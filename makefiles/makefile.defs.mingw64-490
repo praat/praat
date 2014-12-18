@@ -1,13 +1,13 @@
 # File: makefile.defs.mingw64-490
 
 # System: MinGW
-# Paul Boersma, 9 June 2014
+# Paul Boersma, 17 December 2014
 
 CC = /mingw64-490/bin/x86_64-w64-mingw32-gcc -std=gnu99 -isystem /mingw64-490/mingw/include
 
 CXX = /mingw64-490/bin/x86_64-w64-mingw32-g++ -std=c++0x -isystem /mingw64-490/mingw/include/c++/4.9.0 -isystem /mingw64-490/mingw/include -Wshadow -m64
 
-CFLAGS = -DWINVER=0x0600 -D_WIN32_WINNT=0x0600 -D_WIN32_IE=0x0700 -DUNICODE -Dmain=wingwmain -O1 -flto
+CFLAGS = -DWINVER=0x0600 -D_WIN32_WINNT=0x0600 -D_WIN32_IE=0x0700 -DUNICODE -D_FILE_OFFSET_BITS=64 -Dmain=wingwmain -O1 -flto
 
 CXXFLAGS = $(CFLAGS) -pthread
 

@@ -92,6 +92,8 @@ static void _TextGridEditor_timeToInterval (TextGridEditor me, double t, int iti
 				iinterval = intervalTier -> intervals -> size;
 			}
 		}
+		Melder_assert (iinterval >= 1);
+		Melder_assert (iinterval <= intervalTier -> intervals -> size);
 		interval = (TextInterval) intervalTier -> intervals -> item [iinterval];
 		*tmin = interval -> xmin;
 		*tmax = interval -> xmax;

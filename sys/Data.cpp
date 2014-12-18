@@ -184,6 +184,7 @@ bool Data_canReadText (Data me) {
 void Data_readText (Data me, MelderReadText text) {
 	try {
 		my v_readText (text);
+		my v_repair ();
 	} catch (MelderError) {
 		Melder_throw (Thing_className (me), " not read.");
 	}
@@ -227,6 +228,7 @@ void Data_readBinary (Data me, FILE *f) {
 			Melder_throw ("Early end of file.");
 		if (ferror (f))
 			Melder_throw ("I/O error.");
+		my v_repair ();
 	} catch (MelderError) {
 		Melder_throw (Thing_className (me), " not read.");
 	}

@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20141126)
+MAN_BEGIN (L"What's new?", L"ppgb", 20141218)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"• Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.4.03# (18 December 2014)")
+LIST_ITEM (L"• TextGrid reading: Praat now corrects some incomplete TextGrid files created by others.")
+LIST_ITEM (L"• Better support for text files larger than 2 GB.")
 NORMAL (L"##5.4.02# (26 November 2014)")
 LIST_ITEM (L"• Mac: repaired a bug by which quote characters typed into the script window could become curly instead of straight.")
 NORMAL (L"##5.4.01# (9 November 2014)")

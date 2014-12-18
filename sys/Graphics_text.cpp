@@ -387,10 +387,10 @@ static void charSize (I, _Graphics_widechar *lc) {
 			int normalSize = my fontSize * my resolution / 72.0;
 			lc -> size = lc -> size < 100 ? (3 * normalSize + 2) / 4 : normalSize;
         
-			uint16_t codes16 [2];
+			utf16_t codes16 [2];
 			int nchars = 1;
 			if (lc -> kar > 0xFFFF) {
-				MelderUtf32 kar = lc -> kar - 0x10000;
+				utf32_t kar = lc -> kar - 0x10000;
 				codes16 [0] = 0xD800 + (kar >> 10);
 				codes16 [1] = 0xDC00 + (kar & 0x3FF);
 				nchars = 2;
@@ -480,13 +480,13 @@ static void charSize (I, _Graphics_widechar *lc) {
 				OSStatus err = ATSUCreateTextLayout (& textLayout);
 				if (err != 0) Melder_fatal ("Graphics_text/ATSUCreateTextLayout: unknown MacOS error %d.", (int) err);
 			}
-			uint16_t code16 [2];
+			utf16_t code16 [2];
 			if (lc -> kar <= 0xFFFF) {
 				code16 [0] = lc -> kar;
 				OSStatus err = ATSUSetTextPointerLocation (textLayout, & code16 [0], kATSUFromTextBeginning, kATSUToTextEnd, 1);   // BUG: not 64-bit
 				if (err != 0) Melder_fatal ("Graphics_text/ATSUSetTextPointerLocation low Unicode: unknown MacOS error %d.", (int) err);
 			} else {
-				MelderUtf32 kar = lc -> kar - 0x10000;
+				utf32_t kar = lc -> kar - 0x10000;
 				code16 [0] = 0xD800 + (kar >> 10);
 				code16 [1] = 0xDC00 + (kar & 0x3FF);
 				OSStatus err = ATSUSetTextPointerLocation (textLayout, & code16 [0], kATSUFromTextBeginning, kATSUToTextEnd, 2);   // BUG: not 64-bit
@@ -682,7 +682,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 }
 
 static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
-	const wchar_t *codes, const char *codes8, const MelderUtf16 *codes16, int nchars, int width)
+	const wchar_t *codes, const char *codes8, const utf16_t *codes16, int nchars, int width)
 {
 	iam (Graphics);
 	//Melder_casual ("nchars %d first %d %c rightToLeft %d", nchars, lc->kar, lc -> kar, lc->rightToLeft);
@@ -1273,7 +1273,7 @@ static long bufferSize;
 static _Graphics_widechar *theWidechar;
 static wchar_t *charCodes;
 static char *charCodes8;
-static MelderUtf16 *charCodes16;
+static utf16_t *charCodes16;
 static int initBuffer (const wchar_t *txt) {
 	try {
 		long sizeNeeded = wcslen (txt) + 1;   /* It is true that some characters are split into two, but all of these are backslash sequences. */
@@ -1286,7 +1286,7 @@ static int initBuffer (const wchar_t *txt) {
 			theWidechar = Melder_calloc (_Graphics_widechar, sizeNeeded);
 			charCodes = Melder_calloc (wchar_t, sizeNeeded);
 			charCodes8 = Melder_calloc (char, sizeNeeded);
-			charCodes16 = Melder_calloc (MelderUtf16, sizeNeeded);
+			charCodes16 = Melder_calloc (utf16_t, sizeNeeded);
 			bufferSize = sizeNeeded;
 		}
 		return 1;

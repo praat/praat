@@ -1641,7 +1641,7 @@ static inline void binpututf16 (wchar_t character, FILE *f) {
 	if (sizeof (wchar_t) == 2) {   // wchar_t is UTF-16?
 		binputu2 (character, f);
 	} else {   // wchar_t is UTF-32.
-		MelderUtf32 kar = character;
+		utf32_t kar = character;
 		if (kar <= 0xFFFF) {
 			binputu2 (character, f);
 		} else if (kar <= 0x10FFFF) {

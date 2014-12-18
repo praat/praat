@@ -1,13 +1,13 @@
 # File: makefile.defs.linux.alsa
 
 # System: Linux
-# Paul Boersma, 12 June 2014
+# Paul Boersma, 17 December 2014
 
 CC = gcc -std=gnu99
 
 CXX = g++ -std=c++0x
 
-CFLAGS = -DUNIX -Dlinux -DALSA `pkg-config --cflags gtk+-2.0` -Werror=missing-prototypes -Werror=implicit -Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O1 -g1 -pthread
+CFLAGS = -DUNIX -Dlinux -DALSA -D_FILE_OFFSET_BITS=64 `pkg-config --cflags gtk+-2.0` -Werror=missing-prototypes -Werror=implicit -Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O1 -g1 -pthread
 
 CXXFLAGS = $(CFLAGS) -Wshadow
 

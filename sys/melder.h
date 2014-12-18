@@ -42,6 +42,9 @@
 #include <stdint.h>
 
 typedef wchar_t wchar;
+typedef uint8_t  utf8_t;
+typedef uint16_t utf16_t;
+typedef uint32_t utf32_t;
 
 bool Melder_wcsequ_firstCharacterCaseInsensitive (const wchar_t *string1, const wchar_t *string2);
 
@@ -58,6 +61,22 @@ bool Melder_wcsequ_firstCharacterCaseInsensitive (const wchar_t *string1, const 
 #ifndef NULL
 	#define NULL  ((void *) 0)
 #endif
+#ifndef INT32_MAX
+	#define INT8_MAX         127
+	#define INT16_MAX        32767
+	#define INT32_MAX        2147483647
+	#define INT64_MAX        9223372036854775807LL
+
+	#define INT8_MIN          -128
+	#define INT16_MIN         -32768
+	#define INT32_MIN        (-INT32_MAX-1)
+	#define INT64_MIN        (-INT64_MAX-1)
+
+	#define UINT8_MAX         255
+	#define UINT16_MAX        65535
+	#define UINT32_MAX        4294967295U
+	#define UINT64_MAX        18446744073709551615ULL
+#endif
 
 /*
  * Operating system version control.
@@ -73,8 +92,8 @@ typedef struct { double red, green, blue, transparency; } double_rgbt;
 	The following routines return a static string, chosen from a circularly used set of 11 buffers.
 	You can call at most 11 of them in one Melder_casual call, for instance.
 */
-const wchar_t * Melder_integer (long value);
-const wchar_t * Melder_bigInteger (long long value);
+const wchar_t * Melder_integer (int64_t value);
+const wchar_t * Melder_bigInteger (int64_t value);
 const wchar_t * Melder_boolean (bool value);   // "yes" or "no"
 const wchar_t * Melder_double (double value);   // "--undefined--" or something in the "%.15g", "%.16g", or "%.17g" formats
 const wchar_t * Melder_single (double value);   // "--undefined--" or something in the "%.8g" format
@@ -111,15 +130,15 @@ void Melder_writeToConsole (const wchar_t *message, bool useStderr);
 
 void Melder_alloc_init (void);   // to be called around program start-up
 void Melder_message_init (void);   // to be called around program start-up
-void * _Melder_malloc (unsigned long size);
+void * _Melder_malloc (int64_t size);
 #define Melder_malloc(type,numberOfElements)  (type *) _Melder_malloc ((numberOfElements) * sizeof (type))
-void * _Melder_malloc_f (unsigned long size);
+void * _Melder_malloc_f (int64_t size);
 #define Melder_malloc_f(type,numberOfElements)  (type *) _Melder_malloc_f ((numberOfElements) * sizeof (type))
-void * Melder_realloc (void *pointer, long size);
-void * Melder_realloc_f (void *pointer, long size);
-void * _Melder_calloc (long numberOfElements, long elementSize);
+void * Melder_realloc (void *pointer, int64_t size);
+void * Melder_realloc_f (void *pointer, int64_t size);
+void * _Melder_calloc (int64_t numberOfElements, int64_t elementSize);
 #define Melder_calloc(type,numberOfElements)  (type *) _Melder_calloc (numberOfElements, sizeof (type))
-void * _Melder_calloc_f (long numberOfElements, long elementSize);
+void * _Melder_calloc_f (int64_t numberOfElements, int64_t elementSize);
 #define Melder_calloc_f(type,numberOfElements)  (type *) _Melder_calloc_f (numberOfElements, sizeof (type))
 char * Melder_strdup (const char *string);
 char * Melder_strdup_f (const char *string);
@@ -127,8 +146,8 @@ wchar_t * Melder_wcsdup (const wchar_t *string);
 wchar_t * Melder_wcsdup_f (const wchar_t *string);
 int Melder_strcmp (const char *string1, const char *string2);   // regards null string as empty string
 int Melder_wcscmp (const wchar_t *string1, const wchar_t *string2);   // regards null string as empty string
-int Melder_strncmp (const char *string1, const char *string2, unsigned long n);
-int Melder_wcsncmp (const wchar_t *string1, const wchar_t *string2, unsigned long n);
+int Melder_strncmp (const char *string1, const char *string2, int64_t n);
+int Melder_wcsncmp (const wchar_t *string1, const wchar_t *string2, int64_t n);
 wchar_t * Melder_wcstok (wchar_t *string, const wchar_t *delimiter, wchar_t **last);   // circumvents platforms where wcstok has only two arguments
 wchar_t * Melder_wcsdecompose (const wchar_t *string);
 wchar_t * Melder_wcsprecompose (const wchar_t *string);
@@ -154,9 +173,6 @@ const uint32_t kMelder_textInputEncoding_FLAC = 0x464C4143;
 const uint32_t kMelder_textOutputEncoding_ASCII = 0x41534349;
 const uint32_t kMelder_textOutputEncoding_ISO_LATIN1 = 0x4C415401;
 const uint32_t kMelder_textOutputEncoding_FLAC = 0x464C4143;
-
-typedef uint16_t MelderUtf16;
-typedef uint32_t MelderUtf32;
 
 bool Melder_isValidAscii (const wchar_t *string);
 bool Melder_strIsValidUtf8 (const char *string);
@@ -184,7 +200,7 @@ void Melder_wcsTo8bitFileRepresentation_inline (const wchar_t *wcs, char *utf8);
 void Melder_8bitFileRepresentationToWcs_inline (const char *utf8, wchar_t *wcs);
 extern "C" wchar_t * Melder_peekUtf8ToWcs (const char *string);
 extern "C" char * Melder_peekWcsToUtf8 (const wchar_t *string);
-extern "C" const MelderUtf16 * Melder_peekWcsToUtf16 (const wchar_t *string);
+extern "C" const utf16_t * Melder_peekWcsToUtf16 (const wchar_t *string);
 const void * Melder_peekWcsToCfstring (const wchar_t *string);
 void Melder_fwriteWcsAsUtf8 (const wchar_t *ptr, size_t n, FILE *f);
 
@@ -352,7 +368,7 @@ typedef struct {
 typedef struct {
 	unsigned long length;
 	unsigned long bufferSize;
-	MelderUtf16 *string;   // a growing buffer, never shrunk (can only be freed by MelderString16_free)
+	utf16_t *string;   // a growing buffer, never shrunk (can only be freed by MelderString16_free)
 } MelderString16;
 
 void MelderString_free (MelderString *me);   // frees the "string" attribute only (and sets other attributes to zero)
@@ -394,7 +410,7 @@ MelderReadText MelderReadText_createFromFile (MelderFile file);
 MelderReadText MelderReadText_createFromString (const wchar_t *string);
 wchar_t MelderReadText_getChar (MelderReadText text);
 wchar_t * MelderReadText_readLine (MelderReadText text);
-long MelderReadText_getNumberOfLines (MelderReadText me);
+int64_t MelderReadText_getNumberOfLines (MelderReadText me);
 const wchar_t * MelderReadText_getLineNumber (MelderReadText text);
 void MelderReadText_delete (MelderReadText text);
 
@@ -531,6 +547,7 @@ struct MelderArg {
 	MelderArg (const wchar_t *      arg) : type (1), argW (arg) { }
 	MelderArg (const  char   *      arg) : type (2), arg8 (arg) { }
 	MelderArg (const double         arg) : type (1), argW (Melder_double          (arg)) { }
+	MelderArg (const     long long  arg) : type (1), argW (Melder_integer         (arg)) { }
 	MelderArg (const          long  arg) : type (1), argW (Melder_integer         (arg)) { }
 	MelderArg (const unsigned long  arg) : type (1), argW (Melder_integer         (arg)) { }
 	MelderArg (const          int   arg) : type (1), argW (Melder_integer         (arg)) { }
@@ -1175,7 +1192,7 @@ public:
 		//if (Melder_debug == 39) Melder_casual ("autostring: leaving assignment from C-string; new = %ld", ptr);
 	}
 	#endif
-	T& operator[] (long i) {
+	template <class U> T& operator[] (U i) {
 		return ptr [i];
 	}
 	T * peek () const {
@@ -1193,7 +1210,7 @@ public:
 		if (ptr) Melder_free (ptr);
 		ptr = string;
 	}
-	void resize (long new_size) {
+	template <class U> void resize (U new_size) {
 		T *tmp = (T *) Melder_realloc (ptr, new_size * sizeof (T));
 		ptr = tmp;
 	}

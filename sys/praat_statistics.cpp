@@ -1,6 +1,6 @@
 /* praat_statistics.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,6 +60,8 @@ void praat_reportIntegerProperties () {
 	MelderInfo_writeLine (L"A \"long integer\" is ",       Melder_integer (sizeof (long)        * 8), L" bits.");
 	MelderInfo_writeLine (L"A \"long long integer\" is ",  Melder_integer (sizeof (long long)   * 8), L" bits.");
 	MelderInfo_writeLine (L"A pointer is ",                Melder_integer (sizeof (void *)      * 8), L" bits.");
+	MelderInfo_writeLine (L"A memory object size is ",     Melder_integer (sizeof (size_t)      * 8), L" bits.");
+	MelderInfo_writeLine (L"A file offset is ",            Melder_integer (sizeof (off_t)       * 8), L" bits.");
 	MelderInfo_close ();
 }
 

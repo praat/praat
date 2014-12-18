@@ -1,6 +1,6 @@
 /* melder_textencoding.cpp
  *
- * Copyright (C) 2007-2011 Paul Boersma
+ * Copyright (C) 2007-2011,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -304,7 +304,7 @@ void Melder_8bitToWcs_inline (const char *string, wchar_t *wcs, int inputEncodin
 	const unsigned char *p = (const unsigned char *) & string [0];
 	if (inputEncoding == kMelder_textInputEncoding_UTF8) {
 		while (*p != '\0') {
-			uint32_t kar = * p ++;
+			utf32_t kar = * p ++;
 			if (kar <= 0x7F) {
 				* q ++ = kar;
 			} else if (kar <= 0xDF) {
@@ -413,7 +413,7 @@ unsigned long wcslen_utf8 (const wchar_t *wcs, bool expandNewlines) {
 	long length = 0;
 	for (const wchar_t *p = & wcs [0]; *p != '\0'; p ++) {
 		if (sizeof (wchar_t) == 2) {
-			unsigned short kar = *p;
+			utf16_t kar = *p;
 			if (kar <= 0x007F) {
 				#ifdef _WIN32
 					if (expandNewlines && kar == '\n') length ++;
@@ -432,7 +432,7 @@ unsigned long wcslen_utf8 (const wchar_t *wcs, bool expandNewlines) {
 				length += 3;
 			}
 		} else {
-			unsigned long kar = *p;
+			utf32_t kar = *p;
 			if (kar <= 0x00007F) {
 				#ifdef _WIN32
 					if (expandNewlines && kar == '\n') length ++;
@@ -555,7 +555,7 @@ char * Melder_peekWcsToUtf8 (const wchar_t *text) {
 	return buffer [ibuffer];
 }
 
-const MelderUtf16 * Melder_peekWcsToUtf16 (const wchar_t *text) {
+const utf16_t * Melder_peekWcsToUtf16 (const wchar_t *text) {
 	if (text == NULL) return NULL;
 	static MelderString16 buffers [11] = { { 0 } };
 	static int ibuffer = 0;

@@ -1,5 +1,5 @@
 Praats/external/flac/READ_ME.TXT
-Paul Boersma, 26 December 2008
+Paul Boersma, 18 December 2014
 This file describes the adaptations to the FLAC 1.2.1 sources
 that are needed to make them compatible with Praat.
 
@@ -17,19 +17,6 @@ For MinGW we need to change in flac_share_alloc.h:
 #if !defined _MSC_VER && !defined __EMX__
 #include <stdint.h> /* for SIZE_MAX in case limits.h didn't get it */
 #endif
-
-
-For win32 on Metrowerks CodeWarrior we do a
-#if defined (_WIN32) && ! defined (off_t)
-#define off_t long
-#endif
-just above the declaration of
-FLAC__metadata_simple_iterator_get_block_offset;
-we also do
-#define fseeko fseek
-#define ftello ftell
-on win32 on Metrowerks CodeWarrior.
-This measure may be expendable once we compile on mingw or so.
 
 The sources contain a confusion of FLAC__int32 and int,
 especially in calls to local_bitreader_read_rice_signed_block

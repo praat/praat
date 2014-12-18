@@ -179,32 +179,64 @@ void structGraphicsScreen :: v_polyline (long numberOfPoints, double *xyDC, bool
 			cairoRevertLine (this);
 		}
 	#elif win
-		winPrepareLine (this);
-		POINT *points = Melder_malloc (POINT, numberOfPoints + close);
-		if (points) {
-			for (long i = 0; i < numberOfPoints; i ++) {
-				points [i]. x = *xyDC, xyDC ++;
-				points [i]. y = *xyDC, xyDC ++;
-			}
-			if (close)
-				points [numberOfPoints] = points [0];
-			Polyline (our d_gdiGraphicsContext, points, numberOfPoints + close);
-			if (our d_fatNonSolid) {
-				for (long i = 0; i < numberOfPoints; i ++)
-					points [i]. x -= 1;
+		if (our d_useGdiplus && 0) {
+			Gdiplus::Graphics dcplus (our d_gdiGraphicsContext);
+			Gdiplus::Point *points = Melder_malloc (Gdiplus::Point, numberOfPoints + close);
+			if (points) {
+				for (long i = 0; i < numberOfPoints; i ++) {
+					points [i]. X = *xyDC, xyDC ++;
+					points [i]. Y = *xyDC, xyDC ++;
+				}
 				if (close)
 					points [numberOfPoints] = points [0];
-				Polyline (our d_gdiGraphicsContext, points, numberOfPoints + close);
+#define LINE_WIDTH_IN_PIXELS2(hjhkj)  ( our resolution > 192 ? our lineWidth * (our resolution / 192.0) : our lineWidth )
+				Gdiplus::Pen pen (Gdiplus::Color (255,0,0,0), LINE_WIDTH_IN_PIXELS2 (this) + 0.5);
+				float dotted_line [] = { 2, 2 };
+				float dashed_line [] = { 6, 2 };
+				float dashed_dotted_line [] = { 6, 2, 2, 2 };
+				switch (our lineType) {
+					case Graphics_DOTTED:
+						pen. SetDashPattern (dotted_line, 2);
+						break;
+					case Graphics_DASHED:
+						pen. SetDashPattern (dashed_line, 2);
+						break;
+					case Graphics_DASHED_DOTTED:
+						pen. SetDashPattern (dashed_dotted_line, 4);
+						break;
+				}
+				dcplus. DrawLines (& pen, points, numberOfPoints + close);
+				Melder_free (points);
+			}
+		} else {
+			winPrepareLine (this);
+			POINT *points = Melder_malloc (POINT, numberOfPoints + close);
+			if (points) {
 				for (long i = 0; i < numberOfPoints; i ++) {
-					points [i]. x += 1;
-					points [i]. y -= 1;
+					points [i]. x = *xyDC, xyDC ++;
+					points [i]. y = *xyDC, xyDC ++;
 				}
 				if (close)
 					points [numberOfPoints] = points [0];
 				Polyline (our d_gdiGraphicsContext, points, numberOfPoints + close);
+				if (our d_fatNonSolid) {
+					for (long i = 0; i < numberOfPoints; i ++)
+						points [i]. x -= 1;
+					if (close)
+						points [numberOfPoints] = points [0];
+					Polyline (our d_gdiGraphicsContext, points, numberOfPoints + close);
+					for (long i = 0; i < numberOfPoints; i ++) {
+						points [i]. x += 1;
+						points [i]. y -= 1;
+					}
+					if (close)
+						points [numberOfPoints] = points [0];
+					Polyline (our d_gdiGraphicsContext, points, numberOfPoints + close);
+				}
+				Melder_free (points);
 			}
+			DEFAULT
 		}
-		DEFAULT
 	#elif mac
 		GraphicsQuartz_initDraw (this);
 		quartzPrepareLine (this);

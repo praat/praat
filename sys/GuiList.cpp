@@ -319,7 +319,7 @@ Thing_implement (GuiList, GuiControl, 0);
 				strncpy (Melder_buffer1, text_utf8, dataLength);
 				Melder_buffer1 [dataLength] = '\0';
 				wchar_t *text_wcs = Melder_peekUtf8ToWcs (Melder_buffer1);
-				const MelderUtf16 *text_utf16 = Melder_peekWcsToUtf16 (text_wcs);
+				const utf16_t *text_utf16 = Melder_peekWcsToUtf16 (text_wcs);
 				UniCharCount runLength = wcslen (text_wcs);   // BUG
 				ATSUTextLayout textLayout;
 				ATSUStyle style;

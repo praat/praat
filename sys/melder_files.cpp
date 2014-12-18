@@ -103,7 +103,7 @@ void Melder_wcsTo8bitFileRepresentation_inline (const wchar_t *wcs, char *utf8) 
 		UniChar unipath [kMelder_MAXPATH+1];
 		long n = wcslen (wcs), n_utf16 = 0;
 		for (long i = 0; i < n; i ++) {
-			uint32_t kar = wcs [i];
+			utf32_t kar = wcs [i];
 			if (kar <= 0xFFFF) {
 				unipath [n_utf16 ++] = kar;   // including null byte
 			} else if (kar <= 0x10FFFF) {
@@ -137,9 +137,9 @@ void Melder_8bitFileRepresentationToWcs_inline (const char *path, wchar_t *wpath
 		long n_utf16 = CFStringGetLength (cfpath2);
 		long n_wcs = 0;
 		for (long i = 0; i < n_utf16; i ++) {
-			uint32_t kar = CFStringGetCharacterAtIndex (cfpath2, i);
+			utf32_t kar = CFStringGetCharacterAtIndex (cfpath2, i);
 			if (kar >= 0xD800 && kar <= 0xDBFF) {
-				uint32_t kar2 = CFStringGetCharacterAtIndex (cfpath2, ++ i);
+				utf32_t kar2 = CFStringGetCharacterAtIndex (cfpath2, ++ i);
 				if (kar2 >= 0xDC00 && kar2 <= 0xDFFF) {
 					kar = (((kar & 0x3FF) << 10) | (kar2 & 0x3FF)) + 0x10000;
 				} else {

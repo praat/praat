@@ -759,6 +759,7 @@ static void _GraphicsScreen_imageFromFile (GraphicsScreen me, const wchar_t *rel
 			Gdiplus::Graphics dcplus (my d_gdiGraphicsContext);
 			Gdiplus::Rect rect (x1DC, y2DC, width, height);
 			dcplus. DrawImage (& image, rect);
+		} else {
 		}
 	#elif mac
 		structMelderFile file = { 0 };

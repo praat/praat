@@ -93,6 +93,7 @@ oo_DEFINE_CLASS (TextGrid, Function)
 		Function tier (long i) { return static_cast <Function> (our tiers -> item [i]); }
 		void removePoints (long tierNumber, int which_Melder_STRING, const wchar_t *criterion);
 		virtual void v_info ();
+		virtual void v_repair ();
 		virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
 		virtual void v_shiftX (double xfrom, double xto);
 		virtual void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto);

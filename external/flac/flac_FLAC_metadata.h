@@ -471,9 +471,6 @@ FLAC_API FLAC__bool FLAC__metadata_simple_iterator_is_last(const FLAC__Metadata_
  *    This is the byte offset relative to the beginning of the file of
  *    the current metadata block's header.
  */
-#if defined (_WIN32) && ! defined (off_t)
-#define off_t long
-#endif
 FLAC_API off_t FLAC__metadata_simple_iterator_get_block_offset(const FLAC__Metadata_SimpleIterator *iterator);
 
 /** Get the type of the metadata block at the current position.  This

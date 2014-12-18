@@ -1521,6 +1521,9 @@ void praat_run (void) {
 	{ uint16_t dummy = 40000; Melder_assert ((int) (int16_t) dummy == -25536); }   // bingeti2 relies on this
 	{ uint16_t dummy = 40000; Melder_assert ((short) (int16_t) dummy == -25536); }   // bingete2 relies on this
 
+	if (sizeof (off_t) < 8)
+		Melder_fatal ("sizeof(off_t) is less than 8. Compile Praat with -D_FILE_OFFSET_BITS=64.");
+
 	if (Melder_batch) {
 		if (thePraatStandAloneScriptText != NULL) {
 			try {

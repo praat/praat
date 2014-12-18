@@ -1701,7 +1701,7 @@ void structGuiText :: f_setString (const wchar_t *text) {
 		 */
 		long j = 0;
 		for (long i = 0; i < length_utf32; i ++) {
-			MelderUtf32 kar = text [i];
+			utf32_t kar = text [i];
 			if (kar == '\n') {   // LF
 				macText [j ++] = 13;   // CR
 			} else if (kar <= 0xFFFF) {

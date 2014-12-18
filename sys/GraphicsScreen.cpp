@@ -484,6 +484,11 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *void
 Graphics Graphics_create_screen (void *display, void *window, int resolution) {
 	GraphicsScreen me = Thing_new (GraphicsScreen);
 	my screen = true;
+	#if win
+		my d_useGdiplus = _GraphicsWindows_tryToInitializeGdiPlus ();
+	#elif mac
+		_GraphicsMacintosh_tryToInitializeQuartz ();
+	#endif
 	my yIsZeroAtTheTop = true;
 	Graphics_init (me, resolution);
 	Graphics_setWsViewport ((Graphics) me, 0, 100, 0, 100);
@@ -500,7 +505,9 @@ Graphics Graphics_create_screenPrinter (void *display, void *window) {
 	my screen = true;
 	my yIsZeroAtTheTop = true;
 	my printer = true;
-	#ifdef macintosh
+	#if win
+		my d_useGdiplus = _GraphicsWindows_tryToInitializeGdiPlus ();
+	#elif mac
 		_GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
 	Graphics_init (me, thePrinter. resolution);

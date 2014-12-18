@@ -131,10 +131,13 @@ void NUMvector_insert (long elementSize, void **v, long lo, long *hi, long posit
 
 void * NUMmatrix (long elementSize, long row1, long row2, long col1, long col2) {
 	try {
+		int64_t numberOfRows = row2 - row1 + 1;
+		int64_t numberOfColumns = col2 - col1 + 1;
+		int64_t numberOfCells = numberOfRows * numberOfColumns;
+
 		/*
 		 * Allocate room for the row pointers.
 		 */
-		long numberOfRows = row2 - row1 + 1;
 		char **result;
 		Melder_assert (sizeof (char) == 1);   // true by definition
 		for (;;) {
@@ -147,10 +150,9 @@ void * NUMmatrix (long elementSize, long row1, long row2, long col1, long col2) 
 		 * Allocate room for the cells.
 		 * The first row pointer points to below the first cell.
 		 */
-		long numberOfColumns = col2 - col1 + 1;
 		for (;;) {
 			try {
-				result [row1] = reinterpret_cast <char *> (_Melder_calloc (numberOfRows * numberOfColumns, elementSize));
+				result [row1] = reinterpret_cast <char *> (_Melder_calloc (numberOfCells, elementSize));
 			} catch (MelderError) {
 				result += row1;
 				Melder_free (result);   // free the row pointers
@@ -159,7 +161,7 @@ void * NUMmatrix (long elementSize, long row1, long row2, long col1, long col2) 
 			if ((result [row1] -= col1 * elementSize) != NULL) break;   // this will normally succeed at the first try
 			(void) Melder_realloc_f (result [row1] + col1 * elementSize, 1);   // make "sure" that the second try will succeed
 		}
-		long columnSize = numberOfColumns * elementSize;
+		int64_t columnSize = numberOfColumns * elementSize;
 		for (long irow = row1 + 1; irow <= row2; irow ++) result [irow] = result [irow - 1] + columnSize;
 		theTotalNumberOfArrays += 1;
 		return result;

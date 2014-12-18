@@ -39,7 +39,7 @@ void MelderString16_free (MelderString16 *me) {
 	Melder_free (my string);
 	if (Melder_debug == 34) fprintf (stderr, "from MelderString16_free\t%p\t%ld\t%ld\n", my string, my bufferSize, 2L);
 	totalNumberOfDeallocations += 1;
-	totalDeallocationSize += my bufferSize * sizeof (MelderUtf16);
+	totalDeallocationSize += my bufferSize * sizeof (utf16_t);
 	my bufferSize = 0;
 	my length = 0;
 }
@@ -84,7 +84,7 @@ void MelderString16_empty (MelderString16 *me) {
 		MelderString16_free (me);
 	}
 	unsigned long sizeNeeded = 1;
-	expandIfNecessary (MelderUtf16)
+	expandIfNecessary (utf16_t)
 	my string [0] = '\0';
 	my length = 0;
 }
@@ -358,12 +358,12 @@ void MelderString_appendCharacter (MelderString *me, wchar_t character) {
 
 void MelderString16_appendCharacter (MelderString16 *me, wchar_t character) {
 	unsigned long sizeNeeded = my length + 3;   // make room for character, potential surrogate character, and null byte
-	expandIfNecessary (MelderUtf16)
+	expandIfNecessary (utf16_t)
 	if (sizeof (wchar_t) == 2) {   // wchar_t is UTF-16?
 		my string [my length] = character;
 		my length ++;
 	} else {   // wchar_t is UTF-32.
-		MelderUtf32 kar = character;
+		utf32_t kar = character;
 		if (kar <= 0xFFFF) {
 			my string [my length] = character;
 			my length ++;

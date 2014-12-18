@@ -47,13 +47,19 @@
 static wchar_t buffers [NUMBER_OF_BUFFERS] [MAXIMUM_NUMERIC_STRING_LENGTH + 1];
 static int ibuffer = 0;
 
-const wchar_t * Melder_integer (long value) {
+const wchar_t * Melder_integer (int64_t value) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
-	swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%ld", value);
+	if (sizeof (long) == 8) {
+		swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%ld", value);
+	} else if (sizeof (long long) == 8) {
+		swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%lld", value);
+	} else {
+		Melder_fatal ("Neither long nor long long is 8 bytes on this machine.");
+	}
 	return buffers [ibuffer];
 }
 
-const wchar_t * Melder_bigInteger (long long value) {
+const wchar_t * Melder_bigInteger (int64_t value) {
 	wchar_t *text;
 	int quintillions, quadrillions, trillions, billions, millions, thousands, units;
 	bool firstDigitPrinted = false;

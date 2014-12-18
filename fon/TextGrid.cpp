@@ -300,6 +300,23 @@ void structTextGrid :: v_info () {
 	MelderInfo_writeLine (L"Number of points: ", Melder_integer (numberOfPoints));
 }
 
+static void IntervalTier_addInterval_unsafe (IntervalTier me, double tmin, double tmax, const wchar_t *label) {
+	autoTextInterval interval = TextInterval_create (tmin, tmax, label);
+	Collection_addItem (my intervals, interval.transfer());
+}
+
+void structTextGrid :: v_repair () {
+	for (long itier = 1; itier <= our numberOfTiers (); itier ++) {
+		Function anyTier = our tier (itier);
+		if (anyTier -> classInfo == classIntervalTier) {
+			IntervalTier tier = (IntervalTier) anyTier;
+			if (tier -> numberOfIntervals () == 0) {
+				IntervalTier_addInterval_unsafe (tier, tier -> xmin, tier -> xmax, L"");
+			}
+		}
+	}
+}
+
 void structTextGrid :: v_shiftX (double xfrom, double xto) {
 	TextGrid_Parent :: v_shiftX (xfrom, xto);
 	for (long i = 1; i <= tiers -> size; i ++) {
@@ -863,11 +880,6 @@ TableOfReal TextTier_downto_TableOfReal (TextTier me, const wchar_t *label) {
 
 TableOfReal TextTier_downto_TableOfReal_any (TextTier me) {
 	return TextTier_downto_TableOfReal (me, NULL);
-}
-
-static void IntervalTier_addInterval_unsafe (IntervalTier me, double tmin, double tmax, const wchar_t *label) {
-	autoTextInterval interval = TextInterval_create (tmin, tmax, label);
-	Collection_addItem (my intervals, interval.transfer());
 }
 
 IntervalTier IntervalTier_readFromXwaves (MelderFile file) {

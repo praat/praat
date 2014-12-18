@@ -1,6 +1,6 @@
 /* Strings.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -224,7 +224,7 @@ Strings Strings_readFromRawTextFile (MelderFile file) {
 		/*
 		 * Count number of strings.
 		 */
-		long n = MelderReadText_getNumberOfLines (text.peek());
+		int64_t n = MelderReadText_getNumberOfLines (text.peek());
 
 		/*
 		 * Create.

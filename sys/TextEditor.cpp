@@ -594,8 +594,8 @@ static void menu_cb_convertToCString (EDITOR_ARGS) {
 		} else if (*p == '\\') {
 			MelderInfo_write (L"\\\\");
 		} else if (*p < 0 || *p > 127) {
-			uint32_t kar = *p;
-			if (kar <= 0xFFFF) {
+			utf32_t kar = sizeof (wchar_t) == 2 ? (utf16_t) *p : *p;
+			if (kar <= 0xFFFF) {   // BUG on Windows
 				MelderInfo_write (L"\\u", hex [kar >> 12], hex [(kar >> 8) & 0x0000000F], hex [(kar >> 4) & 0x0000000F], hex [kar & 0x0000000F]);
 			} else {
 				MelderInfo_write (L"\\U", hex [kar >> 28], hex [(kar >> 24) & 0x0000000F], hex [(kar >> 20) & 0x0000000F], hex [(kar >> 16) & 0x0000000F],

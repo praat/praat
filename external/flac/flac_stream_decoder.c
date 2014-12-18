@@ -42,10 +42,6 @@
 #include <string.h> /* for memset/memcpy() */
 #include <sys/stat.h> /* for stat() */
 #include <sys/types.h> /* for off_t */
-#if defined _WIN32
-#define fseeko fseek
-#define ftello ftell
-#endif
 #include "flac_FLAC_assert.h"
 #include "flac_share_alloc.h"
 #include "flac_protected_stream_decoder.h"

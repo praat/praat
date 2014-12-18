@@ -891,7 +891,10 @@ Sound Sound_createAsPureTone (long numberOfChannels, double startingTime, double
 	double sampleRate, double frequency, double amplitude, double fadeInDuration, double fadeOutDuration)
 {
 	try {
-		autoSound me = Sound_create (numberOfChannels, startingTime, endTime, round ((endTime - startingTime) * sampleRate),
+		double numberOfSamples_f = round ((endTime - startingTime) * sampleRate);
+		if (numberOfSamples_f > INT32_MAX)
+			Melder_throw ("Cannot create sounds with more than ", Melder_bigInteger (INT32_MAX), " samples, because they cannot be saved to disk.");
+		autoSound me = Sound_create (numberOfChannels, startingTime, endTime, (long) numberOfSamples_f,
 			1 / sampleRate, startingTime + 0.5 / sampleRate);
 		for (long isamp = 1; isamp <= my nx; isamp ++) {
 			double time = my x1 + (isamp - 1) * my dx;

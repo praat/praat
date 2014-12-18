@@ -42,10 +42,6 @@
 #include <stdlib.h> /* for malloc() */
 #include <string.h> /* for memcpy() */
 #include <sys/types.h> /* for off_t */
-#if defined _WIN32
-#define fseeko fseek
-#define ftello ftell
-#endif
 #include "flac_FLAC_assert.h"
 #include "flac_FLAC_stream_decoder.h"
 #include "flac_share_alloc.h"

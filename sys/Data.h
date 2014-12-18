@@ -47,6 +47,7 @@ Thing_define (Data, Thing) {
 		virtual void v_readText (MelderReadText text);
 		virtual void v_writeBinary (FILE *f);
 		virtual void v_readBinary (FILE *f);
+		virtual void v_repair () { }   // after reading Praat data files created by others
 		// messages for scripting:
 		virtual bool v_hasGetNrow      () { return false; }   virtual double        v_getNrow      ()                      { return NUMundefined; }
 		virtual bool v_hasGetNcol      () { return false; }   virtual double        v_getNcol      ()                      { return NUMundefined; }

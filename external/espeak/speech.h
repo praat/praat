@@ -26,7 +26,7 @@
 
 #ifdef _WIN32
 	wchar_t * Melder_peekUtf8ToWcs (const char *string);
-	const uint16_t * Melder_peekWcsToUtf16 (const wchar_t *string);
+	const utf16_t * Melder_peekWcsToUtf16 (const wchar_t *string);
 #endif
 
 // conditional compilation options

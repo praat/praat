@@ -42,8 +42,6 @@
 #include <utime.h> /* for utime() */
 #include <io.h> /* for chmod() */
 #include <sys/types.h> /* for off_t */
-#define fseeko fseek
-#define ftello ftell
 #else
 #include <sys/types.h> /* some flavors of BSD (like OS X) require this to get time_t */
 #include <utime.h> /* for utime() */
