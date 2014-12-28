@@ -218,24 +218,23 @@ static wchar_t * _MelderFile_readText (MelderFile file, char **string8) {
 			if (type == 1) {
 				for (int64_t i = 0; i < length; i ++) {
 					utf16_t kar = bingetu2 (f);
-					if (sizeof (wchar_t) == 2) {   // wchar_t is UTF-16?
-						text [i] = kar;
-					} else {   // wchar_t is UTF-32.
-						utf32_t kar1 = kar;
-						if (kar1 < 0xD800) {
-							text [i] = kar1;
-						} else if (kar1 < 0xDC00) {
+					if (sizeof (wchar_t) == 2) {   // wchar_t is UTF-16 (or its signed counterpart)?
+						text [i] = (wchar_t) kar;
+					} else {   // wchar_t is UTF-32 (or its signed counterpart)
+						if (kar < 0xD800) {
+							text [i] = (wchar_t) kar;   // convert up without sign extension
+						} else if (kar < 0xDC00) {
 							length --;
-							utf32_t kar2 = bingetu2 (f);
+							utf16_t kar2 = bingetu2 (f);
 							if (kar2 >= 0xDC00 && kar2 <= 0xDFFF) {
-								text [i] = 0x10000 + ((kar1 & 0x3FF) << 10) + (kar2 & 0x3FF);
+								text [i] = (wchar_t) (0x00010000 + (uint32_t) (((uint32_t) kar & 0x000003FF) << 10) + (uint32_t) ((uint32_t) kar2 & 0x000003FF));
 							} else {
 								text [i] = UNICODE_REPLACEMENT_CHARACTER;
 							}
-						} else if (kar1 < 0xE000) {
+						} else if (kar < 0xE000) {
 							text [i] = UNICODE_REPLACEMENT_CHARACTER;
-						} else if (kar1 <= 0xFFFF) {
-							text [i] = kar1;
+						} else if (kar <= 0xFFFF) {
+							text [i] = (wchar_t) kar;   // convert up without sign extension
 						} else {
 							Melder_fatal ("MelderFile_readText: unsigned short greater than 0xFFFF: should not occur.");
 						}
@@ -244,24 +243,23 @@ static wchar_t * _MelderFile_readText (MelderFile file, char **string8) {
 			} else {
 				for (int64_t i = 0; i < length; i ++) {
 					utf16_t kar = bingetu2LE (f);
-					if (sizeof (wchar_t) == 2) {   // wchar_t is UTF-16?
-						text [i] = kar;
-					} else {   // wchar_t is UTF-32
-						utf32_t kar1 = kar;
-						if (kar1 < 0xD800) {
-							text [i] = kar1;
-						} else if (kar1 < 0xDC00) {
+					if (sizeof (wchar_t) == 2) {   // wchar_t is UTF-16 (or its signed counterpart)?
+						text [i] = (wchar_t) kar;
+					} else {   // wchar_t is UTF-32 (or its signed counterpart)
+						if (kar < 0xD800) {
+							text [i] = (wchar_t) kar;   // convert up without sign extension
+						} else if (kar < 0xDC00) {
 							length --;
-							utf32_t kar2 = bingetu2LE (f);
-							if (kar2 >= 0xDC00 && kar2 <= 0xDFFF) {
-								text [i] = 0x10000 + ((kar1 & 0x3FF) << 10) + (kar2 & 0x3FF);
+							utf16_t kar1 = bingetu2LE (f);
+							if (kar1 >= 0xDC00 && kar1 <= 0xDFFF) {
+								text [i] = (wchar_t) (0x00010000 + (uint32_t) (((uint32_t) kar & 0x000003FF) << 10) + (uint32_t) ((uint32_t) kar1 & 0x000003FF));
 							} else {
 								text [i] = UNICODE_REPLACEMENT_CHARACTER;
 							}
-						} else if (kar1 < 0xE000) {
+						} else if (kar < 0xE000) {
 							text [i] = UNICODE_REPLACEMENT_CHARACTER;
-						} else if (kar1 <= 0xFFFF) {
-							text [i] = kar1;
+						} else if (kar <= 0xFFFF) {
+							text [i] = (wchar_t) kar;   // convert up without sign extension
 						} else {
 							Melder_fatal ("MelderFile_readText: unsigned short greater than 0xFFFF: should not occur.");
 						}

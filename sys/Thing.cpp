@@ -190,9 +190,9 @@ bool Thing_member (Thing me, ClassInfo klas) {
 void * _Thing_check (Thing me, ClassInfo klas, const char *fileName, int line) {
 	if (! me) Melder_fatal ("(_Thing_check:) NULL object passed to a function\n"
 		"in file %.100s at line %d.", fileName, line);
-	ClassInfo l_classInfo = my classInfo;
-	while (l_classInfo != klas && l_classInfo != NULL) l_classInfo = l_classInfo -> parent;
-	if (! l_classInfo)
+	ClassInfo classInfo = my classInfo;
+	while (classInfo != klas && classInfo != NULL) classInfo = classInfo -> parent;
+	if (! classInfo)
 		Melder_fatal ("(_Thing_check:) Object of wrong class (%.50s) passed to a function\n"
 				"in file %.100s at line %d.", Melder_peekWcsToUtf8 (my classInfo -> className), fileName, line);
 	return me;

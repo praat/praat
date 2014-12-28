@@ -581,7 +581,7 @@ protected:
 };
 Thing_implement (Vertices, DLL, 0);
 
-#define VERTEX(n) ((Vertex) (n -> data))
+#define VERTEX(n) ((Vertex) ((n) -> data))
 
 int structVertices :: s_compare (I, thou) {
 	iam (DLLNode); thouart (DLLNode);

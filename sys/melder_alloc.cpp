@@ -40,7 +40,7 @@ static double totalNumberOfAllocations = 0, totalNumberOfDeallocations = 0, tota
 /*
  * The rainy-day fund.
  *
- * Typically, memory allocation for data is entirely checked by using the _e versions of the allocation routines,
+ * Typically, memory allocation for data is entirely checked by using the normal versions of the allocation routines,
  * which will call Melder_error if they are out of memory.
  * When data allocation is indeed out of memory,
  * the application will present an error message to the user saying that the data could not be created.
@@ -54,7 +54,7 @@ static double totalNumberOfAllocations = 0, totalNumberOfDeallocations = 0, tota
  * If the user doesn't do that, the application will crash upon the next failing allocation of a _f routine.
  */
 
-#define theRainyDayFund_SIZE  300000
+#define theRainyDayFund_SIZE  3000000
 static char *theRainyDayFund = NULL;
 
 void Melder_alloc_init (void) {
@@ -81,7 +81,7 @@ void * _Melder_malloc_f (int64_t size) {
 		Melder_fatal ("(Melder_malloc_f:) Can never allocate %ls bytes.", Melder_bigInteger (size));
 	void *result = malloc (size);
 	if (result == NULL) {
-		if (theRainyDayFund != NULL) free (theRainyDayFund);
+		if (theRainyDayFund != NULL) { free (theRainyDayFund); theRainyDayFund = NULL; }
 		result = malloc (size);
 		if (result != NULL) {
 			Melder_flushError ("Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
@@ -129,7 +129,7 @@ void * Melder_realloc_f (void *ptr, int64_t size) {
 		Melder_fatal ("(Melder_realloc_f:) Can never allocate %ls bytes.", Melder_bigInteger (size));
 	result = realloc (ptr, size);   /* Will not show in the statistics... */
 	if (result == NULL) {
-		if (theRainyDayFund != NULL) free (theRainyDayFund);
+		if (theRainyDayFund != NULL) { free (theRainyDayFund); theRainyDayFund = NULL; }
 		result = realloc (ptr, size);
 		if (result != NULL) {
 			Melder_flushError ("Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
@@ -176,7 +176,7 @@ void * _Melder_calloc_f (int64_t nelem, int64_t elsize) {
 		Melder_fatal ("(Melder_calloc_f:) Can never allocate elements whose size is %ls bytes.", Melder_bigInteger (elsize));
 	result = calloc (nelem, elsize);
 	if (result == NULL) {
-		if (theRainyDayFund != NULL) free (theRainyDayFund);
+		if (theRainyDayFund != NULL) { free (theRainyDayFund); theRainyDayFund = NULL; }
 		result = calloc (nelem, elsize);
 		if (result != NULL) {
 			Melder_flushError ("Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
@@ -207,7 +207,7 @@ char * Melder_strdup_f (const char *string) {
 	int64_t size = strlen (string) + 1;
 	char *result = (char *) malloc (size * sizeof (char));
 	if (result == NULL) {
-		if (theRainyDayFund != NULL) free (theRainyDayFund);
+		if (theRainyDayFund != NULL) { free (theRainyDayFund); theRainyDayFund = NULL; }
 		result = (char *) malloc (size * sizeof (char));
 		if (result != NULL) {
 			Melder_flushError ("Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
@@ -239,7 +239,7 @@ wchar_t * Melder_wcsdup_f (const wchar_t *string) {
 	int64_t size = wcslen (string) + 1;
 	wchar_t *result = (wchar_t *) malloc (size * sizeof (wchar_t));
 	if (result == NULL) {
-		if (theRainyDayFund != NULL) free (theRainyDayFund);
+		if (theRainyDayFund != NULL) { free (theRainyDayFund); theRainyDayFund = NULL; }
 		result = (wchar_t *) malloc (size * sizeof (wchar_t));
 		if (result != NULL) {
 			Melder_flushError ("Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");

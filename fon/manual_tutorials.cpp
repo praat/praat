@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20141218)
+MAN_BEGIN (L"What's new?", L"ppgb", 20141228)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"• Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.4.04# (28 December 2014)")
+LIST_ITEM (L"• Windows audio playback: if the sound has more channels than the audio hardware, distribute them evenly.")
 NORMAL (L"##5.4.03# (18 December 2014)")
 LIST_ITEM (L"• TextGrid reading: Praat now corrects some incomplete TextGrid files created by others.")
 LIST_ITEM (L"• Better support for text files larger than 2 GB.")
@@ -53,7 +55,7 @@ LIST_ITEM (L"• Linux audio: created a second workaround that reduces even more
 LIST_ITEM (L"• Smoother communication with Phon.")
 LIST_ITEM (L"• Windows: repaired a memory leak when saving PNG files.")
 NORMAL (L"##5.3.82# (26 July 2014)")
-LIST_ITEM (L"• Audio playback: if the sound has more channels than the audio hardware, distribute them evenly.")
+LIST_ITEM (L"• Linux and Mac audio playback: if the sound has more channels than the audio hardware, distribute them evenly.")
 LIST_ITEM (L"• Pause forms: more consistent appearance of the Revert button.")
 LIST_ITEM (L"• Scripting: pauseScript ( ) function.")
 NORMAL (L"##5.3.81# (2 July 2014)")

@@ -78,7 +78,6 @@
    email: m-mat @ math.sci.hiroshima-u.ac.jp (remove spaces)
 */
 
-#include <inttypes.h>
 #if defined (__MINGW32__) || defined (linux)
 	#define UINT64_C(n)  n ## ULL
 #endif

@@ -1792,6 +1792,8 @@ static void Formula_removeLabels (void) {
 	numberOfInstructions --;   /* Het END_-symbol hoeft niet geinterpreteerd. */
 }
 
+#include <inttypes.h>
+
 /*
  * For debugging.
  */
@@ -1802,31 +1804,31 @@ static void Formula_print (FormulaInstruction f) {
 		symbol = f [++ i]. symbol;
 		instructionName = Formula_instructionNames [symbol];
 		if (symbol == NUMBER_)
-			Melder_casual ("%d %ls %.17g", i, instructionName, f [i]. content.number);
+			Melder_casual ("%d %ls %.17g", (int) i, instructionName, f [i]. content.number);
 		else if (symbol == GOTO_ || symbol == IFFALSE_ || symbol == IFTRUE_ || symbol == LABEL_ || symbol == INCREMENT_GREATER_GOTO_)
-			Melder_casual ("%d %ls %d", i, instructionName, f [i]. content.label);
+			Melder_casual ("%d %ls %d", (int) i, instructionName, (int) f [i]. content.label);
 		else if (symbol == NUMERIC_VARIABLE_)
-			Melder_casual ("%d %ls %ls %ls", i, instructionName, f [i]. content.variable -> string, Melder_double (f [i]. content.variable -> numericValue));
+			Melder_casual ("%d %ls %ls %ls", (int) i, instructionName, f [i]. content.variable -> string, Melder_double (f [i]. content.variable -> numericValue));
 		else if (symbol == STRING_VARIABLE_)
-			Melder_casual ("%d %ls %ls %ls", i, instructionName, f [i]. content.variable -> string, f [i]. content.variable -> stringValue);
+			Melder_casual ("%d %ls %ls %ls", (int) i, instructionName, f [i]. content.variable -> string, f [i]. content.variable -> stringValue);
 		else if (symbol == STRING_ || symbol == VARIABLE_NAME_ || symbol == INDEXED_NUMERIC_VARIABLE_ || symbol == INDEXED_STRING_VARIABLE_)
-			Melder_casual ("%d %ls \"%ls\"", i, instructionName, f [i]. content.string);
+			Melder_casual ("%d %ls \"%ls\"", (int) i, instructionName, f [i]. content.string);
 		else if (symbol == MATRIKS_ || symbol == MATRIKSSTR_ || symbol == MATRIKS1_ || symbol == MATRIKSSTR1_ ||
 		         symbol == MATRIKS2_ || symbol == MATRIKSSTR2_ || symbol == ROWSTR_ || symbol == COLSTR_)
 		{
 			Thing object = (Thing) f [i]. content.object;
 			if (object) {
-				Melder_casual ("%d %ls %s %s", i, instructionName,
+				Melder_casual ("%d %ls %s %s", (int) i, instructionName,
 					Melder_peekWcsToUtf8 (Thing_className (object)),
 					Melder_peekWcsToUtf8 (object -> name));
 			} else {
-				Melder_casual ("%d %ls", i, instructionName);
+				Melder_casual ("%d %ls", (int) i, instructionName);
 			}
 		}
 		else if (symbol == CALL_)
-			Melder_casual ("%d %ls %ls", i, instructionName, f [i]. content.string);
+			Melder_casual ("%d %ls %ls", (int) i, instructionName, f [i]. content.string);
 		else
-			Melder_casual ("%d %ls", i, instructionName);
+			Melder_casual ("%d %ls", (int) i, instructionName);
 	} while (symbol != END_);
 }
 
@@ -3941,7 +3943,7 @@ static void do_endPauseForm (void) {
 		co [7] == NULL ? NULL : co[7]->string, co [8] == NULL ? NULL : co[8]->string,
 		co [9] == NULL ? NULL : co[9]->string, co [10] == NULL ? NULL : co[10]->string,
 		theInterpreter);
-	//Melder_casual ("Button %d", buttonClicked);
+	//Melder_casual ("Button %d", (int) buttonClicked);
 	pushNumber (buttonClicked);
 }
 static void do_chooseReadFileStr (void) {
@@ -4934,7 +4936,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 	//Melder_casual ("starting value %f", var -> numericValue);
 	pushVariable (var);
 } break; case INCREMENT_GREATER_GOTO_: {
-	//Melder_casual ("top of loop, stack depth %d", w);
+	//Melder_casual ("top of loop, stack depth %d", (int) w);
 	Stackel e = & theStack [w], v = & theStack [w - 1];
 	Melder_assert (e->which == Stackel_NUMBER);
 	Melder_assert (v->which == Stackel_VARIABLE);

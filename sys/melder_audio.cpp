@@ -543,6 +543,7 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 		PaStreamParameters outputParameters = { 0 };
 		outputParameters. device = Pa_GetDefaultOutputDevice ();
 		const PaDeviceInfo *deviceInfo = Pa_GetDeviceInfo (outputParameters. device);
+		trace ("the device can handle %d channels", (int) deviceInfo -> maxOutputChannels);
 		if (my numberOfChannels > deviceInfo -> maxOutputChannels) {
 			my numberOfChannels = deviceInfo -> maxOutputChannels;
 		}
@@ -783,9 +784,52 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 						Melder_throw ("This computer probably has no sound card.");
 					if (err == MMSYSERR_NOMEM)
 						Melder_throw ("Not enough free memory to play any sound at all.");
-					if (err == WAVERR_BADFORMAT)
-						Melder_throw ("Bad sound format? Should not occur! Report bug to the author!");
-					Melder_throw ("Unknown error ", err, " while trying to play a sound? Report bug to the author!");
+					if (err == WAVERR_BADFORMAT) {
+						if (my numberOfChannels > 2) {
+							/*
+							 * Retry with 2 channels.
+							 */
+							my numberOfChannels = 2;
+							waveFormat. nChannels = my numberOfChannels;
+							waveFormat. nBlockAlign = my numberOfChannels * waveFormat. wBitsPerSample / 8;
+							waveFormat. nAvgBytesPerSec = waveFormat. nBlockAlign * waveFormat. nSamplesPerSec;
+							err = waveOutOpen (& my hWaveOut, WAVE_MAPPER, & waveFormat, 0, 0, CALLBACK_NULL | WAVE_ALLOWSYNC);
+							if (err != MMSYSERR_NOERROR)
+								Melder_throw ("Bad sound format even after reduction to 2 channels? Should not occur! Report bug to the author!");
+							MelderAudio_isPlaying = true;
+						} else {
+							Melder_throw ("Bad sound format? Should not occur! Report bug to the author!");
+						}
+					} else {
+						Melder_throw ("Unknown error ", err, " while trying to play a sound? Report bug to the author!");
+					}
+				}
+				if (numberOfChannels > my numberOfChannels) {
+					/*
+					 * Redistribute the in channels over the out channels.
+					 */
+					if (numberOfChannels == 4 && my numberOfChannels == 2) {   // a common case
+						int16_t *in = & my buffer [0], *out = & my buffer [0];
+						for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
+							long in1 = *in ++, in2 = *in ++, in3 = *in ++, in4 = *in ++;
+							*out ++ = (in1 + in2) / 2;
+							*out ++ = (in3 + in4) / 2;
+						}
+					} else {
+						int16_t *in = & my buffer [0], *out = & my buffer [0];
+						for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
+							for (long iout = 1; iout <= my numberOfChannels; iout ++) {
+								long outValue = 0;
+								long numberOfIn = numberOfChannels / my numberOfChannels;
+								if (iout == my numberOfChannels)
+									numberOfIn += numberOfChannels % my numberOfChannels;
+								for (long iin = 1; iin <= numberOfIn; iin ++)
+									outValue += *in ++;
+								outValue /= numberOfIn;
+								*out ++ = outValue;
+							}
+						}
+					}
 				}
 
 				my waveHeader. dwFlags = 0;

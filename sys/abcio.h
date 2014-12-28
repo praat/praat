@@ -81,7 +81,7 @@ void texputw4 (MelderFile file, const wchar_t *s, const wchar_t *s1, const wchar
 		int fgetc (FILE *f);   int fputc (int c, FILE *f);   // 0..255
 */
 unsigned int bingetu1 (FILE *f);   void binputu1 (unsigned int i, FILE *f);   /* 0..255 */
-unsigned int bingetu2 (FILE *f);   void binputu2 (unsigned int i, FILE *f);   /* 0..65535 */
+uint16_t bingetu2 (FILE *f);   void binputu2 (unsigned int i, FILE *f);   /* 0..65535 */
 unsigned long bingetu4 (FILE *f);   void binputu4 (unsigned long i, FILE *f);   /* 0..4294967295 */
 
 int bingeti1 (FILE *f);   void binputi1 (int i, FILE *f);   /* -128..127 */
@@ -97,7 +97,7 @@ long bingeti4 (FILE *f);   void binputi4 (long i, FILE *f);   /* -2147483648..21
 int bingeti2LE (FILE *f);   void binputi2LE (int i, FILE *f);   /* -32768..32767 */
 long bingeti3LE (FILE *f);   void binputi3LE (long i, FILE *f);   /* -8388608..2148388607 */
 long bingeti4LE (FILE *f);   void binputi4LE (long i, FILE *f);   /* -2147483648..2147483647 */
-unsigned int bingetu2LE (FILE *f);   void binputu2LE (unsigned int i, FILE *f);   /* 0..65535 */
+uint16_t bingetu2LE (FILE *f);   void binputu2LE (unsigned int i, FILE *f);   /* 0..65535 */
 unsigned long bingetu4LE (FILE *f);   void binputu4LE (unsigned long i, FILE *f);   /* 0..4294967295 */
 /*
 	Read or write signed or unsigned integers from or to 2 or 4 bytes in the stream 'f',

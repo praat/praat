@@ -182,7 +182,7 @@ static void deleteDynamicMenu (void) {
 	trace ("deletion #%ld", ++ numberOfDeletions);
 	for (int i = 1; i <= theNumberOfActions; i ++) {
 		if (theActions [i]. button) {
-			trace ("trying to destroy action %d of %d: %ls", i, (int) theNumberOfActions, theActions [i]. title);
+			trace ("trying to destroy action %d of %d: %ls", (int) i, (int) theNumberOfActions, theActions [i]. title);
 			#if gtk || cocoa
 				if (theActions [i]. button -> d_parent == praat_form) {
 					trace ("destroy a label or a push button or a cascade button");

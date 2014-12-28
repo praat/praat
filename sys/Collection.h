@@ -282,13 +282,6 @@ Thing_define (SortedSetOfDouble, SortedSet) {
 void SortedSetOfDouble_init (SortedSetOfDouble me);
 SortedSetOfDouble SortedSetOfDouble_create (void);
 
-template <class T>
-class SortedSetOfDouble_vector : public structSortedSetOfDouble {
-	T& operator[] (long i) {
-		return (T) item [i];
-	}
-};
-
 /********** class SortedSetOfString **********/
 
 Thing_define (SortedSetOfString, SortedSet) {

@@ -134,7 +134,12 @@ Sound Sound_create (long numberOfChannels, double xmin, double xmax, long nx, do
 }
 
 Sound Sound_createSimple (long numberOfChannels, double duration, double samplingFrequency) {
-	return Sound_create (numberOfChannels, 0.0, duration, floor (duration * samplingFrequency + 0.5),
+	Melder_assert (duration > 0.0);
+	Melder_assert (samplingFrequency > 0.0);
+	double numberOfSamples_f = round (duration * samplingFrequency);
+	if (numberOfSamples_f > (double) INT32_MAX)
+		Melder_throw ("Cannot create sounds with more than ", Melder_bigInteger (INT32_MAX), " samples, because they cannot be saved to disk.");
+	return Sound_create (numberOfChannels, 0.0, duration, (long) (int32_t) numberOfSamples_f,
 		1 / samplingFrequency, 0.5 / samplingFrequency);
 }
 
@@ -892,7 +897,7 @@ Sound Sound_createAsPureTone (long numberOfChannels, double startingTime, double
 {
 	try {
 		double numberOfSamples_f = round ((endTime - startingTime) * sampleRate);
-		if (numberOfSamples_f > INT32_MAX)
+		if (numberOfSamples_f > (double) INT32_MAX)
 			Melder_throw ("Cannot create sounds with more than ", Melder_bigInteger (INT32_MAX), " samples, because they cannot be saved to disk.");
 		autoSound me = Sound_create (numberOfChannels, startingTime, endTime, (long) numberOfSamples_f,
 			1 / sampleRate, startingTime + 0.5 / sampleRate);

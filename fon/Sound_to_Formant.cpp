@@ -136,7 +136,7 @@ static int findNewZeroes (int ijt, double ppORIG [], int degree,
 	newZeroes [0] = 1.0;
 	for (i = 1; i <= half_degree; i ++) {
 		if (! findOneZero (ijt, px, zeroes [i - 1], zeroes [i], & newZeroes [i])) {
-			Melder_casual ("Degree %d not completed.", degree);
+			Melder_casual ("Degree %d not completed.", (int) degree);
 			return 0;
 		}
 	}

@@ -553,11 +553,11 @@ static void gui_button_cb_record (I, GuiButtonEvent event) {
 				if (Melder_debug == 20) Melder_casual ("Before Pa_OpenStream");
 				PaError err = Pa_OpenStream (& my portaudioStream, & streamParameters, NULL,
 					theControlPanel. sampleRate, 0, paNoFlag, portaudioStreamCallback, (void *) me);
-				if (Melder_debug == 20) Melder_casual ("Pa_OpenStream returns %d", err);
+				if (Melder_debug == 20) Melder_casual ("Pa_OpenStream returns %d", (int) err);
 				if (err)
 					Melder_throw ("open ", Melder_peekUtf8ToWcs (Pa_GetErrorText (err)));
 				Pa_StartStream (my portaudioStream);
-				if (Melder_debug == 20) Melder_casual ("Pa_StartStream returns %d", err);
+				if (Melder_debug == 20) Melder_casual ("Pa_StartStream returns %d", (int) err);
 				if (err)
 					Melder_throw ("start ", Melder_peekUtf8ToWcs (Pa_GetErrorText (err)));
 			} else {
@@ -1105,7 +1105,7 @@ SoundRecorder SoundRecorder_create (int numberOfChannels) {
 			for (PaDeviceIndex idevice = 0; idevice < deviceCount; idevice ++) {
 				const PaDeviceInfo *deviceInfo = Pa_GetDeviceInfo (idevice);
 				if (Melder_debug == 20) Melder_casual ("Device \"%s\", input %d, output %d, sample rate %lf", deviceInfo -> name,
-					deviceInfo -> maxInputChannels, deviceInfo -> maxOutputChannels, deviceInfo -> defaultSampleRate);
+					(int) deviceInfo -> maxInputChannels, (int) deviceInfo -> maxOutputChannels, deviceInfo -> defaultSampleRate);
 				if (deviceInfo -> maxInputChannels > 0 && my numberOfInputDevices < SoundRecorder_IDEVICE_MAX) {
 					my device_ [++ my numberOfInputDevices]. canDo = true;
 					wcsncpy (my device_ [my numberOfInputDevices]. name, Melder_peekUtf8ToWcs (deviceInfo -> name), 40);

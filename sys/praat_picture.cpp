@@ -80,7 +80,7 @@ static void updateSizeMenu (void) {
 	}
 }
 static void setFontSize (int fontSize) {
-	//Melder_casual("Praat picture: set font size %d", fontSize);
+	//Melder_casual("Praat picture: set font size %d", (int) fontSize);
 	{// scope
 		autoPraatPicture picture;
 		Graphics_setFontSize (GRAPHICS, fontSize);

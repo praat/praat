@@ -200,7 +200,7 @@ static void u2write (Sound me, FILE *f, int littleEndian, long *nClip) {
 
 static void u2read (Sound me, FILE *f, int littleEndian) {
 	double *s = my z[1];
-	unsigned int (*get) (FILE *) = littleEndian ? bingetu2LE : bingetu2;
+	uint16_t (*get) (FILE *) = littleEndian ? bingetu2LE : bingetu2;
 	for (long i = 1; i <= my nx; i++) {
 		s[i] = get (f) / 32768.0 - 1.0;
 	}
@@ -746,10 +746,10 @@ static void NUMgammatoneFilter4 (double *x, double *y, long n, double centre_fre
 		               Melder_double (centre_frequency), Melder_double (bandwidth),
 		               Melder_double (dt), Melder_double (gain));
 		for (long i = 0; i <= 4; i++) {
-			Melder_casual ("a[%d] = %ls", i, Melder_double (a[i]));
+			Melder_casual ("a[%ld] = %ls", i, Melder_double (a[i]));
 		}
 		for (long i = 0; i <= 8; i++) {
-			Melder_casual ("b[%d] = %ls", i, Melder_double (b[i]));
+			Melder_casual ("b[%ld] = %ls", i, Melder_double (b[i]));
 		}
 	}
 	/*

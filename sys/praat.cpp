@@ -1516,10 +1516,22 @@ void praat_run (void) {
 	}
 
 	Melder_assert (wcsequ (Melder_double (1.5), L"1.5"));   // check locale settings; because of the required file portability Praat cannot stand "1,5"
-	{ int dummy = 200; Melder_assert ((int) (signed char) dummy == -56); }   // bingeti1 relies on this
-	{ int dummy = 200; Melder_assert ((int) (unsigned char) dummy == 200); }
-	{ uint16_t dummy = 40000; Melder_assert ((int) (int16_t) dummy == -25536); }   // bingeti2 relies on this
-	{ uint16_t dummy = 40000; Melder_assert ((short) (int16_t) dummy == -25536); }   // bingete2 relies on this
+	{ int dummy = 200;
+		Melder_assert ((int) (signed char) dummy == -56);   // bingeti1 relies on this
+		Melder_assert ((int) (unsigned char) dummy == 200);
+		Melder_assert ((double) dummy == 200.0);
+		Melder_assert ((double) (signed char) dummy == -56.0);
+		Melder_assert ((double) (unsigned char) dummy == 200.0);
+	}
+	{ uint16_t dummy = 40000;
+		Melder_assert ((int) (int16_t) dummy == -25536);   // bingeti2 relies on this
+		Melder_assert ((short) (int16_t) dummy == -25536);   // bingete2 relies on this
+		Melder_assert ((double) dummy == 40000.0);
+		Melder_assert ((double) (int16_t) dummy == -25536.0);
+	}
+	{ uint32_t dummy = 0xffffffff;
+		Melder_assert (wcsequ (Melder_integer (dummy), L"4294967295"));
+	}
 
 	if (sizeof (off_t) < 8)
 		Melder_fatal ("sizeof(off_t) is less than 8. Compile Praat with -D_FILE_OFFSET_BITS=64.");

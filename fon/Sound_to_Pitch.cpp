@@ -523,7 +523,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 		long numberOfFramesPerThread = 20;
 		int numberOfThreads = (nFrames - 1) / numberOfFramesPerThread + 1;
 		const int numberOfProcessors = MelderThread_getNumberOfProcessors ();
-		trace ("%d processors", numberOfProcessors);
+		trace ("%d processors", (int) numberOfProcessors);
 		if (numberOfThreads > numberOfProcessors) numberOfThreads = numberOfProcessors;
 		if (numberOfThreads > 16) numberOfThreads = 16;
 		if (numberOfThreads < 1) numberOfThreads = 1;

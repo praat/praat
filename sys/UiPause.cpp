@@ -203,7 +203,7 @@ int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int can
 			//Melder_flushError (NULL);
 			//Melder_clearError ();
 		} else {
-			//Melder_casual ("Clicked %d", thePauseForm_clicked);
+			//Melder_casual ("Clicked %d", (int) thePauseForm_clicked);
 		}
 	#endif
 	return thePauseForm_clicked;

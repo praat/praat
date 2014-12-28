@@ -457,7 +457,7 @@ static void Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
 	char data [14], chunkID [4];
 	bool formatChunkPresent = false, dataChunkPresent = false;
 	int numberOfBitsPerSamplePoint = -1;
-	long dataChunkSize = -1;
+	uint32_t dataChunkSize = 0xffffffff;
 
 	if (fread (data, 1, 4, f) < 4)   Melder_throw ("File too small: no RIFF statement.");
 	if (! strnequ (data, "RIFF", 4)) Melder_throw ("Not a WAV file (RIFF statement expected).");
@@ -469,7 +469,7 @@ static void Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
 	/* Search for Format Chunk and Data Chunk. */
 
 	while (fread (chunkID, 1, 4, f) == 4) {
-		long chunkSize = bingeti4LE (f);
+		uint32_t chunkSize = bingetu4LE (f);
 		if (Melder_debug == 23) {
 			Melder_warning (Melder_integer (chunkID [0]), L" ", Melder_integer (chunkID [1]), L" ",
 				Melder_integer (chunkID [2]), L" ", Melder_integer (chunkID [3]), L" ", Melder_integer (chunkSize));
@@ -565,10 +565,10 @@ static void Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
 			*startOfData = ftell (f);
 			if (chunkSize & 1) chunkSize ++;
 			if (chunkSize < 0) {   // incorrect data chunk (sometimes -44); assume that the data run till the end of the file
-				fseek (f, 0, SEEK_END);
-				long endOfData = ftell (f);
+				fseeko (f, 0LL, SEEK_END);
+				off_t endOfData = ftello (f);
 				dataChunkSize = chunkSize = endOfData - *startOfData;
-				fseek (f, *startOfData, SEEK_SET);
+				fseeko (f, *startOfData, SEEK_SET);
 			}
 			if (Melder_debug == 23) {
 				for (long i = 1; i <= chunkSize; i ++)
@@ -873,6 +873,9 @@ static void Melder_readMp3File (FILE *f, int numberOfChannels, double **buffer, 
 		Melder_throw ("Error decoding MP3 file.");
 }
 
+int64_t Melder_fread (uint8_t *bytes, double numberOfBytes, FILE *f) {
+}
+
 void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, double **buffer, long numberOfSamples) {
 	try {
 		switch (encoding) {
@@ -914,7 +917,8 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 					} else { // optimize
 						long numberOfBytes = numberOfChannels * numberOfSamples * numberOfBytesPerSamplePerChannel;
 						unsigned char *bytes = (unsigned char *) & buffer [numberOfChannels] [numberOfSamples] + sizeof (double) - numberOfBytes;
-						if (fread (bytes, 1, numberOfBytes, f) < numberOfBytes) throw MelderError ();   // read 16-bit data into last quarter of buffer
+						Melder_assert (numberOfBytes > 0);
+						if (fread (bytes, 1, numberOfBytes, f) < (size_t) numberOfBytes) throw MelderError ();   // read 16-bit data into last quarter of buffer
 						if (numberOfChannels == 1) {
 							for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
 								unsigned char byte1 = * bytes ++, byte2 = * bytes ++;
@@ -946,9 +950,17 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 							}
 						}
 					} else { // optimize
-						long numberOfBytes = numberOfChannels * numberOfSamples * numberOfBytesPerSamplePerChannel;
+						double numberOfBytes_f = (double) numberOfChannels * (double) numberOfSamples * (double) numberOfBytesPerSamplePerChannel;
+						if (isinf (numberOfBytes_f) || numberOfBytes_f > (double) (1LL << 53)) {
+							Melder_throw ("Cannot read ", numberOfBytes_f, " bytes, because that crosses the 9-petabyte limit.");
+						}
+						if (numberOfBytes_f > (double) SIZE_MAX) {
+							Melder_throw ("Cannot read ", numberOfBytes_f, " bytes. Perhaps try a 64-bit edition of Praat?");
+						}
+						Melder_assert (numberOfBytes_f >= 0.0);
+						size_t numberOfBytes = (size_t) numberOfBytes_f;   // cast is safe because overflow and signedness have been checked
 						unsigned char *bytes = (unsigned char *) & buffer [numberOfChannels] [numberOfSamples] + sizeof (double) - numberOfBytes;
-						if (fread (bytes, 1, numberOfBytes, f) < numberOfBytes) throw MelderError ();   // read 16-bit data into last quarter of buffer
+						if (fread (bytes, 1, numberOfBytes, f) < (size_t) numberOfBytes) throw MelderError ();   // read 16-bit data into last quarter of buffer
 						if (numberOfChannels == 1) {
 							for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
 								unsigned char byte1 = * bytes ++, byte2 = * bytes ++;

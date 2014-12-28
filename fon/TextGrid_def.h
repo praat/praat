@@ -73,7 +73,8 @@ oo_DEFINE_CLASS (IntervalTier, Function)
 	#if oo_DECLARING
 		long numberOfIntervals () { return our intervals -> size; }
 		TextInterval interval (long i) { return static_cast <TextInterval> (our intervals -> item [i]); }
-		// TextInterval operator[] (long i) { return static_cast <TextInterval> (our intervals -> item [i]); }   // oops: operator[] not for pointer objects
+		//template <class T> T& operator[] (long i) { return (T) (our intervals -> item [i]); }
+		//TextInterval* intervalss () { return (TextInterval *) (our intervals -> item); }
 		virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
 		virtual void v_shiftX (double xfrom, double xto);
 		virtual void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto);

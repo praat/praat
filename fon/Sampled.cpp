@@ -43,13 +43,13 @@ Thing_implement (Sampled, Function, 0);
 
 void structSampled :: v_shiftX (double xfrom, double xto) {
 	Sampled_Parent :: v_shiftX (xfrom, xto);
-	NUMshift (& x1, xfrom, xto);
+	NUMshift (& our x1, xfrom, xto);
 }
 
 void structSampled :: v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
 	Sampled_Parent :: v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
-	NUMscale (& x1, xminfrom, xmaxfrom, xminto, xmaxto);
-	dx *= (xmaxto - xminto) / (xmaxfrom - xminfrom);
+	NUMscale (& our x1, xminfrom, xmaxfrom, xminto, xmaxto);
+	our dx *= (xmaxto - xminto) / (xmaxfrom - xminfrom);
 }
 
 long Sampled_getWindowSamples (Sampled me, double xmin, double xmax, long *ixmin, long *ixmax) {

@@ -720,7 +720,7 @@ int bingeti2 (FILE *f) {
 		} else {
 			unsigned char bytes [2];
 			if (fread (bytes, sizeof (unsigned char), 2, f) != 2) readError (f, "two bytes.");
-			uint16_t externalValue = ((uint16_t) bytes [0] << 8) | (uint16_t) bytes [1];
+			uint16_t externalValue = (uint16_t) ((uint16_t) bytes [0] << 8) | (uint16_t) bytes [1];
 			return (int) (int16_t) externalValue;   // with sign extension if an int is 4 bytes
 		}
 	} catch (MelderError) {
@@ -728,7 +728,7 @@ int bingeti2 (FILE *f) {
 	}
 }
 
-unsigned int bingetu2 (FILE *f) {
+uint16_t bingetu2 (FILE *f) {
 	try {
 		if (binario_shortBE2 && Melder_debug != 18) {
 			unsigned short s;
@@ -737,8 +737,8 @@ unsigned int bingetu2 (FILE *f) {
 		} else {
 			unsigned char bytes [2];
 			if (fread (bytes, sizeof (unsigned char), 2, f) != 2) readError (f, "two bytes.");
-			uint16_t externalValue = ((uint16_t) bytes [0] << 8) | (uint16_t) bytes [1];
-			return (unsigned int) externalValue;
+			uint16_t externalValue = (uint16_t) ((uint16_t) bytes [0] << 8) | (uint16_t) bytes [1];
+			return externalValue;
 		}
 	} catch (MelderError) {
 		Melder_throw ("Unsigned integer not read from 2 bytes in binary file.");
@@ -753,7 +753,7 @@ int bingete2 (FILE *f, int min, int max, const wchar_t *type) {
 		} else {
 			unsigned char bytes [2];
 			if (fread (bytes, sizeof (unsigned char), 2, f) != 2) readError (f, "two bytes.");
-			uint16_t externalValue = ((uint16_t) bytes [0] << 8) | (uint16_t) bytes [1];
+			uint16_t externalValue = (uint16_t) ((uint16_t) bytes [0] << 8) | (uint16_t) bytes [1];
 			result = (short) (int16_t) externalValue;
 		}
 		if (result < min || result > max)
@@ -768,10 +768,10 @@ long bingeti3 (FILE *f) {
 	try {
 		unsigned char bytes [3];
 		if (fread (bytes, sizeof (unsigned char), 3, f) != 3) readError (f, "three bytes.");
-		uint32_t externalValue = ((uint32_t) bytes [0] << 16) | ((uint32_t) bytes [1] << 8) | (uint32_t) bytes [2];
+		uint32_t externalValue = (uint32_t) ((uint32_t) bytes [0] << 16) | (uint32_t) ((uint32_t) bytes [1] << 8) | (uint32_t) bytes [2];
 		if ((bytes [0] & 128) != 0)   // is the 24-bit sign bit on?
 			externalValue |= 0xFF000000;   // extend negative sign to 32 bits
-		return (long) (int32_t) externalValue;   // first convert signedness, then perhaps extend sign to 64 bits!
+		return (long) (int32_t) externalValue;   // first add sign, then perhaps extend sign
 	} catch (MelderError) {
 		Melder_throw ("Signed long integer not read from 3 bytes in binary file.");
 	}
@@ -787,9 +787,9 @@ long bingeti4 (FILE *f) {
 			unsigned char bytes [4];
 			if (fread (bytes, sizeof (unsigned char), 4, f) != 4) readError (f, "four bytes.");
 			uint32_t externalValue = 
-				((uint32_t) bytes [0] << 24) | ((uint32_t) bytes [1] << 16) |
-				((uint32_t) bytes [2] << 8) | (uint32_t) bytes [3];
-			return (long) (int32_t) externalValue;   // first add signedness, then extend
+				(uint32_t) ((uint32_t) bytes [0] << 24) | (uint32_t) ((uint32_t) bytes [1] << 16) |
+				(uint32_t) ((uint32_t) bytes [2] << 8) | (uint32_t) bytes [3];
+			return (long) (int32_t) externalValue;   // first add sign, then perhaps extend sign
 		}
 	} catch (MelderError) {
 		Melder_throw ("Signed long integer not read from 4 bytes in binary file.");
@@ -806,8 +806,8 @@ unsigned long bingetu4 (FILE *f) {
 			unsigned char bytes [4];
 			if (fread (bytes, sizeof (unsigned char), 4, f) != 4) readError (f, "four bytes.");
 			uint32_t externalValue = 
-				((uint32_t) bytes [0] << 24) | ((uint32_t) bytes [1] << 16) |
-				((uint32_t) bytes [2] << 8) | (uint32_t) bytes [3];
+				(uint32_t) ((uint32_t) bytes [0] << 24) | (uint32_t) ((uint32_t) bytes [1] << 16) |
+				(uint32_t) ((uint32_t) bytes [2] << 8) | (uint32_t) bytes [3];
 			return (unsigned long) externalValue;
 		}
 	} catch (MelderError) {
@@ -826,7 +826,7 @@ int bingeti2LE (FILE *f) {
 		} else {
 			unsigned char bytes [2];
 			if (fread (bytes, sizeof (unsigned char), 2, f) != 2) readError (f, "two bytes.");
-			uint16_t externalValue = ((uint16_t) bytes [1] << 8) | (uint16_t) bytes [0];
+			uint16_t externalValue = (uint16_t) ((uint16_t) bytes [1] << 8) | (uint16_t) bytes [0];
 			return (int) (int16_t) externalValue;   // with sign extension if an int is 4 bytes
 		}
 	} catch (MelderError) {
@@ -834,7 +834,7 @@ int bingeti2LE (FILE *f) {
 	}
 }
 
-unsigned int bingetu2LE (FILE *f) {
+uint16_t bingetu2LE (FILE *f) {
 	try {
 		if (binario_shortLE2 && Melder_debug != 18) {
 			unsigned short s;
@@ -843,8 +843,8 @@ unsigned int bingetu2LE (FILE *f) {
 		} else {
 			unsigned char bytes [2];
 			if (fread (bytes, sizeof (unsigned char), 2, f) != 2) readError (f, "two bytes.");
-			uint16_t externalValue = ((uint16_t) bytes [1] << 8) | (uint16_t) bytes [0];
-			return (unsigned int) externalValue;
+			uint16_t externalValue = (uint16_t) ((uint16_t) bytes [1] << 8) | (uint16_t) bytes [0];
+			return externalValue;
 		}
 	} catch (MelderError) {
 		Melder_throw ("Unsigned integer not read from 2 bytes in binary file.");
@@ -873,8 +873,8 @@ long bingeti4LE (FILE *f) {
 		} else {
 			unsigned char bytes [4];
 			if (fread (bytes, sizeof (unsigned char), 4, f) != 4) readError (f, "four bytes.");
-			uint32_t externalValue = ((uint32_t) bytes [3] << 24) | ((uint32_t) bytes [2] << 16) |
-				((uint32_t) bytes [1] << 8) | (uint32_t) bytes [0];
+			uint32_t externalValue = (uint32_t) ((uint32_t) bytes [3] << 24) | (uint32_t) ((uint32_t) bytes [2] << 16) |
+				(uint32_t) ((uint32_t) bytes [1] << 8) | (uint32_t) bytes [0];
 			return (long) (int32_t) externalValue;   // first add signedness, then extend
 		}
 	} catch (MelderError) {
@@ -891,8 +891,8 @@ unsigned long bingetu4LE (FILE *f) {
 		} else {
 			unsigned char bytes [4];
 			if (fread (bytes, sizeof (unsigned char), 4, f) != 4) readError (f, "four bytes.");
-			uint32_t externalValue = ((uint32_t) bytes [3] << 24) | ((uint32_t) bytes [2] << 16) |
-				((uint32_t) bytes [1] << 8) | (uint32_t) bytes [0];
+			uint32_t externalValue = (uint32_t) ((uint32_t) bytes [3] << 24) | (uint32_t) ((uint32_t) bytes [2] << 16) |
+				(uint32_t) ((uint32_t) bytes [1] << 8) | (uint32_t) bytes [0];
 			return (unsigned long) externalValue;
 		}
 	} catch (MelderError) {
@@ -1431,8 +1431,8 @@ char * bingets1 (FILE *f) {
 
 char * bingets2 (FILE *f) {
 	try {
-		unsigned int length = bingetu2 (f);
-		autostring8 result = Melder_malloc (char, length + 1);
+		uint16_t length = bingetu2 (f);
+		autostring8 result = Melder_malloc (char, (int64_t) length + 1);
 		if (fread (result.peek(), sizeof (char), length, f) != length)
 			Melder_throw (feof (f) ? "Reached end of file" : "Error in file", " while trying to read ", length, " one-byte characters.");
 		result [length] = 0;   // trailing null byte
@@ -1467,7 +1467,7 @@ wchar_t * bingetw1 (FILE *f) {
 			result.reset (Melder_malloc (wchar_t, length + 1));
 			for (unsigned short i = 0; i < length; i ++) {
 				if (sizeof (wchar_t) == 2) {
-					result [i] = bingetu2 (f);
+					result [i] = (wchar_t) bingetu2 (f);   // add sign
 				} else {
 					uint16_t kar = bingetu2 (f);
 					if ((kar & 0xF800) == 0xD800) {
@@ -1501,7 +1501,7 @@ wchar_t * bingetw1 (FILE *f) {
 wchar_t * bingetw2 (FILE *f) {
 	try {
 		autostring result = NULL;
-		unsigned short length = bingetu2 (f);
+		uint16_t length = bingetu2 (f);
 		if (length == 0xFFFF) {   // an escape for encoding
 			/*
 			 * UTF-16
@@ -1510,13 +1510,13 @@ wchar_t * bingetw2 (FILE *f) {
 			result.reset (Melder_malloc (wchar_t, length + 1));
 			for (unsigned short i = 0; i < length; i ++) {
 				if (sizeof (wchar_t) == 2) {
-					result [i] = bingetu2 (f);
+					result [i] = (wchar_t) bingetu2 (f);
 				} else {
-					unsigned short kar = bingetu2 (f);
+					uint16_t kar = bingetu2 (f);
 					if ((kar & 0xF800) == 0xD800) {
 						if (kar > 0xDBFF)
 							Melder_throw ("Incorrect Unicode value (first surrogate member ", kar, ").");
-						unsigned short kar2 = bingetu2 (f);
+						uint16_t kar2 = bingetu2 (f);
 						if (kar2 < 0xDC00 || kar2 > 0xDFFF)
 							Melder_throw ("Incorrect Unicode value (second surrogate member ", kar2, ").");
 						result [i] = (((kar & 0x3FF) << 10) | (kar2 & 0x3FF)) + 0x10000;
@@ -1553,13 +1553,13 @@ wchar_t * bingetw4 (FILE *f) {
 			result.reset (Melder_malloc (wchar_t, length + 1));
 			for (unsigned long i = 0; i < length; i ++) {
 				if (sizeof (wchar_t) == 2) {
-					result [i] = bingetu2 (f);
+					result [i] = (wchar_t) bingetu2 (f);
 				} else {
-					unsigned short kar = bingetu2 (f);
+					uint16_t kar = bingetu2 (f);
 					if ((kar & 0xF800) == 0xD800) {
 						if (kar > 0xDBFF)
 							Melder_throw ("Incorrect Unicode value (first surrogate member ", kar, ").");
-						unsigned short kar2 = bingetu2 (f);
+						uint16_t kar2 = bingetu2 (f);
 						if (kar2 < 0xDC00 || kar2 > 0xDFFF)
 							Melder_throw ("Incorrect Unicode value (second surrogate member ", kar2, ").");
 						result [i] = (((kar & 0x3FF) << 10) | (kar2 & 0x3FF)) + 0x10000;

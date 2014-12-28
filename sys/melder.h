@@ -39,6 +39,11 @@
 	//#define swprintf  __mingw_snwprintf
 #endif
 #include <stdbool.h>
+/*
+ * The following two lines are for obsolete (i.e. C99) versions of stdint.h
+ */
+#define __STDC_LIMIT_MACROS
+#define __STDC_CONSTANT_MACROS
 #include <stdint.h>
 
 typedef wchar_t wchar;
@@ -131,7 +136,7 @@ void Melder_writeToConsole (const wchar_t *message, bool useStderr);
 void Melder_alloc_init (void);   // to be called around program start-up
 void Melder_message_init (void);   // to be called around program start-up
 void * _Melder_malloc (int64_t size);
-#define Melder_malloc(type,numberOfElements)  (type *) _Melder_malloc ((numberOfElements) * sizeof (type))
+#define Melder_malloc(type,numberOfElements)  (type *) _Melder_malloc ((numberOfElements) * (int64_t) sizeof (type))
 void * _Melder_malloc_f (int64_t size);
 #define Melder_malloc_f(type,numberOfElements)  (type *) _Melder_malloc_f ((numberOfElements) * sizeof (type))
 void * Melder_realloc (void *pointer, int64_t size);
