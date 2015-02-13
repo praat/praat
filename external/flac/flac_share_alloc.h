@@ -33,6 +33,7 @@
 #endif
 #include <stdlib.h> /* for size_t, malloc(), etc */
 
+/* ppgb 20141231
 #ifndef SIZE_MAX
 # ifndef SIZE_T_MAX
 #  ifdef _MSC_VER
@@ -43,6 +44,7 @@
 # endif
 # define SIZE_MAX SIZE_T_MAX
 #endif
+*/
 
 #ifndef FLaC__INLINE
 #define FLaC__INLINE  inline   // ppgb 20071120

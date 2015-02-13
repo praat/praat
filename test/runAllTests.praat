@@ -1,23 +1,34 @@
 # Praat script runAlltests.praat
-# Paul Boersma, 6 May 2013
+# Paul Boersma, 31 December 2014
 #
 # This script runs all Praat scripts in its subdirectories.
 
-directories = Create Strings as directory list... directories .
+Text writing preferences: "try ASCII, then UTF-16"
+if macintosh
+	Text reading preferences: "try UTF-8, then MacRoman"
+elif windows
+	Text reading preferences: "try UTF-8, then Windows Latin-1"
+elif unix
+	Text reading preferences: "try UTF-8, then ISO Latin-1"
+else
+	exitScript: "Unknown operating system."
+endif
+
+directories = Create Strings as directory list: "directories", "."
 numberOfDirectories = Get number of strings
 for directory to numberOfDirectories
-printline 'directory'
-	select Strings directories
-	directory$ = Get string... directory
-	printline 'directory$'
+	appendInfoLine: directory
+	selectObject: directories
+	directory$ = Get string: directory
+	appendInfoLine: directory$
 	if directory$ <> "manually"
-		files = Create Strings as file list... files 'directory$'/*.praat
+		files = Create Strings as file list: "files", directory$ + "/*.praat"
 		numberOfFiles = Get number of strings
 		for file to numberOfFiles
-			select files
-			file$ = Get string... file
-			printline ### executing 'directory$'/'file$':
-			execute 'directory$'/'file$'
+			selectObject: files
+			file$ = Get string: file
+			appendInfoLine: "### executing ", directory$, "/", file$, ":"
+			runScript: directory$ + "/" + file$
 		endfor
 	endif
 endfor

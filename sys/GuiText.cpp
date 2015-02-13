@@ -1437,7 +1437,7 @@ void structGuiText :: f_replace (long from_pos, long to_pos, const wchar_t *text
 		Melder_free (winText);
 		UpdateWindow (d_widget -> window);
 	#elif mac
-		long length = wcslen (text), i;
+		size_t length = wcslen (text);
 		wchar_t *macText = Melder_malloc_f (wchar_t, length + 1);
 		Melder_assert (d_widget -> widgetClass == xmTextWidgetClass);
 		wcsncpy (macText, text, length);
@@ -1445,7 +1445,7 @@ void structGuiText :: f_replace (long from_pos, long to_pos, const wchar_t *text
 		/*
 		 * Replace all LF with CR.
 		 */
-		for (i = 0; i < length; i ++) if (macText [i] == '\n') macText [i] = 13;
+		for (size_t i = 0; i < length; i ++) if (macText [i] == '\n') macText [i] = 13;
 		/*
 		 * We DON'T replace any text without selecting it, so we can deselect any other text,
 		 * thus allowing ourselves to select [from_pos, to_pos] and use selection replacement.
@@ -1473,7 +1473,7 @@ void structGuiText :: f_replace (long from_pos, long to_pos, const wchar_t *text
 			for (long i = from_pos; i < to_pos; i ++) if (oldText [i] > 0xFFFF) numberOfSelectedHighUnicodeValues ++;
 			from_pos += numberOfLeadingHighUnicodeValues;
 			to_pos += numberOfLeadingHighUnicodeValues + numberOfSelectedHighUnicodeValues;
-			const UniChar *macText_utf16 = Melder_peekWcsToUtf16 (macText);
+			const char16_t *macText_utf16 = (const char16_t *) Melder_peekWcsToUtf16 (macText);
 			TXNSetData (d_macMlteObject, kTXNUnicodeTextData, macText_utf16, wcslen_utf16 (macText, 0) * 2, from_pos, to_pos);
 		}
 		Melder_free (macText);
@@ -1701,16 +1701,16 @@ void structGuiText :: f_setString (const wchar_t *text) {
 		 */
 		long j = 0;
 		for (long i = 0; i < length_utf32; i ++) {
-			utf32_t kar = text [i];
+			char32_t kar = (char32_t) text [i];   // reinterpret sign bit
 			if (kar == '\n') {   // LF
 				macText [j ++] = 13;   // CR
-			} else if (kar <= 0xFFFF) {
+			} else if (kar <= 0x00FFFF) {
 				macText [j ++] = kar;
 			} else {
 				Melder_assert (kar <= 0x10FFFF);
-				kar -= 0x10000;
-				macText [j ++] = 0xD800 | (kar >> 10);   // first UTF-16 surrogate character
-				macText [j ++] = 0xDC00 | (kar & 0x3FF);   // second UTF-16 surrogate character
+				kar -= 0x010000;
+				macText [j ++] = (UniChar) (0x00D800 | (kar >> 10));   // first UTF-16 surrogate character
+				macText [j ++] = (UniChar) (0x00DC00 | (kar & 0x0003FF));   // second UTF-16 surrogate character
 			}
 		}
 		macText [j] = '\0';

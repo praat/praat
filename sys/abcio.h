@@ -28,7 +28,8 @@
 
 int texgeti1 (MelderReadText text);
 int texgeti2 (MelderReadText text);
-long texgeti4 (MelderReadText text);
+long texgeti32 (MelderReadText text);
+#define texgeti4 texgeti32
 unsigned int texgetu1 (MelderReadText text);
 unsigned int texgetu2 (MelderReadText text);
 unsigned long texgetu4 (MelderReadText text);
@@ -54,7 +55,8 @@ void texputintro (MelderFile file, const wchar_t *s1, const wchar_t *s2, const w
 
 void texputi1 (MelderFile file, int i, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
 void texputi2 (MelderFile file, int i, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
-void texputi4 (MelderFile file, long i, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
+void texputi32 (MelderFile file, long i, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
+#define texputi4 texputi32
 void texputu1 (MelderFile file, unsigned int u, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
 void texputu2 (MelderFile file, unsigned int u, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
 void texputu4 (MelderFile file, unsigned long u, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
@@ -81,24 +83,26 @@ void texputw4 (MelderFile file, const wchar_t *s, const wchar_t *s1, const wchar
 		int fgetc (FILE *f);   int fputc (int c, FILE *f);   // 0..255
 */
 unsigned int bingetu1 (FILE *f);   void binputu1 (unsigned int i, FILE *f);   /* 0..255 */
-uint16_t bingetu2 (FILE *f);   void binputu2 (unsigned int i, FILE *f);   /* 0..65535 */
-unsigned long bingetu4 (FILE *f);   void binputu4 (unsigned long i, FILE *f);   /* 0..4294967295 */
+uint16_t bingetu2 (FILE *f);   void binputu2 (uint16_t i, FILE *f);   /* 0..65535 */
+uint32_t bingetu4 (FILE *f);   void binputu4 (uint32_t i, FILE *f);   /* 0..4294967295 */
 
 int bingeti1 (FILE *f);   void binputi1 (int i, FILE *f);   /* -128..127 */
-int bingeti2 (FILE *f);   void binputi2 (int i, FILE *f);   /* -32768..32767 */
-long bingeti3 (FILE *f);   void binputi3 (long i, FILE *f);   /* -8388608..2148388607 */
-long bingeti4 (FILE *f);   void binputi4 (long i, FILE *f);   /* -2147483648..2147483647 */
+int16_t bingeti2 (FILE *f);   void binputi2 (int16_t i, FILE *f);   /* -32768..32767 */
+int32_t bingeti3 (FILE *f);   void binputi3 (int32_t i, FILE *f);   /* -8388608..2148388607 */
+int32_t bingeti32 (FILE *f);   void binputi32 (int32_t i, FILE *f);   /* -2147483648..2147483647 */
+#define bingeti4 bingeti32
+#define binputi4 binputi32
 /*
 	Read or write signed or unsigned integers from or to 2 or 4 bytes in the stream 'f',
 	in big-endian byte order (most significant byte first).
 	This is the native integer format on Macintosh and Silicon Graphics Iris.
 */
 
-int bingeti2LE (FILE *f);   void binputi2LE (int i, FILE *f);   /* -32768..32767 */
-long bingeti3LE (FILE *f);   void binputi3LE (long i, FILE *f);   /* -8388608..2148388607 */
-long bingeti4LE (FILE *f);   void binputi4LE (long i, FILE *f);   /* -2147483648..2147483647 */
-uint16_t bingetu2LE (FILE *f);   void binputu2LE (unsigned int i, FILE *f);   /* 0..65535 */
-unsigned long bingetu4LE (FILE *f);   void binputu4LE (unsigned long i, FILE *f);   /* 0..4294967295 */
+int16_t bingeti2LE (FILE *f);   void binputi2LE (int16_t i, FILE *f);   /* -32768..32767 */
+int32_t bingeti3LE (FILE *f);   void binputi3LE (int32_t i, FILE *f);   /* -8388608..2148388607 */
+int32_t bingeti4LE (FILE *f);   void binputi4LE (int32_t i, FILE *f);   /* -2147483648..2147483647 */
+uint16_t bingetu2LE (FILE *f);   void binputu2LE (uint16_t i, FILE *f);   /* 0..65535 */
+uint32_t bingetu4LE (FILE *f);   void binputu4LE (uint32_t i, FILE *f);   /* 0..4294967295 */
 /*
 	Read or write signed or unsigned integers from or to 2 or 4 bytes in the stream 'f',
 	in little-endian byte order (least significant byte first).

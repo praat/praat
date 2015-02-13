@@ -447,7 +447,7 @@ void Graphics_readRecordings (Graphics me, FILE *f) {
 	long old_irecord = my irecord;
 	long added_irecord = 0;
 	double *p = NULL, *endp = NULL;
-	long numberOfArguments = 0;
+	signed long numberOfArguments = 0;
 	int opcode = 0;
 	try {
 		added_irecord = bingeti4 (f);
@@ -458,7 +458,7 @@ void Graphics_readRecordings (Graphics me, FILE *f) {
 		while (p < endp) {
 			opcode = (int) bingetr4 (f);
 			put (opcode);
-			numberOfArguments = (long) bingetr4 (f);
+			numberOfArguments = (signed long) bingetr4 (f);
 			if (numberOfArguments == -1) {
 				numberOfArguments = bingeti4 (f);
 			}
@@ -467,7 +467,7 @@ void Graphics_readRecordings (Graphics me, FILE *f) {
 				put (bingetr4 (f));   // x
 				put (bingetr4 (f));   // y
 				put (bingetr4 (f));   // length
-				if ((long) fread (++ p, 8, numberOfArguments - 3, f) < numberOfArguments - 3)   // text
+				if (fread (++ p, 8, (size_t) numberOfArguments - 3, f) < (size_t) numberOfArguments - 3)   // text
 					Melder_throw ("Error reading graphics recordings.");
 				p += numberOfArguments - 4;
 			} else if (opcode == IMAGE_FROM_FILE) {
@@ -476,7 +476,7 @@ void Graphics_readRecordings (Graphics me, FILE *f) {
 				put (bingetr4 (f));   // y1
 				put (bingetr4 (f));   // y2
 				put (bingetr4 (f));   // length
-				if ((long) fread (++ p, 8, numberOfArguments - 5, f) < numberOfArguments - 5)   // text
+				if (fread (++ p, 8, (size_t) numberOfArguments - 5, f) < (size_t) numberOfArguments - 5)   // text
 					Melder_throw ("Error reading graphics recordings.");
 				p += numberOfArguments - 6;
 			} else {

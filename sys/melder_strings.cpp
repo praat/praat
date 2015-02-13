@@ -1,6 +1,6 @@
 /* melder_strings.cpp
  *
- * Copyright (C) 2006-2011 Paul Boersma
+ * Copyright (C) 2006-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,16 +20,16 @@
 #include "melder.h"
 #include "UnicodeData.h"
 #define my  me ->
-#define FREE_THRESHOLD_BYTES 10000
+#define FREE_THRESHOLD_BYTES 10000LL
 
 static double totalNumberOfAllocations = 0, totalNumberOfDeallocations = 0, totalAllocationSize = 0, totalDeallocationSize = 0;
 
 void MelderString_free (MelderString *me) {
 	if (my string == NULL) return;
 	Melder_free (my string);
-	if (Melder_debug == 34) fprintf (stderr, "from MelderString_free\t%p\t%ld\t%ld\n", my string, my bufferSize, sizeof (wchar_t));
+	if (Melder_debug == 34) fprintf (stderr, "from MelderString_free\t%p\t%lld\t%d\n", my string, (long long) my bufferSize, (int) sizeof (wchar_t));
 	totalNumberOfDeallocations += 1;
-	totalDeallocationSize += my bufferSize * sizeof (wchar_t);
+	totalDeallocationSize += my bufferSize * (int64_t) sizeof (wchar_t);
 	my bufferSize = 0;
 	my length = 0;
 }
@@ -37,9 +37,9 @@ void MelderString_free (MelderString *me) {
 void MelderString16_free (MelderString16 *me) {
 	if (my string == NULL) return;
 	Melder_free (my string);
-	if (Melder_debug == 34) fprintf (stderr, "from MelderString16_free\t%p\t%ld\t%ld\n", my string, my bufferSize, 2L);
+	if (Melder_debug == 34) fprintf (stderr, "from MelderString16_free\t%p\t%lld\t%d\n", my string, (long long) my bufferSize, 2);
 	totalNumberOfDeallocations += 1;
-	totalDeallocationSize += my bufferSize * sizeof (utf16_t);
+	totalDeallocationSize += my bufferSize * (int64_t) sizeof (char16_t);
 	my bufferSize = 0;
 	my length = 0;
 }
@@ -48,16 +48,16 @@ void MelderString16_free (MelderString16 *me) {
 	if (sizeNeeded > my bufferSize) { \
 		Melder_assert (my bufferSize >= 0); \
 		Melder_assert (sizeNeeded >= 0); \
-		sizeNeeded = 1.618034 * sizeNeeded + 100; \
+		sizeNeeded = (int64) (1.618034 * sizeNeeded) + 100; \
 		Melder_assert (sizeNeeded > 0); \
 		if (my string) { \
 			totalNumberOfDeallocations += 1; \
-			totalDeallocationSize += my bufferSize * sizeof (type); \
+			totalDeallocationSize += my bufferSize * (int64) sizeof (type); \
 		} \
-		long bytesNeeded = sizeNeeded * sizeof (type); \
+		int64 bytesNeeded = sizeNeeded * (int64) sizeof (type); \
 		Melder_assert (bytesNeeded > 0); \
 		try { \
-			if (Melder_debug == 34) fprintf (stderr, "from MelderString:expandIfNecessary\t%p\t%ld\t%ld\n", my string, sizeNeeded, sizeof (type)); \
+			if (Melder_debug == 34) fprintf (stderr, "from MelderString:expandIfNecessary\t%p\t%lld\t%d\n", my string, (long long) sizeNeeded, (int) sizeof (type)); \
 			my string = (type *) Melder_realloc (my string, bytesNeeded); \
 		} catch (MelderError) { \
 			my bufferSize = 0; \
@@ -70,54 +70,54 @@ void MelderString16_free (MelderString16 *me) {
 	}
 
 void MelderString_empty (MelderString *me) {
-	if (my bufferSize * sizeof (wchar_t) >= FREE_THRESHOLD_BYTES) {
+	if (my bufferSize * (int64) sizeof (wchar) >= FREE_THRESHOLD_BYTES) {
 		MelderString_free (me);
 	}
-	unsigned long sizeNeeded = 1;
-	expandIfNecessary (wchar_t)
+	int64 sizeNeeded = 1;
+	expandIfNecessary (wchar)
 	my string [0] = '\0';
 	my length = 0;
 }
 
 void MelderString16_empty (MelderString16 *me) {
-	if (my bufferSize * sizeof (wchar_t) >= FREE_THRESHOLD_BYTES) {
+	if (my bufferSize * (int64) sizeof (wchar) >= FREE_THRESHOLD_BYTES) {
 		MelderString16_free (me);
 	}
-	unsigned long sizeNeeded = 1;
-	expandIfNecessary (utf16_t)
+	int64_t sizeNeeded = 1;
+	expandIfNecessary (char16)
 	my string [0] = '\0';
 	my length = 0;
 }
 
 void MelderString_copy (MelderString *me, const wchar_t *source) {
-	if (my bufferSize * sizeof (wchar_t) >= FREE_THRESHOLD_BYTES)
+	if (my bufferSize * (int64) sizeof (wchar) >= FREE_THRESHOLD_BYTES)
 		MelderString_free (me);
 	if (source == NULL) source = L"";
-	unsigned long length = wcslen (source);
-	unsigned long sizeNeeded = length + 1;
-	expandIfNecessary (wchar_t)
+	int64 length = (int64) wcslen (source);
+	int64 sizeNeeded = length + 1;
+	expandIfNecessary (wchar)
 	wcscpy (my string, source);
 	my length = length;
 }
 
-void MelderString_ncopy (MelderString *me, const wchar_t *source, unsigned long n) {
-	if (my bufferSize * sizeof (wchar_t) >= FREE_THRESHOLD_BYTES)
+void MelderString_ncopy (MelderString *me, const wchar_t *source, int64 n) {
+	if (my bufferSize * (int64) sizeof (wchar_t) >= FREE_THRESHOLD_BYTES)
 		MelderString_free (me);
 	if (source == NULL) source = L"";
-	unsigned long length = wcslen (source);
+	int64 length = (int64) wcslen (source);
 	if (length > n) length = n;
-	unsigned long sizeNeeded = length + 1;
-	expandIfNecessary (wchar_t)
-	wcsncpy (my string, source, length);
+	int64 sizeNeeded = length + 1;
+	expandIfNecessary (wchar)
+	wcsncpy (my string, source, (size_t) length);
 	my string [length] = '\0';
 	my length = length;
 }
 
 void MelderString_append (MelderString *me, const wchar_t *s1) {
 	if (s1 == NULL) s1 = L"";
-	unsigned long length1 = wcslen (s1);
-	unsigned long sizeNeeded = my length + length1 + 1;
-	expandIfNecessary (wchar_t)
+	int64 length1 = (int64) wcslen (s1);
+	int64 sizeNeeded = my length + length1 + 1;
+	expandIfNecessary (wchar)
 	wcscpy (my string + my length, s1);
 	my length += length1;
 }
@@ -125,10 +125,10 @@ void MelderString_append (MelderString *me, const wchar_t *s1) {
 void MelderString_append (MelderString *me, const wchar_t *s1, const wchar_t *s2) {
 	if (s1 == NULL) s1 = L"";
 	if (s2 == NULL) s2 = L"";
-	unsigned long length1 = wcslen (s1);
-	unsigned long length2 = wcslen (s2);
-	unsigned long sizeNeeded = my length + length1 + length2 + 1;
-	expandIfNecessary (wchar_t)
+	int64 length1 = (int64) wcslen (s1);
+	int64 length2 = (int64) wcslen (s2);
+	int64 sizeNeeded = my length + length1 + length2 + 1;
+	expandIfNecessary (wchar)
 	wcscpy (my string + my length, s1);
 	my length += length1;
 	wcscpy (my string + my length, s2);
@@ -139,11 +139,11 @@ void MelderString_append (MelderString *me, const wchar_t *s1, const wchar_t *s2
 	if (s1 == NULL) s1 = L"";
 	if (s2 == NULL) s2 = L"";
 	if (s3 == NULL) s3 = L"";
-	unsigned long length1 = wcslen (s1);
-	unsigned long length2 = wcslen (s2);
-	unsigned long length3 = wcslen (s3);
-	unsigned long sizeNeeded = my length + length1 + length2 + length3 + 1;
-	expandIfNecessary (wchar_t)
+	int64 length1 = (int64) wcslen (s1);
+	int64 length2 = (int64) wcslen (s2);
+	int64 length3 = (int64) wcslen (s3);
+	int64 sizeNeeded = my length + length1 + length2 + length3 + 1;
+	expandIfNecessary (wchar)
 	wcscpy (my string + my length, s1);
 	my length += length1;
 	wcscpy (my string + my length, s2);
@@ -157,12 +157,12 @@ void MelderString_append (MelderString *me, const wchar_t *s1, const wchar_t *s2
 	if (s2 == NULL) s2 = L"";
 	if (s3 == NULL) s3 = L"";
 	if (s4 == NULL) s4 = L"";
-	unsigned long length1 = wcslen (s1);
-	unsigned long length2 = wcslen (s2);
-	unsigned long length3 = wcslen (s3);
-	unsigned long length4 = wcslen (s4);
-	unsigned long sizeNeeded = my length + length1 + length2 + length3 + length4 + 1;
-	expandIfNecessary (wchar_t)
+	int64 length1 = (int64) wcslen (s1);
+	int64 length2 = (int64) wcslen (s2);
+	int64 length3 = (int64) wcslen (s3);
+	int64 length4 = (int64) wcslen (s4);
+	int64 sizeNeeded = my length + length1 + length2 + length3 + length4 + 1;
+	expandIfNecessary (wchar)
 	wcscpy (my string + my length, s1);
 	my length += length1;
 	wcscpy (my string + my length, s2);
@@ -181,13 +181,13 @@ void MelderString_append (MelderString *me, const wchar_t *s1, const wchar_t *s2
 	if (s3 == NULL) s3 = L"";
 	if (s4 == NULL) s4 = L"";
 	if (s5 == NULL) s5 = L"";
-	unsigned long length1 = wcslen (s1);
-	unsigned long length2 = wcslen (s2);
-	unsigned long length3 = wcslen (s3);
-	unsigned long length4 = wcslen (s4);
-	unsigned long length5 = wcslen (s5);
-	unsigned long sizeNeeded = my length + length1 + length2 + length3 + length4 + length5 + 1;
-	expandIfNecessary (wchar_t)
+	int64 length1 = (int64) wcslen (s1);
+	int64 length2 = (int64) wcslen (s2);
+	int64 length3 = (int64) wcslen (s3);
+	int64 length4 = (int64) wcslen (s4);
+	int64 length5 = (int64) wcslen (s5);
+	int64 sizeNeeded = my length + length1 + length2 + length3 + length4 + length5 + 1;
+	expandIfNecessary (wchar)
 	wcscpy (my string + my length, s1);
 	my length += length1;
 	wcscpy (my string + my length, s2);
@@ -209,14 +209,14 @@ void MelderString_append (MelderString *me, const wchar_t *s1, const wchar_t *s2
 	if (s4 == NULL) s4 = L"";
 	if (s5 == NULL) s5 = L"";
 	if (s6 == NULL) s6 = L"";
-	unsigned long length1 = wcslen (s1);
-	unsigned long length2 = wcslen (s2);
-	unsigned long length3 = wcslen (s3);
-	unsigned long length4 = wcslen (s4);
-	unsigned long length5 = wcslen (s5);
-	unsigned long length6 = wcslen (s6);
-	unsigned long sizeNeeded = my length + length1 + length2 + length3 + length4 + length5 + length6 + 1;
-	expandIfNecessary (wchar_t)
+	int64 length1 = (int64) wcslen (s1);
+	int64 length2 = (int64) wcslen (s2);
+	int64 length3 = (int64) wcslen (s3);
+	int64 length4 = (int64) wcslen (s4);
+	int64 length5 = (int64) wcslen (s5);
+	int64 length6 = (int64) wcslen (s6);
+	int64 sizeNeeded = my length + length1 + length2 + length3 + length4 + length5 + length6 + 1;
+	expandIfNecessary (wchar)
 	wcscpy (my string + my length, s1);
 	my length += length1;
 	wcscpy (my string + my length, s2);
@@ -241,15 +241,15 @@ void MelderString_append (MelderString *me, const wchar_t *s1, const wchar_t *s2
 	if (s5 == NULL) s5 = L"";
 	if (s6 == NULL) s6 = L"";
 	if (s7 == NULL) s7 = L"";
-	unsigned long length1 = wcslen (s1);
-	unsigned long length2 = wcslen (s2);
-	unsigned long length3 = wcslen (s3);
-	unsigned long length4 = wcslen (s4);
-	unsigned long length5 = wcslen (s5);
-	unsigned long length6 = wcslen (s6);
-	unsigned long length7 = wcslen (s7);
-	unsigned long sizeNeeded = my length + length1 + length2 + length3 + length4 + length5 + length6 + length7 + 1;
-	expandIfNecessary (wchar_t)
+	int64 length1 = (int64) wcslen (s1);
+	int64 length2 = (int64) wcslen (s2);
+	int64 length3 = (int64) wcslen (s3);
+	int64 length4 = (int64) wcslen (s4);
+	int64 length5 = (int64) wcslen (s5);
+	int64 length6 = (int64) wcslen (s6);
+	int64 length7 = (int64) wcslen (s7);
+	int64 sizeNeeded = my length + length1 + length2 + length3 + length4 + length5 + length6 + length7 + 1;
+	expandIfNecessary (wchar)
 	wcscpy (my string + my length, s1);
 	my length += length1;
 	wcscpy (my string + my length, s2);
@@ -277,16 +277,16 @@ void MelderString_append (MelderString *me, const wchar_t *s1, const wchar_t *s2
 	if (s6 == NULL) s6 = L"";
 	if (s7 == NULL) s7 = L"";
 	if (s8 == NULL) s8 = L"";
-	unsigned long length1 = wcslen (s1);
-	unsigned long length2 = wcslen (s2);
-	unsigned long length3 = wcslen (s3);
-	unsigned long length4 = wcslen (s4);
-	unsigned long length5 = wcslen (s5);
-	unsigned long length6 = wcslen (s6);
-	unsigned long length7 = wcslen (s7);
-	unsigned long length8 = wcslen (s8);
-	unsigned long sizeNeeded = my length + length1 + length2 + length3 + length4 + length5 + length6 + length7 + length8 + 1;
-	expandIfNecessary (wchar_t)
+	int64 length1 = (int64) wcslen (s1);
+	int64 length2 = (int64) wcslen (s2);
+	int64 length3 = (int64) wcslen (s3);
+	int64 length4 = (int64) wcslen (s4);
+	int64 length5 = (int64) wcslen (s5);
+	int64 length6 = (int64) wcslen (s6);
+	int64 length7 = (int64) wcslen (s7);
+	int64 length8 = (int64) wcslen (s8);
+	int64 sizeNeeded = my length + length1 + length2 + length3 + length4 + length5 + length6 + length7 + length8 + 1;
+	expandIfNecessary (wchar)
 	wcscpy (my string + my length, s1);
 	my length += length1;
 	wcscpy (my string + my length, s2);
@@ -317,17 +317,17 @@ void MelderString_append (MelderString *me, const wchar_t *s1, const wchar_t *s2
 	if (s7 == NULL) s7 = L"";
 	if (s8 == NULL) s8 = L"";
 	if (s9 == NULL) s9 = L"";
-	unsigned long length1 = wcslen (s1);
-	unsigned long length2 = wcslen (s2);
-	unsigned long length3 = wcslen (s3);
-	unsigned long length4 = wcslen (s4);
-	unsigned long length5 = wcslen (s5);
-	unsigned long length6 = wcslen (s6);
-	unsigned long length7 = wcslen (s7);
-	unsigned long length8 = wcslen (s8);
-	unsigned long length9 = wcslen (s9);
-	unsigned long sizeNeeded = my length + length1 + length2 + length3 + length4 + length5 + length6 + length7 + length8 + length9 + 1;
-	expandIfNecessary (wchar_t)
+	int64 length1 = (int64) wcslen (s1);
+	int64 length2 = (int64) wcslen (s2);
+	int64 length3 = (int64) wcslen (s3);
+	int64 length4 = (int64) wcslen (s4);
+	int64 length5 = (int64) wcslen (s5);
+	int64 length6 = (int64) wcslen (s6);
+	int64 length7 = (int64) wcslen (s7);
+	int64 length8 = (int64) wcslen (s8);
+	int64 length9 = (int64) wcslen (s9);
+	int64 sizeNeeded = my length + length1 + length2 + length3 + length4 + length5 + length6 + length7 + length8 + length9 + 1;
+	expandIfNecessary (wchar)
 	wcscpy (my string + my length, s1);
 	my length += length1;
 	wcscpy (my string + my length, s2);
@@ -349,29 +349,29 @@ void MelderString_append (MelderString *me, const wchar_t *s1, const wchar_t *s2
 }
 
 void MelderString_appendCharacter (MelderString *me, wchar_t character) {
-	unsigned long sizeNeeded = my length + 2;   // make room for character and null byte
-	expandIfNecessary (wchar_t)
+	int64 sizeNeeded = my length + 2;   // make room for character and null byte
+	expandIfNecessary (wchar)
 	my string [my length] = character;
 	my length ++;
 	my string [my length] = L'\0';
 }
 
 void MelderString16_appendCharacter (MelderString16 *me, wchar_t character) {
-	unsigned long sizeNeeded = my length + 3;   // make room for character, potential surrogate character, and null byte
-	expandIfNecessary (utf16_t)
+	int64 sizeNeeded = my length + 3;   // make room for character, potential surrogate character, and null byte
+	expandIfNecessary (char16)
 	if (sizeof (wchar_t) == 2) {   // wchar_t is UTF-16?
-		my string [my length] = character;
+		my string [my length] = (char16) character;   // guarded cast
 		my length ++;
 	} else {   // wchar_t is UTF-32.
-		utf32_t kar = character;
-		if (kar <= 0xFFFF) {
-			my string [my length] = character;
+		char32 kar = (char32) character;
+		if (kar <= 0x00FFFF) {
+			my string [my length] = (char16) character;   // guarded cast
 			my length ++;
 		} else if (kar <= 0x10FFFF) {
-			kar -= 0x10000;
-			my string [my length] = 0xD800 | (kar >> 10);
+			kar -= 0x010000;
+			my string [my length] = (char16) (0x00D800 | (kar >> 10));
 			my length ++;
-			my string [my length] = 0xDC00 | (kar & 0x3FF);
+			my string [my length] = (char16) (0x00DC00 | (kar & 0x0003FF));
 			my length ++;
 		} else {
 			my string [my length] = UNICODE_REPLACEMENT_CHARACTER;
@@ -379,6 +379,14 @@ void MelderString16_appendCharacter (MelderString16 *me, wchar_t character) {
 		}
 	}
 	my string [my length] = '\0';
+}
+
+void MelderString32_appendCharacter (MelderString32 *me, char32 character) {
+	int64 sizeNeeded = my length + 2;   // make room for character and null byte
+	expandIfNecessary (char32)
+	my string [my length] = character;
+	my length ++;
+	my string [my length] = U'\0';
 }
 
 void MelderString_get (MelderString *me, wchar_t *destination) {

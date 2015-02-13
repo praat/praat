@@ -387,15 +387,18 @@ static void charSize (I, _Graphics_widechar *lc) {
 			int normalSize = my fontSize * my resolution / 72.0;
 			lc -> size = lc -> size < 100 ? (3 * normalSize + 2) / 4 : normalSize;
         
-			utf16_t codes16 [2];
+			char16_t codes16 [2];
 			int nchars = 1;
-			if (lc -> kar > 0xFFFF) {
-				utf32_t kar = lc -> kar - 0x10000;
-				codes16 [0] = 0xD800 + (kar >> 10);
-				codes16 [1] = 0xDC00 + (kar & 0x3FF);
+			if (lc -> kar > 0x00FFFF) {
+				char32_t kar = lc -> kar - 0x010000;   // subtract the BMP
+				Melder_assert (lc -> kar <= 0x0FFFFF);   // no more than 20 bits should remain
+				// encode the upper 10 bits
+				codes16 [0] = (char16) (0x00D800 | (kar >> 10));   // at most 0x00D800 | 0x0003FF = 0x00DBFF
+				// encode the lower 10 bits
+				codes16 [1] = (char16) (0x00DC00 | (kar & 0x0003FF));   // at most 0x00DC00 | 0x0003FF = 0x00DFFF
 				nchars = 2;
 			} else {
-				codes16 [0] = lc -> kar;
+				codes16 [0] = (char16) lc -> kar;   // guarded conversion down
 			}
 			NSString *s = [[NSString alloc]
 				initWithBytes: codes16
@@ -480,16 +483,20 @@ static void charSize (I, _Graphics_widechar *lc) {
 				OSStatus err = ATSUCreateTextLayout (& textLayout);
 				if (err != 0) Melder_fatal ("Graphics_text/ATSUCreateTextLayout: unknown MacOS error %d.", (int) err);
 			}
-			utf16_t code16 [2];
+			char16_t code16 [2];
 			if (lc -> kar <= 0xFFFF) {
 				code16 [0] = lc -> kar;
-				OSStatus err = ATSUSetTextPointerLocation (textLayout, & code16 [0], kATSUFromTextBeginning, kATSUToTextEnd, 1);   // BUG: not 64-bit
+				OSStatus err = ATSUSetTextPointerLocation (textLayout,
+					(ConstUniCharArrayPtr) & code16 [0],
+					kATSUFromTextBeginning, kATSUToTextEnd, 1);   // BUG: not 64-bit
 				if (err != 0) Melder_fatal ("Graphics_text/ATSUSetTextPointerLocation low Unicode: unknown MacOS error %d.", (int) err);
 			} else {
-				utf32_t kar = lc -> kar - 0x10000;
+				char32_t kar = lc -> kar - 0x10000;
 				code16 [0] = 0xD800 + (kar >> 10);
 				code16 [1] = 0xDC00 + (kar & 0x3FF);
-				OSStatus err = ATSUSetTextPointerLocation (textLayout, & code16 [0], kATSUFromTextBeginning, kATSUToTextEnd, 2);   // BUG: not 64-bit
+				OSStatus err = ATSUSetTextPointerLocation (textLayout,
+					(ConstUniCharArrayPtr) & code16 [0],
+					kATSUFromTextBeginning, kATSUToTextEnd, 2);   // BUG: not 64-bit
 				if (err != 0) Melder_fatal ("Graphics_text/ATSUSetTextPointerLocation high Unicode: unknown MacOS error %d.", (int) err);
 			}
 			static ATSUFontFallbacks fontFallbacks = NULL;
@@ -682,7 +689,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 }
 
 static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
-	const wchar_t *codes, const char *codes8, const utf16_t *codes16, int nchars, int width)
+	const wchar_t *codes, const char *codes8, const char16_t *codes16, int nchars, int width)
 {
 	iam (Graphics);
 	//Melder_casual ("nchars %d first %d %c rightToLeft %d", nchars, lc->kar, lc -> kar, lc->rightToLeft);
@@ -812,7 +819,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 			}
 			if (hasHighUnicodeValues) {
 				nchars = wcslen_utf16 (codes, 0);
-				codes16 = Melder_peekWcsToUtf16 (codes);
+				codes16 = (const char16_t *) Melder_peekWcsToUtf16 (codes);
 			}
 			#if 1
 				CFStringRef s = CFStringCreateWithBytes (NULL, (const UInt8 *) codes16, nchars * 2, kCFStringEncodingUTF16LE, false);
@@ -917,10 +924,14 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 			}
 			if (hasHighUnicodeValues) {
 				nchars = wcslen_utf16 (codes, 0);
-				OSStatus err = ATSUSetTextPointerLocation (theAtsuiTextLayout, Melder_peekWcsToUtf16 (codes), kATSUFromTextBeginning, kATSUToTextEnd, nchars);
+				OSStatus err = ATSUSetTextPointerLocation (theAtsuiTextLayout,
+					(ConstUniCharArrayPtr) Melder_peekWcsToUtf16 (codes),
+					kATSUFromTextBeginning, kATSUToTextEnd, nchars);
 				if (err != 0) Melder_fatal ("Graphics_text/ATSUSetTextPointerLocation hasHighUnicodeValues true: unknown MacOS error %d.", (int) err);
 			} else {
-				OSStatus err = ATSUSetTextPointerLocation (theAtsuiTextLayout, codes16, kATSUFromTextBeginning, kATSUToTextEnd, nchars);
+				OSStatus err = ATSUSetTextPointerLocation (theAtsuiTextLayout,
+					(ConstUniCharArrayPtr) codes16,
+					kATSUFromTextBeginning, kATSUToTextEnd, nchars);
 				if (err != 0) Melder_fatal ("Graphics_text/ATSUSetTextPointerLocation hasHighUnicodeValues false: unknown MacOS error %d.", (int) err);
 			}
 			static ATSUFontFallbacks fontFallbacks = NULL;
@@ -1273,7 +1284,7 @@ static long bufferSize;
 static _Graphics_widechar *theWidechar;
 static wchar_t *charCodes;
 static char *charCodes8;
-static utf16_t *charCodes16;
+static char16_t *charCodes16;
 static int initBuffer (const wchar_t *txt) {
 	try {
 		long sizeNeeded = wcslen (txt) + 1;   /* It is true that some characters are split into two, but all of these are backslash sequences. */
@@ -1286,7 +1297,7 @@ static int initBuffer (const wchar_t *txt) {
 			theWidechar = Melder_calloc (_Graphics_widechar, sizeNeeded);
 			charCodes = Melder_calloc (wchar_t, sizeNeeded);
 			charCodes8 = Melder_calloc (char, sizeNeeded);
-			charCodes16 = Melder_calloc (utf16_t, sizeNeeded);
+			charCodes16 = Melder_calloc (char16_t, sizeNeeded);
 			bufferSize = sizeNeeded;
 		}
 		return 1;

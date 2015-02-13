@@ -1868,32 +1868,34 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 		if (! my p_pitch_show) textColour = Graphics_GREEN, alignment = Graphics_LEFT, y = my d_endWindow;
 		else if (! my p_spectrogram_show && ! my p_formant_show) textColour = Graphics_GREEN, alignment = Graphics_RIGHT, y = my d_startWindow;
 		else textColour = my p_spectrogram_show ? Graphics_LIME : Graphics_GREEN, alignment = Graphics_RIGHT, y = my d_endWindow;
-		Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, my p_intensity_viewFrom, my p_intensity_viewTo);
-		if (my d_intensity) {
-			if (my d_startSelection == my d_endSelection) {
-				intensityCursor = Vector_getValueAtX (my d_intensity, my d_startSelection, Vector_CHANNEL_1, Vector_VALUE_INTERPOLATION_LINEAR);
-			} else {
-				intensityCursor = Intensity_getAverage (my d_intensity, my d_startSelection, my d_endSelection, my p_intensity_averagingMethod);
+		if (my p_intensity_viewTo > my p_intensity_viewFrom) {
+			Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, my p_intensity_viewFrom, my p_intensity_viewTo);
+			if (my d_intensity) {
+				if (my d_startSelection == my d_endSelection) {
+					intensityCursor = Vector_getValueAtX (my d_intensity, my d_startSelection, Vector_CHANNEL_1, Vector_VALUE_INTERPOLATION_LINEAR);
+				} else {
+					intensityCursor = Intensity_getAverage (my d_intensity, my d_startSelection, my d_endSelection, my p_intensity_averagingMethod);
+				}
 			}
+			Graphics_setColour (my d_graphics, textColour);
+			intensityCursorVisible = NUMdefined (intensityCursor) && intensityCursor > my p_intensity_viewFrom && intensityCursor < my p_intensity_viewTo;
+			if (intensityCursorVisible) {
+				static const wchar_t *methodString [] = { L" (.5)", L" (μE)", L" (μS)", L" (μ)" };
+				Graphics_setTextAlignment (my d_graphics, alignment, Graphics_HALF);
+				Graphics_text3 (my d_graphics, y, intensityCursor, Melder_float (Melder_half (intensityCursor)), L" dB",
+					my d_startSelection == my d_endSelection ? L"" : methodString [my p_intensity_averagingMethod]);
+			}
+			if (! intensityCursorVisible || Graphics_dyWCtoMM (my d_graphics, intensityCursor - my p_intensity_viewFrom) > 5.0) {
+				Graphics_setTextAlignment (my d_graphics, alignment, Graphics_BOTTOM);
+				Graphics_text2 (my d_graphics, y, my p_intensity_viewFrom - Graphics_dyMMtoWC (my d_graphics, 0.5),
+					Melder_float (Melder_half (my p_intensity_viewFrom)), L" dB");
+			}
+			if (! intensityCursorVisible || Graphics_dyWCtoMM (my d_graphics, my p_intensity_viewTo - intensityCursor) > 5.0) {
+				Graphics_setTextAlignment (my d_graphics, alignment, Graphics_TOP);
+				Graphics_text2 (my d_graphics, y, my p_intensity_viewTo, Melder_float (Melder_half (my p_intensity_viewTo)), L" dB");
+			}
+			Graphics_setColour (my d_graphics, Graphics_BLACK);
 		}
-		Graphics_setColour (my d_graphics, textColour);
-		intensityCursorVisible = NUMdefined (intensityCursor) && intensityCursor > my p_intensity_viewFrom && intensityCursor < my p_intensity_viewTo;
-		if (intensityCursorVisible) {
-			static const wchar_t *methodString [] = { L" (.5)", L" (μE)", L" (μS)", L" (μ)" };
-			Graphics_setTextAlignment (my d_graphics, alignment, Graphics_HALF);
-			Graphics_text3 (my d_graphics, y, intensityCursor, Melder_float (Melder_half (intensityCursor)), L" dB",
-				my d_startSelection == my d_endSelection ? L"" : methodString [my p_intensity_averagingMethod]);
-		}
-		if (! intensityCursorVisible || Graphics_dyWCtoMM (my d_graphics, intensityCursor - my p_intensity_viewFrom) > 5.0) {
-			Graphics_setTextAlignment (my d_graphics, alignment, Graphics_BOTTOM);
-			Graphics_text2 (my d_graphics, y, my p_intensity_viewFrom - Graphics_dyMMtoWC (my d_graphics, 0.5),
-				Melder_float (Melder_half (my p_intensity_viewFrom)), L" dB");
-		}
-		if (! intensityCursorVisible || Graphics_dyWCtoMM (my d_graphics, my p_intensity_viewTo - intensityCursor) > 5.0) {
-			Graphics_setTextAlignment (my d_graphics, alignment, Graphics_TOP);
-			Graphics_text2 (my d_graphics, y, my p_intensity_viewTo, Melder_float (Melder_half (my p_intensity_viewTo)), L" dB");
-		}
-		Graphics_setColour (my d_graphics, Graphics_BLACK);
 	}
 	if (my p_spectrogram_show || my p_formant_show) {
 		static MelderString text = { 0 };

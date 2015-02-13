@@ -319,7 +319,7 @@ Thing_implement (GuiList, GuiControl, 0);
 				strncpy (Melder_buffer1, text_utf8, dataLength);
 				Melder_buffer1 [dataLength] = '\0';
 				wchar_t *text_wcs = Melder_peekUtf8ToWcs (Melder_buffer1);
-				const utf16_t *text_utf16 = Melder_peekWcsToUtf16 (text_wcs);
+				const char16_t *text_utf16 = (const char16_t *) Melder_peekWcsToUtf16 (text_wcs);
 				UniCharCount runLength = wcslen (text_wcs);   // BUG
 				ATSUTextLayout textLayout;
 				ATSUStyle style;
@@ -331,7 +331,8 @@ Thing_implement (GuiList, GuiControl, 0);
 				ByteCount styleValueSizes [] = { sizeof (Fixed), sizeof (Boolean), sizeof (Boolean) };
 				ATSUAttributeValuePtr styleValues [] = { & fontSize, & boldStyle, & italicStyle };
 				ATSUSetAttributes (style, 3, styleAttributeTags, styleValueSizes, styleValues);
-				OSStatus err = ATSUCreateTextLayoutWithTextPtr (text_utf16, kATSUFromTextBeginning, kATSUToTextEnd, runLength,
+				OSStatus err = ATSUCreateTextLayoutWithTextPtr ((ConstUniCharArrayPtr) text_utf16,
+					kATSUFromTextBeginning, kATSUToTextEnd, runLength,
 					1, & runLength, & style, & textLayout);
 				Melder_assert (err == 0);
 				ATSUAttributeTag attributeTags [] = { kATSUCGContextTag, kATSULineFontFallbacksTag };
@@ -784,7 +785,6 @@ void structGuiList :: f_replaceItem (const wchar_t *itemText, long position) {
 		GuiCocoaList *list = (GuiCocoaList *) d_widget;
 		NSString *nsString = [[NSString alloc] initWithUTF8String: Melder_peekWcsToUtf8 (itemText)];
 		[[list contents]   replaceObjectAtIndex: position - 1   withObject: nsString];
-		Melder_assert ([nsString retainCount] == 2);
 		[nsString release];
 		[[list tableView] reloadData];
 	#elif win

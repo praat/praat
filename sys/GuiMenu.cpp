@@ -66,7 +66,7 @@ void structGuiMenu :: v_destroy () {
 				return;
 			}
 			unichar character = [characters characterAtIndex: 0];   // there is now at least one character, so no range exception can be raised
-			if (Melder_getTracing ()) {
+			if (Melder_isTracing) {
 				for (NSUInteger i = 0; i < [characters length]; i ++) {
 					unichar kar = [characters characterAtIndex: 0];
 					trace ("character [%d]: %d", (int) i, (int) kar);

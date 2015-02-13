@@ -1,6 +1,6 @@
 /* melder_debug.cpp
  *
- * Copyright (C) 2000-2012,2014 Paul Boersma
+ * Copyright (C) 2000-2012,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,18 +81,18 @@ the behaviour of that program changes in the following way:
 
 */
 
-static bool theTracing = false;
+bool Melder_isTracing = false;
 static structMelderFile theTracingFile = { 0 };
 
 #ifdef linux
 static void theGtkLogHandler (const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer unused_data) {
-	Melder_trace_ (NULL, 0, "GTK", "%s", message);
+	Melder_trace_FMT (NULL, 0, "GTK", "%s", message);
 }
 static void theGlibLogHandler (const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer unused_data) {
-	Melder_trace_ (NULL, 0, "GLib", "%s", message);
+	Melder_trace_FMT (NULL, 0, "GLib", "%s", message);
 }
 static void theGlibGobjectLogHandler (const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer unused_data) {
-	Melder_trace_ (NULL, 0, "GLib-GObject", "%s", message);
+	Melder_trace_FMT (NULL, 0, "GLib-GObject", "%s", message);
 }
 #endif
 
@@ -102,7 +102,7 @@ void Melder_setTracing (bool tracing) {
 	#define str(s) #s
 	if (! tracing)
 		trace ("switch tracing off in Praat version %s at %s", xstr (PRAAT_VERSION_STR), ctime (& today));
-	theTracing = tracing;
+	Melder_isTracing = tracing;
 	#ifdef linux
 		static guint handler_id1, handler_id2, handler_id3;
 		if (tracing) {
@@ -120,17 +120,13 @@ void Melder_setTracing (bool tracing) {
 		trace ("switch tracing on in Praat version %s at %s", xstr (PRAAT_VERSION_STR), ctime (& today));
 }
 
-bool Melder_getTracing () {
-	return theTracing;
-}
-
 void Melder_tracingToFile (MelderFile file) {
 	MelderFile_copy (file, & theTracingFile);
 	MelderFile_delete (& theTracingFile);
 }
 
-void Melder_trace_ (const char *fileName, int lineNumber, const char *functionName, const char *format, ...) {
-	if (! theTracing || MelderFile_isNull (& theTracingFile)) return;
+void Melder_trace_FMT (const char *fileName, int lineNumber, const char *functionName, const char *format, ...) {
+	if (! Melder_isTracing || MelderFile_isNull (& theTracingFile)) return;
 	try {
 		FILE *f = Melder_fopen (& theTracingFile, "a");
 		if (fileName) {

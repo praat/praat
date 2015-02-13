@@ -273,6 +273,7 @@ int mp3f_analyze (MP3_FILE mp3f)
 				last * mp3f -> samples_per_frame / (float)mp3f -> frequency));
 #endif /* MP3_DEBUG */
 
+if(status!=-1)   // ppgb 2015-01-17
 	mp3f_seek (mp3f, 0);
 
 end:
@@ -323,12 +324,15 @@ int mp3f_seek (MP3_FILE mp3f, MP3F_OFFSET sample)
 		-- frame; 
 	if ( frame ) /* ...and the first frame it decodes is useless */
 		-- frame; 
+Melder_assert (mp3f -> frames_per_location > 0);
+Melder_assert (mp3f -> num_locations > 0);
 	location = frame / mp3f -> frames_per_location;
 	if (location >= mp3f -> num_locations)
 		location = mp3f -> num_locations - 1;
 	frame = location * mp3f -> frames_per_location;
 	base = frame * mp3f -> samples_per_frame;
 
+Melder_assert (location >= 0);
 	offset = mp3f -> locations [location];
 	if (fseek (mp3f -> f, offset, SEEK_SET) < 0)
 		return 0;

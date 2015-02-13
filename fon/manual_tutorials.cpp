@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20141228)
+MAN_BEGIN (L"What's new?", L"ppgb", 20150213)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"• Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.4.05# (13 February 2015)")
+LIST_ITEM (L"• Better support for big integer numbers on Windows XP.")
+LIST_ITEM (L"• Sound window: guarded against empty view ranges for the intensity curve.")
 NORMAL (L"##5.4.04# (28 December 2014)")
 LIST_ITEM (L"• Windows audio playback: if the sound has more channels than the audio hardware, distribute them evenly.")
 NORMAL (L"##5.4.03# (18 December 2014)")

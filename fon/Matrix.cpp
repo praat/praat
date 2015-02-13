@@ -436,10 +436,10 @@ void Matrix_movie (Matrix me, Graphics g) {
 Matrix Matrix_readAP (MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "rb");
-		short header [256];
+		int16_t header [256];
 		for (long i = 0; i < 256; i ++)
 			header [i] = bingeti2LE (f);
-		double samplingFrequency = header [100];
+		double samplingFrequency = header [100];   // converting up (from 16 to 54 bytes)
 		Melder_casual ("Sampling frequency %.10g.", samplingFrequency);
 		autoMatrix me = Matrix_create (0, header [34], header [34] /* Number of frames. */, 1, 0.5,
 			0, header [35], header [35] /* Number of words per frame. */, 1, 0.5);
@@ -451,7 +451,7 @@ Matrix Matrix_readAP (MelderFile file) {
 		Melder_casual ("... Loading %d frames of %d words ...", header [34], header [35]);
 		for (long i = 1; i <= my nx; i ++)
 			for (long j = 1; j <= my ny; j ++)
-				my z [j] [i] = bingeti2LE (f);
+				my z [j] [i] = bingeti2LE (f);   // converting up (from 16 to 54 bytes)
 
 		/*
 		 * Get pitch frequencies.

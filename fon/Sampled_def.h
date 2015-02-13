@@ -21,7 +21,7 @@
 #define ooSTRUCT Sampled
 oo_DEFINE_CLASS (Sampled, Function)
 
-	oo_LONG (nx)
+	oo_INT32 (nx)
 	oo_DOUBLE (dx)
 	oo_DOUBLE (x1)
 

@@ -129,9 +129,9 @@
 
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
 	{ \
-		long n = bingeti4 (f); \
+		int32_t n = bingeti4 (f); \
 		our x = Class##_create (); \
-		for (long i = 1; i <= n; i ++) { \
+		for (int32_t i = 1; i <= n; i ++) { \
 			long saveVersion = Thing_version; \
 			auto##ItemClass item = (ItemClass) Thing_new (ItemClass); \
 			Thing_version = version; \

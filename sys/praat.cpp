@@ -1529,8 +1529,18 @@ void praat_run (void) {
 		Melder_assert ((double) dummy == 40000.0);
 		Melder_assert ((double) (int16_t) dummy == -25536.0);
 	}
+	{
+		int64_t dummy = 1000000000000;
+		if (! wcsequ (Melder_integer (dummy), L"1000000000000"))
+			Melder_fatal ("The number 1000000000000 is mistaken written on this machine as %ls", Melder_integer (dummy));
+	}
 	{ uint32_t dummy = 0xffffffff;
+		Melder_assert ((int64_t) dummy == 4294967295LL);
 		Melder_assert (wcsequ (Melder_integer (dummy), L"4294967295"));
+		Melder_assert (double (dummy) == 4294967295.0);
+	}
+	{ double dummy = 3000000000.0;
+		Melder_assert ((uint32_t) dummy == 3000000000);
 	}
 
 	if (sizeof (off_t) < 8)

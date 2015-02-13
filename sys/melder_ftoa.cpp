@@ -31,7 +31,7 @@
  * pb 2008/01/06 Mac: use strtod instead of wcstod for speed
  * pb 2010/10/16 Melder_naturalLogarithm
  * pb 2011/04/05 C++
- * pb 2014/01/09 use fabs in the calculating minimum precision
+ * pb 2014/01/09 use fabs in calculating minimum precision
  */
 
 #include "melder.h"
@@ -41,8 +41,8 @@
 
 #define NUMBER_OF_BUFFERS  32
 	/* = maximum number of arguments to a function call */
-#define MAXIMUM_NUMERIC_STRING_LENGTH  386
-	/* = sign + 308 + point + 60 + e + sign + 3 + null byte + (\.c10^^ - 1) + 4 extra */
+#define MAXIMUM_NUMERIC_STRING_LENGTH  400
+	/* = sign + 324 + point + 60 + e + sign + 3 + null byte + ("·10^^" - "e") + 4 extra */
 
 static wchar_t buffers [NUMBER_OF_BUFFERS] [MAXIMUM_NUMERIC_STRING_LENGTH + 1];
 static int ibuffer = 0;
@@ -52,7 +52,29 @@ const wchar_t * Melder_integer (int64_t value) {
 	if (sizeof (long) == 8) {
 		swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%ld", value);
 	} else if (sizeof (long long) == 8) {
-		swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%lld", value);
+		/*
+		 * There are buggy platforms (namely 32-bit Mingw on Windows XP) that support long long and %lld but that convert
+		 * the argument to a 32-bit long.
+		 * There are also buggy platforms (namely 32-bit gcc on Linux) that support long long and %I64d but that convert
+		 * the argument to a 32-bit long.
+		 */
+		static const wchar_t *formatString = NULL;
+		if (! formatString) {
+			wchar_t tryBuffer [MAXIMUM_NUMERIC_STRING_LENGTH + 1];
+			swprintf (tryBuffer, MAXIMUM_NUMERIC_STRING_LENGTH, L"%lld", 1000000000000LL);
+			if (wcsequ (tryBuffer, L"1000000000000")) {
+				formatString = L"%lld";
+			} else {
+				swprintf (tryBuffer, MAXIMUM_NUMERIC_STRING_LENGTH, L"%I64d", 1000000000000LL);
+				if (wcsequ (tryBuffer, L"1000000000000")) {
+					formatString = L"%I64d";
+				} else {
+					wprintf (tryBuffer);
+					Melder_fatal ("Found no way to print 64-bit integers.");
+				}
+			}
+		}
+		swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, formatString, value);
 	} else {
 		Melder_fatal ("Neither long nor long long is 8 bytes on this machine.");
 	}
@@ -214,12 +236,12 @@ const wchar_t * Melder_float (const wchar_t *number) {
 		if (number [0] == '1' && number [1] == 'e') {
 			wcscpy (buffers [ibuffer], L"10^^"); b = buffers [ibuffer] + 4;
 		} else {
-			wcscat (buffers [ibuffer], L"\\.c10^^"); b += 7;
+			wcscat (buffers [ibuffer], L"·10^^"); b += 7;
 		}
 		Melder_assert (*n == 'e');
-		if (*++n == '+') n ++;   /* Ignore leading plus sign in exponent. */
-		if (*n == '-') *(b++) = *(n++);   /* Copy sign of negative exponent. */
-		while (*n == '0') n ++;   /* Ignore leading zeroes in exponent. */
+		if (*++n == '+') n ++;   // ignore leading plus sign in exponent
+		if (*n == '-') *(b++) = *(n++);   // copy sign of negative exponent
+		while (*n == '0') n ++;   // ignore leading zeroes in exponent
 		while (*n >= '0' && *n <= '9') *(b++) = *(n++);
 		*(b++) = '^';
 		while (*n != '\0') *(b++) = *(n++); *b = '\0';

@@ -198,7 +198,8 @@ void LongSounds_appendToExistingSoundFile (Collection me, MelderFile file) {
 		autofile f = Melder_fopen (file, "r+b");
 		file -> filePointer = f; // essential !!
 		double sampleRate_d;
-		long startOfData, numberOfSamples;
+		long startOfData;
+		int32 numberOfSamples;
 		int numberOfChannels, encoding;
 		int audioFileType = MelderFile_checkSoundFile (file, &numberOfChannels,
 		                    &encoding, &sampleRate_d, &startOfData, &numberOfSamples);

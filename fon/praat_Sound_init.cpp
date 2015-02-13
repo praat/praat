@@ -478,7 +478,7 @@ static void common_Sound_create (void *dia, Interpreter interpreter, bool allowM
 	double startTime = GET_REAL (L"Start time");
 	double endTime = GET_REAL (L"End time");
 	double samplingFrequency = GET_REAL (L"Sampling frequency");
-	double numberOfSamples_real = floor ((endTime - startTime) * samplingFrequency + 0.5);
+	double numberOfSamples_real = round ((endTime - startTime) * samplingFrequency);
 	long numberOfSamples;
 	if (endTime <= startTime) {
 		if (endTime == startTime)

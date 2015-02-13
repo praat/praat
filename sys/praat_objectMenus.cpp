@@ -367,7 +367,7 @@ FORM (praat_debug, L"Set debugging options", 0)
 	LABEL (L"", L"in unpredictable ways.")
 	INTEGER (L"Debug option", L"0")
 	OK
-SET_INTEGER (L"Tracing", Melder_getTracing ())
+SET_INTEGER (L"Tracing", Melder_isTracing)
 SET_INTEGER (L"Debug option", Melder_debug)
 DO
 	Melder_setTracing (GET_INTEGER (L"Tracing"));

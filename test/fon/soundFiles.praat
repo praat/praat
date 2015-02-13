@@ -56,15 +56,24 @@ procedure test32 .type$ .extension$ .duration
 		printline  't:4' seconds
 	endfor
 endproc
+Debug... no 18
 call test WAV wav 3
+Debug... no 0
 call test WAV wav 3
+Debug... no 0
 call test AIFF aiff 3
 call test AIFC aifc 3
 call test Next/Sun au 3
 call test NIST nist 3
 call test FLAC flac 3
+Debug... no 18
+call test WAV wav 30
+Debug... no 0
 call test WAV wav 30
 call test24 WAV wav 3
+Debug... no 18
+call test32 WAV wav 3
+Debug... no 0
 call test32 WAV wav 3
 
 procedure do

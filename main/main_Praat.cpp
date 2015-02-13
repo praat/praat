@@ -1,6 +1,6 @@
 /* main_Praat.cpp
  *
- * Copyright (C) 1992-2012,2013,2014 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,11 @@
 
 #include "praat.h"
 #include "praat_version.h"
+
+#define UTF32_C(string) \
+	({ static const wchar_t *_static_utf32_string = Melder_utf8ToWcs (string); _static_utf32_string; })
+
+static const char32_t *greeting = U"Hello?";
 
 static void logo (Graphics g) {
 	Graphics_setWindow (g, 0, 1, 0.00, 0.80);
@@ -41,13 +46,13 @@ static void logo (Graphics g) {
 	Graphics_text (g, 0.5, 0.33, L"www.praat.org");
 	Graphics_setFont (g, kGraphics_font_HELVETICA);
 	Graphics_setFontSize (g, 10);
-	Graphics_text (g, 0.5, 0.16, L"Copyright © 1992–" xstr(PRAAT_YEAR) " by Paul Boersma and David Weenink");
+	Graphics_text (g, 0.5, 0.16, UTF32_C ("Copyright © 1992–" xstr(PRAAT_YEAR) " by Paul Boersma and David Weenink"));
 }
 
 int main (int argc, char *argv []) {
 	try {
 		praat_setLogo (130, 80, logo);
-		praat_init ("Praat", argc, argv);
+		praat_init ("Praat", (unsigned int) argc, argv);
 		INCLUDE_LIBRARY (praat_uvafon_init)
 		INCLUDE_LIBRARY (praat_contrib_Ola_KNN_init)
 		praat_run ();

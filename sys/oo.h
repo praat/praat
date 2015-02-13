@@ -2,7 +2,7 @@
 #define _oo_h_
 /* oo.h
  *
- * Copyright (C) 1994-2012,2013 Paul Boersma
+ * Copyright (C) 1994-2012,2013,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +45,13 @@
 #define oo_UBYTE(x)  oo_SIMPLE (unsigned char, u1, x)
 #define oo_UINT(x)  oo_SIMPLE (unsigned int, u2, x)
 #define oo_ULONG(x)  oo_SIMPLE (unsigned long, u4, x)
+#define oo_INT8(x)  oo_SIMPLE (int8, i8, x)
+#define oo_INT16(x)  oo_SIMPLE (int16, i16, x)
+#define oo_INT32(x)  oo_SIMPLE (int32, i32, x)
+#define oo_INT64(x)  oo_SIMPLE (int64, i64, x)
+#define oo_UINT8(x)  oo_SIMPLE (uint8, u8, x)
+#define oo_UINT16(x)  oo_SIMPLE (uint16, u16, x)
+#define oo_UINT32(x)  oo_SIMPLE (uint32, u32, x)
 #define oo_BOOL(x)  oo_SIMPLE (unsigned char, u1, x)
 #define oo_FLOAT(x)  oo_SIMPLE (double, r4, x)
 #define oo_DOUBLE(x)  oo_SIMPLE (double, r8, x)

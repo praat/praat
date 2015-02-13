@@ -817,7 +817,7 @@ static void mac_message (NSAlertStyle macAlertType, const wchar_t *messageW) {
 	int messageLength = wcslen (messageW);
 	int j = 0;
 	for (int i = 0; i < messageLength && j <= 4000 - 3; i ++) {
-		utf32_t kar = messageW [i];
+		char32_t kar = (char32_t) messageW [i];   // change sign
 		if (kar <= 0xFFFF) {
 			messageU [j ++] = kar;
 		} else if (kar <= 0x10FFFF) {

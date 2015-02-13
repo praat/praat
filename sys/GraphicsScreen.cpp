@@ -232,7 +232,7 @@ void structGraphicsScreen :: v_flushWs () {
 		// Ik weet niet of dit is wat het zou moeten zijn ;)
 		//gdk_window_process_updates (d_window, TRUE);   // this "works" but is incorrect because it's not the expose events that have to be carried out
 		//gdk_window_flush (d_window);
-		//gdk_flush ();
+		gdk_flush ();
 		// TODO: een aanroep die de eventuele grafische buffer ledigt,
 		// zodat de gebruiker de grafica ziet ook al blijft Praat in hetzelfde event zitten
 	#elif cocoa

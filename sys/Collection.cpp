@@ -73,7 +73,7 @@ bool structCollection :: v_equal (thou) {
 				"cannot compare items of class ", Thing_className ((Thing) thy item [i]), ".");
 		bool equal = Data_equal ((Data) item [i], (Data) thy item [i]);
 		//Melder_casual ("classCollection_equal: %d, items %ld, types %ls and %ls",
-		//	equal, i, Thing_className (my item [i]), Thing_className (thy item [i]));
+		//	equal, (long) i, Thing_className (my item [i]), Thing_className (thy item [i]));
 		if (! equal) return false;
 	}
 	return true;
@@ -133,9 +133,9 @@ void structCollection :: v_readText (MelderReadText text) {
 			our item [i] = Thing_newFromClassNameA (klas);
 			Thing_version = -1;   /* Override. */
 			our size ++;
-			if (! Thing_member ((Thing) item [i], classData) || ! Data_canReadText ((Data) item [i]))
-				Melder_throw ("Cannot read item of class ", Thing_className ((Thing) item [i]), " in collection.");
-			Data_readText ((Data) item [i], text);
+			if (! Thing_member ((Thing) our item [i], classData) || ! Data_canReadText ((Data) our item [i]))
+				Melder_throw ("Cannot read item of class ", Thing_className ((Thing) our item [i]), " in collection.");
+			Data_readText ((Data) our item [i], text);
 			if (stringsRead == 3) {
 				if (line [n] == ' ') n ++;   // skip space character
 				length = wcslen (line+n);
@@ -144,27 +144,27 @@ void structCollection :: v_readText (MelderReadText text) {
 			}
 		}
 	} else {
-		long l_size = texgeti4 (text);
+		int32_t l_size = texgeti4 (text);
 		Collection_init (this, NULL, l_size);
-		for (long i = 1; i <= l_size; i ++) {
+		for (int32_t i = 1; i <= l_size; i ++) {
 			long saveVersion = Thing_version;   /* The version of the Collection... */
 			autostring8 className = texgets2 (text);
 			our item [i] = Thing_newFromClassNameA (className.peek());
 			our size ++;
-			if (! Thing_member ((Thing) item [i], classData) || ! Data_canReadText ((Data) item [i]))
-				Melder_throw ("Cannot read item of class ", Thing_className ((Thing) item [i]), " in collection.");
+			if (! Thing_member ((Thing) our item [i], classData) || ! Data_canReadText ((Data) our item [i]))
+				Melder_throw ("Cannot read item of class ", Thing_className ((Thing) our item [i]), " in collection.");
 			autostring objectName = texgetw2 (text);
-			Thing_setName ((Thing) item [i], objectName.peek());
-			Data_readText ((Data) item [i], text);
+			Thing_setName ((Thing) our item [i], objectName.peek());
+			Data_readText ((Data) our item [i], text);
 			Thing_version = saveVersion;
 		}
 	}
 }
 
 void structCollection :: v_writeBinary (FILE *f) {
-	binputi4 (size, f);
-	for (long i = 1; i <= size; i ++) {
-		Thing thing = (Thing) item [i];
+	binputi4 (our size, f);
+	for (long i = 1; i <= our size; i ++) {
+		Thing thing = (Thing) our item [i];
 		ClassInfo classInfo = thing -> classInfo;
 		if (! Thing_member (thing, classData) || ! Data_canWriteBinary ((Data) thing))
 			Melder_throw ("Objects of class ", classInfo -> className, L" cannot be written.");
@@ -177,43 +177,43 @@ void structCollection :: v_writeBinary (FILE *f) {
 
 void structCollection :: v_readBinary (FILE *f) {
 	if (Thing_version < 0) {
-		long l_size = bingeti4 (f);
+		int32_t l_size = bingeti4 (f);
 		if (l_size < 0)
 			Melder_throw ("Empty collection.");
 		Collection_init (this, NULL, l_size);
-		for (long i = 1; i <= l_size; i ++) {
+		for (int32_t i = 1; i <= l_size; i ++) {
 			char klas [200], name [2000];
-			if (fscanf (f, "%s%s", klas, name) < 2)
+			if (fscanf (f, "%s%s", klas, name) < 2)   // BUG
 				Melder_throw ("Cannot read class and name.");
-			item [i] = Thing_newFromClassNameA (klas);
+			our item [i] = Thing_newFromClassNameA (klas);
 			Thing_version = -1;   /* Override. */
 			our size ++;
-			if (! Thing_member ((Thing) item [i], classData))
-				Melder_throw ("Cannot read item of class ", Thing_className ((Thing) item [i]), ".");
+			if (! Thing_member ((Thing) our item [i], classData))
+				Melder_throw ("Cannot read item of class ", Thing_className ((Thing) our item [i]), ".");
 			if (fgetc (f) != ' ')
 				Melder_throw ("Cannot read space.");
-			Data_readBinary ((Data) item [i], f);
-			if (strcmp (name, "?")) Thing_setName ((Thing) item [i], Melder_peekUtf8ToWcs (name));
+			Data_readBinary ((Data) our item [i], f);
+			if (strcmp (name, "?")) Thing_setName ((Thing) our item [i], Melder_peekUtf8ToWcs (name));
 		}
 	} else {
-		long l_size = bingeti4 (f);
+		int32_t l_size = bingeti4 (f);
 		if (Melder_debug == 44)
-			Melder_casual ("structCollection :: v_readBinary: Reading %ld objects", l_size);
+			Melder_casual ("structCollection :: v_readBinary: Reading %ld objects", (long) l_size);
 		Collection_init (this, NULL, l_size);
-		for (long i = 1; i <= l_size; i ++) {
+		for (int32_t i = 1; i <= l_size; i ++) {
 			long saveVersion = Thing_version;   // the version of the Collection...
 			autostring8 klas = bingets1 (f);
 			if (Melder_debug == 44)
 				Melder_casual ("structCollection :: v_readBinary: Reading object of type %s", klas.peek());
-			item [i] = Thing_newFromClassNameA (klas.peek());
+			our item [i] = Thing_newFromClassNameA (klas.peek());
 			our size ++;
-			if (! Thing_member ((Thing) item [i], classData) || ! Data_canReadBinary ((Data) item [i]))
-				Melder_throw ("Objects of class ", Thing_className ((Thing) item [i]), " cannot be read.");
+			if (! Thing_member ((Thing) our item [i], classData) || ! Data_canReadBinary ((Data) our item [i]))
+				Melder_throw ("Objects of class ", Thing_className ((Thing) our item [i]), " cannot be read.");
 			autostring name = bingetw2 (f);
 			if (Melder_debug == 44)
 				Melder_casual ("structCollection :: v_readBinary: Reading object with name %ls", name.peek());
-			Thing_setName ((Thing) item [i], name.peek());
-			Data_readBinary ((Data) item [i], f);
+			Thing_setName ((Thing) our item [i], name.peek());
+			Data_readBinary ((Data) our item [i], f);
 			Thing_version = saveVersion;
 		}
 	}

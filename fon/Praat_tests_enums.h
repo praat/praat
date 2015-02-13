@@ -1,5 +1,5 @@
 /* Praat_tests_enums.h */
-/* Paul Boersma, 16 June 2014 */
+/* Paul Boersma, 2 January 2015 */
 
 enums_begin (kPraatTests, 0)
 	enums_add (kPraatTests, 0, _, L"_")
@@ -9,6 +9,10 @@ enums_begin (kPraatTests, 0)
 	enums_add (kPraatTests, 4, TIME_SORT, L"TimeSort")
 	enums_add (kPraatTests, 5, TIME_INTEGER, L"TimeInteger")
 	enums_add (kPraatTests, 6, TIME_FLOAT, L"TimeFloat")
-enums_end (kPraatTests, 6, CHECK_RANDOM_1009_2009)
+	enums_add (kPraatTests, 7, TIME_FLOAT_TO_UNSIGNED_BUILTIN, L"TimeFloatToUnsigned_builtin")
+	enums_add (kPraatTests, 8, TIME_FLOAT_TO_UNSIGNED_EXTERN, L"TimeFloatToUnsigned_extern")
+	enums_add (kPraatTests, 9, TIME_UNSIGNED_TO_FLOAT_BUILTIN, L"TimeUnsignedToFloat_builtin")
+	enums_add (kPraatTests, 10, TIME_UNSIGNED_TO_FLOAT_EXTERN, L"TimeUnsignedToFloat_extern")
+enums_end (kPraatTests, 10, CHECK_RANDOM_1009_2009)
 
 /* End of file Praat_tests_enums.h */

@@ -50,7 +50,7 @@ static long WordList_count (WordList me) {
 void structWordList :: v_info () {
 	structData :: v_info ();
 	long n = WordList_count (this);
-	if (! length) length = wcslen (string);
+	if (! our length) our length = wcslen (our string);
 	MelderInfo_writeLine (L"Number of words: ", Melder_integer (n));
 	MelderInfo_writeLine (L"Number of characters: ", Melder_integer (length - n));
 }
@@ -58,12 +58,12 @@ void structWordList :: v_info () {
 void structWordList :: v_readBinary (FILE *f) {
 	wchar_t *current, *p;
 	int kar = 0;
-	length = bingeti4 (f);
-	if (length < 0)
-		Melder_throw ("Wrong length ", length, ".");
-	string = Melder_calloc (wchar_t, length + 1);
+	our length = bingeti4 (f);
+	if (our length < 0)
+		Melder_throw ("Wrong length ", our length, ".");
+	string = Melder_calloc (wchar_t, our length + 1);
 	p = current = string;
-	if (length > 0) {
+	if (our length > 0) {
 		/*
 		 * Read first word.
 		 */

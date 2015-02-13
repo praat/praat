@@ -753,7 +753,7 @@ Pitch Pitch_smooth (Pitch me, double bandWidth) {
 		long firstVoiced = 0, lastVoiced = 0;
 		for (long i = 1; i <= matrix1 -> nx; i ++) {
 			double f = matrix1 -> z [1] [i];
-			if (f) {
+			if (f != 0.0) {
 				if (! firstVoiced) firstVoiced = i;
 				lastVoiced = i;
 				sound1 -> z [1] [i + matrix1 -> nx] = f;

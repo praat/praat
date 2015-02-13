@@ -1,6 +1,6 @@
 /* oo_DESCRIPTION.h
  *
- * Copyright (C) 1994-2012,2013 Paul Boersma
+ * Copyright (C) 1994-2012,2013,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
 #define oo_BYTE(x)  { L"" #x, bytewa, Melder_offsetof (ooSTRUCT, x), sizeof (signed char) },
 #undef oo_INT
 #define oo_INT(x)  { L"" #x, intwa, Melder_offsetof (ooSTRUCT, x), sizeof (int) },
+#undef oo_INT32
+#define oo_INT32(x)  { L"" #x, intwa, Melder_offsetof (ooSTRUCT, x), sizeof (int32) },
 #undef oo_LONG
 #define oo_LONG(x)  { L"" #x, longwa, Melder_offsetof (ooSTRUCT, x), sizeof (long) },
 #undef oo_UBYTE
