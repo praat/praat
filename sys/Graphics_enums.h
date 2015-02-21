@@ -1,6 +1,6 @@
 /* Graphics_enums.h
  *
- * Copyright (C) 1992-2007,2013,2014 Paul Boersma
+ * Copyright (C) 1992-2007,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,11 +35,12 @@ enums_begin (kGraphics_resolution, 0)
 	enums_add (kGraphics_resolution, 0,  96, L"96 dpi")
 	enums_add (kGraphics_resolution, 1, 100, L"100 dpi")
 	enums_add (kGraphics_resolution, 2, 180, L"180 dpi")
-	enums_add (kGraphics_resolution, 3, 300, L"300 dpi")
-	enums_add (kGraphics_resolution, 4, 360, L"360 dpi")
-	enums_add (kGraphics_resolution, 5, 600, L"600 dpi")
-	enums_add (kGraphics_resolution, 6, 1200, L"1200 dpi")
-enums_end (kGraphics_resolution, 6, 100)
+	enums_add (kGraphics_resolution, 3, 200, L"200 dpi")
+	enums_add (kGraphics_resolution, 4, 300, L"300 dpi")
+	enums_add (kGraphics_resolution, 5, 360, L"360 dpi")
+	enums_add (kGraphics_resolution, 6, 600, L"600 dpi")
+	enums_add (kGraphics_resolution, 7, 1200, L"1200 dpi")
+enums_end (kGraphics_resolution, 7, 100)
 
 enums_begin (kGraphics_colourScale, 0)
 	enums_add (kGraphics_colourScale, 0, GREY, L"grey")

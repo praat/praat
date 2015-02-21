@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20150213)
+MAN_BEGIN (L"What's new?", L"ppgb", 20150221)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"• Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.4.06# (21 February 2015)")
+LIST_ITEM (L"• Windows: repaired a bug that could cause Praat to crash if a metafile resolution was 200 dpi.")
 NORMAL (L"##5.4.05# (13 February 2015)")
 LIST_ITEM (L"• Better support for big integer numbers on Windows XP.")
 LIST_ITEM (L"• Sound window: guarded against empty view ranges for the intensity curve.")
