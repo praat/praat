@@ -198,16 +198,17 @@ void * _Thing_check (Thing me, ClassInfo klas, const char *fileName, int line) {
 	return me;
 }
 
-void Thing_infoWithId (Thing me, unsigned long id) {
+void Thing_infoWithIdAndFile (Thing me, unsigned long id, MelderFile file) {
 	Melder_clearInfo ();
 	MelderInfo_open ();
 	if (id != 0) MelderInfo_writeLine (L"Object id: ", Melder_integer (id));
+	if (! MelderFile_isNull (file)) MelderInfo_writeLine (L"Associated file: ", Melder_fileToPath (file));
 	my v_info ();
 	MelderInfo_close ();
 }
 
 void Thing_info (Thing me) {
-	Thing_infoWithId (me, 0);
+	Thing_infoWithIdAndFile (me, 0, NULL);
 }
 
 wchar_t * Thing_getName (Thing me) { return my name; }

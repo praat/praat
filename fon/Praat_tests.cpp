@@ -11,42 +11,51 @@
 #include "Praat_tests_enums.h"
 #include "enums_getValue.h"
 #include "Praat_tests_enums.h"
+#include <string>
+
+#define UTF32_C(string) \
+	({ static const wchar_t *_static_utf32_string = Melder_utf8ToStr32 (string); _static_utf32_string; })
+
+constexpr char32_t greeting [] {U"Hello?"};
 
 
 int Praat_tests (int itest, wchar_t *arg1, wchar_t *arg2, wchar_t *arg3, wchar_t *arg4) {
-	unsigned long i, n = wcstoul (arg1, NULL, 10);
-	double x, t;
+	int64 n = wcstoll (arg1, NULL, 10);
+	double t;
 	(void) arg1;
 	(void) arg2;
 	(void) arg3;
 	(void) arg4;
+	constexpr int a {2};   // modern syntax
+	constexpr double d {2};
+	int b = ({ int c {4}; c+10; });   // unusual syntax: a "statement expression", which is a GNU C extension
 	Melder_clearInfo ();
 	Melder_stopwatch ();
 	switch (itest) {
 		case kPraatTests_TIME_RANDOM_FRACTION: {
-			for (i = 1; i <= n; i ++)
+			for (int64 i = 1; i <= n; i ++)
 				(void) NUMrandomFraction ();
 			t = Melder_stopwatch ();
 		} break;
 		case kPraatTests_TIME_RANDOM_GAUSS: {
-			for (i = 1; i <= n; i ++)
+			for (int64 i = 1; i <= n; i ++)
 				(void) NUMrandomGauss (0.0, 1.0);
 			t = Melder_stopwatch ();
 		} break;
 		case kPraatTests_TIME_SORT: {
 			long m = wcstol (arg2, NULL, 10);
 			long *array = NUMvector <long> (1, m);
-			for (i = 1; i <= m; i ++)
+			for (int64 i = 1; i <= m; i ++)
 				array [i] = NUMrandomInteger (1, 100);
 			Melder_stopwatch ();
-			for (i = 1; i <= n; i ++)
+			for (int64 i = 1; i <= n; i ++)
 				NUMsort_l (m, array);
 			t = Melder_stopwatch ();
 			NUMvector_free (array, 1);
 		} break;
 		case kPraatTests_TIME_INTEGER: {
 			double sum = 0;
-			for (i = 1; i <= n; i ++)
+			for (int64 i = 1; i <= n; i ++)
 				sum += i * (i - 1) * (i - 2);
 			t = Melder_stopwatch ();
 			MelderInfo_writeLine (Melder_double (sum));
@@ -90,8 +99,21 @@ int Praat_tests (int itest, wchar_t *arg1, wchar_t *arg2, wchar_t *arg3, wchar_t
 			t = Melder_stopwatch ();   // 0.96
 			MelderInfo_writeLine (Melder_double (sum));
 		} break;
+		case kPraatTests_TIME_STRING_MELDER: {
+			MelderString string = { 0 };
+			for (int64 i = 1; i <= n; i ++)
+				MelderString_append (& string, L"abc");
+			t = Melder_stopwatch ();
+		} break;
+		case kPraatTests_TIME_STRING_CPP: {
+			std::wstring s = L"";
+			for (int64 i = 1; i <= n; i ++)
+				s += L"abc";
+			t = Melder_stopwatch ();
+		} break;
 	}
 	MelderInfo_writeLine (Melder_single (t / n * 1e9), L" nanoseconds");
+	MelderInfo_writeLine (Melder_integer (5 + 6 << 1));
 	MelderInfo_close ();
 	return 1;
 }

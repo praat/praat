@@ -2,7 +2,7 @@
 #define _FunctionEditor_h_
 /* FunctionEditor.h
  *
- * Copyright (C) 1992-2011,2012,2013,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,21 +61,21 @@ Thing_define (FunctionEditor, Editor) {
 		double marker [1 + 3], playCursor, startZoomHistory, endZoomHistory;
 		int numberOfMarkers;
 	// overridden methods:
-		virtual void v_destroy ();
-		virtual void v_info ();
-		virtual void v_createMenus ();
-		virtual void v_createMenuItems_file (EditorMenu menu);
-		virtual void v_createMenuItems_query (EditorMenu menu);
-		virtual void v_createChildren ();
-		virtual void v_createHelpMenuItems (EditorMenu menu);
-		virtual void v_dataChanged ();
+		void v_destroy () override;
+		void v_info () override;
+		void v_createMenus () override;
+		void v_createMenuItems_file (EditorMenu) override;
+		void v_createMenuItems_query (EditorMenu) override;
+		void v_createChildren () override;
+		void v_createHelpMenuItems (EditorMenu) override;
+		void v_dataChanged () override;
 	// new methods:
 		virtual void v_draw () { }
 			/*
 			 * Message: "draw your part of the data between startWindow and endWindow."
 			 */
 		virtual void v_drawSelectionViewer () { }
-		virtual void v_prepareDraw () { }   // for less flashing
+		virtual void v_prepareDraw () const { }   // for less flashing
 		virtual const wchar_t * v_format_domain () { return L"Time domain:"; }
 		virtual const wchar_t * v_format_short () { return L"%.3f"; }
 		virtual const wchar_t * v_format_long () { return L"%f"; }
@@ -85,7 +85,7 @@ Thing_define (FunctionEditor, Editor) {
 		virtual const wchar_t * v_format_selection () { return L"%f (%.3f / s)"; }
 		virtual int v_fixedPrecision_long () { return 6; }
 		virtual bool v_hasText () { return false; }
-		virtual void v_play (double a_tmin, double a_tmax) { (void) a_tmin; (void) a_tmax; }
+		virtual void v_play (double /* timeFrom */, double /* timeTo */) { }
 			/*
 			 * Message: "the user clicked in one of the rectangles above or below the data window."
 			 */
@@ -109,22 +109,22 @@ Thing_define (FunctionEditor, Editor) {
 		virtual int v_clickE (double xWC, double yWC);
 		virtual int v_playCallback (int phase, double tmin, double tmax, double t);
 		virtual void v_updateText () { }
-		virtual void v_prefs_addFields (EditorCommand cmd) { (void) cmd; }
-		virtual void v_prefs_setValues (EditorCommand cmd) { (void) cmd; }
-		virtual void v_prefs_getValues (EditorCommand cmd) { (void) cmd; }
-		virtual void v_createMenuItems_file_draw (EditorMenu menu) { (void) menu; }
-		virtual void v_createMenuItems_file_extract (EditorMenu menu) { (void) menu; }
-		virtual void v_createMenuItems_file_write (EditorMenu menu) { (void) menu; }
-		virtual void v_createMenuItems_view (EditorMenu menu);
-		virtual void v_createMenuItems_view_timeDomain (EditorMenu menu);
-		virtual void v_createMenuItems_view_audio (EditorMenu menu);
+		virtual void v_prefs_addFields (EditorCommand) { }
+		virtual void v_prefs_setValues (EditorCommand) { }
+		virtual void v_prefs_getValues (EditorCommand) { }
+		virtual void v_createMenuItems_file_draw (EditorMenu) { }
+		virtual void v_createMenuItems_file_extract (EditorMenu) { }
+		virtual void v_createMenuItems_file_write (EditorMenu) { }
+		virtual void v_createMenuItems_view (EditorMenu);
+		virtual void v_createMenuItems_view_timeDomain (EditorMenu);
+		virtual void v_createMenuItems_view_audio (EditorMenu);
 		virtual void v_highlightSelection (double left, double right, double bottom, double top);
 		virtual void v_unhighlightSelection (double left, double right, double bottom, double top);
 		virtual double v_getBottomOfSoundArea () { return 0.0; }
 		virtual double v_getBottomOfSoundAndAnalysisArea () { return 0.0; }
-		virtual void v_form_pictureSelection (EditorCommand cmd);
-		virtual void v_ok_pictureSelection (EditorCommand cmd);
-		virtual void v_do_pictureSelection (EditorCommand cmd);
+		virtual void v_form_pictureSelection (EditorCommand);
+		virtual void v_ok_pictureSelection (EditorCommand);
+		virtual void v_do_pictureSelection (EditorCommand);
     
     // new preferences:
     #include "FunctionEditor_prefs.h"
@@ -137,21 +137,21 @@ int theFunctionEditor_playCallback (void *void_me, int phase, double tmin, doubl
 	Attributes:
 		data: must be a Function.
 
-	int clickB (I, double xWC, double yWC);
+	int clickB (double xWC, double yWC);
 		"user clicked in data window with the middle mouse button (Mac: control- or option-click)."
 		'xWC' is the time; 'yWC' is a value between 0.0 (bottom) and 1.0 (top).
 		For the return value, see the 'click' method.
 		FunctionEditor::clickB simply moves the start of the selection (B) to 'xWC',
 			with the sole statement 'my startSelection = xWC'.
 
-	int clickE (I, double xWC, double yWC);
+	int clickE (double xWC, double yWC);
 		"user clicked in data window with the right mouse button (Mac: command-click)."
 		'xWC' is the time; 'yWC' is a value between 0.0 (bottom) and 1.0 (top).
 		For the return value, see the 'click' method.
 		FunctionEditor::clickB simply moves the end of the selection (E) to 'xWC',
 			with the sole statement 'my endSelection = xWC'.
 
-	void key (I, unsigned char key);
+	void key (unsigned char key);
 		"user typed a key to the data window."
 		FunctionEditor::key ignores this message.
 */

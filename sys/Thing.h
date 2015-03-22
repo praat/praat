@@ -2,7 +2,7 @@
 #define _Thing_h_
 /* Thing.h
  *
- * Copyright (C) 1992-2011,2012,2013,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -162,7 +162,7 @@ bool Thing_subclass (ClassInfo klas, ClassInfo ancestor);
 */
 
 void Thing_info (Thing me);
-void Thing_infoWithId (Thing me, unsigned long id);
+void Thing_infoWithIdAndFile (Thing me, unsigned long id, MelderFile file);
 
 #define Thing_new(Klas)  (Klas) _Thing_new (class##Klas)
 /*

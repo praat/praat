@@ -2,7 +2,7 @@
 #define _Data_h_
 /* Data.h
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@ Thing_define (Data, Thing) {
 template <class T> T* Data_copy (T* data) {
 	return static_cast <T*> (_Data_copy (data));
 }
-Any _Data_copy (Data me);
+Data _Data_copy (Data me);
 /*
 	Message:
 		"return a deep copy of yourself."
@@ -239,7 +239,7 @@ void Data_readText (Data me, MelderReadText text);
 		but is preferably the same as the format produced by the 'writeText' method.
 */
 
-Any Data_readFromTextFile (MelderFile file);
+Data Data_readFromTextFile (MelderFile file);
 /*
 	Message:
 		"try to read a Data as text from a file".
@@ -276,7 +276,7 @@ void Data_readBinary (Data me, FILE *f);
 		but is preferably the same as the format produced by the 'writeBinary' method.
 */
 
-Any Data_readFromBinaryFile (MelderFile file);
+Data Data_readFromBinaryFile (MelderFile file);
 /*
 	Message:
 		"try to read a Data as binary data from a file".
@@ -334,7 +334,7 @@ Registering a file-type recognizer:
 	After this, Data_readFromFile is able to read Sun audio files.
 */
 
-Any Data_readFromFile (MelderFile file);
+Data Data_readFromFile (MelderFile file);
 /*
 Purpose:
 	to read a file with data of any kind.

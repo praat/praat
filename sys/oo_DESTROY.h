@@ -123,19 +123,14 @@
 #define oo_DECLARING  0
 #define oo_DESTROYING  1
 #define oo_COPYING  0
-#define oo_EQUALLING  0
 #define oo_COMPARING  0
 #define oo_VALIDATING_ENCODING  0
 #define oo_READING  0
 #define oo_READING_TEXT  0
 #define oo_READING_BINARY  0
-#define oo_READING_CACHE  0
-#define oo_READING_LISP  0
 #define oo_WRITING  0
 #define oo_WRITING_TEXT  0
 #define oo_WRITING_BINARY  0
-#define oo_WRITING_CACHE  0
-#define oo_WRITING_LISP  0
 #define oo_DESCRIBING  0
 
 /* End of file oo_DESTROY.h */

@@ -1,6 +1,6 @@
 /* praat_objectMenus.cpp
  *
- * Copyright (C) 1992-2012,2013,2014 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,16 +33,16 @@
 
 /********** Callbacks of the fixed buttons. **********/
 
-DIRECT (Remove)
+DIRECT2 (Remove) {
 	WHERE_DOWN (SELECTED)
 		praat_removeObject (IOBJECT);
 	praat_show ();
-END
+END2 }
 
-FORM (Rename, L"Rename object", L"Rename...")
+FORM (Rename, L"Rename object", L"Rename...") {
 	LABEL (L"rename object", L"New name:")
 	TEXTFIELD (L"newName", L"")
-	OK
+	OK2
 { int IOBJECT; WHERE (SELECTED) SET_STRING (L"newName", NAME) }
 DO
 	wchar_t *string = GET_STRING (L"newName");
@@ -65,12 +65,12 @@ DO
 			if (EDITOR [ieditor]) Thing_setName ((Thing) EDITOR [ieditor], fullName.string);
 		Thing_setName ((Thing) OBJECT, string);
 	}
-END
+END2 }
 
-FORM (Copy, L"Copy object", L"Copy...")
+FORM (Copy, L"Copy object", L"Copy...") {
 	LABEL (L"copy object", L"Name of new object:")
 	TEXTFIELD (L"newName", L"")
-	OK
+	OK2
 { int IOBJECT; WHERE (SELECTED) SET_STRING (L"newName", NAME) }
 DO
 	if (theCurrentPraatObjects -> totalSelection == 0)
@@ -81,17 +81,17 @@ DO
 		wchar_t *name = GET_STRING (L"newName");
 		praat_new (Data_copy ((Data) OBJECT), name);
 	}
-END
+END2 }
 
-DIRECT (Info)
+DIRECT2 (Info) {
 	if (theCurrentPraatObjects -> totalSelection == 0)
 		Melder_throw ("Selection changed!\nNo object selected. Cannot query.");
 	if (theCurrentPraatObjects -> totalSelection > 1)
 		Melder_throw ("Selection changed!\nCannot query more than one object at a time.");
-	WHERE (SELECTED) Thing_infoWithId ((Thing) OBJECT, ID);
-END
+	WHERE (SELECTED) Thing_infoWithIdAndFile ((Thing) OBJECT, ID, & theCurrentPraatObjects -> list [IOBJECT]. file);
+END2 }
 
-DIRECT (Inspect)
+DIRECT2 (Inspect) {
 	if (theCurrentPraatObjects -> totalSelection == 0)
 		Melder_throw ("Selection changed!\nNo object selected. Cannot inspect.");
 	if (theCurrentPraatApplication -> batch) {
@@ -101,7 +101,7 @@ DIRECT (Inspect)
 			praat_installEditor (DataEditor_create (ID_AND_FULL_NAME, OBJECT), IOBJECT);
 		}
 	}
-END
+END2 }
 
 /********** The fixed menus. **********/
 
@@ -130,20 +130,20 @@ GuiMenu praat_objects_resolveMenu (const wchar_t *menu) {
 
 /********** Callbacks of the Praat menu. **********/
 
-DIRECT (About)
+DIRECT2 (About) {
 	praat_showLogo (FALSE);
-END
+END2 }
 
-DIRECT (praat_newScript)
+DIRECT2 (praat_newScript) {
 	autoScriptEditor editor = ScriptEditor_createFromText (NULL, NULL);
 	editor.transfer();   // the user becomes the owner
-END
+END2 }
 
-DIRECT (praat_openScript)
+DIRECT2 (praat_openScript) {
 	autoScriptEditor editor = ScriptEditor_createFromText (NULL, NULL);
 	TextEditor_showOpen (editor.peek());
 	editor.transfer();   // the user becomes the owner
-END
+END2 }
 
 static ButtonEditor theButtonEditor;
 
@@ -153,16 +153,16 @@ static void cb_ButtonEditor_destruction (Editor editor, void *closure) {
 	theButtonEditor = NULL;
 }
 
-DIRECT (praat_editButtons)
+DIRECT2 (praat_editButtons) {
 	if (theButtonEditor) {
 		theButtonEditor -> raise ();
 	} else {
 		theButtonEditor = ButtonEditor_create ();
 		theButtonEditor -> setDestructionCallback (cb_ButtonEditor_destruction, NULL);
 	}
-END
+END2 }
 
-FORM (praat_addMenuCommand, L"Add menu command", L"Add menu command...")
+FORM (praat_addMenuCommand, L"Add menu command", L"Add menu command...") {
 	WORD (L"Window", L"Objects")
 	WORD (L"Menu", L"New")
 	SENTENCE (L"Command", L"Hallo...")
@@ -170,32 +170,32 @@ FORM (praat_addMenuCommand, L"Add menu command", L"Add menu command...")
 	INTEGER (L"Depth", L"0")
 	LABEL (L"", L"Script file:")
 	TEXTFIELD (L"Script", L"/u/miep/hallo.praat")
-	OK
+	OK2
 DO
 	praat_addMenuCommandScript (GET_STRING (L"Window"), GET_STRING (L"Menu"),
 		GET_STRING (L"Command"), GET_STRING (L"After command"),
 		GET_INTEGER (L"Depth"), GET_STRING (L"Script"));
-END
+END2 }
 
-FORM (praat_hideMenuCommand, L"Hide menu command", L"Hide menu command...")
+FORM (praat_hideMenuCommand, L"Hide menu command", L"Hide menu command...") {
 	WORD (L"Window", L"Objects")
 	WORD (L"Menu", L"New")
 	SENTENCE (L"Command", L"Hallo...")
-	OK
+	OK2
 DO
 	praat_hideMenuCommand (GET_STRING (L"Window"), GET_STRING (L"Menu"), GET_STRING (L"Command"));
-END
+END2 }
 
-FORM (praat_showMenuCommand, L"Show menu command", L"Show menu command...")
+FORM (praat_showMenuCommand, L"Show menu command", L"Show menu command...") {
 	WORD (L"Window", L"Objects")
 	WORD (L"Menu", L"New")
 	SENTENCE (L"Command", L"Hallo...")
-	OK
+	OK2
 DO
 	praat_showMenuCommand (GET_STRING (L"Window"), GET_STRING (L"Menu"), GET_STRING (L"Command"));
-END
+END2 }
 
-FORM (praat_addAction, L"Add action command", L"Add action command...")
+FORM (praat_addAction, L"Add action command", L"Add action command...") {
 	WORD (L"Class 1", L"Sound")
 	INTEGER (L"Number 1", L"0")
 	WORD (L"Class 2", L"")
@@ -207,70 +207,70 @@ FORM (praat_addAction, L"Add action command", L"Add action command...")
 	INTEGER (L"Depth", L"0")
 	LABEL (L"", L"Script file:")
 	TEXTFIELD (L"Script", L"/u/miep/playReverse.praat")
-	OK
+	OK2
 DO
 	praat_addActionScript (GET_STRING (L"Class 1"), GET_INTEGER (L"Number 1"),
 		GET_STRING (L"Class 2"), GET_INTEGER (L"Number 2"), GET_STRING (L"Class 3"),
 		GET_INTEGER (L"Number 3"), GET_STRING (L"Command"), GET_STRING (L"After command"),
 		GET_INTEGER (L"Depth"), GET_STRING (L"Script"));
-END
+END2 }
 
-FORM (praat_hideAction, L"Hide action command", L"Hide action command...")
+FORM (praat_hideAction, L"Hide action command", L"Hide action command...") {
 	WORD (L"Class 1", L"Sound")
 	WORD (L"Class 2", L"")
 	WORD (L"Class 3", L"")
 	SENTENCE (L"Command", L"Play")
-	OK
+	OK2
 DO
 	praat_hideAction_classNames (GET_STRING (L"Class 1"), GET_STRING (L"Class 2"), GET_STRING (L"Class 3"), GET_STRING (L"Command"));
-END
+END2 }
 
-FORM (praat_showAction, L"Show action command", L"Show action command...")
+FORM (praat_showAction, L"Show action command", L"Show action command...") {
 	WORD (L"Class 1", L"Sound")
 	WORD (L"Class 2", L"")
 	WORD (L"Class 3", L"")
 	SENTENCE (L"Command", L"Play")
-	OK
+	OK2
 DO
 	praat_showAction_classNames (GET_STRING (L"Class 1"), GET_STRING (L"Class 2"), GET_STRING (L"Class 3"), GET_STRING (L"Command"));
-END
+END2 }
 
 /********** Callbacks of the Preferences menu. **********/
 
-FORM (TextInputEncodingSettings, L"Text reading preferences", L"Unicode")
+FORM (TextInputEncodingSettings, L"Text reading preferences", L"Unicode") {
 	RADIO_ENUM (L"Encoding of 8-bit text files", kMelder_textInputEncoding, DEFAULT)
-	OK
+	OK2
 SET_ENUM (L"Encoding of 8-bit text files", kMelder_textInputEncoding, Melder_getInputEncoding ())
 DO
 	Melder_setInputEncoding (GET_ENUM (kMelder_textInputEncoding, L"Encoding of 8-bit text files"));
-END
+END2 }
 
-FORM (TextOutputEncodingSettings, L"Text writing preferences", L"Unicode")
+FORM (TextOutputEncodingSettings, L"Text writing preferences", L"Unicode") {
 	RADIO_ENUM (L"Output encoding", kMelder_textOutputEncoding, DEFAULT)
-	OK
+	OK2
 SET_ENUM (L"Output encoding", kMelder_textOutputEncoding, Melder_getOutputEncoding ())
 DO
 	Melder_setOutputEncoding (GET_ENUM (kMelder_textOutputEncoding, L"Output encoding"));
-END
+END2 }
 
-FORM (GraphicsCjkFontStyleSettings, L"CJK font style preferences", 0)
+FORM (GraphicsCjkFontStyleSettings, L"CJK font style preferences", 0) {
 	OPTIONMENU_ENUM (L"CJK font style", kGraphics_cjkFontStyle, DEFAULT)
-	OK
+	OK2
 SET_ENUM (L"CJK font style", kGraphics_cjkFontStyle, theGraphicsCjkFontStyle)
 DO
 	theGraphicsCjkFontStyle = GET_ENUM (kGraphics_cjkFontStyle, L"CJK font style");
-END
+END2 }
 
 
 /********** Callbacks of the Goodies menu. **********/
 
-FORM (praat_calculator, L"Calculator", L"Calculator")
+FORM (praat_calculator, L"Calculator", L"Calculator") {
 	LABEL (L"", L"Type any numeric formula or string formula:")
 	TEXTFIELD (L"expression", L"5*5")
 	LABEL (L"", L"Note that you can include many special functions in your formula,")
 	LABEL (L"", L"including statistical functions and acoustics-auditory conversions.")
 	LABEL (L"", L"For details, click Help.")
-	OK
+	OK2
 DO
 	struct Formula_Result result;
 	if (interpreter == NULL) {
@@ -296,14 +296,14 @@ DO
 		case kFormula_EXPRESSION_TYPE_NUMERIC_ARRAY: {
 		}
 	}
-END
+END2 }
 
-FORM (praat_reportDifferenceOfTwoProportions, L"Report difference of two proportions", L"Difference of two proportions")
+FORM (praat_reportDifferenceOfTwoProportions, L"Report difference of two proportions", L"Difference of two proportions") {
 	INTEGER (L"left Row 1", L"71")
 	INTEGER (L"right Row 1", L"39")
 	INTEGER (L"left Row 2", L"93")
 	INTEGER (L"right Row 2", L"27")
-	OK
+	OK2
 DO
 	double a = GET_INTEGER (L"left Row 1"), b = GET_INTEGER (L"right Row 1");
 	double c = GET_INTEGER (L"left Row 2"), d = GET_INTEGER (L"right Row 2");
@@ -345,11 +345,11 @@ DO
 	MelderInfo_writeLine (L"Chi-square =    ", Melder_double (x2));
 	MelderInfo_writeLine (L"Two-tailed p =    ", Melder_double (NUMchiSquareQ (x2, 1)));
 	MelderInfo_close ();
-END
+END2 }
 
 /********** Callbacks of the Technical menu. **********/
 
-FORM (praat_debug, L"Set debugging options", 0)
+FORM (praat_debug, L"Set debugging options", 0) {
 	LABEL (L"", L"If you switch Tracing on, Praat will write lots of detailed ")
 	LABEL (L"", L"information about what goes on in Praat")
 	structMelderDir dir;
@@ -366,33 +366,33 @@ FORM (praat_debug, L"Set debugging options", 0)
 	LABEL (L"", L"will alter the behaviour of Praat")
 	LABEL (L"", L"in unpredictable ways.")
 	INTEGER (L"Debug option", L"0")
-	OK
+	OK2
 SET_INTEGER (L"Tracing", Melder_isTracing)
 SET_INTEGER (L"Debug option", Melder_debug)
 DO
 	Melder_setTracing (GET_INTEGER (L"Tracing"));
 	Melder_debug = GET_INTEGER (L"Debug option");
-END
+END2 }
 
-DIRECT (praat_listReadableTypesOfObjects)
+DIRECT2 (praat_listReadableTypesOfObjects) {
 	Thing_listReadableClasses ();
-END
+END2 }
 
-DIRECT (praat_reportGraphicalProperties)
+DIRECT2 (praat_reportGraphicalProperties) {
 	praat_reportGraphicalProperties ();
-END
+END2 }
 
-DIRECT (praat_reportIntegerProperties)
+DIRECT2 (praat_reportIntegerProperties) {
 	praat_reportIntegerProperties ();
-END
+END2 }
 
-DIRECT (praat_reportMemoryUse)
+DIRECT2 (praat_reportMemoryUse) {
 	praat_reportMemoryUse ();
-END
+END2 }
 
-DIRECT (praat_reportTextProperties)
+DIRECT2 (praat_reportTextProperties) {
 	praat_reportTextProperties ();
-END
+END2 }
 
 /********** Callbacks of the Open menu. **********/
 
@@ -412,17 +412,17 @@ static void readFromFile (MelderFile file) {
 		ScriptEditor_createFromScript (NULL, (Script) object.peek());
 		return;
 	}
-	praat_new (object.transfer(), MelderFile_name (file));
+	praat_newWithFile (object.transfer(), MelderFile_name (file), file);
 	praat_updateSelection ();
 }
 
-FORM_READ (Data_readFromFile, L"Read Object(s) from file", 0, true)
+FORM_READ2 (Data_readFromFile, L"Read Object(s) from file", 0, true) {
 	readFromFile (file);
-END
+END2 }
 
 /********** Callbacks of the Save menu. **********/
 
-FORM_WRITE (Data_writeToTextFile, L"Save Object(s) as one text file", 0, 0)
+FORM_WRITE2 (Data_writeToTextFile, L"Save Object(s) as one text file", 0, 0) {
 	if (theCurrentPraatObjects -> totalSelection == 1) {
 		LOOP {
 			iam (Data);
@@ -432,9 +432,9 @@ FORM_WRITE (Data_writeToTextFile, L"Save Object(s) as one text file", 0, 0)
 		autoCollection set = praat_getSelectedObjects ();
 		Data_writeToTextFile (set.peek(), file);
 	}
-END
+END2 }
 
-FORM_WRITE (Data_writeToShortTextFile, L"Save Object(s) as one short text file", 0, 0)
+FORM_WRITE2 (Data_writeToShortTextFile, L"Save Object(s) as one short text file", 0, 0) {
 	if (theCurrentPraatObjects -> totalSelection == 1) {
 		LOOP {
 			iam (Data);
@@ -444,9 +444,9 @@ FORM_WRITE (Data_writeToShortTextFile, L"Save Object(s) as one short text file",
 		autoCollection set = praat_getSelectedObjects ();
 		Data_writeToShortTextFile (set.peek(), file);
 	}
-END
+END2 }
 
-FORM_WRITE (Data_writeToBinaryFile, L"Save Object(s) as one binary file", 0, 0)
+FORM_WRITE2 (Data_writeToBinaryFile, L"Save Object(s) as one binary file", 0, 0) {
 	if (theCurrentPraatObjects -> totalSelection == 1) {
 		LOOP {
 			iam (Data);
@@ -456,12 +456,12 @@ FORM_WRITE (Data_writeToBinaryFile, L"Save Object(s) as one binary file", 0, 0)
 		autoCollection set = praat_getSelectedObjects ();
 		Data_writeToBinaryFile (set.peek(), file);
 	}
-END
+END2 }
 
-FORM (ManPages_saveToHtmlDirectory, L"Save all pages as HTML files", 0)
+FORM (ManPages_saveToHtmlDirectory, L"Save all pages as HTML files", 0) {
 	LABEL (L"", L"Type a directory name:")
 	TEXTFIELD (L"directory", L"")
-	OK
+	OK2
 structMelderDir currentDirectory = { { 0 } };
 Melder_getDefaultDir (& currentDirectory);
 SET_STRING (L"directory", Melder_dirToPath (& currentDirectory))
@@ -471,9 +471,9 @@ DO
 		iam (ManPages);
 		ManPages_writeAllToHtmlDir (me, directory);
 	}
-END
+END2 }
 
-DIRECT (ManPages_view)
+DIRECT2 (ManPages_view) {
 	LOOP {
 		iam (ManPages);
 		ManPage firstPage = static_cast<ManPage> (my pages -> item [1]);
@@ -483,44 +483,44 @@ DIRECT (ManPages_view)
 				"Only navigate these pages if you trust their author!");
 		praat_installEditor (manual.transfer(), IOBJECT);
 	}
-END
+END2 }
 
 /********** Callbacks of the Help menu. **********/
 
-FORM (SearchManual, L"Search manual", L"Manual")
+FORM (SearchManual, L"Search manual", L"Manual") {
 	LABEL (L"", L"Search for strings (separate with spaces):")
 	TEXTFIELD (L"query", L"")
-	OK
+	OK2
 DO
 	if (theCurrentPraatApplication -> batch)
 		Melder_throw (L"Cannot view a manual from batch.");
 	Manual manPage = Manual_create (L"Intro", theCurrentPraatApplication -> manPages, false);
 	Manual_search (manPage, GET_STRING (L"query"));
-END
+END2 }
 
-FORM (GoToManualPage, L"Go to manual page", 0)
+FORM (GoToManualPage, L"Go to manual page", 0) {
 	{long numberOfPages;
 	const wchar_t **pages = ManPages_getTitles (theCurrentPraatApplication -> manPages, & numberOfPages);
 	LIST (L"Page", numberOfPages, pages, 1)}
-	OK
+	OK2
 DO
 	if (theCurrentPraatApplication -> batch)
 		Melder_throw (L"Cannot view a manual from batch.");
 	Manual manPage = Manual_create (L"Intro", theCurrentPraatApplication -> manPages, false);
 	HyperPage_goToPage_i (manPage, GET_INTEGER (L"Page"));
-END
+END2 }
 
-FORM (WriteManualToHtmlDirectory, L"Save all pages as HTML files", 0)
+FORM (WriteManualToHtmlDirectory, L"Save all pages as HTML files", 0) {
 	LABEL (L"", L"Type a directory name:")
 	TEXTFIELD (L"directory", L"")
-	OK
+	OK2
 structMelderDir currentDirectory = { { 0 } };
 Melder_getDefaultDir (& currentDirectory);
 SET_STRING (L"directory", Melder_dirToPath (& currentDirectory))
 DO
 	wchar_t *directory = GET_STRING (L"directory");
 	ManPages_writeAllToHtmlDir (theCurrentPraatApplication -> manPages, directory);
-END
+END2 }
 
 /********** Menu descriptions. **********/
 
@@ -573,24 +573,24 @@ static void cb_openDocument (MelderFile file) {
 }
 
 #if cocoa
-DIRECT (praat_cut)
+DIRECT2 (praat_cut) {
 	[[[NSApp keyWindow] fieldEditor: YES forObject: nil] cut: nil];
-END
-DIRECT (praat_copy)
+END2 }
+DIRECT2 (praat_copy) {
 	[[[NSApp keyWindow] fieldEditor: YES forObject: nil] copy: nil];
-END
-DIRECT (praat_paste)
+END2 }
+DIRECT2 (praat_paste) {
 	[[[NSApp keyWindow] fieldEditor: YES forObject: nil] pasteAsPlainText: nil];
-END
-DIRECT (praat_minimize)
+END2 }
+DIRECT2 (praat_minimize) {
 	[[NSApp keyWindow] performMiniaturize: nil];
-END
-DIRECT (praat_zoom)
+END2 }
+DIRECT2 (praat_zoom) {
 	[[NSApp keyWindow] performZoom: nil];
-END
-DIRECT (praat_close)
+END2 }
+DIRECT2 (praat_close) {
 	[[NSApp keyWindow] performClose: nil];
-END
+END2 }
 #endif
 
 void praat_addMenus (GuiWindow window) {

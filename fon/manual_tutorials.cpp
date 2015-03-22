@@ -1,6 +1,6 @@
 /* manual_tutorials.cpp
  *
- * Copyright (C) 1992-2012,2013,2014 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20150221)
+MAN_BEGIN (L"What's new?", L"ppgb", 20150322)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"• Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.4.07# (22 March 2015)")
+LIST_ITEM (L"• TextGrid window: ##Add interval# now does the same thing as ##Add boundary# if a time strectch is selected.")
+LIST_ITEM (L"• Linux: better redrawing in TextGrid window.")
 NORMAL (L"##5.4.06# (21 February 2015)")
 LIST_ITEM (L"• Windows: repaired a bug that could cause Praat to crash if a metafile resolution was 200 dpi.")
 NORMAL (L"##5.4.05# (13 February 2015)")
@@ -42,6 +45,30 @@ NORMAL (L"##5.4.01# (9 November 2014)")
 LIST_ITEM (L"• @MelSpectrogram, @BarkSpectrogram.")
 LIST_ITEM (L"• Linux: removed a bug that could cause too many flashes when scrolling a Sound window.")
 LIST_ITEM (L"• Mac: repaired a bug that could cause a crash in the VowelEditor window.")
+ENTRY (L"What used to be new?")
+LIST_ITEM (L"• @@What was new in 5.4?")
+LIST_ITEM (L"• @@What was new in 5.3?")
+LIST_ITEM (L"• @@What was new in 5.2?")
+LIST_ITEM (L"• @@What was new in 5.1?")
+LIST_ITEM (L"• @@What was new in 5.0?")
+LIST_ITEM (L"• @@What was new in 4.6?")
+LIST_ITEM (L"• @@What was new in 4.5?")
+LIST_ITEM (L"• @@What was new in 4.4?")
+LIST_ITEM (L"• @@What was new in 4.3?")
+LIST_ITEM (L"• @@What was new in 4.2?")
+LIST_ITEM (L"• @@What was new in 4.1?")
+LIST_ITEM (L"• @@What was new in 4.0?")
+LIST_ITEM (L"• @@What was new in 3.9?")
+LIST_ITEM (L"• @@What was new in 3.8?")
+LIST_ITEM (L"• @@What was new in 3.7?")
+LIST_ITEM (L"• @@What was new in 3.6?")
+LIST_ITEM (L"• @@What was new in 3.5?")
+LIST_ITEM (L"• @@What was new in 3.3?")
+LIST_ITEM (L"• @@What was new in 3.2?")
+LIST_ITEM (L"• @@What was new in 3.1?")
+MAN_END
+
+MAN_BEGIN (L"What was new in 5.4?", L"ppgb", 20141003)
 NORMAL (L"##5.4# (4 October 2014)")
 NORMAL (L"##5.3.87# (3 October 2014)")
 LIST_ITEM (L"• Windows scripting: prevented incorrect handling of relative paths after the use of chooseReadFile\\$ .")
@@ -289,26 +316,6 @@ NORMAL (L"##5.3.01# (1 November 2011)")
 LIST_ITEM (L"• Macintosh and Windows: better window positioning if the Dock or Task Bar is on the left or right.")
 LIST_ITEM (L"• IPA symbol: you can now use \\bs.f for the half-length sign (\\.f).")
 LIST_ITEM (L"• EEG window.")
-ENTRY (L"What used to be new?")
-LIST_ITEM (L"• @@What was new in 5.3?")
-LIST_ITEM (L"• @@What was new in 5.2?")
-LIST_ITEM (L"• @@What was new in 5.1?")
-LIST_ITEM (L"• @@What was new in 5.0?")
-LIST_ITEM (L"• @@What was new in 4.6?")
-LIST_ITEM (L"• @@What was new in 4.5?")
-LIST_ITEM (L"• @@What was new in 4.4?")
-LIST_ITEM (L"• @@What was new in 4.3?")
-LIST_ITEM (L"• @@What was new in 4.2?")
-LIST_ITEM (L"• @@What was new in 4.1?")
-LIST_ITEM (L"• @@What was new in 4.0?")
-LIST_ITEM (L"• @@What was new in 3.9?")
-LIST_ITEM (L"• @@What was new in 3.8?")
-LIST_ITEM (L"• @@What was new in 3.7?")
-LIST_ITEM (L"• @@What was new in 3.6?")
-LIST_ITEM (L"• @@What was new in 3.5?")
-LIST_ITEM (L"• @@What was new in 3.3?")
-LIST_ITEM (L"• @@What was new in 3.2?")
-LIST_ITEM (L"• @@What was new in 3.1?")
 MAN_END
 
 MAN_BEGIN (L"What was new in 5.3?", L"ppgb", 20111015)

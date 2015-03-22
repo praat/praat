@@ -50,6 +50,9 @@
 	#define INT54_MAX   9007199254740991LL
 	#define INT54_MIN  -9007199254740991LL
 #endif
+#ifdef linux
+	#define override   /* incomplete C compiler */
+#endif
 
 typedef wchar_t wchar;
 typedef uint8_t  char8_t;
@@ -96,6 +99,7 @@ struct FLAC__StreamEncoder;
 struct structMelderFile {
 	FILE *filePointer;
 	wchar_t path [kMelder_MAXPATH+1];
+	enum class Format { none = 0, binary = 1, text = 2 } format;
 	bool openForReading, openForWriting, verbose, requiresCRLF;
 	unsigned long outputEncoding;
 	int indent;

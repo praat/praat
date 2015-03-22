@@ -1,6 +1,6 @@
 /* Data.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,28 +34,23 @@ bool structData :: v_equal (thou) {
 	return true;
 }   // names of "identical" objects are allowed to be different
 
-bool structData :: v_canWriteAsEncoding (int encoding) {
-	(void) encoding;
+bool structData :: v_canWriteAsEncoding (int /*encoding*/) {
 	return true;
 }
 
-void structData :: v_writeText (MelderFile openFile) {
-	(void) openFile;
+void structData :: v_writeText (MelderFile /*openFile*/) {
 }
 
-void structData :: v_readText (MelderReadText text) {
-	(void) text;
+void structData :: v_readText (MelderReadText) {
 }
 
-void structData :: v_writeBinary (FILE *f) {
-	(void) f;
+void structData :: v_writeBinary (FILE *) {
 }
 
-void structData :: v_readBinary (FILE *f) {
-	(void) f;
+void structData :: v_readBinary (FILE *) {
 }
 
-Any _Data_copy (Data me) {
+Data _Data_copy (Data me) {
 	try {
 		if (me == NULL) return NULL;
 		autoData thee = (Data) _Thing_new (my classInfo);
@@ -190,7 +185,7 @@ void Data_readText (Data me, MelderReadText text) {
 	}
 }
 
-Any Data_readFromTextFile (MelderFile file) {
+Data Data_readFromTextFile (MelderFile file) {
 	try {
 		autoMelderReadText text = MelderReadText_createFromFile (file);
 		wchar_t *line = MelderReadText_readLine (text.peek());
@@ -211,6 +206,7 @@ Any Data_readFromTextFile (MelderFile file) {
 		}
 		MelderFile_getParentDir (file, & Data_directoryBeingRead);
 		Data_readText (me.peek(), text.peek());
+		file -> format = structMelderFile :: Format :: text;
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("Data not read from text file ", file, ".");
@@ -234,7 +230,7 @@ void Data_readBinary (Data me, FILE *f) {
 	}
 }
 
-Any Data_readFromBinaryFile (MelderFile file) {
+Data Data_readFromBinaryFile (MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "rb");
 		char line [200];
@@ -258,6 +254,7 @@ Any Data_readFromBinaryFile (MelderFile file) {
 		}
 		MelderFile_getParentDir (file, & Data_directoryBeingRead);
 		Data_readBinary (me.peek(), f);
+		file -> format = structMelderFile :: Format :: binary;
 		f.close (file);
 		return me.transfer();
 	} catch (MelderError) {
@@ -274,7 +271,7 @@ void Data_recognizeFileType (Any (*recognizer) (int nread, const char *header, M
 	fileTypeRecognizers [++ numFileTypeRecognizers] = recognizer;
 }
 
-Any Data_readFromFile (MelderFile file) {
+Data Data_readFromFile (MelderFile file) {
 	int nread, i;
 	char header [513];
 	autofile f = Melder_fopen (file, "rb");

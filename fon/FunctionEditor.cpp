@@ -1,6 +1,6 @@
 /* FunctionEditor.cpp
  *
- * Copyright (C) 1992-2011,2012,2013,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,9 +43,11 @@ Thing_implement (FunctionEditor, Editor, 0);
 #include "prefs_copyToInstance.h"
 #include "FunctionEditor_prefs.h"
 
-#define maxGroup 100
-static int nGroup = 0;
-static FunctionEditor theGroup [1 + maxGroup];
+namespace {
+	constexpr int maxGroup { 100 };
+	int nGroup = 0;
+	FunctionEditor theGroup [1 + maxGroup];
+}
 
 static void drawWhileDragging (FunctionEditor me, double x1, double x2);
 
@@ -59,9 +61,9 @@ static int group_equalDomain (double tmin, double tmax) {
 
 static void updateScrollBar (FunctionEditor me) {
 /* We cannot call this immediately after creation. */
-	int slider_size = (my d_endWindow - my d_startWindow) / (my tmax - my tmin) * maximumScrollBarValue - 1;
-	int increment, page_increment;
-	int value = (my d_startWindow - my tmin) / (my tmax - my tmin) * maximumScrollBarValue + 1;
+	double slider_size = (my d_endWindow - my d_startWindow) / (my tmax - my tmin) * maximumScrollBarValue - 1;
+	double increment, page_increment;
+	double value = (my d_startWindow - my tmin) / (my tmax - my tmin) * maximumScrollBarValue + 1;
 	if (slider_size < 1) slider_size = 1;
 	if (value > maximumScrollBarValue - slider_size)
 		value = maximumScrollBarValue - slider_size;
@@ -346,11 +348,16 @@ static void drawNow (FunctionEditor me) {
 
 void structFunctionEditor :: v_destroy () {
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
-	if (group) {   // undangle
-		int i = 1; while (theGroup [i] != this) { Melder_assert (i < maxGroup); i ++; } theGroup [i] = NULL;
+	if (our group) {   // undangle
+		int i = 1;
+		while (theGroup [i] != this) {
+			Melder_assert (i < maxGroup);
+			i ++;
+		}
+		theGroup [i] = NULL;
 		nGroup --;
 	}
-	forget (d_graphics);
+	forget (our d_graphics);
 	FunctionEditor_Parent :: v_destroy ();
 }
 
@@ -372,7 +379,7 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 	iam (FunctionEditor);
 	if (my d_graphics == NULL) return;   // Could be the case in the very beginning.
 	Graphics_setWsViewport (my d_graphics, 0, event -> width, 0, event -> height);
-	short width = event -> width + 21;
+	int width = event -> width + 21;
 	/*
 	 * Put the function viewer at the left and the selection viewer at the right.
 	 */

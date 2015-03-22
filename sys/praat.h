@@ -131,10 +131,10 @@ typedef struct {
 	ClassInfo klas;   // the class
 	Data object;   // the instance
 	wchar_t *name;   // the name of the object as it appears in the List
+	structMelderFile file;   // is this Object associated with a file?
 	long id;   // the unique number of the object
 	int selected;   // is the name of the object inverted in the list?
 	Editor editors [praat_MAXNUM_EDITORS];   // are there editors open with this Object in it?
-	structMelderFile file;   // is this (very large) Object (partially) in a file?
 	int _beingCreated;
 } structPraat_Object, *praat_Object;
 

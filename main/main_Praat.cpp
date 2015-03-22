@@ -20,11 +20,6 @@
 #include "praat.h"
 #include "praat_version.h"
 
-#define UTF32_C(string) \
-	({ static const wchar_t *_static_utf32_string = Melder_utf8ToWcs (string); _static_utf32_string; })
-
-static const char32_t *greeting = U"Hello?";
-
 static void logo (Graphics g) {
 	Graphics_setWindow (g, 0, 1, 0.00, 0.80);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
@@ -46,7 +41,7 @@ static void logo (Graphics g) {
 	Graphics_text (g, 0.5, 0.33, L"www.praat.org");
 	Graphics_setFont (g, kGraphics_font_HELVETICA);
 	Graphics_setFontSize (g, 10);
-	Graphics_text (g, 0.5, 0.16, UTF32_C ("Copyright © 1992–" xstr(PRAAT_YEAR) " by Paul Boersma and David Weenink"));
+	Graphics_text (g, 0.5, 0.16, L"Copyright © 1992–" xstr(PRAAT_YEAR) " by Paul Boersma and David Weenink");
 }
 
 int main (int argc, char *argv []) {

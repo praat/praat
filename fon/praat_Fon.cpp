@@ -2018,7 +2018,7 @@ END
 
 FORM_READ (IntervalTier_readFromXwaves, L"Read IntervalTier from Xwaves", 0, true)
 	autoIntervalTier me = IntervalTier_readFromXwaves (file);
-	praat_new (me.transfer(), MelderFile_name (file));
+	praat_newWithFile (me.transfer(), MelderFile_name (file), file);
 END
 
 /***** LTAS *****/

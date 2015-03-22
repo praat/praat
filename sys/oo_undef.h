@@ -61,19 +61,14 @@
 #undef oo_DECLARING
 #undef oo_DESTROYING
 #undef oo_COPYING
-#undef oo_EQUALLING
 #undef oo_COMPARING
 #undef oo_VALIDATING_ENCODING
 #undef oo_READING
 #undef oo_READING_TEXT
 #undef oo_READING_BINARY
-#undef oo_READING_CACHE
-#undef oo_READING_LISP
 #undef oo_WRITING
 #undef oo_WRITING_TEXT
 #undef oo_WRITING_BINARY
-#undef oo_WRITING_CACHE
-#undef oo_WRITING_LISP
 #undef oo_DESCRIBING
 
 /* End of file oo_undef.h */

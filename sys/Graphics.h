@@ -2,7 +2,7 @@
 #define _Graphics_h_
 /* Graphics.h
  *
- * Copyright (C) 1992-2011,2012,2013,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +58,6 @@ Thing_define (Graphics, Thing) {
 		int resolution;
 			/* Dots per inch. */
 		enum kGraphics_resolution resolutionNumber;
-			/* 0 = 96 dpi, 1 = 100 dpi, 2 = 300 dpi, 3 = 360 dpi, 4 = 600 dpi */
 		long d_x1DCmin, d_x2DCmax, d_y1DCmin, d_y2DCmax;
 			/* Maximum dimensions of the output device. */
 			/* x1DCmin < x2DCmax; y1DCmin < y2DCmax; */

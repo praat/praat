@@ -139,7 +139,7 @@ Thing_implement (GuiList, GuiControl, 0);
 		trace ("enter");
 		GuiList me = d_userData;
 		if (me && my d_selectionChangedCallback) {
-			struct structGuiListEvent event = { me };
+			struct structGuiListEvent event { me };
 			//my d_selectionChangedCallback (my d_selectionChangedBoss, & event);
 		}
 	}
@@ -168,7 +168,7 @@ Thing_implement (GuiList, GuiControl, 0);
 		trace ("enter");
 		GuiList me = d_userData;
 		if (me && my d_selectionChangedCallback && ! my d_blockValueChangedCallbacks) {
-			struct structGuiListEvent event = { me };
+			struct structGuiListEvent event { me };
 			my d_selectionChangedCallback (my d_selectionChangedBoss, & event);
 		}
 	}

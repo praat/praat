@@ -1186,7 +1186,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	 * On Unix, also create names for process-id and message files.
 	 */
 	{
-		structMelderDir prefParentDir = { { 0 } };   /* Directory under which to store our preferences directory. */
+		structMelderDir prefParentDir { { 0 } };   /* Directory under which to store our preferences directory. */
 		wchar_t name [256];
 		Melder_getPrefDir (& prefParentDir);
 		/*
@@ -1489,7 +1489,7 @@ void praat_run (void) {
 	/* The Praat phase should remain praat_STARTING_UP,
 	 * because any added commands must not be included in the buttons file.
 	 */
-	structMelderFile searchPattern = { 0 };
+	structMelderFile searchPattern { 0 };
 	MelderDir_getFile (& praatDir, L"plugin_*", & searchPattern);
 	try {
 		autoStrings directoryNames = Strings_createAsDirectoryList (Melder_fileToPath (& searchPattern));
@@ -1571,7 +1571,7 @@ void praat_run (void) {
 				/*
 				 * Try to get the error message out; this is a bit complicated...
 				 */
-				structMelderFile batchFile = { 0 };
+				structMelderFile batchFile { 0 };
 				try {
 					Melder_relativePathToFile (theCurrentPraatApplication -> batchName.string, & batchFile);
 				} catch (MelderError) {

@@ -2,7 +2,7 @@
 #define _Delta_h_
 /* Delta.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,9 +54,6 @@ struct structDelta_Tube
 };
 
 Thing_define (Delta, Thing) {
-	// functions:
-	public:
-		void init (int numberOfTubes);
 	// new data:
 	public:
 		int numberOfTubes;              // >= 1
@@ -64,6 +61,8 @@ Thing_define (Delta, Thing) {
 	// overridden methods:
 		virtual void v_destroy ();
 };
+
+void Delta_init (Delta me, int numberOfTubes);
 
 Delta Delta_create (int numberOfTubes);
 /*

@@ -624,7 +624,7 @@ static void insertBoundaryOrPoint (TextGridEditor me, int itier, double t1, doub
 			if (t1 != t2) Collection_addItem (intervalTier -> intervals, midNewInterval);
 		}
 		Collection_addItem (intervalTier -> intervals, rightNewInterval);
-		if (insertSecond && ntiers >= 2) {
+		if (insertSecond && ntiers >= 2 && t1 == t2) {
 			/*
 			 * Find the last time before t on another tier.
 			 */

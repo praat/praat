@@ -1,6 +1,6 @@
 /* Graphics_linesAndAreas.cpp
  *
- * Copyright (C) 1992-2011,2012,2013,2014 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 #define FUNCTIONS_ARE_CLIPPED  1
 
 #define LINE_WIDTH_IN_PIXELS(me)  ( my resolution > 192 ? my lineWidth * (my resolution / 192.0) : my lineWidth )
-#define ORDER_DC  { long temp; if (x1DC > x2DC) temp = x1DC, x1DC = x2DC, x2DC = temp; \
+#define ORDER_DC  { double temp; if (x1DC > x2DC) temp = x1DC, x1DC = x2DC, x2DC = temp; \
 	if (yIsZeroAtTheTop == (y2DC > y1DC)) temp = y1DC, y1DC = y2DC, y2DC = temp; }
 
 static void psPrepareLine (GraphicsPostscript me) {
@@ -351,9 +351,10 @@ void structGraphicsScreen :: v_fillRectangle (double x1DC, double x2DC, double y
 	ORDER_DC
 	#if cairo
 		if (d_cairoGraphicsContext == NULL) return;	
-		int width = x2DC - x1DC + 1, height = y1DC - y2DC + 1;
+		double width = x2DC - x1DC + 1.0, height = y1DC - y2DC + 1.0;
 		if (width <= 0 || height <= 0) return;
-		cairo_rectangle (d_cairoGraphicsContext, x1DC, y2DC, width, height);
+		trace ("x1DC %.17g, x2DC %.17g, y1DC %.17g, y2DC %.17g", x1DC, x2DC, y1DC, y2DC);
+		cairo_rectangle (d_cairoGraphicsContext, round (x1DC), round (y2DC), round (width), round (height));
 		cairo_fill (d_cairoGraphicsContext);
 	#elif win
 		RECT rect;
