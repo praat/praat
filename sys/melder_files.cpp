@@ -301,7 +301,7 @@ void MelderFile_setToNull (MelderFile file) {
 }
 
 bool MelderFile_isNull (MelderFile file) {
-	return file -> path [0] == '\0';
+	return file == nullptr || file -> path [0] == '\0';
 }
 
 void MelderDir_setToNull (MelderDir dir) {

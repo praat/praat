@@ -27,7 +27,7 @@ Thing_define (ButtonEditor, HyperPage) {
 		int show;
 		GuiRadioButton button1, button2, button3, button4, button5;
 	// overridden methods:
-		virtual bool v_scriptable () { return false; }
+		virtual bool v_scriptable () override { return false; }
 		virtual void v_createChildren ();
 		virtual void v_createHelpMenuItems (EditorMenu menu);
 		virtual void v_draw ();

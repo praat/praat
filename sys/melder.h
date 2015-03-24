@@ -50,9 +50,6 @@
 	#define INT54_MAX   9007199254740991LL
 	#define INT54_MIN  -9007199254740991LL
 #endif
-#ifdef linux
-	#define override   /* incomplete C compiler */
-#endif
 
 typedef wchar_t wchar;
 typedef uint8_t  char8_t;

@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20150322)
+MAN_BEGIN (L"What's new?", L"ppgb", 20150324)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"• Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.4.08# (24 March 2015)")
+LIST_ITEM (L"• Sound window: removed a bug that caused a crash in \"Editor info\".")
 NORMAL (L"##5.4.07# (22 March 2015)")
 LIST_ITEM (L"• TextGrid window: ##Add interval# now does the same thing as ##Add boundary# if a time strectch is selected.")
 LIST_ITEM (L"• Linux: better redrawing in TextGrid window.")
