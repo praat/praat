@@ -1,6 +1,6 @@
 /* OTMultiEditor.cpp
  *
- * Copyright (C) 2005-2011,2012,2013,2014 Paul Boersma
+ * Copyright (C) 2005-2011,2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ static void menu_cb_evaluate (EDITOR_ARGS) {
 		Editor_save (me, L"Evaluate");
 		OTMulti_newDisharmonies ((OTMulti) my data, GET_REAL (L"Evaluation noise"));
 		Graphics_updateWs (my g);
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
 
@@ -48,7 +48,7 @@ static void menu_cb_evaluate_noise_2_0 (EDITOR_ARGS) {
 	Editor_save (me, L"Evaluate (noise 2.0)");
 	OTMulti_newDisharmonies ((OTMulti) my data, 2.0);
 	Graphics_updateWs (my g);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_evaluate_tinyNoise (EDITOR_ARGS) {
@@ -56,7 +56,7 @@ static void menu_cb_evaluate_tinyNoise (EDITOR_ARGS) {
 	Editor_save (me, L"Evaluate (tiny noise)");
 	OTMulti_newDisharmonies ((OTMulti) my data, 1e-9);
 	Graphics_updateWs (my g);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_editRanking (EDITOR_ARGS) {
@@ -82,7 +82,7 @@ static void menu_cb_editRanking (EDITOR_ARGS) {
 		constraint -> disharmony = GET_REAL (L"Disharmony");
 		OTMulti_sort (grammar);
 		Graphics_updateWs (my g);
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
 
@@ -101,13 +101,13 @@ static void menu_cb_learnOne (EDITOR_ARGS) {
 		Editor_save (me, L"Learn one");
 		Melder_free (my form1);
 		Melder_free (my form2);
-		my form1 = my form1Text -> f_getString ();
-		my form2 = my form2Text -> f_getString ();
+		my form1 = GuiText_getString (my form1Text);
+		my form2 = GuiText_getString (my form2Text);
 		OTMulti_learnOne ((OTMulti) my data, my form1, my form2,
 			GET_ENUM (kOTGrammar_rerankingStrategy, L"Update rule"), GET_INTEGER (L"Direction"),
 			GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"));
 		Graphics_updateWs (my g);
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
 
@@ -120,7 +120,7 @@ static void menu_cb_removeConstraint (EDITOR_ARGS) {
 	Editor_save (me, L"Remove constraint");
 	OTMulti_removeConstraint (grammar, constraint -> name);
 	Graphics_updateWs (my g);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_resetAllRankings (EDITOR_ARGS) {
@@ -132,7 +132,7 @@ static void menu_cb_resetAllRankings (EDITOR_ARGS) {
 		Editor_save (me, L"Reset all rankings");
 		OTMulti_reset ((OTMulti) my data, GET_REAL (L"Ranking"));
 		Graphics_updateWs (my g);
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
 
@@ -145,8 +145,8 @@ static void menu_cb_OTLearningTutorial (EDITOR_ARGS) {
 static void do_limit (OTMultiEditor me) {
 	Melder_free (my form1);
 	Melder_free (my form2);
-	my form1 = my form1Text -> f_getString ();
-	my form2 = my form2Text -> f_getString ();
+	my form1 = GuiText_getString (my form1Text);
+	my form2 = GuiText_getString (my form2Text);
 	Graphics_updateWs (my g);
 }
 

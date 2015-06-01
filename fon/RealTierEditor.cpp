@@ -1,6 +1,6 @@
 /* RealTierEditor.cpp
  *
- * Copyright (C) 1992-2011,2012,2013,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ static void menu_cb_removePoints (EDITOR_ARGS) {
 		AnyTier_removePointsBetween (my data, my d_startSelection, my d_endSelection);
 	RealTierEditor_updateScaling (me);
 	FunctionEditor_redraw (me);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_addPointAtCursor (EDITOR_ARGS) {
@@ -48,7 +48,7 @@ static void menu_cb_addPointAtCursor (EDITOR_ARGS) {
 	RealTier_addPoint ((RealTier) my data, 0.5 * (my d_startSelection + my d_endSelection), my ycursor);
 	RealTierEditor_updateScaling (me);
 	FunctionEditor_redraw (me);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_addPointAt (EDITOR_ARGS) {
@@ -69,7 +69,7 @@ static void menu_cb_addPointAt (EDITOR_ARGS) {
 		RealTier_addPoint ((RealTier) my data, GET_REAL (L"Time"), desiredValue);
 		RealTierEditor_updateScaling (me);
 		FunctionEditor_redraw (me);
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
 
@@ -369,7 +369,7 @@ int structRealTierEditor :: v_click (double xWC, double yWC, bool shiftKeyPresse
 			our ycursor = v_maximumLegalValue ();
 	}
 
-	our broadcastDataChanged ();
+	Editor_broadcastDataChanged (this);
 	RealTierEditor_updateScaling (this);
 	return 1;   // update needed
 }

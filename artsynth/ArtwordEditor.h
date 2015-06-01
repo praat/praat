@@ -2,7 +2,7 @@
 #define _ArtwordEditor_h_
 /* ArtwordEditor.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,18 +23,19 @@
 #include "Artword.h"
 
 Thing_define (ArtwordEditor, Editor) {
-	// new data:
-	public:
-		Graphics graphics;
-		int feature;
-		GuiList list;
-		GuiDrawingArea drawingArea;
-		GuiText time, value;
-		GuiRadioButton button [1 + kArt_muscle_MAX];
-	// overridden methods:
-		virtual void v_destroy ();
-		virtual void v_createChildren ();
-		virtual void v_dataChanged ();
+	Graphics graphics;
+	int feature;
+	GuiList list;
+	GuiDrawingArea drawingArea;
+	GuiText time, value;
+	GuiRadioButton button [1 + kArt_muscle_MAX];
+
+	void v_destroy ()
+		override;
+	void v_createChildren ()
+		override;
+	void v_dataChanged ()
+		override;
 };
 
 ArtwordEditor ArtwordEditor_create (const wchar_t *title, Artword data);

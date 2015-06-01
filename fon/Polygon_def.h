@@ -1,6 +1,6 @@
 /* Polygon_def.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@ oo_DEFINE_CLASS (Polygon, Data)
 	#endif
 
 	#if oo_DECLARING
-		// overridden methods:
-		virtual void v_info ();
+		void v_info ()
+			override;
 	#endif
 
 oo_END_CLASS (Polygon)

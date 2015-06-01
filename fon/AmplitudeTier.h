@@ -26,9 +26,8 @@
 /********** class AmplitudeTier **********/
 
 Thing_define (AmplitudeTier, RealTier) {
-	// overridden methods:
-	protected:
-		virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
+	int v_domainQuantity ()
+		override { return MelderQuantity_TIME_SECONDS; }
 };
 
 AmplitudeTier AmplitudeTier_create (double tmin, double tmax);

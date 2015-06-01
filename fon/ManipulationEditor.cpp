@@ -1,6 +1,6 @@
 /* ManipulationEditor.cpp
  *
- * Copyright (C) 1992-2011,2012,2013,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,23 +58,23 @@ static int prefs_synthesisMethod = Manipulation_OVERLAPADD;   /* Remembered acro
 
 static void updateMenus (ManipulationEditor me) {
 	Melder_assert (my synthPulsesButton != NULL);
-	my synthPulsesButton -> f_check (my synthesisMethod == Manipulation_PULSES);
+	GuiMenuItem_check (my synthPulsesButton, my synthesisMethod == Manipulation_PULSES);
 	Melder_assert (my synthPulsesHumButton != NULL);
-	my synthPulsesHumButton -> f_check (my synthesisMethod == Manipulation_PULSES_HUM);
+	GuiMenuItem_check (my synthPulsesHumButton, my synthesisMethod == Manipulation_PULSES_HUM);
 	Melder_assert (my synthPulsesLpcButton != NULL);
-	my synthPulsesLpcButton -> f_check (my synthesisMethod == Manipulation_PULSES_LPC);
+	GuiMenuItem_check (my synthPulsesLpcButton, my synthesisMethod == Manipulation_PULSES_LPC);
 	Melder_assert (my synthPitchButton != NULL);
-	my synthPitchButton -> f_check (my synthesisMethod == Manipulation_PITCH);
+	GuiMenuItem_check (my synthPitchButton, my synthesisMethod == Manipulation_PITCH);
 	Melder_assert (my synthPitchHumButton != NULL);
-	my synthPitchHumButton -> f_check (my synthesisMethod == Manipulation_PITCH_HUM);
+	GuiMenuItem_check (my synthPitchHumButton, my synthesisMethod == Manipulation_PITCH_HUM);
 	Melder_assert (my synthPulsesPitchButton != NULL);
-	my synthPulsesPitchButton -> f_check (my synthesisMethod == Manipulation_PULSES_PITCH);
+	GuiMenuItem_check (my synthPulsesPitchButton, my synthesisMethod == Manipulation_PULSES_PITCH);
 	Melder_assert (my synthPulsesPitchHumButton != NULL);
-	my synthPulsesPitchHumButton -> f_check (my synthesisMethod == Manipulation_PULSES_PITCH_HUM);
+	GuiMenuItem_check (my synthPulsesPitchHumButton, my synthesisMethod == Manipulation_PULSES_PITCH_HUM);
 	Melder_assert (my synthOverlapAddButton != NULL);
-	my synthOverlapAddButton -> f_check (my synthesisMethod == Manipulation_OVERLAPADD);
+	GuiMenuItem_check (my synthOverlapAddButton, my synthesisMethod == Manipulation_OVERLAPADD);
 	Melder_assert (my synthPitchLpcButton != NULL);
-	my synthPitchLpcButton -> f_check (my synthesisMethod == Manipulation_PITCH_LPC);
+	GuiMenuItem_check (my synthPitchLpcButton, my synthesisMethod == Manipulation_PITCH_LPC);
 }
 
 /*
@@ -121,7 +121,7 @@ static void menu_cb_extractOriginalSound (EDITOR_ARGS) {
 	Manipulation ana = (Manipulation) my data;
 	if (! ana -> sound) return;
 	autoSound publish = Data_copy (ana -> sound);
-	my broadcastPublication (publish.transfer());
+	Editor_broadcastPublication (me, publish.transfer());
 }
 
 static void menu_cb_extractPulses (EDITOR_ARGS) {
@@ -129,7 +129,7 @@ static void menu_cb_extractPulses (EDITOR_ARGS) {
 	Manipulation ana = (Manipulation) my data;
 	if (! ana -> pulses) return;
 	autoPointProcess publish = Data_copy (ana -> pulses);
-	my broadcastPublication (publish.transfer());
+	Editor_broadcastPublication (me, publish.transfer());
 }
 
 static void menu_cb_extractPitchTier (EDITOR_ARGS) {
@@ -137,7 +137,7 @@ static void menu_cb_extractPitchTier (EDITOR_ARGS) {
 	Manipulation ana = (Manipulation) my data;
 	if (! ana -> pitch) return;
 	autoPitchTier publish = Data_copy (ana -> pitch);
-	my broadcastPublication (publish.transfer());
+	Editor_broadcastPublication (me, publish.transfer());
 }
 
 static void menu_cb_extractDurationTier (EDITOR_ARGS) {
@@ -145,14 +145,14 @@ static void menu_cb_extractDurationTier (EDITOR_ARGS) {
 	Manipulation ana = (Manipulation) my data;
 	if (! ana -> duration) return;
 	autoDurationTier publish = Data_copy (ana -> duration);
-	my broadcastPublication (publish.transfer());
+	Editor_broadcastPublication (me, publish.transfer());
 }
 
 static void menu_cb_extractManipulatedSound (EDITOR_ARGS) {
 	EDITOR_IAM (ManipulationEditor);
 	Manipulation ana = (Manipulation) my data;
 	autoSound publish = Manipulation_to_Sound (ana, my synthesisMethod);
-	my broadcastPublication (publish.transfer());
+	Editor_broadcastPublication (me, publish.transfer());
 }
 
 /***** EDIT MENU *****/
@@ -187,7 +187,7 @@ static void menu_cb_removePulses (EDITOR_ARGS) {
 	else
 		PointProcess_removePointsBetween (ana -> pulses, my d_startSelection, my d_endSelection);
 	FunctionEditor_redraw (me);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_addPulseAtCursor (EDITOR_ARGS) {
@@ -197,7 +197,7 @@ static void menu_cb_addPulseAtCursor (EDITOR_ARGS) {
 	Editor_save (me, L"Add pulse");
 	PointProcess_addPoint (ana -> pulses, 0.5 * (my d_startSelection + my d_endSelection));
 	FunctionEditor_redraw (me);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_addPulseAt (EDITOR_ARGS) {
@@ -212,7 +212,7 @@ static void menu_cb_addPulseAt (EDITOR_ARGS) {
 		Editor_save (me, L"Add pulse");
 		PointProcess_addPoint (ana -> pulses, GET_REAL (L"Position"));
 		FunctionEditor_redraw (me);
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
 
@@ -228,7 +228,7 @@ static void menu_cb_removePitchPoints (EDITOR_ARGS) {
 	else
 		AnyTier_removePointsBetween (ana -> pitch, my d_startSelection, my d_endSelection);
 	FunctionEditor_redraw (me);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_addPitchPointAtCursor (EDITOR_ARGS) {
@@ -238,7 +238,7 @@ static void menu_cb_addPitchPointAtCursor (EDITOR_ARGS) {
 	Editor_save (me, L"Add pitch point");
 	RealTier_addPoint (ana -> pitch, 0.5 * (my d_startSelection + my d_endSelection), YLININV (my pitchTier.cursor));
 	FunctionEditor_redraw (me);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_addPitchPointAtSlice (EDITOR_ARGS) {
@@ -276,7 +276,7 @@ static void menu_cb_addPitchPointAtSlice (EDITOR_ARGS) {
 	}
 	RealTier_addPoint (ana -> pitch, 0.5 * (my d_startSelection + my d_endSelection), YLININV (f));
 	FunctionEditor_redraw (me);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }	
 
 static void menu_cb_addPitchPointAt (EDITOR_ARGS) {
@@ -293,7 +293,7 @@ static void menu_cb_addPitchPointAt (EDITOR_ARGS) {
 		Editor_save (me, L"Add pitch point");
 		RealTier_addPoint (ana -> pitch, GET_REAL (L"Time"), YLININV (GET_REAL (L"Frequency")));
 		FunctionEditor_redraw (me);
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
 
@@ -315,7 +315,7 @@ static void menu_cb_stylizePitch (EDITOR_ARGS) {
 			my pref_pitch_stylize_frequencyResolution () = my p_pitch_stylize_frequencyResolution = GET_REAL (L"Frequency resolution"),
 			my pref_pitch_stylize_useSemitones        () = my p_pitch_stylize_useSemitones        = GET_INTEGER (L"Units") - 1);
 		FunctionEditor_redraw (me);
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
 
@@ -326,7 +326,7 @@ static void menu_cb_stylizePitch_2st (EDITOR_ARGS) {
 	Editor_save (me, L"Stylize pitch");
 	PitchTier_stylize (ana -> pitch, 2.0, TRUE);
 	FunctionEditor_redraw (me);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_interpolateQuadratically (EDITOR_ARGS) {
@@ -343,7 +343,7 @@ static void menu_cb_interpolateQuadratically (EDITOR_ARGS) {
 			my pref_pitch_interpolateQuadratically_numberOfPointsPerParabola () = my p_pitch_interpolateQuadratically_numberOfPointsPerParabola = GET_INTEGER (L"Number of points per parabola"),
 			my p_pitch_units == kManipulationEditor_pitchUnits_SEMITONES);
 		FunctionEditor_redraw (me);
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
 
@@ -354,7 +354,7 @@ static void menu_cb_interpolateQuadratically_4pts (EDITOR_ARGS) {
 	Editor_save (me, L"Interpolate quadratically");
 	RealTier_interpolateQuadratically (ana -> pitch, 4, my p_pitch_units == kManipulationEditor_pitchUnits_SEMITONES);
 	FunctionEditor_redraw (me);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_shiftPitchFrequencies (EDITOR_ARGS) {
@@ -382,11 +382,11 @@ static void menu_cb_shiftPitchFrequencies (EDITOR_ARGS) {
 		try {
 			PitchTier_shiftFrequencies (ana -> pitch, my d_startSelection, my d_endSelection, GET_REAL (L"Frequency shift"), unit);
 			FunctionEditor_redraw (me);
-			my broadcastDataChanged ();
+			Editor_broadcastDataChanged (me);
 		} catch (MelderError) {
 			// the PitchTier may have partially changed
 			FunctionEditor_redraw (me);
-			my broadcastDataChanged ();
+			Editor_broadcastDataChanged (me);
 			throw;
 		}
 	EDITOR_END
@@ -404,7 +404,7 @@ static void menu_cb_multiplyPitchFrequencies (EDITOR_ARGS) {
 		Editor_save (me, L"Multiply pitch frequencies");
 		PitchTier_multiplyFrequencies (ana -> pitch, my d_startSelection, my d_endSelection, GET_REAL (L"Factor"));
 		FunctionEditor_redraw (me);
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
 
@@ -500,7 +500,7 @@ static void menu_cb_removeDurationPoints (EDITOR_ARGS) {
 	else
 		AnyTier_removePointsBetween (ana -> duration, my d_startSelection, my d_endSelection);
 	FunctionEditor_redraw (me);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_addDurationPointAtCursor (EDITOR_ARGS) {
@@ -510,7 +510,7 @@ static void menu_cb_addDurationPointAtCursor (EDITOR_ARGS) {
 	Editor_save (me, L"Add duration point");
 	RealTier_addPoint (ana -> duration, 0.5 * (my d_startSelection + my d_endSelection), my duration.cursor);
 	FunctionEditor_redraw (me);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_addDurationPointAt (EDITOR_ARGS) {
@@ -526,7 +526,7 @@ static void menu_cb_addDurationPointAt (EDITOR_ARGS) {
 		Editor_save (me, L"Add duration point");
 		RealTier_addPoint (ana -> duration, GET_REAL (L"Time"), GET_REAL (L"Relative duration"));
 		FunctionEditor_redraw (me);
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
 
@@ -537,7 +537,7 @@ static void menu_cb_newDuration (EDITOR_ARGS) {
 	forget (ana -> duration);
 	ana -> duration = DurationTier_create (ana -> xmin, ana -> xmax);
 	FunctionEditor_redraw (me);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_forgetDuration (EDITOR_ARGS) {
@@ -545,7 +545,7 @@ static void menu_cb_forgetDuration (EDITOR_ARGS) {
 	Manipulation ana = (Manipulation) my data;
 	forget (ana -> duration);
 	FunctionEditor_redraw (me);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 	
 static void menu_cb_ManipulationEditorHelp (EDITOR_ARGS) { EDITOR_IAM (ManipulationEditor); Melder_help (L"ManipulationEditor"); }
@@ -1073,7 +1073,7 @@ static int clickPitch (ManipulationEditor me, double xWC, double yWC, bool shift
 		my pitchTier.cursor = YLIN (point -> value);
 	}
 
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 	return 1;   /* Update needed. */
 }
 
@@ -1221,7 +1221,7 @@ static int clickDuration (ManipulationEditor me, double xWC, double yWC, int shi
 		my duration.cursor = point -> value;
 	}
 
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 	return 1;   /* Update needed. */
 }
 

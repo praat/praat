@@ -1,6 +1,6 @@
 /* RunnerMFC.cpp
  *
- * Copyright (C) 2001-2011,2013 Paul Boersma
+ * Copyright (C) 2001-2011,2013,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,16 +35,16 @@
 Thing_implement (RunnerMFC, Editor, 0);
 
 void structRunnerMFC :: v_destroy () {
-	if (experiments) {
-		experiments -> size = 0;   // give ownership back to whoever thinks they own the experiments. BUG: can be dontOwnItems
-		forget (experiments);
+	if (our experiments) {
+		our experiments -> size = 0;   // give ownership back to whoever thinks they own the experiments. BUG: can be dontOwnItems
+		forget (our experiments);
 	}
-	forget (graphics);
-	RunnerMFC_Parent :: v_destroy ();
+	forget (our graphics);
+	our RunnerMFC_Parent :: v_destroy ();
 }
 
 void structRunnerMFC :: v_dataChanged () {
-	Graphics_updateWs (graphics);
+	Graphics_updateWs (our graphics);
 }
 
 static int RunnerMFC_startExperiment (RunnerMFC me) {
@@ -52,7 +52,7 @@ static int RunnerMFC_startExperiment (RunnerMFC me) {
 	Melder_assert (my data -> classInfo == classExperimentMFC);
 	ExperimentMFC_start ((ExperimentMFC) my data);
 	Thing_setName (me, ((ExperimentMFC) my data) -> name);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 	Graphics_updateWs (my graphics);
 	return 1;
 }
@@ -196,15 +196,15 @@ static void do_ok (RunnerMFC me) {
 	my numberOfReplays = 0;
 	if (experiment -> trial == experiment -> numberOfTrials) {
 		experiment -> trial ++;
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 		Graphics_updateWs (my graphics);
 	} else if (experiment -> breakAfterEvery != 0 && experiment -> trial % experiment -> breakAfterEvery == 0) {
 		experiment -> pausing = TRUE;
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 		Graphics_updateWs (my graphics);
 	} else {
 		experiment -> trial ++;
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 		if (experiment -> blankWhilePlaying) {
 			Graphics_setGrey (my graphics, 0.8);
 			Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
@@ -233,7 +233,7 @@ static void do_oops (RunnerMFC me) {
 	experiment -> goodnesses [experiment -> trial] = 0;
 	experiment -> pausing = FALSE;
 	my numberOfReplays = 0;
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 	if (experiment -> blankWhilePlaying) {
 		Graphics_setGrey (my graphics, 0.8);
 		Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
@@ -253,7 +253,7 @@ static void do_replay (RunnerMFC me) {
 	ExperimentMFC experiment = (ExperimentMFC) my data;
 	Melder_assert (experiment -> trial >= 1 && experiment -> trial <= experiment -> numberOfTrials);
 	my numberOfReplays ++;
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 	if (experiment -> blankWhilePlaying) {
 		Graphics_setGrey (my graphics, 0.8);
 		Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
@@ -281,7 +281,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	Graphics_DCtoWC (my graphics, event -> x, event -> y, & x, & y);
 	if (experiment -> trial == 0) {   // the first click of the experiment
 		experiment -> trial ++;
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 		if (experiment -> blankWhilePlaying) {
 			Graphics_setGrey (my graphics, 0.8);
 			Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
@@ -308,7 +308,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 		} else {
 			experiment -> pausing = FALSE;
 			experiment -> trial ++;
-			my broadcastDataChanged ();
+			Editor_broadcastDataChanged (me);
 			if (experiment -> blankWhilePlaying) {
 				Graphics_setGrey (my graphics, 0.8);
 				Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
@@ -351,7 +351,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 					if (experiment -> ok_right <= experiment -> ok_left && experiment -> numberOfGoodnessCategories == 0) {
 						do_ok (me);
 					} else {
-						my broadcastDataChanged ();
+						Editor_broadcastDataChanged (me);
 						Graphics_updateWs (my graphics);
 					}
 				}
@@ -361,7 +361,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 					GoodnessMFC cat = & experiment -> goodness [iresponse];
 					if (x > cat -> left && x < cat -> right && y > cat -> bottom && y < cat -> top) {
 						experiment -> goodnesses [experiment -> trial] = iresponse;
-						my broadcastDataChanged ();
+						Editor_broadcastDataChanged (me);
 						Graphics_updateWs (my graphics);
 					}
 				}
@@ -431,7 +431,7 @@ static void gui_drawingarea_cb_key (I, GuiDrawingAreaKeyEvent event) {
 					if (experiment -> ok_right <= experiment -> ok_left && experiment -> numberOfGoodnessCategories == 0) {
 						do_ok (me);
 					} else {
-						my broadcastDataChanged ();
+						Editor_broadcastDataChanged (me);
 						Graphics_updateWs (my graphics);
 					}
 				}
@@ -441,7 +441,7 @@ static void gui_drawingarea_cb_key (I, GuiDrawingAreaKeyEvent event) {
 }
 
 void structRunnerMFC :: v_createChildren () {
-	d_drawingArea = GuiDrawingArea_createShown (d_windowForm, 0, 0, Machine_getMenuBarHeight (), 0,
+	our d_drawingArea = GuiDrawingArea_createShown (our d_windowForm, 0, 0, Machine_getMenuBarHeight (), 0,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
 }
 
@@ -453,8 +453,8 @@ RunnerMFC RunnerMFC_create (const wchar_t *title, Ordered experiments) {
 		my graphics = Graphics_create_xmdrawingarea (my d_drawingArea);
 
 struct structGuiDrawingAreaResizeEvent event = { my d_drawingArea, 0 };
-event. width  = my d_drawingArea -> f_getWidth  ();
-event. height = my d_drawingArea -> f_getHeight ();
+event. width  = GuiControl_getWidth  (my d_drawingArea);
+event. height = GuiControl_getHeight (my d_drawingArea);
 gui_drawingarea_cb_resize (me.peek(), & event);
 
 		my iexperiment = 1;

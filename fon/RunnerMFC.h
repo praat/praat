@@ -2,7 +2,7 @@
 #define _RunnerMFC_h_
 /* RunnerMFC.h
  *
- * Copyright (C) 2001-2011,2012 Paul Boersma
+ * Copyright (C) 2001-2011,2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,19 +23,22 @@
 #include "ExperimentMFC.h"
 
 Thing_define (RunnerMFC, Editor) {
-	// new data:
-	public:
-		GuiDrawingArea d_drawingArea;
-		Ordered experiments;
-		long iexperiment;
-		Graphics graphics;
-		long numberOfReplays;
-	// overridden methods:
-		void v_destroy ();
-		bool v_editable () { return false; }
-		bool v_scriptable () { return false; }
-		void v_createChildren ();
-		void v_dataChanged ();
+	GuiDrawingArea d_drawingArea;
+	Ordered experiments;
+	long iexperiment;
+	Graphics graphics;
+	long numberOfReplays;
+
+	void v_destroy ()
+		override;
+	bool v_editable ()
+		override { return false; }
+	bool v_scriptable ()
+		override { return false; }
+	void v_createChildren ()
+		override;
+	void v_dataChanged ()
+		override;
 };
 
 RunnerMFC RunnerMFC_create (const wchar_t *title, Ordered experiments);

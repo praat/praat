@@ -1,6 +1,6 @@
 /* GuiForm.cpp
  *
- * Copyright (C) 1993-2012 Paul Boersma
+ * Copyright (C) 1993-2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ GuiForm GuiForm_createInScrolledWindow (GuiScrolledWindow parent)
 		//my d_widget = XmCreateRowColumn (parent -> d_widget, "menu", NULL, 0);
 		my d_widget = XmCreateForm (parent -> d_widget, "menu", NULL, 0);
 	#endif
-	my f_show ();
+	GuiThing_show (me);
 
 	#if gtk
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_guiGtkForm_destroyCallback), me);

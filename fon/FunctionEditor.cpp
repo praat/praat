@@ -70,7 +70,7 @@ static void updateScrollBar (FunctionEditor me) {
 	if (value < 1) value = 1;
 	increment = slider_size / SCROLL_INCREMENT_FRACTION + 1;
 	page_increment = RELATIVE_PAGE_INCREMENT * slider_size + 1;
-	my scrollBar -> f_set (NUMundefined, maximumScrollBarValue, value, slider_size, increment, page_increment);
+	GuiScrollBar_set (my scrollBar, NUMundefined, maximumScrollBarValue, value, slider_size, increment, page_increment);
 }
 
 static void updateGroup (FunctionEditor me) {
@@ -394,8 +394,8 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 
 	/* Save the current shell size as the user's preference for a new FunctionEditor. */
 
-	my pref_shellWidth () = my d_windowForm -> f_getShellWidth ();
-	my pref_shellHeight () = my d_windowForm -> f_getShellHeight ();
+	my pref_shellWidth  () = GuiShell_getShellWidth  (my d_windowForm);
+	my pref_shellHeight () = GuiShell_getShellHeight (my d_windowForm);
 }
 
 static void menu_cb_preferences (EDITOR_ARGS) {
@@ -418,8 +418,8 @@ static void menu_cb_preferences (EDITOR_ARGS) {
 		my pref_arrowScrollStep () = my p_arrowScrollStep = GET_REAL (L"Arrow scroll step");
 		if (my p_showSelectionViewer != oldShowSelectionViewer) {
 			struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };
-			event. width = my drawingArea -> f_getWidth ();
-			event. height = my drawingArea -> f_getHeight ();
+			event. width  = GuiControl_getWidth  (my drawingArea);
+			event. height = GuiControl_getHeight (my drawingArea);
 			gui_drawingarea_cb_resize (me, & event);
 		}
 		if (! oldSynchronizedZoomAndScroll && my pref_synchronizedZoomAndScroll ()) {
@@ -887,11 +887,11 @@ static void menu_cb_moveEright (EDITOR_ARGS) {
 static void gui_cb_scroll (I, GuiScrollBarEvent event) {
 	iam (FunctionEditor);
 	if (my d_graphics == NULL) return;   // ignore events during creation
-	double value = event -> scrollBar -> f_getValue ();
+	double value = GuiScrollBar_getValue (event -> scrollBar);
 	double shift = my tmin + (value - 1) * (my tmax - my tmin) / maximumScrollBarValue - my d_startWindow;
 	bool shifted = shift != 0.0;
 	double oldSliderSize = (my d_endWindow - my d_startWindow) / (my tmax - my tmin) * maximumScrollBarValue - 1;
-	double newSliderSize = event -> scrollBar -> f_getSliderSize ();
+	double newSliderSize = GuiScrollBar_getSliderSize (event -> scrollBar);
 	bool zoomed = newSliderSize != oldSliderSize;
 	#if ! cocoa
 		zoomed = false;
@@ -1192,7 +1192,7 @@ void structFunctionEditor :: v_createChildren () {
 		0, 0,
 		Machine_getMenuBarHeight () + ( our v_hasText () ? TEXT_HEIGHT + marginBetweenTextAndDrawingAreaToEnsureCorrectUnhighlighting : 0), -8 - Gui_PUSHBUTTON_HEIGHT,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, this, 0);
-	our drawingArea -> f_setSwipable (our scrollBar, NULL);
+	GuiDrawingArea_setSwipable (our drawingArea, our scrollBar, NULL);
 }
 
 void structFunctionEditor :: v_dataChanged () {
@@ -1536,8 +1536,8 @@ void FunctionEditor_init (FunctionEditor me, const wchar_t *title, Function data
 
 // This exdents because it's a hack:
 struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };
-event. width  = my drawingArea -> f_getWidth  ();
-event. height = my drawingArea -> f_getHeight ();
+event. width  = GuiControl_getWidth  (my drawingArea);
+event. height = GuiControl_getHeight (my drawingArea);
 gui_drawingarea_cb_resize (me, & event);
 
 	my v_updateText ();
@@ -1569,7 +1569,7 @@ void FunctionEditor_enableUpdates (FunctionEditor me, bool enable) {
 void FunctionEditor_ungroup (FunctionEditor me) {
 	if (! my group) return;
 	my group = false;
-	my groupButton -> f_setValue (false);
+	GuiCheckButton_setValue (my groupButton, false);
 	int i = 1;
 	while (theGroup [i] != me) i ++;
 	theGroup [i] = NULL;

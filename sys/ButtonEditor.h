@@ -2,7 +2,7 @@
 #define _ButtonEditor_h_
 /* ButtonEditor.h
  *
- * Copyright (C) 1996-2011,2012 Paul Boersma
+ * Copyright (C) 1996-2011,2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,16 +22,19 @@
 #include "HyperPage.h"
 
 Thing_define (ButtonEditor, HyperPage) {
-	// new data:
-	public:
-		int show;
-		GuiRadioButton button1, button2, button3, button4, button5;
-	// overridden methods:
-		virtual bool v_scriptable () override { return false; }
-		virtual void v_createChildren ();
-		virtual void v_createHelpMenuItems (EditorMenu menu);
-		virtual void v_draw ();
-		virtual int v_goToPage (const wchar_t *title);
+	int show;
+	GuiRadioButton button1, button2, button3, button4, button5;
+
+	bool v_scriptable ()
+		override { return false; }
+	void v_createChildren ()
+		override;
+	void v_createHelpMenuItems (EditorMenu menu)
+		override;
+	void v_draw ()
+		override;
+	int v_goToPage (const wchar_t *title)
+		override;
 };
 
 ButtonEditor ButtonEditor_create ();

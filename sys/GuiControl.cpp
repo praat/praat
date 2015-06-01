@@ -1,6 +1,6 @@
 /* GuiControl.cpp
  *
- * Copyright (C) 1993-2012,2013 Paul Boersma, 2008 Stefan de Koninck, 2010 Franz Brausse, 2013 Tom Naughton
+ * Copyright (C) 1993-2012,2013,2015 Paul Boersma, 2008 Stefan de Koninck, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,67 +19,6 @@
 
 #include "GuiP.h"
 #include "machine.h"
-
-int structGuiControl :: f_getX () {
-	#if gtk
-		return GTK_WIDGET (d_widget) -> allocation.x;
-	#elif cocoa
-		return [(NSView *) d_widget frame]. origin. x;
-	#elif motif
-		return d_widget -> x;
-	#endif
-}
-
-int structGuiControl :: f_getY () {
-	#if gtk
-		return GTK_WIDGET (d_widget) -> allocation.y;
-	#elif cocoa
-		return [(NSView *) d_widget frame]. origin. y;
-	#elif motif
-		return d_widget -> y;
-	#endif
-}
-
-int structGuiControl :: f_getWidth () {
-	#if gtk
-		return GTK_WIDGET (d_widget) -> allocation.width;
-	#elif cocoa
-		return [(NSView *) d_widget frame]. size. width;
-	#elif motif
-		return d_widget -> width;
-	#endif
-}
-
-int structGuiControl :: f_getHeight () {
-	#if gtk
-		return GTK_WIDGET (d_widget) -> allocation.height;
-	#elif cocoa
-		return [(NSView *) d_widget frame]. size. height;
-	#elif motif
-		return d_widget -> height;
-	#endif
-}
-
-void structGuiControl :: f_move (int x, int y) {
-	#if gtk
-		GuiObject parent = gtk_widget_get_parent (GTK_WIDGET (d_widget));
-		if (GTK_IS_FIXED (parent)) {
-			gtk_fixed_move (GTK_FIXED (parent), GTK_WIDGET (d_widget), x, y);
-		}
-	#elif cocoa
-	#elif motif
-		XtVaSetValues (d_widget, XmNx, (Position) x, XmNy, (Position) y, NULL);   // 64-bit-compatible
-	#endif
-}
-
-void structGuiControl :: f_setSize (int width, int height) {
-	#if gtk
-		gtk_widget_set_size_request (GTK_WIDGET (d_widget), width, height);
-	#elif cocoa
-	#elif motif
-		XtVaSetValues (d_widget, XmNwidth, (Dimension) width, XmNheight, (Dimension) height, NULL);   // 64-bit-compatible
-	#endif
-}
 
 void structGuiControl :: v_positionInForm (GuiObject widget, int left, int right, int top, int bottom, GuiForm parent) {
 	#if gtk
@@ -199,6 +138,67 @@ void structGuiControl :: v_positionInScrolledWindow (GuiObject widget, int width
 	#elif motif
 		(void) parent;
 		XtVaSetValues (widget, XmNwidth, width, XmNheight, height, NULL);
+	#endif
+}
+
+int GuiControl_getX (GuiControl me) {
+	#if gtk
+		return GTK_WIDGET (my d_widget) -> allocation.x;
+	#elif cocoa
+		return [(NSView *) my d_widget frame]. origin. x;
+	#elif motif
+		return my d_widget -> x;
+	#endif
+}
+
+int GuiControl_getY (GuiControl me) {
+	#if gtk
+		return GTK_WIDGET (my d_widget) -> allocation.y;
+	#elif cocoa
+		return [(NSView *) my d_widget frame]. origin. y;
+	#elif motif
+		return my d_widget -> y;
+	#endif
+}
+
+int GuiControl_getWidth (GuiControl me) {
+	#if gtk
+		return GTK_WIDGET (my d_widget) -> allocation.width;
+	#elif cocoa
+		return [(NSView *) my d_widget frame]. size. width;
+	#elif motif
+		return my d_widget -> width;
+	#endif
+}
+
+int GuiControl_getHeight (GuiControl me) {
+	#if gtk
+		return GTK_WIDGET (my d_widget) -> allocation.height;
+	#elif cocoa
+		return [(NSView *) my d_widget frame]. size. height;
+	#elif motif
+		return my d_widget -> height;
+	#endif
+}
+
+void GuiControl_move (GuiControl me, int x, int y) {
+	#if gtk
+		GuiObject parent = gtk_widget_get_parent (GTK_WIDGET (my d_widget));
+		if (GTK_IS_FIXED (parent)) {
+			gtk_fixed_move (GTK_FIXED (parent), GTK_WIDGET (my d_widget), x, y);
+		}
+	#elif cocoa
+	#elif motif
+		XtVaSetValues (my d_widget, XmNx, (Position) x, XmNy, (Position) y, NULL);   // 64-bit-compatible
+	#endif
+}
+
+void GuiControl_setSize (GuiControl me, int width, int height) {
+	#if gtk
+		gtk_widget_set_size_request (GTK_WIDGET (my d_widget), width, height);
+	#elif cocoa
+	#elif motif
+		XtVaSetValues (my d_widget, XmNwidth, (Dimension) width, XmNheight, (Dimension) height, NULL);   // 64-bit-compatible
 	#endif
 }
 

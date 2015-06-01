@@ -2,7 +2,7 @@
 #define _PairDistribution_h_
 /* PairDistribution.h
  *
- * Copyright (C) 1997-2011 Paul Boersma
+ * Copyright (C) 1997-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@ void PairDistribution_removeZeroWeights (PairDistribution me);
 void PairDistribution_to_Stringses (PairDistribution me, long nout, Strings *strings1, Strings *strings2);
 void PairDistribution_peekPair (PairDistribution me, wchar_t **string1, wchar_t **string2);
 
+void PairDistribution_swapInputsAndOutputs (PairDistribution me);
 
 double PairDistribution_getFractionCorrect_maximumLikelihood (PairDistribution me);
 double PairDistribution_getFractionCorrect_probabilityMatching (PairDistribution me);

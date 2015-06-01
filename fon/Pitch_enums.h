@@ -1,6 +1,6 @@
 /* Pitch_enums.h
  *
- * Copyright (C) 1992-2007,2013 Paul Boersma
+ * Copyright (C) 1992-2007,2013,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,15 +18,15 @@
  */
 
 enums_begin (kPitch_unit, 0)
-	enums_add (kPitch_unit, 0, HERTZ, L"Hertz")
-	enums_add (kPitch_unit, 1, HERTZ_LOGARITHMIC, L"Hertz (logarithmic)")
-	enums_add (kPitch_unit, 2, MEL, L"mel")
-	enums_add (kPitch_unit, 3, LOG_HERTZ, L"logHertz")
-	enums_add (kPitch_unit, 4, SEMITONES_1, L"semitones re 1 Hz")
-	enums_add (kPitch_unit, 5, SEMITONES_100, L"semitones re 100 Hz")
-	enums_add (kPitch_unit, 6, SEMITONES_200, L"semitones re 200 Hz")
-	enums_add (kPitch_unit, 7, SEMITONES_440, L"semitones re 440 Hz")
-	enums_add (kPitch_unit, 8, ERB, L"ERB")
+	enums_add (kPitch_unit, 0, HERTZ, U"Hertz")
+	enums_add (kPitch_unit, 1, HERTZ_LOGARITHMIC, U"Hertz (logarithmic)")
+	enums_add (kPitch_unit, 2, MEL, U"mel")
+	enums_add (kPitch_unit, 3, LOG_HERTZ, U"logHertz")
+	enums_add (kPitch_unit, 4, SEMITONES_1, U"semitones re 1 Hz")
+	enums_add (kPitch_unit, 5, SEMITONES_100, U"semitones re 100 Hz")
+	enums_add (kPitch_unit, 6, SEMITONES_200, U"semitones re 200 Hz")
+	enums_add (kPitch_unit, 7, SEMITONES_440, U"semitones re 440 Hz")
+	enums_add (kPitch_unit, 8, ERB, U"ERB")
 enums_end (kPitch_unit, 8, HERTZ)
 
 /* End of file Pitch_enums.h */

@@ -2,7 +2,7 @@
 #define _OTGrammarEditor_h_
 /* OTGrammar.h
  *
- * Copyright (C) 1997-2011,2012 Paul Boersma
+ * Copyright (C) 1997-2011,2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,16 +23,19 @@
 #include "OTGrammar.h"
 
 Thing_define (OTGrammarEditor, HyperPage) {
-	// new data:
-	public:
-		long selected;
-		bool d_constraintsAreDrawnVertically;
-	// overridden methods:
-		virtual bool v_editable () { return true; }
-		virtual void v_createMenus ();
-		virtual void v_createHelpMenuItems (EditorMenu menu);
-		virtual void v_draw ();
-		virtual int v_goToPage (const wchar_t *title);
+	long selected;
+	bool d_constraintsAreDrawnVertically;
+
+	bool v_editable ()
+		override { return true; }
+	void v_createMenus ()
+		override;
+	void v_createHelpMenuItems (EditorMenu menu)
+		override;
+	void v_draw ()
+		override;
+	int v_goToPage (const wchar_t *title)
+		override;
 };
 
 OTGrammarEditor OTGrammarEditor_create (const wchar_t *title, OTGrammar ot);

@@ -1,6 +1,6 @@
 /* GuiFileSelect.cpp
  *
- * Copyright (C) 2010-2012,2013,2014 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 2010-2012,2013,2014,2015 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,14 +23,14 @@
 	#include <Shlobj.h>
 #endif
 
-SortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const wchar_t *title, bool allowMultipleFiles) {
+SortedSetOfString32 GuiFileSelect_getInfileNames (GuiWindow parent, const char32 *title, bool allowMultipleFiles) {
 	structMelderDir saveDir = { { 0 } };
 	Melder_getDefaultDir (& saveDir);
-	autoSortedSetOfString me = SortedSetOfString_create ();
+	autoSortedSetOfString32 me = SortedSetOfString32_create ();
 	#if gtk
 		(void) parent;
 		static structMelderDir dir;
-		GuiObject dialog = gtk_file_chooser_dialog_new (Melder_peekWcsToUtf8 (title), NULL, GTK_FILE_CHOOSER_ACTION_OPEN,
+		GuiObject dialog = gtk_file_chooser_dialog_new (Melder_peekStr32ToUtf8 (title), NULL, GTK_FILE_CHOOSER_ACTION_OPEN,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
 		gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dialog), allowMultipleFiles);
 		if (MelderDir_isNull (& dir))   // first time?
@@ -46,7 +46,7 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const wchar_t 
 			GSList *infileNames_list = gtk_file_chooser_get_filenames (GTK_FILE_CHOOSER (dialog));
 			for (GSList *element = infileNames_list; element != NULL; element = g_slist_next (element)) {
 				char *infileName_utf8 = (char *) element -> data;
-				my addString (Melder_peekUtf8ToWcs (infileName_utf8));
+				SortedSetOfString32_addString (me.peek(), Melder_peekWcsToStr32 (Melder_peekUtf8ToWcs (infileName_utf8)));
 				g_free (infileName_utf8);
 			}
 			g_slist_free (infileNames_list);
@@ -56,14 +56,14 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const wchar_t 
 	#elif cocoa
 		(void) parent;
 		NSOpenPanel	*openPanel = [NSOpenPanel openPanel];
-		[openPanel setTitle: [NSString stringWithUTF8String: Melder_peekWcsToUtf8 (title)]];
+		[openPanel setTitle: [NSString stringWithUTF8String: Melder_peekStr32ToUtf8 (title)]];
 		[openPanel setAllowsMultipleSelection: allowMultipleFiles];
 		[openPanel setCanChooseDirectories: NO];
 		if ([openPanel runModal] == NSFileHandlingPanelOKButton) {
 			for (NSURL *url in [openPanel URLs]) {
 				structMelderFile file = { 0 };
 				Melder_8bitFileRepresentationToWcs_inline ([[url path] UTF8String], file. path);
-				my addString (file. path);
+				SortedSetOfString32_addString (me.peek(), Melder_peekWcsToStr32 (file. path));
 			}
 		}
 		setlocale (LC_ALL, "en_US");
@@ -79,7 +79,7 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const wchar_t 
 		err = NavCreateChooseFileDialog (& dialogOptions, NULL, NULL, NULL, NULL, NULL, & dialogRef);
 		if (err == noErr) {
 			NavReplyRecord reply;
-			[(NSOpenPanel *) dialogRef setTitle: (NSString *) Melder_peekWcsToCfstring (title)];
+			[(NSOpenPanel *) dialogRef setTitle: (NSString *) Melder_peekStr32ToCfstring (title)];
 			NavDialogRun (dialogRef);
 			err = NavDialogGetReply (dialogRef, & reply);
 			if (err == noErr && reply. validRecord) {
@@ -93,7 +93,7 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const wchar_t 
 					structMelderFile file = { 0 };
 					if ((err = AEGetNthPtr (& reply. selection, ifile, typeFSRef, & keyWord, & typeCode, & machFile, sizeof (FSRef), & actualSize)) == noErr)
 						Melder_machToFile (& machFile, & file);
-					my addString (Melder_fileToPath (& file));
+					SortedSetOfString32_addString (me.peek(), Melder_peekWcsToStr32 (Melder_fileToPath (& file)));
 				}
 				NavDisposeReply (& reply);
 			}
@@ -116,7 +116,7 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const wchar_t 
 		openFileName. lpstrFileTitle = NULL;
 		openFileName. nMaxFileTitle = 0;
 		openFileName. lpstrInitialDir = NULL;
-		openFileName. lpstrTitle = title;
+		openFileName. lpstrTitle = Melder_peekStr32ToWcs (title);
 		openFileName. Flags = OFN_EXPLORER | OFN_LONGNAMES | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY
 			| (allowMultipleFiles ? OFN_ALLOWMULTISELECT : 0);
 		openFileName. lpstrDefExt = NULL;
@@ -135,7 +135,7 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const wchar_t 
 				/*
 				 * The user selected one file.
 				 */
-				my addString (fullFileName);
+				SortedSetOfString32_addString (me.peek(), Melder_peekWcsToStr32 (fullFileName));
 			} else {
 				/*
 				 * The user selected multiple files.
@@ -146,7 +146,7 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const wchar_t 
 				for (const wchar_t *p = & fullFileName [firstFileNameLength + 1]; *p != '\0'; p += wcslen (p) + 1) {
 					structMelderFile file = { 0 };
 					MelderDir_getFile (& dir, p, & file);
-					my addString (Melder_fileToPath (& file));
+					SortedSetOfString32_addString (me.peek(), Melder_peekWcsToStr32 (Melder_fileToPath (& file)));
 				}
 			}
 		}
@@ -156,23 +156,23 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const wchar_t 
 	return me.transfer();
 }
 
-wchar_t * GuiFileSelect_getOutfileName (GuiWindow parent, const wchar_t *title, const wchar_t *defaultName) {
+char32 * GuiFileSelect_getOutfileName (GuiWindow parent, const char32 *title, const char32 *defaultName) {
 	structMelderDir saveDir = { { 0 } };
 	Melder_getDefaultDir (& saveDir);
-	wchar_t *outfileName = NULL;
+	char32 *outfileName = NULL;
 	#if gtk
 		(void) parent;
 		static structMelderFile file;
-		GuiObject dialog = gtk_file_chooser_dialog_new (Melder_peekWcsToUtf8 (title), NULL, GTK_FILE_CHOOSER_ACTION_SAVE,
+		GuiObject dialog = gtk_file_chooser_dialog_new (Melder_peekStr32ToUtf8 (title), NULL, GTK_FILE_CHOOSER_ACTION_SAVE,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, NULL);
 		gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (dialog), TRUE);
 		if (file. path [0] != '\0') {
 			gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), Melder_peekWcsToUtf8 (file. path));
 		}
-		gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dialog), Melder_peekWcsToUtf8 (defaultName));
+		gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dialog), Melder_peekStr32ToUtf8 (defaultName));
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 			char *outfileName_utf8 = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-			outfileName = Melder_utf8ToWcs (outfileName_utf8);
+			outfileName = Melder_utf8ToChar32 (outfileName_utf8);
 			g_free (outfileName_utf8);
 			Melder_pathToFile (outfileName, & file);
 		}
@@ -181,28 +181,28 @@ wchar_t * GuiFileSelect_getOutfileName (GuiWindow parent, const wchar_t *title, 
 	#elif cocoa
 		(void) parent;
 		NSSavePanel	*savePanel = [NSSavePanel savePanel];
-		[savePanel setTitle: [NSString stringWithUTF8String: Melder_peekWcsToUtf8 (title)]];
-		//[savePanel setNameFieldStringValue: [NSString stringWithUTF8String: Melder_peekWcsToUtf8 (defaultName)]];   // from 10.6 on
+		[savePanel setTitle: [NSString stringWithUTF8String: Melder_peekStr32ToUtf8 (title)]];
+		//[savePanel setNameFieldStringValue: [NSString stringWithUTF8String: Melder_peekStr32ToUtf8 (defaultName)]];   // from 10.6 on
 		if ([savePanel runModalForDirectory: nil
-			           file: [NSString stringWithUTF8String: Melder_peekWcsToUtf8 (defaultName)]   // deprecated 10.6 but needed 10.5
+			           file: [NSString stringWithUTF8String: Melder_peekStr32ToUtf8 (defaultName)]   // deprecated 10.6 but needed 10.5
 			] == NSFileHandlingPanelOKButton)
 		{
 			const char *outfileName_utf8 = [[[savePanel URL] path] UTF8String];
 			structMelderFile file = { 0 };
 			Melder_8bitFileRepresentationToWcs_inline (outfileName_utf8, file. path);
-			outfileName = Melder_wcsdup (file. path);
+			outfileName = Melder_wcsToStr32 (file. path);
 		}
 		setlocale (LC_ALL, "en_US");
 	#elif mac
 		(void) parent;
-		const wchar_t *lastSlash = wcsrchr (defaultName, Melder_DIRECTORY_SEPARATOR);
+		const char32 *lastSlash = str32rchr (defaultName, Melder_DIRECTORY_SEPARATOR);
 		OSStatus err;
 		NavDialogRef dialogRef;
 		NavDialogCreationOptions dialogOptions;
 		NavGetDefaultDialogCreationOptions (& dialogOptions);
-		dialogOptions. windowTitle = (CFStringRef) Melder_peekWcsToCfstring (title);
+		dialogOptions. windowTitle = (CFStringRef) Melder_peekStr32ToCfstring (title);
 		//dialogOptions. message = (CFStringRef) Melder_peekWcsToCfstring (title);
-		dialogOptions. saveFileName = (CFStringRef) Melder_peekWcsToCfstring (lastSlash ? lastSlash + 1 : defaultName);
+		dialogOptions. saveFileName = (CFStringRef) Melder_peekStr32ToCfstring (lastSlash ? lastSlash + 1 : defaultName);
 		dialogOptions. optionFlags |= kNavNoTypePopup;
 		err = NavCreatePutFileDialog (& dialogOptions, 0, 0, NULL, NULL, & dialogRef);
 		if (err == noErr) {
@@ -234,7 +234,7 @@ wchar_t * GuiFileSelect_getOutfileName (GuiWindow parent, const wchar_t *title, 
 					for (int i = 0; i < n; i ++, p ++)
 						*p = CFStringGetCharacterAtIndex (outfileName_cf, i);
 					*p = '\0';
-					outfileName = Melder_wcsdup_f (file. path);
+					outfileName = Melder_wcsToStr32 (file. path);
 				}
 				NavDisposeReply (& reply);
 			}
@@ -245,7 +245,7 @@ wchar_t * GuiFileSelect_getOutfileName (GuiWindow parent, const wchar_t *title, 
 		OPENFILENAMEW openFileName;
 		static wchar_t customFilter [100+2];
 		static wchar_t fullFileName [300+2];
-		long n = wcslen (defaultName);
+		long n = str32len (defaultName);
 		for (long i = 0; i <= n; i ++) {
 			fullFileName [i] = defaultName [i];
 		}
@@ -258,11 +258,11 @@ wchar_t * GuiFileSelect_getOutfileName (GuiWindow parent, const wchar_t *title, 
 		openFileName. nMaxFile = 300;
 		openFileName. lpstrFileTitle = NULL;
 		openFileName. lpstrInitialDir = NULL;
-		openFileName. lpstrTitle = title;
+		openFileName. lpstrTitle = Melder_peekStr32ToWcs (title);
 		openFileName. Flags = OFN_LONGNAMES | OFN_OVERWRITEPROMPT | OFN_EXPLORER | OFN_HIDEREADONLY;
 		openFileName. lpstrDefExt = NULL;
 		if (GetSaveFileNameW (& openFileName)) {
-			outfileName = Melder_wcsdup_f (fullFileName);
+			outfileName = Melder_wcsToStr32 (fullFileName);
 		}
 		setlocale (LC_ALL, "C");
 	#endif
@@ -270,21 +270,21 @@ wchar_t * GuiFileSelect_getOutfileName (GuiWindow parent, const wchar_t *title, 
 	return outfileName;
 }
 
-wchar_t * GuiFileSelect_getDirectoryName (GuiWindow parent, const wchar_t *title) {
+char32 * GuiFileSelect_getDirectoryName (GuiWindow parent, const char32 *title) {
 	structMelderDir saveDir = { { 0 } };
 	Melder_getDefaultDir (& saveDir);
-	wchar_t *directoryName = NULL;
+	char32 *directoryName = NULL;
 	#if gtk
 		(void) parent;
 		static structMelderFile file;
-		GuiObject dialog = gtk_file_chooser_dialog_new (Melder_peekWcsToUtf8 (title), NULL, GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+		GuiObject dialog = gtk_file_chooser_dialog_new (Melder_peekStr32ToUtf8 (title), NULL, GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, "Choose", GTK_RESPONSE_ACCEPT, NULL);
 		if (file. path [0] != '\0') {
 			gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), Melder_peekWcsToUtf8 (file. path));
 		}
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 			char *directoryName_utf8 = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-			directoryName = Melder_utf8ToWcs (directoryName_utf8);
+			directoryName = Melder_utf8ToChar32 (directoryName_utf8);
 			g_free (directoryName_utf8);
 			Melder_pathToFile (directoryName, & file);
 		}
@@ -293,7 +293,7 @@ wchar_t * GuiFileSelect_getDirectoryName (GuiWindow parent, const wchar_t *title
 	#elif cocoa
 		(void) parent;
 		NSOpenPanel	*openPanel = [NSOpenPanel openPanel];
-		[openPanel setTitle: [NSString stringWithUTF8String: Melder_peekWcsToUtf8 (title)]];
+		[openPanel setTitle: [NSString stringWithUTF8String: Melder_peekStr32ToUtf8 (title)]];
 		[openPanel setAllowsMultipleSelection: NO];
 		[openPanel setCanChooseDirectories: YES];
 		[openPanel setCanChooseFiles: NO];
@@ -303,7 +303,7 @@ wchar_t * GuiFileSelect_getDirectoryName (GuiWindow parent, const wchar_t *title
 				const char *directoryName_utf8 = [[url path] UTF8String];
 				structMelderDir dir = { { 0 } };
 				Melder_8bitFileRepresentationToWcs_inline (directoryName_utf8, dir. path);
-				directoryName = Melder_wcsdup (dir. path);
+				directoryName = Melder_wcsToStr32 (dir. path);
 			}
 		}
 		setlocale (LC_ALL, "en_US");
@@ -313,7 +313,7 @@ wchar_t * GuiFileSelect_getDirectoryName (GuiWindow parent, const wchar_t *title
 		NavDialogRef dialogRef;
 		NavDialogCreationOptions dialogOptions;
 		NavGetDefaultDialogCreationOptions (& dialogOptions);
-		dialogOptions. windowTitle = (CFStringRef) Melder_peekWcsToCfstring (title);
+		dialogOptions. windowTitle = (CFStringRef) Melder_peekStr32ToCfstring (title);
 		dialogOptions. optionFlags |= kNavDontAutoTranslate;
 		dialogOptions. optionFlags &= ~ kNavAllowMultipleFiles;
 		err = NavCreateChooseFolderDialog (& dialogOptions, NULL, NULL, NULL, & dialogRef);
@@ -332,7 +332,7 @@ wchar_t * GuiFileSelect_getDirectoryName (GuiWindow parent, const wchar_t *title
 				structMelderFile file = { 0 };
 				if ((err = AEGetNthPtr (& reply. selection, 1, typeFSRef, & keyWord, & typeCode, & machFile, sizeof (FSRef), & actualSize)) == noErr) {
 					Melder_machToFile (& machFile, & file);
-					directoryName = Melder_wcsdup_f (Melder_fileToPath (& file));
+					directoryName = Melder_wcsToStr32 (Melder_fileToPath (& file));
 				}
 				NavDisposeReply (& reply);
 			}
@@ -351,11 +351,11 @@ wchar_t * GuiFileSelect_getDirectoryName (GuiWindow parent, const wchar_t *title
 		info. ulFlags = BIF_USENEWUI;
 		info. pidlRoot = NULL;   // everything on the computer should be browsable
 		info. pszDisplayName = NULL;   // this would only give the bare directory name, not the full path
-		info. lpszTitle = title;
+		info. lpszTitle = Melder_peekStr32ToWcs (title);
 		LPITEMIDLIST idList = SHBrowseForFolder (& info);
 		SHGetPathFromIDList (idList, fullFileName);
 		CoTaskMemFree (idList);
-		directoryName = Melder_wcsdup_f (fullFileName);
+		directoryName = Melder_wcsToStr32 (fullFileName);
 		setlocale (LC_ALL, "C");
 	#endif
 	Melder_setDefaultDir (& saveDir);

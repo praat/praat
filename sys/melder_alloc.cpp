@@ -1,6 +1,6 @@
 /* melder_alloc.cpp
  *
- * Copyright (C) 1992-2011,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -251,15 +251,33 @@ wchar_t * Melder_wcsdup (const wchar_t *string) {
 	return result;
 }
 
-char32_t * Melder_str32dup (const char32_t *string) {
+char16 * Melder_str16dup (const char16 *string) {
 	if (! string) return NULL;
-	int64_t size = (int64_t) str32len (string) + 1;
-	double allocationSize = (double) size * (double) sizeof (char32_t);
+	int64 size = (int64) str16len (string) + 1;
+	double allocationSize = (double) size * (double) sizeof (char16);
 	if (allocationSize > INT54_MAX)
 		Melder_throw ("Can never allocate ", Melder_bigInteger (size), " bytes. It is above the 9-petabyte limit.");
 	if (sizeof (size_t) < 8 && allocationSize > SIZE_MAX)
 		Melder_throw ("Can never allocate ", Melder_bigInteger (size), " bytes. Use a 64-bit edition of Praat instead?");
-	char32_t *result = (char32_t *) malloc ((size_t) allocationSize);   // guarded conversion
+	char16 *result = (char16 *) malloc ((size_t) allocationSize);   // guarded conversion
+	if (result == NULL)
+		Melder_throw ("Out of memory: there is not enough room to duplicate a text of ", Melder_bigInteger (size - 1), " 16-bit characters.");
+	str16cpy (result, string);
+	if (Melder_debug == 34) { Melder_casual ("Melder_str16dup\t%p\t%ls\t4", result, Melder_bigInteger (size)); }
+	totalNumberOfAllocations += 1;
+	totalAllocationSize += allocationSize;
+	return result;
+}
+
+char32 * Melder_str32dup (const char32 *string) {
+	if (! string) return NULL;
+	int64 size = (int64) str32len (string) + 1;
+	double allocationSize = (double) size * (double) sizeof (char32);
+	if (allocationSize > INT54_MAX)
+		Melder_throw ("Can never allocate ", Melder_bigInteger (size), " bytes. It is above the 9-petabyte limit.");
+	if (sizeof (size_t) < 8 && allocationSize > SIZE_MAX)
+		Melder_throw ("Can never allocate ", Melder_bigInteger (size), " bytes. Use a 64-bit edition of Praat instead?");
+	char32 *result = (char32 *) malloc ((size_t) allocationSize);   // guarded conversion
 	if (result == NULL)
 		Melder_throw ("Out of memory: there is not enough room to duplicate a text of ", Melder_bigInteger (size - 1), " characters.");
 	str32cpy (result, string);
@@ -271,7 +289,7 @@ char32_t * Melder_str32dup (const char32_t *string) {
 
 wchar_t * Melder_wcsdup_f (const wchar_t *string) {
 	if (! string) return NULL;
-	int64_t size = (int64_t) wcslen (string) + 1;
+	int64 size = (int64) wcslen (string) + 1;
 	if (sizeof (size_t) < 8 && (double) size * (double) sizeof (wchar_t) > SIZE_MAX)
 		Melder_fatal ("(Melder_wcsdup_f:) Can never allocate %ls characters.", Melder_bigInteger (size));
 	wchar_t *result = (wchar_t *) malloc ((size_t) size * sizeof (wchar_t));
@@ -287,6 +305,26 @@ wchar_t * Melder_wcsdup_f (const wchar_t *string) {
 	wcscpy (result, string);
 	totalNumberOfAllocations += 1;
 	totalAllocationSize += (double) size * sizeof (wchar_t);
+	return result;
+}
+char32 * Melder_str32dup_f (const char32 *string) {
+	if (! string) return NULL;
+	int64 size = (int64) str32len (string) + 1;
+	if (sizeof (size_t) < 8 && (double) size * (double) sizeof (char32) > SIZE_MAX)
+		Melder_fatal ("(Melder_str32dup_f:) Can never allocate %ls characters.", Melder_bigInteger (size));
+	char32 *result = (char32 *) malloc ((size_t) size * sizeof (char32));
+	if (result == NULL) {
+		if (theRainyDayFund != NULL) { free (theRainyDayFund); theRainyDayFund = NULL; }
+		result = (char32 *) malloc ((size_t) size * sizeof (char32));
+		if (result != NULL) {
+			Melder_flushError ("Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
+		} else {
+			Melder_fatal ("Out of memory: there is not enough room to duplicate a text of %ls characters.", Melder_bigInteger (size - 1));
+		}
+	}
+	str32cpy (result, string);
+	totalNumberOfAllocations += 1;
+	totalAllocationSize += (double) size * sizeof (char32);
 	return result;
 }
 
@@ -328,6 +366,12 @@ int Melder_strncmp (const char *string1, const char *string2, int64_t n) {
 	return strncmp (string1, string2, n);
 }
 
+int Melder_str32ncmp (const char32 *string1, const char32 *string2, int64_t n) {
+	if (string1 == NULL) string1 = U"";
+	if (string2 == NULL) string2 = U"";
+	return str32ncmp (string1, string2, n);
+}
+
 int Melder_wcscmp (const wchar_t *string1, const wchar_t *string2) {
 	if (string1 == NULL) string1 = L"";
 	if (string2 == NULL) string2 = L"";
@@ -346,6 +390,22 @@ bool Melder_wcsequ_firstCharacterCaseInsensitive (const wchar_t *string1, const 
 	if (towlower (*string1) != towlower (*string2)) return false;
 	if (*string1 == '\0') return true;
 	return ! wcscmp (string1 + 1, string2 + 1);
+}
+
+bool Melder_str32equ_firstCharacterCaseInsensitive (const char32 *string1, const char32 *string2) {
+	if (string1 == NULL) string1 = U"";
+	if (string2 == NULL) string2 = U"";
+	if (*string1 == U'\0') return *string2 == U'\0';
+	if (*string1 == *string2)
+		return ! str32cmp (string1 + 1, string2 + 1);
+	if (sizeof (wchar_t) == 2) {
+		if (*string1 > 65536 || *string2 > 65536)
+			return false;
+		if (towlower ((char16) *string1) != towlower ((char16) *string2)) return false;
+	} else {
+		if (towlower ((int32) *string1) != towlower ((int32) *string2)) return false;
+	}
+	return ! str32cmp (string1 + 1, string2 + 1);
 }
 
 wchar_t * Melder_wcstok (wchar_t *string, const wchar_t *delimiter, wchar_t **last) {

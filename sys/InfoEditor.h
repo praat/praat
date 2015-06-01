@@ -2,7 +2,7 @@
 #define _InfoEditor_h_
 /* InfoEditor.h
  *
- * Copyright (C) 2004-2011 Paul Boersma
+ * Copyright (C) 2004-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,11 +22,14 @@
 #include "TextEditor.h"
 
 Thing_define (InfoEditor, TextEditor) {
-	// overridden methods:
-		virtual void v_destroy ();
-		virtual bool v_scriptable () { return false; }
-		virtual bool v_fileBased () { return false; }
-		virtual void v_clear ();
+	void v_destroy ()
+		override;
+	bool v_scriptable ()
+		override { return false; }
+	bool v_fileBased ()
+		override { return false; }
+	void v_clear ()
+		override;
 };
 
 /* End of file InfoEditor.h */

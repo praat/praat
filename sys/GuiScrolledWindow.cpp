@@ -1,6 +1,6 @@
 /* GuiScrolledWindow.cpp
  *
- * Copyright (C) 1993-2011,2012 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2011,2012,2015 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,7 +111,7 @@ GuiScrolledWindow GuiScrolledWindow_createShown (GuiForm parent, int left, int r
 	int horizontalScrollbarPersistence, int verticalScrollbarPersistence, unsigned long flags)
 {
 	GuiScrolledWindow me = GuiScrolledWindow_create (parent, left, right, top, bottom, horizontalScrollbarPersistence, verticalScrollbarPersistence, flags);
-	my f_show ();
+	GuiThing_show (me);
 	return me;
 }
 

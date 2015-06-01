@@ -1,6 +1,6 @@
 /* SoundRecorder.cpp
  *
- * Copyright (C) 1992-2011,2012,2013,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -387,27 +387,27 @@ static bool workProc (void *void_me) {
 
 		/* Set the buttons according to the audio parameters. */
 
-		if (my recordButton) my recordButton -> f_setSensitive (! my recording);
-		if (my stopButton)   my stopButton   -> f_setSensitive (  my recording);
-		if (my playButton)   my playButton   -> f_setSensitive (! my recording && my nsamp > 0);
-		if (my applyButton)  my applyButton  -> f_setSensitive (! my recording && my nsamp > 0);
-		if (my okButton)     my okButton     -> f_setSensitive (! my recording && my nsamp > 0);
-		if (my monoButton   && my numberOfChannels == 1) my monoButton   -> f_set ();
-		if (my stereoButton && my numberOfChannels == 2) my stereoButton -> f_set ();
+		if (my recordButton) GuiThing_setSensitive (my recordButton, ! my recording);
+		if (my stopButton)   GuiThing_setSensitive (my stopButton,     my recording);
+		if (my playButton)   GuiThing_setSensitive (my playButton,   ! my recording && my nsamp > 0);
+		if (my applyButton)  GuiThing_setSensitive (my applyButton,  ! my recording && my nsamp > 0);
+		if (my okButton)     GuiThing_setSensitive (my okButton,     ! my recording && my nsamp > 0);
+		if (my monoButton   && my numberOfChannels == 1) GuiRadioButton_set (my monoButton);
+		if (my stereoButton && my numberOfChannels == 2) GuiRadioButton_set (my stereoButton);
 		for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++)
 			if (my fsamp_ [i]. button && theControlPanel. sampleRate == my fsamp_ [i]. fsamp)
-				my fsamp_ [i]. button -> f_set ();
+				GuiRadioButton_set (my fsamp_ [i]. button);
 		if (my device_ [theControlPanel. inputSource]. button)
-			my device_ [theControlPanel. inputSource]. button -> f_set ();
-		if (my monoButton)   my monoButton   -> f_setSensitive (! my recording);
-		if (my stereoButton) my stereoButton -> f_setSensitive (! my recording);
+			GuiRadioButton_set (my device_ [theControlPanel. inputSource]. button);
+		if (my monoButton)   GuiThing_setSensitive (my monoButton,   ! my recording);
+		if (my stereoButton) GuiThing_setSensitive (my stereoButton, ! my recording);
 		for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++)
 			if (my fsamp_ [i]. button) {
-				my fsamp_ [i]. button -> f_setSensitive (! my recording);
+				GuiThing_setSensitive (my fsamp_ [i]. button, ! my recording);
 			}
 		for (long i = 1; i <= SoundRecorder_IDEVICE_MAX; i ++)
 			if (my device_ [i]. button)
-				my device_ [i]. button -> f_setSensitive (! my recording);
+				GuiThing_setSensitive (my device_ [i]. button, ! my recording);
 
 		/*Graphics_setGrey (my graphics, 0.9);
 		Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 32768.0);
@@ -442,7 +442,7 @@ static bool workProc (void *void_me) {
 				if (my recording) {
 					my nsamp += stepje;
 					if (my nsamp > my nmax - step) my recording = false;
-					my progressScale -> f_setValue (1000.0 * ((double) my nsamp / (double) my nmax));
+					GuiScale_setValue (my progressScale, 1000.0 * ((double) my nsamp / (double) my nmax));
 				}
 			} while (my recording && tooManySamplesInBufferToReturnToGui (me));
 		} else {
@@ -474,7 +474,7 @@ static bool workProc (void *void_me) {
 				long firstSample = lastSample - 3000;
 				if (firstSample < 0) firstSample = 0;
 				showMeter (me, my buffer + firstSample * my numberOfChannels, lastSample - firstSample);
-				my progressScale -> f_setValue (1000.0 * ((double) lastSample / (double) my nmax));
+				GuiScale_setValue (my progressScale, 1000.0 * ((double) lastSample / (double) my nmax));
 			} else {
 				showMeter (me, NULL, 0);
 			}
@@ -622,10 +622,10 @@ static void publish (SoundRecorder me) {
 		}
 	}
 	if (my soundName) {
-		autostring name = my soundName -> f_getString ();
+		autostring name = GuiText_getString (my soundName);
 		Thing_setName (sound.peek(), name.peek());
 	}
-	my broadcastPublication (sound.transfer());
+	Editor_broadcastPublication (me, sound.transfer());
 }
 
 static void gui_button_cb_cancel (I, GuiButtonEvent event) {
@@ -883,7 +883,7 @@ void structSoundRecorder :: v_createChildren ()
 	
 	GuiLabel_createShown (d_windowForm, -200, -130, -y - 2 - Gui_TEXTFIELD_HEIGHT, -y - 2, L"Name:", GuiLabel_RIGHT);
 	soundName = GuiText_createShown (d_windowForm, -120, -20, -y - 2 - Gui_TEXTFIELD_HEIGHT, -y - 2, 0);
-	soundName -> f_setString (L"untitled");
+	GuiText_setString (soundName, L"untitled");
 
 	y = 20;
 	cancelButton = GuiButton_createShown (d_windowForm, -350, -280, -y - Gui_PUSHBUTTON_HEIGHT, -y,
@@ -924,7 +924,7 @@ static void writeAudioFile (SoundRecorder me, MelderFile file, int audioFileType
 static void menu_cb_writeWav (EDITOR_ARGS) {
 	EDITOR_IAM (SoundRecorder);
 	EDITOR_FORM_WRITE (L"Save as WAV file", 0)
-		wchar_t *name = my soundName -> f_getString ();
+		wchar_t *name = GuiText_getString (my soundName);
 		swprintf (defaultName, 300, L"%ls.wav", name);
 		Melder_free (name);
 	EDITOR_DO_WRITE
@@ -935,7 +935,7 @@ static void menu_cb_writeWav (EDITOR_ARGS) {
 static void menu_cb_writeAifc (EDITOR_ARGS) {
 	EDITOR_IAM (SoundRecorder);
 	EDITOR_FORM_WRITE (L"Save as AIFC file", 0)
-		wchar_t *name = my soundName -> f_getString ();
+		wchar_t *name = GuiText_getString (my soundName);
 		swprintf (defaultName, 300, L"%ls.aifc", name);
 		Melder_free (name);
 	EDITOR_DO_WRITE
@@ -946,7 +946,7 @@ static void menu_cb_writeAifc (EDITOR_ARGS) {
 static void menu_cb_writeNextSun (EDITOR_ARGS) {
 	EDITOR_IAM (SoundRecorder);
 	EDITOR_FORM_WRITE (L"Save as NeXT/Sun file", 0)
-		wchar_t *name = my soundName -> f_getString ();
+		wchar_t *name = GuiText_getString (my soundName);
 		swprintf (defaultName, 300, L"%ls.au", name);
 		Melder_free (name);
 	EDITOR_DO_WRITE
@@ -957,7 +957,7 @@ static void menu_cb_writeNextSun (EDITOR_ARGS) {
 static void menu_cb_writeNist (EDITOR_ARGS) {
 	EDITOR_IAM (SoundRecorder);
 	EDITOR_FORM_WRITE (L"Save as NIST file", 0)
-		wchar_t *name = my soundName -> f_getString ();
+		wchar_t *name = GuiText_getString (my soundName);
 		swprintf (defaultName, 300, L"%ls.nist", name);
 		Melder_free (name);
 	EDITOR_DO_WRITE
@@ -966,8 +966,10 @@ static void menu_cb_writeNist (EDITOR_ARGS) {
 }
 
 static void updateMenus (SoundRecorder me) {
-	my d_meterIntensityButton -> f_check (my p_meter_which == kSoundRecorder_meter_INTENSITY);
-	my d_meterCentreOfGravityVersusIntensityButton -> f_check (my p_meter_which == kSoundRecorder_meter_CENTRE_OF_GRAVITY_VERSUS_INTENSITY);
+	GuiMenuItem_check (my d_meterIntensityButton,
+		my p_meter_which == kSoundRecorder_meter_INTENSITY);
+	GuiMenuItem_check (my d_meterCentreOfGravityVersusIntensityButton,
+		my p_meter_which == kSoundRecorder_meter_CENTRE_OF_GRAVITY_VERSUS_INTENSITY);
 }
 
 static void menu_cb_intensity (EDITOR_ARGS) {
@@ -1169,8 +1171,8 @@ SoundRecorder SoundRecorder_create (int numberOfChannels) {
 		Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 1.0);
 
 struct structGuiDrawingAreaResizeEvent event = { my meter, 0 };
-event. width  = my meter -> f_getWidth  ();
-event. height = my meter -> f_getHeight ();
+event. width  = GuiControl_getWidth  (my meter);
+event. height = GuiControl_getHeight (my meter);
 gui_drawingarea_cb_resize (me.peek(), & event);
 
 		#if cocoa

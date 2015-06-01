@@ -1,6 +1,6 @@
 /* longchar.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@
  * pb 2008/02/27 \d- and \D-
  * pb 2009/03/24 removed bug that caused Longchar_getInfoFromNative to be able to work with uninitialized table
  * pb 2011/04/06 C++
+ * pb 2015/05/30 char32_t
  */
 
 #include "longchar.h"
@@ -670,6 +671,41 @@ wchar_t * Longchar_nativizeW (const wchar_t *generic, wchar_t *native, int educa
 	*native++ = '\0';
 	return native;
 }
+char32_t * Longchar_nativize32 (const char32_t *generic, char32_t *native, int educateQuotes) {
+	long nquote = 0;
+	char32_t kar, kar1, kar2;
+	if (! inited) init ();
+	while ((kar = *generic++) != U'\0') {
+		if (educateQuotes) {
+			if (kar == U'\"') {
+				*native++ = ++nquote & 1 ? UNICODE_LEFT_DOUBLE_QUOTATION_MARK : UNICODE_RIGHT_DOUBLE_QUOTATION_MARK;
+				continue;
+			} else if (kar == U'`') {   /* Grave. */
+				*native++ = UNICODE_LEFT_SINGLE_QUOTATION_MARK;
+				continue;
+			} else if (kar == U'\'') {   /* Straight apostrophe. */
+				*native++ = UNICODE_RIGHT_SINGLE_QUOTATION_MARK;   /* Right single quote. */
+				continue;
+			}
+		}
+		if (kar == '\\' && (kar1 = generic [0]) >= 32 && kar1 <= 126 && (kar2 = generic [1]) >= 32 && kar2 <= 126) {
+			long location = where [kar1 - 32] [kar2 - 32];
+			if (location == 0) {
+				*native++ = kar;
+				*native++ = kar1;   /* Even if this is a backslash itself... */
+				*native++ = kar2;   /* Even if this is a backslash itself... */
+				/* These "evens" are here to ensure that Longchar_nativize does nothing on an already nativized string. */
+			} else {
+				*native++ = Longchar_database [location]. unicode ? Longchar_database [location]. unicode : UNICODE_INVERTED_QUESTION_MARK;
+			}	
+			generic += 2;
+		} else {
+			*native++ = kar;
+		}
+	}
+	*native++ = '\0';
+	return native;
+}
 
 char *Longchar_genericize (const char *native, char *g) {
 	unsigned char kar;
@@ -690,8 +726,23 @@ char *Longchar_genericize (const char *native, char *g) {
 wchar_t *Longchar_genericizeW (const wchar_t *native, wchar_t *g) {
 	wchar_t kar;
 	if (! inited) init ();
-	while ((kar = *native++) != '\0') {
+	while ((kar = *native++) != L'\0') {
 		if (kar > 128 && kar <= UNICODE_TOP_GENERICIZABLE && genericDigraph [kar]. first != '\0') {
+			*g++ = '\\';
+			*g++ = genericDigraph [kar]. first;
+			*g++ = genericDigraph [kar]. second;
+		} else {
+			*g++ = kar;
+		}
+	}
+	*g++ = '\0';
+	return g;
+}
+char32_t *Longchar_genericize32 (const char32_t *native, char32_t *g) {
+	char32_t kar;
+	if (! inited) init ();
+	while ((kar = *native++) != U'\0') {
+		if (kar > 128 && kar <= UNICODE_TOP_GENERICIZABLE && genericDigraph [kar]. first != U'\0') {
 			*g++ = '\\';
 			*g++ = genericDigraph [kar]. first;
 			*g++ = genericDigraph [kar]. second;

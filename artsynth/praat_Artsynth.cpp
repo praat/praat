@@ -1,6 +1,6 @@
 /* praat_Artsynth.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ END
 
 FORM (Art_edit, L"View & Edit Articulation", 0)
 	for (int i = 1; i <= kArt_muscle_MAX; i ++)
-		REAL (kArt_muscle_getText (i), L"0.0")
+		REAL (kArt_muscle_getText (i), U"0.0")
 	OK
 {
 	Art object = (Art) ONLY_OBJECT;

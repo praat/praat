@@ -225,28 +225,48 @@
 
 #undef oo_STRING
 #define oo_STRING(x)  { L"" #x, stringwa, Melder_offsetof (ooSTRUCT, x), sizeof (wchar_t *) },
+#undef oo_STRING32
+#define oo_STRING32(x)  { L"" #x, string32wa, Melder_offsetof (ooSTRUCT, x), sizeof (char32 *) },
 #undef oo_LSTRING
 #define oo_LSTRING(x)  { L"" #x, lstringwa, Melder_offsetof (ooSTRUCT, x), sizeof (wchar_t *) },
+#undef oo_LSTRING32
+#define oo_LSTRING32(x)  { L"" #x, lstring32wa, Melder_offsetof (ooSTRUCT, x), sizeof (char32 *) },
 
 #undef oo_STRING_ARRAY
 #define oo_STRING_ARRAY(x,cap,n)  { L"" #x, stringwa, Melder_offsetof (ooSTRUCT, x), sizeof (wchar_t *), 0, 0, - cap, (const wchar_t *) 0, L"" #n },
+#undef oo_STRING32_ARRAY
+#define oo_STRING32_ARRAY(x,cap,n)  { L"" #x, string32wa, Melder_offsetof (ooSTRUCT, x), sizeof (char32 *), 0, 0, - cap, (const wchar_t *) 0, L"" #n },
 #undef oo_LSTRING_ARRAY
 #define oo_LSTRING_ARRAY(x,cap,n)  { L"" #x, lstringwa, Melder_offsetof (ooSTRUCT, x), sizeof (wchar_t *), 0, 0, - cap, (const wchar_t *) 0, L"" #n },
+#undef oo_LSTRING32_ARRAY
+#define oo_LSTRING32_ARRAY(x,cap,n)  { L"" #x, lstring32wa, Melder_offsetof (ooSTRUCT, x), sizeof (char32 *), 0, 0, - cap, (const wchar_t *) 0, L"" #n },
 
 #undef oo_STRING_SET
 #define oo_STRING_SET(x,setType)  { L"" #x, stringwa, Melder_offsetof (ooSTRUCT, x), sizeof (wchar_t *), 0, 0, 3, (const wchar_t *) setType##_getText, (const wchar_t *) setType##_getValue },
+#undef oo_STRING32_SET
+#define oo_STRING32_SET(x,setType)  { L"" #x, string32wa, Melder_offsetof (ooSTRUCT, x), sizeof (char32 *), 0, 0, 3, (const wchar_t *) setType##_getText, (const wchar_t *) setType##_getValue },
 #undef oo_LSTRING_SET
 #define oo_LSTRING_SET(x,setType)  { L"" #x, lstringwa, Melder_offsetof (ooSTRUCT, x), sizeof (wchar_t *), 0, 0, 3, (const wchar_t *) setType##_getText, (const wchar_t *) setType##_getValue },
+#undef oo_LSTRING32_SET
+#define oo_LSTRING32_SET(x,setType)  { L"" #x, lstring32wa, Melder_offsetof (ooSTRUCT, x), sizeof (char32 *), 0, 0, 3, (const wchar_t *) setType##_getText, (const wchar_t *) setType##_getValue },
 
 #undef oo_STRING_VECTOR_FROM
 #define oo_STRING_VECTOR_FROM(x,min,max)  { L"" #x, stringwa, Melder_offsetof (ooSTRUCT, x), sizeof (wchar_t *), 0, 0, 1, L"" #min, L"" #max },
+#undef oo_STRING32_VECTOR_FROM
+#define oo_STRING32_VECTOR_FROM(x,min,max)  { L"" #x, string32wa, Melder_offsetof (ooSTRUCT, x), sizeof (char32 *), 0, 0, 1, L"" #min, L"" #max },
 #undef oo_LSTRING_VECTOR_FROM
 #define oo_LSTRING_VECTOR_FROM(x,min,max)  { L"" #x, lstringwa, Melder_offsetof (ooSTRUCT, x), sizeof (wchar_t *), 0, 0, 1, L"" #min, L"" #max },
+#undef oo_LSTRING32_VECTOR_FROM
+#define oo_LSTRING32_VECTOR_FROM(x,min,max)  { L"" #x, lstring32wa, Melder_offsetof (ooSTRUCT, x), sizeof (char32 *), 0, 0, 1, L"" #min, L"" #max },
 
 #undef oo_STRING_VECTOR
 #define oo_STRING_VECTOR(x,n)  { L"" #x, stringwa, Melder_offsetof (ooSTRUCT, x), sizeof (wchar_t *), 0, 0, 1, (const wchar_t *) 0, L"" #n },
+#undef oo_STRING32_VECTOR
+#define oo_STRING32_VECTOR(x,n)  { L"" #x, string32wa, Melder_offsetof (ooSTRUCT, x), sizeof (char32 *), 0, 0, 1, (const wchar_t *) 0, L"" #n },
 #undef oo_LSTRING_VECTOR
 #define oo_LSTRING_VECTOR(x,n)  { L"" #x, lstringwa, Melder_offsetof (ooSTRUCT, x), sizeof (wchar_t *), 0, 0, 1, (const wchar_t *) 0, L"" #n },
+#undef oo_LSTRING32_VECTOR
+#define oo_LSTRING32_VECTOR(x,n)  { L"" #x, lstring32wa, Melder_offsetof (ooSTRUCT, x), sizeof (char32 *), 0, 0, 1, (const wchar_t *) 0, L"" #n },
 
 #define oo_STRUCT(Type,x)  { L"" #x, structwa, Melder_offsetof (ooSTRUCT, x), sizeof (struct struct##Type), L"" #Type, & struct##Type :: s_description },
 #define oo_STRUCT_ARRAY(Type,x,cap,n)  { L"" #x, structwa, Melder_offsetof (ooSTRUCT, x), sizeof (struct struct##Type), L"" #Type, & struct##Type :: s_description, - cap, (const wchar_t *) 0, L"" #n },

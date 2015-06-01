@@ -1,6 +1,6 @@
 /* abcio_enums.h
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2009,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,23 +17,19 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2009/03/18
- */
-
 enums_begin (kBoolean, 0)
-	enums_add (kBoolean, 0, FALSE, L"false")
-	enums_add (kBoolean, 1, TRUE, L"true")
+	enums_add (kBoolean, 0, FALSE, U"false")
+	enums_add (kBoolean, 1, TRUE, U"true")
 enums_end (kBoolean, 1, FALSE)
 
 enums_begin (kQuestion, 0)
-	enums_add (kQuestion, 0, NO, L"no")
-	enums_add (kQuestion, 1, YES, L"yes")
+	enums_add (kQuestion, 0, NO, U"no")
+	enums_add (kQuestion, 1, YES, U"yes")
 enums_end (kQuestion, 1, NO)
 
 enums_begin (kExistence, 0)
-	enums_add (kExistence, 0, ABSENT, L"absent")
-	enums_add (kExistence, 1, EXISTS, L"exists")
+	enums_add (kExistence, 0, ABSENT, U"absent")
+	enums_add (kExistence, 1, EXISTS, U"exists")
 enums_end (kExistence, 1, ABSENT)
 
 /* End of file abcio_enums.h */

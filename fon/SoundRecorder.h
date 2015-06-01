@@ -2,7 +2,7 @@
 #define _SoundRecorder_h_
 /* SoundRecorder.h
  *
- * Copyright (C) 1992-2011,2012,2013 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,57 +73,61 @@ struct SoundRecorder_Fsamp {
 #define SoundRecorder_IFSAMP_MAX  14
 
 Thing_define (SoundRecorder, Editor) {
-	// new data:
-	public:
-		int numberOfChannels;
-		long nsamp, nmax;
-		bool fakeMono, synchronous, recording;
-		int lastLeftMaximum, lastRightMaximum;
-		long numberOfInputDevices;
-		struct SoundRecorder_Device device_ [1+SoundRecorder_IDEVICE_MAX];
-		struct SoundRecorder_Fsamp fsamp_ [1+SoundRecorder_IFSAMP_MAX];
-		short *buffer;
-		GuiRadioButton monoButton, stereoButton;
-		GuiDrawingArea meter;
-		GuiScale progressScale;
-		GuiButton recordButton, stopButton, playButton;
-		GuiText soundName;
-		GuiButton cancelButton, applyButton, okButton;
-		GuiMenuItem d_meterIntensityButton, d_meterCentreOfGravityVersusIntensityButton;
-		Graphics graphics;
-		bool inputUsesPortAudio;
-		const PaDeviceInfo *deviceInfos [1+SoundRecorder_IDEVICE_MAX];
-		PaDeviceIndex deviceIndices [1+SoundRecorder_IDEVICE_MAX];
-		PaStream *portaudioStream;
-		#if cocoa
-			CFRunLoopTimerRef d_cocoaTimer;
-		#elif motif
-			XtWorkProcId workProcId;
-		#endif
-		#if defined (_WIN32)
-			HWAVEIN hWaveIn;
-			WAVEFORMATEX waveFormat;
-			WAVEHDR waveHeader [3];
-			MMRESULT err;
-			short buffertje1 [1000*2], buffertje2 [1000*2];
-		#elif defined (macintosh)
-			short macSource [1+8];
-			Str255 hybridDeviceNames [1+8];
-			long refNum;
-		#elif defined (linux)
-			int fd;
-		#else
-			int fd;
-		#endif
-	// overridden methods:
-		virtual void v_destroy ();
-		virtual bool v_editable () { return false; }
-		virtual bool v_scriptable () { return false; }
-		virtual void v_createChildren ();
-		virtual void v_createMenus ();
-		virtual void v_createHelpMenuItems (EditorMenu menu);
-	// preferences:
-		#include "SoundRecorder_prefs.h"
+	int numberOfChannels;
+	long nsamp, nmax;
+	bool fakeMono, synchronous, recording;
+	int lastLeftMaximum, lastRightMaximum;
+	long numberOfInputDevices;
+	struct SoundRecorder_Device device_ [1+SoundRecorder_IDEVICE_MAX];
+	struct SoundRecorder_Fsamp fsamp_ [1+SoundRecorder_IFSAMP_MAX];
+	short *buffer;
+	GuiRadioButton monoButton, stereoButton;
+	GuiDrawingArea meter;
+	GuiScale progressScale;
+	GuiButton recordButton, stopButton, playButton;
+	GuiText soundName;
+	GuiButton cancelButton, applyButton, okButton;
+	GuiMenuItem d_meterIntensityButton, d_meterCentreOfGravityVersusIntensityButton;
+	Graphics graphics;
+	bool inputUsesPortAudio;
+	const PaDeviceInfo *deviceInfos [1+SoundRecorder_IDEVICE_MAX];
+	PaDeviceIndex deviceIndices [1+SoundRecorder_IDEVICE_MAX];
+	PaStream *portaudioStream;
+	#if cocoa
+		CFRunLoopTimerRef d_cocoaTimer;
+	#elif motif
+		XtWorkProcId workProcId;
+	#endif
+	#if defined (_WIN32)
+		HWAVEIN hWaveIn;
+		WAVEFORMATEX waveFormat;
+		WAVEHDR waveHeader [3];
+		MMRESULT err;
+		short buffertje1 [1000*2], buffertje2 [1000*2];
+	#elif defined (macintosh)
+		short macSource [1+8];
+		Str255 hybridDeviceNames [1+8];
+		long refNum;
+	#elif defined (linux)
+		int fd;
+	#else
+		int fd;
+	#endif
+
+	void v_destroy ()
+		override;
+	bool v_editable ()
+		override { return false; }
+	bool v_scriptable ()
+		override { return false; }
+	void v_createChildren ()
+		override;
+	void v_createMenus ()
+		override;
+	void v_createHelpMenuItems (EditorMenu menu)
+		override;
+
+	#include "SoundRecorder_prefs.h"
 };
 
 SoundRecorder SoundRecorder_create (int numberOfChannels);

@@ -1,6 +1,6 @@
 /* oo_WRITE_TEXT.h
  *
- * Copyright (C) 1994-2012,2013,2014 Paul Boersma
+ * Copyright (C) 1994-2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
 #define oo_SET(type,storage,x,setType)  \
 	texputintro (file, L"" #x " []:", 0,0,0,0,0); \
 	for (int i = 0; i <= setType##_MAX; i ++) \
-		texput##storage (file, our x [i], L"" #x " [", setType##_getText (i), L"]", 0,0,0); \
+		texput##storage (file, our x [i], L"" #x " [", Melder_peekStr32ToWcs (setType##_getText (i)), L"]", 0,0,0); \
 	texexdent (file);
 
 #define oo_VECTOR(type,storage,x,min,max)  \
@@ -65,8 +65,15 @@
 
 #define oo_STRINGx(storage,x)  \
 	texput##storage (file, our x, L""#x, 0,0,0,0,0);
+#define oo_STRING32x(storage,x)  \
+	texput##storage (file, our x, L""#x, 0,0,0,0,0);
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
+	texputintro (file, L"" #x " []: ", n ? NULL : L"(empty)", 0,0,0,0); \
+	for (int i = 0; i < n; i ++) \
+		texput##storage (file, our x [i], L"" #x " [", Melder_integer (i), L"]", 0,0,0); \
+	texexdent (file);
+#define oo_STRING32x_ARRAY(storage,x,cap,n)  \
 	texputintro (file, L"" #x " []: ", n ? NULL : L"(empty)", 0,0,0,0); \
 	for (int i = 0; i < n; i ++) \
 		texput##storage (file, our x [i], L"" #x " [", Melder_integer (i), L"]", 0,0,0); \
@@ -77,8 +84,18 @@
 	for (int i = 0; i <= setType##_MAX; i ++) \
 		texput##storage (file, our x [i], L"" #x " [", setType##_getText (i), L"]", 0,0,0); \
 	texexdent (file);
+#define oo_STRING32x_SET(storage,x,setType)  \
+	texputintro (file, L"" #x " []:", 0,0,0,0,0); \
+	for (int i = 0; i <= setType##_MAX; i ++) \
+		texput##storage (file, our x [i], L"" #x " [", setType##_getText (i), L"]", 0,0,0); \
+	texexdent (file);
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
+	texputintro (file, L"" #x " []: ", max >= min ? NULL : L"(empty)", 0,0,0,0); \
+	for (long i = min; i <= max; i ++) \
+		texput##storage (file, our x [i], L"" #x " [", Melder_integer (i), L"]", 0,0,0); \
+	texexdent (file);
+#define oo_STRING32x_VECTOR(storage,x,min,max)  \
 	texputintro (file, L"" #x " []: ", max >= min ? NULL : L"(empty)", 0,0,0,0); \
 	for (long i = min; i <= max; i ++) \
 		texput##storage (file, our x [i], L"" #x " [", Melder_integer (i), L"]", 0,0,0); \
@@ -101,7 +118,7 @@
 #define oo_STRUCT_SET(Type,x,setType)  \
 	texputintro (file, L"" #x " []:", 0,0,0,0,0); \
 	for (int i = 0; i <= setType##_MAX; i ++) { \
-		texputintro (file, L"" #x " [", setType##_getText (i), L"]:", 0,0,0); \
+		texputintro (file, L"" #x " [", Melder_peekStr32ToWcs (setType##_getText (i)), L"]:", 0,0,0); \
 		our x [i]. writeText (file); \
 		texexdent (file); \
 	} \

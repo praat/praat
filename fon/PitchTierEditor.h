@@ -2,7 +2,7 @@
 #define _PitchTierEditor_h_
 /* PitchTierEditor.h
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,22 +24,36 @@
 #include "Sound.h"
 
 Thing_define (PitchTierEditor, RealTierEditor) {
-	// overridden methods:
-		virtual void v_createHelpMenuItems (EditorMenu menu);
-		virtual void v_play (double tmin, double tmax);
-		virtual double v_minimumLegalValue () { return 0.0; }
-		virtual const wchar_t * v_quantityText () { return L"Frequency (Hz)"; }
-		virtual const wchar_t * v_quantityKey () { return L"Frequency"; }
-		virtual const wchar_t * v_rightTickUnits () { return L" Hz"; }
-		virtual double v_defaultYmin () { return 50.0; }
-		virtual double v_defaultYmax () { return 600.0; }
-		virtual const wchar_t * v_setRangeTitle () { return L"Set frequency range..."; }
-		virtual const wchar_t * v_defaultYminText () { return L"50.0"; }
-		virtual const wchar_t * v_defaultYmaxText () { return L"600.0"; }
-		virtual const wchar_t * v_yminText () { return L"Minimum frequency (Hz)"; }
-		virtual const wchar_t * v_ymaxText () { return L"Maximum frequency (Hz)"; }
-		virtual const wchar_t * v_yminKey () { return L"Minimum frequency"; }
-		virtual const wchar_t * v_ymaxKey () { return L"Maximum frequency"; }
+	void v_createHelpMenuItems (EditorMenu menu)
+		override;
+	void v_play (double tmin, double tmax)
+		override;
+	double v_minimumLegalValue ()
+		override { return 0.0; }
+	const wchar_t * v_quantityText ()
+		override { return L"Frequency (Hz)"; }
+	const wchar_t * v_quantityKey ()
+		override { return L"Frequency"; }
+	const wchar_t * v_rightTickUnits ()
+		override { return L" Hz"; }
+	double v_defaultYmin ()
+		override { return 50.0; }
+	double v_defaultYmax ()
+		override { return 600.0; }
+	const wchar_t * v_setRangeTitle ()
+		override { return L"Set frequency range..."; }
+	const wchar_t * v_defaultYminText ()
+		override { return L"50.0"; }
+	const wchar_t * v_defaultYmaxText ()
+		override { return L"600.0"; }
+	const wchar_t * v_yminText ()
+		override { return L"Minimum frequency (Hz)"; }
+	const wchar_t * v_ymaxText ()
+		override { return L"Maximum frequency (Hz)"; }
+	const wchar_t * v_yminKey ()
+		override { return L"Minimum frequency"; }
+	const wchar_t * v_ymaxKey ()
+		override { return L"Maximum frequency"; }
 };
 
 PitchTierEditor PitchTierEditor_create (const wchar_t *title,

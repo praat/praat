@@ -2,7 +2,7 @@
 #define _enums_h_
 /* enums.h
  *
- * Copyright (C) 2007,2013 Paul Boersma
+ * Copyright (C) 2007,2013,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +24,8 @@
 #define enums_alt(type,which,text)
 #define enums_end(type,maximum,def) type##_MAX = maximum, \
 	type##_DEFAULT = type##_##def }; \
-	const wchar_t * type##_getText (int value); \
-	int type##_getValue (const wchar_t *text);
+	const char32 * type##_getText (int value); \
+	int type##_getValue (const char32 *text);
 
 /* End of file enums.h */
 #endif

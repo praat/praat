@@ -2,7 +2,7 @@
 #define _Simple_h_
 /* Simple.h
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,11 +26,13 @@ oo_CLASS_CREATE (SimpleInt, Data);
 oo_CLASS_CREATE (SimpleLong, Data);
 oo_CLASS_CREATE (SimpleDouble, Data);
 oo_CLASS_CREATE (SimpleString, Data);
+oo_CLASS_CREATE (SimpleString32, Data);
 
 SimpleInt SimpleInt_create (int number);
 SimpleLong SimpleLong_create (long number);
 SimpleDouble SimpleDouble_create (double number);
 SimpleString SimpleString_create (const wchar_t *string);
+SimpleString32 SimpleString32_create (const char32 *string);
 
 /* End of file Simple.h */
 #endif

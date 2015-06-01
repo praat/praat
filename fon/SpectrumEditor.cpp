@@ -1,6 +1,6 @@
 /* SpectrumEditor.cpp
  *
- * Copyright (C) 1992-2011,2012,2013,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,8 +62,8 @@ void structSpectrumEditor :: v_draw () {
 
 	long first, last;
 	long selectedSamples = Sampled_getWindowSamples (spectrum, our d_startSelection, our d_endSelection, & first, & last);
-	our publishBandButton  -> f_setSensitive (selectedSamples != 0);
-	our publishSoundButton -> f_setSensitive (selectedSamples != 0);
+	GuiThing_setSensitive (our publishBandButton,  selectedSamples != 0);
+	GuiThing_setSensitive (our publishSoundButton, selectedSamples != 0);
 }
 
 int structSpectrumEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
@@ -94,13 +94,13 @@ void structSpectrumEditor :: v_play (double fmin, double fmax) {
 static void menu_cb_publishBand (EDITOR_ARGS) {
 	EDITOR_IAM (SpectrumEditor);
 	autoSpectrum publish = Spectrum_band ((Spectrum) my data, my d_startSelection, my d_endSelection);
-	my broadcastPublication (publish.transfer());
+	Editor_broadcastPublication (me, publish.transfer());
 }
 
 static void menu_cb_publishSound (EDITOR_ARGS) {
 	EDITOR_IAM (SpectrumEditor);
 	autoSound publish = Spectrum_to_Sound_part ((Spectrum) my data, my d_startSelection, my d_endSelection);
-	my broadcastPublication (publish.transfer());
+	Editor_broadcastPublication (me, publish.transfer());
 }
 
 static void menu_cb_passBand (EDITOR_ARGS) {
@@ -115,7 +115,7 @@ static void menu_cb_passBand (EDITOR_ARGS) {
 		Editor_save (me, L"Pass band");
 		Spectrum_passHannBand ((Spectrum) my data, my d_startSelection, my d_endSelection, my p_bandSmoothing);
 		FunctionEditor_redraw (me);
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
 
@@ -131,7 +131,7 @@ static void menu_cb_stopBand (EDITOR_ARGS) {
 		Editor_save (me, L"Stop band");
 		Spectrum_stopHannBand ((Spectrum) my data, my d_startSelection, my d_endSelection, my p_bandSmoothing);
 		FunctionEditor_redraw (me);
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
 

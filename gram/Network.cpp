@@ -1,6 +1,6 @@
 /* Network.cpp
  *
- * Copyright (C) 2009-2012,2013,2014 Paul Boersma
+ * Copyright (C) 2009-2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,17 +57,17 @@
 void structNetwork :: v_info ()
 {
 	structData :: v_info ();
-	MelderInfo_writeLine (L"Spreading rate: ", Melder_double (our spreadingRate));
-	MelderInfo_writeLine (L"Activity clipping rule: ", kNetwork_activityClippingRule_getText (our activityClippingRule));
-	MelderInfo_writeLine (L"Minimum activity: ", Melder_double (our minimumActivity));
-	MelderInfo_writeLine (L"Maximum activity: ", Melder_double (our maximumActivity));
-	MelderInfo_writeLine (L"Activity leak: ", Melder_double (our activityLeak));
-	MelderInfo_writeLine (L"Learning rate: ", Melder_double (our learningRate));
-	MelderInfo_writeLine (L"Minimum weight: ", Melder_double (our minimumWeight));
-	MelderInfo_writeLine (L"Maximum weight: ", Melder_double (our maximumWeight));
-	MelderInfo_writeLine (L"Weight leak: ", Melder_double (our weightLeak));
-	MelderInfo_writeLine (L"Number of nodes: ", Melder_integer (our numberOfNodes));
-	MelderInfo_writeLine (L"Number of connections: ", Melder_integer (our numberOfConnections));
+	MelderInfo_writeLine (U"Spreading rate: ", Melder32_double (our spreadingRate));
+	MelderInfo_writeLine (U"Activity clipping rule: ", kNetwork_activityClippingRule_getText (our activityClippingRule));
+	MelderInfo_writeLine (U"Minimum activity: ", Melder32_double (our minimumActivity));
+	MelderInfo_writeLine (U"Maximum activity: ", Melder32_double (our maximumActivity));
+	MelderInfo_writeLine (U"Activity leak: ", Melder32_double (our activityLeak));
+	MelderInfo_writeLine (U"Learning rate: ", Melder32_double (our learningRate));
+	MelderInfo_writeLine (U"Minimum weight: ", Melder32_double (our minimumWeight));
+	MelderInfo_writeLine (U"Maximum weight: ", Melder32_double (our maximumWeight));
+	MelderInfo_writeLine (U"Weight leak: ", Melder32_double (our weightLeak));
+	MelderInfo_writeLine (U"Number of nodes: ", Melder32_integer (our numberOfNodes));
+	MelderInfo_writeLine (U"Number of connections: ", Melder32_integer (our numberOfConnections));
 }
 
 Thing_implement (Network, Data, 6);

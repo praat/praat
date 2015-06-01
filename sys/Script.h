@@ -2,7 +2,7 @@
 #define _Script_h_
 /* Script.h
  *
- * Copyright (C) 1997-2011 Paul Boersma
+ * Copyright (C) 1997-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +22,7 @@
 #include "Data.h"
 
 Thing_define (Script, Data) {
-	// new data:
-	public:
-		structMelderFile file;
+	structMelderFile file;
 };
 
 Script Script_createFromFile (MelderFile file);

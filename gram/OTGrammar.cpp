@@ -1,6 +1,6 @@
 /* OTGrammar.cpp
  *
- * Copyright (C) 1997-2012,2014 Paul Boersma
+ * Copyright (C) 1997-2012,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,56 +106,56 @@ void structOTGrammar :: v_info ()
 			for (long icons = 1; icons <= numberOfConstraints; icons ++)
 				numberOfViolations += tableaus [itab]. candidates [icand]. marks [icons];
 	}
-	MelderInfo_writeLine (L"Decision strategy: ", kOTGrammar_decisionStrategy_getText (decisionStrategy));
-	MelderInfo_writeLine (L"Number of constraints: ", Melder_integer (numberOfConstraints));
-	MelderInfo_writeLine (L"Number of tableaus: ", Melder_integer (numberOfTableaus));
-	MelderInfo_writeLine (L"Number of candidates: ", Melder_integer (numberOfCandidates));
-	MelderInfo_writeLine (L"Number of violation marks: ", Melder_integer (numberOfViolations));
+	MelderInfo_writeLine (U"Decision strategy: ", kOTGrammar_decisionStrategy_getText (decisionStrategy));
+	MelderInfo_writeLine (U"Number of constraints: ", Melder32_integer (numberOfConstraints));
+	MelderInfo_writeLine (U"Number of tableaus: ", Melder32_integer (numberOfTableaus));
+	MelderInfo_writeLine (U"Number of candidates: ", Melder32_integer (numberOfCandidates));
+	MelderInfo_writeLine (U"Number of violation marks: ", Melder32_integer (numberOfViolations));
 }
 
 void structOTGrammar :: v_writeText (MelderFile file) {
-	MelderFile_write (file, L"\n<", kOTGrammar_decisionStrategy_getText (decisionStrategy),
-		L">\n", Melder_double (leak), L" ! leak\n", Melder_integer (numberOfConstraints), L" constraints");
+	MelderFile_write (file, U"\n<", kOTGrammar_decisionStrategy_getText (decisionStrategy),
+		U">\n", Melder32_double (leak), U" ! leak\n", Melder32_integer (numberOfConstraints), U" constraints");
 	for (long icons = 1; icons <= numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & constraints [icons];
-		MelderFile_write (file, L"\nconstraint [", Melder_integer (icons), L"]: \"");
+		MelderFile_write (file, U"\nconstraint [", Melder32_integer (icons), U"]: \"");
 		for (const wchar_t *p = & constraint -> name [0]; *p; p ++) {
-			if (*p =='\"') MelderFile_writeCharacter (file, '\"');   // Double any quotes within quotes.
+			if (*p == '\"') MelderFile_writeCharacter (file, U'\"');   // Double any quotes within quotes.
 			MelderFile_writeCharacter (file, *p);
 		}
-		MelderFile_write (file, L"\" ", Melder_double (constraint -> ranking),
-			L" ", Melder_double (constraint -> disharmony), L" ", Melder_double (constraint -> plasticity), L" ! ");
+		MelderFile_write (file, U"\" ", Melder32_double (constraint -> ranking),
+			U" ", Melder32_double (constraint -> disharmony), U" ", Melder32_double (constraint -> plasticity), U" ! ");
 		for (const wchar_t *p = & constraint -> name [0]; *p; p ++) {
-			if (*p == '\n') MelderFile_writeCharacter (file, ' ');
+			if (*p == '\n') MelderFile_writeCharacter (file, U' ');
 			else if (*p == '\\' && p [1] == 's' && p [2] == '{') p += 2;
 			else if (*p == '}') { }
 			else MelderFile_writeCharacter (file, *p);
 		}
 	}
-	MelderFile_write (file, L"\n\n", Melder_integer (numberOfFixedRankings), L" fixed rankings");
+	MelderFile_write (file, U"\n\n", Melder32_integer (numberOfFixedRankings), U" fixed rankings");
 	for (long irank = 1; irank <= numberOfFixedRankings; irank ++) {
 		OTGrammarFixedRanking fixedRanking = & fixedRankings [irank];
-		MelderFile_write (file, L"\n   ", Melder_integer (fixedRanking -> higher), L" ", Melder_integer (fixedRanking -> lower));
+		MelderFile_write (file, U"\n   ", Melder32_integer (fixedRanking -> higher), U" ", Melder32_integer (fixedRanking -> lower));
 	}
-	MelderFile_write (file, L"\n\n", Melder_integer (numberOfTableaus), L" tableaus");
+	MelderFile_write (file, U"\n\n", Melder32_integer (numberOfTableaus), U" tableaus");
 	for (long itab = 1; itab <= numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & tableaus [itab];
-		MelderFile_write (file, L"\ninput [", Melder_integer (itab), L"]: \"");
+		MelderFile_write (file, U"\ninput [", Melder32_integer (itab), U"]: \"");
 		for (const wchar_t *p = & tableau -> input [0]; *p; p ++) {
-			if (*p =='\"') MelderFile_writeCharacter (file, '\"');   // Double any quotes within quotes.
+			if (*p == '\"') MelderFile_writeCharacter (file, U'\"');   // Double any quotes within quotes.
 			MelderFile_writeCharacter (file, *p);
 		}
-		MelderFile_write (file, L"\" ", Melder_integer (tableau -> numberOfCandidates));
+		MelderFile_write (file, U"\" ", Melder32_integer (tableau -> numberOfCandidates));
 		for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 			OTGrammarCandidate candidate = & tableau -> candidates [icand];
-			MelderFile_write (file, L"\n   candidate [", Melder_integer (icand), L"]: \"");
+			MelderFile_write (file, U"\n   candidate [", Melder32_integer (icand), U"]: \"");
 			for (const wchar_t *p = & candidate -> output [0]; *p; p ++) {
-				if (*p =='\"') MelderFile_writeCharacter (file, '\"');   // Double any quotes within quotes.
+				if (*p =='\"') MelderFile_writeCharacter (file, U'\"');   // Double any quotes within quotes.
 				MelderFile_writeCharacter (file, *p);
 			}
-			MelderFile_writeCharacter (file, '\"');
+			MelderFile_writeCharacter (file, U'\"');
 			for (long icons = 1; icons <= candidate -> numberOfConstraints; icons ++) {
-				MelderFile_write (file, L" ", Melder_integer (candidate -> marks [icons]));
+				MelderFile_write (file, U" ", Melder32_integer (candidate -> marks [icons]));
 			}
 		}
 	}

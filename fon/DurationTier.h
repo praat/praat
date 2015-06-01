@@ -2,7 +2,7 @@
 #define _DurationTier_h_
 /* DurationTier.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,10 +25,10 @@
 /********** class DurationTier **********/
 
 Thing_define (DurationTier, RealTier) {
-	// overridden methods:
-	protected:
-		virtual void v_info ();
-		virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
+	void v_info ()
+		override;
+	int v_domainQuantity ()
+		override { return MelderQuantity_TIME_SECONDS; }
 };
 
 DurationTier DurationTier_create (double tmin, double tmax);

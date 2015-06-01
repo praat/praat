@@ -1,6 +1,6 @@
 /* Formant_def.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2002,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,10 +61,12 @@ oo_DEFINE_CLASS (Formant, Sampled)
 	oo_STRUCT_VECTOR (Formant_Frame, d_frames, nx)
 
 	#if oo_DECLARING
-		// overridden methods:
-			virtual void v_info ();
-			virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
-			virtual double v_getValueAtSample (long iframe, long which, int units);
+		void v_info ()
+			override;
+		int v_domainQuantity ()
+			override { return MelderQuantity_TIME_SECONDS; }
+		double v_getValueAtSample (long iframe, long which, int units)
+			override;
 	#endif
 
 oo_END_CLASS (Formant)

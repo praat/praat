@@ -2,7 +2,7 @@
 #define _ManPages_h_
 /* ManPages.h
  *
- * Copyright (C) 1996-2011 Paul Boersma
+ * Copyright (C) 1996-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,16 +23,15 @@
 #include "Collection.h"
 
 Thing_define (ManPages, Data) {
-	// new data:
-	public:
-		Ordered pages;
-		const wchar_t **titles;
-		int ground, dynamic, executable;
-		structMelderDir rootDirectory;
-	// overridden methods:
-	protected:
-		virtual void v_destroy ();
-		virtual void v_readText (MelderReadText text);
+	Ordered pages;
+	const wchar_t **titles;
+	int ground, dynamic, executable;
+	structMelderDir rootDirectory;
+
+	void v_destroy ()
+		override;
+	void v_readText (MelderReadText text)
+		override;
 };
 
 ManPages ManPages_create (void);

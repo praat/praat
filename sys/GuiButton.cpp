@@ -1,6 +1,6 @@
 /* GuiButton.cpp
  *
- * Copyright (C) 1993-2012 Paul Boersma, 2007-2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
+ * Copyright (C) 1993-2012,2015 Paul Boersma, 2007-2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -259,7 +259,7 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 		}
 	#endif
 	if (flags & GuiButton_INSENSITIVE) {
-		my f_setSensitive (false);
+		GuiThing_setSensitive (me, false);
 	}
 	return me;
 }
@@ -268,19 +268,19 @@ GuiButton GuiButton_createShown (GuiForm parent, int left, int right, int top, i
 	const wchar_t *buttonText, void (*clickedCallback) (void *boss, GuiButtonEvent event), void *clickedBoss, unsigned long flags)
 {
 	GuiButton me = GuiButton_create (parent, left, right, top, bottom, buttonText, clickedCallback, clickedBoss, flags);
-	my f_show ();
+	GuiThing_show (me);
 	return me;
 }
 
-void structGuiButton :: f_setString (const wchar_t *text) {
+void GuiButton_setText (GuiButton me, const wchar_t *text) {
 	#if gtk
-		gtk_button_set_label (GTK_BUTTON (d_widget), Melder_peekWcsToUtf8 (text));
+		gtk_button_set_label (GTK_BUTTON (my d_widget), Melder_peekWcsToUtf8 (text));
 	#elif cocoa
-		[(NSButton *) d_widget setTitle: (NSString *) Melder_peekWcsToCfstring (text)];
+		[(NSButton *) my d_widget setTitle: (NSString *) Melder_peekWcsToCfstring (text)];
 	#elif motif
-		Melder_free (d_widget -> name);
-		d_widget -> name = Melder_wcsdup_f (text);
-		_GuiNativeControl_setTitle (d_widget);
+		Melder_free (my d_widget -> name);
+		my d_widget -> name = Melder_wcsdup_f (text);
+		_GuiNativeControl_setTitle (my d_widget);
 	#endif
 }
 

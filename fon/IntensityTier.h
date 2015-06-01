@@ -2,7 +2,7 @@
 #define _IntensityTier_h_
 /* IntensityTier.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +25,8 @@
 #include "Sound.h"
 
 Thing_define (IntensityTier, RealTier) {
-	// overridden methods:
-	protected:
-		virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
+	int v_domainQuantity ()
+		override { return MelderQuantity_TIME_SECONDS; }
 };
 
 IntensityTier IntensityTier_create (double tmin, double tmax);

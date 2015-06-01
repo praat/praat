@@ -1,6 +1,6 @@
 /* Harmonics_def.h
  *
- * Copyright (C) 2011 Paul Boersma
+ * Copyright (C) 2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +26,8 @@ oo_DEFINE_CLASS (Harmonics, Data)
 	oo_DOUBLE_VECTOR (harmonics, numberOfHarmonics)
 
 	#if oo_DECLARING
-		// overridden methods:
-		public:
-			virtual void v_info ();
+		void v_info ()
+			override;
 	#endif
 
 oo_END_CLASS (Harmonics)

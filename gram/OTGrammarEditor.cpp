@@ -1,6 +1,6 @@
 /* OTGrammarEditor.cpp
  *
- * Copyright (C) 1997-2011,2012,2013 Paul Boersma
+ * Copyright (C) 1997-2011,2012,2013,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ static void menu_cb_evaluate (EDITOR_ARGS) {
 		Editor_save (me, L"Evaluate");
 		OTGrammar_newDisharmonies ((OTGrammar) my data, GET_REAL (L"Noise"));
 		Graphics_updateWs (my g);
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
 
@@ -46,7 +46,7 @@ static void menu_cb_evaluate_noise_2_0 (EDITOR_ARGS) {
 	Editor_save (me, L"Evaluate (noise 2.0)");
 	OTGrammar_newDisharmonies ((OTGrammar) my data, 2.0);
 	Graphics_updateWs (my g);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_evaluate_tinyNoise (EDITOR_ARGS) {
@@ -54,7 +54,7 @@ static void menu_cb_evaluate_tinyNoise (EDITOR_ARGS) {
 	Editor_save (me, L"Evaluate (tiny noise)");
 	OTGrammar_newDisharmonies ((OTGrammar) my data, 1e-9);
 	Graphics_updateWs (my g);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_evaluate_zeroNoise (EDITOR_ARGS) {
@@ -62,7 +62,7 @@ static void menu_cb_evaluate_zeroNoise (EDITOR_ARGS) {
 	Editor_save (me, L"Evaluate (zero noise)");
 	OTGrammar_newDisharmonies ((OTGrammar) my data, 0.0);
 	Graphics_updateWs (my g);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_editConstraint (EDITOR_ARGS) {
@@ -91,7 +91,7 @@ static void menu_cb_editConstraint (EDITOR_ARGS) {
 		constraint -> plasticity = GET_REAL (L"Plasticity");
 		OTGrammar_sort (ot);
 		Graphics_updateWs (my g);
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
 
@@ -115,7 +115,7 @@ static void menu_cb_learnOne (EDITOR_ARGS) {
 			GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"), TRUE, TRUE, NULL);
 		OTGrammar_sort ((OTGrammar) my data);
 		Graphics_updateWs (my g);
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
 
@@ -138,7 +138,7 @@ static void menu_cb_learnOneFromPartialOutput (EDITOR_ARGS) {
 			GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"), GET_INTEGER (L"Number of chews"), TRUE);
 		OTGrammar_sort ((OTGrammar) my data);
 		Graphics_updateWs (my g);
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
 
@@ -152,7 +152,7 @@ static void menu_cb_removeConstraint (EDITOR_ARGS) {
 	Editor_save (me, L"Remove constraint");
 	OTGrammar_removeConstraint (ot, constraint -> name);
 	Graphics_updateWs (my g);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_resetAllRankings (EDITOR_ARGS) {
@@ -164,7 +164,7 @@ static void menu_cb_resetAllRankings (EDITOR_ARGS) {
 		Editor_save (me, L"Reset all rankings");
 		OTGrammar_reset ((OTGrammar) my data, GET_REAL (L"Ranking"));
 		Graphics_updateWs (my g);
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
 

@@ -1,6 +1,6 @@
 /* Network_enums.h
  *
- * Copyright (C) 2012 Paul Boersma
+ * Copyright (C) 2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
  */
 
 enums_begin (kNetwork_activityClippingRule, 0)
-	enums_add (kNetwork_activityClippingRule, 0, SIGMOID, L"sigmoid")
-	enums_add (kNetwork_activityClippingRule, 1, LINEAR, L"linear")
-	enums_add (kNetwork_activityClippingRule, 2, TOP_SIGMOID, L"top-sigmoid")
+	enums_add (kNetwork_activityClippingRule, 0, SIGMOID, U"sigmoid")
+	enums_add (kNetwork_activityClippingRule, 1, LINEAR, U"linear")
+	enums_add (kNetwork_activityClippingRule, 2, TOP_SIGMOID, U"top-sigmoid")
 enums_end (kNetwork_activityClippingRule, 2, LINEAR)
 
 /* End of file Network_enums.h */

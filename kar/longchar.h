@@ -2,7 +2,7 @@
 #define _longchar_h_
 /* longchar.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,9 +50,11 @@
 /********** Conversion of Roman native and generic string encodings. **********/
 
 wchar_t * Longchar_nativizeW (const wchar_t *generic, wchar_t *native, int educateQuotes);
+char32_t * Longchar_nativize32 (const char32_t *generic, char32_t *native, int educateQuotes);
 
 char * Longchar_genericize (const char *native, char *generic);
 wchar_t *Longchar_genericizeW (const wchar_t *native, wchar_t *generic);
+char32_t *Longchar_genericize32 (const char32_t *native, char32_t *generic);
 /*
 	Function:
 		Copies the string 'native' to the string 'generic',

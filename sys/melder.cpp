@@ -1,6 +1,6 @@
 /* melder.cpp
  *
- * Copyright (C) 1992-2012,2013,2014 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
+ * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -232,25 +232,25 @@ static bool waitWhileProgress (double progress, const wchar_t *message, GuiDialo
 		}
 	#endif
 	if (progress >= 1.0) {
-		dia -> f_hide ();
+		GuiThing_hide (dia);
 	} else {
 		if (progress <= 0.0) progress = 0.0;
-		dia -> f_show ();   // TODO: prevent raising to the front
+		GuiThing_show (dia);   // TODO: prevent raising to the front
 		const wchar_t *newline = wcschr (message, '\n');
 		if (newline != NULL) {
 			static MelderString buffer = { 0 };
 			MelderString_copy (& buffer, message);
 			buffer.string [newline - message] = '\0';
-			label1 -> f_setString (buffer.string);
+			GuiLabel_setText (label1, buffer.string);
 			buffer.string [newline - message] = '\n';
-			label2 -> f_setString (buffer.string + (newline - message) + 1);
+			GuiLabel_setText (label2, buffer.string + (newline - message) + 1);
 		} else {
-			label1 -> f_setString (message);
-			label2 -> f_setString (L"");
+			GuiLabel_setText (label1, message);
+			GuiLabel_setText (label2, L"");
 		}
 		#if gtk
 			trace ("update the progress bar");
-			scale -> f_setValue (progress);
+			GuiProgressBar_setValue (scale, progress);
 			while (gtk_events_pending ()) {
 				trace ("event pending");
 				gtk_main_iteration ();
@@ -261,14 +261,14 @@ static bool waitWhileProgress (double progress, const wchar_t *message, GuiDialo
 				return false;   // don't continue
 			}
 		#elif cocoa
-			scale -> f_setValue (progress);
+			GuiProgressBar_setValue (scale, progress);
 			//[scale -> d_cocoaProgressBar   displayIfNeeded];
 			if (theProgressCancelled) {
 				theProgressCancelled = false;
 				return false;
 			}
 		#elif motif
-			scale -> f_setValue (progress);
+			GuiProgressBar_setValue (scale, progress);
 			XmUpdateDisplay (dia -> d_widget);
 		#endif
 	}
@@ -415,7 +415,7 @@ static void * _Melder_monitor (double progress, const wchar_t *message) {
 			if (dia == NULL) {
 				_Melder_dia_init (& dia, & scale, & label1, & label2, & cancelButton, true);
 				drawingArea = GuiDrawingArea_createShown (dia, 0, 400, 230, 430, NULL, NULL, NULL, NULL, NULL, 0);
-				dia -> f_show ();
+				GuiThing_show (dia);
 				graphics = Graphics_create_xmdrawingarea (drawingArea);
 			}
 			if (! waitWhileProgress (progress, message, dia, scale, label1, label2, cancelButton))
@@ -817,13 +817,13 @@ static void mac_message (NSAlertStyle macAlertType, const wchar_t *messageW) {
 	int messageLength = wcslen (messageW);
 	int j = 0;
 	for (int i = 0; i < messageLength && j <= 4000 - 3; i ++) {
-		char32_t kar = (char32_t) messageW [i];   // change sign
-		if (kar <= 0xFFFF) {
+		char32 kar = (char32) messageW [i];   // change sign
+		if (kar <= 0x00FFFF) {
 			messageU [j ++] = kar;
 		} else if (kar <= 0x10FFFF) {
-			kar -= 0x10000;
-			messageU [j ++] = 0xD800 | (kar >> 10);
-			messageU [j ++] = 0xDC00 | (kar & 0x3FF);
+			kar -= 0x010000;
+			messageU [j ++] = 0x00D800 | (kar >> 10);
+			messageU [j ++] = 0x00DC00 | (kar & 0x0003FF);
 		}
 	}
 	messageU [j] = '\0';   // append null byte because we are going to search this string

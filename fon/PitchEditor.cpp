@@ -1,6 +1,6 @@
 /* PitchEditor.cpp
  *
- * Copyright (C) 1992-2011,2012,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ static void menu_cb_setCeiling (EDITOR_ARGS) {
 		Editor_save (me, L"Change ceiling");
 		Pitch_setCeiling (pitch, GET_REAL (L"Ceiling"));
 		FunctionEditor_redraw (me);
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
 
@@ -66,7 +66,7 @@ static void menu_cb_pathFinder (EDITOR_ARGS) {
 			GET_REAL (L"Octave cost"), GET_REAL (L"Octave-jump cost"),
 			GET_REAL (L"Voiced/unvoiced cost"), GET_REAL (L"Ceiling"), GET_INTEGER (L"Pull formants"));
 		FunctionEditor_redraw (me);
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
 
@@ -85,7 +85,7 @@ static void menu_cb_octaveUp (EDITOR_ARGS) {
 	Editor_save (me, L"Octave up");
 	Pitch_step (pitch, 2.0, 0.1, my d_startSelection, my d_endSelection);
 	FunctionEditor_redraw (me);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_fifthUp (EDITOR_ARGS) {
@@ -94,7 +94,7 @@ static void menu_cb_fifthUp (EDITOR_ARGS) {
 	Editor_save (me, L"Fifth up");
 	Pitch_step (pitch, 1.5, 0.1, my d_startSelection, my d_endSelection);
 	FunctionEditor_redraw (me);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_fifthDown (EDITOR_ARGS) {
@@ -103,7 +103,7 @@ static void menu_cb_fifthDown (EDITOR_ARGS) {
 	Editor_save (me, L"Fifth down");
 	Pitch_step (pitch, 1 / 1.5, 0.1, my d_startSelection, my d_endSelection);
 	FunctionEditor_redraw (me);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_octaveDown (EDITOR_ARGS) {
@@ -112,7 +112,7 @@ static void menu_cb_octaveDown (EDITOR_ARGS) {
 	Editor_save (me, L"Octave down");
 	Pitch_step (pitch, 0.5, 0.1, my d_startSelection, my d_endSelection);
 	FunctionEditor_redraw (me);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_voiceless (EDITOR_ARGS) {
@@ -134,7 +134,7 @@ static void menu_cb_voiceless (EDITOR_ARGS) {
 		}
 	}
 	FunctionEditor_redraw (me);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_PitchEditorHelp (EDITOR_ARGS) { EDITOR_IAM (PitchEditor); Melder_help (L"PitchEditor"); }
@@ -334,7 +334,7 @@ int structPitchEditor :: v_click (double xWC, double yWC, bool dummy) {
 			bestFrame -> candidate [1] = bestFrame -> candidate [bestCandidate];
 			bestFrame -> candidate [bestCandidate] = help;
 			FunctionEditor_redraw (this);
-			our broadcastDataChanged ();
+			Editor_broadcastDataChanged (this);
 			our d_startSelection = our d_endSelection = tmid;   // cursor will snap to candidate
 			return 1;
 		} else {

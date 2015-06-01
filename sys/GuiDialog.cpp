@@ -1,6 +1,6 @@
 /* GuiDialog.cpp
  *
- * Copyright (C) 1993-2012,2013 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2012,2013,2015 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,7 +111,7 @@ GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int heigh
 			goAwayCallback ? G_CALLBACK (_GuiGtkDialog_goAwayCallback) : G_CALLBACK (gtk_widget_hide_on_delete), me);
 		gtk_window_set_default_size (GTK_WINDOW (my d_gtkWindow), width, height);
 		gtk_window_set_modal (GTK_WINDOW (my d_gtkWindow), flags & GuiDialog_MODAL);
-		my f_setTitle (title);
+		GuiShell_setTitle (me, title);
 		GuiObject vbox = GTK_DIALOG (my d_gtkWindow) -> vbox;
 		my d_widget = gtk_fixed_new ();
 		_GuiObject_setUserData (my d_widget, me);
@@ -139,7 +139,7 @@ GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int heigh
 		if (goAwayCallback) {
 			XmAddWMProtocolCallback (my d_xmShell, 'delw', _GuiMotifDialog_goAwayCallback, (char *) me);
 		}
-		my f_setTitle (title);
+		GuiShell_setTitle (me, title);
 		my d_widget = XmCreateForm (my d_xmShell, "dialog", NULL, 0);
 		XtVaSetValues (my d_widget, XmNwidth, (Dimension) width, XmNheight, (Dimension) height, NULL);
 		_GuiObject_setUserData (my d_widget, me);

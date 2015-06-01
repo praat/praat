@@ -1,6 +1,6 @@
 /* GuiDrawingArea.cpp
  *
- * Copyright (C) 1993-2012,2013 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
+ * Copyright (C) 1993-2012,2013,2015 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -487,14 +487,6 @@ static gboolean _guiGtkDrawingArea_swipeCallback (GuiObject w, GdkEventScroll *e
 }
 #endif
 
-void structGuiDrawingArea :: f_setSwipable (GuiScrollBar horizontalScrollBar, GuiScrollBar verticalScrollBar) {
-	d_horizontalScrollBar = horizontalScrollBar;
-	d_verticalScrollBar = verticalScrollBar;
-	#if gtk
-		g_signal_connect (G_OBJECT (d_widget), "scroll-event", G_CALLBACK (_guiGtkDrawingArea_swipeCallback), this);
-	#endif
-}
-
 GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int top, int bottom,
 	void (*exposeCallback) (void *boss, GuiDrawingAreaExposeEvent event),
 	void (*clickCallback)  (void *boss, GuiDrawingAreaClickEvent  event),
@@ -568,7 +560,7 @@ GuiDrawingArea GuiDrawingArea_createShown (GuiForm parent, int left, int right, 
 	unsigned long flags)
 {
 	GuiDrawingArea me = GuiDrawingArea_create (parent, left, right, top, bottom, exposeCallback, clickCallback, keyCallback, resizeCallback, boss, flags);
-	my f_show ();
+	GuiThing_show (me);
 	return me;
 }
 
@@ -640,23 +632,31 @@ GuiDrawingArea GuiDrawingArea_createShown (GuiScrolledWindow parent, int width, 
 	unsigned long flags)
 {
 	GuiDrawingArea me = GuiDrawingArea_create (parent, width, height, exposeCallback, clickCallback, keyCallback, resizeCallback, boss, flags);
-	my f_show ();
+	GuiThing_show (me);
 	return me;
 }
 
-void structGuiDrawingArea :: f_setExposeCallback (void (*callback) (void *boss, GuiDrawingAreaExposeEvent event), void *boss) {
-	d_exposeCallback = callback;
-	d_exposeBoss = boss;
+void GuiDrawingArea_setSwipable (GuiDrawingArea me, GuiScrollBar horizontalScrollBar, GuiScrollBar verticalScrollBar) {
+	my d_horizontalScrollBar = horizontalScrollBar;
+	my d_verticalScrollBar = verticalScrollBar;
+	#if gtk
+		g_signal_connect (G_OBJECT (my d_widget), "scroll-event", G_CALLBACK (_guiGtkDrawingArea_swipeCallback), me);
+	#endif
 }
 
-void structGuiDrawingArea :: f_setClickCallback (void (*callback) (void *boss, GuiDrawingAreaClickEvent event), void *boss) {
-	d_clickCallback = callback;
-	d_clickBoss = boss;
+void GuiDrawingArea_setExposeCallback (GuiDrawingArea me, void (*callback) (void *boss, GuiDrawingAreaExposeEvent event), void *boss) {
+	my d_exposeCallback = callback;
+	my d_exposeBoss = boss;
 }
 
-void structGuiDrawingArea :: f_setResizeCallback (void (*callback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss) {
-	d_resizeCallback = callback;
-	d_resizeBoss = boss;
+void GuiDrawingArea_setClickCallback (GuiDrawingArea me, void (*callback) (void *boss, GuiDrawingAreaClickEvent event), void *boss) {
+	my d_clickCallback = callback;
+	my d_clickBoss = boss;
+}
+
+void GuiDrawingArea_setResizeCallback (GuiDrawingArea me, void (*callback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss) {
+	my d_resizeCallback = callback;
+	my d_resizeBoss = boss;
 }
 
 /* End of file GuiDrawingArea.cpp */

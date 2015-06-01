@@ -1,6 +1,6 @@
 /* ButtonEditor.cpp
  *
- * Copyright (C) 1996-2011,2013,2014 Paul Boersma
+ * Copyright (C) 1996-2011,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -174,7 +174,7 @@ int structButtonEditor :: v_goToPage (const wchar_t *title) {
 	if (! title || ! title [0]) return 0;
 	if (wcsequ (title, L"Buttons")) return 1;
 	switch (title [0]) {
-		case 'a': {   /* Toggle visibility of action.*/
+		case 'a': {   // toggle visibility of action
 			long i = wcstol (& title [1], NULL, 10);
 			praat_Command action = praat_getAction (i);
 			if (! action) return 0;
@@ -183,7 +183,7 @@ int structButtonEditor :: v_goToPage (const wchar_t *title) {
 			else
 				praat_hideAction (action -> class1, action -> class2, action -> class3, action -> title);
 		} break;
-		case 'm': {   /* Toggle visibility of menu command. */
+		case 'm': {   // toggle visibility of menu command
 			long i = wcstol (& title [1], NULL, 10);
 			praat_Command menuCommand = praat_getMenuCommand (i);
 			if (! menuCommand) return 0;
@@ -192,13 +192,13 @@ int structButtonEditor :: v_goToPage (const wchar_t *title) {
 			else
 				praat_hideMenuCommand (menuCommand -> window, menuCommand -> menu, menuCommand -> title);
 		} break;
-		case 'e': {   /* Execute action. */
+		case 'e': {   // execute action
 			long i = wcstol (& title [1], NULL, 10);
 			praat_Command action = praat_getAction (i);
 			if (! action || ! action -> callback) return 0;
 			if (action -> title) {
-				UiHistory_write (L"\n");
-				UiHistory_write_colonize (action -> title);
+				UiHistory_write (U"\n");
+				UiHistory_write_colonize (Melder_peekWcsToStr32 (action -> title));
 			}
 			if (action -> script) {
 				try {
@@ -215,13 +215,13 @@ int structButtonEditor :: v_goToPage (const wchar_t *title) {
 			}
 			praat_updateSelection ();
 		} break;
-		case 'p': {   /* Perform menu command. */
+		case 'p': {   // perform menu command
 			long i = wcstol (& title [1], NULL, 10);
 			praat_Command menuCommand = praat_getMenuCommand (i);
 			if (! menuCommand || ! menuCommand -> callback) return 0;
 			if (menuCommand -> title) {
-				UiHistory_write (L"\n");
-				UiHistory_write_colonize (menuCommand -> title);
+				UiHistory_write (U"\n");
+				UiHistory_write_colonize (Melder_peekWcsToStr32 (menuCommand -> title));
 			}
 			if (menuCommand -> script) {
 				try {
@@ -245,7 +245,7 @@ int structButtonEditor :: v_goToPage (const wchar_t *title) {
 
 static void which (ButtonEditor me, int show) {
 	my show = show;
-	( show == 1 ? my button1 : show == 2 ? my button2 : show == 3 ? my button3 : show == 4 ? my button4 : my button5 ) -> f_set ();
+	GuiRadioButton_set (show == 1 ? my button1 : show == 2 ? my button2 : show == 3 ? my button3 : show == 4 ? my button4 : my button5);
 	HyperPage_goToPage (me, L"Buttons");
 }
 

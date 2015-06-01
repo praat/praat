@@ -1,6 +1,6 @@
 /* TimeSoundEditor.cpp
  *
- * Copyright (C) 1992-2012,2013,2014 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ void structTimeSoundEditor :: v_destroy () {
 void structTimeSoundEditor :: v_info () {
 	TimeSoundEditor_Parent :: v_info ();
 	/* Sound flags: */
-	MelderInfo_writeLine (L"Sound scaling strategy: ", kTimeSoundEditor_scalingStrategy_getText (p_sound_scalingStrategy));
+	MelderInfo_writeLine (U"Sound scaling strategy: ", kTimeSoundEditor_scalingStrategy_getText (p_sound_scalingStrategy));
 }
 
 /***** FILE MENU *****/
@@ -136,7 +136,7 @@ static void do_ExtractSelectedSound (TimeSoundEditor me, bool preserveTimes) {
 	} else if (my d_sound.data) {
 		extract.reset (Sound_extractPart (my d_sound.data, my d_startSelection, my d_endSelection, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes));
 	}
-	my broadcastPublication (extract.transfer());
+	Editor_broadcastPublication (me, extract.transfer());
 }
 
 static void menu_cb_ExtractSelectedSound_timeFromZero (EDITOR_ARGS) {
@@ -169,7 +169,7 @@ static void menu_cb_ExtractSelectedSound_windowed (EDITOR_ARGS) {
 		autoSound extract = Sound_extractPart (sound, my d_startSelection, my d_endSelection, my pref_extract_windowShape (),
 			my pref_extract_relativeWidth (), my pref_extract_preserveTimes ());
 		Thing_setName (extract.peek(), GET_STRING (L"Name"));
-		my broadcastPublication (extract.transfer());
+		Editor_broadcastPublication (me, extract.transfer());
 	EDITOR_END
 }
 
@@ -187,7 +187,7 @@ static void menu_cb_ExtractSelectedSoundForOverlap (EDITOR_ARGS) {
 		autoSound extract = Sound_extractPartForOverlap (sound, my d_startSelection, my d_endSelection,
 			my pref_extract_overlap ());
 		Thing_setName (extract.peek(), GET_STRING (L"Name"));
-		my broadcastPublication (extract.transfer());
+		Editor_broadcastPublication (me, extract.transfer());
 	EDITOR_END
 }
 
@@ -425,22 +425,22 @@ void structTimeSoundEditor :: v_updateMenuItems_file () {
 	if (sound == NULL) return;
 	long first, last, selectedSamples = Sampled_getWindowSamples (sound, d_startSelection, d_endSelection, & first, & last);
 	if (drawButton) {
-		drawButton -> f_setSensitive (selectedSamples != 0);
-		publishButton -> f_setSensitive (selectedSamples != 0);
-		publishPreserveButton -> f_setSensitive (selectedSamples != 0);
-		if (publishWindowButton) publishWindowButton -> f_setSensitive (selectedSamples != 0);
-		if (publishOverlapButton) publishOverlapButton -> f_setSensitive (selectedSamples != 0);
+		GuiThing_setSensitive (drawButton, selectedSamples != 0);
+		GuiThing_setSensitive (publishButton, selectedSamples != 0);
+		GuiThing_setSensitive (publishPreserveButton, selectedSamples != 0);
+		if (publishWindowButton) GuiThing_setSensitive (publishWindowButton, selectedSamples != 0);
+		if (publishOverlapButton) GuiThing_setSensitive (publishOverlapButton, selectedSamples != 0);
 	}
-	writeWavButton -> f_setSensitive (selectedSamples != 0);
+	GuiThing_setSensitive (writeWavButton, selectedSamples != 0);
 	if (d_saveAs24BitWavButton)
-		d_saveAs24BitWavButton -> f_setSensitive (selectedSamples != 0);
+		GuiThing_setSensitive (d_saveAs24BitWavButton, selectedSamples != 0);
 	if (d_saveAs32BitWavButton)
-		d_saveAs32BitWavButton -> f_setSensitive (selectedSamples != 0);
-	writeAiffButton -> f_setSensitive (selectedSamples != 0);
-	writeAifcButton -> f_setSensitive (selectedSamples != 0);
-	writeNextSunButton -> f_setSensitive (selectedSamples != 0);
-	writeNistButton -> f_setSensitive (selectedSamples != 0);
-	writeFlacButton -> f_setSensitive (selectedSamples != 0);
+		GuiThing_setSensitive (d_saveAs32BitWavButton, selectedSamples != 0);
+	GuiThing_setSensitive (writeAiffButton, selectedSamples != 0);
+	GuiThing_setSensitive (writeAifcButton, selectedSamples != 0);
+	GuiThing_setSensitive (writeNextSunButton, selectedSamples != 0);
+	GuiThing_setSensitive (writeNistButton, selectedSamples != 0);
+	GuiThing_setSensitive (writeFlacButton, selectedSamples != 0);
 }
 
 void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double globalMaximum) {

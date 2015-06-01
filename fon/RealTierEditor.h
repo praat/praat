@@ -2,7 +2,7 @@
 #define _RealTierEditor_h_
 /* RealTierEditor.h
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,31 +23,35 @@
 #include "RealTier.h"
 
 Thing_define (RealTierEditor, TimeSoundEditor) {
-	// new data:
-	public:
-		double ymin, ymax, ycursor;
-	// overridden methods:
-		virtual void v_createMenus ();
-		virtual void v_dataChanged ();
-		virtual void v_draw ();
-		virtual int v_click (double xWC, double yWC, bool shiftKeyPressed);
-		virtual void v_play (double tmin, double tmax);
-		virtual void v_createMenuItems_view (EditorMenu menu);
-	// new methods:
-		virtual double v_minimumLegalValue () { return NUMundefined; }
-		virtual double v_maximumLegalValue () { return NUMundefined; }
-		virtual const wchar_t * v_quantityText () { return L"Y"; }   // normally includes units
-		virtual const wchar_t * v_quantityKey () { return L"Y"; }   // without units
-		virtual const wchar_t * v_rightTickUnits () { return L""; }
-		virtual double v_defaultYmin () { return 0.0; }
-		virtual double v_defaultYmax () { return 1.0; }
-		virtual const wchar_t * v_setRangeTitle () { return L"Set range..."; }
-		virtual const wchar_t * v_defaultYminText () { return L"0.0"; }
-		virtual const wchar_t * v_defaultYmaxText () { return L"1.0"; }
-		virtual const wchar_t * v_yminText () { return L"Minimum"; }   // normally includes units
-		virtual const wchar_t * v_ymaxText () { return L"Maximum"; }   // normally includes units
-		virtual const wchar_t * v_yminKey () { return L"Minimum"; }   // without units
-		virtual const wchar_t * v_ymaxKey () { return L"Maximum"; }   // without units
+	double ymin, ymax, ycursor;
+
+	void v_createMenus ()
+		override;
+	void v_dataChanged ()
+		override;
+	void v_draw ()
+		override;
+	int v_click (double xWC, double yWC, bool shiftKeyPressed)
+		override;
+	void v_play (double tmin, double tmax)
+		override;
+	void v_createMenuItems_view (EditorMenu menu)
+		override;
+
+	virtual double v_minimumLegalValue () { return NUMundefined; }
+	virtual double v_maximumLegalValue () { return NUMundefined; }
+	virtual const wchar_t * v_quantityText () { return L"Y"; }   // normally includes units
+	virtual const wchar_t * v_quantityKey () { return L"Y"; }   // without units
+	virtual const wchar_t * v_rightTickUnits () { return L""; }
+	virtual double v_defaultYmin () { return 0.0; }
+	virtual double v_defaultYmax () { return 1.0; }
+	virtual const wchar_t * v_setRangeTitle () { return L"Set range..."; }
+	virtual const wchar_t * v_defaultYminText () { return L"0.0"; }
+	virtual const wchar_t * v_defaultYmaxText () { return L"1.0"; }
+	virtual const wchar_t * v_yminText () { return L"Minimum"; }   // normally includes units
+	virtual const wchar_t * v_ymaxText () { return L"Maximum"; }   // normally includes units
+	virtual const wchar_t * v_yminKey () { return L"Minimum"; }   // without units
+	virtual const wchar_t * v_ymaxKey () { return L"Maximum"; }   // without units
 };
 
 void RealTierEditor_updateScaling (RealTierEditor me);

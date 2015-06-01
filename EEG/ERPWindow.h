@@ -2,7 +2,7 @@
 #define _ERPWindow_h_
 /* ERPWindow.h
  *
- * Copyright (C) 2012,2013,2014 Paul Boersma
+ * Copyright (C) 2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,19 +23,28 @@
 #include "ERP.h"
 
 Thing_define (ERPWindow, SoundEditor) { public:
-	// overridden methods:
-		virtual const wchar_t * v_getChannelName (long channelNumber) {
+	const wchar_t * v_getChannelName (long channelNumber)
+		override {
 			ERP erp = (ERP) our data;
 			return erp -> channelNames [channelNumber];
 		}
-		virtual void v_drawSelectionViewer ();
-		virtual bool v_hasPitch     () { return false; }
-		virtual bool v_hasIntensity () { return false; }
-		virtual bool v_hasFormants  () { return false; }
-		virtual bool v_hasPulses    () { return false; }
-		virtual void v_prefs_addFields (EditorCommand cmd);
-		virtual void v_prefs_setValues (EditorCommand cmd);
-		virtual void v_prefs_getValues (EditorCommand cmd);
+	void v_drawSelectionViewer ()
+		override;
+	bool v_hasPitch ()
+		override { return false; }
+	bool v_hasIntensity ()
+		override { return false; }
+	bool v_hasFormants ()
+		override { return false; }
+	bool v_hasPulses ()
+		override { return false; }
+	void v_prefs_addFields (EditorCommand cmd)
+		override;
+	void v_prefs_setValues (EditorCommand cmd)
+		override;
+	void v_prefs_getValues (EditorCommand cmd)
+		override;
+
 	#include "ERPWindow_prefs.h"
 };
 

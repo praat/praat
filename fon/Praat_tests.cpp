@@ -16,7 +16,7 @@
 #define UTF32_C(string) \
 	({ static const wchar_t *_static_utf32_string = Melder_utf8ToStr32 (string); _static_utf32_string; })
 
-constexpr char32_t greeting [] {U"Hello?"};
+constexpr char32 greeting [] {U"Hello?"};
 
 
 int Praat_tests (int itest, wchar_t *arg1, wchar_t *arg2, wchar_t *arg3, wchar_t *arg4) {

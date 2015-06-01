@@ -833,7 +833,7 @@ DIRECT2 (TextGrid_edit) {
 	LOOP if (CLASS == classTextGrid) {
 		iam (TextGrid);
 		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, sound, true, NULL, NULL);
-		editor -> setPublicationCallback (cb_TextGridEditor_publication, NULL);
+		Editor_setPublicationCallback (editor.peek(), cb_TextGridEditor_publication, NULL);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END2 }
@@ -850,7 +850,7 @@ DO
 	LOOP if (CLASS == classTextGrid) {
 		iam (TextGrid);
 		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, sound, true, NULL, Melder_peekWcsToUtf8 (GET_STRING (L"Callback text")));
-		editor -> setPublicationCallback (cb_TextGridEditor_publication, NULL);
+		Editor_setPublicationCallback (editor.peek(), cb_TextGridEditor_publication, NULL);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END2 }
@@ -866,7 +866,7 @@ DIRECT2 (TextGrid_LongSound_edit) {
 	LOOP if (CLASS == classTextGrid) {
 		iam (TextGrid);
 		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, longSound, false, NULL, NULL);
-		editor -> setPublicationCallback (cb_TextGridEditor_publication, NULL);
+		Editor_setPublicationCallback (editor.peek(), cb_TextGridEditor_publication, NULL);
 		praat_installEditor2 (editor.transfer(), IOBJECT, ilongSound);
 	}
 END2 }
@@ -1430,7 +1430,7 @@ FORM (TextGrid_removePoints, L"Remove points", 0) {
 DO
 	LOOP {
 		iam (TextGrid);
-		my removePoints (GET_INTEGER (STRING_TIER_NUMBER), GET_ENUM (kMelder_string, L"Remove every point whose label..."), GET_STRING (L"...the text"));
+		TextGrid_removePoints (me, GET_INTEGER (STRING_TIER_NUMBER), GET_ENUM (kMelder_string, L"Remove every point whose label..."), GET_STRING (L"...the text"));
 		praat_dataChanged (me);
 	}
 END2 }

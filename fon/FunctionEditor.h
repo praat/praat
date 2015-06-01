@@ -29,106 +29,110 @@ struct FunctionEditor_picture {
 };
 
 Thing_define (FunctionEditor, Editor) {
-	// new data:
-	public:
-		/* Subclass may change the following attributes, */
-		/* but has to respect the invariants, */
-		/* and has to call FunctionEditor_marksChanged () */
-		/* immediately after making the changes. */
-		double tmin, tmax, d_startWindow, d_endWindow;
-		double d_startSelection, d_endSelection;   // markers
-			/* These attributes are all expressed in seconds. Invariants: */
-			/*    tmin <= startWindow < endWindow <= tmax; */
-			/*    tmin <= (startSelection, endSelection) <= tmax; */
+	/* Subclass may change the following attributes, */
+	/* but has to respect the invariants, */
+	/* and has to call FunctionEditor_marksChanged () */
+	/* immediately after making the changes. */
+	double tmin, tmax, d_startWindow, d_endWindow;
+	double d_startSelection, d_endSelection;   // markers
+		/* These attributes are all expressed in seconds. Invariants: */
+		/*    tmin <= startWindow < endWindow <= tmax; */
+		/*    tmin <= (startSelection, endSelection) <= tmax; */
 
-		Graphics d_graphics;   // used in the 'draw' method
-		short functionViewerLeft, functionViewerRight;   // size of drawing areas in pixels
-		short selectionViewerLeft, selectionViewerRight;   // size of drawing areas in pixels
-		short height;   // size of drawing areas in pixels
-		GuiText text;   // optional text at top
-		int shiftKeyPressed;   // information for the 'play' method
-		bool playingCursor, playingSelection;   // information for end of play
-		struct FunctionEditor_picture picture;
+	Graphics d_graphics;   // used in the 'draw' method
+	short functionViewerLeft, functionViewerRight;   // size of drawing areas in pixels
+	short selectionViewerLeft, selectionViewerRight;   // size of drawing areas in pixels
+	short height;   // size of drawing areas in pixels
+	GuiText text;   // optional text at top
+	int shiftKeyPressed;   // information for the 'play' method
+	bool playingCursor, playingSelection;   // information for end of play
+	struct FunctionEditor_picture picture;
 
-		/* Private: */
-		GuiDrawingArea drawingArea;
-		GuiScrollBar scrollBar;
-		GuiCheckButton groupButton;
-		GuiObject bottomArea;
-		bool group, enableUpdates;
-		int nrect;
-		struct { double left, right, bottom, top; } rect [8];
-		double marker [1 + 3], playCursor, startZoomHistory, endZoomHistory;
-		int numberOfMarkers;
-	// overridden methods:
-		void v_destroy () override;
-		void v_info () override;
-		void v_createMenus () override;
-		void v_createMenuItems_file (EditorMenu) override;
-		void v_createMenuItems_query (EditorMenu) override;
-		void v_createChildren () override;
-		void v_createHelpMenuItems (EditorMenu) override;
-		void v_dataChanged () override;
-	// new methods:
-		virtual void v_draw () { }
-			/*
-			 * Message: "draw your part of the data between startWindow and endWindow."
-			 */
-		virtual void v_drawSelectionViewer () { }
-		virtual void v_prepareDraw () const { }   // for less flashing
-		virtual const wchar_t * v_format_domain () { return L"Time domain:"; }
-		virtual const wchar_t * v_format_short () { return L"%.3f"; }
-		virtual const wchar_t * v_format_long () { return L"%f"; }
-		virtual const wchar_t * v_format_units () { return L"seconds"; }
-		virtual const wchar_t * v_format_totalDuration () { return L"Total duration %f seconds"; }
-		virtual const wchar_t * v_format_window () { return L"Visible part %f seconds"; }
-		virtual const wchar_t * v_format_selection () { return L"%f (%.3f / s)"; }
-		virtual int v_fixedPrecision_long () { return 6; }
-		virtual bool v_hasText () { return false; }
-		virtual void v_play (double /* timeFrom */, double /* timeTo */) { }
-			/*
-			 * Message: "the user clicked in one of the rectangles above or below the data window."
-			 */
-		virtual int v_click (double xWC, double yWC, bool shiftKeyPressed);
-			/*
-			 * Message: "the user clicked in data window with the left mouse button."
-			 * 'xWC' is the time;
-			 * 'yWC' is a value between 0.0 (bottom) and 1.0 (top);
-			 * 'shiftKeyPressed' flags if the Shift key was held down during the click.
-			 * Constraints:
-			 *    Return FunctionEditor_UPDATE_NEEDED if you want a window update, i.e.,
-			 *    if your 'click' moves the cursor or otherwise changes the appearance of the data.
-			 *    Return FunctionEditor_NO_UPDATE_NEEDED if you do not want a window update, e.g.,
-			 *    if your 'click' method just 'plays' something or puts a dialog on the screen.
-			 *    In the latter case, the 'ok' callback of the dialog should
-			 *    call FunctionEditor_marksChanged if necessary.
-			 * Behaviour of FunctionEditor::click ():
-			 *    moves the cursor to 'xWC', drags to create a selection, or extends the selection.
-			 */
-		virtual int v_clickB (double xWC, double yWC);
-		virtual int v_clickE (double xWC, double yWC);
-		virtual int v_playCallback (int phase, double tmin, double tmax, double t);
-		virtual void v_updateText () { }
-		virtual void v_prefs_addFields (EditorCommand) { }
-		virtual void v_prefs_setValues (EditorCommand) { }
-		virtual void v_prefs_getValues (EditorCommand) { }
-		virtual void v_createMenuItems_file_draw (EditorMenu) { }
-		virtual void v_createMenuItems_file_extract (EditorMenu) { }
-		virtual void v_createMenuItems_file_write (EditorMenu) { }
-		virtual void v_createMenuItems_view (EditorMenu);
-		virtual void v_createMenuItems_view_timeDomain (EditorMenu);
-		virtual void v_createMenuItems_view_audio (EditorMenu);
-		virtual void v_highlightSelection (double left, double right, double bottom, double top);
-		virtual void v_unhighlightSelection (double left, double right, double bottom, double top);
-		virtual double v_getBottomOfSoundArea () { return 0.0; }
-		virtual double v_getBottomOfSoundAndAnalysisArea () { return 0.0; }
-		virtual void v_form_pictureSelection (EditorCommand);
-		virtual void v_ok_pictureSelection (EditorCommand);
-		virtual void v_do_pictureSelection (EditorCommand);
-    
-    // new preferences:
+	/* Private: */
+	GuiDrawingArea drawingArea;
+	GuiScrollBar scrollBar;
+	GuiCheckButton groupButton;
+	GuiObject bottomArea;
+	bool group, enableUpdates;
+	int nrect;
+	struct { double left, right, bottom, top; } rect [8];
+	double marker [1 + 3], playCursor, startZoomHistory, endZoomHistory;
+	int numberOfMarkers;
+
+	void v_destroy ()
+		override;
+	void v_info ()
+		override;
+	void v_createMenus ()
+		override;
+	void v_createMenuItems_file (EditorMenu)
+		override;
+	void v_createMenuItems_query (EditorMenu)
+		override;
+	void v_createChildren ()
+		override;
+	void v_createHelpMenuItems (EditorMenu)
+		override;
+	void v_dataChanged ()
+		override;
+
+	virtual void v_draw () { }
+		/*
+		 * Message: "draw your part of the data between startWindow and endWindow."
+		 */
+	virtual void v_drawSelectionViewer () { }
+	virtual void v_prepareDraw () { }   // for less flashing
+	virtual const wchar_t * v_format_domain () { return L"Time domain:"; }
+	virtual const wchar_t * v_format_short () { return L"%.3f"; }
+	virtual const wchar_t * v_format_long () { return L"%f"; }
+	virtual const wchar_t * v_format_units () { return L"seconds"; }
+	virtual const wchar_t * v_format_totalDuration () { return L"Total duration %f seconds"; }
+	virtual const wchar_t * v_format_window () { return L"Visible part %f seconds"; }
+	virtual const wchar_t * v_format_selection () { return L"%f (%.3f / s)"; }
+	virtual int v_fixedPrecision_long () { return 6; }
+	virtual bool v_hasText () { return false; }
+	virtual void v_play (double /* timeFrom */, double /* timeTo */) { }
+		/*
+		 * Message: "the user clicked in one of the rectangles above or below the data window."
+		 */
+	virtual int v_click (double xWC, double yWC, bool shiftKeyPressed);
+		/*
+		 * Message: "the user clicked in data window with the left mouse button."
+		 * 'xWC' is the time;
+		 * 'yWC' is a value between 0.0 (bottom) and 1.0 (top);
+		 * 'shiftKeyPressed' flags if the Shift key was held down during the click.
+		 * Constraints:
+		 *    Return FunctionEditor_UPDATE_NEEDED if you want a window update, i.e.,
+		 *    if your 'click' moves the cursor or otherwise changes the appearance of the data.
+		 *    Return FunctionEditor_NO_UPDATE_NEEDED if you do not want a window update, e.g.,
+		 *    if your 'click' method just 'plays' something or puts a dialog on the screen.
+		 *    In the latter case, the 'ok' callback of the dialog should
+		 *    call FunctionEditor_marksChanged if necessary.
+		 * Behaviour of FunctionEditor::click ():
+		 *    moves the cursor to 'xWC', drags to create a selection, or extends the selection.
+		 */
+	virtual int v_clickB (double xWC, double yWC);
+	virtual int v_clickE (double xWC, double yWC);
+	virtual int v_playCallback (int phase, double tmin, double tmax, double t);
+	virtual void v_updateText () { }
+	virtual void v_prefs_addFields (EditorCommand) { }
+	virtual void v_prefs_setValues (EditorCommand) { }
+	virtual void v_prefs_getValues (EditorCommand) { }
+	virtual void v_createMenuItems_file_draw (EditorMenu) { }
+	virtual void v_createMenuItems_file_extract (EditorMenu) { }
+	virtual void v_createMenuItems_file_write (EditorMenu) { }
+	virtual void v_createMenuItems_view (EditorMenu);
+	virtual void v_createMenuItems_view_timeDomain (EditorMenu);
+	virtual void v_createMenuItems_view_audio (EditorMenu);
+	virtual void v_highlightSelection (double left, double right, double bottom, double top);
+	virtual void v_unhighlightSelection (double left, double right, double bottom, double top);
+	virtual double v_getBottomOfSoundArea () { return 0.0; }
+	virtual double v_getBottomOfSoundAndAnalysisArea () { return 0.0; }
+	virtual void v_form_pictureSelection (EditorCommand);
+	virtual void v_ok_pictureSelection (EditorCommand);
+	virtual void v_do_pictureSelection (EditorCommand);
+
     #include "FunctionEditor_prefs.h"
-
 };
 
 int theFunctionEditor_playCallback (void *void_me, int phase, double tmin, double tmax, double t);

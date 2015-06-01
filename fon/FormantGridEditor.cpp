@@ -1,6 +1,6 @@
 /* FormantGridEditor.cpp
  *
- * Copyright (C) 2008-2011,2012,2013,2014 Paul Boersma & David Weenink
+ * Copyright (C) 2008-2011,2012,2013,2014,2015 Paul Boersma & David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ static void menu_cb_removePoints (EDITOR_ARGS) {
 	else
 		AnyTier_removePointsBetween (tier, my d_startSelection, my d_endSelection);
 	FunctionEditor_redraw (me);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_addPointAtCursor (EDITOR_ARGS) {
@@ -54,7 +54,7 @@ static void menu_cb_addPointAtCursor (EDITOR_ARGS) {
 	RealTier tier = (RealTier) tiers -> item [my selectedFormant];
 	RealTier_addPoint (tier, 0.5 * (my d_startSelection + my d_endSelection), my ycursor);
 	FunctionEditor_redraw (me);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_addPointAt (EDITOR_ARGS) {
@@ -72,7 +72,7 @@ static void menu_cb_addPointAt (EDITOR_ARGS) {
 		RealTier tier = (RealTier) tiers -> item [my selectedFormant];
 		RealTier_addPoint (tier, GET_REAL (L"Time"), GET_REAL (L"Frequency"));
 		FunctionEditor_redraw (me);
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
 
@@ -109,7 +109,7 @@ static void menu_cb_setBandwidthRange (EDITOR_ARGS) {
 static void menu_cb_showBandwidths (EDITOR_ARGS) {
 	EDITOR_IAM (FormantGridEditor);
 	my editingBandwidths = ! my editingBandwidths;
-	my d_bandwidthsToggle -> f_check (my editingBandwidths);
+	GuiMenuItem_check (my d_bandwidthsToggle, my editingBandwidths);
 	FunctionEditor_redraw (me);
 }
 
@@ -433,7 +433,7 @@ int structFormantGridEditor :: v_click (double xWC, double yWC, bool shiftKeyPre
 		our ycursor += df;
 	}
 
-	our broadcastDataChanged ();
+	Editor_broadcastDataChanged (this);
 	return 1;   // update needed
 }
 

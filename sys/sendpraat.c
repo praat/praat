@@ -1,6 +1,6 @@
 /* sendpraat.c */
 /* by Paul Boersma */
-/* 12 April 2014 */
+/* 1 June 2015 */
 
 /*
  * The sendpraat subroutine (Unix with GTK; Windows; Macintosh) sends a message
@@ -110,7 +110,7 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 	#elif mac
 		AEDesc programDescriptor;
 		AppleEvent event, reply;
-		OSErr err;
+		OSStatus err;
 		UInt32 signature;
 		(void) display;
 	#endif
@@ -134,7 +134,7 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 	 * If the text is going to be sent in a file, create its name.
 	 * The file is going to be written into the preferences directory of the receiving program.
 	 * On Unix, the name will be something like /home/jane/.praat-dir/message.
-	 * On Windows, the name will be something like C:\Documents and Settings\Jane\Praat\Message.txt,
+	 * On Windows, the name will be something like C:\Users\Jane\Praat\Message.txt,
 	 * or C:\Windows\Praat\Message.txt on older systems.
 	 * On Macintosh, the text is NOT going to be sent in a file.
 	 */
@@ -327,7 +327,7 @@ wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, co
 	#elif mac
 		AEDesc programDescriptor;
 		AppleEvent event, reply;
-		OSErr err;
+		OSStatus err;
 		UInt32 signature;
 		(void) display;
 	#endif
@@ -351,7 +351,7 @@ wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, co
 	 * If the text is going to be sent in a file, create its name.
 	 * The file is going to be written into the preferences directory of the receiving program.
 	 * On Unix, the name will be something like /home/jane/.praat-dir/message.
-	 * On Windows, the name will be something like C:\Documents and Settings\Jane\Praat\Message.txt,
+	 * On Windows, the name will be something like C:\Users\Jane\Praat\Message.txt,
 	 * or C:\Windows\Praat\Message.txt on older systems.
 	 * On Macintosh, the text is NOT going to be sent in a file.
 	 */
@@ -501,9 +501,9 @@ wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, co
 		}
 	#elif mac
 		/*
-		 * Notify the running program by sending it an Apple event of the magic class 758934755.
+		 * Notify the running program by sending it an Apple event of the magic class 758934756.
 		 */
-		AECreateAppleEvent (758934755, 0, & programDescriptor, kAutoGenerateReturnID, 1, & event);
+		AECreateAppleEvent (758934756, 0, & programDescriptor, kAutoGenerateReturnID, 1, & event);
 		AEPutParamPtr (& event, 1, typeUnicodeText, text, wcslen (text) + 1);
 		#ifdef __MACH__
 			err = AESendMessage (& event, & reply,

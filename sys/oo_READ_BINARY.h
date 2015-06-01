@@ -1,6 +1,6 @@
 /* oo_READ_BINARY.h
  *
- * Copyright (C) 1994-2012,2013,2014 Paul Boersma
+ * Copyright (C) 1994-2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,16 +66,27 @@
 
 #define oo_STRINGx(storage,x)  \
 	our x = binget##storage (f);
+#define oo_STRING32x(storage,x)  \
+	our x = binget32##storage (f);
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	if (n > cap) Melder_throw ("Number of \"", #x, "\" (", n, ") greater than ", cap, "."); \
 	for (int i = 0; i < n; i ++) { \
 		our x [i] = binget##storage (f); \
 	}
+#define oo_STRING32x_ARRAY(storage,x,cap,n)  \
+	if (n > cap) Melder_throw ("Number of \"", #x, "\" (", n, ") greater than ", cap, "."); \
+	for (int i = 0; i < n; i ++) { \
+		our x [i] = binget32##storage (f); \
+	}
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) { \
 		our x [i] = binget##storage (f); \
+	}
+#define oo_STRING32x_SET(storage,x,setType)  \
+	for (int i = 0; i <= setType##_MAX; i ++) { \
+		our x [i] = binget32##storage (f); \
 	}
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
@@ -83,6 +94,13 @@
 		our x = NUMvector <wchar_t *> (min, max); \
 		for (long i = min; i <= max; i ++) { \
 			our x [i] = binget##storage (f); \
+		} \
+	}
+#define oo_STRING32x_VECTOR(storage,x,min,max)  \
+	if (max >= min) { \
+		our x = NUMvector <char32 *> (min, max); \
+		for (long i = min; i <= max; i ++) { \
+			our x [i] = binget32##storage (f); \
 		} \
 	}
 

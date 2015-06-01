@@ -1,6 +1,6 @@
 /* OTMulti.cpp
  *
- * Copyright (C) 2005-2012,2013 Paul Boersma
+ * Copyright (C) 2005-2012,2013,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,36 +61,36 @@ void structOTMulti :: v_info ()
 			numberOfViolations += candidates [icand]. marks [icons];
 		}
 	}
-	MelderInfo_writeLine (L"Decision strategy: ", kOTGrammar_decisionStrategy_getText (decisionStrategy));
-	MelderInfo_writeLine (L"Number of constraints: ", Melder_integer (numberOfConstraints));
-	MelderInfo_writeLine (L"Number of candidates: ", Melder_integer (numberOfCandidates));
-	MelderInfo_writeLine (L"Number of violation marks: ", Melder_integer (numberOfViolations));
+	MelderInfo_writeLine (U"Decision strategy: ", kOTGrammar_decisionStrategy_getText (decisionStrategy));
+	MelderInfo_writeLine (U"Number of constraints: ", Melder32_integer (numberOfConstraints));
+	MelderInfo_writeLine (U"Number of candidates: ", Melder32_integer (numberOfCandidates));
+	MelderInfo_writeLine (U"Number of violation marks: ", Melder32_integer (numberOfViolations));
 }
 
 void structOTMulti :: v_writeText (MelderFile file) {
-	MelderFile_write (file, L"\n<", kOTGrammar_decisionStrategy_getText (decisionStrategy),
-		L">\n", Melder_double (leak), L" ! leak\n", Melder_integer (numberOfConstraints), L" constraints");
+	MelderFile_write (file, U"\n<", kOTGrammar_decisionStrategy_getText (decisionStrategy),
+		U">\n", Melder32_double (leak), U" ! leak\n", Melder32_integer (numberOfConstraints), U" constraints");
 	for (long icons = 1; icons <= numberOfConstraints; icons ++) {
 		OTConstraint constraint = & constraints [icons];
-		MelderFile_write (file, L"\n\t\"");
+		MelderFile_write (file, U"\n\t\"");
 		for (const wchar_t *p = & constraint -> name [0]; *p; p ++) {
-			if (*p =='\"') MelderFile_writeCharacter (file, '\"');   // double any quotes within quotes
+			if (*p == '\"') MelderFile_writeCharacter (file, U'\"');   // double any quotes within quotes
 			MelderFile_writeCharacter (file, *p);
 		}
-		MelderFile_write (file, L"\" ", Melder_double (constraint -> ranking),
-			L" ", Melder_double (constraint -> disharmony), L" ", Melder_double (constraint -> plasticity));
+		MelderFile_write (file, U"\" ", Melder32_double (constraint -> ranking),
+			U" ", Melder32_double (constraint -> disharmony), U" ", Melder32_double (constraint -> plasticity));
 	}
-	MelderFile_write (file, L"\n\n", Melder_integer (numberOfCandidates), L" candidates");
+	MelderFile_write (file, U"\n\n", Melder32_integer (numberOfCandidates), U" candidates");
 	for (long icand = 1; icand <= numberOfCandidates; icand ++) {
 		OTCandidate candidate = & candidates [icand];
-		MelderFile_write (file, L"\n\t\"");
+		MelderFile_write (file, U"\n\t\"");
 		for (const wchar_t *p = & candidate -> string [0]; *p; p ++) {
-			if (*p =='\"') MelderFile_writeCharacter (file, '\"');   // double any quotes within quotes
+			if (*p == '\"') MelderFile_writeCharacter (file, U'\"');   // double any quotes within quotes
 			MelderFile_writeCharacter (file, *p);
 		}
-		MelderFile_write (file, L"\"  ");
+		MelderFile_write (file, U"\"  ");
 		for (long icons = 1; icons <= candidate -> numberOfConstraints; icons ++) {
-			MelderFile_write (file, L" ", Melder_integer (candidate -> marks [icons]));
+			MelderFile_write (file, U" ", Melder32_integer (candidate -> marks [icons]));
 		}
 	}
 }

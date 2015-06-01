@@ -1,6 +1,6 @@
 /* oo_READ_TEXT.h
  *
- * Copyright (C) 1994-2012,2013,2014 Paul Boersma
+ * Copyright (C) 1994-2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,16 +83,31 @@
 	} catch (MelderError) { \
 		Melder_throw ("String \"", #x, "\" not read."); \
 	}
+#define oo_STRING32x(storage,x)  \
+	try { \
+		our x = texget32##storage (a_text); \
+	} catch (MelderError) { \
+		Melder_throw ("String \"", #x, "\" not read."); \
+	}
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	if (n > cap) Melder_throw ("Number of \"", #x, "\" (", n, ") greater than ", cap, "."); \
 	for (long i = 0; i < n; i ++) { \
 		our x [i] = texget##storage (a_text); \
 	}
+#define oo_STRING32x_ARRAY(storage,x,cap,n)  \
+	if (n > cap) Melder_throw ("Number of \"", #x, "\" (", n, ") greater than ", cap, "."); \
+	for (long i = 0; i < n; i ++) { \
+		our x [i] = texget32##storage (a_text); \
+	}
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	for (long i = 0; i <= setType##_MAX; i ++) { \
 		our x [i] = texget##storage (a_text); \
+	}
+#define oo_STRING32x_SET(storage,x,setType)  \
+	for (long i = 0; i <= setType##_MAX; i ++) { \
+		our x [i] = texget32##storage (a_text); \
 	}
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
@@ -101,6 +116,17 @@
 		for (long i = min; i <= max; i ++) { \
 			try { \
 				our x [i] = texget##storage (a_text); \
+			} catch (MelderError) { \
+				Melder_throw ("Element ", i, " of \"" #x, "\" not read."); \
+			} \
+		} \
+	}
+#define oo_STRING32x_VECTOR(storage,x,min,max)  \
+	if (max >= min) { \
+		our x = NUMvector <char32*> (min, max); \
+		for (long i = min; i <= max; i ++) { \
+			try { \
+				our x [i] = texget32##storage (a_text); \
 			} catch (MelderError) { \
 				Melder_throw ("Element ", i, " of \"" #x, "\" not read."); \
 			} \

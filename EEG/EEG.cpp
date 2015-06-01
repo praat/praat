@@ -539,7 +539,7 @@ void EEG_removeTriggers (EEG me, int which_Melder_STRING, const wchar_t *criteri
 	try {
 		if (my textgrid -> numberOfTiers () < 2 || ! Melder_wcsequ (my textgrid -> tier (2) -> name, L"Trigger"))
 			Melder_throw (me, " does not have a Trigger channel.");
-		my textgrid -> removePoints (2, which_Melder_STRING, criterion);
+		TextGrid_removePoints (my textgrid, 2, which_Melder_STRING, criterion);
 	} catch (MelderError) {
 		Melder_throw (me, ": triggers not removed.");
 	}

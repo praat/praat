@@ -1,6 +1,6 @@
 /* enums_getText.h
  *
- * Copyright (C) 2007 Paul Boersma
+ * Copyright (C) 2007,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 #undef enums_add
 #undef enums_alt
 #undef enums_end
-#define enums_begin(type,minimum)  const wchar_t * type##_getText (int testValue) { return
+#define enums_begin(type,minimum)  const char32 * type##_getText (int testValue) { return
 #define enums_add(type,value,which,text)  testValue == type##_##which ? text :
 #define enums_alt(type,which,text)
 #define enums_end(type,maximum,def) type##_getText (type##_DEFAULT); }

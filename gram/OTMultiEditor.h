@@ -2,7 +2,7 @@
 #define _OTMultiEditor_h_
 /* OTMultiEditor.h
  *
- * Copyright (C) 2005-2011,2012 Paul Boersma
+ * Copyright (C) 2005-2011,2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,19 +23,23 @@
 #include "OTMulti.h"
 
 Thing_define (OTMultiEditor, HyperPage) {
-	// new data:
-	public:
-		const wchar_t *form1, *form2;
-		GuiText form1Text, form2Text;
-		long selectedConstraint;
-		bool d_constraintsAreDrawnVertically;
-	// overridden methods:
-		virtual bool v_editable () { return true; }
-		virtual void v_createChildren ();
-		virtual void v_createMenus ();
-		virtual void v_createHelpMenuItems (EditorMenu menu);
-		virtual void v_draw ();
-		virtual int v_goToPage (const wchar_t *title);
+	const wchar_t *form1, *form2;
+	GuiText form1Text, form2Text;
+	long selectedConstraint;
+	bool d_constraintsAreDrawnVertically;
+
+	bool v_editable ()
+		override { return true; }
+	void v_createChildren ()
+		override;
+	void v_createMenus ()
+		override;
+	void v_createHelpMenuItems (EditorMenu menu)
+		override;
+	void v_draw ()
+		override;
+	int v_goToPage (const wchar_t *title)
+		override;
 };
 
 OTMultiEditor OTMultiEditor_create (const wchar_t *title, OTMulti grammar);

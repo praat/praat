@@ -1,6 +1,6 @@
 /* ManipulationEditor_enums.h
  *
- * Copyright (C) 1992-2007,2013 Paul Boersma
+ * Copyright (C) 1992-2007,2013,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,15 +18,15 @@
  */
 
 enums_begin (kManipulationEditor_draggingStrategy, 1)
-	enums_add (kManipulationEditor_draggingStrategy, 1, ALL, L"all")
-	enums_add (kManipulationEditor_draggingStrategy, 2, HORIZONTAL, L"only horizontal")
-	enums_add (kManipulationEditor_draggingStrategy, 3, VERTICAL, L"only vertical")
-	enums_add (kManipulationEditor_draggingStrategy, 4, HYBRID, L"single all, multiple only vertical")
+	enums_add (kManipulationEditor_draggingStrategy, 1, ALL, U"all")
+	enums_add (kManipulationEditor_draggingStrategy, 2, HORIZONTAL, U"only horizontal")
+	enums_add (kManipulationEditor_draggingStrategy, 3, VERTICAL, U"only vertical")
+	enums_add (kManipulationEditor_draggingStrategy, 4, HYBRID, U"single all, multiple only vertical")
 enums_end (kManipulationEditor_draggingStrategy, 4, ALL)
 
 enums_begin (kManipulationEditor_pitchUnits, 1)
-	enums_add (kManipulationEditor_pitchUnits, 1, HERTZ, L"Hertz")
-	enums_add (kManipulationEditor_pitchUnits, 2, SEMITONES, L"semitones re 100 Hz")
+	enums_add (kManipulationEditor_pitchUnits, 1, HERTZ, U"Hertz")
+	enums_add (kManipulationEditor_pitchUnits, 2, SEMITONES, U"semitones re 100 Hz")
 enums_end (kManipulationEditor_pitchUnits, 2, HERTZ)
 
 /* End of file ManipulationEditor.h */

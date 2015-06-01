@@ -2,7 +2,7 @@
 #define _Sound_h_
 /* Sound.h
  *
- * Copyright (C) 1992-2011,2012,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,11 +27,18 @@
 #include "Sound_enums.h"
 
 Thing_define (Sound, Vector) {
-	// overridden methods:
-		virtual void v_info ();
-		virtual bool v_hasGetMatrix    () { return true; }   virtual double v_getMatrix (long irow, long icol);
-		virtual bool v_hasGetFunction2 () { return true; }   virtual double v_getFunction2 (double x, double y);
-		virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
+	void v_info ()
+		override;
+	bool v_hasGetMatrix ()
+		override { return true; }
+	double v_getMatrix (long irow, long icol)
+		override;
+	bool v_hasGetFunction2 ()
+		override { return true; }
+	double v_getFunction2 (double x, double y)
+		override;
+	int v_domainQuantity ()
+		override { return MelderQuantity_TIME_SECONDS; }
 };
 
 /* Attributes:

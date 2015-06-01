@@ -111,10 +111,10 @@ static void _Data_writeToTextFile (Data me, MelderFile file, bool verbose) {
 		#endif
 		MelderFile_write (file, L"File type = \"ooTextFile\"\nObject class = \"", my classInfo -> className);
 		if (my classInfo -> version > 0)
-			MelderFile_write (file, L" ", Melder_integer (my classInfo -> version));
-		MelderFile_write (file, L"\"\n");
+			MelderFile_write (file, U" ", Melder32_integer (my classInfo -> version));
+		MelderFile_write (file, U"\"\n");
 		Data_writeText (me, file);
-		MelderFile_writeCharacter (file, '\n');
+		MelderFile_writeCharacter (file, U'\n');
 		#ifndef _WIN32
 			if (file -> filePointer) funlockfile (file -> filePointer);
 		#endif
@@ -188,20 +188,20 @@ void Data_readText (Data me, MelderReadText text) {
 Data Data_readFromTextFile (MelderFile file) {
 	try {
 		autoMelderReadText text = MelderReadText_createFromFile (file);
-		wchar_t *line = MelderReadText_readLine (text.peek());
+		char32 *line = MelderReadText_readLine (text.peek());
 		if (line == NULL)
 			Melder_throw ("No lines.");
-		wchar_t *end = wcsstr (line, L"ooTextFile");   // oo format?
+		char32 *end = str32str (line, U"ooTextFile");   // oo format?
 		autoData me = NULL;
 		if (end) {
 			autostring klas = texgetw2 (text.peek());
 			me.reset ((Data) Thing_newFromClassName (klas.peek()));
 		} else {
-			end = wcsstr (line, L"TextFile");
+			end = str32str (line, U"TextFile");
 			if (end == NULL)
 				Melder_throw ("Not an old-type text file; should not occur.");
 			*end = '\0';
-			me.reset ((Data) Thing_newFromClassName (line));
+			me.reset ((Data) Thing_newFromClassName (Melder_peekStr32ToWcs (line)));
 			Thing_version = -1;   // old version: override version number, which was set to 0 by newFromClassName
 		}
 		MelderFile_getParentDir (file, & Data_directoryBeingRead);

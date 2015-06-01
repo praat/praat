@@ -1,6 +1,6 @@
 /* GuiShell.cpp
  *
- * Copyright (C) 1993-2012 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2012,2015 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,67 +24,67 @@ Thing_implement (GuiShell, GuiForm, 0);
 
 void structGuiShell :: v_destroy () {
 	#if cocoa
-		if (d_cocoaWindow) {
-			[d_cocoaWindow setUserData: NULL];   // undangle reference to this
+		if (our d_cocoaWindow) {
+			[our d_cocoaWindow setUserData: NULL];   // undangle reference to this
 			Melder_fatal ("ordering out?");
-			[d_cocoaWindow orderOut: nil];
-			[d_cocoaWindow close];
-			[d_cocoaWindow release];
-			d_cocoaWindow = NULL;   // undangle
+			[our d_cocoaWindow orderOut: nil];
+			[our d_cocoaWindow close];
+			[our d_cocoaWindow release];
+			our d_cocoaWindow = NULL;   // undangle
 		}
 	#endif
 	GuiShell_Parent :: v_destroy ();
 }
 
-int structGuiShell :: f_getShellWidth () {
+int GuiShell_getShellWidth (GuiShell me) {
 	int width = 0;
 	#if gtk
-		width = GTK_WIDGET (d_gtkWindow) -> allocation.width;
+		width = GTK_WIDGET (my d_gtkWindow) -> allocation.width;
 	#elif cocoa
-        return [d_cocoaWindow frame].size.width;
+        return [my d_cocoaWindow frame].size.width;
 	#elif motif
-		width = d_xmShell -> width;
+		width = my d_xmShell -> width;
 	#endif
 	return width;
 }
 
-int structGuiShell :: f_getShellHeight () {
+int GuiShell_getShellHeight (GuiShell me) {
 	int height = 0;
 	#if gtk
-		height = GTK_WIDGET (d_gtkWindow) -> allocation.height;
+		height = GTK_WIDGET (my d_gtkWindow) -> allocation.height;
 	#elif cocoa
-        return [d_cocoaWindow frame].size.height;
+        return [my d_cocoaWindow frame].size.height;
 	#elif motif
-		height = d_xmShell -> height;
+		height = my d_xmShell -> height;
 	#endif
 	return height;
 }
 
-void structGuiShell :: f_setTitle (const wchar_t *title) {
+void GuiShell_setTitle (GuiShell me, const wchar_t *title) {
 	#if gtk
-		gtk_window_set_title (d_gtkWindow, Melder_peekWcsToUtf8 (title));
+		gtk_window_set_title (my d_gtkWindow, Melder_peekWcsToUtf8 (title));
 	#elif cocoa
-		[d_cocoaWindow setTitle: (NSString *) Melder_peekWcsToCfstring (title)];
+		[my d_cocoaWindow setTitle: (NSString *) Melder_peekWcsToCfstring (title)];
 	#elif win
-		SetWindowText (d_xmShell -> window, title);
+		SetWindowText (my d_xmShell -> window, title);
 	#elif mac
-		SetWindowTitleWithCFString (d_xmShell -> nat.window.ptr, (CFStringRef) Melder_peekWcsToCfstring (title));
+		SetWindowTitleWithCFString (my d_xmShell -> nat.window.ptr, (CFStringRef) Melder_peekWcsToCfstring (title));
 	#endif
 }
 
-void structGuiShell :: f_drain () {
+void GuiShell_drain (GuiShell me) {
 	#if gtk
-		//gdk_window_flush (gtk_widget_get_window (me));
+		//gdk_window_flush (gtk_widget_get_window (my d_gtkWindow));
 		gdk_flush ();
 	#elif cocoa
-        //[d_cocoaWindow displayIfNeeded];
-        [d_cocoaWindow flushWindow];
-		//[d_cocoaWindow display];
+        //[my d_cocoaWindow   displayIfNeeded];
+        [my d_cocoaWindow   flushWindow];
+		//[my d_cocoaWindow   display];
 	#elif win
 	#elif mac
-		Melder_assert (d_xmShell != NULL);
-		Melder_assert (d_xmShell -> nat.window.ptr != NULL);
-		QDFlushPortBuffer (GetWindowPort (d_xmShell -> nat.window.ptr), NULL);
+		Melder_assert (my d_xmShell != NULL);
+		Melder_assert (my d_xmShell -> nat.window.ptr != NULL);
+		QDFlushPortBuffer (GetWindowPort (my d_xmShell -> nat.window.ptr), NULL);
 		/*
 		 * The following TRICK cost me half a day to work out.
 		 * It turns out that after a call to QDFlushPortBuffer (),
@@ -96,7 +96,7 @@ void structGuiShell :: f_drain () {
 		 * a simple Graphics_function () of e.g. noise.
 		 */
 		static Rect bounds = { -32768, -32768, 32767, 32767 };
-		QDAddRectToDirtyRegion (GetWindowPort (d_xmShell -> nat.window.ptr), & bounds);
+		QDAddRectToDirtyRegion (GetWindowPort (my d_xmShell -> nat.window.ptr), & bounds);
 	#endif
 }
 

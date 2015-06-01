@@ -200,7 +200,7 @@ void NUMrandom_init () {
 #elif ZERO_OR_MAGIC_VERSION == 2
 	#define ZERO_OR_MAGIC  ( (x & UINT64_C (1)) * MATRIX_A )
 #else   // M&N 2014
-	const uint64_t mag01 [2] = { UINT64_C (0), MATRIX_A };
+	constexpr uint64_t mag01 [2] { UINT64_C (0), MATRIX_A };
 	#define ZERO_OR_MAGIC  mag01 [(int) (x & UINT64_C (1))]
 #endif
 
@@ -285,11 +285,11 @@ double NUMrandomGauss (double mean, double standardDeviation) {
 	/*
 		Knuth, p. 122.
 	*/
-	double s, x;
 	if (my secondAvailable) {
 		my secondAvailable = FALSE;
 		return mean + standardDeviation * my y;
 	} else {
+		double s, x;
 		repeat {
 			x = 2.0 * NUMrandomFraction () - 1.0;   /* Inside the square [-1; 1] x [-1; 1]. */
 			my y = 2.0 * NUMrandomFraction () - 1.0;
@@ -311,11 +311,11 @@ double NUMrandomGauss_mt (int threadNumber, double mean, double standardDeviatio
 	/*
 		Knuth, p. 122.
 	*/
-	double s, x;
 	if (my secondAvailable) {
 		my secondAvailable = FALSE;
 		return mean + standardDeviation * my y;
 	} else {
+		double s, x;
 		repeat {
 			x = 2.0 * NUMrandomFraction_mt (threadNumber) - 1.0;   /* Inside the square [-1; 1] x [-1; 1]. */
 			my y = 2.0 * NUMrandomFraction_mt (threadNumber) - 1.0;

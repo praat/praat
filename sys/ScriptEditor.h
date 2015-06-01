@@ -2,7 +2,7 @@
 #define _ScriptEditor_h_
 /* ScriptEditor.h
  *
- * Copyright (C) 1997-2011,2012 Paul Boersma
+ * Copyright (C) 1997-2011,2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,23 +24,29 @@
 #include "Interpreter.h"
 
 Thing_define (ScriptEditor, TextEditor) {
-	// new data:
-	public:
-		wchar_t *environmentName;
-		ClassInfo editorClass;
-		Interpreter interpreter;
-		UiForm argsDialog;
-	// functions:
-		void init (Editor editor, const wchar_t *initialText);
-	// overridden methods:
-		virtual void v_destroy ();
-		virtual void v_nameChanged ();
-		virtual void v_goAway ();
-		virtual bool v_scriptable () { return false; }
-		virtual void v_createMenus ();
-		virtual void v_createHelpMenuItems (EditorMenu menu);
+	wchar_t *environmentName;
+	ClassInfo editorClass;
+	Interpreter interpreter;
+	UiForm argsDialog;
+
+	void v_destroy ()
+		override;
+	void v_nameChanged ()
+		override;
+	void v_goAway ()
+		override;
+	bool v_scriptable ()
+		override { return false; }
+	void v_createMenus ()
+		override;
+	void v_createHelpMenuItems (EditorMenu menu)
+		override;
 };
 
+void ScriptEditor_init (ScriptEditor me,
+	Editor editor,
+	const wchar_t *initialText
+);
 ScriptEditor ScriptEditor_createFromText (
 	Editor editor,   // the scripting environment; if NULL, the scripting environment consists of the global windows
 	const wchar_t *initialText   // may be NULL

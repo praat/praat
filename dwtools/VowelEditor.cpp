@@ -1,6 +1,6 @@
-/* VowelEditor.c
+/* VowelEditor.cpp
  *
- * Copyright (C) 2008-2013 David Weenink
+ * Copyright (C) 2008-2013 David Weenink, 2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -285,7 +285,7 @@ static void appendF1F2F0 (MelderString *statusInfo, const wchar_t *intro, double
 
 static double getRealFromTextWidget (GuiText me) {
 	double value = NUMundefined;
-	wchar_t *dirty = my f_getString ();
+	wchar_t *dirty = GuiText_getString (me);
 	try {
 		Interpreter_numericExpression (NULL, dirty, & value);
 	} catch (MelderError) {
@@ -298,14 +298,14 @@ static double getRealFromTextWidget (GuiText me) {
 static void VowelEditor_updateF0Info (VowelEditor me) {
 	double f0 = getRealFromTextWidget (my f0TextField);
 	checkF0 (&my f0, &f0);
-	my f0TextField -> f_setString (Melder_double (f0));
+	GuiText_setString (my f0TextField, Melder_double (f0));
 	my f0.start = f0;
 	double slopeOctPerSec = getRealFromTextWidget (my f0SlopeTextField);
 	if (slopeOctPerSec == NUMundefined) {
 		slopeOctPerSec = f0default.slopeOctPerSec;
 	}
 	my f0.slopeOctPerSec = slopeOctPerSec;
-	my f0SlopeTextField -> f_setString (Melder_double (my f0.slopeOctPerSec));
+	GuiText_setString (my f0SlopeTextField, Melder_double (my f0.slopeOctPerSec));
 }
 
 static void VowelEditor_updateExtendDuration (VowelEditor me) {
@@ -313,7 +313,7 @@ static void VowelEditor_updateExtendDuration (VowelEditor me) {
 	if (extend == NUMundefined || extend <= MINIMUM_SOUND_DURATION || extend > my maximumDuration) {
 		extend = MINIMUM_SOUND_DURATION;
 	}
-	my extendTextField -> f_setString (Melder_double (extend));
+	GuiText_setString (my extendTextField, Melder_double (extend));
 	my extendDuration = prefs.extendDuration = extend;
 }
 
@@ -322,7 +322,7 @@ static double VowelEditor_updateDurationInfo (VowelEditor me) {
 	if (duration == NUMundefined || duration < MINIMUM_SOUND_DURATION) {
 		duration = MINIMUM_SOUND_DURATION;
 	}
-	my durationTextField -> f_setString (Melder_double (MICROSECPRECISION (duration)));
+	GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (duration)));
 	return duration;
 }
 
@@ -956,14 +956,14 @@ static void menu_cb_ranges_f1f2 (EDITOR_ARGS) {
 static void menu_cb_publishSound (EDITOR_ARGS) {
 	EDITOR_IAM (VowelEditor);
 	autoSound publish = VowelEditor_createTarget (me);
-	my broadcastPublication (publish.transfer());
+	Editor_broadcastPublication (me, publish.transfer());
 }
 
 static void menu_cb_extract_FormantGrid (EDITOR_ARGS) {
 	EDITOR_IAM (VowelEditor);
 	VowelEditor_updateVowel (me);
 	autoFormantGrid publish = FormantTier_to_FormantGrid (my vowel -> ft);
-	my broadcastPublication (publish.transfer());
+	Editor_broadcastPublication (me, publish.transfer());
 }
 
 static void menu_cb_extract_KlattGrid (EDITOR_ARGS) {
@@ -974,14 +974,14 @@ static void menu_cb_extract_KlattGrid (EDITOR_ARGS) {
 	KlattGrid_addVoicingAmplitudePoint (publish.peek(), fg -> xmin, 90);
 	KlattGrid_replacePitchTier (publish.peek(), my vowel -> pt);
 	KlattGrid_replaceFormantGrid (publish.peek(), KlattGrid_ORAL_FORMANTS, fg.peek());
-	my broadcastPublication (publish.transfer());
+	Editor_broadcastPublication (me, publish.transfer());
 }
 
 static void menu_cb_extract_PitchTier (EDITOR_ARGS) {
 	EDITOR_IAM (VowelEditor);
 	VowelEditor_updateVowel (me);
 	autoPitchTier publish = Data_copy (my vowel -> pt);
-	my broadcastPublication (publish.transfer());
+	Editor_broadcastPublication (me, publish.transfer());
 }
 
 static void menu_cb_drawTrajectory (EDITOR_ARGS) {
@@ -1078,8 +1078,8 @@ static void menu_cb_setF0 (EDITOR_ARGS) {
 		my f0.start = f0;
 		my f0.slopeOctPerSec = GET_REAL (L"Slope");
 		VowelEditor_setSource (me);
-		my f0TextField -> f_setString (Melder_double (my f0.start));
-		my f0SlopeTextField -> f_setString (Melder_double (my f0.slopeOctPerSec));
+		GuiText_setString (my f0TextField, Melder_double (my f0.start));
+		GuiText_setString (my f0SlopeTextField, Melder_double (my f0.slopeOctPerSec));
 	EDITOR_END
 }
 
@@ -1189,7 +1189,7 @@ static void menu_cb_newTrajectory (EDITOR_ARGS) {
 		checkF1F2 (me, &f1, &f2);
 		VowelEditor_Vowel_addData (me, vowel.peek(), time, f1, f2, f0);
 
-		my durationTextField -> f_setString (Melder_double (MICROSECPRECISION (duration)));
+		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (duration)));
 		forget (my vowel);
 		my vowel = vowel.transfer();
 
@@ -1214,7 +1214,7 @@ static void menu_cb_extendTrajectory (EDITOR_ARGS) {
 		checkF1F2 (me, &f1, &f2);
 		VowelEditor_Vowel_addData (me, thee, newDuration, f1, f2, f0);
 
-		my durationTextField -> f_setString (Melder_double (MICROSECPRECISION (newDuration)));
+		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (newDuration)));
 		Graphics_updateWs (my g);
 	EDITOR_END
 }
@@ -1225,7 +1225,7 @@ static void menu_cb_modifyTrajectoryDuration (EDITOR_ARGS) {
 		POSITIVE (L"New duration (s)", L"0.5")
 	EDITOR_OK
 	EDITOR_DO
-		my durationTextField -> f_setString (Melder_double (MICROSECPRECISION (GET_REAL (L"New duration"))));
+		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (GET_REAL (L"New duration"))));
 	EDITOR_END
 }
 
@@ -1270,7 +1270,7 @@ static void gui_button_cb_publish (I, GuiButtonEvent event) {
 	(void) event;
 	iam (VowelEditor);
 	autoSound publish = VowelEditor_createTarget (me);
-	my broadcastPublication (publish.transfer());
+	Editor_broadcastPublication (me, publish.transfer());
 }
 
 static void gui_button_cb_reverse (I, GuiButtonEvent event) {
@@ -1299,12 +1299,12 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 
 	appendF1F2F0 (&statusInfo, STATUSINFO_STARTINTR0, FormantTier_getValueAtTime (ft, 1, ts),
 	              FormantTier_getValueAtTime (ft, 2, ts), getF0 (&my f0, ts), STATUSINFO_ENDING);
-	my startInfo -> f_setString (statusInfo.string);
+	GuiLabel_setText (my startInfo, statusInfo.string);
 	MelderString_empty (&statusInfo);
 
 	appendF1F2F0 (&statusInfo, STATUSINFO_ENDINTR0, FormantTier_getValueAtTime (ft, 1, te),
 	              FormantTier_getValueAtTime (ft, 2, te), getF0 (&my f0, te), STATUSINFO_ENDING);
-	my endInfo -> f_setString (statusInfo.string);
+	GuiLabel_setText (my endInfo, statusInfo.string);
 	MelderString_empty (&statusInfo);
 
 	Graphics_setGrey (my g, 0.9);
@@ -1330,8 +1330,8 @@ static void gui_drawingarea_cb_resize__ (I, GuiDrawingAreaResizeEvent event) {
 	if (me == NULL || my g == NULL) {
 		return;
 	}
-	my height = my drawingArea -> f_getHeight ();
-	my width = my drawingArea -> f_getWidth ();
+	my width  = GuiControl_getWidth  (my drawingArea);
+	my height = GuiControl_getHeight (my drawingArea);
 	Graphics_setWsViewport (my g, 0, my width , 0, my height);
 	Graphics_setWsWindow (my g, 0, my width, 0, my height);
 	Graphics_setViewport (my g, 0, my width, 0, my height);
@@ -1351,10 +1351,10 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 	Graphics_setViewport (my g, 0, my width, 0, my height);
 	Graphics_updateWs (my g);
 
-	/* Save the current shell size as the user's preference for a new FunctionEditor. */
+	/* Save the current shell size as the user's preference for a new VowelEditor. */
 
-	prefs.shellWidth = my d_windowForm -> f_getShellWidth ();
-	prefs.shellHeight = my d_windowForm -> f_getShellHeight ();
+	prefs.shellWidth  = GuiShell_getShellWidth  (my d_windowForm);
+	prefs.shellHeight = GuiShell_getShellHeight (my d_windowForm);
 }
 
 static void VowelEditor_Vowel_updateTiers (VowelEditor me, Vowel thee, double time, double x, double y) {
@@ -1405,7 +1405,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 		dt = thy xmax + my extendDuration;
 		t = 0 + dt;
 		VowelEditor_Vowel_updateTiers (me, thee, t, x, y);
-		my durationTextField -> f_setString (Melder_double (t));
+		GuiText_setString (my durationTextField, Melder_double (t));
 		if (! my soundFollowsMouse) {
 			goto end;
 		}
@@ -1415,7 +1415,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 		athee.reset (Vowel_create (MINIMUM_SOUND_DURATION));
 		thee = athee.peek();
 		VowelEditor_Vowel_updateTiers (me, thee, t, x, y);
-		my durationTextField -> f_setString (Melder_double (t));
+		GuiText_setString (my durationTextField, Melder_double (t));
 		if (! my soundFollowsMouse) {
 			VowelEditor_Vowel_updateTiers (me, thee, MINIMUM_SOUND_DURATION, x, y);
 			goto end;
@@ -1441,7 +1441,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 		Graphics_line (my g, xb, yb, x, y);
 
 		VowelEditor_Vowel_updateTiers (me, thee, t, x, y);
-		my durationTextField -> f_setString (Melder_double (MICROSECPRECISION (t)));
+		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (t)));
 	}
 	t = Melder_clock () - t0;
 	// To prevent ultra short clicks we set a minimum of 0.01 s duration
@@ -1449,7 +1449,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 		t = MINIMUM_SOUND_DURATION;
 	}
 	t += dt;
-	my durationTextField -> f_setString (Melder_double (MICROSECPRECISION (t)));
+	GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (t)));
 	VowelEditor_Vowel_updateTiers (me, thee, t, x, y);
 
 	Graphics_xorOff (my g);
@@ -1586,8 +1586,8 @@ void structVowelEditor :: v_createChildren ()
 	//	gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
 	drawingArea = GuiDrawingArea_createShown (d_windowForm, 0, 0, Machine_getMenuBarHeight (), -MARGIN_BOTTOM,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, this, 0);
-	height = drawingArea -> f_getHeight ();
-	width = drawingArea -> f_getWidth ();
+	width  = GuiControl_getWidth  (drawingArea);
+	height = GuiControl_getHeight (drawingArea);
 }
 
 static void VowelEditor_setSource (VowelEditor me) {
@@ -1624,7 +1624,7 @@ VowelEditor VowelEditor_create (const wchar_t *title, Data data) {
 		my g = Graphics_create_xmdrawingarea (my drawingArea);
 		Melder_assert (my g != NULL);
 		Graphics_setFontSize (my g, 12);
-		my setPublicationCallback (cb_publish, NULL);
+		Editor_setPublicationCallback (me.peek(), cb_publish, NULL);
 
 		my f1min = prefs.f1min;
 		my f1max = prefs.f1max;
@@ -1653,18 +1653,18 @@ VowelEditor VowelEditor_create (const wchar_t *title, Data data) {
 		my f0 = f0default;
 		VowelEditor_setSource (me.peek());
 		my target = Sound_createSimple (1, my maximumDuration, my f0.samplingFrequency);
-		my f0TextField -> f_setString (Melder_double (my f0.start));
-		my f0SlopeTextField -> f_setString (Melder_double (my f0.slopeOctPerSec));
-		my durationTextField -> f_setString (L"0.2"); // Source has been created
-		my extendTextField -> f_setString (Melder_double (my extendDuration));
+		GuiText_setString (my f0TextField, Melder_double (my f0.start));
+		GuiText_setString (my f0SlopeTextField, Melder_double (my f0.slopeOctPerSec));
+		GuiText_setString (my durationTextField, L"0.2"); // Source has been created
+		GuiText_setString (my extendTextField, Melder_double (my extendDuration));
 		my grid = griddefault;
-		{
-			// This exdents because it's a hack:
-			struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };
-			event. width = my drawingArea -> f_getWidth ();
-			event. height = my drawingArea -> f_getHeight ();
-			gui_drawingarea_cb_resize (me.peek(), & event);
-		}
+{
+	// This exdents because it's a hack:
+	struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };
+	event. width  = GuiControl_getWidth  (my drawingArea);
+	event. height = GuiControl_getHeight (my drawingArea);
+	gui_drawingarea_cb_resize (me.peek(), & event);
+}
 		//struct structGuiDrawingAreaResizeEvent event = { 0 };
 		//event.widget = my drawingArea;
 		//gui_drawingarea_cb_resize (me, & event);

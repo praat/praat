@@ -1,6 +1,6 @@
 /* Manipulation_def.h
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2008,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,11 +79,12 @@ oo_DEFINE_CLASS (Manipulation, Function)
 	#endif
 
 	#if oo_DECLARING
-		// overridden methods:
-		protected:
-			virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
-			virtual void v_shiftX (double xfrom, double xto);
-			virtual void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto);
+		int v_domainQuantity ()
+			override { return MelderQuantity_TIME_SECONDS; }
+		void v_shiftX (double xfrom, double xto)
+			override;
+		void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto)
+			override;
 	#endif
 
 oo_END_CLASS (Manipulation)

@@ -2,7 +2,7 @@
 #define _TextEditor_h_
 /* TextEditor.h
  *
- * Copyright (C) 1997-2011,2012,2013 Paul Boersma
+ * Copyright (C) 1997-2011,2012,2013,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,30 +22,35 @@
 #include "Editor.h"
 
 Thing_define (TextEditor, Editor) {
-	// new data:
-	public:
-		structMelderFile file;
-		GuiText textWidget;
-		UiForm openDialog, saveDialog, printDialog, findDialog;
-		int dirty;
-		GuiDialog dirtyNewDialog, dirtyOpenDialog, dirtyCloseDialog;
-		GuiMenuItem fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24;
-	// functions:
-		void init (const wchar_t *initialText);
-	// overridden methods:
-		virtual void v_destroy ();
-		virtual void v_nameChanged ();
-		virtual void v_goAway ();
-		virtual void v_createChildren ();
-		virtual void v_createMenus ();
-		virtual bool v_hasQueryMenu () { return false; }
-	// new methods:
-		virtual bool v_fileBased () { return true; };   // if true, have New, Open..., Save; if false, have Clear
-		virtual void v_clear () { }
-	// preferences:
-		#include "TextEditor_prefs.h"
+	structMelderFile file;
+	GuiText textWidget;
+	UiForm openDialog, saveDialog, printDialog, findDialog;
+	int dirty;
+	GuiDialog dirtyNewDialog, dirtyOpenDialog, dirtyCloseDialog;
+	GuiMenuItem fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24;
+
+	void v_destroy ()
+		override;
+	void v_nameChanged ()
+		override;
+	void v_goAway ()
+		override;
+	void v_createChildren ()
+		override;
+	void v_createMenus ()
+		override;
+	bool v_hasQueryMenu ()
+		override { return false; }
+
+	virtual bool v_fileBased () { return true; };   // if true, have New, Open..., Save; if false, have Clear
+	virtual void v_clear () { }
+
+	#include "TextEditor_prefs.h"
 };
 
+void TextEditor_init (TextEditor me,
+	const wchar_t *initialText
+);
 TextEditor TextEditor_create (
 	const wchar_t *initialText   // may be NULL
 );

@@ -2,7 +2,7 @@
 #define _FormantGridEditor_h_
 /* FormantGridEditor.h
  *
- * Copyright (C) 2008-2011,2012,2013 Paul Boersma & David Weenink
+ * Copyright (C) 2008-2011,2012,2013,2015 Paul Boersma & David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,21 +23,23 @@
 #include "FormantGrid.h"
 
 Thing_define (FormantGridEditor, FunctionEditor) {
-	// new data:
-	public:
-		bool editingBandwidths;
-		GuiMenuItem d_bandwidthsToggle;
-		long selectedFormant;
-		double ycursor;
-	// overridden methods:
-		virtual void v_createMenus ();
-		virtual void v_draw ();
-		virtual int v_click (double xWC, double yWC, bool shiftKeyPressed);
-		virtual void v_play (double tmin, double tmax);
-	// new methods:
-		virtual bool v_hasSourceMenu () { return true; }
-	// preferences:
-		#include "FormantGridEditor_prefs.h"
+	bool editingBandwidths;
+	GuiMenuItem d_bandwidthsToggle;
+	long selectedFormant;
+	double ycursor;
+
+	void v_createMenus ()
+		override;
+	void v_draw ()
+		override;
+	int v_click (double xWC, double yWC, bool shiftKeyPressed)
+		override;
+	void v_play (double tmin, double tmax)
+		override;
+
+	virtual bool v_hasSourceMenu () { return true; }
+
+	#include "FormantGridEditor_prefs.h"
 };
 
 void FormantGridEditor_init (FormantGridEditor me, const wchar_t *title, FormantGrid data);

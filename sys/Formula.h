@@ -2,7 +2,7 @@
 #define _Formula_h_
 /* Formula.h
  *
- * Copyright (C) 1990-2011,2013,2014 Paul Boersma
+ * Copyright (C) 1990-2011,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,23 +43,28 @@ typedef struct structStackel {
 	int which;   /* 0 or negative = no clean-up required, positive = requires clean-up */
 	union {
 		double number;
-		wchar_t *string;
+		char32 *string;
 		struct Formula_NumericArray numericArray;
 		InterpreterVariable variable;
 	};
 } *Stackel;
-const wchar_t *Stackel_whichText (Stackel me);
+const char32 *Stackel_whichText (Stackel me);
 
 struct Formula_Result {
 	int expressionType;
 	union {
 		double numericResult;
-		wchar_t *stringResult;
+		char32 *stringResult;
 		struct Formula_NumericArray numericArrayResult;
 	} result;
 };
 
-void Formula_compile (Any interpreter, Any data, const wchar_t *expression, int expressionType, int optimize);
+void Formula_compile (Any interpreter, Any data, const char32 *expression, int expressionType, int optimize);
+inline static
+void Formula_compile (Any interpreter, Any data, const wchar_t *expressionW, int expressionType, int optimize) {
+	autostring32 expression32 = Melder_wcsToStr32 (expressionW);
+	Formula_compile (interpreter, data, expression32.peek(), expressionType, optimize);
+}
 
 void Formula_run (long row, long col, struct Formula_Result *result);
 

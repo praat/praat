@@ -1,6 +1,6 @@
 /* praat_picture.cpp
  *
- * Copyright (C) 1992-2012,2013,2014 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ static void updateFontMenu (void) {
 		if (theCurrentPraatPicture -> font < kGraphics_font_MIN) theCurrentPraatPicture -> font = kGraphics_font_MIN;
 		if (theCurrentPraatPicture -> font > kGraphics_font_MAX) theCurrentPraatPicture -> font = kGraphics_font_MAX;   // we no longer have New Century Schoolbook
 		for (int i = kGraphics_font_MIN; i <= kGraphics_font_MAX; i ++) {
-			praatButton_fonts [i] -> f_check (theCurrentPraatPicture -> font == i);
+			GuiMenuItem_check (praatButton_fonts [i], theCurrentPraatPicture -> font == i);
 		}
 	}
 }
@@ -72,11 +72,11 @@ DIRECT (Courier)   { setFont (kGraphics_font_COURIER);   } END
 static GuiMenuItem praatButton_10, praatButton_12, praatButton_14, praatButton_18, praatButton_24;
 static void updateSizeMenu (void) {
 	if (! theCurrentPraatApplication -> batch) {
-		praatButton_10 -> f_check (theCurrentPraatPicture -> fontSize == 10);
-		praatButton_12 -> f_check (theCurrentPraatPicture -> fontSize == 12);
-		praatButton_14 -> f_check (theCurrentPraatPicture -> fontSize == 14);
-		praatButton_18 -> f_check (theCurrentPraatPicture -> fontSize == 18);
-		praatButton_24 -> f_check (theCurrentPraatPicture -> fontSize == 24);
+		GuiMenuItem_check (praatButton_10, theCurrentPraatPicture -> fontSize == 10);
+		GuiMenuItem_check (praatButton_12, theCurrentPraatPicture -> fontSize == 12);
+		GuiMenuItem_check (praatButton_14, theCurrentPraatPicture -> fontSize == 14);
+		GuiMenuItem_check (praatButton_18, theCurrentPraatPicture -> fontSize == 18);
+		GuiMenuItem_check (praatButton_24, theCurrentPraatPicture -> fontSize == 24);
 	}
 }
 static void setFontSize (int fontSize) {
@@ -132,8 +132,8 @@ END2 }
 static GuiMenuItem praatButton_innerViewport, praatButton_outerViewport;
 static void updateViewportMenu (void) {
 	if (! theCurrentPraatApplication -> batch) {
-		praatButton_innerViewport -> f_check (praat_mouseSelectsInnerViewport ? 1 : 0);
-		praatButton_outerViewport -> f_check (praat_mouseSelectsInnerViewport ? 0 : 1);
+		GuiMenuItem_check (praatButton_innerViewport, praat_mouseSelectsInnerViewport ? 1 : 0);
+		GuiMenuItem_check (praatButton_outerViewport, praat_mouseSelectsInnerViewport ? 0 : 1);
 	}
 }
 
@@ -188,7 +188,7 @@ DO
 		double x1wNDC, x2wNDC, y1wNDC, y2wNDC;
 		Graphics_inqWsWindow (GRAPHICS, & x1wNDC, & x2wNDC, & y1wNDC, & y2wNDC);
 		double wDC = (x2DC - x1DC) / (x2wNDC - x1wNDC);
-		double hDC = abs (y2DC - y1DC) / (y2wNDC - y1wNDC);
+		double hDC = labs (y2DC - y1DC) / (y2wNDC - y1wNDC);
 		xmargin *= Graphics_getResolution (GRAPHICS) / wDC;
 		ymargin *= Graphics_getResolution (GRAPHICS) / hDC;
 	}
@@ -310,25 +310,25 @@ static GuiMenuItem praatButton_black, praatButton_white, praatButton_red, praatB
 static void updatePenMenu (void) {
 	if (! theCurrentPraatApplication -> batch) {
 		for (int i = Graphics_DRAWN; i <= Graphics_DASHED; i ++) {
-			praatButton_lines [i] -> f_check (theCurrentPraatPicture -> lineType == i);
+			GuiMenuItem_check (praatButton_lines [i], theCurrentPraatPicture -> lineType == i);
 		}
-		praatButton_black   -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_BLACK));
-		praatButton_white   -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_WHITE));
-		praatButton_red     -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_RED));
-		praatButton_green   -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_GREEN));
-		praatButton_blue    -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_BLUE));
-		praatButton_yellow  -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_YELLOW));
-		praatButton_cyan    -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_CYAN));
-		praatButton_magenta -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_MAGENTA));
-		praatButton_maroon  -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_MAROON));
-		praatButton_lime    -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_LIME));
-		praatButton_navy    -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_NAVY));
-		praatButton_teal    -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_TEAL));
-		praatButton_purple  -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_PURPLE));
-		praatButton_olive   -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_OLIVE));
-		praatButton_pink    -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_PINK));
-		praatButton_silver  -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_SILVER));
-		praatButton_grey    -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_GREY));
+		GuiMenuItem_check (praatButton_black   , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_BLACK));
+		GuiMenuItem_check (praatButton_white   , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_WHITE));
+		GuiMenuItem_check (praatButton_red     , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_RED));
+		GuiMenuItem_check (praatButton_green   , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_GREEN));
+		GuiMenuItem_check (praatButton_blue    , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_BLUE));
+		GuiMenuItem_check (praatButton_yellow  , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_YELLOW));
+		GuiMenuItem_check (praatButton_cyan    , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_CYAN));
+		GuiMenuItem_check (praatButton_magenta , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_MAGENTA));
+		GuiMenuItem_check (praatButton_maroon  , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_MAROON));
+		GuiMenuItem_check (praatButton_lime    , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_LIME));
+		GuiMenuItem_check (praatButton_navy    , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_NAVY));
+		GuiMenuItem_check (praatButton_teal    , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_TEAL));
+		GuiMenuItem_check (praatButton_purple  , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_PURPLE));
+		GuiMenuItem_check (praatButton_olive   , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_OLIVE));
+		GuiMenuItem_check (praatButton_pink    , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_PINK));
+		GuiMenuItem_check (praatButton_silver  , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_SILVER));
+		GuiMenuItem_check (praatButton_grey    , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_GREY));
 	}
 }
 static void setLineType (int lineType) {
@@ -448,7 +448,7 @@ static void DO_Picture_writeToEpsFile (UiForm sendingForm, int narg, Stackel arg
 		UiOutfile_do (dia, L"praat.eps");
 	} else { MelderFile file; structMelderFile file2 = { 0 };
 		if (args == NULL && sendingString == NULL) file = UiFile_getFile (dia);
-		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
+		else { Melder_relativePathToFile (args ? args [1]. string : Melder_peekWcsToStr32 (sendingString), & file2); file = & file2; }
 		Picture_writeToEpsFile (praat_picture, file, TRUE, FALSE);
 	}
 }
@@ -468,7 +468,7 @@ static void DO_Picture_writeToFontlessEpsFile_xipa (UiForm sendingForm, int narg
 		UiOutfile_do (dia, L"praat.eps");
 	} else { MelderFile file; structMelderFile file2 = { 0 };
 		if (args == NULL && sendingString == NULL) file = UiFile_getFile (dia);
-		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
+		else { Melder_relativePathToFile (args ? args [1]. string : Melder_peekWcsToStr32 (sendingString), & file2); file = & file2; }
 		Picture_writeToEpsFile (praat_picture, file, FALSE, FALSE);
 	}
 }
@@ -485,7 +485,7 @@ static void DO_Picture_writeToFontlessEpsFile_silipa (UiForm sendingForm, int na
 		UiOutfile_do (dia, L"praat.eps");
 	} else { MelderFile file; structMelderFile file2 = { 0 };
 		if (args == NULL && sendingString == NULL) file = UiFile_getFile (dia);
-		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
+		else { Melder_relativePathToFile (args ? args [1]. string : Melder_peekWcsToStr32 (sendingString), & file2); file = & file2; }
 		Picture_writeToEpsFile (praat_picture, file, FALSE, TRUE);
 	}
 }
@@ -502,7 +502,7 @@ static void DO_Picture_writeToPdfFile (UiForm sendingForm, int narg, Stackel arg
 		UiOutfile_do (dia, L"praat.pdf");
 	} else { MelderFile file; structMelderFile file2 = { 0 };
 		if (args == NULL && sendingString == NULL) file = UiFile_getFile (dia);
-		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
+		else { Melder_relativePathToFile (args ? args [1]. string : Melder_peekWcsToStr32 (sendingString), & file2); file = & file2; }
 		Picture_writeToPdfFile (praat_picture, file);
 	}
 }
@@ -519,7 +519,7 @@ static void DO_Picture_writeToPngFile_300 (UiForm sendingForm, int narg, Stackel
 		UiOutfile_do (dia, L"praat.png");
 	} else { MelderFile file; structMelderFile file2 = { 0 };
 		if (args == NULL && sendingString == NULL) file = UiFile_getFile (dia);
-		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
+		else { Melder_relativePathToFile (args ? args [1]. string : Melder_peekWcsToStr32 (sendingString), & file2); file = & file2; }
 		Picture_writeToPngFile_300 (praat_picture, file);
 	}
 }
@@ -536,7 +536,7 @@ static void DO_Picture_writeToPngFile_600 (UiForm sendingForm, int narg, Stackel
 		UiOutfile_do (dia, L"praat.png");
 	} else { MelderFile file; structMelderFile file2 = { 0 };
 		if (args == NULL && sendingString == NULL) file = UiFile_getFile (dia);
-		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
+		else { Melder_relativePathToFile (args ? args [1]. string : Melder_peekWcsToStr32 (sendingString), & file2); file = & file2; }
 		Picture_writeToPngFile_600 (praat_picture, file);
 	}
 }
@@ -553,7 +553,7 @@ static void DO_Picture_writeToPraatPictureFile (UiForm sendingForm, int narg, St
 		UiOutfile_do (dia, L"praat.prapic");
 	} else { MelderFile file; structMelderFile file2 = { 0 };
 		if (args == NULL && sendingString == NULL) file = UiFile_getFile (dia);
-		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
+		else { Melder_relativePathToFile (args ? args [1]. string : Melder_peekWcsToStr32 (sendingString), & file2); file = & file2; }
 		Picture_writeToPraatPictureFile (praat_picture, file);
 	}
 }
@@ -585,7 +585,7 @@ DIRECT (Print) {
 			UiOutfile_do (dia, L"praat.emf");
 		} else { MelderFile file; structMelderFile file2 = { 0 };
 			if (args == NULL && sendingString == NULL) file = UiFile_getFile (dia);
-			else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
+			else { Melder_relativePathToFile (args ? args [1]. string : Melder_peekWcsToStr32 (sendingString), & file2); file = & file2; }
 			Picture_writeToWindowsMetafile (praat_picture, file);
 		}
 	}
@@ -1386,7 +1386,7 @@ DIRECT (Picture_settings_report) {
 		theCurrentPraatPicture != & theForegroundPraatPicture ?
 			theCurrentPraatPicture -> y2NDC - ymargin :
 			12 - theCurrentPraatPicture -> y1NDC - ymargin), units);
-	MelderInfo_writeLine (L"Font: ", kGraphics_font_getText (theCurrentPraatPicture -> font));
+	MelderInfo_writeLine (L"Font: ", Melder_peekStr32ToWcs (kGraphics_font_getText (theCurrentPraatPicture -> font)));
 	MelderInfo_writeLine (L"Line type: ",
 		theCurrentPraatPicture -> lineType == Graphics_DRAWN ? L"Solid" :
 		theCurrentPraatPicture -> lineType == Graphics_DOTTED ? L"Dotted" :
@@ -1427,23 +1427,23 @@ static void cb_selectionChanged (Picture p, void *closure,
 		double xmargin = fontSize * 4.2 / 72.0, ymargin = fontSize * 2.8 / 72.0;
 		if (ymargin > 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC)) ymargin = 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC);
 		if (xmargin > 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC)) xmargin = 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC);
-		UiHistory_write (L"\nSelect inner viewport: ");
-		UiHistory_write (Melder_single (theCurrentPraatPicture -> x1NDC + xmargin));
-		UiHistory_write (L", ");
-		UiHistory_write (Melder_single (theCurrentPraatPicture -> x2NDC - xmargin));
-		UiHistory_write (L", ");
-		UiHistory_write (Melder_single (12 - theCurrentPraatPicture -> y2NDC + ymargin));
-		UiHistory_write (L", ");
-		UiHistory_write (Melder_single (12 - theCurrentPraatPicture -> y1NDC - ymargin));
+		UiHistory_write (U"\nSelect inner viewport: ");
+		UiHistory_write (Melder32_single (theCurrentPraatPicture -> x1NDC + xmargin));
+		UiHistory_write (U", ");
+		UiHistory_write (Melder32_single (theCurrentPraatPicture -> x2NDC - xmargin));
+		UiHistory_write (U", ");
+		UiHistory_write (Melder32_single (12 - theCurrentPraatPicture -> y2NDC + ymargin));
+		UiHistory_write (U", ");
+		UiHistory_write (Melder32_single (12 - theCurrentPraatPicture -> y1NDC - ymargin));
 	} else {
-		UiHistory_write (L"\nSelect outer viewport: ");
-		UiHistory_write (Melder_single (theCurrentPraatPicture -> x1NDC));
-		UiHistory_write (L", ");
-		UiHistory_write (Melder_single (theCurrentPraatPicture -> x2NDC));
-		UiHistory_write (L", ");
-		UiHistory_write (Melder_single (12 - theCurrentPraatPicture -> y2NDC));
-		UiHistory_write (L", ");
-		UiHistory_write (Melder_single (12 - theCurrentPraatPicture -> y1NDC));
+		UiHistory_write (U"\nSelect outer viewport: ");
+		UiHistory_write (Melder32_single (theCurrentPraatPicture -> x1NDC));
+		UiHistory_write (U", ");
+		UiHistory_write (Melder32_single (theCurrentPraatPicture -> x2NDC));
+		UiHistory_write (U", ");
+		UiHistory_write (Melder32_single (12 - theCurrentPraatPicture -> y2NDC));
+		UiHistory_write (U", ");
+		UiHistory_write (Melder32_single (12 - theCurrentPraatPicture -> y1NDC));
 	}
 }
 
@@ -1476,7 +1476,7 @@ void praat_picture_open (void) {
 		#if gtk
 			gtk_window_present (GTK_WINDOW (dialog -> d_gtkWindow));
 		#elif cocoa
-			dialog -> f_show ();
+			GuiThing_show (dialog);
 		#elif motif
 			XtMapWidget (dialog -> d_xmShell);
 			XMapRaised (XtDisplay (dialog -> d_xmShell), XtWindow (dialog -> d_xmShell));
@@ -1576,7 +1576,7 @@ void praat_picture_init (void) {
 		#endif
 		sprintf (pictureWindowTitle, "%s Picture", praatP.title);
 		dialog = GuiWindow_create (x, y, width, height, 400, 200, Melder_peekUtf8ToWcs (pictureWindowTitle), NULL, NULL, 0);
-		dialog -> f_addMenuBar ();
+		GuiWindow_addMenuBar (dialog);
 	}
 	if (! theCurrentPraatApplication -> batch) {
 		fileMenu =    GuiMenu_createInWindow (dialog, L"File", 0);
@@ -1767,7 +1767,7 @@ void praat_picture_init (void) {
 		width = height = resolution * 12;
 		scrollWindow = GuiScrolledWindow_createShown (dialog, margin, 0, Machine_getMenuBarHeight () + margin, 0, 1, 1, 0);
 		drawingArea = GuiDrawingArea_createShown (scrollWindow, width, height, NULL, NULL, NULL, NULL, NULL, 0);
-		dialog -> f_show ();
+		GuiThing_show (dialog);
 	}
 
 	// TODO: Paul: deze moet VOOR de update functies anders krijgen die void_me 0x0

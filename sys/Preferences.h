@@ -2,7 +2,7 @@
 #define _Preferences_h_
 /* Preferences.h
  *
- * Copyright (C) 1996-2011,2013 Paul Boersma
+ * Copyright (C) 1996-2011,2013,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ void Preferences_addBool (const wchar_t *string, bool *value, bool defaultValue)
 void Preferences_addDouble (const wchar_t *string, double *value, double defaultValue);
 void Preferences_addString (const wchar_t *string, wchar_t *value, const wchar_t *defaultValue);
 void _Preferences_addEnum (const wchar_t *string, enum kPreferences_dummy *value, int min, int max,
-	const wchar_t *(*getText) (int value), int (*getValue) (const wchar_t *text), enum kPreferences_dummy defaultValue);
+	const char32 *(*getText) (int value), int (*getValue) (const char32 *text), enum kPreferences_dummy defaultValue);
 #define Preferences_addEnum(string,value,enumerated,defaultValue) \
 	_Preferences_addEnum (string, (enum kPreferences_dummy *) value, enumerated##_MIN, enumerated##_MAX, \
 	enumerated##_getText, enumerated##_getValue, (enum kPreferences_dummy) defaultValue)

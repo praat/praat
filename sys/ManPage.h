@@ -2,7 +2,7 @@
 #define _ManPage_h_
 /* ManPage.h
  *
- * Copyright (C) 1996-2011 Paul Boersma
+ * Copyright (C) 1996-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,14 +31,12 @@ typedef struct structManPage_Paragraph {
 } *ManPage_Paragraph;
 
 Thing_define (ManPage, Thing) {
-	// new data:
-	public:
-		const wchar_t *title, *author;
-		long date;
-		struct structManPage_Paragraph *paragraphs;
-		long nlinksHither, nlinksThither;
-		long *linksHither, *linksThither;
-		double recordingTime;
+	const wchar_t *title, *author;
+	long date;
+	struct structManPage_Paragraph *paragraphs;
+	long nlinksHither, nlinksThither;
+	long *linksHither, *linksThither;
+	double recordingTime;
 };
 
 /* End of file ManPage.h */

@@ -1,6 +1,6 @@
 /* Collection.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,7 +112,7 @@ void structCollection :: v_writeText (MelderFile file) {
 void structCollection :: v_readText (MelderReadText text) {
 	if (Thing_version < 0) {
 		long l_size;
-		wchar_t *line = MelderReadText_readLine (text);
+		wchar_t *line = MelderReadText_readLineW (text);
 		if (line == NULL || ! swscanf (line, L"%ld", & l_size) || l_size < 0)
 			Melder_throw ("Collection::readText: cannot read size.");
 		Collection_init (this, NULL, l_size);
@@ -120,7 +120,7 @@ void structCollection :: v_readText (MelderReadText text) {
 			long itemNumberRead;
 			int n = 0, length, stringsRead;
 			char klas [200], nameTag [2000];
-			do { line = MelderReadText_readLine (text); if (line == NULL) Melder_throw ("Missing object line."); }
+			do { line = MelderReadText_readLineW (text); if (line == NULL) Melder_throw ("Missing object line."); }
 			while (wcsncmp (line, L"Object ", 7));
 			stringsRead = swscanf (line, L"Object %ld: class %s %s%n", & itemNumberRead, klas, nameTag, & n);
 			if (stringsRead < 2)
@@ -193,7 +193,8 @@ void structCollection :: v_readBinary (FILE *f) {
 			if (fgetc (f) != ' ')
 				Melder_throw ("Cannot read space.");
 			Data_readBinary ((Data) our item [i], f);
-			if (strcmp (name, "?")) Thing_setName ((Thing) our item [i], Melder_peekUtf8ToWcs (name));
+			if (strcmp (name, "?"))
+				Thing_setName ((Thing) our item [i], Melder_peekUtf8ToWcs (name));
 		}
 	} else {
 		int32_t l_size = bingeti4 (f);
@@ -540,6 +541,63 @@ void structSortedSetOfString :: addString (const wchar_t *string) {
 	if (index == 0) return;   // OK: already there: do not add
 	autoSimpleString newSimp = SimpleString_create (string);
 	_Collection_insertItem (this, newSimp.transfer(), index);
+}
+
+/********** class SortedSetOfString32 **********/
+
+Thing_implement (SortedSetOfString32, SortedSet, 0);
+
+int structSortedSetOfString32 :: s_compare (I, thou) {
+	iam (SimpleString32); thouart (SimpleString32);
+	return str32cmp (my string, thy string);
+}
+
+void SortedSetOfString32_init (SortedSetOfString32 me) {
+	SortedSet_init (me, classSimpleString32, 10);
+}
+
+SortedSetOfString32 SortedSetOfString32_create (void) {
+	autoSortedSetOfString32 me = Thing_new (SortedSetOfString32);
+	SortedSetOfString32_init (me.peek());
+	return me.transfer();
+}
+
+long SortedSetOfString32_lookUp (SortedSetOfString32 me, const char32 *string) {
+	SimpleString32 *items = (SimpleString32 *) my item;
+	long numberOfItems = my size;
+	long left = 1, right = numberOfItems;
+	int atStart, atEnd;
+	if (numberOfItems == 0) return 0;
+
+	atEnd = str32cmp (string, items [numberOfItems] -> string);
+	if (atEnd > 0) return 0;
+	if (atEnd == 0) return numberOfItems;
+
+	atStart = str32cmp (string, items [1] -> string);
+	if (atStart < 0) return 0;
+	if (atStart == 0) return 1;
+
+	while (left < right - 1) {
+		long mid = (left + right) / 2;
+		int here = str32cmp (string, items [mid] -> string);
+		if (here == 0) return mid;
+		if (here > 0) left = mid; else right = mid;
+	}
+	Melder_assert (right == left + 1);
+	return 0;
+}
+
+void SortedSetOfString32_addString (SortedSetOfString32 me, const char32 *string) {
+	static SimpleString32 simp;
+	if (simp == NULL) {
+		simp = SimpleString32_create (U"");
+		Melder_free (simp -> string);
+	}
+	simp -> string = (char32 *) string;   // reference copy
+	long index = my v_position (simp);
+	if (index == 0) return;   // OK: already there: do not add
+	autoSimpleString32 newSimp = SimpleString32_create (string);
+	_Collection_insertItem (me, newSimp.transfer(), index);
 }
 
 /********** class Cyclic **********/

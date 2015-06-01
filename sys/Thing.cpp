@@ -199,6 +199,7 @@ void * _Thing_check (Thing me, ClassInfo klas, const char *fileName, int line) {
 }
 
 void Thing_infoWithIdAndFile (Thing me, unsigned long id, MelderFile file) {
+	//Melder_assert (me != NULL);
 	Melder_clearInfo ();
 	MelderInfo_open ();
 	if (id != 0) MelderInfo_writeLine (L"Object id: ", Melder_integer (id));

@@ -2,7 +2,7 @@
 #define _DataEditor_h_
 /* DataEditor.h
  *
- * Copyright (C) 1995-2011,2012 Paul Boersma
+ * Copyright (C) 1995-2011,2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,60 +43,63 @@ typedef struct structDataSubEditor_FieldData {
 #define kDataSubEditor_MAXNUM_ROWS  12
 
 Thing_define (DataSubEditor, Editor) {
-	// new data:
-	public:
-		DataEditor d_root;
-		void *d_address;
-		Data_Description d_description;
-		GuiScrollBar d_scrollBar;
-		int d_irow, d_topField, d_numberOfFields;
-		struct structDataSubEditor_FieldData d_fieldData [1 + kDataSubEditor_MAXNUM_ROWS];
-	// overridden methods:
-		virtual void v_destroy ();
-		virtual bool v_scriptable () { return false; }
-		virtual void v_createChildren ();
-		virtual void v_createHelpMenuItems (EditorMenu menu);
-	// new methods:
-		virtual long v_countFields () { return 0; }
-		virtual void v_showMembers () { }
+	DataEditor d_root;
+	void *d_address;
+	Data_Description d_description;
+	GuiScrollBar d_scrollBar;
+	int d_irow, d_topField, d_numberOfFields;
+	struct structDataSubEditor_FieldData d_fieldData [1 + kDataSubEditor_MAXNUM_ROWS];
+
+	void v_destroy ()
+		override;
+	bool v_scriptable ()
+		override { return false; }
+	void v_createChildren ()
+		override;
+	void v_createHelpMenuItems (EditorMenu menu)
+		override;
+
+	virtual long v_countFields () { return 0; }
+	virtual void v_showMembers () { }
 };
 
 Thing_define (VectorEditor, DataSubEditor) {
-	// new data:
-	public:
-		long d_minimum, d_maximum;
-	// overridden methods:
-		virtual long v_countFields ();
-		virtual void v_showMembers ();
+	long d_minimum, d_maximum;
+
+	long v_countFields ()
+		override;
+	void v_showMembers ()
+		override;
 };
 
 Thing_define (MatrixEditor, DataSubEditor) {
-	// new data:
-	public:
-		long d_minimum, d_maximum, d_min2, d_max2;
-	// overridden methods:
-		virtual long v_countFields ();
-		virtual void v_showMembers ();
+	long d_minimum, d_maximum, d_min2, d_max2;
+
+	long v_countFields ()
+		override;
+	void v_showMembers ()
+		override;
 };
 
 Thing_define (StructEditor, DataSubEditor) {
-	// overridden methods:
-		virtual long v_countFields ();
-		virtual void v_showMembers ();
+	long v_countFields ()
+		override;
+	void v_showMembers ()
+		override;
 };
 
 Thing_define (ClassEditor, StructEditor) {
-	// overridden methods:
-		virtual void v_showMembers ();
+	void v_showMembers ()
+		override;
 };
 
 Thing_define (DataEditor, ClassEditor) {
-	// new data:
-	public:
-		Collection d_children;
-	// overridden methods:
-		void v_destroy ();
-		void v_dataChanged ();
+	Collection d_children;
+
+	void v_destroy ()
+		override;
+	void v_dataChanged ()
+		override;
 };
 
 DataEditor DataEditor_create (const wchar_t *title, Data data);

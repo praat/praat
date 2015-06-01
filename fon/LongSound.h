@@ -2,7 +2,7 @@
 #define _LongSound_h_
 /* LongSound.h
  *
- * Copyright (C) 1992-2012 Paul Boersma, 2007 Erez Volk (for FLAC, MP3)
+ * Copyright (C) 1992-2012,2015 Paul Boersma, 2007 Erez Volk (for FLAC, MP3)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,28 +30,31 @@ struct FLAC__StreamEncoder;
 struct _MP3_FILE;
 
 Thing_define (LongSound, Sampled) {
-	// new data:
-	public:
-		structMelderFile file;
-		FILE *f;
-		int audioFileType, numberOfChannels, encoding, numberOfBytesPerSamplePoint;
-		double sampleRate;
-		long startOfData;
-		double bufferLength;
-		short *buffer;
-		long imin, imax, nmax;
-		struct FLAC__StreamDecoder *flacDecoder;
-		struct _MP3_FILE *mp3f;
-		int compressedMode;
-		long compressedSamplesLeft;
-		double *compressedFloats [2];
-		short *compressedShorts;
-	// overridden methods:
-		virtual void v_destroy ();
-		virtual void v_info ();
-		virtual void v_copy (Any data_to);
-		virtual bool v_writable () { return false; }
-		virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
+	structMelderFile file;
+	FILE *f;
+	int audioFileType, numberOfChannels, encoding, numberOfBytesPerSamplePoint;
+	double sampleRate;
+	long startOfData;
+	double bufferLength;
+	short *buffer;
+	long imin, imax, nmax;
+	struct FLAC__StreamDecoder *flacDecoder;
+	struct _MP3_FILE *mp3f;
+	int compressedMode;
+	long compressedSamplesLeft;
+	double *compressedFloats [2];
+	short *compressedShorts;
+
+	void v_destroy ()
+		override;
+	void v_info ()
+		override;
+	void v_copy (Any data_to)
+		override;
+	bool v_writable ()
+		override { return false; }
+	int v_domainQuantity ()
+		override { return MelderQuantity_TIME_SECONDS; }
 };
 
 LongSound LongSound_open (MelderFile fs);

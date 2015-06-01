@@ -1,6 +1,6 @@
 /* motifEmulator.cpp
  *
- * Copyright (C) 1993-2011,2012 Paul Boersma
+ * Copyright (C) 1993-2011,2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -221,8 +221,7 @@ static GuiObject theMenus [1+MAXIMUM_NUMBER_OF_MENUS];   /* We can freely use an
 #elif mac
 	static GuiObject theMenuBar;   /* There is only one menu bar on the Macintosh. */
 	static int theHelpMenuOffset;   /* The number of items in the global help menu before we add the first item. */
-	static int (*theUserMessageCallbackA) (char *message);
-	static int (*theUserMessageCallbackW) (wchar_t *message);
+	static int (*theUserMessageCallback) (char32 *message);
 #endif
 
 static GuiObject theApplicationShell;   /* For global menus. */
@@ -2791,7 +2790,7 @@ void XtUnmanageChildren (GuiObjectList children, Cardinal num_children) {
 		AEDisposeDesc (& documentList);
 		return noErr;
 	}
-	static pascal OSErr _motif_processSignalA (const AppleEvent *theAppleEvent, AppleEvent *reply, long handlerRefCon) {
+	static pascal OSErr _motif_processSignal8 (const AppleEvent *theAppleEvent, AppleEvent *reply, long handlerRefCon) {
 		static int duringAppleEvent = FALSE;
 		(void) reply;
 		(void) handlerRefCon;
@@ -2803,33 +2802,37 @@ void XtUnmanageChildren (GuiObjectList children, Cardinal num_children) {
 			ProcessSerialNumber psn;
 			GetCurrentProcess (& psn);
 			SetFrontProcess (& psn);
-			AEGetParamPtr (theAppleEvent, 1, typeChar, NULL, NULL, 0, & actualSize);
+			AEGetParamPtr (theAppleEvent, 1, typeUTF8Text, NULL, NULL, 0, & actualSize);
 			buffer = (char *) malloc (actualSize);
-			AEGetParamPtr (theAppleEvent, 1, typeChar, NULL, & buffer [0], actualSize, NULL);
-			if (theUserMessageCallbackA)
-				theUserMessageCallbackA (buffer);
+			AEGetParamPtr (theAppleEvent, 1, typeUTF8Text, NULL, & buffer [0], actualSize, NULL);
+			if (theUserMessageCallback) {
+				autostring32 buffer32 = Melder_utf8ToChar32 (buffer);
+				theUserMessageCallback (buffer32.peek());
+			}
 			free (buffer);
 			duringAppleEvent = FALSE;
 		}
 		return noErr;
 	}
-	static pascal OSErr _motif_processSignalW (const AppleEvent *theAppleEvent, AppleEvent *reply, long handlerRefCon) {
+	static pascal OSErr _motif_processSignal16 (const AppleEvent *theAppleEvent, AppleEvent *reply, long handlerRefCon) {
 		static int duringAppleEvent = FALSE;
 		(void) reply;
 		(void) handlerRefCon;
 		if (! duringAppleEvent) {
-			wchar_t *buffer;
+			char16 *buffer;
 			long actualSize;
 			duringAppleEvent = TRUE;
 			//AEInteractWithUser (kNoTimeOut, NULL, NULL);   // use time out of 0 to execute immediately (without bringing to foreground)
 			ProcessSerialNumber psn;
 			GetCurrentProcess (& psn);
 			SetFrontProcess (& psn);
-			AEGetParamPtr (theAppleEvent, 1, typeUnicodeText, NULL, NULL, 0, & actualSize);
-			buffer = (wchar_t *) malloc (actualSize);
-			AEGetParamPtr (theAppleEvent, 1, typeUnicodeText, NULL, & buffer [0], actualSize, NULL);
-			if (theUserMessageCallbackW)
-				theUserMessageCallbackW (buffer);
+			AEGetParamPtr (theAppleEvent, 1, typeUTF16ExternalRepresentation, NULL, NULL, 0, & actualSize);
+			buffer = (char16 *) malloc (actualSize);
+			AEGetParamPtr (theAppleEvent, 1, typeUTF16ExternalRepresentation, NULL, & buffer [0], actualSize, NULL);
+			if (theUserMessageCallback) {
+				autostring32 buffer32 = Melder_str16to32 (buffer);
+				theUserMessageCallback (buffer32.peek());
+			}
 			free (buffer);
 			duringAppleEvent = FALSE;
 		}
@@ -2851,8 +2854,8 @@ void GuiInitialize (const char *name, unsigned int *argc, char **argv)
 		AEInstallEventHandler (kCoreEventClass, kAEOpenApplication, NewAEEventHandlerUPP (_motif_processOpenApplicationMessage), 0, false);
 		AEInstallEventHandler (kCoreEventClass, kAEQuitApplication, NewAEEventHandlerUPP (_motif_processQuitApplicationMessage), 0, false);
 		AEInstallEventHandler (kCoreEventClass, kAEOpenDocuments, NewAEEventHandlerUPP (_motif_processOpenDocumentsMessage), 0, false);
-		AEInstallEventHandler (758934755, 0, NewAEEventHandlerUPP (_motif_processSignalA), 0, false);
-		AEInstallEventHandler (758934756, 0, NewAEEventHandlerUPP (_motif_processSignalW), 0, false);
+		AEInstallEventHandler (758934755, 0, NewAEEventHandlerUPP (_motif_processSignal8),  0, false);
+		AEInstallEventHandler (758934756, 0, NewAEEventHandlerUPP (_motif_processSignal16), 0, false);
 		//USE_QUESTION_MARK_HELP_MENU = 1;
 		theUserFocusEventTarget = GetUserFocusEventTarget ();
 	#elif win
@@ -3841,7 +3844,7 @@ static bool _motif_processKeyDownEvent (EventHandlerCallRef nextHandler, EventRe
 				GuiObject nextTextWidget = _motif_getNextTextWidget (shell, text, modifiers & _motif_SHIFT_MASK);
 				if (nextTextWidget != NULL) {
 					_GuiText_setTheTextFocus (nextTextWidget);
-					((GuiText) nextTextWidget -> userData) -> f_setSelection (0, 10000000);
+					GuiText_setSelection ((GuiText) nextTextWidget -> userData, 0, 10000000);
 					return true;
 				}
 			}
@@ -4491,7 +4494,7 @@ modifiers & _motif_SHIFT_MASK ? " shift" : "", message -> message == WM_KEYDOWN 
 				GuiObject nextTextWidget = _motif_getNextTextWidget (my shell, me, GetKeyState (VK_SHIFT) < 0);
 				if (nextTextWidget != NULL) {
 					_GuiText_setTheTextFocus (nextTextWidget);
-					((GuiText) nextTextWidget -> userData) -> f_setSelection (0, 10000000);
+					GuiText_setSelection ((GuiText) nextTextWidget -> userData, 0, 10000000);
 					return;
 				}
 			}
@@ -4829,11 +4832,8 @@ void GuiMainLoop () {
 	}
 #endif
 #if mac
-	void motif_mac_setUserMessageCallbackA (int (*userMessageCallback) (char *message)) {
-		theUserMessageCallbackA = userMessageCallback;
-	}
-	void motif_mac_setUserMessageCallbackW (int (*userMessageCallback) (wchar_t *message)) {
-		theUserMessageCallbackW = userMessageCallback;
+	void motif_mac_setUserMessageCallback (int (*userMessageCallback) (char32 *message)) {
+		theUserMessageCallback = userMessageCallback;
 	}
 #endif
 void Gui_setOpenDocumentCallback (void (*openDocumentCallback) (MelderFile file)) {

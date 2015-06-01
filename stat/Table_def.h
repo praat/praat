@@ -1,6 +1,6 @@
 /* Table_def.h
  *
- * Copyright (C) 2002-2012 Paul Boersma
+ * Copyright (C) 2002-2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,16 +63,35 @@ oo_DEFINE_CLASS (Table, Data)
 	oo_COLLECTION (Ordered, rows, TableRow, 0)
 
 	#if oo_DECLARING
-		// functions:
-			TableRow row (long i) { return static_cast <TableRow> (rows -> item [i]); }
-		// overridden methods:
-			virtual void v_info ();
-			virtual bool v_hasGetNrow      () { return true; }   virtual double        v_getNrow      () { return rows -> size; }
-			virtual bool v_hasGetNcol      () { return true; }   virtual double        v_getNcol      () { return numberOfColumns; }
-			virtual bool v_hasGetColStr    () { return true; }   virtual const wchar_t * v_getColStr    (long columnNumber);
-			virtual bool v_hasGetMatrix    () { return true; }   virtual double        v_getMatrix    (long rowNumber, long columnNumber);
-			virtual bool v_hasGetMatrixStr () { return true; }   virtual const wchar_t * v_getMatrixStr (long rowNumber, long columnNumber);
-			virtual bool v_hasGetColIndex  () { return true; }   virtual double        v_getColIndex  (const wchar_t *columnLabel);
+		TableRow row (long i) // accessor
+			{ return static_cast <TableRow> (rows -> item [i]); }
+
+		void v_info ()
+			override;
+		bool v_hasGetNrow ()
+			override { return true; }
+		double v_getNrow ()
+			override { return rows -> size; }
+		bool v_hasGetNcol ()
+			override { return true; }
+		double v_getNcol ()
+			override { return numberOfColumns; }
+		bool v_hasGetColStr ()
+			override { return true; }
+		const char32 * v_getColStr (long columnNumber)
+			override;
+		bool v_hasGetMatrix ()
+			override { return true; }
+		double v_getMatrix (long rowNumber, long columnNumber)
+			override;
+		bool v_hasGetMatrixStr ()
+			override { return true; }
+		const char32 * v_getMatrixStr (long rowNumber, long columnNumber)
+			override;
+		bool v_hasGetColIndex ()
+			override { return true; }
+		double v_getColIndex (const char32 *columnLabel)
+			override;
 	#endif
 
 oo_END_CLASS (Table)

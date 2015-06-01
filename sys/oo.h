@@ -193,19 +193,29 @@
 /*    w4: store as sequence of characters (u2), preceded with 4 bytes (u4) to denote length. */
 
 #define oo_STRING(x)  oo_STRINGx (w2, x)
+#define oo_STRING32(x)  oo_STRING32x (w2, x)
 #define oo_LSTRING(x)  oo_STRINGx (w4, x)
+#define oo_LSTRING32(x)  oo_STRING32x (w4, x)
 
 #define oo_STRING_ARRAY(x,cap,n)  oo_STRINGx_ARRAY (w2, x, cap, n)
+#define oo_STRING32_ARRAY(x,cap,n)  oo_STRING32x_ARRAY (w2, x, cap, n)
 #define oo_LSTRING_ARRAY(x,cap,n)  oo_STRINGx_ARRAY (w4, x, cap, n)
+#define oo_LSTRING32_ARRAY(x,cap,n)  oo_STRING32x_ARRAY (w4, x, cap, n)
 
 #define oo_STRING_SET(x,setType)  oo_STRINGx_SET (w2, x, setType)
+#define oo_STRING32_SET(x,setType)  oo_STRING32x_SET (w2, x, setType)
 #define oo_LSTRING_SET(x,setType)  oo_STRINGx_SET (w4, x, setType)
+#define oo_LSTRING32_SET(x,setType)  oo_STRING32x_SET (w4, x, setType)
 
 #define oo_STRING_VECTOR_FROM(x,min,max)  oo_STRINGx_VECTOR (w2, x, min, max)
+#define oo_STRING32_VECTOR_FROM(x,min,max)  oo_STRING32x_VECTOR (w2, x, min, max)
 #define oo_LSTRING_VECTOR_FROM(x,min,max)  oo_STRINGx_VECTOR (w4, x, min, max)
+#define oo_LSTRING32_VECTOR_FROM(x,min,max)  oo_STRING32x_VECTOR (w4, x, min, max)
 
 #define oo_STRING_VECTOR(x,n)  oo_STRINGx_VECTOR (w2, x, 1, n)
+#define oo_STRING32_VECTOR(x,n)  oo_STRING32x_VECTOR (w2, x, 1, n)
 #define oo_LSTRING_VECTOR(x,n)  oo_STRINGx_VECTOR (w4, x, 1, n)
+#define oo_LSTRING32_VECTOR(x,n)  oo_STRING32x_VECTOR (w4, x, 1, n)
 
 /*** Structs. ***/
 
@@ -239,9 +249,13 @@
 #define oo_ENUMx_VECTOR(type,storage,Type,x,min,max)  type *x;
 
 #define oo_STRINGx(storage,x)  wchar_t *x;
+#define oo_STRING32x(storage,x)  char32 *x;
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  wchar_t *x [cap];
+#define oo_STRING32x_ARRAY(storage,x,cap,n)  char32 *x [cap];
 #define oo_STRINGx_SET(storage,x,setType)  wchar_t *x [1 + setType##_MAX];
+#define oo_STRING32x_SET(storage,x,setType)  char32 *x [1 + setType##_MAX];
 #define oo_STRINGx_VECTOR(storage,x,min,max)  wchar_t **x;
+#define oo_STRING32x_VECTOR(storage,x,min,max)  char32 **x;
 
 #define oo_STRUCT(Type,x)  struct struct##Type x;
 #define oo_STRUCT_ARRAY(Type,x,cap,n)  struct struct##Type x [cap];
@@ -278,16 +292,16 @@
 	class struct##klas : public struct##parent { \
 		public:
 #define oo_END_CLASS(Class) \
-		virtual void v_destroy (); \
-		virtual void v_copy (Any data_to); \
-		virtual bool v_equal (Any otherData); \
+		virtual void v_destroy () override; \
+		virtual void v_copy (Any data_to) override; \
+		virtual bool v_equal (Any otherData) override; \
 		static Data_Description s_description; \
-		virtual Data_Description v_description () { return s_description; } \
-		virtual bool v_canWriteAsEncoding (int outputEncoding); \
-		virtual void v_writeText (MelderFile openFile); \
-		virtual void v_readText (MelderReadText text); \
-		virtual void v_writeBinary (FILE *f); \
-		virtual void v_readBinary (FILE *f); \
+		virtual Data_Description v_description () override { return s_description; } \
+		virtual bool v_canWriteAsEncoding (int outputEncoding) override; \
+		virtual void v_writeText (MelderFile openFile) override; \
+		virtual void v_readText (MelderReadText text) override; \
+		virtual void v_writeBinary (FILE *f) override; \
+		virtual void v_readBinary (FILE *f) override; \
 	};
 
 /*** Miscellaneous. ***/

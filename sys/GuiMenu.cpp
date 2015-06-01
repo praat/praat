@@ -1,6 +1,6 @@
 /* GuiMenu.cpp
  *
- * Copyright (C) 1992-2012,2013 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
+ * Copyright (C) 1992-2012,2013,2015 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +22,9 @@
 Thing_implement (GuiMenu, GuiThing, 0);
 
 void structGuiMenu :: v_destroy () {
-	forget (d_cascadeButton);
-	forget (d_menuItem);
-	GuiMenu_Parent :: v_destroy ();   // if (d_widget) { _GuiObject_setUserData (d_widget, NULL); GuiObject_destroy (d_widget); }
+	forget (our d_cascadeButton);
+	forget (our d_menuItem);
+	our GuiMenu_Parent :: v_destroy ();   // if (d_widget) { _GuiObject_setUserData (d_widget, NULL); GuiObject_destroy (d_widget); }
 }
 
 #if gtk
@@ -179,58 +179,58 @@ void structGuiMenu :: v_destroy () {
 
 void structGuiMenu :: v_hide () {
 	#if gtk
-		gtk_widget_hide (GTK_WIDGET (d_gtkMenuTitle));
+		gtk_widget_hide (GTK_WIDGET (our d_gtkMenuTitle));
 	#elif cocoa
-		[d_cocoaMenuButton setHidden: YES];
+		[our d_cocoaMenuButton   setHidden: YES];
 	#elif motif
-		XtUnmanageChild (d_xmMenuTitle);
+		XtUnmanageChild (our d_xmMenuTitle);
 	#endif
 }
 
 void structGuiMenu :: v_setSensitive (bool sensitive) {
 	#if gtk
-		gtk_widget_set_sensitive (GTK_WIDGET (d_gtkMenuTitle), sensitive);
+		gtk_widget_set_sensitive (GTK_WIDGET (our d_gtkMenuTitle), sensitive);
 	#elif cocoa
-		[d_cocoaMenuButton setEnabled: sensitive];
+		[our d_cocoaMenuButton   setEnabled: sensitive];
 	#elif motif
-		XtSetSensitive (d_xmMenuTitle, sensitive);
+		XtSetSensitive (our d_xmMenuTitle, sensitive);
 	#endif
 }
 
 void structGuiMenu :: v_show () {
 	trace ("begin");
 	#if gtk
-		gtk_widget_show (GTK_WIDGET (d_gtkMenuTitle));
+		gtk_widget_show (GTK_WIDGET (our d_gtkMenuTitle));
 	#elif cocoa
-		[d_cocoaMenuButton setHidden: NO];
+		[our d_cocoaMenuButton   setHidden: NO];
 	#elif motif
-		XtManageChild (d_xmMenuTitle);
+		XtManageChild (our d_xmMenuTitle);
 	#endif
 	trace ("end");
 }
 
-void structGuiMenu :: f_empty () {
+void GuiMenu_empty (GuiMenu me) {
 	#if gtk
 		trace ("begin");
-		Melder_assert (d_widget);
+		Melder_assert (my d_widget);
 		/*
 		 * Destroy my widget, but prevent forgetting me.
 		 */
-		_GuiObject_setUserData (d_widget, NULL);
-		gtk_widget_destroy (GTK_WIDGET (d_widget));
+		_GuiObject_setUserData (my d_widget, NULL);
+		gtk_widget_destroy (GTK_WIDGET (my d_widget));
 
-		d_widget = gtk_menu_new ();
-		trace ("shell %p", d_shell);
-		Melder_assert (d_shell);
-		trace ("shell class name %ls", Thing_className (d_shell));
-		Melder_assert (d_shell -> classInfo == classGuiWindow);
-		Melder_assert (((GuiWindow) d_shell) -> d_gtkMenuBar);
-		GtkAccelGroup *ag = (GtkAccelGroup *) g_object_get_data (G_OBJECT (((GuiWindow) d_shell) -> d_gtkMenuBar), "accel-group");
-		gtk_menu_set_accel_group (GTK_MENU (d_widget), ag);
+		my d_widget = gtk_menu_new ();
+		trace ("shell %p", my d_shell);
+		Melder_assert (my d_shell);
+		trace ("shell class name %ls", Thing_className (my d_shell));
+		Melder_assert (my d_shell -> classInfo == classGuiWindow);
+		Melder_assert (((GuiWindow) my d_shell) -> d_gtkMenuBar);
+		GtkAccelGroup *ag = (GtkAccelGroup *) g_object_get_data (G_OBJECT (((GuiWindow) my d_shell) -> d_gtkMenuBar), "accel-group");
+		gtk_menu_set_accel_group (GTK_MENU (my d_widget), ag);
 		Melder_assert (ag);
-		gtk_menu_item_set_submenu (GTK_MENU_ITEM (d_gtkMenuTitle), GTK_WIDGET (d_widget));
-		gtk_widget_show (GTK_WIDGET (d_widget));
-		_GuiObject_setUserData (d_widget, this);
+		gtk_menu_item_set_submenu (GTK_MENU_ITEM (my d_gtkMenuTitle), GTK_WIDGET (my d_widget));
+		gtk_widget_show (GTK_WIDGET (my d_widget));
+		_GuiObject_setUserData (my d_widget, me);
 	#elif cocoa
 	#elif motif
 	#endif
@@ -241,34 +241,34 @@ void structGuiMenu :: f_empty () {
 		GuiMenu d_userData;
 	}
 	- (void) dealloc {   // override
-		GuiMenu me = d_userData;
+		GuiMenu me = self -> d_userData;
 		forget (me);
 		trace ("deleting a menu button");
 		[super dealloc];
 	}
 	- (GuiThing) userData {
-		return d_userData;
+		return self -> d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
 		Melder_assert (userData == NULL || Thing_member (userData, classGuiMenu));
-		d_userData = static_cast <GuiMenu> (userData);
+		self -> d_userData = static_cast <GuiMenu> (userData);
 	}
 	@end
 	@implementation GuiCocoaMenu {
 		GuiMenu d_userData;
 	}
 	- (void) dealloc {   // override
-		GuiMenu me = d_userData;
+		GuiMenu me = self -> d_userData;
 		forget (me);
 		trace ("deleting a menu");
 		[super dealloc];
 	}
 	- (GuiThing) userData {
-		return d_userData;
+		return self -> d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
 		Melder_assert (userData == NULL || Thing_member (userData, classGuiMenu));
-		d_userData = static_cast <GuiMenu> (userData);
+		self -> d_userData = static_cast <GuiMenu> (userData);
 	}
 	@end
 #endif

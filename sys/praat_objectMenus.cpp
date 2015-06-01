@@ -155,10 +155,10 @@ static void cb_ButtonEditor_destruction (Editor editor, void *closure) {
 
 DIRECT2 (praat_editButtons) {
 	if (theButtonEditor) {
-		theButtonEditor -> raise ();
+		Editor_raise (theButtonEditor);
 	} else {
 		theButtonEditor = ButtonEditor_create ();
-		theButtonEditor -> setDestructionCallback (cb_ButtonEditor_destruction, NULL);
+		Editor_setDestructionCallback (theButtonEditor, cb_ButtonEditor_destruction, NULL);
 	}
 END2 }
 
@@ -276,21 +276,21 @@ DO
 	if (interpreter == NULL) {
 		interpreter = Interpreter_create (NULL, NULL);
 		try {
-			Interpreter_anyExpression (interpreter, GET_STRING (L"expression"), & result);
+			Interpreter_anyExpression (interpreter, GET_STRING (U"expression"), & result);
 			forget (interpreter);
 		} catch (MelderError) {
 			forget (interpreter);
 			throw;
 		}
 	} else {
-		Interpreter_anyExpression (interpreter, GET_STRING (L"expression"), & result);
+		Interpreter_anyExpression (interpreter, GET_STRING (U"expression"), & result);
 	}
 	switch (result. expressionType) {
 		case kFormula_EXPRESSION_TYPE_NUMERIC: {
 			Melder_information (Melder_double (result. result.numericResult));
 		} break;
 		case kFormula_EXPRESSION_TYPE_STRING: {
-			Melder_information (result. result.stringResult);
+			Melder_information (Melder_peekStr32ToWcs (result. result.stringResult));
 			Melder_free (result. result.stringResult);
 		} break;
 		case kFormula_EXPRESSION_TYPE_NUMERIC_ARRAY: {
@@ -534,7 +534,8 @@ void praat_show (void) {
 	praat_sensitivizeFixedButtonCommand (L"Info", theCurrentPraatObjects -> totalSelection == 1);
 	praat_sensitivizeFixedButtonCommand (L"Inspect", theCurrentPraatObjects -> totalSelection != 0);
 	praat_actions_show ();
-	if (theCurrentPraatApplication == & theForegroundPraatApplication && theButtonEditor) theButtonEditor -> dataChanged ();
+	if (theCurrentPraatApplication == & theForegroundPraatApplication && theButtonEditor)
+		Editor_dataChanged (theButtonEditor);
 }
 
 /********** Menu descriptions. **********/

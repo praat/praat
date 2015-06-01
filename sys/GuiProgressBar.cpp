@@ -1,6 +1,6 @@
 /* GuiProgressBar.cpp
  *
- * Copyright (C) 1993-2012,2013 Paul Boersma, 2008 Stefan de Konink
+ * Copyright (C) 1993-2012,2013,2015 Paul Boersma, 2008 Stefan de Konink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,17 +99,17 @@ GuiProgressBar GuiProgressBar_create (GuiForm parent, int left, int right, int t
 GuiProgressBar GuiProgressBar_createShown (GuiForm parent, int left, int right, int top, int bottom, unsigned long flags)
 {
 	GuiProgressBar me = GuiProgressBar_create (parent, left, right, top, bottom, flags);
-	my f_show ();
+	GuiThing_show (me);
 	return me;
 }
 
-void structGuiProgressBar :: f_setValue (double value) {
+void GuiProgressBar_setValue (GuiProgressBar me, double value) {
 	#if gtk
-		gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (d_widget), value);
+		gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (my d_widget), value);
 	#elif cocoa
-		[d_cocoaProgressBar   setDoubleValue: value];
+		[my d_cocoaProgressBar   setDoubleValue: value];
 	#elif motif
-		XmScaleSetValue (d_widget, round (value * 10000));
+		XmScaleSetValue (my d_widget, round (value * 10000));
 	#endif
 }
 

@@ -1,6 +1,6 @@
 /* melder_info.cpp
  *
- * Copyright (C) 1992-2012,2014 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ void MelderInfo_open (void) {
 
 void MelderInfo_write (const wchar_t *s1) {
 	MelderString_append (theInfos, s1);
-	if (Melder_batch && theInfos == & theForegroundBuffer) {
+	if (theInformation == defaultInformation && theInfos == & theForegroundBuffer) {
 		Melder_writeToConsole (s1, false);
 	}
 }

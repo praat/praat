@@ -1,6 +1,6 @@
 /* GuiThing.cpp
  *
- * Copyright (C) 1993-2012,2013 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
+ * Copyright (C) 1993-2012,2013,2015 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +22,6 @@
 
 void structGuiThing :: v_destroy () {
 	GuiThing_Parent :: v_destroy ();
-}
-
-void structGuiThing :: f_hide () {
-	v_hide ();
 }
 
 void structGuiThing :: v_hide () {
@@ -62,10 +58,6 @@ void structGuiThing :: v_hide () {
 	#endif
 }
 
-void structGuiThing :: f_setSensitive (bool sensitive) {
-	v_setSensitive (sensitive);
-}
-
 void structGuiThing :: v_setSensitive (bool sensitive) {
 	#if gtk
 		gtk_widget_set_sensitive (GTK_WIDGET (d_widget), sensitive);
@@ -78,10 +70,6 @@ void structGuiThing :: v_setSensitive (bool sensitive) {
 	#elif motif
 		XtSetSensitive (d_widget, sensitive);
 	#endif
-}
-
-void structGuiThing :: f_show () {
-	v_show ();
 }
 
 void structGuiThing :: v_show () {
@@ -130,6 +118,18 @@ void structGuiThing :: v_show () {
 		}
 	#endif
 	trace ("end");
+}
+
+void GuiThing_hide (GuiThing me) {
+	my v_hide ();
+}
+
+void GuiThing_setSensitive (GuiThing me, bool sensitive) {
+	my v_setSensitive (sensitive);
+}
+
+void GuiThing_show (GuiThing me) {
+	my v_show ();
 }
 
 /* End of file GuiThing.cpp */

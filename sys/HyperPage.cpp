@@ -1,6 +1,6 @@
 /* HyperPage.cpp
  *
- * Copyright (C) 1996-2011,2012,2013,2014 Paul Boersma
+ * Copyright (C) 1996-2011,2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -412,7 +412,7 @@ if (! my printing) {
 
 int HyperPage_script (I, double width_inches, double height_inches, const wchar_t *script) {
 	iam (HyperPage);
-	wchar_t *text = Melder_wcsdup_f (script);
+	char32 *text = Melder_wcsToStr32 (script);
 	Interpreter interpreter = Interpreter_createFromEnvironment (NULL);
 	double topSpacing = 0.1, bottomSpacing = 0.1, minFooterDistance = 0.0;
 	kGraphics_font font = my p_font;
@@ -731,11 +731,11 @@ static void menu_cb_font (EDITOR_ARGS) {
 }
 
 static void updateSizeMenu (HyperPage me) {
-	my fontSizeButton_10 -> f_check (my p_fontSize == 10);
-	my fontSizeButton_12 -> f_check (my p_fontSize == 12);
-	my fontSizeButton_14 -> f_check (my p_fontSize == 14);
-	my fontSizeButton_18 -> f_check (my p_fontSize == 18);
-	my fontSizeButton_24 -> f_check (my p_fontSize == 24);
+	GuiMenuItem_check (my fontSizeButton_10, my p_fontSize == 10);
+	GuiMenuItem_check (my fontSizeButton_12, my p_fontSize == 12);
+	GuiMenuItem_check (my fontSizeButton_14, my p_fontSize == 14);
+	GuiMenuItem_check (my fontSizeButton_18, my p_fontSize == 18);
+	GuiMenuItem_check (my fontSizeButton_24, my p_fontSize == 24);
 }
 static void setFontSize (HyperPage me, int fontSize) {
 	my pref_fontSize () = my p_fontSize = fontSize;
@@ -786,7 +786,7 @@ static void menu_cb_searchForPage (EDITOR_ARGS) {
 
 static void gui_cb_verticalScroll (I, GuiScrollBarEvent	event) {
 	iam (HyperPage);
-	double value = event -> scrollBar -> f_getValue ();
+	double value = GuiScrollBar_getValue (event -> scrollBar);
 	if (value != my top) {
 		trace ("scroll from %f to %f", (double) my top, value);
 		my top = value;
@@ -815,14 +815,14 @@ static void updateVerticalScrollBar (HyperPage me)
 /* This has to be called after changing 'my topParagraph'. */
 {
 	int sliderSize = 25;
-	my verticalScrollBar -> f_set (NUMundefined, NUMundefined, my top, sliderSize, 1, sliderSize - 1);
+	GuiScrollBar_set (my verticalScrollBar, NUMundefined, NUMundefined, my top, sliderSize, 1, sliderSize - 1);
 	my history [my historyPointer]. top = 0/*my top*/;
 }
 
 static void menu_cb_pageUp (EDITOR_ARGS) {
 	EDITOR_IAM (HyperPage);
 	if (! my verticalScrollBar) return;
-	int value = my verticalScrollBar -> f_getValue () - 24;
+	int value = GuiScrollBar_getValue (my verticalScrollBar) - 24;
 	if (value < 0) value = 0;
 	if (value != my top) {
 		my top = value;
@@ -836,7 +836,7 @@ static void menu_cb_pageUp (EDITOR_ARGS) {
 static void menu_cb_pageDown (EDITOR_ARGS) {
 	EDITOR_IAM (HyperPage);
 	if (! my verticalScrollBar) return;
-	int value = my verticalScrollBar -> f_getValue () + 24;
+	int value = GuiScrollBar_getValue (my verticalScrollBar) + 24;
 	if (value > (int) (PAGE_HEIGHT * 5) - 25) value = (int) (PAGE_HEIGHT * 5) - 25;
 	if (value != my top) {
 		my top = value;
@@ -979,7 +979,7 @@ void structHyperPage :: v_createChildren () {
 		0, - Machine_getScrollBarWidth (),
 		y + ( our d_hasExtraRowOfTools ? 2 * height + 16 : height + 9 ), - Machine_getScrollBarWidth (),
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, this, GuiDrawingArea_BORDER);
-	drawingArea -> f_setSwipable (NULL, our verticalScrollBar);
+	GuiDrawingArea_setSwipable (drawingArea, NULL, our verticalScrollBar);
 }
 
 void HyperPage_init (HyperPage me, const wchar_t *title, Data data) {
@@ -997,8 +997,8 @@ void HyperPage_init (HyperPage me, const wchar_t *title, Data data) {
 	setFontSize (me, my p_fontSize);
 
 struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };
-event. width  = my drawingArea -> f_getWidth  ();
-event. height = my drawingArea -> f_getHeight ();
+event. width  = GuiControl_getWidth  (my drawingArea);
+event. height = GuiControl_getHeight (my drawingArea);
 gui_drawingarea_cb_resize (me, & event);
 
 	updateVerticalScrollBar (me);   // scroll to the top (my top == 0)

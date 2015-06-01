@@ -1,6 +1,6 @@
 /* praat.cpp
  *
- * Copyright (C) 1992-2012,2013,2014 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -168,7 +168,7 @@ void praat_deselect (int IOBJECT) {
 	Melder_assert (readableClassId != 0);
 	theCurrentPraatObjects -> numberOfSelected [readableClassId] -= 1;
 	if (! theCurrentPraatApplication -> batch && ! Melder_backgrounding) {
-		praatList_objects -> f_deselectItem (IOBJECT);
+		GuiList_deselectItem (praatList_objects, IOBJECT);
 	}
 }
 
@@ -184,7 +184,7 @@ void praat_select (int IOBJECT) {
 	if (readableClassId == 0) Melder_fatal ("No sequential unique ID for class %ls.", object -> classInfo -> className);
 	theCurrentPraatObjects -> numberOfSelected [readableClassId] += 1;
 	if (! theCurrentPraatApplication -> batch && ! Melder_backgrounding) {
-		praatList_objects -> f_selectItem (IOBJECT);
+		GuiList_selectItem (praatList_objects, IOBJECT);
 	}
 }
 
@@ -192,12 +192,12 @@ void praat_selectAll (void) { int IOBJECT; WHERE (1) praat_select (IOBJECT); }
 
 void praat_list_background (void) {
 	int IOBJECT;
-	WHERE (SELECTED) praatList_objects -> f_deselectItem (IOBJECT);
+	WHERE (SELECTED) GuiList_deselectItem (praatList_objects, IOBJECT);
 }
 void praat_list_foreground (void) {
 	int IOBJECT;
 	WHERE (SELECTED) {
-		praatList_objects -> f_selectItem (IOBJECT);
+		GuiList_selectItem (praatList_objects, IOBJECT);
 	}
 }
 
@@ -385,7 +385,7 @@ void praat_newWithFile (Data me, const wchar_t *myName, MelderFile file) {
 	if (! theCurrentPraatApplication -> batch) {   // put a new object on the screen, at the bottom of the list
 		MelderString listName = { 0 };
 		MelderString_append (& listName, Melder_integer (theCurrentPraatObjects -> uniqueId), L". ", name.string);
-		praatList_objects -> f_insertItem (listName.string, theCurrentPraatObjects -> n);
+		GuiList_insertItem (praatList_objects, listName.string, theCurrentPraatObjects -> n);
 		MelderString_free (& listName);
 	}
 	OBJECT = me;
@@ -494,7 +494,8 @@ static void gui_cb_list (void *void_me, GuiListEvent event) {
 		Melder_assert (theCurrentPraatObjects -> numberOfSelected [readableClassId] >= 0);
 	}
 	theCurrentPraatObjects -> totalSelection = 0;
-	long numberOfSelected, *selected = praatList_objects -> f_getSelectedPositions (& numberOfSelected);
+	long numberOfSelected;
+	long *selected = GuiList_getSelectedPositions (praatList_objects, & numberOfSelected);
 	if (selected != NULL) {
 		for (long iselected = 1; iselected <= numberOfSelected; iselected ++) {
 			IOBJECT = selected [iselected];
@@ -502,9 +503,9 @@ static void gui_cb_list (void *void_me, GuiListEvent event) {
 			long readableClassId = ((Thing) theCurrentPraatObjects -> list [IOBJECT]. object) -> classInfo -> sequentialUniqueIdOfReadableClass;
 			theCurrentPraatObjects -> numberOfSelected [readableClassId] ++;
 			Melder_assert (theCurrentPraatObjects -> numberOfSelected [readableClassId] > 0);
-			UiHistory_write (first ? L"\nselectObject: \"" : L"\nplusObject: \"");
-			UiHistory_write_expandQuotes (FULL_NAME);
-			UiHistory_write (L"\"");
+			UiHistory_write (first ? U"\nselectObject: \"" : U"\nplusObject: \"");
+			UiHistory_write_expandQuotes (Melder_peekWcsToStr32 (FULL_NAME));
+			UiHistory_write (U"\"");
 			first = FALSE;
 			theCurrentPraatObjects -> totalSelection += 1;
 		}
@@ -515,9 +516,9 @@ static void gui_cb_list (void *void_me, GuiListEvent event) {
 
 void praat_list_renameAndSelect (int position, const wchar_t *name) {
 	if (! theCurrentPraatApplication -> batch) {
-		praatList_objects -> f_replaceItem (name, position);   // void if name equal
+		GuiList_replaceItem (praatList_objects, name, position);   // void if name equal
 		if (! Melder_backgrounding)
-			praatList_objects -> f_selectItem (position);
+			GuiList_selectItem (praatList_objects, position);
 	}
 }
 
@@ -549,7 +550,7 @@ void praat_removeObject (int i) {
 	MelderFile_setToNull (& theCurrentPraatObjects -> list [theCurrentPraatObjects -> n]. file);   /* Undangle or remove second reference. */
 	-- theCurrentPraatObjects -> n;
 	if (! theCurrentPraatApplication -> batch) {
-		praatList_objects -> f_deleteItem (i);
+		GuiList_deleteItem (praatList_objects, i);
 	}
 }
 
@@ -647,7 +648,7 @@ static void cb_Editor_dataChanged (Editor me, void *closure) {
 			for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 				Editor otherEditor = (Editor) theCurrentPraatObjects -> list [iobject]. editors [ieditor];
 				if (otherEditor != NULL && otherEditor != me) {
-					otherEditor -> dataChanged ();
+					Editor_dataChanged (otherEditor);
 				}
 			}
 		}
@@ -674,9 +675,10 @@ int praat_installEditor (Editor editor, int IOBJECT) {
 	for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 		if (EDITOR [ieditor] == NULL) {
 			EDITOR [ieditor] = editor;
-			editor -> setDestructionCallback (cb_Editor_destruction, NULL);
-			editor -> setDataChangedCallback (cb_Editor_dataChanged, NULL);
-			if (! editor -> d_publicationCallback) editor -> setPublicationCallback (cb_Editor_publication, NULL);
+			Editor_setDestructionCallback (editor, cb_Editor_destruction, NULL);
+			Editor_setDataChangedCallback (editor, cb_Editor_dataChanged, NULL);
+			if (! editor -> d_publicationCallback)
+				Editor_setPublicationCallback (editor, cb_Editor_publication, NULL);
 			return 1;
 		}
 	}
@@ -696,9 +698,10 @@ int praat_installEditor2 (Editor editor, int i1, int i2) {
 			break;
 	if (ieditor1 < praat_MAXNUM_EDITORS && ieditor2 < praat_MAXNUM_EDITORS) {
 		theCurrentPraatObjects -> list [i1]. editors [ieditor1] = theCurrentPraatObjects -> list [i2]. editors [ieditor2] = editor;
-		editor -> setDestructionCallback (cb_Editor_destruction, NULL);
-		editor -> setDataChangedCallback (cb_Editor_dataChanged, NULL);
-		if (! editor -> d_publicationCallback) editor -> setPublicationCallback (cb_Editor_publication, NULL);
+		Editor_setDestructionCallback (editor, cb_Editor_destruction, NULL);
+		Editor_setDataChangedCallback (editor, cb_Editor_dataChanged, NULL);
+		if (! editor -> d_publicationCallback)
+			Editor_setPublicationCallback (editor, cb_Editor_publication, NULL);
 	} else {
 		forget (editor);
 		Melder_throw ("(praat_installEditor2:) Cannot have more than ", praat_MAXNUM_EDITORS, " editors with one object.");
@@ -722,9 +725,10 @@ int praat_installEditor3 (Editor editor, int i1, int i2, int i3) {
 			break;
 	if (ieditor1 < praat_MAXNUM_EDITORS && ieditor2 < praat_MAXNUM_EDITORS && ieditor3 < praat_MAXNUM_EDITORS) {
 		theCurrentPraatObjects -> list [i1]. editors [ieditor1] = theCurrentPraatObjects -> list [i2]. editors [ieditor2] = theCurrentPraatObjects -> list [i3]. editors [ieditor3] = editor;
-		editor -> setDestructionCallback (cb_Editor_destruction, NULL);
-		editor -> setDataChangedCallback (cb_Editor_dataChanged, NULL);
-		if (! editor -> d_publicationCallback) editor -> setPublicationCallback (cb_Editor_publication, NULL);
+		Editor_setDestructionCallback (editor, cb_Editor_destruction, NULL);
+		Editor_setDataChangedCallback (editor, cb_Editor_dataChanged, NULL);
+		if (! editor -> d_publicationCallback)
+			Editor_setPublicationCallback (editor, cb_Editor_publication, NULL);
 	} else {
 		forget (editor);
 		Melder_throw ("(praat_installEditor3:) Cannot have more than ", praat_MAXNUM_EDITORS, " editors with one object.");
@@ -769,9 +773,10 @@ int praat_installEditorN (Editor editor, Ordered objects) {
 				for (; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 					if (theCurrentPraatObjects -> list [iPraatObject]. editors [ieditor] == NULL) {
 						theCurrentPraatObjects -> list [iPraatObject]. editors [ieditor] = editor;
-						editor -> setDestructionCallback (cb_Editor_destruction, NULL);
-						editor -> setDataChangedCallback (cb_Editor_dataChanged, NULL);
-						if (! editor -> d_publicationCallback) editor -> setPublicationCallback (cb_Editor_publication, NULL);
+						Editor_setDestructionCallback (editor, cb_Editor_destruction, NULL);
+						Editor_setDataChangedCallback (editor, cb_Editor_dataChanged, NULL);
+						if (! editor -> d_publicationCallback)
+							Editor_setPublicationCallback (editor, cb_Editor_publication, NULL);
 						break;
 					}
 				}
@@ -799,7 +804,7 @@ void praat_dataChanged (Any object) {
 		for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 			Editor editor = (Editor) EDITOR [ieditor];
 			if (editor != NULL) {
-				editor -> dataChanged ();
+				Editor_dataChanged (editor);
 			}
 		}
 	}
@@ -937,15 +942,11 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 		sendpraatW (NULL, Melder_peekUtf8ToWcs (praatP.title), 0, text);
 	}
 #elif cocoa
-	static int (*theUserMessageCallbackA) (char *message);
-	static int (*theUserMessageCallbackW) (wchar_t *message);
-	static void mac_setUserMessageCallbackA (int (*userMessageCallback) (char *message)) {
-		theUserMessageCallbackA = userMessageCallback;
+	static int (*theUserMessageCallback) (char32 *message);
+	static void mac_setUserMessageCallback (int (*userMessageCallback) (char32 *message)) {
+		theUserMessageCallback = userMessageCallback;
 	}
-	static void mac_setUserMessageCallbackW (int (*userMessageCallback) (wchar_t *message)) {
-		theUserMessageCallbackW = userMessageCallback;
-	}
-	static pascal OSErr mac_processSignalA (const AppleEvent *theAppleEvent, AppleEvent *reply, long handlerRefCon) {
+	static pascal OSErr mac_processSignal8 (const AppleEvent *theAppleEvent, AppleEvent *reply, long handlerRefCon) {
 		static int duringAppleEvent = FALSE;
 		(void) reply;
 		(void) handlerRefCon;
@@ -957,50 +958,43 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 			ProcessSerialNumber psn;
 			GetCurrentProcess (& psn);
 			SetFrontProcess (& psn);
-			AEGetParamPtr (theAppleEvent, 1, typeChar, NULL, NULL, 0, & actualSize);
+			AEGetParamPtr (theAppleEvent, 1, typeUTF8Text, NULL, NULL, 0, & actualSize);
 			buffer = (char *) malloc (actualSize);
-			AEGetParamPtr (theAppleEvent, 1, typeChar, NULL, & buffer [0], actualSize, NULL);
-			if (theUserMessageCallbackA)
-				theUserMessageCallbackA (buffer);
+			AEGetParamPtr (theAppleEvent, 1, typeUTF8Text, NULL, & buffer [0], actualSize, NULL);
+			if (theUserMessageCallback) {
+				autostring32 buffer32 = Melder_utf8ToChar32 (buffer);
+				theUserMessageCallback (buffer32.peek());
+			}
 			free (buffer);
 			duringAppleEvent = FALSE;
 		}
 		return noErr;
 	}
-	static pascal OSErr mac_processSignalW (const AppleEvent *theAppleEvent, AppleEvent *reply, long handlerRefCon) {
+	static pascal OSErr mac_processSignal16 (const AppleEvent *theAppleEvent, AppleEvent *reply, long handlerRefCon) {
 		static int duringAppleEvent = FALSE;
 		(void) reply;
 		(void) handlerRefCon;
 		if (! duringAppleEvent) {
-			wchar_t *buffer;
+			char16 *buffer;
 			long actualSize;
 			duringAppleEvent = TRUE;
 			//AEInteractWithUser (kNoTimeOut, NULL, NULL);   // use time out of 0 to execute immediately (without bringing to foreground)
 			ProcessSerialNumber psn;
 			GetCurrentProcess (& psn);
 			SetFrontProcess (& psn);
-			AEGetParamPtr (theAppleEvent, 1, typeUnicodeText, NULL, NULL, 0, & actualSize);
-			buffer = (wchar_t *) malloc (actualSize);
-			AEGetParamPtr (theAppleEvent, 1, typeUnicodeText, NULL, & buffer [0], actualSize, NULL);
-			if (theUserMessageCallbackW)
-				theUserMessageCallbackW (buffer);
+			AEGetParamPtr (theAppleEvent, 1, typeUTF16ExternalRepresentation, NULL, NULL, 0, & actualSize);
+			buffer = (char16 *) malloc (actualSize);
+			AEGetParamPtr (theAppleEvent, 1, typeUTF16ExternalRepresentation, NULL, & buffer [0], actualSize, NULL);
+			if (theUserMessageCallback) {
+				autostring32 buffer32 = Melder_str16to32 (buffer);
+				theUserMessageCallback (buffer32.peek());
+			}
 			free (buffer);
 			duringAppleEvent = FALSE;
 		}
 		return noErr;
 	}
-	static int cb_userMessageA (char *messageA) {
-		autoPraatBackground background;
-		autostring message = Melder_8bitToWcs (messageA, 0);
-		try {
-			praat_executeScriptFromText (message.peek());
-		} catch (MelderError) {
-			Melder_error_ (praatP.title, ": message not completely handled.");
-			Melder_flushError (NULL);
-		}
-		return 0;
-	}
-	static int cb_userMessageW (wchar_t *message) {
+	static int cb_userMessage (char32 *message) {
 		autoPraatBackground background;
 		try {
 			praat_executeScriptFromText (message);
@@ -1015,18 +1009,7 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 		return 0;
 	}
 #elif defined (macintosh)
-	static int cb_userMessageA (char *messageA) {
-		autoPraatBackground background;
-		autostring message = Melder_8bitToWcs (messageA, 0);
-		try {
-			praat_executeScriptFromText (message.peek());
-		} catch (MelderError) {
-			Melder_error_ (praatP.title, ": message not completely handled.");
-			Melder_flushError (NULL);
-		}
-		return 0;
-	}
-	static int cb_userMessageW (wchar_t *message) {
+	static int cb_userMessage (char32 *message) {
 		autoPraatBackground background;
 		try {
 			praat_executeScriptFromText (message);
@@ -1042,9 +1025,9 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 	}
 #endif
 
-static wchar_t * thePraatStandAloneScriptText = NULL;
+static char32 * thePraatStandAloneScriptText = NULL;
 
-void praat_setStandAloneScriptText (wchar_t *text) {
+void praat_setStandAloneScriptText (char32 *text) {
 	thePraatStandAloneScriptText = text;
 }
 
@@ -1110,12 +1093,12 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			argc > iarg_batchName
 			&& argv [iarg_batchName] [0] == '-'
 			&& argv [iarg_batchName] [1] == '\0';
-		MelderString_copy (& theCurrentPraatApplication -> batchName,
-			hasCommandLineInput ? L""
-			: argc > iarg_batchName && argv [iarg_batchName] [0] != '-' /* funny Mac test */ ? Melder_peekUtf8ToWcs (argv [iarg_batchName])
-			: L"");
+		MelderString32_copy (& theCurrentPraatApplication -> batchName,
+			hasCommandLineInput ? U""
+			: argc > iarg_batchName && argv [iarg_batchName] [0] != '-' /* funny Mac test */ ? Melder_peekWcsToStr32 (Melder_peekUtf8ToWcs (argv [iarg_batchName]))
+			: U"");
 
-		Melder_batch = theCurrentPraatApplication -> batchName.string [0] != '\0' || thePraatStandAloneScriptText != NULL;
+		Melder_batch = theCurrentPraatApplication -> batchName.string [0] != U'\0' || thePraatStandAloneScriptText != NULL;
 
 		#if defined (_WIN32) && defined (CONSOLE_APPLICATION)
 			if (! Melder_batch) {
@@ -1137,8 +1120,8 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		//Melder_fatal ("<%s>", argv [0]);
 	#else
 		#if defined (_WIN32)
-			MelderString_copy (& theCurrentPraatApplication -> batchName,
-				argv [3] ? Melder_peekUtf8ToWcs (argv [3]) : L"");   /* The command line. */
+			MelderString32_copy (& theCurrentPraatApplication -> batchName,
+				argv [3] ? Melder_peekWcsToStr32 (Melder_peekUtf8ToWcs (argv [3])) : U"");   /* The command line. */
 		#endif
 		Melder_batch = false;   // PRAAT.EXE on Windows is always interactive
 		strcpy (truncatedTitle, title && title [0] ? title : "praat");
@@ -1173,7 +1156,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	 * Get the program's private directory:
 	 *    "/u/miep/.myProg-dir" (Unix)
 	 *    "/Users/miep/Library/Preferences/MyProg Prefs" (Macintosh)
-	 *    "C:\Documents and Settings\Miep\MyProg" (Windows)
+	 *    "C:\Users\Miep\MyProg" (Windows)
 	 * and construct a preferences-file name and a script-buttons-file name like
 	 *    /u/miep/.myProg-dir/prefs5
 	 *    /u/miep/.myProg-dir/buttons5
@@ -1181,8 +1164,8 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	 *    /Users/miep/Library/Preferences/MyProg Prefs/Prefs5
 	 *    /Users/miep/Library/Preferences/MyProg Prefs/Buttons5
 	 * or
-	 *    C:\Documents and Settings\Miep\MyProg\Preferences5.ini
-	 *    C:\Documents and Settings\Miep\MyProg\Buttons5.ini
+	 *    C:\Users\Miep\MyProg\Preferences5.ini
+	 *    C:\Users\Miep\MyProg\Buttons5.ini
 	 * On Unix, also create names for process-id and message files.
 	 */
 	{
@@ -1245,14 +1228,12 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	#elif defined (macintosh)
 		#if useCarbon
 			if (! Melder_batch) {
-				motif_mac_setUserMessageCallbackA (cb_userMessageA);
-				motif_mac_setUserMessageCallbackW (cb_userMessageW);
+				motif_mac_setUserMessageCallback (cb_userMessage);
 				Gui_setQuitApplicationCallback (cb_quitApplication);
 			}
 		#else
 			if (! Melder_batch) {
-				mac_setUserMessageCallbackA (cb_userMessageA);
-				mac_setUserMessageCallbackW (cb_userMessageW);
+				mac_setUserMessageCallback (cb_userMessage);
 				Gui_setQuitApplicationCallback (cb_quitApplication);
 			}
 		#endif
@@ -1269,16 +1250,16 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	GuiWindow raam = NULL;
 	if (Melder_batch) {
 		#if defined (UNIX) || defined (macintosh) || defined (_WIN32) && defined (CONSOLE_APPLICATION)
-			MelderString_empty (& theCurrentPraatApplication -> batchName);
+			MelderString32_empty (& theCurrentPraatApplication -> batchName);
 			for (unsigned int i = iarg_batchName; i < argc; i ++) {
 				int needsQuoting = strchr (argv [i], ' ') != NULL && (i == iarg_batchName || i < argc - 1);
-				if (i > 1) MelderString_append (& theCurrentPraatApplication -> batchName, L" ");
-				if (needsQuoting) MelderString_append (& theCurrentPraatApplication -> batchName, L"\"");
-				MelderString_append (& theCurrentPraatApplication -> batchName, Melder_peekUtf8ToWcs (argv [i]));
-				if (needsQuoting) MelderString_append (& theCurrentPraatApplication -> batchName, L"\"");
+				if (i > 1) MelderString32_append (& theCurrentPraatApplication -> batchName, U" ");
+				if (needsQuoting) MelderString32_append (& theCurrentPraatApplication -> batchName, U"\"");
+				MelderString32_append (& theCurrentPraatApplication -> batchName, Melder_peekWcsToStr32 (Melder_peekUtf8ToWcs (argv [i])));
+				if (needsQuoting) MelderString32_append (& theCurrentPraatApplication -> batchName, U"\"");
 			}
 		#elif defined (_WIN32)
-			MelderString_copy (& theCurrentPraatApplication -> batchName, Melder_peekUtf8ToWcs (argv [3]));
+			MelderString32_copy (& theCurrentPraatApplication -> batchName, Melder_peekWcsToStr32 (Melder_peekUtf8ToWcs (argv [3])));
 		#endif
 	} else {
 		trace ("starting the application");
@@ -1315,7 +1296,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			GuiApp_setApplicationShell (theCurrentPraatApplication -> topShell -> d_xmShell);
 		#endif
 		trace ("before objects window shows locale %s", setlocale (LC_ALL, NULL));
-		raam -> f_show ();
+		GuiThing_show (raam);
 		trace ("after objects window shows locale %s", setlocale (LC_ALL, NULL));
 	}
 	Thing_recognizeClassesByName (classCollection, classStrings, classManPages, classSortedSetOfString, NULL);
@@ -1329,31 +1310,31 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 
 		#ifdef macintosh
 			#if ! useCarbon
-				AEInstallEventHandler (758934755, 0, (AEEventHandlerProcPtr) (mac_processSignalA), 0, false);
-				AEInstallEventHandler (758934756, 0, (AEEventHandlerProcPtr) (mac_processSignalW), 0, false);
+				AEInstallEventHandler (758934755, 0, (AEEventHandlerProcPtr) (mac_processSignal8), 0, false);   // for receiving sendpraat
+				AEInstallEventHandler (758934756, 0, (AEEventHandlerProcPtr) (mac_processSignal16), 0, false);   // for receiving sendpraatW
 			#endif
 			MelderGui_create (raam);   /* BUG: default Melder_assert would call printf recursively!!! */
 		#endif
 		#if defined (macintosh) && useCarbon
 			trace ("creating the menu bar along the top of the screen (Mac only)");
-			raam -> f_addMenuBar ();   // yes, on the Mac we create a menu bar twice: once at the top of the screen, once in the Objects window
+			GuiWindow_addMenuBar (raam);   // yes, on the Mac we create a menu bar twice: once at the top of the screen, once in the Objects window
 		#endif
 		trace ("creating the menu bar in the Objects window");
-		raam -> f_addMenuBar ();
+		GuiWindow_addMenuBar (raam);
 		praatP.menuBar = raam;
 		praat_addMenus (praatP.menuBar);
 
 		trace ("creating the object list in the Objects window");
 		GuiLabel_createShown (raam, 3, -250, Machine_getMainWindowMenuBarHeight () + 5, Machine_getMainWindowMenuBarHeight () + 5 + Gui_LABEL_HEIGHT, L"Objects:", 0);
 		praatList_objects = GuiList_create (raam, 0, -250, Machine_getMainWindowMenuBarHeight () + 26, -100, true, L" Objects ");
-		praatList_objects -> f_setSelectionChangedCallback (gui_cb_list, 0);
-		praatList_objects -> f_show ();
+		GuiList_setSelectionChangedCallback (praatList_objects, gui_cb_list, 0);
+		GuiThing_show (praatList_objects);
 		praat_addFixedButtons (raam);
 
 		trace ("creating the dynamic menu in the Objects window");
 		praat_actions_createDynamicMenu (raam);
 		trace ("showing the Objects window");
-		raam -> f_show ();
+		GuiThing_show (raam);
 	//Melder_fatal ("stop");
 		#if defined (UNIX) && ! defined (NO_GRAPHICS)
 			try {
@@ -1410,7 +1391,7 @@ static void executeStartUpFile (MelderDir startUpDirectory, const wchar_t *fileN
 			trace ("keyval %ld, type %ld", (long) event -> keyval, (long) event -> type);
 			if ((event -> keyval == GDK_Tab || event -> keyval == GDK_ISO_Left_Tab) && event -> type == GDK_KEY_PRESS) {
 				trace ("tab key pressed in window %p", widget);
-				if (event -> state == 0) {
+				if ((event -> state & GDK_MODIFIER_MASK) == 0) {
 					if (GTK_IS_WINDOW (widget)) {
 						GtkWidget *shell = gtk_widget_get_toplevel (GTK_WIDGET (widget));
 						trace ("tab pressed in GTK window %p", shell);
@@ -1422,7 +1403,7 @@ static void executeStartUpFile (MelderDir startUpDirectory, const wchar_t *fileN
 							return TRUE;
 						}
 					}
-				} else if (event -> state == GDK_SHIFT_MASK) {   // BUG: 
+				} else if ((event -> state & GDK_MODIFIER_MASK) == GDK_SHIFT_MASK) {
 					if (GTK_IS_WINDOW (widget)) {
 						GtkWidget *shell = gtk_widget_get_toplevel (GTK_WIDGET (widget));
 						trace ("shift-tab pressed in GTK window %p", shell);
@@ -1542,6 +1523,13 @@ void praat_run (void) {
 	{ double dummy = 3000000000.0;
 		Melder_assert ((uint32_t) dummy == 3000000000);
 	}
+	{
+		Melder_assert (str32len (U"hello") == 5);
+		Melder_assert (str32ncmp (U"hellogoodbye", U"hellogee", 6) == 0);
+		Melder_assert (str32ncmp (U"hellogoodbye", U"hellogee", 7) > 0);
+		Melder_assert (str32str (U"hellogoodbye", U"ogo") != NULL);
+		Melder_assert (str32str (U"hellogoodbye", U"oygo") == NULL);
+	}
 
 	if (sizeof (off_t) < 8)
 		Melder_fatal ("sizeof(off_t) is less than 8. Compile Praat with -D_FILE_OFFSET_BITS=64.");
@@ -1591,17 +1579,17 @@ void praat_run (void) {
 		 */
 		praatP.phase = praat_READING_BUTTONS;
 		{// scope
-			autostring buttons;
+			autostring32 buttons;
 			try {
-				buttons.reset (MelderFile_readText (& buttonsFile));
+				buttons.reset (MelderFile_readText32 (& buttonsFile));
 			} catch (MelderError) {
 				Melder_clearError ();
 			}
 			if (buttons.peek()) {
-				wchar_t *line = buttons.peek();
+				char32 *line = buttons.peek();
 				for (;;) {
-					wchar_t *newline = wcschr (line, '\n');
-					if (newline) *newline = '\0';
+					char32 *newline = str32chr (line, U'\n');
+					if (newline) *newline = U'\0';
 					try {
 						praat_executeCommand (NULL, line);
 					} catch (MelderError) {
@@ -1638,37 +1626,37 @@ void praat_run (void) {
 			[NSApp run];
 		#elif motif
 			#if defined (_WIN32)
-				if (theCurrentPraatApplication -> batchName.string [0] != '\0') {
-					wchar_t text [500];
+				if (theCurrentPraatApplication -> batchName.string [0] != U'\0') {
+					char32 text [500];
 					/*
 					 * The user dropped one or more files on the Praat icon, while Praat was not running yet.
 					 * Windows may have enclosed each path between quotes;
 					 * this is especially likely to happen for paths that contain spaces (which is usual).
 					 */
 
-					wchar_t *s = theCurrentPraatApplication -> batchName.string;
+					char32 *s = theCurrentPraatApplication -> batchName.string;
 					for (;;) {
 						bool endSeen = false;
-						while (*s == ' ' || *s == '\n') s ++;
+						while (*s == U' ' || *s == U'\n') s ++;
 						if (*s == '\0') break;
-						wchar_t *path = s;
-						if (*s == '\"') {
+						char32 *path = s;
+						if (*s == U'\"') {
 							path = ++ s;
-							while (*s != '\"' && *s != '\0') s ++;
+							while (*s != U'\"' && *s != U'\0') s ++;
 							if (*s == '\0') break;
-							Melder_assert (*s == '\"');
-							*s = '\0';
+							Melder_assert (*s == U'\"');
+							*s = U'\0';
 						} else {
-							while (*s != ' ' && *s != '\n' && *s != '\0') s ++;
-							if (*s == ' ' || *s == '\n') {
-								*s = '\0';
+							while (*s != U' ' && *s != U'\n' && *s != U'\0') s ++;
+							if (*s == U' ' || *s == U'\n') {
+								*s = U'\0';
 							} else {
 								endSeen = true;
 							}
 						}
-						swprintf (text, 500, L"Read from file... %ls", path);
+						autostring32 text = Melder_str32dup (Melder_str32cat (U"Read from file... ", path));
 						try {
-							praat_executeScriptFromText (text);
+							praat_executeScriptFromText (text.peek());
 						} catch (MelderError) {
 							Melder_flushError (NULL);
 						}

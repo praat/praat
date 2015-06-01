@@ -1,6 +1,6 @@
 /* PairDistribution.cpp
  *
- * Copyright (C) 1997-2012,2013 Paul Boersma
+ * Copyright (C) 1997-2012,2013,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,9 +116,9 @@ void PairDistribution_removeZeroWeights (PairDistribution me) {
 	}
 }
 
-void structPairDistribution :: f_swapInputsAndOutputs () {
-	for (long ipair = pairs -> size; ipair > 0; ipair --) {
-		PairProbability prob = static_cast <PairProbability> (pairs -> item [ipair]);
+void PairDistribution_swapInputsAndOutputs (PairDistribution me) {
+	for (long ipair = my pairs -> size; ipair > 0; ipair --) {
+		PairProbability prob = static_cast <PairProbability> (my pairs -> item [ipair]);
 		wchar_t *tmp = prob -> string1;
 		prob -> string1 = prob -> string2;
 		prob -> string2 = tmp;

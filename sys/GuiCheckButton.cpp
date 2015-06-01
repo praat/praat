@@ -1,6 +1,6 @@
 /* GuiCheckButton.cpp
  *
- * Copyright (C) 1993-2012,2013,2014 Paul Boersma, 2007-2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
+ * Copyright (C) 1993-2012,2013,2014,2015 Paul Boersma, 2007-2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,7 +120,7 @@ GuiCheckButton GuiCheckButton_create (GuiForm parent, int left, int right, int t
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (my d_widget), (flags & GuiCheckButton_SET) != 0);
 		if (flags & GuiCheckButton_INSENSITIVE) {
-			my f_setSensitive (false);
+			GuiThing_setSensitive (me, false);
 		}
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkCheckButton_destroyCallback), me);
 		g_signal_connect (GTK_TOGGLE_BUTTON (my d_widget), "toggled", G_CALLBACK (_GuiGtkCheckButton_valueChangedCallback), me);
@@ -151,7 +151,7 @@ GuiCheckButton GuiCheckButton_create (GuiForm parent, int left, int right, int t
 			Button_SetCheck (my d_widget -> window, BST_CHECKED);
 		}
 		if (flags & GuiCheckButton_INSENSITIVE) {
-			my f_setSensitive (false);
+			GuiThing_setSensitive (me, false);
 		}
 	#elif mac
 		my d_widget = _Gui_initializeWidget (xmToggleButtonWidgetClass, parent -> d_widget, buttonText);
@@ -166,7 +166,7 @@ GuiCheckButton GuiCheckButton_create (GuiForm parent, int left, int right, int t
 		_GuiNativeControl_setTitle (my d_widget);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		if (flags & GuiCheckButton_INSENSITIVE) {
-			my f_setSensitive (false);
+			GuiThing_setSensitive (me, false);
 		}
 	#endif
 	return me;
@@ -176,36 +176,36 @@ GuiCheckButton GuiCheckButton_createShown (GuiForm parent, int left, int right, 
 	const wchar_t *buttonText, void (*valueChangedCallback) (void *boss, GuiCheckButtonEvent event), void *valueChangedBoss, unsigned long flags)
 {
 	GuiCheckButton me = GuiCheckButton_create (parent, left, right, top, bottom, buttonText, valueChangedCallback, valueChangedBoss, flags);
-	my f_show ();
+	GuiThing_show (me);
 	return me;
 }
 
-bool structGuiCheckButton :: f_getValue () {
+bool GuiCheckButton_getValue (GuiCheckButton me) {
 	bool value = false;
 	#if gtk
-		value = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (d_widget));   // gtk_check_button inherits from gtk_toggle_button
+		value = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (my d_widget));   // gtk_check_button inherits from gtk_toggle_button
 	#elif cocoa
-        GuiCocoaCheckButton *checkButton = (GuiCocoaCheckButton*)d_widget;
+        GuiCocoaCheckButton *checkButton = (GuiCocoaCheckButton *) my d_widget;
         value = [checkButton state] == NSOnState;
 	#elif win
-		value = (Button_GetState (d_widget -> window) & 0x0003) == BST_CHECKED;
+		value = (Button_GetState (my d_widget -> window) & 0x0003) == BST_CHECKED;
 	#elif mac
-		value = GetControlValue (d_widget -> nat.control.handle);
+		value = GetControlValue (my d_widget -> nat.control.handle);
 	#endif
 	return value;
 }
 
-void structGuiCheckButton :: f_setValue (bool value) {
-	GuiControlBlockValueChangedCallbacks block (this);
+void GuiCheckButton_setValue (GuiCheckButton me, bool value) {
+	GuiControlBlockValueChangedCallbacks block (me);
 	#if gtk
-		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (d_widget), value);
+		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (my d_widget), value);
 	#elif cocoa
-		GuiCocoaCheckButton *checkButton = (GuiCocoaCheckButton *) d_widget;
+		GuiCocoaCheckButton *checkButton = (GuiCocoaCheckButton *) my d_widget;
 		[checkButton setState: value ? NSOnState: NSOffState];
 	#elif win
-		Button_SetCheck (d_widget -> window, value ? BST_CHECKED : BST_UNCHECKED);
+		Button_SetCheck (my d_widget -> window, value ? BST_CHECKED : BST_UNCHECKED);
 	#elif mac
-		SetControlValue (d_widget -> nat.control.handle, value);
+		SetControlValue (my d_widget -> nat.control.handle, value);
 	#endif
 }
 

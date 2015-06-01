@@ -1,6 +1,6 @@
 /* GuiLabel.cpp
  *
- * Copyright (C) 1993-2012,2013 Paul Boersma, 2007 Stefan de Konink
+ * Copyright (C) 1993-2012,2013,2015 Paul Boersma, 2007 Stefan de Konink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,19 +137,19 @@ GuiLabel GuiLabel_createShown (GuiForm parent, int left, int right, int top, int
 	const wchar_t *labelText, unsigned long flags)
 {
 	GuiLabel me = GuiLabel_create (parent, left, right, top, bottom, labelText, flags);
-	my f_show ();
+	GuiThing_show (me);
 	return me;
 }
 
-void structGuiLabel :: f_setString (const wchar_t *text) {
+void GuiLabel_setText (GuiLabel me, const wchar_t *text) {
 	#if gtk
-		gtk_label_set_text (GTK_LABEL (d_widget), Melder_peekWcsToUtf8 (text));
+		gtk_label_set_text (GTK_LABEL (my d_widget), Melder_peekWcsToUtf8 (text));
 	#elif cocoa
-		[(NSTextField *) d_widget setTitleWithMnemonic: (NSString *) Melder_peekWcsToCfstring (text)];
+		[(NSTextField *) my d_widget setTitleWithMnemonic: (NSString *) Melder_peekWcsToCfstring (text)];
 	#elif motif
-		Melder_free (d_widget -> name);
-		d_widget -> name = Melder_wcsdup_f (text);
-		_GuiNativeControl_setTitle (d_widget);
+		Melder_free (my d_widget -> name);
+		my d_widget -> name = Melder_wcsdup_f (text);
+		_GuiNativeControl_setTitle (my d_widget);
 	#endif
 }
 

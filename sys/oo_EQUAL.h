@@ -1,6 +1,6 @@
 /* oo_EQUAL.h
  *
- * Copyright (C) 1994-2012,2013,2014 Paul Boersma
+ * Copyright (C) 1994-2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,20 +53,34 @@
 
 #define oo_STRINGx(storage,x)  \
 	if (! Melder_wcsequ (our x, thy x)) return false;
+#define oo_STRING32x(storage,x)  \
+	if (! Melder_str32equ (our x, thy x)) return false;
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
 		if (! Melder_wcsequ (our x [i], thy x [i])) return false;
+#define oo_STRING32x_ARRAY(storage,x,cap,n)  \
+	for (int i = 0; i < n; i ++) \
+		if (! Melder_str32equ (our x [i], thy x [i])) return false;
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) \
 		if (! Melder_wcsequ (our x [i], thy x [i])) return false;
+#define oo_STRING32x_SET(storage,x,setType)  \
+	for (int i = 0; i <= setType##_MAX; i ++) \
+		if (! Melder_str32equ (our x [i], thy x [i])) return false;
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (! our x != ! thy x) return false; \
 	if (our x) { \
 		for (long i = min; i <= max; i ++) \
 			if (! Melder_wcsequ (our x [i], thy x [i])) return false; \
+	}
+#define oo_STRING32x_VECTOR(storage,x,min,max)  \
+	if (! our x != ! thy x) return false; \
+	if (our x) { \
+		for (long i = min; i <= max; i ++) \
+			if (! Melder_str32equ (our x [i], thy x [i])) return false; \
 	}
 
 #define oo_STRUCT(Type,x)  \

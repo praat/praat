@@ -1,6 +1,6 @@
 /* DemoEditor.cpp
  *
- * Copyright (C) 2009-2011,2013 Paul Boersma
+ * Copyright (C) 2009-2011,2013,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,8 +38,8 @@ void structDemoEditor :: v_destroy () {
 void structDemoEditor :: v_info () {
 	DemoEditor_Parent :: v_info ();
 	MelderInfo_writeLine (L"Colour: ", Graphics_Colour_name (((PraatPicture) praatPicture) -> colour));
-	MelderInfo_writeLine (L"Font: ", kGraphics_font_getText (((PraatPicture) praatPicture) -> font));
-	MelderInfo_writeLine (L"Font size: ", Melder_integer (((PraatPicture) praatPicture) -> fontSize));
+	MelderInfo_writeLine (U"Font: ", kGraphics_font_getText (((PraatPicture) praatPicture) -> font));
+	MelderInfo_writeLine (U"Font size: ", Melder32_integer (((PraatPicture) praatPicture) -> fontSize));
 }
 
 void structDemoEditor :: v_goAway () {
@@ -122,7 +122,8 @@ void DemoEditor_init (DemoEditor me) {
 	Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
 	Graphics_setColour (my graphics, Graphics_BLACK);
 	Graphics_startRecording (my graphics);
-	Graphics_setWsViewport (my graphics, 0, my drawingArea -> f_getWidth (), 0, my drawingArea -> f_getHeight ());
+	Graphics_setWsViewport (my graphics, 0, GuiControl_getWidth  (my drawingArea),
+	                                     0, GuiControl_getHeight (my drawingArea));
 	Graphics_setWsWindow (my graphics, 0, 100, 0, 100);
 	Graphics_setViewport (my graphics, 0, 100, 0, 100);
 	Graphics_updateWs (my graphics);
@@ -176,17 +177,17 @@ void Demo_close (void) {
 	theCurrentPraatPicture = & theForegroundPraatPicture;
 }
 
-int Demo_windowTitle (const wchar_t *title) {
+int Demo_windowTitle (const char32 *title) {
 	autoDemoOpen demo;
-	Thing_setName (theDemoEditor, title);
+	Thing_setName (theDemoEditor, Melder_peekStr32ToWcs (title));
 	return 1;
 }
 
 int Demo_show (void) {
 	if (theDemoEditor == NULL) return 0;
 	autoDemoOpen demo;
-	theDemoEditor -> d_windowForm -> f_show ();
-	theDemoEditor -> d_windowForm -> f_drain ();
+	GuiThing_show (theDemoEditor -> d_windowForm);
+	GuiShell_drain (theDemoEditor -> d_windowForm);
 	return 1;
 }
 
@@ -300,7 +301,7 @@ bool Demo_keyPressed (void) {
 	return theDemoEditor -> keyPressed;
 }
 
-wchar_t Demo_key (void) {
+char32 Demo_key (void) {
 	if (theDemoEditor == NULL) return 0;
 	if (theDemoEditor -> waitingForInput) {
 		Melder_throw ("You cannot work with the Demo window while it is waiting for input. "
@@ -345,13 +346,13 @@ bool Demo_extraControlKeyPressed (void) {
 	return theDemoEditor -> extraControlKeyPressed;
 }
 
-bool Demo_input (const wchar_t *keys) {
+bool Demo_input (const char32 *keys) {
 	if (theDemoEditor == NULL) return false;
 	if (theDemoEditor -> waitingForInput) {
 		Melder_throw ("You cannot work with the Demo window while it is waiting for input. "
 			"Please click or type into the Demo window or close it.");
 	}
-	return wcschr (keys, theDemoEditor -> key) != NULL;
+	return str32chr (keys, theDemoEditor -> key) != NULL;
 }
 
 bool Demo_clickedIn (double left, double right, double bottom, double top) {

@@ -55,44 +55,50 @@
 
 #include "TimeSoundAnalysisEditor_enums.h"
 
-Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) { public:
-	// new data:
-		Spectrogram d_spectrogram;
-		double d_spectrogram_cursor;
-		Pitch d_pitch;
-		Intensity d_intensity;
-		Formant d_formant;
-		PointProcess d_pulses;
-		GuiMenuItem spectrogramToggle, pitchToggle, intensityToggle, formantToggle, pulsesToggle;
-	// overridden methods:
-		virtual void v_destroy ();
-		virtual void v_info ();
-		virtual void v_createMenuItems_query (EditorMenu menu);
-		virtual int v_click (double xWC, double yWC, bool shiftKeyPressed);
-		virtual void v_createMenuItems_view_sound (EditorMenu menu);
-		virtual double v_getBottomOfSoundArea () {
-			return p_spectrogram_show || p_pitch_show || p_intensity_show || p_formant_show ? 0.5 : 0.0;
-		}
-	// new methods:
-		virtual bool v_hasAnalysis    () { return true; }
-		virtual bool v_hasSpectrogram () { return true; }
-		virtual bool v_hasPitch       () { return true; }
-		virtual bool v_hasIntensity   () { return true; }
-		virtual bool v_hasFormants    () { return true; }
-		virtual bool v_hasPulses      () { return true; }
-		virtual void v_destroy_analysis ();
-		virtual void v_createMenuItems_spectrum_picture (EditorMenu menu);
-		virtual void v_createMenuItems_pitch_picture (EditorMenu menu);
-		virtual void v_createMenuItems_intensity_picture (EditorMenu menu);
-		virtual void v_createMenuItems_formant_picture (EditorMenu menu);
-		virtual void v_createMenuItems_pulses_picture (EditorMenu menu);
-		virtual void v_draw_analysis ();
-		virtual void v_draw_analysis_pulses ();
-		virtual void v_createMenuItems_query_log (EditorMenu menu);
-		virtual void v_createMenus_analysis ();
-		virtual void v_createMenuItems_view_sound_analysis (EditorMenu menu);
-	// preferences:
-		#include "TimeSoundAnalysisEditor_prefs.h"
+Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
+	Spectrogram d_spectrogram;
+	double d_spectrogram_cursor;
+	Pitch d_pitch;
+	Intensity d_intensity;
+	Formant d_formant;
+	PointProcess d_pulses;
+	GuiMenuItem spectrogramToggle, pitchToggle, intensityToggle, formantToggle, pulsesToggle;
+
+	void v_destroy ()
+		override;
+	void v_info ()
+		override;
+	void v_createMenuItems_query (EditorMenu menu)
+		override;
+	int v_click (double xWC, double yWC, bool shiftKeyPressed)
+		override;
+	void v_createMenuItems_view_sound (EditorMenu menu)
+		override;
+	double v_getBottomOfSoundArea ()
+		override
+	{
+		return p_spectrogram_show || p_pitch_show || p_intensity_show || p_formant_show ? 0.5 : 0.0;
+	}
+
+	virtual bool v_hasAnalysis    () { return true; }
+	virtual bool v_hasSpectrogram () { return true; }
+	virtual bool v_hasPitch       () { return true; }
+	virtual bool v_hasIntensity   () { return true; }
+	virtual bool v_hasFormants    () { return true; }
+	virtual bool v_hasPulses      () { return true; }
+	virtual void v_destroy_analysis ();
+	virtual void v_createMenuItems_spectrum_picture (EditorMenu menu);
+	virtual void v_createMenuItems_pitch_picture (EditorMenu menu);
+	virtual void v_createMenuItems_intensity_picture (EditorMenu menu);
+	virtual void v_createMenuItems_formant_picture (EditorMenu menu);
+	virtual void v_createMenuItems_pulses_picture (EditorMenu menu);
+	virtual void v_draw_analysis ();
+	virtual void v_draw_analysis_pulses ();
+	virtual void v_createMenuItems_query_log (EditorMenu menu);
+	virtual void v_createMenus_analysis ();
+	virtual void v_createMenuItems_view_sound_analysis (EditorMenu menu);
+
+	#include "TimeSoundAnalysisEditor_prefs.h"
 };
 
 void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me,

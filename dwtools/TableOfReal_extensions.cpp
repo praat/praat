@@ -90,7 +90,7 @@ long TableOfReal_getColumnIndexAtMaximumInRow (TableOfReal me, long rowNumber) {
 
 const wchar_t *TableOfReal_getColumnLabelAtMaximumInRow (TableOfReal me, long rowNumber) {
 	long columnNumber = TableOfReal_getColumnIndexAtMaximumInRow (me, rowNumber);
-	return my v_getColStr (columnNumber);
+	return Melder_peekStr32ToWcs (my v_getColStr (columnNumber));
 }
 
 

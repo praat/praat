@@ -1,6 +1,6 @@
 /* GuiWindow.cpp
  *
- * Copyright (C) 1993-2012,2013,2014 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2012,2013,2014,2015 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -177,7 +177,7 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidt
 
 		gtk_window_set_default_size (GTK_WINDOW (my d_gtkWindow), width, height);
 		gtk_window_set_resizable (GTK_WINDOW (my d_gtkWindow), TRUE);
-		my f_setTitle (title);
+		GuiShell_setTitle (me, title);
 
 		my d_widget = gtk_fixed_new ();
 		_GuiObject_setUserData (my d_widget, me);
@@ -195,7 +195,7 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidt
 			defer: false];
 		[my d_cocoaWindow setCollectionBehavior: NSWindowCollectionBehaviorFullScreenPrimary];
         [my d_cocoaWindow setMinSize: NSMakeSize (minimumWidth, minimumHeight)];
-		my f_setTitle (title);
+		GuiShell_setTitle (me, title);
 		[my d_cocoaWindow makeKeyAndOrderFront: nil];
 		my d_widget = [my d_cocoaWindow contentView];
 		_GuiObject_setUserData (my d_cocoaWindow, me);
@@ -210,7 +210,7 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidt
 		if (goAwayCallback) {
 			XmAddWMProtocolCallback (my d_xmShell, 'delw', _GuiMotifWindow_goAwayCallback, (char *) me);
 		}
-		my f_setTitle (title);
+		GuiShell_setTitle (me, title);
 		my d_widget = XmCreateForm (my d_xmShell, "dialog", NULL, 0);
 		_GuiObject_setUserData (my d_widget, me);
 		XtAddCallback (my d_widget, XmNdestroyCallback, _GuiMotifWindow_destroyCallback, me);
@@ -225,28 +225,28 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidt
 GuiObject theGuiTopMenuBar;
 unsigned long theGuiTopLowAccelerators [8];
 
-void structGuiWindow :: f_addMenuBar () {
+void GuiWindow_addMenuBar (GuiWindow me) {
 	#if gtk
-		d_gtkMenuBar = (GtkMenuBar *) gtk_menu_bar_new ();
-		_GuiObject_setUserData (d_gtkMenuBar, this);
-		this -> v_positionInForm (d_gtkMenuBar, 0, 0, 0, Machine_getMenuBarHeight (), this);   // BUG?
+		my d_gtkMenuBar = (GtkMenuBar *) gtk_menu_bar_new ();
+		_GuiObject_setUserData (my d_gtkMenuBar, me);
+		my v_positionInForm (my d_gtkMenuBar, 0, 0, 0, Machine_getMenuBarHeight (), me);   // BUG?
 		
 		// we need an accelerator group for each window we're creating accelerated menus on
-		GuiObject topwin = gtk_widget_get_toplevel (GTK_WIDGET (d_widget));
-		Melder_assert (topwin == d_gtkWindow);
+		GuiObject topwin = gtk_widget_get_toplevel (GTK_WIDGET (my d_widget));
+		Melder_assert (topwin == my d_gtkWindow);
 		GtkAccelGroup *ag = gtk_accel_group_new ();
 		gtk_window_add_accel_group (GTK_WINDOW (topwin), ag);
 		// unfortunately, menu-bars don't fiddle with accel-groups, so we need a way
 		// to pass it to the sub-menus created upon this bar for their items to have
 		// access to the accel-group
-		g_object_set_data (G_OBJECT (d_gtkMenuBar), "accel-group", ag);
-		gtk_widget_show (GTK_WIDGET (d_gtkMenuBar));
+		g_object_set_data (G_OBJECT (my d_gtkMenuBar), "accel-group", ag);
+		gtk_widget_show (GTK_WIDGET (my d_gtkMenuBar));
 	#elif cocoa
 	#elif motif
 		if (win || theGuiTopMenuBar) {
-			d_xmMenuBar = XmCreateMenuBar (d_widget, "menuBar", NULL, 0);
-			XtVaSetValues (d_xmMenuBar, XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM, NULL);
-			XtManageChild (d_xmMenuBar);
+			my d_xmMenuBar = XmCreateMenuBar (my d_widget, "menuBar", NULL, 0);
+			XtVaSetValues (my d_xmMenuBar, XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM, NULL);
+			XtManageChild (my d_xmMenuBar);
 		} else {
 			theGuiTopMenuBar = XmCreateMenuBar (NULL, "menuBar", NULL, 0);
 			//XtManageChild (topBar);
@@ -254,18 +254,18 @@ void structGuiWindow :: f_addMenuBar () {
 	#endif
 }
 
-bool structGuiWindow :: f_setDirty (bool dirty) {
+bool GuiWindow_setDirty (GuiWindow me, bool dirty) {
 	#if gtk
 		(void) dirty;
 		return false;
 	#elif cocoa
-		[d_cocoaWindow setDocumentEdited: dirty];
+		[my d_cocoaWindow   setDocumentEdited: dirty];
 		return true;
 	#elif win
 		(void) dirty;
 		return false;
 	#elif mac
-		SetWindowModified (d_xmShell -> nat.window.ptr, dirty);
+		SetWindowModified (my d_xmShell -> nat.window.ptr, dirty);
 		return true;
 	#endif
 }

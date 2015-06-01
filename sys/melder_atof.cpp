@@ -1,6 +1,6 @@
 /* melder_atof.cpp
  *
- * Copyright (C) 2003-2011 Paul Boersma
+ * Copyright (C) 2003-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,6 +89,67 @@ static const wchar_t *findEndOfNumericString_nothrow (const wchar_t *string) {
 	return p;
 }
 
+static const char *findEndOfNumericString_nothrow (const char *string) {
+	const char *p = & string [0];
+	/*
+	 * Leading white space is OK.
+	 */
+	while (*p == ' ' || *p == '\t' || *p == '\n' || *p == '\r')
+		p ++;
+	/*
+	 * Next we accept an optional leading plus or minus.
+	 */
+	if (*p == '+' || *p == '-') p ++;
+	/*
+	 * The next character must be a decimal digit.
+	 * So we don't allow things like ".5".
+	 */
+	if (*p < '0' || *p > '9') return NULL;   /* String is not numeric. */
+	p ++;
+	/*
+	 * Then we accept any number of decimal digits.
+	 */
+	while (*p >= '0' && *p <= '9') p ++;
+	/*
+	 * Next we accept an optional decimal point.
+	 */
+	if (*p == '.') {
+		p ++;
+		/*
+		 * We accept any number of (even zero) decimal digits after the decimal point.
+		 */
+		while (*p >= '0' && *p <= '9') p ++;
+	}
+	/*
+	 * Next we accept an optional exponential E or e.
+	 */
+	if (*p == 'e' || *p == 'E') {
+		p ++;
+		/*
+		 * In the exponent we accept an optional leading plus or minus.
+		 */
+		if (*p == '+' || *p == '-') p ++;
+		/*
+		 * The exponent must contain a decimal digit.
+		 * So we don't allow things like "+2.1E".
+		 */
+		if (*p < '0' || *p > '9') return NULL;   /* String is not numeric. */
+		p ++;
+		/*
+		 * Then we accept any number of decimal digits.
+		 */
+		while (*p >= '0' && *p <= '9') p ++;
+	}
+	/*
+	 * Next we accept an optional percent sign.
+	 */
+	if (*p == '%') p ++;
+	/*
+	 * We have found the end of the numeric string.
+	 */
+	return p;
+}
+
 int Melder_isStringNumeric_nothrow (const wchar_t *string) {
 	if (string == NULL) return false;
 	const wchar_t *p = findEndOfNumericString_nothrow (string);
@@ -99,6 +160,14 @@ int Melder_isStringNumeric_nothrow (const wchar_t *string) {
 	while (*p == ' ' || *p == '\t' || *p == '\n' || *p == '\r')
 		p ++;
 	return *p == '\0';
+}
+
+double Melder_a8tof (const char *string) {
+	if (string == NULL) return NUMundefined;
+	const char *p = findEndOfNumericString_nothrow (string);
+	if (p == NULL) return NUMundefined;
+	Melder_assert (p - string > 0);
+	return p [-1] == '%' ? 0.01 * strtod (string, NULL) : strtod (string, NULL);
 }
 
 double Melder_atof (const wchar_t *string) {
@@ -112,6 +181,9 @@ double Melder_atof (const wchar_t *string) {
 	#else
 		return p [-1] == '%' ? 0.01 * wcstod (string, NULL) : wcstod (string, NULL);
 	#endif
+}
+double Melder_a32tof (const char32 *string) {
+	return Melder_a8tof (Melder_peekStr32ToUtf8 (string));
 }
 
 /* End of file melder_atof.cpp */

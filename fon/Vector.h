@@ -2,7 +2,7 @@
 #define _Vector_h_
 /* Vector.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,13 +25,20 @@
 #include "Matrix.h"
 
 Thing_define (Vector, Matrix) {
-	// overridden methods:
-	protected:
-		virtual bool v_hasGetVector    () { return true; }   virtual double v_getVector (long irow, long icol);
-		virtual bool v_hasGetFunction1 () { return true; }   virtual double v_getFunction1 (long irow, double x);
-		virtual bool v_hasGetMatrix    () { return false; }
-		virtual bool v_hasGetFunction2 () { return false; }
-		virtual double v_getValueAtSample (long isamp, long ilevel, int unit);
+	bool v_hasGetVector ()
+		override { return true; }
+	double v_getVector (long irow, long icol)
+		override;
+	bool v_hasGetFunction1 ()
+		override { return true; }
+	double v_getFunction1 (long irow, double x)
+		override;
+	bool v_hasGetMatrix ()
+		override { return false; }
+	bool v_hasGetFunction2 ()
+		override { return false; }
+	double v_getValueAtSample (long isamp, long ilevel, int unit)
+		override;
 };
 
 #define Vector_CHANNEL_AVERAGE  0

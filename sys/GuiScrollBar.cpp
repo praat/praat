@@ -1,6 +1,6 @@
 /* GuiScrollBar.cpp
  *
- * Copyright (C) 1993-2011,2012,2013,2014 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2011,2012,2013,2014,2015 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -276,11 +276,11 @@ GuiScrollBar GuiScrollBar_createShown (GuiForm parent, int left, int right, int 
 	GuiScrollBar me = GuiScrollBar_create (parent, left, right, top, bottom,
 		minimum, maximum, value, sliderSize, increment, pageIncrement,
 		valueChangedCallback, valueChangedBoss, flags);
-	my f_show ();
+	GuiThing_show (me);
 	return me;
 }
 
-void structGuiScrollBar :: f_set (double minimum, double maximum, double value, double sliderSize, double increment, double pageIncrement) {
+void GuiScrollBar_set (GuiScrollBar me, double minimum, double maximum, double value, double sliderSize, double increment, double pageIncrement) {
 	/*
 	 * This function calls the native scroll bar modification function.
 	 *
@@ -296,8 +296,8 @@ void structGuiScrollBar :: f_set (double minimum, double maximum, double value, 
 		 * This function sends a *slow* value-changed notification to the scroll bar.
 		 * We have to make sure that our own d_valueChangedCallback is not called.
 		 */
-		d_blockValueChangedCallbacks = true;
-		GtkAdjustment *adj = gtk_range_get_adjustment (GTK_RANGE (d_widget));
+		my d_blockValueChangedCallbacks = true;
+		GtkAdjustment *adj = gtk_range_get_adjustment (GTK_RANGE (my d_widget));
 		gtk_adjustment_configure (GTK_ADJUSTMENT (adj),
 			NUMdefined (value)         ? value         : gtk_adjustment_get_value          (GTK_ADJUSTMENT (adj)),
 			NUMdefined (minimum)       ? minimum       : gtk_adjustment_get_lower          (GTK_ADJUSTMENT (adj)),
@@ -314,8 +314,8 @@ void structGuiScrollBar :: f_set (double minimum, double maximum, double value, 
 		 * This function sends a *synchronous* value-changed notification to the scroll bar.
 		 * We have to make sure that our own d_valueChangedCallback is not called.
 		 */
-		GuiControlBlockValueChangedCallbacks block (this);
-		GuiCocoaScrollBar *scroller = (GuiCocoaScrollBar *) d_widget;
+		GuiControlBlockValueChangedCallbacks block (me);
+		GuiCocoaScrollBar *scroller = (GuiCocoaScrollBar *) my d_widget;
 		[scroller
 			setMinimum:    NUMdefined (minimum)       ? minimum       : [scroller m_minimum]
 			maximum:       NUMdefined (maximum)       ? maximum       : [scroller m_maximum]
@@ -325,12 +325,12 @@ void structGuiScrollBar :: f_set (double minimum, double maximum, double value, 
 			pageIncrement: NUMdefined (pageIncrement) ? pageIncrement : [scroller m_pageIncrement]];
 	#elif motif
 		if (NUMdefined (minimum))
-			XtVaSetValues (d_widget, XmNminimum, (int) minimum, NULL);
+			XtVaSetValues (my d_widget, XmNminimum, (int) minimum, NULL);
 		if (NUMdefined (maximum))
-			XtVaSetValues (d_widget, XmNmaximum, (int) maximum, NULL);
+			XtVaSetValues (my d_widget, XmNmaximum, (int) maximum, NULL);
 		int oldValue, oldSliderSize, oldIncrement, oldPageIncrement;
-		XmScrollBarGetValues (d_widget, & oldValue, & oldSliderSize, & oldIncrement, & oldPageIncrement);
-		XmScrollBarSetValues (d_widget,
+		XmScrollBarGetValues (my d_widget, & oldValue, & oldSliderSize, & oldIncrement, & oldPageIncrement);
+		XmScrollBarSetValues (my d_widget,
 			NUMdefined (value)         ? value         : oldValue,
 			NUMdefined (sliderSize)    ? sliderSize    : oldSliderSize,
 			NUMdefined (increment)     ? increment     : oldIncrement,
@@ -340,28 +340,28 @@ void structGuiScrollBar :: f_set (double minimum, double maximum, double value, 
 	trace ("exit");
 }
 
-int structGuiScrollBar :: f_getValue () {
+int GuiScrollBar_getValue (GuiScrollBar me) {
 	#if gtk
-		return gtk_range_get_value (GTK_RANGE (d_widget));
+		return gtk_range_get_value (GTK_RANGE (my d_widget));
 	#elif cocoa
-		GuiCocoaScrollBar *scroller = (GuiCocoaScrollBar *) d_widget;
+		GuiCocoaScrollBar *scroller = (GuiCocoaScrollBar *) my d_widget;
 		return [scroller m_value];
 	#elif motif
 		int value, slider, incr, pincr;
-		XmScrollBarGetValues (d_widget, & value, & slider, & incr, & pincr);
+		XmScrollBarGetValues (my d_widget, & value, & slider, & incr, & pincr);
 		return value;
 	#endif
 }
 
-int structGuiScrollBar :: f_getSliderSize () {
+int GuiScrollBar_getSliderSize (GuiScrollBar me) {
 	#if gtk
 		return 1;   // NYI
 	#elif cocoa
-		GuiCocoaScrollBar *scroller = (GuiCocoaScrollBar *) d_widget;
-		return [scroller m_sliderSize];
+		GuiCocoaScrollBar *scroller = (GuiCocoaScrollBar *) my d_widget;
+		return [scroller   m_sliderSize];
 	#elif motif
 		int value, slider, incr, pincr;
-		XmScrollBarGetValues (d_widget, & value, & slider, & incr, & pincr);
+		XmScrollBarGetValues (my d_widget, & value, & slider, & incr, & pincr);
 		return slider;
 	#endif
 }

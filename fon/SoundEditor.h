@@ -2,7 +2,7 @@
 #define _SoundEditor_h_
 /* SoundEditor.h
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,24 +22,33 @@
 #include "TimeSoundAnalysisEditor.h"
 
 Thing_define (SoundEditor, TimeSoundAnalysisEditor) {
-	// new data:
-		private:
-			GuiMenuItem cutButton, copyButton, pasteButton, zeroButton, reverseButton;
-			double maxBuffer;
-	// overridden methods:
-		private:
-			virtual void v_createMenus ();
-			virtual void v_createHelpMenuItems (EditorMenu menu);
-			virtual void v_dataChanged ();
-			virtual void v_prepareDraw ();
-			virtual void v_draw ();
-			virtual void v_play (double tmin, double tmax);
-			virtual int v_click (double xWC, double yWC, bool shiftKeyPressed);
-			virtual void v_highlightSelection (double left, double right, double bottom, double top);
-			virtual void v_unhighlightSelection (double left, double right, double bottom, double top);
+	GuiMenuItem cutButton, copyButton, pasteButton, zeroButton, reverseButton;
+	double maxBuffer;
+
+	void v_createMenus ()
+		override;
+	void v_createHelpMenuItems (EditorMenu menu)
+		override;
+	void v_dataChanged ()
+		override;
+	void v_prepareDraw ()
+		override;
+	void v_draw ()
+		override;
+	void v_play (double tmin, double tmax)
+		override;
+	int v_click (double xWC, double yWC, bool shiftKeyPressed)
+		override;
+	void v_highlightSelection (double left, double right, double bottom, double top)
+		override;
+	void v_unhighlightSelection (double left, double right, double bottom, double top)
+		override;
 };
 
-void SoundEditor_init (SoundEditor me, const wchar_t *title, Sampled data);
+void SoundEditor_init (SoundEditor me,
+	const wchar_t *title,
+	Sampled data
+);
 
 SoundEditor SoundEditor_create (
 	const wchar_t *title,

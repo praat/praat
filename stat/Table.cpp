@@ -1,6 +1,6 @@
 /* Table.cpp
  *
- * Copyright (C) 2002-2012,2013,2014 Paul Boersma
+ * Copyright (C) 2002-2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,9 +91,9 @@ void structTable :: v_info () {
 	MelderInfo_writeLine (L"Number of columns: ", Melder_integer (numberOfColumns));
 }
 
-const wchar_t * structTable :: v_getColStr (long columnNumber) {
+const char32 * structTable :: v_getColStr (long columnNumber) {
 	if (columnNumber < 1 || columnNumber > numberOfColumns) return NULL;
-	return columnHeaders [columnNumber]. label ? columnHeaders [columnNumber]. label : L"";
+	return columnHeaders [columnNumber]. label ? Melder_peekWcsToStr32 (columnHeaders [columnNumber]. label) : U"";
 }
 
 double structTable :: v_getMatrix (long rowNumber, long columnNumber) {
@@ -103,15 +103,15 @@ double structTable :: v_getMatrix (long rowNumber, long columnNumber) {
 	return stringValue == NULL ? NUMundefined : Melder_atof (stringValue);
 }
 
-const wchar_t * structTable :: v_getMatrixStr (long rowNumber, long columnNumber) {
-	if (rowNumber < 1 || rowNumber > rows -> size) return L"";
-	if (columnNumber < 1 || columnNumber > numberOfColumns) return L"";
+const char32 * structTable :: v_getMatrixStr (long rowNumber, long columnNumber) {
+	if (rowNumber < 1 || rowNumber > rows -> size) return U"";
+	if (columnNumber < 1 || columnNumber > numberOfColumns) return U"";
 	wchar_t *stringValue = ((TableRow) rows -> item [rowNumber]) -> cells [columnNumber]. string;
-	return stringValue == NULL ? L"" : stringValue;
+	return stringValue == NULL ? U"" : Melder_peekWcsToStr32 (stringValue);
 }
 
-double structTable :: v_getColIndex (const wchar_t *columnLabel) {
-	return Table_findColumnIndexFromColumnLabel (this, columnLabel);
+double structTable :: v_getColIndex (const char32 *columnLabel) {
+	return Table_findColumnIndexFromColumnLabel (this, Melder_peekStr32ToWcs (columnLabel));
 }
 
 static TableRow TableRow_create (long numberOfColumns) {
@@ -1088,7 +1088,7 @@ Table Table_rowsToColumns (Table me, const wchar_t *factors_string, long columnT
 				for (long jrow = rowmin; jrow <= rowmax; jrow ++) {
 					TableRow myRow = static_cast <TableRow> (my rows -> item [jrow]);
 					double value = myRow -> cells [columnsToExpand [iexpand]]. number;
-					long level = myRow -> cells [columnToTranspose]. number;
+					long level = lround (myRow -> cells [columnToTranspose]. number);
 					long thyColumn = numberOfFactors + (iexpand - 1) * numberOfLevels + level;
 					if (thyRow -> cells [thyColumn]. string != NULL && ! warned) {
 						Melder_warning (L"Some information from the original table has not been included in the new table. "
@@ -1373,7 +1373,7 @@ void Table_formula_columnRange (Table me, long fromColumn, long toColumn, const 
 				struct Formula_Result result;
 				Formula_run (irow, icol, & result);
 				if (result. expressionType == kFormula_EXPRESSION_TYPE_STRING) {
-					Table_setStringValue (me, irow, icol, result. result.stringResult);
+					Table_setStringValue (me, irow, icol, Melder_peekStr32ToWcs (result. result.stringResult));
 					Melder_free (result. result.stringResult);
 				} else if (result. expressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
 					Table_setNumericValue (me, irow, icol, result. result.numericResult);
@@ -2015,7 +2015,7 @@ Table Table_readFromCharacterSeparatedTextFile (MelderFile file, wchar_t separat
 		/*
 		 * Kill final new-line symbols.
 		 */
-		for (long length = wcslen (string.peek()); length > 0 && string [length - 1] == '\n'; length = wcslen (string.peek())) string [length - 1] = '\0';
+		for (size_t length = wcslen (string.peek()); length > 0 && string [length - 1] == '\n'; length = wcslen (string.peek())) string [length - 1] = '\0';
 
 		/*
 		 * Count columns.

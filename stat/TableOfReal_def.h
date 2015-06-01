@@ -1,6 +1,6 @@
 /* TableOfReal_def.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,15 +28,36 @@ oo_DEFINE_CLASS (TableOfReal, Data)
 	oo_DOUBLE_MATRIX (data, numberOfRows, numberOfColumns)
 
 	#if oo_DECLARING
-		// overridden methods:
-		virtual void v_info ();
-		virtual bool v_hasGetNrow     () { return true; }   virtual double        v_getNrow     () { return numberOfRows; }
-		virtual bool v_hasGetNcol     () { return true; }   virtual double        v_getNcol     () { return numberOfColumns; }
-		virtual bool v_hasGetRowStr   () { return true; }   virtual const wchar_t * v_getRowStr   (long irow);
-		virtual bool v_hasGetColStr   () { return true; }   virtual const wchar_t * v_getColStr   (long icol);
-		virtual bool v_hasGetMatrix   () { return true; }   virtual double        v_getMatrix   (long irow, long icol);
-		virtual bool v_hasGetRowIndex () { return true; }   virtual double        v_getRowIndex (const wchar_t *rowLabel);
-		virtual bool v_hasGetColIndex () { return true; }   virtual double        v_getColIndex (const wchar_t *columnLabel);
+		void v_info ()
+			override;
+		bool v_hasGetNrow ()
+			override { return true; }
+		double v_getNrow ()
+			override { return numberOfRows; }
+		bool v_hasGetNcol ()
+			override { return true; }
+		double v_getNcol ()
+			override { return numberOfColumns; }
+		bool v_hasGetRowStr ()
+			override { return true; }
+		const char32 * v_getRowStr (long irow)
+			override;
+		bool v_hasGetColStr ()
+			override { return true; }
+		const char32 * v_getColStr (long icol)
+			override;
+		bool v_hasGetMatrix ()
+			override { return true; }
+		double v_getMatrix (long irow, long icol)
+			override;
+		bool v_hasGetRowIndex ()
+			override { return true; }
+		double v_getRowIndex (const char32 *rowLabel)
+			override;
+		bool v_hasGetColIndex ()
+			override { return true; }
+		double v_getColIndex (const char32 *columnLabel)
+			override;
 	#endif
 
 oo_END_CLASS (TableOfReal)

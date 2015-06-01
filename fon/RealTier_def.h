@@ -1,6 +1,6 @@
 /* RealTier_def.h
  *
- * Copyright (C) 1992-2012,2014 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,21 +33,41 @@ oo_DEFINE_CLASS (RealTier, Function)
 	oo_COLLECTION (SortedSetOfDouble, points, RealPoint, 0)
 
 	#if oo_DECLARING
-		// access functions:
-			long numberOfPoints () { return points -> size; }
-			RealPoint * peekPoints () { return reinterpret_cast <RealPoint *> (points -> item); }
-			RealPoint point (long ipoint) { return static_cast <RealPoint> (points -> item [ipoint]); }
-		// overridden methods:
-			virtual void v_info ();
-			virtual bool v_hasGetNx        () { return true; }   virtual double v_getNx   ()        { return numberOfPoints (); }
-			virtual bool v_hasGetX         () { return true; }   virtual double v_getX    (long ix) { return point (ix) -> number; }
-			virtual bool v_hasGetNcol      () { return true; }   virtual double v_getNcol ()        { return numberOfPoints (); }
-			virtual bool v_hasGetVector    () { return true; }   virtual double v_getVector    (long irow, long icol);
-			virtual bool v_hasGetFunction1 () { return true; }   virtual double v_getFunction1 (long irow, double x);
-			virtual const wchar_t * v_getUnitText (long ilevel, int unit, unsigned long flags)
-				{ (void) ilevel; (void) unit; (void) flags; return L"Time (s)"; }
-			virtual void v_shiftX (double xfrom, double xto);
-			virtual void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto);
+		long numberOfPoints () // accessor
+			{ return points -> size; }
+		RealPoint * peekPoints () // accessor
+			{ return reinterpret_cast <RealPoint *> (points -> item); }
+		RealPoint point (long ipoint) // accessor
+			{ return static_cast <RealPoint> (points -> item [ipoint]); }
+
+		void v_info ()
+			override;
+		bool v_hasGetNx ()
+			override { return true; }
+		double v_getNx ()
+			override { return numberOfPoints (); }
+		bool v_hasGetX ()
+			override { return true; }
+		double v_getX (long ix)
+			override { return point (ix) -> number; }
+		bool v_hasGetNcol ()
+			override { return true; }
+		double v_getNcol ()
+			override { return numberOfPoints (); }
+		bool v_hasGetVector ()
+			override { return true; }
+		double v_getVector (long irow, long icol)
+			override;
+		bool v_hasGetFunction1 ()
+			override { return true; }
+		double v_getFunction1 (long irow, double x)
+			override;
+		const wchar_t * v_getUnitText (long /* ilevel */, int /* unit */, unsigned long /* flags */)
+			override { return L"Time (s)"; }
+		void v_shiftX (double xfrom, double xto)
+			override;
+		void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto)
+			override;
 	#endif
 
 oo_END_CLASS (RealTier)

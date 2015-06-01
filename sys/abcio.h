@@ -2,7 +2,7 @@
 #define _abcio_h_
 /* abcio.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,15 +38,17 @@ double texgetr8 (MelderReadText text);
 double texgetr10 (MelderReadText text);
 fcomplex texgetc8 (MelderReadText text);
 dcomplex texgetc16 (MelderReadText text);
-short texgete1 (MelderReadText text, int (*getValue) (const wchar_t *));
-short texgete2 (MelderReadText text, int (*getValue) (const wchar_t *));
+short texgete1 (MelderReadText text, int (*getValue) (const char32 *));
+short texgete2 (MelderReadText text, int (*getValue) (const char32 *));
 short texgeteb (MelderReadText text);
 short texgeteq (MelderReadText text);
 short texgetex (MelderReadText text);
 char *texgets2 (MelderReadText text);
 char *texgets4 (MelderReadText text);
 wchar_t *texgetw2 (MelderReadText text);
+char32 *texget32w2 (MelderReadText text);
 wchar_t *texgetw4 (MelderReadText text);
+char32 *texget32w4 (MelderReadText text);
 
 void texindent (MelderFile file);
 void texexdent (MelderFile file);
@@ -64,8 +66,8 @@ void texputr4 (MelderFile file, double x, const wchar_t *s1, const wchar_t *s2, 
 void texputr8 (MelderFile file, double x, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
 void texputc8 (MelderFile file, fcomplex z, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
 void texputc16 (MelderFile file, dcomplex z, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
-void texpute1 (MelderFile file, int i, const wchar_t * (*getText) (int), const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
-void texpute2 (MelderFile file, int i, const wchar_t * (*getText) (int), const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
+void texpute1 (MelderFile file, int i, const char32 * (*getText) (int), const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
+void texpute2 (MelderFile file, int i, const char32 * (*getText) (int), const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
 void texputeb (MelderFile file, bool i, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
 void texputeq (MelderFile file, bool i, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
 void texputex (MelderFile file, bool i, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
@@ -73,6 +75,7 @@ void texputs1 (MelderFile file, const char *s, const wchar_t *s1, const wchar_t 
 void texputs2 (MelderFile file, const char *s, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
 void texputs4 (MelderFile file, const char *s, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
 void texputw2 (MelderFile file, const wchar_t *s, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
+void texputw2 (MelderFile file, const char32  *s, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
 void texputw4 (MelderFile file, const wchar_t *s, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
 
 /* Portable device-independent binary input and output. */
@@ -195,7 +198,9 @@ char * bingets4 (FILE *f);   void binputs4 (const char *s, FILE *f);   /* 0..429
 */
 wchar_t * bingetw1 (FILE *f);   void binputw1 (const wchar_t *s, FILE *f);
 wchar_t * bingetw2 (FILE *f);   void binputw2 (const wchar_t *s, FILE *f);
+char32 * binget32w2 (FILE *f);  void binputw2 (const char32  *s, FILE *f);
 wchar_t * bingetw4 (FILE *f);   void binputw4 (const wchar_t *s, FILE *f);
+char32 * binget32w4 (FILE *f);  void binputw4 (const char32  *s, FILE *f);
 
 /********** cache I/O **********/
 

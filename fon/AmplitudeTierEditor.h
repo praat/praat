@@ -2,7 +2,7 @@
 #define _AmplitudeTierEditor_h_
 /* AmplitudeTierEditor.h
  *
- * Copyright (C) 2003-2011,2012,2014 Paul Boersma
+ * Copyright (C) 2003-2011,2012,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,23 +24,34 @@
 #include "Sound.h"
 
 Thing_define (AmplitudeTierEditor, RealTierEditor) {
-	// overridden methods:
-		virtual void v_createHelpMenuItems (EditorMenu menu);
-		virtual void v_play (double fromTime, double toTime);
-		virtual const wchar_t *
-			v_quantityText ()
-				{ return L"Sound pressure (Pa)"; }
-		virtual const wchar_t * v_quantityKey () { return L"Sound pressure"; }
-		virtual const wchar_t * v_rightTickUnits () { return L" Pa"; }
-		virtual double v_defaultYmin () { return -1.0; }
-		virtual double v_defaultYmax () { return +1.0; }
-		virtual const wchar_t * v_setRangeTitle () { return L"Set amplitude range..."; }
-		virtual const wchar_t * v_defaultYminText () { return L"-1.0"; }
-		virtual const wchar_t * v_defaultYmaxText () { return L"+1.0"; }
-		virtual const wchar_t * v_yminText () { return L"Minimum amplitude (Pa)"; }
-		virtual const wchar_t * v_ymaxText () { return L"Maximum amplitude (Pa)"; }
-		virtual const wchar_t * v_yminKey () { return L"Minimum amplitude"; }
-		virtual const wchar_t * v_ymaxKey () { return L"Maximum amplitude"; }
+	void v_createHelpMenuItems (EditorMenu menu)
+		override;
+	void v_play (double fromTime, double toTime)
+		override;
+	const wchar_t * v_quantityText ()
+		override { return L"Sound pressure (Pa)"; }
+	const wchar_t * v_quantityKey ()
+		override { return L"Sound pressure"; }
+	const wchar_t * v_rightTickUnits ()
+		override { return L" Pa"; }
+	double v_defaultYmin ()
+		override { return -1.0; }
+	double v_defaultYmax ()
+		override { return +1.0; }
+	const wchar_t * v_setRangeTitle ()
+		override { return L"Set amplitude range..."; }
+	const wchar_t * v_defaultYminText ()
+		override { return L"-1.0"; }
+	const wchar_t * v_defaultYmaxText ()
+		override { return L"+1.0"; }
+	const wchar_t * v_yminText ()
+		override { return L"Minimum amplitude (Pa)"; }
+	const wchar_t * v_ymaxText ()
+		override { return L"Maximum amplitude (Pa)"; }
+	const wchar_t * v_yminKey ()
+		override { return L"Minimum amplitude"; }
+	const wchar_t * v_ymaxKey ()
+		override { return L"Maximum amplitude"; }
 };
 
 AmplitudeTierEditor AmplitudeTierEditor_create (const wchar_t *title,

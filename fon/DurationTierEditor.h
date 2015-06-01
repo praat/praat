@@ -2,7 +2,7 @@
 #define _DurationTierEditor_h_
 /* DurationTierEditor.h
  *
- * Copyright (C) 1992-2011,2012,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,22 +24,36 @@
 #include "Sound.h"
 
 Thing_define (DurationTierEditor, RealTierEditor) {
-	// overridden methods:
-		virtual void v_createHelpMenuItems (EditorMenu menu);
-		virtual void v_play (double fromTime, double toTime);
-		virtual double v_minimumLegalValue () { return 0.0; }
-		virtual const wchar_t * v_quantityText () { return L"Relative duration"; }
-		virtual const wchar_t * v_quantityKey () { return L"Relative duration"; }
-		virtual const wchar_t * v_rightTickUnits () { return L""; }
-		virtual double v_defaultYmin () { return 0.25; }
-		virtual double v_defaultYmax () { return 3.0; }
-		virtual const wchar_t * v_setRangeTitle () { return L"Set duration range..."; }
-		virtual const wchar_t * v_defaultYminText () { return L"0.25"; }
-		virtual const wchar_t * v_defaultYmaxText () { return L"3.0"; }
-		virtual const wchar_t * v_yminText () { return L"Minimum duration"; }
-		virtual const wchar_t * v_ymaxText () { return L"Maximum duration"; }
-		virtual const wchar_t * v_yminKey () { return L"Minimum duration"; }
-		virtual const wchar_t * v_ymaxKey () { return L"Maximum duration"; }
+	void v_createHelpMenuItems (EditorMenu menu)
+		override;
+	void v_play (double fromTime, double toTime)
+		override;
+	double v_minimumLegalValue ()
+		override { return 0.0; }
+	const wchar_t * v_quantityText ()
+		override { return L"Relative duration"; }
+	const wchar_t * v_quantityKey ()
+		override { return L"Relative duration"; }
+	const wchar_t * v_rightTickUnits ()
+		override { return L""; }
+	double v_defaultYmin ()
+		override { return 0.25; }
+	double v_defaultYmax ()
+		override { return 3.0; }
+	const wchar_t * v_setRangeTitle ()
+		override { return L"Set duration range..."; }
+	const wchar_t * v_defaultYminText ()
+		override { return L"0.25"; }
+	const wchar_t * v_defaultYmaxText ()
+		override { return L"3.0"; }
+	const wchar_t * v_yminText ()
+		override { return L"Minimum duration"; }
+	const wchar_t * v_ymaxText ()
+		override { return L"Maximum duration"; }
+	const wchar_t * v_yminKey ()
+		override { return L"Minimum duration"; }
+	const wchar_t * v_ymaxKey ()
+		override { return L"Maximum duration"; }
 };
 
 DurationTierEditor DurationTierEditor_create (const wchar_t *title,

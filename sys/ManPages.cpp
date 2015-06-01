@@ -1,6 +1,6 @@
 /* ManPages.cpp
  *
- * Copyright (C) 1996-2012,2014 Paul Boersma
+ * Copyright (C) 1996-2012,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -575,7 +575,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 					Melder_setDefaultDir (& my rootDirectory);
 				}
 				try {
-					autostring text = Melder_wcsdup (p);
+					autostring32 text = Melder_wcsToStr32 (p);
 					Interpreter_run (interpreter.peek(), text.peek());
 				} catch (MelderError) {
 					trace ("interpreter fails on %ls", pdfFile. path);

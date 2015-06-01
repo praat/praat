@@ -1,6 +1,6 @@
 /* oo_DESTROY.h
  *
- * Copyright (C) 1994-2012,2013,2014 Paul Boersma
+ * Copyright (C) 1994-2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,16 +43,30 @@
 
 #define oo_STRINGx(storage,x)  \
 	Melder_free (our x);
+#define oo_STRING32x(storage,x)  \
+	Melder_free (our x);
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
+	for (int i = 0; i < n; i ++) \
+		Melder_free (our x [i]);
+#define oo_STRING32x_ARRAY(storage,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
 		Melder_free (our x [i]);
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) \
 		Melder_free (our x [i]);
+#define oo_STRING32x_SET(storage,x,setType)  \
+	for (int i = 0; i <= setType##_MAX; i ++) \
+		Melder_free (our x [i]);
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
+	if (our x) { \
+		for (long i = min; i <= max; i ++) \
+			Melder_free (our x [i]); \
+		NUMvector_free <wchar_t*> (our x, min); \
+	}
+#define oo_STRING32x_VECTOR(storage,x,min,max)  \
 	if (our x) { \
 		for (long i = min; i <= max; i ++) \
 			Melder_free (our x [i]); \

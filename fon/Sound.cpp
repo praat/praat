@@ -134,7 +134,7 @@ Sound Sound_create (long numberOfChannels, double xmin, double xmax, long nx, do
 }
 
 Sound Sound_createSimple (long numberOfChannels, double duration, double samplingFrequency) {
-	Melder_assert (duration > 0.0);
+	Melder_assert (duration >= 0.0);
 	Melder_assert (samplingFrequency > 0.0);
 	double numberOfSamples_f = round (duration * samplingFrequency);
 	if (numberOfSamples_f > (double) INT32_MAX)

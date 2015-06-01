@@ -1,6 +1,6 @@
 /* oo_WRITE_BINARY.h
  *
- * Copyright (C) 1994-2012,2013,2014 Paul Boersma
+ * Copyright (C) 1994-2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,16 +55,27 @@
 
 #define oo_STRINGx(storage,x)  \
 	binput##storage (our x, f);
+#define oo_STRING32x(storage,x)  \
+	binput##storage (our x, f);
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
 		binput##storage (our x [i], f);
+#define oo_STRING32x_ARRAY(storage,x,cap,n)  \
+	for (int i = 0; i < n; i ++) \
+		binput32##storage (our x [i], f);
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) \
 		binput##storage (our x [i], f);
+#define oo_STRING32x_SET(storage,x,setType)  \
+	for (int i = 0; i <= setType##_MAX; i ++) \
+		binput32##storage (our x [i], f);
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
+	for (long i = min; i <= max; i ++) \
+		binput##storage (our x [i], f);
+#define oo_STRING32x_VECTOR(storage,x,min,max)  \
 	for (long i = min; i <= max; i ++) \
 		binput##storage (our x [i], f);
 

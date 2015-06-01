@@ -2,7 +2,7 @@
 #define _HyperPage_h_
 /* HyperPage.h
  *
- * Copyright (C) 1992-2011,2012,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,53 +24,52 @@
 #include "Graphics.h"
 
 Thing_define (HyperLink, Data) {
-	// new data:
-	public:
-		double x1DC, x2DC, y1DC, y2DC;
+	double x1DC, x2DC, y1DC, y2DC;
 };
 
 HyperLink HyperLink_create (const wchar_t *name, double x1, double x2, double y1, double y2);
 
 Thing_define (HyperPage, Editor) {
-	// data:
-	public:
-		GuiDrawingArea drawingArea;
-		GuiScrollBar verticalScrollBar;
-		bool d_hasExtraRowOfTools;
-		Graphics g, ps;
-		double d_x, d_y, rightMargin, previousBottomSpacing;
-		long d_printingPageNumber;
-		Collection links;
-		int printing, top, mirror;
-		wchar_t *insideHeader, *middleHeader, *outsideHeader;
-		wchar_t *insideFooter, *middleFooter, *outsideFooter;
-		wchar_t *entryHint; double entryPosition;
-		struct { wchar_t *page; int top; } history [20];
-		int historyPointer;
-		wchar_t *currentPageTitle;
-		GuiMenuItem fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24;
-		void *praatApplication, *praatObjects, *praatPicture;
-		bool scriptErrorHasBeenNotified;
-		structMelderDir rootDirectory;
-	// overridden methods:
-	protected:
-		virtual void v_destroy ();
-		virtual bool v_editable () { return false; }
-		virtual void v_createMenus ();
-		virtual void v_createChildren ();
-		virtual void v_dataChanged ();
-	// new methods:
-	public:
-		virtual void v_draw () { }
-		virtual long v_getNumberOfPages () { return 0; }
-		virtual long v_getCurrentPageNumber () { return 0; }
-		virtual int v_goToPage (const wchar_t *title) { (void) title; return 0; }
-		virtual void v_goToPage_i (long pageNumber) { (void) pageNumber; }
-		virtual void v_defaultHeaders (EditorCommand cmd) { (void) cmd; }
-		virtual bool v_hasHistory () { return false; }
-		virtual bool v_isOrdered () { return false; }
-	// preferences:
-		#include "HyperPage_prefs.h"
+	GuiDrawingArea drawingArea;
+	GuiScrollBar verticalScrollBar;
+	bool d_hasExtraRowOfTools;
+	Graphics g, ps;
+	double d_x, d_y, rightMargin, previousBottomSpacing;
+	long d_printingPageNumber;
+	Collection links;
+	int printing, top, mirror;
+	wchar_t *insideHeader, *middleHeader, *outsideHeader;
+	wchar_t *insideFooter, *middleFooter, *outsideFooter;
+	wchar_t *entryHint; double entryPosition;
+	struct { wchar_t *page; int top; } history [20];
+	int historyPointer;
+	wchar_t *currentPageTitle;
+	GuiMenuItem fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24;
+	void *praatApplication, *praatObjects, *praatPicture;
+	bool scriptErrorHasBeenNotified;
+	structMelderDir rootDirectory;
+
+	void v_destroy ()
+		override;
+	bool v_editable ()
+		override { return false; }
+	void v_createMenus ()
+		override;
+	void v_createChildren ()
+		override;
+	void v_dataChanged ()
+		override;
+
+	virtual void v_draw () { }
+	virtual long v_getNumberOfPages () { return 0; }
+	virtual long v_getCurrentPageNumber () { return 0; }
+	virtual int v_goToPage (const wchar_t *title) { (void) title; return 0; }
+	virtual void v_goToPage_i (long pageNumber) { (void) pageNumber; }
+	virtual void v_defaultHeaders (EditorCommand cmd) { (void) cmd; }
+	virtual bool v_hasHistory () { return false; }
+	virtual bool v_isOrdered () { return false; }
+
+	#include "HyperPage_prefs.h"
 };
 
 void HyperPage_clear (HyperPage me);

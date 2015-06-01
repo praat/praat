@@ -2,7 +2,7 @@
 #define _EditorM_h_
 /* EditorM.h
  *
- * Copyright (C) 1992-2011,2013 Paul Boersma
+ * Copyright (C) 1992-2011,2013,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,7 +105,7 @@
 #define EDITOR_DO_WRITE \
 	UiOutfile_do (cmd -> d_uiform, defaultName); } else { MelderFile file; structMelderFile file2 = { 0 }; \
 		if (args == NULL && sendingString == NULL) file = UiFile_getFile (sendingForm); \
-		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
+		else { Melder_relativePathToFile (args ? args [1]. string : Melder_peekWcsToStr32 (sendingString), & file2); file = & file2; }
 
 #define EDITOR_FORM_READ(title,helpTitle) \
 	if (cmd -> d_uiform == NULL) { \
@@ -114,12 +114,12 @@
 #define EDITOR_DO_READ \
 	UiInfile_do (cmd -> d_uiform); } else { MelderFile file; structMelderFile file2 = { 0 }; \
 		if (args == NULL && sendingString == NULL) file = UiFile_getFile (sendingForm); \
-		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
+		else { Melder_relativePathToFile (args ? args [1]. string : Melder_peekWcsToStr32 (sendingString), & file2); file = & file2; }
 
 #define GET_REAL(name)  UiForm_getReal (cmd -> d_uiform, name)
 #define GET_INTEGER(name)  UiForm_getInteger (cmd -> d_uiform, name)
 #define GET_STRING(name)  UiForm_getString (cmd -> d_uiform, name)
-#define GET_ENUM(enum,name)  (enum) enum##_getValue (GET_STRING (name))
+#define GET_ENUM(enum,name)  (enum) enum##_getValue (Melder_peekWcsToStr32 (GET_STRING (name)))
 #define GET_FILE  UiForm_getFile (cmd -> d_uiform)
 
 /* End of file EditorM.h */

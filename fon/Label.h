@@ -2,7 +2,7 @@
 #define _Label_h_
 /* Label.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,12 +23,13 @@
 #include "Function.h"
 
 Thing_define (Autosegment, Function) {
-	// overridden methods:
-	protected:
-		virtual void v_copy (Any data_to);
-		virtual bool v_equal (Any otherData);
-		static Data_Description s_description;
-		virtual Data_Description v_description () { return s_description; }
+	void v_copy (Any data_to)
+		override;
+	bool v_equal (Any otherData)
+		override;
+	static Data_Description s_description;
+	Data_Description v_description ()
+		override { return s_description; }
 };
 
 Autosegment Autosegment_create (double tmin, double tmax, const wchar_t *label);
@@ -50,9 +51,9 @@ Autosegment Autosegment_create (double tmin, double tmax, const wchar_t *label);
 */
 
 Thing_define (Tier, Sorted) {
-	// overridden methods:
-		static int compare (Any data1, Any data2);
-		virtual int (*v_getCompareFunction ()) (Any data1, Any data2) { return compare; }
+	static int compare (Any data1, Any data2);
+	int (*v_getCompareFunction ()) (Any data1, Any data2)
+		override { return compare; }
 };
 
 void Tier_init (I, long initialCapacity);

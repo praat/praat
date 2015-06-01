@@ -1,6 +1,6 @@
 /* praat_Sound_init.cpp
  *
- * Copyright (C) 1992-2012,2014 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -146,14 +146,14 @@ FORM (LongSound_writePartToAudioFile, L"LongSound: Save part as audio file", 0) 
 	{ int i; for (i = 1; i <= Melder_NUMBER_OF_AUDIO_FILE_TYPES; i ++) {
 		RADIOBUTTON (Melder_audioFileTypeString (i))
 	}}
-	REAL (L"left Time range (s)", L"0.0")
+	REAL (U"left Time range (s)", U"0.0")
 	REAL (L"right Time range (s)", L"10.0")
 	OK2
 DO
 	LOOP {
 		iam (LongSound);
 		structMelderFile file = { 0 };
-		Melder_relativePathToFile (GET_STRING (L"Audio file"), & file);
+		Melder_relativePathToFile (GET_STRING (U"Audio file"), & file);
 		LongSound_writePartToAudioFile (me, GET_INTEGER (L"Type"),
 			GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), & file);
 	}
@@ -722,7 +722,7 @@ DIRECT2 (Sound_edit) {
 	LOOP {
 		iam (Sound);
 		autoSoundEditor editor = SoundEditor_create (ID_AND_FULL_NAME, me);
-		editor -> setPublicationCallback (cb_SoundEditor_publication, NULL);
+		Editor_setPublicationCallback (editor.peek(), cb_SoundEditor_publication, NULL);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END2 }
@@ -1401,15 +1401,15 @@ static void do_Sound_record (int numberOfChannels) {
 		Melder_throw ("Cannot record a Sound from batch.");
 	if (theSoundRecorder) {
 		if (numberOfChannels == thePreviousNumberOfChannels) {
-			theSoundRecorder -> raise ();
+			Editor_raise (theSoundRecorder);
 		} else {
 			forget (theSoundRecorder);
 		}
 	}
 	if (! theSoundRecorder) {
 		theSoundRecorder = SoundRecorder_create (numberOfChannels);
-		theSoundRecorder -> setDestructionCallback (cb_SoundRecorder_destruction, NULL);
-		theSoundRecorder -> setPublicationCallback (cb_SoundRecorder_publication, NULL);
+		Editor_setDestructionCallback (theSoundRecorder, cb_SoundRecorder_destruction, NULL);
+		Editor_setPublicationCallback (theSoundRecorder, cb_SoundRecorder_publication, NULL);
 	}
 	thePreviousNumberOfChannels = numberOfChannels;
 }

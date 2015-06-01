@@ -1,6 +1,6 @@
 /* Graphics_text.cpp
  *
- * Copyright (C) 1992-2011,2012,2013,2014 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -390,7 +390,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 			char16_t codes16 [2];
 			int nchars = 1;
 			if (lc -> kar > 0x00FFFF) {
-				char32_t kar = lc -> kar - 0x010000;   // subtract the BMP
+				char32 kar = lc -> kar - 0x010000;   // subtract the BMP
 				Melder_assert (lc -> kar <= 0x0FFFFF);   // no more than 20 bits should remain
 				// encode the upper 10 bits
 				codes16 [0] = (char16) (0x00D800 | (kar >> 10));   // at most 0x00D800 | 0x0003FF = 0x00DBFF
@@ -491,7 +491,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 					kATSUFromTextBeginning, kATSUToTextEnd, 1);   // BUG: not 64-bit
 				if (err != 0) Melder_fatal ("Graphics_text/ATSUSetTextPointerLocation low Unicode: unknown MacOS error %d.", (int) err);
 			} else {
-				char32_t kar = lc -> kar - 0x10000;
+				char32 kar = lc -> kar - 0x10000;
 				code16 [0] = 0xD800 + (kar >> 10);
 				code16 [1] = 0xDC00 + (kar & 0x3FF);
 				OSStatus err = ATSUSetTextPointerLocation (textLayout,

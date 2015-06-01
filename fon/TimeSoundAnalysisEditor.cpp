@@ -1,6 +1,6 @@
 /* TimeSoundAnalysisEditor.cpp
  *
- * Copyright (C) 1992-2012,2013,2014 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,71 +59,71 @@ void structTimeSoundAnalysisEditor :: v_info () {
 	TimeSoundAnalysisEditor_Parent :: v_info ();
 	if (v_hasSpectrogram ()) {
 		/* Spectrogram flag: */
-		MelderInfo_writeLine (L"Spectrogram show: ", Melder_boolean (p_spectrogram_show));
+		MelderInfo_writeLine (U"Spectrogram show: ", Melder32_boolean (p_spectrogram_show));
 		/* Spectrogram settings: */
-		MelderInfo_writeLine (L"Spectrogram view from: ", Melder_double (p_spectrogram_viewFrom), L" Hz");
-		MelderInfo_writeLine (L"Spectrogram view to: ", Melder_double (p_spectrogram_viewTo), L" Hz");
-		MelderInfo_writeLine (L"Spectrogram window length: ", Melder_double (p_spectrogram_windowLength), L" seconds");
-		MelderInfo_writeLine (L"Spectrogram dynamic range: ", Melder_double (p_spectrogram_dynamicRange), L" dB");
+		MelderInfo_writeLine (U"Spectrogram view from: ", Melder32_double (p_spectrogram_viewFrom), U" Hz");
+		MelderInfo_writeLine (U"Spectrogram view to: ", Melder32_double (p_spectrogram_viewTo), U" Hz");
+		MelderInfo_writeLine (U"Spectrogram window length: ", Melder32_double (p_spectrogram_windowLength), U" seconds");
+		MelderInfo_writeLine (U"Spectrogram dynamic range: ", Melder32_double (p_spectrogram_dynamicRange), U" dB");
 		/* Advanced spectrogram settings: */
-		MelderInfo_writeLine (L"Spectrogram number of time steps: ", Melder_integer (p_spectrogram_timeSteps));
-		MelderInfo_writeLine (L"Spectrogram number of frequency steps: ", Melder_integer (p_spectrogram_frequencySteps));
-		MelderInfo_writeLine (L"Spectrogram method: ", L"Fourier");
-		MelderInfo_writeLine (L"Spectrogram window shape: ", kSound_to_Spectrogram_windowShape_getText (p_spectrogram_windowShape));
-		MelderInfo_writeLine (L"Spectrogram autoscaling: ", Melder_boolean (p_spectrogram_autoscaling));
-		MelderInfo_writeLine (L"Spectrogram maximum: ", Melder_double (p_spectrogram_maximum), L" dB/Hz");
-		MelderInfo_writeLine (L"Spectrogram pre-emphasis: ", Melder_integer (p_spectrogram_preemphasis), L" dB/octave");
-		MelderInfo_writeLine (L"Spectrogram dynamicCompression: ", Melder_integer (p_spectrogram_dynamicCompression));
+		MelderInfo_writeLine (U"Spectrogram number of time steps: ", Melder32_integer (p_spectrogram_timeSteps));
+		MelderInfo_writeLine (U"Spectrogram number of frequency steps: ", Melder32_integer (p_spectrogram_frequencySteps));
+		MelderInfo_writeLine (U"Spectrogram method: ", U"Fourier");
+		MelderInfo_writeLine (U"Spectrogram window shape: ", kSound_to_Spectrogram_windowShape_getText (p_spectrogram_windowShape));
+		MelderInfo_writeLine (U"Spectrogram autoscaling: ", Melder32_boolean (p_spectrogram_autoscaling));
+		MelderInfo_writeLine (U"Spectrogram maximum: ", Melder32_double (p_spectrogram_maximum), U" dB/Hz");
+		MelderInfo_writeLine (U"Spectrogram pre-emphasis: ", Melder32_integer (p_spectrogram_preemphasis), U" dB/octave");
+		MelderInfo_writeLine (U"Spectrogram dynamicCompression: ", Melder32_integer (p_spectrogram_dynamicCompression));
 		/* Dynamic information: */
-		MelderInfo_writeLine (L"Spectrogram cursor frequency: ", Melder_double (d_spectrogram_cursor), L" Hz");
+		MelderInfo_writeLine (U"Spectrogram cursor frequency: ", Melder32_double (d_spectrogram_cursor), U" Hz");
 	}
 	if (v_hasPitch ()) {
 		/* Pitch flag: */
-		MelderInfo_writeLine (L"Pitch show: ", Melder_boolean (p_pitch_show));
+		MelderInfo_writeLine (U"Pitch show: ", Melder32_boolean (p_pitch_show));
 		/* Pitch settings: */
-		MelderInfo_writeLine (L"Pitch floor: ", Melder_double (p_pitch_floor), L" Hz");
-		MelderInfo_writeLine (L"Pitch ceiling: ", Melder_double (p_pitch_ceiling), L" Hz");
+		MelderInfo_writeLine (U"Pitch floor: ", Melder32_double (p_pitch_floor), U" Hz");
+		MelderInfo_writeLine (U"Pitch ceiling: ", Melder32_double (p_pitch_ceiling), U" Hz");
 		MelderInfo_writeLine (L"Pitch unit: ", Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, p_pitch_unit, Function_UNIT_TEXT_MENU));
-		MelderInfo_writeLine (L"Pitch drawing method: ", kTimeSoundAnalysisEditor_pitch_drawingMethod_getText (p_pitch_drawingMethod));
+		MelderInfo_writeLine (U"Pitch drawing method: ", kTimeSoundAnalysisEditor_pitch_drawingMethod_getText (p_pitch_drawingMethod));
 		/* Advanced pitch settings: */
 		MelderInfo_writeLine (L"Pitch view from: ", Melder_double (p_pitch_viewFrom), L" ", Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, p_pitch_unit, Function_UNIT_TEXT_MENU));
 		MelderInfo_writeLine (L"Pitch view to: ", Melder_double (p_pitch_viewTo), L" ", Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, p_pitch_unit, Function_UNIT_TEXT_MENU));
-		MelderInfo_writeLine (L"Pitch method: ", kTimeSoundAnalysisEditor_pitch_analysisMethod_getText (p_pitch_method));
-		MelderInfo_writeLine (L"Pitch very accurate: ", Melder_boolean (p_pitch_veryAccurate));
-		MelderInfo_writeLine (L"Pitch max. number of candidates: ", Melder_integer (p_pitch_maximumNumberOfCandidates));
-		MelderInfo_writeLine (L"Pitch silence threshold: ", Melder_double (p_pitch_silenceThreshold), L" of global peak");
-		MelderInfo_writeLine (L"Pitch voicing threshold: ", Melder_double (p_pitch_voicingThreshold), L" (periodic power / total power)");
-		MelderInfo_writeLine (L"Pitch octave cost: ", Melder_double (p_pitch_octaveCost), L" per octave");
-		MelderInfo_writeLine (L"Pitch octave jump cost: ", Melder_double (p_pitch_octaveJumpCost), L" per octave");
-		MelderInfo_writeLine (L"Pitch voiced/unvoiced cost: ", Melder_double (p_pitch_voicedUnvoicedCost));
+		MelderInfo_writeLine (U"Pitch method: ", kTimeSoundAnalysisEditor_pitch_analysisMethod_getText (p_pitch_method));
+		MelderInfo_writeLine (U"Pitch very accurate: ", Melder32_boolean (p_pitch_veryAccurate));
+		MelderInfo_writeLine (U"Pitch max. number of candidates: ", Melder32_integer (p_pitch_maximumNumberOfCandidates));
+		MelderInfo_writeLine (U"Pitch silence threshold: ", Melder32_double (p_pitch_silenceThreshold), U" of global peak");
+		MelderInfo_writeLine (U"Pitch voicing threshold: ", Melder32_double (p_pitch_voicingThreshold), U" (periodic power / total power)");
+		MelderInfo_writeLine (U"Pitch octave cost: ", Melder32_double (p_pitch_octaveCost), U" per octave");
+		MelderInfo_writeLine (U"Pitch octave jump cost: ", Melder32_double (p_pitch_octaveJumpCost), U" per octave");
+		MelderInfo_writeLine (U"Pitch voiced/unvoiced cost: ", Melder32_double (p_pitch_voicedUnvoicedCost));
 	}
 	if (v_hasIntensity ()) {
 		/* Intensity flag: */
-		MelderInfo_writeLine (L"Intensity show: ", Melder_boolean (p_intensity_show));
+		MelderInfo_writeLine (U"Intensity show: ", Melder32_boolean (p_intensity_show));
 		/* Intensity settings: */
-		MelderInfo_writeLine (L"Intensity view from: ", Melder_double (p_intensity_viewFrom), L" dB");
-		MelderInfo_writeLine (L"Intensity view to: ", Melder_double (p_intensity_viewTo), L" dB");
-		MelderInfo_writeLine (L"Intensity averaging method: ", kTimeSoundAnalysisEditor_intensity_averagingMethod_getText (p_intensity_averagingMethod));
-		MelderInfo_writeLine (L"Intensity subtract mean pressure: ", Melder_boolean (p_intensity_subtractMeanPressure));
+		MelderInfo_writeLine (U"Intensity view from: ", Melder32_double (p_intensity_viewFrom), U" dB");
+		MelderInfo_writeLine (U"Intensity view to: ", Melder32_double (p_intensity_viewTo), U" dB");
+		MelderInfo_writeLine (U"Intensity averaging method: ", kTimeSoundAnalysisEditor_intensity_averagingMethod_getText (p_intensity_averagingMethod));
+		MelderInfo_writeLine (U"Intensity subtract mean pressure: ", Melder32_boolean (p_intensity_subtractMeanPressure));
 	}
 	if (v_hasFormants ()) {
 		/* Formant flag: */
-		MelderInfo_writeLine (L"Formant show: ", Melder_boolean (p_formant_show));
+		MelderInfo_writeLine (U"Formant show: ", Melder32_boolean (p_formant_show));
 		/* Formant settings: */
-		MelderInfo_writeLine (L"Formant maximum formant: ", Melder_double (p_formant_maximumFormant), L" Hz");
-		MelderInfo_writeLine (L"Formant number of poles: ", Melder_integer (2 * p_formant_numberOfFormants));
-		MelderInfo_writeLine (L"Formant window length: ", Melder_double (p_formant_windowLength), L" seconds");
-		MelderInfo_writeLine (L"Formant dynamic range: ", Melder_double (p_formant_dynamicRange), L" dB");
-		MelderInfo_writeLine (L"Formant dot size: ", Melder_double (p_formant_dotSize), L" mm");
+		MelderInfo_writeLine (U"Formant maximum formant: ", Melder32_double (p_formant_maximumFormant), U" Hz");
+		MelderInfo_writeLine (U"Formant number of poles: ", Melder32_integer (2 * p_formant_numberOfFormants));
+		MelderInfo_writeLine (U"Formant window length: ", Melder32_double (p_formant_windowLength), U" seconds");
+		MelderInfo_writeLine (U"Formant dynamic range: ", Melder32_double (p_formant_dynamicRange), U" dB");
+		MelderInfo_writeLine (U"Formant dot size: ", Melder32_double (p_formant_dotSize), U" mm");
 		/* Advanced formant settings: */
-		MelderInfo_writeLine (L"Formant method: ", kTimeSoundAnalysisEditor_formant_analysisMethod_getText (p_formant_method));
-		MelderInfo_writeLine (L"Formant pre-emphasis from: ", Melder_double (p_formant_preemphasisFrom), L" Hz");
+		MelderInfo_writeLine (U"Formant method: ", kTimeSoundAnalysisEditor_formant_analysisMethod_getText (p_formant_method));
+		MelderInfo_writeLine (U"Formant pre-emphasis from: ", Melder32_double (p_formant_preemphasisFrom), U" Hz");
 	}
 	if (v_hasPulses ()) {
 		/* Pulses flag: */
-		MelderInfo_writeLine (L"Pulses show: ", Melder_boolean (p_pulses_show));
-		MelderInfo_writeLine (L"Pulses maximum period factor: ", Melder_double (p_pulses_maximumPeriodFactor));
-		MelderInfo_writeLine (L"Pulses maximum amplitude factor: ", Melder_double (p_pulses_maximumAmplitudeFactor));
+		MelderInfo_writeLine (U"Pulses show: ", Melder32_boolean (p_pulses_show));
+		MelderInfo_writeLine (U"Pulses maximum period factor: ", Melder32_double (p_pulses_maximumPeriodFactor));
+		MelderInfo_writeLine (U"Pulses maximum amplitude factor: ", Melder32_double (p_pulses_maximumAmplitudeFactor));
 	}
 }
 
@@ -387,11 +387,11 @@ static void menu_cb_showAnalyses (EDITOR_ARGS) {
 		SET_INTEGER (L"Show pulses",      my p_pulses_show)
 		SET_REAL    (L"Longest analysis", my p_longestAnalysis)
 	EDITOR_DO
-		my spectrogramToggle -> f_check (my pref_spectrogram_show () = my p_spectrogram_show = GET_INTEGER (L"Show spectrogram"));
-		my pitchToggle       -> f_check (my pref_pitch_show       () = my p_pitch_show       = GET_INTEGER (L"Show pitch"));
-		my intensityToggle   -> f_check (my pref_intensity_show   () = my p_intensity_show   = GET_INTEGER (L"Show intensity"));
-		my formantToggle     -> f_check (my pref_formant_show     () = my p_formant_show     = GET_INTEGER (L"Show formants"));
-		my pulsesToggle      -> f_check (my pref_pulses_show      () = my p_pulses_show      = GET_INTEGER (L"Show pulses"));
+		GuiMenuItem_check (my spectrogramToggle , my pref_spectrogram_show () = my p_spectrogram_show = GET_INTEGER (L"Show spectrogram"));
+		GuiMenuItem_check (my pitchToggle       , my pref_pitch_show       () = my p_pitch_show       = GET_INTEGER (L"Show pitch"));
+		GuiMenuItem_check (my intensityToggle   , my pref_intensity_show   () = my p_intensity_show   = GET_INTEGER (L"Show intensity"));
+		GuiMenuItem_check (my formantToggle     , my pref_formant_show     () = my p_formant_show     = GET_INTEGER (L"Show formants"));
+		GuiMenuItem_check (my pulsesToggle      , my pref_pulses_show      () = my p_pulses_show      = GET_INTEGER (L"Show pulses"));
 		my pref_longestAnalysis () = my p_longestAnalysis = GET_REAL (L"Longest analysis");
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -428,7 +428,7 @@ static void menu_cb_timeStepSettings (EDITOR_ARGS) {
 static void menu_cb_showSpectrogram (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	my pref_spectrogram_show () = my p_spectrogram_show = ! my p_spectrogram_show;
-	my spectrogramToggle -> f_check (my p_spectrogram_show);   // in case we're called from a script
+	GuiMenuItem_check (my spectrogramToggle, my p_spectrogram_show);   // in case we're called from a script
 	FunctionEditor_redraw (me);
 }
 
@@ -572,7 +572,7 @@ static void menu_cb_extractVisibleSpectrogram (EDITOR_ARGS) {
 		if (! my d_spectrogram) Melder_throw (theMessage_Cannot_compute_spectrogram);
 	}
 	autoSpectrogram publish = Data_copy (my d_spectrogram);
-	my broadcastPublication (publish.transfer());
+	Editor_broadcastPublication (me, publish.transfer());
 }
 
 static void menu_cb_viewSpectralSlice (EDITOR_ARGS) {
@@ -597,7 +597,7 @@ static void menu_cb_viewSpectralSlice (EDITOR_ARGS) {
 	MelderString_appendCharacter (& sliceName, '_');
 	MelderString_append (& sliceName, Melder_fixed (0.5 * (my d_startSelection + my d_endSelection), 3));
 	Thing_setName (publish.peek(), sliceName.string);
-	my broadcastPublication (publish.transfer());
+	Editor_broadcastPublication (me, publish.transfer());
 }
 
 static void menu_cb_paintVisibleSpectrogram (EDITOR_ARGS) {
@@ -637,7 +637,7 @@ static void menu_cb_paintVisibleSpectrogram (EDITOR_ARGS) {
 static void menu_cb_showPitch (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	my pref_pitch_show () = my p_pitch_show = ! my p_pitch_show;
-	my pitchToggle -> f_check (my p_pitch_show);   // in case we're called from a script
+	GuiMenuItem_check (my pitchToggle, my p_pitch_show);   // in case we're called from a script
 	FunctionEditor_redraw (me);
 }
 
@@ -869,7 +869,7 @@ static void menu_cb_extractVisiblePitchContour (EDITOR_ARGS) {
 		if (! my d_pitch) Melder_throw (theMessage_Cannot_compute_pitch);
 	}
 	autoPitch publish = Data_copy (my d_pitch);
-	my broadcastPublication (publish.transfer());
+	Editor_broadcastPublication (me, publish.transfer());
 }
 
 static void menu_cb_drawVisiblePitchContour (EDITOR_ARGS) {
@@ -918,7 +918,7 @@ static void menu_cb_drawVisiblePitchContour (EDITOR_ARGS) {
 static void menu_cb_showIntensity (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	my pref_intensity_show () = my p_intensity_show = ! my p_intensity_show;
-	my intensityToggle -> f_check (my p_intensity_show);   // in case we're called from a script
+	GuiMenuItem_check (my intensityToggle, my p_intensity_show);   // in case we're called from a script
 	FunctionEditor_redraw (me);
 }
 
@@ -960,7 +960,7 @@ static void menu_cb_extractVisibleIntensityContour (EDITOR_ARGS) {
 		if (! my d_intensity) Melder_throw (theMessage_Cannot_compute_intensity);
 	}
 	autoIntensity publish = Data_copy (my d_intensity);
-	my broadcastPublication (publish.transfer());
+	Editor_broadcastPublication (me, publish.transfer());
 }
 
 static void menu_cb_drawVisibleIntensityContour (EDITOR_ARGS) {
@@ -1073,7 +1073,7 @@ static void menu_cb_getMaximumIntensity (EDITOR_ARGS) {
 static void menu_cb_showFormants (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	my pref_formant_show () = my p_formant_show = ! my p_formant_show;
-	my formantToggle -> f_check (my p_formant_show);   // in case we're called from a script
+	GuiMenuItem_check (my formantToggle, my p_formant_show);   // in case we're called from a script
 	FunctionEditor_redraw (me);
 }
 
@@ -1139,7 +1139,7 @@ static void menu_cb_extractVisibleFormantContour (EDITOR_ARGS) {
 		if (! my d_formant) Melder_throw (theMessage_Cannot_compute_formant);
 	}
 	autoFormant publish = Data_copy (my d_formant);
-	my broadcastPublication (publish.transfer());
+	Editor_broadcastPublication (me, publish.transfer());
 }
 
 static void menu_cb_drawVisibleFormantContour (EDITOR_ARGS) {
@@ -1283,7 +1283,7 @@ static void menu_cb_getBandwidth (EDITOR_ARGS) {
 static void menu_cb_showPulses (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	my pref_pulses_show () = my p_pulses_show = ! my p_pulses_show;
-	my pulsesToggle -> f_check (my p_pulses_show);   // in case we're called from a script
+	GuiMenuItem_check (my pulsesToggle, my p_pulses_show);   // in case we're called from a script
 	FunctionEditor_redraw (me);
 }
 
@@ -1312,7 +1312,7 @@ static void menu_cb_extractVisiblePulses (EDITOR_ARGS) {
 		if (! my d_pulses) Melder_throw (theMessage_Cannot_compute_pulses);
 	}
 	autoPointProcess publish = Data_copy (my d_pulses);
-	my broadcastPublication (publish.transfer());
+	Editor_broadcastPublication (me, publish.transfer());
 }
 
 static void menu_cb_drawVisiblePulses (EDITOR_ARGS) {

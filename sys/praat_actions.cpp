@@ -1,6 +1,6 @@
 /* praat_actions.cpp
  *
- * Copyright (C) 1992-2012,2013,2014 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -524,8 +524,8 @@ static void do_menu (I, bool modified) {
 		praat_Command me = & theActions [i];
 		if (my callback == callback) {
 			if (my title != NULL && ! wcsstr (my title, L"...")) {
-				UiHistory_write (L"\n");
-				UiHistory_write_colonize (my title);
+				UiHistory_write (U"\n");
+				UiHistory_write_colonize (Melder_peekWcsToStr32 (my title));
 			}
 			Ui_setAllowExecutionHook (allowExecutionHook, (void *) callback);   // BUG: one shouldn't assign a function pointer to a void pointer
 			try {
@@ -539,12 +539,12 @@ static void do_menu (I, bool modified) {
 		}
 		if (my callback == DO_RunTheScriptFromAnyAddedMenuCommand && my script == (void *) void_me) {
 			if (my title != NULL && ! wcsstr (my title, L"...")) {
-				UiHistory_write (L"\nexecute ");
-				UiHistory_write (my script);
+				UiHistory_write (U"\nexecute ");
+				UiHistory_write (Melder_peekWcsToStr32 (my script));
 			} else {
-				UiHistory_write (L"\nexecute \"");
-				UiHistory_write (my script);
-				UiHistory_write (L"\"");
+				UiHistory_write (U"\nexecute \"");
+				UiHistory_write (Melder_peekWcsToStr32 (my script));
+				UiHistory_write (U"\"");
 			}
 			try {
 				DO_RunTheScriptFromAnyAddedMenuCommand (NULL, 0, NULL, my script, NULL, NULL, false, NULL);
@@ -579,14 +579,14 @@ void praat_actions_show (void) {
 	if (! theCurrentPraatApplication -> batch) {
 		deleteDynamicMenu ();
 		if (! Melder_backgrounding) {
-			praat_writeMenu -> f_setSensitive (false);
-			if (praat_writeMenuSeparator) praat_writeMenuSeparator -> f_hide ();
+			GuiThing_setSensitive (praat_writeMenu, false);
+			if (praat_writeMenuSeparator) GuiThing_hide (praat_writeMenuSeparator);
 		}
 
 		/* Determine the visibility and sensitivity of all the actions.
 		 */
 		if (theCurrentPraatObjects -> totalSelection != 0 && ! Melder_backgrounding)
-			praat_writeMenu -> f_setSensitive (true);
+			GuiThing_setSensitive (praat_writeMenu, true);
 	}
 	for (long i = 1; i <= theNumberOfActions; i ++) {
 		int sel1 = 0, sel2 = 0, sel3 = 0, sel4 = 0;
@@ -671,7 +671,7 @@ void praat_actions_show (void) {
 				 */
 				if (currentSubmenu2 || currentSubmenu1) {   /* These separators are not shown in a flattened menu. */
 					my button = GuiMenu_addSeparator (currentSubmenu2 ? currentSubmenu2 : currentSubmenu1);
-					my button -> f_show ();
+					GuiThing_show (my button);
 				}
 			} else {
 				/*
@@ -687,7 +687,7 @@ void praat_actions_show (void) {
 					currentSubmenu2 = GuiMenu_createInMenu (currentSubmenu1, my title, 0);
 					my button = currentSubmenu2 -> d_menuItem;
 				}
-				my button -> f_show ();
+				GuiThing_show (my button);
 			}
 		}
 	}

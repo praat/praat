@@ -1,6 +1,6 @@
 /* praat_menuCommands.cpp
  *
- * Copyright (C) 1992-2012,2013,2014 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,8 +74,8 @@ static void do_menu (I, unsigned long modified) {
 		praat_Command me = & theCommands [i];
 		if (my callback == callback) {
 			if (my title != NULL && ! wcsstr (my title, L"...")) {
-				UiHistory_write (L"\n");
-				UiHistory_write_expandQuotes (my title);
+				UiHistory_write (U"\n");
+				UiHistory_write_expandQuotes (Melder_peekWcsToStr32 (my title));
 			}
 			try {
 				callback (NULL, 0, NULL, NULL, NULL, my title, modified, NULL);
@@ -87,12 +87,12 @@ static void do_menu (I, unsigned long modified) {
 		}
 		if (my callback == DO_RunTheScriptFromAnyAddedMenuCommand && my script == (void *) void_me) {
 			if (my title != NULL && ! wcsstr (my title, L"...")) {
-				UiHistory_write (L"\nexecute ");
-				UiHistory_write (my script);
+				UiHistory_write (U"\nexecute ");
+				UiHistory_write (Melder_peekWcsToStr32 (my script));
 			} else {
-				UiHistory_write (L"\nexecute \"");
-				UiHistory_write (my script);
-				UiHistory_write (L"\"");
+				UiHistory_write (U"\nexecute \"");
+				UiHistory_write (Melder_peekWcsToStr32 (my script));
+				UiHistory_write (U"\"");
 			}
 			try {
 				DO_RunTheScriptFromAnyAddedMenuCommand (NULL, 0, NULL, my script, NULL, NULL, false, NULL);
@@ -235,7 +235,7 @@ GuiMenuItem praat_addMenuCommand (const wchar_t *window, const wchar_t *menu, co
 			theCommands [position]. button = GuiMenu_addItem (parentMenu, title, guiFlags, gui_cb_menu, (void *) callback);
 			Melder_assert (theCommands [position]. button != NULL);
 		}
-		if (hidden) theCommands [position]. button -> f_hide ();
+		if (hidden) GuiThing_hide (theCommands [position]. button);
 	}
 	Thing_cast (GuiMenuItem, button_as_GuiMenuItem, theCommands [position]. button);
 	return button_as_GuiMenuItem;
@@ -353,7 +353,7 @@ void praat_hideMenuCommand (const wchar_t *window, const wchar_t *menu, const wc
 	if (! command -> hidden && ! command -> unhidable) {
 		command -> hidden = TRUE;
 		if (praatP.phase >= praat_READING_BUTTONS) command -> toggled = ! command -> toggled;
-		if (command -> button) command -> button -> f_hide ();
+		if (command -> button) GuiThing_hide (command -> button);
 	}
 }
 
@@ -365,7 +365,7 @@ void praat_showMenuCommand (const wchar_t *window, const wchar_t *menu, const wc
 	if (command -> hidden) {
 		command -> hidden = FALSE;
 		if (praatP.phase >= praat_READING_BUTTONS) command -> toggled = ! command -> toggled;
-		if (command -> button) command -> button -> f_show ();
+		if (command -> button) GuiThing_show (command -> button);
 	}
 }
 
@@ -402,8 +402,8 @@ void praat_addFixedButtonCommand (GuiForm parent, const wchar_t *title, void (*c
 	} else {
 		GuiThing button = my button = GuiButton_create (parent, x, x + 82, -y - Gui_PUSHBUTTON_HEIGHT, -y,
 			title, gui_button_cb_menu, (void *) callback, 0);   // BUG: shouldn't convert a function pointer to a void pointer
-		button -> f_setSensitive (false);
-		button -> f_show ();
+		GuiThing_setSensitive (button, false);
+		GuiThing_show (button);
 	}
 	my executable = false;
 }
@@ -413,7 +413,8 @@ void praat_sensitivizeFixedButtonCommand (const wchar_t *title, int sensitive) {
 	for (; i <= theNumberOfCommands; i ++)
 		if (wcsequ (theCommands [i]. title, title)) break;   // search
 	theCommands [i]. executable = sensitive;
-	if (! theCurrentPraatApplication -> batch && ! Melder_backgrounding) theCommands [i]. button -> f_setSensitive (sensitive);
+	if (! theCurrentPraatApplication -> batch && ! Melder_backgrounding)
+		GuiThing_setSensitive (theCommands [i]. button, sensitive);
 }
 
 int praat_doMenuCommand (const wchar_t *command, const wchar_t *arguments, Interpreter interpreter) {

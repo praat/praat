@@ -23,9 +23,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20150324)
+MAN_BEGIN (L"What's new?", L"ppgb", 20150601)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"• Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.4.09# (1 June 2015)")
+LIST_ITEM (L"• Linux: the tab key can be used to play sounds on more computers.")
+LIST_ITEM (L"• Windows: TextGrid files with non-BMP characters are now read correctly.")
+LIST_ITEM (L"• Windows: files with names that contain non-BMP characters are now saved correctly.")
+LIST_ITEM (L"• Updated manual.")
 NORMAL (L"##5.4.08# (24 March 2015)")
 LIST_ITEM (L"• Sound window: removed a bug that caused a crash in \"Editor info\".")
 NORMAL (L"##5.4.07# (22 March 2015)")

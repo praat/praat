@@ -1,6 +1,6 @@
 /* TextGridEditor.cpp
  *
- * Copyright (C) 1992-2012,2013,2014 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,8 @@ void structTextGridEditor :: v_info () {
 	MelderInfo_writeLine (L"Selected tier: ", Melder_integer (selectedTier));
 	MelderInfo_writeLine (L"TextGrid uses text styles: ", Melder_boolean (p_useTextStyles));
 	MelderInfo_writeLine (L"TextGrid font size: ", Melder_integer (p_fontSize));
-	MelderInfo_writeLine (L"TextGrid alignment: ", kGraphics_horizontalAlignment_getText (p_alignment));
+	MelderInfo_writeLine (L"TextGrid alignment: ",
+		Melder_peekStr32ToWcs (kGraphics_horizontalAlignment_getText (p_alignment)));
 }
 
 /********** UTILITIES **********/
@@ -166,14 +167,14 @@ static void menu_cb_ExtractSelectedTextGrid_preserveTimes (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
 	if (my d_endSelection <= my d_startSelection) Melder_throw ("No selection.");
 	autoTextGrid extract = TextGrid_extractPart ((TextGrid) my data, my d_startSelection, my d_endSelection, true);
-	my broadcastPublication (extract.transfer());
+	Editor_broadcastPublication (me, extract.transfer());
 }
 
 static void menu_cb_ExtractSelectedTextGrid_timeFromZero (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
 	if (my d_endSelection <= my d_startSelection) Melder_throw ("No selection.");
 	autoTextGrid extract = TextGrid_extractPart ((TextGrid) my data, my d_startSelection, my d_endSelection, false);
-	my broadcastPublication (extract.transfer());
+	Editor_broadcastPublication (me, extract.transfer());
 }
 
 void structTextGridEditor :: v_createMenuItems_file_extract (EditorMenu menu) {
@@ -263,19 +264,19 @@ void structTextGridEditor :: v_createMenuItems_file_draw (EditorMenu menu) {
 #ifndef macintosh
 static void menu_cb_Cut (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	my text -> f_cut ();
+	GuiText_cut (my text);
 }
 static void menu_cb_Copy (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	my text -> f_copy ();
+	GuiText_copy (my text);
 }
 static void menu_cb_Paste (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	my text -> f_paste ();
+	GuiText_paste (my text);
 }
 static void menu_cb_Erase (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	my text -> f_remove ();
+	GuiText_remove (my text);
 }
 #endif
 
@@ -285,7 +286,7 @@ static void menu_cb_Genericize (EDITOR_ARGS) {
 	TextGrid_genericize ((TextGrid) my data);
 	FunctionEditor_updateText (me);
 	FunctionEditor_redraw (me);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_Nativize (EDITOR_ARGS) {
@@ -294,7 +295,7 @@ static void menu_cb_Nativize (EDITOR_ARGS) {
 	TextGrid_nativize ((TextGrid) my data);
 	FunctionEditor_updateText (me);
 	FunctionEditor_redraw (me);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 /***** QUERY MENU *****/
@@ -583,7 +584,7 @@ static void insertBoundaryOrPoint (TextGridEditor me, int itier, double t1, doub
 			 * Divide up the label text into left, mid and right, depending on where the text selection is.
 			 */
 			long left, right;
-			wchar_t *text = my text -> f_getStringAndSelectionPosition (& left, & right);
+			wchar_t *text = GuiText_getStringAndSelectionPosition (my text, & left, & right);
 			bool wholeTextIsSelected = right - left == wcslen (text);
 			rightNewInterval = TextInterval_create (t2, interval -> xmax, text + right);
 			text [right] = '\0';
@@ -662,7 +663,7 @@ static void do_insertIntervalOnTier (TextGridEditor me, int itier) {
 			true);
 		my selectedTier = itier;
 		FunctionEditor_marksChanged (me, true);
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 	} catch (MelderError) {
 		Melder_throw ("Interval not inserted.");
 	}
@@ -698,7 +699,7 @@ static void menu_cb_AlignInterval (EDITOR_ARGS) {
 			my p_align_language, my p_align_includeWords, my p_align_includePhonemes);
 	}
 	FunctionEditor_redraw (me);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_AlignmentSettings (EDITOR_ARGS) {
@@ -751,7 +752,7 @@ static void menu_cb_RemovePointOrBoundary (EDITOR_ARGS) {
 	}
 	FunctionEditor_updateText (me);
 	FunctionEditor_redraw (me);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void do_movePointOrBoundary (TextGridEditor me, int where) {
@@ -797,7 +798,7 @@ static void do_movePointOrBoundary (TextGridEditor me, int where) {
 		point -> number = my d_startSelection = my d_endSelection = position;
 	}
 	FunctionEditor_marksChanged (me, true);   // because cursor has moved
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_MoveToB (EDITOR_ARGS) {
@@ -823,7 +824,7 @@ static void do_insertOnTier (TextGridEditor me, int itier) {
 			false);
 		my selectedTier = itier;
 		FunctionEditor_marksChanged (me, true);
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 	} catch (MelderError) {
 		Melder_throw ("Boundary or point not inserted.");
 	}
@@ -871,7 +872,7 @@ static void findInTier (TextGridEditor me) {
 					my d_startSelection = interval -> xmin;
 					my d_endSelection = interval -> xmax;
 					scrollToView (me, my d_startSelection);
-					my text -> f_setSelection (position - text, position - text + wcslen (my findString));
+					GuiText_setSelection (my text, position - text, position - text + wcslen (my findString));
 					return;
 				}
 			}
@@ -890,7 +891,7 @@ static void findInTier (TextGridEditor me) {
 				if (position) {
 					my d_startSelection = my d_endSelection = point -> number;
 					scrollToView (me, point -> number);
-					my text -> f_setSelection (position - text, position - text + wcslen (my findString));
+					GuiText_setSelection (my text, position - text, position - text + wcslen (my findString));
 					return;
 				}
 			}
@@ -904,10 +905,10 @@ static void findInTier (TextGridEditor me) {
 static void do_find (TextGridEditor me) {
 	if (my findString) {
 		long left, right;
-		autostring label = my text -> f_getStringAndSelectionPosition (& left, & right);
+		autostring label = GuiText_getStringAndSelectionPosition (my text, & left, & right);
 		wchar_t *position = wcsstr (label.peek() + right, my findString);   // CRLF BUG?
 		if (position) {
-			my text -> f_setSelection (position - label.peek(), position - label.peek() + wcslen (my findString));
+			GuiText_setSelection (my text, position - label.peek(), position - label.peek() + wcslen (my findString));
 		} else {
 			findInTier (me);
 		}
@@ -949,7 +950,7 @@ static void checkSpellingInTier (TextGridEditor me) {
 					my d_startSelection = interval -> xmin;
 					my d_endSelection = interval -> xmax;
 					scrollToView (me, my d_startSelection);
-					my text -> f_setSelection (position, position + wcslen (notAllowed));
+					GuiText_setSelection (my text, position, position + wcslen (notAllowed));
 					return;
 				}
 			}
@@ -969,7 +970,7 @@ static void checkSpellingInTier (TextGridEditor me) {
 				if (notAllowed) {
 					my d_startSelection = my d_endSelection = point -> number;
 					scrollToView (me, point -> number);
-					my text -> f_setSelection (position, position + wcslen (notAllowed));
+					GuiText_setSelection (my text, position, position + wcslen (notAllowed));
 					return;
 				}
 			}
@@ -984,11 +985,11 @@ static void menu_cb_CheckSpelling (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
 	if (my spellingChecker) {
 		long left, right;
-		autostring label = my text -> f_getStringAndSelectionPosition (& left, & right);
+		autostring label = GuiText_getStringAndSelectionPosition (my text, & left, & right);
 		long position = right;
 		wchar_t *notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, label.peek(), & position);
 		if (notAllowed) {
-			my text -> f_setSelection (position, position + wcslen (notAllowed));
+			GuiText_setSelection (my text, position, position + wcslen (notAllowed));
 		} else {
 			checkSpellingInTier (me);
 		}
@@ -999,11 +1000,11 @@ static void menu_cb_CheckSpellingInInterval (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
 	if (my spellingChecker) {
 		long left, right;
-		autostring label = my text -> f_getStringAndSelectionPosition (& left, & right);
+		autostring label = GuiText_getStringAndSelectionPosition (my text, & left, & right);
 		long position = right;
 		wchar_t *notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, label.peek(), & position);
 		if (notAllowed) {
-			my text -> f_setSelection (position, position + wcslen (notAllowed));
+			GuiText_setSelection (my text, position, position + wcslen (notAllowed));
 		}
 	}
 }
@@ -1011,9 +1012,9 @@ static void menu_cb_CheckSpellingInInterval (EDITOR_ARGS) {
 static void menu_cb_AddToUserDictionary (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
 	if (my spellingChecker) {
-		autostring word = my text -> f_getSelection ();
+		autostring word = GuiText_getSelection (my text);
 		SpellingChecker_addNewWord (my spellingChecker, word.peek());
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 	}
 }
 
@@ -1039,7 +1040,7 @@ static void menu_cb_RenameTier (EDITOR_ARGS) {
 		Thing_setName (tier, newName);
 
 		FunctionEditor_redraw (me);
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
 
@@ -1051,7 +1052,7 @@ static void menu_cb_PublishTier (EDITOR_ARGS) {
 	autoTextGrid publish = TextGrid_createWithoutTiers (1e30, -1e30);
 	TextGrid_addTier (publish.peek(), tier);
 	Thing_setName (publish.peek(), tier -> name);
-	my broadcastPublication (publish.transfer());
+	Editor_broadcastPublication (me, publish.transfer());
 }
 
 static void menu_cb_RemoveAllTextFromTier (EDITOR_ARGS) {
@@ -1071,7 +1072,7 @@ static void menu_cb_RemoveAllTextFromTier (EDITOR_ARGS) {
 
 	FunctionEditor_updateText (me);
 	FunctionEditor_redraw (me);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_RemoveTier (EDITOR_ARGS) {
@@ -1088,7 +1089,7 @@ static void menu_cb_RemoveTier (EDITOR_ARGS) {
 	my selectedTier = 1;
 	FunctionEditor_updateText (me);
 	FunctionEditor_redraw (me);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_AddIntervalTier (EDITOR_ARGS) {
@@ -1117,7 +1118,7 @@ static void menu_cb_AddIntervalTier (EDITOR_ARGS) {
 		my selectedTier = position;
 		FunctionEditor_updateText (me);
 		FunctionEditor_redraw (me);
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
 
@@ -1147,7 +1148,7 @@ static void menu_cb_AddPointTier (EDITOR_ARGS) {
 		my selectedTier = position;
 		FunctionEditor_updateText (me);
 		FunctionEditor_redraw (me);
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
 
@@ -1179,7 +1180,7 @@ static void menu_cb_DuplicateTier (EDITOR_ARGS) {
 		my selectedTier = position;
 		FunctionEditor_updateText (me);
 		FunctionEditor_redraw (me);
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
 
@@ -1309,7 +1310,7 @@ static void gui_text_cb_change (I, GuiTextEvent event) {
 	if (my suppressRedraw) return;   /* Prevent infinite loop if 'draw' method or Editor_broadcastChange calls GuiText_setString. */
 	//Melder_casual ("gui_text_cb_change 2 in editor %ld", me);
 	if (my selectedTier) {
-		wchar_t *text = my text -> f_getString ();
+		wchar_t *text = GuiText_getString (my text);
 		IntervalTier intervalTier;
 		TextTier textTier;
 		_AnyTier_identifyClass ((Function) grid -> tiers -> item [my selectedTier], & intervalTier, & textTier);
@@ -1322,7 +1323,7 @@ static void gui_text_cb_change (I, GuiTextEvent event) {
 				//Melder_casual ("gui_text_cb_change 4 in editor %ld", me);
 				FunctionEditor_redraw (me);
 				//Melder_casual ("gui_text_cb_change 5 in editor %ld", me);
-				my broadcastDataChanged ();
+				Editor_broadcastDataChanged (me);
 				//Melder_casual ("gui_text_cb_change 6 in editor %ld", me);
 			}
 		} else {
@@ -1333,7 +1334,7 @@ static void gui_text_cb_change (I, GuiTextEvent event) {
 				if (wcsspn (text, L" \n\t") != wcslen (text))   // any visible characters?
 				point -> mark = Melder_wcsdup_f (text);
 				FunctionEditor_redraw (me);
-				my broadcastDataChanged ();
+				Editor_broadcastDataChanged (me);
 			}
 		}
 		Melder_free (text);
@@ -1342,7 +1343,7 @@ static void gui_text_cb_change (I, GuiTextEvent event) {
 
 void structTextGridEditor :: v_createChildren () {
 	TextGridEditor_Parent :: v_createChildren ();
-	if (text) text -> f_setChangeCallback (gui_text_cb_change, this);
+	if (text) GuiText_setChangeCallback (text, gui_text_cb_change, this);
 }
 
 void structTextGridEditor :: v_dataChanged () {
@@ -1870,7 +1871,7 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 		my d_endSelection = dummy;
 	}
 	FunctionEditor_marksChanged (me, true);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 int structTextGridEditor :: v_click (double xclick, double yWC, bool shiftKeyPressed) {
@@ -2005,7 +2006,7 @@ int structTextGridEditor :: v_click (double xclick, double yWC, bool shiftKeyPre
 		insertBoundaryOrPoint (this, iClickedTier, our d_startSelection, our d_startSelection, false);
 		our selectedTier = iClickedTier;
 		FunctionEditor_marksChanged (this, true);
-		our broadcastDataChanged ();
+		Editor_broadcastDataChanged (this);
 		if (drag) Graphics_waitMouseUp (our d_graphics);
 		return FunctionEditor_NO_UPDATE_NEEDED;
 	} else {
@@ -2108,9 +2109,9 @@ void structTextGridEditor :: v_updateText () {
 	if (our text) {
 		our suppressRedraw = TRUE;   // prevent valueChangedCallback from redrawing
 		trace ("setting new text %ls", newText);
-		text -> f_setString (newText);
+		GuiText_setString (text, newText);
 		long cursor = wcslen (newText);   // at end
-		text -> f_setSelection (cursor, cursor);
+		GuiText_setSelection (text, cursor, cursor);
 		our suppressRedraw = FALSE;
 	}
 }
@@ -2194,8 +2195,8 @@ void structTextGridEditor :: v_createMenuItems_pitch_picture (EditorMenu menu) {
 
 void structTextGridEditor :: v_updateMenuItems_file () {
 	TextGridEditor_Parent :: v_updateMenuItems_file ();
-	extractSelectedTextGridPreserveTimesButton -> f_setSensitive (our d_endSelection > our d_startSelection);
-	extractSelectedTextGridTimeFromZeroButton  -> f_setSensitive (our d_endSelection > our d_startSelection);
+	GuiThing_setSensitive (extractSelectedTextGridPreserveTimesButton, our d_endSelection > our d_startSelection);
+	GuiThing_setSensitive (extractSelectedTextGridTimeFromZeroButton,  our d_endSelection > our d_startSelection);
 }
 
 /********** EXPORTED **********/
@@ -2216,7 +2217,7 @@ void TextGridEditor_init (TextGridEditor me, const wchar_t *title, TextGrid grid
 		FunctionEditor_marksChanged (me, false);
 	}
 	if (spellingChecker != NULL)
-		my text -> f_setSelection (0, 0);
+		GuiText_setSelection (my text, 0, 0);
 	if (sound && sound -> xmin == 0.0 && grid -> xmin != 0.0 && grid -> xmax > sound -> xmax)
 		Melder_warning ("The time domain of the TextGrid (starting at ",
 			Melder_fixed (grid -> xmin, 6), " seconds) does not overlap with that of the sound "

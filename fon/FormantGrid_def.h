@@ -1,6 +1,6 @@
 /* FormantGrid_def.h
  *
- * Copyright (C) 2008-2011 Paul Boersma & David Weenink
+ * Copyright (C) 2008-2011,2015 Paul Boersma & David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,13 +24,20 @@ oo_DEFINE_CLASS (FormantGrid, Function)
 	oo_COLLECTION (Ordered, bandwidths, RealTier, 0)
 
 	#if oo_DECLARING
-		// overridden methods:
-			virtual bool v_hasGetVector    () { return true; }   virtual double v_getVector    (long irow, long icol);
-			virtual bool v_hasGetFunction1 () { return true; }   virtual double v_getFunction1 (long irow, double x);
-			virtual const wchar_t * v_getUnitText (long ilevel, int unit, unsigned long flags)
-				{ (void) unit; (void) flags; return ilevel & 1 ? L"Formant (Hz)" : L"Bandwidth (Hz)"; }
-			virtual void v_shiftX (double xfrom, double xto);
-			virtual void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto);
+		bool v_hasGetVector ()
+			override { return true; }
+		double v_getVector (long irow, long icol)
+			override;
+		bool v_hasGetFunction1 ()
+			override { return true; }
+		double v_getFunction1 (long irow, double x)
+			override;
+		const wchar_t * v_getUnitText (long ilevel, int /* unit */, unsigned long /* flags */)
+			override { return ilevel & 1 ? L"Formant (Hz)" : L"Bandwidth (Hz)"; }
+		void v_shiftX (double xfrom, double xto)
+			override;
+		void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto)
+			override;
 	#endif
 
 oo_END_CLASS (FormantGrid)

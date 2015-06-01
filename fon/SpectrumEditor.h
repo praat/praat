@@ -2,7 +2,7 @@
 #define _SpectrumEditor_h_
 /* SpectrumEditor.h
  *
- * Copyright (C) 1992-2011,2012,2013 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,26 +23,40 @@
 #include "Spectrum.h"
 
 Thing_define (SpectrumEditor, FunctionEditor) {
-	// new data:
-	public:
-		double minimum, maximum, cursorHeight;
-		GuiMenuItem publishBandButton, publishSoundButton;
-	// overridden methods:
-		virtual void v_createMenus ();
-		virtual void v_createHelpMenuItems (EditorMenu menu);
-		virtual void v_dataChanged ();
-		virtual void v_draw ();
-		virtual int v_click (double xWC, double yWC, bool shiftKeyPressed);
-		virtual void v_play (double tmin, double tmax);
-		virtual void v_createMenuItems_view (EditorMenu menu);
-		virtual const wchar_t * v_format_domain () { return L"Frequency domain:"; }
-		virtual const wchar_t * v_format_short () { return L"%.0f"; }
-		virtual const wchar_t * v_format_long () { return L"%.2f"; }
-		virtual int v_fixedPrecision_long () { return 2; }
-		virtual const wchar_t * v_format_units () { return L"hertz"; }
-		virtual const wchar_t * v_format_totalDuration () { return L"Total bandwidth %.2f hertz"; }
-		virtual const wchar_t * v_format_window () { return L"Visible part %.2f hertz"; }
-		virtual const wchar_t * v_format_selection () { return L"%.2f Hz"; }
+	double minimum, maximum, cursorHeight;
+	GuiMenuItem publishBandButton, publishSoundButton;
+
+	void v_createMenus ()
+		override;
+	void v_createHelpMenuItems (EditorMenu menu)
+		override;
+	void v_dataChanged ()
+		override;
+	void v_draw ()
+		override;
+	int v_click (double xWC, double yWC, bool shiftKeyPressed)
+		override;
+	void v_play (double tmin, double tmax)
+		override;
+	void v_createMenuItems_view (EditorMenu menu)
+		override;
+	const wchar_t * v_format_domain ()
+		override { return L"Frequency domain:"; }
+	const wchar_t * v_format_short ()
+		override { return L"%.0f"; }
+	const wchar_t * v_format_long ()
+		override { return L"%.2f"; }
+	int v_fixedPrecision_long ()
+		override { return 2; }
+	const wchar_t * v_format_units ()
+		override { return L"hertz"; }
+	const wchar_t * v_format_totalDuration ()
+		override { return L"Total bandwidth %.2f hertz"; }
+	const wchar_t * v_format_window ()
+		override { return L"Visible part %.2f hertz"; }
+	const wchar_t * v_format_selection ()
+		override { return L"%.2f Hz"; }
+
 	#include "SpectrumEditor_prefs.h"
 };
 

@@ -1,6 +1,6 @@
 /* Simple.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,6 +67,14 @@ Thing_implement (SimpleString, Data, 0);
 SimpleString SimpleString_create (const wchar_t *string) {
 	autoSimpleString me = Thing_new (SimpleString);
 	my string = Melder_wcsdup (string);
+	return me.transfer();
+}
+
+Thing_implement (SimpleString32, Data, 0);
+
+SimpleString32 SimpleString32_create (const char32 *string) {
+	autoSimpleString32 me = Thing_new (SimpleString32);
+	my string = Melder_str32dup (string);
 	return me.transfer();
 }
 

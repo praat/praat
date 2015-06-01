@@ -1,6 +1,6 @@
 /* GuiRadioButton.cpp
  *
- * Copyright (C) 1993-2011,2012,2013 Paul Boersma
+ * Copyright (C) 1993-2011,2012,2013,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -269,7 +269,7 @@ GuiRadioButton GuiRadioButton_create (GuiForm parent, int left, int right, int t
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 	#endif
 	if (flags & GuiRadioButton_INSENSITIVE) {
-		my f_setSensitive (false);
+		GuiThing_setSensitive (me, false);
 	}
 	if (my d_previous) {
 		Melder_assert (my d_previous != NULL);
@@ -285,60 +285,60 @@ GuiRadioButton GuiRadioButton_createShown (GuiForm parent, int left, int right, 
 	const wchar_t *buttonText, void (*valueChangedCallback) (void *boss, GuiRadioButtonEvent event), void *valueChangedBoss, unsigned long flags)
 {
 	GuiRadioButton me = GuiRadioButton_create (parent, left, right, top, bottom, buttonText, valueChangedCallback, valueChangedBoss, flags);
-	my f_show ();
+	GuiThing_show (me);
 	return me;
 }
 
-bool structGuiRadioButton :: f_getValue () {
+bool GuiRadioButton_getValue (GuiRadioButton me) {
 	bool value = false;
 	#if gtk
-		value = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (d_widget));   // gtk_check_button inherits from gtk_toggle_button
+		value = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (my d_widget));   // gtk_check_button inherits from gtk_toggle_button
 	#elif cocoa
-        value = [d_cocoaRadioButton state] == NSOnState;
+        value = [my d_cocoaRadioButton state] == NSOnState;
 	#elif win
-		value = (Button_GetState (d_widget -> window) & 0x0003) == BST_CHECKED;
+		value = (Button_GetState (my d_widget -> window) & 0x0003) == BST_CHECKED;
 	#elif mac
-		value = GetControlValue (d_widget -> nat.control.handle);
+		value = GetControlValue (my d_widget -> nat.control.handle);
 	#endif
 	return value;
 }
 
-void structGuiRadioButton :: f_set () {
+void GuiRadioButton_set (GuiRadioButton me) {
 	trace ("enter");
-	GuiControlBlockValueChangedCallbacks block (this);   // the value should be set without calling the valueChanged callback (crucial on GTK)
+	GuiControlBlockValueChangedCallbacks block (me);   // the value should be set without calling the valueChanged callback (crucial on GTK)
 	#if gtk
-		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (d_widget), TRUE);
+		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (my d_widget), TRUE);
 	#elif cocoa
-		[d_cocoaRadioButton   setState: NSOnState];
+		[my d_cocoaRadioButton   setState: NSOnState];
 		/*
 		 * Deselect the sister buttons.
 		 */
-		for (GuiRadioButton sibling = d_previous; sibling != NULL; sibling = sibling -> d_previous) {
+		for (GuiRadioButton sibling = my d_previous; sibling != NULL; sibling = sibling -> d_previous) {
 			[sibling -> d_cocoaRadioButton   setState: NSOffState];
 		}
-		for (GuiRadioButton sibling = d_next; sibling != NULL; sibling = sibling -> d_next) {
+		for (GuiRadioButton sibling = my d_next; sibling != NULL; sibling = sibling -> d_next) {
 			[sibling -> d_cocoaRadioButton   setState: NSOffState];
 		}
 	#elif win
-		Button_SetCheck (d_widget -> window, BST_CHECKED);
+		Button_SetCheck (my d_widget -> window, BST_CHECKED);
 		/*
 		 * Deselect the sister buttons.
 		 */
-		for (GuiRadioButton sibling = d_previous; sibling != NULL; sibling = sibling -> d_previous) {
+		for (GuiRadioButton sibling = my d_previous; sibling != NULL; sibling = sibling -> d_previous) {
 			Button_SetCheck (sibling -> d_widget -> window, BST_UNCHECKED);
 		}
-		for (GuiRadioButton sibling = d_next; sibling != NULL; sibling = sibling -> d_next) {
+		for (GuiRadioButton sibling = my d_next; sibling != NULL; sibling = sibling -> d_next) {
 			Button_SetCheck (sibling -> d_widget -> window, BST_UNCHECKED);
 		}
 	#elif mac
-		SetControlValue (d_widget -> nat.control.handle, true);
+		SetControlValue (my d_widget -> nat.control.handle, true);
 		/*
 		 * Deselect the sister buttons.
 		 */
-		for (GuiRadioButton sibling = d_previous; sibling != NULL; sibling = sibling -> d_previous) {
+		for (GuiRadioButton sibling = my d_previous; sibling != NULL; sibling = sibling -> d_previous) {
 			SetControlValue (sibling -> d_widget -> nat.control.handle, false);
 		}
-		for (GuiRadioButton sibling = d_next; sibling != NULL; sibling = sibling -> d_next) {
+		for (GuiRadioButton sibling = my d_next; sibling != NULL; sibling = sibling -> d_next) {
 			SetControlValue (sibling -> d_widget -> nat.control.handle, false);
 		}
 	#endif

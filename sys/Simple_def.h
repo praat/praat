@@ -1,6 +1,6 @@
 /* Simple_def.h
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,12 @@ oo_END_CLASS (SimpleDouble)
 oo_DEFINE_CLASS (SimpleString, Data)
 	oo_STRING (string)
 oo_END_CLASS (SimpleString)
+#undef ooSTRUCT
+
+#define ooSTRUCT SimpleString32
+oo_DEFINE_CLASS (SimpleString32, Data)
+	oo_STRING32 (string)
+oo_END_CLASS (SimpleString32)
 #undef ooSTRUCT
 
 /* End of file Simple_def.h */

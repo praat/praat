@@ -2,7 +2,7 @@
 #define _TimeSoundEditor_h_
 /* TimeSoundEditor.h
  *
- * Copyright (C) 1992-2012,2013,2014 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,29 +32,35 @@ struct TimeSoundEditor_sound {
 };
 
 Thing_define (TimeSoundEditor, FunctionEditor) {
-	// new data:
-		public:
-			bool d_ownSound;
-			struct TimeSoundEditor_sound d_sound;
-			struct { LongSound data; } d_longSound;
-			GuiMenuItem drawButton, publishButton, publishPreserveButton, publishWindowButton, publishOverlapButton;
-			GuiMenuItem writeAiffButton, d_saveAs24BitWavButton, d_saveAs32BitWavButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton, writeFlacButton;
-	// overridden methods:
-		protected:
-			virtual void v_destroy ();
-			virtual void v_info ();
-			virtual void v_createMenuItems_file (EditorMenu menu);
-			virtual void v_createMenuItems_query_info (EditorMenu menu);
-			virtual void v_createMenuItems_file_draw (EditorMenu menu);
-			virtual void v_createMenuItems_file_extract (EditorMenu menu);
-			virtual void v_createMenuItems_file_write (EditorMenu menu);
-			virtual void v_createMenuItems_view (EditorMenu menu);
-			virtual int v_click (double xbegin, double ybegin, bool shiftKeyPressed);   // catch channel scrolling
-	// new methods:
-		public:   // BUG
-			virtual void v_createMenuItems_view_sound (EditorMenu menu);
-			virtual void v_updateMenuItems_file ();
-			virtual const wchar_t * v_getChannelName (long channelNumber) { (void) channelNumber; return NULL; }
+	bool d_ownSound;
+	struct TimeSoundEditor_sound d_sound;
+	struct { LongSound data; } d_longSound;
+	GuiMenuItem drawButton, publishButton, publishPreserveButton, publishWindowButton, publishOverlapButton;
+	GuiMenuItem writeAiffButton, d_saveAs24BitWavButton, d_saveAs32BitWavButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton, writeFlacButton;
+
+	void v_destroy ()
+		override;
+	void v_info ()
+		override;
+	void v_createMenuItems_file (EditorMenu menu)
+		override;
+	void v_createMenuItems_query_info (EditorMenu menu)
+		override;
+	void v_createMenuItems_file_draw (EditorMenu menu)
+		override;
+	void v_createMenuItems_file_extract (EditorMenu menu)
+		override;
+	void v_createMenuItems_file_write (EditorMenu menu)
+		override;
+	void v_createMenuItems_view (EditorMenu menu)
+		override;
+	int v_click (double xbegin, double ybegin, bool shiftKeyPressed)
+		override;   // catch channel scrolling
+
+	virtual void v_createMenuItems_view_sound (EditorMenu menu);
+	virtual void v_updateMenuItems_file ();
+	virtual const wchar_t * v_getChannelName (long channelNumber) { (void) channelNumber; return NULL; }
+
 	#include "TimeSoundEditor_prefs.h"
 };
 

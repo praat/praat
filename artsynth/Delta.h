@@ -54,12 +54,11 @@ struct structDelta_Tube
 };
 
 Thing_define (Delta, Thing) {
-	// new data:
-	public:
-		int numberOfTubes;              // >= 1
-		struct structDelta_Tube *tube;  // tube [1..numberOfTubes]
-	// overridden methods:
-		virtual void v_destroy ();
+	int numberOfTubes;              // >= 1
+	struct structDelta_Tube *tube;  // tube [1..numberOfTubes]
+
+	void v_destroy ()
+		override;
 };
 
 void Delta_init (Delta me, int numberOfTubes);

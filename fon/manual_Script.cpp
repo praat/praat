@@ -1,6 +1,6 @@
 /* manual_Script.cpp
  *
- * Copyright (C) 1992-2011,2013,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2883,7 +2883,7 @@ NORMAL (L"The string variable \"mean\\$ \" now contains the entire string \"150 
 NORMAL (L"This works for every command that would otherwise write into the Info window.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 6.4. Files", L"ppgb", 20140111)
+MAN_BEGIN (L"Scripting 6.4. Files", L"ppgb", 20150601)
 INTRO (L"You can read from and write to text files from a Praat script.")
 ENTRY (L"Reading a file")
 NORMAL (L"You can check the availability of a file for reading with the function")
@@ -2894,7 +2894,7 @@ NORMAL (L"which returns 1 (true) if the file exists and can be read, and 0 (fals
 	"\"hello.wav\" refers to ##Paolo/project1/hello.wav#, the file name \"yesterday/hello.wav\" "
 	"refers to ##Paolo/project1/yesterday/hello.wav#, and the file name \"../project2/hello.wav\" "
 	"refers to ##Paolo/project2/hello.wav# (\"..\" goes one directory up). "
-	"You can also use full path names such as \"C:/Documents and Settings/Paolo/project1/hello.wav\" "
+	"You can also use full path names such as \"C:/Users/Paolo/project1/hello.wav\" "
 	"on Windows and \"/Users/Paolo/project1/hello.wav\" on the Mac.")
 NORMAL (L"To read the contents of an existing text file into a string variable or into a numeric variable, you use")
 CODE (L"text\\$  = readFile\\$  (\"myFile.txt\")")
@@ -2927,7 +2927,7 @@ NORMAL (L"You can create a directory with")
 CODE (L"#createDirectory: %%directoryName\\$ %")
 NORMAL (L"where, as with file names, %%directoryName\\$ % can be relative to the directory of the script "
 	"(e.g. \"data\", or \"yesterday/data\", or \"../project2/yesterday/data\") "
-	"or an absolute path (e.g. \"C:/Documents and Settings/Paolo/project1/yesterday/data\" on Windows "
+	"or an absolute path (e.g. \"C:/Users/Paolo/project1/yesterday/data\" on Windows "
 	"or \"/Users/Paolo/project1/yesterday/data\" on the Mac). "
 	"If the directory already exists, this command does nothing.")
 NORMAL (L"You can delete an existing file with the function")

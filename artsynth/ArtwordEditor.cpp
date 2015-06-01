@@ -1,6 +1,6 @@
 /* ArtwordEditor.cpp
  *
- * Copyright (C) 1992-2011,2013 Paul Boersma
+ * Copyright (C) 1992-2011,2013,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,12 +30,12 @@ void structArtwordEditor :: v_destroy () {
 static void updateList (ArtwordEditor me) {
 	Artword artword = (Artword) my data;
 	ArtwordData a = & artword -> data [my feature];
-	my list -> f_deleteAllItems ();
+	GuiList_deleteAllItems (my list);
 	for (int i = 1; i <= a -> numberOfTargets; i ++) {
 		static MelderString itemText = { 0 };
 		MelderString_empty (& itemText);
 		MelderString_append (& itemText, Melder_single (a -> times [i]), L"  ", Melder_single (a -> targets [i]));
-		my list -> f_insertItem (itemText.string, i);
+		GuiList_insertItem (my list, itemText.string, i);
 	}
 	Graphics_updateWs (my graphics);
 }
@@ -44,23 +44,24 @@ static void gui_button_cb_removeTarget (I, GuiButtonEvent event) {
 	(void) event;
 	iam (ArtwordEditor);
 	Artword artword = (Artword) my data;
-	long numberOfSelectedPositions, *selectedPositions = my list -> f_getSelectedPositions (& numberOfSelectedPositions);   // BUG memory
+	long numberOfSelectedPositions;
+	long *selectedPositions = GuiList_getSelectedPositions (my list, & numberOfSelectedPositions);   // BUG memory
 	if (selectedPositions != NULL) {
 		for (long ipos = numberOfSelectedPositions; ipos > 0; ipos --)
 			Artword_removeTarget (artword, my feature, selectedPositions [ipos]);
 	}
 	NUMvector_free <long> (selectedPositions, 1);
 	updateList (me);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void gui_button_cb_addTarget (I, GuiButtonEvent event) {
 	(void) event;
 	iam (ArtwordEditor);
 	Artword artword = (Artword) my data;
-	wchar_t *timeText = my time -> f_getString ();
+	wchar_t *timeText = GuiText_getString (my time);
 	double tim = Melder_atof (timeText);
-	wchar_t *valueText = my value -> f_getString ();
+	wchar_t *valueText = GuiText_getString (my value);
 	double value = Melder_atof (valueText);
 	ArtwordData a = & artword -> data [my feature];
 	int i = 1, oldCount = a -> numberOfTargets;
@@ -80,12 +81,12 @@ static void gui_button_cb_addTarget (I, GuiButtonEvent event) {
 	MelderString_empty (& itemText);
 	MelderString_append (& itemText, Melder_single (tim), L"  ", Melder_single (value));
 	if (a -> numberOfTargets == oldCount) {
-		my list -> f_replaceItem (itemText.string, i);
+		GuiList_replaceItem (my list, itemText.string, i);
 	} else {
-		my list -> f_insertItem (itemText.string, i);
+		GuiList_insertItem (my list, itemText.string, i);
 	}
 	Graphics_updateWs (my graphics);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void gui_radiobutton_cb_toggle (I, GuiRadioButtonEvent event) {
@@ -114,8 +115,8 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	double xWC, yWC;
 	Graphics_DCtoWC (my graphics, event -> x, event -> y, & xWC, & yWC);
 	Graphics_unsetInner (my graphics);
-	my time  -> f_setString (Melder_fixed (xWC, 6));
-	my value -> f_setString (Melder_fixed (yWC, 6));
+	GuiText_setString (my time,  Melder_fixed (xWC, 6));
+	GuiText_setString (my value, Melder_fixed (yWC, 6));
 }
 
 void structArtwordEditor :: v_dataChanged () {
@@ -153,7 +154,7 @@ void structArtwordEditor :: v_createChildren () {
 	}
 	GuiRadioGroup_end ();
 	feature = 1;
-	button [feature] -> f_set ();
+	GuiRadioButton_set (button [feature]);
 }
 
 ArtwordEditor ArtwordEditor_create (const wchar_t *title, Artword data) {

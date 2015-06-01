@@ -52,9 +52,9 @@ wchar_t * Melder_getenv (const wchar_t *variableName) {
 	#endif
 }
 
-void Melder_system (const wchar_t *command) {
+void Melder_system (const char32 *command) {
 	#if defined (macintosh) || defined (UNIX)
-		if (system (Melder_peekWcsToUtf8 (command)) != 0)
+		if (system (Melder_peekStr32ToUtf8 (command)) != 0)
 			Melder_throw ("System command failed.");
 	#elif defined (_WIN32)
 		STARTUPINFO siStartInfo;
@@ -85,7 +85,7 @@ void Melder_system (const wchar_t *command) {
 				}
 			}
 		}
-		MelderString_append (& buffer, L" /c ", command);
+		MelderString_append (& buffer, L" /c ", Melder_peekStr32ToWcs (command));
         memset (& siStartInfo, 0, sizeof (siStartInfo));
         siStartInfo. cb = sizeof (siStartInfo);
 		if (! CreateProcess (NULL, buffer.string, NULL, NULL, TRUE, 0, NULL, NULL, & siStartInfo, & piProcInfo))

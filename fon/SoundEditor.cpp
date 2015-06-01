@@ -1,6 +1,6 @@
 /* SoundEditor.cpp
  *
- * Copyright (C) 1992-2012,2013,2014 Paul Boersma, 2007 Erez Volk (FLAC support)
+ * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma, 2007 Erez Volk (FLAC support)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,7 +148,7 @@ static void menu_cb_Cut (EDITOR_ARGS) {
 			my v_destroy_analysis ();
 			FunctionEditor_ungroup (me);
 			FunctionEditor_marksChanged (me, false);
-			my broadcastDataChanged ();
+			Editor_broadcastDataChanged (me);
 		} else {
 			Melder_warning (L"No samples selected.");
 		}
@@ -218,7 +218,7 @@ static void menu_cb_Paste (EDITOR_ARGS) {
 	my v_destroy_analysis ();
 	FunctionEditor_ungroup (me);
 	FunctionEditor_marksChanged (me, false);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_SetSelectionToZero (EDITOR_ARGS) {
@@ -234,7 +234,7 @@ static void menu_cb_SetSelectionToZero (EDITOR_ARGS) {
 	}
 	my v_destroy_analysis ();
 	FunctionEditor_redraw (me);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_ReverseSelection (EDITOR_ARGS) {
@@ -243,7 +243,7 @@ static void menu_cb_ReverseSelection (EDITOR_ARGS) {
 	Sound_reverse ((Sound) my data, my d_startSelection, my d_endSelection);
 	my v_destroy_analysis ();
 	FunctionEditor_redraw (me);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 /***** SELECT MENU *****/
@@ -396,10 +396,10 @@ void structSoundEditor :: v_draw () {
 	long selectedSamples = Sampled_getWindowSamples (data, d_startSelection, d_endSelection, & first, & last);
 	v_updateMenuItems_file ();
 	if (d_sound.data) {
-		cutButton     -> f_setSensitive (selectedSamples != 0 && selectedSamples < d_sound.data -> nx);
-		copyButton    -> f_setSensitive (selectedSamples != 0);
-		zeroButton    -> f_setSensitive (selectedSamples != 0);
-		reverseButton -> f_setSensitive (selectedSamples != 0);
+		GuiThing_setSensitive (cutButton     , selectedSamples != 0 && selectedSamples < d_sound.data -> nx);
+		GuiThing_setSensitive (copyButton    , selectedSamples != 0);
+		GuiThing_setSensitive (zeroButton    , selectedSamples != 0);
+		GuiThing_setSensitive (reverseButton , selectedSamples != 0);
 	}
 }
 
@@ -435,7 +435,7 @@ void structSoundEditor :: v_unhighlightSelection (double left, double right, dou
 void SoundEditor_init (SoundEditor me, const wchar_t *title, Sampled data) {
 	/*
 	 * my longSound.data or my sound.data have to be set before we call FunctionEditor_init,
-	 * because createMenus expect that one of them is not NULL.
+	 * because createMenus expects that one of them is not NULL.
 	 */
 	TimeSoundAnalysisEditor_init (me, title, data, data, false);
 	if (my d_longSound.data && my d_endWindow - my d_startWindow > 30.0) {

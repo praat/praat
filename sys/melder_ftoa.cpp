@@ -1,6 +1,6 @@
 /* melder_ftoa.cpp
  *
- * Copyright (C) 1992-2011,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
  * pb 2010/10/16 Melder_naturalLogarithm
  * pb 2011/04/05 C++
  * pb 2014/01/09 use fabs in calculating minimum precision
+ * pb 2015/05/28 char32
  */
 
 #include "melder.h"
@@ -44,13 +45,28 @@
 #define MAXIMUM_NUMERIC_STRING_LENGTH  400
 	/* = sign + 324 + point + 60 + e + sign + 3 + null byte + ("·10^^" - "e") + 4 extra */
 
-static wchar_t buffers [NUMBER_OF_BUFFERS] [MAXIMUM_NUMERIC_STRING_LENGTH + 1];
+static  char   buffers8  [NUMBER_OF_BUFFERS] [MAXIMUM_NUMERIC_STRING_LENGTH + 1];
+static wchar_t buffersW  [NUMBER_OF_BUFFERS] [MAXIMUM_NUMERIC_STRING_LENGTH + 1];
+static  char32 buffers32 [NUMBER_OF_BUFFERS] [MAXIMUM_NUMERIC_STRING_LENGTH + 1];
 static int ibuffer = 0;
 
-const wchar_t * Melder_integer (int64_t value) {
+#define CONVERT_BUFFER_TO_WCHAR \
+	wchar_t *q = buffersW [ibuffer]; \
+	while (*p != '\0') * q ++ = (wchar_t) (char8) * p ++; /* change sign before extending (should be unnecessary, because all characters should be below 128) */ \
+	*q = L'\0'; \
+	return buffersW [ibuffer];
+#define CONVERT_BUFFER_TO_CHAR32 \
+	char32 *q = buffers32 [ibuffer]; \
+	while (*p != '\0') * q ++ = (char32) (char8) * p ++; /* change sign before extending (should be unnecessary, because all characters should be below 128) */ \
+	*q = U'\0'; \
+	return buffers32 [ibuffer];
+
+const char * Melder8_integer (int64_t value) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	if (sizeof (long) == 8) {
-		swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%ld", value);
+		int n = snprintf (buffers8 [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH + 1, "%ld", (long) value);   // cast to identical type, to make compiler happy
+		Melder_assert (n > 0);
+		Melder_assert (n <= MAXIMUM_NUMERIC_STRING_LENGTH);
 	} else if (sizeof (long long) == 8) {
 		/*
 		 * There are buggy platforms (namely 32-bit Mingw on Windows XP) that support long long and %lld but that convert
@@ -58,185 +74,236 @@ const wchar_t * Melder_integer (int64_t value) {
 		 * There are also buggy platforms (namely 32-bit gcc on Linux) that support long long and %I64d but that convert
 		 * the argument to a 32-bit long.
 		 */
-		static const wchar_t *formatString = NULL;
+		static const char *formatString = NULL;
 		if (! formatString) {
-			wchar_t tryBuffer [MAXIMUM_NUMERIC_STRING_LENGTH + 1];
-			swprintf (tryBuffer, MAXIMUM_NUMERIC_STRING_LENGTH, L"%lld", 1000000000000LL);
-			if (wcsequ (tryBuffer, L"1000000000000")) {
-				formatString = L"%lld";
-			} else {
-				swprintf (tryBuffer, MAXIMUM_NUMERIC_STRING_LENGTH, L"%I64d", 1000000000000LL);
-				if (wcsequ (tryBuffer, L"1000000000000")) {
-					formatString = L"%I64d";
-				} else {
-					wprintf (tryBuffer);
-					Melder_fatal ("Found no way to print 64-bit integers.");
+			char tryBuffer [MAXIMUM_NUMERIC_STRING_LENGTH + 1];
+			formatString = "%lld";
+			sprintf (tryBuffer, formatString, 1000000000000LL);
+			if (! strequ (tryBuffer, "1000000000000")) {
+				formatString = "%I64d";
+				sprintf (tryBuffer, formatString, 1000000000000LL);
+				if (! strequ (tryBuffer, "1000000000000")) {
+					Melder_fatal ("Found no way to print 64-bit integers on this machine.");
 				}
 			}
 		}
-		swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, formatString, value);
+		int n = snprintf (buffers8 [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH + 1, formatString, value);
+		Melder_assert (n > 0);
+		Melder_assert (n <= MAXIMUM_NUMERIC_STRING_LENGTH);
 	} else {
 		Melder_fatal ("Neither long nor long long is 8 bytes on this machine.");
 	}
-	return buffers [ibuffer];
+	return buffers8 [ibuffer];
+}
+const wchar_t * MelderW_integer (int64_t value) {
+	const char *p = Melder8_integer (value);
+	CONVERT_BUFFER_TO_WCHAR
+}
+const char32 * Melder32_integer (int64_t value) {
+	const char *p = Melder8_integer (value);
+	CONVERT_BUFFER_TO_CHAR32
 }
 
-const wchar_t * Melder_bigInteger (int64_t value) {
-	wchar_t *text;
-	int quintillions, quadrillions, trillions, billions, millions, thousands, units;
-	bool firstDigitPrinted = false;
+const char * Melder8_bigInteger (int64_t value) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
-	text = buffers [ibuffer];
-	text [0] = L'\0';
+	char *text = buffers8 [ibuffer];
+	text [0] = '\0';
 	if (value < 0) {
-		swprintf (text, MAXIMUM_NUMERIC_STRING_LENGTH, L"-");
+		sprintf (text, "-");
 		value = - value;
 	}
-	quintillions =  value / 1000000000000000000LL;
-	value -= quintillions * 1000000000000000000LL;
-	quadrillions =  value / 1000000000000000LL;
-	value -= quadrillions * 1000000000000000LL;
-	trillions =     value / 1000000000000LL;
-	value -=    trillions * 1000000000000LL;
-	billions =      value / 1000000000LL;
-	value -=     billions * 1000000000LL;
-	millions =      value / 1000000LL;
-	value -=     millions * 1000000LL;
-	thousands =     value / 1000LL;
-	value -=    thousands * 1000LL;
-	units = value;
+	int quintillions =  value / 1000000000000000000LL;
+	value -=     quintillions * 1000000000000000000LL;
+	int quadrillions =  value / 1000000000000000LL;
+	value -=     quadrillions * 1000000000000000LL;
+	int trillions =     value / 1000000000000LL;
+	value -=        trillions * 1000000000000LL;
+	int billions =      value / 1000000000LL;
+	value -=         billions * 1000000000LL;
+	int millions =      value / 1000000LL;
+	value -=         millions * 1000000LL;
+	int thousands =     value / 1000LL;
+	value -=        thousands * 1000LL;
+	int units = value;
+	bool firstDigitPrinted = false;
 	if (quintillions) {
-		swprintf (text + wcslen (text), MAXIMUM_NUMERIC_STRING_LENGTH, firstDigitPrinted ? L"%03d," : L"%d,", quintillions);
+		sprintf (text + strlen (text), firstDigitPrinted ? "%03d," : "%d,", quintillions);
 		firstDigitPrinted = TRUE;
 	}
 	if (quadrillions || firstDigitPrinted) {
-		swprintf (text + wcslen (text), MAXIMUM_NUMERIC_STRING_LENGTH, firstDigitPrinted ? L"%03d," : L"%d,", quadrillions);
+		sprintf (text + strlen (text), firstDigitPrinted ? "%03d," : "%d,", quadrillions);
 		firstDigitPrinted = TRUE;
 	}
 	if (trillions || firstDigitPrinted) {
-		swprintf (text + wcslen (text), MAXIMUM_NUMERIC_STRING_LENGTH, firstDigitPrinted ? L"%03d," : L"%d,", trillions);
+		sprintf (text + strlen (text), firstDigitPrinted ? "%03d," : "%d,", trillions);
 		firstDigitPrinted = TRUE;
 	}
 	if (billions || firstDigitPrinted) {
-		swprintf (text + wcslen (text), MAXIMUM_NUMERIC_STRING_LENGTH, firstDigitPrinted ? L"%03d," : L"%d,", billions);
+		sprintf (text + strlen (text), firstDigitPrinted ? "%03d," : "%d,", billions);
 		firstDigitPrinted = TRUE;
 	}
 	if (millions || firstDigitPrinted) {
-		swprintf (text + wcslen (text), MAXIMUM_NUMERIC_STRING_LENGTH, firstDigitPrinted ? L"%03d," : L"%d,", millions);
+		sprintf (text + strlen (text), firstDigitPrinted ? "%03d," : "%d,", millions);
 		firstDigitPrinted = TRUE;
 	}
 	if (thousands || firstDigitPrinted) {
-		swprintf (text + wcslen (text), MAXIMUM_NUMERIC_STRING_LENGTH, firstDigitPrinted ? L"%03d," : L"%d,", thousands);
+		sprintf (text + strlen (text), firstDigitPrinted ? "%03d," : "%d,", thousands);
 		firstDigitPrinted = TRUE;
 	}
-	swprintf (text + wcslen (text), MAXIMUM_NUMERIC_STRING_LENGTH, firstDigitPrinted ? L"%03d" : L"%d", units);
+	sprintf (text + strlen (text), firstDigitPrinted ? "%03d" : "%d", units);
 	return text;
 }
+const wchar_t * MelderW_bigInteger (int64_t value) {
+	const char *p = Melder8_bigInteger (value);
+	CONVERT_BUFFER_TO_WCHAR
+}
+const char32 * Melder32_bigInteger (int64_t value) {
+	const char *p = Melder8_bigInteger (value);
+	CONVERT_BUFFER_TO_CHAR32
+}
 
-const wchar_t * Melder_boolean (bool value) {
+const char * Melder8_boolean (bool value) {
+	return value ? "yes" : "no";
+}
+const wchar_t * MelderW_boolean (bool value) {
 	return value ? L"yes" : L"no";
 }
+const char32 * Melder32_boolean (bool value) {
+	return value ? U"yes" : U"no";
+}
 
-const wchar_t * Melder_double (double value) {
-	if (value == NUMundefined) return L"--undefined--";
+const char * Melder8_double (double value) {
+	if (value == NUMundefined) return "--undefined--";
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
-	#if defined (macintosh)
-		/*
-		 * OPTIMIZATION: strtod may be 100 times faster than wcstod on the Mac. 20080106
-		 */
-		static char buffer [MAXIMUM_NUMERIC_STRING_LENGTH + 1];
-		sprintf (buffer, "%.15g", value);
-		if (strtod (buffer, NULL) != value) {
-			sprintf (buffer, "%.16g", value);
-			if (strtod (buffer, NULL) != value) {
-				sprintf (buffer, "%.17g", value);
-			}
+	sprintf (buffers8 [ibuffer], "%.15g", value);
+	if (strtod (buffers8 [ibuffer], NULL) != value) {
+		sprintf (buffers8 [ibuffer], "%.16g", value);
+		if (strtod (buffers8 [ibuffer], NULL) != value) {
+			sprintf (buffers8 [ibuffer], "%.17g", value);
 		}
-		#if 0
-			wchar_t *to = & buffers [ibuffer] [0];
-			char *from = & buffer [0];
-			for (; (*to++ = *from++) != '\0';) ;
-			*to = '\0';
-		#else
-			Melder_8bitToWcs_inline (buffer, buffers [ibuffer], kMelder_textInputEncoding_UTF8);   // guaranteed not to fail
-		#endif
-	#else
-		swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.15g", value);
-		if (wcstod (buffers [ibuffer], NULL) != value) {
-			swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.16g", value);
-			if (wcstod (buffers [ibuffer], NULL) != value) {
-				swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.17g", value);
-			}
-		}
-	#endif
-	return buffers [ibuffer];
+	}
+	return buffers8 [ibuffer];
+}
+const wchar_t * MelderW_double (double value) {
+	const char *p = Melder8_double (value);
+	CONVERT_BUFFER_TO_WCHAR
+}
+const char32 * Melder32_double (double value) {
+	const char *p = Melder8_double (value);
+	CONVERT_BUFFER_TO_CHAR32
 }
 
-const wchar_t * Melder_single (double value) {
-	if (value == NUMundefined) return L"--undefined--";
+const char * Melder8_single (double value) {
+	if (value == NUMundefined) return "--undefined--";
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
-	swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.9g", value);
-	return buffers [ibuffer];
+	sprintf (buffers8 [ibuffer], "%.9g", value);
+	return buffers8 [ibuffer];
+}
+const wchar_t * MelderW_single (double value) {
+	const char *p = Melder8_single (value);
+	CONVERT_BUFFER_TO_WCHAR
+}
+const char32 * Melder32_single (double value) {
+	const char *p = Melder8_single (value);
+	CONVERT_BUFFER_TO_CHAR32
 }
 
-const wchar_t * Melder_half (double value) {
-	if (value == NUMundefined) return L"--undefined--";
+const char * Melder8_half (double value) {
+	if (value == NUMundefined) return "--undefined--";
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
-	swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.4g", value);
-	return buffers [ibuffer];
+	sprintf (buffers8 [ibuffer], "%.4g", value);
+	return buffers8 [ibuffer];
+}
+const wchar_t * MelderW_half (double value) {
+	const char *p = Melder8_half (value);
+	CONVERT_BUFFER_TO_WCHAR
+}
+const char32 * Melder32_half (double value) {
+	const char *p = Melder8_half (value);
+	CONVERT_BUFFER_TO_CHAR32
 }
 
-const wchar_t * Melder_fixed (double value, int precision) {
+const char * Melder8_fixed (double value, int precision) {
 	int minimumPrecision;
-	if (value == NUMundefined) return L"--undefined--";
-	if (value == 0.0) return L"0";
+	if (value == NUMundefined) return "--undefined--";
+	if (value == 0.0) return "0";
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	if (precision > 60) precision = 60;
 	minimumPrecision = - (int) floor (log10 (fabs (value)));
-	swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.*f",
+	int n = snprintf (buffers8 [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH + 1, "%.*f",
 		minimumPrecision > precision ? minimumPrecision : precision, value);
-	return buffers [ibuffer];
+	Melder_assert (n > 0);
+	Melder_assert (n <= MAXIMUM_NUMERIC_STRING_LENGTH);
+	return buffers8 [ibuffer];
+}
+const wchar_t * MelderW_fixed (double value, int precision) {
+	const char *p = Melder8_fixed (value, precision);
+	CONVERT_BUFFER_TO_WCHAR
+}
+const char32 * Melder32_fixed (double value, int precision) {
+	const char *p = Melder8_fixed (value, precision);
+	CONVERT_BUFFER_TO_CHAR32
 }
 
-const wchar_t * Melder_fixedExponent (double value, int exponent, int precision) {
+const char * Melder8_fixedExponent (double value, int exponent, int precision) {
 	double factor = pow (10, exponent);
 	int minimumPrecision;
-	if (value == NUMundefined) return L"--undefined--";
-	if (value == 0.0) return L"0";
+	if (value == NUMundefined) return "--undefined--";
+	if (value == 0.0) return "0";
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	if (precision > 60) precision = 60;
 	value /= factor;
 	minimumPrecision = - (int) floor (log10 (fabs (value)));
-	swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.*fE%d",
+	int n = snprintf (buffers8 [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH + 1, "%.*fE%d",
 		minimumPrecision > precision ? minimumPrecision : precision, value, exponent);
-	return buffers [ibuffer];
+	Melder_assert (n > 0);
+	Melder_assert (n <= MAXIMUM_NUMERIC_STRING_LENGTH);
+	return buffers8 [ibuffer];
+}
+const wchar_t * MelderW_fixedExponent (double value, int exponent, int precision) {
+	const char *p = Melder8_fixedExponent (value, exponent, precision);
+	CONVERT_BUFFER_TO_WCHAR
+}
+const char32 * Melder32_fixedExponent (double value, int exponent, int precision) {
+	const char *p = Melder8_fixedExponent (value, exponent, precision);
+	CONVERT_BUFFER_TO_CHAR32
 }
 
-const wchar_t * Melder_percent (double value, int precision) {
+const char * Melder8_percent (double value, int precision) {
 	int minimumPrecision;
-	if (value == NUMundefined) return L"--undefined--";
-	if (value == 0.0) return L"0";
+	if (value == NUMundefined) return "--undefined--";
+	if (value == 0.0) return "0";
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	if (precision > 60) precision = 60;
 	value *= 100.0;
 	minimumPrecision = - (int) floor (log10 (fabs (value)));
-	swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.*f%%",
+	int n = snprintf (buffers8 [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH + 1, "%.*f%%",
 		minimumPrecision > precision ? minimumPrecision : precision, value);
-	return buffers [ibuffer];
+	Melder_assert (n > 0);
+	Melder_assert (n <= MAXIMUM_NUMERIC_STRING_LENGTH);
+	return buffers8 [ibuffer];
+}
+const wchar_t * MelderW_percent (double value, int precision) {
+	const char *p = Melder8_percent (value, precision);
+	CONVERT_BUFFER_TO_WCHAR
+}
+const char32 * Melder32_percent (double value, int precision) {
+	const char *p = Melder8_percent (value, precision);
+	CONVERT_BUFFER_TO_CHAR32
 }
 
 const wchar_t * Melder_float (const wchar_t *number) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	if (wcschr (number, 'e') == NULL) {
-		wcscpy (buffers [ibuffer], number);
+		wcscpy (buffersW [ibuffer], number);
 	} else {
-		wchar_t *b = buffers [ibuffer];
+		wchar_t *b = buffersW [ibuffer];
 		const wchar_t *n = number;
 		while (*n != 'e') *(b++) = *(n++); *b = '\0';
 		if (number [0] == '1' && number [1] == 'e') {
-			wcscpy (buffers [ibuffer], L"10^^"); b = buffers [ibuffer] + 4;
+			wcscpy (buffersW [ibuffer], L"10^^"); b = buffersW [ibuffer] + 4;
 		} else {
-			wcscat (buffers [ibuffer], L"·10^^"); b += 7;
+			wcscat (buffersW [ibuffer], L"·10^^"); b += 7;
 		}
 		Melder_assert (*n == 'e');
 		if (*++n == '+') n ++;   // ignore leading plus sign in exponent
@@ -246,12 +313,12 @@ const wchar_t * Melder_float (const wchar_t *number) {
 		*(b++) = '^';
 		while (*n != '\0') *(b++) = *(n++); *b = '\0';
 	}
-	return buffers [ibuffer];
+	return buffersW [ibuffer];
 }
 
-const wchar_t * Melder_naturalLogarithm (double lnNumber) {
-	if (lnNumber == NUMundefined) return L"--undefined--";
-	if (lnNumber == -INFINITY) return L"0";
+const char * Melder8_naturalLogarithm (double lnNumber) {
+	if (lnNumber == NUMundefined) return "--undefined--";
+	if (lnNumber == -INFINITY) return "0";
 	double log10Number = lnNumber * NUMlog10e;
 	if (log10Number < -41) {
 		if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
@@ -262,16 +329,24 @@ const wchar_t * Melder_naturalLogarithm (double lnNumber) {
 			remainder10 *= 10;
 			ceiling --;
 		}
-		swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.15g", remainder10);
-		if (wcstod (buffers [ibuffer], NULL) != remainder10) {
-			swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.16g", remainder10);
-			if (wcstod (buffers [ibuffer], NULL) != remainder10) swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.17g", remainder10);
+		sprintf (buffers8 [ibuffer], "%.15g", remainder10);
+		if (strtod (buffers8 [ibuffer], NULL) != remainder10) {
+			sprintf (buffers8 [ibuffer], "%.16g", remainder10);
+			if (strtod (buffers8 [ibuffer], NULL) != remainder10) sprintf (buffers8 [ibuffer], "%.17g", remainder10);
 		}
-		swprintf (buffers [ibuffer] + wcslen (buffers [ibuffer]), 100, L"e-%ld", ceiling);
+		sprintf (buffers8 [ibuffer] + strlen (buffers8 [ibuffer]), "e-%ld", ceiling);
 	} else {
-		return Melder_double (exp (lnNumber));
+		return Melder8_double (exp (lnNumber));
 	}
-	return buffers [ibuffer];
+	return buffers8 [ibuffer];
+}
+const wchar_t * MelderW_naturalLogarithm (double lnNumber) {
+	const char *p = Melder8_naturalLogarithm (lnNumber);
+	CONVERT_BUFFER_TO_WCHAR
+}
+const char32 * Melder32_naturalLogarithm (double lnNumber) {
+	const char *p = Melder8_naturalLogarithm (lnNumber);
+	CONVERT_BUFFER_TO_CHAR32
 }
 
 /* End of file melder_ftoa.cpp */

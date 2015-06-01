@@ -2,7 +2,7 @@
 #define _GraphicsP_h_
 /* GraphicsP.h
  *
- * Copyright (C) 1992-2011,2012,2013,2014 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,63 +49,78 @@ void Graphics_init (Graphics me, int resolution);
 #define kGraphics_font_JAPANESE  (kGraphics_font_MAX + 6)
 
 Thing_define (GraphicsScreen, Graphics) {
-	// new data:
-	public:
-		bool d_isPng;
-		structMelderFile d_file;
-		#if defined (NO_GRAPHICS)
-		#elif defined (UNIX)
-			GdkDisplay *d_display;
-			#if ALLOW_GDK_DRAWING
-				GdkDrawable *d_window;
-				GdkGC *d_gdkGraphicsContext;
-			#else
-				GdkWindow *d_window;
-			#endif
-			cairo_surface_t *d_cairoSurface;
-			cairo_t *d_cairoGraphicsContext;
-		#elif defined (_WIN32)
-			HWND d_winWindow;
-			HDC d_gdiGraphicsContext;
-			COLORREF d_winForegroundColour;
-			HPEN d_winPen;
-			HBRUSH d_winBrush;
-			bool d_fatNonSolid;
-			bool d_useGdiplus;
-			HBITMAP d_gdiBitmap;
-			Gdiplus::Bitmap *d_gdiplusBitmap;
-		#elif defined (macintosh)
-            #if useCarbon
-                GrafPtr d_macPort;
-            #else
-                NSView *d_macView;
-            #endif
-			int d_macFont, d_macStyle;
-			int d_depth;
-			RGBColor d_macColour;
-			uint8_t *d_bits;
-			CGContextRef d_macGraphicsContext;
+	bool d_isPng;
+	structMelderFile d_file;
+	#if defined (NO_GRAPHICS)
+	#elif defined (UNIX)
+		GdkDisplay *d_display;
+		#if ALLOW_GDK_DRAWING
+			GdkDrawable *d_window;
+			GdkGC *d_gdkGraphicsContext;
+		#else
+			GdkWindow *d_window;
 		#endif
-	// overridden methods:
-	protected:
-		virtual void v_destroy ();
-		virtual void v_polyline (long numberOfPoints, double *xyDC, bool close);
-		virtual void v_fillArea (long numberOfPoints, double *xyDC);
-		virtual void v_rectangle (double x1DC, double x2DC, double y1DC, double y2DC);
-		virtual void v_fillRectangle (double x1DC, double x2DC, double y1DC, double y2DC);
-		virtual void v_circle (double xDC, double yDC, double rDC);
-		virtual void v_ellipse (double x1DC, double x2DC, double y1DC, double y2DC);
-		virtual void v_arc (double xDC, double yDC, double rDC, double fromAngle, double toAngle);
-		virtual void v_fillCircle (double xDC, double yDC, double rDC);
-		virtual void v_fillEllipse (double x1DC, double x2DC, double y1DC, double y2DC);
-		virtual void v_button (double x1DC, double x2DC, double y1DC, double y2DC);
-		virtual void v_roundedRectangle (double x1DC, double x2DC, double y1DC, double y2DC, double r);
-		virtual void v_arrowHead (double xDC, double yDC, double angle);
-		virtual bool v_mouseStillDown ();
-		virtual void v_getMouseLocation (double *xWC, double *yWC);
-		virtual void v_flushWs ();
-		virtual void v_clearWs ();
-		virtual void v_updateWs ();
+		cairo_surface_t *d_cairoSurface;
+		cairo_t *d_cairoGraphicsContext;
+	#elif defined (_WIN32)
+		HWND d_winWindow;
+		HDC d_gdiGraphicsContext;
+		COLORREF d_winForegroundColour;
+		HPEN d_winPen;
+		HBRUSH d_winBrush;
+		bool d_fatNonSolid;
+		bool d_useGdiplus;
+		HBITMAP d_gdiBitmap;
+		Gdiplus::Bitmap *d_gdiplusBitmap;
+	#elif defined (macintosh)
+		#if useCarbon
+			GrafPtr d_macPort;
+		#else
+			NSView *d_macView;
+		#endif
+		int d_macFont, d_macStyle;
+		int d_depth;
+		RGBColor d_macColour;
+		uint8_t *d_bits;
+		CGContextRef d_macGraphicsContext;
+	#endif
+
+	void v_destroy ()
+		override;
+	void v_polyline (long numberOfPoints, double *xyDC, bool close)
+		override;
+	void v_fillArea (long numberOfPoints, double *xyDC)
+		override;
+	void v_rectangle (double x1DC, double x2DC, double y1DC, double y2DC)
+		override;
+	void v_fillRectangle (double x1DC, double x2DC, double y1DC, double y2DC)
+		override;
+	void v_circle (double xDC, double yDC, double rDC)
+		override;
+	void v_ellipse (double x1DC, double x2DC, double y1DC, double y2DC)
+		override;
+	void v_arc (double xDC, double yDC, double rDC, double fromAngle, double toAngle)
+		override;
+	void v_fillCircle (double xDC, double yDC, double rDC)
+		override;
+	void v_fillEllipse (double x1DC, double x2DC, double y1DC, double y2DC)
+		override;
+	void v_button (double x1DC, double x2DC, double y1DC, double y2DC)
+		override;
+	void v_roundedRectangle (double x1DC, double x2DC, double y1DC, double y2DC, double r)
+		override;
+	void v_arrowHead (double xDC, double yDC, double angle)
+		override;
+	bool v_mouseStillDown ()
+		override;
+	void v_getMouseLocation (double *xWC, double *yWC)
+		override;
+	void v_flushWs ()
+		override;
+	void v_clearWs ()
+		override;
+	void v_updateWs ()
+		override;
 };
 
 #if defined (NO_GRAPHICS)
@@ -127,28 +142,37 @@ Thing_define (GraphicsScreen, Graphics) {
 #endif
 
 Thing_define (GraphicsPostscript, Graphics) {
-	// new data:
-	public:
-		FILE *d_file;
-		int (*d_printf) (void *stream, const char *format, ...);
-		int languageLevel;
-		int photocopyable, spotsDensity, spotsAngle, landscape, includeFonts, loadedXipa, useSilipaPS;
-		double magnification;
-		char *fontInfos [1 + kGraphics_font_DINGBATS] [1 + Graphics_BOLD_ITALIC];
-		const char *lastFid;
-		int job, eps, pageNumber, lastSize;
-	// overridden methods:
-		virtual void v_destroy ();
-		virtual void v_polyline (long numberOfPoints, double *xyDC, bool close);
-		virtual void v_fillArea (long numberOfPoints, double *xyDC);
-		virtual void v_rectangle (double x1DC, double x2DC, double y1DC, double y2DC);
-		virtual void v_fillRectangle (double x1DC, double x2DC, double y1DC, double y2DC);
-		virtual void v_circle (double xDC, double yDC, double rDC);
-		virtual void v_ellipse (double x1DC, double x2DC, double y1DC, double y2DC);
-		virtual void v_arc (double xDC, double yDC, double rDC, double fromAngle, double toAngle);
-		virtual void v_fillCircle (double xDC, double yDC, double rDC);
-		virtual void v_fillEllipse (double x1DC, double x2DC, double y1DC, double y2DC);
-		virtual void v_arrowHead (double xDC, double yDC, double angle);
+	FILE *d_file;
+	int (*d_printf) (void *stream, const char *format, ...);
+	int languageLevel;
+	int photocopyable, spotsDensity, spotsAngle, landscape, includeFonts, loadedXipa, useSilipaPS;
+	double magnification;
+	char *fontInfos [1 + kGraphics_font_DINGBATS] [1 + Graphics_BOLD_ITALIC];
+	const char *lastFid;
+	int job, eps, pageNumber, lastSize;
+
+	void v_destroy ()
+		override;
+	void v_polyline (long numberOfPoints, double *xyDC, bool close)
+		override;
+	void v_fillArea (long numberOfPoints, double *xyDC)
+		override;
+	void v_rectangle (double x1DC, double x2DC, double y1DC, double y2DC)
+		override;
+	void v_fillRectangle (double x1DC, double x2DC, double y1DC, double y2DC)
+		override;
+	void v_circle (double xDC, double yDC, double rDC)
+		override;
+	void v_ellipse (double x1DC, double x2DC, double y1DC, double y2DC)
+		override;
+	void v_arc (double xDC, double yDC, double rDC, double fromAngle, double toAngle)
+		override;
+	void v_fillCircle (double xDC, double yDC, double rDC)
+		override;
+	void v_fillEllipse (double x1DC, double x2DC, double y1DC, double y2DC)
+		override;
+	void v_arrowHead (double xDC, double yDC, double angle)
+		override;
 };
 
 /* Opcodes for recording. */

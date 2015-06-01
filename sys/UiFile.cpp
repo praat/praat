@@ -79,15 +79,15 @@ UiForm UiInfile_create (GuiWindow parent, const wchar_t *title,
 void UiInfile_do (I) {
 	iam (UiInfile);
 	try {
-		autoSortedSetOfString infileNames = GuiFileSelect_getInfileNames (my parent, my name, my allowMultipleFiles);
+		autoSortedSetOfString32 infileNames = GuiFileSelect_getInfileNames (my parent, Melder_peekWcsToStr32 (my name), my allowMultipleFiles);
 		for (long ifile = 1; ifile <= infileNames -> size; ifile ++) {
-			SimpleString infileName = (SimpleString) infileNames -> item [ifile];
+			SimpleString32 infileName = (SimpleString32) infileNames -> item [ifile];
 			Melder_pathToFile (infileName -> string, & my file);
-			UiHistory_write (L"\n");
-			UiHistory_write_colonize (my invokingButtonTitle);
-			UiHistory_write (L" \"");
+			UiHistory_write (U"\n");
+			UiHistory_write_colonize (Melder_peekWcsToStr32 (my invokingButtonTitle));
+			UiHistory_write (U" \"");
 			UiHistory_write_expandQuotes (infileName -> string);
-			UiHistory_write (L"\"");
+			UiHistory_write (U"\"");
 			structMelderFile file;
 			MelderFile_copy (& my file, & file);
 			try {
@@ -149,7 +149,7 @@ UiForm UiInfile_createE (EditorCommand cmd, const wchar_t *title, const wchar_t 
 
 void UiOutfile_do (I, const wchar_t *defaultName) {
 	iam (UiOutfile);
-	wchar_t *outfileName = GuiFileSelect_getOutfileName (NULL, my name, defaultName);
+	char32 *outfileName = GuiFileSelect_getOutfileName (NULL, Melder_peekWcsToStr32 (my name), Melder_peekWcsToStr32 (defaultName));
 	if (outfileName == NULL) return;   // cancelled
 	if (my allowExecutionHook && ! my allowExecutionHook (my allowExecutionClosure)) {
 		Melder_flushError ("Dialog `%s' cancelled.", my name);
@@ -158,17 +158,17 @@ void UiOutfile_do (I, const wchar_t *defaultName) {
 	Melder_pathToFile (outfileName, & my file);
 	structMelderFile file;
 	MelderFile_copy (& my file, & file);   // save, because okCallback could destroy me
-	UiHistory_write (L"\n");
-	UiHistory_write_colonize (my invokingButtonTitle);
+	UiHistory_write (U"\n");
+	UiHistory_write_colonize (Melder_peekWcsToStr32 (my invokingButtonTitle));
 	try {
 		my okCallback ((UiForm) me, 0, NULL, NULL, NULL, my invokingButtonTitle, false, my okClosure);
 	} catch (MelderError) {
 		Melder_error_ ("File ", & file, " not finished.");
 		Melder_flushError (NULL);
 	}
-	UiHistory_write (L" \"");
+	UiHistory_write (U" \"");
 	UiHistory_write (outfileName);
-	UiHistory_write (L"\"");
+	UiHistory_write (U"\"");
 	Melder_free (outfileName);
 }
 

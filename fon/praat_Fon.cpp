@@ -1,6 +1,6 @@
 /* praat_Fon.cpp
  *
- * Copyright (C) 1992-2012,2013,2014 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,13 +159,13 @@ extern "C" Graphics Movie_create (const wchar_t *title, int width, int height) {
 	if (! graphics) {
 		dialog = GuiDialog_create (theCurrentPraatApplication -> topShell, 100, 100, width + 2, height + 2, title, NULL, NULL, 0);
 		drawingArea = GuiDrawingArea_createShown (dialog, 0, width, 0, height, NULL, NULL, NULL, NULL, NULL, 0);
-		dialog -> f_show ();
+		GuiThing_show (dialog);
 		graphics = Graphics_create_xmdrawingarea (drawingArea);
 	}
-	dialog -> f_setTitle (title);
-	dialog -> f_setSize (width + 2, height + 2);
-	drawingArea -> f_setSize (width, height);
-	dialog -> f_show ();
+	GuiShell_setTitle (dialog, title);
+	GuiControl_setSize (dialog, width + 2, height + 2);
+	GuiControl_setSize (drawingArea, width, height);
+	GuiThing_show (dialog);
 	return graphics;
 }
 
@@ -1242,7 +1242,7 @@ DIRECT (FormantGrid_edit)
 	LOOP {
 		iam (FormantGrid);
 		autoFormantGridEditor editor = FormantGridEditor_create (ID_AND_FULL_NAME, me);
-		editor -> setPublicationCallback (cb_FormantGridEditor_publish, NULL);
+		Editor_setPublicationCallback (editor.peek(), cb_FormantGridEditor_publish, NULL);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
@@ -2351,7 +2351,7 @@ DIRECT (Manipulation_edit)
 	LOOP {
 		iam (Manipulation);
 		autoManipulationEditor editor = ManipulationEditor_create (ID_AND_FULL_NAME, me);
-		editor -> setPublicationCallback (cb_ManipulationEditor_publication, NULL);
+		Editor_setPublicationCallback (editor.peek(), cb_ManipulationEditor_publication, NULL);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END

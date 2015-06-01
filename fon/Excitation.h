@@ -2,7 +2,7 @@
 #define _Excitation_h_
 /* Excitation.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,10 +23,10 @@
 #include "Graphics.h"
 
 Thing_define (Excitation, Vector) {
-	// overridden methods:
-	protected:
-		virtual void v_info ();
-		virtual int v_domainQuantity () { return MelderQuantity_FREQUENCY_BARK; }
+	void v_info ()
+		override;
+	int v_domainQuantity ()
+		override { return MelderQuantity_FREQUENCY_BARK; }
 };
 
 double Excitation_hertzToBark (double hertz);

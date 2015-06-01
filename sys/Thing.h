@@ -74,7 +74,7 @@ struct structClassInfo {
 };
 
 #define Thing_declare(klas) \
-	typedef class struct##klas *klas; \
+	typedef struct struct##klas *klas; \
 	typedef _Thing_auto <struct##klas> auto##klas; \
 	extern ClassInfo class##klas
 
@@ -82,7 +82,7 @@ struct structClassInfo {
 	Thing_declare (klas); \
 	typedef struct##parentKlas klas##_Parent; \
 	extern struct structClassInfo theClassInfo_##klas; \
-	class struct##klas : public struct##parentKlas
+	struct struct##klas : public struct##parentKlas
 
 #define Thing_implement(klas,parentKlas,version) \
 	static Thing _##klas##_new () { return (Thing) new struct##klas; } \
@@ -93,40 +93,39 @@ struct structClassInfo {
  * Thing has no parent class, so instead of using the Thing_define macro
  * we write out the stuff that does exist.
  */
-typedef class structThing *Thing;
+typedef struct structThing *Thing;
 extern ClassInfo classThing;
 extern struct structClassInfo theClassInfo_Thing;
-class structThing {
-	public:
-		ClassInfo classInfo;   // the Praat class pointer (every object also has a C++ class pointer initialized by C++ "new")
-		wchar_t *name;
-		void * operator new (size_t size) { return Melder_calloc (char, size); }
-		void operator delete (void *ptr, size_t size) { (void) size; Melder_free (ptr); }
-	// new methods:
-		virtual void v_destroy () { Melder_free (name); };
-			/*
-			 * derived::v_destroy calls base::v_destroy at end
-			 */
-		virtual void v_info ();
-			/*
-			 * Implement as follows: call a set of MelderInfo_writeXXX describing your data.
-			 *
-			 * Thing::v_info writes object id, object name, and date;
-			 * derived::v_info often calls base::v_info at start and then writes information on the new data,
-			 * but a few ancestors can be skipped if their data have new meanings.
-			 */
-		virtual void v_checkConstraints () { };
-			/*
-			 * derived::v_checkConstraints typically calls base::v_checkConstraints at start
-			 */
-		virtual void v_nameChanged () { };
-			/*
-			 * derived::v_nameChanged may call base::_nameChanged at start, middle or end
-			 */
-		virtual void v_copyPreferencesToInstance () { };
-			/*
-			 * derived::v_copyPreferencesToInstance calls base::v_copyPreferencesToInstance at start
-			 */
+struct structThing {
+	ClassInfo classInfo;   // the Praat class pointer (every object also has a C++ class pointer initialized by C++ "new")
+	wchar_t *name;
+	void * operator new (size_t size) { return Melder_calloc (char, size); }
+	void operator delete (void *ptr, size_t size) { (void) size; Melder_free (ptr); }
+
+	virtual void v_destroy () { Melder_free (name); };
+		/*
+		 * derived::v_destroy calls base::v_destroy at end
+		 */
+	virtual void v_info ();
+		/*
+		 * Implement as follows: call a set of MelderInfo_writeXXX describing your data.
+		 *
+		 * Thing::v_info writes object id, object name, and date;
+		 * derived::v_info often calls base::v_info at start and then writes information on the new data,
+		 * but a few ancestors can be skipped if their data have new meanings.
+		 */
+	virtual void v_checkConstraints () { };
+		/*
+		 * derived::v_checkConstraints typically calls base::v_checkConstraints at start
+		 */
+	virtual void v_nameChanged () { };
+		/*
+		 * derived::v_nameChanged may call base::_nameChanged at start, middle or end
+		 */
+	virtual void v_copyPreferencesToInstance () { };
+		/*
+		 * derived::v_copyPreferencesToInstance calls base::v_copyPreferencesToInstance at start
+		 */
 };
 
 #define forget(thing)  do { _Thing_forget (thing); thing = NULL; } while (false)
@@ -216,6 +215,9 @@ Any Thing_newFromClassName (const wchar_t *className);
 */
 
 ClassInfo Thing_classFromClassName (const wchar_t *className);
+inline static ClassInfo Thing_classFromClassName (const char32 *className) {
+	return Thing_classFromClassName (Melder_peekStr32ToWcs (className));
+}
 /*
 	Function:
 		Return the class info table of class 'className', or NULL if it is not recognized.

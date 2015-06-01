@@ -1,6 +1,6 @@
 /* Picture.cpp
  *
- * Copyright (C) 1992-2011,2012,2013,2014 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brauße
+ * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brauße
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -215,7 +215,7 @@ Picture Picture_create (GuiDrawingArea drawingArea, bool sensitive) {
 		if (drawingArea) {
 			/* The drawing area must have been realized; see manual at XtWindow. */
 			my graphics = Graphics_create_xmdrawingarea (my drawingArea);
-			my drawingArea -> f_setExposeCallback (gui_drawingarea_cb_expose, me);
+			GuiDrawingArea_setExposeCallback (my drawingArea, gui_drawingarea_cb_expose, me);
 		} else {
 			/*
 			 * Create a dummy Graphics.
@@ -227,7 +227,7 @@ Picture Picture_create (GuiDrawingArea drawingArea, bool sensitive) {
 		if (my sensitive) {
 			my selectionGraphics = Graphics_create_xmdrawingarea (my drawingArea);
 			Graphics_setWindow (my selectionGraphics, 0, 12, 0, 12);
-			my drawingArea -> f_setClickCallback (gui_drawingarea_cb_click, me);
+			GuiDrawingArea_setClickCallback (my drawingArea, gui_drawingarea_cb_click, me);
 		}
 		Graphics_startRecording (my graphics);
 		return me;

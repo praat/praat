@@ -1,6 +1,6 @@
 /* SoundRecorder_enums.h
  *
- * Copyright (C) 2013 Paul Boersma
+ * Copyright (C) 2013,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
  */
 
 enums_begin (kSoundRecorder_meter, 1)
-	enums_add (kSoundRecorder_meter, 1, INTENSITY, L"intensity")
-	enums_add (kSoundRecorder_meter, 2, CENTRE_OF_GRAVITY_VERSUS_INTENSITY, L"centre of gravity ~ intensity")
+	enums_add (kSoundRecorder_meter, 1, INTENSITY, U"intensity")
+	enums_add (kSoundRecorder_meter, 2, CENTRE_OF_GRAVITY_VERSUS_INTENSITY, U"centre of gravity ~ intensity")
 enums_end (kSoundRecorder_meter, 2, INTENSITY)
 
 /* End of file SoundRecorder_enums.h */

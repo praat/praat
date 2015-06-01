@@ -2,7 +2,7 @@
 #define _Manual_h_
 /* Manual.h
  *
- * Copyright (C) 1996-2012 Paul Boersma
+ * Copyright (C) 1996-2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,30 +23,41 @@
 #include "ManPages.h"
 
 Thing_define (Manual, HyperPage) {
-	// new data:
-	public:
-		long path, numberOfParagraphs;
-		struct structManPage_Paragraph *paragraphs;
-		GuiText searchText;
-		GuiButton homeButton, recordButton, playButton, publishButton;
-		int numberOfMatches;
-		long matches [1 + 20], fromPage, toPage;
-		int suppressLinksHither;
-		wchar_t *printPagesStartingWith;
-	// overridden methods:
-		virtual bool v_scriptable () { return false; }
-		virtual void v_createChildren ();
-		virtual void v_createMenus ();
-		virtual bool v_hasQueryMenu () { return false; }
-		virtual void v_createHelpMenuItems (EditorMenu menu);
-		virtual void v_draw ();
-		virtual void v_defaultHeaders (EditorCommand cmd);
-		virtual long v_getNumberOfPages ();
-		virtual long v_getCurrentPageNumber ();
-		virtual int v_goToPage (const wchar_t *title);
-		virtual void v_goToPage_i (long pageNumber);
-		virtual bool v_hasHistory () { return true; }
-		virtual bool v_isOrdered () { return true; }
+	long path, numberOfParagraphs;
+	struct structManPage_Paragraph *paragraphs;
+	GuiText searchText;
+	GuiButton homeButton, recordButton, playButton, publishButton;
+	int numberOfMatches;
+	long matches [1 + 20], fromPage, toPage;
+	int suppressLinksHither;
+	wchar_t *printPagesStartingWith;
+
+	bool v_scriptable ()
+		override { return false; }
+	void v_createChildren ()
+		override;
+	void v_createMenus ()
+		override;
+	bool v_hasQueryMenu ()
+		override { return false; }
+	void v_createHelpMenuItems (EditorMenu menu)
+		override;
+	void v_draw ()
+		override;
+	void v_defaultHeaders (EditorCommand cmd)
+		override;
+	long v_getNumberOfPages ()
+		override;
+	long v_getCurrentPageNumber ()
+		override;
+	int v_goToPage (const wchar_t *title)
+		override;
+	void v_goToPage_i (long pageNumber)
+		override;
+	bool v_hasHistory ()
+		override { return true; }
+	bool v_isOrdered ()
+		override { return true; }
 };
 
 void Manual_init (Manual me, const wchar_t *title, Data data, bool ownData);

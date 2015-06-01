@@ -27,8 +27,9 @@ oo_DEFINE_CLASS (WordList, Data)
 
 	#if oo_DECLARING
 		oo_LONG (length)
-		// overridden methods:
-			virtual void v_info ();
+
+		void v_info ()
+			override;
 	#endif
 
 oo_END_CLASS (WordList)

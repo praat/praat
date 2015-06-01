@@ -2,7 +2,7 @@
 #define _UiPause_h_
 /* UiPause.h
  *
- * Copyright (C) 2009-2011,2012 Paul Boersma
+ * Copyright (C) 2009-2011,2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,26 +22,26 @@
 #include "Gui.h"
 #include "Interpreter_decl.h"
 
-void UiPause_begin (GuiWindow topShell, const wchar_t *title, Interpreter interpreter);
+void UiPause_begin (GuiWindow topShell, const char32 *title, Interpreter interpreter);
 
-void UiPause_real (const wchar_t *label, const wchar_t *defaultValue);
-void UiPause_positive (const wchar_t *label, const wchar_t *defaultValue);
-void UiPause_integer (const wchar_t *label, const wchar_t *defaultValue);
-void UiPause_natural (const wchar_t *label, const wchar_t *defaultValue);
-void UiPause_word (const wchar_t *label, const wchar_t *defaultValue);
-void UiPause_sentence (const wchar_t *label, const wchar_t *defaultValue);
-void UiPause_text (const wchar_t *label, const wchar_t *defaultValue);
-void UiPause_boolean (const wchar_t *label, int defaultValue);
-void UiPause_choice (const wchar_t *label, int defaultValue);
-void UiPause_optionMenu (const wchar_t *label, int defaultValue);
-void UiPause_option (const wchar_t *label);
-void UiPause_comment (const wchar_t *label);
+void UiPause_real       (const char32 *label, const char32 *defaultValue);
+void UiPause_positive   (const char32 *label, const char32 *defaultValue);
+void UiPause_integer    (const char32 *label, const char32 *defaultValue);
+void UiPause_natural    (const char32 *label, const char32 *defaultValue);
+void UiPause_word       (const char32 *label, const char32 *defaultValue);
+void UiPause_sentence   (const char32 *label, const char32 *defaultValue);
+void UiPause_text       (const char32 *label, const char32 *defaultValue);
+void UiPause_boolean    (const char32 *label, int defaultValue);
+void UiPause_choice     (const char32 *label, int defaultValue);
+void UiPause_optionMenu (const char32 *label, int defaultValue);
+void UiPause_option     (const char32 *label);
+void UiPause_comment    (const char32 *label);
 
 int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int cancelContinueButton,
-	const wchar_t *continueText1, const wchar_t *continueText2, const wchar_t *continueText3,
-	const wchar_t *continueText4, const wchar_t *continueText5, const wchar_t *continueText6,
-	const wchar_t *continueText7, const wchar_t *continueText8, const wchar_t *continueText9,
-	const wchar_t *continueText10, Interpreter interpreter);
+	const char32 *continueText1, const char32 *continueText2, const char32 *continueText3,
+	const char32 *continueText4, const char32 *continueText5, const char32 *continueText6,
+	const char32 *continueText7, const char32 *continueText8, const char32 *continueText9,
+	const char32 *continueText10, Interpreter interpreter);
 
 /* End of file UiPause.h */
 #endif

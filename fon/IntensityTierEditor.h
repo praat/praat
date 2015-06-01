@@ -2,7 +2,7 @@
 #define _IntensityTierEditor_h_
 /* IntensityTierEditor.h
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,21 +24,34 @@
 #include "Sound.h"
 
 Thing_define (IntensityTierEditor, RealTierEditor) {
-	// overridden methods:
-		virtual void v_createHelpMenuItems (EditorMenu menu);
-		virtual void v_play (double tmin, double tmax);
-		virtual const wchar_t * v_quantityText () { return L"Intensity (dB)"; }
-		virtual const wchar_t * v_quantityKey () { return L"Intensity"; }
-		virtual const wchar_t * v_rightTickUnits () { return L" dB"; }
-		virtual double v_defaultYmin () { return 50.0; }
-		virtual double v_defaultYmax () { return 100.0; }
-		virtual const wchar_t * v_setRangeTitle () { return L"Set intensity range..."; }
-		virtual const wchar_t * v_defaultYminText () { return L"50.0"; }
-		virtual const wchar_t * v_defaultYmaxText () { return L"100.0"; }
-		virtual const wchar_t * v_yminText () { return L"Minimum intensity (dB)"; }
-		virtual const wchar_t * v_ymaxText () { return L"Maximum intensity (dB)"; }
-		virtual const wchar_t * v_yminKey () { return L"Minimum intensity"; }
-		virtual const wchar_t * v_ymaxKey () { return L"Maximum intensity"; }
+	void v_createHelpMenuItems (EditorMenu menu)
+		override;
+	void v_play (double tmin, double tmax)
+		override;
+	const wchar_t * v_quantityText ()
+		override { return L"Intensity (dB)"; }
+	const wchar_t * v_quantityKey ()
+		override { return L"Intensity"; }
+	const wchar_t * v_rightTickUnits ()
+		override { return L" dB"; }
+	double v_defaultYmin ()
+		override { return 50.0; }
+	double v_defaultYmax ()
+		override { return 100.0; }
+	const wchar_t * v_setRangeTitle ()
+		override { return L"Set intensity range..."; }
+	const wchar_t * v_defaultYminText ()
+		override { return L"50.0"; }
+	const wchar_t * v_defaultYmaxText ()
+		override { return L"100.0"; }
+	const wchar_t * v_yminText ()
+		override { return L"Minimum intensity (dB)"; }
+	const wchar_t * v_ymaxText ()
+		override { return L"Maximum intensity (dB)"; }
+	const wchar_t * v_yminKey ()
+		override { return L"Minimum intensity"; }
+	const wchar_t * v_ymaxKey ()
+		override { return L"Maximum intensity"; }
 };
 
 IntensityTierEditor IntensityTierEditor_create (const wchar_t *title,

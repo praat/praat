@@ -1,6 +1,6 @@
 /* Strings.cpp
  *
- * Copyright (C) 1992-2012,2014 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,10 +88,10 @@ void structStrings :: v_info () {
 	MelderInfo_writeLine (L"Longest string: ", Melder_integer (Strings_maximumLength (this)), L" characters");
 }
 
-const wchar_t * structStrings :: v_getVectorStr (long icol) {
-	if (icol < 1 || icol > numberOfStrings) return L"";
-	wchar_t *stringValue = strings [icol];
-	return stringValue == NULL ? L"" : stringValue;
+const char32 * structStrings :: v_getVectorStr (long icol) {
+	if (icol < 1 || icol > numberOfStrings) return U"";
+	char32 *stringValue = Melder_peekWcsToStr32 (strings [icol]);
+	return stringValue == NULL ? U"" : stringValue;
 }
 
 #define Strings_createAsFileOrDirectoryList_TYPE_FILE  0
@@ -237,8 +237,8 @@ Strings Strings_readFromRawTextFile (MelderFile file) {
 		 * Read strings.
 		 */
 		for (long i = 1; i <= n; i ++) {
-			wchar_t *line = MelderReadText_readLine (text.peek());
-			my strings [i] = Melder_wcsdup (line);
+			char32 *line = MelderReadText_readLine (text.peek());
+			my strings [i] = Melder_str32ToWcs (line);
 		}
 		return me.transfer();
 	} catch (MelderError) {

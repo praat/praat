@@ -1,6 +1,6 @@
 /* praat.h
  *
- * Copyright (C) 1992-2012,2013,2014 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ be read by Data_readFromTextFile () and Data_readFromBinaryFile ().
 */
 void praat_init (const char *title, unsigned int argc, char **argv);
 void praat_run (void);
-void praat_setStandAloneScriptText (wchar_t *text);   // call before praat_init if you want to create a stand-alone application without Objects and Picture window
+void praat_setStandAloneScriptText (char32 *text);   // call before praat_init if you want to create a stand-alone application without Objects and Picture window
 
 void praat_addAction (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
 	const wchar_t *title, const wchar_t *after, unsigned long flags,
@@ -140,7 +140,7 @@ typedef struct {
 
 #define praat_MAXNUM_OBJECTS 10000   /* Maximum number of objects in the list. */
 typedef struct {   /* Readonly */
-	MelderString batchName;   /* The name of the command file when called from batch. */
+	MelderString32 batchName;   /* The name of the command file when called from batch. */
 	int batch;   /* Was the program called from the command line? */
 	GuiWindow topShell;   /* The application shell: parent of standard dialogs. */
 	ManPages manPages;
@@ -390,7 +390,7 @@ void praat_name2 (wchar_t *name, ClassInfo klas1, ClassInfo klas2);
 				if (args == NULL && sendingString == NULL) { \
 					file = UiFile_getFile (dia); \
 				} else { \
-					Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); \
+					Melder_relativePathToFile (args ? args [1]. string : Melder_peekWcsToStr32 (sendingString), & file2); \
 					file = & file2; \
 				} \
 				{
@@ -415,7 +415,7 @@ void praat_name2 (wchar_t *name, ClassInfo klas1, ClassInfo klas2);
 				if (args == NULL && sendingString == NULL) { \
 					file = UiFile_getFile (dia); \
 				} else { \
-					Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); \
+					Melder_relativePathToFile (args ? args [1]. string : Melder_peekWcsToStr32 (sendingString), & file2); \
 					file = & file2; \
 				} \
 
@@ -439,7 +439,7 @@ void praat_name2 (wchar_t *name, ClassInfo klas1, ClassInfo klas2);
 				if (args == NULL && sendingString == NULL) { \
 					file = UiFile_getFile (dia); \
 				} else { \
-					Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); \
+					Melder_relativePathToFile (args ? args [1]. string : Melder_peekWcsToStr32 (sendingString), & file2); \
 					file = & file2; \
 				} \
 				{
@@ -464,7 +464,7 @@ void praat_name2 (wchar_t *name, ClassInfo klas1, ClassInfo klas2);
 				if (args == NULL && sendingString == NULL) { \
 					file = UiFile_getFile (dia); \
 				} else { \
-					Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); \
+					Melder_relativePathToFile (args ? args [1]. string : Melder_peekWcsToStr32 (sendingString), & file2); \
 					file = & file2; \
 				}
 
@@ -481,7 +481,7 @@ void praat_name2 (wchar_t *name, ClassInfo klas1, ClassInfo klas2);
 #define GET_REAL(name)  UiForm_getReal (dia, name)
 #define GET_INTEGER(name)  UiForm_getInteger (dia, name)
 #define GET_STRING(name)  UiForm_getString (dia, name)
-#define GET_ENUM(enum,name)  (enum) enum##_getValue (GET_STRING (name))
+#define GET_ENUM(enum,name)  (enum) enum##_getValue (Melder_peekWcsToStr32 (GET_STRING (name)))
 #define GET_COLOUR(name)  UiForm_getColour (dia, name)
 #define GET_FILE(name)  UiForm_getFile (dia, name)
 #define REQUIRE(c,t)  if (! (c)) Melder_throw (t);

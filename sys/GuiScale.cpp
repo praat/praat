@@ -1,6 +1,6 @@
 /* GuiScale.cpp
  *
- * Copyright (C) 1993-2011,2012 Paul Boersma
+ * Copyright (C) 1993-2011,2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,17 +122,17 @@ GuiScale GuiScale_createShown (GuiForm parent, int left, int right, int top, int
 	int minimum, int maximum, int value, unsigned long flags)
 {
 	GuiScale me = GuiScale_create (parent, left, right, top, bottom, minimum, maximum, value, flags);
-	my f_show ();
+	GuiThing_show (me);
 	return me;
 }
 
-void structGuiScale :: f_setValue (int value) {
+void GuiScale_setValue (GuiScale me, int value) {
 	#if gtk
-		gtk_range_set_value (GTK_RANGE (d_widget), value);
+		gtk_range_set_value (GTK_RANGE (my d_widget), value);
 	#elif cocoa
-		[d_cocoaScale   setDoubleValue: value];
+		[my d_cocoaScale   setDoubleValue: value];
 	#elif motif
-		XmScaleSetValue (d_widget, value);
+		XmScaleSetValue (my d_widget, value);
 	#endif
 }
 

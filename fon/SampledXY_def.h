@@ -1,6 +1,6 @@
 /* SampledXY_def.h
  *
- * Copyright (C) 1992-2011,2013,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,13 +31,26 @@ oo_DEFINE_CLASS (SampledXY, Sampled)
 	oo_DOUBLE (y1)
 
 	#if oo_DECLARING
-		// overridden methods:
-			//virtual void v_info ();
-			virtual bool v_hasGetYmin      () { return true; }   virtual double v_getYmin      ()        { return ymin; }
-			virtual bool v_hasGetYmax      () { return true; }   virtual double v_getYmax      ()        { return ymax; }
-			virtual bool v_hasGetNy        () { return true; }   virtual double v_getNy        ()        { return ny; }
-			virtual bool v_hasGetDy        () { return true; }   virtual double v_getDy        ()        { return dy; }
-			virtual bool v_hasGetY         () { return true; }   virtual double v_getY         (long iy) { return y1 + (iy - 1) * dy; }
+		bool v_hasGetYmin ()
+			override { return true; }
+		double v_getYmin ()
+			override { return ymin; }
+		bool v_hasGetYmax ()
+			override { return true; }
+		double v_getYmax ()
+			override { return ymax; }
+		bool v_hasGetNy ()
+			override { return true; }
+		double v_getNy ()
+			override { return ny; }
+		bool v_hasGetDy ()
+			override { return true; }
+		double v_getDy ()
+			override { return dy; }
+		bool v_hasGetY ()
+			override { return true; }
+		double v_getY (long iy)
+			override { return y1 + (iy - 1) * dy; }
 	#endif
 
 oo_END_CLASS (SampledXY)

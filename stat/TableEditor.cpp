@@ -1,6 +1,6 @@
 /* TableEditor.cpp
  *
- * Copyright (C) 2006-2011,2013 Paul Boersma
+ * Copyright (C) 2006-2011,2013,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,12 +34,12 @@ void structTableEditor :: v_destroy () {
 
 static void updateVerticalScrollBar (TableEditor me) {
 	Table table = static_cast<Table> (my data);
-	my verticalScrollBar -> f_set (NUMundefined, table -> rows -> size + 1, my topRow, NUMundefined, NUMundefined, NUMundefined);
+	GuiScrollBar_set (my verticalScrollBar, NUMundefined, table -> rows -> size + 1, my topRow, NUMundefined, NUMundefined, NUMundefined);
 }
 
 static void updateHorizontalScrollBar (TableEditor me) {
 	Table table = static_cast<Table> (my data);
-	my horizontalScrollBar -> f_set (NUMundefined, table -> numberOfColumns + 1, my leftColumn, NUMundefined, NUMundefined, NUMundefined);
+	GuiScrollBar_set (my horizontalScrollBar, NUMundefined, table -> numberOfColumns + 1, my leftColumn, NUMundefined, NUMundefined, NUMundefined);
 }
 
 void structTableEditor :: v_dataChanged () {
@@ -59,19 +59,19 @@ void structTableEditor :: v_dataChanged () {
 #ifndef macintosh
 static void menu_cb_Cut (EDITOR_ARGS) {   // BUG: why only on Mac?
 	EDITOR_IAM (TableEditor);
-	my text -> f_cut ();
+	GuiText_cut (my text);
 }
 static void menu_cb_Copy (EDITOR_ARGS) {
 	EDITOR_IAM (TableEditor);
-	my text -> f_copy ();
+	GuiText_copy (my text);
 }
 static void menu_cb_Paste (EDITOR_ARGS) {
 	EDITOR_IAM (TableEditor);
-	my text -> f_paste ();
+	GuiText_paste (my text);
 }
 static void menu_cb_Erase (EDITOR_ARGS) {
 	EDITOR_IAM (TableEditor);
-	my text -> f_remove ();
+	GuiText_remove (my text);
 }
 #endif
 
@@ -177,7 +177,7 @@ static void gui_text_cb_change (I, GuiTextEvent event) {
 	iam (TableEditor);
 	(void) event;
 	Table table = static_cast<Table> (my data);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
@@ -203,7 +203,7 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 
 static void gui_cb_scrollHorizontal (I, GuiScrollBarEvent event) {
 	iam (TableEditor);
-	int value = event -> scrollBar -> f_getValue ();
+	int value = GuiScrollBar_getValue (event -> scrollBar);
 	if (value != my leftColumn) {
 		my leftColumn = value;
 		#if cocoa || gtk || win
@@ -217,7 +217,7 @@ static void gui_cb_scrollHorizontal (I, GuiScrollBarEvent event) {
 
 static void gui_cb_scrollVertical (I, GuiScrollBarEvent event) {
 	iam (TableEditor);
-	int value = event -> scrollBar -> f_getValue ();
+	int value = GuiScrollBar_getValue (event -> scrollBar);
 	if (value != my topRow) {
 		my topRow = value;
 		#if cocoa || gtk || win
@@ -233,20 +233,20 @@ void structTableEditor :: v_createChildren () {
 	Table table = static_cast<Table> (data);
 	int y = Machine_getMenuBarHeight () + 4, scrollWidth = Machine_getScrollBarWidth ();
 
-	text = GuiText_createShown (d_windowForm, 0, 0, y, y + Machine_getTextHeight (), 0);
-	text -> f_setChangeCallback (gui_text_cb_change, this);
+	our text = GuiText_createShown (our d_windowForm, 0, 0, y, y + Machine_getTextHeight (), 0);
+	GuiText_setChangeCallback (our text, gui_text_cb_change, this);
 	y += Machine_getTextHeight () + 4;
 
-	drawingArea = GuiDrawingArea_createShown (d_windowForm, 0, - scrollWidth, y, - scrollWidth,
+	our drawingArea = GuiDrawingArea_createShown (our d_windowForm, 0, - scrollWidth, y, - scrollWidth,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, this, 0);
 
-	verticalScrollBar = GuiScrollBar_createShown (d_windowForm, - scrollWidth, 0, y, - scrollWidth,
+	our verticalScrollBar = GuiScrollBar_createShown (our d_windowForm, - scrollWidth, 0, y, - scrollWidth,
 		1, table -> rows -> size + 1, 1, 1, 1, 10, gui_cb_scrollVertical, this, 0);
 
-	horizontalScrollBar = GuiScrollBar_createShown (d_windowForm, 0, - scrollWidth, - scrollWidth, 0,
+	our horizontalScrollBar = GuiScrollBar_createShown (our d_windowForm, 0, - scrollWidth, - scrollWidth, 0,
 		1, table -> numberOfColumns + 1, 1, 1, 1, 3, gui_cb_scrollHorizontal, this, GuiScrollBar_HORIZONTAL);
 
-	drawingArea -> f_setSwipable (horizontalScrollBar, verticalScrollBar);
+	GuiDrawingArea_setSwipable (our drawingArea, our horizontalScrollBar, our verticalScrollBar);
 }
 
 void structTableEditor :: v_createMenus () {

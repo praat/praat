@@ -1,6 +1,6 @@
 /* Sampled_def.h
  *
- * Copyright (C) 1992-2011,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,15 +26,25 @@ oo_DEFINE_CLASS (Sampled, Function)
 	oo_DOUBLE (x1)
 
 	#if oo_DECLARING
-		// overridden methods:
-			virtual bool v_hasGetNx () { return true; }   virtual double v_getNx ()        { return nx; }
-			virtual bool v_hasGetDx () { return true; }   virtual double v_getDx ()        { return dx; }
-			virtual bool v_hasGetX  () { return true; }   virtual double v_getX  (long ix) { return x1 + (ix - 1) * dx; }
-			virtual void v_shiftX (double xfrom, double xto);
-			virtual void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto);
-		// new methods:
-			virtual double v_getValueAtSample (long isamp, long ilevel, int unit)
-				{ (void) isamp; (void) ilevel; (void) unit; return NUMundefined; }
+		bool v_hasGetNx ()
+			override { return true; }
+		double v_getNx ()
+			override { return nx; }
+		bool v_hasGetDx ()
+			override { return true; }
+		double v_getDx ()
+			override { return dx; }
+		bool v_hasGetX ()
+			override { return true; }
+		double v_getX (long ix)
+			override { return x1 + (ix - 1) * dx; }
+		void v_shiftX (double xfrom, double xto)
+			override;
+		void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto)
+			override;
+
+		virtual double v_getValueAtSample (long /* isamp */, long /* ilevel */, int /* unit */)
+			{ return NUMundefined; }
 	#endif
 
 oo_END_CLASS (Sampled)

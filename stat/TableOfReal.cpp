@@ -1,6 +1,6 @@
 /* TableOfReal.cpp
  *
- * Copyright (C) 1992-2012,2014 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,27 +39,27 @@
 #include "TableOfReal_def.h"
 
 static void fprintquotedstring (MelderFile file, const wchar_t *s) {
-	MelderFile_writeCharacter (file, '\"');
+	MelderFile_writeCharacter (file, U'\"');
 	if (s) { wchar_t c; while ((c = *s ++) != '\0') { MelderFile_writeCharacter (file, c); if (c == '\"') MelderFile_writeCharacter (file, c); } }
-	MelderFile_writeCharacter (file, '\"');
+	MelderFile_writeCharacter (file, U'\"');
 }
 
 void structTableOfReal :: v_writeText (MelderFile file) {
 	texputi4 (file, numberOfColumns, L"numberOfColumns", 0,0,0,0,0);
-	MelderFile_write (file, L"\ncolumnLabels []: ");
-	if (numberOfColumns < 1) MelderFile_write (file, L"(empty)");
-	MelderFile_write (file, L"\n");
+	MelderFile_write (file, U"\ncolumnLabels []: ");
+	if (numberOfColumns < 1) MelderFile_write (file, U"(empty)");
+	MelderFile_write (file, U"\n");
 	for (long i = 1; i <= numberOfColumns; i ++) {
 		fprintquotedstring (file, columnLabels [i]);
-		MelderFile_writeCharacter (file, '\t');
+		MelderFile_writeCharacter (file, U'\t');
 	}
 	texputi4 (file, numberOfRows, L"numberOfRows", 0,0,0,0,0);
 	for (long i = 1; i <= numberOfRows; i ++) {
-		MelderFile_write (file, L"\nrow [", Melder_integer (i), L"]: ");
+		MelderFile_write (file, U"\nrow [", Melder32_integer (i), U"]: ");
 		fprintquotedstring (file, rowLabels [i]);
 		for (long j = 1; j <= numberOfColumns; j ++) {
 			double x = data [i] [j];
-			MelderFile_write (file, L"\t", Melder_double (x));
+			MelderFile_write (file, U"\t", Melder32_double (x));
 		}
 	}
 }
@@ -91,24 +91,24 @@ void structTableOfReal :: v_info () {
 	MelderInfo_writeLine (L"Number of columns: ", Melder_integer (numberOfColumns));
 }
 
-const wchar_t * structTableOfReal :: v_getRowStr (long irow) {
+const char32 * structTableOfReal :: v_getRowStr (long irow) {
 	if (irow < 1 || irow > numberOfRows) return NULL;
-	return rowLabels [irow] ? rowLabels [irow] : L"";
+	return rowLabels [irow] ? Melder_peekWcsToStr32 (rowLabels [irow]) : U"";
 }
-const wchar_t * structTableOfReal :: v_getColStr (long icol) {
+const char32 * structTableOfReal :: v_getColStr (long icol) {
 	if (icol < 1 || icol > numberOfColumns) return NULL;
-	return columnLabels [icol] ? columnLabels [icol] : L"";
+	return columnLabels [icol] ? Melder_peekWcsToStr32 (columnLabels [icol]) : U"";
 }
 double structTableOfReal :: v_getMatrix (long irow, long icol) {
 	if (irow < 1 || irow > numberOfRows) return NUMundefined;
 	if (icol < 1 || icol > numberOfColumns) return NUMundefined;
 	return data [irow] [icol];
 }
-double structTableOfReal :: v_getRowIndex (const wchar_t *rowLabel) {
-	return TableOfReal_rowLabelToIndex (this, rowLabel);
+double structTableOfReal :: v_getRowIndex (const char32 *rowLabel) {
+	return TableOfReal_rowLabelToIndex (this, Melder_peekStr32ToWcs (rowLabel));
 }
-double structTableOfReal :: v_getColIndex (const wchar_t *columnLabel) {
-	return TableOfReal_columnLabelToIndex (this, columnLabel);
+double structTableOfReal :: v_getColIndex (const char32 *columnLabel) {
+	return TableOfReal_columnLabelToIndex (this, Melder_peekStr32ToWcs (columnLabel));
 }
 
 Thing_implement (TableOfReal, Data, 0);
@@ -689,7 +689,8 @@ static void NUMrationalize (double x, long *numerator, long *denominator) {
 	double epsilon = 1e-6;
 	*numerator = 1;
 	for (*denominator = 1; *denominator <= 100000; (*denominator) ++) {
-		double numerator_d = x * *denominator, rounded = floor (numerator_d + 0.5);
+		double numerator_d = x * *denominator;
+		long rounded = lround (numerator_d);
 		if (fabs (rounded - numerator_d) < epsilon) {
 			*numerator = rounded;
 			return;
@@ -747,7 +748,7 @@ static double getMaxColumnLabelHeight (TableOfReal me, Graphics graphics, long c
 	if (! my columnLabels) return 0.0;
 	fixRows (me, & colmin, & colmax);
 	for (long icol = colmin; icol <= colmax; icol ++) if (my columnLabels [icol] && my columnLabels [icol] [0]) {
-		if (! maxHeight) maxHeight = lineSpacing;
+		if (maxHeight == 0.0) maxHeight = lineSpacing;
 	}
 	return maxHeight;
 }
@@ -778,7 +779,7 @@ void TableOfReal_drawAsNumbers (TableOfReal me, Graphics graphics, long rowmin, 
 			Graphics_text (graphics, icol, y, text);
 		}
 	}
-	if (maxTextHeight) {
+	if (maxTextHeight != 0.0) {
 		double left = 0.5;
 		if (maxTextWidth > 0.0) left -= maxTextWidth + 2 * leftMargin;
 		Graphics_line (graphics, left, 1, my numberOfColumns + 0.5, 1);
@@ -818,7 +819,7 @@ void TableOfReal_drawAsNumbers_if (TableOfReal me, Graphics graphics, long rowmi
 				Graphics_text (graphics, icol, y, text);
 			}
 		}
-		if (maxTextHeight) {
+		if (maxTextHeight != 0.0) {
 			double left = 0.5;
 			if (maxTextWidth > 0.0) left -= maxTextWidth + 2 * leftMargin;
 			Graphics_line (graphics, left, 1, my numberOfColumns + 0.5, 1);

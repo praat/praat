@@ -2,7 +2,7 @@
 #define _DemoEditor_h_
 /* DemoEditor.h
  *
- * Copyright (C) 2009-2011,2012 Paul Boersma
+ * Copyright (C) 2009-2011,2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,24 +22,30 @@
 #include "Editor.h"
 
 Thing_define (DemoEditor, Editor) {
-	// new data:
-	public:
-		GuiDrawingArea drawingArea;
-		Graphics graphics;
-		void *praatPicture;
-		bool clicked, keyPressed, shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed;
-		long x, y;
-		wchar_t key;
-		bool waitingForInput, userWantsToClose, fullScreen;
-	// overridden methods:
-		virtual void v_destroy ();
-		virtual void v_info ();
-		virtual void v_goAway ();
-		virtual bool v_hasMenuBar () { return false; }
-		virtual bool v_canFullScreen () { return true; }
-		virtual bool v_scriptable () { return false; }
-		virtual void v_createChildren ();
-		virtual void v_createMenus ();
+	GuiDrawingArea drawingArea;
+	Graphics graphics;
+	void *praatPicture;
+	bool clicked, keyPressed, shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed;
+	long x, y;
+	char32 key;
+	bool waitingForInput, userWantsToClose, fullScreen;
+
+	void v_destroy ()
+		override;
+	void v_info ()
+		override;
+	void v_goAway ()
+		override;
+	bool v_hasMenuBar ()
+		override { return false; }
+	bool v_canFullScreen ()
+		override { return true; }
+	bool v_scriptable ()
+		override { return false; }
+	void v_createChildren ()
+		override;
+	void v_createMenus ()
+		override;
 };
 
 void DemoEditor_init (DemoEditor me);
@@ -52,20 +58,20 @@ struct autoDemoOpen {
 	~autoDemoOpen () { Demo_close (); }
 };
 
-int Demo_windowTitle (const wchar_t *title);
+int Demo_windowTitle (const char32 *title);
 int Demo_show (void);
 void Demo_waitForInput (Interpreter interpreter);
 bool Demo_clicked (void);
 double Demo_x (void);
 double Demo_y (void);
 bool Demo_keyPressed (void);
-wchar_t Demo_key (void);
+char32 Demo_key (void);
 bool Demo_shiftKeyPressed (void);
 bool Demo_commandKeyPressed (void);
 bool Demo_optionKeyPressed (void);
 bool Demo_extraControlKeyPressed (void);
 /* Shortcuts: */
-bool Demo_input (const wchar_t *keys);
+bool Demo_input (const char32 *keys);
 bool Demo_clickedIn (double left, double right, double bottom, double top);
 
 /* End of file DemoEditor.h */

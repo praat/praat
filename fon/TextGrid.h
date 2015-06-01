@@ -2,7 +2,7 @@
 #define _TextGrid_h_
 /* TextGrid.h
  *
- * Copyright (C) 1992-2012,2014 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,6 +110,9 @@ void TextInterval_removeText (TextInterval me);
 void TextPoint_removeText (TextPoint me);
 void IntervalTier_removeText (IntervalTier me);
 void TextTier_removeText (TextTier me);
+
+void TextTier_removePoints (TextTier me, int which_Melder_STRING, const wchar_t *criterion);
+void TextGrid_removePoints (TextGrid me, long tierNumber, int which_Melder_STRING, const wchar_t *criterion);
 
 void TextGrid_insertBoundary (TextGrid me, int itier, double t);
 void TextGrid_removeBoundaryAtTime (TextGrid me, int itier, double t);

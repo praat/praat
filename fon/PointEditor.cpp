@@ -1,6 +1,6 @@
 /* PointEditor.cpp
  *
- * Copyright (C) 1992-2011,2012,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,7 +107,7 @@ static void menu_cb_removePoints (EDITOR_ARGS) {
 	else
 		PointProcess_removePointsBetween ((PointProcess) my data, my d_startSelection, my d_endSelection);
 	FunctionEditor_redraw (me);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_addPointAtCursor (EDITOR_ARGS) {
@@ -115,7 +115,7 @@ static void menu_cb_addPointAtCursor (EDITOR_ARGS) {
 	Editor_save (me, L"Add point");
 	PointProcess_addPoint ((PointProcess) my data, 0.5 * (my d_startSelection + my d_endSelection));
 	FunctionEditor_redraw (me);
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_addPointAt (EDITOR_ARGS) {
@@ -128,7 +128,7 @@ static void menu_cb_addPointAt (EDITOR_ARGS) {
 		Editor_save (me, L"Add point");
 		PointProcess_addPoint ((PointProcess) my data, GET_REAL (L"Position"));
 		FunctionEditor_redraw (me);
-		my broadcastDataChanged ();
+		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
 

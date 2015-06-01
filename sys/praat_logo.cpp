@@ -1,6 +1,6 @@
 /* praat_logo.cpp
  *
- * Copyright (C) 1996-2012,2013,2014 Paul Boersma, 2008 Stefan de Konink
+ * Copyright (C) 1996-2012,2013,2014,2015 Paul Boersma, 2008 Stefan de Konink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ static struct {
 static void logo_timeOut (XtPointer closure, XtIntervalId *id) {
 	(void) closure;
 	(void) id;
- 	theLogo.form -> f_hide ();
+ 	GuiThing_hide (theLogo.form);
 }
 #endif
 
@@ -86,12 +86,12 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	(void) void_me;
 	(void) event;
- 	theLogo.form -> f_hide ();
+ 	GuiThing_hide (theLogo.form);
 }
 
 static void gui_cb_goAway (I) {
 	(void) void_me;
- 	theLogo.form -> f_hide ();
+ 	GuiThing_hide (theLogo.form);
 }
 
 void praat_showLogo (int autoPopDown) {
@@ -123,8 +123,8 @@ void praat_showLogo (int autoPopDown) {
 			theLogo.drawingArea = GuiDrawingArea_createShown (theLogo.form, 0, width, 0, height,
 				gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, NULL, NULL, 0);
 		}
-		theLogo.form -> f_show ();
-		theLogo.dia -> f_show ();
+		GuiThing_show (theLogo.form);
+		GuiThing_show (theLogo.dia);
 		#if motif
 			if (autoPopDown)
 				GuiAddTimeOut (2000, logo_timeOut, (XtPointer) NULL);

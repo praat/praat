@@ -2,7 +2,7 @@
 #define _Ui_h_
 /* Ui.h
  *
- * Copyright (C) 1992-2011,2012,2013 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,76 +72,166 @@ Thing_declare (EditorCommand);
 */
 
 Thing_define (UiField, Thing) {
-	// new data:
-	public:
-		int type;
-		const wchar_t *formLabel;
-		double realValue, realDefaultValue;
-		long integerValue, integerDefaultValue;
-		wchar_t *stringValue; const wchar_t *stringDefaultValue;
-		Graphics_Colour colourValue;
-		char *stringValueA;
-		Ordered options;
-		long numberOfStrings;
-		const wchar_t **strings;
-		GuiLabel label;
-		GuiText text;
-		GuiCheckButton checkButton;
-		GuiRadioButton radioButton;
-		GuiList list;
-		GuiOptionMenu optionMenu;
-		int y;
-	// overridden methods:
-		virtual void v_destroy ();
+	int type;
+	const wchar_t *formLabel;
+	double realValue, realDefaultValue;
+	long integerValue, integerDefaultValue;
+	wchar_t *stringValue; const wchar_t *stringDefaultValue;
+	Graphics_Colour colourValue;
+	char *stringValueA;
+	Ordered options;
+	long numberOfStrings;
+	const wchar_t **strings;
+	GuiLabel label;
+	GuiText text;
+	GuiCheckButton checkButton;
+	GuiRadioButton radioButton;
+	GuiList list;
+	GuiOptionMenu optionMenu;
+	int y;
+
+	void v_destroy ()
+		override;
 };
 
 #define MAXIMUM_NUMBER_OF_FIELDS  50
 #define MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS  10
 
 Thing_define (UiForm, Thing) {
-	// new data:
-	public:
-		EditorCommand command;
-		GuiWindow d_dialogParent;
-		GuiDialog d_dialogForm;
-		void (*okCallback) (UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure);
-		void (*applyCallback) (Any dia, void *closure);
-		void (*cancelCallback) (Any dia, void *closure);
-		void *buttonClosure;
-		const wchar_t *invokingButtonTitle, *helpTitle;
-		int numberOfContinueButtons, defaultContinueButton, cancelContinueButton, clickedContinueButton;
-		const wchar_t *continueTexts [1 + MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS];
-		int numberOfFields;
-		UiField field [1 + MAXIMUM_NUMBER_OF_FIELDS];
-		GuiButton okButton, cancelButton, revertButton, helpButton, applyButton, continueButtons [1 + MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS];
-		bool destroyWhenUnmanaged, isPauseForm;
-		bool (*allowExecutionHook) (void *closure);
-		void *allowExecutionClosure;
-	// overridden methods:
-		virtual void v_destroy ();
+	EditorCommand command;
+	GuiWindow d_dialogParent;
+	GuiDialog d_dialogForm;
+	void (*okCallback) (UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure);
+	void (*applyCallback) (Any dia, void *closure);
+	void (*cancelCallback) (Any dia, void *closure);
+	void *buttonClosure;
+	const wchar_t *invokingButtonTitle, *helpTitle;
+	int numberOfContinueButtons, defaultContinueButton, cancelContinueButton, clickedContinueButton;
+	const wchar_t *continueTexts [1 + MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS];
+	int numberOfFields;
+	UiField field [1 + MAXIMUM_NUMBER_OF_FIELDS];
+	GuiButton okButton, cancelButton, revertButton, helpButton, applyButton, continueButtons [1 + MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS];
+	bool destroyWhenUnmanaged, isPauseForm;
+	bool (*allowExecutionHook) (void *closure);
+	void *allowExecutionClosure;
+
+	void v_destroy ()
+		override;
 };
 
 /* The following routines work on the screen and from batch. */
 UiForm UiForm_create (GuiWindow parent, const wchar_t *title,
 	void (*okCallback) (UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure), void *buttonClosure,
 	const wchar_t *invokingButtonTitle, const wchar_t *helpTitle);
+inline static
+UiForm UiForm_create (GuiWindow parent, const char32 *title,
+	void (*okCallback) (UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure), void *buttonClosure,
+	const char32 *invokingButtonTitle, const char32 *helpTitle) {
+		return UiForm_create (parent, Melder_peekStr32ToWcs (title), okCallback, buttonClosure, Melder_peekStr32ToWcs (invokingButtonTitle), Melder_peekStr32ToWcs (helpTitle));
+}
+
 Any UiForm_addReal (I, const wchar_t *label, const wchar_t *defaultValue);
+inline static
+Any UiForm_addReal (I, const char32 *label, const char32 *defaultValue) {
+	return UiForm_addReal (void_me, Melder_peekStr32ToWcs (label), Melder_peekStr32ToWcs (defaultValue));
+}
+
 Any UiForm_addRealOrUndefined (I, const wchar_t *label, const wchar_t *defaultValue);
+inline static
+Any UiForm_addRealOrUndefined (I, const char32 *label, const char32 *defaultValue) {
+	return UiForm_addRealOrUndefined (void_me, Melder_peekStr32ToWcs (label), Melder_peekStr32ToWcs (defaultValue));
+}
+
 Any UiForm_addPositive (I, const wchar_t *label, const wchar_t *defaultValue);
+inline static
+Any UiForm_addPositive (I, const char32 *label, const char32 *defaultValue) {
+	return UiForm_addPositive (void_me, Melder_peekStr32ToWcs (label), Melder_peekStr32ToWcs (defaultValue));
+}
+
 Any UiForm_addInteger (I, const wchar_t *label, const wchar_t *defaultValue);
+inline static
+Any UiForm_addInteger (I, const char32 *label, const char32 *defaultValue) {
+	return UiForm_addInteger (void_me, Melder_peekStr32ToWcs (label), Melder_peekStr32ToWcs (defaultValue));
+}
+
 Any UiForm_addNatural (I, const wchar_t *label, const wchar_t *defaultValue);
+inline static
+Any UiForm_addNatural (I, const char32 *label, const char32 *defaultValue) {
+	return UiForm_addNatural (void_me, Melder_peekStr32ToWcs (label), Melder_peekStr32ToWcs (defaultValue));
+}
+
 Any UiForm_addWord (I, const wchar_t *label, const wchar_t *defaultValue);
+inline static
+Any UiForm_addWord (I, const char32 *label, const char32 *defaultValue) {
+	return UiForm_addWord (void_me, Melder_peekStr32ToWcs (label), Melder_peekStr32ToWcs (defaultValue));
+}
+
 Any UiForm_addSentence (I, const wchar_t *label, const wchar_t *defaultValue);
+inline static
+Any UiForm_addSentence (I, const char32 *label, const char32 *defaultValue) {
+	return UiForm_addSentence (void_me, Melder_peekStr32ToWcs (label), Melder_peekStr32ToWcs (defaultValue));
+}
+
 Any UiForm_addLabel (I, const wchar_t *name, const wchar_t *label);
+inline static
+Any UiForm_addLabel (I, const char32 *label, const char32 *defaultValue) {
+	return UiForm_addLabel (void_me, Melder_peekStr32ToWcs (label), Melder_peekStr32ToWcs (defaultValue));
+}
+
 Any UiForm_addBoolean (I, const wchar_t *label, int defaultValue);
+inline static
+Any UiForm_addBoolean (I, const char32 *label, int defaultValue) {
+	return UiForm_addBoolean (void_me, Melder_peekStr32ToWcs (label), defaultValue);
+}
+
 Any UiForm_addText (I, const wchar_t *name, const wchar_t *defaultValue);
+inline static
+Any UiForm_addText (I, const char32 *label, const char32 *defaultValue) {
+	return UiForm_addText (void_me, Melder_peekStr32ToWcs (label), Melder_peekStr32ToWcs (defaultValue));
+}
+
 Any UiForm_addRadio (I, const wchar_t *label, int defaultValue);
-	Any UiRadio_addButton (I, const wchar_t *label);
+inline static
+Any UiForm_addRadio (I, const char32 *label, int defaultValue) {
+	return UiForm_addRadio (void_me, Melder_peekStr32ToWcs (label), defaultValue);
+}
+
+Any UiRadio_addButton (I, const wchar_t *label);
+inline static
+Any UiRadio_addButton (I, const char32 *label) {
+	return UiRadio_addButton (void_me, Melder_peekStr32ToWcs (label));
+}
+
 Any UiForm_addOptionMenu (I, const wchar_t *label, int defaultValue);
-	Any UiOptionMenu_addButton (I, const wchar_t *label);
+inline static
+Any UiForm_addOptionMenu (I, const char32 *label, int defaultValue) {
+	return UiForm_addOptionMenu (void_me, Melder_peekStr32ToWcs (label), defaultValue);
+}
+
+Any UiOptionMenu_addButton (I, const wchar_t *label);
+inline static
+Any UiOptionMenu_addButton (I, const char32 *label) {
+	return UiOptionMenu_addButton (void_me, Melder_peekStr32ToWcs (label));
+}
+
 Any UiForm_addList (I, const wchar_t *label, long numberOfStrings, const wchar_t **strings, long defaultValue);
+inline static
+Any UiForm_addList (I, const char32 *label, long numberOfStrings, const wchar_t **strings, long defaultValue) {
+	return UiForm_addList (void_me, Melder_peekStr32ToWcs (label), numberOfStrings, strings, defaultValue);
+}
+
 Any UiForm_addColour (I, const wchar_t *label, const wchar_t *defaultValue);
+inline static
+Any UiForm_addColour (I, const char32 *label, const char32 *defaultValue) {
+	return UiForm_addColour (void_me, Melder_peekStr32ToWcs (label), Melder_peekStr32ToWcs (defaultValue));
+}
+
 Any UiForm_addChannel (I, const wchar_t *label, const wchar_t *defaultValue);
+inline static
+Any UiForm_addChannel (I, const char32 *label, const char32 *defaultValue) {
+	return UiForm_addChannel (void_me, Melder_peekStr32ToWcs (label), Melder_peekStr32ToWcs (defaultValue));
+}
+
 void UiForm_finish (I);
 void UiForm_destroyWhenUnmanaged (I);
 void UiForm_setPauseForm (I,
@@ -157,8 +247,16 @@ void UiForm_setPauseForm (I,
 /* 'fieldName' is name from UiForm_addXXXXXX (), */
 /* without anything from and including the first " (" or ":". */
 void UiForm_setString (I, const wchar_t *fieldName, const wchar_t *text);
+inline static
+void UiForm_setString (I, const wchar_t *fieldName, const char32 *text) {
+	UiForm_setString (void_me, fieldName, Melder_peekStr32ToWcs (text));
+}
 	/* Real, Positive, Integer, Natural, Word, Sentence, Label, Text, Radio, List. */
 void UiForm_setReal (I, const wchar_t *fieldName, double value);
+inline static
+void UiForm_setReal (I, const char32 *fieldName, double value) {
+	UiForm_setReal (void_me, Melder_peekStr32ToWcs (fieldName), value);
+}
 	/* Real, Positive. */
 void UiForm_setInteger (I, const wchar_t *fieldName, long value);
 	/* Integer, Natural, Boolean, Radio, List. */
@@ -197,14 +295,38 @@ void UiForm_do (I, bool modified);
 /* without anything from parentheses or from a colon. */
 /* These routines work from the screen and from batch. */
 double UiForm_getReal (I, const wchar_t *fieldName);	// Real, Positive
+inline static double UiForm_getReal (I, const char32 *fieldName) {
+	return UiForm_getReal (void_me, Melder_peekStr32ToWcs (fieldName));
+}
+
 long UiForm_getInteger (I, const wchar_t *fieldName);	// Integer, Natural, Boolean, Radio, List
+inline static long UiForm_getInteger (I, const char32 *fieldName) {
+	return UiForm_getInteger (void_me, Melder_peekStr32ToWcs (fieldName));
+}
+
 wchar_t * UiForm_getString (I, const wchar_t *fieldName);	// Word, Sentence, Text, Radio, List
+inline static char32 * UiForm_getString (I, const char32 *fieldName) {
+	return Melder_peekWcsToStr32 (UiForm_getString (void_me, Melder_peekStr32ToWcs (fieldName)));
+}
+
 Graphics_Colour UiForm_getColour (I, const wchar_t *fieldName);   // Colour
 MelderFile UiForm_getFile (I, const wchar_t *fieldName); // FileIn, FileOut
 
 double UiForm_getReal_check (I, const wchar_t *fieldName);
+inline static double UiForm_getReal_check (I, const char32 *fieldName) {
+	return UiForm_getReal_check (void_me, Melder_peekStr32ToWcs (fieldName));
+}
+
 long UiForm_getInteger_check (I, const wchar_t *fieldName);
+inline static long UiForm_getInteger_check (I, const char32 *fieldName) {
+	return UiForm_getInteger_check (void_me, Melder_peekStr32ToWcs (fieldName));
+}
+
 wchar_t * UiForm_getString_check (I, const wchar_t *fieldName);
+inline static char32 * UiForm_getString_check (I, const char32 *fieldName) {
+	return Melder_peekWcsToStr32 (UiForm_getString_check (void_me, Melder_peekStr32ToWcs (fieldName)));
+}
+
 Graphics_Colour UiForm_getColour_check (I, const wchar_t *fieldName);
 
 void UiForm_call (I, int narg, Stackel args, Interpreter interpreter);
@@ -235,10 +357,10 @@ void UiFile_hide (void);
 	UiFile_hide () before Melder_pause ().
 */
 
-void UiHistory_write (const wchar_t *string);
-void UiHistory_write_expandQuotes (const wchar_t *string);
-void UiHistory_write_colonize (const wchar_t *string);
-wchar_t *UiHistory_get (void);
+void UiHistory_write (const char32 *string);
+void UiHistory_write_expandQuotes (const char32 *string);
+void UiHistory_write_colonize (const char32 *string);
+char32 *UiHistory_get (void);
 void UiHistory_clear (void);
 
 void Ui_setAllowExecutionHook (bool (*allowExecutionHook) (void *closure), void *allowExecutionClosure);

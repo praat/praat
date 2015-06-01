@@ -1,6 +1,6 @@
 /* GraphicsScreen.cpp
  *
- * Copyright (C) 1992-2012,2014 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2012,2014,2015 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -247,7 +247,7 @@ void structGraphicsScreen :: v_flushWs () {
 		if (d_drawingArea) {
 			GuiShell shell = d_drawingArea -> d_shell;
 			Melder_assert (shell != NULL);
-			shell -> f_drain ();
+			GuiShell_drain (shell);
 		}
 	#endif
 }

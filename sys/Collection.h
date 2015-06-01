@@ -26,29 +26,34 @@
 #include "Simple.h"
 
 Thing_define (Collection, Data) {
-	// new data:
-	public:
-		ClassInfo itemClass;   // the class of which all items must be members (see Thing_member)
-		long _capacity, size;
-		bool _dontOwnItems;
-		Any *item;   // [1..size]
-	// overridden methods:
-	public:
-		virtual void v_info ();
-		virtual void v_destroy ();   // destroys all the items
-		virtual void v_copy (Any data_to);   // copies all the items
-		virtual bool v_equal (Any data2);   // compares 'my item [i]' with 'thy item [i]', i = 1..size
-		virtual bool v_canWriteAsEncoding (int outputEncoding);
-		virtual void v_writeText (MelderFile openFile);
-		virtual void v_readText (MelderReadText text);
-		virtual void v_writeBinary (FILE *f);
-		virtual void v_readBinary (FILE *f);
-		static Data_Description s_description;
-		virtual Data_Description v_description () { return s_description; }
-		virtual long v_position (Any data) {
-			(void) data;
-			return size + 1;   // at end
-		};
+	ClassInfo itemClass;   // the class of which all items must be members (see Thing_member)
+	long _capacity, size;
+	bool _dontOwnItems;
+	Any *item;   // [1..size]
+
+	void v_info ()
+		override;
+	void v_destroy ()
+		override;   // destroys all the items
+	void v_copy (Any data_to)
+		override;   // copies all the items
+	bool v_equal (Any data2)
+		override;   // compares 'my item [i]' with 'thy item [i]', i = 1..size
+	bool v_canWriteAsEncoding (int outputEncoding)
+		override;
+	void v_writeText (MelderFile openFile)
+		override;
+	void v_readText (MelderReadText text)
+		override;
+	void v_writeBinary (FILE *f)
+		override;
+	void v_readBinary (FILE *f)
+		override;
+	static Data_Description s_description;
+	Data_Description v_description ()
+		override { return s_description; }
+
+	virtual long v_position (Any /* data */) { return size + 1; /* at end */ };
 };
 /*
 	An object of type Collection is a collection of items of any class.
@@ -231,14 +236,11 @@ void Sorted_sort (Sorted me);
 /********** class SortedSet **********/
 
 Thing_define (SortedSet, Sorted) {   // every item must be unique (by key)
-	// functions:
-	public:
-		bool hasItem (Any a_item) {
-			return v_position (a_item) == 0;
-		}
-	// overridden methods:
-	protected:
-		virtual long v_position (Any data);   // returns 0 (refusal) if the key of 'data' already occurs
+	bool hasItem (Any a_item) {
+		return v_position (a_item) == 0;
+	}
+
+	virtual long v_position (Any data);   // returns 0 (refusal) if the key of 'data' already occurs
 };
 
 void SortedSet_init (SortedSet me, ClassInfo itemClass, long initialCapacity);
@@ -252,9 +254,9 @@ void SortedSet_init (SortedSet me, ClassInfo itemClass, long initialCapacity);
 /********** class SortedSetOfInt **********/
 
 Thing_define (SortedSetOfInt, SortedSet) {
-	// overridden methods:
-		static int s_compare (Any data1, Any data2);
-		virtual Data_CompareFunction v_getCompareFunction () { return s_compare; }
+	static int s_compare (Any data1, Any data2);
+	Data_CompareFunction v_getCompareFunction ()
+		override { return s_compare; }
 };
 
 void SortedSetOfInt_init (SortedSetOfInt me);
@@ -263,9 +265,9 @@ SortedSetOfInt SortedSetOfInt_create (void);
 /********** class SortedSetOfLong **********/
 
 Thing_define (SortedSetOfLong, SortedSet) {
-	// overridden methods:
-		static int s_compare (Any data1, Any data2);
-		virtual Data_CompareFunction v_getCompareFunction () { return s_compare; }
+	static int s_compare (Any data1, Any data2);
+	Data_CompareFunction v_getCompareFunction ()
+		override { return s_compare; }
 };
 
 void SortedSetOfLong_init (SortedSetOfLong me);
@@ -274,9 +276,9 @@ SortedSetOfLong SortedSetOfLong_create (void);
 /********** class SortedSetOfDouble **********/
 
 Thing_define (SortedSetOfDouble, SortedSet) {
-	// overridden methods:
-		static int s_compare (Any data1, Any data2);
-		virtual Data_CompareFunction v_getCompareFunction () { return s_compare; }
+	static int s_compare (Any data1, Any data2);
+	Data_CompareFunction v_getCompareFunction ()
+		override { return s_compare; }
 };
 
 void SortedSetOfDouble_init (SortedSetOfDouble me);
@@ -285,18 +287,29 @@ SortedSetOfDouble SortedSetOfDouble_create (void);
 /********** class SortedSetOfString **********/
 
 Thing_define (SortedSetOfString, SortedSet) {
-	// functions:
-	public:
-		void addString (const wchar_t *string);
-	// overridden methods:
-	protected:
-		static int s_compare (Any data1, Any data2);
-		virtual Data_CompareFunction v_getCompareFunction () { return s_compare; }
+	void addString (const wchar_t *string);
+
+	static int s_compare (Any data1, Any data2);
+	Data_CompareFunction v_getCompareFunction ()
+		override { return s_compare; }
 };
 
 void SortedSetOfString_init (SortedSetOfString me);
 SortedSetOfString SortedSetOfString_create (void);
 long SortedSetOfString_lookUp (SortedSetOfString me, const wchar_t *string);
+
+/********** class SortedSetOfString32 **********/
+
+Thing_define (SortedSetOfString32, SortedSet) {
+	static int s_compare (Any data1, Any data2);
+	Data_CompareFunction v_getCompareFunction ()
+		override { return s_compare; }
+};
+
+void SortedSetOfString32_init (SortedSetOfString32 me);
+SortedSetOfString32 SortedSetOfString32_create (void);
+void SortedSetOfString32_addString (SortedSetOfString32 me, const char32 *string);
+long SortedSetOfString32_lookUp (SortedSetOfString32 me, const char32 *string);
 
 /********** class Cyclic **********/
 

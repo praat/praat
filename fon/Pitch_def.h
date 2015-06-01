@@ -1,6 +1,6 @@
 /* Pitch_def.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,16 +83,24 @@ oo_DEFINE_CLASS (Pitch, Sampled)
 	oo_STRUCT_VECTOR (Pitch_Frame, frame, nx)
 
 	#if oo_DECLARING
-		// overridden methods:
-			virtual void v_info ();
-			virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
-			virtual int v_getMinimumUnit (long ilevel);
-			virtual int v_getMaximumUnit (long ilevel);
-			virtual const wchar_t * v_getUnitText (long ilevel, int unit, unsigned long flags);
-			virtual bool v_isUnitLogarithmic (long ilevel, int unit);
-			virtual double v_convertStandardToSpecialUnit (double value, long ilevel, int unit);
-			virtual double v_convertSpecialToStandardUnit (double value, long ilevel, int unit);
-			virtual double v_getValueAtSample (long isamp, long ilevel, int unit);
+		void v_info ()
+			override;
+		int v_domainQuantity ()
+			override { return MelderQuantity_TIME_SECONDS; }
+		int v_getMinimumUnit (long ilevel)
+			override;
+		int v_getMaximumUnit (long ilevel)
+			override;
+		const wchar_t * v_getUnitText (long ilevel, int unit, unsigned long flags)
+			override;
+		bool v_isUnitLogarithmic (long ilevel, int unit)
+			override;
+		double v_convertStandardToSpecialUnit (double value, long ilevel, int unit)
+			override;
+		double v_convertSpecialToStandardUnit (double value, long ilevel, int unit)
+			override;
+		double v_getValueAtSample (long isamp, long ilevel, int unit)
+			override;
 	#endif
 
 oo_END_CLASS (Pitch)

@@ -1,6 +1,6 @@
 /* TextGrid.cpp
  *
- * Copyright (C) 1992-2012,2014 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1219,18 +1219,18 @@ void TextTier_removePoint (TextTier me, long ipoint) {
 	Collection_removeItem (my points, ipoint);
 }
 
-void structTextTier :: removePoints (int which_Melder_STRING, const wchar_t *criterion) {
-	for (long i = our numberOfPoints (); i > 0; i --)
-		if (Melder_stringMatchesCriterion (our point (i) -> mark, which_Melder_STRING, criterion))
-			Collection_removeItem (our points, i);
+void TextTier_removePoints (TextTier me, int which_Melder_STRING, const wchar_t *criterion) {
+	for (long i = my numberOfPoints (); i > 0; i --)
+		if (Melder_stringMatchesCriterion (my point (i) -> mark, which_Melder_STRING, criterion))
+			Collection_removeItem (my points, i);
 }
 
-void structTextGrid :: removePoints (long tierNumber, int which_Melder_STRING, const wchar_t *criterion) {
+void TextGrid_removePoints (TextGrid me, long tierNumber, int which_Melder_STRING, const wchar_t *criterion) {
 	try {
-		TextTier tier = TextGrid_checkSpecifiedTierIsPointTier (this, tierNumber);
-		tier -> removePoints (which_Melder_STRING, criterion);
+		TextTier tier = TextGrid_checkSpecifiedTierIsPointTier (me, tierNumber);
+		TextTier_removePoints (tier, which_Melder_STRING, criterion);
 	} catch (MelderError) {
-		Melder_throw (this, ": points not removed.");
+		Melder_throw (me, ": points not removed.");
 	}
 }
 
@@ -1359,7 +1359,7 @@ TextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 }
 
 static void writeQuotedString (MelderFile file, const wchar_t *string) {
-	MelderFile_writeCharacter (file, '\"');
+	MelderFile_writeCharacter (file, U'\"');
 	if (string) {
 		wchar_t kar;
 		while ((kar = *string ++) != '\0') {
@@ -1367,7 +1367,7 @@ static void writeQuotedString (MelderFile file, const wchar_t *string) {
 			if (kar == '\"') MelderFile_writeCharacter (file, kar);
 		}
 	}   // BUG
-	MelderFile_writeCharacter (file, '\"');
+	MelderFile_writeCharacter (file, U'\"');
 }
 
 void TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file) {
@@ -1597,7 +1597,7 @@ TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 					length = strlen (arg7);
 					if (length < 6 || ! strnequ (arg7, "w=\"", 3))
 						Melder_throw ("Missing word.");
-					arg7 [length - 3] = '\0';   /* Truncate "/>. */
+					arg7 [length - 3] = '\0';   // truncate "/>
 					strcat (phrase, arg7 + 3);
 					if (phraseTier -> intervals -> size > 0) {
 						TextInterval latestInterval = (TextInterval) phraseTier -> intervals -> item [phraseTier -> intervals -> size];

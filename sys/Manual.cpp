@@ -1,6 +1,6 @@
 /* Manual.cpp
  *
- * Copyright (C) 1996-2011,2014 Paul Boersma
+ * Copyright (C) 1996-2011,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -358,7 +358,7 @@ static void search (Manual me, const wchar_t *query) {
 }
 
 void Manual_search (Manual me, const wchar_t *query) {
-	my searchText -> f_setString (query);
+	GuiText_setString (my searchText, query);
 	search (me, query);
 }
 
@@ -375,31 +375,31 @@ static void gui_button_cb_record (I, GuiButtonEvent event) {
 	iam (Manual);
 	ManPages manPages = (ManPages) my data;
 	ManPage manPage = (ManPage) (my path < 1 ? NULL : manPages -> pages -> item [my path]);
-	my recordButton  -> f_setSensitive (false);
-	my playButton    -> f_setSensitive (false);
-	my publishButton -> f_setSensitive (false);
+	GuiThing_setSensitive (my recordButton,  false);
+	GuiThing_setSensitive (my playButton,    false);
+	GuiThing_setSensitive (my publishButton, false);
 	#if motif
 		XmUpdateDisplay (my d_windowForm -> d_xmShell);
 	#endif
 	if (! Melder_record (manPage == NULL ? 1.0 : manPage -> recordingTime)) Melder_flushError (NULL);
-	my recordButton  -> f_setSensitive (true);
-	my playButton    -> f_setSensitive (true);
-	my publishButton -> f_setSensitive (true);
+	GuiThing_setSensitive (my recordButton,  true);
+	GuiThing_setSensitive (my playButton,    true);
+	GuiThing_setSensitive (my publishButton, true);
 }
 
 static void gui_button_cb_play (I, GuiButtonEvent event) {
 	(void) event;
 	iam (Manual);
-	my recordButton  -> f_setSensitive (false);
-	my playButton    -> f_setSensitive (false);
-	my publishButton -> f_setSensitive (false);
+	GuiThing_setSensitive (my recordButton,  false);
+	GuiThing_setSensitive (my playButton,    false);
+	GuiThing_setSensitive (my publishButton, false);
 	#if motif
 		XmUpdateDisplay (my d_windowForm -> d_xmShell);
 	#endif
 	Melder_play ();
-	my recordButton  -> f_setSensitive (true);
-	my playButton    -> f_setSensitive (true);
-	my publishButton -> f_setSensitive (true);
+	GuiThing_setSensitive (my recordButton,  true);
+	GuiThing_setSensitive (my playButton,    true);
+	GuiThing_setSensitive (my publishButton, true);
 }
 
 static void gui_button_cb_publish (I, GuiButtonEvent event) {
@@ -410,7 +410,7 @@ static void gui_button_cb_publish (I, GuiButtonEvent event) {
 }
 
 static void do_search (Manual me) {
-	wchar_t *query = my searchText -> f_getString ();
+	wchar_t *query = GuiText_getString (my searchText);
 	search (me, query);
 	Melder_free (query);
 }
@@ -526,7 +526,8 @@ int structManual :: v_goToPage (const wchar_t *title) {
 		autoMelderSetDefaultDir dir (& manPages -> rootDirectory);
 		autoPraatBackground background;
 		try {
-			praat_executeScriptFromFileNameWithArguments (title + 3);
+			autostring32 fileNameWithArguments = Melder_wcsToStr32 (title + 3);
+			praat_executeScriptFromFileNameWithArguments (fileNameWithArguments.peek());
 		} catch (MelderError) {
 			Melder_flushError (NULL);
 		}

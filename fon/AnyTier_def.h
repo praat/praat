@@ -1,6 +1,6 @@
 /* AnyTier_def.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,10 +31,10 @@ oo_DEFINE_CLASS (AnyTier, Function)
 	oo_COLLECTION (SortedSetOfDouble, points, AnyPoint, 0)
 
 	#if oo_DECLARING
-		// overridden methods:
-		protected:
-			virtual void v_shiftX (double xfrom, double xto);
-			virtual void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto);
+		void v_shiftX (double xfrom, double xto)
+			override;
+		void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto)
+			override;
 	#endif
 
 oo_END_CLASS (AnyTier)

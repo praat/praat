@@ -40,103 +40,102 @@ typedef struct {
 } _Graphics_widechar;
 
 Thing_define (Graphics, Thing) {
-	// new data:
-	public:
-		/* Device constants. */
-		bool screen;
-			/* A boolean for whether we are a graphic screen (which may include a non-PostScript printer. */
-		bool postScript;
-			/* A boolean for whether we are a PostScript device. */
-		bool printer;
-			/* A boolean for whether we are a printer. */
-		bool metafile;
-			/* A boolean for whether we are a high-resolution metafile or clipboard. */
-		bool yIsZeroAtTheTop;
-			/* A boolean for whether vertical cooordinates increase from top to bottom (as on most screens, but not PostScript). */
-		GuiDrawingArea d_drawingArea;
-			/* Also used as a boolean. */
-		int resolution;
-			/* Dots per inch. */
-		enum kGraphics_resolution resolutionNumber;
-		long d_x1DCmin, d_x2DCmax, d_y1DCmin, d_y2DCmax;
-			/* Maximum dimensions of the output device. */
-			/* x1DCmin < x2DCmax; y1DCmin < y2DCmax; */
-			/* The point (x1DCmin, y1DCmin) can be either in the top left */
-			/* or in the bottom left, depending on the yIsZeroAtTheTop flag. */
-			/* Device variables. */
-		long d_x1DC, d_x2DC, d_y1DC, d_y2DC;
-			/* Current dimensions of the output device, or: */
-			/* device coordinates of the viewport rectangle. */
-			/* x1DCmin <= x1DC < x2DC <= x2DCmax; */
-			/* y1DCmin <= y1DC < y2DC <= y2DCmax; */
-			/* Graphics_create_xxxxxx sets these coordinates to */
-			/* x1DCmin, x2DCmax, y1DCmin, and y2DCmax. */
-			/* They can be changed by Graphics_setWsViewport. */
-		double d_x1wNDC, d_x2wNDC, d_y1wNDC, d_y2wNDC;
-			/* Normalized device coordinates of */
-			/* the device viewport rectangle. */
-			/* The point (x1wNDC, y1wNDC) is always in the bottom left.	*/
-			/* Graphics_create_xxxxxx sets these coordinates to */
-			/* 0.0, 1.0, 0.0, and 1.0. */
-			/* They can be changed by Graphics_setWsWindow. */
-		double d_x1NDC, d_x2NDC, d_y1NDC, d_y2NDC;
-			/* Normalized device coordinates of the user output viewport, */
-			/* which is a part of the device viewport rectangle. */
-			/* x1wNDC <= x1NDC < x2NDC <= x2wNDC; */
-			/* y1wNDC <= y1NDC < y2NDC <= y2wNDC; */
-			/* Graphics_create_xxxxxx sets these coordinates to */
-			/* 0.0, 1.0, 0.0, and 1.0. */
-			/* They can be changed by Graphics_setViewport. */
-		double d_x1WC, d_x2WC, d_y1WC, d_y2WC;
-			/* World coordinates of the user output viewport rectangle.	*/
-			/* They bear a relation to the "real" world, */
-			/* and are used in the drawing routines. */
-			/* Graphics_create_xxxxxx sets these coordinates to */
-			/* 0.0, 1.0, 0.0, and 1.0. */
-			/* They can be changed by Graphics_setWindow. */
-		double deltaX, deltaY, scaleX, scaleY;
-			/* Current coordinate transformation. */
-		/* Graphics state. */
-		int lineType;
-		Graphics_Colour colour;
-		double lineWidth, arrowSize, speckleSize;
-		enum kGraphics_colourScale colourScale;
-		int horizontalTextAlignment, verticalTextAlignment;
-		double textRotation, wrapWidth, secondIndent, textX, textY;
-		enum kGraphics_font font;
-		int fontSize, fontStyle;
-		int percentSignIsItalic, numberSignIsBold, circumflexIsSuperscript, underscoreIsSubscript;
-		int dollarSignIsCode, atSignIsLink;
-		bool recording, duringXor;
-		long irecord, nrecord;
-		double *record;
-		Graphics_Viewport outerViewport;   /* For Graphics_(un)setInner (). */
-		double horTick, vertTick;   /* For Graphics_mark(s)XXX (). */
-		double paperWidth, paperHeight;
-	// overridden methods:
-		virtual void v_destroy ();
-	// new methods:
-		virtual void v_polyline (long numberOfPoints, double *xyDC, bool close) { (void) numberOfPoints; (void) xyDC; (void) close; }
-		virtual void v_fillArea (long numberOfPoints, double *xyDC) { (void) numberOfPoints; (void) xyDC; }
-		virtual void v_rectangle (double x1DC, double x2DC, double y1DC, double y2DC) { (void) x1DC; (void) x2DC; (void) y1DC; (void) y2DC; }
-		virtual void v_fillRectangle (double a_x1DC, double a_x2DC, double a_y1DC, double a_y2DC) { (void) a_x1DC; (void) a_x2DC; (void) a_y1DC; (void) a_y2DC; }
-		virtual void v_circle (double xDC, double yDC, double rDC) { (void) xDC; (void) yDC; (void) rDC; }
-		virtual void v_ellipse (double a_x1DC, double a_x2DC, double a_y1DC, double a_y2DC) { (void) a_x1DC; (void) a_x2DC; (void) a_y1DC; (void) a_y2DC; }
-		virtual void v_arc (double xDC, double yDC, double rDC, double fromAngle, double toAngle) { (void) xDC; (void) yDC; (void) rDC; (void) fromAngle; (void) toAngle; }
-		virtual void v_fillCircle (double xDC, double yDC, double rDC) { (void) xDC; (void) yDC; (void) rDC; }
-		virtual void v_fillEllipse (double a_x1DC, double a_x2DC, double a_y1DC, double a_y2DC) { (void) a_x1DC; (void) a_x2DC; (void) a_y1DC; (void) a_y2DC; }
-		virtual void v_button (double a_x1DC, double a_x2DC, double a_y1DC, double a_y2DC)
-			{
-				v_rectangle (a_x1DC, a_x2DC, a_y1DC, a_y2DC);   // the simplest implementation
-			}
-		virtual void v_roundedRectangle (double x1DC, double x2DC, double y1DC, double y2DC, double r);
-		virtual void v_fillRoundedRectangle (double x1DC, double x2DC, double y1DC, double y2DC, double r);
-		virtual void v_arrowHead (double xDC, double yDC, double angle);
-		virtual bool v_mouseStillDown () { return false; }
-		virtual void v_getMouseLocation (double *xWC, double *yWC) { *xWC = *yWC = NUMundefined; }
-		virtual void v_flushWs () { }
-		virtual void v_clearWs () { }
-		virtual void v_updateWs () { }
+	/* Device constants. */
+	bool screen;
+		/* A boolean for whether we are a graphic screen (which may include a non-PostScript printer. */
+	bool postScript;
+		/* A boolean for whether we are a PostScript device. */
+	bool printer;
+		/* A boolean for whether we are a printer. */
+	bool metafile;
+		/* A boolean for whether we are a high-resolution metafile or clipboard. */
+	bool yIsZeroAtTheTop;
+		/* A boolean for whether vertical cooordinates increase from top to bottom (as on most screens, but not PostScript). */
+	GuiDrawingArea d_drawingArea;
+		/* Also used as a boolean. */
+	int resolution;
+		/* Dots per inch. */
+	enum kGraphics_resolution resolutionNumber;
+	long d_x1DCmin, d_x2DCmax, d_y1DCmin, d_y2DCmax;
+		/* Maximum dimensions of the output device. */
+		/* x1DCmin < x2DCmax; y1DCmin < y2DCmax; */
+		/* The point (x1DCmin, y1DCmin) can be either in the top left */
+		/* or in the bottom left, depending on the yIsZeroAtTheTop flag. */
+		/* Device variables. */
+	long d_x1DC, d_x2DC, d_y1DC, d_y2DC;
+		/* Current dimensions of the output device, or: */
+		/* device coordinates of the viewport rectangle. */
+		/* x1DCmin <= x1DC < x2DC <= x2DCmax; */
+		/* y1DCmin <= y1DC < y2DC <= y2DCmax; */
+		/* Graphics_create_xxxxxx sets these coordinates to */
+		/* x1DCmin, x2DCmax, y1DCmin, and y2DCmax. */
+		/* They can be changed by Graphics_setWsViewport. */
+	double d_x1wNDC, d_x2wNDC, d_y1wNDC, d_y2wNDC;
+		/* Normalized device coordinates of */
+		/* the device viewport rectangle. */
+		/* The point (x1wNDC, y1wNDC) is always in the bottom left.	*/
+		/* Graphics_create_xxxxxx sets these coordinates to */
+		/* 0.0, 1.0, 0.0, and 1.0. */
+		/* They can be changed by Graphics_setWsWindow. */
+	double d_x1NDC, d_x2NDC, d_y1NDC, d_y2NDC;
+		/* Normalized device coordinates of the user output viewport, */
+		/* which is a part of the device viewport rectangle. */
+		/* x1wNDC <= x1NDC < x2NDC <= x2wNDC; */
+		/* y1wNDC <= y1NDC < y2NDC <= y2wNDC; */
+		/* Graphics_create_xxxxxx sets these coordinates to */
+		/* 0.0, 1.0, 0.0, and 1.0. */
+		/* They can be changed by Graphics_setViewport. */
+	double d_x1WC, d_x2WC, d_y1WC, d_y2WC;
+		/* World coordinates of the user output viewport rectangle.	*/
+		/* They bear a relation to the "real" world, */
+		/* and are used in the drawing routines. */
+		/* Graphics_create_xxxxxx sets these coordinates to */
+		/* 0.0, 1.0, 0.0, and 1.0. */
+		/* They can be changed by Graphics_setWindow. */
+	double deltaX, deltaY, scaleX, scaleY;
+		/* Current coordinate transformation. */
+	/* Graphics state. */
+	int lineType;
+	Graphics_Colour colour;
+	double lineWidth, arrowSize, speckleSize;
+	enum kGraphics_colourScale colourScale;
+	int horizontalTextAlignment, verticalTextAlignment;
+	double textRotation, wrapWidth, secondIndent, textX, textY;
+	enum kGraphics_font font;
+	int fontSize, fontStyle;
+	int percentSignIsItalic, numberSignIsBold, circumflexIsSuperscript, underscoreIsSubscript;
+	int dollarSignIsCode, atSignIsLink;
+	bool recording, duringXor;
+	long irecord, nrecord;
+	double *record;
+	Graphics_Viewport outerViewport;   /* For Graphics_(un)setInner (). */
+	double horTick, vertTick;   /* For Graphics_mark(s)XXX (). */
+	double paperWidth, paperHeight;
+
+	void v_destroy ()
+		override;
+
+	virtual void v_polyline (long numberOfPoints, double *xyDC, bool close) { (void) numberOfPoints; (void) xyDC; (void) close; }
+	virtual void v_fillArea (long numberOfPoints, double *xyDC) { (void) numberOfPoints; (void) xyDC; }
+	virtual void v_rectangle (double x1DC, double x2DC, double y1DC, double y2DC) { (void) x1DC; (void) x2DC; (void) y1DC; (void) y2DC; }
+	virtual void v_fillRectangle (double a_x1DC, double a_x2DC, double a_y1DC, double a_y2DC) { (void) a_x1DC; (void) a_x2DC; (void) a_y1DC; (void) a_y2DC; }
+	virtual void v_circle (double xDC, double yDC, double rDC) { (void) xDC; (void) yDC; (void) rDC; }
+	virtual void v_ellipse (double a_x1DC, double a_x2DC, double a_y1DC, double a_y2DC) { (void) a_x1DC; (void) a_x2DC; (void) a_y1DC; (void) a_y2DC; }
+	virtual void v_arc (double xDC, double yDC, double rDC, double fromAngle, double toAngle) { (void) xDC; (void) yDC; (void) rDC; (void) fromAngle; (void) toAngle; }
+	virtual void v_fillCircle (double xDC, double yDC, double rDC) { (void) xDC; (void) yDC; (void) rDC; }
+	virtual void v_fillEllipse (double a_x1DC, double a_x2DC, double a_y1DC, double a_y2DC) { (void) a_x1DC; (void) a_x2DC; (void) a_y1DC; (void) a_y2DC; }
+	virtual void v_button (double a_x1DC, double a_x2DC, double a_y1DC, double a_y2DC)
+		{
+			v_rectangle (a_x1DC, a_x2DC, a_y1DC, a_y2DC);   // the simplest implementation
+		}
+	virtual void v_roundedRectangle (double x1DC, double x2DC, double y1DC, double y2DC, double r);
+	virtual void v_fillRoundedRectangle (double x1DC, double x2DC, double y1DC, double y2DC, double r);
+	virtual void v_arrowHead (double xDC, double yDC, double angle);
+	virtual bool v_mouseStillDown () { return false; }
+	virtual void v_getMouseLocation (double *xWC, double *yWC) { *xWC = *yWC = NUMundefined; }
+	virtual void v_flushWs () { }
+	virtual void v_clearWs () { }
+	virtual void v_updateWs () { }
 };
 
 Graphics Graphics_create (int resolution);
@@ -327,6 +326,10 @@ void Graphics_textLeft (Graphics me, bool far, const wchar_t *text);
 void Graphics_textRight (Graphics me, bool far, const wchar_t *text);
 void Graphics_textBottom (Graphics me, bool far, const wchar_t *text);
 void Graphics_textTop (Graphics me, bool far, const wchar_t *text);
+inline static
+void Graphics_textTop (Graphics me, bool farr, const char32 *text) {
+	Graphics_textTop (me, farr, Melder_peekStr32ToWcs (text));
+}
 void Graphics_marksLeft (Graphics me, int numberOfMarks, bool haveNumbers, bool haveTicks, bool haveDottedLines);
 void Graphics_marksRight (Graphics me, int numberOfMarks, bool haveNumbers, bool haveTicks, bool haveDottedLines);
 void Graphics_marksBottom (Graphics me, int numberOfMarks, bool haveNumbers, bool haveTicks, bool haveDottedLines);

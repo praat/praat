@@ -1,6 +1,6 @@
 /* TextGrid_def.h
  *
- * Copyright (C) 1992-2011,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,8 @@ oo_DEFINE_CLASS (TextInterval, Function)
 	oo_STRING (text)
 
 	#if oo_DECLARING
-		virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
+		int v_domainQuantity ()
+			override { return MelderQuantity_TIME_SECONDS; }
 	#endif
 
 oo_END_CLASS (TextInterval)
@@ -53,12 +54,17 @@ oo_DEFINE_CLASS (TextTier, Function)
 	oo_COLLECTION (SortedSetOfDouble, points, TextPoint, 0)
 
 	#if oo_DECLARING
-		long numberOfPoints () { return our points -> size; }
-		TextPoint point (long i) { return static_cast <TextPoint> (our points -> item [i]); }
-		void removePoints (int which_Melder_STRING, const wchar_t *criterion);
-		virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
-		virtual void v_shiftX (double xfrom, double xto);
-		virtual void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto);
+		long numberOfPoints () // accessor
+			{ return our points -> size; }
+		TextPoint point (long i) // accessor
+			{ return static_cast <TextPoint> (our points -> item [i]); }
+
+		int v_domainQuantity ()
+			override { return MelderQuantity_TIME_SECONDS; }
+		void v_shiftX (double xfrom, double xto)
+			override;
+		void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto)
+			override;
 	#endif
 
 oo_END_CLASS (TextTier)
@@ -71,13 +77,19 @@ oo_DEFINE_CLASS (IntervalTier, Function)
 	oo_COLLECTION (SortedSetOfDouble, intervals, TextInterval, 0)
 
 	#if oo_DECLARING
-		long numberOfIntervals () { return our intervals -> size; }
-		TextInterval interval (long i) { return static_cast <TextInterval> (our intervals -> item [i]); }
+		long numberOfIntervals () // accessor
+			{ return our intervals -> size; }
+		TextInterval interval (long i) // accessor
+			{ return static_cast <TextInterval> (our intervals -> item [i]); }
 		//template <class T> T& operator[] (long i) { return (T) (our intervals -> item [i]); }
 		//TextInterval* intervalss () { return (TextInterval *) (our intervals -> item); }
-		virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
-		virtual void v_shiftX (double xfrom, double xto);
-		virtual void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto);
+
+		int v_domainQuantity ()
+			override { return MelderQuantity_TIME_SECONDS; }
+		void v_shiftX (double xfrom, double xto)
+			override;
+		void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto)
+			override;
 	#endif
 
 oo_END_CLASS (IntervalTier)
@@ -90,14 +102,21 @@ oo_DEFINE_CLASS (TextGrid, Function)
 	oo_OBJECT (Ordered, 0, tiers)   // TextTier and IntervalTier objects
 
 	#if oo_DECLARING
-		long numberOfTiers () { return our tiers -> size; }
-		Function tier (long i) { return static_cast <Function> (our tiers -> item [i]); }
-		void removePoints (long tierNumber, int which_Melder_STRING, const wchar_t *criterion);
-		virtual void v_info ();
-		virtual void v_repair ();
-		virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
-		virtual void v_shiftX (double xfrom, double xto);
-		virtual void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto);
+		long numberOfTiers () // accessor
+			{ return our tiers -> size; }
+		Function tier (long i) // accessor
+			{ return static_cast <Function> (our tiers -> item [i]); }
+
+		void v_info ()
+			override;
+		void v_repair ()
+			override;
+		int v_domainQuantity ()
+			override { return MelderQuantity_TIME_SECONDS; }
+		void v_shiftX (double xfrom, double xto)
+			override;
+		void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto)
+			override;
 	#endif
 
 oo_END_CLASS (TextGrid)

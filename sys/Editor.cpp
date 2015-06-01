@@ -1,6 +1,6 @@
 /* Editor.cpp
  *
- * Copyright (C) 1992-2012,2013,2014 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
+ * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,8 +64,8 @@ void structEditorMenu :: v_destroy () {
 static void commonCallback (GUI_ARGS) {
 	GUI_IAM (EditorCommand);
 	if (my d_editor && my d_editor -> v_scriptable () && ! wcsstr (my itemTitle, L"...")) {
-		UiHistory_write (L"\n");
-		UiHistory_write_colonize (my itemTitle);
+		UiHistory_write (U"\n");
+		UiHistory_write_colonize (Melder_peekWcsToStr32 (my itemTitle));
 	}
 	try {
 		my commandCallback (my d_editor, me, NULL, 0, NULL, NULL, NULL);
@@ -173,7 +173,7 @@ void Editor_setMenuSensitive (Editor me, const wchar_t *menuTitle, int sensitive
 	for (int imenu = 1; imenu <= numberOfMenus; imenu ++) {
 		EditorMenu menu = (EditorMenu) my menus -> item [imenu];
 		if (wcsequ (menuTitle, menu -> menuTitle)) {
-			menu -> menuWidget -> f_setSensitive (sensitive);
+			GuiThing_setSensitive (menu -> menuWidget, sensitive);
 			return;
 		}
 	}
@@ -221,7 +221,7 @@ void structEditor :: v_destroy () {
 	 * Otherwise, we would be forgetting dangling command dialogs here.
 	 */
 	forget (our menus);
-	broadcastDestruction ();
+	Editor_broadcastDestruction (this);
 	if (our d_windowForm) {
 		#if gtk
 			if (our d_windowForm -> d_gtkWindow) {
@@ -259,7 +259,7 @@ void structEditor :: v_info () {
 
 void structEditor :: v_nameChanged () {
 	if (our name)
-		our d_windowForm -> f_setTitle (our name);
+		GuiShell_setTitle (our d_windowForm, our name);
 }
 
 void structEditor :: v_saveData () {
@@ -311,7 +311,7 @@ static void menu_cb_undo (EDITOR_ARGS) {
 	/*
 	 * Send a message to my boss (e.g., she will notify the others that depend on me).
 	 */
-	my broadcastDataChanged ();
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_searchManual (EDITOR_ARGS) {
@@ -484,7 +484,7 @@ void Editor_init (Editor me, int x, int y, int width, int height, const wchar_t 
 
 	if (my v_hasMenuBar ()) {
 		my menus = Ordered_create ();
-		my d_windowForm -> f_addMenuBar ();
+		GuiWindow_addMenuBar (my d_windowForm);
 	}
 
 	my v_createChildren ();
@@ -508,13 +508,13 @@ void Editor_init (Editor me, int x, int y, int width, int height, const wchar_t 
 			Editor_addCommand (me, L"File", L"Send back to calling program", 0, menu_cb_sendBackToCallingProgram);
 		Editor_addCommand (me, L"File", L"Close", 'W', menu_cb_close);
 	}
-	my d_windowForm -> f_show ();
+	GuiThing_show (my d_windowForm);
 }
 
 void Editor_save (Editor me, const wchar_t *text) {
 	my v_saveData ();
 	if (! my undoButton) return;
-	my undoButton -> f_setSensitive (true);
+	GuiThing_setSensitive (my undoButton, true);
 	swprintf (my undoText, 100, L"Undo %ls", text);
 	#if gtk
 		gtk_label_set_label (GTK_LABEL (gtk_bin_get_child (GTK_BIN (my undoButton -> d_widget))), Melder_peekWcsToUtf8 (my undoText));

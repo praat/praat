@@ -2,7 +2,7 @@
 #define _TableEditor_h_
 /* TableEditor.h
  *
- * Copyright (C) 2006-2011,2012 Paul Boersma
+ * Copyright (C) 2006-2011,2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,23 +25,26 @@
 #define kTableEditor_MAXNUM_VISIBLE_COLUMNS  100
 
 Thing_define (TableEditor, Editor) {
-	// new data:
-	public:
-		long topRow, leftColumn, selectedRow, selectedColumn;
-		GuiText text;
-		GuiDrawingArea drawingArea;
-		GuiScrollBar horizontalScrollBar, verticalScrollBar;
-		double columnLeft [kTableEditor_MAXNUM_VISIBLE_COLUMNS], columnRight [kTableEditor_MAXNUM_VISIBLE_COLUMNS];
-		Graphics graphics;
-	// overridden methods:
-		virtual void v_destroy ();
-		virtual void v_createChildren ();
-		virtual void v_createMenus ();
-		virtual void v_createHelpMenuItems (EditorMenu menu);
-		virtual void v_dataChanged ();
-	// new methods:
-		virtual void v_draw ();
-		virtual int v_click (double xWC, double yWC, bool shiftKeyPressed);
+	long topRow, leftColumn, selectedRow, selectedColumn;
+	GuiText text;
+	GuiDrawingArea drawingArea;
+	GuiScrollBar horizontalScrollBar, verticalScrollBar;
+	double columnLeft [kTableEditor_MAXNUM_VISIBLE_COLUMNS], columnRight [kTableEditor_MAXNUM_VISIBLE_COLUMNS];
+	Graphics graphics;
+
+	void v_destroy ()
+		override;
+	void v_createChildren ()
+		override;
+	void v_createMenus ()
+		override;
+	void v_createHelpMenuItems (EditorMenu menu)
+		override;
+	void v_dataChanged ()
+		override;
+
+	virtual void v_draw ();
+	virtual int v_click (double xWC, double yWC, bool shiftKeyPressed);
 };
 
 TableEditor TableEditor_create (const wchar_t *title, Table table);

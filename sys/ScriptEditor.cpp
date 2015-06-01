@@ -1,6 +1,6 @@
 /* ScriptEditor.cpp
  *
- * Copyright (C) 1997-2012,2013 Paul Boersma
+ * Copyright (C) 1997-2012,2013,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ void structScriptEditor :: v_destroy () {
 }
 
 void structScriptEditor :: v_nameChanged () {
-	bool dirtinessAlreadyShown = d_windowForm -> f_setDirty (dirty);
+	bool dirtinessAlreadyShown = GuiWindow_setDirty (d_windowForm, dirty);
 	static MelderString buffer = { 0 };
 	MelderString_copy (& buffer, name [0] ? L"Script" : L"untitled script");
 	if (editorClass)
@@ -53,7 +53,7 @@ void structScriptEditor :: v_nameChanged () {
 		MelderString_append (& buffer, L" ", MelderFile_messageName (& file));
 	if (dirty && ! dirtinessAlreadyShown)
 		MelderString_append (& buffer, L" (modified)");
-	d_windowForm -> f_setTitle (buffer.string);
+	GuiShell_setTitle (d_windowForm, buffer.string);
 }
 
 void structScriptEditor :: v_goAway () {
@@ -73,7 +73,7 @@ static void args_ok (UiForm sendingForm, int narg_dummy, Stackel args_dummy, con
 	(void) interpreter_dummy;
 	(void) invokingButtonTitle;
 	(void) modified_dummy;
-	autostring text = my textWidget -> f_getString ();
+	autostring32 text = GuiText_getString32 (my textWidget);
 	structMelderFile file = { 0 };
 	if (my name [0]) {
 		Melder_pathToFile (my name, & file);
@@ -96,7 +96,7 @@ static void args_ok_selectionOnly (UiForm sendingForm, int narg_dummy, Stackel a
 	(void) interpreter_dummy;
 	(void) invokingButtonTitle;
 	(void) modified_dummy;
-	autostring text = my textWidget -> f_getSelection ();
+	autostring32 text = GuiText_getSelection32 (my textWidget);
 	if (text.peek() == NULL)
 		Melder_throw ("No text is selected any longer.\nPlease reselect or click Cancel.");
 	structMelderFile file = { 0 };
@@ -117,7 +117,8 @@ static void menu_cb_run (EDITOR_ARGS) {
 	EDITOR_IAM (ScriptEditor);
 	if (my interpreter -> running)
 		Melder_throw ("The script is already running (paused). Please close or continue the pause or demo window.");
-	autostring text = my textWidget -> f_getString ();
+	autostring32 text = GuiText_getString32 (my textWidget);
+	trace ("Running the following script (1):\n%s", Melder_peekStr32ToUtf8 (text.peek()));
 	structMelderFile file = { 0 };
 	if (my name [0]) {
 		Melder_pathToFile (my name, & file);
@@ -135,6 +136,7 @@ static void menu_cb_run (EDITOR_ARGS) {
 	} else {
 		autoPraatBackground background;
 		if (my name [0]) MelderFile_setDefaultDir (& file);
+		trace ("Running the following script (2):\n%s", Melder_peekStr32ToUtf8 (text.peek()));
 		Interpreter_run (my interpreter, text.peek());
 	}
 }
@@ -143,7 +145,7 @@ static void menu_cb_runSelection (EDITOR_ARGS) {
 	EDITOR_IAM (ScriptEditor);
 	if (my interpreter -> running)
 		Melder_throw (L"The script is already running (paused). Please close or continue the pause or demo window.");
-	autostring text = my textWidget -> f_getSelection ();
+	autostring32 text = GuiText_getSelection32 (my textWidget);
 	if (text.peek() == NULL)
 		Melder_throw ("No text selected.");
 	structMelderFile file = { 0 };
@@ -251,37 +253,37 @@ static void menu_cb_clearHistory (EDITOR_ARGS) {
 
 static void menu_cb_pasteHistory (EDITOR_ARGS) {
 	EDITOR_IAM (ScriptEditor);
-	wchar_t *history = UiHistory_get ();
-	if (history == NULL || history [0] == '\0')
+	char32 *history = UiHistory_get ();
+	if (history == NULL || history [0] == U'\0')
 		Melder_throw ("No history.");
-	long length = wcslen (history);
-	if (history [length - 1] != '\n') {
-		UiHistory_write (L"\n");
+	long length = str32len (history);
+	if (history [length - 1] != U'\n') {
+		UiHistory_write (U"\n");
 		history = UiHistory_get ();
-		length = wcslen (history);
+		length = str32len (history);
 	}
-	if (history [0] == '\n') {
+	if (history [0] == U'\n') {
 		history ++;
 		length --;
 	}
 	long first = 0, last = 0;
-	wchar_t *text = my textWidget -> f_getStringAndSelectionPosition (& first, & last);
+	wchar_t *text = GuiText_getStringAndSelectionPosition (my textWidget, & first, & last);
 	Melder_free (text);
-	my textWidget -> f_replace (first, last, history);
-	my textWidget -> f_setSelection (first, first + length);
-	my textWidget -> f_scrollToSelection ();
+	GuiText_replace (my textWidget, first, last, history);
+	GuiText_setSelection (my textWidget, first, first + length);
+	GuiText_scrollToSelection (my textWidget);
 }
 
 static void menu_cb_expandIncludeFiles (EDITOR_ARGS) {
 	EDITOR_IAM (ScriptEditor);
 	structMelderFile file = { 0 };
-	autostring text = my textWidget -> f_getString ();
+	autostring32 text = GuiText_getString32 (my textWidget);
 	if (my name [0]) {
 		Melder_pathToFile (my name, & file);
 		MelderFile_setDefaultDir (& file);
 	}
 	Melder_includeIncludeFiles (& text);
-	my textWidget -> f_setString (text.peek());
+	GuiText_setString (my textWidget, text.peek());
 }
 
 static void menu_cb_AboutScriptEditor (EDITOR_ARGS) { EDITOR_IAM (ScriptEditor); Melder_help (L"ScriptEditor"); }
@@ -330,24 +332,24 @@ void structScriptEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"Adding to a dynamic menu", 0, menu_cb_AddingToADynamicMenu);
 }
 
-void structScriptEditor :: init (Editor environment, const wchar_t *initialText) {
+void ScriptEditor_init (ScriptEditor me, Editor environment, const wchar_t *initialText) {
 	if (environment != NULL) {
-		environmentName = Melder_wcsdup (environment -> name);
-		editorClass = environment -> classInfo;
+		my environmentName = Melder_wcsdup (environment -> name);
+		my editorClass = environment -> classInfo;
 	}
-	structTextEditor::init (initialText);
-	interpreter = Interpreter_createFromEnvironment (environment);
+	TextEditor_init (me, initialText);
+	my interpreter = Interpreter_createFromEnvironment (environment);
 	if (theScriptEditors == NULL) {
 		theScriptEditors = Collection_create (NULL, 10);
 		Collection_dontOwnItems (theScriptEditors);
 	}
-	Collection_addItem (theScriptEditors, this);
+	Collection_addItem (theScriptEditors, me);
 }
 
 ScriptEditor ScriptEditor_createFromText (Editor environment, const wchar_t *initialText) {
 	try {
 		autoScriptEditor me = Thing_new (ScriptEditor);
-		me.peek() -> structScriptEditor :: init (environment, initialText);
+		ScriptEditor_init (me.peek(), environment, initialText);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("Script window not created.");
@@ -360,7 +362,7 @@ ScriptEditor ScriptEditor_createFromScript (Editor environment, Script script) {
 			for (long ieditor = 1; ieditor <= theScriptEditors -> size; ieditor ++) {
 				ScriptEditor editor = (ScriptEditor) theScriptEditors -> item [ieditor];
 				if (MelderFile_equal (& script -> file, & editor -> file)) {
-					editor -> raise ();
+					Editor_raise (editor);
 					Melder_error_ ("The script ", & script -> file, " is already open and has been moved to the front.");
 					if (editor -> dirty)
 						Melder_error_ ("Choose \"Reopen from disk\" if you want to revert to the old version.");

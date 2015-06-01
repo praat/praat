@@ -2,7 +2,7 @@
 #define _MovieWindow_h_
 /* MovieWindow.h
  *
- * Copyright (C) 2011,2012,2014 Paul Boersma
+ * Copyright (C) 2011,2012,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,15 +23,20 @@
 #include "Movie.h"
 
 Thing_define (MovieWindow, TimeSoundAnalysisEditor) {
-	// overridden methods:
-		protected:
-			virtual void v_createMenus ();
-			virtual void v_draw ();
-			virtual int v_click (double xWC, double yWC, bool shiftKeyPressed);
-			virtual void v_play (double tmin, double tmax);
-			virtual void v_createMenuItems_view (EditorMenu menu);
-			virtual void v_highlightSelection (double left, double right, double bottom, double top);
-			virtual void v_unhighlightSelection (double left, double right, double bottom, double top);
+	void v_createMenus ()
+		override;
+	void v_draw ()
+		override;
+	int v_click (double xWC, double yWC, bool shiftKeyPressed)
+		override;
+	void v_play (double tmin, double tmax)
+		override;
+	void v_createMenuItems_view (EditorMenu menu)
+		override;
+	void v_highlightSelection (double left, double right, double bottom, double top)
+		override;
+	void v_unhighlightSelection (double left, double right, double bottom, double top)
+		override;
 };
 
 void MovieWindow_init (MovieWindow me, const wchar_t *title, Movie movie);

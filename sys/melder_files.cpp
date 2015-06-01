@@ -103,7 +103,7 @@ void Melder_wcsTo8bitFileRepresentation_inline (const wchar_t *wcs, char *utf8) 
 		UniChar unipath [kMelder_MAXPATH+1];
 		size_t n = wcslen (wcs), n_utf16 = 0;
 		for (size_t i = 0; i < n; i ++) {
-			char32_t kar = (char32_t) wcs [i];   // change sign (bit 32 is never used)
+			char32 kar = (char32) wcs [i];   // change sign (bit 32 is never used)
 			if (kar <= 0x00FFFF) {
 				unipath [n_utf16 ++] = (UniChar) kar;   // including null byte; guarded truncation
 			} else if (kar <= 0x10FFFF) {
@@ -137,9 +137,9 @@ void Melder_8bitFileRepresentationToWcs_inline (const char *path, wchar_t *wpath
 		long n_utf16 = CFStringGetLength (cfpath2);
 		long n_wcs = 0;
 		for (long i = 0; i < n_utf16; i ++) {
-			char32_t kar1 = CFStringGetCharacterAtIndex (cfpath2, i);
+			char32 kar1 = CFStringGetCharacterAtIndex (cfpath2, i);
 			if (kar1 >= 0x00D800 && kar1 <= 0x00DBFF) {
-				char32_t kar2 = (char32_t) CFStringGetCharacterAtIndex (cfpath2, ++ i);   // convert up
+				char32 kar2 = (char32) CFStringGetCharacterAtIndex (cfpath2, ++ i);   // convert up
 				if (kar2 >= 0x00DC00 && kar2 <= 0x00DFFF) {
 					kar1 = (((kar1 & 0x3FF) << 10) | (kar2 & 0x3FF)) + 0x10000;
 				} else {
@@ -301,7 +301,7 @@ void MelderFile_setToNull (MelderFile file) {
 }
 
 bool MelderFile_isNull (MelderFile file) {
-	return file == nullptr || file -> path [0] == '\0';
+	return file == NULL || file -> path [0] == '\0';
 }
 
 void MelderDir_setToNull (MelderDir dir) {

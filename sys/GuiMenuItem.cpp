@@ -1,6 +1,6 @@
 /* GuiMenuItem.cpp
  *
- * Copyright (C) 1992-2012,2013 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2012,2013,2015 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,21 +122,21 @@ static void NativeMenuItem_setText (GuiObject me) {
 		GuiMenuItem d_userData;
 	}
 	- (void) dealloc {   // override
-		GuiMenuItem me = d_userData;
+		GuiMenuItem me = self -> d_userData;
 		forget (me);
 		trace ("deleting a menu item");
 		[super dealloc];
 	}
 	- (GuiThing) userData {
-		return d_userData;
+		return self -> d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
 		Melder_assert (userData == NULL || Thing_member (userData, classGuiMenuItem));
-		d_userData = static_cast <GuiMenuItem> (userData);
+		self -> d_userData = static_cast <GuiMenuItem> (userData);
 	}
 	- (void) _guiCocoaMenuItem_activateCallback: (id) widget {
 		Melder_assert (self == widget);   // sender (widget) and receiver (self) happen to be the same object
-		GuiMenuItem me = d_userData;
+		GuiMenuItem me = self -> d_userData;
 		if (my d_commandCallback != NULL) {
 			struct structGuiMenuItemEvent event = { me, 0 };
 			try {
@@ -222,7 +222,7 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const wchar_t *title, long flags,
 
 	trace ("set sensitivity");
 	if (flags & GuiMenu_INSENSITIVE)
-		my f_setSensitive (false);
+		GuiThing_setSensitive (me, false);
 
 	trace ("understand toggle menu items");
 	if (flags & GuiMenu_TOGGLE_ON)
@@ -410,17 +410,17 @@ GuiMenuItem GuiMenu_addSeparator (GuiMenu menu) {
 	return me;
 }
 
-void structGuiMenuItem :: f_check (bool check) {
-	Melder_assert (d_widget != NULL);
+void GuiMenuItem_check (GuiMenuItem me, bool check) {
+	Melder_assert (my d_widget != NULL);
 	#if gtk
-		d_callbackBlocked = true;
-		gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (d_widget), check);
-		d_callbackBlocked = false;
+		my d_callbackBlocked = true;
+		gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (my d_widget), check);
+		my d_callbackBlocked = false;
 	#elif cocoa
-		GuiCocoaMenuItem *item = (GuiCocoaMenuItem*)d_widget;
+		GuiCocoaMenuItem *item = (GuiCocoaMenuItem *) my d_widget;
 		[item   setState: check];
 	#elif motif
-		XmToggleButtonGadgetSetState (d_widget, check, False);
+		XmToggleButtonGadgetSetState (my d_widget, check, False);
 	#endif
 }
 

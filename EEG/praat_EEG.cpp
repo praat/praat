@@ -1,6 +1,6 @@
 /* praat_EEG.cpp
  *
- * Copyright (C) 2011-2012,2013,2014 Paul Boersma
+ * Copyright (C) 2011-2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -325,7 +325,7 @@ DIRECT (EEG_viewAndEdit)
 	LOOP {
 		iam (EEG);
 		autoEEGWindow editor = EEGWindow_create (ID_AND_FULL_NAME, me);
-		editor -> setPublicationCallback (cb_EEGWindow_publication, NULL);
+		Editor_setPublicationCallback (editor.peek(), cb_EEGWindow_publication, NULL);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
@@ -643,7 +643,7 @@ DIRECT (ERP_viewAndEdit)
 	LOOP {
 		iam (ERP);
 		autoERPWindow editor = ERPWindow_create (ID_AND_FULL_NAME, me);
-		editor -> setPublicationCallback (cb_ERPWindow_publication, NULL);
+		Editor_setPublicationCallback (editor.peek(), cb_ERPWindow_publication, NULL);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END

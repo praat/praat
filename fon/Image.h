@@ -2,7 +2,7 @@
 #define _Image_h_
 /* Image.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,13 +34,13 @@ oo_CLASS_CREATE (Image, Sampled);
 	These represent the function values z (x1 + (ix - 1) * dx, y1 + (iy - 1) * dy).
 */
 
-int Image_init
-	(I, double xmin, double xmax, long nx, double dx, double x1,
-		double ymin, double ymax, long ny, double dy, double y1);
+//int Image_init
+//	(Image me, double xmin, double xmax, long nx, double dx, double x1,
+//		       double ymin, double ymax, long ny, double dy, double y1);
 
-Image Image_create
-	(double xmin, double xmax, long nx, double dx, double x1,
-	 double ymin, double ymax, long ny, double dy, double y1);
+//Image Image_create
+//	(double xmin, double xmax, long nx, double dx, double x1,
+//	 double ymin, double ymax, long ny, double dy, double y1);
 /*
 	Function:
 		return a new empty Image, or NULL if out of memory.
@@ -62,11 +62,11 @@ Image Image_create
 		result -> z [1..ny] [1..nx] == 0;
 */
 
-long Image_getWindowExtrema (I, long ixmin, long ixmax, long iymin, long iymax,
-	unsigned char *minimum, unsigned char *maximum);
+//long Image_getWindowExtrema (I, long ixmin, long ixmax, long iymin, long iymax,
+//	unsigned char *minimum, unsigned char *maximum);
 
-void Image_paint (I, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	unsigned char minimum, unsigned char maximum);
+//void Image_paint (I, Graphics g, double xmin, double xmax, double ymin, double ymax,
+//	unsigned char minimum, unsigned char maximum);
 /*
 	Every sample is drawn as a grey rectangle.
 	The larger the value of the sample, the darker the rectangle.
