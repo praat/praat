@@ -31,7 +31,7 @@ Thing_define (SpectrogramEditor, FunctionEditor) {
 		override;
 };
 
-SpectrogramEditor SpectrogramEditor_create (const wchar_t *title, Spectrogram data);
+SpectrogramEditor SpectrogramEditor_create (const char32 *title, Spectrogram data);
 
 /* End of file SpectrogramEditor.h */
 #endif

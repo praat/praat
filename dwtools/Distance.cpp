@@ -32,7 +32,7 @@ Distance Distance_create (long numberOfPoints) {
 		Proximity_init (me.peek(), numberOfPoints);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Distance not created.");
+		Melder_throw (U"Distance not created.");
 	}
 }
 

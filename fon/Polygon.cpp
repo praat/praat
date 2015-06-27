@@ -1,6 +1,6 @@
 /* Polygon.cpp
  *
- * Copyright (C) 1992-2012,2014 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,22 +38,22 @@ Thing_implement (Polygon, Data, 1);
 
 void structPolygon :: v_info () {
 	our structData :: v_info ();
-	MelderInfo_writeLine (L"Number of points: ", Melder_integer (our numberOfPoints));
-	MelderInfo_writeLine (L"Perimeter: ", Melder_single (Polygon_perimeter (this)));
+	MelderInfo_writeLine (U"Number of points: ", our numberOfPoints);
+	MelderInfo_writeLine (U"Perimeter: ", Melder_single (Polygon_perimeter (this)));
 }
   
 void structPolygon :: v_writeText (MelderFile file) {
-	texputi4 (file, our numberOfPoints, L"numberOfPoints", 0,0,0,0,0);
+	texputi4 (file, our numberOfPoints, U"numberOfPoints", 0,0,0,0,0);
 	for (long i = 1; i <= our numberOfPoints; i ++) {
-		texputr4 (file, our x [i], L"x [", Melder_integer (i), L"]", 0,0,0);
-		texputr4 (file, our y [i], L"y [", Melder_integer (i), L"]", 0,0,0);
+		texputr4 (file, our x [i], U"x [", Melder_integer (i), U"]", 0,0,0);
+		texputr4 (file, our y [i], U"y [", Melder_integer (i), U"]", 0,0,0);
 	}
 }
 
 void structPolygon :: v_readText (MelderReadText text) {
 	our numberOfPoints = texgeti4 (text);
 	if (our numberOfPoints < 1)
-		Melder_throw ("Cannot read a Polygon with only ", our numberOfPoints, " points.");
+		Melder_throw (U"Cannot read a Polygon with only ", our numberOfPoints, U" points.");
 	our x = NUMvector <double> (1, our numberOfPoints);
 	our y = NUMvector <double> (1, our numberOfPoints);
 	for (long i = 1; i <= our numberOfPoints; i ++) {
@@ -70,7 +70,7 @@ Polygon Polygon_create (long numberOfPoints) {
 		my y = NUMvector <double> (1, numberOfPoints);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Polygon not created.");
+		Melder_throw (U"Polygon not created.");
 	}
 }
 
@@ -103,8 +103,7 @@ static void computeDistanceTable (Polygon me, int **table) {
 		for (long j = i + 1; j <= my numberOfPoints; j ++) {
 			double dx = my x [i] - my x [j], dy = my y [i] - my y [j];
 			table [i] [j] = table [j] [i] =
-				sqrt (dx * dx + dy * dy);
-					/* Round to zero. */
+				(int) floor (sqrt (dx * dx + dy * dy));   // round to zero
 		}
 }
 
@@ -220,7 +219,7 @@ void Polygon_salesperson (Polygon me, long numberOfIterations) {
 
 		int numberOfCities = my numberOfPoints;
 		if (numberOfCities < 1)
-			Melder_throw ("No points.");
+			Melder_throw (U"No points.");
 		autoNUMmatrix <int> distance (1, numberOfCities, 1, numberOfCities);
 		computeDistanceTable (me, distance.peek());
 		autoNUMvector <int> path (0L, numberOfCities);
@@ -245,8 +244,9 @@ void Polygon_salesperson (Polygon me, long numberOfIterations) {
 				numberOfShortest ++;
 		}
 		if (numberOfIterations > 1)
-			Melder_casual ("Polygon_salesperson: "
-				"found %ld times the same shortest path.", numberOfShortest);
+			Melder_casual (U"Polygon_salesperson:"
+				U" found ", numberOfShortest,
+				U" times the same shortest path.");
 
 		/* Change me: I will follow the shortest path found. */
 
@@ -256,7 +256,7 @@ void Polygon_salesperson (Polygon me, long numberOfIterations) {
 			my y [i] = help -> y [shortestPath [i]];
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": shortest path not found.");
+		Melder_throw (me, U": shortest path not found.");
 	}
 }
 

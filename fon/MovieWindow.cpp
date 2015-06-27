@@ -122,18 +122,18 @@ void structMovieWindow :: v_play (double tmin, double tmax) {
 	Movie_play (movie, our d_graphics, tmin, tmax, theFunctionEditor_playCallback, this);
 }
 
-void MovieWindow_init (MovieWindow me, const wchar_t *title, Movie movie) {
+void MovieWindow_init (MovieWindow me, const char32 *title, Movie movie) {
 	Melder_assert (movie != NULL);
 	TimeSoundAnalysisEditor_init (me, title, movie, movie -> d_sound, false);
 }
 
-MovieWindow MovieWindow_create (const wchar_t *title, Movie movie) {
+MovieWindow MovieWindow_create (const char32 *title, Movie movie) {
 	try {
 		autoMovieWindow me = Thing_new (MovieWindow);
 		MovieWindow_init (me.peek(), title, movie);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Movie window not created.");
+		Melder_throw (U"Movie window not created.");
 	}
 }
 

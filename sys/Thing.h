@@ -58,7 +58,7 @@ struct structClassInfo {
 	/*
 	 * The following five fields are statically initialized by the Thing_implement() macro.
 	 */
-	const wchar_t *className;
+	const char32 *className;
 	ClassInfo parent;
 	long size;
 	Thing (* _new) ();   // objects have to be constructed via this function, because it calls C++ "new", which initializes the C++ class pointer
@@ -86,7 +86,7 @@ struct structClassInfo {
 
 #define Thing_implement(klas,parentKlas,version) \
 	static Thing _##klas##_new () { return (Thing) new struct##klas; } \
-	struct structClassInfo theClassInfo_##klas = { L"" #klas, & theClassInfo_##parentKlas, sizeof (class struct##klas), _##klas##_new, version, 0, NULL }; \
+	struct structClassInfo theClassInfo_##klas = { U"" #klas, & theClassInfo_##parentKlas, sizeof (class struct##klas), _##klas##_new, version, 0, NULL }; \
 	ClassInfo class##klas = & theClassInfo_##klas
 
 /*
@@ -98,9 +98,9 @@ extern ClassInfo classThing;
 extern struct structClassInfo theClassInfo_Thing;
 struct structThing {
 	ClassInfo classInfo;   // the Praat class pointer (every object also has a C++ class pointer initialized by C++ "new")
-	wchar_t *name;
-	void * operator new (size_t size) { return Melder_calloc (char, size); }
-	void operator delete (void *ptr, size_t size) { (void) size; Melder_free (ptr); }
+	char32 *name;
+	void * operator new (size_t size) { return Melder_calloc (char, (int64) size); }
+	void operator delete (void *ptr, size_t /* size */) { Melder_free (ptr); }
 
 	virtual void v_destroy () { Melder_free (name); };
 		/*
@@ -143,7 +143,7 @@ struct structThing {
 
 /* All functions with 'Thing me' as the first argument assume that it is not NULL. */
 
-const wchar_t * Thing_className (Thing me);
+const char32 * Thing_className (Thing me);
 /* Return your class name. */
 
 bool Thing_member (Thing me, ClassInfo klas);
@@ -199,11 +199,10 @@ void Thing_recognizeClassesByName (ClassInfo readableClass, ...);
 		or with Data_readText () or Data_readBinary () if the object is a Collection.
 		Calls to this routine should preferably be put in the beginning of main ().
 */
-void Thing_recognizeClassByOtherName (ClassInfo readableClass, const wchar_t *otherName);
+void Thing_recognizeClassByOtherName (ClassInfo readableClass, const char32 *otherName);
 long Thing_listReadableClasses (void);
 
-Any Thing_newFromClassNameA (const char *className);
-Any Thing_newFromClassName (const wchar_t *className);
+Any Thing_newFromClassName (const char32 *className);
 /*
 	Function:
 		return a new object of class 'className', or NULL if the class name is not recognized.
@@ -214,10 +213,7 @@ Any Thing_newFromClassName (const wchar_t *className);
 		see Thing_classFromClassName.
 */
 
-ClassInfo Thing_classFromClassName (const wchar_t *className);
-inline static ClassInfo Thing_classFromClassName (const char32 *className) {
-	return Thing_classFromClassName (Melder_peekStr32ToWcs (className));
-}
+ClassInfo Thing_classFromClassName (const char32 *className);
 /*
 	Function:
 		Return the class info table of class 'className', or NULL if it is not recognized.
@@ -233,11 +229,11 @@ inline static ClassInfo Thing_classFromClassName (const char32 *className) {
 	((klas) _Thing_dummyObject (class##klas))
 Thing _Thing_dummyObject (ClassInfo classInfo);
 
-wchar_t * Thing_getName (Thing me);
+char32 * Thing_getName (Thing me);
 /* Return a pointer to your internal name (which can be NULL). */
-wchar_t * Thing_messageName (Thing me);
+char32 * Thing_messageName (Thing me);
 
-void Thing_setName (Thing me, const wchar_t *name);
+void Thing_setName (Thing me, const char32 *name /* cattable */);
 /*
 	Function:
 		remember that you are called 'name'.

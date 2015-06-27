@@ -2,7 +2,7 @@
 #define _GuiP_h_
 /* GuiP.h
  *
- * Copyright (C) 1993-2011,2012,2013 Paul Boersma
+ * Copyright (C) 1993-2011,2012,2013,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ class GuiControlBlockValueChangedCallbacks {
 			long magicNumber;
 			unsigned long widgetClass;
 			GuiObject parent, previousSibling, nextSibling, firstChild;
-			wchar_t *name;
+			char32 *name;
 			bool inMenu, nativized, managed, insensitive;
 			GuiObject textFocus;   /* For shells. */
 			GuiObject shell;   /* My shell ancestor. */
@@ -175,9 +175,9 @@ class GuiControlBlockValueChangedCallbacks {
 			void _GuiMac_clipOffValid (GuiObject me);
 			void _GuiMac_clipOffInvalid (GuiObject me);
 		#elif win
-			wchar_t * _GuiWin_getDrawingAreaClassName (void);
+			char32 * _GuiWin_getDrawingAreaClassName (void);
 		#endif
-		GuiObject _Gui_initializeWidget (int widgetClass, GuiObject parent, const wchar_t *name);
+		GuiObject _Gui_initializeWidget (int widgetClass, GuiObject parent, const char32 *name);
 		void _Gui_invalidateWidget (GuiObject me);
 		void _Gui_validateWidget (GuiObject me);
 		void _Gui_manageScrolledWindow (GuiObject me);
@@ -188,7 +188,7 @@ class GuiControlBlockValueChangedCallbacks {
 		void _GuiNativeControl_show (GuiObject me);
 		void _GuiNativeControl_hide (GuiObject me);
 		void _GuiNativeControl_setSensitive (GuiObject me);
-		wchar_t * _GuiWin_expandAmpersands (const wchar_t *title);
+		char32 * _GuiWin_expandAmpersands (const char32 *title);
 
 		/********** GuiButton.cpp **********/
 		#if win

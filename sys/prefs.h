@@ -2,7 +2,7 @@
 #define _prefs_h_
 /* prefs.h
  *
- * Copyright (C) 2013 Paul Boersma
+ * Copyright (C) 2013,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,12 +27,12 @@
 
 #define prefs_add_int(Klas,name,version,default) \
 	private: static int s_##name; public: virtual int & pref_##name () { return s_##name; } \
-	private: static const wchar_t * sdefault_##name; public: virtual const wchar_t * default_##name () { return sdefault_##name; }
+	private: static const char32 * sdefault_##name; public: virtual const char32 * default_##name () { return sdefault_##name; }
 #define prefs_add_int_with_data(Klas,name,version,default)  public: int p_##name; prefs_add_int (Klas, name, version, default)
 
 #define prefs_add_long(Klas,name,version,default) \
 	private: static long s_##name; public: virtual long & pref_##name () { return s_##name; } \
-	private: static const wchar_t * sdefault_##name; public: virtual const wchar_t * default_##name () { return sdefault_##name; }
+	private: static const char32 * sdefault_##name; public: virtual const char32 * default_##name () { return sdefault_##name; }
 #define prefs_add_long_with_data(Klas,name,version,default)  public: long p_##name; prefs_add_long (Klas, name, version, default)
 
 #define prefs_add_bool(Klas,name,version,default) \
@@ -42,7 +42,7 @@
 
 #define prefs_add_double(Klas,name,version,default) \
 	private: static double s_##name; public: virtual double & pref_##name () { return s_##name; } \
-	private: static const wchar_t * sdefault_##name; public: virtual const wchar_t * default_##name () { return sdefault_##name; }
+	private: static const char32 * sdefault_##name; public: virtual const char32 * default_##name () { return sdefault_##name; }
 #define prefs_add_double_with_data(Klas,name,version,default)  public: double p_##name; prefs_add_double (Klas, name, version, default)
 
 #define prefs_add_enum(Klas,name,version,enumerated,default) \
@@ -51,9 +51,9 @@
 #define prefs_add_enum_with_data(Klas,name,version,enumerated,default)  public: enumerated p_##name; prefs_add_enum (Klas, name, version, enumerated, default)
 
 #define prefs_add_string(Klas,name,version,default) \
-	private: static wchar_t s_##name [Preferences_STRING_BUFFER_SIZE]; public: virtual wchar_t * pref_##name () { return & s_##name [0]; } \
-	private: static const wchar_t * sdefault_##name; public: virtual const wchar_t * default_##name () { return sdefault_##name; }
-#define prefs_add_string_with_data(Klas,name,version,default)  public: wchar_t p_##name [Preferences_STRING_BUFFER_SIZE]; prefs_add_string (Klas, name, version, default)
+	private: static char32 s_##name [Preferences_STRING_BUFFER_SIZE]; public: virtual char32 * pref_##name () { return & s_##name [0]; } \
+	private: static const char32 * sdefault_##name; public: virtual const char32 * default_##name () { return sdefault_##name; }
+#define prefs_add_string_with_data(Klas,name,version,default)  public: char32 p_##name [Preferences_STRING_BUFFER_SIZE]; prefs_add_string (Klas, name, version, default)
 
 #define prefs_end(Klas)
 

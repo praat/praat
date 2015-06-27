@@ -78,11 +78,11 @@ void Eigen_sort (I);
 void Eigen_invertEigenvector (I, long ivec);
 
 void Eigen_drawEigenvalues (I, Graphics g, long first, long last, double ymin, double ymax,
-	int fractionOfTotal, int cumulative, double size_mm, const wchar_t *mark, int garnish);
+	int fractionOfTotal, int cumulative, double size_mm, const char32 *mark, int garnish);
 
 void Eigen_drawEigenvector (I, Graphics g, long ivec, long first, long last,
-	double minimum, double maximum, int weigh, double size_mm, const wchar_t *mark,
-	int connect, wchar_t **rowLabels, int garnish);
+	double minimum, double maximum, int weigh, double size_mm, const char32 *mark,
+	int connect, char32 **rowLabels, int garnish);
 /*
 	Draw eigenvector. When rowLabels != NULL, draw row text labels on bottom axis.
 */

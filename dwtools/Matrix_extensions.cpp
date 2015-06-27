@@ -1,6 +1,6 @@
 /* Matrix_extensions.cpp
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +30,9 @@
 #include "Eigen.h"
 #include "NUM2.h"
 
-void Matrix_scatterPlot (I, Graphics g, long icx, long icy,
-                         double xmin, double xmax, double ymin, double ymax,
-                         double size_mm, const wchar_t *mark, int garnish) {
-	iam (Matrix);
+void Matrix_scatterPlot (Matrix me, Graphics g, long icx, long icy, double xmin, double xmax, double ymin, double ymax,
+	double size_mm, const char32 *mark, int garnish)
+{
 	long ix = labs (icx), iy = labs (icy);
 
 	if (ix < 1 || ix > my nx || iy < 1 || iy > my nx) {
@@ -83,9 +82,7 @@ void Matrix_scatterPlot (I, Graphics g, long icx, long icy,
 	}
 }
 
-
-void Matrix_drawAsSquares (I, Graphics g, double xmin, double xmax, double ymin, double ymax, int garnish) {
-	iam (Matrix);
+void Matrix_drawAsSquares (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax, int garnish) {
 	Graphics_Colour colour = Graphics_inqColour (g);
 	long ixmin, ixmax, iymin, iymax;
 
@@ -110,14 +107,16 @@ void Matrix_drawAsSquares (I, Graphics g, double xmin, double xmax, double ymin,
 		for (long j = ixmin; j <= ixmax; j++) {
 			double x = Matrix_columnToX (me, j);
 			double d = 0.95 * sqrt (fabs (my z[i][j]) / wAbsMax);
-			double x1WC = x - d * dx / 2, x2WC = x + d * dx / 2;
-			double y1WC = y - d * dy / 2, y2WC = y + d * dy / 2;
-			if (my z[i][j] > 0) {
-				Graphics_setColour (g, Graphics_WHITE);
+			if (d > 0) {
+				double x1WC = x - d * dx / 2, x2WC = x + d * dx / 2;
+				double y1WC = y - d * dy / 2, y2WC = y + d * dy / 2;
+				if (my z[i][j] > 0) {
+					Graphics_setColour (g, Graphics_WHITE);
+				}
+				Graphics_fillRectangle (g, x1WC, x2WC, y1WC, y2WC);
+				Graphics_setColour (g, colour);
+				Graphics_rectangle (g, x1WC, x2WC , y1WC, y2WC);
 			}
-			Graphics_fillRectangle (g, x1WC, x2WC, y1WC, y2WC);
-			Graphics_setColour (g, colour);
-			Graphics_rectangle (g, x1WC, x2WC , y1WC, y2WC);
 		}
 	}
 	Graphics_setGrey (g, 0.0);
@@ -135,8 +134,8 @@ void Matrix_drawAsSquares (I, Graphics g, double xmin, double xmax, double ymin,
 	}
 }
 
-void Matrix_scale (I, int choice) {
-	iam (Matrix); double min, max, extremum;
+void Matrix_scale (Matrix me, int choice) {
+	double min, max, extremum;
 	long nZero = 0;
 
 	if (choice == 2) { /* by row */
@@ -172,16 +171,15 @@ void Matrix_scale (I, int choice) {
 			}
 		}
 	} else {
-		Melder_flushError ("Matrix_scale: choice must be >= 0 && < 3.");
+		Melder_flushError (U"Matrix_scale: choice must be > 0 && <= 3.");
 		return;
 	}
 	if (nZero) {
-		Melder_warning (L"Matrix_scale: extremum == 0, (part of) matrix unscaled.");
+		Melder_warning (U"Matrix_scale: extremum == 0, (part of) matrix unscaled.");
 	}
 }
 
-Matrix Matrix_transpose (I) {
-	iam (Matrix);
+Matrix Matrix_transpose (Matrix me) {
 	try {
 		autoMatrix thee = Matrix_create (my ymin, my ymax, my ny, my dy, my y1,
 		                                 my xmin, my xmax, my nx, my dx, my x1);
@@ -192,15 +190,13 @@ Matrix Matrix_transpose (I) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not transposed.");
+		Melder_throw (me, U": not transposed.");
 	}
 }
 
-void Matrix_drawDistribution (I, Graphics g, double xmin, double xmax,
+void Matrix_drawDistribution (Matrix me, Graphics g, double xmin, double xmax,
                               double ymin, double ymax, double minimum, double maximum, long nBins,
                               double freqMin, double freqMax, int cumulative, int garnish) {
-	iam (Matrix);
-
 	if (nBins <= 0) {
 		return;
 	}
@@ -233,7 +229,7 @@ void Matrix_drawDistribution (I, Graphics g, double xmin, double xmax,
 	long nxy = 0;
 	for (long i = iymin; i <= iymax; i++) {
 		for (long j = ixmin; j <= ixmax; j++) {
-			long bin = 1 + floor ( (my z[i][j] - minimum) / binWidth);
+			long bin = 1 + (long) floor ( (my z[i][j] - minimum) / binWidth);
 			if (bin <= nBins && bin > 0) {
 				freq[bin]++; nxy ++;
 			}
@@ -271,14 +267,13 @@ void Matrix_drawDistribution (I, Graphics g, double xmin, double xmax,
 		Graphics_marksBottom (g, 2, 1, 1, 0);
 		Graphics_marksLeft (g, 2, 1, 1, 0);
 		if (! cumulative) {
-			Graphics_textLeft (g, 1, L"Number/bin");
+			Graphics_textLeft (g, 1, U"Number/bin");
 		}
 	}
 }
 
-void Matrix_drawSliceY (I, Graphics g, double x, double ymin, double ymax,
+void Matrix_drawSliceY (Matrix me, Graphics g, double x, double ymin, double ymax,
                         double min, double max) {
-	iam (Matrix);
 
 	if (x < my xmin || x > my xmax) {
 		return;
@@ -315,16 +310,15 @@ void Matrix_drawSliceY (I, Graphics g, double x, double ymin, double ymax,
 	Graphics_unsetInner (g);
 }
 
-Matrix Matrix_solveEquation (I, double tolerance) {
+Matrix Matrix_solveEquation (Matrix me, double tolerance) {
 	try {
-		iam (Matrix);
 		long nr = my ny, nc = my nx - 1;
 
 		if (nc == 0) {
-			Melder_throw ("Matrix_solveEquation: there must be at least 2 columns in the matrix.");
+			Melder_throw (U"Matrix_solveEquation: there must be at least 2 columns in the matrix.");
 		}
 		if (nr < nc) {
-			Melder_warning (L"Matrix_solveEquation: solution is not unique (fewer equations than unknowns).");
+			Melder_warning (U"Matrix_solveEquation: solution is not unique (fewer equations than unknowns).");
 		}
 
 		autoNUMmatrix<double> u (1, nr, 1, nc);
@@ -345,12 +339,11 @@ Matrix Matrix_solveEquation (I, double tolerance) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Matrix equation not solved.");
+		Melder_throw (U"Matrix equation not solved.");
 	}
 }
 
-double Matrix_getMean (I, double xmin, double xmax, double ymin, double ymax) {
-	iam (Matrix);
+double Matrix_getMean (Matrix me, double xmin, double xmax, double ymin, double ymax) {
 	if (xmax <= xmin) {
 		xmin = my xmin; xmax = my xmax;
 	}
@@ -371,8 +364,7 @@ double Matrix_getMean (I, double xmin, double xmax, double ymin, double ymax) {
 	return sum / ((iymax - iymin + 1) * (ixmax - ixmin + 1));
 }
 
-double Matrix_getStandardDeviation (I, double xmin, double xmax, double ymin, double ymax) {
-	iam (Matrix);
+double Matrix_getStandardDeviation (Matrix me, double xmin, double xmax, double ymin, double ymax) {
 	if (xmax <= xmin) {
 		xmin = my xmin; xmax = my xmax;
 	}

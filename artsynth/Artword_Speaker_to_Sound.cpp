@@ -1,6 +1,6 @@
 /* Artword_Speaker_to_Sound.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ Sound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 		long sample;
 		int n, m, M;
 		autoDelta delta = Speaker_to_Delta (speaker);
-		autoMelderMonitor monitor (L"Articulatory synthesis");
+		autoMelderMonitor monitor (U"Articulatory synthesis");
 		Artword_intoArt (artword, art.peek(), 0.0);
 		Art_Speaker_intoDelta (art.peek(), speaker, delta.peek());
 		M = delta -> numberOfTubes;
@@ -100,7 +100,7 @@ Sound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 			t->V = t->A * t->Dx;   /* 5.114 */
 			totalVolume += t->V;
 		}
-		//Melder_casual ("Starting volume: %.10g litres.", totalVolume * 1000);
+		//Melder_casual (U"Starting volume: ", totalVolume * 1000, U" litres.");
 		for (sample = 1; sample <= numberOfSamples; sample ++) {
 			double time = (sample - 1) / fsamp;
 			Artword_intoArt (artword, art.peek(), time);
@@ -161,7 +161,7 @@ Sound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 				Graphics_function (graphics, area, 65, 78, 0.5, 1);
 				Graphics_setLineType (graphics, Graphics_DRAWN);
 				Graphics_resetViewport (graphics, vp);
-				Melder_monitor ((double) sample / numberOfSamples, L"Articulatory synthesis: ", Melder_half (time), L" seconds");
+				Melder_monitor ((double) sample / numberOfSamples, U"Articulatory synthesis: ", Melder_half (time), U" seconds");
 			}
 			for (n = 1; n <= oversampling; n ++) {
 				for (m = 1; m <= M; m ++) {
@@ -408,7 +408,7 @@ Sound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 		totalVolume = 0.0;
 		for (m = 1; m <= M; m ++)
 			totalVolume += delta->tube [m]. V;
-		//Melder_casual ("Ending volume: %.10g litres.", totalVolume * 1000);
+		//Melder_casual (U"Ending volume: ", totalVolume * 1000, U" litres.");
 		if (out_w1) *out_w1 = w1.transfer();
 		if (out_w2) *out_w2 = w2.transfer();
 		if (out_w3) *out_w3 = w3.transfer();
@@ -420,7 +420,7 @@ Sound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 		if (out_v3) *out_v3 = v3.transfer();
 		return result.transfer();
 	} catch (MelderError) {
-		Melder_throw (artword, " & ", speaker, ": articulatory synthesis not performed.");
+		Melder_throw (artword, U" & ", speaker, U": articulatory synthesis not performed.");
 	}
 }
 

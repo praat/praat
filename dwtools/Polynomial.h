@@ -43,7 +43,7 @@ oo_CLASS_CREATE (FunctionTerms, Function);
 
 void FunctionTerms_init (I, double xmin, double xmax, long numberOfCoefficients);
 
-void FunctionTerms_initFromString (I, double xmin, double xmax, const wchar_t *s, int allowTrailingZeros);
+void FunctionTerms_initFromString (I, double xmin, double xmax, const char32 *s, int allowTrailingZeros);
 
 FunctionTerms FunctionTerms_create (double xmin, double xmax, long numberOfCoefficients);
 
@@ -98,7 +98,7 @@ Thing_define (Polynomial, FunctionTerms) {
 
 Polynomial Polynomial_create (double xmin, double xmax, long degree);
 
-Polynomial Polynomial_createFromString (double xmin, double xmax, const wchar_t *s);
+Polynomial Polynomial_createFromString (double xmin, double xmax, const char32 *s);
 
 void Polynomial_scaleCoefficients_monic (Polynomial me);
 /* Make coefficent of leading term 1.0 */
@@ -136,7 +136,7 @@ Thing_define (LegendreSeries, FunctionTerms) {
 
 LegendreSeries LegendreSeries_create (double xmin, double xmax, long numberOfPolynomials);
 
-LegendreSeries LegendreSeries_createFromString (double xmin, double xmax, const wchar_t *s);
+LegendreSeries LegendreSeries_createFromString (double xmin, double xmax, const char32 *s);
 
 LegendreSeries LegendreSeries_getDerivative (LegendreSeries me);
 
@@ -159,7 +159,7 @@ Roots Polynomial_to_Roots_ev (Polynomial me);
 long Roots_getNumberOfRoots (Roots me);
 
 void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin, double imax,
-	const wchar_t *symbol, int fontSize, int garnish);
+	const char32 *symbol, int fontSize, int garnish);
 
 dcomplex Roots_getRoot (Roots me, long index);
 void Roots_setRoot (Roots me, long index, double re, double im);
@@ -202,7 +202,7 @@ Thing_define (ChebyshevSeries, FunctionTerms) {
 
 ChebyshevSeries ChebyshevSeries_create (double xmin, double xmax, long numberOfPolynomials);
 
-ChebyshevSeries ChebyshevSeries_createFromString (double xmin, double xmax, const wchar_t *s);
+ChebyshevSeries ChebyshevSeries_createFromString (double xmin, double xmax, const char32 *s);
 
 Polynomial ChebyshevSeries_to_Polynomial (ChebyshevSeries me);
 
@@ -226,7 +226,7 @@ Thing_define (MSpline, Spline) {
 
 MSpline MSpline_create (double xmin, double xmax, long degree, long numberOfInteriorKnots);
 
-MSpline MSpline_createFromStrings (double xmin, double xmax, long degree, const wchar_t *coef, const wchar_t *interiorKnots);
+MSpline MSpline_createFromStrings (double xmin, double xmax, long degree, const char32 *coef, const char32 *interiorKnots);
 
 Thing_define (ISpline, Spline) {
 	// overridden methods:
@@ -237,7 +237,7 @@ Thing_define (ISpline, Spline) {
 };
 
 ISpline ISpline_create (double xmin, double xmax, long degree, long numberOfInteriorKnots);
-ISpline ISpline_createFromStrings (double xmin, double xmax, long degree, const wchar_t *coef, const wchar_t *interiorKnots);
+ISpline ISpline_createFromStrings (double xmin, double xmax, long degree, const char32 *coef, const char32 *interiorKnots);
 
 /****************** fit **********************************************/
 

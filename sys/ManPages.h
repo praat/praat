@@ -24,7 +24,7 @@
 
 Thing_define (ManPages, Data) {
 	Ordered pages;
-	const wchar_t **titles;
+	const char32 **titles;
 	int ground, dynamic, executable;
 	structMelderDir rootDirectory;
 
@@ -36,20 +36,20 @@ Thing_define (ManPages, Data) {
 
 ManPages ManPages_create (void);
 
-void ManPages_addPage (ManPages me, const wchar_t *title, const wchar_t *author, long date,
+void ManPages_addPage (ManPages me, const char32 *title, const char32 *author, long date,
 	struct structManPage_Paragraph paragraphs []);
 /*
 	All string and struct arguments must be statically allocated
 	and not change after adding them to the ManPages.
 */
 
-long ManPages_lookUp (ManPages me, const wchar_t *title);
+long ManPages_lookUp (ManPages me, const char32 *title);
 
 void ManPages_writeOneToHtmlFile (ManPages me, long ipage, MelderFile file);
-void ManPages_writeAllToHtmlDir (ManPages me, const wchar_t *dirPath);
+void ManPages_writeAllToHtmlDir (ManPages me, const char32 *dirPath);
 
 long ManPages_uniqueLinksHither (ManPages me, long ipage);
-const wchar_t **ManPages_getTitles (ManPages me, long *numberOfTitles);
+const char32 **ManPages_getTitles (ManPages me, long *numberOfTitles);
 
 /* End of file ManPages.h */
 #endif

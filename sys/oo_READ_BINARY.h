@@ -23,7 +23,7 @@
 	our x = binget##storage (f);
 
 #define oo_ARRAY(type,storage,x,cap,n)  \
-	if (n > cap) Melder_throw ("Number of \"", #x, "\" (", n, ") greater than ", cap, "."); \
+	if (n > cap) Melder_throw (U"Number of \"" #x U"\" (", n, U") greater than ", cap, U"."); \
 	for (int i = 0; i < n; i ++) { \
 		our x [i] = binget##storage (f); \
 	}
@@ -44,63 +44,45 @@
 	}
 
 #define oo_ENUMx(type,storage,Type,x)  \
-	our x = binget##storage (f, Type##_MIN, Type##_MAX, L"" #Type);
+	our x = binget##storage (f, Type##_MIN, Type##_MAX, U"" #Type);
 
 #define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  \
-	if (n > cap) Melder_throw ("Number of \"", #x, "\" (", n, ") greater than ", cap, "."); \
+	if (n > cap) Melder_throw (U"Number of \"" #x U"\" (", n, U") greater than ", cap, U"."); \
 	for (int i = 0; i < n; i ++) { \
-		our x [i] = binget##storage (f, Type##_MIN, Type##_MAX, L"" #Type); \
+		our x [i] = binget##storage (f, Type##_MIN, Type##_MAX, U"" #Type); \
 	}
 
 #define oo_ENUMx_SET(type,storage,Type,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) { \
-		our x [i] = binget##storage (f, Type##_MIN, Type##_MAX, L"" #Type); \
+		our x [i] = binget##storage (f, Type##_MIN, Type##_MAX, U"" #Type); \
 	}
 
 #define oo_ENUMx_VECTOR(type,storage,Type,x,min,max)  \
 	if (max >= min) { \
 		our x = NUMvector <type> (min, max); \
 		for (long i = min; i <= max; i ++) { \
-			our x [i] = binget##storage (f, Type##_MIN, Type##_MAX, L"" #Type); \
+			our x [i] = binget##storage (f, Type##_MIN, Type##_MAX, U"" #Type); \
 	}
 
 #define oo_STRINGx(storage,x)  \
 	our x = binget##storage (f);
-#define oo_STRING32x(storage,x)  \
-	our x = binget32##storage (f);
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	if (n > cap) Melder_throw ("Number of \"", #x, "\" (", n, ") greater than ", cap, "."); \
+	if (n > cap) Melder_throw (U"Number of \"" #x U"\" (", n, U") greater than ", cap, U"."); \
 	for (int i = 0; i < n; i ++) { \
 		our x [i] = binget##storage (f); \
-	}
-#define oo_STRING32x_ARRAY(storage,x,cap,n)  \
-	if (n > cap) Melder_throw ("Number of \"", #x, "\" (", n, ") greater than ", cap, "."); \
-	for (int i = 0; i < n; i ++) { \
-		our x [i] = binget32##storage (f); \
 	}
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) { \
 		our x [i] = binget##storage (f); \
 	}
-#define oo_STRING32x_SET(storage,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) { \
-		our x [i] = binget32##storage (f); \
-	}
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (max >= min) { \
-		our x = NUMvector <wchar_t *> (min, max); \
-		for (long i = min; i <= max; i ++) { \
-			our x [i] = binget##storage (f); \
-		} \
-	}
-#define oo_STRING32x_VECTOR(storage,x,min,max)  \
-	if (max >= min) { \
 		our x = NUMvector <char32 *> (min, max); \
 		for (long i = min; i <= max; i ++) { \
-			our x [i] = binget32##storage (f); \
+			our x [i] = binget##storage (f); \
 		} \
 	}
 
@@ -108,7 +90,7 @@
 	our x. readBinary (f);
 
 #define oo_STRUCT_ARRAY(Type,x,cap,n) \
-	if (n > cap) Melder_throw ("Number of \"", #x, "\" (", n, ") greater than ", cap, "."); \
+	if (n > cap) Melder_throw (U"Number of \"", #x, U"\" (", n, U") greater than ", cap, U"."); \
 	for (int i = 0; i < n; i ++) { \
 		our x [i]. readBinary (f); \
 	}
@@ -174,7 +156,7 @@
 	void struct##Class :: v_readBinary (FILE *f) { \
 		int localVersion = Thing_version; (void) localVersion; \
 		if (localVersion > our classInfo -> version) \
-			Melder_throw ("The format of this file is too new. Download a newer version of Praat."); \
+			Melder_throw (U"The format of this file is too new. Download a newer version of Praat."); \
 		Class##_Parent :: v_readBinary (f);
 
 #define oo_END_CLASS(Class)  \

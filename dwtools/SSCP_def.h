@@ -37,8 +37,8 @@ oo_DEFINE_CLASS (SSCP, TableOfReal)
 		oo_OBJECT (PCA, 0, pca)
 	#endif
 	#if oo_DECLARING
-		// overridden methods:
-			virtual void v_info ();
+		void v_info ()
+			override;
 	#endif
 
 oo_END_CLASS (SSCP)

@@ -28,8 +28,8 @@
 #include "melder.h"
 #include "NUM.h"
 
-static const wchar_t *findEndOfNumericString_nothrow (const wchar_t *string) {
-	const wchar_t *p = & string [0];
+static const char32 *findEndOfNumericString_nothrow (const char32 *string) {
+	const char32 *p = & string [0];
 	/*
 	 * Leading white space is OK.
 	 */
@@ -43,7 +43,7 @@ static const wchar_t *findEndOfNumericString_nothrow (const wchar_t *string) {
 	 * The next character must be a decimal digit.
 	 * So we don't allow things like ".5".
 	 */
-	if (*p < '0' || *p > '9') return NULL;   /* String is not numeric. */
+	if (*p < '0' || *p > '9') return NULL;   // string is not numeric
 	p ++;
 	/*
 	 * Then we accept any number of decimal digits.
@@ -72,7 +72,7 @@ static const wchar_t *findEndOfNumericString_nothrow (const wchar_t *string) {
 		 * The exponent must contain a decimal digit.
 		 * So we don't allow things like "+2.1E".
 		 */
-		if (*p < '0' || *p > '9') return NULL;   /* String is not numeric. */
+		if (*p < '0' || *p > '9') return NULL;   // string is not numeric
 		p ++;
 		/*
 		 * Then we accept any number of decimal digits.
@@ -104,7 +104,7 @@ static const char *findEndOfNumericString_nothrow (const char *string) {
 	 * The next character must be a decimal digit.
 	 * So we don't allow things like ".5".
 	 */
-	if (*p < '0' || *p > '9') return NULL;   /* String is not numeric. */
+	if (*p < '0' || *p > '9') return NULL;   // string is not numeric
 	p ++;
 	/*
 	 * Then we accept any number of decimal digits.
@@ -133,7 +133,7 @@ static const char *findEndOfNumericString_nothrow (const char *string) {
 		 * The exponent must contain a decimal digit.
 		 * So we don't allow things like "+2.1E".
 		 */
-		if (*p < '0' || *p > '9') return NULL;   /* String is not numeric. */
+		if (*p < '0' || *p > '9') return NULL;   // string is not numeric
 		p ++;
 		/*
 		 * Then we accept any number of decimal digits.
@@ -150,9 +150,9 @@ static const char *findEndOfNumericString_nothrow (const char *string) {
 	return p;
 }
 
-int Melder_isStringNumeric_nothrow (const wchar_t *string) {
+bool Melder_isStringNumeric_nothrow (const char32 *string) {
 	if (string == NULL) return false;
-	const wchar_t *p = findEndOfNumericString_nothrow (string);
+	const char32 *p = findEndOfNumericString_nothrow (string);
 	if (p == NULL) return FALSE;
 	/*
 	 * We accept only white space after the numeric string.
@@ -170,20 +170,12 @@ double Melder_a8tof (const char *string) {
 	return p [-1] == '%' ? 0.01 * strtod (string, NULL) : strtod (string, NULL);
 }
 
-double Melder_atof (const wchar_t *string) {
-	if (string == NULL) return NUMundefined;
-	const wchar_t *p = findEndOfNumericString_nothrow (string);
-	if (p == NULL) return NUMundefined;
-	Melder_assert (p - string > 0);
-	#if defined (macintosh)
-		/* strtod may be 100 times faster than wcstod: */
-		return p [-1] == '%' ? 0.01 * strtod (Melder_peekWcsToUtf8 (string), NULL) : strtod (Melder_peekWcsToUtf8 (string), NULL);
-	#else
-		return p [-1] == '%' ? 0.01 * wcstod (string, NULL) : wcstod (string, NULL);
-	#endif
+double Melder_atof (const char32 *string) {
+	return Melder_a8tof (Melder_peek32to8 (string));
 }
-double Melder_a32tof (const char32 *string) {
-	return Melder_a8tof (Melder_peekStr32ToUtf8 (string));
+
+int64 Melder_atoi (const char32 *string) {
+	return strtoll (Melder_peek32to8 (string), NULL, 10);
 }
 
 /* End of file melder_atof.cpp */

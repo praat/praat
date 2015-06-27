@@ -27,20 +27,12 @@
 #include "SVD.h"
 #include "TableOfReal.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
-SVD TableOfReal_to_SVD (I);
-GSVD TablesOfReal_to_GSVD (I, thou);
+SVD TableOfReal_to_SVD (TableOfReal me);
+GSVD TablesOfReal_to_GSVD (TableOfReal me, TableOfReal thee);
 
 TableOfReal SVD_to_TableOfReal (SVD me, long from, long to);
-TableOfReal SVD_extractLeftSingularVectors (I);
-TableOfReal SVD_extractRightSingularVectors (I);
-TableOfReal SVD_extractSingularValues (I);
-
-#ifdef __cplusplus
-	}
-#endif
+TableOfReal SVD_extractLeftSingularVectors (SVD me);
+TableOfReal SVD_extractRightSingularVectors (SVD me);
+TableOfReal SVD_extractSingularValues (SVD me);
 
 #endif // _TableOfReal_and_SVD_h_

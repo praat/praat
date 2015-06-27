@@ -25,7 +25,7 @@ Thing_implement (GuiForm, GuiControl, 0);
 	static void _guiGtkForm_destroyCallback (GuiObject widget, gpointer void_me) {
 		(void) widget;
 		iam (GuiForm);
-		trace ("destroying GuiForm %p", me);
+		trace (U"destroying GuiForm ", Melder_pointer (me));
 		forget (me);
 	}
 #elif cocoa

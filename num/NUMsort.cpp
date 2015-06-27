@@ -1,6 +1,6 @@
 /* NUMsort.c
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,9 +98,9 @@ void NUMsort_i (long n, int a [])
 void NUMsort_l (long n, long a [])
 	MACRO_NUMsort (long)
 
-void NUMsort_str (long n, wchar_t *a []) {
+void NUMsort_str (long n, char32 *a []) {
 	long l, r, j, i;
-	wchar_t *k;
+	char32 *k;
 	if (n < 2) return;
 	l = (n >> 1) + 1;
 	r = n;
@@ -119,8 +119,8 @@ void NUMsort_str (long n, wchar_t *a []) {
 			i = j;
 			j = j << 1;
 			if (j > r) break;
-			if (j < r && wcscmp (a [j], a [j + 1]) < 0) j ++;
-			if (wcscmp (k, a [j]) >= 0) break;
+			if (j < r && str32cmp (a [j], a [j + 1]) < 0) j ++;
+			if (str32cmp (k, a [j]) >= 0) break;
 			a [i] = a [j];
 		}
 		a [i] = k;
@@ -158,7 +158,7 @@ void NUMsort_p (long n, void *a [], int (*compare) (const void *, const void *))
 
 double NUMquantile (long n, double a [], double factor) {
 	double place = factor * n + 0.5;
-	long left = floor (place);
+	long left = (long) floor (place);
 	if (n < 1) return 0.0;
 	if (n == 1) return a [1];
 	if (left < 1) left = 1;

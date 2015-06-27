@@ -51,8 +51,8 @@ oo_DEFINE_CLASS (LPC, Sampled)
 	oo_STRUCT_VECTOR (LPC_Frame, d_frames, nx)
 
 	#if oo_DECLARING
-		// overridden methods:
-			virtual void v_info ();
+		void v_info ()
+			override;
 	#endif
 
 oo_END_CLASS (LPC)

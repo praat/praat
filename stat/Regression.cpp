@@ -1,6 +1,6 @@
 /* Regression.cpp
  *
- * Copyright (C) 2005-2011,2014 Paul Boersma
+ * Copyright (C) 2005-2011,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,23 +43,23 @@ Thing_implement (RegressionParameter, Data, 0);
 
 void structRegression :: v_info () {
 	Regression_Parent :: v_info ();
-	MelderInfo_writeLine (L"Factors:");
-	MelderInfo_writeLine (L"   Number of factors: ", Melder_integer (parameters -> size));
+	MelderInfo_writeLine (U"Factors:");
+	MelderInfo_writeLine (U"   Number of factors: ", parameters -> size);
 	for (long ivar = 1; ivar <= parameters -> size; ivar ++) {
 		RegressionParameter parm = static_cast<RegressionParameter> (parameters -> item [ivar]);
-		MelderInfo_writeLine (L"   Factor ", Melder_integer (ivar), L": ", parm -> label);
+		MelderInfo_writeLine (U"   Factor ", ivar, U": ", parm -> label);
 	}
-	MelderInfo_writeLine (L"Fitted coefficients:");
-	MelderInfo_writeLine (L"   Intercept: ", Melder_double (intercept));
+	MelderInfo_writeLine (U"Fitted coefficients:");
+	MelderInfo_writeLine (U"   Intercept: ", intercept);
 	for (long ivar = 1; ivar <= parameters -> size; ivar ++) {
 		RegressionParameter parm = static_cast<RegressionParameter> (parameters -> item [ivar]);
-		MelderInfo_writeLine (L"   Coefficient of factor ", parm -> label, L": ", Melder_double (parm -> value));
+		MelderInfo_writeLine (U"   Coefficient of factor ", parm -> label, U": ", parm -> value);
 	}
-	MelderInfo_writeLine (L"Ranges of values:");
+	MelderInfo_writeLine (U"Ranges of values:");
 	for (long ivar = 1; ivar <= parameters -> size; ivar ++) {
 		RegressionParameter parm = static_cast<RegressionParameter> (parameters -> item [ivar]);
-		MelderInfo_writeLine (L"   Range of factor ", parm -> label, L": minimum ",
-			Melder_double (parm -> minimum), L", maximum ", Melder_double (parm -> maximum));
+		MelderInfo_writeLine (U"   Range of factor ", parm -> label, U": minimum ",
+			parm -> minimum, U", maximum ", parm -> maximum);
 	}
 }
 
@@ -69,25 +69,25 @@ void Regression_init (Regression me) {
 	my parameters = Ordered_create ();
 }
 
-void Regression_addParameter (Regression me, const wchar_t *label, double minimum, double maximum, double value) {
+void Regression_addParameter (Regression me, const char32 *label, double minimum, double maximum, double value) {
 	try {
 		autoRegressionParameter thee = Thing_new (RegressionParameter);
-		thy label = Melder_wcsdup (label);
+		thy label = Melder_dup (label);
 		thy minimum = minimum;
 		thy maximum = maximum;
 		thy value = value;
 		Collection_addItem (my parameters, thee.transfer());
 	} catch (MelderError) {
-		Melder_throw (me, ": parameter not added.");
+		Melder_throw (me, U": parameter not added.");
 	}
 }
 
-long Regression_getFactorIndexFromFactorName_e (Regression me, const wchar_t *factorName) {
+long Regression_getFactorIndexFromFactorName_e (Regression me, const char32 *factorName) {
 	for (long iparm = 1; iparm <= my parameters -> size; iparm ++) {
 		RegressionParameter parm = static_cast<RegressionParameter> (my parameters -> item [iparm]);
-		if (Melder_wcsequ (factorName, parm -> label)) return iparm;
+		if (Melder_equ (factorName, parm -> label)) return iparm;
 	}
-	Melder_throw (Thing_messageName (me), L" has no parameter named \"", factorName, L"\".");
+	Melder_throw (Thing_messageName (me), U" has no parameter named \"", factorName, U"\".");
 }
 
 Thing_implement (LinearRegression, Regression, 0);
@@ -98,7 +98,7 @@ LinearRegression LinearRegression_create (void) {
 		Regression_init (me.peek());
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("LinearRegression not created.");
+		Melder_throw (U"LinearRegression not created.");
 	}
 }
 
@@ -107,9 +107,9 @@ LinearRegression Table_to_LinearRegression (Table me) {
 		long numberOfIndependentVariables = my numberOfColumns - 1, numberOfParameters = my numberOfColumns;
 		long numberOfCells = my rows -> size, icell, ivar;
 		if (numberOfParameters < 1)   /* Includes intercept. */
-			Melder_throw ("Not enough columns (has to be more than 1).");
+			Melder_throw (U"Not enough columns (has to be more than 1).");
 		if (numberOfCells < numberOfParameters) {
-			Melder_warning (L"Solution is not unique (more parameters than cases).");
+			Melder_warning (U"Solution is not unique (more parameters than cases).");
 		}
 		autoNUMmatrix <double> u (1, numberOfCells, 1, numberOfParameters);
 		autoNUMvector <double> b (1, numberOfCells);
@@ -125,7 +125,7 @@ LinearRegression Table_to_LinearRegression (Table me) {
 				u [icell] [ivar] = Table_getNumericValue_Assert (me, icell, ivar);
 			}
 			u [icell] [numberOfParameters] = 1.0;   /* For the intercept. */
-			b [icell] = Table_getNumericValue_Assert (me, icell, my numberOfColumns);   /* The dependent variable. */
+			b [icell] = Table_getNumericValue_Assert (me, icell, my numberOfColumns);   // the dependent variable
 		}
 		NUMsolveEquation (u.peek(), numberOfCells, numberOfParameters, b.peek(), NUMeps * numberOfCells, x.peek());
 		thy intercept = x [numberOfParameters];
@@ -135,7 +135,7 @@ LinearRegression Table_to_LinearRegression (Table me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": linear regression not performed.");
+		Melder_throw (me, U": linear regression not performed.");
 	}
 }
 

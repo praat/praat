@@ -20,7 +20,7 @@
 /*
  djmw 19950710
  djmw 20020812 GPL header
- djmw 20071007 wchar_t
+ djmw 20071007 wchar
  djmw 20110304 Thing_new
 */
 
@@ -28,7 +28,7 @@
 
 Thing_implement (Command, Thing, 0);
 
-void Command_init (I, const wchar_t *name, Any data, int (*execute) (Any), int (*undo) (Any)) {
+void Command_init (I, const char32 *name, Any data, int (*execute) (Any), int (*undo) (Any)) {
 	iam (Command);
 	Melder_assert (execute && undo);
 	Thing_setName (me, name);
@@ -55,7 +55,7 @@ CommandHistory CommandHistory_create (long maximumCapacity) {
 		Collection_init (me.peek(), classCommand, maximumCapacity);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Command not created.");
+		Melder_throw (U"Command not created.");
 	}
 }
 
@@ -107,7 +107,7 @@ int CommandHistory_offright (I) {
 	return my size == 0 || my current == my size + 1;
 }
 
-wchar_t *CommandHistory_commandName (I, long offsetFromCurrent) {
+char32 *CommandHistory_commandName (I, long offsetFromCurrent) {
 	iam (CommandHistory);
 	long pos = my current + offsetFromCurrent;
 

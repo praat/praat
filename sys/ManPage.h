@@ -25,13 +25,13 @@
 
 typedef struct structManPage_Paragraph {
 	short type;
-	const wchar_t *text;
+	const char32 *text;
 	double width, height;
 	void (*draw) (Graphics g);
 } *ManPage_Paragraph;
 
 Thing_define (ManPage, Thing) {
-	const wchar_t *title, *author;
+	const char32 *title, *author;
 	long date;
 	struct structManPage_Paragraph *paragraphs;
 	long nlinksHither, nlinksThither;

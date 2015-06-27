@@ -1,6 +1,6 @@
 /* IntensityTier.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,21 +27,21 @@ IntensityTier IntensityTier_create (double tmin, double tmax) {
 		RealTier_init (me.peek(), tmin, tmax);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("IntensityTier not created.");
+		Melder_throw (U"IntensityTier not created.");
 	}
 }
 
 void IntensityTier_draw (IntensityTier me, Graphics g, double tmin, double tmax,
-	double ymin, double ymax, const wchar_t *method, int garnish)
+	double ymin, double ymax, const char32 *method, int garnish)
 {
-	RealTier_draw (me, g, tmin, tmax, ymin, ymax, garnish, method, L"Intensity (dB)");
+	RealTier_draw (me, g, tmin, tmax, ymin, ymax, garnish, method, U"Intensity (dB)");
 }
 
 IntensityTier PointProcess_upto_IntensityTier (PointProcess me, double intensity) {
 	try {
 		return (IntensityTier) PointProcess_upto_RealTier (me, intensity, classIntensityTier);
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to IntensityTier.");
+		Melder_throw (me, U": not converted to IntensityTier.");
 	}
 }
 
@@ -49,7 +49,7 @@ IntensityTier Intensity_downto_IntensityTier (Intensity me) {
 	try {
 		return (IntensityTier) Vector_to_RealTier (me, 1, classIntensityTier);
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to IntensityTier.");
+		Melder_throw (me, U": not converted to IntensityTier.");
 	}
 }
 
@@ -57,7 +57,7 @@ IntensityTier Intensity_to_IntensityTier_peaks (Intensity me) {
 	try {
 		return (IntensityTier) Vector_to_RealTier_peaks (me, 1, classIntensityTier);
 	} catch (MelderError) {
-		Melder_throw (me, ": peaks not converted to IntensityTier.");
+		Melder_throw (me, U": peaks not converted to IntensityTier.");
 	}
 }
 
@@ -65,7 +65,7 @@ IntensityTier Intensity_to_IntensityTier_valleys (Intensity me) {
 	try {
 		return (IntensityTier) Vector_to_RealTier_valleys (me, 1, classIntensityTier);
 	} catch (MelderError) {
-		Melder_throw (me, ": valleys not converted to IntensityTier.");
+		Melder_throw (me, U": valleys not converted to IntensityTier.");
 	}
 }
 
@@ -75,13 +75,13 @@ IntensityTier Intensity_PointProcess_to_IntensityTier (Intensity me, PointProces
 		autoIntensityTier thee = IntensityTier_PointProcess_to_IntensityTier (temp.peek(), pp);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, " & ", pp, ": not converted to IntensityTier.");
+		Melder_throw (me, U" & ", pp, U": not converted to IntensityTier.");
 	}
 }
 
 IntensityTier IntensityTier_PointProcess_to_IntensityTier (IntensityTier me, PointProcess pp) {
 	try {
-		if (my points -> size == 0) Melder_throw ("No intensity points.");
+		if (my points -> size == 0) Melder_throw (U"No intensity points.");
 		autoIntensityTier thee = IntensityTier_create (pp -> xmin, pp -> xmax);
 		for (long i = 1; i <= pp -> nt; i ++) {
 			double time = pp -> t [i];
@@ -90,12 +90,12 @@ IntensityTier IntensityTier_PointProcess_to_IntensityTier (IntensityTier me, Poi
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, " & ", pp, ": not converted to IntensityTier.");
+		Melder_throw (me, U" & ", pp, U": not converted to IntensityTier.");
 	}
 }
 
 TableOfReal IntensityTier_downto_TableOfReal (IntensityTier me) {
-	return RealTier_downto_TableOfReal (me, L"Time (s)", L"Intensity (dB)");
+	return RealTier_downto_TableOfReal (me, U"Time (s)", U"Intensity (dB)");
 }
 
 void Sound_IntensityTier_multiply_inline (Sound me, IntensityTier intensity) {
@@ -116,7 +116,7 @@ Sound Sound_IntensityTier_multiply (Sound me, IntensityTier intensity, int scale
 		if (scale) Vector_scale (thee.peek(), 0.9);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not multiplied with ", intensity, ".");
+		Melder_throw (me, U": not multiplied with ", intensity, U".");
 	}
 }
 

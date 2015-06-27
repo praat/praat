@@ -39,15 +39,15 @@ Pitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceiling, i
 		double fminl2 = NUMlog2 (fmin), fmaxl2 = NUMlog2 (fmax);
 		double points = (fmaxl2 - fminl2) * nPointsPerOctave;
 		double dfl2 = (fmaxl2 - fminl2) / (points - 1);
-		long nFrequencyPoints = points;
-		long maxHarmonic = fmax / fmin;
+		long nFrequencyPoints = (long) floor (points);
+		long maxHarmonic = (long) floor (fmax / fmin);
 		double maxStrength = 0, unvoicedCriterium = 0.45, maxPower = 0;
 
 		if (nFrequencyPoints < 2) {
-			Melder_throw ("Frequency range too small.");
+			Melder_throw (U"Frequency range too small.");
 		}
 		if (ceiling <= fmin) {
-			Melder_throw ("Ceiling is smaller than centre frequency of lowest filter.");
+			Melder_throw (U"Ceiling is smaller than centre frequency of lowest filter.");
 		}
 
 		autoPitch thee = Pitch_create (my xmin, my xmax, my nx, my dx, my x1, ceiling, maxnCandidates);
@@ -78,7 +78,7 @@ Pitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceiling, i
 			power[j] = p;
 		}
 		if (maxPower == 0) {
-			Melder_throw ("No power");
+			Melder_throw (U"No power");
 		}
 
 		for (long j = 1; j <= my nx; j++) {
@@ -99,7 +99,7 @@ Pitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceiling, i
 
 			for (long m = 1; m <= maxHarmonic; m++) {
 				double hm = 1 - harmonicFallOffSlope * NUMlog2 (m);
-				long kb = 1 + floor (nPointsPerOctave * NUMlog2 (m));
+				long kb = 1 + (long) floor (nPointsPerOctave * NUMlog2 (m));
 				for (long k = kb; k <= nFrequencyPoints; k++) {
 					if (pitch[k] > 0) {
 						sumspec[k - kb + 1] += pitch[k] * hm;
@@ -137,7 +137,7 @@ Pitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceiling, i
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Pitch created.");
+		Melder_throw (me, U": no Pitch created.");
 	}
 }
 

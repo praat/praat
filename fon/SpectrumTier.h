@@ -30,8 +30,8 @@ Thing_define (SpectrumTier, RealTier) {
 		override;
 	int v_domainQuantity ()
 		override { return MelderQuantity_FREQUENCY_HERTZ; }
-	const wchar_t * v_getUnitText (long /* ilevel */, int /* unit */, unsigned long /* flags */)
-		override { return L"Frequency (Hz)"; }
+	const char32 * v_getUnitText (long /* ilevel */, int /* unit */, unsigned long /* flags */)
+		override { return U"Frequency (Hz)"; }
 };
 
 SpectrumTier SpectrumTier_create (double fmin, double fmax);
@@ -43,7 +43,7 @@ SpectrumTier SpectrumTier_create (double fmin, double fmax);
 */
 
 void SpectrumTier_draw (SpectrumTier me, Graphics g, double fmin, double fmax,
-	double pmin, double pmax, int garnish, const wchar_t *method);
+	double pmin, double pmax, int garnish, const char32 *method);
 
 void SpectrumTier_list (SpectrumTier me, bool includeIndexes, bool includeFrequency, bool includePowerDensity);
 

@@ -64,7 +64,7 @@ Permutation Index_to_Permutation_permuteRandomly (I, int permuteWithinClasses) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": Permutation not created.");
+		Melder_throw (me, U": Permutation not created.");
 	}
 }
 

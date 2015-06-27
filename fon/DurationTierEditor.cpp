@@ -1,6 +1,6 @@
 /* DurationTierEditor.cpp
  *
- * Copyright (C) 1992-2011,2012,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,11 +22,11 @@
 
 Thing_implement (DurationTierEditor, RealTierEditor, 0);
 
-static void menu_cb_DurationTierHelp (EDITOR_ARGS) { EDITOR_IAM (DurationTierEditor); Melder_help (L"DurationTier"); }
+static void menu_cb_DurationTierHelp (EDITOR_ARGS) { EDITOR_IAM (DurationTierEditor); Melder_help (U"DurationTier"); }
 
 void structDurationTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	DurationTierEditor_Parent :: v_createHelpMenuItems (menu);
-	EditorMenu_addCommand (menu, L"DurationTier help", 0, menu_cb_DurationTierHelp);
+	EditorMenu_addCommand (menu, U"DurationTier help", 0, menu_cb_DurationTierHelp);
 }
 
 void structDurationTierEditor :: v_play (double fromTime, double toTime) {
@@ -37,13 +37,13 @@ void structDurationTierEditor :: v_play (double fromTime, double toTime) {
 	}
 }
 
-DurationTierEditor DurationTierEditor_create (const wchar_t *title, DurationTier duration, Sound sound, bool ownSound) {
+DurationTierEditor DurationTierEditor_create (const char32 *title, DurationTier duration, Sound sound, bool ownSound) {
 	try {
 		autoDurationTierEditor me = Thing_new (DurationTierEditor);
 		RealTierEditor_init (me.peek(), title, (RealTier) duration, sound, ownSound);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("DurationTier window not created.");
+		Melder_throw (U"DurationTier window not created.");
 	}
 }
 

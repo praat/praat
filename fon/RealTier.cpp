@@ -1,6 +1,6 @@
 /* RealTier.cpp
  *
- * Copyright (C) 1992-2012,2014 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,9 +54,9 @@ RealPoint RealPoint_create (double time, double value) {
 
 void structRealTier :: v_info () {
 	structFunction :: v_info ();
-	MelderInfo_writeLine (L"Number of points: ", Melder_integer (our numberOfPoints ()));
-	MelderInfo_writeLine (L"Minimum value: ", Melder_double (RealTier_getMinimumValue (this)));
-	MelderInfo_writeLine (L"Maximum value: ", Melder_double (RealTier_getMaximumValue (this)));
+	MelderInfo_writeLine (U"Number of points: ", our numberOfPoints ());
+	MelderInfo_writeLine (U"Minimum value: ", RealTier_getMinimumValue (this));
+	MelderInfo_writeLine (U"Maximum value: ", RealTier_getMaximumValue (this));
 }
 
 double structRealTier :: v_getVector (long irow, long icol) {
@@ -99,7 +99,7 @@ RealTier RealTier_create (double tmin, double tmax) {
 		RealTier_init (me.peek(), tmin, tmax);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("RealTier not created.");
+		Melder_throw (U"RealTier not created.");
 	}
 }
 
@@ -109,7 +109,7 @@ RealTier RealTier_createWithClass (double tmin, double tmax, ClassInfo klas) {
 		RealTier_init (me.peek(), tmin, tmax);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw (klas -> className, " not created.");
+		Melder_throw (klas -> className, U" not created.");
 	}
 }
 
@@ -118,7 +118,7 @@ void RealTier_addPoint (RealTier me, double t, double value) {
 		autoRealPoint point = RealPoint_create (t, value);
 		Collection_addItem (my points, point.transfer());
 	} catch (MelderError) {
-		Melder_throw (me, ": point not added.");
+		Melder_throw (me, U": point not added.");
 	}
 }
 
@@ -281,10 +281,10 @@ void RealTier_multiplyPart (RealTier me, double tmin, double tmax, double factor
 }
 
 void RealTier_draw (RealTier me, Graphics g, double tmin, double tmax, double fmin, double fmax,
-	int garnish, const wchar_t *method, const wchar_t *quantity)
+	int garnish, const char32 *method, const char32 *quantity)
 {
-	bool drawLines = wcsstr (method, L"lines") || wcsstr (method, L"Lines");
-	bool drawSpeckles = wcsstr (method, L"speckles") || wcsstr (method, L"Speckles");
+	bool drawLines = str32str (method, U"lines") || str32str (method, U"Lines");
+	bool drawSpeckles = str32str (method, U"speckles") || str32str (method, U"Speckles");
 	long n = my numberOfPoints (), imin, imax, i;
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 	Graphics_setWindow (g, tmin, tmax, fmin, fmax);
@@ -325,7 +325,7 @@ void RealTier_draw (RealTier me, Graphics g, double tmin, double tmax, double fm
 	}
 }
 
-TableOfReal RealTier_downto_TableOfReal (RealTier me, const wchar_t *timeLabel, const wchar_t *valueLabel) {
+TableOfReal RealTier_downto_TableOfReal (RealTier me, const char32 *timeLabel, const char32 *valueLabel) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfPoints (), 2);
 		TableOfReal_setColumnLabel (thee.peek(), 1, timeLabel);
@@ -337,7 +337,7 @@ TableOfReal RealTier_downto_TableOfReal (RealTier me, const wchar_t *timeLabel, 
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to TableOfReal.");
+		Melder_throw (me, U": not converted to TableOfReal.");
 	}
 }
 
@@ -378,11 +378,11 @@ void RealTier_interpolateQuadratically (RealTier me, long numberOfPointsPerParab
 		}
 		Thing_swap (me, thee.peek());
 	} catch (MelderError) {
-		Melder_throw (me, ": not interpolated quadratically.");
+		Melder_throw (me, U": not interpolated quadratically.");
 	}
 }
 
-Table RealTier_downto_Table (RealTier me, const wchar_t *indexText, const wchar_t *timeText, const wchar_t *valueText) {
+Table RealTier_downto_Table (RealTier me, const char32 *indexText, const char32 *timeText, const char32 *valueText) {
 	try {
 		autoTable thee = Table_createWithoutColumnNames (my numberOfPoints (),
 			(indexText != NULL) + (timeText != NULL) + (valueText != NULL));
@@ -399,7 +399,7 @@ Table RealTier_downto_Table (RealTier me, const wchar_t *indexText, const wchar_
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Table.");
+		Melder_throw (me, U": not converted to Table.");
 	}
 }
 
@@ -411,7 +411,7 @@ RealTier Vector_to_RealTier (Vector me, long channel, ClassInfo klas) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to ", klas -> className, ".");
+		Melder_throw (me, U": not converted to ", klas -> className, U".");
 	}
 }
 
@@ -429,7 +429,7 @@ RealTier Vector_to_RealTier_peaks (Vector me, long channel, ClassInfo klas) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to ", klas -> className, " (peaks).");
+		Melder_throw (me, U": not converted to ", klas -> className, U" (peaks).");
 	}
 }
 
@@ -447,7 +447,7 @@ RealTier Vector_to_RealTier_valleys (Vector me, long channel, ClassInfo klas) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to ", klas -> className, " (valleys).");
+		Melder_throw (me, U": not converted to ", klas -> className, U" (valleys).");
 	}
 }
 
@@ -459,11 +459,11 @@ RealTier PointProcess_upto_RealTier (PointProcess me, double value, ClassInfo kl
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to RealTier.");
+		Melder_throw (me, U": not converted to RealTier.");
 	}
 }
 
-void RealTier_formula (RealTier me, const wchar_t *expression, Interpreter interpreter, RealTier thee) {
+void RealTier_formula (RealTier me, const char32 *expression, Interpreter interpreter, RealTier thee) {
 	try {
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE);
 		if (thee == NULL) thee = me;
@@ -471,11 +471,11 @@ void RealTier_formula (RealTier me, const wchar_t *expression, Interpreter inter
 			struct Formula_Result result;
 			Formula_run (0, icol, & result);
 			if (result. result.numericResult == NUMundefined)
-				Melder_throw ("Cannot put an undefined value into the tier.");
+				Melder_throw (U"Cannot put an undefined value into the tier.");
 			thy point (icol) -> value = result. result.numericResult;
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": formula not completed.");
+		Melder_throw (me, U": formula not completed.");
 	}
 }
 

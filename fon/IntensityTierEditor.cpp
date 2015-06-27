@@ -1,6 +1,6 @@
 /* IntensityTierEditor.cpp
  *
- * Copyright (C) 1992-2011,2012,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,11 +22,11 @@
 
 Thing_implement (IntensityTierEditor, RealTierEditor, 0);
 
-static void menu_cb_IntensityTierHelp (EDITOR_ARGS) { EDITOR_IAM (IntensityTierEditor); Melder_help (L"IntensityTier"); }
+static void menu_cb_IntensityTierHelp (EDITOR_ARGS) { EDITOR_IAM (IntensityTierEditor); Melder_help (U"IntensityTier"); }
 
 void structIntensityTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	IntensityTierEditor_Parent :: v_createHelpMenuItems (menu);
-	EditorMenu_addCommand (menu, L"IntensityTier help", 0, menu_cb_IntensityTierHelp);
+	EditorMenu_addCommand (menu, U"IntensityTier help", 0, menu_cb_IntensityTierHelp);
 }
 
 void structIntensityTierEditor :: v_play (double a_tmin, double a_tmax) {
@@ -37,13 +37,13 @@ void structIntensityTierEditor :: v_play (double a_tmin, double a_tmax) {
 	}
 }
 
-IntensityTierEditor IntensityTierEditor_create (const wchar_t *title, IntensityTier intensity, Sound sound, bool ownSound) {
+IntensityTierEditor IntensityTierEditor_create (const char32 *title, IntensityTier intensity, Sound sound, bool ownSound) {
 	try {
 		autoIntensityTierEditor me = Thing_new (IntensityTierEditor);
 		RealTierEditor_init (me.peek(), title, (RealTier) intensity, sound, ownSound);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("IntensityTier window not created.");
+		Melder_throw (U"IntensityTier window not created.");
 	}
 }
 

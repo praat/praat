@@ -43,7 +43,7 @@ Sound PitchTier_to_Sound_pulseTrain (PitchTier me, double samplingFrequency,
 		}
 		return sound.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Sound (pulse train).");
+		Melder_throw (me, U": not converted to Sound (pulse train).");
 	}
 }
 
@@ -61,7 +61,7 @@ Sound PitchTier_to_Sound_phonation (PitchTier me, double samplingFrequency,
 		}
 		return sound.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Sound (phonation).");
+		Melder_throw (me, U": not converted to Sound (phonation).");
 	}
 }
 
@@ -70,7 +70,7 @@ void PitchTier_playPart (PitchTier me, double tmin, double tmax, int hum) {
 		autoSound sound = PitchTier_to_Sound_pulseTrain (me, 44100.0, 0.7, 0.05, 30, hum);
 		Sound_playPart (sound.peek(), tmin, tmax, NULL, NULL);
 	} catch (MelderError) {
-		Melder_throw (me, ": not played.");
+		Melder_throw (me, U": not played.");
 	}
 }
 
@@ -85,7 +85,7 @@ void PitchTier_hum (PitchTier me) {
 Sound PitchTier_to_Sound_sine (PitchTier me, double tmin, double tmax, double samplingFrequency) {
 	try {
 		if (tmax <= tmin) tmin = my xmin, tmax = my xmax;
-		long numberOfSamples = 1 + floor ((my xmax - my xmin) * samplingFrequency);   // >= 1
+		long numberOfSamples = 1 + (long) floor ((my xmax - my xmin) * samplingFrequency);   // >= 1
 		double samplingPeriod = 1.0 / samplingFrequency;
 		double tmid = (tmin + tmax) / 2;
 		double t1 = tmid - 0.5 * (numberOfSamples - 1) * samplingPeriod;
@@ -99,7 +99,7 @@ Sound PitchTier_to_Sound_sine (PitchTier me, double tmin, double tmax, double sa
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Sound (sine).");
+		Melder_throw (me, U": not converted to Sound (sine).");
 	}
 }
 
@@ -109,7 +109,7 @@ void PitchTier_playPart_sine (PitchTier me, double tmin, double tmax) {
 		autoSound sound = PitchTier_to_Sound_sine (me, tmin, tmax, 44100.0);
 		Sound_playPart (sound.peek(), tmin, tmax, NULL, NULL);
 	} catch (MelderError) {
-		Melder_throw (me, ": not played.");
+		Melder_throw (me, U": not played.");
 	}
 }
 

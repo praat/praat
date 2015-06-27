@@ -1,6 +1,6 @@
 /* ParamCurve.cpp
  *
- * Copyright (C) 1992-2012,2014 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,23 +45,23 @@ void structParamCurve :: v_info () {
 		if (value > ymax) ymax = value;
 	}
 	structData :: v_info ();
-	MelderInfo_writeLine (L"Domain:");
-	MelderInfo_writeLine (L"   tmin: ", Melder_double (xmin));
-	MelderInfo_writeLine (L"   tmax: ", Melder_double (xmax));
-	MelderInfo_writeLine (L"x sampling:");
-	MelderInfo_writeLine (L"   Number of values of t in x: ", Melder_double (x -> nx));
-	MelderInfo_writeLine (L"   t step in x: ", Melder_double (x -> dx), L" (sampling rate ", Melder_double (1.0 / x -> dx), L")");
-	MelderInfo_writeLine (L"   First t in x: ", Melder_double (x -> x1));
-	MelderInfo_writeLine (L"x values:");
-	MelderInfo_writeLine (L"   Minimum x: ", Melder_double (xmin));
-	MelderInfo_writeLine (L"   Maximum x: ", Melder_double (xmax));
-	MelderInfo_writeLine (L"y sampling:");
-	MelderInfo_writeLine (L"   Number of values of t in y: ", Melder_double (y -> nx));
-	MelderInfo_writeLine (L"   t step in y: ", Melder_double (y -> dx), L" (sampling rate ", Melder_double (1.0 / y -> dx), L")");
-	MelderInfo_writeLine (L"   First t in y: ", Melder_double (y -> x1));
-	MelderInfo_writeLine (L"y values:");
-	MelderInfo_writeLine (L"   Minimum y: ", Melder_double (ymin));
-	MelderInfo_writeLine (L"   Maximum y: ", Melder_double (ymax));
+	MelderInfo_writeLine (U"Domain:");
+	MelderInfo_writeLine (U"   tmin: ", xmin);
+	MelderInfo_writeLine (U"   tmax: ", xmax);
+	MelderInfo_writeLine (U"x sampling:");
+	MelderInfo_writeLine (U"   Number of values of t in x: ", x -> nx);
+	MelderInfo_writeLine (U"   t step in x: ", x -> dx, U" (sampling rate ", 1.0 / x -> dx, U")");
+	MelderInfo_writeLine (U"   First t in x: ", x -> x1);
+	MelderInfo_writeLine (U"x values:");
+	MelderInfo_writeLine (U"   Minimum x: ", xmin);
+	MelderInfo_writeLine (U"   Maximum x: ", xmax);
+	MelderInfo_writeLine (U"y sampling:");
+	MelderInfo_writeLine (U"   Number of values of t in y: ", y -> nx);
+	MelderInfo_writeLine (U"   t step in y: ", y -> dx, U" (sampling rate ", 1.0 / y -> dx, U")");
+	MelderInfo_writeLine (U"   First t in y: ", y -> x1);
+	MelderInfo_writeLine (U"y values:");
+	MelderInfo_writeLine (U"   Minimum y: ", ymin);
+	MelderInfo_writeLine (U"   Maximum y: ", ymax);
 }
 
 void structParamCurve :: v_writeText (MelderFile file) {
@@ -97,7 +97,7 @@ void structParamCurve :: v_readBinary (FILE *f) {
 
 void ParamCurve_init (ParamCurve me, Sound x, Sound y) {
 	if (x -> xmax <= y -> xmin || x -> xmin >= y -> xmax)
-		Melder_throw ("Domains do not overlap.");
+		Melder_throw (U"Domains do not overlap.");
 	my x = Data_copy (x);
 	my y = Data_copy (y);
 	my xmin = x -> xmin > y -> xmin ? x -> xmin : y -> xmin;
@@ -110,7 +110,7 @@ ParamCurve ParamCurve_create (Sound x, Sound y) {
 		ParamCurve_init (me.peek(), x, y);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("ParamCurve not created.");
+		Melder_throw (U"ParamCurve not created.");
 	}
 }
 

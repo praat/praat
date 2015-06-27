@@ -49,7 +49,7 @@
 void structFeatureWeights :: v_info ()
 {
     this -> structData :: v_info ();
-    MelderInfo_writeLine (L"Number of weights: ", Melder_integer (fweights -> numberOfColumns));
+    MelderInfo_writeLine (U"Number of weights: ", fweights -> numberOfColumns);
 }
 
 Thing_implement (FeatureWeights, Data, 0);
@@ -76,7 +76,7 @@ FeatureWeights FeatureWeights_create
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("FeatureWeights not created.");
+		Melder_throw (U"FeatureWeights not created.");
 	}
 }
 
@@ -243,7 +243,7 @@ FeatureWeights FeatureWeights_computeWrapperInt
 		cs [nseeds] = NULL;   // prevent destruction
 		return result;
 	} catch (MelderError) {
-		Melder_throw ("FeatureWeights: wrapper not computed.");
+		Melder_throw (U"FeatureWeights: wrapper not computed.");
 	}
 }
 
@@ -349,7 +349,7 @@ FeatureWeights FeatureWeights_computeWrapperExt
 		cs [nseeds] = NULL;   // prevent destruction
 		return result;
 	} catch (MelderError) {
-		Melder_throw ("FeatureWeights: wrapper not computed.");
+		Melder_throw (U"FeatureWeights: wrapper not computed.");
 	}
 }
 

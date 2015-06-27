@@ -292,7 +292,7 @@ int NUMblas_dgemm (const char *transa, const char *transb, long *m, long *n, lon
 		return 0;
 	}
 	/* Quick return if possible. */
-	if (*m == 0 || *n == 0 || (*alpha == 0. || *k == 0) && *beta == 1.) {
+	if (*m == 0 || *n == 0 || ((*alpha == 0. || *k == 0) && *beta == 1.)) {
 		return 0;
 	}
 	/* And if alpha.eq.zero. */
@@ -563,7 +563,7 @@ int NUMblas_dgemv (const char *trans, long *m, long *n, double *alpha, double *a
 		return 0;
 	}
 	/* Quick return if possible. */
-	if (*m == 0 || *n == 0 || *alpha == 0. && *beta == 1.) {
+	if (*m == 0 || *n == 0 || (*alpha == 0. && *beta == 1.)) {
 		return 0;
 	}
 	/* Set LENX and LENY, the lengths of the vectors x and y, and set up the
@@ -1110,7 +1110,7 @@ L10:
 			}
 
 		} else if (ngpmin == gpmin && ngnmin == gnmin) {
-			if ( (i__1 = ngpmin - ngnmin, abs (i__1)) == 1) {
+			if ( (i__1 = ngpmin - ngnmin, labs (i__1)) == 1) {
 				lemin = MAX (ngpmin, ngnmin);
 				/* ( Twos-complement machines, no gradual underflow; e.g.,
 				   CYBER 205 ) */
@@ -1120,7 +1120,7 @@ L10:
 				iwarn = TRUE;
 			}
 
-		} else if ( (i__1 = ngpmin - ngnmin, abs (i__1)) == 1 && gpmin == gnmin) {
+		} else if ( (i__1 = ngpmin - ngnmin, labs (i__1)) == 1 && gpmin == gnmin) {
 			if (gpmin - MIN (ngpmin, ngnmin) == 3) {
 				lemin = MAX (ngpmin, ngnmin) - 1 + lt;
 				/* ( Twos-complement machines with gradual underflow; no
@@ -1141,8 +1141,8 @@ L10:
 		/* Comment out this if block if EMIN is ok */
 		if (iwarn) {
 			first = TRUE;
-			Melder_warning (L"\n\n WARNING. The value EMIN may be incorrect:- " "EMIN = ", Melder_integer (lemin),
-			                L"\nIf, after inspection, the value EMIN looks acceptable"
+			Melder_warning (U"\n\n WARNING. The value EMIN may be incorrect:- " "EMIN = ", lemin,
+			                U"\nIf, after inspection, the value EMIN looks acceptable"
 			                "please comment out \n the IF block as marked within the"
 			                "code of routine DLAMC2, \n otherwise supply EMIN" "explicitly.\n");
 		}
@@ -1651,7 +1651,7 @@ int NUMblas_dsymv (const char *uplo, long *n, double *alpha, double *a, long *ld
 		return 0;
 	}
 	/* Quick return if possible. */
-	if (*n == 0 || *alpha == 0. && *beta == 1.) {
+	if (*n == 0 || (*alpha == 0. && *beta == 1.)) {
 		return 0;
 	}
 	/* Set up the start points in X and Y. */
@@ -1981,7 +1981,7 @@ int NUMblas_dsyr2k (const char *uplo, const char *trans, long *n, long *k, doubl
 		return 0;
 	}
 	/* Quick return if possible. */
-	if (*n == 0 || (*alpha == 0. || *k == 0) && *beta == 1.) {
+	if (*n == 0 || ((*alpha == 0. || *k == 0) && *beta == 1.)) {
 		return 0;
 	}
 	/* And when alpha.eq.zero. */

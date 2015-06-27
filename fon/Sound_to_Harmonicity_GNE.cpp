@@ -1,6 +1,6 @@
 /* Sound_to_Harmonicity_GNE.cpp
  *
- * Copyright (C) 1999-2011 Paul Boersma
+ * Copyright (C) 1999-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ Matrix Sound_to_Harmonicity_GNE (Sound me,
 {
 	try {
 		autoSound envelope [1+100];
-		long nenvelopes = (fmax - fmin) / step;
+		long nenvelopes = (long) floor ((fmax - fmin) / step);
 		for (long ienvelope = 1; ienvelope <= 100; ienvelope ++)
 			Melder_assert (envelope [ienvelope].peek() == NULL);
 
@@ -96,7 +96,7 @@ Matrix Sound_to_Harmonicity_GNE (Sound me,
 		}
 		double fmid = fmin;
 		long ienvelope = 1;
-		autoMelderMonitor monitor (L"Computing Hilbert envelopes...");
+		autoMelderMonitor monitor (U"Computing Hilbert envelopes...");
 		while (fmid <= fmax) {
 			/*
 			 * Step 3: calculate Hilbert envelopes of bands.
@@ -116,7 +116,7 @@ Matrix Sound_to_Harmonicity_GNE (Sound me,
 				Graphics_clearWs (graphics);
 				Spectrum_draw (bandSpectrum, graphics, 0, 5000, 0, 0, TRUE);
 			}*/
-			Melder_monitor (ienvelope / (nenvelopes + 1.0), L"Computing Hilbert envelope ", Melder_integer (ienvelope), L"...");
+			Melder_monitor (ienvelope / (nenvelopes + 1.0), U"Computing Hilbert envelope ", ienvelope, U"...");
 			autoSound hilbertBand = Spectrum_to_Sound (hilbertBandSpectrum.peek());
 			envelope [ienvelope].reset (Sound_extractPart (band.peek(), 0, duration, kSound_windowShape_RECTANGULAR, 1.0, TRUE));
 			/*
@@ -155,7 +155,7 @@ Matrix Sound_to_Harmonicity_GNE (Sound me,
 		 */	
 		for (long row = 2; row <= nenvelopes; row ++) {
 			for (long col = 1; col <= row - 1; col ++) {
-				if (abs (row - col) < bandwidth / 2 / step) {
+				if (labs (row - col) < bandwidth / 2 / step) {
 					cc -> z [row] [col] = 0.0;
 				}
 			}
@@ -163,7 +163,7 @@ Matrix Sound_to_Harmonicity_GNE (Sound me,
 
 		return cc.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Harmonicity (GNE).");
+		Melder_throw (me, U": not converted to Harmonicity (GNE).");
 	}
 }
 

@@ -33,7 +33,7 @@ Thing_define (AmplitudeTier, RealTier) {
 AmplitudeTier AmplitudeTier_create (double tmin, double tmax);
 
 void AmplitudeTier_draw (AmplitudeTier me, Graphics g, double tmin, double tmax,
-	double ymin, double ymax, const wchar_t *method, int garnish);
+	double ymin, double ymax, const char32 *method, int garnish);
 
 AmplitudeTier PointProcess_upto_AmplitudeTier (PointProcess me, double soundPressure);
 AmplitudeTier IntensityTier_to_AmplitudeTier (IntensityTier me);

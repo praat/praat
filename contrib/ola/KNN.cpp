@@ -58,7 +58,7 @@ Thing_implement (KNN, Data, 0);
 void structKNN :: v_info ()
 {
     structData :: v_info ();
-    MelderInfo_writeLine (L"Size of instancebase: ", Melder_integer (nInstances));
+    MelderInfo_writeLine (U"Size of instancebase: ", nInstances);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -72,7 +72,7 @@ KNN KNN_create ()
         my nInstances = 0;
         return me.transfer();
     } catch (MelderError) {
-		Melder_throw ("KNN classifier not created.");
+		Melder_throw (U"KNN classifier not created.");
 	}
 }
 
@@ -826,7 +826,7 @@ double KNN_modelSearch
 
 		return best.performance;
 	} catch (MelderError) {
-		Melder_throw (me, " & ", fws, ": model search not performed.");
+		Melder_throw (me, U" & ", fws, U": model search not performed.");
 	}
 }
 
@@ -1676,10 +1676,10 @@ double KNN_SA_t_metric
 }
 
 void KNN_SA_t_print (void * istruct) {
-    Melder_casual ("\n");
+    Melder_casual (U"\n");
     for (long i = 1; i <= ((KNN_SA_t *) istruct) -> p -> ny; i ++)
-        Melder_casual ("%ld,", ((KNN_SA_t *) istruct) -> indices [i]);
-    Melder_casual ("\n");
+        Melder_casual (((KNN_SA_t *) istruct) -> indices [i]);
+    Melder_casual (U"\n");
 }
 
 void KNN_SA_t_step

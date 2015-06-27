@@ -55,13 +55,13 @@ SSCP Eigen_and_SSCP_project (I, SSCP thee) {
 	try {
 		iam (Eigen);
 		if (thy numberOfRows != my dimension) {
-			Melder_throw ("SSCP_and_Eigen_project: dimensions don't agree.");
+			Melder_throw (U"SSCP_and_Eigen_project: dimensions don't agree.");
 		}
 		autoSSCP him = SSCP_create (my numberOfEigenvalues);
 		Eigen_and_SSCP_project_ (me, thee, him.peek());
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw ("SSCP not projected.");
+		Melder_throw (U"SSCP not projected.");
 	}
 }
 
@@ -69,13 +69,13 @@ Covariance Eigen_and_Covariance_project (I, Covariance thee) {
 	try {
 		iam (Eigen);
 		if (thy numberOfRows != my dimension) {
-			Melder_throw ("Covariance_and_Eigen_project: dimensions don't agree.");
+			Melder_throw (U"Covariance_and_Eigen_project: dimensions don't agree.");
 		}
 		autoCovariance him = Covariance_create (my numberOfEigenvalues);
 		Eigen_and_SSCP_project_ (me, thee, him.peek());
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Covariance not projected.");
+		Melder_throw (U"Covariance not projected.");
 	}
 }
 

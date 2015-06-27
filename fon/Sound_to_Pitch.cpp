@@ -1,6 +1,6 @@
 /* Sound_to_Pitch.cpp
  *
- * Copyright (C) 1992-2011,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,7 +111,7 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 		if (localSpan > my nx + 1 - startSample) localSpan = my nx + 1 - startSample;
 		localMaximumLag = localSpan - nsamp_window;
 		offset = startSample - 1;
-		double sumx2 = 0;   /* Sum of squares. */
+		double sumx2 = 0;   // sum of squares
 		for (long channel = 1; channel <= my ny; channel ++) {
 			double *amp = my z [channel] + offset;
 			for (long i = 1; i <= nsamp_window; i ++) {
@@ -119,7 +119,7 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 				sumx2 += x * x;
 			}
 		}
-		double sumy2 = sumx2;   /* At zero lag, these are still equal. */
+		double sumy2 = sumx2;   // at zero lag, these are still equal
 		r [0] = 1.0;
 		for (long i = 1; i <= localMaximumLag; i ++) {
 			double product = 0.0;
@@ -145,12 +145,12 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 			ac [i] = 0.0;
 		}
 		for (long channel = 1; channel <= my ny; channel ++) {
-			NUMfft_forward (fftTable, frame [channel]);   /* Complex spectrum. */
-			ac [1] += frame [channel] [1] * frame [channel] [1];   /* DC component. */
+			NUMfft_forward (fftTable, frame [channel]);   // complex spectrum
+			ac [1] += frame [channel] [1] * frame [channel] [1];   // DC component
 			for (long i = 2; i < nsampFFT; i += 2) {
-				ac [i] += frame [channel] [i] * frame [channel] [i] + frame [channel] [i+1] * frame [channel] [i+1]; /* Power spectrum. */
+				ac [i] += frame [channel] [i] * frame [channel] [i] + frame [channel] [i+1] * frame [channel] [i+1];   // power spectrum
 			}
-			ac [nsampFFT] += frame [channel] [nsampFFT] * frame [channel] [nsampFFT];   /* Nyquist frequency. */
+			ac [nsampFFT] += frame [channel] [nsampFFT] * frame [channel] [nsampFFT];   // Nyquist frequency
 		}
 		NUMfft_backward (fftTable, ac);   /* Autocorrelation. */
 
@@ -167,7 +167,7 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 	 * Register the first candidate, which is always present: voicelessness.
 	 */
 	pitchFrame->nCandidates = 1;
-	pitchFrame->candidate[1].frequency = 0.0;   /* Voiceless: always present. */
+	pitchFrame->candidate[1].frequency = 0.0;   // voiceless: always present
 	pitchFrame->candidate[1].strength = 0.0;
 
 	/*
@@ -182,8 +182,8 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 	 */
 	imax [1] = 0;
 	for (long i = 2; i < maximumLag && i < brent_ixmax; i ++)
-		if (r [i] > 0.5 * voicingThreshold && /* Not too unvoiced? */
-			r [i] > r [i-1] && r [i] >= r [i+1])   /* Maximum? */
+		if (r [i] > 0.5 * voicingThreshold &&   // not too unvoiced?
+			r [i] > r [i-1] && r [i] >= r [i+1])   // maximum?
 	{
 		int place = 0;
 
@@ -203,7 +203,7 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 		/*
 		 * Find a place for this maximum.
 		 */
-		if (pitchFrame->nCandidates < maxnCandidates) { /* Is there still a free place? */
+		if (pitchFrame->nCandidates < maxnCandidates) {   // is there still a free place?
 			place = ++ pitchFrame->nCandidates;
 		} else {
 			/* Try the place of the weakest candidate so far. */
@@ -219,7 +219,7 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 			if (strengthOfMaximum - octaveCost * NUMlog2 (minimumPitch / frequencyOfMaximum) <= weakest)
 				place = 0;
 		}
-		if (place) {   /* Have we found a place for this candidate? */
+		if (place) {   // have we found a place for this candidate?
 			pitchFrame->candidate[place].frequency = frequencyOfMaximum;
 			pitchFrame->candidate[place].strength = strengthOfMaximum;
 			imax [place] = i;
@@ -322,7 +322,7 @@ static MelderThread_RETURN_TYPE Sound_into_Pitch (Sound_into_Pitch_Args me)
 		if (my isMainThread) {
 			try {
 				Melder_progress (0.1 + 0.8 * (iframe - my firstFrame) / (my lastFrame - my firstFrame),
-					L"Sound to Pitch: analysing ", Melder_integer (my lastFrame), L" frames");
+					U"Sound to Pitch: analysing ", my lastFrame, U" frames");
 			} catch (MelderError) {
 				*my cancelled = 1;
 				throw;
@@ -350,21 +350,21 @@ Pitch Sound_to_Pitch_any (Sound me,
 	try {
 		autoNUMfft_Table fftTable;
 		double duration, t1;
-		double dt_window;   /* Window length in seconds. */
-		long nsamp_window, halfnsamp_window;   /* Number of samples per window. */
+		double dt_window;   // window length in seconds
+		long nsamp_window, halfnsamp_window;   // number of samples per window
 		long nFrames, minimumLag, maximumLag;
 		long nsampFFT;
 		double interpolation_depth;
-		long nsamp_period, halfnsamp_period;   /* Number of samples in longest period. */
+		long nsamp_period, halfnsamp_period;   // number of samples in longest period
 		long brent_ixmax, brent_depth;
 		double globalPeak;
 
 		Melder_assert (maxnCandidates >= 2);
 		Melder_assert (method >= AC_HANNING && method <= FCC_ACCURATE);
 
-		if (maxnCandidates < ceiling / minimumPitch) maxnCandidates = ceiling / minimumPitch;
+		if (maxnCandidates < ceiling / minimumPitch) maxnCandidates = (long) floor (ceiling / minimumPitch);
 
-		if (dt <= 0.0) dt = periodsPerWindow / minimumPitch / 4.0;   /* e.g. 3 periods, 75 Hz: 10 milliseconds. */
+		if (dt <= 0.0) dt = periodsPerWindow / minimumPitch / 4.0;   // e.g. 3 periods, 75 Hz: 10 milliseconds
 
 		switch (method) {
 			case AC_HANNING:
@@ -372,9 +372,9 @@ Pitch Sound_to_Pitch_any (Sound me,
 				interpolation_depth = 0.5;
 				break;
 			case AC_GAUSS:
-				periodsPerWindow *= 2;   /* Because Gaussian window is twice as long. */
+				periodsPerWindow *= 2;   // because Gaussian window is twice as long
 				brent_depth = NUM_PEAK_INTERPOLATE_SINC700;
-				interpolation_depth = 0.25;   /* Because Gaussian window is twice as long. */
+				interpolation_depth = 0.25;   // because Gaussian window is twice as long
 				break;
 			case FCC_NORMAL:
 				brent_depth = NUM_PEAK_INTERPOLATE_SINC70;
@@ -387,14 +387,14 @@ Pitch Sound_to_Pitch_any (Sound me,
 		}
 		duration = my dx * my nx;
 		if (minimumPitch < periodsPerWindow / duration)
-			Melder_throw ("To analyse this Sound, ", L_LEFT_DOUBLE_QUOTE, "minimum pitch", L_RIGHT_DOUBLE_QUOTE, " must not be less than ", periodsPerWindow / duration, " Hz.");
+			Melder_throw (U"To analyse this Sound, ", U_LEFT_DOUBLE_QUOTE, U"minimum pitch", U_RIGHT_DOUBLE_QUOTE, U" must not be less than ", periodsPerWindow / duration, U" Hz.");
 
 		/*
 		 * Determine the number of samples in the longest period.
 		 * We need this to compute the local mean of the sound (looking one period in both directions),
 		 * and to compute the local peak of the sound (looking half a period in both directions).
 		 */
-		nsamp_period = floor (1 / my dx / minimumPitch);
+		nsamp_period = (long) floor (1 / my dx / minimumPitch);
 		halfnsamp_period = nsamp_period / 2 + 1;
 
 		if (ceiling > 0.5 / my dx) ceiling = 0.5 / my dx;
@@ -403,18 +403,18 @@ Pitch Sound_to_Pitch_any (Sound me,
 		 * Determine window length in seconds and in samples.
 		 */
 		dt_window = periodsPerWindow / minimumPitch;
-		nsamp_window = floor (dt_window / my dx);
+		nsamp_window = (long) floor (dt_window / my dx);
 		halfnsamp_window = nsamp_window / 2 - 1;
 		if (halfnsamp_window < 2)
-			Melder_throw ("Analysis window too short.");
+			Melder_throw (U"Analysis window too short.");
 		nsamp_window = halfnsamp_window * 2;
 
 		/*
 		 * Determine the minimum and maximum lags.
 		 */
-		minimumLag = floor (1 / my dx / ceiling);
+		minimumLag = (long) floor (1 / my dx / ceiling);
 		if (minimumLag < 2) minimumLag = 2;
-		maximumLag = floor (nsamp_window / periodsPerWindow) + 2;
+		maximumLag = (long) floor (nsamp_window / periodsPerWindow) + 2;
 		if (maximumLag > nsamp_window) maximumLag = nsamp_window;
 
 		/*
@@ -426,7 +426,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 		try {
 			Sampled_shortTermAnalysis (me, method >= FCC_NORMAL ? 1 / minimumPitch + dt_window : dt_window, dt, & nFrames, & t1);
 		} catch (MelderError) {
-			Melder_throw ("The pitch analysis would give zero pitch frames.");
+			Melder_throw (U"The pitch analysis would give zero pitch frames.");
 		}
 
 		/*
@@ -466,7 +466,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 		if (method >= FCC_NORMAL) {   /* For cross-correlation analysis. */
 
 			nsampFFT = 0;
-			brent_ixmax = nsamp_window * interpolation_depth;
+			brent_ixmax = (long) floor (nsamp_window * interpolation_depth);
 
 		} else {   /* For autocorrelation analysis. */
 
@@ -515,15 +515,15 @@ Pitch Sound_to_Pitch_any (Sound me,
 			for (long i = 2; i <= nsamp_window; i ++) windowR [i] /= windowR [1];   // normalize
 			windowR [1] = 1.0;   // normalize
 
-			brent_ixmax = nsamp_window * interpolation_depth;
+			brent_ixmax = (long) floor (nsamp_window * interpolation_depth);
 		}
 
-		autoMelderProgress progress (L"Sound to Pitch...");
+		autoMelderProgress progress (U"Sound to Pitch...");
 
 		long numberOfFramesPerThread = 20;
 		int numberOfThreads = (nFrames - 1) / numberOfFramesPerThread + 1;
 		const int numberOfProcessors = MelderThread_getNumberOfProcessors ();
-		trace ("%d processors", (int) numberOfProcessors);
+		trace (numberOfProcessors, U" processors");
 		if (numberOfThreads > numberOfProcessors) numberOfThreads = numberOfProcessors;
 		if (numberOfThreads > 16) numberOfThreads = 16;
 		if (numberOfThreads < 1) numberOfThreads = 1;
@@ -547,13 +547,13 @@ Pitch Sound_to_Pitch_any (Sound me,
 		}
 		MelderThread_run (Sound_into_Pitch, args, numberOfThreads);
 
-		Melder_progress (0.95, L"Sound to Pitch: path finder");   // progress (0.95, L"Sound to Pitch: path finder");
+		Melder_progress (0.95, U"Sound to Pitch: path finder");
 		Pitch_pathFinder (thee.peek(), silenceThreshold, voicingThreshold,
 			octaveCost, octaveJumpCost, voicedUnvoicedCost, ceiling, Melder_debug == 31 ? true : false);
 
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": pitch analysis not performed.");
+		Melder_throw (me, U": pitch analysis not performed.");
 	}
 }
 

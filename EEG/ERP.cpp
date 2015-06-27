@@ -1,6 +1,6 @@
 /* ERP.cpp
  *
- * Copyright (C) 2011-2012,2013,2014 Paul Boersma
+ * Copyright (C) 2011-2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,9 +42,9 @@
 
 Thing_implement (ERP, Sound, 2);
 
-long ERP_getChannelNumber (ERP me, const wchar_t *channelName) {
+long ERP_getChannelNumber (ERP me, const char32 *channelName) {
 	for (long ichan = 1; ichan <= my ny; ichan ++) {
-		if (Melder_wcsequ (my channelNames [ichan], channelName)) {
+		if (Melder_equ (my channelNames [ichan], channelName)) {
 			return ichan;
 		}
 	}
@@ -84,8 +84,8 @@ void ERP_drawChannel_number (ERP me, Graphics graphics, long channelNumber, doub
 	Graphics_unsetInner (graphics);
 	if (garnish) {
 		Graphics_drawInnerBox (graphics);
-		Graphics_textTop (graphics, true, Melder_wcscat (L"Channel ", my channelNames [channelNumber]));
-		Graphics_textBottom (graphics, true, L"Time (s)");
+		Graphics_textTop (graphics, true, Melder_cat (U"Channel ", my channelNames [channelNumber]));
+		Graphics_textBottom (graphics, true, U"Time (s)");
 		Graphics_marksBottom (graphics, 2, true, true, false);
 		if (0.0 > tmin && 0.0 < tmax)
 			Graphics_markBottom (graphics, 0.0, true, true, true, NULL);
@@ -99,25 +99,25 @@ void ERP_drawChannel_number (ERP me, Graphics graphics, long channelNumber, doub
 
 }
 
-void ERP_drawChannel_name (ERP me, Graphics graphics, const wchar_t *channelName, double tmin, double tmax, double vmin, double vmax, bool garnish) {
+void ERP_drawChannel_name (ERP me, Graphics graphics, const char32 *channelName, double tmin, double tmax, double vmin, double vmax, bool garnish) {
 	ERP_drawChannel_number (me, graphics, ERP_getChannelNumber (me, channelName), tmin, tmax, vmin, vmax, garnish);
 }
 
 Table ERP_tabulate (ERP me, bool includeSampleNumbers, bool includeTime, int timeDecimals, int voltageDecimals, int units) {
 	double voltageScaling = 1.0;
-	const wchar_t *unitText = L"(V)";
+	const char32 *unitText = U"(V)";
 	if (units == 2) {
 		voltageDecimals -= 6;
 		voltageScaling = 1000000.0;
-		unitText = L"(uV)";
+		unitText = U"(uV)";
 	}
 	try {
 		autoTable thee = Table_createWithoutColumnNames (my nx, includeSampleNumbers + includeTime + my ny);
 		long icol = 0;
-		if (includeSampleNumbers) Table_setColumnLabel (thee.peek(), ++ icol, L"sample");
-		if (includeTime) Table_setColumnLabel (thee.peek(), ++ icol, L"time(s)");
+		if (includeSampleNumbers) Table_setColumnLabel (thee.peek(), ++ icol, U"sample");
+		if (includeTime) Table_setColumnLabel (thee.peek(), ++ icol, U"time(s)");
 		for (long ichan = 1; ichan <= my ny; ichan ++) {
-			Table_setColumnLabel (thee.peek(), ++ icol, Melder_wcscat (my channelNames [ichan], unitText));
+			Table_setColumnLabel (thee.peek(), ++ icol, Melder_cat (my channelNames [ichan], unitText));
 		}
 		for (long isamp = 1; isamp <= my nx; isamp ++) {
 			icol = 0;
@@ -129,7 +129,7 @@ Table ERP_tabulate (ERP me, bool includeSampleNumbers, bool includeTime, int tim
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Table.");
+		Melder_throw (me, U": not converted to Table.");
 	}
 }
 
@@ -139,7 +139,7 @@ Sound ERP_downto_Sound (ERP me) {
 		my structSound :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Sound.");
+		Melder_throw (me, U": not converted to Sound.");
 	}
 }
 

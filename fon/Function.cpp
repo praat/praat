@@ -1,6 +1,6 @@
 /* Function.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,9 +42,9 @@ Thing_implement (Function, Data, 0);
 
 void structFunction :: v_info () {
 	Function_Parent :: v_info ();
-	MelderInfo_writeLine (L"Domain:");
-	MelderInfo_writeLine (L"   xmin: ", Melder_double (xmin));
-	MelderInfo_writeLine (L"   xmax: ", Melder_double (xmax));
+	MelderInfo_writeLine (U"Domain:");
+	MelderInfo_writeLine (U"   xmin: ", xmin);
+	MelderInfo_writeLine (U"   xmax: ", xmax);
 }
 
 void structFunction :: v_shiftX (double xfrom, double xto) {
@@ -74,7 +74,7 @@ int Function_getDomainQuantity (Function me) {
 	return my v_domainQuantity ();
 }
 
-const wchar_t * Function_getUnitText (Function me, long ilevel, int unit, unsigned long flags) {
+const char32 * Function_getUnitText (Function me, long ilevel, int unit, unsigned long flags) {
 	Melder_assert (unit >= my v_getMinimumUnit (ilevel) && unit <= my v_getMaximumUnit (ilevel));
 	return my v_getUnitText (ilevel, unit, flags);
 }
@@ -135,11 +135,11 @@ double Function_window (double tim, int windowType) {
 			return 0.54 + 0.46 * cos (2 * NUMpi * tim);
 		case Function_KAISER12:
 			if (tim < -0.77 || tim > 0.77) return 0.0;
-			if (! one_by_bessi_0_12) one_by_bessi_0_12 = 1.0 / NUMbessel_i0_f (12);
+			if (one_by_bessi_0_12 == 0.0) one_by_bessi_0_12 = 1.0 / NUMbessel_i0_f (12);
 			return NUMbessel_i0_f (12 * sqrt (1 - (1.0 / 0.77 / 0.77) * tim * tim)) * one_by_bessi_0_12;
 		case Function_KAISER20:
 			if (tim <= -1 || tim >= 1) return 0.0;
-			if (! one_by_bessi_0_20) one_by_bessi_0_20 = 1.0 / NUMbessel_i0_f (20.24);
+			if (one_by_bessi_0_20 == 0.0) one_by_bessi_0_20 = 1.0 / NUMbessel_i0_f (20.24);
 			return NUMbessel_i0_f (20.24 * sqrt (1 - tim * tim)) * one_by_bessi_0_20;
 		case Function_GAUSSIAN:
 			return exp ((- NUMpi * NUMpi) * tim * tim);

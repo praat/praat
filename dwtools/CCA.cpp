@@ -58,9 +58,9 @@
 
 void structCCA :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine (L"Number of coefficients: ", Melder_integer (numberOfCoefficients));
-	MelderInfo_writeLine (L"ny: ", Melder_integer (y -> dimension));
-	MelderInfo_writeLine (L"nx: ", Melder_integer (x -> dimension));
+	MelderInfo_writeLine (U"Number of coefficients: ", numberOfCoefficients);
+	MelderInfo_writeLine (U"ny: ", y -> dimension);
+	MelderInfo_writeLine (U"nx: ", x -> dimension);
 }
 
 Thing_implement (CCA, Data, 0);
@@ -75,12 +75,12 @@ CCA CCA_create (long numberOfCoefficients, long ny, long nx) {
 		my x = Eigen_create (numberOfCoefficients, nx);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("CCA not created.");
+		Melder_throw (U"CCA not created.");
 	}
 }
 
 void CCA_drawEigenvector (CCA me, Graphics g, int x_or_y, long ivec, long first, long last,
-                          double ymin, double ymax, int weigh, double size_mm, const wchar_t *mark,	int connect, int garnish) {
+                          double ymin, double ymax, int weigh, double size_mm, const char32 *mark,	int connect, int garnish) {
 	Eigen e = my x;
 	Strings labels = my xLabels;
 	if (x_or_y == 1) {
@@ -100,12 +100,12 @@ CCA TableOfReal_to_CCA (TableOfReal me, long ny) {
 		long n = my numberOfRows, nx = my numberOfColumns - ny;
 
 		if (ny < 1 || ny > my numberOfColumns - 1) {
-			Melder_throw ("Dimension of first part not correct.");
+			Melder_throw (U"Dimension of first part not correct.");
 		}
-		if (ny > nx) Melder_throw (L"The dimension of the dependent part (", ny, L") must be less than or equal to "
-			                           "the dimension of the independent part (", nx, L").");
+		if (ny > nx) Melder_throw (U"The dimension of the dependent part (", ny, U") must be less than or equal to "
+			                           "the dimension of the independent part (", nx, U").");
 		if (n < ny) {
-			Melder_throw (L"The number of observations must be larger then ", ny, ".");
+			Melder_throw (U"The number of observations must be larger then ", ny, U".");
 		}
 
 		TableOfReal_areAllCellsDefined (me, 0, 0, 0, 0);
@@ -130,7 +130,7 @@ CCA TableOfReal_to_CCA (TableOfReal me, long ny) {
 		double fnormy = NUMfrobeniusnorm (n, ny, uy);
 		double fnormx = NUMfrobeniusnorm (n, nx, ux);
 		if (fnormy == 0 || fnormx == 0) {
-			Melder_throw ("One of the parts of the table contains only zeros.");
+			Melder_throw (U"One of the parts of the table contains only zeros.");
 		}
 
 		/*
@@ -213,7 +213,7 @@ CCA TableOfReal_to_CCA (TableOfReal me, long ny) {
 		               thy y -> dimension == thy yLabels -> numberOfStrings);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": CCA not created.");
+		Melder_throw (me, U": CCA not created.");
 	}
 }
 
@@ -222,25 +222,25 @@ TableOfReal CCA_and_TableOfReal_scores (CCA me, TableOfReal thee, long numberOfF
 		long n = thy numberOfRows;
 		long nx = my x -> dimension, ny = my y -> dimension;
 
-		if (ny + nx != thy numberOfColumns) Melder_throw ("The number of columns in the table (", thy numberOfColumns,
-			        ") does not agree with the dimensions of the CCA object (ny + nx = ", ny, " + ", nx, ").");
+		if (ny + nx != thy numberOfColumns) Melder_throw (U"The number of columns in the table (", thy numberOfColumns,
+			        U") does not agree with the dimensions of the CCA object (ny + nx = ", ny, U" + ", nx, U").");
 
 		if (numberOfFactors == 0) {
 			numberOfFactors = my numberOfCoefficients;
 		}
 		if (numberOfFactors < 1 || numberOfFactors > my numberOfCoefficients) Melder_throw
-			("The number of factors must be in interval [1, ", my numberOfCoefficients, L"].");
+			(U"The number of factors must be in interval [1, ", my numberOfCoefficients, U"].");
 
 		autoTableOfReal him = TableOfReal_create (n, 2 * numberOfFactors);
 		TableOfReal phim = him.peek();
 		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows);
 		Eigen_and_TableOfReal_project_into (my y, thee, 1, ny, &phim, 1, numberOfFactors);
 		Eigen_and_TableOfReal_project_into (my x, thee, ny + 1, thy numberOfColumns, &phim, numberOfFactors + 1, his numberOfColumns);
-		TableOfReal_setSequentialColumnLabels (him.peek(), 1, numberOfFactors, L"y_", 1, 1);
-		TableOfReal_setSequentialColumnLabels (him.peek(), numberOfFactors + 1, his numberOfColumns, L"x_", 1, 1);
+		TableOfReal_setSequentialColumnLabels (him.peek(), 1, numberOfFactors, U"y_", 1, 1);
+		TableOfReal_setSequentialColumnLabels (him.peek(), numberOfFactors + 1, his numberOfColumns, U"x_", 1, 1);
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no TableOfReal with scores created.");
+		Melder_throw (me, U": no TableOfReal with scores created.");
 	}
 }
 
@@ -255,7 +255,7 @@ TableOfReal CCA_and_TableOfReal_predict (CCA me, TableOfReal thee, long from) {
 		*/
 
 		if (ny != nev) {
-			Melder_throw ("There are not enough correlations present for prediction.");
+			Melder_throw (U"There are not enough correlations present for prediction.");
 		}
 
 		if (from == 0) {
@@ -263,7 +263,7 @@ TableOfReal CCA_and_TableOfReal_predict (CCA me, TableOfReal thee, long from) {
 		}
 		long ncols = thy numberOfColumns - from + 1;
 		if (from < 1 || ncols != nx) {
-			Melder_throw ("The number of columns to analyze must be equal to ", nx, ".");
+			Melder_throw (U"The number of columns to analyze must be equal to ", nx, U".");
 		}
 
 		// ???? dimensions if nx .. ny ??
@@ -287,7 +287,7 @@ TableOfReal CCA_and_TableOfReal_predict (CCA me, TableOfReal thee, long from) {
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no predictions created.");
+		Melder_throw (me, U": no predictions created.");
 	}
 }
 
@@ -297,7 +297,7 @@ TableOfReal CCA_and_TableOfReal_factorLoadings (CCA me, TableOfReal thee) {
 		autoTableOfReal him = CCA_and_Correlation_factorLoadings (me, c.peek());
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no factor loadings created.");
+		Melder_throw (me, U": no factor loadings created.");
 	}
 }
 

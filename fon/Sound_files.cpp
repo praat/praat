@@ -75,17 +75,17 @@ Sound Sound_readFromSoundFile (MelderFile file) {
 		int32 numberOfSamples;
 		int fileType = MelderFile_checkSoundFile (file, & numberOfChannels, & encoding, & sampleRate, & startOfData, & numberOfSamples);
 		if (fileType == 0)
-			Melder_throw ("Not an audio file.");
+			Melder_throw (U"Not an audio file.");
 		if (fseek (file -> filePointer, startOfData, SEEK_SET) == EOF)   // start from beginning of Data Chunk
-			Melder_throw ("No data in audio file.");
+			Melder_throw (U"No data in audio file.");
 		autoSound me = Sound_createSimple (numberOfChannels, numberOfSamples / sampleRate, sampleRate);
 		if (encoding == Melder_SHORTEN || encoding == Melder_POLYPHONE)
-			Melder_throw ("Cannot unshorten. Write to paul.boersma@uva.nl for more information.");
+			Melder_throw (U"Cannot unshorten. Write to paul.boersma@uva.nl for more information.");
 		Melder_readAudioToFloat (file -> filePointer, numberOfChannels, encoding, my z, numberOfSamples);
 		mfile.close ();
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Sound not read from sound file ", file, ".");
+		Melder_throw (U"Sound not read from sound file ", file, U".");
 	}
 }
 
@@ -108,7 +108,7 @@ Sound Sound_readFromSesamFile (MelderFile file) {
 			numberOfSamples = (header [6] << 8) - header [68];
 		}
 		if (numberOfSamples < 1 || numberOfSamples > 1000000000 || samplingFrequency < 10.0 || samplingFrequency > 100000000.0)
-			Melder_throw ("Not a correct SESAM or LVS file.");
+			Melder_throw (U"Not a correct SESAM or LVS file.");
 		autoSound me = Sound_createSimple (1, numberOfSamples / samplingFrequency, samplingFrequency);
 		for (int32_t i = 1; i <= numberOfSamples; i ++) {
 			my z [1] [i] = (double) bingeti2LE (f) * (1.0 / 2048);   // 12 bits
@@ -116,7 +116,7 @@ Sound Sound_readFromSesamFile (MelderFile file) {
 		f.close (file);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Sound not read from Sesam file ", file, ".");
+		Melder_throw (U"Sound not read from Sesam file ", file, U".");
 	}
 }
 
@@ -132,14 +132,14 @@ Sound Sound_readFromBellLabsFile (MelderFile file) {
 		 */
 		char tag [200];
 		if (fread (tag, 1, 16, f) < 16 || ! strnequ (tag, "SIG\n", 4))
-			Melder_throw ("Not a Bell-Labs sound file.");
+			Melder_throw (U"Not a Bell-Labs sound file.");
 		char *endOfTag = strchr (tag + 4, '\n');
 		if (endOfTag == NULL)
-			Melder_throw ("Second line missing or too long.");
+			Melder_throw (U"Second line missing or too long.");
 		unsigned long tagLength = (endOfTag - tag) + 1;   // probably 12
 		unsigned long headerLength = atol (tag + 4);
 		if (headerLength <= 0)
-			Melder_throw ("Wrong header-length info.");
+			Melder_throw (U"Wrong header-length info.");
 
 		/*
 		 * Read data from header.
@@ -147,7 +147,7 @@ Sound Sound_readFromBellLabsFile (MelderFile file) {
 		 */
 		autostring8 lines = Melder_calloc (char, headerLength + 1);
 		if (fread (lines.peek(), 1, headerLength, f) < headerLength)
-			Melder_throw ("Header too short.");
+			Melder_throw (U"Header too short.");
 		unsigned long numberOfSamples = 0;
 		char *psamples = & lines [-1];
 		while ((psamples = strstr (psamples + 1, "samples ")) != NULL)   // take last occurrence
@@ -158,7 +158,7 @@ Sound Sound_readFromBellLabsFile (MelderFile file) {
 			numberOfSamples = (ftell (f) - tagLength - headerLength) / 2;
 		}
 		if (numberOfSamples < 1)
-			Melder_throw ("No samples found.");
+			Melder_throw (U"No samples found.");
 		double samplingFrequency = 0.0;
 		char *pfrequency = & lines [-1];
 		while ((pfrequency = strstr (pfrequency + 1, "frequency ")) != NULL)   // take last occurrence
@@ -181,12 +181,12 @@ Sound Sound_readFromBellLabsFile (MelderFile file) {
 		f.close (file);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Sound not read from Bell Labs sound file ", file, ".");
+		Melder_throw (U"Sound not read from Bell Labs sound file ", file, U".");
 	}
 }
 
 static void readError () {
-	Melder_throw ("Error reading bytes from file.");
+	Melder_throw (U"Error reading bytes from file.");
 }
 
 Sound Sound_readFromKayFile (MelderFile file) {
@@ -198,22 +198,22 @@ Sound Sound_readFromKayFile (MelderFile file) {
 		char data [100];
 		if (fread (data, 1, 12, f) < 12) readError ();
 		if (! strnequ (data, "FORMDS16", 8))
-			Melder_throw ("Not a KAY DS-16 file.");
+			Melder_throw (U"Not a KAY DS-16 file.");
 
 		/* HEDR or HDR8 chunk */
 
 		if (fread (data, 1, 4, f) < 4) readError ();
 		if (! strnequ (data, "HEDR", 4) && ! strnequ (data, "HDR8", 4))
-			Melder_throw ("Missing HEDR or HDR8 chunk. Please report to paul.boersma@uva.nl.");
+			Melder_throw (U"Missing HEDR or HDR8 chunk. Please report to paul.boersma@uva.nl.");
 		uint32_t chunkSize = bingetu4LE (f);
 		if (chunkSize & 1) ++ chunkSize;
 		if (chunkSize != 32 && chunkSize != 44)
-			Melder_throw ("Unknown chunk size %ld. Please report to paul.boersma@uva.nl.", chunkSize);
+			Melder_throw (U"Unknown chunk size %ld. Please report to paul.boersma@uva.nl.", chunkSize);
 		if (fread (data, 1, 20, f) < 20) readError ();
 		double samplingFrequency = bingetu4LE (f);   // converting up (from 32 to 53 bits)
 		uint32_t numberOfSamples = bingetu4LE (f);
 		if (samplingFrequency <= 0 || samplingFrequency > 1e7 || numberOfSamples >= 1000000000)
-			Melder_throw ("Not a correct Kay file.");
+			Melder_throw (U"Not a correct Kay file.");
 		int16_t tmp1 = bingeti2LE (f);
 		int16_t tmp2 = bingeti2LE (f);
 		long numberOfChannels = tmp1 == -1 || tmp2 == -1 ? 1 : 2;
@@ -225,7 +225,7 @@ Sound Sound_readFromKayFile (MelderFile file) {
 		if (fread (data, 1, 4, f) < 4) readError ();
 		while (! strnequ (data, "SDA_", 4) && ! strnequ (data, "SD_B", 4)) {
 			if (feof (f))
-				Melder_throw ("Missing or unreadable SD chunk. Please report to paul.boersma@uva.nl.");
+				Melder_throw (U"Missing or unreadable SD chunk. Please report to paul.boersma@uva.nl.");
 			chunkSize = bingetu4LE (f);
 			if (chunkSize & 1) ++ chunkSize;
 			if (fread (data, 1, chunkSize, f) < chunkSize) readError ();
@@ -233,7 +233,7 @@ Sound Sound_readFromKayFile (MelderFile file) {
 		}
 		chunkSize = bingetu4LE (f);
 		if (chunkSize != numberOfSamples * 2)
-			Melder_throw ("Incomplete SD chunk. Please report to paul.boersma@uva.nl.");
+			Melder_throw (U"Incomplete SD chunk. Please report to paul.boersma@uva.nl.");
 
 		autoSound me = Sound_createSimple (numberOfChannels, numberOfSamples / samplingFrequency, samplingFrequency);
 		for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
@@ -244,7 +244,7 @@ Sound Sound_readFromKayFile (MelderFile file) {
 		f.close (file);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Sound not read from Kay file ", file, ".");
+		Melder_throw (U"Sound not read from Kay file ", file, U".");
 	}
 }
 
@@ -260,19 +260,19 @@ Sound Sound_readFromRawAlawFile (MelderFile file) {
 		f.close (file);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Sound not read from raw A-law file ", file, ".");
+		Melder_throw (U"Sound not read from raw A-law file ", file, U".");
 	}
 }
 
 void Sound_writeToAudioFile (Sound me, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint) {
 	try {
 		autoMelderFile mfile = MelderFile_create (file);
-		MelderFile_writeAudioFileHeader (file, audioFileType, floor (1.0 / my dx + 0.5), my nx, my ny, numberOfBitsPerSamplePoint);
+		MelderFile_writeAudioFileHeader (file, audioFileType, lround (1.0 / my dx), my nx, my ny, numberOfBitsPerSamplePoint);
 		MelderFile_writeFloatToAudio (file, my ny, Melder_defaultAudioFileEncoding (audioFileType, numberOfBitsPerSamplePoint), my z, my nx, TRUE);
-		MelderFile_writeAudioFileTrailer (file, audioFileType, floor (1.0 / my dx + 0.5), my nx, my ny, numberOfBitsPerSamplePoint);
+		MelderFile_writeAudioFileTrailer (file, audioFileType, lround (1.0 / my dx), my nx, my ny, numberOfBitsPerSamplePoint);
 		mfile.close ();
 	} catch (MelderError) {
-		Melder_throw (me, ": not written to 16-bit sound file ", file, ".");
+		Melder_throw (me, U": not written to 16-bit sound file ", file, U".");
 	}
 }
 
@@ -282,26 +282,26 @@ void Sound_writeToSesamFile (Sound me, MelderFile file) {
 		long header [1 + 128], tail;
 		for (long i = 1; i <= 128; i ++) header [i] = 0;
 		/* ILS header. */
-			header [6] = ((my nx - 1) >> 8) + 1;   /* Number of disk blocks. */
-			header [64] = 32149;   /* ILS magic. */
+			header [6] = ((my nx - 1) >> 8) + 1;   // number of disk blocks
+			header [64] = 32149;   // ILS magic
 		/* LVS header. */
-			header [62] = round (1 / my dx);   /* Sampling frequency, rounded to n Hz. */
-			header [63] = -32000;   /* Magic: "sampled signal." */
-			header [66] = 2047;   /* Maximum absolute value: 12 bits. */
-			header [67] = 2047;   /* LVS magic. */
-			header [68] = my nx % 256;   /* Number of samples in last block. */
-			header [69] = 1;   /* ? */
+			header [62] = lround (1 / my dx);   // sampling frequency, rounded to n Hz
+			header [63] = -32000;   // magic: "sampled signal"
+			header [66] = 2047;   // maximum absolute value: 12 bits
+			header [67] = 2047;   // LVS magic
+			header [68] = my nx % 256;   // number of samples in last block
+			header [69] = 1;   // ?
 		/* Sesam header. */
-			header [126] = round (1 / my dx);   /* Sampling frequency, rounded to n Hz. */
-			header [127] = my nx;   /* Number of samples. */
+			header [126] = lround (1 / my dx);   // sampling frequency, rounded to n Hz
+			header [127] = my nx;   // number of samples
 		for (long i = 1; i <= 128; i ++) binputi4LE (header [i], f);
-		for (long i = 1; i <= my nx; i ++) binputi2LE (round (my z [1] [i] * 2048), f);
+		for (long i = 1; i <= my nx; i ++) binputi2LE (lround (my z [1] [i] * 2048), f);
 		tail = 256 - my nx % 256;
 		if (tail == 256) tail = 0;
-		for (long i = 1; i <= tail; i ++) binputi2LE (0, f);   /* Pad last block with zeroes. */
+		for (long i = 1; i <= tail; i ++) binputi2LE (0, f);   // pad last block with zeroes
 		f.close (file);
 	} catch (MelderError) {
-		Melder_throw (me, ": not written to Sesam file ", file, ".");
+		Melder_throw (me, U": not written to Sesam file ", file, U".");
 	}
 }
 
@@ -320,11 +320,11 @@ void Sound_writeToKayFile (Sound me, MelderFile file) {
 		strcpy (date, ctime (& today));	
 		fwrite (date+4, 1, 20, file -> filePointer);   // skip weekday
 
-		binputi4LE (round (1 / my dx), file -> filePointer);   // sampling frequency
+		binputi4LE (lround (1 / my dx), file -> filePointer);   // sampling frequency
 		binputi4LE (my nx, file -> filePointer);   // number of samples
 		int maximumA = 0;
 		for (long i = 1; i <= my nx; i ++) {
-			long value = floor (my z [1] [i] * 32768 + 0.5);
+			long value = lround (my z [1] [i] * 32768);
 			if (value < - maximumA) maximumA = - value;
 			if (value > maximumA) maximumA = value;
 		}
@@ -334,7 +334,7 @@ void Sound_writeToKayFile (Sound me, MelderFile file) {
 		} else {
 			int maximumB = 0;
 			for (long i = 1; i <= my nx; i ++) {
-				long value = round (my z [2] [i] * 32768);
+				long value = lround (my z [2] [i] * 32768);
 				if (value < - maximumB) maximumB = - value;
 				if (value > maximumB) maximumB = value;
 			}
@@ -348,7 +348,7 @@ void Sound_writeToKayFile (Sound me, MelderFile file) {
 			MelderFile_writeFloatToAudio (file, 1, Melder_LINEAR_16_LITTLE_ENDIAN, my z + 1, my nx, TRUE);
 		mfile.close ();
 	} catch (MelderError) {
-		Melder_throw (me, ": not written to Kay sound file ", file, ".");
+		Melder_throw (me, U": not written to Kay sound file ", file, U".");
 	}
 }
 
@@ -358,7 +358,7 @@ void Sound_writeToRawSoundFile (Sound me, MelderFile file, int encoding) {
 		MelderFile_writeFloatToAudio (file, my ny, encoding, my z, my nx, TRUE);
 		mfile.close ();
 	} catch (MelderError) {
-		Melder_throw (me, ": not written to raw sound file ", file, ".");
+		Melder_throw (me, U": not written to raw sound file ", file, U".");
 	}
 }
 

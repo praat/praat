@@ -249,6 +249,9 @@ if(option_log_frames)
 {
 	FILE *f;
 	f=fopen("log-klatt","a");
+	/*
+	 * ppgb: BUG; vervangen door fwrite (Melder_sprint...
+	 */
 	fprintf(f,"%4dhz %2dAV %4d %3d, %4d %3d, %4d %3d, %4d %3d, %4d, %3d, FNZ=%3d TLT=%2d\n",frame->F0hz10,frame->AVdb,
 	frame->Fhz[1],frame->Bhz[1],frame->Fhz[2],frame->Bhz[2],frame->Fhz[3],frame->Bhz[3],frame->Fhz[4],frame->Bhz[4],frame->Fhz[5],frame->Bhz[5],frame->Fhz[0],frame->TLTdb);
 	fclose(f);
@@ -1175,6 +1178,9 @@ if(option_log_frames)
 {
 	FILE *f_log;
 	f_log=fopen("log-espeakedit","a");
+	/*
+	 * ppgb: BUG; vervangen door fwrite (Melder_sprint...
+	 */
 	if(f_log != NULL)
 	{
 		fprintf(f_log,"K %3dmS  %3d %3d %4d %4d %4d %4d (%2d)  to  %3d %3d %4d %4d %4d %4d (%2d)\n",length*1000/samplerate,
@@ -1183,6 +1189,9 @@ if(option_log_frames)
 		fclose(f_log);
 	}
 	f_log=fopen("log-klatt","a");
+	/*
+	 * ppgb: BUG; vervangen door fwrite (Melder_sprint...
+	 */
 	if(f_log != NULL)
 	{
 		fprintf(f_log,"K %3dmS  %3d %3d %4d %4d (%2d)  to  %3d %3d %4d %4d (%2d)\n",length*1000/samplerate,

@@ -87,31 +87,31 @@ Thing_implement (Table, Data, 0);
 
 void structTable :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine (L"Number of rows: ", Melder_integer (rows -> size));
-	MelderInfo_writeLine (L"Number of columns: ", Melder_integer (numberOfColumns));
+	MelderInfo_writeLine (U"Number of rows: ", rows -> size);
+	MelderInfo_writeLine (U"Number of columns: ", numberOfColumns);
 }
 
 const char32 * structTable :: v_getColStr (long columnNumber) {
 	if (columnNumber < 1 || columnNumber > numberOfColumns) return NULL;
-	return columnHeaders [columnNumber]. label ? Melder_peekWcsToStr32 (columnHeaders [columnNumber]. label) : U"";
+	return columnHeaders [columnNumber]. label ? columnHeaders [columnNumber]. label : U"";
 }
 
 double structTable :: v_getMatrix (long rowNumber, long columnNumber) {
 	if (rowNumber < 1 || rowNumber > rows -> size) return NUMundefined;
 	if (columnNumber < 1 || columnNumber > numberOfColumns) return NUMundefined;
-	wchar_t *stringValue = ((TableRow) rows -> item [rowNumber]) -> cells [columnNumber]. string;
+	char32 *stringValue = ((TableRow) rows -> item [rowNumber]) -> cells [columnNumber]. string;
 	return stringValue == NULL ? NUMundefined : Melder_atof (stringValue);
 }
 
 const char32 * structTable :: v_getMatrixStr (long rowNumber, long columnNumber) {
 	if (rowNumber < 1 || rowNumber > rows -> size) return U"";
 	if (columnNumber < 1 || columnNumber > numberOfColumns) return U"";
-	wchar_t *stringValue = ((TableRow) rows -> item [rowNumber]) -> cells [columnNumber]. string;
-	return stringValue == NULL ? U"" : Melder_peekWcsToStr32 (stringValue);
+	char32 *stringValue = ((TableRow) rows -> item [rowNumber]) -> cells [columnNumber]. string;
+	return stringValue == NULL ? U"" : stringValue;
 }
 
 double structTable :: v_getColIndex (const char32 *columnLabel) {
-	return Table_findColumnIndexFromColumnLabel (this, Melder_peekStr32ToWcs (columnLabel));
+	return Table_findColumnIndexFromColumnLabel (this, columnLabel);
 }
 
 static TableRow TableRow_create (long numberOfColumns) {
@@ -123,7 +123,7 @@ static TableRow TableRow_create (long numberOfColumns) {
 
 void Table_initWithoutColumnNames (Table me, long numberOfRows, long numberOfColumns) {
 	if (numberOfColumns < 1)
-		Melder_throw ("Cannot create table without columns.");
+		Melder_throw (U"Cannot create table without columns.");
 	my numberOfColumns = numberOfColumns;
 	my columnHeaders = NUMvector <structTableColumnHeader> (1, numberOfColumns);
 	my rows = Ordered_create ();
@@ -138,26 +138,26 @@ Table Table_createWithoutColumnNames (long numberOfRows, long numberOfColumns) {
 		Table_initWithoutColumnNames (me.peek(), numberOfRows, numberOfColumns);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Table not created.");
+		Melder_throw (U"Table not created.");
 	}
 }
 
-void Table_initWithColumnNames (Table me, long numberOfRows, const wchar_t *columnNames) {
+void Table_initWithColumnNames (Table me, long numberOfRows, const char32 *columnNames) {
 	Table_initWithoutColumnNames (me, numberOfRows, Melder_countTokens (columnNames));
 	long icol = 0;
-	for (wchar_t *columnName = Melder_firstToken (columnNames); columnName != NULL; columnName = Melder_nextToken ()) {
+	for (char32 *columnName = Melder_firstToken (columnNames); columnName != NULL; columnName = Melder_nextToken ()) {
 		icol ++;
 		Table_setColumnLabel (me, icol, columnName);
 	}
 }
 
-Table Table_createWithColumnNames (long numberOfRows, const wchar_t *columnNames) {
+Table Table_createWithColumnNames (long numberOfRows, const char32 *columnNames) {
 	try {
 		autoTable me = Thing_new (Table);
 		Table_initWithColumnNames (me.peek(), numberOfRows, columnNames);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Table not created.");
+		Melder_throw (U"Table not created.");
 	}
 }
 
@@ -166,49 +166,49 @@ void Table_appendRow (Table me) {
 		autoTableRow row = TableRow_create (my numberOfColumns);
 		Collection_addItem (my rows, row.transfer());
 	} catch (MelderError) {
-		Melder_throw (me, ": row not appended.");
+		Melder_throw (me, U": row not appended.");
 	}
 }
 
-void Table_appendColumn (Table me, const wchar_t *label) {
+void Table_appendColumn (Table me, const char32 *label) {
 	try {
 		Table_insertColumn (me, my numberOfColumns + 1, label);
 	} catch (MelderError) {
-		Melder_throw (me, ": column \"", label, "\" not appended.");
+		Melder_throw (me, U": column \"", label, U"\" not appended.");
 	}
 }
 
 void Table_checkSpecifiedRowNumberWithinRange (Table me, long rowNumber) {
 	if (rowNumber < 1)
-		Melder_throw (me, ": the specified row number is ", rowNumber, ", but should be at least 1.");
+		Melder_throw (me, U": the specified row number is ", rowNumber, U", but should be at least 1.");
 	if (rowNumber > my rows -> size)
-		Melder_throw (me, ": the specified row number (", rowNumber, ") exceeds my number of rows (", my rows -> size, ").");	
+		Melder_throw (me, U": the specified row number (", rowNumber, U") exceeds my number of rows (", my rows -> size, U").");
 }
 
 void Table_removeRow (Table me, long rowNumber) {
 	try {
 		if (my rows -> size == 1)
-			Melder_throw (me, ": cannot remove my only row.");
+			Melder_throw (me, U": cannot remove my only row.");
 		Table_checkSpecifiedRowNumberWithinRange (me, rowNumber);
 		Collection_removeItem (my rows, rowNumber);
 		for (long icol = 1; icol <= my numberOfColumns; icol ++)
 			my columnHeaders [icol]. numericized = FALSE;
 	} catch (MelderError) {
-		Melder_throw (me, ": row ", rowNumber, " not removed.");
+		Melder_throw (me, U": row ", rowNumber, U" not removed.");
 	}
 }
 
 void Table_checkSpecifiedColumnNumberWithinRange (Table me, long columnNumber) {
 	if (columnNumber < 1)
-		Melder_throw (me, ": the specified column number is ", columnNumber, ", but should be at least 1.");
+		Melder_throw (me, U": the specified column number is ", columnNumber, U", but should be at least 1.");
 	if (columnNumber > my numberOfColumns)
-		Melder_throw (me, ": the specified column number is ", columnNumber, ", but should be at most my number of columns (", my numberOfColumns, ").");	
+		Melder_throw (me, U": the specified column number is ", columnNumber, U", but should be at most my number of columns (", my numberOfColumns, U").");
 }
 
 void Table_removeColumn (Table me, long columnNumber) {
 	try {
 		if (my numberOfColumns == 1)
-			Melder_throw (me, ": cannot remove my only column.");
+			Melder_throw (me, U": cannot remove my only column.");
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
 		/*
 		 * Changes without error.
@@ -225,7 +225,7 @@ void Table_removeColumn (Table me, long columnNumber) {
 		}
 		my numberOfColumns --;
 	} catch (MelderError) {
-		Melder_throw (me, ": column ", columnNumber, " not removed.");
+		Melder_throw (me, U": column ", columnNumber, U" not removed.");
 	}
 }
 
@@ -235,9 +235,9 @@ void Table_insertRow (Table me, long rowNumber) {
 		 * Check without changes.
 		 */
 		if (rowNumber < 1)
-			Melder_throw (me, ": the specified row number is ", rowNumber, ", but should be at least 1.");
+			Melder_throw (me, U": the specified row number is ", rowNumber, U", but should be at least 1.");
 		if (rowNumber > my rows -> size + 1)
-			Melder_throw (me, ": the specified row number is ", rowNumber, ", but should be at most my number of rows (", my rows -> size, ") plus 1.");	
+			Melder_throw (me, U": the specified row number is ", rowNumber, U", but should be at most my number of rows (", my rows -> size, U") plus 1.");
 		autoTableRow row = TableRow_create (my numberOfColumns);
 		/*
 		 * Safe change.
@@ -249,21 +249,21 @@ void Table_insertRow (Table me, long rowNumber) {
 		for (long icol = 1; icol <= my numberOfColumns; icol ++)
 			my columnHeaders [icol]. numericized = FALSE;
 	} catch (MelderError) {
-		Melder_throw (me, ": row ", rowNumber, " not inserted.");
+		Melder_throw (me, U": row ", rowNumber, U" not inserted.");
 	}
 }
 
-void Table_insertColumn (Table me, long columnNumber, const wchar_t *label) {
+void Table_insertColumn (Table me, long columnNumber, const char32 *label /* cattable */) {
 	try {
 		/*
 		 * Check without changes.
 		 */
 		if (columnNumber < 1)
-			Melder_throw (me, ": the specified column number is ", columnNumber, ", but should be at least 1.");
+			Melder_throw (me, U": the specified column number is ", columnNumber, U", but should be at least 1.");
 		if (columnNumber > my numberOfColumns + 1)
-			Melder_throw (me, ": the specified column number is ", columnNumber, ", but should be at most my number of columns (", my numberOfColumns, ") plus 1.");	
+			Melder_throw (me, U": the specified column number is ", columnNumber, U", but should be at most my number of columns (", my numberOfColumns, U") plus 1.");
+		autostring32 newLabel = Melder_dup (label);
 		autoTable thee = Table_createWithoutColumnNames (my rows -> size, my numberOfColumns + 1);
-		autostring newLabel = Melder_wcsdup (label);
 		/*
 		 * Changes without error.
 		 */
@@ -317,46 +317,46 @@ void Table_insertColumn (Table me, long columnNumber, const wchar_t *label) {
 		 */
 		my numberOfColumns ++;
 	} catch (MelderError) {
-		Melder_throw (me, ": column not inserted.");
+		Melder_throw (me, U": column not inserted.");
 	}
 }
 
-void Table_setColumnLabel (Table me, long columnNumber, const wchar_t *label) {
+void Table_setColumnLabel (Table me, long columnNumber, const char32 *label /* cattable */) {
 	try {
 		/*
 		 * Check without changes.
 		 */
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
-		autostring newLabel = Melder_wcsdup (label);
+		autostring32 newLabel = Melder_dup (label);
 		/*
 		 * Changes without error.
 		 */
 		Melder_free (my columnHeaders [columnNumber]. label);
 		my columnHeaders [columnNumber]. label = newLabel.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": column label not set.");
+		Melder_throw (me, U": column label not set.");
 	}
 }
 
-long Table_findColumnIndexFromColumnLabel (Table me, const wchar_t *label) {
+long Table_findColumnIndexFromColumnLabel (Table me, const char32 *label) {
 	for (long icol = 1; icol <= my numberOfColumns; icol ++)
-		if (my columnHeaders [icol]. label && wcsequ (my columnHeaders [icol]. label, label))
+		if (my columnHeaders [icol]. label && str32equ (my columnHeaders [icol]. label, label))
 			return icol;
 	return 0;
 }
 
-long Table_getColumnIndexFromColumnLabel (Table me, const wchar_t *columnLabel) {
+long Table_getColumnIndexFromColumnLabel (Table me, const char32 *columnLabel) {
 	long columnNumber = Table_findColumnIndexFromColumnLabel (me, columnLabel);
 	if (columnNumber == 0)
-		Melder_throw (me, ": there is no column named \"", columnLabel, "\".");
+		Melder_throw (me, U": there is no column named \"", columnLabel, U"\".");
 	return columnNumber;
 }
 
-long * Table_getColumnIndicesFromColumnLabelString (Table me, const wchar_t *string, long *numberOfTokens) {
+long * Table_getColumnIndicesFromColumnLabelString (Table me, const char32 *string, long *numberOfTokens) {
 	*numberOfTokens = 0;
 	autoMelderTokens tokens (string, numberOfTokens);
 	if (*numberOfTokens < 1)
-		Melder_throw (me, ": you specified an empty list of columns.");
+		Melder_throw (me, U": you specified an empty list of columns.");
 	autoNUMvector <long> columns (1, *numberOfTokens);
 	for (long icol = 1; icol <= *numberOfTokens; icol ++) {
 		columns [icol] = Table_getColumnIndexFromColumnLabel (me, tokens [icol]);
@@ -364,23 +364,23 @@ long * Table_getColumnIndicesFromColumnLabelString (Table me, const wchar_t *str
 	return columns.transfer();
 }
 
-long Table_searchColumn (Table me, long columnNumber, const wchar_t *value) {
+long Table_searchColumn (Table me, long columnNumber, const char32 *value) {
 	for (long irow = 1; irow <= my rows -> size; irow ++) {
 		TableRow row = static_cast <TableRow> (my rows -> item [irow]);
-		if (row -> cells [columnNumber]. string != NULL && wcsequ (row -> cells [columnNumber]. string, value))
+		if (row -> cells [columnNumber]. string != NULL && str32equ (row -> cells [columnNumber]. string, value))
 			return irow;
 	}
 	return 0;
 }
 
-void Table_setStringValue (Table me, long rowNumber, long columnNumber, const wchar_t *value) {
+void Table_setStringValue (Table me, long rowNumber, long columnNumber, const char32 *value /* cattable */) {
 	try {
 		/*
 		 * Check without changes.
 		 */
 		Table_checkSpecifiedRowNumberWithinRange (me, rowNumber);
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
-		autostring newValue = Melder_wcsdup (value);
+		autostring32 newValue = Melder_dup (value);
 		/*
 		 * Change without errors.
 		 */
@@ -389,7 +389,7 @@ void Table_setStringValue (Table me, long rowNumber, long columnNumber, const wc
 		row -> cells [columnNumber]. string = newValue.transfer();
 		my columnHeaders [columnNumber]. numericized = FALSE;
 	} catch (MelderError) {
-		Melder_throw (me, ": string value not set.");
+		Melder_throw (me, U": string value not set.");
 	}
 }
 
@@ -400,7 +400,7 @@ void Table_setNumericValue (Table me, long rowNumber, long columnNumber, double 
 		 */
 		Table_checkSpecifiedRowNumberWithinRange (me, rowNumber);
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
-		autostring newValue = Melder_wcsdup (Melder_double (value));
+		autostring32 newValue = Melder_dup (Melder_double (value));
 		/*
 		 * Change without errors.
 		 */
@@ -409,7 +409,7 @@ void Table_setNumericValue (Table me, long rowNumber, long columnNumber, double 
 		row -> cells [columnNumber]. string = newValue.transfer();
 		my columnHeaders [columnNumber]. numericized = FALSE;
 	} catch (MelderError) {
-		Melder_throw (me, ": numeric value not set.");
+		Melder_throw (me, U": numeric value not set.");
 	}
 }
 
@@ -417,20 +417,20 @@ bool Table_isCellNumeric_ErrorFalse (Table me, long rowNumber, long columnNumber
 	if (rowNumber < 1 || rowNumber > my rows -> size) return false;
 	if (columnNumber < 1 || columnNumber > my numberOfColumns) return false;
 	TableRow row = static_cast <TableRow> (my rows -> item [rowNumber]);
-	const wchar_t *cell = row -> cells [columnNumber]. string;
+	const char32 *cell = row -> cells [columnNumber]. string;
 	if (cell == NULL) return true;   // the value --undefined--
 	/*
 	 * Skip leading white space, in order to separately detect "?" and "--undefined--".
 	 */
-	while (*cell == ' ' || *cell == '\t' || *cell == '\n' || *cell == '\r') cell ++;
-	if (cell [0] == '\0') return true;   // only white space: the value --undefined--
-	if (cell [0] == '?' || wcsnequ (cell, L"--undefined--", 13)) {
+	while (*cell == U' ' || *cell == U'\t' || *cell == U'\n' || *cell == U'\r') cell ++;
+	if (cell [0] == U'\0') return true;   // only white space: the value --undefined--
+	if (cell [0] == U'?' || str32nequ (cell, U"--undefined--", 13)) {
 		/*
 		 * See whether there is anything else besides "?" or "--undefined--" and white space.
 		 */
-		cell += ( cell [0] == '?' ) ? 1 : 13;
-		while (*cell == ' ' || *cell == '\t' || *cell == '\n' || *cell == '\r') cell ++;
-		return *cell == '\0';   // only white space after the "?" or "--undefined--"
+		cell += ( cell [0] == U'?' ) ? 1 : 13;
+		while (*cell == U' ' || *cell == U'\t' || *cell == U'\n' || *cell == U'\r') cell ++;
+		return *cell == U'\0';   // only white space after the "?" or "--undefined--"
 	}
 	return Melder_isStringNumeric_nothrow (cell);
 }
@@ -447,9 +447,9 @@ static long stringCompare_column;
 
 static int stringCompare_NoError (const void *first, const void *second) {
 	TableRow me = * (TableRow *) first, thee = * (TableRow *) second;
-	wchar_t *firstString = my cells [stringCompare_column]. string;
-	wchar_t *secondString = thy cells [stringCompare_column]. string;
-	return wcscmp (firstString ? firstString : L"", secondString ? secondString : L"");
+	char32 *firstString = my cells [stringCompare_column]. string;
+	char32 *secondString = thy cells [stringCompare_column]. string;
+	return str32cmp (firstString ? firstString : U"", secondString ? secondString : U"");
 }
 
 static void sortRowsByStrings_Assert (Table me, long columnNumber) {
@@ -475,14 +475,14 @@ void Table_numericize_Assert (Table me, long columnNumber) {
 	if (Table_isColumnNumeric_ErrorFalse (me, columnNumber)) {
 		for (long irow = 1; irow <= my rows -> size; irow ++) {
 			TableRow row = static_cast <TableRow> (my rows -> item [irow]);
-			const wchar_t *string = row -> cells [columnNumber]. string;
+			const char32 *string = row -> cells [columnNumber]. string;
 			row -> cells [columnNumber]. number =
-				string == NULL || string [0] == '\0' || (string [0] == '?' && string [1] == '\0') ? NUMundefined :
+				string == NULL || string [0] == U'\0' || (string [0] == U'?' && string [1] == U'\0') ? NUMundefined :
 				Melder_atof (string);
 		}
 	} else {
 		long iunique = 0;
-		const wchar_t *previousString = NULL;
+		const char32 *previousString = NULL;
 		for (long irow = 1; irow <= my rows -> size; irow ++) {
 			TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 			row -> sortingIndex = irow;
@@ -490,9 +490,9 @@ void Table_numericize_Assert (Table me, long columnNumber) {
 		sortRowsByStrings_Assert (me, columnNumber);
 		for (long irow = 1; irow <= my rows -> size; irow ++) {
 			TableRow row = static_cast <TableRow> (my rows -> item [irow]);
-			const wchar_t *string = row -> cells [columnNumber]. string;
-			if (string == NULL) string = L"";
-			if (previousString == NULL || ! wcsequ (string, previousString)) {
+			const char32 *string = row -> cells [columnNumber]. string;
+			if (string == NULL) string = U"";
+			if (previousString == NULL || ! str32equ (string, previousString)) {
 				iunique ++;
 			}
 			row -> cells [columnNumber]. number = iunique;
@@ -508,17 +508,17 @@ static void Table_numericize_checkDefined (Table me, long columnNumber) {
 	for (long irow = 1; irow <= my rows -> size; irow ++) {
 		TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 		if (row -> cells [columnNumber]. number == NUMundefined)
-			Melder_throw (me, ": the cell in row ", irow,
-				" of column \"", my columnHeaders [columnNumber]. label ? my columnHeaders [columnNumber]. label : Melder_integer (columnNumber),
-				" is undefined.");
+			Melder_throw (me, U": the cell in row ", irow,
+				U" of column \"", my columnHeaders [columnNumber]. label ? my columnHeaders [columnNumber]. label : Melder_integer (columnNumber),
+				U" is undefined.");
 	}
 }
 
-const wchar_t * Table_getStringValue_Assert (Table me, long rowNumber, long columnNumber) {
+const char32 * Table_getStringValue_Assert (Table me, long rowNumber, long columnNumber) {
 	Melder_assert (rowNumber >= 1 && rowNumber <= my rows -> size);
 	Melder_assert (columnNumber >= 1 && columnNumber <= my numberOfColumns);
 	TableRow row = static_cast <TableRow> (my rows -> item [rowNumber]);
-	return row -> cells [columnNumber]. string ? row -> cells [columnNumber]. string : L"";
+	return row -> cells [columnNumber]. string ? row -> cells [columnNumber]. string : U"";
 }
 
 double Table_getNumericValue_Assert (Table me, long rowNumber, long columnNumber) {
@@ -542,7 +542,7 @@ double Table_getMean (Table me, long columnNumber) {
 		}
 		return sum / my rows -> size;
 	} catch (MelderError) {
-		Melder_throw (me, ": cannot compute mean of column ", columnNumber, ".");
+		Melder_throw (me, U": cannot compute mean of column ", columnNumber, U".");
 	}
 }
 
@@ -561,7 +561,7 @@ double Table_getMaximum (Table me, long columnNumber) {
 		}
 		return maximum;
 	} catch (MelderError) {
-		Melder_throw (me, ": cannot compute maximum of column ", columnNumber, ".");
+		Melder_throw (me, U": cannot compute maximum of column ", columnNumber, U".");
 	}
 }
 
@@ -580,11 +580,11 @@ double Table_getMinimum (Table me, long columnNumber) {
 		}
 		return minimum;
 	} catch (MelderError) {
-		Melder_throw (me, ": cannot compute minimum of column ", columnNumber, ".");
+		Melder_throw (me, U": cannot compute minimum of column ", columnNumber, U".");
 	}
 }
 
-double Table_getGroupMean (Table me, long columnNumber, long groupColumnNumber, const wchar_t *group) {
+double Table_getGroupMean (Table me, long columnNumber, long groupColumnNumber, const char32 *group) {
 	try {
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
 		Table_numericize_checkDefined (me, columnNumber);
@@ -592,7 +592,7 @@ double Table_getGroupMean (Table me, long columnNumber, long groupColumnNumber, 
 		double sum = 0.0;
 		for (long irow = 1; irow <= my rows -> size; irow ++) {
 			TableRow row = static_cast <TableRow> (my rows -> item [irow]);
-			if (Melder_wcsequ (row -> cells [groupColumnNumber]. string, group)) {
+			if (Melder_equ (row -> cells [groupColumnNumber]. string, group)) {
 				n += 1;
 				sum += row -> cells [columnNumber]. number;
 			}
@@ -601,7 +601,7 @@ double Table_getGroupMean (Table me, long columnNumber, long groupColumnNumber, 
 		double mean = sum / n;
 		return mean;
 	} catch (MelderError) {
-		Melder_throw (me, ": cannot compute mean of column ", columnNumber, " for group \"", group, "\" of column ", groupColumnNumber, ".");
+		Melder_throw (me, U": cannot compute mean of column ", columnNumber, U" for group \"", group, U"\" of column ", groupColumnNumber, U".");
 	}
 }
 
@@ -619,7 +619,7 @@ double Table_getQuantile (Table me, long columnNumber, double quantile) {
 		NUMsort_d (my rows -> size, sortingColumn.peek());
 		return NUMquantile (my rows -> size, sortingColumn.peek(), quantile);
 	} catch (MelderError) {
-		Melder_throw (me, ": cannot compute the ", quantile, " quantile of column ", columnNumber, ".");
+		Melder_throw (me, U": cannot compute the ", quantile, U" quantile of column ", columnNumber, U".");
 	}
 }
 
@@ -636,7 +636,7 @@ double Table_getStdev (Table me, long columnNumber) {
 		}
 		return sqrt (sum / (my rows -> size - 1));
 	} catch (MelderError) {
-		Melder_throw (me, ": cannot compute the standard deviation of column ", columnNumber, ".");
+		Melder_throw (me, U": cannot compute the standard deviation of column ", columnNumber, U".");
 	}
 }
 
@@ -645,14 +645,14 @@ long Table_drawRowFromDistribution (Table me, long columnNumber) {
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
 		Table_numericize_checkDefined (me, columnNumber);
 		if (my rows -> size < 1)
-			Melder_throw (me, ": no rows.");
+			Melder_throw (me, U": no rows.");
 		double total = 0.0;
 		for (long irow = 1; irow <= my rows -> size; irow ++) {
 			TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 			total += row -> cells [columnNumber]. number;
 		}
 		if (total <= 0.0)
-			Melder_throw (me, ": the total weight of column ", columnNumber, " is not positive.");
+			Melder_throw (me, U": the total weight of column ", columnNumber, U" is not positive.");
 		long irow;
 		do {
 			double rand = NUMrandomUniform (0, total), sum = 0.0;
@@ -661,10 +661,10 @@ long Table_drawRowFromDistribution (Table me, long columnNumber) {
 				sum += row -> cells [columnNumber]. number;
 				if (rand <= sum) break;
 			}
-		} while (irow > my rows -> size);   /* Guard against rounding errors. */
+		} while (irow > my rows -> size);   // guard against rounding errors
 		return irow;
 	} catch (MelderError) {
-		Melder_throw (me, ": cannot draw a row from the distribution of column ", columnNumber, ".");
+		Melder_throw (me, U": cannot draw a row from the distribution of column ", columnNumber, U".");
 	}
 }
 
@@ -674,7 +674,7 @@ Table Table_extractRowsWhereColumn_number (Table me, long columnNumber, int whic
 		Table_numericize_Assert (me, columnNumber);   // extraction should work even if cells are not defined
 		autoTable thee = Table_create (0, my numberOfColumns);
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
-			thy columnHeaders [icol]. label = Melder_wcsdup (my columnHeaders [icol]. label);
+			thy columnHeaders [icol]. label = Melder_dup (my columnHeaders [icol]. label);
 		}
 		for (long irow = 1; irow <= my rows -> size; irow ++) {
 			TableRow row = static_cast <TableRow> (my rows -> item [irow]);
@@ -684,20 +684,20 @@ Table Table_extractRowsWhereColumn_number (Table me, long columnNumber, int whic
 			}
 		}
 		if (thy rows -> size == 0) {
-			Melder_warning (L"No row matches criterion.");
+			Melder_warning (U"No row matches criterion.");
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": rows not extracted.");
+		Melder_throw (me, U": rows not extracted.");
 	}
 }
 
-Table Table_extractRowsWhereColumn_string (Table me, long columnNumber, int which_Melder_STRING, const wchar_t *criterion) {
+Table Table_extractRowsWhereColumn_string (Table me, long columnNumber, int which_Melder_STRING, const char32 *criterion) {
 	try {
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
 		autoTable thee = Table_create (0, my numberOfColumns);
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
-			autostring newLabel = Melder_wcsdup (my columnHeaders [icol]. label);
+			autostring32 newLabel = Melder_dup (my columnHeaders [icol]. label);
 			thy columnHeaders [icol]. label = newLabel.transfer();
 		}
 		for (long irow = 1; irow <= my rows -> size; irow ++) {
@@ -708,33 +708,33 @@ Table Table_extractRowsWhereColumn_string (Table me, long columnNumber, int whic
 			}
 		}
 		if (thy rows -> size == 0) {
-			Melder_warning (L"No row matches criterion.");
+			Melder_warning (U"No row matches criterion.");
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": rows not extracted.");
+		Melder_throw (me, U": rows not extracted.");
 	}
 }
 
-static void Table_columns_checkExist (Table me, wchar_t **columnNames, long n) {
+static void Table_columns_checkExist (Table me, char32 **columnNames, long n) {
 	for (long i = 1; i <= n; i ++) {
 		if (Table_findColumnIndexFromColumnLabel (me, columnNames [i]) == 0)
-			Melder_throw (me, ": column \"", columnNames [i], "\" does not exist.");
+			Melder_throw (me, U": column \"", columnNames [i], U"\" does not exist.");
 	}
 }
 
-static void Table_columns_checkCrossSectionEmpty (wchar_t **factors, long nfactors, wchar_t **vars, long nvars) {
+static void Table_columns_checkCrossSectionEmpty (char32 **factors, long nfactors, char32 **vars, long nvars) {
 	for (long ifactor = 1; ifactor <= nfactors; ifactor ++) {
 		for (long ivar = 1; ivar <= nvars; ivar ++) {
-			if (wcsequ (factors [ifactor], vars [ivar]))
-				Melder_throw ("Factor \"", factors [ifactor], "\" is also used as dependent variable.");
+			if (str32equ (factors [ifactor], vars [ivar]))
+				Melder_throw (U"Factor \"", factors [ifactor], U"\" is also used as dependent variable.");
 		}
 	}
 }
 
-Table Table_collapseRows (Table me, const wchar_t *factors_string, const wchar_t *columnsToSum_string,
-	const wchar_t *columnsToAverage_string, const wchar_t *columnsToMedianize_string,
-	const wchar_t *columnsToAverageLogarithmically_string, const wchar_t *columnsToMedianizeLogarithmically_string)
+Table Table_collapseRows (Table me, const char32 *factors_string, const char32 *columnsToSum_string,
+	const char32 *columnsToAverage_string, const char32 *columnsToMedianize_string,
+	const char32 *columnsToAverageLogarithmically_string, const char32 *columnsToMedianizeLogarithmically_string)
 {
 	bool originalChanged = false;
 	try {
@@ -746,7 +746,7 @@ Table Table_collapseRows (Table me, const wchar_t *factors_string, const wchar_t
 		long numberOfFactors;
 		autoMelderTokens factors (factors_string, & numberOfFactors);
 		if (numberOfFactors < 1)
-			Melder_throw ("In order to pool table data, you must supply at least one independent variable.");
+			Melder_throw (U"In order to pool table data, you must supply at least one independent variable.");
 		Table_columns_checkExist (me, factors.peek(), numberOfFactors);
 
 		long numberToSum = 0;
@@ -907,9 +907,9 @@ Table Table_collapseRows (Table me, const wchar_t *factors_string, const wchar_t
 						double value = ((TableRow) my rows -> item [jrow]) -> cells [columns [icol]]. number;
 						if (value <= 0.0)
 							Melder_throw (
-								"The cell in column \"", columnsToAverageLogarithmically [i],
-								"\" of row ", jrow, " of ", me,
-								" is not positive.\nCannot average logarithmically.");
+								U"The cell in column \"", columnsToAverageLogarithmically [i],
+								U"\" of row ", jrow, U" of ", me,
+								U" is not positive.\nCannot average logarithmically.");
 						sum += log (value);
 					}
 					Table_setNumericValue (thee.peek(), thy rows -> size, icol, exp (sum / (rowmax - rowmin + 1)));
@@ -920,9 +920,9 @@ Table Table_collapseRows (Table me, const wchar_t *factors_string, const wchar_t
 						double value = ((TableRow) my rows -> item [jrow]) -> cells [columns [icol]]. number;
 						if (value <= 0.0)
 							Melder_throw (
-								"The cell in column \"", columnsToMedianizeLogarithmically [i],
-								"\" of row ", jrow, " of ", me,
-								" is not positive.\nCannot medianize logarithmically.");
+								U"The cell in column \"", columnsToMedianizeLogarithmically [i],
+								U"\" of row ", jrow, U" of ", me,
+								U" is not positive.\nCannot medianize logarithmically.");
 						sortingColumn [jrow] = log (value);
 					}
 					NUMsort_d (rowmax - rowmin + 1, & sortingColumn [rowmin - 1]);
@@ -942,7 +942,7 @@ Table Table_collapseRows (Table me, const wchar_t *factors_string, const wchar_t
 	}
 }
 
-static wchar_t ** _Table_getLevels (Table me, long column, long *numberOfLevels) {
+static char32 ** _Table_getLevels (Table me, long column, long *numberOfLevels) {
 	try {
 		for (long irow = 1; irow <= my rows -> size; irow ++) {
 			TableRow row = static_cast <TableRow> (my rows -> item [irow]);
@@ -957,12 +957,12 @@ static wchar_t ** _Table_getLevels (Table me, long column, long *numberOfLevels)
 			(*numberOfLevels) ++;
 			while (++ irow <= my rows -> size && ((TableRow) my rows -> item [irow]) -> cells [column]. number == value) { }
 		}
-		autostringvector result (1, *numberOfLevels);
+		autostring32vector result (1, *numberOfLevels);
 		*numberOfLevels = 0;
 		irow = 1;
 		while (irow <= my rows -> size) {
 			double value = ((TableRow) my rows -> item [irow]) -> cells [column]. number;
-			result [++ *numberOfLevels] = Melder_wcsdup (Table_getStringValue_Assert (me, irow, column));
+			result [++ *numberOfLevels] = Melder_dup (Table_getStringValue_Assert (me, irow, column));
 			while (++ irow <= my rows -> size && ((TableRow) my rows -> item [irow]) -> cells [column]. number == value) { }
 		}
 		sortRowsByIndex_NoError (me);   // unsort the original table
@@ -974,7 +974,7 @@ static wchar_t ** _Table_getLevels (Table me, long column, long *numberOfLevels)
 	}
 }
 
-Table Table_rowsToColumns (Table me, const wchar_t *factors_string, long columnToTranspose, const wchar_t *columnsToExpand_string) {
+Table Table_rowsToColumns (Table me, const char32 *factors_string, long columnToTranspose, const char32 *columnsToExpand_string) {
 	bool originalChanged = false;
 	try {
 		Melder_assert (factors_string != NULL);
@@ -986,15 +986,15 @@ Table Table_rowsToColumns (Table me, const wchar_t *factors_string, long columnT
 		 */
 		autoMelderTokens factors_names (factors_string, & numberOfFactors);
 		if (numberOfFactors < 1)
-			Melder_throw ("In order to nest table data, you must supply at least one independent variable.");
+			Melder_throw (U"In order to nest table data, you must supply at least one independent variable.");
 		Table_columns_checkExist (me, factors_names.peek(), numberOfFactors);
 		autoMelderTokens columnsToExpand_names (columnsToExpand_string, & numberToExpand);
 		if (numberToExpand < 1)
-			Melder_throw ("In order to nest table data, you must supply at least one dependent variable (to expand).");
+			Melder_throw (U"In order to nest table data, you must supply at least one dependent variable (to expand).");
 		Table_columns_checkExist (me, columnsToExpand_names.peek(), numberToExpand);
 		Table_columns_checkCrossSectionEmpty (factors_names.peek(), numberOfFactors, columnsToExpand_names.peek(), numberToExpand);
-		wchar_t ** dummy = _Table_getLevels (me, columnToTranspose, & numberOfLevels);
-		autostringvector levels_names (dummy, 1, numberOfLevels);
+		char32 ** dummy = _Table_getLevels (me, columnToTranspose, & numberOfLevels);
+		autostring32vector levels_names (dummy, 1, numberOfLevels);
 		/*
 		 * Get the column numbers for the factors.
 		 */
@@ -1022,17 +1022,13 @@ Table Table_rowsToColumns (Table me, const wchar_t *factors_string, long columnT
 		for (long ifactor = 1; ifactor <= numberOfFactors; ifactor ++) {
 			Table_setColumnLabel (thee.peek(), ifactor, factors_names [ifactor]);
 		}
-		autoMelderString columnLabel;
 		for (long iexpand = 1; iexpand <= numberToExpand; iexpand ++) {
 			for (long ilevel = 1; ilevel <= numberOfLevels; ilevel ++) {
-				MelderString_copy (& columnLabel, columnsToExpand_names [iexpand]);
-				MelderString_appendCharacter (& columnLabel, '.');
-				MelderString_append (& columnLabel, levels_names [ilevel]);
-				//Melder_casual ("Number of factors: %ld", numberOfFactors);
-				//Melder_casual ("Level: %ld out of %ld", ilevel, numberOfLevels);
+				//Melder_casual (U"Number of factors: ", numberOfFactors);
+				//Melder_casual (U"Level: ", ilevel, U" out of ", numberOfLevels);
 				long columnNumber = numberOfFactors + (iexpand - 1) * numberOfLevels + ilevel;
-				//Melder_casual ("Column number: %ld", columnNumber);
-				Table_setColumnLabel (thee.peek(), columnNumber, columnLabel.string);
+				//Melder_casual (U"Column number: ", columnNumber);
+				Table_setColumnLabel (thee.peek(), columnNumber, Melder_cat (columnsToExpand_names [iexpand], U".", levels_names [ilevel]));
 			}
 		}
 		/*
@@ -1069,8 +1065,8 @@ Table Table_rowsToColumns (Table me, const wchar_t *factors_string, long columnT
 			}
 			#if 0
 			if (rowmax - rowmin > numberOfLevels && ! warned) {
-				Melder_warning (L"Some rows of the original table have not been included in the new table. "
-					"You could perhaps add more factors.");
+				Melder_warning (U"Some rows of the original table have not been included in the new table. "
+					U"You could perhaps add more factors.");
 				warned = true;
 			}
 			#endif
@@ -1091,8 +1087,8 @@ Table Table_rowsToColumns (Table me, const wchar_t *factors_string, long columnT
 					long level = lround (myRow -> cells [columnToTranspose]. number);
 					long thyColumn = numberOfFactors + (iexpand - 1) * numberOfLevels + level;
 					if (thyRow -> cells [thyColumn]. string != NULL && ! warned) {
-						Melder_warning (L"Some information from the original table has not been included in the new table. "
-							"You could perhaps add more factors.");
+						Melder_warning (U"Some information from the original table has not been included in the new table. "
+							U"You could perhaps add more factors.");
 						warned = true;
 					}
 					Table_setNumericValue (thee.peek(), thy rows -> size, thyColumn, value);
@@ -1122,7 +1118,7 @@ Table Table_transpose (Table me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not transposed.");
+		Melder_throw (me, U": not transposed.");
 	}
 }
 
@@ -1146,21 +1142,21 @@ void Table_sortRows_Assert (Table me, long *columns, long numberOfColumns) {
 	qsort (& my rows -> item [1], (unsigned long) my rows -> size, sizeof (TableRow), cellCompare_NoError);
 }
 
-void Table_sortRows_string (Table me, const wchar_t *columns_string) {
+void Table_sortRows_string (Table me, const char32 *columns_string) {
 	try {
 		long numberOfColumns;
 		autoMelderTokens columns_tokens (columns_string, & numberOfColumns);
 		if (numberOfColumns < 1)
-			Melder_throw (me, ": you specified an empty list of columns.");
+			Melder_throw (me, U": you specified an empty list of columns.");
 		autoNUMvector <long> columns (1, numberOfColumns);
 		for (long icol = 1; icol <= numberOfColumns; icol ++) {
 			columns [icol] = Table_findColumnIndexFromColumnLabel (me, columns_tokens [icol]);
 			if (columns [icol] == 0)
-				Melder_throw ("Column \"", columns_tokens [icol], L"\" does not exist.");
+				Melder_throw (U"Column \"", columns_tokens [icol], U"\" does not exist.");
 		}
 		Table_sortRows_Assert (me, columns.peek(), numberOfColumns);
 	} catch (MelderError) {
-		Melder_throw (me, ": rows not sorted.");
+		Melder_throw (me, U": rows not sorted.");
 	}
 }
 
@@ -1184,7 +1180,7 @@ void Table_reflectRows (Table me) {
 
 Table Tables_append (Collection me) {
 	try {
-		if (my size == 0) Melder_throw ("Cannot add zero tables.");
+		if (my size == 0) Melder_throw (U"Cannot add zero tables.");
 		Table thee = static_cast <Table> (my item [1]);
 		long nrow = thy rows -> size;
 		long ncol = thy numberOfColumns;
@@ -1193,12 +1189,12 @@ Table Tables_append (Collection me) {
 			thee = static_cast <Table> (my item [itab]);
 			nrow += thy rows -> size;
 			if (thy numberOfColumns != ncol)
-				Melder_throw ("Numbers of columns do not match.");
+				Melder_throw (U"Numbers of columns do not match.");
 			for (long icol = 1; icol <= ncol; icol ++) {
-				if (! Melder_wcsequ (thy columnHeaders [icol]. label, firstTable -> columnHeaders [icol]. label))
-					Melder_throw ("The label of column ", icol, " of ", thee,
-						" (", thy columnHeaders [icol]. label, L") does not match the label of column ", icol,
-						" of ", firstTable, " (", firstTable -> columnHeaders [icol]. label, ").");
+				if (! Melder_equ (thy columnHeaders [icol]. label, firstTable -> columnHeaders [icol]. label))
+					Melder_throw (U"The label of column ", icol, U" of ", thee,
+						U" (", thy columnHeaders [icol]. label, U") does not match the label of column ", icol,
+						U" of ", firstTable, U" (", firstTable -> columnHeaders [icol]. label, U").");
 			}
 		}
 		autoTable him = Table_createWithoutColumnNames (nrow, ncol);
@@ -1217,11 +1213,11 @@ Table Tables_append (Collection me) {
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Table objects not appended.");
+		Melder_throw (U"Table objects not appended.");
 	}
 }
 
-void Table_appendSumColumn (Table me, long column1, long column2, const wchar_t *label) {   // safe
+void Table_appendSumColumn (Table me, long column1, long column2, const char32 *label) {   // safe
 	try {
 		/*
 		 * Check without change.
@@ -1252,11 +1248,11 @@ void Table_appendSumColumn (Table me, long column1, long column2, const wchar_t 
 			thyCell -> string = NULL;   // ...undangle
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": sum column not appended.");
+		Melder_throw (me, U": sum column not appended.");
 	}
 }
 
-void Table_appendDifferenceColumn (Table me, long column1, long column2, const wchar_t *label) {   // safe
+void Table_appendDifferenceColumn (Table me, long column1, long column2, const char32 *label) {   // safe
 	try {
 		/*
 		 * Check without change.
@@ -1287,11 +1283,11 @@ void Table_appendDifferenceColumn (Table me, long column1, long column2, const w
 			thyCell -> string = NULL;   // ...undangle
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": difference column not appended.");
+		Melder_throw (me, U": difference column not appended.");
 	}
 }
 
-void Table_appendProductColumn (Table me, long column1, long column2, const wchar_t *label) {   // safe
+void Table_appendProductColumn (Table me, long column1, long column2, const char32 *label) {   // safe
 	try {
 		/*
 		 * Check without change.
@@ -1322,11 +1318,11 @@ void Table_appendProductColumn (Table me, long column1, long column2, const wcha
 			thyCell -> string = NULL;   // ...undangle
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": product column not appended.");
+		Melder_throw (me, U": product column not appended.");
 	}
 }
 
-void Table_appendQuotientColumn (Table me, long column1, long column2, const wchar_t *label) {   // safe
+void Table_appendQuotientColumn (Table me, long column1, long column2, const char32 *label) {   // safe
 	try {
 		/*
 		 * Check without change.
@@ -1359,11 +1355,11 @@ void Table_appendQuotientColumn (Table me, long column1, long column2, const wch
 			thyCell -> string = NULL;   // ...undangle
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": quotient column not appended.");
+		Melder_throw (me, U": quotient column not appended.");
 	}
 }
 
-void Table_formula_columnRange (Table me, long fromColumn, long toColumn, const wchar_t *expression, Interpreter interpreter) {
+void Table_formula_columnRange (Table me, long fromColumn, long toColumn, const char32 *expression, Interpreter interpreter) {
 	try {
 		Table_checkSpecifiedColumnNumberWithinRange (me, fromColumn);
 		Table_checkSpecifiedColumnNumberWithinRange (me, toColumn);
@@ -1373,23 +1369,23 @@ void Table_formula_columnRange (Table me, long fromColumn, long toColumn, const 
 				struct Formula_Result result;
 				Formula_run (irow, icol, & result);
 				if (result. expressionType == kFormula_EXPRESSION_TYPE_STRING) {
-					Table_setStringValue (me, irow, icol, Melder_peekStr32ToWcs (result. result.stringResult));
+					Table_setStringValue (me, irow, icol, result. result.stringResult);
 					Melder_free (result. result.stringResult);
 				} else if (result. expressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
 					Table_setNumericValue (me, irow, icol, result. result.numericResult);
 				} else if (result. expressionType == kFormula_EXPRESSION_TYPE_NUMERIC_ARRAY) {
-					Melder_throw (me, ": cannot put arrays into cells.");
+					Melder_throw (me, U": cannot put arrays into cells.");
 				} else if (result. expressionType == kFormula_EXPRESSION_TYPE_STRING_ARRAY) {
-					Melder_throw (me, ": cannot put arrays into cells.");
+					Melder_throw (me, U": cannot put arrays into cells.");
 				}
 			}
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": application of formula not completed.");
+		Melder_throw (me, U": application of formula not completed.");
 	}
 }
 
-void Table_formula (Table me, long icol, const wchar_t *expression, Interpreter interpreter) {
+void Table_formula (Table me, long icol, const char32 *expression, Interpreter interpreter) {
 	Table_formula_columnRange (me, icol, icol, expression, interpreter);
 }
 
@@ -1479,7 +1475,7 @@ double Table_getCorrelation_kendallTau (Table me, long column1, long column2, do
 	if ((out_significance || out_lowerLimit || out_upperLimit) && NUMdefined (correlation) && n >= 2) {
 		double standardError = sqrt ((4 * n + 10.0) / (9 * n * (n - 1)));
 		if (out_significance)
-			*out_significance = NUMgaussQ (fabs (correlation) / standardError);   /* One-sided. */
+			*out_significance = NUMgaussQ (fabs (correlation) / standardError);   // one-sided
 		if (out_lowerLimit)
 			*out_lowerLimit = correlation - NUMinvGaussQ (significanceLevel) * standardError;
 		if (out_upperLimit)
@@ -1567,7 +1563,7 @@ double Table_getMean_studentT (Table me, long column, double significanceLevel,
 	return mean;
 }
 
-double Table_getGroupMean_studentT (Table me, long column, long groupColumn, const wchar_t *group, double significanceLevel,
+double Table_getGroupMean_studentT (Table me, long column, long groupColumn, const char32 *group, double significanceLevel,
 	double *out_tFromZero, double *out_numberOfDegreesOfFreedom, double *out_significanceFromZero, double *out_lowerLimit, double *out_upperLimit)
 {
 	if (out_tFromZero) *out_tFromZero = NUMundefined;
@@ -1582,7 +1578,7 @@ double Table_getGroupMean_studentT (Table me, long column, long groupColumn, con
 	for (long irow = 1; irow <= my rows -> size; irow ++) {
 		TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 		if (row -> cells [groupColumn]. string != NULL) {
-			if (wcsequ (row -> cells [groupColumn]. string, group)) {
+			if (str32equ (row -> cells [groupColumn]. string, group)) {
 				n += 1;
 				sum += row -> cells [column]. number;
 			}
@@ -1597,7 +1593,7 @@ double Table_getGroupMean_studentT (Table me, long column, long groupColumn, con
 		for (long irow = 1; irow <= my rows -> size; irow ++) {
 			TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 			if (row -> cells [groupColumn]. string != NULL) {
-				if (wcsequ (row -> cells [groupColumn]. string, group)) {
+				if (str32equ (row -> cells [groupColumn]. string, group)) {
 					double diff = row -> cells [column]. number - mean;
 					sumOfSquares += diff * diff;
 				}
@@ -1615,7 +1611,7 @@ double Table_getGroupMean_studentT (Table me, long column, long groupColumn, con
 	return mean;
 }
 
-double Table_getGroupDifference_studentT (Table me, long column, long groupColumn, const wchar_t *group1, const wchar_t *group2, double significanceLevel,
+double Table_getGroupDifference_studentT (Table me, long column, long groupColumn, const char32 *group1, const char32 *group2, double significanceLevel,
 	double *out_tFromZero, double *out_numberOfDegreesOfFreedom, double *out_significanceFromZero, double *out_lowerLimit, double *out_upperLimit)
 {
 	if (out_tFromZero) *out_tFromZero = NUMundefined;
@@ -1631,10 +1627,10 @@ double Table_getGroupDifference_studentT (Table me, long column, long groupColum
 	for (long irow = 1; irow <= my rows -> size; irow ++) {
 		TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 		if (row -> cells [groupColumn]. string != NULL) {
-			if (wcsequ (row -> cells [groupColumn]. string, group1)) {
+			if (str32equ (row -> cells [groupColumn]. string, group1)) {
 				n1 ++;
 				sum1 += row -> cells [column]. number;
-			} else if (wcsequ (row -> cells [groupColumn]. string, group2)) {
+			} else if (str32equ (row -> cells [groupColumn]. string, group2)) {
 				n2 ++;
 				sum2 += row -> cells [column]. number;
 			}
@@ -1651,10 +1647,10 @@ double Table_getGroupDifference_studentT (Table me, long column, long groupColum
 		for (long irow = 1; irow <= my rows -> size; irow ++) {
 			TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 			if (row -> cells [groupColumn]. string != NULL) {
-				if (wcsequ (row -> cells [groupColumn]. string, group1)) {
+				if (str32equ (row -> cells [groupColumn]. string, group1)) {
 					double diff = row -> cells [column]. number - mean1;
 					sumOfSquares += diff * diff;
-				} else if (wcsequ (row -> cells [groupColumn]. string, group2)) {
+				} else if (str32equ (row -> cells [groupColumn]. string, group2)) {
 					double diff = row -> cells [column]. number - mean2;
 					sumOfSquares += diff * diff;
 				}
@@ -1672,7 +1668,7 @@ double Table_getGroupDifference_studentT (Table me, long column, long groupColum
 	return difference;
 }
 
-double Table_getGroupDifference_wilcoxonRankSum (Table me, long column, long groupColumn, const wchar_t *group1, const wchar_t *group2,
+double Table_getGroupDifference_wilcoxonRankSum (Table me, long column, long groupColumn, const char32 *group1, const char32 *group2,
 	double *out_rankSum, double *out_significanceFromZero)
 {
 	if (out_rankSum) *out_rankSum = NUMundefined;
@@ -1684,9 +1680,9 @@ double Table_getGroupDifference_wilcoxonRankSum (Table me, long column, long gro
 	for (long irow = 1; irow <= my rows -> size; irow ++) {
 		TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 		if (row -> cells [groupColumn]. string != NULL) {
-			if (wcsequ (row -> cells [groupColumn]. string, group1)) {
+			if (str32equ (row -> cells [groupColumn]. string, group1)) {
 				n1 ++;
-			} else if (wcsequ (row -> cells [groupColumn]. string, group2)) {
+			} else if (str32equ (row -> cells [groupColumn]. string, group2)) {
 				n2 ++;
 			}
 		}
@@ -1697,10 +1693,10 @@ double Table_getGroupDifference_wilcoxonRankSum (Table me, long column, long gro
 	for (long irow = 1, jrow = 0; irow <= my rows -> size; irow ++) {
 		TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 		if (row -> cells [groupColumn]. string != NULL) {
-			if (wcsequ (row -> cells [groupColumn]. string, group1)) {
+			if (str32equ (row -> cells [groupColumn]. string, group1)) {
 				Table_setNumericValue (ranks, ++ jrow, 1, 1.0);
 				Table_setNumericValue (ranks, jrow, 2, row -> cells [column]. number);
-			} else if (wcsequ (row -> cells [groupColumn]. string, group2)) {
+			} else if (str32equ (row -> cells [groupColumn]. string, group2)) {
 				Table_setNumericValue (ranks, ++ jrow, 1, 2.0);
 				Table_setNumericValue (ranks, jrow, 2, row -> cells [column]. number);
 			}
@@ -1765,7 +1761,7 @@ bool Table_getExtrema (Table me, long icol, double *minimum, double *maximum) {
 }
 
 void Table_scatterPlot_mark (Table me, Graphics g, long xcolumn, long ycolumn,
-	double xmin, double xmax, double ymin, double ymax, double markSize_mm, const wchar_t *mark, int garnish)
+	double xmin, double xmax, double ymin, double ymax, double markSize_mm, const char32 *mark, int garnish)
 {
 	long n = my rows -> size, irow;
 	if (xcolumn < 1 || xcolumn > my numberOfColumns || ycolumn < 1 || ycolumn > my numberOfColumns) return;
@@ -1822,7 +1818,7 @@ void Table_scatterPlot (Table me, Graphics g, long xcolumn, long ycolumn,
 	Graphics_setFontSize (g, fontSize);
 	for (long irow = 1; irow <= n; irow ++) {
 		TableRow row = static_cast <TableRow> (my rows -> item [irow]);
-		const wchar_t *mark = row -> cells [markColumn]. string;
+		const char32 *mark = row -> cells [markColumn]. string;
 		if (mark)
 			Graphics_text (g, row -> cells [xcolumn]. number, row -> cells [ycolumn]. number, mark);
 	}
@@ -1866,91 +1862,91 @@ void Table_drawEllipse_e (Table me, Graphics g, long xcolumn, long ycolumn,
 	}
 }
 
-static const wchar_t *visibleString (const wchar_t *s) {
-	return s != NULL && s [0] != '\0' ? s : L"?";
+static const char32 *visibleString (const char32 *s) {
+	return s != NULL && s [0] != U'\0' ? s : U"?";
 }
 
 void Table_list (Table me, bool includeRowNumbers) {
 	MelderInfo_open ();
 	if (includeRowNumbers) {
-		MelderInfo_write (L"row");
-		if (my numberOfColumns > 0) MelderInfo_write (L"\t");
+		MelderInfo_write (U"row");
+		if (my numberOfColumns > 0) MelderInfo_write (U"\t");
 	}
 	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
-		if (icol > 1) MelderInfo_write (L"\t");
+		if (icol > 1) MelderInfo_write (U"\t");
 		MelderInfo_write (visibleString (my columnHeaders [icol]. label));
 	}
-	MelderInfo_write (L"\n");
+	MelderInfo_write (U"\n");
 	for (long irow = 1; irow <= my rows -> size; irow ++) {
 		if (includeRowNumbers) {
-			MelderInfo_write (Melder_integer (irow));
-			if (my numberOfColumns > 0) MelderInfo_write (L"\t");
+			MelderInfo_write (irow);
+			if (my numberOfColumns > 0) MelderInfo_write (U"\t");
 		}
 		TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
-			if (icol > 1) MelderInfo_write (L"\t");
+			if (icol > 1) MelderInfo_write (U"\t");
 			MelderInfo_write (visibleString (row -> cells [icol]. string));
 		}
-		MelderInfo_write (L"\n");
+		MelderInfo_write (U"\n");
 	}
 	MelderInfo_close ();
 }
 
-static void _Table_writeToCharacterSeparatedFile (Table me, MelderFile file, wchar_t kar) {
+static void _Table_writeToCharacterSeparatedFile (Table me, MelderFile file, char32 kar) {
 	autoMelderString buffer;
 	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 		if (icol != 1) MelderString_appendCharacter (& buffer, kar);
-		wchar_t *s = my columnHeaders [icol]. label;
-		MelderString_append (& buffer, s != NULL && s [0] != '\0' ? s : L"?");
+		char32 *s = my columnHeaders [icol]. label;
+		MelderString_append (& buffer, s != NULL && s [0] != U'\0' ? s : U"?");
 	}
 	MelderString_appendCharacter (& buffer, '\n');
 	for (long irow = 1; irow <= my rows -> size; irow ++) {
 		TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 			if (icol != 1) MelderString_appendCharacter (& buffer, kar);
-			wchar_t *s = row -> cells [icol]. string;
-			MelderString_append (& buffer, s != NULL && s [0] != '\0' ? s : L"?");
+			char32 *s = row -> cells [icol]. string;
+			MelderString_append (& buffer, s != NULL && s [0] != U'\0' ? s : U"?");
 		}
-		MelderString_appendCharacter (& buffer, '\n');
+		MelderString_appendCharacter (& buffer, U'\n');
 	}
 	MelderFile_writeText (file, buffer.string, Melder_getOutputEncoding ());
 }
 
 void Table_writeToTabSeparatedFile (Table me, MelderFile file) {
 	try {
-		_Table_writeToCharacterSeparatedFile (me, file, '\t');
+		_Table_writeToCharacterSeparatedFile (me, file, U'\t');
 	} catch (MelderError) {
-		Melder_throw (me, ": not written to tab-separated file.");
+		Melder_throw (me, U": not written to tab-separated file.");
 	}
 }
 
 void Table_writeToCommaSeparatedFile (Table me, MelderFile file) {
 	try {
-		_Table_writeToCharacterSeparatedFile (me, file, ',');
+		_Table_writeToCharacterSeparatedFile (me, file, U',');
 	} catch (MelderError) {
-		Melder_throw (me, ": not written to comma-separated file.");
+		Melder_throw (me, U": not written to comma-separated file.");
 	}
 }
 
 Table Table_readFromTableFile (MelderFile file) {
 	Table me = NULL;
 	try {
-		autostring string = MelderFile_readText (file);
+		autostring32 string = MelderFile_readText (file);
 		long nrow, ncol, nelements;
 		/*
 		 * Count columns.
 		 */
 		ncol = 0;
-		wchar_t *p = & string [0];
+		char32 *p = & string [0];
 		for (;;) {
-			wchar_t kar = *p++;
-			if (kar == '\n' || kar == '\0') break;
-			if (kar == ' ' || kar == '\t') continue;
+			char32 kar = *p++;
+			if (kar == U'\n' || kar == U'\0') break;
+			if (kar == U' ' || kar == U'\t') continue;
 			ncol ++;
-			do { kar = *p++; } while (kar != ' ' && kar != '\t' && kar != '\n' && kar != '\0');
-			if (kar == '\n' || kar == '\0') break;
+			do { kar = *p++; } while (kar != U' ' && kar != U'\t' && kar != U'\n' && kar != U'\0');
+			if (kar == U'\n' || kar == U'\0') break;
 		}
-		if (ncol < 1) Melder_throw ("No columns.");
+		if (ncol < 1) Melder_throw (U"No columns.");
 
 		/*
 		 * Count elements.
@@ -1958,19 +1954,19 @@ Table Table_readFromTableFile (MelderFile file) {
 		p = & string [0];
 		nelements = 0;
 		for (;;) {
-			wchar_t kar = *p++;
-			if (kar == '\0') break;
-			if (kar == ' ' || kar == '\t' || kar == '\n') continue;
+			char32 kar = *p++;
+			if (kar == U'\0') break;
+			if (kar == U' ' || kar == U'\t' || kar == U'\n') continue;
 			nelements ++;
-			do { kar = *p++; } while (kar != ' ' && kar != '\t' && kar != '\n' && kar != '\0');
-			if (kar == '\0') break;
+			do { kar = *p++; } while (kar != U' ' && kar != U'\t' && kar != U'\n' && kar != U'\0');
+			if (kar == U'\0') break;
 		}
 
 		/*
 		 * Check if all columns are complete.
 		 */
 		if (nelements == 0 || nelements % ncol != 0)
-			Melder_throw ("The number of elements (", nelements, ") is not a multiple of the number of columns (", ncol, ").");
+			Melder_throw (U"The number of elements (", nelements, U") is not a multiple of the number of columns (", ncol, U").");
 
 		/*
 		 * Create empty table.
@@ -1983,49 +1979,49 @@ Table Table_readFromTableFile (MelderFile file) {
 		 */
 		p = & string [0];
 		for (long icol = 1; icol <= ncol; icol ++) {
-			while (*p == ' ' || *p == '\t') { Melder_assert (*p != '\0'); p ++; }
-			static MelderString buffer = { 0 };
+			while (*p == U' ' || *p == U'\t') { Melder_assert (*p != U'\0'); p ++; }
+			static MelderString buffer { 0 };
 			MelderString_empty (& buffer);
-			while (*p != ' ' && *p != '\t' && *p != '\n') { MelderString_appendCharacter (& buffer, *p); p ++; }
+			while (*p != U' ' && *p != U'\t' && *p != U'\n') { MelderString_appendCharacter (& buffer, *p); p ++; }
 			Table_setColumnLabel (me, icol, buffer.string);
 			MelderString_empty (& buffer);
 		}
 		for (long irow = 1; irow <= nrow; irow ++) {
 			TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 			for (long icol = 1; icol <= ncol; icol ++) {
-				while (*p == ' ' || *p == '\t' || *p == '\n') { Melder_assert (*p != '\0'); p ++; }
-				static MelderString buffer = { 0 };
+				while (*p == U' ' || *p == U'\t' || *p == U'\n') { Melder_assert (*p != U'\0'); p ++; }
+				static MelderString buffer { 0 };
 				MelderString_empty (& buffer);
-				while (*p != ' ' && *p != '\t' && *p != '\n' && *p != '\0') { MelderString_appendCharacter (& buffer, *p); p ++; }
-				row -> cells [icol]. string = Melder_wcsdup_f (buffer.string);
+				while (*p != U' ' && *p != U'\t' && *p != U'\n' && *p != U'\0') { MelderString_appendCharacter (& buffer, *p); p ++; }
+				row -> cells [icol]. string = Melder_dup_f (buffer.string);
 				MelderString_empty (& buffer);
 			}
 		}
 		return me;
 	} catch (MelderError) {
 		forget (me);
-		Melder_throw ("Table object not read from space-separated text file ", file, ".");
+		Melder_throw (U"Table object not read from space-separated text file ", file, U".");
 	}
 }
 
-Table Table_readFromCharacterSeparatedTextFile (MelderFile file, wchar_t separator) {
+Table Table_readFromCharacterSeparatedTextFile (MelderFile file, char32 separator) {
 	try {
-		autostring string = MelderFile_readText (file);
+		autostring32 string = MelderFile_readText (file);
 
 		/*
 		 * Kill final new-line symbols.
 		 */
-		for (size_t length = wcslen (string.peek()); length > 0 && string [length - 1] == '\n'; length = wcslen (string.peek())) string [length - 1] = '\0';
+		for (int64 length = str32len (string.peek()); length > 0 && string [length - 1] == U'\n'; length = str32len (string.peek())) string [length - 1] = U'\0';
 
 		/*
 		 * Count columns.
 		 */
 		long ncol = 1;
-		const wchar_t *p = & string [0];
+		const char32 *p = & string [0];
 		for (;;) {
-			wchar_t kar = *p++;
-			if (kar == '\0') Melder_throw (L"No rows.");
-			if (kar == '\n') break;
+			char32 kar = *p++;
+			if (kar == U'\0') Melder_throw (U"No rows.");
+			if (kar == U'\n') break;
 			if (kar == separator) ncol ++;
 		}
 
@@ -2034,9 +2030,9 @@ Table Table_readFromCharacterSeparatedTextFile (MelderFile file, wchar_t separat
 		 */
 		long nrow = 1;
 		for (;;) {
-			wchar_t kar = *p++;
-			if (kar == '\0') break;
-			if (kar == '\n') nrow ++;
+			char32 kar = *p++;
+			if (kar == U'\0') break;
+			if (kar == U'\n') nrow ++;
 		}
 
 		/*
@@ -2047,18 +2043,17 @@ Table Table_readFromCharacterSeparatedTextFile (MelderFile file, wchar_t separat
 		/*
 		 * Read column names.
 		 */
+		autoMelderString buffer;
 		p = & string [0];
 		for (long icol = 1; icol <= ncol; icol ++) {
-			static MelderString buffer = { 0 };
 			MelderString_empty (& buffer);
-			while (*p != separator && *p != '\n') {
-				Melder_assert (*p != '\0');
+			while (*p != separator && *p != U'\n') {
+				Melder_assert (*p != U'\0');
 				MelderString_appendCharacter (& buffer, *p);
 				p ++;
 			}
 			p ++;
 			Table_setColumnLabel (me.peek(), icol, buffer.string);
-			MelderString_empty (& buffer);
 		}
 
 		/*
@@ -2067,29 +2062,27 @@ Table Table_readFromCharacterSeparatedTextFile (MelderFile file, wchar_t separat
 		for (long irow = 1; irow <= nrow; irow ++) {
 			TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 			for (long icol = 1; icol <= ncol; icol ++) {
-				static MelderString buffer = { 0 };
 				MelderString_empty (& buffer);
-				while (*p != separator && *p != '\n' && *p != '\0') {
+				while (*p != separator && *p != U'\n' && *p != U'\0') {
 					MelderString_appendCharacter (& buffer, *p);
 					p ++;
 				}
-				if (*p == '\0') {
-					if (irow != nrow) Melder_fatal ("irow %ld, nrow %ld, icol %ld, ncol %ld", irow, nrow, icol, ncol);
-					if (icol != ncol) Melder_throw ("Last row incomplete.");
-				} else if (*p == '\n') {
-					if (icol != ncol) Melder_throw ("Row ", irow, " incomplete.");
+				if (*p == U'\0') {
+					if (irow != nrow) Melder_fatal (U"irow ", irow, U", nrow ", nrow, U", icol ", icol, U", ncol ", ncol);
+					if (icol != ncol) Melder_throw (U"Last row incomplete.");
+				} else if (*p == U'\n') {
+					if (icol != ncol) Melder_throw (U"Row ", irow, U" incomplete.");
 					p ++;
 				} else {
 					Melder_assert (*p == separator);
 					p ++;
 				}
-				row -> cells [icol]. string = Melder_wcsdup (buffer.string);
-				MelderString_empty (& buffer);
+				row -> cells [icol]. string = Melder_dup (buffer.string);
 			}
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Table object not read from character-separated text file ", file, ".");
+		Melder_throw (U"Table object not read from character-separated text file ", file, U".");
 	}
 }
 

@@ -57,10 +57,10 @@ void structSPINET :: v_info () {
 	        ! Sampled2_getWindowExtrema_d (this, s, 1, nx, 1, ny, & mins, & maxs)) {
 		return;
 	}
-	MelderInfo_writeLine (L"Minimum power: ", Melder_double (miny));
-	MelderInfo_writeLine (L"Maximum power: ", Melder_double (maxy));
-	MelderInfo_writeLine (L"Minimum power rectified: ", Melder_double (mins));
-	MelderInfo_writeLine (L"Maximum powerrectified: ", Melder_double (maxs));
+	MelderInfo_writeLine (U"Minimum power: ", miny);
+	MelderInfo_writeLine (U"Maximum power: ", maxy);
+	MelderInfo_writeLine (U"Minimum power rectified: ", mins);
+	MelderInfo_writeLine (U"Maximum powerrectified: ", maxs);
 }
 
 SPINET SPINET_create (double tmin, double tmax, long nt, double dt, double t1,
@@ -80,7 +80,7 @@ SPINET SPINET_create (double tmin, double tmax, long nt, double dt, double t1,
 		my inhibitionErbProportion = inhibitionErbProportion;
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("SPINET not created.");
+		Melder_throw (U"SPINET not created.");
 	}
 }
 
@@ -98,18 +98,18 @@ void SPINET_spectralRepresentation (SPINET me, Graphics g, double fromTime, doub
 	Matrix_paintCells (thee.peek(), g, fromTime, toTime, fromErb, toErb, minimum, maximum);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, L"Time (s)");
+		Graphics_textBottom (g, 1, U"Time (s)");
 		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, L"Frequency (ERB)");
+		Graphics_textLeft (g, 1, U"Frequency (ERB)");
 		Graphics_marksLeft (g, 2, 1, 1, 0);
-		Graphics_textTop (g, 0, enhanced ? L"Cooperative interaction output" :
-		                  L"Gammatone filterbank output");
+		Graphics_textTop (g, 0, enhanced ? U"Cooperative interaction output" :
+		                  U"Gammatone filterbank output");
 	}
 }
 
 void SPINET_drawSpectrum (SPINET me, Graphics g, double time, double fromErb, double toErb,
                           double minimum, double maximum, int enhanced, int garnish) {
-	long ifmin, ifmax, icol = Sampled2_xToColumn (me, time);
+	long ifmin, ifmax, icol = Sampled2_xToLowColumn (me, time);   // ppgb: don't use Sampled2_xToColumn for integer rounding
 	double **z = enhanced ? my s : my y;
 	if (icol < 1 || icol > my nx) {
 		return;
@@ -144,9 +144,9 @@ void SPINET_drawSpectrum (SPINET me, Graphics g, double time, double fromErb, do
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, L"Frequency (ERB)");
+		Graphics_textBottom (g, 1, U"Frequency (ERB)");
 		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, L"strength");
+		Graphics_textLeft (g, 1, U"strength");
 		Graphics_marksLeft (g, 2, 1, 1, 0);
 	}
 }

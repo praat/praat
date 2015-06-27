@@ -1,6 +1,6 @@
 /* FormantGrid.cpp
  *
- * Copyright (C) 2008-2011,2014 Paul Boersma & David Weenink
+ * Copyright (C) 2008-2011,2014,2015 Paul Boersma & David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,7 +95,7 @@ FormantGrid FormantGrid_createEmpty (double tmin, double tmax, long numberOfForm
 		FormantGrid_init (me.peek(), tmin, tmax, numberOfFormants);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Empty FormantGrid not created.");
+		Melder_throw (U"Empty FormantGrid not created.");
 	}
 }
 
@@ -113,29 +113,29 @@ FormantGrid FormantGrid_create (double tmin, double tmax, long numberOfFormants,
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("FormantGrid not created.");
+		Melder_throw (U"FormantGrid not created.");
 	}
 }
 
 void FormantGrid_addFormantPoint (FormantGrid me, long iformant, double t, double value) {
 	try {
 		if (iformant < 1 || iformant > my formants -> size)
-			Melder_throw ("No such formant number.");
+			Melder_throw (U"No such formant number.");
 		RealTier formantTier = (RealTier) my formants -> item [iformant];
 		RealTier_addPoint (formantTier, t, value);
 	} catch (MelderError) {
-		Melder_throw (me, ": formant point not added.");
+		Melder_throw (me, U": formant point not added.");
 	}
 }
 
 void FormantGrid_addBandwidthPoint (FormantGrid me, long iformant, double t, double value) {
 	try {
 		if (iformant < 1 || iformant > my formants -> size)
-			Melder_throw ("No such formant number.");
+			Melder_throw (U"No such formant number.");
 		RealTier bandwidthTier = (RealTier) my bandwidths -> item [iformant];
 		RealTier_addPoint (bandwidthTier, t, value);
 	} catch (MelderError) {
-		Melder_throw (me, ": bandwidth point not added.");
+		Melder_throw (me, U": bandwidth point not added.");
 	}
 }
 
@@ -203,7 +203,7 @@ Sound Sound_FormantGrid_filter (Sound me, FormantGrid formantGrid) {
 		Vector_scale (thee.peek(), 0.99);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not filtered with ", formantGrid, ".");
+		Melder_throw (me, U": not filtered with ", formantGrid, U".");
 	}
 }
 
@@ -213,7 +213,7 @@ Sound Sound_FormantGrid_filter_noscale (Sound me, FormantGrid formantGrid) {
 		Sound_FormantGrid_filter_inline (thee.peek(), formantGrid);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not filtered with ", formantGrid, ".");
+		Melder_throw (me, U": not filtered with ", formantGrid, U".");
 	}
 }
 
@@ -231,7 +231,7 @@ Sound FormantGrid_to_Sound (FormantGrid me, double samplingFrequency,
 		Sound_FormantGrid_filter_inline (thee.peek(), me);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Sound.");
+		Melder_throw (me, U": not converted to Sound.");
 	}
 }
 
@@ -247,11 +247,11 @@ void FormantGrid_playPart (FormantGrid me, double tmin, double tmax, double samp
 		Vector_scale (sound.peek(), 0.99);
 		Sound_playPart (sound.peek(), tmin, tmax, playCallback, playClosure);
 	} catch (MelderError) {
-		Melder_throw (me, ": not played.");
+		Melder_throw (me, U": not played.");
 	}
 }
 
-void FormantGrid_formula_bandwidths (FormantGrid me, const wchar_t *expression, Interpreter interpreter, FormantGrid thee) {
+void FormantGrid_formula_bandwidths (FormantGrid me, const char32 *expression, Interpreter interpreter, FormantGrid thee) {
 	try {
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE);
 		if (thee == NULL) thee = me;
@@ -261,16 +261,16 @@ void FormantGrid_formula_bandwidths (FormantGrid me, const wchar_t *expression, 
 				struct Formula_Result result;
 				Formula_run (irow, icol, & result);
 				if (result. result.numericResult == NUMundefined)
-					Melder_throw ("Cannot put an undefined value into the tier.\nFormula not finished.");
+					Melder_throw (U"Cannot put an undefined value into the tier.\nFormula not finished.");
 				((RealPoint) bandwidth -> points -> item [icol]) -> value = result. result.numericResult;
 			}
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": bandwidth formula not completed.");
+		Melder_throw (me, U": bandwidth formula not completed.");
 	}
 }
 
-void FormantGrid_formula_frequencies (FormantGrid me, const wchar_t *expression, Interpreter interpreter, FormantGrid thee) {
+void FormantGrid_formula_frequencies (FormantGrid me, const char32 *expression, Interpreter interpreter, FormantGrid thee) {
 	try {
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE);
 		if (thee == NULL) thee = me;
@@ -280,12 +280,12 @@ void FormantGrid_formula_frequencies (FormantGrid me, const wchar_t *expression,
 				struct Formula_Result result;
 				Formula_run (irow, icol, & result);
 				if (result. result.numericResult == NUMundefined)
-					Melder_throw ("Cannot put an undefined value into the tier.\nFormula not finished.");
+					Melder_throw (U"Cannot put an undefined value into the tier.\nFormula not finished.");
 				((RealPoint) formant -> points -> item [icol]) -> value = result. result.numericResult;
 			}
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": frequency formula not completed.");
+		Melder_throw (me, U": frequency formula not completed.");
 	}
 }
 
@@ -303,7 +303,7 @@ FormantGrid Formant_downto_FormantGrid (Formant me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to FormantGrid.");
+		Melder_throw (me, U": not converted to FormantGrid.");
 	}
 }
 
@@ -328,7 +328,7 @@ Formant FormantGrid_to_Formant (FormantGrid me, double dt, double intensity) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Formant.");
+		Melder_throw (me, U": not converted to Formant.");
 	}
 }
 
@@ -338,7 +338,7 @@ Sound Sound_Formant_filter (Sound me, Formant formant) {
 		autoSound thee = Sound_FormantGrid_filter (me, grid.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not filtered with ", formant, ".");
+		Melder_throw (me, U": not filtered with ", formant, U".");
 	}
 }
 
@@ -348,7 +348,7 @@ Sound Sound_Formant_filter_noscale (Sound me, Formant formant) {
 		autoSound thee = Sound_FormantGrid_filter_noscale (me, grid.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not filtered with ", formant, ".");
+		Melder_throw (me, U": not filtered with ", formant, U".");
 	}
 }
 

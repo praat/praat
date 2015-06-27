@@ -63,27 +63,27 @@ void structEditorMenu :: v_destroy () {
 
 static void commonCallback (GUI_ARGS) {
 	GUI_IAM (EditorCommand);
-	if (my d_editor && my d_editor -> v_scriptable () && ! wcsstr (my itemTitle, L"...")) {
+	if (my d_editor && my d_editor -> v_scriptable () && ! str32str (my itemTitle, U"...")) {
 		UiHistory_write (U"\n");
-		UiHistory_write_colonize (Melder_peekWcsToStr32 (my itemTitle));
+		UiHistory_write_colonize (my itemTitle);
 	}
 	try {
 		my commandCallback (my d_editor, me, NULL, 0, NULL, NULL, NULL);
 	} catch (MelderError) {
-		if (! Melder_hasError (L"Script exited.")) {
-			Melder_error_ ("Menu command \"", my itemTitle, "\" not completed.");
+		if (! Melder_hasError (U"Script exited.")) {
+			Melder_error_ (U"Menu command \"", my itemTitle, U"\" not completed.");
 		}
-		Melder_flushError (NULL);
+		Melder_flushError ();
 	}
 }
 
-GuiMenuItem EditorMenu_addCommand (EditorMenu me, const wchar_t *itemTitle, long flags,
-	void (*commandCallback) (Editor me, EditorCommand cmd, UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter))
+GuiMenuItem EditorMenu_addCommand (EditorMenu me, const char32 *itemTitle /* cattable */, long flags,
+	void (*commandCallback) (Editor me, EditorCommand cmd, UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter))
 {
 	autoEditorCommand thee = Thing_new (EditorCommand);
 	thy d_editor = my d_editor;
 	thy menu = me;
-	thy itemTitle = Melder_wcsdup (itemTitle);
+	thy itemTitle = Melder_dup (itemTitle);
 	thy itemWidget =
 		commandCallback == NULL ? GuiMenu_addSeparator (my menuWidget) :
 		flags & Editor_HIDDEN ? NULL :
@@ -96,10 +96,10 @@ GuiMenuItem EditorMenu_addCommand (EditorMenu me, const wchar_t *itemTitle, long
 
 /*GuiObject EditorCommand_getItemWidget (EditorCommand me) { return my itemWidget; }*/
 
-EditorMenu Editor_addMenu (Editor me, const wchar_t *menuTitle, long flags) {
+EditorMenu Editor_addMenu (Editor me, const char32 *menuTitle, long flags) {
 	autoEditorMenu thee = Thing_new (EditorMenu);
 	thy d_editor = me;
-	thy menuTitle = Melder_wcsdup (menuTitle);
+	thy menuTitle = Melder_dup (menuTitle);
 	thy menuWidget = GuiMenu_createInWindow (my d_windowForm, menuTitle, flags);
 	thy commands = Ordered_create ();
 	EditorMenu result = thee.peek();
@@ -109,23 +109,23 @@ EditorMenu Editor_addMenu (Editor me, const wchar_t *menuTitle, long flags) {
 
 /*GuiObject EditorMenu_getMenuWidget (EditorMenu me) { return my menuWidget; }*/
 
-GuiMenuItem Editor_addCommand (Editor me, const wchar_t *menuTitle, const wchar_t *itemTitle, long flags,
-	void (*commandCallback) (Editor me, EditorCommand cmd, UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter))
+GuiMenuItem Editor_addCommand (Editor me, const char32 *menuTitle, const char32 *itemTitle, long flags,
+	void (*commandCallback) (Editor me, EditorCommand cmd, UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter))
 {
 	try {
 		long numberOfMenus = my menus -> size;
 		for (long imenu = 1; imenu <= numberOfMenus; imenu ++) {
 			EditorMenu menu = (EditorMenu) my menus -> item [imenu];
-			if (wcsequ (menuTitle, menu -> menuTitle))
+			if (str32equ (menuTitle, menu -> menuTitle))
 				return EditorMenu_addCommand (menu, itemTitle, flags, commandCallback);
 		}
-		Melder_throw ("Menu \"", menuTitle, L"\" does not exist.");
+		Melder_throw (U"Menu \"", menuTitle, U"\" does not exist.");
 	} catch (MelderError) {
-		Melder_throw ("Command \"", itemTitle, "\" not inserted in menu \"", menuTitle, ".");
+		Melder_throw (U"Command \"", itemTitle, U"\" not inserted in menu \"", menuTitle, U".");
 	}
 }
 
-static void Editor_scriptCallback (Editor me, EditorCommand cmd, UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter) {
+static void Editor_scriptCallback (Editor me, EditorCommand cmd, UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter) {
 	(void) sendingForm;
 	(void) narg;
 	(void) args;
@@ -134,26 +134,26 @@ static void Editor_scriptCallback (Editor me, EditorCommand cmd, UiForm sendingF
 	DO_RunTheScriptFromAnyAddedEditorCommand (me, cmd -> script);
 }
 
-GuiMenuItem Editor_addCommandScript (Editor me, const wchar_t *menuTitle, const wchar_t *itemTitle, long flags,
-	const wchar_t *script)
+GuiMenuItem Editor_addCommandScript (Editor me, const char32 *menuTitle, const char32 *itemTitle, long flags,
+	const char32 *script)
 {
 	long numberOfMenus = my menus -> size;
 	for (long imenu = 1; imenu <= numberOfMenus; imenu ++) {
 		EditorMenu menu = (EditorMenu) my menus -> item [imenu];
-		if (wcsequ (menuTitle, menu -> menuTitle)) {
+		if (str32equ (menuTitle, menu -> menuTitle)) {
 			autoEditorCommand cmd = Thing_new (EditorCommand);
 			cmd -> d_editor = me;
 			cmd -> menu = menu;
-			cmd -> itemTitle = Melder_wcsdup_f (itemTitle);
+			cmd -> itemTitle = Melder_dup_f (itemTitle);
 			cmd -> itemWidget = script == NULL ? GuiMenu_addSeparator (menu -> menuWidget) :
 				GuiMenu_addItem (menu -> menuWidget, itemTitle, flags, commonCallback, cmd.peek());   // DANGLE BUG
 			cmd -> commandCallback = Editor_scriptCallback;
-			if (wcslen (script) == 0) {
-				cmd -> script = Melder_wcsdup_f (L"");
+			if (str32len (script) == 0) {
+				cmd -> script = Melder_dup_f (U"");
 			} else {
 				structMelderFile file = { 0 };
 				Melder_relativePathToFile (script, & file);
-				cmd -> script = Melder_wcsdup_f (Melder_fileToPath (& file));
+				cmd -> script = Melder_dup_f (Melder_fileToPath (& file));
 			}
 			GuiMenuItem result = cmd -> itemWidget;
 			Collection_addItem (menu -> commands, cmd.transfer());
@@ -161,60 +161,60 @@ GuiMenuItem Editor_addCommandScript (Editor me, const wchar_t *menuTitle, const 
 		}
 	}
 	Melder_warning (
-		"Menu \"", menuTitle, L"\" does not exist.\n"
-		"Command \"", itemTitle, "\" not inserted in menu \"", menuTitle, ".\n"
-		"To fix this, go to Praat->Preferences->Buttons->Editors, and remove the script from this menu.\n"
-		"You may want to install the script in a different menu.");
+		U"Menu \"", menuTitle, U"\" does not exist.\n"
+		U"Command \"", itemTitle, U"\" not inserted in menu \"", menuTitle, U".\n"
+		U"To fix this, go to Praat->Preferences->Buttons->Editors, and remove the script from this menu.\n"
+		U"You may want to install the script in a different menu.");
 	return NULL;
 }
 
-void Editor_setMenuSensitive (Editor me, const wchar_t *menuTitle, int sensitive) {
+void Editor_setMenuSensitive (Editor me, const char32 *menuTitle, int sensitive) {
 	int numberOfMenus = my menus -> size;
 	for (int imenu = 1; imenu <= numberOfMenus; imenu ++) {
 		EditorMenu menu = (EditorMenu) my menus -> item [imenu];
-		if (wcsequ (menuTitle, menu -> menuTitle)) {
+		if (str32equ (menuTitle, menu -> menuTitle)) {
 			GuiThing_setSensitive (menu -> menuWidget, sensitive);
 			return;
 		}
 	}
 }
 
-EditorCommand Editor_getMenuCommand (Editor me, const wchar_t *menuTitle, const wchar_t *itemTitle) {
+EditorCommand Editor_getMenuCommand (Editor me, const char32 *menuTitle, const char32 *itemTitle) {
 	int numberOfMenus = my menus -> size;
 	for (int imenu = 1; imenu <= numberOfMenus; imenu ++) {
 		EditorMenu menu = (EditorMenu) my menus -> item [imenu];
-		if (wcsequ (menuTitle, menu -> menuTitle)) {
+		if (str32equ (menuTitle, menu -> menuTitle)) {
 			int numberOfCommands = menu -> commands -> size, icommand;
 			for (icommand = 1; icommand <= numberOfCommands; icommand ++) {
 				EditorCommand command = (EditorCommand) menu -> commands -> item [icommand];
-				if (wcsequ (itemTitle, command -> itemTitle))
+				if (str32equ (itemTitle, command -> itemTitle))
 					return command;
 			}
 		}
 	}
-	Melder_throw ("Command \"", itemTitle, "\" not found in menu \"", menuTitle, "\".");
+	Melder_throw (U"Command \"", itemTitle, U"\" not found in menu \"", menuTitle, U"\".");
 }
 
-void Editor_doMenuCommand (Editor me, const wchar_t *commandTitle, int narg, Stackel args, const wchar_t *arguments, Interpreter interpreter) {
+void Editor_doMenuCommand (Editor me, const char32 *commandTitle, int narg, Stackel args, const char32 *arguments, Interpreter interpreter) {
 	int numberOfMenus = my menus -> size;
 	for (int imenu = 1; imenu <= numberOfMenus; imenu ++) {
 		EditorMenu menu = (EditorMenu) my menus -> item [imenu];
 		long numberOfCommands = menu -> commands -> size;
 		for (long icommand = 1; icommand <= numberOfCommands; icommand ++) {
 			EditorCommand command = (EditorCommand) menu -> commands -> item [icommand];
-			if (wcsequ (commandTitle, command -> itemTitle)) {
+			if (str32equ (commandTitle, command -> itemTitle)) {
 				command -> commandCallback (me, command, NULL, narg, args, arguments, interpreter);
 				return;
 			}
 		}
 	}
-	Melder_throw ("Command not available in ", my classInfo -> className, ".");
+	Melder_throw (U"Command not available in ", my classInfo -> className, U".");
 }
 
 /********** class Editor **********/
 
 void structEditor :: v_destroy () {
-	trace ("enter");
+	trace (U"enter");
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	/*
 	 * The following command must be performed before the shell is destroyed.
@@ -247,13 +247,13 @@ void structEditor :: v_destroy () {
 }
 
 void structEditor :: v_info () {
-	MelderInfo_writeLine (L"Editor type: ", Thing_className (this));
-	MelderInfo_writeLine (L"Editor name: ", our name ? our name : L"<no name>");
+	MelderInfo_writeLine (U"Editor type: ", Thing_className (this));
+	MelderInfo_writeLine (U"Editor name: ", our name ? our name : U"<no name>");
 	time_t today = time (NULL);
-	MelderInfo_writeLine (L"Date: ", Melder_peekUtf8ToWcs (ctime (& today)));   // includes a newline
+	MelderInfo_writeLine (U"Date: ", Melder_peek8to32 (ctime (& today)));   // includes a newline
 	if (our data) {
-		MelderInfo_writeLine (L"Data type: ", our data -> classInfo -> className);
-		MelderInfo_writeLine (L"Data name: ", our data -> name);
+		MelderInfo_writeLine (U"Data type: ", our data -> classInfo -> className);
+		MelderInfo_writeLine (U"Data name: ", our data -> name);
 	}
 }
 
@@ -278,9 +278,9 @@ static void menu_cb_sendBackToCallingProgram (EDITOR_ARGS) {
 	if (my data) {
 		extern structMelderDir praatDir;
 		structMelderFile file = { 0 };
-		MelderDir_getFile (& praatDir, L"praat_backToCaller.Data", & file);
+		MelderDir_getFile (& praatDir, U"praat_backToCaller.Data", & file);
 		Data_writeToTextFile (my data, & file);
-		sendsocket (my callbackSocket, Melder_peekWcsToUtf8 (my data -> name));
+		sendsocket (my callbackSocket, Melder_peek32to8 (my data -> name));
 	}
 	my v_goAway ();
 }
@@ -293,15 +293,15 @@ static void menu_cb_close (EDITOR_ARGS) {
 static void menu_cb_undo (EDITOR_ARGS) {
 	EDITOR_IAM (Editor);
 	my v_restoreData ();
-	if (wcsnequ (my undoText, L"Undo", 4)) my undoText [0] = 'R', my undoText [1] = 'e';
-	else if (wcsnequ (my undoText, L"Redo", 4)) my undoText [0] = 'U', my undoText [1] = 'n';
-	else wcscpy (my undoText, L"Undo?");
+	if (str32nequ (my undoText, U"Undo", 4)) my undoText [0] = U'R', my undoText [1] = U'e';
+	else if (str32nequ (my undoText, U"Redo", 4)) my undoText [0] = U'U', my undoText [1] = U'n';
+	else str32cpy (my undoText, U"Undo?");
 	#if gtk
-		gtk_label_set_label (GTK_LABEL (gtk_bin_get_child (GTK_BIN (my undoButton -> d_widget))), Melder_peekWcsToUtf8 (my undoText));
+		gtk_label_set_label (GTK_LABEL (gtk_bin_get_child (GTK_BIN (my undoButton -> d_widget))), Melder_peek32to8 (my undoText));
 	#elif cocoa
-		[(GuiCocoaMenuItem *) my undoButton -> d_widget   setTitle: (NSString *) Melder_peekWcsToCfstring (my undoText)];
+		[(GuiCocoaMenuItem *) my undoButton -> d_widget   setTitle: (NSString *) Melder_peek32toCfstring (my undoText)];
 	#elif motif
-		char *text_utf8 = Melder_peekWcsToUtf8 (my undoText);
+		char *text_utf8 = Melder_peek32to8 (my undoText);
 		XtVaSetValues (my undoButton -> d_widget, XmNlabelString, text_utf8, NULL);
 	#endif
 	/*
@@ -336,7 +336,7 @@ void structEditor :: v_createMenuItems_file (EditorMenu menu) {
 
 void structEditor :: v_createMenuItems_edit (EditorMenu menu) {
 	if (our data)
-		our undoButton = EditorMenu_addCommand (menu, L"Cannot undo", GuiMenu_INSENSITIVE + 'Z', menu_cb_undo);
+		our undoButton = EditorMenu_addCommand (menu, U"Cannot undo", GuiMenu_INSENSITIVE + 'Z', menu_cb_undo);
 }
 
 static void menu_cb_settingsReport (EDITOR_ARGS) {
@@ -354,50 +354,47 @@ void structEditor :: v_createMenuItems_query (EditorMenu menu) {
 }
 
 void structEditor :: v_createMenuItems_query_info (EditorMenu menu) {
-	EditorMenu_addCommand (menu, L"Editor info", 0, menu_cb_settingsReport);
-	EditorMenu_addCommand (menu, L"Settings report", Editor_HIDDEN, menu_cb_settingsReport);
+	EditorMenu_addCommand (menu, U"Editor info", 0, menu_cb_settingsReport);
+	EditorMenu_addCommand (menu, U"Settings report", Editor_HIDDEN, menu_cb_settingsReport);
 	if (data) {
-		static MelderString title = { 0 };
-		MelderString_empty (& title);
-		MelderString_append (& title, Thing_className (data), L" info");
-		EditorMenu_addCommand (menu, title.string, 0, menu_cb_info);
+		EditorMenu_addCommand (menu, Melder_cat (Thing_className (data), U" info"), 0, menu_cb_info);
 	}
 }
 
 void structEditor :: v_createMenus () {
-	EditorMenu menu = Editor_addMenu (this, L"File", 0);
+	EditorMenu menu = Editor_addMenu (this, U"File", 0);
 	v_createMenuItems_file (menu);
 	if (v_editable ()) {
-		menu = Editor_addMenu (this, L"Edit", 0);
+		menu = Editor_addMenu (this, U"Edit", 0);
 		v_createMenuItems_edit (menu);
 	}
 	if (v_hasQueryMenu ()) {
-		menu = Editor_addMenu (this, L"Query", 0);
+		menu = Editor_addMenu (this, U"Query", 0);
 		v_createMenuItems_query (menu);
 	}
 }
 
 void structEditor :: v_form_pictureWindow (EditorCommand cmd) {
-	LABEL (L"", L"Picture window:")
-	BOOLEAN (L"Erase first", 1);
+	LABEL (U"", U"Picture window:")
+	BOOLEAN (U"Erase first", 1);
 }
 void structEditor :: v_ok_pictureWindow (EditorCommand cmd) {
-	SET_INTEGER (L"Erase first", pref_picture_eraseFirst ());
+	SET_INTEGER (U"Erase first", pref_picture_eraseFirst ());
 }
 void structEditor :: v_do_pictureWindow (EditorCommand cmd) {
-	pref_picture_eraseFirst () = GET_INTEGER (L"Erase first");
+	pref_picture_eraseFirst () = GET_INTEGER (U"Erase first");
 }
 
 void structEditor :: v_form_pictureMargins (EditorCommand cmd) {
 	Any radio = 0;
-	LABEL (L"", L"Margins:")
-	OPTIONMENU_ENUM (L"Write name at top", kEditor_writeNameAtTop, kEditor_writeNameAtTop_DEFAULT);
+	LABEL (U"", U"Margins:")
+	OPTIONMENU_ENUM (U"Write name at top", kEditor_writeNameAtTop, kEditor_writeNameAtTop_DEFAULT);
 }
 void structEditor :: v_ok_pictureMargins (EditorCommand cmd) {
-	SET_ENUM (L"Write name at top", kEditor_writeNameAtTop, pref_picture_writeNameAtTop ());
+	SET_ENUM (U"Write name at top", kEditor_writeNameAtTop, pref_picture_writeNameAtTop ());
 }
 void structEditor :: v_do_pictureMargins (EditorCommand cmd) {
-	pref_picture_writeNameAtTop () = GET_ENUM (kEditor_writeNameAtTop, L"Write name at top");
+	pref_picture_writeNameAtTop () = GET_ENUM (kEditor_writeNameAtTop, U"Write name at top");
 }
 
 static void gui_window_cb_goAway (I) {
@@ -408,7 +405,7 @@ static void gui_window_cb_goAway (I) {
 }
 
 void praat_addCommandsToEditor (Editor me);
-void Editor_init (Editor me, int x, int y, int width, int height, const wchar_t *title, Data data) {
+void Editor_init (Editor me, int x, int y, int width, int height, const char32 *title, Data data) {
 	double xmin, ymin, widthmax, heightmax;
 	Gui_getWindowPositioningBounds (& xmin, & ymin, & widthmax, & heightmax);
 	/*
@@ -468,7 +465,7 @@ void Editor_init (Editor me, int x, int y, int width, int height, const wchar_t 
 		 * Zero y: randomize between the top and bottom of the screen.
 		 */
 		top = NUMrandomInteger ((int) ymin + 4, (int) ymin + (int) heightmax - height - 4);
-		//Melder_casual ("%d %d %d %d", (int) ymin, (int) heightmax, height, top);
+		//Melder_casual (ymin, U" ", heightmax, U" ", height, U" ", top);
 		bottom = top + height;
 	}
 	#if defined (macintoshXXX) || gtk
@@ -491,37 +488,37 @@ void Editor_init (Editor me, int x, int y, int width, int height, const wchar_t 
 
 	if (my v_hasMenuBar ()) {
 		my v_createMenus ();
-		EditorMenu helpMenu = Editor_addMenu (me, L"Help", 0);
+		EditorMenu helpMenu = Editor_addMenu (me, U"Help", 0);
 		my v_createHelpMenuItems (helpMenu);
-		EditorMenu_addCommand (helpMenu, L"-- search --", 0, NULL);
-		my searchButton = EditorMenu_addCommand (helpMenu, L"Search manual...", 'M', menu_cb_searchManual);
+		EditorMenu_addCommand (helpMenu, U"-- search --", 0, NULL);
+		my searchButton = EditorMenu_addCommand (helpMenu, U"Search manual...", 'M', menu_cb_searchManual);
 		if (my v_scriptable ()) {
-			Editor_addCommand (me, L"File", L"New editor script", 0, menu_cb_newScript);
-			Editor_addCommand (me, L"File", L"Open editor script...", 0, menu_cb_openScript);
-			Editor_addCommand (me, L"File", L"-- after script --", 0, 0);
+			Editor_addCommand (me, U"File", U"New editor script", 0, menu_cb_newScript);
+			Editor_addCommand (me, U"File", U"Open editor script...", 0, menu_cb_openScript);
+			Editor_addCommand (me, U"File", U"-- after script --", 0, 0);
 		}
 		/*
 		 * Add the scripted commands.
 		 */
 		praat_addCommandsToEditor (me);
 		if (my callbackSocket)
-			Editor_addCommand (me, L"File", L"Send back to calling program", 0, menu_cb_sendBackToCallingProgram);
-		Editor_addCommand (me, L"File", L"Close", 'W', menu_cb_close);
+			Editor_addCommand (me, U"File", U"Send back to calling program", 0, menu_cb_sendBackToCallingProgram);
+		Editor_addCommand (me, U"File", U"Close", 'W', menu_cb_close);
 	}
 	GuiThing_show (my d_windowForm);
 }
 
-void Editor_save (Editor me, const wchar_t *text) {
+void Editor_save (Editor me, const char32 *text) {
 	my v_saveData ();
 	if (! my undoButton) return;
 	GuiThing_setSensitive (my undoButton, true);
-	swprintf (my undoText, 100, L"Undo %ls", text);
+	Melder_sprint (my undoText,100, U"Undo ", text);
 	#if gtk
-		gtk_label_set_label (GTK_LABEL (gtk_bin_get_child (GTK_BIN (my undoButton -> d_widget))), Melder_peekWcsToUtf8 (my undoText));
+		gtk_label_set_label (GTK_LABEL (gtk_bin_get_child (GTK_BIN (my undoButton -> d_widget))), Melder_peek32to8 (my undoText));
 	#elif cocoa
-		[(GuiCocoaMenuItem *) my undoButton -> d_widget   setTitle: (NSString *) Melder_peekWcsToCfstring (my undoText)];
+		[(GuiCocoaMenuItem *) my undoButton -> d_widget   setTitle: (NSString *) Melder_peek32toCfstring (my undoText)];
 	#elif motif
-		char *text_utf8 = Melder_peekWcsToUtf8 (my undoText);
+		char *text_utf8 = Melder_peek32to8 (my undoText);
 		XtVaSetValues (my undoButton -> d_widget, XmNlabelString, text_utf8, NULL);
 	#endif
 }

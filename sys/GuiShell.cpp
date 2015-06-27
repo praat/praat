@@ -26,7 +26,7 @@ void structGuiShell :: v_destroy () {
 	#if cocoa
 		if (our d_cocoaWindow) {
 			[our d_cocoaWindow setUserData: NULL];   // undangle reference to this
-			Melder_fatal ("ordering out?");
+			Melder_fatal (U"ordering out?");
 			[our d_cocoaWindow orderOut: nil];
 			[our d_cocoaWindow close];
 			[our d_cocoaWindow release];
@@ -60,15 +60,15 @@ int GuiShell_getShellHeight (GuiShell me) {
 	return height;
 }
 
-void GuiShell_setTitle (GuiShell me, const wchar_t *title) {
+void GuiShell_setTitle (GuiShell me, const char32 *title) {
 	#if gtk
-		gtk_window_set_title (my d_gtkWindow, Melder_peekWcsToUtf8 (title));
+		gtk_window_set_title (my d_gtkWindow, Melder_peek32to8 (title));
 	#elif cocoa
-		[my d_cocoaWindow setTitle: (NSString *) Melder_peekWcsToCfstring (title)];
+		[my d_cocoaWindow setTitle: (NSString *) Melder_peek32toCfstring (title)];
 	#elif win
-		SetWindowText (my d_xmShell -> window, title);
+		SetWindowTextW (my d_xmShell -> window, Melder_peek32toW (title));
 	#elif mac
-		SetWindowTitleWithCFString (my d_xmShell -> nat.window.ptr, (CFStringRef) Melder_peekWcsToCfstring (title));
+		SetWindowTitleWithCFString (my d_xmShell -> nat.window.ptr, (CFStringRef) Melder_peek32toCfstring (title));
 	#endif
 }
 

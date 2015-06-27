@@ -193,7 +193,7 @@ static void Diagonalizer_and_CrossCorrelationTables_ffdiag (Diagonalizer me, Cro
 			w[i][i] = 1;
 		}
 
-		autoMelderProgress progress (L"Simultaneous diagonalization of many CrossCorrelationTables...");
+		autoMelderProgress progress (U"Simultaneous diagonalization of many CrossCorrelationTables...");
 		double dm_new = CrossCorrelationTables_getDiagonalityMeasure (ccts.peek(), NULL, 0, 0);
 		try {
 			double dm_old, theta = 1, dm_start = dm_new;
@@ -256,13 +256,13 @@ static void Diagonalizer_and_CrossCorrelationTables_ffdiag (Diagonalizer me, Cro
 				}
 				dm_new = CrossCorrelationTables_getDiagonalityMeasure (ccts.peek(), 0, 0, 0);
 				iter++;
-				Melder_progress ((double) iter / (double) maxNumberOfIterations, L"Iteration: ", Melder_integer (iter), L", measure: ", Melder_double (dm_new), L"\n fractional measure: ", Melder_double (dm_new / dm_start));
+				Melder_progress ((double) iter / (double) maxNumberOfIterations, U"Iteration: ", iter, U", measure: ", dm_new, U"\n fractional measure: ", dm_new / dm_start);
 			} while (fabs ((dm_old - dm_new) / dm_new) > delta && iter < maxNumberOfIterations);
 		} catch (MelderError) {
 			Melder_clearError ();
 		}
 	} catch (MelderError) {
-		Melder_throw (me, " & ", thee, ": no joint diagonalization (ffdiag).");
+		Melder_throw (me, U" & ", thee, U": no joint diagonalization (ffdiag).");
 	}
 }
 
@@ -328,7 +328,7 @@ static void Diagonalizer_and_CrossCorrelationTable_qdiag (Diagonalizer me, Cross
 		Eigen_initFromSymmetricMatrix (eigen.peek(), c0 -> data, dimension);
 		for (long i = 1; i <= dimension; i++) {
 			if (eigen -> eigenvalues[i] < 0) {
-				Melder_throw ("Covariance matrix not positive definite, eigenvalue[", Melder_integer(i), "] is negative.");
+				Melder_throw (U"Covariance matrix not positive definite, eigenvalue[", i, U"] is negative.");
 			}
 			double scalef = 1 / sqrt (eigen -> eigenvalues[i]);
 			for (long j = 1; j <= dimension; j++) {
@@ -363,7 +363,7 @@ static void Diagonalizer_and_CrossCorrelationTable_qdiag (Diagonalizer me, Cross
 		long iter = 0;
 		double delta_w;
 
-		autoMelderProgress progress (L"Simultaneous diagonalization of many CrossCorrelationTables...");
+		autoMelderProgress progress (U"Simultaneous diagonalization of many CrossCorrelationTables...");
 		try {
 			do {
 				// the standard diagonality measure is rather expensive to calculate so we compare the norms of
@@ -405,8 +405,7 @@ static void Diagonalizer_and_CrossCorrelationTable_qdiag (Diagonalizer me, Cross
 				}
 				iter++;
 
-				Melder_progress ((double) iter / (double) (maxNumberOfIterations + 1), L"Iteration: ", Melder_integer (iter), L", norm: ",
-					Melder_double (delta_w));
+				Melder_progress ((double) iter / (double) (maxNumberOfIterations + 1), U"Iteration: ", iter, U", norm: ", delta_w);
 			} while (delta_w > delta && iter < maxNumberOfIterations);
 		} catch (MelderError) {
 			Melder_clearError ();
@@ -422,7 +421,7 @@ static void Diagonalizer_and_CrossCorrelationTable_qdiag (Diagonalizer me, Cross
 	//	double dm = CrossCorrelationTables_and_Diagonalizer_getDiagonalityMeasure (thee, me, cweights, 1, thy size);
 
 	} catch (MelderError) {
-		Melder_throw (me, " & ", thee, ": no joint diagonalization (qdiag).");
+		Melder_throw (me, U" & ", thee, U": no joint diagonalization (qdiag).");
 	}
 }
 
@@ -440,7 +439,7 @@ void MixingMatrix_and_CrossCorrelationTables_improveUnmixing (MixingMatrix me, C
  * 	lag >= 0
  */
 static void NUMcrossCorrelate_rows (double **x, long nrows, long icol1, long icol2, long lag, double **cc, double *centroid, double scale) {
-	lag = abs (lag);
+	lag = labs (lag);
 	long nsamples = icol2 - icol1 + 1 + lag;
 	for (long i = 1; i <= nrows; i++) {
 		double sum = 0;
@@ -471,7 +470,7 @@ CrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me, double startTime
 			startTime = my xmin;
 			endTime = my xmax;
 		}
-		long lag = lagStep / my dx;
+		long lag = (long) floor (lagStep / my dx);   // ppgb: voor al dit soort dingen geldt: waarom afronden naar beneden?
 		long i1 = Sampled_xToNearestIndex (me, startTime);
 		if (i1 < 1) {
 			i1 = 1;
@@ -483,7 +482,7 @@ CrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me, double startTime
 		i2 -= lag;
 		long nsamples = i2 - i1 + 1;
 		if (nsamples <= my ny) {
-			Melder_throw ("Not enough samples, choose a longer interval.");
+			Melder_throw (U"Not enough samples, choose a longer interval.");
 		}
 		autoCrossCorrelationTable thee = CrossCorrelationTable_create (my ny);
 
@@ -493,7 +492,7 @@ CrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me, double startTime
 
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": CrossCorrelationTable not created.");
+		Melder_throw (me, U": CrossCorrelationTable not created.");
 	}
 }
 
@@ -504,13 +503,13 @@ CrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me, double startTime
 CrossCorrelationTable Sounds_to_CrossCorrelationTable_combined (Sound me, Sound thee, double relativeStartTime, double relativeEndTime, double lagStep) {
 	try {
 		if (my dx != thy dx) {
-			Melder_throw ("Sampling frequencies must be equal.");
+			Melder_throw (U"Sampling frequencies must be equal.");
 		}
 		if (relativeEndTime <= relativeStartTime) {
 			relativeStartTime = my xmin;
 			relativeEndTime = my xmax;
 		}
-		long ndelta = lagStep / my dx, nchannels = my ny + thy ny;
+		long ndelta = (long) floor (lagStep / my dx), nchannels = my ny + thy ny;
 		long i1 = Sampled_xToNearestIndex (me, relativeStartTime);
 		if (i1 < 1) {
 			i1 = 1;
@@ -522,7 +521,7 @@ CrossCorrelationTable Sounds_to_CrossCorrelationTable_combined (Sound me, Sound 
 		i2 -= ndelta;
 		long nsamples = i2 - i1 + 1;
 		if (nsamples <= nchannels) {
-			Melder_throw ("Not enough samples");
+			Melder_throw (U"Not enough samples");
 		}
 		autoCrossCorrelationTable him = CrossCorrelationTable_create (nchannels);
 		autoNUMvector<double *> data (1, nchannels);
@@ -539,7 +538,7 @@ CrossCorrelationTable Sounds_to_CrossCorrelationTable_combined (Sound me, Sound 
 
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": CrossCorrelationTable not created.");
+		Melder_throw (me, U": CrossCorrelationTable not created.");
 	}
 }
 
@@ -551,7 +550,7 @@ Covariance Sound_to_Covariance_channels (Sound me, double startTime, double endT
         thy structCrossCorrelationTable :: v_copy (him.peek());
         return him.transfer();
     } catch (MelderError) {
-        Melder_throw (me, ": no Covariance created.");
+        Melder_throw (me, U": no Covariance created.");
     }
 }
 
@@ -565,7 +564,7 @@ CrossCorrelationTables Sound_to_CrossCorrelationTables (Sound me, double startTi
 			endTime = my xmax;
 		}
 		if (startTime + ncovars * lagStep >= endTime) {
-			Melder_throw ("Lag time too large.");
+			Melder_throw (U"Lag time too large.");
 		}
 		autoCrossCorrelationTables thee = CrossCorrelationTables_create ();
 		for (long i = 1; i <= ncovars; i++) {
@@ -575,7 +574,7 @@ CrossCorrelationTables Sound_to_CrossCorrelationTables (Sound me, double startTi
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no CrossCorrelationTables created.");
+		Melder_throw (me, U": no CrossCorrelationTables created.");
 	}
 }
 
@@ -585,7 +584,7 @@ Sound Sound_to_Sound_BSS (Sound me, double startTime, double endTime, long ncova
 		autoSound thee = Sound_and_MixingMatrix_unmix (me, him.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not separated.");
+		Melder_throw (me, U": not separated.");
 	}
 }
 
@@ -602,7 +601,7 @@ Diagonalizer Diagonalizer_create (long dimension) {
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Diagonalizer not created.");
+		Melder_throw (U"Diagonalizer not created.");
 	}
 }
 
@@ -618,15 +617,15 @@ MixingMatrix MixingMatrix_create (long numberOfChannels, long numberOfComponents
 		MixingMatrix_initializeRandom (me.peek());
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("MixingMatrix not created.");
+		Melder_throw (U"MixingMatrix not created.");
 	}
 }
 
-MixingMatrix MixingMatrix_createSimple (long numberOfChannels, long numberOfComponents, wchar_t *elements) {
+MixingMatrix MixingMatrix_createSimple (long numberOfChannels, long numberOfComponents, char32 *elements) {
 	try {
 		long inum = 1, ntokens = Melder_countTokens (elements);
 		if (ntokens == 0) {
-			Melder_throw ("No matrix elements.");
+			Melder_throw (U"No matrix elements.");
 		}
 		long nwanted = numberOfChannels * numberOfComponents;
 
@@ -634,7 +633,7 @@ MixingMatrix MixingMatrix_createSimple (long numberOfChannels, long numberOfComp
 
 		// Construct the full matrix from the elements
 		double number;
-		for (wchar_t *token = Melder_firstToken (elements); token != NULL && inum <= ntokens; token = Melder_nextToken (), inum++) {
+		for (char32 *token = Melder_firstToken (elements); token != NULL && inum <= ntokens; token = Melder_nextToken (), inum++) {
 			long irow = (inum - 1) / numberOfComponents + 1;
 			long icol = (inum - 1) % numberOfComponents + 1;
 			Interpreter_numericExpression (0, token, &number);
@@ -650,7 +649,7 @@ MixingMatrix MixingMatrix_createSimple (long numberOfChannels, long numberOfComp
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("MixingMatrix not created.");
+		Melder_throw (U"MixingMatrix not created.");
 	}
 }
 
@@ -668,13 +667,13 @@ void MixingMatrix_initializeRandom (MixingMatrix me) {
 Diagonalizer MixingMatrix_to_Diagonalizer (MixingMatrix me) {
 	try {
 		if (my numberOfRows != my numberOfColumns) {
-			Melder_throw ("The number of channels and the number of components must be equal.");
+			Melder_throw (U"The number of channels and the number of components must be equal.");
 		}
 		autoDiagonalizer thee = Diagonalizer_create (my numberOfRows);
 		NUMpseudoInverse (my data, my numberOfRows, my numberOfColumns, thy data, 0);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Diagonalizer created.");
+		Melder_throw (me, U": no Diagonalizer created.");
 	}
 }
 
@@ -684,7 +683,7 @@ MixingMatrix Diagonalizer_to_MixingMatrix (Diagonalizer me) {
 		NUMpseudoInverse (my data, my numberOfRows, my numberOfColumns, thy data, 0);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no MixingMatrix created.");
+		Melder_throw (me, U": no MixingMatrix created.");
 	}
 }
 
@@ -693,7 +692,7 @@ MixingMatrix Diagonalizer_to_MixingMatrix (Diagonalizer me) {
 Sound Sound_and_MixingMatrix_mix (Sound me, MixingMatrix thee) {
 	try {
 		if (my ny != thy numberOfColumns) {
-			Melder_throw ("The number of components in the MixingMatrix and the number of channels in the Sound must be equal.");
+			Melder_throw (U"The number of components in the MixingMatrix and the number of channels in the Sound must be equal.");
 		}
 		autoSound him = Sound_create (thy numberOfRows, my xmin, my xmax, my nx, my dx, my x1);
 		for (long i = 1; i <= thy numberOfRows; i++) {
@@ -707,14 +706,14 @@ Sound Sound_and_MixingMatrix_mix (Sound me, MixingMatrix thee) {
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not mixed.");
+		Melder_throw (me, U": not mixed.");
 	}
 }
 
 Sound Sound_and_MixingMatrix_unmix (Sound me, MixingMatrix thee) {
 	try {
 		if (my ny != thy numberOfRows) {
-			Melder_throw ("The MixingMatrix and the Sound must have the same number of channels.");
+			Melder_throw (U"The MixingMatrix and the Sound must have the same number of channels.");
 		}
 
 		autoNUMmatrix<double> minv (1, thy numberOfColumns, 1, thy numberOfRows);
@@ -731,7 +730,7 @@ Sound Sound_and_MixingMatrix_unmix (Sound me, MixingMatrix thee) {
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not unmixed.");
+		Melder_throw (me, U": not unmixed.");
 	}
 }
 
@@ -742,20 +741,20 @@ MixingMatrix Sound_to_MixingMatrix (Sound me, double startTime, double endTime, 
 		MixingMatrix_and_CrossCorrelationTables_improveUnmixing (thee.peek(), ccs.peek(), maxNumberOfIterations, tol, method);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no MixingMatrix created.");
+		Melder_throw (me, U": no MixingMatrix created.");
 	}
 }
 
 MixingMatrix TableOfReal_to_MixingMatrix (TableOfReal me) {
 	try {
 		if (my numberOfColumns != my numberOfRows) {
-			Melder_throw ("Number of rows and columns must be equal.");
+			Melder_throw (U"Number of rows and columns must be equal.");
 		}
 		autoMixingMatrix thee = Thing_new (MixingMatrix);
 		my structTableOfReal :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to MixingMatrix.");
+		Melder_throw (me, U": not converted to MixingMatrix.");
 	}
 }
 
@@ -766,7 +765,7 @@ Thing_implement (CrossCorrelationTable, SSCP, 0);
 void structCrossCorrelationTable :: v_info () {
 	structSSCP :: v_info ();
 	double dm = CrossCorrelationTable_getDiagonalityMeasure (this);
-	MelderInfo_writeLine (L"Diagonality measure: ", Melder_double (dm));
+	MelderInfo_writeLine (U"Diagonality measure: ", dm);
 }
 
 CrossCorrelationTable CrossCorrelationTable_create (long dimension) {
@@ -775,24 +774,24 @@ CrossCorrelationTable CrossCorrelationTable_create (long dimension) {
 		SSCP_init (me.peek(), dimension, dimension);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("CrossCorrelationTable not created.");
+		Melder_throw (U"CrossCorrelationTable not created.");
 	}
 }
 
-CrossCorrelationTable CrossCorrelationTable_createSimple (wchar_t *covars, wchar_t *centroid, long numberOfSamples) {
+CrossCorrelationTable CrossCorrelationTable_createSimple (char32 *covars, char32 *centroid, long numberOfSamples) {
 	try {
 		long dimension = Melder_countTokens (centroid);
 		long ncovars = Melder_countTokens (covars);
 		long ncovars_wanted = dimension * (dimension + 1) / 2;
-		if (ncovars != ncovars_wanted) Melder_throw ("The number of matrix elements and the number of "
-			        "centroid elements are not in concordance. There should be \"d(d+1)/2\" matrix values and \"d\" centroid values.");
+		if (ncovars != ncovars_wanted) Melder_throw (U"The number of matrix elements and the number of "
+			        U"centroid elements are not in concordance. There should be \"d(d+1)/2\" matrix values and \"d\" centroid values.");
 
 		autoCrossCorrelationTable me = CrossCorrelationTable_create (dimension);
 
 		// Construct the full matrix from the upper-diagonal elements
 
 		long inum = 1, irow = 1;
-		for (wchar_t *token = Melder_firstToken (covars); token != NULL && inum <= ncovars_wanted; token = Melder_nextToken (), inum++) {
+		for (char32 *token = Melder_firstToken (covars); token != NULL && inum <= ncovars_wanted; token = Melder_nextToken (), inum++) {
 			double number;
 			long nmissing = (irow - 1) * irow / 2;
 			long inumc = inum + nmissing;
@@ -806,7 +805,7 @@ CrossCorrelationTable CrossCorrelationTable_createSimple (wchar_t *covars, wchar
 		}
 
 		inum = 1;
-		for (wchar_t *token = Melder_firstToken (centroid); token != NULL && inum <= dimension; token = Melder_nextToken (), inum++) {
+		for (char32 *token = Melder_firstToken (centroid); token != NULL && inum <= dimension; token = Melder_nextToken (), inum++) {
 			double number;
 			Interpreter_numericExpression (NULL, token, &number);
 			my centroid[inum] = number;
@@ -814,7 +813,7 @@ CrossCorrelationTable CrossCorrelationTable_createSimple (wchar_t *covars, wchar
 		my numberOfObservations = numberOfSamples;
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("CrossCorrelationTable not created.");
+		Melder_throw (U"CrossCorrelationTable not created.");
 	}
 }
 
@@ -827,10 +826,10 @@ double CrossCorrelationTable_getDiagonalityMeasure (CrossCorrelationTable me) {
 void structCrossCorrelationTables :: v_info () {
 	structOrdered :: v_info ();
 	CrossCorrelationTable thee = (CrossCorrelationTable) item[1];
-	MelderInfo_writeLine (L"  Number of rows and columns: ", Melder_integer (thy numberOfRows));
+	MelderInfo_writeLine (U"  Number of rows and columns: ", thy numberOfRows);
 	for (long i = 1; i <= size; i++) {
 		double dm = CrossCorrelationTable_getDiagonalityMeasure ( (CrossCorrelationTable) item[i]);
-		MelderInfo_writeLine (L"Diagonality measure for item ", Melder_integer (i), L": ", Melder_double (dm));
+		MelderInfo_writeLine (U"Diagonality measure for item ", i, U": ", dm);
 	}
 }
 
@@ -842,7 +841,7 @@ CrossCorrelationTables CrossCorrelationTables_create () {
 		Ordered_init (me.peek(), classCrossCorrelationTable, 30);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("CrossCorrelationTables not created.");
+		Melder_throw (U"CrossCorrelationTables not created.");
 	}
 }
 
@@ -879,13 +878,13 @@ double CrossCorrelationTables_and_Diagonalizer_getDiagonalityMeasure (CrossCorre
 CrossCorrelationTable CrossCorrelationTable_and_Diagonalizer_diagonalize (CrossCorrelationTable me, Diagonalizer thee) {
 	try {
 		if (my numberOfRows != thy numberOfRows) {
-			Melder_throw ("The CrossCorrelationTable and the Diagonalizer matrix dimensions must be equal.");
+			Melder_throw (U"The CrossCorrelationTable and the Diagonalizer matrix dimensions must be equal.");
 		}
 		autoCrossCorrelationTable him = CrossCorrelationTable_create (my numberOfColumns);
 		NUMdmatrices_multiply_VCVp (his data, thy data, my numberOfColumns, my numberOfColumns, my data, 1);
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw ("CrossCorrelationTable not diagonalized.");
+		Melder_throw (U"CrossCorrelationTable not diagonalized.");
 	}
 }
 
@@ -899,7 +898,7 @@ CrossCorrelationTables CrossCorrelationTables_and_Diagonalizer_diagonalize (Cros
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw ("CrossCorrelationTables not diagonalized.");
+		Melder_throw (U"CrossCorrelationTables not diagonalized.");
 	}
 }
 
@@ -910,7 +909,7 @@ Diagonalizer CrossCorrelationTables_to_Diagonalizer (CrossCorrelationTables me, 
 		Diagonalizer_and_CrossCorrelationTables_improveDiagonality (thee.peek(), me, maxNumberOfIterations, tol, method);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Diagonalizer not created from CrossCorrelationTables.");
+		Melder_throw (U"Diagonalizer not created from CrossCorrelationTables.");
 	};
 }
 
@@ -932,7 +931,7 @@ Sound Sound_whitenChannels (Sound me, double varianceFraction) {
         autoSound thee = Sound_and_Covariance_whitenChannels (me, cov.peek(), varianceFraction);
         return thee.transfer();
     } catch (MelderError) {
-        Melder_throw (me, ": not whitened.");
+        Melder_throw (me, U": not whitened.");
     }
 }
 
@@ -943,7 +942,7 @@ Sound Sound_and_Covariance_whitenChannels (Sound me, Covariance thee, double var
         autoSound him = Sound_and_PCA_whitenChannels (me, pca.peek(), numberOfComponents);
         return him.transfer ();
     } catch (MelderError) {
-        Melder_throw (me, ": not whitened from ", thee);
+        Melder_throw (me, U": not whitened from ", thee);
     }
 }
 
@@ -991,7 +990,7 @@ CrossCorrelationTables CrossCorrelationTables_createTestSet (long dimension, lon
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("CrossCorrelationTables test set not created.");
+		Melder_throw (U"CrossCorrelationTables test set not created.");
 	}
 }
 
@@ -1001,14 +1000,14 @@ static void Sound_and_MixingMatrix_improveUnmixing_fica (Sound me, MixingMatrix 
 	try {
 		long iter = 0;
 		if (my ny != thy numberOfColumns) {
-			Melder_throw ("Dimensions do not agree.");
+			Melder_throw (U"Dimensions do not agree.");
 		}
 		autoNUMmatrix<double> x (NUMmatrix_copy (my z, 1, my ny, 1, my nx), 1, 1);
 		do {
 			iter++;
 		} while (/*fabs((dm_old - dm_new) / dm_new) > tol &&*/ iter < maxNumberOfIterations);
 	} catch (MelderError) {
-		Melder_throw (me, " & ", thee, " .");
+		Melder_throw (me, U" & ", thee, U" .");
 	}
 }
 /* End of file ICA.cpp 987*/

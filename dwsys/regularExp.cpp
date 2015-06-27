@@ -91,13 +91,9 @@
  * djmw 20101119 Changed NULL to '\0' in makeDelimiterTable
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <ctype.h>
 #include <limits.h>
 #include "regularExp.h"
-#include "melder.h"
 
 /* The first byte of the regexp internal `program' is a magic number to help
    guard against corrupted data; the compiled regex code really begins in the
@@ -399,11 +395,11 @@
 #define LENGTH_SIZE	4
 #define NODE_SIZE       (NEXT_PTR_SIZE + OP_CODE_SIZE)
 
-#define GET_OP_CODE(p)  (*(regularExp_CHAR *)(p))
+#define GET_OP_CODE(p)  (*(char32 *)(p))
 #define OPERAND(p)      ((p) + NODE_SIZE)
 #define GET_OFFSET(p)   ((( *((p) + 1) & 0377) << 8) + (( *((p) + 2)) & 0377))
-#define PUT_OFFSET_L(v) (regularExp_CHAR)(((v) >> 8) & 0377)
-#define PUT_OFFSET_R(v) (regularExp_CHAR) ((v)       & 0377)
+#define PUT_OFFSET_L(v) (char32)(((v) >> 8) & 0377)
+#define PUT_OFFSET_R(v) (char32) ((v)       & 0377)
 #define GET_LOWER(p)    ((( *((p) + NODE_SIZE) & 0377) << 8) + \
                          (( *((p) + NODE_SIZE+1)) & 0377))
 #define GET_UPPER(p)    ((( *((p) + NODE_SIZE+2) & 0377) << 8) + \
@@ -416,7 +412,7 @@
                           (c) == '?' || (c) == Brace_Char)
 #define SET_BIT(i,n)     ((i) |= (1 << ((n) - 1)))
 #define TEST_BIT(i,n)    ((i) &  (1 << ((n) - 1)))
-#define U_CHAR_AT(p)     ((unsigned int) *(regularExp_CHAR *)(p))
+#define U_CHAR_AT(p)     ((unsigned int) *(char32 *)(p))
 
 /* Flags to be passed up and down via function parameters during compile. */
 
@@ -459,9 +455,9 @@ character class */
 #define MAX_COMPILED_SIZE  32767UL  /* Largest size a compiled regex can be.
 	       Probably could be 65535UL. */
 
-       /* Global work variables for `CompileRE'. */
+/* Global work variables for `CompileRE'. */
 
-		       static regularExp_CHAR *Reg_Parse;       /* Input scan ptr (scans user's regex) */
+static char32 *Reg_Parse;       /* Input scan ptr (scans user's regex) */
 static int            Total_Paren;     /* Parentheses, (),  counter. */
 static int            Num_Braces;      /* Number of general {m,n} constructs.
                                           {m,n} quantifiers of SIMPLE atoms are
@@ -469,8 +465,8 @@ static int            Num_Braces;      /* Number of general {m,n} constructs.
 static int            Closed_Parens;   /* Bit flags indicating () closure. */
 static int            Paren_Has_Width; /* Bit flags indicating ()'s that are
                                           known to not match the empty string */
-static regularExp_CHAR  Compute_Size;    /* Address of this used as flag. */
-static regularExp_CHAR *Code_Emit_Ptr;   /* When Code_Emit_Ptr is set to
+static char32  Compute_Size;    /* Address of this used as flag. */
+static char32 *Code_Emit_Ptr;   /* When Code_Emit_Ptr is set to
                                           &Compute_Size no code is emitted.
                                           Instead, the size of code that WOULD
                                           have been generated is accumulated in
@@ -478,25 +474,25 @@ static regularExp_CHAR *Code_Emit_Ptr;   /* When Code_Emit_Ptr is set to
                                           points to where compiled regex code is
                                           to be written. */
 static unsigned long  Reg_Size;        /* Size of compiled regex code. */
-static const wchar         **Error_Ptr;       /* Place to store error messages so
+static const char32         **Error_Ptr;       /* Place to store error messages so
                                           they can be returned by `CompileRE' */
-static wchar           Error_Text [128];/* Sting to build error messages in. */
+static char32           Error_Text [128];/* Sting to build error messages in. */
 
-static regularExp_CHAR  White_Space [WHITE_SPACE_SIZE]; /* Arrays used by       */
-static regularExp_CHAR  Word_Char   [ALNUM_CHAR_SIZE];  /* functions            */
-static regularExp_CHAR  Letter_Char [ALNUM_CHAR_SIZE];  /* init_ansi_classes () */
+static char32  White_Space [WHITE_SPACE_SIZE]; /* Arrays used by       */
+static char32  Word_Char   [ALNUM_CHAR_SIZE];  /* functions            */
+static char32  Letter_Char [ALNUM_CHAR_SIZE];  /* init_ansi_classes () */
 /* and
    shortcut_escape ().  */
 
-static regularExp_CHAR  ASCII_Digits [] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '\0' }; /* Same for all */
+static char32  ASCII_Digits [] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '\0' }; /* Same for all */
 /* locales.     */
 static int            Is_Case_Insensitive;
 static int            Match_Newline;
 
 static int            Enable_Counting_Quantifier = 1;
-static regularExp_CHAR  Brace_Char;
-static regularExp_CHAR  Default_Meta_Char [] = { '{', '.', '*', '+', '?', '[', '(', '|', ')', '^', '<', '>', '$', '\0' };
-static regularExp_CHAR *Meta_Char;
+static char32  Brace_Char;
+static char32  Default_Meta_Char [] = { '{', '.', '*', '+', '?', '[', '(', '|', ')', '^', '<', '>', '$', '\0' };
+static char32 *Meta_Char;
 
 typedef struct {
 	long lower;
@@ -505,32 +501,24 @@ typedef struct {
 
 /* Forward declarations for functions used by `CompileRE'. */
 
-static regularExp_CHAR *alternative (int *flag_param, len_range *range_param);
-static regularExp_CHAR *back_ref (regularExp_CHAR *c, int *flag_param,
-                                  int emit);
-static regularExp_CHAR *chunk (int paren, int *flag_param, len_range *range_param);
-static void            emit_byte (regularExp_CHAR c);
-static void            emit_class_byte (regularExp_CHAR c);
-static regularExp_CHAR *emit_node (int op_code);
-static regularExp_CHAR *emit_special (regularExp_CHAR op_code,
-                                      unsigned long test_val,
-                                      int index);
-static regularExp_CHAR   literal_escape (regularExp_CHAR c);
-static regularExp_CHAR   numeric_escape (regularExp_CHAR c, regularExp_CHAR **parse);
-static regularExp_CHAR *atom (int *flag_param, len_range *range_param);
-static void            reg_error (const wchar *str);
-static regularExp_CHAR *insert (regularExp_CHAR op, regularExp_CHAR *opnd,
-                                long min, long max, int index);
-static regularExp_CHAR *next_ptr (regularExp_CHAR *ptr);
-static void            offset_tail (regularExp_CHAR *ptr, int offset,
-                                    regularExp_CHAR *val);
-static void            branch_tail (regularExp_CHAR *ptr, int offset,
-                                    regularExp_CHAR *val);
-static regularExp_CHAR *piece (int *flag_param, len_range *range_param);
-static void            tail (regularExp_CHAR *search_from,
-                             regularExp_CHAR *point_t);
-static regularExp_CHAR *shortcut_escape (regularExp_CHAR c, int *flag_param,
-        int emit);
+static char32 *alternative (int *flag_param, len_range *range_param);
+static char32 *back_ref (char32 *c, int *flag_param, int emit);
+static char32 *chunk (int paren, int *flag_param, len_range *range_param);
+static void emit_byte (char32 c);
+static void emit_class_byte (char32 c);
+static char32 *emit_node (int op_code);
+static char32 *emit_special (char32 op_code, unsigned long test_val, int index);
+static char32 literal_escape (char32 c);
+static char32 numeric_escape (char32 c, char32 **parse);
+static char32 *atom (int *flag_param, len_range *range_param);
+static void reg_error (const char32_t *str);
+static char32 *insert (char32 op, char32 *opnd, long min, long max, int index);
+static char32 *next_ptr (char32 *ptr);
+static void offset_tail (char32 *ptr, int offset, char32 *val);
+static void branch_tail (char32 *ptr, int offset, char32 *val);
+static char32 *piece (int *flag_param, len_range *range_param);
+static void tail (char32 *search_from, char32 *point_t);
+static char32 *shortcut_escape (char32 c, int *flag_param, int emit);
 
 static int             init_ansi_classes (void);
 
@@ -549,10 +537,10 @@ static int             init_ansi_classes (void);
  * some of the structure of the compiled regexp.
  *----------------------------------------------------------------------*/
 
-regexp *CompileRE (const regularExp_CHAR *exp, const wchar **errorText, int defaultFlags) {
+regexp *CompileRE (const char32 *exp, const char32 **errorText, int defaultFlags) {
 
-	register regexp *comp_regex = NULL;
-	register regularExp_CHAR *scan;
+	regexp *comp_regex = NULL;
+	char32 *scan;
 	int flags_local, pass;
 	len_range range_local;
 
@@ -567,16 +555,16 @@ regexp *CompileRE (const regularExp_CHAR *exp, const wchar **errorText, int defa
 	/* Set up errorText to receive failure reports. */
 
 	Error_Ptr = errorText;
-	*Error_Ptr = L"";
+	*Error_Ptr = U"";
 
 	if (exp == NULL) {
-		REG_FAIL (L"NULL argument, `CompileRE\'");
+		REG_FAIL (U"NULL argument, `CompileRE\'");
 	}
 
 	/* Initialize arrays used by function `shortcut_escape'. */
 
 	if (!init_ansi_classes ()) {
-		REG_FAIL (L"internal error #1, `CompileRE\'");
+		REG_FAIL (U"internal error #1, `CompileRE\'");
 	}
 
 	Code_Emit_Ptr = &Compute_Size;
@@ -607,7 +595,7 @@ regexp *CompileRE (const regularExp_CHAR *exp, const wchar **errorText, int defa
 		Match_Newline = 0;  /* ((defaultFlags & REDFLT_MATCH_NEWLINE)   ? 1 : 0);
                              Currently not used. Uncomment if needed. */
 
-		Reg_Parse       = (regularExp_CHAR *) exp;
+		Reg_Parse       = (char32 *) exp;
 		Total_Paren     = 1;
 		Num_Braces      = 0;
 		Closed_Parens   = 0;
@@ -626,24 +614,24 @@ regexp *CompileRE (const regularExp_CHAR *exp, const wchar **errorText, int defa
 				   This is a real issue since the first BRANCH node usually points
 				   to the end of the compiled regex code. */
 
-				swprintf ( (wchar *) Error_Text, 128, L"regexp > %lu bytes", MAX_COMPILED_SIZE);
+				Melder_sprint (Error_Text,128, U"regexp > ", MAX_COMPILED_SIZE, U" bytes");
 				REG_FAIL (Error_Text);
 			}
 
 			/* Allocate memory. */
 
-			comp_regex = (regexp *) malloc (sizeof (regexp) + Reg_Size * sizeof (wchar_t));
+			comp_regex = (regexp *) malloc (sizeof (regexp) + Reg_Size * sizeof (char32));
 
 			if (comp_regex == NULL) {
-				REG_FAIL (L"out of memory in `CompileRE\'");
+				REG_FAIL (U"out of memory in `CompileRE\'");
 			}
 
-			Code_Emit_Ptr = (regularExp_CHAR *) comp_regex->program;
+			Code_Emit_Ptr = (char32 *) comp_regex->program;
 		}
 	}
 
-	comp_regex->program [1] = (regularExp_CHAR) Total_Paren - 1;
-	comp_regex->program [2] = (regularExp_CHAR) Num_Braces;
+	comp_regex->program [1] = (char32) Total_Paren - 1;
+	comp_regex->program [2] = (char32) Num_Braces;
 
 	/*----------------------------------------*
 	 * Dig out information for optimizations. *
@@ -654,7 +642,7 @@ regexp *CompileRE (const regularExp_CHAR *exp, const wchar **errorText, int defa
 
 	/* First BRANCH. */
 
-	scan = (regularExp_CHAR *) (comp_regex->program + REGEX_START_OFFSET);
+	scan = (char32 *) (comp_regex->program + REGEX_START_OFFSET);
 
 	if (GET_OP_CODE (next_ptr (scan)) == END) { /* Only one top-level choice. */
 		scan = OPERAND (scan);
@@ -693,19 +681,18 @@ regexp *CompileRE (const regularExp_CHAR *exp, const wchar **errorText, int defa
  * branches to what follows makes it hard to avoid.                     *
  *----------------------------------------------------------------------*/
 
-static regularExp_CHAR *chunk (int paren, int *flag_param,
-                               len_range *range_param) {
+static char32 *chunk (int paren, int *flag_param, len_range *range_param) {
 
-	register regularExp_CHAR *ret_val = NULL;
-	register regularExp_CHAR *this_branch;
-	register regularExp_CHAR *ender = NULL;
-	register          int   this_paren = 0;
+	char32 *ret_val = NULL;
+	char32 *this_branch;
+	char32 *ender = NULL;
+	int   this_paren = 0;
 	int   flags_local, first = 1, zero_width, i;
 	int   old_sensitive = Is_Case_Insensitive;
 	int   old_newline   = Match_Newline;
 	len_range range_local;
 	int   look_only = 0;
-	regularExp_CHAR *emit_look_behind_bounds = NULL;
+	char32 *emit_look_behind_bounds = NULL;
 
 
 	*flag_param = HAS_WIDTH;  /* Tentatively. */
@@ -716,7 +703,7 @@ static regularExp_CHAR *chunk (int paren, int *flag_param,
 
 	if (paren == PAREN) {
 		if (Total_Paren >= NSUBEXP) {
-			swprintf ( (wchar *) Error_Text, 128, L"number of ()'s > %d", (int) NSUBEXP);
+			Melder_sprint (Error_Text,128, U"number of ()'s > ", NSUBEXP);
 			REG_FAIL (Error_Text);
 		}
 
@@ -819,12 +806,12 @@ static regularExp_CHAR *chunk (int paren, int *flag_param,
 	/* Check for proper termination. */
 
 	if (paren != NO_PAREN && *Reg_Parse++ != ')') {
-		REG_FAIL (L"missing right parenthesis \')\'");
+		REG_FAIL (U"missing right parenthesis \')\'");
 	} else if (paren == NO_PAREN && *Reg_Parse != '\0') {
 		if (*Reg_Parse == ')') {
-			REG_FAIL (L"missing left parenthesis \'(\'");
+			REG_FAIL (U"missing left parenthesis \'(\'");
 		} else {
-			REG_FAIL (L"junk on end");  /* "Can't happen" - NOTREACHED */
+			REG_FAIL (U"junk on end");  /* "Can't happen" - NOTREACHED */
 		}
 	}
 
@@ -832,10 +819,10 @@ static regularExp_CHAR *chunk (int paren, int *flag_param,
 
 	if (emit_look_behind_bounds) {
 		if (range_param->lower < 0) {
-			REG_FAIL (L"look-behind does not have a bounded size");
+			REG_FAIL (U"look-behind does not have a bounded size");
 		}
 		if (range_param->upper > 65535L) {
-			REG_FAIL (L"max. look-behind size is too large (>65535)")
+			REG_FAIL (U"max. look-behind size is too large (>65535)")
 		}
 		if (Code_Emit_Ptr != &Compute_Size) {
 			*emit_look_behind_bounds++ = PUT_OFFSET_L (range_param->lower);
@@ -908,12 +895,12 @@ static regularExp_CHAR *chunk (int paren, int *flag_param,
  * pointers of each regex atom together sequentialy.
  *----------------------------------------------------------------------*/
 
-static regularExp_CHAR *alternative (int *flag_param, len_range *range_param) {
+static char32 *alternative (int *flag_param, len_range *range_param) {
 
-	register regularExp_CHAR *ret_val;
-	register regularExp_CHAR *chain;
-	register regularExp_CHAR *latest;
-	int   flags_local;
+	char32 *ret_val;
+	char32 *chain;
+	char32 *latest;
+	int flags_local;
 	len_range range_local;
 
 	*flag_param = WORST;  /* Tentatively. */
@@ -967,11 +954,11 @@ static regularExp_CHAR *alternative (int *flag_param, len_range *range_param) {
  * dispensed with entirely, but the endmarker role is not redundant.
  *----------------------------------------------------------------------*/
 
-static regularExp_CHAR *piece (int *flag_param, len_range *range_param) {
+static char32 *piece (int *flag_param, len_range *range_param) {
 
-	register regularExp_CHAR *ret_val;
-	register regularExp_CHAR *next;
-	register regularExp_CHAR  op_code;
+	char32 *ret_val;
+	char32 *next;
+	char32 op_code;
 	unsigned long  min_max [2] = {REG_ZERO, REG_INFINITY};
 	int            flags_local, i, brace_present = 0;
 	int            lazy = 0, comma_present = 0;
@@ -1013,7 +1000,7 @@ static regularExp_CHAR *piece (int *flag_param, len_range *range_param) {
 			   value for max and min of 65,535 is due to using 2 bytes to store
 			   each value in the compiled regex code. */
 
-			while (isdigit (*Reg_Parse)) {
+			while (isdigit ((int) *Reg_Parse)) {
 				/* (6553 * 10 + 6) > 65535 (16 bit max) */
 
 				if ( (min_max [i] == 6553UL && (*Reg_Parse - '0') <= 5) ||
@@ -1026,11 +1013,9 @@ static regularExp_CHAR *piece (int *flag_param, len_range *range_param) {
 					digit_present [i]++;
 				} else {
 					if (i == 0) {
-						swprintf ( (wchar *) Error_Text, 128, L"min operand of {%lu%c,???} > 65535",
-						           min_max [0], *Reg_Parse);
+						Melder_sprint (Error_Text,128, U"min operand of {", min_max [0], *Reg_Parse, U",???} > 65535");
 					} else {
-						swprintf ( (wchar *) Error_Text, 128, L"max operand of {%lu,%lu%c} > 65535",
-						           min_max [0], min_max [1], *Reg_Parse);
+						Melder_sprint (Error_Text,128, U"max operand of {", min_max [0], U",", min_max [1], *Reg_Parse, U"} > 65535");
 					}
 
 					REG_FAIL (Error_Text);
@@ -1050,17 +1035,17 @@ static regularExp_CHAR *piece (int *flag_param, len_range *range_param) {
 
 		if (digit_present [0] && (min_max [0] == REG_ZERO) && !comma_present) {
 
-			REG_FAIL (L"{0} is an invalid range");
+			REG_FAIL (U"{0} is an invalid range");
 		} else if (digit_present [0] && (min_max [0] == REG_ZERO) &&
 		           digit_present [1] && (min_max [1] == REG_ZERO)) {
 
-			REG_FAIL (L"{0,0} is an invalid range");
+			REG_FAIL (U"{0,0} is an invalid range");
 		} else if (digit_present [1] && (min_max [1] == REG_ZERO)) {
 			if (digit_present [0]) {
-				swprintf ( (wchar *) Error_Text, 128, L"{%lu,0} is an invalid range", min_max [0]);
+				Melder_sprint (Error_Text,128, U"{", min_max [0], U",0} is an invalid range");
 				REG_FAIL (Error_Text);
 			} else {
-				REG_FAIL (L"{,0} is an invalid range");
+				REG_FAIL (U"{,0} is an invalid range");
 			}
 		}
 
@@ -1069,13 +1054,12 @@ static regularExp_CHAR *piece (int *flag_param, len_range *range_param) {
 		} /* {x} means {x,x} */
 
 		if (*Reg_Parse != '}') {
-			REG_FAIL (L"{m,n} specification missing right \'}\'");
+			REG_FAIL (U"{m,n} specification missing right \'}\'");
 
 		} else if (min_max [1] != REG_INFINITY && min_max [0] > min_max [1]) {
 			/* Disallow a backward range. */
 
-			swprintf ( (wchar *) Error_Text, 128, L"{%lu,%lu} is an invalid range",
-			           min_max [0], min_max [1]);
+			Melder_sprint (Error_Text,128, U"{", min_max [0], U",", min_max [1], U"} is an invalid range");
 			REG_FAIL (Error_Text);
 		}
 	}
@@ -1106,7 +1090,7 @@ static regularExp_CHAR *piece (int *flag_param, len_range *range_param) {
 			*range_param = range_local;
 			return (ret_val);
 		} else if (Num_Braces > (int) UCHAR_MAX) {
-			swprintf ( (wchar *) Error_Text, 128, L"number of {m,n} constructs > %d", UCHAR_MAX);
+			Melder_sprint (Error_Text,128, U"number of {m,n} constructs > ", UCHAR_MAX);
 			REG_FAIL (Error_Text);
 		}
 	}
@@ -1123,10 +1107,9 @@ static regularExp_CHAR *piece (int *flag_param, len_range *range_param) {
 
 	if (! (flags_local & HAS_WIDTH)) {
 		if (brace_present) {
-			swprintf ( (wchar *) Error_Text, 128, L"{%lu,%lu} operand could be empty",
-			           min_max [0], min_max [1]);
+			Melder_sprint (Error_Text,128, U"{", min_max [0], U",", min_max [1], U"} operand could be empty");
 		} else {
-			swprintf ( (wchar *) Error_Text, 128, L"%c operand could be empty", op_code);
+			Melder_sprint (Error_Text,128, op_code, U" operand could be empty");
 		}
 
 		REG_FAIL (Error_Text);
@@ -1494,14 +1477,14 @@ static regularExp_CHAR *piece (int *flag_param, len_range *range_param) {
 		/* We get here if the IS_QUANTIFIER macro is not coordinated properly
 		   with this function. */
 
-		REG_FAIL (L"internal error #2, `piece\'");
+		REG_FAIL (U"internal error #2, `piece\'");
 	}
 
 	if (IS_QUANTIFIER (*Reg_Parse)) {
 		if (op_code == '{') {
-			swprintf ( (wchar *) Error_Text, 128, L"nested quantifiers, {m,n}%c", *Reg_Parse);
+			Melder_sprint (Error_Text,128, U"nested quantifiers, {m,n}", *Reg_Parse);
 		} else {
-			swprintf ( (wchar *) Error_Text, 128, L"nested quantifiers, %c%c", op_code, *Reg_Parse);
+			Melder_sprint (Error_Text,128, U"nested quantifiers, ", op_code, *Reg_Parse);
 		}
 
 		REG_FAIL (Error_Text);
@@ -1520,10 +1503,10 @@ static regularExp_CHAR *piece (int *flag_param, len_range *range_param) {
  * is smaller to store and faster to run.
  *----------------------------------------------------------------------*/
 
-static regularExp_CHAR *atom (int *flag_param, len_range *range_param) {
+static char32 *atom (int *flag_param, len_range *range_param) {
 
-	register regularExp_CHAR *ret_val;
-	regularExp_CHAR  test;
+	char32 *ret_val;
+	char32  test;
 	int            flags_local;
 	len_range      range_local;
 
@@ -1627,16 +1610,12 @@ static regularExp_CHAR *atom (int *flag_param, len_range *range_param) {
 						Reg_Parse++;
 						ret_val = chunk (NEG_BEHIND_OPEN, &flags_local, &range_local);
 					} else {
-						swprintf ( (wchar *) Error_Text, 128,
-						           L"invalid look-behind syntax, \"(?<%c...)\"",
-						           *Reg_Parse);
+						Melder_sprint (Error_Text,128, U"invalid look-behind syntax, \"(?<", *Reg_Parse, U"...)\"");
 
 						REG_FAIL (Error_Text);
 					}
 				} else {
-					swprintf ( (wchar *) Error_Text, 128,
-					           L"invalid grouping syntax, \"(?%c...)\"",
-					           *Reg_Parse);
+					Melder_sprint (Error_Text,128, U"invalid grouping syntax, \"(?", *Reg_Parse, U"...)\"");
 
 					REG_FAIL (Error_Text);
 				}
@@ -1658,17 +1637,17 @@ static regularExp_CHAR *atom (int *flag_param, len_range *range_param) {
 		case '\0':
 		case '|':
 		case ')':
-			REG_FAIL (L"internal error #3, `atom\'");  /* Supposed to be  */
+			REG_FAIL (U"internal error #3, `atom\'");  /* Supposed to be  */
 			/* caught earlier. */
 		case '?':
 		case '+':
 		case '*':
-			swprintf ( (wchar *) Error_Text, 128, L"%c follows nothing", * (Reg_Parse - 1));
+			Melder_sprint (Error_Text,128, * (Reg_Parse - 1), U" follows nothing");
 			REG_FAIL (Error_Text);
 
 		case '{':
 			if (Enable_Counting_Quantifier) {
-				REG_FAIL (L"{m,n} follows nothing");
+				REG_FAIL (U"{m,n} follows nothing");
 			} else {
 				ret_val = emit_node (EXACTLY); /* Treat braces as literals. */
 				emit_byte ('{');
@@ -1680,9 +1659,9 @@ static regularExp_CHAR *atom (int *flag_param, len_range *range_param) {
 			break;
 
 		case '[': {
-			register unsigned int  second_value;
-			register unsigned int  last_value;
-			regularExp_CHAR last_emit = 0;
+			unsigned int  second_value;
+			unsigned int  last_value;
+			char32 last_emit = 0;
 
 			/* Handle characters that can only occur at the start of a class. */
 
@@ -1751,16 +1730,11 @@ static regularExp_CHAR *atom (int *flag_param, len_range *range_param) {
 							} else if (shortcut_escape (*Reg_Parse,
 							                            NULL,
 							                            CHECK_CLASS_ESCAPE)) {
-								swprintf ( (wchar *) Error_Text, 128,
-								           L"\\%c is not allowed as range operand",
-								           *Reg_Parse);
+								Melder_sprint (Error_Text, 128, U"\\", *Reg_Parse, U" is not allowed as range operand");
 
 								REG_FAIL (Error_Text);
 							} else {
-								swprintf (
-								    (wchar *) Error_Text, 128,
-								    L"\\%c is an invalid char class escape sequence",
-								    *Reg_Parse);
+								Melder_sprint (Error_Text, 128, U"\\", *Reg_Parse, U" is an invalid char class escape sequence");
 
 								REG_FAIL (Error_Text);
 							}
@@ -1780,7 +1754,7 @@ static regularExp_CHAR *atom (int *flag_param, len_range *range_param) {
 						   lower case. */
 
 						if (second_value - 1 > last_value) {
-							REG_FAIL (L"invalid [] range");
+							REG_FAIL (U"invalid [] range");
 						}
 
 						/* If only one character in range (e.g [a-a]) then this
@@ -1791,7 +1765,7 @@ static regularExp_CHAR *atom (int *flag_param, len_range *range_param) {
 							emit_class_byte (second_value);
 						}
 
-						last_emit = (regularExp_CHAR) last_value;
+						last_emit = (char32) last_value;
 
 						Reg_Parse++;
 
@@ -1814,9 +1788,7 @@ static regularExp_CHAR *atom (int *flag_param, len_range *range_param) {
 							/* Specifically disallow shortcut escapes as the start
 							   of a character class range (see comment above.) */
 
-							swprintf ( (wchar *) Error_Text, 128,
-							           L"\\%c not allowed as range operand",
-							           *Reg_Parse);
+							Melder_sprint (Error_Text,128, U"\\", *Reg_Parse, U" not allowed as range operand");
 
 							REG_FAIL (Error_Text);
 						} else {
@@ -1826,9 +1798,7 @@ static regularExp_CHAR *atom (int *flag_param, len_range *range_param) {
 							shortcut_escape (*Reg_Parse, NULL, EMIT_CLASS_BYTES);
 						}
 					} else {
-						swprintf ( (wchar *) Error_Text, 128,
-						           L"\\%c is an invalid char class escape sequence",
-						           *Reg_Parse);
+						Melder_sprint (Error_Text,128, U"\\", *Reg_Parse, U" is an invalid char class escape sequence");
 
 						REG_FAIL (Error_Text);
 					}
@@ -1845,7 +1815,7 @@ static regularExp_CHAR *atom (int *flag_param, len_range *range_param) {
 			} /* End of while (*Reg_Parse != '\0' && *Reg_Parse != ']') */
 
 			if (*Reg_Parse != ']') {
-				REG_FAIL (L"missing right \']\'");
+				REG_FAIL (U"missing right \']\'");
 			}
 
 			emit_byte ('\0');
@@ -1890,7 +1860,7 @@ static regularExp_CHAR *atom (int *flag_param, len_range *range_param) {
 				break;
 			}
 
-			if (wcslen ( (wchar *) Error_Text) > 0) {
+			if (str32len (Error_Text) > 0) {
 				REG_FAIL (Error_Text);
 			}
 
@@ -1905,7 +1875,7 @@ static regularExp_CHAR *atom (int *flag_param, len_range *range_param) {
 			Reg_Parse--; /* If we fell through from the above code, we are now
                          pointing at the back slash (\) character. */
 			{
-				regularExp_CHAR *parse_save;
+				char32 *parse_save;
 				int   len = 0;
 
 				if (Is_Case_Insensitive) {
@@ -1917,9 +1887,7 @@ static regularExp_CHAR *atom (int *flag_param, len_range *range_param) {
 				/* Loop until we find a meta character, shortcut escape, back
 				   reference, or end of regex string. */
 
-				for (; *Reg_Parse != '\0' &&
-				        !wcschr ( (wchar *) Meta_Char, (int) *Reg_Parse);
-				        len++) {
+				for (; *Reg_Parse != '\0' && ! str32chr (Meta_Char, *Reg_Parse); len++) {
 
 					/* Save where we are in case we have to back
 					   this character out. */
@@ -1933,7 +1901,7 @@ static regularExp_CHAR *atom (int *flag_param, len_range *range_param) {
 
 						if ( (test = numeric_escape (*Reg_Parse, &Reg_Parse))) {
 							if (Is_Case_Insensitive) {
-								emit_byte (tolower (test));
+								emit_byte (tolower ((int) test));
 							} else {
 								emit_byte (test);
 							}
@@ -1948,13 +1916,11 @@ static regularExp_CHAR *atom (int *flag_param, len_range *range_param) {
 
 							Reg_Parse--; break;
 						} else {
-							if (wcslen ( (wchar *) Error_Text) == 0) {
+							if (str32len (Error_Text) == 0) {
 								/* None of the above calls generated an error message
 								   so generate our own here. */
 
-								swprintf ( (wchar *) Error_Text, 128,
-								           L"\\%c is an invalid escape sequence",
-								           *Reg_Parse);
+								Melder_sprint (Error_Text,128, U"\\", *Reg_Parse, U" is an invalid escape sequence");
 							}
 
 							REG_FAIL (Error_Text);
@@ -1965,7 +1931,7 @@ static regularExp_CHAR *atom (int *flag_param, len_range *range_param) {
 						/* Ordinary character */
 
 						if (Is_Case_Insensitive) {
-							emit_byte (tolower (*Reg_Parse));
+							emit_byte (tolower ((int) *Reg_Parse));
 						} else {
 							emit_byte (*Reg_Parse);
 						}
@@ -1994,7 +1960,7 @@ static regularExp_CHAR *atom (int *flag_param, len_range *range_param) {
 				}
 
 				if (len <= 0) {
-					REG_FAIL (L"internal error #4, `atom\'");
+					REG_FAIL (U"internal error #4, `atom\'");
 				}
 
 				*flag_param |= HAS_WIDTH;
@@ -2023,10 +1989,10 @@ static regularExp_CHAR *atom (int *flag_param, len_range *range_param) {
  * Returns a pointer to the START of the emitted node.
  *----------------------------------------------------------------------*/
 
-static regularExp_CHAR *emit_node (int op_code) {
+static char32 *emit_node (int op_code) {
 
-	register regularExp_CHAR *ret_val;
-	register regularExp_CHAR *ptr;
+	char32 *ret_val;
+	char32 *ptr;
 
 	ret_val = Code_Emit_Ptr; /* Return address of start of node */
 
@@ -2034,7 +2000,7 @@ static regularExp_CHAR *emit_node (int op_code) {
 		Reg_Size += NODE_SIZE;
 	} else {
 		ptr   = ret_val;
-		*ptr++ = (regularExp_CHAR) op_code;
+		*ptr++ = op_code;
 		*ptr++ = '\0'; /* Null "NEXT" pointer. */
 		*ptr++ = '\0';
 
@@ -2050,7 +2016,7 @@ static regularExp_CHAR *emit_node (int op_code) {
  * Emit (if appropriate) a byte of code (usually part of an operand.)
  *----------------------------------------------------------------------*/
 
-static void emit_byte (regularExp_CHAR c) {
+static void emit_byte (char32 c) {
 
 	if (Code_Emit_Ptr == &Compute_Size) {
 		Reg_Size++;
@@ -2066,20 +2032,20 @@ static void emit_byte (regularExp_CHAR c) {
  * class operand.)
  *----------------------------------------------------------------------*/
 
-static void emit_class_byte (regularExp_CHAR c) {
+static void emit_class_byte (char32 c) {
 
 	if (Code_Emit_Ptr == &Compute_Size) {
 		Reg_Size++;
 
-		if (Is_Case_Insensitive && isalpha (c)) {
+		if (Is_Case_Insensitive && iswalpha ((int) c)) {
 			Reg_Size++;
 		}
-	} else if (Is_Case_Insensitive && isalpha (c)) {
+	} else if (Is_Case_Insensitive && iswalpha ((int) c)) {
 		/* For case insensitive character classes, emit both upper and lower case
 		   versions of alphabetical characters. */
 
-		*Code_Emit_Ptr++ = tolower (c);
-		*Code_Emit_Ptr++ = toupper (c);
+		*Code_Emit_Ptr++ = (char32) towlower ((int) c);
+		*Code_Emit_Ptr++ = (char32) towupper ((int) c);
 	} else {
 		*Code_Emit_Ptr++ = c;
 	}
@@ -2091,13 +2057,13 @@ static void emit_class_byte (regularExp_CHAR c) {
  * Emit nodes that need special processing.
  *----------------------------------------------------------------------*/
 
-static regularExp_CHAR *emit_special (
-    regularExp_CHAR op_code,
+static char32 *emit_special (
+    char32 op_code,
     unsigned long test_val,
-    int  index) {
+    int index) {
 
-	register regularExp_CHAR *ret_val = &Compute_Size;
-	register regularExp_CHAR *ptr;
+	char32 *ret_val = &Compute_Size;
+	char32 *ptr;
 
 	if (Code_Emit_Ptr == &Compute_Size) {
 		switch (op_code) {
@@ -2121,7 +2087,7 @@ static regularExp_CHAR *emit_special (
 		ptr     = Code_Emit_Ptr;
 
 		if (op_code == INC_COUNT || op_code == TEST_COUNT) {
-			*ptr++ = (regularExp_CHAR) index;
+			*ptr++ = (char32) index;
 
 			if (op_code == TEST_COUNT) {
 				*ptr++ = PUT_OFFSET_L (test_val);
@@ -2149,17 +2115,17 @@ static regularExp_CHAR *emit_special (
  * where the new node is to be inserted.
  *----------------------------------------------------------------------*/
 
-static regularExp_CHAR *insert (
-    regularExp_CHAR  op,
-    regularExp_CHAR *insert_pos,
-    long           min,
-    long           max,
-    int            index) {
+static char32 *insert (
+    char32 op,
+    char32 *insert_pos,
+    long min,
+    long max,
+    int index) {
 
-	register regularExp_CHAR *src;
-	register regularExp_CHAR *dst;
-	regularExp_CHAR *place;
-	int   insert_size = NODE_SIZE;
+	char32 *src;
+	char32 *dst;
+	char32 *place;
+	int insert_size = NODE_SIZE;
 
 	if (op == BRACE || op == LAZY_BRACE) {
 		/* Make room for the min and max values. */
@@ -2198,7 +2164,7 @@ static regularExp_CHAR *insert (
 		*place++ = PUT_OFFSET_L (max);
 		*place++ = PUT_OFFSET_R (max);
 	} else if (op == INIT_COUNT) {
-		*place++ = (regularExp_CHAR) index;
+		*place++ = (char32) index;
 	}
 
 	return place; /* Return a pointer to the start of the code moved. */
@@ -2208,11 +2174,11 @@ static regularExp_CHAR *insert (
  * tail - Set the next-pointer at the end of a node chain.
  *----------------------------------------------------------------------*/
 
-static void tail (regularExp_CHAR *search_from, regularExp_CHAR *point_to) {
+static void tail (char32 *search_from, char32 *point_to) {
 
-	register regularExp_CHAR *scan;
-	register regularExp_CHAR *next;
-	register          int   offset;
+	char32 *scan;
+	char32 *next;
+	int offset;
 
 	if (search_from == &Compute_Size) {
 		return;
@@ -2250,7 +2216,7 @@ static void tail (regularExp_CHAR *search_from, regularExp_CHAR *point_to) {
  * Perform a tail operation on (ptr + offset).
  *--------------------------------------------------------------------*/
 
-static void offset_tail (regularExp_CHAR *ptr, int offset, regularExp_CHAR *val) {
+static void offset_tail (char32 *ptr, int offset, char32 *val) {
 
 	if (ptr == &Compute_Size || ptr == NULL) {
 		return;
@@ -2266,7 +2232,7 @@ static void offset_tail (regularExp_CHAR *ptr, int offset, regularExp_CHAR *val)
  * BRANCH node.
  *--------------------------------------------------------------------*/
 
-static void branch_tail (regularExp_CHAR *ptr, int offset, regularExp_CHAR *val) {
+static void branch_tail (char32 *ptr, int offset, char32 *val) {
 
 	if (ptr == &Compute_Size || ptr == NULL || GET_OP_CODE (ptr) != BRANCH) {
 		return;
@@ -2314,15 +2280,15 @@ static void branch_tail (regularExp_CHAR *ptr, int offset, regularExp_CHAR *val)
  *
  *--------------------------------------------------------------------*/
 
-static regularExp_CHAR *shortcut_escape (
-    regularExp_CHAR  c,
+static char32 *shortcut_escape (
+    char32  c,
     int           *flag_param,
     int            emit) {
 
-	register regularExp_CHAR *klas   = NULL;
-	static   regularExp_CHAR *codes   = (regularExp_CHAR *) L"ByYdDlLsSwW";
-	regularExp_CHAR *ret_val = (regularExp_CHAR *) 1; /* Assume success. */
-	regularExp_CHAR *valid_codes;
+	char32 *klas   = NULL;
+	static const char32 *codes = U"ByYdDlLsSwW";
+	char32 *ret_val = (char32 *) 1; /* Assume success. */
+	const char32 *valid_codes;
 
 	if (emit == EMIT_CLASS_BYTES || emit == CHECK_CLASS_ESCAPE) {
 		valid_codes = codes + 3; /* \B, \y and \Y are not allowed in classes */
@@ -2330,7 +2296,7 @@ static regularExp_CHAR *shortcut_escape (
 		valid_codes = codes;
 	}
 
-	if (!wcschr ( (wchar *) valid_codes, (int) c)) {
+	if (! str32chr (valid_codes, c)) {
 		return NULL; /* Not a valid shortcut escape sequence */
 	} else if (emit == CHECK_ESCAPE || emit == CHECK_CLASS_ESCAPE) {
 		return ret_val; /* Just checking if this is a valid shortcut escape. */
@@ -2342,10 +2308,8 @@ static regularExp_CHAR *shortcut_escape (
 			if (emit == EMIT_CLASS_BYTES) {
 				klas = ASCII_Digits;
 			} else if (emit == EMIT_NODE) {
-				ret_val = (islower (c) ? emit_node (DIGIT)
-				           : emit_node (NOT_DIGIT));
+				ret_val = (iswlower ((int) c) ? emit_node (DIGIT) : emit_node (NOT_DIGIT));
 			}
-
 			break;
 
 		case 'l':
@@ -2353,10 +2317,8 @@ static regularExp_CHAR *shortcut_escape (
 			if (emit == EMIT_CLASS_BYTES) {
 				klas = Letter_Char;
 			} else if (emit == EMIT_NODE) {
-				ret_val = (islower (c) ? emit_node (LETTER)
-				           : emit_node (NOT_LETTER));
+				ret_val = (iswlower ((int) c) ? emit_node (LETTER) : emit_node (NOT_LETTER));
 			}
-
 			break;
 
 		case 's':
@@ -2365,18 +2327,14 @@ static regularExp_CHAR *shortcut_escape (
 				if (Match_Newline) {
 					emit_byte ('\n');
 				}
-
 				klas = White_Space;
 			} else if (emit == EMIT_NODE) {
 				if (Match_Newline) {
-					ret_val = (islower (c) ? emit_node (SPACE_NL)
-					           : emit_node (NOT_SPACE_NL));
+					ret_val = (iswlower ((int) c) ? emit_node (SPACE_NL) : emit_node (NOT_SPACE_NL));
 				} else {
-					ret_val = (islower (c) ? emit_node (SPACE)
-					           : emit_node (NOT_SPACE));
+					ret_val = (iswlower ((int) c) ? emit_node (SPACE) : emit_node (NOT_SPACE));
 				}
 			}
-
 			break;
 
 		case 'w':
@@ -2384,10 +2342,8 @@ static regularExp_CHAR *shortcut_escape (
 			if (emit == EMIT_CLASS_BYTES) {
 				klas = Word_Char;
 			} else if (emit == EMIT_NODE) {
-				ret_val = (islower (c) ? emit_node (WORD_CHAR)
-				           : emit_node (NOT_WORD_CHAR));
+				ret_val = (iswlower ((int) c) ? emit_node (WORD_CHAR) : emit_node (NOT_WORD_CHAR));
 			}
-
 			break;
 
 			/* Since the delimiter table is not available at regex compile time \B,
@@ -2395,40 +2351,34 @@ static regularExp_CHAR *shortcut_escape (
 			   will be available for these nodes to use. */
 
 		case 'y':
-
 			if (emit == EMIT_NODE) {
 				ret_val = emit_node (IS_DELIM);
 			} else {
-				REG_FAIL (L"internal error #5 `shortcut_escape\'");
+				REG_FAIL (U"internal error #5 `shortcut_escape\'");
 			}
-
 			break;
 
 		case 'Y':
-
 			if (emit == EMIT_NODE) {
 				ret_val = emit_node (NOT_DELIM);
 			} else {
-				REG_FAIL (L"internal error #6 `shortcut_escape\'");
+				REG_FAIL (U"internal error #6 `shortcut_escape\'");
 			}
-
 			break;
 
 		case 'B':
-
 			if (emit == EMIT_NODE) {
 				ret_val = emit_node (NOT_BOUNDARY);
 			} else {
-				REG_FAIL (L"internal error #7 `shortcut_escape\'");
+				REG_FAIL (U"internal error #7 `shortcut_escape\'");
 			}
-
 			break;
 
 		default:
 			/* We get here if there isn't a case for every character in
 			   the string "codes" */
 
-			REG_FAIL (L"internal error #8 `shortcut_escape\'");
+			REG_FAIL (U"internal error #8 `shortcut_escape\'");
 	}
 
 	if (emit == EMIT_NODE  &&  c != 'B') {
@@ -2460,11 +2410,11 @@ static regularExp_CHAR *shortcut_escape (
  * \0000 is specified.
  *--------------------------------------------------------------------*/
 
-static regularExp_CHAR numeric_escape (
-    regularExp_CHAR    c,
-    regularExp_CHAR  **parse) {
+static char32 numeric_escape (
+    char32 c,
+    char32 **parse) {
 
-	static regularExp_CHAR digits [] = { 'f', 'e', 'd', 'c', 'b', 'a', 'F', 'E', 'D', 'C', 'B', 'A', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '\0' };
+	static char32 digits [] = { 'f', 'e', 'd', 'c', 'b', 'a', 'F', 'E', 'D', 'C', 'B', 'A', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '\0' };
 
 	static unsigned int digit_val [] = {
 		15, 14, 13, 12, 11, 10,                  /* Lower case Hex digits */
@@ -2472,9 +2422,9 @@ static regularExp_CHAR numeric_escape (
 		9,  8,  7,  6,  5,  4,  3,  2,  1,  0
 	}; /* Decimal Digits */
 
-	regularExp_CHAR *scan;
-	regularExp_CHAR *pos_ptr;
-	regularExp_CHAR *digit_str;
+	char32 *scan;
+	char32 *pos_ptr;
+	char32 *digit_str;
 	unsigned int   value     =  0;
 	unsigned int   radix     =  8;
 	int   width     =  3; /* Can not be bigger than \0377 */
@@ -2502,7 +2452,7 @@ static regularExp_CHAR numeric_escape (
 
 	scan = *parse; scan++; /* Only change *parse on success. */
 
-	pos_ptr = (regularExp_CHAR *) wcschr ( (wchar *) digit_str, (int) * scan);
+	pos_ptr = str32chr (digit_str, *scan);
 
 	for (i = 0; pos_ptr != NULL && (i < width); i++) {
 		pos   = (pos_ptr - digit_str) + pos_delta;
@@ -2526,16 +2476,16 @@ static regularExp_CHAR numeric_escape (
 		}
 
 		scan++;
-		pos_ptr = (regularExp_CHAR *) wcschr ( (wchar *) digit_str, (int) * scan);
+		pos_ptr = str32chr (digit_str, *scan);
 	}
 
 	/* Handle the case of "\0" i.e. trying to specify a NULL character. */
 
 	if (value == 0) {
 		if (c == '0') {
-			swprintf ( (wchar *) Error_Text, 128, L"\\00 is an invalid octal escape");
+			Melder_sprint (Error_Text,128, U"\\00 is an invalid octal escape");
 		} else {
-			swprintf ( (wchar *) Error_Text, 128, L"\\%c0 is an invalid hexadecimal escape", c);
+			Melder_sprint (Error_Text,128, U"\\", c, U"0 is an invalid hexadecimal escape");
 		}
 	} else {
 		/* Point to the last character of the number on success. */
@@ -2544,7 +2494,7 @@ static regularExp_CHAR numeric_escape (
 		*parse = scan;
 	}
 
-	return (regularExp_CHAR) value;
+	return value;
 }
 
 /*--------------------------------------------------------------------*
@@ -2557,9 +2507,9 @@ static regularExp_CHAR numeric_escape (
  * escape.
  *--------------------------------------------------------------------*/
 
-static regularExp_CHAR literal_escape (regularExp_CHAR c) {
+static char32 literal_escape (char32 c) {
 
-	static regularExp_CHAR valid_escape [] =  {
+	static char32 valid_escape [] =  {
 		'a',   'b',
 		'e',
 		'f',   'n',   'r',   't',   'v',   '(',    ')',   '-',   '[',   ']',
@@ -2567,7 +2517,7 @@ static regularExp_CHAR literal_escape (regularExp_CHAR c) {
 		'+',   '?',   '&',   '\0'
 	};
 
-	static regularExp_CHAR value [] = {
+	static char32 value [] = {
 		'\a',  '\b',
 #ifdef EBCDIC_CHARSET
 		0x27,  /* Escape character in IBM's EBCDIC character set. */
@@ -2604,14 +2554,14 @@ static regularExp_CHAR literal_escape (regularExp_CHAR c) {
  * text previously matched by another regex. *** IMPLEMENT LATER ***
  *--------------------------------------------------------------------*/
 
-static regularExp_CHAR *back_ref (
-    regularExp_CHAR *c,
+static char32 *back_ref (
+    char32 *c,
     int           *flag_param,
     int            emit) {
 
 	int  paren_no, c_offset = 0, is_cross_regex = 0;
 
-	regularExp_CHAR *ret_val;
+	char32 *ret_val;
 
 	/* Implement cross regex backreferences later. */
 
@@ -2620,9 +2570,9 @@ static regularExp_CHAR *back_ref (
 	   is_cross_regex++;
 	} */
 
-	paren_no = (int) (* (c + c_offset) - (regularExp_CHAR) ('0'));
+	paren_no = (int) (* (c + c_offset) - (char32) ('0'));
 
-	if (!isdigit (* (c + c_offset)) || /* Only \1, \2, ... \9 are supported.  */
+	if (!iswdigit ((int) * (c + c_offset)) || /* Only \1, \2, ... \9 are supported.  */
 	        paren_no == 0) {              /* Should be caught by numeric_escape. */
 
 		return NULL;
@@ -2631,7 +2581,7 @@ static regularExp_CHAR *back_ref (
 	/* Make sure parentheses for requested back-reference are complete. */
 
 	if (!is_cross_regex && !TEST_BIT (Closed_Parens, paren_no)) {
-		swprintf ( (wchar *) Error_Text, 128, L"\\%d is an illegal back reference", paren_no);
+		Melder_sprint (Error_Text,128, U"\\", paren_no, U" is an illegal back reference");
 		return NULL;
 	}
 
@@ -2653,13 +2603,13 @@ static regularExp_CHAR *back_ref (
 			}
 		}
 
-		emit_byte ( (regularExp_CHAR) paren_no);
+		emit_byte ((char32) paren_no);
 
 		if (is_cross_regex || TEST_BIT (Paren_Has_Width, paren_no)) {
 			*flag_param |= HAS_WIDTH;
 		}
 	} else if (emit == CHECK_ESCAPE) {
-		ret_val = (regularExp_CHAR *) 1;
+		ret_val = (char32 *) 1;
 	} else {
 		ret_val = NULL;
 	}
@@ -2673,19 +2623,17 @@ static regularExp_CHAR *back_ref (
 
 /* Global work variables for `ExecRE'. */
 
-static regularExp_CHAR  *Reg_Input;           /* String-input pointer.         */
-static regularExp_CHAR  *Start_Of_String;     /* Beginning of input, for ^     */
+static char32  *Reg_Input;           /* String-input pointer.         */
+static const char32  *Start_Of_String;     /* Beginning of input, for ^     */
 /* and < checks.                 */
-static regularExp_CHAR  *End_Of_String;       /* Logical end of input (if
-   				               supplied, till \0 otherwise)  */
-static regularExp_CHAR  *Look_Behind_To;      /* Position till were look behind
-                                               can safely check back         */
-static regularExp_CHAR **Start_Ptr_Ptr;       /* Pointer to `startp' array.    */
-static regularExp_CHAR **End_Ptr_Ptr;         /* Ditto for `endp'.             */
-static regularExp_CHAR  *Extent_Ptr_FW;       /* Forward extent pointer        */
-static regularExp_CHAR  *Extent_Ptr_BW;       /* Backward extent pointer       */
-static regularExp_CHAR  *Back_Ref_Start [10]; /* Back_Ref_Start [0] and        */
-static regularExp_CHAR  *Back_Ref_End   [10]; /* Back_Ref_End [0] are not      */
+static const char32  *End_Of_String;       /* Logical end of input (if supplied, till \0 otherwise)  */
+static const char32  *Look_Behind_To;      /* Position till were look behind can safely check back   */
+static char32 **Start_Ptr_Ptr;       /* Pointer to `startp' array.    */
+static char32 **End_Ptr_Ptr;         /* Ditto for `endp'.             */
+static char32  *Extent_Ptr_FW;       /* Forward extent pointer        */
+static char32  *Extent_Ptr_BW;       /* Backward extent pointer       */
+static char32  *Back_Ref_Start [10]; /* Back_Ref_Start [0] and        */
+static char32  *Back_Ref_End   [10]; /* Back_Ref_End [0] are not      */
 /* used. This simplifies         */
 /* indexing.                     */
 /*
@@ -2700,8 +2648,7 @@ static regularExp_CHAR  *Back_Ref_End   [10]; /* Back_Ref_End [0] are not      *
 static int Recursion_Count;          /* Recursion counter */
 static int Recursion_Limit_Exceeded; /* Recursion limit exceeded flag */
 
-#define AT_END_OF_STRING(X) (*(X) == (regularExp_CHAR)'\0' ||\
-                             (End_Of_String != NULL && (X) >= End_Of_String))
+#define AT_END_OF_STRING(X) (*(X) == U'\0' || (End_Of_String != NULL && (X) >= End_Of_String))
 
 /* static regexp *Cross_Regex_Backref; */
 
@@ -2720,17 +2667,17 @@ static struct brace_counts *Brace;
 
 /* Default table for determining whether a character is a word delimiter. */
 
-static regularExp_CHAR  Default_Delimiters [UCHAR_MAX] = {0};
+static char32 Default_Delimiters [UCHAR_MAX] = {0};
 
-static regularExp_CHAR *Current_Delimiters;  /* Current delimiter table */
+static char32 *Current_Delimiters;  /* Current delimiter table */
 
 /* Forward declarations of functions used by `ExecRE' */
 
-static int             attempt (regexp *, regularExp_CHAR *);
-static int             match (regularExp_CHAR *, int *);
-static unsigned long   greedy (regularExp_CHAR *, long);
-static void            adjustcase (regularExp_CHAR *, int, regularExp_CHAR);
-static regularExp_CHAR *makeDelimiterTable (regularExp_CHAR *, regularExp_CHAR *);
+static int             attempt (regexp *, char32 *);
+static int             match (char32 *, int *);
+static unsigned long   greedy (char32 *, long);
+static void            adjustcase (char32 *, int, char32);
+static char32 *        makeDelimiterTable (const char32 *, char32 *);
 
 /*
  * ExecRE - match a `regexp' structure against a string
@@ -2760,37 +2707,37 @@ static regularExp_CHAR *makeDelimiterTable (regularExp_CHAR *, regularExp_CHAR *
 int ExecRE (
     regexp *prog,
     regexp *cross_regex_backref,
-    const regularExp_CHAR   *string,
-    const regularExp_CHAR   *end,
+    const char32   *string,
+    const char32   *end,
     int     reverse,
-    regularExp_CHAR    prev_char,
-    regularExp_CHAR    succ_char,
-    const regularExp_CHAR   *delimiters,
-    const regularExp_CHAR   *look_behind_to,
-    const regularExp_CHAR   *match_to) {
+    char32    prev_char,
+    char32    succ_char,
+    const char32   *delimiters,
+    const char32   *look_behind_to,
+    const char32   *match_to) {
 
-	register regularExp_CHAR  *str;
-	regularExp_CHAR **s_ptr;
-	regularExp_CHAR **e_ptr;
+	char32 *str;
+	char32 **s_ptr;
+	char32 **e_ptr;
 	int    ret_val = 0;
-	regularExp_CHAR tempDelimitTable [256];
+	char32 tempDelimitTable [256];
 	int    i;
 	(void) cross_regex_backref;
 
-	s_ptr = (regularExp_CHAR **) prog->startp;
-	e_ptr = (regularExp_CHAR **) prog->endp;
+	s_ptr = (char32 **) prog->startp;
+	e_ptr = (char32 **) prog->endp;
 
 	/* Check for valid parameters. */
 
 	if (prog == NULL || string == NULL) {
-		reg_error (L"NULL parameter to `ExecRE\'");
+		reg_error (U"NULL parameter to `ExecRE\'");
 		goto SINGLE_RETURN;
 	}
 
 	/* Check validity of program. */
 
 	if (U_CHAR_AT (prog->program) != MAGIC) {
-		reg_error (L"corrupted program");
+		reg_error (U"corrupted program");
 		goto SINGLE_RETURN;
 	}
 
@@ -2799,17 +2746,15 @@ int ExecRE (
 	if (delimiters == NULL) {
 		Current_Delimiters = Default_Delimiters;
 	} else {
-		Current_Delimiters = makeDelimiterTable (
-		                         (regularExp_CHAR *) delimiters,
-		                         (regularExp_CHAR *) tempDelimitTable);
+		Current_Delimiters = makeDelimiterTable (delimiters, tempDelimitTable);
 	}
 
 	/* Remember the logical end of the string. */
 
-	End_Of_String = (regularExp_CHAR *) match_to;
+	End_Of_String = match_to;
 
 	if (end == NULL && reverse) {
-		for (end = string; !AT_END_OF_STRING ( (regularExp_CHAR *) end); end++) {
+		for (end = string; !AT_END_OF_STRING (end); end++) {
 			;
 		}
 		succ_char = '\n';
@@ -2825,13 +2770,13 @@ int ExecRE (
 
 	/* Remember the beginning of the string for matching BOL */
 
-	Start_Of_String    = (regularExp_CHAR *) string;
-	Look_Behind_To     = (regularExp_CHAR *) (look_behind_to ? look_behind_to : string);
+	Start_Of_String    = string;
+	Look_Behind_To     = look_behind_to ? look_behind_to : string;
 
 	Prev_Is_BOL        = ( (prev_char == '\n') || (prev_char == '\0') ? 1 : 0);
 	Succ_Is_EOL        = ( (succ_char == '\n') || (succ_char == '\0') ? 1 : 0);
-	Prev_Is_Delim      = (Current_Delimiters [ (regularExp_CHAR) prev_char] ? 1 : 0);
-	Succ_Is_Delim      = (Current_Delimiters [ (regularExp_CHAR) succ_char] ? 1 : 0);
+	Prev_Is_Delim      = (Current_Delimiters [prev_char] ? 1 : 0);
+	Succ_Is_Delim      = (Current_Delimiters [succ_char] ? 1 : 0);
 
 	Total_Paren        = (int) (prog->program [1]);
 	Num_Braces         = (int) (prog->program [2]);
@@ -2848,7 +2793,7 @@ int ExecRE (
 		    (brace_counts *) malloc (sizeof (brace_counts) * (size_t) Num_Braces);
 
 		if (Brace == NULL) {
-			reg_error (L"out of memory in `ExecRE\'");
+			reg_error (U"out of memory in `ExecRE\'");
 			goto SINGLE_RETURN;
 		}
 	} else {
@@ -2862,21 +2807,21 @@ int ExecRE (
 	   can only specify \1, \2, ... \9. */
 
 	for (i = 9; i > 0; i--) {
-		*s_ptr++ = (regularExp_CHAR *) string;
-		*e_ptr++ = (regularExp_CHAR *) string;
+		*s_ptr++ = (char32 *) string;
+		*e_ptr++ = (char32 *) string;
 	}
 
 	if (!reverse) { /* Forward Search */
 		if (prog->anchor) {
 			/* Search is anchored at BOL */
 
-			if (attempt (prog, (regularExp_CHAR *) string)) {
+			if (attempt (prog, (char32 *) string)) {
 				ret_val = 1;
 				goto SINGLE_RETURN;
 			}
 
-			for (str = (regularExp_CHAR *) string;
-			        !AT_END_OF_STRING (str) && str != (regularExp_CHAR *) end && !Recursion_Limit_Exceeded;
+			for (str = (char32 *) string;
+			        !AT_END_OF_STRING (str) && str != (char32 *) end && !Recursion_Limit_Exceeded;
 			        str++) {
 
 				if (*str == '\n') {
@@ -2892,11 +2837,11 @@ int ExecRE (
 		} else if (prog->match_start != '\0') {
 			/* We know what char match must start with. */
 
-			for (str = (regularExp_CHAR *) string;
-			        !AT_END_OF_STRING (str) && str != (regularExp_CHAR *) end && !Recursion_Limit_Exceeded;
+			for (str = (char32 *) string;
+			        !AT_END_OF_STRING (str) && str != (char32 *) end && !Recursion_Limit_Exceeded;
 			        str++) {
 
-				if (*str == (regularExp_CHAR) prog->match_start) {
+				if (*str == (char32) prog->match_start) {
 					if (attempt (prog, str)) {
 						ret_val = 1;
 						break;
@@ -2908,8 +2853,8 @@ int ExecRE (
 		} else {
 			/* General case */
 
-			for (str = (regularExp_CHAR *) string;
-			        !AT_END_OF_STRING (str) && str != (regularExp_CHAR *) end && !Recursion_Limit_Exceeded;
+			for (str = (char32 *) string;
+			        !AT_END_OF_STRING (str) && str != (char32 *) end && !Recursion_Limit_Exceeded;
 			        str++) {
 
 				if (attempt (prog, str)) {
@@ -2919,7 +2864,7 @@ int ExecRE (
 			}
 
 			/* Beware of a single $ matching \0 */
-			if (!Recursion_Limit_Exceeded && !ret_val && AT_END_OF_STRING (str) && str != (regularExp_CHAR *) end) {
+			if (!Recursion_Limit_Exceeded && !ret_val && AT_END_OF_STRING (str) && str != (char32 *) end) {
 				if (attempt (prog, str)) {
 					ret_val = 1;
 				}
@@ -2930,16 +2875,14 @@ int ExecRE (
 	} else { /* Search reverse, same as forward, but loops run backward */
 
 		/* Make sure that we don't start matching beyond the logical end */
-		if (End_Of_String != NULL && (regularExp_CHAR *) end > End_Of_String) {
-			end = (const regularExp_CHAR *) End_Of_String;
+		if (End_Of_String != NULL && (char32 *) end > End_Of_String) {
+			end = (const char32 *) End_Of_String;
 		}
 
 		if (prog->anchor) {
 			/* Search is anchored at BOL */
 
-			for (str = (regularExp_CHAR *) (end - 1);
-			        str >= (regularExp_CHAR *) string && !Recursion_Limit_Exceeded;
-			        str--) {
+			for (str = (char32 *) (end - 1); str >= (char32 *) string && !Recursion_Limit_Exceeded; str--) {
 
 				if (*str == '\n') {
 					if (attempt (prog, str + 1)) {
@@ -2949,7 +2892,7 @@ int ExecRE (
 				}
 			}
 
-			if (!Recursion_Limit_Exceeded && attempt (prog, (regularExp_CHAR *) string)) {
+			if (!Recursion_Limit_Exceeded && attempt (prog, (char32 *) string)) {
 				ret_val = 1;
 				goto SINGLE_RETURN;
 			}
@@ -2958,11 +2901,9 @@ int ExecRE (
 		} else if (prog->match_start != '\0') {
 			/* We know what char match must start with. */
 
-			for (str = (regularExp_CHAR *) end;
-			        str >= (regularExp_CHAR *) string && !Recursion_Limit_Exceeded;
-			        str--) {
+			for (str = (char32 *) end; str >= (char32 *) string && !Recursion_Limit_Exceeded; str--) {
 
-				if (*str == (regularExp_CHAR) prog->match_start) {
+				if (*str == (char32) prog->match_start) {
 					if (attempt (prog, str)) {
 						ret_val = 1;
 						break;
@@ -2974,9 +2915,7 @@ int ExecRE (
 		} else {
 			/* General case */
 
-			for (str = (regularExp_CHAR *) end;
-			        str >= (regularExp_CHAR *) string && !Recursion_Limit_Exceeded;
-			        str--) {
+			for (str = (char32 *) end; str >= (char32 *) string && !Recursion_Limit_Exceeded; str--) {
 
 				if (attempt (prog, str)) {
 					ret_val = 1;
@@ -3018,11 +2957,11 @@ static int init_ansi_classes (void) {
 
 		for (i = 1; i < (int) UCHAR_MAX; i++) {
 			if (isalnum (i) || i == underscore) {
-				Word_Char [word_count++] = (regularExp_CHAR) i;
+				Word_Char [word_count++] = (char32) i;
 			}
 
 			if (isalpha (i)) {
-				Letter_Char [letter_count++] = (regularExp_CHAR) i;
+				Letter_Char [letter_count++] = (char32) i;
 			}
 
 			/* Note: Whether or not newline is considered to be whitespace is
@@ -3030,7 +2969,7 @@ static int init_ansi_classes (void) {
 			   here. */
 
 			if (isspace (i) && (i != (int) '\n')) {
-				White_Space [space_count++] = (regularExp_CHAR) i;
+				White_Space [space_count++] = (char32) i;
 			}
 
 			/* Make sure arrays are big enough.  ("- 2" because of zero array
@@ -3040,7 +2979,7 @@ static int init_ansi_classes (void) {
 			        space_count  > (WHITE_SPACE_SIZE - 2) ||
 			        letter_count > (ALNUM_CHAR_SIZE  - 2)) {
 
-				reg_error (L"internal error #9 `init_ansi_classes\'");
+				reg_error (U"internal error #9 `init_ansi_classes\'");
 				return (0);
 			}
 		}
@@ -3057,18 +2996,18 @@ static int init_ansi_classes (void) {
  * attempt - try match at specific point, returns: 0 failure, 1 success
  *----------------------------------------------------------------------*/
 
-static int attempt (regexp *prog, regularExp_CHAR *string) {
+static int attempt (regexp *prog, char32 *string) {
 
-	register          int    i;
-	register regularExp_CHAR **s_ptr;
-	register regularExp_CHAR **e_ptr;
+	int    i;
+	char32 **s_ptr;
+	char32 **e_ptr;
 	int    branch_index = 0; /* Must be set to zero ! */
 
 	Reg_Input      = string;
-	Start_Ptr_Ptr  = (regularExp_CHAR **) prog->startp;
-	End_Ptr_Ptr    = (regularExp_CHAR **) prog->endp;
-	s_ptr          = (regularExp_CHAR **) prog->startp;
-	e_ptr          = (regularExp_CHAR **) prog->endp;
+	Start_Ptr_Ptr  = (char32 **) prog->startp;
+	End_Ptr_Ptr    = (char32 **) prog->endp;
+	s_ptr          = (char32 **) prog->startp;
+	e_ptr          = (char32 **) prog->endp;
 
 	/* Reset the recursion counter. */
 	Recursion_Count = 0;
@@ -3083,12 +3022,12 @@ static int attempt (regexp *prog, regularExp_CHAR *string) {
 		*e_ptr++ = NULL;
 	}
 
-	if (match ( (regularExp_CHAR *) (prog->program + REGEX_START_OFFSET),
+	if (match ( (char32 *) (prog->program + REGEX_START_OFFSET),
 	            &branch_index)) {
-		prog->startp [0] = (regularExp_CHAR *) string;
-		prog->endp   [0] = (regularExp_CHAR *) Reg_Input;     /* <-- One char AFTER  */
-		prog->extentpBW  = (regularExp_CHAR *) Extent_Ptr_BW; /*     matched string! */
-		prog->extentpFW  = (regularExp_CHAR *) Extent_Ptr_FW;
+		prog->startp [0] = (char32 *) string;
+		prog->endp   [0] = (char32 *) Reg_Input;     /* <-- One char AFTER  */
+		prog->extentpBW  = (char32 *) Extent_Ptr_BW; /*     matched string! */
+		prog->extentpFW  = (char32 *) Extent_Ptr_FW;
 		prog->top_branch = branch_index;
 
 		return (1);
@@ -3112,15 +3051,15 @@ static int attempt (regexp *prog, regularExp_CHAR *string) {
 #define CHECK_RECURSION_LIMIT\
  if (Recursion_Limit_Exceeded) MATCH_RETURN (0);
 
-static int match (regularExp_CHAR *prog, int *branch_index_param) {
+static int match (char32 *prog, int *branch_index_param) {
 
-	register regularExp_CHAR *scan;  /* Current node. */
-	regularExp_CHAR *next;  /* Next node. */
-	register int next_ptr_offset;  /* Used by the NEXT_PTR () macro */
+	char32 *scan;  /* Current node. */
+	char32 *next;  /* Next node. */
+	int next_ptr_offset;  /* Used by the NEXT_PTR () macro */
 
 	if (++Recursion_Count > REGEX_RECURSION_LIMIT) {
 		if (!Recursion_Limit_Exceeded) { /* Prevent duplicate errors */
-			reg_error (L"recursion limit exceeded, please respecify expression");
+			reg_error (U"recursion limit exceeded, please respecify expression");
 		}
 		Recursion_Limit_Exceeded = 1;
 		MATCH_RETURN (0);
@@ -3134,8 +3073,8 @@ static int match (regularExp_CHAR *prog, int *branch_index_param) {
 
 		switch (GET_OP_CODE (scan)) {
 			case BRANCH: {
-				register regularExp_CHAR *save;
-				register int branch_index_local = 0;
+				char32 *save;
+				int branch_index_local = 0;
 
 				if (GET_OP_CODE (next) != BRANCH) {  /* No choice. */
 					next = OPERAND (scan);   /* Avoid recursion. */
@@ -3165,8 +3104,8 @@ static int match (regularExp_CHAR *prog, int *branch_index_param) {
 			break;
 
 			case EXACTLY: {
-				register int            len;
-				register regularExp_CHAR *opnd;
+				int len;
+				char32 *opnd;
 
 				opnd = OPERAND (scan);
 
@@ -3176,14 +3115,13 @@ static int match (regularExp_CHAR *prog, int *branch_index_param) {
 					MATCH_RETURN (0);
 				}
 
-				len = wcslen ( (wchar *) opnd);
+				len = str32len (opnd);
 
 				if (End_Of_String != NULL && Reg_Input + len > End_Of_String) {
 					MATCH_RETURN (0);
 				}
 
-				if (len > 1  &&
-				        wcsncmp ( (wchar *) opnd, (wchar *) Reg_Input, len) != 0) {
+				if (len > 1  && str32ncmp (opnd, Reg_Input, len) != 0) {
 
 					MATCH_RETURN (0);
 				}
@@ -3194,8 +3132,8 @@ static int match (regularExp_CHAR *prog, int *branch_index_param) {
 			break;
 
 			case SIMILAR: {
-				register regularExp_CHAR *opnd;
-				register regularExp_CHAR  test;
+				char32 *opnd;
+				char32  test;
 
 				opnd = OPERAND (scan);
 
@@ -3204,7 +3142,7 @@ static int match (regularExp_CHAR *prog, int *branch_index_param) {
 
 				while ( (test = *opnd++) != '\0') {
 					if (AT_END_OF_STRING (Reg_Input) ||
-					        tolower (*Reg_Input++) != test) {
+					        towlower ((int) *Reg_Input++) != test) {
 
 						MATCH_RETURN (0);
 					}
@@ -3423,7 +3361,7 @@ static int match (regularExp_CHAR *prog, int *branch_index_param) {
                                     considers \0 as a member
                                     of the character set. */
 
-				if (wcschr ( (wchar *) OPERAND (scan), (int) *Reg_Input) == NULL) {
+				if (str32chr (OPERAND (scan), *Reg_Input) == NULL) {
 					MATCH_RETURN (0);
 				}
 
@@ -3437,7 +3375,7 @@ static int match (regularExp_CHAR *prog, int *branch_index_param) {
 					MATCH_RETURN (0);    /* See comment for ANY_OF. */
 				}
 
-				if (wcschr ( (wchar *) OPERAND (scan), (int) *Reg_Input) != NULL) {
+				if (str32chr (OPERAND (scan), *Reg_Input) != NULL) {
 					MATCH_RETURN (0);
 				}
 
@@ -3456,11 +3394,11 @@ static int match (regularExp_CHAR *prog, int *branch_index_param) {
 			case LAZY_PLUS:
 			case LAZY_QUESTION:
 			case LAZY_BRACE: {
-				register unsigned long  num_matched = REG_ZERO;
-				register unsigned long  min = ULONG_MAX, max = REG_ZERO;
-				register regularExp_CHAR *save;
-				register regularExp_CHAR  next_char;
-				regularExp_CHAR *next_op;
+				unsigned long  num_matched = REG_ZERO;
+				unsigned long  min = ULONG_MAX, max = REG_ZERO;
+				char32 *save;
+				char32 next_char;
+				char32 *next_op;
 				int            lazy = 0;
 
 				/* Lookahead (when possible) to avoid useless match attempts
@@ -3586,8 +3524,8 @@ static int match (regularExp_CHAR *prog, int *branch_index_param) {
 				/* case X_REGEX_BR:    */
 				/* case X_REGEX_BR_CI: *** IMPLEMENT LATER */
 			{
-				register regularExp_CHAR *captured, *finish;
-				int   paren_no;
+				char32 *captured, *finish;
+				int paren_no;
 
 				paren_no = (int) * OPERAND (scan);
 
@@ -3637,8 +3575,8 @@ static int match (regularExp_CHAR *prog, int *branch_index_param) {
 
 			case POS_AHEAD_OPEN:
 			case NEG_AHEAD_OPEN: {
-				register regularExp_CHAR *save;
-				register regularExp_CHAR *saved_end;
+				char32 *save;
+				const char32 *saved_end;
 				int   answer;
 
 				save      = Reg_Input;
@@ -3689,12 +3627,12 @@ static int match (regularExp_CHAR *prog, int *branch_index_param) {
 
 			case POS_BEHIND_OPEN:
 			case NEG_BEHIND_OPEN: {
-				register regularExp_CHAR *save;
+				char32 *save;
 				int   answer;
-				register 	 int   offset, upper;
+				int   offset, upper;
 				int   lower;
 				int   found = 0;
-				regularExp_CHAR *saved_end;
+				const char32 *saved_end;
 
 				save      = Reg_Input;
 				saved_end = End_Of_String;
@@ -3778,8 +3716,8 @@ static int match (regularExp_CHAR *prog, int *branch_index_param) {
 				if ( (GET_OP_CODE (scan) > OPEN) &&
 				        (GET_OP_CODE (scan) < OPEN + NSUBEXP)) {
 
-					register          int   no;
-					register regularExp_CHAR *save;
+					int no;
+					char32 *save;
 
 					no   = GET_OP_CODE (scan) - OPEN;
 					save = Reg_Input;
@@ -3804,8 +3742,8 @@ static int match (regularExp_CHAR *prog, int *branch_index_param) {
 				} else if ( (GET_OP_CODE (scan) > CLOSE) &&
 				            (GET_OP_CODE (scan) < CLOSE + NSUBEXP)) {
 
-					register          int   no;
-					register regularExp_CHAR *save;
+					int no;
+					char32 *save;
 
 					no   = GET_OP_CODE (scan) - CLOSE;
 					save = Reg_Input;
@@ -3827,7 +3765,7 @@ static int match (regularExp_CHAR *prog, int *branch_index_param) {
 						MATCH_RETURN (0);
 					}
 				} else {
-					reg_error (L"memory corruption, `match\'");
+					reg_error (U"memory corruption, `match\'");
 
 					MATCH_RETURN (0);
 				}
@@ -3841,7 +3779,7 @@ static int match (regularExp_CHAR *prog, int *branch_index_param) {
 	/* We get here only if there's trouble -- normally "case END" is
 	   the terminating point. */
 
-	reg_error (L"corrupted pointers, `match\'");
+	reg_error (U"corrupted pointers, `match\'");
 
 	MATCH_RETURN (0);
 }
@@ -3860,12 +3798,12 @@ static int match (regularExp_CHAR *prog, int *branch_index_param) {
  * Returns the actual number of matches.
  *----------------------------------------------------------------------*/
 
-static unsigned long greedy (regularExp_CHAR *p, long max) {
+static unsigned long greedy (char32 *p, long max) {
 
-	register regularExp_CHAR *input_str;
-	register regularExp_CHAR *operand;
-	register unsigned long  count = REG_ZERO;
-	register unsigned long  max_cmp;
+	char32 *input_str;
+	char32 *operand;
+	unsigned long  count = REG_ZERO;
+	unsigned long  max_cmp;
 
 	input_str = Reg_Input;
 	operand   = OPERAND (p); /* Literal char or start of class characters. */
@@ -3905,7 +3843,7 @@ static unsigned long greedy (regularExp_CHAR *p, long max) {
 
 		case SIMILAR: /* Case insensitive version of EXACTLY */
 			while (count < max_cmp                  &&
-			        *operand == tolower (*input_str) &&
+			        *operand == (char32) towlower ((int) *input_str) &&
 			        !AT_END_OF_STRING (input_str)) {
 				count++; input_str++;
 			}
@@ -3914,7 +3852,7 @@ static unsigned long greedy (regularExp_CHAR *p, long max) {
 
 		case ANY_OF:  /* [...] character class. */
 			while (count < max_cmp                                      &&
-			        wcschr ( (wchar *) operand, (int) *input_str) != NULL  &&
+			        str32chr (operand, *input_str) != NULL  &&
 			        !AT_END_OF_STRING (input_str)) {
 
 				count++; input_str++;
@@ -3927,7 +3865,7 @@ static unsigned long greedy (regularExp_CHAR *p, long max) {
                        time.) */
 
 			while (count < max_cmp                                      &&
-			        wcschr ( (wchar *) operand, (int) *input_str) == NULL  &&
+			        str32chr (operand, *input_str) == NULL  &&
 			        !AT_END_OF_STRING (input_str)) {
 
 				count++; input_str++;
@@ -3959,8 +3897,8 @@ static unsigned long greedy (regularExp_CHAR *p, long max) {
 
 		case WORD_CHAR: /* \w (word character, alpha-numeric or underscore) */
 			while (count < max_cmp                     &&
-			        (isalnum ( (int) *input_str) ||
-			         *input_str == (regularExp_CHAR) '_') &&
+			        (iswalnum ( (int) *input_str) ||
+			         *input_str == U'_') &&
 			        !AT_END_OF_STRING (input_str)) {
 
 				count++; input_str++;
@@ -3970,9 +3908,9 @@ static unsigned long greedy (regularExp_CHAR *p, long max) {
 
 		case NOT_WORD_CHAR:/* \W (NOT a word character) */
 			while (count < max_cmp                      &&
-			        !isalnum ( (int) *input_str)          &&
-			        *input_str != (regularExp_CHAR) '_'    &&
-			        *input_str != (regularExp_CHAR) '\n'   &&
+			        !iswalnum ( (int) *input_str)          &&
+			        *input_str != U'_'    &&
+			        *input_str != U'\n'   &&
 			        !AT_END_OF_STRING (input_str)) {
 
 				count++; input_str++;
@@ -3991,8 +3929,8 @@ static unsigned long greedy (regularExp_CHAR *p, long max) {
 
 		case NOT_DIGIT: /* same as [^0123456789] */
 			while (count < max_cmp              &&
-			        !isdigit ( (int) *input_str)  &&
-			        *input_str != '\n'           &&
+			        !iswdigit ( (int) *input_str)  &&
+			        *input_str != U'\n'           &&
 			        !AT_END_OF_STRING (input_str)) {
 
 				count++; input_str++;
@@ -4002,8 +3940,8 @@ static unsigned long greedy (regularExp_CHAR *p, long max) {
 
 		case SPACE: /* same as [ \t\r\f\v]-- doesn't match newline. */
 			while (count < max_cmp             &&
-			        isspace ( (int) *input_str)  &&
-			        *input_str != '\n'          &&
+			        iswspace ( (int) *input_str)  &&
+			        *input_str != U'\n'          &&
 			        !AT_END_OF_STRING (input_str)) {
 
 				count++; input_str++;
@@ -4013,7 +3951,7 @@ static unsigned long greedy (regularExp_CHAR *p, long max) {
 
 		case SPACE_NL: /* same as [\n \t\r\f\v]-- matches newline. */
 			while (count < max_cmp             &&
-			        isspace ( (int) *input_str)  &&
+			        iswspace ( (int) *input_str)  &&
 			        !AT_END_OF_STRING (input_str)) {
 
 				count++; input_str++;
@@ -4023,7 +3961,7 @@ static unsigned long greedy (regularExp_CHAR *p, long max) {
 
 		case NOT_SPACE: /* same as [^\n \t\r\f\v]-- doesn't match newline. */
 			while (count < max_cmp              &&
-			        !isspace ( (int) *input_str)  &&
+			        !iswspace ( (int) *input_str)  &&
 			        !AT_END_OF_STRING (input_str)) {
 
 				count++; input_str++;
@@ -4033,7 +3971,7 @@ static unsigned long greedy (regularExp_CHAR *p, long max) {
 
 		case NOT_SPACE_NL: /* same as [^ \t\r\f\v]-- matches newline. */
 			while (count < max_cmp                                     &&
-			        (!isspace ( (int) *input_str) || *input_str == '\n')  &&
+			        (!iswspace ( (int) *input_str) || *input_str == '\n')  &&
 			        !AT_END_OF_STRING (input_str)) {
 
 				count++; input_str++;
@@ -4043,7 +3981,7 @@ static unsigned long greedy (regularExp_CHAR *p, long max) {
 
 		case LETTER: /* same as [a-zA-Z] */
 			while (count < max_cmp             &&
-			        isalpha ( (int) *input_str)  &&
+			        iswalpha ( (int) *input_str)  &&
 			        !AT_END_OF_STRING (input_str)) {
 
 				count++; input_str++;
@@ -4053,7 +3991,7 @@ static unsigned long greedy (regularExp_CHAR *p, long max) {
 
 		case NOT_LETTER: /* same as [^a-zA-Z] */
 			while (count < max_cmp              &&
-			        !isalpha ( (int) *input_str)  &&
+			        !iswalpha ( (int) *input_str)  &&
 			        *input_str != '\n'           &&
 			        !AT_END_OF_STRING (input_str)) {
 
@@ -4067,7 +4005,7 @@ static unsigned long greedy (regularExp_CHAR *p, long max) {
 			   generate a call to greedy.  The above cases should cover
 			   all the atoms that are SIMPLE. */
 
-			reg_error (L"internal error #10 `greedy\'");
+			reg_error (U"internal error #10 `greedy\'");
 			count = 0U;  /* Best we can do. */
 	}
 
@@ -4085,9 +4023,9 @@ static unsigned long greedy (regularExp_CHAR *p, long max) {
  *       description of the macro).
  *----------------------------------------------------------------------*/
 
-static regularExp_CHAR *next_ptr (regularExp_CHAR *ptr) {
+static char32 *next_ptr (char32 *ptr) {
 
-	register int offset;
+	int offset;
 
 	if (ptr == &Compute_Size) {
 		return (NULL);
@@ -4113,34 +4051,34 @@ static regularExp_CHAR *next_ptr (regularExp_CHAR *ptr) {
 **  To give the caller a chance to react to this the function returns False
 **  on any error. The substitution will still be executed.
 */
-int SubstituteRE (const regexp *prog, const regularExp_CHAR *source, regularExp_CHAR *dest, int max, int *errorType) {
+int SubstituteRE (const regexp *prog, const char32 *source, char32 *dest, int max, int *errorType) {
 
-	register regularExp_CHAR *src;
-	regularExp_CHAR *src_alias;
-	register regularExp_CHAR *dst;
-	register regularExp_CHAR  c;
-	register regularExp_CHAR  test;
-	register          int   paren_no;
-	register          int   len;
-	register regularExp_CHAR  chgcase;
+	const char32 *src;
+	const char32 *src_alias;
+	char32 *dst;
+	char32 c;
+	char32 test;
+	int   paren_no;
+	int   len;
+	char32 chgcase;
 	int anyWarnings = FALSE;
 
 	*errorType = 0;
 	if (prog == NULL || source == NULL || dest == NULL) {
-		reg_error (L"NULL parm to `SubstituteRE\'");
+		reg_error (U"NULL parm to `SubstituteRE\'");
 		*errorType = 2;
 		return FALSE;
 	}
 
 	if (U_CHAR_AT (prog->program) != MAGIC) {
 		*errorType = 3;
-		reg_error (L"damaged regexp passed to `SubstituteRE\'");
+		reg_error (U"damaged regexp passed to `SubstituteRE\'");
 
 		return FALSE;
 	}
 
-	src = (regularExp_CHAR *) source;
-	dst = (regularExp_CHAR *) dest;
+	src = source;
+	dst = dest;
 
 	while ( (c = *src++) != '\0') {
 		chgcase  = '\0';
@@ -4174,7 +4112,7 @@ int SubstituteRE (const regexp *prog, const regularExp_CHAR *source, regularExp_
 			} else if ( (test = literal_escape (*src)) != '\0') {
 				c = test; src++;
 
-			} else if ( (test = numeric_escape (*src, &src_alias)) != '\0') {
+			} else if ( (test = numeric_escape (*src, (char32 **) &src_alias)) != '\0') {
 				c   = test;
 				src = src_alias; src++;
 
@@ -4191,9 +4129,9 @@ int SubstituteRE (const regexp *prog, const regularExp_CHAR *source, regularExp_
 		}                 /* mind set of issuing an error!       */
 
 		if (paren_no < 0) { /* Ordinary character. */
-			if ( ( (regularExp_CHAR *) dst - (regularExp_CHAR *) dest) >= (max - 1)) {
+			if ( (dst - dest) >= (max - 1)) {
 				*errorType = 1;
-				reg_error (L"replacing expression in `SubstituteRE\' too long; truncating");
+				reg_error (U"replacing expression in `SubstituteRE\' too long; truncating");
 				anyWarnings = TRUE;
 				break;
 			} else {
@@ -4204,14 +4142,14 @@ int SubstituteRE (const regexp *prog, const regularExp_CHAR *source, regularExp_
 
 			len = prog->endp [paren_no] - prog->startp [paren_no];
 
-			if ( ( (regularExp_CHAR *) dst + len - (regularExp_CHAR *) dest) >= max - 1) {
+			if ( (dst + len - dest) >= max - 1) {
 				*errorType = 1;
-				reg_error (L"replacing expression in `SubstituteRE\' too long; truncating");
+				reg_error (U"replacing expression in `SubstituteRE\' too long; truncating");
 				anyWarnings = TRUE;
-				len = max - ( (regularExp_CHAR *) dst - (regularExp_CHAR *) dest) - 1;
+				len = max - (dst - dest) - 1;
 			}
 
-			(void) wcsncpy ( (wchar *) dst, (wchar *) prog->startp [paren_no], len);
+			(void) str32ncpy (dst, prog->startp [paren_no], len);
 
 			if (chgcase != '\0') {
 				adjustcase (dst, len, chgcase);
@@ -4221,7 +4159,7 @@ int SubstituteRE (const regexp *prog, const regularExp_CHAR *source, regularExp_
 
 			if (len != 0 && * (dst - 1) == '\0') { /* strncpy hit NUL. */
 				*errorType = 3;
-				reg_error (L"damaged match string in `SubstituteRE\'");
+				reg_error (U"damaged match string in `SubstituteRE\'");
 				anyWarnings = TRUE;
 			}
 		}
@@ -4232,15 +4170,15 @@ int SubstituteRE (const regexp *prog, const regularExp_CHAR *source, regularExp_
 	return !anyWarnings;
 }
 
-static void adjustcase (regularExp_CHAR *str, int len, regularExp_CHAR chgcase) {
+static void adjustcase (char32 *str, int len, char32 chgcase) {
 
-	register regularExp_CHAR *string = str;
-	int            i;
+	char32 *string = str;
+	int i;
 
 	/* The tokens \u and \l only modify the first character while the tokens
 	   \U and \L modify the entire string. */
 
-	if (islower (chgcase) && len > 0) {
+	if (iswlower ((int) chgcase) && len > 0) {
 		len = 1;
 	}
 
@@ -4248,7 +4186,7 @@ static void adjustcase (regularExp_CHAR *str, int len, regularExp_CHAR chgcase) 
 		case 'u':
 		case 'U':
 			for (i = 0; i < len; i++) {
-				* (string + i) = toupper ( (int) * (string + i));
+				* (string + i) = (char32) towupper ( (int) * (string + i));
 			}
 
 			break;
@@ -4256,7 +4194,7 @@ static void adjustcase (regularExp_CHAR *str, int len, regularExp_CHAR chgcase) 
 		case 'l':
 		case 'L':
 			for (i = 0; i < len; i++) {
-				* (string + i) = tolower ( (int) * (string + i));
+				* (string + i) = (char32) towlower ( (int) * (string + i));
 			}
 
 			break;
@@ -4267,8 +4205,8 @@ static void adjustcase (regularExp_CHAR *str, int len, regularExp_CHAR chgcase) 
  * reg_error
  *----------------------------------------------------------------------*/
 
-static void reg_error (const wchar *str) {
-	Melder_error_ ("Internal error processing regular expression: ", str);
+static void reg_error (const char32 *str) {
+	Melder_error_ (U"Internal error processing regular expression: ", str);
 }
 
 /*----------------------------------------------------------------------*
@@ -4283,15 +4221,15 @@ static void reg_error (const wchar *str) {
  * Return value is a pointer to the table.
  *----------------------------------------------------------------------*/
 
-static regularExp_CHAR *makeDelimiterTable (
-    regularExp_CHAR *delimiters,
-    regularExp_CHAR *table) {
+static char32 *makeDelimiterTable (
+    const char32 *delimiters,
+    char32 *table) {
 
-	regularExp_CHAR *c;
+	const char32 *c;
 
 	memset (table, 0, 256);
 
-	for (c = (regularExp_CHAR *) delimiters; *c != '\0'; c++) {
+	for (c = delimiters; *c != '\0'; c++) {
 		table [*c] = 1;
 	}
 
@@ -4309,10 +4247,12 @@ static regularExp_CHAR *makeDelimiterTable (
  * Builds a default delimiter table that persists across `ExecRE' calls.
  *----------------------------------------------------------------------*/
 
-void SetREDefaultWordDelimiters (regularExp_CHAR *delimiters) {
+void SetREDefaultWordDelimiters (char32 *delimiters) {
 	makeDelimiterTable (delimiters, Default_Delimiters);
 }
 
 void EnableCountingQuantifier (int is_enabled) {
 	Enable_Counting_Quantifier = is_enabled;
 }
+
+/* End of file regularExp.cpp */

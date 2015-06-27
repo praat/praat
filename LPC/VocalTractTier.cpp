@@ -72,7 +72,7 @@ VocalTractPoint VocalTract_to_VocalTractPoint (VocalTract me, double time) {
 		thy d_vocalTract = (VocalTract) Data_copy (me);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to VocalTractPoint.");
+		Melder_throw (me, U": not converted to VocalTractPoint.");
 	}
 }
 
@@ -87,7 +87,7 @@ VocalTractTier VocalTractTier_create (double fromTime, double toTime) {
 		my d_vocalTracts = SortedSetOfDouble_create ();
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw (": VocalTractTier not created.");
+		Melder_throw (U": VocalTractTier not created.");
 	}
 }
 
@@ -97,7 +97,7 @@ VocalTractTier VocalTract_to_VocalTractTier (VocalTract me, double startTime, do
 		VocalTractTier_addVocalTract (thee.peek(), time, me);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to VocalTractTier");
+		Melder_throw (me, U": not converted to VocalTractTier");
 	}
 }
 
@@ -109,12 +109,12 @@ void VocalTractTier_addVocalTract (VocalTractTier me, double time, VocalTract vo
 			long numberOfSections = vtp -> d_vocalTract -> nx;
 			if (numberOfSections != vocaltract -> nx) {
 				forget (vocaltract);
-				Melder_throw ("The number of sections must be equal to ", Melder_integer (numberOfSections), ".");
+				Melder_throw (U"The number of sections must be equal to ", numberOfSections, U".");
 			}
 		}
 		Collection_addItem (my d_vocalTracts, thee.transfer());
 	} catch (MelderError) {
-		Melder_throw (me, ": no VocalTract added.");
+		Melder_throw (me, U": no VocalTract added.");
 	}
 }
 
@@ -134,16 +134,16 @@ VocalTract VocalTractTier_to_VocalTract (VocalTractTier me, double time) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no VocalTract created.");
+		Melder_throw (me, U": no VocalTract created.");
 	}
 }
 
 LPC VocalTractTier_to_LPC (VocalTractTier me, double timeStep) {
 	try {
 		if (my d_vocalTracts -> size == 0) {
-			Melder_throw ("Empty VocalTractTier");
+			Melder_throw (U"Empty VocalTractTier");
 		}
-		long numberOfFrames = floor((my xmax - my xmin) / timeStep);
+		long numberOfFrames = (long) floor ((my xmax - my xmin) / timeStep);
 		VocalTractPoint vtp = (VocalTractPoint) my d_vocalTracts -> item[1];
 		long numberOfSections = vtp -> d_vocalTract -> nx;
 		double samplingPeriod = 1.0 / (1000.0 * numberOfSections);
@@ -175,7 +175,7 @@ LPC VocalTractTier_to_LPC (VocalTractTier me, double timeStep) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (": not converted to LPC.");
+		Melder_throw (U": not converted to LPC.");
 	}
 }
 

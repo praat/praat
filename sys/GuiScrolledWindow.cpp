@@ -45,7 +45,7 @@ Thing_implement (GuiScrolledWindow, GuiControl, 0);
 	- (void) dealloc {   // override
 		GuiScrolledWindow me = d_userData;
 		forget (me);
-		trace ("deleting a scrolled window");
+		trace (U"deleting a scrolled window");
 		[super dealloc];
 	}
 	- (GuiThing) userData {
@@ -101,7 +101,7 @@ GuiScrolledWindow GuiScrolledWindow_create (GuiForm parent, int left, int right,
 		_GuiObject_setUserData (my d_widget, me);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		Melder_assert (my classInfo == classGuiScrolledWindow);
-		trace ("me = %p, user data = %p", me, my d_widget -> userData);
+		trace (U"me = ", Melder_pointer (me), U", user data = ", Melder_pointer (my d_widget -> userData));
 	#endif
 	return me;
 }

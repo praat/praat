@@ -1,6 +1,6 @@
 /* Graphics.cpp
  *
- * Copyright (C) 1992-2012,2014 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ Thing_implement (Graphics, Thing, 0);
 enum kGraphics_cjkFontStyle theGraphicsCjkFontStyle;
 
 void Graphics_prefs () {
-	Preferences_addEnum (L"Graphics.cjkFontStyle", & theGraphicsCjkFontStyle, kGraphics_cjkFontStyle, kGraphics_cjkFontStyle_DEFAULT);
+	Preferences_addEnum (U"Graphics.cjkFontStyle", & theGraphicsCjkFontStyle, kGraphics_cjkFontStyle, kGraphics_cjkFontStyle_DEFAULT);
 }
 
 void structGraphics :: v_destroy () {
@@ -117,7 +117,7 @@ void Graphics_init (Graphics me, int resolution) {
 	} else if (resolution == 1200) {
 		my resolutionNumber = kGraphics_resolution_1200;
 	} else {
-		Melder_fatal ("Unsupported resolution %d dpi.", resolution);
+		Melder_fatal (U"Unsupported resolution ", resolution, U" dpi.");
 	}
 	my d_x1DC = my d_x1DCmin = 0;	my d_x2DC = my d_x2DCmax = 32767;
 	my d_y1DC = my d_y1DCmin = 0;	my d_y2DC = my d_y2DCmax = 32767;
@@ -157,13 +157,12 @@ void Graphics_setWsViewport (Graphics me,
 	long x1DC, long x2DC, long y1DC, long y2DC)
 {
 	if (x1DC < my d_x1DCmin || x2DC > my d_x2DCmax || y1DC < my d_y1DCmin || y2DC > my d_y2DCmax) {
-		static MelderString warning = { 0 };
-		MelderString_empty (& warning);
-		MelderString_append (& warning, L"Graphics_setWsViewport: coordinates too large:\n",
-			Melder_integer (x1DC), L"..", Melder_integer (x2DC), L" x ", Melder_integer (y1DC), L"..", Melder_integer (y2DC));
-		MelderString_append (& warning, L" goes outside ",
-			Melder_integer (my d_x1DCmin), L"..", Melder_integer (my d_x2DCmax), L" x ", Melder_integer (my d_y1DCmin), L"..", Melder_integer (my d_y2DCmax), L".");
-		Melder_warning (warning.string);
+		Melder_warning (U"Graphics_setWsViewport: coordinates too large:\n",
+			x1DC, U"..", x2DC, U" x ", y1DC, U"..", y2DC,
+			U" goes outside ",
+			my d_x1DCmin, U"..", my d_x2DCmax, U" x ", my d_y1DCmin, U"..", my d_y2DCmax,
+			U"."
+		);
 		x1DC = my d_x1DCmin;
 		x2DC = my d_x2DCmax;
 		y1DC = my d_y1DCmin;
@@ -246,7 +245,7 @@ void Graphics_WCtoDC (Graphics me, double xWC, double yWC, long *xDC, long *yDC)
 /***** OUTPUT PRIMITIVES, RECORDABLE *****/
 
 void Graphics_setViewport (Graphics me, double x1NDC, double x2NDC, double y1NDC, double y2NDC) {
-	trace ("enter %f %f %f %f", x1NDC, x2NDC, y1NDC, y2NDC);
+	trace (U"enter ", x1NDC, U_SPACE, x2NDC, U_SPACE, y1NDC, U_SPACE, y2NDC);
 	my d_x1NDC = x1NDC;
 	my d_x2NDC = x2NDC;
 	my d_y1NDC = y1NDC;
@@ -259,7 +258,7 @@ void Graphics_setViewport (Graphics me, double x1NDC, double x2NDC, double y1NDC
 void Graphics_setInner (Graphics me) {
 	double margin = 2.8 * my fontSize * my resolution / 72.0;
 	double wDC = (my d_x2DC - my d_x1DC) / (my d_x2wNDC - my d_x1wNDC) * (my d_x2NDC - my d_x1NDC);
-	double hDC = abs (my d_y2DC - my d_y1DC) / (my d_y2wNDC - my d_y1wNDC) * (my d_y2NDC - my d_y1NDC);
+	double hDC = labs (my d_y2DC - my d_y1DC) / (my d_y2wNDC - my d_y1wNDC) * (my d_y2NDC - my d_y1NDC);
 	double dx = 1.5 * margin / wDC;
 	double dy = margin / hDC;
 	my horTick = 0.06 * dx, my vertTick = 0.09 * dy;
@@ -274,7 +273,7 @@ void Graphics_setInner (Graphics me) {
 	my d_x2NDC = (1 - dx) * my outerViewport.x2NDC + dx * my outerViewport.x1NDC;
 	my d_y1NDC = (1 - dy) * my outerViewport.y1NDC + dy * my outerViewport.y2NDC;
 	my d_y2NDC = (1 - dy) * my outerViewport.y2NDC + dy * my outerViewport.y1NDC;
-	trace ("done %f %f %f %f", my d_x1NDC, my d_x2NDC, my d_y1NDC, my d_y2NDC);
+	trace (U"done ", my d_x1NDC, U" ", my d_x2NDC, U" ", my d_y1NDC, U" ", my d_y2NDC);
 	computeTrafo (me);
 	if (my recording) { op (SET_INNER, 0); }
 }
@@ -284,7 +283,7 @@ void Graphics_unsetInner (Graphics me) {
 	my d_x2NDC = my outerViewport.x2NDC;
 	my d_y1NDC = my outerViewport.y1NDC;
 	my d_y2NDC = my outerViewport.y2NDC;
-	trace ("done %f %f %f %f", my d_x1NDC, my d_x2NDC, my d_y1NDC, my d_y2NDC);
+	trace (U"done ", my d_x1NDC, U" ", my d_x2NDC, U" ", my d_y1NDC, U" ", my d_y2NDC);
 	computeTrafo (me);
 	if (my recording)
 		{ op (UNSET_INNER, 0); }
@@ -321,7 +320,7 @@ void Graphics_inqWindow (Graphics me, double *x1WC, double *x2WC, double *y1WC, 
 Graphics_Viewport Graphics_insetViewport
 	(Graphics me, double x1rel, double x2rel, double y1rel, double y2rel)
 {
-	trace ("enter");
+	trace (U"enter");
 	Graphics_Viewport previous;
 	previous.x1NDC = my d_x1NDC;
 	previous.x2NDC = my d_x2NDC;
@@ -336,7 +335,7 @@ Graphics_Viewport Graphics_insetViewport
 }
 
 void Graphics_resetViewport (Graphics me, Graphics_Viewport viewport) {
-	trace ("enter");
+	trace (U"enter");
 	Graphics_setViewport (me, viewport.x1NDC, viewport.x2NDC, viewport.y1NDC, viewport.y2NDC);
 }
 

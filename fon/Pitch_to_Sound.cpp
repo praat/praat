@@ -1,6 +1,6 @@
 /* Pitch_to_Sound.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ Sound Pitch_to_Sound (Pitch me, double tmin, double tmax, int hum) {
 		}
 		return sound.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Sound.");
+		Melder_throw (me, U": not converted to Sound.");
 	}
 }
 
@@ -52,7 +52,7 @@ void Pitch_play (Pitch me, double tmin, double tmax) {
 		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   // autowindowing
 		Sound_playPart (sound.peek(), tmin, tmax, NULL, NULL);
 	} catch (MelderError) {
-		Melder_throw (me, ": not played.");
+		Melder_throw (me, U": not played.");
 	}
 }
 
@@ -62,7 +62,7 @@ void Pitch_hum (Pitch me, double tmin, double tmax) {
 		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   // autowindowing
 		Sound_playPart (sound.peek(), tmin, tmax, NULL, NULL);
 	} catch (MelderError) {
-		Melder_throw (me, ": not played.");
+		Melder_throw (me, U": not played.");
 	}
 }
 
@@ -94,7 +94,7 @@ Sound Pitch_to_Sound_sine (Pitch me, double tmin, double tmax, double samplingFr
 		}
 		return sound.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Sound (sine).");
+		Melder_throw (me, U": not converted to Sound (sine).");
 	}
 }
 

@@ -69,6 +69,9 @@
 #include "Manipulation.h"
 #include "NUM2.h"
 
+//#include <pulse/simple.h>
+//#include <pulse/error.h>
+
 #define MAX_T  0.02000000001   /* Maximum interval between two voice pulses (otherwise voiceless). */
 
 static void PitchTier_modifyExcursionRange (PitchTier me, double tmin, double tmax, double multiplier, double fref_Hz) {
@@ -114,7 +117,7 @@ static void i1write (Sound me, FILE *f, long *nClip) {
 	double *s = my z[1], min = -128, max = 127;
 	*nClip = 0;
 	for (long i = 1; i <= my nx; i++) {
-		double sample = floor (s[i] * 128 + 0.5);
+		double sample = round (s[i] * 128);
 		if (sample > max) {
 			sample = max;
 			(*nClip) ++;
@@ -122,7 +125,7 @@ static void i1write (Sound me, FILE *f, long *nClip) {
 			sample = min;
 			(*nClip) ++;
 		}
-		binputi1 (sample, f);
+		binputi1 ((int) sample, f);
 	}
 }
 
@@ -137,7 +140,7 @@ static void u1write (Sound me, FILE *f, long *nClip) {
 	double *s = my z[1], min = 0, max = 255;
 	*nClip = 0;
 	for (long i = 1; i <= my nx; i++) {
-		double sample = floor ( (s[i] + 1) * 255 / 2 + 0.5);
+		double sample = round ( (s[i] + 1) * 255 / 2);
 		if (sample > max) {
 			sample = max;
 			(*nClip) ++;
@@ -145,7 +148,7 @@ static void u1write (Sound me, FILE *f, long *nClip) {
 			sample = min;
 			(*nClip) ++;
 		}
-		binputu1 (sample, f);
+		binputu1 ((unsigned int) sample, f);
 	}
 }
 
@@ -161,7 +164,7 @@ static void i2write (Sound me, FILE *f, int littleEndian, long *nClip) {
 	void (*put) (int16_t, FILE *) = littleEndian ? binputi2LE : binputi2;
 	*nClip = 0;
 	for (long i = 1; i <= my nx; i++) {
-		double sample = floor (s[i] * 32768 + 0.5);
+		double sample = round (s[i] * 32768);
 		if (sample > max) {
 			sample = max;
 			(*nClip) ++;
@@ -169,7 +172,7 @@ static void i2write (Sound me, FILE *f, int littleEndian, long *nClip) {
 			sample = min;
 			(*nClip) ++;
 		}
-		put (sample, f);
+		put ((int16) sample, f);
 	}
 }
 
@@ -186,7 +189,7 @@ static void u2write (Sound me, FILE *f, int littleEndian, long *nClip) {
 	void (*put) (uint16_t, FILE *) = littleEndian ? binputu2LE : binputu2;
 	*nClip = 0;
 	for (long i = 1; i <= my nx; i++) {
-		double sample = floor ( (s[i] + 1) * 65535 / 2 + 0.5);
+		double sample = round ( (s[i] + 1) * 65535 / 2);
 		if (sample > max) {
 			sample = max;
 			(*nClip) ++;
@@ -194,7 +197,7 @@ static void u2write (Sound me, FILE *f, int littleEndian, long *nClip) {
 			sample = min;
 			(*nClip) ++;
 		}
-		put (sample, f);
+		put ((uint16) sample, f);
 	}
 }
 
@@ -211,7 +214,7 @@ static void i4write (Sound me, FILE *f, int littleEndian, long *nClip) {
 	void (*put) (int32_t, FILE *) = littleEndian ? binputi4LE : binputi4;
 	*nClip = 0;
 	for (long i = 1; i <= my nx; i++) {
-		double sample = floor (s[i] * 2147483648.0 + 0.5);
+		double sample = round (s[i] * 2147483648.0);
 		if (sample > max) {
 			sample = max;
 			(*nClip) ++;
@@ -219,7 +222,7 @@ static void i4write (Sound me, FILE *f, int littleEndian, long *nClip) {
 			sample = min;
 			(*nClip) ++;
 		}
-		put (sample, f);
+		put ((int32) sample, f);
 	}
 }
 
@@ -245,7 +248,7 @@ static void u4write (Sound me, FILE *f, int littleEndian, long *nClip) {
 			sample = min;
 			(*nClip) ++;
 		}
-		put (sample, f);
+		put ((uint32) sample, f);
 	}
 }
 
@@ -289,29 +292,29 @@ Sound Sound_readFromCmuAudioFile (MelderFile file) {
 		int littleEndian = 1;
 		autofile f = Melder_fopen (file, "rb");
 		if (bingeti2LE (f) != 6) {
-			Melder_throw ("Incorrect header size.");
+			Melder_throw (U"Incorrect header size.");
 		}
 		bingeti2LE (f);
 		short nChannels = bingeti2LE (f);
 		if (nChannels < 1) {
-			Melder_throw ("Incorrect number of channels.");
+			Melder_throw (U"Incorrect number of channels.");
 		}
 		if (nChannels > 1) {
-			Melder_throw ("File has multiple channels: cannot read.");
+			Melder_throw (U"File has multiple channels: cannot read.");
 		}
 		if (bingeti2LE (f) < 1) {
-			Melder_throw ("Incorrect sampling frequency.");
+			Melder_throw (U"Incorrect sampling frequency.");
 		}
 		long nSamples = bingeti4LE (f);
 		if (nSamples < 1) {
-			Melder_throw ("Incorrect number of samples.");
+			Melder_throw (U"Incorrect number of samples.");
 		}
 		autoSound me = Sound_createSimple (1, nSamples / 16000., 16000);
 		i2read (me.peek(), f, littleEndian);
 		f.close (file);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Sound not read from CMU audio file ", MelderFile_messageName (file), ".");
+		Melder_throw (U"Sound not read from CMU audio file ", MelderFile_messageName (file), U".");
 	}
 }
 
@@ -330,14 +333,14 @@ Sound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsCodin
 			nBytesPerSample = 4;
 		}
 		if (nBytesPerSample == 3 || nBytesPerSample > 4) {
-			Melder_throw ("Number of bytes per sample should be 1, 2 or 4.");
+			Melder_throw (U"Number of bytes per sample should be 1, 2 or 4.");
 		}
 		if (skipNBytes <= 0) {
 			skipNBytes = 0;
 		}
 		long nSamples = (fileLengthBytes (f) - skipNBytes) / nBytesPerSample;
 		if (nSamples < 1) {
-			Melder_throw ("No samples left to read");
+			Melder_throw (U"No samples left to read");
 		}
 		autoSound me = Sound_createSimple (1, nSamples / samplingFrequency, samplingFrequency);
 		fseek (f, skipNBytes, SEEK_SET);
@@ -359,7 +362,7 @@ Sound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsCodin
 		f.close (file);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Sound not read from raw audio file ", MelderFile_messageName (file), ".");
+		Melder_throw (U"Sound not read from raw audio file ", MelderFile_messageName (file), U".");
 	}
 }
 
@@ -378,7 +381,7 @@ void Sound_writeToRawFile (Sound me, MelderFile file, const char *format, int li
 			nBytesPerSample = 4;
 		}
 		if (nBytesPerSample == 3 || nBytesPerSample > 4) {
-			Melder_throw (L"number of bytes per sample should be 1, 2 or 4.");
+			Melder_throw (U"number of bytes per sample should be 1, 2 or 4.");
 		}
 		if (nBytesPerSample == 1 &&   unSigned) {
 			u1write (me, f, & nClip);
@@ -395,14 +398,14 @@ void Sound_writeToRawFile (Sound me, MelderFile file, const char *format, int li
 		} else if (nBytesPerSample == 4 && strequ (format, "float")) {
 			r4write (me, f);
 		}
-		if (nClip > 0) Melder_warning (Melder_integer (nClip), L" from ", Melder_integer (my nx),
-			                               L" samples have been clipped.\nAdvice: you could scale the amplitudes or save as a binary file.");
+		if (nClip > 0) Melder_warning (nClip, U" from ", my nx,
+			                               U" samples have been clipped.\nAdvice: you could scale the amplitudes or save as a binary file.");
 		if (feof (f) || ferror (f)) {
-			Melder_throw ("Sound_writeToRawFile: not completed");
+			Melder_throw (U"Sound_writeToRawFile: not completed");
 		}
 		f.close (file);
 	} catch (MelderError) {
-		Melder_throw (me, ": saving as raw file not performed.");
+		Melder_throw (me, U": saving as raw file not performed.");
 	}
 }
 
@@ -491,14 +494,14 @@ Sound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate) {
 
 		long filelength = MelderFile_length (file);
 		if (filelength <= 0) {
-			Melder_throw ("File is empty.");
+			Melder_throw (U"File is empty.");
 		}
 
 		// Two samples in each byte
 
 		long numberOfSamples = 2 * filelength;
 		if (numberOfSamples <= 0) {
-			Melder_throw ("File too long");
+			Melder_throw (U"File too long");
 		}
 		autoSound me = Sound_createSimple (1, numberOfSamples / sampleRate, sampleRate);
 
@@ -519,7 +522,7 @@ Sound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate) {
 		f.close (file);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Sound not read from Dialogic ADPCM file", MelderFile_messageName (file), ".");
+		Melder_throw (U"Sound not read from Dialogic ADPCM file", MelderFile_messageName (file), U".");
 	}
 }
 
@@ -558,7 +561,7 @@ Sound Sound_createGaussian (double windowDuration, double samplingFrequency) {
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Sound not created from Gaussian function.");
+		Melder_throw (U"Sound not created from Gaussian function.");
 	}
 }
 
@@ -572,12 +575,12 @@ Sound Sound_createHamming (double windowDuration, double samplingFrequency) {
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Sound not created from Hamming function.");
+		Melder_throw (U"Sound not created from Hamming function.");
 	};
 }
 
 static Sound Sound_create2 (double minimumTime, double maximumTime, double samplingFrequency) {
-	return Sound_create (1, minimumTime, maximumTime, floor ( (maximumTime - minimumTime) * samplingFrequency + 0.5),
+	return Sound_create (1, minimumTime, maximumTime, lround ( (maximumTime - minimumTime) * samplingFrequency),
 	                     1.0 / samplingFrequency, minimumTime + 0.5 / samplingFrequency);
 }
 
@@ -619,7 +622,7 @@ static Sound Sound_createToneComplex (double minimumTime, double maximumTime, do
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Sound not created from tone complex.");
+		Melder_throw (U"Sound not created from tone complex.");
 	}
 }
 
@@ -627,8 +630,8 @@ static Sound Sound_createToneComplex (double minimumTime, double maximumTime, do
 Sound Sound_createSimpleToneComplex (double minimumTime, double maximumTime, double samplingFrequency,
                                      double firstFrequency, long numberOfComponents, double frequencyDistance, int scaleAmplitudes) {
 	if (firstFrequency + (numberOfComponents - 1) * frequencyDistance > samplingFrequency / 2) {
-		Melder_warning (L"Sound_createSimpleToneComplex: frequency of (some) components too high.");
-		numberOfComponents = 1.0 + (samplingFrequency / 2 - firstFrequency) / frequencyDistance;
+		Melder_warning (U"Sound_createSimpleToneComplex: frequency of (some) components too high.");
+		numberOfComponents = (long) floor (1.0 + (samplingFrequency / 2 - firstFrequency) / frequencyDistance);
 	}
 	return Sound_createToneComplex (minimumTime, maximumTime, samplingFrequency,
 	                                firstFrequency, numberOfComponents, frequencyDistance, 0, 0, scaleAmplitudes);
@@ -638,11 +641,11 @@ Sound Sound_createMistunedHarmonicComplex (double minimumTime, double maximumTim
         double firstFrequency, long numberOfComponents, long mistunedComponent,
         double mistuningFraction, int scaleAmplitudes) {
 	if (firstFrequency + (numberOfComponents - 1) * firstFrequency > samplingFrequency / 2) {
-		Melder_warning (L"Sound_createMistunedHarmonicComplex: frequency of (some) components too high.");
-		numberOfComponents = 1.0 + (samplingFrequency / 2 - firstFrequency) / firstFrequency;
+		Melder_warning (U"Sound_createMistunedHarmonicComplex: frequency of (some) components too high.");
+		numberOfComponents = (long) floor (1.0 + (samplingFrequency / 2 - firstFrequency) / firstFrequency);
 	}
 	if (mistunedComponent > numberOfComponents) {
-		Melder_warning (L"Sound_createMistunedHarmonicComplex: mistuned component too high.");
+		Melder_warning (U"Sound_createMistunedHarmonicComplex: mistuned component too high.");
 	}
 	return Sound_createToneComplex (minimumTime, maximumTime, samplingFrequency,
 	                                firstFrequency, numberOfComponents, firstFrequency, mistunedComponent,
@@ -673,7 +676,7 @@ Sound Sound_createGammaTone (double minimumTime, double maximumTime, double samp
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Sound not created from gammatone function.");
+		Melder_throw (U"Sound not created from gammatone function.");
 	}
 }
 
@@ -742,14 +745,17 @@ static void NUMgammatoneFilter4 (double *x, double *y, long n, double centre_fre
 	}
 
 	if (Melder_debug == -1) {
-		Melder_casual ("--gammatonefilter4--\nF = %ls, B = %ls, T = %ls\nGain = %ls",
-		               Melder_double (centre_frequency), Melder_double (bandwidth),
-		               Melder_double (dt), Melder_double (gain));
+		Melder_casual (
+			U"--gammatonefilter4--\nF = ", centre_frequency,
+			U", B = ", bandwidth,
+			U", T = ", dt,
+			U"\nGain = ", gain
+		);
 		for (long i = 0; i <= 4; i++) {
-			Melder_casual ("a[%ld] = %ls", i, Melder_double (a[i]));
+			Melder_casual (U"a[", i, U"] = ", a[i]);
 		}
 		for (long i = 0; i <= 8; i++) {
-			Melder_casual ("b[%ld] = %ls", i, Melder_double (b[i]));
+			Melder_casual (U"b[", i, U"] = ", b[i]);
 		}
 	}
 	/*
@@ -810,10 +816,10 @@ static void NUMgammatoneFilter4 (double *x, double *y, long n, double centre_fre
 Sound Sound_filterByGammaToneFilter4 (Sound me, double centre_frequency, double bandwidth) {
 	try {
 		if (centre_frequency <= 0) {
-			Melder_throw ("Centre frequency must be positive.");
+			Melder_throw (U"Centre frequency must be positive.");
 		}
 		if (bandwidth < 0) {
-			Melder_throw ("Bandwidth must be positive.");
+			Melder_throw (U"Bandwidth must be positive.");
 		}
 
 		autoSound thee = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1);
@@ -834,7 +840,7 @@ Sound Sound_filterByGammaToneFilter4 (Sound me, double centre_frequency, double 
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Sound not filtered by gammatone filter4.");
+		Melder_throw (U"Sound not filtered by gammatone filter4.");
 	}
 }
 
@@ -845,8 +851,8 @@ Sound Sound_createShepardTone (double minimumTime, double maximumTime, double sa
 	Sound me; long i, j, nComponents = 1 + log2 (maximumFrequency / 2 / baseFrequency);
 	double lmin = pow (10, - amplitudeRange / 10);
 	double twoPi = 2.0 * NUMpi, f = baseFrequency * (1 + frequencyShiftFraction);
-	if (nComponents < 2) Melder_warning (L"Sound_createShepardTone: only 1 component.");
-	Melder_casual ("Sound_createShepardTone: %ld components.", nComponents);
+	if (nComponents < 2) Melder_warning (U"Sound_createShepardTone: only 1 component.");
+	Melder_casual (U"Sound_createShepardTone: ", nComponents, U" components.");
 	if (! (me = Sound_create2 (minimumTime, maximumTime, samplingFrequency))) return NULL;
 
 	for (j=1; j <= nComponents; j++)
@@ -871,11 +877,11 @@ Sound Sound_createShepardToneComplex (double minimumTime, double maximumTime,
 		double highestFrequency = lowestFrequency * pow (2, numberOfComponents);
 		double lmax_db = 0, lmin_db = lmax_db - fabs (amplitudeRange);
 
-		if (highestFrequency > samplingFrequency / 2) Melder_throw ("The highest frequency you want to generate is "
-			        "above the Nyquist frequency. Choose a larger value for \"Sampling frequency\", or lower values for "
-			        "\"Number of components\" or \"Lowest frequency\".");
-		if (octaveShiftFraction < 0 || octaveShiftFraction >= 1) Melder_throw ("Octave offset fraction "
-			        "must be greater or equal zero and smaller than one.");
+		if (highestFrequency > samplingFrequency / 2) Melder_throw (U"The highest frequency you want to generate is "
+			        U"above the Nyquist frequency. Choose a larger value for \"Sampling frequency\", or lower values for "
+			        U"\"Number of components\" or \"Lowest frequency\".");
+		if (octaveShiftFraction < 0 || octaveShiftFraction >= 1) Melder_throw (U"Octave offset fraction "
+			        U"must be greater or equal zero and smaller than one.");
 		double octaveTime, sweeptime;
 		if (frequencyChange_st != 0) {
 			octaveTime = 12 / fabs (frequencyChange_st);
@@ -936,7 +942,7 @@ Sound Sound_createShepardToneComplex (double minimumTime, double maximumTime,
 		Vector_scale (me.peek(), 0.99996948);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Sound not created from Shepard tone complex.");
+		Melder_throw (U"Sound not created from Shepard tone complex.");
 	}
 }
 
@@ -955,9 +961,9 @@ Sound Sound_createShepardTone (double minimumTime, double maximumTime,
 		                               (lowestFrequency + 1));
 
 		if (lowestFrequency > samplingFrequency / 2) Melder_throw
-			("Sound_createShepardTone: lowest frequency too high.");
+			(U"Sound_createShepardTone: lowest frequency too high.");
 		if (maximumFrequency > samplingFrequency / 2) Melder_throw
-			("Sound_createShepardTone: frequency of highest component too high.");
+			(U"Sound_createShepardTone: frequency of highest component too high.");
 		autoSound me = Sound_create2 (minimumTime, maximumTime, samplingFrequency);
 
 		for (long i = 1; i <= my nx; i++) {
@@ -983,7 +989,7 @@ Sound Sound_createShepardTone (double minimumTime, double maximumTime,
 		Vector_scale (me.peek(), 0.99996948);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Sound not created from Shepard tone.");
+		Melder_throw (U"Sound not created from Shepard tone.");
 	}
 }
 
@@ -991,7 +997,7 @@ Sound Sound_createPattersonWightmanTone (double minimumTime, double maximumTime,
         double baseFrequency, double frequencyShiftRatio, long numberOfComponents) {
 	try {
 		if ( (numberOfComponents - 1 + frequencyShiftRatio) * baseFrequency >  samplingFrequency / 2) Melder_throw
-			("Frequency of one or more components too large.");
+			(U"Frequency of one or more components too large.");
 		autoSound me = Sound_create2 (minimumTime, maximumTime, samplingFrequency);
 		double w0 = NUM2pi * baseFrequency;
 		for (long i = 1; i <= my nx; i++) {
@@ -1004,7 +1010,7 @@ Sound Sound_createPattersonWightmanTone (double minimumTime, double maximumTime,
 		Vector_scale (me.peek(), 0.99996948);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Sound not created from Patterson Wightman tone.");
+		Melder_throw (U"Sound not created from Patterson Wightman tone.");
 	}
 }
 
@@ -1014,7 +1020,7 @@ Sound Sound_createPlompTone (double minimumTime, double maximumTime, double samp
 		double w1 = NUM2pi * (1 - frequencyFraction) * baseFrequency;
 		double w2 = NUM2pi * (1 + frequencyFraction) * baseFrequency;
 		if (12 * (1 + frequencyFraction) * baseFrequency >  samplingFrequency / 2) Melder_throw
-			("Sound_createPlompTone: frequency of one or more components too large.");
+			(U"Sound_createPlompTone: frequency of one or more components too large.");
 		autoSound me = Sound_create2 (minimumTime, maximumTime, samplingFrequency);
 		for (long i = 1; i <= my nx; i++) {
 			double a = 0, t = (i - 0.5) * my dx;
@@ -1029,7 +1035,7 @@ Sound Sound_createPlompTone (double minimumTime, double maximumTime, double samp
 		Vector_scale (me.peek(), 0.99996948);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Sound not created from Plomp tone.");
+		Melder_throw (U"Sound not created from Plomp tone.");
 	}
 }
 
@@ -1068,7 +1074,7 @@ double Sound_correlateParts (Sound me, double tx, double ty, double duration) {
 		decrement = ney - my nx;
 	}
 
-	long ns = duration / my dx - increment - decrement;
+	long ns = (long) floor (duration / my dx) - increment - decrement;
 	if (ns < 1) {
 		return 0;
 	}
@@ -1188,7 +1194,7 @@ end:
 
 void Sound_overwritePart (Sound me, double t1, double t2, Sound thee, double t3) {
 	if (my dx != thy dx) {
-		Melder_throw ("Sample rates must be equal.");
+		Melder_throw (U"Sample rates must be equal.");
 	}
 
 	if (t1 == 0) {
@@ -1201,7 +1207,7 @@ void Sound_overwritePart (Sound me, double t1, double t2, Sound thee, double t3)
 	long i1 = Sampled_xToHighIndex (me, t1);
 	long i2 = Sampled_xToLowIndex (me, t2);
 	if (i1 > i2 || i2 > my nx || i1 < 1) Melder_throw
-		("Times of part to be overwritten must be within the sound.");
+		(U"Times of part to be overwritten must be within the sound.");
 
 	if (t3 == 0) {
 		t3 = thy xmin;
@@ -1209,10 +1215,10 @@ void Sound_overwritePart (Sound me, double t1, double t2, Sound thee, double t3)
 	long i3 = Sampled_xToHighIndex (thee, t3);
 	long i4 = Sampled_xToLowIndex (thee, t3 + t2 - t1);
 	if (i4 > thy nx || i3 < 1) {
-		Melder_throw ("Not enough samples to be copied.");
+		Melder_throw (U"Not enough samples to be copied.");
 	}
 	if (i4 - i3 != i2 - i1) {
-		Melder_throw ("Error i4 - i3 != i2 - i1.");
+		Melder_throw (U"Error i4 - i3 != i2 - i1.");
 	}
 
 	for (long i = i1; i <= i2; i++) {
@@ -1220,7 +1226,7 @@ void Sound_overwritePart (Sound me, double t1, double t2, Sound thee, double t3)
 	}
 }
 
-void Sound_filter_part_formula (Sound me, double t1, double t2, const wchar_t *formula, Interpreter interpreter) {
+void Sound_filter_part_formula (Sound me, double t1, double t2, const char32 *formula, Interpreter interpreter) {
 	try {
 		autoSound part = Sound_extractPart (me, t1, t2, kSound_windowShape_RECTANGULAR, 1, 1);
 		autoSpectrum spec = Sound_to_Spectrum (part.peek(), TRUE);
@@ -1231,7 +1237,7 @@ void Sound_filter_part_formula (Sound me, double t1, double t2, const wchar_t *f
 
 		Sound_overwritePart (me, t1, t2, filtered.peek(), 0);
 	} catch (MelderError) {
-		Melder_throw (me, ": part not filtered by formula.");
+		Melder_throw (me, U": part not filtered by formula.");
 	}
 }
 
@@ -1243,7 +1249,7 @@ void Sound_filter_part_formula (Sound me, double t1, double t2, const wchar_t *f
 PointProcess Sound_to_PointProcess_getJumps (Sound me, double minimumJump, double dt) {
 	try {
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, 10);
-		long i = 1, dtn = dt / my dx;
+		long i = 1, dtn = (long) floor (dt / my dx);
 		if (dtn < 1) {
 			dtn = 1;
 		}
@@ -1262,7 +1268,7 @@ PointProcess Sound_to_PointProcess_getJumps (Sound me, double minimumJump, doubl
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no PointProcess created.");
+		Melder_throw (me, U": no PointProcess created.");
 	}
 }
 
@@ -1276,7 +1282,7 @@ Sound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him,
 		double samplingFrequency_old = 1 / my dx;
 
 		if (my xmin != his xmin || my xmax != his xmax) Melder_throw
-			("The Pitch and the Sound object must have the same start and end times.");
+			(U"The Pitch and the Sound object must have the same start and end times.");
 
 		autoSound sound = Data_copy (me);
 		Vector_subtractMean (sound.peek());
@@ -1299,7 +1305,7 @@ Sound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him,
 			PitchTier_multiplyFrequencies (pitchTier.peek(), sound -> xmin, sound -> xmax, pitchMultiplier / formantMultiplier);
 			PitchTier_modifyExcursionRange (pitchTier.peek(), sound -> xmin, sound -> xmax, pitchRangeMultiplier, median);
 		} else if (pitchMultiplier != 1) {
-			Melder_warning (L"Pitch has not been changed because the sound was entirely voiceless.");
+			Melder_warning (U"Pitch has not been changed because the sound was entirely voiceless.");
 		}
 		autoDurationTier duration = DurationTier_create (my xmin, my xmax);
 		RealTier_addPoint (duration.peek(), (my xmin + my xmax) / 2, formantMultiplier * durationMultiplier);
@@ -1313,7 +1319,7 @@ Sound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him,
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Sound not created from Pitch & Sound.");
+		Melder_throw (U"Sound not created from Pitch & Sound.");
 	}
 }
 
@@ -1327,53 +1333,53 @@ Sound Sound_changeSpeaker (Sound me, double pitchMin, double pitchMax,
 		autoSound thee = Sound_and_Pitch_changeSpeaker (me, pitch.peek(), formantMultiplier, pitchMultiplier, pitchRangeMultiplier, durationMultiplier);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": speaker not changed.");
+		Melder_throw (me, U": speaker not changed.");
 	}
 }
 
 TextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double timeStep,
 	double silenceThreshold, double minSilenceDuration, double minSoundingDuration,
-	const wchar_t *silentLabel, const wchar_t *soundingLabel) {
+	const char32 *silentLabel, const char32 *soundingLabel) {
 	try {
 		int subtractMeanPressure = 1;
 		autoIntensity thee = Sound_to_Intensity (me, minPitch, timeStep, subtractMeanPressure);
 		autoTextGrid him = Intensity_to_TextGrid_detectSilences (thee.peek(), silenceThreshold, minSilenceDuration, minSoundingDuration, silentLabel, soundingLabel);
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no TextGrid with silences created.");
+		Melder_throw (me, U": no TextGrid with silences created.");
 	}
 }
 
 void Sound_getStartAndEndTimesOfSounding (Sound me, double minPitch, double timeStep,
 	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *t1, double *t2) {
 	try {
-		const wchar_t *silentLabel = L"-", *soundingLabel = L"+";
+		const char32 *silentLabel = U"-", *soundingLabel = U"+";
 		autoTextGrid dbs = Sound_to_TextGrid_detectSilences (me, minPitch, timeStep, silenceThreshold,
 			minSilenceDuration, minSoundingDuration, silentLabel, soundingLabel);
 		IntervalTier itier = (IntervalTier) dbs -> tiers -> item[1];
 		TextInterval ti = (TextInterval) itier -> intervals -> item[1];
 		*t1 = my xmin;
-		if (Melder_wcsequ (ti -> text, silentLabel)) {
+		if (Melder_equ (ti -> text, silentLabel)) {
 			*t1 = ti -> xmax;
 		}
 		*t2 = my xmax;
 		ti = (TextInterval) itier -> intervals -> item[itier -> intervals -> size];
-		if (Melder_wcsequ (ti -> text, silentLabel)) {
+		if (Melder_equ (ti -> text, silentLabel)) {
 			*t2 = ti -> xmin;
 		}
 	} catch (MelderError) {
-		Melder_throw ("Sounding times not found.");
+		Melder_throw (U"Sounding times not found.");
 	}
 }
 
-Sound Sound_and_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee, const wchar_t *match) {
+Sound Sound_and_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee, const char32 *match) {
     try {
         // count samples of the trimmed sound
         long ixmin, ixmax, numberOfSamples = 0, previous_ixmax = 0;
 		double xmin = my xmin; // start time of output sound is start time of input sound
         for (long iint = 1; iint <= thy intervals -> size; iint++) {
             TextInterval ti = (TextInterval) thy intervals -> item[iint];
-            if (! Melder_wcsequ (ti -> text, match)) {
+            if (! Melder_equ (ti -> text, match)) {
                 numberOfSamples += Sampled_getWindowSamples (me, ti -> xmin, ti -> xmax, &ixmin, &ixmax);
                 // if two contiguous intervals have to be copied then the last sample of previous interval
                 // and first sample of current interval might sometimes be equal
@@ -1392,7 +1398,7 @@ Sound Sound_and_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee,
         numberOfSamples = 0; previous_ixmax = 0;
         for (long iint = 1; iint <= thy intervals -> size; iint++) {
             TextInterval ti = (TextInterval) thy intervals -> item[iint];
-            if (! Melder_wcsequ (ti -> text, match)) {
+            if (! Melder_equ (ti -> text, match)) {
 				long ipos;
                 Sampled_getWindowSamples (me, ti -> xmin, ti -> xmax, &ixmin, &ixmax);
 				if (ixmin == previous_ixmax) {
@@ -1411,17 +1417,17 @@ Sound Sound_and_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee,
         Melder_assert (numberOfSamples == his nx);
         return him.transfer();
     } catch (MelderError) {
-        Melder_throw (me, ": intervals not trimmed.");
+        Melder_throw (me, U": intervals not trimmed.");
     }
 }
 
-Sound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAndEnd, double minPitch, double timeStep, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, TextGrid *tg, const wchar_t *trimLabel) {
+Sound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAndEnd, double minPitch, double timeStep, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, TextGrid *tg, const char32 *trimLabel) {
     try {
         if (my ny > 1) {
-            Melder_throw ("The sound must be a mono sound.");
+            Melder_throw (U"The sound must be a mono sound.");
         }
-        const wchar_t *silentLabel = L"silent", *soundingLabel = L"sounding";
-        const wchar_t *copyLabel = L"";
+        const char32 *silentLabel = U"silent", *soundingLabel = U"sounding";
+        const char32 *copyLabel = U"";
         autoTextGrid dbs = Sound_to_TextGrid_detectSilences (me, minPitch, timeStep, silenceThreshold,
             minSilenceDuration, minSoundingDuration, silentLabel, soundingLabel);
         autoIntervalTier itg = (IntervalTier) Data_copy ((IntervalTier) dbs -> tiers -> item[1]);
@@ -1430,8 +1436,8 @@ Sound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAndEnd,
             TextInterval ti = (TextInterval) itier -> intervals -> item[iint];
             TextInterval ati = (TextInterval) itg -> intervals -> item[iint];
             double duration = ti -> xmax - ti -> xmin;
-            if (duration > trimDuration && Melder_wcsequ (ti -> text, silentLabel)) { // silent
-				const wchar_t * label = trimLabel;
+            if (duration > trimDuration && Melder_equ (ti -> text, silentLabel)) { // silent
+				const char32 * label = trimLabel;
                 if (iint == 1) { // first is special
                     double trim_t = ti -> xmax - trimDuration;
                     IntervalTier_moveBoundary (itg.peek(), iint, false, trim_t);
@@ -1460,7 +1466,7 @@ Sound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAndEnd,
         }
         return thee.transfer();
     } catch (MelderError) {
-        Melder_throw (me, ": silences not trimmed.");
+        Melder_throw (me, U": silences not trimmed.");
     }
 }
 
@@ -1468,22 +1474,22 @@ Sound Sound_trimSilencesAtStartAndEnd (Sound me, double trimDuration, double min
 	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *t1, double *t2) {
 	try {
 		TextGrid tg;
-		autoSound thee = Sound_trimSilences (me, trimDuration, true, minPitch, timeStep, silenceThreshold, minSilenceDuration, minSoundingDuration, &tg, L"trimmed");
+		autoSound thee = Sound_trimSilences (me, trimDuration, true, minPitch, timeStep, silenceThreshold, minSilenceDuration, minSoundingDuration, &tg, U"trimmed");
 		autoTextGrid atg = tg;
 		IntervalTier trim = (IntervalTier) tg -> tiers -> item[2];
 		TextInterval ti1 = (TextInterval) trim -> intervals -> item[1];
 		*t1 = my xmin;
-		if (Melder_wcsequ (ti1 -> text, L"trimmed")) {
+		if (Melder_equ (ti1 -> text, U"trimmed")) {
 			*t1 = ti1 -> xmax;
 		}
 		TextInterval ti2 = (TextInterval) trim -> intervals -> item[trim -> intervals -> size];
 		*t2 = my xmax;
-		if (Melder_wcsequ (ti2 -> text, L"trimmed")) {
+		if (Melder_equ (ti2 -> text, U"trimmed")) {
 			*t2 = ti2 -> xmin;
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": silences not trimmed.");
+		Melder_throw (me, U": silences not trimmed.");
 	}
 }
 
@@ -1521,7 +1527,7 @@ static Pitch Pitch_scaleTime_old (Pitch me, double scaleFactor) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Pitch not scaled.");
+		Melder_throw (U"Pitch not scaled.");
 	}
 }
 
@@ -1530,12 +1536,12 @@ Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio
 		double samplingFrequency_old = 1 / my dx;
 
 		if (my ny > 1) {
-			Melder_throw ("Change Gender works only on mono sounds.");
+			Melder_throw (U"Change Gender works only on mono sounds.");
 		}
 		if (my xmin != his xmin || my xmax != his xmax) Melder_throw
-			("The Pitch and the Sound object must have the same starting times and finishing times.");
+			(U"The Pitch and the Sound object must have the same starting times and finishing times.");
 		if (new_pitch < 0) {
-			Melder_throw ("The new pitch median must not be negative.");
+			Melder_throw (U"The new pitch median must not be negative.");
 		}
 
 		autoSound sound = Data_copy (me);
@@ -1560,7 +1566,7 @@ Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio
 			PitchTier_multiplyFrequencies (pitchTier.peek(), sound -> xmin, sound -> xmax, factor);
 			PitchTier_modifyRange_old (pitchTier.peek(), sound -> xmin, sound -> xmax, pitchRangeFactor, new_pitch);
 		} else {
-			Melder_warning (L"There were no voiced segments found.");
+			Melder_warning (U"There were no voiced segments found.");
 		}
 		autoDurationTier duration = DurationTier_create (my xmin, my xmax);
 		RealTier_addPoint (duration.peek(), (my xmin + my xmax) / 2, formantRatio * durationFactor);
@@ -1575,7 +1581,7 @@ Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Sound not created from Pitch & Sound.");
+		Melder_throw (U"Sound not created from Pitch & Sound.");
 	}
 }
 
@@ -1587,7 +1593,7 @@ Sound Sound_changeGender_old (Sound me, double fmin, double fmax, double formant
 		                 new_pitch, pitchRangeFactor, durationFactor);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Sound not created for gender change.");
+		Melder_throw (U"Sound not created for gender change.");
 	}
 }
 
@@ -1654,22 +1660,22 @@ void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double ami
 }
 
 void Sound_fade (Sound me, int channel, double t, double fadeTime, int inout, int fadeGlobal) {
-	long numberOfSamples = fabs (fadeTime) / my dx;
+	long numberOfSamples = (long) floor (fabs (fadeTime) / my dx);
 	double t1 = t, t2 = t1 + fadeTime;
-	const wchar_t *fade_inout = inout > 0 ? L"out" : L"in";
+	const char32 *fade_inout = inout > 0 ? U"out" : U"in";
 	if (channel < 0 || channel > my ny) {
-		Melder_throw ("Invalid channel number.");
+		Melder_throw (U"Invalid channel number.");
 	}
 	if (t > my xmax) {
 		t = my xmax;
 		if (inout <= 0) { // fade in
-			Melder_warning (L"The start time of the fade-in is after the end time of the sound. The fade-in will not happen.");
+			Melder_warning (U"The start time of the fade-in is after the end time of the sound. The fade-in will not happen.");
 			return;
 		}
 	} else if (t < my xmin) {
 		t = my xmin;
 		if (inout > 0) { // fade  out
-			Melder_warning (L"The start time of the fade-out is before the start time of the sound. The fade-out will not happen.");
+			Melder_warning (U"The start time of the fade-out is before the start time of the sound. The fade-out will not happen.");
 			return;
 		}
 	}
@@ -1678,8 +1684,8 @@ void Sound_fade (Sound me, int channel, double t, double fadeTime, int inout, in
 	} else if (fadeTime > 0) {
 		t1 = t; t2 = t + fadeTime;
 	} else {
-		Melder_warning (L"You have given a \"Fade time\" of zero seconds. The fade-", fade_inout,
-		                L"will not happen.");
+		Melder_warning (U"You have given a \"Fade time\" of zero seconds. The fade-", fade_inout,
+		                U"will not happen.");
 		return;
 	}
 	long i0 = 0, iystart, iyend;
@@ -1694,12 +1700,12 @@ void Sound_fade (Sound me, int channel, double t, double fadeTime, int inout, in
 		istart = 1;
 	}
 	if (istart >= my nx) {
-		Melder_warning (L"The part to fade ", fade_inout, L" lies after the end time of the sound. The fade-",  fade_inout, L" will not happen.");
+		Melder_warning (U"The part to fade ", fade_inout, U" lies after the end time of the sound. The fade-",  fade_inout, U" will not happen.");
 		return;
 	}
 	long iend = Sampled_xToNearestIndex (me, t2);
 	if (iend <= 1) {
-		Melder_warning (L"The part to fade ", fade_inout, L" lies before the start time of the sound. Fade-", fade_inout, L" will be incomplete.");
+		Melder_warning (U"The part to fade ", fade_inout, U" lies before the start time of the sound. Fade-", fade_inout, U" will be incomplete.");
 		return;
 	}
 	if (iend > my nx) {
@@ -1713,7 +1719,7 @@ void Sound_fade (Sound me, int channel, double t, double fadeTime, int inout, in
 		if (fadeTime < 0) {
 			i0 = numberOfSamples - (iend - istart + 1);
 		}
-		Melder_warning (L"The fade time is larger than the part of the sound to fade ", fade_inout, L". Fade-", fade_inout, L" will be incomplete.");
+		Melder_warning (U"The fade time is larger than the part of the sound to fade ", fade_inout, U". Fade-", fade_inout, U" will be incomplete.");
 	}
 	for (long ichannel = iystart; ichannel <= iyend; ichannel++) {
 		for (long i = istart; i <= iend; i++) {
@@ -1775,7 +1781,7 @@ Sound Sound_createFromWindowFunction (double windowDuration, double samplingFreq
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Sound not created from window function.");
+		Melder_throw (U"Sound not created from window function.");
 	}
 }
 
@@ -1808,13 +1814,13 @@ Sound Sound_localAverage (Sound me, double averagingInterval, int windowType) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Sound (local average) created.");
+		Melder_throw (me, U": no Sound (local average) created.");
 	}
 }
 
 static void _Sound_garnish (Sound me, Graphics g, double tmin, double tmax, double minimum, double maximum) {
 	Graphics_drawInnerBox (g);
-	Graphics_textBottom (g, 1, L"Time (s)");
+	Graphics_textBottom (g, 1, U"Time (s)");
 	Graphics_marksBottom (g, 2, 1, 1, 0);
 	Graphics_setWindow (g, tmin, tmax, minimum - (my ny - 1) * (maximum - minimum), maximum);
 	Graphics_markLeft (g, minimum, 1, 1, 0, NULL);
@@ -1857,7 +1863,7 @@ static void _Sound_getWindowExtrema (Sound me, double *tmin, double *tmax, doubl
 	 We cannot use a sinc-interpolation because at strong amplitude changes high-frequency oscilations may occur.
 	 (may be leave out the interpolation and just use Vector_VALUE_INTERPOLATION_LINEAR only?)
 */
-static void Sound_findIntermediatePoint_bs (Sound me, long ichannel, long isample, bool left, bool right, const wchar_t *formula,
+static void Sound_findIntermediatePoint_bs (Sound me, long ichannel, long isample, bool left, bool right, const char32 *formula,
         Interpreter interpreter, int interpolation, long numberOfBisections, double *x, double *y) {
 	if (left) {
 		*x = Matrix_columnToX (me, isample);
@@ -1867,7 +1873,7 @@ static void Sound_findIntermediatePoint_bs (Sound me, long ichannel, long isampl
 		*y = my z[ichannel][isample + 1];
 	}
 	if ( (left && right) || (!left && !right)) {
-		Melder_throw ("Invalid situation.");
+		Melder_throw (U"Invalid situation.");
 	}
 
 	if (numberOfBisections < 1) {
@@ -1898,7 +1904,7 @@ static void Sound_findIntermediatePoint_bs (Sound me, long ichannel, long isampl
 		// Only thy x1 and thy dx have changed; It seems we don't have to recompile.
 		struct Formula_Result result;
 		Formula_run (ichannel, 2, & result);
-		bool current = result.result.numericResult;
+		bool current = ( result.result.numericResult != 0.0 );
 
 		dx /= 2;
 		if ( (left && current) || (! left && ! current)) {
@@ -1930,7 +1936,7 @@ static void Sound_findIntermediatePoint_bs (Sound me, long ichannel, long isampl
 }
 
 void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double minimum, double maximum,
-	bool garnish, const wchar_t *method, long numberOfBisections, const wchar_t *formula, Interpreter interpreter) {
+	bool garnish, const char32 *method, long numberOfBisections, const char32 *formula, Interpreter interpreter) {
 	Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 
 	long ixmin, ixmax;
@@ -1943,10 +1949,10 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 	for (long channel = 1; channel <= my ny; channel ++) {
 		Graphics_setWindow (g, tmin, tmax, minimum - (my ny - channel) * (maximum - minimum),
 			maximum + (channel - 1) * (maximum - minimum));
-		if (wcsstr (method, L"bars") || wcsstr (method, L"Bars")) {
+		if (str32str (method, U"bars") || str32str (method, U"Bars")) {
 			for (long ix = ixmin; ix <= ixmax; ix ++) {
 				Formula_run (channel, ix, & result);
-				if (result.result.numericResult) {
+				if (result.result.numericResult != 0.0) {
 					double x = Sampled_indexToX (me, ix);
 					double y = my z [channel] [ix];
 					double left = x - 0.5 * my dx, right = x + 0.5 * my dx;
@@ -1964,10 +1970,10 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 					Graphics_line (g, right, y, right, minimum);
 				}
 			}
-		} else if (wcsstr (method, L"poles") || wcsstr (method, L"Poles")) {
+		} else if (str32str (method, U"poles") || str32str (method, U"Poles")) {
 			for (long ix = ixmin; ix <= ixmax; ix ++) {
 				Formula_run (channel, ix, & result);
-				if (result.result.numericResult) {
+				if (result.result.numericResult != 0.0) {
 					double x = Sampled_indexToX (me, ix);
 					double y = my z[channel][ix];
 					if (y > maximum) {
@@ -1979,10 +1985,10 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 					Graphics_line (g, x, 0, x, y);
 				}
 			}
-		} else if (wcsstr (method, L"speckles") || wcsstr (method, L"Speckles")) {
+		} else if (str32str (method, U"speckles") || str32str (method, U"Speckles")) {
 			for (long ix = ixmin; ix <= ixmax; ix ++) {
 				Formula_run (channel, ix, & result);
-				if (result.result.numericResult) {
+				if (result.result.numericResult != 0.0) {
 					double x = Sampled_indexToX (me, ix);
 					Graphics_speckle (g, x, my z [channel] [ix]);
 				}
@@ -1995,7 +2001,7 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 			double xb = Sampled_indexToX (me, ixmin), yb = my z[channel][ixmin], xe, ye;
 			for (long ix = ixmin; ix <= ixmax; ix++) {
 				Formula_run (channel, ix, & result);
-				current = result.result.numericResult; // true means draw
+				current = ( result.result.numericResult != 0.0 ); // true means draw
 				if (previous && not current) { // leaving drawing segment
 					if (ix != ixmin) {
 						if (ix - istart > 1) {
@@ -2042,7 +2048,7 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 }
 
 void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin, double tmax,
-                       double minimum, double maximum, double level, bool garnish, long numberOfBisections, const wchar_t *formula, Interpreter interpreter) {
+                       double minimum, double maximum, double level, bool garnish, long numberOfBisections, const char32 *formula, Interpreter interpreter) {
 	try {
 		long ixmin, ixmax;
 		struct Formula_Result result;
@@ -2062,7 +2068,7 @@ void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin
 			long ix = ixmin;
 			do {
 				Formula_run (channel, ix, & result);
-				current = result.result.numericResult;
+				current = ( result.result.numericResult != 0.0 );
 				if (ix == ixmin) {
 					previous = current;
 				}
@@ -2143,10 +2149,10 @@ void Sounds_paintEnclosed (Sound me, Sound thee, Graphics g, Graphics_Colour col
 	}
 }
 
-Sound Sound_copyChannelRanges (Sound me, const wchar_t *ranges) {
+Sound Sound_copyChannelRanges (Sound me, const char32 *ranges) {
 	try {
 		long numberOfChannels;
-		autoNUMvector <long> channels (NUMstring_getElementsOfRanges (ranges, my ny, & numberOfChannels, NULL, L"channel", true), 1);
+		autoNUMvector <long> channels (NUMstring_getElementsOfRanges (ranges, my ny, & numberOfChannels, NULL, U"channel", true), 1);
 		autoSound thee = Sound_create (numberOfChannels, my xmin, my xmax, my nx, my dx, my x1);
 		for (long i = 1; i <= numberOfChannels; i++) {
 			double *from = my z[channels[i]], *to = thy z[i];
@@ -2154,18 +2160,18 @@ Sound Sound_copyChannelRanges (Sound me, const wchar_t *ranges) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": could not extract channels.");
+		Melder_throw (me, U": could not extract channels.");
 	}
 }
 
 /* After a script by Ton Wempe */
-Sound Sound_removeNoiseBySpectralSubtraction_mono (Sound me, Sound noise, double windowLength) {
+static Sound Sound_removeNoiseBySpectralSubtraction_mono (Sound me, Sound noise, double windowLength) {
 	try {
 		if (my dx != noise -> dx) {
-			Melder_throw ("The sound and the noise must have the same sampling frequency.");
+			Melder_throw (U"The sound and the noise must have the same sampling frequency.");
 		}
 		if (noise -> ny != 1 || noise -> ny != 1) {
-			Melder_throw ("The number of channels in the noise and the sound should equal 1.");
+			Melder_throw (U"The number of channels in the noise and the sound should equal 1.");
 		}
 		double samplingFrequency = 1.0 / my dx;
 		autoSound denoised = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
@@ -2213,7 +2219,7 @@ Sound Sound_removeNoiseBySpectralSubtraction_mono (Sound me, Sound noise, double
 		}
 		return denoised.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": noise not subtracted.");
+		Melder_throw (me, U": noise not subtracted.");
 	}
 }
 
@@ -2230,11 +2236,11 @@ static void Sound_findNoise (Sound me, double minimumNoiseDuration, double *nois
 			tmax = my xmax; tmin = tmax - minimumNoiseDuration;
 		}
 		if (tmin < my xmin) {
-			Melder_throw ("Sound too short, or window length too long.");
+			Melder_throw (U"Sound too short, or window length too long.");
 		}
 		*noiseStart = tmin; *noiseEnd = tmax;
 	} catch (MelderError) {
-		Melder_throw (me, ": noise not found.");
+		Melder_throw (me, U": noise not found.");
 	}
 }
 
@@ -2257,7 +2263,7 @@ Sound Sound_removeNoise (Sound me, double noiseStart, double noiseEnd, double wi
 		}
 		return denoised.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not denoised.");
+		Melder_throw (me, U": not denoised.");
 	}
 }
 
@@ -2268,7 +2274,7 @@ void Sound_playAsFrequencyShifted (Sound me, double shiftBy, double newSamplingF
 		autoSound thee = Spectrum_to_Sound (shifted.peek());
 		Sound_playPart (thee.peek(), my xmin, my xmax, NULL, NULL);
 	} catch (MelderError) {
-		Melder_throw (me, " not played with frequencies shifted.");
+		Melder_throw (me, U" not played with frequencies shifted.");
 	}
 }
 

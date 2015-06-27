@@ -19,7 +19,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20071009 wchar_t
+ djmw 20071009 wchar
  djmw 20071017 Melder_error<n>
  djmw 20090914 getItem modified
  djmw 20110304 Thing_new
@@ -51,7 +51,7 @@ Excitations Excitations_create (long initialCapacity) {
 		Ordered_init (me.peek(), classExcitation, initialCapacity);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Excitations not created.");
+		Melder_throw (U"Excitations not created.");
 	}
 }
 
@@ -63,7 +63,7 @@ Pattern Excitations_to_Pattern (Excitations me, long join) {
 			join = 1;
 		}
 		if ( (my size % join) != 0) {
-			Melder_throw ("Number of rows is not a multiple of join.");
+			Melder_throw (U"Number of rows is not a multiple of join.");
 		}
 		autoPattern thee = Pattern_create (my size / join, join * m -> nx);
 		long r = 0, c = 1;
@@ -79,7 +79,7 @@ Pattern Excitations_to_Pattern (Excitations me, long join) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Pattern created.");
+		Melder_throw (me, U": no Pattern created.");
 	}
 }
 
@@ -96,20 +96,20 @@ TableOfReal Excitations_to_TableOfReal (Excitations me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no TableOfReal created.");
+		Melder_throw (me, U": no TableOfReal created.");
 	}
 }
 
 Excitation Excitations_getItem (Excitations me, long item) {
 	try {
 		if (item < 1 || item > my size) {
-			Melder_throw ("Not a valid element number.");
+			Melder_throw (U"Not a valid element number.");
 		}
 		autoExcitation thee = Data_copy ( (Excitation) my item[item]);
 		Thing_setName (thee.peek(), Thing_getName ( (Thing) my item[item]));
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Excitation created.");
+		Melder_throw (me, U": no Excitation created.");
 	}
 }
 

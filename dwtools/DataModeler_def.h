@@ -17,11 +17,11 @@ oo_DEFINE_CLASS (DataModeler, Function)
 	oo_OBJECT (Strings, 0, parameterNames)
 	oo_OBJECT (Covariance, 0, parameterCovariances)
 	#if oo_DECLARING
-		// overridden methods:
 		double (*f_evaluate) (DataModeler me, double x, double p[]);
 		void (*f_evaluateBasisFunctions) (DataModeler me, double x, double term[]);
-		public:
-			virtual void v_info ();
+
+		void v_info ()
+			override;
 	#endif
 	#if oo_COPYING
 			DataModeler_setBasisFunctions (thee, thy type);
@@ -36,9 +36,8 @@ oo_END_CLASS (DataModeler)
 oo_DEFINE_CLASS (FormantModeler, Function)
 	oo_COLLECTION (Ordered, datamodelers, DataModeler, 0)
 	#if oo_DECLARING
-		// overridden methods:
-		public:
-			virtual void v_info ();
+		void v_info ()
+			override;
 	#endif
 oo_END_CLASS (FormantModeler)
 #undef ooSTRUCT

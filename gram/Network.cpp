@@ -57,17 +57,17 @@
 void structNetwork :: v_info ()
 {
 	structData :: v_info ();
-	MelderInfo_writeLine (U"Spreading rate: ", Melder32_double (our spreadingRate));
+	MelderInfo_writeLine (U"Spreading rate: ", our spreadingRate);
 	MelderInfo_writeLine (U"Activity clipping rule: ", kNetwork_activityClippingRule_getText (our activityClippingRule));
-	MelderInfo_writeLine (U"Minimum activity: ", Melder32_double (our minimumActivity));
-	MelderInfo_writeLine (U"Maximum activity: ", Melder32_double (our maximumActivity));
-	MelderInfo_writeLine (U"Activity leak: ", Melder32_double (our activityLeak));
-	MelderInfo_writeLine (U"Learning rate: ", Melder32_double (our learningRate));
-	MelderInfo_writeLine (U"Minimum weight: ", Melder32_double (our minimumWeight));
-	MelderInfo_writeLine (U"Maximum weight: ", Melder32_double (our maximumWeight));
-	MelderInfo_writeLine (U"Weight leak: ", Melder32_double (our weightLeak));
-	MelderInfo_writeLine (U"Number of nodes: ", Melder32_integer (our numberOfNodes));
-	MelderInfo_writeLine (U"Number of connections: ", Melder32_integer (our numberOfConnections));
+	MelderInfo_writeLine (U"Minimum activity: ", our minimumActivity);
+	MelderInfo_writeLine (U"Maximum activity: ", our maximumActivity);
+	MelderInfo_writeLine (U"Activity leak: ", our activityLeak);
+	MelderInfo_writeLine (U"Learning rate: ", our learningRate);
+	MelderInfo_writeLine (U"Minimum weight: ", our minimumWeight);
+	MelderInfo_writeLine (U"Maximum weight: ", our maximumWeight);
+	MelderInfo_writeLine (U"Weight leak: ", our weightLeak);
+	MelderInfo_writeLine (U"Number of nodes: ", our numberOfNodes);
+	MelderInfo_writeLine (U"Number of connections: ", our numberOfConnections);
 }
 
 Thing_implement (Network, Data, 6);
@@ -110,57 +110,57 @@ Network Network_create (double spreadingRate, enum kNetwork_activityClippingRule
 			xmin, xmax, ymin, ymax, numberOfNodes, numberOfConnections);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Network not created.");
+		Melder_throw (U"Network not created.");
 	}
 }
 
 double Network_getActivity (Network me, long nodeNumber) {
 	try {
 		if (nodeNumber <= 0 || nodeNumber > my numberOfNodes)
-			Melder_throw (me, ": node number (", nodeNumber, ") out of the range 1..", my numberOfNodes, ".");
+			Melder_throw (me, U": node number (", nodeNumber, U") out of the range 1..", my numberOfNodes, U".");
 		return my nodes [nodeNumber]. activity;
 	} catch (MelderError) {
-		Melder_throw (me, ": activity not gotten.");
+		Melder_throw (me, U": activity not gotten.");
 	}
 }
 
 void Network_setActivity (Network me, long nodeNumber, double activity) {
 	try {
 		if (nodeNumber <= 0 || nodeNumber > my numberOfNodes)
-			Melder_throw (me, ": node number (", nodeNumber, ") out of the range 1..", my numberOfNodes, ".");
+			Melder_throw (me, U": node number (", nodeNumber, U") out of the range 1..", my numberOfNodes, U".");
 		my nodes [nodeNumber]. activity = my nodes [nodeNumber]. excitation = activity;
 	} catch (MelderError) {
-		Melder_throw (me, ": activity not set.");
+		Melder_throw (me, U": activity not set.");
 	}
 }
 
 double Network_getWeight (Network me, long connectionNumber) {
 	try {
 		if (connectionNumber <= 0 || connectionNumber > my numberOfConnections)
-			Melder_throw (me, ": connection number (", connectionNumber, ") out of the range 1..", my numberOfConnections, ".");
+			Melder_throw (me, U": connection number (", connectionNumber, U") out of the range 1..", my numberOfConnections, U".");
 		return my connections [connectionNumber]. weight;
 	} catch (MelderError) {
-		Melder_throw (me, ": weight not gotten.");
+		Melder_throw (me, U": weight not gotten.");
 	}
 }
 
 void Network_setWeight (Network me, long connectionNumber, double weight) {
 	try {
 		if (connectionNumber <= 0 || connectionNumber > my numberOfConnections)
-			Melder_throw (me, ": connection number (", connectionNumber, ") out of the range 1..", my numberOfConnections, ".");
+			Melder_throw (me, U": connection number (", connectionNumber, U") out of the range 1..", my numberOfConnections, U".");
 		my connections [connectionNumber]. weight = weight;
 	} catch (MelderError) {
-		Melder_throw (me, ": weight not set.");
+		Melder_throw (me, U": weight not set.");
 	}
 }
 
 void Network_setClamping (Network me, long nodeNumber, bool clamped) {
 	try {
 		if (nodeNumber <= 0 || nodeNumber > my numberOfNodes)
-			Melder_throw (me, ": node number (", nodeNumber, ") out of the range 1..", my numberOfNodes, ".");
+			Melder_throw (me, U": node number (", nodeNumber, U") out of the range 1..", my numberOfNodes, U".");
 		my nodes [nodeNumber]. clamped = clamped;
 	} catch (MelderError) {
-		Melder_throw (me, ": clamping not set.");
+		Melder_throw (me, U": clamping not set.");
 	}
 }
 
@@ -204,7 +204,7 @@ void Network_spreadActivities (Network me, long numberOfSteps) {
 						} else {
 							node -> activity = my minimumActivity +
 								(my maximumActivity - my minimumActivity) * (2.0 * NUMsigmoid (2.0 * (node -> excitation - my minimumActivity) / (my maximumActivity - my minimumActivity)) - 1.0);
-							trace ("excitation %f, activity %f", node -> excitation, node -> activity);
+							trace (U"excitation ", node -> excitation, U", activity ", node -> activity);
 						}
 					break;
 				}
@@ -323,7 +323,7 @@ Network Network_create_rectangle (double spreadingRate, enum kNetwork_activityCl
 		Melder_assert (iconn == my numberOfConnections);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Rectangular network not created.");
+		Melder_throw (U"Rectangular network not created.");
 	}
 }
 
@@ -366,7 +366,7 @@ Network Network_create_rectangle_vertical (double spreadingRate, enum kNetwork_a
 		Melder_assert (iconn == my numberOfConnections);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Vertical rectangular network not created.");
+		Melder_throw (U"Vertical rectangular network not created.");
 	}
 }
 
@@ -439,7 +439,7 @@ void Network_addNode (Network me, double x, double y, double activity, bool clam
 		my nodes [my numberOfNodes]. activity = my nodes [my numberOfNodes]. excitation = activity;
 		my nodes [my numberOfNodes]. clamped = clamped;
 	} catch (MelderError) {
-		Melder_throw (me, ": node not added.");
+		Melder_throw (me, U": node not added.");
 	}
 }
 
@@ -451,7 +451,7 @@ void Network_addConnection (Network me, long nodeFrom, long nodeTo, double weigh
 		my connections [my numberOfConnections]. weight = weight;
 		my connections [my numberOfConnections]. plasticity = plasticity;
 	} catch (MelderError) {
-		Melder_throw (me, ": connection not added.");
+		Melder_throw (me, U": connection not added.");
 	}
 }
 
@@ -498,12 +498,12 @@ Table Network_nodes_downto_Table (Network me, long fromNodeNumber, long toNodeNu
 		autoTable thee = Table_createWithoutColumnNames (numberOfNodes,
 			includeNodeNumbers + includeX + includeY + includeClamped + includeActivity + includeExcitation);
 		long icol = 0;
-		if (includeNodeNumbers) Table_setColumnLabel (thee.peek(), ++ icol, L"node");
-		if (includeX)           Table_setColumnLabel (thee.peek(), ++ icol, L"x");
-		if (includeY)           Table_setColumnLabel (thee.peek(), ++ icol, L"y");
-		if (includeClamped)     Table_setColumnLabel (thee.peek(), ++ icol, L"clamped");
-		if (includeActivity)    Table_setColumnLabel (thee.peek(), ++ icol, L"activity");
-		if (includeExcitation)  Table_setColumnLabel (thee.peek(), ++ icol, L"excitation");
+		if (includeNodeNumbers) Table_setColumnLabel (thee.peek(), ++ icol, U"node");
+		if (includeX)           Table_setColumnLabel (thee.peek(), ++ icol, U"x");
+		if (includeY)           Table_setColumnLabel (thee.peek(), ++ icol, U"y");
+		if (includeClamped)     Table_setColumnLabel (thee.peek(), ++ icol, U"clamped");
+		if (includeActivity)    Table_setColumnLabel (thee.peek(), ++ icol, U"activity");
+		if (includeExcitation)  Table_setColumnLabel (thee.peek(), ++ icol, U"excitation");
 		for (long inode = fromNodeNumber; inode <= toNodeNumber; inode ++) {
 			NetworkNode node = & my nodes [inode];
 			icol = 0;
@@ -516,7 +516,7 @@ Table Network_nodes_downto_Table (Network me, long fromNodeNumber, long toNodeNu
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Table.");
+		Melder_throw (me, U": not converted to Table.");
 	}
 }
 
@@ -531,7 +531,7 @@ void Network_listNodes (Network me, long fromNodeNumber, long toNodeNumber,
 			includeX, includeY, positionDecimals, includeClamped, includeActivity, includeExcitation, activityDecimals);
 		Table_list (table.peek(), false);
 	} catch (MelderError) {
-		Melder_throw (me, ": not listed.");
+		Melder_throw (me, U": not listed.");
 	}
 }
 

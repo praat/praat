@@ -25,7 +25,7 @@
  * pb 2005/11/21 added replayButton (version 4)
  * pb 2005/12/04 added okButton and oopsButton (version 4)
  * pb 2005/12/06 fix stimuliAreSounds: defaults to TRUE
- * pb 2007/08/12 wchar_t
+ * pb 2007/08/12 wchar
  * pb 2007/09/26 added font size (version 5)
  * pb 2011/03/03 added reaction time (version 2 of ResultsMFC)
  * pb 2013/01/01 added finalSilenceDuration and blankWhilePlaying (version 6)

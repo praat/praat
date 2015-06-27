@@ -1,6 +1,6 @@
 /* Label.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,16 +32,16 @@ bool structAutosegment :: v_equal (thou) {
 	if (! Autosegment_Parent :: v_equal (thee)) return false;
 	if (name == NULL && thy name == NULL) return true;   // shortcut: no names
 	if (name == NULL || thy name == NULL) return false;
-	return wcsequ (name, thy name);
+	return str32equ (name, thy name);
 }
 
 static struct structData_Description theAutosegment_description [] = {
-	{ L"Autosegment", inheritwa, 0, sizeof (struct structAutosegment), L"Autosegment", & theClassInfo_Function },
-	{ L"name", stringwa, Melder_offsetof (Autosegment, name), sizeof (wchar_t *) },
+	{ U"Autosegment", inheritwa, 0, sizeof (struct structAutosegment), U"Autosegment", & theClassInfo_Function },
+	{ U"name", stringwa, Melder_offsetof (Autosegment, name), sizeof (char32 *) },
 	{ 0 } };
 Data_Description structAutosegment :: s_description = & theAutosegment_description [0];
 
-Autosegment Autosegment_create (double tmin, double tmax, const wchar_t *label) {
+Autosegment Autosegment_create (double tmin, double tmax, const char32 *label) {
 	try {
 		autoAutosegment me = Thing_new (Autosegment);
 		Function_init (me.peek(), tmin, tmax);
@@ -50,7 +50,7 @@ Autosegment Autosegment_create (double tmin, double tmax, const wchar_t *label) 
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Autosegment not created.");
+		Melder_throw (U"Autosegment not created.");
 	}
 }
 
@@ -77,7 +77,7 @@ Tier Tier_create (long initialCapacity) {
 		Tier_init (me.peek(), initialCapacity);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Tier not created.");
+		Melder_throw (U"Tier not created.");
 	}
 }
 
@@ -106,7 +106,7 @@ Label Label_create (long initialNumberOfTiers) {
 		Label_init (me.peek(), initialNumberOfTiers);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Label not created.");
+		Melder_throw (U"Label not created.");
 	}
 }
 

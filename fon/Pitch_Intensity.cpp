@@ -1,6 +1,6 @@
 /* Pitch_Intensity.cpp
  *
- * Copyright (C) 1992-2011,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,9 +72,9 @@ void Pitch_Intensity_draw (Pitch pitch, Intensity intensity, Graphics g,
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, L"Fundamental frequency (Hz)");
+		Graphics_textBottom (g, 1, U"Fundamental frequency (Hz)");
 		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, L"Intensity (dB)");
+		Graphics_textLeft (g, 1, U"Intensity (dB)");
 		Graphics_marksLeft (g, 2, 1, 1, 0);
 	}
 }

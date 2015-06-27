@@ -38,7 +38,7 @@ Thing_define (EEGWindow, TextGridEditor) { public:
 		override;
 	void v_createHelpMenuItems (EditorMenu menu)
 		override;
-	const wchar_t * v_getChannelName (long channelNumber)
+	const char32 * v_getChannelName (long channelNumber)
 		override;
 	void v_createMenuItems_file_extract (EditorMenu menu)
 		override;
@@ -48,9 +48,9 @@ Thing_define (EEGWindow, TextGridEditor) { public:
 	#include "EEGWindow_prefs.h"
 };
 
-void EEGWindow_init (EEGWindow me, const wchar_t *title, EEG eeg);
+void EEGWindow_init (EEGWindow me, const char32 *title, EEG eeg);
 
-EEGWindow EEGWindow_create (const wchar_t *title, EEG eeg);
+EEGWindow EEGWindow_create (const char32 *title, EEG eeg);
 
 /* End of file EEGWindow.h */
 #endif

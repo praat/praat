@@ -1,6 +1,6 @@
 /* Intensity.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,14 +23,14 @@ Thing_implement (Intensity, Vector, 2);
 
 void structIntensity :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine (L"Time domain:");
-	MelderInfo_writeLine (L"   Start time: ", Melder_double (xmin), L" seconds");
-	MelderInfo_writeLine (L"   End time: ", Melder_double (xmax), L" seconds");
-	MelderInfo_writeLine (L"   Total duration: ", Melder_double (xmax - xmin), L" seconds");
-	MelderInfo_writeLine (L"Time sampling:");
-	MelderInfo_writeLine (L"   Number of frames: ", Melder_integer (nx));
-	MelderInfo_writeLine (L"   Time step: ", Melder_double (dx), L" seconds");
-	MelderInfo_writeLine (L"   First frame centred at: ", Melder_double (x1), L" seconds");
+	MelderInfo_writeLine (U"Time domain:");
+	MelderInfo_writeLine (U"   Start time: ", xmin, U" seconds");
+	MelderInfo_writeLine (U"   End time: ", xmax, U" seconds");
+	MelderInfo_writeLine (U"   Total duration: ", xmax - xmin, U" seconds");
+	MelderInfo_writeLine (U"Time sampling:");
+	MelderInfo_writeLine (U"   Number of frames: ", nx);
+	MelderInfo_writeLine (U"   Time step: ", dx, U" seconds");
+	MelderInfo_writeLine (U"   First frame centred at: ", x1, U" seconds");
 }
 
 double structIntensity :: v_convertStandardToSpecialUnit (double value, long ilevel, int unit) {
@@ -63,7 +63,7 @@ Intensity Intensity_create (double tmin, double tmax, long nt, double dt, double
 		Intensity_init (me.peek(), tmin, tmax, nt, dt, t1);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Intensity not created.");
+		Melder_throw (U"Intensity not created.");
 	}
 }
 
@@ -73,7 +73,7 @@ Matrix Intensity_to_Matrix (Intensity me) {
 		my structMatrix :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Intensity.");
+		Melder_throw (me, U": not converted to Intensity.");
 	}
 }
 
@@ -83,7 +83,7 @@ Intensity Matrix_to_Intensity (Matrix me) {
 		my structMatrix :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Matrix.");
+		Melder_throw (me, U": not converted to Matrix.");
 	}
 }
 
@@ -106,10 +106,10 @@ void Intensity_draw (Intensity me, Graphics g, double tmin, double tmax,
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, L"Time (s)");
+		Graphics_textBottom (g, 1, U"Time (s)");
 		Graphics_marksBottom (g, 2, 1, 1, 0);
 		Graphics_marksLeft (g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, L"Intensity (dB)");
+		Graphics_textLeft (g, 1, U"Intensity (dB)");
 	}
 }
 

@@ -1,6 +1,6 @@
 /* AmplitudeTier.cpp
  *
- * Copyright (C) 2003-2011,2014 Paul Boersma
+ * Copyright (C) 2003-2011,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,21 +27,21 @@ AmplitudeTier AmplitudeTier_create (double tmin, double tmax) {
 		RealTier_init (me.peek(), tmin, tmax);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("AmplitudeTier not created.");
+		Melder_throw (U"AmplitudeTier not created.");
 	}
 }
 
 void AmplitudeTier_draw (AmplitudeTier me, Graphics g, double tmin, double tmax,
-	double ymin, double ymax, const wchar_t *method, int garnish)
+	double ymin, double ymax, const char32 *method, int garnish)
 {
-	RealTier_draw (me, g, tmin, tmax, ymin, ymax, garnish, method, L"Sound pressure (Pa)");
+	RealTier_draw (me, g, tmin, tmax, ymin, ymax, garnish, method, U"Sound pressure (Pa)");
 }
 
 AmplitudeTier PointProcess_upto_AmplitudeTier (PointProcess me, double soundPressure) {
 	try {
 		return (AmplitudeTier) PointProcess_upto_RealTier (me, soundPressure, classAmplitudeTier);
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to AmplitudeTier.");
+		Melder_throw (me, U": not converted to AmplitudeTier.");
 	}
 }
 
@@ -55,7 +55,7 @@ AmplitudeTier IntensityTier_to_AmplitudeTier (IntensityTier me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to AmplitudeTier.");
+		Melder_throw (me, U": not converted to AmplitudeTier.");
 	}
 }
 
@@ -71,12 +71,12 @@ IntensityTier AmplitudeTier_to_IntensityTier (AmplitudeTier me, double threshold
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to IntensityTier.");
+		Melder_throw (me, U": not converted to IntensityTier.");
 	}
 }
 
 TableOfReal AmplitudeTier_downto_TableOfReal (AmplitudeTier me) {
-	return RealTier_downto_TableOfReal (me, L"Time (s)", L"Sound pressure (Pa)");
+	return RealTier_downto_TableOfReal (me, U"Time (s)", U"Sound pressure (Pa)");
 }
 
 void Sound_AmplitudeTier_multiply_inline (Sound me, AmplitudeTier amplitude) {
@@ -97,7 +97,7 @@ Sound Sound_AmplitudeTier_multiply (Sound me, AmplitudeTier amplitude) {
 		Vector_scale (thee.peek(), 0.9);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not multiplied by ", amplitude, ".");
+		Melder_throw (me, U": not multiplied by ", amplitude, U".");
 	}
 }
 
@@ -112,7 +112,7 @@ AmplitudeTier PointProcess_Sound_to_AmplitudeTier_point (PointProcess me, Sound 
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, " & ", thee, ": not converted to AmplitudeTier.");
+		Melder_throw (me, U" & ", thee, U": not converted to AmplitudeTier.");
 	}
 }
 /*
@@ -156,7 +156,7 @@ AmplitudeTier PointProcess_Sound_to_AmplitudeTier_period (PointProcess me, Sound
 		long imin, imax, numberOfPeaks;
 		if (tmax <= tmin) tmin = my xmin, tmax = my xmax;
 		numberOfPeaks = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax);
-		if (numberOfPeaks < 3) Melder_throw ("Too few pulses between ", tmin, " and ", tmax, " seconds.");
+		if (numberOfPeaks < 3) Melder_throw (U"Too few pulses between ", tmin, U" and ", tmax, U" seconds.");
 		autoAmplitudeTier him = AmplitudeTier_create (tmin, tmax);
 		for (long i = imin + 1; i < imax; i ++) {
 			double p1 = my t [i] - my t [i - 1], p2 = my t [i + 1] - my t [i];
@@ -169,7 +169,7 @@ AmplitudeTier PointProcess_Sound_to_AmplitudeTier_period (PointProcess me, Sound
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, " & ", thee, ": not converted to AmplitudeTier.");
+		Melder_throw (me, U" & ", thee, U": not converted to AmplitudeTier.");
 	}
 }
 double AmplitudeTier_getShimmer_local (AmplitudeTier me, double pmin, double pmax, double maximumAmplitudeFactor) {
@@ -343,7 +343,7 @@ double AmplitudeTier_getShimmer_dda (AmplitudeTier me, double pmin, double pmax,
 
 Sound AmplitudeTier_to_Sound (AmplitudeTier me, double samplingFrequency, long interpolationDepth) {
 	try {
-		long sound_nt = 1 + floor ((my xmax - my xmin) * samplingFrequency);   /* >= 1 */
+		long sound_nt = 1 + (long) floor ((my xmax - my xmin) * samplingFrequency);   // >= 1
 		double dt = 1.0 / samplingFrequency;
 		double tmid = (my xmin + my xmax) / 2;
 		double t1 = tmid - 0.5 * (sound_nt - 1) * dt;
@@ -374,7 +374,7 @@ Sound AmplitudeTier_to_Sound (AmplitudeTier me, double samplingFrequency, long i
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Sound.");
+		Melder_throw (me, U": not converted to Sound.");
 	}
 }
 

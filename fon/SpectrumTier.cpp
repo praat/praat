@@ -1,6 +1,6 @@
 /* SpectrumTier.cpp
  *
- * Copyright (C) 2007-2012 Paul Boersma
+ * Copyright (C) 2007-2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +23,13 @@ Thing_implement (SpectrumTier, RealTier, 0);
 
 void structSpectrumTier :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine (L"Frequency domain:");
-	MelderInfo_writeLine (L"   Lowest frequency: ", Melder_double (xmin), L" Hz");
-	MelderInfo_writeLine (L"   Highest frequency: ", Melder_double (xmax), L" Hz");
-	MelderInfo_writeLine (L"   Total bandwidth: ", Melder_double (xmax - xmin), L" Hz");
-	MelderInfo_writeLine (L"Number of points: ", Melder_integer (points -> size));
-	MelderInfo_writeLine (L"Minimum power value: ", Melder_double (RealTier_getMinimumValue (this)), L" dB/Hz");
-	MelderInfo_writeLine (L"Maximum power value: ", Melder_double (RealTier_getMaximumValue (this)), L" dB/Hz");
+	MelderInfo_writeLine (U"Frequency domain:");
+	MelderInfo_writeLine (U"   Lowest frequency: ", xmin, U" Hz");
+	MelderInfo_writeLine (U"   Highest frequency: ", xmax, U" Hz");
+	MelderInfo_writeLine (U"   Total bandwidth: ", xmax - xmin, U" Hz");
+	MelderInfo_writeLine (U"Number of points: ", points -> size);
+	MelderInfo_writeLine (U"Minimum power value: ", RealTier_getMinimumValue (this), U" dB/Hz");
+	MelderInfo_writeLine (U"Maximum power value: ", RealTier_getMaximumValue (this), U" dB/Hz");
 }
 
 SpectrumTier SpectrumTier_create (double fmin, double fmax) {
@@ -38,14 +38,14 @@ SpectrumTier SpectrumTier_create (double fmin, double fmax) {
 		RealTier_init (me.peek(), fmin, fmax);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("SpectrumTier not created.");
+		Melder_throw (U"SpectrumTier not created.");
 	}
 }
 
 void SpectrumTier_draw (SpectrumTier me, Graphics g, double fmin, double fmax,
-	double pmin, double pmax, int garnish, const wchar_t *method)
+	double pmin, double pmax, int garnish, const char32 *method)
 {
-	RealTier_draw (me, g, fmin, fmax, pmin, pmax, garnish, method, L"Power spectral density (dB)");
+	RealTier_draw (me, g, fmin, fmax, pmin, pmax, garnish, method, U"Power spectral density (dB)");
 }
 
 void SpectrumTier_list (SpectrumTier me, bool includeIndexes, bool includeFrequency, bool includePowerDensity) {
@@ -53,15 +53,15 @@ void SpectrumTier_list (SpectrumTier me, bool includeIndexes, bool includeFreque
 		autoTable table = SpectrumTier_downto_Table (me, includeIndexes, includeFrequency, includePowerDensity);
 		Table_list (table.peek(), false);
 	} catch (MelderError) {
-		Melder_throw (me, ": not listed.");
+		Melder_throw (me, U": not listed.");
 	}
 }
 
 Table SpectrumTier_downto_Table (SpectrumTier me, bool includeIndexes, bool includeFrequency, bool includePowerDensity) {
 	return RealTier_downto_Table (me,
-		includeIndexes ? L"index" : NULL,
-		includeFrequency ? L"freq(Hz)" : NULL,
-		includePowerDensity ? L"pow(dB/Hz)" : NULL);
+		includeIndexes ? U"index" : NULL,
+		includeFrequency ? U"freq(Hz)" : NULL,
+		includePowerDensity ? U"pow(dB/Hz)" : NULL);
 }
 
 SpectrumTier Spectrum_to_SpectrumTier_peaks (Spectrum me) {
@@ -70,7 +70,7 @@ SpectrumTier Spectrum_to_SpectrumTier_peaks (Spectrum me) {
 		autoSpectrumTier thee = Ltas_to_SpectrumTier_peaks (ltas.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": peaks not converted to SpectrumTier.");
+		Melder_throw (me, U": peaks not converted to SpectrumTier.");
 	}
 }
 

@@ -64,13 +64,13 @@ void Melder_alloc_init (void) {
 
 void * _Melder_malloc (int64_t size) {
 	if (size <= 0)
-		Melder_throw ("Can never allocate ", Melder_bigInteger (size), " bytes.");
+		Melder_throw (U"Can never allocate ", Melder_bigInteger (size), U" bytes.");
 	if (sizeof (size_t) < 8 && (double) size > SIZE_MAX)
-		Melder_throw ("Can never allocate ", Melder_bigInteger (size), " bytes. Use a 64-bit edition of Praat instead?");
+		Melder_throw (U"Can never allocate ", Melder_bigInteger (size), U" bytes. Use a 64-bit edition of Praat instead?");
 	void *result = malloc ((size_t) size);
 	if (result == NULL)
-		Melder_throw ("Out of memory: there is not enough room for another ", Melder_bigInteger (size), " bytes.");
-	if (Melder_debug == 34) { Melder_casual ("Melder_malloc\t%p\t%ls\t1", result, Melder_bigInteger (size)); }
+		Melder_throw (U"Out of memory: there is not enough room for another ", Melder_bigInteger (size), U" bytes.");
+	if (Melder_debug == 34) { Melder_casual (U"Melder_malloc\t", Melder_pointer (result), U"\t", Melder_bigInteger (size), U"\t1"); }
 	totalNumberOfAllocations += 1;
 	totalAllocationSize += size;
 	return result;
@@ -78,17 +78,17 @@ void * _Melder_malloc (int64_t size) {
 
 void * _Melder_malloc_f (int64_t size) {
 	if (size <= 0)
-		Melder_fatal ("(Melder_malloc_f:) Can never allocate %ls bytes.", Melder_bigInteger (size));
+		Melder_fatal (U"(Melder_malloc_f:) Can never allocate ", Melder_bigInteger (size), U" bytes.");
 	if (sizeof (size_t) < 8 && (double) size > SIZE_MAX)
-		Melder_fatal ("(Melder_malloc_f:) Can never allocate %ls bytes.", Melder_bigInteger (size));
+		Melder_fatal (U"(Melder_malloc_f:) Can never allocate ", Melder_bigInteger (size), U" bytes.");
 	void *result = malloc ((size_t) size);
 	if (result == NULL) {
 		if (theRainyDayFund != NULL) { free (theRainyDayFund); theRainyDayFund = NULL; }
 		result = malloc ((size_t) size);
 		if (result != NULL) {
-			Melder_flushError ("Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
+			Melder_flushError (U"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
 		} else {
-			Melder_fatal ("Out of memory: there is not enough room for another %ls bytes.", Melder_bigInteger (size));
+			Melder_fatal (U"Out of memory: there is not enough room for another %s bytes.", Melder_bigInteger (size));
 		}
 	}
 	totalNumberOfAllocations += 1;
@@ -98,22 +98,22 @@ void * _Melder_malloc_f (int64_t size) {
 
 void _Melder_free (void **ptr) {
 	if (*ptr == NULL) return;
+	if (Melder_debug == 34) { Melder_casual (U"Melder_free\t", Melder_pointer (*ptr), U"\t?\t?"); }
 	free (*ptr);
-	if (Melder_debug == 34) { Melder_casual ("Melder_free\t%p\t?\t?", *ptr); }
 	*ptr = NULL;
 	totalNumberOfDeallocations += 1;
 }
 
 void * Melder_realloc (void *ptr, int64_t size) {
 	if (size <= 0)
-		Melder_throw ("Can never allocate ", Melder_bigInteger (size), " bytes.");
+		Melder_throw (U"Can never allocate ", Melder_bigInteger (size), U" bytes.");
 	if (sizeof (size_t) < 8 && (double) size > SIZE_MAX)
-		Melder_throw ("Can never allocate ", Melder_bigInteger (size), " bytes. Use a 64-bit edition of Praat instead?");
+		Melder_throw (U"Can never allocate ", Melder_bigInteger (size), U" bytes. Use a 64-bit edition of Praat instead?");
 	void *result = realloc (ptr, (size_t) size);   // will not show in the statistics...
 	if (result == NULL)
-		Melder_throw ("Out of memory. Could not extend room to ", Melder_bigInteger (size), " bytes.");
+		Melder_throw (U"Out of memory. Could not extend room to ", Melder_bigInteger (size), U" bytes.");
 	if (ptr == NULL) {   // is it like malloc?
-		if (Melder_debug == 34) { Melder_casual ("Melder_realloc\t%p\t%ls\t1", result, Melder_bigInteger (size)); }
+		if (Melder_debug == 34) { Melder_casual (U"Melder_realloc\t", Melder_pointer (result), U"\t", Melder_bigInteger (size), U"\t1"); }
 		totalNumberOfAllocations += 1;
 		totalAllocationSize += size;
 	} else if (result != ptr) {   // did realloc do a malloc-and-free?
@@ -130,17 +130,17 @@ void * Melder_realloc (void *ptr, int64_t size) {
 void * Melder_realloc_f (void *ptr, int64_t size) {
 	void *result;
 	if (size <= 0)
-		Melder_fatal ("(Melder_realloc_f:) Can never allocate %ls bytes.", Melder_bigInteger (size));
+		Melder_fatal (U"(Melder_realloc_f:) Can never allocate ", Melder_bigInteger (size), U" bytes.");
 	if (sizeof (size_t) < 8 && (double) size > SIZE_MAX)
-		Melder_fatal ("(Melder_realloc_f:) Can never allocate %ls bytes.", Melder_bigInteger (size));
+		Melder_fatal (U"(Melder_realloc_f:) Can never allocate ", Melder_bigInteger (size), U" bytes.");
 	result = realloc (ptr, (size_t) size);   // will not show in the statistics...
 	if (result == NULL) {
 		if (theRainyDayFund != NULL) { free (theRainyDayFund); theRainyDayFund = NULL; }
 		result = realloc (ptr, (size_t) size);
 		if (result != NULL) {
-			Melder_flushError ("Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
+			Melder_flushError (U"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
 		} else {
-			Melder_fatal ("Out of memory. Could not extend room to %ls bytes.", Melder_bigInteger (size));
+			Melder_fatal (U"Out of memory. Could not extend room to ", Melder_bigInteger (size), U" bytes.");
 		}
 	}
 	if (ptr == NULL) {   /* Is it like malloc? */
@@ -160,15 +160,15 @@ void * Melder_realloc_f (void *ptr, int64_t size) {
 void * _Melder_calloc (int64_t nelem, int64_t elsize) {
 	void *result;
 	if (nelem <= 0)
-		Melder_throw ("Can never allocate ", Melder_bigInteger (nelem), " elements.");
+		Melder_throw (U"Can never allocate ", Melder_bigInteger (nelem), U" elements.");
 	if (elsize <= 0)
-		Melder_throw ("Can never allocate elements whose size is ", Melder_bigInteger (elsize), " bytes.");
+		Melder_throw (U"Can never allocate elements whose size is ", Melder_bigInteger (elsize), U" bytes.");
 	if (sizeof (size_t) < 8 && (double) nelem * (double) elsize > SIZE_MAX)
-		Melder_throw ("Can never allocate ", Melder_bigInteger (nelem * elsize), " bytes. Use a 64-bit edition of Praat instead?");
+		Melder_throw (U"Can never allocate ", Melder_bigInteger (nelem * elsize), U" bytes. Use a 64-bit edition of Praat instead?");
 	result = calloc ((size_t) nelem, (size_t) elsize);
 	if (result == NULL)
-		Melder_throw ("Out of memory: there is not enough room for ", Melder_bigInteger (nelem), " more elements whose sizes are ", elsize, " bytes each.");
-	if (Melder_debug == 34) { Melder_casual ("Melder_calloc\t%p\t%ls\t%ls", result, Melder_bigInteger (nelem), Melder_bigInteger (elsize)); }
+		Melder_throw (U"Out of memory: there is not enough room for ", Melder_bigInteger (nelem), U" more elements whose sizes are ", elsize, U" bytes each.");
+	if (Melder_debug == 34) { Melder_casual (U"Melder_calloc\t", Melder_pointer (result), U"\t", Melder_bigInteger (nelem), U"\t", Melder_bigInteger (elsize)); }
 	totalNumberOfAllocations += 1;
 	totalAllocationSize += (double) nelem * (double) elsize;
 	return result;
@@ -177,19 +177,20 @@ void * _Melder_calloc (int64_t nelem, int64_t elsize) {
 void * _Melder_calloc_f (int64_t nelem, int64_t elsize) {
 	void *result;
 	if (nelem <= 0)
-		Melder_fatal ("(Melder_calloc_f:) Can never allocate %ls elements.", Melder_bigInteger (nelem));
+		Melder_fatal (U"(Melder_calloc_f:) Can never allocate ", Melder_bigInteger (nelem), U" elements.");
 	if (elsize <= 0)
-		Melder_fatal ("(Melder_calloc_f:) Can never allocate elements whose size is %ls bytes.", Melder_bigInteger (elsize));
+		Melder_fatal (U"(Melder_calloc_f:) Can never allocate elements whose size is ", Melder_bigInteger (elsize), U" bytes.");
 	if (sizeof (size_t) < 8 && (double) nelem * (double) elsize > SIZE_MAX)
-		Melder_fatal ("(Melder_calloc_f:) Can never allocate %ls bytes.", Melder_double ((double) nelem * (double) elsize));
+		Melder_fatal (U"(Melder_calloc_f:) Can never allocate ", (double) nelem * (double) elsize, U" bytes.");
 	result = calloc ((size_t) nelem, (size_t) elsize);
 	if (result == NULL) {
 		if (theRainyDayFund != NULL) { free (theRainyDayFund); theRainyDayFund = NULL; }
 		result = calloc ((size_t) nelem, (size_t) elsize);
 		if (result != NULL) {
-			Melder_flushError ("Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
+			Melder_flushError (U"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
 		} else {
-			Melder_fatal ("Out of memory: there is not enough room for %ls more elements whose sizes are %ls bytes each.", Melder_bigInteger (nelem), Melder_bigInteger (elsize));
+			Melder_fatal (U"Out of memory: there is not enough room for ", Melder_bigInteger (nelem),
+				U" more elements whose sizes are ", Melder_bigInteger (elsize), U" bytes each.");
 		}
 	}
 	totalNumberOfAllocations += 1;
@@ -201,12 +202,12 @@ char * Melder_strdup (const char *string) {
 	if (! string) return NULL;
 	int64_t size = (int64_t) strlen (string) + 1;
 	if (sizeof (size_t) < 8 && (double) size > SIZE_MAX)
-		Melder_throw ("Can never allocate ", Melder_bigInteger (size), " bytes. Use a 64-bit edition of Praat instead?");
+		Melder_throw (U"Can never allocate ", Melder_bigInteger (size), U" bytes. Use a 64-bit edition of Praat instead?");
 	char *result = (char *) malloc ((size_t) size * sizeof (char));
 	if (result == NULL)
-		Melder_throw ("Out of memory: there is not enough room to duplicate a text of ", Melder_bigInteger (size - 1), " characters.");
+		Melder_throw (U"Out of memory: there is not enough room to duplicate a text of ", Melder_bigInteger (size - 1), U" characters.");
 	strcpy (result, string);
-	if (Melder_debug == 34) { Melder_casual ("Melder_strdup\t%p\t%ls\t1", result, Melder_bigInteger (size)); }
+	if (Melder_debug == 34) { Melder_casual (U"Melder_strdup\t", Melder_pointer (result), U"\t", Melder_bigInteger (size), U"\t1"); }
 	totalNumberOfAllocations += 1;
 	totalAllocationSize += (double) size;
 	return result;
@@ -216,15 +217,15 @@ char * Melder_strdup_f (const char *string) {
 	if (! string) return NULL;
 	int64_t size = (int64_t) strlen (string) + 1;
 	if (sizeof (size_t) < 8 && (double) size > SIZE_MAX)
-		Melder_fatal ("(Melder_strdup_f:) Can never allocate %ls bytes.", Melder_bigInteger (size));
+		Melder_fatal (U"(Melder_strdup_f:) Can never allocate ", Melder_bigInteger (size), U" bytes.");
 	char *result = (char *) malloc ((size_t) size * sizeof (char));
 	if (result == NULL) {
 		if (theRainyDayFund != NULL) { free (theRainyDayFund); theRainyDayFund = NULL; }
 		result = (char *) malloc ((size_t) size * sizeof (char));
 		if (result != NULL) {
-			Melder_flushError ("Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
+			Melder_flushError (U"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
 		} else {
-			Melder_fatal ("Out of memory: there is not enough room to duplicate a text of %ls characters.", Melder_bigInteger (size - 1));
+			Melder_fatal (U"Out of memory: there is not enough room to duplicate a text of ", Melder_bigInteger (size - 1), U" characters.");
 		}
 	}
 	strcpy (result, string);
@@ -233,93 +234,37 @@ char * Melder_strdup_f (const char *string) {
 	return result;
 }
 
-wchar_t * Melder_wcsdup (const wchar_t *string) {
-	if (! string) return NULL;
-	int64_t size = (int64_t) wcslen (string) + 1;
-	double allocationSize = (double) size * (double) sizeof (wchar_t);
-	if (allocationSize > INT54_MAX)
-		Melder_throw ("Can never allocate ", Melder_bigInteger (size), " bytes. It is above the 9-petabyte limit.");
-	if (sizeof (size_t) < 8 && allocationSize > SIZE_MAX)
-		Melder_throw ("Can never allocate ", Melder_bigInteger (size), " bytes. Use a 64-bit edition of Praat instead?");
-	wchar_t *result = (wchar_t *) malloc ((size_t) allocationSize);   // guarded conversion
-	if (result == NULL)
-		Melder_throw ("Out of memory: there is not enough room to duplicate a text of ", Melder_bigInteger (size - 1), " characters.");
-	wcscpy (result, string);
-	if (Melder_debug == 34) { Melder_casual ("Melder_wcsdup\t%p\t%ls\t4", result, Melder_bigInteger (size)); }
-	totalNumberOfAllocations += 1;
-	totalAllocationSize += allocationSize;
-	return result;
-}
-
-char16 * Melder_str16dup (const char16 *string) {
-	if (! string) return NULL;
-	int64 size = (int64) str16len (string) + 1;
-	double allocationSize = (double) size * (double) sizeof (char16);
-	if (allocationSize > INT54_MAX)
-		Melder_throw ("Can never allocate ", Melder_bigInteger (size), " bytes. It is above the 9-petabyte limit.");
-	if (sizeof (size_t) < 8 && allocationSize > SIZE_MAX)
-		Melder_throw ("Can never allocate ", Melder_bigInteger (size), " bytes. Use a 64-bit edition of Praat instead?");
-	char16 *result = (char16 *) malloc ((size_t) allocationSize);   // guarded conversion
-	if (result == NULL)
-		Melder_throw ("Out of memory: there is not enough room to duplicate a text of ", Melder_bigInteger (size - 1), " 16-bit characters.");
-	str16cpy (result, string);
-	if (Melder_debug == 34) { Melder_casual ("Melder_str16dup\t%p\t%ls\t4", result, Melder_bigInteger (size)); }
-	totalNumberOfAllocations += 1;
-	totalAllocationSize += allocationSize;
-	return result;
-}
-
-char32 * Melder_str32dup (const char32 *string) {
+char32 * Melder_dup (const char32 *string /* cattable */) {
 	if (! string) return NULL;
 	int64 size = (int64) str32len (string) + 1;
 	double allocationSize = (double) size * (double) sizeof (char32);
 	if (allocationSize > INT54_MAX)
-		Melder_throw ("Can never allocate ", Melder_bigInteger (size), " bytes. It is above the 9-petabyte limit.");
+		Melder_throw (U"Can never allocate ", Melder_bigInteger (size), U" bytes. It is above the 9-petabyte limit.");
 	if (sizeof (size_t) < 8 && allocationSize > SIZE_MAX)
-		Melder_throw ("Can never allocate ", Melder_bigInteger (size), " bytes. Use a 64-bit edition of Praat instead?");
+		Melder_throw (U"Can never allocate ", Melder_bigInteger (size), U" bytes. Use a 64-bit edition of Praat instead?");
 	char32 *result = (char32 *) malloc ((size_t) allocationSize);   // guarded conversion
 	if (result == NULL)
-		Melder_throw ("Out of memory: there is not enough room to duplicate a text of ", Melder_bigInteger (size - 1), " characters.");
+		Melder_throw (U"Out of memory: there is not enough room to duplicate a text of ", Melder_bigInteger (size - 1), U" characters.");
 	str32cpy (result, string);
-	if (Melder_debug == 34) { Melder_casual ("Melder_str32dup\t%p\t%ls\t4", result, Melder_bigInteger (size)); }
+	if (Melder_debug == 34) { Melder_casual (U"Melder_dup\t", Melder_pointer (result), U"\t", Melder_bigInteger (size), U"\t4"); }
 	totalNumberOfAllocations += 1;
 	totalAllocationSize += allocationSize;
 	return result;
 }
 
-wchar_t * Melder_wcsdup_f (const wchar_t *string) {
-	if (! string) return NULL;
-	int64 size = (int64) wcslen (string) + 1;
-	if (sizeof (size_t) < 8 && (double) size * (double) sizeof (wchar_t) > SIZE_MAX)
-		Melder_fatal ("(Melder_wcsdup_f:) Can never allocate %ls characters.", Melder_bigInteger (size));
-	wchar_t *result = (wchar_t *) malloc ((size_t) size * sizeof (wchar_t));
-	if (result == NULL) {
-		if (theRainyDayFund != NULL) { free (theRainyDayFund); theRainyDayFund = NULL; }
-		result = (wchar_t *) malloc ((size_t) size * sizeof (wchar_t));
-		if (result != NULL) {
-			Melder_flushError ("Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
-		} else {
-			Melder_fatal ("Out of memory: there is not enough room to duplicate a text of %ls characters.", Melder_bigInteger (size - 1));
-		}
-	}
-	wcscpy (result, string);
-	totalNumberOfAllocations += 1;
-	totalAllocationSize += (double) size * sizeof (wchar_t);
-	return result;
-}
-char32 * Melder_str32dup_f (const char32 *string) {
+char32 * Melder_dup_f (const char32 *string /* cattable */) {
 	if (! string) return NULL;
 	int64 size = (int64) str32len (string) + 1;
 	if (sizeof (size_t) < 8 && (double) size * (double) sizeof (char32) > SIZE_MAX)
-		Melder_fatal ("(Melder_str32dup_f:) Can never allocate %ls characters.", Melder_bigInteger (size));
+		Melder_fatal (U"(Melder_dup_f:) Can never allocate ", Melder_bigInteger (size), U" characters.");
 	char32 *result = (char32 *) malloc ((size_t) size * sizeof (char32));
 	if (result == NULL) {
 		if (theRainyDayFund != NULL) { free (theRainyDayFund); theRainyDayFund = NULL; }
 		result = (char32 *) malloc ((size_t) size * sizeof (char32));
 		if (result != NULL) {
-			Melder_flushError ("Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
+			Melder_flushError (U"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
 		} else {
-			Melder_fatal ("Out of memory: there is not enough room to duplicate a text of %ls characters.", Melder_bigInteger (size - 1));
+			Melder_fatal (U"Out of memory: there is not enough room to duplicate a text of ", Melder_bigInteger (size - 1), U" characters.");
 		}
 	}
 	str32cpy (result, string);
@@ -348,48 +293,16 @@ double Melder_movingReallocationsCount (void) {
 	return totalNumberOfMovingReallocs;
 }
 
-int Melder_strcmp (const char *string1, const char *string2) {
-	if (string1 == NULL) string1 = "";
-	if (string2 == NULL) string2 = "";
-	return strcmp (string1, string2);
-}
-
-int Melder_str32cmp (const char32 *string1, const char32 *string2) {
+int Melder_cmp (const char32 *string1, const char32 *string2) {
 	if (string1 == NULL) string1 = U"";
 	if (string2 == NULL) string2 = U"";
 	return str32cmp (string1, string2);
 }
 
-int Melder_strncmp (const char *string1, const char *string2, int64_t n) {
-	if (string1 == NULL) string1 = "";
-	if (string2 == NULL) string2 = "";
-	return strncmp (string1, string2, n);
-}
-
-int Melder_str32ncmp (const char32 *string1, const char32 *string2, int64_t n) {
+int Melder_ncmp (const char32 *string1, const char32 *string2, int64_t n) {
 	if (string1 == NULL) string1 = U"";
 	if (string2 == NULL) string2 = U"";
 	return str32ncmp (string1, string2, n);
-}
-
-int Melder_wcscmp (const wchar_t *string1, const wchar_t *string2) {
-	if (string1 == NULL) string1 = L"";
-	if (string2 == NULL) string2 = L"";
-	return wcscmp (string1, string2);
-}
-
-int Melder_wcsncmp (const wchar_t *string1, const wchar_t *string2, int64_t n) {
-	if (string1 == NULL) string1 = L"";
-	if (string2 == NULL) string2 = L"";
-	return wcsncmp (string1, string2, n);
-}
-
-bool Melder_wcsequ_firstCharacterCaseInsensitive (const wchar_t *string1, const wchar_t *string2) {
-	if (string1 == NULL) string1 = L"";
-	if (string2 == NULL) string2 = L"";
-	if (towlower (*string1) != towlower (*string2)) return false;
-	if (*string1 == '\0') return true;
-	return ! wcscmp (string1 + 1, string2 + 1);
 }
 
 bool Melder_str32equ_firstCharacterCaseInsensitive (const char32 *string1, const char32 *string2) {
@@ -408,13 +321,41 @@ bool Melder_str32equ_firstCharacterCaseInsensitive (const char32 *string1, const
 	return ! str32cmp (string1 + 1, string2 + 1);
 }
 
-wchar_t * Melder_wcstok (wchar_t *string, const wchar_t *delimiter, wchar_t **last) {
-	#if defined (__MINGW32__)
-		(void) last;
-		return wcstok (string, delimiter);
-	#else
-		return wcstok (string, delimiter, last);
-	#endif
+char32 * Melder_tok (char32 *string, const char32 *delimiter) {
+	const char32 *spanp;
+	char32 c, sc;
+	char32 *tok;
+	static char32 *last;
+
+	if (string == NULL && (string = last) == NULL)
+		return (NULL);
+
+cont:
+	c = * string ++;
+	for (spanp = delimiter; (sc = * spanp ++) != U'\0';) {
+		if (c == sc)
+			goto cont;
+	}
+
+	if (c == U'\0') {
+		last = NULL;
+		return NULL;
+	}
+	tok = string - 1;
+	for (;;) {
+		c = * string ++;
+		spanp = delimiter;
+		do {
+			if ((sc = * spanp ++) == c) {
+				if (c == U'\0')
+					string = NULL;
+				else
+					string [-1] = U'\0';
+				last = string;
+				return tok;
+			}
+		} while (sc != U'\0');
+	}
 }
 
 /* End of file melder_alloc.cpp */

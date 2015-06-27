@@ -28,14 +28,14 @@ TableOfReal Matrix_and_Categories_to_TableOfReal (I, Categories thee) {
 	try {
 		iam (Matrix);
 		if (thy size != my ny) {
-			Melder_throw ("Number of rows and number of categories must be equal.");
+			Melder_throw (U"Number of rows and number of categories must be equal.");
 		}
 
 		autoTableOfReal him = TableOfReal_create (my ny, my nx);
 		TableOfReal_setSequentialColumnLabels (him.peek(), 0, 0, NULL, 1, 1);
 
 		for (long i = 1; i <= my ny; i++) {
-			his rowLabels[i] = Melder_wcsdup (OrderedOfString_itemAtIndex_c (thee, i));
+			his rowLabels[i] = Melder_dup (OrderedOfString_itemAtIndex_c (thee, i));
 		}
 		for (long i = 1; i <= my ny; i++) {
 			for (long j = 1; j <= my nx; j++) {
@@ -44,7 +44,7 @@ TableOfReal Matrix_and_Categories_to_TableOfReal (I, Categories thee) {
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw ("TableOfReal not created from Matrix & Categories.");
+		Melder_throw (U"TableOfReal not created from Matrix & Categories.");
 	}
 }
 

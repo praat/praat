@@ -28,7 +28,7 @@
 	extern "C" {
 #endif
 
-#define xerbla_(src,info) Melder_throw (Melder_peekUtf8ToWcs (src), ": parameter ", *info, "not correct!")
+#define xerbla_(src,info) Melder_throw (Melder_peek8to32 (src), U": parameter ", *info, U"not correct!")
 
 int NUMblas_daxpy (long *n, double *da, double *dx,	long *incx, double *dy, long *incy);
 /*     constant times a vector plus a vector.

@@ -58,7 +58,7 @@ Data _Data_copy (Data me) {
 		Thing_setName (thee.peek(), my name);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not copied.");
+		Melder_throw (me, U": not copied.");
 	}
 }
 
@@ -81,7 +81,7 @@ bool Data_canWriteText (Data me) {
 void Data_writeText (Data me, MelderFile openFile) {
 	my v_writeText (openFile);
 	if (ferror (openFile -> filePointer))
-		Melder_throw ("I/O error.");
+		Melder_throw (U"I/O error.");
 }
 
 MelderFile Data_createTextFile (Data me, MelderFile file, bool verbose) {
@@ -104,14 +104,14 @@ MelderFile Data_createTextFile (Data me, MelderFile file, bool verbose) {
 static void _Data_writeToTextFile (Data me, MelderFile file, bool verbose) {
 	try {
 		if (! Data_canWriteText (me))
-			Melder_throw ("Objects of class ", my classInfo -> className, " cannot be written to a text file.");
+			Melder_throw (U"Objects of class ", my classInfo -> className, U" cannot be written to a text file.");
 		autoMelderFile mfile = Data_createTextFile (me, file, verbose);
 		#ifndef _WIN32
 			flockfile (file -> filePointer);   // BUG
 		#endif
-		MelderFile_write (file, L"File type = \"ooTextFile\"\nObject class = \"", my classInfo -> className);
+		MelderFile_write (file, U"File type = \"ooTextFile\"\nObject class = \"", my classInfo -> className);
 		if (my classInfo -> version > 0)
-			MelderFile_write (file, U" ", Melder32_integer (my classInfo -> version));
+			MelderFile_write (file, U" ", my classInfo -> version);
 		MelderFile_write (file, U"\"\n");
 		Data_writeText (me, file);
 		MelderFile_writeCharacter (file, U'\n');
@@ -131,7 +131,7 @@ void Data_writeToTextFile (Data me, MelderFile file) {
 	try {
 		_Data_writeToTextFile (me, file, true);
 	} catch (MelderError) {
-		Melder_throw (me, ": not written to text file ", file, ".");
+		Melder_throw (me, U": not written to text file ", file, U".");
 	}
 }
 
@@ -139,7 +139,7 @@ void Data_writeToShortTextFile (Data me, MelderFile file) {
 	try {
 		_Data_writeToTextFile (me, file, false);
 	} catch (MelderError) {
-		Melder_throw (me, ": not written to short text file ", file, ".");
+		Melder_throw (me, U": not written to short text file ", file, U".");
 	}
 }
 
@@ -150,25 +150,25 @@ bool Data_canWriteBinary (Data me) {
 void Data_writeBinary (Data me, FILE *f) {
 	my v_writeBinary (f);
 	if (ferror (f))
-		Melder_throw ("I/O error.");
+		Melder_throw (U"I/O error.");
 }
 
 void Data_writeToBinaryFile (Data me, MelderFile file) {
 	try {
 		if (! Data_canWriteBinary (me))
-			Melder_throw ("Objects of class ", my classInfo -> className, L" cannot be written to a generic binary file.");
+			Melder_throw (U"Objects of class ", my classInfo -> className, U" cannot be written to a generic binary file.");
 		autoMelderFile mfile = MelderFile_create (file);
 		if (fprintf (file -> filePointer, "ooBinaryFile") < 0)
-			Melder_throw ("Cannot write first bytes of file.");
+			Melder_throw (U"Cannot write first bytes of file.");
 		binputw1 (
 			my classInfo -> version > 0 ?
-				Melder_wcscat (my classInfo -> className, L" ", Melder_integer (my classInfo -> version)) :
+				Melder_cat (my classInfo -> className, U" ", my classInfo -> version) :
 				my classInfo -> className,
 			file -> filePointer);
 		Data_writeBinary (me, file -> filePointer);
 		mfile.close ();
 	} catch (MelderError) {
-		Melder_throw (me, ": not written to binary file ", file, ".");
+		Melder_throw (me, U": not written to binary file ", file, U".");
 	}
 }
 
@@ -181,7 +181,7 @@ void Data_readText (Data me, MelderReadText text) {
 		my v_readText (text);
 		my v_repair ();
 	} catch (MelderError) {
-		Melder_throw (Thing_className (me), " not read.");
+		Melder_throw (Thing_className (me), U" not read.");
 	}
 }
 
@@ -190,18 +190,18 @@ Data Data_readFromTextFile (MelderFile file) {
 		autoMelderReadText text = MelderReadText_createFromFile (file);
 		char32 *line = MelderReadText_readLine (text.peek());
 		if (line == NULL)
-			Melder_throw ("No lines.");
+			Melder_throw (U"No lines.");
 		char32 *end = str32str (line, U"ooTextFile");   // oo format?
 		autoData me = NULL;
 		if (end) {
-			autostring klas = texgetw2 (text.peek());
+			autostring32 klas = texgetw2 (text.peek());
 			me.reset ((Data) Thing_newFromClassName (klas.peek()));
 		} else {
 			end = str32str (line, U"TextFile");
 			if (end == NULL)
-				Melder_throw ("Not an old-type text file; should not occur.");
+				Melder_throw (U"Not an old-type text file; should not occur.");
 			*end = '\0';
-			me.reset ((Data) Thing_newFromClassName (Melder_peekStr32ToWcs (line)));
+			me.reset ((Data) Thing_newFromClassName (line));
 			Thing_version = -1;   // old version: override version number, which was set to 0 by newFromClassName
 		}
 		MelderFile_getParentDir (file, & Data_directoryBeingRead);
@@ -209,7 +209,7 @@ Data Data_readFromTextFile (MelderFile file) {
 		file -> format = structMelderFile :: Format :: text;
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Data not read from text file ", file, ".");
+		Melder_throw (U"Data not read from text file ", file, U".");
 	}
 }
 
@@ -221,12 +221,12 @@ void Data_readBinary (Data me, FILE *f) {
 	try {
 		my v_readBinary (f);
 		if (feof (f))
-			Melder_throw ("Early end of file.");
+			Melder_throw (U"Early end of file.");
 		if (ferror (f))
-			Melder_throw ("I/O error.");
+			Melder_throw (U"I/O error.");
 		my v_repair ();
 	} catch (MelderError) {
-		Melder_throw (Thing_className (me), " not read.");
+		Melder_throw (Thing_className (me), U" not read.");
 	}
 }
 
@@ -240,14 +240,14 @@ Data Data_readFromBinaryFile (MelderFile file) {
 		if (end) {
 			fseek (f, strlen ("ooBinaryFile"), 0);
 			autostring8 klas = bingets1 (f);
-			me.reset ((Data) Thing_newFromClassNameA (klas.peek()));
+			me.reset ((Data) Thing_newFromClassName (Melder_peek8to32 (klas.peek())));
 		} else {
 			end = strstr (line, "BinaryFile");
 			if (! end) {
-				Melder_throw ("File ", file, " is not a Data binary file.");
+				Melder_throw (U"File ", file, U" is not a Data binary file.");
 			}
 			*end = '\0';
-			me.reset ((Data) Thing_newFromClassNameA (line));
+			me.reset ((Data) Thing_newFromClassName (Melder_peek8to32 (line)));
 			Thing_version = -1;   // old version: override version number, which was set to 0 by newFromClassName
 			rewind (f);
 			fread (line, 1, end - line + strlen ("BinaryFile"), f);
@@ -258,7 +258,7 @@ Data Data_readFromBinaryFile (MelderFile file) {
 		f.close (file);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Data not read from binary file ", file, ".");
+		Melder_throw (U"Data not read from binary file ", file, U".");
 	}
 }
 
@@ -321,7 +321,7 @@ Data Data_readFromFile (MelderFile file) {
 			break;
 	if (i >= nread) return Data_readFromTextFile (file);
 
-	Melder_throw ("File ", file, " not recognized.");
+	Melder_throw (U"File ", file, U" not recognized.");
 }
 
 /* Recursive routines for working with struct members. */
@@ -338,9 +338,9 @@ int Data_Description_countMembers (Data_Description structDescription) {
 	return count;
 }
 
-Data_Description Data_Description_findMatch (Data_Description structDescription, const wchar_t *name) {
+Data_Description Data_Description_findMatch (Data_Description structDescription, const char32 *name) {
 	for (Data_Description desc = structDescription; desc -> name; desc ++)
-		if (wcsequ (name, desc -> name)) return desc;
+		if (str32equ (name, desc -> name)) return desc;
 	if (structDescription [0]. type == inheritwa) {
 		Data_Description parentDescription = ((Data) _Thing_dummyObject ((ClassInfo) structDescription [0]. tagType)) -> v_description ();
 		if (parentDescription)
@@ -349,10 +349,10 @@ Data_Description Data_Description_findMatch (Data_Description structDescription,
 	return NULL;   /* Not found. */
 }
 
-Data_Description Data_Description_findNumberUse (Data_Description structDescription, const wchar_t *string) {
+Data_Description Data_Description_findNumberUse (Data_Description structDescription, const char32 *string) {
 	for (Data_Description desc = structDescription; desc -> name; desc ++) {
-		if (desc -> max1 && wcsequ (desc -> max1, string)) return desc;
-		if (desc -> max2 && wcsequ (desc -> max2, string)) return desc;
+		if (desc -> max1 && str32equ (desc -> max1, string)) return desc;
+		if (desc -> max2 && str32equ (desc -> max2, string)) return desc;
 	}
 	if (structDescription [0]. type == inheritwa) {
 		Data_Description parentDescription = ((Data) _Thing_dummyObject ((ClassInfo) structDescription [0]. tagType)) -> v_description ();
@@ -364,7 +364,7 @@ Data_Description Data_Description_findNumberUse (Data_Description structDescript
 
 /* Retrieving data from object + description. */
 
-long Data_Description_integer (void *address, Data_Description description) {
+int64 Data_Description_integer (void *address, Data_Description description) {
 	switch (description -> type) {
 		case bytewa:       return * (signed char *)    ((char *) address + description -> offset);
 		case intwa:        return * (int *)            ((char *) address + description -> offset);
@@ -380,20 +380,20 @@ long Data_Description_integer (void *address, Data_Description description) {
 }
 
 int Data_Description_evaluateInteger (void *structAddress, Data_Description structDescription,
-	const wchar_t *formula, long *result)
+	const char32 *formula, long *result)
 {
 	if (formula == NULL) {   // this was a VECTOR_FROM array
 		*result = 1;
 		return 1;
 	}
-	if (formula [0] >= 'a' && formula [0] <= 'z') {
-		wchar_t buffer [100], *minus1, *psize;
+	if (formula [0] >= U'a' && formula [0] <= U'z') {
+		char32 buffer [100], *minus1, *psize;
 		Data_Description sizeDescription;
-		wcscpy (buffer, formula);
-		if ((minus1 = wcsstr (buffer, L" - 1")) != NULL)
-			*minus1 = '\0';   // strip trailing " - 1", but remember
-		if ((psize = wcsstr (buffer, L" -> size")) != NULL)
-			*psize = '\0';   // strip trailing " -> size"
+		str32cpy (buffer, formula);
+		if ((minus1 = str32str (buffer, U" - 1")) != NULL)
+			*minus1 = U'\0';   // strip trailing " - 1", but remember
+		if ((psize = str32str (buffer, U" -> size")) != NULL)
+			*psize = U'\0';   // strip trailing " -> size"
 		if (! (sizeDescription = Data_Description_findMatch (structDescription, buffer))) {
 			*result = 0;
 			return 0 /*Melder_error ("Cannot find member \"%ls\".", buffer)*/;
@@ -401,7 +401,7 @@ int Data_Description_evaluateInteger (void *structAddress, Data_Description stru
 		*result = Data_Description_integer (structAddress, sizeDescription);
 		if (minus1) *result -= 1;
 	} else {
-		*result = wcstol (formula, NULL, 10);
+		*result = Melder_atoi (formula);
 	}
 	return 1;
 }

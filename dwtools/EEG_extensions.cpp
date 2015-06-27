@@ -31,41 +31,41 @@ static EEG EEG_copyWithoutSound (EEG me) {
  		autoEEG thee = EEG_create (my xmin, my xmax);
 		thy numberOfChannels = my numberOfChannels;
 		thy textgrid = (TextGrid) Data_copy (my textgrid);
-		autostringvector channelNames (1, my numberOfChannels);
+		autostring32vector channelNames (1, my numberOfChannels);
 		for (long i = 1; i <= my numberOfChannels; i++) {
-			channelNames[i] = Melder_wcsdup (my channelNames[i]);
+			channelNames[i] = Melder_dup (my channelNames[i]);
 		}
 		thy channelNames = channelNames.transfer();
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not copied.");
+		Melder_throw (me, U": not copied.");
 	}
 }
 
-static long *EEG_channelNames_to_channelNumbers (EEG me, wchar_t **channelNames, long numberOfChannelNames) {
+static long *EEG_channelNames_to_channelNumbers (EEG me, char32 **channelNames, long numberOfChannelNames) {
 	try {
 		autoNUMvector<long> channelNumbers (1, numberOfChannelNames);
 		for (long i = 1; i <= numberOfChannelNames; i++) {
 			for (long j = 1; j <= my numberOfChannels; j++) {
-				if (Melder_wcsequ (channelNames[i], my channelNames[j])) {
+				if (Melder_equ (channelNames[i], my channelNames[j])) {
 					channelNumbers[i] = j;
 				}
 			}
 			if (channelNumbers[i] == 0) {
-				Melder_throw ("Channel name \"", channelNames[i], "\" not found.");
+				Melder_throw (U"Channel name \"", channelNames[i], U"\" not found.");
 			}
 		}
 		return channelNumbers.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": channelNames not found.");
+		Melder_throw (me, U": channelNames not found.");
 	}
 }
 
-static void EEG_setChannelNames_selected (EEG me, const wchar_t *precursor, long *channelNumbers, long numberOfChannels) {
+static void EEG_setChannelNames_selected (EEG me, const char32 *precursor, long *channelNumbers, long numberOfChannels) {
 	autoMelderString name;
-	const wchar_t *zero = L"0";
+	const char32 *zero = U"0";
 	for (long i = 1; i <= numberOfChannels; i++) {
-		MelderString_append (&name, precursor);
+		MelderString_copy (&name, precursor);
 		if (my numberOfChannels > 100) {
 			if (i < 10) {
 				MelderString_append (&name, zero);
@@ -76,13 +76,12 @@ static void EEG_setChannelNames_selected (EEG me, const wchar_t *precursor, long
 		} else if (i < 10) {
 			MelderString_append (&name, zero);
 		}
-		MelderString_append (&name, Melder_integer (i));
+		MelderString_append (&name, i);
 		EEG_setChannelName (me, channelNumbers[i], name.string);
-		MelderString_empty (&name);
 	}
 }
 
-CrossCorrelationTable EEG_to_CrossCorrelationTable (EEG me, double startTime, double endTime, double lagStep, const wchar_t *channelRanges)
+CrossCorrelationTable EEG_to_CrossCorrelationTable (EEG me, double startTime, double endTime, double lagStep, const char32 *channelRanges)
 {
 	try {
 		// autowindow
@@ -98,23 +97,23 @@ CrossCorrelationTable EEG_to_CrossCorrelationTable (EEG me, double startTime, do
 		}
 		autoEEG thee = EEG_extractPart (me, startTime, endTime, true);
 		long numberOfChannels;
-		autoNUMvector <long> channels (NUMstring_getElementsOfRanges (channelRanges, thy numberOfChannels, & numberOfChannels, NULL, L"channel", true), 1);
+		autoNUMvector <long> channels (NUMstring_getElementsOfRanges (channelRanges, thy numberOfChannels, & numberOfChannels, NULL, U"channel", true), 1);
 		autoSound soundPart = Sound_copyChannelRanges (thy sound, channelRanges);
 		autoCrossCorrelationTable him = Sound_to_CrossCorrelationTable (soundPart.peek(), startTime, endTime, lagStep);
 		// assign channel names
 		for (long i = 1; i <= numberOfChannels; i++) {
 			long ichannel = channels[i];
-			wchar_t *label = my channelNames[ichannel];
+			char32 *label = my channelNames[ichannel];
 			TableOfReal_setRowLabel (him.peek(), i, label);
 			TableOfReal_setColumnLabel (him.peek(), i, label);
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no CrossCorrelationTable calculated.");
+		Melder_throw (me, U": no CrossCorrelationTable calculated.");
 	}
 }
 
-Covariance EEG_to_Covariance (EEG me, double startTime, double endTime, const wchar_t *channelRanges)
+Covariance EEG_to_Covariance (EEG me, double startTime, double endTime, const char32 *channelRanges)
 {
 	try {
 		double lagStep = 0.0;
@@ -123,11 +122,11 @@ Covariance EEG_to_Covariance (EEG me, double startTime, double endTime, const wc
         thy structCrossCorrelationTable :: v_copy (him.peek());
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Covariance calculated.");
+		Melder_throw (me, U": no Covariance calculated.");
 	}
 }
 
-CrossCorrelationTables EEG_to_CrossCorrelationTables (EEG me, double startTime, double endTime, double lagStep, long ncovars, const wchar_t *channelRanges) {
+CrossCorrelationTables EEG_to_CrossCorrelationTables (EEG me, double startTime, double endTime, double lagStep, long ncovars, const char32 *channelRanges) {
 	try {
 		// autowindow
 		if (startTime == endTime) {
@@ -142,16 +141,16 @@ CrossCorrelationTables EEG_to_CrossCorrelationTables (EEG me, double startTime, 
 		}
 		autoEEG thee = EEG_extractPart (me, startTime, endTime, true);
 		long numberOfChannels;
-		autoNUMvector <long> channels (NUMstring_getElementsOfRanges (channelRanges, thy numberOfChannels, & numberOfChannels, NULL, L"channel", true), 1);
+		autoNUMvector <long> channels (NUMstring_getElementsOfRanges (channelRanges, thy numberOfChannels, & numberOfChannels, NULL, U"channel", true), 1);
 		autoSound soundPart = Sound_copyChannelRanges (thy sound, channelRanges);
 		autoCrossCorrelationTables him = Sound_to_CrossCorrelationTables (soundPart.peek(), startTime, endTime, lagStep, ncovars);
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no CrossCorrelationTables calculated.");
+		Melder_throw (me, U": no CrossCorrelationTables calculated.");
 	}
 }
 
-PCA EEG_to_PCA (EEG me, double startTime, double endTime, const wchar_t *channelRanges, int fromCorrelation) {
+PCA EEG_to_PCA (EEG me, double startTime, double endTime, const char32 *channelRanges, int fromCorrelation) {
 	try {
 		autoCovariance cov = EEG_to_Covariance (me, startTime, endTime, channelRanges);
 		if (fromCorrelation) {
@@ -163,7 +162,7 @@ PCA EEG_to_PCA (EEG me, double startTime, double endTime, const wchar_t *channel
 			return him.transfer();
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": no PCA calculated.");
+		Melder_throw (me, U": no PCA calculated.");
 	}
 }
 
@@ -182,10 +181,10 @@ EEG EEG_and_PCA_to_EEG_whiten (EEG me, PCA thee, long numberOfComponents) {
 			long ichannel = channelNumbers[i];
 			NUMvector_copyElements<double> (white -> z[i], his sound -> z[ichannel], 1, his sound -> nx);
 		}
-		EEG_setChannelNames_selected (him.peek(), L"wh", channelNumbers.peek(), thy dimension);
+		EEG_setChannelNames_selected (him.peek(), U"wh", channelNumbers.peek(), thy dimension);
 		return him.transfer();
 	} catch(MelderError) {
-		Melder_throw (me, ": not whitened with ", thee);
+		Melder_throw (me, U": not whitened with ", thee);
 	}
 }
 
@@ -203,14 +202,14 @@ EEG EEG_and_PCA_to_EEG_principalComponents (EEG me, PCA thee, long numberOfCompo
 			long ichannel = channelNumbers[i];
 			NUMvector_copyElements<double> (pc -> z[i], his sound -> z[ichannel], 1, his sound -> nx);
 		}
-		EEG_setChannelNames_selected (him.peek(), L"pc", channelNumbers.peek(), thy dimension);
+		EEG_setChannelNames_selected (him.peek(), U"pc", channelNumbers.peek(), thy dimension);
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not projected.");
+		Melder_throw (me, U": not projected.");
 	}
 }
 
-EEG EEG_to_EEG_bss (EEG me, double startTime, double endTime, long ncovars, double lagStep, const wchar_t *channelRanges, int whiteningMethod, int diagonalizerMethod, long maxNumberOfIterations, double tol) {
+EEG EEG_to_EEG_bss (EEG me, double startTime, double endTime, long ncovars, double lagStep, const char32 *channelRanges, int whiteningMethod, int diagonalizerMethod, long maxNumberOfIterations, double tol) {
 	try {
 		// autowindow
 		if (startTime == endTime) {
@@ -224,7 +223,7 @@ EEG EEG_to_EEG_bss (EEG me, double startTime, double endTime, long ncovars, doub
 			endTime = my xmax;
 		}
 		long numberOfChannels;
-		autoNUMvector <long> channelNumbers (NUMstring_getElementsOfRanges (channelRanges, my numberOfChannels, & numberOfChannels, NULL, L"channel", true), 1);
+		autoNUMvector <long> channelNumbers (NUMstring_getElementsOfRanges (channelRanges, my numberOfChannels, & numberOfChannels, NULL, U"channel", true), 1);
 		autoEEG thee = EEG_extractPart (me, startTime, endTime, true);
 		if (whiteningMethod != 0) {
 			bool fromCorrelation = whiteningMethod == 2;
@@ -236,7 +235,7 @@ EEG EEG_to_EEG_bss (EEG me, double startTime, double endTime, long ncovars, doub
 
 		autoEEG him = EEG_copyWithoutSound (me);
 		his sound = Sound_and_MixingMatrix_unmix (my sound, mm.peek());
-		EEG_setChannelNames_selected (him.peek(), L"ic", channelNumbers.peek(), numberOfChannels);
+		EEG_setChannelNames_selected (him.peek(), U"ic", channelNumbers.peek(), numberOfChannels);
 
 		// Calculate the cross-correlations between eye-channels and the ic's
 
@@ -244,14 +243,14 @@ EEG EEG_to_EEG_bss (EEG me, double startTime, double endTime, long ncovars, doub
 		return him.transfer();
 
 	} catch (MelderError) {
-		Melder_throw (me, ": no independent components determined.");
+		Melder_throw (me, U": no independent components determined.");
 	}
 }
 
-Sound EEG_to_Sound_modulated (EEG me, double baseFrequency, double channelBandwidth, const wchar_t *channelRanges) {
+Sound EEG_to_Sound_modulated (EEG me, double baseFrequency, double channelBandwidth, const char32 *channelRanges) {
 	try {
 		long numberOfChannels;
-		autoNUMvector <long> channelNumbers (NUMstring_getElementsOfRanges (channelRanges, my numberOfChannels, & numberOfChannels, NULL, L"channel", true), 1);
+		autoNUMvector <long> channelNumbers (NUMstring_getElementsOfRanges (channelRanges, my numberOfChannels, & numberOfChannels, NULL, U"channel", true), 1);
 		double maxFreq = baseFrequency + my numberOfChannels * channelBandwidth;
 		double samplingFrequency = 2 * maxFreq;
 		samplingFrequency = samplingFrequency < 44100 ? 44100 : samplingFrequency;
@@ -272,7 +271,7 @@ Sound EEG_to_Sound_modulated (EEG me, double baseFrequency, double channelBandwi
 		Vector_scale (thee.peek(), 0.99);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no playable sound created.");
+		Melder_throw (me, U": no playable sound created.");
 	}
 }
 
@@ -287,7 +286,7 @@ Sound EEG_to_Sound_frequencyShifted (EEG me, long channel, double frequencyShift
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": channel not converted to sound.");
+		Melder_throw (me, U": channel not converted to sound.");
 	}
 }
 /* End of file EEG_extensions.cpp */

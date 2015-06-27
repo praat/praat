@@ -34,7 +34,7 @@ Thing_define (DurationTier, RealTier) {
 DurationTier DurationTier_create (double tmin, double tmax);
 
 void DurationTier_draw (DurationTier me, Graphics g, double tmin, double tmax,
-	double ymin, double ymax, const wchar_t *method, int garnish);
+	double ymin, double ymax, const char32 *method, int garnish);
 
 DurationTier PointProcess_upto_DurationTier (PointProcess me);
 

@@ -26,8 +26,8 @@
  * pb 2005/05/08 embedded scripts (for pictures)
  * pb 2005/07/19 moved navigation buttons to the top, removed page label and horizontal scroll bar
  * pb 2006/10/20 embedded scripts: not on opening page
- * pb 2007/06/10 wchar_t
- * pb 2007/08/12 wchar_t
+ * pb 2007/06/10 wchar
+ * pb 2007/08/12 wchar
  * pb 2008/01/19 double
  * pb 2008/03/20 split off Help menu
  * pb 2008/03/21 new Editor API
@@ -51,18 +51,20 @@ Thing_implement (Manual, HyperPage, 0);
 
 #define SEARCH_PAGE  0
 
-static const wchar_t *month [] =
-	{ L"", L"January", L"February", L"March", L"April", L"May", L"June",
-	  L"July", L"August", L"September", L"October", L"November", L"December" };
+static const char32 *month [] =
+	{ U"", U"January", U"February", U"March", U"April", U"May", U"June",
+	  U"July", U"August", U"September", U"October", U"November", U"December" };
 
 static void menu_cb_writeOneToHtmlFile (EDITOR_ARGS) {
 	EDITOR_IAM (Manual);
-	EDITOR_FORM_WRITE (L"Save as HTML file", 0)
+	EDITOR_FORM_WRITE (U"Save as HTML file", 0)
 		ManPages manPages = (ManPages) my data;
-		wchar_t *p = defaultName;
-		wcscpy (p, ((ManPage) manPages -> pages -> item [my path]) -> title);
-		while (*p) { if (! isalnum (*p) && *p != '_') *p = '_'; p ++; }
-		wcscat (defaultName, L".html");
+		autoMelderString buffer;
+		MelderString_copy (& buffer, ((ManPage) manPages -> pages -> item [my path]) -> title);
+		char32 *p = buffer.string;
+		while (*p) { if (! isalnum ((int) *p) && *p != U'_') *p = U'_'; p ++; }
+		MelderString_append (& buffer, U".html");
+		Melder_sprint (defaultName,300, buffer.string);
 	EDITOR_DO_WRITE
 		ManPages_writeOneToHtmlFile ((ManPages) my data, my path, file);
 	EDITOR_END
@@ -70,29 +72,29 @@ static void menu_cb_writeOneToHtmlFile (EDITOR_ARGS) {
 
 static void menu_cb_writeAllToHtmlDir (EDITOR_ARGS) {
 	EDITOR_IAM (Manual);
-	EDITOR_FORM (L"Save all pages as HTML files", 0)
-		LABEL (L"", L"Type a directory name:")
-		TEXTFIELD (L"directory", L"")
+	EDITOR_FORM (U"Save all pages as HTML files", 0)
+		LABEL (U"", U"Type a directory name:")
+		TEXTFIELD (U"directory", U"")
 	EDITOR_OK
 		structMelderDir currentDirectory = { { 0 } };
 		Melder_getDefaultDir (& currentDirectory);
-		SET_STRING (L"directory", Melder_dirToPath (& currentDirectory))
+		SET_STRING (U"directory", Melder_dirToPath (& currentDirectory))
 	EDITOR_DO
-		wchar_t *directory = GET_STRING (L"directory");
+		char32 *directory = GET_STRING (U"directory");
 		ManPages_writeAllToHtmlDir ((ManPages) my data, directory);
 	EDITOR_END
 }
 
 static void menu_cb_searchForPageList (EDITOR_ARGS) {
 	EDITOR_IAM (Manual);
-	EDITOR_FORM (L"Search for page", 0)
+	EDITOR_FORM (U"Search for page", 0)
 		ManPages manPages = (ManPages) my data;
 		long numberOfPages;
-		const wchar_t **pages = ManPages_getTitles (manPages, & numberOfPages);
-		LIST (L"Page", manPages -> pages -> size, pages, 1)
+		const char32 **pages = ManPages_getTitles (manPages, & numberOfPages);
+		LIST (U"Page", manPages -> pages -> size, pages, 1)
 	EDITOR_OK
 	EDITOR_DO
-		HyperPage_goToPage_i (me, GET_INTEGER (L"Page"));
+		HyperPage_goToPage_i (me, GET_INTEGER (U"Page"));
 	EDITOR_END
 }
 
@@ -104,12 +106,12 @@ void structManual :: v_draw () {
 	Graphics_clearWs (g);
 	#endif
 	if (our path == SEARCH_PAGE) {
-		HyperPage_pageTitle (this, L"Best matches");
-		HyperPage_intro (this, L"The best matches to your query seem to be:");
+		HyperPage_pageTitle (this, U"Best matches");
+		HyperPage_intro (this, U"The best matches to your query seem to be:");
 		for (int i = 1; i <= our numberOfMatches; i ++) {
-			wchar_t link [300];
+			char32 link [300];
 			page = (ManPage) manPages -> pages -> item [matches [i]];
-			swprintf (link, 300, L"• @@%ls", page -> title);
+			Melder_sprint (link,300, U"• @@", page -> title);
 			HyperPage_listItem (this, link);
 		}
 		return;
@@ -154,12 +156,12 @@ void structManual :: v_draw () {
 		bool goAhead = true;
 		while (page -> paragraphs [lastParagraph]. type != 0) lastParagraph ++;
 		if (lastParagraph > 0) {
-			const wchar_t *text = page -> paragraphs [lastParagraph - 1]. text;
-			if (text == NULL || text [0] == '\0' || text [wcslen (text) - 1] != ':') {
+			const char32 *text = page -> paragraphs [lastParagraph - 1]. text;
+			if (text == NULL || text [0] == U'\0' || text [str32len (text) - 1] != U':') {
 				if (our printing && our suppressLinksHither)
 					goAhead = false;
 				else
-					HyperPage_entry (this, L"Links to this page");
+					HyperPage_entry (this, U"Links to this page");
 			}
 		}
 		if (goAhead) for (ilink = 1; ilink <= page -> nlinksHither; ilink ++) {
@@ -169,23 +171,25 @@ void structManual :: v_draw () {
 				if (page -> linksThither [jlink] == link)
 					alreadyShown = true;
 			if (! alreadyShown) {
-				const wchar_t *title = ((ManPage) manPages -> pages -> item [page -> linksHither [ilink]]) -> title;
-				wchar_t linkText [304];
-				swprintf (linkText, 304, L"@@%ls@", title);
+				const char32 *title = ((ManPage) manPages -> pages -> item [page -> linksHither [ilink]]) -> title;
+				char32 linkText [304];
+				Melder_sprint (linkText, 304, U"@@", title, U"@");
 				HyperPage_listItem (this, linkText);
 			}
 		}
 	}
 	if (! our printing && page -> date) {
-		wchar_t signature [100];
+		char32 signature [100];
 		long date = page -> date;
 		int imonth = date % 10000 / 100;
 		if (imonth < 0 || imonth > 12) imonth = 0;
-		swprintf (signature, 100, L"© %ls, %ld %ls %ld",
-			wcsequ (page -> author, L"ppgb") ? L"Paul Boersma" :
-			wcsequ (page -> author, L"djmw") ? L"David Weenink" : page -> author,
-			date % 100, month [imonth], date / 10000);
-		HyperPage_any (this, L"", our p_font, our p_fontSize, 0, 0.0,
+		Melder_sprint (signature,100,
+			U"© ", str32equ (page -> author, U"ppgb") ? U"Paul Boersma" :
+			       str32equ (page -> author, U"djmw") ? U"David Weenink" : page -> author,
+			U", ", date % 100,
+			U" ", month [imonth],
+			U" ", date / 10000);
+		HyperPage_any (this, U"", our p_font, our p_fontSize, 0, 0.0,
 			0.0, 0.0, 0.1, 0.1, HyperPage_ADD_BORDER);
 		HyperPage_any (this, signature, our p_font, our p_fontSize, Graphics_ITALIC, 0.0,
 			0.03, 0.0, 0.1, 0.0, 0);
@@ -215,7 +219,7 @@ static void print (I, Graphics graphics) {
 			par = my paragraphs;
 			while ((par ++) -> type) my numberOfParagraphs ++;
 			Melder_free (my currentPageTitle);
-			my currentPageTitle = Melder_wcsdup_f (page -> title);
+			my currentPageTitle = Melder_dup_f (page -> title);
 			my v_goToPage_i (ipage);
 			my v_draw ();
 			my v_goToPage_i (savePage);
@@ -227,18 +231,18 @@ static void print (I, Graphics graphics) {
 
 static void menu_cb_printRange (EDITOR_ARGS) {
 	EDITOR_IAM (Manual);
-	EDITOR_FORM (L"Print range", 0)
-		SENTENCE (L"Left or inside header", L"")
-		SENTENCE (L"Middle header", L"")
-		SENTENCE (L"Right or outside header", L"Manual")
-		SENTENCE (L"Left or inside footer", L"")
-		SENTENCE (L"Middle footer", L"")
-		SENTENCE (L"Right or outside footer", L"")
-		BOOLEAN (L"Mirror even/odd headers", TRUE)
-		LABEL (L"", L"Print all pages whose title starts with:")
-		TEXTFIELD (L"Print pages starting with", L"Intro")
-		INTEGER (L"First page number", L"1")
-		BOOLEAN (L"Suppress \"Links to this page\"", FALSE)
+	EDITOR_FORM (U"Print range", 0)
+		SENTENCE (U"Left or inside header", U"")
+		SENTENCE (U"Middle header", U"")
+		SENTENCE (U"Right or outside header", U"Manual")
+		SENTENCE (U"Left or inside footer", U"")
+		SENTENCE (U"Middle footer", U"")
+		SENTENCE (U"Right or outside footer", U"")
+		BOOLEAN (U"Mirror even/odd headers", TRUE)
+		LABEL (U"", U"Print all pages whose title starts with:")
+		TEXTFIELD (U"Print pages starting with", U"Intro")
+		INTEGER (U"First page number", U"1")
+		BOOLEAN (U"Suppress \"Links to this page\"", FALSE)
 	EDITOR_OK
 		ManPages manPages = (ManPages) my data;
 		time_t today = time (NULL);
@@ -249,26 +253,26 @@ static void menu_cb_printRange (EDITOR_ARGS) {
 		#else
 			strcpy (dateA, ctime (& today));
 		#endif
-		wchar_t *date = Melder_peekUtf8ToWcs (dateA), *newline;
-		newline = wcschr (date, '\n'); if (newline) *newline = '\0';
-		SET_STRING (L"Left or inside header", date)
-		SET_STRING (L"Right or outside header", my name)
-		if (my d_printingPageNumber) SET_INTEGER (L"First page number", my d_printingPageNumber + 1)
+		char32 *date = Melder_peek8to32 (dateA), *newline;
+		newline = str32chr (date, U'\n'); if (newline) *newline = U'\0';
+		SET_STRING (U"Left or inside header", date)
+		SET_STRING (U"Right or outside header", my name)
+		if (my d_printingPageNumber) SET_INTEGER (U"First page number", my d_printingPageNumber + 1)
 		if (my path >= 1 && my path <= manPages -> pages -> size) {
 			ManPage page = (ManPage) manPages -> pages -> item [my path];
-			SET_STRING (L"Print pages starting with", page -> title);
+			SET_STRING (U"Print pages starting with", page -> title);
 		}
 	EDITOR_DO
-		my insideHeader = GET_STRING (L"Left or inside header");
-		my middleHeader = GET_STRING (L"Middle header");
-		my outsideHeader = GET_STRING (L"Right or outside header");
-		my insideFooter = GET_STRING (L"Left or inside footer");
-		my middleFooter = GET_STRING (L"Middle footer");
-		my outsideFooter = GET_STRING (L"Right or outside footer");
-		my mirror = GET_INTEGER (L"Mirror even/odd headers");
-		my printPagesStartingWith = GET_STRING (L"Print pages starting with");
-		my d_printingPageNumber = GET_INTEGER (L"First page number");
-		my suppressLinksHither = GET_INTEGER (L"Suppress \"Links to this page\"");
+		my insideHeader = GET_STRING (U"Left or inside header");
+		my middleHeader = GET_STRING (U"Middle header");
+		my outsideHeader = GET_STRING (U"Right or outside header");
+		my insideFooter = GET_STRING (U"Left or inside footer");
+		my middleFooter = GET_STRING (U"Middle footer");
+		my outsideFooter = GET_STRING (U"Right or outside footer");
+		my mirror = GET_INTEGER (U"Mirror even/odd headers");
+		my printPagesStartingWith = GET_STRING (U"Print pages starting with");
+		my d_printingPageNumber = GET_INTEGER (U"First page number");
+		my suppressLinksHither = GET_INTEGER (U"Suppress \"Links to this page\"");
 		Printer_print (print, me);
 	EDITOR_END
 }
@@ -277,7 +281,7 @@ static void menu_cb_printRange (EDITOR_ARGS) {
 
 static double *goodnessOfMatch;
 
-static double searchToken (ManPages me, long ipage, wchar_t *token) {
+static double searchToken (ManPages me, long ipage, char32 *token) {
 	double goodness = 0.0;
 	ManPage page = (ManPage) my pages -> item [ipage];
 	struct structManPage_Paragraph *par = & page -> paragraphs [0];
@@ -285,27 +289,27 @@ static double searchToken (ManPages me, long ipage, wchar_t *token) {
 	/*
 	 * Try to find a match in the title, case insensitively.
 	 */
-	static MelderString buffer = { 0 };
+	static MelderString buffer { 0 };
 	MelderString_copy (& buffer, page -> title);
-	for (wchar_t *p = & buffer.string [0]; *p != '\0'; p ++) *p = tolower (*p);
-	if (wcsstr (buffer.string, token)) {
-		goodness += 300.0;   /* Lots of points for a match in the title! */
-		if (wcsequ (buffer.string, token))
-			goodness += 10000.0;   /* Even more points for an exact match! */
+	for (char32 *p = & buffer.string [0]; *p != U'\0'; p ++) *p = towlower ((int) *p);
+	if (str32str (buffer.string, token)) {
+		goodness += 300.0;   // lots of points for a match in the title!
+		if (str32equ (buffer.string, token))
+			goodness += 10000.0;   // even more points for an exact match!
 	}
 	/*
 	 * Try to find a match in the paragraphs, case-insensitively.
 	 */
 	while (par -> type) {
 		if (par -> text) {
-			wchar_t *ptoken;
+			char32 *ptoken;
 			MelderString_copy (& buffer, par -> text);
-			for (wchar_t *p = & buffer.string [0]; *p != '\0'; p ++) *p = tolower (*p);
-			ptoken = wcsstr (buffer.string, token);
+			for (char32 *p = & buffer.string [0]; *p != '\0'; p ++) *p = towlower ((int) *p);
+			ptoken = str32str (buffer.string, token);
 			if (ptoken) {
-				goodness += 10.0;   /* Ten points for every paragraph with a match! */
-				if (wcsstr (ptoken + wcslen (token), token)) {
-					goodness += 1.0;   /* One point for every second occurrence in a paragraph! */
+				goodness += 10.0;   // ten points for every paragraph with a match!
+				if (str32str (ptoken + str32len (token), token)) {
+					goodness += 1.0;   // one point for every second occurrence in a paragraph!
 				}
 			}
 		}
@@ -314,26 +318,26 @@ static double searchToken (ManPages me, long ipage, wchar_t *token) {
 	return goodness;
 }
 
-static void search (Manual me, const wchar_t *query) {
+static void search (Manual me, const char32 *query) {
 	ManPages manPages = (ManPages) my data;
 	long numberOfPages = manPages -> pages -> size;
-	static MelderString searchText = { 0 };
+	static MelderString searchText { 0 };
 	MelderString_copy (& searchText, query);
-	for (wchar_t *p = & searchText.string [0]; *p != '\0'; p ++) {
-		if (*p == '\n') *p = ' ';
-		*p = tolower (*p);
+	for (char32 *p = & searchText.string [0]; *p != U'\0'; p ++) {
+		if (*p == U'\n') *p = U' ';
+		*p = towlower ((int) *p);
 	}
 	if (! goodnessOfMatch)
 		goodnessOfMatch = NUMvector <double> (1, numberOfPages);
 	for (long ipage = 1; ipage <= numberOfPages; ipage ++) {
-		wchar_t *token = searchText.string;
+		char32 *token = searchText.string;
 		goodnessOfMatch [ipage] = 1.0;
 		for (;;) {
-			wchar_t *space = wcschr (token, ' ');
-			if (space) *space = '\0';
+			char32 *space = str32chr (token, U' ');
+			if (space) *space = U'\0';
 			goodnessOfMatch [ipage] *= searchToken (manPages, ipage, token);
 			if (! space) break;
-			*space = ' ';   // restore
+			*space = U' ';   // restore
 			token = space + 1;
 		}
 	}
@@ -357,7 +361,7 @@ static void search (Manual me, const wchar_t *query) {
 	HyperPage_goToPage_i (me, SEARCH_PAGE);
 }
 
-void Manual_search (Manual me, const wchar_t *query) {
+void Manual_search (Manual me, const char32 *query) {
 	GuiText_setString (my searchText, query);
 	search (me, query);
 }
@@ -366,7 +370,7 @@ static void gui_button_cb_home (I, GuiButtonEvent event) {
 	(void) event;
 	iam (Manual);
 	ManPages pages = (ManPages) my data;
-	long iHome = ManPages_lookUp (pages, L"Intro");
+	long iHome = ManPages_lookUp (pages, U"Intro");
 	HyperPage_goToPage_i (me, iHome ? iHome : 1);
 }
  
@@ -381,7 +385,7 @@ static void gui_button_cb_record (I, GuiButtonEvent event) {
 	#if motif
 		XmUpdateDisplay (my d_windowForm -> d_xmShell);
 	#endif
-	if (! Melder_record (manPage == NULL ? 1.0 : manPage -> recordingTime)) Melder_flushError (NULL);
+	if (! Melder_record (manPage == NULL ? 1.0 : manPage -> recordingTime)) Melder_flushError ();
 	GuiThing_setSensitive (my recordButton,  true);
 	GuiThing_setSensitive (my playButton,    true);
 	GuiThing_setSensitive (my publishButton, true);
@@ -410,7 +414,7 @@ static void gui_button_cb_publish (I, GuiButtonEvent event) {
 }
 
 static void do_search (Manual me) {
-	wchar_t *query = GuiText_getString (my searchText);
+	char32 *query = GuiText_getString (my searchText);
 	search (me, query);
 	Melder_free (query);
 }
@@ -437,52 +441,52 @@ void structManual :: v_createChildren () {
 	#endif
 	int height = Machine_getTextHeight (), y = Machine_getMenuBarHeight () + 4;
 	our homeButton = GuiButton_createShown (our d_windowForm, 104, 168, y, y + height,
-		L"Home", gui_button_cb_home, this, 0);
+		U"Home", gui_button_cb_home, this, 0);
 	if (pages -> dynamic) {
 		our recordButton = GuiButton_createShown (our d_windowForm, 4, 79, y+height+8, y+height+8 + height,
-			L"Record", gui_button_cb_record, this, 0);
+			U"Record", gui_button_cb_record, this, 0);
 		our playButton = GuiButton_createShown (our d_windowForm, 85, 160, y+height+8, y+height+8 + height,
-			L"Play", gui_button_cb_play, this, 0);
+			U"Play", gui_button_cb_play, this, 0);
 		our publishButton = GuiButton_createShown (our d_windowForm, 166, 166 + 175, y+height+8, y+height+8 + height,
-			L"Copy last played to list", gui_button_cb_publish, this, 0);
+			U"Copy last played to list", gui_button_cb_publish, this, 0);
 	}
 	GuiButton_createShown (our d_windowForm, 274, 274 + 69, y, y + height,
-		L"Search:", gui_button_cb_search, this, GuiButton_DEFAULT);
+		U"Search:", gui_button_cb_search, this, GuiButton_DEFAULT);
 	our searchText = GuiText_createShown (our d_windowForm, 274+69 + STRING_SPACING, 452 + STRING_SPACING - 2, y, y + Gui_TEXTFIELD_HEIGHT, 0);
 }
 
-static void menu_cb_help (EDITOR_ARGS) { EDITOR_IAM (Manual); HyperPage_goToPage (me, L"Manual"); }
+static void menu_cb_help (EDITOR_ARGS) { EDITOR_IAM (Manual); HyperPage_goToPage (me, U"Manual"); }
 
 void structManual :: v_createMenus () {
 	Manual_Parent :: v_createMenus ();
 
-	Editor_addCommand (this, L"File", L"Print manual...", 0, menu_cb_printRange);
-	Editor_addCommand (this, L"File", L"Save page as HTML file...", 0, menu_cb_writeOneToHtmlFile);
-	Editor_addCommand (this, L"File", L"Save manual to HTML directory...", 0, menu_cb_writeAllToHtmlDir);
-	Editor_addCommand (this, L"File", L"-- close --", 0, NULL);
+	Editor_addCommand (this, U"File", U"Print manual...", 0, menu_cb_printRange);
+	Editor_addCommand (this, U"File", U"Save page as HTML file...", 0, menu_cb_writeOneToHtmlFile);
+	Editor_addCommand (this, U"File", U"Save manual to HTML directory...", 0, menu_cb_writeAllToHtmlDir);
+	Editor_addCommand (this, U"File", U"-- close --", 0, NULL);
 
-	Editor_addCommand (this, L"Go to", L"Search for page (list)...", 0, menu_cb_searchForPageList);
+	Editor_addCommand (this, U"Go to", U"Search for page (list)...", 0, menu_cb_searchForPageList);
 }
 
 void structManual :: v_createHelpMenuItems (EditorMenu menu) {
 	Manual_Parent :: v_createHelpMenuItems (menu);
-	EditorMenu_addCommand (menu, L"Manual help", '?', menu_cb_help);
+	EditorMenu_addCommand (menu, U"Manual help", '?', menu_cb_help);
 }
 
 void structManual :: v_defaultHeaders (EditorCommand cmd) {
 	Manual me = (Manual) cmd -> d_editor;
 	ManPages manPages = (ManPages) my data;
 	if (my path) {
-		wchar_t string [400];
-		static const wchar_t *shortMonth [] =
-			{ L"Jan", L"Feb", L"Mar", L"Apr", L"May", L"Jun", L"Jul", L"Aug", L"Sep", L"Oct", L"Nov", L"Dec" };
+		char32 string [400];
+		static const char32 *shortMonth [] =
+			{ U"Jan", U"Feb", U"Mar", U"Apr", U"May", U"Jun", U"Jul", U"Aug", U"Sep", U"Oct", U"Nov", U"Dec" };
 		ManPage page = (ManPage) manPages -> pages -> item [my path];
 		long date = page -> date;
-		SET_STRING (L"Right or outside header", page -> title)
-		SET_STRING (L"Left or inside footer", page -> author)
+		SET_STRING (U"Right or outside header", page -> title)
+		SET_STRING (U"Left or inside footer", page -> author)
 		if (date) {
-			swprintf (string, 400, L"%ls %ld, %ld", shortMonth [date % 10000 / 100 - 1], date % 100, date / 10000);
-			SET_STRING (L"Left or inside header", string)
+			Melder_sprint (string,400, shortMonth [date % 10000 / 100 - 1], U" ", date % 100, U", ", date / 10000);
+			SET_STRING (U"Left or inside header", string)
 		}
 	}
 }
@@ -503,7 +507,7 @@ void structManual :: v_goToPage_i (long pageNumber) {
 			our path = SEARCH_PAGE;
 			Melder_free (our currentPageTitle);
 			return;
-		} else Melder_throw ("Page ", pageNumber, " not found.");
+		} else Melder_throw (U"Page ", pageNumber, U" not found.");
 	}
 	our path = pageNumber;
 	ManPage page = (ManPage) manPages -> pages -> item [path];
@@ -512,10 +516,10 @@ void structManual :: v_goToPage_i (long pageNumber) {
 	ManPage_Paragraph par = paragraphs;
 	while ((par ++) -> type) our numberOfParagraphs ++;
 	Melder_free (our currentPageTitle);
-	our currentPageTitle = Melder_wcsdup_f (page -> title);
+	our currentPageTitle = Melder_dup_f (page -> title);
 }
 
-int structManual :: v_goToPage (const wchar_t *title) {
+int structManual :: v_goToPage (const char32 *title) {
 	ManPages manPages = (ManPages) our data;
 	if (title [0] == '\\' && title [1] == 'F' && title [2] == 'I') {
 		structMelderFile file = { 0 };
@@ -526,29 +530,29 @@ int structManual :: v_goToPage (const wchar_t *title) {
 		autoMelderSetDefaultDir dir (& manPages -> rootDirectory);
 		autoPraatBackground background;
 		try {
-			autostring32 fileNameWithArguments = Melder_wcsToStr32 (title + 3);
+			autostring32 fileNameWithArguments = Melder_dup (title + 3);
 			praat_executeScriptFromFileNameWithArguments (fileNameWithArguments.peek());
 		} catch (MelderError) {
-			Melder_flushError (NULL);
+			Melder_flushError ();
 		}
 		return 0;
 	} else {
 		long i = ManPages_lookUp (manPages, title);
 		if (! i)
-			Melder_throw ("Page \"", title, "\" not found.");
+			Melder_throw (U"Page \"", title, U"\" not found.");
 		our v_goToPage_i (i);
 		return 1;
 	}
 }
 
-void Manual_init (Manual me, const wchar_t *title, Data data, bool ownData) {
+void Manual_init (Manual me, const char32 *title, Data data, bool ownData) {
 	ManPages manPages = (ManPages) data;
-	wchar_t windowTitle [101];
+	char32 windowTitle [101];
 	long i;
 	ManPage page;
 	ManPage_Paragraph par;
 	if (! (i = ManPages_lookUp (manPages, title)))
-		Melder_throw ("Page \"", title, "\" not found.");
+		Melder_throw (U"Page \"", title, U"\" not found.");
 	my path = i;
 	page = (ManPage) manPages -> pages -> item [i];
 	my paragraphs = page -> paragraphs;
@@ -557,24 +561,24 @@ void Manual_init (Manual me, const wchar_t *title, Data data, bool ownData) {
 	while ((par ++) -> type) my numberOfParagraphs ++;
 
 	if (((ManPage) manPages -> pages -> item [1]) -> title [0] == '-') {
-		wcscpy (windowTitle, & ((ManPage) manPages -> pages -> item [1]) -> title [1]);
-		if (windowTitle [wcslen (windowTitle) - 1] == '-') windowTitle [wcslen (windowTitle) - 1] = '\0';
+		Melder_sprint (windowTitle,101, & ((ManPage) manPages -> pages -> item [1]) -> title [1]);
+		if (windowTitle [str32len (windowTitle) - 1] == U'-') windowTitle [str32len (windowTitle) - 1] = U'\0';
 	} else {
-		wcscpy (windowTitle, L"Manual");
+		Melder_sprint (windowTitle,101, U"Manual");
 	}
 	my d_ownData = ownData;
 	HyperPage_init (me, windowTitle, data);
 	MelderDir_copy (& manPages -> rootDirectory, & my rootDirectory);
-	my history [0]. page = Melder_wcsdup_f (title);   /* BAD */
+	my history [0]. page = Melder_dup_f (title);   // BAD
 }
 
-Manual Manual_create (const wchar_t *title, Data data, bool ownData) {
+Manual Manual_create (const char32 *title, Data data, bool ownData) {
 	try {
 		autoManual me = Thing_new (Manual);
 		Manual_init (me.peek(), title, data, ownData);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Manual window not created.");
+		Melder_throw (U"Manual window not created.");
 	}
 }
 

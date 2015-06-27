@@ -1,6 +1,6 @@
 /* Sound_to_Harmonicity.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ Harmonicity Sound_to_Harmonicity_ac (Sound me, double dt, double minimumPitch,
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": harmonicity analysis (ac) not performed.");
+		Melder_throw (me, U": harmonicity analysis (ac) not performed.");
 	}
 }
 
@@ -66,7 +66,7 @@ Harmonicity Sound_to_Harmonicity_cc (Sound me, double dt, double minimumPitch,
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": harmonicity analysis (cc) not performed.");
+		Melder_throw (me, U": harmonicity analysis (cc) not performed.");
 	}
 }
 

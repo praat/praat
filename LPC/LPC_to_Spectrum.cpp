@@ -48,7 +48,7 @@ void LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduc
 	long nfft = 2 * (thy nx - 1), ndata = my nCoefficients + 1;
 	double scale = 1.0 / sqrt (2 * thy xmax * thy dx);
 	if (ndata >= nfft - 1 && (deEmphasisFrequency < thy xmax || ndata > nfft)) {
-		Melder_throw ("Spectrum size not large enough.");
+		Melder_throw (U"Spectrum size not large enough.");
 	}
 
 	autoNUMvector<double> fftbuffer (1, nfft);
@@ -125,7 +125,7 @@ Spectrum LPC_to_Spectrum (LPC me, double t, double dfMin, double bandwidthReduct
 		LPC_Frame_into_Spectrum (& my d_frames[index], thee.peek(), bandwidthReduction, deEmphasisFrequency);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Spectrum created.");
+		Melder_throw (me, U": no Spectrum created.");
 	}
 }
 

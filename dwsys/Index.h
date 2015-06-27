@@ -31,7 +31,7 @@ Index Index_extractPart (I, long from, long to);
 
 StringsIndex StringsIndex_create (long numberOfElements);
 
-int StringsIndex_getClass (StringsIndex me, wchar_t *classLabel);
+int StringsIndex_getClass (StringsIndex me, char32 *classLabel);
 
 long StringsIndex_countItems (StringsIndex me, int iclas);
 

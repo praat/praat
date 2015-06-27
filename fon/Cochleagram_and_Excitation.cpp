@@ -1,6 +1,6 @@
 /* Cochleagram_and_Excitation.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ Excitation Cochleagram_to_Excitation (Cochleagram me, double t) {
 			thy z [1] [ifreq] = my z [ifreq] [column];
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": slice at time ", t, " seconds not extracted to Excitation.");
+		Melder_throw (me, U": slice at time ", t, U" seconds not extracted to Excitation.");
 	}
 }
 

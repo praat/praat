@@ -1,6 +1,6 @@
 /* Spectrum.cpp
  *
- * Copyright (C) 1992-2012,2014 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,15 +50,15 @@ Thing_implement (Spectrum, Matrix, 2);
 
 void structSpectrum :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine (L"Frequency domain:");
-	MelderInfo_writeLine (L"   Lowest frequency: ", Melder_double (xmin), L" Hz");
-	MelderInfo_writeLine (L"   Highest frequency: ", Melder_double (xmax), L" Hz");
-	MelderInfo_writeLine (L"   Total bandwidth: ", Melder_double (xmax - xmin), L" Hz");
-	MelderInfo_writeLine (L"Frequency sampling:");
-	MelderInfo_writeLine (L"   Number of frequency bands (bins): ", Melder_integer (nx));
-	MelderInfo_writeLine (L"   Frequency step (bin width): ", Melder_double (dx), L" Hz");
-	MelderInfo_writeLine (L"   First frequency band around (bin centre at): ", Melder_double (x1), L" Hz");
-	MelderInfo_writeLine (L"Total energy: ", Melder_single (Spectrum_getBandEnergy (this, 0.0, 0.0)), L" Pa2 sec");
+	MelderInfo_writeLine (U"Frequency domain:");
+	MelderInfo_writeLine (U"   Lowest frequency: ", xmin, U" Hz");
+	MelderInfo_writeLine (U"   Highest frequency: ", xmax, U" Hz");
+	MelderInfo_writeLine (U"   Total bandwidth: ", xmax - xmin, U" Hz");
+	MelderInfo_writeLine (U"Frequency sampling:");
+	MelderInfo_writeLine (U"   Number of frequency bands (bins): ", nx);
+	MelderInfo_writeLine (U"   Frequency step (bin width): ", dx, U" Hz");
+	MelderInfo_writeLine (U"   First frequency band around (bin centre at): ", x1, U" Hz");
+	MelderInfo_writeLine (U"Total energy: ", Melder_single (Spectrum_getBandEnergy (this, 0.0, 0.0)), U" Pa2 sec");
 }
 
 double structSpectrum :: v_getValueAtSample (long isamp, long which, int units) {
@@ -92,7 +92,7 @@ Spectrum Spectrum_create (double fmax, long nf) {
 		Matrix_init (me.peek(), 0.0, fmax, nf, fmax / (nf - 1), 0.0, 1, 2, 2, 1, 1);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Spectrum not created.");
+		Melder_throw (U"Spectrum not created.");
 	}
 }
 
@@ -148,9 +148,9 @@ void Spectrum_draw (Spectrum me, Graphics g, double fmin, double fmax, double mi
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, L"Frequency (Hz)");
+		Graphics_textBottom (g, 1, U"Frequency (Hz)");
 		Graphics_marksBottom (g, 2, true, true, false);
-		Graphics_textLeft (g, 1, L"Sound pressure level (dB/Hz)");
+		Graphics_textLeft (g, 1, U"Sound pressure level (dB/Hz)");
 		Graphics_marksLeftEvery (g, 1.0, 20.0, true, true, false);
 	}
 }
@@ -173,7 +173,7 @@ if(ifmin==1)ifmin=2;  /* BUG */
 		yWC [ifreq] = my v_getValueAtSample (ifreq, 0, 2);
 		if (autoscaling && yWC [ifreq] > maximum) maximum = yWC [ifreq];
 	}
-	if (autoscaling) minimum = maximum - 60;   /* Default dynamic range is 60 dB. */
+	if (autoscaling) minimum = maximum - 60;   // default dynamic range is 60 dB
 
 	/*
 	 * Second pass: clip.
@@ -189,9 +189,9 @@ if(ifmin==1)ifmin=2;  /* BUG */
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, L"Frequency (Hz)");
+		Graphics_textBottom (g, 1, U"Frequency (Hz)");
 		Graphics_marksBottomLogarithmic (g, 3, TRUE, TRUE, FALSE);
-		Graphics_textLeft (g, 1, L"Sound pressure level (dB/Hz)");
+		Graphics_textLeft (g, 1, U"Sound pressure level (dB/Hz)");
 		Graphics_marksLeftEvery (g, 1.0, 20.0, TRUE, TRUE, FALSE);
 	}
 }
@@ -203,12 +203,12 @@ Table Spectrum_downto_Table (Spectrum me, bool includeBinNumbers, bool includeFr
 		autoTable thee = Table_createWithoutColumnNames (my nx,
 			includeBinNumbers + includeFrequency + includeRealPart + includeImaginaryPart + includeEnergyDensity + includePowerDensity);
 		long icol = 0;
-		if (includeBinNumbers) Table_setColumnLabel (thee.peek(), ++ icol, L"bin");
-		if (includeFrequency) Table_setColumnLabel (thee.peek(), ++ icol, L"freq(Hz)");
-		if (includeRealPart) Table_setColumnLabel (thee.peek(), ++ icol, L"re(Pa/Hz)");
-		if (includeImaginaryPart) Table_setColumnLabel (thee.peek(), ++ icol, L"im(Pa/Hz)");
-		if (includeEnergyDensity) Table_setColumnLabel (thee.peek(), ++ icol, L"energy(Pa^2/Hz^2)");
-		if (includePowerDensity) Table_setColumnLabel (thee.peek(), ++ icol, L"pow(dB/Hz)");
+		if (includeBinNumbers) Table_setColumnLabel (thee.peek(), ++ icol, U"bin");
+		if (includeFrequency) Table_setColumnLabel (thee.peek(), ++ icol, U"freq(Hz)");
+		if (includeRealPart) Table_setColumnLabel (thee.peek(), ++ icol, U"re(Pa/Hz)");
+		if (includeImaginaryPart) Table_setColumnLabel (thee.peek(), ++ icol, U"im(Pa/Hz)");
+		if (includeEnergyDensity) Table_setColumnLabel (thee.peek(), ++ icol, U"energy(Pa^2/Hz^2)");
+		if (includePowerDensity) Table_setColumnLabel (thee.peek(), ++ icol, U"pow(dB/Hz)");
 		for (long ibin = 1; ibin <= my nx; ibin ++) {
 			icol = 0;
 			if (includeBinNumbers) Table_setNumericValue (thee.peek(), ibin, ++ icol, ibin);
@@ -220,7 +220,7 @@ Table Spectrum_downto_Table (Spectrum me, bool includeBinNumbers, bool includeFr
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Table.");
+		Melder_throw (me, U": not converted to Table.");
 	}
 }
 
@@ -232,19 +232,19 @@ void Spectrum_list (Spectrum me, bool includeBinNumbers, bool includeFrequency,
 			includeRealPart, includeImaginaryPart, includeEnergyDensity, includePowerDensity);
 		Table_list (table.peek(), false);
 	} catch (MelderError) {
-		Melder_throw (me, ": not listed.");
+		Melder_throw (me, U": not listed.");
 	}
 }
 
 Spectrum Matrix_to_Spectrum (Matrix me) {
 	try {
 		if (my ny != 2)
-			Melder_throw ("Matrix must have exactly 2 rows.");
+			Melder_throw (U"Matrix must have exactly 2 rows.");
 		autoSpectrum thee = Thing_new (Spectrum);
 		my structMatrix :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Spectrum.");
+		Melder_throw (me, U": not converted to Spectrum.");
 	}
 }
 
@@ -254,7 +254,7 @@ Matrix Spectrum_to_Matrix (Spectrum me) {
 		my structMatrix :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Matrix.");
+		Melder_throw (me, U": not converted to Matrix.");
 	}
 }
 
@@ -299,7 +299,7 @@ Spectrum Spectrum_cepstralSmoothing (Spectrum me, double bandWidth) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": cepstral smoothing not computed.");
+		Melder_throw (me, U": cepstral smoothing not computed.");
 	}
 }
 
@@ -439,12 +439,12 @@ void Spectrum_getNearestMaximum (Spectrum me, double frequency, double *frequenc
 		autoSpectrumTier thee = Spectrum_to_SpectrumTier_peaks (me);
 		long index = AnyTier_timeToNearestIndex (thee.peek(), frequency);
 		if (index == 0)
-			Melder_throw ("No peak.");
+			Melder_throw (U"No peak.");
 		RealPoint point = (RealPoint) thy points -> item [index];
 		*frequencyOfMaximum = point -> number;
 		*heightOfMaximum = point -> value;
 	} catch (MelderError) {
-		Melder_throw (me, ": no nearest maximum found.");
+		Melder_throw (me, U": no nearest maximum found.");
 	}
 }
 

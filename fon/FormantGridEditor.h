@@ -42,9 +42,9 @@ Thing_define (FormantGridEditor, FunctionEditor) {
 	#include "FormantGridEditor_prefs.h"
 };
 
-void FormantGridEditor_init (FormantGridEditor me, const wchar_t *title, FormantGrid data);
+void FormantGridEditor_init (FormantGridEditor me, const char32 *title, FormantGrid data);
 
-FormantGridEditor FormantGridEditor_create (const wchar_t *title, FormantGrid data);
+FormantGridEditor FormantGridEditor_create (const char32 *title, FormantGrid data);
 
 /* End of file FormantGridEditor.h */
 #endif

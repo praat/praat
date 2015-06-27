@@ -35,7 +35,7 @@ Thing_implement (GuiButton, GuiControl, 0);
 	static void _GuiGtkButton_destroyCallback (GuiObject widget, gpointer void_me) {
 		(void) widget;
 		iam (GuiButton);
-		trace ("destroying GuiButton %p", me);
+		trace (U"destroying GuiButton ", Melder_pointer (me));
 		forget (me);
 	}
 	static void _GuiGtkButton_activateCallback (GuiObject widget, gpointer void_me) {
@@ -45,8 +45,7 @@ Thing_implement (GuiButton, GuiControl, 0);
 			try {
 				my d_activateCallback (my d_activateBoss, & event);
 			} catch (MelderError) {
-				Melder_error_ ("Your click on button \"", GTK_WIDGET (widget) -> name, "\" was not completely handled.");
-				Melder_flushError (NULL);
+				Melder_flushError (U"Your click on button \"", Melder_peek8to32 (GTK_WIDGET (widget) -> name), U"\" was not completely handled.");
 			}
 		}
 	}
@@ -57,7 +56,7 @@ Thing_implement (GuiButton, GuiControl, 0);
 	- (void) dealloc {   // override
 		GuiButton me = d_userData;
 		forget (me);
-		trace ("deleting a button");
+		trace (U"deleting a button");
 		[super dealloc];
 	}
 	- (GuiThing) userData {
@@ -75,8 +74,7 @@ Thing_implement (GuiButton, GuiControl, 0);
 			try {
 				my d_activateCallback (my d_activateBoss, & event);
 			} catch (MelderError) {
-				Melder_error_ ("Your click on button \"", "xx", "\" was not completely handled.");
-				Melder_flushError (NULL);
+				Melder_flushError (U"Your click on button \"", U"xx", U"\" was not completely handled.");
 			}
 		}
 	}
@@ -98,8 +96,7 @@ Thing_implement (GuiButton, GuiControl, 0);
 			try {
 				my d_activateCallback (my d_activateBoss, & event);
 			} catch (MelderError) {
-				Melder_error_ ("Your click on button \"", widget -> name, "\" was not completely handled.");
-				Melder_flushError (NULL);
+				Melder_flushError (U"Your click on button \"", widget -> name, U"\" was not completely handled.");
 			}
 		}
 	}
@@ -110,8 +107,7 @@ Thing_implement (GuiButton, GuiControl, 0);
 			try {
 				my d_activateCallback (my d_activateBoss, & event);
 			} catch (MelderError) {
-				Melder_error_ ("Your click on button \"", widget -> name, "\" was not completely handled.");
-				Melder_flushError (NULL);
+				Melder_flushError (U"Your key click on button \"", widget -> name, U"\" was not completely handled.");
 			}
 			return true;
 		}
@@ -143,8 +139,7 @@ Thing_implement (GuiButton, GuiControl, 0);
 			try {
 				my d_activateCallback (my d_activateBoss, & event);
 			} catch (MelderError) {
-				Melder_error_ ("Your click on button \"", widget -> name, "\" was not completely handled.");
-				Melder_flushError (NULL);
+				Melder_flushError (U"Your click on button \"", widget -> name, U"\" was not completely handled.");
 			}
 		}
 	}
@@ -156,8 +151,7 @@ Thing_implement (GuiButton, GuiControl, 0);
 			try {
 				my d_activateCallback (my d_activateBoss, & event);
 			} catch (MelderError) {
-				Melder_error_ ("Your click on button \"", widget -> name, "\" was not completely handled.");
-				Melder_flushError (NULL);
+				Melder_flushError (U"Your key click on button \"", widget -> name, U"\" was not completely handled.");
 			}
 			return true;
 		}
@@ -166,7 +160,7 @@ Thing_implement (GuiButton, GuiControl, 0);
 #endif
 
 GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bottom,
-	const wchar_t *buttonText, void (*activateCallback) (void *boss, GuiButtonEvent event), void *activateBoss, unsigned long flags)
+	const char32 *buttonText, void (*activateCallback) (void *boss, GuiButtonEvent event), void *activateBoss, unsigned long flags)
 {
 	GuiButton me = Thing_new (GuiButton);
 	my d_shell = parent -> d_shell;
@@ -174,7 +168,7 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 	my d_activateCallback = activateCallback;
 	my d_activateBoss = activateBoss;
 	#if gtk
-		my d_widget = gtk_button_new_with_label (Melder_peekWcsToUtf8 (buttonText));
+		my d_widget = gtk_button_new_with_label (Melder_peek32to8 (buttonText));
 		_GuiObject_setUserData (my d_widget, me);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		if (flags & GuiButton_DEFAULT || flags & GuiButton_ATTRACTIVE) {
@@ -205,7 +199,7 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 			theButtonFont = [NSFont systemFontOfSize: 13.0];
 		}
 		[button setFont: theButtonFont];
-		[button setTitle: (NSString *) Melder_peekWcsToCfstring (buttonText)];
+		[button setTitle: (NSString *) Melder_peek32toCfstring (buttonText)];
 		[button setTarget: (id) my d_widget];
 		[button setAction: @selector (_guiCocoaButton_activateCallback:)];
 		//[button setAutoresizingMask: NSViewNotSizable];
@@ -224,7 +218,7 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 	#elif win
 		my d_widget = _Gui_initializeWidget (xmPushButtonWidgetClass, parent -> d_widget, buttonText);
 		_GuiObject_setUserData (my d_widget, me);
-		my d_widget -> window = CreateWindow (L"button", _GuiWin_expandAmpersands (my d_widget -> name),
+		my d_widget -> window = CreateWindow (L"button", Melder_peek32toW (_GuiWin_expandAmpersands (my d_widget -> name)),
 			WS_CHILD
 			| ( flags & (GuiButton_DEFAULT | GuiButton_ATTRACTIVE) ? BS_DEFPUSHBUTTON : BS_PUSHBUTTON )
 			| WS_CLIPSIBLINGS,
@@ -265,21 +259,21 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 }
 
 GuiButton GuiButton_createShown (GuiForm parent, int left, int right, int top, int bottom,
-	const wchar_t *buttonText, void (*clickedCallback) (void *boss, GuiButtonEvent event), void *clickedBoss, unsigned long flags)
+	const char32 *buttonText, void (*clickedCallback) (void *boss, GuiButtonEvent event), void *clickedBoss, unsigned long flags)
 {
 	GuiButton me = GuiButton_create (parent, left, right, top, bottom, buttonText, clickedCallback, clickedBoss, flags);
 	GuiThing_show (me);
 	return me;
 }
 
-void GuiButton_setText (GuiButton me, const wchar_t *text) {
+void GuiButton_setText (GuiButton me, const char32 *text /* cattable */) {
 	#if gtk
-		gtk_button_set_label (GTK_BUTTON (my d_widget), Melder_peekWcsToUtf8 (text));
+		gtk_button_set_label (GTK_BUTTON (my d_widget), Melder_peek32to8 (text));
 	#elif cocoa
-		[(NSButton *) my d_widget setTitle: (NSString *) Melder_peekWcsToCfstring (text)];
+		[(NSButton *) my d_widget setTitle: (NSString *) Melder_peek32toCfstring (text)];
 	#elif motif
 		Melder_free (my d_widget -> name);
-		my d_widget -> name = Melder_wcsdup_f (text);
+		my d_widget -> name = Melder_dup_f (text);
 		_GuiNativeControl_setTitle (my d_widget);
 	#endif
 }

@@ -14,8 +14,8 @@ FilesInMemory create_espeakdata_variants () {
 			116, 116, 101, 114, 32, 50, 48, 10, 10, 102, 111, 114, 109, 97, 110, 116, 32, 48, 32, 49, 48, 48, 32, 56, 48, 32, 49, 49, 48, 10,
 			10, 10, 10, 0};
 		autoFileInMemory espeakdata_variants1 = FileInMemory_createWithData (93, reinterpret_cast<const char *> (&espeakdata_variants1_data), 
-			L"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/croak", 
-			L"croak");
+			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/croak",
+			U"croak");
 		Collection_addItem (me.peek(), espeakdata_variants1.transfer());
 
 		static unsigned char espeakdata_variants2_data[325] = {
@@ -31,8 +31,8 @@ FilesInMemory create_espeakdata_variants () {
 			110, 116, 32, 56, 32, 49, 49, 48, 32, 32, 55, 48, 32, 49, 53, 48, 10, 10, 115, 116, 114, 101, 115, 115, 65, 100, 100, 32, 45, 49,
 			48, 32, 45, 49, 48, 32, 45, 50, 48, 32, 45, 50, 48, 32, 48, 32, 48, 32, 52, 48, 32, 54, 48, 10, 0};
 		autoFileInMemory espeakdata_variants2 = FileInMemory_createWithData (324, reinterpret_cast<const char *> (&espeakdata_variants2_data), 
-			L"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/f1", 
-			L"f1");
+			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/f1",
+			U"f1");
 		Collection_addItem (me.peek(), espeakdata_variants2.transfer());
 
 		static unsigned char espeakdata_variants3_data[358] = {
@@ -49,8 +49,8 @@ FilesInMemory create_espeakdata_variants () {
 			52, 48, 10, 98, 114, 101, 97, 116, 104, 32, 48, 32, 50, 32, 51, 32, 51, 32, 51, 32, 51, 32, 51, 32, 50, 10, 101, 99, 104, 111,
 			32, 49, 52, 48, 32, 49, 48, 10, 99, 111, 110, 115, 111, 110, 97, 110, 116, 115, 32, 49, 50, 53, 32, 49, 50, 53, 10, 0};
 		autoFileInMemory espeakdata_variants3 = FileInMemory_createWithData (357, reinterpret_cast<const char *> (&espeakdata_variants3_data), 
-			L"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/f2", 
-			L"f2");
+			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/f2",
+			U"f2");
 		Collection_addItem (me.peek(), espeakdata_variants3.transfer());
 
 		static unsigned char espeakdata_variants4_data[376] = {
@@ -68,8 +68,8 @@ FilesInMemory create_espeakdata_variants () {
 			116, 104, 32, 48, 32, 50, 32, 51, 32, 51, 32, 51, 32, 51, 32, 51, 32, 50, 10, 101, 99, 104, 111, 32, 49, 50, 48, 32, 49, 48,
 			10, 114, 111, 117, 103, 104, 110, 101, 115, 115, 32, 52, 10, 10, 10, 0};
 		autoFileInMemory espeakdata_variants4 = FileInMemory_createWithData (375, reinterpret_cast<const char *> (&espeakdata_variants4_data), 
-			L"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/f3", 
-			L"f3");
+			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/f3",
+			U"f3");
 		Collection_addItem (me.peek(), espeakdata_variants4.transfer());
 
 		static unsigned char espeakdata_variants5_data[351] = {
@@ -86,8 +86,8 @@ FilesInMemory create_espeakdata_variants () {
 			32, 45, 50, 48, 32, 48, 32, 48, 32, 50, 48, 32, 49, 50, 48, 10, 115, 116, 114, 101, 115, 115, 65, 109, 112, 32, 49, 56, 32, 49,
 			54, 32, 50, 48, 32, 50, 48, 32, 50, 48, 32, 50, 48, 32, 50, 48, 32, 50, 48, 10, 0};
 		autoFileInMemory espeakdata_variants5 = FileInMemory_createWithData (350, reinterpret_cast<const char *> (&espeakdata_variants5_data), 
-			L"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/f4", 
-			L"f4");
+			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/f4",
+			U"f4");
 		Collection_addItem (me.peek(), espeakdata_variants5.transfer());
 
 		static unsigned char espeakdata_variants6_data[426] = {
@@ -107,32 +107,32 @@ FilesInMemory create_espeakdata_variants () {
 			48, 10, 98, 114, 101, 97, 116, 104, 119, 32, 49, 53, 48, 32, 49, 53, 48, 32, 50, 48, 48, 32, 50, 48, 48, 32, 52, 48, 48, 32,
 			52, 48, 48, 32, 10, 0};
 		autoFileInMemory espeakdata_variants6 = FileInMemory_createWithData (425, reinterpret_cast<const char *> (&espeakdata_variants6_data), 
-			L"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/f5", 
-			L"f5");
+			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/f5",
+			U"f5");
 		Collection_addItem (me.peek(), espeakdata_variants6.transfer());
 
 		static unsigned char espeakdata_variants7_data[39] = {
 			108, 97, 110, 103, 117, 97, 103, 101, 32, 118, 97, 114, 105, 97, 110, 116, 10, 110, 97, 109, 101, 32, 107, 108, 97, 116, 116, 10, 107, 108,
 			97, 116, 116, 32, 49, 10, 32, 10, 0};
 		autoFileInMemory espeakdata_variants7 = FileInMemory_createWithData (38, reinterpret_cast<const char *> (&espeakdata_variants7_data), 
-			L"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/klatt", 
-			L"klatt");
+			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/klatt",
+			U"klatt");
 		Collection_addItem (me.peek(), espeakdata_variants7.transfer());
 
 		static unsigned char espeakdata_variants8_data[39] = {
 			108, 97, 110, 103, 117, 97, 103, 101, 32, 118, 97, 114, 105, 97, 110, 116, 10, 110, 97, 109, 101, 32, 107, 108, 97, 116, 116, 50, 10, 107,
 			108, 97, 116, 116, 32, 50, 10, 10, 0};
 		autoFileInMemory espeakdata_variants8 = FileInMemory_createWithData (38, reinterpret_cast<const char *> (&espeakdata_variants8_data), 
-			L"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/klatt2", 
-			L"klatt2");
+			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/klatt2",
+			U"klatt2");
 		Collection_addItem (me.peek(), espeakdata_variants8.transfer());
 
 		static unsigned char espeakdata_variants9_data[40] = {
 			108, 97, 110, 103, 117, 97, 103, 101, 32, 118, 97, 114, 105, 97, 110, 116, 10, 110, 97, 109, 101, 32, 107, 108, 97, 116, 116, 51, 10, 107,
 			108, 97, 116, 116, 32, 51, 10, 32, 10, 0};
 		autoFileInMemory espeakdata_variants9 = FileInMemory_createWithData (39, reinterpret_cast<const char *> (&espeakdata_variants9_data), 
-			L"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/klatt3", 
-			L"klatt3");
+			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/klatt3",
+			U"klatt3");
 		Collection_addItem (me.peek(), espeakdata_variants9.transfer());
 
 		static unsigned char espeakdata_variants10_data[336] = {
@@ -149,8 +149,8 @@ FilesInMemory create_espeakdata_variants () {
 			116, 114, 101, 115, 115, 65, 100, 100, 32, 45, 49, 48, 32, 45, 49, 48, 32, 45, 50, 48, 32, 45, 50, 48, 32, 48, 32, 48, 32, 52,
 			48, 32, 55, 48, 10, 0};
 		autoFileInMemory espeakdata_variants10 = FileInMemory_createWithData (335, reinterpret_cast<const char *> (&espeakdata_variants10_data), 
-			L"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/m1", 
-			L"m1");
+			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/m1",
+			U"m1");
 		Collection_addItem (me.peek(), espeakdata_variants10.transfer());
 
 		static unsigned char espeakdata_variants11_data[265] = {
@@ -164,8 +164,8 @@ FilesInMemory create_espeakdata_variants () {
 			48, 32, 32, 57, 48, 32, 49, 50, 48, 10, 102, 111, 114, 109, 97, 110, 116, 32, 55, 32, 49, 48, 48, 32, 32, 57, 48, 32, 49, 50,
 			48, 10, 102, 111, 114, 109, 97, 110, 116, 32, 56, 32, 49, 48, 48, 32, 32, 57, 48, 32, 49, 50, 48, 10, 0};
 		autoFileInMemory espeakdata_variants11 = FileInMemory_createWithData (264, reinterpret_cast<const char *> (&espeakdata_variants11_data), 
-			L"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/m2", 
-			L"m2");
+			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/m2",
+			U"m2");
 		Collection_addItem (me.peek(), espeakdata_variants11.transfer());
 
 		static unsigned char espeakdata_variants12_data[286] = {
@@ -180,8 +180,8 @@ FilesInMemory create_espeakdata_variants () {
 			49, 48, 48, 32, 49, 48, 48, 32, 49, 48, 48, 10, 10, 115, 116, 114, 101, 115, 115, 65, 100, 100, 32, 49, 48, 32, 49, 48, 32, 48,
 			32, 48, 32, 48, 32, 48, 32, 45, 51, 48, 32, 45, 51, 48, 10, 0};
 		autoFileInMemory espeakdata_variants12 = FileInMemory_createWithData (285, reinterpret_cast<const char *> (&espeakdata_variants12_data), 
-			L"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/m3", 
-			L"m3");
+			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/m3",
+			U"m3");
 		Collection_addItem (me.peek(), espeakdata_variants12.transfer());
 
 		static unsigned char espeakdata_variants13_data[291] = {
@@ -196,8 +196,8 @@ FilesInMemory create_espeakdata_variants () {
 			32, 49, 48, 51, 32, 49, 48, 48, 32, 49, 48, 48, 10, 10, 115, 116, 114, 101, 115, 115, 65, 100, 100, 32, 45, 49, 48, 32, 45, 49,
 			48, 32, 45, 51, 48, 32, 45, 51, 48, 32, 48, 32, 48, 32, 54, 48, 32, 57, 48, 10, 0};
 		autoFileInMemory espeakdata_variants13 = FileInMemory_createWithData (290, reinterpret_cast<const char *> (&espeakdata_variants13_data), 
-			L"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/m4", 
-			L"m4");
+			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/m4",
+			U"m4");
 		Collection_addItem (me.peek(), espeakdata_variants13.transfer());
 
 		static unsigned char espeakdata_variants14_data[263] = {
@@ -211,8 +211,8 @@ FilesInMemory create_espeakdata_variants () {
 			116, 32, 55, 32, 49, 48, 53, 32, 32, 56, 53, 32, 49, 53, 48, 10, 102, 111, 114, 109, 97, 110, 116, 32, 56, 32, 49, 48, 53, 32,
 			32, 56, 53, 32, 49, 53, 48, 10, 10, 105, 110, 116, 111, 110, 97, 116, 105, 111, 110, 32, 50, 10, 0};
 		autoFileInMemory espeakdata_variants14 = FileInMemory_createWithData (262, reinterpret_cast<const char *> (&espeakdata_variants14_data), 
-			L"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/m5", 
-			L"m5");
+			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/m5",
+			U"m5");
 		Collection_addItem (me.peek(), espeakdata_variants14.transfer());
 
 		static unsigned char espeakdata_variants15_data[189] = {
@@ -224,8 +224,8 @@ FilesInMemory create_espeakdata_variants () {
 			32, 52, 32, 49, 48, 48, 32, 32, 56, 48, 32, 49, 52, 48, 10, 102, 111, 114, 109, 97, 110, 116, 32, 53, 32, 49, 48, 48, 32, 32,
 			56, 48, 32, 49, 52, 48, 10, 10, 0};
 		autoFileInMemory espeakdata_variants15 = FileInMemory_createWithData (188, reinterpret_cast<const char *> (&espeakdata_variants15_data), 
-			L"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/m6", 
-			L"m6");
+			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/m6",
+			U"m6");
 		Collection_addItem (me.peek(), espeakdata_variants15.transfer());
 
 		static unsigned char espeakdata_variants16_data[255] = {
@@ -239,8 +239,8 @@ FilesInMemory create_espeakdata_variants () {
 			48, 48, 32, 53, 48, 32, 49, 48, 48, 10, 102, 111, 114, 109, 97, 110, 116, 32, 56, 32, 49, 48, 48, 32, 53, 48, 32, 49, 48, 48,
 			10, 118, 111, 105, 99, 105, 110, 103, 32, 49, 53, 53, 10, 10, 0};
 		autoFileInMemory espeakdata_variants16 = FileInMemory_createWithData (254, reinterpret_cast<const char *> (&espeakdata_variants16_data), 
-			L"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/m7", 
-			L"m7");
+			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/m7",
+			U"m7");
 		Collection_addItem (me.peek(), espeakdata_variants16.transfer());
 
 		static unsigned char espeakdata_variants17_data[187] = {
@@ -252,8 +252,8 @@ FilesInMemory create_espeakdata_variants () {
 			32, 49, 48, 10, 98, 114, 101, 97, 116, 104, 119, 32, 49, 53, 48, 32, 49, 53, 48, 32, 50, 48, 48, 32, 50, 48, 48, 32, 52, 48,
 			48, 32, 52, 48, 48, 10, 0};
 		autoFileInMemory espeakdata_variants17 = FileInMemory_createWithData (186, reinterpret_cast<const char *> (&espeakdata_variants17_data), 
-			L"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/whisper", 
-			L"whisper");
+			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/whisper",
+			U"whisper");
 		Collection_addItem (me.peek(), espeakdata_variants17.transfer());
 
 		static unsigned char espeakdata_variants18_data[393] = {
@@ -272,13 +272,13 @@ FilesInMemory create_espeakdata_variants () {
 			101, 97, 116, 104, 119, 32, 49, 53, 48, 32, 49, 53, 48, 32, 50, 48, 48, 32, 50, 48, 48, 32, 52, 48, 48, 32, 52, 48, 48, 10,
 			32, 10, 0};
 		autoFileInMemory espeakdata_variants18 = FileInMemory_createWithData (392, reinterpret_cast<const char *> (&espeakdata_variants18_data), 
-			L"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/whisperf", 
-			L"whisperf");
+			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/whisperf",
+			U"whisperf");
 		Collection_addItem (me.peek(), espeakdata_variants18.transfer());
 
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw (L"FilesInMemory not created.");
+		Melder_throw (U"FilesInMemory not created.");
 	}
 }
 

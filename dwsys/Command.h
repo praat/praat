@@ -36,7 +36,7 @@ Thing_define (Command, Thing) {
 		int (*undo) (I);
 };
 
-void Command_init (I, const wchar_t *name, Any data, int (*execute)(Any), int (*undo)(Any));
+void Command_init (I, const char32 *name, Any data, int (*execute)(Any), int (*undo)(Any));
 	
 int Command_do (I);
 
@@ -80,7 +80,7 @@ int CommandHistory_offleft (I);
 int CommandHistory_offright (I);
 /*	return my size == 0 || my current == my size + 1; */
 
-wchar_t *CommandHistory_commandName (I, long offsetFromCurrent);
+char32 *CommandHistory_commandName (I, long offsetFromCurrent);
 /* offsetFromCurrent may be zero, positive or negative. */
 /* References outside the list will return NULL. */
 

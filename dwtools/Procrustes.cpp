@@ -109,7 +109,7 @@ Procrustes Procrustes_create (long n) {
 		Procrustes_setDefaults (me.peek());
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Procrustes not created.");
+		Melder_throw (U"Procrustes not created.");
 	}
 }
 

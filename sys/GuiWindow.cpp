@@ -22,7 +22,7 @@
  * pb 2004/02/12 don't trust window modification feedback on MacOS 9
  * pb 2004/04/06 GuiWindow_drain separated from XmUpdateDisplay
  * pb 2006/10/28 erased MacOS 9 stuff
- * pb 2007/06/19 wchar_t
+ * pb 2007/06/19 wchar
  * pb 2007/12/30 extraction
  * pb 2010/07/29 removed GuiWindow_show
  * pb 2011/04/06 C++
@@ -70,25 +70,26 @@ Thing_implement (GuiWindow, GuiShell, 0);
 				/*
 				 * Move and resize.
 				 */
-				trace ("moving child of class %ls", Thing_className (control));
+				trace (U"moving child of class ", Thing_className (control));
 				int left = control -> d_left, right = control -> d_right, top = control -> d_top, bottom = control -> d_bottom;
 				if (left   <  0) left   += allocation -> width;   // this replicates structGuiControl :: v_positionInForm ()
 				if (right  <= 0) right  += allocation -> width;
 				if (top    <  0) top    += allocation -> height;
 				if (bottom <= 0) bottom += allocation -> height;
-				trace ("moving child to (%d,%d)", left, top);
+				trace (U"moving child to (", left, U",", top, U")");
 				gtk_fixed_move (GTK_FIXED (parentWidget), GTK_WIDGET (childWidget), left, top);
 				gtk_widget_set_size_request (GTK_WIDGET (childWidget), right - left, bottom - top);
-				trace ("moved child of class %ls", Thing_className (control));
+				trace (U"moved child of class ", Thing_className (control));
 			}
 		}
 	}
 	static gboolean _GuiWindow_resizeCallback (GuiObject widget, GtkAllocation *allocation, gpointer void_me) {
 		(void) widget;
 		iam (GuiWindow);
-		trace ("fixed received size allocation: (%ld, %ld), %ld x %ld.", (long) allocation -> x, (long) allocation -> y, (long) allocation -> width, (long) allocation -> height);
+		trace (U"fixed received size allocation: (", allocation -> x, U", ", allocation -> y,
+			U"), ", allocation -> width, U" x ", allocation -> height, U".");
 		if (allocation -> width != my d_width || allocation -> height != my d_height) {
-			trace ("user changed the size of the window?");
+			trace (U"user changed the size of the window?");
 			/*
 			 * Apparently, GTK sends the size allocation message both to the shell and to its fixed-container child.
 			 * we could capture the message either from the shell or from the fixed; we choose to do it from the fixed.
@@ -102,7 +103,7 @@ Thing_implement (GuiWindow, GuiShell, 0);
 			my d_height = allocation -> height;
 			gtk_widget_set_size_request (GTK_WIDGET (widget), allocation -> width, allocation -> height);
 		}
-		trace ("end");
+		trace (U"end");
 		return FALSE;
 	}
 #elif cocoa
@@ -113,7 +114,7 @@ Thing_implement (GuiWindow, GuiShell, 0);
 		GuiWindow me = d_userData;
 		my d_cocoaWindow = NULL;   // this is already under destruction, so undangle
 		forget (me);
-		trace ("deleting a window");
+		trace (U"deleting a window");
 		[super dealloc];
 	}
 	- (GuiThing) userData {
@@ -124,7 +125,7 @@ Thing_implement (GuiWindow, GuiShell, 0);
 		d_userData = static_cast <GuiWindow> (userData);
 	}
 	- (void) keyDown: (NSEvent *) theEvent {
-		trace ("key down");
+		trace (U"key down");
 	}
 	//@end
 	//@interface GuiCocoaWindowDelegate : NSObject <NSWindowDelegate> { } @end
@@ -134,10 +135,10 @@ Thing_implement (GuiWindow, GuiShell, 0);
 		GuiCocoaWindow *widget = (GuiCocoaWindow *) sender;
 		GuiWindow me = (GuiWindow) [widget userData];
 		if (my d_goAwayCallback != NULL) {
-			trace ("calling goAwayCallback)");
+			trace (U"calling goAwayCallback)");
 			my d_goAwayCallback (my d_goAwayBoss);
 		} else {
-			trace ("hiding window");
+			trace (U"hiding window");
 			[widget orderOut: nil];
 		}
 		return FALSE;
@@ -150,7 +151,7 @@ Thing_implement (GuiWindow, GuiShell, 0);
 		iam (GuiWindow);
 		if (my d_xmMenuBar) {
 		}
-		//Melder_casual ("destroying window widget");
+		trace (U"destroying window widget");
 		forget (me);
 	}
 	static void _GuiMotifWindow_goAwayCallback (GuiObject widget, XtPointer void_me, XtPointer call) {
@@ -163,7 +164,7 @@ Thing_implement (GuiWindow, GuiShell, 0);
 #endif
 
 GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidth, int minimumHeight,
-	const wchar_t *title, void (*goAwayCallback) (void *goAwayBoss), void *goAwayBoss, unsigned long flags)
+	const char32 *title, void (*goAwayCallback) (void *goAwayBoss), void *goAwayBoss, unsigned long flags)
 {
 	GuiWindow me = Thing_new (GuiWindow);
 	my d_parent = NULL;

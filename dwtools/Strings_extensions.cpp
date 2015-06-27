@@ -39,52 +39,49 @@
 Strings Strings_createFixedLength (long numberOfStrings) {
 	try {
 		if (numberOfStrings <= 0) {
-			Melder_throw ("The number of strings must be positive.");
+			Melder_throw (U"The number of strings must be positive.");
 		}
 		autoStrings me = Thing_new (Strings);
-		my strings = NUMvector<wchar_t *> (1, numberOfStrings);
+		my strings = NUMvector<char32 *> (1, numberOfStrings);
 		my numberOfStrings = numberOfStrings;
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Strings not created.");
+		Melder_throw (U"Strings not created.");
 	}
 }
 
-Strings Strings_createAsCharacters (const wchar_t *string) {
+Strings Strings_createAsCharacters (const char32 *string) {
 	try {
 		autoStrings me = Thing_new (Strings);
-		my numberOfStrings = wcslen (string);
-		my strings = NUMvector<wchar_t *> (1, my numberOfStrings);
-		autoMelderString s;
+		my numberOfStrings = str32len (string);
+		my strings = NUMvector<char32 *> (1, my numberOfStrings);
 		for (long i = 1; i <= my numberOfStrings; i++) {
-			MelderString_appendCharacter (&s, *string++);
-			my strings[i] = Melder_wcsdup (s.string);
-			MelderString_empty (&s);
+			my strings[i] = Melder_dup (Melder_character (*string++));
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Strings from characters not created.");
+		Melder_throw (U"Strings from characters not created.");
 	}
 }
 
-Strings Strings_createAsTokens (const wchar_t *string) {
+Strings Strings_createAsTokens (const char32 *string) {
 	try {
 		autoStrings me = Thing_new (Strings);
 		my numberOfStrings =  Melder_countTokens (string);
-		my strings = NUMvector<wchar_t *> (1, my numberOfStrings);
+		my strings = NUMvector<char32 *> (1, my numberOfStrings);
 		long i = 1;
-		for (wchar_t *token = Melder_firstToken (string); token != 0; token = Melder_nextToken ()) {
-			my strings[i++] = Melder_wcsdup (token);
+		for (char32 *token = Melder_firstToken (string); token != 0; token = Melder_nextToken ()) {
+			my strings[i++] = Melder_dup (token);
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Strings from characters not created.");
+		Melder_throw (U"Strings from characters not created.");
 	}
 }
 
-long Strings_findString (Strings me, const wchar_t *string) {
+long Strings_findString (Strings me, const char32 *string) {
 	for (long i = 1; i <= my numberOfStrings; i++) {
-		if (Melder_wcsequ (my strings[i], string)) {
+		if (Melder_equ (my strings[i], string)) {
 			return i;
 		}
 	}
@@ -108,52 +105,52 @@ Strings Strings_append (Collection me) {
 				if (s -> strings[j] == 0) {
 					continue;
 				}
-				thy strings [index] = Melder_wcsdup (s -> strings[j]);
+				thy strings [index] = Melder_dup (s -> strings[j]);
 			}
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not appended.");
+		Melder_throw (me, U": not appended.");
 	}
 }
 
-Strings Strings_change (Strings me, const wchar_t *search, const wchar_t *replace, int maximumNumberOfReplaces,
+Strings Strings_change (Strings me, const char32 *search, const char32 *replace, int maximumNumberOfReplaces,
                         long *nmatches, long *nstringmatches, int use_regexp) {
 	try {
 		autoStrings thee = Thing_new (Strings);
-		wchar_t **strings = strs_replace (my strings, 1, my numberOfStrings, search, replace, maximumNumberOfReplaces,
+		char32 **strings = strs_replace (my strings, 1, my numberOfStrings, search, replace, maximumNumberOfReplaces,
 		                                  nmatches, nstringmatches, use_regexp);
 		thy numberOfStrings = my numberOfStrings;
 		thy strings = strings;
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not changed.");
+		Melder_throw (me, U": not changed.");
 	}
 }
 
-Strings strings_to_Strings (wchar_t **strings, long from, long to) {
+Strings strings_to_Strings (char32 **strings, long from, long to) {
 	try {
 		autoStrings thee = Strings_createFixedLength (to - from + 1);
 		for (long i = from; i <= to; i++) {
-			thy strings[i - from + 1]  = Melder_wcsdup (strings[i]);
+			thy strings[i - from + 1]  = Melder_dup (strings[i]);
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Strings not created.");
+		Melder_throw (U"Strings not created.");
 	}
 }
 
 Strings Strings_extractPart (Strings me, long from, long to) {
 	try {
 		if (from < 1 || to > my numberOfStrings || from > to) Melder_throw
-			("Strings_extractPart: begin and end must be in interval [1, ", my numberOfStrings, L"].");
+			(U"Strings_extractPart: begin and end must be in interval [1, ", my numberOfStrings, U"].");
 		return strings_to_Strings (my strings, from, to);
 	} catch (MelderError) {
-		Melder_throw (me, ": no part extracted.");
+		Melder_throw (me, U": no part extracted.");
 	}
 }
 
-Strings strings_to_Strings_link (wchar_t **strings, long n) {
+Strings strings_to_Strings_link (char32 **strings, long n) {
 	try {
 		autoStrings me = Strings_createFixedLength (n);
 		for (long i = 1; i <= n; i++) {
@@ -161,7 +158,7 @@ Strings strings_to_Strings_link (wchar_t **strings, long n) {
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Strings not linked.");
+		Melder_throw (U"Strings not linked.");
 	}
 }
 
@@ -179,22 +176,22 @@ Permutation Strings_to_Permutation (Strings me, int sort) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Permutation created.");
+		Melder_throw (me, U": no Permutation created.");
 	}
 }
 
 Strings Strings_and_Permutation_permuteStrings (Strings me, Permutation thee) {
 	try {
-		if (my numberOfStrings != thy numberOfElements) Melder_throw ("Strings_and_Permutation_permuteStrings: "
-			        "The number of strings and the number of elements in the Permutation must be equal.");
+		if (my numberOfStrings != thy numberOfElements) Melder_throw (U"Strings_and_Permutation_permuteStrings: "
+			        U"The number of strings and the number of elements in the Permutation must be equal.");
 		autoStrings him = Strings_createFixedLength (my numberOfStrings);
 		for (long i = 1; i <= thy numberOfElements; i++) {
 			long index = thy p[i];
-			his strings[i] = Melder_wcsdup (my strings[index]);
+			his strings[i] = Melder_dup (my strings[index]);
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no permuted Strings created.");
+		Melder_throw (me, U": no permuted Strings created.");
 	}
 }
 
@@ -211,10 +208,10 @@ StringsIndex Stringses_to_StringsIndex (Strings me, Strings classes) {
 		}
 		for (long j = 1; j <= my numberOfStrings; j++) {
 			long index = 0;
-			wchar_t *stringsj = my strings[j];
+			char32 *stringsj = my strings[j];
 			for (long i = 1; i <= numberOfClasses; i++) {
 				SimpleString ss = (SimpleString) his classes -> item[i];
-				if (Melder_wcscmp (stringsj, ss -> string) == 0) {
+				if (Melder_cmp (stringsj, ss -> string) == 0) {
 					index = i;
 					break;
 				}
@@ -223,7 +220,7 @@ StringsIndex Stringses_to_StringsIndex (Strings me, Strings classes) {
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no StringsIndex created.");
+		Melder_throw (me, U": no StringsIndex created.");
 	}
 }
 
@@ -232,11 +229,11 @@ StringsIndex Strings_to_StringsIndex (Strings me) {
 		autoStringsIndex thee = StringsIndex_create (my numberOfStrings);
 		autoPermutation sorted = Strings_to_Permutation (me, 1);
 		long numberOfClasses = 0;
-		wchar_t *strings = NULL;
+		char32 *strings = NULL;
 		for (long i = 1; i <= sorted -> numberOfElements; i++) {
 			long index = sorted -> p[i];
-			wchar_t *stringsi = my strings[index];
-			if (i == 1 || Melder_wcscmp (strings, stringsi) != 0) {
+			char32 *stringsi = my strings[index];
+			if (i == 1 || Melder_cmp (strings, stringsi) != 0) {
 				numberOfClasses++;
 				autoSimpleString him = SimpleString_create (stringsi);
 				Collection_addItem (thy classes, him.transfer());
@@ -246,7 +243,7 @@ StringsIndex Strings_to_StringsIndex (Strings me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no StringsIndex created.");
+		Melder_throw (me, U": no StringsIndex created.");
 	}
 }
 
@@ -255,22 +252,22 @@ Strings StringsIndex_to_Strings (StringsIndex me) {
 		autoStrings thee = Strings_createFixedLength (my numberOfElements);
 		for (long i = 1; i <= thy numberOfStrings; i++) {
 			SimpleString s = (SimpleString) my classes -> item[my classIndex[i]];
-			thy strings[i] = Melder_wcsdup (s -> string);
+			thy strings[i] = Melder_dup (s -> string);
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Strings created.");
+		Melder_throw (me, U": no Strings created.");
 	}
 }
 
 StringsIndex Table_to_StringsIndex_column (Table me, long column) {
 	try {
 		if (column < 1 || column > my numberOfColumns) {
-			Melder_throw ("Invalid column number.");
+			Melder_throw (U"Invalid column number.");
 		}
 		long numberOfRows = my rows -> size;
 		Table_numericize_Assert (me, column);
-		autoNUMvector<wchar_t *> groupLabels (1, numberOfRows);
+		autoNUMvector<char32 *> groupLabels (1, numberOfRows);
 		for (long irow = 1; irow <= numberOfRows; irow++) {
 			groupLabels[irow] = ((TableRow) my rows -> item [irow]) -> cells [column] .string;
 		}
@@ -278,7 +275,7 @@ StringsIndex Table_to_StringsIndex_column (Table me, long column) {
 		autoStringsIndex him = Strings_to_StringsIndex (thee.peek());
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, "no StringsIndex created from column ", Melder_integer (column));
+		Melder_throw (me, U"No StringsIndex created from column ", column, U".");
 	}
 }
 

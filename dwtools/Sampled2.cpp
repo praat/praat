@@ -51,13 +51,13 @@ void structSampled2 :: v_readText (MelderReadText text) {
 	dy = texgetr8 (text);
 	y1 = texgetr8 (text);
 	if (xmin > xmax || ymin > ymax) {
-		Melder_throw ("xmax should be greater than xmax and ymax should be greater than ymin.");
+		Melder_throw (U"xmax should be greater than xmax and ymax should be greater than ymin.");
 	}
 	if (nx < 1 || ny < 1) {
-		Melder_throw ("nx and ny should be at least 1.");
+		Melder_throw (U"nx and ny should be at least 1.");
 	}
 	if (dx <= 0 || dy <= 0) {
-		Melder_throw ("dx and dy should be positive.");
+		Melder_throw (U"dx and dy should be positive.");
 	}
 }
 

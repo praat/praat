@@ -2,7 +2,7 @@
 #define _OTMulti_h_
 /* OTMulti.h
  *
- * Copyright (C) 2005-2011,2014 Paul Boersma
+ * Copyright (C) 2005-2011,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 #include "OTMulti_def.h"
 oo_CLASS_CREATE (OTMulti, Data);
 
-long OTMulti_getConstraintIndexFromName (OTMulti me, const wchar_t *name);
+long OTMulti_getConstraintIndexFromName (OTMulti me, const char32 *name);
 
 void OTMulti_checkIndex (OTMulti me);
 
@@ -40,21 +40,21 @@ void OTMulti_sort (OTMulti me);
 
 void OTMulti_newDisharmonies (OTMulti me, double evaluationNoise);
 
-int OTMulti_candidateMatches (OTMulti me, long icand, const wchar_t *form1, const wchar_t *form2);
+int OTMulti_candidateMatches (OTMulti me, long icand, const char32 *form1, const char32 *form2);
 int OTMulti_compareCandidates (OTMulti me, long icand1, long icand2);
-long OTMulti_getWinner (OTMulti me, const wchar_t *form1, const wchar_t *form2);
+long OTMulti_getWinner (OTMulti me, const char32 *form1, const char32 *form2);
 
 #define OTMulti_LEARN_FORWARD  1
 #define OTMulti_LEARN_BACKWARD  2
 #define OTMulti_LEARN_BIDIRECTIONALLY  3
-int OTMulti_learnOne (OTMulti me, const wchar_t *form1, const wchar_t *form2,
+int OTMulti_learnOne (OTMulti me, const char32 *form1, const char32 *form2,
 	enum kOTGrammar_rerankingStrategy updateRule, int direction, double plasticity, double relativePlasticityNoise);
 void OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee,
 	double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, int direction,
 	double initialPlasticity, long replicationsPerPlasticity, double plasticityDecrement,
 	long numberOfPlasticities, double relativePlasticityNoise, long storeHistoryEvery, Table *history_out);
 
-void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar_t *form1, const wchar_t *form2, bool vertical, bool showDisharmonies);
+void OTMulti_drawTableau (OTMulti me, Graphics g, const char32 *form1, const char32 *form2, bool vertical, bool showDisharmonies);
 
 OTMulti OTMulti_create_metrics (int equal_footForm_wsp, int trochaicityConstraint, int includeFootBimoraic, int includeFootBisyllabic,
 	int includePeripheral, int nonfinalityConstraint, int overtFormsHaveSecondaryStress,
@@ -63,11 +63,11 @@ OTMulti OTMulti_create_metrics (int equal_footForm_wsp, int trochaicityConstrain
 void OTMulti_reset (OTMulti me, double ranking);
 void OTMulti_setRanking (OTMulti me, long constraint, double ranking, double disharmony);
 void OTMulti_setConstraintPlasticity (OTMulti me, long constraint, double plasticity);
-void OTMulti_removeConstraint (OTMulti me, const wchar_t *constraintName);
+void OTMulti_removeConstraint (OTMulti me, const char32 *constraintName);
 
-void OTMulti_generateOptimalForm (OTMulti me, const wchar_t *form1, const wchar_t *form2, wchar_t *optimalForm, double evaluationNoise);
-Strings OTMulti_generateOptimalForms (OTMulti me, const wchar_t *form1, const wchar_t *form2, long numberOfTrials, double evaluationNoise);
-Distributions OTMulti_to_Distribution (OTMulti me, const wchar_t *form1, const wchar_t *form2, long numberOfTrials, double evaluationNoise);
+void OTMulti_generateOptimalForm (OTMulti me, const char32 *form1, const char32 *form2, char32 *optimalForm, double evaluationNoise);
+Strings OTMulti_generateOptimalForms (OTMulti me, const char32 *form1, const char32 *form2, long numberOfTrials, double evaluationNoise);
+Distributions OTMulti_to_Distribution (OTMulti me, const char32 *form1, const char32 *form2, long numberOfTrials, double evaluationNoise);
 Strings OTMulti_Strings_generateOptimalForms (OTMulti me, Strings forms, double evaluationNoise);
 
 /* End of file OTMulti.h */

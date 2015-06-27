@@ -1,6 +1,6 @@
 /* SpellingChecker_def.h
  *
- * Copyright (C) 1999-2007 Paul Boersma
+ * Copyright (C) 1999-2007,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,19 +22,19 @@
  */
 
 #define ooSTRUCT SpellingChecker
-oo_DEFINE_CLASS (SpellingChecker, Data)           /* CGN: */
-	oo_STRING (forbiddenStrings)              /* : ; " */
-	oo_BOOLEAN (checkMatchingParentheses)     /* true */
-	oo_STRING (separatingCharacters)          /* .,:;()!? */
-	oo_BOOLEAN (allowAllParenthesized)        /* true */
-	oo_BOOLEAN (allowAllNames)                /* true */
-	oo_STRING (namePrefixes)                  /* 's- d' l' */
-	oo_BOOLEAN (allowAllAbbreviations)        /* true */
-	oo_BOOLEAN (allowCapsSentenceInitially)   /* false */
-	oo_BOOLEAN (allowCapsAfterColon)          /* false */
-	oo_STRING (allowAllWordsContaining)       /* * xxx */
-	oo_STRING (allowAllWordsStartingWith)     /* */
-	oo_STRING (allowAllWordsEndingIn)         /* - */
+oo_DEFINE_CLASS (SpellingChecker, Data)           // CGN:
+	oo_STRING (forbiddenStrings)              // : ; "
+	oo_BOOLEAN (checkMatchingParentheses)     // true
+	oo_STRING (separatingCharacters)          // .,:;()!?
+	oo_BOOLEAN (allowAllParenthesized)        // true
+	oo_BOOLEAN (allowAllNames)                // true
+	oo_STRING (namePrefixes)                  // 's- d' l'
+	oo_BOOLEAN (allowAllAbbreviations)        // true
+	oo_BOOLEAN (allowCapsSentenceInitially)   // false
+	oo_BOOLEAN (allowCapsAfterColon)          // false
+	oo_STRING (allowAllWordsContaining)       // * xxx
+	oo_STRING (allowAllWordsStartingWith)
+	oo_STRING (allowAllWordsEndingIn)         // -
 	oo_OBJECT (WordList, 0, wordList)
 	oo_COLLECTION (SortedSetOfString, userDictionary, SimpleString, 0)
 oo_END_CLASS (SpellingChecker)

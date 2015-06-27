@@ -1,6 +1,6 @@
 /* VocalTract_to_Spectrum.cpp
  *
- * Copyright (C) 1991-2011 Paul Boersma
+ * Copyright (C) 1991-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,7 +131,7 @@ Spectrum VocalTract_to_Spectrum
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Spectrum.");
+		Melder_throw (me, U": not converted to Spectrum.");
 	}
 }
 

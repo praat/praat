@@ -1,6 +1,6 @@
 /* Excitation.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,15 +63,15 @@ void structExcitation :: v_info () {
 	double *y = z [1];
 	long numberOfMaxima = 0;
 	structData :: v_info ();
-	MelderInfo_writeLine (L"Loudness: ", Melder_half (Excitation_getLoudness (this)), L" sones");
+	MelderInfo_writeLine (U"Loudness: ", Melder_half (Excitation_getLoudness (this)), U" sones");
 	for (long i = 2; i < nx; i ++) if (y [i] > y [i - 1] && y [i] >= y [i + 1]) {
 		double i_real, formant_bark, strength;
 		if (++ numberOfMaxima > 15) break;
 		strength = NUMimproveMaximum (z [1], nx, i, NUM_PEAK_INTERPOLATE_SINC70, & i_real);
 		formant_bark = x1 + (i_real - 1) * dx;
-		MelderInfo_write (L"Peak at ", Melder_single (formant_bark), L" Bark");
-		MelderInfo_write (L", ", Melder_integer ((long) NUMbarkToHertz (formant_bark)), L" Hz");
-		MelderInfo_writeLine (L", ", Melder_half (strength), L" phon.");
+		MelderInfo_write (U"Peak at ", Melder_single (formant_bark), U" Bark");
+		MelderInfo_write (U", ", (long) NUMbarkToHertz (formant_bark), U" Hz");
+		MelderInfo_writeLine (U", ", Melder_half (strength), U" phon.");
 	}
 }
 
@@ -81,7 +81,7 @@ Excitation Excitation_create (double df, long nf) {
 		Matrix_init (me.peek(), 0.0, nf * df, nf, df, 0.5 * df, 1, 1, 1, 1, 1);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Excitation not created.");
+		Melder_throw (U"Excitation not created.");
 	}
 }
 
@@ -123,8 +123,8 @@ void Excitation_draw (Excitation me, Graphics g,
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, L"Frequency (Bark)");
-		Graphics_textLeft (g, 1, L"Excitation (phon)");
+		Graphics_textBottom (g, 1, U"Frequency (Bark)");
+		Graphics_textLeft (g, 1, U"Excitation (phon)");
 		Graphics_marksBottomEvery (g, 1, 5, 1, 1, 0);
 		Graphics_marksLeftEvery (g, 1, 20, 1, 1, 0);
 	}
@@ -136,7 +136,7 @@ Matrix Excitation_to_Matrix (Excitation me) {
 		my structMatrix :: v_copy (thee.peek());   // BUG: safe, but compiler should be able to check
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Matrix.");
+		Melder_throw (me, U": not converted to Matrix.");
 	}
 }
 
@@ -146,7 +146,7 @@ Excitation Matrix_to_Excitation (Matrix me) {
 		my structMatrix :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Excitation.");
+		Melder_throw (me, U": not converted to Excitation.");
 	}
 }
 

@@ -2,7 +2,7 @@
 #define _VowelEditor_h_
 /* VowelEditor.h
  *
- * Copyright (C) 2008-2011 David Weenink
+ * Copyright (C) 2008-2011, 2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@ Thing_define (VowelEditor, Editor) {
 		virtual void v_createHelpMenuItems (EditorMenu menu);
 };
 
-VowelEditor VowelEditor_create (const wchar_t *title, Data data);
+VowelEditor VowelEditor_create (const char32 *title, Data data);
 
 void VowelEditor_prefs ();
 

@@ -19,23 +19,23 @@
 
 #include "praat.h"
 
-void praat_addActionScript (const wchar_t *className1, int n1, const wchar_t *className2, int n2, const wchar_t *className3, int n3,
-	const wchar_t *title, const wchar_t *after, int depth, const wchar_t *script);
+void praat_addActionScript (const char32 *className1, int n1, const char32 *className2, int n2, const char32 *className3, int n3,
+	const char32 *title, const char32 *after, int depth, const char32 *script);
 /* No strings may be NULL; unspecify them by giving an empty string. 'title' and 'script' are deep-copied. */
-void praat_removeAction_classNames (const wchar_t *className1, const wchar_t *className2,
-	const wchar_t *className3, const wchar_t *title);
+void praat_removeAction_classNames (const char32 *className1, const char32 *className2,
+	const char32 *className3, const char32 *title);
 /* No arguments may be NULL; unspecify them by giving an empty string. */
 /* 'title' is deep-copied. */
-void praat_hideAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, const wchar_t *title);
-void praat_hideAction_classNames (const wchar_t *className1, const wchar_t *className2,
-	const wchar_t *className3, const wchar_t *title);
-void praat_showAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, const wchar_t *title);
-void praat_showAction_classNames (const wchar_t *className1, const wchar_t *className2,
-	const wchar_t *className3, const wchar_t *title);
+void praat_hideAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, const char32 *title);
+void praat_hideAction_classNames (const char32 *className1, const char32 *className2,
+	const char32 *className3, const char32 *title);
+void praat_showAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, const char32 *title);
+void praat_showAction_classNames (const char32 *className1, const char32 *className2,
+	const char32 *className3, const char32 *title);
 void praat_sortActions ();
 
-void praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, const wchar_t *title,
-	const wchar_t *after, int depth, const wchar_t *script);
+void praat_addMenuCommandScript (const char32 *window, const char32 *menu, const char32 *title,
+	const char32 *after, int depth, const char32 *script);
 /* All strings are deep-copied and may not be NULL; unspecify them by giving an empty string. */
 /*
 	For the Praat objects window:
@@ -43,11 +43,11 @@ void praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, con
 	For the Praat picture window:
 	'window' is "Picture", 'menu' is "File", "Edit", "Margins", "World", "Select", "Pen", "Font", or "Help".
 */
-void praat_hideMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title);
-void praat_showMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title);
+void praat_hideMenuCommand (const char32 *window, const char32 *menu, const char32 *title);
+void praat_showMenuCommand (const char32 *window, const char32 *menu, const char32 *title);
 void praat_saveMenuCommands (MelderString *buffer);
-void praat_addFixedButtonCommand (GuiForm parent, const wchar_t *title, void (*callback) (UiForm, int, Stackel, const wchar_t *, Interpreter, const wchar_t *, bool, void *), int x, int y);
-void praat_sensitivizeFixedButtonCommand (const wchar_t *title, int sensitive);
+void praat_addFixedButtonCommand (GuiForm parent, const char32 *title, void (*callback) (UiForm, int, Stackel, const char32 *, Interpreter, const char32 *, bool, void *), int x, int y);
+void praat_sensitivizeFixedButtonCommand (const char32 *title, int sensitive);
 void praat_sortMenuCommands ();
 
 #define praat_MAXNUM_MENUS 20   /* Maximum number of added New, Open, Save, or Help menus. */
@@ -56,8 +56,8 @@ void praat_sortMenuCommands ();
 typedef struct structPraat_Command {
 	ClassInfo class1, class2, class3, class4;   // selected classes
 	short n1, n2, n3, n4;   // number of selected objects of each class; 0 means "any number"
-	const wchar_t *title;   // button text = command text
-	void (*callback) (UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure);   // multi-purpose
+	const char32 *title;   // button text = command text
+	void (*callback) (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure);   // multi-purpose
 		/* If both sendingForm and sendingString are NULL, this routine is an activate callback;
 			you should directly execute the command, or call UiForm_do(dialog) if you need arguments;
 			UiForm_do will call this routine again with sendingForm = dialog. */
@@ -76,9 +76,9 @@ typedef struct structPraat_Command {
 		unhidable,
 		attractive;
 	GuiThing button;
-	const wchar_t *window, *menu;
-	const wchar_t *script;   // if 'callback' equals DO_RunTheScriptFromAnyAddedMenuCommand
-	const wchar_t *after;   // title of previous command, often NULL
+	const char32 *window, *menu;
+	const char32 *script;   // if 'callback' equals DO_RunTheScriptFromAnyAddedMenuCommand
+	const char32 *after;   // title of previous command, often NULL
 	long uniqueID;   // for sorting the added commands
 	long sortingTail;
 } *praat_Command;
@@ -88,7 +88,7 @@ typedef struct structPraat_Command {
 #define praat_HANDLING_EVENTS  3
 
 long praat_getIdOfSelected (ClassInfo klas, int inplace);
-wchar_t * praat_getNameOfSelected (ClassInfo klas, int inplace);
+char32 * praat_getNameOfSelected (ClassInfo klas, int inplace);
 
 int praat_selection (ClassInfo klas);
 	/* How many objects of this class (excluding subclasses) are currently selected? */
@@ -104,7 +104,7 @@ void praat_picture_prefsChanged ();
    (after reading the prefs file).
    Picture window will update the font menu.
 */
-GuiMenu praat_picture_resolveMenu (const wchar_t *menu);
+GuiMenu praat_picture_resolveMenu (const char32 *menu);
 void praat_picture_background ();
 void praat_picture_foreground ();
 
@@ -128,8 +128,8 @@ void praat_showLogo (int autoPopDown);
 /* Communication with praat_menuCommands.cpp: */
 void praat_menuCommands_init ();
 void praat_menuCommands_exit ();
-int praat_doMenuCommand (const wchar_t *command, const wchar_t *arguments, Interpreter interpreter);   // 0 = not found
-int praat_doMenuCommand (const wchar_t *command, int narg, Stackel args, Interpreter interpreter);   // 0 = not found
+int praat_doMenuCommand (const char32 *command, const char32 *arguments, Interpreter interpreter);   // 0 = not found
+int praat_doMenuCommand (const char32 *command, int narg, Stackel args, Interpreter interpreter);   // 0 = not found
 long praat_getNumberOfMenuCommands ();
 praat_Command praat_getMenuCommand (long i);
 
@@ -139,8 +139,8 @@ void praat_actions_createWriteMenu (GuiWindow window);
 void praat_actions_init ();   // creates space for action commands
 void praat_actions_createDynamicMenu (GuiWindow window);
 void praat_saveAddedActions (MelderString *buffer);
-int praat_doAction (const wchar_t *command, const wchar_t *arguments, Interpreter interpreter);   // 0 = not found
-int praat_doAction (const wchar_t *command, int narg, Stackel args, Interpreter interpreter);   // 0 = not found
+int praat_doAction (const char32 *command, const char32 *arguments, Interpreter interpreter);   // 0 = not found
+int praat_doAction (const char32 *command, int narg, Stackel args, Interpreter interpreter);   // 0 = not found
 long praat_getNumberOfActions ();   // for ButtonEditor
 praat_Command praat_getAction (long i);   // for ButtonEditor
 
@@ -154,13 +154,13 @@ void praat_reportIntegerProperties ();
 void praat_reportTextProperties ();
 
 /* Communication with praat_objectMenus.cpp: */
-GuiMenu praat_objects_resolveMenu (const wchar_t *menu);
+GuiMenu praat_objects_resolveMenu (const char32 *menu);
 void praat_addFixedButtons (GuiWindow window);
 void praat_addMenus (GuiWindow window);
 void praat_addMenus2 ();
 
-void praat_cleanUpName (wchar_t *name);
-void praat_list_renameAndSelect (int position, const wchar_t *name);
+void praat_cleanUpName (char32 *name);
+void praat_list_renameAndSelect (int position, const char32 *name);
 
 extern struct PraatP {
 	int dontUsePictureWindow;   // see praat_dontUsePictureWindow ()

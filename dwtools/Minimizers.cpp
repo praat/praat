@@ -62,9 +62,9 @@ static void classMinimizer_after (I, Any aclosure) {
 	}
 
 	if (my start == 1) {
-		wchar_t s[35];
+		char32 s[35];
 		Minimizer_drawHistory (me, my gmonitor, 0, my maxNumOfIterations, 0, 1.1 * my history[1], 1);
-		swprintf (s, 35, L"Dimension of search space: %6ld", my nParameters);
+		Melder_sprint (s,35, U"Dimension of search space: ", my nParameters);
 		Graphics_textTop (my gmonitor, 0, s);
 	}
 	Graphics_setInner (my gmonitor);
@@ -72,9 +72,9 @@ static void classMinimizer_after (I, Any aclosure) {
 	               my iteration, my history[my iteration]);
 	Graphics_unsetInner (my gmonitor);
 	Melder_monitor ( (double) (my iteration) / my maxNumOfIterations,
-	                  L"Iterations: ", Melder_integer (my iteration),
-	                  L", Function calls: ", Melder_integer (my funcCalls),
-	                  L", Cost: ", Melder_double (my minimum));
+	                  U"Iterations: ", my iteration,
+	                  U", Function calls: ", my funcCalls,
+	                  U", Cost: ", my minimum);
 }
 
 void Minimizer_init (I, long nParameters, Data object) {
@@ -113,20 +113,22 @@ void Minimizer_minimize (Minimizer me, long maxNumOfIterations, double tolerance
 				my history++;    /* arrays start at 1 !! */
 			}
 			history = (double *) Melder_realloc (my history, my maxNumOfIterations *
-			                                     sizeof (double));
+			                                     (int64) sizeof (double));
 			my history = --history; /* arrays start at 1 !! */
 		}
 		if (monitor) {
-			my gmonitor = (Graphics) Melder_monitor (0.0, L"Starting...");
+			my gmonitor = (Graphics) Melder_monitor (0.0, U"Starting...");
 		}
 		my start = 1; /* for my after() */
 		my v_minimize ();
 		if (monitor) {
 			monitor_off (me);
 		}
-		if (my success) Melder_casual ("Minimizer_minimize: minimum %f reached \n"
-			                               "after %ld iterations and %ld function calls.", my minimum,
-			                               my iteration, my funcCalls);
+		if (my success) Melder_casual (U"Minimizer_minimize:",
+		                               U" minimum ", my minimum,
+		                               U" reached \nafter ", my iteration,
+									   U" iterations and ", my funcCalls,
+									   U" function calls.");
 	} catch (MelderError) {
 		if (monitor) {
 			monitor_off (me);    // temporarily until better monitor facilities
@@ -142,12 +144,12 @@ void Minimizer_minimizeManyTimes (Minimizer me, long numberOfTimes, long maxIter
 	autoNUMvector<double> popt (NUMvector_copy<double> (my p, 1, my nParameters), 1);
 
 	if (! monitorSingle) {
-		Melder_progress (0.0, L"Minimize many times");
+		Melder_progress (0.0, U"Minimize many times");
 	}
 	/* on first iteration start with current parameters 27/11/97 */
 	for (long i = 1; i <= numberOfTimes; i++) {
 		Minimizer_minimize (me, maxIterationsPerTime, tolerance, monitorSingle);
-		Melder_casual ("Current %ld: minimum = %.17g", i, my minimum);
+		Melder_casual (U"Current ", i, U": minimum = ", my minimum);
 		if (my minimum < fopt) {
 			NUMvector_copyElements (my p, popt.peek(), 1, my nParameters);
 			fopt = my minimum;
@@ -155,8 +157,7 @@ void Minimizer_minimizeManyTimes (Minimizer me, long numberOfTimes, long maxIter
 		Minimizer_reset (me, 0);
 		if (! monitorSingle) {
 			try {
-				Melder_progress ( (double) i / numberOfTimes, Melder_integer (i), L" from ",
-				                   Melder_integer (numberOfTimes));
+				Melder_progress ( (double) i / numberOfTimes, i, U" from ", numberOfTimes);
 			} catch (MelderError) {
 				Melder_clearError ();   // interrurpt, no error
 				break;
@@ -164,7 +165,7 @@ void Minimizer_minimizeManyTimes (Minimizer me, long numberOfTimes, long maxIter
 		}
 	}
 	if (! monitorSingle) {
-		Melder_progress (1.0, 0);
+		Melder_progress (1.0);
 	}
 	Minimizer_reset (me, popt.peek());
 }
@@ -228,7 +229,7 @@ void Minimizer_drawHistory (Minimizer me, Graphics g, long iFrom, long iTo, doub
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, L"Number of iterations");
+		Graphics_textBottom (g, 1, U"Number of iterations");
 		Graphics_marksBottom (g, 2, 1, 1, 0);
 		Graphics_marksLeft (g, 2, 1, 1, 0);
 	}
@@ -258,7 +259,7 @@ void structSteepestDescentMinimizer :: v_minimize () {
 			try {
 				after (this, aclosure);
 			} catch (MelderError) {
-				Melder_casual ("Interrupted after %ld iterations.", iteration);
+				Melder_casual (U"Interrupted after ", iteration, U" iterations.");
 				Melder_clearError ();
 				break;
 			}
@@ -290,7 +291,7 @@ SteepestDescentMinimizer SteepestDescentMinimizer_create (long nParameters, Data
 		my dfunc = dfunc;
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("SteepestDescentMinimizer not created.");
+		Melder_throw (U"SteepestDescentMinimizer not created.");
 	}
 }
 
@@ -448,7 +449,7 @@ void structVDSmagtMinimizer :: v_minimize () {
 						try {
 							after (this, aclosure);
 						} catch (MelderError) {
-							Melder_casual ("Interrupted after %ld iterations.", this -> iteration);
+							Melder_casual (U"Interrupted after ", this -> iteration, U" iterations.");
 							Melder_clearError ();
 							break;
 						}
@@ -539,7 +540,7 @@ VDSmagtMinimizer VDSmagtMinimizer_create (long nParameters, Data object, double 
 		my lineSearchMaxNumOfIterations = 5;
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("VDSmagtMinimizer not created.");
+		Melder_throw (U"VDSmagtMinimizer not created.");
 	}
 }
 

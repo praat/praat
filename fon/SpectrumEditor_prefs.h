@@ -1,6 +1,6 @@
 /* SpectrumEditor_prefs.h
  *
- * Copyright (C) 2013 Paul Boersma
+ * Copyright (C) 2013,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,12 +19,12 @@
 
 prefs_begin (SpectrumEditor)
 	// overridden:
-		prefs_add_int  (SpectrumEditor, shellWidth,                 1, L"700")
-		prefs_add_int  (SpectrumEditor, shellHeight,                1, L"440")
-		prefs_add_double (SpectrumEditor, arrowScrollStep,          1, L"100.0")
+		prefs_add_int  (SpectrumEditor, shellWidth,                 1, U"700")
+		prefs_add_int  (SpectrumEditor, shellHeight,                1, U"440")
+		prefs_add_double (SpectrumEditor, arrowScrollStep,          1, U"100.0")
 	// new:
-		prefs_add_double_with_data (SpectrumEditor, bandSmoothing,  1, L"100.0")
-		prefs_add_double_with_data (SpectrumEditor, dynamicRange,   1, L"60.0")
+		prefs_add_double_with_data (SpectrumEditor, bandSmoothing,  1, U"100.0")
+		prefs_add_double_with_data (SpectrumEditor, dynamicRange,   1, U"60.0")
 prefs_end (SpectrumEditor)
 
 /* End of file SpectrumEditor_prefs.h */

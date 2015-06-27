@@ -34,15 +34,13 @@ Thing_define (Diagonalizer, TableOfReal) {
 };
 
 Thing_define (CrossCorrelationTable, SSCP) {
-	// overridden methods:
-	public:
-		virtual void v_info ();
+	void v_info ()
+		override;
 };
 
 Thing_define (CrossCorrelationTables, Ordered) {
-	// overridden methods:
-	public:
-		virtual void v_info ();
+	void v_info ()
+		override;
 };
 
 /*
@@ -58,7 +56,7 @@ Thing_define (CrossCorrelationTables, Ordered) {
 	  in general not the case for cross-correlations.
 */
 CrossCorrelationTable CrossCorrelationTable_create (long dimension);
-CrossCorrelationTable CrossCorrelationTable_createSimple (wchar_t *covars, wchar_t *centroid, long numberOfSamples);
+CrossCorrelationTable CrossCorrelationTable_createSimple (char32 *covars, char32 *centroid, long numberOfSamples);
 
 /* (sum(i,j=1..dimension, i!=j; C[i][j]^2))/(dimension*(dimension-1)) */
 double CrossCorrelationTable_getDiagonalityMeasure (CrossCorrelationTable me);
@@ -70,7 +68,7 @@ double CrossCorrelationTables_and_Diagonalizer_getDiagonalityMeasure (CrossCorre
 CrossCorrelationTables CrossCorrelationTables_createTestSet (long dimension, long n, int firstPositiveDefinite, double sigma);
 
 MixingMatrix MixingMatrix_create (long numberOfChannels, long numberOfComponents);
-MixingMatrix MixingMatrix_createSimple (long numberOfChannels, long numberOfComponents, wchar_t *elements);
+MixingMatrix MixingMatrix_createSimple (long numberOfChannels, long numberOfComponents, char32 *elements);
 void MixingMatrix_initializeRandom (MixingMatrix me);
 
 Diagonalizer Diagonalizer_create (long dimension);

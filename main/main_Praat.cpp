@@ -26,22 +26,22 @@ static void logo (Graphics g) {
 	Graphics_setFont (g, kGraphics_font_TIMES);
 	Graphics_setFontSize (g, 45);
 	Graphics_setColour (g, Graphics_MAROON);
-	Graphics_text (g, 0.385, 0.66, L"P");
-	Graphics_text (g, 0.448, 0.66, L"\\s{R}");
-	Graphics_text (g, 0.510, 0.66, L"\\s{A}");
-	Graphics_text (g, 0.575, 0.66, L"\\s{A}");
-	Graphics_text (g, 0.628, 0.66, L"\\s{T}");
+	Graphics_text (g, 0.385, 0.66, U"P");
+	Graphics_text (g, 0.448, 0.66, U"\\s{R}");
+	Graphics_text (g, 0.510, 0.66, U"\\s{A}");
+	Graphics_text (g, 0.575, 0.66, U"\\s{A}");
+	Graphics_text (g, 0.628, 0.66, U"\\s{T}");
 	Graphics_setFontSize (g, 15);
-	Graphics_text (g, 0.5, 0.55, L"%%doing phonetics by computer");
+	Graphics_text (g, 0.5, 0.55, U"%%doing phonetics by computer");
 	#define xstr(s) str(s)
 	#define str(s) #s
-	Graphics_text (g, 0.5, 0.45, L"version " xstr(PRAAT_VERSION_STR));
+	Graphics_text (g, 0.5, 0.45, U"version " xstr(PRAAT_VERSION_STR));
 	Graphics_setColour (g, Graphics_BLACK);
 	Graphics_setFontSize (g, 14);
-	Graphics_text (g, 0.5, 0.33, L"www.praat.org");
+	Graphics_text (g, 0.5, 0.33, U"www.praat.org");
 	Graphics_setFont (g, kGraphics_font_HELVETICA);
 	Graphics_setFontSize (g, 10);
-	Graphics_text (g, 0.5, 0.16, L"Copyright © 1992–" xstr(PRAAT_YEAR) " by Paul Boersma and David Weenink");
+	Graphics_text (g, 0.5, 0.16, U"Copyright © 1992–" xstr(PRAAT_YEAR) " by Paul Boersma and David Weenink");
 }
 
 int main (int argc, char *argv []) {
@@ -52,7 +52,7 @@ int main (int argc, char *argv []) {
 		INCLUDE_LIBRARY (praat_contrib_Ola_KNN_init)
 		praat_run ();
 	} catch (MelderError) {
-		Melder_flushError ("This error message percolated all the way to the top.");   // an attempt to catch Apache errors
+		Melder_flushError (U"This error message percolated all the way to the top.");   // an attempt to catch Apache errors
 	}
 	return 0;
 }

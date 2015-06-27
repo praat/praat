@@ -62,8 +62,8 @@ oo_DEFINE_CLASS (RealTier, Function)
 			override { return true; }
 		double v_getFunction1 (long irow, double x)
 			override;
-		const wchar_t * v_getUnitText (long /* ilevel */, int /* unit */, unsigned long /* flags */)
-			override { return L"Time (s)"; }
+		const char32 * v_getUnitText (long /* ilevel */, int /* unit */, unsigned long /* flags */)
+			override { return U"Time (s)"; }
 		void v_shiftX (double xfrom, double xto)
 			override;
 		void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto)

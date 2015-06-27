@@ -84,7 +84,7 @@ static Spectrum Sound_to_Spectrum_power (Sound me) {
 		re[1] *= 0.5; re[thy nx] *= 0.5;
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Spectrum with spectral power created.");
+		Melder_throw (me, U": no Spectrum with spectral power created.");
 	}
 }
 
@@ -134,9 +134,9 @@ BarkSpectrogram Sound_to_BarkSpectrogram (Sound me, double analysisWidth, double
 		}
 
 		fmax_bark = MIN (fmax_bark, zmax);
-		long numberOfFilters = floor ( (fmax_bark - f1_bark) / df_bark + 0.5);
+		long numberOfFilters = lround ( (fmax_bark - f1_bark) / df_bark);
 		if (numberOfFilters <= 0) {
-			Melder_throw ("The combination of filter parameters is not valid.");
+			Melder_throw (U"The combination of filter parameters is not valid.");
 		}
 
 		long numberOfFrames; double t1;
@@ -145,7 +145,7 @@ BarkSpectrogram Sound_to_BarkSpectrogram (Sound me, double analysisWidth, double
 		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
 		autoBarkSpectrogram thee = BarkSpectrogram_create (my xmin, my xmax, numberOfFrames, dt, t1, fmin_bark, fmax_bark, numberOfFilters, df_bark, f1_bark);
 
-		autoMelderProgress progess (L"BarkSpectrogram analysis");
+		autoMelderProgress progess (U"BarkSpectrogram analysis");
 
 		for (long iframe = 1; iframe <= numberOfFrames; iframe++) {
 			double t = Sampled_indexToX (thee.peek(), iframe);
@@ -155,8 +155,8 @@ BarkSpectrogram Sound_to_BarkSpectrogram (Sound me, double analysisWidth, double
 			Sound_into_BarkSpectrogram_frame (sframe.peek(), thee.peek(), iframe);
 
 			if ((iframe % 10) == 1) {
-				Melder_progress ( (double) iframe / numberOfFrames,  L"BarkSpectrogram analysis: frame ",
-					Melder_integer (iframe), L" from ", Melder_integer (numberOfFrames), L".");
+				Melder_progress ( (double) iframe / numberOfFrames,  U"BarkSpectrogram analysis: frame ",
+					iframe, U" from ", numberOfFrames, U".");
 			}
 		}
 		
@@ -164,7 +164,7 @@ BarkSpectrogram Sound_to_BarkSpectrogram (Sound me, double analysisWidth, double
 
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no BarkSpectrogram created.");
+		Melder_throw (me, U": no BarkSpectrogram created.");
 	}
 }
 
@@ -215,7 +215,7 @@ MelSpectrogram Sound_to_MelSpectrogram (Sound me, double analysisWidth, double d
 
 		// Determine the number of filters.
 
-		long numberOfFilters = floor ((fmax_mel - f1_mel) / df_mel + 0.5);
+		long numberOfFilters = lround ((fmax_mel - f1_mel) / df_mel);
 		fmax_mel = f1_mel + numberOfFilters * df_mel;
 
 		Sampled_shortTermAnalysis (me, windowDuration, dt, &numberOfFrames, &t1);
@@ -223,7 +223,7 @@ MelSpectrogram Sound_to_MelSpectrogram (Sound me, double analysisWidth, double d
 		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
 		autoMelSpectrogram thee = MelSpectrogram_create (my xmin, my xmax, numberOfFrames, dt, t1, fmin_mel, fmax_mel, numberOfFilters, df_mel, f1_mel);
 
-		autoMelderProgress progress (L"MelSpectrograms analysis");
+		autoMelderProgress progress (U"MelSpectrograms analysis");
 
 		for (long iframe = 1; iframe <= numberOfFrames; iframe++) {
 			double t = Sampled_indexToX (thee.peek(), iframe);
@@ -232,7 +232,7 @@ MelSpectrogram Sound_to_MelSpectrogram (Sound me, double analysisWidth, double d
 			Sound_into_MelSpectrogram_frame (sframe.peek(), thee.peek(), iframe);
 			
 			if ((iframe % 10) == 1) {
-				Melder_progress ((double) iframe / numberOfFrames, L"Frame ", Melder_integer (iframe), L" out of ", Melder_integer (numberOfFrames), L".");
+				Melder_progress ((double) iframe / numberOfFrames, U"Frame ", iframe, U" out of ", numberOfFrames, U".");
 			}
 		}
 		
@@ -240,7 +240,7 @@ MelSpectrogram Sound_to_MelSpectrogram (Sound me, double analysisWidth, double d
 
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no MelSpectrogram created.");
+		Melder_throw (me, U": no MelSpectrogram created.");
 	}
 }
 
@@ -288,7 +288,7 @@ Spectrogram Sound_to_Spectrogram_pitchDependent (Sound me, double analysisWidth,
 		autoSpectrogram ff = Sound_and_Pitch_to_Spectrogram (me, thee.peek(), analysisWidth, dt, f1_hz, fmax_hz, df_hz, relative_bw);
 		return ff.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Spectrogram created.");
+		Melder_throw (me, U": no Spectrogram created.");
 	}
 }
 
@@ -299,13 +299,13 @@ Spectrogram Sound_and_Pitch_to_Spectrogram (Sound me, Pitch thee, double analysi
 		long numberOfFrames, f0_undefined = 0;
 
 		if (my xmin > thy xmin || my xmax > thy xmax) Melder_throw
-			("The domain of the Sound is not included in the domain of the Pitch.");
+			(U"The domain of the Sound is not included in the domain of the Pitch.");
 
 		double f0_median = Pitch_getQuantile (thee, thy xmin, thy xmax, 0.5, kPitch_unit_HERTZ);
 
 		if (f0_median == NUMundefined || f0_median == 0) {
 			f0_median = 100;
-			Melder_warning (L"Pitch values undefined. Bandwith fixed to 100 Hz. ");
+			Melder_warning (U"Pitch values undefined. Bandwith fixed to 100 Hz. ");
 		}
 
 		if (f1_hz <= 0) {
@@ -322,7 +322,7 @@ Spectrogram Sound_and_Pitch_to_Spectrogram (Sound me, Pitch thee, double analysi
 		}
 
 		fmax_hz = MIN (fmax_hz, nyquist);
-		long numberOfFilters = floor ( (fmax_hz - f1_hz) / df_hz + 0.5);
+		long numberOfFilters = lround ( (fmax_hz - f1_hz) / df_hz);
 
 		Sampled_shortTermAnalysis (me, windowDuration, dt, &numberOfFrames, &t1);
 		autoSpectrogram him = Spectrogram_create (my xmin, my xmax, numberOfFrames, dt, t1, fmin_hz, fmax_hz, numberOfFilters, df_hz, f1_hz);
@@ -331,7 +331,7 @@ Spectrogram Sound_and_Pitch_to_Spectrogram (Sound me, Pitch thee, double analysi
 
 		autoSound sframe = Sound_createSimple (1, windowDuration, samplingFrequency);
 		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
-		autoMelderProgress progress (L"Sound & Pitch: To FormantFilter");
+		autoMelderProgress progress (U"Sound & Pitch: To FormantFilter");
 		for (long iframe = 1; iframe <= numberOfFrames; iframe++) {
 			double t = Sampled_indexToX (him.peek(), iframe);
 			double b, f0 = Pitch_getValueAtTime (thee, t, kPitch_unit_HERTZ, 0);
@@ -346,8 +346,8 @@ Spectrogram Sound_and_Pitch_to_Spectrogram (Sound me, Pitch thee, double analysi
 			Sound_into_Spectrogram_frame (sframe.peek(), him.peek(), iframe, b);
 
 			if ((iframe % 10) == 1) {
-				Melder_progress ( (double) iframe / numberOfFrames, L"Frame ", Melder_integer (iframe), L" out of ", 
-					Melder_integer (numberOfFrames), L".");
+				Melder_progress ( (double) iframe / numberOfFrames, U"Frame ", iframe, U" out of ",
+					numberOfFrames, U".");
 			}
 		}
 		
@@ -355,7 +355,7 @@ Spectrogram Sound_and_Pitch_to_Spectrogram (Sound me, Pitch thee, double analysi
 
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw ("FormantFilter not created from Pitch & FormantFilter.");
+		Melder_throw (U"FormantFilter not created from Pitch & FormantFilter.");
 	}
 }
 
@@ -368,7 +368,7 @@ Sound BandFilterSpectrogram_as_Sound (BandFilterSpectrogram me, int unit) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Sound created.");
+		Melder_throw (me, U": no Sound created.");
 	}
 }
 
@@ -379,7 +379,7 @@ Sound BandFilterSpectrograms_crossCorrelate (BandFilterSpectrogram me, BandFilte
 		autoSound cc = Sounds_crossCorrelate (sme.peek(), sthee.peek(), scaling, signalOutsideTimeDomain);
 		return cc.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, " and ", thee, " not cross-correlated.");
+		Melder_throw (me, U" and ", thee, U" not cross-correlated.");
 	}
 }
 
@@ -390,7 +390,7 @@ Sound BandFilterSpectrograms_convolve (BandFilterSpectrogram me, BandFilterSpect
 		autoSound cc = Sounds_convolve (sme.peek(), sthee.peek(), scaling, signalOutsideTimeDomain);
 		return cc.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, " and ", thee, " not convolved.");
+		Melder_throw (me, U" and ", thee, U" not convolved.");
 	}
 }
 

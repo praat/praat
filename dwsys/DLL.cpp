@@ -55,16 +55,16 @@ DLLNode DLLNode_create (Data data) {
 	return me;
 }
 
-void DLL_init (I) {
-	iam (DLL);
+void DLL_init (DLL) {
 }
 
 DLL DLL_create() {
 	try {
 		DLL me = Thing_new (DLL);
+		DLL_init (me);
 		return me;
 	} catch (MelderError) {
-		Melder_throw ("DLL not created.");
+		Melder_throw (U"DLL not created.");
 	}
 
 }

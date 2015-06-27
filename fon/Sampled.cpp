@@ -1,6 +1,6 @@
 /* Sampled.cpp
  *
- * Copyright (C) 1992-2011,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,8 +74,8 @@ void Sampled_shortTermAnalysis (Sampled me, double windowDuration, double timeSt
 	Melder_assert (timeStep > 0.0);
 	volatile double myDuration = my dx * my nx;
 	if (windowDuration > myDuration)
-		Melder_throw (me, ": shorter than window length."); 
-	*numberOfFrames = floor ((myDuration - windowDuration) / timeStep) + 1;
+		Melder_throw (me, U": shorter than window length.");
+	*numberOfFrames = (long) floor ((myDuration - windowDuration) / timeStep) + 1;
 	Melder_assert (*numberOfFrames >= 1);
 	double ourMidTime = my x1 - 0.5 * my dx + 0.5 * myDuration;
 	double thyDuration = *numberOfFrames * timeStep;
@@ -91,7 +91,7 @@ double Sampled_getValueAtX (Sampled me, double x, long ilevel, int unit, bool in
 	if (x < my xmin || x > my xmax) return NUMundefined;
 	if (interpolate) {
 		double ireal = Sampled_xToIndex (me, x);
-		long ileft = floor (ireal), inear, ifar;
+		long ileft = (long) floor (ireal), inear, ifar;
 		double phase = ireal - ileft;
 		if (phase < 0.5) {
 			inear = ileft, ifar = ileft + 1;
@@ -153,7 +153,7 @@ double Sampled_getQuantile (Sampled me, double xmin, double xmax, double quantil
 		}
 		return result;
 	} catch (MelderError) {
-		Melder_throw (me, ": quantile not computed.");
+		Melder_throw (me, U": quantile not computed.");
 	}
 }
 
@@ -173,7 +173,7 @@ static void Sampled_getSumAndDefinitionRange
 			if (Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax)) {
 				double leftEdge = my x1 - 0.5 * my dx, rightEdge = leftEdge + my nx * my dx;
 				for (isamp = imin; isamp <= imax; isamp ++) {
-					double value = my v_getValueAtSample (isamp, ilevel, unit);   /* A fast way to integrate a linearly interpolated curve; works everywhere except at the edges. */
+					double value = my v_getValueAtSample (isamp, ilevel, unit);   // a fast way to integrate a linearly interpolated curve; works everywhere except at the edges
 					if (NUMdefined (value)) {
 						definitionRange += 1.0;
 						sum += value;
@@ -182,19 +182,19 @@ static void Sampled_getSumAndDefinitionRange
 				/*
 				 * Corrections within the first and last sampling intervals.
 				 */
-				if (xmin > leftEdge) {   /* Otherwise, constant extrapolation over 0.5 sample is OK. */
-					double phase = (my x1 + (imin - 1) * my dx - xmin) / my dx;   /* This fraction of sampling interval is still to be determined. */
+				if (xmin > leftEdge) {   // otherwise, constant extrapolation over 0.5 sample is OK
+					double phase = (my x1 + (imin - 1) * my dx - xmin) / my dx;   // this fraction of sampling interval is still to be determined
 					double rightValue = Sampled_getValueAtSample (me, imin, ilevel, unit);
 					double leftValue = Sampled_getValueAtSample (me, imin - 1, ilevel, unit);
 					if (NUMdefined (rightValue)) {
-						definitionRange -= 0.5;   /* Delete constant extrapolation over 0.5 sample. */
+						definitionRange -= 0.5;   // delete constant extrapolation over 0.5 sample
 						sum -= 0.5 * rightValue;
 						if (NUMdefined (leftValue)) {
 							definitionRange += phase;   /* Add current fraction. */
-							sum += phase * (rightValue + 0.5 * phase * (leftValue - rightValue));   /* Interpolate to outside sample. */
+							sum += phase * (rightValue + 0.5 * phase * (leftValue - rightValue));   // interpolate to outside sample
 						} else {
 							if (phase > 0.5) phase = 0.5;
-							definitionRange += phase;   /* Add current fraction, but never more than 0.5. */
+							definitionRange += phase;   // add current fraction, but never more than 0.5
 							sum += phase * rightValue;
 						}
 					} else if (NUMdefined (leftValue) && phase > 0.5) {
@@ -202,19 +202,19 @@ static void Sampled_getSumAndDefinitionRange
 						sum += (phase - 0.5) * leftValue;
 					}
 				}
-				if (xmax < rightEdge) {   /* Otherwise, constant extrapolation is OK. */
-					double phase = (xmax - (my x1 + (imax - 1) * my dx)) / my dx;   /* This fraction of sampling interval is still to be determined. */
+				if (xmax < rightEdge) {   // otherwise, constant extrapolation is OK
+					double phase = (xmax - (my x1 + (imax - 1) * my dx)) / my dx;   // this fraction of sampling interval is still to be determined
 					double leftValue = Sampled_getValueAtSample (me, imax, ilevel, unit);
 					double rightValue = Sampled_getValueAtSample (me, imax + 1, ilevel, unit);
 					if (NUMdefined (leftValue)) {
-						definitionRange -= 0.5;   /* Delete constant extrapolation over 0.5 sample. */
+						definitionRange -= 0.5;   // delete constant extrapolation over 0.5 sample
 						sum -= 0.5 * leftValue;
 						if (NUMdefined (rightValue)) {
-							definitionRange += phase;   /* Add current fraction. */
-							sum += phase * (leftValue + 0.5 * phase * (rightValue - leftValue));   /* Interpolate to outside sample. */
+							definitionRange += phase;   // add current fraction
+							sum += phase * (leftValue + 0.5 * phase * (rightValue - leftValue));   // interpolate to outside sample
 						} else {
 							if (phase > 0.5) phase = 0.5;
-							definitionRange += phase;   /* Add current fraction, but never more than 0.5. */
+							definitionRange += phase;   // add current fraction, but never more than 0.5
 							sum += phase * leftValue;
 						}
 					} else if (NUMdefined (rightValue) && phase > 0.5) {
@@ -231,7 +231,7 @@ static void Sampled_getSumAndDefinitionRange
 				double rightValue = Sampled_getValueAtSample (me, imin, ilevel, unit);
 				double phase1 = (xmin - (my x1 + (imax - 1) * my dx)) / my dx;
 				double phase2 = (xmax - (my x1 + (imax - 1) * my dx)) / my dx;
-				if (imin == imax + 1) {   /* Not too far from sample definition region. */
+				if (imin == imax + 1) {   // not too far from sample definition region
 					if (NUMdefined (leftValue)) {
 						if (NUMdefined (rightValue)) {
 							definitionRange += phase2 - phase1;
@@ -248,7 +248,7 @@ static void Sampled_getSumAndDefinitionRange
 					}
 				}
 			}
-		} else {   /* No interpolation. */
+		} else {   // no interpolation
 			double rimin = Sampled_xToIndex (me, xmin), rimax = Sampled_xToIndex (me, xmax);
 			if (rimax >= 0.5 && rimin < my nx + 0.5) {
 				imin = rimin < 0.5 ? 0 : (long) floor (rimin + 0.5);
@@ -608,7 +608,7 @@ void Sampled_getMaximumAndX (Sampled me, double xmin, double xmax, long ilevel, 
 				}
 			}
 		}
-		xOfMaximum = my x1 + (xOfMaximum - 1) * my dx;   /* From index plus phase to time. */
+		xOfMaximum = my x1 + (xOfMaximum - 1) * my dx;   // from index plus phase to time
 		/* Check boundary values. */
 		if (interpolate) {
 			double fleft = Sampled_getValueAtX (me, xmin, ilevel, unit, TRUE);

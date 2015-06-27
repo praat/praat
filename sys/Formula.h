@@ -60,11 +60,6 @@ struct Formula_Result {
 };
 
 void Formula_compile (Any interpreter, Any data, const char32 *expression, int expressionType, int optimize);
-inline static
-void Formula_compile (Any interpreter, Any data, const wchar_t *expressionW, int expressionType, int optimize) {
-	autostring32 expression32 = Melder_wcsToStr32 (expressionW);
-	Formula_compile (interpreter, data, expression32.peek(), expressionType, optimize);
-}
 
 void Formula_run (long row, long col, struct Formula_Result *result);
 

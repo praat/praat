@@ -68,7 +68,7 @@ static void Polynomial_evaluate2 (I, double x, double *f, double *df) {
 		dp = dp * xc + p;
 		p =  p * xc + my coefficients[i];
 	}
-	*f = p; *df = dp;
+	*f = (double) p; *df = (double) dp;
 }
 
 /* Get value and derivative */
@@ -85,8 +85,8 @@ static void Polynomial_evaluate2_z (I, dcomplex *z, dcomplex *p, dcomplex *dp) {
 		pr   =   pr * x -   pi * y + my coefficients[i];
 		pi   =   tr * y +   pi * x;
 	}
-	p -> re =   pr;  p -> im =  pi;
-	dp -> re =  dpr; dp -> im = dpi;
+	p -> re =   (double) pr;  p -> im =  (double) pi;
+	dp -> re =  (double) dpr; dp -> im = (double) dpi;
 }
 
 /*
@@ -147,7 +147,7 @@ static void Polynomial_polish_realroot (I, double *x, long maxit) {
 		double dx = p / dp; /* Newton -Raphson */
 		*x -= dx;
 	}
-	// Melder_throw ("Maximum number of iterations exceeded.");
+	// Melder_throw (U"Maximum number of iterations exceeded.");
 }
 
 static void Polynomial_polish_complexroot_nr (I, dcomplex *z, long maxit) {
@@ -175,7 +175,7 @@ static void Polynomial_polish_complexroot_nr (I, dcomplex *z, long maxit) {
 		dcomplex dz = dcomplex_div (p , dp); /* Newton -Raphson */
 		*z = dcomplex_sub (*z, dz);
 	}
-	// Melder_throw ("Maximum number of iterations exceeded.");
+	// Melder_throw (U"Maximum number of iterations exceeded.");
 }
 
 /*
@@ -206,7 +206,7 @@ static void svdcvm (double **v, long mfit, long ma, int *frozen, double *w, doub
 	autoNUMvector<double> wti (1, mfit);
 
 	for (long i = 1; i <= mfit; i++) {
-		if (w[i]) {
+		if (w[i] != 0.0) {
 			wti[i] = 1.0 / (w[i] * w[i]);
 		}
 	}
@@ -297,11 +297,11 @@ FunctionTerms FunctionTerms_create (double xmin, double xmax, long numberOfCoeff
 		FunctionTerms_init (me.peek(), xmin, xmax, numberOfCoefficients);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("FunctionTerms not created.");
+		Melder_throw (U"FunctionTerms not created.");
 	}
 }
 
-void FunctionTerms_initFromString (I, double xmin, double xmax, const wchar_t *s, int allowTrailingZeros) {
+void FunctionTerms_initFromString (I, double xmin, double xmax, const char32 *s, int allowTrailingZeros) {
 	iam (FunctionTerms);
 	long numberOfCoefficients;
 	autoNUMvector<double> numbers (NUMstring_to_numbers (s, &numberOfCoefficients), 1);
@@ -506,10 +506,10 @@ void FunctionTerms_drawBasisFunction (I, Graphics g, long index, double xmin,
 void FunctionTerms_setCoefficient (I, long index, double value) {
 	iam (FunctionTerms);
 	if (index < 1 || index > my numberOfCoefficients) {
-		Melder_throw (L"Idex out of range [1, ", my numberOfCoefficients, L"].");
+		Melder_throw (U"Idex out of range [1, ", my numberOfCoefficients, U"].");
 	}
 	if (index == my numberOfCoefficients && value == 0) {
-		Melder_throw (L"You cannot remove the highest degree term.");
+		Melder_throw (U"You cannot remove the highest degree term.");
 	}
 	my coefficients[index] = value;
 }
@@ -524,7 +524,7 @@ double structPolynomial :: v_evaluate (double x) {
 	for (long i = numberOfCoefficients - 1; i > 0; i--) {
 		p = p * x + coefficients [i];
 	}
-	return p;
+	return (double) p;
 }
 
 void structPolynomial :: v_evaluate_z (dcomplex *z, dcomplex *p) {
@@ -537,7 +537,7 @@ void structPolynomial :: v_evaluate_z (dcomplex *z, dcomplex *p) {
 		pr =  pr * x - pi * y + coefficients[i];
 		pi = prtmp * y + pi * x;
 	}
-	p -> re = pr; p -> im = pi;
+	p -> re = (double) pr; p -> im = (double) pi;
 }
 
 void structPolynomial :: v_evaluateTerms (double x, double terms[]) {
@@ -588,17 +588,17 @@ Polynomial Polynomial_create (double lxmin, double lxmax, long degree) {
 		FunctionTerms_init (me.peek(), lxmin, lxmax, degree + 1);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Polynomial not created.");
+		Melder_throw (U"Polynomial not created.");
 	}
 }
 
-Polynomial Polynomial_createFromString (double lxmin, double lxmax, const wchar_t *s) {
+Polynomial Polynomial_createFromString (double lxmin, double lxmax, const char32 *s) {
 	try {
 		autoPolynomial me = Thing_new (Polynomial);
 		FunctionTerms_initFromString (me.peek(), lxmin, lxmax, s, 0);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Polynomial not created from string.");
+		Melder_throw (U"Polynomial not created from string.");
 	}
 }
 
@@ -666,7 +666,7 @@ Polynomial Polynomial_scaleX (Polynomial me, double xmin, double xmax) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw ("");
+		Melder_throw (U"");
 	}
 }
 
@@ -706,7 +706,7 @@ Polynomial Polynomial_getDerivative (Polynomial me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no derivative created.");
+		Melder_throw (me, U": no derivative created.");
 	}
 }
 
@@ -718,7 +718,7 @@ Polynomial Polynomial_getPrimitive (Polynomial me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no primitive created.");
+		Melder_throw (me, U": no primitive created.");
 	}
 }
 
@@ -736,7 +736,7 @@ Polynomial Polynomials_multiply (Polynomial me, Polynomial thee) {
 		long n1 = my numberOfCoefficients, n2 = thy numberOfCoefficients;
 
 		if (my xmax <= thy xmin || my xmin >= thy xmax) {
-			Melder_throw ("Domains do not overlap.");
+			Melder_throw (U"Domains do not overlap.");
 		}
 		double xmin = my xmin > thy xmin ? my xmin : thy xmin;
 		double xmax = my xmax < thy xmax ? my xmax : thy xmax;
@@ -749,7 +749,7 @@ Polynomial Polynomials_multiply (Polynomial me, Polynomial thee) {
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Polynomials not multiplied.");
+		Melder_throw (U"Polynomials not multiplied.");
 	}
 }
 
@@ -859,17 +859,17 @@ LegendreSeries LegendreSeries_create (double xmin, double xmax, long numberOfPol
 		FunctionTerms_init (me.peek(), xmin, xmax, numberOfPolynomials);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("LegendreSeries not created.");
+		Melder_throw (U"LegendreSeries not created.");
 	}
 }
 
-LegendreSeries LegendreSeries_createFromString (double xmin, double xmax, const wchar_t *s) {
+LegendreSeries LegendreSeries_createFromString (double xmin, double xmax, const char32 *s) {
 	try {
 		autoLegendreSeries me = Thing_new (LegendreSeries);
 		FunctionTerms_initFromString (me.peek(), xmin, xmax, s, 0);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("LegendreSeries not created from string.");
+		Melder_throw (U"LegendreSeries not created from string.");
 	}
 }
 
@@ -887,7 +887,7 @@ LegendreSeries LegendreSeries_getDerivative (LegendreSeries me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no derivative created.");
+		Melder_throw (me, U": no derivative created.");
 	}
 }
 
@@ -930,7 +930,7 @@ Polynomial LegendreSeries_to_Polynomial (LegendreSeries me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Polynomial.");
+		Melder_throw (me, U": not converted to Polynomial.");
 	}
 }
 
@@ -944,7 +944,7 @@ Roots Roots_create (long numberOfRoots) {
 		ComplexVector_init (me.peek(), 1, numberOfRoots);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Roots not created.");
+		Melder_throw (U"Roots not created.");
 	}
 }
 
@@ -980,7 +980,7 @@ static void NUMdcvector_extrema_im (dcomplex v[], long lo, long hi, double *min,
 }
 
 void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin,
-                 double imax, const wchar_t *symbol, int fontSize, int garnish) {
+                 double imax, const char32 *symbol, int fontSize, int garnish) {
 	int oldFontSize = Graphics_inqFontSize (g);
 	double eps = 1e-6;
 
@@ -1019,15 +1019,15 @@ void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin,
 	if (garnish) {
 		Graphics_drawInnerBox (g);
 		if (rmin * rmax < 0) {
-			Graphics_markLeft (g, 0, 1, 1, 1, L"0");
+			Graphics_markLeft (g, 0, 1, 1, 1, U"0");
 		}
 		if (imin * imax < 0) {
-			Graphics_markBottom (g, 0, 1, 1, 1, L"0");
+			Graphics_markBottom (g, 0, 1, 1, 1, U"0");
 		}
 		Graphics_marksLeft (g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, L"Imaginary part");
+		Graphics_textLeft (g, 1, U"Imaginary part");
 		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_textBottom (g, 1, L"Real part");
+		Graphics_textBottom (g, 1, U"Real part");
 	}
 }
 
@@ -1036,7 +1036,7 @@ Roots Polynomial_to_Roots (Polynomial me) {
 		long np1 = my numberOfCoefficients, n = np1 - 1, n2 = n * n;
 
 		if (n < 1) {
-			Melder_throw ("Cannot find roots of a constant function.");
+			Melder_throw (U"Cannot find roots of a constant function.");
 		}
 
 		// Allocate storage for Hessenberg matrix (n * n) plus real and imaginary
@@ -1064,10 +1064,10 @@ Roots Polynomial_to_Roots (Polynomial me) {
 		NUMlapack_dhseqr (&job, &compz, &n, &ilo, &ihi, &hes[1], &ldh, &wr[1], &wi[1], z, &ldz, wt, &lwork, &info);
 		if (info != 0) {
 			if (info < 0) {
-				Melder_throw (L"Programming error. Argument ", info, " in NUMlapack_dhseqr has illegal value.");
+				Melder_throw (U"Programming error. Argument ", info, U" in NUMlapack_dhseqr has illegal value.");
 			}
 		}
-		lwork = wt[0];
+		lwork = (long) floor (wt[0]);
 		autoNUMvector<double> work (1, lwork);
 
 		// Find eigenvalues.
@@ -1080,12 +1080,12 @@ Roots Polynomial_to_Roots (Polynomial me) {
 			// WR and WI contain those eigenvalues which have been successfully computed
 			nrootsfound -= info;
 			if (nrootsfound < 1) {
-				Melder_throw ("No roots found.");
+				Melder_throw (U"No roots found.");
 			}
-			Melder_warning (L"Calculated only ", Melder_integer (nrootsfound), L" roots.");
+			Melder_warning (U"Calculated only ", nrootsfound, U" roots.");
 			ioffset = info;
 		} else if (info < 0) {
-			Melder_throw (L"Programming error. Argument ", info, L" in NUMlapack_dhseqr has illegal value.");
+			Melder_throw (U"Programming error. Argument ", info, U" in NUMlapack_dhseqr has illegal value.");
 		}
 
 		autoRoots thee = Roots_create (nrootsfound);
@@ -1096,7 +1096,7 @@ Roots Polynomial_to_Roots (Polynomial me) {
 		Roots_and_Polynomial_polish (thee.peek(), me);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no roots can be calculated.");
+		Melder_throw (me, U": no roots can be calculated.");
 	}
 }
 
@@ -1129,13 +1129,13 @@ Polynomial Roots_to_Polynomial (Roots me) {
 		(void) me;
 		throw MelderError();
 	} catch (MelderError) {
-		Melder_throw ("Not implemented yet");
+		Melder_throw (U"Not implemented yet");
 	}
 }
 
 void Roots_setRoot (Roots me, long index, double re, double im) {
 	if (index < my min || index > my max) {
-		Melder_throw ("Index must be in interval [1, ", my max, "].");
+		Melder_throw (U"Index must be in interval [1, ", my max, U"].");
 	}
 	my v[index].re = re;
 	my v[index].im = im;
@@ -1153,7 +1153,7 @@ dcomplex Roots_evaluate_z (Roots me, dcomplex z) {
 Spectrum Roots_to_Spectrum (Roots me, double nyquistFrequency, long numberOfFrequencies, double radius) {
 	try {
 		if (numberOfFrequencies < 2) {
-			Melder_throw ("NumberOfFrequencies must be greater or equal 2.");
+			Melder_throw (U"NumberOfFrequencies must be greater or equal 2.");
 		}
 		autoSpectrum thee = Spectrum_create (nyquistFrequency, numberOfFrequencies);
 
@@ -1167,7 +1167,7 @@ Spectrum Roots_to_Spectrum (Roots me, double nyquistFrequency, long numberOfFreq
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Spectrum calculated.");
+		Melder_throw (me, U": no Spectrum calculated.");
 	}
 }
 
@@ -1177,7 +1177,7 @@ long Roots_getNumberOfRoots (Roots me) {
 
 dcomplex Roots_getRoot (Roots me, long index) {
 	if (index < 1 || index > my max) {
-		Melder_throw ("Root index out of range.");
+		Melder_throw (U"Root index out of range.");
 	}
 	return my v [index];
 }
@@ -1186,7 +1186,7 @@ dcomplex Roots_getRoot (Roots me, long index) {
 Spectrum Polynomial_to_Spectrum (Polynomial me, double nyquistFrequency, long numberOfFrequencies, double radius) {
 	try {
 		if (numberOfFrequencies < 2) {
-			Melder_throw (L"NumberOfFrequencies must be greater or equal 2.");
+			Melder_throw (U"NumberOfFrequencies must be greater or equal 2.");
 		}
 		autoSpectrum thee = Spectrum_create (nyquistFrequency, numberOfFrequencies);
 
@@ -1198,7 +1198,7 @@ Spectrum Polynomial_to_Spectrum (Polynomial me, double nyquistFrequency, long nu
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Spectrum calculated.");
+		Melder_throw (me, U": no Spectrum calculated.");
 	}
 }
 
@@ -1262,7 +1262,7 @@ void structChebyshevSeries :: v_getExtrema (double x1, double x2,
 		autoPolynomial p = ChebyshevSeries_to_Polynomial (this);
 		FunctionTerms_getExtrema (p.peek(), x1, x2, lxmin, ymin, lxmax, ymax);
 	} catch (MelderError) {
-		Melder_throw (this, "Extrema cannot be calculated");   // David, dat is fout: er moet een Melder_throw of een Melder_clearError volgen: Klopt
+		Melder_throw (this, U"Extrema cannot be calculated");
 	}
 }
 
@@ -1272,17 +1272,17 @@ ChebyshevSeries ChebyshevSeries_create (double lxmin, double lxmax, long numberO
 		FunctionTerms_init (me.peek(), lxmin, lxmax, numberOfPolynomials);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("ChebyshevSeries not created.");
+		Melder_throw (U"ChebyshevSeries not created.");
 	}
 }
 
-ChebyshevSeries ChebyshevSeries_createFromString (double lxmin, double lxmax, const wchar_t *s) {
+ChebyshevSeries ChebyshevSeries_createFromString (double lxmin, double lxmax, const char32 *s) {
 	try {
 		autoChebyshevSeries me = Thing_new (ChebyshevSeries);
 		FunctionTerms_initFromString (me.peek(), lxmin, lxmax, s, 0);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("ChebyshevSeries not created from string.");
+		Melder_throw (U"ChebyshevSeries not created from string.");
 	};
 }
 
@@ -1327,7 +1327,7 @@ Polynomial ChebyshevSeries_to_Polynomial (ChebyshevSeries me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, "; not converted to Polynomial.");
+		Melder_throw (me, U"; not converted to Polynomial.");
 	};
 }
 
@@ -1340,7 +1340,7 @@ void FunctionTerms_and_RealTier_fit (I, thou, int *freeze, double tol, int ic, C
 		long numberOfFreeParameters = numberOfParameters;
 
 		if (numberOfData < 2) {
-			Melder_throw ("Not enough data points.");
+			Melder_throw (U"Not enough data points.");
 		}
 
 		autoFunctionTerms frozen = Data_copy (me);
@@ -1363,14 +1363,14 @@ void FunctionTerms_and_RealTier_fit (I, thou, int *freeze, double tol, int ic, C
 		}
 
 		if (numberOfFreeParameters == 0) {
-			Melder_throw ("No free parameters left.");
+			Melder_throw (U"No free parameters left.");
 		}
 
 		autoSVD svd = SVD_create (numberOfData, numberOfFreeParameters);
 
 		double sigma = RealTier_getStandardDeviation_points (thee, my xmin, my xmax);
 		if (sigma == NUMundefined) {
-			Melder_throw ("Not enough data points in fit interval.");
+			Melder_throw (U"Not enough data points in fit interval.");
 		}
 
 		for (long i = 1; i <= numberOfData; i++) {
@@ -1417,7 +1417,7 @@ void FunctionTerms_and_RealTier_fit (I, thou, int *freeze, double tol, int ic, C
 		}
 		*c = ac.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, " & ", thee, ": no fit.");
+		Melder_throw (me, U" & ", thee, U": no fit.");
 	}
 }
 
@@ -1429,29 +1429,29 @@ Polynomial RealTier_to_Polynomial (I, long degree, double tol, int ic, Covarianc
 		FunctionTerms_and_RealTier_fit (thee.peek(), me, 0, tol, ic, cvm);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Polynomial fitted.");
+		Melder_throw (me, U": no Polynomial fitted.");
 	}
 }
 
 LegendreSeries RealTier_to_LegendreSeries (I, long degree, double tol, int ic, Covariance *cvm) {
 	iam (RealTier);
 	try {
-		autoLegendreSeries thee = LegendreSeries_create (degree, my xmin, my xmax);
+		autoLegendreSeries thee = LegendreSeries_create (my xmin, my xmax, degree);
 		FunctionTerms_and_RealTier_fit (thee.peek(), me, 0, tol, ic, cvm);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no LegendreSeries fitted.");
+		Melder_throw (me, U": no LegendreSeries fitted.");
 	}
 }
 
 ChebyshevSeries RealTier_to_ChebyshevSeries (I, long degree, double tol, int ic, Covariance *cvm) {
 	iam (RealTier);
 	try {
-		autoChebyshevSeries thee = ChebyshevSeries_create (degree, my xmin, my xmax);
+		autoChebyshevSeries thee = ChebyshevSeries_create (my xmin, my xmax, degree);
 		FunctionTerms_and_RealTier_fit (thee.peek(), me, 0, tol, ic, cvm);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ":no ChebyshevSeries fitted.");
+		Melder_throw (me, U":no ChebyshevSeries fitted.");
 	};
 }
 
@@ -1581,18 +1581,18 @@ long structSpline :: v_getOrder () {
 }
 
 /* Precondition: FunctionTerms part inited + degree */
-static void Spline_initKnotsFromString (I, long degree, const wchar_t *interiorKnots) {
+static void Spline_initKnotsFromString (I, long degree, const char32 *interiorKnots) {
 	iam (Spline);
 
 	if (degree > Spline_MAXIMUM_DEGREE) {
-		Melder_throw ("Degree must be <= 20.");
+		Melder_throw (U"Degree must be <= 20.");
 	}
 	long numberOfInteriorKnots;
 	autoNUMvector<double> numbers (NUMstring_to_numbers (interiorKnots, &numberOfInteriorKnots), 1);
 	if (numberOfInteriorKnots > 0) {
 		NUMsort_d (numberOfInteriorKnots, numbers.peek());
 		if (numbers[1] <= my xmin || numbers[numberOfInteriorKnots] > my xmax) {
-			Melder_throw ("Knots must be inside domain.");
+			Melder_throw (U"Knots must be inside domain.");
 		}
 	}
 
@@ -1601,7 +1601,7 @@ static void Spline_initKnotsFromString (I, long degree, const wchar_t *interiorK
 	long n = numberOfInteriorKnots + order;
 
 	if (my numberOfCoefficients != n) {
-		Melder_throw ("NumberOfCoefficients must equal ", n, ".");
+		Melder_throw (U"NumberOfCoefficients must equal ", n, U".");
 	}
 
 	my numberOfKnots = numberOfInteriorKnots + 2;
@@ -1618,7 +1618,7 @@ void Spline_init (I, double xmin, double xmax, long degree, long numberOfCoeffic
 	iam (Spline);
 
 	if (degree > Spline_MAXIMUM_DEGREE) {
-		Melder_throw ("Spline_init: degree must be <= 20.");
+		Melder_throw (U"Spline_init: degree must be <= 20.");
 	}
 	FunctionTerms_init (me, xmin, xmax, numberOfCoefficients);
 	my knots = NUMvector<double> (1, numberOfKnots);
@@ -1631,7 +1631,6 @@ void Spline_init (I, double xmin, double xmax, long degree, long numberOfCoeffic
 void Spline_drawKnots (I, Graphics g, double xmin, double xmax, double ymin, double ymax, int garnish) {
 	iam (Spline);
 	long order = Spline_getOrder (me);
-	wchar_t ts[20] = L"";
 
 	if (xmax <= xmin) {
 		xmin = my xmin; xmax = my xmax;
@@ -1649,37 +1648,29 @@ void Spline_drawKnots (I, Graphics g, double xmin, double xmax, double ymin, dou
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 
 	if (my knots[1] >= xmin && my knots[1] <= xmax) {
-		if (garnish) {
-			if (order == 1) {
-				swprintf (ts, 20, L"t__1_");
-			} else if (order == 2) {
-				swprintf (ts, 20, L"{t__1_, t__2_}");
-			} else {
-				swprintf (ts, 20, L"{t__1_..t__%ld_}", order);
-			}
-		}
-		Graphics_markTop (g, my knots[1], 0, 1, 1, ts);
+		Graphics_markTop (g, my knots[1], 0, 1, 1,
+				! garnish ? U"" :
+				order == 1 ? U"t__1_" :
+				order == 2 ? U"{t__1_, t__2_}" :
+				Melder_cat (U"{t__1_..t__", order, U"_}")
+			);
 	}
 	for (long i = 2; i <= my numberOfKnots - 1; i++) {
 		if (my knots[i] >= xmin && my knots[i] <= xmax) {
-			if (garnish) {
-				swprintf (ts, 20, L"t__%ld_", i + order - 1);
-			}
-			Graphics_markTop (g, my knots[i], 0, 1, 1, ts);
+			Graphics_markTop (g, my knots[i], 0, 1, 1,
+					! garnish ? U"" :
+					Melder_cat (U"t__", i + order - 1, U"_")
+				);
 		}
 	}
 	if (my knots[my numberOfKnots] >= xmin && my knots[my numberOfKnots] <= xmax) {
-		if (garnish) {
-			long numberOfKnots = my numberOfKnots + 2 * (order - 1);
-			if (order == 1) {
-				swprintf (ts, 20, L"t__%ld_", numberOfKnots);
-			} else if (order == 2) {
-				swprintf (ts, 20, L"{t__%d_, t__%ld_}", numberOfKnots - 1, numberOfKnots);
-			} else {
-				swprintf (ts, 20, L"{t__%d_..t__%ld_}", numberOfKnots - order + 1, numberOfKnots);
-			}
-		}
-		Graphics_markTop (g, my knots[my numberOfKnots], 0, 1, 1, ts);
+		long numberOfKnots = ! garnish ? 0 : my numberOfKnots + 2 * (order - 1);
+		Graphics_markTop (g, my knots[my numberOfKnots], 0, 1, 1,
+				! garnish ? U"" :
+				order == 1 ? Melder_cat (U"t__", numberOfKnots, U"_") :
+				order == 2 ? Melder_cat (U"{t__", numberOfKnots - 1, U"_, t__", numberOfKnots, U"_}") :
+				Melder_cat (U"{t__", numberOfKnots - order + 1, U"_..t__", numberOfKnots, U"_}")
+			);
 	}
 }
 
@@ -1709,7 +1700,7 @@ Spline Spline_scaleX (I, double xmin, double xmax) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Scaled Spline not created.");
+		Melder_throw (U"Scaled Spline not created.");
 	}
 }
 
@@ -1748,21 +1739,21 @@ MSpline MSpline_create (double xmin, double xmax, long degree, long numberOfInte
 		Spline_init (me.peek(), xmin, xmax, degree, numberOfCoefficients, numberOfKnots);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("MSpline not created.");
+		Melder_throw (U"MSpline not created.");
 	}
 }
 
-MSpline MSpline_createFromStrings (double xmin, double xmax, long degree, const wchar_t *coef, const wchar_t *interiorKnots) {
+MSpline MSpline_createFromStrings (double xmin, double xmax, long degree, const char32 *coef, const char32 *interiorKnots) {
 	try {
 		if (degree > Spline_MAXIMUM_DEGREE) {
-			Melder_throw ("Degree must be <= 20.");
+			Melder_throw (U"Degree should be <= 20.");
 		}
 		autoMSpline me = Thing_new (MSpline);
 		FunctionTerms_initFromString (me.peek(), xmin, xmax, coef, 1);
 		Spline_initKnotsFromString (me.peek(), degree, interiorKnots);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("MSpline not created from strings.");
+		Melder_throw (U"MSpline not created from strings.");
 	}
 }
 
@@ -1801,21 +1792,21 @@ ISpline ISpline_create (double xmin, double xmax, long degree, long numberOfInte
 		Spline_init (me.peek(), xmin, xmax, degree, numberOfCoefficients, numberOfKnots);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("ISpline not created.");
+		Melder_throw (U"ISpline not created.");
 	}
 }
 
-ISpline ISpline_createFromStrings (double xmin, double xmax, long degree, const wchar_t *coef, const wchar_t *interiorKnots) {
+ISpline ISpline_createFromStrings (double xmin, double xmax, long degree, const char32 *coef, const char32 *interiorKnots) {
 	try {
 		if (degree > Spline_MAXIMUM_DEGREE) {
-			Melder_throw ("Degree must be <= 20.");
+			Melder_throw (U"Degree should be <= 20.");
 		}
 		autoISpline me = Thing_new (ISpline);
 		FunctionTerms_initFromString (me.peek(), xmin, xmax, coef, 1);
 		Spline_initKnotsFromString (me.peek(), degree, interiorKnots);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("ISpline not created from strings.");
+		Melder_throw (U"ISpline not created from strings.");
 	};
 }
 

@@ -81,7 +81,7 @@ static void menu_cb_Erase (EDITOR_ARGS) {
 
 static void menu_cb_TableEditorHelp (EDITOR_ARGS) {
 	EDITOR_IAM (TableEditor);
-	Melder_help (L"TableEditor");
+	Melder_help (U"TableEditor");
 }
 
 /********** DRAWING AREA **********/
@@ -108,7 +108,7 @@ void structTableEditor :: v_draw () {
 	/*
 	 * Determine the width of the column with the row numbers.
 	 */
-	columnWidth = Graphics_textWidth (graphics, L"row");
+	columnWidth = Graphics_textWidth (graphics, U"row");
 	for (long irow = rowmin; irow <= rowmax; irow ++) {
 		cellWidth = Graphics_textWidth (graphics, Melder_integer (irow));
 		if (cellWidth > columnWidth) columnWidth = cellWidth;
@@ -122,15 +122,15 @@ void structTableEditor :: v_draw () {
 	 * Determine the width of the columns.
 	 */
 	for (long icol = colmin; icol <= colmax; icol ++) {
-		const wchar_t *columnLabel = table -> columnHeaders [icol]. label;
+		const char32 *columnLabel = table -> columnHeaders [icol]. label;
 		columnWidth = Graphics_textWidth (graphics, Melder_integer (icol));
-		if (columnLabel == NULL) columnLabel = L"";
+		if (columnLabel == NULL) columnLabel = U"";
 		cellWidth = Graphics_textWidth (graphics, columnLabel);
 		if (cellWidth > columnWidth) columnWidth = cellWidth;
 		for (long irow = rowmin; irow <= rowmax; irow ++) {
-			const wchar_t *cell = Table_getStringValue_Assert (table, irow, icol);
+			const char32 *cell = Table_getStringValue_Assert (table, irow, icol);
 			Melder_assert (cell != NULL);
-			if (cell [0] == '\0') cell = L"?";
+			if (cell [0] == U'\0') cell = U"?";
 			cellWidth = Graphics_textWidth (graphics, cell);
 			if (cellWidth > columnWidth) columnWidth = cellWidth;
 		}
@@ -140,18 +140,18 @@ void structTableEditor :: v_draw () {
 	/*
 	 * Show the row numbers.
 	 */
-	Graphics_text (graphics, columnLeft [0] / 2, rowmin - 1, L"row");
+	Graphics_text (graphics, columnLeft [0] / 2, rowmin - 1, U"row");
 	for (long irow = rowmin; irow <= rowmax; irow ++) {
-		Graphics_text1 (graphics, columnLeft [0] / 2, irow, Melder_integer (irow));
+		Graphics_text (graphics, columnLeft [0] / 2, irow, irow);
 	}
 	/*
 	 * Show the column labels.
 	 */
 	for (long icol = colmin; icol <= colmax; icol ++) {
 		double mid = (columnLeft [icol - colmin] + columnRight [icol - colmin]) / 2;
-		const wchar_t *columnLabel = table -> columnHeaders [icol]. label;
-		if (columnLabel == NULL || columnLabel [0] == '\0') columnLabel = L"?";
-		Graphics_text1 (graphics, mid, rowmin - 2, Melder_integer (icol));
+		const char32 *columnLabel = table -> columnHeaders [icol]. label;
+		if (columnLabel == NULL || columnLabel [0] == U'\0') columnLabel = U"?";
+		Graphics_text (graphics, mid, rowmin - 2, icol);
 		Graphics_text (graphics, mid, rowmin - 1, columnLabel);
 	}
 	/*
@@ -160,9 +160,9 @@ void structTableEditor :: v_draw () {
 	for (long irow = rowmin; irow <= rowmax; irow ++) {
 		for (long icol = colmin; icol <= colmax; icol ++) {
 			double mid = (columnLeft [icol - colmin] + columnRight [icol - colmin]) / 2;
-			const wchar_t *cell = Table_getStringValue_Assert (table, irow, icol);
+			const char32 *cell = Table_getStringValue_Assert (table, irow, icol);
 			Melder_assert (cell != NULL);
-			if (cell [0] == '\0') cell = L"?";
+			if (cell [0] == U'\0') cell = U"?";
 			Graphics_text (graphics, mid, irow, cell);
 		}
 	}
@@ -253,24 +253,24 @@ void structTableEditor :: v_createMenus () {
 	TableEditor_Parent :: v_createMenus ();
 
 	#ifndef macintosh
-	Editor_addCommand (this, L"Edit", L"-- cut copy paste --", 0, NULL);
-	Editor_addCommand (this, L"Edit", L"Cut text", 'X', menu_cb_Cut);
-	Editor_addCommand (this, L"Edit", L"Cut", Editor_HIDDEN, menu_cb_Cut);
-	Editor_addCommand (this, L"Edit", L"Copy text", 'C', menu_cb_Copy);
-	Editor_addCommand (this, L"Edit", L"Copy", Editor_HIDDEN, menu_cb_Copy);
-	Editor_addCommand (this, L"Edit", L"Paste text", 'V', menu_cb_Paste);
-	Editor_addCommand (this, L"Edit", L"Paste", Editor_HIDDEN, menu_cb_Paste);
-	Editor_addCommand (this, L"Edit", L"Erase text", 0, menu_cb_Erase);
-	Editor_addCommand (this, L"Edit", L"Erase", Editor_HIDDEN, menu_cb_Erase);
+	Editor_addCommand (this, U"Edit", U"-- cut copy paste --", 0, NULL);
+	Editor_addCommand (this, U"Edit", U"Cut text", 'X', menu_cb_Cut);
+	Editor_addCommand (this, U"Edit", U"Cut", Editor_HIDDEN, menu_cb_Cut);
+	Editor_addCommand (this, U"Edit", U"Copy text", 'C', menu_cb_Copy);
+	Editor_addCommand (this, U"Edit", U"Copy", Editor_HIDDEN, menu_cb_Copy);
+	Editor_addCommand (this, U"Edit", U"Paste text", 'V', menu_cb_Paste);
+	Editor_addCommand (this, U"Edit", U"Paste", Editor_HIDDEN, menu_cb_Paste);
+	Editor_addCommand (this, U"Edit", U"Erase text", 0, menu_cb_Erase);
+	Editor_addCommand (this, U"Edit", U"Erase", Editor_HIDDEN, menu_cb_Erase);
 	#endif
 }
 
 void structTableEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	TableEditor_Parent :: v_createHelpMenuItems (menu);
-	EditorMenu_addCommand (menu, L"TableEditor help", '?', menu_cb_TableEditorHelp);
+	EditorMenu_addCommand (menu, U"TableEditor help", U'?', menu_cb_TableEditorHelp);
 }
 
-TableEditor TableEditor_create (const wchar_t *title, Table table) {
+TableEditor TableEditor_create (const char32 *title, Table table) {
 	try {
 		autoTableEditor me = Thing_new (TableEditor);
 		Editor_init (me.peek(), 0, 0, 700, 500, title, table);
@@ -292,7 +292,7 @@ TableEditor TableEditor_create (const wchar_t *title, Table table) {
 		Graphics_setAtSignIsLink (my graphics, TRUE);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("TableEditor not created.");
+		Melder_throw (U"TableEditor not created.");
 	}
 }
 

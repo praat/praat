@@ -87,7 +87,7 @@ LFCC LPC_to_LFCC (LPC me, long numberOfCoefficients) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no LFCC created.");
+		Melder_throw (me, U": no LFCC created.");
 	}
 }
 
@@ -105,7 +105,7 @@ LPC LFCC_to_LPC (LFCC me, long numberOfCoefficients) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no LPC created.");
+		Melder_throw (me, U": no LPC created.");
 	}
 }
 

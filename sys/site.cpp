@@ -1,6 +1,6 @@
 /* site.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  * pb 2002/03/07 GPL
  * pb 2004/10/21 simplified print command
  * pb 2005/03/02 pref string buffer 260 bytes long
- * pb 2007/08/12 wchar_t
+ * pb 2007/08/12 wchar
  * pb 2007/12/09 preferences
  * pb 2011/05/15 C++
  */
@@ -30,14 +30,14 @@
 #include <string.h>
 #include "site.h"
 
-static wchar_t printCommand [Preferences_STRING_BUFFER_SIZE];
+static char32 printCommand [Preferences_STRING_BUFFER_SIZE];
 
-wchar_t * Site_getPrintCommand (void) { return printCommand; }
+char32 * Site_getPrintCommand (void) { return printCommand; }
 
-void Site_setPrintCommand (const wchar_t *text) { wcscpy (printCommand, text); }
+void Site_setPrintCommand (const char32 *text) { str32cpy (printCommand, text); }
 
 void Site_prefs (void) {
-	Preferences_addString (L"Site.printCommand", printCommand, L"lp -c %s");
+	Preferences_addString (U"Site.printCommand", printCommand, U"lp -c %s");
 }
 
 /* End of file site.cpp */

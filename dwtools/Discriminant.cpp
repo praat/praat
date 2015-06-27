@@ -29,7 +29,7 @@
  djmw 20050405 Modified column label: eigenvector->Eigenvector
  djmw 20061021 printf expects %ld for 'long int'
  djmw 20061212 Changed info to Melder_writeLine<x> format.
- djmw 20071009 wchar_t
+ djmw 20071009 wchar
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
  djmw 20071201 Melder_warning<n>
  djmw 20081119 Check in TableOfReal_to_Discriminant if TableOfReal_areAllCellsDefined
@@ -72,12 +72,10 @@ Thing_implement (Discriminant, Eigen, 0);
 
 void structDiscriminant :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine (L"Number of groups: ", Melder_integer (numberOfGroups));
-	MelderInfo_writeLine (L"Number of variables: ", Melder_integer (dimension));
-	MelderInfo_writeLine (L"Number of discriminant functions: ",
-	                       Melder_integer (Discriminant_getNumberOfFunctions (this)));
-	MelderInfo_writeLine (L"Number of observations (total): ",
-	                       Melder_integer (Discriminant_getNumberOfObservations (this, 0)));
+	MelderInfo_writeLine (U"Number of groups: ", numberOfGroups);
+	MelderInfo_writeLine (U"Number of variables: ", dimension);
+	MelderInfo_writeLine (U"Number of discriminant functions: ", Discriminant_getNumberOfFunctions (this));
+	MelderInfo_writeLine (U"Number of observations (total): ", Discriminant_getNumberOfObservations (this, 0));
 }
 
 Discriminant Discriminant_create (long numberOfGroups, long numberOfEigenvalues, long dimension) {
@@ -91,15 +89,15 @@ Discriminant Discriminant_create (long numberOfGroups, long numberOfEigenvalues,
 		my costs = NUMmatrix<double> (1, numberOfGroups, 1, numberOfGroups);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Discriminant not created.");
+		Melder_throw (U"Discriminant not created.");
 	}
 }
 
-long Discriminant_groupLabelToIndex (Discriminant me, const wchar_t *label) {
-	wchar_t *name;
+long Discriminant_groupLabelToIndex (Discriminant me, const char32 *label) {
+	char32 *name;
 
 	for (long i = 1; i <= my numberOfGroups; i++) {
-		if ( (name = Thing_getName ( (Thing) my groups -> item[i])) && wcsequ (name, label)) {
+		if ( (name = Thing_getName ( (Thing) my groups -> item[i])) && str32equ (name, label)) {
 			return i;
 		}
 	}
@@ -113,10 +111,10 @@ long Discriminant_getNumberOfGroups (Discriminant me) {
 long Discriminant_getNumberOfObservations (Discriminant me, long group) {
 	if (group == 0) {
 		SSCP sscp = (SSCP) my total;
-		return sscp -> numberOfObservations;
+		return (long) floor (sscp -> numberOfObservations);
 	} else if (group >= 1 && group <= my numberOfGroups) {
 		SSCP sscp = (SSCP) my groups -> item[group];
-		return sscp -> numberOfObservations;
+		return (long) floor (sscp -> numberOfObservations);
 	} else {
 		return -1;
 	}
@@ -124,10 +122,10 @@ long Discriminant_getNumberOfObservations (Discriminant me, long group) {
 
 void Discriminant_setAprioriProbability (Discriminant me, long group, double p) {
 	if (group < 1 || group > my numberOfGroups) {
-		Melder_throw ("The group number (", group, ") must be in the interval [1, ", my numberOfGroups, "]; the supplied value (", group, ") falls outside it.");
+		Melder_throw (U"The group number (", group, U") must be in the interval [1, ", my numberOfGroups, U"]; the supplied value (", group, U") falls outside it.");
 	}
 	if (p < 0 || p > 1) {
-		Melder_throw ("The probability must be in the interval [0, 1]; the supplied value (", p, ") falls outside it.");
+		Melder_throw (U"The probability must be in the interval [0, 1]; the supplied value (", p, U") falls outside it.");
 	}
 	my aprioriProbabilities[group] = p;
 }
@@ -140,10 +138,10 @@ long Discriminant_getNumberOfFunctions (Discriminant me) {
 
 void Discriminant_setGroupLabels (Discriminant me, Strings thee) {
 	if (my numberOfGroups != thy numberOfStrings) Melder_throw
-		("The number of strings must equal the number of groups.");
+		(U"The number of strings must equal the number of groups.");
 
 	for (long i = 1; i <= my numberOfGroups; i++) {
-		const wchar_t *noname = L"", *name;
+		const char32 *noname = U"", *name;
 		name = thy strings[i];
 		if (name == 0) {
 			name = noname;
@@ -155,15 +153,15 @@ void Discriminant_setGroupLabels (Discriminant me, Strings thee) {
 Strings Discriminant_extractGroupLabels (Discriminant me) {
 	try {
 		autoStrings thee = Thing_new (Strings);
-		thy strings = NUMvector<wchar_t *> (1, my numberOfGroups);
+		thy strings = NUMvector<char32 *> (1, my numberOfGroups);
 		thy numberOfStrings = my numberOfGroups;
 		for (long i = 1; i <= my numberOfGroups; i++) {
-			wchar_t *name = Thing_getName ( (Thing) my groups -> item[i]);
-			thy strings[i] = Melder_wcsdup (name);
+			char32 *name = Thing_getName ( (Thing) my groups -> item[i]);
+			thy strings[i] = Melder_dup (name);
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": group labels not extracted.");
+		Melder_throw (me, U": group labels not extracted.");
 	}
 }
 
@@ -180,7 +178,7 @@ TableOfReal Discriminant_extractGroupCentroids (Discriminant me) {
 		NUMstrings_copyElements ( ( (SSCP) my groups -> item[m]) -> columnLabels, thy columnLabels, 1, n);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": group centroids not extracted.");
+		Melder_throw (me, U": group centroids not extracted.");
 	}
 }
 
@@ -192,7 +190,7 @@ TableOfReal Discriminant_extractGroupStandardDeviations (Discriminant me) {
 		for (long i = 1; i <= m; i++) {
 			SSCP sscp = (SSCP) my groups -> item[i];
 			TableOfReal_setRowLabel (thee.peek(), i, Thing_getName (sscp));
-			long numberOfObservationsm1 = sscp -> numberOfObservations - 1;
+			long numberOfObservationsm1 = (long) floor (sscp -> numberOfObservations) - 1;
 			for (long j = 1; j <= n; j++) {
 				thy data[i][j] = numberOfObservationsm1 > 0 ? sqrt (sscp -> data[j][j] / numberOfObservationsm1) : NUMundefined;
 			}
@@ -200,7 +198,7 @@ TableOfReal Discriminant_extractGroupStandardDeviations (Discriminant me) {
 		NUMstrings_copyElements ( ( (SSCP) my groups -> item[m]) -> columnLabels, thy columnLabels, 1, n);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": group standard deviations not extracted.");
+		Melder_throw (me, U": group standard deviations not extracted.");
 	}
 }
 
@@ -234,8 +232,8 @@ TableOfReal Discriminant_extractCoefficients (Discriminant me, int choice) {
 			within.reset (Discriminant_extractPooledWithinGroupsSSCP (me));
 		}
 
-		TableOfReal_setColumnLabel (thee.peek(), nx + 1, L"constant");
-		TableOfReal_setSequentialRowLabels (thee.peek(), 1, ny, L"function_", 1, 1);
+		TableOfReal_setColumnLabel (thee.peek(), nx + 1, U"constant");
+		TableOfReal_setSequentialRowLabels (thee.peek(), 1, ny, U"function_", 1, 1);
 
 		double scale = sqrt (total -> numberOfObservations - my numberOfGroups);
 		double *centroid = my total -> centroid;
@@ -252,14 +250,14 @@ TableOfReal Discriminant_extractCoefficients (Discriminant me, int choice) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": coefficients not extracted.");
+		Melder_throw (me, U": coefficients not extracted.");
 	}
 }
 
 static long Discriminant_getDegreesOfFreedom (Discriminant me) {
 	long ndf = 0;
 	for (long i = 1; i <= my groups -> size; i++) {
-		ndf += SSCP_getDegreesOfFreedom (my groups -> item[i]);
+		ndf += SSCP_getDegreesOfFreedom ((SSCP) my groups -> item[i]);
 	}
 	return ndf;
 }
@@ -302,7 +300,7 @@ double Discriminant_getConcentrationEllipseArea (Discriminant me, long group,
 		autoSSCP thee = Eigen_and_SSCP_project (me, (SSCP) groups -> item[group]);
 		area = SSCP_getConcentrationEllipseArea (thee.peek(), scale, confidence, d1, d2);
 	} else {
-		area = SSCP_getConcentrationEllipseArea (groups -> item[group], scale, confidence, d1, d2);
+		area = SSCP_getConcentrationEllipseArea ((SSCP) groups -> item[group], scale, confidence, d1, d2);
 	}
 	return area;
 }
@@ -329,11 +327,11 @@ SSCP Discriminant_extractPooledWithinGroupsSSCP (Discriminant me) {
 SSCP Discriminant_extractWithinGroupSSCP (Discriminant me, long index) {
 	try {
 		if (index < 1 || index > my numberOfGroups) Melder_throw
-			("Index must be in interval [1,", my numberOfGroups, "].");
+			(U"Index must be in interval [1,", my numberOfGroups, U"].");
 		autoSSCP thee = Data_copy ( (SSCP) my groups -> item[index]);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": within group SSCP not created.");
+		Melder_throw (me, U": within group SSCP not created.");
 	}
 }
 
@@ -349,7 +347,7 @@ SSCP Discriminant_extractBetweenGroupsSSCP (Discriminant me) {
 		}
 		return b.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": between group SSCP not created.");
+		Melder_throw (me, U": between group SSCP not created.");
 	}
 }
 
@@ -364,7 +362,7 @@ void Discriminant_drawTerritorialMap (Discriminant me, Graphics g,
 }
 
 void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g,
-        double scale, int confidence, wchar_t *label, int discriminantDirections, long d1, long d2,
+        double scale, int confidence, char32 *label, int discriminantDirections, long d1, long d2,
         double xmin, double xmax, double ymin, double ymax, int fontSize, int garnish) {
 	long numberOfFunctions = Discriminant_getNumberOfFunctions (me);
 
@@ -375,8 +373,8 @@ void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g,
 	}
 
 	if (numberOfFunctions <= 1) {
-		Melder_warning (L"Discriminant_drawConcentrationEllipses: Nothing drawn "
-		                "because there is only one dimension in the discriminant space.");
+		Melder_warning (U"Discriminant_drawConcentrationEllipses: Nothing drawn "
+		                U"because there is only one dimension in the discriminant space.");
 		return;
 	}
 
@@ -397,19 +395,18 @@ void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g,
 	SSCPs_drawConcentrationEllipses (thee.peek(), g, scale, confidence, label, 1, 2, xmin, xmax, ymin, ymax, fontSize, 0);
 
 	if (garnish) {
-		wchar_t llabel[40];
+		char32 llabel[40];
 		Graphics_drawInnerBox (g);
 		Graphics_marksLeft (g, 2, 1, 1, 0);
-		swprintf (llabel, 40, L"function %ld", d2);
+		Melder_sprint (llabel,40, U"function ", d2);
 		Graphics_textLeft (g, 1, llabel);
 		Graphics_marksBottom (g, 2, 1, 1, 0);
-		swprintf (llabel, 40, L"function %ld", d1);
+		Melder_sprint (llabel,40, U"function ", d1);
 		Graphics_textBottom (g, 1, llabel);
 	}
 }
 
-Discriminant TableOfReal_to_Discriminant (I) {
-	iam (TableOfReal);
+Discriminant TableOfReal_to_Discriminant (TableOfReal me) {
 	try {
 		autoDiscriminant thee = Thing_new (Discriminant);
 		long dimension = my numberOfColumns;
@@ -417,23 +414,23 @@ Discriminant TableOfReal_to_Discriminant (I) {
 		TableOfReal_areAllCellsDefined (me, 0, 0, 0, 0);
 
 		if (NUMdmatrix_hasInfinities (my data, 1, my numberOfRows, 1, dimension)) {
-			Melder_throw ("Table contains infinities.");
+			Melder_throw (U"Table contains infinities.");
 		}
 
 		if (! TableOfReal_hasRowLabels (me)) {
-			Melder_throw ("At least one of the rows has no label.");
+			Melder_throw (U"At least one of the rows has no label.");
 		}
 
 		autoTableOfReal mew = TableOfReal_sortOnlyByRowLabels (me);
 		if (! TableOfReal_hasColumnLabels (mew.peek())) {
-			TableOfReal_setSequentialColumnLabels (mew.peek(), 0, 0, L"c", 1, 1);
+			TableOfReal_setSequentialColumnLabels (mew.peek(), 0, 0, U"c", 1, 1);
 		}
 
 		thy groups = TableOfReal_to_SSCPs_byLabel (mew.peek());
 		thy total = TableOfReal_to_SSCP (mew.peek(), 0, 0, 0, 0);
 
 		if ( (thy numberOfGroups = thy groups -> size) < 2) {
-			Melder_throw ("Number of groups must be greater than one.");
+			Melder_throw (U"Number of groups must be greater than one.");
 		}
 
 		TableOfReal_centreColumns_byRowLabel (mew.peek());
@@ -482,7 +479,7 @@ Discriminant TableOfReal_to_Discriminant (I) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": Discriminant not created.");
+		Melder_throw (me, U": Discriminant not created.");
 	}
 }
 
@@ -495,10 +492,10 @@ Configuration Discriminant_and_TableOfReal_to_Configuration (Discriminant me, Ta
 		Configuration thim = him.peek();
 		Eigen_and_TableOfReal_project_into (me, thee, 1, thy numberOfColumns, & thim, 1, numberOfDimensions);
 		TableOfReal_copyLabels (thee, thim, 1, 0);
-		TableOfReal_setSequentialColumnLabels (him.peek(), 0, 0, L"Eigenvector ", 1, 1);
+		TableOfReal_setSequentialColumnLabels (him.peek(), 0, 0, U"Eigenvector ", 1, 1);
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Configuration not created.");
+		Melder_throw (U"Configuration not created.");
 	}
 }
 
@@ -527,7 +524,7 @@ static double mahalanobisDistanceSq (double **li, long n, double *v, double *m,
 TableOfReal Discriminant_and_TableOfReal_mahalanobis (Discriminant me, TableOfReal thee, long group, bool poolCovarianceMatrices) {
 	try {
 		if (group < 1 || group > my numberOfGroups) {
-			Melder_throw ("Group does not exist.");
+			Melder_throw (U"Group does not exist.");
 		}
 		autoSSCP pool = SSCPs_to_SSCP_pool (my groups);
 		autoCovariance covg = SSCP_to_Covariance (pool.peek(), my numberOfGroups);
@@ -541,7 +538,7 @@ TableOfReal Discriminant_and_TableOfReal_mahalanobis (Discriminant me, TableOfRe
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw ("TableOfReal not created.");
+		Melder_throw (U"TableOfReal not created.");
 	}
 }
 
@@ -553,7 +550,7 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Discrim
 		long m = thy numberOfRows;
 
 		if (p != thy numberOfColumns) Melder_throw
-			("The number of columns does not agree with the dimension of the discriminant.");
+			(U"The number of columns does not agree with the dimension of the discriminant.");
 
 		autoNUMvector<double> log_p (1, g);
 		autoNUMvector<double> log_apriori (1, g);
@@ -595,7 +592,7 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Discrim
 			long npool = 0;
 			for (long j = 1; j <= g; j++) {
 				SSCP t = (SSCP) groups -> item[j];
-				long no = SSCP_getNumberOfObservations (t);
+				long no = (long) floor (SSCP_getNumberOfObservations (t));
 				for (long i = 1; i <= p; i++) {
 					for (long k = i; k <= p; k++) {
 						t -> data[k][i] = (t -> data[i][k] /= (no - 1));
@@ -618,16 +615,16 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Discrim
 				}
 			}
 			if (npool > 0) {
-				Melder_warning (Melder_integer (npool), L" groups use pooled covariance matrix.");
+				Melder_warning (npool, U" groups use pooled covariance matrix.");
 			}
 		}
 
 		// Labels for columns in ClassificationTable
 
 		for (long j = 1; j <= g; j++) {
-			const wchar_t *name = Thing_getName ( (Thing) my groups -> item[j]);
+			const char32 *name = Thing_getName ( (Thing) my groups -> item[j]);
 			if (! name) {
-				name = L"?";
+				name = U"?";
 			}
 			TableOfReal_setColumnLabel (him.peek(), j, name);
 		}
@@ -664,7 +661,7 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Discrim
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw ("ClassificationTable from Discriminant & TableOfReal not created.");
+		Melder_throw (U"ClassificationTable from Discriminant & TableOfReal not created.");
 	}
 }
 
@@ -676,7 +673,7 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (Disc
 		long m = thy numberOfRows;
 
 		if (p != thy numberOfColumns) Melder_throw
-			("The number of columns does not agree with the dimension of the discriminant.");
+			(U"The number of columns does not agree with the dimension of the discriminant.");
 
 		autoNUMvector<double> log_p (1, g);
 		autoNUMvector<double> log_apriori (1, g);
@@ -719,7 +716,7 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (Disc
 			long npool = 0;
 			for (long j = 1; j <= g; j++) {
 				SSCP t = (SSCP) groups -> item[j];
-				long no = SSCP_getNumberOfObservations (t);
+				long no = (long) floor (SSCP_getNumberOfObservations (t));
 				for (long i = 1; i <= p; i++) {
 					for (long k = i; k <= p; k++) {
 						t -> data[k][i] = (t -> data[i][k] /= (no - 1));
@@ -742,16 +739,16 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (Disc
 				}
 			}
 			if (npool > 0) {
-				Melder_warning (Melder_integer (npool), L" groups use pooled covariance matrix.");
+				Melder_warning (npool, U" groups use pooled covariance matrix.");
 			}
 		}
 
 		// Labels for columns in ClassificationTable
 
 		for (long j = 1; j <= g; j++) {
-			const wchar_t *name = Thing_getName ( (Thing) my groups -> item[j]);
+			const char32 *name = Thing_getName ( (Thing) my groups -> item[j]);
 			if (! name) {
-				name = L"?";
+				name = U"?";
 			}
 			TableOfReal_setColumnLabel (him.peek(), j, name);
 		}
@@ -806,7 +803,7 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (Disc
 		*displacements = adisplacements.transfer();
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw ("ClassificationTable for Weenink procedure not created.");
+		Melder_throw (U"ClassificationTable for Weenink procedure not created.");
 	}
 }
 
@@ -816,7 +813,7 @@ Configuration TableOfReal_to_Configuration_lda (TableOfReal me, long numberOfDim
 		autoConfiguration him = Discriminant_and_TableOfReal_to_Configuration (thee.peek(), me, numberOfDimensions);
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": Configuration with lda data not created.");
+		Melder_throw (me, U": Configuration with lda data not created.");
 	}
 }
 

@@ -1,6 +1,6 @@
 /* AnyTier.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -196,7 +196,7 @@ void AnyTier_addPoint (I, Data point) {
 	try {
 		Collection_addItem (my points, point);
 	} catch (MelderError) {
-		Melder_throw (me, ": point not added.");
+		Melder_throw (me, U": point not added.");
 	}
 }
 
@@ -232,7 +232,7 @@ PointProcess AnyTier_downto_PointProcess (I) {
 		thy nt = numberOfPoints;
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to PointProcess.");
+		Melder_throw (me, U": not converted to PointProcess.");
 	}
 }
 

@@ -30,33 +30,33 @@ Thing_define (DurationTierEditor, RealTierEditor) {
 		override;
 	double v_minimumLegalValue ()
 		override { return 0.0; }
-	const wchar_t * v_quantityText ()
-		override { return L"Relative duration"; }
-	const wchar_t * v_quantityKey ()
-		override { return L"Relative duration"; }
-	const wchar_t * v_rightTickUnits ()
-		override { return L""; }
+	const char32 * v_quantityText ()
+		override { return U"Relative duration"; }
+	const char32 * v_quantityKey ()
+		override { return U"Relative duration"; }
+	const char32 * v_rightTickUnits ()
+		override { return U""; }
 	double v_defaultYmin ()
 		override { return 0.25; }
 	double v_defaultYmax ()
 		override { return 3.0; }
-	const wchar_t * v_setRangeTitle ()
-		override { return L"Set duration range..."; }
-	const wchar_t * v_defaultYminText ()
-		override { return L"0.25"; }
-	const wchar_t * v_defaultYmaxText ()
-		override { return L"3.0"; }
-	const wchar_t * v_yminText ()
-		override { return L"Minimum duration"; }
-	const wchar_t * v_ymaxText ()
-		override { return L"Maximum duration"; }
-	const wchar_t * v_yminKey ()
-		override { return L"Minimum duration"; }
-	const wchar_t * v_ymaxKey ()
-		override { return L"Maximum duration"; }
+	const char32 * v_setRangeTitle ()
+		override { return U"Set duration range..."; }
+	const char32 * v_defaultYminText ()
+		override { return U"0.25"; }
+	const char32 * v_defaultYmaxText ()
+		override { return U"3.0"; }
+	const char32 * v_yminText ()
+		override { return U"Minimum duration"; }
+	const char32 * v_ymaxText ()
+		override { return U"Maximum duration"; }
+	const char32 * v_yminKey ()
+		override { return U"Minimum duration"; }
+	const char32 * v_ymaxKey ()
+		override { return U"Maximum duration"; }
 };
 
-DurationTierEditor DurationTierEditor_create (const wchar_t *title,
+DurationTierEditor DurationTierEditor_create (const char32 *title,
 	DurationTier duration, Sound sound, bool ownSound);
 /*
 	'sound' may be NULL.

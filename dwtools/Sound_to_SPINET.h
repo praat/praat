@@ -28,16 +28,8 @@
 #include "SPINET.h"
 #include "Sound_extensions.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 SPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration,
 	double minimumFrequencyHz, double maximumFrequencyHz, long nFilters,
 	double excitationErbProportion, double inhibitionErbProportion);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _Sound_to_SPINET_h_ */

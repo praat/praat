@@ -25,8 +25,8 @@
 #include "Matrix.h"
 
 Thing_define (Confusion, TableOfReal) {
-	// overridden methods:
-		virtual void v_info ();
+	void v_info ()
+		override;
 };
 
 /*
@@ -35,16 +35,16 @@ Thing_define (Confusion, TableOfReal) {
 
 Confusion Confusion_create (long numberOfStimuli, long numberOfResponses);
 
-Confusion Confusion_createSimple (const wchar *labels);
+Confusion Confusion_createSimple (const char32 *labels);
 
 Confusion Confusion_createFromStringses (Strings stimulusLabels, Strings responseLabels);
 
 Confusion Categories_to_Confusion (Categories me, Categories thee);
 
-void Confusion_increase (Confusion me, const wchar_t *stimulus, const wchar_t *response);
+void Confusion_increase (Confusion me, const char32 *stimulus, const char32 *response);
 /* data['stim']['resp'] += 1; */
 
-double Confusion_getValue (Confusion me, const wchar_t *stim, const wchar_t *resp);
+double Confusion_getValue (Confusion me, const char32 *stim, const char32 *resp);
 /* data['stim']['resp'] ; */
 
 void Confusion_getEntropies (Confusion me, double *h, double *hx, double *hy,
@@ -84,25 +84,25 @@ Matrix Confusion_difference (Confusion me, Confusion thee);
 
 long Confusion_getNumberOfEntries (Confusion me);
 
-Confusion Confusion_groupStimuli (Confusion me, const wchar_t *labels, const wchar_t *newLabel, long newpos);
-Confusion Confusion_groupResponses (Confusion me, const wchar_t *labels, const wchar_t *newLabel, long newpos);
-Confusion Confusion_group (Confusion me, const wchar_t *labels, const wchar_t *newLabel, long newpos);
+Confusion Confusion_groupStimuli (Confusion me, const char32 *labels, const char32 *newLabel, long newpos);
+Confusion Confusion_groupResponses (Confusion me, const char32 *labels, const char32 *newLabel, long newpos);
+Confusion Confusion_group (Confusion me, const char32 *labels, const char32 *newLabel, long newpos);
 
-Confusion Confusion_condense (Confusion me, const wchar_t *search, const wchar_t *replace,
+Confusion Confusion_condense (Confusion me, const char32 *search, const char32 *replace,
 	long maximumNumberOfReplaces, int use_regexp);
 /*
 	Group row and column labels according to search and replace.
 */
 
-Confusion TableOfReal_to_Confusion (I);
+Confusion TableOfReal_to_Confusion (TableOfReal me);
 
-TableOfReal Confusion_to_TableOfReal_marginals (I);
+TableOfReal Confusion_to_TableOfReal_marginals (Confusion me);
 /*
 	Create a table with one extra row and one extra column with marginals,
 	i.e., column and row sums.
 */
 
-void Confusion_drawAsNumbers (I, Graphics g, int marginals, int iformat, int precision);
+void Confusion_drawAsNumbers (Confusion me, Graphics g, int marginals, int iformat, int precision);
 // option marginals draw one extra row and column with sums.
 
 #endif /* _Confusion_h_ */

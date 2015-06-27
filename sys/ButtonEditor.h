@@ -33,7 +33,7 @@ Thing_define (ButtonEditor, HyperPage) {
 		override;
 	void v_draw ()
 		override;
-	int v_goToPage (const wchar_t *title)
+	int v_goToPage (const char32 *title)
 		override;
 };
 

@@ -1,6 +1,6 @@
 /* Sound_PointProcess.cpp
  *
- * Copyright (C) 2010-2011 Paul Boersma
+ * Copyright (C) 2010-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,12 +27,12 @@
 Sound Sound_PointProcess_to_SoundEnsemble_correlate (Sound me, PointProcess thee, double fromLag, double toLag) {
 	try {
 		if (my ny > 1)
-			Melder_throw ("Sound has to be mono.");
+			Melder_throw (U"Sound has to be mono.");
 		long numberOfPoints = thy nt;
 		double hisDuration = toLag - fromLag;
-		long numberOfSamples = floor (hisDuration / my dx) + 1;
+		long numberOfSamples = (long) floor (hisDuration / my dx) + 1;
 		if (numberOfSamples < 1)
-			Melder_throw (L"Time window too short.");
+			Melder_throw (U"Time window too short.");
 		double midTime = 0.5 * (fromLag + toLag);
 		double hisPhysicalDuration = numberOfSamples * my dx;
 		double firstTime = midTime - 0.5 * hisPhysicalDuration + 0.5 * my dx;   // distribute the samples evenly over the time domain
@@ -42,7 +42,7 @@ Sound Sound_PointProcess_to_SoundEnsemble_correlate (Sound me, PointProcess thee
 			double hisTimeOfPoint = 0.0;
 			double mySample = 1 + (myTimeOfPoint - my x1) / my dx;
 			double hisSample = 1 + (hisTimeOfPoint - his x1) / my dx;
-			long sampleDifference = round (mySample - hisSample);
+			long sampleDifference = lround (mySample - hisSample);
 			for (long isample = 1; isample <= numberOfSamples; isample ++) {
 				long jsample = isample + sampleDifference;
 				his z [ipoint] [isample] = jsample < 1 || jsample > my nx ? 0.0 : my z [1] [jsample];
@@ -50,7 +50,7 @@ Sound Sound_PointProcess_to_SoundEnsemble_correlate (Sound me, PointProcess thee
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, " & ", thee, ": Sound ensemble not created.");
+		Melder_throw (me, U" & ", thee, U": Sound ensemble not created.");
 	}
 }
 

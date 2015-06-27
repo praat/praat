@@ -182,17 +182,17 @@ LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, doubl
 		long p = thy maxnCoefficients;
 
 		if (my xmin != thy xmin || my xmax != thy xmax) {
-			Melder_throw ("Time domains differ.");
+			Melder_throw (U"Time domains differ.");
 		}
 		if (my dx != thy samplingPeriod) {
-			Melder_throw ("Sampling intervals differ.");
+			Melder_throw (U"Sampling intervals differ.");
 		}
 		if (floor (windowDuration / my dx) < p + 1) {
-			Melder_throw ("Analysis window too short.");
+			Melder_throw (U"Analysis window too short.");
 		}
 		Sampled_shortTermAnalysis (me, windowDuration, thy dx, & nFrames, & t1);
 		if (nFrames != thy nx || t1 != thy x1) {
-			Melder_throw ("Incorrect retrieved analysis width");
+			Melder_throw (U"Incorrect retrieved analysis width");
 		}
 
 		autoSound sound = Data_copy (me);
@@ -206,7 +206,7 @@ LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, doubl
 		struct_huber.tol_svd = tol_svd;
 		struct_huber.itermax = itermax;
 
-		autoMelderProgress progess (L"LPC analysis");
+		autoMelderProgress progess (U"LPC analysis");
 
 		Sound_preEmphasis (sound.peek(), preEmphasisFrequency);
 
@@ -228,20 +228,20 @@ LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, doubl
 			iter += struct_huber.iter;
 
 			if ( (i % 10) == 1) {
-				Melder_progress ( (double) i / nFrames, L"LPC analysis of frame ",
-				                   Melder_integer (i), L" out of ", Melder_integer (nFrames), L".");
+				Melder_progress ( (double) i / nFrames, U"LPC analysis of frame ",
+				                   i, U" out of ", nFrames, U".");
 			}
 		}
 
-		if (frameErrorCount) Melder_warning (L"Results of ", Melder_integer (frameErrorCount),
-			L" frame(s) out of ", Melder_integer (nFrames), L" could not be optimised.");
-		MelderInfo_writeLine (L"Number of iterations: ", Melder_integer (iter),
-			L"\n   Average per frame: ", Melder_double (((double) iter) / nFrames));
+		if (frameErrorCount) Melder_warning (U"Results of ", frameErrorCount,
+			U" frame(s) out of ", nFrames, U" could not be optimised.");
+		MelderInfo_writeLine (U"Number of iterations: ", iter,
+			U"\n   Average per frame: ", ((double) iter) / nFrames);
 		huber_struct_destroy (&struct_huber);
 		return him.transfer();
 	} catch (MelderError) {
 		huber_struct_destroy (&struct_huber);
-		Melder_throw (me, ": no robust LPC created.");
+		Melder_throw (me, U": no robust LPC created.");
 	}
 }
 
@@ -250,7 +250,7 @@ Formant Sound_to_Formant_robust (Sound me, double dt_in, double numberOfFormants
 {
 	double dt = dt_in > 0.0 ? dt_in : halfdt_window / 4.0;
 	double nyquist = 0.5 / my dx;
-	int predictionOrder = 2 * numberOfFormants;
+	int predictionOrder = (long) floor (2 * numberOfFormants);
 	try {
 		autoSound sound = NULL;
 		if (maximumFrequency <= 0.0 || fabs (maximumFrequency / nyquist - 1) < 1.0e-12) {
@@ -264,7 +264,7 @@ Formant Sound_to_Formant_robust (Sound me, double dt_in, double numberOfFormants
 		autoFormant thee = LPC_to_Formant (lpcr.peek(), safetyMargin);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no robust Formant created.");
+		Melder_throw (me, U": no robust Formant created.");
 	}
 }
 

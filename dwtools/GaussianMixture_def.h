@@ -26,8 +26,8 @@ oo_DEFINE_CLASS (GaussianMixture, Data)
 	oo_COLLECTION (Ordered, covariances, Covariance, 0)
 
 	#if oo_DECLARING
-		// overridden methods:
-			virtual void v_info ();
+		void v_info ()
+			override;
 	#endif
 
 oo_END_CLASS(GaussianMixture)

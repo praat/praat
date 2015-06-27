@@ -43,7 +43,7 @@ Table IntervalTiers__to_Table_textAlignmentment (IntervalTier target, IntervalTi
 Table TextGrids_to_Table_textAlignmentment (TextGrid target, long ttier, TextGrid source, long stier, EditCostsTable costs);
 
 /* For testing purposes only */
-TextGrid TextGrid_and_IntervalTier_patch (TextGrid me, IntervalTier thee, const wchar_t *patchLabel, double precision);
-TextGrid TextGrid_and_IntervalTier_cutPartsMatchingLabel (TextGrid me, IntervalTier thee, const wchar_t *label, double precision);
+TextGrid TextGrid_and_IntervalTier_patch (TextGrid me, IntervalTier thee, const char32 *patchLabel, double precision);
+TextGrid TextGrid_and_IntervalTier_cutPartsMatchingLabel (TextGrid me, IntervalTier thee, const char32 *label, double precision);
 
 #endif // _SpeechSynthesizer_and_TextGrid_h_

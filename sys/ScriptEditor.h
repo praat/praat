@@ -24,7 +24,7 @@
 #include "Interpreter.h"
 
 Thing_define (ScriptEditor, TextEditor) {
-	wchar_t *environmentName;
+	char32 *environmentName;
 	ClassInfo editorClass;
 	Interpreter interpreter;
 	UiForm argsDialog;
@@ -45,11 +45,11 @@ Thing_define (ScriptEditor, TextEditor) {
 
 void ScriptEditor_init (ScriptEditor me,
 	Editor editor,
-	const wchar_t *initialText
+	const char32 *initialText
 );
 ScriptEditor ScriptEditor_createFromText (
 	Editor editor,   // the scripting environment; if NULL, the scripting environment consists of the global windows
-	const wchar_t *initialText   // may be NULL
+	const char32 *initialText   // may be NULL
 );
 
 ScriptEditor ScriptEditor_createFromScript (

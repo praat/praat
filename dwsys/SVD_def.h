@@ -28,8 +28,8 @@ oo_DEFINE_CLASS (SVD, Data)
 	oo_DOUBLE_VECTOR (d, (numberOfColumns < numberOfRows ? numberOfColumns : numberOfRows))
 
 	#if oo_DECLARING
-		// overridden methods:
-			virtual void v_info ();
+		void v_info ()
+			override;
 	#endif
 
 oo_END_CLASS (SVD)
@@ -47,8 +47,8 @@ oo_DEFINE_CLASS (GSVD, Data)
 	oo_DOUBLE_VECTOR (d2, numberOfColumns)
 
 	#if oo_DECLARING
-		// overridden methods:
-			virtual void v_info ();
+		void v_info ()
+			override;
 	#endif
 
 oo_END_CLASS (GSVD)

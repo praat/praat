@@ -54,12 +54,11 @@ Thing_implement (LPC, Sampled, 1);
 
 void structLPC :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine (L"Time domain: ", Melder_double (xmin), L" to ", Melder_double (xmax),
-	                       L" (s).");
-	MelderInfo_writeLine (L"Prediction order: ", Melder_integer (maxnCoefficients));
-	MelderInfo_writeLine (L"Number of frames: ", Melder_integer (nx));
-	MelderInfo_writeLine (L"Time step: ", Melder_double (dx), L" (s).");
-	MelderInfo_writeLine (L"First frame at: ", Melder_double (x1), L" (s).");
+	MelderInfo_writeLine (U"Time domain: ", xmin, U" to ", xmax, U" (s).");
+	MelderInfo_writeLine (U"Prediction order: ", maxnCoefficients);
+	MelderInfo_writeLine (U"Number of frames: ", nx);
+	MelderInfo_writeLine (U"Time step: ", dx, U" (s).");
+	MelderInfo_writeLine (U"First frame at: ", x1, U" (s).");
 }
 
 void LPC_Frame_init (LPC_Frame me, int nCoefficients) {
@@ -84,7 +83,7 @@ LPC LPC_create (double tmin, double tmax, long nt, double dt, double t1,
 		LPC_init (me.peek(), tmin, tmax, nt, dt, t1, predictionOrder, samplingPeriod);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("LPC not created.");
+		Melder_throw (U"LPC not created.");
 	}
 }
 
@@ -119,8 +118,8 @@ void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, do
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, L"Time (seconds)");
-		Graphics_textLeft (g, 1, L"Gain");
+		Graphics_textBottom (g, 1, U"Time (seconds)");
+		Graphics_textLeft (g, 1, U"Gain");
 		Graphics_marksBottom (g, 2, 1, 1, 0);
 		Graphics_marksLeft (g, 2, 1, 1, 0);
 	}
@@ -129,7 +128,7 @@ void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, do
 void LPC_drawPoles (LPC me, Graphics g, double time, int garnish) {
 	autoPolynomial p = LPC_to_Polynomial (me, time);
 	autoRoots r = Polynomial_to_Roots (p.peek());
-	Roots_draw (r.peek(), g, -1, 1, -1, 1, L"+", 12, garnish);
+	Roots_draw (r.peek(), g, -1, 1, -1, 1, U"+", 12, garnish);
 }
 
 Matrix LPC_downto_Matrix_lpc (LPC me) {
@@ -143,7 +142,7 @@ Matrix LPC_downto_Matrix_lpc (LPC me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Matrix with linear prediction coefficients created.");
+		Melder_throw (me, U": no Matrix with linear prediction coefficients created.");
 	}
 }
 
@@ -160,7 +159,7 @@ Matrix LPC_downto_Matrix_rc (LPC me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Matrix with relection coefficients created.");
+		Melder_throw (me, U": no Matrix with relection coefficients created.");
 	}
 }
 
@@ -179,7 +178,7 @@ Matrix LPC_downto_Matrix_area (LPC me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Matrix with areas created.");
+		Melder_throw (me, U": no Matrix with areas created.");
 	}
 }
 

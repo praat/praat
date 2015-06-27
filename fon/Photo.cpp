@@ -53,16 +53,16 @@ Thing_implement (Photo, SampledXY, 0);
 
 void structPhoto :: v_info () {
 	our structData :: v_info ();
-	MelderInfo_writeLine (L"xmin: ", Melder_double (our xmin));
-	MelderInfo_writeLine (L"xmax: ", Melder_double (our xmax));
-	MelderInfo_writeLine (L"Number of columns: ", Melder_integer (our nx));
-	MelderInfo_writeLine (L"dx: ", Melder_double (our dx), L" (-> sampling rate ", Melder_double (1.0 / our dx), L" )");
-	MelderInfo_writeLine (L"x1: ", Melder_double (our x1));
-	MelderInfo_writeLine (L"ymin: ", Melder_double (our ymin));
-	MelderInfo_writeLine (L"ymax: ", Melder_double (our ymax));
-	MelderInfo_writeLine (L"Number of rows: ", Melder_integer (our ny));
-	MelderInfo_writeLine (L"dy: ", Melder_double (our dy), L" (-> sampling rate ", Melder_double (1.0 / our dy), L" )");
-	MelderInfo_writeLine (L"y1: ", Melder_double (our y1));
+	MelderInfo_writeLine (U"xmin: ", our xmin);
+	MelderInfo_writeLine (U"xmax: ", our xmax);
+	MelderInfo_writeLine (U"Number of columns: ", our nx);
+	MelderInfo_writeLine (U"dx: ", our dx, U" (-> sampling rate ", 1.0 / our dx, U" )");
+	MelderInfo_writeLine (U"x1: ", our x1);
+	MelderInfo_writeLine (U"ymin: ", our ymin);
+	MelderInfo_writeLine (U"ymax: ", our ymax);
+	MelderInfo_writeLine (U"Number of rows: ", our ny);
+	MelderInfo_writeLine (U"dy: ", our dy, U" (-> sampling rate ", 1.0 / our dy, U" )");
+	MelderInfo_writeLine (U"y1: ", our y1);
 }
 
 void Photo_init (Photo me,
@@ -85,7 +85,7 @@ Photo Photo_create
 		Photo_init (me.peek(), xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Photo object not created.");
+		Melder_throw (U"Photo object not created.");
 	}
 }
 
@@ -96,21 +96,21 @@ Photo Photo_createSimple (long numberOfRows, long numberOfColumns) {
 		                       0.5, numberOfRows    + 0.5, numberOfRows,    1, 1);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Photo object not created.");
+		Melder_throw (U"Photo object not created.");
 	}
 }
 
 Photo Photo_readFromImageFile (MelderFile file) {
 	try {
 		#if defined (linux)
-			cairo_surface_t *surface = cairo_image_surface_create_from_png (Melder_peekWcsToUtf8 (file -> path));
+			cairo_surface_t *surface = cairo_image_surface_create_from_png (Melder_peek32to8 (file -> path));
 			//if (cairo_surface_status)
-			//	Melder_throw ("Error opening PNG file.");
+			//	Melder_throw (U"Error opening PNG file.");
 			long width = cairo_image_surface_get_width (surface);
 			long height = cairo_image_surface_get_height (surface);
 			if (width == 0 || height == 0) {
 				cairo_surface_destroy (surface);
-				Melder_throw ("Error reading PNG file.");
+				Melder_throw (U"Error reading PNG file.");
 			}
 			unsigned char *imageData = cairo_image_surface_get_data (surface);
 			long bytesPerRow = cairo_image_surface_get_stride (surface);
@@ -138,16 +138,16 @@ Photo Photo_readFromImageFile (MelderFile file) {
 				}
 			} else {
 				cairo_surface_destroy (surface);
-				Melder_throw ("Unsupported PNG format ", format, ".");
+				Melder_throw (U"Unsupported PNG format ", format, U".");
 			}
 			cairo_surface_destroy (surface);
 			return me.transfer();
 		#elif defined (_WIN32)
-			Gdiplus::Bitmap gdiplusBitmap (file -> path);
+			Gdiplus::Bitmap gdiplusBitmap (Melder_peek32toW (file -> path));
 			long width = gdiplusBitmap. GetWidth ();
 			long height = gdiplusBitmap. GetHeight ();
 			if (width == 0 || height == 0)
-				Melder_throw ("Error reading PNG file.");
+				Melder_throw (U"Error reading PNG file.");
 			autoPhoto me = Photo_createSimple (height, width);
 			for (long irow = 1; irow <= height; irow ++) {
 				for (long icol = 1; icol <= width; icol ++) {
@@ -163,14 +163,14 @@ Photo Photo_readFromImageFile (MelderFile file) {
 		#elif defined (macintosh)
 			autoPhoto me = NULL;
 			char utf8 [500];
-			Melder_wcsTo8bitFileRepresentation_inline (file -> path, utf8);
+			Melder_str32To8bitFileRepresentation_inline (file -> path, utf8);
 			CFStringRef path = CFStringCreateWithCString (NULL, utf8, kCFStringEncodingUTF8);
 			CFURLRef url = CFURLCreateWithFileSystemPath (NULL, path, kCFURLPOSIXPathStyle, false);
 			CFRelease (path);
 			CGImageSourceRef imageSource = CGImageSourceCreateWithURL (url, NULL);
 			CFRelease (url);
 			if (imageSource == NULL)
-				Melder_throw ("Cannot open picture file ", file, ".");
+				Melder_throw (U"Cannot open picture file ", file, U".");
 			CGImageRef image = CGImageSourceCreateImageAtIndex (imageSource, 0, NULL);
 			CFRelease (imageSource);
 			if (image != NULL) {
@@ -180,7 +180,11 @@ Photo Photo_readFromImageFile (MelderFile file) {
 				long bitsPerPixel = CGImageGetBitsPerPixel (image);
 				long bitsPerComponent = CGImageGetBitsPerComponent (image);
 				long bytesPerRow = CGImageGetBytesPerRow (image);
-				trace ("%ld bits per pixel, %ld bits per component, %ld bytes per row", bitsPerPixel, bitsPerComponent, bytesPerRow);
+				trace (
+					bitsPerPixel, U" bits per pixel, ",
+					bitsPerComponent, U" bits per component, ",
+					bytesPerRow, U" bytes per row"
+				);
 				/*
 				 * Now we probably need to use:
 				 * CGColorSpaceRef CGImageGetColorSpace (CGImageRef image);
@@ -204,7 +208,7 @@ Photo Photo_readFromImageFile (MelderFile file) {
 			return me.transfer();
 		#endif
 	} catch (MelderError) {
-		Melder_throw ("Picture file ", file, " not opened as Photo.");
+		Melder_throw (U"Picture file ", file, U" not opened as Photo.");
 	}
 }
 
@@ -219,13 +223,13 @@ Photo Photo_readFromImageFile (MelderFile file) {
 #endif
 
 #ifdef linux
-	static void _lin_saveAsImageFile (Photo me, MelderFile file, const wchar_t *which) {
+	static void _lin_saveAsImageFile (Photo me, MelderFile file, const char32 *which) {
 		cairo_format_t format = CAIRO_FORMAT_ARGB32;
-		long bytesPerRow = cairo_format_stride_for_width (format, my nx);   // likely to be my nx * 4;
+		long bytesPerRow = cairo_format_stride_for_width (format, my nx);   // likely to be my nx * 4
 		long numberOfRows = my ny;
-		unsigned char *imageData = Melder_malloc_f (unsigned char, bytesPerRow * numberOfRows);
+		uint8 *imageData = Melder_malloc_f (uint8, bytesPerRow * numberOfRows);
 		for (long irow = 1; irow <= my ny; irow ++) {
-			uint8_t *rowAddress = imageData + bytesPerRow * (my ny - irow);
+			uint8 *rowAddress = imageData + bytesPerRow * (my ny - irow);
 			for (long icol = 1; icol <= my nx; icol ++) {
 				* rowAddress ++ = round (my d_blue         -> z [irow] [icol] * 255.0);
 				* rowAddress ++ = round (my d_green        -> z [irow] [icol] * 255.0);
@@ -235,13 +239,13 @@ Photo Photo_readFromImageFile (MelderFile file) {
 		}
 		cairo_surface_t *surface = cairo_image_surface_create_for_data (imageData,
 			format, my nx, my ny, bytesPerRow);
-		cairo_surface_write_to_png (surface, Melder_peekWcsToUtf8 (file -> path));
+		cairo_surface_write_to_png (surface, Melder_peek32to8 (file -> path));
 		cairo_surface_destroy (surface);
 	}
 #endif
 
 #ifdef _WIN32
-	static void _win_saveAsImageFile (Photo me, MelderFile file, const wchar_t *mimeType) {
+	static void _win_saveAsImageFile (Photo me, MelderFile file, const char32 *mimeType) {
 		Gdiplus::Bitmap gdiplusBitmap (my nx, my ny, PixelFormat32bppARGB);
 		for (long irow = 1; irow <= my ny; irow ++) {
 			for (long icol = 1; icol <= my nx; icol ++) {
@@ -259,15 +263,15 @@ Photo Photo_readFromImageFile (MelderFile file) {
 		UINT numberOfImageEncoders, sizeOfImageEncoderArray;
 		Gdiplus::GetImageEncodersSize (& numberOfImageEncoders, & sizeOfImageEncoderArray);
 		if (sizeOfImageEncoderArray == 0)
-			Melder_throw ("Cannot find image encoders.");
+			Melder_throw (U"Cannot find image encoders.");
 		Gdiplus::ImageCodecInfo *imageEncoderInfos = Melder_malloc (Gdiplus::ImageCodecInfo, sizeOfImageEncoderArray);
 		Gdiplus::GetImageEncoders (numberOfImageEncoders, sizeOfImageEncoderArray, imageEncoderInfos);
 		for (int iencoder = 0; iencoder < numberOfImageEncoders; iencoder ++) {
-			trace ("Supported MIME type: %ls", imageEncoderInfos [iencoder]. MimeType);
-			if (Melder_wcsequ (imageEncoderInfos [iencoder]. MimeType, mimeType)) {
+			trace (U"Supported MIME type: ", Melder_peekWto32 (imageEncoderInfos [iencoder]. MimeType));
+			if (str32equ (Melder_peekWto32 (imageEncoderInfos [iencoder]. MimeType), mimeType)) {
 				Gdiplus::EncoderParameters *p = NULL;
 				Gdiplus::EncoderParameters encoderParameters;
-				if (Melder_wcsequ (mimeType, L"image/jpeg")) {
+				if (str32equ (mimeType, U"image/jpeg")) {
 					encoderParameters. Count = 1;
 					GUID guid = { 0x1D5BE4B5, 0xFA4A, 0x452D, { 0x9C, 0xDD, 0x5D, 0xB3, 0x51, 0x05, 0xE7, 0xEB }};  // EncoderQuality
 					encoderParameters. Parameter [0]. Guid = guid;
@@ -277,12 +281,12 @@ Photo Photo_readFromImageFile (MelderFile file) {
 					encoderParameters. Parameter [0]. Value = & quality;
 					p = & encoderParameters;
 				}
-				gdiplusBitmap. Save (file -> path, & imageEncoderInfos [iencoder]. Clsid, p);
+				gdiplusBitmap. Save (Melder_peek32toW (file -> path), & imageEncoderInfos [iencoder]. Clsid, p);
 				Melder_free (imageEncoderInfos);
 				return;
 			}
 		}
-		Melder_throw ("Unknown MIME type ", mimeType, ".");
+		Melder_throw (U"Unknown MIME type ", mimeType, U".");
 	}
 #endif
 
@@ -294,10 +298,10 @@ Photo Photo_readFromImageFile (MelderFile file) {
 		for (long irow = 1; irow <= my ny; irow ++) {
 			uint8_t *rowAddress = imageData + bytesPerRow * (my ny - irow);
 			for (long icol = 1; icol <= my nx; icol ++) {
-				* rowAddress ++ = round (my d_red          -> z [irow] [icol] * 255.0);
-				* rowAddress ++ = round (my d_green        -> z [irow] [icol] * 255.0);
-				* rowAddress ++ = round (my d_blue         -> z [irow] [icol] * 255.0);
-				* rowAddress ++ = 255 - round (my d_transparency -> z [irow] [icol] * 255.0);
+				* rowAddress ++ = (uint8) lround (my d_red          -> z [irow] [icol] * 255.0);   // BUG: should be tested for speed
+				* rowAddress ++ = (uint8) lround (my d_green        -> z [irow] [icol] * 255.0);
+				* rowAddress ++ = (uint8) lround (my d_blue         -> z [irow] [icol] * 255.0);
+				* rowAddress ++ = 255 - (uint8) lround (my d_transparency -> z [irow] [icol] * 255.0);
 			}
 		}
 		static CGColorSpaceRef colourSpace = NULL;
@@ -315,7 +319,7 @@ Photo Photo_readFromImageFile (MelderFile file) {
 			8, 32, bytesPerRow, colourSpace, kCGImageAlphaNone, dataProvider, NULL, false, kCGRenderingIntentDefault);
 		CGDataProviderRelease (dataProvider);
 		Melder_assert (image != NULL);
-		NSString *path = (NSString *) Melder_peekWcsToCfstring (Melder_fileToPath (file));
+		NSString *path = (NSString *) Melder_peek32toCfstring (Melder_fileToPath (file));
 		CFURLRef url = (CFURLRef) [NSURL   fileURLWithPath: path   isDirectory: NO];
 		CGImageDestinationRef destination = CGImageDestinationCreateWithURL (url, (CFStringRef) which, 1, NULL);
 		CGImageDestinationAddImage (destination, image, nil);
@@ -332,17 +336,17 @@ Photo Photo_readFromImageFile (MelderFile file) {
 
 void Photo_saveAsPNG (Photo me, MelderFile file) {
 	#if defined (_WIN32)
-		_win_saveAsImageFile (me, file, L"image/png");
+		_win_saveAsImageFile (me, file, U"image/png");
 	#elif defined (macintosh)
 		_mac_saveAsImageFile (me, file, kUTTypePNG);
 	#elif defined (linux)
-		_lin_saveAsImageFile (me, file, L"image/png");
+		_lin_saveAsImageFile (me, file, U"image/png");
 	#endif
 }
 
 void Photo_saveAsTIFF (Photo me, MelderFile file) {
 	#if defined (_WIN32)
-		_win_saveAsImageFile (me, file, L"image/tiff");
+		_win_saveAsImageFile (me, file, U"image/tiff");
 	#elif defined (macintosh)
 		_mac_saveAsImageFile (me, file, kUTTypeTIFF);
 	#else
@@ -353,7 +357,7 @@ void Photo_saveAsTIFF (Photo me, MelderFile file) {
 
 void Photo_saveAsGIF (Photo me, MelderFile file) {
 	#if defined (_WIN32)
-		_win_saveAsImageFile (me, file, L"image/gif");
+		_win_saveAsImageFile (me, file, U"image/gif");
 	#elif defined (macintosh)
 		_mac_saveAsImageFile (me, file, kUTTypeGIF);
 	#else
@@ -364,7 +368,7 @@ void Photo_saveAsGIF (Photo me, MelderFile file) {
 
 void Photo_saveAsWindowsBitmapFile (Photo me, MelderFile file) {
 	#if defined (_WIN32)
-		_win_saveAsImageFile (me, file, L"image/bmp");
+		_win_saveAsImageFile (me, file, U"image/bmp");
 	#elif defined (macintosh)
 		_mac_saveAsImageFile (me, file, kUTTypeBMP);
 	#else
@@ -375,7 +379,7 @@ void Photo_saveAsWindowsBitmapFile (Photo me, MelderFile file) {
 
 void Photo_saveAsJPEG (Photo me, MelderFile file) {
 	#if defined (_WIN32)
-		_win_saveAsImageFile (me, file, L"image/jpeg");
+		_win_saveAsImageFile (me, file, U"image/jpeg");
 	#elif defined (macintosh)
 		_mac_saveAsImageFile (me, file, kUTTypeJPEG);
 	#else
@@ -386,7 +390,7 @@ void Photo_saveAsJPEG (Photo me, MelderFile file) {
 
 void Photo_saveAsJPEG2000 (Photo me, MelderFile file) {
 	#if defined (_WIN32)
-		_win_saveAsImageFile (me, file, L"image/jpeg2000");
+		_win_saveAsImageFile (me, file, U"image/jpeg2000");
 	#elif defined (macintosh)
 		_mac_saveAsImageFile (me, file, kUTTypeJPEG2000);
 	#else
@@ -397,7 +401,7 @@ void Photo_saveAsJPEG2000 (Photo me, MelderFile file) {
 
 void Photo_saveAsAppleIconFile (Photo me, MelderFile file) {
 	#if defined (_WIN32)
-		_win_saveAsImageFile (me, file, L"image/ICNS");
+		_win_saveAsImageFile (me, file, U"image/ICNS");
 	#elif defined (macintosh)
 		_mac_saveAsImageFile (me, file, kUTTypeAppleICNS);
 	#else
@@ -408,7 +412,7 @@ void Photo_saveAsAppleIconFile (Photo me, MelderFile file) {
 
 void Photo_saveAsWindowsIconFile (Photo me, MelderFile file) {
 	#if defined (_WIN32)
-		_win_saveAsImageFile (me, file, L"image/icon");
+		_win_saveAsImageFile (me, file, U"image/icon");
 	#elif defined (macintosh)
 		_mac_saveAsImageFile (me, file, kUTTypeICO);
 	#else
@@ -448,7 +452,7 @@ static void _Photo_cellArrayOrImage (Photo me, Graphics g, double xmin, double x
 	Sampled_getWindowSamples    (me, xmin - 0.49999 * my dx, xmax + 0.49999 * my dx, & ixmin, & ixmax);
 	SampledXY_getWindowSamplesY (me, ymin - 0.49999 * my dy, ymax + 0.49999 * my dy, & iymin, & iymax);
 	if (ixmin > ixmax || iymin > iymax) {
-		Melder_fatal ("ixmin %ld ixmax %ld iymin %ld iymax %ld", ixmin, ixmax, iymin, iymax);
+		Melder_fatal (U"ixmin ", ixmin, U" ixmax ", ixmax, U" iymin ", iymin, U" iymax ", iymax);
 		return;
 	}
 	Graphics_setInner (g);

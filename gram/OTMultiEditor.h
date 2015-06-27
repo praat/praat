@@ -23,7 +23,7 @@
 #include "OTMulti.h"
 
 Thing_define (OTMultiEditor, HyperPage) {
-	const wchar_t *form1, *form2;
+	const char32 *form1, *form2;
 	GuiText form1Text, form2Text;
 	long selectedConstraint;
 	bool d_constraintsAreDrawnVertically;
@@ -38,11 +38,11 @@ Thing_define (OTMultiEditor, HyperPage) {
 		override;
 	void v_draw ()
 		override;
-	int v_goToPage (const wchar_t *title)
+	int v_goToPage (const char32 *title)
 		override;
 };
 
-OTMultiEditor OTMultiEditor_create (const wchar_t *title, OTMulti grammar);
+OTMultiEditor OTMultiEditor_create (const char32 *title, OTMulti grammar);
 
 /* End of file OTMultiEditor.h */
 #endif

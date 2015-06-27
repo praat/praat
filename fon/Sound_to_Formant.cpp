@@ -1,6 +1,6 @@
 /* Sound_to_Formant.cpp
  *
- * Copyright (C) 1992-2011,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,7 +84,7 @@ static void burg (double sample [], long nsamp_window, double cof [], int nPoles
 				log (roots -> v [i].re * roots -> v [i].re + roots -> v [i].im * roots -> v [i].im) * nyquistFrequency / NUMpi;
 		}
 	}
-	Melder_assert (iformant == frame -> nFormants);   /* May fail if some frequency is NaN. */
+	Melder_assert (iformant == frame -> nFormants);   // may fail if some frequency is NaN
 }
 
 static int findOneZero (int ijt, double vcx [], double a, double b, double *zero) {
@@ -94,25 +94,29 @@ static int findOneZero (int ijt, double vcx [], double a, double b, double *zero
 		fa = vcx [k] + a * fa;
 		fb = vcx [k] + b * fb;
 	}
-	if (fa * fb >= 0.0) {   /* There should be a zero between a and b. */
-		Melder_casual ("There is no zero between %.8g and %.8g.\n"
-			"   The function values are %.8g and %.8g, respectively.",
-			a, b, fa, fb);
+	if (fa * fb >= 0.0) {   // there should be a zero between a and b
+		Melder_casual (
+			U"There is no zero between ,", Melder_single (a),
+			U" and ", Melder_single (b),
+			U".\n    The function values are ", Melder_single (fa),
+			U" and ", Melder_single (fb),
+			U", respectively."
+		);
 		return 0;
 	}
 	do {
 		fx = 0.0;
 		/*x = fa == fb ? 0.5 * (a + b) : a + fa * (a - b) / (fb - fa);*/
-		x = 0.5 * (a + b);   /* Simple bisection. */
+		x = 0.5 * (a + b);   // simple bisection
 		for (k = ijt; k >= 0; k --) fx = vcx [k] + x * fx;
 		if (fa * fx > 0.0) { a = x; fa = fx; } else { b = x; fb = fx; }
 	} while (fabs (fx) > 1e-5);
 	*zero = x;
-	return 1;   /* OK */
+	return 1;   // OK
 }
 
 static int findNewZeroes (int ijt, double ppORIG [], int degree,
-	double zeroes [])   /* In / out */
+	double zeroes [])   // In / out
 {
 	static double cosa [7] [7] = {
 		{  1,   0,   0,   0,   0,   0,   0 },
@@ -136,7 +140,10 @@ static int findNewZeroes (int ijt, double ppORIG [], int degree,
 	newZeroes [0] = 1.0;
 	for (i = 1; i <= half_degree; i ++) {
 		if (! findOneZero (ijt, px, zeroes [i - 1], zeroes [i], & newZeroes [i])) {
-			Melder_casual ("Degree %d not completed.", (int) degree);
+			Melder_casual (
+				U"Degree ", degree,
+				U" not completed."
+			);
 			return 0;
 		}
 	}
@@ -148,9 +155,9 @@ static int findNewZeroes (int ijt, double ppORIG [], int degree,
 }
 
 static int splitLevinson (
-	double xw [], long nx,	/* The windowed signal xw [1..nx] */
-	int ncof,	/* The coefficients cof [1..ncof] */
-	Formant_Frame frame, double nyquistFrequency)	/* Put the results here. */
+	double xw [], long nx,   // the windowed signal xw [1..nx]
+	int ncof,   // the coefficients cof [1..ncof]
+	Formant_Frame frame, double nyquistFrequency)   // put the results here
 {
 	int result = 1;
 	double rx [100], zeroes [33];
@@ -188,7 +195,7 @@ static int splitLevinson (
 			if (degree == 1) {
 				(void) 0;
 			} else if (degree == 2) {
-				zeroes [0] = 1.0;   /* Starting values. */
+				zeroes [0] = 1.0;   // starting values
 				zeroes [1] = 0.5 - 0.5 * pnu [1];
 				zeroes [2] = -1.0;
 			}
@@ -268,7 +275,7 @@ static Formant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOf
 	long nsamp_window = (long) floor (dt_window / my dx), halfnsamp_window = nsamp_window / 2;
 
 	if (nsamp_window < numberOfPoles + 1)
-		Melder_throw ("Window too short.");
+		Melder_throw (U"Window too short.");
 	t1 = my x1 + 0.5 * (duration - my dx - (nFrames - 1) * dt);   // centre of first frame
 	if (nFrames < 1) {
 		nFrames = 1;
@@ -281,7 +288,7 @@ static Formant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOf
 	autoNUMvector <double> frame (1, nsamp_window);
 	autoNUMvector <double> cof (1, numberOfPoles);   // superfluous if which==2, but nobody uses that anyway
 
-	autoMelderProgress progress (L"Formant analysis...");
+	autoMelderProgress progress (U"Formant analysis...");
 
 	/* Pre-emphasis. */
 	Sound_preEmphasis (me, preemphasisFrequency);
@@ -308,7 +315,7 @@ static Formant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOf
 			}
 		}
 		if (maximumIntensity == HUGE_VAL)
-			Melder_throw ("Sound contains infinities.");
+			Melder_throw (U"Sound contains infinities.");
 		thy d_frames [iframe]. intensity = maximumIntensity;
 		if (maximumIntensity == 0.0) continue;   // Burg cannot stand all zeroes
 
@@ -321,10 +328,13 @@ static Formant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOf
 		} else if (which == 2) {
 			if (! splitLevinson (frame.peek(), endSample - startSample + 1, numberOfPoles, & thy d_frames [iframe], 0.5 / my dx)) {
 				Melder_clearError ();
-				Melder_casual ("(Sound_to_Formant:) Analysis results of frame %ld will be wrong.", iframe);
+				Melder_casual (U"(Sound_to_Formant:)"
+					U" Analysis results of frame ", iframe,
+					U" will be wrong."
+				);
 			}
 		}
-		Melder_progress ((double) iframe / (double) nFrames, L"Formant analysis: frame ", Melder_integer (iframe));
+		Melder_progress ((double) iframe / (double) nFrames, U"Formant analysis: frame ", iframe);
 	}
 	Formant_sort (thee.peek());
 	return thee.transfer();
@@ -348,7 +358,7 @@ Formant Sound_to_Formant_burg (Sound me, double dt, double nFormants, double max
 	try {
 		return Sound_to_Formant_any (me, dt, (int) (2 * nFormants), maximumFrequency, halfdt_window, 1, preemphasisFrequency, 50.0);
 	} catch (MelderError) {
-		Melder_throw (me, ": formant analysis (Burg) not performed.");
+		Melder_throw (me, U": formant analysis (Burg) not performed.");
 	}
 }
 
@@ -356,7 +366,7 @@ Formant Sound_to_Formant_keepAll (Sound me, double dt, double nFormants, double 
 	try {
 		return Sound_to_Formant_any (me, dt, (int) (2 * nFormants), maximumFrequency, halfdt_window, 1, preemphasisFrequency, 0.0);
 	} catch (MelderError) {
-		Melder_throw (me, ": formant analysis (keep all) not performed.");
+		Melder_throw (me, U": formant analysis (keep all) not performed.");
 	}
 }
 
@@ -364,7 +374,7 @@ Formant Sound_to_Formant_willems (Sound me, double dt, double nFormants, double 
 	try {
 		return Sound_to_Formant_any (me, dt, (int) (2 * nFormants), maximumFrequency, halfdt_window, 2, preemphasisFrequency, 50.0);
 	} catch (MelderError) {
-		Melder_throw (me, ": formant analysis (Burg) not performed.");
+		Melder_throw (me, U": formant analysis (Burg) not performed.");
 	}
 }
 

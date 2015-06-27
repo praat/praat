@@ -34,7 +34,7 @@ Thing_implement (GuiProgressBar, GuiControl, 0);
 	- (void) dealloc {   // override
 		GuiProgressBar me = d_userData;
 		forget (me);
-		trace ("deleting a progress bar");
+		trace (U"deleting a progress bar");
 		[super dealloc];
 	}
 	- (GuiThing) userData {
@@ -48,10 +48,10 @@ Thing_implement (GuiProgressBar, GuiControl, 0);
 #elif motif
 	static void _guiMotifProgressBar_destroyCallback (GuiObject widget, XtPointer void_me, XtPointer call) {
 		(void) widget; (void) call;
-		trace ("destroying a progress bar");
+		trace (U"destroying a progress bar");
 		iam (GuiProgressBar);
 		//forget (me);   // because I am already forgotten in the scale::destroy callback
-		trace ("destroyed a progress bar");
+		trace (U"destroyed a progress bar");
 	}
 #endif
 

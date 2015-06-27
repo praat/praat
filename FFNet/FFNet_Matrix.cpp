@@ -27,7 +27,7 @@
 Matrix FFNet_weightsToMatrix (FFNet me, long layer, int deltaWeights) {
 	try {
 		if (layer < 1 || layer > my nLayers) {
-			Melder_throw ("Layer must be > 0 and < ", my nLayers, ".");
+			Melder_throw (U"Layer must be > 0 and < ", my nLayers, U".");
 		}
 		autoMatrix thee = Matrix_create (
 		                      0.5, my nUnitsInLayer[layer] + 0.5, my nUnitsInLayer[layer], 1, 1,
@@ -44,20 +44,20 @@ Matrix FFNet_weightsToMatrix (FFNet me, long layer, int deltaWeights) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Matrix created.");
+		Melder_throw (me, U": no Matrix created.");
 	}
 }
 
 FFNet FFNet_weightsFromMatrix (FFNet me, Matrix him, long layer) {
 	try {
 		if (layer < 1 || layer > my nLayers) {
-			Melder_throw ("Layer must be > 0 and < ", my nLayers, ".");
+			Melder_throw (U"Layer must be > 0 and < ", my nLayers, U".");
 		}
-		if (my nUnitsInLayer[layer] != his nx) Melder_throw (L"The #columns (", his nx, ") must equal "
-			        "#units (", my nUnitsInLayer[layer], ") in layer ", layer, ".");
+		if (my nUnitsInLayer[layer] != his nx) Melder_throw (U"The #columns (", his nx, U") must equal "
+			        U"#units (", my nUnitsInLayer[layer], U") in layer ", layer, U".");
 		long nunits = my nUnitsInLayer[layer - 1] + 1;
 		if (nunits != his ny) {
-			Melder_throw (" The #rows (", his ny, ")  must equal #units (", nunits , ") in layer ", layer - 1, ".");
+			Melder_throw (U" The #rows (", his ny, U")  must equal #units (", nunits , U") in layer ", layer - 1, U".");
 		}
 		autoFFNet thee = (FFNet) Data_copy (me);
 		long node = 1;
@@ -72,7 +72,7 @@ FFNet FFNet_weightsFromMatrix (FFNet me, Matrix him, long layer) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no FFNet created.");
+		Melder_throw (me, U": no FFNet created.");
 	}
 }
 

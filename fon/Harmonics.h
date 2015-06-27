@@ -2,7 +2,7 @@
 #define _Harmonics_h_
 /* Harmonics.h
  *
- * Copyright (C) 2011 Paul Boersma
+ * Copyright (C) 2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ oo_CLASS_CREATE (Harmonics, Data);
 Harmonics Harmonics_create (long numberOfHarmonics);
 
 void Harmonics_draw (Harmonics me, Graphics g, double fmin, double fmax,
-	double minimum, double maximum, int garnish, const wchar_t *method);
+	double minimum, double maximum, int garnish, const char32 *method);
 
 Matrix Harmonics_to_Matrix (Harmonics me);
 Harmonics Matrix_to_Harmonics (Matrix me);

@@ -29,7 +29,7 @@ void structCategories :: v_readText (MelderReadText a_text) {
 	if (l_size == 0) {
 		OrderedOfString_init (this, 1);
 	} else if (l_size < 0) {
-		Melder_throw ("Size cannot be negative.");
+		Melder_throw (U"Size cannot be negative.");
 	} else {
 		OrderedOfString_init (this, l_size);   // David, in je vorige versie kon dit tweemaal aangeroepen worden (en in dat geval crashend): Ja dat was een bug, Ok nu
 	}
@@ -41,10 +41,10 @@ void structCategories :: v_readText (MelderReadText a_text) {
 }
 
 void structCategories :: v_writeText (MelderFile file) {
-	texputi4 (file, size, L"size", 0, 0, 0, 0, 0);
+	texputi4 (file, size, U"size", 0, 0, 0, 0, 0);
 	for (long i = 1; i <= size; i++) {
 		SimpleString data = (SimpleString) item [i];
-		texputintro (file, L"item" " [", Melder_integer (i), L"]:", 0, 0, 0);
+		texputintro (file, U"item" " [", Melder_integer (i), U"]:", NULL, NULL, NULL);
 		data -> structSimpleString :: v_writeText (file);
 		texexdent (file);
 	}
@@ -62,7 +62,7 @@ Categories Categories_create () {
 		Categories_init (me.peek(), 10);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Categories not created.");
+		Melder_throw (U"Categories not created.");
 	}
 }
 
@@ -73,7 +73,7 @@ Categories Categories_sequentialNumbers (long n) {
 		OrderedOfString_sequentialNumbers (me.peek(), n);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Sequential number Categories not created.");
+		Melder_throw (U"Sequential number Categories not created.");
 	}
 }
 
@@ -83,7 +83,7 @@ Categories Categories_selectUniqueItems (Categories me, int sorted) {
 		autoCategories thee = OrderedOfString_to_Categories (s.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no unique categories created.");
+		Melder_throw (me, U": no unique categories created.");
 	}
 }
 
@@ -106,7 +106,7 @@ Categories OrderedOfString_to_Categories (I) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Categories.");
+		Melder_throw (me, U": not converted to Categories.");
 	}
 }
 
@@ -128,7 +128,7 @@ Categories TableOfReal_to_CategoriesRow (I) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": row labels not converted to Categories.");
+		Melder_throw (me, U": row labels not converted to Categories.");
 	}
 }
 
@@ -145,7 +145,7 @@ Categories TableOfReal_to_CategoriesColumn (I) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": columnlabels not converted to Categories.");
+		Melder_throw (me, U": columnlabels not converted to Categories.");
 	}
 }
 

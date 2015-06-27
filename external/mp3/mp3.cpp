@@ -150,7 +150,7 @@ MP3_FILE mp3f_new (void)
 	try {
 		return Melder_calloc (struct _MP3_FILE, 1);
 	} catch (MelderError) {
-		Melder_throw ("Cannot create MP3 file object.");
+		Melder_throw (U"Cannot create MP3 file object.");
 	}
 }
 

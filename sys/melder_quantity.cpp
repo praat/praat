@@ -1,6 +1,6 @@
 /* melder_quantity.cpp
  *
- * Copyright (C) 2007-2011 Paul Boersma
+ * Copyright (C) 2007-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,24 +19,24 @@
 
 /*
  * pb 2007/03/17 created
- * pb 2007/08/14 wchar_t
+ * pb 2007/08/14 wchar
  * pb 2008/03/07 typo
  * pb 2011/04/05 C++
  */
 
 #include "melder.h"
 
-static const wchar_t * texts [1+MelderQuantity_NUMBER_OF_QUANTITIES] [4] = {
-	{ L"", L"", L"", L"" },
-	{ L"Time", L"Time (s)", L"seconds", L"s" },
-	{ L"Frequency", L"Frequency (Hz)", L"Hertz", L"Hz" },
-	{ L"Frequency", L"Frequency (Bark)", L"Bark", L"Bark" },
-	{ L"Distance from glottis", L"Distance from glottis (m)", L"metres", L"m" },	
+static const char32 * texts [1+MelderQuantity_NUMBER_OF_QUANTITIES] [4] = {
+	{ U"", U"", U"", U"" },
+	{ U"Time", U"Time (s)", U"seconds", U"s" },
+	{ U"Frequency", U"Frequency (Hz)", U"Hertz", U"Hz" },
+	{ U"Frequency", U"Frequency (Bark)", U"Bark", U"Bark" },
+	{ U"Distance from glottis", U"Distance from glottis (m)", U"metres", U"m" },	
 };
 
-const wchar_t * MelderQuantity_getText (int quantity) { return texts [quantity] [0]; }
-const wchar_t * MelderQuantity_getWithUnitText (int quantity) { return texts [quantity] [1]; }
-const wchar_t * MelderQuantity_getLongUnitText (int quantity) { return texts [quantity] [2]; }
-const wchar_t * MelderQuantity_getShortUnitText (int quantity) { return texts [quantity] [3]; }
+const char32 * MelderQuantity_getText (int quantity) { return texts [quantity] [0]; }
+const char32 * MelderQuantity_getWithUnitText (int quantity) { return texts [quantity] [1]; }
+const char32 * MelderQuantity_getLongUnitText (int quantity) { return texts [quantity] [2]; }
+const char32 * MelderQuantity_getShortUnitText (int quantity) { return texts [quantity] [3]; }
 
 /* End of file melder_quantity.cpp */

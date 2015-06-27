@@ -58,8 +58,8 @@ oo_DEFINE_CLASS (HMM, Data)
 	oo_OBJECT (Ordered, 1, observationSymbols)
 
 	#if oo_DECLARING
-		// overridden methods:
-			virtual void v_info ();
+		void v_info ()
+			override;
 	#endif
 
 oo_END_CLASS(HMM)

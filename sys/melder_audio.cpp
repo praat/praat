@@ -1,6 +1,6 @@
 /* melder_audio.cpp
  *
- * Copyright (C) 1992-2011,2012,2013,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
  * pb 2006/12/16 Macintosh uses CoreAudio (via PortAudio)
  * pb 2007/01/03 best sample rate can be over 64 kHz
  * pb 2007/05/13 null pointer test for deviceInfo (thanks to Stefan de Konink)
- * pb 2007/08/12 wchar_t
+ * pb 2007/08/12 wchar
  * Stefan de Konink 2007/12/02 big-endian Linux
  * pb 2007/12/04 enums
  * pb 2008/06/01 removed SPEXLAB audio server
@@ -40,6 +40,7 @@
  * pb 2010/05/09 GTK
  * pb 2011/02/11 better message
  * pb 2011/04/05 C++
+ * pb 2015/06/08 char32
  */
 
 #if defined (macintosh)
@@ -80,12 +81,12 @@ static struct {
 } preferences;
 
 void Melder_audio_prefs (void) {
-	Preferences_addEnum (L"Audio.maximumAsynchronicity", & preferences. maximumAsynchronicity, kMelder_asynchronicityLevel, kMelder_asynchronicityLevel_DEFAULT);
-	Preferences_addBool (L"Audio.useInternalSpeaker", & preferences. useInternalSpeaker, true);
-	Preferences_addBool (L"Audio.outputUsesPortAudio2", & preferences. outputUsesPortAudio, kMelderAudio_outputUsesPortAudio_DEFAULT);
-	Preferences_addDouble (L"Audio.silenceBefore", & preferences. silenceBefore, kMelderAudio_outputSilenceBefore_DEFAULT);
-	Preferences_addDouble (L"Audio.silenceAfter", & preferences. silenceAfter, kMelderAudio_outputSilenceAfter_DEFAULT);
-	Preferences_addBool (L"Audio.inputUsesPortAudio2", & preferences. inputUsesPortAudio, kMelderAudio_inputUsesPortAudio_DEFAULT);
+	Preferences_addEnum (U"Audio.maximumAsynchronicity", & preferences. maximumAsynchronicity, kMelder_asynchronicityLevel, kMelder_asynchronicityLevel_DEFAULT);
+	Preferences_addBool (U"Audio.useInternalSpeaker", & preferences. useInternalSpeaker, true);
+	Preferences_addBool (U"Audio.outputUsesPortAudio2", & preferences. outputUsesPortAudio, kMelderAudio_outputUsesPortAudio_DEFAULT);
+	Preferences_addDouble (U"Audio.silenceBefore", & preferences. silenceBefore, kMelderAudio_outputSilenceBefore_DEFAULT);
+	Preferences_addDouble (U"Audio.silenceAfter", & preferences. silenceAfter, kMelderAudio_outputSilenceAfter_DEFAULT);
+	Preferences_addBool (U"Audio.inputUsesPortAudio2", & preferences. inputUsesPortAudio, kMelderAudio_inputUsesPortAudio_DEFAULT);
 }
 
 void MelderAudio_setOutputMaximumAsynchronicity (enum kMelder_asynchronicityLevel maximumAsynchronicity) {
@@ -328,7 +329,7 @@ static bool flush (void) {
 }
 
 bool MelderAudio_stopPlaying (bool explicitStop) {
-	//Melder_casual ("stop playing!");
+	//Melder_casual (U"stop playing!");
 	struct MelderPlay *me = & thePlay;
 	my explicitStop = explicitStop;
 	if (! MelderAudio_isPlaying || my asynchronicity < kMelder_asynchronicityLevel_ASYNCHRONOUS) return false;
@@ -347,7 +348,7 @@ static bool workProc (void *closure) {
 	struct MelderPlay *me = & thePlay;
 //static long n = 0;
 //n ++;
-//Melder_casual("workProc %ld", n);
+//Melder_casual (U"workProc ", n);
 	if (my usePortAudio) {
 		#if defined (linux)
 			double timeElapsed = Melder_clock () - theStartingTime - Pa_GetStreamInfo (my stream) -> outputLatency;
@@ -377,7 +378,7 @@ static bool workProc (void *closure) {
 			 */
 		#else
 			double timeElapsed = Melder_clock () - theStartingTime - Pa_GetStreamInfo (my stream) -> outputLatency;
-			my samplesPlayed = timeElapsed * my sampleRate;
+			my samplesPlayed = (long) floor (timeElapsed * my sampleRate);
 			if (my supports_paComplete && Pa_IsStreamActive (my stream)) {
 				if (my callback && ! my callback (my closure, my samplesPlayed)) {
 					Pa_AbortStream (my stream);
@@ -477,15 +478,14 @@ static int thePaStreamCallback (const void *input, void *output,
 		return my supports_paComplete ? paComplete : paContinue;
 	}
 	if (statusFlags & paOutputUnderflow) {
-		if (Melder_debug == 20) Melder_casual ("output underflow");
+		if (Melder_debug == 20) Melder_casual (U"output underflow");
 	}
 	if (statusFlags & paOutputOverflow) {
-		if (Melder_debug == 20) Melder_casual ("output overflow");
+		if (Melder_debug == 20) Melder_casual (U"output overflow");
 	}
 	if (my samplesLeft > 0) {
 		long dsamples = my samplesLeft > (long) frameCount ? (long) frameCount : my samplesLeft;
-		if (Melder_debug == 20) Melder_casual ("play %ls %ls", Melder_integer (dsamples),
-			Melder_double (Pa_GetStreamCpuLoad (my stream)));
+		if (Melder_debug == 20) Melder_casual (U"play ", dsamples, U" ", Pa_GetStreamCpuLoad (my stream));
 		memset (output, '\0', 2 * frameCount * my numberOfChannels);
 		Melder_assert (my buffer != NULL);
 		memcpy (output, (char *) & my buffer [my samplesSent * my numberOfChannels], 2 * dsamples * my numberOfChannels);
@@ -495,7 +495,7 @@ static int thePaStreamCallback (const void *input, void *output,
 	} else /*if (my samplesPlayed >= my numberOfSamples)*/ {
 		memset (output, '\0', 2 * frameCount * my numberOfChannels);
 		my samplesPlayed = my numberOfSamples;
-		trace ("paComplete");
+		trace (U"paComplete");
 		return my supports_paComplete ? paComplete : paContinue;
 	}
 	return paContinue;
@@ -521,7 +521,7 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 		kMelder_asynchronicityLevel_ASYNCHRONOUS;
 	if (my asynchronicity > preferences. maximumAsynchronicity)
 		my asynchronicity = preferences. maximumAsynchronicity;
-	trace ("asynchronicity %d", (int) my asynchronicity);
+	trace (U"asynchronicity ", my asynchronicity);
 	my usePortAudio = preferences. outputUsesPortAudio;
 	my explicitStop = MelderAudio_IMPLICIT;
 	my fakeMono = false;
@@ -536,14 +536,14 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 		static bool paInitialized = false;
 		if (! paInitialized) {
 			err = Pa_Initialize ();
-			if (err) Melder_fatal ("PortAudio does not initialize: %s", Pa_GetErrorText (err));
+			if (err) Melder_fatal (U"PortAudio does not initialize: ", Melder_peek8to32 (Pa_GetErrorText (err)));
 			paInitialized = true;
 		}
 		my supports_paComplete = Pa_GetHostApiInfo (Pa_GetDefaultHostApi ()) -> type != paDirectSound &&false;
 		PaStreamParameters outputParameters = { 0 };
 		outputParameters. device = Pa_GetDefaultOutputDevice ();
 		const PaDeviceInfo *deviceInfo = Pa_GetDeviceInfo (outputParameters. device);
-		trace ("the device can handle %d channels", (int) deviceInfo -> maxOutputChannels);
+		trace (U"the device can handle ", deviceInfo -> maxOutputChannels, U" channels");
 		if (my numberOfChannels > deviceInfo -> maxOutputChannels) {
 			my numberOfChannels = deviceInfo -> maxOutputChannels;
 		}
@@ -580,10 +580,10 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 		outputParameters. hostApiSpecificStreamInfo = NULL;
 		err = Pa_OpenStream (& my stream, NULL, & outputParameters, my sampleRate, paFramesPerBufferUnspecified,
 			paDitherOff, thePaStreamCallback, me);
-		if (err) Melder_throw ("PortAudio cannot open sound output: ", Pa_GetErrorText (err), ".");
+		if (err) Melder_throw (U"PortAudio cannot open sound output: ", Melder_peek8to32 (Pa_GetErrorText (err)), U".");
 		theStartingTime = Melder_clock ();
 		err = Pa_StartStream (my stream);
-		if (err) Melder_throw ("PortAudio cannot start sound output: ", Pa_GetErrorText (err), ".");
+		if (err) Melder_throw (U"PortAudio cannot start sound output: ", Melder_peek8to32 (Pa_GetErrorText (err)), U".");
 		my paStartingTime = Pa_GetStreamTime (my stream);
 		if (my asynchronicity <= kMelder_asynchronicityLevel_INTERRUPTABLE) {
 			for (;;) {
@@ -600,7 +600,7 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 					 * A version that doesn't trust that the stream callback will complete.
 					 */
 					double timeElapsed = Melder_clock () - theStartingTime - Pa_GetStreamInfo (my stream) -> outputLatency;
-					long samplesPlayed = timeElapsed * my sampleRate;
+					long samplesPlayed = (long) floor (timeElapsed * my sampleRate);
 					if (samplesPlayed >= my numberOfSamples + my sampleRate / 20) {
 						my samplesPlayed = my numberOfSamples;
 						break;
@@ -654,7 +654,7 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 				Pa_Sleep (10);
 			}
 			if (my samplesPlayed != my numberOfSamples) {
-				Melder_fatal ("Played %ld instead of %ld samples.", my samplesPlayed, my numberOfSamples);
+				Melder_fatal (U"Played ", my samplesPlayed, U" instead of ", my numberOfSamples, U" samples.");
 			}
 			#ifndef linux
 				Pa_AbortStream (my stream);
@@ -686,15 +686,15 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 				#endif
 				/* O_NDELAY option added by Rafael Laboissiere, May 19, 2005 */
 				if ((my audio_fd = open ("/dev/dsp", O_WRONLY | (Melder_debug == 16 ? 0 : O_NDELAY))) == -1) {
-					Melder_throw (errno == EBUSY ? "Audio device already in use." :
-						"Cannot open audio device.\nPlease switch on PortAudio in Praat's Sound Playing Preferences.");
+					Melder_throw (errno == EBUSY ? U"Audio device already in use." :
+						U"Cannot open audio device.\nPlease switch on PortAudio in Praat's Sound Playing Preferences.");
 				}
 				fcntl (my audio_fd, F_SETFL, 0);   /* Added by Rafael Laboissiere, May 19, 2005 */
-				if (ioctl (my audio_fd, SNDCTL_DSP_SETFMT,   /* Changed SND_DSP_SAMPLESIZE to SNDCTL_DSP_SETFMT; Stefan de Konink, Nov 29, 2007 */
-					(my val = fmt, & my val)) == -1 ||   /* Error? */
-					my val != fmt)   /* Has sound card overridden our sample size? */
+				if (ioctl (my audio_fd, SNDCTL_DSP_SETFMT,   // changed SND_DSP_SAMPLESIZE to SNDCTL_DSP_SETFMT; Stefan de Konink, Nov 29, 2007
+					(my val = fmt, & my val)) == -1 ||   // error?
+					my val != fmt)   // has sound card overridden our sample size?
 				{
-					Melder_throw ("Cannot set sample size to 16 bit.");
+					Melder_throw (U"Cannot set sample size to 16 bit.");
 				}
 				if (ioctl (my audio_fd, SNDCTL_DSP_CHANNELS, (my val = my numberOfChannels, & my val)) == -1 ||   /* Error? */
 					my val != my numberOfChannels)   /* Has sound card overridden our number of channels? */
@@ -713,27 +713,27 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 						my buffer = newBuffer;
 						my numberOfChannels = 2;
 					} else {
-						Melder_throw ("Cannot set number of channels to .", my numberOfChannels, ".");
+						Melder_throw (U"Cannot set number of channels to .", my numberOfChannels, U".");
 					}
 				}
 				if (ioctl (my audio_fd, SNDCTL_DSP_SPEED, (my val = my sampleRate, & my val)) == -1 ||    // error?
-					my val != my sampleRate)   /* Has sound card overridden our sampling frequency? */
+					my val != my sampleRate)   // has sound card overridden our sampling frequency?
 				{
-					Melder_throw ("Cannot set sampling frequency to ", my sampleRate, " Hz.");
+					Melder_throw (U"Cannot set sampling frequency to ", my sampleRate, U" Hz.");
 				}
 
 				theStartingTime = Melder_clock ();
 				if (my asynchronicity == kMelder_asynchronicityLevel_SYNCHRONOUS) {
 					if (write (my audio_fd, & my buffer [0], 2 * numberOfChannels * numberOfSamples) == -1)
-						Melder_throw ("Cannot write audio output.");
-					close (my audio_fd), my audio_fd = 0;   /* Drain. Set to zero in order to notify flush (). */
+						Melder_throw (U"Cannot write audio output.");
+					close (my audio_fd), my audio_fd = 0;   // drain; set to zero in order to notify flush ()
 					my samplesPlayed = my numberOfSamples;
 				} else if (my asynchronicity <= kMelder_asynchronicityLevel_INTERRUPTABLE) {
 					bool interrupted = false;
 					while (my samplesLeft && ! interrupted) {
 						int dsamples = my samplesLeft > 500 ? 500 : my samplesLeft;
 						if (write (my audio_fd, (char *) & my buffer [my samplesSent * my numberOfChannels], 2 * dsamples * my numberOfChannels) == -1)
-							Melder_throw ("Cannot write audio output.");
+							Melder_throw (U"Cannot write audio output.");
 						my samplesLeft -= dsamples;
 						my samplesSent += dsamples;
 						my samplesPlayed = (Melder_clock () - theStartingTime) * my sampleRate;
@@ -759,7 +759,7 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 				struct MelderPlay *me = & thePlay;
 				if (my audio_fd) close (my audio_fd), my audio_fd = 0;
 				MelderAudio_isPlaying = false;
-				Melder_throw ("16-bit audio not played.");
+				Melder_throw (U"16-bit audio not played.");
 			}
 		#elif defined (_WIN32)
 			try {
@@ -776,14 +776,14 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 				if (err != MMSYSERR_NOERROR) {
 					MelderAudio_isPlaying = false;
 					if (err == MMSYSERR_ALLOCATED)
-						Melder_throw ("Previous sound is still playing? Should not occur!\n"
-							"Report bug to the author: ", err, "; wasPlaying: ", wasPlaying, ".");
+						Melder_throw (U"Previous sound is still playing? Should not occur!\n"
+							U"Report bug to the author: ", err, U"; wasPlaying: ", wasPlaying, U".");
 					if (err == MMSYSERR_BADDEVICEID)
-						Melder_throw ("Cannot play a sound. Perhaps another program is playing a sound at the same time?");
+						Melder_throw (U"Cannot play a sound. Perhaps another program is playing a sound at the same time?");
 					if (err == MMSYSERR_NODRIVER)
-						Melder_throw ("This computer probably has no sound card.");
+						Melder_throw (U"This computer probably has no sound card.");
 					if (err == MMSYSERR_NOMEM)
-						Melder_throw ("Not enough free memory to play any sound at all.");
+						Melder_throw (U"Not enough free memory to play any sound at all.");
 					if (err == WAVERR_BADFORMAT) {
 						if (my numberOfChannels > 2) {
 							/*
@@ -795,13 +795,13 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 							waveFormat. nAvgBytesPerSec = waveFormat. nBlockAlign * waveFormat. nSamplesPerSec;
 							err = waveOutOpen (& my hWaveOut, WAVE_MAPPER, & waveFormat, 0, 0, CALLBACK_NULL | WAVE_ALLOWSYNC);
 							if (err != MMSYSERR_NOERROR)
-								Melder_throw ("Bad sound format even after reduction to 2 channels? Should not occur! Report bug to the author!");
+								Melder_throw (U"Bad sound format even after reduction to 2 channels? Should not occur! Report bug to the author!");
 							MelderAudio_isPlaying = true;
 						} else {
-							Melder_throw ("Bad sound format? Should not occur! Report bug to the author!");
+							Melder_throw (U"Bad sound format? Should not occur! Report bug to the author!");
 						}
 					} else {
-						Melder_throw ("Unknown error ", err, " while trying to play a sound? Report bug to the author!");
+						Melder_throw (U"Unknown error ", err, U" while trying to play a sound? Report bug to the author!");
 					}
 				}
 				if (numberOfChannels > my numberOfChannels) {
@@ -844,13 +844,13 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 					waveOutClose (my hWaveOut), my hWaveOut = 0;
 					MelderAudio_isPlaying = false;
 					if (err == MMSYSERR_INVALHANDLE)
-						Melder_throw ("No device? Should not occur!");
+						Melder_throw (U"No device? Should not occur!");
 					if (err == MMSYSERR_NODRIVER)
-						Melder_throw ("No driver? Should not occur!");
+						Melder_throw (U"No driver? Should not occur!");
 					if (err == MMSYSERR_NOMEM)
-						Melder_throw ("Not enough free memory to play this sound.\n"
-							"Remove some objects, play a shorter sound, or buy more memory.");
-					Melder_throw ("Unknown error ", err, " while preparing header? Should not occur!");
+						Melder_throw (U"Not enough free memory to play this sound.\n"
+							U"Remove some objects, play a shorter sound, or buy more memory.");
+					Melder_throw (U"Unknown error ", err, U" while preparing header? Should not occur!");
 				}
 
 				err = waveOutWrite (my hWaveOut, & my waveHeader, sizeof (WAVEHDR));
@@ -859,7 +859,7 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 					waveOutUnprepareHeader (my hWaveOut, & my waveHeader, sizeof (WAVEHDR));
 					waveOutClose (my hWaveOut), my hWaveOut = 0;
 					MelderAudio_isPlaying = false;
-					Melder_throw ("Error ", err, " while writing audio output.");   // BUG: should flush
+					Melder_throw (U"Error ", err, U" while writing audio output.");   // BUG: should flush
 				}
 
 				theStartingTime = Melder_clock ();
@@ -891,10 +891,10 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 				flush ();
 				return;
 			} catch (MelderError) {
-				Melder_throw ("16-bit audio not played.");
+				Melder_throw (U"16-bit audio not played.");
 			}
 		#else
-			Melder_throw ("Cannot play a sound on this computer.\n16-bit audio not played.");
+			Melder_throw (U"Cannot play a sound on this computer.\n16-bit audio not played.");
 		#endif
 	}
 }

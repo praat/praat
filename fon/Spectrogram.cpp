@@ -1,6 +1,6 @@
 /* Spectrogram.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,22 +23,22 @@ Thing_implement (Spectrogram, Matrix, 2);
 
 void structSpectrogram :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine (L"Time domain:");
-	MelderInfo_writeLine (L"   Start time: ", Melder_double (xmin), L" seconds");
-	MelderInfo_writeLine (L"   End time: ", Melder_double (xmax), L" seconds");
-	MelderInfo_writeLine (L"   Total duration: ", Melder_double (xmax - xmin), L" seconds");
-	MelderInfo_writeLine (L"Time sampling:");
-	MelderInfo_writeLine (L"   Number of time slices (frames): ", Melder_integer (nx));
-	MelderInfo_writeLine (L"   Time step (frame distance): ", Melder_double (dx), L" seconds");
-	MelderInfo_writeLine (L"   First time slice (frame centre) at: ", Melder_double (x1), L" seconds");
-	MelderInfo_writeLine (L"Frequency domain:");
-	MelderInfo_writeLine (L"   Lowest frequency: ", Melder_double (ymin), L" Hz");
-	MelderInfo_writeLine (L"   Highest frequency: ", Melder_double (ymax), L" Hz");
-	MelderInfo_writeLine (L"   Total bandwidth: ", Melder_double (ymax - ymin), L" Hz");
-	MelderInfo_writeLine (L"Frequency sampling:");
-	MelderInfo_writeLine (L"   Number of frequency bands (bins): ", Melder_integer (ny));
-	MelderInfo_writeLine (L"   Frequency step (bin width): ", Melder_double (dy), L" Hz");
-	MelderInfo_writeLine (L"   First frequency band around (bin centre at): ", Melder_double (y1), L" Hz");
+	MelderInfo_writeLine (U"Time domain:");
+	MelderInfo_writeLine (U"   Start time: ", xmin, U" seconds");
+	MelderInfo_writeLine (U"   End time: ", xmax, U" seconds");
+	MelderInfo_writeLine (U"   Total duration: ", xmax - xmin, U" seconds");
+	MelderInfo_writeLine (U"Time sampling:");
+	MelderInfo_writeLine (U"   Number of time slices (frames): ", nx);
+	MelderInfo_writeLine (U"   Time step (frame distance): ", dx, U" seconds");
+	MelderInfo_writeLine (U"   First time slice (frame centre) at: ", x1, U" seconds");
+	MelderInfo_writeLine (U"Frequency domain:");
+	MelderInfo_writeLine (U"   Lowest frequency: ", ymin, U" Hz");
+	MelderInfo_writeLine (U"   Highest frequency: ", ymax, U" Hz");
+	MelderInfo_writeLine (U"   Total bandwidth: ", ymax - ymin, U" Hz");
+	MelderInfo_writeLine (U"Frequency sampling:");
+	MelderInfo_writeLine (U"   Number of frequency bands (bins): ", ny);
+	MelderInfo_writeLine (U"   Frequency step (bin width): ", dy, U" Hz");
+	MelderInfo_writeLine (U"   First frequency band around (bin centre at): ", y1, U" Hz");
 }
 
 Spectrogram Spectrogram_create (double tmin, double tmax, long nt, double dt, double t1,
@@ -49,7 +49,7 @@ Spectrogram Spectrogram_create (double tmin, double tmax, long nt, double dt, do
 		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Spectrogram not created.");
+		Melder_throw (U"Spectrogram not created.");
 	}
 }
 
@@ -113,10 +113,10 @@ void Spectrogram_paint (Spectrogram me, Graphics g,
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, L"Time (s)");
+		Graphics_textBottom (g, 1, U"Time (s)");
 		Graphics_marksBottom (g, 2, 1, 1, 0);
 		Graphics_marksLeft (g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, L"Frequency (Hz)");
+		Graphics_textLeft (g, 1, U"Frequency (Hz)");
 	}
 }
 
@@ -126,7 +126,7 @@ Spectrogram Matrix_to_Spectrogram (Matrix me) {
 		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Spectrogram.");
+		Melder_throw (me, U": not converted to Spectrogram.");
 	}
 }
 
@@ -136,7 +136,7 @@ Matrix Spectrogram_to_Matrix (Spectrogram me) {
 		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Matrix.");
+		Melder_throw (me, U": not converted to Matrix.");
 	}
 }
 

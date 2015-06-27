@@ -42,7 +42,7 @@ void structGuiControl :: v_positionInForm (GuiObject widget, int left, int right
 		if (right  <= 0) right  += parentWidth;
         if (top    <  0) top    += parentHeight;
 		if (bottom <= 0) bottom += parentHeight;
-		trace ("fixed: parent width %d height %d", parentWidth, parentHeight);
+		trace (U"fixed: parent width ", parentWidth, U" height ", parentHeight);
 		gtk_widget_set_size_request (GTK_WIDGET (widget), right - left, bottom - top);
 		gtk_fixed_put (GTK_FIXED (parent -> d_widget), GTK_WIDGET (widget), left, top);
 	#elif cocoa
@@ -104,9 +104,9 @@ void structGuiControl :: v_positionInForm (GuiObject widget, int left, int right
 			}
 		} else {
 			Melder_assert (right <= 0);
-			trace ("parent width %d", parent -> d_widget -> width);
+			trace (U"parent width ", parent -> d_widget -> width);
 			XtVaSetValues (widget, XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, - right, XmNwidth, right - left, NULL);
-			trace ("parent width %d", parent -> d_widget -> width);
+			trace (U"parent width ", parent -> d_widget -> width);
 		}
 		if (top >= 0) {
 			if (bottom > 0) {

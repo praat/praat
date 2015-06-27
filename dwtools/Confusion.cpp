@@ -44,39 +44,38 @@ void structConfusion :: v_info () {
 	Confusion_getEntropies (this, & h, & hx, & hy, & hygx, & hxgy, & uygx,
 	                        & uxgy, & uxy);
 	Confusion_getFractionCorrect (this, & frac, & nCorrect);
-	MelderInfo_writeLine (L"Number of rows: ", Melder_integer (numberOfRows));
-	MelderInfo_writeLine (L"Number of colums: ", Melder_integer (numberOfColumns));
-	MelderInfo_writeLine (L"Entropies (y is row variable):");
-	MelderInfo_writeLine (L"  Total: ", Melder_double (h));
-	MelderInfo_writeLine (L"  Y: ", Melder_double (hy));
-	MelderInfo_writeLine (L"  X: ", Melder_double (hx));
-	MelderInfo_writeLine (L"  Y given x: ", Melder_double (hygx));
-	MelderInfo_writeLine (L"  X given y: ", Melder_double (hxgy));
-	MelderInfo_writeLine (L"  Dependency of y on x; ", Melder_double (uygx));
-	MelderInfo_writeLine (L"  Dependency of x on y: ", Melder_double (uxgy));
-	MelderInfo_writeLine (L"  Symmetrical dependency: ", Melder_double (uxy));
-	MelderInfo_writeLine (L"  Total number of entries: ",
-	                       Melder_integer (Confusion_getNumberOfEntries (this)));
-	MelderInfo_writeLine (L" Fraction correct: ", Melder_double (frac));
+	MelderInfo_writeLine (U"Number of rows: ", numberOfRows);
+	MelderInfo_writeLine (U"Number of colums: ", numberOfColumns);
+	MelderInfo_writeLine (U"Entropies (y is row variable):");
+	MelderInfo_writeLine (U"  Total: ", h);
+	MelderInfo_writeLine (U"  Y: ", hy);
+	MelderInfo_writeLine (U"  X: ", hx);
+	MelderInfo_writeLine (U"  Y given x: ", hygx);
+	MelderInfo_writeLine (U"  X given y: ", hxgy);
+	MelderInfo_writeLine (U"  Dependency of y on x; ", uygx);
+	MelderInfo_writeLine (U"  Dependency of x on y: ", uxgy);
+	MelderInfo_writeLine (U"  Symmetrical dependency: ", uxy);
+	MelderInfo_writeLine (U"  Total number of entries: ", Confusion_getNumberOfEntries (this));
+	MelderInfo_writeLine (U" Fraction correct: ", frac);
 }
 
 Confusion Confusion_createFromStringses (Strings me, Strings thee) {
 	try {
 		if (my numberOfStrings < 1 || thy numberOfStrings < 1) {
-			Melder_throw ("Empty Strings.");
+			Melder_throw (U"Empty Strings.");
 		}
 		autoConfusion him = Confusion_create (my numberOfStrings, thy numberOfStrings);
 		for (long irow = 1; irow <= my numberOfStrings; irow++) {
-			const wchar_t *label = my strings[irow];
+			const char32 *label = my strings[irow];
 			TableOfReal_setRowLabel (him.peek(), irow, label);
 		}
 		for (long icol = 1; icol <= thy numberOfStrings; icol++) {
-			const wchar_t *label = thy strings[icol];
+			const char32 *label = thy strings[icol];
 			TableOfReal_setColumnLabel (him.peek(), icol, label);
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": could not create Confusion with ", thee);
+		Melder_throw (me, U": could not create Confusion with ", thee);
 	}
 }
 
@@ -86,22 +85,22 @@ Confusion Confusion_create (long numberOfStimuli, long numberOfResponses) {
 		TableOfReal_init (me.peek(), numberOfStimuli, numberOfResponses);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Confusion not created.");
+		Melder_throw (U"Confusion not created.");
 	}
 }
 
-Confusion Confusion_createSimple (const wchar_t *labels) {
+Confusion Confusion_createSimple (const char32 *labels) {
 	try {
 		long numberOfLabels = Melder_countTokens (labels);
 		if (numberOfLabels < 1) {
-			Melder_throw ("Not enough labels.");
+			Melder_throw (U"Not enough labels.");
 		}
 		autoConfusion me = Confusion_create (numberOfLabels, numberOfLabels);
 		long ilabel = 1;
-		for (wchar_t *token = Melder_firstToken (labels); token != 0; token = Melder_nextToken ()) {
+		for (char32 *token = Melder_firstToken (labels); token != 0; token = Melder_nextToken ()) {
 			for (long i = 1; i <= ilabel - 1; i++) {
-				if (Melder_wcscmp (token, my rowLabels[i]) == 0) {
-					Melder_throw ("Label ", i, "and ", ilabel, "may not be equal.");
+				if (Melder_cmp (token, my rowLabels[i]) == 0) {
+					Melder_throw (U"Label ", i, U"and ", ilabel, U"may not be equal.");
 				}
 			}
 			TableOfReal_setRowLabel (me.peek(), ilabel, token);
@@ -110,14 +109,14 @@ Confusion Confusion_createSimple (const wchar_t *labels) {
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Simple Confusion not created.");
+		Melder_throw (U"Simple Confusion not created.");
 	}
 }
 
 Confusion Categories_to_Confusion (Categories me, Categories thee) {
 	try {
 		if (my size != thy size) {
-			Melder_throw ("Categories_to_Confusion: dimensions do not agree.");
+			Melder_throw (U"Categories_to_Confusion: dimensions do not agree.");
 		}
 
 		autoCategories ul1 = Categories_selectUniqueItems (me, 1);
@@ -138,7 +137,7 @@ Confusion Categories_to_Confusion (Categories me, Categories thee) {
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Confusion created.");
+		Melder_throw (me, U": no Confusion created.");
 	}
 }
 
@@ -184,31 +183,31 @@ void Confusion_getEntropies (Confusion me, double *h, double *hx, double *hy,
 	*uxy = 2.0 * (*hx + *hy - *h) / (*hx + *hy + TINY);
 }
 
-void Confusion_increase (Confusion me, const wchar_t *stim, const wchar_t *resp) {
+void Confusion_increase (Confusion me, const char32 *stim, const char32 *resp) {
 	try {
 		long stimIndex = TableOfReal_rowLabelToIndex (me, stim);
 		if (stimIndex < 1) {
-			Melder_throw ("Stimulus not valid.");
+			Melder_throw (U"Stimulus not valid.");
 		}
 		long respIndex = TableOfReal_columnLabelToIndex (me, resp);
 		if (respIndex < 1) {
-			Melder_throw ("Response not valid.");
+			Melder_throw (U"Response not valid.");
 		}
 
 		my data[stimIndex][respIndex] += 1;
 	} catch (MelderError) {
-		Melder_throw (me, ": not increased.");
+		Melder_throw (me, U": not increased.");
 	}
 }
 
-double Confusion_getValue (Confusion me, const wchar_t *stim, const wchar_t *resp) {
+double Confusion_getValue (Confusion me, const char32 *stim, const char32 *resp) {
 	long stimIndex = TableOfReal_rowLabelToIndex (me, stim);
 	if (stimIndex < 1) {
-		Melder_throw ("Stimulus not valid.");
+		Melder_throw (U"Stimulus not valid.");
 	}
 	long respIndex = TableOfReal_columnLabelToIndex (me, resp);
 	if (respIndex < 1) {
-		Melder_throw ("Response not valid.");
+		Melder_throw (U"Response not valid.");
 	}
 	return my data[stimIndex][respIndex];
 }
@@ -224,7 +223,7 @@ void Confusion_getFractionCorrect (Confusion me, double *fraction, long *numberO
 				return;
 			}
 			ct += my data[i][j];
-			if (wcscmp (my rowLabels[i], my columnLabels[j]) == 0) {
+			if (str32cmp (my rowLabels[i], my columnLabels[j]) == 0) {
 				c += my data[i][j];
 			}
 		}
@@ -233,7 +232,7 @@ void Confusion_getFractionCorrect (Confusion me, double *fraction, long *numberO
 	if (ct != 0) {
 		*fraction = c / ct;
 	}
-	*numberOfCorrect = c;
+	*numberOfCorrect = (long) floor (c);
 }
 
 /*************** Confusion_Matrix_draw ****************************************/
@@ -250,7 +249,7 @@ static Polygon Polygon_createPointer () {
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Polygon not created.");
+		Melder_throw (U"Polygon not created.");
 	}
 }
 
@@ -267,7 +266,7 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, long index, d
 	}
 
 	if (thy ny != my numberOfRows) {
-		Melder_throw ("Wrong number of positions.");
+		Melder_throw (U"Wrong number of positions.");
 	}
 
 	if (xmax <= xmin) {
@@ -361,7 +360,7 @@ Matrix Confusion_difference (Confusion me, Confusion thee) {
 	try {
 		/* categories must be the same too*/
 		if (my numberOfColumns != thy numberOfColumns || my numberOfRows != thy numberOfRows) Melder_throw
-			("Dimensions not equal.");
+			(U"Dimensions not equal.");
 
 		autoMatrix him = Matrix_create (0.5, my numberOfColumns + 0.5, my numberOfColumns,
 		                                1, 1, 0.5, my numberOfRows + 0.5, my numberOfRows, 1, 1);
@@ -373,7 +372,7 @@ Matrix Confusion_difference (Confusion me, Confusion thee) {
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Matrix not created from two Confusions.");
+		Melder_throw (U"Matrix not created from two Confusions.");
 	}
 }
 
@@ -384,14 +383,14 @@ long Confusion_getNumberOfEntries (Confusion me) {
 			total += my data[i][j];
 		}
 	}
-	return total;
+	return (long) floor (total);
 }
 
-static void create_index (wchar_t **s, long sb, long se, wchar_t **ref, long rb, long re, long *index) {
+static void create_index (char32 **s, long sb, long se, char32 **ref, long rb, long re, long *index) {
 	for (long i = sb; i <= se; i++) {
 		long indxj = 0;
 		for (long j = rb; j <= re; j++) {
-			if (wcsequ (s[i], ref[j])) {
+			if (str32equ (s[i], ref[j])) {
 				indxj = j; break;
 			}
 		}
@@ -399,18 +398,18 @@ static void create_index (wchar_t **s, long sb, long se, wchar_t **ref, long rb,
 	}
 }
 
-Confusion Confusion_condense (Confusion me, const wchar_t *search, const wchar_t *replace,
+Confusion Confusion_condense (Confusion me, const char32 *search, const char32 *replace,
 	long maximumNumberOfReplaces, int use_regexp) {
 	try {
 		long nmatches, nstringmatches;
 
 		if (my rowLabels == 0 || my columnLabels == 0) {
-			Melder_throw ("No row or column labels.");
+			Melder_throw (U"No row or column labels.");
 		}
-		autostringvector rowLabels (strs_replace (my rowLabels, 1, my numberOfRows, search, replace,
+		autostring32vector rowLabels (strs_replace (my rowLabels, 1, my numberOfRows, search, replace,
 			maximumNumberOfReplaces, &nmatches, &nstringmatches, use_regexp), 1, my numberOfRows);
 
-		autostringvector columnLabels (strs_replace (my columnLabels, 1, my numberOfColumns,  search, replace,
+		autostring32vector columnLabels (strs_replace (my columnLabels, 1, my numberOfColumns,  search, replace,
 			 maximumNumberOfReplaces, &nmatches, &nstringmatches, use_regexp), 1, my numberOfColumns);
 
 		autoStrings srow = Thing_new (Strings);
@@ -445,35 +444,34 @@ Confusion Confusion_condense (Confusion me, const wchar_t *search, const wchar_t
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not condensed.");
+		Melder_throw (me, U": not condensed.");
 	}
 }
 
-Confusion TableOfReal_to_Confusion (I) {
-	iam (TableOfReal);
+Confusion TableOfReal_to_Confusion (TableOfReal me) {
 	try {
 		if (! TableOfReal_checkPositive (me)) {
-			Melder_throw ("Elements may not be less than zero.");
+			Melder_throw (U"Elements may not be less than zero.");
 		}
 		autoConfusion thee = Thing_new (Confusion);
 		my structTableOfReal :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Confusion.");
+		Melder_throw (me, U": not converted to Confusion.");
 	}
 }
 
-Confusion Confusion_group (Confusion me, const wchar_t *labels, const wchar_t *newLabel, long newpos) {
+Confusion Confusion_group (Confusion me, const char32 *labels, const char32 *newLabel, long newpos) {
 	try {
 		autoConfusion stim = Confusion_groupStimuli (me, labels, newLabel, newpos);
 		autoConfusion thee = Confusion_groupResponses (stim.peek(), labels, newLabel, newpos);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not grouped.");
+		Melder_throw (me, U": not grouped.");
 	}
 }
 
-Confusion Confusion_groupStimuli (Confusion me, const wchar_t *labels, const wchar_t *newLabel, long newpos) {
+Confusion Confusion_groupStimuli (Confusion me, const char32 *labels, const char32 *newLabel, long newpos) {
 	try {
 		long ncondense = Melder_countTokens (labels);
 		autoNUMvector<long> irow (1, my numberOfRows);
@@ -482,9 +480,9 @@ Confusion Confusion_groupStimuli (Confusion me, const wchar_t *labels, const wch
 			irow[i] = i;
 		}
 
-		for (wchar_t *token = Melder_firstToken (labels); token != 0; token = Melder_nextToken ()) {
+		for (char32 *token = Melder_firstToken (labels); token != nullptr; token = Melder_nextToken ()) {
 			for (long i = 1; i <= my numberOfRows; i++) {
-				if (Melder_wcsequ (token, my rowLabels[i])) {
+				if (Melder_equ (token, my rowLabels[i])) {
 					irow[i] = 0;
 					break;
 				}
@@ -497,10 +495,10 @@ Confusion Confusion_groupStimuli (Confusion me, const wchar_t *labels, const wch
 			}
 		}
 		if (nfound == 0) {
-			Melder_throw ("Invalid stimulus labels.");
+			Melder_throw (U"Invalid stimulus labels.");
 		}
 		if (nfound != ncondense) {
-			Melder_warning (L"One or more of the given stimulus labels are suspect.");
+			Melder_warning (U"One or more of the given stimulus labels are suspect.");
 		}
 		long newnstim = my numberOfRows - nfound + 1;
 		if (newpos < 1) {
@@ -530,11 +528,11 @@ Confusion Confusion_groupStimuli (Confusion me, const wchar_t *labels, const wch
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": stimuli not grouped.");
+		Melder_throw (me, U": stimuli not grouped.");
 	}
 }
 
-Confusion Confusion_groupResponses (Confusion me, const wchar_t *labels, const wchar_t *newLabel, long newpos) {
+Confusion Confusion_groupResponses (Confusion me, const char32 *labels, const char32 *newLabel, long newpos) {
 	try {
 		long ncondense = Melder_countTokens (labels);
 		autoNUMvector<long> icol (1, my numberOfColumns);
@@ -543,9 +541,9 @@ Confusion Confusion_groupResponses (Confusion me, const wchar_t *labels, const w
 			icol[i] = i;
 		}
 
-		for (wchar_t *token = Melder_firstToken (labels); token != 0; token = Melder_nextToken ()) {
+		for (char32 *token = Melder_firstToken (labels); token != 0; token = Melder_nextToken ()) {
 			for (long i = 1; i <= my numberOfColumns; i++) {
-				if (Melder_wcsequ (token, my columnLabels[i])) {
+				if (Melder_equ (token, my columnLabels[i])) {
 					icol[i] = 0;
 					break;
 				}
@@ -558,10 +556,10 @@ Confusion Confusion_groupResponses (Confusion me, const wchar_t *labels, const w
 			}
 		}
 		if (nfound == 0) {
-			Melder_throw ("Invalid response labels.");
+			Melder_throw (U"Invalid response labels.");
 		}
 		if (nfound != ncondense) {
-			Melder_warning (L"One or more of the given response labels are suspect.");
+			Melder_warning (U"One or more of the given response labels are suspect.");
 		}
 		long newnresp = my numberOfColumns - nfound + 1;
 		if (newpos < 1) {
@@ -590,12 +588,11 @@ Confusion Confusion_groupResponses (Confusion me, const wchar_t *labels, const w
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": responses not grouped.");
+		Melder_throw (me, U": responses not grouped.");
 	}
 }
 
-TableOfReal Confusion_to_TableOfReal_marginals (I) {
-	iam (Confusion);
+TableOfReal Confusion_to_TableOfReal_marginals (Confusion me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows + 1, my numberOfColumns + 1);
 
@@ -624,13 +621,12 @@ TableOfReal Confusion_to_TableOfReal_marginals (I) {
 		NUMstrings_copyElements (my columnLabels, thy columnLabels, 1, my numberOfColumns);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": table with marginals not created.");
+		Melder_throw (me, U": table with marginals not created.");
 	}
 }
 
-void Confusion_drawAsNumbers (I, Graphics g, int marginals, int iformat, int precision) {
-	iam (Confusion);
-	TableOfReal thee = (TableOfReal) me;
+void Confusion_drawAsNumbers (Confusion me, Graphics g, int marginals, int iformat, int precision) {
+	TableOfReal thee = me;
 	autoTableOfReal athee = 0;
 	if (marginals) {
 		athee.reset (Confusion_to_TableOfReal_marginals (me));

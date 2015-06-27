@@ -40,7 +40,7 @@ ClassificationTable ClassificationTable_create (long numberOfRows, long numberOf
 		TableOfReal_init (me.peek(), numberOfRows, numberOfClasses );
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("ClassificationTable not created.");
+		Melder_throw (U"ClassificationTable not created.");
 	}
 }
 
@@ -54,13 +54,13 @@ Confusion ClassificationTable_to_Confusion (ClassificationTable me, int onlyClas
 		Confusion_and_ClassificationTable_increase (thee.peek(), me);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": confusions cannot be calculated.");
+		Melder_throw (me, U": confusions cannot be calculated.");
 	}
 }
 
 void Confusion_and_ClassificationTable_increase (Confusion me, ClassificationTable thee) {
 	if (my numberOfColumns != thy numberOfColumns) {
-		Melder_throw ("The number of columns must be equal.");
+		Melder_throw (U"The number of columns must be equal.");
 	}
 	for (long irow = 1; irow <= thy numberOfRows; irow++) {
 		long index = TableOfReal_getColumnIndexAtMaximumInRow (thee, irow);
@@ -86,7 +86,7 @@ Strings ClassificationTable_to_Strings_maximumProbability (ClassificationTable m
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": strings cannot be created.");
+		Melder_throw (me, U": strings cannot be created.");
 	}
 }
 
@@ -105,7 +105,7 @@ Categories ClassificationTable_to_Categories_maximumProbability (ClassificationT
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Categories created.");
+		Melder_throw (me, U": no Categories created.");
 	}
 }
 
@@ -113,7 +113,7 @@ Correlation ClassificationTable_to_Correlation_columns (ClassificationTable me) 
 	try {
 		autoCorrelation thee = Correlation_create (my numberOfColumns);
 		for (long icol = 1; icol <= thy numberOfColumns; icol++) {
-			wchar_t *label = my columnLabels[icol];
+			char32 *label = my columnLabels[icol];
 			TableOfReal_setRowLabel (thee.peek(), icol, label);
 			TableOfReal_setColumnLabel (thee.peek(), icol, label);
 		}
@@ -136,7 +136,7 @@ Correlation ClassificationTable_to_Correlation_columns (ClassificationTable me) 
 		thy numberOfObservations = my numberOfRows;
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no correlation created.");
+		Melder_throw (me, U": no correlation created.");
 	}
 }
 

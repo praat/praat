@@ -1,6 +1,6 @@
 /* Matrix_and_Pitch.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 /*
  * pb 2002/07/16 GPL
- * pb 2007/08/12 wchar_t
+ * pb 2007/08/12 wchar
  * pb 2009/01/18 Interpreter argument to formula
  * pb 2009/04/04 corrected voiceless frames in Pitch_to_Matrix
  * pb 2011/06/04 C++
@@ -36,7 +36,7 @@ Matrix Pitch_to_Matrix (Pitch me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Matrix.");
+		Melder_throw (me, U": not converted to Matrix.");
 	}
 }
 
@@ -60,11 +60,11 @@ Pitch Matrix_to_Pitch (Matrix me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Pitch.");
+		Melder_throw (me, U": not converted to Pitch.");
 	}
 }
 
-void Pitch_formula (Pitch me, const wchar_t *formula, Interpreter interpreter) {
+void Pitch_formula (Pitch me, const char32 *formula, Interpreter interpreter) {
 	try {
 		autoMatrix m = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, my maxnCandidates, my maxnCandidates, 1, 1);
 		for (long iframe = 1; iframe <= my nx; iframe ++) {
@@ -79,7 +79,7 @@ void Pitch_formula (Pitch me, const wchar_t *formula, Interpreter interpreter) {
 				frame -> candidate [icand]. frequency = m -> z [icand] [iframe];
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": formula not completed.");
+		Melder_throw (me, U": formula not completed.");
 	}
 }
 

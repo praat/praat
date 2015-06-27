@@ -1,6 +1,6 @@
 /* DurationTier.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +23,13 @@ Thing_implement (DurationTier, RealTier, 0);
 
 void structDurationTier :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine (L"Time domain:");
-	MelderInfo_writeLine (L"   Start time: ", Melder_double (xmin), L" seconds");
-	MelderInfo_writeLine (L"   End time: ", Melder_double (xmax), L" seconds");
-	MelderInfo_writeLine (L"   Total original duration: ", Melder_double (xmax - xmin), L" seconds");
-	MelderInfo_writeLine (L"Number of points: ", Melder_integer (points -> size));
-	MelderInfo_writeLine (L"Minimum relative duration value: ", Melder_double (RealTier_getMinimumValue (this)));
-	MelderInfo_writeLine (L"Maximum relative duration value: ", Melder_double (RealTier_getMaximumValue (this)));
+	MelderInfo_writeLine (U"Time domain:");
+	MelderInfo_writeLine (U"   Start time: ", xmin, U" seconds");
+	MelderInfo_writeLine (U"   End time: ", xmax, U" seconds");
+	MelderInfo_writeLine (U"   Total original duration: ", xmax - xmin, U" seconds");
+	MelderInfo_writeLine (U"Number of points: ", points -> size);
+	MelderInfo_writeLine (U"Minimum relative duration value: ", RealTier_getMinimumValue (this));
+	MelderInfo_writeLine (U"Maximum relative duration value: ", RealTier_getMaximumValue (this));
 }
 
 DurationTier DurationTier_create (double tmin, double tmax) {
@@ -38,14 +38,14 @@ DurationTier DurationTier_create (double tmin, double tmax) {
 		RealTier_init (me.peek(), tmin, tmax);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("DurationTier not created.");
+		Melder_throw (U"DurationTier not created.");
 	}
 }
 
 void DurationTier_draw (DurationTier me, Graphics g, double tmin, double tmax,
-	double ymin, double ymax, const wchar_t *method, int garnish)
+	double ymin, double ymax, const char32 *method, int garnish)
 {
-	RealTier_draw (me, g, tmin, tmax, ymin, ymax, garnish, method, L"Relative duration");
+	RealTier_draw (me, g, tmin, tmax, ymin, ymax, garnish, method, U"Relative duration");
 }
 
 DurationTier PointProcess_upto_DurationTier (PointProcess me) {
@@ -56,7 +56,7 @@ DurationTier PointProcess_upto_DurationTier (PointProcess me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to DurationTier.");
+		Melder_throw (me, U": not converted to DurationTier.");
 	}
 }
 

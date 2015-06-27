@@ -1,6 +1,6 @@
 /* NUM.cpp
  *
- * Copyright (C) 1992-2008,2011,2012,2014 Paul Boersma
+ * Copyright (C) 1992-2008,2011,2012,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,7 +129,7 @@ double NUMincompleteBeta (double a, double b, double x) {
 	gsl_sf_result result;
 	int status = gsl_sf_beta_inc_e (a, b, x, & result);
 	if (status != GSL_SUCCESS && status != GSL_EUNDRFLW && status != GSL_EMAXITER) {
-		Melder_fatal ("NUMincompleteBeta status %d", status);
+		Melder_fatal (U"NUMincompleteBeta status ", status);
 		return NUMundefined;
 	}
 	return result. val;
@@ -402,7 +402,7 @@ double NUM_interpolate_sinc (double y [], long nx, double x, long maxDepth) {
 }
 #else
 double NUM_interpolate_sinc (double y [], long nx, double x, long maxDepth) {
-	long ix, midleft = floor (x), midright = midleft + 1, left, right;
+	long ix, midleft = (long) floor (x), midright = midleft + 1, left, right;
 	double result = 0.0, a, halfsina, aa, daa;
 	NUM_interpolate_simple_cases
 	left = midright - maxDepth, right = midleft + maxDepth;
@@ -498,14 +498,14 @@ void NUM_viterbi (
 	for (long iframe = 2; iframe <= numberOfFrames; iframe ++) {
 		for (long icand2 = 1; icand2 <= numberOfCandidates [iframe]; icand2 ++) {
 			double maximum = -1e300;
-			double place = 0;
+			long place = 0;
 			for (long icand1 = 1; icand1 <= numberOfCandidates [iframe - 1]; icand1 ++) {
 				double value = delta [iframe - 1] [icand1] + delta [iframe] [icand2]
 					- getTransitionCost (iframe, icand1, icand2, closure);
 				if (value > maximum) { maximum = value; place = icand1; }
 			}
 			if (place == 0)
-				Melder_throw ("Viterbi algorithm cannot compute a track because of weird values.");
+				Melder_throw (U"Viterbi algorithm cannot compute a track because of weird values.");
 			delta [iframe] [icand2] = maximum;
 			psi [iframe] [icand2] = place;
 		}
@@ -575,11 +575,11 @@ void NUM_viterbi_multi (
 	struct parm2 parm;
 	parm.indices = NULL;
 
-	if (ntrack > ncand) Melder_throw ("(NUM_viterbi_multi:) "
-		"Number of tracks (", ntrack, ") should not exceed number of candidates (", ncand, ").");
+	if (ntrack > ncand) Melder_throw (U"(NUM_viterbi_multi:) "
+		U"Number of tracks (", ntrack, U") should not exceed number of candidates (", ncand, U").");
 	double ncomb = NUMcombinations (ncand, ntrack);
-	if (ncomb > 10000000) Melder_throw ("(NUM_viterbi_multi:) "
-		"Unrealistically high number of combinations (", ncomb, ").");
+	if (ncomb > 10000000) Melder_throw (U"(NUM_viterbi_multi:) "
+		U"Unrealistically high number of combinations (", ncomb, U").");
 	parm. ntrack = ntrack;
 	parm. ncomb = ncomb;
 

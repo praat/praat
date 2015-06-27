@@ -55,15 +55,12 @@
 // This interface is maintained because older scripts stiil have to work.
 
 Thing_define (FilterBank, Matrix) {
-	// new methods:
-	public:
-		virtual int v_getFrequencyScale () { return FilterBank_HERTZ; }
+	virtual int v_getFrequencyScale () { return FilterBank_HERTZ; }
 };
 
 Thing_define (BarkFilter, FilterBank) {
-	// overridden methods:
-	protected:
-		virtual int v_getFrequencyScale () { return FilterBank_BARK; }
+	int v_getFrequencyScale ()
+		override { return FilterBank_BARK; }
 };
 
 /*
@@ -89,19 +86,18 @@ void BarkFilter_drawSekeyHansonFilterFunctions (BarkFilter me, Graphics g,
 	int dbScale, double ymin, double ymax, int garnish);
 
 void FilterBank_drawTimeSlice (I, Graphics g, double t, double fmin, double fmax,
-	double min, double max, const wchar_t *xlabel, int garnish);
+	double min, double max, const char32 *xlabel, int garnish);
 
 void FilterBank_paint (FilterBank me, Graphics g, double xmin, double xmax, double ymin, double ymax, double minimum, double maximum, int garnish);
 
 BarkFilter BarkFilter_create (double tmin, double tmax, long nt, double dt,
-	double t1, double fmin, double fmax, long nf, double df, long f1);
+	double t1, double fmin, double fmax, long nf, double df, double f1);
 
 BarkFilter Matrix_to_BarkFilter (I);
 
 Thing_define (MelFilter, FilterBank) {
-	// overridden methods:
-	protected:
-		virtual int v_getFrequencyScale () { return FilterBank_MEL; }
+	int v_getFrequencyScale ()
+		override { return FilterBank_MEL; }
 };
 
 /*

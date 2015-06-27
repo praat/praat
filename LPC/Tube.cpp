@@ -49,18 +49,18 @@ Thing_implement (Tube, Sampled, 0);
 
 void structTube :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine (L"Time domain: ", Melder_double (xmin), L" to ", Melder_double (xmax), L" seconds");
-	MelderInfo_writeLine (L"Maximum number of segments: ", Melder_integer (maxnSegments));
-	MelderInfo_writeLine (L"Number of frames: ", Melder_integer (nx));
-	MelderInfo_writeLine (L"Time step: ", Melder_double (dx), L" seconds");
-	MelderInfo_writeLine (L"First frame at: ", Melder_double (x1), L" seconds");
+	MelderInfo_writeLine (U"Time domain: ", xmin, U" to ", xmax, U" seconds");
+	MelderInfo_writeLine (U"Maximum number of segments: ", maxnSegments);
+	MelderInfo_writeLine (U"Number of frames: ", nx);
+	MelderInfo_writeLine (U"Time step: ", dx, U" seconds");
+	MelderInfo_writeLine (U"First frame at: ", x1, U" seconds");
 }
 
 void Tube_Frame_init (Tube_Frame me, long nSegments, double length) {
 	my nSegments = nSegments;
 	my length = length;
 	if (nSegments <= 0) {
-		Melder_throw ("Number of segments must be a natural number.");
+		Melder_throw (U"Number of segments must be a natural number.");
 	}
 	my c = NUMvector<double> (1, nSegments);
 }
@@ -68,7 +68,7 @@ void Tube_Frame_init (Tube_Frame me, long nSegments, double length) {
 /* Gray & Markel (1979), LPTRN */
 void Tube_Frames_rc_into_area (Tube_Frame me, Tube_Frame thee) {
 	if (my nSegments > thy nSegments) {
-		Melder_throw ("Number of segments to big.");
+		Melder_throw (U"Number of segments to big.");
 	}
 
 	double s = 0.0001; /* 1.0 cm^2 at glottis */
@@ -112,7 +112,7 @@ Area Area_create (double tmin, double tmax, long nt, double dt, double t1,
 		Area_init (me.peek(), tmin, tmax, nt, dt, t1, maxnSegments, defaultLength);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Area not crteated.");
+		Melder_throw (U"Area not crteated.");
 	}
 }
 
@@ -130,7 +130,7 @@ RC RC_create (double tmin, double tmax, long nt, double dt, double t1,
 		RC_init (me.peek(), tmin, tmax, nt, dt, t1, maxnCoefficients, defaultLength);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("RC not crteated.");
+		Melder_throw (U"RC not crteated.");
 	}
 }
 

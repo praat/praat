@@ -27,39 +27,39 @@
 #include "Matrix.h"
 #include "Graphics.h"
 
-void Matrix_scatterPlot (I, Graphics g, long icx, long icy,
+void Matrix_scatterPlot (Matrix me, Graphics g, long icx, long icy,
     double xmin, double xmax, double ymin, double ymax,
-    double size_mm, const wchar_t *mark, int garnish);
+    double size_mm, const char32 *mark, int garnish);
 /* Draw my columns ix and iy as a scatterplot (with squares)				*/
 
-void Matrix_drawAsSquares (I, Graphics graphics, double xmin, double xmax, double ymin, double ymax, int garnished);
+void Matrix_drawAsSquares (Matrix me, Graphics graphics, double xmin, double xmax, double ymin, double ymax, int garnished);
 /* Draw a Matrix as small squares whose area correspond to the matrix element */
 /* The square is filled with black if the weights are negative					*/
 
-void Matrix_drawRowsAsLineSegments (I, Graphics g, double xmin, double xmax, double ymin, double ymax,
+void Matrix_drawRowsAsLineSegments (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	double minimum, double maximum, int connect);
 /* draw a row as segments */
 
-void Matrix_scale (I, int choice);
+void Matrix_scale (Matrix me, int choice);
 /* choice = 1 :divide each elmnt by the maximum (abs) */
 /* choice = 2 :rows, divide each row elmnt by the maximum (abs) of that row	*/
 /* choice = 3 :columns, divide each col elmnt by the maximum of that col	*/
 
-Matrix Matrix_transpose (I);
+Matrix Matrix_transpose (Matrix me);
 
-void Matrix_drawDistribution (I, Graphics g, double xmin, double xmax,
+void Matrix_drawDistribution (Matrix me, Graphics g, double xmin, double xmax,
 	double ymin, double ymax, double minimum, double maximum, long nBins,
 	double freqMin, double freqmax, int cumulative, int garnish);
 
-void Matrix_drawSliceY (I, Graphics g, double x, double ymin, double ymax,
+void Matrix_drawSliceY (Matrix me, Graphics g, double x, double ymin, double ymax,
 	double min, double max);
 
-int Matrix_fitPolynomial (I, long maxDegree);
+int Matrix_fitPolynomial (Matrix me, long maxDegree);
 
-Matrix Matrix_solveEquation (I, double tolerance);
+Matrix Matrix_solveEquation (Matrix me, double tolerance);
 
-double Matrix_getMean (I, double xmin, double xmax, double ymin, double ymax);
-double Matrix_getStandardDeviation (I, double xmin, double xmax, double ymin, double ymax);
+double Matrix_getMean (Matrix me, double xmin, double xmax, double ymin, double ymax);
+double Matrix_getStandardDeviation (Matrix me, double xmin, double xmax, double ymin, double ymax);
 
 
 #endif /* _Matrix_extensions_h_ */

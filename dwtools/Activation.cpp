@@ -53,7 +53,7 @@ Activation Activation_create (long ny, long nx) {
 		Activation_init (me.peek(), ny, nx);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Activation not created.");
+		Melder_throw (U"Activation not created.");
 	}
 }
 
@@ -64,7 +64,7 @@ Activation Matrix_to_Activation (I) {
 		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Activation.");
+		Melder_throw (me, U": not converted to Activation.");
 	}
 }
 
@@ -76,7 +76,7 @@ Matrix Activation_to_Matrix (I) {
 		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Matrix.");
+		Melder_throw (me, U": not converted to Matrix.");
 	}
 }
 

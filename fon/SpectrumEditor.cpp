@@ -52,10 +52,10 @@ void structSpectrumEditor :: v_draw () {
 	Graphics_setColour (our d_graphics, Graphics_BLACK);
 	Graphics_rectangle (our d_graphics, 0, 1, 0, 1);
 	Spectrum_drawInside (spectrum, our d_graphics, our d_startWindow, our d_endWindow, our minimum, our maximum);
-	FunctionEditor_drawRangeMark (this, our maximum, Melder_fixed (maximum, 1), L" dB", Graphics_TOP);
-	FunctionEditor_drawRangeMark (this, our minimum, Melder_fixed (minimum, 1), L" dB", Graphics_BOTTOM);
+	FunctionEditor_drawRangeMark (this, our maximum, Melder_fixed (maximum, 1), U" dB", Graphics_TOP);
+	FunctionEditor_drawRangeMark (this, our minimum, Melder_fixed (minimum, 1), U" dB", Graphics_BOTTOM);
 	if (our cursorHeight > our minimum && our cursorHeight < our maximum)
-		FunctionEditor_drawHorizontalHair (this, our cursorHeight, Melder_fixed (our cursorHeight, 1), L" dB");
+		FunctionEditor_drawHorizontalHair (this, our cursorHeight, Melder_fixed (our cursorHeight, 1), U" dB");
 	Graphics_setColour (our d_graphics, Graphics_BLACK);
 
 	/* Update buttons. */
@@ -105,14 +105,14 @@ static void menu_cb_publishSound (EDITOR_ARGS) {
 
 static void menu_cb_passBand (EDITOR_ARGS) {
 	EDITOR_IAM (SpectrumEditor);
-	EDITOR_FORM (L"Filter (pass Hann band)", L"Spectrum: Filter (pass Hann band)...");
-		REAL (L"Band smoothing (Hz)", my default_bandSmoothing ())
+	EDITOR_FORM (U"Filter (pass Hann band)", U"Spectrum: Filter (pass Hann band)...");
+		REAL (U"Band smoothing (Hz)", my default_bandSmoothing ())
 	EDITOR_OK
-		SET_REAL (L"Band smoothing", my p_bandSmoothing)
+		SET_REAL (U"Band smoothing", my p_bandSmoothing)
 	EDITOR_DO
-		my pref_bandSmoothing() = my p_bandSmoothing = GET_REAL (L"Band smoothing");
-		if (my d_endSelection <= my d_startSelection) Melder_throw (L"To apply a band-pass filter, first make a selection.");
-		Editor_save (me, L"Pass band");
+		my pref_bandSmoothing() = my p_bandSmoothing = GET_REAL (U"Band smoothing");
+		if (my d_endSelection <= my d_startSelection) Melder_throw (U"To apply a band-pass filter, first make a selection.");
+		Editor_save (me, U"Pass band");
 		Spectrum_passHannBand ((Spectrum) my data, my d_startSelection, my d_endSelection, my p_bandSmoothing);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
@@ -121,14 +121,14 @@ static void menu_cb_passBand (EDITOR_ARGS) {
 
 static void menu_cb_stopBand (EDITOR_ARGS) {
 	EDITOR_IAM (SpectrumEditor);
-	EDITOR_FORM (L"Filter (stop Hann band)", 0)
-		REAL (L"Band smoothing (Hz)", my default_bandSmoothing ())
+	EDITOR_FORM (U"Filter (stop Hann band)", 0)
+		REAL (U"Band smoothing (Hz)", my default_bandSmoothing ())
 	EDITOR_OK
-		SET_REAL (L"Band smoothing", my p_bandSmoothing)
+		SET_REAL (U"Band smoothing", my p_bandSmoothing)
 	EDITOR_DO
-		my pref_bandSmoothing () = my p_bandSmoothing = GET_REAL (L"Band smoothing");
-		if (my d_endSelection <= my d_startSelection) Melder_throw (L"To apply a band-stop filter, first make a selection.");
-		Editor_save (me, L"Stop band");
+		my pref_bandSmoothing () = my p_bandSmoothing = GET_REAL (U"Band smoothing");
+		if (my d_endSelection <= my d_startSelection) Melder_throw (U"To apply a band-stop filter, first make a selection.");
+		Editor_save (me, U"Stop band");
 		Spectrum_stopHannBand ((Spectrum) my data, my d_startSelection, my d_endSelection, my p_bandSmoothing);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
@@ -146,45 +146,45 @@ static void menu_cb_moveCursorToPeak (EDITOR_ARGS) {
 
 static void menu_cb_setDynamicRange (EDITOR_ARGS) {
 	EDITOR_IAM (SpectrumEditor);
-	EDITOR_FORM (L"Set dynamic range", 0)
-		POSITIVE (L"Dynamic range (dB)", my default_dynamicRange ())
+	EDITOR_FORM (U"Set dynamic range", 0)
+		POSITIVE (U"Dynamic range (dB)", my default_dynamicRange ())
 	EDITOR_OK
-		SET_REAL (L"Dynamic range", my p_dynamicRange)
+		SET_REAL (U"Dynamic range", my p_dynamicRange)
 	EDITOR_DO
-		my pref_dynamicRange () = my p_dynamicRange = GET_REAL (L"Dynamic range");
+		my pref_dynamicRange () = my p_dynamicRange = GET_REAL (U"Dynamic range");
 		updateRange (me);
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
 
-static void menu_cb_help_SpectrumEditor (EDITOR_ARGS) { EDITOR_IAM (SpectrumEditor); Melder_help (L"SpectrumEditor"); }
-static void menu_cb_help_Spectrum (EDITOR_ARGS) { EDITOR_IAM (SpectrumEditor); Melder_help (L"Spectrum"); }
+static void menu_cb_help_SpectrumEditor (EDITOR_ARGS) { EDITOR_IAM (SpectrumEditor); Melder_help (U"SpectrumEditor"); }
+static void menu_cb_help_Spectrum (EDITOR_ARGS) { EDITOR_IAM (SpectrumEditor); Melder_help (U"Spectrum"); }
 
 void structSpectrumEditor :: v_createMenus () {
 	SpectrumEditor_Parent :: v_createMenus ();
-	our publishBandButton = Editor_addCommand (this, L"File", L"Publish band", 0, menu_cb_publishBand);
-	our publishSoundButton = Editor_addCommand (this, L"File", L"Publish band-filtered sound", 0, menu_cb_publishSound);
-	Editor_addCommand (this, L"File", L"-- close --", 0, NULL);
-	Editor_addCommand (this, L"Edit", L"-- edit band --", 0, NULL);
-	Editor_addCommand (this, L"Edit", L"Pass band...", 0, menu_cb_passBand);
-	Editor_addCommand (this, L"Edit", L"Stop band...", 0, menu_cb_stopBand);
-	Editor_addCommand (this, L"Select", L"-- move to peak --", 0, 0);
-	Editor_addCommand (this, L"Select", L"Move cursor to nearest peak", 'K', menu_cb_moveCursorToPeak);
+	our publishBandButton = Editor_addCommand (this, U"File", U"Publish band", 0, menu_cb_publishBand);
+	our publishSoundButton = Editor_addCommand (this, U"File", U"Publish band-filtered sound", 0, menu_cb_publishSound);
+	Editor_addCommand (this, U"File", U"-- close --", 0, NULL);
+	Editor_addCommand (this, U"Edit", U"-- edit band --", 0, NULL);
+	Editor_addCommand (this, U"Edit", U"Pass band...", 0, menu_cb_passBand);
+	Editor_addCommand (this, U"Edit", U"Stop band...", 0, menu_cb_stopBand);
+	Editor_addCommand (this, U"Select", U"-- move to peak --", 0, 0);
+	Editor_addCommand (this, U"Select", U"Move cursor to nearest peak", 'K', menu_cb_moveCursorToPeak);
 }
 
 void structSpectrumEditor :: v_createMenuItems_view (EditorMenu menu) {
-	EditorMenu_addCommand (menu, L"Set dynamic range...", 0, menu_cb_setDynamicRange);
-	EditorMenu_addCommand (menu, L"-- view settings --", 0, 0);
+	EditorMenu_addCommand (menu, U"Set dynamic range...", 0, menu_cb_setDynamicRange);
+	EditorMenu_addCommand (menu, U"-- view settings --", 0, 0);
 	SpectrumEditor_Parent :: v_createMenuItems_view (menu);
 }
 
 void structSpectrumEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	SpectrumEditor_Parent :: v_createHelpMenuItems (menu);
-	EditorMenu_addCommand (menu, L"SpectrumEditor help", '?', menu_cb_help_SpectrumEditor);
-	EditorMenu_addCommand (menu, L"Spectrum help", 0, menu_cb_help_Spectrum);
+	EditorMenu_addCommand (menu, U"SpectrumEditor help", '?', menu_cb_help_SpectrumEditor);
+	EditorMenu_addCommand (menu, U"Spectrum help", 0, menu_cb_help_Spectrum);
 }
 
-SpectrumEditor SpectrumEditor_create (const wchar_t *title, Spectrum data) {
+SpectrumEditor SpectrumEditor_create (const char32 *title, Spectrum data) {
 	try {
 		autoSpectrumEditor me = Thing_new (SpectrumEditor);
 		FunctionEditor_init (me.peek(), title, data);
@@ -192,7 +192,7 @@ SpectrumEditor SpectrumEditor_create (const wchar_t *title, Spectrum data) {
 		updateRange (me.peek());
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Spectrum window not created.");
+		Melder_throw (U"Spectrum window not created.");
 	}
 }
 

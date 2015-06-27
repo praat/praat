@@ -1,6 +1,6 @@
 /* SpectrogramEditor.cpp
  *
- * Copyright (C) 1992-2011,2012,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ void structSpectrogramEditor :: v_draw () {
 	long df = 1000;
 	for (long f = df; f <= our maximum; f += df) {
 		Graphics_line (our d_graphics, 0.0, f, 1.0, f);
-		Graphics_text2 (our d_graphics, -0.01, f, Melder_integer (f), L" Hz");
+		Graphics_text (our d_graphics, -0.01, f,   f, U" Hz");
 	}
 
 	/*
@@ -77,14 +77,14 @@ int structSpectrogramEditor :: v_click (double xWC, double yWC, bool shiftKeyPre
 	return our SpectrogramEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 }
 
-SpectrogramEditor SpectrogramEditor_create (const wchar_t *title, Spectrogram data) {
+SpectrogramEditor SpectrogramEditor_create (const char32 *title, Spectrogram data) {
 	try {
 		autoSpectrogramEditor me = Thing_new (SpectrogramEditor);
 		FunctionEditor_init (me.peek(), title, data);
 		my maximum = 10000.0;
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Spectrogram window not created.");
+		Melder_throw (U"Spectrogram window not created.");
 	}
 }
 

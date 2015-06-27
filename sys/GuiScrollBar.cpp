@@ -40,7 +40,7 @@ Thing_implement (GuiScrollBar, GuiControl, 0);
 	}
 	static void _GuiGtkScrollBar_valueChangedCallback (GuiObject widget, gpointer void_me) {
 		iam (GuiScrollBar);
-		trace ("enter: blocked %d", my d_blockValueChangedCallbacks);
+		trace (U"enter: blocked ", my d_blockValueChangedCallbacks);
 		if (my d_blockValueChangedCallbacks) {
 			my d_blockValueChangedCallbacks = false;
 		} else if (my d_valueChangedCallback) {
@@ -48,8 +48,7 @@ Thing_implement (GuiScrollBar, GuiControl, 0);
 			try {
 				my d_valueChangedCallback (my d_valueChangedBoss, & event);
 			} catch (MelderError) {
-				Melder_error_ ("Your action in a scroll bar was not completely handled.");
-				Melder_flushError (NULL);
+				Melder_flushError (U"Your action in a scroll bar was not completely handled.");
 			}
 		}
 	}
@@ -71,7 +70,7 @@ Thing_implement (GuiScrollBar, GuiControl, 0);
 - (void) dealloc {   // override
     GuiScrollBar me = d_userData;
     forget (me);
-    trace ("deleting a scroll bar");
+    trace (U"deleting a scroll bar");
     [super dealloc];
 }
 - (GuiThing) userData {
@@ -106,12 +105,12 @@ Thing_implement (GuiScrollBar, GuiControl, 0);
         try {
             my d_valueChangedCallback (my d_valueChangedBoss, & event);
         } catch (MelderError) {
-            Melder_flushError ("Scroll not completely handled.");
+            Melder_flushError (U"Scroll not completely handled.");
         }
     }
 }
 - (void) scrollBy: (double) step {
-	trace ("step %lf", step);
+	trace (U"step ", step);
 	if (step == 0) return;
 	_m_value -= 0.3 * step * _m_increment;
 	if (_m_value < _m_minimum)
@@ -121,7 +120,7 @@ Thing_implement (GuiScrollBar, GuiControl, 0);
 	[self _update];
 }
 - (void) magnifyBy: (double) step {
-	trace ("step %lf", step);
+	trace (U"step ", step);
 	double increase = _m_sliderSize * (exp (- step) - 1.0);
 	_m_sliderSize += increase;
 	if (_m_sliderSize > _m_maximum - _m_minimum)
@@ -177,7 +176,7 @@ Thing_implement (GuiScrollBar, GuiControl, 0);
         try {
             my d_valueChangedCallback (my d_valueChangedBoss, & event);
         } catch (MelderError) {
-            Melder_flushError ("Scroll not completely handled.");
+            Melder_flushError (U"Scroll not completely handled.");
         }
     }
 }
@@ -203,7 +202,7 @@ Thing_implement (GuiScrollBar, GuiControl, 0);
 			try {
 				my d_valueChangedCallback (my d_valueChangedBoss, & event);
 			} catch (MelderError) {
-				Melder_flushError ("Scroll not completely handled.");
+				Melder_flushError (U"Scroll not completely handled.");
 			}
 		}
 	}
@@ -289,7 +288,7 @@ void GuiScrollBar_set (GuiScrollBar me, double minimum, double maximum, double v
 	 * This will call our own d_valueChangedCallback if we don't prevent it.
 	 * We have to prevent that, because our d_valueChangedCallback is only for user-initiated modifications.
 	 */
-	trace ("enter %.17g %.17g %.17g %.17g %.17g %.17g", minimum, maximum, value, sliderSize, increment, pageIncrement);
+	trace (U"enter ", minimum, U" ", maximum, U" ", value, U" ", sliderSize, U" ", increment, U" ", pageIncrement);
 	#if gtk
 		/*
 		 * We're going to modify the scroll bar with gtk_adjustment_configure ().
@@ -337,7 +336,7 @@ void GuiScrollBar_set (GuiScrollBar me, double minimum, double maximum, double v
 			NUMdefined (pageIncrement) ? pageIncrement : oldPageIncrement,
 			False);
 	#endif
-	trace ("exit");
+	trace (U"exit");
 }
 
 int GuiScrollBar_getValue (GuiScrollBar me) {

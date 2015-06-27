@@ -1,4 +1,4 @@
-/* Index.c
+/* Index.cpp
  *
  * Copyright (C) 2005-2011 David Weenink
  *
@@ -53,13 +53,13 @@ Thing_implement (Index, Data, 0);
 
 void structIndex :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine (L"Number of elements: ", Melder_integer (numberOfElements));
+	MelderInfo_writeLine (U"Number of elements: ", numberOfElements);
 }
 
 void Index_init (I, long numberOfElements) {
 	iam (Index);
 	if (numberOfElements < 1) {
-		Melder_throw ("Cannot create index without elements.");
+		Melder_throw (U"Cannot create index without elements.");
 	}
 	my classes = Ordered_create ();
 	my numberOfElements = numberOfElements;
@@ -76,7 +76,7 @@ Index Index_extractPart (I, long from, long to) {
 			to = my numberOfElements;
 		}
 		if (to < from || from < 1 || to > my numberOfElements) Melder_throw
-			("Range should be in interval [1,", my numberOfElements, "].");
+			(U"Range should be in interval [1,", my numberOfElements, U"].");
 		autoIndex thee = Data_copy (me);
 		thy numberOfElements = to - from + 1;
 		/* */
@@ -85,7 +85,7 @@ Index Index_extractPart (I, long from, long to) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": part not extracted.");
+		Melder_throw (me, U": part not extracted.");
 	}
 }
 
@@ -97,14 +97,14 @@ StringsIndex StringsIndex_create (long numberOfElements) {
 		Index_init (me.peek(), numberOfElements);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("StringsIndex not created.");
+		Melder_throw (U"StringsIndex not created.");
 	}
 }
 
-int StringsIndex_getClass (StringsIndex me, wchar_t *classLabel) {
+int StringsIndex_getClass (StringsIndex me, char32 *klasLabel) {
 	for (long i = 1; i <= my classes -> size; i++) {
 		SimpleString ss = (SimpleString) my classes -> item[i];
-		if (Melder_wcscmp (ss -> string, classLabel) == 0) {
+		if (Melder_cmp (ss -> string, klasLabel) == 0) {
 			return i;
 		}
 	}
@@ -119,4 +119,4 @@ long StringsIndex_countItems (StringsIndex me, int iclass) {
 	return sum;
 }
 
-/* End of Index.c */
+/* End of Index.cpp */

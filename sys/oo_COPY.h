@@ -49,35 +49,21 @@
 	if (our x) thy x = NUMvector_copy (our x, min, max);
 
 #define oo_STRINGx(storage,x)  \
-	if (our x) thy x = Melder_wcsdup (our x);
-#define oo_STRING32x(storage,x)  \
-	if (our x) thy x = Melder_str32dup (our x);
+	if (our x) thy x = Melder_dup (our x);
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
-		if (our x [i]) thy x [i] = Melder_wcsdup (our x [i]);
-#define oo_STRING32x_ARRAY(storage,x,cap,n)  \
-	for (int i = 0; i < n; i ++) \
-		if (our x [i]) thy x [i] = Melder_str32dup (our x [i]);
+		if (our x [i]) thy x [i] = Melder_dup (our x [i]);
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) \
-		if (our x [i]) thy x [i] = Melder_wcsdup (our x [i]);
-#define oo_STRING32x_SET(storage,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
-		if (our x [i]) thy x [i] = Melder_str32dup (our x [i]);
+		if (our x [i]) thy x [i] = Melder_dup (our x [i]);
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (our x) { \
-		thy x = NUMvector <wchar_t*> (min, max); \
-		for (long i = min; i <= max; i ++) \
-			if (our x [i]) thy x [i] = Melder_wcsdup (our x [i]); \
-	}
-#define oo_STRING32x_VECTOR(storage,x,min,max)  \
-	if (our x) { \
 		thy x = NUMvector <char32*> (min, max); \
 		for (long i = min; i <= max; i ++) \
-			if (our x [i]) thy x [i] = Melder_str32dup (our x [i]); \
+			if (our x [i]) thy x [i] = Melder_dup (our x [i]); \
 	}
 
 #define oo_STRUCT(Type,x)  \

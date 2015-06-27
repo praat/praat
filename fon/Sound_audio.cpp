@@ -1,6 +1,6 @@
 /* Sound_audio.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,7 +134,7 @@ static int portaudioStreamCallback (
 		memcpy (info -> buffer + 1 + info -> numberOfSamplesRead, input, 2 * dsamples);
 		info -> numberOfSamplesRead += dsamples;
 		short *input2 = (short*) input;
-		trace ("read %d samples: %d, %d, %d...", (int) dsamples, (int) input2 [0], (int) input2 [1], (int) input2 [3]);
+		trace (U"read ", dsamples, U" samples: ", input2 [0], U", ", input2 [1], U", ", input2 [3], U"...");
 		if (info -> numberOfSamplesRead >= info -> numberOfSamples) return paComplete;
 	} else /*if (info -> numberOfSamplesRead >= info -> numberOfSamples)*/ {
 		info -> numberOfSamplesRead = info -> numberOfSamples;
@@ -184,7 +184,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 		/* Check representation of shorts. */
 
 		if (sizeof (short) != 2)
-			Melder_throw ("Cannot record a sound on this computer.");
+			Melder_throw (U"Cannot record a sound on this computer.");
 
 		/* Check sampling frequency. */
 
@@ -209,7 +209,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 			#endif
 		}
 		if (! supportsSamplingFrequency)
-			Melder_throw ("Your audio hardware does not support a sampling frequency of ", sampleRate, " Hz.");
+			Melder_throw (U"Your audio hardware does not support a sampling frequency of ", sampleRate, U" Hz.");
 
 		/*
 		 * Open phase 1.
@@ -220,7 +220,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 			if (! paInitialized) {
 				PaError err = Pa_Initialize ();
 				if (err)
-					Melder_throw ("Pa_Initialize: ", Pa_GetErrorText (err));
+					Melder_throw (U"Pa_Initialize: ", Melder_peek8to32 (Pa_GetErrorText (err)));
 				paInitialized = true;
 			}
 		} else {
@@ -231,12 +231,12 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 				fd = open (DEV_AUDIO, O_RDONLY);
 				if (fd == -1) {
 					if (errno == EBUSY)
-						Melder_throw ("Audio device in use by another program.");
+						Melder_throw (U"Audio device in use by another program.");
 					else
 						#ifdef linux
-							Melder_throw ("Cannot open audio device.\nPlease switch on PortAudio in the Sound Recording Preferences.");
+							Melder_throw (U"Cannot open audio device.\nPlease switch on PortAudio in the Sound Recording Preferences.");
 						#else
-							Melder_throw ("Cannot open audio device.");
+							Melder_throw (U"Cannot open audio device.");
 						#endif
 				}
 				/* The device immediately started recording into its buffer, but probably at the wrong rate etc. */
@@ -251,17 +251,17 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 
 		if (inputUsesPortAudio) {
 			if (inputSource < 1 || inputSource > Pa_GetDeviceCount ())
-				Melder_throw ("Unknown device #", inputSource, ".");
+				Melder_throw (U"Unknown device #", inputSource, U".");
 			streamParameters. device = inputSource - 1;
 		} else {
 			#if defined (macintosh)
 			#elif defined (linux)
 				fd_mixer = open ("/dev/mixer", O_WRONLY);		
 				if (fd_mixer == -1)
-					Melder_throw ("Cannot open /dev/mixer.");
+					Melder_throw (U"Cannot open /dev/mixer.");
 				dev_mask = inputSource == 1 ? SOUND_MASK_MIC : SOUND_MASK_LINE;
 				if (ioctl (fd_mixer, SOUND_MIXER_WRITE_RECSRC, & dev_mask) == -1)
-					Melder_throw ("Cannot set recording device in mixer");		
+					Melder_throw (U"Cannot set recording device in mixer");
 			#endif
 		}
 
@@ -284,11 +284,11 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 				if (inputSource == 1) {			
 					/* MIC */		       
 					if (ioctl (fd_mixer, MIXER_WRITE (SOUND_MIXER_MIC), & val) == -1)
-						Melder_throw ("Cannot set gain and balance.");
+						Melder_throw (U"Cannot set gain and balance.");
 				} else {
 					/* LINE */
 					if (ioctl (fd_mixer, MIXER_WRITE (SOUND_MIXER_LINE), & val) == -1)
-						Melder_throw ("Cannot set gain and balance.");
+						Melder_throw (U"Cannot set gain and balance.");
 				}
 				close (fd_mixer);
 				fd_mixer = -1;
@@ -304,7 +304,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 			#elif defined (linux)
 				int sampleRate_int = (int) sampleRate;
 				if (ioctl (fd, SNDCTL_DSP_SPEED, & sampleRate_int) == -1)
-					Melder_throw ("Cannot set sampling frequency to ", sampleRate, " Hz.");
+					Melder_throw (U"Cannot set sampling frequency to ", sampleRate, U" Hz.");
 			#elif defined (_WIN32)
 				waveFormat. nSamplesPerSec = sampleRate;
 			#endif
@@ -319,7 +319,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 			#elif defined (linux)
 				val = 1;
 				if (ioctl (fd, SNDCTL_DSP_CHANNELS, & val) == -1)
-					Melder_throw ("Cannot set to mono.");
+					Melder_throw (U"Cannot set to mono.");
 			#elif defined (_WIN32)
 				waveFormat. nChannels = 1;
 			#endif
@@ -338,7 +338,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 					val = AFMT_S16_LE;
 				#endif
 				if (ioctl (fd, SNDCTL_DSP_SETFMT, & val) == -1)
-					Melder_throw ("Cannot set 16-bit linear.");
+					Melder_throw (U"Cannot set 16-bit linear.");
 			#elif defined (_WIN32)
 				waveFormat. wFormatTag = WAVE_FORMAT_PCM;
 				waveFormat. wBitsPerSample = 16;
@@ -349,9 +349,9 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 
 		/* Create a buffer for recording, and the resulting sound. */
 
-		numberOfSamples = floor (sampleRate * duration + 0.5);
+		numberOfSamples = lround (sampleRate * duration);
 		if (numberOfSamples < 1)
-			Melder_throw ("Duration too short.");
+			Melder_throw (U"Duration too short.");
 		autoNUMvector <short> buffer (1, numberOfSamples * (fakeMonoByStereo ? 2 : 1));
 		autoSound me = Sound_createSimple (1, numberOfSamples / sampleRate, sampleRate);   // STEREO BUG
 		Melder_assert (my nx == numberOfSamples);
@@ -377,20 +377,20 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 			PaError err = Pa_OpenStream (& portaudioStream, & streamParameters, NULL,
 				sampleRate, 0, paNoFlag, portaudioStreamCallback, (void *) & info);
 			if (err)
-				Melder_throw ("open ", Pa_GetErrorText (err));
+				Melder_throw (U"open ", Melder_peek8to32 (Pa_GetErrorText (err)));
 			Pa_StartStream (portaudioStream);
 			if (err)
-				Melder_throw ("start ", Pa_GetErrorText (err));
+				Melder_throw (U"start ", Melder_peek8to32 (Pa_GetErrorText (err)));
 		} else {
 			#if defined (macintosh)
 			#elif defined (_WIN32)
 				waveFormat. cbSize = 0;
 				err = waveInOpen (& hWaveIn, WAVE_MAPPER, & waveFormat, 0, 0, CALLBACK_NULL);
 				if (err != MMSYSERR_NOERROR)
-					Melder_throw ("Error ", err, " while opening.");
+					Melder_throw (U"Error ", err, U" while opening.");
 			#endif
 		}
-for (i = 1; i <= numberOfSamples; i ++) trace ("Started %d", (int) buffer [i]);
+for (i = 1; i <= numberOfSamples; i ++) trace (U"Started ", buffer [i]);
 
 		/* Read the sound into the buffer. */
 
@@ -400,7 +400,7 @@ for (i = 1; i <= numberOfSamples; i ++) trace ("Started %d", (int) buffer [i]);
 				//Pa_Sleep (1);
 				//Melder_casual ("filled %ld/%ld", getNumberOfSamplesRead (& info), numberOfSamples);
 			}
-for (i = 1; i <= numberOfSamples; i ++) trace ("Recorded %d", (int) buffer [i]);
+for (i = 1; i <= numberOfSamples; i ++) trace (U"Recorded ", buffer [i]);
 		} else {
 			#if defined (macintosh)
 			#elif defined (_WIN32)
@@ -412,17 +412,17 @@ for (i = 1; i <= numberOfSamples; i ++) trace ("Recorded %d", (int) buffer [i]);
 				waveHeader. reserved = 0;
 				err = waveInPrepareHeader (hWaveIn, & waveHeader, sizeof (WAVEHDR));
 				if (err != MMSYSERR_NOERROR)
-					Melder_throw ("Error ", err, " while preparing header.");
+					Melder_throw (U"Error ", err, U" while preparing header.");
 				err = waveInAddBuffer (hWaveIn, & waveHeader, sizeof (WAVEHDR));
 				if (err != MMSYSERR_NOERROR)
-					Melder_throw ("Error ", err, " while listening.");
+					Melder_throw (U"Error ", err, U" while listening.");
 				err = waveInStart (hWaveIn);
 				if (err != MMSYSERR_NOERROR)
-					Melder_throw ("Error ", err, " while starting.");
+					Melder_throw (U"Error ", err, U" while starting.");
 					while (! (waveHeader. dwFlags & WHDR_DONE)) { Pa_Sleep (1); }
 				err = waveInUnprepareHeader (hWaveIn, & waveHeader, sizeof (WAVEHDR));
 				if (err != MMSYSERR_NOERROR)
-					Melder_throw ("Error ", err, " while unpreparing header.");
+					Melder_throw (U"Error ", err, U" while unpreparing header.");
 			#else
 				if (mulaw)
 					read (fd, (char *) & buffer [1], numberOfSamples);
@@ -465,7 +465,7 @@ for (i = 1; i <= numberOfSamples; i ++) trace ("Recorded %d", (int) buffer [i]);
 			#elif defined (_WIN32)
 				err = waveInClose (hWaveIn);
 				if (err != MMSYSERR_NOERROR)
-					Melder_throw ("Error ", err, " while closing.");
+					Melder_throw (U"Error ", err, U" while closing.");
 			#else
 				close (fd);
 			#endif
@@ -487,7 +487,7 @@ for (i = 1; i <= numberOfSamples; i ++) trace ("Recorded %d", (int) buffer [i]);
 				if (fd != -1) close (fd);
 			#endif
 		}
-		Melder_throw ("Sound not recorded.");
+		Melder_throw (U"Sound not recorded.");
 	}
 }
 
@@ -520,7 +520,7 @@ void Sound_playPart (Sound me, double tmin, double tmax,
 	int (*callback) (void *closure, int phase, double tmin, double tmax, double t), void *closure)
 {
 	try {
-		long ifsamp = floor (1.0 / my dx + 0.5), bestSampleRate = MelderAudio_getOutputBestSampleRate (ifsamp);
+		long ifsamp = lround (1.0 / my dx), bestSampleRate = MelderAudio_getOutputBestSampleRate (ifsamp);
 		if (ifsamp == bestSampleRate) {
 			struct SoundPlay *thee = (struct SoundPlay *) & thePlayingSound;
 			double *fromLeft = my z [1], *fromRight = my ny > 1 ? my z [2] : NULL;
@@ -569,7 +569,7 @@ void Sound_playPart (Sound me, double tmin, double tmax,
 			Sound_playPart (resampled.peek(), tmin, tmax, callback, closure);   // recursively
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": not played.");
+		Melder_throw (me, U": not played.");
 	}
 }
 

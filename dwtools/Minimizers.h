@@ -31,29 +31,29 @@
 /*********** deferred class Minimizer **********************************/
 
 Thing_define (Minimizer, Thing) {
-	// new data:
-	public:
-		long nParameters;	/* the number of parameters */
-		double *p;			/* the parameters */
-		double minimum;		/* current minimum */
-		double *history;	/* previous minima */
-		double tolerance;	/* stop criterium */
-		Data object;		/* reference to the object that uses this Minimizer */
-		long funcCalls;		/* the number of times 'func' has been called */
-		long success;		/* indicates whether I'm done */
-		long start;			/* start iteration series */
-		long maxNumOfIterations; /* the current maximum number of iterations */
-		long iteration;     /* the total number of iterations */
-		void (*after) (I, Any aclosure); /* to be called after each iteration */
-		Any aclosure;
-		Graphics gmonitor;		/* graphics to monitor the minimization process */
-	// overridden methods:
-		virtual void v_destroy ();
-		virtual void v_info () { }
-	// new methods:
-		virtual void v_minimize () { }  /* does the work */
-		virtual void v_reset () { } /* reset the minimizer */
-		virtual void v_setParameters (Any parameters) { (void) parameters; }
+	long nParameters;	/* the number of parameters */
+	double *p;			/* the parameters */
+	double minimum;		/* current minimum */
+	double *history;	/* previous minima */
+	double tolerance;	/* stop criterium */
+	Data object;		/* reference to the object that uses this Minimizer */
+	long funcCalls;		/* the number of times 'func' has been called */
+	long success;		/* indicates whether I'm done */
+	long start;			/* start iteration series */
+	long maxNumOfIterations; /* the current maximum number of iterations */
+	long iteration;     /* the total number of iterations */
+	void (*after) (I, Any aclosure); /* to be called after each iteration */
+	Any aclosure;
+	Graphics gmonitor;		/* graphics to monitor the minimization process */
+
+	void v_destroy ()
+		override;
+	void v_info ()
+		override { }
+
+	virtual void v_minimize () { }  /* does the work */
+	virtual void v_reset () { } /* reset the minimizer */
+	virtual void v_setParameters (Any parameters) { (void) parameters; }
 };
 
 void Minimizer_init (I, long nParameters, Data object);

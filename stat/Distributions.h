@@ -29,9 +29,9 @@ Thing_define (Distributions, TableOfReal) {
 
 Distributions Distributions_create (long numberOfRows, long numberOfColumns);
 
-void Distributions_peek (Distributions me, long column, wchar_t **string, long *row);
+void Distributions_peek (Distributions me, long column, char32 **string, long *row);
 
-double Distributions_getProbability (Distributions me, const wchar_t *string, long column);
+double Distributions_getProbability (Distributions me, const char32 *string, long column);
 double Distributionses_getMeanAbsoluteDifference (Distributions me, Distributions thee, long column);
 
 Distributions Distributions_addTwo (Distributions me, Distributions thee);

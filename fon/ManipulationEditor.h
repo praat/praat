@@ -60,7 +60,7 @@ Thing_define (ManipulationEditor, FunctionEditor) {
 	#include "ManipulationEditor_prefs.h"
 };
 
-ManipulationEditor ManipulationEditor_create (const wchar_t *title, Manipulation ana);
+ManipulationEditor ManipulationEditor_create (const char32 *title, Manipulation ana);
 
 /* End of file ManipulationEditor.h */
 #endif

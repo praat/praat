@@ -1,6 +1,6 @@
 /* melder_sysenv.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,11 +39,11 @@
 #endif
 #include "melder.h"
 
-wchar_t * Melder_getenv (const wchar_t *variableName) {
+char32 * Melder_getenv (const char32 *variableName) {
 	#if defined (macintosh) || defined (UNIX) || defined (__MINGW32__)
-		return Melder_peekUtf8ToWcs (getenv (Melder_peekWcsToUtf8 (variableName)));
+		return Melder_peek8to32 (getenv (Melder_peek32to8 (variableName)));
 	#elif defined (_WIN32)
-		static wchar_t buffer [11] [255];
+		static char32 buffer [11] [255];
 		static int ibuffer = 0;
 		if (++ ibuffer == 11) ibuffer = 0;
 		long n = GetEnvironmentVariableW (variableName, buffer [ibuffer], 255);
@@ -54,16 +54,16 @@ wchar_t * Melder_getenv (const wchar_t *variableName) {
 
 void Melder_system (const char32 *command) {
 	#if defined (macintosh) || defined (UNIX)
-		if (system (Melder_peekStr32ToUtf8 (command)) != 0)
-			Melder_throw ("System command failed.");
+		if (system (Melder_peek32to8 (command)) != 0)
+			Melder_throw (U"System command failed.");
 	#elif defined (_WIN32)
 		STARTUPINFO siStartInfo;
 		PROCESS_INFORMATION piProcInfo;
-		wchar_t *comspec = Melder_getenv (L"COMSPEC");   // e.g. "C:\WINDOWS\COMMAND.COM" or "C:\WINNT\windows32\cmd.exe"
+		char32 *comspec = Melder_getenv (U"COMSPEC");   // e.g. "C:\WINDOWS\COMMAND.COM" or "C:\WINNT\windows32\cmd.exe"
 		if (comspec == NULL) {
-			comspec = Melder_getenv (L"ComSpec");
+			comspec = Melder_getenv (U"ComSpec");
 		}
-		MelderString buffer = { 0 };
+		autoMelderString buffer;
 		if (comspec != NULL) {
 			MelderString_copy (& buffer, comspec);
 		} else {
@@ -73,23 +73,23 @@ void Melder_system (const char32 *command) {
 			if (! GetVersionEx ((OSVERSIONINFO *) & osVersionInfo)) {
 				osVersionInfo. dwOSVersionInfoSize = sizeof (OSVERSIONINFO);
 				if (! GetVersionEx ((OSVERSIONINFO *) & osVersionInfo))
-					Melder_throw ("System command cannot find system version.");
+					Melder_throw (U"System command cannot find system version.");
 			}
 			switch (osVersionInfo. dwPlatformId) {
 				case VER_PLATFORM_WIN32_NT: {
-					MelderString_copy (& buffer, L"cmd.exe");
+					MelderString_copy (& buffer, U"cmd.exe");
 				} break; case VER_PLATFORM_WIN32_WINDOWS: {
-					MelderString_copy (& buffer, L"command.com");
+					MelderString_copy (& buffer, U"command.com");
 				} break; default: {
-					MelderString_copy (& buffer, L"command.com");
+					MelderString_copy (& buffer, U"command.com");
 				}
 			}
 		}
-		MelderString_append (& buffer, L" /c ", Melder_peekStr32ToWcs (command));
+		MelderString_append (& buffer, U" /c ", command);
         memset (& siStartInfo, 0, sizeof (siStartInfo));
         siStartInfo. cb = sizeof (siStartInfo);
-		if (! CreateProcess (NULL, buffer.string, NULL, NULL, TRUE, 0, NULL, NULL, & siStartInfo, & piProcInfo))
-			Melder_throw ("Cannot create subprocess.");
+		if (! CreateProcess (NULL, Melder_peek32toW (buffer.string), NULL, NULL, TRUE, 0, NULL, NULL, & siStartInfo, & piProcInfo))
+			Melder_throw (U"Cannot create subprocess.");
 		WaitForSingleObject (piProcInfo. hProcess, -1);
 		CloseHandle (piProcInfo. hProcess);
 		CloseHandle (piProcInfo. hThread);

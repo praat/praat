@@ -1,6 +1,6 @@
 /* Matrix_and_Polygon.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 Polygon Matrix_to_Polygon (Matrix me) {
 	try {
 		if (my nx != 2 && my ny != 2)
-			Melder_throw ("Matrix must have exactly 2 rows or columns.");
+			Melder_throw (U"Matrix must have exactly 2 rows or columns.");
 		autoPolygon thee = NULL;
 		if (my ny == 2) {
 			thee.reset (Polygon_create (my nx));
@@ -44,7 +44,7 @@ Polygon Matrix_to_Polygon (Matrix me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Polygon.");
+		Melder_throw (me, U": not converted to Polygon.");
 	}
 }
 
@@ -55,7 +55,7 @@ Matrix Polygon_to_Matrix (Polygon me) {
 		NUMvector_copyElements (my y, thy z [2], 1, my numberOfPoints);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Matrix.");
+		Melder_throw (me, U": not converted to Matrix.");
 	}
 }
 

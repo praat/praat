@@ -1,6 +1,6 @@
 /* Spectrum_and_Spectrogram.cpp
  *
- * Copyright (C) 1992-2011,2014 David Weenink & Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015 David Weenink & Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,19 +34,19 @@ Spectrum Spectrogram_to_Spectrum (I, double tim) {
 		thy xmax = my ymax;
 		thy x1 = my y1;   // centre of first band, instead of 0 (makes it unFFTable)
 		thy dx = my dy;   // frequency step
-		long itime = Sampled_xToIndex (me, tim);
+		long itime = Sampled_xToNearestIndex (me, tim);
 		if (itime < 1 ) itime = 1;
 		if (itime > my nx) itime = my nx;
 		for (long ifreq = 1; ifreq <= my ny; ifreq ++) {
 			double value = my z [ifreq] [itime];
 			if (value < 0.0)
-				Melder_throw ("Negative values in spectrogram.");
+				Melder_throw (U"Negative values in spectrogram.");
 			thy z [1] [ifreq] = sqrt (value);
 			thy z [2] [ifreq] = 0.0;
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": spectral slice not extracted.");
+		Melder_throw (me, U": spectral slice not extracted.");
 	}
 }
 
@@ -58,7 +58,7 @@ Spectrogram Spectrum_to_Spectrogram (I) {
 			thy z [i] [1] = my z [1] [i] * my z [1] [i] + my z [2] [i] * my z [2] [i];
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Spectrogram.");
+		Melder_throw (me, U": not converted to Spectrogram.");
 	}
 }
 

@@ -1,6 +1,6 @@
 /* praat_statistics.cpp
  *
- * Copyright (C) 1992-2012,2014 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,22 +24,22 @@
 static struct {
 	long batchSessions, interactiveSessions;
 	double memory;
-	wchar_t dateOfFirstSession [Preferences_STRING_BUFFER_SIZE];
+	char32 dateOfFirstSession [Preferences_STRING_BUFFER_SIZE];
 } statistics;
 
 void praat_statistics_prefs () {
-	Preferences_addLong (L"PraatShell.batchSessions", & statistics.batchSessions, 0);
-	Preferences_addLong (L"PraatShell.interactiveSessions", & statistics.interactiveSessions, 0);
-	Preferences_addDouble (L"PraatShell.memory", & statistics.memory, 0.0);
-	Preferences_addString (L"PraatShell.dateOfFirstSession", & statistics.dateOfFirstSession [0], L"");
+	Preferences_addLong (U"PraatShell.batchSessions", & statistics.batchSessions, 0);
+	Preferences_addLong (U"PraatShell.interactiveSessions", & statistics.interactiveSessions, 0);
+	Preferences_addDouble (U"PraatShell.memory", & statistics.memory, 0.0);
+	Preferences_addString (U"PraatShell.dateOfFirstSession", & statistics.dateOfFirstSession [0], U"");
 }
 
 void praat_statistics_prefsChanged () {
 	if (! statistics.dateOfFirstSession [0]) {
 		time_t today = time (NULL);
-		wchar_t *newLine;
-		wcscpy (statistics.dateOfFirstSession, Melder_peekUtf8ToWcs (ctime (& today)));
-		newLine = wcschr (statistics.dateOfFirstSession, '\n');
+		char32 *newLine;
+		str32cpy (statistics.dateOfFirstSession, Melder_peek8to32 (ctime (& today)));
+		newLine = str32chr (statistics.dateOfFirstSession, '\n');
 		if (newLine) *newLine = '\0';
 	}
 	if (theCurrentPraatApplication -> batch)
@@ -54,58 +54,58 @@ void praat_statistics_exit () {
 
 void praat_reportIntegerProperties () {
 	MelderInfo_open ();
-	MelderInfo_writeLine (L"Integer properties of this edition of Praat on this computer:\n");
-	MelderInfo_writeLine (L"A \"short integer\" is ",      Melder_integer (sizeof (short)       * 8), L" bits.");
-	MelderInfo_writeLine (L"An \"integer\" is ",           Melder_integer (sizeof (int)         * 8), L" bits.");
-	MelderInfo_writeLine (L"A \"long integer\" is ",       Melder_integer (sizeof (long)        * 8), L" bits.");
-	MelderInfo_writeLine (L"A \"long long integer\" is ",  Melder_integer (sizeof (long long)   * 8), L" bits.");
-	MelderInfo_writeLine (L"A pointer is ",                Melder_integer (sizeof (void *)      * 8), L" bits.");
-	MelderInfo_writeLine (L"A memory object size is ",     Melder_integer (sizeof (size_t)      * 8), L" bits.");
-	MelderInfo_writeLine (L"A file offset is ",            Melder_integer (sizeof (off_t)       * 8), L" bits.");
+	MelderInfo_writeLine (U"Integer properties of this edition of Praat on this computer:\n");
+	MelderInfo_writeLine (U"A \"short integer\" is ",      sizeof (short)       * 8, U" bits.");
+	MelderInfo_writeLine (U"An \"integer\" is ",           sizeof (int)         * 8, U" bits.");
+	MelderInfo_writeLine (U"A \"long integer\" is ",       sizeof (long)        * 8, U" bits.");
+	MelderInfo_writeLine (U"A \"long long integer\" is ",  sizeof (long long)   * 8, U" bits.");
+	MelderInfo_writeLine (U"A pointer is ",                sizeof (void *)      * 8, U" bits.");
+	MelderInfo_writeLine (U"A memory object size is ",     sizeof (size_t)      * 8, U" bits.");
+	MelderInfo_writeLine (U"A file offset is ",            sizeof (off_t)       * 8, U" bits.");
 	MelderInfo_close ();
 }
 
 void praat_reportTextProperties () {
 	MelderInfo_open ();
-	MelderInfo_writeLine (L"Text properties of this edition of Praat on this computer:\n");
-	MelderInfo_writeLine (L"Locale: ", Melder_peekUtf8ToWcs (setlocale (LC_ALL, NULL)));
+	MelderInfo_writeLine (U"Text properties of this edition of Praat on this computer:\n");
+	MelderInfo_writeLine (U"Locale: ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
 	MelderInfo_close ();
 }
 
 void praat_reportGraphicalProperties () {
 	MelderInfo_open ();
-	MelderInfo_writeLine (L"Graphical properties of this edition of Praat on this computer:\n");
+	MelderInfo_writeLine (U"Graphical properties of this edition of Praat on this computer:\n");
 	double x, y, width, height;
 	Gui_getWindowPositioningBounds (& x, & y, & width, & height);
-	MelderInfo_writeLine (L"Window positioning area: x = ", Melder_double (x), L", y = ", Melder_double (y),
-		L", width = ", Melder_double (width), L", height = ", Melder_double (height));
+	MelderInfo_writeLine (U"Window positioning area: x = ", x, U", y = ", y,
+		U", width = ", width, U", height = ", height);
 	#if defined (macintosh)
 		CGDirectDisplayID screen = CGMainDisplayID ();
 		CGSize screenSize_mm = CGDisplayScreenSize (screen);
 		double diagonal_mm = sqrt (screenSize_mm. width * screenSize_mm. width + screenSize_mm. height * screenSize_mm. height);
 		double diagonal_inch = diagonal_mm / 25.4;
-		MelderInfo_writeLine (L"\nScreen size: ", Melder_double (screenSize_mm. width), L" x ", Melder_double (screenSize_mm. height),
-			L" mm (diagonal ", Melder_fixed (diagonal_mm, 1), L" mm = ", Melder_fixed (diagonal_inch, 1), L" inch)");
+		MelderInfo_writeLine (U"\nScreen size: ", screenSize_mm. width, U" x ", screenSize_mm. height,
+			U" mm (diagonal ", Melder_fixed (diagonal_mm, 1), U" mm = ", Melder_fixed (diagonal_inch, 1), U" inch)");
 		size_t screenWidth_pixels = CGDisplayPixelsWide (screen);
 		size_t screenHeight_pixels = CGDisplayPixelsHigh (screen);
-		MelderInfo_writeLine (L"Screen \"resolution\": ", Melder_integer (screenWidth_pixels), L" x ", Melder_integer (screenHeight_pixels), L" pixels");
+		MelderInfo_writeLine (U"Screen \"resolution\": ", screenWidth_pixels, U" x ", screenHeight_pixels, U" pixels");
 		double resolution = 25.4 * screenWidth_pixels / screenSize_mm. width;
-		MelderInfo_writeLine (L"Screen resolution: ", Melder_fixed (resolution, 1), L" pixels/inch");
+		MelderInfo_writeLine (U"Screen resolution: ", Melder_fixed (resolution, 1), U" pixels/inch");
 	#elif defined (_WIN32)
 		/*for (int i = 0; i <= 88; i ++)
-			MelderInfo_writeLine (L"System metric ", Melder_integer (i), L": ", Melder_integer (GetSystemMetrics (i)));*/
+			MelderInfo_writeLine (U"System metric ", i, U": ", GetSystemMetrics (i));*/
 	#endif
 	MelderInfo_close ();
 }
 
 void praat_reportMemoryUse () {
 	MelderInfo_open ();
-	MelderInfo_writeLine (L"Memory use by Praat:\n");
-	MelderInfo_writeLine (L"Currently in use:\n"
-		L"   Strings: ", Melder_integer (MelderString_allocationCount () - MelderString_deallocationCount ()));
-	MelderInfo_writeLine (L"   Arrays: ", Melder_integer (NUM_getTotalNumberOfArrays ()));
-	MelderInfo_writeLine (L"   Things: ", Melder_integer (Thing_getTotalNumberOfThings ()),
-		L" (objects in list: ", Melder_integer (theCurrentPraatObjects -> n), L")");
+	MelderInfo_writeLine (U"Memory use by Praat:\n");
+	MelderInfo_writeLine (U"Currently in use:\n"
+		U"   Strings: ", MelderString_allocationCount () - MelderString_deallocationCount ());
+	MelderInfo_writeLine (U"   Arrays: ", NUM_getTotalNumberOfArrays ());
+	MelderInfo_writeLine (U"   Things: ", Thing_getTotalNumberOfThings (),
+		U" (objects in list: ", theCurrentPraatObjects -> n, U")");
 	long numberOfMotifWidgets =
 		#if motif && (defined (_WIN32) || defined (macintosh))
 			Gui_getNumberOfMotifWidgets ();
@@ -113,29 +113,29 @@ void praat_reportMemoryUse () {
 			0;
 		#endif
 	if (numberOfMotifWidgets > 0) {
-		MelderInfo_writeLine (L"   Motif widgets: ", Melder_integer (numberOfMotifWidgets));
+		MelderInfo_writeLine (U"   Motif widgets: ", numberOfMotifWidgets);
 	}
-	MelderInfo_writeLine (L"   Other: ",
+	MelderInfo_writeLine (U"   Other: ",
 		Melder_bigInteger (Melder_allocationCount () - Melder_deallocationCount ()
 			- Thing_getTotalNumberOfThings () - NUM_getTotalNumberOfArrays ()
 			- (MelderString_allocationCount () - MelderString_deallocationCount ())
 			- numberOfMotifWidgets));
 	MelderInfo_writeLine (
-		L"\nMemory history of this session:\n"
-		L"   Total created: ", Melder_bigInteger (Melder_allocationCount ()), L" (", Melder_bigInteger (Melder_allocationSize ()), L" bytes)");
-	MelderInfo_writeLine (L"   Total deleted: ", Melder_bigInteger (Melder_deallocationCount ()));
-	MelderInfo_writeLine (L"   Reallocations: ", Melder_bigInteger (Melder_movingReallocationsCount ()), L" moving, ",
-		Melder_bigInteger (Melder_reallocationsInSituCount ()), L" in situ");
+		U"\nMemory history of this session:\n"
+		U"   Total created: ", Melder_bigInteger (Melder_allocationCount ()), U" (", Melder_bigInteger (Melder_allocationSize ()), U" bytes)");
+	MelderInfo_writeLine (U"   Total deleted: ", Melder_bigInteger (Melder_deallocationCount ()));
+	MelderInfo_writeLine (U"   Reallocations: ", Melder_bigInteger (Melder_movingReallocationsCount ()), U" moving, ",
+		Melder_bigInteger (Melder_reallocationsInSituCount ()), U" in situ");
 	MelderInfo_writeLine (
-		L"   Strings created: ", Melder_bigInteger (MelderString_allocationCount ()), L" (", Melder_bigInteger (MelderString_allocationSize ()), L" bytes)");
+		U"   Strings created: ", Melder_bigInteger (MelderString_allocationCount ()), U" (", Melder_bigInteger (MelderString_allocationSize ()), U" bytes)");
 	MelderInfo_writeLine (
-		L"   Strings deleted: ", Melder_bigInteger (MelderString_deallocationCount ()), L" (", Melder_bigInteger (MelderString_deallocationSize ()), L" bytes)");
-	MelderInfo_writeLine (L"\nHistory of all sessions from ", statistics.dateOfFirstSession, L" until today:");
-	MelderInfo_writeLine (L"   Sessions: ", Melder_integer (statistics.interactiveSessions), L" interactive, ",
-		Melder_integer (statistics.batchSessions), L" batch");
-	MelderInfo_writeLine (L"   Total memory use: ", Melder_bigInteger (statistics.memory + Melder_allocationSize ()), L" bytes");
-	MelderInfo_writeLine (L"\nNumber of fixed menu commands: ", Melder_integer (praat_getNumberOfMenuCommands ()));
-	MelderInfo_writeLine (L"Number of dynamic menu commands: ", Melder_integer (praat_getNumberOfActions ()));
+		U"   Strings deleted: ", Melder_bigInteger (MelderString_deallocationCount ()), U" (", Melder_bigInteger (MelderString_deallocationSize ()), U" bytes)");
+	MelderInfo_writeLine (U"\nHistory of all sessions from ", statistics.dateOfFirstSession, U" until today:");
+	MelderInfo_writeLine (U"   Sessions: ", statistics.interactiveSessions, U" interactive, ",
+		statistics.batchSessions, U" batch");
+	MelderInfo_writeLine (U"   Total memory use: ", Melder_bigInteger (statistics.memory + Melder_allocationSize ()), U" bytes");
+	MelderInfo_writeLine (U"\nNumber of fixed menu commands: ", praat_getNumberOfMenuCommands ());
+	MelderInfo_writeLine (U"Number of dynamic menu commands: ", praat_getNumberOfActions ());
 	MelderInfo_close ();
 }
 

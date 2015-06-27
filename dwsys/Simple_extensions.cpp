@@ -19,21 +19,21 @@
 
 /*
  djmw 20020812 GPL header
- djmw & pb wchar_t
+ djmw & pb wchar
 */
 
 #include "Simple_extensions.h"
 #include "longchar.h"
 
-void SimpleString_init (SimpleString me, const wchar_t *string) {
-	my string = Melder_wcsdup (string);
+void SimpleString_init (SimpleString me, const char32 *string) {
+	my string = Melder_dup (string);
 }
 
 int SimpleString_compare (SimpleString me, SimpleString thee) {
-	return wcscmp (my string, thy string);
+	return str32cmp (my string, thy string);
 }
 
-const wchar_t *SimpleString_c (SimpleString me) {
+const char32 *SimpleString_c (SimpleString me) {
 	return my string;
 }
 
@@ -41,13 +41,13 @@ void SimpleString_append (SimpleString me, SimpleString thee) {
 	SimpleString_append_c (me, thy string);
 }
 
-void SimpleString_append_c (SimpleString me, const wchar_t *str) {
+void SimpleString_append_c (SimpleString me, const char32 *str) {
 	if (str == 0) {
 		return;
 	}
-	long myLength = wcslen (my string);
-	my string = (wchar_t *) Melder_realloc (my string, (myLength + wcslen (str) + 1) * sizeof (wchar_t));
-	wcscpy (& my string[myLength], str);
+	long myLength = str32len (my string);
+	my string = (char32 *) Melder_realloc (my string, (myLength + str32len (str) + 1) * (int64) sizeof (char32));
+	str32cpy (& my string[myLength], str);
 }
 
 SimpleString SimpleString_concat (SimpleString me, SimpleString thee) {
@@ -56,36 +56,36 @@ SimpleString SimpleString_concat (SimpleString me, SimpleString thee) {
 	return him.transfer();
 }
 
-SimpleString SimpleString_concat_c (SimpleString me, const wchar_t *str) {
+SimpleString SimpleString_concat_c (SimpleString me, const char32 *str) {
 	autoSimpleString him = Data_copy (me);
 	SimpleString_append_c (him.peek(), str);
 	return him.transfer();
 }
 
-void SimpleString_replace_c (SimpleString me, const wchar_t *str) {
-	wchar_t *ptr = Melder_wcsdup (str);
+void SimpleString_replace_c (SimpleString me, const char32 *str) {
+	char32 *ptr = Melder_dup (str);
 	Melder_free (my string);
 	my string = ptr;
 }
 
 long SimpleString_length (SimpleString me) {
-	return wcslen (my string);
+	return str32len (my string);
 }
 
 void SimpleString_draw (SimpleString me, Graphics g, double xWC, double yWC) {
 	Graphics_text (g, xWC, yWC, my string);
 }
 
-const wchar_t *SimpleString_nativize_c (SimpleString me, int educateQuotes) {
+const char32 *SimpleString_nativize_c (SimpleString me, int educateQuotes) {
 	autoSimpleString thee = Data_copy (me);
-	Longchar_nativizeW (thy string, my string, educateQuotes);
+	Longchar_nativize32 (thy string, my string, educateQuotes);
 	return my string;
 }
 
-const wchar_t *SimpleString_genericize_c (SimpleString me) {
+const char32 *SimpleString_genericize_c (SimpleString me) {
 	autoSimpleString thee = Data_copy (me);
-	my string = (wchar_t *) Melder_realloc (my string, (3 * wcslen (my string) + 1) * sizeof (wchar_t));
-	Longchar_genericizeW (thy string, my string);
+	my string = (char32 *) Melder_realloc (my string, (3 * str32len (my string) + 1) * (int64) sizeof (char32));
+	Longchar_genericize32 (thy string, my string);
 	return my string;
 }
 

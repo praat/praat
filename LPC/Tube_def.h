@@ -36,8 +36,8 @@ oo_DEFINE_CLASS (Tube, Sampled)
 	oo_STRUCT_VECTOR (Tube_Frame, frame, nx)
 
 	#if oo_DECLARING
-		// overridden methods:
-			virtual void v_info ();
+		void v_info ()
+			override;
 	#endif
 
 oo_END_CLASS (Tube)

@@ -40,27 +40,27 @@ Thing_define (SpectrumEditor, FunctionEditor) {
 		override;
 	void v_createMenuItems_view (EditorMenu menu)
 		override;
-	const wchar_t * v_format_domain ()
-		override { return L"Frequency domain:"; }
-	const wchar_t * v_format_short ()
-		override { return L"%.0f"; }
-	const wchar_t * v_format_long ()
-		override { return L"%.2f"; }
+	const char32 * v_format_domain ()
+		override { return U"Frequency domain:"; }
+	const char * v_format_short ()
+		override { return "%.0f"; }
+	const char * v_format_long ()
+		override { return "%.2f"; }
 	int v_fixedPrecision_long ()
 		override { return 2; }
-	const wchar_t * v_format_units ()
-		override { return L"hertz"; }
-	const wchar_t * v_format_totalDuration ()
-		override { return L"Total bandwidth %.2f hertz"; }
-	const wchar_t * v_format_window ()
-		override { return L"Visible part %.2f hertz"; }
-	const wchar_t * v_format_selection ()
-		override { return L"%.2f Hz"; }
+	const char32 * v_format_units ()
+		override { return U"hertz"; }
+	const char * v_format_totalDuration ()
+		override { return u8"Total bandwidth %.2f hertz"; }
+	const char * v_format_window ()
+		override { return u8"Visible part %.2f hertz"; }
+	const char * v_format_selection ()
+		override { return u8"%.2f Hz"; }
 
 	#include "SpectrumEditor_prefs.h"
 };
 
-SpectrumEditor SpectrumEditor_create (const wchar_t *title, Spectrum data);
+SpectrumEditor SpectrumEditor_create (const char32 *title, Spectrum data);
 
 /* End of file SpectrumEditor.h */
 #endif

@@ -37,7 +37,7 @@ static void FilesInMemory_and_Strings_changeIds (FilesInMemory me, Strings thee)
 			FileInMemory_setId ((FileInMemory) my item[i], thy strings[i]);
 		}
 	} catch (MelderError) {
-		Melder_throw (me, "Ids not changed.");
+		Melder_throw (me, U"Ids not changed.");
 	}
 }
 
@@ -48,34 +48,34 @@ static Strings espeak_voices_sort () {
 		FilesInMemory_and_Strings_changeIds (espeakdata_voices, fullnames.peek());
 		espeakdata_voices -> d_sortKey = 1; // sort id's
 		Sorted_sort (espeakdata_voices);
-		Table_sortRows_string (names.peek(), L"name"); //They hopefully sort the same way
+		Table_sortRows_string (names.peek(), U"name"); //They hopefully sort the same way
 		autoStrings neworder = espeakdata_voices_getNames (names.peek(), 2);
 		autoStrings names_short = espeakdata_voices_getNames (names.peek(), 1);
 		FilesInMemory_and_Strings_changeIds (espeakdata_voices, names_short.peek());
 		return neworder.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Espeak voices not sorted.");
+		Melder_throw (U"Espeak voices not sorted.");
 	}
 }
 
-static Strings Strings_insertAndExpand (Strings me, long position, const wchar_t *newstring) {
+static Strings Strings_insertAndExpand (Strings me, long position, const char32 *newstring) {
 	try {
 		if (position == 0) position = my numberOfStrings + 1;
 		Melder_assert (position >= 1);
 		Melder_assert (position <= my numberOfStrings + 1);
 		autoStrings thee = Thing_new (Strings);
-		thy strings = NUMvector<wchar *> (1, my numberOfStrings + 1);
+		thy strings = NUMvector<char32 *> (1, my numberOfStrings + 1);
 		for (long i = 1, from = 1; i <= my numberOfStrings + 1; i++, from++) {
-			const wchar *to_copy = my strings[from];
+			const char32 *to_copy = my strings[from];
 			if (i == position) {
 				to_copy = newstring; from--;
 			}
-			thy strings[i] = Melder_wcsdup (to_copy);
+			thy strings[i] = Melder_dup (to_copy);
 		}
 		thy numberOfStrings = my numberOfStrings + 1;
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, " not expanded.");
+		Melder_throw (me, U" not expanded.");
 	}
 }
 
@@ -83,14 +83,14 @@ void espeakdata_praat_init () {
 	try {
 		espeakdata_variants = create_espeakdata_variants ();
 		autoStrings vnames = FilesInMemory_to_Strings_id (espeakdata_variants);
-		espeakdata_variants_names = Strings_insertAndExpand (vnames.peek(), 1, L"default");
+		espeakdata_variants_names = Strings_insertAndExpand (vnames.peek(), 1, U"default");
 		espeakdata_dicts = create_espeakdata_dicts ();
 		espeakdata_phons = create_espeakdata_phons ();
 		espeakdata_voices = create_espeakdata_voices ();
 		espeakdata_voices_names = espeak_voices_sort ();
 		autoTable names_table = espeakdata_voices_to_Table (espeakdata_voices);
 	} catch (MelderError) {
-		Melder_throw ("Espeakdata initialization not performed.");
+		Melder_throw (U"Espeakdata initialization not performed.");
 	}
 }
 
@@ -119,7 +119,7 @@ const char * espeakdata_get_voicedata (const char *data, long ndata, char *buf, 
 
 Table espeakdata_voices_to_Table (FilesInMemory me) {
 	try {
-		autoTable thee = Table_createWithColumnNames (my size, L"id name");
+		autoTable thee = Table_createWithColumnNames (my size, U"id name");
 		for (long ifile = 1; ifile <= my size; ifile++) {
 			FileInMemory fim = (FileInMemory) my item[ifile];
 			Table_setStringValue (thee.peek(), ifile, 1, fim -> d_id);
@@ -137,51 +137,51 @@ Table espeakdata_voices_to_Table (FilesInMemory me) {
 			// skip leading white space
 			bufp = & buf[4];
 			while (ESPEAK_ISSPACE (*bufp)) { *bufp++; }
-			Table_setStringValue (thee.peek(), ifile, 2, Melder_peekUtf8ToWcs (bufp));
+			Table_setStringValue (thee.peek(), ifile, 2, Melder_peek8to32 (bufp));
 			TableRow row = static_cast <TableRow> (thy rows -> item [ifile]);
 			wint_t c0 = row -> cells [2]. string[0];
 			row -> cells [2]. string[0] = towupper (c0);
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Espeakdata: voice table not initialized.");
+		Melder_throw (U"Espeakdata: voice table not initialized.");
 	}
 }
 
 Strings espeakdata_voices_getNames (Table me, long column) {
 	try {
 		if (column < 0 || column > 2) {
-			Melder_throw ("Illegal columnn.");
+			Melder_throw (U"Illegal columnn.");
 		}
 		autoStrings thee = Thing_new (Strings);
-		thy strings = NUMvector <wchar *> (1, my rows -> size);
+		thy strings = NUMvector <char32 *> (1, my rows -> size);
 		thy numberOfStrings = 0;
 		for (long irow = 1; irow <= my rows -> size; irow++) {
-			thy strings[irow] = Melder_wcsdup (Table_getStringValue_Assert (me, irow, column));
+			thy strings[irow] = Melder_dup (Table_getStringValue_Assert (me, irow, column));
 			thy numberOfStrings++;
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Espeakdata: voices not initialized.");
+		Melder_throw (U"Espeakdata: voices not initialized.");
 	}
 }
 
 char * espeakdata_get_dict_data (const char *name, unsigned int *size) {
 	long lsize;
-	char *data = FilesInMemory_getCopyOfData (espeakdata_dicts, Melder_peekUtf8ToWcs (name), &lsize);
+	char *data = FilesInMemory_getCopyOfData (espeakdata_dicts, Melder_peek8to32 (name), &lsize);
 	*size = (unsigned int) lsize;
 	return data;
 }
 
 
 const char * espeakdata_get_voice (const char *vname, long *numberOfBytes) {
-	return FilesInMemory_getData (espeakdata_voices, Melder_peekUtf8ToWcs (vname), numberOfBytes);
+	return FilesInMemory_getData (espeakdata_voices, Melder_peek8to32 (vname), numberOfBytes);
 }
 
 const char * espeakdata_get_voiceVariant (const char *vname, long *numberOfBytes) {
 	char *plus = strstr ((char *) vname, "+"); // prototype says: strstr (const char *, const char *)
 	const char *name = plus != NULL ? ++plus : vname;
-	return FilesInMemory_getData (espeakdata_variants, Melder_peekUtf8ToWcs (name), numberOfBytes);;
+	return FilesInMemory_getData (espeakdata_variants, Melder_peek8to32 (name), numberOfBytes);;
 }
 
 

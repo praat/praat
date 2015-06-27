@@ -31,15 +31,15 @@ TableOfReal CCA_and_Correlation_factorLoadings (CCA me, Correlation thee) {
 	try {
 		long ny = my y -> dimension, nx = my x -> dimension;
 
-		if (ny + nx != thy numberOfColumns) Melder_throw ("The number of columns in the Correlation "
-			        "must equal the sum of the dimensions in the CCA object");
+		if (ny + nx != thy numberOfColumns) Melder_throw (U"The number of columns in the Correlation "
+			        U"must equal the sum of the dimensions in the CCA object");
 
 		autoTableOfReal him = TableOfReal_create (2 * my numberOfCoefficients, thy numberOfColumns);
 
 		NUMstrings_copyElements (thy columnLabels, his columnLabels, 1, thy numberOfColumns);
-		TableOfReal_setSequentialRowLabels (him.peek(), 1, my numberOfCoefficients, L"dv", 1, 1);
+		TableOfReal_setSequentialRowLabels (him.peek(), 1, my numberOfCoefficients, U"dv", 1, 1);
 		TableOfReal_setSequentialRowLabels (him.peek(), my numberOfCoefficients + 1,
-		                                    2 * my numberOfCoefficients, L"iv", 1, 1);
+		                                    2 * my numberOfCoefficients, U"iv", 1, 1);
 
 		double **evecy = my y -> eigenvectors, **evecx = my x -> eigenvectors;
 		for (long i = 1; i <= thy numberOfRows; i++) {
@@ -60,19 +60,19 @@ TableOfReal CCA_and_Correlation_factorLoadings (CCA me, Correlation thee) {
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw ("TableOfReal not created from CCA & Correlation.");
+		Melder_throw (U"TableOfReal not created from CCA & Correlation.");
 	}
 }
 
 static void _CCA_and_Correlation_check (CCA me, Correlation thee, int canonicalVariate_from, int canonicalVariate_to) {
 	if (my y -> dimension + my x -> dimension != thy numberOfColumns) {
-		Melder_throw ("The number of columns in the Correlation object must equal the sum of the dimensions in the CCA object");
+		Melder_throw (U"The number of columns in the Correlation object must equal the sum of the dimensions in the CCA object");
 	}
 	if (canonicalVariate_to < canonicalVariate_from) {
-		Melder_throw ("The second value in the \"Canonical variate range\" must be equal or larger than the first.");
+		Melder_throw (U"The second value in the \"Canonical variate range\" must be equal or larger than the first.");
 	}
 	if (canonicalVariate_from < 1 || canonicalVariate_to > my numberOfCoefficients) {
-		Melder_throw ("The \"Canonical variate range\" must be within the interval [1, ", my numberOfCoefficients, "].");
+		Melder_throw (U"The \"Canonical variate range\" must be within the interval [1, ", my numberOfCoefficients, U"].");
 	}
 }
 

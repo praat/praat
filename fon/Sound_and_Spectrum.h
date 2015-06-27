@@ -1,6 +1,6 @@
 /* Sound_and_Spectrum.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,6 @@ Spectrum Spectrum_lpcSmoothing (Spectrum me, int numberOfPeaks, double preemphas
 
 Sound Sound_filter_passHannBand (Sound me, double fmin, double fmax, double smooth);
 Sound Sound_filter_stopHannBand (Sound me, double fmin, double fmax, double smooth);
-Sound Sound_filter_formula (Sound me, const wchar_t *formula, Interpreter interpreter);
+Sound Sound_filter_formula (Sound me, const char32 *formula, Interpreter interpreter);
 
 /* End of file Sound_and_Spectrum.h */

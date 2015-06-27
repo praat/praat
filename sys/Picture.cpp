@@ -71,9 +71,9 @@ static void drawMarkers (Picture me)
 	for (i = 1; i < SIDE; i ++) {
 		double x = i;
 		Graphics_setTextAlignment (my selectionGraphics, Graphics_CENTRE, Graphics_TOP);
-		Graphics_text1 (my selectionGraphics, x, SIDE, Melder_integer (i));
+		Graphics_text (my selectionGraphics, x, SIDE, i);
 		Graphics_setTextAlignment (my selectionGraphics, Graphics_CENTRE, Graphics_BOTTOM);
-		Graphics_text1 (my selectionGraphics, x, 0, Melder_integer (i));
+		Graphics_text (my selectionGraphics, x, 0, i);
 	}
 	for (i = 1; i < SQUARES ; i ++) {   /* Vertical ticks. */
 		double x = 0.5 * i;
@@ -83,9 +83,9 @@ static void drawMarkers (Picture me)
 	for (i = 1; i < SIDE; i ++) {
 		double y = SIDE - i;
 		Graphics_setTextAlignment (my selectionGraphics, Graphics_LEFT, Graphics_HALF);
-		Graphics_text1 (my selectionGraphics, 0.04, y, Melder_integer (i));
+		Graphics_text (my selectionGraphics, 0.04, y, i);
 		Graphics_setTextAlignment (my selectionGraphics, Graphics_RIGHT, Graphics_HALF);
-		Graphics_text1 (my selectionGraphics, SIDE - 0.03, y, Melder_integer (i));
+		Graphics_text (my selectionGraphics, SIDE - 0.03, y, i);
 	}
 	for (i = 1; i < SQUARES; i ++) {   /* Horizontal ticks. */
 		double y = SIDE - 0.5 * i;
@@ -193,7 +193,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 		Graphics_updateWs (my selectionGraphics);   // to change the dark red back into black
 	#endif
 	if (my selectionChangedCallback) {
-		//Melder_casual ("selectionChangedCallback from gui_drawingarea_cb_click");
+		//Melder_casual (U"selectionChangedCallback from gui_drawingarea_cb_click");
 		my selectionChangedCallback (me, my selectionChangedClosure,
 			my selx1, my selx2, my sely1, my sely2);
 	}
@@ -233,7 +233,7 @@ Picture Picture_create (GuiDrawingArea drawingArea, bool sensitive) {
 		return me;
 	} catch (MelderError) {
 		if (me) Melder_free (me);
-		Melder_throw ("Picture not created.");
+		Melder_throw (U"Picture not created.");
 	}
 }
 
@@ -281,11 +281,11 @@ void Picture_erase (Picture me) {
 void Picture_writeToPraatPictureFile (Picture me, MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "wb");
-		if (fprintf (f, "PraatPictureFile") < 0) Melder_throw ("Write error.");
+		if (fprintf (f, "PraatPictureFile") < 0) Melder_throw (U"Write error.");
 		Graphics_writeRecordings (my graphics, f);
 		f.close (file);
 	} catch (MelderError) {
-		Melder_throw ("Cannot write Praat picture file ", file, ".");
+		Melder_throw (U"Cannot write Praat picture file ", file, U".");
 	}
 }
 
@@ -297,7 +297,7 @@ void Picture_readFromPraatPictureFile (Picture me, MelderFile file) {
 		line [n] = '\0';
 		const char *tag = "PraatPictureFile";
 		char *end = strstr (line, tag);
-		if (! end) Melder_throw ("This is not a Praat picture file.");
+		if (! end) Melder_throw (U"This is not a Praat picture file.");
 		*end = '\0';
 		rewind (f);
 		fread (line, 1, end - line + strlen (tag), f);
@@ -305,7 +305,7 @@ void Picture_readFromPraatPictureFile (Picture me, MelderFile file) {
 		Graphics_updateWs (my graphics);
 		f.close (file);
 	} catch (MelderError) {
-		Melder_throw ("Praat picture not read from file ", file);
+		Melder_throw (U"Praat picture not read from file ", file);
 	}
 }
 
@@ -359,37 +359,37 @@ static HENHMETAFILE copyToMetafile (Picture me) {
 	PrintDlg (& defaultPrinter);
 	SetRect (& rect, my selx1 * 2540, (12 - my sely2) * 2540, my selx2 * 2540, (12 - my sely1) * 2540);
 	dc = CreateEnhMetaFile (defaultPrinter. hDC, NULL, & rect, L"Praat\0");
-	if (! dc) Melder_throw ("Cannot create Windows metafile.");
+	if (! dc) Melder_throw (U"Cannot create Windows metafile.");
 	resolution = GetDeviceCaps (dc, LOGPIXELSX);   // Virtual PC: 360; Parallels Desktop: 600
-	//Melder_fatal ("resolution %d", resolution);
+	//Melder_fatal (U"resolution ", resolution);
 	if (Melder_debug == 6) {
 		DEVMODE *devMode = * (DEVMODE **) defaultPrinter. hDevMode;
 		MelderInfo_open ();
-		MelderInfo_writeLine (L"DEVICE CAPS:");
-		MelderInfo_writeLine (L"aspect x ", Melder_integer (GetDeviceCaps (dc, ASPECTX)),
-			L" y ", Melder_integer (GetDeviceCaps (dc, ASPECTY)));
-		MelderInfo_writeLine (L"res(pixels) hor ", Melder_integer (GetDeviceCaps (dc, HORZRES)),
-			L" vert ", Melder_integer (GetDeviceCaps (dc, VERTRES)));
-		MelderInfo_writeLine (L"size(mm) hor ", Melder_integer (GetDeviceCaps (dc, HORZSIZE)),
-			L" vert ", Melder_integer (GetDeviceCaps (dc, VERTSIZE)));
-		MelderInfo_writeLine (L"pixels/inch hor ", Melder_integer (GetDeviceCaps (dc, LOGPIXELSX)),
-			L" vert ", Melder_integer (GetDeviceCaps (dc, LOGPIXELSY)));
-		MelderInfo_writeLine (L"physicalOffset(pixels) hor ", Melder_integer (GetDeviceCaps (dc, PHYSICALOFFSETX)),
-			L" vert ", Melder_integer (GetDeviceCaps (dc, PHYSICALOFFSETY)));
-		MelderInfo_writeLine (L"PRINTER:");
-		MelderInfo_writeLine (L"dmFields ", Melder_integer (devMode -> dmFields));
+		MelderInfo_writeLine (U"DEVICE CAPS:");
+		MelderInfo_writeLine (U"aspect x ", GetDeviceCaps (dc, ASPECTX),
+			U" y ", GetDeviceCaps (dc, ASPECTY));
+		MelderInfo_writeLine (U"res(pixels) hor ", GetDeviceCaps (dc, HORZRES),
+			U" vert ", GetDeviceCaps (dc, VERTRES));
+		MelderInfo_writeLine (U"size(mm) hor ", GetDeviceCaps (dc, HORZSIZE),
+			U" vert ", GetDeviceCaps (dc, VERTSIZE));
+		MelderInfo_writeLine (U"pixels/inch hor ", GetDeviceCaps (dc, LOGPIXELSX),
+			U" vert ", GetDeviceCaps (dc, LOGPIXELSY));
+		MelderInfo_writeLine (U"physicalOffset(pixels) hor ", GetDeviceCaps (dc, PHYSICALOFFSETX),
+			U" vert ", GetDeviceCaps (dc, PHYSICALOFFSETY));
+		MelderInfo_writeLine (U"PRINTER:");
+		MelderInfo_writeLine (U"dmFields ", devMode -> dmFields);
 		if (devMode -> dmFields & DM_YRESOLUTION)
-			MelderInfo_writeLine (L"y resolution ", Melder_integer (devMode -> dmYResolution));
+			MelderInfo_writeLine (U"y resolution ", devMode -> dmYResolution);
 		if (devMode -> dmFields & DM_PRINTQUALITY)
-			MelderInfo_writeLine (L"print quality ", Melder_integer (devMode -> dmPrintQuality));
+			MelderInfo_writeLine (U"print quality ", devMode -> dmPrintQuality);
 		if (devMode -> dmFields & DM_PAPERWIDTH)
-			MelderInfo_writeLine (L"paper width ", Melder_integer (devMode -> dmPaperWidth));
+			MelderInfo_writeLine (U"paper width ", devMode -> dmPaperWidth);
 		if (devMode -> dmFields & DM_PAPERLENGTH)
-			MelderInfo_writeLine (L"paper length ", Melder_integer (devMode -> dmPaperLength));
+			MelderInfo_writeLine (U"paper length ", devMode -> dmPaperLength);
 		if (devMode -> dmFields & DM_PAPERSIZE)
-			MelderInfo_writeLine (L"paper size ", Melder_integer (devMode -> dmPaperSize));
+			MelderInfo_writeLine (U"paper size ", devMode -> dmPaperSize);
 		if (devMode -> dmFields & DM_ORIENTATION)
-			MelderInfo_writeLine (L"orientation ", Melder_integer (devMode -> dmOrientation));
+			MelderInfo_writeLine (U"orientation ", devMode -> dmOrientation);
 		MelderInfo_close ();
 	}
 	autoGraphics pictGraphics = Graphics_create_screen ((void *) dc, NULL, resolution);
@@ -411,17 +411,17 @@ void Picture_copyToClipboard (Picture me) {
 		 * because the clipboard becomes the owner of this global memory object.
 		 */
 	} catch (MelderError) {
-		Melder_throw ("Picture not copied to clipboard.");
+		Melder_throw (U"Picture not copied to clipboard.");
 	}
 }
 void Picture_writeToWindowsMetafile (Picture me, MelderFile file) {
 	try {
 		HENHMETAFILE metafile = copyToMetafile (me);
 		MelderFile_delete (file);   // overwrite any existing file with the same name
-		DeleteEnhMetaFile (CopyEnhMetaFile (metafile, file -> path));
+		DeleteEnhMetaFile (CopyEnhMetaFile (metafile, Melder_peek32toW (file -> path)));
 		DeleteEnhMetaFile (metafile);
 	} catch (MelderError) {
-		Melder_throw ("Picture not written to Windows metafile ", file);
+		Melder_throw (U"Picture not written to Windows metafile ", file);
 	}
 }
 #endif
@@ -437,7 +437,7 @@ void Picture_writeToEpsFile (Picture me, MelderFile file, int includeFonts, int 
 			Graphics_play ((Graphics) my graphics, ps.peek());
 		}
 	} catch (MelderError) {
-		Melder_throw ("Picture not written to EPS file ", file);
+		Melder_throw (U"Picture not written to EPS file ", file);
 	}
 }
 
@@ -446,7 +446,7 @@ void Picture_writeToPdfFile (Picture me, MelderFile file) {
 		autoGraphics graphics = Graphics_create_pdffile (file, 300, my selx1, my selx2, my sely1, my sely2);
 		Graphics_play ((Graphics) my graphics, graphics.peek());
 	} catch (MelderError) {
-		Melder_throw ("Picture not written to PDF file ", file, ".");
+		Melder_throw (U"Picture not written to PDF file ", file, U".");
 	}
 }
 
@@ -455,7 +455,7 @@ void Picture_writeToPngFile_300 (Picture me, MelderFile file) {
 		autoGraphics graphics = Graphics_create_pngfile (file, 300, my selx1, my selx2, my sely1, my sely2);
 		Graphics_play ((Graphics) my graphics, graphics.peek());
 	} catch (MelderError) {
-		Melder_throw ("Picture not written to PNG file ", file, ".");
+		Melder_throw (U"Picture not written to PNG file ", file, U".");
 	}
 }
 
@@ -464,7 +464,7 @@ void Picture_writeToPngFile_600 (Picture me, MelderFile file) {
 		autoGraphics graphics = Graphics_create_pngfile (file, 600, my selx1, my selx2, my sely1, my sely2);
 		Graphics_play ((Graphics) my graphics, graphics.peek());
 	} catch (MelderError) {
-		Melder_throw ("Picture not written to PNG file ", file, ".");
+		Melder_throw (U"Picture not written to PNG file ", file, U".");
 	}
 }
 
@@ -477,7 +477,7 @@ void Picture_print (Picture me) {
 	try {
 		Printer_print (print, me);
 	} catch (MelderError) {
-		Melder_flushError ("Picture not printed.");
+		Melder_flushError (U"Picture not printed.");
 	}
 }
 
@@ -497,7 +497,7 @@ void Picture_setSelection
 	}
 
 	if (notify && my selectionChangedCallback) {
-		//Melder_casual ("selectionChangedCallback from Picture_setSelection");
+		//Melder_casual (U"selectionChangedCallback from Picture_setSelection");
 		my selectionChangedCallback (me, my selectionChangedClosure,
 			my selx1, my selx2, my sely1, my sely2);
 	}

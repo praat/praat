@@ -1,6 +1,6 @@
 /* Sound_and_Spectrum.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,7 +71,7 @@ Spectrum Sound_to_Spectrum (Sound me, int fast) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Spectrum.");
+		Melder_throw (me, U": not converted to Spectrum.");
 	}
 }
 
@@ -81,7 +81,7 @@ Sound Spectrum_to_Sound (Spectrum me) {
 		double lastFrequency = my x1 + (my nx - 1) * my dx;
 		int originalNumberOfSamplesProbablyOdd = im [my nx] != 0.0 || my xmax - lastFrequency > 0.25 * my dx;
 		if (my x1 != 0.0)
-			Melder_throw ("A Fourier-transformable Spectrum must have a first frequency of 0 Hz, not ", my x1, L" Hz.");
+			Melder_throw (U"A Fourier-transformable Spectrum must have a first frequency of 0 Hz, not ", my x1, U" Hz.");
 		long numberOfSamples = 2 * my nx - ( originalNumberOfSamplesProbablyOdd ? 1 : 2 );
 		autoSound thee = Sound_createSimple (1, 1 / my dx, numberOfSamples * my dx);
 		double *amp = thy z [1];
@@ -100,7 +100,7 @@ Sound Spectrum_to_Sound (Spectrum me) {
 		NUMrealft (amp, numberOfSamples, -1);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Sound.");
+		Melder_throw (me, U": not converted to Sound.");
 	}
 }
 
@@ -138,11 +138,11 @@ Spectrum Spectrum_lpcSmoothing (Spectrum me, int numberOfPeaks, double preemphas
 		im [halfnfft + 1] = 0.0;
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not smoothed.");
+		Melder_throw (me, U": not smoothed.");
 	}
 }
 
-Sound Sound_filter_formula (Sound me, const wchar_t *formula, Interpreter interpreter) {
+Sound Sound_filter_formula (Sound me, const char32 *formula, Interpreter interpreter) {
 	try {
 		autoSound thee = Data_copy (me);
 		if (my ny == 1) {
@@ -161,7 +161,7 @@ Sound Sound_filter_formula (Sound me, const wchar_t *formula, Interpreter interp
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not filtered (with formula).");
+		Melder_throw (me, U": not filtered (with formula).");
 	}
 }
 
@@ -184,7 +184,7 @@ Sound Sound_filter_passHannBand (Sound me, double fmin, double fmax, double smoo
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not filtered (pass Hann band).");
+		Melder_throw (me, U": not filtered (pass Hann band).");
 	}
 }
 
@@ -207,7 +207,7 @@ Sound Sound_filter_stopHannBand (Sound me, double fmin, double fmax, double smoo
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not filtered (stop Hann band).");
+		Melder_throw (me, U": not filtered (stop Hann band).");
 	}
 }
 

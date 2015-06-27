@@ -29,7 +29,7 @@
 static void checkChannelsWithinRange (long *channels, long n, long min, long max) {
 	for (long i = 1; i <= n; i++) {
 		if (channels[i] < min || channels[i] > max) {
-			Melder_throw ("Channel ", Melder_integer (channels[i]), " is not within range [", Melder_integer (min), ", ", Melder_integer (max), "].");
+			Melder_throw (U"Channel ", channels[i], U" is not within range [", min, U", ", max, U"].");
 		}
 	}
 }
@@ -41,7 +41,7 @@ PCA Sound_to_PCA_channels (Sound me, double startTime, double endTime) {
 		autoPCA him = SSCP_to_PCA (thee.peek());
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no PCA created.");
+		Melder_throw (me, U": no PCA created.");
 	}
 }
 
@@ -70,7 +70,7 @@ Sound Sound_and_PCA_to_Sound_pc_selectedChannels (Sound me, PCA thee, long numbe
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no principal components calculated with ", thee);
+		Melder_throw (me, U": no principal components calculated with ", thee);
 	}
 }
 
@@ -111,7 +111,7 @@ Sound Sound_and_PCA_whitenSelectedChannels (Sound me, PCA thee, long numberOfCom
         }
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Sound not created.");
+		Melder_throw (U"Sound not created.");
 	}
 }
 

@@ -29,7 +29,7 @@ oo_CLASS_CREATE (Movie, Sampled);
 
 Movie Movie_openFromSoundFile (MelderFile file);
 
-void Movie_init (Movie me, Sound sound, const wchar_t *folderName, Strings fileNames);
+void Movie_init (Movie me, Sound sound, const char32 *folderName, Strings fileNames);
 
 void Movie_paintOneImageInside (Movie me, Graphics graphics, long frameNumber, double xmin, double xmax, double ymin, double ymax);
 

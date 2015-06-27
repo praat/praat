@@ -1,6 +1,6 @@
 /* Printer.cpp
  *
- * Copyright (C) 1998-2011,2012,2013,2014 Paul Boersma
+ * Copyright (C) 1998-2011,2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
  * pb 2006/10/28 erased MacOS 9 stuff
  * pb 2006/12/28 theCurrentPraat
  * pb 2007/04/28 Mac: error messages for failing PostScript passthrough
- * pb 2007/08/12 wchar_t
+ * pb 2007/08/12 wchar
  * pb 2007/10/05 less char
  * pb 2007/12/09 enums
  * pb 2009/01/18 arguments to UiForm callbacks
@@ -66,10 +66,10 @@
 };
 
 void Printer_prefs (void) {
-	Preferences_addEnum (L"Printer.spots", & thePrinter. spots, kGraphicsPostscript_spots, kGraphicsPostscript_spots_DEFAULT);
-	Preferences_addEnum (L"Printer.paperSize", & thePrinter. paperSize, kGraphicsPostscript_paperSize, kGraphicsPostscript_paperSize_DEFAULT);
-	Preferences_addBool (L"Printer.allowDirectPostScript", & thePrinter. allowDirectPostScript, true);
-	Preferences_addEnum (L"Printer.fontChoiceStrategy", & thePrinter. fontChoiceStrategy, kGraphicsPostscript_fontChoiceStrategy, kGraphicsPostscript_fontChoiceStrategy_DEFAULT);
+	Preferences_addEnum (U"Printer.spots", & thePrinter. spots, kGraphicsPostscript_spots, kGraphicsPostscript_spots_DEFAULT);
+	Preferences_addEnum (U"Printer.paperSize", & thePrinter. paperSize, kGraphicsPostscript_paperSize, kGraphicsPostscript_paperSize_DEFAULT);
+	Preferences_addBool (U"Printer.allowDirectPostScript", & thePrinter. allowDirectPostScript, true);
+	Preferences_addEnum (U"Printer.fontChoiceStrategy", & thePrinter. fontChoiceStrategy, kGraphicsPostscript_fontChoiceStrategy, kGraphicsPostscript_fontChoiceStrategy_DEFAULT);
 }
 
 #if cocoa
@@ -223,18 +223,16 @@ int Printer_pageSetup (void) {
 	return 1;
 }
 
-static void DO_Printer_postScriptSettings (UiForm dia, int narg, Stackel args, const wchar_t *sendingString_dummy, Interpreter interpreter_dummy, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
-	(void) sendingString_dummy;
-	(void) interpreter_dummy;
-	(void) invokingButtonTitle;
-	(void) modified;
-	(void) dummy;
+static void DO_Printer_postScriptSettings (UiForm dia, int /* narg */, Stackel /* args */,
+	const char32 * /* sendingString_dummy */, Interpreter /* interpreter_dummy */,
+	const char32 * /* invokingButtonTitle */, bool /* modified */, void *)
+{
 	#if defined (_WIN32)
-		thePrinter. allowDirectPostScript = GET_INTEGER (L"Allow direct PostScript");
+		thePrinter. allowDirectPostScript = GET_INTEGER (U"Allow direct PostScript");
 	#endif
-	thePrinter. spots = GET_ENUM (kGraphicsPostscript_spots, L"Grey resolution");
+	thePrinter. spots = GET_ENUM (kGraphicsPostscript_spots, U"Grey resolution");
 	#if defined (UNIX)
-		thePrinter. paperSize = GET_ENUM (kGraphicsPostscript_paperSize, L"Paper size");
+		thePrinter. paperSize = GET_ENUM (kGraphicsPostscript_paperSize, U"Paper size");
 	 	if (thePrinter. paperSize == kGraphicsPostscript_paperSize_A3) {
 	 		thePrinter. paperWidth = 842 * thePrinter. resolution / 72;
 	 		thePrinter. paperHeight = 1191 * thePrinter. resolution / 72;
@@ -245,47 +243,47 @@ static void DO_Printer_postScriptSettings (UiForm dia, int narg, Stackel args, c
 			thePrinter. paperWidth = 595 * thePrinter. resolution / 72;
 			thePrinter. paperHeight = 842 * thePrinter. resolution / 72;
 		}
-		thePrinter. orientation = GET_ENUM (kGraphicsPostscript_orientation, L"Orientation");
-		thePrinter. magnification = GET_REAL (L"Magnification");
-		Site_setPrintCommand (GET_STRING (L"printCommand"));
+		thePrinter. orientation = GET_ENUM (kGraphicsPostscript_orientation, U"Orientation");
+		thePrinter. magnification = GET_REAL (U"Magnification");
+		Site_setPrintCommand (GET_STRING (U"printCommand"));
 	#endif
-	thePrinter. fontChoiceStrategy = GET_ENUM (kGraphicsPostscript_fontChoiceStrategy, L"Font choice strategy");
+	thePrinter. fontChoiceStrategy = GET_ENUM (kGraphicsPostscript_fontChoiceStrategy, U"Font choice strategy");
 }
 
 int Printer_postScriptSettings (void) {
 	static Any dia;
 	if (dia == NULL) {
 		Any radio;
-		dia = UiForm_create (theCurrentPraatApplication -> topShell, L"PostScript settings", DO_Printer_postScriptSettings, NULL, L"PostScript settings...", L"PostScript settings...");
+		dia = UiForm_create (theCurrentPraatApplication -> topShell, U"PostScript settings", DO_Printer_postScriptSettings, NULL, U"PostScript settings...", U"PostScript settings...");
 		#if defined (_WIN32)
-			BOOLEAN (L"Allow direct PostScript", TRUE);
+			BOOLEAN (U"Allow direct PostScript", TRUE);
 		#endif
-		RADIO_ENUM (L"Grey resolution", kGraphicsPostscript_spots, DEFAULT)
+		RADIO_ENUM (U"Grey resolution", kGraphicsPostscript_spots, DEFAULT)
 		#if defined (UNIX)
-			RADIO_ENUM (L"Paper size", kGraphicsPostscript_paperSize, DEFAULT);
-			RADIO_ENUM (L"Orientation", kGraphicsPostscript_orientation, DEFAULT);
-			POSITIVE (L"Magnification", L"1.0");
-			LABEL (L"label", L"Print command:");
+			RADIO_ENUM (U"Paper size", kGraphicsPostscript_paperSize, DEFAULT);
+			RADIO_ENUM (U"Orientation", kGraphicsPostscript_orientation, DEFAULT);
+			POSITIVE (U"Magnification", U"1.0");
+			LABEL (U"label", U"Print command:");
 			#if defined (linux)
-				TEXTFIELD (L"printCommand", L"lpr %s");
+				TEXTFIELD (U"printCommand", U"lpr %s");
 			#else
-				TEXTFIELD (L"printCommand", L"lp -c %s");
+				TEXTFIELD (U"printCommand", U"lp -c %s");
 			#endif
 		#endif
-		RADIO_ENUM (L"Font choice strategy", kGraphicsPostscript_fontChoiceStrategy, DEFAULT);
+		RADIO_ENUM (U"Font choice strategy", kGraphicsPostscript_fontChoiceStrategy, DEFAULT);
 		UiForm_finish (dia);
 	}
 	#if defined (_WIN32)
-		SET_INTEGER (L"Allow direct PostScript", thePrinter. allowDirectPostScript);
+		SET_INTEGER (U"Allow direct PostScript", thePrinter. allowDirectPostScript);
 	#endif
-	SET_ENUM (L"Grey resolution", kGraphicsPostscript_spots, thePrinter. spots);
+	SET_ENUM (U"Grey resolution", kGraphicsPostscript_spots, thePrinter. spots);
 	#if defined (UNIX)
-		SET_ENUM (L"Paper size", kGraphicsPostscript_paperSize, thePrinter. paperSize);
-		SET_ENUM (L"Orientation", kGraphicsPostscript_orientation, thePrinter. orientation);
-		SET_REAL (L"Magnification", thePrinter. magnification);
-		SET_STRING (L"printCommand", Site_getPrintCommand ());
+		SET_ENUM (U"Paper size", kGraphicsPostscript_paperSize, thePrinter. paperSize);
+		SET_ENUM (U"Orientation", kGraphicsPostscript_orientation, thePrinter. orientation);
+		SET_REAL (U"Magnification", thePrinter. magnification);
+		SET_STRING (U"printCommand", Site_getPrintCommand ());
 	#endif
-	SET_ENUM (L"Font choice strategy", kGraphicsPostscript_fontChoiceStrategy, thePrinter. fontChoiceStrategy);
+	SET_ENUM (U"Font choice strategy", kGraphicsPostscript_fontChoiceStrategy, thePrinter. fontChoiceStrategy);
 	UiForm_do (dia, false);
 	return 1;
 }
@@ -320,7 +318,7 @@ int Printer_postScriptSettings (void) {
 		//GuiButton d_userData;
 	}
 	- (void) drawRect: (NSRect) dirtyRect {
-		trace ("printing %f %f %f %f", dirtyRect. origin. x, dirtyRect. origin. y, dirtyRect. size. width, dirtyRect. size. height);
+		trace (U"printing ", dirtyRect. origin. x, U" ", dirtyRect. origin. y, U" ", dirtyRect. size. width, U" ", dirtyRect. size. height);
 		int currentPage = [[NSPrintOperation currentOperation] currentPage];
 		thePrinter. graphics = Graphics_create_screenPrinter (NULL, self);
 		theDraw (theBoss, thePrinter. graphics);
@@ -352,13 +350,13 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 			structMelderFile tempFile = { 0 };
 			char tempPath_utf8 [] = "/tmp/picXXXXXX";
 			close (mkstemp (tempPath_utf8));
-			Melder_pathToFile (Melder_peekUtf8ToWcs (tempPath_utf8), & tempFile);
+			Melder_pathToFile (Melder_peek8to32 (tempPath_utf8), & tempFile);
 			thePrinter. graphics = Graphics_create_postscriptjob (& tempFile, thePrinter. resolution,
 				thePrinter. spots, thePrinter. paperSize, thePrinter. orientation, thePrinter. magnification);
 			draw (boss, thePrinter. graphics);
 			forget (thePrinter. graphics);
 			char command [500];
-			sprintf (command, Melder_peekWcsToUtf8 (Site_getPrintCommand ()), tempPath_utf8);
+			sprintf (command, Melder_peek32to8 (Site_getPrintCommand ()), tempPath_utf8);
 			system (command);
 			MelderFile_delete (& tempFile);
 		#elif cocoa
@@ -413,12 +411,12 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 				memset (& theWinPrint, 0, sizeof (PRINTDLG));
 				theWinPrint. lStructSize = sizeof (PRINTDLG);
 				theWinPrint. Flags = PD_RETURNDEFAULT;
-				if (! PrintDlg (& theWinPrint)) Melder_throw ("Cannot initialize printer.");
+				if (! PrintDlg (& theWinPrint)) Melder_throw (U"Cannot initialize printer.");
 			}
 			if (Melder_backgrounding) {
 				theWinPrint. Flags = PD_RETURNDEFAULT | PD_RETURNDC;
 				if (! PrintDlg (& theWinPrint) || theWinPrint. hDC == NULL) {
-					Melder_throw ("Cannot print from a script on this computer.");
+					Melder_throw (U"Cannot print from a script on this computer.");
 				}
 			} else {
 				theWinPrint. Flags &= ~ PD_RETURNDEFAULT;
@@ -485,7 +483,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 				draw (boss, thePrinter. graphics);
 				forget (thePrinter. graphics);
 				if (EndPage (theWinDC) < 0) {
-					Melder_throw ("Cannot print page.");
+					Melder_throw (U"Cannot print page.");
 				} else {
 					EndDoc (theWinDC);
 				}
@@ -551,7 +549,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 				theMacPort = NULL;
 			}
 		#endif
-		Melder_throw ("Not printed.");
+		Melder_throw (U"Not printed.");
 	}
 }
 

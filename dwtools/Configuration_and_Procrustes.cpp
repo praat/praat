@@ -29,7 +29,7 @@
 Procrustes Configurations_to_Procrustes (Configuration me, Configuration thee, int orthogonal) {
 	try {
 		if (my numberOfRows != thy numberOfRows || my numberOfColumns != thy numberOfColumns) {
-			Melder_throw ("Configurations must have the same number of points and the same dimension.");
+			Melder_throw (U"Configurations must have the same number of points and the same dimension.");
 		}
 
 		autoProcrustes p = Procrustes_create (my numberOfColumns);
@@ -41,7 +41,7 @@ Procrustes Configurations_to_Procrustes (Configuration me, Configuration thee, i
 		NUMProcrustes (my data, thy data, my numberOfRows, my numberOfColumns, p -> r, translation, scale);
 		return p.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Procrustes from two Configurations not created.");
+		Melder_throw (U"Procrustes from two Configurations not created.");
 	}
 }
 

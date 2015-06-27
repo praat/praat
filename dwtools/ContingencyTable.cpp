@@ -33,20 +33,20 @@ void structContingencyTable :: v_info () {
 	ContingencyTable_entropies (this, &h, &hx, &hy, &hygx, &hxgy, &uygx, &uxgy, &uxy);
 	ContingencyTable_chisq (this, &chisq, &ndf);
 
-	Melder_information (L"Number of rows: ", Melder_integer (numberOfRows));
-	Melder_information (L"Number of columns: ", Melder_integer (numberOfColumns));
-	Melder_information (L"Entropies (y is row variable):");
-	Melder_information (L"  Total: ", Melder_double (h));
-	Melder_information (L"  Y: ", Melder_double (hy));
-	Melder_information (L"  X: ", Melder_double (hx));
-	Melder_information (L"  Y given x: ", Melder_double (hygx));
-	Melder_information (L"  X given y: ", Melder_double (hxgy));
-	Melder_information (L"  Dependency of y on x: ", Melder_double (uygx));
-	Melder_information (L"  Dependency of x on y: ", Melder_double (uxgy));
-	Melder_information (L"  Symmetrical dependency: ", Melder_double (uxy));
-	Melder_information (L"  Chi squared: ", Melder_double (chisq));
-	Melder_information (L"  Degrees of freedom: ", Melder_integer (ndf));
-	Melder_information (L"  Probability: ", Melder_double (ContingencyTable_chisqProbability (this)));
+	MelderInfo_writeLine (U"Number of rows: ", numberOfRows);
+	MelderInfo_writeLine (U"Number of columns: ", numberOfColumns);
+	MelderInfo_writeLine (U"Entropies (y is row variable):");
+	MelderInfo_writeLine (U"  Total: ", h);
+	MelderInfo_writeLine (U"  Y: ", hy);
+	MelderInfo_writeLine (U"  X: ", hx);
+	MelderInfo_writeLine (U"  Y given x: ", hygx);
+	MelderInfo_writeLine (U"  X given y: ", hxgy);
+	MelderInfo_writeLine (U"  Dependency of y on x: ", uygx);
+	MelderInfo_writeLine (U"  Dependency of x on y: ", uxgy);
+	MelderInfo_writeLine (U"  Symmetrical dependency: ", uxy);
+	MelderInfo_writeLine (U"  Chi squared: ", chisq);
+	MelderInfo_writeLine (U"  Degrees of freedom: ", ndf);
+	MelderInfo_writeLine (U"  Probability: ", ContingencyTable_chisqProbability (this));
 }
 
 ContingencyTable ContingencyTable_create (long numberOfRows, long numberOfColumns) {
@@ -55,7 +55,7 @@ ContingencyTable ContingencyTable_create (long numberOfRows, long numberOfColumn
 		TableOfReal_init (me.peek(), numberOfRows, numberOfColumns);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("ContingencyTable not created.");
+		Melder_throw (U"ContingencyTable not created.");
 	}
 }
 
@@ -233,7 +233,7 @@ ContingencyTable Confusion_to_ContingencyTable (Confusion me) {
 		my structTableOfReal :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to ContingencyTable.");
+		Melder_throw (me, U": not converted to ContingencyTable.");
 	}
 }
 
@@ -245,7 +245,7 @@ ContingencyTable TableOfReal_to_ContingencyTable (I) {
 		my structTableOfReal :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to ContingencyTable.");
+		Melder_throw (me, U": not converted to ContingencyTable.");
 	}
 }
 

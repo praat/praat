@@ -49,10 +49,10 @@ Thing_define (TextEditor, Editor) {
 };
 
 void TextEditor_init (TextEditor me,
-	const wchar_t *initialText
+	const char32 *initialText
 );
 TextEditor TextEditor_create (
-	const wchar_t *initialText   // may be NULL
+	const char32 *initialText   // may be NULL
 );
 
 void TextEditor_showOpen (TextEditor me);

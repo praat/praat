@@ -1,6 +1,6 @@
 /* Speaker.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@
 
 Thing_implement (Speaker, Data, 0);
 
-Speaker Speaker_create (wchar_t *kindOfSpeaker, int numberOfVocalCordMasses) {
+Speaker Speaker_create (char32 *kindOfSpeaker, int numberOfVocalCordMasses) {
 	Speaker me = Thing_new (Speaker);
 
 	/* Supralaryngeal dimensions are taken from P. Mermelstein (1973):		*/
@@ -50,36 +50,36 @@ Speaker Speaker_create (wchar_t *kindOfSpeaker, int numberOfVocalCordMasses) {
 
 	double scaling;
 	if (! me) return NULL;
-	if (wcsequ (kindOfSpeaker, L"Male")) my relativeSize = 1.1;
-	else if (wcsequ (kindOfSpeaker, L"Child")) my relativeSize = 0.7;
+	if (str32equ (kindOfSpeaker, U"Male")) my relativeSize = 1.1;
+	else if (str32equ (kindOfSpeaker, U"Child")) my relativeSize = 0.7;
 	else my relativeSize = 1.0;
 	scaling = my relativeSize;
 
 	/* Laryngeal system. Data for male speaker from Ishizaka and Flanagan.	*/
 
-	if (wcsequ (kindOfSpeaker, L"Female")) {
-		my lowerCord.thickness = 1.4e-3;   /* dx, in metres */
+	if (str32equ (kindOfSpeaker, U"Female")) {
+		my lowerCord.thickness = 1.4e-3;   // dx, in metres
 		my upperCord.thickness = 0.7e-3;
 		my cord.length = 10e-3;
-		my lowerCord.mass = 0.02e-3;   /* kilograms */
+		my lowerCord.mass = 0.02e-3;   // kilograms
 		my upperCord.mass = 0.01e-3;
-		my lowerCord.k1 = 10;   /* Newtons per metre */
+		my lowerCord.k1 = 10;   // Newtons per metre
 		my upperCord.k1 = 4;
-	} else if (wcsequ (kindOfSpeaker, L"Male")) {
-		my lowerCord.thickness = 2.0e-3;   /* dx, in metres */
+	} else if (str32equ (kindOfSpeaker, U"Male")) {
+		my lowerCord.thickness = 2.0e-3;   // dx, in metres
 		my upperCord.thickness = 1.0e-3;
 		my cord.length = 18e-3;
-		my lowerCord.mass = 0.1e-3;   /* kilograms */
+		my lowerCord.mass = 0.1e-3;   // kilograms
 		my upperCord.mass = 0.05e-3;
-		my lowerCord.k1 = 12;   /* Newtons per metre */
+		my lowerCord.k1 = 12;   // Newtons per metre
 		my upperCord.k1 = 4;
 	} else /* "Child" */ {
-		my lowerCord.thickness = 0.7e-3;   /* dx, in metres */
+		my lowerCord.thickness = 0.7e-3;   // dx, in metres
 		my upperCord.thickness = 0.3e-3;
 		my cord.length = 6e-3;
-		my lowerCord.mass = 0.003e-3;   /* kilograms */
+		my lowerCord.mass = 0.003e-3;   // kilograms
 		my upperCord.mass = 0.002e-3;
-		my lowerCord.k1 = 6;   /* Newtons per metre */
+		my lowerCord.k1 = 6;   // Newtons per metre
 		my upperCord.k1 = 2;
 	}
 	my cord.numberOfMasses = numberOfVocalCordMasses;
@@ -103,8 +103,8 @@ Speaker Speaker_create (wchar_t *kindOfSpeaker, int numberOfVocalCordMasses) {
 	my teethCavity.dx1 = -0.009 * scaling;
 	my teethCavity.dx2 = -0.004 * scaling;
 	my teethCavity.dy = -0.011 * scaling;
-	my lowerTeeth.a = -0.30;   /* radians */
-	my lowerTeeth.r = 0.113 * scaling;   /* metres */
+	my lowerTeeth.a = -0.30;   // radians
+	my lowerTeeth.r = 0.113 * scaling;   // metres
 	my upperTeeth.x = 0.036 * scaling;
 	my upperTeeth.y = 0.026 * scaling;
 	my lowerLip.dx = 0.010 * scaling;

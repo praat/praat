@@ -1,6 +1,6 @@
 /* GraphicsPostscript.cpp
  *
- * Copyright (C) 1992-2011,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -166,7 +166,7 @@ Graphics Graphics_create_postscriptjob (MelderFile file, int resolution, enum kG
 	 */
 	my d_printf (my d_file, "%%!PS-Adobe-3.0\n");
 	my d_printf (my d_file, "%%%%Creator: Praat Shell 4.2\n");
-	my d_printf (my d_file, "%%%%Title: %s\n", Melder_peekWcsToUtf8 (MelderFile_name (file)));
+	my d_printf (my d_file, "%%%%Title: %s\n", Melder_peek32to8 (MelderFile_name (file)));
 	today = time (NULL);
 	my d_printf (my d_file, "%%%%CreationDate: %s", ctime (& today));   /* Contains newline symbol. */
 	my d_printf (my d_file, "%%%%PageOrder: Special\n");

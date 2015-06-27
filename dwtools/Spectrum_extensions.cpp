@@ -27,7 +27,7 @@
  djmw 20061218 Introduction of Melder_information<12...9>
  djmw 20071022 phase_unwrap initialize phase = 0.
  djmw 20080122 float -> double
- djmw 20080202 Warning in Spectrum_drawPhases to wchar_t
+ djmw 20080202 Warning in Spectrum_drawPhases to wchar
  djmw 20080411 Removed define NUM2pi
 */
 
@@ -102,7 +102,7 @@ static void getSpectralValues (struct tribolet_struct *tbs, double freq_rad,
 */
 static int phase_check (double pv, double *phase, double thlcon) {
 	double a0 = (*phase - pv) / NUM2pi;
-	long k = a0;
+	long k = (long) floor (a0);   // ppgb: instead of truncation toward zero
 	double a1 = pv + k * NUM2pi;
 	double a2 = a1 + SIGN (NUM2pi, a0);
 	double a3 = fabs (a1 - *phase);
@@ -207,7 +207,7 @@ Matrix Spectrum_unwrap (Spectrum me) {
 		nfft *= 2;
 
 		if (nfft / 2 != my nx - 1) {
-			Melder_throw ("Dimension of Spectrum is not (power of 2 - 1).");
+			Melder_throw (U"Dimension of Spectrum is not (power of 2 - 1).");
 		}
 
 		autoSound x = Spectrum_to_Sound (me);
@@ -225,7 +225,7 @@ Matrix Spectrum_unwrap (Spectrum me) {
 		tbs.thlcon = THLCON;
 		tbs.x = x -> z[1];
 		tbs.nx = x -> nx;
-		tbs.l = (pow (2, EXP2) + 0.1);
+		tbs.l = (long) floor (pow (2, EXP2) + 0.1);
 		tbs.ddf = NUM2pi / ( (tbs.l) * nfft);
 		tbs.reverse_sign = my z[1][1] < 0;
 		tbs.count = 0;
@@ -245,7 +245,7 @@ Matrix Spectrum_unwrap (Spectrum me) {
 
 		tbs.dvtmn2 = (2 * tbs.dvtmn2 - snx -> z[2][1] - snx -> z[2][my nx]) / (my nx - 1);
 
-		autoMelderProgress progress (L"Phase unwrapping");
+		autoMelderProgress progress (U"Phase unwrapping");
 
 		double pphase = 0, phase = 0;
 		double ppdvt = snx -> z[2][1];
@@ -257,11 +257,11 @@ Matrix Spectrum_unwrap (Spectrum me) {
 			phase = phase_unwrap (&tbs, pfreq, ppv, pdvt, &pphase, &ppdvt);
 			ppdvt = pdvt;
 			thy z[2][i] = pphase = phase;
-			Melder_progress ( (double) i / my nx, Melder_integer (i),
-			                   L" unwrapped phases from ", Melder_integer (my nx), L".");
+			Melder_progress ( (double) i / my nx, i,
+			                   U" unwrapped phases from ", my nx, U".");
 		}
 
-		long iphase = (phase / NUMpi + 0.1);
+		long iphase = (long) floor (phase / NUMpi + 0.1);   // ppgb: better than truncation toward zero
 
 		if (remove_linear_part) {
 			phase /= my nx - 1;
@@ -269,11 +269,11 @@ Matrix Spectrum_unwrap (Spectrum me) {
 				thy z[2][i] -= phase * (i - 1);
 			}
 		}
-		Melder_information (L"Number of spectral values: ", Melder_integer (tbs.count));
-		Melder_information (L" iphase = ", Melder_integer (iphase));
+		Melder_information (U"Number of spectral values: ", tbs.count);
+		Melder_information (U" iphase = ", iphase);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not unwrapped.");
+		Melder_throw (me, U": not unwrapped.");
 	}
 }
 
@@ -301,7 +301,7 @@ Spectrum Spectra_multiply (Spectrum me, Spectrum thee) {
 	try {
 		if (my nx != thy nx || my x1 != thy x1 || my xmax != thy xmax ||
 		        my dx != thy dx) {
-			Melder_throw ("Dimensions of both spectra do not conform.");
+			Melder_throw (U"Dimensions of both spectra do not conform.");
 		}
 		autoSpectrum him = Data_copy (me);
 
@@ -311,7 +311,7 @@ Spectrum Spectra_multiply (Spectrum me, Spectrum thee) {
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not multiplied.");
+		Melder_throw (me, U": not multiplied.");
 	}
 }
 
@@ -330,11 +330,11 @@ Spectrum Spectrum_resample (Spectrum me, long numberOfFrequencies) {
 		NUMmatrix_copyElements<double> (thy z, his z, 1, 2, 1, numberOfFrequencies);
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not resampled.");
+		Melder_throw (me, U": not resampled.");
 	}
 }
 
-Spectrum Spectrum_shiftFrequencies2 (Spectrum me, double shiftBy, bool changeMaximumFrequency) {
+static Spectrum Spectrum_shiftFrequencies2 (Spectrum me, double shiftBy, bool changeMaximumFrequency) {
 	try {
 		double xmax = my xmax;
 		long numberOfFrequencies = my nx, interpolationDepth = 50;
@@ -355,7 +355,7 @@ Spectrum Spectrum_shiftFrequencies2 (Spectrum me, double shiftBy, bool changeMax
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not shifted.");
+		Melder_throw (me, U": not shifted.");
 	}
 }
 
@@ -364,7 +364,7 @@ Spectrum Spectrum_shiftFrequencies (Spectrum me, double shiftBy, double newMaxim
 		double xmax = my xmax;
 		long numberOfFrequencies = my nx;
 		if (newMaximumFrequency != 0) {
-			numberOfFrequencies = newMaximumFrequency / my dx + 1;
+			numberOfFrequencies = (long) floor (newMaximumFrequency / my dx) + 1;
 			xmax = newMaximumFrequency;
 		}
 		autoSpectrum thee = Spectrum_create (xmax, numberOfFrequencies);
@@ -386,7 +386,7 @@ Spectrum Spectrum_shiftFrequencies (Spectrum me, double shiftBy, double newMaxim
 		thy z[1][thy nx] = amp; thy z[2][thy nx] = 0;
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not shifted.");
+		Melder_throw (me, U": not shifted.");
 	}
 }
 
@@ -395,7 +395,7 @@ Spectrum Spectrum_compressFrequencyDomain (Spectrum me, double fmax, long interp
 		double fdomain = my xmax - my xmin, factor = fdomain / fmax ;
 		//long numberOfFrequencies = 1.0 + fmax / my dx; // keep dx the same, otherwise the "duration" changes
 		double xmax = my xmax / factor;
-		long numberOfFrequencies = my nx / factor; // keep dx the same, otherwise the "duration" changes
+		long numberOfFrequencies = (long) floor (my nx / factor); // keep dx the same, otherwise the "duration" changes
 		autoSpectrum thee = Spectrum_create (xmax, numberOfFrequencies);
 		thy z[1][1] = my z[1][1]; thy z[2][1] = my z[2][1];
 		double df = freqscale == 1 ? factor * my dx : log10 (fdomain) / (numberOfFrequencies - 1);
@@ -409,20 +409,22 @@ Spectrum Spectrum_compressFrequencyDomain (Spectrum me, double fmax, long interp
 				x = NUM_interpolate_sinc (my z[1], my nx, index, interpolationDepth);
 				y = NUM_interpolate_sinc (my z[2], my nx, index, interpolationDepth);
 			} else {
+				x = NUMundefined;   // ppgb: better than data from random memory
+				y = NUMundefined;
 			}
 			thy z[1][i] = x; thy z[2][i] = y;
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not compressed.");
+		Melder_throw (me, U": not compressed.");
 	}
 }
 
-void Spectrum_fitTiltLine (Spectrum me, double fmin, double fmax, bool logf, double bandwidth, double *a, double *intercept, int method) {
+static void Spectrum_fitTiltLine (Spectrum me, double fmin, double fmax, bool logf, double bandwidth, double *a, double *intercept, int method) {
 	(void) me; (void) fmin; (void) fmax; (void) logf; (void) bandwidth; (void) a; (void) intercept; (void) method;
 	try {
 	} catch (MelderError) {
-		Melder_throw ("Tilt line not fitted.");
+		Melder_throw (U"Tilt line not fitted.");
 	}
 }
 

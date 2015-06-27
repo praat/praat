@@ -63,7 +63,7 @@ Resonator Resonator_create (double dT, int normalisation) {
 		my normalisation = normalisation;
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Resonator not created.");
+		Melder_throw (U"Resonator not created.");
 	}
 }
 
@@ -117,7 +117,7 @@ ConstantGainResonator ConstantGainResonator_create (double dT) {
 		my dT = dT;
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("ConstantGainResonator not created.");
+		Melder_throw (U"ConstantGainResonator not created.");
 	}
 }
 
@@ -128,7 +128,7 @@ AntiResonator AntiResonator_create (double dT) {
 		my dT = dT;
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("AntiResonator not created.");
+		Melder_throw (U"AntiResonator not created.");
 	}
 }
 

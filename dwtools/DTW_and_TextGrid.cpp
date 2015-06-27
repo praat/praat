@@ -55,10 +55,10 @@ TextTier DTW_and_TextTier_to_TextTier (DTW me, TextTier thee, double precision) 
 			}
 			return him.transfer();
 		} else {
-			Melder_throw ("The domain of the TextTier and one of the domains of the DTW must be equal.");
+			Melder_throw (U"The domain of the TextTier and one of the domains of the DTW must be equal.");
 		}
 	} catch (MelderError) {
-		Melder_throw ("TextTier not created from DTW & TextTier.");
+		Melder_throw (U"TextTier not created from DTW & TextTier.");
 	}
 }
 
@@ -89,10 +89,10 @@ IntervalTier DTW_and_IntervalTier_to_IntervalTier (DTW me, IntervalTier thee, do
 			}
 			return him.transfer();
 		} else {
-			Melder_throw ("The domain of the IntervalTier and one of the domains of the DTW must be equal.");
+			Melder_throw (U"The domain of the IntervalTier and one of the domains of the DTW must be equal.");
 		}
 	} catch (MelderError) {
-		Melder_throw ("IntervalTier not created from DTW & IntervalTier.");
+		Melder_throw (U"IntervalTier not created from DTW & IntervalTier.");
 	}
 }
 
@@ -106,7 +106,7 @@ TextGrid DTW_and_TextGrid_to_TextGrid (DTW me, TextGrid thee, double precision) 
 			tmin = my ymin;
 			tmax = my ymax;
 		} else {
-			Melder_throw ("The domain of the TextGrid must be equal to one of the domains of the DTW.");
+			Melder_throw (U"The domain of the TextGrid must be equal to one of the domains of the DTW.");
 		}
 
 		autoTextGrid him = TextGrid_createWithoutTiers (tmin, tmax);
@@ -121,19 +121,19 @@ TextGrid DTW_and_TextGrid_to_TextGrid (DTW me, TextGrid thee, double precision) 
 				autoTextTier tier = DTW_and_TextTier_to_TextTier (me, (TextTier) anyTier, precision);
 				TextGrid_addTier (him.peek(), tier.peek());
 			} else {
-				Melder_throw ("Unknown tier.");
+				Melder_throw (U"Unknown tier.");
 			}
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw ("TextGrid not created from DTW & TextGrid.");
+		Melder_throw (U"TextGrid not created from DTW & TextGrid.");
 	}
 }
 
 Table DTW_and_IntervalTier_to_Table (DTW me, IntervalTier thee, double precision) {
 	try {
 		long numberOfIntervals = thy intervals -> size;
-		autoTable him = Table_createWithColumnNames (numberOfIntervals, L"tmin tmax label dist");
+		autoTable him = Table_createWithColumnNames (numberOfIntervals, U"tmin tmax label dist");
 		if (fabs (my ymin - thy xmin) <= precision && fabs (my ymax - thy xmax) <= precision) { // map from Y to X
 			long pathIndex = 1;
 			for (long i = 1; i <= numberOfIntervals; i++) {
@@ -171,11 +171,11 @@ Table DTW_and_IntervalTier_to_Table (DTW me, IntervalTier thee, double precision
 				Table_setNumericValue (him.peek(), i, 4, sumOfDistances / numberOfFrames);
 			}
 		} else {
-			Melder_throw ("The domain of the IntervalTier and one of the domains of the DTW must be equal.");
+			Melder_throw (U"The domain of the IntervalTier and one of the domains of the DTW must be equal.");
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Table with distances created.");
+		Melder_throw (me, U": no Table with distances created.");
 	}
 
 
@@ -185,7 +185,7 @@ Table DTW_and_IntervalTier_to_Table (DTW me, IntervalTier thee, double precision
 TextTier DTW_and_TextTier_to_TextTier_old (DTW me, TextTier thee) {
 	try {
 		if (my xmin != thy xmin || my xmax != thy xmax) {
-			Melder_throw ("The domain of the TextTier and the DTW must be equal.");
+			Melder_throw (U"The domain of the TextTier and the DTW must be equal.");
 		}
 		autoTextTier him =  Data_copy (thee);
 		his xmin = my ymin;
@@ -198,14 +198,14 @@ TextTier DTW_and_TextTier_to_TextTier_old (DTW me, TextTier thee) {
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw ("TextTier not created.");
+		Melder_throw (U"TextTier not created.");
 	}
 }
 
 IntervalTier DTW_and_IntervalTier_to_IntervalTier_old (DTW me, IntervalTier thee) {
 	try {
 		if ( (my xmin != thy xmin) || my xmax != thy xmax) Melder_throw
-			("The domain of the IntervalTier and the DTW must be equal.");
+			(U"The domain of the IntervalTier and the DTW must be equal.");
 
 		autoIntervalTier him = Data_copy (thee);
 
@@ -221,7 +221,7 @@ IntervalTier DTW_and_IntervalTier_to_IntervalTier_old (DTW me, IntervalTier thee
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw ("IntervalTier not created.");
+		Melder_throw (U"IntervalTier not created.");
 	}
 }
 
@@ -229,7 +229,7 @@ TextGrid DTW_and_TextGrid_to_TextGrid_old (DTW me, TextGrid thee) {
 	try {
 		autoTextGrid him = Thing_new (TextGrid);
 		if (my xmin != thy xmin || my xmax != thy xmax) {
-			Melder_throw ("The domain of the TextGrid and the y-domain of the DTW must be equal.");
+			Melder_throw (U"The domain of the TextGrid and the y-domain of the DTW must be equal.");
 		}
 
 		his xmin = my ymin;
@@ -247,12 +247,12 @@ TextGrid DTW_and_TextGrid_to_TextGrid_old (DTW me, TextGrid thee) {
 				autoTextTier tier = DTW_and_TextTier_to_TextTier_old (me, (TextTier) anyTier);
 				TextGrid_addTier (him.peek(), tier.peek());
 			} else {
-				Melder_throw (L"Unknown tier.");
+				Melder_throw (U"Unknown tier.");
 			}
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw ("TextGrid not created.");
+		Melder_throw (U"TextGrid not created.");
 	}
 }
 

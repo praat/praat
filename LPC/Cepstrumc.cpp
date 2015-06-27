@@ -51,12 +51,12 @@ Thing_implement (Cepstrumc, Sampled, 1);
 
 void structCepstrumc :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine (L"  Start time: ", Melder_double (xmin));
-	MelderInfo_writeLine (L"  End time: ", Melder_double (xmax));
-	MelderInfo_writeLine (L"  Number of frames: ", Melder_integer (nx));
-	MelderInfo_writeLine (L"  Time step: ", Melder_double (dx));
-	MelderInfo_writeLine (L"  First frame at: ", Melder_double (x1));
-	MelderInfo_writeLine (L"  Number of coefficients: ", Melder_integer (maxnCoefficients));
+	MelderInfo_writeLine (U"  Start time: ", xmin);
+	MelderInfo_writeLine (U"  End time: ", xmax);
+	MelderInfo_writeLine (U"  Number of frames: ", nx);
+	MelderInfo_writeLine (U"  Time step: ", dx);
+	MelderInfo_writeLine (U"  First frame at: ", x1);
+	MelderInfo_writeLine (U"  Number of coefficients: ", maxnCoefficients);
 }
 
 void Cepstrumc_Frame_init (Cepstrumc_Frame me, int nCoefficients) {
@@ -79,7 +79,7 @@ Cepstrumc Cepstrumc_create (double tmin, double tmax, long nt, double dt, double
 		Cepstrumc_init (me.peek(), tmin, tmax, nt, dt, t1, nCoefficients, samplingFrequency);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Cepstrum not created.");
+		Melder_throw (U"Cepstrum not created.");
 	}
 }
 
@@ -109,19 +109,19 @@ static void regression (Cepstrumc me, long frame, double r[], long nr) {
 DTW Cepstrumc_to_DTW (Cepstrumc me, Cepstrumc thee, double wc, double wle,
                       double wr, double wer, double dtr, int matchStart, int matchEnd, int constraint) {
 	try {
-		long nr = dtr / my dx;
+		long nr = (long) floor (dtr / my dx);
 
 		if (my maxnCoefficients != thy maxnCoefficients) {
-			Melder_throw ("Cepstrumc orders must be equal.");
+			Melder_throw (U"Cepstrumc orders must be equal.");
 		}
 		if (wr != 0 && nr < 2) {
-			Melder_throw ("Time window for regression coefficients too small.");
+			Melder_throw (U"Time window for regression coefficients too small.");
 		}
 		if (nr % 2 == 0) {
 			nr++;
 		}
 		if (wr != 0) {
-			Melder_casual ("Number of frames used for regression coefficients %ld", nr);
+			Melder_casual (U"Number of frames used for regression coefficients ", nr);
 		}
 		autoDTW him = DTW_create (my xmin, my xmax, my nx, my dx, my x1, thy xmin, thy xmax, thy nx, thy dx, thy x1);
 		autoNUMvector<double> ri (0L, my maxnCoefficients);
@@ -129,7 +129,7 @@ DTW Cepstrumc_to_DTW (Cepstrumc me, Cepstrumc thee, double wc, double wle,
 
 		// Calculate distance matrix
 
-		autoMelderProgress progress (L"");
+		autoMelderProgress progress (U"");
 		for (long i = 1; i <= my nx; i++) {
 			Cepstrumc_Frame fi = & my frame[i];
 			regression (me, i, ri.peek(), nr);
@@ -164,13 +164,13 @@ DTW Cepstrumc_to_DTW (Cepstrumc me, Cepstrumc thee, double wc, double wle,
 				dist /= wc + wle + wr + wer;
 				his z[i][j] = sqrt (dist); // prototype along y-direction
 			}
-			Melder_progress ( (double) i / my nx, L"Calculate distances: frame ",
-			                   Melder_integer (i), L" from ", Melder_integer (my nx), L".");
+			Melder_progress ( (double) i / my nx, U"Calculate distances: frame ",
+			                   i, U" from ", my nx, U".");
 		}
 		DTW_findPath (him.peek(), matchStart, matchEnd, constraint);
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw ("DTW not created.");
+		Melder_throw (U"DTW not created.");
 	}
 }
 
@@ -187,7 +187,7 @@ Matrix Cepstrumc_to_Matrix (Cepstrumc me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Matrix created.");
+		Melder_throw (me, U": no Matrix created.");
 	}
 }
 

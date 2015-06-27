@@ -5,8 +5,8 @@
 #include "Confusion.h"
 
 Thing_define (ContingencyTable, TableOfReal) {
-	// overridden methods:
-		virtual void v_info ();
+	void v_info ()
+		override;
 };
 
 // entries must be nonnegative numbers

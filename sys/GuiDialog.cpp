@@ -53,7 +53,7 @@ Thing_implement (GuiDialog, GuiShell, 0);
 	- (void) dealloc {   // override
 		GuiDialog me = d_userData;
 		forget (me);
-		trace ("deleting a dialog");
+		trace (U"deleting a dialog");
 		[super dealloc];
 	}
 	- (GuiDialog) userData {
@@ -66,10 +66,10 @@ Thing_implement (GuiDialog, GuiShell, 0);
 		GuiCocoaDialog *widget = (GuiCocoaDialog *) sender;
 		GuiDialog me = [widget userData];
 		if (my d_goAwayCallback != NULL) {
-			trace ("calling goAwayCallback)");
+			trace (U"calling goAwayCallback)");
 			my d_goAwayCallback (my d_goAwayBoss);
 		} else {
-			trace ("hiding window");
+			trace (U"hiding window");
 			[widget orderOut: nil];
 		}
 		return FALSE;
@@ -91,7 +91,7 @@ Thing_implement (GuiDialog, GuiShell, 0);
 #endif
 
 GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int height,
-	const wchar_t *title, void (*goAwayCallback) (void *goAwayBoss), void *goAwayBoss, unsigned long flags)
+	const char32 *title, void (*goAwayCallback) (void *goAwayBoss), void *goAwayBoss, unsigned long flags)
 {
 	GuiDialog me = Thing_new (GuiDialog);
 	my d_parent = parent;
@@ -128,7 +128,7 @@ GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int heigh
 			backing: NSBackingStoreBuffered
 			defer: false];
         [nsWindow setMinSize: NSMakeSize (500.0, 500.0)];   // BUG: should not be needed
-		[nsWindow setTitle: (NSString *) Melder_peekWcsToCfstring (title)];
+		[nsWindow setTitle: (NSString *) Melder_peek32toCfstring (title)];
 		//[nsWindow makeKeyAndOrderFront: nil];
 		my d_widget = (GuiObject) [nsWindow contentView];
 		[(GuiCocoaDialog *) nsWindow setUserData: me];

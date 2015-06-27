@@ -71,8 +71,8 @@ oo_DEFINE_CLASS (DTW, Matrix)
 		DTW_Path_recode (this);
 	#endif
 	#if oo_DECLARING
-		// overridden methods:
-			virtual void v_info ();
+		void v_info ()
+			override;
 	#endif
 oo_END_CLASS (DTW)
 #undef ooSTRUCT

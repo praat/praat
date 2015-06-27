@@ -1,6 +1,6 @@
 /* prefs_define.h
  *
- * Copyright (C) 2013 Paul Boersma
+ * Copyright (C) 2013,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,12 +38,12 @@
 
 #define prefs_add_int(Klas,name,version,default) \
 	int struct##Klas :: s_##name; \
-	const wchar_t * struct##Klas :: sdefault_##name = default;
+	const char32 * struct##Klas :: sdefault_##name = default;
 #define prefs_add_int_with_data(Klas,name,version,default)  prefs_add_int (Klas, name, version, default)
 
 #define prefs_add_long(Klas,name,version,default) \
 	long struct##Klas :: s_##name; \
-	const wchar_t * struct##Klas :: sdefault_##name = default;
+	const char32 * struct##Klas :: sdefault_##name = default;
 #define prefs_add_long_with_data(Klas,name,version,default)  prefs_add_long (Klas, name, version, default)
 
 #define prefs_add_bool(Klas,name,version,default) \
@@ -53,7 +53,7 @@
 
 #define prefs_add_double(Klas,name,version,default) \
 	double struct##Klas :: s_##name; \
-	const wchar_t * struct##Klas :: sdefault_##name = default;
+	const char32 * struct##Klas :: sdefault_##name = default;
 #define prefs_add_double_with_data(Klas,name,version,default)  prefs_add_double (Klas, name, version, default)
 
 #define prefs_add_enum(Klas,name,version,enumerated,default) \
@@ -64,8 +64,8 @@
 #define prefs_end(Klas)
 
 #define prefs_add_string(Klas,name,version,default) \
-	wchar_t struct##Klas :: s_##name [Preferences_STRING_BUFFER_SIZE]; \
-	const wchar_t * struct##Klas :: sdefault_##name = default;
+	char32 struct##Klas :: s_##name [Preferences_STRING_BUFFER_SIZE]; \
+	const char32 * struct##Klas :: sdefault_##name = default;
 #define prefs_add_string_with_data(Klas,name,version,default)  prefs_add_string (Klas, name, version, default)
 
 /* End of file prefs_define.h */

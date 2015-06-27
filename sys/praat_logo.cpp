@@ -32,10 +32,10 @@ static void logo_defaultDraw (Graphics g) {
 	Graphics_setFontSize (g, 24);
 	Graphics_setFontStyle (g, Graphics_ITALIC);
 	Graphics_setUnderscoreIsSubscript (g, FALSE);   /* Because program names may contain underscores. */
-	Graphics_text (g, 0.5, 0.6, Melder_peekUtf8ToWcs (praatP.title));
+	Graphics_text (g, 0.5, 0.6, Melder_peek8to32 (praatP.title));
 	Graphics_setFontStyle (g, 0);
 	Graphics_setFontSize (g, 12);
-	Graphics_text (g, 0.5, 0.25, L"\\s{Built on the} %%Praat shell%\\s{,© Paul Boersma, 1992-2015");
+	Graphics_text (g, 0.5, 0.25, U"\\s{Built on the} %%Praat shell%\\s{,© Paul Boersma, 1992-2015");
 }
 
 static struct {
@@ -102,9 +102,7 @@ void praat_showLogo (int autoPopDown) {
 		#define xstr(s) str(s)
 		#define str(s) #s
 		gtk_about_dialog_set_version (GTK_ABOUT_DIALOG (dialog), xstr (PRAAT_VERSION_STR));
-		static const wchar_t *copyright = Melder_utf8ToWcs ("Copyright © 1992–" xstr(PRAAT_YEAR) " by Paul Boersma and David Weenink");
-		gtk_about_dialog_set_copyright (GTK_ABOUT_DIALOG (dialog),
-			Melder_peekWcsToUtf8 (copyright));
+		gtk_about_dialog_set_copyright (GTK_ABOUT_DIALOG (dialog), "Copyright © 1992–" xstr(PRAAT_YEAR) " by Paul Boersma and David Weenink");
 		gtk_about_dialog_set_license (GTK_ABOUT_DIALOG (dialog), "GPL");
 		gtk_about_dialog_set_website (GTK_ABOUT_DIALOG (dialog), "http://www.praat.org");
 		//gtk_about_dialog_set_authors (GTK_ABOUT_DIALOG (dialog), authors);
@@ -118,7 +116,7 @@ void praat_showLogo (int autoPopDown) {
 			int width  = theLogo.width_mm  / 25.4 * Gui_getResolution (NULL);
 			int height = theLogo.height_mm / 25.4 * Gui_getResolution (NULL);
 			theLogo.dia = GuiDialog_create (theCurrentPraatApplication -> topShell, 100, 100, width, height,
-				L"About", gui_cb_goAway, NULL, 0);
+				U"About", gui_cb_goAway, NULL, 0);
 			theLogo.form = theLogo.dia;
 			theLogo.drawingArea = GuiDrawingArea_createShown (theLogo.form, 0, width, 0, height,
 				gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, NULL, NULL, 0);

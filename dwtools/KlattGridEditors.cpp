@@ -40,19 +40,19 @@ Thing_implement (KlattGrid_realTierEditor, RealTierEditor, 0);
 
 static void menu_cb_KlattGridHelp (EDITOR_ARGS) {
 	EDITOR_IAM (KlattGrid_realTierEditor);
-	Melder_help (L"KlattGrid");
+	Melder_help (U"KlattGrid");
 }
 
 void structKlattGrid_realTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	KlattGrid_realTierEditor_Parent :: v_createHelpMenuItems (menu);
-	EditorMenu_addCommand (menu, L"KlattGrid help", 0, menu_cb_KlattGridHelp);
+	EditorMenu_addCommand (menu, U"KlattGrid help", 0, menu_cb_KlattGridHelp);
 }
 
 void structKlattGrid_realTierEditor :: v_play (double ltmin, double ltmax) {
 	KlattGrid_Editor_defaultPlay (klattgrid, ltmin, ltmax);
 }
 
-void KlattGrid_realTierEditor_init (KlattGrid_realTierEditor me, const wchar_t *title, KlattGrid klattgrid, RealTier data) {
+void KlattGrid_realTierEditor_init (KlattGrid_realTierEditor me, const char32 *title, KlattGrid klattgrid, RealTier data) {
 	my klattgrid = klattgrid;
 	RealTierEditor_init (me, title, data, 0, 0);
 }
@@ -62,26 +62,26 @@ void KlattGrid_realTierEditor_init (KlattGrid_realTierEditor me, const wchar_t *
 Thing_implement (KlattGrid_pitchTierEditor, KlattGrid_realTierEditor, 0);
 
 static void menu_cb_KlattGrid_pitchTierEditorHelp (EDITOR_ARGS) {
-	EDITOR_IAM (KlattGrid_pitchTierEditor); Melder_help (L"PitchTierEditor");
+	EDITOR_IAM (KlattGrid_pitchTierEditor); Melder_help (U"PitchTierEditor");
 }
 
 static void menu_cb_PitchTierHelp (EDITOR_ARGS) {
-	EDITOR_IAM (KlattGrid_pitchTierEditor); Melder_help (L"PitchTier");
+	EDITOR_IAM (KlattGrid_pitchTierEditor); Melder_help (U"PitchTier");
 }
 
 void structKlattGrid_pitchTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
-	EditorMenu_addCommand (menu, L"PitchTierEditor help", 0, menu_cb_KlattGrid_pitchTierEditorHelp);
-	EditorMenu_addCommand (menu, L"PitchTier help", 0, menu_cb_PitchTierHelp);
+	EditorMenu_addCommand (menu, U"PitchTierEditor help", 0, menu_cb_KlattGrid_pitchTierEditorHelp);
+	EditorMenu_addCommand (menu, U"PitchTier help", 0, menu_cb_PitchTierHelp);
 }
 
-KlattGrid_pitchTierEditor KlattGrid_pitchTierEditor_create (const wchar_t *title, KlattGrid klattgrid) {
+KlattGrid_pitchTierEditor KlattGrid_pitchTierEditor_create (const char32 *title, KlattGrid klattgrid) {
 	try {
 		autoKlattGrid_pitchTierEditor me = Thing_new (KlattGrid_pitchTierEditor);
 		RealTier tier = (RealTier) klattgrid -> phonation -> pitch;
 		KlattGrid_realTierEditor_init (me.peek(), title, klattgrid, tier);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("KlattGrid pitch window not created.");
+		Melder_throw (U"KlattGrid pitch window not created.");
 	}
 }
 
@@ -91,15 +91,15 @@ Thing_implement (KlattGrid_intensityTierEditor, KlattGrid_realTierEditor, 0);
 
 static void menu_cb_IntensityTierHelp (EDITOR_ARGS) {
 	EDITOR_IAM (KlattGrid_intensityTierEditor);
-	Melder_help (L"IntensityTier");
+	Melder_help (U"IntensityTier");
 }
 
 void structKlattGrid_intensityTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	KlattGrid_intensityTierEditor_Parent :: v_createHelpMenuItems (menu);
-	EditorMenu_addCommand (menu, L"IntensityTier help", 0, menu_cb_IntensityTierHelp);
+	EditorMenu_addCommand (menu, U"IntensityTier help", 0, menu_cb_IntensityTierHelp);
 }
 
-void KlattGrid_intensityTierEditor_init (KlattGrid_intensityTierEditor me, const wchar_t *title, KlattGrid klattgrid, RealTier tier) {
+void KlattGrid_intensityTierEditor_init (KlattGrid_intensityTierEditor me, const char32 *title, KlattGrid klattgrid, RealTier tier) {
 	KlattGrid_realTierEditor_init (me, title, klattgrid, tier);
 }
 
@@ -108,13 +108,13 @@ void KlattGrid_intensityTierEditor_init (KlattGrid_intensityTierEditor me, const
 
 Thing_implement (KlattGrid_decibelTierEditor, KlattGrid_intensityTierEditor, 0);
 
-KlattGrid_decibelTierEditor KlattGrid_decibelTierEditor_create (const wchar_t *title, KlattGrid klattgrid, RealTier tier) {
+KlattGrid_decibelTierEditor KlattGrid_decibelTierEditor_create (const char32 *title, KlattGrid klattgrid, RealTier tier) {
 	try {
 		autoKlattGrid_decibelTierEditor me = Thing_new (KlattGrid_decibelTierEditor);
 		KlattGrid_intensityTierEditor_init (me.peek(), title, klattgrid, tier);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("KlattGrid decibel window not created.");
+		Melder_throw (U"KlattGrid decibel window not created.");
 	}
 }
 
@@ -122,14 +122,14 @@ KlattGrid_decibelTierEditor KlattGrid_decibelTierEditor_create (const wchar_t *t
 
 Thing_implement (KlattGrid_voicingAmplitudeTierEditor, KlattGrid_intensityTierEditor, 0);
 
-KlattGrid_voicingAmplitudeTierEditor KlattGrid_voicingAmplitudeTierEditor_create (const wchar_t *title, KlattGrid klattgrid) {
+KlattGrid_voicingAmplitudeTierEditor KlattGrid_voicingAmplitudeTierEditor_create (const char32 *title, KlattGrid klattgrid) {
 	try {
 		autoKlattGrid_voicingAmplitudeTierEditor me = Thing_new (KlattGrid_voicingAmplitudeTierEditor);
 		RealTier tier = (RealTier) klattgrid -> phonation -> voicingAmplitude;
 		KlattGrid_intensityTierEditor_init (me.peek(), title, klattgrid, tier);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("KlattGrid voicing amplitude window not created.");
+		Melder_throw (U"KlattGrid voicing amplitude window not created.");
 	}
 }
 
@@ -137,14 +137,14 @@ KlattGrid_voicingAmplitudeTierEditor KlattGrid_voicingAmplitudeTierEditor_create
 
 Thing_implement (KlattGrid_aspirationAmplitudeTierEditor, KlattGrid_intensityTierEditor, 0);
 
-KlattGrid_aspirationAmplitudeTierEditor KlattGrid_aspirationAmplitudeTierEditor_create (const wchar_t *title, KlattGrid klattgrid) {
+KlattGrid_aspirationAmplitudeTierEditor KlattGrid_aspirationAmplitudeTierEditor_create (const char32 *title, KlattGrid klattgrid) {
 	try {
 		autoKlattGrid_aspirationAmplitudeTierEditor me = Thing_new (KlattGrid_aspirationAmplitudeTierEditor);
 		RealTier tier = (RealTier) klattgrid -> phonation -> aspirationAmplitude;
 		KlattGrid_intensityTierEditor_init (me.peek(), title, klattgrid, tier);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("KlattGrid aspiration amplitude window not created.");
+		Melder_throw (U"KlattGrid aspiration amplitude window not created.");
 	}
 }
 
@@ -152,14 +152,14 @@ KlattGrid_aspirationAmplitudeTierEditor KlattGrid_aspirationAmplitudeTierEditor_
 
 Thing_implement (KlattGrid_breathinessAmplitudeTierEditor, KlattGrid_intensityTierEditor, 0);
 
-KlattGrid_breathinessAmplitudeTierEditor KlattGrid_breathinessAmplitudeTierEditor_create (const wchar_t *title, KlattGrid klattgrid) {
+KlattGrid_breathinessAmplitudeTierEditor KlattGrid_breathinessAmplitudeTierEditor_create (const char32 *title, KlattGrid klattgrid) {
 	try {
 		autoKlattGrid_breathinessAmplitudeTierEditor me = Thing_new (KlattGrid_breathinessAmplitudeTierEditor);
 		RealTier tier = (RealTier) klattgrid -> phonation -> breathinessAmplitude;
 		KlattGrid_intensityTierEditor_init (me.peek(), title, klattgrid, tier);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("KlattGrid breathiness amplitude window not created.");
+		Melder_throw (U"KlattGrid breathiness amplitude window not created.");
 	}
 }
 
@@ -167,14 +167,14 @@ KlattGrid_breathinessAmplitudeTierEditor KlattGrid_breathinessAmplitudeTierEdito
 
 Thing_implement (KlattGrid_spectralTiltTierEditor, KlattGrid_intensityTierEditor, 0);
 
-KlattGrid_spectralTiltTierEditor KlattGrid_spectralTiltTierEditor_create (const wchar_t *title, KlattGrid klattgrid) {
+KlattGrid_spectralTiltTierEditor KlattGrid_spectralTiltTierEditor_create (const char32 *title, KlattGrid klattgrid) {
 	try {
 		autoKlattGrid_spectralTiltTierEditor me = Thing_new (KlattGrid_spectralTiltTierEditor);
 		RealTier tier = (RealTier) klattgrid -> phonation -> spectralTilt;
 		KlattGrid_intensityTierEditor_init (me.peek(), title, klattgrid, tier);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("KlattGrid spectral tilt window not created.");
+		Melder_throw (U"KlattGrid spectral tilt window not created.");
 	}
 }
 
@@ -182,14 +182,14 @@ KlattGrid_spectralTiltTierEditor KlattGrid_spectralTiltTierEditor_create (const 
 
 Thing_implement (KlattGrid_fricationBypassTierEditor, KlattGrid_intensityTierEditor, 0);
 
-KlattGrid_fricationBypassTierEditor KlattGrid_fricationBypassTierEditor_create (const wchar_t *title, KlattGrid klattgrid) {
+KlattGrid_fricationBypassTierEditor KlattGrid_fricationBypassTierEditor_create (const char32 *title, KlattGrid klattgrid) {
 	try {
 		autoKlattGrid_fricationBypassTierEditor me = Thing_new (KlattGrid_fricationBypassTierEditor);
 		RealTier tier = (RealTier) klattgrid -> frication -> bypass;
 		KlattGrid_intensityTierEditor_init (me.peek(), title, klattgrid, tier);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("KlattGrid frication bypass window not created.");
+		Melder_throw (U"KlattGrid frication bypass window not created.");
 	}
 }
 
@@ -197,14 +197,14 @@ KlattGrid_fricationBypassTierEditor KlattGrid_fricationBypassTierEditor_create (
 
 Thing_implement (KlattGrid_fricationAmplitudeTierEditor, KlattGrid_intensityTierEditor, 0);
 
-KlattGrid_fricationAmplitudeTierEditor KlattGrid_fricationAmplitudeTierEditor_create (const wchar_t *title, KlattGrid klattgrid) {
+KlattGrid_fricationAmplitudeTierEditor KlattGrid_fricationAmplitudeTierEditor_create (const char32 *title, KlattGrid klattgrid) {
 	try {
 		autoKlattGrid_fricationAmplitudeTierEditor me = Thing_new (KlattGrid_fricationAmplitudeTierEditor);
 		RealTier tier = (RealTier) klattgrid -> frication -> fricationAmplitude;
 		KlattGrid_intensityTierEditor_init (me.peek(), title, klattgrid, tier);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("KlattGrid frication amplitude window not created.");
+		Melder_throw (U"KlattGrid frication amplitude window not created.");
 	}
 }
 
@@ -212,14 +212,14 @@ KlattGrid_fricationAmplitudeTierEditor KlattGrid_fricationAmplitudeTierEditor_cr
 
 Thing_implement (KlattGrid_openPhaseTierEditor, KlattGrid_realTierEditor, 0);
 
-KlattGrid_openPhaseTierEditor KlattGrid_openPhaseTierEditor_create (const wchar_t *title, KlattGrid klattgrid) {
+KlattGrid_openPhaseTierEditor KlattGrid_openPhaseTierEditor_create (const char32 *title, KlattGrid klattgrid) {
 	try {
 		autoKlattGrid_openPhaseTierEditor me = Thing_new (KlattGrid_openPhaseTierEditor);
 		RealTier tier = (RealTier) klattgrid -> phonation -> openPhase;
 		KlattGrid_realTierEditor_init (me.peek(), title, klattgrid, tier);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("KlattGrid_openPhaseTierEditor not created.");
+		Melder_throw (U"KlattGrid_openPhaseTierEditor not created.");
 	}
 }
 
@@ -227,14 +227,14 @@ KlattGrid_openPhaseTierEditor KlattGrid_openPhaseTierEditor_create (const wchar_
 
 Thing_implement (KlattGrid_collisionPhaseTierEditor, KlattGrid_realTierEditor, 0);
 
-KlattGrid_collisionPhaseTierEditor KlattGrid_collisionPhaseTierEditor_create (const wchar_t *title, KlattGrid klattgrid) {
+KlattGrid_collisionPhaseTierEditor KlattGrid_collisionPhaseTierEditor_create (const char32 *title, KlattGrid klattgrid) {
 	try {
 		autoKlattGrid_collisionPhaseTierEditor me = Thing_new (KlattGrid_collisionPhaseTierEditor);
 		RealTier tier = (RealTier) klattgrid -> phonation -> collisionPhase;
 		KlattGrid_realTierEditor_init (me.peek(), title, klattgrid, tier);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("KlattGrid collision phase window not created.");
+		Melder_throw (U"KlattGrid collision phase window not created.");
 	}
 }
 
@@ -242,14 +242,14 @@ KlattGrid_collisionPhaseTierEditor KlattGrid_collisionPhaseTierEditor_create (co
 
 Thing_implement (KlattGrid_power1TierEditor, KlattGrid_realTierEditor, 0);
 
-KlattGrid_power1TierEditor KlattGrid_power1TierEditor_create (const wchar_t *title, KlattGrid klattgrid) {
+KlattGrid_power1TierEditor KlattGrid_power1TierEditor_create (const char32 *title, KlattGrid klattgrid) {
 	try {
 		autoKlattGrid_power1TierEditor me = Thing_new (KlattGrid_power1TierEditor);
 		RealTier tier = (RealTier) klattgrid -> phonation -> power1;
 		KlattGrid_realTierEditor_init (me.peek(), title, klattgrid, tier);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("KlattGrid power1 window not created.");
+		Melder_throw (U"KlattGrid power1 window not created.");
 	}
 }
 
@@ -257,14 +257,14 @@ KlattGrid_power1TierEditor KlattGrid_power1TierEditor_create (const wchar_t *tit
 
 Thing_implement (KlattGrid_power2TierEditor, KlattGrid_realTierEditor, 0);
 
-KlattGrid_power2TierEditor KlattGrid_power2TierEditor_create (const wchar_t *title, KlattGrid klattgrid) {
+KlattGrid_power2TierEditor KlattGrid_power2TierEditor_create (const char32 *title, KlattGrid klattgrid) {
 	try {
 		autoKlattGrid_power2TierEditor me = Thing_new (KlattGrid_power2TierEditor);
 		RealTier tier = (RealTier) klattgrid -> phonation -> power2;
 		KlattGrid_realTierEditor_init (me.peek(), title, klattgrid, tier);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("KlattGrid power2 window not created.");
+		Melder_throw (U"KlattGrid power2 window not created.");
 	}
 }
 
@@ -272,14 +272,14 @@ KlattGrid_power2TierEditor KlattGrid_power2TierEditor_create (const wchar_t *tit
 
 Thing_implement (KlattGrid_flutterTierEditor, KlattGrid_realTierEditor, 0);
 
-KlattGrid_flutterTierEditor KlattGrid_flutterTierEditor_create (const wchar_t *title, KlattGrid klattgrid) {
+KlattGrid_flutterTierEditor KlattGrid_flutterTierEditor_create (const char32 *title, KlattGrid klattgrid) {
 	try {
 		autoKlattGrid_flutterTierEditor me = Thing_new (KlattGrid_flutterTierEditor);
 		RealTier tier = (RealTier) klattgrid -> phonation -> flutter;
 		KlattGrid_realTierEditor_init (me.peek(), title, klattgrid, tier);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("KlattGrid flutter window not created.");
+		Melder_throw (U"KlattGrid flutter window not created.");
 	}
 }
 
@@ -287,14 +287,14 @@ KlattGrid_flutterTierEditor KlattGrid_flutterTierEditor_create (const wchar_t *t
 
 Thing_implement (KlattGrid_doublePulsingTierEditor, KlattGrid_realTierEditor, 0);
 
-KlattGrid_doublePulsingTierEditor KlattGrid_doublePulsingTierEditor_create (const wchar_t *title, KlattGrid klattgrid) {
+KlattGrid_doublePulsingTierEditor KlattGrid_doublePulsingTierEditor_create (const char32 *title, KlattGrid klattgrid) {
 	try {
 		autoKlattGrid_doublePulsingTierEditor me = Thing_new (KlattGrid_doublePulsingTierEditor);
 		RealTier tier = (RealTier) klattgrid -> phonation -> doublePulsing;
 		KlattGrid_realTierEditor_init (me.peek(), title, klattgrid, tier);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("KlattGrid double pulsing window not created.");
+		Melder_throw (U"KlattGrid double pulsing window not created.");
 	}
 }
 
@@ -310,22 +310,22 @@ void structKlattGrid_formantGridEditor :: v_play (double ltmin, double ltmax) {
 	KlattGrid_Editor_defaultPlay (klattgrid, ltmin, ltmax);
 }
 
-KlattGrid_formantGridEditor KlattGrid_formantGridEditor_create (const wchar_t *title, KlattGrid data, int formantType) {
+KlattGrid_formantGridEditor KlattGrid_formantGridEditor_create (const char32 *title, KlattGrid data, int formantType) {
 	try {
 		Melder_assert (data != NULL);
 		FormantGrid *fg = KlattGrid_getAddressOfFormantGrid (data, formantType);
 		if (fg == NULL) {
-			Melder_throw ("Formant type unknown.");
+			Melder_throw (U"Formant type unknown.");
 		}
 		if (FormantGrid_isEmpty (*fg)) {
-			Melder_throw ("Cannot edit an empty formant grid.");
+			Melder_throw (U"Cannot edit an empty formant grid.");
 		}
 		autoKlattGrid_formantGridEditor me = Thing_new (KlattGrid_formantGridEditor);
 		my klattgrid = data;
 		FormantGridEditor_init (me.peek(), title, *fg);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("KlattGrid formant window not created.");
+		Melder_throw (U"KlattGrid formant window not created.");
 	}
 }
 

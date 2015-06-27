@@ -1,6 +1,6 @@
 /* Distributions_and_Transition.cpp
  *
- * Copyright (C) 1997-2011 Paul Boersma
+ * Copyright (C) 1997-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 /*
  * pb 1997/03/02 created
  * pb 2002/07/16 GPL
- * pb 2007/08/12 wchar_t
+ * pb 2007/08/12 wchar
  * pb 2011/05/09 C++
  */
 
@@ -36,12 +36,12 @@ Transition Distributions_to_Transition (Distributions underlying, Distributions 
 		 * Preconditions: range check and matrix matching.
 		 */
 		if (environment < 1 || environment > underlying -> numberOfColumns)
-			Melder_throw ("Environment (", environment, ") out of range (1-", underlying -> numberOfColumns, ").");
+			Melder_throw (U"Environment (", environment, U") out of range (1-", underlying -> numberOfColumns, U").");
 		if (surface && (underlying -> numberOfColumns != surface -> numberOfColumns || underlying -> numberOfRows != surface -> numberOfRows))
-			Melder_throw ("Sizes of underlying and surface distributions do not match.");
+			Melder_throw (U"Sizes of underlying and surface distributions do not match.");
 		if (adjacency && adjacency -> numberOfStates != underlying -> numberOfColumns)
-			Melder_throw ("Number of states (", adjacency -> numberOfStates, ") in adjacency matrix "
-				"does not match number of distributions (", underlying -> numberOfColumns, ")");
+			Melder_throw (U"Number of states (", adjacency -> numberOfStates, U") in adjacency matrix "
+				U"does not match number of distributions (", underlying -> numberOfColumns, U")");
 
 		/*
 		 * Defaults.
@@ -57,7 +57,7 @@ Transition Distributions_to_Transition (Distributions underlying, Distributions 
 		 * Copy labels and set name.
 		 */
 		for (long i = 1; i <= thy numberOfStates; i ++) {
-			thy stateLabels [i] = Melder_wcsdup (underlying -> columnLabels [i]);
+			thy stateLabels [i] = Melder_dup (underlying -> columnLabels [i]);
 		}
 		Thing_setName (thee.peek(), underlying -> columnLabels [environment]);
 
@@ -73,7 +73,7 @@ Transition Distributions_to_Transition (Distributions underlying, Distributions 
 			if (adjacency) {
 				numberOfAdjacentStates = 0;
 				for (long j = 1; j <= thy numberOfStates; j ++)
-					if (i != j && adjacency -> data [i] [j])
+					if (i != j && adjacency -> data [i] [j] != 0.0)
 						numberOfAdjacentStates ++;
 			} else {
 				numberOfAdjacentStates = thy numberOfStates - 1;
@@ -98,7 +98,7 @@ Transition Distributions_to_Transition (Distributions underlying, Distributions 
 					 * Error-driven: grammar step only triggered by positive evidence.
 					 * If the datum does not conflict with the current hypothesis (i), ignore it.
 					 */
-					if (underlying -> data [m] [i]) continue;
+					if (underlying -> data [m] [i] != 0.0) continue;
 
 					/*
 					 * Greedy: grammar step only taken if new grammar accepts datum.
@@ -125,7 +125,7 @@ Transition Distributions_to_Transition (Distributions underlying, Distributions 
 
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (underlying, ": Transition not computed.");
+		Melder_throw (underlying, U": Transition not computed.");
 	}
 }
 
@@ -135,8 +135,8 @@ Distributions Distributions_Transition_map (Distributions me, Transition map) {
 		 * Preconditions: matrix matching.
 		 */
 		if (map -> numberOfStates != my numberOfRows)
-			Melder_throw ("Number of data (", map -> numberOfStates, ") in mapping matrix "
-				"does not match number of data (", my numberOfRows, ") in distribution.");
+			Melder_throw (U"Number of data (", map -> numberOfStates, U") in mapping matrix "
+				U"does not match number of data (", my numberOfRows, U") in distribution.");
 
 		/*
 		 * Create the output object.
@@ -154,7 +154,7 @@ Distributions Distributions_Transition_map (Distributions me, Transition map) {
 
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not mapped to Transition.");
+		Melder_throw (me, U": not mapped to Transition.");
 	}
 }
 
@@ -166,7 +166,7 @@ Distributions Transition_to_Distributions_conflate (Transition me) {
 		 * Copy labels.
 		 */
 		for (long i = 1; i <= my numberOfStates; i ++) {
-			thy rowLabels [i] = Melder_wcsdup (my stateLabels [i]);
+			thy rowLabels [i] = Melder_dup (my stateLabels [i]);
 		}
 
 		/*
@@ -180,7 +180,7 @@ Distributions Transition_to_Distributions_conflate (Transition me) {
 
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not conflated to Distributions.");
+		Melder_throw (me, U": not conflated to Distributions.");
 	}
 }
 

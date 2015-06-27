@@ -1,6 +1,6 @@
 /* prefs_install.h
  *
- * Copyright (C) 2013 Paul Boersma
+ * Copyright (C) 2013,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,27 +38,27 @@
 	void struct##Klas :: f_preferences () {
 
 #define prefs_add_int(Klas,name,version,default) \
-	Preferences_addInt (Melder_wcscat (L"" #Klas "." #name, version >= 2 ? L"." #version : L""), & s_##name, Melder_atof (sdefault_##name));
+	Preferences_addInt (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name, Melder_atoi (sdefault_##name));
 #define prefs_add_int_with_data(Klas,name,version,default)  prefs_add_int (Klas, name, version, default)
 
 #define prefs_add_long(Klas,name,version,default) \
-	Preferences_addLong (Melder_wcscat (L"" #Klas "." #name, version >= 2 ? L"." #version : L""), & s_##name, Melder_atof (sdefault_##name));
+	Preferences_addLong (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name, Melder_atoi (sdefault_##name));
 #define prefs_add_long_with_data(Klas,name,version,default)  prefs_add_long (Klas, name, version, default)
 
 #define prefs_add_bool(Klas,name,version,default) \
-	Preferences_addBool (Melder_wcscat (L"" #Klas "." #name, version >= 2 ? L"." #version : L""), & s_##name, default);
+	Preferences_addBool (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name, default);
 #define prefs_add_bool_with_data(Klas,name,version,default)  prefs_add_bool (Klas, name, version, default)
 
 #define prefs_add_double(Klas,name,version,default) \
-	Preferences_addDouble (Melder_wcscat (L"" #Klas "." #name, version >= 2 ? L"." #version : L""), & s_##name, Melder_atof (sdefault_##name));
+	Preferences_addDouble (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name, Melder_atof (sdefault_##name));
 #define prefs_add_double_with_data(Klas,name,version,default)  prefs_add_double (Klas, name, version, default)
 
 #define prefs_add_enum(Klas,name,version,enumerated,default) \
-	Preferences_addEnum (Melder_wcscat (L"" #Klas "." #name, version >= 2 ? L"." #version : L""), & s_##name, enumerated, enumerated##_##default);
+	Preferences_addEnum (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name, enumerated, enumerated##_##default);
 #define prefs_add_enum_with_data(Klas,name,version,enumerated,default)  prefs_add_enum (Klas, name, version, enumerated, default)
 
 #define prefs_add_string(Klas,name,version,default) \
-	Preferences_addString (Melder_wcscat (L"" #Klas "." #name, version >= 2 ? L"." #version : L""), & s_##name [0], default);
+	Preferences_addString (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name [0], default);
 #define prefs_add_string_with_data(Klas,name,version,default)  prefs_add_string (Klas, name, version, default)
 
 #define prefs_end(Klas) \

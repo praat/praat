@@ -58,9 +58,9 @@ static int _GuiRadioButton_getPosition (GuiRadioButton me) {
 	}
 	static void _GuiGtkRadioButton_handleToggle (GuiObject widget, gpointer void_me) {
 		iam (GuiRadioButton);
-		trace ("enter");
+		trace (U"enter");
 		if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget))) {
-			trace ("on");
+			trace (U"on");
 			if (my d_valueChangedCallback != NULL && ! my d_blockValueChangedCallbacks) {
 				struct structGuiRadioButtonEvent event = { me };
 				event. position = _GuiRadioButton_getPosition (me);
@@ -75,7 +75,7 @@ static int _GuiRadioButton_getPosition (GuiRadioButton me) {
 	- (void) dealloc {   // override
 		GuiRadioButton me = self -> d_userData;
 		forget (me);
-		trace ("deleting a radio button");
+		trace (U"deleting a radio button");
 		[super dealloc];
 	}
 	- (GuiThing) userData {
@@ -86,7 +86,7 @@ static int _GuiRadioButton_getPosition (GuiRadioButton me) {
 		d_userData = static_cast <GuiRadioButton> (userData);
 	}
 	- (void) _guiCocoaRadioButton_activateCallback: (id) widget {
-		trace ("enter");
+		trace (U"enter");
 		Melder_assert (self == widget);   // sender (widget) and receiver (self) happen to be the same object
 		GuiRadioButton me = d_userData;
 		/*
@@ -171,9 +171,9 @@ void GuiRadioGroup_end () {
 }
 
 GuiRadioButton GuiRadioButton_create (GuiForm parent, int left, int right, int top, int bottom,
-	const wchar_t *buttonText, void (*valueChangedCallback) (void *boss, GuiRadioButtonEvent event), void *valueChangedBoss, unsigned long flags)
+	const char32 *buttonText, void (*valueChangedCallback) (void *boss, GuiRadioButtonEvent event), void *valueChangedBoss, unsigned long flags)
 {
-	trace ("begin: text %ls", buttonText);
+	trace (U"begin: text %", buttonText);
 	GuiRadioButton me = Thing_new (GuiRadioButton);
 	my d_shell = parent -> d_shell;
 	my d_parent = parent;
@@ -182,7 +182,7 @@ GuiRadioButton GuiRadioButton_create (GuiForm parent, int left, int right, int t
 	my d_previous = latestRadioButton;
 	my d_next = NULL;
 	#if gtk
-		my d_widget = gtk_radio_button_new_with_label_from_widget (latestRadioButton ? GTK_RADIO_BUTTON (latestRadioButton -> d_widget) : NULL, Melder_peekWcsToUtf8 (buttonText));
+		my d_widget = gtk_radio_button_new_with_label_from_widget (latestRadioButton ? GTK_RADIO_BUTTON (latestRadioButton -> d_widget) : NULL, Melder_peek32to8 (buttonText));
 		_GuiObject_setUserData (my d_widget, me);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		if (flags & GuiRadioButton_SET) {
@@ -198,7 +198,7 @@ GuiRadioButton GuiRadioButton_create (GuiForm parent, int left, int right, int t
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		[my d_cocoaRadioButton   setUserData: me];
 		[my d_cocoaRadioButton setButtonType: NSRadioButton];
-		[my d_cocoaRadioButton setTitle: (NSString *) Melder_peekWcsToCfstring (buttonText)];
+		[my d_cocoaRadioButton setTitle: (NSString *) Melder_peek32toCfstring (buttonText)];
 		if (flags & GuiCheckButton_SET) {
 			[my d_cocoaRadioButton setState: NSOnState];
 		}
@@ -214,7 +214,7 @@ GuiRadioButton GuiRadioButton_create (GuiForm parent, int left, int right, int t
 		[my d_cocoaRadioButton setButtonType: NSSwitchButton];
 		[my d_cocoaRadioButton setImage: image];
 		[my d_cocoaRadioButton setAlternateImage: alternateImage];
-		[my d_cocoaRadioButton setTitle: (NSString *) Melder_peekWcsToCfstring (buttonText)];
+		[my d_cocoaRadioButton setTitle: (NSString *) Melder_peek32toCfstring (buttonText)];
 		if (flags & GuiCheckButton_SET) {
 			[my d_cocoaRadioButton setState: NSOnState];
 		}
@@ -225,7 +225,7 @@ GuiRadioButton GuiRadioButton_create (GuiForm parent, int left, int right, int t
 		my d_cocoaRadioButton = [[GuiCocoaRadioButton alloc] initWithFrame:matrixRect];
 		[my d_cocoaRadioButton   setUserData: me];
 		[my d_cocoaRadioButton setButtonType: NSRadioButton];
-		[my d_cocoaRadioButton setTitle: (NSString *) Melder_peekWcsToCfstring (buttonText)];
+		[my d_cocoaRadioButton setTitle: (NSString *) Melder_peek32toCfstring (buttonText)];
     	NSMatrix *radioMatrix = [[NSMatrix alloc] initWithFrame: matrixRect   mode: NSRadioModeMatrix
 			prototype: (NSCell *) [my d_cocoaRadioButton cell]   numberOfRows: 1   numberOfColumns: 1];
 		my d_widget = (GuiObject) radioMatrix; //my d_cocoaRadioButton;
@@ -233,7 +233,7 @@ GuiRadioButton GuiRadioButton_create (GuiForm parent, int left, int right, int t
 		[radioMatrix   addSubview: my d_cocoaRadioButton];
 		[my d_cocoaRadioButton   setUserData: me];
 		[my d_cocoaRadioButton setButtonType: NSRadioButton];
-		[my d_cocoaRadioButton setTitle: (NSString *) Melder_peekWcsToCfstring (buttonText)];
+		[my d_cocoaRadioButton setTitle: (NSString *) Melder_peek32toCfstring (buttonText)];
 		if (flags & GuiCheckButton_SET) {
 			[my d_cocoaRadioButton setState: NSOnState];
 		}
@@ -243,7 +243,7 @@ GuiRadioButton GuiRadioButton_create (GuiForm parent, int left, int right, int t
 		my d_widget = _Gui_initializeWidget (xmToggleButtonWidgetClass, parent -> d_widget, buttonText);
 		_GuiObject_setUserData (my d_widget, me);
 		my d_widget -> isRadioButton = true;
-		my d_widget -> window = CreateWindow (L"button", _GuiWin_expandAmpersands (buttonText),
+		my d_widget -> window = CreateWindow (L"button", Melder_peek32toW (_GuiWin_expandAmpersands (buttonText)),
 			WS_CHILD
 			| ( my d_widget -> parent -> radioBehavior ? BS_AUTORADIOBUTTON : BS_RADIOBUTTON )
 			| WS_CLIPSIBLINGS,
@@ -277,12 +277,12 @@ GuiRadioButton GuiRadioButton_create (GuiForm parent, int left, int right, int t
 		my d_previous -> d_next = me;
 	}
 	latestRadioButton = me;
-	trace ("end");
+	trace (U"end");
 	return me;
 }
 
 GuiRadioButton GuiRadioButton_createShown (GuiForm parent, int left, int right, int top, int bottom,
-	const wchar_t *buttonText, void (*valueChangedCallback) (void *boss, GuiRadioButtonEvent event), void *valueChangedBoss, unsigned long flags)
+	const char32 *buttonText, void (*valueChangedCallback) (void *boss, GuiRadioButtonEvent event), void *valueChangedBoss, unsigned long flags)
 {
 	GuiRadioButton me = GuiRadioButton_create (parent, left, right, top, bottom, buttonText, valueChangedCallback, valueChangedBoss, flags);
 	GuiThing_show (me);
@@ -304,7 +304,7 @@ bool GuiRadioButton_getValue (GuiRadioButton me) {
 }
 
 void GuiRadioButton_set (GuiRadioButton me) {
-	trace ("enter");
+	trace (U"enter");
 	GuiControlBlockValueChangedCallbacks block (me);   // the value should be set without calling the valueChanged callback (crucial on GTK)
 	#if gtk
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (my d_widget), TRUE);
@@ -342,7 +342,7 @@ void GuiRadioButton_set (GuiRadioButton me) {
 			SetControlValue (sibling -> d_widget -> nat.control.handle, false);
 		}
 	#endif
-	trace ("exit");
+	trace (U"exit");
 }
 
 /* End of file GuiRadioButton.cpp */

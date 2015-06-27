@@ -44,7 +44,7 @@ Thing_implement (GuiLabel, GuiControl, 0);
 	- (void) dealloc {   // override
 		GuiLabel me = d_userData;
 		forget (me);
-		trace ("deleting a label");
+		trace (U"deleting a label");
 		[super dealloc];
 	}
 	- (GuiThing) userData {
@@ -70,33 +70,33 @@ Thing_implement (GuiLabel, GuiControl, 0);
 #endif
 
 GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bottom,
-	const wchar_t *labelText, unsigned long flags)
+	const char32 *labelText, unsigned long flags)
 {
 	GuiLabel me = Thing_new (GuiLabel);
 	my d_shell = parent -> d_shell;
 	my d_parent = parent;
 	#if gtk
-		my d_widget = gtk_label_new (Melder_peekWcsToUtf8 (labelText));
+		my d_widget = gtk_label_new (Melder_peek32to8 (labelText));
 		_GuiObject_setUserData (my d_widget, me);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkLabel_destroyCallback), me);
 		gtk_misc_set_alignment (GTK_MISC (my d_widget), flags & GuiLabel_RIGHT ? 1.0 : flags & GuiLabel_CENTRE ? 0.5 : 0.0, 0.5);
 	#elif cocoa
-		trace ("create");
+		trace (U"create");
         GuiCocoaLabel *label = [[GuiCocoaLabel alloc] init];
 		my d_widget = label;
-		trace ("position");
+		trace (U"position");
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
-		trace ("set user data");
+		trace (U"set user data");
 		[label setUserData: me];
-		trace ("set bezel style");
+		trace (U"set bezel style");
 		[label setBezelStyle: NSTextFieldRoundedBezel];
-		trace ("set bordered");
+		trace (U"set bordered");
 		[label setBordered: NO];
-		trace ("set selectable");
+		trace (U"set selectable");
 		[label setSelectable: NO];
-		trace ("title");
-		[label setTitleWithMnemonic: (NSString *) Melder_peekWcsToCfstring (labelText)];
+		trace (U"title");
+		[label setTitleWithMnemonic: (NSString *) Melder_peek32toCfstring (labelText)];
         [label setAlignment:( flags & GuiLabel_RIGHT ? NSRightTextAlignment : flags & GuiLabel_CENTRE ? NSCenterTextAlignment : NSLeftTextAlignment )];
 		static NSFont *theLabelFont;
 		if (! theLabelFont) {
@@ -106,7 +106,7 @@ GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bott
 	#elif win
 		my d_widget = _Gui_initializeWidget (xmLabelWidgetClass, parent -> d_widget, labelText);
 		_GuiObject_setUserData (my d_widget, me);
-		my d_widget -> window = CreateWindow (L"static", _GuiWin_expandAmpersands (my d_widget -> name),
+		my d_widget -> window = CreateWindow (L"static", Melder_peek32toW (_GuiWin_expandAmpersands (my d_widget -> name)),
 			WS_CHILD
 			| ( flags & GuiLabel_RIGHT ? SS_RIGHT : flags & GuiLabel_CENTRE ? SS_CENTER : SS_LEFT )
 			| SS_CENTERIMAGE,
@@ -134,21 +134,21 @@ GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bott
 }
 
 GuiLabel GuiLabel_createShown (GuiForm parent, int left, int right, int top, int bottom,
-	const wchar_t *labelText, unsigned long flags)
+	const char32 *labelText, unsigned long flags)
 {
 	GuiLabel me = GuiLabel_create (parent, left, right, top, bottom, labelText, flags);
 	GuiThing_show (me);
 	return me;
 }
 
-void GuiLabel_setText (GuiLabel me, const wchar_t *text) {
+void GuiLabel_setText (GuiLabel me, const char32 *text /* cattable */) {
 	#if gtk
-		gtk_label_set_text (GTK_LABEL (my d_widget), Melder_peekWcsToUtf8 (text));
+		gtk_label_set_text (GTK_LABEL (my d_widget), Melder_peek32to8 (text));
 	#elif cocoa
-		[(NSTextField *) my d_widget setTitleWithMnemonic: (NSString *) Melder_peekWcsToCfstring (text)];
+		[(NSTextField *) my d_widget setTitleWithMnemonic: (NSString *) Melder_peek32toCfstring (text)];
 	#elif motif
 		Melder_free (my d_widget -> name);
-		my d_widget -> name = Melder_wcsdup_f (text);
+		my d_widget -> name = Melder_dup_f (text);
 		_GuiNativeControl_setTitle (my d_widget);
 	#endif
 }

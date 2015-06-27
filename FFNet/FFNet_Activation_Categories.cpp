@@ -26,8 +26,7 @@
 
 #include "FFNet_Activation_Categories.h"
 
-static long winnerTakesAll (I, const double activation[]) {
-	iam (FFNet);
+static long winnerTakesAll (FFNet me, const double activation[]) {
 	long pos = 1;
 	double max = activation[1];
 	for (long i = 2; i <= my nOutputs; i++) {
@@ -38,8 +37,7 @@ static long winnerTakesAll (I, const double activation[]) {
 	return pos;
 }
 
-static long stochastic (I, const double activation[]) {
-	iam (FFNet);
+static long stochastic (FFNet me, const double activation[]) {
 	long i;
 	double range = 0;
 	for (i = 1; i <= my nOutputs; i++) {
@@ -59,13 +57,13 @@ static long stochastic (I, const double activation[]) {
 Categories FFNet_Activation_to_Categories (FFNet me, Activation activation, int labeling) {
 	try {
 		Categories categories = (Categories) my outputCategories;
-		long (*labelingFunction) (I, const double act[]);
+		long (*labelingFunction) (FFNet me, const double act[]);
 
 		if (my outputCategories == 0) {
-			Melder_throw ("No Categories (has the FFNet been trained yet?).");
+			Melder_throw (U"No Categories (has the FFNet been trained yet?).");
 		}
 		if (my nOutputs != activation->nx) {
-			Melder_throw ("Number of columns and number of outputs must be equal.");
+			Melder_throw (U"Number of columns and number of outputs must be equal.");
 		}
 		autoCategories thee = Categories_create ();
 		labelingFunction = labeling == 2 ? stochastic : winnerTakesAll;
@@ -76,7 +74,7 @@ Categories FFNet_Activation_to_Categories (FFNet me, Activation activation, int 
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Categories created.");
+		Melder_throw (me, U": no Categories created.");
 	}
 }
 
@@ -85,26 +83,26 @@ Activation FFNet_Categories_to_Activation (FFNet me, Categories thee) {
 		autoCategories uniq = Categories_selectUniqueItems (thee, 1);
 
 		if (my outputCategories == 0) {
-			Melder_throw ("The FFNet does not have categories.");
+			Melder_throw (U"The FFNet does not have categories.");
 		}
 		long nl =  OrderedOfString_isSubsetOf (uniq.peek(), my outputCategories, 0);
 		if (nl == 0) {
-			Melder_throw ("The Categories do not match the categories of the FFNet.");
+			Melder_throw (U"The Categories do not match the categories of the FFNet.");
 		}
 
 		autoActivation him = Activation_create (thy size, my nOutputs);
 		for (long i = 1; i <= thy size; i++) {
-			const wchar *citem = OrderedOfString_itemAtIndex_c (thee, i);
+			const char32 *citem = OrderedOfString_itemAtIndex_c (thee, i);
 			long pos =  OrderedOfString_indexOfItem_c (my outputCategories, citem);
 			if (pos < 1) {
-				Melder_throw ("The FFNet doesn't know the category ", citem, ".");
+				Melder_throw (U"The FFNet doesn't know the category ", citem, U".");
 			}
 			his z[i][pos] = 1.0;
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Activation created.");
+		Melder_throw (me, U": no Activation created.");
 	}
 }
 
-/* End of file FFNet_Activation_Categories.c */
+/* End of file FFNet_Activation_Categories.cpp */

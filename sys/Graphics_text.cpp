@@ -33,7 +33,7 @@
  * pb 2005/10/27 corrected character width for Symbol (should not depend on SILIPA setting)
  * pb 2005/11/11 Windows: font sizes up to 500
  * pb 2006/10/20 links are recorded in DC (no longer WC)
- * pb 2007/06/11 wchar_t
+ * pb 2007/06/11 wchar
  * pb 2007/08/01 reintroduced yIsZeroAtTheTop
  * pb 2007/08/25 use Charis SIL or Doulos SIL rather than SILDoulos IPA93
  * pb 2007/09/29 correct counting of UTF-8 bytes
@@ -146,7 +146,7 @@ static HFONT loadFont (GraphicsScreen me, int font, int size, int style) {
 		ipaInited = TRUE;
 		if (! charisAvailable && ! doulosAvailable) {
 			/* BUG: The next warning may cause reentry of drawing (on window exposure) and lead to crash. Some code must be non-reentrant !! */
-			Melder_warning (L"The phonetic font is not available.\nSeveral characters will not look correct.\nSee www.praat.org");
+			Melder_warning (U"The phonetic font is not available.\nSeveral characters will not look correct.\nSee www.praat.org");
 		} else {
 			ipaAvailable = true;
 		}
@@ -210,8 +210,8 @@ static void charSize (I, _Graphics_widechar *lc) {
 					case kGraphics_font_DINGBATS:  cairo_select_font_face (my d_cairoGraphicsContext, "Dingbats", slant, weight); break;
 					default:                       cairo_select_font_face (my d_cairoGraphicsContext, "Sans", slant, weight); break;
 				}
-				wchar_t buffer [2] = { lc -> kar, 0 };
-				cairo_text_extents (my d_cairoGraphicsContext, Melder_peekWcsToUtf8 (buffer), & extents);
+				char32 buffer [2] = { lc -> kar, 0 };
+				cairo_text_extents (my d_cairoGraphicsContext, Melder_peek32to8 (buffer), & extents);
 				lc -> width = extents.x_advance;
 				lc -> baseline *= my fontSize * 0.01;
 				lc -> code = lc -> kar;
@@ -247,7 +247,6 @@ static void charSize (I, _Graphics_widechar *lc) {
 					lc -> width = strlen (ipaSerifRegular24 [info -> psEncoding - 32] [0]);
 			} else {
 				SIZE extent;
-				wchar_t code;
 				lc -> code =
 					font == kGraphics_font_IPATIMES ||
 					font == kGraphics_font_TIMES ||
@@ -277,7 +276,13 @@ static void charSize (I, _Graphics_widechar *lc) {
 					}
 				}
 				SelectFont (my d_gdiGraphicsContext, fontInfo);
-				GetTextExtentPoint32W (my d_gdiGraphicsContext, (code = (unsigned short) lc -> code, & code), 1, & extent);   // UTF-32 BUG
+				if (lc -> code <= 0x00FFFF) {
+					char16 code = (char16) lc -> code;
+					GetTextExtentPoint32W (my d_gdiGraphicsContext, (WCHAR *) & code, 1, & extent);
+				} else {
+					char32 code [2] { lc -> code, U'\0' };
+					GetTextExtentPoint32W (my d_gdiGraphicsContext, Melder_peek32toW (code), 2, & extent);
+				}
 				lc -> width = extent. cx;
 			}
 			lc -> baseline *= my fontSize * 0.01 * my resolution / 72.0;
@@ -481,7 +486,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 			static ATSUTextLayout textLayout;
 			if (textLayout == NULL) {
 				OSStatus err = ATSUCreateTextLayout (& textLayout);
-				if (err != 0) Melder_fatal ("Graphics_text/ATSUCreateTextLayout: unknown MacOS error %d.", (int) err);
+				if (err != 0) Melder_fatal (U"Graphics_text/ATSUCreateTextLayout: unknown MacOS error ", (int) err, U".");
 			}
 			char16_t code16 [2];
 			if (lc -> kar <= 0xFFFF) {
@@ -489,7 +494,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 				OSStatus err = ATSUSetTextPointerLocation (textLayout,
 					(ConstUniCharArrayPtr) & code16 [0],
 					kATSUFromTextBeginning, kATSUToTextEnd, 1);   // BUG: not 64-bit
-				if (err != 0) Melder_fatal ("Graphics_text/ATSUSetTextPointerLocation low Unicode: unknown MacOS error %d.", (int) err);
+				if (err != 0) Melder_fatal (U"Graphics_text/ATSUSetTextPointerLocation low Unicode: unknown MacOS error ", (int) err, U".");
 			} else {
 				char32 kar = lc -> kar - 0x10000;
 				code16 [0] = 0xD800 + (kar >> 10);
@@ -497,7 +502,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 				OSStatus err = ATSUSetTextPointerLocation (textLayout,
 					(ConstUniCharArrayPtr) & code16 [0],
 					kATSUFromTextBeginning, kATSUToTextEnd, 2);   // BUG: not 64-bit
-				if (err != 0) Melder_fatal ("Graphics_text/ATSUSetTextPointerLocation high Unicode: unknown MacOS error %d.", (int) err);
+				if (err != 0) Melder_fatal (U"Graphics_text/ATSUSetTextPointerLocation high Unicode: unknown MacOS error ", (int) err, U".");
 			}
 			static ATSUFontFallbacks fontFallbacks = NULL;
 			if (fontFallbacks == NULL) {
@@ -689,10 +694,10 @@ static void charSize (I, _Graphics_widechar *lc) {
 }
 
 static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
-	const wchar_t *codes, const char *codes8, const char16_t *codes16, int nchars, int width)
+	const char32 *codes, const char *codes8, const char16 *codes16, int nchars, int width)
 {
 	iam (Graphics);
-	//Melder_casual ("nchars %d first %d %c rightToLeft %d", nchars, lc->kar, lc -> kar, lc->rightToLeft);
+	//Melder_casual (U"nchars ", nchars, U" first ", (int) lc->kar, U" ", (char32) lc -> kar, U" rightToLeft ", lc->rightToLeft);
 	if (my postScript) {
 		iam (GraphicsPostscript);
 		bool onlyRegular = lc -> font.string [0] == 'S' ||
@@ -768,18 +773,18 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 				keys [1] = kCTFontNameAttribute;
 				CFStringRef cfFont;
 				switch (font) {
-					case kGraphics_font_TIMES:       { cfFont = (CFStringRef) Melder_peekWcsToCfstring (L"Times New Roman"); } break;
-					case kGraphics_font_HELVETICA:   { cfFont = (CFStringRef) Melder_peekWcsToCfstring (L"Arial"          ); } break;
-					case kGraphics_font_COURIER:     { cfFont = (CFStringRef) Melder_peekWcsToCfstring (L"Courier New"    ); } break;
+					case kGraphics_font_TIMES:       { cfFont = (CFStringRef) Melder_peek32toCfstring (L"Times New Roman"); } break;
+					case kGraphics_font_HELVETICA:   { cfFont = (CFStringRef) Melder_peek32toCfstring (L"Arial"          ); } break;
+					case kGraphics_font_COURIER:     { cfFont = (CFStringRef) Melder_peek32toCfstring (L"Courier New"    ); } break;
 					case kGraphics_font_PALATINO:    { if (Melder_debug == 900)
-															cfFont = (CFStringRef) Melder_peekWcsToCfstring (L"DG Meta Serif Science");
+															cfFont = (CFStringRef) Melder_peek32toCfstring (L"DG Meta Serif Science");
 													   else
-														    cfFont = (CFStringRef) Melder_peekWcsToCfstring (L"Palatino");
+														    cfFont = (CFStringRef) Melder_peek32toCfstring (L"Palatino");
 													 } break;
-					case kGraphics_font_SYMBOL:      { cfFont = (CFStringRef) Melder_peekWcsToCfstring (L"Symbol"         ); } break;
-					case kGraphics_font_IPATIMES:    { cfFont = (CFStringRef) Melder_peekWcsToCfstring (L"Doulos SIL"     ); } break;
-					case kGraphics_font_IPAPALATINO: { cfFont = (CFStringRef) Melder_peekWcsToCfstring (L"Charis SIL"     ); } break;
-					case kGraphics_font_DINGBATS:    { cfFont = (CFStringRef) Melder_peekWcsToCfstring (L"Zapf Dingbats"  ); } break;
+					case kGraphics_font_SYMBOL:      { cfFont = (CFStringRef) Melder_peek32toCfstring (L"Symbol"         ); } break;
+					case kGraphics_font_IPATIMES:    { cfFont = (CFStringRef) Melder_peek32toCfstring (L"Doulos SIL"     ); } break;
+					case kGraphics_font_IPAPALATINO: { cfFont = (CFStringRef) Melder_peek32toCfstring (L"Charis SIL"     ); } break;
+					case kGraphics_font_DINGBATS:    { cfFont = (CFStringRef) Melder_peek32toCfstring (L"Zapf Dingbats"  ); } break;
 				}
 				void *values [2] = { (void *) styleDict, (void *) cfFont };
 				CFDictionaryRef attributes = CFDictionaryCreate (NULL, (const void **) & keys, (const void **) & values, 2,
@@ -818,8 +823,8 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 				hasHighUnicodeValues |= codes [i] > 0xFFFF;
 			}
 			if (hasHighUnicodeValues) {
-				nchars = wcslen_utf16 (codes, 0);
-				codes16 = (const char16_t *) Melder_peekWcsToUtf16 (codes);
+				nchars = str32len_utf16 (codes, 0);
+				codes16 = Melder_peek32to16 (codes);
 			}
 			#if 1
 				CFStringRef s = CFStringCreateWithBytes (NULL, (const UInt8 *) codes16, nchars * 2, kCFStringEncodingUTF16LE, false);
@@ -911,10 +916,10 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 				OSStatus err = ATSUCreateTextLayout (& theAtsuiTextLayout);
 				if (err != 0) {
 					if (err == kATSUInvalidFontID) {
-						Melder_fatal ("Praat detected an invalid font ID and will now crash, beause this is a system error. "
-							"Please use Font Book to check for duplicate or corrupted fonts.");
+						Melder_fatal (U"Praat detected an invalid font ID and will now crash, beause this is a system error. "
+							U"Please use Font Book to check for duplicate or corrupted fonts.");
 					} else {
-						Melder_fatal ("Graphics_text/ATSUCreateTextLayout drawing: unknown MacOS error %d.", (int) err);
+						Melder_fatal (U"Graphics_text/ATSUCreateTextLayout drawing: unknown MacOS error ", (int) err, U".");
 					}
 				}
 			}
@@ -923,16 +928,16 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 				hasHighUnicodeValues |= codes [i] > 0xFFFF;
 			}
 			if (hasHighUnicodeValues) {
-				nchars = wcslen_utf16 (codes, 0);
+				nchars = str32len_utf16 (codes, 0);
 				OSStatus err = ATSUSetTextPointerLocation (theAtsuiTextLayout,
-					(ConstUniCharArrayPtr) Melder_peekWcsToUtf16 (codes),
+					(ConstUniCharArrayPtr) Melder_peek32to16 (codes),
 					kATSUFromTextBeginning, kATSUToTextEnd, nchars);
-				if (err != 0) Melder_fatal ("Graphics_text/ATSUSetTextPointerLocation hasHighUnicodeValues true: unknown MacOS error %d.", (int) err);
+				if (err != 0) Melder_fatal (U"Graphics_text/ATSUSetTextPointerLocation hasHighUnicodeValues true: unknown MacOS error ", (int) err, U".");
 			} else {
 				OSStatus err = ATSUSetTextPointerLocation (theAtsuiTextLayout,
 					(ConstUniCharArrayPtr) codes16,
 					kATSUFromTextBeginning, kATSUToTextEnd, nchars);
-				if (err != 0) Melder_fatal ("Graphics_text/ATSUSetTextPointerLocation hasHighUnicodeValues false: unknown MacOS error %d.", (int) err);
+				if (err != 0) Melder_fatal (U"Graphics_text/ATSUSetTextPointerLocation hasHighUnicodeValues false: unknown MacOS error ", (int) err, U".");
 			}
 			static ATSUFontFallbacks fontFallbacks = NULL;
 			if (fontFallbacks == NULL) {
@@ -977,12 +982,12 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 				CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeDifference);
 				CGContextSetAllowsAntialiasing (my d_macGraphicsContext, false);
 				OSStatus err = ATSUDrawText (theAtsuiTextLayout, kATSUFromTextBeginning, kATSUToTextEnd, 0, 0);
-				if (err != 0) Melder_fatal ("Graphics_text/ATSUDrawText during Xor: unknown MacOS error %d.", (int) err);
+				if (err != 0) Melder_fatal (U"Graphics_text/ATSUDrawText during Xor: unknown MacOS error ", (int) err, U".");
 				CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeNormal);
 				CGContextSetAllowsAntialiasing (my d_macGraphicsContext, true);
 			} else {
 				OSStatus err = ATSUDrawText (theAtsuiTextLayout, kATSUFromTextBeginning, kATSUToTextEnd, 0, 0);
-				if (err != 0) Melder_fatal ("Graphics_text/ATSUDrawText: unknown MacOS error %d.", (int) err);
+				if (err != 0) Melder_fatal (U"Graphics_text/ATSUDrawText: unknown MacOS error ", (int) err, U".");
 			}
 			CGContextRestoreGState (my d_macGraphicsContext);
 			return;
@@ -1036,7 +1041,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 							default:                       cairo_select_font_face (my d_cairoGraphicsContext, "Sans", slant, weight); break;
 						}
 						cairo_move_to (my d_cairoGraphicsContext, xDC, yDC);
-						cairo_show_text (my d_cairoGraphicsContext, Melder_peekWcsToUtf8 (codes));
+						cairo_show_text (my d_cairoGraphicsContext, Melder_peek32to8 (codes));
 					}
 				#elif win
 					if (my duringXor) {
@@ -1061,13 +1066,13 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 						Rectangle (dc, 0, top, width, bottom);
 						SelectFont (dc, fonts [my resolutionNumber] [font] [lc -> size] [lc -> style]);
 						SetTextColor (dc, my d_winForegroundColour);
-						TextOutW (dc, 0, baseline, (const wchar_t *) codes16, nchars);
+						TextOutW (dc, 0, baseline, (const WCHAR *) codes16, nchars);
 						BitBlt (my d_gdiGraphicsContext, xDC, yDC - ascent, width, bottom - top, dc, 0, top, SRCINVERT);
 					} else {
 						SelectPen (my d_gdiGraphicsContext, my d_winPen), SelectBrush (my d_gdiGraphicsContext, my d_winBrush);
 						if (lc -> link) SetTextColor (my d_gdiGraphicsContext, RGB (0, 0, 255)); else SetTextColor (my d_gdiGraphicsContext, my d_winForegroundColour);
 						SelectFont (my d_gdiGraphicsContext, fonts [my resolutionNumber] [font] [lc -> size] [lc -> style]);
-						TextOutW (my d_gdiGraphicsContext, xDC, yDC, (const wchar_t *) codes16, nchars);
+						TextOutW (my d_gdiGraphicsContext, xDC, yDC, (const WCHAR *) codes16, nchars);
 						if (lc -> link) SetTextColor (my d_gdiGraphicsContext, my d_winForegroundColour);
 						SelectPen (my d_gdiGraphicsContext, GetStockPen (BLACK_PEN)), SelectBrush (my d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));
 					}
@@ -1190,7 +1195,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 					//cairo_scale (my d_cairoGraphicsContext, 1, -1);
 					cairo_rotate (my d_cairoGraphicsContext, - my textRotation * NUMpi / 180.0);
 					cairo_move_to (my d_cairoGraphicsContext, 0, 0);
-					cairo_show_text (my d_cairoGraphicsContext, Melder_peekWcsToUtf8 (codes));
+					cairo_show_text (my d_cairoGraphicsContext, Melder_peek32to8 (codes));
 					cairo_restore (my d_cairoGraphicsContext);
 					return;
 				#elif win
@@ -1205,7 +1210,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 						ModifyWorldTransform (my d_gdiGraphicsContext, & rotate, MWT_RIGHTMULTIPLY);
 						XFORM translate = { 1, 0, 0, 1, (float) xDC, (float) yDC };
 						ModifyWorldTransform (my d_gdiGraphicsContext, & translate, MWT_RIGHTMULTIPLY);
-						TextOutW (my d_gdiGraphicsContext, 0 /*xDC*/, 0 /*yDC*/, (const wchar_t *) codes16, nchars);
+						TextOutW (my d_gdiGraphicsContext, 0 /*xDC*/, 0 /*yDC*/, (const WCHAR *) codes16, nchars);
 						RestoreDC (my d_gdiGraphicsContext, restore);
 						if (lc -> link) SetTextColor (my d_gdiGraphicsContext, my d_winForegroundColour);
 						SelectPen (my d_gdiGraphicsContext, GetStockPen (BLACK_PEN)), SelectBrush (my d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));
@@ -1239,7 +1244,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 					SelectPen (dc, GetStockPen (BLACK_PEN));
 					SelectBrush (dc, GetStockBrush (NULL_BRUSH));
 					SelectFont (dc, fonts [my resolutionNumber] [font] [lc -> size] [lc -> style]);
-					TextOutW (dc, 0, baseline, (const wchar_t *) codes16, nchars);
+					TextOutW (dc, 0, baseline, (const WCHAR *) codes16, nchars);
 				#endif
 				if (my textRotation == 90.0) { cosa = 0.0; sina = 1.0; }
 				else if (my textRotation == 270.0) { cosa = 0.0; sina = -1.0; }
@@ -1248,8 +1253,8 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 					double dx1 = ix;
 					#if win
 						for (iy = top; iy <= bottom; iy ++) {
-							if (GetPixel (dc, ix, iy) == RGB (0, 0, 0)) {   /* Black? */
-								int dy1 = iy - baseline;   /* Translate, rotate, translate. */
+							if (GetPixel (dc, ix, iy) == RGB (0, 0, 0)) {   // black?
+								int dy1 = iy - baseline;   // translate, rotate, translate
 								int xp = xDC + (int) (cosa * dx1 + sina * dy1);
 								int yp = yDC - (int) (sina * dx1 - cosa * dy1);
 								SetPixel (my d_gdiGraphicsContext, xp, yp, my d_winForegroundColour);
@@ -1282,12 +1287,12 @@ static void exitText (I) {
 
 static long bufferSize;
 static _Graphics_widechar *theWidechar;
-static wchar_t *charCodes;
+static char32 *charCodes;
 static char *charCodes8;
-static char16_t *charCodes16;
-static int initBuffer (const wchar_t *txt) {
+static char16 *charCodes16;
+static int initBuffer (const char32 *txt) {
 	try {
-		long sizeNeeded = wcslen (txt) + 1;   /* It is true that some characters are split into two, but all of these are backslash sequences. */
+		long sizeNeeded = str32len (txt) + 1;   /* It is true that some characters are split into two, but all of these are backslash sequences. */
 		if (sizeNeeded > bufferSize) {
 			sizeNeeded += sizeNeeded / 2 + 100;
 			Melder_free (theWidechar);
@@ -1295,15 +1300,15 @@ static int initBuffer (const wchar_t *txt) {
 			Melder_free (charCodes8);
 			Melder_free (charCodes16);
 			theWidechar = Melder_calloc (_Graphics_widechar, sizeNeeded);
-			charCodes = Melder_calloc (wchar_t, sizeNeeded);
+			charCodes = Melder_calloc (char32, sizeNeeded);
 			charCodes8 = Melder_calloc (char, sizeNeeded);
-			charCodes16 = Melder_calloc (char16_t, sizeNeeded);
+			charCodes16 = Melder_calloc (char16, sizeNeeded);
 			bufferSize = sizeNeeded;
 		}
 		return 1;
 	} catch (MelderError) {
 		bufferSize = 0;
-		Melder_flushError (NULL);
+		Melder_flushError ();
 		return 0;
 	}
 }
@@ -1522,9 +1527,9 @@ static void drawCells (Graphics me, double xWC, double yWC, _Graphics_widechar l
 	my wrapWidth = saveWrapWidth;
 }
 
-static void parseTextIntoCellsLinesRuns (Graphics me, const wchar_t *txt, _Graphics_widechar a_widechar []) {
-	wchar_t kar;
-	const wchar_t *in = txt;
+static void parseTextIntoCellsLinesRuns (Graphics me, const char32 *txt /* cattable */, _Graphics_widechar a_widechar []) {
+	char32 kar;
+	const char32 *in = txt;
 	int nquote = 0;
 	_Graphics_widechar *out = & a_widechar [0];
 	unsigned int charSuperscript = 0, charSubscript = 0, charItalic = 0, charBold = 0;
@@ -1565,7 +1570,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const wchar_t *txt, _Graph
 		} else if (kar == '@' && my atSignIsLink   // recognize links
 		           && ! my textRotation)   // no links allowed in rotated text, because links are identified by 2-point rectangles
 		{
-			wchar_t *to, *max;
+			char32 *to, *max;
 			/*
 			 * We will distinguish:
 			 * 1. The link text: the text shown to the user, drawn in blue.
@@ -1591,9 +1596,9 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const wchar_t *txt, _Graph
 				 * First step: collect the page text (the link information);
 				 * it is everything between "@@" and "|" or "@" or end of string.
 				 */
-				const wchar_t *from = in + 1;   // start with first character after "@@"
+				const char32 *from = in + 1;   // start with first character after "@@"
 				if (! links [++ numberOfLinks]. name)   // make room for saving link info
-					links [numberOfLinks]. name = Melder_calloc_f (wchar_t, MAX_LINK_LENGTH + 1);
+					links [numberOfLinks]. name = Melder_calloc_f (char32, MAX_LINK_LENGTH + 1);
 				to = links [numberOfLinks]. name, max = to + MAX_LINK_LENGTH;
 				while (*from && *from != '@' && *from != '|' && to < max)   // until end-of-string or '@' or '|'...
 					* to ++ = * from ++;   // ... copy one character
@@ -1620,9 +1625,9 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const wchar_t *txt, _Graph
 				 * Detected a single-word link, like in "this is a @Link that consists of one word".
 				 * First step: collect the page text: letters, digits, and underscores.
 				 */
-				const wchar_t *from = in;   // start with first character after "@"
+				const char32 *from = in;   // start with first character after "@"
 				if (! links [++ numberOfLinks]. name)   // make room for saving link info
-					links [numberOfLinks]. name = Melder_calloc_f (wchar_t, MAX_LINK_LENGTH + 1);
+					links [numberOfLinks]. name = Melder_calloc_f (char32, MAX_LINK_LENGTH + 1);
 				to = links [numberOfLinks]. name, max = to + MAX_LINK_LENGTH;
 				while (*from && (isalnum (*from) || *from == '_') && to < max)   // until end-of-word...
 					*to ++ = *from++;   // ... copy one character
@@ -1639,7 +1644,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const wchar_t *txt, _Graph
 			/*
 			 * Detected backslash sequence: backslash + kar1 + kar2...
 			 */
-			wchar_t kar1, kar2;
+			char32 kar1, kar2;
 			/*
 			 * ... except if kar1 or kar2 is null: in that case, draw the backslash.
 			 */
@@ -1720,7 +1725,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const wchar_t *txt, _Graph
 	out -> rightToLeft = false;
 }
 
-double Graphics_textWidth (Graphics me, const wchar_t *txt) {
+double Graphics_textWidth (Graphics me, const char32 *txt) {
 	double width;
 	if (! initBuffer (txt)) return 0.0;
 	initText (me);
@@ -1731,7 +1736,7 @@ double Graphics_textWidth (Graphics me, const wchar_t *txt) {
 	return width / my scaleX;
 }
 
-void Graphics_textRect (Graphics me, double x1, double x2, double y1, double y2, const wchar_t *txt) {
+void Graphics_textRect (Graphics me, double x1, double x2, double y1, double y2, const char32 *txt) {
 	_Graphics_widechar *plc, *startOfLine;
 	double width = 0.0, lineHeight = (1.1 / 72) * my fontSize * my resolution;
 	long x1DC = x1 * my scaleX + my deltaX + 2, x2DC = x2 * my scaleX + my deltaX - 2;
@@ -1788,11 +1793,11 @@ void Graphics_textRect (Graphics me, double x1, double x2, double y1, double y2,
 	exitText (me);
 }
 
-void Graphics_text (Graphics me, double xWC, double yWC, const wchar_t *txt) {
-	if (my wrapWidth == 0.0 && wcschr (txt, '\n') && my textRotation == 0.0) {
+static void _Graphics_text (Graphics me, double xWC, double yWC, const char32 *txt) {
+	if (my wrapWidth == 0.0 && str32chr (txt, U'\n') && my textRotation == 0.0) {
 		double lineSpacingWC = (1.2/72) * my fontSize * my resolution / fabs (my scaleY);
 		long numberOfLines = 1;
-		for (const wchar_t *p = & txt [0]; *p != '\0'; p ++) {
+		for (const char32 *p = & txt [0]; *p != U'\0'; p ++) {
 			if (*p == '\n') {
 				numberOfLines ++;
 			}
@@ -1801,11 +1806,11 @@ void Graphics_text (Graphics me, double xWC, double yWC, const wchar_t *txt) {
 			my verticalTextAlignment == Graphics_TOP ? 0 :
 			my verticalTextAlignment == Graphics_HALF ? 0.5 * (numberOfLines - 1) * lineSpacingWC:
 			(numberOfLines - 1) * lineSpacingWC;
-		autostring linesToDraw = Melder_wcsdup_f (txt);
-		wchar_t *p = & linesToDraw [0];
+		autostring32 linesToDraw = Melder_dup_f (txt);
+		char32 *p = & linesToDraw [0];
 		for (;;) {
-			wchar_t *newline = wcschr (p, '\n');
-			if (newline != NULL) *newline = '\0';
+			char32 *newline = str32chr (p, U'\n');
+			if (newline != NULL) *newline = U'\0';
 			Graphics_text (me, xWC, yWC, p);
 			yWC -= lineSpacingWC;
 			if (newline != NULL) {
@@ -1822,10 +1827,68 @@ void Graphics_text (Graphics me, double xWC, double yWC, const wchar_t *txt) {
 	drawCells (me, xWC, yWC, theWidechar);
 	exitText (me);
 	if (my recording) {
-		char *txt_utf8 = Melder_peekWcsToUtf8 (txt);
+		char *txt_utf8 = Melder_peek32to8 (txt);
 		int length = strlen (txt_utf8) / sizeof (double) + 1;
 		op (TEXT, 3 + length); put (xWC); put (yWC); sput (txt_utf8, length)
 	}
+}
+
+static MelderString theGraphicsTextBuffer { 0 };
+void Graphics_text (Graphics me, double x, double y, Melder_1_ARG) {
+	MelderString_copy (& theGraphicsTextBuffer, Melder_1_ARG_CALL);   // even in the one-argument case, make a copy because s1 may be a temporary string (Melder_integer or so)
+	_Graphics_text (me, x, y, theGraphicsTextBuffer.string);
+}
+void Graphics_text (Graphics me, double x, double y, Melder_2_ARGS) {
+	MelderString_copy (& theGraphicsTextBuffer, Melder_2_ARGS_CALL);
+	_Graphics_text (me, x, y, theGraphicsTextBuffer.string);
+}
+void Graphics_text (Graphics me, double x, double y, Melder_3_ARGS) {
+	MelderString_copy (& theGraphicsTextBuffer, Melder_3_ARGS_CALL);
+	_Graphics_text (me, x, y, theGraphicsTextBuffer.string);
+}
+void Graphics_text (Graphics me, double x, double y, Melder_4_ARGS) {
+	MelderString_copy (& theGraphicsTextBuffer, Melder_4_ARGS_CALL);
+	_Graphics_text (me, x, y, theGraphicsTextBuffer.string);
+}
+void Graphics_text (Graphics me, double x, double y, Melder_5_ARGS) {
+	MelderString_copy (& theGraphicsTextBuffer, Melder_5_ARGS_CALL);
+	_Graphics_text (me, x, y, theGraphicsTextBuffer.string);
+}
+void Graphics_text (Graphics me, double x, double y, Melder_6_ARGS) {
+	MelderString_copy (& theGraphicsTextBuffer, Melder_6_ARGS_CALL);
+	_Graphics_text (me, x, y, theGraphicsTextBuffer.string);
+}
+void Graphics_text (Graphics me, double x, double y, Melder_7_ARGS) {
+	MelderString_copy (& theGraphicsTextBuffer, Melder_7_ARGS_CALL);
+	_Graphics_text (me, x, y, theGraphicsTextBuffer.string);
+}
+void Graphics_text (Graphics me, double x, double y, Melder_8_ARGS) {
+	MelderString_copy (& theGraphicsTextBuffer, Melder_8_ARGS_CALL);
+	_Graphics_text (me, x, y, theGraphicsTextBuffer.string);
+}
+void Graphics_text (Graphics me, double x, double y, Melder_9_ARGS) {
+	MelderString_copy (& theGraphicsTextBuffer, Melder_9_ARGS_CALL);
+	_Graphics_text (me, x, y, theGraphicsTextBuffer.string);
+}
+void Graphics_text (Graphics me, double x, double y, Melder_10_ARGS) {
+	MelderString_copy (& theGraphicsTextBuffer, Melder_10_ARGS_CALL);
+	_Graphics_text (me, x, y, theGraphicsTextBuffer.string);
+}
+void Graphics_text (Graphics me, double x, double y, Melder_11_ARGS) {
+	MelderString_copy (& theGraphicsTextBuffer, Melder_11_ARGS_CALL);
+	_Graphics_text (me, x, y, theGraphicsTextBuffer.string);
+}
+void Graphics_text (Graphics me, double x, double y, Melder_13_ARGS) {
+	MelderString_copy (& theGraphicsTextBuffer, Melder_13_ARGS_CALL);
+	_Graphics_text (me, x, y, theGraphicsTextBuffer.string);
+}
+void Graphics_text (Graphics me, double x, double y, Melder_15_ARGS) {
+	MelderString_copy (& theGraphicsTextBuffer, Melder_15_ARGS_CALL);
+	_Graphics_text (me, x, y, theGraphicsTextBuffer.string);
+}
+void Graphics_text (Graphics me, double x, double y, Melder_19_ARGS) {
+	MelderString_copy (& theGraphicsTextBuffer, Melder_19_ARGS_CALL);
+	_Graphics_text (me, x, y, theGraphicsTextBuffer.string);
 }
 
 double Graphics_inqTextX (Graphics me) { return my textX; }
@@ -1900,13 +1963,13 @@ static double psTextWidth (_Graphics_widechar string [], int useSilipaPS) {
 	return textWidth;
 }
 
-double Graphics_textWidth_ps_mm (Graphics me, const wchar_t *txt, bool useSilipaPS) {
+double Graphics_textWidth_ps_mm (Graphics me, const char32 *txt, bool useSilipaPS) {
 	if (! initBuffer (txt)) return 0.0;
 	parseTextIntoCellsLinesRuns (me, txt, theWidechar);
 	return psTextWidth (theWidechar, useSilipaPS) * (double) my fontSize * (25.4 / 72.0);
 }
 
-double Graphics_textWidth_ps (Graphics me, const wchar_t *txt, bool useSilipaPS) {
+double Graphics_textWidth_ps (Graphics me, const char32 *txt, bool useSilipaPS) {
 	return Graphics_dxMMtoWC (me, Graphics_textWidth_ps_mm (me, txt, useSilipaPS));
 }
 
@@ -1939,9 +2002,9 @@ bool _GraphicsMac_tryToInitializeFonts (void) {
 	theZapfDingbatsAtsuiFont = findFont (CFSTR ("Zapf Dingbats"));
 	if (! theZapfDingbatsAtsuiFont) theZapfDingbatsAtsuiFont = theTimesAtsuiFont;
 	if (! theTimesAtsuiFont || ! theHelveticaAtsuiFont || ! theCourierAtsuiFont || ! theSymbolAtsuiFont) {
-		Melder_warning (L"Praat cannot find one or more of the fonts Times (or Times New Roman), "
-			"Helvetica (or Arial), Courier (or Courier New), and Symbol. "
-			"Praat will have limited capabilities for international text.");
+		Melder_warning (U"Praat cannot find one or more of the fonts Times (or Times New Roman), "
+			U"Helvetica (or Arial), Courier (or Courier New), and Symbol. "
+			U"Praat will have limited capabilities for international text.");
 		return false;
 	}
 	theIpaTimesAtsuiFont = findFont (CFSTR ("Doulos SIL"));
@@ -1950,8 +2013,8 @@ bool _GraphicsMac_tryToInitializeFonts (void) {
 		if (theIpaPalatinoAtsuiFont) {
 			theIpaTimesAtsuiFont = theIpaPalatinoAtsuiFont;
 		} else {
-			Melder_warning (L"Praat cannot find the Charis SIL or Doulos SIL font.\n"
-				"Phonetic characters will not look well.");   // because ATSUI will use the "last resort font"
+			Melder_warning (U"Praat cannot find the Charis SIL or Doulos SIL font.\n"
+				U"Phonetic characters will not look well.");   // because ATSUI will use the "last resort font"
 			theIpaTimesAtsuiFont = theTimesAtsuiFont;
 			theIpaPalatinoAtsuiFont = thePalatinoAtsuiFont;
 		}
@@ -1983,7 +2046,7 @@ bool _GraphicsMac_tryToInitializeFonts (void) {
 }
 #endif
 
-void _GraphicsScreen_text_init (GraphicsScreen me) {   /* BUG: should be done as late as possible. */
+void _GraphicsScreen_text_init (GraphicsScreen me) {   // BUG: should be done as late as possible
 	#if gtk
 	#elif cocoa
         (void) me;

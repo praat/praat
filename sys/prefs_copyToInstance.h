@@ -1,6 +1,6 @@
 /* prefs_copyToInstance.h
  *
- * Copyright (C) 2013 Paul Boersma
+ * Copyright (C) 2013,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@
 #define prefs_add_enum_with_data(Klas,name,version,enumerated,default)  p_##name = pref_##name ();
 
 #define prefs_add_string(Klas,name,version,default)
-#define prefs_add_string_with_data(Klas,name,version,default)  wcscpy (& p_##name [0], pref_##name ());
+#define prefs_add_string_with_data(Klas,name,version,default)  str32cpy (& p_##name [0], pref_##name ());
 
 #define prefs_end(Klas) \
 	}

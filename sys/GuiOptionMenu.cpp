@@ -49,7 +49,7 @@ Thing_implement (GuiOptionMenu, GuiControl, 0);
         
         forget (my d_options);
 		forget (me);   
-		trace ("deleting an option menu");
+		trace (U"deleting an option menu");
 		[super dealloc];
 	}
 	- (GuiThing) userData {
@@ -145,10 +145,10 @@ static void cb_optionChanged (GuiObject w, XtPointer void_me, XtPointer call) {
 	for (int i = 1; i <= my d_options -> size; i ++) {
 		GuiMenuItem item = static_cast <GuiMenuItem> (my d_options -> item [i]);
 		if (item -> d_widget == w) {
-			XtVaSetValues (my d_xmCascadeButton, XmNlabelString, Melder_peekWcsToUtf8 (item -> d_widget -> name), NULL);
+			XtVaSetValues (my d_xmCascadeButton, XmNlabelString, Melder_peek32to8 (item -> d_widget -> name), NULL);
 			XmToggleButtonSetState (item -> d_widget, TRUE, FALSE);
 			if (Melder_debug == 11) {
-				Melder_warning (i, " \"", item -> d_widget -> name, "\"");
+				Melder_warning (i, U" \"", item -> d_widget -> name, U"\"");
 			}
 		} else {
 			XmToggleButtonSetState (item -> d_widget, FALSE, FALSE);
@@ -157,17 +157,17 @@ static void cb_optionChanged (GuiObject w, XtPointer void_me, XtPointer call) {
 }
 #endif
 
-void GuiOptionMenu_addOption (GuiOptionMenu me, const wchar_t *text) {
+void GuiOptionMenu_addOption (GuiOptionMenu me, const char32 *text) {
 	#if gtk
-		gtk_combo_box_append_text (GTK_COMBO_BOX (my d_widget), Melder_peekWcsToUtf8 (text));
+		gtk_combo_box_append_text (GTK_COMBO_BOX (my d_widget), Melder_peek32to8 (text));
 	#elif motif
 		GuiMenuItem menuItem = Thing_new (GuiMenuItem);
-		menuItem -> d_widget = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (text), xmToggleButtonWidgetClass, my d_widget, NULL);
+		menuItem -> d_widget = XtVaCreateManagedWidget (Melder_peek32to8 (text), xmToggleButtonWidgetClass, my d_widget, NULL);
 		XtAddCallback (menuItem -> d_widget, XmNvalueChangedCallback, cb_optionChanged, (XtPointer) me);
 		Collection_addItem (my d_options, menuItem);
     #elif cocoa
         GuiCocoaOptionMenu *menu = (GuiCocoaOptionMenu *) my d_widget;
-        [menu addItemWithTitle: [NSString stringWithUTF8String: Melder_peekWcsToUtf8 (text)]];
+        [menu addItemWithTitle: [NSString stringWithUTF8String: Melder_peek32to8 (text)]];
 	#endif
 }
 
@@ -200,7 +200,7 @@ void GuiOptionMenu_setValue (GuiOptionMenu me, int value) {
 			GuiMenuItem menuItem = static_cast <GuiMenuItem> (my d_options -> item [i]);
 			XmToggleButtonSetState (menuItem -> d_widget, i == value, False);
 			if (i == value) {
-				XtVaSetValues (my d_xmCascadeButton, XmNlabelString, Melder_peekWcsToUtf8 (menuItem -> d_widget -> name), NULL);
+				XtVaSetValues (my d_xmCascadeButton, XmNlabelString, Melder_peek32to8 (menuItem -> d_widget -> name), NULL);
 			}
 		}
 	#endif

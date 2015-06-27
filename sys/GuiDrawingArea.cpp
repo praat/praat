@@ -43,7 +43,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		forget (me);
 	}
 	static gboolean _GuiGtkDrawingArea_exposeCallback (GuiObject widget, GdkEventExpose *expose, gpointer void_me) {
-		trace ("begin");
+		trace (U"begin");
 		iam (GuiDrawingArea);
 		Melder_assert (me);
 		// TODO: that helps against the damaged regions outside the rect where the
@@ -59,21 +59,21 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			try {
 				//GdkRectangle rect = { event. x, event. y, event. width, event. height };
 				//gdk_window_begin_paint_rect ((GTK_WIDGET (widget)) -> window, & rect);
-				trace ("send the expose callback");
-				trace ("locale is %s", setlocale (LC_ALL, NULL));
+				trace (U"send the expose callback");
+				trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
 				my d_exposeCallback (my d_exposeBoss, & event);
-				trace ("the expose callback finished");
-				trace ("locale is %s", setlocale (LC_ALL, NULL));
+				trace (U"the expose callback finished");
+				trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
 				//gdk_window_end_paint ((GTK_WIDGET (widget)) -> window);
 				//gdk_window_flush ((GTK_WIDGET (widget)) -> window);
 				//gdk_flush ();
 			} catch (MelderError) {
-				Melder_flushError ("Redrawing not completed");
+				Melder_flushError (U"Redrawing not completed");
 			}
-			trace ("the expose callback handled drawing");
+			trace (U"the expose callback handled drawing");
 			return TRUE;
 		}
-		trace ("GTK will handle redrawing");
+		trace (U"GTK will handle redrawing");
 		return FALSE;
 	}
 	static gboolean _GuiGtkDrawingArea_clickCallback (GuiObject widget, GdkEvent *e, gpointer void_me) {
@@ -88,7 +88,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			try {
 				my d_clickCallback (my d_clickBoss, & event);
 			} catch (MelderError) {
-				Melder_flushError ("Mouse click not completely handled.");
+				Melder_flushError (U"Mouse click not completely handled.");
 			}
 			return TRUE;
 		}
@@ -96,7 +96,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	}
 	static gboolean _GuiGtkDrawingArea_keyCallback (GuiObject widget, GdkEvent *gevent, gpointer void_me) {
 		iam (GuiDrawingArea);
-		trace ("begin");
+		trace (U"begin");
 		if (my d_keyCallback && gevent -> type == GDK_KEY_PRESS) {
 			struct structGuiDrawingAreaKeyEvent event = { me, 0 };
 			GdkEventKey *gkeyEvent = (GdkEventKey *) gevent;
@@ -116,7 +116,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			try {
 				my d_keyCallback (my d_keyBoss, & event);
 			} catch (MelderError) {
-				Melder_flushError ("Key press not completely handled.");
+				Melder_flushError (U"Key press not completely handled.");
 			}
 			/*
 			 * FIXME: here we should empty the type-ahead buffer
@@ -129,14 +129,14 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		iam (GuiDrawingArea);
 		if (my d_resizeCallback) {
 			struct structGuiDrawingAreaResizeEvent event = { me, 0 };
-			trace ("drawingArea resized to %d x %d.", (int) allocation -> width, (int) allocation -> height);
+			trace (U"drawingArea resized to ", allocation -> width, U" x ", allocation -> height, U".");
 			event. width = allocation -> width;
 			event. height = allocation -> height;
 			//g_debug("%d %d", allocation->width, allocation->height);
 			try {
 				my d_resizeCallback (my d_resizeBoss, & event);
 			} catch (MelderError) {
-				Melder_flushError ("Window resizing not completely handled.");
+				Melder_flushError (U"Window resizing not completely handled.");
 			}
 			return TRUE;
 		}
@@ -167,7 +167,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		GuiDrawingArea me = d_userData;
 		forget (me);
 		[self removeTrackingArea: _trackingArea];
-		trace ("deleting a drawing area");
+		trace (U"deleting a drawing area");
 		[super dealloc];
 	}
 	- (GuiThing) userData {
@@ -185,12 +185,12 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			try {
 				my d_resizeCallback (my d_resizeBoss, & event);
 			} catch (MelderError) {
-				Melder_flushError ("Window resizing not completely handled.");
+				Melder_flushError (U"Window resizing not completely handled.");
 			}
 		}
 	}
 	- (void) drawRect: (NSRect) dirtyRect {
-		trace ("dirtyRect: %f, %f, %f, %f", dirtyRect.origin.x, dirtyRect.origin.y, dirtyRect.size.width, dirtyRect.size.height);
+		trace (U"dirtyRect: ", dirtyRect.origin.x, U", ", dirtyRect.origin.y, U", ", dirtyRect.size.width, U", ", dirtyRect.size.height);
 		GuiDrawingArea me = (GuiDrawingArea) d_userData;
 		if (! _inited) {
 			// Last chance to do this. Is there a better place?
@@ -202,7 +202,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			try {
 				my d_exposeCallback (my d_exposeBoss, & event);
 			} catch (MelderError) {
-				Melder_flushError ("Redrawing not completed");
+				Melder_flushError (U"Redrawing not completed");
 			}
 		}
 	}
@@ -249,7 +249,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			try {
 				my d_clickCallback (my d_clickBoss, & event);
 			} catch (MelderError) {
-				Melder_flushError ("Mouse click not completely handled.");
+				Melder_flushError (U"Mouse click not completely handled.");
 			}
 		}
 	}
@@ -295,7 +295,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			if (event. key == NSRightArrowFunctionKey) event. key = 0x2192;
 			if (event. key == NSUpArrowFunctionKey)    event. key = 0x2191;
 			if (event. key == NSDownArrowFunctionKey)  event. key = 0x2193;
-			trace ("key %d", (int) event. key);
+			trace (U"key ", event. key);
 			NSUInteger modifiers = [nsEvent modifierFlags];
 			event. shiftKeyPressed = modifiers & NSShiftKeyMask;
 			event. optionKeyPressed = modifiers & NSAlternateKeyMask;
@@ -303,7 +303,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			try {
 				my d_keyCallback (my d_keyBoss, & event);
 			} catch (MelderError) {
-				Melder_flushError ("Key press not completely handled.");
+				Melder_flushError (U"Key press not completely handled.");
 			}
 		}
 	}
@@ -323,7 +323,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			try {
 				my d_exposeCallback (my d_exposeBoss, & event);
 			} catch (MelderError) {
-				Melder_flushError ("Redrawing not completed");
+				Melder_flushError (U"Redrawing not completed");
 			}
 		}
 		EndPaint (widget -> window, & paintStruct);
@@ -340,7 +340,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			try {
 				my d_clickCallback (my d_clickBoss, & event);
 			} catch (MelderError) {
-				Melder_flushError ("Mouse click not completely handled.");
+				Melder_flushError (U"Mouse click not completely handled.");
 			}
 		}
 	}
@@ -360,7 +360,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			try {
 				my d_keyCallback (my d_keyBoss, & event);
 			} catch (MelderError) {
-				Melder_flushError ("Key press not completely handled.");
+				Melder_flushError (U"Key press not completely handled.");
 			}
 		}
 	}
@@ -373,7 +373,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			try {
 				my d_resizeCallback (my d_resizeBoss, & event);
 			} catch (MelderError) {
-				Melder_flushError ("Window resizing not completely handled.");
+				Melder_flushError (U"Window resizing not completely handled.");
 			}
 		}
 	}
@@ -390,7 +390,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			try {
 				my d_exposeCallback (my d_exposeBoss, & event);
 			} catch (MelderError) {
-				Melder_flushError ("Redrawing not completed");
+				Melder_flushError (U"Redrawing not completed");
 			}
 			GuiMac_clipOff ();
 		}
@@ -408,7 +408,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			try {
 				my d_clickCallback (my d_clickBoss, & event);
 			} catch (MelderError) {
-				Melder_flushError ("Mouse click not completely handled.");
+				Melder_flushError (U"Mouse click not completely handled.");
 			}
 		}
 	}
@@ -431,7 +431,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			try {
 				my d_keyCallback (my d_keyBoss, & event);
 			} catch (MelderError) {
-				Melder_flushError ("Key press not completely handled.");
+				Melder_flushError (U"Key press not completely handled.");
 			}
 			return true;
 		}
@@ -446,7 +446,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			try {
 				my d_resizeCallback (my d_resizeBoss, & event);
 			} catch (MelderError) {
-				Melder_flushError ("Window resizing not completely handled.");
+				Melder_flushError (U"Window resizing not completely handled.");
 			}
 		}
 	}
@@ -537,15 +537,15 @@ GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int t
 			[[drawingArea window]   makeFirstResponder: drawingArea];   // needed in DemoWindow
 		}
     #elif win
-		my d_widget = _Gui_initializeWidget (xmDrawingAreaWidgetClass, parent -> d_widget, L"drawingArea");
+		my d_widget = _Gui_initializeWidget (xmDrawingAreaWidgetClass, parent -> d_widget, U"drawingArea");
 		_GuiObject_setUserData (my d_widget, me);
-		my d_widget -> window = CreateWindowEx (0, _GuiWin_getDrawingAreaClassName (), L"drawingArea",
+		my d_widget -> window = CreateWindowEx (0, Melder_peek32toW (_GuiWin_getDrawingAreaClassName ()), L"drawingArea",
 			WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS,
 			my d_widget -> x, my d_widget -> y, my d_widget -> width, my d_widget -> height, my d_widget -> parent -> window, NULL, theGui.instance, NULL);
 		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 	#elif mac
-		my d_widget = _Gui_initializeWidget (xmDrawingAreaWidgetClass, parent -> d_widget, L"drawingArea");
+		my d_widget = _Gui_initializeWidget (xmDrawingAreaWidgetClass, parent -> d_widget, U"drawingArea");
 		_GuiObject_setUserData (my d_widget, me);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 	#endif
@@ -609,15 +609,15 @@ GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int h
 		my v_positionInScrolledWindow (my d_widget, width, height, parent);
 		[drawingArea setUserData: me];
     #elif win
-		my d_widget = _Gui_initializeWidget (xmDrawingAreaWidgetClass, parent -> d_widget, L"drawingArea");
+		my d_widget = _Gui_initializeWidget (xmDrawingAreaWidgetClass, parent -> d_widget, U"drawingArea");
 		_GuiObject_setUserData (my d_widget, me);
-		my d_widget -> window = CreateWindowEx (0, _GuiWin_getDrawingAreaClassName (), L"drawingArea",
+		my d_widget -> window = CreateWindowEx (0, Melder_peek32toW (_GuiWin_getDrawingAreaClassName ()), L"drawingArea",
 			WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS,
 			0, 0, my d_widget -> width, my d_widget -> height, my d_widget -> parent -> window, NULL, theGui.instance, NULL);
 		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
 		my v_positionInScrolledWindow (my d_widget, width, height, parent);
 	#elif mac
-		my d_widget = _Gui_initializeWidget (xmDrawingAreaWidgetClass, parent -> d_widget, L"drawingArea");
+		my d_widget = _Gui_initializeWidget (xmDrawingAreaWidgetClass, parent -> d_widget, U"drawingArea");
 		_GuiObject_setUserData (my d_widget, me);
 		my v_positionInScrolledWindow (my d_widget, width, height, parent);
 	#endif

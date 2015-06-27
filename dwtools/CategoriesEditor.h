@@ -40,6 +40,6 @@ Thing_define (CategoriesEditor, Editor) {
 		void v_dataChanged ();
 };
 
-CategoriesEditor CategoriesEditor_create (const wchar_t *title, Categories data);
+CategoriesEditor CategoriesEditor_create (const char32 *title, Categories data);
 
 #endif /* _CategoriesEditor_h_ */

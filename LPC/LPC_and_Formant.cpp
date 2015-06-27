@@ -91,15 +91,15 @@ Formant LPC_to_Formant (LPC me, double margin) {
 		long interval = nmax > 20 ? 1 : 10;
 
 		if (nmax > 99) {
-			Melder_throw ("We cannot find the roots of a polynomial of order > 99.");
+			Melder_throw (U"We cannot find the roots of a polynomial of order > 99.");
 		}
 		if (margin >= samplingFrequency / 4) {
-			Melder_throw ("Margin must be smaller than ", samplingFrequency / 4, ".");
+			Melder_throw (U"Margin should be smaller than ", samplingFrequency / 4, U".");
 		}
 
 		autoFormant thee = Formant_create (my xmin, my xmax, my nx, my dx, my x1, (nmax + 1) / 2);
 
-		autoMelderProgress progress (L"LPC to Formant");
+		autoMelderProgress progress (U"LPC to Formant");
 
 		for (long i = 1; i <= my nx; i++) {
 			Formant_Frame formant = & thy d_frames[i];
@@ -115,18 +115,18 @@ Formant LPC_to_Formant (LPC me, double margin) {
 			}
 
 			if ( (interval == 1 || (i % interval) == 1)) {
-				Melder_progress ( (double) i / my nx, L"LPC to Formant: frame ", Melder_integer (i),
-				                   L" out of ", Melder_integer (my nx), L".");
+				Melder_progress ( (double) i / my nx, U"LPC to Formant: frame ", i,
+				                   U" out of ", my nx, U".");
 			}
 		}
 
 		Formant_sort (thee.peek());
 		if (err > 0) {
-			Melder_warning (Melder_integer (err), L" formant frames out of ", Melder_integer (my nx), L" suspect.");
+			Melder_warning (err, U" formant frames out of ", my nx, U" are suspect.");
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Formant created.");
+		Melder_throw (me, U": no Formant created.");
 	}
 }
 
@@ -183,7 +183,7 @@ LPC Formant_to_LPC (Formant me, double samplingPeriod) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no LPC created.");
+		Melder_throw (me, U": no LPC created.");
 	}
 }
 

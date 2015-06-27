@@ -1,4 +1,4 @@
-/* NUMsort.c
+/* NUMsort.cpp
  *
  * Copyright (C) 1993-2012 David Weenink
  *
@@ -135,16 +135,13 @@ void NUMrankColumns (double **m, long rb, long re, long cb, long ce) {
 
 #define COMPARELT(x,y) ((x) < (y))
 
-void NUMindexx_f (const float a[], long n, long index[])
-MACRO_NUMindex (float)
-
 void NUMindexx (const double a[], long n, long index[])
-MACRO_NUMindex (float)
+MACRO_NUMindex (double)
 
 #undef COMPARELT
-#define COMPARELT(x,y) (Melder_wcscmp (x,y) <  0)
-void NUMindexx_s (wchar_t **a, long n, long index[])
-MACRO_NUMindex (wchar_t *)
+#define COMPARELT(x,y) (Melder_cmp (x,y) <  0)
+void NUMindexx_s (char32 **a, long n, long index[])
+MACRO_NUMindex (char32 *)
 
 #undef COMPARELT
 #undef MACRO_INDEXX
@@ -241,4 +238,4 @@ MACRO_NUMsortkf (double)
 
 #undef MACRO_NUMsortkf
 
-/* End of file NUMsort.c */
+/* End of file NUMsort.cpp */

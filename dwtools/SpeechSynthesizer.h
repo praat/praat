@@ -47,17 +47,17 @@ void SpeechSynthesizerVoice_initFromEspeakVoice (SpeechSynthesizerVoice me, voic
 
 
 void SpeechSynthesizer_initSoundBuffer (SpeechSynthesizer me);
-SpeechSynthesizer SpeechSynthesizer_create (const wchar_t *voiceLanguageName, const wchar_t *voiceVariantName);
+SpeechSynthesizer SpeechSynthesizer_create (const char32 *voiceLanguageName, const char32 *voiceVariantName);
 
-const wchar_t *SpeechSynthesizer_getVoiceLanguageCodeFromName (SpeechSynthesizer me, const wchar_t *voiceLanguageName);
-const wchar_t *SpeechSynthesizer_getVoiceVariantCodeFromName (SpeechSynthesizer me, const wchar_t *voiceVariantName);
+const char32 *SpeechSynthesizer_getVoiceLanguageCodeFromName (SpeechSynthesizer me, const char32 *voiceLanguageName);
+const char32 *SpeechSynthesizer_getVoiceVariantCodeFromName (SpeechSynthesizer me, const char32 *voiceVariantName);
 
 void SpeechSynthesizer_setTextInputSettings (SpeechSynthesizer me, int inputTextFormat, int inputPhonemeCoding);
 void SpeechSynthesizer_setSpeechOutputSettings (SpeechSynthesizer me, double samplingFrequency, double wordgap, long pitchAdjustment, long pitchRange, long wordsPerMinute, bool estimateWordsPerMinute, int outputPhonemeCodes);
 
-Sound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const wchar_t *text, TextGrid *tg, Table *events);
+Sound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, TextGrid *tg, Table *events);
 
-void SpeechSynthesizer_playText (SpeechSynthesizer me, const wchar_t *text);
+void SpeechSynthesizer_playText (SpeechSynthesizer me, const char32 *text);
 
 
 /* End of file SpeechSynthesizer.h */

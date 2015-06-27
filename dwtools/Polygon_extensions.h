@@ -2,7 +2,7 @@
 #define _Polygon_extensions_h_
 /* Polygon_extensions.h
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2012, 2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@
 #define Polygon_VERTEX 5
 
 void Polygon_getExtrema (Polygon me, double *xmin, double *xmax, double *ymin, double *ymax);
-Polygon Polygon_createSimple (wchar_t *xystring);
+Polygon Polygon_createSimple (char32 *xystring);
 Polygon Polygon_createFromRandomVertices (long numberOfVertices, double xmin, double xmax, double ymin, double ymax);
 Polygon Polygon_simplify (Polygon me);
 void Polygon_translate (Polygon me, double xt, double yt);
@@ -55,7 +55,7 @@ void Polygon_Categories_draw (Polygon me, Any categories, Graphics graphics, dou
 /* reverse axis when min > max */
 
 void Polygon_drawMarks (Polygon me, Graphics g, double xmin, double xmax,
-	double ymin, double ymax, double size_mm, const wchar_t *mark);
+	double ymin, double ymax, double size_mm, const char32 *mark);
 
 Polygon Sound_to_Polygon (Sound me, int channel, double tmin, double tmax, double ymin, double ymax, double level);
 /*
@@ -89,5 +89,8 @@ Polygon Sounds_to_Polygon_enclosed (Sound me, Sound thee, int channel, double tm
 Polygon Polygons_union (Polygon me, Polygon thee);
 
 Collection Polygons_clip (Polygon me, Polygon thee);
+
+Polygon Polygon_convexHull (Polygon me);
+double Polygon_getAreaOfConvexHull (Polygon me);
 
 #endif /* _Polygon_extensions_h_ */

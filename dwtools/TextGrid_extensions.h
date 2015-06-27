@@ -77,18 +77,18 @@ void TextGrid_extendTime (TextGrid me, double delta_time, int position);
 	Interval tiers will have a new (empty) interval at the start or the end.
 */
 
-void TextGrid_setTierName (TextGrid me, long itier, const wchar_t *newName);
+void TextGrid_setTierName (TextGrid me, long itier, const char32 *newName);
 
-void TextTier_changeLabels (I, long from, long to, const wchar_t *search, const wchar_t *replace, int use_regexp, long *nmatches, long *nstringmatches);
+void TextTier_changeLabels (I, long from, long to, const char32 *search, const char32 *replace, int use_regexp, long *nmatches, long *nstringmatches);
 
-void IntervalTier_changeLabels (I, long from, long to, const wchar_t *search, const wchar_t *replace, int use_regexp, long *nmatches, long *nstringmatches);
+void IntervalTier_changeLabels (I, long from, long to, const char32 *search, const char32 *replace, int use_regexp, long *nmatches, long *nstringmatches);
 
-void IntervalTier_removeBoundariesBetweenIdenticallyLabeledIntervals (IntervalTier me, const wchar_t *label);
+void IntervalTier_removeBoundariesBetweenIdenticallyLabeledIntervals (IntervalTier me, const char32 *label);
 
-void IntervalTier_cutIntervalsOnLabelMatch (IntervalTier me, const wchar_t *label);
-void IntervalTier_cutIntervals_minimumDuration (IntervalTier me, const wchar_t *label, double minimumDuration);
+void IntervalTier_cutIntervalsOnLabelMatch (IntervalTier me, const char32 *label);
+void IntervalTier_cutIntervals_minimumDuration (IntervalTier me, const char32 *label, double minimumDuration);
 
-void TextGrid_changeLabels (TextGrid me, int tier, long from, long to, const wchar_t *search, const wchar_t *replace, int use_regexp, long *nmatches, long *nstringmatches);
+void TextGrid_changeLabels (TextGrid me, int tier, long from, long to, const char32 *search, const char32 *replace, int use_regexp, long *nmatches, long *nstringmatches);
 
 /* Set the start/end time to a smaller/larger value.
  * If mark is NULL, only times are changed
@@ -96,14 +96,14 @@ void TextGrid_changeLabels (TextGrid me, int tier, long from, long to, const wch
  *    For a TextTier this involves adding a point with the marker
  *    For an IntervalTier this involves adding a new interval
  */
-void IntervalTier_setLaterEndTime (IntervalTier me, double xmax, const wchar_t *mark);
-void IntervalTier_setEarlierStartTime (IntervalTier me, double xmin, const wchar_t *mark);
+void IntervalTier_setLaterEndTime (IntervalTier me, double xmax, const char32 *mark);
+void IntervalTier_setEarlierStartTime (IntervalTier me, double xmin, const char32 *mark);
 
 void IntervalTier_moveBoundary (IntervalTier me, long interval, bool atStart, double newTime);
-void TextTier_setLaterEndTime (TextTier me, double xmax, const wchar_t *mark);
-void TextTier_setEarlierStartTime (TextTier me, double xmin, const wchar_t *mark);
-void TextGrid_setEarlierStartTime (TextGrid me, double xmin, const wchar_t *imark, const wchar_t *pmark);
-void TextGrid_setLaterEndTime (TextGrid me, double xmax, const wchar_t *imark, const wchar_t *pmark);
+void TextTier_setLaterEndTime (TextTier me, double xmax, const char32 *mark);
+void TextTier_setEarlierStartTime (TextTier me, double xmin, const char32 *mark);
+void TextGrid_setEarlierStartTime (TextGrid me, double xmin, const char32 *imark, const char32 *pmark);
+void TextGrid_setLaterEndTime (TextGrid me, double xmax, const char32 *imark, const char32 *pmark);
 
 
 // Precondition: if (preserveTimes) { my xmax <= thy xmin }

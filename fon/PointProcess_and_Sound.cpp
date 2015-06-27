@@ -1,6 +1,6 @@
 /* PointProcess_and_Sound.cpp
  *
- * Copyright (C) 1992-2011,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ Sound PointProcess_to_Sound_pulseTrain
 	 double adaptFactor, double adaptTime, long interpolationDepth)
 {
 	try {
-		long sound_nt = 1 + floor ((my xmax - my xmin) * samplingFrequency);   // >= 1
+		long sound_nt = 1 + (long) floor ((my xmax - my xmin) * samplingFrequency);   // >= 1
 		double dt = 1.0 / samplingFrequency;
 		double tmid = (my xmin + my xmax) / 2;
 		double t1 = tmid - 0.5 * (sound_nt - 1) * dt;
@@ -70,7 +70,7 @@ Sound PointProcess_to_Sound_pulseTrain
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": pulse train not synthesized.");
+		Melder_throw (me, U": pulse train not synthesized.");
 	}
 }
 
@@ -79,7 +79,7 @@ Sound PointProcess_to_Sound_phonation
 	 double openPhase, double collisionPhase, double power1, double power2)
 {
 	try {
-		long sound_nt = 1 + floor ((my xmax - my xmin) * samplingFrequency);   // >= 1
+		long sound_nt = 1 + (long) floor ((my xmax - my xmin) * samplingFrequency);   // >= 1
 		double dt = 1.0 / samplingFrequency;
 		double tmid = (my xmin + my xmax) / 2;
 		double t1 = tmid - 0.5 * (sound_nt - 1) * dt;
@@ -94,13 +94,7 @@ Sound PointProcess_to_Sound_phonation
 		} else {
 			double xmaxFlow = pow (power1 / power2, 1.0 / (power2 - power1));
 			double xleft = xmaxFlow;
-			double gleft = pow (xleft, power1) - pow (xleft, power2);
-			double gderivleft = power1 * pow (xleft, power1 - 1.0) - power2 * pow (xleft, power2 - 1.0);
-			double fleft = - gleft / gderivleft;
 			double xright = 1.0;
-			double gright = pow (xright, power1) - pow (xright, power2);
-			double gderivright = power1 * pow (xright, power1 - 1.0) - power2 * pow (xright, power2 - 1.0);
-			double fright = - gright / gderivright;
 			for (int i = 1; i <= 50; i ++) {
 				double xmid = 0.5 * (xleft + xright);
 				double gmid = pow (xmid, power1) - pow (xmid, power2);
@@ -108,10 +102,8 @@ Sound PointProcess_to_Sound_phonation
 				double fmid = - gmid / gderivmid;
 				if (fmid > collisionPhase / openPhase) {
 					xleft = xmid;
-					fleft = fmid;
 				} else {
 					xright = xmid;
-					fright = fmid;
 				}
 				re = xmid * openPhase;
 			}
@@ -159,7 +151,7 @@ Sound PointProcess_to_Sound_phonation
 			 * Fill in the samples to the left of the current point.
 			 */
 			{// scope
-				long beginSample = midSample - floor (te / thy dx);
+				long beginSample = midSample - (long) floor (te / thy dx);
 				if (beginSample < 1) beginSample = 1;
 				long endSample = midSample;
 				if (endSample > thy nx) endSample = thy nx;
@@ -185,7 +177,7 @@ Sound PointProcess_to_Sound_phonation
 				double value = flowDerivative * factorPerSample;
 				long beginSample = midSample + 1;
 				if (beginSample < 1) beginSample = 1;
-				long endSample = midSample + floor (20 * ta / thy dx);
+				long endSample = midSample + (long) floor (20 * ta / thy dx);
 				if (endSample > thy nx) endSample = thy nx;
 				for (long isamp = beginSample; isamp <= endSample; isamp ++) {
 					sound [isamp] += value;
@@ -196,7 +188,7 @@ Sound PointProcess_to_Sound_phonation
 		Vector_scale (thee.peek(), 0.9);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Sound (phonation).");
+		Melder_throw (me, U": not converted to Sound (phonation).");
 	}
 }
 
@@ -205,7 +197,7 @@ void PointProcess_playPart (PointProcess me, double tmin, double tmax) {
 		autoSound sound = PointProcess_to_Sound_pulseTrain (me, 44100, 0.7, 0.05, 30);
 		Sound_playPart (sound.peek(), tmin, tmax, NULL, NULL);
 	} catch (MelderError) {
-		Melder_throw (me, ": not played.");
+		Melder_throw (me, U": not played.");
 	}
 }
 
@@ -229,7 +221,7 @@ Sound PointProcess_to_Sound_hum (PointProcess me) {
 		Sound_filterWithFormants (sound.peek(), my xmin, my xmax, 6, formant, bandwidth);
 		return sound.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Sound (hum).");
+		Melder_throw (me, U": not converted to Sound (hum).");
 	}
 }
 

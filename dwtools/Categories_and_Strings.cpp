@@ -27,26 +27,26 @@
 Strings Categories_to_Strings (Categories me) {
 	try {
 		if (my size < 1) {
-			Melder_throw ("No elements.");
+			Melder_throw (U"No elements.");
 		}
 		autoStrings thee = Thing_new (Strings);
-		thy strings = NUMvector<wchar_t *> (1, my size);
+		thy strings = NUMvector<char32 *> (1, my size);
 		thy numberOfStrings = my size;
 
 		for (long i = 1; i <= my size; i++) {
 			SimpleString s = (SimpleString) my item[i];
-			thy strings[i] = Melder_wcsdup (s -> string);
+			thy strings[i] = Melder_dup (s -> string);
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Strings.");
+		Melder_throw (me, U": not converted to Strings.");
 	}
 }
 
 Categories Strings_to_Categories (Strings me) {
 	try {
 		if (my numberOfStrings < 1) {
-			Melder_throw ("Empty strings.");
+			Melder_throw (U"Empty strings.");
 		}
 		autoCategories thee = Thing_new (Categories);
 		Categories_init (thee.peek(), my numberOfStrings);
@@ -57,7 +57,7 @@ Categories Strings_to_Categories (Strings me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted.");
+		Melder_throw (me, U": not converted.");
 	}
 }
 

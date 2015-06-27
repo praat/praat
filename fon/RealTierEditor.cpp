@@ -28,7 +28,7 @@ Thing_implement (RealTierEditor, TimeSoundEditor, 0);
 
 static void menu_cb_removePoints (EDITOR_ARGS) {
 	EDITOR_IAM (RealTierEditor);
-	Editor_save (me, L"Remove point(s)");
+	Editor_save (me, U"Remove point(s)");
 	if (my d_startSelection == my d_endSelection)
 		AnyTier_removePointNear (my data, my d_startSelection);
 	else
@@ -41,10 +41,10 @@ static void menu_cb_removePoints (EDITOR_ARGS) {
 static void menu_cb_addPointAtCursor (EDITOR_ARGS) {
 	EDITOR_IAM (RealTierEditor);
 	if (NUMdefined (my v_minimumLegalValue ()) && my ycursor < my v_minimumLegalValue ())
-		Melder_throw ("Cannot add a point below ", my v_minimumLegalValue (), my v_rightTickUnits (), ".");
+		Melder_throw (U"Cannot add a point below ", my v_minimumLegalValue (), my v_rightTickUnits (), U".");
 	if (NUMdefined (my v_maximumLegalValue ()) && my ycursor > my v_maximumLegalValue ())
-		Melder_throw ("Cannot add a point above ", my v_maximumLegalValue (), my v_rightTickUnits (), ".");
-	Editor_save (me, L"Add point");
+		Melder_throw (U"Cannot add a point above ", my v_maximumLegalValue (), my v_rightTickUnits (), U".");
+	Editor_save (me, U"Add point");
 	RealTier_addPoint ((RealTier) my data, 0.5 * (my d_startSelection + my d_endSelection), my ycursor);
 	RealTierEditor_updateScaling (me);
 	FunctionEditor_redraw (me);
@@ -53,20 +53,20 @@ static void menu_cb_addPointAtCursor (EDITOR_ARGS) {
 
 static void menu_cb_addPointAt (EDITOR_ARGS) {
 	EDITOR_IAM (RealTierEditor);
-	EDITOR_FORM (L"Add point", 0)
-		REAL (L"Time (s)", L"0.0")
-		REAL (my v_quantityText (), L"0.0")
+	EDITOR_FORM (U"Add point", 0)
+		REAL (U"Time (s)", U"0.0")
+		REAL (my v_quantityText (), U"0.0")
 	EDITOR_OK
-		SET_REAL (L"Time", 0.5 * (my d_startSelection + my d_endSelection))
+		SET_REAL (U"Time", 0.5 * (my d_startSelection + my d_endSelection))
 		SET_REAL (my v_quantityKey (), my ycursor)
 	EDITOR_DO
 		double desiredValue = GET_REAL (my v_quantityKey ());
 		if (NUMdefined (my v_minimumLegalValue ()) && desiredValue < my v_minimumLegalValue ())
-			Melder_throw ("Cannot add a point below ", my v_minimumLegalValue (), my v_rightTickUnits (), ".");
+			Melder_throw (U"Cannot add a point below ", my v_minimumLegalValue (), my v_rightTickUnits (), U".");
 		if (NUMdefined (my v_maximumLegalValue ()) && desiredValue > my v_maximumLegalValue ())
-			Melder_throw ("Cannot add a point above ", my v_maximumLegalValue (), my v_rightTickUnits (), ".");
-		Editor_save (me, L"Add point");
-		RealTier_addPoint ((RealTier) my data, GET_REAL (L"Time"), desiredValue);
+			Melder_throw (U"Cannot add a point above ", my v_maximumLegalValue (), my v_rightTickUnits (), U".");
+		Editor_save (me, U"Add point");
+		RealTier_addPoint ((RealTier) my data, GET_REAL (U"Time"), desiredValue);
 		RealTierEditor_updateScaling (me);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
@@ -91,17 +91,17 @@ static void menu_cb_setRange (EDITOR_ARGS) {
 
 void structRealTierEditor :: v_createMenuItems_view (EditorMenu menu) {
 	RealTierEditor_Parent :: v_createMenuItems_view (menu);
-	EditorMenu_addCommand (menu, L"-- view/realtier --", 0, 0);
+	EditorMenu_addCommand (menu, U"-- view/realtier --", 0, 0);
 	EditorMenu_addCommand (menu, v_setRangeTitle (), 0, menu_cb_setRange);
 }
 
 void structRealTierEditor :: v_createMenus () {
 	RealTierEditor_Parent :: v_createMenus ();
-	EditorMenu menu = Editor_addMenu (this, L"Point", 0);
-	EditorMenu_addCommand (menu, L"Add point at cursor", 'T', menu_cb_addPointAtCursor);
-	EditorMenu_addCommand (menu, L"Add point at...", 0, menu_cb_addPointAt);
-	EditorMenu_addCommand (menu, L"-- remove point --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Remove point(s)", GuiMenu_OPTION + 'T', menu_cb_removePoints);
+	EditorMenu menu = Editor_addMenu (this, U"Point", 0);
+	EditorMenu_addCommand (menu, U"Add point at cursor", 'T', menu_cb_addPointAtCursor);
+	EditorMenu_addCommand (menu, U"Add point at...", 0, menu_cb_addPointAt);
+	EditorMenu_addCommand (menu, U"-- remove point --", 0, NULL);
+	EditorMenu_addCommand (menu, U"Remove point(s)", GuiMenu_OPTION + 'T', menu_cb_removePoints);
 }
 
 void RealTierEditor_updateScaling (RealTierEditor me) {
@@ -170,12 +170,12 @@ void structRealTierEditor :: v_draw () {
 	Graphics_setColour (our d_graphics, Graphics_RED);
 	Graphics_line (our d_graphics, our d_startWindow, ycursor, our d_endWindow, our ycursor);
 	Graphics_setTextAlignment (our d_graphics, Graphics_RIGHT, Graphics_HALF);
-	Graphics_text1 (our d_graphics, our d_startWindow, our ycursor, Melder_float (Melder_half (our ycursor)));
+	Graphics_text (our d_graphics, our d_startWindow, our ycursor, Melder_float (Melder_half (our ycursor)));
 	Graphics_setColour (our d_graphics, Graphics_BLUE);
 	Graphics_setTextAlignment (our d_graphics, Graphics_LEFT, Graphics_TOP);
-	Graphics_text2 (our d_graphics, our d_endWindow, our ymax, Melder_float (Melder_half (ymax)), our v_rightTickUnits ());
+	Graphics_text (our d_graphics, our d_endWindow, our ymax,   Melder_float (Melder_half (ymax)), our v_rightTickUnits ());
 	Graphics_setTextAlignment (our d_graphics, Graphics_LEFT, Graphics_HALF);
-	Graphics_text2 (our d_graphics, our d_endWindow, our ymin, Melder_float (Melder_half (our ymin)), our v_rightTickUnits ());
+	Graphics_text (our d_graphics, our d_endWindow, our ymin,   Melder_float (Melder_half (our ymin)), our v_rightTickUnits ());
 	ifirstSelected = AnyTier_timeToHighIndex (data, our d_startSelection);
 	ilastSelected = AnyTier_timeToLowIndex (data, our d_endSelection);
 	imin = AnyTier_timeToHighIndex (data, our d_startWindow);
@@ -184,7 +184,7 @@ void structRealTierEditor :: v_draw () {
 	if (n == 0) {
 		Graphics_setTextAlignment (our d_graphics, Graphics_CENTRE, Graphics_HALF);
 		Graphics_text (our d_graphics, 0.5 * (our d_startWindow + our d_endWindow),
-			0.5 * (our ymin + our ymax), L"(no points)");
+			0.5 * (our ymin + our ymax), U"(no points)");
 	} else if (imax < imin) {
 		double yleft = RealTier_getValueAtTime (data, our d_startWindow);
 		double yright = RealTier_getValueAtTime (data, our d_endWindow);
@@ -237,10 +237,10 @@ static void drawWhileDragging (RealTierEditor me, double xWC, double yWC, long f
 		double t = point -> number + dt, y = point -> value + dy;
 		Graphics_line (my d_graphics, t, my ymin, t, my ymax - Graphics_dyMMtoWC (my d_graphics, 4.0));
 		Graphics_setTextAlignment (my d_graphics, kGraphics_horizontalAlignment_CENTRE, Graphics_TOP);
-		Graphics_text1 (my d_graphics, t, my ymax, Melder_fixed (t, 6));
+		Graphics_text (my d_graphics, t, my ymax, Melder_fixed (t, 6));
 		Graphics_line (my d_graphics, my d_startWindow, y, my d_endWindow, y);
 		Graphics_setTextAlignment (my d_graphics, Graphics_LEFT, Graphics_BOTTOM);
-		Graphics_text1 (my d_graphics, my d_startWindow, y, Melder_fixed (y, 6));
+		Graphics_text (my d_graphics, my d_startWindow, y, Melder_fixed (y, 6));
 	}
 }
 
@@ -289,10 +289,10 @@ int structRealTierEditor :: v_click (double xWC, double yWC, bool shiftKeyPresse
 	if (draggingSelection) {
 		ifirstSelected = AnyTier_timeToHighIndex (pitch, d_startSelection);
 		ilastSelected = AnyTier_timeToLowIndex (pitch, d_endSelection);
-		Editor_save (this, L"Drag points");
+		Editor_save (this, U"Drag points");
 	} else {
 		ifirstSelected = ilastSelected = inearestPoint;
-		Editor_save (this, L"Drag point");
+		Editor_save (this, U"Drag point");
 	}
 
 	/*
@@ -379,7 +379,7 @@ void structRealTierEditor :: v_play (double a_tmin, double a_tmax) {
 		Sound_playPart (our d_sound.data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
 }
 
-void RealTierEditor_init (RealTierEditor me, const wchar_t *title, RealTier data, Sound sound, bool ownSound) {
+void RealTierEditor_init (RealTierEditor me, const char32 *title, RealTier data, Sound sound, bool ownSound) {
 	Melder_assert (data != NULL);
 	Melder_assert (Thing_member (data, classRealTier));
 	TimeSoundEditor_init (me, title, data, sound, ownSound);

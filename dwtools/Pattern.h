@@ -37,19 +37,19 @@ Thing_define (Pattern, Matrix) {
    z[iy][ix]		:the inputs. All elements in interval [0,1].
 */
 
-void Pattern_init (I, long ny, long nx);
+void Pattern_init (Pattern me, long ny, long nx);
 
 Pattern Pattern_create (long ny, long nx);
 
-void Pattern_normalize (I, int choice, double pmin, double pmax);
+void Pattern_normalize (Pattern me, int choice, double pmin, double pmax);
 /* choice == 1: z[i][j] = (z[i][j]-pmin) / (pmax-pmin);
  * choice == 2: z[i][j] *= 1.0 / sum(j=1,j=nx, z[i][j]-pmin)
  */
 
-void Pattern_draw (I, Graphics g, long pattern, double xmin, double xmax,
+void Pattern_draw (Pattern me, Graphics g, long pattern, double xmin, double xmax,
 	double ymin, double ymax, int garnish);
 
-Pattern Matrix_to_Pattern (I, int join);
+Pattern Matrix_to_Pattern (Matrix me, int join);
 Matrix Pattern_to_Matrix (Pattern me);
 
 int _Pattern_checkElements (Pattern me);

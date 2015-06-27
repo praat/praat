@@ -49,7 +49,7 @@ Spectrogram LPC_to_Spectrogram (LPC me, double dfMin, double bandwidthReduction,
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Spectrogram created.");
+		Melder_throw (me, U": no Spectrogram created.");
 	}
 }
 

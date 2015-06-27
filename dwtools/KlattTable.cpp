@@ -395,8 +395,8 @@ typedef struct structKlattFrame {
 	long Gain0;	/* Overall gain, 60 dB is unity,    0 to   60 */
 } *KlattFrame;
 
-static const wchar_t *columnNames = L"f0 av f1 b1 f2 b2 f3 b3 f4 b4 f5 b5 f6 b6 fnz bnz fnp bnp ah kopen aturb tilt af skew a1 b1p a2 b2p a3 b3p a4 b4p a5 b5p a6 b6p anp ab avp gain";
-static const wchar_t *columnNamesA[KlattTable_NPAR + 1] = {L"", L"f0", L"av", L"f1", L"b1", L"f2", L"b2", L"f3", L"b3", L"f4", L"b4", L"f5", L"b5", L"f6", L"b6", L"fnz", L"bnz", L"fnp", L"bnp", L"ah", L"kopen", L"aturb", L"tilt", L"af", L"skew", L"a1", L"b1p", L"a2", L"b2p", L"a3", L"b3p", L"a4", L"b4p", L"a5", L"b5p", L"a6", L"b6p", L"anp", L"ab", L"avp", L"gain"};
+static const char32 *columnNames = U"f0 av f1 b1 f2 b2 f3 b3 f4 b4 f5 b5 f6 b6 fnz bnz fnp bnp ah kopen aturb tilt af skew a1 b1p a2 b2p a3 b3p a4 b4p a5 b5p a6 b6p anp ab avp gain";
+static const char32 *columnNamesA[KlattTable_NPAR + 1] = {U"", U"f0", U"av", U"f1", U"b1", U"f2", U"b2", U"f3", U"b3", U"f4", U"b4", U"f5", U"b5", U"f6", U"b6", U"fnz", U"bnz", U"fnp", U"bnp", U"ah", U"kopen", U"aturb", U"tilt", U"af", U"skew", U"a1", U"b1p", U"a2", U"b2p", U"a3", U"b3p", U"a4", U"b4p", U"a5", U"b5p", U"a6", U"b6p", U"anp", U"ab", U"avp", U"gain"};
 
 static double DBtoLIN (long dB) {
 	static double amptable[88] = {
@@ -463,7 +463,7 @@ KlattTable KlattTable_readFromRawTextFile (MelderFile fs) {
 		autoMatrix thee = Matrix_readFromRawTextFile (fs);
 
 		if (thy nx != KlattTable_NPAR) {
-			Melder_throw ("A KlattTable needs ",  KlattTable_NPAR, " columns.");
+			Melder_throw (U"A KlattTable needs ",  KlattTable_NPAR, U" columns.");
 		}
 
 		autoKlattTable me = Thing_new (KlattTable);
@@ -479,7 +479,7 @@ KlattTable KlattTable_readFromRawTextFile (MelderFile fs) {
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("KlattTable not read from file.");
+		Melder_throw (U"KlattTable not read from file.");
 	}
 }
 
@@ -504,7 +504,7 @@ static KlattGlobal KlattGlobal_create (double samplingFrequency) {
 	try {
 		me = (KlattGlobal) _Melder_calloc_f (1, sizeof (struct structKlattGlobal));
 
-		my samrate = samplingFrequency;
+		my samrate = (long) floor (samplingFrequency);
 		double dT = 1.0 / my samrate;
 
 		for (long i = 1; i <= 8; i++) {
@@ -522,7 +522,7 @@ static KlattGlobal KlattGlobal_create (double samplingFrequency) {
 		return me;
 	} catch (MelderError) {
 		KlattGlobal_free (me);
-		Melder_throw ("KlattGlobal not created.");
+		Melder_throw (U"KlattGlobal not created.");
 	}
 }
 
@@ -538,7 +538,7 @@ static void KlattGlobal_init (KlattGlobal me, int synthesisModel, int numberOfFo
 		-1891, -1045, -1600, -1462, -1384, -1261, -949, -730
 	};
 
-	my nspfr = my samrate * frameDuration; /* average number of samples per frame */
+	my nspfr = (long) floor (my samrate * frameDuration); /* average number of samples per frame */
 	my synthesis_model = synthesisModel;
 	my nfcascade = numberOfFormants;
 	my glsource = glottalSource;
@@ -548,8 +548,8 @@ static void KlattGlobal_init (KlattGlobal me, int synthesisModel, int numberOfFo
 	my outsl = outputType;
 	my f0_flutter = flutter;
 
-	my FLPhz = 0.0950 * my samrate; // depends on samplingFrequency ????
-	my BLPhz = 0.0630 * my samrate;
+	my FLPhz = (long) floor (0.0950 * my samrate); // depends on samplingFrequency ????
+	my BLPhz = (long) floor (0.0630 * my samrate);
 	Filter_setFB (my rlp, my FLPhz, my BLPhz);
 }
 
@@ -564,11 +564,11 @@ static void KlattFrame_free (KlattFrame me) {
 KlattTable KlattTable_create (double frameDuration, double totalDuration) {
 	try {
 		autoKlattTable me = (KlattTable) Thing_new (KlattTable);
-		long nrows = floor (totalDuration / frameDuration) + 1;
+		long nrows = (long) floor (totalDuration / frameDuration) + 1;
 		Table_initWithColumnNames (me.peek(), nrows, columnNames);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("KlattTable not created.");
+		Melder_throw (U"KlattTable not created.");
 	}
 }
 
@@ -654,7 +654,7 @@ static void KlattFrame_flutter (KlattGlobal me) {
   Noise spectrum is tilted down by soft low-pass filter having a pole near
     the origin in the z-plane, i.e. output = input + (0.75 * lastoutput)
 */
-static float KlattGlobal_gen_noise (KlattGlobal me) {
+static double KlattGlobal_gen_noise (KlattGlobal me) {   // ppgb: dit was een float; kan niet goed zijn
 	static double nlast = 0;
 	double noise;
 
@@ -671,7 +671,7 @@ a natural excitation waveform. Low-pass filter the differentiated impulse
 with a critically-damped second-order filter, time constant proportional
 to Kopen.
 */
-static float KlattGlobal_impulsive_source (KlattGlobal me) {
+static double KlattGlobal_impulsive_source (KlattGlobal me) {   // ppgb: dit was een float; kan niet goed zijn
 	static double doublet[] = {0.0, 13000000.0, -13000000.0};
 	static double vwave;
 
@@ -684,7 +684,7 @@ static float KlattGlobal_impulsive_source (KlattGlobal me) {
 Vwave is the differentiated glottal flow waveform, there is a weak
 spectral zero around 800 Hz, magic constants a,b reset pitch synchronously.
 */
-static float KlattGlobal_natural_source (KlattGlobal me) {
+static double KlattGlobal_natural_source (KlattGlobal me) {   // ppgb: dit was een float; kan niet goed zijn
 	static double vwave = 0;
 	double lgtemp = 0;
 
@@ -699,13 +699,13 @@ static float KlattGlobal_natural_source (KlattGlobal me) {
 }
 
 /* Allows the use of a glottal excitation waveform sampled from a real voice. */
-static float KlattGlobal_sampled_source (KlattGlobal me) {
+static double KlattGlobal_sampled_source (KlattGlobal me) {   // ppgb: dit was een float; kan niet goed zijn
 	double result = 0;
 
 	if (my T0 != 0) {
 		double ftemp = my nper;
 		ftemp *= my num_samples / my T0;
-		long itemp = ftemp;
+		long itemp = (long) floor (ftemp);
 
 		double temp_diff = ftemp - itemp;
 
@@ -798,7 +798,7 @@ static void KlattGlobal_pitch_synch_par_reset (KlattGlobal me) {
 		my T0 = (40 * my samrate) / my F0hz10;
 
 
-		my amp_voice = DBtoLIN (my AVdb);
+		my amp_voice = DBtoLIN ((long) floor (my AVdb));
 
 		/* Duration of period before amplitude modulation */
 
@@ -809,7 +809,7 @@ static void KlattGlobal_pitch_synch_par_reset (KlattGlobal me) {
 
 		/* Breathiness of voicing waveform */
 
-		my amp_breth = DBtoLIN (my Aturb) * 0.1;
+		my amp_breth = DBtoLIN ((long) floor (my Aturb)) * 0.1;
 
 		/* Set open phase of glottal period where  40 <= open phase <= 263 */
 
@@ -821,14 +821,14 @@ static void KlattGlobal_pitch_synch_par_reset (KlattGlobal me) {
 
 		if (my nopen >= (my T0 - 1)) {
 			my nopen = my T0 - 2;
-			Melder_warning (L"Glottal open period cannot exceed T0, truncated");
+			Melder_warning (U"Glottal open period cannot exceed T0, truncated");
 		}
 
 		if (my nopen < 40) {
 			/* F0 max = 1000 Hz */
 			my nopen = 40;
-			Melder_warning (L"Warning: minimum glottal open period is 10 samples.\n"
-			                "truncated, nopen = ", Melder_integer (my nopen));
+			Melder_warning (U"Warning: minimum glottal open period is 10 samples.\n"
+			                U"truncated, nopen = ", my nopen);
 		}
 
 
@@ -852,8 +852,8 @@ static void KlattGlobal_pitch_synch_par_reset (KlattGlobal me) {
 
 		temp = my T0 - my nopen;
 		if (my Kskew > temp) {
-			Melder_information (L"Kskew duration=", Melder_integer (my Kskew), L" > glottal closed period=",
-			                    Melder_integer (my T0 - my nopen), L" truncate");
+			Melder_information (U"Kskew duration=", my Kskew, U" > glottal closed period=",
+			                    my T0 - my nopen, U" truncate");
 			my Kskew = temp;
 		}
 		if (skew >= 0) {
@@ -1075,7 +1075,7 @@ static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output) {
 		if (temp >	32767.0) {
 			temp =  32767.0;
 		}
-		*output++ = temp;
+		*output++ = temp;   // ppgb: truncatie naar 0, dus compressie; is dat de bedoeling?
 	}
 }
 
@@ -1101,7 +1101,7 @@ static int KlattTable_checkLimits (KlattTable me) {
 	long nv = 0;
 	for (long irow = 1; irow <= my rows -> size; irow++) {
 		for (long j = 1; j <= KlattTable_NPAR; j++) {
-			long val = Table_getNumericValue_Assert ( (Table) me, irow, j);
+			long val = Table_getNumericValue_Assert ( (Table) me, irow, j);   // ppgb: truncatie? kan dat kloppen?
 			if (val < lower[j]) {
 				nviolations_lower[j]++; nv++;
 			} else if (val > upper[j]) {
@@ -1111,21 +1111,21 @@ static int KlattTable_checkLimits (KlattTable me) {
 	}
 	if (nv > 0) {
 		MelderInfo_open ();
-		MelderInfo_writeLine (L"Diagnostics for KlattTable \"", Thing_getName (me), L"\":");
-		MelderInfo_writeLine (L"Number of frames: ", Melder_integer (my rows -> size));
+		MelderInfo_writeLine (U"Diagnostics for KlattTable \"", Thing_getName (me), U"\":");
+		MelderInfo_writeLine (U"Number of frames: ", my rows -> size);
 		for (long j = 1; j <= KlattTable_NPAR; j++) {
 			if (nviolations_lower[j] > 0) {
 				if (nviolations_upper[j] > 0) {
-					MelderInfo_writeLine (columnNamesA[j], L": ",
-					                       Melder_integer (nviolations_lower[j]), L" frame(s) < min = ", Melder_integer (nviolations_lower[j]), L"; ",
-					                       Melder_integer (nviolations_upper[j]), L" frame(s) > max = ", Melder_integer (upper[j]));
+					MelderInfo_writeLine (columnNamesA[j], U": ",
+					                       nviolations_lower[j], U" frame(s) < min = ", nviolations_lower[j], U"; ",
+					                       nviolations_upper[j], U" frame(s) > max = ", upper[j]);
 				} else {
-					MelderInfo_writeLine (columnNamesA[j], L": ",
-					                       Melder_integer (nviolations_lower[j]), L" frame(s) < min = ", Melder_integer (lower[j]));
+					MelderInfo_writeLine (columnNamesA[j], U": ",
+					                       nviolations_lower[j], U" frame(s) < min = ", lower[j]);
 				}
 			} else if (nviolations_upper[j] > 0) {
-				MelderInfo_writeLine (columnNamesA[j], L": ",
-				                       Melder_integer (nviolations_upper[j]), L" frame(s) > max = ", Melder_integer (upper[j]));
+				MelderInfo_writeLine (columnNamesA[j], U": ",
+				                       nviolations_upper[j], U" frame(s) > max = ", upper[j]);
 			}
 		}
 		MelderInfo_close ();
@@ -1141,20 +1141,20 @@ Sound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synthesi
 		long numberOfSamples = 1, par[KlattTable_NPAR + 1];
 
 		if (! KlattTable_checkLimits (me)) {
-			Melder_warning (L"Some values in the KlattTable are outside the limits, the resulting sound may sound weird.");
+			Melder_warning (U"Some values in the KlattTable are outside the limits, the resulting sound may sound weird.");
 		}
 		thee = KlattGlobal_create (samplingFrequency);
 		frame = KlattFrame_create ();
 		autoNUMvector<short> iwave (0L, MAX_SAM);
-		thy samrate = samplingFrequency;
+		thy samrate = (long) floor (samplingFrequency);
 
-		KlattGlobal_init (thee, synthesisModel, numberOfFormants, glottalSource, frameDuration, flutter, outputType);
+		KlattGlobal_init (thee, synthesisModel, numberOfFormants, glottalSource, frameDuration, (long) floor (flutter), outputType);
 
 		autoSound him = Sound_createSimple (1, frameDuration * my rows -> size, samplingFrequency);
 
 		for (long irow = 1 ; irow <= my rows -> size; irow++) {
 			for (long col = 1; col <= KlattTable_NPAR; col++) {
-				par[col] = Table_getNumericValue_Assert ( (Table) me, irow, col);
+				par[col] = Table_getNumericValue_Assert ( (Table) me, irow, col);   // ppgb: truncatie?
 			}
 			long jcol = 1;
 			frame ->  F0hz10 = par[jcol++]; frame ->  AVdb = par[jcol++];
@@ -1193,7 +1193,7 @@ Sound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synthesi
 	} catch (MelderError) {
 		KlattGlobal_free (thee);
 		KlattFrame_free (frame);
-		Melder_throw (me, ": no Sound created.");
+		Melder_throw (me, U": no Sound created.");
 	}
 }
 
@@ -2594,20 +2594,20 @@ KlattTable KlattTable_createExample () {
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw (" KlattTable example not created.");
+		Melder_throw (U" KlattTable example not created.");
 	}
 }
 
 KlattTable Table_to_KlattTable (Table me) {
 	try {
 		if (my numberOfColumns != KlattTable_NPAR) {
-			Melder_throw ("A KlattTable needs ", KlattTable_NPAR, L" columns.");
+			Melder_throw (U"A KlattTable needs ", KlattTable_NPAR, U" columns.");
 		}
 		autoKlattTable thee = Thing_new (KlattTable);
 		my structTable :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw ("KlattTable not created from Table.");
+		Melder_throw (U"KlattTable not created from Table.");
 	}
 }
 
@@ -2617,7 +2617,7 @@ Table KlattTable_to_Table (KlattTable me) {
 		my structTable :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Table not created from KlattTable.");
+		Melder_throw (U"Table not created from KlattTable.");
 	}
 }
 

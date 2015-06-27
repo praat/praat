@@ -32,7 +32,7 @@ Thing_define (Autosegment, Function) {
 		override { return s_description; }
 };
 
-Autosegment Autosegment_create (double tmin, double tmax, const wchar_t *label);
+Autosegment Autosegment_create (double tmin, double tmax, const char32 *label);
 /*
 	Function:
 		create a new instance of Autosegment.

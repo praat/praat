@@ -1,6 +1,6 @@
 /* Sound_enhance.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@
 Sound Sound_lengthen_overlapAdd (Sound me, double fmin, double fmax, double factor) {
 	try {
 		if (my ny > 1)
-			Melder_throw ("Overlap-add works only on mono sounds.");
+			Melder_throw (U"Overlap-add works only on mono sounds.");
 		autoSound sound = Data_copy (me);
 		Vector_subtractMean (sound.peek());
 		autoPitch pitch = Sound_to_Pitch (sound.peek(), 0.8 / fmin, fmin, fmax);
@@ -46,7 +46,7 @@ Sound Sound_lengthen_overlapAdd (Sound me, double fmin, double fmax, double fact
 		autoSound thee = Sound_Point_Pitch_Duration_to_Sound (sound.peek(), pulses.peek(), pitchTier.peek(), duration.peek(), 1.5 / fmin);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not lengthened.");
+		Melder_throw (me, U": not lengthened.");
 	}
 }
 
@@ -72,7 +72,7 @@ Sound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 			double *amp = thy z [channel];
 			for (long i = 1; i <= n; i ++) amp [i] = filtered -> z [1] [i];
 
-			autoMelderProgress progress (L"Deepen band modulation...");
+			autoMelderProgress progress (U"Deepen band modulation...");
 			double fmin = flow;
 			while (fmin < fhigh) {
 				/*
@@ -81,7 +81,7 @@ Sound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 				double fmid_bark = NUMhertzToBark (fmin) + 0.5, ceiling;
 				double fmax = NUMbarkToHertz (NUMhertzToBark (fmin) + 1);
 				if (fmax > fhigh) fmax = fhigh;
-				Melder_progress (fmin / fhigh, L"Band: ", Melder_fixed (fmin, 0), L" ... ", Melder_fixed (fmax, 0), L" Hz");
+				Melder_progress (fmin / fhigh, U"Band: ", Melder_fixed (fmin, 0), U" ... ", Melder_fixed (fmax, 0), U" Hz");
 				NUMmatrix_copyElements (orgspec -> z, spec -> z, 1, 2, 1, spec -> nx);
 				Spectrum_passHannBand (spec.peek(), fmin, fmax, bandSmoothing);
 				autoSound band = Spectrum_to_Sound (spec.peek());
@@ -126,7 +126,7 @@ Sound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 		thy x1 = my x1;
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": band modulation not deepened.");
+		Melder_throw (me, U": band modulation not deepened.");
 	}
 }
 

@@ -40,18 +40,18 @@ Thing_define (RealTierEditor, TimeSoundEditor) {
 
 	virtual double v_minimumLegalValue () { return NUMundefined; }
 	virtual double v_maximumLegalValue () { return NUMundefined; }
-	virtual const wchar_t * v_quantityText () { return L"Y"; }   // normally includes units
-	virtual const wchar_t * v_quantityKey () { return L"Y"; }   // without units
-	virtual const wchar_t * v_rightTickUnits () { return L""; }
+	virtual const char32 * v_quantityText () { return U"Y"; }   // normally includes units
+	virtual const char32 * v_quantityKey () { return U"Y"; }   // without units
+	virtual const char32 * v_rightTickUnits () { return U""; }
 	virtual double v_defaultYmin () { return 0.0; }
 	virtual double v_defaultYmax () { return 1.0; }
-	virtual const wchar_t * v_setRangeTitle () { return L"Set range..."; }
-	virtual const wchar_t * v_defaultYminText () { return L"0.0"; }
-	virtual const wchar_t * v_defaultYmaxText () { return L"1.0"; }
-	virtual const wchar_t * v_yminText () { return L"Minimum"; }   // normally includes units
-	virtual const wchar_t * v_ymaxText () { return L"Maximum"; }   // normally includes units
-	virtual const wchar_t * v_yminKey () { return L"Minimum"; }   // without units
-	virtual const wchar_t * v_ymaxKey () { return L"Maximum"; }   // without units
+	virtual const char32 * v_setRangeTitle () { return U"Set range..."; }
+	virtual const char32 * v_defaultYminText () { return U"0.0"; }
+	virtual const char32 * v_defaultYmaxText () { return U"1.0"; }
+	virtual const char32 * v_yminText () { return U"Minimum"; }   // normally includes units
+	virtual const char32 * v_ymaxText () { return U"Maximum"; }   // normally includes units
+	virtual const char32 * v_yminKey () { return U"Minimum"; }   // without units
+	virtual const char32 * v_ymaxKey () { return U"Maximum"; }   // without units
 };
 
 void RealTierEditor_updateScaling (RealTierEditor me);
@@ -60,7 +60,7 @@ void RealTierEditor_updateScaling (RealTierEditor me);
 	Call after every change in the data.
 */
 
-void RealTierEditor_init (RealTierEditor me, const wchar_t *title, RealTier data, Sound sound, bool ownSound);
+void RealTierEditor_init (RealTierEditor me, const char32 *title, RealTier data, Sound sound, bool ownSound);
 /*
 	'Sound' may be NULL;
 	if 'ownSound' is TRUE, the editor will contain a deep copy of the Sound,

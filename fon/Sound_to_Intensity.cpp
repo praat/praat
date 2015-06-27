@@ -1,6 +1,6 @@
 /* Sound_to_Intensity.cpp
  *
- * Copyright (C) 1992-2011,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,11 +39,11 @@ static Intensity Sound_to_Intensity_ (Sound me, double minimumPitch, double time
 		/*
 		 * Preconditions.
 		 */
-		if (! NUMdefined (minimumPitch)) Melder_throw ("(Sound-to-Intensity:) Minimum pitch undefined.");
-		if (! NUMdefined (timeStep)) Melder_throw ("(Sound-to-Intensity:) Time step undefined.");
-		if (timeStep < 0.0) Melder_throw ("(Sound-to-Intensity:) Time step should be zero or positive instead of ", timeStep, ".");
-		if (my dx <= 0.0) Melder_throw ("(Sound-to-Intensity:) The Sound's time step should be positive.");
-		if (minimumPitch <= 0.0) Melder_throw ("(Sound-to-Intensity:) Minimum pitch should be positive.");
+		if (! NUMdefined (minimumPitch)) Melder_throw (U"(Sound-to-Intensity:) Minimum pitch undefined.");
+		if (! NUMdefined (timeStep)) Melder_throw (U"(Sound-to-Intensity:) Time step undefined.");
+		if (timeStep < 0.0) Melder_throw (U"(Sound-to-Intensity:) Time step should be zero or positive instead of ", timeStep, U".");
+		if (my dx <= 0.0) Melder_throw (U"(Sound-to-Intensity:) The Sound's time step should be positive.");
+		if (minimumPitch <= 0.0) Melder_throw (U"(Sound-to-Intensity:) Minimum pitch should be positive.");
 		/*
 		 * Defaults.
 		 */
@@ -52,7 +52,7 @@ static Intensity Sound_to_Intensity_ (Sound me, double minimumPitch, double time
 		double windowDuration = 6.4 / minimumPitch;
 		Melder_assert (windowDuration > 0.0);
 		double halfWindowDuration = 0.5 * windowDuration;
-		long halfWindowSamples = halfWindowDuration / my dx;
+		long halfWindowSamples = (long) floor (halfWindowDuration / my dx);
 		autoNUMvector <double> amplitude (- halfWindowSamples, halfWindowSamples);
 		autoNUMvector <double> window (- halfWindowSamples, halfWindowSamples);
 
@@ -66,8 +66,8 @@ static Intensity Sound_to_Intensity_ (Sound me, double minimumPitch, double time
 		try {
 			Sampled_shortTermAnalysis (me, windowDuration, timeStep, & numberOfFrames, & thyFirstTime);
 		} catch (MelderError) {
-			Melder_throw ("The duration of the sound in an intensity analysis should be at least 6.4 divided by the minimum pitch (", minimumPitch, " Hz), "
-				"i.e. at least ", 6.4 / minimumPitch, " s, instead of ", my xmax - my xmin, " s.");
+			Melder_throw (U"The duration of the sound in an intensity analysis should be at least 6.4 divided by the minimum pitch (", minimumPitch, U" Hz), "
+				U"i.e. at least ", 6.4 / minimumPitch, U" s, instead of ", my xmax - my xmin, U" s.");
 		}
 		autoIntensity thee = Intensity_create (my xmin, my xmax, numberOfFrames, timeStep, thyFirstTime);
 		for (long iframe = 1; iframe <= numberOfFrames; iframe ++) {
@@ -98,12 +98,12 @@ static Intensity Sound_to_Intensity_ (Sound me, double minimumPitch, double time
 				}
 			}
 			intensity = sumxw / sumw;
-			if (intensity != 0.0) intensity /= 4e-10;
+			intensity /= 4e-10;
 			thy z [1] [iframe] = intensity < 1e-30 ? -300 : 10 * log10 (intensity);
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": intensity analysis not performed.");
+		Melder_throw (me, U": intensity analysis not performed.");
 	}
 }
 
@@ -125,7 +125,7 @@ IntensityTier Sound_to_IntensityTier (Sound me, double minimumPitch, double time
 		autoIntensityTier thee = Intensity_downto_IntensityTier (intensity.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no IntensityTier created.");
+		Melder_throw (me, U": no IntensityTier created.");
 	}
 }
 

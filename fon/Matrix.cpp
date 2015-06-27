@@ -1,6 +1,6 @@
 /* Matrix.cpp
  *
- * Copyright (C) 1992-2012,2013,2014 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,18 +45,18 @@ void structMatrix :: v_info () {
 	structData :: v_info ();
 	double minimum = 0.0, maximum = 0.0;
 	Matrix_getWindowExtrema (this, 1, our nx, 1, our ny, & minimum, & maximum);
-	MelderInfo_writeLine (L"xmin: ", Melder_double (our xmin));
-	MelderInfo_writeLine (L"xmax: ", Melder_double (our xmax));
-	MelderInfo_writeLine (L"Number of columns: ", Melder_integer (our nx));
-	MelderInfo_writeLine (L"dx: ", Melder_double (our dx), L" (-> sampling rate ", Melder_double (1.0 / our dx), L" )");
-	MelderInfo_writeLine (L"x1: ", Melder_double (our x1));
-	MelderInfo_writeLine (L"ymin: ", Melder_double (our ymin));
-	MelderInfo_writeLine (L"ymax: ", Melder_double (our ymax));
-	MelderInfo_writeLine (L"Number of rows: ", Melder_integer (our ny));
-	MelderInfo_writeLine (L"dy: ", Melder_double (our dy), L" (-> sampling rate ", Melder_double (1.0 / our dy), L" )");
-	MelderInfo_writeLine (L"y1: ", Melder_double (our y1));
-	MelderInfo_writeLine (L"Minimum value: ", Melder_single (minimum));
-	MelderInfo_writeLine (L"Maximum value: ", Melder_single (maximum));
+	MelderInfo_writeLine (U"xmin: ", our xmin);
+	MelderInfo_writeLine (U"xmax: ", our xmax);
+	MelderInfo_writeLine (U"Number of columns: ", our nx);
+	MelderInfo_writeLine (U"dx: ", our dx, U" (-> sampling rate ", 1.0 / our dx, U" )");
+	MelderInfo_writeLine (U"x1: ", our x1);
+	MelderInfo_writeLine (U"ymin: ", our ymin);
+	MelderInfo_writeLine (U"ymax: ", our ymax);
+	MelderInfo_writeLine (U"Number of rows: ", our ny);
+	MelderInfo_writeLine (U"dy: ", our dy, U" (-> sampling rate ", 1.0 / our dy, U" )");
+	MelderInfo_writeLine (U"y1: ", our y1);
+	MelderInfo_writeLine (U"Minimum value: ", minimum);
+	MelderInfo_writeLine (U"Maximum value: ", maximum);
 }
 
 void structMatrix :: v_readText (MelderReadText text) {
@@ -75,17 +75,17 @@ void structMatrix :: v_readText (MelderReadText text) {
 		Matrix_Parent :: v_readText (text);
 	}
 	if (our xmin > our xmax)
-		Melder_throw ("xmin should be less than or equal to xmax.");
+		Melder_throw (U"xmin should be less than or equal to xmax.");
 	if (our ymin > our ymax)
-		Melder_throw ("ymin should be less than or equal to ymax.");
+		Melder_throw (U"ymin should be less than or equal to ymax.");
 	if (our nx < 1)
-		Melder_throw ("nx should be at least 1.");
+		Melder_throw (U"nx should be at least 1.");
 	if (our ny < 1)
-		Melder_throw ("ny should be at least 1.");
+		Melder_throw (U"ny should be at least 1.");
 	if (our dx <= 0.0)
-		Melder_throw ("dx should be greater than 0.0.");
+		Melder_throw (U"dx should be greater than 0.0.");
 	if (our dy <= 0.0)
-		Melder_throw ("dy should be greater than 0.0.");
+		Melder_throw (U"dy should be greater than 0.0.");
 	our z = NUMmatrix_readText_r8 (1, our ny, 1, our nx, text, "z");
 }
 
@@ -103,7 +103,7 @@ double structMatrix :: v_getMatrix (long irow, long icol) {
 double structMatrix :: v_getFunction2 (double x, double y) {
 	double rrow = (y - our y1) / our dy + 1.0;
 	double rcol = (x - our x1) / our dx + 1.0;
-	long irow = floor (rrow), icol = floor (rcol);
+	long irow = (long) floor (rrow), icol = (long) floor (rcol);
 	double drow = rrow - irow, dcol = rcol - icol;
 	double z1 = irow < 1 || irow >  our ny || icol < 1 || icol >  our nx ? 0.0 : z [irow]     [icol];
 	double z2 = irow < 0 || irow >= our ny || icol < 1 || icol >  our nx ? 0.0 : z [irow + 1] [icol];
@@ -134,7 +134,7 @@ Matrix Matrix_create
 		Matrix_init (me.peek(), xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Matrix object not created.");
+		Melder_throw (U"Matrix object not created.");
 	}
 }
 
@@ -145,7 +145,7 @@ Matrix Matrix_createSimple (long numberOfRows, long numberOfColumns) {
 			0.5, numberOfRows + 0.5, numberOfRows, 1, 1);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Matrix object not created.");
+		Melder_throw (U"Matrix object not created.");
 	}
 }
 
@@ -219,12 +219,12 @@ double Matrix_getValueAtXY (Matrix me, double x, double y) {
 	/*
 	 * Determine the four nearest (xi, yi) points.
 	 */
-	bottomRow = floor (row_real);   /* 0 <= bottomRow <= my ny */
-	topRow = bottomRow + 1;         /* 1 <= topRow <= my ny + 1 */
-	leftCol = floor (col_real);     /* 0 <= leftCol <= my nx */
-	rightCol = leftCol + 1;         /* 1 <= rightCol <= my nx + 1 */
-	drow = row_real - bottomRow;    /* 0.0 <= drow < 1.0 */
-	dcol = col_real - leftCol;      /* 0.0 <= dcol < 1.0 */
+	bottomRow = (long) floor (row_real);   // 0 <= bottomRow <= my ny
+	topRow = bottomRow + 1;         // 1 <= topRow <= my ny + 1
+	leftCol = (long) floor (col_real);     // 0 <= leftCol <= my nx
+	rightCol = leftCol + 1;         // 1 <= rightCol <= my nx + 1
+	drow = row_real - bottomRow;    // 0.0 <= drow < 1.0
+	dcol = col_real - leftCol;      // 0.0 <= dcol < 1.0
 	/*
 	 * If adjacent points exist
 	 * (i.e., both row numbers are between 1 and my ny,
@@ -233,10 +233,10 @@ double Matrix_getValueAtXY (Matrix me, double x, double y) {
 	 * If not, we do constant extrapolation,
 	 * which can be simulated by an interpolation between equal z values.
 	 */
-	if (bottomRow < 1) bottomRow = 1;         /* 1 <= bottomRow <= my ny */
-	if (topRow > my ny) topRow = my ny;       /* 1 <= topRow <= my ny */
-	if (leftCol < 1) leftCol = 1;             /* 1 <= leftCol <= my nx */
-	if (rightCol > my nx) rightCol = my nx;   /* 1 <= rightCol <= my nx */
+	if (bottomRow < 1) bottomRow = 1;         // 1 <= bottomRow <= my ny
+	if (topRow > my ny) topRow = my ny;       // 1 <= topRow <= my ny
+	if (leftCol < 1) leftCol = 1;             // 1 <= leftCol <= my nx
+	if (rightCol > my nx) rightCol = my nx;   // 1 <= rightCol <= my nx
 	return (1.0 - drow) * (1.0 - dcol) * my z [bottomRow] [leftCol] +
 		drow * (1.0 - dcol) * my z [topRow] [leftCol] +
 		(1.0 - drow) * dcol * my z [bottomRow] [rightCol] +
@@ -440,7 +440,7 @@ Matrix Matrix_readAP (MelderFile file) {
 		for (long i = 0; i < 256; i ++)
 			header [i] = bingeti2LE (f);
 		double samplingFrequency = header [100];   // converting up (from 16 to 54 bytes)
-		Melder_casual ("Sampling frequency %.10g.", samplingFrequency);
+		Melder_casual (U"Sampling frequency ", samplingFrequency);
 		autoMatrix me = Matrix_create (0, header [34], header [34] /* Number of frames. */, 1, 0.5,
 			0, header [35], header [35] /* Number of words per frame. */, 1, 0.5);
 			/*Mat := MATRIX_create (Buffer.I2 [36], (* Number of words per frame. *)
@@ -448,7 +448,8 @@ Matrix Matrix_readAP (MelderFile file) {
 							   1.0,
 							   Buffer.I2 [111] / (* Samples per frame. *)
 							   Buffer.I2 [101]); (* Sampling frequency. *)*/
-		Melder_casual ("... Loading %d frames of %d words ...", header [34], header [35]);
+		Melder_casual (U"... Loading ", header [34], U" frames",
+			U" of ", header [35], U" words ...");
 		for (long i = 1; i <= my nx; i ++)
 			for (long j = 1; j <= my ny; j ++)
 				my z [j] [i] = bingeti2LE (f);   // converting up (from 16 to 54 bytes)
@@ -463,7 +464,7 @@ Matrix Matrix_readAP (MelderFile file) {
 		f.close (file);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Matrix object not read from AP file ", file);
+		Melder_throw (U"Matrix object not read from AP file ", file);
 	}
 }
 
@@ -482,7 +483,7 @@ Matrix Matrix_appendRows (Matrix me, Matrix thee, ClassInfo klas) {
 				his z [irow + my ny] [icol] = thy z [irow] [icol];
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, " & ", thee, ": rows not appended.");
+		Melder_throw (me, U" & ", thee, U": rows not appended.");
 	}
 }
 
@@ -505,7 +506,7 @@ Matrix Matrix_readFromRawTextFile (MelderFile file) {   // BUG: not Unicode-comp
 			if (kar == '\n' || kar == '\r' || kar == EOF) break;
 		}
 		if (ncol == 0)
-			Melder_throw ("File empty");
+			Melder_throw (U"File empty");
 
 		/*
 		 * Count number of elements.
@@ -514,7 +515,7 @@ Matrix Matrix_readFromRawTextFile (MelderFile file) {   // BUG: not Unicode-comp
 		long nelements = 0;
 		for (;;) {
 			double element;
-			if (fscanf (f, "%lf", & element) < 1) break;   /* Zero or end-of-file. */
+			if (fscanf (f, "%lf", & element) < 1) break;   // zero or end-of-file
 			nelements ++;
 		}
 
@@ -522,7 +523,7 @@ Matrix Matrix_readFromRawTextFile (MelderFile file) {   // BUG: not Unicode-comp
 		 * Check if all columns are complete.
 		 */
 		if (nelements == 0 || nelements % ncol != 0)
-			Melder_throw ("The number of elements (", nelements, ") is not a multiple of the number of columns (", ncol, ").");
+			Melder_throw (U"The number of elements (", nelements, U") is not a multiple of the number of columns (", ncol, U").");
 
 		/*
 		 * Create simple matrix.
@@ -541,7 +542,7 @@ Matrix Matrix_readFromRawTextFile (MelderFile file) {   // BUG: not Unicode-comp
 		f.close (file);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Matrix object not read from raw text file ", file);
+		Melder_throw (U"Matrix object not read from raw text file ", file);
 	}
 }
 
@@ -550,7 +551,7 @@ void Matrix_eigen (Matrix me, Matrix *out_eigenvectors, Matrix *out_eigenvalues)
 	*out_eigenvalues = NULL;
 	try {
 		if (my nx != my ny)
-			Melder_throw ("(Matrix not square.");
+			Melder_throw (U"(Matrix not square.");
 
 		autoEigen eigen = Thing_new (Eigen);
 		Eigen_initFromSymmetricMatrix (eigen.peek(), my z, my nx);
@@ -564,14 +565,14 @@ void Matrix_eigen (Matrix me, Matrix *out_eigenvectors, Matrix *out_eigenvalues)
 		*out_eigenvectors = eigenvectors.transfer();
 		*out_eigenvalues = eigenvalues.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": eigenstructure not computed.");
+		Melder_throw (me, U": eigenstructure not computed.");
 	}
 }
 
 Matrix Matrix_power (Matrix me, long power) {
 	try {
 		if (my nx != my ny)
-			Melder_throw ("Matrix not square.");
+			Melder_throw (U"Matrix not square.");
 		autoMatrix thee = Data_copy (me);
 		autoMatrix him = Data_copy (me);
 		for (long ipow = 2; ipow <= power; ipow ++) {
@@ -587,7 +588,7 @@ Matrix Matrix_power (Matrix me, long power) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": power not computed.");
+		Melder_throw (me, U": power not computed.");
 	}
 }
 
@@ -595,7 +596,7 @@ void Matrix_writeToMatrixTextFile (Matrix me, MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "w");
 		fprintf (f, "\"ooTextFile\"\n\"Matrix\"\n%.17g %.17g %ld %.17g %.17g\n%.17g %.17g %ld %.17g %.17g\n",
-			my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
+			my xmin, my xmax, (long) my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
 		for (long i = 1; i <= my ny; i ++) {
 			for (long j = 1; j <= my nx; j ++) {
 				if (j > 1) fprintf (f, " ");
@@ -605,7 +606,7 @@ void Matrix_writeToMatrixTextFile (Matrix me, MelderFile file) {
 		}
 		f.close (file);
 	} catch (MelderError) {
-		Melder_throw (me, ": not written to Matrix text file.");
+		Melder_throw (me, U": not written to Matrix text file.");
 	}
 }
 
@@ -615,17 +616,17 @@ void Matrix_writeToHeaderlessSpreadsheetFile (Matrix me, MelderFile file) {
 		for (long i = 1; i <= my ny; i ++) {
 			for (long j = 1; j <= my nx; j ++) {
 				if (j > 1) fprintf (f, "\t");
-				fprintf (f, "%ls", Melder_single (my z [i] [j]));
+				fprintf (f, "%s", Melder8_single (my z [i] [j]));
 			}
 			fprintf (f, "\n");
 		}
 		f.close (file);
 	} catch (MelderError) {
-		Melder_throw (me, ": not saved as tab-separated file ", file);
+		Melder_throw (me, U": not saved as tab-separated file ", file);
 	}
 }
 
-void Matrix_formula (Matrix me, const wchar_t *expression, Interpreter interpreter, Matrix target) {
+void Matrix_formula (Matrix me, const char32 *expression, Interpreter interpreter, Matrix target) {
 	try {
 		struct Formula_Result result;
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE);
@@ -637,12 +638,12 @@ void Matrix_formula (Matrix me, const wchar_t *expression, Interpreter interpret
 			}
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": formula not completed.");
+		Melder_throw (me, U": formula not completed.");
 	}
 }
 
 void Matrix_formula_part (Matrix me, double xmin, double xmax, double ymin, double ymax,
-	const wchar_t *expression, Interpreter interpreter, Matrix target)
+	const char32 *expression, Interpreter interpreter, Matrix target)
 {
 	try {
 		if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
@@ -660,7 +661,7 @@ void Matrix_formula_part (Matrix me, double xmin, double xmax, double ymin, doub
 			}
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": formula not completed.");
+		Melder_throw (me, U": formula not completed.");
 	}
 }
 
@@ -691,7 +692,7 @@ Matrix TableOfReal_to_Matrix (TableOfReal me) {
 				thy z [i] [j] = my data [i] [j];
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Matrix.");
+		Melder_throw (me, U": not converted to Matrix.");
 	}
 }
 
@@ -703,7 +704,7 @@ TableOfReal Matrix_to_TableOfReal (Matrix me) {
 				thy data [i] [j] = my z [i] [j];
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to TableOfReal.");
+		Melder_throw (me, U": not converted to TableOfReal.");
 	}
 }
 
@@ -721,7 +722,7 @@ Matrix Table_to_Matrix (Table me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Matrix.");
+		Melder_throw (me, U": not converted to Matrix.");
 	}
 }
 

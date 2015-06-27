@@ -1,6 +1,6 @@
 /* Thing.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,17 +25,17 @@ static long theTotalNumberOfThings;
 
 void structThing :: v_info ()
 {
-	MelderInfo_writeLine (L"Object type: ", Thing_className (this));
-	MelderInfo_writeLine (L"Object name: ", this -> name ? this -> name : L"<no name>");
+	MelderInfo_writeLine (U"Object type: ", Thing_className (this));
+	MelderInfo_writeLine (U"Object name: ", this -> name ? this -> name : U"<no name>");
 	time_t today = time (NULL);
-	MelderInfo_writeLine (L"Date: ", Melder_peekUtf8ToWcs (ctime (& today)));   /* Includes a newline. */
+	MelderInfo_writeLine (U"Date: ", Melder_peek8to32 (ctime (& today)));   // includes a newline
 }
 
 /*
  * Instead of the Thing_implement macro.
  */
 struct structClassInfo theClassInfo_Thing = {
-	L"Thing",
+	U"Thing",
 	NULL,      // no parent class
 	sizeof (class structThing),
 	NULL,      // no _new function (not needed; plus, it would have to be called "_Thing_new", but that name has been given to something else)
@@ -45,15 +45,15 @@ struct structClassInfo theClassInfo_Thing = {
 };
 ClassInfo classThing = & theClassInfo_Thing;
 
-const wchar_t * Thing_className (Thing me) { return my classInfo -> className; }
+const char32 * Thing_className (Thing me) { return my classInfo -> className; }
 
 Any _Thing_new (ClassInfo classInfo) {
 	Thing me = (Thing) classInfo -> _new ();
-	trace ("created %ls", classInfo -> className);
+	trace (U"created ", classInfo -> className);
 	theTotalNumberOfThings += 1;
 	my classInfo = classInfo;
 	Melder_assert (my name == NULL);   // check that _new called calloc
-	if (Melder_debug == 40) Melder_casual ("created %ls (%p, %p)", classInfo -> className, classInfo, me);
+	if (Melder_debug == 40) Melder_casual (U"created ", classInfo -> className, U" (", Melder_pointer (classInfo), U", ", me, U")");
 	return me;
 }
 
@@ -61,7 +61,7 @@ static int theNumberOfReadableClasses = 0;
 static ClassInfo theReadableClasses [1 + 1000];
 static void _Thing_addOneReadableClass (ClassInfo readableClass) {
 	if (++ theNumberOfReadableClasses > 1000)
-		Melder_fatal ("(Thing_recognizeClassesByName:) Too many (1001) readable classes.");
+		Melder_fatal (U"(Thing_recognizeClassesByName:) Too many (1001) readable classes.");
 	theReadableClasses [theNumberOfReadableClasses] = readableClass;
 	readableClass -> sequentialUniqueIdOfReadableClass = theNumberOfReadableClasses;
 }
@@ -82,7 +82,7 @@ long Thing_listReadableClasses (void) {
 	MelderInfo_open ();
 	for (long iclass = 1; iclass <= theNumberOfReadableClasses; iclass ++) {
 		ClassInfo klas = theReadableClasses [iclass];
-		MelderInfo_writeLine (Melder_integer (klas -> sequentialUniqueIdOfReadableClass), L"\t", klas -> className);
+		MelderInfo_writeLine (klas -> sequentialUniqueIdOfReadableClass, U"\t", klas -> className);
 	}
 	MelderInfo_close ();
 	return theNumberOfReadableClasses;
@@ -91,22 +91,22 @@ long Thing_listReadableClasses (void) {
 static int theNumberOfAliases = 0;
 static struct {
 	ClassInfo readableClass;
-	const wchar_t *otherName;
+	const char32 *otherName;
 } theAliases [1 + 100];
 
-void Thing_recognizeClassByOtherName (ClassInfo readableClass, const wchar_t *otherName) {
+void Thing_recognizeClassByOtherName (ClassInfo readableClass, const char32 *otherName) {
 	theAliases [++ theNumberOfAliases]. readableClass = readableClass;
 	theAliases [theNumberOfAliases]. otherName = otherName;
 }
 
 long Thing_version;   // global variable!
-ClassInfo Thing_classFromClassName (const wchar_t *klas) {
-	static wchar_t buffer [1+100];
-	wcsncpy (buffer, klas ? klas : L"", 100);
-	wchar_t *space = wcschr (buffer, ' ');
+ClassInfo Thing_classFromClassName (const char32 *klas) {
+	static char32 buffer [1+100];
+	str32ncpy (buffer, klas ? klas : U"", 100);
+	char32 *space = str32chr (buffer, U' ');
 	if (space) {
 		*space = '\0';   // strip version number
-		Thing_version = wcstol (space + 1, NULL, 10);
+		Thing_version = Melder_atoi (space + 1);
 	} else {
 		Thing_version = 0;
 	}
@@ -116,7 +116,7 @@ ClassInfo Thing_classFromClassName (const wchar_t *klas) {
 	 */
 	for (int i = 1; i <= theNumberOfReadableClasses; i ++) {
 		ClassInfo classInfo = theReadableClasses [i];
-		if (wcsequ (buffer, classInfo -> className)) {
+		if (str32equ (buffer, classInfo -> className)) {
 			return classInfo;
 		}
 	}
@@ -125,30 +125,21 @@ ClassInfo Thing_classFromClassName (const wchar_t *klas) {
 	 * Then try the aliases that were registered with Thing_recognizeClassByOtherName.
 	 */
 	for (int i = 1; i <= theNumberOfAliases; i ++) {
-		if (wcsequ (buffer, theAliases [i]. otherName)) {
+		if (str32equ (buffer, theAliases [i]. otherName)) {
 			ClassInfo classInfo = theAliases [i]. readableClass;
 			return classInfo;
 		}
 	}
 
-	Melder_throw ("Class \"", buffer, "\" not recognized.");
+	Melder_throw (U"Class \"", buffer, U"\" not recognized.");
 }
 
-Any Thing_newFromClassNameA (const char *className) {
-	try {
-		ClassInfo classInfo = Thing_classFromClassName (Melder_peekUtf8ToWcs (className));
-		return _Thing_new (classInfo);
-	} catch (MelderError) {
-		Melder_throw (className, " not created.");
-	}
-}
-
-Any Thing_newFromClassName (const wchar_t *className) {
+Any Thing_newFromClassName (const char32 *className) {
 	try {
 		ClassInfo classInfo = Thing_classFromClassName (className);
 		return _Thing_new (classInfo);
 	} catch (MelderError) {
-		Melder_throw (className, " not created.");
+		Melder_throw (className, U" not created.");
 	}
 }
 
@@ -162,16 +153,16 @@ Thing _Thing_dummyObject (ClassInfo classInfo) {
 
 void _Thing_forget_nozero (Thing me) {
 	if (! me) return;
-	if (Melder_debug == 40) Melder_casual ("destroying %ls", my classInfo -> className);
+	if (Melder_debug == 40) Melder_casual (U"destroying ", my classInfo -> className);
 	my v_destroy ();
 	theTotalNumberOfThings -= 1;
 }
 
 void _Thing_forget (Thing me) {
 	if (! me) return;
-	if (Melder_debug == 40) Melder_casual ("destroying %ls", my classInfo -> className);
+	if (Melder_debug == 40) Melder_casual (U"destroying ", my classInfo -> className);
 	my v_destroy ();
-	trace ("destroying %ls", my classInfo -> className);
+	trace (U"destroying ", my classInfo -> className);
 	//Melder_free (me);
 	delete me;
 	theTotalNumberOfThings -= 1;
@@ -183,18 +174,28 @@ bool Thing_subclass (ClassInfo klas, ClassInfo ancestor) {
 }
 
 bool Thing_member (Thing me, ClassInfo klas) {
-	if (! me) Melder_fatal ("(Thing_member:) Found NULL object.");
+	if (! me) Melder_fatal (U"(Thing_member:) Found NULL object.");
 	return Thing_subclass (my classInfo, klas);
 }
 
 void * _Thing_check (Thing me, ClassInfo klas, const char *fileName, int line) {
-	if (! me) Melder_fatal ("(_Thing_check:) NULL object passed to a function\n"
-		"in file %.100s at line %d.", fileName, line);
+	if (! me)
+		Melder_fatal (U"(_Thing_check:)"
+			U" NULL object passed to a function\n"
+			U"in file ", Melder_peek8to32 (fileName),
+			U" at line ", line,
+			U"."
+		);
 	ClassInfo classInfo = my classInfo;
 	while (classInfo != klas && classInfo != NULL) classInfo = classInfo -> parent;
 	if (! classInfo)
-		Melder_fatal ("(_Thing_check:) Object of wrong class (%.50s) passed to a function\n"
-				"in file %.100s at line %d.", Melder_peekWcsToUtf8 (my classInfo -> className), fileName, line);
+		Melder_fatal (U"(_Thing_check:)"
+			U" Object of wrong class (", my classInfo -> className,
+			U") passed to a function\n"
+			U"in file ", Melder_peek8to32 (fileName),
+			U" at line ", line,
+			U"."
+		);
 	return me;
 }
 
@@ -202,8 +203,8 @@ void Thing_infoWithIdAndFile (Thing me, unsigned long id, MelderFile file) {
 	//Melder_assert (me != NULL);
 	Melder_clearInfo ();
 	MelderInfo_open ();
-	if (id != 0) MelderInfo_writeLine (L"Object id: ", Melder_integer (id));
-	if (! MelderFile_isNull (file)) MelderInfo_writeLine (L"Associated file: ", Melder_fileToPath (file));
+	if (id != 0) MelderInfo_writeLine (U"Object id: ", id);
+	if (! MelderFile_isNull (file)) MelderInfo_writeLine (U"Associated file: ", Melder_fileToPath (file));
 	my v_info ();
 	MelderInfo_close ();
 }
@@ -212,26 +213,25 @@ void Thing_info (Thing me) {
 	Thing_infoWithIdAndFile (me, 0, NULL);
 }
 
-wchar_t * Thing_getName (Thing me) { return my name; }
+char32 * Thing_getName (Thing me) { return my name; }
 
-wchar_t * Thing_messageName (Thing me) {
-	static MelderString buffers [11];
+char32 * Thing_messageName (Thing me) {
+	static MelderString buffers [19] { { 0 } };
 	static int ibuffer = 0;
-	if (++ ibuffer == 11) ibuffer = 0;
-	MelderString_empty (& buffers [ibuffer]);
+	if (++ ibuffer == 19) ibuffer = 0;
 	if (my name) {
-		MelderString_append (& buffers [ibuffer], my classInfo -> className, L" \"", my name, L"\"");
+		MelderString_copy (& buffers [ibuffer], my classInfo -> className, U" \"", my name, U"\"");
 	} else {
-		MelderString_append (& buffers [ibuffer], my classInfo -> className);
+		MelderString_copy (& buffers [ibuffer], my classInfo -> className);
 	}
 	return buffers [ibuffer]. string;
 }
 
-void Thing_setName (Thing me, const wchar_t *name) {
+void Thing_setName (Thing me, const char32 *name /* cattable */) {
 	/*
 	 * First check without change.
 	 */
-	autostring newName = Melder_wcsdup_f (name);   // BUG: that's no checking
+	autostring32 newName = Melder_dup_f (name);   // BUG: that's no checking
 	/*
 	 * Then change without error.
 	 */

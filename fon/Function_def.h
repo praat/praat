@@ -26,7 +26,7 @@ oo_DEFINE_CLASS (Function, Data)
 
 	#if oo_READING
 		if (xmin > xmax)
-			Melder_throw ("Wrong xmin ", xmin, " and xmax ", xmax, ".");
+			Melder_throw (U"Wrong xmin ", xmin, U" and xmax ", xmax, U".");
 	#endif
 
 	#if oo_DECLARING
@@ -44,8 +44,8 @@ oo_DEFINE_CLASS (Function, Data)
 		virtual int v_domainQuantity () { return 0; }
 		virtual int v_getMinimumUnit (long ilevel) { (void) ilevel; return 0; }
 		virtual int v_getMaximumUnit (long ilevel) { (void) ilevel; return 0; }
-		virtual const wchar_t * v_getUnitText (long ilevel, int unit, unsigned long flags)
-			{ (void) ilevel; (void) unit; (void) flags; return L""; }
+		virtual const char32 * v_getUnitText (long ilevel, int unit, unsigned long flags)
+			{ (void) ilevel; (void) unit; (void) flags; return U""; }
 		virtual bool v_isUnitLogarithmic (long ilevel, int unit)
 			{ (void) ilevel; (void) unit; return false; }
 		virtual double v_convertStandardToSpecialUnit (double value, long ilevel, int unit)

@@ -28,33 +28,33 @@ Thing_define (AmplitudeTierEditor, RealTierEditor) {
 		override;
 	void v_play (double fromTime, double toTime)
 		override;
-	const wchar_t * v_quantityText ()
-		override { return L"Sound pressure (Pa)"; }
-	const wchar_t * v_quantityKey ()
-		override { return L"Sound pressure"; }
-	const wchar_t * v_rightTickUnits ()
-		override { return L" Pa"; }
+	const char32 * v_quantityText ()
+		override { return U"Sound pressure (Pa)"; }
+	const char32 * v_quantityKey ()
+		override { return U"Sound pressure"; }
+	const char32 * v_rightTickUnits ()
+		override { return U" Pa"; }
 	double v_defaultYmin ()
 		override { return -1.0; }
 	double v_defaultYmax ()
 		override { return +1.0; }
-	const wchar_t * v_setRangeTitle ()
-		override { return L"Set amplitude range..."; }
-	const wchar_t * v_defaultYminText ()
-		override { return L"-1.0"; }
-	const wchar_t * v_defaultYmaxText ()
-		override { return L"+1.0"; }
-	const wchar_t * v_yminText ()
-		override { return L"Minimum amplitude (Pa)"; }
-	const wchar_t * v_ymaxText ()
-		override { return L"Maximum amplitude (Pa)"; }
-	const wchar_t * v_yminKey ()
-		override { return L"Minimum amplitude"; }
-	const wchar_t * v_ymaxKey ()
-		override { return L"Maximum amplitude"; }
+	const char32 * v_setRangeTitle ()
+		override { return U"Set amplitude range..."; }
+	const char32 * v_defaultYminText ()
+		override { return U"-1.0"; }
+	const char32 * v_defaultYmaxText ()
+		override { return U"+1.0"; }
+	const char32 * v_yminText ()
+		override { return U"Minimum amplitude (Pa)"; }
+	const char32 * v_ymaxText ()
+		override { return U"Maximum amplitude (Pa)"; }
+	const char32 * v_yminKey ()
+		override { return U"Minimum amplitude"; }
+	const char32 * v_ymaxKey ()
+		override { return U"Maximum amplitude"; }
 };
 
-AmplitudeTierEditor AmplitudeTierEditor_create (const wchar_t *title,
+AmplitudeTierEditor AmplitudeTierEditor_create (const char32 *title,
 	AmplitudeTier amplitude,
 	Sound sound,   // may be NULL
 	bool ownSound);

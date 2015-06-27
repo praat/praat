@@ -1,6 +1,6 @@
 /* Graphics_colour.cpp
  *
- * Copyright (C) 1992-2011,2012,2013,2014 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,27 +59,35 @@ Graphics_Colour
 	Graphics_GREY = { 0.5, 0.5, 0.5 },
 	Graphics_WINDOW_BACKGROUND_COLOUR = { 0.90, 0.90, 0.85 };
 
-const wchar_t * Graphics_Colour_name (Graphics_Colour colour) {
+inline static const char32 * rgbColourName (Graphics_Colour colour) {
+	static MelderString buffer;
+	MelderString_copy (& buffer,
+		U"{", Melder_fixed (colour. red, 6),
+		U",", Melder_fixed (colour. green, 6),
+		U",", Melder_fixed (colour. blue, 6),
+		U"}"
+	);
+	return buffer.string;
+}
+const char32 * Graphics_Colour_name (Graphics_Colour colour) {
 	return
-		Graphics_Colour_equal (colour, Graphics_BLACK) ? L"black" :
-		Graphics_Colour_equal (colour, Graphics_WHITE) ? L"white" :
-		Graphics_Colour_equal (colour, Graphics_RED) ? L"red" :
-		Graphics_Colour_equal (colour, Graphics_GREEN) ? L"green" :
-		Graphics_Colour_equal (colour, Graphics_BLUE) ? L"blue" :
-		Graphics_Colour_equal (colour, Graphics_CYAN) ? L"cyan" :
-		Graphics_Colour_equal (colour, Graphics_MAGENTA) ? L"magenta" :
-		Graphics_Colour_equal (colour, Graphics_YELLOW) ? L"yellow" :
-		Graphics_Colour_equal (colour, Graphics_MAROON) ? L"maroon" :
-		Graphics_Colour_equal (colour, Graphics_LIME) ? L"lime" :
-		Graphics_Colour_equal (colour, Graphics_NAVY) ? L"navy" :
-		Graphics_Colour_equal (colour, Graphics_TEAL) ? L"teal" :
-		Graphics_Colour_equal (colour, Graphics_PURPLE) ? L"purple" :
-		Graphics_Colour_equal (colour, Graphics_OLIVE) ? L"olive" :
-		Graphics_Colour_equal (colour, Graphics_SILVER) ? L"silver" :
-		Graphics_Colour_equal (colour, Graphics_GREY) ? L"grey" :
-		//colour. red == colour. green && colour. red == colour. blue ? Melder_fixed (colour. red, 6) :
-		Melder_wcscat (L"{", Melder_fixed (colour. red, 6), L",", Melder_fixed (colour. green, 6), L",",
-			Melder_fixed (colour. blue, 6), L"}");
+		Graphics_Colour_equal (colour, Graphics_BLACK) ? U"black" :
+		Graphics_Colour_equal (colour, Graphics_WHITE) ? U"white" :
+		Graphics_Colour_equal (colour, Graphics_RED) ? U"red" :
+		Graphics_Colour_equal (colour, Graphics_GREEN) ? U"green" :
+		Graphics_Colour_equal (colour, Graphics_BLUE) ? U"blue" :
+		Graphics_Colour_equal (colour, Graphics_CYAN) ? U"cyan" :
+		Graphics_Colour_equal (colour, Graphics_MAGENTA) ? U"magenta" :
+		Graphics_Colour_equal (colour, Graphics_YELLOW) ? U"yellow" :
+		Graphics_Colour_equal (colour, Graphics_MAROON) ? U"maroon" :
+		Graphics_Colour_equal (colour, Graphics_LIME) ? U"lime" :
+		Graphics_Colour_equal (colour, Graphics_NAVY) ? U"navy" :
+		Graphics_Colour_equal (colour, Graphics_TEAL) ? U"teal" :
+		Graphics_Colour_equal (colour, Graphics_PURPLE) ? U"purple" :
+		Graphics_Colour_equal (colour, Graphics_OLIVE) ? U"olive" :
+		Graphics_Colour_equal (colour, Graphics_SILVER) ? U"silver" :
+		Graphics_Colour_equal (colour, Graphics_GREY) ? U"grey" :
+		rgbColourName (colour);
 }
 
 #if mac

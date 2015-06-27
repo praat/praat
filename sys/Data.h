@@ -24,15 +24,15 @@
 #include "Thing.h"
 
 typedef struct structData_Description {
-	const wchar_t *name;   /* The name of this field. */
-	int type;   /* bytewa..inheritwa, see below */
-	int offset;   /* The offset of this field in the enveloping struct. */
-	int size;   /* The size of this field if it is in an array. */
-	const wchar_t *tagName;   /* For structs: tag; for classes: class name; for enums: type name. */
-	void *tagType;   /* For structs: offset table; for classes: class pointer; for enums: enum pointer. */
-	int rank;   /* 0 = single, 1 = vector, 2 = matrix, 3 = set, -1 = array. */
-	const wchar_t *min1, *max1;   /* For vectors and matrices. */
-	const wchar_t *min2, *max2;   /* For matrices. */
+	const char32 *name;   // the name of this field
+	int type;   // bytewa..inheritwa, see below
+	int offset;   // the offset of this field in the enveloping struct
+	int size;   // the size of this field if it is in an array
+	const char32 *tagName;   // for structs: tag; for classes: class name; for enums: type name
+	void *tagType;   // for structs: offset table; for classes: class pointer; for enums: enum pointer
+	int rank;   // 0 = single, 1 = vector, 2 = matrix, 3 = set, -1 = array
+	const char32 *min1, *max1;   // for vectors and matrices
+	const char32 *min2, *max2;   // for matrices
 } *Data_Description;
 
 Thing_define (Data, Thing) {
@@ -368,35 +368,33 @@ extern structMelderDir Data_directoryBeingRead;
 #define booleanwa  14
 #define questionwa  15
 #define stringwa  16
-#define string32wa  17
-#define lstringwa  18
-#define lstring32wa  19
-#define maxsingletypewa lstring32wa
-#define structwa  20
-#define widgetwa  21
-#define objectwa  22
-#define collectionwa  23
-#define inheritwa  24
+#define lstringwa  17
+#define maxsingletypewa lstringwa
+#define structwa  18
+#define widgetwa  19
+#define objectwa  20
+#define collectionwa  21
+#define inheritwa  22
 
 /* Recursive routines for working with struct members. */
 
 int Data_Description_countMembers (Data_Description structDescription);
 /* Including inherited members. */
 
-Data_Description Data_Description_findMatch (Data_Description structDescription, const wchar_t *member);
+Data_Description Data_Description_findMatch (Data_Description structDescription, const char32 *member);
 /* Find the location of member 'member' in a struct. */
 /* If 'structDescription' describes a class, the ancestor classes are also searched. */
 
-Data_Description Data_Description_findNumberUse (Data_Description structDescription, const wchar_t *string);
+Data_Description Data_Description_findNumberUse (Data_Description structDescription, const char32 *string);
 /* Find the first member that uses member 'string' in its size description (max1 or max2 fields). */
 
 /* Retrieving data from object + description. */
 
-long Data_Description_integer (void *structAddress, Data_Description description);
+int64 Data_Description_integer (void *structAddress, Data_Description description);
 /* Convert data found at a certain offset from 'address' to an integer, according to the given 'description'. */
 
 int Data_Description_evaluateInteger (void *structAddress, Data_Description structDescription,
-	const wchar_t *formula, long *result);
+	const char32 *formula, long *result);
 /*
  * Translates a string like '100' or 'numberOfHorses' or 'numberOfCows - 1' to an integer.
  * The 'algorithm' does some wild guesses as to the meanings of the 'min1' and 'max1' strings.

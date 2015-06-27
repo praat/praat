@@ -29,7 +29,7 @@ TableOfReal TableOfReal_and_Permutation_permuteRows (I, Permutation thee) {
 	iam (TableOfReal);
 	try {
 		if (my numberOfRows != thy numberOfElements) {
-			Melder_throw (L"The number of rows in the table and the number of elements in the Permutation must be equal.");
+			Melder_throw (U"The number of rows in the table and the number of elements in the Permutation must be equal.");
 		}
 		autoTableOfReal him = TableOfReal_create (my numberOfRows, my numberOfColumns);
 
@@ -41,7 +41,7 @@ TableOfReal TableOfReal_and_Permutation_permuteRows (I, Permutation thee) {
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not permuted.");
+		Melder_throw (me, U": not permuted.");
 	}
 }
 
@@ -52,7 +52,7 @@ Permutation TableOfReal_to_Permutation_sortRowLabels (I) {
 		NUMindexx_s (my rowLabels, my numberOfRows, thy p);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Permutation created.");
+		Melder_throw (me, U": no Permutation created.");
 	}
 }
 

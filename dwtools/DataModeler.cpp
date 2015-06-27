@@ -53,26 +53,26 @@ extern machar_Table NUMfpp;
 Thing_implement (DataModeler, Function, 0);
 
 void structDataModeler :: v_info () {
-	MelderInfo_writeLine (L"   Time domain:");
-	MelderInfo_writeLine (L"      Start time: ", Melder_double (xmin), L" seconds");
-	MelderInfo_writeLine (L"      End time: ", Melder_double (xmax), L" seconds");
-	MelderInfo_writeLine (L"      Total duration: ", Melder_double (xmax - xmin), L" seconds");
+	MelderInfo_writeLine (U"   Time domain:");
+	MelderInfo_writeLine (U"      Start time: ", xmin, U" seconds");
+	MelderInfo_writeLine (U"      End time: ", xmax, U" seconds");
+	MelderInfo_writeLine (U"      Total duration: ", xmax - xmin, U" seconds");
 	double ndf, rSquared = DataModeler_getCoefficientOfDetermination (this, NULL, NULL);
 	double probability, chisq = DataModeler_getChiSquaredQ (this, useSigmaY, &probability, &ndf);
-	MelderInfo_writeLine (L"   Fit:");
-	MelderInfo_writeLine (L"      Number of data points: ", Melder_integer (numberOfDataPoints));
-	MelderInfo_writeLine (L"      Number of parameters: ", Melder_integer (numberOfParameters));
-	MelderInfo_writeLine (L"      Each data point has ", useSigmaY == DataModeler_DATA_WEIGH_EQUAL ? L" the same weight (estimated)." :
-		useSigmaY == DataModeler_DATA_WEIGH_SIGMA ? L"a different weight (sigmaY)." : 
-		useSigmaY == DataModeler_DATA_WEIGH_RELATIVE ? L"a different relative weight (Y_value/sigmaY)." :
-		L"a different weight (SQRT(sigmaY)).");
-	MelderInfo_writeLine (L"      Chi squared: ", Melder_double (chisq));
-	MelderInfo_writeLine (L"      Number of degrees of freedom: ", Melder_double (ndf));
-	MelderInfo_writeLine (L"      Probability: ", Melder_double (probability));
-	MelderInfo_writeLine (L"      R-squared: ", Melder_double (rSquared));
+	MelderInfo_writeLine (U"   Fit:");
+	MelderInfo_writeLine (U"      Number of data points: ", numberOfDataPoints);
+	MelderInfo_writeLine (U"      Number of parameters: ", numberOfParameters);
+	MelderInfo_writeLine (U"      Each data point has ", useSigmaY == DataModeler_DATA_WEIGH_EQUAL ? U" the same weight (estimated)." :
+		useSigmaY == DataModeler_DATA_WEIGH_SIGMA ? U"a different weight (sigmaY)." : 
+		useSigmaY == DataModeler_DATA_WEIGH_RELATIVE ? U"a different relative weight (Y_value/sigmaY)." :
+		U"a different weight (SQRT(sigmaY)).");
+	MelderInfo_writeLine (U"      Chi squared: ", chisq);
+	MelderInfo_writeLine (U"      Number of degrees of freedom: ", ndf);
+	MelderInfo_writeLine (U"      Probability: ", probability);
+	MelderInfo_writeLine (U"      R-squared: ", rSquared);
 	for (long ipar = 1; ipar <= numberOfParameters; ipar++) {
 		double sigma = parameterStatus[ipar] == DataModeler_PARAMETER_FIXED ? 0 : sqrt (parameterCovariances -> data[ipar][ipar]);
-		MelderInfo_writeLine (L"      p[", Melder_integer (ipar), L"] = ", Melder_double (parameter[ipar]), L"; sigma = ", Melder_double (sigma));
+		MelderInfo_writeLine (U"      p[", ipar, U"] = ", parameter[ipar], U"; sigma = ", sigma);
 	}
 }
 
@@ -211,7 +211,7 @@ int DataModeler_getDataPointStatus (DataModeler me, long index) {
 void DataModeler_setDataPointStatus (DataModeler me, long index, int status) {
 	if (index > 0 && index <= my numberOfDataPoints) {
 		if (status == DataModeler_DATA_VALID && ! NUMdefined (my y[index])) {
-			Melder_throw ("Your data value is undefined. First set the value and then its status.");
+			Melder_throw (U"Your data value is undefined. First set the value and then its status.");
 		}
 		my dataPointStatus[index] = status;
 	}
@@ -348,7 +348,7 @@ double *DataModeler_getZScores (DataModeler me, int useSigmaY) {
 		if (useSigmaY == DataModeler_DATA_WEIGH_EQUAL) {
 			estimatedSigmaY = DataModeler_estimateSigmaY (me);
 			if (! NUMdefined (estimatedSigmaY)) {
-				Melder_throw ("Not enough data points to calculate sigma.");
+				Melder_throw (U"Not enough data points to calculate sigma.");
 			}
 		}
 		autoNUMvector<double> zscores (1, my numberOfDataPoints);
@@ -363,7 +363,7 @@ double *DataModeler_getZScores (DataModeler me, int useSigmaY) {
 		}
 		return zscores.transfer();
 	} catch (MelderError) {
-		Melder_throw ("No z-scores calculated.");
+		Melder_throw (U"No z-scores calculated.");
 	}
 }
 
@@ -458,7 +458,7 @@ void DataModeler_drawBasisFunction_inside (DataModeler me, Graphics g, double xm
 	}
 }
 
-void DataModeler_drawOutliersMarked_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, double numberOfSigmas, int useSigmaY, wchar_t *mark, int marksFontSize, double horizontalOffset_mm) {
+void DataModeler_drawOutliersMarked_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, int useSigmaY, double numberOfSigmas, char32 *mark, int marksFontSize, double horizontalOffset_mm) {
 	if (xmax <= xmin) { 
 		xmin = my xmin; xmax = my xmax;
 	}
@@ -619,7 +619,7 @@ void DataModeler_speckle (DataModeler me, Graphics g, double xmin, double xmax, 
 
 Table DataModeler_to_Table_zscores (DataModeler me, int useSigmaY) {
 	try {
-		autoTable ztable = Table_createWithColumnNames (my numberOfDataPoints, L"x z");
+		autoTable ztable = Table_createWithColumnNames (my numberOfDataPoints, U"x z");
 		autoNUMvector<double> zscores (DataModeler_getZScores (me, useSigmaY), 1);
 		for (long i = 1; i <= my numberOfDataPoints; i++) {
 			Table_setNumericValue (ztable.peek(), i, 1, my x[i]);
@@ -627,11 +627,11 @@ Table DataModeler_to_Table_zscores (DataModeler me, int useSigmaY) {
 		}
 		return ztable.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Table not created.");
+		Melder_throw (U"Table not created.");
 	}	
 }
 
-void DataModeler_normalProbabilityPlot (DataModeler me, Graphics g, int useSigmaY, long numberOfQuantiles, double numberOfSigmas, int labelSize, const wchar_t *label, int garnish) {
+void DataModeler_normalProbabilityPlot (DataModeler me, Graphics g, int useSigmaY, long numberOfQuantiles, double numberOfSigmas, int labelSize, const char32 *label, int garnish) {
 	try {
 		autoTable thee = DataModeler_to_Table_zscores (me, useSigmaY);
 		Table_normalProbabilityPlot (thee.peek(), g, 2, numberOfQuantiles, numberOfSigmas, labelSize, label, garnish);
@@ -661,10 +661,10 @@ void  DataModeler_init (DataModeler me, double xmin, double xmax, long numberOfD
 	my dataPointStatus = NUMvector<int> (1, numberOfDataPoints);
 	my numberOfParameters = numberOfParameters;
 	if (numberOfParameters <= 0) {
-		Melder_throw ("The number of parameters must be greater than zero.");
+		Melder_throw (U"The number of parameters must be greater than zero.");
 	}
 	if (numberOfParameters > numberOfDataPoints) {
-		Melder_throw ("The number of parameters must be smaller than the number of data points");
+		Melder_throw (U"The number of parameters must be smaller than the number of data points");
 	}
 	my parameter = NUMvector<double> (1, numberOfParameters);
 	my parameterStatus = NUMvector<int> (1, numberOfParameters);
@@ -679,7 +679,7 @@ DataModeler DataModeler_create (double xmin, double xmax, long numberOfDataPoint
 		my xmin = xmin; my xmax = xmax;
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("DataModeler not created.");
+		Melder_throw (U"DataModeler not created.");
 	}
 }
 
@@ -775,7 +775,7 @@ void DataModeler_fit (DataModeler me)
 			SVD_getSquared (thee.peek(), cov -> data, true);
 		}
 	} catch (MelderError) {
-		Melder_throw ("DataModeler no fit.");
+		Melder_throw (U"DataModeler no fit.");
 	}
 }
 
@@ -791,7 +791,7 @@ Covariance DataModeler_to_Covariance_parameters (DataModeler me) {
 		autoCovariance cov = (Covariance) Data_copy (my parameterCovariances);
 		return cov.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Covariance not created.");
+		Melder_throw (U"Covariance not created.");
 	}
 }
 
@@ -811,9 +811,9 @@ DataModeler Table_to_DataModeler (Table me, double xmin, double xmax, long xcolu
 				numberOfData++; x[numberOfData] = val;
 				if (numberOfData > 1) {
 					if (val < x[numberOfData - 1]) {
-						Melder_throw ("Data with x-values must be sorted.");
+						Melder_throw (U"Data with x-values must be sorted.");
 					} else if (val == x[numberOfData - 1]) {
-						Melder_throw ("All x-values must be different.");
+						Melder_throw (U"All x-values must be different.");
 					}
 				}
 				y[numberOfData] = Table_getNumericValue_Assert (me, i, ycolumn);
@@ -824,7 +824,7 @@ DataModeler Table_to_DataModeler (Table me, double xmin, double xmax, long xcolu
 			NUMvector_extrema<double> (x.peek(), 1, numberOfData, &xmin, &xmax);
 		}
 		if (xmin >= xmax) {
-			Melder_throw ("Range of x-values too small.");
+			Melder_throw (U"Range of x-values too small.");
 		}
 		long numberOfDataPoints = 0, validData = 0;
 		for (long i = 1; i <= numberOfData; i++) {
@@ -850,13 +850,13 @@ DataModeler Table_to_DataModeler (Table me, double xmin, double xmax, long xcolu
 		thy numberOfDataPoints = numberOfDataPoints;
 		thy tolerance = 1e-5;
 		if (validData < numberOfParameters) {
-			Melder_throw ("The number of parameters must not exceed the number of data points.");
+			Melder_throw (U"The number of parameters must not exceed the number of data points.");
 		}
 		DataModeler_setDataWeighing (thee.peek(), DataModeler_DATA_WEIGH_SIGMA);
 		DataModeler_fit (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Datamodeler not created from Table.");
+		Melder_throw (U"Datamodeler not created from Table.");
 	}
 }
 
@@ -864,13 +864,13 @@ Thing_implement (FormantModeler, Function, 0);
 
 void structFormantModeler :: v_info () {
 
-	MelderInfo_writeLine (L"Time domain:");
-	MelderInfo_writeLine (L"   Start time: ", Melder_double (xmin), L" seconds");
-	MelderInfo_writeLine (L"   End time: ", Melder_double (xmax), L" seconds");
-	MelderInfo_writeLine (L"   Total duration: ", Melder_double (xmax - xmin), L" seconds");
+	MelderInfo_writeLine (U"Time domain:");
+	MelderInfo_writeLine (U"   Start time: ", xmin, U" seconds");
+	MelderInfo_writeLine (U"   End time: ", xmax, U" seconds");
+	MelderInfo_writeLine (U"   Total duration: ", xmax - xmin, U" seconds");
 	for (long iformant = 1; iformant <= datamodelers -> size; iformant++) {
 		DataModeler ffi = (DataModeler) datamodelers -> item[iformant];
-		MelderInfo_writeLine (L"Formant ", Melder_integer (iformant));
+		MelderInfo_writeLine (U"Formant ", iformant);
 		ffi -> v_info();
 	}
 }
@@ -905,7 +905,7 @@ double DataModeler_estimateSigmaY (DataModeler me) {
 		double sigma = NUMdefined (variance) ? sqrt (variance / (numberOfDataPoints - 1)) : NUMundefined;
 		return sigma;
 	} catch (MelderError) {
-		Melder_throw ("Cannot estimate sigma.");
+		Melder_throw (U"Cannot estimate sigma.");
 	}
 }
 
@@ -989,7 +989,7 @@ void FormantModeler_setParametersFree (FormantModeler me, long fromFormant, long
 	}
 	if (! (toFormant >= 1 && toFormant <= numberOfFormants && fromFormant >= 1 && fromFormant <= numberOfFormants &&
 		fromFormant <= toFormant)) {
-		Melder_throw ("Formant number(s) must be in the interval [1, ", Melder_integer (numberOfFormants), "].");
+		Melder_throw (U"Formant number(s) must be in the interval [1, ", numberOfFormants, U"].");
 	}
 	for (long iformant = fromFormant; iformant <= toFormant; iformant++) {
 		DataModeler ffi = (DataModeler) my datamodelers -> item[iformant];
@@ -1004,7 +1004,7 @@ void FormantModeler_setDataWeighing (FormantModeler me, long fromFormant, long t
 	}
 	if (! (toFormant >= 1 && toFormant <= numberOfFormants && fromFormant >= 1 && fromFormant <= numberOfFormants &&
 		fromFormant <= toFormant)) {
-		Melder_throw ("Formant number(s) must be in the interval [1, ", Melder_integer (numberOfFormants), "].");
+		Melder_throw (U"Formant number(s) must be in the interval [1, ", numberOfFormants, U"].");
 	}
 	for (long iformant = fromFormant; iformant <= toFormant; iformant++) {
 		DataModeler ffi = (DataModeler) my datamodelers -> item[iformant];
@@ -1034,15 +1034,15 @@ void FormantModeler_drawBasisFunction (FormantModeler me, Graphics g, double tmi
 	if (garnish) {
 		Graphics_inqWindow (g, &tmin, &tmax, &fmin, &fmax);
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, L"Time (s)");
-		Graphics_textLeft (g, 1, (scaled ? L"Frequency (Hz)" : L"Amplitude"));
+		Graphics_textBottom (g, 1, U"Time (s)");
+		Graphics_textLeft (g, 1, (scaled ? U"Frequency (Hz)" : U"Amplitude"));
 		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_markLeft (g, fmin, 1, 1, 0, L"");
-		Graphics_markLeft (g, fmax, 1, 1, 0, L"");
+		Graphics_markLeft (g, fmin, 1, 1, 0, U"");
+		Graphics_markLeft (g, fmax, 1, 1, 0, U"");
 	}
 }
 
-void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, long fromTrack, long toTrack, double numberOfSigmas, int useSigmaY, wchar_t *mark, int marksFontSize, double horizontalOffset_mm, int garnish) {
+void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, long fromTrack, long toTrack, double numberOfSigmas, int useSigmaY, char32 *mark, int marksFontSize, double horizontalOffset_mm, int garnish) {
 	if (tmax <= tmin) { 
 		tmin = my xmin; tmax = my xmax; 
 	}
@@ -1059,20 +1059,20 @@ void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tm
 	for (long iformant = fromTrack; iformant <= toTrack; iformant++) {
 		DataModeler ffi =  (DataModeler) my datamodelers -> item[iformant];
 		double xOffset_mm = (iformant % 2 == 1) ? horizontalOffset_mm : -horizontalOffset_mm;
-		DataModeler_drawOutliersMarked_inside (ffi, g, tmin, tmax, 0, fmax, numberOfSigmas, useSigmaY, mark, marksFontSize, xOffset_mm);
+		DataModeler_drawOutliersMarked_inside (ffi, g, tmin, tmax, 0, fmax, useSigmaY, numberOfSigmas, mark, marksFontSize, xOffset_mm);
 	}
 	Graphics_setFontSize (g, currectFontSize);
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, L"Time (s)");
-		Graphics_textLeft (g, 1, L"Formant frequency (Hz)");
+		Graphics_textBottom (g, 1, U"Time (s)");
+		Graphics_textLeft (g, 1, U"Formant frequency (Hz)");
 		Graphics_marksBottom (g, 2, 1, 1, 0);
 		Graphics_marksLeftEvery (g, 1.0, 1000.0, 1, 1, 1);
 	}
 }
 
-void FormantModeler_normalProbabilityPlot (FormantModeler me, Graphics g, long iformant, int useSigmaY, long numberOfQuantiles, double numberOfSigmas, int labelSize, const wchar_t *label, int garnish) {
+void FormantModeler_normalProbabilityPlot (FormantModeler me, Graphics g, long iformant, int useSigmaY, long numberOfQuantiles, double numberOfSigmas, int labelSize, const char32 *label, int garnish) {
 	if (iformant > 0 || iformant <= my datamodelers -> size) {
 		DataModeler ff = (DataModeler) my datamodelers ->item[iformant];
 		DataModeler_normalProbabilityPlot (ff, g, useSigmaY, numberOfQuantiles, numberOfSigmas, labelSize, label, garnish);
@@ -1106,8 +1106,8 @@ void FormantModeler_drawTracks (FormantModeler me, Graphics g, double tmin, doub
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, L"Time (s)");
-		Graphics_textLeft (g, 1, L"Formant frequency (Hz)");
+		Graphics_textBottom (g, 1, U"Time (s)");
+		Graphics_textLeft (g, 1, U"Formant frequency (Hz)");
 		Graphics_marksBottom (g, 2, 1, 1, 0);
 		Graphics_marksLeftEvery (g, 1.0, 1000.0, 1, 1, 1);
 	}
@@ -1140,8 +1140,8 @@ void FormantModeler_speckle (FormantModeler me, Graphics g, double tmin, double 
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, L"Time (s)");
-		Graphics_textLeft (g, 1, L"Formant frequency (Hz)");
+		Graphics_textBottom (g, 1, U"Time (s)");
+		Graphics_textLeft (g, 1, U"Formant frequency (Hz)");
 		Graphics_marksBottom (g, 2, 1, 1, 0);
 		Graphics_marksLeftEvery (g, 1.0, 1000.0, 1, 1, 1);
 	}
@@ -1158,7 +1158,7 @@ FormantModeler FormantModeler_create (double tmin, double tmax, long numberOfFor
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("FormantModeler not created.");
+		Melder_throw (U"FormantModeler not created.");
 	}
 }
 
@@ -1299,14 +1299,11 @@ Table FormantModeler_to_Table_zscores (FormantModeler me, int useSigmaY) {
 	try {
 		long icolt = 1, numberOfFormants = my datamodelers -> size;
 		long numberOfDataPoints = FormantModeler_getNumberOfDataPoints (me);
-		autoMelderString columnLabel;
 		autoTable ztable = Table_createWithoutColumnNames (numberOfDataPoints, numberOfFormants + 1);
-		Table_setColumnLabel (ztable.peek(), icolt, L"time");
+		Table_setColumnLabel (ztable.peek(), icolt, U"time");
 		for (long iformant = 1; iformant <= numberOfFormants; iformant++) {
 			long icolz = iformant + 1;
-			MelderString_append (&columnLabel, L"z", Melder_integer(iformant));
-			Table_setColumnLabel (ztable.peek(), icolz, columnLabel.string);
-			MelderString_empty (&columnLabel);
+			Table_setColumnLabel (ztable.peek(), icolz, Melder_cat (U"z", iformant));
 			DataModeler ffi = (DataModeler) my datamodelers -> item[iformant];
 			if (iformant == 1) {
 				for (long i = 1; i <= numberOfDataPoints; i++) { // only once all tracks have same x-values
@@ -1320,34 +1317,34 @@ Table FormantModeler_to_Table_zscores (FormantModeler me, int useSigmaY) {
 		}
 		return ztable.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Table not created.");
+		Melder_throw (U"Table not created.");
 	}	
 }
 
 DataModeler FormantModeler_extractDataModeler (FormantModeler me, long iformant) {
 	try {
 		if (! (iformant > 0 && iformant <= my datamodelers -> size)) {
-			Melder_throw ("");
+			Melder_throw (U"");
 		}
 		DataModeler ff = (DataModeler) my datamodelers -> item[iformant];
 		autoDataModeler thee = (DataModeler) Data_copy (ff);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw ("DataModeler not created.");
+		Melder_throw (U"DataModeler not created.");
 	}	
 }
 
 Covariance FormantModeler_to_Covariance_parameters (FormantModeler me, long iformant) {
 	try {
 		if (iformant < 1 || iformant > my datamodelers -> size) {
-			Melder_throw (L"The formant should be greater than zero and smaller than or equal to ", 
-				  Melder_integer (my datamodelers -> size));
+			Melder_throw (U"The formant should be greater than zero and smaller than or equal to ", 
+				  my datamodelers -> size);
 		}
 		DataModeler thee = (DataModeler) my datamodelers -> item[iformant];
 		autoCovariance cov = (Covariance) Data_copy (thy parameterCovariances);
 		return cov.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Covariance not created.");
+		Melder_throw (U"Covariance not created.");
 	}
 	
 }
@@ -1367,7 +1364,7 @@ FormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tmax, 
 		}
 		long numberOfDataPoints = Sampled_getWindowSamples (me, tmin, tmax, &ifmin, &ifmax);
 		if (numberOfDataPoints < numberOfParametersPerTrack) {
-			Melder_throw ("Not enought data points, extend the selection.");
+			Melder_throw (U"Not enought data points, extend the selection.");
 		}
 		autoFormantModeler thee = FormantModeler_create (tmin, tmax, numberOfFormants, numberOfDataPoints, numberOfParametersPerTrack);
 		for (long iformant = 1; iformant <= numberOfFormants; iformant++) {
@@ -1398,12 +1395,12 @@ FormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tmax, 
 			}
 		}
 		if (posInCollection == 0) {
-			Melder_throw ("Not enought data points in all the formants!");
+			Melder_throw (U"Not enought data points in all the formants!");
 		}
 		FormantModeler_fit (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw ("FormantModeler not created.");
+		Melder_throw (U"FormantModeler not created.");
 	}
 }
 
@@ -1443,7 +1440,7 @@ Formant FormantModeler_to_Formant (FormantModeler me, int useEstimates, int esti
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Cannot create Formant from FormantModeler.");
+		Melder_throw (U"Cannot create Formant from FormantModeler.");
 	}
 }
 
@@ -1514,7 +1511,7 @@ FormantModeler FormantModeler_processOutliers (FormantModeler me, double numberO
 	try {
 		long numberOfFormants = my datamodelers -> size;
 		if (numberOfFormants < 3) {
-			Melder_throw ("We need at least three formants to process outliers.");
+			Melder_throw (U"We need at least three formants to process outliers.");
 		}
 		long numberOfDataPoints = FormantModeler_getNumberOfDataPoints (me);
 		autoNUMvector<double> x (1, numberOfDataPoints); // also store x-values
@@ -1549,7 +1546,7 @@ FormantModeler FormantModeler_processOutliers (FormantModeler me, double numberO
 		FormantModeler_fit (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Cannot calculate track discontinuities");
+		Melder_throw (U"Cannot calculate track discontinuities");
 	}
 }
 
@@ -1607,7 +1604,10 @@ double FormantModeler_getFormantsConstraintsFactor (FormantModeler me, double mi
 	return minF1Factor * maxF1Factor * minF2Factor * maxF2Factor * minF3Factor;
 }
 
-long Formants_getSmoothestInInterval (Collection me, double tmin, double tmax, long numberOfFormantTracks, long numberOfParametersPerTrack, int useBandWidthsForTrackEstimation, int useConstraints, double numberOfSigmas, double power, double minF1, double maxF1, double minF2, double maxF2, double minF3) {
+long Formants_getSmoothestInInterval (Collection me, double tmin, double tmax, long numberOfFormantTracks, long numberOfParametersPerTrack,
+	int useBandWidthsForTrackEstimation, int useConstraints, double numberOfSigmas, double power,
+	double minF1, double maxF1, double minF2, double maxF2, double minF3)
+{
 	try {
 		long numberOfFormantObjects = my size, minNumberOfFormants = 1000000;
 		if (numberOfFormantObjects == 1) {
@@ -1622,7 +1622,7 @@ long Formants_getSmoothestInInterval (Collection me, double tmin, double tmax, l
 			if (tminf == tmaxf) {
 				tminf = fi -> xmin; tmaxf = fi -> xmax;
 			} else if (fi -> xmin != tminf || fi -> xmax != tmaxf) {
-				Melder_throw ("All Formant objects must have the same starting and finishing times.");
+				Melder_throw (U"All Formant objects must have the same starting and finishing times.");
 			}
 			// Find the one that has least formant tracks
 			numberOfFormants[iobject] = Formant_getMaxNumFormants (fi);
@@ -1643,14 +1643,14 @@ long Formants_getSmoothestInInterval (Collection me, double tmin, double tmax, l
 				}
 			}
 			if (numberOfInvalids == numberOfFormantObjects) {
-				Melder_throw ("None of the Formants has enough formant tracks. Lower your upper formant number.");
+				Melder_throw (U"None of the Formants has enough formant tracks. Lower your upper formant number.");
 			}
 		}
 		if (tmax <= tmin) { // default
 			tmin = tminf; tmax = tmaxf;
 		}
 		if (! (tmin >= tminf && tmax <= tmaxf)) {
-			Melder_throw ("The selected interval needs to be within the Formant object's domain.");
+			Melder_throw (U"The selected interval needs to be within the Formant object's domain.");
 		}
 		/* The chisq is not meaningfull as a the only test whether one model is better than the other because if we have two models 
 		 * 1 & 2 with the same data points (x1[i]=x2[i] and y1[i]= y2[i] but if sigma1[i] < sigma2[i] than chisq1 > chisq2.
@@ -1674,7 +1674,7 @@ long Formants_getSmoothestInInterval (Collection me, double tmin, double tmax, l
 		}
 		return index;
 	} catch (MelderError) {
-		Melder_throw ("No Formant object could be selected.");
+		Melder_throw (U"No Formant object could be selected.");
 	}
 }
 
@@ -1684,7 +1684,7 @@ Formant Formant_extractPart (Formant me, double tmin, double tmax) {
 			tmin = my xmin; tmax = my xmax;
 		}
 		if (tmin >= my xmax || tmax <= my xmin) {
-			Melder_throw ("Your start and end time should be between ", Melder_double (my xmin), L" and ", Melder_double (my xmax), ".");
+			Melder_throw (U"Your start and end time should be between ", my xmin, U" and ", my xmax, U".");
 		}
 		long thyindex = 1, ifmin, ifmax;
 		long numberOfFrames = Sampled_getWindowSamples (me, tmin, tmax, &ifmin, &ifmax);
@@ -1698,30 +1698,36 @@ Formant Formant_extractPart (Formant me, double tmin, double tmax) {
 		return thee.transfer();
 		
 	} catch (MelderError) {
-		Melder_throw ("Formant part could not be extracted.");
+		Melder_throw (U"Formant part could not be extracted.");
 	}
 }
 
-Formant Formants_extractSmoothestPart (Collection me, double tmin, double tmax, long numberOfFormantTracks, long numberOfParametersPerTrack, int useBandWidthsForTrackEstimation, double numberOfSigmas, double power) {
+Formant Formants_extractSmoothestPart (Collection me, double tmin, double tmax, long numberOfFormantTracks, long numberOfParametersPerTrack,
+	int useBandWidthsForTrackEstimation, double numberOfSigmas, double power)
+{
 	try {
-		long index = Formants_getSmoothestInInterval (me, tmin, tmax, numberOfFormantTracks, numberOfParametersPerTrack, useBandWidthsForTrackEstimation, numberOfSigmas, power, 0, 1, 1, 1, 1, 1); // last four are just fillers
+		long index = Formants_getSmoothestInInterval (me, tmin, tmax, numberOfFormantTracks, numberOfParametersPerTrack,
+			useBandWidthsForTrackEstimation, 0, numberOfSigmas, power, 1, 1, 1, 1, 1); // last four are just fillers
 		Formant bestfit = (Formant) my item[index];
 		autoFormant thee = Formant_extractPart (bestfit, tmin, tmax);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Smoothest Formant part could not be extracted.");
+		Melder_throw (U"Smoothest Formant part could not be extracted.");
 	}
 }
 
 
-Formant Formants_extractSmoothestPart_withFormantsConstraints (Collection me, double tmin, double tmax, long numberOfFormantTracks, long numberOfParametersPerTrack, int useBandWidthsForTrackEstimation, double numberOfSigmas, double power, double minF1, double maxF1, double minF2, double maxF2, double minF3) {
+Formant Formants_extractSmoothestPart_withFormantsConstraints (Collection me, double tmin, double tmax, long numberOfFormantTracks, long numberOfParametersPerTrack,
+	int useBandWidthsForTrackEstimation, double numberOfSigmas, double power, double minF1, double maxF1, double minF2, double maxF2, double minF3)
+{
 	try {
-		long index = Formants_getSmoothestInInterval (me, tmin, tmax, numberOfFormantTracks, numberOfParametersPerTrack, useBandWidthsForTrackEstimation, numberOfSigmas, power, 1, minF1, maxF1, minF2, maxF2, minF3);
+		long index = Formants_getSmoothestInInterval (me, tmin, tmax, numberOfFormantTracks, numberOfParametersPerTrack,
+			useBandWidthsForTrackEstimation, 1, numberOfSigmas, power, minF1, maxF1, minF2, maxF2, minF3);
 		Formant bestfit = (Formant) my item[index];
 		autoFormant thee = Formant_extractPart (bestfit, tmin, tmax);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Smoothest Formant part could not be extracted.");
+		Melder_throw (U"Smoothest Formant part could not be extracted.");
 	}
 }
 
@@ -1735,7 +1741,7 @@ PitchModeler Pitch_to_PitchModeler (Pitch me, double tmin, double tmax, long num
 		}
 		long numberOfDataPoints = Sampled_getWindowSamples (me, tmin, tmax, &ifmin, &ifmax);
 		if (numberOfDataPoints < numberOfParameters) {
-			Melder_throw ("Not enought data points, extend the selection.");
+			Melder_throw (U"Not enough data points, extend the selection.");
 		}
 		autoPitchModeler thee = Thing_new (PitchModeler);
 		DataModeler_init (thee.peek(), tmin, tmax, numberOfDataPoints, numberOfParameters, DataModeler_TYPE_LEGENDRE);
@@ -1751,12 +1757,12 @@ PitchModeler Pitch_to_PitchModeler (Pitch me, double tmin, double tmax, long num
 		}
 		thy numberOfDataPoints = idata;
 		if (validData < numberOfParameters) { // remove don't throw exception
-			Melder_throw ("Not enough valid data in interval.");
+			Melder_throw (U"Not enough valid data in interval.");
 		}
 		DataModeler_fit (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw ("No PitchModeler could be created.");
+		Melder_throw (U"No PitchModeler could be created.");
 	}
 }
 
@@ -1766,11 +1772,17 @@ void PitchModeler_draw (PitchModeler me, Graphics g, double tmin, double tmax, d
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, L"Time (s)");
-		Graphics_textLeft (g, 1, L"Frequency (Hz)");
+		Graphics_textBottom (g, 1, U"Time (s)");
+		Graphics_textLeft (g, 1, U"Frequency (Hz)");
 		Graphics_marksBottom (g, 2, 1, 1, 0);
 		Graphics_marksLeftEvery (g, 1.0, 100.0, 1, 1, 1);
 	}
+}
+
+double Sound_getOptimalFormantCeiling (Sound me, double startTime, double endTime, double windowLength, double timeStep, double minFreq, double maxFreq, long numberOfFrequencySteps, double preemphasisFrequency, long numberOfFormantTracks, long numberOfParametersPerTrack, int weighData, double numberOfSigmas, double power) {
+	double optimalCeiling;
+	autoFormant thee = Sound_to_Formant_interval (me, startTime, endTime, windowLength, timeStep, minFreq, maxFreq,  numberOfFrequencySteps, preemphasisFrequency, numberOfFormantTracks, numberOfParametersPerTrack, weighData,  numberOfSigmas, power, false, 0, 5000, 0, 5000, 0, &optimalCeiling);
+	return optimalCeiling;
 }
 
 Formant Sound_to_Formant_interval (Sound me, double startTime, double endTime, double windowLength, double timeStep, double minFreq, double maxFreq, long numberOfFrequencySteps, double preemphasisFrequency, long numberOfFormantTracks, long numberOfParametersPerTrack, int weighData, double numberOfSigmas, double power, bool useConstraints, double minF1, double maxF1, double minF2, double maxF2, double minF3, double *optimalCeiling) {
@@ -1781,7 +1793,7 @@ Formant Sound_to_Formant_interval (Sound me, double startTime, double endTime, d
 		}
 		double nyquistFrequency = 0.5 / my dx;
 		if (maxFreq > nyquistFrequency) {
-			Melder_throw ("The upper value of the maximum frequency range is higher than the Nyquist frequency of the sound.");
+			Melder_throw (U"The upper value of the maximum frequency range is higher than the Nyquist frequency of the sound.");
 		}
 		double df = 0, ceiling_best, mincriterium = 1e28;
 		if (minFreq >= maxFreq) {
@@ -1823,7 +1835,7 @@ Formant Sound_to_Formant_interval (Sound me, double startTime, double endTime, d
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw ("No Formant object created.");
+		Melder_throw (U"No Formant object created.");
 	}
 }
 
@@ -1835,7 +1847,7 @@ Formant Sound_to_Formant_interval_robust (Sound me, double startTime, double end
 		}
 		double nyquistFrequency = 0.5 / my dx;
 		if (maxFreq > nyquistFrequency) {
-			Melder_throw ("The upper value of the maximum frequency range is higher than the Nyquist frequency of the sound.");
+			Melder_throw (U"The upper value of the maximum frequency range is higher than the Nyquist frequency of the sound.");
 		}
 		double df = 0, ceiling_best, mincriterium = 1e28;
 		if (minFreq >= maxFreq) {
@@ -1877,7 +1889,7 @@ Formant Sound_to_Formant_interval_robust (Sound me, double startTime, double end
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw ("No Formant object created.");
+		Melder_throw (U"No Formant object created.");
 	}
 }
 

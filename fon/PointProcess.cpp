@@ -1,6 +1,6 @@
 /* PointProcess.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,31 +50,31 @@ static void infoPeriods (PointProcess me, double shortestPeriod, double longestP
 	double jitter_rap = PointProcess_getJitter_rap (me, 0.0, 0.0, shortestPeriod, longestPeriod, maximumPeriodFactor);
 	double jitter_ppq5 = PointProcess_getJitter_ppq5 (me, 0.0, 0.0, shortestPeriod, longestPeriod, maximumPeriodFactor);
 	double jitter_ddp = PointProcess_getJitter_ddp (me, 0.0, 0.0, shortestPeriod, longestPeriod, maximumPeriodFactor);
-	MelderInfo_writeLine (L"     Number of periods: ", Melder_integer (numberOfPeriods));
-	MelderInfo_writeLine (L"     Mean period: ", Melder_double (meanPeriod), L" seconds");
-	MelderInfo_writeLine (L"     Stdev period: ", Melder_double (stdevPeriod), L" seconds");
-	MelderInfo_writeLine (L"     Jitter (local): ", Melder_percent (jitter_local, precision));
-	MelderInfo_writeLine (L"     Jitter (local, absolute): ", Melder_fixedExponent (jitter_local_absolute, -6, precision), L" seconds");
-	MelderInfo_writeLine (L"     Jitter (rap): ", Melder_percent (jitter_rap, precision));
-	MelderInfo_writeLine (L"     Jitter (ppq5): ", Melder_percent (jitter_ppq5, precision));
-	MelderInfo_writeLine (L"     Jitter (ddp): ", Melder_percent (jitter_ddp, precision));
+	MelderInfo_writeLine (U"     Number of periods: ", numberOfPeriods);
+	MelderInfo_writeLine (U"     Mean period: ", meanPeriod, U" seconds");
+	MelderInfo_writeLine (U"     Stdev period: ", stdevPeriod, U" seconds");
+	MelderInfo_writeLine (U"     Jitter (local): ", Melder_percent (jitter_local, precision));
+	MelderInfo_writeLine (U"     Jitter (local, absolute): ", Melder_fixedExponent (jitter_local_absolute, -6, precision), U" seconds");
+	MelderInfo_writeLine (U"     Jitter (rap): ", Melder_percent (jitter_rap, precision));
+	MelderInfo_writeLine (U"     Jitter (ppq5): ", Melder_percent (jitter_ppq5, precision));
+	MelderInfo_writeLine (U"     Jitter (ddp): ", Melder_percent (jitter_ddp, precision));
 }
 
 void structPointProcess :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine (L"Time domain:");
-	MelderInfo_writeLine (L"   Start time: ", Melder_double (xmin), L" seconds");
-	MelderInfo_writeLine (L"   End time: ", Melder_double (xmax), L" seconds");
-	MelderInfo_writeLine (L"   Total duration: ", Melder_double (xmax - xmin), L" seconds");
-	MelderInfo_writeLine (L"Number of times: ", Melder_integer (nt));
+	MelderInfo_writeLine (U"Time domain:");
+	MelderInfo_writeLine (U"   Start time: ", xmin, U" seconds");
+	MelderInfo_writeLine (U"   End time: ", xmax, U" seconds");
+	MelderInfo_writeLine (U"   Total duration: ", xmax - xmin, U" seconds");
+	MelderInfo_writeLine (U"Number of times: ", nt);
 	if (nt) {
-		MelderInfo_writeLine (L"First time: ", Melder_double (t [1]), L" seconds");
-		MelderInfo_writeLine (L"Last time: ", Melder_double (t [nt]), L" seconds");
+		MelderInfo_writeLine (U"First time: ", t [1], U" seconds");
+		MelderInfo_writeLine (U"Last time: ", t [nt], U" seconds");
 	}
-	MelderInfo_writeLine (L"Periods between 0.1 ms and 20 ms (pitch between 50 and 10000 Hz),");
-	MelderInfo_writeLine (L"with a maximum \"period factor\" of 1.3:");
+	MelderInfo_writeLine (U"Periods between 0.1 ms and 20 ms (pitch between 50 and 10000 Hz),");
+	MelderInfo_writeLine (U"with a maximum \"period factor\" of 1.3:");
 	infoPeriods (this, 1e-4, 20e-3, 1.3, 3);
-	MelderInfo_writeLine (L"All periods:");
+	MelderInfo_writeLine (U"All periods:");
 	infoPeriods (this, 0.0, 0.0, 1e300, 6);
 }
 
@@ -107,7 +107,7 @@ PointProcess PointProcess_create (double tmin, double tmax, long initialMaxnt) {
 		PointProcess_init (me.peek(), tmin, tmax, initialMaxnt);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("PointProcess not created.");
+		Melder_throw (U"PointProcess not created.");
 	}
 }
 
@@ -121,7 +121,7 @@ PointProcess PointProcess_createPoissonProcess (double startingTime, double fini
 		NUMsort_d (my nt, my t);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("PointProcess (Poisson process) not created.");
+		Melder_throw (U"PointProcess (Poisson process) not created.");
 	}
 }
 
@@ -178,7 +178,7 @@ long PointProcess_getNearestIndex (PointProcess me, double t) {
 void PointProcess_addPoint (PointProcess me, double t) {
 	try {
 		if (t == NUMundefined)
-			Melder_throw ("Cannot add a point at an undefined time.");
+			Melder_throw (U"Cannot add a point at an undefined time.");
 		if (my nt >= my maxnt) {
 			/*
 			 * Create without change.
@@ -203,7 +203,7 @@ void PointProcess_addPoint (PointProcess me, double t) {
 			}
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": point not added.");
+		Melder_throw (me, U": point not added.");
 	}
 }
 
@@ -248,7 +248,7 @@ void PointProcess_draw (PointProcess me, Graphics g, double tmin, double tmax, i
 	}
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, L"Time (s)");
+		Graphics_textBottom (g, 1, U"Time (s)");
 		Graphics_marksBottom (g, 2, 1, 1, 0);
 	}
 }
@@ -269,7 +269,7 @@ PointProcess PointProcesses_union (PointProcess me, PointProcess thee) {
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, " & ", thee, ": union not computed.");
+		Melder_throw (me, U" & ", thee, U": union not computed.");
 	}
 }
 
@@ -300,7 +300,7 @@ PointProcess PointProcesses_intersection (PointProcess me, PointProcess thee) {
 				PointProcess_removePoint (him.peek(), i);
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, " & ", thee, ": intersection not computed.");
+		Melder_throw (me, U" & ", thee, U": intersection not computed.");
 	}
 }
 
@@ -312,20 +312,20 @@ PointProcess PointProcesses_difference (PointProcess me, PointProcess thee) {
 				PointProcess_removePoint (him.peek(), i);
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, " & ", thee, ": difference not computed.");
+		Melder_throw (me, U" & ", thee, U": difference not computed.");
 	}
 }
 
 void PointProcess_fill (PointProcess me, double tmin, double tmax, double period) {
 	try {
 		if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   // autowindowing
-		long n = floor ((tmax - tmin) / period);
+		long n = (long) floor ((tmax - tmin) / period);
 		double t = 0.5 * (tmin + tmax - n * period);
 		for (long i = 1; i <= n; i ++, t += period) {
 			PointProcess_addPoint (me, t);
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": not filled.");
+		Melder_throw (me, U": not filled.");
 	}
 }
 
@@ -345,7 +345,7 @@ void PointProcess_voice (PointProcess me, double period, double maxT) {
 		endVoiceless = my xmax;
 		PointProcess_fill (me, beginVoiceless, endVoiceless, period);
 	} catch (MelderError) {
-		Melder_throw (me, ": not voiced.");
+		Melder_throw (me, U": not voiced.");
 	}
 }
 

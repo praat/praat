@@ -30,7 +30,7 @@ Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 	SpellingChecker spellingChecker;
 	long selectedTier;
 	bool suppressRedraw;
-	wchar_t *findString;
+	char32 *findString;
 	GuiMenuItem extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton;
 
 	void v_info ()
@@ -89,9 +89,9 @@ Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 	#include "TextGridEditor_prefs.h"
 };
 
-void TextGridEditor_init (TextGridEditor me, const wchar_t *title, TextGrid grid, Sampled sound, bool ownSound, SpellingChecker spellingChecker, const char *callbackSocket);
+void TextGridEditor_init (TextGridEditor me, const char32 *title, TextGrid grid, Sampled sound, bool ownSound, SpellingChecker spellingChecker, const char *callbackSocket);
 
-TextGridEditor TextGridEditor_create (const wchar_t *title, TextGrid grid,
+TextGridEditor TextGridEditor_create (const char32 *title, TextGrid grid,
 	Sampled sound,   // either a Sound or a LongSound, or null
 	bool ownSound,
 	SpellingChecker spellingChecker,

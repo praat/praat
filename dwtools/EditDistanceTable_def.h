@@ -39,11 +39,12 @@ oo_END_CLASS (WarpingPath)
 #define ooSTRUCT EditCostsTable
 oo_DEFINE_CLASS (EditCostsTable, TableOfReal)
 	#if oo_DECLARING
-		// overridden methods:
-			virtual void v_info ();
-			virtual bool v_matchTargetSymbol (const wchar_t *targetSymbol, const wchar_t *symbol);
-			virtual bool v_matchSourceSymbol (const wchar_t *sourceSymbol, const wchar_t *symbol);
-			virtual bool v_matchTargetWithSourceSymbol (const wchar_t *targetSymbol, const wchar_t *sourceSymbol);
+		void v_info ()
+			override;
+
+		virtual bool v_matchTargetSymbol (const char32 *targetSymbol, const char32 *symbol);
+		virtual bool v_matchSourceSymbol (const char32 *sourceSymbol, const char32 *symbol);
+		virtual bool v_matchTargetWithSourceSymbol (const char32 *targetSymbol, const char32 *sourceSymbol);
 	#endif
 oo_END_CLASS (EditCostsTable)
 #undef ooSTRUCT
@@ -53,8 +54,9 @@ oo_END_CLASS (EditCostsTable)
 	oo_OBJECT (WarpingPath, 0, warpingPath)
 	#if oo_DECLARING
 		oo_OBJECT (EditCostsTable, 0, editCostsTable)
-		// overridden methods:
-			virtual void v_info ();
+
+		void v_info ()
+			override;
 	#endif
 oo_END_CLASS (EditDistanceTable)
 #undef ooSTRUCT

@@ -80,7 +80,7 @@ Thing_implement (AffineTransform, Data, 0);
 void AffineTransform_init (I, long n) {
 	iam (AffineTransform);
 	if (n < 1) {
-		Melder_throw ("Dimensionality must be at least 1.");
+		Melder_throw (U"Dimensionality must be at least 1.");
 	}
 	my n = n;
 	my r = NUMmatrix<double> (1, n, 1, n);
@@ -93,7 +93,7 @@ AffineTransform AffineTransform_create (long n) {
 		AffineTransform_init (me.peek(), n);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("AffineTransform not created.");
+		Melder_throw (U"AffineTransform not created.");
 	}
 }
 
@@ -109,14 +109,14 @@ TableOfReal AffineTransform_extractMatrix (I) {
 		autoTableOfReal thee = TableOfReal_create (my n, my n);
 		NUMmatrix_copyElements (my r, thy data, 1, my n, 1, my n);
 		for (long i = 1; i <= my n; i++) {
-			wchar_t label[20];
-			(void) swprintf (label, 20, L"%ld", i);
+			char32 label[40];
+			Melder_sprint (label,40, i);   // ppgb: 20 chars is niet genoeg voor een long
 			TableOfReal_setRowLabel (thee.peek(), i, label);
 			TableOfReal_setColumnLabel (thee.peek(), i, label);
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": transformation matrix not extracted.");
+		Melder_throw (me, U": transformation matrix not extracted.");
 	}
 }
 
@@ -129,7 +129,7 @@ TableOfReal AffineTransform_extractTranslationVector (I) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": translation vector not extracted.");
+		Melder_throw (me, U": translation vector not extracted.");
 	}
 }
 

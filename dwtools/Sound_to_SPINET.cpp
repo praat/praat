@@ -69,7 +69,7 @@ SPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration,
 			bw[i] = 2 * NUMpi * b * (f[i] * (6.23e-6 * f[i] + 93.39e-3) + 28.52);
 		}
 
-		autoMelderProgress progress (L"SPINET analysis");
+		autoMelderProgress progress (U"SPINET analysis");
 
 		for (long i = 1; i <= nFilters; i++) {
 			double bb = (f[i] / 1000) * exp (- f[i] / 1000); // outer & middle ear and phase locking
@@ -88,8 +88,7 @@ SPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration,
 				Sounds_multiply (frame.peek(), window.peek());
 				thy y[i][j] = Sound_power (frame.peek()) * bb / gammaMaxAmplitude;
 			}
-			Melder_progress ( (double) i / nFilters, L"SPINET: filter ", Melder_integer (i), L" from ",
-			                   Melder_integer (nFilters), L".");
+			Melder_progress ( (double) i / nFilters, U"SPINET: filter ", i, U" from ", nFilters, U".");
 		}
 
 		// Excitatory and inhibitory area functions
@@ -117,7 +116,7 @@ SPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration,
 			}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ":  no SPINET created.");
+		Melder_throw (me, U":  no SPINET created.");
 	}
 }
 

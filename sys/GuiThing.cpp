@@ -30,7 +30,7 @@ void structGuiThing :: v_hide () {
 		if (parent != NULL && GTK_IS_DIALOG (parent)) {   // I am the top GtkFixed of a dialog
 			gtk_widget_hide (GTK_WIDGET (parent));
 		} else if (parent != NULL && GTK_IS_DIALOG (gtk_widget_get_parent (GTK_WIDGET (parent)))) {
-			trace ("hiding a dialog indirectly");
+			trace (U"hiding a dialog indirectly");
 			gtk_widget_hide (GTK_WIDGET (gtk_widget_get_parent (GTK_WIDGET (parent))));
 		} else {
 			gtk_widget_hide (GTK_WIDGET (d_widget));
@@ -74,33 +74,33 @@ void structGuiThing :: v_setSensitive (bool sensitive) {
 
 void structGuiThing :: v_show () {
 	#if gtk
-		trace ("showing widget %p", d_widget);
+		trace (U"showing widget ", Melder_pointer (d_widget));
 		GuiObject parent = gtk_widget_get_parent (GTK_WIDGET (d_widget));
-		trace ("the parent widget is %p", parent);
+		trace (U"the parent widget is ", Melder_pointer (parent));
 		if (GTK_IS_WINDOW (parent)) {
 			// I am a window's GtkFixed
-			trace ("showing a window");
+			trace (U"showing a window");
 			gtk_widget_show (GTK_WIDGET (d_widget));
 			gtk_window_present (GTK_WINDOW (parent));
 		} else if (GTK_IS_DIALOG (parent)) {
 			// I am a dialog's GtkFixed, and therefore automatically shown
-			trace ("showing a dialog");
+			trace (U"showing a dialog");
 			gtk_window_present (GTK_WINDOW (parent));
 		} else if (GTK_IS_DIALOG (gtk_widget_get_parent (GTK_WIDGET (parent)))) {
 			// I am a dialog's GtkFixed, and therefore automatically shown
-			trace ("showing a dialog (indirectly)");
+			trace (U"showing a dialog (indirectly)");
 			gtk_window_present (GTK_WINDOW (gtk_widget_get_parent (GTK_WIDGET (parent))));
 		} else {
-			trace ("showing a widget that is not a window or dialog");
+			trace (U"showing a widget that is not a window or dialog");
 			gtk_widget_show (GTK_WIDGET (d_widget));
 		}
 	#elif cocoa
 		if ([(NSObject *) d_widget isKindOfClass: [NSWindow class]]) {
-			trace ("trying to show a window");
+			trace (U"trying to show a window");
 			[(NSWindow *) d_widget makeKeyAndOrderFront: nil];
 		} else if ([(NSObject *) d_widget isKindOfClass: [NSView class]]) {
 			if ((NSView *) d_widget == [[(NSView *) d_widget window] contentView]) {
-				trace ("trying to show a window through its content view");
+				trace (U"trying to show a window through its content view");
 				[[(NSView *) d_widget window] makeKeyAndOrderFront: nil];
 			} else {
 				[(NSView *) d_widget setHidden: NO];
@@ -117,7 +117,7 @@ void structGuiThing :: v_show () {
 			XtManageChild (parent);   // the containing scrolled window; BUG if created with XmScrolledList?
 		}
 	#endif
-	trace ("end");
+	trace (U"end");
 }
 
 void GuiThing_hide (GuiThing me) {

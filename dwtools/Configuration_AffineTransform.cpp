@@ -90,7 +90,7 @@ static void NUMmaximizeCongruence (double **b, double **a, long nr, long nc,
 	}
 
 	if (checkc == 0 || checkw == 0) {
-		Melder_throw ("NUMmaximizeCongruence: we cannot rotate a zero matrix.");
+		Melder_throw (U"NUMmaximizeCongruence: we cannot rotate a zero matrix.");
 	}
 
 	// Scale W by (diag(B'B))^-1/2
@@ -192,7 +192,7 @@ AffineTransform Configurations_to_AffineTransform_congruence (Configuration me,
 		NUMmatrix_copyElements (p -> r, at -> r, 1, p -> n, 1, p -> n);
 		return at.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no congruence transformation created.");
+		Melder_throw (me, U": no congruence transformation created.");
 	}
 }
 
@@ -201,7 +201,7 @@ Configuration Configuration_and_AffineTransform_to_Configuration (Configuration 
 		thouart (AffineTransform);
 
 		if (my numberOfColumns != thy n) {
-			Melder_throw ("Dimensions do not agree.");
+			Melder_throw (U"Dimensions do not agree.");
 		}
 		autoConfiguration him = (Configuration) Data_copy (me);
 
@@ -210,7 +210,7 @@ Configuration Configuration_and_AffineTransform_to_Configuration (Configuration 
 		thy v_transform (my data, my numberOfRows, his data);
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Configuration not created.");
+		Melder_throw (U"Configuration not created.");
 	}
 }
 

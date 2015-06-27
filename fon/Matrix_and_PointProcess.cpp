@@ -1,6 +1,6 @@
 /* Matrix_and_PointProcess.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,13 +28,13 @@
 Matrix PointProcess_to_Matrix (PointProcess me) {
 	try {
 		if (my nt == 0)
-			Melder_throw ("No times in PointProcess.");
+			Melder_throw (U"No times in PointProcess.");
 		autoMatrix thee = Matrix_create (1, my nt, my nt, 1, 1, 1, 1, 1, 1, 1);
 		for (long i = 1; i <= my nt; i ++)
 			thy z [1] [i] = my t [i];
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Matrix.");
+		Melder_throw (me, U": not converted to Matrix.");
 	}
 }
 
@@ -46,7 +46,7 @@ PointProcess Matrix_to_PointProcess (Matrix me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to PointProcess.");
+		Melder_throw (me, U": not converted to PointProcess.");
 	}
 }
 

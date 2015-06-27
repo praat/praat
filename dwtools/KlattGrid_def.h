@@ -72,9 +72,8 @@ oo_DEFINE_CLASS (PhonationGrid, Function)
 		PhonationGrid_setNames (this);
 	#endif
 	#if oo_DECLARING
-		// overridden methods:
-		public:
-			virtual void v_info ();
+		void v_info ()
+			override;
 	#endif
 oo_END_CLASS (PhonationGrid)
 #undef ooSTRUCT
@@ -107,9 +106,8 @@ oo_DEFINE_CLASS (VocalTractGrid, Function)
 		VocalTractGrid_setNames (this);
 	#endif
 	#if oo_DECLARING
-		// overridden methods:
-		public:
-			virtual void v_info ();
+		void v_info ()
+			override;
 	#endif
 oo_END_CLASS (VocalTractGrid)
 #undef ooSTRUCT
@@ -145,9 +143,8 @@ oo_DEFINE_CLASS (CouplingGrid, Function)
 		CouplingGrid_setNames (this);
 	#endif
 	#if oo_DECLARING
-		// overridden methods:
-		public:
-			virtual void v_info ();
+		void v_info ()
+			override;
 	#endif
 oo_END_CLASS (CouplingGrid)
 #undef ooSTRUCT
@@ -174,9 +171,8 @@ oo_DEFINE_CLASS (FricationGrid, Function)
 		FricationGrid_setNames (this);
 	#endif
 	#if oo_DECLARING
-		// overridden methods:
-		public:
-			virtual void v_info ();
+		void v_info ()
+			override;
 	#endif
 oo_END_CLASS (FricationGrid)
 #undef ooSTRUCT
@@ -205,9 +201,8 @@ oo_DEFINE_CLASS (KlattGrid, Function)
 		KlattGrid_setNames (this);
 	#endif
 	#if oo_DECLARING
-		// overridden methods:
-		protected:
-			virtual void v_info ();
+		void v_info ()
+			override;
 	#endif
 oo_END_CLASS (KlattGrid)
 #undef ooSTRUCT

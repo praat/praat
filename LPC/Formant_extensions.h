@@ -29,7 +29,7 @@
 #include "Spectrogram.h"
 
 
-void Formant_formula (Formant me, double tmin, double tmax, long formantmin, long formantmax, Interpreter interpreter, wchar_t *expression);
+void Formant_formula (Formant me, double tmin, double tmax, long formantmin, long formantmax, Interpreter interpreter, char32 *expression);
 IntensityTier Formant_and_Spectrogram_to_IntensityTier (Formant me, Spectrogram thee, long iformant);
 
 #endif /* _Formant_extensions_h_ */

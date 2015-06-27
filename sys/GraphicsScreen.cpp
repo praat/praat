@@ -73,7 +73,7 @@ void structGraphicsScreen :: v_destroy () {
 			cairo_surface_flush (d_cairoSurface);
 			if (d_isPng) {
 				#if 1
-					cairo_surface_write_to_png (d_cairoSurface, Melder_peekWcsToUtf8 (d_file. path));
+					cairo_surface_write_to_png (d_cairoSurface, Melder_peek32to8 (d_file. path));
 				#else
 					unsigned char *bitmap = cairo_image_surface_get_data (my d_cairoSurface);   // peeking into the internal bits
 					// copy bitmap to PNG structure created with the PNG library
@@ -96,7 +96,7 @@ void structGraphicsScreen :: v_destroy () {
 			d_winBrush = NULL;
 		}
 		if (d_isPng && d_gdiBitmap) {
-			trace ("saving the filled bitmap to a PNG file");
+			trace (U"saving the filled bitmap to a PNG file");
 			/*
 			 * Deselect the bitmap from the device context (otherwise GetDIBits won't work).
 			 */
@@ -107,7 +107,7 @@ void structGraphicsScreen :: v_destroy () {
 			GetObject (d_gdiBitmap, sizeof (BITMAP), & bitmap);
 			int width = bitmap. bmWidth, height = bitmap. bmHeight;
 			//int width = 3600, height = 3600;
-			trace ("width %d, height %d", width, height);
+			trace (U"width ", width, U", height ", height);
 
 			/*
 			 * Get the bits from the HBITMAP;
@@ -128,15 +128,15 @@ void structGraphicsScreen :: v_destroy () {
 			//HANDLE handle = GlobalAlloc (GHND, 4 * width * height);
 			//unsigned char *bits = (unsigned char *) GlobalLock (handle);
 			int numberOfLinesScanned = GetDIBits (GetDC (NULL), d_gdiBitmap, 0, height, bits, (BITMAPINFO *) & bitmapInfo, DIB_RGB_COLORS);
-			trace ("%d lines scanned", numberOfLinesScanned);
+			trace (numberOfLinesScanned, U" lines scanned");
 
-			trace ("creating a savable bitmap");
+			trace (U"creating a savable bitmap");
 
 			//Gdiplus::Bitmap gdiplusBitmap (width, height, PixelFormat32bppARGB);
 			Gdiplus::Bitmap gdiplusBitmap ((BITMAPINFO *) & bitmapInfo, bits);
 			gdiplusBitmap. SetResolution (resolution, resolution);
 
-			trace ("copying the device-independent bits to the savable bitmap.");
+			trace (U"copying the device-independent bits to the savable bitmap.");
 
 			/*
 			for (long irow = 1; irow <= height; irow ++) {
@@ -148,19 +148,19 @@ void structGraphicsScreen :: v_destroy () {
 			}
 			*/
 
-			trace ("saving");
+			trace (U"saving");
 
 			UINT numberOfImageEncoders, sizeOfImageEncoderArray;
 			Gdiplus::GetImageEncodersSize (& numberOfImageEncoders, & sizeOfImageEncoderArray);
 			Gdiplus::ImageCodecInfo *imageEncoderInfos = Melder_malloc (Gdiplus::ImageCodecInfo, sizeOfImageEncoderArray);
 			Gdiplus::GetImageEncoders (numberOfImageEncoders, sizeOfImageEncoderArray, imageEncoderInfos);
 			for (int iencoder = 0; iencoder < numberOfImageEncoders; iencoder ++) {
-				if (Melder_wcsequ (imageEncoderInfos [iencoder]. MimeType, L"image/png")) {
-					gdiplusBitmap. Save (d_file. path, & imageEncoderInfos [iencoder]. Clsid, NULL);
+				if (! wcscmp (imageEncoderInfos [iencoder]. MimeType, L"image/png")) {
+					gdiplusBitmap. Save (Melder_peek32toW (our d_file. path), & imageEncoderInfos [iencoder]. Clsid, NULL);
 				}
 			}
 
-			trace ("cleaning up");
+			trace (U"cleaning up");
 
 			Melder_free (imageEncoderInfos);
 			//bits -= 4 * width * height;
@@ -210,7 +210,7 @@ void structGraphicsScreen :: v_destroy () {
 			/*
 			 */
 			CFURLRef url = CFURLCreateWithFileSystemPath (NULL,
-				(CFStringRef) Melder_peekWcsToCfstring (d_file. path), kCFURLPOSIXPathStyle, false);
+				(CFStringRef) Melder_peek32toCfstring (d_file. path), kCFURLPOSIXPathStyle, false);
 			CGImageDestinationRef imageDestination = CGImageDestinationCreateWithURL (url, kUTTypePNG, 1, NULL);
 			Melder_assert (imageDestination != NULL);
 			CGImageDestinationAddImage (imageDestination, image, properties);
@@ -222,9 +222,9 @@ void structGraphicsScreen :: v_destroy () {
 		}
 		Melder_free (d_bits);
 	#endif
-	trace ("destroying parent");
+	trace (U"destroying parent");
 	GraphicsScreen_Parent :: v_destroy ();
-	trace ("exit");
+	trace (U"exit");
 }
 
 void structGraphicsScreen :: v_flushWs () {
@@ -274,11 +274,11 @@ void structGraphicsScreen :: v_clearWs () {
 			rect.height = this -> d_y1DC - this -> d_y2DC;
 		}
 		if (d_cairoGraphicsContext == NULL) {
-			trace ("clear and null");
+			trace (U"clear and null");
 			//gdk_window_clear (this -> window);
 			//gdk_window_invalidate_rect (this -> window, & rect, true);   // BUG: it seems weird that this is necessary.
 		} else {
-			trace ("clear and not null");
+			trace (U"clear and not null");
 			cairo_set_source_rgb (d_cairoGraphicsContext, 1.0, 1.0, 1.0);
 			cairo_rectangle (d_cairoGraphicsContext, rect.x, rect.y, rect.width, rect.height);
 			cairo_fill (d_cairoGraphicsContext);
@@ -312,7 +312,7 @@ void structGraphicsScreen :: v_clearWs () {
 			//rect.origin.y -= 1000;
 			//rect.size.width += 2000;
 			//rect.size.height += 2000;
-			trace ("clearing %f %f %f %f", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+			trace (U"clearing ", rect.origin.x, U" ", rect.origin.y, U" ", rect.size.width, U" ", rect.size.height);
                 //CGContextTranslateCTM (context, 0, cocoaDrawingArea.bounds.size.height);
                 //CGContextScaleCTM (context, 1.0, -1.0);
             CGContextFillRect (context, rect);
@@ -432,9 +432,9 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *void
 		my d_display = (GdkDisplay *) gdk_display_get_default ();
 		_GraphicsScreen_text_init (me);
 		#if ALLOW_GDK_DRAWING
-			trace ("retrieving window");
+			trace (U"retrieving window");
 			my d_window = GDK_DRAWABLE (GTK_WIDGET (voidDisplay) -> window);
-			trace ("retrieved window");
+			trace (U"retrieved window");
 			my d_gdkGraphicsContext = gdk_gc_new (my d_window);
 		#else
 			my d_window = gtk_widget_get_window (GTK_WIDGET (voidDisplay));
@@ -556,7 +556,7 @@ static void cb_move (GuiObject w, XtPointer void_me, XtPointer call) {
 #endif
 
 Graphics Graphics_create_xmdrawingarea (GuiDrawingArea w) {
-	trace ("begin");
+	trace (U"begin");
 	GraphicsScreen me = Thing_new (GraphicsScreen);
 	#if gtk
 		GtkRequisition realsize;
@@ -600,7 +600,7 @@ Graphics Graphics_create_xmdrawingarea (GuiDrawingArea w) {
 		gtk_widget_size_request (GTK_WIDGET (my d_drawingArea -> d_widget), & realsize);
 		gtk_widget_get_allocation (GTK_WIDGET (my d_drawingArea -> d_widget), & allocation);
 		// HIER WAS IK
-		trace ("requested %d x %d, allocated %d x %d", realsize.width, realsize.height, allocation.width, allocation.height);
+		trace (U"requested ", realsize.width, U" x ", realsize.height, U", allocated ", allocation.width, U" x ", allocation.height);
 		Graphics_setWsViewport ((Graphics) me, 0, realsize.width, 0, realsize.height);
 	#elif motif
 		XtVaGetValues (my d_drawingArea -> d_widget, XmNwidth, & width, XmNheight, & height, NULL);
@@ -662,7 +662,7 @@ Graphics Graphics_create_pngfile (MelderFile file, int resolution,
 			colourSpace,
 			kCGImageAlphaPremultipliedLast);
     	if (my d_macGraphicsContext == NULL)
-			Melder_throw ("Could not create PNG file ", file, ".");
+			Melder_throw (U"Could not create PNG file ", file, U".");
 		CGRect rect = CGRectMake (0, 0, width, height);
 		CGContextSetAlpha (my d_macGraphicsContext, 1.0);
 		CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeNormal);
@@ -674,14 +674,14 @@ Graphics Graphics_create_pngfile (MelderFile file, int resolution,
 		my metafile = TRUE;
 		HDC screenDC = GetDC (NULL);
 		my d_gdiGraphicsContext = CreateCompatibleDC (screenDC);
-		trace ("d_gdiGraphicsContext %p", my d_gdiGraphicsContext);
+		trace (U"d_gdiGraphicsContext ", Melder_pointer (my d_gdiGraphicsContext));
 		Melder_assert (my d_gdiGraphicsContext != NULL);
 		my d_gdiBitmap = CreateCompatibleBitmap (screenDC, (x2inches - x1inches) * resolution, (y2inches - y1inches) * resolution);
-		trace ("d_gdiBitmap %p", my d_gdiBitmap);
+		trace (U"d_gdiBitmap ", Melder_pointer (my d_gdiBitmap));
 		Melder_assert (my d_gdiBitmap != NULL);
 		ReleaseDC (NULL, screenDC);
 		SelectObject (my d_gdiGraphicsContext, my d_gdiBitmap);
-		trace ("bitmap selected into device context");
+		trace (U"bitmap selected into device context");
 		my resolution = resolution;
 		SetBkMode (my d_gdiGraphicsContext, TRANSPARENT);
 		my d_winPen = CreatePen (PS_SOLID, 0, RGB (0, 0, 0));
@@ -710,7 +710,7 @@ Graphics Graphics_create_pdffile (MelderFile file, int resolution,
 	#endif
 	Graphics_init (me.peek(), resolution);
 	#if gtk
-		my d_cairoSurface = cairo_pdf_surface_create (Melder_peekWcsToUtf8 (file -> path),
+		my d_cairoSurface = cairo_pdf_surface_create (Melder_peek32to8 (file -> path),
 			(x2inches - x1inches) * 72.0, (y2inches - y1inches) * 72.0);
 		my d_cairoGraphicsContext = cairo_create (my d_cairoSurface);
 		my d_x1DC = my d_x1DCmin = 0;
@@ -720,10 +720,10 @@ Graphics Graphics_create_pdffile (MelderFile file, int resolution,
 		Graphics_setWsWindow ((Graphics) me.peek(), 0, 7.5, 1.0, 12.0);
 		cairo_scale (my d_cairoGraphicsContext, 72.0 / resolution, 72.0 / resolution);
 	#elif mac
-		CFURLRef url = CFURLCreateWithFileSystemPath (NULL, (CFStringRef) Melder_peekWcsToCfstring (file -> path), kCFURLPOSIXPathStyle, false);
+		CFURLRef url = CFURLCreateWithFileSystemPath (NULL, (CFStringRef) Melder_peek32toCfstring (file -> path), kCFURLPOSIXPathStyle, false);
 		CGRect rect = CGRectMake (0, 0, (x2inches - x1inches) * 72.0, (y2inches - y1inches) * 72.0);   // don't tire PDF viewers with funny origins
-		CFStringRef key = (CFStringRef) Melder_peekWcsToCfstring (L"Creator");
-		CFStringRef value = (CFStringRef) Melder_peekWcsToCfstring (L"Praat");
+		CFStringRef key = (CFStringRef) Melder_peek32toCfstring (U"Creator");
+		CFStringRef value = (CFStringRef) Melder_peek32toCfstring (U"Praat");
 		CFIndex numberOfValues = 1;
 		CFDictionaryRef dictionary = CFDictionaryCreate (NULL, (const void **) & key, (const void **) & value, numberOfValues,
 			& kCFTypeDictionaryKeyCallBacks, & kCFTypeDictionaryValueCallBacks);
@@ -731,7 +731,7 @@ Graphics Graphics_create_pdffile (MelderFile file, int resolution,
 		CFRelease (url);
 		CFRelease (dictionary);
     	if (my d_macGraphicsContext == NULL)
-			Melder_throw ("Could not create PDF file ", file, ".");
+			Melder_throw (U"Could not create PDF file ", file, U".");
 		my d_x1DC = my d_x1DCmin = 0;
 		my d_x2DC = my d_x2DCmax = 7.5 * resolution;
 		my d_y1DC = my d_y1DCmin = 0;

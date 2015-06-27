@@ -1,6 +1,6 @@
 /* HyperPage_prefs.h
  *
- * Copyright (C) 2013 Paul Boersma
+ * Copyright (C) 2013,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 prefs_begin (HyperPage)
 	// new:
 		prefs_add_enum_with_data (HyperPage, font,     1, kGraphics_font, DEFAULT)
-		prefs_add_int_with_data  (HyperPage, fontSize, 1, L"12")
+		prefs_add_int_with_data  (HyperPage, fontSize, 1, U"12")
 prefs_end (HyperPage)
 
 /* End of file HyperPage_prefs.h */

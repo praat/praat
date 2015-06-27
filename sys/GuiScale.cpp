@@ -51,7 +51,7 @@ Thing_implement (GuiScale, GuiControl, 0);
 	- (void) dealloc {   // override
 		GuiScale me = d_userData;
 		forget (me);
-		trace ("deleting a progress bar");
+		trace (U"deleting a progress bar");
 		[super dealloc];
 	}
 	- (GuiThing) userData {
@@ -66,7 +66,7 @@ Thing_implement (GuiScale, GuiControl, 0);
 	void _GuiWinScale_destroy (GuiObject widget) {
 		iam_scale;
 		DestroyWindow (widget -> window);
-		trace ("forgetting a scale or a progress bar");
+		trace (U"forgetting a scale or a progress bar");
 		forget (me);   // NOTE: my widget is not destroyed here
 	}
 #elif mac
@@ -75,7 +75,7 @@ Thing_implement (GuiScale, GuiControl, 0);
 		EraseRect (& widget -> rect);
 		GuiMac_clipOff ();
 		iam_scale;
-		trace ("forgetting a scale or a progress bar");
+		trace (U"forgetting a scale or a progress bar");
 		forget (me);   // NOTE: my widget is not destroyed here
 	}
 #endif

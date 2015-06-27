@@ -160,7 +160,7 @@ void NUMrandom_init () {
 	for (int threadNumber = 0; threadNumber <= 16; threadNumber ++) {
 		const int numberOfKeys = 6;
 		uint64_t keys [numberOfKeys];
-		keys [0] = round (1e6 * Melder_clock ());   // unique between boots of the same computer
+		keys [0] = lround (1e6 * Melder_clock ());   // unique between boots of the same computer
 		keys [1] = UINT64_C (7320321686725470078) + (uint64_t) threadNumber;   // unique between threads in the same process
 		switch (threadNumber) {
 			case  0: keys [2] = UINT64_C  (4492812493098689432), keys [3] = UINT64_C  (8902321878452586268); break;
@@ -180,7 +180,7 @@ void NUMrandom_init () {
 			case 14: keys [2] = UINT64_C  (1238716515545475765), keys [3] = UINT64_C  (8435674023875847388); break;
 			case 15: keys [2] = UINT64_C  (6127715675014756456), keys [3] = UINT64_C  (2435788450287508457); break;
 			case 16: keys [2] = UINT64_C  (1081237546238975884), keys [3] = UINT64_C  (2939783238574293882); break;
-			default: Melder_fatal ("Thread number too high.");
+			default: Melder_fatal (U"Thread number too high.");
 		}
 		keys [4] = getpid ();   // unique between processes that run simultaneously on the same computer
 		#ifndef _WIN32

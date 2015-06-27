@@ -38,7 +38,7 @@ Thing_define (PointEditor, TimeSoundEditor) {
 		override;
 };
 
-PointEditor PointEditor_create (const wchar_t *title,
+PointEditor PointEditor_create (const char32 *title,
 	PointProcess point,
 	Sound sound   // may be NULL
 );

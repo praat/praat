@@ -65,16 +65,16 @@ static void dfunc_optimized (Data object, const double p[], double dp[]) {
 }
 
 static void _FFNet_Pattern_Activation_checkDimensions (FFNet me, Pattern p, Activation a) {
-	if (my nInputs != p -> nx) Melder_throw (L"The Pattern and the FFNet do not match.\n"
+	if (my nInputs != p -> nx) Melder_throw (U"The Pattern and the FFNet do not match.\n"
 		        "The number of colums in the Pattern must equal the number of inputs in the FFNet.");
-	if (my nOutputs != a -> nx) Melder_throw (L"The Activation and the FFNet do not match.\n"
+	if (my nOutputs != a -> nx) Melder_throw (U"The Activation and the FFNet do not match.\n"
 		        "The number of colums in the Activation must equal the number of outputs in the FFNet.");
-	if (p -> ny != a -> ny) Melder_throw (L"The Pattern and the Activation do not match.\n"
+	if (p -> ny != a -> ny) Melder_throw (U"The Pattern and the Activation do not match.\n"
 		                                      "The number of rows in the Pattern must equal the number of rows in the Activation.");
-	if (! _Pattern_checkElements (p)) Melder_throw (L"The elements in the Pattern are not all "
+	if (! _Pattern_checkElements (p)) Melder_throw (U"The elements in the Pattern are not all "
 		        "in the interval [0, 1].\nThe input of the neural net can only process values that are between 0 "
 		        "and 1.\nYou could use a \"Formula...\" to scale the Pattern values first.");
-	if (! _Activation_checkElements (a)) Melder_throw (L"The elements in the Activation are not "
+	if (! _Activation_checkElements (a)) Melder_throw (U"The elements in the Activation are not "
 		        "all in the interval [0, 1].\nThe output of the neural net can only process values that are "
 		        "between 0 and 1.\nYou could use \"Formula...\" to scale the Activation values first.");
 }
@@ -181,13 +181,13 @@ Activation FFNet_Pattern_to_Activation (FFNet me, Pattern p, long layer) {
 		if (layer < 1 || layer > my nLayers) {
 			layer = my nLayers;
 		}
-		if (my nInputs != p -> nx) Melder_throw ("The Pattern and the FFNet do not match. "
-			        "The number of colums in the Pattern (", p -> nx, ") must equal the number of inputs "
-			        "in the FFNet (", my nInputs, ").");
+		if (my nInputs != p -> nx) Melder_throw (U"The Pattern and the FFNet do not match. "
+			        U"The number of colums in the Pattern (", p -> nx, U") should equal the number of inputs "
+			        U"in the FFNet (", my nInputs, U").");
 		if (! _Pattern_checkElements (p)) Melder_throw
-			("The elements in the Activation are not all in the interval [0, 1].\n"
-			 "The output units of the neural net can only process values that are between 0 and 1.\n"
-			 "You could use \"Formula...\" to scale the Activation values first.");
+			(U"The elements in the Activation are not all in the interval [0, 1].\n"
+			 U"The output units of the neural net can only process values that are between 0 and 1.\n"
+			 U"You could use \"Formula...\" to scale the Activation values first.");
 
 		long nPatterns = p -> ny;
 		autoActivation thee = Activation_create (nPatterns, my nUnitsInLayer[layer]);
@@ -197,7 +197,7 @@ Activation FFNet_Pattern_to_Activation (FFNet me, Pattern p, long layer) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Activation created.");
+		Melder_throw (me, U": no Activation created.");
 	}
 }
 

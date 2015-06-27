@@ -1,6 +1,6 @@
 /* Artword.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,7 +85,7 @@ void Artword_setTarget (Artword me, int feature, double time, double target) {
 		f -> targets [insert] = target;
 		f -> times [insert] = time;
 	} catch (MelderError) {
-		Melder_throw (me, ": target not set.");
+		Melder_throw (me, U": target not set.");
 	}
 }
 
@@ -150,7 +150,7 @@ void Artword_draw (Artword me, Graphics g, int feature, int garnish) {
 		Graphics_marksBottom (g, 2, TRUE, TRUE, FALSE);
 		Graphics_marksLeft (g, 3, TRUE, TRUE, TRUE);
 		Graphics_textTop (g, FALSE, kArt_muscle_getText (feature));
-		Graphics_textBottom (g, TRUE, L"Time (s)");
+		Graphics_textBottom (g, TRUE, U"Time (s)");
 	}
 }
 

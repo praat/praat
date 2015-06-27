@@ -61,26 +61,26 @@ void praat_run (void);
 void praat_setStandAloneScriptText (char32 *text);   // call before praat_init if you want to create a stand-alone application without Objects and Picture window
 
 void praat_addAction (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
-	const wchar_t *title, const wchar_t *after, unsigned long flags,
-	void (*callback) (UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure));
+	const char32 *title, const char32 *after, unsigned long flags,
+	void (*callback) (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure));
 /* 'class2', 'class3', 'title', 'after', and 'callback' may be NULL; 'title' is reference-copied. */
 void praat_addAction1 (ClassInfo class1, int n1,
-	const wchar_t *title, const wchar_t *after, unsigned long flags,
-	void (*callback) (UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure));
+	const char32 *title, const char32 *after, unsigned long flags,
+	void (*callback) (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure));
 void praat_addAction2 (ClassInfo class1, int n1, ClassInfo class2, int n2,
-	const wchar_t *title, const wchar_t *after, unsigned long flags,
-	void (*callback) (UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure));
+	const char32 *title, const char32 *after, unsigned long flags,
+	void (*callback) (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure));
 void praat_addAction3 (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
-	const wchar_t *title, const wchar_t *after, unsigned long flags,
-	void (*callback) (UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure));
+	const char32 *title, const char32 *after, unsigned long flags,
+	void (*callback) (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure));
 void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3, ClassInfo class4, int n4,
-	const wchar_t *title, const wchar_t *after, unsigned long flags,
-	void (*callback) (UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure));
+	const char32 *title, const char32 *after, unsigned long flags,
+	void (*callback) (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure));
 /*
 	'title' is the name that will appear in the dynamic menu,
 		and also the command that is used in command files.
 	'callback' refers to a function prototyped like this:
-		static int DO_Class_action (UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter, void *closure);
+		static int DO_Class_action (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, void *closure);
 		this function should throw an exception if the command failed,
 		and return 1 if the command was executed successfully;
 		this function will be called by 'praat' when the user clicks a menu command,
@@ -117,12 +117,12 @@ void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, Class
 #define praat_DEPTH_6  0x00060000
 #define praat_DEPTH_7  0x00070000
 #define praat_CTRL  0x00200000
-void praat_removeAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, const wchar_t *title);
+void praat_removeAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, const char32 *title);
 	/* 'class2' and 'class3' may be NULL. */
 	/* 'title' may be NULL; reference-copied. */
 
-GuiMenuItem praat_addMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title,
-	const wchar_t *after, unsigned long flags, void (*callback) (UiForm, int narg, Stackel args, const wchar_t *, Interpreter, const wchar_t *, bool, void *));
+GuiMenuItem praat_addMenuCommand (const char32 *window, const char32 *menu, const char32 *title /* cattable */,
+	const char32 *after, unsigned long flags, void (*callback) (UiForm, int narg, Stackel args, const char32 *, Interpreter, const char32 *, bool, void *));
 /* All strings are reference-copied; 'title', 'after', and 'callback' may be NULL. */
 
 #define praat_MAXNUM_EDITORS 5
@@ -130,7 +130,7 @@ GuiMenuItem praat_addMenuCommand (const wchar_t *window, const wchar_t *menu, co
 typedef struct {
 	ClassInfo klas;   // the class
 	Data object;   // the instance
-	wchar_t *name;   // the name of the object as it appears in the List
+	char32 *name;   // the name of the object as it appears in the List
 	structMelderFile file;   // is this Object associated with a file?
 	long id;   // the unique number of the object
 	int selected;   // is the name of the object inverted in the list?
@@ -140,7 +140,7 @@ typedef struct {
 
 #define praat_MAXNUM_OBJECTS 10000   /* Maximum number of objects in the list. */
 typedef struct {   /* Readonly */
-	MelderString32 batchName;   /* The name of the command file when called from batch. */
+	MelderString batchName;   /* The name of the command file when called from batch. */
 	int batch;   /* Was the program called from the command line? */
 	GuiWindow topShell;   /* The application shell: parent of standard dialogs. */
 	ManPages manPages;
@@ -172,23 +172,19 @@ Data praat_onlyObject (ClassInfo klas);
 Data praat_onlyObject_generic (ClassInfo klas);
 	/* Returns a selected Data of class 'klas' or a subclass. */
 praat_Object praat_onlyScreenObject (void);
-wchar_t *praat_name (int iobject);
-void praat_write_do (Any dia, const wchar_t *extension);
-void praat_new (Data me, const wchar_t *s1);
-void praat_new (Data me, const wchar_t *s1, const wchar_t *s2);
-void praat_new (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3);
-void praat_new (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4);
-void praat_new (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5);
-void praat_new (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
-void praat_new (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7);
-void praat_new (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8);
-void praat_new (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9);
-void praat_newWithFile (Data me, const wchar_t *s1, MelderFile file);
-void praat_newWithFile (Data me, const wchar_t *s1, const wchar_t *s2, MelderFile file);
-void praat_newWithFile (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, MelderFile file);
-void praat_newWithFile (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, MelderFile file);
-void praat_newWithFile (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, MelderFile file);
-void praat_name2 (wchar_t *name, ClassInfo klas1, ClassInfo klas2);
+char32 *praat_name (int iobject);
+void praat_write_do (Any dia, const char32 *extension);
+void praat_new (Data me, Melder_1_ARG);
+void praat_new (Data me, Melder_2_ARGS);
+void praat_new (Data me, Melder_3_ARGS);
+void praat_new (Data me, Melder_4_ARGS);
+void praat_new (Data me, Melder_5_ARGS);
+void praat_new (Data me, Melder_6_ARGS);
+void praat_new (Data me, Melder_7_ARGS);
+void praat_new (Data me, Melder_8_ARGS);
+void praat_new (Data me, Melder_9_ARGS);
+void praat_newWithFile (Data me, MelderFile file, const char32 *name);
+void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
 /* Macros for description of forms (dialog boxes).
 	FORM prompts the user for arguments to DO_proc.
@@ -249,7 +245,7 @@ void praat_name2 (wchar_t *name, ClassInfo klas1, ClassInfo klas2);
 #ifndef _EditorM_h_
 
 #define FORM(proc,name,helpTitle) \
-	static void DO_##proc (UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *buttonClosure) { \
+	static void DO_##proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *buttonClosure) { \
 		static UiForm dia; \
 		if (dia == NULL) { \
 			Any radio = 0; \
@@ -294,7 +290,7 @@ void praat_name2 (wchar_t *name, ClassInfo klas1, ClassInfo klas2);
 #define DO \
 			UiForm_do (dia, modified); \
 		} else if (sendingForm == NULL) { \
-			trace ("args %p", args); \
+			trace (U"args ", Melder_pointer (args)); \
 			if (args) { \
 				UiForm_call (dia, narg, args, interpreter); \
 			} else { \
@@ -309,7 +305,7 @@ void praat_name2 (wchar_t *name, ClassInfo klas1, ClassInfo klas2);
 #define DO_ALTERNATIVE(alternative) \
 			UiForm_do (dia, modified); \
 		} else if (sendingForm == NULL) { \
-			trace ("alternative args %p", args); \
+			trace (U"alternative args ", Melder_pointer (args)); \
 			try { \
 				if (args) { \
 					UiForm_call (dia, narg, args, interpreter); \
@@ -317,7 +313,7 @@ void praat_name2 (wchar_t *name, ClassInfo klas1, ClassInfo klas2);
 					UiForm_parseString (dia, sendingString, interpreter); \
 				} \
 			} catch (MelderError) { \
-				wchar_t *parkedError = Melder_wcsdup_f (Melder_getError ()); \
+				char32 *parkedError = Melder_dup_f (Melder_getError ()); \
 				Melder_clearError (); \
 				try { \
 					DO_##alternative (NULL, narg, args, sendingString, interpreter, invokingButtonTitle, modified, buttonClosure); \
@@ -354,7 +350,7 @@ void praat_name2 (wchar_t *name, ClassInfo klas1, ClassInfo klas2);
 		}
 
 #define DIRECT(proc) \
-	static void DO_##proc (UiForm dummy1, int narg, Stackel args, const wchar_t *dummy2, Interpreter dummy3, const wchar_t *dummy4, bool dummy5, void *dummy6) { \
+	static void DO_##proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter dummy3, const char32 *dummy4, bool dummy5, void *dummy6) { \
 		(void) dummy1; (void) narg; (void) args; (void) dummy2; (void) dummy3; (void) dummy4; (void) dummy5; (void) dummy6; \
 		{ \
 			try { \
@@ -363,7 +359,7 @@ void praat_name2 (wchar_t *name, ClassInfo klas1, ClassInfo klas2);
 				{
 
 #define DIRECT2(proc) \
-	static void DO_##proc (UiForm dummy1, int narg, Stackel args, const wchar_t *dummy2, Interpreter dummy3, const wchar_t *dummy4, bool dummy5, void *dummy6) { \
+	static void DO_##proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter dummy3, const char32 *dummy4, bool dummy5, void *dummy6) { \
 		(void) dummy1; (void) narg; (void) args; (void) dummy2; (void) dummy3; (void) dummy4; (void) dummy5; (void) dummy6; \
 		{ \
 			try { \
@@ -371,7 +367,7 @@ void praat_name2 (wchar_t *name, ClassInfo klas1, ClassInfo klas2);
 				(void) IOBJECT;
 
 #define FORM_READ(proc,title,help,allowMult) \
-	static void DO_##proc (UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *okClosure) { \
+	static void DO_##proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *okClosure) { \
 		static UiForm dia; \
 		(void) narg; \
 		(void) interpreter; \
@@ -390,13 +386,13 @@ void praat_name2 (wchar_t *name, ClassInfo klas1, ClassInfo klas2);
 				if (args == NULL && sendingString == NULL) { \
 					file = UiFile_getFile (dia); \
 				} else { \
-					Melder_relativePathToFile (args ? args [1]. string : Melder_peekWcsToStr32 (sendingString), & file2); \
+					Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); \
 					file = & file2; \
 				} \
 				{
 
 #define FORM_READ2(proc,title,help,allowMult) \
-	static void DO_##proc (UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *okClosure) { \
+	static void DO_##proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *okClosure) { \
 		static UiForm dia; \
 		(void) narg; \
 		(void) interpreter; \
@@ -415,12 +411,12 @@ void praat_name2 (wchar_t *name, ClassInfo klas1, ClassInfo klas2);
 				if (args == NULL && sendingString == NULL) { \
 					file = UiFile_getFile (dia); \
 				} else { \
-					Melder_relativePathToFile (args ? args [1]. string : Melder_peekWcsToStr32 (sendingString), & file2); \
+					Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); \
 					file = & file2; \
 				} \
 
 #define FORM_WRITE(proc,title,help,ext) \
-	static void DO_##proc (UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *okClosure) { \
+	static void DO_##proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *okClosure) { \
 		static Any dia; \
 		(void) narg; \
 		(void) interpreter; \
@@ -439,13 +435,13 @@ void praat_name2 (wchar_t *name, ClassInfo klas1, ClassInfo klas2);
 				if (args == NULL && sendingString == NULL) { \
 					file = UiFile_getFile (dia); \
 				} else { \
-					Melder_relativePathToFile (args ? args [1]. string : Melder_peekWcsToStr32 (sendingString), & file2); \
+					Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); \
 					file = & file2; \
 				} \
 				{
 
 #define FORM_WRITE2(proc,title,help,ext) \
-	static void DO_##proc (UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *okClosure) { \
+	static void DO_##proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *okClosure) { \
 		static Any dia; \
 		(void) narg; \
 		(void) interpreter; \
@@ -464,7 +460,7 @@ void praat_name2 (wchar_t *name, ClassInfo klas1, ClassInfo klas2);
 				if (args == NULL && sendingString == NULL) { \
 					file = UiFile_getFile (dia); \
 				} else { \
-					Melder_relativePathToFile (args ? args [1]. string : Melder_peekWcsToStr32 (sendingString), & file2); \
+					Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); \
 					file = & file2; \
 				}
 
@@ -481,7 +477,7 @@ void praat_name2 (wchar_t *name, ClassInfo klas1, ClassInfo klas2);
 #define GET_REAL(name)  UiForm_getReal (dia, name)
 #define GET_INTEGER(name)  UiForm_getInteger (dia, name)
 #define GET_STRING(name)  UiForm_getString (dia, name)
-#define GET_ENUM(enum,name)  (enum) enum##_getValue (Melder_peekWcsToStr32 (GET_STRING (name)))
+#define GET_ENUM(enum,name)  (enum) enum##_getValue (GET_STRING (name))
 #define GET_COLOUR(name)  UiForm_getColour (dia, name)
 #define GET_FILE(name)  UiForm_getFile (dia, name)
 #define REQUIRE(c,t)  if (! (c)) Melder_throw (t);
@@ -496,7 +492,7 @@ void praat_name2 (wchar_t *name, ClassInfo klas1, ClassInfo klas2);
 #define GRAPHICS  theCurrentPraatPicture -> graphics
 #define FULL_NAME  (theCurrentPraatObjects -> list [IOBJECT]. name)
 #define ID  (theCurrentPraatObjects -> list [IOBJECT]. id)
-#define ID_AND_FULL_NAME  Melder_wcscat (Melder_integer (ID), L". ", FULL_NAME)
+#define ID_AND_FULL_NAME  Melder_cat (ID, U". ", FULL_NAME)
 #define NAME  praat_name (IOBJECT)
 #define EVERY(proc)  WHERE (SELECTED) proc;
 #define EVERY_CHECK(proc)  EVERY (if (! proc) return 0)
@@ -526,7 +522,7 @@ int praat_installEditor (Editor editor, int iobject);
       Return value: normally 1, but 0 if 'editor' is NULL.
    A typical calling sequence is:
 	DIRECT (Spectrogram_edit)
-		if (praat.batch) Melder_throw ("Cannot edit a Spectrogram from batch.");
+		if (praat.batch) Melder_throw (U"Cannot edit a Spectrogram from batch.");
 		else WHERE (SELECTED)
 			praat_installEditor
 				(SpectrogramEditor_create (praat.topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT);

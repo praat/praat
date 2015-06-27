@@ -1,6 +1,6 @@
 /* Manipulation.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ Manipulation Manipulation_create (double tmin, double tmax) {
 		my duration = DurationTier_create (tmin, tmax);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Manipulation object not created.");
+		Melder_throw (U"Manipulation object not created.");
 	}
 }
 
@@ -87,7 +87,7 @@ int Manipulation_replaceOriginalSound (Manipulation me, Sound sound) {
 		my sound = sound2.transfer();
 		return 1;
 	} catch (MelderError) {
-		Melder_throw (me, ": original Sound not replaced with ", sound, ".");
+		Melder_throw (me, U": original Sound not replaced with ", sound, U".");
 	}
 }
 
@@ -98,7 +98,7 @@ int Manipulation_replacePulses (Manipulation me, PointProcess pulses) {
 		my pulses = pulses2.transfer();
 		return 1;
 	} catch (MelderError) {
-		Melder_throw (me, ": pulses not replaced with ", pulses, ".");
+		Melder_throw (me, U": pulses not replaced with ", pulses, U".");
 	}
 }
 
@@ -109,7 +109,7 @@ int Manipulation_replacePitchTier (Manipulation me, PitchTier pitch) {
 		my pitch = pitch2.transfer();
 		return 1;
 	} catch (MelderError) {
-		Melder_throw (me, ": pitch tier not replaced with ", pitch, ".");
+		Melder_throw (me, U": pitch tier not replaced with ", pitch, U".");
 	}
 }
 
@@ -120,7 +120,7 @@ int Manipulation_replaceDurationTier (Manipulation me, DurationTier duration) {
 		my duration = duration2.transfer();
 		return 1;
 	} catch (MelderError) {
-		Melder_throw (me, ": duration tier not replaced with ", duration, ".");
+		Melder_throw (me, U": duration tier not replaced with ", duration, U".");
 	}
 }
 
@@ -135,7 +135,7 @@ Manipulation Sound_to_Manipulation (Sound me, double timeStep, double minimumPit
 		/* (DurationTier has been done at creation time) */
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Manipulation.");
+		Melder_throw (me, U": not converted to Manipulation.");
 	}
 }
 
@@ -148,7 +148,7 @@ Manipulation Sound_Pitch_to_Manipulation (Sound sound, Pitch pitch) {
 		my pitch = Pitch_to_PitchTier (pitch);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw (sound, " & ", pitch, ": not converted to Manipulation.");
+		Melder_throw (sound, U" & ", pitch, U": not converted to Manipulation.");
 	}
 }
 
@@ -161,7 +161,7 @@ Manipulation Sound_PointProcess_to_Manipulation (Sound sound, PointProcess point
 		my pitch = PointProcess_to_PitchTier (point, MAX_T);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw (sound, " & ", point, ": not converted to Manipulation.");
+		Melder_throw (sound, U" & ", point, U": not converted to Manipulation.");
 	}
 }
 
@@ -170,7 +170,7 @@ int Manipulation_playPart (Manipulation me, double tmin, double tmax, int method
 		if (method == Manipulation_OVERLAPADD) {
 			Sound saved = my sound;
 			if (! my sound)
-				Melder_throw ("Cannot synthesize overlap-add without a sound.");
+				Melder_throw (U"Cannot synthesize overlap-add without a sound.");
 			autoSound part = Data_copy (my sound);
 			long imin = Sampled_xToLowIndex (part.peek(), tmin), imax = Sampled_xToHighIndex (part.peek(), tmax);
 			double *amp = part -> z [1];
@@ -196,7 +196,7 @@ int Manipulation_playPart (Manipulation me, double tmin, double tmax, int method
 		}
 		return 1;
 	} catch (MelderError) {
-		Melder_throw (me, ": not played.");
+		Melder_throw (me, U": not played.");
 	}
 }
 
@@ -206,7 +206,7 @@ int Manipulation_play (Manipulation me, int method) {
 		Sound_play (sound.peek(), NULL, NULL);
 		return 1;
 	} catch (MelderError) {
-		Melder_throw (me, ": not played.");
+		Melder_throw (me, U": not played.");
 	}
 }
 
@@ -283,7 +283,7 @@ static void copyFlat (Sound me, double tmin, double tmax, Sound thee, double tmi
 	if (imax < imin) return;
 	long iminTarget = Sampled_xToHighIndex (thee, tminTarget);
 	if (iminTarget < 1) iminTarget = 1;
-	trace ("%.17g %.17g %.17g %ld %ld %ld", tmin, tmax, tminTarget, imin, imax, iminTarget);
+	trace (tmin, U" ", tmax, U" ", tminTarget, U" ", imin, U" ", imax, U" ", iminTarget);
 	Melder_assert (iminTarget + imax - imin <= thy nx);
 	NUMvector_copyElements (my z [1] + imin, thy z [1] + iminTarget, 0, imax - imin);
 }
@@ -326,7 +326,7 @@ Sound Sound_Point_Point_to_Sound (Sound me, PointProcess source, PointProcess ta
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not manipulated.");
+		Melder_throw (me, U": not manipulated.");
 	}
 }
 
@@ -342,7 +342,7 @@ Sound Sound_Point_Pitch_Duration_to_Sound (Sound me, PointProcess pulses,
 		double durationOfSourceVoice, durationOfTargetVoice;
 		double startingPeriod, finishingPeriod, ttarget, voicelessPeriod;
 		if (duration -> points -> size == 0)
-			Melder_throw ("No duration points.");
+			Melder_throw (U"No duration points.");
 
 		/*
 		 * Create a Sound long enough to hold the longest possible duration-manipulated sound.
@@ -476,97 +476,97 @@ Sound Sound_Point_Pitch_Duration_to_Sound (Sound me, PointProcess pulses,
 
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not manipulated.");
+		Melder_throw (me, U": not manipulated.");
 	}
 }
 
 static Sound synthesize_overlapAdd_nodur (Manipulation me) {
 	try {
-		if (! my sound)  Melder_throw ("Missing original sound.");
-		if (! my pulses) Melder_throw ("Missing pulses analysis.");
-		if (! my pitch)  Melder_throw ("Missing pitch manipulation.");
+		if (! my sound)  Melder_throw (U"Missing original sound.");
+		if (! my pulses) Melder_throw (U"Missing pulses analysis.");
+		if (! my pitch)  Melder_throw (U"Missing pitch manipulation.");
 		autoPointProcess targetPulses = PitchTier_Point_to_PointProcess (my pitch, my pulses, MAX_T);
 		autoSound thee = Sound_Point_Point_to_Sound (my sound, my pulses, targetPulses.peek(), MAX_T);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": overlap-add synthesis (without duration) not performed.");
+		Melder_throw (me, U": overlap-add synthesis (without duration) not performed.");
 	}
 }
 
 static Sound synthesize_overlapAdd (Manipulation me) {
 	if (! my duration || my duration -> points -> size == 0) return synthesize_overlapAdd_nodur (me);
 	try {
-		if (! my sound)  Melder_throw ("Missing original sound.");
-		if (! my pulses) Melder_throw ("Missing pulses analysis.");
-		if (! my pitch)  Melder_throw ("Missing pitch manipulation.");
+		if (! my sound)  Melder_throw (U"Missing original sound.");
+		if (! my pulses) Melder_throw (U"Missing pulses analysis.");
+		if (! my pitch)  Melder_throw (U"Missing pitch manipulation.");
 		autoSound thee = Sound_Point_Pitch_Duration_to_Sound (my sound, my pulses, my pitch, my duration, MAX_T);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": overlap-add synthesis not performed.");
+		Melder_throw (me, U": overlap-add synthesis not performed.");
 	}
 }
 
 static Sound synthesize_pulses (Manipulation me) {
 	try {
-		if (! my pulses) Melder_throw ("Missing pulses analysis.");
+		if (! my pulses) Melder_throw (U"Missing pulses analysis.");
 		return PointProcess_to_Sound_pulseTrain (my pulses, 44100, 0.7, 0.05, 30);
 	} catch (MelderError) {
-		Melder_throw (me, ": pulses synthesis not performed.");
+		Melder_throw (me, U": pulses synthesis not performed.");
 	}
 }
 
 static Sound synthesize_pulses_hum (Manipulation me) {
 	try {
-		if (! my pulses) Melder_throw ("Missing pulses analysis.");
+		if (! my pulses) Melder_throw (U"Missing pulses analysis.");
 		return PointProcess_to_Sound_hum (my pulses);
 	} catch (MelderError) {
-		Melder_throw (me, ": pulses hum synthesis not performed.");
+		Melder_throw (me, U": pulses hum synthesis not performed.");
 	}
 }
 
 static Sound synthesize_pitch (Manipulation me) {
 	try {
-		if (! my pitch) Melder_throw ("Missing pitch tier.");
+		if (! my pitch) Melder_throw (U"Missing pitch tier.");
 		autoPointProcess pulses = PitchTier_to_PointProcess (my pitch);
 		autoSound thee = PointProcess_to_Sound_pulseTrain (pulses.peek(), 44100, 0.7, 0.05, 30);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": pitch manipulation not synthesized.");
+		Melder_throw (me, U": pitch manipulation not synthesized.");
 	}
 }
 
 static Sound synthesize_pitch_hum (Manipulation me) {
 	try {
-		if (! my pitch) Melder_throw ("Missing pitch tier.");
+		if (! my pitch) Melder_throw (U"Missing pitch tier.");
 		autoPointProcess pulses = PitchTier_to_PointProcess (my pitch);
 		autoSound thee = PointProcess_to_Sound_hum (pulses.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": pitch hum manipulation not synthesized.");
+		Melder_throw (me, U": pitch hum manipulation not synthesized.");
 	}
 }
 
 static Sound synthesize_pulses_pitch (Manipulation me) {
 	try {
-		if (! my pulses) Melder_throw ("Missing pulses analysis.");
-		if (! my pitch)  Melder_throw ("Missing pitch tier.");
+		if (! my pulses) Melder_throw (U"Missing pulses analysis.");
+		if (! my pitch)  Melder_throw (U"Missing pitch tier.");
 		autoPointProcess pulses = PitchTier_Point_to_PointProcess (my pitch, my pulses, MAX_T);
 		autoSound thee = PointProcess_to_Sound_pulseTrain (pulses.peek(), 44100, 0.7, 0.05, 30);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": pitch pulses manipulation not synthesized.");
+		Melder_throw (me, U": pitch pulses manipulation not synthesized.");
 	}
 }
 
 static Sound synthesize_pulses_pitch_hum (Manipulation me) {
 	try {
-		if (! my pulses) Melder_throw ("Missing pulses analysis.");
-		if (! my pitch)  Melder_throw ("Missing pitch tier.");
+		if (! my pulses) Melder_throw (U"Missing pulses analysis.");
+		if (! my pitch)  Melder_throw (U"Missing pitch tier.");
 		autoPointProcess pulses = PitchTier_Point_to_PointProcess (my pitch, my pulses, MAX_T);
 		autoSound thee = PointProcess_to_Sound_hum (pulses.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": pitch pulses hum manipulation not synthesized.");
+		Melder_throw (me, U": pitch pulses hum manipulation not synthesized.");
 	}
 }
 
@@ -580,13 +580,13 @@ void Sound_Formant_Intensity_filter (Sound me, FormantTier formantTier, Intensit
 
 static Sound synthesize_pulses_formant (Manipulation me, int useIntensity) {
 	try {
-		if (! my pulses)  Melder_throw ("Missing pulses analysis.");
-		if (! my formant) Melder_throw ("Missing formant information.");
+		if (! my pulses)  Melder_throw (U"Missing pulses analysis.");
+		if (! my formant) Melder_throw (U"Missing formant information.");
 		autoSound thee = PointProcess_to_Sound (my pulses, 44100, 0.7, 0.05, 30);
 		Sound_Formant_Intensity_filter (thee.peek(), my formant, useIntensity ? my intensity : NULL);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": formant and pulses manipulation not synthesized.");
+		Melder_throw (me, U": formant and pulses manipulation not synthesized.");
 	}
 }
 */
@@ -624,11 +624,11 @@ static void Sound_PointProcess_fillVoiceless (Sound me, PointProcess pulses) {
 static Sound synthesize_pulses_lpc (Manipulation me) {
 	try {
 		if (! my lpc) {
-			if (! my sound) Melder_throw ("Missing original sound.");
+			if (! my sound) Melder_throw (U"Missing original sound.");
 			autoSound sound10k = Sound_resample (my sound, 10000, 50);
 			my lpc = Sound_to_LPC_burg (sound10k.peek(), 20, 0.025, 0.01, 50.0);
 		}
-		if (! my pulses) Melder_throw ("Missing pulses analysis.");
+		if (! my pulses) Melder_throw (U"Missing pulses analysis.");
 		autoSound train = PointProcess_to_Sound_pulseTrain (my pulses, 1 / my lpc -> samplingPeriod, 0.7, 0.05, 30);
 		train -> dx = my lpc -> samplingPeriod;   // to be exact
 		Sound_PointProcess_fillVoiceless (train.peek(), my pulses);
@@ -637,19 +637,19 @@ static Sound synthesize_pulses_lpc (Manipulation me) {
 		Vector_scale (result.peek(), 0.99);
 		return result.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": LPC synthesis not performed.");
+		Melder_throw (me, U": LPC synthesis not performed.");
 	}
 }
 
 static Sound synthesize_pitch_lpc (Manipulation me) {
 	try {
 		if (! my lpc) {
-			if (! my sound) Melder_throw ("Missing original sound.");
+			if (! my sound) Melder_throw (U"Missing original sound.");
 			autoSound sound10k = Sound_resample (my sound, 10000, 50);
 			my lpc = Sound_to_LPC_burg (sound10k.peek(), 20, 0.025, 0.01, 50.0);
 		}
-		if (! my pitch)  Melder_throw ("Missing pitch manipulation.");
-		if (! my pulses) Melder_throw ("Missing pulses analysis.");
+		if (! my pitch)  Melder_throw (U"Missing pitch manipulation.");
+		if (! my pulses) Melder_throw (U"Missing pulses analysis.");
 		autoPointProcess pulses = PitchTier_Point_to_PointProcess (my pitch, my pulses, MAX_T);
 		autoSound train = PointProcess_to_Sound_pulseTrain (pulses.peek(), 1 / my lpc -> samplingPeriod, 0.7, 0.05, 30);
 		train -> dx = my lpc -> samplingPeriod;   // to be exact
@@ -659,7 +659,7 @@ static Sound synthesize_pitch_lpc (Manipulation me) {
 		Vector_scale (result.peek(), 0.99);
 		return result.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": pitch LPC synthesis not performed.");
+		Melder_throw (me, U": pitch LPC synthesis not performed.");
 	}
 }
 
@@ -685,7 +685,7 @@ Sound Manipulation_to_Sound (Manipulation me, int method) {
 
 Manipulation Manipulation_AnyTier_to_Manipulation (Manipulation me, AnyTier tier) {
 	try {
-		if (! my pitch) Melder_throw ("Missing pitch manipulation.");
+		if (! my pitch) Melder_throw (U"Missing pitch manipulation.");
 		autoManipulation result = Data_copy (me);
 		/*
 		 * Create without change.
@@ -700,7 +700,7 @@ Manipulation Manipulation_AnyTier_to_Manipulation (Manipulation me, AnyTier tier
 		 */
 		return result.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted.");
+		Melder_throw (me, U": not converted.");
 	}
 }
 
@@ -713,7 +713,7 @@ int Manipulation_writeToTextFileWithoutSound (Manipulation me, MelderFile file) 
 		return 1;
 	} catch (MelderError) {
 		my sound = saved;
-		Melder_throw (me, ": not saved to text file.");
+		Melder_throw (me, U": not saved to text file.");
 	}
 }
 
@@ -726,7 +726,7 @@ int Manipulation_writeToBinaryFileWithoutSound (Manipulation me, MelderFile file
 		return 1;
 	} catch (MelderError) {
 		my sound = saved;
-		Melder_throw (me, ": not saved to binary file.");
+		Melder_throw (me, U": not saved to binary file.");
 	}
 }
 

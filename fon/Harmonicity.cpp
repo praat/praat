@@ -1,6 +1,6 @@
 /* Harmonicity.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,41 +80,41 @@ double Harmonicity_getQuantile (Harmonicity me, double quantile) {
 
 void structHarmonicity :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine (L"Time domain:");
-	MelderInfo_writeLine (L"   Start time: ", Melder_double (xmin), L" seconds");
-	MelderInfo_writeLine (L"   End time: ", Melder_double (xmax), L" seconds");
-	MelderInfo_writeLine (L"   Total duration: ", Melder_double (xmax - xmin), L" seconds");
+	MelderInfo_writeLine (U"Time domain:");
+	MelderInfo_writeLine (U"   Start time: ", xmin, U" seconds");
+	MelderInfo_writeLine (U"   End time: ", xmax, U" seconds");
+	MelderInfo_writeLine (U"   Total duration: ", xmax - xmin, U" seconds");
 	autoNUMvector <double> strengths (1, nx);
 	long nSounding = 0;
 	for (long ix = 1; ix <= nx; ix ++)
 		if (z [1] [ix] != -200)
 			strengths [++ nSounding] = z [1] [ix];
-	MelderInfo_writeLine (L"Time sampling:");
-	MelderInfo_writeLine (L"   Number of frames: ", Melder_integer (nx), L" (", Melder_integer (nSounding), L" sounding)");
-	MelderInfo_writeLine (L"   Time step: ", Melder_double (dx), L" seconds");
-	MelderInfo_writeLine (L"   First frame centred at: ", Melder_double (x1), L" seconds");
+	MelderInfo_writeLine (U"Time sampling:");
+	MelderInfo_writeLine (U"   Number of frames: ", nx, U" (", nSounding, U" sounding)");
+	MelderInfo_writeLine (U"   Time step: ", dx, U" seconds");
+	MelderInfo_writeLine (U"   First frame centred at: ", x1, U" seconds");
 	if (nSounding) {
 		double sum = 0, sumOfSquares = 0;
-		MelderInfo_writeLine (L"Periodicity-to-noise ratios of sounding frames:");
+		MelderInfo_writeLine (U"Periodicity-to-noise ratios of sounding frames:");
 		NUMsort_d (nSounding, strengths.peek());
-		MelderInfo_writeLine (L"   Median ", Melder_single (NUMquantile (nSounding, strengths.peek(), 0.50)), L" dB");
-		MelderInfo_writeLine (L"   10 % = ", Melder_single (NUMquantile (nSounding, strengths.peek(), 0.10)), L" dB   90 %% = ",
-			Melder_single (NUMquantile (nSounding, strengths.peek(), 0.90)), L" dB");
-		MelderInfo_writeLine (L"   16 % = ", Melder_single (NUMquantile (nSounding, strengths.peek(), 0.16)), L" dB   84 %% = ",
-			Melder_single (NUMquantile (nSounding, strengths.peek(), 0.84)), L" dB");
-		MelderInfo_writeLine (L"   25 % = ", Melder_single (NUMquantile (nSounding, strengths.peek(), 0.25)), L" dB   75 %% = ",
-			Melder_single (NUMquantile (nSounding, strengths.peek(), 0.75)), L" dB");
-		MelderInfo_writeLine (L"Minimum: ", Melder_single (strengths [1]), L" dB");
-		MelderInfo_writeLine (L"Maximum: ", Melder_single (strengths [nSounding]), L" dB");
+		MelderInfo_writeLine (U"   Median ", Melder_single (NUMquantile (nSounding, strengths.peek(), 0.50)), U" dB");
+		MelderInfo_writeLine (U"   10 % = ", Melder_single (NUMquantile (nSounding, strengths.peek(), 0.10)), U" dB   90 %% = ",
+			Melder_single (NUMquantile (nSounding, strengths.peek(), 0.90)), U" dB");
+		MelderInfo_writeLine (U"   16 % = ", Melder_single (NUMquantile (nSounding, strengths.peek(), 0.16)), U" dB   84 %% = ",
+			Melder_single (NUMquantile (nSounding, strengths.peek(), 0.84)), U" dB");
+		MelderInfo_writeLine (U"   25 % = ", Melder_single (NUMquantile (nSounding, strengths.peek(), 0.25)), U" dB   75 %% = ",
+			Melder_single (NUMquantile (nSounding, strengths.peek(), 0.75)), U" dB");
+		MelderInfo_writeLine (U"Minimum: ", Melder_single (strengths [1]), U" dB");
+		MelderInfo_writeLine (U"Maximum: ", Melder_single (strengths [nSounding]), U" dB");
 		for (long i = 1; i <= nSounding; i ++) {
 			double f = strengths [i];
 			sum += f;
 			sumOfSquares += f * f;
 		}
-		MelderInfo_writeLine (L"Average: ", Melder_single (sum / nSounding), L" dB");
+		MelderInfo_writeLine (U"Average: ", Melder_single (sum / nSounding), U" dB");
 		if (nSounding > 1) {
 			double var = (sumOfSquares - sum * sum / nSounding) / (nSounding - 1);
-			MelderInfo_writeLine (L"Standard deviation: ", Melder_single (var < 0.0 ? 0.0 : sqrt (var)), L" dB");
+			MelderInfo_writeLine (U"Standard deviation: ", Melder_single (var < 0.0 ? 0.0 : sqrt (var)), U" dB");
 		}
 	}
 }
@@ -125,7 +125,7 @@ Harmonicity Harmonicity_create (double tmin, double tmax, long nt, double dt, do
 		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, 1, 1, 1, 1, 1);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Harmonicity not created.");
+		Melder_throw (U"Harmonicity not created.");
 	}
 }
 
@@ -135,7 +135,7 @@ Matrix Harmonicity_to_Matrix (Harmonicity me) {
 		NUMvector_copyElements (my z [1], thy z [1], 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, "not converted to Matrix.");
+		Melder_throw (me, U"not converted to Matrix.");
 	}
 }
 
@@ -145,7 +145,7 @@ Harmonicity Matrix_to_Harmonicity (Matrix me) {
 		NUMvector_copyElements (my z [1], thy z [1], 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, "not converted to Harmonicity.");
+		Melder_throw (me, U"not converted to Harmonicity.");
 	}
 }
 

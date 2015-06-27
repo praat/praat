@@ -75,11 +75,11 @@ void LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee, int audi
 		long numberOfReads = (nx - 1) / nbuf + 1, numberOfBitsPerSamplePoint = 16;
 
 		if (thy numberOfChannels != my numberOfChannels || my numberOfChannels != 1) {
-			Melder_throw ("LongSounds must be mono.");
+			Melder_throw (U"LongSounds should be mono.");
 		}
 
 		if (my sampleRate != thy sampleRate) {
-			Melder_throw ("Sample rates must be equal.");
+			Melder_throw (U"Sample rates should be equal.");
 		}
 
 		/*
@@ -93,7 +93,7 @@ void LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee, int audi
 		autoNUMvector<short> buffer (1, nchannels * nbuf);
 
 		autoMelderFile f  = MelderFile_create (file);
-		MelderFile_writeAudioFileHeader (file, audioFileType, my sampleRate, nx, nchannels, numberOfBitsPerSamplePoint);
+		MelderFile_writeAudioFileHeader (file, audioFileType, (long) floor (my sampleRate), nx, nchannels, numberOfBitsPerSamplePoint);
 
 		for (long i = 1; i <= numberOfReads; i++) {
 			long n_to_write = i == numberOfReads ? (nx - 1) % nbuf + 1 : nbuf;
@@ -102,10 +102,10 @@ void LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee, int audi
 			MelderFile_writeShortToAudio (file, nchannels, Melder_defaultAudioFileEncoding (audioFileType,
                 numberOfBitsPerSamplePoint), buffer.peek(), n_to_write);
 		}
-		MelderFile_writeAudioFileTrailer (file, audioFileType, my sampleRate, nx, nchannels, numberOfBitsPerSamplePoint);
+		MelderFile_writeAudioFileTrailer (file, audioFileType, (long) floor (my sampleRate), nx, nchannels, numberOfBitsPerSamplePoint);
 		f.close ();
 	} catch (MelderError) {
-		Melder_throw (me, ": no stereo audio file created.");
+		Melder_throw (me, U": no stereo audio file created.");
 	}
 }
 
@@ -128,10 +128,10 @@ static void MelderFile_truncate (MelderFile me, long size) {
 
 	MelderFile_close (me);
 
-	hFile = CreateFileW (my path, fdwAccess, fdwShareMode, lpsa, fdwCreate,
+	hFile = CreateFileW (Melder_peek32toW (my path), fdwAccess, fdwShareMode, lpsa, fdwCreate,
 	                     FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hFile == INVALID_HANDLE_VALUE) {
-		Melder_throw ("Can't open file ", MelderFile_messageName (me), ".");
+		Melder_throw (U"Can't open file ", me, U".");
 	}
 
 	// Set current file pointer to position 'size'
@@ -140,7 +140,7 @@ static void MelderFile_truncate (MelderFile me, long size) {
 	fileSize.HighPart = 0; /* Limit the file size to 2^32 - 2 bytes */
 	fPos = SetFilePointer (hFile, fileSize.LowPart, &fileSize.HighPart, FILE_BEGIN);
 	if (fPos == 0xFFFFFFFF) {
-		Melder_throw ("Can't set the position at size ", size, "for file ", 	MelderFile_messageName (me), ".");
+		Melder_throw (U"Can't set the position at size ", size, U"for file ", me, U".");
 	}
 
 	// Limit the file size as the current position of the file pointer.
@@ -151,10 +151,10 @@ static void MelderFile_truncate (MelderFile me, long size) {
 #elif defined(linux) || defined(macintosh)
 
 	MelderFile_close (me);
-	if (truncate (Melder_peekWcsToUtf8 (my path), size) == -1) Melder_throw ("Truncating failed for file ",
-		        MelderFile_messageName (me), " (", Melder_peekUtf8ToWcs (strerror (errno)), ").");
+	if (truncate (Melder_peek32to8 (my path), size) == -1) Melder_throw (U"Truncating failed for file ",
+		        MelderFile_messageName (me), U" (", Melder_peek8to32 (strerror (errno)), U").");
 #else
-	Melder_throw ("Don't know what to do.");
+	Melder_throw (U"Don't know what to do.");
 #endif
 }
 
@@ -182,7 +182,7 @@ void LongSounds_appendToExistingSoundFile (Collection me, MelderFile file) {
 	long pre_append_endpos = 0, numberOfBitsPerSamplePoint = 16;
 	try {
 		if (my size < 1) {
-			Melder_throw ("No Sound or LongSound objects to append.");
+			Melder_throw (U"No Sound or LongSound objects to append.");
 		}
 
 		/*
@@ -205,12 +205,12 @@ void LongSounds_appendToExistingSoundFile (Collection me, MelderFile file) {
 		                    &encoding, &sampleRate_d, &startOfData, &numberOfSamples);
 
 		if (audioFileType == 0) {
-			Melder_throw ("Not a sound file.");
+			Melder_throw (U"Not a sound file.");
 		}
 
 		// Check whether all the sample rates and channels match.
 
-		long sampleRate = sampleRate_d;
+		long sampleRate = (long) floor (sampleRate_d);
 		for (long i = 1; i <= my size; i++) {
 			int sampleRatesMatch, numbersOfChannelsMatch;
 			Sampled data = (Sampled) my item [i];
@@ -226,10 +226,10 @@ void LongSounds_appendToExistingSoundFile (Collection me, MelderFile file) {
 				numberOfSamples += longSound -> nx;
 			}
 			if (! sampleRatesMatch) {
-				Melder_throw ("Sample rates do not match.");
+				Melder_throw (U"Sample rates do not match.");
 			}
 			if (! numbersOfChannelsMatch) {
-				Melder_throw ("Cannot mix stereo and mono.");
+				Melder_throw (U"Cannot mix stereo and mono.");
 			}
 		}
 
@@ -251,7 +251,7 @@ void LongSounds_appendToExistingSoundFile (Collection me, MelderFile file) {
 				writePartToOpenFile16 (longSound, audioFileType, 1, longSound -> nx, file);
 			}
 			if (errno != 0) {
-				Melder_throw ("Error during writing.");
+				Melder_throw (U"Error during writing.");
 			}
 		}
 
@@ -267,7 +267,7 @@ void LongSounds_appendToExistingSoundFile (Collection me, MelderFile file) {
 			// Restore file at original size
 			int error = errno;
 			MelderFile_truncate (file, pre_append_endpos);
-			Melder_throw ("File ", MelderFile_messageName (file), L" restored to original size (", strerror (error), ").");
+			Melder_throw (U"File ", MelderFile_messageName (file), U" restored to original size (", Melder_peek8to32 (strerror (error)), U").");
 		} throw;
 	}
 }

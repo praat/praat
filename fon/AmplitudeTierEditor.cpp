@@ -1,6 +1,6 @@
 /* AmplitudeTierEditor.cpp
  *
- * Copyright (C) 2003-2011,2012,2014 Paul Boersma
+ * Copyright (C) 2003-2011,2012,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,11 +22,11 @@
 
 Thing_implement (AmplitudeTierEditor, RealTierEditor, 0);
 
-static void menu_cb_AmplitudeTierHelp (EDITOR_ARGS) { EDITOR_IAM (AmplitudeTierEditor); Melder_help (L"AmplitudeTier"); }
+static void menu_cb_AmplitudeTierHelp (EDITOR_ARGS) { EDITOR_IAM (AmplitudeTierEditor); Melder_help (U"AmplitudeTier"); }
 
 void structAmplitudeTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	AmplitudeTierEditor_Parent :: v_createHelpMenuItems (menu);
-	EditorMenu_addCommand (menu, L"AmplitudeTier help", 0, menu_cb_AmplitudeTierHelp);
+	EditorMenu_addCommand (menu, U"AmplitudeTier help", 0, menu_cb_AmplitudeTierHelp);
 }
 
 void structAmplitudeTierEditor :: v_play (double fromTime, double toTime) {
@@ -37,13 +37,13 @@ void structAmplitudeTierEditor :: v_play (double fromTime, double toTime) {
 	}
 }
 
-AmplitudeTierEditor AmplitudeTierEditor_create (const wchar_t *title, AmplitudeTier amplitude, Sound sound, bool ownSound) {
+AmplitudeTierEditor AmplitudeTierEditor_create (const char32 *title, AmplitudeTier amplitude, Sound sound, bool ownSound) {
 	try {
 		autoAmplitudeTierEditor me = Thing_new (AmplitudeTierEditor);
 		RealTierEditor_init (me.peek(), title, (RealTier) amplitude, sound, ownSound);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("AmplitudeTier window not created.");
+		Melder_throw (U"AmplitudeTier window not created.");
 	}
 }
 

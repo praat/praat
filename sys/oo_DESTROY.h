@@ -43,20 +43,12 @@
 
 #define oo_STRINGx(storage,x)  \
 	Melder_free (our x);
-#define oo_STRING32x(storage,x)  \
-	Melder_free (our x);
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
 		Melder_free (our x [i]);
-#define oo_STRING32x_ARRAY(storage,x,cap,n)  \
-	for (int i = 0; i < n; i ++) \
-		Melder_free (our x [i]);
 
 #define oo_STRINGx_SET(storage,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
-		Melder_free (our x [i]);
-#define oo_STRING32x_SET(storage,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) \
 		Melder_free (our x [i]);
 
@@ -64,13 +56,7 @@
 	if (our x) { \
 		for (long i = min; i <= max; i ++) \
 			Melder_free (our x [i]); \
-		NUMvector_free <wchar_t*> (our x, min); \
-	}
-#define oo_STRING32x_VECTOR(storage,x,min,max)  \
-	if (our x) { \
-		for (long i = min; i <= max; i ++) \
-			Melder_free (our x [i]); \
-		NUMvector_free <wchar_t*> (our x, min); \
+		NUMvector_free <char32*> (our x, min); \
 	}
 
 #define oo_STRUCT(Type,x)  \

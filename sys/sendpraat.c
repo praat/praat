@@ -264,7 +264,7 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 		if (timeOut) {
 			signal (SIGALRM, handleTimeOut);
 			alarm (timeOut);
-			theTimeOut = timeOut;   /* Hand an argument to handleTimeOut () in a static variable. */
+			theTimeOut = timeOut;   // hand an argument to handleTimeOut () in a static variable
 			errorMessage [0] = '\0';
 			pause ();
 			if (errorMessage [0] != '\0') return errorMessage;
@@ -274,7 +274,7 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 		 * Notify the running program by sending a WM_USER message to its main window.
 		 */
 		if (SendMessage (window, WM_USER, 0, 0)) {
-			sprintf (errorMessage, "Program %s returns error.", programName);   /* BUG? */
+			sprintf (errorMessage, "Program %s returns error.", programName);   // BUG?
 			return errorMessage;
 		}
 	#elif mac

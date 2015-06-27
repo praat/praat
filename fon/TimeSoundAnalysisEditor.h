@@ -37,7 +37,7 @@
  * pb 2005/01/11 getBottomOfSoundAndAnalysisArea
  * pb 2005/06/16 units
  * pb 2005/12/07 arrowScrollStep
- * pb 2007/06/10 wchar_t
+ * pb 2007/06/10 wchar
  * pb 2007/09/02 direct drawing to picture window
  * pb 2007/09/08 inherit from TimeSoundEditor
  * pb 2007/11/01 direct intensity, formants, and pulses drawing
@@ -102,7 +102,7 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 };
 
 void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me,
-	const wchar_t *title, Function data, Sampled sound, bool ownSound);
+	const char32 *title, Function data, Sampled sound, bool ownSound);
 
 void TimeSoundAnalysisEditor_computeSpectrogram (TimeSoundAnalysisEditor me);
 void TimeSoundAnalysisEditor_computePitch (TimeSoundAnalysisEditor me);

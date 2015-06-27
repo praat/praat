@@ -2,7 +2,7 @@
 #define _EEG_h_
 /* EEG.h
  *
- * Copyright (C) 2011-2012,2014 Paul Boersma
+ * Copyright (C) 2011-2012,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +33,8 @@ EEG EEG_readFromBdfFile (MelderFile file);
 EEG EEGs_concatenate (Collection me);
 
 void EEG_init (EEG me, double tmin, double tmax);
-long EEG_getChannelNumber (EEG me, const wchar_t *channelName);
-void EEG_setChannelName (EEG me, long channelNumber, const wchar_t *a_name);
+long EEG_getChannelNumber (EEG me, const char32 *channelName);
+void EEG_setChannelName (EEG me, long channelNumber, const char32 *a_name);
 static inline long EEG_getNumberOfCapElectrodes (EEG me) {
 	return (my numberOfChannels - 1) & ~ 15L;   // BUG
 }
@@ -44,17 +44,17 @@ static inline long EEG_getNumberOfExtraSensors (EEG me) {
 static inline long EEG_getNumberOfExternalElectrodes (EEG me) {
 	return my numberOfChannels - EEG_getNumberOfCapElectrodes (me) - EEG_getNumberOfExtraSensors (me);
 }
-void EEG_setExternalElectrodeNames (EEG me, const wchar_t *nameExg1, const wchar_t *nameExg2, const wchar_t *nameExg3, const wchar_t *nameExg4,
-	const wchar_t *nameExg5, const wchar_t *nameExg6, const wchar_t *nameExg7, const wchar_t *nameExg8);
+void EEG_setExternalElectrodeNames (EEG me, const char32 *nameExg1, const char32 *nameExg2, const char32 *nameExg3, const char32 *nameExg4,
+	const char32 *nameExg5, const char32 *nameExg6, const char32 *nameExg7, const char32 *nameExg8);
 void EEG_detrend (EEG me);
 void EEG_filter (EEG me, double lowFrequency, double lowWidth, double highFrequency, double highWidth, bool doNotch50Hz);
-void EEG_subtractReference (EEG me, const wchar_t *channelNumber1, const wchar_t *channelNumber2);
+void EEG_subtractReference (EEG me, const char32 *channelNumber1, const char32 *channelNumber2);
 void EEG_subtractMeanChannel (EEG me, long fromChannel, long toChannel);
 void EEG_setChannelToZero (EEG me, long channelNumber);
-void EEG_setChannelToZero (EEG me, const wchar_t *channelName);
-void EEG_removeTriggers (EEG me, int which_Melder_STRING, const wchar_t *criterion);
+void EEG_setChannelToZero (EEG me, const char32 *channelName);
+void EEG_removeTriggers (EEG me, int which_Melder_STRING, const char32 *criterion);
 EEG EEG_extractChannel (EEG me, long channelNumber);
-EEG EEG_extractChannel (EEG me, const wchar_t *channelName);
+EEG EEG_extractChannel (EEG me, const char32 *channelName);
 static inline Sound EEG_extractSound (EEG me) { return Data_copy (my sound); }
 static inline TextGrid EEG_extractTextGrid (EEG me) { return Data_copy (my textgrid); }
 EEG EEG_extractPart (EEG me, double tmin, double tmax, bool preserveTimes);

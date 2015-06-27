@@ -1,6 +1,6 @@
 /* Graphics_record.cpp
  *
- * Copyright (C) 1992-2011,2013,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,8 +48,8 @@ double * _Graphics_check (Graphics me, long number) {
 				Melder_clearError ();
 			} else {
 				messageHasAlreadyBeenShownOnce = true;
-				Melder_flushError ("_Graphics_growRecorder: out of memory.\n"
-					"This message will not show up on future occasions.");   // because of loop danger when redrawing
+				Melder_flushError (U"_Graphics_growRecorder: out of memory.\n"
+					U"This message will not show up on future occasions.");   // because of loop danger when redrawing
 			}
 			return NULL;
 		}
@@ -64,8 +64,8 @@ double * _Graphics_check (Graphics me, long number) {
 				Melder_clearError ();
 			} else {
 				messageHasAlreadyBeenShownOnce = true;
-				Melder_flushError ("_Graphics_growRecorder: out of memory.\n"
-					"This message will not show up on future occasions.");   // because of loop danger when redrawing
+				Melder_flushError (U"_Graphics_growRecorder: out of memory.\n"
+					U"This message will not show up on future occasions.");   // because of loop danger when redrawing
 			}
 			return NULL;
 		}
@@ -122,7 +122,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 			}  break;
 			case TEXT:
 			{  double x = get, y = get; long length = get; char *text_utf8 = sget (length);
-				Graphics_text (thee, x, y, Melder_peekUtf8ToWcs (text_utf8));
+				Graphics_text (thee, x, y, Melder_peek8to32 (text_utf8));
 			}  break;
 			case POLYLINE:
 			{  long n = get; double *x = mget (n), *y = mget (n);
@@ -345,7 +345,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 			} break;
 			case IMAGE_FROM_FILE:
 			{  double x1 = get, x2 = get, y1 = get, y2 = get; long length = get; char *text_utf8 = sget (length);
-				Graphics_imageFromFile (thee, Melder_peekUtf8ToWcs (text_utf8), x1, x2, y1, y2);
+				Graphics_imageFromFile (thee, Melder_peek8to32 (text_utf8), x1, x2, y1, y2);
 			}  break;
 			case POLYLINE_CLOSED:
 			{  long n = get; double *x = mget (n), *y = mget (n);
@@ -391,7 +391,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 			}  break;
 			default:
 				my recording = wasRecording;
-				Melder_flushError ("Graphics_play: unknown opcode (%d).\n%f %f", opcode, p [-1], p [1]);
+				Melder_flushError (U"Graphics_play: unknown opcode (", opcode, U").\n", p [-1], U" ", p [1]);
 				return;
 		}
 	}
@@ -425,7 +425,7 @@ void Graphics_writeRecordings (Graphics me, FILE *f) {
 			binputr4 (get, f);   // length
 			Melder_assert (sizeof (double) == 8);
 			if ((long) fwrite (++ p, 8, numberOfArguments - 3, f) < numberOfArguments - 3)   // text
-				Melder_throw ("Error writing graphics recordings.");
+				Melder_throw (U"Error writing graphics recordings.");
 			p += numberOfArguments - 4;
 		} else if (opcode == IMAGE_FROM_FILE) {
 			binputr4 (get, f);   // x1
@@ -435,7 +435,7 @@ void Graphics_writeRecordings (Graphics me, FILE *f) {
 			binputr4 (get, f);   // length
 			Melder_assert (sizeof (double) == 8);
 			if ((long) fwrite (++ p, 8, numberOfArguments - 5, f) < numberOfArguments - 5)   // text
-				Melder_throw ("Error writing graphics recordings.");
+				Melder_throw (U"Error writing graphics recordings.");
 			p += numberOfArguments - 6;
 		} else {
 			for (long i = numberOfArguments; i > 0; i --) binputr4 (get, f);
@@ -468,7 +468,7 @@ void Graphics_readRecordings (Graphics me, FILE *f) {
 				put (bingetr4 (f));   // y
 				put (bingetr4 (f));   // length
 				if (fread (++ p, 8, (size_t) numberOfArguments - 3, f) < (size_t) numberOfArguments - 3)   // text
-					Melder_throw ("Error reading graphics recordings.");
+					Melder_throw (U"Error reading graphics recordings.");
 				p += numberOfArguments - 4;
 			} else if (opcode == IMAGE_FROM_FILE) {
 				put (bingetr4 (f));   // x1
@@ -477,7 +477,7 @@ void Graphics_readRecordings (Graphics me, FILE *f) {
 				put (bingetr4 (f));   // y2
 				put (bingetr4 (f));   // length
 				if (fread (++ p, 8, (size_t) numberOfArguments - 5, f) < (size_t) numberOfArguments - 5)   // text
-					Melder_throw ("Error reading graphics recordings.");
+					Melder_throw (U"Error reading graphics recordings.");
 				p += numberOfArguments - 6;
 			} else {
 				for (long i = numberOfArguments; i > 0; i --) put (bingetr4 (f));
@@ -485,8 +485,8 @@ void Graphics_readRecordings (Graphics me, FILE *f) {
 		}   
 	} catch (MelderError) {
 		my irecord = old_irecord;
-		Melder_throw ("Error reading graphics record ", added_irecord - (long) (endp - p),
-			" out of ", added_irecord, ".\nOpcode ", opcode, ", args ", numberOfArguments, ".");
+		Melder_throw (U"Error reading graphics record ", added_irecord - (long) (endp - p),
+			U" out of ", added_irecord, U".\nOpcode ", opcode, U", args ", numberOfArguments, U".");
 	}
 }
 
@@ -503,7 +503,7 @@ void Graphics_undoGroup (Graphics me) {
 		if (opcode == MARK_GROUP) lastMark = jrecord - 1;   // found a mark
 		jrecord += number;
 	}
-	if (jrecord != my irecord) Melder_flushError ("jrecord != my irecord: %ld, %ld", jrecord, my irecord);
+	if (jrecord != my irecord) Melder_flushError (U"jrecord != my irecord: ", jrecord, U", ", my irecord);
 	if (lastMark > 0)   // found?
 		my irecord = lastMark - 1;   // forget all graphics from and including the last mark
 }

@@ -2,7 +2,7 @@
 #define _RealTier_h_
 /* RealTier.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,18 +69,18 @@ double RealTier_getStandardDeviation_points (RealTier me, double tmin, double tm
 
 void RealTier_addPoint (RealTier me, double t, double value);
 void RealTier_draw (RealTier me, Graphics g, double tmin, double tmax,
-	double ymin, double ymax, int garnish, const wchar_t *method, const wchar_t *quantity);
-TableOfReal RealTier_downto_TableOfReal (RealTier me, const wchar_t *timeLabel, const wchar_t *valueLabel);
+	double ymin, double ymax, int garnish, const char32 *method, const char32 *quantity);
+TableOfReal RealTier_downto_TableOfReal (RealTier me, const char32 *timeLabel, const char32 *valueLabel);
 
 void RealTier_interpolateQuadratically (RealTier me, long numberOfPointsPerParabola, int logarithmically);
 
-Table RealTier_downto_Table (RealTier me, const wchar_t *indexText, const wchar_t *timeText, const wchar_t *valueText);
+Table RealTier_downto_Table (RealTier me, const char32 *indexText, const char32 *timeText, const char32 *valueText);
 RealTier Vector_to_RealTier (Vector me, long channel, ClassInfo klas);
 RealTier Vector_to_RealTier_peaks (Vector me, long channel, ClassInfo klas);
 RealTier Vector_to_RealTier_valleys (Vector me, long channel, ClassInfo klas);
 RealTier PointProcess_upto_RealTier (PointProcess me, double value, ClassInfo klas);
 
-void RealTier_formula (RealTier me, const wchar_t *expression, Interpreter interpreter, RealTier thee);
+void RealTier_formula (RealTier me, const char32 *expression, Interpreter interpreter, RealTier thee);
 void RealTier_multiplyPart (RealTier me, double tmin, double tmax, double factor);
 void RealTier_removePointsBelow (RealTier me, double level);
 

@@ -51,21 +51,21 @@ EditCostsTable EditCostsTable_create (long targetAlphabetSize, long sourceAlphab
  */
 
 void EditCostsTable_setDefaultCosts (EditCostsTable me, double insertionCosts, double deletionCosts, double substitutionCosts);
-long EditCostsTable_getTargetIndex (EditCostsTable me, const wchar_t *symbol);
-long EditCostsTable_getSourceIndex (EditCostsTable me, const wchar_t *symbol);
-double EditCostsTable_getInsertionCost (EditCostsTable me, const wchar_t *symbol);
-void EditCostsTable_setInsertionCosts (EditCostsTable me, wchar_t *targets, double cost);
+long EditCostsTable_getTargetIndex (EditCostsTable me, const char32 *symbol);
+long EditCostsTable_getSourceIndex (EditCostsTable me, const char32 *symbol);
+double EditCostsTable_getInsertionCost (EditCostsTable me, const char32 *symbol);
+void EditCostsTable_setInsertionCosts (EditCostsTable me, char32 *targets, double cost);
 void EditCostsTable_setOthersCosts (EditCostsTable me, double insertionCosts, double deletionCost, double substitutionCost_equal, double substitutionCost_unequal);
 double EditCostsTable_getOthersCost (EditCostsTable me, int type);
-double EditCostsTable_getDeletionCost (EditCostsTable me, const wchar_t *symbol);
-void EditCostsTable_setDeletionCosts (EditCostsTable me, wchar_t *sources, double cost);
-double EditCostsTable_getSubstitutionCost (EditCostsTable me, const wchar_t *symbol, const wchar *replacement);
-void EditCostsTable_setSubstitutionCosts (EditCostsTable me, wchar_t *targets, wchar_t *sources, double cost);
+double EditCostsTable_getDeletionCost (EditCostsTable me, const char32 *symbol);
+void EditCostsTable_setDeletionCosts (EditCostsTable me, char32 *sources, double cost);
+double EditCostsTable_getSubstitutionCost (EditCostsTable me, const char32 *symbol, const char32 *replacement);
+void EditCostsTable_setSubstitutionCosts (EditCostsTable me, char32 *targets, char32 *sources, double cost);
 TableOfReal EditCostsTable_to_TableOfReal (EditCostsTable me);
 
 
 EditDistanceTable EditDistanceTable_create (Strings target, Strings source);
-EditDistanceTable EditDistanceTable_createFromCharacterStrings (const wchar_t *chars1, const wchar_t *chars2);
+EditDistanceTable EditDistanceTable_createFromCharacterStrings (const char32 *chars1, const char32 *chars2);
 void EditDistanceTable_draw (EditDistanceTable me, Graphics graphics, int iformat, int precision, double angle);
 void EditDistanceTable_drawEditOperations (EditDistanceTable me, Graphics graphics);
 void EditDistanceTable_setDefaultCosts (EditDistanceTable me, double insertionCosts, double deletionCosts, double substitutionCosts);

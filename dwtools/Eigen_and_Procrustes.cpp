@@ -29,11 +29,11 @@ Procrustes Eigens_to_Procrustes (I, thou, long evec_from, long evec_to) {
 		long nmin = my numberOfEigenvalues < thy numberOfEigenvalues ? my numberOfEigenvalues : thy numberOfEigenvalues;
 
 		if (my dimension != thy dimension) {
-			Melder_throw ("The eigenvectors must have the same dimension.");
+			Melder_throw (U"The eigenvectors must have the same dimension.");
 		}
 
 		if (evec_from > evec_to || evec_from < 1 || evec_to > nmin) {
-			Melder_throw ("Eigenvector range too large.");
+			Melder_throw (U"Eigenvector range too large.");
 		}
 
 		autoNUMmatrix<double> x (1, my dimension, 1, nvectors);
@@ -51,7 +51,7 @@ Procrustes Eigens_to_Procrustes (I, thou, long evec_from, long evec_to) {
 		NUMProcrustes (x.peek(), y.peek(), my dimension, nvectors, his r, NULL, NULL);
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Procrustes not created from Eigens.");
+		Melder_throw (U"Procrustes not created from Eigens.");
 	}
 }
 

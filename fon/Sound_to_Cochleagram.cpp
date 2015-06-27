@@ -1,6 +1,6 @@
 /* Sound_to_Cochleagram.cpp
  *
- * Copyright (C) 1992-2011,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,15 +36,15 @@
 Cochleagram Sound_to_Cochleagram (Sound me, double dt, double df, double dt_window, double forwardMaskingTime) {
 	try {
 		double duration = my nx * my dx;
-		long nFrames = 1 + floor ((duration - dt_window) / dt);
-		long nsamp_window = floor (dt_window / my dx), halfnsamp_window = nsamp_window / 2 - 1;
-		long nf = floor (25.6 / df + 0.5);
-		double dampingFactor = forwardMaskingTime > 0.0 ? exp (- dt / forwardMaskingTime) : 0.0;   /* Default 30 ms. */
+		long nFrames = 1 + (long) floor ((duration - dt_window) / dt);
+		long nsamp_window = (long) floor (dt_window / my dx), halfnsamp_window = nsamp_window / 2 - 1;
+		long nf = lround (25.6 / df);
+		double dampingFactor = forwardMaskingTime > 0.0 ? exp (- dt / forwardMaskingTime) : 0.0;   // default 30 ms
 		double integrationCorrection = 1.0 - dampingFactor;
 
 		nsamp_window = halfnsamp_window * 2;
 		if (nFrames < 2) return NULL;
-		double t1 = my x1 + 0.5 * (duration - my dx - (nFrames - 1) * dt); /* Centre of first frame. */
+		double t1 = my x1 + 0.5 * (duration - my dx - (nFrames - 1) * dt);   // centre of first frame
 		autoCochleagram thee = Cochleagram_create (my xmin, my xmax, nFrames, dt, t1, df, nf);
 		autoSound window = Sound_createSimple (1, nsamp_window * my dx, 1.0 / my dx);
 		for (long iframe = 1; iframe <= nFrames; iframe ++) {
@@ -54,11 +54,14 @@ Cochleagram Sound_to_Cochleagram (Sound me, double dt, double df, double dt_wind
 			long startSample = rightSample - halfnsamp_window;
 			long endSample = rightSample + halfnsamp_window;
 			if (startSample < 1) {
-				Melder_casual ("Start sample too small: %ld instead of 1.", startSample);
+				Melder_casual (U"Start sample too small: ", startSample,
+					U" instead of 1.");
 				startSample = 1;
 			}
 			if (endSample > my nx) {
-				Melder_casual ("End sample too small: %ld instead of %ld.", endSample, my nx);
+				Melder_casual (U"End sample too small: ", endSample,
+					U" instead of ", my nx,
+					U".");
 				endSample = my nx;
 			}
 
@@ -77,7 +80,7 @@ Cochleagram Sound_to_Cochleagram (Sound me, double dt, double df, double dt_wind
 				thy z [ifreq] [iframe] *= integrationCorrection;
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Cochleagram.");
+		Melder_throw (me, U": not converted to Cochleagram.");
 	}
 }
 
@@ -109,9 +112,9 @@ Cochleagram Sound_to_Cochleagram_edb
 	try {
 		double duration_seconds = my xmax;
 		if (dtime < my dx) dtime = my dx;
-		long ntime = floor (duration_seconds / dtime + 0.5);
+		long ntime = lround (duration_seconds / dtime);
 		if (ntime < 2) return NULL;
-		long nfreq = floor (25.6 / dfreq + 0.5);   // 25.6 Bark = highest frequency
+		long nfreq = lround (25.6 / dfreq);   // 25.6 Bark = highest frequency
 
 		autoCochleagram thee = Cochleagram_create (my xmin, my xmax, ntime, dtime, 0.5 * dtime, dfreq, nfreq);
 
@@ -183,11 +186,11 @@ Cochleagram Sound_to_Cochleagram_edb
 						mean /= n;
 					} else {
 						double mu = floor ((i1 + i2) / 2.0);
-						long muint = mu, dint = d;
+						long muint = (long) mu, dint = (long) d;
 						for (long isamp = muint - dint; isamp <= muint + dint; isamp ++) {
 							double y = 0;
 							if (isamp < 1 || isamp > basil -> nx)
-								Melder_casual ("isamp %ld", isamp);
+								Melder_casual (U"isamp ", isamp);
 							else
 								y = basil -> z [1] [isamp];
 							mean += y * onebyoneminexpmin6 * (exp (factor * (isamp - muint) *
@@ -201,7 +204,7 @@ Cochleagram Sound_to_Cochleagram_edb
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Cochleagram (edb).");
+		Melder_throw (me, U": not converted to Cochleagram (edb).");
 	}
 }
 

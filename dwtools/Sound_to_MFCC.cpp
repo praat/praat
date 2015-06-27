@@ -31,7 +31,7 @@ MFCC Sound_to_MFCC (Sound me, long numberOfCoefficients, double analysisWidth, d
 		autoMFCC mfcc = MelSpectrogram_to_MFCC (mf.peek(), numberOfCoefficients);
 		return mfcc.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no MFCC created.");
+		Melder_throw (me, U": no MFCC created.");
 	}
 }
 

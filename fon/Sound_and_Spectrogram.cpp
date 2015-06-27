@@ -1,6 +1,6 @@
 /* Sound_and_Spectrogram.cpp
  *
- * Copyright (C) 1992-2011,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,11 +64,11 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 		long halfnsamp_window = nsamp_window / 2 - 1;
 		nsamp_window = halfnsamp_window * 2;
 		if (nsamp_window < 1)
-			Melder_throw ("Your analysis window is too short: less than two samples.");
+			Melder_throw (U"Your analysis window is too short: less than two samples.");
 		if (physicalAnalysisWidth > duration)
-			Melder_throw ("Your sound is too short:\n"
-				"it should be at least as long as ",
-				windowType == kSound_to_Spectrogram_windowShape_GAUSSIAN ? "two window lengths." : "one window length.");
+			Melder_throw (U"Your sound is too short:\n"
+				U"it should be at least as long as ",
+				windowType == kSound_to_Spectrogram_windowShape_GAUSSIAN ? U"two window lengths." : U"one window length.");
 		long numberOfTimes = 1 + (long) floor ((duration - physicalAnalysisWidth) / timeStep);   // >= 1
 		double t1 = my x1 + 0.5 * ((double) (my nx - 1) * my dx - (double) (numberOfTimes - 1) * timeStep);
 			/* Centre of first frame. */
@@ -87,11 +87,11 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 		/*
 		 * Compute the frequency sampling of the spectrogram.
 		 */
-		long binWidth_samples = freqStep * my dx * nsampFFT;
+		long binWidth_samples = (long) floor (freqStep * my dx * nsampFFT);
 		if (binWidth_samples < 1) binWidth_samples = 1;
 		double binWidth_hertz = 1.0 / (my dx * nsampFFT);
 		freqStep = binWidth_samples * binWidth_hertz;
-		numberOfFreqs = floor (fmax / freqStep);
+		numberOfFreqs = (long) floor (fmax / freqStep);
 		if (numberOfFreqs < 1) return NULL;
 
 		autoSpectrogram thee = Spectrogram_create (my xmin, my xmax, numberOfTimes, timeStep, t1,
@@ -103,10 +103,10 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 		autoNUMfft_Table fftTable;
 		NUMfft_Table_init (& fftTable, nsampFFT);
 
-		autoMelderProgress progress (L"Sound to Spectrogram...");
+		autoMelderProgress progress (U"Sound to Spectrogram...");
 		for (long i = 1; i <= nsamp_window; i ++) {
 			double nSamplesPerWindow_f = physicalAnalysisWidth / my dx;
-			double phase = (double) i / nSamplesPerWindow_f;   /* 0 .. 1 */
+			double phase = (double) i / nSamplesPerWindow_f;   // 0 .. 1
 			double value;
 			switch (windowType) {
 				case kSound_to_Spectrogram_windowShape_SQUARE:
@@ -151,7 +151,7 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 				for (long j = nsamp_window + 1; j <= nsampFFT; j ++) frame [j] = 0.0f;
 
 				Melder_progress (iframe / (numberOfTimes + 1.0),
-					L"Sound to Spectrogram: analysis of frame ", Melder_integer (iframe), L" out of ", Melder_integer (numberOfTimes));
+					U"Sound to Spectrogram: analysis of frame ", iframe, U" out of ", numberOfTimes);
 
 				/* Compute Fast Fourier Transform of the frame. */
 
@@ -162,7 +162,7 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 				spec [1] += frame [1] * frame [1];   // DC component
 				for (long i = 2; i <= half_nsampFFT; i ++)
 					spec [i] += frame [i + i - 2] * frame [i + i - 2] + frame [i + i - 1] * frame [i + i - 1];
-				spec [half_nsampFFT + 1] += frame [nsampFFT] * frame [nsampFFT];   /* Nyquist frequency. Correct?? */
+				spec [half_nsampFFT + 1] += frame [nsampFFT] * frame [nsampFFT];   // Nyquist frequency. Correct??
 			}
 			if (my ny > 1 ) for (long i = 1; i <= half_nsampFFT; i ++) {
 				spec [i] /= my ny;
@@ -178,14 +178,14 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": spectrogram analysis not performed.");
+		Melder_throw (me, U": spectrogram analysis not performed.");
 	}
 }
 
 Sound Spectrogram_to_Sound (Spectrogram me, double fsamp) {
 	try {
 		double dt = 1 / fsamp;
-		long n = (my xmax - my xmin) / dt;
+		long n = (long) floor ((my xmax - my xmin) / dt);
 		if (n < 0) return NULL;
 		autoSound thee = Sound_create (1, my xmin, my xmax, n, dt, 0.5 * dt);
 		for (long i = 1; i <= n; i ++) {
@@ -193,7 +193,7 @@ Sound Spectrogram_to_Sound (Spectrogram me, double fsamp) {
 			double rframe = Sampled_xToIndex (me, t), phase, value = 0.0;
 			long leftFrame, rightFrame;
 			if (rframe < 1 || rframe >= my nx) continue;
-			leftFrame = floor (rframe), rightFrame = leftFrame + 1, phase = rframe - leftFrame;
+			leftFrame = (long) floor (rframe), rightFrame = leftFrame + 1, phase = rframe - leftFrame;
 			for (long j = 1; j <= my ny; j ++) {
 				double f = Matrix_rowToY (me, j);
 				double power = my z [j] [leftFrame] * (1 - phase) + my z [j] [rightFrame] * phase;
@@ -203,7 +203,7 @@ Sound Spectrogram_to_Sound (Spectrogram me, double fsamp) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Sound.");
+		Melder_throw (me, U": not converted to Sound.");
 	}
 }
 

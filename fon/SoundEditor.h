@@ -46,12 +46,12 @@ Thing_define (SoundEditor, TimeSoundAnalysisEditor) {
 };
 
 void SoundEditor_init (SoundEditor me,
-	const wchar_t *title,
+	const char32 *title,
 	Sampled data
 );
 
 SoundEditor SoundEditor_create (
-	const wchar_t *title,
+	const char32 *title,
 	Sampled data   // either a Sound or a LongSound
 );
 

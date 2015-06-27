@@ -30,38 +30,38 @@ Thing_implement (BandFilterSpectrogram, Matrix, 2);
 
 void structBandFilterSpectrogram :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine (L"Time domain:");
-	MelderInfo_writeLine (L"   Start time: ", Melder_double (xmin), L" seconds");
-	MelderInfo_writeLine (L"   End time: ", Melder_double (xmax), L" seconds");
-	MelderInfo_writeLine (L"   Total duration: ", Melder_double (xmax - xmin), L" seconds");
-	MelderInfo_writeLine (L"Time sampling:");
-	MelderInfo_writeLine (L"   Number of time slices (frames): ", Melder_integer (nx));
-	MelderInfo_writeLine (L"   Time step (frame distance): ", Melder_double (dx), L" seconds");
-	MelderInfo_writeLine (L"   First time slice (frame centre) at: ", Melder_double (x1), L" seconds");
+	MelderInfo_writeLine (U"Time domain:");
+	MelderInfo_writeLine (U"   Start time: ", xmin, U" seconds");
+	MelderInfo_writeLine (U"   End time: ", xmax, U" seconds");
+	MelderInfo_writeLine (U"   Total duration: ", xmax - xmin, U" seconds");
+	MelderInfo_writeLine (U"Time sampling:");
+	MelderInfo_writeLine (U"   Number of time slices (frames): ", nx);
+	MelderInfo_writeLine (U"   Time step (frame distance): ", dx, U" seconds");
+	MelderInfo_writeLine (U"   First time slice (frame centre) at: ", x1, U" seconds");
 }
 
 void structBarkSpectrogram :: v_info () {
 	structBandFilterSpectrogram :: v_info ();
-	MelderInfo_writeLine (L"Frequency domain:");
-	MelderInfo_writeLine (L"   Lowest frequency: ", Melder_double (ymin), L" ", v_getFrequencyUnit ());
-	MelderInfo_writeLine (L"   Highest frequency: ", Melder_double (ymax), L" ", v_getFrequencyUnit ());
-	MelderInfo_writeLine (L"   Total bandwidth: ", Melder_double (ymax - ymin), L" ", v_getFrequencyUnit ());
-	MelderInfo_writeLine (L"Frequency sampling:");
-	MelderInfo_writeLine (L"   Number of frequency bands (bins): ", Melder_integer (ny));
-	MelderInfo_writeLine (L"   Frequency step (bin width): ", Melder_double (dy), L" ", v_getFrequencyUnit ());
-	MelderInfo_writeLine (L"   First frequency band around (bin centre at): ", Melder_double (y1), L" ", v_getFrequencyUnit ());
+	MelderInfo_writeLine (U"Frequency domain:");
+	MelderInfo_writeLine (U"   Lowest frequency: ", ymin, U" ", v_getFrequencyUnit ());
+	MelderInfo_writeLine (U"   Highest frequency: ", ymax, U" ", v_getFrequencyUnit ());
+	MelderInfo_writeLine (U"   Total bandwidth: ", ymax - ymin, U" ", v_getFrequencyUnit ());
+	MelderInfo_writeLine (U"Frequency sampling:");
+	MelderInfo_writeLine (U"   Number of frequency bands (bins): ", ny);
+	MelderInfo_writeLine (U"   Frequency step (bin width): ", dy, U" ", v_getFrequencyUnit ());
+	MelderInfo_writeLine (U"   First frequency band around (bin centre at): ", y1, U" ", v_getFrequencyUnit ());
 }
 
 void structMelSpectrogram :: v_info () {
 	structBandFilterSpectrogram :: v_info ();
-	MelderInfo_writeLine (L"Frequency domain:");
-	MelderInfo_writeLine (L"   Lowest frequency: ", Melder_double (ymin), L" ", v_getFrequencyUnit ());
-	MelderInfo_writeLine (L"   Highest frequency: ", Melder_double (ymax), L" ", v_getFrequencyUnit ());
-	MelderInfo_writeLine (L"   Total bandwidth: ", Melder_double (ymax - ymin), L" ", v_getFrequencyUnit ());
-	MelderInfo_writeLine (L"Frequency sampling:");
-	MelderInfo_writeLine (L"   Number of frequency bands (bins): ", Melder_integer (ny));
-	MelderInfo_writeLine (L"   Frequency step (bin width): ", Melder_double (dy), L" ", v_getFrequencyUnit ());
-	MelderInfo_writeLine (L"   First frequency band around (bin centre at): ", Melder_double (y1), L" ", v_getFrequencyUnit ());
+	MelderInfo_writeLine (U"Frequency domain:");
+	MelderInfo_writeLine (U"   Lowest frequency: ", ymin, U" ", v_getFrequencyUnit ());
+	MelderInfo_writeLine (U"   Highest frequency: ", ymax, U" ", v_getFrequencyUnit ());
+	MelderInfo_writeLine (U"   Total bandwidth: ", ymax - ymin, U" ", v_getFrequencyUnit ());
+	MelderInfo_writeLine (U"Frequency sampling:");
+	MelderInfo_writeLine (U"   Number of frequency bands (bins): ", ny);
+	MelderInfo_writeLine (U"   Frequency step (bin width): ", dy, U" ", v_getFrequencyUnit ());
+	MelderInfo_writeLine (U"   First frequency band around (bin centre at): ", y1, U" ", v_getFrequencyUnit ());
 }
 
 // Preconditions: 1 <= iframe <= nx; 1 <= irow <= ny
@@ -88,7 +88,7 @@ Matrix Spectrogram_to_Matrix_dB (Spectrogram me, double reference, double scaleF
 				if (my z[i][j] > 0) {
 					val = scaleFactor * log10 (my z[i][j] / reference);
 				} else if (my z[i][j] < 0) {
-					Melder_throw ("Negative power in Spectrogram.");
+					Melder_throw (U"Negative power in Spectrogram.");
 				}
 				if (val < floor_dB) {
 					val = floor_dB;
@@ -98,7 +98,7 @@ Matrix Spectrogram_to_Matrix_dB (Spectrogram me, double reference, double scaleF
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Matrix with dB values not created.");
+		Melder_throw (U"Matrix with dB values not created.");
 	}
 }
 
@@ -202,7 +202,7 @@ MelSpectrogram MFCC_to_MelSpectrogram (MFCC me, long first, long last, bool c0) 
 		CC_into_BandFilterSpectrogram (me, thee.peek(), first, last, c0);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, "MelSpectrogram not created.");
+		Melder_throw (me, U"MelSpectrogram not created.");
 	}
 }
 
@@ -216,17 +216,17 @@ MFCC MelSpectrogram_to_MFCC (MelSpectrogram me, long numberOfCoefficients) {
 		BandFilterSpectrogram_into_CC (me, thee.peek(), numberOfCoefficients);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": MFCC not created.");
+		Melder_throw (me, U": MFCC not created.");
 	}
 }
 
-BarkSpectrogram BarkSpectrogram_create (double tmin, double tmax, long nt, double dt, double t1, double fmin, double fmax, long nf, double df, long f1) {
+BarkSpectrogram BarkSpectrogram_create (double tmin, double tmax, long nt, double dt, double t1, double fmin, double fmax, long nf, double df, double f1) {
 	try {
 		autoBarkSpectrogram me = Thing_new (BarkSpectrogram);
 		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("BarkSpectrogram not created.");
+		Melder_throw (U"BarkSpectrogram not created.");
 	}
 }
 
@@ -237,7 +237,7 @@ double BandFilterSpectrogram_getFrequencyInHertz (BandFilterSpectrogram me, doub
 // xmin, xmax in hz versus bark/mel or lin
 void BandFilterSpectrogram_drawFrequencyScale (BandFilterSpectrogram me, Graphics g, double xmin, double xmax, double ymin, double ymax, int garnish) {
 	if (xmin < 0 || xmax < 0 || ymin < 0 || ymax < 0) {
-		Melder_warning (L"Frequencies must be >= 0.");
+		Melder_warning (U"Frequencies must be >= 0.");
 		return;
 	}
 
@@ -274,11 +274,9 @@ void BandFilterSpectrogram_drawFrequencyScale (BandFilterSpectrogram me, Graphic
 	if (garnish) {
 		Graphics_drawInnerBox (g);
 		Graphics_marksLeft (g, 2, 1, 1, 0);
-		autoMelderString verticalText;
-		MelderString_append (&verticalText, L"Frequency (", my v_getFrequencyUnit (), L")");
-		Graphics_textLeft (g, 1, verticalText.string);
+		Graphics_textLeft (g, 1, Melder_cat (U"Frequency (", my v_getFrequencyUnit (), U")"));
 		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_textBottom (g, 1, L"Frequency (Hz)");
+		Graphics_textBottom (g, 1, U"Frequency (Hz)");
 	}
 }
 
@@ -313,11 +311,9 @@ void BandFilterSpectrogram_paintImage (BandFilterSpectrogram me, Graphics g, dou
 	if (garnish) {
 		Graphics_drawInnerBox (g);
 		Graphics_marksLeft (g, 2, 1, 1, 0);
-		autoMelderString yText;
-		MelderString_append (&yText, L"Frequency (", my v_getFrequencyUnit (), L")");
-		Graphics_textLeft (g, 1, yText.string);
+		Graphics_textLeft (g, 1, Melder_cat (U"Frequency (", my v_getFrequencyUnit (), U")"));
 		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_textBottom (g, 1, L"Time (s)");
+		Graphics_textBottom (g, 1, U"Time (s)");
 	}
 }
 
@@ -372,10 +368,8 @@ void BandFilterSpectrogram_drawSpectrumAtNearestTimeSlice (BandFilterSpectrogram
 		Graphics_drawInnerBox (g);
 		Graphics_marksBottom (g, 2, 1, 1, 0);
 		Graphics_marksLeft (g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, L"Power (dB)");
-		autoMelderString xText;
-		MelderString_append (&xText, L"Frequency (", my v_getFrequencyUnit (), L")");
-		Graphics_textBottom (g, 1, xText.string);
+		Graphics_textLeft (g, 1, U"Power (dB)");
+		Graphics_textBottom (g, 1, Melder_cat (U"Frequency (", my v_getFrequencyUnit (), U")"));
 	}
 }
 
@@ -437,10 +431,8 @@ void BarkSpectrogram_drawSekeyHansonFilterFunctions (BarkSpectrogram me, Graphic
 		Graphics_drawInnerBox (g);
 		Graphics_marksBottom (g, 2, 1, 1, 0);
 		Graphics_marksLeftEvery (g, 1, distance, 1, 1, 0);
-		Graphics_textLeft (g, 1, yscale_dB ? L"Amplitude (dB)" : L"Amplitude");
-		autoMelderString xText;
-		MelderString_append (&xText, L"Frequency (", xIsHertz ? L"Hz" : my v_getFrequencyUnit (), L")");
-		Graphics_textBottom (g, 1, xText.string);
+		Graphics_textLeft (g, 1, yscale_dB ? U"Amplitude (dB)" : U"Amplitude");
+		Graphics_textBottom (g, 1, Melder_cat (U"Frequency (", xIsHertz ? U"Hz" : my v_getFrequencyUnit (), U")"));
 	}
 }
 
@@ -452,12 +444,12 @@ MelSpectrogram MelSpectrogram_create (double tmin, double tmax, long nt, double 
 		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("MelSpectrogram not created.");
+		Melder_throw (U"MelSpectrogram not created.");
 	}
 }
 
 void BandFilterSpectrogram_drawTimeSlice (I, Graphics g, double t, double fmin,
-                               double fmax, double min, double max, const wchar_t *xlabel, int garnish) {
+                               double fmax, double min, double max, const char32 *xlabel, int garnish) {
 	iam (Matrix);
 	Matrix_drawSliceY (me, g, t, fmin, fmax, min, max);
 	if (garnish) {
@@ -544,10 +536,8 @@ void MelSpectrogram_drawTriangularFilterFunctions (MelSpectrogram me, Graphics g
 		Graphics_drawInnerBox (g);
 		Graphics_marksBottom (g, 2, 1, 1, 0);
 		Graphics_marksLeftEvery (g, 1, yscale_dB ? 10 : 0.5, 1, 1, 0);
-		Graphics_textLeft (g, 1, yscale_dB ? L"Amplitude (dB)" : L"Amplitude");
-		autoMelderString bottomText;
-		MelderString_append (&bottomText, L"Frequency (", (xIsHertz ? L"Hz" : my v_getFrequencyUnit ()), L")");
-		Graphics_textBottom (g, 1, bottomText.string);
+		Graphics_textLeft (g, 1, yscale_dB ? U"Amplitude (dB)" : U"Amplitude");
+		Graphics_textBottom (g, 1, Melder_cat (U"Frequency (", ( xIsHertz ? U"Hz" : my v_getFrequencyUnit () ), U")"));
 	}
 }
 
@@ -562,19 +552,18 @@ Matrix BandFilterSpectrogram_to_Matrix (BandFilterSpectrogram me, int to_dB) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Matrix.");
+		Melder_throw (me, U": not converted to Matrix.");
 	}
 }
 
-BarkSpectrogram Matrix_to_BarkSpectrogram (I) {
-	iam (Matrix);
+BarkSpectrogram Matrix_to_BarkSpectrogram (Matrix me) {
 	try {
 		autoBarkSpectrogram thee = BarkSpectrogram_create (my xmin, my xmax, my nx, my dx, my x1,
 			my ymin, my ymax, my ny, my dy, my y1);
 		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to BarkSpectrogram.");
+		Melder_throw (me, U": not converted to BarkSpectrogram.");
 	}
 }
 
@@ -584,7 +573,7 @@ MelSpectrogram Matrix_to_MelSpectrogram (Matrix me) {
 		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to MelSpectrogram.");
+		Melder_throw (me, U": not converted to MelSpectrogram.");
 	}
 }
 
@@ -600,7 +589,7 @@ Intensity BandFilterSpectrogram_to_Intensity (BandFilterSpectrogram me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": Intensity not created.");
+		Melder_throw (me, U": Intensity not created.");
 	}
 }
 
@@ -621,7 +610,7 @@ void BandFilterSpectrogram_equalizeIntensities (BandFilterSpectrogram me, double
 void BandFilterSpectrogram_and_PCA_drawComponent (BandFilterSpectrogram me, PCA thee, Graphics g, long component, double dblevel,
                                        double frequencyOffset, double scale, double tmin, double tmax, double fmin, double fmax) {
 	if (component < 1 || component > thy numberOfEigenvalues) {
-		Melder_throw ("Component too large.");
+		Melder_throw (U"Component too large.");
 	}
 
 	// Scale Intensity
@@ -635,5 +624,13 @@ void BandFilterSpectrogram_and_PCA_drawComponent (BandFilterSpectrogram me, PCA 
 	}
 	Matrix_drawRows (him.peek(), g, tmin, tmax, component - 0.5, component + 0.5, fmin, fmax);
 }
+
+/*
+ * MelSpectrograms_to_DTW (MelSpectrogram me, MelSpectrogram thee, dtw-params);
+ * comparison on the basis of mfcc
+ * BarkSpectrograms_to_DTW (BarkSpectrogram me, BarkSpectrogram thee, dtw-params);
+ * comparison on the basis of bfcc!
+ */
+
 
 /* End of file Spectrogram_extensions.cpp */

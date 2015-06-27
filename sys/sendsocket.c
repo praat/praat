@@ -62,17 +62,17 @@ char * sendsocket (const char *hostNameAndPort, const char *command) {
 	port = atoi (colon + 1);
 {
 	struct hostent *host;
-	struct sockaddr_in his_addr;   /* Address of remote host. */
+	struct sockaddr_in his_addr;   // address of remote host
 	int stat, sokket = -1;
 	long bytesSent;
-	result [0] = '\0';   /* No error yet. */
+	result [0] = '\0';   // no error yet
 
 	#ifdef _WIN32
 	{
 		static int initialized;
 		if (! initialized) {
 			WSADATA wsaData;
-			WORD requestedWinsockVersion = MAKEWORD (1,1);   /* Require version 1.1. */
+			WORD requestedWinsockVersion = MAKEWORD (1,1);   // require version 1.1
 			if (WSAStartup (requestedWinsockVersion, & wsaData)) {
 				return "Cannot send to socket because the socket library (WINSOCK.DLL) is not available, "
 					"too old, or otherwise unusable.";
@@ -110,7 +110,7 @@ char * sendsocket (const char *hostNameAndPort, const char *command) {
 	}
 
 	/*
-		Melder_casual ("Connected to port %d on host %s.", ntohs (his_addr. sin_port), inet_ntoa (his_addr. sin_addr));
+		Melder_casual (U"Connected to port ", ntohs (his_addr. sin_port), U" on host ", Melder_peek8to32 (inet_ntoa (his_addr. sin_addr)), U".");
 	*/
    
 	bytesSent = send (sokket, command, strlen (command) + 1, 0);   /* Include null byte. */
@@ -119,7 +119,7 @@ char * sendsocket (const char *hostNameAndPort, const char *command) {
 		goto end;
 	}
 	/*
-		Melder_casual ("sendsocket: %d bytes written.", bytesSent);
+		Melder_casual (U"sendsocket: ", bytesSent, U" bytes written.");
 	*/
 end:
 	if (sokket >= 0) {

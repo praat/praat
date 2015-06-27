@@ -2,7 +2,7 @@
 #define _Pitch_h_
 /* Pitch.h
  *
- * Copyright (C) 1992-2011,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -197,7 +197,7 @@ void Pitch_step (Pitch me, double step, double precision, double tmin, double tm
 	as long as that candidate is in between 0 and my ceiling.
 */
 
-void Pitch_formula (Pitch me, const wchar_t *formula, Interpreter interpreter);
+void Pitch_formula (Pitch me, const char32 *formula, Interpreter interpreter);
 
 /* End of file Pitch.h */
 #endif

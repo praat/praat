@@ -2,7 +2,7 @@
 #define _site_h_
 /* site.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-wchar_t *Site_getPrintCommand (void);
-void Site_setPrintCommand (const wchar_t *text);
+char32 *Site_getPrintCommand (void);
+void Site_setPrintCommand (const char32 *text);
 
 void Site_prefs (void);
 

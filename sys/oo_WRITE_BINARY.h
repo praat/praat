@@ -55,27 +55,16 @@
 
 #define oo_STRINGx(storage,x)  \
 	binput##storage (our x, f);
-#define oo_STRING32x(storage,x)  \
-	binput##storage (our x, f);
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
 		binput##storage (our x [i], f);
-#define oo_STRING32x_ARRAY(storage,x,cap,n)  \
-	for (int i = 0; i < n; i ++) \
-		binput32##storage (our x [i], f);
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) \
 		binput##storage (our x [i], f);
-#define oo_STRING32x_SET(storage,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
-		binput32##storage (our x [i], f);
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
-	for (long i = min; i <= max; i ++) \
-		binput##storage (our x [i], f);
-#define oo_STRING32x_VECTOR(storage,x,min,max)  \
 	for (long i = min; i <= max; i ++) \
 		binput##storage (our x [i], f);
 

@@ -31,7 +31,7 @@ Thing_declare (Editor);
 
 Thing_define (EditorMenu, Thing) {
 	Editor d_editor;
-	const wchar_t *menuTitle;
+	const char32 *menuTitle;
 	GuiMenu menuWidget;
 	Ordered commands;
 
@@ -42,10 +42,10 @@ Thing_define (EditorMenu, Thing) {
 Thing_define (EditorCommand, Thing) {
 	Editor d_editor;
 	EditorMenu menu;
-	const wchar_t *itemTitle;
+	const char32 *itemTitle;
 	GuiMenuItem itemWidget;
-	void (*commandCallback) (Editor editor_me, EditorCommand cmd, UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter);
-	const wchar_t *script;
+	void (*commandCallback) (Editor editor_me, EditorCommand cmd, UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter);
+	const char32 *script;
 	UiForm d_uiform;
 
 	void v_destroy ()
@@ -58,7 +58,7 @@ Thing_define (Editor, Thing) {
 	Ordered menus;
 	Data data, previousData;   // the data that can be displayed and edited
 	bool d_ownData;
-	wchar_t undoText [100];
+	char32 undoText [100];
 	Graphics pictureGraphics;
 	void (*d_dataChangedCallback) (Editor me, void *closure);                   void *d_dataChangedClosure;
 	void (*d_destructionCallback) (Editor me, void *closure);                   void *d_destructionClosure;
@@ -98,19 +98,19 @@ Thing_define (Editor, Thing) {
 	#include "Editor_prefs.h"
 };
 
-GuiMenuItem EditorMenu_addCommand (EditorMenu me, const wchar_t *itemTitle, long flags,
-	void (*commandCallback) (Editor me, EditorCommand, UiForm, int, Stackel, const wchar_t *, Interpreter));
+GuiMenuItem EditorMenu_addCommand (EditorMenu me, const char32 *itemTitle /* cattable */, long flags,
+	void (*commandCallback) (Editor me, EditorCommand, UiForm, int, Stackel, const char32 *, Interpreter));
 GuiMenuItem EditorCommand_getItemWidget (EditorCommand me);
 
-EditorMenu Editor_addMenu (Editor me, const wchar_t *menuTitle, long flags);
+EditorMenu Editor_addMenu (Editor me, const char32 *menuTitle, long flags);
 GuiObject EditorMenu_getMenuWidget (EditorMenu me);
 
 #define Editor_HIDDEN  (1 << 14)
-GuiMenuItem Editor_addCommand (Editor me, const wchar_t *menuTitle, const wchar_t *itemTitle, long flags,
-	void (*commandCallback) (Editor me, EditorCommand cmd, UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter));
-GuiMenuItem Editor_addCommandScript (Editor me, const wchar_t *menuTitle, const wchar_t *itemTitle, long flags,
-	const wchar_t *script);
-void Editor_setMenuSensitive (Editor me, const wchar_t *menu, int sensitive);
+GuiMenuItem Editor_addCommand (Editor me, const char32 *menuTitle, const char32 *itemTitle, long flags,
+	void (*commandCallback) (Editor me, EditorCommand cmd, UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter));
+GuiMenuItem Editor_addCommandScript (Editor me, const char32 *menuTitle, const char32 *itemTitle, long flags,
+	const char32 *script);
+void Editor_setMenuSensitive (Editor me, const char32 *menu, int sensitive);
 
 inline static void Editor_raise (Editor me)
 	/*
@@ -206,7 +206,7 @@ inline static void Editor_broadcastPublication (Editor me, Data publication)
 /***** For inheritors. *****/
 
 void Editor_init (Editor me, int x, int y , int width, int height,
-	const wchar_t *title, Data data);
+	const char32 *title, Data data);
 /*
 	This creates my shell and my d_windowForm,
 	calls the v_createMenus and v_createChildren methods,
@@ -227,15 +227,15 @@ void Editor_init (Editor me, int x, int y , int width, int height,
 	and the Editor will not destroy 'data' when the Editor itself is destroyed.
 */
 
-void Editor_save (Editor me, const wchar_t *text);   // for Undo
+void Editor_save (Editor me, const char32 *text);   // for Undo
 
-UiForm UiForm_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *invokingButtonTitle, const wchar_t *helpTitle);
-void UiForm_parseStringE (EditorCommand cmd, int narg, Stackel args, const wchar_t *arguments, Interpreter interpreter);
-UiForm UiOutfile_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *invokingButtonTitle, const wchar_t *helpTitle);
-UiForm UiInfile_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *invokingButtonTitle, const wchar_t *helpTitle);
+UiForm UiForm_createE (EditorCommand cmd, const char32 *title, const char32 *invokingButtonTitle, const char32 *helpTitle);
+void UiForm_parseStringE (EditorCommand cmd, int narg, Stackel args, const char32 *arguments, Interpreter interpreter);
+UiForm UiOutfile_createE (EditorCommand cmd, const char32 *title, const char32 *invokingButtonTitle, const char32 *helpTitle);
+UiForm UiInfile_createE (EditorCommand cmd, const char32 *title, const char32 *invokingButtonTitle, const char32 *helpTitle);
 
-EditorCommand Editor_getMenuCommand (Editor me, const wchar_t *menuTitle, const wchar_t *itemTitle);
-void Editor_doMenuCommand (Editor me, const wchar_t *command, int narg, Stackel args, const wchar_t *arguments, Interpreter interpreter);
+EditorCommand Editor_getMenuCommand (Editor me, const char32 *menuTitle, const char32 *itemTitle);
+void Editor_doMenuCommand (Editor me, const char32 *command, int narg, Stackel args, const char32 *arguments, Interpreter interpreter);
 
 /*
  * The following two procedures are in praat_picture.cpp.

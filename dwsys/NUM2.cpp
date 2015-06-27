@@ -123,24 +123,30 @@ int NUMdmatrix_hasInfinities (double **m, long rb, long re, long cb, long ce) {
 	return max >= NUMfpp -> rmax || min <= - NUMfpp -> rmax;
 }
 
-void NUMdmatrix_printMatlabForm (double **m, long nr, long nc, const wchar_t *name) {
+void NUMdmatrix_printMatlabForm (double **m, long nr, long nc, const char32 *name) {
 	long npc = 5;
 	ldiv_t n = ldiv (nc, npc);
 
 	MelderInfo_open ();
-	MelderInfo_write (name, L"=[");
+	MelderInfo_write (name, U"=[");
 	for (long i = 1; i <= nr; i++) {
 		for (long j = 1; j <= n.quot; j++) {
 			for (long k = 1; k <= npc; k++) {
-				MelderInfo_write (Melder_double (m[i][ (j - 1) *npc + k]), (k < npc ? L", " : L""));
+				MelderInfo_write (
+					m[i][ (j - 1) *npc + k],
+					(k < npc ? U", " : U"")
+				);
 			}
-			MelderInfo_write (j < n.quot ? L",\n" : L"");
+			MelderInfo_write (j < n.quot ? U",\n" : U"");
 		}
 
 		for (long k = 1; k <= n.rem; k++) {
-			MelderInfo_write (Melder_double (m[i][n.quot * npc + k]), (k < n.rem ? L", " : L""));
+			MelderInfo_write (
+				m[i][n.quot * npc + k],
+				(k < n.rem ? U", " : U"")
+			);
 		}
-		MelderInfo_write (i < nr ? L";\n" : L"];\n");
+		MelderInfo_write (i < nr ? U";\n" : U"];\n");
 	}
 	MelderInfo_close ();
 }
@@ -458,7 +464,7 @@ void NUMvector_smoothByMovingAverage (double *xin, long n, long nwindow, double 
 
 void NUMcovarianceFromColumnCentredMatrix (double **x, long nrows, long ncols, long ndf, double **covar) {
 	if (ndf < 0 || nrows - ndf < 1 || covar == 0) {
-		Melder_throw ("Invalid arguments.");
+		Melder_throw (U"Invalid arguments.");
 	}
 	for (long i = 1; i <= ncols; i++) {
 		for (long j = i; j <= ncols; j++) {
@@ -622,22 +628,12 @@ void NUMmonotoneRegression (const double x[], long n, double xs[]) {
 	}
 }
 
-float NUMfvector_getNorm1 (const float v[], long n);
-float NUMfvector_getNorm1 (const float v[], long n) {
-	float norm = 0; long i;
+double NUMvector_getNorm1 (const double v[], long n) {
+	double norm = 0; long i;
 	for (i = 1; i <= n; i++) {
 		norm += fabs (v[i]);
 	}
 	return norm;
-}
-
-float NUMfvector_getNorm2 (const float v[], long n);
-float NUMfvector_getNorm2 (const float v[], long n) {
-	float norm = 0; long i;
-	for (i = 1; i <= n; i++) {
-		norm += v[i] * v[i];
-	}
-	return sqrt (norm);
 }
 
 double NUMvector_getNorm2 (const double v[], long n) {
@@ -703,7 +699,7 @@ void NUMdeterminant_cholesky (double **a, long n, double *lnd) {
 	long lda = n, info;
 	NUMlapack_dpotf2 (&uplo, &n, &a[1][1], &lda, &info);
 	if (info != 0) {
-		Melder_throw ("Cannot determine Cholesky decomposition.");
+		Melder_throw (U"Cannot determine Cholesky decomposition.");
 	}
 
 	// Determinant from diagonal, restore diagonal
@@ -733,7 +729,7 @@ void NUMlowerCholeskyInverse (double **a, long n, double *lnd) {
 
 	(void) NUMlapack_dpotf2 (&uplo, &n, &a[1][1], &n, &info);
 	if (info != 0) {
-		Melder_throw ("dpotf2 fails.");
+		Melder_throw (U"dpotf2 fails.");
 	}
 
 	// Determinant from diagonal, diagonal is now sqrt (a[i][i]) !
@@ -750,7 +746,7 @@ void NUMlowerCholeskyInverse (double **a, long n, double *lnd) {
 
 	(void) NUMlapack_dtrtri (&uplo, &diag, &n, &a[1][1], &n, &info);
 	if (info != 0) {
-		Melder_throw ("dtrtri fails.");
+		Melder_throw (U"dtrtri fails.");
 	}
 }
 
@@ -826,7 +822,7 @@ void NUMdominantEigenvector (double **mns, long n, double *q, double *lambda, do
 		}
 	}
 	if (cval == 0) {
-		Melder_throw ("Zero matrices ??");
+		Melder_throw (U"Zero matrices ??");
 	}
 
 	long iter = 0;
@@ -915,7 +911,7 @@ void NUMsolveEquation (double **a, long nr, long nc, double *b, double tolerance
 	double tol = tolerance > 0 ? tolerance : NUMfpp -> eps * nr;
 
 	if (nr <= 0 || nc <= 0) {
-		Melder_throw ("Negative dimensions");
+		Melder_throw (U"Negative dimensions");
 	}
 
 	autoSVD me = SVD_create_d (a, nr, nc);
@@ -928,7 +924,7 @@ void NUMsolveEquations (double **a, long nr, long nc, double **b, long ncb, doub
 	double tol = tolerance > 0 ? tolerance : NUMfpp -> eps * nr;
 
 	if (nr <= 0 || nc <= 0) {
-		Melder_throw ("Negative dimensions");
+		Melder_throw (U"Negative dimensions");
 	}
 
 	autoSVD me = SVD_create_d (a, nr, nc);
@@ -1051,7 +1047,7 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[], lon
 	char uplo = 'U';
 	(void) NUMlapack_dpotf2 (&uplo, &n3, &ftinv[1][1], &n3, &info);
 	if (info != 0) {
-		Melder_throw ("dpotf2 fails.");
+		Melder_throw (U"dpotf2 fails.");
 	}
 	ftinv[1][2] = ftinv[1][3] = ftinv[2][3] = 0;
 
@@ -1325,7 +1321,7 @@ void NUMProcrustes (double **x, double **y, long nPoints, long nDimensions, doub
 	}
 
 	if (trace == 0) {
-		Melder_throw ("NUMProcrustes: degenerate configuration(s).");
+		Melder_throw (U"NUMProcrustes: degenerate configuration(s).");
 	}
 
 	// 3. T = QP'
@@ -1391,7 +1387,7 @@ void NUMProcrustes (double **x, double **y, long nPoints, long nDimensions, doub
 void NUMmspline (double knot[], long nKnots, long order, long i, double x, double *y) {
 	long jj, nSplines = nKnots - order;
 	if (nSplines <= 0) {
-		Melder_throw ("No splines.");
+		Melder_throw (U"No splines.");
 	}
 
 	// Find the interval where x is located.
@@ -1402,7 +1398,7 @@ void NUMmspline (double knot[], long nKnots, long order, long i, double x, doubl
 
 	*y = 0;
 	if (i > nSplines || order < 1) {
-		Melder_throw ("Combination of order and index not correct.");
+		Melder_throw (U"Combination of order and index not correct.");
 	}
 	for (jj = order; jj <= nKnots - order + 1; jj++) {
 		if (x < knot[jj]) {
@@ -1483,7 +1479,7 @@ double NUMfactln (int n) {
 	if (n <= 1) {
 		return 0;
 	}
-	return n > 100 ? NUMlnGamma (n + 1.0) : table[n] ? table[n] :
+	return n > 100 ? NUMlnGamma (n + 1.0) : table[n] != 0.0 ? table[n] :
 	       (table[n] = NUMlnGamma (n + 1.0));
 }
 
@@ -1505,7 +1501,7 @@ void NUMnrbis (void (*f) (double x, double *fx, double *dfx, void *closure), dou
 
 	if ( (fl > 0.0 && fh > 0.0) || (fl < 0.0 && fh < 0.0)) {
 		*root = NUMundefined;
-		Melder_throw (L"Root must be bracketed.");
+		Melder_throw (U"Root must be bracketed.");
 	}
 
 	if (fl < 0.0) {
@@ -1551,7 +1547,7 @@ void NUMnrbis (void (*f) (double x, double *fx, double *dfx, void *closure), dou
 			xh = *root;
 		}
 	}
-	Melder_warning (L"NUMnrbis: maximum number of iterations (", Melder_integer (itermax), L") exceeded.");
+	Melder_warning (U"NUMnrbis: maximum number of iterations (", itermax, U") exceeded.");
 }
 
 double NUMridders (double (*f) (double x, void *closure), double x1, double x2, void *closure) {
@@ -1577,7 +1573,7 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 		return NUMundefined;
 	}
 	if ( (f1 < 0 && f2 < 0) || (f1 > 0 && f2 > 0)) {
-		Melder_warning (L"NUMridders: root must be bracketed.");
+		Melder_warning (U"NUMridders: root must be bracketed.");
 		return NUMundefined;
 	}
 
@@ -1598,7 +1594,7 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 
 		d = f3 * f3 - f1 * f2;
 		if (d < 0.0) {
-			Melder_warning (L"d < 0 in ridders (iter = ", Melder_integer (iter), L").");
+			Melder_warning (U"d < 0 in ridders (iter = ", iter, U").");
 			return NUMundefined;
 		}
 
@@ -1698,7 +1694,7 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 	{
 		static long nwarnings = 0;
 		nwarnings++;
-		Melder_warning (L"NUMridders: maximum number of iterations (", Melder_integer (itermax), L") exceeded.");
+		Melder_warning (U"NUMridders: maximum number of iterations (", itermax, U") exceeded.");
 	}
 	return root;
 }
@@ -2164,7 +2160,7 @@ void NUMdmatrix_to_dBs (double **m, long rb, long re, long cb, long ce, double r
 	}
 
 	if (max < 0 || min < 0) {
-		Melder_throw ("NUMdmatrix_to_dBs: all matrix elements must be positive.");
+		Melder_throw (U"NUMdmatrix_to_dBs: all matrix elements must be positive.");
 	}
 	ref_db = factor10 * log10 (ref);
 
@@ -2239,7 +2235,7 @@ void NUMsplint (double xa[], double ya[], double y2a[], long n, double x, double
 	}
 	double h = xa[khi] - xa[klo];
 	if (h == 0.0) {
-		Melder_throw ("NUMsplint: bad input value.");
+		Melder_throw (U"NUMsplint: bad input value.");
 	}
 	double a = (xa[khi] - x) / h;
 	double b = (x - xa[klo]) / h;
@@ -2351,7 +2347,7 @@ int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2
 		}
 		ni++;
 		if (ni > 2) {
-			Melder_throw ("Too many intersections.");
+			Melder_throw (U"Too many intersections.");
 		}
 		xi[ni] = x3;
 		yi[ni] = y3;
@@ -2490,7 +2486,7 @@ bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2,
 		}
 		*xo1 = xc[1]; *yo1 = yc[1]; *xo2 = xc[2]; *yo2 = yc[2];
 	} else {
-		Melder_throw ("Too many crossings found.");
+		Melder_throw (U"Too many crossings found.");
 	}
 	return true;
 }
@@ -2637,7 +2633,7 @@ double NUMminimize_brent (double (*f) (double x, void *closure), double a, doubl
 			}
 		}
 	}
-	Melder_warning (L"NUMminimize_brent: maximum number of iterations (", Melder_integer (itermax), L") exceeded.");
+	Melder_warning (U"NUMminimize_brent: maximum number of iterations (", itermax, U") exceeded.");
 	return x;
 }
 
@@ -2702,7 +2698,7 @@ void NUMlineFit_theil (double *x, double *y, long numberOfPoints, double *m, dou
 			*intercept = NUMquantile (numberOfPoints, mbs.peek(), 0.5);
 		}
 	} catch (MelderError) {
-		Melder_throw ("No line fit (Theil's method)");
+		Melder_throw (U"No line fit (Theil's method)");
 	}
 }
 
@@ -2743,7 +2739,7 @@ void NUMlpc_lpc_to_rc (double *lpc, long p, double *rc) {
 	for (long m = p; m > 0; m--) {
 		rc[m] = a[m];
 		if (fabs (rc[m]) > 1) {
-			Melder_throw ("Relection coefficient [", Melder_integer(m), "] larger 1.");
+			Melder_throw (U"Relection coefficient [", m, U"] larger than 1.");
 		}
 		for (long i = 1; i < m; i++) {
 			b[i] = a[i];
@@ -3033,7 +3029,7 @@ TryAgain:
 
 		/* More efficient determination of whether v < f(x)/f(M) */
 
-		long k = abs (ix - m);
+		long k = labs (ix - m);
 
 		if (k <= FAR_FROM_MEAN) {
 			/*
@@ -3130,4 +3126,4 @@ Finish:
   	return (flipped) ? (n - ix) : ix;
 }
 
-/* End of file NUM2.c */
+/* End of file NUM2.cpp */

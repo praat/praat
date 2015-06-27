@@ -1,6 +1,6 @@
 /* FormantTier.cpp
  *
- * Copyright (C) 1992-2011,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ FormantPoint FormantPoint_create (double time) {
 		my time = time;
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Formant point not created.");
+		Melder_throw (U"Formant point not created.");
 	}
 }
 
@@ -71,7 +71,7 @@ FormantTier FormantTier_create (double tmin, double tmax) {
 		my xmax = tmax;
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("FormantTier not created.");
+		Melder_throw (U"FormantTier not created.");
 	}
 }
 
@@ -150,10 +150,10 @@ void FormantTier_speckle (FormantTier me, Graphics g, double tmin, double tmax, 
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, TRUE, L"Time (s)");
+		Graphics_textBottom (g, TRUE, U"Time (s)");
 		Graphics_marksBottom (g, 2, TRUE, TRUE, FALSE);
 		Graphics_marksLeft (g, 2, TRUE, TRUE, FALSE);
-		Graphics_textLeft (g, TRUE, L"Frequency (Hz)");
+		Graphics_textLeft (g, TRUE, U"Frequency (Hz)");
 	}
 }
 
@@ -173,7 +173,7 @@ FormantTier Formant_downto_FormantTier (Formant me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to FormantTier.");
+		Melder_throw (me, U": not converted to FormantTier.");
 	}
 }
 
@@ -198,7 +198,7 @@ FormantTier Formant_PointProcess_to_FormantTier (Formant me, PointProcess pp) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, " & ", pp, ": not converted to FormantTier.");
+		Melder_throw (me, U" & ", pp, U": not converted to FormantTier.");
 	}
 }
 
@@ -228,15 +228,15 @@ TableOfReal FormantTier_downto_TableOfReal (FormantTier me, int includeFormants,
 		autoTableOfReal thee = TableOfReal_create (my points -> size, 1 +
 			( includeFormants ? maximumNumberOfFormants : 0 ) +
 			( includeBandwidths ? maximumNumberOfFormants : 0 ));
-		TableOfReal_setColumnLabel (thee.peek(), 1, L"Time");
+		TableOfReal_setColumnLabel (thee.peek(), 1, U"Time");
 		for (long icol = 1, iformant = 1; iformant <= maximumNumberOfFormants; iformant ++) {
-			wchar_t label [4];
+			char32 label [4];
 			if (includeFormants) {
-				swprintf (label, 4, L"F%d", iformant);
+				Melder_sprint (label,4, U"F", iformant);
 				TableOfReal_setColumnLabel (thee.peek(), ++ icol, label);
 			}
 			if (includeBandwidths) {
-				swprintf (label, 4, L"B%d", iformant);
+				Melder_sprint (label,4, U"B", iformant);
 				TableOfReal_setColumnLabel (thee.peek(), ++ icol, label);
 			}
 		}
@@ -250,7 +250,7 @@ TableOfReal FormantTier_downto_TableOfReal (FormantTier me, int includeFormants,
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to TableOfReal.");
+		Melder_throw (me, U": not converted to TableOfReal.");
 	}
 }
 
@@ -295,7 +295,7 @@ Sound Sound_FormantTier_filter (Sound me, FormantTier formantTier) {
 		Vector_scale (thee.peek(), 0.99);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not filtered with ", formantTier, ".");
+		Melder_throw (me, U": not filtered with ", formantTier, U".");
 	}
 }
 
@@ -305,7 +305,7 @@ Sound Sound_FormantTier_filter_noscale (Sound me, FormantTier formantTier) {
 		Sound_FormantTier_filter_inline (thee.peek(), formantTier);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not filtered with ", formantTier, ".");
+		Melder_throw (me, U": not filtered with ", formantTier, U".");
 	}
 }
 

@@ -57,7 +57,7 @@ static int RunnerMFC_startExperiment (RunnerMFC me) {
 	return 1;
 }
 
-static void drawControlButton (RunnerMFC me, double left, double right, double bottom, double top, const wchar_t *visibleText) {
+static void drawControlButton (RunnerMFC me, double left, double right, double bottom, double top, const char32 *visibleText) {
 	Graphics_setColour (my graphics, Graphics_MAROON);
 	Graphics_setLineWidth (my graphics, 3.0);
 	Graphics_fillRectangle (my graphics, left, right, bottom, top);
@@ -90,43 +90,44 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 				experiment -> oops_label);
 		}
 	} else if (experiment -> trial <= experiment -> numberOfTrials) {
-		const wchar_t *visibleText = experiment -> stimulus [experiment -> stimuli [experiment -> trial]]. visibleText;
-		wchar_t *visibleText_dup = Melder_wcsdup_f (visibleText ? visibleText : L""), *visibleText_p = visibleText_dup;
+		const char32 *visibleText = experiment -> stimulus [experiment -> stimuli [experiment -> trial]]. visibleText;
+		autostring32 visibleText_dup = Melder_dup_f (visibleText ? visibleText : U"");
+		char32 *visibleText_p = visibleText_dup.peek();
 		Graphics_setFont (my graphics, kGraphics_font_TIMES);
 		Graphics_setFontSize (my graphics, 10);
 		Graphics_setColour (my graphics, Graphics_BLACK);
 		Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_TOP);
-		Graphics_text3 (my graphics, 0, 1, Melder_integer (experiment -> trial), L" / ", Melder_integer (experiment -> numberOfTrials));
+		Graphics_text (my graphics, 0, 1,   experiment -> trial, U" / ", experiment -> numberOfTrials);
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_TOP);
 		Graphics_setFontSize (my graphics, 24);
 		/*
 		 * The run text.
 		 */
-		if (visibleText_p [0] != '\0') {
-			wchar_t *visibleText_q = wcschr (visibleText_p, '|');
+		if (visibleText_p [0] != U'\0') {
+			char32 *visibleText_q = str32chr (visibleText_p, U'|');
 			if (visibleText_q) *visibleText_q = '\0';
 			Graphics_text (my graphics, 0.5, 1.0, visibleText_p [0] != '\0' ? visibleText_p : experiment -> runText);
-			if (visibleText_q) visibleText_p = visibleText_q + 1; else visibleText_p += wcslen (visibleText_p);
+			if (visibleText_q) visibleText_p = visibleText_q + 1; else visibleText_p += str32len (visibleText_p);
 		} else {
 			Graphics_text (my graphics, 0.5, 1.0, experiment -> runText);
 		}
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
 		for (iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
 			ResponseMFC response = & experiment -> response [iresponse];
-			wchar_t *textToDraw = response -> label;   // can be overridden
-			if (visibleText_p [0] != '\0') {
-				wchar_t *visibleText_q = wcschr (visibleText_p, '|');
-				if (visibleText_q) *visibleText_q = '\0';
+			char32 *textToDraw = response -> label;   // can be overridden
+			if (visibleText_p [0] != U'\0') {
+				char32 *visibleText_q = str32chr (visibleText_p, U'|');
+				if (visibleText_q) *visibleText_q = U'\0';
 				textToDraw = visibleText_p;   // override
-				if (visibleText_q) visibleText_p = visibleText_q + 1; else visibleText_p += wcslen (visibleText_p);
+				if (visibleText_q) visibleText_p = visibleText_q + 1; else visibleText_p += str32len (visibleText_p);
 			}
-			if (wcsnequ (textToDraw, L"\\FI", 3)) {
+			if (str32nequ (textToDraw, U"\\FI", 3)) {
 				structMelderFile file = { 0 };
 				MelderDir_relativePathToFile (& experiment -> rootDirectory, textToDraw + 3, & file);
 				Graphics_imageFromFile (my graphics, Melder_fileToPath (& file), response -> left, response -> right, response -> bottom, response -> top);
 			} else {
 				Graphics_setColour (my graphics,
-					response -> name [0] == '\0' ? Graphics_SILVER :
+					response -> name [0] == U'\0' ? Graphics_SILVER :
 					experiment -> responses [experiment -> trial] == iresponse ? Graphics_RED :
 					experiment -> ok_right > experiment -> ok_left || experiment -> responses [experiment -> trial] == 0 ?
 					Graphics_YELLOW : Graphics_SILVER);
@@ -168,7 +169,6 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 				experiment -> oops_left, experiment -> oops_right, experiment -> oops_bottom, experiment -> oops_top,
 				experiment -> oops_label);
 		}
-		Melder_free (visibleText_dup);
 	} else {
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
 		Graphics_setFontSize (my graphics, 24);
@@ -271,7 +271,7 @@ static void do_replay (RunnerMFC me) {
 
 static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	iam (RunnerMFC);
-	if (my graphics == NULL) return;   // Could be the case in the very beginning.
+	if (my graphics == NULL) return;   // could be the case in the very beginning
 	ExperimentMFC experiment = (ExperimentMFC) my data;
 	if (my data == NULL) return;
 	double reactionTime = Melder_clock () - experiment -> startingTime;
@@ -291,7 +291,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 		Graphics_updateWs (my graphics);
 		if (experiment -> stimuliAreSounds) {
 			if (experiment -> numberOfTrials < 1) {
-				Melder_flushError ("There are zero trials in this experiment.");
+				Melder_flushError (U"There are zero trials in this experiment.");
 				forget (me);
 				return;
 			}
@@ -386,7 +386,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 		if (my iexperiment < my experiments -> size) {
 			my iexperiment ++;
 			if (! RunnerMFC_startExperiment (me)) {
-				Melder_flushError (NULL);
+				Melder_flushError ();
 				forget (me);
 				return;
 			}
@@ -445,7 +445,7 @@ void structRunnerMFC :: v_createChildren () {
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
 }
 
-RunnerMFC RunnerMFC_create (const wchar_t *title, Ordered experiments) {
+RunnerMFC RunnerMFC_create (const char32 *title, Ordered experiments) {
 	try {
 		autoRunnerMFC me = Thing_new (RunnerMFC);
 		Editor_init (me.peek(), 0, 0, 2000, 2000, title, NULL);
@@ -461,7 +461,7 @@ gui_drawingarea_cb_resize (me.peek(), & event);
 		RunnerMFC_startExperiment (me.peek());
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Experiment window not created.");
+		Melder_throw (U"Experiment window not created.");
 	}
 }
 

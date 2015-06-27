@@ -87,10 +87,10 @@ void Graphics_boxAndWhiskerPlot (Graphics g, double data[], long ndata, double x
 	}
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	while (i <= ie && data[i] < lowerOuterFence) {
-		Graphics_text (g, x, data[i], L"o"); i++;
+		Graphics_text (g, x, data[i], U"o"); i++;
 	}
 	while (i <= ie && data[i] < lowerInnerFence) {
-		Graphics_text (g, x, data[i], L"*"); i++;
+		Graphics_text (g, x, data[i], U"*"); i++;
 	}
 	double lowerWhisker = data[i] < q25 ? data[i] : lowerInnerFence;
 	if (lowerWhisker > ymax) {
@@ -104,10 +104,10 @@ void Graphics_boxAndWhiskerPlot (Graphics g, double data[], long ndata, double x
 		i--;
 	}
 	while (i >= ie && data[i] > upperOuterFence) {
-		Graphics_text (g, x, data[i], L"o"); i--;
+		Graphics_text (g, x, data[i], U"o"); i--;
 	}
 	while (i >= ie && data[i] > upperInnerFence) {
-		Graphics_text (g, x, data[i], L"*"); i--;
+		Graphics_text (g, x, data[i], U"*"); i--;
 	}
 	double upperWhisker = data[i] > q75 ? data[i] : upperInnerFence;
 	if (upperWhisker < ymin) {
@@ -174,7 +174,7 @@ void Graphics_boxAndWhiskerPlot (Graphics g, double data[], long ndata, double x
 	}
 }
 
-void Graphics_quantileQuantilePlot (Graphics g, long numberOfQuantiles, double xdata[], long xnumberOfData, double ydata[], long ynumberOfData, double xmin, double xmax, double ymin, double ymax, int labelSize, const wchar_t *plotLabel) {
+void Graphics_quantileQuantilePlot (Graphics g, long numberOfQuantiles, double xdata[], long xnumberOfData, double ydata[], long ynumberOfData, double xmin, double xmax, double ymin, double ymax, int labelSize, const char32 *plotLabel) {
 	int fontSize = Graphics_inqFontSize (g);
 
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
@@ -248,7 +248,7 @@ void Graphics_matrixAsSquares (Graphics g, double **matrix, long numberOfRows, l
 	}
 }
 
-void Graphics_lagPlot (Graphics g, double data[], long numberOfData, double xmin, double xmax, long lag, int labelSize, const wchar_t *plotLabel) {
+void Graphics_lagPlot (Graphics g, double data[], long numberOfData, double xmin, double xmax, long lag, int labelSize, const char32 *plotLabel) {
 	if (lag < 0 || lag >= numberOfData) {
 		return;
 	}

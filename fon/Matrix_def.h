@@ -23,7 +23,9 @@ oo_DEFINE_CLASS (Matrix, SampledXY)
 
 	#if oo_READING
 		if (Melder_debug == 45)
-			Melder_casual ("structMatrix :: read: Going to read %ld rows of %ld columns.", ny, nx);
+			Melder_casual (U"structMatrix :: read:"
+				U" Going to read ", ny, U" rows"
+				U" of ", nx, U" columns.");
 		if (localVersion >= 2) {
 			oo_DOUBLE_MATRIX (z, ny, nx)
 		} else {

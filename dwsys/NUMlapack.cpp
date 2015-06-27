@@ -1111,7 +1111,7 @@ void NUMgsvdFromUpperTriangulars (double **a, long m, long n, double **b,
 
 	if (iter == MAXIT + 1) {
 		*ncycle = MAXIT;
-		Melder_throw ("No convergence after ", MAXIT, " iterations.");
+		Melder_throw (U"No convergence after ", MAXIT, U" iterations.");
 	}
 
 	*ncycle = iter;
@@ -1376,7 +1376,7 @@ void NUMgsvdcmp (double **a, long m, long n, double **b, long p, int productsvd,
 	double bnorm = NUMfrobeniusnorm (p, n, b);
 
 	if (anorm == 0 || bnorm == 0) {
-		Melder_throw ("NUMgsvdcmp: empty matrix.");
+		Melder_throw (U"NUMgsvdcmp: empty matrix.");
 	}
 
 	double tola = MAX (m, n) * MAX (anorm, NUMfpp -> sfmin) * NUMfpp -> prec;

@@ -1,6 +1,6 @@
 /* Artword_to_Art.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ Art Artword_to_Art (Artword me, double tim) {
 		Artword_intoArt (me, thee.peek(), tim);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Articulation.");
+		Melder_throw (me, U": not converted to Articulation.");
 	}
 }
 

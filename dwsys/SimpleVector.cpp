@@ -57,7 +57,7 @@ DoubleVector DoubleVector_create (long min, long max) {
 		DoubleVector_init (me.peek(), min, max);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("DoubleVector not created.");
+		Melder_throw (U"DoubleVector not created.");
 	}
 }
 
@@ -75,7 +75,7 @@ ComplexVector ComplexVector_create (long min, long max) {
 		ComplexVector_init (me.peek(), min, max);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("ComplexVector not created.");
+		Melder_throw (U"ComplexVector not created.");
 	}
 }
 

@@ -94,8 +94,8 @@ oo_DEFINE_CLASS (FFNet, Data)
 	#endif
 
 	#if oo_DECLARING
-		// overridden methods:
-			virtual void v_info ();
+		void v_info ()
+			override;
 	#endif
 
 oo_END_CLASS (FFNet)

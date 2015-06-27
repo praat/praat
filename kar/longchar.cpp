@@ -27,7 +27,7 @@
  * pb 2005/03/08 ps encoding; SILIPA93 encoding for Windows and Mac
  * pb 2005/09/18 SILIPA93 widths for fontless EPS files, including bold
  * pb 2006/11/17 Unicode
- * pb 2006/12/05 first wchar_t support
+ * pb 2006/12/05 first wchar support
  * pb 2006/12/15 stress marks
  * pb 2007/08/08 Longchar_genericizeW
  * pb 2008/02/27 \d- and \D-
@@ -636,41 +636,6 @@ static void init (void) {
 	inited = 1;
 }
 
-wchar_t * Longchar_nativizeW (const wchar_t *generic, wchar_t *native, int educateQuotes) {
-	long nquote = 0;
-	wchar_t kar, kar1, kar2;
-	if (! inited) init ();
-	while ((kar = *generic++) != L'\0') {
-		if (educateQuotes) {
-			if (kar == L'\"') {
-				*native++ = ++nquote & 1 ? UNICODE_LEFT_DOUBLE_QUOTATION_MARK : UNICODE_RIGHT_DOUBLE_QUOTATION_MARK;
-				continue;
-			} else if (kar == L'`') {   /* Grave. */
-				*native++ = UNICODE_LEFT_SINGLE_QUOTATION_MARK;
-				continue;
-			} else if (kar == L'\'') {   /* Straight apostrophe. */
-				*native++ = UNICODE_RIGHT_SINGLE_QUOTATION_MARK;   /* Right single quote. */
-				continue;
-			}
-		}
-		if (kar == '\\' && (kar1 = generic [0]) >= 32 && kar1 <= 126 && (kar2 = generic [1]) >= 32 && kar2 <= 126) {
-			long location = where [kar1 - 32] [kar2 - 32];
-			if (location == 0) {
-				*native++ = kar;
-				*native++ = kar1;   /* Even if this is a backslash itself... */
-				*native++ = kar2;   /* Even if this is a backslash itself... */
-				/* These "evens" are here to ensure that Longchar_nativize does nothing on an already nativized string. */
-			} else {
-				*native++ = Longchar_database [location]. unicode ? Longchar_database [location]. unicode : UNICODE_INVERTED_QUESTION_MARK;
-			}	
-			generic += 2;
-		} else {
-			*native++ = kar;
-		}
-	}
-	*native++ = '\0';
-	return native;
-}
 char32_t * Longchar_nativize32 (const char32_t *generic, char32_t *native, int educateQuotes) {
 	long nquote = 0;
 	char32_t kar, kar1, kar2;
@@ -723,21 +688,6 @@ char *Longchar_genericize (const char *native, char *g) {
 	return g;
 }
 
-wchar_t *Longchar_genericizeW (const wchar_t *native, wchar_t *g) {
-	wchar_t kar;
-	if (! inited) init ();
-	while ((kar = *native++) != L'\0') {
-		if (kar > 128 && kar <= UNICODE_TOP_GENERICIZABLE && genericDigraph [kar]. first != '\0') {
-			*g++ = '\\';
-			*g++ = genericDigraph [kar]. first;
-			*g++ = genericDigraph [kar]. second;
-		} else {
-			*g++ = kar;
-		}
-	}
-	*g++ = '\0';
-	return g;
-}
 char32_t *Longchar_genericize32 (const char32_t *native, char32_t *g) {
 	char32_t kar;
 	if (! inited) init ();
@@ -762,7 +712,7 @@ Longchar_Info Longchar_getInfo (char kar1, char kar2) {
 	return & Longchar_database [position];
 }
 
-Longchar_Info Longchar_getInfoFromNative (wchar_t kar) {
+Longchar_Info Longchar_getInfoFromNative (char32_t kar) {
 	if (! inited) init ();
 	return kar > UNICODE_TOP_GENERICIZABLE ? Longchar_getInfo (' ', ' ') : Longchar_getInfo (genericDigraph [kar]. first, genericDigraph [kar]. second);
 }

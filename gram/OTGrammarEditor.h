@@ -34,11 +34,11 @@ Thing_define (OTGrammarEditor, HyperPage) {
 		override;
 	void v_draw ()
 		override;
-	int v_goToPage (const wchar_t *title)
+	int v_goToPage (const char32 *title)
 		override;
 };
 
-OTGrammarEditor OTGrammarEditor_create (const wchar_t *title, OTGrammar ot);
+OTGrammarEditor OTGrammarEditor_create (const char32 *title, OTGrammar ot);
 
 /* End of file OTGrammarEditor.h */
 #endif

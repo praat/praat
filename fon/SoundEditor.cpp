@@ -51,7 +51,7 @@ static void menu_cb_Copy (EDITOR_ARGS) {
 		forget (Sound_clipboard);
 		Sound_clipboard = publish.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Sound selection not copied to clipboard.");
+		Melder_throw (U"Sound selection not copied to clipboard.");
 	}
 }
 
@@ -64,9 +64,9 @@ static void menu_cb_Cut (EDITOR_ARGS) {
 		long oldNumberOfSamples = sound -> nx;
 		long newNumberOfSamples = oldNumberOfSamples - selectionNumberOfSamples;
 		if (newNumberOfSamples < 1)
-			Melder_throw ("You cannot cut all of the signal away,\n"
-				"because you cannot create a Sound with 0 samples.\n"
-				"You could consider using Copy instead.");
+			Melder_throw (U"You cannot cut all of the signal away,\n"
+				U"because you cannot create a Sound with 0 samples.\n"
+				U"You could consider using Copy instead.");
 		if (selectionNumberOfSamples) {
 			double **oldData = sound -> z;
 			/*
@@ -90,7 +90,7 @@ static void menu_cb_Cut (EDITOR_ARGS) {
 					newData [channel] [++ j] = oldData [channel] [i];
 				}
 			}
-			Editor_save (me, L"Cut");
+			Editor_save (me, U"Cut");
 			/*
 			 * Change without error.
 			 */
@@ -150,10 +150,10 @@ static void menu_cb_Cut (EDITOR_ARGS) {
 			FunctionEditor_marksChanged (me, false);
 			Editor_broadcastDataChanged (me);
 		} else {
-			Melder_warning (L"No samples selected.");
+			Melder_warning (U"No samples selected.");
 		}
 	} catch (MelderError) {
-		Melder_throw ("Sound selection not cut to clipboard.");
+		Melder_throw (U"Sound selection not cut to clipboard.");
 	}
 }
 
@@ -164,17 +164,17 @@ static void menu_cb_Paste (EDITOR_ARGS) {
 	long oldNumberOfSamples = sound -> nx, newNumberOfSamples;
 	double **oldData = sound -> z;
 	if (! Sound_clipboard) {
-		Melder_warning (L"Clipboard is empty; nothing pasted.");
+		Melder_warning (U"Clipboard is empty; nothing pasted.");
 		return;
 	}
 	if (Sound_clipboard -> ny != sound -> ny)
-		Melder_throw ("Cannot paste, because\n"
-			"the number of channels of the clipboard is not equal to\n"
-			"the number of channels of the edited sound.");
+		Melder_throw (U"Cannot paste, because\n"
+			U"the number of channels of the clipboard is not equal to\n"
+			U"the number of channels of the edited sound.");
 	if (Sound_clipboard -> dx != sound -> dx)
-		Melder_throw ("Cannot paste, because\n"
-			"the sampling frequency of the clipboard is not equal to\n"
-			"the sampling frequency of the edited sound.");
+		Melder_throw (U"Cannot paste, because\n"
+			U"the sampling frequency of the clipboard is not equal to\n"
+			U"the sampling frequency of the edited sound.");
 	if (leftSample < 0) leftSample = 0;
 	if (leftSample > oldNumberOfSamples) leftSample = oldNumberOfSamples;
 	newNumberOfSamples = oldNumberOfSamples + Sound_clipboard -> nx;
@@ -194,7 +194,7 @@ static void menu_cb_Paste (EDITOR_ARGS) {
 			newData [channel] [++ j] = oldData [channel] [i];
 		}
 	}
-	Editor_save (me, L"Paste");
+	Editor_save (me, U"Paste");
 	/*
 	 * Change without error.
 	 */
@@ -226,7 +226,7 @@ static void menu_cb_SetSelectionToZero (EDITOR_ARGS) {
 	Sound sound = (Sound) my data;
 	long first, last;
 	Sampled_getWindowSamples (sound, my d_startSelection, my d_endSelection, & first, & last);
-	Editor_save (me, L"Set to zero");
+	Editor_save (me, U"Set to zero");
 	for (long channel = 1; channel <= sound -> ny; channel ++) {
 		for (long i = first; i <= last; i ++) {
 			sound -> z [channel] [i] = 0.0;
@@ -239,7 +239,7 @@ static void menu_cb_SetSelectionToZero (EDITOR_ARGS) {
 
 static void menu_cb_ReverseSelection (EDITOR_ARGS) {
 	EDITOR_IAM (SoundEditor);
-	Editor_save (me, L"Reverse selection");
+	Editor_save (me, U"Reverse selection");
 	Sound_reverse ((Sound) my data, my d_startSelection, my d_endSelection);
 	my v_destroy_analysis ();
 	FunctionEditor_redraw (me);
@@ -287,30 +287,30 @@ static void menu_cb_MoveEtoZero (EDITOR_ARGS) {
 
 /***** HELP MENU *****/
 
-static void menu_cb_SoundEditorHelp (EDITOR_ARGS) { EDITOR_IAM (SoundEditor); Melder_help (L"SoundEditor"); }
-static void menu_cb_LongSoundEditorHelp (EDITOR_ARGS) { EDITOR_IAM (SoundEditor); Melder_help (L"LongSoundEditor"); }
+static void menu_cb_SoundEditorHelp (EDITOR_ARGS) { EDITOR_IAM (SoundEditor); Melder_help (U"SoundEditor"); }
+static void menu_cb_LongSoundEditorHelp (EDITOR_ARGS) { EDITOR_IAM (SoundEditor); Melder_help (U"LongSoundEditor"); }
 
 void structSoundEditor :: v_createMenus () {
 	SoundEditor_Parent :: v_createMenus ();
 	Melder_assert (data != NULL);
 	Melder_assert (d_sound.data != NULL || d_longSound.data != NULL);
 
-	Editor_addCommand (this, L"Edit", L"-- cut copy paste --", 0, NULL);
-	if (d_sound.data) cutButton = Editor_addCommand (this, L"Edit", L"Cut", 'X', menu_cb_Cut);
-	copyButton = Editor_addCommand (this, L"Edit", L"Copy selection to Sound clipboard", 'C', menu_cb_Copy);
-	if (d_sound.data) pasteButton = Editor_addCommand (this, L"Edit", L"Paste after selection", 'V', menu_cb_Paste);
+	Editor_addCommand (this, U"Edit", U"-- cut copy paste --", 0, NULL);
+	if (d_sound.data) cutButton = Editor_addCommand (this, U"Edit", U"Cut", 'X', menu_cb_Cut);
+	copyButton = Editor_addCommand (this, U"Edit", U"Copy selection to Sound clipboard", 'C', menu_cb_Copy);
+	if (d_sound.data) pasteButton = Editor_addCommand (this, U"Edit", U"Paste after selection", 'V', menu_cb_Paste);
 	if (d_sound.data) {
-		Editor_addCommand (this, L"Edit", L"-- zero --", 0, NULL);
-		zeroButton = Editor_addCommand (this, L"Edit", L"Set selection to zero", 0, menu_cb_SetSelectionToZero);
-		reverseButton = Editor_addCommand (this, L"Edit", L"Reverse selection", 'R', menu_cb_ReverseSelection);
+		Editor_addCommand (this, U"Edit", U"-- zero --", 0, NULL);
+		zeroButton = Editor_addCommand (this, U"Edit", U"Set selection to zero", 0, menu_cb_SetSelectionToZero);
+		reverseButton = Editor_addCommand (this, U"Edit", U"Reverse selection", 'R', menu_cb_ReverseSelection);
 	}
 
 	if (d_sound.data) {
-		Editor_addCommand (this, L"Select", L"-- move to zero --", 0, 0);
-		Editor_addCommand (this, L"Select", L"Move start of selection to nearest zero crossing", ',', menu_cb_MoveBtoZero);
-		Editor_addCommand (this, L"Select", L"Move begin of selection to nearest zero crossing", Editor_HIDDEN, menu_cb_MoveBtoZero);
-		Editor_addCommand (this, L"Select", L"Move cursor to nearest zero crossing", '0', menu_cb_MoveCursorToZero);
-		Editor_addCommand (this, L"Select", L"Move end of selection to nearest zero crossing", '.', menu_cb_MoveEtoZero);
+		Editor_addCommand (this, U"Select", U"-- move to zero --", 0, 0);
+		Editor_addCommand (this, U"Select", U"Move start of selection to nearest zero crossing", ',', menu_cb_MoveBtoZero);
+		Editor_addCommand (this, U"Select", U"Move begin of selection to nearest zero crossing", Editor_HIDDEN, menu_cb_MoveBtoZero);
+		Editor_addCommand (this, U"Select", U"Move cursor to nearest zero crossing", '0', menu_cb_MoveCursorToZero);
+		Editor_addCommand (this, U"Select", U"Move end of selection to nearest zero crossing", '.', menu_cb_MoveEtoZero);
 	}
 
 	v_createMenus_analysis ();
@@ -318,8 +318,8 @@ void structSoundEditor :: v_createMenus () {
 
 void structSoundEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	SoundEditor_Parent :: v_createHelpMenuItems (menu);
-	EditorMenu_addCommand (menu, L"SoundEditor help", '?', menu_cb_SoundEditorHelp);
-	EditorMenu_addCommand (menu, L"LongSoundEditor help", 0, menu_cb_LongSoundEditorHelp);
+	EditorMenu_addCommand (menu, U"SoundEditor help", '?', menu_cb_SoundEditorHelp);
+	EditorMenu_addCommand (menu, U"LongSoundEditor help", 0, menu_cb_LongSoundEditorHelp);
 }
 
 /********** UPDATE **********/
@@ -350,9 +350,9 @@ void structSoundEditor :: v_draw () {
 		Graphics_fillRectangle (d_graphics, 0, 1, 0, 1);
 		Graphics_setColour (d_graphics, Graphics_BLACK);
 		Graphics_setTextAlignment (d_graphics, Graphics_CENTRE, Graphics_BOTTOM);
-		Graphics_text3 (d_graphics, 0.5, 0.5, L"(window longer than ", Melder_float (Melder_single (d_longSound.data -> bufferLength)), L" seconds)");
+		Graphics_text (d_graphics, 0.5, 0.5,   U"(window longer than ", Melder_float (Melder_single (d_longSound.data -> bufferLength)), U" seconds)");
 		Graphics_setTextAlignment (d_graphics, Graphics_CENTRE, Graphics_TOP);
-		Graphics_text1 (d_graphics, 0.5, 0.5, L"(zoom in to see the samples)");
+		Graphics_text (d_graphics, 0.5, 0.5, U"(zoom in to see the samples)");
 		return;
 	}
 
@@ -432,7 +432,7 @@ void structSoundEditor :: v_unhighlightSelection (double left, double right, dou
 		Graphics_unhighlight (d_graphics, left, right, bottom, top);
 }
 
-void SoundEditor_init (SoundEditor me, const wchar_t *title, Sampled data) {
+void SoundEditor_init (SoundEditor me, const char32 *title, Sampled data) {
 	/*
 	 * my longSound.data or my sound.data have to be set before we call FunctionEditor_init,
 	 * because createMenus expects that one of them is not NULL.
@@ -446,14 +446,14 @@ void SoundEditor_init (SoundEditor me, const wchar_t *title, Sampled data) {
 	}
 }
 
-SoundEditor SoundEditor_create (const wchar_t *title, Sampled data) {
+SoundEditor SoundEditor_create (const char32 *title, Sampled data) {
 	Melder_assert (data != NULL);
 	try {
 		autoSoundEditor me = Thing_new (SoundEditor);
 		SoundEditor_init (me.peek(), title, data);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Sound window not created.");
+		Melder_throw (U"Sound window not created.");
 	}
 }
 

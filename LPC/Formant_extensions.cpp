@@ -24,7 +24,7 @@
 #include "Formant_extensions.h"
 #include "NUM2.h"
 
-void Formant_formula (Formant me, double tmin, double tmax, long formantmin, long formantmax, Interpreter interpreter, wchar_t *expression) {
+void Formant_formula (Formant me, double tmin, double tmax, long formantmin, long formantmax, Interpreter interpreter, char32 *expression) {
 	try {
 		long numberOfPossibleFormants = my maxnFormants;
 		if (tmax <= tmin) {
@@ -86,17 +86,17 @@ void Formant_formula (Formant me, double tmin, double tmax, long formantmin, lon
 			frame ->  nFormants = iformantto;
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": not filtered.");
+		Melder_throw (me, U": not filtered.");
 	}
 }
 
 IntensityTier Formant_and_Spectrogram_to_IntensityTier (Formant me, Spectrogram thee, long iformant) {
 	try {
 		if (my xmin != thy xmin || my xmax != thy xmax) {
-			Melder_throw ("The start and end times of the Formant and the Spectrogram must be equal.");
+			Melder_throw (U"The start and end times of the Formant and the Spectrogram must be equal.");
 		}
 		if (iformant < 1 || iformant > my maxnFormants) {
-			Melder_throw ("Formant number not in range [1, ", my maxnFormants, "].");
+			Melder_throw (U"Formant number not in range [1, ", my maxnFormants, U"].");
 		}
 		autoIntensityTier him = IntensityTier_create (my xmin, my xmax);
 		double previousValue = -80000; // can never occur
@@ -123,7 +123,7 @@ IntensityTier Formant_and_Spectrogram_to_IntensityTier (Formant me, Spectrogram 
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw ("IntensityTier not created from ", me, " and ", thee, ".");
+		Melder_throw (U"IntensityTier not created from ", me, U" and ", thee, U".");
 	}
 }
 

@@ -24,7 +24,7 @@
 #include "FormantGrid_extensions.h"
 #include "NUM2.h"
 
-void FormantGrid_draw (FormantGrid me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool bandwidths, bool garnish, const wchar_t *method) {
+void FormantGrid_draw (FormantGrid me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool bandwidths, bool garnish, const char32 *method) {
 	Ordered tiers = bandwidths ? my bandwidths : my formants;
 
 	if (xmax <= xmin) {
@@ -34,11 +34,11 @@ void FormantGrid_draw (FormantGrid me, Graphics g, double xmin, double xmax, dou
 		ymin = 0; ymax = bandwidths ? 1000 : 8000;
 	}
 	for (long iformant = 1; iformant <= my formants -> size; iformant++) {
-		const wchar_t *quantity = 0;
+		const char32 *quantity = 0;
 		bool garnish2 = false;
 		RealTier tier = (RealTier) tiers -> item[iformant];
 		if (iformant == my formants -> size) {
-			quantity = L"Frequency (Hz)";
+			quantity = U"Frequency (Hz)";
 			if (garnish) {
 				garnish2 = true;
 			}
@@ -85,7 +85,7 @@ static void FormantGrid_addBandwidthTier (FormantGrid me, int position) {
 void FormantGrid_addFormantAndBandwidthTiers (FormantGrid me, int position) {
 	try {
 		if (my formants -> size != my bandwidths -> size) {
-			Melder_throw ("Number of formants and bandwidths must be equal.");
+			Melder_throw (U"Number of formants and bandwidths must be equal.");
 		}
 		if (position > my formants -> size || position < 1) {
 			position = my formants -> size + 1;
@@ -98,7 +98,7 @@ void FormantGrid_addFormantAndBandwidthTiers (FormantGrid me, int position) {
 			throw MelderError ();
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": no ties added.");
+		Melder_throw (me, U": no ties added.");
 	}
 }
 

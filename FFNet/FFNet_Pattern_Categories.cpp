@@ -30,13 +30,13 @@
 
 static void _FFNet_Pattern_Categories_checkDimensions (FFNet me, Pattern p, Categories c) {
 
-	if (my nInputs != p -> nx) Melder_throw (L"The Pattern and the FFNet do not match.\n"
-		        "The number of colums in the Pattern must equal the number of inputs in the FFNet.");
-	if (p -> ny != c -> size) Melder_throw (L"The Pattern and the categories do not match.\n"
-		                                        "The number of rows in the Pattern must equal the number of categories.");
-	if (! _Pattern_checkElements (p)) Melder_throw (L"The elements in the Pattern are not all "
-		        "in the interval [0, 1].\nThe input of the neural net can only process values that are between 0 "
-		        "and 1.\nYou could use \"Formula...\" to scale the Pattern values first.");
+	if (my nInputs != p -> nx) Melder_throw (U"The Pattern and the FFNet do not match.\n"
+		        U"The number of colums in the Pattern must equal the number of inputs in the FFNet.");
+	if (p -> ny != c -> size) Melder_throw (U"The Pattern and the categories do not match.\n"
+		                                        U"The number of rows in the Pattern must equal the number of categories.");
+	if (! _Pattern_checkElements (p)) Melder_throw (U"The elements in the Pattern are not all "
+		        U"in the interval [0, 1].\nThe input of the neural net can only process values that are between 0 "
+		        U"and 1.\nYou could use \"Formula...\" to scale the Pattern values first.");
 }
 
 static void _FFNet_Pattern_Categories_learn (FFNet me, Pattern p, Categories c,
@@ -77,14 +77,14 @@ void FFNet_Pattern_Categories_learnSD (FFNet me, Pattern p, Categories c,
 Categories FFNet_Pattern_to_Categories (FFNet me, Pattern thee, int labeling) {
 	try {
 		if (my outputCategories == 0) {
-			Melder_throw ("The FFNet has no output categories.");
+			Melder_throw (U"The FFNet has no output categories.");
 		}
-		if (my nInputs != thy nx) Melder_throw ("The number of colums in the Pattern (", thy nx,
-			                                        ") must equal the number of inputs in the FFNet (", my nInputs, L").");
+		if (my nInputs != thy nx) Melder_throw (U"The number of colums in the Pattern (", thy nx,
+			                                        U") should equal the number of inputs in the FFNet (", my nInputs, U").");
 		if (! _Pattern_checkElements (thee)) Melder_throw
-			("The elements in the Pattern are not all in the interval [0, 1].\n"
-			 "The input of the neural net can only process values that are between 0 and 1.\n"
-			 "You could use \"Formula...\" to scale the Pattern values first.");
+			(U"The elements in the Pattern are not all in the interval [0, 1].\n"
+			 U"The input of the neural net can only process values that are between 0 and 1.\n"
+			 U"You could use \"Formula...\" to scale the Pattern values first.");
 
 
 		autoCategories him = Categories_create ();
@@ -97,7 +97,7 @@ Categories FFNet_Pattern_to_Categories (FFNet me, Pattern thee, int labeling) {
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Categories created.");
+		Melder_throw (me, U": no Categories created.");
 	}
 }
 

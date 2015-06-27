@@ -1,6 +1,6 @@
 /* PitchTierEditor.cpp
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +23,13 @@
 
 Thing_implement (PitchTierEditor, RealTierEditor, 0);
 
-static void menu_cb_PitchTierEditorHelp (EDITOR_ARGS) { EDITOR_IAM (PitchTierEditor); Melder_help (L"PitchTierEditor"); }
-static void menu_cb_PitchTierHelp (EDITOR_ARGS) { EDITOR_IAM (PitchTierEditor); Melder_help (L"PitchTier"); }
+static void menu_cb_PitchTierEditorHelp (EDITOR_ARGS) { EDITOR_IAM (PitchTierEditor); Melder_help (U"PitchTierEditor"); }
+static void menu_cb_PitchTierHelp (EDITOR_ARGS) { EDITOR_IAM (PitchTierEditor); Melder_help (U"PitchTier"); }
 
 void structPitchTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	PitchTierEditor_Parent :: v_createHelpMenuItems (menu);
-	EditorMenu_addCommand (menu, L"PitchTierEditor help", 0, menu_cb_PitchTierEditorHelp);
-	EditorMenu_addCommand (menu, L"PitchTier help", 0, menu_cb_PitchTierHelp);
+	EditorMenu_addCommand (menu, U"PitchTierEditor help", 0, menu_cb_PitchTierEditorHelp);
+	EditorMenu_addCommand (menu, U"PitchTier help", 0, menu_cb_PitchTierHelp);
 }
 
 void structPitchTierEditor :: v_play (double a_tmin, double a_tmax) {
@@ -40,13 +40,13 @@ void structPitchTierEditor :: v_play (double a_tmin, double a_tmax) {
 	}
 }
 
-PitchTierEditor PitchTierEditor_create (const wchar_t *title, PitchTier pitch, Sound sound, bool ownSound) {
+PitchTierEditor PitchTierEditor_create (const char32 *title, PitchTier pitch, Sound sound, bool ownSound) {
 	try {
 		autoPitchTierEditor me = Thing_new (PitchTierEditor);
 		RealTierEditor_init (me.peek(), title, (RealTier) pitch, sound, ownSound);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("PitchTier window not created.");
+		Melder_throw (U"PitchTier window not created.");
 	}
 }
 

@@ -77,7 +77,7 @@ Cepstrumc LPC_to_Cepstrumc (LPC me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Cepstrum created.");
+		Melder_throw (me, U": no Cepstrum created.");
 	}
 }
 
@@ -91,7 +91,7 @@ LPC Cepstrumc_to_LPC (Cepstrumc me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ":no LPC created.");
+		Melder_throw (me, U":no LPC created.");
 	}
 }
 

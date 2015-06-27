@@ -1,6 +1,6 @@
 /* FujisakiPitch.cpp
  *
- * Copyright (C) 2002-2011 Paul Boersma
+ * Copyright (C) 2002-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ FujisakiCommand FujisakiCommand_create (double tmin, double tmax, double amplitu
 		my amplitude = amplitude;
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Fujisaki command not created.");
+		Melder_throw (U"Fujisaki command not created.");
 	}
 }
 
@@ -73,7 +73,7 @@ FujisakiPitch FujisakiPitch_create (double tmin, double tmax,
 		my accentCommands = SortedSetOfDouble_create ();
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("FujisakiPitch not created.");
+		Melder_throw (U"FujisakiPitch not created.");
 	}
 }
 
@@ -124,7 +124,7 @@ FujisakiPitch Pitch_to_FujisakiPitch (Pitch me, double gamma, double timeResolut
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to FujisakiPitch.");
+		Melder_throw (me, U": not converted to FujisakiPitch.");
 	}
 }
 

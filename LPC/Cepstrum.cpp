@@ -108,7 +108,7 @@ Cepstrum Cepstrum_create (double qmax, long nq) {
 		Matrix_init (me.peek(), 0, qmax, nq, dq, 0, 1, 1, 1, 1, 1);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Cepstrum not created.");
+		Melder_throw (U"Cepstrum not created.");
 	}
 }
 
@@ -120,7 +120,7 @@ PowerCepstrum Cepstrum_downto_PowerCepstrum (Cepstrum me ) {
 		}
 		return thee.transfer ();
 	} catch (MelderError) {
-		Melder_throw (me, " not converted.");
+		Melder_throw (me, U" not converted.");
 	}
 }
 
@@ -132,11 +132,11 @@ PowerCepstrum PowerCepstrum_create (double qmax, long nq) {
 		Matrix_init (me.peek(), 0, qmax, nq, dq, 0, 1, 1, 1, 1, 1);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("PowerCepstrum not created.");
+		Melder_throw (U"PowerCepstrum not created.");
 	}
 }
 
-void _Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax, double minimum, double maximum, int power, int garnish) {
+static void _Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax, double minimum, double maximum, int power, int garnish) {
 	int autoscaling = minimum >= maximum;
 
 	Graphics_setInner (g);
@@ -173,9 +173,9 @@ void _Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax, double m
 
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, L"Quefrency (s)");
+		Graphics_textBottom (g, 1, U"Quefrency (s)");
 		Graphics_marksBottom (g, 2, TRUE, TRUE, FALSE);
-		Graphics_textLeft (g, 1, power ? L"Amplitude (dB)" : L"Amplitude");
+		Graphics_textLeft (g, 1, power ? U"Amplitude (dB)" : U"Amplitude");
 		Graphics_marksLeft (g, 2, TRUE, TRUE, FALSE);
 	}
 }
@@ -276,7 +276,7 @@ void PowerCepstrum_fitTiltLine (PowerCepstrum me, double qmin, double qmax, doub
 		imin = (lineType == 2 && imin == 1) ? 2 : imin; // log(0) is undefined!
 		long numberOfPoints = imax - imin + 1;
 		if (numberOfPoints < 2) {
-			Melder_throw ("Not enough points for fit.");
+			Melder_throw (U"Not enough points for fit.");
 		}
 		autoNUMvector<double> y (1, numberOfPoints);
 		autoNUMvector<double> x (1, numberOfPoints);
@@ -310,12 +310,12 @@ void PowerCepstrum_fitTiltLine (PowerCepstrum me, double qmin, double qmax, doub
 		// fit a straight line through (x,y)'s
 		NUMlineFit (x.peek(), y.peek(), numberOfPoints, a, intercept, method);
 	} catch (MelderError) {
-		Melder_throw (me, ": couldn't fit a line.");
+		Melder_throw (me, U": couldn't fit a line.");
 	}
 }
 
 // Hillenbrand subtracts dB values and if the result is negative it is made zero
-void PowerCepstrum_subtractTiltLine_inline2 (PowerCepstrum me, double slope, double intercept, int lineType) {
+static void PowerCepstrum_subtractTiltLine_inline2 (PowerCepstrum me, double slope, double intercept, int lineType) {
 	for (long j = 1; j <= my nx; j++) {
 		double q = my x1 + (j - 1) * my dx;
 		q = j == 1 ? 0.5 * my dx : q; // approximation
@@ -328,7 +328,7 @@ void PowerCepstrum_subtractTiltLine_inline2 (PowerCepstrum me, double slope, dou
 }
 
 // clip with tilt line
-void PowerCepstrum_subtractTiltLine_inline (PowerCepstrum me, double slope, double intercept, int lineType) {
+static void PowerCepstrum_subtractTiltLine_inline (PowerCepstrum me, double slope, double intercept, int lineType) {
 	for (long j = 1; j <= my nx; j++) {
 		double q = my x1 + (j - 1) * my dx;
 		q = j == 1 ? 0.5 * my dx : q; // approximation
@@ -356,13 +356,13 @@ PowerCepstrum PowerCepstrum_subtractTilt (PowerCepstrum me, double qstartFit, do
 		PowerCepstrum_subtractTilt_inline (thee.peek(), qstartFit,  qendFit, lineType, fitMethod);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": couldn't subtract tilt line.");
+		Melder_throw (me, U": couldn't subtract tilt line.");
 	}
 }
 
-void PowerCepstrum_smooth_inline2 (PowerCepstrum me, double quefrencyAveragingWindow) {
+static void PowerCepstrum_smooth_inline2 (PowerCepstrum me, double quefrencyAveragingWindow) {
 	try {
-		long numberOfQuefrencyBins = quefrencyAveragingWindow / my dx;
+		long numberOfQuefrencyBins = (long) floor (quefrencyAveragingWindow / my dx);
 		if (numberOfQuefrencyBins > 1) {
 			autoNUMvector<double> qin (1, my nx);
 			autoNUMvector<double> qout (1, my nx);
@@ -375,13 +375,13 @@ void PowerCepstrum_smooth_inline2 (PowerCepstrum me, double quefrencyAveragingWi
 			}
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": not smoothed.");
+		Melder_throw (me, U": not smoothed.");
 	}
 }
 
 void PowerCepstrum_smooth_inline (PowerCepstrum me, double quefrencyAveragingWindow, long numberOfIterations) {
 	try {
-		long numberOfQuefrencyBins = quefrencyAveragingWindow / my dx;
+		long numberOfQuefrencyBins = (long) floor (quefrencyAveragingWindow / my dx);
 		if (numberOfQuefrencyBins > 1) {
 			autoNUMvector<double> qin (1, my nx);
 			autoNUMvector<double> qout (1, my nx);
@@ -399,7 +399,7 @@ void PowerCepstrum_smooth_inline (PowerCepstrum me, double quefrencyAveragingWin
 			}
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": not smoothed.");
+		Melder_throw (me, U": not smoothed.");
 	}
 }
 
@@ -534,19 +534,19 @@ Matrix PowerCepstrum_to_Matrix (PowerCepstrum me) {
 		my structMatrix :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Matrix created.");
+		Melder_throw (me, U": no Matrix created.");
 	}
 }
 
 PowerCepstrum Matrix_to_PowerCepstrum (Matrix me) {
 	try {
 		if (my ny != 1)
-			Melder_throw ("Matrix must have exactly 1 row.");
+			Melder_throw (U"Matrix should have exactly 1 row.");
 		autoPowerCepstrum thee = Thing_new (PowerCepstrum);
 		my structMatrix :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to PowerCepstrum.");
+		Melder_throw (me, U": not converted to PowerCepstrum.");
 	}
 }
 
@@ -554,12 +554,12 @@ PowerCepstrum Matrix_to_PowerCepstrum_row (Matrix me, long row) {
 	try {
 		autoPowerCepstrum thee = PowerCepstrum_create (my xmax, my nx);
 		if (row < 1 || row > my ny) {
-			Melder_throw ("Row number must be between 1 and ", my ny, " inclusive.");
+			Melder_throw (U"Row number should be between 1 and ", my ny, U" inclusive.");
 		}
 		NUMvector_copyElements (my z[row], thy z[1], 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no PowerCepstrum created.");
+		Melder_throw (me, U": no PowerCepstrum created.");
 	}
 }
 
@@ -567,14 +567,14 @@ PowerCepstrum Matrix_to_PowerCepstrum_column (Matrix me, long col) {
 	try {
 		autoPowerCepstrum thee = PowerCepstrum_create (my ymax, my ny);
 		if (col < 1 || col > my nx) {
-			Melder_throw ("Column number must be between 1 and ", my nx, " inclusive.");
+			Melder_throw (U"Column number should be between 1 and ", my nx, U" inclusive.");
 		}
 		for (long i = 1; i <= my ny; i++) {
 			thy z[1][i] = my z[i][col];
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no PowerCepstrum created.");
+		Melder_throw (me, U": no PowerCepstrum created.");
 	}
 }
 

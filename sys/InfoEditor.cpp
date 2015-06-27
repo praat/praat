@@ -32,12 +32,12 @@ void structInfoEditor :: v_clear () {
 	Melder_clearInfo ();
 }
 
-void gui_information (const wchar_t *message);   // BUG
-void gui_information (const wchar_t *message) {
+void gui_information (const char32 *message);   // BUG
+void gui_information (const char32 *message) {
 	if (! theInfoEditor) {
 		theInfoEditor = Thing_new (InfoEditor);
-		TextEditor_init (theInfoEditor, L"");
-		Thing_setName (theInfoEditor, L"Praat Info");
+		TextEditor_init (theInfoEditor, U"");
+		Thing_setName (theInfoEditor, U"Praat Info");
 	}
 	GuiText_setString (theInfoEditor -> textWidget, message);
 	GuiThing_show (theInfoEditor -> d_windowForm);

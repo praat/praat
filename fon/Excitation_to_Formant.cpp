@@ -1,6 +1,6 @@
 /* Excitation_to_Formant.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ Formant Excitation_to_Formant (Excitation me, int maxnFormants) {
 		thy d_frames [1]. nFormants = nform;
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Formant.");
+		Melder_throw (me, U": not converted to Formant.");
 	}
 }
 

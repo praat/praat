@@ -25,8 +25,8 @@ oo_DEFINE_CLASS (Configuration, TableOfReal)
 	oo_DOUBLE_VECTOR (w, numberOfColumns)
 
 	#if oo_DECLARING
-		// overridden methods:
-			virtual void v_info ();
+		void v_info ()
+			override;
 	#endif
 
 oo_END_CLASS (Configuration)	

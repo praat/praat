@@ -30,7 +30,7 @@
 #include "Spectrum_extensions.h"
 #include "Sound_and_Spectrum.h"
 
-Cepstrum Spectrum_to_Cepstrum_cmplx (Spectrum me) {
+static Cepstrum Spectrum_to_Cepstrum_cmplx (Spectrum me) {
 	try {
 		autoMatrix unwrap = Spectrum_unwrap (me);
 		autoSpectrum sx = Data_copy (me);
@@ -50,7 +50,7 @@ Cepstrum Spectrum_to_Cepstrum_cmplx (Spectrum me) {
 		NUMvector_copyElements (x -> z[1], thy z[1], 1, x -> nx);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Cepstrum created.");
+		Melder_throw (me, U": no Cepstrum created.");
 	}
 }
 
@@ -70,7 +70,7 @@ PowerCepstrum Spectrum_to_PowerCepstrum (Spectrum me) {
 		}
 		return thee.transfer ();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Sound.");
+		Melder_throw (me, U": not converted to Sound.");
 	}
 }
 
@@ -90,7 +90,7 @@ Cepstrum Spectrum_to_Cepstrum (Spectrum me) {
 		}
 		return thee.transfer ();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Sound.");
+		Melder_throw (me, U": not converted to Sound.");
 	}
 }
 
@@ -110,16 +110,16 @@ Spectrum Cepstrum_to_Spectrum (Cepstrum me) { //TODO power cepstrum
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Spectrum created.");
+		Melder_throw (me, U": no Spectrum created.");
 	}
 }
 
-Cepstrum Spectrum_to_Cepstrum2 (Spectrum me) {
+static Cepstrum Spectrum_to_Cepstrum2 (Spectrum me) {
 	try {
 		autoNUMfft_Table fftTable;
 		// originalNumberOfSamplesProbablyOdd irrelevant
 		if (my x1 != 0.0) {
-			Melder_throw ("A Fourier-transformable Spectrum must have a first frequency of 0 Hz, not ", my x1, L" Hz.");
+			Melder_throw (U"A Fourier-transformable Spectrum must have a first frequency of 0 Hz, not ", my x1, U" Hz.");
 		}
 		long numberOfSamples = 2 * my nx - 2;
 		autoCepstrum thee = Cepstrum_create (0.5 / my dx, my nx);
@@ -141,12 +141,12 @@ Cepstrum Spectrum_to_Cepstrum2 (Spectrum me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Cepstrum.");
+		Melder_throw (me, U": not converted to Cepstrum.");
 	}
 }
 
 
-Spectrum Cepstrum_to_Spectrum2 (Cepstrum me) { //TODO power cepstrum
+static Spectrum Cepstrum_to_Spectrum2 (Cepstrum me) { //TODO power cepstrum
 	try {
 		autoNUMfft_Table fftTable;
 		long numberOfSamples = 2 * my nx - 2;
@@ -173,7 +173,7 @@ Spectrum Cepstrum_to_Spectrum2 (Cepstrum me) { //TODO power cepstrum
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Spectrum created.");
+		Melder_throw (me, U": no Spectrum created.");
 	}
 }
 

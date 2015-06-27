@@ -1,6 +1,6 @@
 /* Graphics_image.cpp
  *
- * Copyright (C) 1992-2012,2013,2014 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,9 +62,9 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 	double dy = (double) (y2DC - y1DC) / (double) ny;   /* Vertical pixels per cell. Negative. */
 	double scale = 255.0 / (maximum - minimum), offset = 255.0 + minimum * scale;
 	if (x2DC <= x1DC || y1DC <= y2DC) return;
-	trace ("scale %f", scale);
+	trace (U"scale ", scale);
 	/* Clip by the intersection of the world window and the outline of the cells. */
-	//Melder_casual ("clipy1 %ld clipy2 %ld", clipy1, clipy2);
+	//Melder_casual (U"clipy1 ", clipy1, U" clipy2 ", clipy2);
 	if (clipx1 < x1DC) clipx1 = x1DC;
 	if (clipx2 > x2DC) clipx2 = x2DC;
 	if (clipy1 > y1DC) clipy1 = y1DC;
@@ -166,12 +166,17 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 		#if cairo
 			long arrayWidth = clipx2 - clipx1;
 			long arrayHeight = clipy1 - clipy2;
-			trace ("arrayWidth %f, arrayHeight %f", (double) arrayWidth, (double) arrayHeight);
+			trace (U"arrayWidth ", arrayWidth, U", arrayHeight ", arrayHeight);
 			cairo_surface_t *sfc = cairo_image_surface_create (CAIRO_FORMAT_RGB24, arrayWidth, arrayHeight);
 			unsigned char *bits = cairo_image_surface_get_data (sfc);
 			int scanLineLength = cairo_image_surface_get_stride (sfc);
 			unsigned char grey [256];
-			trace ("image surface address %p, bits address %p, scanLineLength %d, numberOfGreys %d", sfc, bits, scanLineLength, sizeof(grey)/sizeof(*grey));
+			trace (
+				U"image surface address ", Melder_pointer (sfc),
+				U", bits address ", Melder_pointer (bits),
+				U", scanLineLength ", scanLineLength,
+				U", numberOfGreys ", sizeof (grey) / sizeof (*grey)
+			);
 			for (int igrey = 0; igrey < sizeof (grey) / sizeof (*grey); igrey++)
 				grey [igrey] = 255 - (unsigned char) (igrey * 255.0 / (sizeof (grey) / sizeof (*grey) - 1));
 		#elif win
@@ -388,9 +393,9 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 			cairo_matrix_scale (& clip_trans, 1, -1);		// we painted in the reverse y-direction
 			cairo_matrix_translate (& clip_trans, - clipx1, - clipy1);
 			cairo_pattern_t *bitmap_pattern = cairo_pattern_create_for_surface (sfc);
-			trace ("bitmap pattern %p", bitmap_pattern);
+			trace (U"bitmap pattern ", Melder_pointer (bitmap_pattern));
 			if (cairo_status_t status = cairo_pattern_status (bitmap_pattern)) {
-				Melder_casual ("bitmap pattern status: %s", cairo_status_to_string (status));
+				Melder_casual (U"bitmap pattern status: ", Melder_peek8to32 (cairo_status_to_string (status)));
 			} else {
 				cairo_pattern_set_matrix (bitmap_pattern, & clip_trans);
 				cairo_save (my d_cairoGraphicsContext);
@@ -705,7 +710,7 @@ void Graphics_image8 (Graphics me, unsigned char **z, long ix1, long ix2, double
 	long iy1, long iy2, double y1WC, double y2WC, unsigned char minimum, unsigned char maximum)
 { cellArrayOrImage (me, NULL, NULL, z, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, TRUE); }
 
-static void _GraphicsScreen_imageFromFile (GraphicsScreen me, const wchar_t *relativeFileName, double x1, double x2, double y1, double y2) {
+static void _GraphicsScreen_imageFromFile (GraphicsScreen me, const char32 *relativeFileName, double x1, double x2, double y1, double y2) {
 	long x1DC = wdx (x1), x2DC = wdx (x2), y1DC = wdy (y1), y2DC = wdy (y2);
 	long width = x2DC - x1DC, height = my yIsZeroAtTheTop ? y1DC - y2DC : y2DC - y1DC;
 	#if 0
@@ -745,7 +750,7 @@ static void _GraphicsScreen_imageFromFile (GraphicsScreen me, const wchar_t *rel
 		if (my d_useGdiplus) {
 			structMelderFile file = { 0 };
 			Melder_relativePathToFile (relativeFileName, & file);
-			Gdiplus::Bitmap image (file. path);
+			Gdiplus::Bitmap image (Melder_peek32toW (file. path));
 			if (x1 == x2 && y1 == y2) {
 				width = image. GetWidth (), x1DC -= width / 2, x2DC = x1DC + width;
 				height = image. GetHeight (), y2DC -= height / 2, y1DC = y2DC + height;
@@ -765,7 +770,7 @@ static void _GraphicsScreen_imageFromFile (GraphicsScreen me, const wchar_t *rel
 		structMelderFile file = { 0 };
 		Melder_relativePathToFile (relativeFileName, & file);
 		char utf8 [500];
-		Melder_wcsTo8bitFileRepresentation_inline (file. path, utf8);
+		Melder_str32To8bitFileRepresentation_inline (file. path, utf8);
 		CFStringRef path = CFStringCreateWithCString (NULL, utf8, kCFStringEncodingUTF8);
 		CFURLRef url = CFURLCreateWithFileSystemPath (NULL, path, kCFURLPOSIXPathStyle, false);
 		CFRelease (path);
@@ -801,12 +806,12 @@ static void _GraphicsScreen_imageFromFile (GraphicsScreen me, const wchar_t *rel
 	#endif
 }
 
-void Graphics_imageFromFile (Graphics me, const wchar_t *relativeFileName, double x1, double x2, double y1, double y2) {
+void Graphics_imageFromFile (Graphics me, const char32 *relativeFileName, double x1, double x2, double y1, double y2) {
 	if (my screen) {
 		_GraphicsScreen_imageFromFile (static_cast <GraphicsScreen> (me), relativeFileName, x1, x2, y1, y2);
 	}
 	if (my recording) {
-		char *txt_utf8 = Melder_peekWcsToUtf8 (relativeFileName);
+		char *txt_utf8 = Melder_peek32to8 (relativeFileName);
 		int length = strlen (txt_utf8) / sizeof (double) + 1;
 		op (IMAGE_FROM_FILE, 5 + length); put (x1); put (x2); put (y1); put (y2); sput (txt_utf8, length)
 	}

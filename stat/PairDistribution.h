@@ -27,17 +27,17 @@
 oo_CLASS_CREATE (PairProbability, Data);
 oo_CLASS_CREATE (PairDistribution, Data);
 
-PairProbability PairProbability_create (const wchar_t *string1, const wchar_t *string2, double weight);
+PairProbability PairProbability_create (const char32 *string1, const char32 *string2, double weight);
 PairDistribution PairDistribution_create (void);
 
-const wchar_t * PairDistribution_getString1 (PairDistribution me, long pairNumber);
-const wchar_t * PairDistribution_getString2 (PairDistribution me, long pairNumber);
+const char32 * PairDistribution_getString1 (PairDistribution me, long pairNumber);
+const char32 * PairDistribution_getString2 (PairDistribution me, long pairNumber);
 double PairDistribution_getWeight (PairDistribution me, long pairNumber);
 
-void PairDistribution_add (PairDistribution me, const wchar_t *string1, const wchar_t *string2, double weight);
+void PairDistribution_add (PairDistribution me, const char32 *string1, const char32 *string2, double weight);
 void PairDistribution_removeZeroWeights (PairDistribution me);
 void PairDistribution_to_Stringses (PairDistribution me, long nout, Strings *strings1, Strings *strings2);
-void PairDistribution_peekPair (PairDistribution me, wchar_t **string1, wchar_t **string2);
+void PairDistribution_peekPair (PairDistribution me, char32 **string1, char32 **string2);
 
 void PairDistribution_swapInputsAndOutputs (PairDistribution me);
 

@@ -23,16 +23,16 @@
 	try { \
 		our x = texget##storage (a_text); \
 	} catch (MelderError) { \
-		Melder_throw ("\"", #x, L"\" not read."); \
+		Melder_throw (U"\"" #x U"\" not read."); \
 	}
 
 #define oo_ARRAY(type,storage,x,cap,n)  \
-	if (n > cap) Melder_throw ("Number of \"", #x, "\" (", n, ") greater than ", cap, "."); \
+	if (n > cap) Melder_throw (U"Number of \"" #x U"\" (", n, U") greater than ", cap, U"."); \
 	for (long i = 0; i < n; i ++) { \
 		try { \
 			our x [i] = texget##storage (a_text); \
 		} catch (MelderError) { \
-			Melder_throw ("Element ", i+1, " of \"", #x, "\" not read."); \
+			Melder_throw (U"Element ", i+1, U" of \"" #x U"\" not read."); \
 		} \
 	}
 
@@ -41,7 +41,7 @@
 		try { \
 			our x [i] = texget##storage (a_text); \
 		} catch (MelderError) { \
-			Melder_throw ("Element ", i+1, " of \"", #x, "\" not read."); \
+			Melder_throw (U"Element ", i+1, U" of \"" #x, U"\" not read."); \
 		} \
 	}
 
@@ -59,7 +59,7 @@
 	our x = texget##storage (a_text, Type##_getValue);
 
 #define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  \
-	if (n > cap) Melder_throw ("Number of \"", #x, "\" (", n, ") greater than ", cap, "."); \
+	if (n > cap) Melder_throw (U"Number of \"" #x U"\" (", n, U") greater than ", cap, U"."); \
 	for (long i = 0; i < n; i ++) { \
 		our x [i] = texget##storage (a_text, Type##_getValue); \
 	}
@@ -81,54 +81,28 @@
 	try { \
 		our x = texget##storage (a_text); \
 	} catch (MelderError) { \
-		Melder_throw ("String \"", #x, "\" not read."); \
-	}
-#define oo_STRING32x(storage,x)  \
-	try { \
-		our x = texget32##storage (a_text); \
-	} catch (MelderError) { \
-		Melder_throw ("String \"", #x, "\" not read."); \
+		Melder_throw (U"String \"" #x U"\" not read."); \
 	}
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	if (n > cap) Melder_throw ("Number of \"", #x, "\" (", n, ") greater than ", cap, "."); \
+	if (n > cap) Melder_throw (U"Number of \"" #x U"\" (", n, U") greater than ", cap, U"."); \
 	for (long i = 0; i < n; i ++) { \
 		our x [i] = texget##storage (a_text); \
-	}
-#define oo_STRING32x_ARRAY(storage,x,cap,n)  \
-	if (n > cap) Melder_throw ("Number of \"", #x, "\" (", n, ") greater than ", cap, "."); \
-	for (long i = 0; i < n; i ++) { \
-		our x [i] = texget32##storage (a_text); \
 	}
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	for (long i = 0; i <= setType##_MAX; i ++) { \
 		our x [i] = texget##storage (a_text); \
 	}
-#define oo_STRING32x_SET(storage,x,setType)  \
-	for (long i = 0; i <= setType##_MAX; i ++) { \
-		our x [i] = texget32##storage (a_text); \
-	}
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
-	if (max >= min) { \
-		our x = NUMvector <wchar_t*> (min, max); \
-		for (long i = min; i <= max; i ++) { \
-			try { \
-				our x [i] = texget##storage (a_text); \
-			} catch (MelderError) { \
-				Melder_throw ("Element ", i, " of \"" #x, "\" not read."); \
-			} \
-		} \
-	}
-#define oo_STRING32x_VECTOR(storage,x,min,max)  \
 	if (max >= min) { \
 		our x = NUMvector <char32*> (min, max); \
 		for (long i = min; i <= max; i ++) { \
 			try { \
-				our x [i] = texget32##storage (a_text); \
+				our x [i] = texget##storage (a_text); \
 			} catch (MelderError) { \
-				Melder_throw ("Element ", i, " of \"" #x, "\" not read."); \
+				Melder_throw (U"Element ", i, U" of \"" #x U"\" not read."); \
 			} \
 		} \
 	}
@@ -137,7 +111,7 @@
 	our x. readText (a_text);
 
 #define oo_STRUCT_ARRAY(Type,x,cap,n) \
-	if (n > cap) Melder_throw ("Number of \"", #x, "\" (", n, ") greater than ", cap, "."); \
+	if (n > cap) Melder_throw (U"Number of \"" #x U"\" (", n, U") greater than ", cap, U"."); \
 	for (long i = 0; i < n; i ++) { \
 		our x [i]. readText (a_text); \
 	}
@@ -203,7 +177,7 @@
 	void struct##Class :: v_readText (MelderReadText a_text) { \
 		int localVersion = Thing_version; (void) localVersion; \
 		if (localVersion > our classInfo -> version) \
-			Melder_throw ("The format of this file is too new. Download a newer version of Praat."); \
+			Melder_throw (U"The format of this file is too new. Download a newer version of Praat."); \
 		Class##_Parent :: v_readText (a_text);
 
 #define oo_END_CLASS(Class)  \

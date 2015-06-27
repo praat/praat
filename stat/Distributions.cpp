@@ -1,6 +1,6 @@
 /* Distributions.cpp
  *
- * Copyright (C) 1997-2012,2014 Paul Boersma
+ * Copyright (C) 1997-2012,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +23,8 @@ Thing_implement (Distributions, TableOfReal, 0);
 
 void structDistributions :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine (L"Number of distributions: ", Melder_integer (numberOfColumns));
-	MelderInfo_writeLine (L"Number of values: ", Melder_integer (numberOfRows));
+	MelderInfo_writeLine (U"Number of distributions: ", numberOfColumns);
+	MelderInfo_writeLine (U"Number of values: ", numberOfRows);
 }
 
 Distributions Distributions_create (long numberOfRows, long numberOfColumns) {
@@ -33,27 +33,27 @@ Distributions Distributions_create (long numberOfRows, long numberOfColumns) {
 		TableOfReal_init (me.peek(), numberOfRows, numberOfColumns);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Distributions not created.");
+		Melder_throw (U"Distributions not created.");
 	}
 }
 
 void Distributions_checkSpecifiedColumnNumberWithinRange (Distributions me, long columnNumber) {
 	if (columnNumber < 1)
-		Melder_throw (me, ": the specified column number is ", columnNumber, ", but should be at least 1.");
+		Melder_throw (me, U": the specified column number is ", columnNumber, U", but should be at least 1.");
 	if (columnNumber > my numberOfColumns)
-		Melder_throw (me, ": the specified column number is ", columnNumber, ", but should be at most my number of columns (", my numberOfColumns, ").");
+		Melder_throw (me, U": the specified column number is ", columnNumber, U", but should be at most my number of columns (", my numberOfColumns, U").");
 }
 
-void Distributions_peek (Distributions me, long column, wchar_t **string, long *number) {
+void Distributions_peek (Distributions me, long column, char32 **string, long *number) {
 	Distributions_checkSpecifiedColumnNumberWithinRange (me, column);
 	if (my numberOfRows < 1)
-		Melder_throw (me, ": I have no candidates.");
+		Melder_throw (me, U": I have no candidates.");
 	double total = 0.0;
 	for (long irow = 1; irow <= my numberOfRows; irow ++) {
 		total += my data [irow] [column];
 	}
 	if (total <= 0.0)
-		Melder_throw (me, ": the total weight of column ", column, " is not positive.");
+		Melder_throw (me, U": the total weight of column ", column, U" is not positive.");
 	long irow;
 	do {
 		double rand = NUMrandomUniform (0, total), sum = 0.0;
@@ -61,22 +61,22 @@ void Distributions_peek (Distributions me, long column, wchar_t **string, long *
 			sum += my data [irow] [column];
 			if (rand <= sum) break;
 		}
-	} while (irow > my numberOfRows);   /* Guard against rounding errors. */
+	} while (irow > my numberOfRows);   // guard against rounding errors
 	if (my rowLabels [irow] == NULL)
-		Melder_throw (me, ": no string in row ", irow, ".");
+		Melder_throw (me, U": no string in row ", irow, U".");
 	if (string)
 		*string = my rowLabels [irow];
 	if (number)
 		*number = irow;
 }
 
-double Distributions_getProbability (Distributions me, const wchar_t *string, long column) {
+double Distributions_getProbability (Distributions me, const char32 *string, long column) {
 	long row, rowOfString = 0;
 	double total = 0.0;
 	if (column < 1 || column > my numberOfColumns) return NUMundefined;
 	for (row = 1; row <= my numberOfRows; row ++) {
 		total += my data [row] [column];
-		if (my rowLabels [row] && wcsequ (my rowLabels [row], string))
+		if (my rowLabels [row] && str32equ (my rowLabels [row], string))
 			rowOfString = row;
 	}
 	if (total <= 0.0) return NUMundefined;
@@ -99,7 +99,7 @@ static void unicize (Distributions me) {
 	long nrow = 0, ifrom = 1;
 	for (long irow = 1; irow <= my numberOfRows; irow ++) {
 		if (irow == my numberOfRows || (my rowLabels [irow] == NULL) != (my rowLabels [irow + 1] == NULL) ||
-		    (my rowLabels [irow] != NULL && ! wcsequ (my rowLabels [irow], my rowLabels [irow + 1])))
+		    (my rowLabels [irow] != NULL && ! str32equ (my rowLabels [irow], my rowLabels [irow + 1])))
 		{
 			/*
 			 * Detected a change.
@@ -137,7 +137,7 @@ Distributions Distributions_addTwo (Distributions me, Distributions thee) {
 		unicize (him.peek());
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, " & ", thee, ": not added.");
+		Melder_throw (me, U" & ", thee, U": not added.");
 	}
 }
 
@@ -148,7 +148,7 @@ Distributions Distributions_addMany (Collection me) {
 		unicize (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Distributions objects not added.");
+		Melder_throw (U"Distributions objects not added.");
 	}
 }
 

@@ -27,90 +27,81 @@
 #include "NUM2.h"
 
 
-int NUMstring_containsPrintableCharacter (const wchar_t *s) {
+int NUMstring_containsPrintableCharacter (const char32 *s) {
 	long len;
-	if (s == NULL || ( (len = wcslen (s)) == 0)) {
+	if (s == NULL || ( (len = str32len (s)) == 0)) {
 		return 0;
 	}
 	for (long i = 0; i < len; i++) {
-		int c = s[i];
-		if (isgraph (c)) {
+		if (isgraph ((int) s[i])) {
 			return 1;
 		}
 	}
 	return 0;
 }
 
-void NUMstring_chopWhiteSpaceAtExtremes_inline (wchar_t *string) {
-	long start = 0;
-	while (iswspace (string[start]) != 0) {
+void NUMstring_chopWhiteSpaceAtExtremes_inline (char32 *string) {
+	int64 start = 0;
+	while (iswspace ((int) string[start]) != 0) {
 		start++;
 	}
-	long end = wcslen (string);
-	while (end != start && iswspace(string[end - 1]) != 0) {
+	int64 end = str32len (string);
+	while (end != start && iswspace((int) string[end - 1]) != 0) {
 		end--;
 	}
-	long n = end - start;
-	memmove (string, string + start, n * sizeof (wchar_t));
+	int64 n = end - start;
+	memmove (string, string + start, (size_t) (n * (int64) sizeof (char32)));
 	string[n] = 0;
 }
 
-double *NUMstring_to_numbers (const wchar_t *s, long *numbers_found) {
+double *NUMstring_to_numbers (const char32 *s, long *numbers_found) {
 	*numbers_found = Melder_countTokens (s);
 	if (*numbers_found < 1) {
-		Melder_throw ("Empty string.");
+		Melder_throw (U"Empty string.");
 	}
 	autoNUMvector<double> numbers (1, *numbers_found);
 	long inum = 1;
-	for (wchar_t *token = Melder_firstToken (s); token != 0; token = Melder_nextToken (), inum++) {
+	for (char32 *token = Melder_firstToken (s); token != 0; token = Melder_nextToken (), inum++) {
 		Interpreter_numericExpression (0, token, &numbers[inum]);
 	}
 	return numbers.transfer();
 }
 
-void NUMstrings_copyElements (wchar_t **from, wchar_t **to, long lo, long hi) {
+void NUMstrings_copyElements (char32 **from, char32 **to, long lo, long hi) {
 	for (long i = lo; i <= hi; i++) {
 		Melder_free (to[i]);
 		if (from[i]) {
-			to[i] = Melder_wcsdup (from[i]);
+			to[i] = Melder_dup (from[i]);
 		}
 	}
 }
 
-void NUMstrings_free (wchar_t **s, long lo, long hi) {
+void NUMstrings_free (char32 **s, long lo, long hi) {
 	if (s == NULL) {
 		return;
 	}
 	for (long i = lo; i <= hi; i++) {
 		Melder_free (s[i]);
 	}
-	NUMvector_free<wchar_t *> (s, lo);
+	NUMvector_free<char32 *> (s, lo);
 }
 
-wchar_t **NUMstrings_copy (wchar_t **from, long lo, long hi) {
-	autoNUMvector<wchar_t *> to (lo, hi);
+char32 **NUMstrings_copy (char32 **from, long lo, long hi) {
+	autoNUMvector<char32 *> to (lo, hi);
 	NUMstrings_copyElements (from, to.peek(), lo, hi);
 	return to.transfer();
 }
 
-static wchar_t *appendNumberToString (const wchar_t *s, long number, int asArray) {
-	wchar_t buf[30];
-	long ncharb, nchars = 0;
-	ncharb = swprintf (buf, 29, (asArray == 0 ? L"%ld" : asArray == 1 ? L"[%ld]" : L"(%ld)"), number);
-	if (s != NULL) {
-		nchars = wcslen (s);
-	}
-	wchar_t *newc = Melder_calloc (wchar_t, nchars + ncharb + 1);
-	if (nchars > 0) {
-		wcsncpy (newc, s, nchars);
-	}
-	wcsncpy (newc + nchars, buf, ncharb + 1);
-	return newc;
+static char32 *appendNumberToString (const char32 *s, long number, int asArray) {
+	return Melder_dup (
+		asArray == 0 ? Melder_cat (s, number) :
+		asArray == 1 ? Melder_cat (s, U"[", number, U"]") :
+		Melder_cat (s, U"(", number, U")"));
 }
 
-int NUMstrings_setSequentialNumbering (wchar_t **s, long lo, long hi, const wchar_t *pre, long number, long increment, int asArray) {
+int NUMstrings_setSequentialNumbering (char32 **s, long lo, long hi, const char32 *pre, long number, long increment, int asArray) {
 	for (long i = lo; i <= hi; i++, number += increment) {
-		wchar_t *newc = appendNumberToString (pre, number, asArray);
+		char32 *newc = appendNumberToString (pre, number, asArray);
 		if (newc == NULL) {
 			return 0;
 		}
@@ -135,35 +126,35 @@ void NUMstring_add (unsigned char *a, unsigned char *b, unsigned char *c, long n
 	}
 }
 
-wchar_t *strstr_regexp (const wchar_t *string, const wchar_t *search_regexp) {
-	wchar_t *charp = 0;
-	const wchar_t *compileMsg;
-	regexp *compiled_regexp = CompileRE ( (regularExp_CHAR *) search_regexp, &compileMsg, 0);
+char32 *strstr_regexp (const char32 *string, const char32 *search_regexp) {
+	char32 *charp = 0;
+	const char32 *compileMsg;
+	regexp *compiled_regexp = CompileRE (search_regexp, &compileMsg, 0);
 
 	if (compiled_regexp == 0) {
-		Melder_throw ("No regexp");
+		Melder_throw (U"No regexp");
 	}
 
-	if (ExecRE (compiled_regexp, NULL, (regularExp_CHAR *) string, NULL, 0, '\0', '\0', NULL, NULL, NULL)) {
-		charp = (wchar *) compiled_regexp -> startp[0];
+	if (ExecRE (compiled_regexp, NULL, string, NULL, 0, '\0', '\0', NULL, NULL, NULL)) {
+		charp = compiled_regexp -> startp[0];
 	}
 
 	free (compiled_regexp);
 	return charp;
 }
 
-wchar_t *str_replace_literal (const wchar_t *string, const wchar_t *search, const wchar_t *replace,
+char32 *str_replace_literal (const char32 *string, const char32 *search, const char32 *replace,
                               long maximumNumberOfReplaces, long *nmatches) {
 	if (string == 0 || search == 0 || replace == 0) {
 		return NULL;
 	}
 
 
-	int len_string = wcslen (string);
+	int len_string = str32len (string);
 	if (len_string == 0) {
 		maximumNumberOfReplaces = 1;
 	}
-	int len_search = wcslen (search);
+	int len_search = str32len (search);
 	if (len_search == 0) {
 		maximumNumberOfReplaces = 1;
 	}
@@ -173,7 +164,7 @@ wchar_t *str_replace_literal (const wchar_t *string, const wchar_t *search, cons
 		matches will occur.
 	*/
 
-	const wchar_t *pos = string; //current position / start of current match
+	const char32 *pos = string; //current position / start of current match
 	*nmatches = 0;
 	if (maximumNumberOfReplaces <= 0) {
 		maximumNumberOfReplaces = LONG_MAX;
@@ -185,22 +176,22 @@ wchar_t *str_replace_literal (const wchar_t *string, const wchar_t *search, cons
 		}
 	} else {
 		if (len_string != 0) { /* Because empty string always matches */
-			while ( (pos = wcsstr (pos, search)) && *nmatches < maximumNumberOfReplaces) {
+			while ( (pos = str32str (pos, search)) && *nmatches < maximumNumberOfReplaces) {
 				pos += len_search;
 				(*nmatches) ++;
 			}
 		}
 	}
 
-	int len_replace = wcslen (replace);
-	int len_result = len_string + *nmatches * (len_replace - len_search);
-	wchar_t *result = Melder_malloc (wchar_t, (len_result + 1) * sizeof (wchar_t));
+	int64 len_replace = str32len (replace);
+	int64 len_result = len_string + *nmatches * (len_replace - len_search);
+	char32 *result = Melder_malloc (char32, (len_result + 1) * (int64) sizeof (char32));
 	result[len_result] = '\0';
 
-	const wchar_t *posp = pos = string;
+	const char32 *posp = pos = string;
 	int nchar = 0, result_nchar = 0;
 	for (long i = 1; i <= *nmatches; i++) {
-		pos = wcsstr (pos, search);
+		pos = str32str (pos, search);
 
 		/*
 			Copy gap between end of previous match and start of current.
@@ -208,7 +199,7 @@ wchar_t *str_replace_literal (const wchar_t *string, const wchar_t *search, cons
 
 		nchar = (pos - posp);
 		if (nchar > 0) {
-			wcsncpy (result + result_nchar, posp, nchar);
+			str32ncpy (result + result_nchar, posp, nchar);
 			result_nchar += nchar;
 		}
 
@@ -216,7 +207,7 @@ wchar_t *str_replace_literal (const wchar_t *string, const wchar_t *search, cons
 			Insert the replace string in result.
 		*/
 
-		wcsncpy (result + result_nchar, replace, len_replace);
+		str32ncpy (result + result_nchar, replace, len_replace);
 		result_nchar += len_replace;
 
 		/*
@@ -234,29 +225,29 @@ wchar_t *str_replace_literal (const wchar_t *string, const wchar_t *search, cons
 	pos = string + len_string;
 	nchar = pos - posp;
 	if (nchar > 0) {
-		wcsncpy (result + result_nchar, posp, nchar);
+		str32ncpy (result + result_nchar, posp, nchar);
 	}
 	return result;
 }
 
-wchar_t *str_replace_regexp (const wchar_t *string, regexp *compiledSearchRE,
-                             const wchar_t *replaceRE, long maximumNumberOfReplaces, long *nmatches) {
+char32 *str_replace_regexp (const char32 *string, regexp *compiledSearchRE,
+                             const char32 *replaceRE, long maximumNumberOfReplaces, long *nmatches) {
 	int buf_nchar = 0;				/* # characters in 'buf' */
 	int gap_copied = 0;
 	int nchar, reverse = 0;
 	int errorType;
-	wchar_t prev_char = '\0';
-	const wchar_t *pos; 	/* current position in 'string' / start of current match */
-	const wchar_t *posp; /* end of previous match */
-	autostring buf;
+	char32 prev_char = '\0';
+	const char32 *pos; 	/* current position in 'string' / start of current match */
+	const char32 *posp; /* end of previous match */
+	autostring32 buf;
 
 	*nmatches = 0;
 	if (string == 0 || compiledSearchRE == 0 || replaceRE == 0) {
 		return 0;
 	}
 
-	int string_length = wcslen (string);
-	//int replace_length = wcslen (replaceRE);
+	int string_length = str32len (string);
+	//int replace_length = str32len (replaceRE);
 	if (string_length == 0) {
 		maximumNumberOfReplaces = 1;
 	}
@@ -278,21 +269,21 @@ wchar_t *str_replace_regexp (const wchar_t *string, regexp *compiledSearchRE,
 	buf.resize (buf_size);
 
 	pos = posp = string;
-	while (ExecRE (compiledSearchRE, 0, (regularExp_CHAR *) pos, 0, reverse, prev_char, '\0', 0, 0, 0) && i++ < maximumNumberOfReplaces) {
+	while (ExecRE (compiledSearchRE, 0, pos, 0, reverse, prev_char, '\0', 0, 0, 0) && i++ < maximumNumberOfReplaces) {
 		/*
 			Copy gap between the end of the previous match and the start
 			of the current match.
 			Check buffer overflow. pos == posp ? '\0' : pos[-1],
 		*/
 
-		pos = (wchar_t *) compiledSearchRE -> startp[0];
+		pos = compiledSearchRE -> startp[0];
 		nchar = pos - posp;
 		if (nchar > 0 && ! gap_copied) {
 			if (buf_nchar + nchar + 1 > buf_size) {
 				buf_size *= 2;
 				buf.resize (buf_size);
 			}
-			wcsncpy (buf.peek() + buf_nchar, posp, nchar);
+			str32ncpy (buf.peek() + buf_nchar, posp, nchar);
 			buf_nchar += nchar;
 		}
 
@@ -303,7 +294,7 @@ wchar_t *str_replace_regexp (const wchar_t *string, regexp *compiledSearchRE,
 			overflow. SubstituteRE puts null byte at last replaced position and signals when overflow.
 		*/
 
-		if ( (SubstituteRE (compiledSearchRE, (regularExp_CHAR *) replaceRE, (regularExp_CHAR *) buf.peek() + buf_nchar, buf_size - buf_nchar, &errorType)) == false) {
+		if ( (SubstituteRE (compiledSearchRE, replaceRE, buf.peek() + buf_nchar, buf_size - buf_nchar, &errorType)) == false) {
 			if (errorType == 1) { // not enough memory
 				buf_size *= 2;
 				buf.resize (buf_size);
@@ -311,18 +302,18 @@ wchar_t *str_replace_regexp (const wchar_t *string, regexp *compiledSearchRE,
 				i--; // retry
 				continue;
 			}
-			Melder_throw ("Error during substitution.");
+			Melder_throw (U"Error during substitution.");
 		}
 
 		// Buffer is not full, get number of characters added;
 
-		nchar = wcslen (buf.peek() + buf_nchar);
+		nchar = str32len (buf.peek() + buf_nchar);
 		buf_nchar += nchar;
 
 		// Update next start position in search string.
 
 		posp = pos;
-		pos = (wchar_t *) compiledSearchRE -> endp[0];
+		pos = (char32 *) compiledSearchRE -> endp[0];
 		if (pos != posp) {
 			prev_char = pos[-1];
 		}
@@ -342,23 +333,23 @@ wchar_t *str_replace_regexp (const wchar_t *string, regexp *compiledSearchRE,
 	buf_size = buf_nchar + nchar + 1;
 	buf.resize (buf_size);
 
-	wcsncpy (buf.peek() + buf_nchar, pos, nchar);
+	str32ncpy (buf.peek() + buf_nchar, pos, nchar);
 	buf[buf_size - 1] = '\0';
 	return buf.transfer();
 }
 
-static wchar_t **strs_replace_literal (wchar_t **from, long lo, long hi, const wchar_t *search,
-	const wchar_t *replace, int maximumNumberOfReplaces, long *nmatches, long *nstringmatches) {
+static char32 **strs_replace_literal (char32 **from, long lo, long hi, const char32 *search,
+	const char32 *replace, int maximumNumberOfReplaces, long *nmatches, long *nstringmatches) {
 	if (search == NULL || replace == NULL) {
 		return NULL;
 	}
-	autostringvector result (lo, hi);
+	autostring32vector result (lo, hi);
 	try {
 		long nmatches_sub = 0;
 		*nmatches = 0; *nstringmatches = 0;
 		for (long i = lo; i <= hi; i++) {
 			/* Treat a NULL as an empty string */
-			const wchar_t *string = from[i] == NULL ? L"" : from[i];
+			const char32 *string = from[i] == NULL ? U"" : from[i];
 
 			result[i] = str_replace_literal (string, search, replace, maximumNumberOfReplaces, &nmatches_sub);
 			if (nmatches_sub > 0) {
@@ -372,20 +363,20 @@ static wchar_t **strs_replace_literal (wchar_t **from, long lo, long hi, const w
 	}
 }
 
-static wchar_t **strs_replace_regexp (wchar_t **from, long lo, long hi, const wchar_t *searchRE,
-	const wchar_t *replaceRE, int maximumNumberOfReplaces, long *nmatches, long *nstringmatches) {
+static char32 **strs_replace_regexp (char32 **from, long lo, long hi, const char32 *searchRE,
+	const char32 *replaceRE, int maximumNumberOfReplaces, long *nmatches, long *nstringmatches) {
 	if (searchRE == NULL || replaceRE == NULL) {
 		return NULL;
 	}
-	autostringvector result;
+	autostring32vector result;
 	try {
 		regexp *compiledRE;
-		const wchar_t *compileMsg;
+		const char32 *compileMsg;
 		long nmatches_sub = 0;
 
-		compiledRE = CompileRE ( (regularExp_CHAR *) searchRE, &compileMsg, 0);
+		compiledRE = CompileRE (searchRE, &compileMsg, 0);
 		if (compiledRE == NULL) {
-			Melder_throw ("No regexp ");
+			Melder_throw (U"No regexp ");
 		}
 
 		result.reset (lo, hi);
@@ -393,7 +384,7 @@ static wchar_t **strs_replace_regexp (wchar_t **from, long lo, long hi, const wc
 		*nmatches = 0; *nstringmatches = 0;
 		for (long i = lo; i <= hi; i++) {
 			/* Treat a NULL as an empty string */
-			const wchar_t *string = from[i] == NULL ? L"" : from[i];
+			const char32 *string = from[i] == NULL ? U"" : from[i];
 			result [i] = str_replace_regexp (string, compiledRE, replaceRE,
 			                                 maximumNumberOfReplaces, &nmatches_sub);
 			if (nmatches_sub > 0) {
@@ -407,7 +398,7 @@ static wchar_t **strs_replace_regexp (wchar_t **from, long lo, long hi, const wc
 	}
 }
 
-wchar_t **strs_replace (wchar_t **from, long lo, long hi, const wchar_t *search, const wchar_t *replace,
+char32 **strs_replace (char32 **from, long lo, long hi, const char32 *search, const char32 *replace,
                         int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, int use_regexp) {
 	if (use_regexp) return strs_replace_regexp (from, lo, hi, search,
 		                       replace, maximumNumberOfReplaces, nmatches, nstringmatches);
@@ -421,47 +412,47 @@ wchar_t **strs_replace (wchar_t **from, long lo, long hi, const wchar_t *search,
  * 1, 4, 2, 3, 4, 5, 6, 7, 4, 3, 3, 4, 5, 4, 3, 2
  * Overlap is allowed. Ranges can go up and down.
  */
-static long *getElementsOfRanges (const wchar_t *ranges, long maximumElement, long *numberOfElements, const wchar_t *elementType) {
+static long *getElementsOfRanges (const char32 *ranges, long maximumElement, long *numberOfElements, const char32 *elementType) {
 	/*
 	 * Count the elements.
 	 */
 	long previousElement = 0;
 	*numberOfElements = 0;
-	const wchar_t *p = & ranges [0];
+	const char32 *p = & ranges [0];
 	for (;;) {
-		while (*p == ' ' || *p == '\t') p ++;
-		if (*p == '\0') break;
-		if (isdigit (*p)) {
-			long currentElement = wcstol (p, NULL, 10);
+		while (*p == U' ' || *p == U'\t') p ++;
+		if (*p == U'\0') break;
+		if (isdigit ((int) *p)) {
+			long currentElement = Melder_atoi (p);
 			if (currentElement == 0)
-				Melder_throw ("No such ", elementType, L": 0 (minimum is 1).");
+				Melder_throw (U"No such ", elementType, U": 0 (minimum is 1).");
 			if (currentElement > maximumElement)
-				Melder_throw ("No such ", elementType, ": ", currentElement, " (maximum is ", maximumElement, ").");
+				Melder_throw (U"No such ", elementType, U": ", currentElement, U" (maximum is ", maximumElement, U").");
 			*numberOfElements += 1;
 			previousElement = currentElement;
-			do { p ++; } while (isdigit (*p));
+			do { p ++; } while (isdigit ((int) *p));
 		} else if (*p == ':') {
 			if (previousElement == 0)
-				Melder_throw ("Cannot start range with colon.");
-			do { p ++; } while (*p == ' ' || *p == '\t');
-			if (*p == '\0')
-				Melder_throw ("Cannot end range with colon.");
-			if (! isdigit (*p))
-				Melder_throw ("End of range should be a positive whole number.");
-			long currentElement = wcstol (p, NULL, 10);
+				Melder_throw (U"Cannot start range with colon.");
+			do { p ++; } while (*p == U' ' || *p == U'\t');
+			if (*p == U'\0')
+				Melder_throw (U"Cannot end range with colon.");
+			if (! isdigit ((int) *p))
+				Melder_throw (U"End of range should be a positive whole number.");
+			long currentElement = Melder_atoi (p);
 			if (currentElement == 0)
-				Melder_throw ("No such ", elementType, ": 0 (minimum is 1).");
+				Melder_throw (U"No such ", elementType, U": 0 (minimum is 1).");
 			if (currentElement > maximumElement)
-				Melder_throw ("No such ", elementType, ": ", currentElement, " (maximum is ", maximumElement, ").");
+				Melder_throw (U"No such ", elementType, U": ", currentElement, U" (maximum is ", maximumElement, U").");
 			if (currentElement > previousElement) {
 				*numberOfElements += currentElement - previousElement;
 			} else {
 				*numberOfElements += previousElement - currentElement;
 			}
 			previousElement = currentElement;
-			do { p ++; } while (isdigit (*p));
+			do { p ++; } while (isdigit ((int) *p));
 		} else {
-			Melder_throw ("Start of range should be a positive whole number.");
+			Melder_throw (U"Start of range should be a positive whole number.");
 		}
 	}
 	/*
@@ -475,16 +466,16 @@ static long *getElementsOfRanges (const wchar_t *ranges, long maximumElement, lo
 	*numberOfElements = 0;
 	p = & ranges [0];
 	for (;;) {
-		while (*p == ' ' || *p == '\t') p ++;
-		if (*p == '\0') break;
-		if (isdigit (*p)) {
-			long currentElement = wcstol (p, NULL, 10);
+		while (*p == U' ' || *p == U'\t') p ++;
+		if (*p == U'\0') break;
+		if (isdigit ((int) *p)) {
+			long currentElement = Melder_atoi (p);
 			elements [++ *numberOfElements] = currentElement;
 			previousElement = currentElement;
-			do { p ++; } while (isdigit (*p));
-		} else if (*p == ':') {
-			do { p ++; } while (*p == ' ' || *p == '\t');
-			long currentElement = wcstol (p, NULL, 10);
+			do { p ++; } while (isdigit ((int) *p));
+		} else if (*p == U':') {
+			do { p ++; } while (*p == U' ' || *p == U'\t');
+			long currentElement = Melder_atoi (p);
 			if (currentElement > previousElement) {
 				for (long ielement = previousElement + 1; ielement <= currentElement; ielement ++) {
 					elements [++ *numberOfElements] = ielement;
@@ -495,7 +486,7 @@ static long *getElementsOfRanges (const wchar_t *ranges, long maximumElement, lo
 				}
 			}
 			previousElement = currentElement;
-			do { p ++; } while (isdigit (*p));
+			do { p ++; } while (isdigit ((int) *p));
 		}
 	}
 	return elements.transfer();
@@ -525,7 +516,7 @@ static void NUMlvector_getUniqueNumbers (long *numbers, long *numberOfElements, 
 	*numberOfElements = n;
 }
 
-long *NUMstring_getElementsOfRanges (const wchar_t *ranges, long maximumElement, long *numberOfElements, long *numberOfMultiples, const wchar_t *elementType, bool sortedUniques) {
+long *NUMstring_getElementsOfRanges (const char32 *ranges, long maximumElement, long *numberOfElements, long *numberOfMultiples, const char32 *elementType, bool sortedUniques) {
 	autoNUMvector<long> elements (getElementsOfRanges (ranges, maximumElement, numberOfElements, elementType), 1);
 	if (sortedUniques) {
 		NUMlvector_getUniqueNumbers (elements.peek(), numberOfElements, numberOfMultiples);
@@ -533,11 +524,11 @@ long *NUMstring_getElementsOfRanges (const wchar_t *ranges, long maximumElement,
 	return elements.transfer();
 }
 
-wchar_t * NUMstring_timeNoDot (double time) {
-	static wchar_t string[100];
-	long seconds = time;
-	long ms = round((double)((time - seconds) * 1000.0));
-	swprintf (string, 99, L"_%ld_%ld", seconds, ms);
+char32 * NUMstring_timeNoDot (double time) {
+	static char32 string[100];
+	long seconds = (long) floor (time);
+	long ms = lround ((time - seconds) * 1000.0);
+	Melder_sprint (string,100, U"_", seconds, U"_", ms);
 	return string;
 }
 

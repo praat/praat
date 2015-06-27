@@ -104,7 +104,7 @@ Cepstrum Sound_to_Cepstrum_bw (Sound me) {
 		thy z[1][1] = lnxa;
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Cepstrum created.");
+		Melder_throw (me, U": no Cepstrum created.");
 	}
 }
 
@@ -116,7 +116,7 @@ Cepstrum Sound_to_Cepstrum (Sound me) {
 		autoCepstrum thee = Spectrum_to_Cepstrum (spectrum.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Cepstrum calculated.");
+		Melder_throw (me, U": no Cepstrum calculated.");
 	}
 }
 
@@ -126,7 +126,7 @@ Sound Cepstrum_to_Sound (Cepstrum me) {
 		autoSound thee = Spectrum_to_Sound (sx.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Sound calculated.");
+		Melder_throw (me, U": no Sound calculated.");
 	}
 }
 

@@ -18,11 +18,15 @@
  */
 
 #include "melder.h"
+#include <math.h>   // for floor()
 #ifdef linux
 	#include "GuiP.h"
 #endif
 #include <time.h>
 #include "praat_version.h"
+#ifdef _WIN32
+	#include "UnicodeData.h"
+#endif
 
 int Melder_debug = 0;
 
@@ -81,18 +85,491 @@ the behaviour of that program changes in the following way:
 
 */
 
+/*
+ * In order to make sure that Melder_casual() and trace() can be called from anywhere,
+ * including e.g. from Melder_realloc() or Melder_free(),
+ * they cannot use any Melder_xxx() functions.
+ */
+
+/*
+ * peek32to8 substitutes for Melder_peek32to8(),
+ * which can call Melder_realloc() and Melder_free();
+ * also, we need no newline nativization, as Melder_32to8_inline() does.
+ */
+static const char * peek32to8 (const char32 *string) {
+	if (string == NULL) return "";
+	static char *buffer { NULL };
+	static int64 bufferSize { 0 };
+	int64 n = str32len (string);
+	int64 sizeNeeded = n * 4 + 1;
+	if ((bufferSize - sizeNeeded) * (int64) sizeof (char) >= 10000) {
+		free (buffer);
+		bufferSize = 0;
+	}
+	if (sizeNeeded > bufferSize) {
+		sizeNeeded = (int64) floor (sizeNeeded * 1.61803) + 100;
+		buffer = (char *) realloc (buffer, (size_t) sizeNeeded * sizeof (char));
+		if (buffer == NULL) {
+			bufferSize = 0;
+			return "(out of memory during Melder_casual)";
+		}
+		bufferSize = sizeNeeded;
+	}
+	int64 i, j;
+	for (i = 0, j = 0; i < n; i ++) {
+		char32 kar = string [i];
+		if (kar <= 0x00007F) {   // 7 bits
+			buffer [j ++] = (char) (char8) kar;   // guarded truncation
+		} else if (kar <= 0x0007FF) {   // 11 bits
+			buffer [j ++] = (char) (char8) (0x0000C0 | (kar >> 6));   // the upper 5 bits yield a number between 0xC4 and 0xDF
+			buffer [j ++] = (char) (char8) (0x000080 | (kar & 0x00003F));   // the lower 6 bits yield a number between 0x80 and 0xBF
+		} else if (kar <= 0x00FFFF) {   // 16 bits
+			buffer [j ++] = (char) (char8) (0x0000E0 | (kar >> 12));   // the upper 4 bits yield a number between 0xE0 and 0xEF
+			buffer [j ++] = (char) (char8) (0x000080 | ((kar >> 6) & 0x00003F));
+			buffer [j ++] = (char) (char8) (0x000080 | (kar & 0x00003F));
+		} else {   // 21 bits
+			buffer [j ++] = (char) (char8) (0x0000F0 | (kar >> 18));   // the upper 3 bits yield a number between 0xF0 and 0xF4 (0x10FFFF >> 18 == 4)
+			buffer [j ++] = (char) (char8) (0x000080 | ((kar >> 12) & 0x00003F));   // the next 6 bits
+			buffer [j ++] = (char) (char8) (0x000080 | ((kar >> 6) & 0x00003F));   // the third 6 bits
+			buffer [j ++] = (char) (char8) (0x000080 | (kar & 0x00003F));   // the lower 6 bits
+		}
+	}
+	buffer [j] = '\0';
+	return buffer;
+}
+#ifdef _WIN32
+static const char16 * peek32to16 (const char32 *string) {
+	if (string == NULL) return u"";
+	static char16 *buffer { NULL };
+	static int64 bufferSize { 0 };
+	int64 n = str32len (string);
+	int64 sizeNeeded = n * 2 + 1;
+	if ((bufferSize - sizeNeeded) * (int64) sizeof (char16) >= 10000) {
+		free (buffer);
+		bufferSize = 0;
+	}
+	if (sizeNeeded > bufferSize) {
+		sizeNeeded = (int64) floor (sizeNeeded * 1.61803) + 100;
+		buffer = (char16 *) realloc (buffer, (size_t) sizeNeeded * sizeof (char16));
+		if (buffer == NULL) {
+			bufferSize = 0;
+			return u"(out of memory during trace)";
+		}
+		bufferSize = sizeNeeded;
+	}
+	int64 i, j;
+	for (i = 0, j = 0; i < n; i ++) {
+		char32 kar = string [i];
+		if (kar <= 0x00D7FF) {   // 16 bits
+			buffer [j ++] = (char16) kar;   // guarded truncation
+		} else if (kar <= 0x00DFFF) {   // 16 bits
+			buffer [j ++] = (char16) UNICODE_REPLACEMENT_CHARACTER;   // forbidden for UTF-32
+		} else if (kar <= 0x00FFFF) {   // 16 bits
+			buffer [j ++] = (char16) kar;   // guarded truncation
+		} else if (kar <= 0x10FFFF) {   // 21 bits
+			kar -= 0x010000;
+			buffer [j ++] = (char16) (0x00D800 | (kar >> 10));   // guarded truncation
+			buffer [j ++] = (char16) (0x00DC00 | (kar & 0x0003FF));   // guarded truncation
+		} else {   // 21 bits
+			buffer [j ++] = (char16) UNICODE_REPLACEMENT_CHARACTER;
+		}
+	}
+	buffer [j] = u'\0';
+	return buffer;
+}
+#endif
+
+/********** CASUAL **********/
+
+void Melder_casual (Melder_1_ARG) {
+	fprintf (stderr, "%s", peek32to8 (arg1. _arg));
+	fprintf (stderr, "\n");
+}
+void Melder_casual (Melder_2_ARGS) {
+	fprintf (stderr, "%s", peek32to8 (arg1. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg2. _arg));
+	fprintf (stderr, "\n");
+}
+void Melder_casual (Melder_3_ARGS) {
+	fprintf (stderr, "%s", peek32to8 (arg1. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg2. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg3. _arg));
+	fprintf (stderr, "\n");
+}
+void Melder_casual (Melder_4_ARGS) {
+	fprintf (stderr, "%s", peek32to8 (arg1. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg2. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg3. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg4. _arg));
+	fprintf (stderr, "\n");
+}
+void Melder_casual (Melder_5_ARGS) {
+	fprintf (stderr, "%s", peek32to8 (arg1. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg2. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg3. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg4. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg5. _arg));
+	fprintf (stderr, "\n");
+}
+void Melder_casual (Melder_6_ARGS) {
+	fprintf (stderr, "%s", peek32to8 (arg1. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg2. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg3. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg4. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg5. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg6. _arg));
+	fprintf (stderr, "\n");
+}
+void Melder_casual (Melder_7_ARGS) {
+	fprintf (stderr, "%s", peek32to8 (arg1. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg2. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg3. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg4. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg5. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg6. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg7. _arg));
+	fprintf (stderr, "\n");
+}
+void Melder_casual (Melder_8_ARGS) {
+	fprintf (stderr, "%s", peek32to8 (arg1. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg2. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg3. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg4. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg5. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg6. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg7. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg8. _arg));
+	fprintf (stderr, "\n");
+}
+void Melder_casual (Melder_9_ARGS) {
+	fprintf (stderr, "%s", peek32to8 (arg1. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg2. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg3. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg4. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg5. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg6. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg7. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg8. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg9. _arg));
+	fprintf (stderr, "\n");
+}
+void Melder_casual (Melder_10_ARGS) {
+	fprintf (stderr, "%s", peek32to8 (arg1. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg2. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg3. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg4. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg5. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg6. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg7. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg8. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg9. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg10._arg));
+	fprintf (stderr, "\n");
+}
+void Melder_casual (Melder_11_ARGS) {
+	fprintf (stderr, "%s", peek32to8 (arg1. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg2. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg3. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg4. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg5. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg6. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg7. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg8. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg9. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg10._arg));
+	fprintf (stderr, "%s", peek32to8 (arg11._arg));
+	fprintf (stderr, "\n");
+}
+void Melder_casual (Melder_13_ARGS) {
+	fprintf (stderr, "%s", peek32to8 (arg1. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg2. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg3. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg4. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg5. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg6. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg7. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg8. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg9. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg10._arg));
+	fprintf (stderr, "%s", peek32to8 (arg11._arg));
+	fprintf (stderr, "%s", peek32to8 (arg12._arg));
+	fprintf (stderr, "%s", peek32to8 (arg13._arg));
+	fprintf (stderr, "\n");
+}
+void Melder_casual (Melder_15_ARGS) {
+	fprintf (stderr, "%s", peek32to8 (arg1. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg2. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg3. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg4. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg5. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg6. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg7. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg8. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg9. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg10._arg));
+	fprintf (stderr, "%s", peek32to8 (arg11._arg));
+	fprintf (stderr, "%s", peek32to8 (arg12._arg));
+	fprintf (stderr, "%s", peek32to8 (arg13._arg));
+	fprintf (stderr, "%s", peek32to8 (arg14._arg));
+	fprintf (stderr, "%s", peek32to8 (arg15._arg));
+	fprintf (stderr, "\n");
+}
+void Melder_casual (Melder_19_ARGS) {
+	fprintf (stderr, "%s", peek32to8 (arg1. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg2. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg3. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg4. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg5. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg6. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg7. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg8. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg9. _arg));
+	fprintf (stderr, "%s", peek32to8 (arg10._arg));
+	fprintf (stderr, "%s", peek32to8 (arg11._arg));
+	fprintf (stderr, "%s", peek32to8 (arg12._arg));
+	fprintf (stderr, "%s", peek32to8 (arg13._arg));
+	fprintf (stderr, "%s", peek32to8 (arg14._arg));
+	fprintf (stderr, "%s", peek32to8 (arg15._arg));
+	fprintf (stderr, "%s", peek32to8 (arg16._arg));
+	fprintf (stderr, "%s", peek32to8 (arg17._arg));
+	fprintf (stderr, "%s", peek32to8 (arg18._arg));
+	fprintf (stderr, "%s", peek32to8 (arg19._arg));
+	fprintf (stderr, "\n");
+}
+
+/********** TRACE **********/
+
 bool Melder_isTracing = false;
 static structMelderFile theTracingFile = { 0 };
 
+void Melder_tracingToFile (MelderFile file) {
+	MelderFile_copy (file, & theTracingFile);
+	MelderFile_delete (& theTracingFile);
+}
+
+static FILE * Melder_trace_open (const char *fileName, int lineNumber, const char *functionName) {
+	FILE *f;
+	#ifdef _WIN32
+		f = _wfopen ((const wchar_t *) peek32to16 (theTracingFile. path), L"a");
+	#else
+		char utf8path [kMelder_MAXPATH+1];
+		Melder_str32To8bitFileRepresentation_inline (theTracingFile. path, utf8path);   // this Melder_xxx() function is OK to call
+		f = fopen ((char *) utf8path, "a");
+	#endif
+	if (! f) f = stderr;   // if the file cannot be opened, we can still trace to stderr!
+	if (fileName) {
+		const char *slashPosition = strrchr (fileName, Melder_DIRECTORY_SEPARATOR);
+		fprintf (f, "%s (%s:%d): ", functionName, slashPosition ? slashPosition + 1 : fileName, lineNumber);
+	} else {
+		fprintf (f, "%s: ", functionName);
+	}
+	return f;
+}
+
+static void Melder_trace_close (FILE *f) {
+	fprintf (f, "\n");
+	if (f != stderr) fclose (f);
+}
+
+void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_1_ARG) {
+	if (! Melder_isTracing || MelderFile_isNull (& theTracingFile)) return;
+	FILE *f = Melder_trace_open (fileName, lineNumber, functionName);
+	fprintf (f, "%s", peek32to8 (arg1._arg));
+	Melder_trace_close (f);
+}
+void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_2_ARGS) {
+	if (! Melder_isTracing || MelderFile_isNull (& theTracingFile)) return;
+	FILE *f = Melder_trace_open (fileName, lineNumber, functionName);
+	fprintf (f, "%s", peek32to8 (arg1. _arg));
+	fprintf (f, "%s", peek32to8 (arg2. _arg));
+	Melder_trace_close (f);
+}
+void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_3_ARGS) {
+	if (! Melder_isTracing || MelderFile_isNull (& theTracingFile)) return;
+	FILE *f = Melder_trace_open (fileName, lineNumber, functionName);
+	fprintf (f, "%s", peek32to8 (arg1. _arg));
+	fprintf (f, "%s", peek32to8 (arg2. _arg));
+	fprintf (f, "%s", peek32to8 (arg3. _arg));
+	Melder_trace_close (f);
+}
+void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_4_ARGS) {
+	if (! Melder_isTracing || MelderFile_isNull (& theTracingFile)) return;
+	FILE *f = Melder_trace_open (fileName, lineNumber, functionName);
+	fprintf (f, "%s", peek32to8 (arg1. _arg));
+	fprintf (f, "%s", peek32to8 (arg2. _arg));
+	fprintf (f, "%s", peek32to8 (arg3. _arg));
+	fprintf (f, "%s", peek32to8 (arg4. _arg));
+	Melder_trace_close (f);
+}
+void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_5_ARGS) {
+	if (! Melder_isTracing || MelderFile_isNull (& theTracingFile)) return;
+	FILE *f = Melder_trace_open (fileName, lineNumber, functionName);
+	fprintf (f, "%s", peek32to8 (arg1. _arg));
+	fprintf (f, "%s", peek32to8 (arg2. _arg));
+	fprintf (f, "%s", peek32to8 (arg3. _arg));
+	fprintf (f, "%s", peek32to8 (arg4. _arg));
+	fprintf (f, "%s", peek32to8 (arg5. _arg));
+	Melder_trace_close (f);
+}
+void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_6_ARGS) {
+	if (! Melder_isTracing || MelderFile_isNull (& theTracingFile)) return;
+	FILE *f = Melder_trace_open (fileName, lineNumber, functionName);
+	fprintf (f, "%s", peek32to8 (arg1. _arg));
+	fprintf (f, "%s", peek32to8 (arg2. _arg));
+	fprintf (f, "%s", peek32to8 (arg3. _arg));
+	fprintf (f, "%s", peek32to8 (arg4. _arg));
+	fprintf (f, "%s", peek32to8 (arg5. _arg));
+	fprintf (f, "%s", peek32to8 (arg6. _arg));
+	Melder_trace_close (f);
+}
+void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_7_ARGS) {
+	if (! Melder_isTracing || MelderFile_isNull (& theTracingFile)) return;
+	FILE *f = Melder_trace_open (fileName, lineNumber, functionName);
+	fprintf (f, "%s", peek32to8 (arg1. _arg));
+	fprintf (f, "%s", peek32to8 (arg2. _arg));
+	fprintf (f, "%s", peek32to8 (arg3. _arg));
+	fprintf (f, "%s", peek32to8 (arg4. _arg));
+	fprintf (f, "%s", peek32to8 (arg5. _arg));
+	fprintf (f, "%s", peek32to8 (arg6. _arg));
+	fprintf (f, "%s", peek32to8 (arg7. _arg));
+	Melder_trace_close (f);
+}
+void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_8_ARGS) {
+	if (! Melder_isTracing || MelderFile_isNull (& theTracingFile)) return;
+	FILE *f = Melder_trace_open (fileName, lineNumber, functionName);
+	fprintf (f, "%s", peek32to8 (arg1. _arg));
+	fprintf (f, "%s", peek32to8 (arg2. _arg));
+	fprintf (f, "%s", peek32to8 (arg3. _arg));
+	fprintf (f, "%s", peek32to8 (arg4. _arg));
+	fprintf (f, "%s", peek32to8 (arg5. _arg));
+	fprintf (f, "%s", peek32to8 (arg6. _arg));
+	fprintf (f, "%s", peek32to8 (arg7. _arg));
+	fprintf (f, "%s", peek32to8 (arg8. _arg));
+	Melder_trace_close (f);
+}
+void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_9_ARGS) {
+	if (! Melder_isTracing || MelderFile_isNull (& theTracingFile)) return;
+	FILE *f = Melder_trace_open (fileName, lineNumber, functionName);
+	fprintf (f, "%s", peek32to8 (arg1. _arg));
+	fprintf (f, "%s", peek32to8 (arg2. _arg));
+	fprintf (f, "%s", peek32to8 (arg3. _arg));
+	fprintf (f, "%s", peek32to8 (arg4. _arg));
+	fprintf (f, "%s", peek32to8 (arg5. _arg));
+	fprintf (f, "%s", peek32to8 (arg6. _arg));
+	fprintf (f, "%s", peek32to8 (arg7. _arg));
+	fprintf (f, "%s", peek32to8 (arg8. _arg));
+	fprintf (f, "%s", peek32to8 (arg9. _arg));
+	Melder_trace_close (f);
+}
+void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_10_ARGS) {
+	if (! Melder_isTracing || MelderFile_isNull (& theTracingFile)) return;
+	FILE *f = Melder_trace_open (fileName, lineNumber, functionName);
+	fprintf (f, "%s", peek32to8 (arg1. _arg));
+	fprintf (f, "%s", peek32to8 (arg2. _arg));
+	fprintf (f, "%s", peek32to8 (arg3. _arg));
+	fprintf (f, "%s", peek32to8 (arg4. _arg));
+	fprintf (f, "%s", peek32to8 (arg5. _arg));
+	fprintf (f, "%s", peek32to8 (arg6. _arg));
+	fprintf (f, "%s", peek32to8 (arg7. _arg));
+	fprintf (f, "%s", peek32to8 (arg8. _arg));
+	fprintf (f, "%s", peek32to8 (arg9. _arg));
+	fprintf (f, "%s", peek32to8 (arg10._arg));
+	Melder_trace_close (f);
+}
+void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_11_ARGS) {
+	if (! Melder_isTracing || MelderFile_isNull (& theTracingFile)) return;
+	FILE *f = Melder_trace_open (fileName, lineNumber, functionName);
+	fprintf (f, "%s", peek32to8 (arg1. _arg));
+	fprintf (f, "%s", peek32to8 (arg2. _arg));
+	fprintf (f, "%s", peek32to8 (arg3. _arg));
+	fprintf (f, "%s", peek32to8 (arg4. _arg));
+	fprintf (f, "%s", peek32to8 (arg5. _arg));
+	fprintf (f, "%s", peek32to8 (arg6. _arg));
+	fprintf (f, "%s", peek32to8 (arg7. _arg));
+	fprintf (f, "%s", peek32to8 (arg8. _arg));
+	fprintf (f, "%s", peek32to8 (arg9. _arg));
+	fprintf (f, "%s", peek32to8 (arg10._arg));
+	fprintf (f, "%s", peek32to8 (arg11._arg));
+	Melder_trace_close (f);
+}
+void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_13_ARGS) {
+	if (! Melder_isTracing || MelderFile_isNull (& theTracingFile)) return;
+	FILE *f = Melder_trace_open (fileName, lineNumber, functionName);
+	fprintf (f, "%s", peek32to8 (arg1. _arg));
+	fprintf (f, "%s", peek32to8 (arg2. _arg));
+	fprintf (f, "%s", peek32to8 (arg3. _arg));
+	fprintf (f, "%s", peek32to8 (arg4. _arg));
+	fprintf (f, "%s", peek32to8 (arg5. _arg));
+	fprintf (f, "%s", peek32to8 (arg6. _arg));
+	fprintf (f, "%s", peek32to8 (arg7. _arg));
+	fprintf (f, "%s", peek32to8 (arg8. _arg));
+	fprintf (f, "%s", peek32to8 (arg9. _arg));
+	fprintf (f, "%s", peek32to8 (arg10._arg));
+	fprintf (f, "%s", peek32to8 (arg11._arg));
+	fprintf (f, "%s", peek32to8 (arg12._arg));
+	fprintf (f, "%s", peek32to8 (arg13._arg));
+	Melder_trace_close (f);
+}
+void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_15_ARGS) {
+	if (! Melder_isTracing || MelderFile_isNull (& theTracingFile)) return;
+	FILE *f = Melder_trace_open (fileName, lineNumber, functionName);
+	fprintf (f, "%s", peek32to8 (arg1. _arg));
+	fprintf (f, "%s", peek32to8 (arg2. _arg));
+	fprintf (f, "%s", peek32to8 (arg3. _arg));
+	fprintf (f, "%s", peek32to8 (arg4. _arg));
+	fprintf (f, "%s", peek32to8 (arg5. _arg));
+	fprintf (f, "%s", peek32to8 (arg6. _arg));
+	fprintf (f, "%s", peek32to8 (arg7. _arg));
+	fprintf (f, "%s", peek32to8 (arg8. _arg));
+	fprintf (f, "%s", peek32to8 (arg9. _arg));
+	fprintf (f, "%s", peek32to8 (arg10._arg));
+	fprintf (f, "%s", peek32to8 (arg11._arg));
+	fprintf (f, "%s", peek32to8 (arg12._arg));
+	fprintf (f, "%s", peek32to8 (arg13._arg));
+	fprintf (f, "%s", peek32to8 (arg14._arg));
+	fprintf (f, "%s", peek32to8 (arg15._arg));
+	Melder_trace_close (f);
+}
+void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_19_ARGS) {
+	if (! Melder_isTracing || MelderFile_isNull (& theTracingFile)) return;
+	FILE *f = Melder_trace_open (fileName, lineNumber, functionName);
+	fprintf (f, "%s", peek32to8 (arg1. _arg));
+	fprintf (f, "%s", peek32to8 (arg2. _arg));
+	fprintf (f, "%s", peek32to8 (arg3. _arg));
+	fprintf (f, "%s", peek32to8 (arg4. _arg));
+	fprintf (f, "%s", peek32to8 (arg5. _arg));
+	fprintf (f, "%s", peek32to8 (arg6. _arg));
+	fprintf (f, "%s", peek32to8 (arg7. _arg));
+	fprintf (f, "%s", peek32to8 (arg8. _arg));
+	fprintf (f, "%s", peek32to8 (arg9. _arg));
+	fprintf (f, "%s", peek32to8 (arg10._arg));
+	fprintf (f, "%s", peek32to8 (arg11._arg));
+	fprintf (f, "%s", peek32to8 (arg12._arg));
+	fprintf (f, "%s", peek32to8 (arg13._arg));
+	fprintf (f, "%s", peek32to8 (arg14._arg));
+	fprintf (f, "%s", peek32to8 (arg15._arg));
+	fprintf (f, "%s", peek32to8 (arg16._arg));
+	fprintf (f, "%s", peek32to8 (arg17._arg));
+	fprintf (f, "%s", peek32to8 (arg18._arg));
+	fprintf (f, "%s", peek32to8 (arg19._arg));
+	Melder_trace_close (f);
+}
+
 #ifdef linux
 static void theGtkLogHandler (const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer unused_data) {
-	Melder_trace_FMT (NULL, 0, "GTK", "%s", message);
+	FILE *f = Melder_trace_open (NULL, 0, "GTK");
+	fprintf (f, "%s", message);
+	Melder_trace_close (f);
 }
 static void theGlibLogHandler (const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer unused_data) {
-	Melder_trace_FMT (NULL, 0, "GLib", "%s", message);
+	FILE *f = Melder_trace_open (NULL, 0, "GLib");
+	fprintf (f, "%s", message);
+	Melder_trace_close (f);
 }
 static void theGlibGobjectLogHandler (const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer unused_data) {
-	Melder_trace_FMT (NULL, 0, "GLib-GObject", "%s", message);
+	FILE *f = Melder_trace_open (NULL, 0, "GLib-GObject");
+	fprintf (f, "%s", message);
+	Melder_trace_close (f);
 }
 #endif
 
@@ -101,7 +578,10 @@ void Melder_setTracing (bool tracing) {
 	#define xstr(s) str(s)
 	#define str(s) #s
 	if (! tracing)
-		trace ("switch tracing off in Praat version %s at %s", xstr (PRAAT_VERSION_STR), ctime (& today));
+		trace (U"switch tracing off"
+			U" in Praat version ", Melder_peek8to32 (xstr (PRAAT_VERSION_STR)),
+			U" at ", Melder_peek8to32 (ctime (& today))
+		);
 	Melder_isTracing = tracing;
 	#ifdef linux
 		static guint handler_id1, handler_id2, handler_id3;
@@ -117,34 +597,10 @@ void Melder_setTracing (bool tracing) {
 		}
 	#endif
 	if (tracing)
-		trace ("switch tracing on in Praat version %s at %s", xstr (PRAAT_VERSION_STR), ctime (& today));
-}
-
-void Melder_tracingToFile (MelderFile file) {
-	MelderFile_copy (file, & theTracingFile);
-	MelderFile_delete (& theTracingFile);
-}
-
-void Melder_trace_FMT (const char *fileName, int lineNumber, const char *functionName, const char *format, ...) {
-	if (! Melder_isTracing || MelderFile_isNull (& theTracingFile)) return;
-	try {
-		FILE *f = Melder_fopen (& theTracingFile, "a");
-		if (fileName) {
-			const char *slashPosition = strrchr (fileName, Melder_DIRECTORY_SEPARATOR);
-			fprintf (f, "%s (%s:%d): ", functionName, slashPosition ? slashPosition + 1 : fileName, lineNumber);
-		} else {
-			fprintf (f, "%s: ", functionName);
-		}
-		va_list arg;
-		va_start (arg, format);
-		vfprintf (f, format, arg);
-		va_end (arg);
-		char lastCharacter = format [0] == '\0' ? '\0' : format [strlen (format) - 1];
-		fprintf (f, strchr (".!?,;", lastCharacter) ? "\n" : ".\n");
-		Melder_fclose (& theTracingFile, f);
-	} catch (MelderError) {
-		Melder_clearError ();   // ignore
-	}
+		trace (U"switch tracing on"
+			U" in Praat version ", Melder_peek8to32 (xstr (PRAAT_VERSION_STR)),
+			U" at ", Melder_peek8to32 (ctime (& today))
+		);
 }
 
 /* End of file melder_debug.cpp */

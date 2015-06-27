@@ -1,6 +1,6 @@
 /* Formant.cpp
  *
- * Copyright (C) 1992-2012,2014 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,14 +55,14 @@ Thing_implement (Formant, Sampled, 2);   // version 1 = with intensity, 2 = doub
 
 void structFormant :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine (L"Time domain:");
-	MelderInfo_writeLine (L"   Start time: ", Melder_double (xmin), L" seconds");
-	MelderInfo_writeLine (L"   End time: ", Melder_double (xmax), L" seconds");
-	MelderInfo_writeLine (L"   Total duration: ", Melder_double (xmax - xmin), L" seconds");
-	MelderInfo_writeLine (L"Time sampling:");
-	MelderInfo_writeLine (L"   Number of frames: ", Melder_integer (nx));
-	MelderInfo_writeLine (L"   Time step: ", Melder_double (dx), L" seconds");
-	MelderInfo_writeLine (L"   First frame centred at: ", Melder_double (x1), L" seconds");
+	MelderInfo_writeLine (U"Time domain:");
+	MelderInfo_writeLine (U"   Start time: ", xmin, U" seconds");
+	MelderInfo_writeLine (U"   End time: ", xmax, U" seconds");
+	MelderInfo_writeLine (U"   Total duration: ", xmax - xmin, U" seconds");
+	MelderInfo_writeLine (U"Time sampling:");
+	MelderInfo_writeLine (U"   Number of frames: ", nx);
+	MelderInfo_writeLine (U"   Time step: ", dx, U" seconds");
+	MelderInfo_writeLine (U"   First frame centred at: ", x1, U" seconds");
 }
 
 double structFormant :: v_getValueAtSample (long iframe, long which, int units) {
@@ -95,7 +95,7 @@ Formant Formant_create (double tmin, double tmax, long nt, double dt, double t1,
 		my maxnFormants = maxnFormants;
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Formant object not created.");
+		Melder_throw (U"Formant object not created.");
 	}
 }
 
@@ -134,8 +134,8 @@ void Formant_drawTracks (Formant me, Graphics g, double tmin, double tmax, doubl
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, L"Time (s)");
-		Graphics_textLeft (g, 1, L"Formant frequency (Hz)");
+		Graphics_textBottom (g, 1, U"Time (s)");
+		Graphics_textLeft (g, 1, U"Formant frequency (Hz)");
 		Graphics_marksBottom (g, 2, 1, 1, 0);
 		Graphics_marksLeftEvery (g, 1.0, 1000.0, 1, 1, 1);
 	}
@@ -180,18 +180,18 @@ void Formant_drawSpeckles (Formant me, Graphics g, double tmin, double tmax, dou
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, L"Time (s)");
-		Graphics_textLeft (g, 1, L"Formant frequency (Hz)");
+		Graphics_textBottom (g, 1, U"Time (s)");
+		Graphics_textLeft (g, 1, U"Formant frequency (Hz)");
 		Graphics_marksBottom (g, 2, 1, 1, 0);
 		Graphics_marksLeftEvery (g, 1.0, 1000.0, 1, 1, 1);
 	}
 }
 
-void Formant_formula_bandwidths (Formant me, const wchar_t *formula, Interpreter interpreter) {
+void Formant_formula_bandwidths (Formant me, const char32 *formula, Interpreter interpreter) {
 	try {
 		long nrow = Formant_getMaxNumFormants (me);
 		if (nrow < 1)
-			Melder_throw (L"No formants available.");
+			Melder_throw (U"No formants available.");
 		autoMatrix mat = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, nrow + 0.5, nrow, 1, 1);
 		for (long iframe = 1; iframe <= my nx; iframe ++) {
 			Formant_Frame frame = & my d_frames [iframe];
@@ -205,15 +205,15 @@ void Formant_formula_bandwidths (Formant me, const wchar_t *formula, Interpreter
 				frame -> formant [iformant]. bandwidth = mat -> z [iformant] [iframe];
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": bandwidth formula not executed.");
+		Melder_throw (me, U": bandwidth formula not executed.");
 	}
 }
 
-void Formant_formula_frequencies (Formant me, const wchar_t *formula, Interpreter interpreter) {
+void Formant_formula_frequencies (Formant me, const char32 *formula, Interpreter interpreter) {
 	try {
 		long nrow = Formant_getMaxNumFormants (me);
 		if (nrow < 1)
-			Melder_throw ("No formants available.");
+			Melder_throw (U"No formants available.");
 		autoMatrix mat = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, nrow + 0.5, nrow, 1, 1);
 		for (long iframe = 1; iframe <= my nx; iframe ++) {
 			Formant_Frame frame = & my d_frames [iframe];
@@ -227,7 +227,7 @@ void Formant_formula_frequencies (Formant me, const wchar_t *formula, Interprete
 				frame -> formant [iformant]. frequency = mat -> z [iformant] [iframe];
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": frequency formula not executed.");
+		Melder_throw (me, U": frequency formula not executed.");
 	}
 }
 
@@ -243,7 +243,7 @@ void Formant_getExtrema (Formant me, int iformant, double tmin, double tmax, dou
 		double f;
 		if (iformant > frame -> nFormants) continue;
 		f = frame -> formant [iformant]. frequency;
-		if (! f) continue;
+		if (f == 0.0) continue;
 		if (fmin) if (f < *fmin || *fmin == 0.0) *fmin = f;
 		if (fmax) if (f > *fmax) *fmax = f;
 	}
@@ -307,7 +307,7 @@ double Formant_getStandardDeviation (Formant me, int iformant, double tmin, doub
 		Formant_Frame frame = & my d_frames [iframe];
 		if (iformant > frame -> nFormants) continue;
 		double f = frame -> formant [iformant]. frequency;
-		if (! f) continue;
+		if (f == 0.0) continue;
 		if (bark) f = NUMhertzToBark (f);
 		n += 1;
 		sum += (f - mean) * (f - mean);
@@ -330,7 +330,7 @@ double Formant_getQuantileOfBandwidth (Formant me, int iformant, double quantile
 
 void Formant_scatterPlot (Formant me, Graphics g, double tmin, double tmax,
 	int iformant1, double fmin1, double fmax1, int iformant2, double fmin2, double fmax2,
-	double size_mm, const wchar_t *mark, int garnish)
+	double size_mm, const char32 *mark, int garnish)
 {
 	if (iformant1 < 1 || iformant2 < 1) return;
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
@@ -354,12 +354,9 @@ void Formant_scatterPlot (Formant me, Graphics g, double tmin, double tmax,
 	}
 	Graphics_unsetInner (g);
 	if (garnish) {
-		wchar_t text [100];
 		Graphics_drawInnerBox (g);
-		swprintf (text, 100, L"%%F_%d (Hz)", iformant1);
-		Graphics_textBottom (g, 1, text);
-		swprintf (text, 100, L"%%F_%d (Hz)", iformant2);
-		Graphics_textLeft (g, 1, text);
+		Graphics_textBottom (g, 1, Melder_cat (U"%%F_", iformant1, U" (Hz)"));
+		Graphics_textLeft (g, 1, Melder_cat (U"%%F_", iformant2, U" (Hz)"));
 		Graphics_marksBottom (g, 2, 1, 1, 0);
 		Graphics_marksLeft (g, 2, 1, 1, 0);
 	}
@@ -375,7 +372,7 @@ Matrix Formant_to_Matrix (Formant me, int iformant) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": frequencies of formant ", iformant, " not converted to Matrix.");
+		Melder_throw (me, U": frequencies of formant ", iformant, U" not converted to Matrix.");
 	}
 }
 
@@ -389,7 +386,7 @@ Matrix Formant_to_Matrix_bandwidths (Formant me, int iformant) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": bandwidths of formant ", iformant, " not converted to Matrix.");
+		Melder_throw (me, U": bandwidths of formant ", iformant, U" not converted to Matrix.");
 	}
 }
 
@@ -404,7 +401,7 @@ static double getLocalCost (long iframe, long icand, int itrack, void *closure) 
 	if (icand > frame -> nFormants) return 1e30;
 	candidate = & frame -> formant [icand];
 	/*if (candidate -> frequency <= 0.0) candidate -> frequency = 0.001;
-		Melder_fatal ("Weird formant frequency %ls Hz.", Melder_double (candidate -> frequency))*/;
+		Melder_fatal (U"Weird formant frequency ", candidate -> frequency, U" Hz.")*/;
 	Melder_assert (candidate -> bandwidth > 0.0);
 	Melder_assert (itrack > 0 && itrack <= 5);
 	return my dfCost * fabs (candidate -> frequency - my refF [itrack]) +
@@ -439,7 +436,7 @@ Formant Formant_tracker (Formant me, int ntrack,
 	try {
 		long nformmin = Formant_getMinNumFormants (me);
 		struct fparm parm;
-		if (ntrack > nformmin) Melder_throw ("Number of tracks (", ntrack, ") should not exceed minimum number of formants (", nformmin, ").");
+		if (ntrack > nformmin) Melder_throw (U"Number of tracks (", ntrack, U") should not exceed minimum number of formants (", nformmin, U").");
 		autoFormant thee = Formant_create (my xmin, my xmax, my nx, my dx, my x1, ntrack);
 		for (long iframe = 1; iframe <= thy nx; iframe ++) {
 			thy d_frames [iframe]. formant = NUMvector <structFormant_Formant> (1, ntrack);
@@ -461,7 +458,7 @@ Formant Formant_tracker (Formant me, int ntrack,
 			getLocalCost, getTransitionCost, putResult, & parm);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not tracked.");
+		Melder_throw (me, U": not tracked.");
 	}
 }
 
@@ -475,13 +472,13 @@ Table Formant_downto_Table (Formant me, bool includeFrameNumbers,
 		autoTable thee = Table_createWithoutColumnNames (my nx, includeFrameNumbers + includeTimes + includeIntensity +
 			includeNumberOfFormants + my maxnFormants * (1 + includeBandwidths));
 		long icol = 0;
-		if (includeFrameNumbers)     Table_setColumnLabel (thee.peek(), ++ icol, L"frame");
-		if (includeTimes)            Table_setColumnLabel (thee.peek(), ++ icol, L"time(s)");
-		if (includeIntensity)        Table_setColumnLabel (thee.peek(), ++ icol, L"intensity");
-		if (includeNumberOfFormants) Table_setColumnLabel (thee.peek(), ++ icol, L"nformants");
+		if (includeFrameNumbers)     Table_setColumnLabel (thee.peek(), ++ icol, U"frame");
+		if (includeTimes)            Table_setColumnLabel (thee.peek(), ++ icol, U"time(s)");
+		if (includeIntensity)        Table_setColumnLabel (thee.peek(), ++ icol, U"intensity");
+		if (includeNumberOfFormants) Table_setColumnLabel (thee.peek(), ++ icol, U"nformants");
 		for (long iformant = 1; iformant <= my maxnFormants; iformant ++) {
-			Table_setColumnLabel (thee.peek(), ++ icol, Melder_wcscat (L"F", Melder_integer (iformant), L"(Hz)"));
-			if (includeBandwidths) { Table_setColumnLabel (thee.peek(), ++ icol, Melder_wcscat (L"B", Melder_integer (iformant), L"(Hz)")); }
+			Table_setColumnLabel (thee.peek(), ++ icol, Melder_cat (U"F", iformant, U"(Hz)"));
+			if (includeBandwidths) { Table_setColumnLabel (thee.peek(), ++ icol, Melder_cat (U"B", iformant, U"(Hz)")); }
 		}
 		for (long iframe = 1; iframe <= my nx; iframe ++) {
 			icol = 0;
@@ -508,7 +505,7 @@ Table Formant_downto_Table (Formant me, bool includeFrameNumbers,
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Table.");
+		Melder_throw (me, U": not converted to Table.");
 	}
 }
 
@@ -524,7 +521,7 @@ void Formant_list (Formant me, bool includeFrameNumbers,
 			includeNumberOfFormants, frequencyDecimals, includeBandwidths);
 		Table_list (table.peek(), false);
 	} catch (MelderError) {
-		Melder_throw (me, ": not listed.");
+		Melder_throw (me, U": not listed.");
 	}
 }
 

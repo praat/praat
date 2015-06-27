@@ -2,7 +2,7 @@
 #define _SpellingChecker_h_
 /* SpellingChecker.h
  *
- * Copyright (C) 1999-2011 Paul Boersma
+ * Copyright (C) 1999-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,10 +31,10 @@ void SpellingChecker_replaceWordList (SpellingChecker me, WordList list);
 SortedSetOfString SpellingChecker_extractUserDictionary (SpellingChecker me);
 void SpellingChecker_replaceUserDictionary (SpellingChecker me, SortedSetOfString userDictionary);
 
-bool SpellingChecker_isWordAllowed (SpellingChecker me, const wchar_t *word);
-wchar_t * SpellingChecker_nextNotAllowedWord (SpellingChecker me, const wchar_t *sentence, long *start);
+bool SpellingChecker_isWordAllowed (SpellingChecker me, const char32 *word);
+char32 * SpellingChecker_nextNotAllowedWord (SpellingChecker me, const char32 *sentence, long *start);
 
-void SpellingChecker_addNewWord (SpellingChecker me, const wchar_t *word);
+void SpellingChecker_addNewWord (SpellingChecker me, const char32 *word);
 
 /* End of file SpellingChecker.h */
 #endif

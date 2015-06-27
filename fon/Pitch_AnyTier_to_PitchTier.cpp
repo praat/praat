@@ -1,6 +1,6 @@
 /* Pitch_AnyTier_to_PitchTier.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 PitchTier PitchTier_AnyTier_to_PitchTier (PitchTier pitch, AnyTier tier) {
 	try {
 		SortedSetOfDouble points = tier -> points;
-		if (pitch -> points -> size == 0) Melder_throw ("No pitch points.");
+		if (pitch -> points -> size == 0) Melder_throw (U"No pitch points.");
 
 		/*
 		 * Result's domain is a union of both domains.
@@ -50,7 +50,7 @@ PitchTier PitchTier_AnyTier_to_PitchTier (PitchTier pitch, AnyTier tier) {
 
 		return thee.peek();
 	} catch (MelderError) {
-		Melder_throw (pitch, " & ", tier, ": not converted to PitchTier.");
+		Melder_throw (pitch, U" & ", tier, U": not converted to PitchTier.");
 	}
 }
 
@@ -78,13 +78,13 @@ PitchTier Pitch_AnyTier_to_PitchTier (Pitch pitch, AnyTier tier, int checkMethod
 			double time = point -> number;
 			double frequency = Pitch_getValueAtTime (pitch, time, kPitch_unit_HERTZ, Pitch_LINEAR);
 			if (frequency == NUMundefined && checkMethod)
-				Melder_throw ("No periodicity at time ", time, " seconds.");
+				Melder_throw (U"No periodicity at time ", time, U" seconds.");
 			RealTier_addPoint (thee.peek(), time, frequency);
 		}
 
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (pitch, " & ", tier, ": not converted to PitchTier.");
+		Melder_throw (pitch, U" & ", tier, U": not converted to PitchTier.");
 	}
 }
 

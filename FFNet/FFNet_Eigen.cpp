@@ -74,7 +74,7 @@ void FFNet_Eigen_drawIntersection (FFNet me, Eigen eigen, Graphics g, long pcx, 
 			ys[ns] = y[j] + (y[j + 1] - y[j]) * r;
 		}
 		if (ns < 2) {
-			Melder_casual ("Intersection for unit %ld outside range", i);
+			Melder_casual (U"Intersection for unit ", i, U" outside range");
 		} else {
 			Graphics_line (g, xs[1], ys[1], xs[2], ys[2]);
 		}
@@ -162,17 +162,17 @@ void FFNet_Eigen_drawDecisionPlaneInEigenspace (FFNet me, thou, Graphics g, long
 		x2 = 0; y2 = -bias / we2;
 	}
 	if (we1 == 0 && we2 == 0) {
-		Melder_warning (L"We cannot draw the intersection of the neural net decision plane\n"
-		                 "for unit ", Melder_integer (unit), L" in layer ", Melder_integer (layer),
-		                 L" with the plane spanned by the eigenvectors because \nboth planes are parallel.");
+		Melder_warning (U"We cannot draw the intersection of the neural net decision plane\n"
+		                 "for unit ", unit, U" in layer ", layer,
+		                 U" with the plane spanned by the eigenvectors because \nboth planes are parallel.");
 		return;
 	}
 	double xi[3], yi[3]; /* Intersections */
 	double ni = NUMgetIntersectionsWithRectangle (x1, y1, x2, y2, xmin, ymin, xmax, ymax, xi, yi);
 	if (ni == 2) {
 		Graphics_line (g, xi[1], yi[1], xi[2], yi[2]);
-	} else Melder_warning (L"There were no intersections in the drawing area.\n"
-		                        "Please enlarge the drawing area.");
+	} else Melder_warning (U"There were no intersections in the drawing area.\n"
+		                        U"Please enlarge the drawing area.");
 	Graphics_unsetInner (g);
 }
 

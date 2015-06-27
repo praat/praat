@@ -73,21 +73,21 @@
 #undef iam
 #define iam iam_LOOP
 
-static const wchar_t *STRING_FROM_TIME_SECONDS = L"left Time range (s)";
-static const wchar_t *STRING_TO_TIME_SECONDS = L"right Time range (s)";
-static const wchar_t *STRING_FROM_TIME = L"left Time range";
-static const wchar_t *STRING_TO_TIME = L"right Time range";
-static const wchar_t *STRING_FROM_FREQUENCY_HZ = L"left Frequency range (Hz)";
-static const wchar_t *STRING_TO_FREQUENCY_HZ = L"right Frequency range (Hz)";
-static const wchar_t *STRING_FROM_FREQUENCY = L"left Frequency range";
-static const wchar_t *STRING_TO_FREQUENCY = L"right Frequency range";
+static const char32 *STRING_FROM_TIME_SECONDS = U"left Time range (s)";
+static const char32 *STRING_TO_TIME_SECONDS = U"right Time range (s)";
+static const char32 *STRING_FROM_TIME = U"left Time range";
+static const char32 *STRING_TO_TIME = U"right Time range";
+static const char32 *STRING_FROM_FREQUENCY_HZ = U"left Frequency range (Hz)";
+static const char32 *STRING_TO_FREQUENCY_HZ = U"right Frequency range (Hz)";
+static const char32 *STRING_FROM_FREQUENCY = U"left Frequency range";
+static const char32 *STRING_TO_FREQUENCY = U"right Frequency range";
 
 /***** Common dialog contents. *****/
 
 void praat_dia_timeRange (Any dia);
 void praat_dia_timeRange (Any dia) {
-	REAL (STRING_FROM_TIME_SECONDS, L"0.0")
-	REAL (STRING_TO_TIME_SECONDS, L"0.0 (= all)")
+	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
+	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
 }
 void praat_get_timeRange (Any dia, double *tmin, double *tmax);
 void praat_get_timeRange (Any dia, double *tmin, double *tmax) {
@@ -98,28 +98,28 @@ int praat_get_frequencyRange (Any dia, double *fmin, double *fmax);
 int praat_get_frequencyRange (Any dia, double *fmin, double *fmax) {
 	*fmin = GET_REAL (STRING_FROM_FREQUENCY);
 	*fmax = GET_REAL (STRING_TO_FREQUENCY);
-	REQUIRE (*fmax > *fmin, L"Maximum frequency must be greater than minimum frequency.")
+	REQUIRE (*fmax > *fmin, U"Maximum frequency must be greater than minimum frequency.")
 	return 1;
 }
 static void dia_Vector_getExtremum (Any dia) {
 	Any radio;
 	praat_dia_timeRange (dia);
-	RADIO (L"Interpolation", 2)
-	RADIOBUTTON (L"None")
-	RADIOBUTTON (L"Parabolic")
-	RADIOBUTTON (L"Cubic")
-	RADIOBUTTON (L"Sinc70")
-	RADIOBUTTON (L"Sinc700")
+	RADIO (U"Interpolation", 2)
+		RADIOBUTTON (U"None")
+		RADIOBUTTON (U"Parabolic")
+		RADIOBUTTON (U"Cubic")
+		RADIOBUTTON (U"Sinc70")
+		RADIOBUTTON (U"Sinc700")
 }
 static void dia_Vector_getValue (Any dia) {
 	Any radio;
-	REAL (L"Time (s)", L"0.5")
-	RADIO (L"Interpolation", 3)
-	RADIOBUTTON (L"Nearest")
-	RADIOBUTTON (L"Linear")
-	RADIOBUTTON (L"Cubic")
-	RADIOBUTTON (L"Sinc70")
-	RADIOBUTTON (L"Sinc700")
+	REAL (U"Time (s)", U"0.5")
+	RADIO (U"Interpolation", 3)
+		RADIOBUTTON (U"Nearest")
+		RADIOBUTTON (U"Linear")
+		RADIOBUTTON (U"Cubic")
+		RADIOBUTTON (U"Sinc70")
+		RADIOBUTTON (U"Sinc700")
 }
 
 static void getTminTmaxFminFmax (Any dia, double *tmin, double *tmax, double *fmin, double *fmax) {
@@ -127,7 +127,7 @@ static void getTminTmaxFminFmax (Any dia, double *tmin, double *tmax, double *fm
 	*tmax = GET_REAL (STRING_TO_TIME);
 	*fmin = GET_REAL (STRING_FROM_FREQUENCY);
 	*fmax = GET_REAL (STRING_TO_FREQUENCY);
-	REQUIRE (*fmax > *fmin, L"Maximum frequency must be greater than minimum frequency.")
+	REQUIRE (*fmax > *fmin, U"Maximum frequency must be greater than minimum frequency.")
 }
 #define GET_TMIN_TMAX_FMIN_FMAX \
 	double tmin, tmax, fmin, fmax; \
@@ -141,7 +141,7 @@ int praat_Fon_formula (UiForm dia, Interpreter interpreter) {
 	LOOP {
 		iam (Matrix);
 		try {
-			Matrix_formula (me, GET_STRING (L"formula"), interpreter, NULL);
+			Matrix_formula (me, GET_STRING (U"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);
@@ -151,8 +151,8 @@ int praat_Fon_formula (UiForm dia, Interpreter interpreter) {
 	return 1;
 }
 
-extern "C" Graphics Movie_create (const wchar_t *title, int width, int height);
-extern "C" Graphics Movie_create (const wchar_t *title, int width, int height) {
+extern "C" Graphics Movie_create (const char32 *title, int width, int height);
+extern "C" Graphics Movie_create (const char32 *title, int width, int height) {
 	static Graphics graphics;
 	static GuiDialog dialog;
 	static GuiDrawingArea drawingArea;
@@ -171,28 +171,28 @@ extern "C" Graphics Movie_create (const wchar_t *title, int width, int height) {
 
 /***** AMPLITUDETIER *****/
 
-FORM (AmplitudeTier_addPoint, L"Add one point", L"AmplitudeTier: Add point...")
-	REAL (L"Time (s)", L"0.5")
-	REAL (L"Sound pressure (Pa)", L"0.8")
+FORM (AmplitudeTier_addPoint, U"Add one point", U"AmplitudeTier: Add point...")
+	REAL (U"Time (s)", U"0.5")
+	REAL (U"Sound pressure (Pa)", U"0.8")
 	OK
 DO
 	LOOP {
 		iam (AmplitudeTier);
-		RealTier_addPoint (me, GET_REAL (L"Time"), GET_REAL (L"Sound pressure"));
+		RealTier_addPoint (me, GET_REAL (U"Time"), GET_REAL (U"Sound pressure"));
 		praat_dataChanged (me);
 	}
 END
 
-FORM (AmplitudeTier_create, L"Create empty AmplitudeTier", NULL)
-	WORD (L"Name", L"empty")
-	REAL (L"Start time (s)", L"0.0")
-	REAL (L"End time (s)", L"1.0")
+FORM (AmplitudeTier_create, U"Create empty AmplitudeTier", NULL)
+	WORD (U"Name", U"empty")
+	REAL (U"Start time (s)", U"0.0")
+	REAL (U"End time (s)", U"1.0")
 	OK
 DO
-	double startTime = GET_REAL (L"Start time"), endTime = GET_REAL (L"End time");
-	if (endTime <= startTime) Melder_throw ("End time must be greater than start time.");
+	double startTime = GET_REAL (U"Start time"), endTime = GET_REAL (U"End time");
+	if (endTime <= startTime) Melder_throw (U"End time must be greater than start time.");
 	autoAmplitudeTier thee = AmplitudeTier_create (startTime, endTime);
-	praat_new (thee.transfer(), GET_STRING (L"Name"));
+	praat_new (thee.transfer(), GET_STRING (U"Name"));
 END
 
 DIRECT (AmplitudeTier_downto_PointProcess)
@@ -212,7 +212,7 @@ DIRECT (AmplitudeTier_downto_TableOfReal)
 END
 
 DIRECT (AmplitudeTier_edit)
-	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot view or edit an AmplitudeTier from batch.");
+	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit an AmplitudeTier from batch.");
 	Sound sound = NULL;
 	LOOP {
 		if (CLASS == classSound) sound = (Sound) OBJECT;   // may stay NULL
@@ -224,20 +224,20 @@ DIRECT (AmplitudeTier_edit)
 	}
 END
 
-FORM (AmplitudeTier_formula, L"AmplitudeTier: Formula", L"AmplitudeTier: Formula...")
-	LABEL (L"", L"# ncol = the number of points")
-	LABEL (L"", L"for col from 1 to ncol")
-	LABEL (L"", L"   # x = the time of the colth point, in seconds")
-	LABEL (L"", L"   # self = the value of the colth point, in Pascal")
-	LABEL (L"", L"   self = `formula'")
-	LABEL (L"", L"endfor")
-	TEXTFIELD (L"formula", L"- self ; upside down")
+FORM (AmplitudeTier_formula, U"AmplitudeTier: Formula", U"AmplitudeTier: Formula...")
+	LABEL (U"", U"# ncol = the number of points")
+	LABEL (U"", U"for col from 1 to ncol")
+	LABEL (U"", U"   # x = the time of the colth point, in seconds")
+	LABEL (U"", U"   # self = the value of the colth point, in Pascal")
+	LABEL (U"", U"   self = `formula'")
+	LABEL (U"", U"endfor")
+	TEXTFIELD (U"formula", U"- self ; upside down")
 	OK
 DO
 	LOOP {
 		iam (AmplitudeTier);
 		try {
-			RealTier_formula (me, GET_STRING (L"formula"), interpreter, NULL);
+			RealTier_formula (me, GET_STRING (U"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);
@@ -247,124 +247,124 @@ DO
 END
 
 static void dia_AmplitudeTier_getRangeProperty (Any dia) {
-	REAL (L"Shortest period (s)", L"0.0001")
-	REAL (L"Longest period (s)", L"0.02")
-	POSITIVE (L"Maximum amplitude factor", L"1.6")
+	REAL (U"Shortest period (s)", U"0.0001")
+	REAL (U"Longest period (s)", U"0.02")
+	POSITIVE (U"Maximum amplitude factor", U"1.6")
 }
 
-FORM (AmplitudeTier_getShimmer_local, L"AmplitudeTier: Get shimmer (local)", L"AmplitudeTier: Get shimmer (local)...")
+FORM (AmplitudeTier_getShimmer_local, U"AmplitudeTier: Get shimmer (local)", U"AmplitudeTier: Get shimmer (local)...")
 	dia_AmplitudeTier_getRangeProperty (dia);
 	OK
 DO
 	LOOP {
 		iam (AmplitudeTier);
 		double shimmer = AmplitudeTier_getShimmer_local (me,
-			GET_REAL (L"Shortest period"), GET_REAL (L"Longest period"), GET_REAL (L"Maximum amplitude factor"));
+			GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum amplitude factor"));
 		Melder_informationReal (shimmer, NULL);
 	}
 END
 
-FORM (AmplitudeTier_getShimmer_local_dB, L"AmplitudeTier: Get shimmer (local, dB)", L"AmplitudeTier: Get shimmer (local, dB)...")
+FORM (AmplitudeTier_getShimmer_local_dB, U"AmplitudeTier: Get shimmer (local, dB)", U"AmplitudeTier: Get shimmer (local, dB)...")
 	dia_AmplitudeTier_getRangeProperty (dia);
 	OK
 DO
 	LOOP {
 		iam (AmplitudeTier);
 		double shimmer = AmplitudeTier_getShimmer_local_dB (me,
-			GET_REAL (L"Shortest period"), GET_REAL (L"Longest period"), GET_REAL (L"Maximum amplitude factor"));
+			GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum amplitude factor"));
 		Melder_informationReal (shimmer, NULL);
 	}
 END
 
-FORM (AmplitudeTier_getShimmer_apq3, L"AmplitudeTier: Get shimmer (apq3)", L"AmplitudeTier: Get shimmer (apq3)...")
+FORM (AmplitudeTier_getShimmer_apq3, U"AmplitudeTier: Get shimmer (apq3)", U"AmplitudeTier: Get shimmer (apq3)...")
 	dia_AmplitudeTier_getRangeProperty (dia);
 	OK
 DO
 	LOOP {
 		iam (AmplitudeTier);
 		double shimmer = AmplitudeTier_getShimmer_apq3 (me,
-			GET_REAL (L"Shortest period"), GET_REAL (L"Longest period"), GET_REAL (L"Maximum amplitude factor"));
+			GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum amplitude factor"));
 		Melder_informationReal (shimmer, NULL);
 	}
 END
 
-FORM (AmplitudeTier_getShimmer_apq5, L"AmplitudeTier: Get shimmer (apq5)", L"AmplitudeTier: Get shimmer (apq5)...")
+FORM (AmplitudeTier_getShimmer_apq5, U"AmplitudeTier: Get shimmer (apq5)", U"AmplitudeTier: Get shimmer (apq5)...")
 	dia_AmplitudeTier_getRangeProperty (dia);
 	OK
 DO
 	LOOP {
 		iam (AmplitudeTier);
 		double shimmer = AmplitudeTier_getShimmer_apq5 (me,
-			GET_REAL (L"Shortest period"), GET_REAL (L"Longest period"), GET_REAL (L"Maximum amplitude factor"));
+			GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum amplitude factor"));
 		Melder_informationReal (shimmer, NULL);
 	}
 END
 
-FORM (AmplitudeTier_getShimmer_apq11, L"AmplitudeTier: Get shimmer (apq11)", L"AmplitudeTier: Get shimmer (apq11)...")
+FORM (AmplitudeTier_getShimmer_apq11, U"AmplitudeTier: Get shimmer (apq11)", U"AmplitudeTier: Get shimmer (apq11)...")
 	dia_AmplitudeTier_getRangeProperty (dia);
 	OK
 DO
 	LOOP {
 		iam (AmplitudeTier);
 		double shimmer = AmplitudeTier_getShimmer_apq11 (me,
-			GET_REAL (L"Shortest period"), GET_REAL (L"Longest period"), GET_REAL (L"Maximum amplitude factor"));
+			GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum amplitude factor"));
 		Melder_informationReal (shimmer, NULL);
 	}
 END
 
-FORM (AmplitudeTier_getShimmer_dda, L"AmplitudeTier: Get shimmer (dda)", L"AmplitudeTier: Get shimmer (dda)...")
+FORM (AmplitudeTier_getShimmer_dda, U"AmplitudeTier: Get shimmer (dda)", U"AmplitudeTier: Get shimmer (dda)...")
 	dia_AmplitudeTier_getRangeProperty (dia);
 	OK
 DO
 	LOOP {
 		iam (AmplitudeTier);
 		double shimmer = AmplitudeTier_getShimmer_dda (me,
-			GET_REAL (L"Shortest period"), GET_REAL (L"Longest period"), GET_REAL (L"Maximum amplitude factor"));
+			GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum amplitude factor"));
 		Melder_informationReal (shimmer, NULL);
 	}
 END
 
-/*FORM (AmplitudeTier_getValueAtTime, L"Get AmplitudeTier value", L"AmplitudeTier: Get value at time...")
-	REAL (L"Time (s)", L"0.5")
+/*FORM (AmplitudeTier_getValueAtTime, U"Get AmplitudeTier value", U"AmplitudeTier: Get value at time...")
+	REAL (U"Time (s)", U"0.5")
 	OK
 DO
-	Melder_informationReal (RealTier_getValueAtTime (ONLY_OBJECT, GET_REAL (L"Time")), L"Pa");
+	Melder_informationReal (RealTier_getValueAtTime (ONLY_OBJECT, GET_REAL (U"Time")), U"Pa");
 END
 	
-FORM (AmplitudeTier_getValueAtIndex, L"Get AmplitudeTier value", L"AmplitudeTier: Get value at index...")
-	INTEGER (L"Point number", L"10")
+FORM (AmplitudeTier_getValueAtIndex, U"Get AmplitudeTier value", U"AmplitudeTier: Get value at index...")
+	INTEGER (U"Point number", U"10")
 	OK
 DO
-	Melder_informationReal (RealTier_getValueAtIndex (ONLY_OBJECT, GET_INTEGER (L"Point number")), L"Pa");
+	Melder_informationReal (RealTier_getValueAtIndex (ONLY_OBJECT, GET_INTEGER (U"Point number")), U"Pa");
 END*/
 
-DIRECT (AmplitudeTier_help) Melder_help (L"AmplitudeTier"); END
+DIRECT (AmplitudeTier_help) Melder_help (U"AmplitudeTier"); END
 
-FORM (AmplitudeTier_to_IntensityTier, L"AmplitudeTier: To IntensityTier", L"AmplitudeTier: To IntensityTier...")
-	REAL (L"Threshold (dB)", L"-10000.0")
+FORM (AmplitudeTier_to_IntensityTier, U"AmplitudeTier: To IntensityTier", U"AmplitudeTier: To IntensityTier...")
+	REAL (U"Threshold (dB)", U"-10000.0")
 	OK
 DO
 	LOOP {
 		iam (AmplitudeTier);
-		autoIntensityTier thee = AmplitudeTier_to_IntensityTier (me, GET_REAL (L"Threshold"));
+		autoIntensityTier thee = AmplitudeTier_to_IntensityTier (me, GET_REAL (U"Threshold"));
 		praat_new (thee.transfer(), my name);
 	}
 END
 
-FORM (AmplitudeTier_to_Sound, L"AmplitudeTier: To Sound (pulse train)", L"AmplitudeTier: To Sound (pulse train)...")
-	POSITIVE (L"Sampling frequency (Hz)", L"44100")
-	NATURAL (L"Interpolation depth (samples)", L"2000")
+FORM (AmplitudeTier_to_Sound, U"AmplitudeTier: To Sound (pulse train)", U"AmplitudeTier: To Sound (pulse train)...")
+	POSITIVE (U"Sampling frequency (Hz)", U"44100")
+	NATURAL (U"Interpolation depth (samples)", U"2000")
 	OK
 DO
 	LOOP {
 		iam (AmplitudeTier);
-		autoSound thee = AmplitudeTier_to_Sound (me, GET_REAL (L"Sampling frequency"), GET_INTEGER (L"Interpolation depth"));
+		autoSound thee = AmplitudeTier_to_Sound (me, GET_REAL (U"Sampling frequency"), GET_INTEGER (U"Interpolation depth"));
 		praat_new (thee.transfer(), my name);
 	}
 END
 
 DIRECT (info_AmplitudeTier_Sound_edit)
-	Melder_information (L"To include a copy of a Sound in your AmplitudeTier editor:\n"
+	Melder_information (U"To include a copy of a Sound in your AmplitudeTier editor:\n"
 		"   select an AmplitudeTier and a Sound, and click \"View & Edit\".");
 END
 
@@ -378,32 +378,32 @@ DIRECT (Sound_AmplitudeTier_multiply)
 		if (CLASS == classAmplitudeTier) tier = (AmplitudeTier) OBJECT;
 	}
 	autoSound thee = Sound_AmplitudeTier_multiply (sound, tier);
-	praat_new (thee.transfer(), sound -> name, L"_amp");
+	praat_new (thee.transfer(), sound -> name, U"_amp");
 END
 
 /***** COCHLEAGRAM *****/
 
-FORM (Cochleagram_difference, L"Cochleagram difference", 0)
+FORM (Cochleagram_difference, U"Cochleagram difference", 0)
 	praat_dia_timeRange (dia);
 	OK
 DO
 	Cochleagram coch1 = NULL, coch2 = NULL;
 	LOOP (coch1 ? coch2 : coch1) = (Cochleagram) OBJECT;
 	Melder_informationReal (Cochleagram_difference (coch1, coch2,
-		GET_REAL (L"left Time range"), GET_REAL (L"right Time range")), L"Hertz (root-mean-square)");
+		GET_REAL (U"left Time range"), GET_REAL (U"right Time range")), U"Hertz (root-mean-square)");
 END
 
-FORM (Cochleagram_formula, L"Cochleagram Formula", L"Cochleagram: Formula...")
-	LABEL (L"label", L"`x' is time in seconds, `y' is place in Bark")
-	LABEL (L"label", L"y := y1; for row := 1 to nrow do { x := x1; "
+FORM (Cochleagram_formula, U"Cochleagram Formula", U"Cochleagram: Formula...")
+	LABEL (U"label", U"`x' is time in seconds, `y' is place in Bark")
+	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
-	TEXTFIELD (L"formula", L"self")
+	TEXTFIELD (U"formula", U"self")
 	OK
 DO
 	LOOP {
 		iam (Cochleagram);
 		try {
-			Matrix_formula (reinterpret_cast <Matrix> (me), GET_STRING (L"formula"), interpreter, NULL);
+			Matrix_formula (reinterpret_cast <Matrix> (me), GET_STRING (U"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Cochleagram may have partially changed
@@ -412,35 +412,35 @@ DO
 	}
 END
 
-DIRECT (Cochleagram_help) Melder_help (L"Cochleagram"); END
+DIRECT (Cochleagram_help) Melder_help (U"Cochleagram"); END
 
 DIRECT (Cochleagram_movie)
-	Graphics g = Movie_create (L"Cochleagram movie", 300, 300);
+	Graphics g = Movie_create (U"Cochleagram movie", 300, 300);
 	LOOP {
 		iam (Cochleagram);
 		Matrix_movie (me, g);
 	}
 END
 
-FORM (Cochleagram_paint, L"Paint Cochleagram", 0)
+FORM (Cochleagram_paint, U"Paint Cochleagram", 0)
 	praat_dia_timeRange (dia);
-	BOOLEAN (L"Garnish", 1)
+	BOOLEAN (U"Garnish", 1)
 	OK
 DO
 	LOOP {
 		iam (Cochleagram);
 		autoPraatPicture picture;
-		Cochleagram_paint (me, GRAPHICS, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_INTEGER (L"Garnish"));
+		Cochleagram_paint (me, GRAPHICS, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Garnish"));
 	}
 END
 
-FORM (Cochleagram_to_Excitation, L"From Cochleagram to Excitation", 0)
-	REAL (L"Time (s)", L"0.0")
+FORM (Cochleagram_to_Excitation, U"From Cochleagram to Excitation", 0)
+	REAL (U"Time (s)", U"0.0")
 	OK
 DO
 	LOOP {
 		iam (Cochleagram);
-		autoExcitation thee = Cochleagram_to_Excitation (me, GET_REAL (L"Time"));
+		autoExcitation thee = Cochleagram_to_Excitation (me, GET_REAL (U"Time"));
 		praat_new (thee.transfer(), my name);
 	}
 END
@@ -455,18 +455,18 @@ END
 
 /***** CORPUS *****/
 
-FORM (Corpus_create, L"Create Corpus", L"Create Corpus...")
-	WORD (L"Name", L"myCorpus")
-	LABEL (L"", L"Folder with sound files:")
-	TEXTFIELD (L"folderWithSoundFiles", L"")
-	LABEL (L"", L"Folder with annotation files:")
-	TEXTFIELD (L"folderWithAnnotationFiles", L"")
+FORM (Corpus_create, U"Create Corpus", U"Create Corpus...")
+	WORD (U"Name", U"myCorpus")
+	LABEL (U"", U"Folder with sound files:")
+	TEXTFIELD (U"folderWithSoundFiles", U"")
+	LABEL (U"", U"Folder with annotation files:")
+	TEXTFIELD (U"folderWithAnnotationFiles", U"")
 	OK
 DO
 END
 
 DIRECT (Corpus_edit)
-	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot edit a Corpus from batch.");
+	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot edit a Corpus from batch.");
 	LOOP {
 		iam (Corpus);
 		autoTableEditor editor = TableEditor_create (ID_AND_FULL_NAME, me);
@@ -476,21 +476,21 @@ END
 
 /***** DISTRIBUTIONS *****/
 
-FORM (Distributions_to_Transition, L"To Transition", 0)
-	NATURAL (L"Environment", L"1")
-	BOOLEAN (L"Greedy", 1)
+FORM (Distributions_to_Transition, U"To Transition", 0)
+	NATURAL (U"Environment", U"1")
+	BOOLEAN (U"Greedy", 1)
 	OK
 DO
 	LOOP {
 		iam (Distributions);
-		autoTransition thee = Distributions_to_Transition (me, NULL, GET_INTEGER (L"Environment"), NULL, GET_INTEGER (L"Greedy"));
+		autoTransition thee = Distributions_to_Transition (me, NULL, GET_INTEGER (U"Environment"), NULL, GET_INTEGER (U"Greedy"));
 		praat_new (thee.transfer(), my name);
 	}
 END
 
-FORM (Distributions_to_Transition_adj, L"To Transition", 0)
-	NATURAL (L"Environment", L"1")
-	BOOLEAN (L"Greedy", 1)
+FORM (Distributions_to_Transition_adj, U"To Transition", 0)
+	NATURAL (U"Environment", U"1")
+	BOOLEAN (U"Greedy", 1)
 	OK
 DO
 	Distributions dist = NULL;
@@ -499,24 +499,24 @@ DO
 		if (CLASS == classDistributions) dist = (Distributions) OBJECT;
 		if (CLASS == classTransition) trans = (Transition) OBJECT;
 	}
-	autoTransition thee = Distributions_to_Transition (dist, NULL, GET_INTEGER (L"Environment"), trans, GET_INTEGER (L"Greedy"));
-	praat_new (thee.transfer(), NULL);
+	autoTransition thee = Distributions_to_Transition (dist, NULL, GET_INTEGER (U"Environment"), trans, GET_INTEGER (U"Greedy"));
+	praat_new (thee.transfer(), U"");
 END
 
-FORM (Distributions_to_Transition_noise, L"To Transition (noise)", 0)
-	NATURAL (L"Environment", L"1")
-	BOOLEAN (L"Greedy", 1)
+FORM (Distributions_to_Transition_noise, U"To Transition (noise)", 0)
+	NATURAL (U"Environment", U"1")
+	BOOLEAN (U"Greedy", 1)
 	OK
 DO
 	Distributions underlying = NULL, surface = NULL;
 	LOOP (underlying ? surface : underlying) = (Distributions) OBJECT;
-	autoTransition thee = Distributions_to_Transition (underlying, surface, GET_INTEGER (L"Environment"), NULL, GET_INTEGER (L"Greedy"));
-	praat_new (thee.transfer(), NULL);
+	autoTransition thee = Distributions_to_Transition (underlying, surface, GET_INTEGER (U"Environment"), NULL, GET_INTEGER (U"Greedy"));
+	praat_new (thee.transfer(), U"");
 END
 
-FORM (Distributions_to_Transition_noise_adj, L"To Transition (noise)", 0)
-	NATURAL (L"Environment", L"1")
-	BOOLEAN (L"Greedy", 1)
+FORM (Distributions_to_Transition_noise_adj, U"To Transition (noise)", 0)
+	NATURAL (U"Environment", U"1")
+	BOOLEAN (U"Greedy", 1)
 	OK
 DO
 	Distributions underlying = NULL, surface = NULL;
@@ -525,8 +525,8 @@ DO
 		if (CLASS == classDistributions) (underlying ? surface : underlying) = (Distributions) OBJECT;
 		if (CLASS == classTransition) trans = (Transition) OBJECT;
 	}
-	autoTransition thee = Distributions_to_Transition (underlying, surface, GET_INTEGER (L"Environment"), trans, GET_INTEGER (L"Greedy"));
-	praat_new (thee.transfer(), NULL);
+	autoTransition thee = Distributions_to_Transition (underlying, surface, GET_INTEGER (U"Environment"), trans, GET_INTEGER (U"Greedy"));
+	praat_new (thee.transfer(), U"");
 END
 
 /***** DISTRIBUTIONS & TRANSITION *****/
@@ -539,33 +539,33 @@ DIRECT (Distributions_Transition_map)
 		if (CLASS == classTransition) trans = (Transition) OBJECT;
 	}
 	autoDistributions thee = Distributions_Transition_map (dist, trans);
-	praat_new (thee.transfer(), L"surface");
+	praat_new (thee.transfer(), U"surface");
 END
 
 /***** DURATIONTIER *****/
 
-FORM (DurationTier_addPoint, L"Add one point to DurationTier", L"DurationTier: Add point...")
-	REAL (L"Time (s)", L"0.5")
-	REAL (L"Relative duration", L"1.5")
+FORM (DurationTier_addPoint, U"Add one point to DurationTier", U"DurationTier: Add point...")
+	REAL (U"Time (s)", U"0.5")
+	REAL (U"Relative duration", U"1.5")
 	OK
 DO
 	LOOP {
 		iam (DurationTier);
-		RealTier_addPoint (me, GET_REAL (L"Time"), GET_REAL (L"Relative duration"));
+		RealTier_addPoint (me, GET_REAL (U"Time"), GET_REAL (U"Relative duration"));
 		praat_dataChanged (me);
 	}
 END
 
-FORM (DurationTier_create, L"Create empty DurationTier", L"Create DurationTier...")
-	WORD (L"Name", L"empty")
-	REAL (L"Start time (s)", L"0.0")
-	REAL (L"End time (s)", L"1.0")
+FORM (DurationTier_create, U"Create empty DurationTier", U"Create DurationTier...")
+	WORD (U"Name", U"empty")
+	REAL (U"Start time (s)", U"0.0")
+	REAL (U"End time (s)", U"1.0")
 	OK
 DO
-	double startTime = GET_REAL (L"Start time"), endTime = GET_REAL (L"End time");
-	if (endTime <= startTime) Melder_throw ("End time must be greater than start time.");
+	double startTime = GET_REAL (U"Start time"), endTime = GET_REAL (U"End time");
+	if (endTime <= startTime) Melder_throw (U"End time must be greater than start time.");
 	autoDurationTier thee = DurationTier_create (startTime, endTime);
-	praat_new (thee.transfer(), GET_STRING (L"Name"));
+	praat_new (thee.transfer(), GET_STRING (U"Name"));
 END
 
 DIRECT (DurationTier_downto_PointProcess)
@@ -577,7 +577,7 @@ DIRECT (DurationTier_downto_PointProcess)
 END
 
 DIRECT (DurationTier_edit)
-	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot view or edit a DurationTier from batch.");
+	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a DurationTier from batch.");
 	Sound sound = NULL;
 	LOOP {
 		if (CLASS == classSound) sound = (Sound) OBJECT;   // may stay NULL
@@ -589,20 +589,20 @@ DIRECT (DurationTier_edit)
 	}
 END
 
-FORM (DurationTier_formula, L"DurationTier: Formula", L"DurationTier: Formula...")
-	LABEL (L"", L"# ncol = the number of points")
-	LABEL (L"", L"for col from 1 to ncol")
-	LABEL (L"", L"   # x = the time of the colth point, in seconds")
-	LABEL (L"", L"   # self = the value of the colth point, in relative units")
-	LABEL (L"", L"   self = `formula'")
-	LABEL (L"", L"endfor")
-	TEXTFIELD (L"formula", L"self * 1.5 ; slow down")
+FORM (DurationTier_formula, U"DurationTier: Formula", U"DurationTier: Formula...")
+	LABEL (U"", U"# ncol = the number of points")
+	LABEL (U"", U"for col from 1 to ncol")
+	LABEL (U"", U"   # x = the time of the colth point, in seconds")
+	LABEL (U"", U"   # self = the value of the colth point, in relative units")
+	LABEL (U"", U"   self = `formula'")
+	LABEL (U"", U"endfor")
+	TEXTFIELD (U"formula", U"self * 1.5 ; slow down")
 	OK
 DO
 	LOOP {
 		iam (DurationTier);
 		try {
-			RealTier_formula (me, GET_STRING (L"formula"), interpreter, NULL);
+			RealTier_formula (me, GET_STRING (U"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);
@@ -611,76 +611,76 @@ DO
 	}
 END
 
-FORM (DurationTier_getTargetDuration, L"Get target duration", 0)
-	REAL (L"left Time range (s)", L"0.0")
-	REAL (L"right Time range (s)", L"1.0")
+FORM (DurationTier_getTargetDuration, U"Get target duration", 0)
+	REAL (U"left Time range (s)", U"0.0")
+	REAL (U"right Time range (s)", U"1.0")
 	OK
 DO
 	LOOP {
 		iam (DurationTier);
-		double area = RealTier_getArea (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"));
-		Melder_informationReal (area, L"seconds");
+		double area = RealTier_getArea (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
+		Melder_informationReal (area, U"seconds");
 	}
 END
 
-FORM (DurationTier_getValueAtTime, L"Get DurationTier value", L"DurationTier: Get value at time...")
-	REAL (L"Time (s)", L"0.5")
+FORM (DurationTier_getValueAtTime, U"Get DurationTier value", U"DurationTier: Get value at time...")
+	REAL (U"Time (s)", U"0.5")
 	OK
 DO
 	LOOP {
 		iam (DurationTier);
-		double value = RealTier_getValueAtTime (me, GET_REAL (L"Time"));
+		double value = RealTier_getValueAtTime (me, GET_REAL (U"Time"));
 		Melder_informationReal (value, NULL);
 	}
 END
 	
-FORM (DurationTier_getValueAtIndex, L"Get DurationTier value", L"Duration: Get value at index...")
-	INTEGER (L"Point number", L"10")
+FORM (DurationTier_getValueAtIndex, U"Get DurationTier value", U"Duration: Get value at index...")
+	INTEGER (U"Point number", U"10")
 	OK
 DO
 	LOOP {
 		iam (DurationTier);
-		double value = RealTier_getValueAtIndex (me, GET_INTEGER (L"Point number"));
+		double value = RealTier_getValueAtIndex (me, GET_INTEGER (U"Point number"));
 		Melder_informationReal (value, NULL);
 	}
 END
 
-DIRECT (DurationTier_help) Melder_help (L"DurationTier"); END
+DIRECT (DurationTier_help) Melder_help (U"DurationTier"); END
 
 DIRECT (info_DurationTier_Sound_edit)
-	Melder_information (L"To include a copy of a Sound in your DurationTier editor:\n"
+	Melder_information (U"To include a copy of a Sound in your DurationTier editor:\n"
 		"   select a DurationTier and a Sound, and click \"View & Edit\".");
 END
 
 /***** EXCITATION *****/
 
-FORM (Excitation_draw, L"Draw Excitation", 0)
-	REAL (L"From frequency (Bark)", L"0")
-	REAL (L"To frequency (Bark)", L"25.6")
-	REAL (L"Minimum (phon)", L"0")
-	REAL (L"Maximum (phon)", L"100")
-	BOOLEAN (L"Garnish", 1)
+FORM (Excitation_draw, U"Draw Excitation", 0)
+	REAL (U"From frequency (Bark)", U"0")
+	REAL (U"To frequency (Bark)", U"25.6")
+	REAL (U"Minimum (phon)", U"0")
+	REAL (U"Maximum (phon)", U"100")
+	BOOLEAN (U"Garnish", 1)
 	OK
 DO
 	LOOP {
 		iam (Excitation);
 		autoPraatPicture picture;
 		Excitation_draw (me, GRAPHICS,
-			GET_REAL (L"From frequency"), GET_REAL (L"To frequency"),
-			GET_REAL (L"Minimum"), GET_REAL (L"Maximum"), GET_INTEGER (L"Garnish"));
+			GET_REAL (U"From frequency"), GET_REAL (U"To frequency"),
+			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"), GET_INTEGER (U"Garnish"));
 	}
 END
 
-FORM (Excitation_formula, L"Excitation Formula", L"Excitation: Formula...")
-	LABEL (L"label", L"`x' is the place in Bark, `col' is the bin number")
-	LABEL (L"label", L"x := 0;   for col := 1 to ncol do { self [1, col] := `formula' ; x := x + dx }")
-	TEXTFIELD (L"formula", L"self")
+FORM (Excitation_formula, U"Excitation Formula", U"Excitation: Formula...")
+	LABEL (U"label", U"`x' is the place in Bark, `col' is the bin number")
+	LABEL (U"label", U"x := 0;   for col := 1 to ncol do { self [1, col] := `formula' ; x := x + dx }")
+	TEXTFIELD (U"formula", U"self")
 	OK
 DO
 	LOOP {
 		iam (Excitation);
 		try {
-			Matrix_formula (reinterpret_cast <Matrix> (me), GET_STRING (L"formula"), interpreter, NULL);
+			Matrix_formula (reinterpret_cast <Matrix> (me), GET_STRING (U"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);
@@ -693,19 +693,19 @@ DIRECT (Excitation_getLoudness)
 	LOOP {
 		iam (Excitation);
 		double loudness = Excitation_getLoudness (me);
-		Melder_informationReal (loudness, L"sones");
+		Melder_informationReal (loudness, U"sones");
 	}
 END
 
-DIRECT (Excitation_help) Melder_help (L"Excitation"); END
+DIRECT (Excitation_help) Melder_help (U"Excitation"); END
 
-FORM (Excitation_to_Formant, L"From Excitation to Formant", 0)
-	NATURAL (L"Maximum number of formants", L"20")
+FORM (Excitation_to_Formant, U"From Excitation to Formant", 0)
+	NATURAL (U"Maximum number of formants", U"20")
 	OK
 DO
 	LOOP {
 		iam (Excitation);
-		autoFormant thee = Excitation_to_Formant (me, GET_INTEGER (L"Maximum number of formants"));
+		autoFormant thee = Excitation_to_Formant (me, GET_INTEGER (U"Maximum number of formants"));
 		praat_new (thee.transfer(), my name);
 	}
 END
@@ -736,46 +736,46 @@ DIRECT (Formant_downto_FormantTier)
 	}
 END
 
-FORM (Formant_drawSpeckles, L"Draw Formant", L"Formant: Draw speckles...")
+FORM (Formant_drawSpeckles, U"Draw Formant", U"Formant: Draw speckles...")
 	praat_dia_timeRange (dia);
-	POSITIVE (L"Maximum frequency (Hz)", L"5500.0")
-	REAL (L"Dynamic range (dB)", L"30.0")
-	BOOLEAN (L"Garnish", 1)
+	POSITIVE (U"Maximum frequency (Hz)", U"5500.0")
+	REAL (U"Dynamic range (dB)", U"30.0")
+	BOOLEAN (U"Garnish", 1)
 	OK
 DO
 	LOOP {
 		iam (Formant);
 		autoPraatPicture picture;
 		Formant_drawSpeckles (me, GRAPHICS,
-			GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_REAL (L"Maximum frequency"),
-			GET_REAL (L"Dynamic range"), GET_INTEGER (L"Garnish"));
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_REAL (U"Maximum frequency"),
+			GET_REAL (U"Dynamic range"), GET_INTEGER (U"Garnish"));
 	}
 END
 
-FORM (Formant_drawTracks, L"Draw formant tracks", L"Formant: Draw tracks...")
+FORM (Formant_drawTracks, U"Draw formant tracks", U"Formant: Draw tracks...")
 	praat_dia_timeRange (dia);
-	POSITIVE (L"Maximum frequency (Hz)", L"5500.0")
-	BOOLEAN (L"Garnish", 1)
+	POSITIVE (U"Maximum frequency (Hz)", U"5500.0")
+	BOOLEAN (U"Garnish", 1)
 	OK
 DO
 	LOOP {
 		iam (Formant);
 		autoPraatPicture picture;
 		Formant_drawTracks (me, GRAPHICS,
-			GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_REAL (L"Maximum frequency"),
-			GET_INTEGER (L"Garnish"));
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_REAL (U"Maximum frequency"),
+			GET_INTEGER (U"Garnish"));
 	}
 END
 
-FORM (Formant_formula_bandwidths, L"Formant: Formula (bandwidths)", L"Formant: Formula (bandwidths)...")
-	LABEL (L"", L"row is formant number, col is frame number: for row from 1 to nrow do for col from 1 to ncol do B (row, col) :=")
-	TEXTFIELD (L"formula", L"self / 2 ; sharpen all peaks")
+FORM (Formant_formula_bandwidths, U"Formant: Formula (bandwidths)", U"Formant: Formula (bandwidths)...")
+	LABEL (U"", U"row is formant number, col is frame number: for row from 1 to nrow do for col from 1 to ncol do B (row, col) :=")
+	TEXTFIELD (U"formula", U"self / 2 ; sharpen all peaks")
 	OK
 DO
 	LOOP {
 		iam (Formant);
 		try {
-			Formant_formula_bandwidths (me, GET_STRING (L"formula"), interpreter);
+			Formant_formula_bandwidths (me, GET_STRING (U"formula"), interpreter);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Formant may have partially changed
@@ -784,15 +784,15 @@ DO
 	}
 END
 
-FORM (Formant_formula_frequencies, L"Formant: Formula (frequencies)", L"Formant: Formula (frequencies)...")
-	LABEL (L"", L"row is formant number, col is frame number: for row from 1 to nrow do for col from 1 to ncol do F (row, col) :=")
-	TEXTFIELD (L"formula", L"if row = 2 then self + 200 else self fi")
+FORM (Formant_formula_frequencies, U"Formant: Formula (frequencies)", U"Formant: Formula (frequencies)...")
+	LABEL (U"", U"row is formant number, col is frame number: for row from 1 to nrow do for col from 1 to ncol do F (row, col) :=")
+	TEXTFIELD (U"formula", U"if row = 2 then self + 200 else self fi")
 	OK
 DO
 	LOOP {
 		iam (Formant);
 		try {
-			Formant_formula_frequencies (me, GET_STRING (L"formula"), interpreter);
+			Formant_formula_frequencies (me, GET_STRING (U"formula"), interpreter);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Formant may have partially changed
@@ -801,40 +801,40 @@ DO
 	}
 END
 
-FORM (Formant_getBandwidthAtTime, L"Formant: Get bandwidth", L"Formant: Get bandwidth at time...")
-	NATURAL (L"Formant number", L"1")
-	REAL (L"Time (s)", L"0.5")
-	RADIO (L"Unit", 1)
-	RADIOBUTTON (L"Hertz")
-	RADIOBUTTON (L"Bark")
-	RADIO (L"Interpolation", 1)
-	RADIOBUTTON (L"Linear")
+FORM (Formant_getBandwidthAtTime, U"Formant: Get bandwidth", U"Formant: Get bandwidth at time...")
+	NATURAL (U"Formant number", U"1")
+	REAL (U"Time (s)", U"0.5")
+	RADIO (U"Unit", 1)
+		RADIOBUTTON (U"Hertz")
+		RADIOBUTTON (U"Bark")
+	RADIO (U"Interpolation", 1)
+		RADIOBUTTON (U"Linear")
 	OK
 DO
 	LOOP {
 		iam (Formant);
-		double bandwidth = Formant_getBandwidthAtTime (me, GET_INTEGER (L"Formant number"), GET_REAL (L"Time"), GET_INTEGER (L"Unit") - 1);
-		Melder_informationReal (bandwidth, GET_STRING (L"Unit"));
+		double bandwidth = Formant_getBandwidthAtTime (me, GET_INTEGER (U"Formant number"), GET_REAL (U"Time"), GET_INTEGER (U"Unit") - 1);
+		Melder_informationReal (bandwidth, GET_STRING (U"Unit"));
 		break;
 	}
 END
 	
-FORM (Formant_getMaximum, L"Formant: Get maximum", L"Formant: Get maximum...")
-	NATURAL (L"Formant number", L"1")
+FORM (Formant_getMaximum, U"Formant: Get maximum", U"Formant: Get maximum...")
+	NATURAL (U"Formant number", U"1")
 	praat_dia_timeRange (dia);
-	RADIO (L"Unit", 1)
-	RADIOBUTTON (L"Hertz")
-	RADIOBUTTON (L"Bark")
-	RADIO (L"Interpolation", 2)
-	RADIOBUTTON (L"None")
-	RADIOBUTTON (L"Parabolic")
+	RADIO (U"Unit", 1)
+		RADIOBUTTON (U"Hertz")
+		RADIOBUTTON (U"Bark")
+	RADIO (U"Interpolation", 2)
+		RADIOBUTTON (U"None")
+		RADIOBUTTON (U"Parabolic")
 	OK
 DO
 	LOOP {
 		iam (Formant);
-		double maximum = Formant_getMaximum (me, GET_INTEGER (L"Formant number"),
-			GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_INTEGER (L"Unit") - 1, GET_INTEGER (L"Interpolation") - 1);
-		Melder_informationReal (maximum, GET_STRING (L"Unit"));
+		double maximum = Formant_getMaximum (me, GET_INTEGER (U"Formant number"),
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Unit") - 1, GET_INTEGER (U"Interpolation") - 1);
+		Melder_informationReal (maximum, GET_STRING (U"Unit"));
 		break;
 	}
 END
@@ -843,45 +843,45 @@ DIRECT (Formant_getMaximumNumberOfFormants)
 	LOOP {
 		iam (Formant);
 		long maximumNumberOfFormants = Formant_getMaxNumFormants (me);
-		Melder_information (Melder_integer (maximumNumberOfFormants), L" (there are at most this many formants in every frame)");
+		Melder_information (maximumNumberOfFormants, U" (there are at most this many formants in every frame)");
 		break;
 	}
 END
 
-FORM (Formant_getMean, L"Formant: Get mean", L"Formant: Get mean...")
-	NATURAL (L"Formant number", L"1")
+FORM (Formant_getMean, U"Formant: Get mean", U"Formant: Get mean...")
+	NATURAL (U"Formant number", U"1")
 	praat_dia_timeRange (dia);
-	RADIO (L"Unit", 1)
-	RADIOBUTTON (L"Hertz")
-	RADIOBUTTON (L"Bark")
+	RADIO (U"Unit", 1)
+		RADIOBUTTON (U"Hertz")
+		RADIOBUTTON (U"Bark")
 	OK
 DO
 	LOOP {
 		iam (Formant);
-		double mean = Formant_getMean (me, GET_INTEGER (L"Formant number"),
-			GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_INTEGER (L"Unit") - 1);
-		Melder_informationReal (mean, GET_STRING (L"Unit"));
+		double mean = Formant_getMean (me, GET_INTEGER (U"Formant number"),
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Unit") - 1);
+		Melder_informationReal (mean, GET_STRING (U"Unit"));
 		break;
 	}
 END
 
-FORM (Formant_getMinimum, L"Formant: Get minimum", L"Formant: Get minimum...")
-	NATURAL (L"Formant number", L"1")
+FORM (Formant_getMinimum, U"Formant: Get minimum", U"Formant: Get minimum...")
+	NATURAL (U"Formant number", U"1")
 	praat_dia_timeRange (dia);
-	RADIO (L"Unit", 1)
-	RADIOBUTTON (L"Hertz")
-	RADIOBUTTON (L"Bark")
-	RADIO (L"Interpolation", 2)
-	RADIOBUTTON (L"None")
-	RADIOBUTTON (L"Parabolic")
+	RADIO (U"Unit", 1)
+		RADIOBUTTON (U"Hertz")
+		RADIOBUTTON (U"Bark")
+	RADIO (U"Interpolation", 2)
+		RADIOBUTTON (U"None")
+		RADIOBUTTON (U"Parabolic")
 	OK
 DO
 	LOOP {
 		iam (Formant);
-		double minimum = Formant_getMinimum (me, GET_INTEGER (L"Formant number"),
-			GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_INTEGER (L"Unit") - 1,
-			GET_INTEGER (L"Interpolation") - 1);
-		Melder_informationReal (minimum, GET_STRING (L"Unit"));
+		double minimum = Formant_getMinimum (me, GET_INTEGER (U"Formant number"),
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Unit") - 1,
+			GET_INTEGER (U"Interpolation") - 1);
+		Melder_informationReal (minimum, GET_STRING (U"Unit"));
 		break;
 	}
 END
@@ -890,206 +890,206 @@ DIRECT (Formant_getMinimumNumberOfFormants)
 	LOOP {
 		iam (Formant);
 		long minimumNumberOfFormants = Formant_getMinNumFormants (me);
-		Melder_information (Melder_integer (minimumNumberOfFormants), L" (there are at least this many formants in every frame)");
+		Melder_information (minimumNumberOfFormants, U" (there are at least this many formants in every frame)");
 		break;
 	}
 END
 
-FORM (Formant_getNumberOfFormants, L"Formant: Get number of formants", L"Formant: Get number of formants...")
-	NATURAL (L"Frame number", L"1")
+FORM (Formant_getNumberOfFormants, U"Formant: Get number of formants", U"Formant: Get number of formants...")
+	NATURAL (U"Frame number", U"1")
 	OK
 DO
 	LOOP {
 		iam (Formant);
-		long frame = GET_INTEGER (L"Frame number");
-		if (frame > my nx) Melder_throw ("There is no frame ", frame, " in a Formant with only ", my nx, " frames.");
-		Melder_information (Melder_integer (my d_frames [frame]. nFormants), L" formants");
+		long frame = GET_INTEGER (U"Frame number");
+		if (frame > my nx) Melder_throw (U"There is no frame ", frame, U" in a Formant with only ", my nx, U" frames.");
+		Melder_information (my d_frames [frame]. nFormants, U" formants");
 		break;
 	}
 END
 
-FORM (Formant_getQuantile, L"Formant: Get quantile", 0)
-	NATURAL (L"Formant number", L"1")
+FORM (Formant_getQuantile, U"Formant: Get quantile", 0)
+	NATURAL (U"Formant number", U"1")
 	praat_dia_timeRange (dia);
-	RADIO (L"Unit", 1)
-	RADIOBUTTON (L"Hertz")
-	RADIOBUTTON (L"Bark")
-	REAL (L"Quantile", L"0.50 (= median)")
+	RADIO (U"Unit", 1)
+		RADIOBUTTON (U"Hertz")
+		RADIOBUTTON (U"Bark")
+	REAL (U"Quantile", U"0.50 (= median)")
 	OK
 DO
 	LOOP {
 		iam (Formant);
-		double quantile = Formant_getQuantile (me, GET_INTEGER (L"Formant number"),
-			GET_REAL (L"Quantile"), GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_INTEGER (L"Unit") - 1);
-		Melder_informationReal (quantile, GET_STRING (L"Unit"));
+		double quantile = Formant_getQuantile (me, GET_INTEGER (U"Formant number"),
+			GET_REAL (U"Quantile"), GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Unit") - 1);
+		Melder_informationReal (quantile, GET_STRING (U"Unit"));
 		break;
 	}
 END
 
-FORM (Formant_getQuantileOfBandwidth, L"Formant: Get quantile of bandwidth", 0)
-	NATURAL (L"Formant number", L"1")
+FORM (Formant_getQuantileOfBandwidth, U"Formant: Get quantile of bandwidth", 0)
+	NATURAL (U"Formant number", U"1")
 	praat_dia_timeRange (dia);
-	RADIO (L"Unit", 1)
-	RADIOBUTTON (L"Hertz")
-	RADIOBUTTON (L"Bark")
-	REAL (L"Quantile", L"0.50 (= median)")
+	RADIO (U"Unit", 1)
+		RADIOBUTTON (U"Hertz")
+		RADIOBUTTON (U"Bark")
+	REAL (U"Quantile", U"0.50 (= median)")
 	OK
 DO
 	LOOP {
 		iam (Formant);
-		double quantile = Formant_getQuantileOfBandwidth (me, GET_INTEGER (L"Formant number"),
-			GET_REAL (L"Quantile"), GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_INTEGER (L"Unit") - 1);
-		Melder_informationReal (quantile, GET_STRING (L"Unit"));
+		double quantile = Formant_getQuantileOfBandwidth (me, GET_INTEGER (U"Formant number"),
+			GET_REAL (U"Quantile"), GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Unit") - 1);
+		Melder_informationReal (quantile, GET_STRING (U"Unit"));
 		break;
 	}
 END
 
-FORM (Formant_getStandardDeviation, L"Formant: Get standard deviation", 0)
-	NATURAL (L"Formant number", L"1")
+FORM (Formant_getStandardDeviation, U"Formant: Get standard deviation", 0)
+	NATURAL (U"Formant number", U"1")
 	praat_dia_timeRange (dia);
-	RADIO (L"Unit", 1)
-	RADIOBUTTON (L"Hertz")
-	RADIOBUTTON (L"Bark")
+	RADIO (U"Unit", 1)
+		RADIOBUTTON (U"Hertz")
+		RADIOBUTTON (U"Bark")
 	OK
 DO
 	LOOP {
 		iam (Formant);
-		double stdev = Formant_getStandardDeviation (me, GET_INTEGER (L"Formant number"),
-			GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_INTEGER (L"Unit") - 1);
-		Melder_informationReal (stdev, GET_STRING (L"Unit"));
+		double stdev = Formant_getStandardDeviation (me, GET_INTEGER (U"Formant number"),
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Unit") - 1);
+		Melder_informationReal (stdev, GET_STRING (U"Unit"));
 		break;
 	}
 END
 
-FORM (Formant_getTimeOfMaximum, L"Formant: Get time of maximum", L"Formant: Get time of maximum...")
-	NATURAL (L"Formant number", L"1")
+FORM (Formant_getTimeOfMaximum, U"Formant: Get time of maximum", U"Formant: Get time of maximum...")
+	NATURAL (U"Formant number", U"1")
 	praat_dia_timeRange (dia);
-	RADIO (L"Unit", 1)
-	RADIOBUTTON (L"Hertz")
-	RADIOBUTTON (L"Bark")
-	RADIO (L"Interpolation", 2)
-	RADIOBUTTON (L"None")
-	RADIOBUTTON (L"Parabolic")
+	RADIO (U"Unit", 1)
+		RADIOBUTTON (U"Hertz")
+		RADIOBUTTON (U"Bark")
+	RADIO (U"Interpolation", 2)
+		RADIOBUTTON (U"None")
+		RADIOBUTTON (U"Parabolic")
 	OK
 DO
 	LOOP {
 		iam (Formant);
-		double time = Formant_getTimeOfMaximum (me, GET_INTEGER (L"Formant number"),
-			GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-			GET_INTEGER (L"Unit") - 1, GET_INTEGER (L"Interpolation") - 1);
-		Melder_informationReal (time, L"seconds");
+		double time = Formant_getTimeOfMaximum (me, GET_INTEGER (U"Formant number"),
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+			GET_INTEGER (U"Unit") - 1, GET_INTEGER (U"Interpolation") - 1);
+		Melder_informationReal (time, U"seconds");
 		break;
 	}
 END
 
-FORM (Formant_getTimeOfMinimum, L"Formant: Get time of minimum", L"Formant: Get time of minimum...")
-	NATURAL (L"Formant number", L"1")
+FORM (Formant_getTimeOfMinimum, U"Formant: Get time of minimum", U"Formant: Get time of minimum...")
+	NATURAL (U"Formant number", U"1")
 	praat_dia_timeRange (dia);
-	RADIO (L"Unit", 1)
-	RADIOBUTTON (L"Hertz")
-	RADIOBUTTON (L"Bark")
-	RADIO (L"Interpolation", 2)
-	RADIOBUTTON (L"None")
-	RADIOBUTTON (L"Parabolic")
+	RADIO (U"Unit", 1)
+		RADIOBUTTON (U"Hertz")
+		RADIOBUTTON (U"Bark")
+	RADIO (U"Interpolation", 2)
+		RADIOBUTTON (U"None")
+		RADIOBUTTON (U"Parabolic")
 	OK
 DO
 	LOOP {
 		iam (Formant);
-		double time = Formant_getTimeOfMinimum (me, GET_INTEGER (L"Formant number"),
-			GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-			GET_INTEGER (L"Unit") - 1, GET_INTEGER (L"Interpolation") - 1);
-		Melder_informationReal (time, L"seconds");
+		double time = Formant_getTimeOfMinimum (me, GET_INTEGER (U"Formant number"),
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+			GET_INTEGER (U"Unit") - 1, GET_INTEGER (U"Interpolation") - 1);
+		Melder_informationReal (time, U"seconds");
 		break;
 	}
 END
 
-FORM (Formant_getValueAtTime, L"Formant: Get value", L"Formant: Get value at time...")
-	NATURAL (L"Formant number", L"1")
-	REAL (L"Time (s)", L"0.5")
-	RADIO (L"Unit", 1)
-	RADIOBUTTON (L"Hertz")
-	RADIOBUTTON (L"Bark")
-	RADIO (L"Interpolation", 1)
-	RADIOBUTTON (L"Linear")
+FORM (Formant_getValueAtTime, U"Formant: Get value", U"Formant: Get value at time...")
+	NATURAL (U"Formant number", U"1")
+	REAL (U"Time (s)", U"0.5")
+	RADIO (U"Unit", 1)
+		RADIOBUTTON (U"Hertz")
+		RADIOBUTTON (U"Bark")
+	RADIO (U"Interpolation", 1)
+		RADIOBUTTON (U"Linear")
 	OK
 DO
 	LOOP {
 		iam (Formant);
-		double value = Formant_getValueAtTime (me, GET_INTEGER (L"Formant number"), GET_REAL (L"Time"), GET_INTEGER (L"Unit") - 1);
-		Melder_informationReal (value, GET_STRING (L"Unit"));
+		double value = Formant_getValueAtTime (me, GET_INTEGER (U"Formant number"), GET_REAL (U"Time"), GET_INTEGER (U"Unit") - 1);
+		Melder_informationReal (value, GET_STRING (U"Unit"));
 		break;
 	}
 END
 	
-DIRECT (Formant_help) Melder_help (L"Formant"); END
+DIRECT (Formant_help) Melder_help (U"Formant"); END
 
-FORM (Formant_downto_Table, L"Formant: Down to Table", 0)
-	BOOLEAN (L"Include frame number", false)
-	BOOLEAN (L"Include time", true)
-	NATURAL (L"Time decimals", L"6")
-	BOOLEAN (L"Include intensity", false)
-	NATURAL (L"Intensity decimals", L"3")
-	BOOLEAN (L"Include number of formants", true)
-	NATURAL (L"Frequency decimals", L"3")
-	BOOLEAN (L"Include bandwidths", true)
+FORM (Formant_downto_Table, U"Formant: Down to Table", 0)
+	BOOLEAN (U"Include frame number", false)
+	BOOLEAN (U"Include time", true)
+	NATURAL (U"Time decimals", U"6")
+	BOOLEAN (U"Include intensity", false)
+	NATURAL (U"Intensity decimals", U"3")
+	BOOLEAN (U"Include number of formants", true)
+	NATURAL (U"Frequency decimals", U"3")
+	BOOLEAN (U"Include bandwidths", true)
 	OK
 DO
 	LOOP {
 		iam (Formant);
-		autoTable thee = Formant_downto_Table (me, GET_INTEGER (L"Include frame number"),
-			GET_INTEGER (L"Include time"), GET_INTEGER (L"Time decimals"),
-			GET_INTEGER (L"Include intensity"), GET_INTEGER (L"Intensity decimals"),
-			GET_INTEGER (L"Include number of formants"), GET_INTEGER (L"Frequency decimals"),
-			GET_INTEGER (L"Include bandwidths"));
+		autoTable thee = Formant_downto_Table (me, GET_INTEGER (U"Include frame number"),
+			GET_INTEGER (U"Include time"), GET_INTEGER (U"Time decimals"),
+			GET_INTEGER (U"Include intensity"), GET_INTEGER (U"Intensity decimals"),
+			GET_INTEGER (U"Include number of formants"), GET_INTEGER (U"Frequency decimals"),
+			GET_INTEGER (U"Include bandwidths"));
 		praat_new (thee.transfer(), my name);
 	}
 END
 
-FORM (Formant_list, L"Formant: List", 0)
-	BOOLEAN (L"Include frame number", false)
-	BOOLEAN (L"Include time", true)
-	NATURAL (L"Time decimals", L"6")
-	BOOLEAN (L"Include intensity", false)
-	NATURAL (L"Intensity decimals", L"3")
-	BOOLEAN (L"Include number of formants", true)
-	NATURAL (L"Frequency decimals", L"3")
-	BOOLEAN (L"Include bandwidths", true)
+FORM (Formant_list, U"Formant: List", 0)
+	BOOLEAN (U"Include frame number", false)
+	BOOLEAN (U"Include time", true)
+	NATURAL (U"Time decimals", U"6")
+	BOOLEAN (U"Include intensity", false)
+	NATURAL (U"Intensity decimals", U"3")
+	BOOLEAN (U"Include number of formants", true)
+	NATURAL (U"Frequency decimals", U"3")
+	BOOLEAN (U"Include bandwidths", true)
 	OK
 DO
 	LOOP {
 		iam (Formant);
-		Formant_list (me, GET_INTEGER (L"Include frame number"),
-			GET_INTEGER (L"Include time"), GET_INTEGER (L"Time decimals"),
-			GET_INTEGER (L"Include intensity"), GET_INTEGER (L"Intensity decimals"),
-			GET_INTEGER (L"Include number of formants"), GET_INTEGER (L"Frequency decimals"),
-			GET_INTEGER (L"Include bandwidths"));
+		Formant_list (me, GET_INTEGER (U"Include frame number"),
+			GET_INTEGER (U"Include time"), GET_INTEGER (U"Time decimals"),
+			GET_INTEGER (U"Include intensity"), GET_INTEGER (U"Intensity decimals"),
+			GET_INTEGER (U"Include number of formants"), GET_INTEGER (U"Frequency decimals"),
+			GET_INTEGER (U"Include bandwidths"));
 		break;
 	}
 END
 
-FORM (Formant_scatterPlot, L"Formant: Scatter plot", 0)
+FORM (Formant_scatterPlot, U"Formant: Scatter plot", 0)
 	praat_dia_timeRange (dia);
-	NATURAL (L"Horizontal formant number", L"2")
-	REAL (L"left Horizontal range (Hz)", L"3000")
-	REAL (L"right Horizontal range (Hz)", L"400")
-	NATURAL (L"Vertical formant number", L"1")
-	REAL (L"left Vertical range (Hz)", L"1500")
-	REAL (L"right Vertical range (Hz)", L"100")
-	POSITIVE (L"Mark size (mm)", L"1.0")
-	BOOLEAN (L"Garnish", 1)
-	SENTENCE (L"Mark string (+xo.)", L"+")
+	NATURAL (U"Horizontal formant number", U"2")
+	REAL (U"left Horizontal range (Hz)", U"3000")
+	REAL (U"right Horizontal range (Hz)", U"400")
+	NATURAL (U"Vertical formant number", U"1")
+	REAL (U"left Vertical range (Hz)", U"1500")
+	REAL (U"right Vertical range (Hz)", U"100")
+	POSITIVE (U"Mark size (mm)", U"1.0")
+	BOOLEAN (U"Garnish", 1)
+	SENTENCE (U"Mark string (+xo.)", U"+")
 	OK
 DO
 	LOOP {
 		iam (Formant);
 		autoPraatPicture picture;
 		Formant_scatterPlot (me, GRAPHICS,
-			GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-			GET_INTEGER (L"Horizontal formant number"),
-			GET_REAL (L"left Horizontal range"), GET_REAL (L"right Horizontal range"),
-			GET_INTEGER (L"Vertical formant number"),
-			GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
-			GET_REAL (L"Mark size"), GET_STRING (L"Mark string"), GET_INTEGER (L"Garnish"));
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+			GET_INTEGER (U"Horizontal formant number"),
+			GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
+			GET_INTEGER (U"Vertical formant number"),
+			GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"),
+			GET_REAL (U"Mark size"), GET_STRING (U"Mark string"), GET_INTEGER (U"Garnish"));
 	}
 END
 
@@ -1101,38 +1101,38 @@ DIRECT (Formant_sort)
 	}
 END
 
-FORM (Formant_to_Matrix, L"From Formant to Matrix", 0)
-	INTEGER (L"Formant", L"1")
+FORM (Formant_to_Matrix, U"From Formant to Matrix", 0)
+	INTEGER (U"Formant", U"1")
 	OK
 DO
 	LOOP {
 		iam (Formant);
-		autoMatrix thee = Formant_to_Matrix (me, GET_INTEGER (L"Formant"));
+		autoMatrix thee = Formant_to_Matrix (me, GET_INTEGER (U"Formant"));
 		praat_new (thee.transfer(), my name);
 	}
 END
 
-FORM (Formant_tracker, L"Formant tracker", L"Formant: Track...")
-	NATURAL (L"Number of tracks (1-5)", L"3")
-	REAL (L"Reference F1 (Hz)", L"550")
-	REAL (L"Reference F2 (Hz)", L"1650")
-	REAL (L"Reference F3 (Hz)", L"2750")
-	REAL (L"Reference F4 (Hz)", L"3850")
-	REAL (L"Reference F5 (Hz)", L"4950")
-	REAL (L"Frequency cost (/kHz)", L"1.0")
-	REAL (L"Bandwidth cost", L"1.0")
-	REAL (L"Transition cost (/octave)", L"1.0")
+FORM (Formant_tracker, U"Formant tracker", U"Formant: Track...")
+	NATURAL (U"Number of tracks (1-5)", U"3")
+	REAL (U"Reference F1 (Hz)", U"550")
+	REAL (U"Reference F2 (Hz)", U"1650")
+	REAL (U"Reference F3 (Hz)", U"2750")
+	REAL (U"Reference F4 (Hz)", U"3850")
+	REAL (U"Reference F5 (Hz)", U"4950")
+	REAL (U"Frequency cost (/kHz)", U"1.0")
+	REAL (U"Bandwidth cost", U"1.0")
+	REAL (U"Transition cost (/octave)", U"1.0")
 	OK
 DO
-	long numberOfTracks = GET_INTEGER (L"Number of tracks");
-	if (numberOfTracks > 5) Melder_throw ("Number of tracks cannot be more than 5.");
+	long numberOfTracks = GET_INTEGER (U"Number of tracks");
+	if (numberOfTracks > 5) Melder_throw (U"Number of tracks cannot be more than 5.");
 	LOOP {
 		iam (Formant);
-		autoFormant thee = Formant_tracker (me, GET_INTEGER (L"Number of tracks"),
-			GET_REAL (L"Reference F1"), GET_REAL (L"Reference F2"),
-			GET_REAL (L"Reference F3"), GET_REAL (L"Reference F4"),
-			GET_REAL (L"Reference F5"), GET_REAL (L"Frequency cost"),
-			GET_REAL (L"Bandwidth cost"), GET_REAL (L"Transition cost"));
+		autoFormant thee = Formant_tracker (me, GET_INTEGER (U"Number of tracks"),
+			GET_REAL (U"Reference F1"), GET_REAL (U"Reference F2"),
+			GET_REAL (U"Reference F3"), GET_REAL (U"Reference F4"),
+			GET_REAL (U"Reference F5"), GET_REAL (U"Frequency cost"),
+			GET_REAL (U"Bandwidth cost"), GET_REAL (U"Transition cost"));
 		praat_new (thee.transfer(), my name);
 	}
 END
@@ -1148,7 +1148,7 @@ DIRECT (Formant_PointProcess_to_FormantTier)
 		if (formant && point) break;
 	}
 	autoFormantTier thee = Formant_PointProcess_to_FormantTier (formant, point);
-	praat_new (thee.transfer(), formant -> name, L"_", point -> name);
+	praat_new (thee.transfer(), formant -> name, U"_", point -> name);
 END
 
 /***** FORMANT & SOUND *****/
@@ -1162,7 +1162,7 @@ DIRECT (Sound_Formant_filter)
 		if (sound && formant) break;
 	}
 	autoSound thee = Sound_Formant_filter (sound, formant);
-	praat_new (thee.transfer(), sound -> name, L"_filt");
+	praat_new (thee.transfer(), sound -> name, U"_filt");
 END
 
 DIRECT (Sound_Formant_filter_noscale)
@@ -1174,54 +1174,54 @@ DIRECT (Sound_Formant_filter_noscale)
 		if (sound && formant) break;
 	}
 	autoSound thee = Sound_Formant_filter_noscale (sound, formant);
-	praat_new (thee.transfer(), sound -> name, L"_filt");
+	praat_new (thee.transfer(), sound -> name, U"_filt");
 END
 
 /***** FORMANTGRID *****/
 
-FORM (FormantGrid_addBandwidthPoint, L"FormantGrid: Add bandwidth point", L"FormantGrid: Add bandwidth point...")
-	NATURAL (L"Formant number", L"1")
-	REAL (L"Time (s)", L"0.5")
-	POSITIVE (L"Bandwidth (Hz)", L"100")
+FORM (FormantGrid_addBandwidthPoint, U"FormantGrid: Add bandwidth point", U"FormantGrid: Add bandwidth point...")
+	NATURAL (U"Formant number", U"1")
+	REAL (U"Time (s)", U"0.5")
+	POSITIVE (U"Bandwidth (Hz)", U"100")
 	OK
 DO
 	LOOP {
 		iam (FormantGrid);
-		FormantGrid_addBandwidthPoint (me, GET_INTEGER (L"Formant number"), GET_REAL (L"Time"), GET_REAL (L"Bandwidth"));
+		FormantGrid_addBandwidthPoint (me, GET_INTEGER (U"Formant number"), GET_REAL (U"Time"), GET_REAL (U"Bandwidth"));
 		praat_dataChanged (me);
 	}
 END
 
-FORM (FormantGrid_addFormantPoint, L"FormantGrid: Add formant point", L"FormantGrid: Add formant point...")
-	NATURAL (L"Formant number", L"1")
-	REAL (L"Time (s)", L"0.5")
-	POSITIVE (L"Frequency (Hz)", L"550")
+FORM (FormantGrid_addFormantPoint, U"FormantGrid: Add formant point", U"FormantGrid: Add formant point...")
+	NATURAL (U"Formant number", U"1")
+	REAL (U"Time (s)", U"0.5")
+	POSITIVE (U"Frequency (Hz)", U"550")
 	OK
 DO
 	LOOP {
 		iam (FormantGrid);
-		FormantGrid_addFormantPoint (me, GET_INTEGER (L"Formant number"), GET_REAL (L"Time"), GET_REAL (L"Frequency"));
+		FormantGrid_addFormantPoint (me, GET_INTEGER (U"Formant number"), GET_REAL (U"Time"), GET_REAL (U"Frequency"));
 		praat_dataChanged (OBJECT);
 	}
 END
 
-FORM (FormantGrid_create, L"Create FormantGrid", NULL)
-	WORD (L"Name", L"schwa")
-	REAL (L"Start time (s)", L"0.0")
-	REAL (L"End time (s)", L"1.0")
-	NATURAL (L"Number of formants", L"10")
-	POSITIVE (L"Initial first formant (Hz)", L"550")
-	POSITIVE (L"Initial formant spacing (Hz)", L"1100")
-	REAL (L"Initial first bandwidth (Hz)", L"60")
-	REAL (L"Initial bandwidth spacing (Hz)", L"50")
+FORM (FormantGrid_create, U"Create FormantGrid", NULL)
+	WORD (U"Name", U"schwa")
+	REAL (U"Start time (s)", U"0.0")
+	REAL (U"End time (s)", U"1.0")
+	NATURAL (U"Number of formants", U"10")
+	POSITIVE (U"Initial first formant (Hz)", U"550")
+	POSITIVE (U"Initial formant spacing (Hz)", U"1100")
+	REAL (U"Initial first bandwidth (Hz)", U"60")
+	REAL (U"Initial bandwidth spacing (Hz)", U"50")
 	OK
 DO
-	double startTime = GET_REAL (L"Start time"), endTime = GET_REAL (L"End time");
-	if (endTime <= startTime) Melder_throw ("End time must be greater than start time.");
-	autoFormantGrid thee = FormantGrid_create (startTime, endTime, GET_INTEGER (L"Number of formants"),
-		GET_REAL (L"Initial first formant"), GET_REAL (L"Initial formant spacing"),
-		GET_REAL (L"Initial first bandwidth"), GET_REAL (L"Initial bandwidth spacing"));
-	praat_new (thee.transfer(), GET_STRING (L"Name"));
+	double startTime = GET_REAL (U"Start time"), endTime = GET_REAL (U"End time");
+	if (endTime <= startTime) Melder_throw (U"End time must be greater than start time.");
+	autoFormantGrid thee = FormantGrid_create (startTime, endTime, GET_INTEGER (U"Number of formants"),
+		GET_REAL (U"Initial first formant"), GET_REAL (U"Initial formant spacing"),
+		GET_REAL (U"Initial first bandwidth"), GET_REAL (U"Initial bandwidth spacing"));
+	praat_new (thee.transfer(), GET_STRING (U"Name"));
 END
 
 static void cb_FormantGridEditor_publish (Editor me, void *closure, Data publish) {
@@ -1231,14 +1231,14 @@ static void cb_FormantGridEditor_publish (Editor me, void *closure, Data publish
 	 * Keep the gate for error handling.
 	 */
 	try {
-		praat_new (publish, L"fromFormantGridEditor");
+		praat_new (publish, U"fromFormantGridEditor");
 		praat_updateSelection ();
 	} catch (MelderError) {
-		Melder_flushError (NULL);
+		Melder_flushError ();
 	}
 }
 DIRECT (FormantGrid_edit)
-	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot view or edit a FormantGrid from batch.");
+	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a FormantGrid from batch.");
 	LOOP {
 		iam (FormantGrid);
 		autoFormantGridEditor editor = FormantGridEditor_create (ID_AND_FULL_NAME, me);
@@ -1247,16 +1247,16 @@ DIRECT (FormantGrid_edit)
 	}
 END
 
-FORM (FormantGrid_formula_bandwidths, L"FormantGrid: Formula (bandwidths)", L"Formant: Formula (bandwidths)...")
-	LABEL (L"", L"row is formant number, col is point number: for row from 1 to nrow do for col from 1 to ncol do B (row, col) :=")
-	LABEL (L"", L"self [] is the FormantGrid itself, so it returns frequencies, not bandwidths!")
-	TEXTFIELD (L"formula", L"self / 10 ; one tenth of the formant frequency")
+FORM (FormantGrid_formula_bandwidths, U"FormantGrid: Formula (bandwidths)", U"Formant: Formula (bandwidths)...")
+	LABEL (U"", U"row is formant number, col is point number: for row from 1 to nrow do for col from 1 to ncol do B (row, col) :=")
+	LABEL (U"", U"self [] is the FormantGrid itself, so it returns frequencies, not bandwidths!")
+	TEXTFIELD (U"formula", U"self / 10 ; one tenth of the formant frequency")
 	OK
 DO
 	LOOP {
 		iam (FormantGrid);
 		try {
-			FormantGrid_formula_bandwidths (me, GET_STRING (L"formula"), interpreter, NULL);
+			FormantGrid_formula_bandwidths (me, GET_STRING (U"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the FormantGrid may have partially changed
@@ -1265,15 +1265,15 @@ DO
 	}
 END
 
-FORM (FormantGrid_formula_frequencies, L"FormantGrid: Formula (frequencies)", L"Formant: Formula (frequencies)...")
-	LABEL (L"", L"row is formant number, col is point number: for row from 1 to nrow do for col from 1 to ncol do F (row, col) :=")
-	TEXTFIELD (L"formula", L"if row = 2 then self + 200 else self fi")
+FORM (FormantGrid_formula_frequencies, U"FormantGrid: Formula (frequencies)", U"Formant: Formula (frequencies)...")
+	LABEL (U"", U"row is formant number, col is point number: for row from 1 to nrow do for col from 1 to ncol do F (row, col) :=")
+	TEXTFIELD (U"formula", U"if row = 2 then self + 200 else self fi")
 	OK
 DO
 	LOOP {
 		iam (FormantGrid);
 		try {
-			FormantGrid_formula_frequencies (me, GET_STRING (L"formula"), interpreter, NULL);
+			FormantGrid_formula_frequencies (me, GET_STRING (U"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the FormantGrid may have partially changed
@@ -1282,44 +1282,44 @@ DO
 	}
 END
 
-DIRECT (FormantGrid_help) Melder_help (L"FormantGrid"); END
+DIRECT (FormantGrid_help) Melder_help (U"FormantGrid"); END
 
-FORM (FormantGrid_removeBandwidthPointsBetween, L"Remove bandwidth points between", L"FormantGrid: Remove bandwidth points between...")
-	NATURAL (L"Formant number", L"1")
-	REAL (L"From time (s)", L"0.3")
-	REAL (L"To time (s)", L"0.7")
+FORM (FormantGrid_removeBandwidthPointsBetween, U"Remove bandwidth points between", U"FormantGrid: Remove bandwidth points between...")
+	NATURAL (U"Formant number", U"1")
+	REAL (U"From time (s)", U"0.3")
+	REAL (U"To time (s)", U"0.7")
 	OK
 DO
 	LOOP {
 		iam (FormantGrid);
-		FormantGrid_removeBandwidthPointsBetween (me, GET_INTEGER (L"Formant number"), GET_REAL (L"From time"), GET_REAL (L"To time"));
+		FormantGrid_removeBandwidthPointsBetween (me, GET_INTEGER (U"Formant number"), GET_REAL (U"From time"), GET_REAL (U"To time"));
 		praat_dataChanged (me);
 	}
 END
 
-FORM (FormantGrid_removeFormantPointsBetween, L"Remove formant points between", L"FormantGrid: Remove formant points between...")
-	NATURAL (L"Formant number", L"1")
-	REAL (L"From time (s)", L"0.3")
-	REAL (L"To time (s)", L"0.7")
+FORM (FormantGrid_removeFormantPointsBetween, U"Remove formant points between", U"FormantGrid: Remove formant points between...")
+	NATURAL (U"Formant number", U"1")
+	REAL (U"From time (s)", U"0.3")
+	REAL (U"To time (s)", U"0.7")
 	OK
 DO
 	LOOP {
 		iam (FormantGrid);
-		FormantGrid_removeFormantPointsBetween (me, GET_INTEGER (L"Formant number"), GET_REAL (L"From time"), GET_REAL (L"To time"));
+		FormantGrid_removeFormantPointsBetween (me, GET_INTEGER (U"Formant number"), GET_REAL (U"From time"), GET_REAL (U"To time"));
 		praat_dataChanged (me);
 	}
 END
 
-FORM (FormantGrid_to_Formant, L"FormantGrid: To Formant", 0)
-	POSITIVE (L"Time step (s)", L"0.01")
-	REAL (L"Intensity (Pa\u00B2)", L"0.1")
+FORM (FormantGrid_to_Formant, U"FormantGrid: To Formant", 0)
+	POSITIVE (U"Time step (s)", U"0.01")
+	REAL (U"Intensity (Pa\u00B2)", U"0.1")
 	OK
 DO
-	double intensity = GET_REAL (L"Intensity");
-	if (intensity < 0.0) Melder_throw ("Intensity cannot be negative.");
+	double intensity = GET_REAL (U"Intensity");
+	if (intensity < 0.0) Melder_throw (U"Intensity cannot be negative.");
 	LOOP {
 		iam (FormantGrid);
-		autoFormant thee = FormantGrid_to_Formant (me, GET_REAL (L"Time step"), intensity);
+		autoFormant thee = FormantGrid_to_Formant (me, GET_REAL (U"Time step"), intensity);
 		praat_new (thee.transfer(), my name);
 	}
 END
@@ -1335,7 +1335,7 @@ DIRECT (Sound_FormantGrid_filter)
 		if (me && grid) break;   // OPTIMIZE
 	}
 	autoSound thee = Sound_FormantGrid_filter (me, grid);
-	praat_new (thee.transfer(), my name, L"_filt");
+	praat_new (thee.transfer(), my name, U"_filt");
 END
 
 DIRECT (Sound_FormantGrid_filter_noscale)
@@ -1347,24 +1347,24 @@ DIRECT (Sound_FormantGrid_filter_noscale)
 		if (me && grid) break;   // OPTIMIZE
 	}
 	autoSound thee = Sound_FormantGrid_filter_noscale (me, grid);
-	praat_new (thee.transfer(), my name, L"_filt");
+	praat_new (thee.transfer(), my name, U"_filt");
 END
 
 /***** FORMANTTIER *****/
 
-FORM (FormantTier_addPoint, L"Add one point", L"FormantTier: Add point...")
-	REAL (L"Time (s)", L"0.5")
-	LABEL (L"", L"Frequencies and bandwidths (Hz):")
-	TEXTFIELD (L"fb pairs", L"500 50 1500 100 2500 150 3500 200 4500 300")
+FORM (FormantTier_addPoint, U"Add one point", U"FormantTier: Add point...")
+	REAL (U"Time (s)", U"0.5")
+	LABEL (U"", U"Frequencies and bandwidths (Hz):")
+	TEXTFIELD (U"fb pairs", U"500 50 1500 100 2500 150 3500 200 4500 300")
 	OK
 DO
-	autoFormantPoint point = FormantPoint_create (GET_REAL (L"Time"));
+	autoFormantPoint point = FormantPoint_create (GET_REAL (U"Time"));
 	double *f = point -> formant, *b = point -> bandwidth;
-	char *fbpairs = Melder_peekWcsToUtf8 (GET_STRING (L"fb pairs"));
+	char *fbpairs = Melder_peek32to8 (GET_STRING (U"fb pairs"));
 	int numberOfFormants = sscanf (fbpairs, "%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf",
 		f, b, f+1, b+1, f+2, b+2, f+3, b+3, f+4, b+4, f+5, b+5, f+6, b+6, f+7, b+7, f+8, b+8, f+9, b+9) / 2;
 	if (numberOfFormants < 1)
-		Melder_throw (L"Number of formant-bandwidth pairs must be at least 1.");
+		Melder_throw (U"Number of formant-bandwidth pairs must be at least 1.");
 	point -> numberOfFormants = numberOfFormants;
 	LOOP {
 		iam (FormantTier);
@@ -1374,66 +1374,66 @@ DO
 	}
 END
 
-FORM (FormantTier_create, L"Create empty FormantTier", NULL)
-	WORD (L"Name", L"empty")
-	REAL (L"Start time (s)", L"0.0")
-	REAL (L"End time (s)", L"1.0")
+FORM (FormantTier_create, U"Create empty FormantTier", NULL)
+	WORD (U"Name", U"empty")
+	REAL (U"Start time (s)", U"0.0")
+	REAL (U"End time (s)", U"1.0")
 	OK
 DO
-	double startTime = GET_REAL (L"Start time"), endTime = GET_REAL (L"End time");
-	if (endTime <= startTime) Melder_throw ("End time must be greater than start time.");
+	double startTime = GET_REAL (U"Start time"), endTime = GET_REAL (U"End time");
+	if (endTime <= startTime) Melder_throw (U"End time must be greater than start time.");
 	autoFormantTier thee = FormantTier_create (startTime, endTime);
-	praat_new (thee.transfer(), GET_STRING (L"Name"));
+	praat_new (thee.transfer(), GET_STRING (U"Name"));
 END
 
-FORM (FormantTier_downto_TableOfReal, L"Down to TableOfReal", 0)
-	BOOLEAN (L"Include formants", 1)
-	BOOLEAN (L"Include bandwidths", 0)
+FORM (FormantTier_downto_TableOfReal, U"Down to TableOfReal", 0)
+	BOOLEAN (U"Include formants", 1)
+	BOOLEAN (U"Include bandwidths", 0)
 	OK
 DO
 	LOOP {
 		iam (FormantTier);
-		autoTableOfReal thee = FormantTier_downto_TableOfReal (me, GET_INTEGER (L"Include formants"), GET_INTEGER (L"Include bandwidths"));
+		autoTableOfReal thee = FormantTier_downto_TableOfReal (me, GET_INTEGER (U"Include formants"), GET_INTEGER (U"Include bandwidths"));
 		praat_new (thee.transfer(), my name);
 	}
 END
 
-FORM (FormantTier_getBandwidthAtTime, L"FormantTier: Get bandwidth", L"FormantTier: Get bandwidth at time...")
-	NATURAL (L"Formant number", L"1")
-	REAL (L"Time (s)", L"0.5")
+FORM (FormantTier_getBandwidthAtTime, U"FormantTier: Get bandwidth", U"FormantTier: Get bandwidth at time...")
+	NATURAL (U"Formant number", U"1")
+	REAL (U"Time (s)", U"0.5")
 	OK
 DO
 	LOOP {
 		iam (FormantTier);
-		double bandwidth = FormantTier_getBandwidthAtTime (me, GET_INTEGER (L"Formant number"), GET_REAL (L"Time"));
-		Melder_informationReal (bandwidth, L"hertz");
+		double bandwidth = FormantTier_getBandwidthAtTime (me, GET_INTEGER (U"Formant number"), GET_REAL (U"Time"));
+		Melder_informationReal (bandwidth, U"hertz");
 	}
 END
 	
-FORM (FormantTier_getValueAtTime, L"FormantTier: Get value", L"FormantTier: Get value at time...")
-	NATURAL (L"Formant number", L"1")
-	REAL (L"Time (s)", L"0.5")
+FORM (FormantTier_getValueAtTime, U"FormantTier: Get value", U"FormantTier: Get value at time...")
+	NATURAL (U"Formant number", U"1")
+	REAL (U"Time (s)", U"0.5")
 	OK
 DO
 	LOOP {
 		iam (FormantTier);
-		double value = FormantTier_getValueAtTime (me, GET_INTEGER (L"Formant number"), GET_REAL (L"Time"));
-		Melder_informationReal (value, L"hertz");
+		double value = FormantTier_getValueAtTime (me, GET_INTEGER (U"Formant number"), GET_REAL (U"Time"));
+		Melder_informationReal (value, U"hertz");
 	}
 END
 	
-DIRECT (FormantTier_help) Melder_help (L"FormantTier"); END
+DIRECT (FormantTier_help) Melder_help (U"FormantTier"); END
 
-FORM (FormantTier_speckle, L"Draw FormantTier", 0)
+FORM (FormantTier_speckle, U"Draw FormantTier", 0)
 	praat_dia_timeRange (dia);
-	POSITIVE (L"Maximum frequency (Hz)", L"5500.0")
-	BOOLEAN (L"Garnish", 1)
+	POSITIVE (U"Maximum frequency (Hz)", U"5500.0")
+	BOOLEAN (U"Garnish", 1)
 	OK
 DO
 	LOOP {
 		iam (FormantTier);
 		autoPraatPicture picture;
-		FormantTier_speckle (me, GRAPHICS, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_REAL (L"Maximum frequency"), GET_INTEGER (L"Garnish"));
+		FormantTier_speckle (me, GRAPHICS, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_REAL (U"Maximum frequency"), GET_INTEGER (U"Garnish"));
 	}
 END
 
@@ -1448,7 +1448,7 @@ DIRECT (Sound_FormantTier_filter)
 		if (me && tier) break;   // OPTIMIZE
 	}
 	autoSound thee = Sound_FormantTier_filter (me, tier);
-	praat_new (thee.transfer(), my name, L"_filt");
+	praat_new (thee.transfer(), my name, U"_filt");
 END
 
 DIRECT (Sound_FormantTier_filter_noscale)
@@ -1460,36 +1460,36 @@ DIRECT (Sound_FormantTier_filter_noscale)
 		if (me && tier) break;   // OPTIMIZE
 	}
 	autoSound thee = Sound_FormantTier_filter_noscale (me, tier);
-	praat_new (thee.transfer(), my name, L"_filt");
+	praat_new (thee.transfer(), my name, U"_filt");
 END
 
 /***** HARMONICITY *****/
 
-FORM (Harmonicity_draw, L"Draw harmonicity", 0)
+FORM (Harmonicity_draw, U"Draw harmonicity", 0)
 	praat_dia_timeRange (dia);
-	REAL (L"Minimum", L"0.0")
-	REAL (L"Maximum", L"0.0 (= auto)")
+	REAL (U"Minimum", U"0.0")
+	REAL (U"Maximum", U"0.0 (= auto)")
 	OK
 DO
 	LOOP {
 		iam (Harmonicity);
 		autoPraatPicture picture;
 		Matrix_drawRows (me, GRAPHICS,
-			GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), 0.0, 0.0,
-			GET_REAL (L"Minimum"), GET_REAL (L"Maximum"));
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), 0.0, 0.0,
+			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"));
 	}
 END
 
-FORM (Harmonicity_formula, L"Harmonicity Formula", L"Harmonicity: Formula...")
-	LABEL (L"label", L"x is time")
-	LABEL (L"label", L"for col := 1 to ncol do { self [col] := `formula' ; x := x + dx }")
-	TEXTFIELD (L"formula", L"self")
+FORM (Harmonicity_formula, U"Harmonicity Formula", U"Harmonicity: Formula...")
+	LABEL (U"label", U"x is time")
+	LABEL (U"label", U"for col := 1 to ncol do { self [col] := `formula' ; x := x + dx }")
+	TEXTFIELD (U"formula", U"self")
 	OK
 DO
 	LOOP {
 		iam (Harmonicity);
 		try {
-			Matrix_formula ((Matrix) me, GET_STRING (L"formula"), interpreter, NULL);
+			Matrix_formula ((Matrix) me, GET_STRING (U"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Harmonicity may have partically changed
@@ -1498,100 +1498,100 @@ DO
 	}
 END
 
-FORM (Harmonicity_getMaximum, L"Harmonicity: Get maximum", L"Harmonicity: Get maximum...")
+FORM (Harmonicity_getMaximum, U"Harmonicity: Get maximum", U"Harmonicity: Get maximum...")
 	dia_Vector_getExtremum (dia);
 	OK
 DO
 	LOOP {
 		iam (Harmonicity);
 		double maximum = Vector_getMaximum (me,
-			GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_INTEGER (L"Interpolation") - 1);
-		Melder_informationReal (maximum, L"dB");
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Interpolation") - 1);
+		Melder_informationReal (maximum, U"dB");
 	}
 END
 
-FORM (Harmonicity_getMean, L"Harmonicity: Get mean", L"Harmonicity: Get mean...")
+FORM (Harmonicity_getMean, U"Harmonicity: Get mean", U"Harmonicity: Get mean...")
 	praat_dia_timeRange (dia);
 	OK
 DO
 	LOOP {
 		iam (Harmonicity);
-		double mean = Harmonicity_getMean (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"));
-		Melder_informationReal (mean, L"dB");
+		double mean = Harmonicity_getMean (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
+		Melder_informationReal (mean, U"dB");
 	}
 END
 
-FORM (Harmonicity_getMinimum, L"Harmonicity: Get minimum", L"Harmonicity: Get minimum...")
+FORM (Harmonicity_getMinimum, U"Harmonicity: Get minimum", U"Harmonicity: Get minimum...")
 	dia_Vector_getExtremum (dia);
 	OK
 DO
 	LOOP {
 		iam (Harmonicity);
 		double minimum = Vector_getMinimum (me,
-			GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_INTEGER (L"Interpolation") - 1);
-		Melder_informationReal (minimum, L"dB");
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Interpolation") - 1);
+		Melder_informationReal (minimum, U"dB");
 	}
 END
 
-FORM (Harmonicity_getStandardDeviation, L"Harmonicity: Get standard deviation", L"Harmonicity: Get standard deviation...")
+FORM (Harmonicity_getStandardDeviation, U"Harmonicity: Get standard deviation", U"Harmonicity: Get standard deviation...")
 	praat_dia_timeRange (dia);
 	OK
 DO
 	LOOP {
 		iam (Harmonicity);
 		double stdev = Harmonicity_getStandardDeviation (me,
-			GET_REAL (L"left Time range"), GET_REAL (L"right Time range"));
-		Melder_informationReal (stdev, L"dB");
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
+		Melder_informationReal (stdev, U"dB");
 	}
 END
 
-FORM (Harmonicity_getTimeOfMaximum, L"Harmonicity: Get time of maximum", L"Harmonicity: Get time of maximum...")
+FORM (Harmonicity_getTimeOfMaximum, U"Harmonicity: Get time of maximum", U"Harmonicity: Get time of maximum...")
 	dia_Vector_getExtremum (dia);
 	OK
 DO
 	LOOP {
 		iam (Harmonicity);
 		double maximum = Vector_getXOfMaximum (me,
-			GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_INTEGER (L"Interpolation") - 1);
-		Melder_informationReal (maximum, L"seconds");
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Interpolation") - 1);
+		Melder_informationReal (maximum, U"seconds");
 	}
 END
 
-FORM (Harmonicity_getTimeOfMinimum, L"Harmonicity: Get time of minimum", L"Harmonicity: Get time of minimum...")
+FORM (Harmonicity_getTimeOfMinimum, U"Harmonicity: Get time of minimum", U"Harmonicity: Get time of minimum...")
 	dia_Vector_getExtremum (dia);
 	OK
 DO
 	LOOP {
 		iam (Harmonicity);
 		double minimum = Vector_getXOfMinimum (me,
-			GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_INTEGER (L"Interpolation") - 1);
-		Melder_informationReal (minimum, L"seconds");
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Interpolation") - 1);
+		Melder_informationReal (minimum, U"seconds");
 	}
 END
 
-FORM (Harmonicity_getValueAtTime, L"Harmonicity: Get value", L"Harmonicity: Get value at time...")
+FORM (Harmonicity_getValueAtTime, U"Harmonicity: Get value", U"Harmonicity: Get value at time...")
 	dia_Vector_getValue (dia);
 	OK
 DO
 	LOOP {
 		iam (Harmonicity);
-		double value = Vector_getValueAtX (me, GET_REAL (L"Time"), 1, GET_INTEGER (L"Interpolation") - 1);
-		Melder_informationReal (value, L"dB");
+		double value = Vector_getValueAtX (me, GET_REAL (U"Time"), 1, GET_INTEGER (U"Interpolation") - 1);
+		Melder_informationReal (value, U"dB");
 	}
 END
 	
-FORM (Harmonicity_getValueInFrame, L"Get value in frame", L"Harmonicity: Get value in frame...")
-	INTEGER (L"Frame number", L"10")
+FORM (Harmonicity_getValueInFrame, U"Get value in frame", U"Harmonicity: Get value in frame...")
+	INTEGER (U"Frame number", U"10")
 	OK
 DO
 	LOOP {
 		iam (Harmonicity);
-		long frameNumber = GET_INTEGER (L"Frame number");
-		Melder_informationReal (frameNumber < 1 || frameNumber > my nx ? NUMundefined : my z [1] [frameNumber], L"dB");
+		long frameNumber = GET_INTEGER (U"Frame number");
+		Melder_informationReal (frameNumber < 1 || frameNumber > my nx ? NUMundefined : my z [1] [frameNumber], U"dB");
 	}
 END
 
-DIRECT (Harmonicity_help) Melder_help (L"Harmonicity"); END
+DIRECT (Harmonicity_help) Melder_help (U"Harmonicity"); END
 
 DIRECT (Harmonicity_to_Matrix)
 	LOOP {
@@ -1603,18 +1603,18 @@ END
 
 /***** INTENSITY *****/
 
-FORM (Intensity_draw, L"Draw Intensity", 0)
+FORM (Intensity_draw, U"Draw Intensity", 0)
 	praat_dia_timeRange (dia);
-	REAL (L"Minimum (dB)", L"0.0")
-	REAL (L"Maximum (dB)", L"0.0 (= auto)")
-	BOOLEAN (L"Garnish", 1)
+	REAL (U"Minimum (dB)", U"0.0")
+	REAL (U"Maximum (dB)", U"0.0 (= auto)")
+	BOOLEAN (U"Garnish", 1)
 	OK
 DO
 	LOOP {
 		iam (Intensity);
 		autoPraatPicture picture;
-		Intensity_draw (me, GRAPHICS, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-			GET_REAL (L"Minimum"), GET_REAL (L"Maximum"), GET_INTEGER (L"Garnish"));
+		Intensity_draw (me, GRAPHICS, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"), GET_INTEGER (U"Garnish"));
 	}
 END
 
@@ -1634,16 +1634,16 @@ DIRECT (Intensity_downto_Matrix)
 	}
 END
 
-FORM (Intensity_formula, L"Intensity Formula", 0)
-	LABEL (L"label", L"`x' is the time in seconds, `col' is the frame number, `self' is in dB")
-	LABEL (L"label", L"x := x1;   for col := 1 to ncol do { self [col] := `formula' ; x := x + dx }")
-	TEXTFIELD (L"formula", L"0")
+FORM (Intensity_formula, U"Intensity Formula", 0)
+	LABEL (U"label", U"`x' is the time in seconds, `col' is the frame number, `self' is in dB")
+	LABEL (U"label", U"x := x1;   for col := 1 to ncol do { self [col] := `formula' ; x := x + dx }")
+	TEXTFIELD (U"formula", U"0")
 	OK
 DO
 	LOOP {
 		iam (Intensity);
 		try {
-			Matrix_formula ((Matrix) me, GET_STRING (L"formula"), interpreter, NULL);
+			Matrix_formula ((Matrix) me, GET_STRING (U"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Intensity may have partially changed
@@ -1652,131 +1652,131 @@ DO
 	}
 END
 
-FORM (Intensity_getMaximum, L"Intensity: Get maximum", L"Intensity: Get maximum...")
+FORM (Intensity_getMaximum, U"Intensity: Get maximum", U"Intensity: Get maximum...")
 	dia_Vector_getExtremum (dia);
 	OK
 DO
 	LOOP {
 		iam (Intensity);
 		double maximum = Vector_getMaximum (me,
-			GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_INTEGER (L"Interpolation") - 1);
-		Melder_informationReal (maximum, L"dB");
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Interpolation") - 1);
+		Melder_informationReal (maximum, U"dB");
 		break;   // OPTIMIZE
 	}
 END
 
-FORM (old_Intensity_getMean, L"Intensity: Get mean", L"Intensity: Get mean...")
+FORM (old_Intensity_getMean, U"Intensity: Get mean", U"Intensity: Get mean...")
 	praat_dia_timeRange (dia);
 	OK
 DO
 	LOOP {
 		iam (Intensity);
-		double mean = Sampled_getMean_standardUnit (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), 0, 0, TRUE);
-		Melder_informationReal (mean, L"dB");
+		double mean = Sampled_getMean_standardUnit (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), 0, 0, TRUE);
+		Melder_informationReal (mean, U"dB");
 		break;   // OPTIMIZE
 	}
 END
 
-FORM (Intensity_getMean, L"Intensity: Get mean", L"Intensity: Get mean...")
+FORM (Intensity_getMean, U"Intensity: Get mean", U"Intensity: Get mean...")
 	praat_dia_timeRange (dia);
-	RADIO (L"Averaging method", 1)
-		RADIOBUTTON (L"energy")
-		RADIOBUTTON (L"sones")
-		RADIOBUTTON (L"dB")
+	RADIO (U"Averaging method", 1)
+		RADIOBUTTON (U"energy")
+		RADIOBUTTON (U"sones")
+		RADIOBUTTON (U"dB")
 	OK
 DO_ALTERNATIVE (old_Intensity_getMean)
 	LOOP {
 		iam (Intensity);
-		double mean = Sampled_getMean_standardUnit (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-			0, GET_INTEGER (L"Averaging method"), TRUE);
-		Melder_informationReal (mean, L"dB");
+		double mean = Sampled_getMean_standardUnit (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+			0, GET_INTEGER (U"Averaging method"), TRUE);
+		Melder_informationReal (mean, U"dB");
 		break;   // OPTIMIZE
 	}
 END
 
-FORM (Intensity_getMinimum, L"Intensity: Get minimum", L"Intensity: Get minimum...")
+FORM (Intensity_getMinimum, U"Intensity: Get minimum", U"Intensity: Get minimum...")
 	dia_Vector_getExtremum (dia);
 	OK
 DO
 	LOOP {
 		iam (Intensity);
 		double minimum = Vector_getMinimum (me,
-			GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_INTEGER (L"Interpolation") - 1);
-		Melder_informationReal (minimum, L"dB");
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Interpolation") - 1);
+		Melder_informationReal (minimum, U"dB");
 		break;   // OPTIMIZE
 	}
 END
 
-FORM (Intensity_getQuantile, L"Intensity: Get quantile", 0)
+FORM (Intensity_getQuantile, U"Intensity: Get quantile", 0)
 	praat_dia_timeRange (dia);
-	REAL (L"Quantile (0-1)", L"0.50")
+	REAL (U"Quantile (0-1)", U"0.50")
 	OK
 DO
 	LOOP {
 		iam (Intensity);
-		double quantile = Intensity_getQuantile (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_REAL (L"Quantile"));
-		Melder_informationReal (quantile, L"dB");
+		double quantile = Intensity_getQuantile (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_REAL (U"Quantile"));
+		Melder_informationReal (quantile, U"dB");
 	}
 END
 
-FORM (Intensity_getStandardDeviation, L"Intensity: Get standard deviation", L"Intensity: Get standard deviation...")
+FORM (Intensity_getStandardDeviation, U"Intensity: Get standard deviation", U"Intensity: Get standard deviation...")
 	praat_dia_timeRange (dia);
 	OK
 DO
 	LOOP {
 		iam (Intensity);
-		double stdev = Vector_getStandardDeviation (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), 1);
-		Melder_informationReal (stdev, L"dB");
+		double stdev = Vector_getStandardDeviation (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), 1);
+		Melder_informationReal (stdev, U"dB");
 	}
 END
 
-FORM (Intensity_getTimeOfMaximum, L"Intensity: Get time of maximum", L"Intensity: Get time of maximum...")
+FORM (Intensity_getTimeOfMaximum, U"Intensity: Get time of maximum", U"Intensity: Get time of maximum...")
 	dia_Vector_getExtremum (dia);
 	OK
 DO
 	LOOP {
 		iam (Intensity);
 		double time = Vector_getXOfMaximum (me,
-			GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_INTEGER (L"Interpolation") - 1);
-		Melder_informationReal (time, L"seconds");
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Interpolation") - 1);
+		Melder_informationReal (time, U"seconds");
 	}
 END
 
-FORM (Intensity_getTimeOfMinimum, L"Intensity: Get time of minimum", L"Intensity: Get time of minimum...")
+FORM (Intensity_getTimeOfMinimum, U"Intensity: Get time of minimum", U"Intensity: Get time of minimum...")
 	dia_Vector_getExtremum (dia);
 	OK
 DO
 	LOOP {
 		iam (Intensity);
 		double time = Vector_getXOfMinimum (me,
-			GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_INTEGER (L"Interpolation") - 1);
-		Melder_informationReal (time, L"seconds");
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Interpolation") - 1);
+		Melder_informationReal (time, U"seconds");
 	}
 END
 
-FORM (Intensity_getValueAtTime, L"Intensity: Get value", L"Intensity: Get value at time...")
+FORM (Intensity_getValueAtTime, U"Intensity: Get value", U"Intensity: Get value at time...")
 	dia_Vector_getValue (dia);
 	OK
 DO
 	LOOP {
 		iam (Intensity);
-		double value = Vector_getValueAtX (me, GET_REAL (L"Time"), 1, GET_INTEGER (L"Interpolation") - 1);
-		Melder_informationReal (value, L"dB");
+		double value = Vector_getValueAtX (me, GET_REAL (U"Time"), 1, GET_INTEGER (U"Interpolation") - 1);
+		Melder_informationReal (value, U"dB");
 	}
 END
 	
-FORM (Intensity_getValueInFrame, L"Get value in frame", L"Intensity: Get value in frame...")
-	INTEGER (L"Frame number", L"10")
+FORM (Intensity_getValueInFrame, U"Get value in frame", U"Intensity: Get value in frame...")
+	INTEGER (U"Frame number", U"10")
 	OK
 DO
 	LOOP {
 		iam (Intensity);
-		long frameNumber = GET_INTEGER (L"Frame number");
-		Melder_informationReal (frameNumber < 1 || frameNumber > my nx ? NUMundefined : my z [1] [frameNumber], L"dB");
+		long frameNumber = GET_INTEGER (U"Frame number");
+		Melder_informationReal (frameNumber < 1 || frameNumber > my nx ? NUMundefined : my z [1] [frameNumber], U"dB");
 	}
 END
 
-DIRECT (Intensity_help) Melder_help (L"Intensity"); END
+DIRECT (Intensity_help) Melder_help (U"Intensity"); END
 
 DIRECT (Intensity_to_IntensityTier_peaks)
 	LOOP {
@@ -1796,16 +1796,16 @@ END
 
 /***** INTENSITY & PITCH *****/
 
-FORM (Pitch_Intensity_draw, L"Plot intensity by pitch", 0)
-	REAL (L"From frequency (Hz)", L"0.0")
-	REAL (L"To frequency (Hz)", L"0.0 (= auto)")
-	REAL (L"From intensity (dB)", L"0.0")
-	REAL (L"To intensity (dB)", L"100.0")
-	BOOLEAN (L"Garnish", 1)
-	RADIO (L"Drawing method", 1)
-	RADIOBUTTON (L"Speckles")
-	RADIOBUTTON (L"Curve")
-	RADIOBUTTON (L"Speckles and curve")
+FORM (Pitch_Intensity_draw, U"Plot intensity by pitch", 0)
+	REAL (U"From frequency (Hz)", U"0.0")
+	REAL (U"To frequency (Hz)", U"0.0 (= auto)")
+	REAL (U"From intensity (dB)", U"0.0")
+	REAL (U"To intensity (dB)", U"100.0")
+	BOOLEAN (U"Garnish", 1)
+	RADIO (U"Drawing method", 1)
+		RADIOBUTTON (U"Speckles")
+		RADIOBUTTON (U"Curve")
+		RADIOBUTTON (U"Speckles and curve")
 	OK
 DO
 	Pitch pitch = NULL;
@@ -1817,16 +1817,16 @@ DO
 	}
 	autoPraatPicture picture;
 	Pitch_Intensity_draw (pitch, intensity, GRAPHICS,
-		GET_REAL (L"From frequency"), GET_REAL (L"To frequency"),
-		GET_REAL (L"From intensity"), GET_REAL (L"To intensity"), GET_INTEGER (L"Garnish"), GET_INTEGER (L"Drawing method"));
+		GET_REAL (U"From frequency"), GET_REAL (U"To frequency"),
+		GET_REAL (U"From intensity"), GET_REAL (U"To intensity"), GET_INTEGER (U"Garnish"), GET_INTEGER (U"Drawing method"));
 END
 
-FORM (Pitch_Intensity_speckle, L"Plot intensity by pitch", 0)
-	REAL (L"From frequency (Hz)", L"0.0")
-	REAL (L"To frequency (Hz)", L"0.0 (= auto)")
-	REAL (L"From intensity (dB)", L"0.0")
-	REAL (L"To intensity (dB)", L"100.0")
-	BOOLEAN (L"Garnish", 1)
+FORM (Pitch_Intensity_speckle, U"Plot intensity by pitch", 0)
+	REAL (U"From frequency (Hz)", U"0.0")
+	REAL (U"To frequency (Hz)", U"0.0 (= auto)")
+	REAL (U"From intensity (dB)", U"0.0")
+	REAL (U"To intensity (dB)", U"100.0")
+	BOOLEAN (U"Garnish", 1)
 	OK
 DO
 	Pitch pitch = NULL;
@@ -1838,8 +1838,8 @@ DO
 	}
 	autoPraatPicture picture;
 	Pitch_Intensity_draw (pitch, intensity, GRAPHICS,
-		GET_REAL (L"From frequency"), GET_REAL (L"To frequency"),
-		GET_REAL (L"From intensity"), GET_REAL (L"To intensity"), GET_INTEGER (L"Garnish"), 1);
+		GET_REAL (U"From frequency"), GET_REAL (U"To frequency"),
+		GET_REAL (U"From intensity"), GET_REAL (U"To intensity"), GET_INTEGER (U"Garnish"), 1);
 END
 
 /***** INTENSITY & POINTPROCESS *****/
@@ -1858,28 +1858,28 @@ END
 
 /***** INTENSITYTIER *****/
 
-FORM (IntensityTier_addPoint, L"Add one point", L"IntensityTier: Add point...")
-	REAL (L"Time (s)", L"0.5")
-	REAL (L"Intensity (dB)", L"75")
+FORM (IntensityTier_addPoint, U"Add one point", U"IntensityTier: Add point...")
+	REAL (U"Time (s)", U"0.5")
+	REAL (U"Intensity (dB)", U"75")
 	OK
 DO
 	LOOP {
 		iam (IntensityTier);
-		RealTier_addPoint (me, GET_REAL (L"Time"), GET_REAL (L"Intensity"));
+		RealTier_addPoint (me, GET_REAL (U"Time"), GET_REAL (U"Intensity"));
 		praat_dataChanged (me);
 	}
 END
 
-FORM (IntensityTier_create, L"Create empty IntensityTier", NULL)
-	WORD (L"Name", L"empty")
-	REAL (L"Start time (s)", L"0.0")
-	REAL (L"End time (s)", L"1.0")
+FORM (IntensityTier_create, U"Create empty IntensityTier", NULL)
+	WORD (U"Name", U"empty")
+	REAL (U"Start time (s)", U"0.0")
+	REAL (U"End time (s)", U"1.0")
 	OK
 DO
-	double startTime = GET_REAL (L"Start time"), endTime = GET_REAL (L"End time");
-	if (endTime <= startTime) Melder_throw ("End time must be greater than start time.");
+	double startTime = GET_REAL (U"Start time"), endTime = GET_REAL (U"End time");
+	if (endTime <= startTime) Melder_throw (U"End time must be greater than start time.");
 	autoIntensityTier thee = IntensityTier_create (startTime, endTime);
-	praat_new (thee.transfer(), GET_STRING (L"Name"));
+	praat_new (thee.transfer(), GET_STRING (U"Name"));
 END
 
 DIRECT (IntensityTier_downto_PointProcess)
@@ -1899,7 +1899,7 @@ DIRECT (IntensityTier_downto_TableOfReal)
 END
 
 DIRECT (IntensityTier_edit)
-	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot view or edit an IntensityTier from batch.");
+	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit an IntensityTier from batch.");
 	Sound sound = NULL;
 	LOOP {
 		if (CLASS == classSound) sound = (Sound) OBJECT;   // may stay NULL
@@ -1912,20 +1912,20 @@ DIRECT (IntensityTier_edit)
 	}
 END
 
-FORM (IntensityTier_formula, L"IntensityTier: Formula", L"IntensityTier: Formula...")
-	LABEL (L"", L"# ncol = the number of points")
-	LABEL (L"", L"for col from 1 to ncol")
-	LABEL (L"", L"   # x = the time of the colth point, in seconds")
-	LABEL (L"", L"   # self = the value of the colth point, in dB")
-	LABEL (L"", L"   self = `formula'")
-	LABEL (L"", L"endfor")
-	TEXTFIELD (L"formula", L"self + 3.0")
+FORM (IntensityTier_formula, U"IntensityTier: Formula", U"IntensityTier: Formula...")
+	LABEL (U"", U"# ncol = the number of points")
+	LABEL (U"", U"for col from 1 to ncol")
+	LABEL (U"", U"   # x = the time of the colth point, in seconds")
+	LABEL (U"", U"   # self = the value of the colth point, in dB")
+	LABEL (U"", U"   self = `formula'")
+	LABEL (U"", U"endfor")
+	TEXTFIELD (U"formula", U"self + 3.0")
 	OK
 DO
 	LOOP {
 		iam (IntensityTier);
 		try {
-			RealTier_formula (me, GET_STRING (L"formula"), interpreter, NULL);
+			RealTier_formula (me, GET_STRING (U"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the IntensityTier may have partially changed
@@ -1934,29 +1934,29 @@ DO
 	}
 END
 
-FORM (IntensityTier_getValueAtTime, L"Get IntensityTier value", L"IntensityTier: Get value at time...")
-	REAL (L"Time (s)", L"0.5")
+FORM (IntensityTier_getValueAtTime, U"Get IntensityTier value", U"IntensityTier: Get value at time...")
+	REAL (U"Time (s)", U"0.5")
 	OK
 DO
 	LOOP {
 		iam (IntensityTier);
-		double value = RealTier_getValueAtTime (me, GET_REAL (L"Time"));
-		Melder_informationReal (value, L"dB");
+		double value = RealTier_getValueAtTime (me, GET_REAL (U"Time"));
+		Melder_informationReal (value, U"dB");
 	}
 END
 	
-FORM (IntensityTier_getValueAtIndex, L"Get IntensityTier value", L"IntensityTier: Get value at index...")
-	INTEGER (L"Point number", L"10")
+FORM (IntensityTier_getValueAtIndex, U"Get IntensityTier value", U"IntensityTier: Get value at index...")
+	INTEGER (U"Point number", U"10")
 	OK
 DO
 	LOOP {
 		iam (IntensityTier);
-		double value = RealTier_getValueAtIndex (me, GET_INTEGER (L"Point number"));
-		Melder_informationReal (value, L"dB");
+		double value = RealTier_getValueAtIndex (me, GET_INTEGER (U"Point number"));
+		Melder_informationReal (value, U"dB");
 	}
 END
 
-DIRECT (IntensityTier_help) Melder_help (L"IntensityTier"); END
+DIRECT (IntensityTier_help) Melder_help (U"IntensityTier"); END
 
 DIRECT (IntensityTier_to_AmplitudeTier)
 	LOOP {
@@ -1967,7 +1967,7 @@ DIRECT (IntensityTier_to_AmplitudeTier)
 END
 
 DIRECT (info_IntensityTier_Sound_edit)
-	Melder_information (L"To include a copy of a Sound in your IntensityTier editor:\n"
+	Melder_information (U"To include a copy of a Sound in your IntensityTier editor:\n"
 		"   select an IntensityTier and a Sound, and click \"View & Edit\".");
 END
 
@@ -1996,11 +1996,11 @@ DIRECT (Sound_IntensityTier_multiply_old)
 		if (sound && intensity) break;   // OPTIMIZE
 	}
 	autoSound thee = Sound_IntensityTier_multiply (sound, intensity, TRUE);
-	praat_new (thee.transfer(), sound -> name, L"_int");
+	praat_new (thee.transfer(), sound -> name, U"_int");
 END
 
-FORM (Sound_IntensityTier_multiply, L"Sound & IntervalTier: Multiply", 0)
-	BOOLEAN (L"Scale to 0.9", 1)
+FORM (Sound_IntensityTier_multiply, U"Sound & IntervalTier: Multiply", 0)
+	BOOLEAN (U"Scale to 0.9", 1)
 	OK
 DO
 	Sound sound = NULL;
@@ -2010,15 +2010,15 @@ DO
 		if (CLASS == classIntensityTier) intensity = (IntensityTier) OBJECT;
 		if (sound && intensity) break;   // OPTIMIZE
 	}
-	autoSound thee = Sound_IntensityTier_multiply (sound, intensity, GET_INTEGER (L"Scale to 0.9"));
-	praat_new (thee.transfer(), sound -> name, L"_int");
+	autoSound thee = Sound_IntensityTier_multiply (sound, intensity, GET_INTEGER (U"Scale to 0.9"));
+	praat_new (thee.transfer(), sound -> name, U"_int");
 END
 
 /***** INTERVALTIER, rest in praat_TextGrid_init.cpp *****/
 
-FORM_READ (IntervalTier_readFromXwaves, L"Read IntervalTier from Xwaves", 0, true)
+FORM_READ (IntervalTier_readFromXwaves, U"Read IntervalTier from Xwaves", 0, true)
 	autoIntervalTier me = IntervalTier_readFromXwaves (file);
-	praat_newWithFile (me.transfer(), MelderFile_name (file), file);
+	praat_newWithFile (me.transfer(), file, MelderFile_name (file));
 END
 
 /***** LTAS *****/
@@ -2026,69 +2026,69 @@ END
 DIRECT (Ltases_average)
 	autoCollection ltases = praat_getSelectedObjects ();
 	autoLtas thee = Ltases_average (ltases.peek());
-	praat_new (thee.transfer(), L"averaged");
+	praat_new (thee.transfer(), U"averaged");
 END
 
-FORM (Ltas_computeTrendLine, L"Ltas: Compute trend line", L"Ltas: Compute trend line...")
-	REAL (L"left Frequency range (Hz)", L"600.0")
-	POSITIVE (L"right Frequency range (Hz)", L"4000.0")
+FORM (Ltas_computeTrendLine, U"Ltas: Compute trend line", U"Ltas: Compute trend line...")
+	REAL (U"left Frequency range (Hz)", U"600.0")
+	POSITIVE (U"right Frequency range (Hz)", U"4000.0")
 	OK
 DO
 	LOOP {
 		iam (Ltas);
-		autoLtas thee = Ltas_computeTrendLine (me, GET_REAL (L"left Frequency range"), GET_REAL (L"right Frequency range"));
-		praat_new (thee.transfer(), my name, L"_trend");
+		autoLtas thee = Ltas_computeTrendLine (me, GET_REAL (U"left Frequency range"), GET_REAL (U"right Frequency range"));
+		praat_new (thee.transfer(), my name, U"_trend");
 	}
 END
 
-FORM (old_Ltas_draw, L"Ltas: Draw", 0)
-	REAL (L"left Frequency range (Hz)", L"0.0")
-	REAL (L"right Frequency range (Hz)", L"0.0 (= all)")
-	REAL (L"left Power range (dB/Hz)", L"-20.0")
-	REAL (L"right Power range (dB/Hz)", L"80.0")
-	BOOLEAN (L"Garnish", 1)
+FORM (old_Ltas_draw, U"Ltas: Draw", 0)
+	REAL (U"left Frequency range (Hz)", U"0.0")
+	REAL (U"right Frequency range (Hz)", U"0.0 (= all)")
+	REAL (U"left Power range (dB/Hz)", U"-20.0")
+	REAL (U"right Power range (dB/Hz)", U"80.0")
+	BOOLEAN (U"Garnish", 1)
 	OK
 DO
 	LOOP {
 		iam (Ltas);
 		autoPraatPicture picture;
-		Ltas_draw (me, GRAPHICS, GET_REAL (L"left Frequency range"), GET_REAL (L"right Frequency range"),
-			GET_REAL (L"left Power range"), GET_REAL (L"right Power range"), GET_INTEGER (L"Garnish"), L"Bars");
+		Ltas_draw (me, GRAPHICS, GET_REAL (U"left Frequency range"), GET_REAL (U"right Frequency range"),
+			GET_REAL (U"left Power range"), GET_REAL (U"right Power range"), GET_INTEGER (U"Garnish"), U"Bars");
 	}
 END
 
-FORM (Ltas_draw, L"Ltas: Draw", 0)
-	REAL (L"left Frequency range (Hz)", L"0.0")
-	REAL (L"right Frequency range (Hz)", L"0.0 (= all)")
-	REAL (L"left Power range (dB/Hz)", L"-20.0")
-	REAL (L"right Power range (dB/Hz)", L"80.0")
-	BOOLEAN (L"Garnish", 1)
-	LABEL (L"", L"")
-	OPTIONMENU (L"Drawing method", 2)
-		OPTION (L"Curve")
-		OPTION (L"Bars")
-		OPTION (L"Poles")
-		OPTION (L"Speckles")
+FORM (Ltas_draw, U"Ltas: Draw", 0)
+	REAL (U"left Frequency range (Hz)", U"0.0")
+	REAL (U"right Frequency range (Hz)", U"0.0 (= all)")
+	REAL (U"left Power range (dB/Hz)", U"-20.0")
+	REAL (U"right Power range (dB/Hz)", U"80.0")
+	BOOLEAN (U"Garnish", 1)
+	LABEL (U"", U"")
+	OPTIONMENU (U"Drawing method", 2)
+		OPTION (U"Curve")
+		OPTION (U"Bars")
+		OPTION (U"Poles")
+		OPTION (U"Speckles")
 	OK
 DO_ALTERNATIVE (old_Ltas_draw)
 	LOOP {
 		iam (Ltas);
 		autoPraatPicture picture;
-		Ltas_draw (me, GRAPHICS, GET_REAL (L"left Frequency range"), GET_REAL (L"right Frequency range"),
-			GET_REAL (L"left Power range"), GET_REAL (L"right Power range"), GET_INTEGER (L"Garnish"), GET_STRING (L"Drawing method"));
+		Ltas_draw (me, GRAPHICS, GET_REAL (U"left Frequency range"), GET_REAL (U"right Frequency range"),
+			GET_REAL (U"left Power range"), GET_REAL (U"right Power range"), GET_INTEGER (U"Garnish"), GET_STRING (U"Drawing method"));
 	}
 END
 
-FORM (Ltas_formula, L"Ltas Formula", 0)
-	LABEL (L"label", L"`x' is the frequency in hertz, `col' is the bin number")
-	LABEL (L"label", L"x := x1;   for col := 1 to ncol do { self [1, col] := `formula' ; x := x + dx }")
-	TEXTFIELD (L"formula", L"0")
+FORM (Ltas_formula, U"Ltas Formula", 0)
+	LABEL (U"label", U"`x' is the frequency in hertz, `col' is the bin number")
+	LABEL (U"label", U"x := x1;   for col := 1 to ncol do { self [1, col] := `formula' ; x := x + dx }")
+	TEXTFIELD (U"formula", U"0")
 	OK
 DO
 	LOOP {
 		iam (Ltas);
 		try {
-			Matrix_formula (reinterpret_cast <Matrix> (me), GET_STRING (L"formula"), interpreter, NULL);
+			Matrix_formula (reinterpret_cast <Matrix> (me), GET_STRING (U"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Ltas may have partially changed
@@ -2097,224 +2097,224 @@ DO
 	}
 END
 
-FORM (Ltas_getBinNumberFromFrequency, L"Ltas: Get band from frequency", L"Ltas: Get band from frequency...")
-	REAL (L"Frequency (Hz)", L"2000")
+FORM (Ltas_getBinNumberFromFrequency, U"Ltas: Get band from frequency", U"Ltas: Get band from frequency...")
+	REAL (U"Frequency (Hz)", U"2000")
 	OK
 DO
 	Ltas me = FIRST (Ltas);
-	double binNumber = Sampled_xToIndex (me, GET_REAL (L"Frequency"));
+	double binNumber = Sampled_xToIndex (me, GET_REAL (U"Frequency"));
 	Melder_informationReal (binNumber, NULL);
 END
 
 DIRECT (Ltas_getBinWidth)
 	Ltas me = FIRST (Ltas);
-	Melder_informationReal (my dx, L"hertz");
+	Melder_informationReal (my dx, U"hertz");
 END
 
-FORM (Ltas_getFrequencyFromBinNumber, L"Ltas: Get frequency from bin number", L"Ltas: Get frequency from bin number...")
-	NATURAL (L"Bin number", L"1")
+FORM (Ltas_getFrequencyFromBinNumber, U"Ltas: Get frequency from bin number", U"Ltas: Get frequency from bin number...")
+	NATURAL (U"Bin number", U"1")
 	OK
 DO
 	Ltas me = FIRST (Ltas);
-	double frequency = Sampled_indexToX (me, GET_INTEGER (L"Bin number"));
-	Melder_informationReal (frequency, L"hertz");
+	double frequency = Sampled_indexToX (me, GET_INTEGER (U"Bin number"));
+	Melder_informationReal (frequency, U"hertz");
 END
 
-FORM (Ltas_getFrequencyOfMaximum, L"Ltas: Get frequency of maximum", L"Ltas: Get frequency of maximum...")
-	REAL (L"From frequency (Hz)", L"0.0")
-	REAL (L"To frequency (Hz)", L"0.0 (= all)")
-	RADIO (L"Interpolation", 1)
-		RADIOBUTTON (L"None")
-		RADIOBUTTON (L"Parabolic")
-		RADIOBUTTON (L"Cubic")
-		RADIOBUTTON (L"Sinc70")
-		RADIOBUTTON (L"Sinc700")
+FORM (Ltas_getFrequencyOfMaximum, U"Ltas: Get frequency of maximum", U"Ltas: Get frequency of maximum...")
+	REAL (U"From frequency (Hz)", U"0.0")
+	REAL (U"To frequency (Hz)", U"0.0 (= all)")
+	RADIO (U"Interpolation", 1)
+		RADIOBUTTON (U"None")
+		RADIOBUTTON (U"Parabolic")
+		RADIOBUTTON (U"Cubic")
+		RADIOBUTTON (U"Sinc70")
+		RADIOBUTTON (U"Sinc700")
 	OK
 DO
 	Ltas me = FIRST (Ltas);
 	double frequency = Vector_getXOfMaximum (me,
-		GET_REAL (L"From frequency"), GET_REAL (L"To frequency"), GET_INTEGER (L"Interpolation") - 1);
-	Melder_informationReal (frequency, L"hertz");
+		GET_REAL (U"From frequency"), GET_REAL (U"To frequency"), GET_INTEGER (U"Interpolation") - 1);
+	Melder_informationReal (frequency, U"hertz");
 END
 
-FORM (Ltas_getFrequencyOfMinimum, L"Ltas: Get frequency of minimum", L"Ltas: Get frequency of minimum...")
-	REAL (L"From frequency (Hz)", L"0.0")
-	REAL (L"To frequency (Hz)", L"0.0 (= all)")
-	RADIO (L"Interpolation", 1)
-		RADIOBUTTON (L"None")
-		RADIOBUTTON (L"Parabolic")
-		RADIOBUTTON (L"Cubic")
-		RADIOBUTTON (L"Sinc70")
-		RADIOBUTTON (L"Sinc700")
+FORM (Ltas_getFrequencyOfMinimum, U"Ltas: Get frequency of minimum", U"Ltas: Get frequency of minimum...")
+	REAL (U"From frequency (Hz)", U"0.0")
+	REAL (U"To frequency (Hz)", U"0.0 (= all)")
+	RADIO (U"Interpolation", 1)
+		RADIOBUTTON (U"None")
+		RADIOBUTTON (U"Parabolic")
+		RADIOBUTTON (U"Cubic")
+		RADIOBUTTON (U"Sinc70")
+		RADIOBUTTON (U"Sinc700")
 	OK
 DO
 	Ltas me = FIRST (Ltas);
 	double frequency = Vector_getXOfMinimum (me,
-		GET_REAL (L"From frequency"), GET_REAL (L"To frequency"), GET_INTEGER (L"Interpolation") - 1);
-	Melder_informationReal (frequency, L"hertz");
+		GET_REAL (U"From frequency"), GET_REAL (U"To frequency"), GET_INTEGER (U"Interpolation") - 1);
+	Melder_informationReal (frequency, U"hertz");
 END
 
 DIRECT (Ltas_getHighestFrequency)
 	Ltas me = FIRST (Ltas);
-	Melder_informationReal (my xmax, L"Hz");
+	Melder_informationReal (my xmax, U"Hz");
 END
 
-FORM (Ltas_getLocalPeakHeight, L"Ltas: Get local peak height", 0)
-	REAL (L"left Environment (Hz)", L"1700.0")
-	REAL (L"right Environment (Hz)", L"4200.0")
-	REAL (L"left Peak (Hz)", L"2400.0")
-	REAL (L"right Peak (Hz)", L"3200.0")
-	RADIO (L"Averaging method", 1)
-		RADIOBUTTON (L"energy")
-		RADIOBUTTON (L"sones")
-		RADIOBUTTON (L"dB")
+FORM (Ltas_getLocalPeakHeight, U"Ltas: Get local peak height", 0)
+	REAL (U"left Environment (Hz)", U"1700.0")
+	REAL (U"right Environment (Hz)", U"4200.0")
+	REAL (U"left Peak (Hz)", U"2400.0")
+	REAL (U"right Peak (Hz)", U"3200.0")
+	RADIO (U"Averaging method", 1)
+		RADIOBUTTON (U"energy")
+		RADIOBUTTON (U"sones")
+		RADIOBUTTON (U"dB")
 	OK
 DO
 	Ltas me = FIRST (Ltas);
-	double environmentMin = GET_REAL (L"left Environment"), environmentMax = GET_REAL (L"right Environment");
-	double peakMin = GET_REAL (L"left Peak"), peakMax = GET_REAL (L"right Peak");
-	if (environmentMin >= peakMin) Melder_throw ("The beginning of the environment must lie before the peak.");
-	if (peakMin >= peakMax) Melder_throw ("The end of the peak must lie after its beginning.");
-	if (environmentMax <= peakMax) Melder_throw ("The end of the environment must lie after the peak.");
+	double environmentMin = GET_REAL (U"left Environment"), environmentMax = GET_REAL (U"right Environment");
+	double peakMin = GET_REAL (U"left Peak"), peakMax = GET_REAL (U"right Peak");
+	if (environmentMin >= peakMin) Melder_throw (U"The beginning of the environment must lie before the peak.");
+	if (peakMin >= peakMax) Melder_throw (U"The end of the peak must lie after its beginning.");
+	if (environmentMax <= peakMax) Melder_throw (U"The end of the environment must lie after the peak.");
 	double localPeakHeight = Ltas_getLocalPeakHeight (me, environmentMin, environmentMax,
-		peakMin, peakMax, GET_INTEGER (L"Averaging method"));
-	Melder_informationReal (localPeakHeight, L"dB");
+		peakMin, peakMax, GET_INTEGER (U"Averaging method"));
+	Melder_informationReal (localPeakHeight, U"dB");
 END
 
 DIRECT (Ltas_getLowestFrequency)
 	Ltas me = FIRST (Ltas);
-	Melder_informationReal (my xmin, L"hertz");
+	Melder_informationReal (my xmin, U"hertz");
 END
 
-FORM (Ltas_getMaximum, L"Ltas: Get maximum", L"Ltas: Get maximum...")
-	REAL (L"From frequency (Hz)", L"0.0")
-	REAL (L"To frequency (Hz)", L"0.0 (= all)")
-	RADIO (L"Interpolation", 1)
-		RADIOBUTTON (L"None")
-		RADIOBUTTON (L"Parabolic")
-		RADIOBUTTON (L"Cubic")
-		RADIOBUTTON (L"Sinc70")
-		RADIOBUTTON (L"Sinc700")
+FORM (Ltas_getMaximum, U"Ltas: Get maximum", U"Ltas: Get maximum...")
+	REAL (U"From frequency (Hz)", U"0.0")
+	REAL (U"To frequency (Hz)", U"0.0 (= all)")
+	RADIO (U"Interpolation", 1)
+		RADIOBUTTON (U"None")
+		RADIOBUTTON (U"Parabolic")
+		RADIOBUTTON (U"Cubic")
+		RADIOBUTTON (U"Sinc70")
+		RADIOBUTTON (U"Sinc700")
 	OK
 DO
 	Ltas me = FIRST (Ltas);
 	double maximum = Vector_getMaximum (me,
-		GET_REAL (L"From frequency"), GET_REAL (L"To frequency"), GET_INTEGER (L"Interpolation") - 1);
-	Melder_informationReal (maximum, L"dB");
+		GET_REAL (U"From frequency"), GET_REAL (U"To frequency"), GET_INTEGER (U"Interpolation") - 1);
+	Melder_informationReal (maximum, U"dB");
 END
 
-FORM (Ltas_getMean, L"Ltas: Get mean", L"Ltas: Get mean...")
-	REAL (L"From frequency (Hz)", L"0.0")
-	REAL (L"To frequency (Hz)", L"0.0 (= all)")
-	RADIO (L"Averaging method", 1)
-		RADIOBUTTON (L"energy")
-		RADIOBUTTON (L"sones")
-		RADIOBUTTON (L"dB")
+FORM (Ltas_getMean, U"Ltas: Get mean", U"Ltas: Get mean...")
+	REAL (U"From frequency (Hz)", U"0.0")
+	REAL (U"To frequency (Hz)", U"0.0 (= all)")
+	RADIO (U"Averaging method", 1)
+		RADIOBUTTON (U"energy")
+		RADIOBUTTON (U"sones")
+		RADIOBUTTON (U"dB")
 	OK
 DO
 	Ltas me = FIRST (Ltas);
-	double mean = Sampled_getMean_standardUnit (me, GET_REAL (L"From frequency"), GET_REAL (L"To frequency"),
-		0, GET_INTEGER (L"Averaging method"), FALSE);
-	Melder_informationReal (mean, L"dB");
+	double mean = Sampled_getMean_standardUnit (me, GET_REAL (U"From frequency"), GET_REAL (U"To frequency"),
+		0, GET_INTEGER (U"Averaging method"), FALSE);
+	Melder_informationReal (mean, U"dB");
 END
 
-FORM (Ltas_getMinimum, L"Ltas: Get minimum", L"Ltas: Get minimum...")
-	REAL (L"From frequency (Hz)", L"0.0")
-	REAL (L"To frequency (Hz)", L"0.0 (= all)")
-	RADIO (L"Interpolation", 1)
-		RADIOBUTTON (L"None")
-		RADIOBUTTON (L"Parabolic")
-		RADIOBUTTON (L"Cubic")
-		RADIOBUTTON (L"Sinc70")
-		RADIOBUTTON (L"Sinc700")
+FORM (Ltas_getMinimum, U"Ltas: Get minimum", U"Ltas: Get minimum...")
+	REAL (U"From frequency (Hz)", U"0.0")
+	REAL (U"To frequency (Hz)", U"0.0 (= all)")
+	RADIO (U"Interpolation", 1)
+		RADIOBUTTON (U"None")
+		RADIOBUTTON (U"Parabolic")
+		RADIOBUTTON (U"Cubic")
+		RADIOBUTTON (U"Sinc70")
+		RADIOBUTTON (U"Sinc700")
 	OK
 DO
 	Ltas me = FIRST (Ltas);
 	double minimum = Vector_getMinimum (me,
-		GET_REAL (L"From frequency"), GET_REAL (L"To frequency"), GET_INTEGER (L"Interpolation") - 1);
-	Melder_informationReal (minimum, L"dB");
+		GET_REAL (U"From frequency"), GET_REAL (U"To frequency"), GET_INTEGER (U"Interpolation") - 1);
+	Melder_informationReal (minimum, U"dB");
 END
 
 DIRECT (Ltas_getNumberOfBins)
 	Ltas me = FIRST (Ltas);
 	long numberOfBins = my nx;
-	Melder_information (Melder_integer (numberOfBins), L" bins");
+	Melder_information (numberOfBins, U" bins");
 END
 
-FORM (Ltas_getSlope, L"Ltas: Get slope", 0)
-	REAL (L"left Low band (Hz)", L"0.0")
-	REAL (L"right Low band (Hz)", L"1000.0")
-	REAL (L"left High band (Hz)", L"1000.0")
-	REAL (L"right High band (Hz)", L"4000.0")
-	RADIO (L"Averaging method", 1)
-		RADIOBUTTON (L"energy")
-		RADIOBUTTON (L"sones")
-		RADIOBUTTON (L"dB")
+FORM (Ltas_getSlope, U"Ltas: Get slope", 0)
+	REAL (U"left Low band (Hz)", U"0.0")
+	REAL (U"right Low band (Hz)", U"1000.0")
+	REAL (U"left High band (Hz)", U"1000.0")
+	REAL (U"right High band (Hz)", U"4000.0")
+	RADIO (U"Averaging method", 1)
+		RADIOBUTTON (U"energy")
+		RADIOBUTTON (U"sones")
+		RADIOBUTTON (U"dB")
 	OK
 DO
 	Ltas me = FIRST (Ltas);
-	double slope = Ltas_getSlope (me, GET_REAL (L"left Low band"), GET_REAL (L"right Low band"),
-		GET_REAL (L"left High band"), GET_REAL (L"right High band"), GET_INTEGER (L"Averaging method"));
-	Melder_informationReal (slope, L"dB");
+	double slope = Ltas_getSlope (me, GET_REAL (U"left Low band"), GET_REAL (U"right Low band"),
+		GET_REAL (U"left High band"), GET_REAL (U"right High band"), GET_INTEGER (U"Averaging method"));
+	Melder_informationReal (slope, U"dB");
 END
 
-FORM (Ltas_getStandardDeviation, L"Ltas: Get standard deviation", L"Ltas: Get standard deviation...")
-	REAL (L"From frequency (Hz)", L"0.0")
-	REAL (L"To frequency (Hz)", L"0.0 (= all)")
-	RADIO (L"Averaging method", 1)
-		RADIOBUTTON (L"energy")
-		RADIOBUTTON (L"sones")
-		RADIOBUTTON (L"dB")
+FORM (Ltas_getStandardDeviation, U"Ltas: Get standard deviation", U"Ltas: Get standard deviation...")
+	REAL (U"From frequency (Hz)", U"0.0")
+	REAL (U"To frequency (Hz)", U"0.0 (= all)")
+	RADIO (U"Averaging method", 1)
+		RADIOBUTTON (U"energy")
+		RADIOBUTTON (U"sones")
+		RADIOBUTTON (U"dB")
 	OK
 DO
 	Ltas me = FIRST (Ltas);
-	double stdev = Sampled_getStandardDeviation_standardUnit (me, GET_REAL (L"From frequency"), GET_REAL (L"To frequency"),
-		0, GET_INTEGER (L"Averaging method"), FALSE);
-	Melder_informationReal (stdev, L"dB");
+	double stdev = Sampled_getStandardDeviation_standardUnit (me, GET_REAL (U"From frequency"), GET_REAL (U"To frequency"),
+		0, GET_INTEGER (U"Averaging method"), FALSE);
+	Melder_informationReal (stdev, U"dB");
 END
 
-FORM (Ltas_getValueAtFrequency, L"Ltas: Get value", L"Ltas: Get value at frequency...")
-	REAL (L"Frequency (Hz)", L"1500")
-	RADIO (L"Interpolation", 1)
-		RADIOBUTTON (L"Nearest")
-		RADIOBUTTON (L"Linear")
-		RADIOBUTTON (L"Cubic")
-		RADIOBUTTON (L"Sinc70")
-		RADIOBUTTON (L"Sinc700")
+FORM (Ltas_getValueAtFrequency, U"Ltas: Get value", U"Ltas: Get value at frequency...")
+	REAL (U"Frequency (Hz)", U"1500")
+	RADIO (U"Interpolation", 1)
+		RADIOBUTTON (U"Nearest")
+		RADIOBUTTON (U"Linear")
+		RADIOBUTTON (U"Cubic")
+		RADIOBUTTON (U"Sinc70")
+		RADIOBUTTON (U"Sinc700")
 	OK
 DO
 	Ltas me = FIRST (Ltas);
-	double value = Vector_getValueAtX (me, GET_REAL (L"Frequency"), 1, GET_INTEGER (L"Interpolation") - 1);
-	Melder_informationReal (value, L"dB");
+	double value = Vector_getValueAtX (me, GET_REAL (U"Frequency"), 1, GET_INTEGER (U"Interpolation") - 1);
+	Melder_informationReal (value, U"dB");
 END
 	
-FORM (Ltas_getValueInBin, L"Get value in bin", L"Ltas: Get value in bin...")
-	INTEGER (L"Bin number", L"100")
+FORM (Ltas_getValueInBin, U"Get value in bin", U"Ltas: Get value in bin...")
+	INTEGER (U"Bin number", U"100")
 	OK
 DO
 	Ltas me = FIRST (Ltas);
-	long binNumber = GET_INTEGER (L"Bin number");
+	long binNumber = GET_INTEGER (U"Bin number");
 	double value = binNumber < 1 || binNumber > my nx ? NUMundefined : my z [1] [binNumber];
-	Melder_informationReal (value, L"dB");
+	Melder_informationReal (value, U"dB");
 END
 
-DIRECT (Ltas_help) Melder_help (L"Ltas"); END
+DIRECT (Ltas_help) Melder_help (U"Ltas"); END
 
 DIRECT (Ltases_merge)
 	autoCollection ltases = praat_getSelectedObjects ();
 	autoLtas thee = Ltases_merge (ltases.peek());
-	praat_new (thee.transfer(), L"merged");
+	praat_new (thee.transfer(), U"merged");
 END
 
-FORM (Ltas_subtractTrendLine, L"Ltas: Subtract trend line", L"Ltas: Subtract trend line...")
-	REAL (L"left Frequency range (Hz)", L"600.0")
-	POSITIVE (L"right Frequency range (Hz)", L"4000.0")
+FORM (Ltas_subtractTrendLine, U"Ltas: Subtract trend line", U"Ltas: Subtract trend line...")
+	REAL (U"left Frequency range (Hz)", U"600.0")
+	POSITIVE (U"right Frequency range (Hz)", U"4000.0")
 	OK
 DO
 	LOOP {
 		iam (Ltas);
-		autoLtas thee = Ltas_subtractTrendLine (me, GET_REAL (L"left Frequency range"), GET_REAL (L"right Frequency range"));
-		praat_new (thee.transfer(), my name, L"_fit");
+		autoLtas thee = Ltas_subtractTrendLine (me, GET_REAL (U"left Frequency range"), GET_REAL (U"right Frequency range"));
+		praat_new (thee.transfer(), my name, U"_fit");
 	}
 END
 
@@ -2340,14 +2340,14 @@ static void cb_ManipulationEditor_publication (Editor editor, void *closure, Dat
 	(void) editor;
 	(void) closure;
 	try {
-		praat_new (publication, L"fromManipulationEditor");
+		praat_new (publication, U"fromManipulationEditor");
 		praat_updateSelection ();
 	} catch (MelderError) {
-		Melder_flushError (NULL);
+		Melder_flushError ();
 	}
 }
 DIRECT (Manipulation_edit)
-	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot view or edit a Manipulation from batch.");
+	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a Manipulation from batch.");
 	LOOP {
 		iam (Manipulation);
 		autoManipulationEditor editor = ManipulationEditor_create (ID_AND_FULL_NAME, me);
@@ -2359,7 +2359,7 @@ END
 DIRECT (Manipulation_extractDurationTier)
 	LOOP {
 		iam (Manipulation);
-		if (! my duration) Melder_throw (me, ": I don't contain a DurationTier.");
+		if (! my duration) Melder_throw (me, U": I don't contain a DurationTier.");
 		autoDurationTier thee = Data_copy (my duration);
 		praat_new (thee.transfer(), my name);
 	}
@@ -2368,7 +2368,7 @@ END
 DIRECT (Manipulation_extractOriginalSound)
 	LOOP {
 		iam (Manipulation);
-		if (! my sound) Melder_throw (me, ": I don't contain a Sound.");
+		if (! my sound) Melder_throw (me, U": I don't contain a Sound.");
 		autoSound thee = Data_copy (my sound);
 		praat_new (thee.transfer(), my name);
 	}
@@ -2377,7 +2377,7 @@ END
 DIRECT (Manipulation_extractPitchTier)
 	LOOP {
 		iam (Manipulation);
-		if (! my pitch) Melder_throw (me, ": I don't contain a PitchTier.");
+		if (! my pitch) Melder_throw (me, U": I don't contain a PitchTier.");
 		autoPitchTier thee = Data_copy (my pitch);
 		praat_new (thee.transfer(), my name);
 	}
@@ -2386,7 +2386,7 @@ END
 DIRECT (Manipulation_extractPulses)
 	LOOP {
 		iam (Manipulation);
-		if (! my pulses) Melder_throw (me, ": I don't contain a PointProcess.");
+		if (! my pulses) Melder_throw (me, U": I don't contain a PointProcess.");
 		autoPointProcess thee = Data_copy (my pulses);
 		praat_new (thee.transfer(), my name);
 	}
@@ -2408,7 +2408,7 @@ DIRECT (Manipulation_getResynthesis_overlapAdd)
 	}
 END
 
-DIRECT (Manipulation_help) Melder_help (L"Manipulation"); END
+DIRECT (Manipulation_help) Melder_help (U"Manipulation"); END
 
 DIRECT (Manipulation_play_lpc)
 	LOOP {
@@ -2440,21 +2440,21 @@ DIRECT (Manipulation_removeOriginalSound)
 	}
 END
 
-FORM_WRITE (Manipulation_writeToBinaryFileWithoutSound, L"Binary file without Sound", 0, 0)
+FORM_WRITE (Manipulation_writeToBinaryFileWithoutSound, U"Binary file without Sound", 0, 0)
 	Manipulation_writeToBinaryFileWithoutSound (FIRST_ANY (Manipulation), file);
 END
 
-FORM_WRITE (Manipulation_writeToTextFileWithoutSound, L"Text file without Sound", 0, 0)
+FORM_WRITE (Manipulation_writeToTextFileWithoutSound, U"Text file without Sound", 0, 0)
 	Manipulation_writeToTextFileWithoutSound (FIRST_ANY (Manipulation), file);
 END
 
 DIRECT (info_DurationTier_Manipulation_replace)
-	Melder_information (L"To replace the DurationTier in a Manipulation object,\n"
+	Melder_information (U"To replace the DurationTier in a Manipulation object,\n"
 		"select a DurationTier object and a Manipulation object\nand choose \"Replace duration\".");
 END
 
 DIRECT (info_PitchTier_Manipulation_replace)
-	Melder_information (L"To replace the PitchTier in a Manipulation object,\n"
+	Melder_information (U"To replace the PitchTier in a Manipulation object,\n"
 		"select a PitchTier object and a Manipulation object\nand choose \"Replace pitch\".");
 END
 
@@ -2466,7 +2466,7 @@ DIRECT (Manipulation_replaceDurationTier)
 	praat_dataChanged (me);
 END
 
-DIRECT (Manipulation_replaceDurationTier_help) Melder_help (L"Manipulation: Replace duration tier"); END
+DIRECT (Manipulation_replaceDurationTier_help) Melder_help (U"Manipulation: Replace duration tier"); END
 
 /***** MANIPULATION & PITCHTIER *****/
 
@@ -2476,7 +2476,7 @@ DIRECT (Manipulation_replacePitchTier)
 	praat_dataChanged (me);
 END
 
-DIRECT (Manipulation_replacePitchTier_help) Melder_help (L"Manipulation: Replace pitch tier"); END
+DIRECT (Manipulation_replacePitchTier_help) Melder_help (U"Manipulation: Replace pitch tier"); END
 
 /***** MANIPULATION & POINTPROCESS *****/
 
@@ -2509,100 +2509,100 @@ DIRECT (Matrix_appendRows)
 	Matrix m1 = NULL, m2 = NULL;
 	LOOP (m1 ? m2 : m1) = (Matrix) OBJECT;
 	autoMatrix thee = Matrix_appendRows (m1, m2, classMatrix);
-	praat_new (thee.transfer(), m1 -> name, L"_", m2 -> name);
+	praat_new (thee.transfer(), m1 -> name, U"_", m2 -> name);
 END
 
-FORM (Matrix_create, L"Create Matrix", L"Create Matrix...")
-	WORD (L"Name", L"xy")
-	REAL (L"xmin", L"1.0")
-	REAL (L"xmax", L"1.0")
-	NATURAL (L"Number of columns", L"1")
-	POSITIVE (L"dx", L"1.0")
-	REAL (L"x1", L"1.0")
-	REAL (L"ymin", L"1.0")
-	REAL (L"ymax", L"1.0")
-	NATURAL (L"Number of rows", L"1")
-	POSITIVE (L"dy", L"1.0")
-	REAL (L"y1", L"1.0")
-	LABEL (L"", L"Formula:")
-	TEXTFIELD (L"formula", L"x*y")
+FORM (Matrix_create, U"Create Matrix", U"Create Matrix...")
+	WORD (U"Name", U"xy")
+	REAL (U"xmin", U"1.0")
+	REAL (U"xmax", U"1.0")
+	NATURAL (U"Number of columns", U"1")
+	POSITIVE (U"dx", U"1.0")
+	REAL (U"x1", U"1.0")
+	REAL (U"ymin", U"1.0")
+	REAL (U"ymax", U"1.0")
+	NATURAL (U"Number of rows", U"1")
+	POSITIVE (U"dy", U"1.0")
+	REAL (U"y1", U"1.0")
+	LABEL (U"", U"Formula:")
+	TEXTFIELD (U"formula", U"x*y")
 	OK
 DO
-	double xmin = GET_REAL (L"xmin"), xmax = GET_REAL (L"xmax");
-	double ymin = GET_REAL (L"ymin"), ymax = GET_REAL (L"ymax");
-	if (xmax < xmin) Melder_throw ("xmax (", Melder_single (xmax), ") should not be less than xmin (", Melder_single (xmin), ").");
-	if (ymax < ymin) Melder_throw ("ymax (", Melder_single (ymax), ") should not be less than ymin (", Melder_single (ymin), ").");
+	double xmin = GET_REAL (U"xmin"), xmax = GET_REAL (U"xmax");
+	double ymin = GET_REAL (U"ymin"), ymax = GET_REAL (U"ymax");
+	if (xmax < xmin) Melder_throw (U"xmax (", Melder_single (xmax), U") should not be less than xmin (", Melder_single (xmin), U").");
+	if (ymax < ymin) Melder_throw (U"ymax (", Melder_single (ymax), U") should not be less than ymin (", Melder_single (ymin), U").");
 	autoMatrix me = Matrix_create (
-		xmin, xmax, GET_INTEGER (L"Number of columns"), GET_REAL (L"dx"), GET_REAL (L"x1"),
-		ymin, ymax, GET_INTEGER (L"Number of rows"), GET_REAL (L"dy"), GET_REAL (L"y1"));
-	Matrix_formula (me.peek(), GET_STRING (L"formula"), interpreter, NULL);
-	praat_new (me.transfer(), GET_STRING (L"Name"));
+		xmin, xmax, GET_INTEGER (U"Number of columns"), GET_REAL (U"dx"), GET_REAL (U"x1"),
+		ymin, ymax, GET_INTEGER (U"Number of rows"), GET_REAL (U"dy"), GET_REAL (U"y1"));
+	Matrix_formula (me.peek(), GET_STRING (U"formula"), interpreter, NULL);
+	praat_new (me.transfer(), GET_STRING (U"Name"));
 END
 
-FORM (Matrix_createSimple, L"Create simple Matrix", L"Create simple Matrix...")
-	WORD (L"Name", L"xy")
-	NATURAL (L"Number of rows", L"10")
-	NATURAL (L"Number of columns", L"10")
-	LABEL (L"", L"Formula:")
-	TEXTFIELD (L"formula", L"x*y")
+FORM (Matrix_createSimple, U"Create simple Matrix", U"Create simple Matrix...")
+	WORD (U"Name", U"xy")
+	NATURAL (U"Number of rows", U"10")
+	NATURAL (U"Number of columns", U"10")
+	LABEL (U"", U"Formula:")
+	TEXTFIELD (U"formula", U"x*y")
 	OK
 DO
-	autoMatrix me = Matrix_createSimple (GET_INTEGER (L"Number of rows"), GET_INTEGER (L"Number of columns"));
-	Matrix_formula (me.peek(), GET_STRING (L"formula"), interpreter, NULL);
-	praat_new (me.transfer(), GET_STRING (L"Name"));
+	autoMatrix me = Matrix_createSimple (GET_INTEGER (U"Number of rows"), GET_INTEGER (U"Number of columns"));
+	Matrix_formula (me.peek(), GET_STRING (U"formula"), interpreter, NULL);
+	praat_new (me.transfer(), GET_STRING (U"Name"));
 END
 
-FORM (Matrix_drawOneContour, L"Draw one altitude contour", 0)
-	REAL (L"From x =", L"0.0")
-	REAL (L"To x =", L"0.0")
-	REAL (L"From y =", L"0.0")
-	REAL (L"To y =", L"0.0")
-	REAL (L"Height", L"0.5")
+FORM (Matrix_drawOneContour, U"Draw one altitude contour", 0)
+	REAL (U"From x =", U"0.0")
+	REAL (U"To x =", U"0.0")
+	REAL (U"From y =", U"0.0")
+	REAL (U"To y =", U"0.0")
+	REAL (U"Height", U"0.5")
 	OK
 DO
 	LOOP {
 		iam (Matrix);
 		autoPraatPicture picture;
 		Matrix_drawOneContour (me, GRAPHICS,
-			GET_REAL (L"From x ="), GET_REAL (L"To x ="), GET_REAL (L"From y ="), GET_REAL (L"To y ="),
-			GET_REAL (L"Height"));
+			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="),
+			GET_REAL (U"Height"));
 	}
 END
 
-FORM (Matrix_drawContours, L"Draw altitude contours", 0)
-	REAL (L"From x =", L"0.0")
-	REAL (L"To x =", L"0.0")
-	REAL (L"From y =", L"0.0")
-	REAL (L"To y =", L"0.0")
-	REAL (L"Minimum", L"0.0")
-	REAL (L"Maximum", L"0.0")
+FORM (Matrix_drawContours, U"Draw altitude contours", 0)
+	REAL (U"From x =", U"0.0")
+	REAL (U"To x =", U"0.0")
+	REAL (U"From y =", U"0.0")
+	REAL (U"To y =", U"0.0")
+	REAL (U"Minimum", U"0.0")
+	REAL (U"Maximum", U"0.0")
 	OK
 DO
 	LOOP {
 		iam (Matrix);
 		autoPraatPicture picture;
 		Matrix_drawContours (me, GRAPHICS,
-			GET_REAL (L"From x ="), GET_REAL (L"To x ="), GET_REAL (L"From y ="), GET_REAL (L"To y ="),
-			GET_REAL (L"Minimum"), GET_REAL (L"Maximum"));
+			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="),
+			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"));
 	}
 END
 
-FORM (Matrix_drawRows, L"Draw rows", 0)
-	REAL (L"From x =", L"0.0")
-	REAL (L"To x =", L"0.0")
-	REAL (L"From y =", L"0.0")
-	REAL (L"To y =", L"0.0")
-	REAL (L"Minimum", L"0.0")
-	REAL (L"Maximum", L"0.0")
+FORM (Matrix_drawRows, U"Draw rows", 0)
+	REAL (U"From x =", U"0.0")
+	REAL (U"To x =", U"0.0")
+	REAL (U"From y =", U"0.0")
+	REAL (U"To y =", U"0.0")
+	REAL (U"Minimum", U"0.0")
+	REAL (U"Maximum", U"0.0")
 	OK
 DO
 	LOOP {
 		iam (Matrix);
 		autoPraatPicture picture;
 		Matrix_drawRows (me, GRAPHICS,
-			GET_REAL (L"From x ="), GET_REAL (L"To x ="),
-			GET_REAL (L"From y ="), GET_REAL (L"To y ="),
-			GET_REAL (L"Minimum"), GET_REAL (L"Maximum"));
+			GET_REAL (U"From x ="), GET_REAL (U"To x ="),
+			GET_REAL (U"From y ="), GET_REAL (U"To y ="),
+			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"));
 	}
 END
 
@@ -2613,21 +2613,21 @@ DIRECT (Matrix_eigen)
 		Matrix_eigen (me, & vec_, & val_);
 		autoMatrix vec = vec_;
 		autoMatrix val = val_;
-		praat_new (vec.transfer(), L"eigenvectors");
-		praat_new (val.transfer(), L"eigenvalues");
+		praat_new (vec.transfer(), U"eigenvectors");
+		praat_new (val.transfer(), U"eigenvalues");
 	}
 END
 
-FORM (Matrix_formula, L"Matrix Formula", L"Formula...")
-	LABEL (L"label", L"y := y1; for row := 1 to nrow do { x := x1; "
+FORM (Matrix_formula, U"Matrix Formula", U"Formula...")
+	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
-	TEXTFIELD (L"formula", L"self")
+	TEXTFIELD (U"formula", U"self")
 	OK
 DO
 	LOOP {
 		iam (Matrix);
 		try {
-			Matrix_formula (me, GET_STRING (L"formula"), interpreter, NULL);
+			Matrix_formula (me, GET_STRING (U"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Matrix may have partially changed
@@ -2658,12 +2658,12 @@ END
 
 DIRECT (Matrix_getNumberOfColumns)
 	Matrix me = FIRST_ANY (Matrix);
-	Melder_information (Melder_integer (my nx));
+	Melder_information (my nx);
 END
 
 DIRECT (Matrix_getNumberOfRows)
 	Matrix me = FIRST_ANY (Matrix);
-	Melder_information (Melder_integer (my ny));
+	Melder_information (my ny);
 END
 
 DIRECT (Matrix_getColumnDistance)
@@ -2696,162 +2696,162 @@ DIRECT (Matrix_getMinimum)
 	Melder_informationReal (minimum, NULL);
 END
 
-FORM (Matrix_getValueAtXY, L"Matrix: Get value at xy", 0)
-	REAL (L"X", L"0")
-	REAL (L"Y", L"0")
+FORM (Matrix_getValueAtXY, U"Matrix: Get value at xy", 0)
+	REAL (U"X", U"0")
+	REAL (U"Y", U"0")
 	OK
 DO
 	Matrix me = FIRST_ANY (Matrix);
-	double x = GET_REAL (L"X"), y = GET_REAL (L"Y");
+	double x = GET_REAL (U"X"), y = GET_REAL (U"Y");
 	double value = Matrix_getValueAtXY (me, x, y);
-	Melder_information (Melder_double (value), L" (at x = ", Melder_double (x), L" and y = ", Melder_double (y), L")");
+	Melder_information (value, U" (at x = ", x, U" and y = ", y, U")");
 END
 
-FORM (Matrix_getValueInCell, L"Matrix: Get value in cell", 0)
-	NATURAL (L"Row number", L"1")
-	NATURAL (L"Column number", L"1")
+FORM (Matrix_getValueInCell, U"Matrix: Get value in cell", 0)
+	NATURAL (U"Row number", U"1")
+	NATURAL (U"Column number", U"1")
 	OK
 DO
 	Matrix me = FIRST_ANY (Matrix);
-	long row = GET_INTEGER (L"Row number"), column = GET_INTEGER (L"Column number");
-	if (row > my ny) Melder_throw ("Row number must not exceed number of rows.");
-	if (column > my nx) Melder_throw ("Column number must not exceed number of columns.");
+	long row = GET_INTEGER (U"Row number"), column = GET_INTEGER (U"Column number");
+	if (row > my ny) Melder_throw (U"Row number must not exceed number of rows.");
+	if (column > my nx) Melder_throw (U"Column number must not exceed number of columns.");
 	Melder_informationReal (my z [row] [column], NULL);
 END
 
-FORM (Matrix_getXofColumn, L"Matrix: Get x of column", 0)
-	NATURAL (L"Column number", L"1")
+FORM (Matrix_getXofColumn, U"Matrix: Get x of column", 0)
+	NATURAL (U"Column number", U"1")
 	OK
 DO
 	Matrix me = FIRST_ANY (Matrix);
-	double x = Matrix_columnToX (me, GET_INTEGER (L"Column number"));
+	double x = Matrix_columnToX (me, GET_INTEGER (U"Column number"));
 	Melder_informationReal (x, NULL);
 END
 
-FORM (Matrix_getYofRow, L"Matrix: Get y of row", 0)
-	NATURAL (L"Row number", L"1")
+FORM (Matrix_getYofRow, U"Matrix: Get y of row", 0)
+	NATURAL (U"Row number", U"1")
 	OK
 DO
 	Matrix me = FIRST_ANY (Matrix);
-	double y = Matrix_rowToY (me, GET_INTEGER (L"Row number"));
+	double y = Matrix_rowToY (me, GET_INTEGER (U"Row number"));
 	Melder_informationReal (y, NULL);
 END
 
-DIRECT (Matrix_help) Melder_help (L"Matrix"); END
+DIRECT (Matrix_help) Melder_help (U"Matrix"); END
 
 DIRECT (Matrix_movie)
-	Graphics g = Movie_create (L"Matrix movie", 300, 300);
+	Graphics g = Movie_create (U"Matrix movie", 300, 300);
 	LOOP {
 		iam (Matrix);
 		Matrix_movie (me, g);
 	}
 END
 
-FORM (Matrix_paintCells, L"Matrix: Paint cells with greys", L"Matrix: Paint cells...")
-	REAL (L"From x =", L"0.0")
-	REAL (L"To x =", L"0.0")
-	REAL (L"From y =", L"0.0")
-	REAL (L"To y =", L"0.0")
-	REAL (L"Minimum", L"0.0")
-	REAL (L"Maximum", L"0.0")
+FORM (Matrix_paintCells, U"Matrix: Paint cells with greys", U"Matrix: Paint cells...")
+	REAL (U"From x =", U"0.0")
+	REAL (U"To x =", U"0.0")
+	REAL (U"From y =", U"0.0")
+	REAL (U"To y =", U"0.0")
+	REAL (U"Minimum", U"0.0")
+	REAL (U"Maximum", U"0.0")
 	OK
 DO
 	LOOP {
 		iam (Matrix);
 		autoPraatPicture picture;
 		Matrix_paintCells (me, GRAPHICS,
-			GET_REAL (L"From x ="), GET_REAL (L"To x ="), GET_REAL (L"From y ="), GET_REAL (L"To y ="),
-			GET_REAL (L"Minimum"), GET_REAL (L"Maximum"));
+			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="),
+			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"));
 	}
 END
 
-FORM (Matrix_paintContours, L"Matrix: Paint altitude contours with greys", 0)
-	REAL (L"From x =", L"0.0")
-	REAL (L"To x =", L"0.0")
-	REAL (L"From y =", L"0.0")
-	REAL (L"To y =", L"0.0")
-	REAL (L"Minimum", L"0.0")
-	REAL (L"Maximum", L"0.0")
+FORM (Matrix_paintContours, U"Matrix: Paint altitude contours with greys", 0)
+	REAL (U"From x =", U"0.0")
+	REAL (U"To x =", U"0.0")
+	REAL (U"From y =", U"0.0")
+	REAL (U"To y =", U"0.0")
+	REAL (U"Minimum", U"0.0")
+	REAL (U"Maximum", U"0.0")
 	OK
 DO
 	LOOP {
 		iam (Matrix);
 		autoPraatPicture picture;
 		Matrix_paintContours (me, GRAPHICS,
-			GET_REAL (L"From x ="), GET_REAL (L"To x ="), GET_REAL (L"From y ="), GET_REAL (L"To y ="),
-			GET_REAL (L"Minimum"), GET_REAL (L"Maximum"));
+			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="),
+			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"));
 	}
 END
 
-FORM (Matrix_paintImage, L"Matrix: Paint grey image", 0)
-	REAL (L"From x =", L"0.0")
-	REAL (L"To x =", L"0.0")
-	REAL (L"From y =", L"0.0")
-	REAL (L"To y =", L"0.0")
-	REAL (L"Minimum", L"0.0")
-	REAL (L"Maximum", L"0.0")
+FORM (Matrix_paintImage, U"Matrix: Paint grey image", 0)
+	REAL (U"From x =", U"0.0")
+	REAL (U"To x =", U"0.0")
+	REAL (U"From y =", U"0.0")
+	REAL (U"To y =", U"0.0")
+	REAL (U"Minimum", U"0.0")
+	REAL (U"Maximum", U"0.0")
 	OK
 DO
 	LOOP {
 		iam (Matrix);
 		autoPraatPicture picture;
 		Matrix_paintImage (me, GRAPHICS,
-			GET_REAL (L"From x ="), GET_REAL (L"To x ="), GET_REAL (L"From y ="), GET_REAL (L"To y ="),
-			GET_REAL (L"Minimum"), GET_REAL (L"Maximum"));
+			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="),
+			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"));
 	}
 END
 
-FORM (Matrix_paintSurface, L"Matrix: Paint 3-D surface plot", 0)
-	REAL (L"From x =", L"0.0")
-	REAL (L"To x =", L"0.0")
-	REAL (L"From y =", L"0.0")
-	REAL (L"To y =", L"0.0")
-	REAL (L"Minimum", L"0.0")
-	REAL (L"Maximum", L"0.0")
+FORM (Matrix_paintSurface, U"Matrix: Paint 3-D surface plot", 0)
+	REAL (U"From x =", U"0.0")
+	REAL (U"To x =", U"0.0")
+	REAL (U"From y =", U"0.0")
+	REAL (U"To y =", U"0.0")
+	REAL (U"Minimum", U"0.0")
+	REAL (U"Maximum", U"0.0")
 	OK
 DO
 	LOOP {
 		iam (Matrix);
 		autoPraatPicture picture;
 		Matrix_paintSurface (me, GRAPHICS,
-			GET_REAL (L"From x ="), GET_REAL (L"To x ="), GET_REAL (L"From y ="), GET_REAL (L"To y ="),
-			GET_REAL (L"Minimum"), GET_REAL (L"Maximum"), 30, 45);
+			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="),
+			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"), 30, 45);
 	}
 END
 
-FORM (Matrix_power, L"Matrix: Power...", 0)
-	NATURAL (L"Power", L"2")
+FORM (Matrix_power, U"Matrix: Power...", 0)
+	NATURAL (U"Power", U"2")
 	OK
 DO
 	LOOP {
 		iam (Matrix);
-		autoMatrix thee = Matrix_power (me, GET_INTEGER (L"Power"));
+		autoMatrix thee = Matrix_power (me, GET_INTEGER (U"Power"));
 		praat_new (thee.transfer(), my name);
 	}
 END
 
-FORM_READ (Matrix_readFromRawTextFile, L"Read Matrix from raw text file", 0, true)
+FORM_READ (Matrix_readFromRawTextFile, U"Read Matrix from raw text file", 0, true)
 	autoMatrix me = Matrix_readFromRawTextFile (file);
 	praat_new (me.transfer(), MelderFile_name (file));
 END
 
-FORM_READ (Matrix_readAP, L"Read Matrix from LVS AP file", 0, true)
+FORM_READ (Matrix_readAP, U"Read Matrix from LVS AP file", 0, true)
 	autoMatrix me = Matrix_readAP (file);
 	praat_new (me.transfer(), MelderFile_name (file));
 END
 
-FORM (Matrix_setValue, L"Matrix: Set value", L"Matrix: Set value...")
-	NATURAL (L"Row number", L"1")
-	NATURAL (L"Column number", L"1")
-	REAL (L"New value", L"0.0")
+FORM (Matrix_setValue, U"Matrix: Set value", U"Matrix: Set value...")
+	NATURAL (U"Row number", U"1")
+	NATURAL (U"Column number", U"1")
+	REAL (U"New value", U"0.0")
 	OK
 DO
 	LOOP {
 		iam (Matrix);
-		long row = GET_INTEGER (L"Row number"), column = GET_INTEGER (L"Column number");
-		if (row > my ny) Melder_throw ("Row number must not be greater than number of rows.");
-		if (column > my nx) Melder_throw ("Column number must not be greater than number of columns.");
-		my z [row] [column] = GET_REAL (L"New value");
+		long row = GET_INTEGER (U"Row number"), column = GET_INTEGER (U"Column number");
+		if (row > my ny) Melder_throw (U"Row number must not be greater than number of rows.");
+		if (column > my nx) Melder_throw (U"Column number must not be greater than number of columns.");
+		my z [row] [column] = GET_REAL (U"New value");
 		praat_dataChanged (me);
 	}
 END
@@ -2925,7 +2925,7 @@ DIRECT (Matrix_to_ParamCurve)
 	LOOP (m1 ? m2 : m1) = (Matrix) OBJECT;
 	autoSound sound1 = Matrix_to_Sound (m1), sound2 = Matrix_to_Sound (m2);
 	autoParamCurve thee = ParamCurve_create (sound1.peek(), sound2.peek());
-	praat_new (thee.transfer(), m1 -> name, L"_", m2 -> name);
+	praat_new (thee.transfer(), m1 -> name, U"_", m2 -> name);
 END
 
 DIRECT (Matrix_to_PointProcess)
@@ -2952,14 +2952,14 @@ DIRECT (Matrix_to_Sound)
 	}
 END
 
-FORM (Matrix_to_Sound_mono, L"Matrix: To Sound (mono)", 0)
-	INTEGER (L"Row", L"1")
-	LABEL (L"", L"(negative values count from last row)")
+FORM (Matrix_to_Sound_mono, U"Matrix: To Sound (mono)", 0)
+	INTEGER (U"Row", U"1")
+	LABEL (U"", U"(negative values count from last row)")
 	OK
 DO
 	LOOP {
 		iam (Matrix);
-		autoSound thee = Matrix_to_Sound_mono (me, GET_INTEGER (L"Row"));
+		autoSound thee = Matrix_to_Sound_mono (me, GET_INTEGER (U"Row"));
 		praat_new (thee.transfer(), my name);
 	}
 END
@@ -2988,41 +2988,41 @@ DIRECT (Matrix_to_VocalTract)
 	}
 END
 
-FORM_WRITE (Matrix_writeToMatrixTextFile, L"Save Matrix as matrix text file", 0, L"mat")
+FORM_WRITE (Matrix_writeToMatrixTextFile, U"Save Matrix as matrix text file", 0, U"mat")
 	Matrix me = FIRST (Matrix);
 	Matrix_writeToMatrixTextFile (me, file);
 END
 
-FORM_WRITE (Matrix_writeToHeaderlessSpreadsheetFile, L"Save Matrix as spreadsheet", 0, L"txt")
+FORM_WRITE (Matrix_writeToHeaderlessSpreadsheetFile, U"Save Matrix as spreadsheet", 0, U"txt")
 	Matrix me = FIRST (Matrix);
 	Matrix_writeToHeaderlessSpreadsheetFile (me, file);
 END
 
 /***** MOVIE *****/
 
-FORM_READ (Movie_openFromSoundFile, L"Open movie file", 0, true)
+FORM_READ (Movie_openFromSoundFile, U"Open movie file", 0, true)
 	autoMovie me = Movie_openFromSoundFile (file);
 	praat_new (me.transfer(), MelderFile_name (file));
 END
 
-FORM (Movie_paintOneImage, L"Movie: Paint one image", 0)
-	NATURAL (L"Frame number", L"1")
-	REAL (L"From x =", L"0.0")
-	REAL (L"To x =", L"1.0")
-	REAL (L"From y =", L"0.0")
-	REAL (L"To y =", L"1.0")
+FORM (Movie_paintOneImage, U"Movie: Paint one image", 0)
+	NATURAL (U"Frame number", U"1")
+	REAL (U"From x =", U"0.0")
+	REAL (U"To x =", U"1.0")
+	REAL (U"From y =", U"0.0")
+	REAL (U"To y =", U"1.0")
 	OK
 DO
 	LOOP {
 		iam (Movie);
 		autoPraatPicture picture;
-		Movie_paintOneImage (me, GRAPHICS, GET_INTEGER (L"Frame number"),
-			GET_REAL (L"From x ="), GET_REAL (L"To x ="), GET_REAL (L"From y ="), GET_REAL (L"To y ="));
+		Movie_paintOneImage (me, GRAPHICS, GET_INTEGER (U"Frame number"),
+			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="));
 	}
 END
 
 DIRECT (Movie_viewAndEdit)
-	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot view or edit a Movie from batch.");
+	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a Movie from batch.");
 	LOOP {
 		iam (Movie);
 		autoMovieWindow editor = MovieWindow_create (ID_AND_FULL_NAME, me);
@@ -3032,88 +3032,88 @@ END
 
 /***** PARAMCURVE *****/
 
-FORM (ParamCurve_draw, L"Draw parametrized curve", 0)
-	REAL (L"Tmin", L"0.0")
-	REAL (L"Tmax", L"0.0")
-	REAL (L"Step", L"0.0")
-	REAL (L"Xmin", L"0.0")
-	REAL (L"Xmax", L"0.0")
-	REAL (L"Ymin", L"0.0")
-	REAL (L"Ymax", L"0.0")
-	BOOLEAN (L"Garnish", 1)
+FORM (ParamCurve_draw, U"Draw parametrized curve", 0)
+	REAL (U"Tmin", U"0.0")
+	REAL (U"Tmax", U"0.0")
+	REAL (U"Step", U"0.0")
+	REAL (U"Xmin", U"0.0")
+	REAL (U"Xmax", U"0.0")
+	REAL (U"Ymin", U"0.0")
+	REAL (U"Ymax", U"0.0")
+	BOOLEAN (U"Garnish", 1)
 	OK
 DO
 	LOOP {
 		iam (ParamCurve);
 		autoPraatPicture picture;
 		ParamCurve_draw (me, GRAPHICS,
-			GET_REAL (L"Tmin"), GET_REAL (L"Tmax"), GET_REAL (L"Step"),
-			GET_REAL (L"Xmin"), GET_REAL (L"Xmax"), GET_REAL (L"Ymin"), GET_REAL (L"Ymax"),
-			GET_INTEGER (L"Garnish"));
+			GET_REAL (U"Tmin"), GET_REAL (U"Tmax"), GET_REAL (U"Step"),
+			GET_REAL (U"Xmin"), GET_REAL (U"Xmax"), GET_REAL (U"Ymin"), GET_REAL (U"Ymax"),
+			GET_INTEGER (U"Garnish"));
 	}
 END
 
-DIRECT (ParamCurve_help) Melder_help (L"ParamCurve"); END
+DIRECT (ParamCurve_help) Melder_help (U"ParamCurve"); END
 
 /***** PHOTO *****/
 
-FORM (Photo_create, L"Create Photo", L"Create Photo...")
-	WORD (L"Name", L"xy")
-	REAL (L"xmin", L"1.0")
-	REAL (L"xmax", L"1.0")
-	NATURAL (L"Number of columns", L"1")
-	POSITIVE (L"dx", L"1.0")
-	REAL (L"x1", L"1.0")
-	REAL (L"ymin", L"1.0")
-	REAL (L"ymax", L"1.0")
-	NATURAL (L"Number of rows", L"1")
-	POSITIVE (L"dy", L"1.0")
-	REAL (L"y1", L"1.0")
-	LABEL (L"", L"Red formula:")
-	TEXTFIELD (L"redFormula", L"x*y/100")
-	LABEL (L"", L"Green formula:")
-	TEXTFIELD (L"greenFormula", L"x*y/1000")
-	LABEL (L"", L"Blue formula:")
-	TEXTFIELD (L"blueFormula", L"x*y/100")
+FORM (Photo_create, U"Create Photo", U"Create Photo...")
+	WORD (U"Name", U"xy")
+	REAL (U"xmin", U"1.0")
+	REAL (U"xmax", U"1.0")
+	NATURAL (U"Number of columns", U"1")
+	POSITIVE (U"dx", U"1.0")
+	REAL (U"x1", U"1.0")
+	REAL (U"ymin", U"1.0")
+	REAL (U"ymax", U"1.0")
+	NATURAL (U"Number of rows", U"1")
+	POSITIVE (U"dy", U"1.0")
+	REAL (U"y1", U"1.0")
+	LABEL (U"", U"Red formula:")
+	TEXTFIELD (U"redFormula", U"x*y/100")
+	LABEL (U"", U"Green formula:")
+	TEXTFIELD (U"greenFormula", U"x*y/1000")
+	LABEL (U"", U"Blue formula:")
+	TEXTFIELD (U"blueFormula", U"x*y/100")
 	OK
 DO
-	double xmin = GET_REAL (L"xmin"), xmax = GET_REAL (L"xmax");
-	double ymin = GET_REAL (L"ymin"), ymax = GET_REAL (L"ymax");
-	if (xmax < xmin) Melder_throw ("xmax (", Melder_single (xmax), ") should not be less than xmin (", Melder_single (xmin), ").");
-	if (ymax < ymin) Melder_throw ("ymax (", Melder_single (ymax), ") should not be less than ymin (", Melder_single (ymin), ").");
+	double xmin = GET_REAL (U"xmin"), xmax = GET_REAL (U"xmax");
+	double ymin = GET_REAL (U"ymin"), ymax = GET_REAL (U"ymax");
+	if (xmax < xmin) Melder_throw (U"xmax (", Melder_single (xmax), U") should not be less than xmin (", Melder_single (xmin), U").");
+	if (ymax < ymin) Melder_throw (U"ymax (", Melder_single (ymax), U") should not be less than ymin (", Melder_single (ymin), U").");
 	autoPhoto me = Photo_create (
-		xmin, xmax, GET_INTEGER (L"Number of columns"), GET_REAL (L"dx"), GET_REAL (L"x1"),
-		ymin, ymax, GET_INTEGER (L"Number of rows"), GET_REAL (L"dy"), GET_REAL (L"y1"));
-	Matrix_formula (my d_red,   GET_STRING (L"redFormula"),   interpreter, NULL);
-	Matrix_formula (my d_green, GET_STRING (L"greenFormula"), interpreter, NULL);
-	Matrix_formula (my d_blue,  GET_STRING (L"blueFormula"),  interpreter, NULL);
-	praat_new (me.transfer(), GET_STRING (L"Name"));
+		xmin, xmax, GET_INTEGER (U"Number of columns"), GET_REAL (U"dx"), GET_REAL (U"x1"),
+		ymin, ymax, GET_INTEGER (U"Number of rows"), GET_REAL (U"dy"), GET_REAL (U"y1"));
+	Matrix_formula (my d_red,   GET_STRING (U"redFormula"),   interpreter, NULL);
+	Matrix_formula (my d_green, GET_STRING (U"greenFormula"), interpreter, NULL);
+	Matrix_formula (my d_blue,  GET_STRING (U"blueFormula"),  interpreter, NULL);
+	praat_new (me.transfer(), GET_STRING (U"Name"));
 END
 
-FORM (Photo_createSimple, L"Create simple Photo", L"Create simple Photo...")
-	WORD (L"Name", L"xy")
-	NATURAL (L"Number of rows", L"10")
-	NATURAL (L"Number of columns", L"10")
-	LABEL (L"", L"Red formula:")
-	TEXTFIELD (L"redFormula", L"x*y/100")
-	LABEL (L"", L"Green formula:")
-	TEXTFIELD (L"greenFormula", L"x*y/1000")
-	LABEL (L"", L"Blue formula:")
-	TEXTFIELD (L"blueFormula", L"x*y/100")
+FORM (Photo_createSimple, U"Create simple Photo", U"Create simple Photo...")
+	WORD (U"Name", U"xy")
+	NATURAL (U"Number of rows", U"10")
+	NATURAL (U"Number of columns", U"10")
+	LABEL (U"", U"Red formula:")
+	TEXTFIELD (U"redFormula", U"x*y/100")
+	LABEL (U"", U"Green formula:")
+	TEXTFIELD (U"greenFormula", U"x*y/1000")
+	LABEL (U"", U"Blue formula:")
+	TEXTFIELD (U"blueFormula", U"x*y/100")
 	OK
 DO
-	autoPhoto me = Photo_createSimple (GET_INTEGER (L"Number of rows"), GET_INTEGER (L"Number of columns"));
-	Matrix_formula (my d_red,   GET_STRING (L"redFormula"),   interpreter, NULL);
-	Matrix_formula (my d_green, GET_STRING (L"greenFormula"), interpreter, NULL);
-	Matrix_formula (my d_blue,  GET_STRING (L"blueFormula"),  interpreter, NULL);
-	praat_new (me.transfer(), GET_STRING (L"Name"));
+	autoPhoto me = Photo_createSimple (GET_INTEGER (U"Number of rows"), GET_INTEGER (U"Number of columns"));
+	Matrix_formula (my d_red,   GET_STRING (U"redFormula"),   interpreter, NULL);
+	Matrix_formula (my d_green, GET_STRING (U"greenFormula"), interpreter, NULL);
+	Matrix_formula (my d_blue,  GET_STRING (U"blueFormula"),  interpreter, NULL);
+	praat_new (me.transfer(), GET_STRING (U"Name"));
 END
 
 DIRECT (Photo_extractBlue)
 	LOOP {
 		iam (Photo);
 		autoMatrix thee = Data_copy (my d_blue);
-		praat_new (thee.transfer(), my name, L"_blue");
+		praat_new (thee.transfer(), my name, U"_blue");
 	}
 END
 
@@ -3121,7 +3121,7 @@ DIRECT (Photo_extractGreen)
 	LOOP {
 		iam (Photo);
 		autoMatrix thee = Data_copy (my d_green);
-		praat_new (thee.transfer(), my name, L"_green");
+		praat_new (thee.transfer(), my name, U"_green");
 	}
 END
 
@@ -3129,7 +3129,7 @@ DIRECT (Photo_extractRed)
 	LOOP {
 		iam (Photo);
 		autoMatrix thee = Data_copy (my d_red);
-		praat_new (thee.transfer(), my name, L"_red");
+		praat_new (thee.transfer(), my name, U"_red");
 	}
 END
 
@@ -3137,20 +3137,20 @@ DIRECT (Photo_extractTransparency)
 	LOOP {
 		iam (Photo);
 		autoMatrix thee = Data_copy (my d_transparency);
-		praat_new (thee.transfer(), my name, L"_transparency");
+		praat_new (thee.transfer(), my name, U"_transparency");
 	}
 END
 
-FORM (Photo_formula_red, L"Photo Formula (red)", L"Formula (red)...")
-	LABEL (L"label", L"y := y1; for row := 1 to nrow do { x := x1; "
+FORM (Photo_formula_red, U"Photo Formula (red)", U"Formula (red)...")
+	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
-	TEXTFIELD (L"formula", L"self")
+	TEXTFIELD (U"formula", U"self")
 	OK
 DO
 	LOOP {
 		iam (Photo);
 		try {
-			Matrix_formula (my d_red, GET_STRING (L"formula"), interpreter, NULL);
+			Matrix_formula (my d_red, GET_STRING (U"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Photo may have partially changed
@@ -3159,16 +3159,16 @@ DO
 	}
 END
 
-FORM (Photo_formula_green, L"Photo Formula (green)", L"Formula (green)...")
-	LABEL (L"label", L"y := y1; for row := 1 to nrow do { x := x1; "
+FORM (Photo_formula_green, U"Photo Formula (green)", U"Formula (green)...")
+	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
-	TEXTFIELD (L"formula", L"self")
+	TEXTFIELD (U"formula", U"self")
 	OK
 DO
 	LOOP {
 		iam (Photo);
 		try {
-			Matrix_formula (my d_green, GET_STRING (L"formula"), interpreter, NULL);
+			Matrix_formula (my d_green, GET_STRING (U"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Photo may have partially changed
@@ -3177,16 +3177,16 @@ DO
 	}
 END
 
-FORM (Photo_formula_blue, L"Photo Formula (blue)", L"Formula (blue)...")
-	LABEL (L"label", L"y := y1; for row := 1 to nrow do { x := x1; "
+FORM (Photo_formula_blue, U"Photo Formula (blue)", U"Formula (blue)...")
+	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
-	TEXTFIELD (L"formula", L"self")
+	TEXTFIELD (U"formula", U"self")
 	OK
 DO
 	LOOP {
 		iam (Photo);
 		try {
-			Matrix_formula (my d_blue, GET_STRING (L"formula"), interpreter, NULL);
+			Matrix_formula (my d_blue, GET_STRING (U"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Photo may have partially changed
@@ -3195,16 +3195,16 @@ DO
 	}
 END
 
-FORM (Photo_formula_transparency, L"Photo Formula (transparency)", L"Formula (transparency)...")
-	LABEL (L"label", L"y := y1; for row := 1 to nrow do { x := x1; "
+FORM (Photo_formula_transparency, U"Photo Formula (transparency)", U"Formula (transparency)...")
+	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
-	TEXTFIELD (L"formula", L"self")
+	TEXTFIELD (U"formula", U"self")
 	OK
 DO
 	LOOP {
 		iam (Photo);
 		try {
-			Matrix_formula (my d_transparency, GET_STRING (L"formula"), interpreter, NULL);
+			Matrix_formula (my d_transparency, GET_STRING (U"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Photo may have partially changed
@@ -3213,86 +3213,86 @@ DO
 	}
 END
 
-FORM (Photo_paintCells, L"Photo: Paint cells with colour", L"Photo: Paint cells...")
-	REAL (L"From x =", L"0.0")
-	REAL (L"To x =", L"0.0")
-	REAL (L"From y =", L"0.0")
-	REAL (L"To y =", L"0.0")
+FORM (Photo_paintCells, U"Photo: Paint cells with colour", U"Photo: Paint cells...")
+	REAL (U"From x =", U"0.0")
+	REAL (U"To x =", U"0.0")
+	REAL (U"From y =", U"0.0")
+	REAL (U"To y =", U"0.0")
 	OK
 DO
 	LOOP {
 		iam (Photo);
 		autoPraatPicture picture;
 		Photo_paintCells (me, GRAPHICS,
-			GET_REAL (L"From x ="), GET_REAL (L"To x ="), GET_REAL (L"From y ="), GET_REAL (L"To y ="));
+			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="));
 	}
 END
 
-FORM (Photo_paintImage, L"Photo: Paint colour image", 0)
-	REAL (L"From x =", L"0.0")
-	REAL (L"To x =", L"0.0")
-	REAL (L"From y =", L"0.0")
-	REAL (L"To y =", L"0.0")
+FORM (Photo_paintImage, U"Photo: Paint colour image", 0)
+	REAL (U"From x =", U"0.0")
+	REAL (U"To x =", U"0.0")
+	REAL (U"From y =", U"0.0")
+	REAL (U"To y =", U"0.0")
 	OK
 DO
 	LOOP {
 		iam (Photo);
 		autoPraatPicture picture;
 		Photo_paintImage (me, GRAPHICS,
-			GET_REAL (L"From x ="), GET_REAL (L"To x ="), GET_REAL (L"From y ="), GET_REAL (L"To y ="));
+			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="));
 	}
 END
 
-FORM_WRITE (Photo_saveAsAppleIconFile, L"Save as Apple icon file", 0, L"icns")
+FORM_WRITE (Photo_saveAsAppleIconFile, U"Save as Apple icon file", 0, U"icns")
 	LOOP {
 		iam (Photo);
 		Photo_saveAsAppleIconFile (me, file);
 	}
 END
 
-FORM_WRITE (Photo_saveAsGIF, L"Save as GIF file", 0, L"gif")
+FORM_WRITE (Photo_saveAsGIF, U"Save as GIF file", 0, U"gif")
 	LOOP {
 		iam (Photo);
 		Photo_saveAsGIF (me, file);
 	}
 END
 
-FORM_WRITE (Photo_saveAsJPEG, L"Save as JPEG file", 0, L"jpg")
+FORM_WRITE (Photo_saveAsJPEG, U"Save as JPEG file", 0, U"jpg")
 	LOOP {
 		iam (Photo);
 		Photo_saveAsJPEG (me, file);
 	}
 END
 
-FORM_WRITE (Photo_saveAsJPEG2000, L"Save as JPEG-2000 file", 0, L"jpg")
+FORM_WRITE (Photo_saveAsJPEG2000, U"Save as JPEG-2000 file", 0, U"jpg")
 	LOOP {
 		iam (Photo);
 		Photo_saveAsJPEG2000 (me, file);
 	}
 END
 
-FORM_WRITE (Photo_saveAsPNG, L"Save as PNG file", 0, L"png")
+FORM_WRITE (Photo_saveAsPNG, U"Save as PNG file", 0, U"png")
 	LOOP {
 		iam (Photo);
 		Photo_saveAsPNG (me, file);
 	}
 END
 
-FORM_WRITE (Photo_saveAsTIFF, L"Save as TIFF file", 0, L"tiff")
+FORM_WRITE (Photo_saveAsTIFF, U"Save as TIFF file", 0, U"tiff")
 	LOOP {
 		iam (Photo);
 		Photo_saveAsTIFF (me, file);
 	}
 END
 
-FORM_WRITE (Photo_saveAsWindowsBitmapFile, L"Save as Windows bitmap file", 0, L"bmp")
+FORM_WRITE (Photo_saveAsWindowsBitmapFile, U"Save as Windows bitmap file", 0, U"bmp")
 	LOOP {
 		iam (Photo);
 		Photo_saveAsWindowsBitmapFile (me, file);
 	}
 END
 
-FORM_WRITE (Photo_saveAsWindowsIconFile, L"Save as Windows icon file", 0, L"ico")
+FORM_WRITE (Photo_saveAsWindowsIconFile, U"Save as Windows icon file", 0, U"ico")
 	LOOP {
 		iam (Photo);
 		Photo_saveAsWindowsIconFile (me, file);
@@ -3333,7 +3333,7 @@ END
 
 DIRECT (Pitch_getNumberOfVoicedFrames)
 	Pitch me = FIRST (Pitch);
-	Melder_information (Melder_integer (Pitch_countVoicedFrames (me)), L" voiced frames");
+	Melder_information (Pitch_countVoicedFrames (me), U" voiced frames");
 END
 
 DIRECT (Pitch_difference)
@@ -3342,11 +3342,11 @@ DIRECT (Pitch_difference)
 	Pitch_difference (pit1, pit2);
 END
 
-FORM (Pitch_draw, L"Pitch: Draw", L"Pitch: Draw...")
+FORM (Pitch_draw, U"Pitch: Draw", U"Pitch: Draw...")
 	praat_dia_timeRange (dia);
-	REAL (STRING_FROM_FREQUENCY_HZ, L"0.0")
-	POSITIVE (STRING_TO_FREQUENCY_HZ, L"500.0")
-	BOOLEAN (L"Garnish", 1)
+	REAL (STRING_FROM_FREQUENCY_HZ, U"0.0")
+	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
+	BOOLEAN (U"Garnish", 1)
 	OK
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
@@ -3354,16 +3354,16 @@ DO
 		iam (Pitch);
 		autoPraatPicture picture;
 		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax,
-			GET_INTEGER (L"Garnish"), Pitch_speckle_NO, kPitch_unit_HERTZ);
+			GET_INTEGER (U"Garnish"), Pitch_speckle_NO, kPitch_unit_HERTZ);
 	}
 END
 
-FORM (Pitch_drawErb, L"Pitch: Draw erb", L"Pitch: Draw...")
-	REAL (STRING_FROM_TIME_SECONDS, L"0.0")
-	REAL (STRING_TO_TIME_SECONDS, L"0.0 (= all)")
-	REAL (L"left Frequency range (ERB)", L"0")
-	REAL (L"right Frequency range (ERB)", L"10.0")
-	BOOLEAN (L"Garnish", 1)
+FORM (Pitch_drawErb, U"Pitch: Draw erb", U"Pitch: Draw...")
+	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
+	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
+	REAL (U"left Frequency range (ERB)", U"0")
+	REAL (U"right Frequency range (ERB)", U"10.0")
+	BOOLEAN (U"Garnish", 1)
 	OK
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
@@ -3371,16 +3371,16 @@ DO
 		iam (Pitch);
 		autoPraatPicture picture;
 		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax,
-			GET_INTEGER (L"Garnish"), Pitch_speckle_NO, kPitch_unit_ERB);
+			GET_INTEGER (U"Garnish"), Pitch_speckle_NO, kPitch_unit_ERB);
 	}
 END
 
-FORM (Pitch_drawLogarithmic, L"Pitch: Draw logarithmic", L"Pitch: Draw...")
-	REAL (STRING_FROM_TIME_SECONDS, L"0.0")
-	REAL (STRING_TO_TIME_SECONDS, L"0.0 (= all)")
-	POSITIVE (STRING_FROM_FREQUENCY_HZ, L"50.0")
-	POSITIVE (STRING_TO_FREQUENCY_HZ, L"500.0")
-	BOOLEAN (L"Garnish", 1)
+FORM (Pitch_drawLogarithmic, U"Pitch: Draw logarithmic", U"Pitch: Draw...")
+	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
+	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
+	POSITIVE (STRING_FROM_FREQUENCY_HZ, U"50.0")
+	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
+	BOOLEAN (U"Garnish", 1)
 	OK
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
@@ -3388,16 +3388,16 @@ DO
 		iam (Pitch);
 		autoPraatPicture picture;
 		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax,
-			GET_INTEGER (L"Garnish"), Pitch_speckle_NO, kPitch_unit_HERTZ_LOGARITHMIC);
+			GET_INTEGER (U"Garnish"), Pitch_speckle_NO, kPitch_unit_HERTZ_LOGARITHMIC);
 	}
 END
 
-FORM (Pitch_drawMel, L"Pitch: Draw mel", L"Pitch: Draw...")
-	REAL (STRING_FROM_TIME_SECONDS, L"0.0")
-	REAL (STRING_TO_TIME_SECONDS, L"0.0 (= all)")
-	REAL (L"left Frequency range (mel)", L"0.0")
-	REAL (L"right Frequency range (mel)", L"500.0")
-	BOOLEAN (L"Garnish", 1)
+FORM (Pitch_drawMel, U"Pitch: Draw mel", U"Pitch: Draw...")
+	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
+	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
+	REAL (U"left Frequency range (mel)", U"0.0")
+	REAL (U"right Frequency range (mel)", U"500.0")
+	BOOLEAN (U"Garnish", 1)
 	OK
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
@@ -3405,17 +3405,17 @@ DO
 		iam (Pitch);
 		autoPraatPicture picture;
 		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax,
-			GET_INTEGER (L"Garnish"), Pitch_speckle_NO, kPitch_unit_MEL);
+			GET_INTEGER (U"Garnish"), Pitch_speckle_NO, kPitch_unit_MEL);
 	}
 END
 
-FORM (Pitch_drawSemitones100, L"Pitch: Draw semitones (re 100 Hz)", L"Pitch: Draw...")
-	REAL (STRING_FROM_TIME_SECONDS, L"0.0")
-	REAL (STRING_TO_TIME_SECONDS, L"0.0 (= all)")
-	LABEL (L"", L"Range in semitones re 100 Hz:")
-	REAL (L"left Frequency range (st)", L"-12.0")
-	REAL (L"right Frequency range (st)", L"30.0")
-	BOOLEAN (L"Garnish", 1)
+FORM (Pitch_drawSemitones100, U"Pitch: Draw semitones (re 100 Hz)", U"Pitch: Draw...")
+	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
+	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
+	LABEL (U"", U"Range in semitones re 100 Hz:")
+	REAL (U"left Frequency range (st)", U"-12.0")
+	REAL (U"right Frequency range (st)", U"30.0")
+	BOOLEAN (U"Garnish", 1)
 	OK
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
@@ -3423,17 +3423,17 @@ DO
 		iam (Pitch);
 		autoPraatPicture picture;
 		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax,
-			GET_INTEGER (L"Garnish"), Pitch_speckle_NO, kPitch_unit_SEMITONES_100);
+			GET_INTEGER (U"Garnish"), Pitch_speckle_NO, kPitch_unit_SEMITONES_100);
 	}
 END
 
-FORM (Pitch_drawSemitones200, L"Pitch: Draw semitones (re 200 Hz)", L"Pitch: Draw...")
-	REAL (STRING_FROM_TIME_SECONDS, L"0.0")
-	REAL (STRING_TO_TIME_SECONDS, L"0.0 (= all)")
-	LABEL (L"", L"Range in semitones re 200 Hz:")
-	REAL (L"left Frequency range (st)", L"-24.0")
-	REAL (L"right Frequency range (st)", L"18.0")
-	BOOLEAN (L"Garnish", 1)
+FORM (Pitch_drawSemitones200, U"Pitch: Draw semitones (re 200 Hz)", U"Pitch: Draw...")
+	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
+	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
+	LABEL (U"", U"Range in semitones re 200 Hz:")
+	REAL (U"left Frequency range (st)", U"-24.0")
+	REAL (U"right Frequency range (st)", U"18.0")
+	BOOLEAN (U"Garnish", 1)
 	OK
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
@@ -3441,17 +3441,17 @@ DO
 		iam (Pitch);
 		autoPraatPicture picture;
 		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax,
-			GET_INTEGER (L"Garnish"), Pitch_speckle_NO, kPitch_unit_SEMITONES_200);
+			GET_INTEGER (U"Garnish"), Pitch_speckle_NO, kPitch_unit_SEMITONES_200);
 	}
 END
 
-FORM (Pitch_drawSemitones440, L"Pitch: Draw semitones (re 440 Hz)", L"Pitch: Draw...")
-	REAL (STRING_FROM_TIME_SECONDS, L"0.0")
-	REAL (STRING_TO_TIME_SECONDS, L"0.0 (= all)")
-	LABEL (L"", L"Range in semitones re 440 Hz:")
-	REAL (L"left Frequency range (st)", L"-36.0")
-	REAL (L"right Frequency range (st)", L"6.0")
-	BOOLEAN (L"Garnish", 1)
+FORM (Pitch_drawSemitones440, U"Pitch: Draw semitones (re 440 Hz)", U"Pitch: Draw...")
+	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
+	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
+	LABEL (U"", U"Range in semitones re 440 Hz:")
+	REAL (U"left Frequency range (st)", U"-36.0")
+	REAL (U"right Frequency range (st)", U"6.0")
+	BOOLEAN (U"Garnish", 1)
 	OK
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
@@ -3459,12 +3459,12 @@ DO
 		iam (Pitch);
 		autoPraatPicture picture;
 		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax,
-			GET_INTEGER (L"Garnish"), Pitch_speckle_NO, kPitch_unit_SEMITONES_440);
+			GET_INTEGER (U"Garnish"), Pitch_speckle_NO, kPitch_unit_SEMITONES_440);
 	}
 END
 
 DIRECT (Pitch_edit)
-	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot view or edit a Pitch from batch.");
+	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a Pitch from batch.");
 	LOOP {
 		iam (Pitch);
 		autoPitchEditor editor = PitchEditor_create (ID_AND_FULL_NAME, me);
@@ -3472,15 +3472,15 @@ DIRECT (Pitch_edit)
 	}
 END
 
-FORM (Pitch_formula, L"Pitch: Formula", L"Formula...")
-	LABEL (L"", L"x = time; col = frame; row = candidate (1 = current path); frequency (time, candidate) :=")
-	TEXTFIELD (L"formula", L"self*2; Example: octave jump up")
+FORM (Pitch_formula, U"Pitch: Formula", U"Formula...")
+	LABEL (U"", U"x = time; col = frame; row = candidate (1 = current path); frequency (time, candidate) :=")
+	TEXTFIELD (U"formula", U"self*2; Example: octave jump up")
 	OK
 DO
 	LOOP {
 		iam (Pitch);
 		try {
-			Pitch_formula (me, GET_STRING (L"formula"), interpreter);
+			Pitch_formula (me, GET_STRING (U"formula"), interpreter);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Pitch may have partially changed
@@ -3489,50 +3489,50 @@ DO
 	}
 END
 
-FORM (Pitch_getMaximum, L"Pitch: Get maximum", 0)
+FORM (Pitch_getMaximum, U"Pitch: Get maximum", 0)
 	praat_dia_timeRange (dia);
-	OPTIONMENU_ENUM (L"Unit", kPitch_unit, DEFAULT)
-	RADIO (L"Interpolation", 2)
-	RADIOBUTTON (L"None")
-	RADIOBUTTON (L"Parabolic")
+	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
+	RADIO (U"Interpolation", 2)
+		RADIOBUTTON (U"None")
+		RADIOBUTTON (U"Parabolic")
 	OK
 DO
-	enum kPitch_unit unit = GET_ENUM (kPitch_unit, L"Unit");
+	enum kPitch_unit unit = GET_ENUM (kPitch_unit, U"Unit");
 	Pitch me = FIRST (Pitch);
-	double value = Pitch_getMaximum (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), unit, GET_INTEGER (L"Interpolation") - 1);
+	double value = Pitch_getMaximum (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), unit, GET_INTEGER (U"Interpolation") - 1);
 	value = Function_convertToNonlogarithmic (me, value, Pitch_LEVEL_FREQUENCY, unit);
 	Melder_informationReal (value, Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
 END
 
-FORM (Pitch_getMean, L"Pitch: Get mean", 0)
+FORM (Pitch_getMean, U"Pitch: Get mean", 0)
 	praat_dia_timeRange (dia);
-	OPTIONMENU_ENUM (L"Unit", kPitch_unit, DEFAULT)
+	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
 	OK
 DO
-	enum kPitch_unit unit = GET_ENUM (kPitch_unit, L"Unit");
+	enum kPitch_unit unit = GET_ENUM (kPitch_unit, U"Unit");
 	Pitch me = FIRST (Pitch);
-	double value = Pitch_getMean (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), unit);
+	double value = Pitch_getMean (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), unit);
 	value = Function_convertToNonlogarithmic (me, value, Pitch_LEVEL_FREQUENCY, unit);
 	Melder_informationReal (value, Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
 END
 
-FORM (Pitch_getMeanAbsoluteSlope, L"Pitch: Get mean absolute slope", 0)
-	RADIO (L"Unit", 1)
-		RADIOBUTTON (L"Hertz")
-		RADIOBUTTON (L"Mel")
-		RADIOBUTTON (L"Semitones")
-		RADIOBUTTON (L"ERB")
+FORM (Pitch_getMeanAbsoluteSlope, U"Pitch: Get mean absolute slope", 0)
+	RADIO (U"Unit", 1)
+		RADIOBUTTON (U"Hertz")
+		RADIOBUTTON (U"Mel")
+		RADIOBUTTON (U"Semitones")
+		RADIOBUTTON (U"ERB")
 	OK
 DO
-	int unit = GET_INTEGER (L"Unit");
+	int unit = GET_INTEGER (U"Unit");
 	Pitch me = FIRST (Pitch);
 	double slope;
 	long nVoiced = (unit == 1 ? Pitch_getMeanAbsSlope_hertz : unit == 2 ? Pitch_getMeanAbsSlope_mel : unit == 3 ? Pitch_getMeanAbsSlope_semitones : Pitch_getMeanAbsSlope_erb)
 		(me, & slope);
 	if (nVoiced < 2) {
-		Melder_information (L"--undefined--");
+		Melder_information (U"--undefined--");
 	} else {
-		Melder_information (Melder_double (slope), L" ", GET_STRING (L"Unit"), L"/s");
+		Melder_information (slope, U" ", GET_STRING (U"Unit"), U"/s");
 	}
 END
 
@@ -3540,50 +3540,50 @@ DIRECT (Pitch_getMeanAbsSlope_noOctave)
 	Pitch me = FIRST (Pitch);
 	double slope;
 	(void) Pitch_getMeanAbsSlope_noOctave (me, & slope);
-	Melder_informationReal (slope, L"Semitones/s");
+	Melder_informationReal (slope, U"Semitones/s");
 END
 
-FORM (Pitch_getMinimum, L"Pitch: Get minimum", 0)
+FORM (Pitch_getMinimum, U"Pitch: Get minimum", 0)
 	praat_dia_timeRange (dia);
-	OPTIONMENU_ENUM (L"Unit", kPitch_unit, DEFAULT)
-	RADIO (L"Interpolation", 2)
-	RADIOBUTTON (L"None")
-	RADIOBUTTON (L"Parabolic")
+	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
+	RADIO (U"Interpolation", 2)
+		RADIOBUTTON (U"None")
+		RADIOBUTTON (U"Parabolic")
 	OK
 DO
-	enum kPitch_unit unit = GET_ENUM (kPitch_unit, L"Unit");
+	enum kPitch_unit unit = GET_ENUM (kPitch_unit, U"Unit");
 	Pitch me = FIRST (Pitch);
-	double value = Sampled_getMinimum (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-		Pitch_LEVEL_FREQUENCY, unit, GET_INTEGER (L"Interpolation") - 1);
+	double value = Sampled_getMinimum (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+		Pitch_LEVEL_FREQUENCY, unit, GET_INTEGER (U"Interpolation") - 1);
 	value = Function_convertToNonlogarithmic (me, value, Pitch_LEVEL_FREQUENCY, unit);
 	Melder_informationReal (value, Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
 END
 
-FORM (Pitch_getQuantile, L"Pitch: Get quantile", 0)
+FORM (Pitch_getQuantile, U"Pitch: Get quantile", 0)
 	praat_dia_timeRange (dia);
-	REAL (L"Quantile", L"0.50 (= median)")
-	OPTIONMENU_ENUM (L"Unit", kPitch_unit, DEFAULT)
+	REAL (U"Quantile", U"0.50 (= median)")
+	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
 	OK
 DO
-	enum kPitch_unit unit = GET_ENUM (kPitch_unit, L"Unit");
+	enum kPitch_unit unit = GET_ENUM (kPitch_unit, U"Unit");
 	Pitch me = FIRST (Pitch);
-	double value = Sampled_getQuantile (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-		GET_REAL (L"Quantile"), Pitch_LEVEL_FREQUENCY, unit);
+	double value = Sampled_getQuantile (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+		GET_REAL (U"Quantile"), Pitch_LEVEL_FREQUENCY, unit);
 	value = Function_convertToNonlogarithmic (me, value, Pitch_LEVEL_FREQUENCY, unit);
 	Melder_informationReal (value, Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
 END
 
-FORM (Pitch_getStandardDeviation, L"Pitch: Get standard deviation", 0)
+FORM (Pitch_getStandardDeviation, U"Pitch: Get standard deviation", 0)
 	praat_dia_timeRange (dia);
-	OPTIONMENU (L"Unit", 1)
-		OPTION (L"Hertz")
-		OPTION (L"mel")
-		OPTION (L"logHertz")
-		OPTION (L"semitones")
-		OPTION (L"ERB")
+	OPTIONMENU (U"Unit", 1)
+		OPTION (U"Hertz")
+		OPTION (U"mel")
+		OPTION (U"logHertz")
+		OPTION (U"semitones")
+		OPTION (U"ERB")
 	OK
 DO
-	int unit = GET_INTEGER (L"Unit");
+	int unit = GET_INTEGER (U"Unit");
 	unit =
 		unit == 1 ? kPitch_unit_HERTZ :
 		unit == 2 ? kPitch_unit_MEL :
@@ -3591,74 +3591,74 @@ DO
 		unit == 4 ? kPitch_unit_SEMITONES_1 :
 		kPitch_unit_ERB;
 	Pitch me = FIRST (Pitch);
-	double value = Pitch_getStandardDeviation (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), unit);
-	const wchar_t *unitText =
-		unit == kPitch_unit_HERTZ ? L"Hz" :
-		unit == kPitch_unit_MEL ? L"mel" :
-		unit == kPitch_unit_LOG_HERTZ ? L"logHz" :
-		unit == kPitch_unit_SEMITONES_1 ? L"semitones" :
-		L"ERB";
+	double value = Pitch_getStandardDeviation (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), unit);
+	const char32 *unitText =
+		unit == kPitch_unit_HERTZ ? U"Hz" :
+		unit == kPitch_unit_MEL ? U"mel" :
+		unit == kPitch_unit_LOG_HERTZ ? U"logHz" :
+		unit == kPitch_unit_SEMITONES_1 ? U"semitones" :
+		U"ERB";
 	Melder_informationReal (value, unitText);
 END
 
-FORM (Pitch_getTimeOfMaximum, L"Pitch: Get time of maximum", 0)
+FORM (Pitch_getTimeOfMaximum, U"Pitch: Get time of maximum", 0)
 	praat_dia_timeRange (dia);
-	OPTIONMENU_ENUM (L"Unit", kPitch_unit, DEFAULT)
-	RADIO (L"Interpolation", 2)
-	RADIOBUTTON (L"None")
-	RADIOBUTTON (L"Parabolic")
+	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
+	RADIO (U"Interpolation", 2)
+		RADIOBUTTON (U"None")
+		RADIOBUTTON (U"Parabolic")
 	OK
 DO
 	Pitch me = FIRST (Pitch);
 	double time = Pitch_getTimeOfMaximum (me,
-		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-		GET_ENUM (kPitch_unit, L"Unit"), GET_INTEGER (L"Interpolation") - 1);
-	Melder_informationReal (time, L"seconds");
+		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+		GET_ENUM (kPitch_unit, U"Unit"), GET_INTEGER (U"Interpolation") - 1);
+	Melder_informationReal (time, U"seconds");
 END
 
-FORM (Pitch_getTimeOfMinimum, L"Pitch: Get time of minimum", 0)
+FORM (Pitch_getTimeOfMinimum, U"Pitch: Get time of minimum", 0)
 	praat_dia_timeRange (dia);
-	OPTIONMENU_ENUM (L"Unit", kPitch_unit, DEFAULT)
-	RADIO (L"Interpolation", 2)
-	RADIOBUTTON (L"None")
-	RADIOBUTTON (L"Parabolic")
+	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
+	RADIO (U"Interpolation", 2)
+		RADIOBUTTON (U"None")
+		RADIOBUTTON (U"Parabolic")
 	OK
 DO
 	Pitch me = FIRST (Pitch);
 	double time = Pitch_getTimeOfMinimum (me,
-		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-		GET_ENUM (kPitch_unit, L"Unit"), GET_INTEGER (L"Interpolation") - 1);
-	Melder_informationReal (time, L"seconds");
+		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+		GET_ENUM (kPitch_unit, U"Unit"), GET_INTEGER (U"Interpolation") - 1);
+	Melder_informationReal (time, U"seconds");
 END
 
-FORM (Pitch_getValueAtTime, L"Pitch: Get value at time", L"Pitch: Get value at time...")
-	REAL (L"Time (s)", L"0.5")
-	OPTIONMENU_ENUM (L"Unit", kPitch_unit, DEFAULT)
-	RADIO (L"Interpolation", 2)
-	RADIOBUTTON (L"Nearest")
-	RADIOBUTTON (L"Linear")
+FORM (Pitch_getValueAtTime, U"Pitch: Get value at time", U"Pitch: Get value at time...")
+	REAL (U"Time (s)", U"0.5")
+	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
+	RADIO (U"Interpolation", 2)
+		RADIOBUTTON (U"Nearest")
+		RADIOBUTTON (U"Linear")
 	OK
 DO
-	enum kPitch_unit unit = GET_ENUM (kPitch_unit, L"Unit");
+	enum kPitch_unit unit = GET_ENUM (kPitch_unit, U"Unit");
 	Pitch me = FIRST (Pitch);
-	double value = Sampled_getValueAtX (me, GET_REAL (L"Time"), Pitch_LEVEL_FREQUENCY, unit, GET_INTEGER (L"Interpolation") - 1);
+	double value = Sampled_getValueAtX (me, GET_REAL (U"Time"), Pitch_LEVEL_FREQUENCY, unit, GET_INTEGER (U"Interpolation") - 1);
 	value = Function_convertToNonlogarithmic (me, value, Pitch_LEVEL_FREQUENCY, unit);
 	Melder_informationReal (value, Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
 END
 	
-FORM (Pitch_getValueInFrame, L"Pitch: Get value in frame", L"Pitch: Get value in frame...")
-	INTEGER (L"Frame number", L"10")
-	OPTIONMENU_ENUM (L"Unit", kPitch_unit, DEFAULT)
+FORM (Pitch_getValueInFrame, U"Pitch: Get value in frame", U"Pitch: Get value in frame...")
+	INTEGER (U"Frame number", U"10")
+	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
 	OK
 DO
-	enum kPitch_unit unit = GET_ENUM (kPitch_unit, L"Unit");
+	enum kPitch_unit unit = GET_ENUM (kPitch_unit, U"Unit");
 	Pitch me = FIRST (Pitch);
-	double value = Sampled_getValueAtSample (me, GET_INTEGER (L"Frame number"), Pitch_LEVEL_FREQUENCY, unit);
+	double value = Sampled_getValueAtSample (me, GET_INTEGER (U"Frame number"), Pitch_LEVEL_FREQUENCY, unit);
 	value = Function_convertToNonlogarithmic (me, value, Pitch_LEVEL_FREQUENCY, unit);
 	Melder_informationReal (value, Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
 END
 
-DIRECT (Pitch_help) Melder_help (L"Pitch"); END
+DIRECT (Pitch_help) Melder_help (U"Pitch"); END
 
 DIRECT (Pitch_hum)
 	LOOP {
@@ -3690,144 +3690,144 @@ DIRECT (Pitch_play)
 	}
 END
 
-FORM (Pitch_smooth, L"Pitch: Smooth", L"Pitch: Smooth...")
-	REAL (L"Bandwidth (Hz)", L"10.0")
+FORM (Pitch_smooth, U"Pitch: Smooth", U"Pitch: Smooth...")
+	REAL (U"Bandwidth (Hz)", U"10.0")
 	OK
 DO
 	LOOP {
 		iam (Pitch);
-		autoPitch thee = Pitch_smooth (me, GET_REAL (L"Bandwidth"));
+		autoPitch thee = Pitch_smooth (me, GET_REAL (U"Bandwidth"));
 		praat_new (thee.transfer(), my name);
 	}
 END
 
-FORM (Pitch_speckle, L"Pitch: Speckle", L"Pitch: Draw...")
-	REAL (STRING_FROM_TIME_SECONDS, L"0.0")
-	REAL (STRING_TO_TIME_SECONDS, L"0.0 (= all)")
-	REAL (STRING_FROM_FREQUENCY_HZ, L"0.0")
-	POSITIVE (STRING_TO_FREQUENCY_HZ, L"500.0")
-	BOOLEAN (L"Garnish", 1)
+FORM (Pitch_speckle, U"Pitch: Speckle", U"Pitch: Draw...")
+	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
+	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
+	REAL (STRING_FROM_FREQUENCY_HZ, U"0.0")
+	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
+	BOOLEAN (U"Garnish", 1)
 	OK
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	LOOP {
 		iam (Pitch);
 		autoPraatPicture picture;
-		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax, GET_INTEGER (L"Garnish"), Pitch_speckle_YES, kPitch_unit_HERTZ);
+		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax, GET_INTEGER (U"Garnish"), Pitch_speckle_YES, kPitch_unit_HERTZ);
 	}
 END
 
-FORM (Pitch_speckleErb, L"Pitch: Speckle erb", L"Pitch: Draw...")
-	REAL (STRING_FROM_TIME_SECONDS, L"0.0")
-	REAL (STRING_TO_TIME_SECONDS, L"0.0 (= all)")
-	REAL (L"left Frequency range (ERB)", L"0")
-	REAL (L"right Frequency range (ERB)", L"10.0")
-	BOOLEAN (L"Garnish", 1)
+FORM (Pitch_speckleErb, U"Pitch: Speckle erb", U"Pitch: Draw...")
+	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
+	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
+	REAL (U"left Frequency range (ERB)", U"0")
+	REAL (U"right Frequency range (ERB)", U"10.0")
+	BOOLEAN (U"Garnish", 1)
 	OK
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	LOOP {
 		iam (Pitch);
 		autoPraatPicture picture;
-		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax, GET_INTEGER (L"Garnish"), Pitch_speckle_YES, kPitch_unit_ERB);
+		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax, GET_INTEGER (U"Garnish"), Pitch_speckle_YES, kPitch_unit_ERB);
 	}
 END
 
-FORM (Pitch_speckleLogarithmic, L"Pitch: Speckle logarithmic", L"Pitch: Draw...")
-	REAL (STRING_FROM_TIME_SECONDS, L"0.0")
-	REAL (STRING_TO_TIME_SECONDS, L"0.0 (= all)")
-	POSITIVE (STRING_FROM_FREQUENCY_HZ, L"50.0")
-	POSITIVE (STRING_TO_FREQUENCY_HZ, L"500.0")
-	BOOLEAN (L"Garnish", 1)
+FORM (Pitch_speckleLogarithmic, U"Pitch: Speckle logarithmic", U"Pitch: Draw...")
+	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
+	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
+	POSITIVE (STRING_FROM_FREQUENCY_HZ, U"50.0")
+	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
+	BOOLEAN (U"Garnish", 1)
 	OK
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	LOOP {
 		iam (Pitch);
 		autoPraatPicture picture;
-		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax, GET_INTEGER (L"Garnish"), Pitch_speckle_YES, kPitch_unit_HERTZ_LOGARITHMIC);
+		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax, GET_INTEGER (U"Garnish"), Pitch_speckle_YES, kPitch_unit_HERTZ_LOGARITHMIC);
 	}
 END
 
-FORM (Pitch_speckleMel, L"Pitch: Speckle mel", L"Pitch: Draw...")
-	REAL (STRING_FROM_TIME_SECONDS, L"0.0")
-	REAL (STRING_TO_TIME_SECONDS, L"0.0 (= all)")
-	REAL (L"left Frequency range (mel)", L"0")
-	REAL (L"right Frequency range (mel)", L"500")
-	BOOLEAN (L"Garnish", 1)
+FORM (Pitch_speckleMel, U"Pitch: Speckle mel", U"Pitch: Draw...")
+	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
+	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
+	REAL (U"left Frequency range (mel)", U"0")
+	REAL (U"right Frequency range (mel)", U"500")
+	BOOLEAN (U"Garnish", 1)
 	OK
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	LOOP {
 		iam (Pitch);
 		autoPraatPicture picture;
-		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax, GET_INTEGER (L"Garnish"), Pitch_speckle_YES, kPitch_unit_MEL);
+		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax, GET_INTEGER (U"Garnish"), Pitch_speckle_YES, kPitch_unit_MEL);
 	}
 END
 
-FORM (Pitch_speckleSemitones100, L"Pitch: Speckle semitones (re 100 Hz)", L"Pitch: Draw...")
-	REAL (STRING_FROM_TIME_SECONDS, L"0.0")
-	REAL (STRING_TO_TIME_SECONDS, L"0.0 (= all)")
-	LABEL (L"", L"Range in semitones re 100 hertz:")
-	REAL (L"left Frequency range (st)", L"-12.0")
-	REAL (L"right Frequency range (st)", L"30.0")
-	BOOLEAN (L"Garnish", 1)
+FORM (Pitch_speckleSemitones100, U"Pitch: Speckle semitones (re 100 Hz)", U"Pitch: Draw...")
+	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
+	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
+	LABEL (U"", U"Range in semitones re 100 hertz:")
+	REAL (U"left Frequency range (st)", U"-12.0")
+	REAL (U"right Frequency range (st)", U"30.0")
+	BOOLEAN (U"Garnish", 1)
 	OK
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	LOOP {
 		iam (Pitch);
 		autoPraatPicture picture;
-		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax, GET_INTEGER (L"Garnish"), Pitch_speckle_YES, kPitch_unit_SEMITONES_100);
+		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax, GET_INTEGER (U"Garnish"), Pitch_speckle_YES, kPitch_unit_SEMITONES_100);
 	}
 END
 
-FORM (Pitch_speckleSemitones200, L"Pitch: Speckle semitones (re 200 Hz)", L"Pitch: Draw...")
-	REAL (STRING_FROM_TIME_SECONDS, L"0.0")
-	REAL (STRING_TO_TIME_SECONDS, L"0.0 (= all)")
-	LABEL (L"", L"Range in semitones re 200 hertz:")
-	REAL (L"left Frequency range (st)", L"-24.0")
-	REAL (L"right Frequency range (st)", L"18.0")
-	BOOLEAN (L"Garnish", 1)
+FORM (Pitch_speckleSemitones200, U"Pitch: Speckle semitones (re 200 Hz)", U"Pitch: Draw...")
+	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
+	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
+	LABEL (U"", U"Range in semitones re 200 hertz:")
+	REAL (U"left Frequency range (st)", U"-24.0")
+	REAL (U"right Frequency range (st)", U"18.0")
+	BOOLEAN (U"Garnish", 1)
 	OK
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	LOOP {
 		iam (Pitch);
 		autoPraatPicture picture;
-		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax, GET_INTEGER (L"Garnish"), Pitch_speckle_YES, kPitch_unit_SEMITONES_200);
+		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax, GET_INTEGER (U"Garnish"), Pitch_speckle_YES, kPitch_unit_SEMITONES_200);
 	}
 END
 
-FORM (Pitch_speckleSemitones440, L"Pitch: Speckle semitones (re 440 Hz)", L"Pitch: Draw...")
-	REAL (STRING_FROM_TIME_SECONDS, L"0.0")
-	REAL (STRING_TO_TIME_SECONDS, L"0.0 (= all)")
-	LABEL (L"", L"Range in semitones re 440 hertz:")
-	REAL (L"left Frequency range (st)", L"-36.0")
-	REAL (L"right Frequency range (st)", L"6.0")
-	BOOLEAN (L"Garnish", 1)
+FORM (Pitch_speckleSemitones440, U"Pitch: Speckle semitones (re 440 Hz)", U"Pitch: Draw...")
+	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
+	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
+	LABEL (U"", U"Range in semitones re 440 hertz:")
+	REAL (U"left Frequency range (st)", U"-36.0")
+	REAL (U"right Frequency range (st)", U"6.0")
+	BOOLEAN (U"Garnish", 1)
 	OK
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	LOOP {
 		iam (Pitch);
 		autoPraatPicture picture;
-		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax, GET_INTEGER (L"Garnish"), Pitch_speckle_YES, kPitch_unit_SEMITONES_440);
+		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax, GET_INTEGER (U"Garnish"), Pitch_speckle_YES, kPitch_unit_SEMITONES_440);
 	}
 END
 
-FORM (Pitch_subtractLinearFit, L"Pitch: subtract linear fit", 0)
-	RADIO (L"Unit", 1)
-		RADIOBUTTON (L"Hertz")
-		RADIOBUTTON (L"Hertz (logarithmic)")
-		RADIOBUTTON (L"Mel")
-		RADIOBUTTON (L"Semitones")
-		RADIOBUTTON (L"ERB")
+FORM (Pitch_subtractLinearFit, U"Pitch: subtract linear fit", 0)
+	RADIO (U"Unit", 1)
+		RADIOBUTTON (U"Hertz")
+		RADIOBUTTON (U"Hertz (logarithmic)")
+		RADIOBUTTON (U"Mel")
+		RADIOBUTTON (U"Semitones")
+		RADIOBUTTON (U"ERB")
 	OK
 DO
 	LOOP {
 		iam (Pitch);
-		autoPitch thee = Pitch_subtractLinearFit (me, GET_INTEGER (L"Unit") - 1);
+		autoPitch thee = Pitch_subtractLinearFit (me, GET_INTEGER (U"Unit") - 1);
 		praat_new (thee.transfer(), my name);
 	}
 END
@@ -3880,28 +3880,28 @@ DIRECT (Pitch_to_Sound_hum)
 	}
 END
 
-FORM (Pitch_to_Sound_sine, L"Pitch: To Sound (sine)", 0)
-	POSITIVE (L"Sampling frequency (Hz)", L"44100")
-	RADIO (L"Cut voiceless stretches", 2)
-		OPTION (L"exactly")
-		OPTION (L"at nearest zero crossings")
+FORM (Pitch_to_Sound_sine, U"Pitch: To Sound (sine)", 0)
+	POSITIVE (U"Sampling frequency (Hz)", U"44100")
+	RADIO (U"Cut voiceless stretches", 2)
+		OPTION (U"exactly")
+		OPTION (U"at nearest zero crossings")
 	OK
 DO
 	LOOP {
 		iam (Pitch);
-		autoSound thee = Pitch_to_Sound_sine (me, 0, 0, GET_REAL (L"Sampling frequency"), GET_INTEGER (L"Cut voiceless stretches") - 1);
+		autoSound thee = Pitch_to_Sound_sine (me, 0, 0, GET_REAL (U"Sampling frequency"), GET_INTEGER (U"Cut voiceless stretches") - 1);
 		praat_new (thee.transfer(), my name);
 	}
 END
 
-FORM (Pitch_to_TextGrid, L"To TextGrid...", L"Pitch: To TextGrid...")
-	SENTENCE (L"Tier names", L"Mary John bell")
-	SENTENCE (L"Point tiers", L"bell")
+FORM (Pitch_to_TextGrid, U"To TextGrid...", U"Pitch: To TextGrid...")
+	SENTENCE (U"Tier names", U"Mary John bell")
+	SENTENCE (U"Point tiers", U"bell")
 	OK
 DO
 	LOOP {
 		iam (Pitch);
-		autoTextGrid thee = TextGrid_create (my xmin, my xmax, GET_STRING (L"Tier names"), GET_STRING (L"Point tiers"));
+		autoTextGrid thee = TextGrid_create (my xmin, my xmax, GET_STRING (U"Tier names"), GET_STRING (U"Point tiers"));
 		praat_new (thee.transfer(), my name);
 	}
 END
@@ -3916,58 +3916,58 @@ END
 
 /***** PITCH & PITCHTIER *****/
 
-FORM (old_PitchTier_Pitch_draw, L"PitchTier & Pitch: Draw", 0)
+FORM (old_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", 0)
 	praat_dia_timeRange (dia);
-	REAL (L"From frequency (Hz)", L"0.0")
-	REAL (L"To frequency (Hz)", L"500.0")
-	RADIO (L"Line type for non-periodic intervals", 2)
-		RADIOBUTTON (L"Normal")
-		RADIOBUTTON (L"Dotted")
-		RADIOBUTTON (L"Blank")
-	BOOLEAN (L"Garnish", 1)
+	REAL (U"From frequency (Hz)", U"0.0")
+	REAL (U"To frequency (Hz)", U"500.0")
+	RADIO (U"Line type for non-periodic intervals", 2)
+		RADIOBUTTON (U"Normal")
+		RADIOBUTTON (U"Dotted")
+		RADIOBUTTON (U"Blank")
+	BOOLEAN (U"Garnish", 1)
 	OK
 DO
 	PitchTier me = FIRST (PitchTier);
 	Pitch thee = FIRST (Pitch);
 	autoPraatPicture picture;
 	PitchTier_Pitch_draw (me, thee, GRAPHICS,
-		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-		GET_REAL (L"From frequency"), GET_REAL (L"To frequency"),
-		GET_INTEGER (L"Line type for non-periodic intervals") - 1,
-		GET_INTEGER (L"Garnish"), L"lines and speckles");
+		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+		GET_REAL (U"From frequency"), GET_REAL (U"To frequency"),
+		GET_INTEGER (U"Line type for non-periodic intervals") - 1,
+		GET_INTEGER (U"Garnish"), U"lines and speckles");
 END
 
-FORM (PitchTier_Pitch_draw, L"PitchTier & Pitch: Draw", 0)
+FORM (PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", 0)
 	praat_dia_timeRange (dia);
-	REAL (L"From frequency (Hz)", L"0.0")
-	REAL (L"To frequency (Hz)", L"500.0")
-	RADIO (L"Line type for non-periodic intervals", 2)
-		RADIOBUTTON (L"Normal")
-		RADIOBUTTON (L"Dotted")
-		RADIOBUTTON (L"Blank")
-	BOOLEAN (L"Garnish", 1)
-	LABEL (L"", L"")
-	OPTIONMENU (L"Drawing method", 1)
-		OPTION (L"lines")
-		OPTION (L"speckles")
-		OPTION (L"lines and speckles")
+	REAL (U"From frequency (Hz)", U"0.0")
+	REAL (U"To frequency (Hz)", U"500.0")
+	RADIO (U"Line type for non-periodic intervals", 2)
+		RADIOBUTTON (U"Normal")
+		RADIOBUTTON (U"Dotted")
+		RADIOBUTTON (U"Blank")
+	BOOLEAN (U"Garnish", 1)
+	LABEL (U"", U"")
+	OPTIONMENU (U"Drawing method", 1)
+		OPTION (U"lines")
+		OPTION (U"speckles")
+		OPTION (U"lines and speckles")
 	OK
 DO_ALTERNATIVE (old_PitchTier_Pitch_draw)
 	PitchTier me = FIRST (PitchTier);
 	Pitch thee = FIRST (Pitch);
 	autoPraatPicture picture;
 	PitchTier_Pitch_draw (me, thee, GRAPHICS,
-		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-		GET_REAL (L"From frequency"), GET_REAL (L"To frequency"),
-		GET_INTEGER (L"Line type for non-periodic intervals") - 1,
-		GET_INTEGER (L"Garnish"), GET_STRING (L"Drawing method"));
+		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+		GET_REAL (U"From frequency"), GET_REAL (U"To frequency"),
+		GET_INTEGER (U"Line type for non-periodic intervals") - 1,
+		GET_INTEGER (U"Garnish"), GET_STRING (U"Drawing method"));
 END
 
 DIRECT (Pitch_PitchTier_to_Pitch)
 	Pitch pitch = FIRST (Pitch);
 	PitchTier tier = FIRST (PitchTier);
 	autoPitch thee = Pitch_PitchTier_to_Pitch (pitch, tier);
-	praat_new (thee.transfer(), pitch -> name, L"_stylized");
+	praat_new (thee.transfer(), pitch -> name, U"_stylized");
 END
 
 /***** PITCH & POINTPROCESS *****/
@@ -3992,44 +3992,44 @@ DIRECT (Sound_Pitch_to_PointProcess_cc)
 	Sound sound = FIRST (Sound);
 	Pitch pitch = FIRST (Pitch);
 	autoPointProcess thee = Sound_Pitch_to_PointProcess_cc (sound, pitch);
-	praat_new (thee.transfer(), sound -> name, L"_", pitch -> name);
+	praat_new (thee.transfer(), sound -> name, U"_", pitch -> name);
 END
 
-FORM (Sound_Pitch_to_PointProcess_peaks, L"Sound & Pitch: To PointProcess (peaks)", 0)
-	BOOLEAN (L"Include maxima", 1)
-	BOOLEAN (L"Include minima", 0)
+FORM (Sound_Pitch_to_PointProcess_peaks, U"Sound & Pitch: To PointProcess (peaks)", 0)
+	BOOLEAN (U"Include maxima", 1)
+	BOOLEAN (U"Include minima", 0)
 	OK
 DO
 	Sound sound = FIRST (Sound);
 	Pitch pitch = FIRST (Pitch);
-	autoPointProcess thee = Sound_Pitch_to_PointProcess_peaks (sound, pitch, GET_INTEGER (L"Include maxima"), GET_INTEGER (L"Include minima"));
-	praat_new (thee.transfer(), sound -> name, L"_", pitch -> name);
+	autoPointProcess thee = Sound_Pitch_to_PointProcess_peaks (sound, pitch, GET_INTEGER (U"Include maxima"), GET_INTEGER (U"Include minima"));
+	praat_new (thee.transfer(), sound -> name, U"_", pitch -> name);
 END
 
 /***** PITCHTIER *****/
 
-FORM (PitchTier_addPoint, L"PitchTier: Add point", L"PitchTier: Add point...")
-	REAL (L"Time (s)", L"0.5")
-	REAL (L"Pitch (Hz)", L"200")
+FORM (PitchTier_addPoint, U"PitchTier: Add point", U"PitchTier: Add point...")
+	REAL (U"Time (s)", U"0.5")
+	REAL (U"Pitch (Hz)", U"200")
 	OK
 DO
 	LOOP {
 		iam (PitchTier);
-		RealTier_addPoint (me, GET_REAL (L"Time"), GET_REAL (L"Pitch"));
+		RealTier_addPoint (me, GET_REAL (U"Time"), GET_REAL (U"Pitch"));
 		praat_dataChanged (me);
 	}
 END
 
-FORM (PitchTier_create, L"Create empty PitchTier", NULL)
-	WORD (L"Name", L"empty")
-	REAL (L"Start time (s)", L"0.0")
-	REAL (L"End time (s)", L"1.0")
+FORM (PitchTier_create, U"Create empty PitchTier", NULL)
+	WORD (U"Name", U"empty")
+	REAL (U"Start time (s)", U"0.0")
+	REAL (U"End time (s)", U"1.0")
 	OK
 DO
-	double startTime = GET_REAL (L"Start time"), endTime = GET_REAL (L"End time");
-	if (endTime <= startTime) Melder_throw ("End time must be greater than start time.");
+	double startTime = GET_REAL (U"Start time"), endTime = GET_REAL (U"End time");
+	if (endTime <= startTime) Melder_throw (U"End time must be greater than start time.");
 	autoPitchTier me = PitchTier_create (startTime, endTime);
-	praat_new (me.transfer(), GET_STRING (L"Name"));
+	praat_new (me.transfer(), GET_STRING (U"Name"));
 END
 
 DIRECT (PitchTier_downto_PointProcess)
@@ -4040,64 +4040,64 @@ DIRECT (PitchTier_downto_PointProcess)
 	}
 END
 
-FORM (PitchTier_downto_TableOfReal, L"PitchTier: Down to TableOfReal", NULL)
-	RADIO (L"Unit", 1)
-	RADIOBUTTON (L"Hertz")
-	RADIOBUTTON (L"Semitones")
+FORM (PitchTier_downto_TableOfReal, U"PitchTier: Down to TableOfReal", NULL)
+	RADIO (U"Unit", 1)
+		RADIOBUTTON (U"Hertz")
+		RADIOBUTTON (U"Semitones")
 	OK
 DO
 	LOOP {
 		iam (PitchTier);
-		autoTableOfReal thee = PitchTier_downto_TableOfReal (me, GET_INTEGER (L"Unit") - 1);
+		autoTableOfReal thee = PitchTier_downto_TableOfReal (me, GET_INTEGER (U"Unit") - 1);
 		praat_new (thee.transfer(), my name);
 	}
 END
 
-FORM (old_PitchTier_draw, L"PitchTier: Draw", 0)
+FORM (old_PitchTier_draw, U"PitchTier: Draw", 0)
 	praat_dia_timeRange (dia);
-	REAL (STRING_FROM_FREQUENCY_HZ, L"0.0")
-	POSITIVE (STRING_TO_FREQUENCY_HZ, L"500.0")
-	BOOLEAN (L"Garnish", 1)
+	REAL (STRING_FROM_FREQUENCY_HZ, U"0.0")
+	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
+	BOOLEAN (U"Garnish", 1)
 	OK
 DO
 	double minimumFrequency = GET_REAL (STRING_FROM_FREQUENCY);
 	double maximumFrequency = GET_REAL (STRING_TO_FREQUENCY);
-	if (maximumFrequency <= minimumFrequency) Melder_throw ("Maximum frequency must be greater than minimum frequency.");
+	if (maximumFrequency <= minimumFrequency) Melder_throw (U"Maximum frequency must be greater than minimum frequency.");
 	LOOP {
 		iam (PitchTier);
 		autoPraatPicture picture;
 		PitchTier_draw (me, GRAPHICS,
-			GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), minimumFrequency, maximumFrequency,
-			GET_INTEGER (L"Garnish"), L"lines and speckles");
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), minimumFrequency, maximumFrequency,
+			GET_INTEGER (U"Garnish"), U"lines and speckles");
 	}
 END
 
-FORM (PitchTier_draw, L"PitchTier: Draw", 0)
+FORM (PitchTier_draw, U"PitchTier: Draw", 0)
 	praat_dia_timeRange (dia);
-	REAL (STRING_FROM_FREQUENCY_HZ, L"0.0")
-	POSITIVE (STRING_TO_FREQUENCY_HZ, L"500.0")
-	BOOLEAN (L"Garnish", 1)
-	LABEL (L"", L"")
-	OPTIONMENU (L"Drawing method", 1)
-		OPTION (L"lines")
-		OPTION (L"speckles")
-		OPTION (L"lines and speckles")
+	REAL (STRING_FROM_FREQUENCY_HZ, U"0.0")
+	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
+	BOOLEAN (U"Garnish", 1)
+	LABEL (U"", U"")
+	OPTIONMENU (U"Drawing method", 1)
+		OPTION (U"lines")
+		OPTION (U"speckles")
+		OPTION (U"lines and speckles")
 	OK
 DO_ALTERNATIVE (old_PitchTier_draw)
 	double minimumFrequency = GET_REAL (STRING_FROM_FREQUENCY);
 	double maximumFrequency = GET_REAL (STRING_TO_FREQUENCY);
-	if (maximumFrequency <= minimumFrequency) Melder_throw ("Maximum frequency must be greater than minimum frequency.");
+	if (maximumFrequency <= minimumFrequency) Melder_throw (U"Maximum frequency must be greater than minimum frequency.");
 	LOOP {
 		iam (PitchTier);
 		autoPraatPicture picture;
 		PitchTier_draw (me, GRAPHICS,
-			GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), minimumFrequency, maximumFrequency,
-			GET_INTEGER (L"Garnish"), GET_STRING (L"Drawing method"));
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), minimumFrequency, maximumFrequency,
+			GET_INTEGER (U"Garnish"), GET_STRING (U"Drawing method"));
 	}
 END
 
 DIRECT (PitchTier_edit)
-	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot view or edit a PitchTier from batch.");
+	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a PitchTier from batch.");
 	Sound sound = FIRST (Sound);
 	LOOP if (CLASS == classPitchTier) {
 		iam (PitchTier);
@@ -4106,20 +4106,20 @@ DIRECT (PitchTier_edit)
 	}
 END
 
-FORM (PitchTier_formula, L"PitchTier: Formula", L"PitchTier: Formula...")
-	LABEL (L"", L"# ncol = the number of points")
-	LABEL (L"", L"for col from 1 to ncol")
-	LABEL (L"", L"   # x = the time of the colth point, in seconds")
-	LABEL (L"", L"   # self = the value of the colth point, in hertz")
-	LABEL (L"", L"   self = `formula'")
-	LABEL (L"", L"endfor")
-	TEXTFIELD (L"formula", L"self * 2 ; one octave up")
+FORM (PitchTier_formula, U"PitchTier: Formula", U"PitchTier: Formula...")
+	LABEL (U"", U"# ncol = the number of points")
+	LABEL (U"", U"for col from 1 to ncol")
+	LABEL (U"", U"   # x = the time of the colth point, in seconds")
+	LABEL (U"", U"   # self = the value of the colth point, in hertz")
+	LABEL (U"", U"   self = `formula'")
+	LABEL (U"", U"endfor")
+	TEXTFIELD (U"formula", U"self * 2 ; one octave up")
 	OK
 DO
 	LOOP {
 		iam (PitchTier);
 		try {
-			RealTier_formula (me, GET_STRING (L"formula"), interpreter, NULL);
+			RealTier_formula (me, GET_STRING (U"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the PitchTier may have partially changed
@@ -4128,49 +4128,49 @@ DO
 	}
 END
 
-FORM (PitchTier_getMean_curve, L"PitchTier: Get mean (curve)", L"PitchTier: Get mean (curve)...")
+FORM (PitchTier_getMean_curve, U"PitchTier: Get mean (curve)", U"PitchTier: Get mean (curve)...")
 	praat_dia_timeRange (dia);
 	OK
 DO
-	Melder_informationReal (RealTier_getMean_curve (FIRST_ANY (PitchTier), GET_REAL (L"left Time range"), GET_REAL (L"right Time range")), L"Hz");
+	Melder_informationReal (RealTier_getMean_curve (FIRST_ANY (PitchTier), GET_REAL (U"left Time range"), GET_REAL (U"right Time range")), U"Hz");
 END
 	
-FORM (PitchTier_getMean_points, L"PitchTier: Get mean (points)", L"PitchTier: Get mean (points)...")
+FORM (PitchTier_getMean_points, U"PitchTier: Get mean (points)", U"PitchTier: Get mean (points)...")
 	praat_dia_timeRange (dia);
 	OK
 DO
-	Melder_informationReal (RealTier_getMean_points (FIRST_ANY (PitchTier), GET_REAL (L"left Time range"), GET_REAL (L"right Time range")), L"Hz");
+	Melder_informationReal (RealTier_getMean_points (FIRST_ANY (PitchTier), GET_REAL (U"left Time range"), GET_REAL (U"right Time range")), U"Hz");
 END
 	
-FORM (PitchTier_getStandardDeviation_curve, L"PitchTier: Get standard deviation (curve)", L"PitchTier: Get standard deviation (curve)...")
+FORM (PitchTier_getStandardDeviation_curve, U"PitchTier: Get standard deviation (curve)", U"PitchTier: Get standard deviation (curve)...")
 	praat_dia_timeRange (dia);
 	OK
 DO
-	Melder_informationReal (RealTier_getStandardDeviation_curve (FIRST_ANY (PitchTier), GET_REAL (L"left Time range"), GET_REAL (L"right Time range")), L"Hz");
+	Melder_informationReal (RealTier_getStandardDeviation_curve (FIRST_ANY (PitchTier), GET_REAL (U"left Time range"), GET_REAL (U"right Time range")), U"Hz");
 END
 	
-FORM (PitchTier_getStandardDeviation_points, L"PitchTier: Get standard deviation (points)", L"PitchTier: Get standard deviation (points)...")
+FORM (PitchTier_getStandardDeviation_points, U"PitchTier: Get standard deviation (points)", U"PitchTier: Get standard deviation (points)...")
 	praat_dia_timeRange (dia);
 	OK
 DO
-	Melder_informationReal (RealTier_getStandardDeviation_points (FIRST_ANY (PitchTier), GET_REAL (L"left Time range"), GET_REAL (L"right Time range")), L"Hz");
+	Melder_informationReal (RealTier_getStandardDeviation_points (FIRST_ANY (PitchTier), GET_REAL (U"left Time range"), GET_REAL (U"right Time range")), U"Hz");
 END
 	
-FORM (PitchTier_getValueAtTime, L"PitchTier: Get value at time", L"PitchTier: Get value at time...")
-	REAL (L"Time (s)", L"0.5")
+FORM (PitchTier_getValueAtTime, U"PitchTier: Get value at time", U"PitchTier: Get value at time...")
+	REAL (U"Time (s)", U"0.5")
 	OK
 DO
-	Melder_informationReal (RealTier_getValueAtTime (FIRST_ANY (PitchTier), GET_REAL (L"Time")), L"Hz");
+	Melder_informationReal (RealTier_getValueAtTime (FIRST_ANY (PitchTier), GET_REAL (U"Time")), U"Hz");
 END
 	
-FORM (PitchTier_getValueAtIndex, L"PitchTier: Get value at index", L"PitchTier: Get value at index...")
-	INTEGER (L"Point number", L"10")
+FORM (PitchTier_getValueAtIndex, U"PitchTier: Get value at index", U"PitchTier: Get value at index...")
+	INTEGER (U"Point number", U"10")
 	OK
 DO
-	Melder_informationReal (RealTier_getValueAtIndex (FIRST_ANY (PitchTier), GET_INTEGER (L"Point number")), L"Hz");
+	Melder_informationReal (RealTier_getValueAtIndex (FIRST_ANY (PitchTier), GET_INTEGER (U"Point number")), U"Hz");
 END
 
-DIRECT (PitchTier_help) Melder_help (L"PitchTier"); END
+DIRECT (PitchTier_help) Melder_help (U"PitchTier"); END
 
 DIRECT (PitchTier_hum)
 	LOOP {
@@ -4179,16 +4179,16 @@ DIRECT (PitchTier_hum)
 	}
 END
 
-FORM (PitchTier_interpolateQuadratically, L"PitchTier: Interpolate quadratically", 0)
-	NATURAL (L"Number of points per parabola", L"4")
-	RADIO (L"Unit", 2)
-	RADIOBUTTON (L"Hz")
-	RADIOBUTTON (L"Semitones")
+FORM (PitchTier_interpolateQuadratically, U"PitchTier: Interpolate quadratically", 0)
+	NATURAL (U"Number of points per parabola", U"4")
+	RADIO (U"Unit", 2)
+		RADIOBUTTON (U"Hz")
+		RADIOBUTTON (U"Semitones")
 	OK
 DO
 	LOOP {
 		iam (PitchTier);
-		RealTier_interpolateQuadratically (me, GET_INTEGER (L"Number of points per parabola"), GET_INTEGER (L"Unit") - 1);
+		RealTier_interpolateQuadratically (me, GET_INTEGER (U"Number of points per parabola"), GET_INTEGER (U"Unit") - 1);
 		praat_dataChanged (me);
 	}
 END
@@ -4207,19 +4207,19 @@ DIRECT (PitchTier_playSine)
 	}
 END
 
-FORM (PitchTier_shiftFrequencies, L"PitchTier: Shift frequencies", 0)
-	REAL (L"left Time range (s)", L"0.0")
-	REAL (L"right Time range (s)", L"1000.0")
-	REAL (L"Frequency shift", L"-20.0")
-	OPTIONMENU (L"Unit", 1)
-		OPTION (L"Hertz")
-		OPTION (L"mel")
-		OPTION (L"logHertz")
-		OPTION (L"semitones")
-		OPTION (L"ERB")
+FORM (PitchTier_shiftFrequencies, U"PitchTier: Shift frequencies", 0)
+	REAL (U"left Time range (s)", U"0.0")
+	REAL (U"right Time range (s)", U"1000.0")
+	REAL (U"Frequency shift", U"-20.0")
+	OPTIONMENU (U"Unit", 1)
+		OPTION (U"Hertz")
+		OPTION (U"mel")
+		OPTION (U"logHertz")
+		OPTION (U"semitones")
+		OPTION (U"ERB")
 	OK
 DO
-	int unit = GET_INTEGER (L"Unit");
+	int unit = GET_INTEGER (U"Unit");
 	unit =
 		unit == 1 ? kPitch_unit_HERTZ :
 		unit == 2 ? kPitch_unit_MEL :
@@ -4229,7 +4229,7 @@ DO
 	LOOP {
 		iam (PitchTier);
 		try {
-			PitchTier_shiftFrequencies (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_REAL (L"Frequency shift"), unit);
+			PitchTier_shiftFrequencies (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_REAL (U"Frequency shift"), unit);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the PitchTier may have partially changed
@@ -4238,29 +4238,29 @@ DO
 	}
 END
 
-FORM (PitchTier_multiplyFrequencies, L"PitchTier: Multiply frequencies", 0)
-	REAL (L"left Time range (s)", L"0.0")
-	REAL (L"right Time range (s)", L"1000.0")
-	POSITIVE (L"Factor", L"1.2")
+FORM (PitchTier_multiplyFrequencies, U"PitchTier: Multiply frequencies", 0)
+	REAL (U"left Time range (s)", U"0.0")
+	REAL (U"right Time range (s)", U"1000.0")
+	POSITIVE (U"Factor", U"1.2")
 	OK
 DO
 	LOOP {
 		iam (PitchTier);
-		PitchTier_multiplyFrequencies (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_REAL (L"Factor"));
+		PitchTier_multiplyFrequencies (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_REAL (U"Factor"));
 		praat_dataChanged (me);
 	}
 END
 
-FORM (PitchTier_stylize, L"PitchTier: Stylize", L"PitchTier: Stylize...")
-	REAL (L"Frequency resolution", L"4.0")
-	RADIO (L"Unit", 2)
-	RADIOBUTTON (L"Hz")
-	RADIOBUTTON (L"Semitones")
+FORM (PitchTier_stylize, U"PitchTier: Stylize", U"PitchTier: Stylize...")
+	REAL (U"Frequency resolution", U"4.0")
+	RADIO (U"Unit", 2)
+		RADIOBUTTON (U"Hz")
+		RADIOBUTTON (U"Semitones")
 	OK
 DO
 	LOOP {
 		iam (PitchTier);
-		PitchTier_stylize (me, GET_REAL (L"Frequency resolution"), GET_INTEGER (L"Unit") - 1);
+		PitchTier_stylize (me, GET_REAL (U"Frequency resolution"), GET_INTEGER (U"Unit") - 1);
 		praat_dataChanged (me);
 	}
 END
@@ -4273,67 +4273,67 @@ DIRECT (PitchTier_to_PointProcess)
 	}
 END
 
-FORM (PitchTier_to_Sound_phonation, L"PitchTier: To Sound (phonation)", 0)
-	POSITIVE (L"Sampling frequency (Hz)", L"44100")
-	POSITIVE (L"Adaptation factor", L"1.0")
-	POSITIVE (L"Maximum period (s)", L"0.05")
-	POSITIVE (L"Open phase", L"0.7")
-	REAL (L"Collision phase", L"0.03")
-	POSITIVE (L"Power 1", L"3.0")
-	POSITIVE (L"Power 2", L"4.0")
-	BOOLEAN (L"Hum", 0)
+FORM (PitchTier_to_Sound_phonation, U"PitchTier: To Sound (phonation)", 0)
+	POSITIVE (U"Sampling frequency (Hz)", U"44100")
+	POSITIVE (U"Adaptation factor", U"1.0")
+	POSITIVE (U"Maximum period (s)", U"0.05")
+	POSITIVE (U"Open phase", U"0.7")
+	REAL (U"Collision phase", U"0.03")
+	POSITIVE (U"Power 1", U"3.0")
+	POSITIVE (U"Power 2", U"4.0")
+	BOOLEAN (U"Hum", 0)
 	OK
 DO
 	LOOP {
 		iam (PitchTier);
-		autoSound thee = PitchTier_to_Sound_phonation (me, GET_REAL (L"Sampling frequency"),
-			GET_REAL (L"Adaptation factor"), GET_REAL (L"Maximum period"),
-			GET_REAL (L"Open phase"), GET_REAL (L"Collision phase"), GET_REAL (L"Power 1"), GET_REAL (L"Power 2"), GET_INTEGER (L"Hum"));
+		autoSound thee = PitchTier_to_Sound_phonation (me, GET_REAL (U"Sampling frequency"),
+			GET_REAL (U"Adaptation factor"), GET_REAL (U"Maximum period"),
+			GET_REAL (U"Open phase"), GET_REAL (U"Collision phase"), GET_REAL (U"Power 1"), GET_REAL (U"Power 2"), GET_INTEGER (U"Hum"));
 		praat_new (thee.transfer(), my name);
 	}
 END
 
-FORM (PitchTier_to_Sound_pulseTrain, L"PitchTier: To Sound (pulse train)", 0)
-	POSITIVE (L"Sampling frequency (Hz)", L"44100")
-	POSITIVE (L"Adaptation factor", L"1.0")
-	POSITIVE (L"Adaptation time", L"0.05")
-	NATURAL (L"Interpolation depth (samples)", L"2000")
-	BOOLEAN (L"Hum", 0)
+FORM (PitchTier_to_Sound_pulseTrain, U"PitchTier: To Sound (pulse train)", 0)
+	POSITIVE (U"Sampling frequency (Hz)", U"44100")
+	POSITIVE (U"Adaptation factor", U"1.0")
+	POSITIVE (U"Adaptation time", U"0.05")
+	NATURAL (U"Interpolation depth (samples)", U"2000")
+	BOOLEAN (U"Hum", 0)
 	OK
 DO
 	LOOP {
 		iam (PitchTier);
-		autoSound thee = PitchTier_to_Sound_pulseTrain (me, GET_REAL (L"Sampling frequency"),
-			GET_REAL (L"Adaptation factor"), GET_REAL (L"Adaptation time"),
-			GET_INTEGER (L"Interpolation depth"), GET_INTEGER (L"Hum"));
+		autoSound thee = PitchTier_to_Sound_pulseTrain (me, GET_REAL (U"Sampling frequency"),
+			GET_REAL (U"Adaptation factor"), GET_REAL (U"Adaptation time"),
+			GET_INTEGER (U"Interpolation depth"), GET_INTEGER (U"Hum"));
 		praat_new (thee.transfer(), my name);
 	}
 END
 
-FORM (PitchTier_to_Sound_sine, L"PitchTier: To Sound (sine)", 0)
-	POSITIVE (L"Sampling frequency (Hz)", L"44100")
+FORM (PitchTier_to_Sound_sine, U"PitchTier: To Sound (sine)", 0)
+	POSITIVE (U"Sampling frequency (Hz)", U"44100")
 	OK
 DO
 	LOOP {
 		iam (PitchTier);
-		autoSound thee = PitchTier_to_Sound_sine (me, 0.0, 0.0, GET_REAL (L"Sampling frequency"));
+		autoSound thee = PitchTier_to_Sound_sine (me, 0.0, 0.0, GET_REAL (U"Sampling frequency"));
 		praat_new (thee.transfer(), my name);
 	}
 END
 
 DIRECT (info_PitchTier_Sound_edit)
-	Melder_information (L"To include a copy of a Sound in your PitchTier editor:\n"
+	Melder_information (U"To include a copy of a Sound in your PitchTier editor:\n"
 		"   select a PitchTier and a Sound, and click \"View & Edit\".");
 END
 
-FORM_WRITE (PitchTier_writeToPitchTierSpreadsheetFile, L"Save PitchTier as spreadsheet", 0, L"PitchTier")
+FORM_WRITE (PitchTier_writeToPitchTierSpreadsheetFile, U"Save PitchTier as spreadsheet", 0, U"PitchTier")
 	LOOP {
 		iam (PitchTier);
 		PitchTier_writeToPitchTierSpreadsheetFile (me, file);
 	}
 END
 
-FORM_WRITE (PitchTier_writeToHeaderlessSpreadsheetFile, L"Save PitchTier as spreadsheet", 0, L"txt")
+FORM_WRITE (PitchTier_writeToHeaderlessSpreadsheetFile, U"Save PitchTier as spreadsheet", 0, U"txt")
 	LOOP {
 		iam (PitchTier);
 		PitchTier_writeToHeaderlessSpreadsheetFile (me, file);
@@ -4351,65 +4351,65 @@ END
 
 /***** POINTPROCESS *****/
 
-FORM (PointProcess_addPoint, L"PointProcess: Add point", L"PointProcess: Add point...")
-	REAL (L"Time (s)", L"0.5")
+FORM (PointProcess_addPoint, U"PointProcess: Add point", U"PointProcess: Add point...")
+	REAL (U"Time (s)", U"0.5")
 	OK
 DO
 	LOOP {
 		iam (PointProcess);
-		PointProcess_addPoint (me, GET_REAL (L"Time"));
+		PointProcess_addPoint (me, GET_REAL (U"Time"));
 		praat_dataChanged (me);
 	}
 END
 
-FORM (PointProcess_createEmpty, L"Create an empty PointProcess", L"Create empty PointProcess...")
-	WORD (L"Name", L"empty")
-	REAL (L"Start time (s)", L"0.0")
-	REAL (L"End time (s)", L"1.0")
+FORM (PointProcess_createEmpty, U"Create an empty PointProcess", U"Create empty PointProcess...")
+	WORD (U"Name", U"empty")
+	REAL (U"Start time (s)", U"0.0")
+	REAL (U"End time (s)", U"1.0")
 	OK
 DO
-	double tmin = GET_REAL (L"Start time"), tmax = GET_REAL (L"End time");
-	if (tmax < tmin) Melder_throw ("End time (", tmax, ") should not be less than start time (", tmin, ").");
+	double tmin = GET_REAL (U"Start time"), tmax = GET_REAL (U"End time");
+	if (tmax < tmin) Melder_throw (U"End time (", tmax, U") should not be less than start time (", tmin, U").");
 	autoPointProcess me = PointProcess_create (tmin, tmax, 0);
-	praat_new (me.transfer(), GET_STRING (L"Name"));
+	praat_new (me.transfer(), GET_STRING (U"Name"));
 END
 
-FORM (PointProcess_createPoissonProcess, L"Create Poisson process", L"Create Poisson process...")
-	WORD (L"Name", L"poisson")
-	REAL (L"Start time (s)", L"0.0")
-	REAL (L"End time (s)", L"1.0")
-	POSITIVE (L"Density (/s)", L"100.0")
+FORM (PointProcess_createPoissonProcess, U"Create Poisson process", U"Create Poisson process...")
+	WORD (U"Name", U"poisson")
+	REAL (U"Start time (s)", U"0.0")
+	REAL (U"End time (s)", U"1.0")
+	POSITIVE (U"Density (/s)", U"100.0")
 	OK
 DO
-	double tmin = GET_REAL (L"Start time"), tmax = GET_REAL (L"End time");
+	double tmin = GET_REAL (U"Start time"), tmax = GET_REAL (U"End time");
 	if (tmax < tmin)
-		Melder_throw ("End time (", tmax, ") should not be less than start time (", tmin, ").");
-	autoPointProcess me = PointProcess_createPoissonProcess (tmin, tmax, GET_REAL (L"Density"));
-	praat_new (me.transfer(), GET_STRING (L"Name"));
+		Melder_throw (U"End time (", tmax, U") should not be less than start time (", tmin, U").");
+	autoPointProcess me = PointProcess_createPoissonProcess (tmin, tmax, GET_REAL (U"Density"));
+	praat_new (me.transfer(), GET_STRING (U"Name"));
 END
 
 DIRECT (PointProcess_difference)
 	PointProcess point1 = NULL, point2 = NULL;
 	LOOP (point1 ? point2 : point1) = (PointProcess) OBJECT;
 	autoPointProcess thee = PointProcesses_difference (point1, point2);
-	praat_new (thee.transfer(), L"difference");
+	praat_new (thee.transfer(), U"difference");
 END
 
-FORM (PointProcess_draw, L"PointProcess: Draw", 0)
+FORM (PointProcess_draw, U"PointProcess: Draw", 0)
 	praat_dia_timeRange (dia);
-	BOOLEAN (L"Garnish", 1)
+	BOOLEAN (U"Garnish", 1)
 	OK
 DO
 	LOOP {
 		iam (PointProcess);
 		autoPraatPicture picture;
 		PointProcess_draw (me, GRAPHICS,
-			GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_INTEGER (L"Garnish"));
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Garnish"));
 	}
 END
 
 DIRECT (PointProcess_edit)
-	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot view or edit a PointProcess from batch.");
+	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a PointProcess from batch.");
 	Sound sound = FIRST (Sound);
 	LOOP if (CLASS == classPointProcess) {
 		iam (PointProcess);
@@ -4418,15 +4418,15 @@ DIRECT (PointProcess_edit)
 	}
 END
 
-FORM (PointProcess_fill, L"PointProcess: Fill", 0)
+FORM (PointProcess_fill, U"PointProcess: Fill", 0)
 	praat_dia_timeRange (dia);
-	POSITIVE (L"Period (s)", L"0.01")
+	POSITIVE (U"Period (s)", U"0.01")
 	OK
 DO
 	LOOP {
 		iam (PointProcess);
 		try {
-			PointProcess_fill (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_REAL (L"Period"));
+			PointProcess_fill (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_REAL (U"Period"));
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the PointProcess may have partially changed
@@ -4435,129 +4435,129 @@ DO
 	}
 END
 
-FORM (PointProcess_getInterval, L"PointProcess: Get interval", L"PointProcess: Get interval...")
-	REAL (L"Time (s)", L"0.5")
+FORM (PointProcess_getInterval, U"PointProcess: Get interval", U"PointProcess: Get interval...")
+	REAL (U"Time (s)", U"0.5")
 	OK
 DO
-	Melder_informationReal (PointProcess_getInterval (FIRST_ANY (PointProcess), GET_REAL (L"Time")), L"seconds");
+	Melder_informationReal (PointProcess_getInterval (FIRST_ANY (PointProcess), GET_REAL (U"Time")), U"seconds");
 END
 
 static void dia_PointProcess_getRangeProperty (Any dia) {
 	praat_dia_timeRange (dia);
-	REAL (L"Shortest period (s)", L"0.0001")
-	REAL (L"Longest period (s)", L"0.02")
-	POSITIVE (L"Maximum period factor", L"1.3")
+	REAL (U"Shortest period (s)", U"0.0001")
+	REAL (U"Longest period (s)", U"0.02")
+	POSITIVE (U"Maximum period factor", U"1.3")
 }
 
-FORM (PointProcess_getJitter_local, L"PointProcess: Get jitter (local)", L"PointProcess: Get jitter (local)...")
+FORM (PointProcess_getJitter_local, U"PointProcess: Get jitter (local)", U"PointProcess: Get jitter (local)...")
 	dia_PointProcess_getRangeProperty (dia);
 	OK
 DO
 	Melder_informationReal (PointProcess_getJitter_local (FIRST_ANY (PointProcess),
-		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-		GET_REAL (L"Shortest period"), GET_REAL (L"Longest period"), GET_REAL (L"Maximum period factor")), NULL);
+		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")), NULL);
 END
 
-FORM (PointProcess_getJitter_local_absolute, L"PointProcess: Get jitter (local, absolute)", L"PointProcess: Get jitter (local, absolute)...")
+FORM (PointProcess_getJitter_local_absolute, U"PointProcess: Get jitter (local, absolute)", U"PointProcess: Get jitter (local, absolute)...")
 	dia_PointProcess_getRangeProperty (dia);
 	OK
 DO
 	Melder_informationReal (PointProcess_getJitter_local_absolute (FIRST_ANY (PointProcess),
-		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-		GET_REAL (L"Shortest period"), GET_REAL (L"Longest period"), GET_REAL (L"Maximum period factor")), L"seconds");
+		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")), U"seconds");
 END
 
-FORM (PointProcess_getJitter_rap, L"PointProcess: Get jitter (rap)", L"PointProcess: Get jitter (rap)...")
+FORM (PointProcess_getJitter_rap, U"PointProcess: Get jitter (rap)", U"PointProcess: Get jitter (rap)...")
 	dia_PointProcess_getRangeProperty (dia);
 	OK
 DO
 	Melder_informationReal (PointProcess_getJitter_rap (FIRST_ANY (PointProcess),
-		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-		GET_REAL (L"Shortest period"), GET_REAL (L"Longest period"), GET_REAL (L"Maximum period factor")), NULL);
+		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")), NULL);
 END
 
-FORM (PointProcess_getJitter_ppq5, L"PointProcess: Get jitter (ppq5)", L"PointProcess: Get jitter (ppq5)...")
+FORM (PointProcess_getJitter_ppq5, U"PointProcess: Get jitter (ppq5)", U"PointProcess: Get jitter (ppq5)...")
 	dia_PointProcess_getRangeProperty (dia);
 	OK
 DO
 	Melder_informationReal (PointProcess_getJitter_ppq5 (FIRST_ANY (PointProcess),
-		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-		GET_REAL (L"Shortest period"), GET_REAL (L"Longest period"), GET_REAL (L"Maximum period factor")), NULL);
+		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")), NULL);
 END
 
-FORM (PointProcess_getJitter_ddp, L"PointProcess: Get jitter (ddp)", L"PointProcess: Get jitter (ddp)...")
+FORM (PointProcess_getJitter_ddp, U"PointProcess: Get jitter (ddp)", U"PointProcess: Get jitter (ddp)...")
 	dia_PointProcess_getRangeProperty (dia);
 	OK
 DO
 	Melder_informationReal (PointProcess_getJitter_ddp (FIRST_ANY (PointProcess),
-		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-		GET_REAL (L"Shortest period"), GET_REAL (L"Longest period"), GET_REAL (L"Maximum period factor")), NULL);
+		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")), NULL);
 END
 
-FORM (PointProcess_getMeanPeriod, L"PointProcess: Get mean period", L"PointProcess: Get mean period...")
+FORM (PointProcess_getMeanPeriod, U"PointProcess: Get mean period", U"PointProcess: Get mean period...")
 	dia_PointProcess_getRangeProperty (dia);
 	OK
 DO
 	Melder_informationReal (PointProcess_getMeanPeriod (FIRST_ANY (PointProcess),
-		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-		GET_REAL (L"Shortest period"), GET_REAL (L"Longest period"), GET_REAL (L"Maximum period factor")), L"seconds");
+		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")), U"seconds");
 END
 
-FORM (PointProcess_getStdevPeriod, L"PointProcess: Get stdev period", L"PointProcess: Get stdev period...")
+FORM (PointProcess_getStdevPeriod, U"PointProcess: Get stdev period", U"PointProcess: Get stdev period...")
 	dia_PointProcess_getRangeProperty (dia);
 	OK
 DO
 	Melder_informationReal (PointProcess_getStdevPeriod (FIRST_ANY (PointProcess),
-		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-		GET_REAL (L"Shortest period"), GET_REAL (L"Longest period"), GET_REAL (L"Maximum period factor")), L"seconds");
+		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")), U"seconds");
 END
 
-FORM (PointProcess_getLowIndex, L"PointProcess: Get low index", L"PointProcess: Get low index...")
-	REAL (L"Time (s)", L"0.5")
+FORM (PointProcess_getLowIndex, U"PointProcess: Get low index", U"PointProcess: Get low index...")
+	REAL (U"Time (s)", U"0.5")
 	OK
 DO
-	Melder_information (Melder_integer (PointProcess_getLowIndex (FIRST_ANY (PointProcess), GET_REAL (L"Time"))));
+	Melder_information (PointProcess_getLowIndex (FIRST_ANY (PointProcess), GET_REAL (U"Time")));
 END
 
-FORM (PointProcess_getHighIndex, L"PointProcess: Get high index", L"PointProcess: Get high index...")
-	REAL (L"Time (s)", L"0.5")
+FORM (PointProcess_getHighIndex, U"PointProcess: Get high index", U"PointProcess: Get high index...")
+	REAL (U"Time (s)", U"0.5")
 	OK
 DO
-	Melder_information (Melder_integer (PointProcess_getHighIndex (FIRST_ANY (PointProcess), GET_REAL (L"Time"))));
+	Melder_information (PointProcess_getHighIndex (FIRST_ANY (PointProcess), GET_REAL (U"Time")));
 END
 
-FORM (PointProcess_getNearestIndex, L"PointProcess: Get nearest index", L"PointProcess: Get nearest index...")
-	REAL (L"Time (s)", L"0.5")
+FORM (PointProcess_getNearestIndex, U"PointProcess: Get nearest index", U"PointProcess: Get nearest index...")
+	REAL (U"Time (s)", U"0.5")
 	OK
 DO
-	Melder_information (Melder_integer (PointProcess_getNearestIndex (FIRST_ANY (PointProcess), GET_REAL (L"Time"))));
+	Melder_information (PointProcess_getNearestIndex (FIRST_ANY (PointProcess), GET_REAL (U"Time")));
 END
 
 DIRECT (PointProcess_getNumberOfPoints)
 	PointProcess me = FIRST_ANY (PointProcess);
-	Melder_information (Melder_integer (my nt));
+	Melder_information (my nt);
 END
 
-FORM (PointProcess_getNumberOfPeriods, L"PointProcess: Get number of periods", L"PointProcess: Get number of periods...")
+FORM (PointProcess_getNumberOfPeriods, U"PointProcess: Get number of periods", U"PointProcess: Get number of periods...")
 	dia_PointProcess_getRangeProperty (dia);
 	OK
 DO
-	Melder_information (Melder_integer (PointProcess_getNumberOfPeriods (FIRST_ANY (PointProcess),
-		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-		GET_REAL (L"Shortest period"), GET_REAL (L"Longest period"), GET_REAL (L"Maximum period factor"))));
+	Melder_information (PointProcess_getNumberOfPeriods (FIRST_ANY (PointProcess),
+		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")));
 END
 
-FORM (PointProcess_getTimeFromIndex, L"Get time", 0 /*"PointProcess: Get time from index..."*/)
-	NATURAL (L"Point number", L"10")
+FORM (PointProcess_getTimeFromIndex, U"Get time", 0 /*"PointProcess: Get time from index..."*/)
+	NATURAL (U"Point number", U"10")
 	OK
 DO
 	PointProcess me = FIRST_ANY (PointProcess);
-	long i = GET_INTEGER (L"Point number");
-	if (i > my nt) Melder_information (L"--undefined--");
-	else Melder_informationReal (my t [i], L"seconds");
+	long i = GET_INTEGER (U"Point number");
+	if (i > my nt) Melder_information (U"--undefined--");
+	else Melder_informationReal (my t [i], U"seconds");
 END
 
-DIRECT (PointProcess_help) Melder_help (L"PointProcess"); END
+DIRECT (PointProcess_help) Melder_help (U"PointProcess"); END
 
 DIRECT (PointProcess_hum)
 	LOOP {
@@ -4570,7 +4570,7 @@ DIRECT (PointProcess_intersection)
 	PointProcess point1 = NULL, point2 = NULL;
 	LOOP (point1 ? point2 : point1) = (PointProcess) OBJECT;
 	autoPointProcess thee = PointProcesses_intersection (point1, point2);
-	praat_new (thee.transfer(), L"intersection");
+	praat_new (thee.transfer(), U"intersection");
 END
 
 DIRECT (PointProcess_play)
@@ -4580,48 +4580,48 @@ DIRECT (PointProcess_play)
 	}
 END
 
-FORM (PointProcess_removePoint, L"PointProcess: Remove point", L"PointProcess: Remove point...")
-	NATURAL (L"Index", L"1")
+FORM (PointProcess_removePoint, U"PointProcess: Remove point", U"PointProcess: Remove point...")
+	NATURAL (U"Index", U"1")
 	OK
 DO
 	LOOP {
 		iam (PointProcess);
-		PointProcess_removePoint (me, GET_INTEGER (L"Index"));
+		PointProcess_removePoint (me, GET_INTEGER (U"Index"));
 		praat_dataChanged (me);
 	}
 END
 
-FORM (PointProcess_removePointNear, L"PointProcess: Remove point near", L"PointProcess: Remove point near...")
-	REAL (L"Time (s)", L"0.5")
+FORM (PointProcess_removePointNear, U"PointProcess: Remove point near", U"PointProcess: Remove point near...")
+	REAL (U"Time (s)", U"0.5")
 	OK
 DO
 	LOOP {
 		iam (PointProcess);
-		PointProcess_removePointNear (me, GET_REAL (L"Time"));
+		PointProcess_removePointNear (me, GET_REAL (U"Time"));
 		praat_dataChanged (me);
 	}
 END
 
-FORM (PointProcess_removePoints, L"PointProcess: Remove points", L"PointProcess: Remove points...")
-	NATURAL (L"From index", L"1")
-	NATURAL (L"To index", L"10")
+FORM (PointProcess_removePoints, U"PointProcess: Remove points", U"PointProcess: Remove points...")
+	NATURAL (U"From index", U"1")
+	NATURAL (U"To index", U"10")
 	OK
 DO
 	LOOP {
 		iam (PointProcess);
-		PointProcess_removePoints (me, GET_INTEGER (L"From index"), GET_INTEGER (L"To index"));
+		PointProcess_removePoints (me, GET_INTEGER (U"From index"), GET_INTEGER (U"To index"));
 		praat_dataChanged (me);
 	}
 END
 
-FORM (PointProcess_removePointsBetween, L"PointProcess: Remove points between", L"PointProcess: Remove points between...")
-	REAL (L"left Time range (s)", L"0.3")
-	REAL (L"right Time range (s)", L"0.7")
+FORM (PointProcess_removePointsBetween, U"PointProcess: Remove points between", U"PointProcess: Remove points between...")
+	REAL (U"left Time range (s)", U"0.3")
+	REAL (U"right Time range (s)", U"0.7")
 	OK
 DO
 	LOOP {
 		iam (PointProcess);
-		PointProcess_removePointsBetween (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"));
+		PointProcess_removePointsBetween (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
 		praat_dataChanged (me);
 	}
 END
@@ -4642,37 +4642,37 @@ DIRECT (PointProcess_to_Matrix)
 	}
 END
 
-FORM (PointProcess_to_PitchTier, L"PointProcess: To PitchTier", L"PointProcess: To PitchTier...")
-	POSITIVE (L"Maximum interval (s)", L"0.02")
+FORM (PointProcess_to_PitchTier, U"PointProcess: To PitchTier", U"PointProcess: To PitchTier...")
+	POSITIVE (U"Maximum interval (s)", U"0.02")
 	OK
 DO
 	LOOP {
 		iam (PointProcess);
-		autoPitchTier thee = PointProcess_to_PitchTier (me, GET_REAL (L"Maximum interval"));
+		autoPitchTier thee = PointProcess_to_PitchTier (me, GET_REAL (U"Maximum interval"));
 		praat_new (thee.transfer(), my name);
 	}
 END
 
-FORM (PointProcess_to_TextGrid, L"PointProcess: To TextGrid...", L"PointProcess: To TextGrid...")
-	SENTENCE (L"Tier names", L"Mary John bell")
-	SENTENCE (L"Point tiers", L"bell")
+FORM (PointProcess_to_TextGrid, U"PointProcess: To TextGrid...", U"PointProcess: To TextGrid...")
+	SENTENCE (U"Tier names", U"Mary John bell")
+	SENTENCE (U"Point tiers", U"bell")
 	OK
 DO
 	LOOP {
 		iam (PointProcess);
-		autoTextGrid thee = TextGrid_create (my xmin, my xmax, GET_STRING (L"Tier names"), GET_STRING (L"Point tiers"));
+		autoTextGrid thee = TextGrid_create (my xmin, my xmax, GET_STRING (U"Tier names"), GET_STRING (U"Point tiers"));
 		praat_new (thee.transfer(), my name);
 	}
 END
 
-FORM (PointProcess_to_TextGrid_vuv, L"PointProcess: To TextGrid (vuv)...", L"PointProcess: To TextGrid (vuv)...")
-	POSITIVE (L"Maximum period (s)", L"0.02")
-	REAL (L"Mean period (s)", L"0.01")
+FORM (PointProcess_to_TextGrid_vuv, U"PointProcess: To TextGrid (vuv)...", U"PointProcess: To TextGrid (vuv)...")
+	POSITIVE (U"Maximum period (s)", U"0.02")
+	REAL (U"Mean period (s)", U"0.01")
 	OK
 DO
 	LOOP {
 		iam (PointProcess);
-		autoTextGrid thee = PointProcess_to_TextGrid_vuv (me, GET_REAL (L"Maximum period"), GET_REAL (L"Mean period"));
+		autoTextGrid thee = PointProcess_to_TextGrid_vuv (me, GET_REAL (U"Maximum period"), GET_REAL (U"Mean period"));
 		praat_new (thee.transfer(), my name);
 	}
 END
@@ -4685,37 +4685,37 @@ DIRECT (PointProcess_to_TextTier)
 	}
 END
 
-FORM (PointProcess_to_Sound_phonation, L"PointProcess: To Sound (phonation)", L"PointProcess: To Sound (phonation)...")
-	POSITIVE (L"Sampling frequency (Hz)", L"44100")
-	POSITIVE (L"Adaptation factor", L"1.0")
-	POSITIVE (L"Maximum period (s)", L"0.05")
-	POSITIVE (L"Open phase", L"0.7")
-	REAL (L"Collision phase", L"0.03")
-	POSITIVE (L"Power 1", L"3.0")
-	POSITIVE (L"Power 2", L"4.0")
+FORM (PointProcess_to_Sound_phonation, U"PointProcess: To Sound (phonation)", U"PointProcess: To Sound (phonation)...")
+	POSITIVE (U"Sampling frequency (Hz)", U"44100")
+	POSITIVE (U"Adaptation factor", U"1.0")
+	POSITIVE (U"Maximum period (s)", U"0.05")
+	POSITIVE (U"Open phase", U"0.7")
+	REAL (U"Collision phase", U"0.03")
+	POSITIVE (U"Power 1", U"3.0")
+	POSITIVE (U"Power 2", U"4.0")
 	OK
 DO
 	LOOP {
 		iam (PointProcess);
-		autoSound thee = PointProcess_to_Sound_phonation (me, GET_REAL (L"Sampling frequency"),
-			GET_REAL (L"Adaptation factor"), GET_REAL (L"Maximum period"),
-			GET_REAL (L"Open phase"), GET_REAL (L"Collision phase"), GET_REAL (L"Power 1"), GET_REAL (L"Power 2"));
+		autoSound thee = PointProcess_to_Sound_phonation (me, GET_REAL (U"Sampling frequency"),
+			GET_REAL (U"Adaptation factor"), GET_REAL (U"Maximum period"),
+			GET_REAL (U"Open phase"), GET_REAL (U"Collision phase"), GET_REAL (U"Power 1"), GET_REAL (U"Power 2"));
 		praat_new (thee.transfer(), my name);
 	}
 END
 
-FORM (PointProcess_to_Sound_pulseTrain, L"PointProcess: To Sound (pulse train)", L"PointProcess: To Sound (pulse train)...")
-	POSITIVE (L"Sampling frequency (Hz)", L"44100")
-	POSITIVE (L"Adaptation factor", L"1.0")
-	POSITIVE (L"Adaptation time (s)", L"0.05")
-	NATURAL (L"Interpolation depth (samples)", L"2000")
+FORM (PointProcess_to_Sound_pulseTrain, U"PointProcess: To Sound (pulse train)", U"PointProcess: To Sound (pulse train)...")
+	POSITIVE (U"Sampling frequency (Hz)", U"44100")
+	POSITIVE (U"Adaptation factor", U"1.0")
+	POSITIVE (U"Adaptation time (s)", U"0.05")
+	NATURAL (U"Interpolation depth (samples)", U"2000")
 	OK
 DO
 	LOOP {
 		iam (PointProcess);
-		autoSound thee = PointProcess_to_Sound_pulseTrain (me, GET_REAL (L"Sampling frequency"),
-			GET_REAL (L"Adaptation factor"), GET_REAL (L"Adaptation time"),
-			GET_INTEGER (L"Interpolation depth"));
+		autoSound thee = PointProcess_to_Sound_pulseTrain (me, GET_REAL (U"Sampling frequency"),
+			GET_REAL (U"Adaptation factor"), GET_REAL (U"Adaptation time"),
+			GET_INTEGER (U"Interpolation depth"));
 		praat_new (thee.transfer(), my name);
 	}
 END
@@ -4732,51 +4732,51 @@ DIRECT (PointProcess_union)
 	PointProcess point1 = NULL, point2 = NULL;
 	LOOP (point1 ? point2 : point1) = (PointProcess) OBJECT;
 	autoPointProcess thee = PointProcesses_union (point1, point2);
-	praat_new (thee.transfer(), L"union");
+	praat_new (thee.transfer(), U"union");
 END
 
-FORM (PointProcess_upto_IntensityTier, L"PointProcess: Up to IntensityTier", L"PointProcess: Up to IntensityTier...")
-	POSITIVE (L"Intensity (dB)", L"70.0")
+FORM (PointProcess_upto_IntensityTier, U"PointProcess: Up to IntensityTier", U"PointProcess: Up to IntensityTier...")
+	POSITIVE (U"Intensity (dB)", U"70.0")
 	OK
 DO
 	LOOP {
 		iam (PointProcess);
-		autoIntensityTier thee = PointProcess_upto_IntensityTier (me, GET_REAL (L"Intensity"));
+		autoIntensityTier thee = PointProcess_upto_IntensityTier (me, GET_REAL (U"Intensity"));
 		praat_new (thee.transfer(), my name);
 	}
 END
 
-FORM (PointProcess_upto_PitchTier, L"PointProcess: Up to PitchTier", L"PointProcess: Up to PitchTier...")
-	POSITIVE (L"Frequency (Hz)", L"190.0")
+FORM (PointProcess_upto_PitchTier, U"PointProcess: Up to PitchTier", U"PointProcess: Up to PitchTier...")
+	POSITIVE (U"Frequency (Hz)", U"190.0")
 	OK
 DO
 	LOOP {
 		iam (PointProcess);
-		autoPitchTier thee = PointProcess_upto_PitchTier (me, GET_REAL (L"Frequency"));
+		autoPitchTier thee = PointProcess_upto_PitchTier (me, GET_REAL (U"Frequency"));
 		praat_new (thee.transfer(), my name);
 	}
 END
 
-FORM (PointProcess_upto_TextTier, L"PointProcess: Up to TextTier", L"PointProcess: Up to TextTier...")
-	SENTENCE (L"Text", L"")
+FORM (PointProcess_upto_TextTier, U"PointProcess: Up to TextTier", U"PointProcess: Up to TextTier...")
+	SENTENCE (U"Text", U"")
 	OK
 DO
 	LOOP {
 		iam (PointProcess);
-		autoTextTier thee = PointProcess_upto_TextTier (me, GET_STRING (L"Text"));
+		autoTextTier thee = PointProcess_upto_TextTier (me, GET_STRING (U"Text"));
 		praat_new (thee.transfer(), my name);
 	}
 END
 
-FORM (PointProcess_voice, L"PointProcess: Fill unvoiced parts", 0)
-	POSITIVE (L"Period (s)", L"0.01")
-	POSITIVE (L"Maximum voiced period (s)", L"0.02000000001")
+FORM (PointProcess_voice, U"PointProcess: Fill unvoiced parts", 0)
+	POSITIVE (U"Period (s)", U"0.01")
+	POSITIVE (U"Maximum voiced period (s)", U"0.02000000001")
 	OK
 DO
 	LOOP {
 		iam (PointProcess);
 		try {
-			PointProcess_voice (me, GET_REAL (L"Period"), GET_REAL (L"Maximum voiced period"));
+			PointProcess_voice (me, GET_REAL (U"Period"), GET_REAL (U"Maximum voiced period"));
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the PointProcess may have partially changed
@@ -4786,7 +4786,7 @@ DO
 END
 
 DIRECT (info_PointProcess_Sound_edit)
-	Melder_information (L"To include a copy of a Sound in your PointProcess editor:\n"
+	Melder_information (U"To include a copy of a Sound in your PointProcess editor:\n"
 		"   select a PointProcess and a Sound, and click \"View & Edit\".");
 END
 
@@ -4806,245 +4806,245 @@ DIRECT (Point_Sound_transplantDomain)
 	praat_dataChanged (point);
 END
 
-FORM (Point_Sound_getShimmer_local, L"PointProcess & Sound: Get shimmer (local)", L"PointProcess & Sound: Get shimmer (local)...")
+FORM (Point_Sound_getShimmer_local, U"PointProcess & Sound: Get shimmer (local)", U"PointProcess & Sound: Get shimmer (local)...")
 	dia_PointProcess_getRangeProperty (dia);
-	POSITIVE (L"Maximum amplitude factor", L"1.6")
+	POSITIVE (U"Maximum amplitude factor", U"1.6")
 	OK
 DO
 	PointProcess point = FIRST (PointProcess);
 	Sound sound = FIRST (Sound);
 	double shimmer = PointProcess_Sound_getShimmer_local (point, sound,
-		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-		GET_REAL (L"Shortest period"), GET_REAL (L"Longest period"),
-		GET_REAL (L"Maximum period factor"), GET_REAL (L"Maximum amplitude factor"));
+		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"),
+		GET_REAL (U"Maximum period factor"), GET_REAL (U"Maximum amplitude factor"));
 	Melder_informationReal (shimmer, NULL);
 END
 
-FORM (Point_Sound_getShimmer_local_dB, L"PointProcess & Sound: Get shimmer (local, dB)", L"PointProcess & Sound: Get shimmer (local, dB)...")
+FORM (Point_Sound_getShimmer_local_dB, U"PointProcess & Sound: Get shimmer (local, dB)", U"PointProcess & Sound: Get shimmer (local, dB)...")
 	dia_PointProcess_getRangeProperty (dia);
-	POSITIVE (L"Maximum amplitude factor", L"1.6")
+	POSITIVE (U"Maximum amplitude factor", U"1.6")
 	OK
 DO
 	PointProcess point = FIRST (PointProcess);
 	Sound sound = FIRST (Sound);
 	double shimmer = PointProcess_Sound_getShimmer_local_dB (point, sound,
-		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-		GET_REAL (L"Shortest period"), GET_REAL (L"Longest period"),
-		GET_REAL (L"Maximum period factor"), GET_REAL (L"Maximum amplitude factor"));
+		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"),
+		GET_REAL (U"Maximum period factor"), GET_REAL (U"Maximum amplitude factor"));
 	Melder_informationReal (shimmer, NULL);
 END
 
-FORM (Point_Sound_getShimmer_apq3, L"PointProcess & Sound: Get shimmer (apq3)", L"PointProcess & Sound: Get shimmer (apq3)...")
+FORM (Point_Sound_getShimmer_apq3, U"PointProcess & Sound: Get shimmer (apq3)", U"PointProcess & Sound: Get shimmer (apq3)...")
 	dia_PointProcess_getRangeProperty (dia);
-	POSITIVE (L"Maximum amplitude factor", L"1.6")
+	POSITIVE (U"Maximum amplitude factor", U"1.6")
 	OK
 DO
 	PointProcess point = FIRST (PointProcess);
 	Sound sound = FIRST (Sound);
 	double shimmer = PointProcess_Sound_getShimmer_apq3 (point, sound,
-		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-		GET_REAL (L"Shortest period"), GET_REAL (L"Longest period"),
-		GET_REAL (L"Maximum period factor"), GET_REAL (L"Maximum amplitude factor"));
+		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"),
+		GET_REAL (U"Maximum period factor"), GET_REAL (U"Maximum amplitude factor"));
 	Melder_informationReal (shimmer, NULL);
 END
 
-FORM (Point_Sound_getShimmer_apq5, L"PointProcess & Sound: Get shimmer (apq)", L"PointProcess & Sound: Get shimmer (apq5)...")
+FORM (Point_Sound_getShimmer_apq5, U"PointProcess & Sound: Get shimmer (apq)", U"PointProcess & Sound: Get shimmer (apq5)...")
 	dia_PointProcess_getRangeProperty (dia);
-	POSITIVE (L"Maximum amplitude factor", L"1.6")
+	POSITIVE (U"Maximum amplitude factor", U"1.6")
 	OK
 DO
 	PointProcess point = FIRST (PointProcess);
 	Sound sound = FIRST (Sound);
 	double shimmer = PointProcess_Sound_getShimmer_apq5 (point, sound,
-		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-		GET_REAL (L"Shortest period"), GET_REAL (L"Longest period"),
-		GET_REAL (L"Maximum period factor"), GET_REAL (L"Maximum amplitude factor"));
+		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"),
+		GET_REAL (U"Maximum period factor"), GET_REAL (U"Maximum amplitude factor"));
 	Melder_informationReal (shimmer, NULL);
 END
 
-FORM (Point_Sound_getShimmer_apq11, L"PointProcess & Sound: Get shimmer (apq11)", L"PointProcess & Sound: Get shimmer (apq11)...")
+FORM (Point_Sound_getShimmer_apq11, U"PointProcess & Sound: Get shimmer (apq11)", U"PointProcess & Sound: Get shimmer (apq11)...")
 	dia_PointProcess_getRangeProperty (dia);
-	POSITIVE (L"Maximum amplitude factor", L"1.6")
+	POSITIVE (U"Maximum amplitude factor", U"1.6")
 	OK
 DO
 	PointProcess point = FIRST (PointProcess);
 	Sound sound = FIRST (Sound);
 	double shimmer = PointProcess_Sound_getShimmer_apq11 (point, sound,
-		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-		GET_REAL (L"Shortest period"), GET_REAL (L"Longest period"),
-		GET_REAL (L"Maximum period factor"), GET_REAL (L"Maximum amplitude factor"));
+		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"),
+		GET_REAL (U"Maximum period factor"), GET_REAL (U"Maximum amplitude factor"));
 	Melder_informationReal (shimmer, NULL);
 END
 
-FORM (Point_Sound_getShimmer_dda, L"PointProcess & Sound: Get shimmer (dda)", L"PointProcess & Sound: Get shimmer (dda)...")
+FORM (Point_Sound_getShimmer_dda, U"PointProcess & Sound: Get shimmer (dda)", U"PointProcess & Sound: Get shimmer (dda)...")
 	dia_PointProcess_getRangeProperty (dia);
-	POSITIVE (L"Maximum amplitude factor", L"1.6")
+	POSITIVE (U"Maximum amplitude factor", U"1.6")
 	OK
 DO
 	PointProcess point = FIRST (PointProcess);
 	Sound sound = FIRST (Sound);
 	double shimmer = PointProcess_Sound_getShimmer_dda (point, sound,
-		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-		GET_REAL (L"Shortest period"), GET_REAL (L"Longest period"),
-		GET_REAL (L"Maximum period factor"), GET_REAL (L"Maximum amplitude factor"));
+		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"),
+		GET_REAL (U"Maximum period factor"), GET_REAL (U"Maximum amplitude factor"));
 	Melder_informationReal (shimmer, NULL);
 END
 
-FORM (PointProcess_Sound_to_AmplitudeTier_period, L"PointProcess & Sound: To AmplitudeTier (period)", 0)
+FORM (PointProcess_Sound_to_AmplitudeTier_period, U"PointProcess & Sound: To AmplitudeTier (period)", 0)
 	dia_PointProcess_getRangeProperty (dia);
 	OK
 DO
 	PointProcess point = FIRST (PointProcess);
 	Sound sound = FIRST (Sound);
 	autoAmplitudeTier thee = PointProcess_Sound_to_AmplitudeTier_period (point, sound,
-		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-		GET_REAL (L"Shortest period"), GET_REAL (L"Longest period"), GET_REAL (L"Maximum period factor"));
-	praat_new (thee.transfer(), sound -> name, L"_", point -> name);
+		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor"));
+	praat_new (thee.transfer(), sound -> name, U"_", point -> name);
 END
 
 DIRECT (PointProcess_Sound_to_AmplitudeTier_point)
 	PointProcess point = FIRST (PointProcess);
 	Sound sound = FIRST (Sound);
 	autoAmplitudeTier thee = PointProcess_Sound_to_AmplitudeTier_point (point, sound);
-	praat_new (thee.transfer(), sound -> name, L"_", point -> name);
+	praat_new (thee.transfer(), sound -> name, U"_", point -> name);
 END
 
-FORM (PointProcess_Sound_to_Ltas, L"PointProcess & Sound: To Ltas", 0)
-	POSITIVE (L"Maximum frequency (Hz)", L"5000")
-	POSITIVE (L"Band width (Hz)", L"100")
-	REAL (L"Shortest period (s)", L"0.0001")
-	REAL (L"Longest period (s)", L"0.02")
-	POSITIVE (L"Maximum period factor", L"1.3")
+FORM (PointProcess_Sound_to_Ltas, U"PointProcess & Sound: To Ltas", 0)
+	POSITIVE (U"Maximum frequency (Hz)", U"5000")
+	POSITIVE (U"Band width (Hz)", U"100")
+	REAL (U"Shortest period (s)", U"0.0001")
+	REAL (U"Longest period (s)", U"0.02")
+	POSITIVE (U"Maximum period factor", U"1.3")
 	OK
 DO
 	PointProcess point = FIRST (PointProcess);
 	Sound sound = FIRST (Sound);
 	autoLtas thee = PointProcess_Sound_to_Ltas (point, sound,
-		GET_REAL (L"Maximum frequency"), GET_REAL (L"Band width"),
-		GET_REAL (L"Shortest period"), GET_REAL (L"Longest period"), GET_REAL (L"Maximum period factor"));
+		GET_REAL (U"Maximum frequency"), GET_REAL (U"Band width"),
+		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor"));
 	praat_new (thee.transfer(), sound -> name);
 END
 
-FORM (PointProcess_Sound_to_Ltas_harmonics, L"PointProcess & Sound: To Ltas (harmonics", 0)
-	NATURAL (L"Maximum harmonic", L"20")
-	REAL (L"Shortest period (s)", L"0.0001")
-	REAL (L"Longest period (s)", L"0.02")
-	POSITIVE (L"Maximum period factor", L"1.3")
+FORM (PointProcess_Sound_to_Ltas_harmonics, U"PointProcess & Sound: To Ltas (harmonics", 0)
+	NATURAL (U"Maximum harmonic", U"20")
+	REAL (U"Shortest period (s)", U"0.0001")
+	REAL (U"Longest period (s)", U"0.02")
+	POSITIVE (U"Maximum period factor", U"1.3")
 	OK
 DO
 	PointProcess point = FIRST (PointProcess);
 	Sound sound = FIRST (Sound);
 	autoLtas thee = PointProcess_Sound_to_Ltas_harmonics (point, sound,
-		GET_INTEGER (L"Maximum harmonic"),
-		GET_REAL (L"Shortest period"), GET_REAL (L"Longest period"), GET_REAL (L"Maximum period factor"));
+		GET_INTEGER (U"Maximum harmonic"),
+		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor"));
 	praat_new (thee.transfer(), sound -> name);
 END
 
-FORM (Sound_PointProcess_to_SoundEnsemble_correlate, L"Sound & PointProcess: To SoundEnsemble (correlate)", 0)
-	REAL (L"From time (s)", L"-0.1")
-	REAL (L"To time (s)", L"1.0")
+FORM (Sound_PointProcess_to_SoundEnsemble_correlate, U"Sound & PointProcess: To SoundEnsemble (correlate)", 0)
+	REAL (U"From time (s)", U"-0.1")
+	REAL (U"To time (s)", U"1.0")
 	OK
 DO
 	PointProcess point = FIRST (PointProcess);
 	Sound sound = FIRST (Sound);
-	autoSound thee = Sound_PointProcess_to_SoundEnsemble_correlate (sound, point, GET_REAL (L"From time"), GET_REAL (L"To time"));
+	autoSound thee = Sound_PointProcess_to_SoundEnsemble_correlate (sound, point, GET_REAL (U"From time"), GET_REAL (U"To time"));
 	praat_new (thee.transfer(), point -> name);
 END
 
 /***** POLYGON *****/
 
-FORM (Polygon_draw, L"Polygon: Draw", 0)
-	REAL (L"Xmin", L"0.0")
-	REAL (L"Xmax", L"0.0")
-	REAL (L"Ymin", L"0.0")
-	REAL (L"Ymax", L"0.0")
+FORM (Polygon_draw, U"Polygon: Draw", 0)
+	REAL (U"Xmin", U"0.0")
+	REAL (U"Xmax", U"0.0")
+	REAL (U"Ymin", U"0.0")
+	REAL (U"Ymax", U"0.0")
 	OK
 DO
 	LOOP {
 		iam (Polygon);
 		autoPraatPicture picture;
-		Polygon_draw (me, GRAPHICS, GET_REAL (L"Xmin"), GET_REAL (L"Xmax"), GET_REAL (L"Ymin"), GET_REAL (L"Ymax"));
+		Polygon_draw (me, GRAPHICS, GET_REAL (U"Xmin"), GET_REAL (U"Xmax"), GET_REAL (U"Ymin"), GET_REAL (U"Ymax"));
 	}
 END
 
-FORM (Polygon_drawCircles, L"Polygon: Draw circles", 0)
-	REAL (L"Xmin", L"0.0")
-	REAL (L"Xmax", L"0.0 (= all)")
-	REAL (L"Ymin", L"0.0")
-	REAL (L"Ymax", L"0.0 (= all)")
-	POSITIVE (L"Diameter (mm)", L"3")
+FORM (Polygon_drawCircles, U"Polygon: Draw circles", 0)
+	REAL (U"Xmin", U"0.0")
+	REAL (U"Xmax", U"0.0 (= all)")
+	REAL (U"Ymin", U"0.0")
+	REAL (U"Ymax", U"0.0 (= all)")
+	POSITIVE (U"Diameter (mm)", U"3")
 	OK
 DO
 	LOOP {
 		iam (Polygon);
 		autoPraatPicture picture;
 		Polygon_drawCircles (me, GRAPHICS,
-			GET_REAL (L"Xmin"), GET_REAL (L"Xmax"), GET_REAL (L"Ymin"), GET_REAL (L"Ymax"),
-			GET_REAL (L"Diameter"));
+			GET_REAL (U"Xmin"), GET_REAL (U"Xmax"), GET_REAL (U"Ymin"), GET_REAL (U"Ymax"),
+			GET_REAL (U"Diameter"));
 	}
 END
 
-FORM (Polygon_drawClosed, L"Polygon: Draw", 0)
-	REAL (L"Xmin", L"0.0")
-	REAL (L"Xmax", L"0.0")
-	REAL (L"Ymin", L"0.0")
-	REAL (L"Ymax", L"0.0")
+FORM (Polygon_drawClosed, U"Polygon: Draw", 0)
+	REAL (U"Xmin", U"0.0")
+	REAL (U"Xmax", U"0.0")
+	REAL (U"Ymin", U"0.0")
+	REAL (U"Ymax", U"0.0")
 	OK
 DO
 	LOOP {
 		iam (Polygon);
 		autoPraatPicture picture;
-		Polygon_drawClosed (me, GRAPHICS, GET_REAL (L"Xmin"), GET_REAL (L"Xmax"), GET_REAL (L"Ymin"), GET_REAL (L"Ymax"));
+		Polygon_drawClosed (me, GRAPHICS, GET_REAL (U"Xmin"), GET_REAL (U"Xmax"), GET_REAL (U"Ymin"), GET_REAL (U"Ymax"));
 	}
 END
 
-FORM (Polygons_drawConnection, L"Polygons: Draw connection", 0)
-	REAL (L"Xmin", L"0.0")
-	REAL (L"Xmax", L"0.0 (= all)")
-	REAL (L"Ymin", L"0.0")
-	REAL (L"Ymax", L"0.0 (= all)")
-	BOOLEAN (L"Arrow", 0)
-	POSITIVE (L"Relative length", L"0.9")
+FORM (Polygons_drawConnection, U"Polygons: Draw connection", 0)
+	REAL (U"Xmin", U"0.0")
+	REAL (U"Xmax", U"0.0 (= all)")
+	REAL (U"Ymin", U"0.0")
+	REAL (U"Ymax", U"0.0 (= all)")
+	BOOLEAN (U"Arrow", 0)
+	POSITIVE (U"Relative length", U"0.9")
 	OK
 DO
 	Polygon polygon1 = NULL, polygon2 = NULL;
 	LOOP (polygon1 ? polygon2 : polygon1) = (Polygon) OBJECT;
 	autoPraatPicture picture;
 	Polygons_drawConnection (polygon1, polygon2, GRAPHICS,
-		GET_REAL (L"Xmin"), GET_REAL (L"Xmax"), GET_REAL (L"Ymin"), GET_REAL (L"Ymax"),
-		GET_INTEGER (L"Arrow"), GET_REAL (L"Relative length"));
+		GET_REAL (U"Xmin"), GET_REAL (U"Xmax"), GET_REAL (U"Ymin"), GET_REAL (U"Ymax"),
+		GET_INTEGER (U"Arrow"), GET_REAL (U"Relative length"));
 END
 
-DIRECT (Polygon_help) Melder_help (L"Polygon"); END
+DIRECT (Polygon_help) Melder_help (U"Polygon"); END
 
-FORM (Polygon_paint, L"Polygon: Paint", 0)
-	COLOUR (L"Colour (0-1, name, or {r,g,b})", L"0.5")
-	REAL (L"Xmin", L"0.0")
-	REAL (L"Xmax", L"0.0 (= all)")
-	REAL (L"Ymin", L"0.0")
-	REAL (L"Ymax", L"0.0 (= all)")
+FORM (Polygon_paint, U"Polygon: Paint", 0)
+	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.5")
+	REAL (U"Xmin", U"0.0")
+	REAL (U"Xmax", U"0.0 (= all)")
+	REAL (U"Ymin", U"0.0")
+	REAL (U"Ymax", U"0.0 (= all)")
 	OK
 DO
 	LOOP {
 		iam (Polygon);
 		autoPraatPicture picture;
-		Polygon_paint (me, GRAPHICS, GET_COLOUR (L"Colour"), GET_REAL (L"Xmin"), GET_REAL (L"Xmax"), GET_REAL (L"Ymin"), GET_REAL (L"Ymax"));
+		Polygon_paint (me, GRAPHICS, GET_COLOUR (U"Colour"), GET_REAL (U"Xmin"), GET_REAL (U"Xmax"), GET_REAL (U"Ymin"), GET_REAL (U"Ymax"));
 	}
 END
 
-FORM (Polygon_paintCircles, L"Polygon: Paint circles", 0)
-	REAL (L"Xmin", L"0.0")
-	REAL (L"Xmax", L"0.0 (= all)")
-	REAL (L"Ymin", L"0.0")
-	REAL (L"Ymax", L"0.0 (= all)")
-	POSITIVE (L"Diameter (mm)", L"3")
+FORM (Polygon_paintCircles, U"Polygon: Paint circles", 0)
+	REAL (U"Xmin", U"0.0")
+	REAL (U"Xmax", U"0.0 (= all)")
+	REAL (U"Ymin", U"0.0")
+	REAL (U"Ymax", U"0.0 (= all)")
+	POSITIVE (U"Diameter (mm)", U"3")
 	OK
 DO
 	LOOP {
 		iam (Polygon);
 		autoPraatPicture picture;
 		Polygon_paintCircles (me, GRAPHICS,
-			GET_REAL (L"Xmin"), GET_REAL (L"Xmax"), GET_REAL (L"Ymin"), GET_REAL (L"Ymax"), GET_REAL (L"Diameter"));
+			GET_REAL (U"Xmin"), GET_REAL (U"Xmax"), GET_REAL (U"Ymin"), GET_REAL (U"Ymax"), GET_REAL (U"Diameter"));
 	}
 END
 
@@ -5056,13 +5056,13 @@ DIRECT (Polygon_randomize)
 	}
 END
 
-FORM (Polygon_salesperson, L"Polygon: Find shortest path", 0)
-	NATURAL (L"Number of iterations", L"1")
+FORM (Polygon_salesperson, U"Polygon: Find shortest path", 0)
+	NATURAL (U"Number of iterations", U"1")
 	OK
 DO
 	LOOP {
 		iam (Polygon);
-		Polygon_salesperson (me, GET_INTEGER (L"Number of iterations"));
+		Polygon_salesperson (me, GET_INTEGER (U"Number of iterations"));
 		praat_dataChanged (me);
 	}
 END
@@ -5077,74 +5077,74 @@ END
 
 /***** SOUND & PITCH & POINTPROCESS *****/
 
-FORM (Sound_Pitch_PointProcess_voiceReport, L"Voice report", L"Voice")
+FORM (Sound_Pitch_PointProcess_voiceReport, U"Voice report", U"Voice")
 	praat_dia_timeRange (dia);
-	POSITIVE (L"left Pitch range (Hz)", L"75.0")
-	POSITIVE (L"right Pitch range (Hz)", L"600.0")
-	POSITIVE (L"Maximum period factor", L"1.3")
-	POSITIVE (L"Maximum amplitude factor", L"1.6")
-	REAL (L"Silence threshold", L"0.03")
-	REAL (L"Voicing threshold", L"0.45")
+	POSITIVE (U"left Pitch range (Hz)", U"75.0")
+	POSITIVE (U"right Pitch range (Hz)", U"600.0")
+	POSITIVE (U"Maximum period factor", U"1.3")
+	POSITIVE (U"Maximum amplitude factor", U"1.6")
+	REAL (U"Silence threshold", U"0.03")
+	REAL (U"Voicing threshold", U"0.45")
 	OK
 DO
 	MelderInfo_open ();
 	Sound_Pitch_PointProcess_voiceReport (FIRST (Sound), FIRST (Pitch), FIRST (PointProcess),
-		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-		GET_REAL (L"left Pitch range"), GET_REAL (L"right Pitch range"),
-		GET_REAL (L"Maximum period factor"), GET_REAL (L"Maximum amplitude factor"),
-		GET_REAL (L"Silence threshold"), GET_REAL (L"Voicing threshold"));
+		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+		GET_REAL (U"left Pitch range"), GET_REAL (U"right Pitch range"),
+		GET_REAL (U"Maximum period factor"), GET_REAL (U"Maximum amplitude factor"),
+		GET_REAL (U"Silence threshold"), GET_REAL (U"Voicing threshold"));
 	MelderInfo_close ();
 END
 
 /***** SOUND & POINTPROCESS & PITCHTIER & DURATIONTIER *****/
 
-FORM (Sound_Point_Pitch_Duration_to_Sound, L"To Sound", 0)
-	POSITIVE (L"Longest period (s)", L"0.02")
+FORM (Sound_Point_Pitch_Duration_to_Sound, U"To Sound", 0)
+	POSITIVE (U"Longest period (s)", U"0.02")
 	OK
 DO
 	autoSound thee = Sound_Point_Pitch_Duration_to_Sound (FIRST (Sound), FIRST (PointProcess),
-		FIRST (PitchTier), FIRST (DurationTier), GET_REAL (L"Longest period"));
-	praat_new (thee.transfer(), L"manip");
+		FIRST (PitchTier), FIRST (DurationTier), GET_REAL (U"Longest period"));
+	praat_new (thee.transfer(), U"manip");
 END
 
 /***** SPECTROGRAM *****/
 
-FORM (Spectrogram_paint, L"Spectrogram: Paint", L"Spectrogram: Paint...")
+FORM (Spectrogram_paint, U"Spectrogram: Paint", U"Spectrogram: Paint...")
 	praat_dia_timeRange (dia);
-	REAL (L"left Frequency range (Hz)", L"0.0")
-	REAL (L"right Frequency range (Hz)", L"0.0 (= all)")
-	REAL (L"Maximum (dB/Hz)", L"100.0")
-	BOOLEAN (L"Autoscaling", 1)
-	POSITIVE (L"Dynamic range (dB)", L"50.0")
-	REAL (L"Pre-emphasis (dB/oct)", L"6.0")
-	REAL (L"Dynamic compression (0-1)", L"0.0")
-	BOOLEAN (L"Garnish", 1)
+	REAL (U"left Frequency range (Hz)", U"0.0")
+	REAL (U"right Frequency range (Hz)", U"0.0 (= all)")
+	REAL (U"Maximum (dB/Hz)", U"100.0")
+	BOOLEAN (U"Autoscaling", 1)
+	POSITIVE (U"Dynamic range (dB)", U"50.0")
+	REAL (U"Pre-emphasis (dB/oct)", U"6.0")
+	REAL (U"Dynamic compression (0-1)", U"0.0")
+	BOOLEAN (U"Garnish", 1)
 	OK
 DO
 	LOOP {
 		iam (Spectrogram);
 		autoPraatPicture picture;
-		Spectrogram_paint (me, GRAPHICS, GET_REAL (L"left Time range"),
-			GET_REAL (L"right Time range"), GET_REAL (L"left Frequency range"), GET_REAL (L"right Frequency range"),
-			GET_REAL (L"Maximum"), GET_INTEGER (L"Autoscaling"),
-			GET_REAL (L"Dynamic range"), GET_REAL (L"Pre-emphasis"),
-			GET_REAL (L"Dynamic compression"), GET_INTEGER (L"Garnish"));
+		Spectrogram_paint (me, GRAPHICS, GET_REAL (U"left Time range"),
+			GET_REAL (U"right Time range"), GET_REAL (U"left Frequency range"), GET_REAL (U"right Frequency range"),
+			GET_REAL (U"Maximum"), GET_INTEGER (U"Autoscaling"),
+			GET_REAL (U"Dynamic range"), GET_REAL (U"Pre-emphasis"),
+			GET_REAL (U"Dynamic compression"), GET_INTEGER (U"Garnish"));
 	}
 END
 
-FORM (Spectrogram_formula, L"Spectrogram: Formula", L"Spectrogram: Formula...")
-	LABEL (L"label", L"Do for all times and frequencies:")
-	LABEL (L"label", L"   `x' is the time in seconds")
-	LABEL (L"label", L"   `y' is the frequency in hertz")
-	LABEL (L"label", L"   `self' is the current value in Pa\u00B2/Hz")
-	LABEL (L"label", L"   Replace all values with:")
-	TEXTFIELD (L"formula", L"self * exp (- x / 0.1)")
+FORM (Spectrogram_formula, U"Spectrogram: Formula", U"Spectrogram: Formula...")
+	LABEL (U"label", U"Do for all times and frequencies:")
+	LABEL (U"label", U"   `x' is the time in seconds")
+	LABEL (U"label", U"   `y' is the frequency in hertz")
+	LABEL (U"label", U"   `self' is the current value in Pa\u00B2/Hz")
+	LABEL (U"label", U"   Replace all values with:")
+	TEXTFIELD (U"formula", U"self * exp (- x / 0.1)")
 	OK
 DO
 	LOOP {
 		iam (Spectrogram);
 		try {
-			Matrix_formula ((Matrix) me, GET_STRING (L"formula"), interpreter, NULL);
+			Matrix_formula ((Matrix) me, GET_STRING (U"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Spectrogram may have partially changed
@@ -5153,23 +5153,23 @@ DO
 	}
 END
 
-FORM (Spectrogram_getPowerAt, L"Spectrogram: Get power at (time, frequency)", 0)
-	REAL (L"Time (s)", L"0.5")
-	REAL (L"Frequency (Hz)", L"1000")
+FORM (Spectrogram_getPowerAt, U"Spectrogram: Get power at (time, frequency)", 0)
+	REAL (U"Time (s)", U"0.5")
+	REAL (U"Frequency (Hz)", U"1000")
 	OK
 DO
 	Spectrogram me = FIRST_ANY (Spectrogram);
-	double time = GET_REAL (L"Time"), frequency = GET_REAL (L"Frequency");
+	double time = GET_REAL (U"Time"), frequency = GET_REAL (U"Frequency");
 	MelderInfo_open ();
-	MelderInfo_write (Melder_double (Matrix_getValueAtXY (me, time, frequency)));
-	MelderInfo_write (L" Pa2/Hz (at time = ", Melder_double (time), L" seconds and frequency = ", Melder_double (frequency), L" Hz)");
+	MelderInfo_write (Matrix_getValueAtXY (me, time, frequency));
+	MelderInfo_write (U" Pa2/Hz (at time = ", time, U" seconds and frequency = ", frequency, U" Hz)");
 	MelderInfo_close ();
 END
 
-DIRECT (Spectrogram_help) Melder_help (L"Spectrogram"); END
+DIRECT (Spectrogram_help) Melder_help (U"Spectrogram"); END
 
 DIRECT (Spectrogram_movie)
-	Graphics g = Movie_create (L"Spectrogram movie", 300, 300);
+	Graphics g = Movie_create (U"Spectrogram movie", 300, 300);
 	LOOP {
 		iam (Spectrogram);
 		Matrix_movie (me, g);
@@ -5184,30 +5184,30 @@ DIRECT (Spectrogram_to_Matrix)
 	}
 END
 
-FORM (Spectrogram_to_Sound, L"Spectrogram: To Sound", 0)
-	REAL (L"Sampling frequency (Hz)", L"44100")
+FORM (Spectrogram_to_Sound, U"Spectrogram: To Sound", 0)
+	REAL (U"Sampling frequency (Hz)", U"44100")
 	OK
 DO
 	LOOP {
 		iam (Spectrogram);
-		autoSound thee = Spectrogram_to_Sound (me, GET_REAL (L"Sampling frequency"));
+		autoSound thee = Spectrogram_to_Sound (me, GET_REAL (U"Sampling frequency"));
 		praat_new (thee.transfer(), my name);
 	}
 END
 
-FORM (Spectrogram_to_Spectrum, L"Spectrogram: To Spectrum (slice)", 0)
-	REAL (L"Time (seconds)", L"0.0")
+FORM (Spectrogram_to_Spectrum, U"Spectrogram: To Spectrum (slice)", 0)
+	REAL (U"Time (seconds)", U"0.0")
 	OK
 DO
 	LOOP {
 		iam (Spectrogram);
-		autoSpectrum thee = Spectrogram_to_Spectrum (me, GET_REAL (L"Time"));
+		autoSpectrum thee = Spectrogram_to_Spectrum (me, GET_REAL (U"Time"));
 		praat_new (thee.transfer(), my name);
 	}
 END
 
 DIRECT (Spectrogram_view)
-	if (theCurrentPraatApplication -> batch) Melder_throw (L"Cannot view or edit a Spectrogram from batch.");
+	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a Spectrogram from batch.");
 	LOOP {
 		iam (Spectrogram);
 		autoSpectrogramEditor editor = SpectrogramEditor_create (ID_AND_FULL_NAME, me);
@@ -5217,53 +5217,53 @@ END
 
 /***** SPECTRUM *****/
 
-FORM (Spectrum_cepstralSmoothing, L"Spectrum: Cepstral smoothing", 0)
-	POSITIVE (L"Bandwidth (Hz)", L"500.0")
+FORM (Spectrum_cepstralSmoothing, U"Spectrum: Cepstral smoothing", 0)
+	POSITIVE (U"Bandwidth (Hz)", U"500.0")
 	OK
 DO
 	LOOP {
 		iam (Spectrum);
-		autoSpectrum thee = Spectrum_cepstralSmoothing (me, GET_REAL (L"Bandwidth"));
+		autoSpectrum thee = Spectrum_cepstralSmoothing (me, GET_REAL (U"Bandwidth"));
 		praat_new (thee.transfer(), my name);
 	}
 END
 
-FORM (Spectrum_draw, L"Spectrum: Draw", 0)
-	REAL (L"left Frequency range (Hz)", L"0.0")
-	REAL (L"right Frequency range (Hz)", L"0.0 (= all)")
-	REAL (L"Minimum power (dB/Hz)", L"0 (= auto)")
-	REAL (L"Maximum power (dB/Hz)", L"0 (= auto)")
-	BOOLEAN (L"Garnish", 1)
+FORM (Spectrum_draw, U"Spectrum: Draw", 0)
+	REAL (U"left Frequency range (Hz)", U"0.0")
+	REAL (U"right Frequency range (Hz)", U"0.0 (= all)")
+	REAL (U"Minimum power (dB/Hz)", U"0 (= auto)")
+	REAL (U"Maximum power (dB/Hz)", U"0 (= auto)")
+	BOOLEAN (U"Garnish", 1)
 	OK
 DO
 	LOOP {
 		iam (Spectrum);
 		autoPraatPicture picture;
-		Spectrum_draw (me, GRAPHICS, GET_REAL (L"left Frequency range"),
-			GET_REAL (L"right Frequency range"), GET_REAL (L"Minimum power"), GET_REAL (L"Maximum power"),
-			GET_INTEGER (L"Garnish"));
+		Spectrum_draw (me, GRAPHICS, GET_REAL (U"left Frequency range"),
+			GET_REAL (U"right Frequency range"), GET_REAL (U"Minimum power"), GET_REAL (U"Maximum power"),
+			GET_INTEGER (U"Garnish"));
 	}
 END
 
-FORM (Spectrum_drawLogFreq, L"Spectrum: Draw (log freq)", 0)
-	POSITIVE (L"left Frequency range (Hz)", L"10.0")
-	POSITIVE (L"right Frequency range (Hz)", L"10000.0")
-	REAL (L"Minimum power (dB/Hz)", L"0 (= auto)")
-	REAL (L"Maximum power (dB/Hz)", L"0 (= auto)")
-	BOOLEAN (L"Garnish", 1)
+FORM (Spectrum_drawLogFreq, U"Spectrum: Draw (log freq)", 0)
+	POSITIVE (U"left Frequency range (Hz)", U"10.0")
+	POSITIVE (U"right Frequency range (Hz)", U"10000.0")
+	REAL (U"Minimum power (dB/Hz)", U"0 (= auto)")
+	REAL (U"Maximum power (dB/Hz)", U"0 (= auto)")
+	BOOLEAN (U"Garnish", 1)
 	OK
 DO
 	LOOP {
 		iam (Spectrum);
 		autoPraatPicture picture;
-		Spectrum_drawLogFreq (me, GRAPHICS, GET_REAL (L"left Frequency range"),
-			GET_REAL (L"right Frequency range"), GET_REAL (L"Minimum power"), GET_REAL (L"Maximum power"),
-			GET_INTEGER (L"Garnish"));
+		Spectrum_drawLogFreq (me, GRAPHICS, GET_REAL (U"left Frequency range"),
+			GET_REAL (U"right Frequency range"), GET_REAL (U"Minimum power"), GET_REAL (U"Maximum power"),
+			GET_INTEGER (U"Garnish"));
 	}
 END
 
 DIRECT (Spectrum_edit)
-	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot view or edit a Spectrum from batch.");
+	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a Spectrum from batch.");
 	LOOP {
 		iam (Spectrum);
 		autoSpectrumEditor editor = SpectrumEditor_create (ID_AND_FULL_NAME, me);
@@ -5271,20 +5271,20 @@ DIRECT (Spectrum_edit)
 	}
 END
 
-FORM (Spectrum_formula, L"Spectrum: Formula", L"Spectrum: Formula...")
-	LABEL (L"label", L"`x' is the frequency in hertz, `col' is the bin number;   "
+FORM (Spectrum_formula, U"Spectrum: Formula", U"Spectrum: Formula...")
+	LABEL (U"label", U"`x' is the frequency in hertz, `col' is the bin number;   "
 		"`y' = `row' is 1 (real part) or 2 (imaginary part)")
-	LABEL (L"label", L"y := 1;   row := 1;   "
+	LABEL (U"label", U"y := 1;   row := 1;   "
 		"x := 0;   for col := 1 to ncol do { self [1, col] := `formula' ; x := x + dx }")
-	LABEL (L"label", L"y := 2;   row := 2;   "
+	LABEL (U"label", U"y := 2;   row := 2;   "
 		"x := 0;   for col := 1 to ncol do { self [2, col] := `formula' ; x := x + dx }")
-	TEXTFIELD (L"formula", L"0")
+	TEXTFIELD (U"formula", U"0")
 	OK
 DO
 	LOOP {
 		iam (Spectrum);
 		try {
-			Matrix_formula ((Matrix) me, GET_STRING (L"formula"), interpreter, NULL);
+			Matrix_formula ((Matrix) me, GET_STRING (U"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Spectrum may have partially changed
@@ -5293,67 +5293,67 @@ DO
 	}
 END
 
-FORM (Spectrum_getBandDensity, L"Spectrum: Get band density", 0)
-	REAL (L"Band floor (Hz)", L"200.0")
-	REAL (L"Band ceiling (Hz)", L"1000")
+FORM (Spectrum_getBandDensity, U"Spectrum: Get band density", 0)
+	REAL (U"Band floor (Hz)", U"200.0")
+	REAL (U"Band ceiling (Hz)", U"1000")
 	OK
 DO
 	LOOP {
 		iam (Spectrum);
-		double density = Spectrum_getBandDensity (me, GET_REAL (L"Band floor"), GET_REAL (L"Band ceiling"));
-		Melder_informationReal (density, L"Pa2 / Hz2");
+		double density = Spectrum_getBandDensity (me, GET_REAL (U"Band floor"), GET_REAL (U"Band ceiling"));
+		Melder_informationReal (density, U"Pa2 / Hz2");
 	}
 END
 
-FORM (Spectrum_getBandDensityDifference, L"Spectrum: Get band density difference", 0)
-	REAL (L"Low band floor (Hz)", L"0")
-	REAL (L"Low band ceiling (Hz)", L"500")
-	REAL (L"High band floor (Hz)", L"500")
-	REAL (L"High band ceiling (Hz)", L"4000")
+FORM (Spectrum_getBandDensityDifference, U"Spectrum: Get band density difference", 0)
+	REAL (U"Low band floor (Hz)", U"0")
+	REAL (U"Low band ceiling (Hz)", U"500")
+	REAL (U"High band floor (Hz)", U"500")
+	REAL (U"High band ceiling (Hz)", U"4000")
 	OK
 DO
 	LOOP {
 		iam (Spectrum);
 		double difference = Spectrum_getBandDensityDifference (me,
-			GET_REAL (L"Low band floor"), GET_REAL (L"Low band ceiling"), GET_REAL (L"High band floor"), GET_REAL (L"High band ceiling"));
-		Melder_informationReal (difference, L"dB");
+			GET_REAL (U"Low band floor"), GET_REAL (U"Low band ceiling"), GET_REAL (U"High band floor"), GET_REAL (U"High band ceiling"));
+		Melder_informationReal (difference, U"dB");
 	}
 END
 
-FORM (Spectrum_getBandEnergy, L"Spectrum: Get band energy", 0)
-	REAL (L"Band floor (Hz)", L"200.0")
-	REAL (L"Band ceiling (Hz)", L"1000")
+FORM (Spectrum_getBandEnergy, U"Spectrum: Get band energy", 0)
+	REAL (U"Band floor (Hz)", U"200.0")
+	REAL (U"Band ceiling (Hz)", U"1000")
 	OK
 DO
 	LOOP {
 		iam (Spectrum);
-		double energy = Spectrum_getBandEnergy (me, GET_REAL (L"Band floor"), GET_REAL (L"Band ceiling"));
-		Melder_informationReal (energy, L"Pa2 sec");
+		double energy = Spectrum_getBandEnergy (me, GET_REAL (U"Band floor"), GET_REAL (U"Band ceiling"));
+		Melder_informationReal (energy, U"Pa2 sec");
 	}
 END
 
-FORM (Spectrum_getBandEnergyDifference, L"Spectrum: Get band energy difference", 0)
-	REAL (L"Low band floor (Hz)", L"0")
-	REAL (L"Low band ceiling (Hz)", L"500")
-	REAL (L"High band floor (Hz)", L"500")
-	REAL (L"High band ceiling (Hz)", L"4000")
+FORM (Spectrum_getBandEnergyDifference, U"Spectrum: Get band energy difference", 0)
+	REAL (U"Low band floor (Hz)", U"0")
+	REAL (U"Low band ceiling (Hz)", U"500")
+	REAL (U"High band floor (Hz)", U"500")
+	REAL (U"High band ceiling (Hz)", U"4000")
 	OK
 DO
 	LOOP {
 		iam (Spectrum);
 		double difference = Spectrum_getBandEnergyDifference (me,
-			GET_REAL (L"Low band floor"), GET_REAL (L"Low band ceiling"), GET_REAL (L"High band floor"), GET_REAL (L"High band ceiling"));
-		Melder_informationReal (difference, L"dB");
+			GET_REAL (U"Low band floor"), GET_REAL (U"Low band ceiling"), GET_REAL (U"High band floor"), GET_REAL (U"High band ceiling"));
+		Melder_informationReal (difference, U"dB");
 	}
 END	
 
-FORM (Spectrum_getBinFromFrequency, L"Spectrum: Get bin from frequency", 0)
-	REAL (L"Frequency (Hz)", L"2000")
+FORM (Spectrum_getBinFromFrequency, U"Spectrum: Get bin from frequency", 0)
+	REAL (U"Frequency (Hz)", U"2000")
 	OK
 DO
 	LOOP {
 		iam (Spectrum);
-		double bin = Sampled_xToIndex (me, GET_REAL (L"Frequency"));
+		double bin = Sampled_xToIndex (me, GET_REAL (U"Frequency"));
 		Melder_informationReal (bin, NULL);
 	}
 END
@@ -5361,70 +5361,70 @@ END
 DIRECT (Spectrum_getBinWidth)
 	LOOP {
 		iam (Spectrum);
-		Melder_informationReal (my dx, L"hertz");
+		Melder_informationReal (my dx, U"hertz");
 	}
 END
 
-FORM (Spectrum_getCentralMoment, L"Spectrum: Get central moment", L"Spectrum: Get central moment...")
-	POSITIVE (L"Moment", L"3.0")
-	POSITIVE (L"Power", L"2.0")
+FORM (Spectrum_getCentralMoment, U"Spectrum: Get central moment", U"Spectrum: Get central moment...")
+	POSITIVE (U"Moment", U"3.0")
+	POSITIVE (U"Power", U"2.0")
 	OK
 DO
 	LOOP {
 		iam (Spectrum);
-		double moment = Spectrum_getCentralMoment (me, GET_REAL (L"Moment"), GET_REAL (L"Power"));
-		Melder_informationReal (moment, L"hertz to the power 'moment'");
+		double moment = Spectrum_getCentralMoment (me, GET_REAL (U"Moment"), GET_REAL (U"Power"));
+		Melder_informationReal (moment, U"hertz to the power 'moment'");
 	}
 END
 
-FORM (Spectrum_getCentreOfGravity, L"Spectrum: Get centre of gravity", L"Spectrum: Get centre of gravity...")
-	POSITIVE (L"Power", L"2.0")
+FORM (Spectrum_getCentreOfGravity, U"Spectrum: Get centre of gravity", U"Spectrum: Get centre of gravity...")
+	POSITIVE (U"Power", U"2.0")
 	OK
 DO
 	LOOP {
 		iam (Spectrum);
-		double centreOfGravity = Spectrum_getCentreOfGravity (me, GET_REAL (L"Power"));
-		Melder_informationReal (centreOfGravity, L"hertz");
+		double centreOfGravity = Spectrum_getCentreOfGravity (me, GET_REAL (U"Power"));
+		Melder_informationReal (centreOfGravity, U"hertz");
 	}
 END
 
-FORM (Spectrum_getFrequencyFromBin, L"Spectrum: Get frequency from bin", 0)
-	NATURAL (L"Band number", L"1")
+FORM (Spectrum_getFrequencyFromBin, U"Spectrum: Get frequency from bin", 0)
+	NATURAL (U"Band number", U"1")
 	OK
 DO
 	LOOP {
 		iam (Spectrum);
-		double frequency = Sampled_indexToX (me, GET_INTEGER (L"Band number"));
-		Melder_informationReal (frequency, L"hertz");
+		double frequency = Sampled_indexToX (me, GET_INTEGER (U"Band number"));
+		Melder_informationReal (frequency, U"hertz");
 	}
 END
 
 DIRECT (Spectrum_getHighestFrequency)
 	LOOP {
 		iam (Spectrum);
-		Melder_informationReal (my xmax, L"hertz");
+		Melder_informationReal (my xmax, U"hertz");
 	}
 END
 
-FORM (Spectrum_getImaginaryValueInBin, L"Spectrum: Get imaginary value in bin", 0)
-	NATURAL (L"Bin number", L"100")
+FORM (Spectrum_getImaginaryValueInBin, U"Spectrum: Get imaginary value in bin", 0)
+	NATURAL (U"Bin number", U"100")
 	OK
 DO
-	long binNumber = GET_INTEGER (L"Bin number");
+	long binNumber = GET_INTEGER (U"Bin number");
 	LOOP {
 		iam (Spectrum);
-		if (binNumber > my nx) Melder_throw ("Bin number must not exceed number of bins.");
+		if (binNumber > my nx) Melder_throw (U"Bin number must not exceed number of bins.");
 		Melder_informationReal (my z [2] [binNumber], NULL);
 	}
 END
 
-FORM (Spectrum_getKurtosis, L"Spectrum: Get kurtosis", L"Spectrum: Get kurtosis...")
-	POSITIVE (L"Power", L"2.0")
+FORM (Spectrum_getKurtosis, U"Spectrum: Get kurtosis", U"Spectrum: Get kurtosis...")
+	POSITIVE (U"Power", U"2.0")
 	OK
 DO
 	LOOP {
 		iam (Spectrum);
-		double kurtosis = Spectrum_getKurtosis (me, GET_REAL (L"Power"));
+		double kurtosis = Spectrum_getKurtosis (me, GET_REAL (U"Power"));
 		Melder_informationReal (kurtosis, NULL);
 	}
 END
@@ -5432,138 +5432,138 @@ END
 DIRECT (Spectrum_getLowestFrequency)
 	LOOP {
 		iam (Spectrum);
-		Melder_informationReal (my xmin, L"hertz");
+		Melder_informationReal (my xmin, U"hertz");
 	}
 END
 
 DIRECT (Spectrum_getNumberOfBins)
 	LOOP {
 		iam (Spectrum);
-		Melder_information (Melder_integer (my nx), L" bins");
+		Melder_information (my nx, U" bins");
 	}
 END
 
-FORM (Spectrum_getRealValueInBin, L"Spectrum: Get real value in bin", 0)
-	NATURAL (L"Bin number", L"100")
+FORM (Spectrum_getRealValueInBin, U"Spectrum: Get real value in bin", 0)
+	NATURAL (U"Bin number", U"100")
 	OK
 DO
-	long binNumber = GET_INTEGER (L"Bin number");
+	long binNumber = GET_INTEGER (U"Bin number");
 	LOOP {
 		iam (Spectrum);
-		if (binNumber > my nx) Melder_throw ("Bin number must not exceed number of bins.");
+		if (binNumber > my nx) Melder_throw (U"Bin number must not exceed number of bins.");
 		Melder_informationReal (my z [1] [binNumber], NULL);
 	}
 END
 
-FORM (Spectrum_getSkewness, L"Spectrum: Get skewness", L"Spectrum: Get skewness...")
-	POSITIVE (L"Power", L"2.0")
+FORM (Spectrum_getSkewness, U"Spectrum: Get skewness", U"Spectrum: Get skewness...")
+	POSITIVE (U"Power", U"2.0")
 	OK
 DO
 	LOOP {
 		iam (Spectrum);
-		double skewness = Spectrum_getSkewness (me, GET_REAL (L"Power"));
+		double skewness = Spectrum_getSkewness (me, GET_REAL (U"Power"));
 		Melder_informationReal (skewness, NULL);
 	}
 END
 
-FORM (Spectrum_getStandardDeviation, L"Spectrum: Get standard deviation", L"Spectrum: Get standard deviation...")
-	POSITIVE (L"Power", L"2.0")
+FORM (Spectrum_getStandardDeviation, U"Spectrum: Get standard deviation", U"Spectrum: Get standard deviation...")
+	POSITIVE (U"Power", U"2.0")
 	OK
 DO
 	LOOP {
 		iam (Spectrum);
-		double stdev = Spectrum_getStandardDeviation (me, GET_REAL (L"Power"));
-		Melder_informationReal (stdev, L"hertz");
+		double stdev = Spectrum_getStandardDeviation (me, GET_REAL (U"Power"));
+		Melder_informationReal (stdev, U"hertz");
 	}
 END
 
-DIRECT (Spectrum_help) Melder_help (L"Spectrum"); END
+DIRECT (Spectrum_help) Melder_help (U"Spectrum"); END
 
-FORM (Spectrum_list, L"Spectrum: List", 0)
-	BOOLEAN (L"Include bin number", false)
-	BOOLEAN (L"Include frequency", true)
-	BOOLEAN (L"Include real part", false)
-	BOOLEAN (L"Include imaginary part", false)
-	BOOLEAN (L"Include energy density", false)
-	BOOLEAN (L"Include power density", true)
+FORM (Spectrum_list, U"Spectrum: List", 0)
+	BOOLEAN (U"Include bin number", false)
+	BOOLEAN (U"Include frequency", true)
+	BOOLEAN (U"Include real part", false)
+	BOOLEAN (U"Include imaginary part", false)
+	BOOLEAN (U"Include energy density", false)
+	BOOLEAN (U"Include power density", true)
 	OK
 DO
 	LOOP {
 		iam (Spectrum);
-		Spectrum_list (me, GET_INTEGER (L"Include bin number"), GET_INTEGER (L"Include frequency"),
-			GET_INTEGER (L"Include real part"), GET_INTEGER (L"Include imaginary part"),
-			GET_INTEGER (L"Include energy density"), GET_INTEGER (L"Include power density"));
+		Spectrum_list (me, GET_INTEGER (U"Include bin number"), GET_INTEGER (U"Include frequency"),
+			GET_INTEGER (U"Include real part"), GET_INTEGER (U"Include imaginary part"),
+			GET_INTEGER (U"Include energy density"), GET_INTEGER (U"Include power density"));
 	}
 END
 
-FORM (Spectrum_lpcSmoothing, L"Spectrum: LPC smoothing", 0)
-	NATURAL (L"Number of peaks", L"5")
-	POSITIVE (L"Pre-emphasis from (Hz)", L"50.0")
+FORM (Spectrum_lpcSmoothing, U"Spectrum: LPC smoothing", 0)
+	NATURAL (U"Number of peaks", U"5")
+	POSITIVE (U"Pre-emphasis from (Hz)", U"50.0")
 	OK
 DO
 	LOOP {
 		iam (Spectrum);
-		autoSpectrum thee = Spectrum_lpcSmoothing (me, GET_INTEGER (L"Number of peaks"), GET_REAL (L"Pre-emphasis from"));
+		autoSpectrum thee = Spectrum_lpcSmoothing (me, GET_INTEGER (U"Number of peaks"), GET_REAL (U"Pre-emphasis from"));
 		praat_new (thee.transfer(), my name);
 	}
 END
 
-FORM (Spectrum_passHannBand, L"Spectrum: Filter (pass Hann band)", L"Spectrum: Filter (pass Hann band)...")
-	REAL (L"From frequency (Hz)", L"500")
-	REAL (L"To frequency (Hz)", L"1000")
-	POSITIVE (L"Smoothing (Hz)", L"100")
+FORM (Spectrum_passHannBand, U"Spectrum: Filter (pass Hann band)", U"Spectrum: Filter (pass Hann band)...")
+	REAL (U"From frequency (Hz)", U"500")
+	REAL (U"To frequency (Hz)", U"1000")
+	POSITIVE (U"Smoothing (Hz)", U"100")
 	OK
 DO
 	LOOP {
 		iam (Spectrum);
-		Spectrum_passHannBand (me, GET_REAL (L"From frequency"), GET_REAL (L"To frequency"), GET_REAL (L"Smoothing"));
+		Spectrum_passHannBand (me, GET_REAL (U"From frequency"), GET_REAL (U"To frequency"), GET_REAL (U"Smoothing"));
 		praat_dataChanged (me);
 	}
 END
 
-FORM (Spectrum_stopHannBand, L"Spectrum: Filter (stop Hann band)", L"Spectrum: Filter (stop Hann band)...")
-	REAL (L"From frequency (Hz)", L"500")
-	REAL (L"To frequency (Hz)", L"1000")
-	POSITIVE (L"Smoothing (Hz)", L"100")
+FORM (Spectrum_stopHannBand, U"Spectrum: Filter (stop Hann band)", U"Spectrum: Filter (stop Hann band)...")
+	REAL (U"From frequency (Hz)", U"500")
+	REAL (U"To frequency (Hz)", U"1000")
+	POSITIVE (U"Smoothing (Hz)", U"100")
 	OK
 DO
 	LOOP {
 		iam (Spectrum);
-		Spectrum_stopHannBand (me, GET_REAL (L"From frequency"), GET_REAL (L"To frequency"), GET_REAL (L"Smoothing"));
+		Spectrum_stopHannBand (me, GET_REAL (U"From frequency"), GET_REAL (U"To frequency"), GET_REAL (U"Smoothing"));
 		praat_dataChanged (me);
 	}
 END
 
-FORM (Spectrum_to_Excitation, L"Spectrum: To Excitation", 0)
-	POSITIVE (L"Frequency resolution (Bark)", L"0.1")
+FORM (Spectrum_to_Excitation, U"Spectrum: To Excitation", 0)
+	POSITIVE (U"Frequency resolution (Bark)", U"0.1")
 	OK
 DO
 	LOOP {
 		iam (Spectrum);
-		autoExcitation thee = Spectrum_to_Excitation (me, GET_REAL (L"Frequency resolution"));
+		autoExcitation thee = Spectrum_to_Excitation (me, GET_REAL (U"Frequency resolution"));
 		praat_new (thee.transfer(), my name);
 	}
 END
 
-FORM (Spectrum_to_Formant_peaks, L"Spectrum: To Formant (peaks)", 0)
-	LABEL (L"", L"Warning: this simply picks peaks from 0 Hz up!")
-	NATURAL (L"Maximum number of formants", L"1000")
+FORM (Spectrum_to_Formant_peaks, U"Spectrum: To Formant (peaks)", 0)
+	LABEL (U"", U"Warning: this simply picks peaks from 0 Hz up!")
+	NATURAL (U"Maximum number of formants", U"1000")
 	OK
 DO
 	LOOP {
 		iam (Spectrum);
-		autoFormant thee = Spectrum_to_Formant (me, GET_INTEGER (L"Maximum number of formants"));
+		autoFormant thee = Spectrum_to_Formant (me, GET_INTEGER (U"Maximum number of formants"));
 		praat_new (thee.transfer(), my name);
 	}
 END
 
-FORM (Spectrum_to_Ltas, L"Spectrum: To Long-term average spectrum", 0)
-	POSITIVE (L"Bandwidth (Hz)", L"1000")
+FORM (Spectrum_to_Ltas, U"Spectrum: To Long-term average spectrum", 0)
+	POSITIVE (U"Bandwidth (Hz)", U"1000")
 	OK
 DO
 	LOOP {
 		iam (Spectrum);
-		autoLtas thee = Spectrum_to_Ltas (me, GET_REAL (L"Bandwidth"));
+		autoLtas thee = Spectrum_to_Ltas (me, GET_REAL (U"Bandwidth"));
 		praat_new (thee.transfer(), my name);
 	}
 END
@@ -5618,132 +5618,132 @@ DIRECT (SpectrumTier_downto_Table)
 	}
 END
 
-FORM (old_SpectrumTier_draw, L"SpectrumTier: Draw", 0)   // 2010/10/19
-	REAL (L"left Frequency range (Hz)", L"0.0")
-	REAL (L"right Frequency range (Hz)", L"10000.0")
-	REAL (L"left Power range (dB)", L"20.0")
-	REAL (L"right Power range (dB)", L"80.0")
-	BOOLEAN (L"Garnish", 1)
+FORM (old_SpectrumTier_draw, U"SpectrumTier: Draw", 0)   // 2010/10/19
+	REAL (U"left Frequency range (Hz)", U"0.0")
+	REAL (U"right Frequency range (Hz)", U"10000.0")
+	REAL (U"left Power range (dB)", U"20.0")
+	REAL (U"right Power range (dB)", U"80.0")
+	BOOLEAN (U"Garnish", 1)
 	OK
 DO
 	LOOP {
 		iam (SpectrumTier);
 		autoPraatPicture picture;
 		SpectrumTier_draw (me, GRAPHICS,
-			GET_REAL (L"left Frequency range"), GET_REAL (L"right Frequency range"),
-			GET_REAL (L"left Power range"), GET_REAL (L"right Power range"),
-			GET_INTEGER (L"Garnish"), L"lines and speckles");
+			GET_REAL (U"left Frequency range"), GET_REAL (U"right Frequency range"),
+			GET_REAL (U"left Power range"), GET_REAL (U"right Power range"),
+			GET_INTEGER (U"Garnish"), U"lines and speckles");
 	}
 END
 
-FORM (SpectrumTier_draw, L"SpectrumTier: Draw", 0)
-	REAL (L"left Frequency range (Hz)", L"0.0")
-	REAL (L"right Frequency range (Hz)", L"10000.0")
-	REAL (L"left Power range (dB)", L"20.0")
-	REAL (L"right Power range (dB)", L"80.0")
-	BOOLEAN (L"Garnish", 1)
-	LABEL (L"", L"")
-	OPTIONMENU (L"Drawing method", 1)
-		OPTION (L"lines")
-		OPTION (L"speckles")
-		OPTION (L"lines and speckles")
+FORM (SpectrumTier_draw, U"SpectrumTier: Draw", 0)
+	REAL (U"left Frequency range (Hz)", U"0.0")
+	REAL (U"right Frequency range (Hz)", U"10000.0")
+	REAL (U"left Power range (dB)", U"20.0")
+	REAL (U"right Power range (dB)", U"80.0")
+	BOOLEAN (U"Garnish", 1)
+	LABEL (U"", U"")
+	OPTIONMENU (U"Drawing method", 1)
+		OPTION (U"lines")
+		OPTION (U"speckles")
+		OPTION (U"lines and speckles")
 	OK
 DO_ALTERNATIVE (old_SpectrumTier_draw)
 	LOOP {
 		iam (SpectrumTier);
 		autoPraatPicture picture;
 		SpectrumTier_draw (me, GRAPHICS,
-			GET_REAL (L"left Frequency range"), GET_REAL (L"right Frequency range"),
-			GET_REAL (L"left Power range"), GET_REAL (L"right Power range"),
-			GET_INTEGER (L"Garnish"), GET_STRING (L"Drawing method"));
+			GET_REAL (U"left Frequency range"), GET_REAL (U"right Frequency range"),
+			GET_REAL (U"left Power range"), GET_REAL (U"right Power range"),
+			GET_INTEGER (U"Garnish"), GET_STRING (U"Drawing method"));
 	}
 END
 
-FORM (SpectrumTier_list, L"SpectrumTier: List", 0)
-	BOOLEAN (L"Include indexes", true)
-	BOOLEAN (L"Include frequency", true)
-	BOOLEAN (L"Include power density", true)
+FORM (SpectrumTier_list, U"SpectrumTier: List", 0)
+	BOOLEAN (U"Include indexes", true)
+	BOOLEAN (U"Include frequency", true)
+	BOOLEAN (U"Include power density", true)
 	OK
 DO
 	LOOP {
 		iam (SpectrumTier);
-		SpectrumTier_list (me, GET_INTEGER (L"Include indexes"), GET_INTEGER (L"Include frequency"), GET_INTEGER (L"Include power density"));
+		SpectrumTier_list (me, GET_INTEGER (U"Include indexes"), GET_INTEGER (U"Include frequency"), GET_INTEGER (U"Include power density"));
 	}
 END
 
-FORM (SpectrumTier_removePointsBelow, L"SpectrumTier: Remove points below", 0)
-	REAL (L"Remove all points below (dB)", L"40.0")
+FORM (SpectrumTier_removePointsBelow, U"SpectrumTier: Remove points below", 0)
+	REAL (U"Remove all points below (dB)", U"40.0")
 	OK
 DO
 	LOOP {
 		iam (SpectrumTier);
-		RealTier_removePointsBelow ((RealTier) me, GET_REAL (L"Remove all points below"));
+		RealTier_removePointsBelow ((RealTier) me, GET_REAL (U"Remove all points below"));
 		praat_dataChanged (me);
 	}
 END
 
 /***** STRINGS *****/
 
-FORM (Strings_createAsFileList, L"Create Strings as file list", L"Create Strings as file list...")
-	SENTENCE (L"Name", L"fileList")
-	LABEL (L"", L"File path:")
-	TEXTFIELD (L"path", L"/people/Miep/*.wav")
+FORM (Strings_createAsFileList, U"Create Strings as file list", U"Create Strings as file list...")
+	SENTENCE (U"Name", U"fileList")
+	LABEL (U"", U"File path:")
+	TEXTFIELD (U"path", U"/people/Miep/*.wav")
 	OK
 static int inited;
 if (! inited) {
 	structMelderDir defaultDir = { { 0 } };
-	wchar_t *workingDirectory, path [kMelder_MAXPATH+1];
 	Melder_getDefaultDir (& defaultDir);
-	workingDirectory = Melder_dirToPath (& defaultDir);
+	char32 *workingDirectory = Melder_dirToPath (& defaultDir);
+	char32 path [kMelder_MAXPATH+1];
 	#if defined (UNIX)
-		swprintf (path, kMelder_MAXPATH+1, L"%ls/*.wav", workingDirectory);
+		Melder_sprint (path, kMelder_MAXPATH+1, workingDirectory, U"/*.wav");
 	#elif defined (_WIN32)
 	{
-		int len = wcslen (workingDirectory);
-		swprintf (path, kMelder_MAXPATH+1, L"%ls%ls*.wav", workingDirectory, len == 0 || workingDirectory [len - 1] != '\\' ? L"\\" : L"");
+		int len = str32len (workingDirectory);
+		Melder_sprint (path, kMelder_MAXPATH+1, workingDirectory, len == 0 || workingDirectory [len - 1] != U'\\' ? U"\\" : U"", U"*.wav");
 	}
 	#else
-		swprintf (path, kMelder_MAXPATH+1, L"%ls*.wav", workingDirectory);
+		Melder_sprint (path, kMelder_MAXPATH+1, workingDirectory, U"*.wav");
 	#endif
-	SET_STRING (L"path", path);
+	SET_STRING (U"path", path);
 	inited = TRUE;
 }
 DO
-	autoStrings me = Strings_createAsFileList (GET_STRING (L"path"));
-	praat_new (me.transfer(), GET_STRING (L"Name"));
+	autoStrings me = Strings_createAsFileList (GET_STRING (U"path"));
+	praat_new (me.transfer(), GET_STRING (U"Name"));
 END
 
-FORM (Strings_createAsDirectoryList, L"Create Strings as directory list", L"Create Strings as directory list...")
-	SENTENCE (L"Name", L"directoryList")
-	LABEL (L"", L"Path:")
-	TEXTFIELD (L"path", L"/people/Miep/*")
+FORM (Strings_createAsDirectoryList, U"Create Strings as directory list", U"Create Strings as directory list...")
+	SENTENCE (U"Name", U"directoryList")
+	LABEL (U"", U"Path:")
+	TEXTFIELD (U"path", U"/people/Miep/*")
 	OK
 static int inited;
 if (! inited) {
 	structMelderDir defaultDir = { { 0 } };
-	wchar_t *workingDirectory, path [kMelder_MAXPATH+1];
 	Melder_getDefaultDir (& defaultDir);
-	workingDirectory = Melder_dirToPath (& defaultDir);
+	char32 *workingDirectory = Melder_dirToPath (& defaultDir);
+	char32 path [kMelder_MAXPATH+1];
 	#if defined (UNIX)
-		swprintf (path, kMelder_MAXPATH+1, L"%ls/*", workingDirectory);
+		Melder_sprint (path, kMelder_MAXPATH+1, workingDirectory, U"/*");
 	#elif defined (_WIN32)
 	{
-		int len = wcslen (workingDirectory);
-		swprintf (path, kMelder_MAXPATH+1, L"%ls%ls*", workingDirectory, len == 0 || workingDirectory [len - 1] != '\\' ? L"\\" : L"");
+		int len = str32len (workingDirectory);
+		Melder_sprint (path, kMelder_MAXPATH+1, workingDirectory, len == 0 || workingDirectory [len - 1] != U'\\' ? U"\\" : U"");
 	}
 	#else
-		swprintf (path, 300, L"%ls*", workingDirectory);
+		Melder_sprint (path, kMelder_MAXPATH+1, workingDirectory, U"*");
 	#endif
-	SET_STRING (L"path", path);
+	SET_STRING (U"path", path);
 	inited = TRUE;
 }
 DO
-	autoStrings me = Strings_createAsDirectoryList (GET_STRING (L"path"));
-	praat_new (me.transfer(), GET_STRING (L"Name"));
+	autoStrings me = Strings_createAsDirectoryList (GET_STRING (U"path"));
+	praat_new (me.transfer(), GET_STRING (U"Name"));
 END
 
 DIRECT (Strings_edit)
-	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot view or edit a Strings from batch.");
+	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a Strings from batch.");
 	LOOP {
 		iam (Strings);
 		autoStringsEditor editor = StringsEditor_create (ID_AND_FULL_NAME, me);
@@ -5755,7 +5755,7 @@ DIRECT (Strings_equal)
 	Strings s1 = NULL, s2 = NULL;
 	LOOP (s1 ? s2 : s1) = (Strings) OBJECT;
 	bool equal = Data_equal (s1, s2);
-	Melder_information (Melder_integer (equal));
+	Melder_information ((int) equal);   // we need a 0 or 1
 END
 
 DIRECT (Strings_genericize)
@@ -5774,32 +5774,32 @@ END
 DIRECT (Strings_getNumberOfStrings)
 	LOOP {
 		iam (Strings);
-		Melder_information (Melder_integer (my numberOfStrings));
+		Melder_information (my numberOfStrings);
 	}
 END
 
-FORM (Strings_getString, L"Get string", 0)
-	NATURAL (L"Position", L"1")
+FORM (Strings_getString, U"Get string", 0)
+	NATURAL (U"Position", U"1")
 	OK
 DO
 	LOOP {
 		iam (Strings);
-		long index = GET_INTEGER (L"Position");
-		Melder_information (index > my numberOfStrings ? L"" : my strings [index]);   // TODO
+		long index = GET_INTEGER (U"Position");
+		Melder_information (index > my numberOfStrings ? U"" : my strings [index]);   // TODO
 	}
 END
 
-DIRECT (Strings_help) Melder_help (L"Strings"); END
+DIRECT (Strings_help) Melder_help (U"Strings"); END
 
-FORM (Strings_insertString, L"Strings: Insert string", 0)
-	NATURAL (L"At position", L"1")
-	LABEL (L"", L"String:")
-	TEXTFIELD (L"string", L"")
+FORM (Strings_insertString, U"Strings: Insert string", 0)
+	NATURAL (U"At position", U"1")
+	LABEL (U"", U"String:")
+	TEXTFIELD (U"string", U"")
 	OK
 DO
 	LOOP {
 		iam (Strings);
-		Strings_insert (me, GET_INTEGER (L"At position"), GET_STRING (L"string"));
+		Strings_insert (me, GET_INTEGER (U"At position"), GET_STRING (U"string"));
 		praat_dataChanged (me);
 	}
 END
@@ -5825,48 +5825,48 @@ DIRECT (Strings_randomize)
 	}
 END
 
-FORM_READ (Strings_readFromRawTextFile, L"Read Strings from raw text file", 0, true)
+FORM_READ (Strings_readFromRawTextFile, U"Read Strings from raw text file", 0, true)
 	autoStrings me = Strings_readFromRawTextFile (file);
 	praat_new (me.transfer(), MelderFile_name (file));
 END
 
-FORM (Strings_removeString, L"Strings: Remove string", 0)
-	NATURAL (L"Position", L"1")
+FORM (Strings_removeString, U"Strings: Remove string", 0)
+	NATURAL (U"Position", U"1")
 	OK
 DO
 	LOOP {
 		iam (Strings);
-		Strings_remove (me, GET_INTEGER (L"Position"));
+		Strings_remove (me, GET_INTEGER (U"Position"));
 		praat_dataChanged (me);
 	}
 END
 
-FORM (Strings_replaceAll, L"Strings: Replace all", 0)
-	SENTENCE (L"Find", L"a")
-	SENTENCE (L"Replace with", L"b")
-	INTEGER (L"Replace limit per string", L"0 (=unlimited)")
-	RADIO (L"Find and replace strings are", 1)
-	RADIOBUTTON (L"literals")
-	RADIOBUTTON (L"regular expressions")
+FORM (Strings_replaceAll, U"Strings: Replace all", 0)
+	SENTENCE (U"Find", U"a")
+	SENTENCE (U"Replace with", U"b")
+	INTEGER (U"Replace limit per string", U"0 (=unlimited)")
+	RADIO (U"Find and replace strings are", 1)
+		RADIOBUTTON (U"literals")
+		RADIOBUTTON (U"regular expressions")
 	OK
 DO
 	long numberOfMatches, numberOfStringMatches;
 	LOOP {
 		iam (Strings);
-		praat_new (Strings_change (me, GET_STRING (L"Find"), GET_STRING (L"Replace with"),
-			GET_INTEGER (L"Replace limit per string"), & numberOfMatches, & numberOfStringMatches, GET_INTEGER (L"Find and replace strings are") - 1), 0);
+		praat_new (Strings_change (me, GET_STRING (U"Find"), GET_STRING (U"Replace with"),
+			GET_INTEGER (U"Replace limit per string"), & numberOfMatches, & numberOfStringMatches, GET_INTEGER (U"Find and replace strings are") - 1), 0);
 	}
 END
 
-FORM (Strings_setString, L"Strings: Set string", 0)
-	NATURAL (L"Position", L"1")
-	LABEL (L"", L"New string:")
-	TEXTFIELD (L"newString", L"")
+FORM (Strings_setString, U"Strings: Set string", 0)
+	NATURAL (U"Position", U"1")
+	LABEL (U"", U"New string:")
+	TEXTFIELD (U"newString", U"")
 	OK
 DO
 	LOOP {
 		iam (Strings);
-		Strings_replace (me, GET_INTEGER (L"Position"), GET_STRING (L"newString"));
+		Strings_replace (me, GET_INTEGER (U"Position"), GET_STRING (U"newString"));
 		praat_dataChanged (me);
 	}
 END
@@ -5895,7 +5895,7 @@ DIRECT (Strings_to_WordList)
 	}
 END
 
-FORM_WRITE (Strings_writeToRawTextFile, L"Save Strings as text file", 0, L"txt")
+FORM_WRITE (Strings_writeToRawTextFile, U"Save Strings as text file", 0, U"txt")
 	LOOP {
 		iam (Strings);
 		Strings_writeToRawTextFile (me, file);
@@ -5914,24 +5914,24 @@ END
 
 /***** TEXTGRID, rest in praat_TextGrid_init.cpp *****/
 
-FORM (TextGrid_create, L"Create TextGrid", L"Create TextGrid...")
-	LABEL (L"", L"Hint: to label or segment an existing Sound,")
-	LABEL (L"", L"select that Sound and choose \"To TextGrid...\".")
-	REAL (L"Start time (s)", L"0.0")
-	REAL (L"End time (s)", L"1.0")
-	SENTENCE (L"All tier names", L"Mary John bell")
-	SENTENCE (L"Which of these are point tiers?", L"bell")
+FORM (TextGrid_create, U"Create TextGrid", U"Create TextGrid...")
+	LABEL (U"", U"Hint: to label or segment an existing Sound,")
+	LABEL (U"", U"select that Sound and choose \"To TextGrid...\".")
+	REAL (U"Start time (s)", U"0.0")
+	REAL (U"End time (s)", U"1.0")
+	SENTENCE (U"All tier names", U"Mary John bell")
+	SENTENCE (U"Which of these are point tiers?", U"bell")
 	OK
 DO
-	double tmin = GET_REAL (L"Start time"), tmax = GET_REAL (L"End time");
-	if (tmax <= tmin) Melder_throw ("End time should be greater than start time");
-	autoTextGrid thee = TextGrid_create (tmin, tmax, GET_STRING (L"All tier names"), GET_STRING (L"Which of these are point tiers?"));
-	praat_new (thee.transfer(), GET_STRING (L"All tier names"));
+	double tmin = GET_REAL (U"Start time"), tmax = GET_REAL (U"End time");
+	if (tmax <= tmin) Melder_throw (U"End time should be greater than start time");
+	autoTextGrid thee = TextGrid_create (tmin, tmax, GET_STRING (U"All tier names"), GET_STRING (U"Which of these are point tiers?"));
+	praat_new (thee.transfer(), GET_STRING (U"All tier names"));
 END
 
 /***** TEXTTIER, rest in praat_TextGrid_init.cpp *****/
 
-FORM_READ (TextTier_readFromXwaves, L"Read TextTier from Xwaves", 0, true)
+FORM_READ (TextTier_readFromXwaves, U"Read TextTier from Xwaves", 0, true)
 	autoTextTier me = TextTier_readFromXwaves (file);
 	praat_new (me.transfer(), MelderFile_name (file));
 END
@@ -5942,17 +5942,17 @@ DIRECT (TimeFrameSampled_getNumberOfFrames)
 	LOOP {
 		iam (Sampled);
 		long numberOfFrames = my nx;
-		Melder_information (Melder_integer (numberOfFrames), L" frames");
+		Melder_information (numberOfFrames, U" frames");
 	}
 END
 
-FORM (TimeFrameSampled_getFrameFromTime, L"Get frame number from time", L"Get frame number from time...")
-	REAL (L"Time (s)", L"0.5")
+FORM (TimeFrameSampled_getFrameFromTime, U"Get frame number from time", U"Get frame number from time...")
+	REAL (U"Time (s)", U"0.5")
 	OK
 DO
 	LOOP {
 		iam (Sampled);
-		double frame = Sampled_xToIndex (me, GET_REAL (L"Time"));
+		double frame = Sampled_xToIndex (me, GET_REAL (U"Time"));
 		Melder_informationReal (frame, NULL);
 	}
 END
@@ -5961,18 +5961,18 @@ DIRECT (TimeFrameSampled_getFrameLength)
 	LOOP {
 		iam (Sampled);
 		double frameLength = my dx;
-		Melder_informationReal (frameLength, L"seconds");
+		Melder_informationReal (frameLength, U"seconds");
 	}
 END
 
-FORM (TimeFrameSampled_getTimeFromFrame, L"Get time from frame number", L"Get time from frame number...")
-	NATURAL (L"Frame number", L"1")
+FORM (TimeFrameSampled_getTimeFromFrame, U"Get time from frame number", U"Get time from frame number...")
+	NATURAL (U"Frame number", U"1")
 	OK
 DO
 	LOOP {
 		iam (Sampled);
-		double time = Sampled_indexToX (me, GET_INTEGER (L"Frame number"));
-		Melder_informationReal (time, L"seconds");
+		double time = Sampled_indexToX (me, GET_INTEGER (U"Frame number"));
+		Melder_informationReal (time, U"seconds");
 	}
 END
 
@@ -5982,7 +5982,7 @@ DIRECT (TimeFunction_getDuration)
 	LOOP {
 		iam (Function);
 		double duration = my xmax - my xmin;
-		Melder_informationReal (duration, L"seconds");
+		Melder_informationReal (duration, U"seconds");
 	}
 END
 
@@ -5990,7 +5990,7 @@ DIRECT (TimeFunction_getEndTime)
 	LOOP {
 		iam (Function);
 		double endTime = my xmax;
-		Melder_informationReal (endTime, L"seconds");
+		Melder_informationReal (endTime, U"seconds");
 	}
 END
 
@@ -5998,28 +5998,28 @@ DIRECT (TimeFunction_getStartTime)
 	LOOP {
 		iam (Function);
 		double startTime = my xmin;
-		Melder_informationReal (startTime, L"seconds");
+		Melder_informationReal (startTime, U"seconds");
 	}
 END
 
-FORM (TimeFunction_scaleTimesBy, L"Scale times by", 0)
-	POSITIVE (L"Factor", L"2.0")
+FORM (TimeFunction_scaleTimesBy, U"Scale times by", 0)
+	POSITIVE (U"Factor", U"2.0")
 	OK
 DO
 	LOOP {
 		iam (Function);
-		Function_scaleXBy (me, GET_REAL (L"Factor"));
+		Function_scaleXBy (me, GET_REAL (U"Factor"));
 		praat_dataChanged (me);
 	}
 END
 
-FORM (TimeFunction_scaleTimesTo, L"Scale times to", 0)
-	REAL (L"New start time (s)", L"0.0")
-	REAL (L"New end time (s)", L"1.0")
+FORM (TimeFunction_scaleTimesTo, U"Scale times to", 0)
+	REAL (U"New start time (s)", U"0.0")
+	REAL (U"New end time (s)", U"1.0")
 	OK
 DO
-	double tminto = GET_REAL (L"New start time"), tmaxto = GET_REAL (L"New end time");
-	if (tminto >= tmaxto) Melder_throw ("New end time should be greater than new start time.");
+	double tminto = GET_REAL (U"New start time"), tmaxto = GET_REAL (U"New end time");
+	if (tminto >= tmaxto) Melder_throw (U"New end time should be greater than new start time.");
 	LOOP {
 		iam (Function);
 		Function_scaleXTo (me, tminto, tmaxto);
@@ -6027,29 +6027,29 @@ DO
 	}
 END
 
-FORM (TimeFunction_shiftTimesBy, L"Shift times by", 0)
-	REAL (L"Shift (s)", L"0.5")
+FORM (TimeFunction_shiftTimesBy, U"Shift times by", 0)
+	REAL (U"Shift (s)", U"0.5")
 	OK
 DO
 	LOOP {
 		iam (Function);
-		Function_shiftXBy (me, GET_REAL (L"Shift"));
+		Function_shiftXBy (me, GET_REAL (U"Shift"));
 		praat_dataChanged (me);
 	}
 END
 
-FORM (TimeFunction_shiftTimesTo, L"Shift times to", 0)
-	RADIO (L"Shift", 1)
-		OPTION (L"start time")
-		OPTION (L"centre time")
-		OPTION (L"end time")
-	REAL (L"To time (s)", L"0.0")
+FORM (TimeFunction_shiftTimesTo, U"Shift times to", 0)
+	RADIO (U"Shift", 1)
+		OPTION (U"start time")
+		OPTION (U"centre time")
+		OPTION (U"end time")
+	REAL (U"To time (s)", U"0.0")
 	OK
 DO
-	int shift = GET_INTEGER (L"Shift");
+	int shift = GET_INTEGER (U"Shift");
 	LOOP {
 		iam (Function);
-		Function_shiftXTo (me, shift == 1 ? my xmin : shift == 2 ? 0.5 * (my xmin + my xmax) : my xmax, GET_REAL (L"To time"));
+		Function_shiftXTo (me, shift == 1 ? my xmin : shift == 2 ? 0.5 * (my xmin + my xmax) : my xmax, GET_REAL (U"To time"));
 		praat_dataChanged (me);
 	}
 END
@@ -6064,85 +6064,85 @@ END
 
 /***** TIMETIER *****/
 
-FORM (TimeTier_getHighIndexFromTime, L"Get high index", L"AnyTier: Get high index from time...")
-	REAL (L"Time (s)", L"0.5")
+FORM (TimeTier_getHighIndexFromTime, U"Get high index", U"AnyTier: Get high index from time...")
+	REAL (U"Time (s)", U"0.5")
 	OK
 DO
 	LOOP {
 		iam (AnyTier);
-		Melder_information (my points -> size == 0 ? L"--undefined--" : Melder_integer (AnyTier_timeToHighIndex (me, GET_REAL (L"Time"))));
+		Melder_information (my points -> size == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToHighIndex (me, GET_REAL (U"Time"))));
 	}
 END
 
-FORM (TimeTier_getLowIndexFromTime, L"Get low index", L"AnyTier: Get low index from time...")
-	REAL (L"Time (s)", L"0.5")
+FORM (TimeTier_getLowIndexFromTime, U"Get low index", U"AnyTier: Get low index from time...")
+	REAL (U"Time (s)", U"0.5")
 	OK
 DO
 	LOOP {
 		iam (AnyTier);
-		Melder_information (my points -> size == 0 ? L"--undefined--" : Melder_integer (AnyTier_timeToLowIndex (me, GET_REAL (L"Time"))));
+		Melder_information (my points -> size == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToLowIndex (me, GET_REAL (U"Time"))));
 	}
 END
 
-FORM (TimeTier_getNearestIndexFromTime, L"Get nearest index", L"AnyTier: Get nearest index from time...")
-	REAL (L"Time (s)", L"0.5")
+FORM (TimeTier_getNearestIndexFromTime, U"Get nearest index", U"AnyTier: Get nearest index from time...")
+	REAL (U"Time (s)", U"0.5")
 	OK
 DO
 	LOOP {
 		iam (AnyTier);
-		Melder_information (my points -> size == 0 ? L"--undefined--" : Melder_integer (AnyTier_timeToNearestIndex (me, GET_REAL (L"Time"))));
+		Melder_information (my points -> size == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToNearestIndex (me, GET_REAL (U"Time"))));
 	}
 END
 
 DIRECT (TimeTier_getNumberOfPoints)
 	LOOP {
 		iam (AnyTier);
-		Melder_information (Melder_integer (my points -> size), L" points");
+		Melder_information (my points -> size, U" points");
 	}
 END
 
-FORM (TimeTier_getTimeFromIndex, L"Get time", 0 /*"AnyTier: Get time from index..."*/)
-	NATURAL (L"Point number", L"10")
+FORM (TimeTier_getTimeFromIndex, U"Get time", 0 /*"AnyTier: Get time from index..."*/)
+	NATURAL (U"Point number", U"10")
 	OK
 DO
 	LOOP {
 		iam (AnyTier);
-		long i = GET_INTEGER (L"Point number");
-		if (i > my points -> size) Melder_information (L"--undefined--");
-		else Melder_informationReal (((AnyPoint) my points -> item [i]) -> number, L"seconds");
+		long i = GET_INTEGER (U"Point number");
+		if (i > my points -> size) Melder_information (U"--undefined--");
+		else Melder_informationReal (((AnyPoint) my points -> item [i]) -> number, U"seconds");
 	}
 END
 
-FORM (TimeTier_removePoint, L"Remove one point", L"AnyTier: Remove point...")
-	NATURAL (L"Point number", L"1")
+FORM (TimeTier_removePoint, U"Remove one point", U"AnyTier: Remove point...")
+	NATURAL (U"Point number", U"1")
 	OK
 DO
 	LOOP {
 		iam (AnyTier);
-		AnyTier_removePoint (me, GET_INTEGER (L"Point number"));
+		AnyTier_removePoint (me, GET_INTEGER (U"Point number"));
 		praat_dataChanged (me);
 	}
 END
 
-FORM (TimeTier_removePointNear, L"Remove one point", L"AnyTier: Remove point near...")
-	REAL (L"Time (s)", L"0.5")
+FORM (TimeTier_removePointNear, U"Remove one point", U"AnyTier: Remove point near...")
+	REAL (U"Time (s)", U"0.5")
 	OK
 DO
 	LOOP {
 		iam (AnyTier);
-		AnyTier_removePointNear (me, GET_REAL (L"Time"));
+		AnyTier_removePointNear (me, GET_REAL (U"Time"));
 		praat_dataChanged (me);
 	}
 END
 
-FORM (TimeTier_removePointsBetween, L"Remove points", L"AnyTier: Remove points between...")
-	REAL (L"left Time range (s)", L"0.0")
-	REAL (L"right Time range (s)", L"1.0")
+FORM (TimeTier_removePointsBetween, U"Remove points", U"AnyTier: Remove points between...")
+	REAL (U"left Time range (s)", U"0.0")
+	REAL (U"right Time range (s)", U"1.0")
 	OK
 DO
 	LOOP {
 		iam (AnyTier);
-		AnyTier_removePointsBetween (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"));
+		AnyTier_removePointsBetween (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
 		praat_dataChanged (me);
 	}
 END
@@ -6157,19 +6157,19 @@ DIRECT (Transition_conflate)
 	}
 END
 
-FORM (Transition_drawAsNumbers, L"Draw as numbers", 0)
-	RADIO (L"Format", 1)
-	RADIOBUTTON (L"decimal")
-	RADIOBUTTON (L"exponential")
-	RADIOBUTTON (L"free")
-	RADIOBUTTON (L"rational")
-	NATURAL (L"Precision", L"2")
+FORM (Transition_drawAsNumbers, U"Draw as numbers", 0)
+	RADIO (U"Format", 1)
+		RADIOBUTTON (U"decimal")
+		RADIOBUTTON (U"exponential")
+		RADIOBUTTON (U"free")
+		RADIOBUTTON (U"rational")
+	NATURAL (U"Precision", U"2")
 	OK
 DO
 	LOOP {
 		iam (Transition);
 		autoPraatPicture picture;
-		Transition_drawAsNumbers (me, GRAPHICS, GET_INTEGER (L"Format"), GET_INTEGER (L"Precision"));
+		Transition_drawAsNumbers (me, GRAPHICS, GET_INTEGER (U"Format"), GET_INTEGER (U"Precision"));
 	}
 END
 
@@ -6180,20 +6180,20 @@ DIRECT (Transition_eigen)
 		Transition_eigen (me, & vec_, & val_);
 		autoMatrix vec = vec_;
 		autoMatrix val = val_;
-		praat_new (vec.transfer(), L"eigenvectors");
-		praat_new (val.transfer(), L"eigenvalues");
+		praat_new (vec.transfer(), U"eigenvectors");
+		praat_new (val.transfer(), U"eigenvalues");
 	}
 END
 
-DIRECT (Transition_help) Melder_help (L"Transition"); END
+DIRECT (Transition_help) Melder_help (U"Transition"); END
 
-FORM (Transition_power, L"Transition: Power...", 0)
-	NATURAL (L"Power", L"2")
+FORM (Transition_power, U"Transition: Power...", 0)
+	NATURAL (U"Power", U"2")
 	OK
 DO
 	LOOP {
 		iam (Transition);
-		autoTransition thee = Transition_power (me, GET_INTEGER (L"Power"));
+		autoTransition thee = Transition_power (me, GET_INTEGER (U"Power"));
 		praat_new (thee.transfer(), my name);
 	}
 END
@@ -6208,31 +6208,31 @@ END
 
 /***** Praat menu *****/
 
-FORM (Praat_test, L"Praat test", 0)
-	OPTIONMENU_ENUM (L"Test", kPraatTests, DEFAULT)
-	SENTENCE (L"arg1", L"1000000")
-	SENTENCE (L"arg2", L"")
-	SENTENCE (L"arg3", L"")
-	SENTENCE (L"arg4", L"")
+FORM (Praat_test, U"Praat test", 0)
+	OPTIONMENU_ENUM (U"Test", kPraatTests, DEFAULT)
+	SENTENCE (U"arg1", U"1000000")
+	SENTENCE (U"arg2", U"")
+	SENTENCE (U"arg3", U"")
+	SENTENCE (U"arg4", U"")
 	OK
 DO
-	Praat_tests (GET_ENUM (kPraatTests, L"Test"), GET_STRING (L"arg1"),
-		GET_STRING (L"arg2"), GET_STRING (L"arg3"), GET_STRING (L"arg4"));
+	Praat_tests (GET_ENUM (kPraatTests, U"Test"), GET_STRING (U"arg1"),
+		GET_STRING (U"arg2"), GET_STRING (U"arg3"), GET_STRING (U"arg4"));
 END
 
 /***** Help menu *****/
 
-DIRECT (ObjectWindow) Melder_help (L"Object window"); END
-DIRECT (Intro) Melder_help (L"Intro"); END
-DIRECT (WhatsNew) Melder_help (L"What's new?"); END
-DIRECT (TypesOfObjects) Melder_help (L"Types of objects"); END
-DIRECT (Editors) Melder_help (L"Editors"); END
-DIRECT (FrequentlyAskedQuestions) Melder_help (L"FAQ (Frequently Asked Questions)"); END
-DIRECT (Acknowledgments) Melder_help (L"Acknowledgments"); END
-DIRECT (FormulasTutorial) Melder_help (L"Formulas"); END
-DIRECT (ScriptingTutorial) Melder_help (L"Scripting"); END
-DIRECT (DemoWindow) Melder_help (L"Demo window"); END
-DIRECT (Programming) Melder_help (L"Programming with Praat"); END
+DIRECT (ObjectWindow) Melder_help (U"Object window"); END
+DIRECT (Intro) Melder_help (U"Intro"); END
+DIRECT (WhatsNew) Melder_help (U"What's new?"); END
+DIRECT (TypesOfObjects) Melder_help (U"Types of objects"); END
+DIRECT (Editors) Melder_help (U"Editors"); END
+DIRECT (FrequentlyAskedQuestions) Melder_help (U"FAQ (Frequently Asked Questions)"); END
+DIRECT (Acknowledgments) Melder_help (U"Acknowledgments"); END
+DIRECT (FormulasTutorial) Melder_help (U"Formulas"); END
+DIRECT (ScriptingTutorial) Melder_help (U"Scripting"); END
+DIRECT (DemoWindow) Melder_help (U"Demo window"); END
+DIRECT (Programming) Melder_help (U"Programming with Praat"); END
 DIRECT (SearchManual) Melder_search (); END
 
 /***** file recognizers *****/
@@ -6264,19 +6264,18 @@ static Any chronologicalTextGridTextFileRecognizer (int nread, const char *heade
 	return NULL;
 }
 
-static Any imageFileRecognizer (int nread, const char *header, MelderFile file) {
-	const wchar_t *fileName = MelderFile_name (file);
-	(void) header;
-	if (Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, L".jpg") ||
-	    Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, L".JPG") ||
-	    Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, L".jpeg") ||
-		Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, L".JPEG") ||
-	    Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, L".png") ||
-		Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, L".PNG") ||
-	    Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, L".tiff") ||
-		Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, L".TIFF") ||
-		Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, L".tif") ||
-		Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, L".TIF"))
+static Any imageFileRecognizer (int /* nread */, const char * /* header */, MelderFile file) {
+	const char32 *fileName = MelderFile_name (file);
+	if (Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".jpg") ||
+	    Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".JPG") ||
+	    Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".jpeg") ||
+		Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".JPEG") ||
+	    Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".png") ||
+		Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".PNG") ||
+	    Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".tiff") ||
+		Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".TIFF") ||
+		Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".tif") ||
+		Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".TIF"))
 	{
 		return Photo_readFromImageFile (file);
 	}
@@ -6289,56 +6288,56 @@ void praat_TableOfReal_init (ClassInfo klas);   // Buttons for TableOfReal and f
 
 void praat_TimeFunction_query_init (ClassInfo klas);   // Query buttons for time-based subclasses of Function.
 void praat_TimeFunction_query_init (ClassInfo klas) {
-	praat_addAction1 (klas, 1, L"Query time domain", 0, 1, 0);
-	praat_addAction1 (klas, 1, L"Get start time", 0, 2, DO_TimeFunction_getStartTime);
-						praat_addAction1 (klas, 1, L"Get starting time", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFunction_getStartTime);
-	praat_addAction1 (klas, 1, L"Get end time", 0, 2, DO_TimeFunction_getEndTime);
-						praat_addAction1 (klas, 1, L"Get finishing time", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFunction_getEndTime);
-	praat_addAction1 (klas, 1, L"Get total duration", 0, 2, DO_TimeFunction_getDuration);
-						praat_addAction1 (klas, 1, L"Get duration", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFunction_getDuration);
+	praat_addAction1 (klas, 1, U"Query time domain", 0, 1, 0);
+	praat_addAction1 (klas, 1, U"Get start time", 0, 2, DO_TimeFunction_getStartTime);
+						praat_addAction1 (klas, 1, U"Get starting time", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFunction_getStartTime);
+	praat_addAction1 (klas, 1, U"Get end time", 0, 2, DO_TimeFunction_getEndTime);
+						praat_addAction1 (klas, 1, U"Get finishing time", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFunction_getEndTime);
+	praat_addAction1 (klas, 1, U"Get total duration", 0, 2, DO_TimeFunction_getDuration);
+						praat_addAction1 (klas, 1, U"Get duration", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFunction_getDuration);
 }
 
 void praat_TimeFunction_modify_init (ClassInfo klas);   // Modify buttons for time-based subclasses of Function.
 void praat_TimeFunction_modify_init (ClassInfo klas) {
-	praat_addAction1 (klas, 0, L"Modify times", 0, 1, 0);
-	praat_addAction1 (klas, 0, L"Shift times by...", 0, 2, DO_TimeFunction_shiftTimesBy);
-	praat_addAction1 (klas, 0, L"Shift times to...", 0, 2, DO_TimeFunction_shiftTimesTo);
-						praat_addAction1 (klas, 0, L"Shift to zero", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFunction_shiftToZero);   // hidden 2008
-	praat_addAction1 (klas, 0, L"Scale times by...", 0, 2, DO_TimeFunction_scaleTimesBy);
-	praat_addAction1 (klas, 0, L"Scale times to...", 0, 2, DO_TimeFunction_scaleTimesTo);
-						praat_addAction1 (klas, 0, L"Scale times...", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFunction_scaleTimesTo);   // hidden 2008
+	praat_addAction1 (klas, 0, U"Modify times", 0, 1, 0);
+	praat_addAction1 (klas, 0, U"Shift times by...", 0, 2, DO_TimeFunction_shiftTimesBy);
+	praat_addAction1 (klas, 0, U"Shift times to...", 0, 2, DO_TimeFunction_shiftTimesTo);
+						praat_addAction1 (klas, 0, U"Shift to zero", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFunction_shiftToZero);   // hidden 2008
+	praat_addAction1 (klas, 0, U"Scale times by...", 0, 2, DO_TimeFunction_scaleTimesBy);
+	praat_addAction1 (klas, 0, U"Scale times to...", 0, 2, DO_TimeFunction_scaleTimesTo);
+						praat_addAction1 (klas, 0, U"Scale times...", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFunction_scaleTimesTo);   // hidden 2008
 }
 
 void praat_TimeFrameSampled_query_init (ClassInfo klas);   // Query buttons for frame-based time-based subclasses of Sampled.
 void praat_TimeFrameSampled_query_init (ClassInfo klas) {
 	praat_TimeFunction_query_init (klas);
-	praat_addAction1 (klas, 1, L"Query time sampling", 0, 1, 0);
-	praat_addAction1 (klas, 1, L"Get number of frames", 0, 2, DO_TimeFrameSampled_getNumberOfFrames);
-	praat_addAction1 (klas, 1, L"Get time step", 0, 2, DO_TimeFrameSampled_getFrameLength);
-						praat_addAction1 (klas, 1, L"Get frame length", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFrameSampled_getFrameLength);
-						praat_addAction1 (klas, 1, L"Get frame duration", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFrameSampled_getFrameLength);
-	praat_addAction1 (klas, 1, L"Get time from frame number...", 0, 2, DO_TimeFrameSampled_getTimeFromFrame);
-						praat_addAction1 (klas, 1, L"Get time from frame...", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFrameSampled_getTimeFromFrame);
-	praat_addAction1 (klas, 1, L"Get frame number from time...", 0, 2, DO_TimeFrameSampled_getFrameFromTime);
-						praat_addAction1 (klas, 1, L"Get frame from time...", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFrameSampled_getFrameFromTime);
+	praat_addAction1 (klas, 1, U"Query time sampling", 0, 1, 0);
+	praat_addAction1 (klas, 1, U"Get number of frames", 0, 2, DO_TimeFrameSampled_getNumberOfFrames);
+	praat_addAction1 (klas, 1, U"Get time step", 0, 2, DO_TimeFrameSampled_getFrameLength);
+						praat_addAction1 (klas, 1, U"Get frame length", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFrameSampled_getFrameLength);
+						praat_addAction1 (klas, 1, U"Get frame duration", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFrameSampled_getFrameLength);
+	praat_addAction1 (klas, 1, U"Get time from frame number...", 0, 2, DO_TimeFrameSampled_getTimeFromFrame);
+						praat_addAction1 (klas, 1, U"Get time from frame...", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFrameSampled_getTimeFromFrame);
+	praat_addAction1 (klas, 1, U"Get frame number from time...", 0, 2, DO_TimeFrameSampled_getFrameFromTime);
+						praat_addAction1 (klas, 1, U"Get frame from time...", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFrameSampled_getFrameFromTime);
 }
 
 void praat_TimeTier_query_init (ClassInfo klas);   // Query buttons for time-based subclasses of AnyTier.
 void praat_TimeTier_query_init (ClassInfo klas) {
 	praat_TimeFunction_query_init (klas);
-	praat_addAction1 (klas, 1, L"Get number of points", 0, 1, DO_TimeTier_getNumberOfPoints);
-	praat_addAction1 (klas, 1, L"Get low index from time...", 0, 1, DO_TimeTier_getLowIndexFromTime);
-	praat_addAction1 (klas, 1, L"Get high index from time...", 0, 1, DO_TimeTier_getHighIndexFromTime);
-	praat_addAction1 (klas, 1, L"Get nearest index from time...", 0, 1, DO_TimeTier_getNearestIndexFromTime);
-	praat_addAction1 (klas, 1, L"Get time from index...", 0, 1, DO_TimeTier_getTimeFromIndex);
+	praat_addAction1 (klas, 1, U"Get number of points", 0, 1, DO_TimeTier_getNumberOfPoints);
+	praat_addAction1 (klas, 1, U"Get low index from time...", 0, 1, DO_TimeTier_getLowIndexFromTime);
+	praat_addAction1 (klas, 1, U"Get high index from time...", 0, 1, DO_TimeTier_getHighIndexFromTime);
+	praat_addAction1 (klas, 1, U"Get nearest index from time...", 0, 1, DO_TimeTier_getNearestIndexFromTime);
+	praat_addAction1 (klas, 1, U"Get time from index...", 0, 1, DO_TimeTier_getTimeFromIndex);
 }
 
 void praat_TimeTier_modify_init (ClassInfo klas);   // Modification buttons for time-based subclasses of AnyTier.
 void praat_TimeTier_modify_init (ClassInfo klas) {
 	praat_TimeFunction_modify_init (klas);
-	praat_addAction1 (klas, 0, L"Remove point...", 0, 1, DO_TimeTier_removePoint);
-	praat_addAction1 (klas, 0, L"Remove point near...", 0, 1, DO_TimeTier_removePointNear);
-	praat_addAction1 (klas, 0, L"Remove points between...", 0, 1, DO_TimeTier_removePointsBetween);
+	praat_addAction1 (klas, 0, U"Remove point...", 0, 1, DO_TimeTier_removePoint);
+	praat_addAction1 (klas, 0, U"Remove point near...", 0, 1, DO_TimeTier_removePointNear);
+	praat_addAction1 (klas, 0, U"Remove points between...", 0, 1, DO_TimeTier_removePointsBetween);
 }
 
 void praat_uvafon_init ();
@@ -6354,9 +6353,9 @@ void praat_uvafon_init () {
 		classIntervalTier, classTextGrid, classLongSound, classWordList, classSpellingChecker,
 		classMovie, classCorpus, classPhoto,
 		NULL);
-	Thing_recognizeClassByOtherName (classManipulation, L"Psola");
-	Thing_recognizeClassByOtherName (classManipulation, L"Analysis");
-	Thing_recognizeClassByOtherName (classPitchTier, L"StylPitch");
+	Thing_recognizeClassByOtherName (classManipulation, U"Psola");
+	Thing_recognizeClassByOtherName (classManipulation, U"Analysis");
+	Thing_recognizeClassByOtherName (classPitchTier, U"StylPitch");
 
 	Data_recognizeFileType (cgnSyntaxFileRecognizer);
 	Data_recognizeFileType (chronologicalTextGridTextFileRecognizer);
@@ -6369,790 +6368,790 @@ void praat_uvafon_init () {
 	INCLUDE_LIBRARY (praat_uvafon_Sound_init)
 	INCLUDE_LIBRARY (praat_uvafon_TextGrid_init)
 
-	praat_addMenuCommand (L"Objects", L"Technical", L"Praat test...", 0, 0, DO_Praat_test);
+	praat_addMenuCommand (U"Objects", U"Technical", U"Praat test...", 0, 0, DO_Praat_test);
 
-	praat_addMenuCommand (L"Objects", L"New", L"-- new numerics --", 0, 0, 0);
-	praat_addMenuCommand (L"Objects", L"New", L"Matrix", 0, 0, 0);
-		praat_addMenuCommand (L"Objects", L"New", L"Create Matrix...", 0, 1, DO_Matrix_create);
-		praat_addMenuCommand (L"Objects", L"New", L"Create simple Matrix...", 0, 1, DO_Matrix_createSimple);
-		praat_addMenuCommand (L"Objects", L"New", L"-- colour matrix --", 0, 1, 0);
-		praat_addMenuCommand (L"Objects", L"New", L"Create Photo...", 0, 1, DO_Photo_create);
-		praat_addMenuCommand (L"Objects", L"New", L"Create simple Photo...", 0, 1, DO_Photo_createSimple);
-	praat_addMenuCommand (L"Objects", L"Open", L"-- read movie --", 0, praat_HIDDEN, 0);
-	praat_addMenuCommand (L"Objects", L"Open", L"Open movie file...", 0, praat_HIDDEN, DO_Movie_openFromSoundFile);
-	praat_addMenuCommand (L"Objects", L"Open", L"-- read raw --", 0, 0, 0);
-	praat_addMenuCommand (L"Objects", L"Open", L"Read Matrix from raw text file...", 0, 0, DO_Matrix_readFromRawTextFile);
-	praat_addMenuCommand (L"Objects", L"Open", L"Read Matrix from LVS AP file...", 0, praat_HIDDEN, DO_Matrix_readAP);
-	praat_addMenuCommand (L"Objects", L"Open", L"Read Strings from raw text file...", 0, 0, DO_Strings_readFromRawTextFile);
+	praat_addMenuCommand (U"Objects", U"New", U"-- new numerics --", 0, 0, 0);
+	praat_addMenuCommand (U"Objects", U"New", U"Matrix", 0, 0, 0);
+		praat_addMenuCommand (U"Objects", U"New", U"Create Matrix...", 0, 1, DO_Matrix_create);
+		praat_addMenuCommand (U"Objects", U"New", U"Create simple Matrix...", 0, 1, DO_Matrix_createSimple);
+		praat_addMenuCommand (U"Objects", U"New", U"-- colour matrix --", 0, 1, 0);
+		praat_addMenuCommand (U"Objects", U"New", U"Create Photo...", 0, 1, DO_Photo_create);
+		praat_addMenuCommand (U"Objects", U"New", U"Create simple Photo...", 0, 1, DO_Photo_createSimple);
+	praat_addMenuCommand (U"Objects", U"Open", U"-- read movie --", 0, praat_HIDDEN, 0);
+	praat_addMenuCommand (U"Objects", U"Open", U"Open movie file...", 0, praat_HIDDEN, DO_Movie_openFromSoundFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"-- read raw --", 0, 0, 0);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read Matrix from raw text file...", 0, 0, DO_Matrix_readFromRawTextFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read Matrix from LVS AP file...", 0, praat_HIDDEN, DO_Matrix_readAP);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read Strings from raw text file...", 0, 0, DO_Strings_readFromRawTextFile);
 
 	INCLUDE_LIBRARY (praat_uvafon_stat_init)
 
-	praat_addMenuCommand (L"Objects", L"New", L"Tiers", 0, 0, 0);
-		praat_addMenuCommand (L"Objects", L"New", L"Create empty PointProcess...", 0, 1, DO_PointProcess_createEmpty);
-		praat_addMenuCommand (L"Objects", L"New", L"Create Poisson process...", 0, 1, DO_PointProcess_createPoissonProcess);
-		praat_addMenuCommand (L"Objects", L"New", L"-- new tiers ---", 0, 1, 0);
-		praat_addMenuCommand (L"Objects", L"New", L"Create PitchTier...", 0, 1, DO_PitchTier_create);
-		praat_addMenuCommand (L"Objects", L"New", L"Create FormantGrid...", 0, 1, DO_FormantGrid_create);
-		praat_addMenuCommand (L"Objects", L"New", L"Create FormantTier...", 0, praat_HIDDEN | praat_DEPTH_1, DO_FormantTier_create);
-		praat_addMenuCommand (L"Objects", L"New", L"Create IntensityTier...", 0, 1, DO_IntensityTier_create);
-		praat_addMenuCommand (L"Objects", L"New", L"Create DurationTier...", 0, 1, DO_DurationTier_create);
-		praat_addMenuCommand (L"Objects", L"New", L"Create AmplitudeTier...", 0, 1, DO_AmplitudeTier_create);
-	praat_addMenuCommand (L"Objects", L"New", L"-- new textgrid --", 0, 0, 0);
-	praat_addMenuCommand (L"Objects", L"New", L"Create TextGrid...", 0, 0, DO_TextGrid_create);
-	praat_addMenuCommand (L"Objects", L"New", L"Create Corpus...", 0, praat_HIDDEN, DO_Corpus_create);
-	praat_addMenuCommand (L"Objects", L"New", L"Create Strings as file list...", 0, 0, DO_Strings_createAsFileList);
-	praat_addMenuCommand (L"Objects", L"New", L"Create Strings as directory list...", 0, 0, DO_Strings_createAsDirectoryList);
+	praat_addMenuCommand (U"Objects", U"New", U"Tiers", 0, 0, 0);
+		praat_addMenuCommand (U"Objects", U"New", U"Create empty PointProcess...", 0, 1, DO_PointProcess_createEmpty);
+		praat_addMenuCommand (U"Objects", U"New", U"Create Poisson process...", 0, 1, DO_PointProcess_createPoissonProcess);
+		praat_addMenuCommand (U"Objects", U"New", U"-- new tiers ---", 0, 1, 0);
+		praat_addMenuCommand (U"Objects", U"New", U"Create PitchTier...", 0, 1, DO_PitchTier_create);
+		praat_addMenuCommand (U"Objects", U"New", U"Create FormantGrid...", 0, 1, DO_FormantGrid_create);
+		praat_addMenuCommand (U"Objects", U"New", U"Create FormantTier...", 0, praat_HIDDEN | praat_DEPTH_1, DO_FormantTier_create);
+		praat_addMenuCommand (U"Objects", U"New", U"Create IntensityTier...", 0, 1, DO_IntensityTier_create);
+		praat_addMenuCommand (U"Objects", U"New", U"Create DurationTier...", 0, 1, DO_DurationTier_create);
+		praat_addMenuCommand (U"Objects", U"New", U"Create AmplitudeTier...", 0, 1, DO_AmplitudeTier_create);
+	praat_addMenuCommand (U"Objects", U"New", U"-- new textgrid --", 0, 0, 0);
+	praat_addMenuCommand (U"Objects", U"New", U"Create TextGrid...", 0, 0, DO_TextGrid_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Corpus...", 0, praat_HIDDEN, DO_Corpus_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as file list...", 0, 0, DO_Strings_createAsFileList);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as directory list...", 0, 0, DO_Strings_createAsDirectoryList);
 
-	praat_addMenuCommand (L"Objects", L"Open", L"-- read tier --", 0, 0, 0);
-	praat_addMenuCommand (L"Objects", L"Open", L"Read from special tier file...", 0, 0, 0);
-		praat_addMenuCommand (L"Objects", L"Open", L"Read TextTier from Xwaves...", 0, 1, DO_TextTier_readFromXwaves);
-		praat_addMenuCommand (L"Objects", L"Open", L"Read IntervalTier from Xwaves...", 0, 1, DO_IntervalTier_readFromXwaves);
+	praat_addMenuCommand (U"Objects", U"Open", U"-- read tier --", 0, 0, 0);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read from special tier file...", 0, 0, 0);
+		praat_addMenuCommand (U"Objects", U"Open", U"Read TextTier from Xwaves...", 0, 1, DO_TextTier_readFromXwaves);
+		praat_addMenuCommand (U"Objects", U"Open", U"Read IntervalTier from Xwaves...", 0, 1, DO_IntervalTier_readFromXwaves);
 
-	praat_addMenuCommand (L"Objects", L"ApplicationHelp", L"Praat Intro", 0, '?', DO_Intro);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Praat Intro", 0, '?', DO_Intro);
 	#ifndef macintosh
-		praat_addMenuCommand (L"Objects", L"Help", L"Object window", 0, 0, DO_ObjectWindow);
+		praat_addMenuCommand (U"Objects", U"Help", U"Object window", 0, 0, DO_ObjectWindow);
 	#endif
-	praat_addMenuCommand (L"Objects", L"ApplicationHelp", L"Frequently asked questions", 0, 0, DO_FrequentlyAskedQuestions);
-	praat_addMenuCommand (L"Objects", L"ApplicationHelp", L"What's new?", 0, 0, DO_WhatsNew);
-	praat_addMenuCommand (L"Objects", L"ApplicationHelp", L"Types of objects", 0, 0, DO_TypesOfObjects);
-	praat_addMenuCommand (L"Objects", L"ApplicationHelp", L"Editors", 0, 0, DO_Editors);
-	praat_addMenuCommand (L"Objects", L"ApplicationHelp", L"Acknowledgments", 0, 0, DO_Acknowledgments);
-	praat_addMenuCommand (L"Objects", L"ApplicationHelp", L"-- shell help --", 0, 0, 0);
-	praat_addMenuCommand (L"Objects", L"ApplicationHelp", L"Formulas tutorial", 0, 0, DO_FormulasTutorial);
-	praat_addMenuCommand (L"Objects", L"ApplicationHelp", L"Scripting tutorial", 0, 0, DO_ScriptingTutorial);
-	praat_addMenuCommand (L"Objects", L"ApplicationHelp", L"Demo window", 0, 0, DO_DemoWindow);
-	praat_addMenuCommand (L"Objects", L"ApplicationHelp", L"Programming", 0, 0, DO_Programming);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Frequently asked questions", 0, 0, DO_FrequentlyAskedQuestions);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"What's new?", 0, 0, DO_WhatsNew);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Types of objects", 0, 0, DO_TypesOfObjects);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Editors", 0, 0, DO_Editors);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Acknowledgments", 0, 0, DO_Acknowledgments);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"-- shell help --", 0, 0, 0);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Formulas tutorial", 0, 0, DO_FormulasTutorial);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Scripting tutorial", 0, 0, DO_ScriptingTutorial);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Demo window", 0, 0, DO_DemoWindow);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Programming", 0, 0, DO_Programming);
 	#ifdef macintosh
-		praat_addMenuCommand (L"Objects", L"Help", L"Praat Intro", 0, '?', DO_Intro);
-		praat_addMenuCommand (L"Objects", L"Help", L"Object window help", 0, 0, DO_ObjectWindow);
-		praat_addMenuCommand (L"Objects", L"Help", L"-- manual --", 0, 0, 0);
-		praat_addMenuCommand (L"Objects", L"Help", L"Search Praat manual...", 0, 'M', DO_SearchManual);
+		praat_addMenuCommand (U"Objects", U"Help", U"Praat Intro", 0, '?', DO_Intro);
+		praat_addMenuCommand (U"Objects", U"Help", U"Object window help", 0, 0, DO_ObjectWindow);
+		praat_addMenuCommand (U"Objects", U"Help", U"-- manual --", 0, 0, 0);
+		praat_addMenuCommand (U"Objects", U"Help", U"Search Praat manual...", 0, 'M', DO_SearchManual);
 	#endif
 
-	praat_addAction1 (classAmplitudeTier, 0, L"AmplitudeTier help", 0, 0, DO_AmplitudeTier_help);
-	praat_addAction1 (classAmplitudeTier, 1, L"View & Edit", 0, praat_ATTRACTIVE, DO_AmplitudeTier_edit);
-	praat_addAction1 (classAmplitudeTier, 1, L"Edit", 0, praat_HIDDEN, DO_AmplitudeTier_edit);
-	praat_addAction1 (classAmplitudeTier, 0, L"View & Edit with Sound?", 0, 0, DO_info_AmplitudeTier_Sound_edit);
-	praat_addAction1 (classAmplitudeTier, 0, L"Query -", 0, 0, 0);
+	praat_addAction1 (classAmplitudeTier, 0, U"AmplitudeTier help", 0, 0, DO_AmplitudeTier_help);
+	praat_addAction1 (classAmplitudeTier, 1, U"View & Edit", 0, praat_ATTRACTIVE, DO_AmplitudeTier_edit);
+	praat_addAction1 (classAmplitudeTier, 1, U"Edit", 0, praat_HIDDEN, DO_AmplitudeTier_edit);
+	praat_addAction1 (classAmplitudeTier, 0, U"View & Edit with Sound?", 0, 0, DO_info_AmplitudeTier_Sound_edit);
+	praat_addAction1 (classAmplitudeTier, 0, U"Query -", 0, 0, 0);
 		praat_TimeTier_query_init (classAmplitudeTier);
-		praat_addAction1 (classAmplitudeTier, 1, L"Get shimmer (local)...", 0, 1, DO_AmplitudeTier_getShimmer_local);
-		praat_addAction1 (classAmplitudeTier, 1, L"Get shimmer (local_dB)...", 0, 1, DO_AmplitudeTier_getShimmer_local_dB);
-		praat_addAction1 (classAmplitudeTier, 1, L"Get shimmer (apq3)...", 0, 1, DO_AmplitudeTier_getShimmer_apq3);
-		praat_addAction1 (classAmplitudeTier, 1, L"Get shimmer (apq5)...", 0, 1, DO_AmplitudeTier_getShimmer_apq5);
-		praat_addAction1 (classAmplitudeTier, 1, L"Get shimmer (apq11)...", 0, 1, DO_AmplitudeTier_getShimmer_apq11);
-		praat_addAction1 (classAmplitudeTier, 1, L"Get shimmer (dda)...", 0, 1, DO_AmplitudeTier_getShimmer_dda);
-	praat_addAction1 (classAmplitudeTier, 0, L"Modify -", 0, 0, 0);
+		praat_addAction1 (classAmplitudeTier, 1, U"Get shimmer (local)...", 0, 1, DO_AmplitudeTier_getShimmer_local);
+		praat_addAction1 (classAmplitudeTier, 1, U"Get shimmer (local_dB)...", 0, 1, DO_AmplitudeTier_getShimmer_local_dB);
+		praat_addAction1 (classAmplitudeTier, 1, U"Get shimmer (apq3)...", 0, 1, DO_AmplitudeTier_getShimmer_apq3);
+		praat_addAction1 (classAmplitudeTier, 1, U"Get shimmer (apq5)...", 0, 1, DO_AmplitudeTier_getShimmer_apq5);
+		praat_addAction1 (classAmplitudeTier, 1, U"Get shimmer (apq11)...", 0, 1, DO_AmplitudeTier_getShimmer_apq11);
+		praat_addAction1 (classAmplitudeTier, 1, U"Get shimmer (dda)...", 0, 1, DO_AmplitudeTier_getShimmer_dda);
+	praat_addAction1 (classAmplitudeTier, 0, U"Modify -", 0, 0, 0);
 		praat_TimeTier_modify_init (classAmplitudeTier);
-		praat_addAction1 (classAmplitudeTier, 0, L"Add point...", 0, 1, DO_AmplitudeTier_addPoint);
-		praat_addAction1 (classAmplitudeTier, 0, L"Formula...", 0, 1, DO_AmplitudeTier_formula);
-praat_addAction1 (classAmplitudeTier, 0, L"Synthesize", 0, 0, 0);
-	praat_addAction1 (classAmplitudeTier, 0, L"To Sound (pulse train)...", 0, 0, DO_AmplitudeTier_to_Sound);
-praat_addAction1 (classAmplitudeTier, 0, L"Convert", 0, 0, 0);
-	praat_addAction1 (classAmplitudeTier, 0, L"To IntensityTier...", 0, 0, DO_AmplitudeTier_to_IntensityTier);
-	praat_addAction1 (classAmplitudeTier, 0, L"Down to PointProcess", 0, 0, DO_AmplitudeTier_downto_PointProcess);
-	praat_addAction1 (classAmplitudeTier, 0, L"Down to TableOfReal", 0, 0, DO_AmplitudeTier_downto_TableOfReal);
+		praat_addAction1 (classAmplitudeTier, 0, U"Add point...", 0, 1, DO_AmplitudeTier_addPoint);
+		praat_addAction1 (classAmplitudeTier, 0, U"Formula...", 0, 1, DO_AmplitudeTier_formula);
+praat_addAction1 (classAmplitudeTier, 0, U"Synthesize", 0, 0, 0);
+	praat_addAction1 (classAmplitudeTier, 0, U"To Sound (pulse train)...", 0, 0, DO_AmplitudeTier_to_Sound);
+praat_addAction1 (classAmplitudeTier, 0, U"Convert", 0, 0, 0);
+	praat_addAction1 (classAmplitudeTier, 0, U"To IntensityTier...", 0, 0, DO_AmplitudeTier_to_IntensityTier);
+	praat_addAction1 (classAmplitudeTier, 0, U"Down to PointProcess", 0, 0, DO_AmplitudeTier_downto_PointProcess);
+	praat_addAction1 (classAmplitudeTier, 0, U"Down to TableOfReal", 0, 0, DO_AmplitudeTier_downto_TableOfReal);
 
-	praat_addAction1 (classCochleagram, 0, L"Cochleagram help", 0, 0, DO_Cochleagram_help);
-	praat_addAction1 (classCochleagram, 1, L"Movie", 0, 0, DO_Cochleagram_movie);
-praat_addAction1 (classCochleagram, 0, L"Info", 0, 0, 0);
-	praat_addAction1 (classCochleagram, 2, L"Difference...", 0, 0, DO_Cochleagram_difference);
-praat_addAction1 (classCochleagram, 0, L"Draw", 0, 0, 0);
-	praat_addAction1 (classCochleagram, 0, L"Paint...", 0, 0, DO_Cochleagram_paint);
-praat_addAction1 (classCochleagram, 0, L"Modify", 0, 0, 0);
-	praat_addAction1 (classCochleagram, 0, L"Formula...", 0, 0, DO_Cochleagram_formula);
-praat_addAction1 (classCochleagram, 0, L"Analyse", 0, 0, 0);
-	praat_addAction1 (classCochleagram, 0, L"To Excitation (slice)...", 0, 0, DO_Cochleagram_to_Excitation);
-praat_addAction1 (classCochleagram, 0, L"Hack", 0, 0, 0);
-	praat_addAction1 (classCochleagram, 0, L"To Matrix", 0, 0, DO_Cochleagram_to_Matrix);
+	praat_addAction1 (classCochleagram, 0, U"Cochleagram help", 0, 0, DO_Cochleagram_help);
+	praat_addAction1 (classCochleagram, 1, U"Movie", 0, 0, DO_Cochleagram_movie);
+praat_addAction1 (classCochleagram, 0, U"Info", 0, 0, 0);
+	praat_addAction1 (classCochleagram, 2, U"Difference...", 0, 0, DO_Cochleagram_difference);
+praat_addAction1 (classCochleagram, 0, U"Draw", 0, 0, 0);
+	praat_addAction1 (classCochleagram, 0, U"Paint...", 0, 0, DO_Cochleagram_paint);
+praat_addAction1 (classCochleagram, 0, U"Modify", 0, 0, 0);
+	praat_addAction1 (classCochleagram, 0, U"Formula...", 0, 0, DO_Cochleagram_formula);
+praat_addAction1 (classCochleagram, 0, U"Analyse", 0, 0, 0);
+	praat_addAction1 (classCochleagram, 0, U"To Excitation (slice)...", 0, 0, DO_Cochleagram_to_Excitation);
+praat_addAction1 (classCochleagram, 0, U"Hack", 0, 0, 0);
+	praat_addAction1 (classCochleagram, 0, U"To Matrix", 0, 0, DO_Cochleagram_to_Matrix);
 
-	praat_addAction1 (classCorpus, 1, L"View & Edit", 0, praat_ATTRACTIVE, DO_Corpus_edit);
+	praat_addAction1 (classCorpus, 1, U"View & Edit", 0, praat_ATTRACTIVE, DO_Corpus_edit);
 
-praat_addAction1 (classDistributions, 0, L"Learn", 0, 0, 0);
-	praat_addAction1 (classDistributions, 1, L"To Transition...", 0, 0, DO_Distributions_to_Transition);
-	praat_addAction1 (classDistributions, 2, L"To Transition (noise)...", 0, 0, DO_Distributions_to_Transition_noise);
+praat_addAction1 (classDistributions, 0, U"Learn", 0, 0, 0);
+	praat_addAction1 (classDistributions, 1, U"To Transition...", 0, 0, DO_Distributions_to_Transition);
+	praat_addAction1 (classDistributions, 2, U"To Transition (noise)...", 0, 0, DO_Distributions_to_Transition_noise);
 
-	praat_addAction1 (classDurationTier, 0, L"DurationTier help", 0, 0, DO_DurationTier_help);
-	praat_addAction1 (classDurationTier, 1, L"View & Edit", 0, praat_ATTRACTIVE, DO_DurationTier_edit);
-	praat_addAction1 (classDurationTier, 1, L"Edit", 0, praat_HIDDEN, DO_DurationTier_edit);
-	praat_addAction1 (classDurationTier, 0, L"View & Edit with Sound?", 0, 0, DO_info_DurationTier_Sound_edit);
-	praat_addAction1 (classDurationTier, 0, L"& Manipulation: Replace?", 0, 0, DO_info_DurationTier_Manipulation_replace);
-	praat_addAction1 (classDurationTier, 0, L"Query -", 0, 0, 0);
+	praat_addAction1 (classDurationTier, 0, U"DurationTier help", 0, 0, DO_DurationTier_help);
+	praat_addAction1 (classDurationTier, 1, U"View & Edit", 0, praat_ATTRACTIVE, DO_DurationTier_edit);
+	praat_addAction1 (classDurationTier, 1, U"Edit", 0, praat_HIDDEN, DO_DurationTier_edit);
+	praat_addAction1 (classDurationTier, 0, U"View & Edit with Sound?", 0, 0, DO_info_DurationTier_Sound_edit);
+	praat_addAction1 (classDurationTier, 0, U"& Manipulation: Replace?", 0, 0, DO_info_DurationTier_Manipulation_replace);
+	praat_addAction1 (classDurationTier, 0, U"Query -", 0, 0, 0);
 		praat_TimeTier_query_init (classDurationTier);
-		praat_addAction1 (classDurationTier, 1, L"-- get content --", 0, 1, 0);
-		praat_addAction1 (classDurationTier, 1, L"Get value at time...", 0, 1, DO_DurationTier_getValueAtTime);
-		praat_addAction1 (classDurationTier, 1, L"Get value at index...", 0, 1, DO_DurationTier_getValueAtIndex);
-		praat_addAction1 (classDurationTier, 1, L"Get target duration...", 0, 1, DO_DurationTier_getTargetDuration);
-	praat_addAction1 (classDurationTier, 0, L"Modify -", 0, 0, 0);
+		praat_addAction1 (classDurationTier, 1, U"-- get content --", 0, 1, 0);
+		praat_addAction1 (classDurationTier, 1, U"Get value at time...", 0, 1, DO_DurationTier_getValueAtTime);
+		praat_addAction1 (classDurationTier, 1, U"Get value at index...", 0, 1, DO_DurationTier_getValueAtIndex);
+		praat_addAction1 (classDurationTier, 1, U"Get target duration...", 0, 1, DO_DurationTier_getTargetDuration);
+	praat_addAction1 (classDurationTier, 0, U"Modify -", 0, 0, 0);
 		praat_TimeTier_modify_init (classDurationTier);
-		praat_addAction1 (classDurationTier, 0, L"Add point...", 0, 1, DO_DurationTier_addPoint);
-		praat_addAction1 (classDurationTier, 0, L"Formula...", 0, 1, DO_DurationTier_formula);
-praat_addAction1 (classDurationTier, 0, L"Convert", 0, 0, 0);
-	praat_addAction1 (classDurationTier, 0, L"Down to PointProcess", 0, 0, DO_DurationTier_downto_PointProcess);
+		praat_addAction1 (classDurationTier, 0, U"Add point...", 0, 1, DO_DurationTier_addPoint);
+		praat_addAction1 (classDurationTier, 0, U"Formula...", 0, 1, DO_DurationTier_formula);
+praat_addAction1 (classDurationTier, 0, U"Convert", 0, 0, 0);
+	praat_addAction1 (classDurationTier, 0, U"Down to PointProcess", 0, 0, DO_DurationTier_downto_PointProcess);
 
-	praat_addAction1 (classExcitation, 0, L"Excitation help", 0, 0, DO_Excitation_help);
-praat_addAction1 (classExcitation, 0, L"Draw", 0, 0, 0);
-	praat_addAction1 (classExcitation, 0, L"Draw...", 0, 0, DO_Excitation_draw);
-praat_addAction1 (classExcitation, 0, L"Analyse", 0, 0, 0);
-	praat_addAction1 (classExcitation, 0, L"To Formant...", 0, 0, DO_Excitation_to_Formant);
-praat_addAction1 (classExcitation, 1, L"Query -", 0, 0, 0);
-	praat_addAction1 (classExcitation, 1, L"Get loudness", 0, 0, DO_Excitation_getLoudness);
-praat_addAction1 (classExcitation, 0, L"Modify", 0, 0, 0);
-	praat_addAction1 (classExcitation, 0, L"Formula...", 0, 0, DO_Excitation_formula);
-praat_addAction1 (classExcitation, 0, L"Hack", 0, 0, 0);
-	praat_addAction1 (classExcitation, 0, L"To Matrix", 0, 0, DO_Excitation_to_Matrix);
+	praat_addAction1 (classExcitation, 0, U"Excitation help", 0, 0, DO_Excitation_help);
+praat_addAction1 (classExcitation, 0, U"Draw", 0, 0, 0);
+	praat_addAction1 (classExcitation, 0, U"Draw...", 0, 0, DO_Excitation_draw);
+praat_addAction1 (classExcitation, 0, U"Analyse", 0, 0, 0);
+	praat_addAction1 (classExcitation, 0, U"To Formant...", 0, 0, DO_Excitation_to_Formant);
+praat_addAction1 (classExcitation, 1, U"Query -", 0, 0, 0);
+	praat_addAction1 (classExcitation, 1, U"Get loudness", 0, 0, DO_Excitation_getLoudness);
+praat_addAction1 (classExcitation, 0, U"Modify", 0, 0, 0);
+	praat_addAction1 (classExcitation, 0, U"Formula...", 0, 0, DO_Excitation_formula);
+praat_addAction1 (classExcitation, 0, U"Hack", 0, 0, 0);
+	praat_addAction1 (classExcitation, 0, U"To Matrix", 0, 0, DO_Excitation_to_Matrix);
 
-	praat_addAction1 (classFormant, 0, L"Formant help", 0, 0, DO_Formant_help);
-	praat_addAction1 (classFormant, 0, L"Draw -", 0, 0, 0);
-		praat_addAction1 (classFormant, 0, L"Speckle...", 0, 1, DO_Formant_drawSpeckles);
-		praat_addAction1 (classFormant, 0, L"Draw tracks...", 0, 1, DO_Formant_drawTracks);
-		praat_addAction1 (classFormant, 0, L"Scatter plot...", 0, 1, DO_Formant_scatterPlot);
-	praat_addAction1 (classFormant, 0, L"Tabulate -", 0, 0, 0);
-		praat_addAction1 (classFormant, 1, L"List...", 0, 1, DO_Formant_list);
-		praat_addAction1 (classFormant, 0, L"Down to Table...", 0, 1, DO_Formant_downto_Table);
-	praat_addAction1 (classFormant, 0, L"Query -", 0, 0, 0);
+	praat_addAction1 (classFormant, 0, U"Formant help", 0, 0, DO_Formant_help);
+	praat_addAction1 (classFormant, 0, U"Draw -", 0, 0, 0);
+		praat_addAction1 (classFormant, 0, U"Speckle...", 0, 1, DO_Formant_drawSpeckles);
+		praat_addAction1 (classFormant, 0, U"Draw tracks...", 0, 1, DO_Formant_drawTracks);
+		praat_addAction1 (classFormant, 0, U"Scatter plot...", 0, 1, DO_Formant_scatterPlot);
+	praat_addAction1 (classFormant, 0, U"Tabulate -", 0, 0, 0);
+		praat_addAction1 (classFormant, 1, U"List...", 0, 1, DO_Formant_list);
+		praat_addAction1 (classFormant, 0, U"Down to Table...", 0, 1, DO_Formant_downto_Table);
+	praat_addAction1 (classFormant, 0, U"Query -", 0, 0, 0);
 		praat_TimeFrameSampled_query_init (classFormant);
-		praat_addAction1 (classFormant, 1, L"Get number of formants...", 0, 1, DO_Formant_getNumberOfFormants);
-		praat_addAction1 (classFormant, 1, L"Get minimum number of formants", 0, 1, DO_Formant_getMinimumNumberOfFormants);
-		praat_addAction1 (classFormant, 1, L"Get maximum number of formants", 0, 1, DO_Formant_getMaximumNumberOfFormants);
-		praat_addAction1 (classFormant, 1, L"-- get value --", 0, 1, 0);
-		praat_addAction1 (classFormant, 1, L"Get value at time...", 0, 1, DO_Formant_getValueAtTime);
-		praat_addAction1 (classFormant, 1, L"Get bandwidth at time...", 0, 1, DO_Formant_getBandwidthAtTime);
-		praat_addAction1 (classFormant, 1, L"-- get extreme --", 0, 1, 0);
-		praat_addAction1 (classFormant, 1, L"Get minimum...", 0, 1, DO_Formant_getMinimum);
-		praat_addAction1 (classFormant, 1, L"Get time of minimum...", 0, 1, DO_Formant_getTimeOfMinimum);
-		praat_addAction1 (classFormant, 1, L"Get maximum...", 0, 1, DO_Formant_getMaximum);
-		praat_addAction1 (classFormant, 1, L"Get time of maximum...", 0, 1, DO_Formant_getTimeOfMaximum);
-		praat_addAction1 (classFormant, 1, L"-- get distribution --", 0, 1, 0);
-		praat_addAction1 (classFormant, 1, L"Get quantile...", 0, 1, DO_Formant_getQuantile);
-		praat_addAction1 (classFormant, 1, L"Get quantile of bandwidth...", 0, 1, DO_Formant_getQuantileOfBandwidth);
-		praat_addAction1 (classFormant, 1, L"Get mean...", 0, 1, DO_Formant_getMean);
-		praat_addAction1 (classFormant, 1, L"Get standard deviation...", 0, 1, DO_Formant_getStandardDeviation);
-	praat_addAction1 (classFormant, 0, L"Modify -", 0, 0, 0);
+		praat_addAction1 (classFormant, 1, U"Get number of formants...", 0, 1, DO_Formant_getNumberOfFormants);
+		praat_addAction1 (classFormant, 1, U"Get minimum number of formants", 0, 1, DO_Formant_getMinimumNumberOfFormants);
+		praat_addAction1 (classFormant, 1, U"Get maximum number of formants", 0, 1, DO_Formant_getMaximumNumberOfFormants);
+		praat_addAction1 (classFormant, 1, U"-- get value --", 0, 1, 0);
+		praat_addAction1 (classFormant, 1, U"Get value at time...", 0, 1, DO_Formant_getValueAtTime);
+		praat_addAction1 (classFormant, 1, U"Get bandwidth at time...", 0, 1, DO_Formant_getBandwidthAtTime);
+		praat_addAction1 (classFormant, 1, U"-- get extreme --", 0, 1, 0);
+		praat_addAction1 (classFormant, 1, U"Get minimum...", 0, 1, DO_Formant_getMinimum);
+		praat_addAction1 (classFormant, 1, U"Get time of minimum...", 0, 1, DO_Formant_getTimeOfMinimum);
+		praat_addAction1 (classFormant, 1, U"Get maximum...", 0, 1, DO_Formant_getMaximum);
+		praat_addAction1 (classFormant, 1, U"Get time of maximum...", 0, 1, DO_Formant_getTimeOfMaximum);
+		praat_addAction1 (classFormant, 1, U"-- get distribution --", 0, 1, 0);
+		praat_addAction1 (classFormant, 1, U"Get quantile...", 0, 1, DO_Formant_getQuantile);
+		praat_addAction1 (classFormant, 1, U"Get quantile of bandwidth...", 0, 1, DO_Formant_getQuantileOfBandwidth);
+		praat_addAction1 (classFormant, 1, U"Get mean...", 0, 1, DO_Formant_getMean);
+		praat_addAction1 (classFormant, 1, U"Get standard deviation...", 0, 1, DO_Formant_getStandardDeviation);
+	praat_addAction1 (classFormant, 0, U"Modify -", 0, 0, 0);
 		praat_TimeFunction_modify_init (classFormant);
-		praat_addAction1 (classFormant, 0, L"Sort", 0, 1, DO_Formant_sort);
-		praat_addAction1 (classFormant, 0, L"Formula (frequencies)...", 0, 1, DO_Formant_formula_frequencies);
-		praat_addAction1 (classFormant, 0, L"Formula (bandwidths)...", 0, 1, DO_Formant_formula_bandwidths);
-praat_addAction1 (classFormant, 0, L"Convert", 0, 0, 0);
-	praat_addAction1 (classFormant, 0, L"Track...", 0, 0, DO_Formant_tracker);
-	praat_addAction1 (classFormant, 0, L"Down to FormantTier", 0, praat_HIDDEN, DO_Formant_downto_FormantTier);
-	praat_addAction1 (classFormant, 0, L"Down to FormantGrid", 0, 0, DO_Formant_downto_FormantGrid);
-praat_addAction1 (classFormant, 0, L"Hack", 0, 0, 0);
-	praat_addAction1 (classFormant, 0, L"To Matrix...", 0, 0, DO_Formant_to_Matrix);
+		praat_addAction1 (classFormant, 0, U"Sort", 0, 1, DO_Formant_sort);
+		praat_addAction1 (classFormant, 0, U"Formula (frequencies)...", 0, 1, DO_Formant_formula_frequencies);
+		praat_addAction1 (classFormant, 0, U"Formula (bandwidths)...", 0, 1, DO_Formant_formula_bandwidths);
+praat_addAction1 (classFormant, 0, U"Convert", 0, 0, 0);
+	praat_addAction1 (classFormant, 0, U"Track...", 0, 0, DO_Formant_tracker);
+	praat_addAction1 (classFormant, 0, U"Down to FormantTier", 0, praat_HIDDEN, DO_Formant_downto_FormantTier);
+	praat_addAction1 (classFormant, 0, U"Down to FormantGrid", 0, 0, DO_Formant_downto_FormantGrid);
+praat_addAction1 (classFormant, 0, U"Hack", 0, 0, 0);
+	praat_addAction1 (classFormant, 0, U"To Matrix...", 0, 0, DO_Formant_to_Matrix);
 
-	praat_addAction1 (classFormantGrid, 0, L"FormantGrid help", 0, 0, DO_FormantGrid_help);
-	praat_addAction1 (classFormantGrid, 1, L"View & Edit", 0, praat_ATTRACTIVE, DO_FormantGrid_edit);
-	praat_addAction1 (classFormantGrid, 1, L"Edit", 0, praat_HIDDEN, DO_FormantGrid_edit);
-	praat_addAction1 (classFormantGrid, 0, L"Modify -", 0, 0, 0);
+	praat_addAction1 (classFormantGrid, 0, U"FormantGrid help", 0, 0, DO_FormantGrid_help);
+	praat_addAction1 (classFormantGrid, 1, U"View & Edit", 0, praat_ATTRACTIVE, DO_FormantGrid_edit);
+	praat_addAction1 (classFormantGrid, 1, U"Edit", 0, praat_HIDDEN, DO_FormantGrid_edit);
+	praat_addAction1 (classFormantGrid, 0, U"Modify -", 0, 0, 0);
 		praat_TimeFunction_modify_init (classFormantGrid);
-		praat_addAction1 (classFormantGrid, 0, L"Formula (frequencies)...", 0, 1, DO_FormantGrid_formula_frequencies);
-		//praat_addAction1 (classFormantGrid, 0, L"Formula (bandwidths)...", 0, 1, DO_FormantGrid_formula_bandwidths);
-		praat_addAction1 (classFormantGrid, 0, L"Add formant point...", 0, 1, DO_FormantGrid_addFormantPoint);
-		praat_addAction1 (classFormantGrid, 0, L"Add bandwidth point...", 0, 1, DO_FormantGrid_addBandwidthPoint);
-		praat_addAction1 (classFormantGrid, 0, L"Remove formant points between...", 0, 1, DO_FormantGrid_removeFormantPointsBetween);
-		praat_addAction1 (classFormantGrid, 0, L"Remove bandwidth points between...", 0, 1, DO_FormantGrid_removeBandwidthPointsBetween);
-	praat_addAction1 (classFormantGrid, 0, L"Convert -", 0, 0, 0);
-		praat_addAction1 (classFormantGrid, 0, L"To Formant...", 0, 1, DO_FormantGrid_to_Formant);
+		praat_addAction1 (classFormantGrid, 0, U"Formula (frequencies)...", 0, 1, DO_FormantGrid_formula_frequencies);
+		//praat_addAction1 (classFormantGrid, 0, U"Formula (bandwidths)...", 0, 1, DO_FormantGrid_formula_bandwidths);
+		praat_addAction1 (classFormantGrid, 0, U"Add formant point...", 0, 1, DO_FormantGrid_addFormantPoint);
+		praat_addAction1 (classFormantGrid, 0, U"Add bandwidth point...", 0, 1, DO_FormantGrid_addBandwidthPoint);
+		praat_addAction1 (classFormantGrid, 0, U"Remove formant points between...", 0, 1, DO_FormantGrid_removeFormantPointsBetween);
+		praat_addAction1 (classFormantGrid, 0, U"Remove bandwidth points between...", 0, 1, DO_FormantGrid_removeBandwidthPointsBetween);
+	praat_addAction1 (classFormantGrid, 0, U"Convert -", 0, 0, 0);
+		praat_addAction1 (classFormantGrid, 0, U"To Formant...", 0, 1, DO_FormantGrid_to_Formant);
 
-	praat_addAction1 (classFormantTier, 0, L"FormantTier help", 0, 0, DO_FormantTier_help);
-	praat_addAction1 (classFormantTier, 0, L"Draw -", 0, 0, 0);
-		praat_addAction1 (classFormantTier, 0, L"Speckle...", 0, 1, DO_FormantTier_speckle);
-	praat_addAction1 (classFormantTier, 0, L"Query -", 0, 0, 0);
+	praat_addAction1 (classFormantTier, 0, U"FormantTier help", 0, 0, DO_FormantTier_help);
+	praat_addAction1 (classFormantTier, 0, U"Draw -", 0, 0, 0);
+		praat_addAction1 (classFormantTier, 0, U"Speckle...", 0, 1, DO_FormantTier_speckle);
+	praat_addAction1 (classFormantTier, 0, U"Query -", 0, 0, 0);
 		praat_TimeTier_query_init (classFormantTier);
-		praat_addAction1 (classFormantTier, 1, L"-- get value --", 0, 1, 0);
-		praat_addAction1 (classFormantTier, 1, L"Get value at time...", 0, 1, DO_FormantTier_getValueAtTime);
-		praat_addAction1 (classFormantTier, 1, L"Get bandwidth at time...", 0, 1, DO_FormantTier_getBandwidthAtTime);
-	praat_addAction1 (classFormantTier, 0, L"Modify -", 0, 0, 0);
+		praat_addAction1 (classFormantTier, 1, U"-- get value --", 0, 1, 0);
+		praat_addAction1 (classFormantTier, 1, U"Get value at time...", 0, 1, DO_FormantTier_getValueAtTime);
+		praat_addAction1 (classFormantTier, 1, U"Get bandwidth at time...", 0, 1, DO_FormantTier_getBandwidthAtTime);
+	praat_addAction1 (classFormantTier, 0, U"Modify -", 0, 0, 0);
 		praat_TimeTier_modify_init (classFormantTier);
-		praat_addAction1 (classFormantTier, 0, L"Add point...", 0, 1, DO_FormantTier_addPoint);
-praat_addAction1 (classFormantTier, 0, L"Down", 0, 0, 0);
-	praat_addAction1 (classFormantTier, 0, L"Down to TableOfReal...", 0, 0, DO_FormantTier_downto_TableOfReal);
+		praat_addAction1 (classFormantTier, 0, U"Add point...", 0, 1, DO_FormantTier_addPoint);
+praat_addAction1 (classFormantTier, 0, U"Down", 0, 0, 0);
+	praat_addAction1 (classFormantTier, 0, U"Down to TableOfReal...", 0, 0, DO_FormantTier_downto_TableOfReal);
 
-	praat_addAction1 (classHarmonicity, 0, L"Harmonicity help", 0, 0, DO_Harmonicity_help);
-	praat_addAction1 (classHarmonicity, 0, L"Draw", 0, 0, 0);
-		praat_addAction1 (classHarmonicity, 0, L"Draw...", 0, 0, DO_Harmonicity_draw);
-	praat_addAction1 (classHarmonicity, 1, L"Query -", 0, 0, 0);
+	praat_addAction1 (classHarmonicity, 0, U"Harmonicity help", 0, 0, DO_Harmonicity_help);
+	praat_addAction1 (classHarmonicity, 0, U"Draw", 0, 0, 0);
+		praat_addAction1 (classHarmonicity, 0, U"Draw...", 0, 0, DO_Harmonicity_draw);
+	praat_addAction1 (classHarmonicity, 1, U"Query -", 0, 0, 0);
 		praat_TimeFrameSampled_query_init (classHarmonicity);
-		praat_addAction1 (classHarmonicity, 1, L"-- get content --", 0, 1, 0);
-		praat_addAction1 (classHarmonicity, 1, L"Get value at time...", 0, 1, DO_Harmonicity_getValueAtTime);
-		praat_addAction1 (classHarmonicity, 1, L"Get value in frame...", 0, 1, DO_Harmonicity_getValueInFrame);
-		praat_addAction1 (classHarmonicity, 1, L"-- get extreme --", 0, 1, 0);
-		praat_addAction1 (classHarmonicity, 1, L"Get minimum...", 0, 1, DO_Harmonicity_getMinimum);
-		praat_addAction1 (classHarmonicity, 1, L"Get time of minimum...", 0, 1, DO_Harmonicity_getTimeOfMinimum);
-		praat_addAction1 (classHarmonicity, 1, L"Get maximum...", 0, 1, DO_Harmonicity_getMaximum);
-		praat_addAction1 (classHarmonicity, 1, L"Get time of maximum...", 0, 1, DO_Harmonicity_getTimeOfMaximum);
-		praat_addAction1 (classHarmonicity, 1, L"-- get statistics --", 0, 1, 0);
-		praat_addAction1 (classHarmonicity, 1, L"Get mean...", 0, 1, DO_Harmonicity_getMean);
-		praat_addAction1 (classHarmonicity, 1, L"Get standard deviation...", 0, 1, DO_Harmonicity_getStandardDeviation);
-	praat_addAction1 (classHarmonicity, 0, L"Modify", 0, 0, 0);
+		praat_addAction1 (classHarmonicity, 1, U"-- get content --", 0, 1, 0);
+		praat_addAction1 (classHarmonicity, 1, U"Get value at time...", 0, 1, DO_Harmonicity_getValueAtTime);
+		praat_addAction1 (classHarmonicity, 1, U"Get value in frame...", 0, 1, DO_Harmonicity_getValueInFrame);
+		praat_addAction1 (classHarmonicity, 1, U"-- get extreme --", 0, 1, 0);
+		praat_addAction1 (classHarmonicity, 1, U"Get minimum...", 0, 1, DO_Harmonicity_getMinimum);
+		praat_addAction1 (classHarmonicity, 1, U"Get time of minimum...", 0, 1, DO_Harmonicity_getTimeOfMinimum);
+		praat_addAction1 (classHarmonicity, 1, U"Get maximum...", 0, 1, DO_Harmonicity_getMaximum);
+		praat_addAction1 (classHarmonicity, 1, U"Get time of maximum...", 0, 1, DO_Harmonicity_getTimeOfMaximum);
+		praat_addAction1 (classHarmonicity, 1, U"-- get statistics --", 0, 1, 0);
+		praat_addAction1 (classHarmonicity, 1, U"Get mean...", 0, 1, DO_Harmonicity_getMean);
+		praat_addAction1 (classHarmonicity, 1, U"Get standard deviation...", 0, 1, DO_Harmonicity_getStandardDeviation);
+	praat_addAction1 (classHarmonicity, 0, U"Modify", 0, 0, 0);
 		praat_TimeFunction_modify_init (classHarmonicity);
-		praat_addAction1 (classHarmonicity, 0, L"Formula...", 0, 0, DO_Harmonicity_formula);
-	praat_addAction1 (classHarmonicity, 0, L"Hack", 0, 0, 0);
-		praat_addAction1 (classHarmonicity, 0, L"To Matrix", 0, 0, DO_Harmonicity_to_Matrix);
+		praat_addAction1 (classHarmonicity, 0, U"Formula...", 0, 0, DO_Harmonicity_formula);
+	praat_addAction1 (classHarmonicity, 0, U"Hack", 0, 0, 0);
+		praat_addAction1 (classHarmonicity, 0, U"To Matrix", 0, 0, DO_Harmonicity_to_Matrix);
 
-	praat_addAction1 (classIntensity, 0, L"Intensity help", 0, 0, DO_Intensity_help);
-	praat_addAction1 (classIntensity, 0, L"Draw...", 0, 0, DO_Intensity_draw);
-	praat_addAction1 (classIntensity, 1, L"Query -", 0, 0, 0);
+	praat_addAction1 (classIntensity, 0, U"Intensity help", 0, 0, DO_Intensity_help);
+	praat_addAction1 (classIntensity, 0, U"Draw...", 0, 0, DO_Intensity_draw);
+	praat_addAction1 (classIntensity, 1, U"Query -", 0, 0, 0);
 		praat_TimeFrameSampled_query_init (classIntensity);
-		praat_addAction1 (classIntensity, 1, L"-- get content --", 0, 1, 0);
-		praat_addAction1 (classIntensity, 1, L"Get value at time...", 0, 1, DO_Intensity_getValueAtTime);
-		praat_addAction1 (classIntensity, 1, L"Get value in frame...", 0, 1, DO_Intensity_getValueInFrame);
-		praat_addAction1 (classIntensity, 1, L"-- get extreme --", 0, 1, 0);
-		praat_addAction1 (classIntensity, 1, L"Get minimum...", 0, 1, DO_Intensity_getMinimum);
-		praat_addAction1 (classIntensity, 1, L"Get time of minimum...", 0, 1, DO_Intensity_getTimeOfMinimum);
-		praat_addAction1 (classIntensity, 1, L"Get maximum...", 0, 1, DO_Intensity_getMaximum);
-		praat_addAction1 (classIntensity, 1, L"Get time of maximum...", 0, 1, DO_Intensity_getTimeOfMaximum);
-		praat_addAction1 (classIntensity, 1, L"-- get statistics --", 0, 1, 0);
-		praat_addAction1 (classIntensity, 1, L"Get quantile...", 0, 1, DO_Intensity_getQuantile);
-		praat_addAction1 (classIntensity, 1, L"Get mean...", 0, 1, DO_Intensity_getMean);
-		praat_addAction1 (classIntensity, 1, L"Get standard deviation...", 0, 1, DO_Intensity_getStandardDeviation);
-	praat_addAction1 (classIntensity, 0, L"Modify -", 0, 0, 0);
+		praat_addAction1 (classIntensity, 1, U"-- get content --", 0, 1, 0);
+		praat_addAction1 (classIntensity, 1, U"Get value at time...", 0, 1, DO_Intensity_getValueAtTime);
+		praat_addAction1 (classIntensity, 1, U"Get value in frame...", 0, 1, DO_Intensity_getValueInFrame);
+		praat_addAction1 (classIntensity, 1, U"-- get extreme --", 0, 1, 0);
+		praat_addAction1 (classIntensity, 1, U"Get minimum...", 0, 1, DO_Intensity_getMinimum);
+		praat_addAction1 (classIntensity, 1, U"Get time of minimum...", 0, 1, DO_Intensity_getTimeOfMinimum);
+		praat_addAction1 (classIntensity, 1, U"Get maximum...", 0, 1, DO_Intensity_getMaximum);
+		praat_addAction1 (classIntensity, 1, U"Get time of maximum...", 0, 1, DO_Intensity_getTimeOfMaximum);
+		praat_addAction1 (classIntensity, 1, U"-- get statistics --", 0, 1, 0);
+		praat_addAction1 (classIntensity, 1, U"Get quantile...", 0, 1, DO_Intensity_getQuantile);
+		praat_addAction1 (classIntensity, 1, U"Get mean...", 0, 1, DO_Intensity_getMean);
+		praat_addAction1 (classIntensity, 1, U"Get standard deviation...", 0, 1, DO_Intensity_getStandardDeviation);
+	praat_addAction1 (classIntensity, 0, U"Modify -", 0, 0, 0);
 		praat_TimeFunction_modify_init (classIntensity);
-		praat_addAction1 (classIntensity, 0, L"Formula...", 0, 1, DO_Intensity_formula);
-	praat_addAction1 (classIntensity, 0, L"Analyse", 0, 0, 0);
-		praat_addAction1 (classIntensity, 0, L"To IntensityTier (peaks)", 0, 0, DO_Intensity_to_IntensityTier_peaks);
-		praat_addAction1 (classIntensity, 0, L"To IntensityTier (valleys)", 0, 0, DO_Intensity_to_IntensityTier_valleys);
-	praat_addAction1 (classIntensity, 0, L"Convert", 0, 0, 0);
-		praat_addAction1 (classIntensity, 0, L"Down to IntensityTier", 0, 0, DO_Intensity_downto_IntensityTier);
-		praat_addAction1 (classIntensity, 0, L"Down to Matrix", 0, 0, DO_Intensity_downto_Matrix);
+		praat_addAction1 (classIntensity, 0, U"Formula...", 0, 1, DO_Intensity_formula);
+	praat_addAction1 (classIntensity, 0, U"Analyse", 0, 0, 0);
+		praat_addAction1 (classIntensity, 0, U"To IntensityTier (peaks)", 0, 0, DO_Intensity_to_IntensityTier_peaks);
+		praat_addAction1 (classIntensity, 0, U"To IntensityTier (valleys)", 0, 0, DO_Intensity_to_IntensityTier_valleys);
+	praat_addAction1 (classIntensity, 0, U"Convert", 0, 0, 0);
+		praat_addAction1 (classIntensity, 0, U"Down to IntensityTier", 0, 0, DO_Intensity_downto_IntensityTier);
+		praat_addAction1 (classIntensity, 0, U"Down to Matrix", 0, 0, DO_Intensity_downto_Matrix);
 
-	praat_addAction1 (classIntensityTier, 0, L"IntensityTier help", 0, 0, DO_IntensityTier_help);
-	praat_addAction1 (classIntensityTier, 1, L"View & Edit", 0, praat_ATTRACTIVE, DO_IntensityTier_edit);
-	praat_addAction1 (classIntensityTier, 1, L"Edit", 0, praat_HIDDEN, DO_IntensityTier_edit);
-	praat_addAction1 (classIntensityTier, 0, L"View & Edit with Sound?", 0, 0, DO_info_IntensityTier_Sound_edit);
-	praat_addAction1 (classIntensityTier, 0, L"Query -", 0, 0, 0);
+	praat_addAction1 (classIntensityTier, 0, U"IntensityTier help", 0, 0, DO_IntensityTier_help);
+	praat_addAction1 (classIntensityTier, 1, U"View & Edit", 0, praat_ATTRACTIVE, DO_IntensityTier_edit);
+	praat_addAction1 (classIntensityTier, 1, U"Edit", 0, praat_HIDDEN, DO_IntensityTier_edit);
+	praat_addAction1 (classIntensityTier, 0, U"View & Edit with Sound?", 0, 0, DO_info_IntensityTier_Sound_edit);
+	praat_addAction1 (classIntensityTier, 0, U"Query -", 0, 0, 0);
 		praat_TimeTier_query_init (classIntensityTier);
-		praat_addAction1 (classIntensityTier, 1, L"-- get content --", 0, 1, 0);
-		praat_addAction1 (classIntensityTier, 1, L"Get value at time...", 0, 1, DO_IntensityTier_getValueAtTime);
-		praat_addAction1 (classIntensityTier, 1, L"Get value at index...", 0, 1, DO_IntensityTier_getValueAtIndex);
-	praat_addAction1 (classIntensityTier, 0, L"Modify -", 0, 0, 0);
+		praat_addAction1 (classIntensityTier, 1, U"-- get content --", 0, 1, 0);
+		praat_addAction1 (classIntensityTier, 1, U"Get value at time...", 0, 1, DO_IntensityTier_getValueAtTime);
+		praat_addAction1 (classIntensityTier, 1, U"Get value at index...", 0, 1, DO_IntensityTier_getValueAtIndex);
+	praat_addAction1 (classIntensityTier, 0, U"Modify -", 0, 0, 0);
 		praat_TimeTier_modify_init (classIntensityTier);
-		praat_addAction1 (classIntensityTier, 0, L"Add point...", 0, 1, DO_IntensityTier_addPoint);
-		praat_addAction1 (classIntensityTier, 0, L"Formula...", 0, 1, DO_IntensityTier_formula);
-praat_addAction1 (classIntensityTier, 0, L"Convert", 0, 0, 0);
-	praat_addAction1 (classIntensityTier, 0, L"To AmplitudeTier", 0, 0, DO_IntensityTier_to_AmplitudeTier);
-	praat_addAction1 (classIntensityTier, 0, L"Down to PointProcess", 0, 0, DO_IntensityTier_downto_PointProcess);
-	praat_addAction1 (classIntensityTier, 0, L"Down to TableOfReal", 0, 0, DO_IntensityTier_downto_TableOfReal);
+		praat_addAction1 (classIntensityTier, 0, U"Add point...", 0, 1, DO_IntensityTier_addPoint);
+		praat_addAction1 (classIntensityTier, 0, U"Formula...", 0, 1, DO_IntensityTier_formula);
+praat_addAction1 (classIntensityTier, 0, U"Convert", 0, 0, 0);
+	praat_addAction1 (classIntensityTier, 0, U"To AmplitudeTier", 0, 0, DO_IntensityTier_to_AmplitudeTier);
+	praat_addAction1 (classIntensityTier, 0, U"Down to PointProcess", 0, 0, DO_IntensityTier_downto_PointProcess);
+	praat_addAction1 (classIntensityTier, 0, U"Down to TableOfReal", 0, 0, DO_IntensityTier_downto_TableOfReal);
 
-	praat_addAction1 (classLtas, 0, L"Ltas help", 0, 0, DO_Ltas_help);
-	praat_addAction1 (classLtas, 0, L"Draw...", 0, 0, DO_Ltas_draw);
-	praat_addAction1 (classLtas, 1, L"Query -", 0, 0, 0);
-		praat_addAction1 (classLtas, 1, L"Frequency domain", 0, 1, 0);
-		praat_addAction1 (classLtas, 1, L"Get lowest frequency", 0, 2, DO_Ltas_getLowestFrequency);
-		praat_addAction1 (classLtas, 1, L"Get highest frequency", 0, 2, DO_Ltas_getHighestFrequency);
-		praat_addAction1 (classLtas, 1, L"Frequency sampling", 0, 1, 0);
-		praat_addAction1 (classLtas, 1, L"Get number of bins", 0, 2, DO_Ltas_getNumberOfBins);
-			praat_addAction1 (classLtas, 1, L"Get number of bands", 0, praat_HIDDEN + praat_DEPTH_2, DO_Ltas_getNumberOfBins);
-		praat_addAction1 (classLtas, 1, L"Get bin width", 0, 2, DO_Ltas_getBinWidth);
-			praat_addAction1 (classLtas, 1, L"Get band width", 0, praat_HIDDEN + praat_DEPTH_2, DO_Ltas_getBinWidth);
-		praat_addAction1 (classLtas, 1, L"Get frequency from bin number...", 0, 2, DO_Ltas_getFrequencyFromBinNumber);
-			praat_addAction1 (classLtas, 1, L"Get frequency from band...", 0, praat_HIDDEN + praat_DEPTH_2, DO_Ltas_getFrequencyFromBinNumber);
-		praat_addAction1 (classLtas, 1, L"Get bin number from frequency...", 0, 2, DO_Ltas_getBinNumberFromFrequency);
-			praat_addAction1 (classLtas, 1, L"Get band from frequency...", 0, praat_HIDDEN + praat_DEPTH_2, DO_Ltas_getBinNumberFromFrequency);
-		praat_addAction1 (classLtas, 1, L"-- get content --", 0, 1, 0);
-		praat_addAction1 (classLtas, 1, L"Get value at frequency...", 0, 1, DO_Ltas_getValueAtFrequency);
-		praat_addAction1 (classLtas, 1, L"Get value in bin...", 0, 1, DO_Ltas_getValueInBin);
-			praat_addAction1 (classLtas, 1, L"Get value in band...", 0, praat_HIDDEN + praat_DEPTH_1, DO_Ltas_getValueInBin);
-		praat_addAction1 (classLtas, 1, L"-- get extreme --", 0, 1, 0);
-		praat_addAction1 (classLtas, 1, L"Get minimum...", 0, 1, DO_Ltas_getMinimum);
-		praat_addAction1 (classLtas, 1, L"Get frequency of minimum...", 0, 1, DO_Ltas_getFrequencyOfMinimum);
-		praat_addAction1 (classLtas, 1, L"Get maximum...", 0, 1, DO_Ltas_getMaximum);
-		praat_addAction1 (classLtas, 1, L"Get frequency of maximum...", 0, 1, DO_Ltas_getFrequencyOfMaximum);
-		praat_addAction1 (classLtas, 1, L"-- get statistics --", 0, 1, 0);
-		praat_addAction1 (classLtas, 1, L"Get mean...", 0, 1, DO_Ltas_getMean);
-		praat_addAction1 (classLtas, 1, L"Get slope...", 0, 1, DO_Ltas_getSlope);
-		praat_addAction1 (classLtas, 1, L"Get local peak height...", 0, 1, DO_Ltas_getLocalPeakHeight);
-		praat_addAction1 (classLtas, 1, L"Get standard deviation...", 0, 1, DO_Ltas_getStandardDeviation);
-	praat_addAction1 (classLtas, 0, L"Modify", 0, 0, 0);
-	praat_addAction1 (classLtas, 0, L"Formula...", 0, 0, DO_Ltas_formula);
-	praat_addAction1 (classLtas, 0, L"Analyse", 0, 0, 0);
-	praat_addAction1 (classLtas, 0, L"To SpectrumTier (peaks)", 0, 0, DO_Ltas_to_SpectrumTier_peaks);
-	praat_addAction1 (classLtas, 0, L"Convert", 0, 0, 0);
-	praat_addAction1 (classLtas, 0, L"Compute trend line...", 0, 0, DO_Ltas_computeTrendLine);
-	praat_addAction1 (classLtas, 0, L"Subtract trend line...", 0, 0, DO_Ltas_subtractTrendLine);
-	praat_addAction1 (classLtas, 0, L"Combine", 0, 0, 0);
-	praat_addAction1 (classLtas, 0, L"Merge", 0, praat_HIDDEN, DO_Ltases_merge);
-	praat_addAction1 (classLtas, 0, L"Average", 0, 0, DO_Ltases_average);
-	praat_addAction1 (classLtas, 0, L"Hack", 0, 0, 0);
-	praat_addAction1 (classLtas, 0, L"To Matrix", 0, 0, DO_Ltas_to_Matrix);
+	praat_addAction1 (classLtas, 0, U"Ltas help", 0, 0, DO_Ltas_help);
+	praat_addAction1 (classLtas, 0, U"Draw...", 0, 0, DO_Ltas_draw);
+	praat_addAction1 (classLtas, 1, U"Query -", 0, 0, 0);
+		praat_addAction1 (classLtas, 1, U"Frequency domain", 0, 1, 0);
+		praat_addAction1 (classLtas, 1, U"Get lowest frequency", 0, 2, DO_Ltas_getLowestFrequency);
+		praat_addAction1 (classLtas, 1, U"Get highest frequency", 0, 2, DO_Ltas_getHighestFrequency);
+		praat_addAction1 (classLtas, 1, U"Frequency sampling", 0, 1, 0);
+		praat_addAction1 (classLtas, 1, U"Get number of bins", 0, 2, DO_Ltas_getNumberOfBins);
+			praat_addAction1 (classLtas, 1, U"Get number of bands", 0, praat_HIDDEN + praat_DEPTH_2, DO_Ltas_getNumberOfBins);
+		praat_addAction1 (classLtas, 1, U"Get bin width", 0, 2, DO_Ltas_getBinWidth);
+			praat_addAction1 (classLtas, 1, U"Get band width", 0, praat_HIDDEN + praat_DEPTH_2, DO_Ltas_getBinWidth);
+		praat_addAction1 (classLtas, 1, U"Get frequency from bin number...", 0, 2, DO_Ltas_getFrequencyFromBinNumber);
+			praat_addAction1 (classLtas, 1, U"Get frequency from band...", 0, praat_HIDDEN + praat_DEPTH_2, DO_Ltas_getFrequencyFromBinNumber);
+		praat_addAction1 (classLtas, 1, U"Get bin number from frequency...", 0, 2, DO_Ltas_getBinNumberFromFrequency);
+			praat_addAction1 (classLtas, 1, U"Get band from frequency...", 0, praat_HIDDEN + praat_DEPTH_2, DO_Ltas_getBinNumberFromFrequency);
+		praat_addAction1 (classLtas, 1, U"-- get content --", 0, 1, 0);
+		praat_addAction1 (classLtas, 1, U"Get value at frequency...", 0, 1, DO_Ltas_getValueAtFrequency);
+		praat_addAction1 (classLtas, 1, U"Get value in bin...", 0, 1, DO_Ltas_getValueInBin);
+			praat_addAction1 (classLtas, 1, U"Get value in band...", 0, praat_HIDDEN + praat_DEPTH_1, DO_Ltas_getValueInBin);
+		praat_addAction1 (classLtas, 1, U"-- get extreme --", 0, 1, 0);
+		praat_addAction1 (classLtas, 1, U"Get minimum...", 0, 1, DO_Ltas_getMinimum);
+		praat_addAction1 (classLtas, 1, U"Get frequency of minimum...", 0, 1, DO_Ltas_getFrequencyOfMinimum);
+		praat_addAction1 (classLtas, 1, U"Get maximum...", 0, 1, DO_Ltas_getMaximum);
+		praat_addAction1 (classLtas, 1, U"Get frequency of maximum...", 0, 1, DO_Ltas_getFrequencyOfMaximum);
+		praat_addAction1 (classLtas, 1, U"-- get statistics --", 0, 1, 0);
+		praat_addAction1 (classLtas, 1, U"Get mean...", 0, 1, DO_Ltas_getMean);
+		praat_addAction1 (classLtas, 1, U"Get slope...", 0, 1, DO_Ltas_getSlope);
+		praat_addAction1 (classLtas, 1, U"Get local peak height...", 0, 1, DO_Ltas_getLocalPeakHeight);
+		praat_addAction1 (classLtas, 1, U"Get standard deviation...", 0, 1, DO_Ltas_getStandardDeviation);
+	praat_addAction1 (classLtas, 0, U"Modify", 0, 0, 0);
+	praat_addAction1 (classLtas, 0, U"Formula...", 0, 0, DO_Ltas_formula);
+	praat_addAction1 (classLtas, 0, U"Analyse", 0, 0, 0);
+	praat_addAction1 (classLtas, 0, U"To SpectrumTier (peaks)", 0, 0, DO_Ltas_to_SpectrumTier_peaks);
+	praat_addAction1 (classLtas, 0, U"Convert", 0, 0, 0);
+	praat_addAction1 (classLtas, 0, U"Compute trend line...", 0, 0, DO_Ltas_computeTrendLine);
+	praat_addAction1 (classLtas, 0, U"Subtract trend line...", 0, 0, DO_Ltas_subtractTrendLine);
+	praat_addAction1 (classLtas, 0, U"Combine", 0, 0, 0);
+	praat_addAction1 (classLtas, 0, U"Merge", 0, praat_HIDDEN, DO_Ltases_merge);
+	praat_addAction1 (classLtas, 0, U"Average", 0, 0, DO_Ltases_average);
+	praat_addAction1 (classLtas, 0, U"Hack", 0, 0, 0);
+	praat_addAction1 (classLtas, 0, U"To Matrix", 0, 0, DO_Ltas_to_Matrix);
 
-	praat_addAction1 (classManipulation, 0, L"Manipulation help", 0, 0, DO_Manipulation_help);
-	praat_addAction1 (classManipulation, 1, L"View & Edit", 0, praat_ATTRACTIVE, DO_Manipulation_edit);
-	praat_addAction1 (classManipulation, 1, L"Edit", 0, praat_HIDDEN, DO_Manipulation_edit);
-	praat_addAction1 (classManipulation, 0, L"Play (overlap-add)", 0, 0, DO_Manipulation_play_overlapAdd);
-	praat_addAction1 (classManipulation, 0, L"Play (PSOLA)", 0, praat_HIDDEN, DO_Manipulation_play_overlapAdd);
-	praat_addAction1 (classManipulation, 0, L"Play (LPC)", 0, 0, DO_Manipulation_play_lpc);
-	praat_addAction1 (classManipulation, 0, L"Get resynthesis (overlap-add)", 0, 0, DO_Manipulation_getResynthesis_overlapAdd);
-	praat_addAction1 (classManipulation, 0, L"Get resynthesis (PSOLA)", 0, praat_HIDDEN, DO_Manipulation_getResynthesis_overlapAdd);
-	praat_addAction1 (classManipulation, 0, L"Get resynthesis (LPC)", 0, 0, DO_Manipulation_getResynthesis_lpc);
-	praat_addAction1 (classManipulation, 0, L"Extract original sound", 0, 0, DO_Manipulation_extractOriginalSound);
-	praat_addAction1 (classManipulation, 0, L"Extract pulses", 0, 0, DO_Manipulation_extractPulses);
-	praat_addAction1 (classManipulation, 0, L"Extract pitch tier", 0, 0, DO_Manipulation_extractPitchTier);
-	praat_addAction1 (classManipulation, 0, L"Extract duration tier", 0, 0, DO_Manipulation_extractDurationTier);
-	praat_addAction1 (classManipulation, 0, L"Modify -", 0, 0, 0);
+	praat_addAction1 (classManipulation, 0, U"Manipulation help", 0, 0, DO_Manipulation_help);
+	praat_addAction1 (classManipulation, 1, U"View & Edit", 0, praat_ATTRACTIVE, DO_Manipulation_edit);
+	praat_addAction1 (classManipulation, 1, U"Edit", 0, praat_HIDDEN, DO_Manipulation_edit);
+	praat_addAction1 (classManipulation, 0, U"Play (overlap-add)", 0, 0, DO_Manipulation_play_overlapAdd);
+	praat_addAction1 (classManipulation, 0, U"Play (PSOLA)", 0, praat_HIDDEN, DO_Manipulation_play_overlapAdd);
+	praat_addAction1 (classManipulation, 0, U"Play (LPC)", 0, 0, DO_Manipulation_play_lpc);
+	praat_addAction1 (classManipulation, 0, U"Get resynthesis (overlap-add)", 0, 0, DO_Manipulation_getResynthesis_overlapAdd);
+	praat_addAction1 (classManipulation, 0, U"Get resynthesis (PSOLA)", 0, praat_HIDDEN, DO_Manipulation_getResynthesis_overlapAdd);
+	praat_addAction1 (classManipulation, 0, U"Get resynthesis (LPC)", 0, 0, DO_Manipulation_getResynthesis_lpc);
+	praat_addAction1 (classManipulation, 0, U"Extract original sound", 0, 0, DO_Manipulation_extractOriginalSound);
+	praat_addAction1 (classManipulation, 0, U"Extract pulses", 0, 0, DO_Manipulation_extractPulses);
+	praat_addAction1 (classManipulation, 0, U"Extract pitch tier", 0, 0, DO_Manipulation_extractPitchTier);
+	praat_addAction1 (classManipulation, 0, U"Extract duration tier", 0, 0, DO_Manipulation_extractDurationTier);
+	praat_addAction1 (classManipulation, 0, U"Modify -", 0, 0, 0);
 		praat_TimeFunction_modify_init (classManipulation);
-		praat_addAction1 (classManipulation, 0, L"Replace pitch tier?", 0, 1, DO_Manipulation_replacePitchTier_help);
-		praat_addAction1 (classManipulation, 0, L"Replace duration tier?", 0, 1, DO_Manipulation_replaceDurationTier_help);
-	praat_addAction1 (classManipulation, 1, L"Save as text file without Sound...", 0, 0, DO_Manipulation_writeToTextFileWithoutSound);
-	praat_addAction1 (classManipulation, 1, L"Write to text file without Sound...", 0, praat_HIDDEN, DO_Manipulation_writeToTextFileWithoutSound);
-	praat_addAction1 (classManipulation, 1, L"Save as binary file without Sound...", 0, 0, DO_Manipulation_writeToBinaryFileWithoutSound);
-	praat_addAction1 (classManipulation, 1, L"Write to binary file without Sound...", 0, praat_HIDDEN, DO_Manipulation_writeToBinaryFileWithoutSound);
+		praat_addAction1 (classManipulation, 0, U"Replace pitch tier?", 0, 1, DO_Manipulation_replacePitchTier_help);
+		praat_addAction1 (classManipulation, 0, U"Replace duration tier?", 0, 1, DO_Manipulation_replaceDurationTier_help);
+	praat_addAction1 (classManipulation, 1, U"Save as text file without Sound...", 0, 0, DO_Manipulation_writeToTextFileWithoutSound);
+	praat_addAction1 (classManipulation, 1, U"Write to text file without Sound...", 0, praat_HIDDEN, DO_Manipulation_writeToTextFileWithoutSound);
+	praat_addAction1 (classManipulation, 1, U"Save as binary file without Sound...", 0, 0, DO_Manipulation_writeToBinaryFileWithoutSound);
+	praat_addAction1 (classManipulation, 1, U"Write to binary file without Sound...", 0, praat_HIDDEN, DO_Manipulation_writeToBinaryFileWithoutSound);
 
-	praat_addAction1 (classMatrix, 0, L"Matrix help", 0, 0, DO_Matrix_help);
-	praat_addAction1 (classMatrix, 1, L"Save as matrix text file...", 0, 0, DO_Matrix_writeToMatrixTextFile);
-	praat_addAction1 (classMatrix, 1, L"Write to matrix text file...", 0, praat_HIDDEN, DO_Matrix_writeToMatrixTextFile);
-	praat_addAction1 (classMatrix, 1, L"Save as headerless spreadsheet file...", 0, 0, DO_Matrix_writeToHeaderlessSpreadsheetFile);
-	praat_addAction1 (classMatrix, 1, L"Write to headerless spreadsheet file...", 0, praat_HIDDEN, DO_Matrix_writeToHeaderlessSpreadsheetFile);
-	praat_addAction1 (classMatrix, 1, L"Play movie", 0, 0, DO_Matrix_movie);
-	praat_addAction1 (classMatrix, 0, L"Draw -", 0, 0, 0);
-		praat_addAction1 (classMatrix, 0, L"Draw rows...", 0, 1, DO_Matrix_drawRows);
-		praat_addAction1 (classMatrix, 0, L"Draw one contour...", 0, 1, DO_Matrix_drawOneContour);
-		praat_addAction1 (classMatrix, 0, L"Draw contours...", 0, 1, DO_Matrix_drawContours);
-		praat_addAction1 (classMatrix, 0, L"Paint image...", 0, 1, DO_Matrix_paintImage);
-		praat_addAction1 (classMatrix, 0, L"Paint contours...", 0, 1, DO_Matrix_paintContours);
-		praat_addAction1 (classMatrix, 0, L"Paint cells...", 0, 1, DO_Matrix_paintCells);
-		praat_addAction1 (classMatrix, 0, L"Paint surface...", 0, 1, DO_Matrix_paintSurface);
-	praat_addAction1 (classMatrix, 1, L"Query -", 0, 0, 0);
-		praat_addAction1 (classMatrix, 1, L"Get lowest x", 0, 1, DO_Matrix_getLowestX);
-		praat_addAction1 (classMatrix, 1, L"Get highest x", 0, 1, DO_Matrix_getHighestX);
-		praat_addAction1 (classMatrix, 1, L"Get lowest y", 0, 1, DO_Matrix_getLowestY);
-		praat_addAction1 (classMatrix, 1, L"Get highest y", 0, 1, DO_Matrix_getHighestY);
-		praat_addAction1 (classMatrix, 1, L"-- get structure --", 0, 1, 0);
-		praat_addAction1 (classMatrix, 1, L"Get number of rows", 0, 1, DO_Matrix_getNumberOfRows);
-		praat_addAction1 (classMatrix, 1, L"Get number of columns", 0, 1, DO_Matrix_getNumberOfColumns);
-		praat_addAction1 (classMatrix, 1, L"Get row distance", 0, 1, DO_Matrix_getRowDistance);
-		praat_addAction1 (classMatrix, 1, L"Get column distance", 0, 1, DO_Matrix_getColumnDistance);
-		praat_addAction1 (classMatrix, 1, L"Get y of row...", 0, 1, DO_Matrix_getYofRow);
-		praat_addAction1 (classMatrix, 1, L"Get x of column...", 0, 1, DO_Matrix_getXofColumn);
-		praat_addAction1 (classMatrix, 1, L"-- get value --", 0, 1, 0);
-		praat_addAction1 (classMatrix, 1, L"Get value in cell...", 0, 1, DO_Matrix_getValueInCell);
-		praat_addAction1 (classMatrix, 1, L"Get value at xy...", 0, 1, DO_Matrix_getValueAtXY);
-		praat_addAction1 (classMatrix, 1, L"Get minimum", 0, 1, DO_Matrix_getMinimum);
-		praat_addAction1 (classMatrix, 1, L"Get maximum", 0, 1, DO_Matrix_getMaximum);
-		praat_addAction1 (classMatrix, 1, L"Get sum", 0, 1, DO_Matrix_getSum);
-	praat_addAction1 (classMatrix, 0, L"Modify -", 0, 0, 0);
-		praat_addAction1 (classMatrix, 0, L"Formula...", 0, 1, DO_Matrix_formula);
-		praat_addAction1 (classMatrix, 0, L"Set value...", 0, 1, DO_Matrix_setValue);
-praat_addAction1 (classMatrix, 0, L"Analyse", 0, 0, 0);
-	praat_addAction1 (classMatrix, 0, L"Eigen", 0, 0, DO_Matrix_eigen);
-	praat_addAction1 (classMatrix, 0, L"Synthesize", 0, 0, 0);
-	praat_addAction1 (classMatrix, 0, L"Power...", 0, 0, DO_Matrix_power);
-	praat_addAction1 (classMatrix, 0, L"Combine two Matrices -", 0, 0, 0);
-		praat_addAction1 (classMatrix, 2, L"Merge (append rows)", 0, 1, DO_Matrix_appendRows);
-		praat_addAction1 (classMatrix, 2, L"To ParamCurve", 0, 1, DO_Matrix_to_ParamCurve);
-	praat_addAction1 (classMatrix, 0, L"Cast -", 0, 0, 0);
-		praat_addAction1 (classMatrix, 0, L"To Cochleagram", 0, 1, DO_Matrix_to_Cochleagram);
-		praat_addAction1 (classMatrix, 0, L"To Excitation", 0, 1, DO_Matrix_to_Excitation);
-		praat_addAction1 (classMatrix, 0, L"To Harmonicity", 0, 1, DO_Matrix_to_Harmonicity);
-		praat_addAction1 (classMatrix, 0, L"To Intensity", 0, 1, DO_Matrix_to_Intensity);
-		praat_addAction1 (classMatrix, 0, L"To Ltas", 0, 1, DO_Matrix_to_Ltas);
-		praat_addAction1 (classMatrix, 0, L"To Pitch", 0, 1, DO_Matrix_to_Pitch);
-		praat_addAction1 (classMatrix, 0, L"To PointProcess", 0, 1, DO_Matrix_to_PointProcess);
-		praat_addAction1 (classMatrix, 0, L"To Polygon", 0, 1, DO_Matrix_to_Polygon);
-		praat_addAction1 (classMatrix, 0, L"To Sound", 0, 1, DO_Matrix_to_Sound);
-		praat_addAction1 (classMatrix, 0, L"To Sound (slice)...", 0, 1, DO_Matrix_to_Sound_mono);
-		praat_addAction1 (classMatrix, 0, L"To Spectrogram", 0, 1, DO_Matrix_to_Spectrogram);
-		praat_addAction1 (classMatrix, 0, L"To TableOfReal", 0, 1, DO_Matrix_to_TableOfReal);
-		praat_addAction1 (classMatrix, 0, L"To Spectrum", 0, 1, DO_Matrix_to_Spectrum);
-		praat_addAction1 (classMatrix, 0, L"To Transition", 0, 1, DO_Matrix_to_Transition);
-		praat_addAction1 (classMatrix, 0, L"To VocalTract", 0, 1, DO_Matrix_to_VocalTract);
+	praat_addAction1 (classMatrix, 0, U"Matrix help", 0, 0, DO_Matrix_help);
+	praat_addAction1 (classMatrix, 1, U"Save as matrix text file...", 0, 0, DO_Matrix_writeToMatrixTextFile);
+	praat_addAction1 (classMatrix, 1, U"Write to matrix text file...", 0, praat_HIDDEN, DO_Matrix_writeToMatrixTextFile);
+	praat_addAction1 (classMatrix, 1, U"Save as headerless spreadsheet file...", 0, 0, DO_Matrix_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (classMatrix, 1, U"Write to headerless spreadsheet file...", 0, praat_HIDDEN, DO_Matrix_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (classMatrix, 1, U"Play movie", 0, 0, DO_Matrix_movie);
+	praat_addAction1 (classMatrix, 0, U"Draw -", 0, 0, 0);
+		praat_addAction1 (classMatrix, 0, U"Draw rows...", 0, 1, DO_Matrix_drawRows);
+		praat_addAction1 (classMatrix, 0, U"Draw one contour...", 0, 1, DO_Matrix_drawOneContour);
+		praat_addAction1 (classMatrix, 0, U"Draw contours...", 0, 1, DO_Matrix_drawContours);
+		praat_addAction1 (classMatrix, 0, U"Paint image...", 0, 1, DO_Matrix_paintImage);
+		praat_addAction1 (classMatrix, 0, U"Paint contours...", 0, 1, DO_Matrix_paintContours);
+		praat_addAction1 (classMatrix, 0, U"Paint cells...", 0, 1, DO_Matrix_paintCells);
+		praat_addAction1 (classMatrix, 0, U"Paint surface...", 0, 1, DO_Matrix_paintSurface);
+	praat_addAction1 (classMatrix, 1, U"Query -", 0, 0, 0);
+		praat_addAction1 (classMatrix, 1, U"Get lowest x", 0, 1, DO_Matrix_getLowestX);
+		praat_addAction1 (classMatrix, 1, U"Get highest x", 0, 1, DO_Matrix_getHighestX);
+		praat_addAction1 (classMatrix, 1, U"Get lowest y", 0, 1, DO_Matrix_getLowestY);
+		praat_addAction1 (classMatrix, 1, U"Get highest y", 0, 1, DO_Matrix_getHighestY);
+		praat_addAction1 (classMatrix, 1, U"-- get structure --", 0, 1, 0);
+		praat_addAction1 (classMatrix, 1, U"Get number of rows", 0, 1, DO_Matrix_getNumberOfRows);
+		praat_addAction1 (classMatrix, 1, U"Get number of columns", 0, 1, DO_Matrix_getNumberOfColumns);
+		praat_addAction1 (classMatrix, 1, U"Get row distance", 0, 1, DO_Matrix_getRowDistance);
+		praat_addAction1 (classMatrix, 1, U"Get column distance", 0, 1, DO_Matrix_getColumnDistance);
+		praat_addAction1 (classMatrix, 1, U"Get y of row...", 0, 1, DO_Matrix_getYofRow);
+		praat_addAction1 (classMatrix, 1, U"Get x of column...", 0, 1, DO_Matrix_getXofColumn);
+		praat_addAction1 (classMatrix, 1, U"-- get value --", 0, 1, 0);
+		praat_addAction1 (classMatrix, 1, U"Get value in cell...", 0, 1, DO_Matrix_getValueInCell);
+		praat_addAction1 (classMatrix, 1, U"Get value at xy...", 0, 1, DO_Matrix_getValueAtXY);
+		praat_addAction1 (classMatrix, 1, U"Get minimum", 0, 1, DO_Matrix_getMinimum);
+		praat_addAction1 (classMatrix, 1, U"Get maximum", 0, 1, DO_Matrix_getMaximum);
+		praat_addAction1 (classMatrix, 1, U"Get sum", 0, 1, DO_Matrix_getSum);
+	praat_addAction1 (classMatrix, 0, U"Modify -", 0, 0, 0);
+		praat_addAction1 (classMatrix, 0, U"Formula...", 0, 1, DO_Matrix_formula);
+		praat_addAction1 (classMatrix, 0, U"Set value...", 0, 1, DO_Matrix_setValue);
+praat_addAction1 (classMatrix, 0, U"Analyse", 0, 0, 0);
+	praat_addAction1 (classMatrix, 0, U"Eigen", 0, 0, DO_Matrix_eigen);
+	praat_addAction1 (classMatrix, 0, U"Synthesize", 0, 0, 0);
+	praat_addAction1 (classMatrix, 0, U"Power...", 0, 0, DO_Matrix_power);
+	praat_addAction1 (classMatrix, 0, U"Combine two Matrices -", 0, 0, 0);
+		praat_addAction1 (classMatrix, 2, U"Merge (append rows)", 0, 1, DO_Matrix_appendRows);
+		praat_addAction1 (classMatrix, 2, U"To ParamCurve", 0, 1, DO_Matrix_to_ParamCurve);
+	praat_addAction1 (classMatrix, 0, U"Cast -", 0, 0, 0);
+		praat_addAction1 (classMatrix, 0, U"To Cochleagram", 0, 1, DO_Matrix_to_Cochleagram);
+		praat_addAction1 (classMatrix, 0, U"To Excitation", 0, 1, DO_Matrix_to_Excitation);
+		praat_addAction1 (classMatrix, 0, U"To Harmonicity", 0, 1, DO_Matrix_to_Harmonicity);
+		praat_addAction1 (classMatrix, 0, U"To Intensity", 0, 1, DO_Matrix_to_Intensity);
+		praat_addAction1 (classMatrix, 0, U"To Ltas", 0, 1, DO_Matrix_to_Ltas);
+		praat_addAction1 (classMatrix, 0, U"To Pitch", 0, 1, DO_Matrix_to_Pitch);
+		praat_addAction1 (classMatrix, 0, U"To PointProcess", 0, 1, DO_Matrix_to_PointProcess);
+		praat_addAction1 (classMatrix, 0, U"To Polygon", 0, 1, DO_Matrix_to_Polygon);
+		praat_addAction1 (classMatrix, 0, U"To Sound", 0, 1, DO_Matrix_to_Sound);
+		praat_addAction1 (classMatrix, 0, U"To Sound (slice)...", 0, 1, DO_Matrix_to_Sound_mono);
+		praat_addAction1 (classMatrix, 0, U"To Spectrogram", 0, 1, DO_Matrix_to_Spectrogram);
+		praat_addAction1 (classMatrix, 0, U"To TableOfReal", 0, 1, DO_Matrix_to_TableOfReal);
+		praat_addAction1 (classMatrix, 0, U"To Spectrum", 0, 1, DO_Matrix_to_Spectrum);
+		praat_addAction1 (classMatrix, 0, U"To Transition", 0, 1, DO_Matrix_to_Transition);
+		praat_addAction1 (classMatrix, 0, U"To VocalTract", 0, 1, DO_Matrix_to_VocalTract);
 
-	praat_addAction1 (classMovie, 1, L"Paint one image...", 0, 1, DO_Movie_paintOneImage);
-	praat_addAction1 (classMovie, 1, L"View & Edit", 0, praat_ATTRACTIVE, DO_Movie_viewAndEdit);
+	praat_addAction1 (classMovie, 1, U"Paint one image...", 0, 1, DO_Movie_paintOneImage);
+	praat_addAction1 (classMovie, 1, U"View & Edit", 0, praat_ATTRACTIVE, DO_Movie_viewAndEdit);
 
-	praat_addAction1 (classParamCurve, 0, L"ParamCurve help", 0, 0, DO_ParamCurve_help);
-	praat_addAction1 (classParamCurve, 0, L"Draw", 0, 0, 0);
-	praat_addAction1 (classParamCurve, 0, L"Draw...", 0, 0, DO_ParamCurve_draw);
+	praat_addAction1 (classParamCurve, 0, U"ParamCurve help", 0, 0, DO_ParamCurve_help);
+	praat_addAction1 (classParamCurve, 0, U"Draw", 0, 0, 0);
+	praat_addAction1 (classParamCurve, 0, U"Draw...", 0, 0, DO_ParamCurve_draw);
 
-	praat_addAction1 (classPhoto, 0, L"Draw -", 0, 0, 0);
-		praat_addAction1 (classPhoto, 0, L"Paint image...", 0, 1, DO_Photo_paintImage);
-		praat_addAction1 (classPhoto, 0, L"Paint cells...", 0, 1, DO_Photo_paintCells);
-	praat_addAction1 (classPhoto, 0, L"Modify -", 0, 0, 0);
-		praat_addAction1 (classPhoto, 0, L"Formula (red)...", 0, 1, DO_Photo_formula_red);
-		praat_addAction1 (classPhoto, 0, L"Formula (green)...", 0, 1, DO_Photo_formula_green);
-		praat_addAction1 (classPhoto, 0, L"Formula (blue)...", 0, 1, DO_Photo_formula_blue);
-		praat_addAction1 (classPhoto, 0, L"Formula (transparency)...", 0, 1, DO_Photo_formula_transparency);
-	praat_addAction1 (classPhoto, 0, L"Extract -", 0, 0, 0);
-		praat_addAction1 (classPhoto, 0, L"Extract red", 0, 1, DO_Photo_extractRed);
-		praat_addAction1 (classPhoto, 0, L"Extract green", 0, 1, DO_Photo_extractGreen);
-		praat_addAction1 (classPhoto, 0, L"Extract blue", 0, 1, DO_Photo_extractBlue);
-		praat_addAction1 (classPhoto, 0, L"Extract transparency", 0, 1, DO_Photo_extractTransparency);
-	praat_addAction1 (classPhoto, 1, L"Save as PNG file...", 0, 0, DO_Photo_saveAsPNG);
+	praat_addAction1 (classPhoto, 0, U"Draw -", 0, 0, 0);
+		praat_addAction1 (classPhoto, 0, U"Paint image...", 0, 1, DO_Photo_paintImage);
+		praat_addAction1 (classPhoto, 0, U"Paint cells...", 0, 1, DO_Photo_paintCells);
+	praat_addAction1 (classPhoto, 0, U"Modify -", 0, 0, 0);
+		praat_addAction1 (classPhoto, 0, U"Formula (red)...", 0, 1, DO_Photo_formula_red);
+		praat_addAction1 (classPhoto, 0, U"Formula (green)...", 0, 1, DO_Photo_formula_green);
+		praat_addAction1 (classPhoto, 0, U"Formula (blue)...", 0, 1, DO_Photo_formula_blue);
+		praat_addAction1 (classPhoto, 0, U"Formula (transparency)...", 0, 1, DO_Photo_formula_transparency);
+	praat_addAction1 (classPhoto, 0, U"Extract -", 0, 0, 0);
+		praat_addAction1 (classPhoto, 0, U"Extract red", 0, 1, DO_Photo_extractRed);
+		praat_addAction1 (classPhoto, 0, U"Extract green", 0, 1, DO_Photo_extractGreen);
+		praat_addAction1 (classPhoto, 0, U"Extract blue", 0, 1, DO_Photo_extractBlue);
+		praat_addAction1 (classPhoto, 0, U"Extract transparency", 0, 1, DO_Photo_extractTransparency);
+	praat_addAction1 (classPhoto, 1, U"Save as PNG file...", 0, 0, DO_Photo_saveAsPNG);
 	#if defined (macintosh) || defined (_WIN32)
-		praat_addAction1 (classPhoto, 1, L"Save as TIFF file...", 0, 0, DO_Photo_saveAsTIFF);
-		praat_addAction1 (classPhoto, 1, L"Save as GIF file...", 0, 0, DO_Photo_saveAsGIF);
-		praat_addAction1 (classPhoto, 1, L"Save as Windows bitmap file...", 0, 0, DO_Photo_saveAsWindowsBitmapFile);
-		praat_addAction1 (classPhoto, 1, L"Save as lossy JPEG file...", 0, 0, DO_Photo_saveAsJPEG);
+		praat_addAction1 (classPhoto, 1, U"Save as TIFF file...", 0, 0, DO_Photo_saveAsTIFF);
+		praat_addAction1 (classPhoto, 1, U"Save as GIF file...", 0, 0, DO_Photo_saveAsGIF);
+		praat_addAction1 (classPhoto, 1, U"Save as Windows bitmap file...", 0, 0, DO_Photo_saveAsWindowsBitmapFile);
+		praat_addAction1 (classPhoto, 1, U"Save as lossy JPEG file...", 0, 0, DO_Photo_saveAsJPEG);
 	#endif
 	#if defined (macintosh)
-		praat_addAction1 (classPhoto, 1, L"Save as JPEG-2000 file...", 0, 0, DO_Photo_saveAsJPEG2000);
-		praat_addAction1 (classPhoto, 1, L"Save as Apple icon file...", 0, 0, DO_Photo_saveAsAppleIconFile);
-		praat_addAction1 (classPhoto, 1, L"Save as Windows icon file...", 0, 0, DO_Photo_saveAsWindowsIconFile);
+		praat_addAction1 (classPhoto, 1, U"Save as JPEG-2000 file...", 0, 0, DO_Photo_saveAsJPEG2000);
+		praat_addAction1 (classPhoto, 1, U"Save as Apple icon file...", 0, 0, DO_Photo_saveAsAppleIconFile);
+		praat_addAction1 (classPhoto, 1, U"Save as Windows icon file...", 0, 0, DO_Photo_saveAsWindowsIconFile);
 	#endif
 
-	praat_addAction1 (classPitch, 0, L"Pitch help", 0, 0, DO_Pitch_help);
-	praat_addAction1 (classPitch, 1, L"View & Edit", 0, praat_ATTRACTIVE, DO_Pitch_edit);
-	praat_addAction1 (classPitch, 1, L"Edit", 0, praat_HIDDEN, DO_Pitch_edit);
-	praat_addAction1 (classPitch, 0, L"Sound -", 0, 0, 0);
-		praat_addAction1 (classPitch, 0, L"Play pulses", 0, 1, DO_Pitch_play);
-		praat_addAction1 (classPitch, 0, L"Hum", 0, 1, DO_Pitch_hum);
-		praat_addAction1 (classPitch, 0, L"-- to sound --", 0, 1, 0);
-		praat_addAction1 (classPitch, 0, L"To Sound (pulses)", 0, 1, DO_Pitch_to_Sound_pulses);
-		praat_addAction1 (classPitch, 0, L"To Sound (hum)", 0, 1, DO_Pitch_to_Sound_hum);
-		praat_addAction1 (classPitch, 0, L"To Sound (sine)...", 0, 1, DO_Pitch_to_Sound_sine);
-	praat_addAction1 (classPitch, 0, L"Draw -", 0, 0, 0);
-		praat_addAction1 (classPitch, 0, L"Draw...", 0, 1, DO_Pitch_draw);
-		praat_addAction1 (classPitch, 0, L"Draw logarithmic...", 0, 1, DO_Pitch_drawLogarithmic);
-		praat_addAction1 (classPitch, 0, L"Draw semitones (re 100 Hz)...", 0, 1, DO_Pitch_drawSemitones100);
-		praat_addAction1 (classPitch, 0, L"Draw semitones...", 0, praat_HIDDEN + praat_DEPTH_1, DO_Pitch_drawSemitones100);
-		praat_addAction1 (classPitch, 0, L"Draw semitones (re 200 Hz)...", 0, 1, DO_Pitch_drawSemitones200);
-		praat_addAction1 (classPitch, 0, L"Draw semitones (re 440 Hz)...", 0, 1, DO_Pitch_drawSemitones440);
-		praat_addAction1 (classPitch, 0, L"Draw mel...", 0, 1, DO_Pitch_drawMel);
-		praat_addAction1 (classPitch, 0, L"Draw erb...", 0, 1, DO_Pitch_drawErb);
-		praat_addAction1 (classPitch, 0, L"Speckle...", 0, 1, DO_Pitch_speckle);
-		praat_addAction1 (classPitch, 0, L"Speckle logarithmic...", 0, 1, DO_Pitch_speckleLogarithmic);
-		praat_addAction1 (classPitch, 0, L"Speckle semitones (re 100 Hz)...", 0, 1, DO_Pitch_speckleSemitones100);
-		praat_addAction1 (classPitch, 0, L"Speckle semitones...", 0, praat_HIDDEN + praat_DEPTH_1, DO_Pitch_speckleSemitones100);
-		praat_addAction1 (classPitch, 0, L"Speckle semitones (re 200 Hz)...", 0, 1, DO_Pitch_speckleSemitones200);
-		praat_addAction1 (classPitch, 0, L"Speckle semitones (re 440 Hz)...", 0, 1, DO_Pitch_speckleSemitones440);
-		praat_addAction1 (classPitch, 0, L"Speckle mel...", 0, 1, DO_Pitch_speckleMel);
-		praat_addAction1 (classPitch, 0, L"Speckle erb...", 0, 1, DO_Pitch_speckleErb);
-	praat_addAction1 (classPitch, 0, L"Query -", 0, 0, 0);
+	praat_addAction1 (classPitch, 0, U"Pitch help", 0, 0, DO_Pitch_help);
+	praat_addAction1 (classPitch, 1, U"View & Edit", 0, praat_ATTRACTIVE, DO_Pitch_edit);
+	praat_addAction1 (classPitch, 1, U"Edit", 0, praat_HIDDEN, DO_Pitch_edit);
+	praat_addAction1 (classPitch, 0, U"Sound -", 0, 0, 0);
+		praat_addAction1 (classPitch, 0, U"Play pulses", 0, 1, DO_Pitch_play);
+		praat_addAction1 (classPitch, 0, U"Hum", 0, 1, DO_Pitch_hum);
+		praat_addAction1 (classPitch, 0, U"-- to sound --", 0, 1, 0);
+		praat_addAction1 (classPitch, 0, U"To Sound (pulses)", 0, 1, DO_Pitch_to_Sound_pulses);
+		praat_addAction1 (classPitch, 0, U"To Sound (hum)", 0, 1, DO_Pitch_to_Sound_hum);
+		praat_addAction1 (classPitch, 0, U"To Sound (sine)...", 0, 1, DO_Pitch_to_Sound_sine);
+	praat_addAction1 (classPitch, 0, U"Draw -", 0, 0, 0);
+		praat_addAction1 (classPitch, 0, U"Draw...", 0, 1, DO_Pitch_draw);
+		praat_addAction1 (classPitch, 0, U"Draw logarithmic...", 0, 1, DO_Pitch_drawLogarithmic);
+		praat_addAction1 (classPitch, 0, U"Draw semitones (re 100 Hz)...", 0, 1, DO_Pitch_drawSemitones100);
+		praat_addAction1 (classPitch, 0, U"Draw semitones...", 0, praat_HIDDEN + praat_DEPTH_1, DO_Pitch_drawSemitones100);
+		praat_addAction1 (classPitch, 0, U"Draw semitones (re 200 Hz)...", 0, 1, DO_Pitch_drawSemitones200);
+		praat_addAction1 (classPitch, 0, U"Draw semitones (re 440 Hz)...", 0, 1, DO_Pitch_drawSemitones440);
+		praat_addAction1 (classPitch, 0, U"Draw mel...", 0, 1, DO_Pitch_drawMel);
+		praat_addAction1 (classPitch, 0, U"Draw erb...", 0, 1, DO_Pitch_drawErb);
+		praat_addAction1 (classPitch, 0, U"Speckle...", 0, 1, DO_Pitch_speckle);
+		praat_addAction1 (classPitch, 0, U"Speckle logarithmic...", 0, 1, DO_Pitch_speckleLogarithmic);
+		praat_addAction1 (classPitch, 0, U"Speckle semitones (re 100 Hz)...", 0, 1, DO_Pitch_speckleSemitones100);
+		praat_addAction1 (classPitch, 0, U"Speckle semitones...", 0, praat_HIDDEN + praat_DEPTH_1, DO_Pitch_speckleSemitones100);
+		praat_addAction1 (classPitch, 0, U"Speckle semitones (re 200 Hz)...", 0, 1, DO_Pitch_speckleSemitones200);
+		praat_addAction1 (classPitch, 0, U"Speckle semitones (re 440 Hz)...", 0, 1, DO_Pitch_speckleSemitones440);
+		praat_addAction1 (classPitch, 0, U"Speckle mel...", 0, 1, DO_Pitch_speckleMel);
+		praat_addAction1 (classPitch, 0, U"Speckle erb...", 0, 1, DO_Pitch_speckleErb);
+	praat_addAction1 (classPitch, 0, U"Query -", 0, 0, 0);
 		praat_TimeFrameSampled_query_init (classPitch);
-		praat_addAction1 (classPitch, 1, L"-- get content --", 0, 1, 0);
-		praat_addAction1 (classPitch, 1, L"Count voiced frames", 0, 1, DO_Pitch_getNumberOfVoicedFrames);
-		praat_addAction1 (classPitch, 1, L"Get value at time...", 0, 1, DO_Pitch_getValueAtTime);
-		praat_addAction1 (classPitch, 1, L"Get value in frame...", 0, 1, DO_Pitch_getValueInFrame);
-		praat_addAction1 (classPitch, 1, L"-- get extreme --", 0, 1, 0);
-		praat_addAction1 (classPitch, 1, L"Get minimum...", 0, 1, DO_Pitch_getMinimum);
-		praat_addAction1 (classPitch, 1, L"Get time of minimum...", 0, 1, DO_Pitch_getTimeOfMinimum);
-		praat_addAction1 (classPitch, 1, L"Get maximum...", 0, 1, DO_Pitch_getMaximum);
-		praat_addAction1 (classPitch, 1, L"Get time of maximum...", 0, 1, DO_Pitch_getTimeOfMaximum);
-		praat_addAction1 (classPitch, 1, L"-- get statistics --", 0, 1, 0);
-		praat_addAction1 (classPitch, 1, L"Get quantile...", 0, 1, DO_Pitch_getQuantile);
-		/*praat_addAction1 (classPitch, 1, L"Get spreading...", 0, 1, DO_Pitch_getSpreading);*/
-		praat_addAction1 (classPitch, 1, L"Get mean...", 0, 1, DO_Pitch_getMean);
-		praat_addAction1 (classPitch, 1, L"Get standard deviation...", 0, 1, DO_Pitch_getStandardDeviation);
-		praat_addAction1 (classPitch, 1, L"-- get slope --", 0, 1, 0);
-		praat_addAction1 (classPitch, 1, L"Get mean absolute slope...", 0, 1, DO_Pitch_getMeanAbsoluteSlope);
-		praat_addAction1 (classPitch, 1, L"Get slope without octave jumps", 0, 1, DO_Pitch_getMeanAbsSlope_noOctave);
-		praat_addAction1 (classPitch, 2, L"-- query two --", 0, 1, 0);
-		praat_addAction1 (classPitch, 2, L"Count differences", 0, 1, DO_Pitch_difference);
-	praat_addAction1 (classPitch, 0, L"Modify -", 0, 0, 0);
+		praat_addAction1 (classPitch, 1, U"-- get content --", 0, 1, 0);
+		praat_addAction1 (classPitch, 1, U"Count voiced frames", 0, 1, DO_Pitch_getNumberOfVoicedFrames);
+		praat_addAction1 (classPitch, 1, U"Get value at time...", 0, 1, DO_Pitch_getValueAtTime);
+		praat_addAction1 (classPitch, 1, U"Get value in frame...", 0, 1, DO_Pitch_getValueInFrame);
+		praat_addAction1 (classPitch, 1, U"-- get extreme --", 0, 1, 0);
+		praat_addAction1 (classPitch, 1, U"Get minimum...", 0, 1, DO_Pitch_getMinimum);
+		praat_addAction1 (classPitch, 1, U"Get time of minimum...", 0, 1, DO_Pitch_getTimeOfMinimum);
+		praat_addAction1 (classPitch, 1, U"Get maximum...", 0, 1, DO_Pitch_getMaximum);
+		praat_addAction1 (classPitch, 1, U"Get time of maximum...", 0, 1, DO_Pitch_getTimeOfMaximum);
+		praat_addAction1 (classPitch, 1, U"-- get statistics --", 0, 1, 0);
+		praat_addAction1 (classPitch, 1, U"Get quantile...", 0, 1, DO_Pitch_getQuantile);
+		/*praat_addAction1 (classPitch, 1, U"Get spreading...", 0, 1, DO_Pitch_getSpreading);*/
+		praat_addAction1 (classPitch, 1, U"Get mean...", 0, 1, DO_Pitch_getMean);
+		praat_addAction1 (classPitch, 1, U"Get standard deviation...", 0, 1, DO_Pitch_getStandardDeviation);
+		praat_addAction1 (classPitch, 1, U"-- get slope --", 0, 1, 0);
+		praat_addAction1 (classPitch, 1, U"Get mean absolute slope...", 0, 1, DO_Pitch_getMeanAbsoluteSlope);
+		praat_addAction1 (classPitch, 1, U"Get slope without octave jumps", 0, 1, DO_Pitch_getMeanAbsSlope_noOctave);
+		praat_addAction1 (classPitch, 2, U"-- query two --", 0, 1, 0);
+		praat_addAction1 (classPitch, 2, U"Count differences", 0, 1, DO_Pitch_difference);
+	praat_addAction1 (classPitch, 0, U"Modify -", 0, 0, 0);
 		praat_TimeFunction_modify_init (classPitch);
-		praat_addAction1 (classPitch, 0, L"Formula...", 0, 1, DO_Pitch_formula);
-	praat_addAction1 (classPitch, 0, L"Annotate -", 0, 0, 0);
-		praat_addAction1 (classPitch, 0, L"To TextGrid...", 0, 1, DO_Pitch_to_TextGrid);
-		praat_addAction1 (classPitch, 0, L"-- to single tier --", 0, praat_HIDDEN + praat_DEPTH_1, 0);
-		praat_addAction1 (classPitch, 0, L"To TextTier", 0, praat_HIDDEN + praat_DEPTH_1, DO_Pitch_to_TextTier);
-		praat_addAction1 (classPitch, 0, L"To IntervalTier", 0, praat_HIDDEN + praat_DEPTH_1, DO_Pitch_to_IntervalTier);
-	praat_addAction1 (classPitch, 0, L"Analyse -", 0, 0, 0);
-		praat_addAction1 (classPitch, 0, L"To PointProcess", 0, 1, DO_Pitch_to_PointProcess);
-	praat_addAction1 (classPitch, 0, L"Convert -", 0, 0, 0);
-		praat_addAction1 (classPitch, 0, L"Interpolate", 0, 1, DO_Pitch_interpolate);
-		praat_addAction1 (classPitch, 0, L"Smooth...", 0, 1, DO_Pitch_smooth);
-		praat_addAction1 (classPitch, 0, L"Subtract linear fit...", 0, 1, DO_Pitch_subtractLinearFit);
-		praat_addAction1 (classPitch, 0, L"Hack", 0, 1, 0);
-		praat_addAction1 (classPitch, 0, L"Kill octave jumps", 0, 2, DO_Pitch_killOctaveJumps);
-		praat_addAction1 (classPitch, 0, L"-- to other types --", 0, 1, 0);
-		praat_addAction1 (classPitch, 0, L"Down to PitchTier", 0, 1, DO_Pitch_to_PitchTier);
-		praat_addAction1 (classPitch, 0, L"To Matrix", 0, 1, DO_Pitch_to_Matrix);
+		praat_addAction1 (classPitch, 0, U"Formula...", 0, 1, DO_Pitch_formula);
+	praat_addAction1 (classPitch, 0, U"Annotate -", 0, 0, 0);
+		praat_addAction1 (classPitch, 0, U"To TextGrid...", 0, 1, DO_Pitch_to_TextGrid);
+		praat_addAction1 (classPitch, 0, U"-- to single tier --", 0, praat_HIDDEN + praat_DEPTH_1, 0);
+		praat_addAction1 (classPitch, 0, U"To TextTier", 0, praat_HIDDEN + praat_DEPTH_1, DO_Pitch_to_TextTier);
+		praat_addAction1 (classPitch, 0, U"To IntervalTier", 0, praat_HIDDEN + praat_DEPTH_1, DO_Pitch_to_IntervalTier);
+	praat_addAction1 (classPitch, 0, U"Analyse -", 0, 0, 0);
+		praat_addAction1 (classPitch, 0, U"To PointProcess", 0, 1, DO_Pitch_to_PointProcess);
+	praat_addAction1 (classPitch, 0, U"Convert -", 0, 0, 0);
+		praat_addAction1 (classPitch, 0, U"Interpolate", 0, 1, DO_Pitch_interpolate);
+		praat_addAction1 (classPitch, 0, U"Smooth...", 0, 1, DO_Pitch_smooth);
+		praat_addAction1 (classPitch, 0, U"Subtract linear fit...", 0, 1, DO_Pitch_subtractLinearFit);
+		praat_addAction1 (classPitch, 0, U"Hack", 0, 1, 0);
+		praat_addAction1 (classPitch, 0, U"Kill octave jumps", 0, 2, DO_Pitch_killOctaveJumps);
+		praat_addAction1 (classPitch, 0, U"-- to other types --", 0, 1, 0);
+		praat_addAction1 (classPitch, 0, U"Down to PitchTier", 0, 1, DO_Pitch_to_PitchTier);
+		praat_addAction1 (classPitch, 0, U"To Matrix", 0, 1, DO_Pitch_to_Matrix);
 
-	praat_addAction1 (classPitchTier, 1, L"Save as PitchTier spreadsheet file...", 0, 0, DO_PitchTier_writeToPitchTierSpreadsheetFile);
-	praat_addAction1 (classPitchTier, 1, L"Write to PitchTier spreadsheet file...", 0, praat_HIDDEN, DO_PitchTier_writeToPitchTierSpreadsheetFile);
-	praat_addAction1 (classPitchTier, 1, L"Save as headerless spreadsheet file...", 0, 0, DO_PitchTier_writeToHeaderlessSpreadsheetFile);
-	praat_addAction1 (classPitchTier, 1, L"Write to headerless spreadsheet file...", 0, praat_HIDDEN, DO_PitchTier_writeToHeaderlessSpreadsheetFile);
-	praat_addAction1 (classPitchTier, 0, L"PitchTier help", 0, 0, DO_PitchTier_help);
-	praat_addAction1 (classPitchTier, 1, L"View & Edit", 0, praat_ATTRACTIVE, DO_PitchTier_edit);
-	praat_addAction1 (classPitchTier, 1, L"Edit", 0, praat_HIDDEN, DO_PitchTier_edit);
-	praat_addAction1 (classPitchTier, 0, L"View & Edit with Sound?", 0, 0, DO_info_PitchTier_Sound_edit);
-	praat_addAction1 (classPitchTier, 0, L"Play pulses", 0, 0, DO_PitchTier_play);
-	praat_addAction1 (classPitchTier, 0, L"Hum", 0, 0, DO_PitchTier_hum);
-	praat_addAction1 (classPitchTier, 0, L"Play sine", 0, 0, DO_PitchTier_playSine);
-	praat_addAction1 (classPitchTier, 0, L"Draw...", 0, 0, DO_PitchTier_draw);
-	praat_addAction1 (classPitchTier, 0, L"& Manipulation: Replace?", 0, 0, DO_info_PitchTier_Manipulation_replace);
-	praat_addAction1 (classPitchTier, 0, L"Query -", 0, 0, 0);
+	praat_addAction1 (classPitchTier, 1, U"Save as PitchTier spreadsheet file...", 0, 0, DO_PitchTier_writeToPitchTierSpreadsheetFile);
+	praat_addAction1 (classPitchTier, 1, U"Write to PitchTier spreadsheet file...", 0, praat_HIDDEN, DO_PitchTier_writeToPitchTierSpreadsheetFile);
+	praat_addAction1 (classPitchTier, 1, U"Save as headerless spreadsheet file...", 0, 0, DO_PitchTier_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (classPitchTier, 1, U"Write to headerless spreadsheet file...", 0, praat_HIDDEN, DO_PitchTier_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (classPitchTier, 0, U"PitchTier help", 0, 0, DO_PitchTier_help);
+	praat_addAction1 (classPitchTier, 1, U"View & Edit", 0, praat_ATTRACTIVE, DO_PitchTier_edit);
+	praat_addAction1 (classPitchTier, 1, U"Edit", 0, praat_HIDDEN, DO_PitchTier_edit);
+	praat_addAction1 (classPitchTier, 0, U"View & Edit with Sound?", 0, 0, DO_info_PitchTier_Sound_edit);
+	praat_addAction1 (classPitchTier, 0, U"Play pulses", 0, 0, DO_PitchTier_play);
+	praat_addAction1 (classPitchTier, 0, U"Hum", 0, 0, DO_PitchTier_hum);
+	praat_addAction1 (classPitchTier, 0, U"Play sine", 0, 0, DO_PitchTier_playSine);
+	praat_addAction1 (classPitchTier, 0, U"Draw...", 0, 0, DO_PitchTier_draw);
+	praat_addAction1 (classPitchTier, 0, U"& Manipulation: Replace?", 0, 0, DO_info_PitchTier_Manipulation_replace);
+	praat_addAction1 (classPitchTier, 0, U"Query -", 0, 0, 0);
 		praat_TimeTier_query_init (classPitchTier);
-		praat_addAction1 (classPitchTier, 1, L"-- get content --", 0, 1, 0);
-		praat_addAction1 (classPitchTier, 1, L"Get value at time...", 0, 1, DO_PitchTier_getValueAtTime);
-		praat_addAction1 (classPitchTier, 1, L"Get value at index...", 0, 1, DO_PitchTier_getValueAtIndex);
-		praat_addAction1 (classPitchTier, 1, L"-- get statistics --", 0, 1, 0);
-		praat_addAction1 (classPitchTier, 1, L"Get mean (curve)...", 0, 1, DO_PitchTier_getMean_curve);
-		praat_addAction1 (classPitchTier, 1, L"Get mean (points)...", 0, 1, DO_PitchTier_getMean_points);
-		praat_addAction1 (classPitchTier, 1, L"Get standard deviation (curve)...", 0, 1, DO_PitchTier_getStandardDeviation_curve);
-		praat_addAction1 (classPitchTier, 1, L"Get standard deviation (points)...", 0, 1, DO_PitchTier_getStandardDeviation_points);
-	praat_addAction1 (classPitchTier, 0, L"Modify -", 0, 0, 0);
+		praat_addAction1 (classPitchTier, 1, U"-- get content --", 0, 1, 0);
+		praat_addAction1 (classPitchTier, 1, U"Get value at time...", 0, 1, DO_PitchTier_getValueAtTime);
+		praat_addAction1 (classPitchTier, 1, U"Get value at index...", 0, 1, DO_PitchTier_getValueAtIndex);
+		praat_addAction1 (classPitchTier, 1, U"-- get statistics --", 0, 1, 0);
+		praat_addAction1 (classPitchTier, 1, U"Get mean (curve)...", 0, 1, DO_PitchTier_getMean_curve);
+		praat_addAction1 (classPitchTier, 1, U"Get mean (points)...", 0, 1, DO_PitchTier_getMean_points);
+		praat_addAction1 (classPitchTier, 1, U"Get standard deviation (curve)...", 0, 1, DO_PitchTier_getStandardDeviation_curve);
+		praat_addAction1 (classPitchTier, 1, U"Get standard deviation (points)...", 0, 1, DO_PitchTier_getStandardDeviation_points);
+	praat_addAction1 (classPitchTier, 0, U"Modify -", 0, 0, 0);
 		praat_TimeTier_modify_init (classPitchTier);
-		praat_addAction1 (classPitchTier, 0, L"Add point...", 0, 1, DO_PitchTier_addPoint);
-		praat_addAction1 (classPitchTier, 0, L"Formula...", 0, 1, DO_PitchTier_formula);
-		praat_addAction1 (classPitchTier, 0, L"-- stylize --", 0, 1, 0);
-		praat_addAction1 (classPitchTier, 0, L"Stylize...", 0, 1, DO_PitchTier_stylize);
-		praat_addAction1 (classPitchTier, 0, L"Interpolate quadratically...", 0, 1, DO_PitchTier_interpolateQuadratically);
-		praat_addAction1 (classPitchTier, 0, L"-- modify frequencies --", 0, 1, 0);
-		praat_addAction1 (classPitchTier, 0, L"Shift frequencies...", 0, 1, DO_PitchTier_shiftFrequencies);
-		praat_addAction1 (classPitchTier, 0, L"Multiply frequencies...", 0, 1, DO_PitchTier_multiplyFrequencies);
-	praat_addAction1 (classPitchTier, 0, L"Synthesize -", 0, 0, 0);
-		praat_addAction1 (classPitchTier, 0, L"To PointProcess", 0, 1, DO_PitchTier_to_PointProcess);
-		praat_addAction1 (classPitchTier, 0, L"To Sound (pulse train)...", 0, 1, DO_PitchTier_to_Sound_pulseTrain);
-		praat_addAction1 (classPitchTier, 0, L"To Sound (phonation)...", 0, 1, DO_PitchTier_to_Sound_phonation);
-		praat_addAction1 (classPitchTier, 0, L"To Sound (sine)...", 0, 1, DO_PitchTier_to_Sound_sine);
-	praat_addAction1 (classPitchTier, 0, L"Convert -", 0, 0, 0);
-		praat_addAction1 (classPitchTier, 0, L"Down to PointProcess", 0, 1, DO_PitchTier_downto_PointProcess);
-		praat_addAction1 (classPitchTier, 0, L"Down to TableOfReal...", 0, 1, DO_PitchTier_downto_TableOfReal);
+		praat_addAction1 (classPitchTier, 0, U"Add point...", 0, 1, DO_PitchTier_addPoint);
+		praat_addAction1 (classPitchTier, 0, U"Formula...", 0, 1, DO_PitchTier_formula);
+		praat_addAction1 (classPitchTier, 0, U"-- stylize --", 0, 1, 0);
+		praat_addAction1 (classPitchTier, 0, U"Stylize...", 0, 1, DO_PitchTier_stylize);
+		praat_addAction1 (classPitchTier, 0, U"Interpolate quadratically...", 0, 1, DO_PitchTier_interpolateQuadratically);
+		praat_addAction1 (classPitchTier, 0, U"-- modify frequencies --", 0, 1, 0);
+		praat_addAction1 (classPitchTier, 0, U"Shift frequencies...", 0, 1, DO_PitchTier_shiftFrequencies);
+		praat_addAction1 (classPitchTier, 0, U"Multiply frequencies...", 0, 1, DO_PitchTier_multiplyFrequencies);
+	praat_addAction1 (classPitchTier, 0, U"Synthesize -", 0, 0, 0);
+		praat_addAction1 (classPitchTier, 0, U"To PointProcess", 0, 1, DO_PitchTier_to_PointProcess);
+		praat_addAction1 (classPitchTier, 0, U"To Sound (pulse train)...", 0, 1, DO_PitchTier_to_Sound_pulseTrain);
+		praat_addAction1 (classPitchTier, 0, U"To Sound (phonation)...", 0, 1, DO_PitchTier_to_Sound_phonation);
+		praat_addAction1 (classPitchTier, 0, U"To Sound (sine)...", 0, 1, DO_PitchTier_to_Sound_sine);
+	praat_addAction1 (classPitchTier, 0, U"Convert -", 0, 0, 0);
+		praat_addAction1 (classPitchTier, 0, U"Down to PointProcess", 0, 1, DO_PitchTier_downto_PointProcess);
+		praat_addAction1 (classPitchTier, 0, U"Down to TableOfReal...", 0, 1, DO_PitchTier_downto_TableOfReal);
 
-	praat_addAction1 (classPointProcess, 0, L"PointProcess help", 0, 0, DO_PointProcess_help);
-	praat_addAction1 (classPointProcess, 1, L"View & Edit", 0, praat_ATTRACTIVE, DO_PointProcess_edit);
-	praat_addAction1 (classPointProcess, 1, L"View & Edit alone", 0, praat_HIDDEN, DO_PointProcess_edit);
-	praat_addAction1 (classPointProcess, 1, L"Edit alone", 0, praat_HIDDEN, DO_PointProcess_edit);
-	praat_addAction1 (classPointProcess, 0, L"View & Edit with Sound?", 0, 0, DO_info_PointProcess_Sound_edit);
-	praat_addAction1 (classPointProcess, 0, L"Play -", 0, 0, 0);
-		praat_addAction1 (classPointProcess, 0, L"Play as pulse train", 0, 1, DO_PointProcess_play);
-		praat_addAction1 (classPointProcess, 0, L"Hum", 0, 1, DO_PointProcess_hum);
-		praat_addAction1 (classPointProcess, 0, L"-- to sound --", 0, 1, 0);
-		praat_addAction1 (classPointProcess, 0, L"To Sound (pulse train)...", 0, 1, DO_PointProcess_to_Sound_pulseTrain);
-		praat_addAction1 (classPointProcess, 0, L"To Sound (phonation)...", 0, 1, DO_PointProcess_to_Sound_phonation);
-		praat_addAction1 (classPointProcess, 0, L"To Sound (hum)", 0, 1, DO_PointProcess_to_Sound_hum);
-	praat_addAction1 (classPointProcess, 0, L"Draw...", 0, 0, DO_PointProcess_draw);
-	praat_addAction1 (classPointProcess, 0, L"Query -", 0, 0, 0);
+	praat_addAction1 (classPointProcess, 0, U"PointProcess help", 0, 0, DO_PointProcess_help);
+	praat_addAction1 (classPointProcess, 1, U"View & Edit", 0, praat_ATTRACTIVE, DO_PointProcess_edit);
+	praat_addAction1 (classPointProcess, 1, U"View & Edit alone", 0, praat_HIDDEN, DO_PointProcess_edit);
+	praat_addAction1 (classPointProcess, 1, U"Edit alone", 0, praat_HIDDEN, DO_PointProcess_edit);
+	praat_addAction1 (classPointProcess, 0, U"View & Edit with Sound?", 0, 0, DO_info_PointProcess_Sound_edit);
+	praat_addAction1 (classPointProcess, 0, U"Play -", 0, 0, 0);
+		praat_addAction1 (classPointProcess, 0, U"Play as pulse train", 0, 1, DO_PointProcess_play);
+		praat_addAction1 (classPointProcess, 0, U"Hum", 0, 1, DO_PointProcess_hum);
+		praat_addAction1 (classPointProcess, 0, U"-- to sound --", 0, 1, 0);
+		praat_addAction1 (classPointProcess, 0, U"To Sound (pulse train)...", 0, 1, DO_PointProcess_to_Sound_pulseTrain);
+		praat_addAction1 (classPointProcess, 0, U"To Sound (phonation)...", 0, 1, DO_PointProcess_to_Sound_phonation);
+		praat_addAction1 (classPointProcess, 0, U"To Sound (hum)", 0, 1, DO_PointProcess_to_Sound_hum);
+	praat_addAction1 (classPointProcess, 0, U"Draw...", 0, 0, DO_PointProcess_draw);
+	praat_addAction1 (classPointProcess, 0, U"Query -", 0, 0, 0);
 		praat_TimeFunction_query_init (classPointProcess);
-		praat_addAction1 (classPointProcess, 1, L"-- script get --", 0, 1, 0);
-		praat_addAction1 (classPointProcess, 1, L"Get number of points", 0, 1, DO_PointProcess_getNumberOfPoints);
-		praat_addAction1 (classPointProcess, 1, L"Get low index...", 0, 1, DO_PointProcess_getLowIndex);
-		praat_addAction1 (classPointProcess, 1, L"Get high index...", 0, 1, DO_PointProcess_getHighIndex);
-		praat_addAction1 (classPointProcess, 1, L"Get nearest index...", 0, 1, DO_PointProcess_getNearestIndex);
-		praat_addAction1 (classPointProcess, 1, L"Get time from index...", 0, 1, DO_PointProcess_getTimeFromIndex);
-		praat_addAction1 (classPointProcess, 1, L"Get interval...", 0, 1, DO_PointProcess_getInterval);
-		praat_addAction1 (classPointProcess, 1, L"-- periods --", 0, 1, 0);
-		praat_addAction1 (classPointProcess, 1, L"Get number of periods...", 0, 1, DO_PointProcess_getNumberOfPeriods);
-		praat_addAction1 (classPointProcess, 1, L"Get mean period...", 0, 1, DO_PointProcess_getMeanPeriod);
-		praat_addAction1 (classPointProcess, 1, L"Get stdev period...", 0, 1, DO_PointProcess_getStdevPeriod);
-		praat_addAction1 (classPointProcess, 1, L"Get jitter (local)...", 0, 1, DO_PointProcess_getJitter_local);
-		praat_addAction1 (classPointProcess, 1, L"Get jitter (local, absolute)...", 0, 1, DO_PointProcess_getJitter_local_absolute);
-		praat_addAction1 (classPointProcess, 1, L"Get jitter (rap)...", 0, 1, DO_PointProcess_getJitter_rap);
-		praat_addAction1 (classPointProcess, 1, L"Get jitter (ppq5)...", 0, 1, DO_PointProcess_getJitter_ppq5);
-		praat_addAction1 (classPointProcess, 1, L"Get jitter (ddp)...", 0, 1, DO_PointProcess_getJitter_ddp);
-	praat_addAction1 (classPointProcess, 0, L"Modify -", 0, 0, 0);
+		praat_addAction1 (classPointProcess, 1, U"-- script get --", 0, 1, 0);
+		praat_addAction1 (classPointProcess, 1, U"Get number of points", 0, 1, DO_PointProcess_getNumberOfPoints);
+		praat_addAction1 (classPointProcess, 1, U"Get low index...", 0, 1, DO_PointProcess_getLowIndex);
+		praat_addAction1 (classPointProcess, 1, U"Get high index...", 0, 1, DO_PointProcess_getHighIndex);
+		praat_addAction1 (classPointProcess, 1, U"Get nearest index...", 0, 1, DO_PointProcess_getNearestIndex);
+		praat_addAction1 (classPointProcess, 1, U"Get time from index...", 0, 1, DO_PointProcess_getTimeFromIndex);
+		praat_addAction1 (classPointProcess, 1, U"Get interval...", 0, 1, DO_PointProcess_getInterval);
+		praat_addAction1 (classPointProcess, 1, U"-- periods --", 0, 1, 0);
+		praat_addAction1 (classPointProcess, 1, U"Get number of periods...", 0, 1, DO_PointProcess_getNumberOfPeriods);
+		praat_addAction1 (classPointProcess, 1, U"Get mean period...", 0, 1, DO_PointProcess_getMeanPeriod);
+		praat_addAction1 (classPointProcess, 1, U"Get stdev period...", 0, 1, DO_PointProcess_getStdevPeriod);
+		praat_addAction1 (classPointProcess, 1, U"Get jitter (local)...", 0, 1, DO_PointProcess_getJitter_local);
+		praat_addAction1 (classPointProcess, 1, U"Get jitter (local, absolute)...", 0, 1, DO_PointProcess_getJitter_local_absolute);
+		praat_addAction1 (classPointProcess, 1, U"Get jitter (rap)...", 0, 1, DO_PointProcess_getJitter_rap);
+		praat_addAction1 (classPointProcess, 1, U"Get jitter (ppq5)...", 0, 1, DO_PointProcess_getJitter_ppq5);
+		praat_addAction1 (classPointProcess, 1, U"Get jitter (ddp)...", 0, 1, DO_PointProcess_getJitter_ddp);
+	praat_addAction1 (classPointProcess, 0, U"Modify -", 0, 0, 0);
 		praat_TimeFunction_modify_init (classPointProcess);
-		praat_addAction1 (classPointProcess, 0, L"Add point...", 0, 1, DO_PointProcess_addPoint);
-		praat_addAction1 (classPointProcess, 0, L"Remove point...", 0, 1, DO_PointProcess_removePoint);
-		praat_addAction1 (classPointProcess, 0, L"Remove point near...", 0, 1, DO_PointProcess_removePointNear);
-		praat_addAction1 (classPointProcess, 0, L"Remove points...", 0, 1, DO_PointProcess_removePoints);
-		praat_addAction1 (classPointProcess, 0, L"Remove points between...", 0, 1, DO_PointProcess_removePointsBetween);
-		praat_addAction1 (classPointProcess, 0, L"-- voice --", 0, 1, 0);
-		praat_addAction1 (classPointProcess, 0, L"Fill...", 0, 1, DO_PointProcess_fill);
-		praat_addAction1 (classPointProcess, 0, L"Voice...", 0, 1, DO_PointProcess_voice);
-	praat_addAction1 (classPointProcess, 0, L"Annotate -", 0, 0, 0);
-		praat_addAction1 (classPointProcess, 0, L"To TextGrid...", 0, 1, DO_PointProcess_to_TextGrid);
-		praat_addAction1 (classPointProcess, 0, L"-- to single tier --", 0, 1, 0);
-		praat_addAction1 (classPointProcess, 0, L"To TextTier", 0, 1, DO_PointProcess_to_TextTier);
-		praat_addAction1 (classPointProcess, 0, L"To IntervalTier", 0, 1, DO_PointProcess_to_IntervalTier);
-	praat_addAction1 (classPointProcess, 0, L"Analyse -", 0, 0, 0);
-		praat_addAction1 (classPointProcess, 0, L"To PitchTier...", 0, 1, DO_PointProcess_to_PitchTier);
-		praat_addAction1 (classPointProcess, 0, L"To TextGrid (vuv)...", 0, 1, DO_PointProcess_to_TextGrid_vuv);
-	praat_addAction1 (classPointProcess, 0, L"Convert -", 0, 0, 0);
-		praat_addAction1 (classPointProcess, 0, L"Hack", 0, 1, 0);
-			praat_addAction1 (classPointProcess, 0, L"To Matrix", 0, 2, DO_PointProcess_to_Matrix);
-			praat_addAction1 (classPointProcess, 0, L"Up to TextTier...", 0, 2, DO_PointProcess_upto_TextTier);
-			praat_addAction1 (classPointProcess, 0, L"Up to PitchTier...", 0, 2, DO_PointProcess_upto_PitchTier);
-			praat_addAction1 (classPointProcess, 0, L"Up to IntensityTier...", 0, 2, DO_PointProcess_upto_IntensityTier);
-	praat_addAction1 (classPointProcess, 0, L"Combine -", 0, 0, 0);
-		praat_addAction1 (classPointProcess, 2, L"Union", 0, 1, DO_PointProcess_union);
-		praat_addAction1 (classPointProcess, 2, L"Intersection", 0, 1, DO_PointProcess_intersection);
-		praat_addAction1 (classPointProcess, 2, L"Difference", 0, 1, DO_PointProcess_difference);
+		praat_addAction1 (classPointProcess, 0, U"Add point...", 0, 1, DO_PointProcess_addPoint);
+		praat_addAction1 (classPointProcess, 0, U"Remove point...", 0, 1, DO_PointProcess_removePoint);
+		praat_addAction1 (classPointProcess, 0, U"Remove point near...", 0, 1, DO_PointProcess_removePointNear);
+		praat_addAction1 (classPointProcess, 0, U"Remove points...", 0, 1, DO_PointProcess_removePoints);
+		praat_addAction1 (classPointProcess, 0, U"Remove points between...", 0, 1, DO_PointProcess_removePointsBetween);
+		praat_addAction1 (classPointProcess, 0, U"-- voice --", 0, 1, 0);
+		praat_addAction1 (classPointProcess, 0, U"Fill...", 0, 1, DO_PointProcess_fill);
+		praat_addAction1 (classPointProcess, 0, U"Voice...", 0, 1, DO_PointProcess_voice);
+	praat_addAction1 (classPointProcess, 0, U"Annotate -", 0, 0, 0);
+		praat_addAction1 (classPointProcess, 0, U"To TextGrid...", 0, 1, DO_PointProcess_to_TextGrid);
+		praat_addAction1 (classPointProcess, 0, U"-- to single tier --", 0, 1, 0);
+		praat_addAction1 (classPointProcess, 0, U"To TextTier", 0, 1, DO_PointProcess_to_TextTier);
+		praat_addAction1 (classPointProcess, 0, U"To IntervalTier", 0, 1, DO_PointProcess_to_IntervalTier);
+	praat_addAction1 (classPointProcess, 0, U"Analyse -", 0, 0, 0);
+		praat_addAction1 (classPointProcess, 0, U"To PitchTier...", 0, 1, DO_PointProcess_to_PitchTier);
+		praat_addAction1 (classPointProcess, 0, U"To TextGrid (vuv)...", 0, 1, DO_PointProcess_to_TextGrid_vuv);
+	praat_addAction1 (classPointProcess, 0, U"Convert -", 0, 0, 0);
+		praat_addAction1 (classPointProcess, 0, U"Hack", 0, 1, 0);
+			praat_addAction1 (classPointProcess, 0, U"To Matrix", 0, 2, DO_PointProcess_to_Matrix);
+			praat_addAction1 (classPointProcess, 0, U"Up to TextTier...", 0, 2, DO_PointProcess_upto_TextTier);
+			praat_addAction1 (classPointProcess, 0, U"Up to PitchTier...", 0, 2, DO_PointProcess_upto_PitchTier);
+			praat_addAction1 (classPointProcess, 0, U"Up to IntensityTier...", 0, 2, DO_PointProcess_upto_IntensityTier);
+	praat_addAction1 (classPointProcess, 0, U"Combine -", 0, 0, 0);
+		praat_addAction1 (classPointProcess, 2, U"Union", 0, 1, DO_PointProcess_union);
+		praat_addAction1 (classPointProcess, 2, U"Intersection", 0, 1, DO_PointProcess_intersection);
+		praat_addAction1 (classPointProcess, 2, U"Difference", 0, 1, DO_PointProcess_difference);
 
-	praat_addAction1 (classPolygon, 0, L"Polygon help", 0, 0, DO_Polygon_help);
-praat_addAction1 (classPolygon, 0, L"Draw -", 0, 0, 0);
-	praat_addAction1 (classPolygon, 0, L"Draw...", 0, 1, DO_Polygon_draw);
-	praat_addAction1 (classPolygon, 0, L"Draw closed...", 0, 1, DO_Polygon_drawClosed);
-	praat_addAction1 (classPolygon, 0, L"Paint...", 0, 1, DO_Polygon_paint);
-	praat_addAction1 (classPolygon, 0, L"Draw circles...", 0, 1, DO_Polygon_drawCircles);
-	praat_addAction1 (classPolygon, 0, L"Paint circles...", 0, 1, DO_Polygon_paintCircles);
-	praat_addAction1 (classPolygon, 2, L"Draw connection...", 0, 1, DO_Polygons_drawConnection);
-praat_addAction1 (classPolygon, 0, L"Modify -", 0, 0, 0);
-	praat_addAction1 (classPolygon, 0, L"Randomize", 0, 1, DO_Polygon_randomize);
-	praat_addAction1 (classPolygon, 0, L"Salesperson...", 0, 1, DO_Polygon_salesperson);
-praat_addAction1 (classPolygon, 0, L"Hack -", 0, 0, 0);
-	praat_addAction1 (classPolygon, 0, L"To Matrix", 0, 1, DO_Polygon_to_Matrix);
+	praat_addAction1 (classPolygon, 0, U"Polygon help", 0, 0, DO_Polygon_help);
+praat_addAction1 (classPolygon, 0, U"Draw -", 0, 0, 0);
+	praat_addAction1 (classPolygon, 0, U"Draw...", 0, 1, DO_Polygon_draw);
+	praat_addAction1 (classPolygon, 0, U"Draw closed...", 0, 1, DO_Polygon_drawClosed);
+	praat_addAction1 (classPolygon, 0, U"Paint...", 0, 1, DO_Polygon_paint);
+	praat_addAction1 (classPolygon, 0, U"Draw circles...", 0, 1, DO_Polygon_drawCircles);
+	praat_addAction1 (classPolygon, 0, U"Paint circles...", 0, 1, DO_Polygon_paintCircles);
+	praat_addAction1 (classPolygon, 2, U"Draw connection...", 0, 1, DO_Polygons_drawConnection);
+praat_addAction1 (classPolygon, 0, U"Modify -", 0, 0, 0);
+	praat_addAction1 (classPolygon, 0, U"Randomize", 0, 1, DO_Polygon_randomize);
+	praat_addAction1 (classPolygon, 0, U"Salesperson...", 0, 1, DO_Polygon_salesperson);
+praat_addAction1 (classPolygon, 0, U"Hack -", 0, 0, 0);
+	praat_addAction1 (classPolygon, 0, U"To Matrix", 0, 1, DO_Polygon_to_Matrix);
 
-	praat_addAction1 (classSpectrogram, 0, L"Spectrogram help", 0, 0, DO_Spectrogram_help);
-	praat_addAction1 (classSpectrogram, 1, L"View", 0, 0, DO_Spectrogram_view);
-	praat_addAction1 (classSpectrogram, 1, L"Movie", 0, 0, DO_Spectrogram_movie);
-	praat_addAction1 (classSpectrogram, 0, L"Query -", 0, 0, 0);
+	praat_addAction1 (classSpectrogram, 0, U"Spectrogram help", 0, 0, DO_Spectrogram_help);
+	praat_addAction1 (classSpectrogram, 1, U"View", 0, 0, DO_Spectrogram_view);
+	praat_addAction1 (classSpectrogram, 1, U"Movie", 0, 0, DO_Spectrogram_movie);
+	praat_addAction1 (classSpectrogram, 0, U"Query -", 0, 0, 0);
 		praat_TimeFrameSampled_query_init (classSpectrogram);
-		praat_addAction1 (classSpectrogram, 1, L"Get power at...", 0, 1, DO_Spectrogram_getPowerAt);
-	praat_addAction1 (classSpectrogram, 0, L"Draw -", 0, 0, 0);
-		praat_addAction1 (classSpectrogram, 0, L"Paint...", 0, 1, DO_Spectrogram_paint);
-	praat_addAction1 (classSpectrogram, 0, L"Analyse -", 0, 0, 0);
-		praat_addAction1 (classSpectrogram, 0, L"To Spectrum (slice)...", 0, 1, DO_Spectrogram_to_Spectrum);
-	praat_addAction1 (classSpectrogram, 0, L"Synthesize -", 0, 0, 0);
-		praat_addAction1 (classSpectrogram, 0, L"To Sound...", 0, 1, DO_Spectrogram_to_Sound);
-	praat_addAction1 (classSpectrogram, 0, L"Modify -", 0, 0, 0);
+		praat_addAction1 (classSpectrogram, 1, U"Get power at...", 0, 1, DO_Spectrogram_getPowerAt);
+	praat_addAction1 (classSpectrogram, 0, U"Draw -", 0, 0, 0);
+		praat_addAction1 (classSpectrogram, 0, U"Paint...", 0, 1, DO_Spectrogram_paint);
+	praat_addAction1 (classSpectrogram, 0, U"Analyse -", 0, 0, 0);
+		praat_addAction1 (classSpectrogram, 0, U"To Spectrum (slice)...", 0, 1, DO_Spectrogram_to_Spectrum);
+	praat_addAction1 (classSpectrogram, 0, U"Synthesize -", 0, 0, 0);
+		praat_addAction1 (classSpectrogram, 0, U"To Sound...", 0, 1, DO_Spectrogram_to_Sound);
+	praat_addAction1 (classSpectrogram, 0, U"Modify -", 0, 0, 0);
 		praat_TimeFunction_modify_init (classSpectrogram);
-		praat_addAction1 (classSpectrogram, 0, L"Formula...", 0, 1, DO_Spectrogram_formula);
-	praat_addAction1 (classSpectrogram, 0, L"Hack -", 0, 0, 0);
-		praat_addAction1 (classSpectrogram, 0, L"To Matrix", 0, 1, DO_Spectrogram_to_Matrix);
+		praat_addAction1 (classSpectrogram, 0, U"Formula...", 0, 1, DO_Spectrogram_formula);
+	praat_addAction1 (classSpectrogram, 0, U"Hack -", 0, 0, 0);
+		praat_addAction1 (classSpectrogram, 0, U"To Matrix", 0, 1, DO_Spectrogram_to_Matrix);
 
-	praat_addAction1 (classSpectrum, 0, L"Spectrum help", 0, 0, DO_Spectrum_help);
-	praat_addAction1 (classSpectrum, 1, L"View & Edit", 0, praat_ATTRACTIVE, DO_Spectrum_edit);
-	praat_addAction1 (classSpectrum, 1, L"Edit", 0, praat_HIDDEN, DO_Spectrum_edit);
-	praat_addAction1 (classSpectrum, 0, L"Sound -", 0, 0, 0);
-		praat_addAction1 (classSpectrum, 0, L"To Sound", 0, 1, DO_Spectrum_to_Sound);
-						praat_addAction1 (classSpectrum, 0, L"To Sound (fft)", 0, praat_HIDDEN + praat_DEPTH_1, DO_Spectrum_to_Sound);
-	praat_addAction1 (classSpectrum, 0, L"Draw -", 0, 0, 0);
-		praat_addAction1 (classSpectrum, 0, L"Draw...", 0, 1, DO_Spectrum_draw);
-		praat_addAction1 (classSpectrum, 0, L"Draw (log freq)...", 0, 1, DO_Spectrum_drawLogFreq);
-	praat_addAction1 (classSpectrum, 1, L"Tabulate -", 0, 0, 0);
-		praat_addAction1 (classSpectrum, 1, L"List...", 0, 1, DO_Spectrum_list);
-	praat_addAction1 (classSpectrum, 1, L"Query -", 0, 0, 0);
-		praat_addAction1 (classSpectrum, 1, L"Frequency domain", 0, 1, 0);
-			praat_addAction1 (classSpectrum, 1, L"Get lowest frequency", 0, 2, DO_Spectrum_getLowestFrequency);
-			praat_addAction1 (classSpectrum, 1, L"Get highest frequency", 0, 2, DO_Spectrum_getHighestFrequency);
-		praat_addAction1 (classSpectrum, 1, L"Frequency sampling", 0, 1, 0);
-			praat_addAction1 (classSpectrum, 1, L"Get number of bins", 0, 2, DO_Spectrum_getNumberOfBins);
-			praat_addAction1 (classSpectrum, 1, L"Get bin width", 0, 2, DO_Spectrum_getBinWidth);
-			praat_addAction1 (classSpectrum, 1, L"Get frequency from bin number...", 0, 2, DO_Spectrum_getFrequencyFromBin);
-						praat_addAction1 (classSpectrum, 1, L"Get frequency from bin...", 0, praat_HIDDEN + praat_DEPTH_2, DO_Spectrum_getFrequencyFromBin);
-			praat_addAction1 (classSpectrum, 1, L"Get bin number from frequency...", 0, 2, DO_Spectrum_getBinFromFrequency);
-						praat_addAction1 (classSpectrum, 1, L"Get bin from frequency...", 0, praat_HIDDEN + praat_DEPTH_2, DO_Spectrum_getBinFromFrequency);
-		praat_addAction1 (classSpectrum, 1, L"-- get content --", 0, 1, 0);
-		praat_addAction1 (classSpectrum, 1, L"Get real value in bin...", 0, 1, DO_Spectrum_getRealValueInBin);
-		praat_addAction1 (classSpectrum, 1, L"Get imaginary value in bin...", 0, 1, DO_Spectrum_getImaginaryValueInBin);
-		praat_addAction1 (classSpectrum, 1, L"-- get energy --", 0, 1, 0);
-		praat_addAction1 (classSpectrum, 1, L"Get band energy...", 0, 1, DO_Spectrum_getBandEnergy);
-		praat_addAction1 (classSpectrum, 1, L"Get band density...", 0, 1, DO_Spectrum_getBandDensity);
-		praat_addAction1 (classSpectrum, 1, L"Get band energy difference...", 0, 1, DO_Spectrum_getBandEnergyDifference);
-		praat_addAction1 (classSpectrum, 1, L"Get band density difference...", 0, 1, DO_Spectrum_getBandDensityDifference);
-		praat_addAction1 (classSpectrum, 1, L"-- get moments --", 0, 1, 0);
-		praat_addAction1 (classSpectrum, 1, L"Get centre of gravity...", 0, 1, DO_Spectrum_getCentreOfGravity);
-		praat_addAction1 (classSpectrum, 1, L"Get standard deviation...", 0, 1, DO_Spectrum_getStandardDeviation);
-		praat_addAction1 (classSpectrum, 1, L"Get skewness...", 0, 1, DO_Spectrum_getSkewness);
-		praat_addAction1 (classSpectrum, 1, L"Get kurtosis...", 0, 1, DO_Spectrum_getKurtosis);
-		praat_addAction1 (classSpectrum, 1, L"Get central moment...", 0, 1, DO_Spectrum_getCentralMoment);
-	praat_addAction1 (classSpectrum, 0, L"Modify -", 0, 0, 0);
-		praat_addAction1 (classSpectrum, 0, L"Formula...", 0, 1, DO_Spectrum_formula);
-		praat_addAction1 (classSpectrum, 0, L"Filter (pass Hann band)...", 0, 1, DO_Spectrum_passHannBand);
-		praat_addAction1 (classSpectrum, 0, L"Filter (stop Hann band)...", 0, 1, DO_Spectrum_stopHannBand);
-	praat_addAction1 (classSpectrum, 0, L"Analyse -", 0, 0, 0);
-		praat_addAction1 (classSpectrum, 0, L"To Excitation...", 0, 1, DO_Spectrum_to_Excitation);
-		praat_addAction1 (classSpectrum, 0, L"To SpectrumTier (peaks)", 0, 1, DO_Spectrum_to_SpectrumTier_peaks);
-		praat_addAction1 (classSpectrum, 0, L"To Formant (peaks)...", 0, 1, DO_Spectrum_to_Formant_peaks);
-		praat_addAction1 (classSpectrum, 0, L"To Ltas...", 0, 1, DO_Spectrum_to_Ltas);
-		praat_addAction1 (classSpectrum, 0, L"To Ltas (1-to-1)", 0, 1, DO_Spectrum_to_Ltas_1to1);
-		praat_addAction1 (classSpectrum, 0, L"To Spectrogram", 0, 1, DO_Spectrum_to_Spectrogram);
-	praat_addAction1 (classSpectrum, 0, L"Convert -", 0, 0, 0);
-		praat_addAction1 (classSpectrum, 0, L"Cepstral smoothing...", 0, 1, DO_Spectrum_cepstralSmoothing);
-		praat_addAction1 (classSpectrum, 0, L"LPC smoothing...", 0, 1, DO_Spectrum_lpcSmoothing);
-		praat_addAction1 (classSpectrum, 0, L"Hack", 0, 1, 0);
-			praat_addAction1 (classSpectrum, 0, L"To Matrix", 0, 2, DO_Spectrum_to_Matrix);
+	praat_addAction1 (classSpectrum, 0, U"Spectrum help", 0, 0, DO_Spectrum_help);
+	praat_addAction1 (classSpectrum, 1, U"View & Edit", 0, praat_ATTRACTIVE, DO_Spectrum_edit);
+	praat_addAction1 (classSpectrum, 1, U"Edit", 0, praat_HIDDEN, DO_Spectrum_edit);
+	praat_addAction1 (classSpectrum, 0, U"Sound -", 0, 0, 0);
+		praat_addAction1 (classSpectrum, 0, U"To Sound", 0, 1, DO_Spectrum_to_Sound);
+						praat_addAction1 (classSpectrum, 0, U"To Sound (fft)", 0, praat_HIDDEN + praat_DEPTH_1, DO_Spectrum_to_Sound);
+	praat_addAction1 (classSpectrum, 0, U"Draw -", 0, 0, 0);
+		praat_addAction1 (classSpectrum, 0, U"Draw...", 0, 1, DO_Spectrum_draw);
+		praat_addAction1 (classSpectrum, 0, U"Draw (log freq)...", 0, 1, DO_Spectrum_drawLogFreq);
+	praat_addAction1 (classSpectrum, 1, U"Tabulate -", 0, 0, 0);
+		praat_addAction1 (classSpectrum, 1, U"List...", 0, 1, DO_Spectrum_list);
+	praat_addAction1 (classSpectrum, 1, U"Query -", 0, 0, 0);
+		praat_addAction1 (classSpectrum, 1, U"Frequency domain", 0, 1, 0);
+			praat_addAction1 (classSpectrum, 1, U"Get lowest frequency", 0, 2, DO_Spectrum_getLowestFrequency);
+			praat_addAction1 (classSpectrum, 1, U"Get highest frequency", 0, 2, DO_Spectrum_getHighestFrequency);
+		praat_addAction1 (classSpectrum, 1, U"Frequency sampling", 0, 1, 0);
+			praat_addAction1 (classSpectrum, 1, U"Get number of bins", 0, 2, DO_Spectrum_getNumberOfBins);
+			praat_addAction1 (classSpectrum, 1, U"Get bin width", 0, 2, DO_Spectrum_getBinWidth);
+			praat_addAction1 (classSpectrum, 1, U"Get frequency from bin number...", 0, 2, DO_Spectrum_getFrequencyFromBin);
+						praat_addAction1 (classSpectrum, 1, U"Get frequency from bin...", 0, praat_HIDDEN + praat_DEPTH_2, DO_Spectrum_getFrequencyFromBin);
+			praat_addAction1 (classSpectrum, 1, U"Get bin number from frequency...", 0, 2, DO_Spectrum_getBinFromFrequency);
+						praat_addAction1 (classSpectrum, 1, U"Get bin from frequency...", 0, praat_HIDDEN + praat_DEPTH_2, DO_Spectrum_getBinFromFrequency);
+		praat_addAction1 (classSpectrum, 1, U"-- get content --", 0, 1, 0);
+		praat_addAction1 (classSpectrum, 1, U"Get real value in bin...", 0, 1, DO_Spectrum_getRealValueInBin);
+		praat_addAction1 (classSpectrum, 1, U"Get imaginary value in bin...", 0, 1, DO_Spectrum_getImaginaryValueInBin);
+		praat_addAction1 (classSpectrum, 1, U"-- get energy --", 0, 1, 0);
+		praat_addAction1 (classSpectrum, 1, U"Get band energy...", 0, 1, DO_Spectrum_getBandEnergy);
+		praat_addAction1 (classSpectrum, 1, U"Get band density...", 0, 1, DO_Spectrum_getBandDensity);
+		praat_addAction1 (classSpectrum, 1, U"Get band energy difference...", 0, 1, DO_Spectrum_getBandEnergyDifference);
+		praat_addAction1 (classSpectrum, 1, U"Get band density difference...", 0, 1, DO_Spectrum_getBandDensityDifference);
+		praat_addAction1 (classSpectrum, 1, U"-- get moments --", 0, 1, 0);
+		praat_addAction1 (classSpectrum, 1, U"Get centre of gravity...", 0, 1, DO_Spectrum_getCentreOfGravity);
+		praat_addAction1 (classSpectrum, 1, U"Get standard deviation...", 0, 1, DO_Spectrum_getStandardDeviation);
+		praat_addAction1 (classSpectrum, 1, U"Get skewness...", 0, 1, DO_Spectrum_getSkewness);
+		praat_addAction1 (classSpectrum, 1, U"Get kurtosis...", 0, 1, DO_Spectrum_getKurtosis);
+		praat_addAction1 (classSpectrum, 1, U"Get central moment...", 0, 1, DO_Spectrum_getCentralMoment);
+	praat_addAction1 (classSpectrum, 0, U"Modify -", 0, 0, 0);
+		praat_addAction1 (classSpectrum, 0, U"Formula...", 0, 1, DO_Spectrum_formula);
+		praat_addAction1 (classSpectrum, 0, U"Filter (pass Hann band)...", 0, 1, DO_Spectrum_passHannBand);
+		praat_addAction1 (classSpectrum, 0, U"Filter (stop Hann band)...", 0, 1, DO_Spectrum_stopHannBand);
+	praat_addAction1 (classSpectrum, 0, U"Analyse -", 0, 0, 0);
+		praat_addAction1 (classSpectrum, 0, U"To Excitation...", 0, 1, DO_Spectrum_to_Excitation);
+		praat_addAction1 (classSpectrum, 0, U"To SpectrumTier (peaks)", 0, 1, DO_Spectrum_to_SpectrumTier_peaks);
+		praat_addAction1 (classSpectrum, 0, U"To Formant (peaks)...", 0, 1, DO_Spectrum_to_Formant_peaks);
+		praat_addAction1 (classSpectrum, 0, U"To Ltas...", 0, 1, DO_Spectrum_to_Ltas);
+		praat_addAction1 (classSpectrum, 0, U"To Ltas (1-to-1)", 0, 1, DO_Spectrum_to_Ltas_1to1);
+		praat_addAction1 (classSpectrum, 0, U"To Spectrogram", 0, 1, DO_Spectrum_to_Spectrogram);
+	praat_addAction1 (classSpectrum, 0, U"Convert -", 0, 0, 0);
+		praat_addAction1 (classSpectrum, 0, U"Cepstral smoothing...", 0, 1, DO_Spectrum_cepstralSmoothing);
+		praat_addAction1 (classSpectrum, 0, U"LPC smoothing...", 0, 1, DO_Spectrum_lpcSmoothing);
+		praat_addAction1 (classSpectrum, 0, U"Hack", 0, 1, 0);
+			praat_addAction1 (classSpectrum, 0, U"To Matrix", 0, 2, DO_Spectrum_to_Matrix);
 
-	praat_addAction1 (classSpectrumTier, 0, L"Draw...", 0, 0, DO_SpectrumTier_draw);
-	praat_addAction1 (classSpectrumTier, 0, L"Tabulate -", 0, 0, 0);
-		praat_addAction1 (classSpectrumTier, 1, L"List...", 0, 1, DO_SpectrumTier_list);
-		praat_addAction1 (classSpectrumTier, 0, L"Down to Table", 0, 1, DO_SpectrumTier_downto_Table);
-	praat_addAction1 (classSpectrumTier, 0, L"Remove points below...", 0, 0, DO_SpectrumTier_removePointsBelow);
+	praat_addAction1 (classSpectrumTier, 0, U"Draw...", 0, 0, DO_SpectrumTier_draw);
+	praat_addAction1 (classSpectrumTier, 0, U"Tabulate -", 0, 0, 0);
+		praat_addAction1 (classSpectrumTier, 1, U"List...", 0, 1, DO_SpectrumTier_list);
+		praat_addAction1 (classSpectrumTier, 0, U"Down to Table", 0, 1, DO_SpectrumTier_downto_Table);
+	praat_addAction1 (classSpectrumTier, 0, U"Remove points below...", 0, 0, DO_SpectrumTier_removePointsBelow);
 
-	praat_addAction1 (classStrings, 0, L"Strings help", 0, 0, DO_Strings_help);
-	praat_addAction1 (classStrings, 1, L"Save as raw text file...", 0, 0, DO_Strings_writeToRawTextFile);
-	praat_addAction1 (classStrings, 1, L"Write to raw text file...", 0, praat_HIDDEN, DO_Strings_writeToRawTextFile);
-	praat_addAction1 (classStrings, 1, L"View & Edit", 0, praat_ATTRACTIVE, DO_Strings_edit);
-	praat_addAction1 (classStrings, 1, L"Edit", 0, praat_HIDDEN, DO_Strings_edit);
-	praat_addAction1 (classStrings, 0, L"Query -", 0, 0, 0);
-		praat_addAction1 (classStrings, 2, L"Equal?", 0, 1, DO_Strings_equal);
-		praat_addAction1 (classStrings, 1, L"Get number of strings", 0, 1, DO_Strings_getNumberOfStrings);
-		praat_addAction1 (classStrings, 1, L"Get string...", 0, 1, DO_Strings_getString);
-	praat_addAction1 (classStrings, 0, L"Modify -", 0, 0, 0);
-		praat_addAction1 (classStrings, 0, L"Set string...", 0, 1, DO_Strings_setString);
-		praat_addAction1 (classStrings, 0, L"Insert string...", 0, 1, DO_Strings_insertString);
-		praat_addAction1 (classStrings, 0, L"Remove string...", 0, 1, DO_Strings_removeString);
-		praat_addAction1 (classStrings, 0, L"-- modify order --", 0, 1, 0);
-		praat_addAction1 (classStrings, 0, L"Randomize", 0, 1, DO_Strings_randomize);
-		praat_addAction1 (classStrings, 0, L"Sort", 0, 1, DO_Strings_sort);
-		praat_addAction1 (classStrings, 0, L"-- convert --", 0, 1, 0);
-		praat_addAction1 (classStrings, 0, L"Replace all...", 0, 1, DO_Strings_replaceAll);
-		praat_addAction1 (classStrings, 0, L"Genericize", 0, 1, DO_Strings_genericize);
-		praat_addAction1 (classStrings, 0, L"Nativize", 0, 1, DO_Strings_nativize);
-	praat_addAction1 (classStrings, 0, L"Analyze", 0, 0, 0);
-		praat_addAction1 (classStrings, 0, L"To Distributions", 0, 0, DO_Strings_to_Distributions);
-	praat_addAction1 (classStrings, 0, L"Synthesize", 0, 0, 0);
-		praat_addAction1 (classStrings, 0, L"To WordList", 0, 0, DO_Strings_to_WordList);
+	praat_addAction1 (classStrings, 0, U"Strings help", 0, 0, DO_Strings_help);
+	praat_addAction1 (classStrings, 1, U"Save as raw text file...", 0, 0, DO_Strings_writeToRawTextFile);
+	praat_addAction1 (classStrings, 1, U"Write to raw text file...", 0, praat_HIDDEN, DO_Strings_writeToRawTextFile);
+	praat_addAction1 (classStrings, 1, U"View & Edit", 0, praat_ATTRACTIVE, DO_Strings_edit);
+	praat_addAction1 (classStrings, 1, U"Edit", 0, praat_HIDDEN, DO_Strings_edit);
+	praat_addAction1 (classStrings, 0, U"Query -", 0, 0, 0);
+		praat_addAction1 (classStrings, 2, U"Equal?", 0, 1, DO_Strings_equal);
+		praat_addAction1 (classStrings, 1, U"Get number of strings", 0, 1, DO_Strings_getNumberOfStrings);
+		praat_addAction1 (classStrings, 1, U"Get string...", 0, 1, DO_Strings_getString);
+	praat_addAction1 (classStrings, 0, U"Modify -", 0, 0, 0);
+		praat_addAction1 (classStrings, 0, U"Set string...", 0, 1, DO_Strings_setString);
+		praat_addAction1 (classStrings, 0, U"Insert string...", 0, 1, DO_Strings_insertString);
+		praat_addAction1 (classStrings, 0, U"Remove string...", 0, 1, DO_Strings_removeString);
+		praat_addAction1 (classStrings, 0, U"-- modify order --", 0, 1, 0);
+		praat_addAction1 (classStrings, 0, U"Randomize", 0, 1, DO_Strings_randomize);
+		praat_addAction1 (classStrings, 0, U"Sort", 0, 1, DO_Strings_sort);
+		praat_addAction1 (classStrings, 0, U"-- convert --", 0, 1, 0);
+		praat_addAction1 (classStrings, 0, U"Replace all...", 0, 1, DO_Strings_replaceAll);
+		praat_addAction1 (classStrings, 0, U"Genericize", 0, 1, DO_Strings_genericize);
+		praat_addAction1 (classStrings, 0, U"Nativize", 0, 1, DO_Strings_nativize);
+	praat_addAction1 (classStrings, 0, U"Analyze", 0, 0, 0);
+		praat_addAction1 (classStrings, 0, U"To Distributions", 0, 0, DO_Strings_to_Distributions);
+	praat_addAction1 (classStrings, 0, U"Synthesize", 0, 0, 0);
+		praat_addAction1 (classStrings, 0, U"To WordList", 0, 0, DO_Strings_to_WordList);
 
-	praat_addAction1 (classTable, 0, L"Down to Matrix", 0, 0, DO_Table_to_Matrix);
+	praat_addAction1 (classTable, 0, U"Down to Matrix", 0, 0, DO_Table_to_Matrix);
 
-	praat_addAction1 (classTransition, 0, L"Transition help", 0, 0, DO_Transition_help);
-praat_addAction1 (classTransition, 0, L"Draw", 0, 0, 0);
-	praat_addAction1 (classTransition, 0, L"Draw as numbers...", 0, 0, DO_Transition_drawAsNumbers);
-praat_addAction1 (classTransition, 0, L"Analyse", 0, 0, 0);
-	praat_addAction1 (classTransition, 0, L"Eigen", 0, 0, DO_Transition_eigen);
-	praat_addAction1 (classTransition, 0, L"Conflate", 0, 0, DO_Transition_conflate);
-praat_addAction1 (classTransition, 0, L"Synthesize", 0, 0, 0);
-	praat_addAction1 (classTransition, 0, L"Power...", 0, 0, DO_Transition_power);
-praat_addAction1 (classTransition, 0, L"Cast", 0, 0, 0);
-	praat_addAction1 (classTransition, 0, L"To Matrix", 0, 0, DO_Transition_to_Matrix);
+	praat_addAction1 (classTransition, 0, U"Transition help", 0, 0, DO_Transition_help);
+praat_addAction1 (classTransition, 0, U"Draw", 0, 0, 0);
+	praat_addAction1 (classTransition, 0, U"Draw as numbers...", 0, 0, DO_Transition_drawAsNumbers);
+praat_addAction1 (classTransition, 0, U"Analyse", 0, 0, 0);
+	praat_addAction1 (classTransition, 0, U"Eigen", 0, 0, DO_Transition_eigen);
+	praat_addAction1 (classTransition, 0, U"Conflate", 0, 0, DO_Transition_conflate);
+praat_addAction1 (classTransition, 0, U"Synthesize", 0, 0, 0);
+	praat_addAction1 (classTransition, 0, U"Power...", 0, 0, DO_Transition_power);
+praat_addAction1 (classTransition, 0, U"Cast", 0, 0, 0);
+	praat_addAction1 (classTransition, 0, U"To Matrix", 0, 0, DO_Transition_to_Matrix);
 
-	praat_addAction2 (classAmplitudeTier, 1, classSound, 1, L"View & Edit", 0, praat_ATTRACTIVE, DO_AmplitudeTier_edit);
-	praat_addAction2 (classAmplitudeTier, 1, classSound, 1, L"Edit", 0, praat_HIDDEN, DO_AmplitudeTier_edit);   // hidden 2011
-	praat_addAction2 (classAmplitudeTier, 1, classSound, 1, L"Multiply", 0, 0, DO_Sound_AmplitudeTier_multiply);
-	praat_addAction2 (classDistributions, 1, classTransition, 1, L"Map", 0, 0, DO_Distributions_Transition_map);
-	praat_addAction2 (classDistributions, 1, classTransition, 1, L"To Transition...", 0, 0, DO_Distributions_to_Transition_adj);
-	praat_addAction2 (classDistributions, 2, classTransition, 1, L"To Transition (noise)...", 0, 0, DO_Distributions_to_Transition_noise_adj);
-	praat_addAction2 (classDurationTier, 1, classSound, 1, L"View & Edit", 0, praat_ATTRACTIVE, DO_DurationTier_edit);
-	praat_addAction2 (classDurationTier, 1, classSound, 1, L"Edit", 0, praat_HIDDEN, DO_DurationTier_edit);
-	praat_addAction2 (classFormant, 1, classPointProcess, 1, L"To FormantTier", 0, 0, DO_Formant_PointProcess_to_FormantTier);
-	praat_addAction2 (classFormant, 1, classSound, 1, L"Filter", 0, 0, DO_Sound_Formant_filter);
-	praat_addAction2 (classFormant, 1, classSound, 1, L"Filter (no scale)", 0, 0, DO_Sound_Formant_filter_noscale);
-	praat_addAction2 (classFormantGrid, 1, classSound, 1, L"Filter", 0, 0, DO_Sound_FormantGrid_filter);
-	praat_addAction2 (classFormantGrid, 1, classSound, 1, L"Filter (no scale)", 0, 0, DO_Sound_FormantGrid_filter_noscale);
-	praat_addAction2 (classFormantTier, 1, classSound, 1, L"Filter", 0, 0, DO_Sound_FormantTier_filter);
-	praat_addAction2 (classFormantTier, 1, classSound, 1, L"Filter (no scale)", 0, 0, DO_Sound_FormantTier_filter_noscale);
-	praat_addAction2 (classIntensity, 1, classPitch, 1, L"Draw", 0, 0, 0);
-	praat_addAction2 (classIntensity, 1, classPitch, 1, L"Draw (phonetogram)...", 0, 0, DO_Pitch_Intensity_draw);
-	praat_addAction2 (classIntensity, 1, classPitch, 1, L"Speckle (phonetogram)...", 0, praat_HIDDEN, DO_Pitch_Intensity_speckle);   /* grandfathered 2005 */
-	praat_addAction2 (classIntensity, 1, classPointProcess, 1, L"To IntensityTier", 0, 0, DO_Intensity_PointProcess_to_IntensityTier);
-	praat_addAction2 (classIntensityTier, 1, classPointProcess, 1, L"To IntensityTier", 0, 0, DO_IntensityTier_PointProcess_to_IntensityTier);
-	praat_addAction2 (classIntensityTier, 1, classSound, 1, L"View & Edit", 0, praat_ATTRACTIVE, DO_IntensityTier_edit);
-	praat_addAction2 (classIntensityTier, 1, classSound, 1, L"Edit", 0, praat_HIDDEN, DO_IntensityTier_edit);
-	praat_addAction2 (classIntensityTier, 1, classSound, 1, L"Multiply", 0, praat_HIDDEN, DO_Sound_IntensityTier_multiply_old);
-	praat_addAction2 (classIntensityTier, 1, classSound, 1, L"Multiply...", 0, 0, DO_Sound_IntensityTier_multiply);
-	praat_addAction2 (classManipulation, 1, classSound, 1, L"Replace original sound", 0, 0, DO_Manipulation_replaceOriginalSound);
-	praat_addAction2 (classManipulation, 1, classPointProcess, 1, L"Replace pulses", 0, 0, DO_Manipulation_replacePulses);
-	praat_addAction2 (classManipulation, 1, classPitchTier, 1, L"Replace pitch tier", 0, 0, DO_Manipulation_replacePitchTier);
-	praat_addAction2 (classManipulation, 1, classDurationTier, 1, L"Replace duration tier", 0, 0, DO_Manipulation_replaceDurationTier);
-	praat_addAction2 (classManipulation, 1, classTextTier, 1, L"To Manipulation", 0, 0, DO_Manipulation_TextTier_to_Manipulation);
-	praat_addAction2 (classMatrix, 1, classSound, 1, L"To ParamCurve", 0, 0, DO_Matrix_to_ParamCurve);
-	praat_addAction2 (classPhoto, 1, classMatrix, 1, L"Replace red", 0, 0, DO_Photo_Matrix_replaceRed);
-	praat_addAction2 (classPhoto, 1, classMatrix, 1, L"Replace green", 0, 0, DO_Photo_Matrix_replaceGreen);
-	praat_addAction2 (classPhoto, 1, classMatrix, 1, L"Replace blue", 0, 0, DO_Photo_Matrix_replaceBlue);
-	praat_addAction2 (classPhoto, 1, classMatrix, 1, L"Replace transparency", 0, 0, DO_Photo_Matrix_replaceTransparency);
-	praat_addAction2 (classPitch, 1, classPitchTier, 1, L"Draw...", 0, 0, DO_PitchTier_Pitch_draw);
-	praat_addAction2 (classPitch, 1, classPitchTier, 1, L"To Pitch", 0, 0, DO_Pitch_PitchTier_to_Pitch);
-	praat_addAction2 (classPitch, 1, classPointProcess, 1, L"To PitchTier", 0, 0, DO_Pitch_PointProcess_to_PitchTier);
-	praat_addAction3 (classPitch, 1, classPointProcess, 1, classSound, 1, L"Voice report...", 0, 0, DO_Sound_Pitch_PointProcess_voiceReport);
-	praat_addAction2 (classPitch, 1, classSound, 1, L"To PointProcess (cc)", 0, 0, DO_Sound_Pitch_to_PointProcess_cc);
-	praat_addAction2 (classPitch, 1, classSound, 1, L"To PointProcess (peaks)...", 0, 0, DO_Sound_Pitch_to_PointProcess_peaks);
-	praat_addAction2 (classPitch, 1, classSound, 1, L"To Manipulation", 0, 0, DO_Sound_Pitch_to_Manipulation);
-	praat_addAction2 (classPitchTier, 1, classPointProcess, 1, L"To PitchTier", 0, 0, DO_PitchTier_PointProcess_to_PitchTier);
-	praat_addAction2 (classPitchTier, 1, classSound, 1, L"View & Edit", 0, praat_ATTRACTIVE, DO_PitchTier_edit);
-	praat_addAction2 (classPitchTier, 1, classSound, 1, L"Edit", 0, praat_HIDDEN, DO_PitchTier_edit);
-	praat_addAction2 (classPointProcess, 1, classSound, 1, L"View & Edit", 0, praat_ATTRACTIVE, DO_PointProcess_edit);
-	praat_addAction2 (classPointProcess, 1, classSound, 1, L"Edit", 0, praat_HIDDEN, DO_PointProcess_edit);
-praat_addAction2 (classPointProcess, 1, classSound, 1, L"Query", 0, 0, 0);
-	praat_addAction2 (classPointProcess, 1, classSound, 1, L"Get shimmer (local)...", 0, 0, DO_Point_Sound_getShimmer_local);
-	praat_addAction2 (classPointProcess, 1, classSound, 1, L"Get shimmer (local_dB)...", 0, 0, DO_Point_Sound_getShimmer_local_dB);
-	praat_addAction2 (classPointProcess, 1, classSound, 1, L"Get shimmer (apq3)...", 0, 0, DO_Point_Sound_getShimmer_apq3);
-	praat_addAction2 (classPointProcess, 1, classSound, 1, L"Get shimmer (apq5)...", 0, 0, DO_Point_Sound_getShimmer_apq5);
-	praat_addAction2 (classPointProcess, 1, classSound, 1, L"Get shimmer (apq11)...", 0, 0, DO_Point_Sound_getShimmer_apq11);
-	praat_addAction2 (classPointProcess, 1, classSound, 1, L"Get shimmer (dda)...", 0, 0, DO_Point_Sound_getShimmer_dda);
-praat_addAction2 (classPointProcess, 1, classSound, 1, L"Modify", 0, 0, 0);
-	praat_addAction2 (classPointProcess, 1, classSound, 1, L"Transplant time domain", 0, 0, DO_Point_Sound_transplantDomain);
-praat_addAction2 (classPointProcess, 1, classSound, 1, L"Analyse", 0, 0, 0);
-	/*praat_addAction2 (classPointProcess, 1, classSound, 1, L"To Manipulation", 0, 0, DO_Sound_PointProcess_to_Manipulation);*/
-	praat_addAction2 (classPointProcess, 1, classSound, 1, L"To AmplitudeTier (point)", 0, 0, DO_PointProcess_Sound_to_AmplitudeTier_point);
-	praat_addAction2 (classPointProcess, 1, classSound, 1, L"To AmplitudeTier (period)...", 0, 0, DO_PointProcess_Sound_to_AmplitudeTier_period);
-	praat_addAction2 (classPointProcess, 1, classSound, 1, L"To Ltas...", 0, 0, DO_PointProcess_Sound_to_Ltas);
-	praat_addAction2 (classPointProcess, 1, classSound, 1, L"To Ltas (only harmonics)...", 0, 0, DO_PointProcess_Sound_to_Ltas_harmonics);
-praat_addAction2 (classPointProcess, 1, classSound, 1, L"Synthesize", 0, 0, 0);
-	praat_addAction2 (classPointProcess, 1, classSound, 1, L"To Sound ensemble...", 0, 0, DO_Sound_PointProcess_to_SoundEnsemble_correlate);
+	praat_addAction2 (classAmplitudeTier, 1, classSound, 1, U"View & Edit", 0, praat_ATTRACTIVE, DO_AmplitudeTier_edit);
+	praat_addAction2 (classAmplitudeTier, 1, classSound, 1, U"Edit", 0, praat_HIDDEN, DO_AmplitudeTier_edit);   // hidden 2011
+	praat_addAction2 (classAmplitudeTier, 1, classSound, 1, U"Multiply", 0, 0, DO_Sound_AmplitudeTier_multiply);
+	praat_addAction2 (classDistributions, 1, classTransition, 1, U"Map", 0, 0, DO_Distributions_Transition_map);
+	praat_addAction2 (classDistributions, 1, classTransition, 1, U"To Transition...", 0, 0, DO_Distributions_to_Transition_adj);
+	praat_addAction2 (classDistributions, 2, classTransition, 1, U"To Transition (noise)...", 0, 0, DO_Distributions_to_Transition_noise_adj);
+	praat_addAction2 (classDurationTier, 1, classSound, 1, U"View & Edit", 0, praat_ATTRACTIVE, DO_DurationTier_edit);
+	praat_addAction2 (classDurationTier, 1, classSound, 1, U"Edit", 0, praat_HIDDEN, DO_DurationTier_edit);
+	praat_addAction2 (classFormant, 1, classPointProcess, 1, U"To FormantTier", 0, 0, DO_Formant_PointProcess_to_FormantTier);
+	praat_addAction2 (classFormant, 1, classSound, 1, U"Filter", 0, 0, DO_Sound_Formant_filter);
+	praat_addAction2 (classFormant, 1, classSound, 1, U"Filter (no scale)", 0, 0, DO_Sound_Formant_filter_noscale);
+	praat_addAction2 (classFormantGrid, 1, classSound, 1, U"Filter", 0, 0, DO_Sound_FormantGrid_filter);
+	praat_addAction2 (classFormantGrid, 1, classSound, 1, U"Filter (no scale)", 0, 0, DO_Sound_FormantGrid_filter_noscale);
+	praat_addAction2 (classFormantTier, 1, classSound, 1, U"Filter", 0, 0, DO_Sound_FormantTier_filter);
+	praat_addAction2 (classFormantTier, 1, classSound, 1, U"Filter (no scale)", 0, 0, DO_Sound_FormantTier_filter_noscale);
+	praat_addAction2 (classIntensity, 1, classPitch, 1, U"Draw", 0, 0, 0);
+	praat_addAction2 (classIntensity, 1, classPitch, 1, U"Draw (phonetogram)...", 0, 0, DO_Pitch_Intensity_draw);
+	praat_addAction2 (classIntensity, 1, classPitch, 1, U"Speckle (phonetogram)...", 0, praat_HIDDEN, DO_Pitch_Intensity_speckle);   /* grandfathered 2005 */
+	praat_addAction2 (classIntensity, 1, classPointProcess, 1, U"To IntensityTier", 0, 0, DO_Intensity_PointProcess_to_IntensityTier);
+	praat_addAction2 (classIntensityTier, 1, classPointProcess, 1, U"To IntensityTier", 0, 0, DO_IntensityTier_PointProcess_to_IntensityTier);
+	praat_addAction2 (classIntensityTier, 1, classSound, 1, U"View & Edit", 0, praat_ATTRACTIVE, DO_IntensityTier_edit);
+	praat_addAction2 (classIntensityTier, 1, classSound, 1, U"Edit", 0, praat_HIDDEN, DO_IntensityTier_edit);
+	praat_addAction2 (classIntensityTier, 1, classSound, 1, U"Multiply", 0, praat_HIDDEN, DO_Sound_IntensityTier_multiply_old);
+	praat_addAction2 (classIntensityTier, 1, classSound, 1, U"Multiply...", 0, 0, DO_Sound_IntensityTier_multiply);
+	praat_addAction2 (classManipulation, 1, classSound, 1, U"Replace original sound", 0, 0, DO_Manipulation_replaceOriginalSound);
+	praat_addAction2 (classManipulation, 1, classPointProcess, 1, U"Replace pulses", 0, 0, DO_Manipulation_replacePulses);
+	praat_addAction2 (classManipulation, 1, classPitchTier, 1, U"Replace pitch tier", 0, 0, DO_Manipulation_replacePitchTier);
+	praat_addAction2 (classManipulation, 1, classDurationTier, 1, U"Replace duration tier", 0, 0, DO_Manipulation_replaceDurationTier);
+	praat_addAction2 (classManipulation, 1, classTextTier, 1, U"To Manipulation", 0, 0, DO_Manipulation_TextTier_to_Manipulation);
+	praat_addAction2 (classMatrix, 1, classSound, 1, U"To ParamCurve", 0, 0, DO_Matrix_to_ParamCurve);
+	praat_addAction2 (classPhoto, 1, classMatrix, 1, U"Replace red", 0, 0, DO_Photo_Matrix_replaceRed);
+	praat_addAction2 (classPhoto, 1, classMatrix, 1, U"Replace green", 0, 0, DO_Photo_Matrix_replaceGreen);
+	praat_addAction2 (classPhoto, 1, classMatrix, 1, U"Replace blue", 0, 0, DO_Photo_Matrix_replaceBlue);
+	praat_addAction2 (classPhoto, 1, classMatrix, 1, U"Replace transparency", 0, 0, DO_Photo_Matrix_replaceTransparency);
+	praat_addAction2 (classPitch, 1, classPitchTier, 1, U"Draw...", 0, 0, DO_PitchTier_Pitch_draw);
+	praat_addAction2 (classPitch, 1, classPitchTier, 1, U"To Pitch", 0, 0, DO_Pitch_PitchTier_to_Pitch);
+	praat_addAction2 (classPitch, 1, classPointProcess, 1, U"To PitchTier", 0, 0, DO_Pitch_PointProcess_to_PitchTier);
+	praat_addAction3 (classPitch, 1, classPointProcess, 1, classSound, 1, U"Voice report...", 0, 0, DO_Sound_Pitch_PointProcess_voiceReport);
+	praat_addAction2 (classPitch, 1, classSound, 1, U"To PointProcess (cc)", 0, 0, DO_Sound_Pitch_to_PointProcess_cc);
+	praat_addAction2 (classPitch, 1, classSound, 1, U"To PointProcess (peaks)...", 0, 0, DO_Sound_Pitch_to_PointProcess_peaks);
+	praat_addAction2 (classPitch, 1, classSound, 1, U"To Manipulation", 0, 0, DO_Sound_Pitch_to_Manipulation);
+	praat_addAction2 (classPitchTier, 1, classPointProcess, 1, U"To PitchTier", 0, 0, DO_PitchTier_PointProcess_to_PitchTier);
+	praat_addAction2 (classPitchTier, 1, classSound, 1, U"View & Edit", 0, praat_ATTRACTIVE, DO_PitchTier_edit);
+	praat_addAction2 (classPitchTier, 1, classSound, 1, U"Edit", 0, praat_HIDDEN, DO_PitchTier_edit);
+	praat_addAction2 (classPointProcess, 1, classSound, 1, U"View & Edit", 0, praat_ATTRACTIVE, DO_PointProcess_edit);
+	praat_addAction2 (classPointProcess, 1, classSound, 1, U"Edit", 0, praat_HIDDEN, DO_PointProcess_edit);
+praat_addAction2 (classPointProcess, 1, classSound, 1, U"Query", 0, 0, 0);
+	praat_addAction2 (classPointProcess, 1, classSound, 1, U"Get shimmer (local)...", 0, 0, DO_Point_Sound_getShimmer_local);
+	praat_addAction2 (classPointProcess, 1, classSound, 1, U"Get shimmer (local_dB)...", 0, 0, DO_Point_Sound_getShimmer_local_dB);
+	praat_addAction2 (classPointProcess, 1, classSound, 1, U"Get shimmer (apq3)...", 0, 0, DO_Point_Sound_getShimmer_apq3);
+	praat_addAction2 (classPointProcess, 1, classSound, 1, U"Get shimmer (apq5)...", 0, 0, DO_Point_Sound_getShimmer_apq5);
+	praat_addAction2 (classPointProcess, 1, classSound, 1, U"Get shimmer (apq11)...", 0, 0, DO_Point_Sound_getShimmer_apq11);
+	praat_addAction2 (classPointProcess, 1, classSound, 1, U"Get shimmer (dda)...", 0, 0, DO_Point_Sound_getShimmer_dda);
+praat_addAction2 (classPointProcess, 1, classSound, 1, U"Modify", 0, 0, 0);
+	praat_addAction2 (classPointProcess, 1, classSound, 1, U"Transplant time domain", 0, 0, DO_Point_Sound_transplantDomain);
+praat_addAction2 (classPointProcess, 1, classSound, 1, U"Analyse", 0, 0, 0);
+	/*praat_addAction2 (classPointProcess, 1, classSound, 1, U"To Manipulation", 0, 0, DO_Sound_PointProcess_to_Manipulation);*/
+	praat_addAction2 (classPointProcess, 1, classSound, 1, U"To AmplitudeTier (point)", 0, 0, DO_PointProcess_Sound_to_AmplitudeTier_point);
+	praat_addAction2 (classPointProcess, 1, classSound, 1, U"To AmplitudeTier (period)...", 0, 0, DO_PointProcess_Sound_to_AmplitudeTier_period);
+	praat_addAction2 (classPointProcess, 1, classSound, 1, U"To Ltas...", 0, 0, DO_PointProcess_Sound_to_Ltas);
+	praat_addAction2 (classPointProcess, 1, classSound, 1, U"To Ltas (only harmonics)...", 0, 0, DO_PointProcess_Sound_to_Ltas_harmonics);
+praat_addAction2 (classPointProcess, 1, classSound, 1, U"Synthesize", 0, 0, 0);
+	praat_addAction2 (classPointProcess, 1, classSound, 1, U"To Sound ensemble...", 0, 0, DO_Sound_PointProcess_to_SoundEnsemble_correlate);
 
-	praat_addAction4 (classDurationTier, 1, classPitchTier, 1, classPointProcess, 1, classSound, 1, L"To Sound...", 0, 0, DO_Sound_Point_Pitch_Duration_to_Sound);
+	praat_addAction4 (classDurationTier, 1, classPitchTier, 1, classPointProcess, 1, classSound, 1, U"To Sound...", 0, 0, DO_Sound_Point_Pitch_Duration_to_Sound);
 
 	INCLUDE_MANPAGES (manual_Manual_init)
 	INCLUDE_MANPAGES (manual_Script_init)
@@ -7171,10 +7170,10 @@ praat_addAction2 (classPointProcess, 1, classSound, 1, L"Synthesize", 0, 0, 0);
 	INCLUDE_MANPAGES (manual_EEG_init)
 
 	INCLUDE_LIBRARY (praat_EEG_init)
-	praat_addMenuCommand (L"Objects", L"New", L"-- new synthesis --", 0, 0, 0);
+	praat_addMenuCommand (U"Objects", U"New", U"-- new synthesis --", 0, 0, 0);
 	INCLUDE_LIBRARY (praat_uvafon_Artsynth_init)
 	INCLUDE_LIBRARY (praat_uvafon_David_init)
-	praat_addMenuCommand (L"Objects", L"New", L"-- new grammars --", 0, 0, 0);
+	praat_addMenuCommand (U"Objects", U"New", U"-- new grammars --", 0, 0, 0);
 	INCLUDE_LIBRARY (praat_uvafon_gram_init)
 	INCLUDE_LIBRARY (praat_uvafon_FFNet_init)
 	INCLUDE_LIBRARY (praat_uvafon_LPC_init)

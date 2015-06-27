@@ -64,7 +64,7 @@ WarpingPath WarpingPath_create (long length) {
 		my _capacity = my pathLength = length;
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("WarpPath not created.");
+		Melder_throw (U"WarpPath not created.");
 	}
 }
 
@@ -146,20 +146,20 @@ Thing_implement (EditCostsTable, TableOfReal, 0);
 
 void structEditCostsTable :: v_info () {
 	EditDistanceTable_Parent :: v_info ();
-	MelderInfo_writeLine (L"Target:", Melder_integer (numberOfRows - 2), L" symbols.");
-	MelderInfo_writeLine (L"Source:", Melder_integer (numberOfColumns - 2), L" symbols.");
+	MelderInfo_writeLine (U"Target:", numberOfRows - 2, U" symbols.");
+	MelderInfo_writeLine (U"Source:", numberOfColumns - 2, U" symbols.");
 }
 
-bool structEditCostsTable :: v_matchTargetSymbol (const wchar_t *targetSymbol, const wchar_t *symbol) {
-	return Melder_wcsequ (targetSymbol, symbol);
+bool structEditCostsTable :: v_matchTargetSymbol (const char32 *targetSymbol, const char32 *symbol) {
+	return Melder_equ (targetSymbol, symbol);
 }
 
-bool structEditCostsTable :: v_matchSourceSymbol (const wchar_t *sourceSymbol, const wchar_t *symbol) {
-	return Melder_wcsequ (sourceSymbol, symbol);
+bool structEditCostsTable :: v_matchSourceSymbol (const char32 *sourceSymbol, const char32 *symbol) {
+	return Melder_equ (sourceSymbol, symbol);
 }
 
-bool structEditCostsTable :: v_matchTargetWithSourceSymbol (const wchar_t *targetSymbol, const wchar_t *sourceSymbol) {
-	return Melder_wcsequ (targetSymbol, sourceSymbol);
+bool structEditCostsTable :: v_matchTargetWithSourceSymbol (const char32 *targetSymbol, const char32 *sourceSymbol) {
+	return Melder_equ (targetSymbol, sourceSymbol);
 }
 
 EditCostsTable EditCostsTable_create (long targetAlphabetSize, long sourceAlphabetSize) {
@@ -168,7 +168,7 @@ EditCostsTable EditCostsTable_create (long targetAlphabetSize, long sourceAlphab
 		TableOfReal_init (me.peek(), targetAlphabetSize + 2, sourceAlphabetSize + 2);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("EditCostsTable not created.");
+		Melder_throw (U"EditCostsTable not created.");
 	}
 }
 
@@ -181,7 +181,7 @@ EditCostsTable EditCostsTable_createDefault () {
 		my data[1][2] = 1; // default deletion cost
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Default EditCostsTable not created.");
+		Melder_throw (U"Default EditCostsTable not created.");
 	}
 }
 
@@ -192,7 +192,7 @@ void EditCostsTable_setDefaultCosts (EditCostsTable me, double insertionCosts, d
 	my data[my numberOfRows - 1][my numberOfColumns] = insertionCosts;
 }
 
-long EditCostsTable_getTargetIndex (EditCostsTable me, const wchar_t *symbol) {
+long EditCostsTable_getTargetIndex (EditCostsTable me, const char32 *symbol) {
 	for (long i = 1; i <= my numberOfRows - 2; i++) {
 		if (my v_matchTargetSymbol (my rowLabels[i], symbol)) {
 			return i;
@@ -201,7 +201,7 @@ long EditCostsTable_getTargetIndex (EditCostsTable me, const wchar_t *symbol) {
 	return 0;
 }
 
-long EditCostsTable_getSourceIndex (EditCostsTable me, const wchar_t *symbol) {
+long EditCostsTable_getSourceIndex (EditCostsTable me, const char32 *symbol) {
 	for (long j = 1; j <= my numberOfColumns - 2; j++) {
 		if (my v_matchSourceSymbol (my columnLabels[j], symbol)) {
 			return j;
@@ -210,16 +210,16 @@ long EditCostsTable_getSourceIndex (EditCostsTable me, const wchar_t *symbol) {
 	return 0;
 }
 
-void EditCostsTable_setInsertionCosts (EditCostsTable me, wchar_t *targets, double cost) {
-	for (wchar_t *token = Melder_firstToken (targets); token != 0; token = Melder_nextToken ()) {
+void EditCostsTable_setInsertionCosts (EditCostsTable me, char32 *targets, double cost) {
+	for (char32 *token = Melder_firstToken (targets); token != 0; token = Melder_nextToken ()) {
 		long irow = EditCostsTable_getTargetIndex (me, token);
 		irow = irow > 0 ? irow : my numberOfRows - 1; // nomatch condition to penultimate row
 		my data[irow][my numberOfColumns] = cost;
 	}
 }
 
-void EditCostsTable_setDeletionCosts (EditCostsTable me, wchar_t *sources, double cost) {
-	for (wchar_t *token = Melder_firstToken (sources); token != 0; token = Melder_nextToken ()) {
+void EditCostsTable_setDeletionCosts (EditCostsTable me, char32 *sources, double cost) {
+	for (char32 *token = Melder_firstToken (sources); token != 0; token = Melder_nextToken ()) {
 		long icol = EditCostsTable_getSourceIndex (me, token);
 		icol = icol > 0 ? icol : my numberOfColumns - 1; // nomatch condition to penultimate column
 		my data[my numberOfRows][icol] = cost;
@@ -240,12 +240,12 @@ double EditCostsTable_getOthersCost (EditCostsTable me, int costType) {
 		 my data[my numberOfRows - 1][my numberOfColumns -1]; // inequality
 }
 
-void EditCostsTable_setSubstitutionCosts (EditCostsTable me, wchar_t *targets, wchar_t *sources, double cost) {
+void EditCostsTable_setSubstitutionCosts (EditCostsTable me, char32 *targets, char32 *sources, double cost) {
 	try {
 		autoNUMvector<long> targetIndex (1, my numberOfRows);
 		autoNUMvector<long> sourceIndex (1, my numberOfRows);
 		long numberOfTargetSymbols = 0;
-		for (wchar_t *token = Melder_firstToken (targets); token != 0; token = Melder_nextToken ()) {
+		for (char32 *token = Melder_firstToken (targets); token != 0; token = Melder_nextToken ()) {
 			long index = EditCostsTable_getTargetIndex (me, token);
 			if (index > 0) {
 				targetIndex[++numberOfTargetSymbols] = index;
@@ -255,7 +255,7 @@ void EditCostsTable_setSubstitutionCosts (EditCostsTable me, wchar_t *targets, w
 			targetIndex[++numberOfTargetSymbols] = my numberOfRows - 1;
 		}
 		long numberOfSourceSymbols = 0;
-		for (wchar_t *token = Melder_firstToken (sources); token != 0; token = Melder_nextToken ()) {
+		for (char32 *token = Melder_firstToken (sources); token != 0; token = Melder_nextToken ()) {
 			long index = EditCostsTable_getSourceIndex (me, token);
 			if (index > 0) {
 				sourceIndex[++numberOfSourceSymbols] = index;
@@ -271,23 +271,23 @@ void EditCostsTable_setSubstitutionCosts (EditCostsTable me, wchar_t *targets, w
 			}
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": substitution costs not set.");
+		Melder_throw (me, U": substitution costs not set.");
 	}
 }
 
-double EditCostsTable_getInsertionCost (EditCostsTable me, const wchar_t *symbol) {
+double EditCostsTable_getInsertionCost (EditCostsTable me, const char32 *symbol) {
 	long irow = EditCostsTable_getTargetIndex (me, symbol);
 	irow = irow == 0 ? my numberOfRows - 1 : irow; // others is penultimate row
 	return my data[irow][my numberOfColumns];
 }
 
-double EditCostsTable_getDeletionCost (EditCostsTable me, const wchar_t *sourceSymbol) {
+double EditCostsTable_getDeletionCost (EditCostsTable me, const char32 *sourceSymbol) {
 	long icol = EditCostsTable_getSourceIndex (me, sourceSymbol);
 	icol = icol == 0 ? my numberOfColumns - 1 : icol; // others is penultimate column
 	return my data[my numberOfRows][icol];
 }
 
-double EditCostsTable_getSubstitutionCost (EditCostsTable me, const wchar_t *symbol, const wchar *replacement) {
+double EditCostsTable_getSubstitutionCost (EditCostsTable me, const char32 *symbol, const char32 *replacement) {
 	long irow = EditCostsTable_getTargetIndex (me, symbol);
 	long icol = EditCostsTable_getSourceIndex (me, replacement);
 	if (irow == 0 && icol == 0) { // nomatch
@@ -308,16 +308,16 @@ TableOfReal EditCostsTable_to_TableOfReal (EditCostsTable me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
 		for (long j = 1; j <= my numberOfColumns; j++) {
-			thy columnLabels[j] = Melder_wcsdup (my columnLabels[j]);
+			thy columnLabels[j] = Melder_dup (my columnLabels[j]);
 		}
 		for (long i = 1; i <= my numberOfRows; i++) {
-			thy rowLabels[i] = Melder_wcsdup (my rowLabels[i]);
+			thy rowLabels[i] = Melder_dup (my rowLabels[i]);
 		}
 		NUMmatrix_copyElements<double> (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
 		return thee.transfer();
 
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to TableOfReal.");
+		Melder_throw (me, U": not converted to TableOfReal.");
 	}
 }
 
@@ -325,8 +325,8 @@ Thing_implement (EditDistanceTable, TableOfReal, 0);
 
 void structEditDistanceTable :: v_info () {
 	EditDistanceTable_Parent :: v_info ();
-	MelderInfo_writeLine (L"Target:", Melder_integer (numberOfRows), L" symbols.");
-	MelderInfo_writeLine (L"Source:", Melder_integer (numberOfColumns), L" symbols.");
+	MelderInfo_writeLine (U"Target:", numberOfRows, U" symbols.");
+	MelderInfo_writeLine (U"Source:", numberOfColumns, U" symbols.");
 }
 
 EditDistanceTable EditDistanceTable_create (Strings target, Strings source) {
@@ -334,20 +334,20 @@ EditDistanceTable EditDistanceTable_create (Strings target, Strings source) {
 		autoEditDistanceTable me = Thing_new (EditDistanceTable);
 		long numberOfSourceSymbols = source -> numberOfStrings, numberOfTargetSymbols = target -> numberOfStrings;
 		TableOfReal_init (me.peek(), numberOfTargetSymbols + 1, numberOfSourceSymbols + 1);
-		TableOfReal_setColumnLabel (me.peek(), 1, L"");
+		TableOfReal_setColumnLabel (me.peek(), 1, U"");
 		for (long j = 1; j <= numberOfSourceSymbols; j++) {
-			my columnLabels[j + 1] = Melder_wcsdup (source -> strings[j]);
+			my columnLabels[j + 1] = Melder_dup (source -> strings[j]);
 		}
-		TableOfReal_setRowLabel (me.peek(), 1, L"");
+		TableOfReal_setRowLabel (me.peek(), 1, U"");
 		for (long i = 1; i <= numberOfTargetSymbols; i++) {
-			my rowLabels[i + 1] = Melder_wcsdup (target -> strings[i]);
+			my rowLabels[i + 1] = Melder_dup (target -> strings[i]);
 		}
 		my warpingPath = WarpingPath_create (numberOfTargetSymbols + numberOfSourceSymbols + 1);
 		my editCostsTable = EditCostsTable_createDefault ();
 		EditDistanceTable_findPath (me.peek(), 0);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("EditDistanceTable not created.");
+		Melder_throw (U"EditDistanceTable not created.");
 	}
 }
 
@@ -357,18 +357,18 @@ void EditDistanceTable_setEditCosts (EditDistanceTable me, EditCostsTable thee) 
 		autoEditCostsTable ect = (EditCostsTable) Data_copy (thee);
 		my editCostsTable = ect.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": edit costs not set.");
+		Melder_throw (me, U": edit costs not set.");
 	}
 }
 
-EditDistanceTable EditDistanceTable_createFromCharacterStrings (const wchar_t *chars1, const wchar_t *chars2) {
+EditDistanceTable EditDistanceTable_createFromCharacterStrings (const char32 *chars1, const char32 *chars2) {
 	try {
 		autoStrings s1 = Strings_createAsCharacters (chars1);
 		autoStrings s2 = Strings_createAsCharacters (chars2);
 		autoEditDistanceTable me = EditDistanceTable_create (s1.peek(), s2.peek());
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("EditDistanceTable not created from character strings.");
+		Melder_throw (U"EditDistanceTable not created from character strings.");
 	}
 }
 
@@ -376,9 +376,9 @@ static void NUMrationalize (double x, long *numerator, long *denominator) {
 	double epsilon = 1e-6;
 	*numerator = 1;
 	for (*denominator = 1; *denominator <= 100000; (*denominator) ++) {
-		double numerator_d = x * *denominator, rounded = floor (numerator_d + 0.5);
+		double numerator_d = x * *denominator, rounded = round (numerator_d);
 		if (fabs (rounded - numerator_d) < epsilon) {
-			*numerator = rounded;
+			*numerator = (long) rounded;
 			return;
 		}
 	}
@@ -391,21 +391,20 @@ static void fixRows (TableOfReal me, long *rowmin, long *rowmax) {
 	else if (*rowmax > my numberOfRows) *rowmax = my numberOfRows;
 }
 
-static void print4 (wchar_t *buffer, double value, int iformat, int width, int precision) {
-	wchar_t formatString [40];
-	if (value == NUMundefined) wcscpy (buffer, L"undefined");
-	else if (iformat == 4) {
+static void print4 (char *buffer, double value, int iformat, int width, int precision) {
+	char formatString [40];
+	if (iformat == 4) {
 		long numerator, denominator;
 		NUMrationalize (value, & numerator, & denominator);
 		if (numerator == 0)
-			swprintf (buffer, 40, L"0");
+			snprintf (buffer, 40, "0");
 		else if (denominator > 1)
-			swprintf (buffer, 40, L"%ld/%ld", numerator, denominator);
+			snprintf (buffer, 40, "%ld/%ld", numerator, denominator);
 		else
-			swprintf (buffer, 40, L"%.7g", value);
+			snprintf (buffer, 40, "%.7g", value);
 	} else {
-		swprintf (formatString, 40, L"%%%d.%d%c", width, precision, iformat == 1 ? 'f' : iformat == 2 ? 'e' : 'g');
-		swprintf (buffer, 40, formatString, value);
+		snprintf (formatString, 40, "%%%d.%d%c", width, precision, iformat == 1 ? 'f' : iformat == 2 ? 'e' : 'g');
+		snprintf (buffer, 40, formatString, value);
 	}
 }
 
@@ -448,10 +447,10 @@ void EditDistanceTable_draw (EditDistanceTable me, Graphics graphics, int iforma
 			Graphics_text (graphics, 0.5 - leftMargin, y, my rowLabels [irow]);
 		Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_HALF);
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
-			wchar_t text [40];
+			char text [40];
 			print4 (text, my data [irow] [icol], iformat, 0, precision);
 			Graphics_setBold (graphics, onPath[irow][icol]);
-			Graphics_text (graphics, icol, y, text);
+			Graphics_text (graphics, icol, y, Melder_peek8to32 (text));
 			if (onPath[irow][icol]) {
 				Graphics_rectangle (graphics, icol-0.5, icol+0.5, y - 0.5*lineSpacing, y + 0.5*lineSpacing);
 			}
@@ -485,7 +484,7 @@ void EditDistanceTable_draw (EditDistanceTable me, Graphics graphics, int iforma
 }
 
 void EditDistanceTable_drawEditOperations (EditDistanceTable me, Graphics graphics) {
-	const wchar_t *oinsertion = L"i", *insertion = L"*", *odeletion = L"d", *deletion = L"*", *osubstitution = L"s", *oequal = L"";
+	const char32 *oinsertion = U"i", *insertion = U"*", *odeletion = U"d", *deletion = U"*", *osubstitution = U"s", *oequal = U"";
 	Graphics_setWindow (graphics, 0.5, my warpingPath -> pathLength - 0.5, 0, 1); // pathLength-1 symbols
 	double lineSpacing = getLineSpacing (graphics);
 	double ytarget = 1 - lineSpacing, ysource = ytarget - 2 * lineSpacing, yoper = ysource - lineSpacing;
@@ -504,7 +503,7 @@ void EditDistanceTable_drawEditOperations (EditDistanceTable me, Graphics graphi
 		} else { // substitution ?
 			Graphics_text (graphics, x, ytarget, my rowLabels[p.y]);
 			Graphics_text (graphics, x, ysource, my columnLabels[p.x]);
-			Graphics_text (graphics, x, yoper, (Melder_wcsequ (my rowLabels[p.y], my columnLabels[p.x]) ? oequal : osubstitution));
+			Graphics_text (graphics, x, yoper, (Melder_equ (my rowLabels[p.y], my columnLabels[p.x]) ? oequal : osubstitution));
 		}
 		Graphics_line (graphics, x, ysource + lineSpacing, x, ytarget - 0.1 * lineSpacing);
 	}
@@ -582,7 +581,7 @@ void EditDistanceTable_findPath (EditDistanceTable me, TableOfReal *directions) 
 			*directions = him.transfer();
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": minimum path not found.");
+		Melder_throw (me, U": minimum path not found.");
 	}
 }
 
@@ -590,15 +589,15 @@ TableOfReal EditDistanceTable_to_TableOfReal (EditDistanceTable me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
 		for (long j = 1; j <= my numberOfColumns; j++) {
-			thy columnLabels[j] = Melder_wcsdup (my columnLabels[j]);
+			thy columnLabels[j] = Melder_dup (my columnLabels[j]);
 		}
 		for (long i = 1; i <= my numberOfRows; i++) {
-			thy rowLabels[i] = Melder_wcsdup (my rowLabels[i]);
+			thy rowLabels[i] = Melder_dup (my rowLabels[i]);
 		}
 		NUMmatrix_copyElements<double> (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no TableOfReal created.");
+		Melder_throw (me, U": no TableOfReal created.");
 	}
 }
 

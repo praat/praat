@@ -39,8 +39,8 @@ FilesInMemory create_espeakdata_phons () {
 			50, 255, 3, 5, 249, 247, 247, 249, 0, 0, 0, 92, 8, 0, 92, 80, 76, 8, 0, 92, 80, 76, 8, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0};
 		autoFileInMemory espeakdata_phons1 = FileInMemory_createWithData (816, reinterpret_cast<const char *> (&espeakdata_phons1_data), 
-			L"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/intonations", 
-			L"intonations");
+			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/intonations", 
+			U"intonations");
 		Collection_addItem (me.peek(), espeakdata_phons1.transfer());
 
 		static unsigned char espeakdata_phons2_data[385581] = {
@@ -12898,8 +12898,8 @@ FilesInMemory create_espeakdata_phons () {
 			238, 239, 239, 240, 239, 242, 244, 238, 233, 239, 242, 243, 242, 235, 234, 238, 236, 240, 240, 246, 0, 5, 6, 9, 5, 241, 242, 245, 251, 10,
 			2, 19, 23, 19, 23, 15, 15, 2, 0, 253, 5, 13, 19, 19, 6, 8, 4, 247, 246, 0, 0};
 		autoFileInMemory espeakdata_phons2 = FileInMemory_createWithData (385580, reinterpret_cast<const char *> (&espeakdata_phons2_data), 
-			L"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/phondata", 
-			L"phondata");
+			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/phondata", 
+			U"phondata");
 		Collection_addItem (me.peek(), espeakdata_phons2.transfer());
 
 		static unsigned char espeakdata_phons3_data[20427] = {
@@ -13585,8 +13585,8 @@ FilesInMemory create_espeakdata_phons () {
 			0, 176, 183, 0, 136, 40, 0, 176, 72, 213, 0, 176, 248, 0, 0, 176, 57, 1, 0, 176, 233, 180, 0, 176, 105, 254, 0, 176, 162, 183,
 			3, 13, 108, 116, 0, 35, 0, 161, 213, 3, 77, 1, 98, 170, 0, 162, 146, 18, 77, 1, 98, 162, 33, 195, 111, 74, 0};
 		autoFileInMemory espeakdata_phons3 = FileInMemory_createWithData (20426, reinterpret_cast<const char *> (&espeakdata_phons3_data), 
-			L"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/phonindex", 
-			L"phonindex");
+			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/phonindex", 
+			U"phonindex");
 		Collection_addItem (me.peek(), espeakdata_phons3.transfer());
 
 		static unsigned char espeakdata_phons4_data[36149] = {
@@ -14796,13 +14796,13 @@ FilesInMemory create_espeakdata_phons () {
 			0, 0, 224, 34, 111, 2, 32, 32, 75, 0, 116, 108, 35, 0, 8, 0, 4, 0, 216, 39, 112, 4, 0, 0, 0, 2, 116, 115, 0, 0,
 			40, 0, 4, 0, 18, 6, 113, 4, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 		autoFileInMemory espeakdata_phons4 = FileInMemory_createWithData (36148, reinterpret_cast<const char *> (&espeakdata_phons4_data), 
-			L"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/phontab", 
-			L"phontab");
+			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/phontab", 
+			U"phontab");
 		Collection_addItem (me.peek(), espeakdata_phons4.transfer());
 
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw (L"FilesInMemory not created.");
+		Melder_throw (U"FilesInMemory not created.");
 	}
 }
 

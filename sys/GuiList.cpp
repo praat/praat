@@ -57,7 +57,7 @@ Thing_implement (GuiList, GuiControl, 0);
 	static void _GuiGtkList_selectionChangedCallback (GtkTreeSelection *sel, gpointer void_me) {
 		iam (GuiList);
 		if (my d_selectionChangedCallback != NULL && ! my d_blockValueChangedCallbacks) {
-			//Melder_casual ("Selection changed.");
+			trace (U"Selection changed.");
 			struct structGuiListEvent event { me };
 			my d_selectionChangedCallback (my d_selectionChangedBoss, & event);
 		}
@@ -74,7 +74,7 @@ Thing_implement (GuiList, GuiControl, 0);
 		[_contents release];
 		GuiThing me = d_userData;
 		forget (me);
-		Melder_casual ("deleting a list");
+		Melder_casual (U"deleting a list");
 		[super dealloc];
 	}
 
@@ -136,7 +136,7 @@ Thing_implement (GuiList, GuiControl, 0);
 		 * because tableViewSelectionDidChange will already have been called at this point.
 		 */
 		(void) sender;
-		trace ("enter");
+		trace (U"enter");
 		GuiList me = d_userData;
 		if (me && my d_selectionChangedCallback) {
 			struct structGuiListEvent event { me };
@@ -165,7 +165,7 @@ Thing_implement (GuiList, GuiControl, 0);
 		 * This is invoked when the user clicks in the table or uses the arrow keys.
 		 */
 		(void) notification;
-		trace ("enter");
+		trace (U"enter");
 		GuiList me = d_userData;
 		if (me && my d_selectionChangedCallback && ! my d_blockValueChangedCallbacks) {
 			struct structGuiListEvent event { me };
@@ -206,7 +206,7 @@ Thing_implement (GuiList, GuiControl, 0);
 		iam_list;
 		if (widget -> isControl) {
 			_GuiNativeControl_show (widget);
-			Melder_casual ("showing a list");
+			trace (U"showing a list");
 			//_GuiMac_clipOnParent (widget);
 			//LSetDrawingMode (true, my macListHandle);
 			//_GuiMac_clipOffInvalid (widget);
@@ -318,9 +318,9 @@ Thing_implement (GuiList, GuiControl, 0);
 				char *text_utf8 = (char *) *(*handle) -> cells + dataOffset;
 				strncpy (Melder_buffer1, text_utf8, dataLength);
 				Melder_buffer1 [dataLength] = '\0';
-				wchar_t *text_wcs = Melder_peekUtf8ToWcs (Melder_buffer1);
-				const char16_t *text_utf16 = (const char16_t *) Melder_peekWcsToUtf16 (text_wcs);
-				UniCharCount runLength = wcslen (text_wcs);   // BUG
+				char32 *text32 = Melder_peek8to32 (Melder_buffer1);
+				const char16 *text_utf16 = (const char16 *) Melder_peek32to16 (text32);
+				UniCharCount runLength = str16len (text_utf16);   // BUG
 				ATSUTextLayout textLayout;
 				ATSUStyle style;
 				ATSUCreateStyle (& style);
@@ -368,7 +368,7 @@ enum {
 };
 #endif
 
-GuiList GuiList_create (GuiForm parent, int left, int right, int top, int bottom, bool allowMultipleSelection, const wchar_t *header) {
+GuiList GuiList_create (GuiForm parent, int left, int right, int top, int bottom, bool allowMultipleSelection, const char32 *header) {
 	GuiList me = Thing_new (GuiList);
 	my d_shell = parent -> d_shell;
 	my d_parent = parent;
@@ -397,7 +397,7 @@ GuiList GuiList_create (GuiForm parent, int left, int right, int top, int bottom
 		gtk_tree_view_column_pack_start (col, renderer, TRUE);
 		gtk_tree_view_column_add_attribute (col, renderer, "text", 0);   // zeroeth column
 		if (header != NULL) {
-			//gtk_tree_view_column_set_title (col, Melder_peekWcsToUtf8 (header));
+			//gtk_tree_view_column_set_title (col, Melder_peek32to8 (header));
 		}
 		gtk_tree_view_append_column (GTK_TREE_VIEW (my d_widget), col);
 
@@ -445,7 +445,7 @@ GuiList GuiList_create (GuiForm parent, int left, int right, int top, int bottom
 		[[list tableView] setAllowsMultipleSelection: allowMultipleSelection];
 		[list setUserData:me];
 	#elif win
-		my d_widget = _Gui_initializeWidget (xmListWidgetClass, parent -> d_widget, L"list");
+		my d_widget = _Gui_initializeWidget (xmListWidgetClass, parent -> d_widget, U"list");
 		_GuiObject_setUserData (my d_widget, me);
 		my d_widget -> window = CreateWindowEx (0, L"listbox", L"list",
 			WS_CHILD | WS_BORDER | WS_VSCROLL | LBS_NOTIFY | WS_CLIPSIBLINGS |
@@ -464,7 +464,7 @@ GuiList GuiList_create (GuiForm parent, int left, int right, int top, int bottom
 	#elif mac
 		my d_xmScrolled = XmCreateScrolledWindow (parent -> d_widget, "scrolled", NULL, 0);
 		my v_positionInForm (my d_xmScrolled, left, right, top, bottom, parent);
-		my d_xmList = my d_widget = _Gui_initializeWidget (xmListWidgetClass, my d_xmScrolled, L"list");
+		my d_xmList = my d_widget = _Gui_initializeWidget (xmListWidgetClass, my d_xmScrolled, U"list");
 		_GuiObject_setUserData (my d_xmScrolled, me);
 		_GuiObject_setUserData (my d_xmList, me);
 		Rect dataBounds = { 0, 0, 0, 1 };
@@ -485,7 +485,7 @@ GuiList GuiList_create (GuiForm parent, int left, int right, int top, int bottom
 	return me;
 }
 
-GuiList GuiList_createShown (GuiForm parent, int left, int right, int top, int bottom, bool allowMultipleSelection, const wchar_t *header) {
+GuiList GuiList_createShown (GuiForm parent, int left, int right, int top, int bottom, bool allowMultipleSelection, const char32 *header) {
 	GuiList me = GuiList_create (parent, left, right, top, bottom, allowMultipleSelection, header);
 	GuiThing_show (me);
 	return me;
@@ -721,7 +721,7 @@ long GuiList_getTopPosition (GuiList me) {
 	#endif
 }
 
-void GuiList_insertItem (GuiList me, const wchar_t *itemText, long position) {
+void GuiList_insertItem (GuiList me, const char32 *itemText /* cattable */, long position) {
 	GuiControlBlockValueChangedCallbacks block (me);
 	/*
 	 * 'position' is the position of the new item in the list after insertion:
@@ -730,13 +730,13 @@ void GuiList_insertItem (GuiList me, const wchar_t *itemText, long position) {
 	 */
 	#if gtk
 		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (my d_widget)));
-		gtk_list_store_insert_with_values (list_store, NULL, (gint) position - 1, COLUMN_STRING, Melder_peekWcsToUtf8 (itemText), -1);
+		gtk_list_store_insert_with_values (list_store, NULL, (gint) position - 1, COLUMN_STRING, Melder_peek32to8 (itemText), -1);
 		// TODO: Tekst opsplitsen
 		// does GTK know the '0' trick?
 		// it does know about NULL, to append in another function
 	#elif cocoa
 		GuiCocoaList *list = (GuiCocoaList *) my d_widget;
-		NSString *nsString = [[NSString alloc] initWithUTF8String: Melder_peekWcsToUtf8 (itemText)];
+		NSString *nsString = [[NSString alloc] initWithUTF8String: Melder_peek32to8 (itemText)];
 		if (position)
 			[[list contents]   insertObject: nsString   atIndex: position - 1];   // cocoa lists start with item 0
 		else
@@ -746,9 +746,9 @@ void GuiList_insertItem (GuiList me, const wchar_t *itemText, long position) {
 		[[list tableView] reloadData];
 	#elif win
 		if (position)
-			ListBox_InsertString (my d_widget -> window, position - 1, itemText);   // win lists start with item 0
+			ListBox_InsertString (my d_widget -> window, position - 1, Melder_peek32toW (itemText));   // win lists start with item 0
 		else
-			ListBox_AddString (my d_widget -> window, itemText);   // insert at end
+			ListBox_AddString (my d_widget -> window, Melder_peek32toW (itemText));   // insert at end
 	#elif mac
 		long n = (** my d_macListHandle). dataBounds. bottom;
 		if (position == 0)
@@ -757,7 +757,7 @@ void GuiList_insertItem (GuiList me, const wchar_t *itemText, long position) {
 		cell.h = 0; cell. v = position - 1;   // mac lists start with item 0
 		_GuiMac_clipOnParent (my d_widget);
 		LAddRow (1, position - 1, my d_macListHandle);
-		const char *itemText_utf8 = Melder_peekWcsToUtf8 (itemText);   // although defProc will convert again...
+		const char *itemText_utf8 = Melder_peek32to8 (itemText);   // although defProc will convert again...
 		LSetCell (itemText_utf8, (short) strlen (itemText_utf8), cell, my d_macListHandle);
 		(** my d_macListHandle). visible. bottom = n + 1;
 		_GuiMac_clipOffInvalid (my d_widget);
@@ -765,13 +765,13 @@ void GuiList_insertItem (GuiList me, const wchar_t *itemText, long position) {
 	#endif
 }
 
-void GuiList_replaceItem (GuiList me, const wchar_t *itemText, long position) {
+void GuiList_replaceItem (GuiList me, const char32 *itemText, long position) {
 	GuiControlBlockValueChangedCallbacks block (me);
 	#if gtk
 		GtkTreeIter iter;
 		GtkTreeModel *tree_model = gtk_tree_view_get_model (GTK_TREE_VIEW (my d_widget));
 		if (gtk_tree_model_iter_nth_child (tree_model, & iter, NULL, (gint) (position - 1))) {
-			gtk_list_store_set (GTK_LIST_STORE (tree_model), & iter, COLUMN_STRING, Melder_peekWcsToUtf8 (itemText), -1);
+			gtk_list_store_set (GTK_LIST_STORE (tree_model), & iter, COLUMN_STRING, Melder_peek32to8 (itemText), -1);
 		}
 /*
 		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) position);
@@ -779,24 +779,24 @@ void GuiList_replaceItem (GuiList me, const wchar_t *itemText, long position) {
 		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (my d_widget)));
 		gtk_tree_model_get_iter (GTK_TREE_MODEL (list_store), & iter, path);
 		gtk_tree_path_free (path);*/
-		// gtk_list_store_set (list_store, & iter, 0, Melder_peekWcsToUtf8 (itemText), -1);
+		// gtk_list_store_set (list_store, & iter, 0, Melder_peek32to8 (itemText), -1);
 		// TODO: Tekst opsplitsen
 	#elif cocoa
 		GuiCocoaList *list = (GuiCocoaList *) my d_widget;
-		NSString *nsString = [[NSString alloc] initWithUTF8String: Melder_peekWcsToUtf8 (itemText)];
+		NSString *nsString = [[NSString alloc] initWithUTF8String: Melder_peek32to8 (itemText)];
 		[[list contents]   replaceObjectAtIndex: position - 1   withObject: nsString];
 		[nsString release];
 		[[list tableView] reloadData];
 	#elif win
 		long nativePosition = position - 1;   // convert from 1-based to zero-based
 		ListBox_DeleteString (my d_widget -> window, nativePosition);
-		ListBox_InsertString (my d_widget -> window, nativePosition, itemText);
+		ListBox_InsertString (my d_widget -> window, nativePosition, Melder_peek32toW (itemText));
 	#elif mac
 		_GuiMac_clipOnParent (my d_widget);
 		Cell cell;
 		cell.h = 0;
 		cell.v = position - 1;
-		const char *itemText_utf8 = Melder_peekWcsToUtf8 (itemText);
+		const char *itemText_utf8 = Melder_peek32to8 (itemText);
 		LSetCell (itemText_utf8, strlen (itemText_utf8), cell, my d_macListHandle);
 		LDraw (cell, my d_macListHandle);
 		GuiMac_clipOff ();
@@ -855,7 +855,7 @@ void GuiList_setSelectionChangedCallback (GuiList me, void (*callback) (void *bo
 }
 
 void GuiList_setTopPosition (GuiList me, long topPosition) {
-	//Melder_casual ("Set top position %ld", topPosition);
+	trace (U"Set top position ", topPosition);
 	#if gtk
 //		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (my md_widget)));
 		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) topPosition);

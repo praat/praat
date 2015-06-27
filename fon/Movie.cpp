@@ -43,21 +43,21 @@ Thing_implement (Movie, Sampled, 0);
 void structMovie :: v_info ()
 {
 	structData :: v_info ();
-	MelderInfo_writeLine (L"Start time: ", Melder_double (xmin), L" seconds");
-	MelderInfo_writeLine (L"End time: ", Melder_double (xmax), L" seconds");
-	MelderInfo_writeLine (L"Total duration: ", Melder_double (xmax - xmin), L" seconds");
-	MelderInfo_writeLine (L"Time sampling:");
-	MelderInfo_writeLine (L"   Number of frames: ", Melder_integer (nx));
-	MelderInfo_writeLine (L"   Frame duration: ", Melder_double (dx), L" seconds");
-	MelderInfo_writeLine (L"   Frame rate: ", Melder_single (1.0 / dx), L" frames per second");
-	MelderInfo_writeLine (L"   First frame centred at: ", Melder_double (x1), L" seconds");
+	MelderInfo_writeLine (U"Start time: ", xmin, U" seconds");
+	MelderInfo_writeLine (U"End time: ", xmax, U" seconds");
+	MelderInfo_writeLine (U"Total duration: ", xmax - xmin, U" seconds");
+	MelderInfo_writeLine (U"Time sampling:");
+	MelderInfo_writeLine (U"   Number of frames: ", nx);
+	MelderInfo_writeLine (U"   Frame duration: ", dx, U" seconds");
+	MelderInfo_writeLine (U"   Frame rate: ", Melder_single (1.0 / dx), U" frames per second");
+	MelderInfo_writeLine (U"   First frame centred at: ", x1, U" seconds");
 }
 
-void Movie_init (Movie me, Sound sound, const wchar_t *folderName, Strings fileNames)
+void Movie_init (Movie me, Sound sound, const char32 *folderName, Strings fileNames)
 {
 	Sampled_init (me, sound -> xmin, sound -> xmax, fileNames ? fileNames -> numberOfStrings : 0, 0.04, 0.0);
 	my d_sound = sound;
-	my d_folderName = Melder_wcsdup (folderName);
+	my d_folderName = Melder_dup (folderName);
 	my d_fileNames = fileNames;
 }
 
@@ -68,26 +68,26 @@ Movie Movie_openFromSoundFile (MelderFile file)
 		autoSound sound = Sound_readFromSoundFile (file);
 		autoMelderString fileNameHead;
 		MelderString_copy (& fileNameHead, Melder_fileToPath (file));
-		wchar_t *extensionLocation = wcsrchr (fileNameHead.string, '.');
+		char32 *extensionLocation = str32rchr (fileNameHead.string, U'.');
 		if (extensionLocation == NULL)
 			extensionLocation = & fileNameHead.string [fileNameHead.length];
-		*extensionLocation = '\0';
+		*extensionLocation = U'\0';
 		fileNameHead.length = extensionLocation - fileNameHead.string;
-		autoStrings strings = Strings_createAsFileList (Melder_wcscat (fileNameHead.string, L"*.png"));
+		autoStrings strings = Strings_createAsFileList (Melder_cat (fileNameHead.string, U"*.png"));
 		struct structMelderDir folder;
 		MelderFile_getParentDir (file, & folder);
 		Movie_init (me.peek(), sound.transfer(), Melder_dirToPath (& folder), strings.transfer());
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Movie object not read from file ", file, ".");
+		Melder_throw (U"Movie object not read from file ", file, U".");
 	}
 }
 
 void Movie_paintOneImageInside (Movie me, Graphics graphics, long frameNumber, double xmin, double xmax, double ymin, double ymax)
 {
 	try {
-		if (frameNumber < 1) Melder_throw ("Specified frame number is ", frameNumber, " but should be at least 1.");
-		if (frameNumber > my nx) Melder_throw ("Specified frame number is ", frameNumber, " but there are only ", my nx, "frames.");
+		if (frameNumber < 1) Melder_throw (U"Specified frame number is ", frameNumber, U" but should be at least 1.");
+		if (frameNumber > my nx) Melder_throw (U"Specified frame number is ", frameNumber, U" but there are only ", my nx, U"frames.");
 		Melder_assert (my d_fileNames != 0);
 		Melder_assert (my d_fileNames -> numberOfStrings == my nx);
 		struct structMelderDir folder;
@@ -96,7 +96,7 @@ void Movie_paintOneImageInside (Movie me, Graphics graphics, long frameNumber, d
 		MelderDir_getFile (& folder, my d_fileNames -> strings [frameNumber], & file);
 		Graphics_imageFromFile (graphics, Melder_fileToPath (& file), xmin, xmax, ymin, ymax);
 	} catch (MelderError) {
-		Melder_throw (me, ": image ", frameNumber, " not painted.");
+		Melder_throw (me, U": image ", frameNumber, U" not painted.");
 	}
 }
 

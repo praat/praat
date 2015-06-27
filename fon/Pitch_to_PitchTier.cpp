@@ -1,6 +1,6 @@
 /* Pitch_to_PitchTier.cpp
  *
- * Copyright (C) 1992-2011,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ PitchTier Pitch_to_PitchTier (Pitch me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to PitchTier.");
+		Melder_throw (me, U": not converted to PitchTier.");
 	}
 }
 
@@ -79,7 +79,7 @@ static void Pitch_line (Pitch me, Graphics g, double tmin, double fleft, double 
 }
 
 void PitchTier_Pitch_draw (PitchTier me, Pitch uv, Graphics g,
-	double tmin, double tmax, double fmin, double fmax, int nonPeriodicLineType, int garnish, const wchar_t *method)
+	double tmin, double tmax, double fmin, double fmax, int nonPeriodicLineType, int garnish, const char32 *method)
 {
 	long n = my points -> size, imin, imax, i;
 	if (nonPeriodicLineType == 0) {
@@ -116,16 +116,16 @@ void PitchTier_Pitch_draw (PitchTier me, Pitch uv, Graphics g,
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, L"Time (s)");
+		Graphics_textBottom (g, 1, U"Time (s)");
 		Graphics_marksBottom (g, 2, 1, 1, 0);
 		Graphics_marksLeft (g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, L"Frequency (Hz)");
+		Graphics_textLeft (g, 1, U"Frequency (Hz)");
 	}
 }
 
 Pitch Pitch_PitchTier_to_Pitch (Pitch me, PitchTier tier) {
 	try {
-		if (tier -> points -> size == 0) Melder_throw ("No pitch points.");
+		if (tier -> points -> size == 0) Melder_throw (U"No pitch points.");
 		autoPitch thee = Data_copy (me);
 		for (long iframe = 1; iframe <= my nx; iframe ++) {
 			Pitch_Frame frame = & thy frame [iframe];
@@ -137,7 +137,7 @@ Pitch Pitch_PitchTier_to_Pitch (Pitch me, PitchTier tier) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, " & ", tier, ": not converted to Pitch.");
+		Melder_throw (me, U" & ", tier, U": not converted to Pitch.");
 	}
 }
 

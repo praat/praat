@@ -21,7 +21,7 @@
  * pb 2002/03/07 GPL
  * pb 2002/03/11 Mach
  * pb 2004/10/21 on Unix, Ctrl becomes the command key
- * pb 2007/06/09 wchar_t
+ * pb 2007/06/09 wchar
  * pb 2007/12/13 Gui
  * sdk 2008/02/08 GTK
  * sdk 2008/03/24 GDK
@@ -63,11 +63,11 @@ int Gui_getResolution (GuiObject widget) {
 void GuiGtk_initialize () {
 	static bool gtkHasBeenInitialized = false;
 	if (! gtkHasBeenInitialized) {
-		trace ("before initing GTK: locale is %s", setlocale (LC_ALL, NULL));
+		trace (U"before initing GTK: locale is ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
 		gtk_disable_setlocale ();   // otherwise 1.5 will be written "1,5" on computers with a French or German locale
-		trace ("during initing GTK: locale is %s", setlocale (LC_ALL, NULL));
+		trace (U"during initing GTK: locale is ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
 		gtk_init_check (NULL, NULL);
-		trace ("after initing GTK: locale is %s", setlocale (LC_ALL, NULL));
+		trace (U"after initing GTK: locale is ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
 		gtkHasBeenInitialized = true;
 	}
 	}

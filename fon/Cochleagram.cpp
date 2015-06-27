@@ -1,6 +1,6 @@
 /* Cochleagram.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ Cochleagram Cochleagram_create (double tmin, double tmax, long nt, double dt, do
 		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, 0.0, nf * df, nf, df, 0.5 * df);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Cochleagram with ", nt, " times and ", nf, " frequencies not created.");
+		Melder_throw (U"Cochleagram with ", nt, U" times and ", nf, U" frequencies not created.");
 	}
 }
 
@@ -58,9 +58,9 @@ void Cochleagram_paint (Cochleagram me, Graphics g, double tmin, double tmax, in
 		Graphics_unsetInner (g);
 		if (garnish) {
 			Graphics_drawInnerBox (g);
-			Graphics_textBottom (g, 1, L"Time (s)");
+			Graphics_textBottom (g, 1, U"Time (s)");
 			Graphics_marksBottom (g, 2, 1, 1, 0);
-			Graphics_textLeft (g, 1, L"Place (Bark)");
+			Graphics_textLeft (g, 1, U"Place (Bark)");
 			Graphics_marksLeftEvery (g, 1.0, 5.0, 1, 1, 0);
 		}
 	} catch (MelderError) {
@@ -71,14 +71,14 @@ void Cochleagram_paint (Cochleagram me, Graphics g, double tmin, double tmax, in
 double Cochleagram_difference (Cochleagram me, Cochleagram thee, double tmin, double tmax) {
 	try {
 		if (my nx != thy nx || my dx != thy dx || my x1 != thy x1)
-			Melder_throw (L"Unequal time samplings.");
+			Melder_throw (U"Unequal time samplings.");
 		if (my ny != thy ny)
-			Melder_throw (L"Unequal numbers of frequencies.");
+			Melder_throw (U"Unequal numbers of frequencies.");
 		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 		long itmin, itmax;
 		long nt = Matrix_getWindowSamplesX (me, tmin, tmax, & itmin, & itmax);
 		if (nt == 0)
-			Melder_throw ("Window too short.");
+			Melder_throw (U"Window too short.");
 		double diff = 0.0;
 		for (long itime = itmin; itime <= itmax; itime ++) {
 			for (long ifreq = 1; ifreq <= my ny; ifreq ++) {
@@ -89,7 +89,7 @@ double Cochleagram_difference (Cochleagram me, Cochleagram thee, double tmin, do
 		diff /= nt * my ny;
 		return sqrt (diff);
 	} catch (MelderError) {
-		Melder_throw (me, " & ", thee, ": difference not computed.");
+		Melder_throw (me, U" & ", thee, U": difference not computed.");
 	}
 }
 
@@ -99,7 +99,7 @@ Cochleagram Matrix_to_Cochleagram (Matrix me) {
 		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Cochleagram.");
+		Melder_throw (me, U": not converted to Cochleagram.");
 	}
 }
 
@@ -109,7 +109,7 @@ Matrix Cochleagram_to_Matrix (Cochleagram me) {
 		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Matrix.");
+		Melder_throw (me, U": not converted to Matrix.");
 	}
 }
 

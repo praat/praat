@@ -1,6 +1,6 @@
 /* Sound_to_PointProcess.cpp
  *
- * Copyright (C) 1992-2011,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ PointProcess Sound_to_PointProcess_extrema (Sound me, long channel, int interpol
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": extrema not computed.");
+		Melder_throw (me, U": extrema not computed.");
 	}
 }
 
@@ -104,7 +104,7 @@ PointProcess Sound_to_PointProcess_zeroes (Sound me, long channel, bool includeR
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": zeroes not computed.");
+		Melder_throw (me, U": zeroes not computed.");
 	}
 }
 
@@ -114,7 +114,7 @@ PointProcess Sound_to_PointProcess_periodic_cc (Sound me, double fmin, double fm
 		autoPointProcess thee = Sound_Pitch_to_PointProcess_cc (me, pitch.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": periodic pulses (cc) not computed.");
+		Melder_throw (me, U": periodic pulses (cc) not computed.");
 	}
 }
 
@@ -124,7 +124,7 @@ PointProcess Sound_to_PointProcess_periodic_peaks (Sound me, double fmin, double
 		autoPointProcess thee = Sound_Pitch_to_PointProcess_peaks (me, pitch.peek(), includeMaxima, includeMinima);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": periodic pulses (peaks) not computed.");
+		Melder_throw (me, U": periodic pulses (peaks) not computed.");
 	}
 }
 

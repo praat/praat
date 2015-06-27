@@ -1,6 +1,6 @@
 /* Vector.cpp
  *
- * Copyright (C) 1992-2011,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -369,7 +369,7 @@ void Vector_scale (Vector me, double scale) {
 /***** Graphics. *****/
 
 void Vector_draw (Vector me, Graphics g, double *pxmin, double *pxmax, double *pymin, double *pymax,
-	double defaultDy, const wchar_t *method)
+	double defaultDy, const char32 *method)
 {
 	bool xreversed = *pxmin > *pxmax, yreversed = *pymin > *pymax;
 	if (xreversed) { double temp = *pxmin; *pxmin = *pxmax; *pxmax = temp; }
@@ -401,7 +401,7 @@ void Vector_draw (Vector me, Graphics g, double *pxmin, double *pxmax, double *p
 	 */
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xreversed ? *pxmax : *pxmin, xreversed ? *pxmin : *pxmax, yreversed ? *pymax : *pymin, yreversed ? *pymin : *pymax);
-	if (wcsstr (method, L"bars") || wcsstr (method, L"Bars")) {
+	if (str32str (method, U"bars") || str32str (method, U"Bars")) {
 		for (ix = ixmin; ix <= ixmax; ix ++) {
 			double x = Sampled_indexToX (me, ix);
 			double y = my z [1] [ix];
@@ -415,12 +415,12 @@ void Vector_draw (Vector me, Graphics g, double *pxmin, double *pxmax, double *p
 				Graphics_line (g, right, y, right, *pymin);
 			}
 		}
-	} else if (wcsstr (method, L"poles") || wcsstr (method, L"Poles")) {
+	} else if (str32str (method, U"poles") || str32str (method, U"Poles")) {
 		for (ix = ixmin; ix <= ixmax; ix ++) {
 			double x = Sampled_indexToX (me, ix);
 			Graphics_line (g, x, 0, x, my z [1] [ix]);
 		}
-	} else if (wcsstr (method, L"speckles") || wcsstr (method, L"Speckles")) {
+	} else if (str32str (method, U"speckles") || str32str (method, U"Speckles")) {
 		for (ix = ixmin; ix <= ixmax; ix ++) {
 			double x = Sampled_indexToX (me, ix);
 			Graphics_speckle (g, x, my z [1] [ix]);

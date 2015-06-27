@@ -32,8 +32,8 @@ oo_DEFINE_CLASS (FormantGrid, Function)
 			override { return true; }
 		double v_getFunction1 (long irow, double x)
 			override;
-		const wchar_t * v_getUnitText (long ilevel, int /* unit */, unsigned long /* flags */)
-			override { return ilevel & 1 ? L"Formant (Hz)" : L"Bandwidth (Hz)"; }
+		const char32 * v_getUnitText (long ilevel, int /* unit */, unsigned long /* flags */)
+			override { return ilevel & 1 ? U"Formant (Hz)" : U"Bandwidth (Hz)"; }
 		void v_shiftX (double xfrom, double xto)
 			override;
 		void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto)

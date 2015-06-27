@@ -30,7 +30,7 @@
 
 bool Melder_consoleIsAnsi = false;
 
-void Melder_writeToConsole (const wchar_t *message, bool useStderr) {
+void Melder_writeToConsole (const char32 *message, bool useStderr) {
 	if (message == NULL) return;
 	#if defined (_WIN32)
 		(void) useStderr;
@@ -39,19 +39,19 @@ void Melder_writeToConsole (const wchar_t *message, bool useStderr) {
 			console = CreateFile (L"CONOUT$", GENERIC_WRITE, FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, 0);
 		}
 		if (Melder_consoleIsAnsi) {
-			size_t n = wcslen (message);
+			size_t n = str32len (message);
 			for (long i = 0; i < n; i ++) {
 				unsigned int kar = (unsigned short) message [i];
 				fputc (kar, stdout);
 			}
 		//} else if (Melder_consoleIsUtf8) {
-			//char *messageA = Melder_peekWcsToUtf8 (message);
+			//char *messageA = Melder_peek32to8 (message);
 			//fprintf (stdout, "%s", messageA);
 		} else {
-			WriteConsole (console, message, wcslen (message), NULL, NULL);
+			WriteConsole (console, message, str32len (message), NULL, NULL);
 		}
 	#else
-		Melder_fwriteWcsAsUtf8 (message, wcslen (message), useStderr ? stderr : stdout);
+		Melder_fwrite32to8 (message, str32len (message), useStderr ? stderr : stdout);
 	#endif
 }
 
@@ -63,7 +63,7 @@ extern "C" int wmain (int argc, wchar_t *argvW []) {
 	if (argc > 0) {
 		argvA = NUMvector <char *> (0, argc - 1);
 		for (int iarg = 0; iarg < argc; iarg ++) {
-			argvA [iarg] = Melder_wcsToUtf8 (argvW [iarg]);
+			argvA [iarg] = Melder_32to8 (Melder_peekWto32 ((argvW [iarg])));
 		}
 	}
 	return main (argc, argvA);

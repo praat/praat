@@ -1,4 +1,4 @@
-/* Eigen.c
+/* Eigen.cpp
  *
  * Copyright (C) 1993-2014 David Weenink
  *
@@ -178,7 +178,7 @@ void Eigen_initFromSquareRootPair (I, double **a, long numberOfRows,
 	    v, &ldv, &q[1][1], &ldq, &work[1], &iwork[1], &info);
 
 	if (info != 0) {
-		Melder_throw ("dggsvd fails.");
+		Melder_throw (U"dggsvd fails.");
 	}
 
 	/*
@@ -205,7 +205,7 @@ void Eigen_initFromSquareRootPair (I, double **a, long numberOfRows,
 	}
 
 	if (ll - n < 1) {
-		Melder_throw ("No eigenvectors can be found. Matrix too singular.");
+		Melder_throw (U"No eigenvectors can be found. Matrix too singular.");
 	}
 
 	Eigen_init (me, ll - n, numberOfColumns);
@@ -260,16 +260,16 @@ void Eigen_initFromSymmetricMatrix (I, double **a, long n) {
 	(void) NUMlapack_dsyev (&jobz, &uplo, &n, &my eigenvectors[1][1], &n,
 	                        &my eigenvalues[1], wt, &lwork, &info);
 	if (info != 0) {
-		Melder_throw ("dsyev initialization fails");
+		Melder_throw (U"dsyev initialization fails");
 	}
 
-	lwork = wt[0];
+	lwork = (long) floor (wt[0]);
 	autoNUMvector<double> work (0L, lwork);
 
 	(void) NUMlapack_dsyev (&jobz, &uplo, &n, &my eigenvectors[1][1], &n,
 	                        &my eigenvalues[1], work.peek(), &lwork, &info);
 	if (info != 0) {
-		Melder_throw ("dsyev fails");
+		Melder_throw (U"dsyev fails");
 	}
 
 	/*
@@ -292,7 +292,7 @@ Eigen Eigen_create (long numberOfEigenvalues, long dimension) {
 		Eigen_init (me.peek(), numberOfEigenvalues, dimension);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Eigen not created.");
+		Melder_throw (U"Eigen not created.");
 	}
 }
 
@@ -406,7 +406,7 @@ void Eigen_invertEigenvector (I, long ivec) {
 }
 
 void Eigen_drawEigenvalues (I, Graphics g, long first, long last, double ymin, double ymax,
-                            int fractionOfTotal, int cumulative, double size_mm, const wchar_t *mark, int garnish) {
+                            int fractionOfTotal, int cumulative, double size_mm, const char32 *mark, int garnish) {
 	iam (Eigen);
 	double xmin = first, xmax = last, scale = 1, sumOfEigenvalues = 0;
 	long i;
@@ -444,17 +444,17 @@ void Eigen_drawEigenvalues (I, Graphics g, long first, long last, double ymin, d
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textLeft (g, 1, fractionOfTotal ? (cumulative ? L"Cumulative fractional eigenvalue" : L"Fractional eigenvalue") :
-			                   (cumulative ? L"Cumulative eigenvalue" : L"Eigenvalue"));
+		Graphics_textLeft (g, 1, fractionOfTotal ? (cumulative ? U"Cumulative fractional eigenvalue" : U"Fractional eigenvalue") :
+			                   (cumulative ? U"Cumulative eigenvalue" : U"Eigenvalue"));
 		Graphics_ticks (g, first, last, 1, 1, 0, 1);
 		Graphics_marksLeft (g, 2, 1, 1, 0);
-		Graphics_textBottom (g, 1, L"Index");
+		Graphics_textBottom (g, 1, U"Index");
 	}
 }
 
 void Eigen_drawEigenvector (I, Graphics g, long ivec, long first, long last,
-                            double ymin, double ymax, int weigh, double size_mm, const wchar_t *mark,
-                            int connect, wchar_t **rowLabels, int garnish) {
+                            double ymin, double ymax, int weigh, double size_mm, const char32 *mark,
+                            int connect, char32 **rowLabels, int garnish) {
 	iam (Eigen);
 	double xmin = first, xmax = last, *vec, w;
 
@@ -495,7 +495,7 @@ void Eigen_drawEigenvector (I, Graphics g, long ivec, long first, long last,
 		}
 		Graphics_marksLeft (g, 2, 1, 1, 0);
 		if (rowLabels == NULL) {
-			Graphics_textBottom (g, 1, L"Element number");
+			Graphics_textBottom (g, 1, U"Element number");
 		}
 	}
 }
@@ -513,7 +513,7 @@ void Eigens_alignEigenvectors (Collection me) {
 	for (long i = 2; i <= my size; i++) {
 		Eigen e2 = (Eigen) my item[i];
 		if (e2 -> dimension != dimension) {
-			Melder_throw ("The dimension of the eigenvectors must be equal (offending object is ",  i, ").");
+			Melder_throw (U"The dimension of the eigenvectors must be equal (offending object is ",  i, U").");
 		}
 	}
 
@@ -549,10 +549,10 @@ static void Eigens_getAnglesBetweenSubspaces (I, thou, long ivec_from, long ivec
 	long nmin = my numberOfEigenvalues < thy numberOfEigenvalues ? my numberOfEigenvalues : thy numberOfEigenvalues;
 
 	if (my dimension != thy dimension) {
-		Melder_throw ("The eigenvectors must have the same dimension.");
+		Melder_throw (U"The eigenvectors must have the same dimension.");
 	}
 	if (ivec_from > ivec_to || ivec_from < 1 || ivec_to > nmin) {
-		Melder_throw ("Eigenvector range too large.");
+		Melder_throw (U"Eigenvector range too large.");
 	}
 
 	autoNUMmatrix<double> c (1, nvectors, 1, nvectors);
@@ -589,4 +589,4 @@ double Eigens_getAngleBetweenEigenplanes_degrees (I, thou) {
 #undef MIN
 #undef SWAP
 
-/* End of file Eigen.c */
+/* End of file Eigen.cpp */

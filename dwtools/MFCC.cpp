@@ -38,7 +38,7 @@ MFCC MFCC_create (double tmin, double tmax, long nt, double dt, double t1,
 		CC_init (me.peek(), tmin, tmax, nt, dt, t1, maximumNumberOfCoefficients, fmin_mel, fmax_mel);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("MFCC not created.");
+		Melder_throw (U"MFCC not created.");
 	}
 }
 
@@ -57,7 +57,7 @@ void MFCC_lifter (MFCC me, long lifter) {
 			}
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": not lifted.");
+		Melder_throw (me, U": not lifted.");
 	}
 }
 
@@ -65,11 +65,8 @@ TableOfReal MFCC_to_TableOfReal (MFCC me, bool includeC0) {
 	try {
 		long numberOfColumns = my maximumNumberOfCoefficients + (includeC0 ? 1 : 0);
 		autoTableOfReal thee = TableOfReal_create (my nx, numberOfColumns);
-		autoMelderString columnLabel;
 		for (long i = 1; i <= numberOfColumns; i++) {
-			MelderString_append (&columnLabel, L"c", Melder_integer (includeC0 ? i - 1 : i));
-			TableOfReal_setColumnLabel (thee.peek(), i, columnLabel.string);
-			MelderString_empty (&columnLabel);
+			TableOfReal_setColumnLabel (thee.peek(), i, Melder_cat (U"c", includeC0 ? i - 1 : i));
 		}
 		long offset = includeC0 ? 1 : 0;
 		for (long iframe = 1; iframe <= my nx; iframe++) {
@@ -83,7 +80,7 @@ TableOfReal MFCC_to_TableOfReal (MFCC me, bool includeC0) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to TabelOfReal.");
+		Melder_throw (me, U": not converted to TabelOfReal.");
 	}
 }
 
@@ -99,41 +96,41 @@ Sound MFCC_to_Sound (MFCC me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not represented as Sound.");
+		Melder_throw (me, U": not represented as Sound.");
 	}
 }
 
 Sound MFCCs_crossCorrelate (MFCC me, MFCC thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain) {
 	try {
 		if (my dx != thy dx) {
-			Melder_throw ("The samplings of the two MFCC's have to be equal.");
+			Melder_throw (U"The samplings of the two MFCC's have to be equal.");
 		}
 		if (my maximumNumberOfCoefficients != thy maximumNumberOfCoefficients) {
-			Melder_throw ("The number of coefficients in the two MFCC's have to be equal.");
+			Melder_throw (U"The number of coefficients in the two MFCC's have to be equal.");
 		}
 		autoSound target = MFCC_to_Sound (me);
 		autoSound source = MFCC_to_Sound (thee);
 		autoSound cc = Sounds_crossCorrelate (target.peek(), source.peek(), scaling, signalOutsideTimeDomain);
 		return cc.transfer();
 	} catch (MelderError) {
-		Melder_throw ("No cross-correlation between ", me, " and ", thee, " calculated.");
+		Melder_throw (U"No cross-correlation between ", me, U" and ", thee, U" calculated.");
 	}
 }
 
 Sound MFCCs_convolve (MFCC me, MFCC thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain) {
 	try {
 		if (my dx != thy dx) {
-			Melder_throw ("The samplings of the two MFCC's have to be equal.");
+			Melder_throw (U"The samplings of the two MFCC's have to be equal.");
 		}
 		if (my maximumNumberOfCoefficients != thy maximumNumberOfCoefficients) {
-			Melder_throw ("The number of coefficients in the two MFCC's have to be equal.");
+			Melder_throw (U"The number of coefficients in the two MFCC's have to be equal.");
 		}
 		autoSound target = MFCC_to_Sound (me);
 		autoSound source = MFCC_to_Sound (thee);
 		autoSound cc = Sounds_convolve (target.peek(), source.peek(), scaling, signalOutsideTimeDomain);
 		return cc.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, " and ", thee, " not convolved.");
+		Melder_throw (me, U" and ", thee, U" not convolved.");
 	}
 }
 
@@ -157,7 +154,7 @@ static double CC_Frames_distance (CC_Frame me, CC_Frame thee, bool includeEnergy
  */
 Matrix MFCC_to_Matrix_features (MFCC me, double windowLength, bool includeEnergy) {
 	try {
-		long nw = windowLength / my dx / 2;
+		long nw = (long) floor (windowLength / my dx / 2);
 		autoMelSpectrogram him = MFCC_to_MelSpectrogram (me, 0, 0, 1);
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, 4, 4, 1, 1);
 		thy z[1][1] = thy z[1][my nx] = 0;  // first & last frame
@@ -214,7 +211,7 @@ Matrix MFCC_to_Matrix_features (MFCC me, double windowLength, bool includeEnergy
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no features calculated.");
+		Melder_throw (me, U": no features calculated.");
 	}
 }
 

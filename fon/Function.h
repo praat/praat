@@ -2,7 +2,7 @@
 #define _Function_h_
 /* Function.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ int Function_getMaximumUnit (Function me, long ilevel);
 #define Function_UNIT_TEXT_SHORT            0x00000001
 #define Function_UNIT_TEXT_GRAPHICAL        0x00000002
 #define Function_UNIT_TEXT_MENU             0x00000004
-const wchar_t * Function_getUnitText (Function me, long ilevel, int unit, unsigned long flags);
+const char32 * Function_getUnitText (Function me, long ilevel, int unit, unsigned long flags);
 
 bool Function_isUnitLogarithmic (Function me, long ilevel, int unit);
 

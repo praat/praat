@@ -29,7 +29,7 @@
  * pb 2005/12/02 response sounds are read
  * pb 2006/10/28 erased MacOS 9 stuff
  * pb 2006/12/20 stereo
- * pb 2007/08/12 wchar_t
+ * pb 2007/08/12 wchar
  * pb 2007/09/26 added font size; version 5
  * pb 2007/10/01 can write as encoding
  * pb 2008/04/08 in ExtractResults, check that a resonse was given
@@ -70,21 +70,22 @@ Thing_implement (ExperimentMFC, Data, 6);
 #include "enums_getValue.h"
 #include "Experiment_enums.h"
 
-static void readSound (ExperimentMFC me, const wchar_t *fileNameHead, const wchar_t *fileNameTail,
-	double medialSilenceDuration, wchar_t **name, Sound *sound)
+static void readSound (ExperimentMFC me, const char32 *fileNameHead, const char32 *fileNameTail,
+	double medialSilenceDuration, char32 **name, Sound *sound)
 {
-	wchar_t fileNameBuffer [256], pathName [256], *fileNames = & fileNameBuffer [0];
+	char32 fileNameBuffer [256], *fileNames = & fileNameBuffer [0];
+	Melder_sprint (fileNameBuffer,256, *name);
 	structMelderFile file = { 0 };
-	wcscpy (fileNameBuffer, *name);
 	/*
 	 * The following conversion is needed when fileNameHead is an absolute path,
 	 * and the stimulus names contain slashes for relative paths.
 	 * An ugly case, but allowed.
 	 */
 	#if defined (_WIN32)
-		for (;;) { wchar_t *slash = wcschr (fileNames, '/'); if (! slash) break; *slash = '\\'; }
+		for (;;) { char32 *slash = str32chr (fileNames, U'/'); if (! slash) break; *slash = U'\\'; }
 	#endif
 	forget (*sound);
+	char32 pathName [kMelder_MAXPATH+1];
 	/*
 	 * 'fileNames' can contain commas, which separate partial file names.
 	 * The separate files should be concatenated.
@@ -93,12 +94,12 @@ static void readSound (ExperimentMFC me, const wchar_t *fileNameHead, const wcha
 		/*
 		 * Determine partial file name.
 		 */
-		wchar_t *comma = wcschr (fileNames, ',');
+		char32 *comma = str32chr (fileNames, U',');
 		if (comma) *comma = '\0';
 		/*
 		 * Determine complete (relative) file name.
 		 */
-		swprintf (pathName, 256, L"%ls%ls%ls", fileNameHead, fileNames, fileNameTail);
+		Melder_sprint (pathName,kMelder_MAXPATH+1, fileNameHead, fileNames, fileNameTail);
 		/*
 		 * Make sure we are in the correct directory.
 		 */
@@ -114,9 +115,9 @@ static void readSound (ExperimentMFC me, const wchar_t *fileNameHead, const wcha
 			MelderDir_relativePathToFile (& my rootDirectory, pathName, & file);
 			if (Melder_debug == 32) {
 				MelderInfo_open ();
-				MelderInfo_writeLine (L"Path name <", pathName, L">");
-				MelderInfo_writeLine (L"Root directory <", my rootDirectory.path, L">");
-				MelderInfo_writeLine (L"Full path name <", file.path, L">");
+				MelderInfo_writeLine (U"Path name <", pathName, U">");
+				MelderInfo_writeLine (U"Root directory <", my rootDirectory.path, U">");
+				MelderInfo_writeLine (U"Full path name <", file.path, U">");
 				MelderInfo_close ();
 			}
 		}
@@ -125,14 +126,14 @@ static void readSound (ExperimentMFC me, const wchar_t *fileNameHead, const wcha
 		 */
 		autoSound substimulus = (Sound) Data_readFromFile (& file);   // Sound_readFromSoundFile (& file);
 		if (substimulus -> classInfo != classSound)
-			Melder_throw ("File ", & file, " contains a ", Thing_className (substimulus.peek()), " instead of a sound.");
+			Melder_throw (U"File ", & file, U" contains a ", Thing_className (substimulus.peek()), U" instead of a sound.");
 		/*
 		 * Check whether all sounds have the same number of channels.
 		 */
 		if (my numberOfChannels == 0) {
 			my numberOfChannels = substimulus -> ny;
 		} else if (substimulus -> ny != my numberOfChannels) {
-			Melder_throw ("The sound in file ", & file, " has a different number of channels than some other sound.");
+			Melder_throw (U"The sound in file ", & file, U" has a different number of channels than some other sound.");
 		}
 		/*
 		 * Check whether all sounds have the same sampling frequency.
@@ -140,7 +141,7 @@ static void readSound (ExperimentMFC me, const wchar_t *fileNameHead, const wcha
 		if (my samplePeriod == 0.0) {
 			my samplePeriod = substimulus -> dx;   /* This must be the first sound read. */
 		} else if (substimulus -> dx != my samplePeriod) {
-			Melder_throw ("The sound in file ", & file, " has a different sampling frequency than some other sound.");
+			Melder_throw (U"The sound in file ", & file, U" has a different sampling frequency than some other sound.");
 		}
 		/*
 		 * Append the substimuli, perhaps with silent intervals.
@@ -233,12 +234,12 @@ void ExperimentMFC_start (ExperimentMFC me) {
 		 * Create the play buffer.
 		 */
 		maximumStimulusPlaySamples =
-			floor (my stimulusInitialSilenceDuration / my samplePeriod + 0.5)
-			+ floor (my stimulusFinalSilenceDuration / my samplePeriod + 0.5)
+			lround (my stimulusInitialSilenceDuration / my samplePeriod)
+			+ lround (my stimulusFinalSilenceDuration / my samplePeriod)
 			+ stimulusCarrierBeforeSamples + maximumStimulusSamples + stimulusCarrierAfterSamples + 2;
 		maximumResponsePlaySamples =
-			floor (my responseInitialSilenceDuration / my samplePeriod + 0.5)
-			+ floor (my responseFinalSilenceDuration / my samplePeriod + 0.5)
+			lround (my responseInitialSilenceDuration / my samplePeriod)
+			+ lround (my responseFinalSilenceDuration / my samplePeriod)
 			+ responseCarrierBeforeSamples + maximumResponseSamples + responseCarrierAfterSamples + 2;
 		maximumPlaySamples = maximumStimulusPlaySamples > maximumResponsePlaySamples ? maximumStimulusPlaySamples : maximumResponsePlaySamples;
 		my playBuffer = Sound_create (my numberOfChannels, 0.0, maximumPlaySamples * my samplePeriod,
@@ -278,7 +279,7 @@ void ExperimentMFC_start (ExperimentMFC me) {
 		Melder_warningOn ();
 		my numberOfTrials = 0;
 		NUMvector_free (my stimuli, 1); my stimuli = NULL;
-		Melder_throw (me, ": not started.");
+		Melder_throw (me, U": not started.");
 	}
 }
 
@@ -287,7 +288,7 @@ static void playSound (ExperimentMFC me, Sound sound, Sound carrierBefore, Sound
 {
 	long numberOfSamplesWritten = 0;
 
-	long initialSilenceSamples = floor (initialSilenceDuration / my samplePeriod + 0.5);
+	long initialSilenceSamples = lround (initialSilenceDuration / my samplePeriod);
 	for (long channel = 1; channel <= my numberOfChannels; channel ++) {
 		for (long i = 1; i <= initialSilenceSamples; i ++) {
 			my playBuffer -> z [channel] [i] = 0.0;
@@ -319,7 +320,7 @@ static void playSound (ExperimentMFC me, Sound sound, Sound carrierBefore, Sound
 		numberOfSamplesWritten += carrierAfter -> nx;
 	}
 
-	long finalSilenceSamples = floor (finalSilenceDuration / my samplePeriod + 0.5);
+	long finalSilenceSamples = lround (finalSilenceDuration / my samplePeriod);
 	for (long channel = 1; channel <= my numberOfChannels; channel ++) {
 		for (long i = 1; i <= finalSilenceSamples; i ++) {
 			my playBuffer -> z [channel] [i + numberOfSamplesWritten] = 0.0;
@@ -353,35 +354,27 @@ ResultsMFC ResultsMFC_create (long numberOfTrials) {
 		my result = NUMvector <structTrialMFC> (1, my numberOfTrials);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("ResultsMFC not created.");
+		Melder_throw (U"ResultsMFC not created.");
 	}
 }
 
 ResultsMFC ExperimentMFC_extractResults (ExperimentMFC me) {
 	try {
 		if (my trial == 0 || my trial <= my numberOfTrials)
-			Melder_warning ("The experiment was not finished. Only the first ", my trial - 1 + my pausing, " responses are valid.");
+			Melder_warning (U"The experiment was not finished. Only the first ", my trial - 1 + my pausing, U" responses are valid.");
 		autoResultsMFC thee = ResultsMFC_create (my numberOfTrials);
 		for (long trial = 1; trial <= my numberOfTrials; trial ++) {
-			wchar_t *pipe = my stimulus [my stimuli [trial]]. visibleText ?
-				wcschr (my stimulus [my stimuli [trial]]. visibleText, '|') : NULL;
-			if (pipe) {
-				long nameLength = wcslen (my stimulus [my stimuli [trial]]. name);
-				long buttonTextLength = wcslen (pipe);
-				thy result [trial]. stimulus = Melder_calloc (wchar_t, nameLength + buttonTextLength + 1);
-				wcscpy (thy result [trial]. stimulus, my stimulus [my stimuli [trial]]. name);
-				wcscat (thy result [trial]. stimulus, pipe);
-			} else {
-				thy result [trial]. stimulus = Melder_wcsdup (my stimulus [my stimuli [trial]]. name);
-			}
-			//if (my responses [trial] < 1) Melder_throw ("No response for trial ", trial, ".")
-			thy result [trial]. response = Melder_wcsdup (my responses [trial] ? my response [my responses [trial]]. name : L"");
+			char32 *pipe = my stimulus [my stimuli [trial]]. visibleText ?
+				str32chr (my stimulus [my stimuli [trial]]. visibleText, U'|') : NULL;
+			thy result [trial]. stimulus = Melder_dup (Melder_cat (my stimulus [my stimuli [trial]]. name, pipe));
+			//if (my responses [trial] < 1) Melder_throw (U"No response for trial ", trial, U".")
+			thy result [trial]. response = Melder_dup (my responses [trial] ? my response [my responses [trial]]. name : U"");
 			thy result [trial]. goodness = my goodnesses [trial];
 			thy result [trial]. reactionTime = my reactionTimes [trial];
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": results not extracted.");
+		Melder_throw (me, U": results not extracted.");
 	}
 }
 
@@ -392,22 +385,22 @@ ResultsMFC ResultsMFC_removeUnsharedStimuli (ResultsMFC me, ResultsMFC thee) {
 		for (long i = 1; i <= thy numberOfTrials; i ++) {
 			bool present = false;
 			for (long j = 1; j <= my numberOfTrials; j ++) {
-				if (wcsequ (thy result [i]. stimulus, my result [j]. stimulus)) {
+				if (str32equ (thy result [i]. stimulus, my result [j]. stimulus)) {
 					present = true;
 					break;
 				}
 			}
 			if (present) {
 				his numberOfTrials ++;
-				his result [his numberOfTrials]. stimulus = Melder_wcsdup (thy result [i]. stimulus);
-				his result [his numberOfTrials]. response = Melder_wcsdup (thy result [i]. response);
+				his result [his numberOfTrials]. stimulus = Melder_dup (thy result [i]. stimulus);
+				his result [his numberOfTrials]. response = Melder_dup (thy result [i]. response);
 			}
 		}
 		if (his numberOfTrials == 0)
-			Melder_throw ("No shared stimuli.");
+			Melder_throw (U"No shared stimuli.");
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, " & ", thee, ": unshared stimuli not removed.");
+		Melder_throw (me, U" & ", thee, U": unshared stimuli not removed.");
 	}
 }
 
@@ -426,13 +419,13 @@ Table ResultsMFCs_to_Table (Collection me) {
 			}
 		}
 		autoTable thee = Table_create (irow, 3 + hasGoodnesses + hasReactionTimes);
-		Table_setColumnLabel (thee.peek(), 1, L"subject");
-		Table_setColumnLabel (thee.peek(), 2, L"stimulus");
-		Table_setColumnLabel (thee.peek(), 3, L"response");
+		Table_setColumnLabel (thee.peek(), 1, U"subject");
+		Table_setColumnLabel (thee.peek(), 2, U"stimulus");
+		Table_setColumnLabel (thee.peek(), 3, U"response");
 		if (hasGoodnesses)
-			Table_setColumnLabel (thee.peek(), 4, L"goodness");
+			Table_setColumnLabel (thee.peek(), 4, U"goodness");
 		if (hasReactionTimes)
-			Table_setColumnLabel (thee.peek(), 4 + hasGoodnesses, L"reactionTime");
+			Table_setColumnLabel (thee.peek(), 4 + hasGoodnesses, U"reactionTime");
 		irow = 0;
 		for (long iresults = 1; iresults <= my size; iresults ++) {
 			ResultsMFC results = (ResultsMFC) my item [iresults];
@@ -451,7 +444,7 @@ Table ResultsMFCs_to_Table (Collection me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw ("ResultsMFC objects not collected to Table.");
+		Melder_throw (U"ResultsMFC objects not collected to Table.");
 	}
 }
 
@@ -464,7 +457,7 @@ Categories ResultsMFC_to_Categories_stimuli (ResultsMFC me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": stimuli not converted to Categories.");
+		Melder_throw (me, U": stimuli not converted to Categories.");
 	}
 }
 
@@ -477,12 +470,12 @@ Categories ResultsMFC_to_Categories_responses (ResultsMFC me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": responses not converted to Categories.");
+		Melder_throw (me, U": responses not converted to Categories.");
 	}
 }
 
 static int compare (SimpleString me, SimpleString thee) {
-	return wcscmp (my string, thy string);
+	return str32cmp (my string, thy string);
 }
 void Categories_sort (Categories me) {
 	NUMsort_p (my size, my item, (int (*) (const void *, const void *)) compare);
@@ -490,14 +483,14 @@ void Categories_sort (Categories me) {
 
 double Categories_getEntropy (Categories me) {
 	long numberOfTokens = 0;
-	wchar_t *previousString = NULL;
+	char32 *previousString = NULL;
 	double entropy = 0.0;
 	autoCategories thee = Data_copy (me);
 	Categories_sort (thee.peek());
 	for (long i = 1; i <= thy size; i ++) {
 		SimpleString s = (SimpleString) thy item [i];
-		wchar_t *string = s -> string;
-		if (previousString != NULL && ! wcsequ (string, previousString)) {
+		char32 *string = s -> string;
+		if (previousString != NULL && ! str32equ (string, previousString)) {
 			double p = (double) numberOfTokens / thy size;
 			entropy -= p * NUMlog2 (p);
 			numberOfTokens = 1;

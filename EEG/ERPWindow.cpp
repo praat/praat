@@ -1,6 +1,6 @@
 /* ERPWindow.cpp
  *
- * Copyright (C) 2012,2013,2014 Paul Boersma
+ * Copyright (C) 2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -163,9 +163,9 @@ void ERP_drawScalp_garnish (Graphics graphics, double vmin, double vmax, enum kG
 	Graphics_setColourScale (graphics, kGraphics_colourScale_GREY);
 	Graphics_rectangle (graphics, 0.85, 0.98, -0.8, +0.8);
 	Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_TOP);
-	Graphics_text2 (graphics, 1.0, -0.8, Melder_double (vmin * 1e6), L" μV");
+	Graphics_text (graphics, 1.0, -0.8,   vmin * 1e6, U" μV");
 	Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_BOTTOM);
-	Graphics_text2 (graphics, 1.0, +0.8, Melder_double (vmax * 1e6), L" μV");
+	Graphics_text (graphics, 1.0, +0.8,   vmax * 1e6, U" μV");
 }
 
 void ERP_drawScalp (ERP me, Graphics graphics, double tmin, double tmax, double vmin, double vmax, enum kGraphics_colourScale colourScale, bool garnish) {
@@ -175,8 +175,8 @@ void ERP_drawScalp (ERP me, Graphics graphics, double tmin, double tmax, double 
 	//Graphics_fillRectangle (graphics, -1.1, 1.1, -1.01, 1.19);
 	//Graphics_setColour (graphics, Graphics_BLACK);
 	long numberOfDrawableChannels =
-			my ny >= 64 && Melder_wcsequ (my channelNames [64], L"O2") ? 64 :
-			my ny >= 32 && Melder_wcsequ (my channelNames [32], L"Cz") ? 32 :
+			my ny >= 64 && Melder_equ (my channelNames [64], U"O2") ? 64 :
+			my ny >= 32 && Melder_equ (my channelNames [32], U"Cz") ? 32 :
 			0;
 	BiosemiLocationData *biosemiLocationData = numberOfDrawableChannels == 64 ? biosemiCapCoordinates64 : numberOfDrawableChannels == 32 ? biosemiCapCoordinates32 : 0;
 	for (long ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
@@ -277,8 +277,8 @@ void structERPWindow :: v_drawSelectionViewer () {
 	Graphics_fillRectangle (d_graphics, -1.1, 1.1, -1.01, 1.19);
 	Graphics_setColour (d_graphics, Graphics_BLACK);
 	long numberOfDrawableChannels =
-			erp -> ny >= 64 && Melder_wcsequ (erp -> channelNames [64], L"O2") ? 64 :
-			erp -> ny >= 32 && Melder_wcsequ (erp -> channelNames [32], L"Cz") ? 32 :
+			erp -> ny >= 64 && Melder_equ (erp -> channelNames [64], U"O2") ? 64 :
+			erp -> ny >= 32 && Melder_equ (erp -> channelNames [32], U"Cz") ? 32 :
 			0;
 	BiosemiLocationData *biosemiLocationData = numberOfDrawableChannels == 64 ? biosemiCapCoordinates64 : numberOfDrawableChannels == 32 ? biosemiCapCoordinates32 : 0;
 	for (long ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
@@ -392,24 +392,24 @@ void structERPWindow :: v_drawSelectionViewer () {
 
 void structERPWindow :: v_prefs_addFields (EditorCommand cmd) {
 	Any radio;
-	OPTIONMENU_ENUM (L"Scalp colour space", kGraphics_colourScale, kGraphics_colourScale_BLUE_TO_RED)
+	OPTIONMENU_ENUM (U"Scalp colour space", kGraphics_colourScale, kGraphics_colourScale_BLUE_TO_RED)
 }
 void structERPWindow :: v_prefs_setValues (EditorCommand cmd) {
-	SET_ENUM (L"Scalp colour space", kGraphics_colourScale, p_scalp_colourScale)
+	SET_ENUM (U"Scalp colour space", kGraphics_colourScale, p_scalp_colourScale)
 }
 void structERPWindow :: v_prefs_getValues (EditorCommand cmd) {
-	pref_scalp_colourScale () = p_scalp_colourScale = GET_ENUM (kGraphics_colourScale, L"Scalp colour space");
+	pref_scalp_colourScale () = p_scalp_colourScale = GET_ENUM (kGraphics_colourScale, U"Scalp colour space");
 	FunctionEditor_redraw (this);
 }
 
-ERPWindow ERPWindow_create (const wchar_t *title, ERP data) {
+ERPWindow ERPWindow_create (const char32 *title, ERP data) {
 	Melder_assert (data != NULL);
 	try {
 		autoERPWindow me = Thing_new (ERPWindow);
 		SoundEditor_init (me.peek(), title, data);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("ERP window not created.");
+		Melder_throw (U"ERP window not created.");
 	}
 }
 

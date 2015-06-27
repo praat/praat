@@ -198,12 +198,12 @@ void Ordered_addItemPos (Ordered me, Thing data, long position);
 /* A Sorted is a sorted Collection. */
 
 Thing_define (Sorted, Collection) {
-	// new methods:
-	public:
-		virtual long v_position (Any data);
-		static int s_compare (Any data1, Any data2);
-		virtual Data_CompareFunction v_getCompareFunction () { return s_compare; }
-			// should compare the keys of two items; returns negative if me < thee, 0 if me == thee, and positive if me > thee
+	long v_position (Any data)
+		override;
+
+	static int s_compare (Any data1, Any data2);
+	virtual Data_CompareFunction v_getCompareFunction () { return s_compare; }
+		// should compare the keys of two items; returns negative if me < thee, 0 if me == thee, and positive if me > thee
 };
 
 void Sorted_init (Sorted me, ClassInfo itemClass, long initialCapacity);
@@ -236,14 +236,14 @@ void Sorted_sort (Sorted me);
 /********** class SortedSet **********/
 
 Thing_define (SortedSet, Sorted) {   // every item must be unique (by key)
-	bool hasItem (Any a_item) {
-		return v_position (a_item) == 0;
-	}
-
 	virtual long v_position (Any data);   // returns 0 (refusal) if the key of 'data' already occurs
 };
 
 void SortedSet_init (SortedSet me, ClassInfo itemClass, long initialCapacity);
+
+inline static bool SortedSet_hasItem (SortedSet me, Any a_item) {
+	return my v_position (a_item) == 0;
+}
 
 /* Behaviour:
 	Collection_addItem (SortedSet) refuses to insert an item if this item already occurs.
@@ -287,8 +287,6 @@ SortedSetOfDouble SortedSetOfDouble_create (void);
 /********** class SortedSetOfString **********/
 
 Thing_define (SortedSetOfString, SortedSet) {
-	void addString (const wchar_t *string);
-
 	static int s_compare (Any data1, Any data2);
 	Data_CompareFunction v_getCompareFunction ()
 		override { return s_compare; }
@@ -296,35 +294,21 @@ Thing_define (SortedSetOfString, SortedSet) {
 
 void SortedSetOfString_init (SortedSetOfString me);
 SortedSetOfString SortedSetOfString_create (void);
-long SortedSetOfString_lookUp (SortedSetOfString me, const wchar_t *string);
-
-/********** class SortedSetOfString32 **********/
-
-Thing_define (SortedSetOfString32, SortedSet) {
-	static int s_compare (Any data1, Any data2);
-	Data_CompareFunction v_getCompareFunction ()
-		override { return s_compare; }
-};
-
-void SortedSetOfString32_init (SortedSetOfString32 me);
-SortedSetOfString32 SortedSetOfString32_create (void);
-void SortedSetOfString32_addString (SortedSetOfString32 me, const char32 *string);
-long SortedSetOfString32_lookUp (SortedSetOfString32 me, const char32 *string);
+void SortedSetOfString_addString (SortedSetOfString me, const char32 *string);
+long SortedSetOfString_lookUp (SortedSetOfString me, const char32 *string);
 
 /********** class Cyclic **********/
 
 Thing_define (Cyclic, Collection) {   // the cyclic list (a, b, c, d) equals (b, c, d, a) but not (d, c, a, b)
-	// functions:
-	public:
-		void cycleLeft ();
-		void unicize ();
-	// overridden methods:
-	protected:
-		static int s_compare (Any data1, Any data2);
-		virtual Data_CompareFunction v_getCompareFunction () { return s_compare; }
+	static int s_compare (Any data1, Any data2);
+	virtual Data_CompareFunction v_getCompareFunction () { return s_compare; }
 };
 
 void Cyclic_init (Cyclic me, ClassInfo itemClass, long initialCapacity);
+
+void Cyclic_cycleLeft (Cyclic me);
+void Cyclic_unicize (Cyclic me);
+
 
 /* End of file Collection.h */
 #endif

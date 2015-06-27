@@ -42,15 +42,15 @@ void GaussianMixture_expandPCA (GaussianMixture me);
 void GaussianMixture_unExpandPCA (GaussianMixture me);
 
 void GaussianMixture_drawConcentrationEllipses (GaussianMixture me, Graphics g,
-	double scale, int confidence, wchar_t *label, int pcaDirections, long d1, long d2,
+	double scale, int confidence, char32 *label, int pcaDirections, long d1, long d2,
 	double xmin, double xmax, double ymin, double ymax, int fontSize, int garnish);
 void GaussianMixture_and_PCA_drawConcentrationEllipses (GaussianMixture me, PCA him, Graphics g,
-	double scale, int confidence, wchar_t *label, long d1, long d2,
+	double scale, int confidence, char32 *label, long d1, long d2,
 	double xmin, double xmax, double ymin, double ymax, int fontSize, int garnish);
 void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, long d, double xmin, double xmax, double ymin, double ymax, long npoints, long nbins, int garnish);
 void GaussianMixture_and_PCA_drawMarginalPdf (GaussianMixture me, PCA him, Graphics g, long d, double xmin, double xmax, double ymin, double ymax, long npoints, long nbins, int garnish);
 
-GaussianMixture TableOfReal_to_GaussianMixture_fromRowLabels (I, long storage);
+GaussianMixture TableOfReal_to_GaussianMixture_fromRowLabels (TableOfReal me, long storage);
 
 void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double nSigmas, double ru_range);
 /*
@@ -70,23 +70,23 @@ void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double 
 #define GaussianMixture_AICC 4
 #define GaussianMixture_CD_LIKELIHOOD 5
 
-const wchar_t *GaussianMixture_criterionText (int criterion);
+const char32 *GaussianMixture_criterionText (int criterion);
 
-GaussianMixture TableOfReal_to_GaussianMixture (I, long numberOfComponents, double delta_lnp, long maxNumberOfIterations, double lambda, int storage, int criterion);
+GaussianMixture TableOfReal_to_GaussianMixture (TableOfReal me, long numberOfComponents, double delta_lnp, long maxNumberOfIterations, double lambda, int storage, int criterion);
 
 void GaussianMixture_and_TableOfReal_improveLikelihood (GaussianMixture me, thou, double delta_lnp,
 	long maxNumberOfIterations, double lambda, int criterion);
 
-GaussianMixture GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM (GaussianMixture me, thou, long minNumberOfComponents, double delta_l, long maxNumberOfIterations, double lambda, int criterion);
+GaussianMixture GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM (GaussianMixture me, TableOfReal thee, long minNumberOfComponents, double delta_l, long maxNumberOfIterations, double lambda, int criterion);
 void GaussianMixture_splitComponent (GaussianMixture me, long component);
 
 ClassificationTable GaussianMixture_and_TableOfReal_to_ClassificationTable (GaussianMixture me, TableOfReal thee);
-TableOfReal GaussianMixture_and_TableOfReal_to_TableOfReal_BHEPNormalityTests (GaussianMixture me, thou, double h);
+TableOfReal GaussianMixture_and_TableOfReal_to_TableOfReal_BHEPNormalityTests (GaussianMixture me, TableOfReal thee, double h);
 
-double GaussianMixture_and_TableOfReal_getLikelihoodValue (GaussianMixture me, thou, int criterion);
+double GaussianMixture_and_TableOfReal_getLikelihoodValue (GaussianMixture me, TableOfReal thee, int criterion);
 
 double GaussianMixture_getProbabilityAtPosition (GaussianMixture me, double *vector);
-double GaussianMixture_getProbabilityAtPosition_string (GaussianMixture me, const wchar_t *vector);
+double GaussianMixture_getProbabilityAtPosition_string (GaussianMixture me, const char32 *vector);
 double GaussianMixture_getMarginalProbabilityAtPosition (GaussianMixture me, double *vector, double x);
 
 Correlation GaussianMixture_and_TableOfReal_to_Correlation (GaussianMixture me, thou);
@@ -110,7 +110,7 @@ void GaussianMixture_getIntervalAlongDirection (GaussianMixture me, long d, doub
 void GaussianMixture_getIntervalsAlongDirections (GaussianMixture me, long d1, long d2, double nsigmas, double *xmin, double *xmax, double *ymin, double *ymax);
 
 /* with on demand expand of pca ! */
-int GaussianMixture_generateOneVector (GaussianMixture me, double *c, wchar_t **covname, double *buf);
+int GaussianMixture_generateOneVector (GaussianMixture me, double *c, char32 **covname, double *buf);
 TableOfReal GaussianMixture_to_TableOfReal_randomSampling (GaussianMixture me, long numberOfPoints);
 
 #endif /* _GaussianMixture_h_ */

@@ -36,20 +36,20 @@
 
 
 Strings Strings_createFixedLength (long numberOfStrings);
-Strings Strings_createAsCharacters (const wchar_t *string);
-Strings Strings_createAsTokens (const wchar_t *string);
+Strings Strings_createAsCharacters (const char32 *string);
+Strings Strings_createAsTokens (const char32 *string);
 
-long Strings_findString (Strings me, const wchar_t *string);
+long Strings_findString (Strings me, const char32 *string);
 Strings Strings_append (Collection me);
 
-Strings Strings_change (Strings me, const wchar_t *search, const wchar_t *replace,
+Strings Strings_change (Strings me, const char32 *search, const char32 *replace,
 	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches,
 	int use_regexp);
 
-Strings strings_to_Strings (wchar_t **strings, long from, long to);
+Strings strings_to_Strings (char32 **strings, long from, long to);
 
 // If the Strings is only an intermediate object to achieve other goals, use the following two routines to avoid copying.
-Strings strings_to_Strings_link (wchar_t** strings, long n);
+Strings strings_to_Strings_link (char32** strings, long n);
 // for (i=1; i<= n; i++) my strings[i] = strings[i];
 void Strings_unlink (Strings me);
 // for (i=1; i<= my numberOfStrings; i++) my strings[i] = NULL;

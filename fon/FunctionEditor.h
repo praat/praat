@@ -82,13 +82,13 @@ Thing_define (FunctionEditor, Editor) {
 		 */
 	virtual void v_drawSelectionViewer () { }
 	virtual void v_prepareDraw () { }   // for less flashing
-	virtual const wchar_t * v_format_domain () { return L"Time domain:"; }
-	virtual const wchar_t * v_format_short () { return L"%.3f"; }
-	virtual const wchar_t * v_format_long () { return L"%f"; }
-	virtual const wchar_t * v_format_units () { return L"seconds"; }
-	virtual const wchar_t * v_format_totalDuration () { return L"Total duration %f seconds"; }
-	virtual const wchar_t * v_format_window () { return L"Visible part %f seconds"; }
-	virtual const wchar_t * v_format_selection () { return L"%f (%.3f / s)"; }
+	virtual const char32 * v_format_domain () { return U"Time domain:"; }
+	virtual const char * v_format_short () { return u8"%.3f"; }
+	virtual const char * v_format_long () { return u8"%f"; }
+	virtual const char32 * v_format_units () { return U"seconds"; }
+	virtual const char * v_format_totalDuration () { return u8"Total duration %f seconds"; }
+	virtual const char * v_format_window () { return u8"Visible part %f seconds"; }
+	virtual const char * v_format_selection () { return u8"%f (%.3f / s)"; }
 	virtual int v_fixedPrecision_long () { return 6; }
 	virtual bool v_hasText () { return false; }
 	virtual void v_play (double /* timeFrom */, double /* timeTo */) { }
@@ -164,7 +164,7 @@ int theFunctionEditor_playCallback (void *void_me, int phase, double tmin, doubl
 #define FunctionEditor_UPDATE_NEEDED  1
 #define FunctionEditor_NO_UPDATE_NEEDED  0
 
-void FunctionEditor_init (FunctionEditor me, const wchar_t *title, Function data);
+void FunctionEditor_init (FunctionEditor me, const char32 *title, Function data);
 /*
 	Function:
 		creates an Editor with a drawing area, a scroll bar and some buttons.
@@ -243,10 +243,10 @@ void FunctionEditor_ungroup (FunctionEditor me);
 /* The x axis of the window is supposed to have been set to [my startWindow, my endWindow]. */
 /* Preconditions: default line type, default line width. */
 /* Postconditions: default line type, default line width, undefined colour, undefined text alignment. */
-void FunctionEditor_drawRangeMark (FunctionEditor me, double yWC, const wchar_t *yWC_string, const wchar_t *units, int verticalAlignment);
-void FunctionEditor_drawCursorFunctionValue (FunctionEditor me, double yWC, const wchar_t *yWC_string, const wchar_t *units);
-void FunctionEditor_insertCursorFunctionValue (FunctionEditor me, double yWC, const wchar_t *yWC_string, const wchar_t *units, double minimum, double maximum);
-void FunctionEditor_drawHorizontalHair (FunctionEditor me, double yWC, const wchar_t *yWC_string, const wchar_t *units);
+void FunctionEditor_drawRangeMark (FunctionEditor me, double yWC, const char32 *yWC_string, const char32 *units, int verticalAlignment);
+void FunctionEditor_drawCursorFunctionValue (FunctionEditor me, double yWC, const char32 *yWC_string, const char32 *units);
+void FunctionEditor_insertCursorFunctionValue (FunctionEditor me, double yWC, const char32 *yWC_string, const char32 *units, double minimum, double maximum);
+void FunctionEditor_drawHorizontalHair (FunctionEditor me, double yWC, const char32 *yWC_string, const char32 *units);
 void FunctionEditor_drawGridLine (FunctionEditor me, double yWC);
 
 void FunctionEditor_insetViewport (FunctionEditor me);

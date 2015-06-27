@@ -23,7 +23,7 @@
 #include "ERP.h"
 
 Thing_define (ERPWindow, SoundEditor) { public:
-	const wchar_t * v_getChannelName (long channelNumber)
+	const char32 * v_getChannelName (long channelNumber)
 		override {
 			ERP erp = (ERP) our data;
 			return erp -> channelNames [channelNumber];
@@ -51,7 +51,7 @@ Thing_define (ERPWindow, SoundEditor) { public:
 /**
 	Create an ERPWindow.
 */
-ERPWindow ERPWindow_create (const wchar_t *title, ERP data);
+ERPWindow ERPWindow_create (const char32 *title, ERP data);
 
 /* End of file ERPWindow.h */
 #endif

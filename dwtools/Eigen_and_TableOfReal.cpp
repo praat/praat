@@ -44,7 +44,7 @@ TableOfReal Eigen_and_TableOfReal_project (I, thou, long from,
 		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows);
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw ("TableOfReal not created from projection.");
+		Melder_throw (U"TableOfReal not created from projection.");
 	}
 }
 
@@ -57,13 +57,13 @@ void Eigen_and_TableOfReal_project_into (I, thou, long thee_from, long thee_to,
 	long his_ncols = his_to - his_from + 1;
 
 	if (thee_from < 1 || thee_to > thy numberOfColumns || his_from < 1 || his_to > his numberOfColumns) {
-		Melder_throw (L"Column selection not correct.");
+		Melder_throw (U"Column selection not correct.");
 	}
 	if (thee_ncols != my dimension) {
-		Melder_throw ("The number of selected columns to project (", thee_ncols, ") must equal the dimension of the eigenvectors (", my dimension, ").");
+		Melder_throw (U"The number of selected columns to project (", thee_ncols, U") must equal the dimension of the eigenvectors (", my dimension, U").");
 	}
 	if (his_ncols > my numberOfEigenvalues) {
-		Melder_throw ("The number of selected columns in the result (", his_ncols, ") cannot exceed the number of eigenvectors (", my numberOfEigenvalues, ").");
+		Melder_throw (U"The number of selected columns in the result (", his_ncols, U") cannot exceed the number of eigenvectors (", my numberOfEigenvalues, U").");
 	}
 
 	for (long i = 1; i <= thy numberOfRows; i++) { /* row */
@@ -83,13 +83,13 @@ void Eigen_and_TableOfReal_project_into (I, thou, long thee_from, long thee_to,
 Eigen TablesOfReal_to_Eigen_gsvd (TableOfReal me, TableOfReal thee) {
 	try {
 		if (my numberOfColumns != thy numberOfColumns) {
-			Melder_throw ("TablesOfReal_to_Eigen: Number of columns must be equal.");
+			Melder_throw (U"TablesOfReal_to_Eigen: Number of columns must be equal.");
 		}
 		autoEigen him = Thing_new (Eigen);
 		Eigen_initFromSquareRootPair (him.peek(), my data, my numberOfRows, my numberOfColumns, thy data, thy numberOfRows);
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": Eigen not created.");
+		Melder_throw (me, U": Eigen not created.");
 	}
 }
 

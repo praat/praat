@@ -427,7 +427,7 @@ static double ptukey(double q, double rr, double cc, double df, int lower_tail, 
     }
 
     if(otsum > eps2) { /* not converged */
-		Melder_throw ("Not converged");
+		Melder_throw (U"Not converged");
     }
     if (ans > 1.)
 	ans = 1.;
@@ -612,7 +612,7 @@ static double qtukey(double p, double rr, double cc, double df, int lower_tail, 
     }
 
     /* The process did not converge in 'maxiter' iterations */
-	Melder_warning ("Maximum number of iterations exceeded.");
+	Melder_warning (U"Maximum number of iterations exceeded.");
     return ans;
 }
 

@@ -41,10 +41,4 @@ oo_DEFINE_CLASS (SimpleString, Data)
 oo_END_CLASS (SimpleString)
 #undef ooSTRUCT
 
-#define ooSTRUCT SimpleString32
-oo_DEFINE_CLASS (SimpleString32, Data)
-	oo_STRING32 (string)
-oo_END_CLASS (SimpleString32)
-#undef ooSTRUCT
-
 /* End of file Simple_def.h */

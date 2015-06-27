@@ -28,33 +28,33 @@ Thing_define (IntensityTierEditor, RealTierEditor) {
 		override;
 	void v_play (double tmin, double tmax)
 		override;
-	const wchar_t * v_quantityText ()
-		override { return L"Intensity (dB)"; }
-	const wchar_t * v_quantityKey ()
-		override { return L"Intensity"; }
-	const wchar_t * v_rightTickUnits ()
-		override { return L" dB"; }
+	const char32 * v_quantityText ()
+		override { return U"Intensity (dB)"; }
+	const char32 * v_quantityKey ()
+		override { return U"Intensity"; }
+	const char32 * v_rightTickUnits ()
+		override { return U" dB"; }
 	double v_defaultYmin ()
 		override { return 50.0; }
 	double v_defaultYmax ()
 		override { return 100.0; }
-	const wchar_t * v_setRangeTitle ()
-		override { return L"Set intensity range..."; }
-	const wchar_t * v_defaultYminText ()
-		override { return L"50.0"; }
-	const wchar_t * v_defaultYmaxText ()
-		override { return L"100.0"; }
-	const wchar_t * v_yminText ()
-		override { return L"Minimum intensity (dB)"; }
-	const wchar_t * v_ymaxText ()
-		override { return L"Maximum intensity (dB)"; }
-	const wchar_t * v_yminKey ()
-		override { return L"Minimum intensity"; }
-	const wchar_t * v_ymaxKey ()
-		override { return L"Maximum intensity"; }
+	const char32 * v_setRangeTitle ()
+		override { return U"Set intensity range..."; }
+	const char32 * v_defaultYminText ()
+		override { return U"50.0"; }
+	const char32 * v_defaultYmaxText ()
+		override { return U"100.0"; }
+	const char32 * v_yminText ()
+		override { return U"Minimum intensity (dB)"; }
+	const char32 * v_ymaxText ()
+		override { return U"Maximum intensity (dB)"; }
+	const char32 * v_yminKey ()
+		override { return U"Minimum intensity"; }
+	const char32 * v_ymaxKey ()
+		override { return U"Maximum intensity"; }
 };
 
-IntensityTierEditor IntensityTierEditor_create (const wchar_t *title,
+IntensityTierEditor IntensityTierEditor_create (const char32 *title,
 	IntensityTier intensity, Sound sound, bool ownSound);
 /*
 	'sound' may be NULL.

@@ -1,4 +1,4 @@
-/* Pattern.c
+/* Pattern.cpp
  *
  * Copyright (C) 1993-2011 David Weenink
  *
@@ -39,8 +39,7 @@ int _Pattern_checkElements (Pattern me) {
 	return 1;
 }
 
-void Pattern_init (I, long ny, long nx) {
-	iam (Pattern);
+void Pattern_init (Pattern me, long ny, long nx) {
 	my ny = ny;
 	my nx = nx;
 	Matrix_init (me, 1, nx, nx, 1, 1, 1, ny, ny, 1, 1);
@@ -52,13 +51,11 @@ Pattern Pattern_create (long ny, long nx) {
 		Pattern_init (me.peek(), ny, nx);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Pattern not created.");
+		Melder_throw (U"Pattern not created.");
 	}
 }
 
-void Pattern_normalize (I, int choice, double pmin, double pmax) {
-	iam (Pattern);
-
+void Pattern_normalize (Pattern me, int choice, double pmin, double pmax) {
 	if (pmin == pmax) {
 		(void) Matrix_getWindowExtrema (me, 1, my nx, 1, my ny, & pmin, & pmax);
 	}
@@ -85,8 +82,7 @@ void Pattern_normalize (I, int choice, double pmin, double pmax) {
 	}
 }
 
-void Pattern_draw (I, Graphics g, long pattern, double xmin, double xmax, double ymin, double ymax, int garnish) {
-	iam (Pattern);
+void Pattern_draw (Pattern me, Graphics g, long pattern, double xmin, double xmax, double ymin, double ymax, int garnish) {
 	Matrix_drawRows (me, g, xmin, xmax, pattern - 0.5, pattern + 0.5, ymin, ymax);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
@@ -95,14 +91,13 @@ void Pattern_draw (I, Graphics g, long pattern, double xmin, double xmax, double
 	}
 }
 
-Pattern Matrix_to_Pattern (I, int join) {
-	iam (Matrix);
+Pattern Matrix_to_Pattern (Matrix me, int join) {
 	try {
 		if (join < 1) {
 			join = 1;
 		}
 		if ( (my ny % join) != 0) {
-			Melder_throw (L"Number of rows is not a multiple of join factor.");
+			Melder_throw (U"Number of rows is not a multiple of join factor.");
 		}
 
 		autoPattern thee = Pattern_create (my ny / join, join * my nx);
@@ -119,7 +114,7 @@ Pattern Matrix_to_Pattern (I, int join) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Pattern created.");
+		Melder_throw (me, U": no Pattern created.");
 	}
 }
 
@@ -129,7 +124,7 @@ Matrix Pattern_to_Matrix (Pattern me) {
 		my structMatrix :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Matrix.");
+		Melder_throw (me, U": not converted to Matrix.");
 	}
 }
 

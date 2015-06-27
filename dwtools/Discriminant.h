@@ -30,7 +30,7 @@ oo_CLASS_CREATE (Discriminant, Eigen);
 
 Discriminant Discriminant_create (long numberOfGroups, long numberOfEigenvalues, long dimension);
 
-long Discriminant_groupLabelToIndex (Discriminant me, const wchar_t *label);
+long Discriminant_groupLabelToIndex (Discriminant me, const char32 *label);
 
 void Discriminant_setAprioriProbability (Discriminant me, long group, double p);
 
@@ -56,7 +56,7 @@ void Discriminant_drawTerritorialMap (Discriminant me, Graphics g, int discrimin
 	int poolCovarianceMatrices, int garnish);
 
 void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g,
-	double scale, int confidence, wchar_t *label, int discriminantDirections,
+	double scale, int confidence, char32 *label, int discriminantDirections,
 	long d1, long d2, double xmin, double xmax, double ymin, double ymax,
 	int fontSize, int garnish);
 
@@ -86,7 +86,7 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw
 TableOfReal Discriminant_and_TableOfReal_mahalanobis (Discriminant me, TableOfReal thee, long group, bool poolCovarianceMatrices);
 /* Mahalanobis distance with respect to group mean */
 
-Discriminant TableOfReal_to_Discriminant (I);
+Discriminant TableOfReal_to_Discriminant (TableOfReal me);
 
 Configuration TableOfReal_to_Configuration_lda (TableOfReal me,
 	long numberOfDimensions);

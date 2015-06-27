@@ -1,6 +1,6 @@
 /* Artword_Speaker_Sound.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ void Artword_Speaker_Sound_movie (Artword artword, Speaker speaker, Sound sound,
 		autoSound mySound = sound ? NULL : Sound_createSimple (1, artword -> totalTime, 44100);
 		Sound_play (sound ? sound : mySound.peek(), playCallback, & info);
 	} catch (MelderError) {
-		Melder_throw (artword, " & ", speaker, ": movie not played.");
+		Melder_throw (artword, U" & ", speaker, U": movie not played.");
 	}
 }
 

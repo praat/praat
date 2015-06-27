@@ -2,7 +2,7 @@
 #define _Strings_h_
 /* Strings.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +24,8 @@
 #include "Strings_def.h"
 oo_CLASS_CREATE (Strings, Data);
 
-Strings Strings_createAsFileList (const wchar_t *path);
-Strings Strings_createAsDirectoryList (const wchar_t *path);
+Strings Strings_createAsFileList (const char32 *path /* cattable */);
+Strings Strings_createAsDirectoryList (const char32 *path /* cattable */);
 Strings Strings_readFromRawTextFile (MelderFile file);
 void Strings_writeToRawTextFile (Strings me, MelderFile file);
 
@@ -35,8 +35,8 @@ void Strings_nativize (Strings me);
 void Strings_sort (Strings me);
 
 void Strings_remove (Strings me, long position);
-void Strings_replace (Strings me, long position, const wchar_t *text);
-void Strings_insert (Strings me, long position, const wchar_t *text);
+void Strings_replace (Strings me, long position, const char32 *text);
+void Strings_insert (Strings me, long position, const char32 *text);
 
 /* End of file Strings.h */
 #endif

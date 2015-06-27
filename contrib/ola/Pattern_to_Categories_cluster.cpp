@@ -72,7 +72,7 @@ Categories Pattern_to_Categories_cluster
 		{
 			double delta;
 			long nfriends  = 0;
-			Melder_progress (1 - (progress - m) / progress, L"");
+			Melder_progress (1 - (progress - m) / progress, U"");
 
 			for (long y = 1; y <= centroids->ny; y++)
 			{
@@ -149,7 +149,7 @@ Categories Pattern_to_Categories_cluster
 					}
 				}
 			}
-			while (delta);
+			while (delta != 0.0);
 
 			double smax = sizes [1];
 			double smin = sizes [1];

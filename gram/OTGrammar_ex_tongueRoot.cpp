@@ -1,6 +1,6 @@
 /* OTGrammar_ex_tongueRoot.cpp
  *
- * Copyright (C) 1997-2011,2013 Paul Boersma
+ * Copyright (C) 1997-2011,2013,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 #include "OTGrammar.h"
 
-static const wchar_t *vowels [] = { L"i", L"e", L"\\sw", L"\\ic", L"\\ef", L"a" };
+static const char32 *vowels [] = { U"i", U"e", U"\\sw", U"\\ic", U"\\ef", U"a" };
 #define i  0
 #define e  1
 #define schwa  2
@@ -43,9 +43,7 @@ static void countVowelViolations (int *marks, int ncons, int v) {
 }
 
 static void OTGrammarCandidate_init (OTGrammarCandidate me, int ncons, int v1, int v2) {
-	wchar_t buffer [100];
-	swprintf (buffer, 100, L"%lst%ls", vowels [v1], vowels [v2]);
-	my output = Melder_wcsdup (buffer);
+	my output = Melder_dup (Melder_cat (vowels [v1], U"t", vowels [v2]));
 	my marks = NUMvector <int> (1, my numberOfConstraints = ncons);
 	/*
 	 * Count vowel-gesture violations.
@@ -63,29 +61,29 @@ OTGrammar OTGrammar_create_tongueRoot_grammar (int small_large, int equal_random
 		int ncons = small_large == 1 ? 5 : 9, itab, v1, v2;
 		autoOTGrammar me = Thing_new (OTGrammar);
 		my constraints = NUMvector <structOTGrammarConstraint> (1, my numberOfConstraints = ncons);
-		my constraints [1]. name = Melder_wcsdup (L"*[rtr / hi]");
-		my constraints [2]. name = Melder_wcsdup (L"*[atr / lo]");
-		my constraints [3]. name = Melder_wcsdup (L"P\\s{ARSE}\n(rtr)");
-		my constraints [4]. name = Melder_wcsdup (L"P\\s{ARSE}\n(atr)");
-		my constraints [5]. name = Melder_wcsdup (L"*G\\s{ESTURE}\n(contour)");
+		my constraints [1]. name = Melder_dup (U"*[rtr / hi]");
+		my constraints [2]. name = Melder_dup (U"*[atr / lo]");
+		my constraints [3]. name = Melder_dup (U"P\\s{ARSE}\n(rtr)");
+		my constraints [4]. name = Melder_dup (U"P\\s{ARSE}\n(atr)");
+		my constraints [5]. name = Melder_dup (U"*G\\s{ESTURE}\n(contour)");
 		if (ncons == 9) {
-			my constraints [6]. name = Melder_wcsdup (L"*[rtr / mid]");
-			my constraints [7]. name = Melder_wcsdup (L"*[rtr / lo]");
-			my constraints [8]. name = Melder_wcsdup (L"*[atr / mid]");
-			my constraints [9]. name = Melder_wcsdup (L"*[atr / hi]");
+			my constraints [6]. name = Melder_dup (U"*[rtr / mid]");
+			my constraints [7]. name = Melder_dup (U"*[rtr / lo]");
+			my constraints [8]. name = Melder_dup (U"*[atr / mid]");
+			my constraints [9]. name = Melder_dup (U"*[atr / hi]");
 		}
-		if (equal_random_infant_Wolof == 1) {   /* equal? */
+		if (equal_random_infant_Wolof == 1) {   // equal?
 			for (long icons = 1; icons <= ncons; icons ++)
 				my constraints [icons]. ranking = 100.0;
-		} else if (equal_random_infant_Wolof == 2) {   /* random? */
+		} else if (equal_random_infant_Wolof == 2) {   // random?
 			for (long icons = 1; icons <= ncons; icons ++)
 				my constraints [icons]. ranking = NUMrandomGauss (100.0, 10.0);
-		} else if (equal_random_infant_Wolof == 3) {   /* infant (= cannot speak) ? */
+		} else if (equal_random_infant_Wolof == 3) {   // infant (= cannot speak) ?
 			for (long icons = 1; icons <= ncons; icons ++)
-				my constraints [icons]. ranking = 100.0;   /* Structural constraints. */
-			my constraints [3]. ranking = 50.0;   /* Faithfulness constraints. */
+				my constraints [icons]. ranking = 100.0;   // structural constraints
+			my constraints [3]. ranking = 50.0;   // faithfulness constraints
 			my constraints [4]. ranking = 50.0;
-		} else {   /* adult Wolof */
+		} else {   // adult Wolof
 			my constraints [1]. ranking = 100.0;
 			my constraints [2]. ranking =  10.0;
 			my constraints [3]. ranking =  50.0;
@@ -109,9 +107,7 @@ OTGrammar OTGrammar_create_tongueRoot_grammar (int small_large, int equal_random
 		itab = 1;
 		for (v1 = 0; v1 < 6; v1 ++) for (v2 = 0; v2 < 6; v2 ++) {
 			OTGrammarTableau tableau = & my tableaus [itab];
-			wchar_t buffer [100];
-			swprintf (buffer, 100, L"%lst%ls", vowels [v1], vowels [v2]);
-			tableau -> input = Melder_wcsdup (buffer);
+			tableau -> input = Melder_dup (Melder_cat (vowels [v1], U"t", vowels [v2]));
 			tableau -> candidates = NUMvector <structOTGrammarCandidate> (1, tableau -> numberOfCandidates = 4);
 			/*
 			 * Generate the four tongue-root variants as output candidates.
@@ -149,7 +145,7 @@ OTGrammar OTGrammar_create_tongueRoot_grammar (int small_large, int equal_random
 			my constraints [icons]. plasticity = 1.0;
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Tongue root grammar not created.");
+		Melder_throw (U"Tongue root grammar not created.");
 	}
 }
 

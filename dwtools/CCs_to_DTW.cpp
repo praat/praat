@@ -61,18 +61,18 @@ DTW CCs_to_DTW (I, thou, double wc, double wle, double wr, double wer, double dt
 		iam (CC); thouart (CC);
 
 		if (my maximumNumberOfCoefficients != thy maximumNumberOfCoefficients) {
-			Melder_throw ("CC orders must be equal.");
+			Melder_throw (U"CC orders must be equal.");
 		}
-		long nr = dtr / my dx;
+		long nr = (long) floor (dtr / my dx);
 		if (wr != 0 && nr < 2) {
-			Melder_throw ("Time window for regression is too small.");
+			Melder_throw (U"Time window for regression is too small.");
 		}
 
 		if (nr % 2 == 0) {
 			nr++;
 		}
 		if (wr != 0) {
-			Melder_casual ("%ld frames used for regression coefficients.", nr);
+			Melder_casual (nr, U" frames used for regression coefficients.");
 		}
 
 		autoDTW him = DTW_create (my xmin, my xmax, my nx, my dx, my x1, thy xmin, thy xmax, thy nx, thy dx, thy x1);
@@ -81,7 +81,7 @@ DTW CCs_to_DTW (I, thou, double wc, double wle, double wr, double wer, double dt
 
 		// Calculate distance matrix
 
-		autoMelderProgress progess (L"CCs_to_DTW");
+		autoMelderProgress progess (U"CCs_to_DTW");
 		for (long i = 1; i <= my nx; i++) {
 			CC_Frame fi = & my frame[i];
 
@@ -134,12 +134,12 @@ DTW CCs_to_DTW (I, thou, double wc, double wle, double wr, double wer, double dt
 			}
 
 			if ( (i % 10) == 1) {
-				Melder_progress (0.999 * i / my nx, L"Calculate distances: frame ", Melder_integer (i), L" from ", Melder_integer (my nx), L".");
+				Melder_progress (0.999 * i / my nx, U"Calculate distances: frame ", i, U" from ", my nx, U".");
 			}
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw ("DTW not created from CCs.");
+		Melder_throw (U"DTW not created from CCs.");
 	}
 }
 

@@ -1,6 +1,6 @@
 /* EEG.cpp
  *
- * Copyright (C) 2011-2012,2013,2014 Paul Boersma
+ * Copyright (C) 2011-2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,20 +43,20 @@ Thing_implement (EEG, Function, 0);
 
 void structEEG :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine (L"Time domain:");
-	MelderInfo_writeLine (L"   Start time: ", Melder_double (our xmin), L" seconds");
-	MelderInfo_writeLine (L"   End time: ", Melder_double (our xmax), L" seconds");
-	MelderInfo_writeLine (L"   Total duration: ", Melder_double (our xmax - our xmin), L" seconds");
+	MelderInfo_writeLine (U"Time domain:");
+	MelderInfo_writeLine (U"   Start time: ", our xmin, U" seconds");
+	MelderInfo_writeLine (U"   End time: ", our xmax, U" seconds");
+	MelderInfo_writeLine (U"   Total duration: ", our xmax - our xmin, U" seconds");
 	if (our sound != NULL) {
-		MelderInfo_writeLine (L"Time sampling of the signal:");
-		MelderInfo_writeLine (L"   Number of samples: ", Melder_integer (our sound -> nx));
-		MelderInfo_writeLine (L"   Sampling period: ", Melder_double (our sound -> dx), L" seconds");
-		MelderInfo_writeLine (L"   Sampling frequency: ", Melder_single (1.0 / our sound -> dx), L" Hz");
-		MelderInfo_writeLine (L"   First sample centred at: ", Melder_double (our sound -> x1), L" seconds");
+		MelderInfo_writeLine (U"Time sampling of the signal:");
+		MelderInfo_writeLine (U"   Number of samples: ", our sound -> nx);
+		MelderInfo_writeLine (U"   Sampling period: ", our sound -> dx, U" seconds");
+		MelderInfo_writeLine (U"   Sampling frequency: ", Melder_single (1.0 / our sound -> dx), U" Hz");
+		MelderInfo_writeLine (U"   First sample centred at: ", our sound -> x1, U" seconds");
 	}
-	MelderInfo_writeLine (L"Number of cap electrodes: ", Melder_integer (EEG_getNumberOfCapElectrodes (this)));
-	MelderInfo_writeLine (L"Number of external electrodes: ", Melder_integer (EEG_getNumberOfExternalElectrodes (this)));
-	MelderInfo_writeLine (L"Number of extra sensors: ", Melder_integer (EEG_getNumberOfExtraSensors (this)));
+	MelderInfo_writeLine (U"Number of cap electrodes: ", EEG_getNumberOfCapElectrodes (this));
+	MelderInfo_writeLine (U"Number of external electrodes: ", EEG_getNumberOfExternalElectrodes (this));
+	MelderInfo_writeLine (U"Number of extra sensors: ", EEG_getNumberOfExtraSensors (this));
 }
 
 void structEEG :: v_shiftX (double xfrom, double xto) {
@@ -82,13 +82,13 @@ EEG EEG_create (double tmin, double tmax) {
 		EEG_init (me.peek(), tmin, tmax);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("EEG object not created.");
+		Melder_throw (U"EEG object not created.");
 	}
 }
 
-long EEG_getChannelNumber (EEG me, const wchar_t *channelName) {
+long EEG_getChannelNumber (EEG me, const char32 *channelName) {
 	for (long ichan = 1; ichan <= my numberOfChannels; ichan ++) {
-		if (Melder_wcsequ (my channelNames [ichan], channelName)) {
+		if (Melder_equ (my channelNames [ichan], channelName)) {
 			return ichan;
 		}
 	}
@@ -102,31 +102,31 @@ EEG EEG_readFromBdfFile (MelderFile file) {
 		fread (buffer, 1, 8, f); buffer [8] = '\0';
 		bool is24bit = buffer [0] == (char) 255;
 		fread (buffer, 1, 80, f); buffer [80] = '\0';
-		trace ("Local subject identification: \"%s\"", buffer);
+		trace (U"Local subject identification: \"", Melder_peek8to32 (buffer), U"\"");
 		fread (buffer, 1, 80, f); buffer [80] = '\0';
-		trace ("Local recording identification: \"%s\"", buffer);
+		trace (U"Local recording identification: \"", Melder_peek8to32 (buffer), U"\"");
 		fread (buffer, 1, 8, f); buffer [8] = '\0';
-		trace ("Start date of recording: \"%s\"", buffer);
+		trace (U"Start date of recording: \"", Melder_peek8to32 (buffer), U"\"");
 		fread (buffer, 1, 8, f); buffer [8] = '\0';
-		trace ("Start time of recording: \"%s\"", buffer);
+		trace (U"Start time of recording: \"", Melder_peek8to32 (buffer), U"\"");
 		fread (buffer, 1, 8, f); buffer [8] = '\0';
 		long numberOfBytesInHeaderRecord = atol (buffer);
-		trace ("Number of bytes in header record: %ld", numberOfBytesInHeaderRecord);
+		trace (U"Number of bytes in header record: ", numberOfBytesInHeaderRecord);
 		fread (buffer, 1, 44, f); buffer [44] = '\0';
-		trace ("Version of data format: \"%s\"", buffer);
+		trace (U"Version of data format: \"", Melder_peek8to32 (buffer), U"\"");
 		fread (buffer, 1, 8, f); buffer [8] = '\0';
 		long numberOfDataRecords = strtol (buffer, NULL, 10);
-		trace ("Number of data records: %ld", numberOfDataRecords);
+		trace (U"Number of data records: ", numberOfDataRecords);
 		fread (buffer, 1, 8, f); buffer [8] = '\0';
 		double durationOfDataRecord = atof (buffer);
-		trace ("Duration of a data record: \"%f\"", durationOfDataRecord);
+		trace (U"Duration of a data record: ", durationOfDataRecord);
 		fread (buffer, 1, 4, f); buffer [4] = '\0';
 		long numberOfChannels = atol (buffer);
-		trace ("Number of channels in data record: %ld", numberOfChannels);
+		trace (U"Number of channels in data record: ", numberOfChannels);
 		if (numberOfBytesInHeaderRecord != (numberOfChannels + 1) * 256)
-			Melder_throw ("Number of bytes in header record (", numberOfBytesInHeaderRecord,
-				") doesn't match number of channels (", numberOfChannels, ").");
-		autostringvector channelNames (1, numberOfChannels);
+			Melder_throw (U"Number of bytes in header record (", numberOfBytesInHeaderRecord,
+				U") doesn't match number of channels (", numberOfChannels, U").");
+		autostring32vector channelNames (1, numberOfChannels);
 		for (long ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
 			fread (buffer, 1, 16, f); buffer [16] = '\0';   // labels of the channels
 			/*
@@ -139,10 +139,10 @@ EEG EEG_readFromBdfFile (MelderFile file) {
 					break;
 				}
 			}
-			channelNames [ichannel] = Melder_wcsdup (Melder_peekUtf8ToWcs (buffer));
-			trace ("Channel <<%ls>>", channelNames [ichannel]);
+			channelNames [ichannel] = Melder_8to32 (buffer);
+			trace (U"Channel <<", channelNames [ichannel], U">>");
 		}
-		bool hasLetters = wcsequ (channelNames [numberOfChannels], L"EDF Annotations");
+		bool hasLetters = str32equ (channelNames [numberOfChannels], U"EDF Annotations");
 		double samplingFrequency = NUMundefined;
 		for (long channel = 1; channel <= numberOfChannels; channel ++) {
 			fread (buffer, 1, 80, f); buffer [80] = '\0';   // transducer type
@@ -182,9 +182,9 @@ EEG EEG_readFromBdfFile (MelderFile file) {
 				samplingFrequency = numberOfSamplesInThisDataRecord / durationOfDataRecord;
 			}
 			if (numberOfSamplesInThisDataRecord / durationOfDataRecord != samplingFrequency)
-				Melder_throw (L"Number of samples per data record in channel ", channel,
-					" (", numberOfSamplesInThisDataRecord,
-					") doesn't match sampling frequency of channel 1 (", samplingFrequency, ").");
+				Melder_throw (U"Number of samples per data record in channel ", channel,
+					U" (", numberOfSamplesInThisDataRecord,
+					U") doesn't match sampling frequency of channel 1 (", samplingFrequency, U").");
 		}
 		for (long channel = 1; channel <= numberOfChannels; channel ++) {
 			fread (buffer, 1, 32, f); buffer [32] = '\0';   // reserved
@@ -217,9 +217,9 @@ EEG EEG_readFromBdfFile (MelderFile file) {
 					for (long i = 1; i <= numberOfSamplesPerDataRecord; i ++) {
 						long sample = i + (record - 1) * numberOfSamplesPerDataRecord;
 						Melder_assert (sample <= my nx);
-						uint8_t lowByte = *p ++, highByte = *p ++;
-						uint16_t externalValue = ((uint16_t) highByte << 8) | (uint16_t) lowByte;
-						my z [channel] [sample] = (int16_t) externalValue * factor;
+						uint8 lowByte = *p ++, highByte = *p ++;
+						uint16 externalValue = (uint16) ((uint16) highByte << 8) | (uint16) lowByte;
+						my z [channel] [sample] = (int16) externalValue * factor;
 					}
 				}
 			}
@@ -233,23 +233,23 @@ EEG EEG_readFromBdfFile (MelderFile file) {
 		}
 		autoTextGrid thee;
 		if (hasLetters) {
-			thee.reset (TextGrid_create (0, duration, L"Mark Trigger", L"Mark Trigger"));
+			thee.reset (TextGrid_create (0, duration, U"Mark Trigger", U"Mark Trigger"));
 			autoMelderString letters;
 			double time = NUMundefined;
 			for (long i = 1; i <= my nx; i ++) {
 				unsigned long value = (long) my z [numberOfChannels] [i];
 				for (int byte = 1; byte <= numberOfStatusBits / 8; byte ++) {
 					unsigned long mask = byte == 1 ? 0x000000ff : 0x0000ff00;
-					wchar_t kar = byte == 1 ? (value & mask) : (value & mask) >> 8;
-					if (kar != '\0' && kar != 20) {
+					char32 kar = byte == 1 ? (value & mask) : (value & mask) >> 8;
+					if (kar != U'\0' && kar != 20) {
 						MelderString_appendCharacter (& letters, kar);
-					} else if (letters. string [0] != '\0') {
-						if (letters. string [0] == '+') {
+					} else if (letters. string [0] != U'\0') {
+						if (letters. string [0] == U'+') {
 							if (NUMdefined (time)) {
 								try {
-									TextGrid_insertPoint (thee.peek(), 1, time, L"");
+									TextGrid_insertPoint (thee.peek(), 1, time, U"");
 								} catch (MelderError) {
-									Melder_throw ("Did not insert empty mark (", letters. string, ") on Mark tier.");
+									Melder_throw (U"Did not insert empty mark (", letters. string, U") on Mark tier.");
 								}
 								time = NUMundefined;   // defensive
 							}
@@ -257,21 +257,21 @@ EEG EEG_readFromBdfFile (MelderFile file) {
 							MelderString_empty (& letters);
 						} else {
 							if (! NUMdefined (time)) {
-								Melder_throw ("Undefined time for label at sample ", i, ".");
+								Melder_throw (U"Undefined time for label at sample ", i, U".");
 							}
 							try {
-								if (Melder_wcsnequ (letters. string, L"Trigger-", 8)) {
+								if (Melder_nequ (letters. string, U"Trigger-", 8)) {
 									try {
 										TextGrid_insertPoint (thee.peek(), 2, time, & letters. string [8]);
 									} catch (MelderError) {
 										Melder_clearError ();
-										trace ("Duplicate trigger at %f seconds: %ls", time, & letters. string [8]);
+										trace (U"Duplicate trigger at ", time, U" seconds: ", & letters. string [8]);
 									}
 								} else {
 									TextGrid_insertPoint (thee.peek(), 1, time, & letters. string [0]);
 								}
 							} catch (MelderError) {
-								Melder_throw ("Did not insert mark (", letters. string, ") on Trigger tier.");
+								Melder_throw (U"Did not insert mark (", letters. string, U") on Trigger tier.");
 							}
 							time = NUMundefined;   // crucial
 							MelderString_empty (& letters);
@@ -280,12 +280,12 @@ EEG EEG_readFromBdfFile (MelderFile file) {
 				}
 			}
 			if (NUMdefined (time)) {
-				TextGrid_insertPoint (thee.peek(), 1, time, L"");
+				TextGrid_insertPoint (thee.peek(), 1, time, U"");
 				time = NUMundefined;   // defensive
 			}
 		} else {
 			thee.reset (TextGrid_create (0, duration,
-				numberOfStatusBits == 8 ? L"S1 S2 S3 S4 S5 S6 S7 S8" : L"S1 S2 S3 S4 S5 S6 S7 S8 S9 S10 S11 S12 S13 S14 S15 S16", L""));
+				numberOfStatusBits == 8 ? U"S1 S2 S3 S4 S5 S6 S7 S8" : U"S1 S2 S3 S4 S5 S6 S7 S8 S9 S10 S11 S12 S13 S14 S15 S16", U""));
 			for (int bit = 1; bit <= numberOfStatusBits; bit ++) {
 				unsigned long bitValue = 1 << (bit - 1);
 				IntervalTier tier = (IntervalTier) thy tiers -> item [bit];
@@ -297,7 +297,7 @@ EEG EEG_readFromBdfFile (MelderFile file) {
 						if (time != 0.0)
 							TextGrid_insertBoundary (thee.peek(), bit, time);
 						if ((thisValue & bitValue) != 0)
-							TextGrid_setIntervalText (thee.peek(), bit, tier -> intervals -> size, L"1");
+							TextGrid_setIntervalText (thee.peek(), bit, tier -> intervals -> size, U"1");
 					}
 				}
 			}
@@ -307,107 +307,107 @@ EEG EEG_readFromBdfFile (MelderFile file) {
 		his sound = me.transfer();
 		his textgrid = thee.transfer();
 		if (EEG_getNumberOfCapElectrodes (him.peek()) == 32) {
-			EEG_setChannelName (him.peek(), 1, L"Fp1");
-			EEG_setChannelName (him.peek(), 2, L"AF3");
-			EEG_setChannelName (him.peek(), 3, L"F7");
-			EEG_setChannelName (him.peek(), 4, L"F3");
-			EEG_setChannelName (him.peek(), 5, L"FC1");
-			EEG_setChannelName (him.peek(), 6, L"FC5");
-			EEG_setChannelName (him.peek(), 7, L"T7");
-			EEG_setChannelName (him.peek(), 8, L"C3");
-			EEG_setChannelName (him.peek(), 9, L"CP1");
-			EEG_setChannelName (him.peek(), 10, L"CP5");
-			EEG_setChannelName (him.peek(), 11, L"P7");
-			EEG_setChannelName (him.peek(), 12, L"P3");
-			EEG_setChannelName (him.peek(), 13, L"Pz");
-			EEG_setChannelName (him.peek(), 14, L"PO3");
-			EEG_setChannelName (him.peek(), 15, L"O1");
-			EEG_setChannelName (him.peek(), 16, L"Oz");
-			EEG_setChannelName (him.peek(), 17, L"O2");
-			EEG_setChannelName (him.peek(), 18, L"PO4");
-			EEG_setChannelName (him.peek(), 19, L"P4");
-			EEG_setChannelName (him.peek(), 20, L"P8");
-			EEG_setChannelName (him.peek(), 21, L"CP6");
-			EEG_setChannelName (him.peek(), 22, L"CP2");
-			EEG_setChannelName (him.peek(), 23, L"C4");
-			EEG_setChannelName (him.peek(), 24, L"T8");
-			EEG_setChannelName (him.peek(), 25, L"FC6");
-			EEG_setChannelName (him.peek(), 26, L"FC2");
-			EEG_setChannelName (him.peek(), 27, L"F4");
-			EEG_setChannelName (him.peek(), 28, L"F8");
-			EEG_setChannelName (him.peek(), 29, L"AF4");
-			EEG_setChannelName (him.peek(), 30, L"Fp2");
-			EEG_setChannelName (him.peek(), 31, L"Fz");
-			EEG_setChannelName (him.peek(), 32, L"Cz");
+			EEG_setChannelName (him.peek(), 1, U"Fp1");
+			EEG_setChannelName (him.peek(), 2, U"AF3");
+			EEG_setChannelName (him.peek(), 3, U"F7");
+			EEG_setChannelName (him.peek(), 4, U"F3");
+			EEG_setChannelName (him.peek(), 5, U"FC1");
+			EEG_setChannelName (him.peek(), 6, U"FC5");
+			EEG_setChannelName (him.peek(), 7, U"T7");
+			EEG_setChannelName (him.peek(), 8, U"C3");
+			EEG_setChannelName (him.peek(), 9, U"CP1");
+			EEG_setChannelName (him.peek(), 10, U"CP5");
+			EEG_setChannelName (him.peek(), 11, U"P7");
+			EEG_setChannelName (him.peek(), 12, U"P3");
+			EEG_setChannelName (him.peek(), 13, U"Pz");
+			EEG_setChannelName (him.peek(), 14, U"PO3");
+			EEG_setChannelName (him.peek(), 15, U"O1");
+			EEG_setChannelName (him.peek(), 16, U"Oz");
+			EEG_setChannelName (him.peek(), 17, U"O2");
+			EEG_setChannelName (him.peek(), 18, U"PO4");
+			EEG_setChannelName (him.peek(), 19, U"P4");
+			EEG_setChannelName (him.peek(), 20, U"P8");
+			EEG_setChannelName (him.peek(), 21, U"CP6");
+			EEG_setChannelName (him.peek(), 22, U"CP2");
+			EEG_setChannelName (him.peek(), 23, U"C4");
+			EEG_setChannelName (him.peek(), 24, U"T8");
+			EEG_setChannelName (him.peek(), 25, U"FC6");
+			EEG_setChannelName (him.peek(), 26, U"FC2");
+			EEG_setChannelName (him.peek(), 27, U"F4");
+			EEG_setChannelName (him.peek(), 28, U"F8");
+			EEG_setChannelName (him.peek(), 29, U"AF4");
+			EEG_setChannelName (him.peek(), 30, U"Fp2");
+			EEG_setChannelName (him.peek(), 31, U"Fz");
+			EEG_setChannelName (him.peek(), 32, U"Cz");
 		} else if (EEG_getNumberOfCapElectrodes (him.peek()) == 64) {
-			EEG_setChannelName (him.peek(), 1, L"Fp1");
-			EEG_setChannelName (him.peek(), 2, L"AF7");
-			EEG_setChannelName (him.peek(), 3, L"AF3");
-			EEG_setChannelName (him.peek(), 4, L"F1");
-			EEG_setChannelName (him.peek(), 5, L"F3");
-			EEG_setChannelName (him.peek(), 6, L"F5");
-			EEG_setChannelName (him.peek(), 7, L"F7");
-			EEG_setChannelName (him.peek(), 8, L"FT7");
-			EEG_setChannelName (him.peek(), 9, L"FC5");
-			EEG_setChannelName (him.peek(), 10, L"FC3");
-			EEG_setChannelName (him.peek(), 11, L"FC1");
-			EEG_setChannelName (him.peek(), 12, L"C1");
-			EEG_setChannelName (him.peek(), 13, L"C3");
-			EEG_setChannelName (him.peek(), 14, L"C5");
-			EEG_setChannelName (him.peek(), 15, L"T7");
-			EEG_setChannelName (him.peek(), 16, L"TP7");
-			EEG_setChannelName (him.peek(), 17, L"CP5");
-			EEG_setChannelName (him.peek(), 18, L"CP3");
-			EEG_setChannelName (him.peek(), 19, L"CP1");
-			EEG_setChannelName (him.peek(), 20, L"P1");
-			EEG_setChannelName (him.peek(), 21, L"P3");
-			EEG_setChannelName (him.peek(), 22, L"P5");
-			EEG_setChannelName (him.peek(), 23, L"P7");
-			EEG_setChannelName (him.peek(), 24, L"P9");
-			EEG_setChannelName (him.peek(), 25, L"PO7");
-			EEG_setChannelName (him.peek(), 26, L"PO3");
-			EEG_setChannelName (him.peek(), 27, L"O1");
-			EEG_setChannelName (him.peek(), 28, L"Iz");
-			EEG_setChannelName (him.peek(), 29, L"Oz");
-			EEG_setChannelName (him.peek(), 30, L"POz");
-			EEG_setChannelName (him.peek(), 31, L"Pz");
-			EEG_setChannelName (him.peek(), 32, L"CPz");
-			EEG_setChannelName (him.peek(), 33, L"Fpz");
-			EEG_setChannelName (him.peek(), 34, L"Fp2");
-			EEG_setChannelName (him.peek(), 35, L"AF8");
-			EEG_setChannelName (him.peek(), 36, L"AF4");
-			EEG_setChannelName (him.peek(), 37, L"AFz");
-			EEG_setChannelName (him.peek(), 38, L"Fz");
-			EEG_setChannelName (him.peek(), 39, L"F2");
-			EEG_setChannelName (him.peek(), 40, L"F4");
-			EEG_setChannelName (him.peek(), 41, L"F6");
-			EEG_setChannelName (him.peek(), 42, L"F8");
-			EEG_setChannelName (him.peek(), 43, L"FT8");
-			EEG_setChannelName (him.peek(), 44, L"FC6");
-			EEG_setChannelName (him.peek(), 45, L"FC4");
-			EEG_setChannelName (him.peek(), 46, L"FC2");
-			EEG_setChannelName (him.peek(), 47, L"FCz");
-			EEG_setChannelName (him.peek(), 48, L"Cz");
-			EEG_setChannelName (him.peek(), 49, L"C2");
-			EEG_setChannelName (him.peek(), 50, L"C4");
-			EEG_setChannelName (him.peek(), 51, L"C6");
-			EEG_setChannelName (him.peek(), 52, L"T8");
-			EEG_setChannelName (him.peek(), 53, L"TP8");
-			EEG_setChannelName (him.peek(), 54, L"CP6");
-			EEG_setChannelName (him.peek(), 55, L"CP4");
-			EEG_setChannelName (him.peek(), 56, L"CP2");
-			EEG_setChannelName (him.peek(), 57, L"P2");
-			EEG_setChannelName (him.peek(), 58, L"P4");
-			EEG_setChannelName (him.peek(), 59, L"P6");
-			EEG_setChannelName (him.peek(), 60, L"P8");
-			EEG_setChannelName (him.peek(), 61, L"P10");
-			EEG_setChannelName (him.peek(), 62, L"PO8");
-			EEG_setChannelName (him.peek(), 63, L"PO4");
-			EEG_setChannelName (him.peek(), 64, L"O2");
+			EEG_setChannelName (him.peek(), 1, U"Fp1");
+			EEG_setChannelName (him.peek(), 2, U"AF7");
+			EEG_setChannelName (him.peek(), 3, U"AF3");
+			EEG_setChannelName (him.peek(), 4, U"F1");
+			EEG_setChannelName (him.peek(), 5, U"F3");
+			EEG_setChannelName (him.peek(), 6, U"F5");
+			EEG_setChannelName (him.peek(), 7, U"F7");
+			EEG_setChannelName (him.peek(), 8, U"FT7");
+			EEG_setChannelName (him.peek(), 9, U"FC5");
+			EEG_setChannelName (him.peek(), 10, U"FC3");
+			EEG_setChannelName (him.peek(), 11, U"FC1");
+			EEG_setChannelName (him.peek(), 12, U"C1");
+			EEG_setChannelName (him.peek(), 13, U"C3");
+			EEG_setChannelName (him.peek(), 14, U"C5");
+			EEG_setChannelName (him.peek(), 15, U"T7");
+			EEG_setChannelName (him.peek(), 16, U"TP7");
+			EEG_setChannelName (him.peek(), 17, U"CP5");
+			EEG_setChannelName (him.peek(), 18, U"CP3");
+			EEG_setChannelName (him.peek(), 19, U"CP1");
+			EEG_setChannelName (him.peek(), 20, U"P1");
+			EEG_setChannelName (him.peek(), 21, U"P3");
+			EEG_setChannelName (him.peek(), 22, U"P5");
+			EEG_setChannelName (him.peek(), 23, U"P7");
+			EEG_setChannelName (him.peek(), 24, U"P9");
+			EEG_setChannelName (him.peek(), 25, U"PO7");
+			EEG_setChannelName (him.peek(), 26, U"PO3");
+			EEG_setChannelName (him.peek(), 27, U"O1");
+			EEG_setChannelName (him.peek(), 28, U"Iz");
+			EEG_setChannelName (him.peek(), 29, U"Oz");
+			EEG_setChannelName (him.peek(), 30, U"POz");
+			EEG_setChannelName (him.peek(), 31, U"Pz");
+			EEG_setChannelName (him.peek(), 32, U"CPz");
+			EEG_setChannelName (him.peek(), 33, U"Fpz");
+			EEG_setChannelName (him.peek(), 34, U"Fp2");
+			EEG_setChannelName (him.peek(), 35, U"AF8");
+			EEG_setChannelName (him.peek(), 36, U"AF4");
+			EEG_setChannelName (him.peek(), 37, U"AFz");
+			EEG_setChannelName (him.peek(), 38, U"Fz");
+			EEG_setChannelName (him.peek(), 39, U"F2");
+			EEG_setChannelName (him.peek(), 40, U"F4");
+			EEG_setChannelName (him.peek(), 41, U"F6");
+			EEG_setChannelName (him.peek(), 42, U"F8");
+			EEG_setChannelName (him.peek(), 43, U"FT8");
+			EEG_setChannelName (him.peek(), 44, U"FC6");
+			EEG_setChannelName (him.peek(), 45, U"FC4");
+			EEG_setChannelName (him.peek(), 46, U"FC2");
+			EEG_setChannelName (him.peek(), 47, U"FCz");
+			EEG_setChannelName (him.peek(), 48, U"Cz");
+			EEG_setChannelName (him.peek(), 49, U"C2");
+			EEG_setChannelName (him.peek(), 50, U"C4");
+			EEG_setChannelName (him.peek(), 51, U"C6");
+			EEG_setChannelName (him.peek(), 52, U"T8");
+			EEG_setChannelName (him.peek(), 53, U"TP8");
+			EEG_setChannelName (him.peek(), 54, U"CP6");
+			EEG_setChannelName (him.peek(), 55, U"CP4");
+			EEG_setChannelName (him.peek(), 56, U"CP2");
+			EEG_setChannelName (him.peek(), 57, U"P2");
+			EEG_setChannelName (him.peek(), 58, U"P4");
+			EEG_setChannelName (him.peek(), 59, U"P6");
+			EEG_setChannelName (him.peek(), 60, U"P8");
+			EEG_setChannelName (him.peek(), 61, U"P10");
+			EEG_setChannelName (him.peek(), 62, U"PO8");
+			EEG_setChannelName (him.peek(), 63, U"PO4");
+			EEG_setChannelName (him.peek(), 64, U"O2");
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw ("BDF file not read.");
+		Melder_throw (U"BDF file not read.");
 	}
 }
 
@@ -446,22 +446,22 @@ void EEG_filter (EEG me, double lowFrequency, double lowWidth, double highFreque
 			NUMvector_copyElements (his z [1], my sound -> z [ichan], 1, my sound -> nx);
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": not filtered.");
+		Melder_throw (me, U": not filtered.");
 	}
 }
 
-void EEG_setChannelName (EEG me, long channelNumber, const wchar_t *a_name) {
-	autostring l_name = Melder_wcsdup (a_name);
+void EEG_setChannelName (EEG me, long channelNumber, const char32 *a_name) {
+	autostring32 l_name = Melder_dup (a_name);
 	Melder_free (my channelNames [channelNumber]);
 	my channelNames [channelNumber] = l_name.transfer();
 }
 
 void EEG_setExternalElectrodeNames (EEG me,
-	const wchar_t *nameExg1, const wchar_t *nameExg2, const wchar_t *nameExg3, const wchar_t *nameExg4,
-	const wchar_t *nameExg5, const wchar_t *nameExg6, const wchar_t *nameExg7, const wchar_t *nameExg8)
+	const char32 *nameExg1, const char32 *nameExg2, const char32 *nameExg3, const char32 *nameExg4,
+	const char32 *nameExg5, const char32 *nameExg6, const char32 *nameExg7, const char32 *nameExg8)
 {
 	if (EEG_getNumberOfExternalElectrodes (me) != 8)
-		Melder_throw (L"There aren't 8 external electrodes.");
+		Melder_throw (U"There aren't 8 external electrodes.");
 	const long firstExternalElectrode = EEG_getNumberOfCapElectrodes (me) + 1;
 	EEG_setChannelName (me, firstExternalElectrode, nameExg1);
 	EEG_setChannelName (me, firstExternalElectrode + 1, nameExg2);
@@ -473,13 +473,13 @@ void EEG_setExternalElectrodeNames (EEG me,
 	EEG_setChannelName (me, firstExternalElectrode + 7, nameExg8);
 }
 
-void EEG_subtractReference (EEG me, const wchar_t *channelNumber1_text, const wchar_t *channelNumber2_text) {
+void EEG_subtractReference (EEG me, const char32 *channelNumber1_text, const char32 *channelNumber2_text) {
 	long channelNumber1 = EEG_getChannelNumber (me, channelNumber1_text);
 	if (channelNumber1 == 0)
-		Melder_throw (me, ": no channel named \"", channelNumber1_text, "\".");
+		Melder_throw (me, U": no channel named \"", channelNumber1_text, U"\".");
 	long channelNumber2 = EEG_getChannelNumber (me, channelNumber2_text);
 	if (channelNumber2 == 0 && channelNumber2_text [0] != '\0')
-		Melder_throw (me, ": no channel named \"", channelNumber2_text, "\".");
+		Melder_throw (me, U": no channel named \"", channelNumber2_text, U"\".");
 	const long numberOfElectrodeChannels = my numberOfChannels - EEG_getNumberOfExtraSensors (me);
 	for (long isamp = 1; isamp <= my sound -> nx; isamp ++) {
 		double referenceValue = channelNumber2 == 0 ? my sound -> z [channelNumber1] [isamp] :
@@ -492,11 +492,11 @@ void EEG_subtractReference (EEG me, const wchar_t *channelNumber1_text, const wc
 
 void EEG_subtractMeanChannel (EEG me, long fromChannel, long toChannel) {
 	if (fromChannel < 1 || fromChannel > my numberOfChannels)
-		Melder_throw ("No channel ", fromChannel, ".");
+		Melder_throw (U"No channel ", fromChannel, U".");
 	if (toChannel < 1 || toChannel > my numberOfChannels)
-		Melder_throw ("No channel ", toChannel, ".");
+		Melder_throw (U"No channel ", toChannel, U".");
 	if (fromChannel > toChannel)
-		Melder_throw ("Channel range cannot run from ", fromChannel, " to ", toChannel, ". Please reverse.");
+		Melder_throw (U"Channel range cannot run from ", fromChannel, U" to ", toChannel, U". Please reverse.");
 	const long numberOfElectrodeChannels = my numberOfChannels - EEG_getNumberOfExtraSensors (me);
 	for (long isamp = 1; isamp <= my sound -> nx; isamp ++) {
 		double referenceValue = 0.0;
@@ -513,79 +513,79 @@ void EEG_subtractMeanChannel (EEG me, long fromChannel, long toChannel) {
 void EEG_setChannelToZero (EEG me, long channelNumber) {
 	try {
 		if (channelNumber < 1 || channelNumber > my numberOfChannels)
-			Melder_throw ("No channel ", channelNumber, ".");
+			Melder_throw (U"No channel ", channelNumber, U".");
 		long numberOfSamples = my sound -> nx;
 		double *channel = my sound -> z [channelNumber];
 		for (long isample = 1; isample <= numberOfSamples; isample ++) {
 			channel [isample] = 0.0;
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": channel ", channelNumber, " not set to zero.");
+		Melder_throw (me, U": channel ", channelNumber, U" not set to zero.");
 	}
 }
 
-void EEG_setChannelToZero (EEG me, const wchar_t *channelName) {
+void EEG_setChannelToZero (EEG me, const char32 *channelName) {
 	try {
 		long channelNumber = EEG_getChannelNumber (me, channelName);
 		if (channelNumber == 0)
-			Melder_throw ("No channel named \"", channelName, "\".");
+			Melder_throw (U"No channel named \"", channelName, U"\".");
 		EEG_setChannelToZero (me, channelNumber);
 	} catch (MelderError) {
-		Melder_throw (me, ": channel ", channelName, " not set to zero.");
+		Melder_throw (me, U": channel ", channelName, U" not set to zero.");
 	}
 }
 
-void EEG_removeTriggers (EEG me, int which_Melder_STRING, const wchar_t *criterion) {
+void EEG_removeTriggers (EEG me, int which_Melder_STRING, const char32 *criterion) {
 	try {
-		if (my textgrid -> numberOfTiers () < 2 || ! Melder_wcsequ (my textgrid -> tier (2) -> name, L"Trigger"))
-			Melder_throw (me, " does not have a Trigger channel.");
+		if (my textgrid -> numberOfTiers () < 2 || ! Melder_equ (my textgrid -> tier (2) -> name, U"Trigger"))
+			Melder_throw (me, U" does not have a Trigger channel.");
 		TextGrid_removePoints (my textgrid, 2, which_Melder_STRING, criterion);
 	} catch (MelderError) {
-		Melder_throw (me, ": triggers not removed.");
+		Melder_throw (me, U": triggers not removed.");
 	}
 }
 
 EEG EEG_extractChannel (EEG me, long channelNumber) {
 	try {
 		if (channelNumber < 1 || channelNumber > my numberOfChannels)
-			Melder_throw ("No channel ", channelNumber, ".");
+			Melder_throw (U"No channel ", channelNumber, U".");
 		autoEEG thee = EEG_create (my xmin, my xmax);
 		thy numberOfChannels = 1;
-		thy channelNames = NUMvector <wchar_t *> (1, 1);
-		thy channelNames [1] = Melder_wcsdup (my channelNames [1]);
+		thy channelNames = NUMvector <char32 *> (1, 1);
+		thy channelNames [1] = Melder_dup (my channelNames [1]);
 		thy sound = Sound_extractChannel (my sound, channelNumber);
 		thy textgrid = Data_copy (my textgrid);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": channel ", channelNumber, " not extracted.");
+		Melder_throw (me, U": channel ", channelNumber, U" not extracted.");
 	}
 }
 
-EEG EEG_extractChannel (EEG me, const wchar_t *channelName) {
+EEG EEG_extractChannel (EEG me, const char32 *channelName) {
 	try {
 		long channelNumber = EEG_getChannelNumber (me, channelName);
 		if (channelNumber == 0)
-			Melder_throw ("No channel named \"", channelName, "\".");
+			Melder_throw (U"No channel named \"", channelName, U"\".");
 		return EEG_extractChannel (me, channelNumber);
 	} catch (MelderError) {
-		Melder_throw (me, ": channel ", channelName, " not extracted.");
+		Melder_throw (me, U": channel ", channelName, U" not extracted.");
 	}
 }
 
 EEG EEGs_concatenate (Collection me) {
 	try {
 		if (my size < 1)
-			Melder_throw ("Cannot concatenate zero EEG objects.");
+			Melder_throw (U"Cannot concatenate zero EEG objects.");
 		EEG first = (EEG) my item [1];
 		long numberOfChannels = first -> numberOfChannels;
-		wchar_t **channelNames = first -> channelNames;
+		char32 **channelNames = first -> channelNames;
 		for (long ieeg = 2; ieeg <= my size; ieeg ++) {
 			EEG other = (EEG) my item [ieeg];
 			if (other -> numberOfChannels != numberOfChannels)
-				Melder_throw ("The number of channels of ", other, " does not match the number of channels of ", first, ".");
+				Melder_throw (U"The number of channels of ", other, U" does not match the number of channels of ", first, U".");
 			for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
-				if (! Melder_wcsequ (other -> channelNames [ichan], channelNames [ichan]))
-					Melder_throw ("Channel ", ichan, " has a different name in ", other, " (", other -> channelNames [ichan], ") than in ", first, " (", channelNames [ichan], ").");
+				if (! Melder_equ (other -> channelNames [ichan], channelNames [ichan]))
+					Melder_throw (U"Channel ", ichan, U" has a different name in ", other, U" (", other -> channelNames [ichan], U") than in ", first, U" (", channelNames [ichan], U").");
 			}
 		}
 		autoOrdered soundCollection = Ordered_create ();
@@ -599,9 +599,9 @@ EEG EEGs_concatenate (Collection me) {
 		}
 		autoEEG thee = Thing_new (EEG);
 		thy numberOfChannels = numberOfChannels;
-		thy channelNames = NUMvector <wchar_t *> (1, numberOfChannels);
+		thy channelNames = NUMvector <char32 *> (1, numberOfChannels);
 		for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
-			thy channelNames [ichan] = Melder_wcsdup (channelNames [ichan]);
+			thy channelNames [ichan] = Melder_dup (channelNames [ichan]);
 		}
 		thy sound = Sounds_concatenate_e (soundCollection.peek(), 0.0);
 		thy textgrid = TextGrids_concatenate (textgridCollection.peek());
@@ -609,7 +609,7 @@ EEG EEGs_concatenate (Collection me) {
 		thy xmax = thy textgrid -> xmax;
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw ("TextGrids not concatenated.");
+		Melder_throw (U"TextGrids not concatenated.");
 	}
 }
 
@@ -617,9 +617,9 @@ EEG EEG_extractPart (EEG me, double tmin, double tmax, bool preserveTimes) {
 	try {
 		autoEEG thee = Thing_new (EEG);
 		thy numberOfChannels = my numberOfChannels;
-		thy channelNames = NUMvector <wchar_t *> (1, my numberOfChannels);
+		thy channelNames = NUMvector <char32 *> (1, my numberOfChannels);
 		for (long ichan = 1; ichan <= my numberOfChannels; ichan ++) {
-			thy channelNames [ichan] = Melder_wcsdup (my channelNames [ichan]);
+			thy channelNames [ichan] = Melder_dup (my channelNames [ichan]);
 		}
 		thy sound = Sound_extractPart (my sound, tmin, tmax, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes);
 		thy textgrid = TextGrid_extractPart (my textgrid, tmin, tmax, preserveTimes);
@@ -627,7 +627,7 @@ EEG EEG_extractPart (EEG me, double tmin, double tmax, bool preserveTimes) {
 		thy xmax = thy textgrid -> xmax;
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": part not extracted.");
+		Melder_throw (me, U": part not extracted.");
 	}
 }
 
@@ -637,7 +637,7 @@ void EEG_replaceTextGrid (EEG me, TextGrid textgrid) {
 		forget (my textgrid);
 		my textgrid = textgrid2.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": TextGrid not replaced with ", textgrid, ".");
+		Melder_throw (me, U": TextGrid not replaced with ", textgrid, U".");
 	}
 }
 
@@ -647,12 +647,12 @@ MixingMatrix EEG_to_MixingMatrix (EEG me, long maxNumberOfIterations, double tol
 		autoMixingMatrix thee = MixingMatrix_create (my sound -> ny, my sound -> ny);
 		for (long ichan = 1; ichan <= my numberOfChannels; ichan ++) {
 			TableOfReal_setRowLabel (thee.peek(), ichan, my channelNames [ichan]);
-			TableOfReal_setColumnLabel (thee.peek(), ichan, Melder_wcscat (L"ic", Melder_integer (ichan)));
+			TableOfReal_setColumnLabel (thee.peek(), ichan, Melder_cat (U"ic", ichan));
 		}
 		MixingMatrix_and_CrossCorrelationTables_improveUnmixing (thee.peek(), tables.peek(), maxNumberOfIterations, tol, method);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no MixingMatrix created.");
+		Melder_throw (me, U": no MixingMatrix created.");
 	}
 }
 

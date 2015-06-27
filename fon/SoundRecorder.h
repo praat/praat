@@ -43,7 +43,7 @@
 #endif
 
 struct SoundRecorder_Device {
-	wchar_t name [1+40];
+	char32 name [1+40];
 	bool canDo;
 	GuiRadioButton button;
 };

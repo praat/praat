@@ -48,31 +48,36 @@
 #define BandFilterSpectrogram_MEL   3
 
 Thing_define (BandFilterSpectrogram, Matrix) {
-	// new methods:
-	public:
-		virtual void v_info ();
-		virtual double v_getValueAtSample (long icol, long irow, int units);
-		virtual double v_frequencyToHertz (double f) { return f; }
-		virtual double v_hertzToFrequency (double hertz) { return hertz; }
-		virtual const wchar_t *v_getFrequencyUnit () { return L"Hz"; }
+	void v_info ()
+		override;
+	double v_getValueAtSample (long icol, long irow, int units)
+		override;
+
+	virtual double v_frequencyToHertz (double f) { return f; }
+	virtual double v_hertzToFrequency (double hertz) { return hertz; }
+	virtual const char32 *v_getFrequencyUnit () { return U"Hz"; }
 };
 
 Thing_define (BarkSpectrogram, BandFilterSpectrogram) {
-	// overridden methods:
-	public:
-		virtual void v_info ();
-		virtual double v_frequencyToHertz (double f) { return NUMbarkToHertz2 (f); }
-		virtual double v_hertzToFrequency (double hertz) { return NUMhertzToBark2 (hertz); }
-		virtual const wchar_t *v_getFrequencyUnit () { return L"bark"; }
+	void v_info ()
+		override;
+	double v_frequencyToHertz (double f)
+		override { return NUMbarkToHertz2 (f); }
+	double v_hertzToFrequency (double hertz)
+		override { return NUMhertzToBark2 (hertz); }
+	const char32 *v_getFrequencyUnit ()
+		override { return U"bark"; }
 };
 
 Thing_define (MelSpectrogram, BandFilterSpectrogram) {
-	// overridden methods:
-	public:
-		virtual void v_info ();
-		virtual double v_frequencyToHertz (double f) { return NUMmelToHertz2 (f); }
-		virtual double v_hertzToFrequency (double hertz) { return NUMhertzToMel2 (hertz); }
-		virtual const wchar_t *v_getFrequencyUnit () { return L"mel"; }
+	void v_info ()
+		override;
+	double v_frequencyToHertz (double f)
+		override { return NUMmelToHertz2 (f); }
+	double v_hertzToFrequency (double hertz)
+		override { return NUMhertzToMel2 (hertz); }
+	const char32 *v_getFrequencyUnit ()
+		override { return U"mel"; }
 };
 
 /*
@@ -94,6 +99,9 @@ Intensity BandFilterSpectrogram_to_Intensity (BandFilterSpectrogram me);
 
 void BandFilterSpectrogram_drawFrequencyScale (BandFilterSpectrogram me, Graphics g, double xmin, double xmax, double ymin, double ymax, int garnish);
 
+void BandFilterSpectrogram_drawTimeSlice (I, Graphics g, double t, double fmin,
+                               double fmax, double min, double max, const char32 *xlabel, int garnish);
+
 void BarkSpectrogram_drawSekeyHansonFilterFunctions (BarkSpectrogram me, Graphics g, bool xIsHertz, int fromFilter, int toFilter, double zmin, double zmax, bool yscale_dB, double ymin, double ymax, int garnish);
 
 void BandFilterSpectrogram_drawSpectrumAtNearestTimeSlice (BandFilterSpectrogram me, Graphics g, double time, double fmin, double fmax, double dBmin, double dBmax, int garnish);
@@ -101,7 +109,7 @@ void BandFilterSpectrogram_drawSpectrumAtNearestTimeSlice (BandFilterSpectrogram
 void BandFilterSpectrogram_paintImage (BandFilterSpectrogram me, Graphics g, double xmin, double xmax, double ymin, double ymax, double minimum, double maximum, int garnish);
 
 BarkSpectrogram BarkSpectrogram_create (double tmin, double tmax, long nt, double dt,
-	double t1, double fmin, double fmax, long nf, double df, long f1);
+	double t1, double fmin, double fmax, long nf, double df, double f1);
 
 BarkSpectrogram Matrix_to_BarkSpectrogram (Matrix me);
 
@@ -130,5 +138,9 @@ void BandFilterSpectrogram_and_PCA_drawComponent (BandFilterSpectrogram me, PCA 
 Matrix Spectrogram_to_Matrix_dB (Spectrogram me, double reference, double scaleFactor, double floor_dB);
 // dbs = scaleFactor * log10 (value/reference);
 // if (dbs < floor_db) { dbs = floor_dB }
+
+void BandFilterSpectrogram_into_CC (BandFilterSpectrogram me, CC thee, long numberOfCoefficients);
+
+void CC_into_BandFilterSpectrogram (CC me, BandFilterSpectrogram thee, long first, long last, bool use_c0);
 
 #endif /* _Spectrogram_extensions_h_ */

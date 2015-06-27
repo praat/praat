@@ -1,6 +1,6 @@
 /* Polygon_extensions.c
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2012, 2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,17 @@
 #include "Vector.h"
 #include "DLL.h"
 
-//
+// not for self-intesecting polygons!
+static double Polygon_area (Polygon me) {
+	double area = 0;
+	long j = my numberOfPoints;
+	for (long i = 1; i <= my numberOfPoints; i++) {
+		area += (my x[j] + my x[i]) * (my y[j] - my y[i]);
+		j = i;
+	}
+	area *= 0.5;
+	return fabs (area); // area my have negative sign in counter clockwise evaluation of area
+}
 
 void Polygon_getExtrema (Polygon me, double *xmin, double *xmax, double *ymin, double *ymax) {
     *xmin = my x[1]; *xmax = my x[1];
@@ -48,15 +58,15 @@ void Polygon_getExtrema (Polygon me, double *xmin, double *xmax, double *ymin, d
         }
     }
 }
-Polygon Polygon_createSimple (wchar_t *xystring) {
+Polygon Polygon_createSimple (char32 *xystring) {
 	try {
 		long numberOfPoints;
 		autoNUMvector<double> xys (NUMstring_to_numbers (xystring, &numberOfPoints), 1);
 		if (numberOfPoints < 6) {
-			Melder_throw ("There must be at least 3 points (= x,y pairs) in the Polygon");
+			Melder_throw (U"There must be at least 3 points (= x,y pairs) in the Polygon");
 		}
 		if (numberOfPoints % 2 != 0) {
-			Melder_throw ("One value is missing.");
+			Melder_throw (U"One value is missing.");
 		}
 		numberOfPoints /= 2; // x,y pairs
 		autoPolygon me = Polygon_create (numberOfPoints);
@@ -64,12 +74,12 @@ Polygon Polygon_createSimple (wchar_t *xystring) {
 			my x[i] = xys[2 * i - 1];
 			my y[i] = xys[2 * i];
 			if (i > 1 && my x[i] == my x[i - 1] && my y[i] == my y[i - 1]) {
-				Melder_warning ("Two successives vertices are equal.");
+				Melder_warning (U"Two successives vertices are equal.");
 			}
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Polygon not created.");
+		Melder_throw (U"Polygon not created.");
 	}
 }
 
@@ -82,7 +92,7 @@ Polygon Polygon_createFromRandomVertices (long numberOfVertices, double xmin, do
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Polygon not created.");
+		Melder_throw (U"Polygon not created.");
 	}
 }
 
@@ -207,7 +217,7 @@ static void setWindow (Polygon me, Graphics graphics,
 }
 
 void Polygon_drawMarks (Polygon me, Graphics g, double xmin, double xmax,
-                        double ymin, double ymax, double size_mm, const wchar_t *mark) {
+                        double ymin, double ymax, double size_mm, const char32 *mark) {
 	Graphics_setInner (g);
 	setWindow (me, g, xmin, xmax, ymin, ymax);
 	for (long i = 1; i <= my numberOfPoints; i++) {
@@ -222,7 +232,7 @@ Polygon Sound_to_Polygon (Sound me, int channel, double tmin, double tmax, doubl
 	try {
 		bool clip = ymin < ymax;
 		if (channel < 1 || channel > my ny) {
-			Melder_throw ("Channel does not exist.");
+			Melder_throw (U"Channel does not exist.");
 		}
 		if (tmin >= tmax) {
 			tmin = my xmin;
@@ -235,7 +245,7 @@ Polygon Sound_to_Polygon (Sound me, int channel, double tmin, double tmax, doubl
 			tmax = my xmax;
 		}
 		if (tmin >= my xmax || tmax < my xmin) {
-			Melder_throw ("Invalid domain.");
+			Melder_throw (U"Invalid domain.");
 		}
 		long k = 1, i1 = Sampled_xToHighIndex (me, tmin);
 		long i2 = Sampled_xToLowIndex (me, tmax);
@@ -274,7 +284,7 @@ Polygon Sound_to_Polygon (Sound me, int channel, double tmin, double tmax, doubl
 		his y[k++] = CLIP_Y (level, ymin, ymax);
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ":no Polygon created.");
+		Melder_throw (me, U":no Polygon created.");
 	}
 }
 
@@ -284,20 +294,20 @@ Polygon Sounds_to_Polygon_enclosed (Sound me, Sound thee, int channel, double tm
 	try {
 		bool clip = ymin < ymax;
 		if (my ny > 1 && thy ny > 1 && my ny != thy ny) {
-			Melder_throw ("The numbers of channels of the two sounds have to be equal or 1.");
+			Melder_throw (U"The numbers of channels of the two sounds have to be equal or 1.");
 		}
 
 		long numberOfChannels = my ny > thy ny ? my ny : thy ny;
 
 		if (channel < 1 || channel > numberOfChannels) {
-			Melder_throw ("Channel does not exist.");
+			Melder_throw (U"Channel does not exist.");
 		}
 		// find overlap in the domains  with xmin workaround as in Sound_to_Polygon
 		double xmin1 = my x1 - 0.5 * my dx, xmin2 = thy x1 - 0.5 * thy dx ;
 		double xmin = my xmin > thy xmin ? xmin1 : xmin2;
 		double xmax = my xmax < thy xmax ? xmin1 + my nx * my dx : xmin2 + thy nx * thy dx;
 		if (xmax <= xmin) {
-			Melder_throw ("Domains must overlap.");
+			Melder_throw (U"Domains must overlap.");
 		}
 		if (tmin >= tmax) {
 			tmin = xmin;
@@ -310,7 +320,7 @@ Polygon Sounds_to_Polygon_enclosed (Sound me, Sound thee, int channel, double tm
 			tmax = xmax;
 		}
 		if (tmin >= xmax || tmax < xmin) {
-			Melder_throw ("Invalid domain.");
+			Melder_throw (U"Invalid domain.");
 		}
 
 		long k = 1;
@@ -369,7 +379,7 @@ Polygon Sounds_to_Polygon_enclosed (Sound me, Sound thee, int channel, double tm
 		Melder_assert (k == numberOfPoints);
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no enclosed Polygon created.");
+		Melder_throw (me, U": no enclosed Polygon created.");
 	}
 }
 
@@ -567,7 +577,7 @@ Vertex Vertex_create () {
 		autoVertex me = Thing_new (Vertex);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Vertex not created.");
+		Melder_throw (U"Vertex not created.");
 	}
 }
 
@@ -594,7 +604,7 @@ Vertices Vertices_create () {
 		Vertices me = Thing_new (Vertices);
 		return me;
 	} catch (MelderError) {
-		Melder_throw ("Vertices not created.");
+		Melder_throw (U"Vertices not created.");
 	}
 }
 
@@ -604,7 +614,7 @@ void Vertices_addCopyBack (Vertices me, DLLNode n) {
 		autoDLLNode nc = (DLLNode) Data_copy (n);
 		DLL_addBack ( (DLL) me, nc.transfer());
 	} catch (MelderError) {
-		Melder_throw (me, ": no copy added.");
+		Melder_throw (me, U": no copy added.");
 	}
 }
 
@@ -646,7 +656,7 @@ Polygon Polygon_circularPermutation (Polygon me, long nshift) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not circularly permuted.");
+		Melder_throw (me, U": not circularly permuted.");
 	}
 }
 
@@ -689,7 +699,7 @@ Polygon Polygon_simplify (Polygon me) {
 			np--;
 		}
 		if (np < 3) {
-			Melder_throw ("Not enough points left after doublet removal.");
+			Melder_throw (U"Not enough points left after doublet removal.");
 		}
 		p1 -> numberOfPoints = np;
 
@@ -750,13 +760,13 @@ Polygon Polygon_simplify (Polygon me) {
 			p -> y[p -> numberOfPoints] = p1 -> y[endpos + 1];
 		}
 		if (p -> numberOfPoints < 3) {
-			Melder_throw ("Not enough points left after collinear points removal.");
+			Melder_throw (U"Not enough points left after collinear points removal.");
 		}
 
 		autoPolygon thee = Data_copy (p.peek()); //
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not simplified.");
+		Melder_throw (me, U": not simplified.");
 	}
 }
 
@@ -778,7 +788,7 @@ Vertices Polygon_to_Vertices (Polygon me, bool close) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Vertices created.");
+		Melder_throw (me, U": no Vertices created.");
 	}
 }
 
@@ -790,33 +800,33 @@ void Vertices_print (Vertices me, Vertices thee) {
 	long ns = 0, nc = 0, nt, nt2;
 	//	MelderInfo_open();
 	DLLNode n = my front;
-	MelderInfo_writeLine (L"");
+	MelderInfo_writeLine (U"");
 	while (n != 0) {
 		double x = VERTEX (n) -> x, y = VERTEX (n) -> y, alpha = VERTEX (n) -> alpha;
-		const wchar_t *type = 0, *itype;
+		const char32 *type = 0, *itype;
 		if (VERTEX (n) -> intersect == 0) {
-			type = L"S"; ns++; nt = ns; itype = L"-"; nt2 = 0;
+			type = U"S"; ns++; nt = ns; itype = U"-"; nt2 = 0;
 		} else {
-			type = L"I"; nt = VERTEX (n) -> id; nt2 = VERTEX (VERTEX (n) -> neighbour) -> id;
+			type = U"I"; nt = VERTEX (n) -> id; nt2 = VERTEX (VERTEX (n) -> neighbour) -> id;
 			itype = Melder_integer (VERTEX (n) -> intersect);
 		}
-		MelderInfo_write (type, Melder_integer (nt), L" I", itype, L", (", Melder_double (x), L", ", Melder_double (y), L"), ");
-		MelderInfo_write (Melder_double (alpha), L", E", Melder_integer (VERTEX (n) -> entry), L"(", Melder_integer (nt2), L")\n");
+		MelderInfo_write (type, nt, U" I", itype, U", (", x, U", ", y, U"), ");
+		MelderInfo_write (alpha, U", E", VERTEX (n) -> entry, U"(", nt2, U")\n");
 		n = n -> next;
 	}
-	MelderInfo_writeLine (L"");
+	MelderInfo_writeLine (U"");
 	n = thy front;
 	while (n != 0) {
 		double x = VERTEX (n) -> x, y = VERTEX (n) -> y, alpha = VERTEX (n) -> alpha;
-		const wchar_t *type = 0, *itype;
+		const char32 *type = 0, *itype;
 		if (VERTEX (n) -> intersect == 0) {
-			type = L"C"; nc++; nt = nc; itype = L"-"; nt2 = 0;
+			type = U"C"; nc++; nt = nc; itype = U"-"; nt2 = 0;
 		} else {
-			type = L"I"; nt = VERTEX (n) -> id; nt2 = VERTEX (VERTEX (n) -> neighbour) -> id;
+			type = U"I"; nt = VERTEX (n) -> id; nt2 = VERTEX (VERTEX (n) -> neighbour) -> id;
 			itype = Melder_integer (VERTEX (n) -> intersect);
 		}
-		MelderInfo_write (type, Melder_integer (nt), L" I", itype, L", (", Melder_double (x), L", ", Melder_double (y), L"), ");
-		MelderInfo_write (Melder_double (alpha), L", E", Melder_integer (VERTEX (n) -> entry), L"(", Melder_integer (nt2), L")\n");
+		MelderInfo_write (type, nt, U" I", itype, U", (", x, U", ", y, U"), ");
+		MelderInfo_write (alpha, U", E", VERTEX (n) -> entry, U"(", nt2, U")\n");
 		n = n -> next;
 	}
 	//	MelderInfo_close();
@@ -853,7 +863,7 @@ void Vertices_addIntersections (Vertices me, Vertices thee) {
 		double eps = 1e-15;
 		long id = 0;
 		if (my numberOfNodes < 4 || thy numberOfNodes < 4) {
-			Melder_throw ("We need at least three vertices.");
+			Melder_throw (U"We need at least three vertices.");
 		}
 		DLLNode ni = my front; // the node index  in me (s)
 		while (ni != my back) { // until penultimate
@@ -907,7 +917,7 @@ void Vertices_addIntersections (Vertices me, Vertices thee) {
 			Vertices_print (me, thee);
 		}
 	} catch (MelderError) {
-		Melder_throw ("Intersections not calculated.");
+		Melder_throw (U"Intersections not calculated.");
 	}
 }
 
@@ -979,12 +989,12 @@ Vertices Verticeses_connectClippingPathsUnion (Vertices me, Vertices thee) {
 		VERTEX (his front) -> poly_npoints = poly_npoints;
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no clipping path.");
+		Melder_throw (me, U": no clipping path.");
 	}
 }
 
-Vertices Verticeses_connectClippingPaths (Vertices me, bool use_myinterior, Vertices thee, bool use_thyinterior);
-Vertices Verticeses_connectClippingPaths (Vertices me, bool use_myinterior, Vertices thee, bool use_thyinterior) {
+//Vertices Verticeses_connectClippingPaths (Vertices me, bool use_myinterior, Vertices thee, bool use_thyinterior);
+static Vertices Verticeses_connectClippingPaths (Vertices me, bool /* use_myinterior */, Vertices thee, bool /* use_thyinterior */) {
 	try {
 		autoVertices him = Vertices_create ();
 		DLLNode prevPoly;
@@ -1049,7 +1059,7 @@ Vertices Verticeses_connectClippingPaths (Vertices me, bool use_myinterior, Vert
 		VERTEX (prevPoly) -> poly_npoints = poly_npoints;
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no clipping vertices created.");
+		Melder_throw (me, U": no clipping vertices created.");
 	}
 }
 
@@ -1060,7 +1070,7 @@ Polygon Vertices_to_Polygon (Vertices me, DLLNode *ni) {
 	try {
 		long i = 1, nPoints = VERTEX (n) -> poly_npoints;
 		if (nPoints == 0) {
-			Melder_throw ("No number info.");
+			Melder_throw (U"No number info.");
 		}
 		autoPolygon thee = Polygon_create (nPoints);
 		thy x[i] = VERTEX (n) -> x; thy y[i] = VERTEX (n) -> y;
@@ -1070,7 +1080,7 @@ Polygon Vertices_to_Polygon (Vertices me, DLLNode *ni) {
 		*ni =  n;
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Polygon not created.");
+		Melder_throw (U"Polygon not created.");
 	}
 }
 
@@ -1085,7 +1095,7 @@ Collection Vertices_to_Polygons (Vertices me) {
 		} while (ni != 0);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no polygon collection created.");
+		Melder_throw (me, U": no polygon collection created.");
 	}
 }
 
@@ -1123,7 +1133,7 @@ Collection Polygons_findClippings (Polygon me, bool use_myinterior, Polygon thee
 		Vertices_markEntryPoints (c.peek(), firstLocation);
 		if (Melder_debug == -1) {
 			Vertices_print (s.peek(), c.peek()); MelderInfo_close();
-			Melder_throw ("Bail out of Polygons_findClippings.");
+			Melder_throw (U"Bail out of Polygons_findClippings.");
 		}
 
 		// phase 3: Determine the clipping paths
@@ -1143,7 +1153,7 @@ Collection Polygons_findClippings (Polygon me, bool use_myinterior, Polygon thee
 		autoCollection pols = Vertices_to_Polygons (pgs.peek());
 		return pols.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no union Polygon created.");
+		Melder_throw (me, U": no union Polygon created.");
 	}
 }
 
@@ -1152,7 +1162,7 @@ Collection Polygons_clip (Polygon subject, Polygon clipper) {
 		autoCollection him = Polygons_findClippings (subject, true, clipper, true);
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (subject, ": no union created.");
+		Melder_throw (subject, U": no union created.");
 	}
 }
 
@@ -1162,10 +1172,9 @@ Polygon Polygons_union (Polygon me, Polygon thee) {
 		autoCollection him = Polygons_findClippings (me, false, thee, false);
 		//Melder_assert (his size == 1);
 		autoPolygon p = (Polygon) Collection_subtractItem (him.peek(), 1);
-		Collection_dontOwnItems (him.peek());
 		return p.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no union created.");
+		Melder_throw (me, U": no union created.");
 	}
 }
 
@@ -1207,6 +1216,60 @@ int Polygon_getLocationOfPoint (Polygon me, double x0, double y0, double eps) {
 		}
 	}
 	return nup % 2 == 0 ? Polygon_OUTSIDE : Polygon_INSIDE;
+}
+
+static inline double cross (double x1, double y1, double x2, double y2, double x3, double y3) {
+  return (x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1);
+}
+
+// Code adapted from http://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain#C
+Polygon Polygon_convexHull (Polygon me) {
+	try {
+		if (my numberOfPoints <= 3) {
+			return (Polygon) Data_copy (me);
+		}
+		autoNUMvector<double> x (1, my numberOfPoints), y (1, my numberOfPoints);
+		autoNUMvector<long> hull (1, my numberOfPoints + 2);
+		for (long i = 1; i <= my numberOfPoints; i++) {
+			x[i] = my x[i];
+			y[i] = my y[i];
+		}
+		NUMsort2 <double, double> (my numberOfPoints, x.peek(), y.peek());
+		// lower hull
+		long n = 1;
+		for (long i = 1; i <= my numberOfPoints; i++) {
+			while (n > 2 && cross (x[hull[n - 2]], y[hull[n - 2]], x[hull[n - 1]], y[hull[n - 1]], x[i], y[i]) <= 0) {
+				--n; // counter clockwise turn
+			}
+    		hull[n++] = i;
+		}
+		// upper hull
+		long t = n + 1;
+		for (long i = my numberOfPoints - 1; i >= 1; i--) {
+			while (n >= t && cross (x[hull[n - 2]], y[hull[n - 2]], x[hull[n - 1]], y[hull[n - 1]], x[i], y[i]) <= 0) {
+				--n;
+			}
+    		hull[n++] = i;
+		}
+		autoPolygon thee = Polygon_create (n - 1);
+		for (long i = 1; i <= n - 1; i++) {
+			thy x[i] = x[hull[i]];
+			thy y[i] = y[hull[i]];
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, U": no convex hull polygon created.");
+	}
+}
+
+double Polygon_getAreaOfConvexHull (Polygon me) {
+	try {
+		autoPolygon thee = Polygon_convexHull (me);
+		return Polygon_area (thee.peek());
+	} catch (MelderError) {
+		Melder_clearError ();
+		return NUMundefined;
+	}
 }
 
 /* End of file Polygon_extensions.cpp */

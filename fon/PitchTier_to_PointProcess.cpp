@@ -1,6 +1,6 @@
 /* PitchTier_to_PointProcess.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 /*
  * pb 2002/07/16 GPL
- * pb 2007/08/12 wchar_t
+ * pb 2007/08/12 wchar
  * pb 2011/06/05
  */
 
@@ -52,7 +52,7 @@ PointProcess PitchTier_to_PointProcess (PitchTier me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to PointProcess.");
+		Melder_throw (me, U": not converted to PointProcess.");
 	}
 }
 
@@ -71,7 +71,7 @@ PointProcess PitchTier_Pitch_to_PointProcess (PitchTier me, Pitch vuv) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, " & ", vuv, ": not converted to PointProcess.");
+		Melder_throw (me, U" & ", vuv, U": not converted to PointProcess.");
 	}
 }
 
@@ -102,7 +102,7 @@ PointProcess PitchTier_Point_to_PointProcess (PitchTier me, PointProcess vuv, do
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, " & ", vuv, ": not converted to PointProcess.");
+		Melder_throw (me, U" & ", vuv, U": not converted to PointProcess.");
 	}
 }
 
@@ -117,7 +117,7 @@ PitchTier PointProcess_to_PitchTier (PointProcess me, double maximumInterval) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to PitchTier.");
+		Melder_throw (me, U": not converted to PitchTier.");
 	}
 }
 
@@ -127,13 +127,13 @@ PitchTier Pitch_PointProcess_to_PitchTier (Pitch me, PointProcess pp) {
 		autoPitchTier thee = PitchTier_PointProcess_to_PitchTier (temp.peek(), pp);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, " & ", pp, ": not converted to PitchTier.");
+		Melder_throw (me, U" & ", pp, U": not converted to PitchTier.");
 	}
 }
 
 PitchTier PitchTier_PointProcess_to_PitchTier (PitchTier me, PointProcess pp) {
 	try {
-		if (my points -> size == 0) Melder_throw ("No pitch points.");
+		if (my points -> size == 0) Melder_throw (U"No pitch points.");
 		autoPitchTier thee = PitchTier_create (pp -> xmin, pp -> xmax);
 		for (long i = 1; i <= pp -> nt; i ++) {
 			double time = pp -> t [i];
@@ -142,19 +142,19 @@ PitchTier PitchTier_PointProcess_to_PitchTier (PitchTier me, PointProcess pp) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, " & ", pp, ": not converted to PitchTier.");
+		Melder_throw (me, U" & ", pp, U": not converted to PitchTier.");
 	}
 }
 
 TableOfReal PitchTier_downto_TableOfReal (PitchTier me, int useSemitones) {
 	try {
-		autoTableOfReal thee = RealTier_downto_TableOfReal (me, L"Time", L"F0");
+		autoTableOfReal thee = RealTier_downto_TableOfReal (me, U"Time", U"F0");
 		if (useSemitones)
 			for (long i = 1; i <= thy numberOfRows; i ++)
 				thy data [i] [2] = NUMhertzToSemitones (thy data [i] [2]);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to TableOfReal.");
+		Melder_throw (me, U": not converted to TableOfReal.");
 	}
 }
 

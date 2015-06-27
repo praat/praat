@@ -1,6 +1,6 @@
 /* PitchTier.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,13 +24,13 @@ Thing_implement (PitchTier, RealTier, 0);
 
 void structPitchTier :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine (L"Time domain:");
-	MelderInfo_writeLine (L"   Start time: ", Melder_double (xmin), L" seconds");
-	MelderInfo_writeLine (L"   End time: ", Melder_double (xmax), L" seconds");
-	MelderInfo_writeLine (L"   Total duration: ", Melder_double (xmax - xmin), L" seconds");
-	MelderInfo_writeLine (L"Number of points: ", Melder_integer (points -> size));
-	MelderInfo_writeLine (L"Minimum pitch value: ", Melder_double (RealTier_getMinimumValue (this)), L" Hz");
-	MelderInfo_writeLine (L"Maximum pitch value: ", Melder_double (RealTier_getMaximumValue (this)), L" Hz");
+	MelderInfo_writeLine (U"Time domain:");
+	MelderInfo_writeLine (U"   Start time: ", xmin, U" seconds");
+	MelderInfo_writeLine (U"   End time: ", xmax, U" seconds");
+	MelderInfo_writeLine (U"   Total duration: ", xmax - xmin, U" seconds");
+	MelderInfo_writeLine (U"Number of points: ", points -> size);
+	MelderInfo_writeLine (U"Minimum pitch value: ", RealTier_getMinimumValue (this), U" Hz");
+	MelderInfo_writeLine (U"Maximum pitch value: ", RealTier_getMaximumValue (this), U" Hz");
 }
 
 PitchTier PitchTier_create (double tmin, double tmax) {
@@ -39,21 +39,21 @@ PitchTier PitchTier_create (double tmin, double tmax) {
 		RealTier_init (me.peek(), tmin, tmax);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("PitchTier not created.");
+		Melder_throw (U"PitchTier not created.");
 	}
 }
 
 void PitchTier_draw (PitchTier me, Graphics g, double tmin, double tmax,
-	double fmin, double fmax, int garnish, const wchar_t *method)
+	double fmin, double fmax, int garnish, const char32 *method)
 {
-	RealTier_draw (me, g, tmin, tmax, fmin, fmax, garnish, method, L"Frequency (Hz)");
+	RealTier_draw (me, g, tmin, tmax, fmin, fmax, garnish, method, U"Frequency (Hz)");
 }
 
 PitchTier PointProcess_upto_PitchTier (PointProcess me, double frequency) {
 	try {
 		return (PitchTier) PointProcess_upto_RealTier (me, frequency, classPitchTier);
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to PitchTier.");
+		Melder_throw (me, U": not converted to PitchTier.");
 	}
 }
 
@@ -96,7 +96,7 @@ void PitchTier_writeToPitchTierSpreadsheetFile (PitchTier me, MelderFile file) {
 	try {
 		PitchTier_writeToSpreadsheetFile (me, file, TRUE);
 	} catch (MelderError) {
-		Melder_throw (me, " not written to tab-separated PitchTier file.");
+		Melder_throw (me, U" not written to tab-separated PitchTier file.");
 	}
 }
 
@@ -104,7 +104,7 @@ void PitchTier_writeToHeaderlessSpreadsheetFile (PitchTier me, MelderFile file) 
 	try {
 		PitchTier_writeToSpreadsheetFile (me, file, FALSE);
 	} catch (MelderError) {
-		Melder_throw (me, " not written to tab-separated table file.");
+		Melder_throw (me, U" not written to tab-separated table file.");
 	}
 }
 
@@ -118,11 +118,11 @@ void PitchTier_shiftFrequencies (PitchTier me, double tmin, double tmax, double 
 				case kPitch_unit_HERTZ: {	
 					frequency += shift;
 					if (frequency <= 0.0)
-						Melder_throw ("The resulting frequency has to be greater than 0 Hz.");
+						Melder_throw (U"The resulting frequency has to be greater than 0 Hz.");
 				} break; case kPitch_unit_MEL: {
 					frequency = NUMhertzToMel (frequency) + shift;
 					if (frequency <= 0.0)
-						Melder_throw ("The resulting frequency has to be greater than 0 mel.");
+						Melder_throw (U"The resulting frequency has to be greater than 0 mel.");
 					frequency = NUMmelToHertz (frequency);
 				} break; case kPitch_unit_LOG_HERTZ: {
 					frequency = pow (10.0, log10 (frequency) + shift);
@@ -131,14 +131,14 @@ void PitchTier_shiftFrequencies (PitchTier me, double tmin, double tmax, double 
 				} break; case kPitch_unit_ERB: {
 					frequency = NUMhertzToErb (frequency) + shift;
 					if (frequency <= 0.0)
-						Melder_throw ("The resulting frequency has to be greater than 0 ERB.");
+						Melder_throw (U"The resulting frequency has to be greater than 0 ERB.");
 					frequency = NUMerbToHertz (frequency);
 				}
 			}
 			point -> value = frequency;
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": not all frequencies were shifted.");
+		Melder_throw (me, U": not all frequencies were shifted.");
 	}
 }
 

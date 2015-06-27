@@ -49,11 +49,9 @@
 
 /********** Conversion of Roman native and generic string encodings. **********/
 
-wchar_t * Longchar_nativizeW (const wchar_t *generic, wchar_t *native, int educateQuotes);
 char32_t * Longchar_nativize32 (const char32_t *generic, char32_t *native, int educateQuotes);
 
 char * Longchar_genericize (const char *native, char *generic);
-wchar_t *Longchar_genericizeW (const wchar_t *native, wchar_t *generic);
 char32_t *Longchar_genericize32 (const char32_t *native, char32_t *generic);
 /*
 	Function:
@@ -88,7 +86,7 @@ typedef struct structLongchar_Info {
 	*Longchar_Info;
 
 Longchar_Info Longchar_getInfo (char kar1, char kar2);
-Longchar_Info Longchar_getInfoFromNative (wchar_t kar);
+Longchar_Info Longchar_getInfoFromNative (char32_t kar);
 /* If no info found, these two routines return the info for a space. */
 
 /*

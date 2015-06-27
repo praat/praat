@@ -38,7 +38,7 @@ Matrix Eigen_and_Matrix_project (I, thou, long numberOfComponents) {
 		Eigen_and_Matrix_project_into (me, thee, &thim);
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Projection Matrix not created.");
+		Melder_throw (U"Projection Matrix not created.");
 	}
 }
 
@@ -47,12 +47,12 @@ void Eigen_and_Matrix_project_into (I, thou, Any void_pointer_to_him) {
 	Matrix him = * ( (Matrix *) void_pointer_to_him);
 
 	if (my dimension != thy ny) Melder_throw
-		("The number of rows in the 'from' Matrix must equal the dimension of the eigenvector.");
+		(U"The number of rows in the 'from' Matrix must equal the dimension of the eigenvector.");
 	if (his nx != thy nx) {
-		Melder_throw ("The number of columns in the Matrixes must be equal.");
+		Melder_throw (U"The number of columns in the Matrixes must be equal.");
 	}
 	if (his ny > my numberOfEigenvalues) Melder_throw
-		("The number of rows in the 'to' Matrix cannot exceed the number of eigenvectors.");
+		(U"The number of rows in the 'to' Matrix cannot exceed the number of eigenvectors.");
 
 	for (long i = 1; i <= thy nx; i++) {
 		for (long j = 1; j <= his ny; j++) {

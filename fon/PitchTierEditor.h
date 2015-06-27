@@ -30,33 +30,33 @@ Thing_define (PitchTierEditor, RealTierEditor) {
 		override;
 	double v_minimumLegalValue ()
 		override { return 0.0; }
-	const wchar_t * v_quantityText ()
-		override { return L"Frequency (Hz)"; }
-	const wchar_t * v_quantityKey ()
-		override { return L"Frequency"; }
-	const wchar_t * v_rightTickUnits ()
-		override { return L" Hz"; }
+	const char32 * v_quantityText ()
+		override { return U"Frequency (Hz)"; }
+	const char32 * v_quantityKey ()
+		override { return U"Frequency"; }
+	const char32 * v_rightTickUnits ()
+		override { return U" Hz"; }
 	double v_defaultYmin ()
 		override { return 50.0; }
 	double v_defaultYmax ()
 		override { return 600.0; }
-	const wchar_t * v_setRangeTitle ()
-		override { return L"Set frequency range..."; }
-	const wchar_t * v_defaultYminText ()
-		override { return L"50.0"; }
-	const wchar_t * v_defaultYmaxText ()
-		override { return L"600.0"; }
-	const wchar_t * v_yminText ()
-		override { return L"Minimum frequency (Hz)"; }
-	const wchar_t * v_ymaxText ()
-		override { return L"Maximum frequency (Hz)"; }
-	const wchar_t * v_yminKey ()
-		override { return L"Minimum frequency"; }
-	const wchar_t * v_ymaxKey ()
-		override { return L"Maximum frequency"; }
+	const char32 * v_setRangeTitle ()
+		override { return U"Set frequency range..."; }
+	const char32 * v_defaultYminText ()
+		override { return U"50.0"; }
+	const char32 * v_defaultYmaxText ()
+		override { return U"600.0"; }
+	const char32 * v_yminText ()
+		override { return U"Minimum frequency (Hz)"; }
+	const char32 * v_ymaxText ()
+		override { return U"Maximum frequency (Hz)"; }
+	const char32 * v_yminKey ()
+		override { return U"Minimum frequency"; }
+	const char32 * v_ymaxKey ()
+		override { return U"Maximum frequency"; }
 };
 
-PitchTierEditor PitchTierEditor_create (const wchar_t *title,
+PitchTierEditor PitchTierEditor_create (const char32 *title,
 	PitchTier pitch,
 	Sound sound,   // may be NULL
 	bool ownSound);

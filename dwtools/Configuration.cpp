@@ -27,7 +27,7 @@
  djmw 20050314 Configuration_draw crashed when rowlabel==NULL
  djmw 20061021 printf expects %ld for 'long int'
  djmw 20061212 Changed info to Melder_writeLine<x> format.
- djmw 20071009 wchar_t
+ djmw 20071009 wchar
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
  djmw 20100302 Extra test in Configuration_rotate
  djmw 20110304 Thing_new
@@ -64,9 +64,9 @@ Thing_implement (Configuration, TableOfReal, 0);
 
 void structConfiguration :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine (L"Number of points: ", Melder_integer (numberOfRows));
-	MelderInfo_writeLine (L"Number of dimensions: ", Melder_integer (numberOfColumns));
-	MelderInfo_writeLine (L"Metric: ", Melder_integer (metric));
+	MelderInfo_writeLine (U"Number of points: ", numberOfRows);
+	MelderInfo_writeLine (U"Number of dimensions: ", numberOfColumns);
+	MelderInfo_writeLine (U"Metric: ", metric);
 }
 
 Configuration Configuration_create (long numberOfPoints,
@@ -76,14 +76,14 @@ Configuration Configuration_create (long numberOfPoints,
 		TableOfReal_init (me.peek(), numberOfPoints, numberOfDimensions);
 		my w = NUMvector<double> (1, numberOfDimensions);
 		TableOfReal_setSequentialRowLabels (me.peek(), 0, 0, NULL, 1, 1);
-		TableOfReal_setSequentialColumnLabels (me.peek(), 0, 0, L"dimension ", 1, 1);
+		TableOfReal_setSequentialColumnLabels (me.peek(), 0, 0, U"dimension ", 1, 1);
 
 		my metric = 2;
 		Configuration_setDefaultWeights (me.peek());
 		Configuration_randomize (me.peek());
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Configuration not created.");
+		Melder_throw (U"Configuration not created.");
 	}
 }
 
@@ -309,7 +309,7 @@ Configuration Configuration_varimax (Configuration me, int normalizeRows,
 		            maximumNumberOfIterations, tolerance);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": varimax rotation not performed.");
+		Melder_throw (me, U": varimax rotation not performed.");
 	}
 }
 
@@ -319,7 +319,7 @@ Configuration Configuration_congruenceRotation (Configuration me, Configuration 
 		autoConfiguration him = Configuration_and_AffineTransform_to_Configuration (me, at.peek());
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": congruence rotation not performed.");
+		Melder_throw (me, U": congruence rotation not performed.");
 	}
 }
 
@@ -333,12 +333,12 @@ void Configuration_rotateToPrincipalDirections (Configuration me) {
 		NUMvector_free (my data, 1);
 		my data = m.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not rotated to principal directions.");
+		Melder_throw (me, U": not rotated to principal directions.");
 	}
 }
 
 void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoordinate, double xmin, double xmax,
-                         double ymin, double ymax, int labelSize, int useRowLabels, const wchar_t *label, int garnish) {
+                         double ymin, double ymax, int labelSize, int useRowLabels, const char32 *label, int garnish) {
 	long nPoints = my numberOfRows, numberOfDimensions = my numberOfColumns;
 
 	if (numberOfDimensions > 1 && (xCoordinate > numberOfDimensions ||
@@ -379,7 +379,7 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 	Graphics_setFontSize (g, labelSize);
 	for (long i = 1; i <= my numberOfRows; i++) {
 		if (x[i] >= xmin && x[i] <= xmax && y[i] >= ymin && y[i] <= ymax) {
-			wchar_t const *plotLabel = useRowLabels ? my rowLabels[i] : label;
+			const char32 *plotLabel = useRowLabels ? my rowLabels[i] : label;
 			if (NUMstring_containsPrintableCharacter (plotLabel)) {
 				Graphics_text (g, x[i], y[i], plotLabel);
 			} else {
@@ -404,12 +404,12 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 		}
 	}
 
-	if (noLabel > 0) Melder_warning (L"Configuration_draw: ", Melder_integer (noLabel), L" from ", Melder_integer (my numberOfRows),
-		                                 L" labels are not visible because they are empty or they contain only spaces or they contain only non-printable characters");
+	if (noLabel > 0) Melder_warning (U"Configuration_draw: ", noLabel, U" from ", my numberOfRows,
+		                                 U" labels are not visible because they are empty or they contain only spaces or they contain only non-printable characters");
 }
 
 void Configuration_drawConcentrationEllipses (Configuration me, Graphics g,
-        double scale, int confidence, const wchar_t *label, long d1, long d2, double xmin, double xmax,
+        double scale, int confidence, const char32 *label, long d1, long d2, double xmin, double xmax,
         double ymin, double ymax, int fontSize, int garnish) {
 	autoSSCPs sscps = TableOfReal_to_SSCPs_byLabel (me);
 	SSCPs_drawConcentrationEllipses (sscps.peek(), g, scale, confidence, label,
@@ -425,7 +425,7 @@ Configuration TableOfReal_to_Configuration (I) {
 		TableOfReal_copyLabels (me, thee.peek(), 1, 1);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted.");
+		Melder_throw (me, U": not converted.");
 	}
 }
 
@@ -439,7 +439,7 @@ Configuration TableOfReal_to_Configuration_pca (TableOfReal me, long numberOfDim
 		autoConfiguration thee = PCA_and_TableOfReal_to_Configuration (pca.peek(), me, numberOfDimensions);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": pca not performed.");
+		Melder_throw (me, U": pca not performed.");
 	}
 }
 
@@ -486,29 +486,29 @@ Configuration Configuration_createLetterRExample (int choice) {
 
 		if (choice == 2) {
 			x = x2; y = y2;
-			Thing_setName (me.peek(), L"R_fit");
+			Thing_setName (me.peek(), U"R_fit");
 		} else {
 			x = x1; y = y1;
-			Thing_setName (me.peek(), L"R");
+			Thing_setName (me.peek(), U"R");
 		}
 
 		for (long i = 1; i <= 32; i++) {
-			wchar_t s[20];
-			swprintf (s, 20, L"%ld", i);
+			char32 s[20];
+			Melder_sprint (s,20, i);
 			TableOfReal_setRowLabel (me.peek(), i, s);
 			my data [i][1] = x[i];
 			my data [i][2] = y[i];
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Letter R Configuration not created.");
+		Melder_throw (U"Letter R Configuration not created.");
 	}
 }
 
 Configuration Configuration_createCarrollWishExample () {
 	double  x[10] = {0, -1, 0, 1, -1, 0, 1, -1,  0,  1};
 	double  y[10] = {0,  1, 1, 1,  0, 0, 0, -1, -1, -1};
-	wchar_t const *label[] = { L"", L"A", L"B", L"C", L"D", L"E", L"F", L"G", L"H", L"I"};
+	char32 const *label[] = { U"", U"A", U"B", U"C", U"D", U"E", U"F", U"G", U"H", U"I"};
 	try {
 		long nObjects = 9;
 		autoConfiguration me = Configuration_create (nObjects, 2);
@@ -519,7 +519,7 @@ Configuration Configuration_createCarrollWishExample () {
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Carroll Wish Configuration not created.");
+		Melder_throw (U"Carroll Wish Configuration not created.");
 	}
 }
 
@@ -533,7 +533,7 @@ Configurations Configurations_create () {
 		Ordered_init (me.peek(), classConfiguration, 10);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Configurations not created.");
+		Melder_throw (U"Configurations not created.");
 	}
 }
 

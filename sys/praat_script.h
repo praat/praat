@@ -28,9 +28,9 @@ void praat_executeScriptFromFileName (const char32 *fileName, int narg, Stackel 
 void praat_executeScriptFromFileNameWithArguments (const char32 *nameAndArguments);
 void praat_executeScriptFromText (char32 *text);
 void praat_executeScriptFromDialog (Any dia);
-void DO_praat_runScript (UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter_dummy, const wchar_t *invokingButtonTitle, bool modified, void *dummy);
-void DO_RunTheScriptFromAnyAddedMenuCommand (UiForm sendingForm_dummy, int narg, Stackel args, const wchar_t *scriptPath, Interpreter interpreter_dummy, const wchar_t *invokingButtonTitle, bool modified, void *dummy);
-void DO_RunTheScriptFromAnyAddedEditorCommand (Editor editor, const wchar_t *script);
+void DO_praat_runScript (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter_dummy, const char32 *invokingButtonTitle, bool modified, void *dummy);
+void DO_RunTheScriptFromAnyAddedMenuCommand (UiForm sendingForm_dummy, int narg, Stackel args, const char32 *scriptPath, Interpreter interpreter_dummy, const char32 *invokingButtonTitle, bool modified, void *dummy);
+void DO_RunTheScriptFromAnyAddedEditorCommand (Editor editor, const char32 *script);
 
 /* End of file praat_script.h */
 #endif

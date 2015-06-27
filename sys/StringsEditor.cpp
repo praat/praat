@@ -30,12 +30,12 @@ void structStringsEditor :: v_destroy () {
 static void menu_cb_help (EDITOR_ARGS) {
 	EDITOR_IAM (StringsEditor);
 	(void) me;
-	Melder_help (L"StringsEditor");
+	Melder_help (U"StringsEditor");
 }
 
 void structStringsEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	StringsEditor_Parent :: v_createHelpMenuItems (menu);
-	EditorMenu_addCommand (menu, L"StringsEditor help", '?', menu_cb_help);
+	EditorMenu_addCommand (menu, U"StringsEditor help", U'?', menu_cb_help);
 }
 
 static void updateList (StringsEditor me) {
@@ -55,7 +55,7 @@ static void gui_button_cb_insert (I, GuiButtonEvent event) {
 	long numberOfSelected, *selected = GuiList_getSelectedPositions (my list, & numberOfSelected);
 	long position = selected == NULL ? strings -> numberOfStrings + 1 : selected [1];
 	NUMvector_free (selected, 1);
-	wchar_t *text = GuiText_getString (my text);
+	char32 *text = GuiText_getString (my text);
 	/*
 	 * Change the data.
 	 */
@@ -77,7 +77,7 @@ static void gui_button_cb_append (I, GuiButtonEvent event) {
 	(void) event;
 	iam (StringsEditor);
 	Strings strings = (Strings) my data;
-	wchar_t *text = GuiText_getString (my text);
+	char32 *text = GuiText_getString (my text);
 	/*
 	 * Change the data.
 	 */
@@ -112,7 +112,7 @@ static void gui_button_cb_replace (I, GuiButtonEvent event) {
 	iam (StringsEditor);
 	Strings strings = (Strings) my data;
 	long numberOfSelected, *selected = GuiList_getSelectedPositions (my list, & numberOfSelected);
-	wchar_t *text = GuiText_getString (my text);
+	char32 *text = GuiText_getString (my text);
 	for (long iselected = 1; iselected <= numberOfSelected; iselected ++) {
 		Strings_replace (strings, selected [iselected], text);
 		GuiList_replaceItem (my list, text, selected [iselected]);
@@ -135,24 +135,24 @@ void structStringsEditor :: v_createChildren () {
 	GuiThing_show (list);
 
 	text = GuiText_createShown (d_windowForm, 0, 0, -40 - Gui_TEXTFIELD_HEIGHT, -40, 0);
-	GuiButton_createShown (d_windowForm, 10, 100, -10 - Gui_PUSHBUTTON_HEIGHT, -10, L"Insert", gui_button_cb_insert, this, GuiButton_DEFAULT);
-	GuiButton_createShown (d_windowForm, 110, 200, -10 - Gui_PUSHBUTTON_HEIGHT, -10, L"Append", gui_button_cb_append, this, 0);
-	GuiButton_createShown (d_windowForm, 210, 300, -10 - Gui_PUSHBUTTON_HEIGHT, -10, L"Replace", gui_button_cb_replace, this, 0);
-	GuiButton_createShown (d_windowForm, 310, 400, -10 - Gui_PUSHBUTTON_HEIGHT, -10, L"Remove", gui_button_cb_remove, this, 0);	
+	GuiButton_createShown (d_windowForm, 10, 100, -10 - Gui_PUSHBUTTON_HEIGHT, -10, U"Insert", gui_button_cb_insert, this, GuiButton_DEFAULT);
+	GuiButton_createShown (d_windowForm, 110, 200, -10 - Gui_PUSHBUTTON_HEIGHT, -10, U"Append", gui_button_cb_append, this, 0);
+	GuiButton_createShown (d_windowForm, 210, 300, -10 - Gui_PUSHBUTTON_HEIGHT, -10, U"Replace", gui_button_cb_replace, this, 0);
+	GuiButton_createShown (d_windowForm, 310, 400, -10 - Gui_PUSHBUTTON_HEIGHT, -10, U"Remove", gui_button_cb_remove, this, 0);
 }
 
 void structStringsEditor :: v_dataChanged () {
 	updateList (this);
 }
 
-StringsEditor StringsEditor_create (const wchar_t *title, Strings data) {
+StringsEditor StringsEditor_create (const char32 *title, Strings data) {
 	try {
 		autoStringsEditor me = Thing_new (StringsEditor);
 		Editor_init (me.peek(), 20, 40, 600, 600, title, data);
 		updateList (me.peek());
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Strings window not created.");
+		Melder_throw (U"Strings window not created.");
 	}
 }
 

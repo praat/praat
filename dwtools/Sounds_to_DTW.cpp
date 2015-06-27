@@ -37,7 +37,7 @@ DTW Sounds_to_DTW (Sound me, Sound thee, double analysisWidth, double dt, double
         DTW_and_Polygon_findPathInside (him.peek(), p.peek(), slope, 0);
 		return him.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no DTW created.");
+		Melder_throw (me, U": no DTW created.");
 	}
 }
 

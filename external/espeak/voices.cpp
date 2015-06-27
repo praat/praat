@@ -1002,7 +1002,7 @@ voice_t *LoadVoice(const char *vname, int control)
 	{
 		if((ix = SelectPhonemeTableName(phonemes_name)) < 0)
 		{
-			Melder_throw ("Unknown phoneme table: ", phonemes_name);
+			Melder_throw (U"Unknown phoneme table: ", Melder_peek8to32 (phonemes_name));
 		}
 		voice->phoneme_tab_ix = ix;
 		new_translator->phoneme_tab_ix = ix;

@@ -64,17 +64,9 @@ SimpleDouble SimpleDouble_create (double number) {
 
 Thing_implement (SimpleString, Data, 0);
 
-SimpleString SimpleString_create (const wchar_t *string) {
+SimpleString SimpleString_create (const char32 *string) {
 	autoSimpleString me = Thing_new (SimpleString);
-	my string = Melder_wcsdup (string);
-	return me.transfer();
-}
-
-Thing_implement (SimpleString32, Data, 0);
-
-SimpleString32 SimpleString32_create (const char32 *string) {
-	autoSimpleString32 me = Thing_new (SimpleString32);
-	my string = Melder_str32dup (string);
+	my string = Melder_dup (string);
 	return me.transfer();
 }
 

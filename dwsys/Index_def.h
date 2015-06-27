@@ -29,8 +29,8 @@ oo_DEFINE_CLASS (Index, Data)
 	oo_LONG_VECTOR (classIndex, numberOfElements)
 
 	#if oo_DECLARING
-		// overridden methods:
-			virtual void v_info ();
+		void v_info ()
+			override;
 	#endif
 
 oo_END_CLASS(Index)	

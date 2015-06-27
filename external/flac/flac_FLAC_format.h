@@ -1005,9 +1005,11 @@ FLAC_API FLAC__bool FLAC__format_picture_is_legal(const FLAC__StreamMetadata_Pic
 
 // pb 20080502
 #ifdef _WIN32
-	wchar_t * Melder_peekUtf8ToWcs (const char *string);
-	const uint16_t * Melder_peekWcsToUtf16 (const wchar_t *string);
-	#define fopen(filename,mode)  _wfopen (Melder_peekWcsToUtf16 (Melder_peekUtf8ToWcs (filename)), L"" mode)
+	#ifndef __cplusplus
+		uint32_t * Melder_peek8to32 (const char *string);
+		const uint16_t * Melder_peek32to16 (const uint32_t *string);
+	#endif
+	#define fopen(filename,mode)  _wfopen (Melder_peek32to16 (Melder_peek8to32 (filename)), L"" mode)
 #endif
 
 #ifdef __cplusplus

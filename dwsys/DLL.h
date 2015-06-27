@@ -49,8 +49,8 @@ Thing_define (DLL, Thing) {
 
 DLLNode DLLNode_create (Data data); // DLLNode owns the data
 
-void DLL_init (I);
-DLL DLL_create();
+void DLL_init (DLL me);
+DLL DLL_create ();
 
 void DLL_addFront (DLL me, DLLNode n);
 void DLL_addBack (DLL me, DLLNode n);

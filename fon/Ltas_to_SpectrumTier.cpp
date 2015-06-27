@@ -23,7 +23,7 @@ SpectrumTier Ltas_to_SpectrumTier_peaks (Ltas me) {
 	try {
 		return (SpectrumTier) Vector_to_RealTier_peaks (me, 1, classSpectrumTier);
 	} catch (MelderError) {
-		Melder_throw (me, ": peaks not analyzed as SpectrumTier.");
+		Melder_throw (me, U": peaks not analyzed as SpectrumTier.");
 	}
 }
 

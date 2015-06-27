@@ -52,13 +52,13 @@ Thing_implement (CC, Sampled, 1);
 
 void structCC :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine (L"Time domain:", Melder_double (xmin), L" to ", Melder_double (xmax), L" seconds");
-	MelderInfo_writeLine (L"Number of frames: ", Melder_integer (nx));
-	MelderInfo_writeLine (L"Time step: ", Melder_double (dx), L" seconds");
-	MelderInfo_writeLine (L"First frame at: ", Melder_double (x1), L" seconds");
-	MelderInfo_writeLine (L"Number of coefficients: ", Melder_integer (maximumNumberOfCoefficients));
-	MelderInfo_writeLine (L"Minimum frequency: ", Melder_double (fmin), L" Hz");
-	MelderInfo_writeLine (L"Maximum frequency: ", Melder_double (fmax), L" Hz");
+	MelderInfo_writeLine (U"Time domain:", xmin, U" to ", xmax, U" seconds");
+	MelderInfo_writeLine (U"Number of frames: ", nx);
+	MelderInfo_writeLine (U"Time step: ", dx, U" seconds");
+	MelderInfo_writeLine (U"First frame at: ", x1, U" seconds");
+	MelderInfo_writeLine (U"Number of coefficients: ", maximumNumberOfCoefficients);
+	MelderInfo_writeLine (U"Minimum frequency: ", fmin, U" Hz");
+	MelderInfo_writeLine (U"Maximum frequency: ", fmax, U" Hz");
 }
 
 void CC_Frame_init (CC_Frame me, long numberOfCoefficients) {
@@ -90,7 +90,7 @@ Matrix CC_to_Matrix (I) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Matrix.");
+		Melder_throw (me, U": not converted to Matrix.");
 	}
 }
 
@@ -103,9 +103,9 @@ void CC_paint (I, Graphics g, double xmin, double xmax, long cmin,
 
 	if (garnish) {
 		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_textBottom (g, 1, L"Time (s)");
+		Graphics_textBottom (g, 1, U"Time (s)");
 		Graphics_marksLeft (g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, L"Coefficients");
+		Graphics_textLeft (g, 1, U"Coefficients");
 	}
 }
 

@@ -27,7 +27,7 @@ void Ltas_fitTiltLine (Ltas me, double fmin, double fmax, bool lnf, int method, 
 		}
 		long ifmin, ifmax, numberOfSamples = Sampled_getWindowSamples (me, fmin, fmax, &ifmin, &ifmax);
 		if (numberOfSamples < 2) {
-			Melder_throw ("There must be at least two data points to fit a line.");
+			Melder_throw (U"There must be at least two data points to fit a line.");
 		}
 		autoNUMvector<double> x (1, numberOfSamples);
 		autoNUMvector<double> y (1, numberOfSamples);
@@ -42,7 +42,7 @@ void Ltas_fitTiltLine (Ltas me, double fmin, double fmax, bool lnf, int method, 
 		}
 		NUMlineFit (x.peek(), y.peek(), numberOfSamples, a, b, method);
 	} catch (MelderError) {
-		Melder_throw ("Tilt line not determined.");
+		Melder_throw (U"Tilt line not determined.");
 	}
 }
 

@@ -1,4 +1,4 @@
-/* NUMhuber.c
+/* NUMhuber.cpp
 *
 * Copyright (C) 1994-2008 David Weenink
 *
@@ -29,7 +29,7 @@ void NUMmad (double *x, long n, double *location, int wantlocation, double *mad,
 
 	*mad = NUMundefined;
 	if (n < 1) {
-		Melder_throw ("The dimension must be at least 1");
+		Melder_throw (U"The dimension must be at least 1");
 	}
 	if (n == 1) {
 		*location = x[1];
@@ -80,7 +80,7 @@ void NUMstatistics_huber (double *x, long n, double *location, int wantlocation,
 		*scale = mad;
 	}
 	if (*scale == 0) {
-		Melder_throw ("Scale is zero.");
+		Melder_throw (U"Scale is zero.");
 	}
 
 	double mu0, mu1 = *location;

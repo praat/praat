@@ -38,9 +38,9 @@ int NUMstrcmp (const char *s1, const char *s2);
 		(s2 == NULL ? 1 : strcmp (s1, s2));
 */
 
-int NUMstring_containsPrintableCharacter (const wchar_t *s);
-void NUMstring_chopWhiteSpaceAtExtremes_inline (wchar_t *string);
-double *NUMstring_to_numbers (const wchar_t *s, long *numbers_found);
+int NUMstring_containsPrintableCharacter (const char32 *s);
+void NUMstring_chopWhiteSpaceAtExtremes_inline (char32 *string);
+double *NUMstring_to_numbers (const char32 *s, long *numbers_found);
 /* return array with the number of numbers found */
 
 /*
@@ -48,14 +48,14 @@ double *NUMstring_to_numbers (const wchar_t *s, long *numbers_found);
  * 1, 4, 2, 3, 4, 5, 6, 7, 4, 3, 3, 4, 5, 4, 3, 2
  * Overlap is allowed. Ranges can go up and down.
  */
-long *NUMstring_getElementsOfRanges (const wchar_t *ranges, long maximumElement, long *numberOfElements, long *numberOfMultiples, const wchar_t *elementType, bool sortedUniques);
+long *NUMstring_getElementsOfRanges (const char32 *ranges, long maximumElement, long *numberOfElements, long *numberOfMultiples, const char32 *elementType, bool sortedUniques);
 
-wchar_t * NUMstring_timeNoDot (double time);
-int NUMstrings_equal (const wchar_t **s1, const wchar_t **s2, long lo, long hi);
-void NUMstrings_copyElements (wchar_t **from, wchar_t**to, long lo, long hi);
-void NUMstrings_free (wchar_t **s, long lo, long hi);
-int NUMstrings_setSequentialNumbering (wchar_t **s, long lo, long hi,
-	const wchar_t *precursor, long number, long increment, int asArray);
+char32 * NUMstring_timeNoDot (double time);
+int NUMstrings_equal (const char32 **s1, const char32 **s2, long lo, long hi);
+void NUMstrings_copyElements (char32 **from, char32**to, long lo, long hi);
+void NUMstrings_free (char32 **s, long lo, long hi);
+int NUMstrings_setSequentialNumbering (char32 **s, long lo, long hi,
+	const char32 *precursor, long number, long increment, int asArray);
 /*
 	Set s[lo]   = precursor<number>
 	    s[lo+1] = precursor<number+1>
@@ -63,21 +63,21 @@ int NUMstrings_setSequentialNumbering (wchar_t **s, long lo, long hi,
 		s[hi]   = precursor<number+hi-lo>
 */
 
-wchar_t **NUMstrings_copy (wchar_t **from, long lo, long hi);
+char32 **NUMstrings_copy (char32 **from, long lo, long hi);
 
-regexp *NUMregexp_compile (const wchar_t *regexp);
+regexp *NUMregexp_compile (const char32 *regexp);
 /* Compiles a regular expression to a datastructure used by the regexp engine */
 
 
-wchar_t *strstr_regexp (const wchar_t *string, const wchar_t *search_regexp);
+char32 *strstr_regexp (const char32 *string, const char32 *search_regexp);
 /*
 	Returns a pointer to the first occurrence in 'string' of the
 	regular expression 'searchRE'. It returns a null pointer if
 	no match is found.
 */
 
-wchar_t **strs_replace (wchar_t **from, long lo, long hi, const wchar_t *search,
-	const wchar_t *replace, int maximumNumberOfReplaces, long *nmatches,
+char32 **strs_replace (char32 **from, long lo, long hi, const char32 *search,
+	const char32 *replace, int maximumNumberOfReplaces, long *nmatches,
 	long *nstringmatches, int use_regexp);
 /*
 	Searches and replaces in string array of strings.
@@ -92,15 +92,15 @@ wchar_t **strs_replace (wchar_t **from, long lo, long hi, const wchar_t *search,
 	'nstringmatches'.
 */
 
-wchar_t *str_replace_literal (const wchar_t *string, const wchar_t *search,
-	const wchar_t *replace, long maximumNumberOfReplaces, long *nmatches);
+char32 *str_replace_literal (const char32 *string, const char32 *search,
+	const char32 *replace, long maximumNumberOfReplaces, long *nmatches);
 /*
 	Search and replace in 'string'.
 	The maximum number of replaces is limited by 'maximumNumberOfReplaces'.
 */
 
-wchar_t *str_replace_regexp (const wchar_t *string, regexp *search_compiled,
-	const wchar_t *replace_regexp, long maximumNumberOfReplaces, long *nmatches);
+char32 *str_replace_regexp (const char32 *string, regexp *search_compiled,
+	const char32 *replace_regexp, long maximumNumberOfReplaces, long *nmatches);
 /*
 	Searches and replaces 'maximumNumberOfReplaces' times in 'string' on
 	the basis of regular expressions (RE).
@@ -113,7 +113,7 @@ wchar_t *str_replace_regexp (const wchar_t *string, regexp *search_compiled,
 */
 
 
-void NUMdmatrix_printMatlabForm (double **m, long nr, long nc, const wchar_t *name);
+void NUMdmatrix_printMatlabForm (double **m, long nr, long nc, const char32 *name);
 /*
 	Print a matrix in a form that can be used as input for octave/matlab.
 	                      1 2 3
@@ -385,9 +385,8 @@ void NUMsort2 (long n, T1 *a, T2 *b) {
     }
 }
 
-void NUMindexx_f (const float a[], long n, long indx[]);
 void NUMindexx (const double a[], long n, long indx[]);
-void NUMindexx_s (wchar_t *a[], long n, long indx[]);
+void NUMindexx_s (char32 *a[], long n, long indx[]);
 /*
 	Indexes the array a[1..n], i.e., outputs the array indx[1..n] such that
 	a[ indx[i] ] is in ascending order for i=1..n;

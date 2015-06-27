@@ -1,6 +1,6 @@
 /* TextGrid_Sound.h
  *
- * Copyright (C) 1992-2011,2013,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, dou
 Collection TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, long itier, int preserveTimes);
 Collection TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound, long itier, int preserveTimes);
 Collection TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound,
-	long itier, int which_Melder_STRING, const wchar_t *text, int preserveTimes);
+	long itier, int which_Melder_STRING, const char32 *text, int preserveTimes);
 
 void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 	long itier, double tmin, double tmax, double fmin, double fmax,
@@ -35,6 +35,6 @@ void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, doub
 	double fmin, double fmax, int showBoundaries, int useTextStyles, int garnish, int speckle, int yscale);
 
 void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierNumber, long intervalNumber,
-	const wchar_t *languageName, bool includeWords, bool includePhonemes);
+	const char32 *languageName, bool includeWords, bool includePhonemes);
 
 /* End of file TextGrid_Sound.h */

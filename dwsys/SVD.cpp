@@ -64,8 +64,8 @@
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
 
 void structSVD :: v_info () {
-	MelderInfo_writeLine (L"Number of rows: ", Melder_integer (numberOfRows));
-	MelderInfo_writeLine (L"Number of columns: ", Melder_integer (numberOfColumns));
+	MelderInfo_writeLine (U"Number of rows: ", numberOfRows);
+	MelderInfo_writeLine (U"Number of columns: ", numberOfColumns);
 }
 
 Thing_implement (SVD, Data, 0);
@@ -107,7 +107,7 @@ SVD SVD_create (long numberOfRows, long numberOfColumns) {
 		SVD_init (me.peek(), numberOfRows, numberOfColumns);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("SVD not created.");
+		Melder_throw (U"SVD not created.");
 	}
 }
 
@@ -117,7 +117,7 @@ SVD SVD_create_d (double **m, long numberOfRows, long numberOfColumns) {
 		SVD_svd_d (me.peek(), m);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("SVD not created from vector.");
+		Melder_throw (U"SVD not created from vector.");
 	}
 }
 
@@ -127,7 +127,7 @@ SVD SVD_create_f (float **m, long numberOfRows, long numberOfColumns) {
 		SVD_svd_f (me.peek(), m);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("SVD not created from vector.");
+		Melder_throw (U"SVD not created from vector.");
 	}
 }
 
@@ -222,7 +222,7 @@ void SVD_compute (SVD me) {
 		                         NULL, &ldvt, wt, &lwork, &info);
 
 		if (info != 0) {
-			Melder_throw ("SVD not precomputed.");
+			Melder_throw (U"SVD not precomputed.");
 		}
 
 		lwork = wt[0];
@@ -230,7 +230,7 @@ void SVD_compute (SVD me) {
 		(void) NUMlapack_dgesvd (&jobu, &jobvt, &m, &n, &my u[1][1], &lda, &my d[1], &my v[1][1], &ldu,
 		                         NULL, &ldvt, work.peek(), &lwork, &info);
 		if (info != 0) {
-			Melder_throw ("SVD not computed.");
+			Melder_throw (U"SVD not computed.");
 		}
 
 		NUMtranspose_d (my v, MIN (m, n));
@@ -238,7 +238,7 @@ void SVD_compute (SVD me) {
 			SVD_transpose (me);
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": SVD could not be computed.");
+		Melder_throw (me, U": SVD could not be computed.");
 	}
 }
 
@@ -287,7 +287,7 @@ void SVD_solve (SVD me, double b[], double x[]) {
 			x[j] = tmp;
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": not solved.");
+		Melder_throw (me, U": not solved.");
 	}
 }
 
@@ -310,7 +310,7 @@ void SVD_sort (SVD me) {
 			}
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": not sorted.");
+		Melder_throw (me, U": not sorted.");
 	}
 }
 
@@ -360,7 +360,7 @@ void SVD_synthesize (SVD me, long sv_from, long sv_to, double **m) {
 		}
 
 		if (sv_from > sv_to || sv_from < 1 || sv_to > mn_min) {
-			Melder_throw ("Indices must be in range [1, ", mn_min, "].");
+			Melder_throw (U"Indices must be in range [1, ", mn_min, U"].");
 		}
 
 		for (long i = 1; i <= my numberOfRows; i++) {
@@ -377,14 +377,14 @@ void SVD_synthesize (SVD me, long sv_from, long sv_to, double **m) {
 			}
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": no synthesis.");
+		Melder_throw (me, U": no synthesis.");
 	}
 }
 
 Thing_implement (GSVD, Data, 0);
 
 void structGSVD :: v_info () {
-	MelderInfo_writeLine (L"Number of columns: ", Melder_integer (numberOfColumns));
+	MelderInfo_writeLine (U"Number of columns: ", numberOfColumns);
 }
 
 GSVD GSVD_create (long numberOfColumns) {
@@ -398,7 +398,7 @@ GSVD GSVD_create (long numberOfColumns) {
 		my d2 = NUMvector<double> (1, numberOfColumns);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("GSVD not created.");
+		Melder_throw (U"GSVD not created.");
 	}
 }
 
@@ -423,7 +423,7 @@ GSVD GSVD_create_d (double **m1, long numberOfRows1, long numberOfColumns, doubl
 		    &a[1][1], &m, &b[1][1], &p, &alpha[1], &beta[1], NULL, &m,
 		    NULL, &p, &q[1][1], &n, &work[1], &iwork[1], &info);
 		if (info != 0) {
-			Melder_throw ("dggsvd failed, error = ", info);
+			Melder_throw (U"dggsvd failed, error = ", info);
 		}
 
 
@@ -455,7 +455,7 @@ GSVD GSVD_create_d (double **m1, long numberOfRows1, long numberOfColumns, doubl
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("GSVD not created.");
+		Melder_throw (U"GSVD not created.");
 	}
 }
 

@@ -30,7 +30,7 @@ Thing_define (Manual, HyperPage) {
 	int numberOfMatches;
 	long matches [1 + 20], fromPage, toPage;
 	int suppressLinksHither;
-	wchar_t *printPagesStartingWith;
+	char32 *printPagesStartingWith;
 
 	bool v_scriptable ()
 		override { return false; }
@@ -50,7 +50,7 @@ Thing_define (Manual, HyperPage) {
 		override;
 	long v_getCurrentPageNumber ()
 		override;
-	int v_goToPage (const wchar_t *title)
+	int v_goToPage (const char32 *title)
 		override;
 	void v_goToPage_i (long pageNumber)
 		override;
@@ -60,10 +60,10 @@ Thing_define (Manual, HyperPage) {
 		override { return true; }
 };
 
-void Manual_init (Manual me, const wchar_t *title, Data data, bool ownData);
-Manual Manual_create (const wchar_t *title, Data data, bool ownData);
+void Manual_init (Manual me, const char32 *title, Data data, bool ownData);
+Manual Manual_create (const char32 *title, Data data, bool ownData);
 
-void Manual_search (Manual me, const wchar_t *query);
+void Manual_search (Manual me, const char32 *query);
 
 /* End of file Manual.h */
 #endif
