@@ -198,7 +198,7 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidt
         [my d_cocoaWindow setMinSize: NSMakeSize (minimumWidth, minimumHeight)];
 		GuiShell_setTitle (me, title);
 		[my d_cocoaWindow makeKeyAndOrderFront: nil];
-		my d_widget = [my d_cocoaWindow contentView];
+		my d_widget = (GuiObject) [my d_cocoaWindow contentView];   // BUG: this d_widget doesn't have the GuiCocoaAny protocol
 		_GuiObject_setUserData (my d_cocoaWindow, me);
 		//if (! theGuiCocoaWindowDelegate) {
 		//	theGuiCocoaWindowDelegate = [[GuiCocoaWindowDelegate alloc] init];

@@ -25,19 +25,10 @@
  djmw 20110307 Latest modification
 */
 
-
 #include "SPINET.h"
 #include "Pitch.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Pitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceiling,
 	int maxnCandidates);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _SPINET_to_Pitch_h_ */

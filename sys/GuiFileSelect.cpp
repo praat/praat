@@ -130,23 +130,22 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const char32 *
 		osVersionInfo. dwOSVersionInfoSize = sizeof (OSVERSIONINFO);
 		GetVersionEx (& osVersionInfo);
 		if (GetOpenFileNameW (& openFileName)) {
-			char32 *fullFileName = Melder_peekWto32 (fullFileNameW);
-			int firstFileNameLength = str32len (fullFileName);
-			if (fullFileName [firstFileNameLength + 1] == U'\0') {
+			int firstFileNameLength = wcslen (fullFileNameW);
+			if (fullFileNameW [firstFileNameLength + 1] == L'\0') {
 				/*
 				 * The user selected one file.
 				 */
-				SortedSetOfString_addString (me.peek(), fullFileName);
+				SortedSetOfString_addString (me.peek(), Melder_peekWto32 (fullFileNameW));
 			} else {
 				/*
 				 * The user selected multiple files.
-				 * 'fullFileName' is a directory name; the file names follow.
+				 * 'fullFileNameW' is a directory name; the file names follow.
 				 */
 				structMelderDir dir;
-				Melder_pathToDir (fullFileName, & dir);
-				for (const char32 *p = & fullFileName [firstFileNameLength + 1]; *p != U'\0'; p += str32len (p) + 1) {
+				Melder_pathToDir (Melder_peekWto32 (fullFileNameW), & dir);
+				for (const WCHAR *p = & fullFileNameW [firstFileNameLength + 1]; *p != L'\0'; p += wcslen (p) + 1) {
 					structMelderFile file { 0 };
-					MelderDir_getFile (& dir, p, & file);
+					MelderDir_getFile (& dir, Melder_peekWto32 (p), & file);
 					SortedSetOfString_addString (me.peek(), Melder_fileToPath (& file));
 				}
 			}

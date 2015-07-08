@@ -25,10 +25,6 @@
  djmw 20110308 Latest modification
 */
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 double d_sign(double *a, double *b);
 /*
 	returns sign(b)*fabs(a)
@@ -51,9 +47,5 @@ long s_cmp(const char *a0, const char *b0, long la, long lb);
 
 void s_copy(register char *a, register char *b, long la, long lb);
 /* assign strings:  a = b (when no null byte at end of string)*/
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _NUMf2c_h_ */

@@ -28,19 +28,11 @@
 #include "LPC.h"
 #include "Cepstrumc.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Cepstrumc LPC_to_Cepstrumc (LPC me);
 
 LPC Cepstrumc_to_LPC (Cepstrumc me);
 
 void LPC_Frame_into_Cepstrumc_Frame (LPC_Frame me, Cepstrumc_Frame thee);
 void Cepstrumc_Frame_into_LPC_Frame (Cepstrumc_Frame me, LPC_Frame thee);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _LPC_and_Cepstrumc_h_ */

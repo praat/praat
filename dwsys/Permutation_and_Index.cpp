@@ -25,8 +25,7 @@
 
 #include "Permutation_and_Index.h"
 
-Permutation Index_to_Permutation_permuteRandomly (I, int permuteWithinClasses) {
-	iam (Index);
+Permutation Index_to_Permutation_permuteRandomly (Index me, int permuteWithinClasses) {
 	try {
 		long numberOfClasses = my classes -> size;
 

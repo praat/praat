@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20150627)
+MAN_BEGIN (U"What's new?", U"ppgb", 20150708)
 INTRO (U"Latest changes in Praat.")
 /*LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (U"##5.4.11# (8 July 2015)")
+LIST_ITEM (U"• Windows: removed a bug introduced in 5.4.10 whereby the file selection window could try to open a file with a garbled name.")
+LIST_ITEM (U"• Removed a bug whereby the PointProcess window would crash when showing a perfectly silent sound.")
 NORMAL (U"##5.4.10# (27 June 2015)")
 LIST_ITEM (U"• Removed a bug introduced in version 4.5.09 (January 2007) that caused incorrect "
 	"upsampling of stereo sounds when the upsampling factor was exactly 2. This bug has caused "

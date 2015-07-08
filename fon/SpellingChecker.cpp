@@ -125,14 +125,14 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, const char32 *word) {
 			/*
 			 * Skip spaces in list.
 			 */
-			while (*p == ' ') p ++;
+			while (*p == U' ') p ++;
 			/*
 			 * Collect one token string from list.
 			 */
-			while (*p != '\0' && *p != ' ') {
+			while (*p != U'\0' && *p != U' ') {
 				*q ++ = *p ++;
 			}
-			*q = '\0';   /* Trailing null byte. */
+			*q = U'\0';   // trailing null character
 			/*
 			 * Allow word if it contains this token.
 			 */
@@ -150,9 +150,9 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, const char32 *word) {
 			char32 *p = & my namePrefixes [0];
 			while (*p) {
 				char32 token [100], *q = & token [0];
-				while (*p == ' ') p ++;
-				while (*p != '\0' && *p != ' ') *q ++ = *p ++;
-				*q = '\0';   /* Trailing null byte. */
+				while (*p == U' ') p ++;
+				while (*p != U'\0' && *p != U' ') *q ++ = *p ++;
+				*q = U'\0';   // trailing null character
 				/*
 				 * Allow word if starts with this prefix
 				 * and this prefix is followed by a capital.
@@ -175,9 +175,9 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, const char32 *word) {
 		while (*p) {
 			char32 token [100], *q = & token [0];
 			int tokenLength;
-			while (*p == ' ') p ++;
-			while (*p != '\0' && *p != ' ') *q ++ = *p ++;
-			*q = '\0';   /* Trailing null byte. */
+			while (*p == U' ') p ++;
+			while (*p != U'\0' && *p != U' ') *q ++ = *p ++;
+			*q = U'\0';   // trailing null character
 			tokenLength = str32len (token);
 			if (wordLength >= tokenLength && str32nequ (token, word, tokenLength)) {
 				return TRUE;
@@ -189,9 +189,9 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, const char32 *word) {
 		while (*p) {
 			char32 token [100], *q = & token [0];
 			int tokenLength;
-			while (*p == ' ') p ++;
-			while (*p != '\0' && *p != ' ') *q ++ = *p ++;
-			*q = '\0';   /* Trailing null byte. */
+			while (*p == U' ') p ++;
+			while (*p != U'\0' && *p != U' ') *q ++ = *p ++;
+			*q = U'\0';   // trailing null character
 			tokenLength = str32len (token);
 			if (wordLength >= tokenLength && str32nequ (token, word + wordLength - tokenLength, tokenLength)) {
 				return TRUE;
@@ -202,8 +202,9 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, const char32 *word) {
 		return TRUE;
 	if (my userDictionary != NULL) {
 		if (str32len (word) > 3333) return FALSE;   // superfluous, because WordList_hasWord already checked; but safe
-		Longchar_genericize32 (word, (char32 *) Melder_buffer2);
-		if (SortedSetOfString_lookUp (my userDictionary, (char32 *) Melder_buffer2) != 0)
+		static char32 buffer [3*3333+1];
+		Longchar_genericize32 (word, buffer);
+		if (SortedSetOfString_lookUp (my userDictionary, buffer) != 0)
 			return TRUE;
 	}
 	return FALSE;
@@ -224,29 +225,29 @@ void SpellingChecker_addNewWord (SpellingChecker me, const char32 *word) {
 char32 * SpellingChecker_nextNotAllowedWord (SpellingChecker me, const char32 *sentence, long *start) {
 	const char32 *p = sentence + *start;
 	for (;;) {
-		if (*p == '\0') {
+		if (*p == U'\0') {
 			return NULL;   // all words allowed
-		} else if (*p == '(' && my allowAllParenthesized) {
+		} else if (*p == U'(' && my allowAllParenthesized) {
 			p ++;
 			for (;;) {
-				if (*p == '\0') {
+				if (*p == U'\0') {
 					return NULL;   // everything is parenthesized...
-				} else if (*p == ')') {
+				} else if (*p == U')') {
 					p ++;
 					break;
 				} else {
 					p ++;
 				}
 			}
-		} else if (*p == ' ' || (my separatingCharacters && str32chr (my separatingCharacters, *p))) {
+		} else if (*p == U' ' || (my separatingCharacters && str32chr (my separatingCharacters, *p))) {
 			p ++;
 		} else {
 			static char32 word [100];
 			char32 *q = & word [0];
 			*start = p - sentence;
 			for (;;) {
-				if (*p == '\0' || *p == ' ' || (my separatingCharacters && str32chr (my separatingCharacters, *p))) {
-					*q ++ = '\0';
+				if (*p == U'\0' || *p == U' ' || (my separatingCharacters && str32chr (my separatingCharacters, *p))) {
+					*q ++ = U'\0';
 					if (SpellingChecker_isWordAllowed (me, word)) {
 						/* Don't increment p (may contain a zero or a parenthesis). */
 						break;

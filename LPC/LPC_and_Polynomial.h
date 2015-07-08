@@ -29,16 +29,8 @@
 #include "LPC.h"
 #include "Polynomial.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Polynomial LPC_to_Polynomial (LPC me, double t);
 
 Polynomial LPC_Frame_to_Polynomial (LPC_Frame me);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _LPC_and_Polynomial_h_ */

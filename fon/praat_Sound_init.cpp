@@ -703,7 +703,7 @@ static void cb_SoundEditor_publication (Editor editor, void *closure, Data publi
 	 * Keep the gate for error handling.
 	 */
 	try {
-		praat_new (publication, NULL);
+		praat_new (publication, U"");
 		praat_updateSelection ();
 		if (Thing_member (publication, classSpectrum)) {
 			int IOBJECT;
@@ -1390,7 +1390,7 @@ static void cb_SoundRecorder_publication (Editor editor, void *closure, Data pub
 	(void) editor;
 	(void) closure;
 	try {
-		praat_new (publication, NULL);
+		praat_new (publication, U"");
 	} catch (MelderError) {
 		Melder_flushError ();
 	}

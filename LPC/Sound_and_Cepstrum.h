@@ -27,18 +27,10 @@
 #include "Sound.h"
 #include "Cepstrum.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Cepstrum Sound_to_Cepstrum (Sound me);
 
 Cepstrum Sound_to_Cepstrum_bw (Sound me);
 
 Sound Cepstrum_to_Sound (Cepstrum me);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _Sound_and_Cepstrum_h_ */

@@ -1,5 +1,5 @@
 /* Praat_tests_enums.h */
-/* Paul Boersma, 26 June 2015 */
+/* Paul Boersma, 29 June 2015 */
 
 enums_begin (kPraatTests, 0)
 	enums_add (kPraatTests, 0, _, U"_")
@@ -21,8 +21,9 @@ enums_begin (kPraatTests, 0)
 	enums_add (kPraatTests, 16, TIME_STRING_CPP_32, U"TimeStringC++32")
 	enums_add (kPraatTests, 17, TIME_STRING_CPP_U32STRING, U"TimeStringC++U32STRING")
 	enums_add (kPraatTests, 18, TIME_STRCPY, U"TimeStrcpy")
-	enums_add (kPraatTests, 19, TIME_STR32CPY, U"TimeStr32cpy")
-	enums_add (kPraatTests, 20, TIME__STR32CPY, U"Time_Str32cpy")
-enums_end (kPraatTests, 20, CHECK_RANDOM_1009_2009)
+	enums_add (kPraatTests, 19, TIME_WCSCPY, U"TimeWcscpy")
+	enums_add (kPraatTests, 20, TIME_STR32CPY, U"TimeStr32cpy")
+	enums_add (kPraatTests, 21, TIME_GRAPHICS_TEXT_TOP, U"TimeGraphicsTextTop")
+enums_end (kPraatTests, 21, CHECK_RANDOM_1009_2009)
 
 /* End of file Praat_tests_enums.h */

@@ -91,7 +91,7 @@ void Minimizer_setParameters (Minimizer me, Any parameters) {
 	my v_setParameters (parameters);
 }
 static void monitor_off (Minimizer me) {
-	Melder_monitor (1.1, NULL);
+	Melder_monitor (1.1);
 	if (my gmonitor) {
 		Graphics_clearWs (my gmonitor); // DON'T forget (my gmonitor)
 		my gmonitor = NULL;

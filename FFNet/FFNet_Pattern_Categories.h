@@ -30,10 +30,6 @@
 #include "Categories.h"
 #include "Minimizers.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 void FFNet_Pattern_Categories_learnSD (FFNet me, Pattern p, Categories c, long maxNumOfEpochs,
     double tolerance, Any parameters, int costFunctionType);
 /* Steepest descent */
@@ -50,10 +46,5 @@ Categories FFNet_Pattern_to_Categories (FFNet me, Pattern p, int labeling);
 /* labeling = 1 : winner-takes-all */
 /* labeling = 2 : stochastic */
 /* Preconditions: I have labels */
-
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _FFNet_Pattern_Categories_h_ */

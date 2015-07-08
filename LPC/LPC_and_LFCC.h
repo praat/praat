@@ -28,10 +28,6 @@
 #include "LPC.h"
 #include "LFCC.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 LFCC LPC_to_LFCC (LPC me, long numberOfCoefficients);
 
 LPC LFCC_to_LPC (LFCC me, long numberOfCoefficients);
@@ -59,9 +55,5 @@ void CC_Frame_into_LPC_Frame (CC_Frame me, LPC_Frame thee);
 	Programs for Digital Signal Processing, IEEE Press,
 	1979 (page 4.3-6).
 */
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _LPC_and_LFCC_h_ */

@@ -24,9 +24,8 @@
 #include "Matrix_Categories.h"
 #include "TableOfReal_extensions.h"
 
-TableOfReal Matrix_and_Categories_to_TableOfReal (I, Categories thee) {
+TableOfReal Matrix_and_Categories_to_TableOfReal (Matrix me, Categories thee) {
 	try {
-		iam (Matrix);
 		if (thy size != my ny) {
 			Melder_throw (U"Number of rows and number of categories must be equal.");
 		}

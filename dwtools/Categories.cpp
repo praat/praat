@@ -95,8 +95,7 @@ void Categories_drawItem (Categories me, Graphics g, long position,
 	SimpleString_draw ( (SimpleString) my item[position], g, xWC, yWC);
 }
 
-Categories OrderedOfString_to_Categories (I) {
-	iam (OrderedOfString);
+Categories OrderedOfString_to_Categories (OrderedOfString me) {
 	try {
 		autoCategories thee = Categories_create();
 
@@ -115,8 +114,7 @@ long Categories_getSize (Categories me) {
 }
 
 /* TableOfReal_Rowlabels_to_Categories  ??? */
-Categories TableOfReal_to_CategoriesRow (I) {
-	iam (TableOfReal);
+Categories TableOfReal_to_CategoriesRow (TableOfReal me) {
 	try {
 		autoCategories thee = Categories_create ();
 
@@ -132,8 +130,7 @@ Categories TableOfReal_to_CategoriesRow (I) {
 	}
 }
 
-Categories TableOfReal_to_CategoriesColumn (I) {
-	iam (TableOfReal);
+Categories TableOfReal_to_CategoriesColumn (TableOfReal me) {
 	try {
 		autoCategories thee = Categories_create ();
 

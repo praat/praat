@@ -27,14 +27,6 @@
 #include "Eigen.h"
 #include "Procrustes.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Procrustes Eigens_to_Procrustes (I, thou, long evec_from, long evec_to);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _Eigen_and_Procrustes_h_ */

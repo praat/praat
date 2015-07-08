@@ -38,10 +38,6 @@
 
 */
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 int NUMlapack_dbdsqr(const char *uplo, long *n, long *ncvt, long *nru, long *ncc,
 	double *d, double *e, double *vt, long *ldvt, double *u, long *ldu,
 	double *c, long *ldc, double *work, long *info);
@@ -6612,9 +6608,5 @@ long NUMlapack_ilaenv (long *ispec, const char *name, const char *opts, long *n1
 
     =====================================================================
 */
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _NUMclapack_h_ */

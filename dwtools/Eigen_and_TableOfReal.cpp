@@ -28,12 +28,9 @@
 #include "Eigen_and_TableOfReal.h"
 #include "NUM2.h"
 
-TableOfReal Eigen_and_TableOfReal_project (I, thou, long from,
+TableOfReal Eigen_and_TableOfReal_project (Eigen me, TableOfReal thee, long from,
         long numberOfComponents) {
 	try {
-		iam (Eigen);
-		thouart (TableOfReal);
-
 		if (numberOfComponents == 0) {
 			numberOfComponents = my numberOfEigenvalues;
 		}
@@ -48,11 +45,9 @@ TableOfReal Eigen_and_TableOfReal_project (I, thou, long from,
 	}
 }
 
-void Eigen_and_TableOfReal_project_into (I, thou, long thee_from, long thee_to,
+void Eigen_and_TableOfReal_project_into (Eigen me, TableOfReal thee, long thee_from, long thee_to,
         Any void_pointer_to_him, long his_from, long his_to) {
 	TableOfReal him = * ( (TableOfReal *) void_pointer_to_him);
-	thouart (TableOfReal);
-	iam (Eigen);
 	long thee_ncols = thee_to - thee_from + 1;
 	long his_ncols = his_to - his_from + 1;
 

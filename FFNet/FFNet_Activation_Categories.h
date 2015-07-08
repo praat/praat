@@ -29,19 +29,11 @@
 #include "Activation.h"
 #include "Categories.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Categories FFNet_Activation_to_Categories (FFNet me, Activation activation, int labeling);
 /* labeling = 1 : winner-takes-all */
 /* labeling = 2 : stochastic */
 
 Activation FFNet_Categories_to_Activation (FFNet me, Categories labels);
 /* Postcondition: my outputCategories != NULL; */
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _FFNet_Activation_Categories_h_ */

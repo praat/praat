@@ -27,8 +27,7 @@
 
 #include "CCs_to_DTW.h"
 
-static void regression (I, long frame, double r[], long nr) {
-	iam (CC);
+static void regression (CC me, long frame, double r[], long nr) {
 
 	// sum(i^2;i=-n..n) = 2n^3/3 + n^2 +n/3 = n (n (2n/3 + 1) + 1/3);
 
@@ -56,10 +55,8 @@ static void regression (I, long frame, double r[], long nr) {
 	}
 }
 
-DTW CCs_to_DTW (I, thou, double wc, double wle, double wr, double wer, double dtr) {
+DTW CCs_to_DTW (CC me, CC thee, double wc, double wle, double wr, double wer, double dtr) {
 	try {
-		iam (CC); thouart (CC);
-
 		if (my maximumNumberOfCoefficients != thy maximumNumberOfCoefficients) {
 			Melder_throw (U"CC orders must be equal.");
 		}

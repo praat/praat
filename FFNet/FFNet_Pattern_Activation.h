@@ -32,10 +32,6 @@
 #include "Activation.h"
 #include "Minimizers.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 void FFNet_Pattern_Activation_learnSD (FFNet me, Pattern p, Activation a, long maxNumOfEpochs,
     double tolerance, Any parameters, int costFunctionType);
 /* Steepest Descent minimization */
@@ -49,9 +45,5 @@ double FFNet_Pattern_Activation_getCosts_average (FFNet me, Pattern p, Activatio
 Activation FFNet_Pattern_to_Activation (FFNet me, Pattern p, long layer);
 /* Calculate the activations at a layer */
 /* if (layer<1 || layer > my nLayers) layer = my nLayers; */
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _FFNet_Pattern_Activation_h_ */

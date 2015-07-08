@@ -195,6 +195,8 @@ static void highlight (Graphics graphics, long x1DC, long x2DC, long y1DC, long 
 				if (direction == 1) {   // forward
 					NSRect rect = NSMakeRect (x1DC, y2DC, width, height);
 					NSRect windowRect = [nsView convertRect: rect toView: nil];
+					//NSRect windowRect = [nsView convertRectToBacking: rect];
+					//NSRect windowRect = [nsView backingAlignedRect: rect options: NSAlignAllEdgesNearest];
 					//windowRect.origin.x += 1;
 					//windowRect.size.width -= 2;
 					[[nsView window] cacheImageInRect: windowRect];
@@ -212,7 +214,12 @@ static void highlight (Graphics graphics, long x1DC, long x2DC, long y1DC, long 
 					CGContextRestoreGState (context);
 					[drawingArea unlockFocus];
 				} else {   // backward
+					//[drawingArea lockFocus];
 					[[nsView window] restoreCachedImage];
+					[[nsView window] discardCachedImage];
+					//[drawingArea unlockFocus];
+					//[[nsView window] flushWindow];
+					//[[nsView window] flushWindowIfNeeded];
 				}
 			}
         #elif mac
@@ -235,7 +242,7 @@ static void highlight (Graphics graphics, long x1DC, long x2DC, long y1DC, long 
 			Rectangle (my d_gdiGraphicsContext, x1DC, y2DC, x2DC + 1, y1DC + 1);
 			SetROP2 (my d_gdiGraphicsContext, R2_COPYPEN);
 			SelectPen (my d_gdiGraphicsContext, GetStockPen (BLACK_PEN));
-			SelectBrush (my d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));   /* Superfluous? */
+			SelectBrush (my d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));   // superfluous?
 		#endif
 	}
 }
@@ -277,12 +284,13 @@ static void highlight2 (Graphics graphics, long x1DC, long x2DC, long y1DC, long
 			GuiCocoaDrawingArea *drawingArea = (GuiCocoaDrawingArea*) my d_drawingArea -> d_widget;
 			if (drawingArea) {
 				NSRect rect = NSMakeRect (x1DC, y2DC, x2DC - x1DC, y1DC - y2DC);
+				NSView *nsView = my d_macView;
 				if (direction == 1) {
-					NSView *nsView = my d_macView;
 					NSRect windowRect = [nsView convertRect: rect toView: nil];
 					[[nsView window] cacheImageInRect: windowRect];
 				} else {
-					[[my d_macView window] restoreCachedImage];
+					[[nsView window] restoreCachedImage];
+					//[[nsView window] flushWindow];
 					return;
 				}
 				[drawingArea lockFocus];

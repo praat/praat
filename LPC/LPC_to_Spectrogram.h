@@ -29,15 +29,7 @@
 #include "Spectrogram.h"
 #include "LPC_to_Spectrum.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Spectrogram LPC_to_Spectrogram (LPC me, double dfMin, double bandwidthReduction, double deEmphasisFrequency);
 /* if(dfMin >= 0) df <= dfMin else df = NyquistFrequency / 512 */
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _LPC_and_Spectrogram_h_ */

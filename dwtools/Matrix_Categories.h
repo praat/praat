@@ -28,14 +28,6 @@
 #include "Categories.h"
 #include "TableOfReal.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
-TableOfReal Matrix_and_Categories_to_TableOfReal (I, Categories thee);
-
-#ifdef __cplusplus
-	}
-#endif
+TableOfReal Matrix_and_Categories_to_TableOfReal (Matrix me, Categories thee);
 
 #endif /* _Matrix_Categories_h_ */

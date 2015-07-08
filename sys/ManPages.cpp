@@ -606,11 +606,14 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 
 		if (isListItem || isTag || isDefinition) {
 			if (! inList) {
-				ul = isListItem && p [0] == U'\\' && p [1] == U'b' && p [2] == U'u';
+				ul = isListItem && (p [0] == U'•' || (p [0] == U'\\' && p [1] == U'b' && p [2] == U'u'));
 				MelderString_append (buffer, ul ? U"<ul>\n" : U"<dl>\n");
 				inList = true;
 			}
-			if (ul && p [0] == U'\\' && p [1] == U'b' && p [2] == U'u' && p [3] == U' ') p += 3;
+			if (ul) {
+				if (p [0] == U'•'  && p [1] == U' ') p += 1;
+				if (p [0] == U'\\' && p [1] == U'b' && p [2] == U'u' && p [3] == U' ') p += 3;
+			}
 			MelderString_append (buffer, ul ? U"<li>" : stylesInfo [paragraph -> type]. htmlIn, U"\n");
 		} else {
 			if (inList) {

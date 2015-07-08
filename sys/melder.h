@@ -87,144 +87,89 @@ extern bool Melder_isTracing;
  * char16 handling.
  */
 inline static int64 str16len (const char16 *string) {
-	if (sizeof (wchar_t) == 2) {
-		return (int64) wcslen ((const wchar_t *) string);
-	} else {
-		const char16 *p = string;
-		while (*p != u'\0') ++ p;
-		return (int64) (p - string);
-	}
+	const char16 *p = string;
+	while (*p != u'\0') ++ p;
+	return (int64) (p - string);
 }
 inline static char16 * str16cpy (char16 *target, const char16 *source) {
-	if (sizeof (wchar_t) == 2) {
-		return (char16 *) wcscpy ((wchar_t *) target, (const wchar_t *) source);
-	} else {
-		char16 *p = target;
-		while (* source != u'\0') * p ++ = * source ++;
-		*p = u'\0';
-		return target;
-	}
+	char16 *p = target;
+	while (* source != u'\0') * p ++ = * source ++;
+	*p = u'\0';
+	return target;
 }
 /*
  * char32 handling.
  */
 inline static int64 str32len (const char32 *string) {
-	if (sizeof (wchar_t) == 4) {
-		return (int64) wcslen ((const wchar_t *) string);
-	} else {
-		const char32 *p = string;
-		while (*p != U'\0') ++ p;
-		return (int64) (p - string);
-	}
-}
-inline static int64 _str32len (const char32 *string) {
 	const char32 *p = string;
 	while (*p != U'\0') ++ p;
 	return (int64) (p - string);
 }
 inline static char32 * str32cpy (char32 *target, const char32 *source) {
-	if (sizeof (wchar_t) == 4) {
-		return (char32 *) wcscpy ((wchar_t *) target, (const wchar_t *) source);
-	} else {
-		char32 *p = target;
-		while (* source != U'\0') * p ++ = * source ++;
-		*p = U'\0';
-		return target;
-	}
-}
-inline static char32 * _str32cpy (char32 *target, const char32 *source) {
 	char32 *p = target;
 	while (* source != U'\0') * p ++ = * source ++;
 	*p = U'\0';
 	return target;
 }
 inline static char32 * str32ncpy (char32 *target, const char32 *source, int64 n) {
-	if (sizeof (wchar_t) == 4) {
-		return (char32 *) wcsncpy ((wchar_t *) target, (const wchar_t *) source, (size_t) n);
-	} else {
-		char32 *p = target;
-		for (; n > 0 && *source != U'\0'; -- n) * p ++ = * source ++;
-		for (; n > 0; -- n) * p ++ = U'\0';
-		return target;
-	}
+	char32 *p = target;
+	for (; n > 0 && *source != U'\0'; -- n) * p ++ = * source ++;
+	for (; n > 0; -- n) * p ++ = U'\0';
+	return target;
 }
 inline static int str32cmp (const char32 *string1, const char32 *string2) {
-	if (sizeof (wchar_t) == 4) {
-		return wcscmp ((const wchar_t *) string1, (const wchar_t *) string2);
-	} else {
-		for (;; ++ string1, ++ string2) {
-			int32 diff = (int32) *string1 - (int32) *string2;
-			if (diff) return (int) diff;
-			if (*string1 == U'\0') return 0;
-		}
+	for (;; ++ string1, ++ string2) {
+		int32 diff = (int32) *string1 - (int32) *string2;
+		if (diff) return (int) diff;
+		if (*string1 == U'\0') return 0;
 	}
 }
 #define str32equ  ! str32cmp
 inline static int str32ncmp (const char32 *string1, const char32 *string2, int64 n) {
-	if (sizeof (wchar_t) == 4) {
-		return wcsncmp ((const wchar_t *) string1, (const wchar_t *) string2, (size_t) n);
-	} else {
-		for (; n > 0; -- n, ++ string1, ++ string2) {
-			int32 diff = (int32) *string1 - (int32) *string2;
-			if (diff) return (int) diff;
-			if (*string1 == U'\0') return 0;
-		}
-		return 0;
+	for (; n > 0; -- n, ++ string1, ++ string2) {
+		int32 diff = (int32) *string1 - (int32) *string2;
+		if (diff) return (int) diff;
+		if (*string1 == U'\0') return 0;
 	}
+	return 0;
 }
 #define str32nequ  ! str32ncmp
 inline static char32 * str32chr (const char32 *string, char32 kar) {
-	if (sizeof (wchar_t) == 4) {
-		return (char32 *) wcschr ((const wchar_t *) string, (wchar_t) kar);
-	} else {
-		for (; *string != kar; ++ string) {
-			if (*string == U'\0')
-				return NULL;
-		}
-		return (char32 *) string;
+	for (; *string != kar; ++ string) {
+		if (*string == U'\0')
+			return NULL;
 	}
+	return (char32 *) string;
 }
 inline static char32 * str32rchr (const char32 *string, char32 kar) {
-	if (sizeof (wchar_t) == 4) {
-		return (char32 *) wcsrchr ((const wchar_t *) string, (wchar_t) kar);
-	} else {
-		char32 *result = NULL;
-		for (; *string != U'\0'; ++ string) {
-			if (*string == kar) result = (char32 *) string;
-		}
-		return result;
+	char32 *result = NULL;
+	for (; *string != U'\0'; ++ string) {
+		if (*string == kar) result = (char32 *) string;
 	}
+	return result;
 }
 inline static char32 * str32str (const char32 *string, const char32 *find) {
-	if (sizeof (wchar_t) == 4) {
-		return (char32 *) wcsstr ((const wchar_t *) string, (const wchar_t *) find);
-	} else {
-		int64 length = str32len (find);
-		if (length == 0) return (char32 *) string;
-		char32 firstCharacter = * find ++;   // optimization
+	int64 length = str32len (find);
+	if (length == 0) return (char32 *) string;
+	char32 firstCharacter = * find ++;   // optimization
+	do {
+		char32 kar;
 		do {
-			char32 kar;
-			do {
-				kar = * string ++;
-				if (kar == U'\0') return NULL;
-			} while (kar != firstCharacter);
-		} while (str32ncmp (string, find, length - 1));
-		return (char32 *) (string - 1);
-	}
+			kar = * string ++;
+			if (kar == U'\0') return NULL;
+		} while (kar != firstCharacter);
+	} while (str32ncmp (string, find, length - 1));
+	return (char32 *) (string - 1);
 }
 inline static int64 str32spn (const char32 *string1, const char32 *string2) {
-	if (sizeof (wchar_t) == 4) {
-		return (int64) wcsspn ((const wchar_t *) string1, (const wchar_t *) string2);
-	} else {
-		const char32 *p = string1;
-		char32 kar1, kar2;
-	cont:
-		kar1 = * p ++;
-		for (const char32 * q = string2; (kar2 = * q ++) != 0;)
-			if (kar2 == kar1)
-				goto cont;
-		return p - 1 - string1;
-	}
+	const char32 *p = string1;
+	char32 kar1, kar2;
+cont:
+	kar1 = * p ++;
+	for (const char32 * q = string2; (kar2 = * q ++) != 0;)
+		if (kar2 == kar1)
+			goto cont;
+	return p - 1 - string1;
 }
 extern "C" char * Melder_peek32to8 (const char32 *string);
 inline static long a32tol (const char32 *string) {
@@ -744,18 +689,19 @@ double Melder_movingReallocationsCount (void);
 typedef struct {
 	int64 length;
 	int64 bufferSize;
-	char16 *string;   // a growing buffer, never shrunk (can only be freed by MelderString16_free)
+	char16 *string;   // a growing buffer, rarely shrunk (can only be freed by MelderString16_free)
 } MelderString16;
 typedef struct {
 	int64 length;
 	int64 bufferSize;
-	char32 *string;   // a growing buffer, never shrunk (can only be freed by MelderString32_free)
+	char32 *string;   // a growing buffer, rarely shrunk (can only be freed by MelderString32_free)
 } MelderString;
 
-void MelderString16_free (MelderString16 *me);   // frees the "string" attribute only (and sets other attributes to zero)
-void MelderString_free (MelderString *me);   // frees the "string" attribute only (and sets other attributes to zero)
-void MelderString16_empty (MelderString16 *me);   // sets to empty string (buffer not freed)
-void MelderString_empty (MelderString *me);   // sets to empty string (buffer not freed)
+void MelderString16_free (MelderString16 *me);   // frees the buffer (and sets other attributes to zero)
+void MelderString_free (MelderString *me);   // frees the buffer (and sets other attributes to zero)
+void MelderString16_empty (MelderString16 *me);   // sets to empty string (buffer shrunk if very large)
+void MelderString_empty (MelderString *me);   // sets to empty string (buffer shrunk if very large)
+void MelderString_expand (MelderString *me, int64 sizeNeeded);   // increases the buffer size; there's normally no need to call this
 void MelderString_copy (MelderString *me, Melder_1_ARG);
 void MelderString_copy (MelderString *me, Melder_2_ARGS);
 void MelderString_copy (MelderString *me, Melder_3_ARGS);
@@ -771,7 +717,14 @@ void MelderString_copy (MelderString *me, Melder_12_OR_13_ARGS);
 void MelderString_copy (MelderString *me, Melder_14_OR_15_ARGS);
 void MelderString_copy (MelderString *me, Melder_16_TO_19_ARGS);
 void MelderString_ncopy (MelderString *me, const char32 *source, int64 n);
-void MelderString_append (MelderString *me, Melder_1_ARG);
+
+inline static void MelderString_append (MelderString *me, Melder_1_ARG) {
+	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	int64 sizeNeeded = me -> length + length1 + 1;
+	if (sizeNeeded > me -> bufferSize) MelderString_expand (me, sizeNeeded);
+	str32cpy (me -> string + me -> length, s1);   me -> length += length1;
+}
+/*void MelderString_append (MelderString *me, Melder_1_ARG);*/
 void MelderString_append (MelderString *me, Melder_2_ARGS);
 void MelderString_append (MelderString *me, Melder_3_ARGS);
 void MelderString_append (MelderString *me, Melder_4_ARGS);
@@ -1204,26 +1157,9 @@ int Melder_publishPlayed (void);
 
 /********** SYSTEM VERSION **********/
 
-extern unsigned long Melder_systemVersion;
+extern int32 Melder_systemVersion;
 /*
 	For Macintosh, this is set in praat_init.
-*/
-
-/********** SCRATCH TEXT BUFFERS **********/
-
-extern char Melder_buffer1 [30001], Melder_buffer2 [30001];
-/*
-	Every Melder routine uses both of these buffers:
-	one for sprintfing the message,
-	and one for translating this message to a native string.
-	You can use these buffers,
-	but be careful not to call any other routines that use them at the same time;
-	the following routines are guaranteed not to call the Melder library:
-	 - Mac Toolbox, XWindows, X Toolkit, Motif, and XVT routines,
-		except those who dispatch events (XtDispatchEvent, xvt_process_pending_events).
-	 - Longchar_*
-	This means that you can use these buffers for reading and writing with
-	the Longchar library.
 */
 
 /********** ENFORCE INTERACTIVE BEHAVIOUR **********/
@@ -1589,8 +1525,8 @@ public:
 		if (ptr) Melder_free (ptr);
 		ptr = string;
 	}
-	template <class U> void resize (U new_size) {
-		T *tmp = (T *) Melder_realloc (ptr, new_size * sizeof (T));
+	void resize (int64 new_size) {
+		T *tmp = (T *) Melder_realloc (ptr, new_size * (int64) sizeof (T));
 		ptr = tmp;
 	}
 private:

@@ -27,14 +27,6 @@
 #include "Permutation.h"
 #include "Index.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
-Permutation Index_to_Permutation_permuteRandomly (I, int permuteWithinClass);
-
-#ifdef __cplusplus
-	}
-#endif
+Permutation Index_to_Permutation_permuteRandomly (Index me, int permuteWithinClass);
 
 #endif /* _Permutation_and_Index_h_ */

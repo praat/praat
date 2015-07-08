@@ -542,7 +542,7 @@ Matrix Matrix_readFromRawTextFile (MelderFile file) {   // BUG: not Unicode-comp
 		f.close (file);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw (U"Matrix object not read from raw text file ", file);
+		Melder_throw (U"Matrix object not read from raw text file ", file, U".");
 	}
 }
 

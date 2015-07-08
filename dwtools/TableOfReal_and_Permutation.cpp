@@ -25,8 +25,7 @@
 #include "TableOfReal_extensions.h"
 #include "NUM2.h"
 
-TableOfReal TableOfReal_and_Permutation_permuteRows (I, Permutation thee) {
-	iam (TableOfReal);
+TableOfReal TableOfReal_and_Permutation_permuteRows (TableOfReal me, Permutation thee) {
 	try {
 		if (my numberOfRows != thy numberOfElements) {
 			Melder_throw (U"The number of rows in the table and the number of elements in the Permutation must be equal.");
@@ -45,8 +44,7 @@ TableOfReal TableOfReal_and_Permutation_permuteRows (I, Permutation thee) {
 	}
 }
 
-Permutation TableOfReal_to_Permutation_sortRowLabels (I) {
-	iam (TableOfReal);
+Permutation TableOfReal_to_Permutation_sortRowLabels (TableOfReal me) {
 	try {
 		autoPermutation thee = Permutation_create (my numberOfRows);
 		NUMindexx_s (my rowLabels, my numberOfRows, thy p);

@@ -25,17 +25,8 @@
  djmw 20110307 Latest modification.
  */
 
-#ifndef _CCA_h_
-	#include "CCA.h"
-#endif
-#ifndef _SSCP_h_
-	#include "SSCP.h"
-#endif
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
+#include "CCA.h"
+#include "SSCP.h"
 
 TableOfReal CCA_and_Correlation_factorLoadings (CCA me, Correlation thee);
 /*
@@ -55,9 +46,5 @@ double CCA_and_Correlation_getRedundancy_sl (CCA me, Correlation thee, int x_or_
 	of the other set.
 	redundancy = VarianceFraction * (canonical correlation)^2
 */
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _CCA_and_Correlation_h_ */

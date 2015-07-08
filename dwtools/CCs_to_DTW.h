@@ -30,7 +30,7 @@
 #include "DTW.h"
 
 
-DTW CCs_to_DTW (I, thou, double wc, double wle, double wr, double wer, double dtr);
+DTW CCs_to_DTW (CC me, CC thee, double wc, double wle, double wr, double wer, double dtr);
 /*
 	1. Calculate distances between CCs:
 		Distance between frame i (from me) and j (from thee) is

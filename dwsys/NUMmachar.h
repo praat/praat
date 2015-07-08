@@ -24,10 +24,6 @@
  djmw 20110308 Latest modification
 */
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 struct structmachar_Table
 {
 	int base;		/* Radix in which numbers are presented. */
@@ -47,9 +43,5 @@ typedef struct structmachar_Table *machar_Table;
 extern machar_Table NUMfpp;
 
 void NUMmachar ();
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _NUMmachar_h_ */

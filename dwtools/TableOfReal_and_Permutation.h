@@ -27,18 +27,10 @@
 #include "Permutation.h"
 #include "TableOfReal.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
-TableOfReal TableOfReal_and_Permutation_permuteRows (I, Permutation thee);
+TableOfReal TableOfReal_and_Permutation_permuteRows (TableOfReal me, Permutation thee);
 /*
 	Permutation (n1,n2,..nn) new his z[1] = my z[n1], his z[2] = my z[n2], ..*/
 
-Permutation TableOfReal_to_Permutation_sortRowLabels (I);
-
-#ifdef __cplusplus
-	}
-#endif
+Permutation TableOfReal_to_Permutation_sortRowLabels (TableOfReal me);
 
 #endif /* _TableOfReal_and_Permutation_h_ */

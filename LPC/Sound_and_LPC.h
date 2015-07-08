@@ -29,10 +29,6 @@
 #include "LPC.h"
 #include "Sound.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 LPC Sound_to_LPC_auto (Sound me, int predictionOrder, double analysisWidth, double dt,
 	double preEmphasisFrequency);
 
@@ -101,9 +97,5 @@ Sound LPC_and_Sound_filterInverse (LPC me, Sound thee);
 
 Sound LPC_and_Sound_filterInverseWithFilterAtTime (LPC me, Sound thee, int channel, double time);
 void LPC_and_Sound_filterInverseWithFilterAtTime_inline (LPC me, Sound thee, int channel, double time);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _Sound_and_LPC_h_ */

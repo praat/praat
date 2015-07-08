@@ -31,14 +31,6 @@
 	#include "Procrustes.h"
 #endif
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Procrustes Configurations_to_Procrustes (Configuration me, Configuration thee, int orthogonal);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _Configuration_and_Procrustes_h_ */

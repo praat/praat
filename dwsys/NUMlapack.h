@@ -118,10 +118,6 @@ We have changed the following things:
 	dggsvp	NUMmatricesToUpperTriangularForms
 */
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 void NUMidentity (double **a, long rb, long re, long cb);
 /*
 	Set a[rb:re, cb:cb+re-rb] to identity matrix.
@@ -1115,9 +1111,5 @@ void NUMtriangularInverse (int upper, int unitDiagonal, long n, double **a);
 	Computes inverse of triangular matrix.
 
 */
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _NUMlapack_h_ */

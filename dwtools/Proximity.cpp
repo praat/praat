@@ -1,4 +1,4 @@
-/* Proximity.c
+/* Proximity.cpp
  *
  * Copyright (C) 1993-2004 David Weenink
  *
@@ -27,11 +27,10 @@
 
 Thing_implement (Proximity, TableOfReal, 0);
 
-void Proximity_init (I, long numberOfPoints) {
-	iam (Proximity);
+void Proximity_init (Proximity me, long numberOfPoints) {
 	TableOfReal_init (me, numberOfPoints, numberOfPoints);
 	TableOfReal_setSequentialRowLabels (me, 0, 0, NULL, 1, 1);
 	TableOfReal_setSequentialColumnLabels (me, 0, 0, NULL, 1, 1);
 }
 
-/* End of file Proximity.c */
+/* End of file Proximity.cpp */

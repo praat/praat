@@ -28,15 +28,7 @@
 #include "MFCC.h"
 #include "Sound.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 MFCC Sound_to_MFCC (Sound me, long numberOfCoefficients, double analysisWidth,
 	double dt, double f1_mel, double fmax_mel, double df_mel);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _Sound_to_MFCC_h_ */

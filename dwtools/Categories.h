@@ -25,10 +25,10 @@
 #include "Graphics.h"
 
 Thing_define (Categories, OrderedOfString) {
-	// overridden methods:
-	public:
-		virtual void v_readText (MelderReadText text);
-		virtual void v_writeText (MelderFile file);
+	void v_readText (MelderReadText text)
+		override;
+	void v_writeText (MelderFile file)
+		override;
 };
 
 void Categories_init (Categories me, long size);
@@ -40,12 +40,12 @@ Categories Categories_selectUniqueItems (Categories me, int sorted);
 
 void Categories_drawItem (Categories me, Graphics g, long position, double xWC, double yWC);
 
-Categories OrderedOfString_to_Categories (I);
+Categories OrderedOfString_to_Categories (OrderedOfString me);
 
 long Categories_getSize (Categories me);
 /* return my size */
 
-Categories TableOfReal_to_CategoriesRow (I);
-Categories TableOfReal_to_CategoriesColumn (I);
+Categories TableOfReal_to_CategoriesRow (TableOfReal me);
+Categories TableOfReal_to_CategoriesColumn (TableOfReal me);
 
 #endif /* _Categories_h_ */

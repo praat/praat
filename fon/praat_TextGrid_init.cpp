@@ -840,7 +840,7 @@ static void cb_TextGridEditor_publication (Editor editor, void *closure, Data pu
 	 * Keep the gate for error handling.
 	 */
 	try {
-		praat_new (publication, NULL);
+		praat_new (publication, U"");
 		praat_updateSelection ();
 		if (Thing_member (publication, classSpectrum) && str32equ (Thing_getName (publication), U"slice")) {
 			int IOBJECT;

@@ -26,33 +26,20 @@
  djmw 20110307 Latest modification
 */
 
-#ifndef _Eigen_h_
-	#include "Eigen.h"
-#endif
+#include "Eigen.h"
+#include "Matrix.h"
 
-#ifndef _Matrix_h_
-	#include "Matrix.h"
-#endif
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
-Matrix Eigen_and_Matrix_project (I, thou, long numberOfComponents);
+Matrix Eigen_and_Matrix_project (Eigen me, Matrix thee, long numberOfComponents);
 /*
 	Purpose: project the columns of the matrix (thou) on the 
 	eigenspace (me). 
 */
 
-void Eigen_and_Matrix_project_into (I, thou, Any void_pointer_to_him);
+void Eigen_and_Matrix_project_into (Eigen me, Matrix thee, Matrix *pointer_to_him);
 /*
 	Purpose: project the columns of the Matrix (thou) on the 
 	eigenspace (me). Result in existing Matrix (him). 
 
 */
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _Eigen_and_Matrix_h_ */

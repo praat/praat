@@ -181,41 +181,6 @@ void Data_writeToBinaryFile (Data me, MelderFile file);
 		The format of the file after this is the same as in Data_writeBinary.
 */
 
-bool Data_canWriteLisp (Data me);
-/*
-	Message:
-		"Can you write yourself as a sequece of LISP objects?"
-	The answer depends on whether the subclass defines a 'writeLisp' method.
-*/
-
-void Data_writeLisp (Data me, FILE *f);
-/*
-	Message:
-		"try to write yourself as a sequence of LISP objects to the stream <f>."
-	Failures:
-		I/O error.
-		Disk full.
-	Description:
-		The format depends on the 'writeLisp' method defined by the subclass.
-*/
-
-void Data_writeLispToConsole (Data me);
-/*
-	Message:
-		"try to write yourself as a sequence of LISP objects to the standard output."
-	Return value:
-		1 if OK, 0 in case of failure.
-	Description:
-		The format is the same as in Data_writeLisp.
-		The standard output will most often be a window named "Console".
-*/
-
-/*
-	The routines Data_readXXX assume that a class can be read from its name (a string).
-	You should have called Thing_recognizeClassesByName () for all the classes
-	that you want to read by name. This call is best placed in the beginning of main ().
-*/
-
 bool Data_canReadText (Data me);
 /*
 	Message:
@@ -290,7 +255,7 @@ Data Data_readFromBinaryFile (MelderFile file);
 		(plus those from Data_readBinary)
 */
 
-void Data_recognizeFileType (Any (*recognizer) (int nread, const char *header, MelderFile fs));
+void Data_recognizeFileType (Any (*recognizer) (int nread, const char *header, MelderFile file));
 /*
 Purpose:
 	to make sure that a file can be read by Data_readFromFile.

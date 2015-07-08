@@ -28,10 +28,6 @@
 #include "Sound_extensions.h"
 #include "Pitch.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Pitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch,
 	double maximumFrequency, double ceiling, long maxnSubharmonics, long maxnCandidates,
 	double compressionFactor, long nDivisionsPerOctave);
@@ -39,9 +35,5 @@ Pitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch,
 Pitch Sound_to_Pitch_SPINET (Sound me, double timeStep, double windowDuration,
 	double minimumFrequencyHz, double maximumFrequencyHz, long nFilters,
 	double ceiling, int maxnCandidates);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _Sound_to_Pitch2_h_ */

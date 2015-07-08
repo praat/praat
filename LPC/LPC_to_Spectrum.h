@@ -28,10 +28,6 @@
 #include "LPC.h"
 #include "Spectrum.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 void LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduction,
 	double deEmphasisFrequency);
 	
@@ -41,9 +37,5 @@ Spectrum LPC_to_Spectrum (LPC me, double t, double dfMin, double bandwidthReduct
 Spectrum LPC_to_Spectrum2 (LPC me, double t, double dfMin, double bandwidthReduction);
 /* if(dfMin >= 0) df <= dfMin else df = NyquistFrequency / 512 */
 /* integration radius r = exp (- pi * bandwidthReduction / samplingFrequency) */
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _LPC_and_Spectrum_h_ */

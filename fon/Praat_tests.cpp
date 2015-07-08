@@ -8,17 +8,14 @@
 
 #include "Praat_tests.h"
 
+#include "Graphics.h"
+#include "praat.h"
+
 #include "enums_getText.h"
 #include "Praat_tests_enums.h"
 #include "enums_getValue.h"
 #include "Praat_tests_enums.h"
 #include <string>
-
-#define UTF32_C(string) \
-	({ static const wchar_t *_static_utf32_string = Melder_utf8ToStr32 (string); _static_utf32_string; })
-
-constexpr char32 greeting [] {U"Hello?"};
-
 
 int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *arg4) {
 	int64 n = Melder_atoi (arg1);
@@ -27,9 +24,6 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 	(void) arg2;
 	(void) arg3;
 	(void) arg4;
-	constexpr int a {2};   // modern syntax
-	constexpr double d {2};
-	int b = ({ int c {4}; c+10; });   // unusual syntax: a "statement expression", which is a GNU C extension
 	Melder_clearInfo ();
 	Melder_stopwatch ();
 	switch (itest) {
@@ -102,99 +96,124 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 		} break;
 		case kPraatTests_TIME_STRING_MELDER_32: {
 			autoMelderString string;
+			char32 word [] { U"abc" };
+			word [2] = NUMrandomInteger ('a', 'z');
 			for (int64 i = 1; i <= n; i ++) {
-				MelderString_copy (& string, U"abc");
+				MelderString_copy (& string, word);
 				for (int j = 1; j <= 30; j ++)
-					MelderString_append (& string, U"abc");
+					MelderString_append (& string, word);
 			}
 			t = Melder_stopwatch ();
 		} break;
 		case kPraatTests_TIME_STRING_CPP_S: {
 			std::string s = "";
+			char word [] { "abc" };
+			word [2] = (char) NUMrandomInteger ('a', 'z');
 			for (int64 i = 1; i <= n; i ++) {
-				s = "abs";
+				s = word;
 				for (int j = 1; j <= 30; j ++)
-					s += "abc";
+					s += word;
 			}
 			t = Melder_stopwatch ();
 		} break;
 		case kPraatTests_TIME_STRING_CPP_C: {
 			std::basic_string<char> s = "";
+			char word [] { "abc" };
+			word [2] = (char) NUMrandomInteger ('a', 'z');
 			for (int64 i = 1; i <= n; i ++) {
-				s = "abc";
+				s = word;
 				for (int j = 1; j <= 30; j ++)
-					s += "abc";
+					s += word;
 			}
 			t = Melder_stopwatch ();
 		} break;
 		case kPraatTests_TIME_STRING_CPP_WS: {
 			std::wstring s = L"";
+			wchar_t word [] { L"abc" };
+			word [2] = NUMrandomInteger ('a', 'z');
 			for (int64 i = 1; i <= n; i ++) {
-				s = L"abc";
+				s = word;
 				for (int j = 1; j <= 30; j ++)
-					s += L"abc";
+					s += word;
 			}
 			t = Melder_stopwatch ();
 		} break;
 		case kPraatTests_TIME_STRING_CPP_WC: {
 			std::basic_string<wchar_t> s = L"";
+			wchar_t word [] { L"abc" };
+			word [2] = NUMrandomInteger ('a', 'z');
 			for (int64 i = 1; i <= n; i ++) {
-				s = L"abc";
+				s = word;
 				for (int j = 1; j <= 30; j ++)
-					s += L"abc";
+					s += word;
 			}
 			t = Melder_stopwatch ();
 		} break;
 		case kPraatTests_TIME_STRING_CPP_32: {
 			std::basic_string<char32_t> s = U"";
+			char32 word [] { U"abc" };
+			word [2] = NUMrandomInteger ('a', 'z');
 			for (int64 i = 1; i <= n; i ++) {
-				s = U"abc";
+				s = word;
 				for (int j = 1; j <= 30; j ++)
-					s += U"abc";
+					s += word;
 			}
 			t = Melder_stopwatch ();
 		} break;
 		case kPraatTests_TIME_STRING_CPP_U32STRING: {
 			#if ! defined (macintosh) || ! useCarbon
 			std::u32string s = U"";
-			volatile int jj = 30;
+			char32 word [] { U"abc" };
+			word [2] = NUMrandomInteger ('a', 'z');
 			for (int64 i = 1; i <= n; i ++) {
-				s = U"abc";
-				for (int j = 1; j <= jj; j ++)
-					s += U"abc";
+				s = word;
+				for (int j = 1; j <= 30; j ++)
+					s += word;
 			}
 			#endif
 			t = Melder_stopwatch ();
 		} break;
 		case kPraatTests_TIME_STRCPY: {
 			char buffer [100];
+			char word [] { "abc" };
+			word [2] = (char) NUMrandomInteger ('a', 'z');
 			for (int64 i = 1; i <= n; i ++) {
-				strcpy (buffer, "abc");
+				strcpy (buffer, word);
 				for (int j = 1; j <= 30; j ++)
-					strcpy (buffer + strlen (buffer), "abc");
+					strcpy (buffer + strlen (buffer), word);
 			}
 			t = Melder_stopwatch ();
 			MelderInfo_writeLine (Melder_peek8to32 (buffer));
 		} break;
+		case kPraatTests_TIME_WCSCPY: {
+			wchar_t buffer [100];
+			wchar_t word [] { L"abc" };
+			word [2] = NUMrandomInteger ('a', 'z');
+			for (int64 i = 1; i <= n; i ++) {
+				wcscpy (buffer, word);
+				for (int j = 1; j <= 30; j ++)
+					wcscpy (buffer + wcslen (buffer), word);
+			}
+			t = Melder_stopwatch ();
+		} break;
 		case kPraatTests_TIME_STR32CPY: {
 			char32 buffer [100];
+			char32 word [] { U"abc" };
+			word [2] = NUMrandomInteger ('a', 'z');
 			for (int64 i = 1; i <= n; i ++) {
-				str32cpy (buffer, U"abc");
+				str32cpy (buffer, word);
 				for (int j = 1; j <= 30; j ++)
-					str32cpy (buffer + str32len (buffer), U"abc");
+					str32cpy (buffer + str32len (buffer), word);
 			}
 			t = Melder_stopwatch ();
 			MelderInfo_writeLine (buffer);
 		} break;
-		case kPraatTests_TIME__STR32CPY: {
-			char32 buffer [100];
+		case kPraatTests_TIME_GRAPHICS_TEXT_TOP: {
+			autoPraatPicture picture;
 			for (int64 i = 1; i <= n; i ++) {
-				_str32cpy (buffer, U"abc");
-				for (int j = 1; j <= 30; j ++)
-					_str32cpy (buffer + _str32len (buffer), U"abc");
+				Graphics_textTop (GRAPHICS, false, U"hello world");
 			}
 			t = Melder_stopwatch ();
-			MelderInfo_writeLine (buffer);
 		} break;
 	}
 	MelderInfo_writeLine (Melder_single (t / n * 1e9), U" nanoseconds");

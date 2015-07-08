@@ -24,10 +24,6 @@
  djmw 20110308 Latest modification
 */
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 #define xerbla_(src,info) Melder_throw (Melder_peek8to32 (src), U": parameter ", *info, U"not correct!")
 
 int NUMblas_daxpy (long *n, double *da, double *dx,	long *incx, double *dy, long *incy);
@@ -776,10 +772,5 @@ int NUMblas_dtrsm (const char *side, const char *uplo, const char *transa, const
 
 long NUMblas_idamax (long *n, double *dx, long *incx);
 /* finds the index of element having max. absolute value.*/
-
-#ifdef __cplusplus
-	}
-#endif
-
 
 #endif /* _NUMcblas_h_ */

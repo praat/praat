@@ -29,6 +29,6 @@
 Thing_define (Proximity, TableOfReal) {
 };
 
-void Proximity_init (I, long numberOfPoints);
+void Proximity_init (Proximity me, long numberOfPoints);
 
 #endif /* _Proximity_h_ */

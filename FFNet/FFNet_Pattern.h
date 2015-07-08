@@ -28,14 +28,6 @@
 #include "Pattern.h"
 #include "FFNet.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 void FFNet_Pattern_drawActivation( FFNet me, Pattern pattern, Graphics g, long ipattern );
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _FFNet_Pattern_h_ */

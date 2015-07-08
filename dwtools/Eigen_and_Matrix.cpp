@@ -24,10 +24,8 @@
 
 #include "Eigen_and_Matrix.h"
 
-Matrix Eigen_and_Matrix_project (I, thou, long numberOfComponents) {
+Matrix Eigen_and_Matrix_project (Eigen me, Matrix thee, long numberOfComponents) {
 	try {
-		iam (Eigen);
-		thouart (Matrix);
 		if (numberOfComponents == 0) {
 			numberOfComponents = my numberOfEigenvalues;
 		}
@@ -42,9 +40,8 @@ Matrix Eigen_and_Matrix_project (I, thou, long numberOfComponents) {
 	}
 }
 
-void Eigen_and_Matrix_project_into (I, thou, Any void_pointer_to_him) {
-	iam (Eigen); thouart (Matrix);
-	Matrix him = * ( (Matrix *) void_pointer_to_him);
+void Eigen_and_Matrix_project_into (Eigen me, Matrix thee, Matrix *pointer_to_him) {
+	Matrix him = *pointer_to_him;
 
 	if (my dimension != thy ny) Melder_throw
 		(U"The number of rows in the 'from' Matrix must equal the dimension of the eigenvector.");

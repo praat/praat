@@ -25,17 +25,8 @@
  djmw 20110307 Latest modification
 */
 
-#ifndef _Pitch_h_
-	#include "Pitch.h"
-#endif
-
-#ifndef _PitchTier_h_
-	#include "PitchTier.h"
-#endif
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
+#include "Pitch.h"
+#include "PitchTier.h"
 
 void Pitch_Frame_addPitch (Pitch_Frame me, double f, double strength, int maxnCandidates);
 void Pitch_Frame_getPitch (Pitch_Frame me, double *f, double *strength);
@@ -49,9 +40,5 @@ Pitch Pitch_scaleTime (Pitch me, double scaleFactor);
 */
 
 Pitch PitchTier_to_Pitch (PitchTier me, double dt, double pitchFloor, double pitchCeiling);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _Pitch_extensions_h_ */

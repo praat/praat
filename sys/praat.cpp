@@ -1007,9 +1007,11 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	#endif
 	char *p;
 	#ifdef macintosh
-		SInt32 macSystemVersion;
-		Gestalt ('sysv', & macSystemVersion);
-		Melder_systemVersion = macSystemVersion;
+		SInt32 sys1, sys2, sys3;
+		Gestalt ('sys1', & sys1);
+		Gestalt ('sys2', & sys2);
+		Gestalt ('sys3', & sys3);
+		Melder_systemVersion = sys1 * 10000 + sys2 * 100 + sys3;
 	#endif
 	/*
 		Initialize numerical libraries.

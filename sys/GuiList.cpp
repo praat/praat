@@ -108,7 +108,7 @@ Thing_implement (GuiList, GuiControl, 0);
 			[self addSubview: sv];   // this retains the scroll view
 			//Melder_assert ([sv retainCount] == 2);   // not always true on 10.6
 			[sv release];
-			Melder_assert ([_tableView retainCount] == 2);
+			//Melder_assert ([_tableView retainCount] == 2);   // not always true on 10.11
 			[_tableView release];
 
 			_contents = [[NSMutableArray alloc] init];
@@ -316,9 +316,10 @@ Thing_implement (GuiList, GuiControl, 0);
 					ATSUSetObjFontFallbacks (fontFallbacks, 0, NULL, kATSUDefaultFontFallbacks);
 				}
 				char *text_utf8 = (char *) *(*handle) -> cells + dataOffset;
-				strncpy (Melder_buffer1, text_utf8, dataLength);
-				Melder_buffer1 [dataLength] = '\0';
-				char32 *text32 = Melder_peek8to32 (Melder_buffer1);
+				static char buffer [30001];
+				strncpy (buffer, text_utf8, dataLength);
+				buffer [dataLength] = '\0';
+				char32 *text32 = Melder_peek8to32 (buffer);
 				const char16 *text_utf16 = (const char16 *) Melder_peek32to16 (text32);
 				UniCharCount runLength = str16len (text_utf16);   // BUG
 				ATSUTextLayout textLayout;

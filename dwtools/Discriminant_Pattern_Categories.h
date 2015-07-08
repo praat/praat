@@ -34,17 +34,9 @@
 	#include "Categories.h"
 #endif
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Discriminant Pattern_and_Categories_to_Discriminant (Pattern me, Categories thee);
 
 Categories Discriminant_and_Pattern_to_Categories (Discriminant me, Pattern thee, 
 	int poolCovarianceMatrices,int useAprioriProbabilities);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _Discriminant_Pattern_Categories_h_ */

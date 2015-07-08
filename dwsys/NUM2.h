@@ -1117,8 +1117,6 @@ void NUMfft_Table_init (NUMfft_Table table, long n);
 	n : data size
 */
 
-#ifdef __cplusplus
-
 struct autoNUMfft_Table : public structNUMfft_Table {
         autoNUMfft_Table () throw () {
                 n = 0;
@@ -1130,8 +1128,6 @@ struct autoNUMfft_Table : public structNUMfft_Table {
                 NUMvector_free (splitcache, 0);
         }
 };
-
-#endif
 
 void NUMfft_forward_f (NUMfft_Table_f table, float *data);
 void NUMfft_forward (NUMfft_Table table, double *data);

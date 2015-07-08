@@ -27,17 +27,9 @@
 #include "FormantGrid.h"
 #include "Graphics.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 void FormantGrid_draw (FormantGrid me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool bandwidths, bool garnish, const char32 *method);
 
 void FormantGrid_removeFormantAndBandwidthTiers (FormantGrid me, int position);
 void FormantGrid_addFormantAndBandwidthTiers (FormantGrid me, int position);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _FormantGrid_extensions_h_ */

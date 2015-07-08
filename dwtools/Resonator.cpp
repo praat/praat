@@ -132,18 +132,15 @@ AntiResonator AntiResonator_create (double dT) {
 	}
 }
 
-void Filter_setFB (I, double f, double b) {
-	iam (Filter);
+void Filter_setFB (Filter me, double f, double b) {
 	my v_setFB (f, b);
 }
 
-double Filter_getOutput (I, double input) {
-	iam (Filter);
+double Filter_getOutput (Filter me, double input) {
 	return my v_getOutput (input);
 }
 
-void Filter_resetMemory (I) {
-	iam (Filter);
+void Filter_resetMemory (Filter me) {
 	my v_resetMemory ();
 }
 

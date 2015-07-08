@@ -28,10 +28,6 @@
 #include "Matrix.h"
 #include "FFNet.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 /* The Matrix organization is as follows:									*/
 /*																			*/
 /* nx = nUnitsInLayer[layer]												*/
@@ -48,9 +44,5 @@ Matrix FFNet_weightsToMatrix (FFNet me, long layer, int deltaWeights);
 FFNet FFNet_weightsFromMatrix (FFNet me, Matrix matrix, long layer);
 /* creates a new FFNet in which the weights that connect to layer are		*/
 /* replaced by the weights in the matrix									*/
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _FFNet_Matrix_h_ */

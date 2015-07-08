@@ -254,7 +254,7 @@ void _GuiText_handleValueChanged (GuiObject widget) {
 				return 1;
 			}
 		}
-		return 0;   /* Not handled. */
+		return 0;   // not handled
 	}
 	void _GuiMacText_handleClick (GuiObject widget, EventRecord *event) {
 		iam_text;
@@ -264,7 +264,7 @@ void _GuiText_handleValueChanged (GuiObject widget) {
 			HandleControlClick (widget -> nat.control.handle, event -> where, event -> modifiers, NULL);
 		} else if (isMLTE (me)) {
 			LocalToGlobal (& event -> where);
-			TXNClick (my d_macMlteObject, event);   /* Handles text selection and scrolling. */
+			TXNClick (my d_macMlteObject, event);   // handles text selection and scrolling
 			GlobalToLocal (& event -> where);
 		}
 		GuiMac_clipOff ();
@@ -932,7 +932,11 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			NSSize contentSize = [my d_cocoaScrollView contentSize];
 			my d_cocoaTextView = [[GuiCocoaTextView alloc] initWithFrame: NSMakeRect (0, 0, contentSize. width, contentSize. height)];
 			[my d_cocoaTextView setUserData: me];
-			[my d_cocoaTextView setMinSize: NSMakeSize (0.0, contentSize.height)];
+			if (Melder_systemVersion < 101100) {
+				[my d_cocoaTextView setMinSize: NSMakeSize (0.0, contentSize.height)];
+			} else {
+				[my d_cocoaTextView setMinSize: NSMakeSize (contentSize. width, contentSize.height)];    // El Capitan Developer Beta 2
+			}
 			[my d_cocoaTextView setMaxSize: NSMakeSize (FLT_MAX, FLT_MAX)];
 			[my d_cocoaTextView setVerticallyResizable: YES];
 			[my d_cocoaTextView setHorizontallyResizable: YES];
@@ -1000,7 +1004,7 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			TXNMargins margins;
 			TXNControlData controlData;
 			TXNControlTag controlTag = kTXNMarginsTag;
-			TXNNewObject (NULL,   /* No file. */
+			TXNNewObject (NULL,   // no file
 				my d_widget -> macWindow, & my d_widget -> rect, kTXNWantHScrollBarMask | kTXNWantVScrollBarMask
 					| kTXNMonostyledTextMask | kTXNDrawGrowIconMask,
 				kTXNTextEditStyleFrameType, kTXNTextensionFile,
@@ -1700,7 +1704,7 @@ void GuiText_setString (GuiText me, const char32 *text) {
 		Melder_free (macText);
 		if (my d_widget -> managed) {
 			if (theGui.duringUpdate) {
-				_Gui_invalidateWidget (my d_widget);   /* HACK: necessary because VisRgn has temporarily been changed (not used in Praat any longer). */
+				_Gui_invalidateWidget (my d_widget);   // HACK: necessary because VisRgn has temporarily been changed (not used in Praat any longer)
 			} else {
 				if (isTextControl (my d_widget)) {
 					_GuiMac_clipOnParent (my d_widget);

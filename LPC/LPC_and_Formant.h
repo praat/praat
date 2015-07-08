@@ -28,10 +28,6 @@
 #include "Polynomial.h"
 #include "Formant.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Formant LPC_to_Formant (LPC me, double margin);
 
 LPC Formant_to_LPC (Formant me, double samplingPeriod);
@@ -46,9 +42,5 @@ void Formant_Frame_scale (Formant_Frame me, double scale);
 void Roots_into_Formant_Frame (Roots me, Formant_Frame thee, double samplingFrequency, double margin);
 
 void Formant_Frame_init (Formant_Frame me, long nFormants);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _LPC_and_Formant_h_ */

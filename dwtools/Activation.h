@@ -26,10 +26,6 @@
 
 #include "Matrix.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_define (Activation, Matrix) {
 };
 
@@ -58,9 +54,5 @@ Matrix Activation_to_Matrix (I);
 
 int _Activation_checkElements (Activation me);
 /* Return 1 if all elements are in interval [0,1] else 0. */
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _Activation_h_ */

@@ -27,40 +27,39 @@
 #include "Sound.h"
 
 Thing_define (Filter, Data) {
-	// new data:
-	public:
-		double dT;
-		double a, b, c;
-		double p1, p2;
-	// new methods:
-		virtual double v_getOutput (double input);
-		virtual void v_setFB (double f, double b);
-		virtual void v_resetMemory ();
+	double dT;
+	double a, b, c;
+	double p1, p2;
+
+	virtual double v_getOutput (double input);
+	virtual void v_setFB (double f, double b);
+	virtual void v_resetMemory ();
 };
 
 Thing_define (Resonator, Filter) {
-	// new data:
-	public:
-		int normalisation;
-	// overridden methods:
-		virtual void v_setFB (double f, double b);
+	int normalisation;
+
+	void v_setFB (double f, double b)
+		override;
 };
 
 Thing_define (AntiResonator, Resonator) {
-	// overridden methods:
-		virtual double v_getOutput (double input);
-		virtual void v_setFB (double f, double b);
+	double v_getOutput (double input)
+		override;
+	void v_setFB (double f, double b)
+		override;
 };
 
 Thing_define (ConstantGainResonator, Filter) {
-	// new data:
-	public:
-		double d;
-		double p3, p4;
-	// overridden methods:
-		virtual double v_getOutput (double input);
-		virtual void v_setFB (double f, double b);
-		virtual void v_resetMemory ();
+	double d;
+	double p3, p4;
+
+	double v_getOutput (double input)
+		override;
+	void v_setFB (double f, double b)
+		override;
+	void v_resetMemory ()
+		override;
 };
 
 #define Resonator_NORMALISATION_H0 0
@@ -78,11 +77,11 @@ AntiResonator AntiResonator_create (double dT);
 	normalisation == 0: H(0) = 1 -> a = 1 -b - c
 	normalisation == 1: H(Fmax) = 1 -> a = (1 + c)sin(2*pi*F*T)
 */
-void Filter_setFB (I, double f, double b);
+void Filter_setFB (Filter me, double f, double b);
 
-double Filter_getOutput (I, double input);
+double Filter_getOutput (Filter me, double input);
 
-void Filter_resetMemory (I);
+void Filter_resetMemory (Filter me);
 
 #endif /* _Resonator_h_ */
 

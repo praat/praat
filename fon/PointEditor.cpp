@@ -178,6 +178,7 @@ void structPointEditor :: v_draw () {
 		long first, last;
 		if (Sampled_getWindowSamples (sound, d_startWindow, d_endWindow, & first, & last) >= 1) {
 			Matrix_getWindowExtrema (sound, first, last, 1, 1, & minimum, & maximum);
+			if (minimum == maximum) minimum -= 1.0, maximum += 1.0;
 		}
 	}
 	Graphics_setWindow (d_graphics, d_startWindow, d_endWindow, minimum, maximum);
