@@ -948,6 +948,7 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			static NSFont *theTextFont;
 			if (! theTextFont) {
 				theTextFont = [[NSFont systemFontOfSize: 13.0] retain];
+				theTextFont = [[NSFont fontWithName: @"Menlo"   size: 12.0] retain];
 			}
 			[my d_cocoaTextView setFont: theTextFont];
 			[my d_cocoaTextView setAllowsUndo: YES];
@@ -1500,7 +1501,7 @@ void GuiText_setFontSize (GuiText me, int size) {
 		gtk_widget_modify_style (GTK_WIDGET (my d_widget), modStyle);
 	#elif cocoa
 		if (my d_cocoaTextView) {
-			[my d_cocoaTextView   setFont: [NSFont systemFontOfSize: size]];
+			[my d_cocoaTextView   setFont: [NSFont fontWithName: @"Menlo"   size: size]];
 		}
 	#elif win
 		// a trick to update the window. BUG: why doesn't UpdateWindow seem to suffice?

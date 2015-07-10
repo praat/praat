@@ -336,6 +336,11 @@ extern char32 Melder_decodeMacRoman [256];
 extern char32 Melder_decodeWindowsLatin1 [256];
 
 long Melder_killReturns_inline (char32 *text);
+long Melder_killReturns_inline (char *text);
+/*
+	 Replaces all bare returns (Mac) or return / linefeed sequences (Win) with bare linefeeds (generic = Unix).
+	 Returns new length of string (equal to or less than old length).
+*/
 
 size_t str32len_utf8  (const char32 *string, bool nativizeNewlines);
 size_t str32len_utf16 (const char32 *string, bool nativizeNewlines);
@@ -1203,12 +1208,6 @@ void Melder_setPlayReverseProc (void (*playReverse) (void));
 void Melder_setPublishPlayedProc (int (*publishPlayed) (void));
 
 double Melder_stopwatch (void);
-
-long Melder_killReturns_inline (char *text);
-/*
-	 Replaces all bare returns (Mac) or return / linefeed sequences (Win) with bare linefeeds (generic = Unix).
-	 Returns new length of string (equal to or less than old length).
-*/
 
 /********** AUDIO **********/
 

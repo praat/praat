@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20150708)
+MAN_BEGIN (U"What's new?", U"ppgb", 20150710)
 INTRO (U"Latest changes in Praat.")
 /*LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (U"##5.4.12# (10 July 2015)")
+LIST_ITEM (U"• Windows: removed a bug introduced in 5.4.10 whereby SpeechSynthesizer would only pronounce the first letter of the text.")
 NORMAL (U"##5.4.11# (8 July 2015)")
 LIST_ITEM (U"• Windows: removed a bug introduced in 5.4.10 whereby the file selection window could try to open a file with a garbled name.")
 LIST_ITEM (U"• Removed a bug whereby the PointProcess window would crash when showing a perfectly silent sound.")
