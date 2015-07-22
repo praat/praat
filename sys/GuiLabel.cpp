@@ -70,7 +70,7 @@ Thing_implement (GuiLabel, GuiControl, 0);
 #endif
 
 GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bottom,
-	const char32 *labelText, unsigned long flags)
+	const char32 *labelText, uint32 flags)
 {
 	GuiLabel me = Thing_new (GuiLabel);
 	my d_shell = parent -> d_shell;
@@ -134,7 +134,7 @@ GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bott
 }
 
 GuiLabel GuiLabel_createShown (GuiForm parent, int left, int right, int top, int bottom,
-	const char32 *labelText, unsigned long flags)
+	const char32 *labelText, uint32 flags)
 {
 	GuiLabel me = GuiLabel_create (parent, left, right, top, bottom, labelText, flags);
 	GuiThing_show (me);

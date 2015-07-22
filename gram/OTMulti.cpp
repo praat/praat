@@ -374,7 +374,7 @@ long OTMulti_getWinner (OTMulti me, const char32 *form1, const char32 *form2) {
 			}
 		}
 		if (icand_best == 0) {
-			Melder_error_ (U"The forms ", form1, U" and ", form2, U" do not match any candidate.");
+			Melder_appendError (U"The forms ", form1, U" and ", form2, U" do not match any candidate.");
 			throw MelderError_OTMulti_NoMatchingCandidate ();   // BUG: NYI
 		}
 		return icand_best;
@@ -950,7 +950,7 @@ void OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee, double e
 			*history_out = history.transfer();
 	} catch (MelderError) {
 		if (idatum > 1)
-			Melder_error_ (U"Only ", idatum - 1, U" input-output pairs out of ", numberOfData, U" were processed.");
+			Melder_appendError (U"Only ", idatum - 1, U" input-output pairs out of ", numberOfData, U" were processed.");
 		Melder_throw (me, U" & ", thee, U": learning from partial pairs not completed.");
 	}
 }

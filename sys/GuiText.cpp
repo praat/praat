@@ -875,7 +875,7 @@ void _GuiText_exit (void) {
 #elif mac
 #endif
 
-GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom, unsigned long flags) {
+GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom, uint32 flags) {
 	GuiText me = Thing_new (GuiText);
 	my d_shell = parent -> d_shell;
 	my d_parent = parent;
@@ -1044,7 +1044,7 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 	return me;
 }
 
-GuiText GuiText_createShown (GuiForm parent, int left, int right, int top, int bottom, unsigned long flags) {
+GuiText GuiText_createShown (GuiForm parent, int left, int right, int top, int bottom, uint32 flags) {
 	GuiText me = GuiText_create (parent, left, right, top, bottom, flags);
 	GuiThing_show (me);
 	return me;

@@ -508,7 +508,17 @@ static void DO_Picture_writeToPdfFile (UiForm sendingForm, int narg, Stackel arg
 	} else { MelderFile file; structMelderFile file2 = { 0 };
 		if (args == NULL && sendingString == NULL) file = UiFile_getFile (dia);
 		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
-		Picture_writeToPdfFile (praat_picture, file);
+		if (theCurrentPraatPicture == & theForegroundPraatPicture) {
+			Picture_writeToPdfFile (praat_picture, file);
+		} else {
+			try {
+				//autoPraatPicture picture;
+				autoGraphics graphics = Graphics_create_pdffile (file, 300, NUMundefined, 10.24, NUMundefined, 7.68);
+				Graphics_play (GRAPHICS, graphics.peek());
+			} catch (MelderError) {
+				Melder_throw (U"Picture not written to PDF file ", file, U".");
+			}
+		}
 	}
 }
 
@@ -525,7 +535,16 @@ static void DO_Picture_writeToPngFile_300 (UiForm sendingForm, int narg, Stackel
 	} else { MelderFile file; structMelderFile file2 = { 0 };
 		if (args == NULL && sendingString == NULL) file = UiFile_getFile (dia);
 		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
-		Picture_writeToPngFile_300 (praat_picture, file);
+		if (theCurrentPraatPicture == & theForegroundPraatPicture) {
+			Picture_writeToPngFile_300 (praat_picture, file);
+		} else {
+			try {
+				autoGraphics graphics = Graphics_create_pngfile (file, 300, 0.0, 10.24, 0.0, 7.68);
+				Graphics_play (GRAPHICS, graphics.peek());
+			} catch (MelderError) {
+				Melder_throw (U"Picture not written to PNG file ", file, U".");
+			}
+		}
 	}
 }
 
@@ -542,7 +561,16 @@ static void DO_Picture_writeToPngFile_600 (UiForm sendingForm, int narg, Stackel
 	} else { MelderFile file; structMelderFile file2 = { 0 };
 		if (args == NULL && sendingString == NULL) file = UiFile_getFile (dia);
 		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
-		Picture_writeToPngFile_600 (praat_picture, file);
+		if (theCurrentPraatPicture == & theForegroundPraatPicture) {
+			Picture_writeToPngFile_600 (praat_picture, file);
+		} else {
+			try {
+				autoGraphics graphics = Graphics_create_pngfile (file, 600, 0.0, 10.24, 0.0, 7.68);
+				Graphics_play (GRAPHICS, graphics.peek());
+			} catch (MelderError) {
+				Melder_throw (U"Picture not written to PNG file ", file, U".");
+			}
+		}
 	}
 }
 
@@ -1555,8 +1583,6 @@ void praat_picture_init (void) {
 	Data_recognizeFileType (pictureRecognizer);
 
 	if (! theCurrentPraatApplication -> batch) {
-		char pictureWindowTitle [100];
-		// Ook al eerder gezien... Migreren naar UI?
 		double screenX, screenY, screenWidth, screenHeight;
 		Gui_getWindowPositioningBounds (& screenX, & screenY, & screenWidth, & screenHeight);
 		resolution = Gui_getResolution (NULL);
@@ -1578,8 +1604,7 @@ void praat_picture_init (void) {
 			y = screenY + 0;
 			width += margin * 2;
 		#endif
-		sprintf (pictureWindowTitle, "%s Picture", praatP.title);
-		dialog = GuiWindow_create (x, y, width, height, 400, 200, Melder_peek8to32 (pictureWindowTitle), NULL, NULL, 0);
+		dialog = GuiWindow_create (x, y, width, height, 400, 200, Melder_cat (praatP.title, U" Picture"), NULL, NULL, 0);
 		GuiWindow_addMenuBar (dialog);
 	}
 	if (! theCurrentPraatApplication -> batch) {
@@ -1764,7 +1789,7 @@ void praat_picture_init (void) {
 	praat_addMenuCommand (U"Picture", U"Help", U"Phonetic symbols", 0, 0, DO_PhoneticSymbols);
 	praat_addMenuCommand (U"Picture", U"Help", U"-- manual --", 0, 0, 0);
 	praat_addMenuCommand (U"Picture", U"Help",
-		Melder_cat (U"Search ", Melder_peek8to32 (praatP.title), U" manual..."),
+		Melder_cat (U"Search ", praatP.title, U" manual..."),
 		0, 'M', DO_SearchManual);
 
 	if (! theCurrentPraatApplication -> batch) {

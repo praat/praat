@@ -3478,7 +3478,7 @@ NORMAL (U"You can run scripts from the @ScriptEditor. If you will have to use th
 NORMAL (U"(You can also run scripts from the command line. See @@Scripting 6.9. Calling from the command line|\\SS6.9@)")
 */
 
-MAN_BEGIN (U"Scripting 9.1. Turning a script into a stand-alone program", U"ppgb", 20150608)
+MAN_BEGIN (U"Scripting 9.1. Turning a script into a stand-alone program", U"ppgb", 20150713)
 INTRO (U"You can turn your script into a double-clickable stand-alone program by including it into Praat's #main procedure. "
 	"If you want to try this, you should already know how to compile and link the Praat program on your computer.")
 NORMAL (U"These stand-alone programs do not show the Objects window and the Picture window; "
@@ -3492,7 +3492,7 @@ CODE (U";")
 CODE (U"")
 CODE (U"int main (int argc, char *argv [ ]) {")
 	CODE1 (U"praat_setStandAloneScriptText (myScript);")
-	CODE1 (U"praat_init (\"Hello\", argc, argv);")
+	CODE1 (U"praat_init (U\"Hello\", argc, argv);")
 	CODE1 (U"INCLUDE_LIBRARY (praat_uvafon_init)")
 	CODE1 (U"praat_run ();")
 	CODE1 (U"return 0;")

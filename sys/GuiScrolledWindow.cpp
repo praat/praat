@@ -75,7 +75,7 @@ Thing_implement (GuiScrolledWindow, GuiControl, 0);
 #endif
 
 GuiScrolledWindow GuiScrolledWindow_create (GuiForm parent, int left, int right, int top, int bottom,
-	int horizontalScrollbarPersistence, int verticalScrollbarPersistence, unsigned long flags)
+	int horizontalScrollbarPersistence, int verticalScrollbarPersistence, uint32 /* flags */)
 {
 	GuiScrolledWindow me = Thing_new (GuiScrolledWindow);
 	my d_shell = parent -> d_shell;
@@ -108,7 +108,7 @@ GuiScrolledWindow GuiScrolledWindow_create (GuiForm parent, int left, int right,
 
 
 GuiScrolledWindow GuiScrolledWindow_createShown (GuiForm parent, int left, int right, int top, int bottom,
-	int horizontalScrollbarPersistence, int verticalScrollbarPersistence, unsigned long flags)
+	int horizontalScrollbarPersistence, int verticalScrollbarPersistence, uint32 flags)
 {
 	GuiScrolledWindow me = GuiScrolledWindow_create (parent, left, right, top, bottom, horizontalScrollbarPersistence, verticalScrollbarPersistence, flags);
 	GuiThing_show (me);

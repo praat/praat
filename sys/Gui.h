@@ -372,7 +372,7 @@ Thing_define (GuiShell, GuiForm) {
 
 int GuiShell_getShellWidth  (GuiShell me);   // needed because GuiControl_getWidth yields the width of the inner form
 int GuiShell_getShellHeight (GuiShell me);
-void GuiShell_setTitle (GuiShell me, const char32 *title);
+void GuiShell_setTitle (GuiShell me, const char32 *title /* cattable */);
 void GuiShell_drain (GuiShell me);   // drain the double graphics buffer
 
 /********** GuiButton **********/
@@ -399,12 +399,12 @@ GuiButton GuiButton_create      (GuiForm parent,
 	int left, int right, int top, int bottom,
 	const char32 *text,
 	void (*activateCallback) (void *boss, GuiButtonEvent event), void *boss,
-	unsigned long flags);
+	uint32 flags);
 GuiButton GuiButton_createShown (GuiForm parent,
 	int left, int right, int top, int bottom,
 	const char32 *text,
 	void (*activateCallback) (void *boss, GuiButtonEvent event), void *boss,
-	unsigned long flags);
+	uint32 flags);
 
 void GuiButton_setText (GuiButton me, const char32 *text /* cattable */);
 
@@ -428,12 +428,12 @@ GuiCheckButton GuiCheckButton_create      (GuiForm parent,
 	int left, int right, int top, int bottom,
 	const char32 *text,
 	void (*valueChangedCallback) (void *boss, GuiCheckButtonEvent event), void *boss,
-	unsigned long flags);
+	uint32 flags);
 GuiCheckButton GuiCheckButton_createShown (GuiForm parent,
 	int left, int right, int top, int bottom,
 	const char32 *text,
 	void (*valueChangedCallback) (void *boss, GuiCheckButtonEvent event), void *boss,
-	unsigned long flags);
+	uint32 flags);
 
 bool GuiCheckButton_getValue (GuiCheckButton me);
 void GuiCheckButton_setValue (GuiCheckButton me, bool value);
@@ -449,7 +449,7 @@ GuiDialog GuiDialog_create (GuiWindow parent,
 	int x, int y, int width, int height,
 	const char32 *title,
 	void (*goAwayCallback) (void *goAwayBoss), void *goAwayBoss,
-	unsigned long flags);
+	uint32 flags);
 
 /********** GuiDrawingArea **********/
 
@@ -495,25 +495,25 @@ GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int t
 	void (*clickCallback) (void *boss, GuiDrawingAreaClickEvent event),
 	void (*keyCallback) (void *boss, GuiDrawingAreaKeyEvent event),
 	void (*resizeCallback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss,
-	unsigned long flags);
+	uint32 flags);
 GuiDrawingArea GuiDrawingArea_createShown (GuiForm parent, int left, int right, int top, int bottom,
 	void (*exposeCallback) (void *boss, GuiDrawingAreaExposeEvent event),
 	void (*clickCallback) (void *boss, GuiDrawingAreaClickEvent event),
 	void (*keyCallback) (void *boss, GuiDrawingAreaKeyEvent event),
 	void (*resizeCallback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss,
-	unsigned long flags);
+	uint32 flags);
 GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int height,
 	void (*exposeCallback) (void *boss, GuiDrawingAreaExposeEvent event),
 	void (*clickCallback) (void *boss, GuiDrawingAreaClickEvent event),
 	void (*keyCallback) (void *boss, GuiDrawingAreaKeyEvent event),
 	void (*resizeCallback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss,
-	unsigned long flags);
+	uint32 flags);
 GuiDrawingArea GuiDrawingArea_createShown (GuiScrolledWindow parent, int width, int height,
 	void (*exposeCallback) (void *boss, GuiDrawingAreaExposeEvent event),
 	void (*clickCallback) (void *boss, GuiDrawingAreaClickEvent event),
 	void (*keyCallback) (void *boss, GuiDrawingAreaKeyEvent event),
 	void (*resizeCallback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss,
-	unsigned long flags);
+	uint32 flags);
 
 void GuiDrawingArea_setSwipable (GuiDrawingArea me, GuiScrollBar horizontalScrollBar, GuiScrollBar verticalScrollBar);
 void GuiDrawingArea_setExposeCallback (GuiDrawingArea me, void (*callback) (void *boss, GuiDrawingAreaExposeEvent event), void *boss);
@@ -541,9 +541,9 @@ Thing_define (GuiLabel, GuiControl) {
 #define GuiLabel_CENTRE  1
 #define GuiLabel_RIGHT  2
 GuiLabel GuiLabel_create      (GuiForm parent, int left, int right, int top, int bottom,
-	const char32 *text, unsigned long flags);
+	const char32 *text, uint32 flags);
 GuiLabel GuiLabel_createShown (GuiForm parent, int left, int right, int top, int bottom,
-	const char32 *text, unsigned long flags);
+	const char32 *text, uint32 flags);
 
 void GuiLabel_setText (GuiLabel me, const char32 *text /* cattable */);
 
@@ -617,9 +617,9 @@ Thing_define (GuiMenu, GuiThing) {
 		override;
 };
 
-GuiMenu GuiMenu_createInWindow (GuiWindow window, const char32 *title, long flags);
-GuiMenu GuiMenu_createInMenu (GuiMenu supermenu, const char32 *title, long flags);
-GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bottom, const char32 *title, long flags);
+GuiMenu GuiMenu_createInWindow (GuiWindow window, const char32 *title, uint32 flags);
+GuiMenu GuiMenu_createInMenu (GuiMenu supermenu, const char32 *title, uint32 flags);
+GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bottom, const char32 *title, uint32 flags);
 
 void GuiMenu_empty (GuiMenu me);
 
@@ -684,7 +684,7 @@ Thing_define (GuiMenuItem, GuiThing) {
 #define GuiMenu_F12  28
 // or any ASCII character (preferably a letter or digit) between 32 and 126
 
-GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, long flags,
+GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, uint32 flags,
 	void (*commandCallback) (void *boss, GuiMenuItemEvent event), void *boss);
 /* Flags is a combination of the above defines. */
 GuiMenuItem GuiMenu_addSeparator (GuiMenu menu);
@@ -707,9 +707,9 @@ Thing_define (GuiOptionMenu, GuiControl) {
 		override;
 };
 
-void GuiOptionMenu_init (GuiOptionMenu me, GuiForm parent, int left, int right, int top, int bottom, unsigned long flags);
-GuiOptionMenu GuiOptionMenu_create        (GuiForm parent, int left, int right, int top, int bottom, unsigned long flags);
-GuiOptionMenu GuiOptionMenu_createShown   (GuiForm parent, int left, int right, int top, int bottom, unsigned long flags);
+void GuiOptionMenu_init (GuiOptionMenu me, GuiForm parent, int left, int right, int top, int bottom, uint32 flags);
+GuiOptionMenu GuiOptionMenu_create        (GuiForm parent, int left, int right, int top, int bottom, uint32 flags);
+GuiOptionMenu GuiOptionMenu_createShown   (GuiForm parent, int left, int right, int top, int bottom, uint32 flags);
 
 void GuiOptionMenu_addOption (GuiOptionMenu me, const char32 *text);
 int GuiOptionMenu_getValue (GuiOptionMenu me);
@@ -725,8 +725,8 @@ Thing_define (GuiProgressBar, GuiControl) { public:
 	#endif
 };
 
-GuiProgressBar GuiProgressBar_create      (GuiForm parent, int left, int right, int top, int bottom, unsigned long flags);
-GuiProgressBar GuiProgressBar_createShown (GuiForm parent, int left, int right, int top, int bottom, unsigned long flags);
+GuiProgressBar GuiProgressBar_create      (GuiForm parent, int left, int right, int top, int bottom, uint32 flags);
+GuiProgressBar GuiProgressBar_createShown (GuiForm parent, int left, int right, int top, int bottom, uint32 flags);
 
 void GuiProgressBar_setValue (GuiProgressBar me, double value);   // between 0.0 and 1.0
 
@@ -752,9 +752,9 @@ Thing_define (GuiRadioButton, GuiControl) { public:
 #define GuiRadioButton_SET  1
 #define GuiRadioButton_INSENSITIVE  2
 GuiRadioButton GuiRadioButton_create      (GuiForm parent, int left, int right, int top, int bottom,
-	const char32 *buttonText, void (*valueChangedCallback) (void *boss, GuiRadioButtonEvent event), void *valueChangedBoss, unsigned long flags);
+	const char32 *buttonText, void (*valueChangedCallback) (void *boss, GuiRadioButtonEvent event), void *valueChangedBoss, uint32 flags);
 GuiRadioButton GuiRadioButton_createShown (GuiForm parent, int left, int right, int top, int bottom,
-	const char32 *buttonText, void (*valueChangedCallback) (void *boss, GuiRadioButtonEvent event), void *valueChangedBoss, unsigned long flags);
+	const char32 *buttonText, void (*valueChangedCallback) (void *boss, GuiRadioButtonEvent event), void *valueChangedBoss, uint32 flags);
 
 void GuiRadioGroup_begin ();
 void GuiRadioGroup_end ();
@@ -773,9 +773,9 @@ Thing_define (GuiScale, GuiControl) { public:
 };
 
 GuiScale GuiScale_create      (GuiForm parent, int left, int right, int top, int bottom,
-	int minimum, int maximum, int value, unsigned long flags);
+	int minimum, int maximum, int value, uint32 flags);
 GuiScale GuiScale_createShown (GuiForm parent, int left, int right, int top, int bottom,
-	int minimum, int maximum, int value, unsigned long flags);
+	int minimum, int maximum, int value, uint32 flags);
 
 int GuiScale_getValue (GuiScale me);
 void GuiScale_setValue (GuiScale me, int value);
@@ -797,10 +797,10 @@ Thing_define (GuiScrollBar, GuiControl) { public:
 #define GuiScrollBar_HORIZONTAL  1
 GuiScrollBar GuiScrollBar_create      (GuiForm parent, int left, int right, int top, int bottom,
 	double minimum, double maximum, double value, double sliderSize, double increment, double pageIncrement,
-	void (*valueChangedCallback) (void *boss, GuiScrollBarEvent event), void *valueChangedBoss, unsigned long flags);
+	void (*valueChangedCallback) (void *boss, GuiScrollBarEvent event), void *valueChangedBoss, uint32 flags);
 GuiScrollBar GuiScrollBar_createShown (GuiForm parent, int left, int right, int top, int bottom,
 	double minimum, double maximum, double value, double sliderSize, double increment, double pageIncrement,
-	void (*valueChangedCallback) (void *boss, GuiScrollBarEvent event), void *valueChangedBoss, unsigned long flags);
+	void (*valueChangedCallback) (void *boss, GuiScrollBarEvent event), void *valueChangedBoss, uint32 flags);
 
 int GuiScrollBar_getValue (GuiScrollBar me);
 int GuiScrollBar_getSliderSize (GuiScrollBar me);
@@ -815,9 +815,9 @@ Thing_define (GuiScrolledWindow, GuiControl) { public:
 };
 
 GuiScrolledWindow GuiScrolledWindow_create      (GuiForm parent, int left, int right, int top, int bottom,
-	int horizontalScrollbarPersistence, int verticalScrollbarPersistence, unsigned long flags);
+	int horizontalScrollbarPersistence, int verticalScrollbarPersistence, uint32 flags);
 GuiScrolledWindow GuiScrolledWindow_createShown (GuiForm parent, int left, int right, int top, int bottom,
-	int horizontalScrollbarPersistence, int verticalScrollbarPersistence, unsigned long flags);
+	int horizontalScrollbarPersistence, int verticalScrollbarPersistence, uint32 flags);
 
 /********** GuiText **********/
 
@@ -865,8 +865,8 @@ Thing_define (GuiText, GuiControl) { public:
 #define GuiText_MULTILINE  2
 #define GuiText_WORDWRAP  4
 #define GuiText_NONEDITABLE  8
-GuiText GuiText_create      (GuiForm parent, int left, int right, int top, int bottom, unsigned long flags);
-GuiText GuiText_createShown (GuiForm parent, int left, int right, int top, int bottom, unsigned long flags);
+GuiText GuiText_create      (GuiForm parent, int left, int right, int top, int bottom, uint32 flags);
+GuiText GuiText_createShown (GuiForm parent, int left, int right, int top, int bottom, uint32 flags);
 
 void GuiText_copy (GuiText me);
 void GuiText_cut (GuiText me);
@@ -907,7 +907,7 @@ Thing_define (GuiWindow, GuiShell) { public:
 /* GuiWindow creation flags: */
 #define GuiWindow_FULLSCREEN  1
 GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidth, int minimumHeight,
-	const char32 *title, void (*goAwayCallback) (void *goAwayBoss), void *goAwayBoss, unsigned long flags);
+	const char32 *title /* cattable */, void (*goAwayCallback) (void *goAwayBoss), void *goAwayBoss, uint32 flags);
 	// returns a Form widget that has a new Shell parent.
 
 void GuiWindow_addMenuBar (GuiWindow me);

@@ -500,7 +500,7 @@ DO
 		if (CLASS == classTransition) trans = (Transition) OBJECT;
 	}
 	autoTransition thee = Distributions_to_Transition (dist, NULL, GET_INTEGER (U"Environment"), trans, GET_INTEGER (U"Greedy"));
-	praat_new (thee.transfer(), U"");
+	praat_new (thee.transfer());
 END
 
 FORM (Distributions_to_Transition_noise, U"To Transition (noise)", 0)
@@ -511,7 +511,7 @@ DO
 	Distributions underlying = NULL, surface = NULL;
 	LOOP (underlying ? surface : underlying) = (Distributions) OBJECT;
 	autoTransition thee = Distributions_to_Transition (underlying, surface, GET_INTEGER (U"Environment"), NULL, GET_INTEGER (U"Greedy"));
-	praat_new (thee.transfer(), U"");
+	praat_new (thee.transfer());
 END
 
 FORM (Distributions_to_Transition_noise_adj, U"To Transition (noise)", 0)
@@ -526,7 +526,7 @@ DO
 		if (CLASS == classTransition) trans = (Transition) OBJECT;
 	}
 	autoTransition thee = Distributions_to_Transition (underlying, surface, GET_INTEGER (U"Environment"), trans, GET_INTEGER (U"Greedy"));
-	praat_new (thee.transfer(), U"");
+	praat_new (thee.transfer());
 END
 
 /***** DISTRIBUTIONS & TRANSITION *****/

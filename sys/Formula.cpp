@@ -2703,9 +2703,9 @@ static void do_exitScript () {
 	for (int iarg = 1; iarg <= numberOfArguments; iarg ++) {
 		Stackel arg = & theStack [w + iarg];
 		if (arg->which == Stackel_NUMBER)
-			Melder_error_noLine (arg->number);
+			Melder_appendError_noLine (arg->number);
 		else if (arg->which == Stackel_STRING)
-			Melder_error_noLine (arg->string);
+			Melder_appendError_noLine (arg->string);
 	}
 	Melder_throw (U"\nScript exited.");
 	pushNumber (1);

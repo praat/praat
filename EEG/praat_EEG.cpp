@@ -110,7 +110,7 @@ DIRECT (EEG_extractSound)
 		iam (EEG);
 		if (! my sound) Melder_throw (me, U": I don't contain a waveform.");
 		autoSound thee = EEG_extractSound (me);
-		praat_new (thee.transfer(), U"");
+		praat_new (thee.transfer());
 	}
 END
 
@@ -119,7 +119,7 @@ DIRECT (EEG_extractTextGrid)
 		iam (EEG);
 		if (! my textgrid) Melder_throw (me, U": I don't contain marks.");
 		autoTextGrid thee = EEG_extractTextGrid (me);
-		praat_new (thee.transfer(), U"");
+		praat_new (thee.transfer());
 	}
 END
 
@@ -306,7 +306,7 @@ static void cb_EEGWindow_publication (Editor editor, void *closure, Data publica
 	 * Keep the gate for error handling.
 	 */
 	try {
-		praat_new (publication, U"");
+		praat_new (publication);
 		praat_updateSelection ();
 		if (Thing_member (publication, classSpectrum) && str32equ (Thing_getName (publication), U"slice")) {
 			int IOBJECT;
@@ -344,7 +344,7 @@ DIRECT (ERP_downto_Sound)
 	LOOP {
 		iam (ERP);
 		autoSound thee = ERP_downto_Sound (me);
-		praat_new (thee.transfer(), U"");
+		praat_new (thee.transfer());
 	}
 END
 
@@ -624,7 +624,7 @@ static void cb_ERPWindow_publication (Editor editor, void *closure, Data publica
 	 * Keep the gate for error handling.
 	 */
 	try {
-		praat_new (publication, U"");
+		praat_new (publication);
 		praat_updateSelection ();
 		if (Thing_member (publication, classSpectrum) && str32equ (Thing_getName (publication), U"slice")) {
 			int IOBJECT;

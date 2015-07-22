@@ -631,7 +631,7 @@ void praat_addMenus (GuiWindow window) {
 		helpMenu = GuiMenu_createInWindow (window, U"Help", 0);
 	}
 	
-	MelderString_append (& itemTitle_about, U"About ", Melder_peek8to32 (praatP.title), U"...");
+	MelderString_append (& itemTitle_about, U"About ", praatP.title, U"...");
 	#ifdef macintosh
 		praat_addMenuCommand (U"Objects", U"Praat", itemTitle_about.string, 0, praat_UNHIDABLE, DO_About);
 		#if cocoa
@@ -697,7 +697,7 @@ void praat_addMenus2 (void) {
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Go to manual page...", 0, 0, DO_GoToManualPage);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Write manual to HTML directory...", 0, praat_HIDDEN, DO_WriteManualToHtmlDirectory);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp",
-		Melder_cat (U"Search ", Melder_peek8to32 (praatP.title), U" manual..."),
+		Melder_cat (U"Search ", praatP.title, U" manual..."),
 		0, 'M', DO_SearchManual);
 	#ifdef _WIN32
 		praat_addMenuCommand (U"Objects", U"Help", U"-- about --", 0, 0, 0);

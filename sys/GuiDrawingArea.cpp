@@ -492,7 +492,7 @@ GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int t
 	void (*clickCallback)  (void *boss, GuiDrawingAreaClickEvent  event),
 	void (*keyCallback)    (void *boss, GuiDrawingAreaKeyEvent    event),
 	void (*resizeCallback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss,
-	unsigned long flags)
+	uint32 /* flags */)
 {
 	GuiDrawingArea me = Thing_new (GuiDrawingArea);
 	my d_shell = parent -> d_shell;
@@ -557,7 +557,7 @@ GuiDrawingArea GuiDrawingArea_createShown (GuiForm parent, int left, int right, 
 	void (*clickCallback) (void *boss, GuiDrawingAreaClickEvent event),
 	void (*keyCallback) (void *boss, GuiDrawingAreaKeyEvent event),
 	void (*resizeCallback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss,
-	unsigned long flags)
+	uint32 flags)
 {
 	GuiDrawingArea me = GuiDrawingArea_create (parent, left, right, top, bottom, exposeCallback, clickCallback, keyCallback, resizeCallback, boss, flags);
 	GuiThing_show (me);
@@ -569,7 +569,7 @@ GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int h
 	void (*clickCallback) (void *boss, GuiDrawingAreaClickEvent event),
 	void (*keyCallback) (void *boss, GuiDrawingAreaKeyEvent event),
 	void (*resizeCallback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss,
-	unsigned long flags)
+	uint32 /* flags */)
 {
 	GuiDrawingArea me = Thing_new (GuiDrawingArea);
 	my d_shell = parent -> d_shell;
@@ -629,7 +629,7 @@ GuiDrawingArea GuiDrawingArea_createShown (GuiScrolledWindow parent, int width, 
 	void (*clickCallback) (void *boss, GuiDrawingAreaClickEvent event),
 	void (*keyCallback) (void *boss, GuiDrawingAreaKeyEvent event),
 	void (*resizeCallback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss,
-	unsigned long flags)
+	uint32 flags)
 {
 	GuiDrawingArea me = GuiDrawingArea_create (parent, width, height, exposeCallback, clickCallback, keyCallback, resizeCallback, boss, flags);
 	GuiThing_show (me);

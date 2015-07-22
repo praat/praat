@@ -65,7 +65,7 @@ static void Melder_fwriteUnicodeAsUtf8 (char32 unicode, FILE *f) {
 	}
 }
 
-void Melder_fwrite32to8 (const char32 *ptr, size_t n, FILE *f) {
+void Melder_fwrite32to8 (const char32 *ptr, int64 n, FILE *f) {
 	/*
 	 * Precondition:
 	 *    the string's encoding is UTF-32.
@@ -73,7 +73,7 @@ void Melder_fwrite32to8 (const char32 *ptr, size_t n, FILE *f) {
 	 *    if the precondition does not hold, we don't crash,
 	 *    but the characters that are written may be incorrect.
 	 */
-	for (size_t i = 0; i < n; i ++) {
+	for (int64 i = 0; i < n; i ++) {
 		Melder_fwriteUnicodeAsUtf8 (ptr [i], f);
 	}
 }

@@ -375,7 +375,7 @@ extern "C" char16 * Melder_peek32to16 (const char32 *string);
 void Melder_str32To8bitFileRepresentation_inline (const char32 *string, char *utf8);
 void Melder_8bitFileRepresentationToStr32_inline (const char *utf8, char32 *string);
 const void * Melder_peek32toCfstring (const char32 *string);
-void Melder_fwrite32to8 (const char32 *ptr, size_t n, FILE *f);
+void Melder_fwrite32to8 (const char32 *ptr, int64 n, FILE *f);
 
 
 /********** FILES **********/
@@ -647,7 +647,7 @@ void MelderFile_setDefaultDir (MelderFile file);
 #define U_NEWLINE  U"\n"
 #define U_COMMA  U","
 #define U_COMMA_  U", "
-#define U_PERIOD U"."
+#define U_PERIOD  U"."
 #define U_LEFT_SINGLE_QUOTE  U"\u2018"
 #define U_RIGHT_SINGLE_QUOTE  U"\u2019"
 #define U_LEFT_DOUBLE_QUOTE  U"\u201c"
@@ -926,23 +926,23 @@ extern int Melder_debug;
 
 class MelderError { };
 
-void Melder_error_noLine (const MelderArg& arg1);
+void Melder_appendError_noLine (const MelderArg& arg1);
 
-void Melder_error_ (Melder_1_ARG);
-void Melder_error_ (Melder_2_ARGS);
-void Melder_error_ (Melder_3_ARGS);
-void Melder_error_ (Melder_4_ARGS);
-void Melder_error_ (Melder_5_ARGS);
-void Melder_error_ (Melder_6_ARGS);
-void Melder_error_ (Melder_7_ARGS);
-void Melder_error_ (Melder_8_ARGS);
-void Melder_error_ (Melder_9_ARGS);
-void Melder_error_ (Melder_10_ARGS);
-void Melder_error_ (Melder_11_ARGS);
-void Melder_error_ (Melder_12_OR_13_ARGS);
-void Melder_error_ (Melder_14_OR_15_ARGS);
-void Melder_error_ (Melder_16_TO_19_ARGS);
-#define Melder_throw(...)  do { Melder_error_ (__VA_ARGS__); throw MelderError (); } while (false)
+void Melder_appendError (Melder_1_ARG);
+void Melder_appendError (Melder_2_ARGS);
+void Melder_appendError (Melder_3_ARGS);
+void Melder_appendError (Melder_4_ARGS);
+void Melder_appendError (Melder_5_ARGS);
+void Melder_appendError (Melder_6_ARGS);
+void Melder_appendError (Melder_7_ARGS);
+void Melder_appendError (Melder_8_ARGS);
+void Melder_appendError (Melder_9_ARGS);
+void Melder_appendError (Melder_10_ARGS);
+void Melder_appendError (Melder_11_ARGS);
+void Melder_appendError (Melder_12_OR_13_ARGS);
+void Melder_appendError (Melder_14_OR_15_ARGS);
+void Melder_appendError (Melder_16_TO_19_ARGS);
+#define Melder_throw(...)  do { Melder_appendError (__VA_ARGS__); throw MelderError (); } while (false)
 
 void Melder_flushError ();
 void Melder_flushError (Melder_1_ARG);

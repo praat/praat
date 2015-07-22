@@ -74,8 +74,8 @@ static void openDocument (TextEditor me, MelderFile file) {
 			TextEditor editor = (TextEditor) theOpenTextEditors -> item [ieditor];
 			if (editor != me && MelderFile_equal (file, & editor -> file)) {
 				Editor_raise (editor);
-				Melder_error_ (U"Text file ", file, U" is already open.");
-				forget (me);   // don't forget me before Melder_error_, because "file" is owned by one of my dialogs
+				Melder_appendError (U"Text file ", file, U" is already open.");
+				forget (me);   // don't forget me before Melder_appendError, because "file" is owned by one of my dialogs
 				Melder_flushError ();
 				return;
 			}

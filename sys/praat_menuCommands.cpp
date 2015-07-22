@@ -136,9 +136,10 @@ GuiMenuItem praat_addMenuCommand (const char32 *window, const char32 *menu, cons
 		return NULL;
 	}
 
-	/* Determine the position of the new command.
+	/*
+	 * Determine the position of the new command.
 	 */
-	if (after) {   /* Search for existing command with same selection. */
+	if (after) {   // search for existing command with same selection
 		long found = lookUpMatchingMenuCommand (window, menu, after);
 		if (found) {
 			position = found + 1;   // after 'after'
@@ -152,7 +153,8 @@ GuiMenuItem praat_addMenuCommand (const char32 *window, const char32 *menu, cons
 		position = theNumberOfCommands + 1;   // at end
 	}
 
-	/* Increment the command area.
+	/*
+	 * Increment the command area.
 	 */
 	if (theNumberOfCommands >= praat_MAXNUM_FIXED_COMMANDS) {
 		Melder_flushError (U"praat_addMenuCommand: too many menu commands.");
@@ -160,7 +162,8 @@ GuiMenuItem praat_addMenuCommand (const char32 *window, const char32 *menu, cons
 	}
 	theNumberOfCommands += 1;
 
-	/* Make room for insertion.
+	/*
+	 * Make room for insertion.
 	 */
 	for (long i = theNumberOfCommands; i > position; i --) theCommands [i] = theCommands [i - 1];
 	memset (& theCommands [position], 0, sizeof (struct structPraat_Command));
@@ -215,7 +218,8 @@ GuiMenuItem praat_addMenuCommand (const char32 *window, const char32 *menu, cons
 			return NULL;
 		}
 
-		/* WHAT TO PUT THERE?
+		/*
+		 * WHAT TO PUT THERE?
 		 */
 
 		if (title == NULL || title [0] == U'-') {

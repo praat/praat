@@ -55,7 +55,7 @@ void praat_sortMenuCommands ();
 
 typedef struct structPraat_Command {
 	ClassInfo class1, class2, class3, class4;   // selected classes
-	short n1, n2, n3, n4;   // number of selected objects of each class; 0 means "any number"
+	int32 n1, n2, n3, n4;   // number of selected objects of each class; 0 means "any number"
 	const char32 *title;   // button text = command text
 	void (*callback) (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure);   // multi-purpose
 		/* If both sendingForm and sendingString are NULL, this routine is an activate callback;
@@ -79,8 +79,8 @@ typedef struct structPraat_Command {
 	const char32 *window, *menu;
 	const char32 *script;   // if 'callback' equals DO_RunTheScriptFromAnyAddedMenuCommand
 	const char32 *after;   // title of previous command, often NULL
-	long uniqueID;   // for sorting the added commands
-	long sortingTail;
+	int32 uniqueID;   // for sorting the added commands
+	int32 sortingTail;
 } *praat_Command;
 
 #define praat_STARTING_UP  1
@@ -164,7 +164,7 @@ void praat_list_renameAndSelect (int position, const char32 *name);
 
 extern struct PraatP {
 	int dontUsePictureWindow;   // see praat_dontUsePictureWindow ()
-	char *title;
+	char32 *title;
 	GuiWindow menuBar;
 	int phase;
 	Editor editor;   // scripting environment

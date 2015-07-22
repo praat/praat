@@ -81,7 +81,7 @@ Thing_implement (GuiScale, GuiControl, 0);
 #endif
 
 GuiScale GuiScale_create (GuiForm parent, int left, int right, int top, int bottom,
-	int minimum, int maximum, int value, unsigned long flags)
+	int minimum, int maximum, int value, uint32 /* flags */)
 {
 	GuiScale me = Thing_new (GuiScale);
 	my d_shell = parent -> d_shell;
@@ -119,7 +119,7 @@ GuiScale GuiScale_create (GuiForm parent, int left, int right, int top, int bott
 }
 
 GuiScale GuiScale_createShown (GuiForm parent, int left, int right, int top, int bottom,
-	int minimum, int maximum, int value, unsigned long flags)
+	int minimum, int maximum, int value, uint32 flags)
 {
 	GuiScale me = GuiScale_create (parent, left, right, top, bottom, minimum, maximum, value, flags);
 	GuiThing_show (me);

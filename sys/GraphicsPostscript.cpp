@@ -215,9 +215,9 @@ Graphics Graphics_create_epsfile (MelderFile file, int resolution, enum kGraphic
 	my useSilipaPS = useSilipaPS;
 	my d_file = Melder_fopen (file, "w");
 	my d_x1DC = my d_x1DCmin = 0;
-	my d_x2DC = my d_x2DCmax = my paperWidth * resolution; /* 600 dpi -> 4500 virtual dots */
+	my d_x2DC = my d_x2DCmax = my paperWidth * resolution;   // 600 dpi -> 4500 virtual dots
 	my d_y1DC = my d_y1DCmin = 0;
-	my d_y2DC = my d_y2DCmax = my paperHeight * resolution; /* 600 dpi -> 6600 virtual dots */
+	my d_y2DC = my d_y2DCmax = my paperHeight * resolution;   // 600 dpi -> 6600 virtual dots
 	Graphics_setWsWindow ((Graphics) me.peek(), 0, my paperWidth, 12.0 - my paperHeight, 12.0);   // force scaling
 	/*
 	 * We will honour version 3.0 of the DSC for Encapsulated PostScript files,

@@ -711,17 +711,22 @@ Graphics Graphics_create_pdffile (MelderFile file, int resolution,
 	Graphics_init (me.peek(), resolution);
 	#if gtk
 		my d_cairoSurface = cairo_pdf_surface_create (Melder_peek32to8 (file -> path),
-			(x2inches - x1inches) * 72.0, (y2inches - y1inches) * 72.0);
+			(NUMdefined (x1inches) ? x2inches - x1inches : x2inches) * 72.0,
+			(NUMdefined (y1inches) ? y2inches - y1inches : y2inches) * 72.0);
 		my d_cairoGraphicsContext = cairo_create (my d_cairoSurface);
 		my d_x1DC = my d_x1DCmin = 0;
-		my d_x2DC = my d_x2DCmax = 7.5 * resolution;
+		my d_x2DC = my d_x2DCmax = (NUMdefined (x1inches) ?  7.5 : x2inches) * resolution;
 		my d_y1DC = my d_y1DCmin = 0;
-		my d_y2DC = my d_y2DCmax = 11.0 * resolution;
-		Graphics_setWsWindow ((Graphics) me.peek(), 0, 7.5, 1.0, 12.0);
+		my d_y2DC = my d_y2DCmax = (NUMdefined (y1inches) ? 11.0 : y2inches) * resolution;
+		Graphics_setWsWindow ((Graphics) me.peek(),
+			NUMdefined (x1inches) ? 0.0 : 0.0, NUMdefined (x1inches) ?  7.5 : x2inches,
+			NUMdefined (y1inches) ? 1.0 : 0.0, NUMdefined (y1inches) ? 12.0 : y2inches);
 		cairo_scale (my d_cairoGraphicsContext, 72.0 / resolution, 72.0 / resolution);
 	#elif mac
 		CFURLRef url = CFURLCreateWithFileSystemPath (NULL, (CFStringRef) Melder_peek32toCfstring (file -> path), kCFURLPOSIXPathStyle, false);
-		CGRect rect = CGRectMake (0, 0, (x2inches - x1inches) * 72.0, (y2inches - y1inches) * 72.0);   // don't tire PDF viewers with funny origins
+		CGRect rect = CGRectMake (0, 0,
+			(NUMdefined (x1inches) ? x2inches - x1inches : x2inches) * 72.0,
+			(NUMdefined (y1inches) ? y2inches - y1inches : y2inches) * 72.0);   // don't tire PDF viewers with funny origins
 		CFStringRef key = (CFStringRef) Melder_peek32toCfstring (U"Creator");
 		CFStringRef value = (CFStringRef) Melder_peek32toCfstring (U"Praat");
 		CFIndex numberOfValues = 1;
@@ -733,13 +738,17 @@ Graphics Graphics_create_pdffile (MelderFile file, int resolution,
     	if (my d_macGraphicsContext == NULL)
 			Melder_throw (U"Could not create PDF file ", file, U".");
 		my d_x1DC = my d_x1DCmin = 0;
-		my d_x2DC = my d_x2DCmax = 7.5 * resolution;
+		my d_x2DC = my d_x2DCmax = (NUMdefined (x1inches) ?  7.5 : x2inches) * resolution;
 		my d_y1DC = my d_y1DCmin = 0;
-		my d_y2DC = my d_y2DCmax = 11.0 * resolution;
-		Graphics_setWsWindow ((Graphics) me.peek(), 0, 7.5, 1.0, 12.0);
+		my d_y2DC = my d_y2DCmax = (NUMdefined (y1inches) ? 11.0 : y2inches) * resolution;
+		Graphics_setWsWindow ((Graphics) me.peek(),
+			NUMdefined (x1inches) ? 0.0 : 0.0, NUMdefined (x1inches) ?  7.5 : x2inches,
+			NUMdefined (y1inches) ? 1.0 : 0.0, NUMdefined (y1inches) ? 12.0 : y2inches);
 		CGContextBeginPage (my d_macGraphicsContext, & rect);
 		CGContextScaleCTM (my d_macGraphicsContext, 72.0 / resolution, 72.0 / resolution);
-		CGContextTranslateCTM (my d_macGraphicsContext, - x1inches * resolution, (12.0 - y1inches) * resolution);
+		CGContextTranslateCTM (my d_macGraphicsContext,
+			(NUMdefined (x1inches) ? - x1inches : 0.0) * resolution,
+			(NUMdefined (y1inches) ? (12.0 - y1inches) : y2inches) * resolution);
 		CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
 	#endif
 	return (Graphics) me.transfer();

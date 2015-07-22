@@ -1,6 +1,6 @@
 /* Art_Speaker_to_VocalTract.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ VocalTract Art_Speaker_to_VocalTract (Art art, Speaker speaker)
 	long isection;
 	double area [300];
 	int numberOfSections;
-	double sectionLength = 0.001;   /* One millimetre. */
+	double sectionLength = 0.001;   // one millimetre
 	Delta delta = NULL;
 
 	delta = Speaker_to_Delta (speaker); if (! delta) goto end;
@@ -37,7 +37,7 @@ VocalTract Art_Speaker_to_VocalTract (Art art, Speaker speaker)
 	for (isection = 1; isection <= 27; isection ++)
 	{
 		Delta_Tube tube = delta -> tube + 37 + isection;
-		int numberOfConstantSections = floor (tube -> Dxeq / sectionLength + 0.5);
+		int numberOfConstantSections = lround (tube -> Dxeq / sectionLength);
 		double constantArea = tube -> Dyeq * tube -> Dzeq;
 		int jsection; for (jsection = 1; jsection <= numberOfConstantSections; jsection ++)
 			area [++ numberOfSections] = constantArea;

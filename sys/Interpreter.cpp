@@ -256,7 +256,7 @@ long Interpreter_readParameters (Interpreter me, char32 *text) {
 			else {
 				newLine = str32chr (line, U'\n');
 				if (newLine) *newLine = U'\0';
-				Melder_error_ (U"Unknown parameter type:\n\"", line, U"\".");
+				Melder_appendError (U"Unknown parameter type:\n\"", line, U"\".");
 				if (newLine) *newLine = U'\n';
 				throw MelderError ();
 				return 0;
@@ -1775,7 +1775,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 					lineNumber --;
 					Melder_assert (lineNumber > 0);   // originally empty lines that stayed empty should not generate errors
 				}
-				Melder_error_ (U"Script line ", lineNumber, U" not performed or completed:\n« ", lines [lineNumber], U" »");
+				Melder_appendError (U"Script line ", lineNumber, U" not performed or completed:\n« ", lines [lineNumber], U" »");
 			}
 		}
 		my numberOfLabels = 0;

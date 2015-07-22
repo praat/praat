@@ -1,9 +1,9 @@
 # Makefile of the library "kar"
-# Paul Boersma, 24 August 2013
+# Paul Boersma, 16 July 2015
 
 include ../makefile.defs
 
-OBJECTS = ipaSerifRegularPS.o ipaSerifRegular24.o longchar.o
+OBJECTS = ipaSerifRegularPS.o longchar.o
 
 .PHONY: all clean
 

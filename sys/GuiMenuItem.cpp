@@ -164,7 +164,7 @@ static void NativeMenuItem_setText (GuiObject me) {
 	}
 #endif
 
-GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, long flags,
+GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, uint32 flags,
 	void (*commandCallback) (void *boss, GuiMenuItemEvent event), void *boss)
 {
 	GuiMenuItem me = Thing_new (GuiMenuItem);
@@ -174,7 +174,7 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, long flags,
 
 	trace (U"creating item \"", title, U"\" in menu ", Melder_pointer (menu));
 	bool toggle = flags & (GuiMenu_CHECKBUTTON | GuiMenu_RADIO_FIRST | GuiMenu_RADIO_NEXT | GuiMenu_TOGGLE_ON) ? true : false;
-	int accelerator = flags & 127;
+	uint32 accelerator = flags & 127;
 	Melder_assert (title != NULL);
 	#if gtk
 		static GSList *group = NULL;

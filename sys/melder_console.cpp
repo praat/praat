@@ -36,7 +36,7 @@ void Melder_writeToConsole (const char32 *message, bool useStderr) {
 		(void) useStderr;
 		static HANDLE console = NULL;
 		if (console == NULL) {
-			console = CreateFile (L"CONOUT$", GENERIC_WRITE, FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, 0);
+			console = CreateFileW (L"CONOUT$", GENERIC_WRITE, FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, 0);
 		}
 		if (Melder_consoleIsAnsi) {
 			size_t n = str32len (message);
@@ -48,7 +48,8 @@ void Melder_writeToConsole (const char32 *message, bool useStderr) {
 			//char *messageA = Melder_peek32to8 (message);
 			//fprintf (stdout, "%s", messageA);
 		} else {
-			WriteConsole (console, message, str32len (message), NULL, NULL);
+			WCHAR *messageW = Melder_peek32toW (message);
+			WriteConsoleW (console, messageW, wcslen (messageW), NULL, NULL);
 		}
 	#else
 		Melder_fwrite32to8 (message, str32len (message), useStderr ? stderr : stdout);

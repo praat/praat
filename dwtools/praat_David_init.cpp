@@ -5355,7 +5355,7 @@ static void Sound_create_checkCommonFields (void *dia, double *startingTime, dou
 		              U"Please set the sampling frequency to something greater than zero, e.g. 44100 Hz.");
 
 	if (numberOfSamples_real < 1.0) {
-		Melder_error_ (U"A Sound cannot have zero samples.\n");
+		Melder_appendError (U"A Sound cannot have zero samples.\n");
 		if (*startingTime == 0.0) {
 			Melder_throw (U"Please raise the finishing time.");
 		} else {

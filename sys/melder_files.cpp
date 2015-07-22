@@ -96,7 +96,7 @@ void Melder_str32To8bitFileRepresentation_inline (const char32 *string, char *ut
 		for (i = 0, j = 0; i < n; i ++) {
 			utf8 [j ++] = string [i] <= 255 ? string [i] : '?';   // the usual replacement on Windows
 		}
-		utf8 [j] = '\0';	
+		utf8 [j] = '\0';
 	#elif defined (macintosh)
 		/*
 			On the Mac, the POSIX path name is stored in canonically decomposed UTF-8 encoding.
@@ -222,7 +222,7 @@ void Melder_relativePathToFile (const char32 *path, MelderFile file) {
 		} else {
 			structMelderDir dir = { { 0 } };
 			Melder_getDefaultDir (& dir);   // BUG
-			if (dir. path [0] == '/' && dir. path [1] == '\0') {
+			if (dir. path [0] == U'/' && dir. path [1] == U'\0') {
 				Melder_sprint (file -> path,kMelder_MAXPATH+1, U"/", path);
 			} else {
 				Melder_sprint (file -> path,kMelder_MAXPATH+1, dir. path, U"/", path);
@@ -252,7 +252,7 @@ void Melder_relativePathToFile (const char32 *path, MelderFile file) {
 			for (;;) {
 				char32 *slash = str32chr (winPath, U'/');
 				if (slash == NULL) break;
-				*slash = '\\';
+				*slash = U'\\';
 			}
 			Melder_relativePathToFile (winPath, file);
 			return;
@@ -306,7 +306,7 @@ void MelderDir_setToNull (MelderDir dir) {
 }
 
 bool MelderDir_isNull (MelderDir dir) {
-	return dir -> path [0] == '\0';
+	return dir -> path [0] == U'\0';
 }
 
 void MelderDir_getFile (MelderDir parent, const char32 *fileName, MelderFile file) {
@@ -428,9 +428,9 @@ void MelderDir_getParentDir (MelderDir dir, MelderDir parent) {
 				if (backslash - parent -> path == length - 1) {   //   C:\   -
 					Melder_getDesktop (parent);   // empty string
 				} else if (backslash - colon == 1) {   //   C:\WINDOWS
-					* (backslash + 1) = '\0';   //   C:\   -
+					* (backslash + 1) = U'\0';   //   C:\   -
 				} else {   //   C:\WINDOWS\FONTS
-					*backslash = '\0';   //   C:\WINDOWS
+					*backslash = U'\0';   //   C:\WINDOWS
 				}
 			} else {   //   LPT1:   ???
 				Melder_getDesktop (parent);   // empty string
@@ -446,7 +446,7 @@ void MelderDir_getParentDir (MelderDir dir, MelderDir parent) {
 					if (backslash - leftBackslash == 0) {   //   \\Swine\Apps
 						* (backslash + 1) = U'\0';   //   \\Swine\   -
 					} else {   //   \\Swine\Apps\Praats
-						*backslash = '\0';   //   \\Swine\Apps
+						*backslash = U'\0';   //   \\Swine\Apps
 					}
 				}
 			} else {   //   \\Swine   ???
@@ -459,7 +459,7 @@ void MelderDir_getParentDir (MelderDir dir, MelderDir parent) {
 }
 
 bool MelderDir_isDesktop (MelderDir dir) {
-	return dir -> path [0] == '\0';
+	return dir -> path [0] == U'\0';
 }
 
 void MelderDir_getSubdir (MelderDir parent, const char32 *subdirName, MelderDir subdir) {
@@ -586,7 +586,7 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 		CURLreturn = curl_easy_perform (CURLhandle);
 		/* Handle errors. */
 		if (CURLreturn) {
-			Melder_error_ (Melder_peek8to32 (errorbuffer));
+			Melder_appendError (Melder_peek8to32 (errorbuffer));
 			f = NULL;
 		};
 		/* Clean up session. */
@@ -603,16 +603,16 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 	}
 	if (! f) {
 		char32 *path = file -> path;
-		Melder_error_ (U"Cannot ", type [0] == 'r' ? U"open" : type [0] == 'a' ? U"append to" : U"create",
+		Melder_appendError (U"Cannot ", type [0] == 'r' ? U"open" : type [0] == 'a' ? U"append to" : U"create",
 			U" file ", file, U".");
 		if (path [0] == U'\0')
-			Melder_error_ (U"Hint: empty file name.");
+			Melder_appendError (U"Hint: empty file name.");
 		else if (path [0] == U' ' || path [0] == U'\t')
-			Melder_error_ (U"Hint: file name starts with a space or tab.");
+			Melder_appendError (U"Hint: file name starts with a space or tab.");
 		else if (path [str32len (path) - 1] == U' ' || path [str32len (path) - 1] == U'\t')
-			Melder_error_ (U"Hint: file name ends in a space or tab.");
+			Melder_appendError (U"Hint: file name ends in a space or tab.");
 		else if (str32chr (path, U'\n'))
-			Melder_error_ (U"Hint: file name contains a newline symbol.");
+			Melder_appendError (U"Hint: file name contains a newline symbol.");
 		throw MelderError ();
 		return NULL;
 	}

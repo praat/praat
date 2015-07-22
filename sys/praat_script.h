@@ -22,7 +22,7 @@
 #include "Interpreter.h"
 
 int praat_executeCommand (Interpreter me, char32 *command);
-void praat_executeCommandFromStandardInput (const char *programName);
+void praat_executeCommandFromStandardInput (const char32 *programName);
 void praat_executeScriptFromFile (MelderFile file, const char32 *arguments);
 void praat_executeScriptFromFileName (const char32 *fileName, int narg, Stackel args);
 void praat_executeScriptFromFileNameWithArguments (const char32 *nameAndArguments);

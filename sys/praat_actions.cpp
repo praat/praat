@@ -501,11 +501,11 @@ static bool allowExecutionHook (void *closure) {
 	}
 	if (numberOfMatchingCallbacks == 1) {
 		praat_Command me = & theActions [firstMatchingCallback];
-		Melder_error_ (U"Selection changed! It should be:");
-		if (my class1) Melder_error_ (U"   ", numberString (my n1), U" ", classString (my class1), U" ", objectString (my n1));
-		if (my class2) Melder_error_ (U"   ", numberString (my n2), U" ", classString (my class2), U" ", objectString (my n2));
-		if (my class3) Melder_error_ (U"   ", numberString (my n3), U" ", classString (my class3), U" ", objectString (my n3));
-		if (my class4) Melder_error_ (U"   ", numberString (my n4), U" ", classString (my class4), U" ", objectString (my n4));
+		Melder_appendError (U"Selection changed! It should be:");
+		if (my class1) Melder_appendError (U"   ", numberString (my n1), U" ", classString (my class1), U" ", objectString (my n1));
+		if (my class2) Melder_appendError (U"   ", numberString (my n2), U" ", classString (my class2), U" ", objectString (my n2));
+		if (my class3) Melder_appendError (U"   ", numberString (my n3), U" ", classString (my class3), U" ", objectString (my n3));
+		if (my class4) Melder_appendError (U"   ", numberString (my n4), U" ", classString (my class4), U" ", objectString (my n4));
 		throw MelderError ();
 	} else {
 		Melder_throw (U"Selection changed!");

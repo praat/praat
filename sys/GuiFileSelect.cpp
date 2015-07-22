@@ -157,7 +157,7 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const char32 *
 }
 
 char32 * GuiFileSelect_getOutfileName (GuiWindow parent, const char32 *title, const char32 *defaultName) {
-	structMelderDir saveDir = { { 0 } };
+	structMelderDir saveDir { { 0 } };
 	Melder_getDefaultDir (& saveDir);
 	char32 *outfileName = NULL;
 	#if gtk
@@ -187,8 +187,13 @@ char32 * GuiFileSelect_getOutfileName (GuiWindow parent, const char32 *title, co
 			           file: [NSString stringWithUTF8String: Melder_peek32to8 (defaultName)]   // deprecated 10.6 but needed 10.5
 			] == NSFileHandlingPanelOKButton)
 		{
-			const char *outfileName_utf8 = [[[savePanel URL] path] UTF8String];
-			structMelderFile file = { 0 };
+			NSString *path = [[savePanel URL] path];
+			if (path == nil)
+				Melder_throw (U"Don't understand where you want to save (1).");
+			const char *outfileName_utf8 = [path UTF8String];
+			if (outfileName_utf8 == nullptr)
+				Melder_throw (U"Don't understand where you want to save (2).");
+			structMelderFile file { 0 };
 			Melder_8bitFileRepresentationToStr32_inline (outfileName_utf8, file. path);   // BUG: unsafe buffer
 			outfileName = Melder_dup (file. path);
 		}

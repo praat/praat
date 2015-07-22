@@ -500,20 +500,19 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 	return 1;
 }
 
-void praat_executeCommandFromStandardInput (const char *programName) {
-	char command [1000]; // can be recursive
+void praat_executeCommandFromStandardInput (const char32 *programName) {
+	char command8 [1000]; // can be recursive
 	for (;;) {
-		char *newLine;
-		printf ("%s > ", programName);
-		if (! fgets (command, 999, stdin))
+		printf ("%s > ", Melder_peek32to8 (programName));
+		if (! fgets (command8, 999, stdin))
 			Melder_throw (U"Cannot read input.");
-		newLine = strchr (command, '\n');
+		char *newLine = strchr (command8, '\n');
 		if (newLine) *newLine = '\0';
-		autostring32 command32 = Melder_8to32 (command);
+		autostring32 command32 = Melder_8to32 (command8);
 		try {
 			praat_executeCommand (NULL, command32.peek());
 		} catch (MelderError) {
-			Melder_flushError (Melder_peek8to32 (programName), U": command \"", Melder_peek8to32 (command), U"\" not executed.");
+			Melder_flushError (programName, U": command \"", Melder_peek8to32 (command8), U"\" not executed.");
 		}
 	}
 }

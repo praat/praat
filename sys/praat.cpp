@@ -63,13 +63,13 @@ structPraatPicture theForegroundPraatPicture;
 PraatPicture theCurrentPraatPicture = & theForegroundPraatPicture;
 struct PraatP praatP;
 static int doingCommandLineInterface;
-static char programName [64];
+static char32 programName [64];
 static structMelderDir homeDir = { { 0 } };
 /*
  * praatDirectory: preferences and buttons files.
  *    Unix:   /u/miep/.myProg-dir   (without slash)
  *    Windows XP/Vista/7:   \\myserver\myshare\Miep\MyProg
- *                    or:   C:\Documents and settings\Miep\MyProg
+ *                    or:   C:\Users\Miep\MyProg
  *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs
  */
 extern structMelderDir praatDir;
@@ -78,7 +78,7 @@ structMelderDir praatDir = { { 0 } };
  * prefsFile: preferences file.
  *    Unix:   /u/miep/.myProg-dir/prefs5
  *    Windows XP/Vista/7:   \\myserver\myshare\Miep\MyProg\Preferences5.ini
- *                       or:   C:\Documents and settings\Miep\MyProg\Preferences5.ini
+ *                       or:   C:\Users\Miep\MyProg\Preferences5.ini
  *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs/Prefs5
  */
 static structMelderFile prefsFile = { 0 };
@@ -86,21 +86,21 @@ static structMelderFile prefsFile = { 0 };
  * buttonsFile: buttons file.
  *    Unix:   /u/miep/.myProg-dir/buttons
  *    Windows XP/Vista/7:   \\myserver\myshare\Miep\MyProg\Buttons5.ini
- *                    or:   C:\Documents and settings\Miep\MyProg\Buttons5.ini
+ *                    or:   C:\Users\Miep\MyProg\Buttons5.ini
  *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs/Buttons5
  */
 static structMelderFile buttonsFile = { 0 };
 #if defined (UNIX)
-	static structMelderFile pidFile = { 0 };   /* Like /u/miep/.myProg-dir/pid */
-	static structMelderFile messageFile = { 0 };   /* Like /u/miep/.myProg-dir/message */
+	static structMelderFile pidFile = { 0 };   // like /u/miep/.myProg-dir/pid
+	static structMelderFile messageFile = { 0 };   // like /u/miep/.myProg-dir/message
 #elif defined (_WIN32)
-	static structMelderFile messageFile = { 0 };   /* Like C:\Windows\myProg\Message.txt */
+	static structMelderFile messageFile = { 0 };   // like C:\Users\Miep\myProg\Message.txt
 #endif
 /*
  * tracingFile: tracing file.
  *    Unix:   /u/miep/.myProg-dir/tracing
  *    Windows XP/Vista/7:   \\myserver\myshare\Miep\MyProg\Tracing.txt
- *                    or:   C:\Documents and settings\Miep\MyProg\Tracing.txt
+ *                    or:   C:\Users\Miep\MyProg\Tracing.txt
  *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs/Tracing.txt
  */
 static structMelderFile tracingFile = { 0 };
@@ -150,7 +150,7 @@ char32 * praat_getNameOfSelected (ClassInfo klas, int inplace) {
 	} else {
 		Melder_throw (U"No ", klas ? klas -> className : U"object", U" selected.");
 	}
-	return 0;   // Failure.
+	return 0;   // failure
 }
 
 int praat_selection (ClassInfo klas) {
@@ -403,6 +403,9 @@ void praat_newWithFile (Data me, MelderFile file, const char32 *myName) {
 }
 
 static MelderString thePraatNewName { 0 };
+void praat_new (Data me) {
+	praat_newWithFile (me, NULL, U"");
+}
 void praat_new (Data me, Melder_1_ARG) {
 	praat_newWithFile (me, NULL, Melder_1_ARG_CALL);
 }
@@ -573,7 +576,7 @@ static void praat_exit (int exit_code) {
 		try {
 			autoMelderString buffer;
 			MelderString_append (& buffer, U"# Buttons (1).\n");
-			MelderString_append (& buffer, U"# This file is generated automatically when you quit the ", Melder_peek8to32 (praatP.title), U" program.\n");
+			MelderString_append (& buffer, U"# This file is generated automatically when you quit the ", praatP.title, U" program.\n");
 			MelderString_append (& buffer, U"# It contains the buttons that you added interactively to the fixed or dynamic menus,\n");
 			MelderString_append (& buffer, U"# and the buttons that you hid or showed.\n\n");
 			praat_saveMenuCommands (& buffer);
@@ -586,7 +589,7 @@ static void praat_exit (int exit_code) {
 
 	trace (U"flush the file-based objects");
 	WHERE_DOWN (! MelderFile_isNull (& theCurrentPraatObjects -> list [IOBJECT]. file)) praat_remove (IOBJECT);
-	Melder_files_cleanUp ();   /* If a URL is open. */
+	Melder_files_cleanUp ();   // in case a URL is open
 
 	trace (U"leave the program");
 	exit (exit_code);
@@ -777,7 +780,7 @@ void praat_dataChanged (Any object) {
 		}
 	}
 	if (duringError) {
-		Melder_error_ (saveError);   // BUG: this appends an empty newline to the original error message
+		Melder_appendError (saveError);   // BUG: this appends an empty newline to the original error message
 		Melder_free (saveError);   // BUG: who will catch the error?
 	}
 }
@@ -813,12 +816,12 @@ FORM (Quit, U"Confirm Quit", U"Quit")
 	char32 prompt [300];
 	if (ScriptEditors_dirty ()) {
 		if (theCurrentPraatObjects -> n)
-			Melder_sprint (prompt,300, U"You have objects and unsaved scripts! Do you still want to quit ", Melder_peek8to32 (praatP.title), U"?");
+			Melder_sprint (prompt,300, U"You have objects and unsaved scripts! Do you still want to quit ", praatP.title, U"?");
 		else
-			Melder_sprint (prompt,300, U"You have unsaved scripts! Do you still want to quit ", Melder_peek8to32 (praatP.title), U"?");
+			Melder_sprint (prompt,300, U"You have unsaved scripts! Do you still want to quit ", praatP.title, U"?");
 		SET_STRING (U"label", prompt);
 	} else if (theCurrentPraatObjects -> n) {
-		Melder_sprint (prompt,300, U"You have objects in your list! Do you still want to quit ", Melder_peek8to32 (praatP.title), U"?");
+		Melder_sprint (prompt,300, U"You have objects in your list! Do you still want to quit ", praatP.title, U"?");
 		SET_STRING (U"label", prompt);
 	} else {
 		praat_exit (0);
@@ -878,7 +881,7 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 				try {
 					praat_executeScriptFromFile (& messageFile, NULL);
 				} catch (MelderError) {
-					Melder_flushError (Melder_peek8to32 (praatP.title), U": message not completely handled.");
+					Melder_flushError (praatP.title, U": message not completely handled.");
 				}
 			}
 			if (narg && pid) kill (pid, SIGUSR2);
@@ -891,7 +894,7 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 		try {
 			praat_executeScriptFromFile (& messageFile, NULL);
 		} catch (MelderError) {
-			Melder_flushError (Melder_peek8to32 (praatP.title), U": message not completely handled.");
+			Melder_flushError (praatP.title, U": message not completely handled.");
 		}
 		return 0;
 	}
@@ -905,7 +908,7 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 		 * this is especially likely to happen for a path that contains spaces.
 		 */
 		Melder_sprint (text,500, U"Read from file... ", file -> path);
-		sendpraatW (NULL, Melder_peek32toW (Melder_peek8to32 (praatP.title)), 0, Melder_peek32toW (text));
+		sendpraatW (NULL, Melder_peek32toW (praatP.title), 0, Melder_peek32toW (text));
 	}
 #elif cocoa
 	static int (*theUserMessageCallback) (char32 *message);
@@ -965,12 +968,12 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 		try {
 			praat_executeScriptFromText (message);
 		} catch (MelderError) {
-			Melder_flushError (Melder_peek8to32 (praatP.title), U": message not completely handled.");
+			Melder_flushError (praatP.title, U": message not completely handled.");
 		}
 		return 0;
 	}
 	static int cb_quitApplication (void) {
-		DO_Quit (NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL);
+		DO_Quit (NULL, 0, NULL, NULL, NULL, NULL, false, NULL);
 		return 0;
 	}
 #elif defined (macintosh)
@@ -979,12 +982,12 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 		try {
 			praat_executeScriptFromText (message);
 		} catch (MelderError) {
-			Melder_flushError (Melder_peek8to32 (praatP.title), U": message not completely handled.");
+			Melder_flushError (praatP.title, U": message not completely handled.");
 		}
 		return 0;
 	}
 	static int cb_quitApplication (void) {
-		DO_Quit (NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL);
+		DO_Quit (NULL, 0, NULL, NULL, NULL, NULL, false, NULL);
 		return 0;
 	}
 #endif
@@ -995,8 +998,8 @@ void praat_setStandAloneScriptText (char32 *text) {
 	thePraatStandAloneScriptText = text;
 }
 
-void praat_init (const char *title, unsigned int argc, char **argv) {
-	static char truncatedTitle [300];   // static because praatP.title will point into it
+void praat_init (const char32 *title, unsigned int argc, char **argv) {
+	static char32 truncatedTitle [300];   // static because praatP.title will point into it
 	#if defined (UNIX)
 		setlocale (LC_ALL, "C");
 		setenv ("PULSE_LATENCY_MSEC", "1", 0);   // Rafael Laboissiere, August 2014
@@ -1005,7 +1008,6 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	#elif defined (macintosh)
 		setlocale (LC_ALL, "en_US");   // required to make swprintf work correctly; the default "C" locale does not do that!
 	#endif
-	char *p;
 	#ifdef macintosh
 		SInt32 sys1, sys2, sys3;
 		Gestalt ('sys1', & sys1);
@@ -1028,16 +1030,16 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	/*
 	 * Install the preferences of the Praat shell, and set the defaults.
 	 */
-	praat_statistics_prefs ();   // Number of sessions, memory used...
-	praat_picture_prefs ();   // Font...
+	praat_statistics_prefs ();   // number of sessions, memory used...
+	praat_picture_prefs ();   // font...
 	Graphics_prefs ();
-	structEditor     :: f_preferences ();   // Erase picture first...
-	structHyperPage  :: f_preferences ();   // Font...
-	Site_prefs ();   // Print command...
-	Melder_audio_prefs ();   // Use speaker (Sun & HP), output gain (HP)...
+	structEditor     :: f_preferences ();   // erase picture first...
+	structHyperPage  :: f_preferences ();   // font...
+	Site_prefs ();   // print command...
+	Melder_audio_prefs ();   // use speaker (Sun & HP), output gain (HP)...
 	Melder_textEncoding_prefs ();
-	Printer_prefs ();   // Paper size, printer command...
-	structTextEditor :: f_preferences ();   // Font size...
+	Printer_prefs ();   // paper size, printer command...
+	structTextEditor :: f_preferences ();   // font size...
 
 	unsigned int iarg_batchName = 1;
 	#if defined (UNIX) || defined (macintosh) || defined (_WIN32) && defined (CONSOLE_APPLICATION)
@@ -1082,37 +1084,37 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		}
 
 		/* Take from 'title' ("myProg 3.2" becomes "myProg") or from command line ("/ifa/praat" becomes "praat"). */
-		strcpy (truncatedTitle, argc && argv [0] [0] ? argv [0] : title && title [0] ? title : "praat");
-		//Melder_fatal ("<%s>", argv [0]);
+		str32cpy (truncatedTitle, argc && argv [0] [0] ? Melder_peek8to32 (argv [0]) : title && title [0] ? title : U"praat");
+		//Melder_fatal (U"<", argv [0], U">");
 	#else
 		#if defined (_WIN32)
 			MelderString_copy (& theCurrentPraatApplication -> batchName,
 				argv [3] ? Melder_peek8to32 (argv [3]) : U"");   // the command line
 		#endif
 		Melder_batch = false;   // PRAAT.EXE on Windows is always interactive
-		strcpy (truncatedTitle, title && title [0] ? title : "praat");
+		str32cpy (truncatedTitle, title && title [0] ? title : U"praat");
 	#endif
 	theCurrentPraatApplication -> batch = Melder_batch;
 
 	/*
 	 * Construct a program name like "myProg 3.2" by removing directory path.
 	 */
-	p = strrchr (truncatedTitle, Melder_DIRECTORY_SEPARATOR);
+	char32 *p = str32rchr (truncatedTitle, Melder_DIRECTORY_SEPARATOR);
 	praatP.title = p ? p + 1 : truncatedTitle;
 
 	/*
 	 * Construct a program name like "myProg" for file and directory names.
 	 */
-	strcpy (programName, praatP.title);
-	if ((p = strchr (programName, ' ')) != NULL) *p = '\0';
+	str32cpy (programName, praatP.title);
+	if ((p = str32chr (programName, U' ')) != NULL) *p = U'\0';
 	#if defined (_WIN32)
-		if ((p = strchr (programName, '.')) != NULL) *p = '\0';   // chop off ".exe"
+		if ((p = str32chr (programName, U'.')) != NULL) *p = U'\0';   // chop off ".exe"
 	#endif
 
 	/*
 	 * Construct a main-window title like "MyProg 3.2".
 	 */
-	praatP.title [0] = toupper (praatP.title [0]);
+	praatP.title [0] = (char32) toupper ((int) praatP.title [0]);
 
 	/*
 	 * Get home directory, e.g. "/home/miep/", or "/Users/miep/", or just "/".
@@ -1142,11 +1144,11 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		 * Make sure that the program's private directory exists.
 		 */
 		#if defined (UNIX)
-			Melder_sprint (name,256, U".", Melder_peek8to32 (programName), U"-dir");   // for example .myProg-dir
+			Melder_sprint (name,256, U".", programName, U"-dir");   // for example .myProg-dir
 		#elif defined (macintosh)
-			Melder_sprint (name,256, Melder_peek8to32 (praatP.title), U" Prefs");   // for example MyProg Prefs
+			Melder_sprint (name,256, praatP.title, U" Prefs");   // for example MyProg Prefs
 		#elif defined (_WIN32)
-			Melder_sprint (name,256, Melder_peek8to32 (praatP.title));   // for example MyProg
+			Melder_sprint (name,256, praatP.title);   // for example MyProg
 		#endif
 		#if defined (UNIX) || defined (macintosh)
 			Melder_createDirectory (& prefParentDir, name, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
@@ -1235,13 +1237,13 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		 */
 		#if gtk
 			trace (U"locale ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
-			g_set_application_name (title);
+			g_set_application_name (Melder_peek32to8 (title));
 			trace (U"locale ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
 		#elif cocoa
 			//[NSApplication sharedApplication];
 			[GuiCocoaApplication sharedApplication];
 		#elif defined (_WIN32)
-			argv [0] = & praatP. title [0];   /* argc == 4 */
+			argv [0] = Melder_32to8 (praatP. title);   // argc == 4
 			Gui_setOpenDocumentCallback (cb_openDocument);
 			GuiAppInitialize ("Praatwulg", NULL, 0, & argc, argv, NULL, NULL);
 		#elif defined (macintosh)
@@ -1249,14 +1251,14 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		#endif
 
 		trace (U"creating and installing the Objects window");
-		char objectWindowTitle [100];
-		sprintf (objectWindowTitle, "%s Objects", praatP.title);
+		char32 objectWindowTitle [100];
+		Melder_sprint (objectWindowTitle,100, praatP.title, U" Objects");
 		double x, y;
 		trace (U"locale ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
 		Gui_getWindowPositioningBounds (& x, & y, NULL, NULL);
 		trace (U"locale ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
 		theCurrentPraatApplication -> topShell = raam = GuiWindow_create (x + 10, y, WINDOW_WIDTH, WINDOW_HEIGHT, 450, 250,
-			Melder_peek8to32 (objectWindowTitle), gui_cb_quit, NULL, 0);
+			objectWindowTitle, gui_cb_quit, NULL, 0);
 		trace (U"locale ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
 		#if motif
 			GuiApp_setApplicationShell (theCurrentPraatApplication -> topShell -> d_xmShell);
@@ -1335,7 +1337,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 
 static void executeStartUpFile (MelderDir startUpDirectory, const char32 *fileNameHead, const char32 *fileNameTail) {
 	char32 name [256];
-	Melder_sprint (name,256, fileNameHead, Melder_peek8to32 (programName), fileNameTail);
+	Melder_sprint (name,256, fileNameHead, programName, fileNameTail);
 	if (! MelderDir_isNull (startUpDirectory)) {   // should not occur on modern systems
 		structMelderFile startUp = { 0 };
 		MelderDir_getFile (startUpDirectory, name, & startUp);
@@ -1344,7 +1346,7 @@ static void executeStartUpFile (MelderDir startUpDirectory, const char32 *fileNa
 		try {
 			praat_executeScriptFromFile (& startUp, NULL);
 		} catch (MelderError) {
-			Melder_flushError (Melder_peek8to32 (praatP.title), U": start-up file ", & startUp, U" not completed.");
+			Melder_flushError (praatP.title, U": start-up file ", & startUp, U" not completed.");
 		}
 	}
 }
@@ -1449,7 +1451,7 @@ void praat_run (void) {
 					try {
 						praat_executeScriptFromFile (& plugin, NULL);
 					} catch (MelderError) {
-						Melder_flushError (Melder_peek8to32 (praatP.title), U": plugin ", & plugin, U" contains an error.");
+						Melder_flushError (praatP.title, U": plugin ", & plugin, U" contains an error.");
 					}
 					Melder_backgrounding = false;
 				}
@@ -1476,7 +1478,7 @@ void praat_run (void) {
 	{
 		int64 dummy = 1000000000000;
 		if (! str32equ (Melder_integer (dummy), U"1000000000000"))
-			Melder_fatal (U"The number 1000000000000 is mistaken written on this machine as ", dummy);
+			Melder_fatal (U"The number 1000000000000 is mistaken written on this machine as ", dummy, U".");
 	}
 	{ uint32_t dummy = 0xffffffff;
 		Melder_assert ((int64) dummy == 4294967295LL);
@@ -1503,7 +1505,7 @@ void praat_run (void) {
 				praat_executeScriptFromText (thePraatStandAloneScriptText);
 				praat_exit (0);
 			} catch (MelderError) {
-				Melder_flushError (Melder_peek8to32 (praatP.title), U": stand-alone script session interrupted.");
+				Melder_flushError (praatP.title, U": stand-alone script session interrupted.");
 				praat_exit (-1);
 			}
 		} else if (doingCommandLineInterface) {
@@ -1511,7 +1513,7 @@ void praat_run (void) {
 				praat_executeCommandFromStandardInput (praatP.title);
 				praat_exit (0);
 			} catch (MelderError) {
-				Melder_flushError (Melder_peek8to32 (praatP.title), U": command line session interrupted.");
+				Melder_flushError (praatP.title, U": command line session interrupted.");
 				praat_exit (-1);
 			}
 		} else {
@@ -1531,7 +1533,7 @@ void praat_run (void) {
 				#if defined (_WIN32) && ! defined (CONSOLE_APPLICATION)
 					MelderGui_create (NULL);
 				#endif
-				Melder_flushError (Melder_peek8to32 (praatP.title), U": command file ", & batchFile, U" not completed.");
+				Melder_flushError (praatP.title, U": command file ", & batchFile, U" not completed.");
 				praat_exit (-1);
 			}
 		}

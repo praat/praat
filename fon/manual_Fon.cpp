@@ -202,7 +202,7 @@ INTRO (U"A command in the @@New menu@ to create a @Strings object containing a l
 	"It works completely analogously to @@Create Strings as file list...@.")
 MAN_END
 
-MAN_BEGIN (U"Create Strings as file list...", U"ppgb", 20140107)
+MAN_BEGIN (U"Create Strings as file list...", U"ppgb", 20150713)
 INTRO (U"A command in the @@New menu@ to create a @Strings object containing a list of files in a given directory.")
 ENTRY (U"Settings")
 SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (2.6), U""
@@ -222,12 +222,12 @@ ENTRY (U"Usage")
 NORMAL (U"There are two ways to specify the file path.")
 NORMAL (U"One way is to specify a directory name only. On Unix, the file path could be "
 	"##/usr/people/miep/sounds# or ##/usr/people/miep/sounds/#, for instance. On Windows, "
-	"##C:\\bsDocuments and Settings\\bsMiep\\bsSounds# or ##C:\\bsDocuments and Settings\\bsMiep\\bsSounds\\bs#. "
+	"##C:\\bsUsers\\bsMiep\\bsSounds# or ##C:\\bsUsers\\bsMiep\\bsSounds\\bs#. "
 	"On Macintosh, ##/Users/miep/Sounds# or ##/Users/miep/Sounds/#. Any of these produce "
 	"a list of all the files in the specified directory.")
 NORMAL (U"The other way is to specify a wildcard (a single asterisk) for the file names. "
 	"To get a list of all the files whose names start with \"hal\" and end in \".wav\", "
-	"type ##/usr/people/miep/sounds/hal*.wav#, ##C:\\bsDocuments and Settings\\bsMiep\\bsSounds\\bshal*.wav#, "
+	"type ##/usr/people/miep/sounds/hal*.wav#, ##C:\\bsUsers\\bsMiep\\bsSounds\\bshal*.wav#, "
 	"or ##/Users/miep/Sounds/hal*.wav#.")
 ENTRY (U"Script usage")
 NORMAL (U"In a script, you can use this command to cycle through the files in a directory. "

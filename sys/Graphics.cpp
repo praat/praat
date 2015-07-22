@@ -114,6 +114,8 @@ void Graphics_init (Graphics me, int resolution) {
 		my resolutionNumber = kGraphics_resolution_360;
 	} else if (resolution == 600) {
 		my resolutionNumber = kGraphics_resolution_600;
+	} else if (resolution == 720) {
+		my resolutionNumber = kGraphics_resolution_720;
 	} else if (resolution == 1200) {
 		my resolutionNumber = kGraphics_resolution_1200;
 	} else {

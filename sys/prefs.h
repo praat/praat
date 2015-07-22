@@ -23,7 +23,7 @@
 
 #define prefs_begin(Klas) \
 	public: static void f_preferences (); \
-	virtual void v_copyPreferencesToInstance ();
+	void v_copyPreferencesToInstance () override;
 
 #define prefs_add_int(Klas,name,version,default) \
 	private: static int s_##name; public: virtual int & pref_##name () { return s_##name; } \

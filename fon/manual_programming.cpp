@@ -22,7 +22,7 @@
 void manual_programming_init (ManPages me);
 void manual_programming_init (ManPages me) {
 
-MAN_BEGIN (U"Programming with Praat", U"ppgb", 20130429)
+MAN_BEGIN (U"Programming with Praat", U"ppgb", 20150713)
 INTRO (U"You can extend the functionality of the Praat program "
 	"by adding modules written in C or C++ to it. All of Praat's source code "
 	"is available under the General Public Licence.")
@@ -58,13 +58,13 @@ NORMAL (U"You can edit ##main/main_Praat.cpp#. "
 CODE (U"\\# include \"praat.h\"")
 CODE (U"")
 CODE (U"DIRECT (HelloFromJane)")
-CODE1 (U"Melder_information (L\"Hello, I am Jane.\");")
+CODE1 (U"Melder_information (U\"Hello, I am Jane.\");")
 CODE (U"END")
 CODE (U"")
 CODE (U"int main (int argc, char **argv) {")
-CODE1 (U"praat_init (\"Praat_Jane\", argc, argv);")
+CODE1 (U"praat_init (U\"Praat_Jane\", argc, argv);")
 CODE1 (U"INCLUDE_LIBRARY (praat_uvafon_init)")
-CODE1 (U"praat_addMenuCommand (L\"Objects\", L\"New\", L\"Hello from Jane...\", NULL, 0, DO_HelloFromJane);")
+CODE1 (U"praat_addMenuCommand (U\"Objects\", U\"New\", U\"Hello from Jane...\", NULL, 0, DO_HelloFromJane);")
 CODE1 (U"praat_run ();")
 CODE1 (U"return 0;")
 CODE (U"}")

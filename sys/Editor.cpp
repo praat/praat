@@ -71,7 +71,7 @@ static void commonCallback (GUI_ARGS) {
 		my commandCallback (my d_editor, me, NULL, 0, NULL, NULL, NULL);
 	} catch (MelderError) {
 		if (! Melder_hasError (U"Script exited.")) {
-			Melder_error_ (U"Menu command \"", my itemTitle, U"\" not completed.");
+			Melder_appendError (U"Menu command \"", my itemTitle, U"\" not completed.");
 		}
 		Melder_flushError ();
 	}

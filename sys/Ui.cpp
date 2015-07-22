@@ -531,10 +531,10 @@ static void UiForm_okOrApply (I, GuiButton button, int hide) {
 			 * Otherwise, show a generic message.
 			 */
 			if (str32str (Melder_getError (), U"Selection changed!")) {
-				Melder_error_ (U"Please change the selection in the object list, or click Cancel in the command window " U_LEFT_DOUBLE_QUOTE,
+				Melder_appendError (U"Please change the selection in the object list, or click Cancel in the command window " U_LEFT_DOUBLE_QUOTE,
 					my name, U_RIGHT_DOUBLE_QUOTE U".");
 			} else {
-				Melder_error_ (U"Please change something in the command window " U_LEFT_DOUBLE_QUOTE,
+				Melder_appendError (U"Please change something in the command window " U_LEFT_DOUBLE_QUOTE,
 					my name, U_RIGHT_DOUBLE_QUOTE U", or click Cancel in that window.");
 			}
 		}

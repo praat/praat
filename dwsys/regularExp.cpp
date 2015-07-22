@@ -4206,7 +4206,7 @@ static void adjustcase (char32 *str, int len, char32 chgcase) {
  *----------------------------------------------------------------------*/
 
 static void reg_error (const char32 *str) {
-	Melder_error_ (U"Internal error processing regular expression: ", str);
+	Melder_appendError (U"Internal error processing regular expression: ", str);
 }
 
 /*----------------------------------------------------------------------*

@@ -362,9 +362,9 @@ ScriptEditor ScriptEditor_createFromScript (Editor environment, Script script) {
 				ScriptEditor editor = (ScriptEditor) theScriptEditors -> item [ieditor];
 				if (MelderFile_equal (& script -> file, & editor -> file)) {
 					Editor_raise (editor);
-					Melder_error_ (U"The script ", & script -> file, U" is already open and has been moved to the front.");
+					Melder_appendError (U"The script ", & script -> file, U" is already open and has been moved to the front.");
 					if (editor -> dirty)
-						Melder_error_ (U"Choose \"Reopen from disk\" if you want to revert to the old version.");
+						Melder_appendError (U"Choose \"Reopen from disk\" if you want to revert to the old version.");
 					Melder_flushError ();
 					return NULL;   // safe NULL
 				}

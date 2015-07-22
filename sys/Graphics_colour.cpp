@@ -283,15 +283,18 @@ static void highlight2 (Graphics graphics, long x1DC, long x2DC, long y1DC, long
 		#elif cocoa
 			GuiCocoaDrawingArea *drawingArea = (GuiCocoaDrawingArea*) my d_drawingArea -> d_widget;
 			if (drawingArea) {
-				NSRect rect = NSMakeRect (x1DC, y2DC, x2DC - x1DC, y1DC - y2DC);
-				NSView *nsView = my d_macView;
-				if (direction == 1) {
-					NSRect windowRect = [nsView convertRect: rect toView: nil];
-					[[nsView window] cacheImageInRect: windowRect];
-				} else {
-					[[nsView window] restoreCachedImage];
-					//[[nsView window] flushWindow];
-					return;
+				if (Melder_systemVersion < 101100) {
+					NSView *nsView = my d_macView;
+					if (direction == 1) {
+						NSRect rect = NSMakeRect (x1DC, y2DC, x2DC - x1DC, y1DC - y2DC);
+						NSRect windowRect = [nsView convertRect: rect toView: nil];
+						Melder_assert ([nsView window] != nil);
+						[[nsView window] cacheImageInRect: windowRect];
+					} else {
+						[[nsView window] restoreCachedImage];
+						//[[nsView window] flushWindow];
+						return;
+					}
 				}
 				[drawingArea lockFocus];
 				my d_macGraphicsContext = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];

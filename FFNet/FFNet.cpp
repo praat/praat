@@ -74,7 +74,7 @@ static void FFNet_checkLayerNumber (FFNet me, long layer) {
 			Melder_throw (U"A layer number of ", layer, U" is too big.");
 		}
 
-		Melder_error_ (U"This FFNet has ", layer, U" layer", (my nLayers > 1 ? U"s\n" : U"\n"));
+		Melder_appendError (U"This FFNet has ", layer, U" layer", (my nLayers > 1 ? U"s\n" : U"\n"));
 		if (my nLayers == 1) {
 			Melder_throw (U"Layer number must be equal to 1.");
 		} else if (my nLayers == 2) {

@@ -482,29 +482,29 @@ static void common_Sound_create (void *dia, Interpreter interpreter, bool allowM
 	long numberOfSamples;
 	if (endTime <= startTime) {
 		if (endTime == startTime)
-			Melder_error_ (U"A Sound cannot have a duration of zero.");
+			Melder_appendError (U"A Sound cannot have a duration of zero.");
 		else
-			Melder_error_ (U"A Sound cannot have a duration less than zero.");
+			Melder_appendError (U"A Sound cannot have a duration less than zero.");
 		if (startTime == 0.0)
 			Melder_throw (U"Please set the end time to something greater than 0 seconds.");
 		else
 			Melder_throw (U"Please lower the start time or raise the end time.");
 	}
 	if (samplingFrequency <= 0.0) {
-		Melder_error_ (U"A Sound cannot have a negative sampling frequency.");
+		Melder_appendError (U"A Sound cannot have a negative sampling frequency.");
 		Melder_throw (U"Please set the sampling frequency to something greater than zero, e.g. 44100 Hz.");
 	}
 	if (numberOfChannels < 1)
 		Melder_throw (U"A Sound cannot have zero channels.");
 	if (numberOfSamples_real < 1.0) {
-		Melder_error_ (U"A Sound cannot have zero samples.");
+		Melder_appendError (U"A Sound cannot have zero samples.");
 		if (startTime == 0.0)
 			Melder_throw (U"Please raise the end time.");
 		else
 			Melder_throw (U"Please lower the start time or raise the end time.");
 	}
 	if (numberOfSamples_real > INT54_MAX) {
-		Melder_error_ (U"A Sound cannot have ", Melder_bigInteger (numberOfSamples_real), U" samples; the maximum is ",
+		Melder_appendError (U"A Sound cannot have ", Melder_bigInteger (numberOfSamples_real), U" samples; the maximum is ",
 			Melder_bigInteger (INT54_MAX), U" samples (or less, depending on your computer's memory).");
 		if (startTime == 0.0)
 			Melder_throw (U"Please lower the end time or the sampling frequency.");
@@ -519,7 +519,7 @@ static void common_Sound_create (void *dia, Interpreter interpreter, bool allowM
 	} catch (MelderError) {
 		if (str32str (Melder_getError (), U"memory")) {
 			Melder_clearError ();
-			Melder_error_ (U"There is not enough memory to create a Sound that contains ", Melder_bigInteger (numberOfSamples_real), U" samples.");
+			Melder_appendError (U"There is not enough memory to create a Sound that contains ", Melder_bigInteger (numberOfSamples_real), U" samples.");
 			if (startTime == 0.0)
 				Melder_throw (U"You could lower the end time or the sampling frequency and try again.");
 			else
@@ -1390,7 +1390,7 @@ static void cb_SoundRecorder_publication (Editor editor, void *closure, Data pub
 	(void) editor;
 	(void) closure;
 	try {
-		praat_new (publication, U"");
+		praat_new (publication);
 	} catch (MelderError) {
 		Melder_flushError ();
 	}

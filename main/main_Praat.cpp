@@ -47,7 +47,7 @@ static void logo (Graphics g) {
 int main (int argc, char *argv []) {
 	try {
 		praat_setLogo (130, 80, logo);
-		praat_init ("Praat", (unsigned int) argc, argv);
+		praat_init (U"Praat", (unsigned int) argc, argv);
 		INCLUDE_LIBRARY (praat_uvafon_init)
 		INCLUDE_LIBRARY (praat_contrib_Ola_KNN_init)
 		praat_run ();

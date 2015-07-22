@@ -48,29 +48,29 @@ void Melder_clearError (void) { errors [0] = U'\0'; }
 
 char32 * Melder_getError (void) { return & errors [0]; }
 
-void Melder_error_ (Melder_1_ARG) {
+void Melder_appendError (Melder_1_ARG) {
 	appendError (arg1. _arg);
 	appendError (U"\n");
 }
-void Melder_error_ (Melder_2_ARGS) {
+void Melder_appendError (Melder_2_ARGS) {
 	appendError (arg1. _arg);
 	appendError (arg2. _arg);
 	appendError (U"\n");
 }
-void Melder_error_ (Melder_3_ARGS) {
+void Melder_appendError (Melder_3_ARGS) {
 	appendError (arg1. _arg);
 	appendError (arg2. _arg);
 	appendError (arg3. _arg);
 	appendError (U"\n");
 }
-void Melder_error_ (Melder_4_ARGS) {
+void Melder_appendError (Melder_4_ARGS) {
 	appendError (arg1. _arg);
 	appendError (arg2. _arg);
 	appendError (arg3. _arg);
 	appendError (arg4. _arg);
 	appendError (U"\n");
 }
-void Melder_error_ (Melder_5_ARGS) {
+void Melder_appendError (Melder_5_ARGS) {
 	appendError (arg1. _arg);
 	appendError (arg2. _arg);
 	appendError (arg3. _arg);
@@ -78,7 +78,7 @@ void Melder_error_ (Melder_5_ARGS) {
 	appendError (arg5. _arg);
 	appendError (U"\n");
 }
-void Melder_error_ (Melder_6_ARGS) {
+void Melder_appendError (Melder_6_ARGS) {
 	appendError (arg1. _arg);
 	appendError (arg2. _arg);
 	appendError (arg3. _arg);
@@ -87,7 +87,7 @@ void Melder_error_ (Melder_6_ARGS) {
 	appendError (arg6. _arg);
 	appendError (U"\n");
 }
-void Melder_error_ (Melder_7_ARGS) {
+void Melder_appendError (Melder_7_ARGS) {
 	appendError (arg1. _arg);
 	appendError (arg2. _arg);
 	appendError (arg3. _arg);
@@ -97,7 +97,7 @@ void Melder_error_ (Melder_7_ARGS) {
 	appendError (arg7. _arg);
 	appendError (U"\n");
 }
-void Melder_error_ (Melder_8_ARGS) {
+void Melder_appendError (Melder_8_ARGS) {
 	appendError (arg1. _arg);
 	appendError (arg2. _arg);
 	appendError (arg3. _arg);
@@ -108,7 +108,7 @@ void Melder_error_ (Melder_8_ARGS) {
 	appendError (arg8. _arg);
 	appendError (U"\n");
 }
-void Melder_error_ (Melder_9_ARGS) {
+void Melder_appendError (Melder_9_ARGS) {
 	appendError (arg1. _arg);
 	appendError (arg2. _arg);
 	appendError (arg3. _arg);
@@ -120,7 +120,7 @@ void Melder_error_ (Melder_9_ARGS) {
 	appendError (arg9. _arg);
 	appendError (U"\n");
 }
-void Melder_error_ (Melder_10_ARGS) {
+void Melder_appendError (Melder_10_ARGS) {
 	appendError (arg1. _arg);
 	appendError (arg2. _arg);
 	appendError (arg3. _arg);
@@ -133,7 +133,7 @@ void Melder_error_ (Melder_10_ARGS) {
 	appendError (arg10._arg);
 	appendError (U"\n");
 }
-void Melder_error_ (Melder_11_ARGS) {
+void Melder_appendError (Melder_11_ARGS) {
 	appendError (arg1. _arg);
 	appendError (arg2. _arg);
 	appendError (arg3. _arg);
@@ -147,7 +147,7 @@ void Melder_error_ (Melder_11_ARGS) {
 	appendError (arg11._arg);
 	appendError (U"\n");
 }
-void Melder_error_ (Melder_13_ARGS) {
+void Melder_appendError (Melder_13_ARGS) {
 	appendError (arg1. _arg);
 	appendError (arg2. _arg);
 	appendError (arg3. _arg);
@@ -163,7 +163,7 @@ void Melder_error_ (Melder_13_ARGS) {
 	appendError (arg13._arg);
 	appendError (U"\n");
 }
-void Melder_error_ (Melder_15_ARGS) {
+void Melder_appendError (Melder_15_ARGS) {
 	appendError (arg1. _arg);
 	appendError (arg2. _arg);
 	appendError (arg3. _arg);
@@ -181,7 +181,7 @@ void Melder_error_ (Melder_15_ARGS) {
 	appendError (arg15._arg);
 	appendError (U"\n");
 }
-void Melder_error_ (Melder_19_ARGS) {
+void Melder_appendError (Melder_19_ARGS) {
 	appendError (arg1. _arg);
 	appendError (arg2. _arg);
 	appendError (arg3. _arg);
@@ -204,7 +204,7 @@ void Melder_error_ (Melder_19_ARGS) {
 	appendError (U"\n");
 }
 
-void Melder_error_noLine (Melder_1_ARG) {
+void Melder_appendError_noLine (Melder_1_ARG) {
 	appendError (arg1._arg);
 }
 
@@ -222,19 +222,19 @@ void Melder_flushError () {
 	theError (temp);
 }
 
-void Melder_flushError (Melder_1_ARG)   { Melder_error_ (Melder_1_ARG_CALL);   Melder_flushError (); }
-void Melder_flushError (Melder_2_ARGS)  { Melder_error_ (Melder_2_ARGS_CALL);  Melder_flushError (); }
-void Melder_flushError (Melder_3_ARGS)  { Melder_error_ (Melder_3_ARGS_CALL);  Melder_flushError (); }
-void Melder_flushError (Melder_4_ARGS)  { Melder_error_ (Melder_4_ARGS_CALL);  Melder_flushError (); }
-void Melder_flushError (Melder_5_ARGS)  { Melder_error_ (Melder_5_ARGS_CALL);  Melder_flushError (); }
-void Melder_flushError (Melder_6_ARGS)  { Melder_error_ (Melder_6_ARGS_CALL);  Melder_flushError (); }
-void Melder_flushError (Melder_7_ARGS)  { Melder_error_ (Melder_7_ARGS_CALL);  Melder_flushError (); }
-void Melder_flushError (Melder_8_ARGS)  { Melder_error_ (Melder_8_ARGS_CALL);  Melder_flushError (); }
-void Melder_flushError (Melder_9_ARGS)  { Melder_error_ (Melder_9_ARGS_CALL);  Melder_flushError (); }
-void Melder_flushError (Melder_10_ARGS) { Melder_error_ (Melder_10_ARGS_CALL); Melder_flushError (); }
-void Melder_flushError (Melder_11_ARGS) { Melder_error_ (Melder_11_ARGS_CALL); Melder_flushError (); }
-void Melder_flushError (Melder_13_ARGS) { Melder_error_ (Melder_13_ARGS_CALL); Melder_flushError (); }
-void Melder_flushError (Melder_15_ARGS) { Melder_error_ (Melder_15_ARGS_CALL); Melder_flushError (); }
-void Melder_flushError (Melder_19_ARGS) { Melder_error_ (Melder_19_ARGS_CALL); Melder_flushError (); }
+void Melder_flushError (Melder_1_ARG)   { Melder_appendError (Melder_1_ARG_CALL);   Melder_flushError (); }
+void Melder_flushError (Melder_2_ARGS)  { Melder_appendError (Melder_2_ARGS_CALL);  Melder_flushError (); }
+void Melder_flushError (Melder_3_ARGS)  { Melder_appendError (Melder_3_ARGS_CALL);  Melder_flushError (); }
+void Melder_flushError (Melder_4_ARGS)  { Melder_appendError (Melder_4_ARGS_CALL);  Melder_flushError (); }
+void Melder_flushError (Melder_5_ARGS)  { Melder_appendError (Melder_5_ARGS_CALL);  Melder_flushError (); }
+void Melder_flushError (Melder_6_ARGS)  { Melder_appendError (Melder_6_ARGS_CALL);  Melder_flushError (); }
+void Melder_flushError (Melder_7_ARGS)  { Melder_appendError (Melder_7_ARGS_CALL);  Melder_flushError (); }
+void Melder_flushError (Melder_8_ARGS)  { Melder_appendError (Melder_8_ARGS_CALL);  Melder_flushError (); }
+void Melder_flushError (Melder_9_ARGS)  { Melder_appendError (Melder_9_ARGS_CALL);  Melder_flushError (); }
+void Melder_flushError (Melder_10_ARGS) { Melder_appendError (Melder_10_ARGS_CALL); Melder_flushError (); }
+void Melder_flushError (Melder_11_ARGS) { Melder_appendError (Melder_11_ARGS_CALL); Melder_flushError (); }
+void Melder_flushError (Melder_13_ARGS) { Melder_appendError (Melder_13_ARGS_CALL); Melder_flushError (); }
+void Melder_flushError (Melder_15_ARGS) { Melder_appendError (Melder_15_ARGS_CALL); Melder_flushError (); }
+void Melder_flushError (Melder_19_ARGS) { Melder_appendError (Melder_19_ARGS_CALL); Melder_flushError (); }
 
 /* End of file melder_error.cpp */

@@ -91,7 +91,7 @@ Thing_implement (GuiDialog, GuiShell, 0);
 #endif
 
 GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int height,
-	const char32 *title, void (*goAwayCallback) (void *goAwayBoss), void *goAwayBoss, unsigned long flags)
+	const char32 *title, void (*goAwayCallback) (void *goAwayBoss), void *goAwayBoss, uint32 flags)
 {
 	GuiDialog me = Thing_new (GuiDialog);
 	my d_parent = parent;

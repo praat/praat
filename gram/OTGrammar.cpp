@@ -1778,7 +1778,7 @@ void OTGrammar_PairDistribution_learn (OTGrammar me, PairDistribution thee,
 		}
 	} catch (MelderError) {
 		if (idatum > 1)
-			Melder_error_ (U"Only ", idatum - 1, U" input-output pairs out of ", numberOfData, U" were processed.");
+			Melder_appendError (U"Only ", idatum - 1, U" input-output pairs out of ", numberOfData, U" were processed.");
 		Melder_throw (me, U": did not complete learning from ", thee, U".");
 	}
 }
@@ -2285,7 +2285,7 @@ void OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distribution
 		}
 	} catch (MelderError) {
 		if (idatum > 1)
-			Melder_error_ (U"Only ", idatum - 1, U" input-output pairs out of ", numberOfData, U" were processed.");
+			Melder_appendError (U"Only ", idatum - 1, U" input-output pairs out of ", numberOfData, U" were processed.");
 		Melder_throw (me, U" & ", thee, U": not learned from partial outputs.");
 	}
 }

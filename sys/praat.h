@@ -34,7 +34,7 @@
 // File main_Sybil.cpp: //
 int main (unsigned int argc, char **argv)
 {
-	praat_init ("Praat_Sybil", argc, argv);   // Obligatory.
+	praat_init (U"Praat_Sybil", argc, argv);   // Obligatory.
 	INCLUDE_LIBRARY (praat_Fon_init)   // Optional: inherit phonetic stuff.
 	INCLUDE_LIBRARY (praat_Sybil_init)   // Optional: add Sybil's things.
 	INCLUDE_MANPAGES (manual_Sybil)
@@ -56,7 +56,7 @@ To make any class string-readable, use Thing_recognizeClassesByName ().
 String-readable classes are known by Thing_newFromClassName () and can therefore
 be read by Data_readFromTextFile () and Data_readFromBinaryFile ().
 */
-void praat_init (const char *title, unsigned int argc, char **argv);
+void praat_init (const char32 *title, unsigned int argc, char **argv);
 void praat_run (void);
 void praat_setStandAloneScriptText (char32 *text);   // call before praat_init if you want to create a stand-alone application without Objects and Picture window
 
@@ -174,6 +174,7 @@ Data praat_onlyObject_generic (ClassInfo klas);
 praat_Object praat_onlyScreenObject (void);
 char32 *praat_name (int iobject);
 void praat_write_do (Any dia, const char32 *extension);
+void praat_new (Data me);
 void praat_new (Data me, Melder_1_ARG);
 void praat_new (Data me, Melder_2_ARGS);
 void praat_new (Data me, Melder_3_ARGS);
@@ -319,7 +320,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 					DO_##alternative (NULL, narg, args, sendingString, interpreter, invokingButtonTitle, modified, buttonClosure); \
 				} catch (MelderError) { \
 					Melder_clearError (); \
-					Melder_error_ (parkedError); \
+					Melder_appendError (parkedError); \
 					Melder_free (parkedError); \
 					throw; \
 				} \

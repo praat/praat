@@ -55,7 +55,7 @@ Thing_implement (GuiProgressBar, GuiControl, 0);
 	}
 #endif
 
-GuiProgressBar GuiProgressBar_create (GuiForm parent, int left, int right, int top, int bottom, unsigned long flags)
+GuiProgressBar GuiProgressBar_create (GuiForm parent, int left, int right, int top, int bottom, uint32 /* flags */)
 {
 	GuiProgressBar me = Thing_new (GuiProgressBar);
 	my d_shell = parent -> d_shell;
@@ -96,7 +96,7 @@ GuiProgressBar GuiProgressBar_create (GuiForm parent, int left, int right, int t
 	return me;
 }
 
-GuiProgressBar GuiProgressBar_createShown (GuiForm parent, int left, int right, int top, int bottom, unsigned long flags)
+GuiProgressBar GuiProgressBar_createShown (GuiForm parent, int left, int right, int top, int bottom, uint32 flags)
 {
 	GuiProgressBar me = GuiProgressBar_create (parent, left, right, top, bottom, flags);
 	GuiThing_show (me);

@@ -78,7 +78,7 @@ void structGuiOptionMenu :: v_show () {
 	#endif
 }
 
-void GuiOptionMenu_init (GuiOptionMenu me, GuiForm parent, int left, int right, int top, int bottom, unsigned long flags)
+void GuiOptionMenu_init (GuiOptionMenu me, GuiForm parent, int left, int right, int top, int bottom, uint32 flags)
 {
 	my d_shell = parent -> d_shell;
 	my d_parent = parent;
@@ -126,13 +126,13 @@ void GuiOptionMenu_init (GuiOptionMenu me, GuiForm parent, int left, int right, 
 	#endif
 }
 
-GuiOptionMenu GuiOptionMenu_create (GuiForm parent, int left, int right, int top, int bottom, unsigned long flags) {
+GuiOptionMenu GuiOptionMenu_create (GuiForm parent, int left, int right, int top, int bottom, uint32 flags) {
 	autoGuiOptionMenu me = Thing_new (GuiOptionMenu);
 	GuiOptionMenu_init (me.peek(), parent, left, right, top, bottom, flags);
 	return me.transfer();
 }
 
-GuiOptionMenu GuiOptionMenu_createShown (GuiForm parent, int left, int right, int top, int bottom, unsigned long flags) {
+GuiOptionMenu GuiOptionMenu_createShown (GuiForm parent, int left, int right, int top, int bottom, uint32 flags) {
 	GuiOptionMenu me = GuiOptionMenu_create (parent, left, right, top, bottom, flags);
 	GuiThing_show (me);
 	return me;

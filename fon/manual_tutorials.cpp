@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20150710)
+MAN_BEGIN (U"What's new?", U"ppgb", 20150722)
 INTRO (U"Latest changes in Praat.")
 /*LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (U"##5.4.13# (22 July 2015)")
+LIST_ITEM (U"• The Demo window can now save itself to a PNG or PDF file.")
+LIST_ITEM (U"• Windows: removed a bug introduced in 5.4.10 whereby Praatcon would write garbled text to the console.")
 NORMAL (U"##5.4.12# (10 July 2015)")
 LIST_ITEM (U"• Windows: removed a bug introduced in 5.4.10 whereby SpeechSynthesizer would only pronounce the first letter of the text.")
 NORMAL (U"##5.4.11# (8 July 2015)")
