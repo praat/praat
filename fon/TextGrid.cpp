@@ -482,31 +482,6 @@ long TextGrid_countLabels (TextGrid me, long tierNumber, const char32 *text) {
 	}
 }
 
-long TextGrid_countLabels (TextGrid me, long tierNumber, int which_Melder_STRING, const char32 *criterion) {
-	try {
-		Function anyTier = TextGrid_checkSpecifiedTierNumberWithinRange (me, tierNumber);
-		long count = 0;
-		if (anyTier -> classInfo == classIntervalTier) {
-			IntervalTier tier = (IntervalTier) anyTier;
-			for (long i = 1; i <= tier -> numberOfIntervals (); i ++) {
-				TextInterval interval = tier -> interval (i);
-				if (Melder_stringMatchesCriterion (interval -> text, which_Melder_STRING, criterion))
-					count ++;
-			}
-		} else {
-			TextTier tier = (TextTier) anyTier;
-			for (long i = 1; i <= tier -> numberOfPoints (); i ++) {
-				TextPoint point = tier -> point (i);
-				if (Melder_stringMatchesCriterion (point -> mark, which_Melder_STRING, criterion))
-					count ++;
-			}
-		}
-		return count;
-	} catch (MelderError) {
-		Melder_throw (me, U": labels not counted.");
-	}
-}
-
 long TextGrid_countIntervalsWhere (TextGrid me, long tierNumber, int which_Melder_STRING, const char32 *criterion) {
 	try {
 		long count = 0;

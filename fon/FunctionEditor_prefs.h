@@ -18,14 +18,15 @@
  */
 
 prefs_begin (FunctionEditor)
-	// new:
-		prefs_add_int  (FunctionEditor, shellWidth,                 1, U"700")
-		prefs_add_int  (FunctionEditor, shellHeight,                1, U"440")
-		prefs_add_bool (FunctionEditor, synchronizedZoomAndScroll,  1, true)
-		prefs_add_bool_with_data   (FunctionEditor, showSelectionViewer, 1, false)
-		prefs_add_double_with_data (FunctionEditor, arrowScrollStep,     1, U"0.05")
-		prefs_add_bool (FunctionEditor, picture_drawSelectionTimes, 1, true)
-		prefs_add_bool (FunctionEditor, picture_drawSelectionHairs, 1, true)
+
+	prefs_add_int  (FunctionEditor, shellWidth,                 1, U"700")
+	prefs_add_int  (FunctionEditor, shellHeight,                1, U"440")
+	prefs_add_bool (FunctionEditor, synchronizedZoomAndScroll,  1, true)
+	prefs_add_bool_with_data   (FunctionEditor, showSelectionViewer, 1, false)
+	prefs_add_double_with_data (FunctionEditor, arrowScrollStep,     1, U"0.05")
+	prefs_add_bool (FunctionEditor, picture_drawSelectionTimes, 1, true)
+	prefs_add_bool (FunctionEditor, picture_drawSelectionHairs, 1, true)
+
 prefs_end (FunctionEditor)
 
 /* End of file FunctionEditor_prefs.h */

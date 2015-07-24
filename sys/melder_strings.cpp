@@ -22,7 +22,7 @@
 #define my  me ->
 #define FREE_THRESHOLD_BYTES 10000LL
 
-static double totalNumberOfAllocations = 0, totalNumberOfDeallocations = 0, totalAllocationSize = 0, totalDeallocationSize = 0;
+static int64 totalNumberOfAllocations = 0, totalNumberOfDeallocations = 0, totalAllocationSize = 0, totalDeallocationSize = 0;
 
 void MelderString16_free (MelderString16 *me) {
 	if (my string == NULL) return;
@@ -753,19 +753,19 @@ void MelderString_get (MelderString *me, char32 *destination) {
 	}
 }
 
-double MelderString_allocationCount (void) {
+int64 MelderString_allocationCount (void) {
 	return totalNumberOfAllocations;
 }
 
-double MelderString_deallocationCount (void) {
+int64 MelderString_deallocationCount (void) {
 	return totalNumberOfDeallocations;
 }
 
-double MelderString_allocationSize (void) {
+int64 MelderString_allocationSize (void) {
 	return totalAllocationSize;
 }
 
-double MelderString_deallocationSize (void) {
+int64 MelderString_deallocationSize (void) {
 	return totalDeallocationSize;
 }
 

@@ -55,7 +55,7 @@ static int ibuffer = 0;
 	*q = U'\0'; \
 	return buffers32 [ibuffer];
 
-const char * Melder8_integer (int64_t value) {
+const char * Melder8_integer (int64 value) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	if (sizeof (long) == 8) {
 		int n = snprintf (buffers8 [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH + 1, "%ld", (long) value);   // cast to identical type, to make compiler happy
@@ -89,12 +89,12 @@ const char * Melder8_integer (int64_t value) {
 	}
 	return buffers8 [ibuffer];
 }
-const char32 * Melder_integer (int64_t value) {
+const char32 * Melder_integer (int64 value) {
 	const char *p = Melder8_integer (value);
 	CONVERT_BUFFER_TO_CHAR32
 }
 
-const char * Melder8_bigInteger (int64_t value) {
+const char * Melder8_bigInteger (int64 value) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	char *text = buffers8 [ibuffer];
 	text [0] = '\0';
@@ -143,7 +143,7 @@ const char * Melder8_bigInteger (int64_t value) {
 	sprintf (text + strlen (text), firstDigitPrinted ? "%03d" : "%d", units);
 	return text;
 }
-const char32 * Melder_bigInteger (int64_t value) {
+const char32 * Melder_bigInteger (int64 value) {
 	const char *p = Melder8_bigInteger (value);
 	CONVERT_BUFFER_TO_CHAR32
 }

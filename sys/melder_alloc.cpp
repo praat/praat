@@ -34,7 +34,7 @@
 #include <wctype.h>
 #include <assert.h>
 
-static double totalNumberOfAllocations = 0, totalNumberOfDeallocations = 0, totalAllocationSize = 0,
+static int64 totalNumberOfAllocations = 0, totalNumberOfDeallocations = 0, totalAllocationSize = 0,
 	totalNumberOfMovingReallocs = 0, totalNumberOfReallocsInSitu = 0;
 
 /*
@@ -62,12 +62,12 @@ void Melder_alloc_init (void) {
 	assert (theRainyDayFund != NULL);
 }
 
-void * _Melder_malloc (int64_t size) {
+void * _Melder_malloc (int64 size) {
 	if (size <= 0)
 		Melder_throw (U"Can never allocate ", Melder_bigInteger (size), U" bytes.");
-	if (sizeof (size_t) < 8 && (double) size > SIZE_MAX)
+	if (sizeof (size_t) < 8 && size > SIZE_MAX)
 		Melder_throw (U"Can never allocate ", Melder_bigInteger (size), U" bytes. Use a 64-bit edition of Praat instead?");
-	void *result = malloc ((size_t) size);
+	void *result = malloc ((size_t) size);   // guarded cast
 	if (result == NULL)
 		Melder_throw (U"Out of memory: there is not enough room for another ", Melder_bigInteger (size), U" bytes.");
 	if (Melder_debug == 34) { Melder_casual (U"Melder_malloc\t", Melder_pointer (result), U"\t", Melder_bigInteger (size), U"\t1"); }
@@ -76,10 +76,10 @@ void * _Melder_malloc (int64_t size) {
 	return result;
 }
 
-void * _Melder_malloc_f (int64_t size) {
+void * _Melder_malloc_f (int64 size) {
 	if (size <= 0)
 		Melder_fatal (U"(Melder_malloc_f:) Can never allocate ", Melder_bigInteger (size), U" bytes.");
-	if (sizeof (size_t) < 8 && (double) size > SIZE_MAX)
+	if (sizeof (size_t) < 8 && size > SIZE_MAX)
 		Melder_fatal (U"(Melder_malloc_f:) Can never allocate ", Melder_bigInteger (size), U" bytes.");
 	void *result = malloc ((size_t) size);
 	if (result == NULL) {
@@ -104,10 +104,10 @@ void _Melder_free (void **ptr) {
 	totalNumberOfDeallocations += 1;
 }
 
-void * Melder_realloc (void *ptr, int64_t size) {
+void * Melder_realloc (void *ptr, int64 size) {
 	if (size <= 0)
 		Melder_throw (U"Can never allocate ", Melder_bigInteger (size), U" bytes.");
-	if (sizeof (size_t) < 8 && (double) size > SIZE_MAX)
+	if (sizeof (size_t) < 8 && size > SIZE_MAX)
 		Melder_throw (U"Can never allocate ", Melder_bigInteger (size), U" bytes. Use a 64-bit edition of Praat instead?");
 	void *result = realloc (ptr, (size_t) size);   // will not show in the statistics...
 	if (result == NULL)
@@ -127,11 +127,11 @@ void * Melder_realloc (void *ptr, int64_t size) {
 	return result;
 }
 
-void * Melder_realloc_f (void *ptr, int64_t size) {
+void * Melder_realloc_f (void *ptr, int64 size) {
 	void *result;
 	if (size <= 0)
 		Melder_fatal (U"(Melder_realloc_f:) Can never allocate ", Melder_bigInteger (size), U" bytes.");
-	if (sizeof (size_t) < 8 && (double) size > SIZE_MAX)
+	if (sizeof (size_t) < 8 && size > SIZE_MAX)
 		Melder_fatal (U"(Melder_realloc_f:) Can never allocate ", Melder_bigInteger (size), U" bytes.");
 	result = realloc (ptr, (size_t) size);   // will not show in the statistics...
 	if (result == NULL) {
@@ -143,10 +143,10 @@ void * Melder_realloc_f (void *ptr, int64_t size) {
 			Melder_fatal (U"Out of memory. Could not extend room to ", Melder_bigInteger (size), U" bytes.");
 		}
 	}
-	if (ptr == NULL) {   /* Is it like malloc? */
+	if (ptr == NULL) {   // is it like malloc?
 		totalNumberOfAllocations += 1;
 		totalAllocationSize += size;
-	} else if (result != ptr) {   /* Did realloc do a malloc-and-free? */
+	} else if (result != ptr) {   // did realloc do a malloc-and-free?
 		totalNumberOfAllocations += 1;
 		totalAllocationSize += size;
 		totalNumberOfDeallocations += 1;
@@ -157,32 +157,31 @@ void * Melder_realloc_f (void *ptr, int64_t size) {
 	return result;
 }
 
-void * _Melder_calloc (int64_t nelem, int64_t elsize) {
-	void *result;
+void * _Melder_calloc (int64 nelem, int64 elsize) {
 	if (nelem <= 0)
 		Melder_throw (U"Can never allocate ", Melder_bigInteger (nelem), U" elements.");
 	if (elsize <= 0)
 		Melder_throw (U"Can never allocate elements whose size is ", Melder_bigInteger (elsize), U" bytes.");
-	if (sizeof (size_t) < 8 && (double) nelem * (double) elsize > SIZE_MAX)
-		Melder_throw (U"Can never allocate ", Melder_bigInteger (nelem * elsize), U" bytes. Use a 64-bit edition of Praat instead?");
-	result = calloc ((size_t) nelem, (size_t) elsize);
+	if ((uint64_t) nelem > SIZE_MAX / (uint64_t) elsize)   // guarded casts to unsigned
+		Melder_throw (U"Can never allocate ", Melder_bigInteger (nelem), U" elements whose sizes are ", Melder_bigInteger (elsize), U" bytes each.",
+			sizeof (size_t) < 8 ? U" Use a 64-bit edition of Praat instead?" : NULL);
+	void *result = calloc ((size_t) nelem, (size_t) elsize);
 	if (result == NULL)
 		Melder_throw (U"Out of memory: there is not enough room for ", Melder_bigInteger (nelem), U" more elements whose sizes are ", elsize, U" bytes each.");
 	if (Melder_debug == 34) { Melder_casual (U"Melder_calloc\t", Melder_pointer (result), U"\t", Melder_bigInteger (nelem), U"\t", Melder_bigInteger (elsize)); }
 	totalNumberOfAllocations += 1;
-	totalAllocationSize += (double) nelem * (double) elsize;
+	totalAllocationSize += nelem * elsize;
 	return result;
 }
 
-void * _Melder_calloc_f (int64_t nelem, int64_t elsize) {
-	void *result;
+void * _Melder_calloc_f (int64 nelem, int64 elsize) {
 	if (nelem <= 0)
 		Melder_fatal (U"(Melder_calloc_f:) Can never allocate ", Melder_bigInteger (nelem), U" elements.");
 	if (elsize <= 0)
 		Melder_fatal (U"(Melder_calloc_f:) Can never allocate elements whose size is ", Melder_bigInteger (elsize), U" bytes.");
-	if (sizeof (size_t) < 8 && (double) nelem * (double) elsize > SIZE_MAX)
-		Melder_fatal (U"(Melder_calloc_f:) Can never allocate ", (double) nelem * (double) elsize, U" bytes.");
-	result = calloc ((size_t) nelem, (size_t) elsize);
+	if ((uint64_t) nelem > SIZE_MAX / (uint64_t) elsize)
+		Melder_fatal (U"(Melder_calloc_f:) Can never allocate ", Melder_bigInteger (nelem), U" elements whose sizes are ", Melder_bigInteger (elsize), U" bytes each.");
+	void *result = calloc ((size_t) nelem, (size_t) elsize);
 	if (result == NULL) {
 		if (theRainyDayFund != NULL) { free (theRainyDayFund); theRainyDayFund = NULL; }
 		result = calloc ((size_t) nelem, (size_t) elsize);
@@ -194,31 +193,31 @@ void * _Melder_calloc_f (int64_t nelem, int64_t elsize) {
 		}
 	}
 	totalNumberOfAllocations += 1;
-	totalAllocationSize += (double) nelem * (double) elsize;
+	totalAllocationSize += nelem * elsize;
 	return result;
 }
 
 char * Melder_strdup (const char *string) {
 	if (! string) return NULL;
-	int64_t size = (int64_t) strlen (string) + 1;
-	if (sizeof (size_t) < 8 && (double) size > SIZE_MAX)
+	int64 size = (int64) strlen (string) + 1;
+	if (sizeof (size_t) < 8 && size > SIZE_MAX)
 		Melder_throw (U"Can never allocate ", Melder_bigInteger (size), U" bytes. Use a 64-bit edition of Praat instead?");
-	char *result = (char *) malloc ((size_t) size * sizeof (char));
+	char *result = (char *) malloc ((size_t) size);
 	if (result == NULL)
 		Melder_throw (U"Out of memory: there is not enough room to duplicate a text of ", Melder_bigInteger (size - 1), U" characters.");
 	strcpy (result, string);
 	if (Melder_debug == 34) { Melder_casual (U"Melder_strdup\t", Melder_pointer (result), U"\t", Melder_bigInteger (size), U"\t1"); }
 	totalNumberOfAllocations += 1;
-	totalAllocationSize += (double) size;
+	totalAllocationSize += size;
 	return result;
 }
 
 char * Melder_strdup_f (const char *string) {
 	if (! string) return NULL;
-	int64_t size = (int64_t) strlen (string) + 1;
-	if (sizeof (size_t) < 8 && (double) size > SIZE_MAX)
+	int64 size = (int64) strlen (string) + 1;
+	if (sizeof (size_t) < 8 && size > SIZE_MAX)
 		Melder_fatal (U"(Melder_strdup_f:) Can never allocate ", Melder_bigInteger (size), U" bytes.");
-	char *result = (char *) malloc ((size_t) size * sizeof (char));
+	char *result = (char *) malloc ((size_t) size);
 	if (result == NULL) {
 		if (theRainyDayFund != NULL) { free (theRainyDayFund); theRainyDayFund = NULL; }
 		result = (char *) malloc ((size_t) size * sizeof (char));
@@ -230,32 +229,29 @@ char * Melder_strdup_f (const char *string) {
 	}
 	strcpy (result, string);
 	totalNumberOfAllocations += 1;
-	totalAllocationSize += (double) size;
+	totalAllocationSize += size;
 	return result;
 }
 
 char32 * Melder_dup (const char32 *string /* cattable */) {
 	if (! string) return NULL;
-	int64 size = (int64) str32len (string) + 1;
-	double allocationSize = (double) size * (double) sizeof (char32);
-	if (allocationSize > INT54_MAX)
-		Melder_throw (U"Can never allocate ", Melder_bigInteger (size), U" bytes. It is above the 9-petabyte limit.");
-	if (sizeof (size_t) < 8 && allocationSize > SIZE_MAX)
-		Melder_throw (U"Can never allocate ", Melder_bigInteger (size), U" bytes. Use a 64-bit edition of Praat instead?");
-	char32 *result = (char32 *) malloc ((size_t) allocationSize);   // guarded conversion
+	int64 size = (int64) str32len (string) + 1;   // guaranteed to be positive
+	if (sizeof (size_t) < 8 && size > SIZE_MAX / sizeof (char32))
+		Melder_throw (U"Can never allocate ", Melder_bigInteger (size), U" characters. Use a 64-bit edition of Praat instead?");
+	char32 *result = (char32 *) malloc ((size_t) size * sizeof (char32));   // guarded conversion
 	if (result == NULL)
 		Melder_throw (U"Out of memory: there is not enough room to duplicate a text of ", Melder_bigInteger (size - 1), U" characters.");
 	str32cpy (result, string);
 	if (Melder_debug == 34) { Melder_casual (U"Melder_dup\t", Melder_pointer (result), U"\t", Melder_bigInteger (size), U"\t4"); }
 	totalNumberOfAllocations += 1;
-	totalAllocationSize += allocationSize;
+	totalAllocationSize += size * (int64) sizeof (char32);
 	return result;
 }
 
 char32 * Melder_dup_f (const char32 *string /* cattable */) {
 	if (! string) return NULL;
 	int64 size = (int64) str32len (string) + 1;
-	if (sizeof (size_t) < 8 && (double) size * (double) sizeof (char32) > SIZE_MAX)
+	if (sizeof (size_t) < 8 && size > SIZE_MAX / sizeof (char32))
 		Melder_fatal (U"(Melder_dup_f:) Can never allocate ", Melder_bigInteger (size), U" characters.");
 	char32 *result = (char32 *) malloc ((size_t) size * sizeof (char32));
 	if (result == NULL) {
@@ -269,27 +265,27 @@ char32 * Melder_dup_f (const char32 *string /* cattable */) {
 	}
 	str32cpy (result, string);
 	totalNumberOfAllocations += 1;
-	totalAllocationSize += (double) size * sizeof (char32);
+	totalAllocationSize += size * (int64) sizeof (char32);
 	return result;
 }
 
-double Melder_allocationCount (void) {
+int64 Melder_allocationCount (void) {
 	return totalNumberOfAllocations;
 }
 
-double Melder_deallocationCount (void) {
+int64 Melder_deallocationCount (void) {
 	return totalNumberOfDeallocations;
 }
 
-double Melder_allocationSize (void) {
+int64 Melder_allocationSize (void) {
 	return totalAllocationSize;
 }
 
-double Melder_reallocationsInSituCount (void) {
+int64 Melder_reallocationsInSituCount (void) {
 	return totalNumberOfReallocsInSitu;
 }
 
-double Melder_movingReallocationsCount (void) {
+int64 Melder_movingReallocationsCount (void) {
 	return totalNumberOfMovingReallocs;
 }
 

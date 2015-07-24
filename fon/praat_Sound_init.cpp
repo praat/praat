@@ -479,7 +479,6 @@ static void common_Sound_create (void *dia, Interpreter interpreter, bool allowM
 	double endTime = GET_REAL (U"End time");
 	double samplingFrequency = GET_REAL (U"Sampling frequency");
 	double numberOfSamples_real = round ((endTime - startTime) * samplingFrequency);
-	long numberOfSamples;
 	if (endTime <= startTime) {
 		if (endTime == startTime)
 			Melder_appendError (U"A Sound cannot have a duration of zero.");
@@ -504,14 +503,14 @@ static void common_Sound_create (void *dia, Interpreter interpreter, bool allowM
 			Melder_throw (U"Please lower the start time or raise the end time.");
 	}
 	if (numberOfSamples_real > INT54_MAX) {
-		Melder_appendError (U"A Sound cannot have ", Melder_bigInteger (numberOfSamples_real), U" samples; the maximum is ",
+		Melder_appendError (U"A Sound cannot have ", numberOfSamples_real, U" samples; the maximum is ",
 			Melder_bigInteger (INT54_MAX), U" samples (or less, depending on your computer's memory).");
 		if (startTime == 0.0)
 			Melder_throw (U"Please lower the end time or the sampling frequency.");
 		else
 			Melder_throw (U"Please raise the start time, lower the end time, or lower the sampling frequency.");
 	}
-	numberOfSamples = (long) numberOfSamples_real;
+	int64 numberOfSamples = (int64) numberOfSamples_real;
 	autoSound sound;
 	try {
 		sound.reset (Sound_create (numberOfChannels, startTime, endTime, numberOfSamples, 1.0 / samplingFrequency,
@@ -519,7 +518,7 @@ static void common_Sound_create (void *dia, Interpreter interpreter, bool allowM
 	} catch (MelderError) {
 		if (str32str (Melder_getError (), U"memory")) {
 			Melder_clearError ();
-			Melder_appendError (U"There is not enough memory to create a Sound that contains ", Melder_bigInteger (numberOfSamples_real), U" samples.");
+			Melder_appendError (U"There is not enough memory to create a Sound that contains ", Melder_bigInteger (numberOfSamples), U" samples.");
 			if (startTime == 0.0)
 				Melder_throw (U"You could lower the end time or the sampling frequency and try again.");
 			else

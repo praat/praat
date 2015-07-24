@@ -664,28 +664,28 @@ void _Melder_free (void **pointer);
 		*pointer == NULL;
 */
 
-double Melder_allocationCount (void);
+int64 Melder_allocationCount (void);
 /*
 	Returns the total number of successful calls to
 	Melder_malloc, Melder_realloc (if 'ptr' is NULL), Melder_calloc, and Melder_strdup,
 	since the start of the process. Mainly for debugging purposes.
 */
 
-double Melder_deallocationCount (void);
+int64 Melder_deallocationCount (void);
 /*
 	Returns the total number of successful calls to Melder_free,
 	since the start of the process. Mainly for debugging purposes.
 */
 
-double Melder_allocationSize (void);
+int64 Melder_allocationSize (void);
 /*
 	Returns the total number of bytes allocated in calls to
 	Melder_malloc, Melder_realloc (if moved), Melder_calloc, and Melder_strdup,
 	since the start of the process. Mainly for debugging purposes.
 */
 
-double Melder_reallocationsInSituCount (void);
-double Melder_movingReallocationsCount (void);
+int64 Melder_reallocationsInSituCount (void);
+int64 Melder_movingReallocationsCount (void);
 
 /********** STRINGS **********/
 
@@ -746,10 +746,10 @@ void MelderString_append (MelderString *me, Melder_16_TO_19_ARGS);
 void MelderString16_appendCharacter (MelderString16 *me, char32 character);
 void MelderString_appendCharacter (MelderString *me, char32 character);
 void MelderString_get (MelderString *me, char32 *destination);   // performs no boundary checking
-double MelderString_allocationCount (void);
-double MelderString_deallocationCount (void);
-double MelderString_allocationSize (void);
-double MelderString_deallocationSize (void);
+int64 MelderString_allocationCount (void);
+int64 MelderString_deallocationCount (void);
+int64 MelderString_allocationSize (void);
+int64 MelderString_deallocationSize (void);
 
 struct structMelderReadText {
 	char32 *string32, *readPointer32;

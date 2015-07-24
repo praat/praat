@@ -18,19 +18,20 @@
  */
 
 prefs_begin (TimeSoundEditor)
-	// new:
-		prefs_add_enum_with_data   (TimeSoundEditor, sound_scalingStrategy,  1, kTimeSoundEditor_scalingStrategy, DEFAULT)
-		prefs_add_double_with_data (TimeSoundEditor, sound_scaling_height,   1, U"2.0")
-		prefs_add_double_with_data (TimeSoundEditor, sound_scaling_minimum,  1, U"-1.0")
-		prefs_add_double_with_data (TimeSoundEditor, sound_scaling_maximum,  1, U"1.0")
-		prefs_add_bool             (TimeSoundEditor, picture_preserveTimes,  1, true)
-		prefs_add_double           (TimeSoundEditor, picture_bottom,         1, U"0.0")
-		prefs_add_double           (TimeSoundEditor, picture_top,            1, U"0.0 (= auto)")
-		prefs_add_bool             (TimeSoundEditor, picture_garnish,        1, true)
-		prefs_add_enum             (TimeSoundEditor, extract_windowShape,    1, kSound_windowShape, DEFAULT)
-		prefs_add_double           (TimeSoundEditor, extract_relativeWidth,  1, U"1.0")
-		prefs_add_bool             (TimeSoundEditor, extract_preserveTimes,  1, true)
-		prefs_add_double           (TimeSoundEditor, extract_overlap,        1, U"0.01")
+
+	prefs_add_enum_with_data   (TimeSoundEditor, sound_scalingStrategy,  1, kTimeSoundEditor_scalingStrategy, DEFAULT)
+	prefs_add_double_with_data (TimeSoundEditor, sound_scaling_height,   1, U"2.0")
+	prefs_add_double_with_data (TimeSoundEditor, sound_scaling_minimum,  1, U"-1.0")
+	prefs_add_double_with_data (TimeSoundEditor, sound_scaling_maximum,  1, U"1.0")
+	prefs_add_bool             (TimeSoundEditor, picture_preserveTimes,  1, true)
+	prefs_add_double           (TimeSoundEditor, picture_bottom,         1, U"0.0")
+	prefs_add_double           (TimeSoundEditor, picture_top,            1, U"0.0 (= auto)")
+	prefs_add_bool             (TimeSoundEditor, picture_garnish,        1, true)
+	prefs_add_enum             (TimeSoundEditor, extract_windowShape,    1, kSound_windowShape, DEFAULT)
+	prefs_add_double           (TimeSoundEditor, extract_relativeWidth,  1, U"1.0")
+	prefs_add_bool             (TimeSoundEditor, extract_preserveTimes,  1, true)
+	prefs_add_double           (TimeSoundEditor, extract_overlap,        1, U"0.01")
+
 prefs_end (TimeSoundEditor)
 
 /* End of file TimeSoundEditor_prefs.h */

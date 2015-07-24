@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20150722)
+MAN_BEGIN (U"What's new?", U"ppgb", 20150724)
 INTRO (U"Latest changes in Praat.")
 /*LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (U"##5.4.14# (24 July 2015)")
+LIST_ITEM (U"• Windows and 32-bit Mac: removed a bug introduced in 5.4.12 that could cause weird behavior (even crashing) when "
+	"pressing the Tab key in the script window or in the manual.")
 NORMAL (U"##5.4.13# (22 July 2015)")
 LIST_ITEM (U"• The Demo window can now save itself to a PNG or PDF file.")
 LIST_ITEM (U"• Windows: removed a bug introduced in 5.4.10 whereby Praatcon would write garbled text to the console.")

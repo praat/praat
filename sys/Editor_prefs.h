@@ -18,9 +18,10 @@
  */
 
 prefs_begin (Editor)
-	// new:
-		prefs_add_bool   (Editor, picture_eraseFirst,     1, true)
-		prefs_add_enum   (Editor, picture_writeNameAtTop, 1, kEditor_writeNameAtTop, DEFAULT)
+
+	prefs_add_bool   (Editor, picture_eraseFirst,     1, true)
+	prefs_add_enum   (Editor, picture_writeNameAtTop, 1, kEditor_writeNameAtTop, DEFAULT)
+
 prefs_end (Editor)
 
 /* End of file Editor_prefs.h */

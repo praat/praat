@@ -18,8 +18,9 @@
  */
 
 prefs_begin (TextEditor)
-	// new:
-		prefs_add_int_with_data (TextEditor, fontSize, 1, U"12")
+
+	prefs_add_int_with_data (TextEditor, fontSize, 1, U"12")
+
 prefs_end (TextEditor)
 
 /* End of file TextEditor_prefs.h */

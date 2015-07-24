@@ -209,26 +209,26 @@ void _Gui_callCallbacks (GuiObject w, XtCallbackList *callbacks, XtPointer call)
 #elif mac
 	#define MAXIMUM_NUMBER_OF_MENUS  32767
 #endif
-static GuiObject theMenus [1+MAXIMUM_NUMBER_OF_MENUS];   /* We can freely use and reuse these menu ids */
+static GuiObject theMenus [1+MAXIMUM_NUMBER_OF_MENUS];   // we can freely use and reuse these menu ids
 #if win
-	static int theCommandShow = False;   /* Last argument of WinMain. */
+	static int theCommandShow = False;   // last argument of WinMain
 	static char32 theApplicationName [100], theWindowClassName [100], theDrawingAreaClassName [100], theApplicationClassName [100];
 	char32 * _GuiWin_getDrawingAreaClassName (void) { return theDrawingAreaClassName; }
 	static int (*theUserMessageCallback) (void);
 	#define MINIMUM_MENU_ITEM_ID  (MAXIMUM_NUMBER_OF_MENUS + 1)
 	#define MAXIMUM_MENU_ITEM_ID  32767
-	static short theMenuItems [1+MAXIMUM_MENU_ITEM_ID];   /* We can freely use and reuse the item ids 4001..32767 */
+	static short theMenuItems [1+MAXIMUM_MENU_ITEM_ID];   // we can freely use and reuse the item ids 4001..32767
 #elif mac
-	static GuiObject theMenuBar;   /* There is only one menu bar on the Macintosh. */
-	static int theHelpMenuOffset;   /* The number of items in the global help menu before we add the first item. */
+	static GuiObject theMenuBar;   // there is only one menu bar on the Macintosh
+	static int theHelpMenuOffset;   // the number of items in the global help menu before we add the first item
 	static int (*theUserMessageCallback) (char32 *message);
 #endif
 
-static GuiObject theApplicationShell;   /* For global menus. */
+static GuiObject theApplicationShell;   // for global menus
 #define MAXIMUM_NUMBER_OF_SHELLS  1000
-static GuiObject theShells [MAXIMUM_NUMBER_OF_SHELLS];   /* For XmUpdateDisplay and suspend events. */
-static int theBackground = False;   /* Set by suspend and resume events; used by Motif-style activation methods. */
-static int theDialogHint = False;   /* Should the shell that is currently being created, have dialog or document looks? */
+static GuiObject theShells [MAXIMUM_NUMBER_OF_SHELLS];   // for XmUpdateDisplay and suspend events
+static int theBackground = False;   // set by suspend and resume events; used by Motif-style activation methods
+static int theDialogHint = False;   // should the shell that is currently being created, have dialog or document looks?
 long numberOfWidgets = 0;
 long Gui_getNumberOfMotifWidgets (void) { return numberOfWidgets; }
 
@@ -260,7 +260,7 @@ static XtPointer theTimeOutClosures [10];
 	static unsigned long theTimeOutIntervals [10];
 #endif
 
-static void Native_move (GuiObject w, int dx, int dy);   /* Forward. */
+static void Native_move (GuiObject w, int dx, int dy);   // forward
 
 static void cb_scroll (GuiObject scrollBar, XtPointer closure, XtPointer call) {
 	GuiObject scrolledWindow = (GuiObject) closure;
@@ -422,11 +422,11 @@ GuiObject _Gui_initializeWidget (int widgetClass, GuiObject parent, const char32
 		} break; case xmCascadeButtonWidgetClass: {
 			if (my parent -> rowColumnType == XmMENU_BAR) {
 				char32 *hyphen = str32str (my name, U" -");
-				if (hyphen) hyphen [2] = '\0';   /* Chop any trailing spaces. */
+				if (hyphen) hyphen [2] = U'\0';   // chop any trailing spaces
 				my x = 2;
 				my y = 2;
 				my width = NativeButton_preferredWidth (me);
-				my height = NativeButton_preferredHeight (me) + 4;   /* BUG: menu bar should be large enough. */
+				my height = NativeButton_preferredHeight (me) + 4;   // BUG: menu bar should be large enough
 			} else {
 				my motiff.cascadeButton.inBar = TRUE;
 			}
@@ -486,7 +486,7 @@ GuiObject _Gui_initializeWidget (int widgetClass, GuiObject parent, const char32
 		} break; case xmScrolledWindowWidgetClass: {
 			my x = 1;
 			my y = 1;
-			my width = parent -> width - 17;   /* Exact fit: scroll bar (16) plus border (1). */
+			my width = parent -> width - 17;   // exact fit: scroll bar (16) plus border (1)
 			my height = parent -> height - 17;
 			if (my widgetClass == xmTextWidgetClass) { my width = 3000; my height = 30000; }   // BUG: either put in GuiText or erase
 		}
@@ -521,9 +521,9 @@ GuiObject _Gui_initializeWidget (int widgetClass, GuiObject parent, const char32
 	 */
 
 	if (my parent && MEMBER (my parent, ScrolledWindow) &&
-		! MEMBER (me, ScrollBar) &&   /* 'me' is one of the two scroll bars, or a new one. */
-		my parent -> motiff.scrolledWindow.clipWindow != NULL)   /* 'me' is probably the clip window now. */
-			my parent -> motiff.scrolledWindow.workWindow = me;   /* Install. */
+		! MEMBER (me, ScrollBar) &&   // 'me' is one of the two scroll bars, or a new one
+		my parent -> motiff.scrolledWindow.clipWindow != NULL)   // 'me' is probably the clip window now
+			my parent -> motiff.scrolledWindow.workWindow = me;   // install
 	return me;
 }
 
@@ -550,7 +550,7 @@ GuiObject _Gui_initializeWidget (int widgetClass, GuiObject parent, const char32
 				if (MEMBER (me, ScrollBar)) {
 					parentRect = & my rect;
 				} else {
-					if (parent -> motiff.scrolledWindow.clipWindow == NULL) return;   /* During destruction. */
+					if (parent -> motiff.scrolledWindow.clipWindow == NULL) return;   // during destruction
 					parentRect = & parent -> motiff.scrolledWindow.clipWindow -> rect;
 				}
 			}
@@ -704,7 +704,7 @@ char32 * _GuiWin_expandAmpersands (const char32 *title) {
 	static char32 buffer [300];
 	const char32 *from = title;
 	char32 *to = & buffer [0];
-	while (*from) { if (*from == '&') * to ++ = '&'; * to ++ = * from ++; } * to = '\0';
+	while (*from) { if (*from == U'&') * to ++ = U'&'; * to ++ = * from ++; } * to = U'\0';
 	return buffer;
 }
 
@@ -844,7 +844,7 @@ static int NativeMenuItem_getPosition (GuiObject me) {
 		 */
 		while (prev && (MEMBER (prev, PulldownMenu) || ! prev -> managed))
 			prev = prev -> previousSibling;
-		if (prev) {   /* Is there a previous managed non-pulldown sibling? */
+		if (prev) {   // is there a previous managed non-pulldown sibling?
 			position = prev -> nat.entry.item + 1;   /* Then I must be the next item in the native menu structure. */
 		} else {
 			/*
@@ -852,12 +852,12 @@ static int NativeMenuItem_getPosition (GuiObject me) {
 			 * However, if the menu is the system's help menu (the question mark in System 7),
 			 * the menu already contains a button called "Show balloon help".
 			 */
-			if (my parent -> nat.menu.id == kHMHelpMenuID) {   /* Is this the system help menu? */
-				if (theHelpMenuOffset == 0)   /* Haven't we asked yet for the length of the system help menu? */
-					theHelpMenuOffset = CountMenuItems (my nat.entry.handle);   /* So ask now. */
-				position = theHelpMenuOffset + 1;   /* Then I must be the next item in the native menu structure. */
-			} else {   /* This must be a menu of our own. */
-				position = 1;   /* I must be the first item in the native menu structure. */
+			if (my parent -> nat.menu.id == kHMHelpMenuID) {   // is this the system help menu?
+				if (theHelpMenuOffset == 0)   // haven't we asked yet for the length of the system help menu?
+					theHelpMenuOffset = CountMenuItems (my nat.entry.handle);   // so ask now
+				position = theHelpMenuOffset + 1;   // then I must be the next item in the native menu structure
+			} else {   // this must be a menu of our own
+				position = 1;   // I must be the first item in the native menu structure
 			}
 		}
 	#endif
@@ -911,7 +911,7 @@ static void NativeMenuItem_setText (GuiObject me) {
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 			const char32 *keyString = keyStrings [acc] ? keyStrings [acc] : U"???";
-			MelderString_copy (&title, _GuiWin_expandAmpersands (my name), U"\t",
+			MelderString_copy (& title, _GuiWin_expandAmpersands (my name), U"\t",
 				modifiers & _motif_COMMAND_MASK ? U"Ctrl-" : NULL,
 				modifiers & _motif_OPTION_MASK ? U"Alt-" : NULL,
 				modifiers & _motif_SHIFT_MASK ? U"Shift-" : NULL, keyString);
@@ -1345,9 +1345,9 @@ static void Native_move (GuiObject me, int dx, int dy) {
 	} else if (MEMBER (me, Shell)) {
 		MoveWindow (my nat.window.ptr, my rect.left, my rect.top + 22, 0);
 	} else if (MEMBER (me, DrawingArea)) {
-		_Gui_callCallbacks (me, & my motiff.drawingArea.moveCallbacks, 0);   /* Only Mac? */
+		_Gui_callCallbacks (me, & my motiff.drawingArea.moveCallbacks, 0);   // only Mac?
 	}
-	if (! my isControl) _Gui_invalidateWidget (me);   /* At new position. */
+	if (! my isControl) _Gui_invalidateWidget (me);   // at new position
 	/*
 	 * Because all non-shell coordinates are port-relative on Mac, we have to recursively move the children.
 	 */
@@ -1499,7 +1499,7 @@ static void resizeWidget (GuiObject me, int dw, int dh) {
 	#elif mac
 	{
 		if ((dw == 0 && dh == 0) || (my parent && MEMBER (my parent, PulldownMenu))) return;
-		if (! my isControl) _Gui_invalidateWidget (me);   /* At old position. */
+		if (! my isControl) _Gui_invalidateWidget (me);   // at old position
 		my rect.right += dw;
 		my rect.bottom += dh;
 		if (MEMBER (me, Text)) {
@@ -1514,7 +1514,7 @@ static void resizeWidget (GuiObject me, int dw, int dh) {
 		} else if (MEMBER (me, DrawingArea)) {
 			_GuiMacDrawingArea_shellResize (me);
 		}
-		if (! my isControl) _Gui_invalidateWidget (me);   /* At new position. */
+		if (! my isControl) _Gui_invalidateWidget (me);   // at new position
 	}
 	#endif
 	if (MEMBER2 (me, Form, ScrolledWindow))
@@ -1837,7 +1837,7 @@ static void _motif_setValues (GuiObject me, va_list arg) {
 				Melder_flushError (U"(XtVaSetValues:) Resource out of range (", resource, U").");
 			else
 				Melder_flushError (U"(XtVaSetValues:) Unknown resource \"", Melder_peek8to32 (motif_resourceNames [resource]), U"\".");
-			return;   // because we do not know how to skip this unknown resource."
+			return;   // because we do not know how to skip this unknown resource
 		}
 	}
 
@@ -1928,7 +1928,7 @@ void _Gui_manageScrolledWindow (GuiObject me) {
 	Melder_assert (my widgetClass == xmScrolledWindowWidgetClass);
 	clipWindow = my motiff.scrolledWindow.clipWindow;
 	workWindow = my motiff.scrolledWindow.workWindow;
-	if (clipWindow == NULL || horzBar == NULL || vertBar == NULL) return;   /* Apparently during destruction of scrolled window. */
+	if (clipWindow == NULL || horzBar == NULL || vertBar == NULL) return;   // apparently during destruction of scrolled window
 	/*
 	 * We must find out if the scrolling policy of each bar is automatic.
 	 * Otherwise, we must not change them automatically.
@@ -1998,7 +1998,7 @@ static void _motif_manage (GuiObject me) {
 
 	for (child = my firstChild; child; child = child -> nextSibling) {
 		if (child -> managed && ! MEMBER (child, Shell)) {
-			int dx = 0, dy = 0;   /* By default, the child does not move. */
+			int dx = 0, dy = 0;   // by default, the child does not move
 			if (MEMBER (me, RowColumn)) {
 				#if mac
 					if (my rowColumnType == XmMENU_BAR && MEMBER (child, CascadeButton) &&
@@ -2118,7 +2118,7 @@ static void xt_addCallback (XtCallbackList *callbacks, XtCallbackProc proc, XtPo
 			return;
 		}
 	}
-	Melder_assert (i < MAXNUM_CALLBACKS);   /* Will always fail if we arrive here. */
+	Melder_assert (i < MAXNUM_CALLBACKS);   // will always fail if we arrive here
 }
 
 void XtAddCallback (GuiObject me, int kind, XtCallbackProc proc, XtPointer closure) {
@@ -2217,10 +2217,10 @@ void XtDestroyWidget (GuiObject me) {
 	if (my widgetClass == xmShellWidgetClass) {
 		XtUnmanageChild (me);
 		#if win
-			natWindow = my window;   /* Save for destroy. */
+			natWindow = my window;   // save for destroy
 			my window = NULL;
 		#elif mac
-			my macWindow = NULL;   /* Notify children. */
+			my macWindow = NULL;   // notify children
 		#endif
 	}
 	if (MEMBER2 (me, Form, BulletinBoard) && MEMBER (my parent, Shell) &&
@@ -2235,10 +2235,10 @@ void XtDestroyWidget (GuiObject me) {
 		return;
 	}
 	while (subview) {
-		GuiObject nextSibling = subview -> nextSibling;   /* Save... */
+		GuiObject nextSibling = subview -> nextSibling;   // save...
 		//if (subview -> widgetClass != xmShellWidgetClass)   /* FIX instead of Xm's being_destroyed mark. */   // removed 20090105
 			XtDestroyWidget (subview);
-		subview = nextSibling;   /* ...because we can't dereference dead subview. */
+		subview = nextSibling;   // ...because we can't dereference dead subview
 	}
 	if (my destroyCallback) my destroyCallback (me, my destroyClosure, NULL);
 	switch (my widgetClass) {
@@ -2389,11 +2389,11 @@ void XtDestroyWidget (GuiObject me) {
 		} break;
 	}
 	Melder_free (my name);
-	if (my parent && me == my parent -> firstChild)   /* Remove dangling reference. */
+	if (my parent && me == my parent -> firstChild)   // remove dangling reference
 		my parent -> firstChild = my nextSibling;
-	if (my previousSibling)   /* Remove dangling reference. */
+	if (my previousSibling)   // remove dangling reference
 		my previousSibling -> nextSibling = my nextSibling;
-	if (my nextSibling)   /* Remove dangling reference: two-way linked list. */
+	if (my nextSibling)   // remove dangling reference: two-way linked list
 		my nextSibling -> previousSibling = my previousSibling;
 	if (my parent && MEMBER (my parent, ScrolledWindow)) {
 		if (me == my parent -> motiff.scrolledWindow.workWindow) {
@@ -2535,7 +2535,7 @@ static void mapWidget (GuiObject me) {
 			#if win
 				DrawMenuBar (my shell -> window);   // every window has its own menu bar
 			#elif mac
-				DrawMenuBar ();   /* There is a single Mac menu bar for all windows. */
+				DrawMenuBar ();   // there is a single Mac menu bar for all windows
 			#endif
 		} break;
 		case xmPushButtonWidgetClass: _GuiNativeControl_show (me); break;
@@ -2620,10 +2620,10 @@ void XtManageChild (GuiObject me) {
 		int visible = True;
 		GuiObject widget;
 		for (widget = me; widget != NULL; widget = widget -> parent) {
-			if (! widget -> managed &&   /* If a parent is invisible, so are its children. */
-					! MEMBER (widget, PulldownMenu))   /* The exception: "shown" even if not popped up. */
+			if (! widget -> managed &&   // if a parent is invisible, so are its children
+					! MEMBER (widget, PulldownMenu))   // the exception: "shown" even if not popped up
 				{ visible = False; break; }
-			if (MEMBER (widget, Shell)) break;   /* Root: end of chain. */
+			if (MEMBER (widget, Shell)) break;   // root: end of chain
 		}
 		if (visible) mapWidget (me);
 	}
@@ -2761,7 +2761,7 @@ void XtUnmanageChildren (GuiObjectList children, Cardinal num_children) {
 		(void) reply;
 		(void) handlerRefCon;
 		if (theQuitApplicationCallback)
-			return theQuitApplicationCallback () ? noErr : userCanceledErr;   /* BUG anti Mac documentation */
+			return theQuitApplicationCallback () ? noErr : userCanceledErr;   // BUG anti Mac documentation
 		exit (0);
 		return noErr;
 	}
@@ -3285,7 +3285,7 @@ void XmScrollBarSetValues (GuiObject me, int value, int sliderSize,
 	NativeScrollBar_set (me);
 	#if mac
 		if (theGui.duringUpdate)
-			_Gui_invalidateWidget (me);   /* HACK: necessary because VisRgn has temporarily been changed. */
+			_Gui_invalidateWidget (me);   // HACK: necessary because VisRgn has temporarily been changed
 	#endif
 	if (notify)	_Gui_callCallbacks (me, & my motiff.scrollBar.valueChangedCallbacks, NULL);
 }
@@ -3339,7 +3339,7 @@ void XmToggleButtonGadgetSetState (GuiObject me, Boolean value, Boolean notify) 
 				GuiMac_clipOff ();
 			} break;
 			case xmCascadeButtonWidgetClass: {
-				if (my isControl) {   /* In window menu bar or in dynamic menu. */
+				if (my isControl) {   // in window menu bar or in dynamic menu
 					_GuiMac_clipOnParent (me);
 					Draw1Control (my nat.control.handle);
 					/* BUG: should make insensitive if not my shell.active or my macWindow != FrontWindow () */
@@ -3448,43 +3448,46 @@ void XmUpdateDisplay (GuiObject displayDummy) {
 
 /***** EVENT *****/
 
-static long numberOfTextWidgets = 0, textWidgetLocation = 0;
-static GuiObject nextTextWidget = NULL;
-static void _motif_inspectTextWidgets (GuiObject me, GuiObject text) {
+static void _motif_inspectTextWidgets (GuiObject me, GuiObject text,
+	long *p_numberOfTextWidgets, long *p_textWidgetLocation)
+{
 	for (GuiObject sub = my firstChild; sub != NULL; sub = sub -> nextSibling) {
 		if (MEMBER (sub, Shell)) continue;
 		if (MEMBER (sub, Text)) {
-			numberOfTextWidgets ++;
+			(*p_numberOfTextWidgets) ++;
 			if (sub == text) {
-				textWidgetLocation = numberOfTextWidgets;
+				*p_textWidgetLocation = *p_numberOfTextWidgets;
 			}
 		} else {
-			_motif_inspectTextWidgets (sub, text);
+			_motif_inspectTextWidgets (sub, text, p_numberOfTextWidgets, p_textWidgetLocation);
 		}
 	}
 }
-static void _motif_getLocatedTextWidget (GuiObject me) {
+static GuiObject _motif_getLocatedTextWidget (GuiObject me,
+	long *p_itextWidget, long textWidgetLocation)
+{
 	for (GuiObject sub = my firstChild; sub != NULL; sub = sub -> nextSibling) {
 		if (MEMBER (sub, Shell)) continue;
 		if (MEMBER (sub, Text)) {
-			numberOfTextWidgets ++;
-			if (numberOfTextWidgets == textWidgetLocation) {
-				nextTextWidget = sub;
+			(*p_itextWidget) ++;
+			if (*p_itextWidget == textWidgetLocation) {
+				return sub;
 			}
 		} else {
-			_motif_getLocatedTextWidget (sub);
+			GuiObject locatedTextWidget = _motif_getLocatedTextWidget (sub, p_itextWidget, textWidgetLocation);
+			if (locatedTextWidget) return locatedTextWidget;
 		}
 	}
+	return NULL;
 }
-static void _motif_getNextTextWidget (GuiObject shell, GuiObject text, bool backward) {
-	numberOfTextWidgets = 0;
-	textWidgetLocation = 0;
-	_motif_inspectTextWidgets (shell, text);
-	if (numberOfTextWidgets == 0) return;   // no tab navigation if there is no text widget (shouldn't normally occur)
+static GuiObject _motif_getNextTextWidget (GuiObject shell, GuiObject text, bool backward) {
+	long numberOfTextWidgets = 0, textWidgetLocation = 0;
+	_motif_inspectTextWidgets (shell, text, & numberOfTextWidgets, & textWidgetLocation);
+	trace (U"Found ", numberOfTextWidgets, U" text widgets.");
+	if (numberOfTextWidgets == 0) return NULL;   // no tab navigation if there is no text widget (shouldn't normally occur)
 	Melder_assert (textWidgetLocation >= 1);
 	Melder_assert (textWidgetLocation <= numberOfTextWidgets);
-	if (numberOfTextWidgets == 1) return;   // no tab navigation if there is only one text widget
-	nextTextWidget = NULL;
+	if (numberOfTextWidgets == 1) return NULL;   // no tab navigation if there is only one text widget
 	if (backward) {
 		textWidgetLocation --;   // tab to previous text widget
 		if (textWidgetLocation < 1) textWidgetLocation = numberOfTextWidgets;   // if at beginning, then tab around to last text widget
@@ -3492,8 +3495,8 @@ static void _motif_getNextTextWidget (GuiObject shell, GuiObject text, bool back
 		textWidgetLocation ++;   // tab to next text widget
 		if (textWidgetLocation > numberOfTextWidgets) textWidgetLocation = 1;   // if at end, then tab around to first text widget
 	}
-	numberOfTextWidgets = 0;
-	_motif_getLocatedTextWidget (shell);
+	long itextWidget = 0;
+	return _motif_getLocatedTextWidget (shell, & itextWidget, textWidgetLocation);
 }
 
 #if win
@@ -3683,7 +3686,7 @@ static GuiObject _motif_findDrawingArea (GuiObject me) {
 	GuiObject sub;
 	if (my widgetClass == xmDrawingAreaWidgetClass) return me;
 	for (sub = my firstChild; sub != NULL; sub = sub -> nextSibling)
-		if (sub -> widgetClass != xmShellWidgetClass) {   /* Only in same mac window. */
+		if (sub -> widgetClass != xmShellWidgetClass) {   // only in same Mac window
 			GuiObject drawingArea = _motif_findDrawingArea (sub);
 			if (drawingArea) return drawingArea;
 		}
@@ -3839,7 +3842,7 @@ static bool _motif_processKeyDownEvent (EventHandlerCallRef nextHandler, EventRe
 			 * Next, try tab navigation.
 			 */
 			if (text) {
-				_motif_getNextTextWidget (shell, text, modifiers & _motif_SHIFT_MASK);
+				GuiObject nextTextWidget = _motif_getNextTextWidget (shell, text, modifiers & _motif_SHIFT_MASK);
 				if (nextTextWidget != NULL) {
 					_GuiText_setTheTextFocus (nextTextWidget);
 					GuiText_setSelection ((GuiText) nextTextWidget -> userData, 0, 10000000);
@@ -4156,7 +4159,7 @@ static void _motif_processMouseDownEvent (EventRecord *event) {
 						case kControlEditTextPart: _GuiMacText_handleClick (control, event); break;
 						default: break;
 					}
-				} else {   /* Clicked in content region, but not in a control. */
+				} else {   // clicked in content region, but not in a control
 					GuiObject shell, clicked;
 					LABEL_clickedOutsideControl:
 					shell = (GuiObject) GetWRefCon (macvenster);
@@ -4166,9 +4169,9 @@ static void _motif_processMouseDownEvent (EventRecord *event) {
 						if (clicked -> widgetClass == xmListWidgetClass) {
 							_GuiMacList_handleClick (clicked, event);
 						} else if (clicked -> widgetClass == xmTextWidgetClass) {
-							if (clicked -> isControl) {   /* A click in the margin of an EditText control !! */
+							if (clicked -> isControl) {   // a click in the margin of an EditText control !!
 								_GuiMacText_handleClick (clicked, event);   // BUG?:
-								;   /* Do nothing. To react would feel like clicking after all text. */
+								;   // do nothing; to react would feel like clicking after all text
 							} else {
 								_GuiMacText_handleClick (clicked, event);
 							}
@@ -4263,7 +4266,7 @@ static void processWorkProcsAndTimeOuts (void) {
 		if (theNumberOfTimeOuts) {
 			clock_t now = clock ();
 			for (i = 1; i < 10; i ++) if (theTimeOutProcs [i]) {
-				static volatile clock_t timeElapsed;   /* Careful: use 32-bit integers circularly; prevent optimization. */
+				static volatile clock_t timeElapsed;   // careful: use 32-bit integers circularly; prevent optimization
 				timeElapsed = now - theTimeOutStarts [i];
 				if (timeElapsed > theTimeOutIntervals [i]) {
 					theTimeOutProcs [i] (theTimeOutClosures [i], & i);
@@ -4283,7 +4286,7 @@ void GuiNextEvent (XEvent *xevent) {
 				processWorkProcsAndTimeOuts ();   // Handle chores during idle time.
 				xevent -> message = 0;   // Hand null message to XtDispatchEvent.
 			}
-		} else GetMessage (xevent, NULL, 0, 0);   // Be neighbour-friendly: do not hand null events.
+		} else GetMessage (xevent, NULL, 0, 0);   // be neighbour-friendly: do not hand null events
 	#elif mac
 		processWorkProcsAndTimeOuts ();
 		XtNextEvent (xevent);
@@ -4325,11 +4328,11 @@ static int win_processKeyboardEquivalent (GuiObject me, int kar, int modifiers) 
 	static GuiObject _motif_findDrawingArea (GuiObject me) {
 		if (my widgetClass == xmDrawingAreaWidgetClass) return me;
 		for (GuiObject sub = my firstChild; sub != NULL; sub = sub -> nextSibling)
-			if (! MEMBER (sub, Shell)) {   /* Only in same top window. */
+			if (! MEMBER (sub, Shell)) {   // only in same top window
 				GuiObject drawingArea = _motif_findDrawingArea (sub);
 				if (drawingArea) return drawingArea;
 			}
-		return NULL;   /* No DrawingArea found. */
+		return NULL;   // no DrawingArea found
 	}
 #endif
 
@@ -4443,7 +4446,7 @@ modifiers & _motif_SHIFT_MASK ? " shift" : "", message -> message == WM_KEYDOWN 
 				 */
 				} else if (modifiers & _motif_COMMAND_MASK) {
 					if (MEMBER (me, Text) && (kar == 'X' || kar == 'C' || kar == 'V' || kar == 'Z')) {
-						;   // Let window proc handle text editing.
+						;   // let window proc handle text editing
 					} else if (kar >= 186) {
 						int shift = modifiers & _motif_SHIFT_MASK;
 						/*
@@ -4456,7 +4459,7 @@ modifiers & _motif_SHIFT_MASK ? " shift" : "", message -> message == WM_KEYDOWN 
 						    kar == 190 && win_processKeyboardEquivalent (my shell, shift ? '>' : '.', modifiers) ||
 						    kar == 191 && win_processKeyboardEquivalent (my shell, shift ? '?' : '/', modifiers) ||
 						    kar == 192 && win_processKeyboardEquivalent (my shell, shift ? '~' : '`', modifiers) ||
-						    kar == 219 && win_processKeyboardEquivalent (my shell, shift ? '{' : '[', modifiers) ||   /* Alt-GR-ringel-s is here. */
+						    kar == 219 && win_processKeyboardEquivalent (my shell, shift ? '{' : '[', modifiers) ||   // Alt-GR-ringel-s is here
 						    kar == 220 && win_processKeyboardEquivalent (my shell, shift ? '|' : '\\', modifiers) ||
 						    kar == 221 && win_processKeyboardEquivalent (my shell, shift ? '}' : ']', modifiers) ||
 						    kar == 222 && win_processKeyboardEquivalent (my shell, shift ? '\"' : '\'', modifiers))
@@ -4464,7 +4467,7 @@ modifiers & _motif_SHIFT_MASK ? " shift" : "", message -> message == WM_KEYDOWN 
 							return;
 						}
 					} else {
-						if (win_processKeyboardEquivalent (my shell, kar, modifiers)) return;   /* Handle shortcuts like Ctrl-T and Ctrl-Alt-T. */
+						if (win_processKeyboardEquivalent (my shell, kar, modifiers)) return;   // handle shortcuts like Ctrl-T and Ctrl-Alt-T
 						/* Let window proc handle international Alt-GR (= Ctrl-Alt) sequences, which are plain characters. */
 					}
 				}
@@ -4489,7 +4492,9 @@ modifiers & _motif_SHIFT_MASK ? " shift" : "", message -> message == WM_KEYDOWN 
 			 * Next, try tab navigation.
 			 */
 			if (me && MEMBER (me, Text) && kar == 9) {
-				_motif_getNextTextWidget (my shell, me, GetKeyState (VK_SHIFT) < 0);
+				trace (U"Tab navigation with shell ", Melder_pointer (my shell), U" and from text widget ", Melder_pointer (me));
+				GuiObject nextTextWidget = _motif_getNextTextWidget (my shell, me, GetKeyState (VK_SHIFT) < 0);
+				trace (U"Tab navigation to text widget ", Melder_pointer (nextTextWidget));
 				if (nextTextWidget != NULL) {
 					_GuiText_setTheTextFocus (nextTextWidget);
 					GuiText_setSelection ((GuiText) nextTextWidget -> userData, 0, 10000000);
@@ -4629,7 +4634,7 @@ void GuiMainLoop () {
 							} else if (codeNotify == EN_SETFOCUS) {
 								_GuiText_handleFocusReception (control);
 							} else if (codeNotify == EN_KILLFOCUS) {
-								_GuiText_handleFocusLoss (control);   /* For button clicks (see above). */
+								_GuiText_handleFocusLoss (control);   // for button clicks (see above)
 							}
 							break;
 						default: break;

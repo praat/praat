@@ -29,31 +29,49 @@
 	private: static int s_##name; public: virtual int & pref_##name () { return s_##name; } \
 	private: static const char32 * sdefault_##name; public: virtual const char32 * default_##name () { return sdefault_##name; }
 #define prefs_add_int_with_data(Klas,name,version,default)  public: int p_##name; prefs_add_int (Klas, name, version, default)
+#define prefs_override_int(Klas,name,version,default) \
+	private: static int s_##name; public: int & pref_##name () override { return s_##name; } \
+	private: static const char32 * sdefault_##name; public: const char32 * default_##name () override { return sdefault_##name; }
 
 #define prefs_add_long(Klas,name,version,default) \
 	private: static long s_##name; public: virtual long & pref_##name () { return s_##name; } \
 	private: static const char32 * sdefault_##name; public: virtual const char32 * default_##name () { return sdefault_##name; }
 #define prefs_add_long_with_data(Klas,name,version,default)  public: long p_##name; prefs_add_long (Klas, name, version, default)
+#define prefs_override_long(Klas,name,version,default) \
+	private: static long s_##name; public: long & pref_##name () override { return s_##name; } \
+	private: static const char32 * sdefault_##name; public: const char32 * default_##name () override { return sdefault_##name; }
 
 #define prefs_add_bool(Klas,name,version,default) \
 	private: static bool s_##name; public: virtual bool & pref_##name () { return s_##name; } \
 	private: static bool sdefault_##name; public: virtual bool default_##name () { return sdefault_##name; }
 #define prefs_add_bool_with_data(Klas,name,version,default)  public: bool p_##name; prefs_add_bool (Klas, name, version, default)
+#define prefs_override_bool(Klas,name,version,default) \
+	private: static bool s_##name; public: bool & pref_##name () override { return s_##name; } \
+	private: static bool sdefault_##name; public: bool default_##name () override { return sdefault_##name; }
 
 #define prefs_add_double(Klas,name,version,default) \
 	private: static double s_##name; public: virtual double & pref_##name () { return s_##name; } \
 	private: static const char32 * sdefault_##name; public: virtual const char32 * default_##name () { return sdefault_##name; }
 #define prefs_add_double_with_data(Klas,name,version,default)  public: double p_##name; prefs_add_double (Klas, name, version, default)
+#define prefs_override_double(Klas,name,version,default) \
+	private: static double s_##name; public: double & pref_##name () override { return s_##name; } \
+	private: static const char32 * sdefault_##name; public: const char32 * default_##name () override { return sdefault_##name; }
 
 #define prefs_add_enum(Klas,name,version,enumerated,default) \
 	private: static enum enumerated s_##name; public: virtual enum enumerated & pref_##name () { return s_##name; } \
 	private: static enum enumerated sdefault_##name; public: virtual enum enumerated default_##name () { return sdefault_##name; }
 #define prefs_add_enum_with_data(Klas,name,version,enumerated,default)  public: enumerated p_##name; prefs_add_enum (Klas, name, version, enumerated, default)
+#define prefs_override_enum(Klas,name,version,enumerated,default) \
+	private: static enum enumerated s_##name; public: enum enumerated & pref_##name () override { return s_##name; } \
+	private: static enum enumerated sdefault_##name; public: enum enumerated default_##name () override { return sdefault_##name; }
 
 #define prefs_add_string(Klas,name,version,default) \
 	private: static char32 s_##name [Preferences_STRING_BUFFER_SIZE]; public: virtual char32 * pref_##name () { return & s_##name [0]; } \
 	private: static const char32 * sdefault_##name; public: virtual const char32 * default_##name () { return sdefault_##name; }
 #define prefs_add_string_with_data(Klas,name,version,default)  public: char32 p_##name [Preferences_STRING_BUFFER_SIZE]; prefs_add_string (Klas, name, version, default)
+#define prefs_override_string(Klas,name,version,default) \
+	private: static char32 s_##name [Preferences_STRING_BUFFER_SIZE]; public: char32 * pref_##name () override { return & s_##name [0]; } \
+	private: static const char32 * sdefault_##name; public: const char32 * default_##name () override{ return sdefault_##name; }
 
 #define prefs_end(Klas)
 

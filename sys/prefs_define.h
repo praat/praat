@@ -22,16 +22,22 @@
 #undef prefs_begin
 #undef prefs_add_int
 #undef prefs_add_int_with_data
+#undef prefs_override_int
 #undef prefs_add_long
 #undef prefs_add_long_with_data
+#undef prefs_override_long
 #undef prefs_add_bool
 #undef prefs_add_bool_with_data
+#undef prefs_override_bool
 #undef prefs_add_double
 #undef prefs_add_double_with_data
+#undef prefs_override_double
 #undef prefs_add_enum
 #undef prefs_add_enum_with_data
+#undef prefs_override_enum
 #undef prefs_add_string
 #undef prefs_add_string_with_data
+#undef prefs_override_string
 #undef prefs_end
 
 #define prefs_begin(Klas)
@@ -40,32 +46,50 @@
 	int struct##Klas :: s_##name; \
 	const char32 * struct##Klas :: sdefault_##name = default;
 #define prefs_add_int_with_data(Klas,name,version,default)  prefs_add_int (Klas, name, version, default)
+#define prefs_override_int(Klas,name,version,default) \
+	int struct##Klas :: s_##name; \
+	const char32 * struct##Klas :: sdefault_##name = default;
 
 #define prefs_add_long(Klas,name,version,default) \
 	long struct##Klas :: s_##name; \
 	const char32 * struct##Klas :: sdefault_##name = default;
 #define prefs_add_long_with_data(Klas,name,version,default)  prefs_add_long (Klas, name, version, default)
+#define prefs_override_long(Klas,name,version,default) \
+	long struct##Klas :: s_##name; \
+	const char32 * struct##Klas :: sdefault_##name = default;
 
 #define prefs_add_bool(Klas,name,version,default) \
 	bool struct##Klas :: s_##name; \
 	bool struct##Klas :: sdefault_##name = default;
 #define prefs_add_bool_with_data(Klas,name,version,default)  prefs_add_bool (Klas, name, version, default)
+#define prefs_override_bool(Klas,name,version,default) \
+	bool struct##Klas :: s_##name; \
+	bool struct##Klas :: sdefault_##name = default;
 
 #define prefs_add_double(Klas,name,version,default) \
 	double struct##Klas :: s_##name; \
 	const char32 * struct##Klas :: sdefault_##name = default;
 #define prefs_add_double_with_data(Klas,name,version,default)  prefs_add_double (Klas, name, version, default)
+#define prefs_override_double(Klas,name,version,default) \
+	double struct##Klas :: s_##name; \
+	const char32 * struct##Klas :: sdefault_##name = default;
 
 #define prefs_add_enum(Klas,name,version,enumerated,default) \
 	enum enumerated struct##Klas :: s_##name; \
 	enum enumerated struct##Klas :: sdefault_##name = enumerated##_##default;
 #define prefs_add_enum_with_data(Klas,name,version,enumerated,default)  prefs_add_enum (Klas, name, version, enumerated, default)
-
-#define prefs_end(Klas)
+#define prefs_override_enum(Klas,name,version,enumerated,default) \
+	enum enumerated struct##Klas :: s_##name; \
+	enum enumerated struct##Klas :: sdefault_##name = enumerated##_##default;
 
 #define prefs_add_string(Klas,name,version,default) \
 	char32 struct##Klas :: s_##name [Preferences_STRING_BUFFER_SIZE]; \
 	const char32 * struct##Klas :: sdefault_##name = default;
 #define prefs_add_string_with_data(Klas,name,version,default)  prefs_add_string (Klas, name, version, default)
+#define prefs_override_string(Klas,name,version,default) \
+	char32 struct##Klas :: s_##name [Preferences_STRING_BUFFER_SIZE]; \
+	const char32 * struct##Klas :: sdefault_##name = default;
+
+#define prefs_end(Klas)
 
 /* End of file prefs_define.h */

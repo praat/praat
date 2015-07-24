@@ -133,7 +133,7 @@ void praat_reportMemoryUse () {
 	MelderInfo_writeLine (U"\nHistory of all sessions from ", statistics.dateOfFirstSession, U" until today:");
 	MelderInfo_writeLine (U"   Sessions: ", statistics.interactiveSessions, U" interactive, ",
 		statistics.batchSessions, U" batch");
-	MelderInfo_writeLine (U"   Total memory use: ", Melder_bigInteger (statistics.memory + Melder_allocationSize ()), U" bytes");
+	MelderInfo_writeLine (U"   Total memory use: ", Melder_bigInteger ((int64) statistics.memory + Melder_allocationSize ()), U" bytes");
 	MelderInfo_writeLine (U"\nNumber of fixed menu commands: ", praat_getNumberOfMenuCommands ());
 	MelderInfo_writeLine (U"Number of dynamic menu commands: ", praat_getNumberOfActions ());
 	MelderInfo_close ();
