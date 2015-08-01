@@ -801,8 +801,8 @@ void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_16_TO_19_ARGS);
 
 /********** NUMBER AND STRING COMPARISON **********/
 
-int Melder_numberMatchesCriterion (double value, int which_kMelder_number, double criterion);
-int Melder_stringMatchesCriterion (const char32 *value, int which_kMelder_string, const char32 *criterion);
+bool Melder_numberMatchesCriterion (double value, int which_kMelder_number, double criterion);
+bool Melder_stringMatchesCriterion (const char32 *value, int which_kMelder_string, const char32 *criterion);
 
 /********** STRING PARSING **********/
 
@@ -1177,7 +1177,7 @@ void MelderGui_create (/* GuiWindow */ void *parent);
 */
 
 extern bool Melder_batch;   // true if run from the batch or from an interactive command-line interface
-extern bool Melder_backgrounding;   /* True if running a script. */
+extern bool Melder_backgrounding;   // true if running a script
 extern bool Melder_consoleIsAnsi;
 extern bool Melder_asynchronous;   // true if specified by the "asynchronous" directive in a script
 #ifndef CONTROL_APPLICATION

@@ -163,7 +163,9 @@ void praat_cleanUpName (char32 *name);
 void praat_list_renameAndSelect (int position, const char32 *name);
 
 extern struct PraatP {
-	int dontUsePictureWindow;   // see praat_dontUsePictureWindow ()
+	bool dontUsePictureWindow;   // see praat_dontUsePictureWindow ()
+	bool ignorePreferenceFiles, ignorePlugins;
+	bool hasCommandLineInput;
 	char32 *title;
 	GuiWindow menuBar;
 	int phase;

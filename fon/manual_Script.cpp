@@ -3193,7 +3193,7 @@ CODE (U"nocheck Remove")
 NORMAL (U"This would cause the script to continue even if there is nothing to remove.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 6.9. Calling from the command line", U"ppgb", 20140212)
+MAN_BEGIN (U"Scripting 6.9. Calling from the command line", U"ppgb", 20150728)
 INTRO (U"Previous sections of this tutorial have shown you how to run a Praat script from the Script window. "
 	"However, you can also call a Praat script from the command line (text console) instead. "
 	"Information that would normally show up in the Info window, then goes to %stdout, "
@@ -3216,7 +3216,8 @@ NORMAL (U"On Windows, you call Praat scripts from the command line like this:")
 CODE (U"e:\\bspraatcon.exe e:\\bsdoit.praat 50 hallo")
 NORMAL (U"Note that you use the program ##praatcon.exe# instead of ##praat.exe#. "
 	"The script will write to the console output in UTF-16 Little Endian encoding. "
-	"If you want to use ISO Latin-1 encoding instead, or if you want to use praatcon's output in a pipe or redirect it to a file, use ##praatcon -a# instead.")
+	"If you want to use ISO Latin-1 encoding instead, or if you want to use praatcon's output in a pipe or redirect it to a file, "
+	"use ##praatcon -a# or ##praatcon --ansi# instead.")
 ENTRY (U"How to get arguments into the script")
 NORMAL (U"In the above example, the script ##doit.praat# requires two arguments. In the script ##doit.praat#, "
 	"you use #form and #endform to receive these arguments. See @@Scripting 6.1. Arguments to the script@. "
@@ -3226,6 +3227,20 @@ NORMAL (U"In the above example, the script ##doit.praat# requires two arguments.
 CODE (U"> /people/mietta/praat playSine.praat 550 0.9")
 NORMAL (U"or")
 CODE (U"e:\\bspraatcon.exe playSine.praat 550 0.9")
+ENTRY (U"Calling Praat from a web server")
+NORMAL (U"If you call Praat from a web server, you typically do not want to read and write its preferences and buttons files. "
+	"To achieve this, you use the ##--no-pref-files# command line option before the script name:")
+CODE (U"> /users/apache/praat --no-pref-files /user/apache/scripts/computeAnalysis.praat 1234 blibla")
+ENTRY (U"Command line options")
+TAG (U"##-a#, ##--ansi#")
+DEFINITION (U"Use ISO Latin-1 encoding (see above; not recommended).")
+TAG (U"##--no-pref-files#")
+DEFINITION (U"Ignore the preferences file and the buttons file at start-up, and don't write them when quitting (see above).")
+TAG (U"##--no-plugins#")
+DEFINITION (U"Don't activate the plugins at start-up.")
+TAG (U"##--pref-dir=#/var/www/praat_plugins")
+DEFINITION (U"Set the preferences directory to /var/www/praat_plugins (for instance). "
+	"This can come in handy if you require access to preference files and/or plugins that are not in your home directory.")
 MAN_END
 
 MAN_BEGIN (U"Scripting 7. Scripting the editors", U"ppgb", 20040222)

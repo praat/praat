@@ -1815,7 +1815,7 @@ void praat_picture_prefsChanged (void) {
 	updateFontMenu ();
 	updateSizeMenu ();
 	updateViewportMenu ();
-	Graphics_setFontSize (theCurrentPraatPicture -> graphics, theCurrentPraatPicture -> fontSize);   /* So that the thickness of the selection rectangle is correct. */
+	Graphics_setFontSize (theCurrentPraatPicture -> graphics, theCurrentPraatPicture -> fontSize);   // so that the thickness of the selection rectangle is correct
 	Picture_setMouseSelectsInnerViewport (praat_picture, praat_mouseSelectsInnerViewport);
 }
 

@@ -1184,7 +1184,8 @@ static void charSizes (Graphics me, _Graphics_widechar string []) {
 			if (next->kar <= U' ' || next->style != lc->style ||
 				next->baseline != lc->baseline || next->size != lc->size || next->link != lc->link ||
 				next->font.integer != lc->font.integer || next->font.string != lc->font.string ||
-				next->rightToLeft != lc->rightToLeft)
+				next->rightToLeft != lc->rightToLeft ||
+				(my textRotation != 0.0 && my screen && my resolution > 150))
 			{
 				charCodes [nchars] = U'\0';
 				const char16 *codes16 = Melder_peek32to16 (charCodes);

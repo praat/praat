@@ -491,7 +491,7 @@ void * Melder_monitor (double progress, Melder_19_ARGS) {
 
 /********** NUMBER AND STRING COMPARISONS **********/
 
-int Melder_numberMatchesCriterion (double value, int which_kMelder_number, double criterion) {
+bool Melder_numberMatchesCriterion (double value, int which_kMelder_number, double criterion) {
 	return
 		(which_kMelder_number == kMelder_number_EQUAL_TO && value == criterion) ||
 		(which_kMelder_number == kMelder_number_NOT_EQUAL_TO && value != criterion) ||
@@ -501,12 +501,12 @@ int Melder_numberMatchesCriterion (double value, int which_kMelder_number, doubl
 		(which_kMelder_number == kMelder_number_GREATER_THAN_OR_EQUAL_TO && value >= criterion);
 }
 
-int Melder_stringMatchesCriterion (const char32 *value, int which_kMelder_string, const char32 *criterion) {
+bool Melder_stringMatchesCriterion (const char32 *value, int which_kMelder_string, const char32 *criterion) {
 	if (value == NULL) {
-		value = U"";   /* Regard null strings as empty strings, as is usual in Praat. */
+		value = U"";   // regard null strings as empty strings, as is usual in Praat
 	}
 	if (criterion == NULL) {
-		criterion = U"";   /* Regard null strings as empty strings, as is usual in Praat. */
+		criterion = U"";   // regard null strings as empty strings, as is usual in Praat
 	}
 	if (which_kMelder_string <= kMelder_string_NOT_EQUAL_TO) {
 		int matchPositiveCriterion = str32equ (value, criterion);
@@ -535,7 +535,7 @@ int Melder_stringMatchesCriterion (const char32 *value, int which_kMelder_string
 		free (compiled_regexp);
 		return place != NULL;
 	}
-	return 0;   // should not occur
+	return false;   // should not occur
 }
 
 void Melder_help (const char32 *query) {

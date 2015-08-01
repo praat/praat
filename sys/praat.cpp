@@ -62,11 +62,10 @@ PraatObjects theCurrentPraatObjects = & theForegroundPraatObjects;
 structPraatPicture theForegroundPraatPicture;
 PraatPicture theCurrentPraatPicture = & theForegroundPraatPicture;
 struct PraatP praatP;
-static int doingCommandLineInterface;
 static char32 programName [64];
 static structMelderDir homeDir = { { 0 } };
 /*
- * praatDirectory: preferences and buttons files.
+ * praatDirectory: preferences file, buttons file, message files, tracing file, plugins.
  *    Unix:   /u/miep/.myProg-dir   (without slash)
  *    Windows XP/Vista/7:   \\myserver\myshare\Miep\MyProg
  *                    or:   C:\Users\Miep\MyProg
@@ -538,52 +537,54 @@ static void praat_exit (int exit_code) {
 	#endif
 	trace (U"destroy the picture window");
 	praat_picture_exit ();
-	praat_statistics_exit ();   /* Record total memory use across sessions. */
+	praat_statistics_exit ();   // record total memory use across sessions
 
-	trace (U"stop receiving messages");
-	#if defined (UNIX)
-		/*
-		 * We are going to delete the process id ("pid") file, if it's ours.
-		 */
-		if (pidFile. path [0]) {
-			try {
-				/*
-				 * To see whether we own the pid file,
-				 * we look into it to see whether its pid equals our pid.
-				 * If not, then we are probably living in an old invocation of the program,
-				 * and the pid file was written by the latest invocation of the program,
-				 * which owns the pid (this means sendpraat can only send to the latest Praat if more than one are open).
-				 */
-				autofile f = Melder_fopen (& pidFile, "r");
-				long pid;
-				if (fscanf (f, "%ld", & pid) < 1) throw MelderError ();
-				f.close (& pidFile);
-				if (pid == getpid ()) {   // is the pid in the pid file equal to our pid?
-					MelderFile_delete (& pidFile);   // ...then we own the pid file and can delete it
+	if (! praatP.ignorePreferenceFiles) {
+		trace (U"stop receiving messages");
+		#if defined (UNIX)
+			/*
+			 * We are going to delete the process id ("pid") file, if it's ours.
+			 */
+			if (pidFile. path [0]) {
+				try {
+					/*
+					 * To see whether we own the pid file,
+					 * we look into it to see whether its pid equals our pid.
+					 * If not, then we are probably living in an old invocation of the program,
+					 * and the pid file was written by the latest invocation of the program,
+					 * which owns the pid (this means sendpraat can only send to the latest Praat if more than one are open).
+					 */
+					autofile f = Melder_fopen (& pidFile, "r");
+					long pid;
+					if (fscanf (f, "%ld", & pid) < 1) throw MelderError ();
+					f.close (& pidFile);
+					if (pid == getpid ()) {   // is the pid in the pid file equal to our pid?
+						MelderFile_delete (& pidFile);   // ...then we own the pid file and can delete it
+					}
+				} catch (MelderError) {
+					Melder_clearError ();   // if the pid file is somehow missing or corrupted, we just ignore that
 				}
-			} catch (MelderError) {
-				Melder_clearError ();   // if the pid file is somehow missing or corrupted, we just ignore that
 			}
-		}
-	#endif
+		#endif
 
-	trace (U"save the preferences");
-	Melder_assert (str32equ (Melder_double (1.5), U"1.5"));   // refuse to write the preferences if the locale is wrong (even if tracing is on)
-	Preferences_write (& prefsFile);
+		trace (U"save the preferences");
+		Melder_assert (str32equ (Melder_double (1.5), U"1.5"));   // refuse to write the preferences if the locale is wrong (even if tracing is on)
+		Preferences_write (& prefsFile);
 
-	trace (U"save the script buttons");
-	if (! theCurrentPraatApplication -> batch) {
-		try {
-			autoMelderString buffer;
-			MelderString_append (& buffer, U"# Buttons (1).\n");
-			MelderString_append (& buffer, U"# This file is generated automatically when you quit the ", praatP.title, U" program.\n");
-			MelderString_append (& buffer, U"# It contains the buttons that you added interactively to the fixed or dynamic menus,\n");
-			MelderString_append (& buffer, U"# and the buttons that you hid or showed.\n\n");
-			praat_saveMenuCommands (& buffer);
-			praat_saveAddedActions (& buffer);
-			MelderFile_writeText (& buttonsFile, buffer.string, kMelder_textOutputEncoding_ASCII_THEN_UTF16);
-		} catch (MelderError) {
-			Melder_clearError ();
+		trace (U"save the script buttons");
+		if (! theCurrentPraatApplication -> batch) {
+			try {
+				autoMelderString buffer;
+				MelderString_append (& buffer, U"# Buttons (1).\n");
+				MelderString_append (& buffer, U"# This file is generated automatically when you quit the ", praatP.title, U" program.\n");
+				MelderString_append (& buffer, U"# It contains the buttons that you added interactively to the fixed or dynamic menus,\n");
+				MelderString_append (& buffer, U"# and the buttons that you hid or showed.\n\n");
+				praat_saveMenuCommands (& buffer);
+				praat_saveAddedActions (& buffer);
+				MelderFile_writeText (& buttonsFile, buffer.string, kMelder_textOutputEncoding_ASCII_THEN_UTF16);
+			} catch (MelderError) {
+				Melder_clearError ();
+			}
 		}
 	}
 
@@ -835,7 +836,7 @@ static void gui_cb_quit (void *) {
 	DO_Quit (NULL, 0, NULL, NULL, NULL, NULL, false, NULL);
 }
 
-void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
+void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = true; }
 
 /********** INITIALIZATION OF THE PRAAT SHELL **********/
 
@@ -999,6 +1000,9 @@ void praat_setStandAloneScriptText (char32 *text) {
 }
 
 void praat_init (const char32 *title, unsigned int argc, char **argv) {
+	for (unsigned int iarg = 0; iarg < argc; iarg ++) {
+		//Melder_casual (U"arg ", iarg, U": <<", Melder_peek8to32 (argv [iarg]), U">>");
+	}
 	static char32 truncatedTitle [300];   // static because praatP.title will point into it
 	#if defined (UNIX)
 		setlocale (LC_ALL, "C");
@@ -1036,35 +1040,61 @@ void praat_init (const char32 *title, unsigned int argc, char **argv) {
 	structEditor     :: f_preferences ();   // erase picture first...
 	structHyperPage  :: f_preferences ();   // font...
 	Site_prefs ();   // print command...
-	Melder_audio_prefs ();   // use speaker (Sun & HP), output gain (HP)...
+	Melder_audio_prefs ();   // asynchronicity, silence after...
 	Melder_textEncoding_prefs ();
 	Printer_prefs ();   // paper size, printer command...
 	structTextEditor :: f_preferences ();   // font size...
 
-	unsigned int iarg_batchName = 1;
+	uint32 iarg_batchName = 1;
+	const char32 *unknownCommandLineOption = nullptr;
+
 	#if defined (UNIX) || defined (macintosh) || defined (_WIN32) && defined (CONSOLE_APPLICATION)
 		/*
 		 * Running the Praat shell from the Unix command line,
 		 * or running PRAATCON.EXE from the Windows command prompt:
 		 *    <programName> <scriptFileName>
 		 */
-		if (argc > iarg_batchName
-			&& argv [iarg_batchName] [0] == '-'
-			&& argv [iarg_batchName] [1] == 'a'
-			&& argv [iarg_batchName] [2] == '\0')
-		{
-			Melder_consoleIsAnsi = true;
-			iarg_batchName ++;
+		while (iarg_batchName < argc && argv [iarg_batchName] [0] == '-') {
+			if (strequ (argv [iarg_batchName], "-")) {
+				praatP.hasCommandLineInput = true;
+			} else if (strequ (argv [iarg_batchName], "-a") || strequ (argv [iarg_batchName], "--ansi")) {
+				Melder_consoleIsAnsi = true;
+				iarg_batchName += 1;
+			} else if (strequ (argv [iarg_batchName], "--no-pref-files")) {
+				praatP.ignorePreferenceFiles = true;
+				iarg_batchName += 1;
+			} else if (strequ (argv [iarg_batchName], "--no-plugins")) {
+				praatP.ignorePlugins = true;
+				iarg_batchName += 1;
+			} else if (strnequ (argv [iarg_batchName], "--pref-dir=", 11)) {
+				Melder_pathToDir (Melder_peek8to32 (argv [iarg_batchName] + 11), & praatDir);
+				iarg_batchName += 1;
+			#if defined (macintosh)
+			} else if (strequ (argv [iarg_batchName], "-NSDocumentRevisionsDebugMode")) {
+				(void) 0;   // ignore this option, which was added by Xcode
+				iarg_batchName += 2;   // jump over the argument, which is usually "YES" (this jump works correctly even if this argument is missing)
+			} else if (strnequ (argv [iarg_batchName], "-psn_", 5)) {
+				(void) 0;   // ignore this option, which was added by the Finder, perhaps when dragging a file on Praat (Process Serial Number)
+				iarg_batchName += 1;
+			#endif
+			} else {
+				unknownCommandLineOption = Melder_8to32 (argv [iarg_batchName]);
+				iarg_batchName = UINT32_MAX;   // ignore all other command line options
+				break;
+			}
 		}
-		//fprintf (stdout, "Console <%d> <%s>", Melder_consoleIsAnsi, argv [1]);
-		bool hasCommandLineInput =
-			argc > iarg_batchName
-			&& argv [iarg_batchName] [0] == '-'
-			&& argv [iarg_batchName] [1] == '\0';
-		MelderString_copy (& theCurrentPraatApplication -> batchName,
-			hasCommandLineInput ? U""
-			: argc > iarg_batchName && argv [iarg_batchName] [0] != '-' /* funny Mac test */ ? Melder_peek8to32 (argv [iarg_batchName])
-			: U"");
+
+		/*
+		 * We now figure out the script file name, if there is any.
+		 * If there is a script file name, it is next on the command line
+		 * (not necessarily *last* on the line, because there may be script arguments after it).
+		 */
+		if (iarg_batchName < argc) {
+			MelderString_copy (& theCurrentPraatApplication -> batchName, Melder_peek8to32 (argv [iarg_batchName]));
+			if (praatP.hasCommandLineInput) Melder_throw (U"Cannot have both command line input and a script file.");
+		} else {
+			MelderString_copy (& theCurrentPraatApplication -> batchName, U"");
+		}
 
 		Melder_batch = theCurrentPraatApplication -> batchName.string [0] != U'\0' || thePraatStandAloneScriptText != NULL;
 
@@ -1078,9 +1108,8 @@ void praat_init (const char32 *title, unsigned int argc, char **argv) {
 		 * Running the Praat shell from the command line:
 		 *    praat -
 		 */
-		if (hasCommandLineInput) {
+		if (praatP.hasCommandLineInput) {
 			Melder_batch = true;
-			doingCommandLineInterface = TRUE;   // read from stdin
 		}
 
 		/* Take from 'title' ("myProg 3.2" becomes "myProg") or from command line ("/ifa/praat" becomes "praat"). */
@@ -1120,8 +1149,9 @@ void praat_init (const char32 *title, unsigned int argc, char **argv) {
 	 * Get home directory, e.g. "/home/miep/", or "/Users/miep/", or just "/".
 	 */
 	Melder_getHomeDir (& homeDir);
+
 	/*
-	 * Get the program's private directory:
+	 * Get the program's private directory (if not yet set by the --prefdir option):
 	 *    "/u/miep/.myProg-dir" (Unix)
 	 *    "/Users/miep/Library/Preferences/MyProg Prefs" (Macintosh)
 	 *    "C:\Users\Miep\MyProg" (Windows)
@@ -1134,15 +1164,16 @@ void praat_init (const char32 *title, unsigned int argc, char **argv) {
 	 * or
 	 *    C:\Users\Miep\MyProg\Preferences5.ini
 	 *    C:\Users\Miep\MyProg\Buttons5.ini
-	 * On Unix, also create names for process-id and message files.
+	 * Also create names for message and tracing files.
 	 */
-	{
+	if (MelderDir_isNull (& praatDir)) {   // not yet set by the --prefdir option?
 		structMelderDir prefParentDir { { 0 } };   // directory under which to store our preferences directory
-		char32 name [256];
 		Melder_getPrefDir (& prefParentDir);
+
 		/*
 		 * Make sure that the program's private directory exists.
 		 */
+		char32 name [256];
 		#if defined (UNIX)
 			Melder_sprint (name,256, U".", programName, U"-dir");   // for example .myProg-dir
 		#elif defined (macintosh)
@@ -1150,12 +1181,22 @@ void praat_init (const char32 *title, unsigned int argc, char **argv) {
 		#elif defined (_WIN32)
 			Melder_sprint (name,256, praatP.title);   // for example MyProg
 		#endif
-		#if defined (UNIX) || defined (macintosh)
-			Melder_createDirectory (& prefParentDir, name, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-		#else
-			Melder_createDirectory (& prefParentDir, name, 0);
-		#endif
-		MelderDir_getSubdir (& prefParentDir, name, & praatDir);
+		try {
+			#if defined (UNIX) || defined (macintosh)
+				Melder_createDirectory (& prefParentDir, name, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+			#else
+				Melder_createDirectory (& prefParentDir, name, 0);
+			#endif
+			MelderDir_getSubdir (& prefParentDir, name, & praatDir);
+		} catch (MelderError) {
+			/*
+			 * If we arrive here, the directory could not be created,
+			 * and all the files are null. Praat should nevertheless start up.
+			 */
+			Melder_clearError ();
+		}
+	}
+	if (! MelderDir_isNull (& praatDir)) {
 		#if defined (UNIX)
 			MelderDir_getFile (& praatDir, U"prefs5", & prefsFile);
 			MelderDir_getFile (& praatDir, U"buttons5", & buttonsFile);
@@ -1318,7 +1359,9 @@ void praat_init (const char32 *title, unsigned int argc, char **argv) {
 			}
 		#endif
 		#ifdef UNIX
-			Preferences_read (& prefsFile);
+			if (! praatP.ignorePreferenceFiles) {
+				Preferences_read (& prefsFile);
+			}
 		#endif
 		#if ! defined (CONSOLE_APPLICATION) && ! defined (macintosh)
 			trace (U"initializing the Gui late");
@@ -1333,6 +1376,10 @@ void praat_init (const char32 *title, unsigned int argc, char **argv) {
 	trace (U"before picture window shows: locale is ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
 	if (! praatP.dontUsePictureWindow) praat_picture_init ();
 	trace (U"after picture window shows: locale is ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
+
+	if (unknownCommandLineOption) {
+		Melder_fatal (U"Unrecognized command line option ", unknownCommandLineOption);
+	}
 }
 
 static void executeStartUpFile (MelderDir startUpDirectory, const char32 *fileNameHead, const char32 *fileNameTail) {
@@ -1342,7 +1389,7 @@ static void executeStartUpFile (MelderDir startUpDirectory, const char32 *fileNa
 		structMelderFile startUp = { 0 };
 		MelderDir_getFile (startUpDirectory, name, & startUp);
 		if (! MelderFile_readable (& startUp))
-			return; // it's OK if the file doesn't exist
+			return;   // it's OK if the file doesn't exist
 		try {
 			praat_executeScriptFromFile (& startUp, NULL);
 		} catch (MelderError) {
@@ -1408,10 +1455,11 @@ void praat_run (void) {
 	 * and those that regard the start of a new session as a meaningful event
 	 * (namely, the session counter and the cross-session memory counter).
 	 */
-	Preferences_read (& prefsFile);
-	if (! praatP.dontUsePictureWindow) praat_picture_prefsChanged ();
-	praat_statistics_prefsChanged ();
-			//Melder_flushError (U"batch name <<", theCurrentPraatApplication -> batchName.string, U">>");
+	if (! praatP.ignorePreferenceFiles) {
+		Preferences_read (& prefsFile);
+		if (! praatP.dontUsePictureWindow) praat_picture_prefsChanged ();
+		praat_statistics_prefsChanged ();
+	}
 
 	praatP.phase = praat_STARTING_UP;
 
@@ -1431,34 +1479,36 @@ void praat_run (void) {
 		executeStartUpFile (& homeDir, U"", U"-user-startUp");
 	#endif
 
-	trace (U"install plug-ins");
-	trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
-	/* The Praat phase should remain praat_STARTING_UP,
-	 * because any added commands must not be included in the buttons file.
-	 */
-	structMelderFile searchPattern { 0 };
-	MelderDir_getFile (& praatDir, U"plugin_*", & searchPattern);
-	try {
-		autoStrings directoryNames = Strings_createAsDirectoryList (Melder_fileToPath (& searchPattern));
-		if (directoryNames -> numberOfStrings > 0) {
-			for (long i = 1; i <= directoryNames -> numberOfStrings; i ++) {
-				structMelderDir pluginDir = { { 0 } };
-				structMelderFile plugin = { 0 };
-				MelderDir_getSubdir (& praatDir, directoryNames -> strings [i], & pluginDir);
-				MelderDir_getFile (& pluginDir, U"setup.praat", & plugin);
-				if (MelderFile_readable (& plugin)) {
-					Melder_backgrounding = true;
-					try {
-						praat_executeScriptFromFile (& plugin, NULL);
-					} catch (MelderError) {
-						Melder_flushError (praatP.title, U": plugin ", & plugin, U" contains an error.");
+	if (! MelderDir_isNull (& praatDir) && ! praatP.ignorePlugins) {
+		trace (U"install plug-ins");
+		trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
+		/* The Praat phase should remain praat_STARTING_UP,
+		 * because any added commands must not be included in the buttons file.
+		 */
+		structMelderFile searchPattern { 0 };
+		MelderDir_getFile (& praatDir, U"plugin_*", & searchPattern);
+		try {
+			autoStrings directoryNames = Strings_createAsDirectoryList (Melder_fileToPath (& searchPattern));
+			if (directoryNames -> numberOfStrings > 0) {
+				for (long i = 1; i <= directoryNames -> numberOfStrings; i ++) {
+					structMelderDir pluginDir = { { 0 } };
+					structMelderFile plugin = { 0 };
+					MelderDir_getSubdir (& praatDir, directoryNames -> strings [i], & pluginDir);
+					MelderDir_getFile (& pluginDir, U"setup.praat", & plugin);
+					if (MelderFile_readable (& plugin)) {
+						Melder_backgrounding = true;
+						try {
+							praat_executeScriptFromFile (& plugin, NULL);
+						} catch (MelderError) {
+							Melder_flushError (praatP.title, U": plugin ", & plugin, U" contains an error.");
+						}
+						Melder_backgrounding = false;
 					}
-					Melder_backgrounding = false;
 				}
 			}
+		} catch (MelderError) {
+			Melder_clearError ();   // in case Strings_createAsDirectoryList () threw an error
 		}
-	} catch (MelderError) {
-		Melder_clearError ();   // in case Strings_createAsDirectoryList () threw an error
 	}
 
 	Melder_assert (str32equ (Melder_double (1.5), U"1.5"));   // check locale settings; because of the required file portability Praat cannot stand "1,5"
@@ -1508,7 +1558,7 @@ void praat_run (void) {
 				Melder_flushError (praatP.title, U": stand-alone script session interrupted.");
 				praat_exit (-1);
 			}
-		} else if (doingCommandLineInterface) {
+		} else if (praatP.hasCommandLineInput) {
 			try {
 				praat_executeCommandFromStandardInput (praatP.title);
 				praat_exit (0);
@@ -1538,29 +1588,31 @@ void praat_run (void) {
 			}
 		}
 	} else /* GUI */ {
-		trace (U"reading the added script buttons");
-		/* Each line separately: every error should be ignored.
-		 */
-		praatP.phase = praat_READING_BUTTONS;
-		{// scope
-			autostring32 buttons;
-			try {
-				buttons.reset (MelderFile_readText (& buttonsFile));
-			} catch (MelderError) {
-				Melder_clearError ();
-			}
-			if (buttons.peek()) {
-				char32 *line = buttons.peek();
-				for (;;) {
-					char32 *newline = str32chr (line, U'\n');
-					if (newline) *newline = U'\0';
-					try {
-						praat_executeCommand (NULL, line);
-					} catch (MelderError) {
-						Melder_clearError ();   // ignore this line, but not necessarily the next
+		if (! praatP.ignorePreferenceFiles) {
+			trace (U"reading the added script buttons");
+			/* Each line separately: every error should be ignored.
+			 */
+			praatP.phase = praat_READING_BUTTONS;
+			{// scope
+				autostring32 buttons;
+				try {
+					buttons.reset (MelderFile_readText (& buttonsFile));
+				} catch (MelderError) {
+					Melder_clearError ();
+				}
+				if (buttons.peek()) {
+					char32 *line = buttons.peek();
+					for (;;) {
+						char32 *newline = str32chr (line, U'\n');
+						if (newline) *newline = U'\0';
+						try {
+							praat_executeCommand (NULL, line);
+						} catch (MelderError) {
+							Melder_clearError ();   // ignore this line, but not necessarily the next
+						}
+						if (newline == NULL) break;
+						line = newline + 1;
 					}
-					if (newline == NULL) break;
-					line = newline + 1;
 				}
 			}
 		}

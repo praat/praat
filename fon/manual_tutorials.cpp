@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20150724)
+MAN_BEGIN (U"What's new?", U"ppgb", 20150801)
 INTRO (U"Latest changes in Praat.")
 /*LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (U"##5.4.15# (1 August 2015)")
+LIST_ITEM (U"• Introduced several command line options that make it easier to call Praat from a web server.")
+LIST_ITEM (U"• 64-bit Mac: removed a bug introduced in 5.4.11 that caused incorrect spacing of vertical text in picture files.")
 NORMAL (U"##5.4.14# (24 July 2015)")
 LIST_ITEM (U"• Windows and 32-bit Mac: removed a bug introduced in 5.4.12 that could cause weird behavior (even crashing) when "
 	"pressing the Tab key in the script window or in the manual.")

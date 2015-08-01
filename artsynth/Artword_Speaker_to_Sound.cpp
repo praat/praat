@@ -193,13 +193,13 @@ Sound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 						Delta_Tube l1 = t->left1, l2 = t->left2, r1 = t->right1, r2 = t->right2;
 						tension = dDy * (t->k1 + cubic);
 						t->B = 2 * t->Brel * sqrt (t->mass * (t->k1 + 3 * cubic));
-						if (t->k1left1 && l1)
+						if (t->k1left1 != 0.0 && l1)
 							tension += t->k1left1 * t->k1 * (dDy - (l1->Dyeq - l1->Dy));
-						if (t->k1left2 && l2)
+						if (t->k1left2 != 0.0 && l2)
 							tension += t->k1left2 * t->k1 * (dDy - (l2->Dyeq - l2->Dy));
-						if (t->k1right1 && r1)
+						if (t->k1right1 != 0.0 && r1)
 							tension += t->k1right1 * t->k1 * (dDy - (r1->Dyeq - r1->Dy));
-						if (t->k1right2 && r2)
+						if (t->k1right2 != 0.0 && r2)
 							tension += t->k1right2 * t->k1 * (dDy - (r2->Dyeq - r2->Dy));
 					}
 					if (t->Dy < t->dy) {

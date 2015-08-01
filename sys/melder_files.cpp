@@ -515,7 +515,9 @@ void Melder_getPrefDir (MelderDir prefDir) {
 		Melder_getHomeDir (prefDir);
 	#elif defined (_WIN32)
 		/*
+		 * On Windows 95, preferences files went in the Windows directory.
 		 * On shared systems (NT, 2000, XP), preferences files go into the home directory.
+		 * TODO: at some point, these files should be moved to HOME\AppData\Roaming\Praat.
 		 */
 		Melder_getHomeDir (prefDir);
 	#endif
@@ -541,6 +543,7 @@ static size_t read_URL_data_from_file (void *buffer, size_t size, size_t nmemb, 
 #endif
 
 FILE * Melder_fopen (MelderFile file, const char *type) {
+	if (MelderFile_isNull (file)) Melder_throw (U"Cannot open null file.");
 	if (! Melder_isTracing)
 		Melder_assert (str32equ (Melder_double (1.5), U"1.5"));   // check locale settings; because of the required file portability Praat cannot stand "1,5"
 	/*
