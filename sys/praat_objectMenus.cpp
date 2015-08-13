@@ -635,12 +635,17 @@ void praat_addMenus (GuiWindow window) {
 	#ifdef macintosh
 		praat_addMenuCommand (U"Objects", U"Praat", itemTitle_about.string, 0, praat_UNHIDABLE, DO_About);
 		#if cocoa
-			praat_addMenuCommand (U"Objects", U"Edit", U"Cut", 0, praat_UNHIDABLE + 'X', DO_praat_cut);
-			praat_addMenuCommand (U"Objects", U"Edit", U"Copy", 0, praat_UNHIDABLE + 'C', DO_praat_copy);
-			praat_addMenuCommand (U"Objects", U"Edit", U"Paste", 0, praat_UNHIDABLE + 'V', DO_praat_paste);
-			praat_addMenuCommand (U"Objects", U"Window", U"Minimize", 0, praat_UNHIDABLE, DO_praat_minimize);
-			praat_addMenuCommand (U"Objects", U"Window", U"Zoom", 0, praat_UNHIDABLE, DO_praat_zoom);
-			praat_addMenuCommand (U"Objects", U"Window", U"Close", 0, 'W', DO_praat_close);
+			/*
+			 * HACK: give the following command weird names,
+			 * because otherwise they may be called from a script.
+			 * (we add three alt-spaces)
+			 */
+			praat_addMenuCommand (U"Objects", U"Edit", U"Cut   ", 0, praat_UNHIDABLE + 'X', DO_praat_cut);
+			praat_addMenuCommand (U"Objects", U"Edit", U"Copy   ", 0, praat_UNHIDABLE + 'C', DO_praat_copy);
+			praat_addMenuCommand (U"Objects", U"Edit", U"Paste   ", 0, praat_UNHIDABLE + 'V', DO_praat_paste);
+			praat_addMenuCommand (U"Objects", U"Window", U"Minimize   ", 0, praat_UNHIDABLE, DO_praat_minimize);
+			praat_addMenuCommand (U"Objects", U"Window", U"Zoom   ", 0, praat_UNHIDABLE, DO_praat_zoom);
+			praat_addMenuCommand (U"Objects", U"Window", U"Close   ", 0, 'W', DO_praat_close);
 		#endif
 	#endif
 	#ifdef UNIX
