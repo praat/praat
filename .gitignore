@@ -1,8 +1,26 @@
-# build
+# Intermediate build products for Windows and Linux
 *.o
 *.a
 
-# OSX
+# .xcodeproj parts
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+*.xccheckout
+*.moved-aside
+*.xcuserstate
+
+# Intermediate build products for MacOSX
+DerivedData
+
+# OSX-specific files
 .DS_Store
-# temporary files
+
+# Praat temporary files
 *kanweg*

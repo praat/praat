@@ -23,7 +23,7 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20150801)
+MAN_BEGIN (U"What's new?", U"ppgb", 20150814)
 INTRO (U"Latest changes in Praat.")
 /*LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")*/
 NORMAL (U"##5.4.16# (xx August 2015)")
