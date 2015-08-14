@@ -1,0 +1,6 @@
+# build
+*.o
+*.a
+
+# OSX
+.DS_Store
