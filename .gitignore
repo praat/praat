@@ -2,12 +2,7 @@
 *.o
 *.a
 
-## Build generated
-/*.xcodeproj
-build/
-DerivedData
-
-## Various settings
+# .xcodeproj parts
 *.pbxuser
 !default.pbxuser
 *.mode1v3
@@ -17,8 +12,6 @@ DerivedData
 *.perspectivev3
 !default.perspectivev3
 xcuserdata
-
-## Other
 *.xccheckout
 *.moved-aside
 *.xcuserstate
