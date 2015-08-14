@@ -40,7 +40,7 @@
 
 static void fprintquotedstring (MelderFile file, const char32 *s) {
 	MelderFile_writeCharacter (file, U'\"');
-	if (s) { char32 c; while ((c = *s ++) != '\0') { MelderFile_writeCharacter (file, c); if (c == '\"') MelderFile_writeCharacter (file, c); } }
+	if (s) { char32 c; while ((c = *s ++) != U'\0') { MelderFile_writeCharacter (file, c); if (c == U'\"') MelderFile_writeCharacter (file, c); } }
 	MelderFile_writeCharacter (file, U'\"');
 }
 

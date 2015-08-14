@@ -4,3 +4,5 @@
 
 # OSX
 .DS_Store
+# temporary files
+*kanweg*
