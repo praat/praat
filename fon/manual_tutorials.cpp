@@ -23,10 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20150814)
+MAN_BEGIN (U"What's new?", U"ppgb", 20150816)
 INTRO (U"Latest changes in Praat.")
 /*LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")*/
-NORMAL (U"##5.4.16# (xx August 2015)")
+NORMAL (U"##5.4.16# (16 August 2015)")
+LIST_ITEM (U"• Mac 64-bit: removed a bug by which graphical text passed over the right edge in TextGrid intervals.")
 LIST_ITEM (U"• Mac 64-bit: removed a bug that allowed the general \"Zoom\" and \"Close\" commands to be accessible from a script.")
 NORMAL (U"##5.4.15# (1 August 2015)")
 LIST_ITEM (U"• Introduced several command line options that make it easier to call Praat from a web server.")
