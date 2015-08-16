@@ -1057,7 +1057,7 @@ static int initBuffer (const char32 *txt) {
 static int numberOfLinks = 0;
 static Graphics_Link links [100];    // a maximum of 100 links per string
 
-static void charSizes (Graphics me, _Graphics_widechar string []) {
+static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEachCharacterSeparately) {
 	if (my postScript) {
 		for (_Graphics_widechar *character = string; character -> kar > U'\t'; character ++)
 			charSize (me, character);
@@ -1181,7 +1181,8 @@ static void charSizes (Graphics me, _Graphics_widechar string []) {
 			charCodes [nchars ++] = lc -> code;
 			_Graphics_widechar *next = lc + 1;
 			lc -> width = 0;
-			if (next->kar <= U' ' || next->style != lc->style ||
+			if (measureEachCharacterSeparately ||
+				next->kar <= U' ' || next->style != lc->style ||
 				next->baseline != lc->baseline || next->size != lc->size || next->link != lc->link ||
 				next->font.integer != lc->font.integer || next->font.string != lc->font.string ||
 				next->rightToLeft != lc->rightToLeft ||
@@ -1420,7 +1421,7 @@ static void drawCells (Graphics me, double xWC, double yWC, _Graphics_widechar l
 	double saveWrapWidth = my wrapWidth;
 	numberOfLinks = 0;
 	for (plc = lc; /* No stop condition. */ ; plc ++) {
-		charSizes (me, plc);
+		charSizes (me, plc, false);
 		drawOneCell (me, xWC * my scaleX + my deltaX, yWC * my scaleY + my deltaY, plc);
 		while (plc -> kar != U'\0' && plc -> kar != U'\t') plc ++;   // find end of cell
 		if (plc -> kar == U'\0') break;   // end of text?
@@ -1641,7 +1642,7 @@ double Graphics_textWidth (Graphics me, const char32 *txt) {
 	if (! initBuffer (txt)) return 0.0;
 	initText (me);
 	parseTextIntoCellsLinesRuns (me, txt, theWidechar);
-	charSizes (me, theWidechar);
+	charSizes (me, theWidechar, false);
 	width = textWidth (theWidechar);
 	exitText (me);
 	return width / my scaleX;
@@ -1659,7 +1660,7 @@ void Graphics_textRect (Graphics me, double x1, double x2, double y1, double y2,
 	if (! initBuffer (txt)) return;
 	initText (me);
 	parseTextIntoCellsLinesRuns (me, txt, theWidechar);
-	charSizes (me, theWidechar);
+	charSizes (me, theWidechar, true);
 	for (plc = theWidechar; plc -> kar > '\t'; plc ++) {
 		width += plc -> width;
 		if (width > availableWidth) {

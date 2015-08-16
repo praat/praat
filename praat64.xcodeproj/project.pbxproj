@@ -3659,7 +3659,7 @@
 		23E5CAE609A22901004E41D5 /* SpectrogramEditor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SpectrogramEditor.h; path = fon/SpectrogramEditor.h; sourceTree = SOURCE_ROOT; };
 		23E5CAE709A22901004E41D5 /* SpectrumEditor.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; name = SpectrumEditor.cpp; path = fon/SpectrumEditor.cpp; sourceTree = "<group>"; };
 		23E5CAE809A22901004E41D5 /* SpectrumEditor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SpectrumEditor.h; path = fon/SpectrumEditor.h; sourceTree = SOURCE_ROOT; };
-		23E5CAE909A22901004E41D5 /* TextGridEditor.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; lineEnding = 0; name = TextGridEditor.cpp; path = fon/TextGridEditor.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		23E5CAE909A22901004E41D5 /* TextGridEditor.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; lineEnding = 0; name = TextGridEditor.cpp; path = fon/TextGridEditor.cpp; sourceTree = "<group>"; };
 		23E5CAEA09A22901004E41D5 /* TextGridEditor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TextGridEditor.h; path = fon/TextGridEditor.h; sourceTree = SOURCE_ROOT; };
 		23E5CAEF09A22901004E41D5 /* manual_exampleSound.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = manual_exampleSound.h; path = fon/manual_exampleSound.h; sourceTree = SOURCE_ROOT; };
 		23E5CAFF09A22901004E41D5 /* praat.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; lineEnding = 0; name = praat.cpp; path = sys/praat.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
