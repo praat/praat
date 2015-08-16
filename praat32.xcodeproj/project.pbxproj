@@ -3710,7 +3710,7 @@
 		23E5CB6309A22902004E41D5 /* melder_audio.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; name = melder_audio.cpp; path = sys/melder_audio.cpp; sourceTree = "<group>"; };
 		23E5CB6409A22902004E41D5 /* melder_audiofiles.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = melder_audiofiles.cpp; path = sys/melder_audiofiles.cpp; sourceTree = "<group>"; };
 		23E5CB6509A22902004E41D5 /* melder_debug.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; name = melder_debug.cpp; path = sys/melder_debug.cpp; sourceTree = "<group>"; };
-		23E5CB6609A22902004E41D5 /* melder_files.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = melder_files.cpp; path = sys/melder_files.cpp; sourceTree = "<group>"; };
+		23E5CB6609A22902004E41D5 /* melder_files.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = melder_files.cpp; path = sys/melder_files.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		23E5CB6709A22902004E41D5 /* melder_sysenv.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = melder_sysenv.cpp; path = sys/melder_sysenv.cpp; sourceTree = "<group>"; };
 		23E5CB6C09A22902004E41D5 /* gsl_err__error.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gsl_err__error.c; sourceTree = "<group>"; };
 		23E5CB6D09A22902004E41D5 /* gsl_err__stream.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gsl_err__stream.c; sourceTree = "<group>"; };

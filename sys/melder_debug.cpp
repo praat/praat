@@ -104,6 +104,7 @@ static const char * peek32to8 (const char32 *string) {
 	int64 sizeNeeded = n * 4 + 1;
 	if ((bufferSize - sizeNeeded) * (int64) sizeof (char) >= 10000) {
 		free (buffer);
+		buffer = NULL;   // undangle
 		bufferSize = 0;
 	}
 	if (sizeNeeded > bufferSize) {
