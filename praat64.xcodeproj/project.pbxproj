@@ -3619,7 +3619,7 @@
 		23E5CAB509A22900004E41D5 /* Spectrum_to_Formant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Spectrum_to_Formant.h; path = fon/Spectrum_to_Formant.h; sourceTree = SOURCE_ROOT; };
 		23E5CAB609A22900004E41D5 /* SpellingChecker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SpellingChecker.cpp; path = fon/SpellingChecker.cpp; sourceTree = "<group>"; };
 		23E5CAB709A22900004E41D5 /* SpellingChecker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SpellingChecker.h; path = fon/SpellingChecker.h; sourceTree = SOURCE_ROOT; };
-		23E5CABC09A22900004E41D5 /* TextGrid.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = TextGrid.cpp; path = fon/TextGrid.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		23E5CABC09A22900004E41D5 /* TextGrid.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = TextGrid.cpp; path = fon/TextGrid.cpp; sourceTree = "<group>"; };
 		23E5CABD09A22900004E41D5 /* TextGrid.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TextGrid.h; path = fon/TextGrid.h; sourceTree = SOURCE_ROOT; };
 		23E5CABE09A22900004E41D5 /* Transition.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Transition.cpp; path = fon/Transition.cpp; sourceTree = "<group>"; };
 		23E5CABF09A22900004E41D5 /* Transition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Transition.h; path = fon/Transition.h; sourceTree = SOURCE_ROOT; };
