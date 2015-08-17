@@ -2,7 +2,7 @@
 
 Most information is on http://www.praat.org.
 
-### Binaries
+### Binary executables
 
 The meaning of the names of binary files uploaded on GitHub is as follows:
 
