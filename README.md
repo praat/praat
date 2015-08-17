@@ -32,7 +32,7 @@ First make sure that the source code can be compiled as is. Then add your own bu
 ##### 1.5. The programming language
 
 Most of the source code is written in C++, but some parts are written in C.
-The code requires that your compiler supports C99 and C++.
+The code requires that your compiler supports C99 and C++11 (for e.g. `char32_t`).
 
 ##### 1.6. Compiling on Macintosh
 
@@ -60,27 +60,32 @@ Use the [MinGW](http://www.mingw.org) compiler, perhaps on a Mac or Linux comput
 
 If you get error messages about `__stosb` and the like, get rid of `Data` in `winnt.h` and/or `intrin-impl.h` and/or `intrin_mac.h` (rename to `DataXXX` or so), because of name clash with `sys/Data.h`.
 
-### Binary executables
+### 2. Binary executables
 
 The meaning of the names of binary files uploaded on GitHub is as follows:
 
-##### Windows binaries
-- `...win64.zip`: zipped executable for 64-bit Windows (XP and higher)
-- `...win32.zip`: zipped executable for 32-bit Windows (XP and higher)
-- `...win98.zip`: zipped executable for Windows 98
-- `...win98sit.exe`: self-extracting StuffIt archive with executable for Windows 98
+##### 2.1. Windows binaries
+- `praatXXXX_win64.zip`: zipped executable for 64-bit Windows (XP and higher)
+- `praatXXXX_win32.zip`: zipped executable for 32-bit Windows (XP and higher)
+- `praatconXXXX_win64.zip`: zipped executable for 64-bit Windows, console edition
+- `praatconXXXX_win32.zip`: zipped executable for 32-bit Windows, console edition
+- `praatXXXX_win98.zip`: zipped executable for Windows 98
+- `praatXXXX_win98sit.exe`: self-extracting StuffIt archive with executable for Windows 98
 
-##### Mac binaries
-- `...mac64.dmg`: disk image with executable for 64-bit Intel Macs (Cocoa)
-- `...mac32.dmg`: disk image with executable for 32-bit Intel Macs (Carbon)
-- `...macU.dmg`: disk image with universal executable for (32-bit) PPC and Intel Macs (Carbon)
-- `...macU.sit`: StuffIt archive with universal executable for (32-bit) PPC and Intel Macs (Carbon)
-- `...macU.zip`: zipped universal executable for (32-bit) PPC and Intel Macs (Carbon)
-- `...macX.zip`: zipped executable for MacOS X (PPC)
-- `...mac9.sit`: StuffIt archive with executable for MacOS 9
-- `...mac9.zip`: zipped executable for MacOS 9
-- `...mac7.sit`: StuffIt archive with executable for MacOS 7
+##### 2.2. Mac binaries
+- `praatXXXX_mac64.dmg`: disk image with executable for 64-bit Intel Macs (Cocoa)
+- `praatXXXX_mac32.dmg`: disk image with executable for 32-bit Intel Macs (Carbon)
+- `praatXXXX_xcodeproj64.zip`: zipped Xcode project file for the 64-bit edition (Cocoa)
+- `praatXXXX_xcodeproj32.zip`: zipped Xcode project file for the 32-bit edition (Carbon)
+- `praatXXXX_macU.dmg`: disk image with universal executable for (32-bit) PPC and Intel Macs (Carbon)
+- `praatXXXX_macU.sit`: StuffIt archive with universal executable for (32-bit) PPC and Intel Macs (Carbon)
+- `praatXXXX_macU.zip`: zipped universal executable for (32-bit) PPC and Intel Macs (Carbon)
+- `praatXXXX_macX.zip`: zipped executable for MacOS X (PPC)
+- `praatXXXX_mac9.sit`: StuffIt archive with executable for MacOS 9
+- `praatXXXX_mac9.zip`: zipped executable for MacOS 9
+- `praatXXXX_mac7.sit`: StuffIt archive with executable for MacOS 7
 
-##### Linux binaries
-- `...linux64.tar.gz`: gzipped tarred executable for 64-bit Linux
-- `...linux32.tar.gz`: gzipped tarred executable for 32-bit Linux
+##### 2.3. Unix binaries
+- `praatXXXX_linux64.tar.gz`: gzipped tarred executable for 64-bit Linux
+- `praatXXXX_linux32.tar.gz`: gzipped tarred executable for 32-bit Linux
+- `praatXXXX_solaris.tar.gz`: gzipped tarred executable for Solaris
