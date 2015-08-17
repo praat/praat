@@ -34,7 +34,7 @@ oo_CLASS_CREATE (EditDistanceTable, TableOfReal);
 WarpingPath WarpingPath_create (long length);
 
 // Search the path for the corresponding axis value. If path is horizontal/vertical
-//  ivar1 and ivar2 will not ge eqal. The return value is the length of the path segment (ivar2-ivar1 +1)
+//  ivar1 and ivar2 will not be equal. The return value is the length of the path segment (ivar2-ivar1 +1)
 long WarpingPath_getColumnsFromRowIndex (WarpingPath me, long irow, long *icol1, long *icol2);
 long WarpingPath_getRowsFromColumnIndex (WarpingPath me, long icol, long *irow1, long *irow2);
 
