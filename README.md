@@ -14,7 +14,7 @@ Before trying to dive into Praat’s source code, you should be familiar with th
 
 ##### 1.1. License
 
-All of the code is available under the GNU General Public License. Of course, any improvements are welcomed by the authors.
+All of the code is available under the [GNU General Public License](http://www.fon.hum.uva.nl/praat/GNU_General_Public_License.txt). Of course, any improvements are welcomed by the authors.
 
 ##### 1.2. Downloading the archive
 
@@ -27,7 +27,7 @@ On most computers you can unpack the *zip* file by double-clicking. If you prefe
 
 ##### 1.4. Steps to take if you want to extend Praat
 
-First make sure that the source code can be compiled as is. Then add your own buttons by editing main/main_Praat.cpp or fon/praat_Fon.cpp. Consult the manual page on [Programming](http://www.fon.hum.uva.nl/praat/manual/Programming.html).
+First make sure that the source code can be compiled as is. Then add your own buttons by editing `main/main_Praat.cpp` or `fon/praat_Fon.cpp`. Consult the manual page on [Programming](http://www.fon.hum.uva.nl/praat/manual/Programming_with_Praat.html).
 
 ##### 1.5. The programming language
 
@@ -46,7 +46,7 @@ Install `libgtk2.0-dev` (and its dependencies) and `libasound2-dev`. Then go to 
     mv external/portaudio external/portaudio2014
     mv external/portaudio2007 external/portaudio
 
-Then type `make` to build the program. One may have to `kill jackd` or `artsd` to get audio to function. If your Unix isn't Linux, you may have to edit the library names in the makefile (you may need pthread, gtk-x11-2.0, gdk-x11-2.0, atk-1.0, pangoft2-1.0, gdk_pixbuf-2.0, m, pangocairo-1.0, cairo, gio-2.0, pango-1.0, freetype, fontconfig, gobject-2.0, gmodule-2.0, gthread-2.0, rt, glib-2.0, asound).
+Then type `make` to build the program. One may have to `kill jackd` or `artsd` to get audio to function. If your Unix isn’t Linux, you may have to edit the library names in the makefile (you may need pthread, gtk-x11-2.0, gdk-x11-2.0, atk-1.0, pangoft2-1.0, gdk_pixbuf-2.0, m, pangocairo-1.0, cairo, gio-2.0, pango-1.0, freetype, fontconfig, gobject-2.0, gmodule-2.0, gthread-2.0, rt, glib-2.0, asound).
 
 When compiling Praat on an external supercomputer or so, you will not have sound. If you do have `libgtk2.0-dev` (and its dependencies), do
 
@@ -56,9 +56,9 @@ Then type `make` to build the program. If your Unix isn’t Linux, you may have 
 
 ##### 1.8. Compiling for Windows
 
-Use the [MinGW](http://www.mingw.org) compiler, perhaps on a Mac or Linux computer, to avoid any chance for viruses. You can find toolchains for 32 and 64 bits [here](http://sourceforge.net/projects/mingw-w64/files/) (look for Automated Builds). Install the GDI+ headers and the GDI+ library ([32-bit](http://www.fon.hum.uva.nl/praat/libgdiplus.a-32.zip); for 64-bit Windows just extract a GDI+ DLL from somewhere). Then copy the file makefiles/makefile.defs.mingw32 or makefiles/makefile.defs.mingw64 to the sources directory (i.e. where makefile is) and rename it to makefile.defs. Then go to the sources directory and type `make`.
+Use the [MinGW](http://www.mingw.org) compiler, perhaps on a Mac or Linux computer, to avoid any chance for viruses. You can find toolchains for 32 and 64 bits [here](http://sourceforge.net/projects/mingw-w64/files/) (look for Automated Builds). Install the GDI+ headers and the GDI+ library ([32-bit](http://www.fon.hum.uva.nl/praat/libgdiplus.a-32.zip); for 64-bit Windows just extract a GDI+ DLL from somewhere). Then copy the file `makefiles/makefile.defs.mingw32` or `makefiles/makefile.defs.mingw64` to the sources directory (i.e. where `makefile` is) and rename it to `makefile.defs`. Then go to the sources directory and type `make`.
 
-If you get error messages about `__stosb` and the like, get rid of "Data" in winnt.h and intrin_mac.h (rename to DataXXX or so), because of name clash with sys/Data.h.
+If you get error messages about `__stosb` and the like, get rid of `Data` in `winnt.h` and/or `intrin-impl.h` and/or `intrin_mac.h` (rename to `DataXXX` or so), because of name clash with `sys/Data.h`.
 
 ### Binary executables
 
