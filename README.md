@@ -1,11 +1,10 @@
-# praat
-Praat: Doing Phonetics By Computer
+# Praat: doing phonetics by computer
 
 Most information is on http://www.praat.org.
 
 ### Binaries
 
-The meaning of the names of uploaded binary files is as follows:
+The meaning of the names of binary files uploaded on GitHub is as follows:
 
 ##### Windows binaries
 - name ends in `win64.zip`: zipped executable for 64-bit Windows (XP and higher)
