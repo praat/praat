@@ -1467,7 +1467,7 @@ static void cb_publish (Editor editor, void *closure, Data publish) {
 	(void) editor;
 	(void) closure;
 	try {
-		praat_new (publish);   // ppgb: geen expliciete NULL meer meegeven als naam (dat wordt "0")
+		praat_new (publish, U"");   // ppgb: geen expliciete NULL meer meegeven als naam (dat wordt "0")
 		praat_updateSelection ();
 	} catch (MelderError) {
 		Melder_flushError ();

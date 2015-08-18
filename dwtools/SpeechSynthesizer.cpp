@@ -510,13 +510,14 @@ Sound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, Text
 		espeak_SetSynthCallback (synthCallback);
 
 		my d_events = Table_createWithColumnNames (0, U"time type type-t t-pos length a-pos sample id uniq");
+		
+		#ifdef _WIN32
+                wchar_t *textW = Melder_peek32toW (text);
+                espeak_Synth (textW, wcslen (textW) + 1, 0, POS_CHARACTER, 0, synth_flags, NULL, me);
+		#else
+                espeak_Synth (text, str32len (text) + 1, 0, POS_CHARACTER, 0, synth_flags, NULL, me);
+		#endif
 
-#ifdef _WIN32
-		wchar_t *textW = Melder_peek32toW (text);
-		espeak_Synth (textW, wcslen (textW) + 1, 0, POS_CHARACTER, 0, synth_flags, NULL, me);
-#else
-		espeak_Synth (text, str32len (text) + 1, 0, POS_CHARACTER, 0, synth_flags, NULL, me);
-#endif
 		espeak_Terminate ();
 		autoSound thee = buffer_to_Sound (my d_wav, my d_numberOfSamples, my d_internalSamplingFrequency);
 

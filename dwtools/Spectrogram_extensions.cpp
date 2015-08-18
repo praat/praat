@@ -135,8 +135,8 @@ static void NUMinverseCosineTransform (double *x, double *y, long n, double **co
 	}
 }
 
-/* Precondition: 1. CC object has been created but individual frames not yest initialized
- *              2. Domains and number of frames conform
+/* Precondition: 1. CC object has been created but individual frames not yet initialized
+ *               2. Domains and number of frames conform
  * Steps:
  * 1. transform power-spectra to dB-spectra
  * 2. cosine transform of dB-spectrum
@@ -212,6 +212,7 @@ MFCC MelSpectrogram_to_MFCC (MelSpectrogram me, long numberOfCoefficients) {
 			numberOfCoefficients = my ny - 1;
 		}
 		numberOfCoefficients = numberOfCoefficients > my ny - 1 ? my ny - 1 : numberOfCoefficients;
+		// 20130220 new interpretation of maximumNumberOfCoefficients necessary for inverse transform 
 		autoMFCC thee = MFCC_create (my xmin, my xmax, my nx, my dx, my x1, my ny - 1, my ymin, my ymax);
 		BandFilterSpectrogram_into_CC (me, thee.peek(), numberOfCoefficients);
 		return thee.transfer();
