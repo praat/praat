@@ -209,11 +209,11 @@ FORM (CrossCorrelationTable_createSimple, U"Create simple CrossCorrelationTable"
 	WORD (U"Name", U"ct")
 	SENTENCE (U"Cross correlations", U"1.0 0.0 1.0")
 	SENTENCE (U"Centroid", U"0.0 0.0")
-	POSITIVE (U"Number of samples", U"100.0")   // ppgb: wat is het punt van dit een real te laten zijn, als je het meteen omzet in een integer?
+	NATURAL (U"Number of samples", U"100")
 	OK
 DO
 	praat_new (CrossCorrelationTable_createSimple (GET_STRING (U"Cross correlations"), GET_STRING (U"Centroid"),
-		(long) floor (GET_REAL (U"Number of samples"))), GET_STRING (U"Name"));
+		GET_INTEGER (U"Number of samples")), GET_STRING (U"Name"));
 END
 
 FORM (MixingMatrix_createSimple, U"Create simple MixingMatrix", 0)
@@ -258,8 +258,9 @@ DIRECT (CrossCorrelationTable_to_CrossCorrelationTables)
 			nrows = my numberOfRows;
 			ncols = my numberOfColumns;
 		}
-		if (my numberOfRows != nrows || my numberOfColumns != ncols) Melder_throw (U"Dimensions of table ",
-			IOBJECT, U" differs from the rest.");
+		if (my numberOfRows != nrows || my numberOfColumns != ncols) {
+			Melder_throw (U"Dimensions of table ", IOBJECT, U" differs from the rest.");
+		}
 		autoCrossCorrelationTable myc = Data_copy (me);
 		Collection_addItem (thee.peek(), myc.transfer());
 	}

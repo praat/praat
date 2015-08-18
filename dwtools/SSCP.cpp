@@ -1556,7 +1556,7 @@ void Covariance_difference (Covariance me, Covariance thee, double *prob, double
 	}
 
 	double l = (numberOfObservations - 1) * fabs (ln_thee - ln_me + trace - p);
-	*chisq = l * labs (1 - (2 * p + 1 - 2 / (p + 1)) / (numberOfObservations - 1) / 6);   // ppgb CHECK fabs versus labs
+	*chisq = l * fabs (1 - (2 * p + 1 - 2 / (p + 1)) / (numberOfObservations - 1) / 6);  // ppgb CHECK fabs versus labs
 	*ndf = p * (p + 1) / 2;
 	*prob = NUMchiSquareQ (*chisq, *ndf);
 }

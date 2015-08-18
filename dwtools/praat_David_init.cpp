@@ -3968,9 +3968,7 @@ DO
 		(m1 ? m2 : m1) = me;
 	}
 	Melder_assert (m1 && m2);
-	praat_new (Matrices_to_DTW (m1, m2, begin, end, slope,
-		(int) floor (GET_REAL (U"Distance metric"))),   // ppgb: afronding! Kan dat goed zijn?
-		m1->name, U"_", m2->name);
+	praat_new (Matrices_to_DTW (m1, m2, begin, end, slope, GET_REAL (U"Distance metric")), m1->name, U"_", m2->name);
 END
 
 FORM (Matrix_to_Pattern, U"Matrix: To Pattern", 0)
@@ -3980,6 +3978,92 @@ DO
 	LOOP {
 		iam (Matrix);
 		praat_new (Matrix_to_Pattern (me, GET_INTEGER (U"Join")), my name);
+	}
+END
+
+/**** Filterbank (deprecated) *******/
+
+DIRECT (FilterBank_getHighestFrequency)
+	LOOP {
+		iam (FilterBank);
+		Melder_information (my ymax, U" ", my v_getFrequencyUnit ());
+	}
+END
+
+DIRECT (FilterBank_getLowestFrequency)
+	LOOP {
+		iam (FilterBank);
+		Melder_information (my ymin, U" ", my v_getFrequencyUnit ());
+	}
+END
+
+DIRECT (FilterBank_getNumberOfFrequencies)
+	LOOP {
+		iam (FilterBank);
+		Melder_information (my ny);
+	}
+END
+
+DIRECT (FilterBank_getFrequencyDistance)
+	LOOP {
+		iam (FilterBank);
+		Melder_information (my dy, U" ", my v_getFrequencyUnit ());
+	}
+END
+
+FORM (FilterBank_getXofColumn, U"Get time of column", 0)
+	NATURAL (U"Column number", U"1")
+	OK
+DO
+	LOOP {
+		iam (FilterBank);
+		Melder_information (Matrix_columnToX (me, GET_INTEGER (U"Column number")));
+	}
+END
+
+FORM (FilterBank_getFrequencyOfRow, U"Get frequency of row", 0)
+	NATURAL (U"Row number", U"1")
+	OK
+DO
+	LOOP {
+		iam (FilterBank);
+		Melder_information (Matrix_rowToY (me, GET_INTEGER (U"Row number")), U" ", my v_getFrequencyUnit ());
+	}
+END
+
+FORM (FilterBank_getValueInCell, U"Get value in cell", 0)
+	POSITIVE (U"Time (s)", U"0.5")
+	POSITIVE (U"Frequency", U"1")
+	OK
+DO
+	double t = GET_REAL (U"Time");
+	double f = GET_REAL (U"Frequency");
+	LOOP {
+		iam (FilterBank);
+		if (f < my ymin || f > my ymax) {
+			Melder_throw (U"Frequency out of range.");
+		}
+		if (t < my xmin || t > my xmax) {
+			Melder_throw (U"Time out of range.");
+		}
+		long col = Matrix_xToNearestColumn (me, t);
+		if (col < 1) {
+			col = 1;
+		}
+		if (col > my nx) {
+			col = my nx;
+		}
+		long row = Matrix_yToNearestRow (me, f);
+		if (row < 1) {
+			row = 1;
+		}
+		if (row > my ny) {
+			row = my ny;
+		}
+		double ta = Matrix_columnToX (me, col);
+		double fa = Matrix_rowToY (me, row);
+		Melder_information (my z[row][col], U" (delta t: ", ta - t, U" f: ",
+		fa - f, U")");
 	}
 END
 
@@ -5296,7 +5380,14 @@ DIRECT (Praat_ReportFloatingPointProperties)
 	MelderInfo_writeLine (U"Overflow threshold (= (1 - eps) * radix ^ expmax): ", NUMfpp -> rmax);
 	MelderInfo_close ();
 END
-
+/*
+#ifdef USE_PULSEAUDIO
+void pulseAudioServer_report (void);
+DIRECT (Praat_ReportSoundServerProperties)
+	pulseAudioServer_report ();
+END
+#endif
+*/
 FORM (Praat_getTukeyQ, U"Get TukeyQ", 0)
 	REAL (U"Critical value", U"2.0")
 	NATURAL (U"Number of means", U"3")
@@ -7998,45 +8089,59 @@ static void praat_BandFilterSpectrogram_draw_init (ClassInfo klas) {
 void praat_Matrixft_query_init (ClassInfo klas);
 void praat_Matrixft_query_init (ClassInfo klas) {
 	praat_TimeFrameSampled_query_init (klas);
-	praat_addAction1 (klas, 1, U"Get time from column...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_BandFilterSpectrogram_getXofColumn);
-	praat_addAction1 (klas, 1, U"-- frequencies --", 0, praat_DEPTH_1 + praat_HIDDEN, 0);
-	praat_addAction1 (klas, 1, U"Get lowest frequency", 0, praat_DEPTH_1 + praat_HIDDEN, DO_BandFilterSpectrogram_getLowestFrequency);
-	praat_addAction1 (klas, 1, U"Get highest frequency", 0, praat_DEPTH_1 + praat_HIDDEN, DO_BandFilterSpectrogram_getHighestFrequency);
-	praat_addAction1 (klas, 1, U"Get number of frequencies", 0, praat_DEPTH_1 + praat_HIDDEN, DO_BandFilterSpectrogram_getNumberOfFrequencies);
-	praat_addAction1 (klas, 1, U"Get frequency distance", 0, praat_DEPTH_1 + praat_HIDDEN, DO_BandFilterSpectrogram_getFrequencyDistance);
-	praat_addAction1 (klas, 1, U"Get frequency from row...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_BandFilterSpectrogram_getFrequencyOfRow);
-	praat_addAction1 (klas, 1, U"-- get value --", 0, praat_DEPTH_1 + praat_HIDDEN, 0);
-	praat_addAction1 (klas, 1, U"Get value in cell...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_BandFilterSpectrogram_getValueInCell);
+	praat_addAction1 (klas, 1, U"Get time from column...", 0, praat_DEPTH_1, DO_BandFilterSpectrogram_getXofColumn);
+	praat_addAction1 (klas, 1, U"-- frequencies --", 0, praat_DEPTH_1, 0);
+	praat_addAction1 (klas, 1, U"Get lowest frequency", 0, praat_DEPTH_1, DO_BandFilterSpectrogram_getLowestFrequency);
+	praat_addAction1 (klas, 1, U"Get highest frequency", 0, praat_DEPTH_1, DO_BandFilterSpectrogram_getHighestFrequency);
+	praat_addAction1 (klas, 1, U"Get number of frequencies", 0, praat_DEPTH_1, DO_BandFilterSpectrogram_getNumberOfFrequencies);
+	praat_addAction1 (klas, 1, U"Get frequency distance", 0, praat_DEPTH_1, DO_BandFilterSpectrogram_getFrequencyDistance);
+	praat_addAction1 (klas, 1, U"Get frequency from row...", 0, praat_DEPTH_1, DO_BandFilterSpectrogram_getFrequencyOfRow);
+	praat_addAction1 (klas, 1, U"-- get value --", 0, praat_DEPTH_1, 0);
+	praat_addAction1 (klas, 1, U"Get value in cell...", 0, praat_DEPTH_1, DO_BandFilterSpectrogram_getValueInCell);
+}
+
+void praat_Matrixtype_query_init (ClassInfo klas);
+void praat_Matrixtype_query_init (ClassInfo klas) {
+	praat_TimeFrameSampled_query_init (klas);
+	praat_addAction1 (klas, 1, U"Get time from column...", 0, praat_DEPTH_1, DO_FilterBank_getXofColumn);
+	praat_addAction1 (klas, 1, U"-- frequencies --", 0, praat_DEPTH_1, 0);
+	praat_addAction1 (klas, 1, U"Get lowest frequency", 0, praat_DEPTH_1, DO_FilterBank_getLowestFrequency);
+	praat_addAction1 (klas, 1, U"Get highest frequency", 0, praat_DEPTH_1, DO_FilterBank_getHighestFrequency);
+	praat_addAction1 (klas, 1, U"Get number of frequencies", 0, praat_DEPTH_1, DO_FilterBank_getNumberOfFrequencies);
+	praat_addAction1 (klas, 1, U"Get frequency distance", 0, praat_DEPTH_1, DO_FilterBank_getFrequencyDistance);
+	praat_addAction1 (klas, 1, U"Get frequency from row...", 0, praat_DEPTH_1, DO_FilterBank_getFrequencyOfRow);
+	praat_addAction1 (klas, 1, U"-- get value --", 0, praat_DEPTH_1, 0);
+	praat_addAction1 (klas, 1, U"Get value in cell...", 0, praat_DEPTH_1, DO_FilterBank_getValueInCell);
 }
 
 static void praat_FilterBank_query_init (ClassInfo klas);
 static void praat_FilterBank_query_init (ClassInfo klas) {
 	praat_addAction1 (klas, 0, QUERY_BUTTON, 0, 0, 0);
-	praat_Matrixft_query_init (klas);
-	praat_addAction1 (klas, 0, U"-- frequency scales --", 0, praat_DEPTH_1 + praat_HIDDEN, 0);
-	praat_addAction1 (klas, 1, U"Get frequency in Hertz...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_FilterBank_getFrequencyInHertz);
-	praat_addAction1 (klas, 1, U"Get frequency in Bark...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_FilterBank_getFrequencyInBark);
-	praat_addAction1 (klas, 1, U"Get frequency in mel...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_FilterBank_getFrequencyInMel);
+	praat_Matrixtype_query_init (klas);
+	praat_addAction1 (klas, 0, U"-- frequency scales --", 0, praat_DEPTH_1, 0);
+	praat_addAction1 (klas, 1, U"Get frequency in Hertz...", 0, praat_DEPTH_1, DO_FilterBank_getFrequencyInHertz);
+	praat_addAction1 (klas, 1, U"Get frequency in Bark...", 0, praat_DEPTH_1, DO_FilterBank_getFrequencyInBark);
+	praat_addAction1 (klas, 1, U"Get frequency in mel...", 0, praat_DEPTH_1, DO_FilterBank_getFrequencyInMel);
 }
 
 static void praat_FilterBank_modify_init (ClassInfo klas);
 static void praat_FilterBank_modify_init (ClassInfo klas) {
 	// praat_addAction1 (klas, 0, MODIFY_BUTTON, 0, 0, 0); 
-	praat_addAction1 (klas, 0, U"Equalize intensities...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_FilterBank_equalizeIntensities);
+	praat_addAction1 (klas, 0, U"Equalize intensities...", 0, praat_DEPTH_1, DO_FilterBank_equalizeIntensities);
 }
 
 static void praat_FilterBank_draw_init (ClassInfo klas);
 static void praat_FilterBank_draw_init (ClassInfo klas) {
 	// praat_addAction1 (klas, 0, DRAW_BUTTON, 0, 0, 0);
-	praat_addAction1 (klas, 0, U"Draw filters...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_FilterBank_drawFilters);
-	praat_addAction1 (klas, 0, U"Draw one contour...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_FilterBank_drawOneContour);
-	praat_addAction1 (klas, 0, U"Draw contours...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_FilterBank_drawContours);
-	praat_addAction1 (klas, 0, U"Paint image...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_FilterBank_paintImage);
-	praat_addAction1 (klas, 0, U"Paint contours...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_FilterBank_paintContours);
-	praat_addAction1 (klas, 0, U"Paint cells...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_FilterBank_paintCells);
-	praat_addAction1 (klas, 0, U"Paint surface...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_FilterBank_paintSurface);
-	praat_addAction1 (klas, 0, U"-- frequency scales --", 0, praat_DEPTH_1 + praat_HIDDEN, 0);
-	praat_addAction1 (klas, 0, U"Draw frequency scales...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_FilterBank_drawFrequencyScales);
+	praat_addAction1 (klas, 0, U"Draw filters...", 0, praat_DEPTH_1, DO_FilterBank_drawFilters);
+	praat_addAction1 (klas, 0, U"Draw one contour...", 0, praat_DEPTH_1, DO_FilterBank_drawOneContour);
+	praat_addAction1 (klas, 0, U"Draw contours...", 0, praat_DEPTH_1, DO_FilterBank_drawContours);
+	praat_addAction1 (klas, 0, U"Paint image...", 0, praat_DEPTH_1, DO_FilterBank_paintImage);
+	praat_addAction1 (klas, 0, U"Paint contours...", 0, praat_DEPTH_1, DO_FilterBank_paintContours);
+	praat_addAction1 (klas, 0, U"Paint cells...", 0, praat_DEPTH_1, DO_FilterBank_paintCells);
+	praat_addAction1 (klas, 0, U"Paint surface...", 0, praat_DEPTH_1, DO_FilterBank_paintSurface);
+	praat_addAction1 (klas, 0, U"-- frequency scales --", 0, praat_DEPTH_1, 0);
+	praat_addAction1 (klas, 0, U"Draw frequency scales...", 0, praat_DEPTH_1, DO_FilterBank_drawFrequencyScales);
 }
 
 static void praat_FilterBank_all_init (ClassInfo klas);
@@ -8232,9 +8337,9 @@ void praat_uvafon_David_init () {
 
 	praat_addAction1 (classBarkFilter, 0, U"BarkFilter help", 0, 0, DO_BarkFilter_help);
 	praat_FilterBank_all_init (classBarkFilter);	// deprecated 2014
-	praat_addAction1 (classBarkFilter, 0, U"Draw spectrum (slice)...", U"Draw filters...", praat_DEPTH_1 + praat_HIDDEN, DO_BarkFilter_drawSpectrum);	// deprecated 2014
-	praat_addAction1 (classBarkFilter, 1, U"Draw filter functions...", U"Draw filters...", praat_DEPTH_1 + praat_HIDDEN, DO_BarkFilter_drawSekeyHansonFilterFunctions);	// deprecated 2014
-	praat_addAction1 (classBarkFilter, 0, U"Paint...", U"Draw filters...", praat_DEPTH_1 + praat_HIDDEN, DO_BarkFilter_paint);	// deprecated 2014
+	praat_addAction1 (classBarkFilter, 0, U"Draw spectrum (slice)...", U"Draw filters...", praat_DEPTH_1, DO_BarkFilter_drawSpectrum);	// deprecated 2014
+	praat_addAction1 (classBarkFilter, 1, U"Draw filter functions...", U"Draw filters...", praat_DEPTH_1, DO_BarkFilter_drawSekeyHansonFilterFunctions);	// deprecated 2014
+	praat_addAction1 (classBarkFilter, 0, U"Paint...", U"Draw filters...", praat_DEPTH_1, DO_BarkFilter_paint);	// deprecated 2014
 	praat_addAction1 (classBarkFilter, 0, U"To BarkSpectrogram", 0, 0, DO_BarkFilter_to_BarkSpectrogram);
 
 	praat_addAction1 (classBarkSpectrogram, 0, U"BarkSpectrogram help", 0, 0, DO_BarkSpectrogram_help);

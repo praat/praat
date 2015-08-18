@@ -1,6 +1,6 @@
 /* praat_KlattGrid_init.cpp
  *
- * Copyright (C) 2009-2014 David Weenink
+ * Copyright (C) 2009-2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,24 +109,24 @@ static void KlattGrid_PlayOptions_addCommonFields (void *dia, int sound) {
 	OPTIONMENU (U"Filter options", 1)
 	OPTION (U"Cascade")
 	OPTION (U"Parallel")
-	REAL (U"left Oral formant range", U"1")
-	REAL (U"right Oral formant range", U"5")
-	REAL (U"left Nasal formant range", U"1")
-	REAL (U"right Nasal formant range", U"1")
-	REAL (U"left Nasal antiformant range", U"1")
-	REAL (U"right Nasal antiformant range", U"1")
+	INTEGER (U"left Oral formant range", U"1")
+	INTEGER (U"right Oral formant range", U"5")
+	INTEGER (U"left Nasal formant range", U"1")
+	INTEGER (U"right Nasal formant range", U"1")
+	INTEGER (U"left Nasal antiformant range", U"1")
+	INTEGER (U"right Nasal antiformant range", U"1")
 	//LABEL (U"", U"Coupling options")
-	REAL (U"left Tracheal formant range", U"1")
-	REAL (U"right Tracheal formant range", U"1")
-	REAL (U"left Tracheal antiformant range", U"1")
-	REAL (U"right Tracheal antiformant range", U"1")
-	REAL (U"left Delta formant range", U"1")
-	REAL (U"right Delta formant range", U"1")
-	REAL (U"left Delta bandwidth range", U"1")
-	REAL (U"right Delta bandwidth range", U"1")
+	INTEGER (U"left Tracheal formant range", U"1")
+	INTEGER (U"right Tracheal formant range", U"1")
+	INTEGER (U"left Tracheal antiformant range", U"1")
+	INTEGER (U"right Tracheal antiformant range", U"1")
+	INTEGER (U"left Delta formant range", U"1")
+	INTEGER (U"right Delta formant range", U"1")
+	INTEGER (U"left Delta bandwidth range", U"1")
+	INTEGER (U"right Delta bandwidth range", U"1")
 	//LABEL (U"", U"Frication options")
-	REAL (U"left Frication formant range", U"1")
-	REAL (U"right Frication formant range", U"6")
+	INTEGER (U"left Frication formant range", U"1")
+	INTEGER (U"right Frication formant range", U"6")
 	BOOLEAN (U"Frication bypass", 1)
 }
 
@@ -143,24 +143,24 @@ static void KlattGrid_PlayOptions_getCommonFields (void *dia, int sound, KlattGr
 	KlattGrid_PhonationGridPlayOptions_getCommonFields (dia, thee);
 	VocalTractGridPlayOptions pv = thy vocalTract -> options;
 	pv -> filterModel = GET_INTEGER (U"Filter options") == 1 ? KlattGrid_FILTER_CASCADE : KlattGrid_FILTER_PARALLEL;
-	pv -> startOralFormant = GET_REAL (U"left Oral formant range");
-	pv -> endOralFormant  = GET_REAL (U"right Oral formant range");
-	pv -> startNasalFormant = GET_REAL (U"left Nasal formant range");
-	pv -> endNasalFormant = GET_REAL (U"right Nasal formant range");
-	pv -> startNasalAntiFormant = GET_REAL (U"left Nasal antiformant range");
-	pv -> endNasalAntiFormant = GET_REAL (U"right Nasal antiformant range");
+	pv -> startOralFormant = GET_INTEGER (U"left Oral formant range");
+	pv -> endOralFormant  = GET_INTEGER (U"right Oral formant range");
+	pv -> startNasalFormant = GET_INTEGER (U"left Nasal formant range");
+	pv -> endNasalFormant = GET_INTEGER (U"right Nasal formant range");
+	pv -> startNasalAntiFormant = GET_INTEGER (U"left Nasal antiformant range");
+	pv -> endNasalAntiFormant = GET_INTEGER (U"right Nasal antiformant range");
 	CouplingGridPlayOptions pc = thy coupling -> options;
-	pc -> startTrachealFormant = GET_REAL (U"left Tracheal formant range");
-	pc -> endTrachealFormant = GET_REAL (U"right Tracheal formant range");
-	pc -> startTrachealAntiFormant = GET_REAL (U"left Tracheal antiformant range");
-	pc -> endTrachealAntiFormant = GET_REAL (U"right Tracheal antiformant range");
-	pc -> startDeltaFormant = GET_REAL (U"left Delta formant range");
-	pc -> endDeltaFormant = GET_REAL (U"right Delta formant range");
-	pc -> startDeltaBandwidth = GET_REAL (U"left Delta bandwidth range");
-	pc -> endDeltaFormant = GET_REAL (U"right Delta bandwidth range");
+	pc -> startTrachealFormant = GET_INTEGER (U"left Tracheal formant range");
+	pc -> endTrachealFormant = GET_INTEGER (U"right Tracheal formant range");
+	pc -> startTrachealAntiFormant = GET_INTEGER (U"left Tracheal antiformant range");
+	pc -> endTrachealAntiFormant = GET_INTEGER (U"right Tracheal antiformant range");
+	pc -> startDeltaFormant = GET_INTEGER (U"left Delta formant range");
+	pc -> endDeltaFormant = GET_INTEGER (U"right Delta formant range");
+	pc -> startDeltaBandwidth = GET_INTEGER (U"left Delta bandwidth range");
+	pc -> endDeltaFormant = GET_INTEGER (U"right Delta bandwidth range");
 	FricationGridPlayOptions pf = thy frication -> options;
-	pf -> startFricationFormant = GET_REAL (U"left Frication formant range");
-	pf -> endFricationFormant = GET_REAL (U"right Frication formant range");
+	pf -> startFricationFormant = GET_INTEGER (U"left Frication formant range");
+	pf -> endFricationFormant = GET_INTEGER (U"right Frication formant range");
 	pf -> bypass = GET_INTEGER (U"Frication bypass");
 }
 

@@ -898,7 +898,7 @@ void DTW_drawDistancesAlongPath (DTW me, Graphics g, double xmin, double xmax, d
 /*
 	metric = 1...n (sum (a_i^n))^(1/n)
 */
-DTW Matrices_to_DTW (I, thou, int matchStart, int matchEnd, int slope, int metric) {
+DTW Matrices_to_DTW (I, thou, int matchStart, int matchEnd, int slope, double metric) {
 	try {
 		iam (Matrix); thouart (Matrix);
 
@@ -942,8 +942,7 @@ DTW Matrices_to_DTW (I, thou, int matchStart, int matchEnd, int slope, int metri
 	}
 }
 
-DTW Spectrograms_to_DTW (Spectrogram me, Spectrogram thee, int matchStart,
-                         int matchEnd, int slope, int metric) {
+DTW Spectrograms_to_DTW (Spectrogram me, Spectrogram thee, int matchStart, int matchEnd, int slope, double metric) {
 	try {
 		if (my xmin != thy xmin || my ymax != thy ymax || my ny != thy ny) {
 			Melder_throw (U"The number of frequencies and/or frequency ranges do not match.");

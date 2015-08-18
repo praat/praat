@@ -69,8 +69,6 @@
 #include "Manipulation.h"
 #include "NUM2.h"
 
-//#include <pulse/simple.h>
-//#include <pulse/error.h>
 
 #define MAX_T  0.02000000001   /* Maximum interval between two voice pulses (otherwise voiceless). */
 
@@ -1904,17 +1902,17 @@ static void Sound_findIntermediatePoint_bs (Sound me, long ichannel, long isampl
 		// Only thy x1 and thy dx have changed; It seems we don't have to recompile.
 		struct Formula_Result result;
 		Formula_run (ichannel, 2, & result);
-		bool current = ( result.result.numericResult != 0.0 );
+		bool current = (result.result.numericResult != 0.0);
 
 		dx /= 2;
-		if ( (left && current) || (! left && ! current)) {
+		if ((left && current) || (! left && ! current)) {
 			xleft = xmid;
 			left = current;
 			for (long channel = 1; channel <= my ny; channel++) {
 				thy z[channel][1] = thy z[channel][2];
 			}
 			thy x1 = xleft;
-		} else if ( (left && ! current) || (!left && current)) {
+		} else if ((left && ! current) || (!left && current)) {
 			xright = xmid;
 			right = current;
 			for (long channel = 1; channel <= my ny; channel++) {
@@ -2001,7 +1999,7 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 			double xb = Sampled_indexToX (me, ixmin), yb = my z[channel][ixmin], xe, ye;
 			for (long ix = ixmin; ix <= ixmax; ix++) {
 				Formula_run (channel, ix, & result);
-				current = ( result.result.numericResult != 0.0 ); // true means draw
+				current = (result.result.numericResult != 0.0 ); // true means draw
 				if (previous && not current) { // leaving drawing segment
 					if (ix != ixmin) {
 						if (ix - istart > 1) {
