@@ -2,7 +2,7 @@
 #define _DTW_h_
 /* DTW.h
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,10 +109,9 @@ Matrix DTW_to_Matrix_distances(DTW me);
 Matrix DTW_to_Matrix_cummulativeDistances (DTW me, double sakoeChibaBand, int slope);
 Matrix DTW_and_Polygon_to_Matrix_cummulativeDistances (DTW me, Polygon thee, int localSlope);
 
-DTW Matrices_to_DTW (I, thou, int matchStart, int matchEnd, int slope, int metric);
+DTW Matrices_to_DTW (I, thou, int matchStart, int matchEnd, int slope, double metric);
 
-DTW Spectrograms_to_DTW (Spectrogram me, Spectrogram thee, int matchStart,
-	int matchEnd, int slope, int metric);
+DTW Spectrograms_to_DTW (Spectrogram me, Spectrogram thee, int matchStart, int matchEnd, int slope, double metric);
 
 DTW Pitches_to_DTW (Pitch me, Pitch thee, double vuv_costs, double time_weight, int matchStart, int matchEnd, int slope);
 

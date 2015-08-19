@@ -50,17 +50,22 @@
 #define FilterBank_BARK  2
 #define FilterBank_MEL   3
 
-// FilterBank, BarkFilter, MelFilter are deprecated as op october 2014.
+// FilterBank, BarkFilter, MelFilter are deprecated as of october 2014.
 // New types are BandFilterSpectrogram, BarkSpectrogram and MelSpectrogram.
-// This interface is maintained because older scripts stiil have to work.
+// This interface is maintained because older scripts still have to work.
 
 Thing_define (FilterBank, Matrix) {
-	virtual int v_getFrequencyScale () { return FilterBank_HERTZ; }
+	virtual int v_getFrequencyScale () 
+		{ return FilterBank_HERTZ; }
+	virtual const char32 *v_getFrequencyUnit () 
+		{ return U"Hz"; } // compatibility with BandFilterSpectrogram
 };
 
 Thing_define (BarkFilter, FilterBank) {
 	int v_getFrequencyScale ()
 		override { return FilterBank_BARK; }
+	const char32 *v_getFrequencyUnit ()
+		override { return U"bark"; }
 };
 
 /*
@@ -98,6 +103,8 @@ BarkFilter Matrix_to_BarkFilter (I);
 Thing_define (MelFilter, FilterBank) {
 	int v_getFrequencyScale ()
 		override { return FilterBank_MEL; }
+	const char32 *v_getFrequencyUnit ()
+		override { return U"mel"; }
 };
 
 /*
@@ -121,12 +128,8 @@ void MelFilter_drawFilterFunctions (MelFilter me, Graphics g,
 MFCC MelFilter_to_MFCC (MelFilter me, long numberOfCoefficients);
 
 Thing_define (FormantFilter, FilterBank) {
-	// overridden methods:
-	protected:
-		//virtual int v_getFrequencyScale ();   // David, is dit correct? ja
-	// new methods:
-	public:
-		//virtual void v_drawFilterFunction (int from, int to, void *dwrawclosure);   // David, is dit correct? ja
+	const char32 *v_getFrequencyUnit ()
+		override { return U"Hz"; }
 };
 
 FormantFilter FormantFilter_create (double tmin, double tmax, long nt,

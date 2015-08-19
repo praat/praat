@@ -1,6 +1,6 @@
 /* MDS.cpp
  *
- * Copyright (C) 1993-2014 David Weenink
+ * Copyright (C) 1993-2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2639,21 +2639,17 @@ void ScalarProducts_Configuration_Salience_indscal (ScalarProducts sp, Configura
 		*out1 = x.transfer(); *out2 = w.transfer();
 
 		if (showProgress) {
-			MelderInfo_open ();
-			MelderInfo_writeLine (U"**************** INDSCAL results on Distances "
-			                      U"*******************\n\n", Thing_className (sp),
-			                      U"number of objects: ",  nSources);
+			MelderInfo_writeLine (U"**************** INDSCAL results on Distances *******************\n\n", 
+				Thing_className (sp), U"number of objects: ", nSources);
 			for (long i = 1; i <= nSources; i++) {
 				MelderInfo_writeLine (U"  ", Thing_getName ( (Thing) sp -> item[i]));
 			}
 			if (nZeros > 0) {
-				MelderInfo_writeLine (U"WARNING: ", nZeros,  U" zero weight",
-				                       (nZeros > 1 ? U"s" : U""), U"!");
+				MelderInfo_writeLine (U"WARNING: ", nZeros,  U" zero weight", (nZeros > 1 ? U"s" : U""), U"!");
 			}
-			MelderInfo_writeLine (U"\n\nVariance Accounted For = ", *vaf,
-								  U"\nThe optimal configuration was reached in ",
-								  (iter > numberOfIterations ? numberOfIterations : iter), U" iterations.");
-			MelderInfo_close ();
+			MelderInfo_writeLine (U"\n\nVariance Accounted For = ", *vaf, U"\nThe optimal configuration was reached in ",
+				(iter > numberOfIterations ? numberOfIterations : iter), U" iterations.");
+			MelderInfo_drain();
 		}
 		if (showProgress) {
 			Melder_progress (1.0);
@@ -2727,7 +2723,6 @@ void Dissimilarities_Configuration_Salience_indscal (Dissimilarities dissims, Co
 		*out1 = x.transfer(); *out2 = w.transfer();
 
 		if (showProgress) {
-			MelderInfo_open ();
 			MelderInfo_writeLine (U"**************** INDSCAL with monotone regression *******************");
 			MelderInfo_writeLine (Thing_className (dissims));
 			MelderInfo_writeLine (U"Number of objects: ", nSources);
@@ -2740,7 +2735,7 @@ void Dissimilarities_Configuration_Salience_indscal (Dissimilarities dissims, Co
 			MelderInfo_writeLine (U"Variance Accounted For: ", *vaf);
 			MelderInfo_writeLine (U"Based on MONOTONE REGRESSION");
 			MelderInfo_writeLine (U"number of iterations: ", (iter > numberOfIterations ?	numberOfIterations : iter));
-			MelderInfo_close ();
+			MelderInfo_drain();
 		}
 		if (showProgress) {
 			Melder_progress (1.0);

@@ -1,6 +1,6 @@
 # Makefile of the library "dwtools"
 # David Weenink, 22 February 2010
-# djmw 20141104 Latest modification
+# djmw 20150803 Latest modification
 
 include ../makefile.defs
 
@@ -33,6 +33,7 @@ OBJECTS = Activation.o AffineTransform.o \
 	Minimizers.o \
 	Matrix_extensions.o \
 	Matrix_Categories.o MDS.o \
+	OptimalCeilingTier.o OptimalCeilingTierEditor.o \
 	Pattern.o PCA.o \
 	Pitch_extensions.o Polynomial.o \
 	Polygon_extensions.o Procrustes.o \

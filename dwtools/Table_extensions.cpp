@@ -3500,13 +3500,9 @@ void Table_printAsAnovaTable (Table me) {
 		for (long j = 2; j <= 6; j++) {
 			double value = row -> cells[j].number;
 			if (NUMdefined (value)) {
-				MelderString_append (&s,
-					Melder_pad (width[j], Melder_half (value)),
-					j == 6 ? U"" : U"\t");
+				MelderString_append (&s, Melder_pad (width[j], Melder_single (value)), j == 6 ? U"" : U"\t");
 			} else {
-				MelderString_append (&s,
-					Melder_pad (width[j], U""),
-					j == 6 ? U"" : U"\t");
+				MelderString_append (&s, Melder_pad (width[j], U""), j == 6 ? U"" : U"\t");
 			}
 		}
 		MelderInfo_writeLine (s.string);

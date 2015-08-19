@@ -2,7 +2,7 @@
 #define _DataModeler_h_
 /* DataModeler.h
  *
- * Copyright (C) 2014 David Weenink
+ * Copyright (C) 2014-2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,11 +45,16 @@
 #define DataModeler_DATA_FROM_COPY3 4
 #define DataModeler_DATA_FROM_COPY4 5
 
-#define FormantModeler_DATA_FROM_LOWER 2
-#define FormantModeler_DATA_FROM_UPPER 3
+#define FormantModeler_NOSHIFT_TRACKS 0
+#define FormantModeler_UPSHIFT_TRACKS 1
+#define FormantModeler_DOWNSHIFT_TRACKS 2
+
+#define FormantModeler_DATA_FROM_LOWER 12
+#define FormantModeler_DATA_FROM_UPPER 13
 
 #include "Collection.h"
 #include "Pitch.h"
+#include "OptimalCeilingTier.h"
 #include "Sound_to_Formant.h"
 #include "SSCP.h"
 #include "Table.h"
@@ -63,9 +68,11 @@ Thing_define (PitchModeler, DataModeler) {
 	//     override;
 };
 
+
 void  DataModeler_init (DataModeler me, double xmin, double xmax, long numberOfDataPoints, long numberOfParameters, int type);
 
 DataModeler DataModeler_create (double xmin, double xmax, long numberOfDataPoints, long numberOfParameters, int type);
+DataModeler DataModeler_createSimple (double xmin, double xmax, long numberOfDataPoints, char32 *parameters, double gaussianNoiseStd, int type);
 
 void DataModeler_setBasisFunctions (DataModeler me, int type);
 
@@ -79,7 +86,7 @@ void DataModeler_drawTrack (DataModeler me, Graphics g, double xmin, double xmax
 
 void DataModeler_drawTrack_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, int estimated, long numberOfParameters, double horizontalOffset_mm);
 
-void DataModeler_drawOutliersMarked_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, int useSigmaY, double numberOfSigmas, char32 *mark, int marksFontSize, double horizontalOffset_mm);
+void DataModeler_drawOutliersMarked_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, double numberOfSigmas, int useSigmaY, char32 *mark, int marksFontSize, double horizontalOffset_mm);
 
 /* Get the y-value of the fitted function at x */
 
@@ -90,6 +97,7 @@ void DataModeler_fit (DataModeler me);
 // sigmaY used in fit or not.
 void DataModeler_setDataWeighing (DataModeler me, int useSigmaY);
 long DataModeler_getNumberOfFixedParameters (DataModeler me);
+void DataModeler_setParameterValue (DataModeler me, long index, double value, int status);
 void DataModeler_setParameterValueFixed (DataModeler me, long index, double value);
 void DataModeler_setParametersFree (DataModeler me, long fromIndex, long toIndex);
 double DataModeler_getParameterValue (DataModeler me, long index);
@@ -101,6 +109,7 @@ double DataModeler_estimateSigmaY (DataModeler me);
 
 void DataModeler_getExtremaY (DataModeler me, double *ymin, double *ymax);
 double DataModeler_getModelValueAtX (DataModeler me, double x);
+double DataModeler_getModelValueAtIndex (DataModeler me, long index);
 double DataModeler_getWeightedMean (DataModeler me);
 
 long DataModeler_getNumberOfInvalidDataPoints (DataModeler me);
@@ -112,7 +121,7 @@ void DataModeler_setDataPointSigma (DataModeler me, long index, double sigma);
 double DataModeler_getDataPointSigma (DataModeler me, long index);
 double DataModeler_getResidualSumOfSquares (DataModeler me, long *numberOfDataPoints);
 
-double *DataModeler_getZScores (DataModeler me, int useSigmaY);
+void DataModeler_getZScores (DataModeler me, int useSigmaY, double zscores[]);
 double DataModeler_getDegreesOfFreedom (DataModeler me);
 double DataModeler_getChiSquaredQ (DataModeler me, int useSigmaY, double *probability, double *ndf);
 double DataModeler_getCoefficientOfDetermination (DataModeler me, double *ssreg, double *sstot);
@@ -123,6 +132,9 @@ Covariance DataModeler_to_Covariance_parameters (DataModeler me);
 Table DataModeler_to_Table_zscores (DataModeler me, int useSigmaY);
 
 FormantModeler FormantModeler_create (double tmin, double tmax, long numberOfFormants, long numberOfDataPoints, long numberOfParameters);
+
+double FormantModeler_indexToTime (FormantModeler me, long index);
+
 void FormantModeler_fit (FormantModeler me);
 void FormantModeler_drawBasisFunction (FormantModeler me, Graphics g, double tmin, double tmax, double fmin, double fmax,
  	long iformant, long iterm, bool scaled, long numberOfPoints, int garnish);
@@ -142,7 +154,9 @@ void FormantModeler_drawTracks (FormantModeler me, Graphics g, double tmin, doub
 	 int estimated, long numberOfParameters, double horizontalOffset_mm, int garnish);
 
 void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, long fromTrack, long toTrack, double numberOfSigmas, int useSigmaY, char32 *mark, int marksFontSize, double horizontalOffset_mm, int garnish);
+void FormantModeler_drawCumulativeChiScores (FormantModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, int useSigmaY, int garnish);
 
+void FormantModeler_drawVariancesOfShiftedTracks (FormantModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, int shiftDirection, long fromFormant, long toFormant, int garnish);
 void FormantModeler_normalProbabilityPlot (FormantModeler me, Graphics g, long iformant, int useSigmaY, long numberOfQuantiles, double numberOfSigmas, int labelSize, const char32 *label, int garnish);
 
 Table FormantModeler_to_Table_zscores (FormantModeler me, int useSigmaY);
@@ -163,7 +177,7 @@ double FormantModeler_getParameterStandardDeviation ( FormantModeler me, long if
 double FormantModeler_getVarianceOfParameters (FormantModeler me, long fromFormant, long toFormant, long fromIndex, long toIndex, long *numberOfFreeParameters);
 int FormantModeler_getParameterStatus (FormantModeler me, long iformant, long index);
 
-long FormantModeler_getNumberOfDataPoints (FormantModeler me, long iformant);
+long FormantModeler_getNumberOfDataPoints (FormantModeler me);
 long FormantModeler_getNumberOfInvalidDataPoints (FormantModeler me, long iformant);
 
 void FormantModeler_setDataPointStatus (FormantModeler me, long iformant, long index, int status);
@@ -177,6 +191,8 @@ double FormantModeler_getDegreesOfFreedom (FormantModeler me, long iformant);
 long FormantModeler_getNumberOfTracks (FormantModeler me);
 
 double FormantModeler_getModelValueAtTime (FormantModeler me, long iformant, double time);
+double FormantModeler_getModelValueAtIndex (FormantModeler me, long iformant, long index);
+
 double FormantModeler_getWeightedMean (FormantModeler me, long iformant);
 
 double FormantModeler_getParameterValue (FormantModeler me, long iformant, long iparameter);
@@ -211,13 +227,6 @@ Formant Sound_to_Formant_interval_robust (Sound me, double startTime, double end
 
 double Sound_getOptimalFormantCeiling (Sound me, double startTime, double endTime, double windowLength, double timeStep, double minFreq, double maxFreq, long numberOfFrequencySteps, double preemphasisFrequency, long numberOfFormantTracks, long numberOfParametersPerTrack, int weighData, double numberOfSigmas, double power);
 
-double DataModeler_getDataPointWeight (DataModeler me, long iPoint, int useSigmaY );
-void DataModeler_drawBasisFunction_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
- 	long iterm, bool scale, long numberOfPoints);
-void DataModeler_setDataPointValueAndStatus (DataModeler me, long index, double value, int dataStatus);
-void FormantModeler_setDataPointValueAndStatus (FormantModeler me, long iformant, long index, double value, int dataStatus);
-void FormantModeler_speckle_inside (FormantModeler me, Graphics g, double xmin, double xmax, double fmax,
-	long fromTrack, long toTrack, int estimated, long numberOfParameters, int errorBars, double barWidth_mm, double horizontalOffset_mm);
-long FormantModeler_getNumberOfDataPoints (FormantModeler me);
+OptimalCeilingTier Sound_to_OptimalCeilingTier (Sound me, double windowLength, double timeStep, double minCeiling, double maxCeiling, long numberOfFrequencySteps, double preemphasisFrequency, double smoothingWindow, long numberOfFormantTracks, long numberOfParametersPerTrack, int weighData, double numberOfSigmas, double power); 
 
 #endif /* _DataModeler_h_ */

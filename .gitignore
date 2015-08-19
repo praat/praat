@@ -10,5 +10,9 @@ DerivedData
 # OSX-specific files
 .DS_Store
 
+# editor temporaries
+*.kate-swp
+*.orig
+
 # Praat temporary files
 *kanweg*
