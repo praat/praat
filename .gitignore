@@ -12,6 +12,7 @@ DerivedData
 
 # editor temporaries
 *.kate-swp
+*.orig
 
 # Praat temporary files
 *kanweg*
