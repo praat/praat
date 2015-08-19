@@ -1511,7 +1511,7 @@ void praat_DataModeler_init (void) {
 	praat_addAction1 (classSound, 0, U"To Formant (interval, constrained)...", U"To Formant (interval)...",
 		praat_DEPTH_2 | praat_HIDDEN, DO_Sound_to_Formant_interval_constrained);
 
-	praat_addAction1 (classSound, 0, U"To OptimalCeilingTier...", 0, praat_DEPTH_1 | praat_HIDDEN, DO_Sound_to_OptimalCeilingTier);
+	praat_addAction1 (classSound, 0, U"To OptimalCeilingTier...", U"To Formant (interval, constrained)...", praat_DEPTH_2 | praat_HIDDEN, DO_Sound_to_OptimalCeilingTier);
 	
 	praat_addAction1 (classSound, 0, U"To Formant (interval, constrained, robust)...", U"To Formant (interval, constrained)...", 
 		praat_DEPTH_2 | praat_HIDDEN, DO_Sound_to_Formant_interval_constrained_robust);
