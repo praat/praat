@@ -29,29 +29,29 @@ Thing_define (OptimalCeilingTierEditor, RealTierEditor) {
 	void v_play (double fromTime, double toTime)
 		override;
 	const char32 * v_quantityText ()
-		override { return U"Sound pressure (Pa)"; }
+		override { return U"Frequency (Hz)"; }
 	const char32 * v_quantityKey ()
-		override { return U"Sound pressure"; }
+		override { return U"Frequency"; }
 	const char32 * v_rightTickUnits ()
-		override { return U" Pa"; }
+		override { return U" Hz"; }
 	double v_defaultYmin ()
-		override { return -1.0; }
+		override { return 4000.0; }
 	double v_defaultYmax ()
-		override { return +1.0; }
+		override { return +6000.0; }
 	const char32 * v_setRangeTitle ()
-		override { return U"Set amplitude range..."; }
+		override { return U"Set frequency range..."; }
 	const char32 * v_defaultYminText ()
-		override { return U"-1.0"; }
+		override { return U"4000.0"; }
 	const char32 * v_defaultYmaxText ()
-		override { return U"+1.0"; }
+		override { return U"6000.0"; }
 	const char32 * v_yminText ()
-		override { return U"Minimum amplitude (Pa)"; }
+		override { return U"Minimum frequency (Hz)"; }
 	const char32 * v_ymaxText ()
-		override { return U"Maximum amplitude (Pa)"; }
+		override { return U"Maximum frequency (Hz)"; }
 	const char32 * v_yminKey ()
-		override { return U"Minimum amplitude"; }
+		override { return U"Minimum frequency"; }
 	const char32 * v_ymaxKey ()
-		override { return U"Maximum amplitude"; }
+		override { return U"Maximum frequency"; }
 };
 
 OptimalCeilingTierEditor OptimalCeilingTierEditor_create (const char32 *title,
