@@ -1347,12 +1347,12 @@ struct autoMelderProgressOff {
 struct autoMelderString : MelderString {
 	autoMelderString () { length = 0; bufferSize = 0; string = NULL; }
 	~autoMelderString () { MelderString_free (this); }
-	char32 * transfer () {
+	const char32 * transfer () {
 		char32 *tmp = string;
 		string = NULL;
 		length = 0;
 		bufferSize = 0;
-		return tmp;
+		return tmp ? tmp : U"";
 	}
 };
 
@@ -1537,6 +1537,59 @@ private:
 typedef _autostring <char> autostring8;
 typedef _autostring <char16> autostring16;
 typedef _autostring <char32> autostring32;
+
+template <class T>
+class _autoconststring {
+	const T *ptr;
+public:
+	_autoconststring (const T *string) : ptr (string) {
+		//if (Melder_debug == 39) Melder_casual (U"autostring: constructor from C-string ", Melder_pointer (ptr));
+	}
+	_autoconststring () : ptr (0) {
+		//if (Melder_debug == 39) Melder_casual (U"autostring: zero constructor");
+	}
+	~_autoconststring () {
+		//if (Melder_debug == 39) Melder_casual (U"autostring: entering destructor ptr = ", Melder_pointer (ptr));
+		if (ptr) Melder_free (ptr);
+		//if (Melder_debug == 39) Melder_casual (U"autostring: leaving destructor");
+	}
+	#if 0
+	void operator= (T *string) {
+		//if (Melder_debug == 39) Melder_casual (U"autostring: entering assignment from C-string; old = ", Melder_pointer (ptr));
+		if (ptr) Melder_free (ptr);
+		ptr = string;
+		//if (Melder_debug == 39) Melder_casual (U"autostring: leaving assignment from C-string; new = ", Melder_pointer (ptr));
+	}
+	#endif
+	template <class U> const T& operator[] (U i) {
+		return ptr [i];
+	}
+	const T * peek () const {
+		return ptr;
+	}
+	const T ** operator& () {
+		return & ptr;
+	}
+	const T * transfer () {
+		T *tmp = ptr;
+		ptr = NULL;
+		return tmp;
+	}
+	void reset (const T *string) {
+		if (ptr) Melder_free (ptr);
+		ptr = string;
+	}
+	void resize (int64 new_size) {
+		const T *tmp = (const T *) Melder_realloc (ptr, new_size * (int64) sizeof (T));
+		ptr = tmp;
+	}
+private:
+	_autoconststring& operator= (const _autoconststring&);   // disable copy assignment
+	//_autostring (_autostring &);   // disable copy constructor (trying it this way also disables good things like autostring s1 = str32dup(U"hello");)
+	template <class Y> _autoconststring (_autoconststring<Y> &);   // disable copy constructor
+};
+
+typedef _autoconststring <char32> autoconststring32;
 
 class autoMelderAudioSaveMaximumAsynchronicity {
 	enum kMelder_asynchronicityLevel d_saveAsynchronicity;
