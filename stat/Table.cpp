@@ -2077,7 +2077,7 @@ Table Table_readFromCharacterSeparatedTextFile (MelderFile file, char32 separato
 					Melder_assert (*p == separator);
 					p ++;
 				}
-				row -> cells [icol]. string = Melder_dup (buffer.string);
+				row -> cells [icol]. string = Melder_dup (buffer.string);   // BUG? could be NULL
 			}
 		}
 		return me.transfer();
