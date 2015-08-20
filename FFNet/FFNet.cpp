@@ -87,7 +87,7 @@ static void FFNet_checkLayerNumber (FFNet me, long layer) {
 	}
 }
 
-char32 *FFNet_createNameFromTopology (FFNet me) {
+const char32 *FFNet_createNameFromTopology (FFNet me) {
 	autoMelderString name;
 	MelderString_copy (&name, my nUnitsInLayer[0]);
 	for (long i = 1; i <= my nLayers; i++) {
@@ -722,7 +722,7 @@ Collection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidden2) 
 		autoCategories uniq = Categories_sequentialNumbers (3);
 		autoFFNet me = FFNet_create (4, numberOfHidden1, numberOfHidden2, 3, 0);
 		FFNet_setOutputCategories (me.peek(), uniq.peek());
-		autostring32 name = FFNet_createNameFromTopology (me.peek());
+		autoconststring32 name = FFNet_createNameFromTopology (me.peek());
 		Thing_setName (me.peek(), name.peek());
 		Collection_addItem (c.peek(), me.transfer());
 		autoTableOfReal iris = TableOfReal_createIrisDataset ();

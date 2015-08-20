@@ -642,7 +642,7 @@ DO
 
 	autoFFNet ffnet = FFNet_create (my nx, nHidden1, nHidden2, numberOfOutputs, 0);
 	FFNet_setOutputCategories (ffnet.peek(), uniq.peek());
-	autostring32 ffnetName = FFNet_createNameFromTopology (ffnet.peek());
+	autoconststring32 ffnetName = FFNet_createNameFromTopology (ffnet.peek());
 	praat_new (ffnet.transfer(), ffnetName.peek());
 END
 
