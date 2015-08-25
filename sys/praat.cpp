@@ -993,9 +993,9 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = true; }
 	}
 #endif
 
-static char32 * thePraatStandAloneScriptText = NULL;
+static const char32 * thePraatStandAloneScriptText = NULL;
 
-void praat_setStandAloneScriptText (char32 *text) {
+void praat_setStandAloneScriptText (const char32 *text) {
 	thePraatStandAloneScriptText = text;
 }
 
