@@ -79,7 +79,7 @@ void Melder_fwrite32to8 (const char32 *ptr, int64 n, FILE *f) {
 }
 
 void MelderFile_writeText (MelderFile file, const char32 *text, enum kMelder_textOutputEncoding outputEncoding) {
-	if (text == NULL) return;
+	if (text == NULL) text = U"";
 	autofile f = Melder_fopen (file, "wb");
 	if (outputEncoding == kMelder_textOutputEncoding_UTF8) {
 		Melder_fwrite32to8 (text, str32len (text), f);
@@ -124,6 +124,7 @@ void MelderFile_writeText (MelderFile file, const char32 *text, enum kMelder_tex
 }
 
 void MelderFile_appendText (MelderFile file, const char32 *text) {
+	if (text == NULL) text = U"";
 	autofile f1;
 	try {
 		f1.reset (Melder_fopen (file, "rb"));
