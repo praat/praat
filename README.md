@@ -73,6 +73,7 @@ The meaning of the names of binary files uploaded on GitHub is as follows:
 - `praatXXXX_win32.zip`: zipped executable for 32-bit Windows (XP and higher)
 - `praatconXXXX_win64.zip`: zipped executable for 64-bit Windows, console edition
 - `praatconXXXX_win32.zip`: zipped executable for 32-bit Windows, console edition
+- `praatconXXXX_win32sit.exe`: self-extracting StuffIt archive with executable for 32-bit Windows, console edition
 - `praatXXXX_win98.zip`: zipped executable for Windows 98
 - `praatXXXX_win98sit.exe`: self-extracting StuffIt archive with executable for Windows 98
 
@@ -90,6 +91,8 @@ The meaning of the names of binary files uploaded on GitHub is as follows:
 - `praatXXXX_mac7.sit`: StuffIt archive with executable for MacOS 7
 
 ##### 2.3. Unix binaries
-- `praatXXXX_linux64.tar.gz`: gzipped tarred executable for 64-bit Linux
-- `praatXXXX_linux32.tar.gz`: gzipped tarred executable for 32-bit Linux
+- `praatXXXX_linux64.tar.gz`: gzipped tarred executable for 64-bit Linux (GTK)
+- `praatXXXX_linux32.tar.gz`: gzipped tarred executable for 32-bit Linux (GTK)
+- `praatXXXX_linux_motif64.tar.gz`: gzipped tarred executable for 64-bit Linux (Motif)
+- `praatXXXX_linux_motif32.tar.gz`: gzipped tarred executable for 32-bit Linux (Motif)
 - `praatXXXX_solaris.tar.gz`: gzipped tarred executable for Solaris
