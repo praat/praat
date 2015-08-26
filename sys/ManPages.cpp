@@ -753,7 +753,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 					if (*p < 127) {
 						MelderString_appendCharacter (buffer, *p);
 					} else {
-						MelderString_append (buffer, U"&#", *p, U";");
+						MelderString_append (buffer, U"&#", (int) *p, U";");
 					}
 					p ++;
 				}

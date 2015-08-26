@@ -580,10 +580,11 @@ void praat_executeScriptFromFileNameWithArguments (const char32 *nameAndArgument
 	praat_executeScriptFromFile (& file, arguments);
 }
 
-void praat_executeScriptFromText (char32 *text) {
+void praat_executeScriptFromText (const char32 *text) {
 	try {
 		autoInterpreter interpreter = Interpreter_create (NULL, NULL);
-		Interpreter_run (interpreter.peek(), text);
+		autostring32 string = Melder_dup (text);
+		Interpreter_run (interpreter.peek(), string.peek());
 	} catch (MelderError) {
 		Melder_throw (U"Script not completed.");
 	}

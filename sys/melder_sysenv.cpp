@@ -53,6 +53,7 @@ char32 * Melder_getenv (const char32 *variableName) {
 }
 
 void Melder_system (const char32 *command) {
+	if (command == NULL) command = U"";
 	#if defined (macintosh) || defined (UNIX)
 		if (system (Melder_peek32to8 (command)) != 0)
 			Melder_throw (U"System command failed.");
