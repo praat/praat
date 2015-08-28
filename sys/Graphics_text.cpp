@@ -859,7 +859,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 					cairo_set_font_size (my d_cairoGraphicsContext, lc -> size);
 					switch (font) {
 						case kGraphics_font_HELVETICA: cairo_select_font_face (my d_cairoGraphicsContext, "Helvetica", slant, weight); break;
-						case kGraphics_font_TIMES:     cairo_select_font_face (my d_cairoGraphicsContext, "Times", slant, weight); break;
+						case kGraphics_font_TIMES:     cairo_select_font_face (my d_cairoGraphicsContext, "Times New Roman", slant, weight); break;
 						case kGraphics_font_COURIER:   cairo_select_font_face (my d_cairoGraphicsContext, "Courier", slant, weight); break;
 						case kGraphics_font_PALATINO:  cairo_select_font_face (my d_cairoGraphicsContext, "Palatino", slant, weight); break;
 						case kGraphics_font_SYMBOL:    cairo_select_font_face (my d_cairoGraphicsContext, "Symbol", slant, weight); break;

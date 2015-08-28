@@ -27,7 +27,7 @@ MAN_BEGIN (U"What's new?", U"ppgb", 20150820)
 INTRO (U"Latest changes in Praat.")
 /*LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")*/
 NORMAL (U"##5.4.17# (20 August 2015)")
-LIST_ITEM (U"• Scripting: removed a bug that could cause Praat to crash when calling `writeFile()` with an empty text.")
+LIST_ITEM (U"• Scripting: removed a bug that could cause Praat to crash when calling $$writeFile()$ with an empty text.")
 NORMAL (U"##5.4.16# (16 August 2015)")
 LIST_ITEM (U"• Mac 64-bit: removed a bug by which graphical text passed over the right edge in TextGrid intervals.")
 LIST_ITEM (U"• Mac 64-bit: removed a bug that allowed the general \"Zoom\" and \"Close\" commands to be accessible from a script.")
@@ -1727,7 +1727,7 @@ ENTRY (U"Known bugs in the Linux version")
 	LIST_ITEM (U"• Keyboard shortcuts do not work if NumLock is on.")
 */
  
-MAN_BEGIN (U"Acknowledgments", U"ppgb", 20140930)
+MAN_BEGIN (U"Acknowledgments", U"ppgb", 20150828)
 NORMAL (U"The following people contributed source code to Praat:")
 LIST_ITEM (U"Paul Boersma: user interface, graphics, @printing, @@Intro|sound@, "
 	"@@Intro 3. Spectral analysis|spectral analysis@, @@Intro 4. Pitch analysis|pitch analysis@, "
@@ -1758,8 +1758,6 @@ LIST_ITEM (U"fftpack: public domain Fourier transforms by Paul Swarztrauber and 
 LIST_ITEM (U"LAPACK: public domain numeric algorithms by Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd., "
 	"Courant Institute, Argonne National Lab, and Rice University.")
 LIST_ITEM (U"Regular expressions by Henry Spencer, Mark Edel, Christopher Conrad, Eddy De Greef (GPL).")
-NORMAL (U"For technical support and advice:")
-LIST_ITEM (U"Ton Wempe, Dirk Jan Vet.")
 NORMAL (U"For their financial support during the development of Praat:")
 LIST_ITEM (U"Netherlands Organization for Scientific Research (NWO) (1996–1999).")
 LIST_ITEM (U"Nederlandse Taalunie (2006–2008).")
@@ -1779,8 +1777,11 @@ LIST_ITEM (U"Jörg Jescheniak, Universität Leipzig.")
 LIST_ITEM (U"The Linguistics Teaching Laboratory, Ohio State University.")
 LIST_ITEM (U"Linguistics & Cognitive Science, Dartmouth College, Hanover NH.")
 LIST_ITEM (U"Cornell Phonetics Lab, Ithaca NY.")
-NORMAL (U"Finally:")
+NORMAL (U"Finally we thank:")
+LIST_ITEM (U"Ton Wempe and Dirk Jan Vet, for technical support and advice.")
 LIST_ITEM (U"Daniel Hirst, for managing the Praat Discussion list.")
+LIST_ITEM (U"José Joaquín Atria and Ingmar Steiner, for setting up the source-code repository on GitHub.")
+LIST_ITEM (U"Hundreds of Praat users, for notifying us of problems and thus helping us to improve Praat.")
 MAN_END
 
 MAN_BEGIN (U"Praat menu", U"ppgb", 20050822)
