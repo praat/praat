@@ -36,7 +36,11 @@ The code requires that your compiler supports C99 and C++11 (for e.g. `char32_t`
 
 ##### 1.6. Compiling on Macintosh
 
-Extract the *xcodeproj64.zip* or *xcodeproj32.zip* file from the latest release (depending on whether you want to compile the 64-bit or the 32-bit edition) into the directory that contains `sys`, `fon`, `dwtools` and so on. Then open the project `praat32.xcodeproj` or `praat64.xcodeproj` in Xcode and choose Build or Run. The project contains the target `praat_mac` (for MacOS X, on Intel processors). If you get an error message like “Code Signing Identity xxx does not match any valid, non-expired, code-signing certificate in your keychain”, then select the target `praat_mac`, go to Info → Build, and switch “Code Signing Identity” to “Don’t Code Sign”, or sign with your own certificate if you have one as a registered Apple developer.
+Extract the *xcodeproj64.zip* or *xcodeproj32.zip* file from the latest release (depending on whether you want to compile the 64-bit or the 32-bit edition) into the directory that contains `sys`, `fon`, `dwtools` and so on. Then open the project `praat32.xcodeproj` or `praat64.xcodeproj` in Xcode and choose Build or Run. The project contains the target `praat_mac` (for MacOS X, on Intel processors).
+
+If you get an error message like “Code Signing Identity xxx does not match any valid, non-expired, code-signing certificate in your keychain”, then select the target `praat_mac`, go to Info → Build, and switch “Code Signing Identity” to “Don’t Code Sign”, or sign with your own certificate if you have one as a registered Apple developer.
+
+If you get lots of errors saying “Expected unqualified-id” or “Unknown type name NSString”, then you may have to switch the Type of some .cpp file from “C++ Source” to “Objective-C++ Source” (under “Identity and Type” in the righthand sidebar).
 
 ##### 1.7. Compiling on Linux and other Unixes
 
@@ -69,6 +73,7 @@ The meaning of the names of binary files uploaded on GitHub is as follows:
 - `praatXXXX_win32.zip`: zipped executable for 32-bit Windows (XP and higher)
 - `praatconXXXX_win64.zip`: zipped executable for 64-bit Windows, console edition
 - `praatconXXXX_win32.zip`: zipped executable for 32-bit Windows, console edition
+- `praatconXXXX_win32sit.exe`: self-extracting StuffIt archive with executable for 32-bit Windows, console edition
 - `praatXXXX_win98.zip`: zipped executable for Windows 98
 - `praatXXXX_win98sit.exe`: self-extracting StuffIt archive with executable for Windows 98
 
@@ -86,6 +91,8 @@ The meaning of the names of binary files uploaded on GitHub is as follows:
 - `praatXXXX_mac7.sit`: StuffIt archive with executable for MacOS 7
 
 ##### 2.3. Unix binaries
-- `praatXXXX_linux64.tar.gz`: gzipped tarred executable for 64-bit Linux
-- `praatXXXX_linux32.tar.gz`: gzipped tarred executable for 32-bit Linux
+- `praatXXXX_linux64.tar.gz`: gzipped tarred executable for 64-bit Linux (GTK)
+- `praatXXXX_linux32.tar.gz`: gzipped tarred executable for 32-bit Linux (GTK)
+- `praatXXXX_linux_motif64.tar.gz`: gzipped tarred executable for 64-bit Linux (Motif)
+- `praatXXXX_linux_motif32.tar.gz`: gzipped tarred executable for 32-bit Linux (Motif)
 - `praatXXXX_solaris.tar.gz`: gzipped tarred executable for Solaris
