@@ -1,6 +1,6 @@
 /* NUMrandom.cpp
  *
- * Copyright (C) 1992-2011,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -396,6 +396,28 @@ double NUMrandomPoisson (double mean) {
 		} until (NUMrandomFraction () <= probability);
 		return result;
 	}
+}
+
+uint32 NUMhashString (const char32 *string) {
+	/*
+	 * Jenkins' one-at-a-time hash.
+	 */
+	uint32 hash = 0;
+	for (char32 kar = *string; kar != U'\0'; kar = * (++ string)) {
+		hash += (kar >> 16) & 0xFF;   // highest five bits (a char32 actually has only 21 significant bits)
+		hash += (hash << 10);
+		hash ^= (hash >> 6);
+		hash += (kar >> 8) & 0xFF;   // middle 8 bits
+		hash += (hash << 10);
+		hash ^= (hash >> 6);
+		hash += kar & 0xFF;   // lowest 8 bits
+		hash += (hash << 10);
+		hash ^= (hash >> 6);
+	}
+	hash += (hash << 3);
+	hash ^= (hash >> 11);
+	hash += (hash << 15);
+	return hash;
 }
 
 /* End of file NUMrandom.cpp */

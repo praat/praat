@@ -200,7 +200,7 @@ Data Data_readFromTextFile (MelderFile file) {
 			end = str32str (line, U"TextFile");
 			if (end == NULL)
 				Melder_throw (U"Not an old-type text file; should not occur.");
-			*end = '\0';
+			*end = U'\0';
 			me.reset ((Data) Thing_newFromClassName (line));
 			Thing_version = -1;   // old version: override version number, which was set to 0 by newFromClassName
 		}

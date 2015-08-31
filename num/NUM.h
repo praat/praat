@@ -342,6 +342,8 @@ double NUMrandomGauss_mt (int threadNumber, double mean, double standardDeviatio
 
 double NUMrandomPoisson (double mean);
 
+uint32 NUMhashString (const char32 *string);
+
 void NUMfbtoa (double formant, double bandwidth, double dt, double *a1, double *a2);
 void NUMfilterSecondOrderSection_a (double x [], long n, double a1, double a2);
 void NUMfilterSecondOrderSection_fb (double x [], long n, double dt, double formant, double bandwidth);
