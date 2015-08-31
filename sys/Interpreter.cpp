@@ -106,17 +106,31 @@ static InterpreterVariable InterpreterVariable_create (const char32 *key) {
 Thing_implement (Interpreter, Thing, 0);
 
 void structInterpreter :: v_destroy () {
-	Melder_free (environmentName);
+	Melder_free (our environmentName);
 	for (int ipar = 1; ipar <= Interpreter_MAXNUM_PARAMETERS; ipar ++)
-		Melder_free (arguments [ipar]);
-	forget (variables);
+		Melder_free (our arguments [ipar]);
+	#if USE_HASH
+	if (our variablesMap) {
+		for (std::unordered_map<std::u32string, InterpreterVariable>::iterator it = our variablesMap -> begin(); it != our variablesMap -> end(); it ++) {
+			InterpreterVariable var = it -> second;
+			forget (var);
+		}
+		delete (our variablesMap);
+	}
+	#else
+	forget (our variables);
+	#endif
 	Interpreter_Parent :: v_destroy ();
 }
 
 Interpreter Interpreter_create (char32 *environmentName, ClassInfo editorClass) {
 	try {
 		autoInterpreter me = Thing_new (Interpreter);
+		#if USE_HASH
+		my variablesMap = new std::unordered_map <std::u32string, InterpreterVariable>;
+		#else
 		my variables = SortedSetOfString_create ();
+		#endif
 		my environmentName = Melder_dup (environmentName);
 		my editorClass = editorClass;
 		return me.transfer();
@@ -630,28 +644,62 @@ void Interpreter_getArgumentsFromArgs (Interpreter me, int narg, Stackel args) {
 }
 
 static void Interpreter_addNumericVariable (Interpreter me, const char32 *key, double value) {
+	#if USE_HASH
+	InterpreterVariable variable = InterpreterVariable_create (key);
+	variable -> numericValue = value;
+	(*my variablesMap) [key] = variable;
+	#else
 	autoInterpreterVariable variable = InterpreterVariable_create (key);
 	variable -> numericValue = value;
 	Collection_addItem (my variables, variable.transfer());
+	#endif
 }
 
 static void Interpreter_addStringVariable (Interpreter me, const char32 *key, const char32 *value) {
+	#if USE_HASH
+	InterpreterVariable variable = InterpreterVariable_create (key);
+	variable -> stringValue = Melder_dup (value);
+	(*my variablesMap) [key] = variable;
+	#else
 	autoInterpreterVariable variable = InterpreterVariable_create (key);
 	variable -> stringValue = Melder_dup (value);
 	Collection_addItem (my variables, variable.transfer());
+	#endif
 }
 
 InterpreterVariable Interpreter_hasVariable (Interpreter me, const char32 *key) {
 	Melder_assert (key != NULL);
+	#if USE_HASH
+	std::unordered_map<std::u32string,InterpreterVariable>::iterator it = my variablesMap -> find (
+		key [0] == U'.' ? Melder_cat (my procedureNames [my callDepth], key) : key);
+	if (it != my variablesMap -> end()) {
+		return it -> second;
+	} else {
+		return NULL;
+	}
+	#else
 	long variableNumber = SortedSetOfString_lookUp (my variables,
 		key [0] == U'.' ? Melder_cat (my procedureNames [my callDepth], key) : key);
 	return variableNumber ? (InterpreterVariable) my variables -> item [variableNumber] : NULL;
+	#endif
 }
 
 InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const char32 *key) {
 	Melder_assert (key != NULL);
 	const char32 *variableNameIncludingProcedureName =
 		key [0] == U'.' ? Melder_cat (my procedureNames [my callDepth], key) : key;
+	#if USE_HASH
+	std::unordered_map<std::u32string,InterpreterVariable>::iterator it = my variablesMap -> find (variableNameIncludingProcedureName);
+	if (it != my variablesMap -> end()) {
+		return it -> second;
+	}
+	/*
+	 * The variable doesn't yet exist: create a new one.
+	 */
+	InterpreterVariable variable = InterpreterVariable_create (variableNameIncludingProcedureName);
+	(*my variablesMap) [variableNameIncludingProcedureName] = variable;
+	return variable;
+	#else
 	long variableNumber = SortedSetOfString_lookUp (my variables, variableNameIncludingProcedureName);
 	if (variableNumber) return (InterpreterVariable) my variables -> item [variableNumber];   // already exists
 	/*
@@ -661,6 +709,7 @@ InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const char32 *ke
 	InterpreterVariable variable_ref = variable.peek();
 	Collection_addItem (my variables, variable.transfer());
 	return variable_ref;
+	#endif
 }
 
 static long lookupLabel (Interpreter me, const char32 *labelName) {
@@ -787,8 +836,16 @@ void Interpreter_run (Interpreter me, char32 *text) {
 		/*
 		 * Copy the parameter names and argument values into the array of variables.
 		 */
+		#if USE_HASH
+		for (std::unordered_map<std::u32string, InterpreterVariable>::iterator it = my variablesMap -> begin(); it != my variablesMap -> end(); it ++) {
+			InterpreterVariable var = it -> second;
+			forget (var);
+		}
+		my variablesMap -> clear ();
+		#else
 		forget (my variables);
 		my variables = SortedSetOfString_create ();
+		#endif
 		for (ipar = 1; ipar <= my numberOfParameters; ipar ++) {
 			char32 parameter [200];
 			/*
@@ -966,7 +1023,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									while (*q == U' ' || *q == U'\t') q ++;   // skip more whitespace
 									if (*q == U'(' || *q == U':') q ++;   // step over parenthesis or colon
 								}
-								while (*q && *q != ')') {
+								while (*q && *q != U')') {
 									static MelderString argument { 0 };
 									MelderString_empty (& argument);
 									while (*p == U' ' || *p == U'\t') p ++;
