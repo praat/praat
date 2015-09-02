@@ -3276,7 +3276,7 @@ static void do_index_regex (int backward) {
 		const char32 *errorMessage;
 		regexp *compiled_regexp = CompileRE (t->string, & errorMessage, 0);
 		if (compiled_regexp == NULL) {
-			pushNumber (NUMundefined);
+			Melder_throw (U"index_regex(): ", errorMessage, U".");
 		} else {
 			if (ExecRE (compiled_regexp, NULL, s->string, NULL, backward, '\0', '\0', NULL, NULL, NULL)) {
 				char32 *place = (char32 *) compiled_regexp -> startp [0];
@@ -3307,8 +3307,7 @@ static void do_replace_regexStr (void) {
 		const char32 *errorMessage;
 		regexp *compiled_regexp = CompileRE (t->string, & errorMessage, 0);
 		if (compiled_regexp == NULL) {
-			autostring32 result = Melder_dup (U"");
-			pushString (result.transfer());
+			Melder_throw (U"replace_regex$(): ", errorMessage, U".");
 		} else {
 			long numberOfMatches;
 			autostring32 result = str_replace_regexp (s->string, compiled_regexp, u->string, lround (x->number), & numberOfMatches);

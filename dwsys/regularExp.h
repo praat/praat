@@ -70,6 +70,8 @@ regexp * CompileRE (
    const char32 **errorText,   /* Text of any error message produced. */
    int  defaultFlags); /* Flags for default RE-operation */
 
+regexp *CompileRE_throwable (const char32 *exp, int defaultFlags);
+
 /* Match a `regexp' structure against a string. */
 
 int ExecRE (

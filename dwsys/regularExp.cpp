@@ -537,6 +537,15 @@ static int             init_ansi_classes (void);
  * some of the structure of the compiled regexp.
  *----------------------------------------------------------------------*/
 
+regexp *CompileRE_throwable (const char32 *exp, int defaultFlags) {
+	const char32 *compileMessage;
+	regexp *compiledRE = CompileRE (exp, & compileMessage, defaultFlags);
+	if (compiledRE == NULL) {
+		Melder_throw (U"Regular expression: ", compileMessage, U".");
+	}
+	return compiledRE;
+}
+
 regexp *CompileRE (const char32 *exp, const char32 **errorText, int defaultFlags) {
 
 	regexp *comp_regex = NULL;

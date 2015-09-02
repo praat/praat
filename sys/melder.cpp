@@ -527,9 +527,7 @@ bool Melder_stringMatchesCriterion (const char32 *value, int which_kMelder_strin
 	}
 	if (which_kMelder_string == kMelder_string_MATCH_REGEXP) {
 		char32 *place = NULL;
-		const char32 *errorMessage;
-		regexp *compiled_regexp = CompileRE (criterion, & errorMessage, 0);
-		if (compiled_regexp == NULL) return FALSE;   // BUG: what about removing errorMessage?
+		regexp *compiled_regexp = CompileRE_throwable (criterion, 0);
 		if (ExecRE (compiled_regexp, NULL, value, NULL, 0, '\0', '\0', NULL, NULL, NULL))
 			place = compiled_regexp -> startp [0];
 		free (compiled_regexp);
