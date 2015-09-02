@@ -23,6 +23,17 @@
 #include "Gui.h"
 #include "Formula.h"
 
+#if defined (macintosh) && useCarbon
+	#define USE_HASH  0
+#else
+	#define USE_HASH  1
+#endif
+
+#if USE_HASH
+#include <string>
+#include <unordered_map>
+#endif
+
 Thing_define (InterpreterVariable, SimpleString) {
 	char32 *stringValue;
 	double numericValue;
@@ -52,7 +63,11 @@ Thing_define (Interpreter, Thing) {
 	char32 labelNames [1+Interpreter_MAXNUM_LABELS] [1+Interpreter_MAX_LABEL_LENGTH];
 	long labelLines [1+Interpreter_MAXNUM_LABELS];
 	char32 dialogTitle [1+100], procedureNames [1+Interpreter_MAX_CALL_DEPTH] [100];
+	#if USE_HASH
+	std::unordered_map <std::u32string, InterpreterVariable> *variablesMap;
+	#else
 	SortedSetOfString variables;
+	#endif
 	bool running, stopped;
 
 	void v_destroy ()

@@ -104,7 +104,6 @@ endfor
 
 printline ----  # special characters # grouping characters ()
 
-match$ = "(ab)"
 call match_index "c" "(ab)" 0
 call match_index "cc" "(ab)" 0
 call match_index "ccc" "(ab)" 0

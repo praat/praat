@@ -211,6 +211,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 				char32 buffer [2] = { lc -> kar, 0 };
 				cairo_text_extents (my d_cairoGraphicsContext, Melder_peek32to8 (buffer), & extents);
 				lc -> width = extents.x_advance;
+				trace (U"width ", lc -> width);
 				lc -> baseline *= my fontSize * 0.01;
 				lc -> code = lc -> kar;
 				lc -> font.string = NULL;

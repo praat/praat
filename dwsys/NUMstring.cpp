@@ -128,12 +128,7 @@ void NUMstring_add (unsigned char *a, unsigned char *b, unsigned char *c, long n
 
 char32 *strstr_regexp (const char32 *string, const char32 *search_regexp) {
 	char32 *charp = 0;
-	const char32 *compileMsg;
-	regexp *compiled_regexp = CompileRE (search_regexp, &compileMsg, 0);
-
-	if (compiled_regexp == 0) {
-		Melder_throw (U"No regexp");
-	}
+	regexp *compiled_regexp = CompileRE_throwable (search_regexp, 0);
 
 	if (ExecRE (compiled_regexp, NULL, string, NULL, 0, '\0', '\0', NULL, NULL, NULL)) {
 		charp = compiled_regexp -> startp[0];
@@ -344,23 +339,20 @@ static char32 **strs_replace_literal (char32 **from, long lo, long hi, const cha
 		return NULL;
 	}
 	autostring32vector result (lo, hi);
-	try {
-		long nmatches_sub = 0;
-		*nmatches = 0; *nstringmatches = 0;
-		for (long i = lo; i <= hi; i++) {
-			/* Treat a NULL as an empty string */
-			const char32 *string = from[i] == NULL ? U"" : from[i];
 
-			result[i] = str_replace_literal (string, search, replace, maximumNumberOfReplaces, &nmatches_sub);
-			if (nmatches_sub > 0) {
-				*nmatches += nmatches_sub;
-				(*nstringmatches) ++;
-			}
+	long nmatches_sub = 0;
+	*nmatches = 0; *nstringmatches = 0;
+	for (long i = lo; i <= hi; i++) {
+		/* Treat a NULL as an empty string */
+		const char32 *string = from[i] == NULL ? U"" : from[i];
+
+		result[i] = str_replace_literal (string, search, replace, maximumNumberOfReplaces, &nmatches_sub);
+		if (nmatches_sub > 0) {
+			*nmatches += nmatches_sub;
+			(*nstringmatches) ++;
 		}
-		return result.transfer();
-	} catch (MelderError) {
-		return 0;
 	}
+	return result.transfer();
 }
 
 static char32 **strs_replace_regexp (char32 **from, long lo, long hi, const char32 *searchRE,
@@ -369,33 +361,25 @@ static char32 **strs_replace_regexp (char32 **from, long lo, long hi, const char
 		return NULL;
 	}
 	autostring32vector result;
-	try {
-		regexp *compiledRE;
-		const char32 *compileMsg;
-		long nmatches_sub = 0;
 
-		compiledRE = CompileRE (searchRE, &compileMsg, 0);
-		if (compiledRE == NULL) {
-			Melder_throw (U"No regexp ");
+	long nmatches_sub = 0;
+
+	regexp *compiledRE = CompileRE_throwable (searchRE, 0);
+
+	result.reset (lo, hi);
+
+	*nmatches = 0; *nstringmatches = 0;
+	for (long i = lo; i <= hi; i++) {
+		/* Treat a NULL as an empty string */
+		const char32 *string = from[i] == NULL ? U"" : from[i];
+		result [i] = str_replace_regexp (string, compiledRE, replaceRE,
+										 maximumNumberOfReplaces, &nmatches_sub);
+		if (nmatches_sub > 0) {
+			*nmatches += nmatches_sub;
+			(*nstringmatches) ++;
 		}
-
-		result.reset (lo, hi);
-
-		*nmatches = 0; *nstringmatches = 0;
-		for (long i = lo; i <= hi; i++) {
-			/* Treat a NULL as an empty string */
-			const char32 *string = from[i] == NULL ? U"" : from[i];
-			result [i] = str_replace_regexp (string, compiledRE, replaceRE,
-			                                 maximumNumberOfReplaces, &nmatches_sub);
-			if (nmatches_sub > 0) {
-				*nmatches += nmatches_sub;
-				(*nstringmatches) ++;
-			}
-		}
-		return result.transfer();
-	} catch (MelderError) {
-		return 0;
 	}
+	return result.transfer();
 }
 
 char32 **strs_replace (char32 **from, long lo, long hi, const char32 *search, const char32 *replace,

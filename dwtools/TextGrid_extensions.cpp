@@ -652,7 +652,7 @@ void TextGrid_changeLabels (TextGrid me, int tier, long from, long to, const cha
 			TextTier_changeLabels (anyTier, from, to, search, replace, use_regexp, nmatches, nstringmatches);
 		}
 	} catch (MelderError) {
-		Melder_throw (me, U": labels not changed");
+		Melder_throw (me, U": labels not changed.");
 	}
 }
 
