@@ -111,7 +111,7 @@ void structInterpreter :: v_destroy () {
 		Melder_free (our arguments [ipar]);
 	#if USE_HASH
 	if (our variablesMap) {
-		for (std::unordered_map<std::u32string, InterpreterVariable>::iterator it = our variablesMap -> begin(); it != our variablesMap -> end(); it ++) {
+		for (auto it = our variablesMap -> begin(); it != our variablesMap -> end(); it ++) {
 			InterpreterVariable var = it -> second;
 			forget (var);
 		}
@@ -128,6 +128,7 @@ Interpreter Interpreter_create (char32 *environmentName, ClassInfo editorClass) 
 		autoInterpreter me = Thing_new (Interpreter);
 		#if USE_HASH
 		my variablesMap = new std::unordered_map <std::u32string, InterpreterVariable>;
+		my variablesMap -> max_load_factor (0.65f);
 		#else
 		my variables = SortedSetOfString_create ();
 		#endif
@@ -670,8 +671,7 @@ static void Interpreter_addStringVariable (Interpreter me, const char32 *key, co
 InterpreterVariable Interpreter_hasVariable (Interpreter me, const char32 *key) {
 	Melder_assert (key != NULL);
 	#if USE_HASH
-	std::unordered_map<std::u32string,InterpreterVariable>::iterator it = my variablesMap -> find (
-		key [0] == U'.' ? Melder_cat (my procedureNames [my callDepth], key) : key);
+	auto it = my variablesMap -> find (key [0] == U'.' ? Melder_cat (my procedureNames [my callDepth], key) : key);
 	if (it != my variablesMap -> end()) {
 		return it -> second;
 	} else {
@@ -689,7 +689,7 @@ InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const char32 *ke
 	const char32 *variableNameIncludingProcedureName =
 		key [0] == U'.' ? Melder_cat (my procedureNames [my callDepth], key) : key;
 	#if USE_HASH
-	std::unordered_map<std::u32string,InterpreterVariable>::iterator it = my variablesMap -> find (variableNameIncludingProcedureName);
+	auto it = my variablesMap -> find (variableNameIncludingProcedureName);
 	if (it != my variablesMap -> end()) {
 		return it -> second;
 	}
@@ -837,7 +837,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 		 * Copy the parameter names and argument values into the array of variables.
 		 */
 		#if USE_HASH
-		for (std::unordered_map<std::u32string, InterpreterVariable>::iterator it = my variablesMap -> begin(); it != my variablesMap -> end(); it ++) {
+		for (auto it = my variablesMap -> begin(); it != my variablesMap -> end(); it ++) {
 			InterpreterVariable var = it -> second;
 			forget (var);
 		}
