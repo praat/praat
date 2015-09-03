@@ -149,7 +149,7 @@ Thing_implement (IntervalTier, Function, 0);
 void structIntervalTier :: v_shiftX (double xfrom, double xto) {
 	IntervalTier_Parent :: v_shiftX (xfrom, xto);
 	for (long i = 1; i <= intervals -> size; i ++) {
-		TextInterval interval = (TextInterval) intervals -> item [i];
+		TextInterval interval = (*this) [i];
 		interval -> v_shiftX (xfrom, xto);
 	}
 }
@@ -157,7 +157,7 @@ void structIntervalTier :: v_shiftX (double xfrom, double xto) {
 void structIntervalTier :: v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
 	IntervalTier_Parent :: v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
 	for (long i = 1; i <= intervals -> size; i ++) {
-		TextInterval interval = (TextInterval) intervals -> item [i];
+		TextInterval interval = (*this) [i];
 		interval -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
 	}
 }
@@ -179,13 +179,13 @@ IntervalTier IntervalTier_create (double tmin, double tmax) {
 long IntervalTier_timeToLowIndex (IntervalTier me, double t) {
 	long ileft = 1, iright = my intervals -> size;
 	if (iright < 1) return 0;   // empty tier
-	TextInterval leftInterval = (TextInterval) my intervals -> item [ileft];
+	TextInterval leftInterval = (*me) [ileft];
 	if (t < leftInterval -> xmin) return 0;   // very small t
-	TextInterval rightInterval = (TextInterval) my intervals -> item [iright];
+	TextInterval rightInterval = (*me) [iright];
 	if (t >= rightInterval -> xmax) return 0;   // very large t
 	while (ileft < iright) {
 		long imid = (ileft + iright) / 2;
-		TextInterval midInterval = (TextInterval) my intervals -> item [imid];
+		TextInterval midInterval = (*me) [imid];
 		if (t >= midInterval -> xmax) {
 			ileft = imid + 1;
 		} else {
@@ -198,13 +198,13 @@ long IntervalTier_timeToLowIndex (IntervalTier me, double t) {
 long IntervalTier_timeToIndex (IntervalTier me, double t) {
 	long ileft = 1, iright = my intervals -> size;
 	if (iright < 1) return 0;   // empty tier
-	TextInterval leftInterval = (TextInterval) my intervals -> item [ileft];
+	TextInterval leftInterval = (*me) [ileft];
 	if (t < leftInterval -> xmin) return 0;   // very small t
-	TextInterval rightInterval = (TextInterval) my intervals -> item [iright];
+	TextInterval rightInterval = (*me) [iright];
 	if (t > rightInterval -> xmax) return 0;   // very large t
 	while (ileft < iright) {
 		long imid = (ileft + iright) / 2;
-		TextInterval midInterval = (TextInterval) my intervals -> item [imid];
+		TextInterval midInterval = (*me) [imid];
 		if (t >= midInterval -> xmax) {
 			ileft = imid + 1;
 		} else {
@@ -217,13 +217,13 @@ long IntervalTier_timeToIndex (IntervalTier me, double t) {
 long IntervalTier_timeToHighIndex (IntervalTier me, double t) {
 	long ileft = 1, iright = my intervals -> size;
 	if (iright < 1) return 0;   // empty tier
-	TextInterval leftInterval = (TextInterval) my intervals -> item [ileft];
+	TextInterval leftInterval = (*me) [ileft];
 	if (t <= leftInterval -> xmin) return 0;   // very small t
-	TextInterval rightInterval = (TextInterval) my intervals -> item [iright];
+	TextInterval rightInterval = (*me) [iright];
 	if (t > rightInterval -> xmax) return 0;   // very large t
 	while (ileft < iright) {
 		long imid = (ileft + iright) / 2;
-		TextInterval midInterval = (TextInterval) my intervals -> item [imid];
+		TextInterval midInterval = (*me) [imid];
 		if (t > midInterval -> xmax) {
 			ileft = imid + 1;
 		} else {
@@ -236,13 +236,13 @@ long IntervalTier_timeToHighIndex (IntervalTier me, double t) {
 long IntervalTier_hasTime (IntervalTier me, double t) {
 	long ileft = 1, iright = my intervals -> size;
 	if (iright < 1) return 0;   // empty tier
-	TextInterval leftInterval = (TextInterval) my intervals -> item [ileft];
+	TextInterval leftInterval = (*me) [ileft];
 	if (t < leftInterval -> xmin) return 0;   // very small t
-	TextInterval rightInterval = (TextInterval) my intervals -> item [iright];
+	TextInterval rightInterval = (*me) [iright];
 	if (t > rightInterval -> xmax) return 0;   // very large t
 	while (ileft < iright) {
 		long imid = (ileft + iright) / 2;
-		TextInterval midInterval = (TextInterval) my intervals -> item [imid];
+		TextInterval midInterval = (*me) [imid];
 		if (t >= midInterval -> xmax) {
 			ileft = imid + 1;
 		} else {
@@ -252,7 +252,7 @@ long IntervalTier_hasTime (IntervalTier me, double t) {
 	/*
 	 * We now know that t is within interval ileft.
 	 */
-	leftInterval = (TextInterval) my intervals -> item [ileft];
+	leftInterval = (*me) [ileft];
 	if (t == leftInterval -> xmin || t == leftInterval -> xmax) return ileft;
 	return 0;   // not found
 }
@@ -260,20 +260,20 @@ long IntervalTier_hasTime (IntervalTier me, double t) {
 long IntervalTier_hasBoundary (IntervalTier me, double t) {
 	long ileft = 2, iright = my intervals -> size;
 	if (iright < 2) return 0;   // tier without inner boundaries
-	TextInterval leftInterval = (TextInterval) my intervals -> item [ileft];
+	TextInterval leftInterval = my interval (ileft);
 	if (t < leftInterval -> xmin) return 0;   // very small t
-	TextInterval rightInterval = (TextInterval) my intervals -> item [iright];
+	TextInterval rightInterval = my interval (iright);
 	if (t >= rightInterval -> xmax) return 0;   // very large t
 	while (ileft < iright) {
 		long imid = (ileft + iright) / 2;
-		TextInterval midInterval = (TextInterval) my intervals -> item [imid];
+		TextInterval midInterval = my interval (imid);
 		if (t >= midInterval -> xmax) {
 			ileft = imid + 1;
 		} else {
 			iright = imid;
 		}
 	}
-	leftInterval = (TextInterval) my intervals -> item [ileft];
+	leftInterval = my intervalss() [ileft];
 	if (t == leftInterval -> xmin) return ileft;
 	return 0;   // not found
 }

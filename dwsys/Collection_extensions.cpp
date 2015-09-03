@@ -246,7 +246,6 @@ void OrderedOfString_changeStrings (OrderedOfString me, char32 *search, char32 *
                                     int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, int use_regexp) {
 	regexp *compiled_search = NULL;
 	try {
-		const char32 *compileMsg;
 		char32 *r;
 
 		if (search == NULL) {
@@ -257,10 +256,7 @@ void OrderedOfString_changeStrings (OrderedOfString me, char32 *search, char32 *
 		}
 
 		if (use_regexp) {
-			compiled_search = CompileRE (search, &compileMsg, 0);
-			if (compiled_search == NULL) {
-				Melder_throw (compileMsg);
-			}
+			compiled_search = CompileRE_throwable (search, 0);
 		}
 		for (long i = 1; i <= my size; i++) {
 			SimpleString ss = (SimpleString) my item[i];

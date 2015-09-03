@@ -4145,13 +4145,9 @@ void Table_distributionPlotWhere (Table me, Graphics g, long dataColumn, double 
 
 static Strings itemizeColourString (const char32 *colourString) {
 	// remove all spaces within { } so each {1,2,3} can be itemized
-	const char32 *compileMsg;
 	long nmatches_sub = 0;
 	const char32 *searchRE = U"\\{\\s*([0-9.]+)\\s*,\\s*([0-9.]+)\\s*,\\s*([0-9.]+)\\s*\\}";
-	regexp *compiledRE = CompileRE (searchRE, &compileMsg, 0);
-	if (compiledRE == NULL) {
-		Melder_throw (U"No valid regexp");
-	}
+	regexp *compiledRE = CompileRE_throwable (searchRE, 0);
 	autoMelderString colour;
 	MelderString_append (&colour, str_replace_regexp (colourString, compiledRE, U"{\\1,\\2,\\3}", 0, &nmatches_sub));
 	autoStrings thee = Strings_createAsTokens (colour.string);

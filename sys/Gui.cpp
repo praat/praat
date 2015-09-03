@@ -44,7 +44,7 @@ int Gui_getResolution (GuiObject widget) {
 			(void) widget;
 			CGDirectDisplayID display = CGMainDisplayID ();
 			CGSize size = CGDisplayScreenSize (display);
-			resolution = floor (25.4 * (double) CGDisplayPixelsWide (display) / size.width + 0.5);
+			resolution = lround (25.4 * (double) CGDisplayPixelsWide (display) / size.width);
 			//resolution = 72;
 		#elif defined (_WIN32)
 			(void) widget;

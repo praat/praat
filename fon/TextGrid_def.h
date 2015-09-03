@@ -81,8 +81,9 @@ oo_DEFINE_CLASS (IntervalTier, Function)
 			{ return our intervals -> size; }
 		TextInterval interval (long i) // accessor
 			{ return static_cast <TextInterval> (our intervals -> item [i]); }
+		TextInterval operator[] (long i) { return static_cast <TextInterval> (our intervals -> item [i]); }
 		//template <class T> T& operator[] (long i) { return (T) (our intervals -> item [i]); }
-		//TextInterval* intervalss () { return (TextInterval *) (our intervals -> item); }
+		TextInterval* intervalss () { return (TextInterval *) (our intervals -> item); }
 
 		int v_domainQuantity ()
 			override { return MelderQuantity_TIME_SECONDS; }

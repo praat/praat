@@ -1,6 +1,6 @@
 /* NUMrandom.cpp
  *
- * Copyright (C) 1992-2011,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,12 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2002/03/04 GPL
- * pb 2006/12/18 improved comment
- * pb 2011/03/29 C++
  */
 
 /* 
@@ -160,7 +154,7 @@ void NUMrandom_init () {
 	for (int threadNumber = 0; threadNumber <= 16; threadNumber ++) {
 		const int numberOfKeys = 6;
 		uint64_t keys [numberOfKeys];
-		keys [0] = lround (1e6 * Melder_clock ());   // unique between boots of the same computer
+		keys [0] = (uint64_t) llround (1e6 * Melder_clock ());   // unique between boots of the same computer
 		keys [1] = UINT64_C (7320321686725470078) + (uint64_t) threadNumber;   // unique between threads in the same process
 		switch (threadNumber) {
 			case  0: keys [2] = UINT64_C  (4492812493098689432), keys [3] = UINT64_C  (8902321878452586268); break;
@@ -182,9 +176,9 @@ void NUMrandom_init () {
 			case 16: keys [2] = UINT64_C  (1081237546238975884), keys [3] = UINT64_C  (2939783238574293882); break;
 			default: Melder_fatal (U"Thread number too high.");
 		}
-		keys [4] = getpid ();   // unique between processes that run simultaneously on the same computer
+		keys [4] = (uint64_t) (int64) getpid ();   // unique between processes that run simultaneously on the same computer
 		#ifndef _WIN32
-		keys [5] = gethostid ();   // unique between computers
+		keys [5] = (uint64_t) (int64) gethostid ();   // unique between computers
 		#endif
 		states [threadNumber]. init_by_array64 (keys, numberOfKeys);
 	}
@@ -396,6 +390,28 @@ double NUMrandomPoisson (double mean) {
 		} until (NUMrandomFraction () <= probability);
 		return result;
 	}
+}
+
+uint32 NUMhashString (const char32 *string) {
+	/*
+	 * Jenkins' one-at-a-time hash.
+	 */
+	uint32 hash = 0;
+	for (char32 kar = *string; kar != U'\0'; kar = * (++ string)) {
+		hash += (kar >> 16) & 0xFF;   // highest five bits (a char32 actually has only 21 significant bits)
+		hash += (hash << 10);
+		hash ^= (hash >> 6);
+		hash += (kar >> 8) & 0xFF;   // middle 8 bits
+		hash += (hash << 10);
+		hash ^= (hash >> 6);
+		hash += kar & 0xFF;   // lowest 8 bits
+		hash += (hash << 10);
+		hash ^= (hash >> 6);
+	}
+	hash += (hash << 3);
+	hash ^= (hash >> 11);
+	hash += (hash << 15);
+	return hash;
 }
 
 /* End of file NUMrandom.cpp */

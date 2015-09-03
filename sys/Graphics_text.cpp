@@ -211,6 +211,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 				char32 buffer [2] = { lc -> kar, 0 };
 				cairo_text_extents (my d_cairoGraphicsContext, Melder_peek32to8 (buffer), & extents);
 				lc -> width = extents.x_advance;
+				trace (U"width ", lc -> width);
 				lc -> baseline *= my fontSize * 0.01;
 				lc -> code = lc -> kar;
 				lc -> font.string = NULL;
@@ -859,7 +860,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 					cairo_set_font_size (my d_cairoGraphicsContext, lc -> size);
 					switch (font) {
 						case kGraphics_font_HELVETICA: cairo_select_font_face (my d_cairoGraphicsContext, "Helvetica", slant, weight); break;
-						case kGraphics_font_TIMES:     cairo_select_font_face (my d_cairoGraphicsContext, "Times", slant, weight); break;
+						case kGraphics_font_TIMES:     cairo_select_font_face (my d_cairoGraphicsContext, "Times New Roman", slant, weight); break;
 						case kGraphics_font_COURIER:   cairo_select_font_face (my d_cairoGraphicsContext, "Courier", slant, weight); break;
 						case kGraphics_font_PALATINO:  cairo_select_font_face (my d_cairoGraphicsContext, "Palatino", slant, weight); break;
 						case kGraphics_font_SYMBOL:    cairo_select_font_face (my d_cairoGraphicsContext, "Symbol", slant, weight); break;

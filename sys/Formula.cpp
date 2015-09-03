@@ -137,8 +137,8 @@ enum { GEENSYMBOOL_,
 		DEMO_CLICKED_, DEMO_X_, DEMO_Y_, DEMO_KEY_PRESSED_, DEMO_KEY_,
 		DEMO_SHIFT_KEY_PRESSED_, DEMO_COMMAND_KEY_PRESSED_, DEMO_OPTION_KEY_PRESSED_, DEMO_EXTRA_CONTROL_KEY_PRESSED_,
 		ZERO_NUMAR_, LINEAR_NUMAR_, RANDOM_UNIFORM_NUMAR_, RANDOM_INTEGER_NUMAR_, RANDOM_GAUSS_NUMAR_,
-		NUMBER_OF_ROWS_, NUMBER_OF_COLUMNS_, EDITOR_,
-	#define HIGH_FUNCTION_N  EDITOR_
+		NUMBER_OF_ROWS_, NUMBER_OF_COLUMNS_, EDITOR_, HASH_,
+	#define HIGH_FUNCTION_N  HASH_
 
 	/* String functions. */
 	#define LOW_STRING_FUNCTION  LOW_FUNCTION_STR1
@@ -234,7 +234,7 @@ static const char32 *Formula_instructionNames [1 + hoogsteSymbool] = { U"",
 	U"demoClicked", U"demoX", U"demoY", U"demoKeyPressed", U"demoKey$",
 	U"demoShiftKeyPressed", U"demoCommandKeyPressed", U"demoOptionKeyPressed", U"demoExtraControlKeyPressed",
 	U"zero#", U"linear#", U"randomUniform#", U"randomInteger#", U"randomGauss#",
-	U"numberOfRows", U"numberOfColumns", U"editor",
+	U"numberOfRows", U"numberOfColumns", U"editor", U"hash",
 
 	U"length", U"number", U"fileReadable",	U"deleteFile", U"createDirectory", U"variableExists",
 	U"readFile", U"readFile$", U"unicodeToBackslashTrigraphs$", U"backslashTrigraphsToUnicode$", U"environment$",
@@ -1834,7 +1834,15 @@ void Formula_compile (Any interpreter, Any data, const char32 *expression, int e
 			theLocalInterpreter = Interpreter_create (NULL, NULL);
 		}
 		theInterpreter = theLocalInterpreter;
+		#if USE_HASH
+		for (std::unordered_map<std::u32string, InterpreterVariable>::iterator it = theInterpreter -> variablesMap -> begin(); it != theInterpreter -> variablesMap -> end(); it ++) {
+			InterpreterVariable var = it -> second;
+			forget (var);
+		}
+		theInterpreter -> variablesMap -> clear ();
+		#else
 		Collection_removeAllItems (theInterpreter -> variables);
+		#endif
 	}
 	theSource = (Data) data;
 	theExpression = expression;
@@ -2985,6 +2993,22 @@ static void do_editor (void) {
 	pushNumber (1);
 }
 
+static void do_hash (void) {
+	Stackel n = pop;
+	Melder_assert (n->which == Stackel_NUMBER);
+	if (n->number == 1) {
+		Stackel s = pop;
+		if (s->which == Stackel_STRING) {
+			double result = NUMhashString (s->string);
+			pushNumber (result);
+		} else {
+			Melder_throw (U"The function \"hash\" requires a string, not ", Stackel_whichText (s), U".");
+		}
+	} else {
+		Melder_throw (U"The function \"hash\" requires 1 argument, not ", n->number, U".");
+	}
+}
+
 static void do_numericArrayElement (void) {
 	Stackel n = pop;
 	Melder_assert (n -> which == Stackel_NUMBER);
@@ -3252,7 +3276,7 @@ static void do_index_regex (int backward) {
 		const char32 *errorMessage;
 		regexp *compiled_regexp = CompileRE (t->string, & errorMessage, 0);
 		if (compiled_regexp == NULL) {
-			pushNumber (NUMundefined);
+			Melder_throw (U"index_regex(): ", errorMessage, U".");
 		} else {
 			if (ExecRE (compiled_regexp, NULL, s->string, NULL, backward, '\0', '\0', NULL, NULL, NULL)) {
 				char32 *place = (char32 *) compiled_regexp -> startp [0];
@@ -3283,8 +3307,7 @@ static void do_replace_regexStr (void) {
 		const char32 *errorMessage;
 		regexp *compiled_regexp = CompileRE (t->string, & errorMessage, 0);
 		if (compiled_regexp == NULL) {
-			autostring32 result = Melder_dup (U"");
-			pushString (result.transfer());
+			Melder_throw (U"replace_regex$(): ", errorMessage, U".");
 		} else {
 			long numberOfMatches;
 			autostring32 result = str_replace_regexp (s->string, compiled_regexp, u->string, lround (x->number), & numberOfMatches);
@@ -4821,6 +4844,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case NUMBER_OF_ROWS_: { do_numberOfRows ();
 } break; case NUMBER_OF_COLUMNS_: { do_numberOfColumns ();
 } break; case EDITOR_: { do_editor ();
+} break; case HASH_: { do_hash ();
 /********** String functions: **********/
 } break; case LENGTH_: { do_length ();
 } break; case STRING_TO_NUMBER_: { do_number ();

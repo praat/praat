@@ -3658,8 +3658,8 @@ LIST_ITEM (U"@@Script for analysing pitch with a TextGrid")
 MAN_END
 
 MAN_BEGIN (U"Script for listing time\\--F0 pairs", U"ppgb", 20140223)
-INTRO (U"\"I wish to have a list of time markers in one column and F0 in the other. "
-	"Those times that have no voiced data should be represented as \\\"l.\\\"r in the F0 column.\"")
+INTRO (U"“I wish to have a list of time markers in one column and F0 in the other. "
+	"Those times that have no voiced data should be represented as “.” in the F0 column.”")
 CODE (U"writeInfoLine: \"Time:    Pitch:\"")
 CODE (U"numberOfFrames = Get number of frames")
 CODE (U"for iframe to numberOfFrames")
@@ -3802,7 +3802,7 @@ CODE (U"endfor")
 CODE (U"selectObject: sound, textgrid")
 MAN_END
 
-MAN_BEGIN (U"Demo window", U"ppgb", 20140621)
+MAN_BEGIN (U"Demo window", U"ppgb", 20150826)
 INTRO (U"The Demo window is a window in which you can draw and ask for user input. "
 	"You can use it for demonstrations, presentations, simulations, adaptive listening experiments, "
 	"and stand-alone programs (see @@Scripting 9.1. Turning a script into a stand-alone program@).")
@@ -3834,7 +3834,7 @@ CODE (U"demo Select outer viewport: 0, 100, 50, 100")
 CODE (U"demo Draw: 0, 0, 0, 0, \"yes\", \"curve\"")
 CODE (U"demo Select inner viewport: 0, 100, 0, 100")
 CODE (U"demo Axes: 0, 10, 0, 10")
-CODE (U"demo Text: 0, \"left\", 0, \"bottom\", \"Left\", \"bottom corner\"")
+CODE (U"demo Text: 0, \"left\", 0, \"bottom\", \"Left bottom corner\"")
 CODE (U"demo Text: 10, \"right\", 0, \"bottom\", \"Right bottom corner\"")
 NORMAL (U"As the title page of a presentation, you could do:")
 CODE (U"demo Erase all")

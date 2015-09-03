@@ -1192,11 +1192,7 @@ long TableOfReal_getNumberOfLabelMatches (TableOfReal me, const char32 *search, 
 		labels = my columnLabels;
 	}
 	if (use_regexp) {
-		const char32 *compileMsg;
-		compiled_regexp = CompileRE (search, &compileMsg, 0);
-		if (compiled_regexp == 0) {
-			Melder_throw (compileMsg);
-		}
+		compiled_regexp = CompileRE_throwable (search, 0);
 	}
 	for (long i = 1; i <= numberOfLabels; i++) {
 		if (labels[i] == 0) {
