@@ -748,21 +748,23 @@ void TextGrids_append_inline (TextGrid me, TextGrid thee, bool preserveTimes)
 		// last intervals must have the same end time
 		double xmax = preserveTimes ? thy xmax : my xmax + (thy xmax - thy xmin);
 		for (long itier = 1; itier <= my tiers -> size; itier++) {
-			Function myTier = (Function) my tiers -> item[itier], thyTier = (Function) thy tiers -> item[itier];
-			
+			Function myTier = my tier (itier), thyTier = thy tier (itier);
 			if (myTier -> classInfo == classIntervalTier && thyTier -> classInfo == classIntervalTier) {
-                IntervalTier ti = (IntervalTier) myTier;
-				IntervalTiers_append_inline (ti, (IntervalTier) thy tiers -> item[itier], preserveTimes);
-                // make sure last interval has correct end tTime
-                TextInterval last = (TextInterval) ti -> intervals -> item [ti -> intervals -> size];
-                last -> xmax = xmax;
-                Melder_assert (last -> xmax > last -> xmin);
+				IntervalTier  myIntervalTier = static_cast <IntervalTier>  (myTier);
+				IntervalTier thyIntervalTier = static_cast <IntervalTier> (thyTier);
+				IntervalTiers_append_inline (myIntervalTier, thyIntervalTier, preserveTimes);
+                // make sure last interval has correct end time
+                TextInterval lastInterval = myIntervalTier -> interval (myIntervalTier -> numberOfIntervals());
+                lastInterval -> xmax = xmax;
+                Melder_assert (lastInterval -> xmax > lastInterval -> xmin);
 			} else if (myTier -> classInfo == classTextTier && thyTier -> classInfo == classTextTier) {
-                TextTier ti = (TextTier) myTier;
-				TextTiers_append_inline (ti, (TextTier) thy tiers -> item [itier], preserveTimes);
-                ti -> xmax = xmax;
+				TextTier  myTextTier = static_cast <TextTier>  (myTier);
+				TextTier thyTextTier = static_cast <TextTier> (thyTier);
+				TextTiers_append_inline (myTextTier, thyTextTier, preserveTimes);
+                myTextTier -> xmax = xmax;
 			} else {
-				Melder_throw (U"Tier number ", itier, U" in the second TextGrid is of different type as the corresponding tier in the first TextGrid.");
+				Melder_throw (U"Tier ", itier, U" in the second TextGrid is of a different type "
+					"than tier ", itier, U" in the first TextGrid.");
 			}
 		}
 		my xmax = xmax;
@@ -774,13 +776,13 @@ void TextGrids_append_inline (TextGrid me, TextGrid thee, bool preserveTimes)
 TextGrid TextGrids_to_TextGrid_appendContinuous (Collection me, bool preserveTimes) {
 	try {
 		if (my size == 1) {
-			return (TextGrid) Data_copy ((Data) my item[1]);
+			return Data_copy ((TextGrid) my item[1]);
 		}
-		autoTextGrid thee = (TextGrid) Data_copy ((Data) my item[1]);
+		autoTextGrid thee = Data_copy ((TextGrid) my item[1]);
 		for (long igrid = 2; igrid <= my size; igrid++) {
 			TextGrids_append_inline (thee.peek(), (TextGrid) my item[igrid], preserveTimes);
 		}
-		if (not preserveTimes) Function_shiftXBy ((Function) thee.peek(), -thy xmin);
+		if (! preserveTimes) Function_shiftXBy ((Function) thee.peek(), -thy xmin);
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (U"No aligned TextGrid created from Collection.");
