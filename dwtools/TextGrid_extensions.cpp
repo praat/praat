@@ -775,14 +775,12 @@ void TextGrids_append_inline (TextGrid me, TextGrid thee, bool preserveTimes)
 
 TextGrid TextGrids_to_TextGrid_appendContinuous (Collection me, bool preserveTimes) {
 	try {
-		autoTextGrid thee = (TextGrid) Data_copy ((Data) my item[1]);
-		if (my size > 1) {
-			for (long igrid = 2; igrid <= my size; igrid++) {
-				TextGrids_append_inline (thee.peek(), (TextGrid) my item[igrid], preserveTimes);
-			}
+		autoTextGrid thee = Data_copy ((TextGrid) my item[1]);
+		for (long igrid = 2; igrid <= my size; igrid++) {
+			TextGrids_append_inline (thee.peek(), (TextGrid) my item[igrid], preserveTimes);
 		}
 		if (! preserveTimes) {
-			Function_shiftXBy ((Function) thee.peek(), -thy xmin);
+			Function_shiftXBy (thee.peek(), -thy xmin);
 		}
 		return thee.transfer();
 	} catch (MelderError) {
