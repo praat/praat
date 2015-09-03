@@ -1529,7 +1529,7 @@ LIST_ITEM (U"\\bu Draw eigenvector...")
 LIST_ITEM (U"\\bu @@Discriminant: Draw sigma ellipses...|Draw sigma ellipses...@")
 MAN_END
 
-MAN_BEGIN (U"Discriminant analysis", U"djmw", 20141101)
+MAN_BEGIN (U"Discriminant analysis", U"djmw", 20150902)
 INTRO (U"This tutorial will show you how to perform discriminant analysis with P\\s{RAAT}")
 NORMAL (U"As an example, we will use the dataset from @@Pols et al. (1973)@ "
 	"with the frequencies and levels of the first three formants from the 12 "
@@ -1551,7 +1551,7 @@ NORMAL (U"Pols et al. use logarithms of frequency values, we will too. Because "
 	"The following script summarizes our achievements up till now:")
 CODE (U"table = Create TableOfReal (Pols 1973): \"yes\"")
 CODE (U"Formula: \"if col < 4 then log10 (self) else self fi\"")
-CODE (U"Standardize columns\"")
+CODE (U"Standardize columns")
 CODE (U"\\#  change the column labels too, for nice plot labels.")
 CODE (U"Set column label (index): 1, \"standardized log (\\% F\\_ \\_ 1\\_ )\"")
 CODE (U"Set column label (index): 2, \"standardized log (\\% F\\_ \\_ 2\\_ )\"")
@@ -1577,7 +1577,7 @@ NORMAL (U"Select the TableOfReal and choose from the dynamic menu the option "
 	"object will bear the same name as the TableOfReal object. The following "
 	"script summarizes:")
 CODE (U"selectObject: table")
-CODE (U"discrimimant = To Discriminant\"")
+CODE (U"discrimimant = To Discriminant")
 ENTRY (U"2. How to project data on the discriminant space")
 NORMAL (U"You select a TableOfReal and a Discriminant object together and choose: "
 	"@@Discriminant & TableOfReal: To Configuration...|To Configuration...@. "
@@ -1631,7 +1631,7 @@ CODE (U"for irow to numberOfRows")
 CODE (U"  selectObject: table")
 CODE (U"  rowi = Extract rows where: \"row = irow\"")
 CODE (U"  selectObject: table")
-CODE (U"  rest = Extract rows where: \"row <> .irow\"")
+CODE (U"  rest = Extract rows where: \"row <> irow\"")
 CODE (U"  discriminant = To Discriminant")
 CODE (U"  plusObject: rowi")
 CODE (U"  classification = To ClassificationTable: \"yes\", \"yes\"")

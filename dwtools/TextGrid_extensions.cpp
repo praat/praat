@@ -1,6 +1,6 @@
 /* TextGrid_extensions.cpp
  *
- * Copyright (C) 1993-2014 David Weenink
+ * Copyright (C) 1993-2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -773,14 +773,15 @@ void TextGrids_append_inline (TextGrid me, TextGrid thee, bool preserveTimes)
 
 TextGrid TextGrids_to_TextGrid_appendContinuous (Collection me, bool preserveTimes) {
 	try {
-		if (my size == 1) {
-			return (TextGrid) Data_copy ((Data) my item[1]);
-		}
 		autoTextGrid thee = (TextGrid) Data_copy ((Data) my item[1]);
-		for (long igrid = 2; igrid <= my size; igrid++) {
-			TextGrids_append_inline (thee.peek(), (TextGrid) my item[igrid], preserveTimes);
+		if (my size > 1) {
+			for (long igrid = 2; igrid <= my size; igrid++) {
+				TextGrids_append_inline (thee.peek(), (TextGrid) my item[igrid], preserveTimes);
+			}
 		}
-		if (not preserveTimes) Function_shiftXBy ((Function) thee.peek(), -thy xmin);
+		if (! preserveTimes) {
+			Function_shiftXBy ((Function) thee.peek(), -thy xmin);
+		}
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (U"No aligned TextGrid created from Collection.");
