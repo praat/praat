@@ -108,7 +108,7 @@ static GuiList praatList_objects;
 
 /***** selection *****/
 
-long praat_getIdOfSelected (ClassInfo klas, int inplace) {
+long praat_idOfSelected (ClassInfo klas, int inplace) {
 	int place = inplace, IOBJECT;
 	if (place == 0) place = 1;
 	if (place > 0) {
@@ -130,7 +130,7 @@ long praat_getIdOfSelected (ClassInfo klas, int inplace) {
 	return 0;
 }
 
-char32 * praat_getNameOfSelected (ClassInfo klas, int inplace) {
+char32 * praat_nameOfSelected (ClassInfo klas, int inplace) {
 	int place = inplace, IOBJECT;
 	if (place == 0) place = 1;
 	if (place > 0) {
@@ -152,7 +152,7 @@ char32 * praat_getNameOfSelected (ClassInfo klas, int inplace) {
 	return 0;   // failure
 }
 
-int praat_selection (ClassInfo klas) {
+int praat_numberOfSelected (ClassInfo klas) {
 	if (klas == NULL) return theCurrentPraatObjects -> totalSelection;
 	long readableClassId = klas -> sequentialUniqueIdOfReadableClass;
 	if (readableClassId == 0) Melder_fatal (U"No sequential unique ID for class ", klas -> className, U".");
@@ -217,7 +217,7 @@ Data praat_firstObject (ClassInfo klas) {
 
 Data praat_onlyObject_generic (ClassInfo klas) {
 	int IOBJECT, result = 0, found = 0;
-	WHERE (SELECTED && Thing_subclass ((ClassInfo) CLASS, klas)) { result = IOBJECT; found += 1; }
+	WHERE (SELECTED && Thing_isSubclass ((ClassInfo) CLASS, klas)) { result = IOBJECT; found += 1; }
 	if (found != 1) return NULL;
 	return theCurrentPraatObjects -> list [result]. object;
 }
@@ -225,7 +225,7 @@ Data praat_onlyObject_generic (ClassInfo klas) {
 Data praat_firstObject_generic (ClassInfo klas) {
 	int IOBJECT;
 	LOOP {
-		if (Thing_subclass ((ClassInfo) CLASS, klas)) return theCurrentPraatObjects -> list [IOBJECT]. object;
+		if (Thing_isSubclass ((ClassInfo) CLASS, klas)) return theCurrentPraatObjects -> list [IOBJECT]. object;
 	}
 	return NULL;   // this is often OK
 }

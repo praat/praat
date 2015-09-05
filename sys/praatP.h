@@ -67,9 +67,9 @@ typedef struct structPraat_Command {
 			UiForm_parseString should be called, which will call this routine again with sendingForm. */
 		/* All of these things are normally taken care of by the macros defined in praat.h. */
 	signed char
-		visible,   /* Selected classes match class1, class2, and class3? */
-		executable,   /* Command actually executable? Button not grey? */
-		depth,   /* 1 = subcommand */
+		visible,   // do the selected classes match class1, class2, class3 and class4?
+		executable,   // is the command actually executable? I.e. isn't the button greyed out?
+		depth,   // 0 = command in main menu, 1 = command in submenu, 2 = command in submenu of submenu
 		hidden,
 		toggled,
 		phase,
@@ -87,11 +87,9 @@ typedef struct structPraat_Command {
 #define praat_READING_BUTTONS  2
 #define praat_HANDLING_EVENTS  3
 
-long praat_getIdOfSelected (ClassInfo klas, int inplace);
-char32 * praat_getNameOfSelected (ClassInfo klas, int inplace);
-
-int praat_selection (ClassInfo klas);
-	/* How many objects of this class (excluding subclasses) are currently selected? */
+int praat_numberOfSelected (ClassInfo klas);
+long praat_idOfSelected (ClassInfo klas, int inplace);
+char32 * praat_nameOfSelected (ClassInfo klas, int inplace);
 
 /* Used by praat.cpp; defined in praat_picture.cpp.
 */
@@ -109,7 +107,7 @@ void praat_picture_background ();
 void praat_picture_foreground ();
 
 
-/* The following routines are a bit private (used by praat_script.c). */
+/* The following routines are a bit private (used by praat_script.cpp). */
 /* If you must call them, follow them by praat_show (). */
 void praat_deselect (int i);
 void praat_deselectAll ();

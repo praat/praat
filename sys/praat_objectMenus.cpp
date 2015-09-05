@@ -409,7 +409,7 @@ END2 }
 static void readFromFile (MelderFile file) {
 	autoData object = (Data) Data_readFromFile (file);
 	if (object.peek() == NULL) return;
-	if (Thing_member (object.peek(), classManPages) && ! Melder_batch) {
+	if (Thing_isa (object.peek(), classManPages) && ! Melder_batch) {
 		ManPages pages = (ManPages) object.peek();
 		ManPage firstPage = static_cast<ManPage> (pages -> pages -> item [1]);
 		Manual_create (firstPage -> title, object.transfer(), true);
@@ -418,7 +418,7 @@ static void readFromFile (MelderFile file) {
 				"Only navigate these pages if you trust their author!");
 		return;
 	}
-	if (Thing_member (object.peek(), classScript) && ! Melder_batch) {
+	if (Thing_isa (object.peek(), classScript) && ! Melder_batch) {
 		ScriptEditor_createFromScript (NULL, (Script) object.peek());
 		return;
 	}

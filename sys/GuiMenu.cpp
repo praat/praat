@@ -250,7 +250,7 @@ void GuiMenu_empty (GuiMenu me) {
 		return self -> d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
-		Melder_assert (userData == NULL || Thing_member (userData, classGuiMenu));
+		Melder_assert (userData == NULL || Thing_isa (userData, classGuiMenu));
 		self -> d_userData = static_cast <GuiMenu> (userData);
 	}
 	@end
@@ -267,7 +267,7 @@ void GuiMenu_empty (GuiMenu me) {
 		return self -> d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
-		Melder_assert (userData == NULL || Thing_member (userData, classGuiMenu));
+		Melder_assert (userData == NULL || Thing_isa (userData, classGuiMenu));
 		self -> d_userData = static_cast <GuiMenu> (userData);
 	}
 	@end

@@ -53,7 +53,7 @@ void structCollection :: v_copy (thou) {
 		if (_dontOwnItems) {
 			thy item [i] = itempie;   // reference copy: if me doesn't own the items, then thee shouldn't either   // NOTE: the items don't have to be Data
 		} else {
-			if (! Thing_member (itempie, classData))
+			if (! Thing_isa (itempie, classData))
 				Melder_throw (U"Cannot copy item of class ", Thing_className (itempie), U".");
 			thy item [i] = Data_copy ((Data) itempie);
 		}
@@ -65,10 +65,10 @@ bool structCollection :: v_equal (thou) {
 	if (! Collection_Parent :: v_equal (thee)) return false;
 	if (size != thy size) return false;
 	for (long i = 1; i <= size; i ++) {
-		if (! Thing_member ((Thing) item [i], classData))
+		if (! Thing_isa ((Thing) item [i], classData))
 			Melder_throw (U"Collection::equal: "
 				U"cannot compare items of class ", Thing_className ((Thing) item [i]), U".");
-		if (! Thing_member ((Thing) thy item [i], classData))
+		if (! Thing_isa ((Thing) thy item [i], classData))
 			Melder_throw (U"Collection::equal: "
 				U"cannot compare items of class ", Thing_className ((Thing) thy item [i]), U".");
 		bool equal = Data_equal ((Data) item [i], (Data) thy item [i]);
@@ -96,7 +96,7 @@ void structCollection :: v_writeText (MelderFile file) {
 		Thing thing = (Thing) item [i];
 		ClassInfo classInfo = thing -> classInfo;
 		texputintro (file, U"item [", Melder_integer (i), U"]:", 0,0,0);
-		if (! Thing_member (thing, classData) || ! Data_canWriteText ((Data) thing))
+		if (! Thing_isa (thing, classData) || ! Data_canWriteText ((Data) thing))
 			Melder_throw (U"Objects of class ", classInfo -> className, U" cannot be written.");
 		texputw2 (file,
 			classInfo -> version > 0 ?
@@ -137,7 +137,7 @@ void structCollection :: v_readText (MelderReadText text) {
 			our item [i] = Thing_newFromClassName (Melder_peek8to32 (klas));
 			Thing_version = -1;   // override
 			our size ++;
-			if (! Thing_member ((Thing) our item [i], classData) || ! Data_canReadText ((Data) our item [i]))
+			if (! Thing_isa ((Thing) our item [i], classData) || ! Data_canReadText ((Data) our item [i]))
 				Melder_throw (U"Cannot read item of class ", Thing_className ((Thing) our item [i]), U" in collection.");
 			Data_readText ((Data) our item [i], text);
 			if (stringsRead == 3) {
@@ -156,7 +156,7 @@ void structCollection :: v_readText (MelderReadText text) {
 			autostring32 className = texgetw2 (text);
 			our item [i] = Thing_newFromClassName (className.peek());
 			our size ++;
-			if (! Thing_member ((Thing) our item [i], classData) || ! Data_canReadText ((Data) our item [i]))
+			if (! Thing_isa ((Thing) our item [i], classData) || ! Data_canReadText ((Data) our item [i]))
 				Melder_throw (U"Cannot read item of class ", Thing_className ((Thing) our item [i]), U" in collection.");
 			autostring32 objectName = texgetw2 (text);
 			Thing_setName ((Thing) our item [i], objectName.peek());
@@ -171,7 +171,7 @@ void structCollection :: v_writeBinary (FILE *f) {
 	for (long i = 1; i <= our size; i ++) {
 		Thing thing = (Thing) our item [i];
 		ClassInfo classInfo = thing -> classInfo;
-		if (! Thing_member (thing, classData) || ! Data_canWriteBinary ((Data) thing))
+		if (! Thing_isa (thing, classData) || ! Data_canWriteBinary ((Data) thing))
 			Melder_throw (U"Objects of class ", classInfo -> className, U" cannot be written.");
 		binputw1 (classInfo -> version > 0 ?
 			Melder_cat (classInfo -> className, U" ", classInfo -> version) : classInfo -> className, f);
@@ -193,7 +193,7 @@ void structCollection :: v_readBinary (FILE *f) {
 			our item [i] = Thing_newFromClassName (Melder_peek8to32 (klas));
 			Thing_version = -1;   /* Override. */
 			our size ++;
-			if (! Thing_member ((Thing) our item [i], classData))
+			if (! Thing_isa ((Thing) our item [i], classData))
 				Melder_throw (U"Cannot read item of class ", Thing_className ((Thing) our item [i]), U".");
 			if (fgetc (f) != ' ')
 				Melder_throw (U"Cannot read space.");
@@ -213,7 +213,7 @@ void structCollection :: v_readBinary (FILE *f) {
 				Melder_casual (U"structCollection :: v_readBinary: Reading object of type ", Melder_peek8to32 (klas.peek()));
 			our item [i] = Thing_newFromClassName (Melder_peek8to32 (klas.peek()));
 			our size ++;
-			if (! Thing_member ((Thing) our item [i], classData) || ! Data_canReadBinary ((Data) our item [i]))
+			if (! Thing_isa ((Thing) our item [i], classData) || ! Data_canReadBinary ((Data) our item [i]))
 				Melder_throw (U"Objects of class ", Thing_className ((Thing) our item [i]), U" cannot be read.");
 			autostring32 name = bingetw2 (f);
 			if (Melder_debug == 44)
@@ -331,7 +331,7 @@ Any Collections_merge (Collection me, Collection thee) {
 			if (my _dontOwnItems) {
 				Collection_addItem (him.peek(), item);
 			} else {
-				if (! Thing_member (item, classData))
+				if (! Thing_isa (item, classData))
 					Melder_throw (U"Cannot copy item of class ", Thing_className (item), U".");
 				Collection_addItem (him.peek(), Data_copy ((Data) item));
 			}

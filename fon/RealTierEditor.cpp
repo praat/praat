@@ -381,7 +381,7 @@ void structRealTierEditor :: v_play (double a_tmin, double a_tmax) {
 
 void RealTierEditor_init (RealTierEditor me, const char32 *title, RealTier data, Sound sound, bool ownSound) {
 	Melder_assert (data != NULL);
-	Melder_assert (Thing_member (data, classRealTier));
+	Melder_assert (Thing_isa (data, classRealTier));
 	TimeSoundEditor_init (me, title, data, sound, ownSound);
 	my ymin = -1.0;
 	RealTierEditor_updateScaling (me);

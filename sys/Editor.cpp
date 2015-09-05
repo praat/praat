@@ -400,7 +400,7 @@ void structEditor :: v_do_pictureMargins (EditorCommand cmd) {
 static void gui_window_cb_goAway (I) {
 	iam (Editor);
 	Melder_assert (me != NULL);
-	Melder_assert (Thing_member (me, classEditor));
+	Melder_assert (Thing_isa (me, classEditor));
 	my v_goAway ();
 }
 

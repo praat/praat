@@ -53,7 +53,7 @@ void structData :: v_readBinary (FILE *) {
 Data _Data_copy (Data me) {
 	try {
 		if (me == NULL) return NULL;
-		autoData thee = (Data) _Thing_new (my classInfo);
+		autoData thee = static_cast <Data> (Thing_newFromClass (my classInfo));
 		my v_copy (thee.peek());
 		Thing_setName (thee.peek(), my name);
 		return thee.transfer();
@@ -195,13 +195,13 @@ Data Data_readFromTextFile (MelderFile file) {
 		autoData me = NULL;
 		if (end) {
 			autostring32 klas = texgetw2 (text.peek());
-			me.reset ((Data) Thing_newFromClassName (klas.peek()));
+			me.reset (static_cast <Data> (Thing_newFromClassName (klas.peek())));
 		} else {
 			end = str32str (line, U"TextFile");
 			if (end == NULL)
 				Melder_throw (U"Not an old-type text file; should not occur.");
 			*end = U'\0';
-			me.reset ((Data) Thing_newFromClassName (line));
+			me.reset (static_cast <Data> (Thing_newFromClassName (line)));
 			Thing_version = -1;   // old version: override version number, which was set to 0 by newFromClassName
 		}
 		MelderFile_getParentDir (file, & Data_directoryBeingRead);
@@ -240,14 +240,14 @@ Data Data_readFromBinaryFile (MelderFile file) {
 		if (end) {
 			fseek (f, strlen ("ooBinaryFile"), 0);
 			autostring8 klas = bingets1 (f);
-			me.reset ((Data) Thing_newFromClassName (Melder_peek8to32 (klas.peek())));
+			me.reset (static_cast <Data> (Thing_newFromClassName (Melder_peek8to32 (klas.peek()))));
 		} else {
 			end = strstr (line, "BinaryFile");
 			if (! end) {
 				Melder_throw (U"File ", file, U" is not a Data binary file.");
 			}
 			*end = '\0';
-			me.reset ((Data) Thing_newFromClassName (Melder_peek8to32 (line)));
+			me.reset (static_cast <Data> (Thing_newFromClassName (Melder_peek8to32 (line))));
 			Thing_version = -1;   // old version: override version number, which was set to 0 by newFromClassName
 			rewind (f);
 			fread (line, 1, end - line + strlen ("BinaryFile"), f);

@@ -22,7 +22,7 @@
 /* The root class of all objects. */
 
 /* Anyone who uses Thing can also use: */
-	/* Arrays with any bounds and 1 or two indices, math, and numerics: */
+	/* Arrays with any bounds and 1 or 2 indices, math, and numerics: */
 		#include "NUM.h"   /* Including math.h */
 	/* The messaging mechanism: */
 		#include "melder.h"   /* Including stdio.h string.h etc. */
@@ -68,7 +68,7 @@ struct structClassInfo {
 	 */
 	long sequentialUniqueIdOfReadableClass;
 	/*
-	 * The following field is initialized by Thing_dummyObject(), whihc is used only rarely.
+	 * The following field is initialized by Thing_dummyObject(), which is used only rarely.
 	 */
 	Thing dummyObject;
 };
@@ -85,7 +85,7 @@ struct structClassInfo {
 	struct struct##klas : public struct##parentKlas
 
 #define Thing_implement(klas,parentKlas,version) \
-	static Thing _##klas##_new () { return (Thing) new struct##klas; } \
+	static Thing _##klas##_new () { return new struct##klas; } \
 	struct structClassInfo theClassInfo_##klas = { U"" #klas, & theClassInfo_##parentKlas, sizeof (class struct##klas), _##klas##_new, version, 0, NULL }; \
 	ClassInfo class##klas = & theClassInfo_##klas
 
@@ -146,24 +146,24 @@ struct structThing {
 const char32 * Thing_className (Thing me);
 /* Return your class name. */
 
-bool Thing_member (Thing me, ClassInfo klas);
+bool Thing_isa (Thing me, ClassInfo klas);
 /*
 	return true if you are a 'klas',
 	i.e., if you are an object of the class 'klas' or of one of the classes derived from 'klas'.
-	E.g., Thing_member (object, classThing) will always return true.
+	E.g., Thing_isa (object, classThing) will always return true.
 */
 
-bool Thing_subclass (ClassInfo klas, ClassInfo ancestor);
+bool Thing_isSubclass (ClassInfo klas, ClassInfo ancestor);
 /*
 	return true if <klas> is a subclass of <ancestor>,
 	i.e., if <klas> equals <ancestor>, or if the parent class of <klas> is a subclass of <ancestor>.
-	E.g., Thing_subclass (classX, classThing) will always return true.
+	E.g., Thing_isSubclass (classX, classThing) will always return true.
 */
 
 void Thing_info (Thing me);
 void Thing_infoWithIdAndFile (Thing me, unsigned long id, MelderFile file);
 
-#define Thing_new(Klas)  (Klas) _Thing_new (class##Klas)
+#define Thing_new(Klas)  static_cast<Klas> (Thing_newFromClass (class##Klas))
 /*
 	Function:
 		return a new object of class 'klas'.
@@ -172,7 +172,7 @@ void Thing_infoWithIdAndFile (Thing me, unsigned long id, MelderFile file);
 		other members are 0.
 */
 
-Any _Thing_new (ClassInfo klas);
+Thing Thing_newFromClass (ClassInfo klas);
 /*
 	Function:
 		return a new object of class 'klas'.
@@ -202,7 +202,7 @@ void Thing_recognizeClassesByName (ClassInfo readableClass, ...);
 void Thing_recognizeClassByOtherName (ClassInfo readableClass, const char32 *otherName);
 long Thing_listReadableClasses (void);
 
-Any Thing_newFromClassName (const char32 *className);
+Thing Thing_newFromClassName (const char32 *className);
 /*
 	Function:
 		return a new object of class 'className', or NULL if the class name is not recognized.
@@ -243,7 +243,7 @@ void Thing_setName (Thing me, const char32 *name /* cattable */);
 
 #define Thing_cast(Klas,var,expr) \
 	Klas var = static_cast <Klas> (expr);   /* The compiler checks this. */ \
-	Melder_assert (var == NULL || Thing_member (var, class##Klas));
+	Melder_assert (var == NULL || Thing_isa (var, class##Klas));
 
 void Thing_swap (Thing me, Thing thee);
 /*

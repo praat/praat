@@ -77,7 +77,7 @@ Thing_implement (GuiScrollBar, GuiControl, 0);
     return d_userData;
 }
 - (void) setUserData: (GuiThing) userData {
-	Melder_assert (userData == NULL || Thing_member (userData, classGuiScrollBar));
+	Melder_assert (userData == NULL || Thing_isa (userData, classGuiScrollBar));
 	d_userData = static_cast <GuiScrollBar> (userData);
 }
 - (void) setMinimum:(double)minimum maximum:(double)maximum value:(double)value sliderSize:(double)sliderSize increment:(double)increment pageIncrement:(double)pageIncrement {

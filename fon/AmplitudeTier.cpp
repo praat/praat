@@ -49,8 +49,8 @@ AmplitudeTier IntensityTier_to_AmplitudeTier (IntensityTier me) {
 	try {
 		autoAmplitudeTier thee = Thing_new (AmplitudeTier);
 		my structRealTier :: v_copy (thee.peek());
-		for (long i = 1; i <= thy points -> size; i ++) {
-			RealPoint point = (RealPoint) thy points -> item [i];
+		for (long i = 1; i <= thy numberOfPoints(); i ++) {
+			RealPoint point = thy point (i);
 			point -> value = pow (10.0, point -> value / 20.0) * 2.0e-5;
 		}
 		return thee.transfer();
@@ -64,8 +64,8 @@ IntensityTier AmplitudeTier_to_IntensityTier (AmplitudeTier me, double threshold
 		double threshold_Pa = pow (10.0, threshold_dB / 20.0) * 2.0e-5;   // often zero!
 		autoIntensityTier thee = Thing_new (IntensityTier);
 		my structRealTier :: v_copy (thee.peek());
-		for (long i = 1; i <= thy points -> size; i ++) {
-			RealPoint point = (RealPoint) thy points -> item [i];
+		for (long i = 1; i <= thy numberOfPoints(); i ++) {
+			RealPoint point = thy point (i);
 			double absoluteValue = fabs (point -> value);
 			point -> value = absoluteValue <= threshold_Pa ? threshold_dB : 20.0 * log10 (absoluteValue / 2.0e-5);
 		}
@@ -80,7 +80,7 @@ TableOfReal AmplitudeTier_downto_TableOfReal (AmplitudeTier me) {
 }
 
 void Sound_AmplitudeTier_multiply_inline (Sound me, AmplitudeTier amplitude) {
-	if (amplitude -> points -> size == 0) return;
+	if (amplitude -> numberOfPoints() == 0) return;
 	for (long isamp = 1; isamp <= my nx; isamp ++) {
 		double t = my x1 + (isamp - 1) * my dx;
 		double factor = RealTier_getValueAtTime (amplitude, t);
@@ -153,9 +153,9 @@ AmplitudeTier PointProcess_Sound_to_AmplitudeTier_period (PointProcess me, Sound
 	double pmin, double pmax, double maximumPeriodFactor)
 {
 	try {
-		long imin, imax, numberOfPeaks;
 		if (tmax <= tmin) tmin = my xmin, tmax = my xmax;
-		numberOfPeaks = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax);
+		long imin, imax;
+		long numberOfPeaks = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax);
 		if (numberOfPeaks < 3) Melder_throw (U"Too few pulses between ", tmin, U" and ", tmax, U" seconds.");
 		autoAmplitudeTier him = AmplitudeTier_create (tmin, tmax);
 		for (long i = imin + 1; i < imax; i ++) {

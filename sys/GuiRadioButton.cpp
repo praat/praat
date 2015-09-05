@@ -82,7 +82,7 @@ static int _GuiRadioButton_getPosition (GuiRadioButton me) {
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
-		Melder_assert (userData == NULL || Thing_member (userData, classGuiRadioButton));
+		Melder_assert (userData == NULL || Thing_isa (userData, classGuiRadioButton));
 		d_userData = static_cast <GuiRadioButton> (userData);
 	}
 	- (void) _guiCocoaRadioButton_activateCallback: (id) widget {

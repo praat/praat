@@ -308,7 +308,7 @@ static void cb_EEGWindow_publication (Editor editor, void *closure, Data publica
 	try {
 		praat_new (publication);
 		praat_updateSelection ();
-		if (Thing_member (publication, classSpectrum) && str32equ (Thing_getName (publication), U"slice")) {
+		if (Thing_isa (publication, classSpectrum) && str32equ (Thing_getName (publication), U"slice")) {
 			int IOBJECT;
 			LOOP {
 				iam (Spectrum);
@@ -626,7 +626,7 @@ static void cb_ERPWindow_publication (Editor editor, void *closure, Data publica
 	try {
 		praat_new (publication);
 		praat_updateSelection ();
-		if (Thing_member (publication, classSpectrum) && str32equ (Thing_getName (publication), U"slice")) {
+		if (Thing_isa (publication, classSpectrum) && str32equ (Thing_getName (publication), U"slice")) {
 			int IOBJECT;
 			LOOP {
 				iam (Spectrum);

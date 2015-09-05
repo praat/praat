@@ -129,7 +129,7 @@ static void NativeMenuItem_setText (GuiObject me) {
 		return self -> d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
-		Melder_assert (userData == NULL || Thing_member (userData, classGuiMenuItem));
+		Melder_assert (userData == NULL || Thing_isa (userData, classGuiMenuItem));
 		self -> d_userData = static_cast <GuiMenuItem> (userData);
 	}
 	- (void) _guiCocoaMenuItem_activateCallback: (id) widget {

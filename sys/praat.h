@@ -563,7 +563,7 @@ void praat_setLogo (double width_mm, double height_mm, void (*draw) (Graphics g)
 /* To remove the selected objects of class Klas from the list: */
 /*
 	for (i = praat.n; i >= 1; i --)   // Down!
-		if (praat.list[i].selected && Thing_member (praat.list[i].object, classKlas)
+		if (praat.list[i].selected && Thing_isa (praat.list[i].object, classKlas)
 			praat_removeObject (i);
 	praat_show ();   // Needed because the selection has changed.
 */

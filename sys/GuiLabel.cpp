@@ -51,7 +51,7 @@ Thing_implement (GuiLabel, GuiControl, 0);
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
-		Melder_assert (userData == NULL || Thing_member (userData, classGuiLabel));
+		Melder_assert (userData == NULL || Thing_isa (userData, classGuiLabel));
 		d_userData = static_cast <GuiLabel> (userData);
 	}
 	@end

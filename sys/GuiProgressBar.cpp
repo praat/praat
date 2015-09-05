@@ -41,7 +41,7 @@ Thing_implement (GuiProgressBar, GuiControl, 0);
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
-		Melder_assert (userData == NULL || Thing_member (userData, classGuiProgressBar));
+		Melder_assert (userData == NULL || Thing_isa (userData, classGuiProgressBar));
 		d_userData = static_cast <GuiProgressBar> (userData);
 	}
 	@end

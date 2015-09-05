@@ -489,11 +489,11 @@ static bool allowExecutionHook (void *closure) {
 			if (! my class1) Melder_throw (U"No class1???");
 			numberOfMatchingCallbacks += 1;
 			if (! firstMatchingCallback) firstMatchingCallback = i;
-			sel1 = my class1 == classData ? theCurrentPraatObjects -> totalSelection : praat_selection (my class1);
+			sel1 = my class1 == classData ? theCurrentPraatObjects -> totalSelection : praat_numberOfSelected (my class1);
 			if (sel1 == 0) continue;
-			if (my class2 && (sel2 = praat_selection (my class2)) == 0) continue;
-			if (my class3 && (sel3 = praat_selection (my class3)) == 0) continue;
-			if (my class4 && (sel4 = praat_selection (my class4)) == 0) continue;
+			if (my class2 && (sel2 = praat_numberOfSelected (my class2)) == 0) continue;
+			if (my class3 && (sel3 = praat_numberOfSelected (my class3)) == 0) continue;
+			if (my class4 && (sel4 = praat_numberOfSelected (my class4)) == 0) continue;
 			if (sel1 + sel2 + sel3 + sel4 != theCurrentPraatObjects -> totalSelection) continue;
 			if ((my n1 && sel1 != my n1) || (my n2 && sel2 != my n2) || (my n3 && sel3 != my n3) || (my n4 && sel4 != my n4)) continue;
 			return true;   // found a matching action
@@ -598,11 +598,11 @@ void praat_actions_show (void) {
 		/* Match the actually selected classes with the selection required for this visibility. */
 
 		if (! theActions [i]. class1) continue;   /* At least one class selected. */
-		sel1 = theActions [i]. class1 == classData ? theCurrentPraatObjects -> totalSelection : praat_selection (theActions [i]. class1);
+		sel1 = theActions [i]. class1 == classData ? theCurrentPraatObjects -> totalSelection : praat_numberOfSelected (theActions [i]. class1);
 		if (sel1 == 0) continue;
-		if (theActions [i]. class2 && (sel2 = praat_selection (theActions [i]. class2)) == 0) continue;
-		if (theActions [i]. class3 && (sel3 = praat_selection (theActions [i]. class3)) == 0) continue;
-		if (theActions [i]. class4 && (sel4 = praat_selection (theActions [i]. class4)) == 0) continue;
+		if (theActions [i]. class2 && (sel2 = praat_numberOfSelected (theActions [i]. class2)) == 0) continue;
+		if (theActions [i]. class3 && (sel3 = praat_numberOfSelected (theActions [i]. class3)) == 0) continue;
+		if (theActions [i]. class4 && (sel4 = praat_numberOfSelected (theActions [i]. class4)) == 0) continue;
 		if (sel1 + sel2 + sel3 + sel4 != theCurrentPraatObjects -> totalSelection) continue;   /* Other classes selected? Do not show. */
 		theActions [i]. visible = ! theActions [i]. hidden;
 
