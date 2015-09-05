@@ -479,7 +479,7 @@ static const char32 *objectString (int number) {
 	return number == 1 ? U"object" : U"objects";
 }
 static bool allowExecutionHook (void *closure) {
-	void (*callback) (UiForm, int, Stackel, const char32 *, Interpreter, const char32 *, bool, void *) = (void (*) (UiForm, int, Stackel, const char32 *, Interpreter, const char32 *, bool, void *)) closure;
+	UiCallback callback = (UiCallback) closure;
 	Melder_assert (sizeof (callback) == sizeof (void *));
 	long numberOfMatchingCallbacks = 0, firstMatchingCallback = 0;
 	for (long i = 1; i <= theNumberOfActions; i ++) {

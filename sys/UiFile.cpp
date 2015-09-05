@@ -25,7 +25,7 @@ Thing_define (UiFile, Thing) {
 	GuiWindow parent;
 	structMelderFile file;
 	const char32 *invokingButtonTitle, *helpTitle;
-	void (*okCallback) (UiForm sendingForm, int narg, Stackel nargs, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure);
+	UiCallback okCallback;
 	void *okClosure;
 	int shiftKeyPressed;
 
@@ -62,7 +62,7 @@ Thing_define (UiInfile, UiFile) {
 Thing_implement (UiInfile, UiFile, 0);
 
 UiForm UiInfile_create (GuiWindow parent, const char32 *title,
-	void (*okCallback) (UiForm, int, Stackel, const char32 *, Interpreter, const char32 *, bool, void *), void *okClosure,
+	UiCallback okCallback, void *okClosure,
 	const char32 *invokingButtonTitle, const char32 *helpTitle, bool allowMultipleFiles)
 {
 	UiInfile me = Thing_new (UiInfile);
@@ -112,7 +112,7 @@ Thing_define (UiOutfile, UiFile) {
 Thing_implement (UiOutfile, UiFile, 0);
 
 UiForm UiOutfile_create (GuiWindow parent, const char32 *title,
-	void (*okCallback) (UiForm, int, Stackel, const char32 *, Interpreter, const char32 *, bool, void *), void *okClosure, const char32 *invokingButtonTitle, const char32 *helpTitle)
+	UiCallback okCallback, void *okClosure, const char32 *invokingButtonTitle, const char32 *helpTitle)
 {
 	UiOutfile me = Thing_new (UiOutfile);
 	my okCallback = okCallback;
