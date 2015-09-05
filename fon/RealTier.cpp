@@ -105,7 +105,7 @@ RealTier RealTier_create (double tmin, double tmax) {
 
 RealTier RealTier_createWithClass (double tmin, double tmax, ClassInfo klas) {
 	try {
-		autoRealTier me = (RealTier) _Thing_new (klas);
+		autoRealTier me = static_cast <RealTier> (Thing_newFromClass (klas));
 		RealTier_init (me.peek(), tmin, tmax);
 		return me.transfer();
 	} catch (MelderError) {

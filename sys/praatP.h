@@ -46,7 +46,7 @@ void praat_addMenuCommandScript (const char32 *window, const char32 *menu, const
 void praat_hideMenuCommand (const char32 *window, const char32 *menu, const char32 *title);
 void praat_showMenuCommand (const char32 *window, const char32 *menu, const char32 *title);
 void praat_saveMenuCommands (MelderString *buffer);
-void praat_addFixedButtonCommand (GuiForm parent, const char32 *title, void (*callback) (UiForm, int, Stackel, const char32 *, Interpreter, const char32 *, bool, void *), int x, int y);
+void praat_addFixedButtonCommand (GuiForm parent, const char32 *title, UiCallback callback, int x, int y);
 void praat_sensitivizeFixedButtonCommand (const char32 *title, int sensitive);
 void praat_sortMenuCommands ();
 
@@ -57,8 +57,8 @@ typedef struct structPraat_Command {
 	ClassInfo class1, class2, class3, class4;   // selected classes
 	int32 n1, n2, n3, n4;   // number of selected objects of each class; 0 means "any number"
 	const char32 *title;   // button text = command text
-	void (*callback) (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure);   // multi-purpose
-		/* If both sendingForm and sendingString are NULL, this routine is an activate callback;
+	UiCallback callback;   // multi-purpose
+		/* If both UiCallback::sendingForm and sendingString are NULL, this routine is an activate callback;
 			you should directly execute the command, or call UiForm_do(dialog) if you need arguments;
 			UiForm_do will call this routine again with sendingForm = dialog. */
 		/* If sendingForm exists, this routine is an ok callback,
@@ -67,9 +67,9 @@ typedef struct structPraat_Command {
 			UiForm_parseString should be called, which will call this routine again with sendingForm. */
 		/* All of these things are normally taken care of by the macros defined in praat.h. */
 	signed char
-		visible,   /* Selected classes match class1, class2, and class3? */
-		executable,   /* Command actually executable? Button not grey? */
-		depth,   /* 1 = subcommand */
+		visible,   // do the selected classes match class1, class2, class3 and class4?
+		executable,   // is the command actually executable? I.e. isn't the button greyed out?
+		depth,   // 0 = command in main menu, 1 = command in submenu, 2 = command in submenu of submenu
 		hidden,
 		toggled,
 		phase,
@@ -87,11 +87,9 @@ typedef struct structPraat_Command {
 #define praat_READING_BUTTONS  2
 #define praat_HANDLING_EVENTS  3
 
-long praat_getIdOfSelected (ClassInfo klas, int inplace);
-char32 * praat_getNameOfSelected (ClassInfo klas, int inplace);
-
-int praat_selection (ClassInfo klas);
-	/* How many objects of this class (excluding subclasses) are currently selected? */
+int praat_numberOfSelected (ClassInfo klas);
+long praat_idOfSelected (ClassInfo klas, int inplace);
+char32 * praat_nameOfSelected (ClassInfo klas, int inplace);
 
 /* Used by praat.cpp; defined in praat_picture.cpp.
 */
@@ -109,7 +107,7 @@ void praat_picture_background ();
 void praat_picture_foreground ();
 
 
-/* The following routines are a bit private (used by praat_script.c). */
+/* The following routines are a bit private (used by praat_script.cpp). */
 /* If you must call them, follow them by praat_show (). */
 void praat_deselect (int i);
 void praat_deselectAll ();

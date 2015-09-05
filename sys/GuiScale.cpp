@@ -58,7 +58,7 @@ Thing_implement (GuiScale, GuiControl, 0);
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
-		Melder_assert (userData == NULL || Thing_member (userData, classGuiScale));
+		Melder_assert (userData == NULL || Thing_isa (userData, classGuiScale));
 		d_userData = static_cast <GuiScale> (userData);
 	}
 	@end

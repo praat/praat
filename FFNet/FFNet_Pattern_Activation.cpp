@@ -123,7 +123,7 @@ void FFNet_Pattern_Activation_learnSD (FFNet me, Pattern p, Activation a,
                                        long maxNumOfEpochs, double tolerance, Any parameters, int costFunctionType) {
 	int resetMinimizer = 0;
 	/* Did we choose another minimizer */
-	if (my minimizer != 0 && ! Thing_member (my minimizer, classSteepestDescentMinimizer)) {
+	if (my minimizer != 0 && ! Thing_isa (my minimizer, classSteepestDescentMinimizer)) {
 		forget (my minimizer);
 		resetMinimizer = 1;
 	}
@@ -142,7 +142,7 @@ void FFNet_Pattern_Activation_learnSM (FFNet me, Pattern p, Activation a,
 	/*
 		Did we choose another minimizer
 	*/
-	if (my minimizer != 0 && ! Thing_member (my minimizer, classVDSmagtMinimizer)) {
+	if (my minimizer != 0 && ! Thing_isa (my minimizer, classVDSmagtMinimizer)) {
 		forget (my minimizer);
 		resetMinimizer = 1;
 	}

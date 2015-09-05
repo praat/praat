@@ -77,7 +77,7 @@ void structPermutation :: v_info () {
 	MelderInfo_writeLine (U"Number of elements: ", numberOfElements);
 }
 
-void structPermutation :: v_readText (MelderReadText text) {
+void structPermutation :: v_readText (MelderReadText text, int /*formatVersion*/) {
 	numberOfElements = texgeti4 (text);
 	if (numberOfElements < 1) {
 		Melder_throw (U"Found a negative mumber of elements during reading.");

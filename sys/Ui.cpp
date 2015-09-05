@@ -569,7 +569,7 @@ static void gui_button_cb_help (I, GuiButtonEvent event) {
 }
 
 UiForm UiForm_create (GuiWindow parent, const char32 *title,
-	void (*okCallback) (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure), void *buttonClosure,
+	UiCallback okCallback, void *buttonClosure,
 	const char32 *invokingButtonTitle, const char32 *helpTitle)
 {
 	autoUiForm me = Thing_new (UiForm);

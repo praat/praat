@@ -842,7 +842,7 @@ static void cb_TextGridEditor_publication (Editor editor, void *closure, Data pu
 	try {
 		praat_new (publication);
 		praat_updateSelection ();
-		if (Thing_member (publication, classSpectrum) && str32equ (Thing_getName (publication), U"slice")) {
+		if (Thing_isa (publication, classSpectrum) && str32equ (Thing_getName (publication), U"slice")) {
 			int IOBJECT;
 			LOOP {
 				iam (Spectrum);

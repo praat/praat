@@ -61,21 +61,16 @@ void praat_run (void);
 void praat_setStandAloneScriptText (const char32 *text);   // call before praat_init if you want to create a stand-alone application without Objects and Picture window
 
 void praat_addAction (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
-	const char32 *title, const char32 *after, unsigned long flags,
-	void (*callback) (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure));
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback);
 /* 'class2', 'class3', 'title', 'after', and 'callback' may be NULL; 'title' is reference-copied. */
 void praat_addAction1 (ClassInfo class1, int n1,
-	const char32 *title, const char32 *after, unsigned long flags,
-	void (*callback) (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure));
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback);
 void praat_addAction2 (ClassInfo class1, int n1, ClassInfo class2, int n2,
-	const char32 *title, const char32 *after, unsigned long flags,
-	void (*callback) (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure));
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback);
 void praat_addAction3 (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
-	const char32 *title, const char32 *after, unsigned long flags,
-	void (*callback) (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure));
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback);
 void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3, ClassInfo class4, int n4,
-	const char32 *title, const char32 *after, unsigned long flags,
-	void (*callback) (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure));
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback);
 /*
 	'title' is the name that will appear in the dynamic menu,
 		and also the command that is used in command files.
@@ -122,7 +117,7 @@ void praat_removeAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, c
 	/* 'title' may be NULL; reference-copied. */
 
 GuiMenuItem praat_addMenuCommand (const char32 *window, const char32 *menu, const char32 *title /* cattable */,
-	const char32 *after, unsigned long flags, void (*callback) (UiForm, int narg, Stackel args, const char32 *, Interpreter, const char32 *, bool, void *));
+	const char32 *after, unsigned long flags, UiCallback callback);
 /* All strings are reference-copied; 'title', 'after', and 'callback' may be NULL. */
 
 #define praat_MAXNUM_EDITORS 5
@@ -133,9 +128,9 @@ typedef struct {
 	char32 *name;   // the name of the object as it appears in the List
 	structMelderFile file;   // is this Object associated with a file?
 	long id;   // the unique number of the object
-	int selected;   // is the name of the object inverted in the list?
+	bool isSelected;   // is the name of the object inverted in the list?
 	Editor editors [praat_MAXNUM_EDITORS];   // are there editors open with this Object in it?
-	int _beingCreated;
+	bool isBeingCreated;
 } structPraat_Object, *praat_Object;
 
 #define praat_MAXNUM_OBJECTS 10000   /* Maximum number of objects in the list. */
@@ -367,38 +362,9 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				int IOBJECT = 0; \
 				(void) IOBJECT;
 
-#define FORM_READ(proc,title,help,allowMult) \
-	static void DO_##proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *okClosure) { \
-		static UiForm dia; \
-		(void) narg; \
-		(void) interpreter; \
-		(void) modified; \
-		(void) okClosure; \
-		if (dia == NULL) \
-			dia = UiInfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, okClosure, invokingButtonTitle, help, allowMult); \
-		if (sendingForm == NULL && args == NULL && sendingString == NULL) { \
-			UiInfile_do (dia); \
-		} else { \
-			try { \
-				MelderFile file; \
-				int IOBJECT = 0; \
-				structMelderFile file2 = { 0 }; \
-				(void) IOBJECT; \
-				if (args == NULL && sendingString == NULL) { \
-					file = UiFile_getFile (dia); \
-				} else { \
-					Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); \
-					file = & file2; \
-				} \
-				{
-
 #define FORM_READ2(proc,title,help,allowMult) \
-	static void DO_##proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *okClosure) { \
+	static void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
 		static UiForm dia; \
-		(void) narg; \
-		(void) interpreter; \
-		(void) modified; \
-		(void) okClosure; \
 		if (dia == NULL) \
 			dia = UiInfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, okClosure, invokingButtonTitle, help, allowMult); \
 		if (sendingForm == NULL && args == NULL && sendingString == NULL) { \
@@ -414,15 +380,11 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				} else { \
 					Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); \
 					file = & file2; \
-				} \
+				}
 
 #define FORM_WRITE(proc,title,help,ext) \
-	static void DO_##proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *okClosure) { \
+	static void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
 		static Any dia; \
-		(void) narg; \
-		(void) interpreter; \
-		(void) modified; \
-		(void) okClosure; \
 		if (dia == NULL) \
 			dia = UiOutfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, okClosure, invokingButtonTitle, help); \
 		if (sendingForm == NULL && args == NULL && sendingString == NULL) { \
@@ -442,12 +404,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				{
 
 #define FORM_WRITE2(proc,title,help,ext) \
-	static void DO_##proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *okClosure) { \
+	static void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
 		static Any dia; \
-		(void) narg; \
-		(void) interpreter; \
-		(void) modified; \
-		(void) okClosure; \
 		if (dia == NULL) \
 			dia = UiOutfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, okClosure, invokingButtonTitle, help); \
 		if (sendingForm == NULL && args == NULL && sendingString == NULL) { \
@@ -487,7 +445,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
 #define WHERE(condition)  for (IOBJECT = 1; IOBJECT <= theCurrentPraatObjects -> n; IOBJECT ++) if (condition)
 #define WHERE_DOWN(condition)  for (IOBJECT = theCurrentPraatObjects -> n; IOBJECT > 0; IOBJECT --) if (condition)
-#define SELECTED  (theCurrentPraatObjects -> list [IOBJECT]. selected)
+#define SELECTED  (theCurrentPraatObjects -> list [IOBJECT]. isSelected)
 #define CLASS  (theCurrentPraatObjects -> list [IOBJECT]. klas)
 #define OBJECT  (theCurrentPraatObjects -> list [IOBJECT]. object)
 #define GRAPHICS  theCurrentPraatPicture -> graphics
@@ -511,7 +469,7 @@ Data praat_firstObject_any ();
 #define EVERY_DRAW(proc) \
 	praat_picture_open (); WHERE (SELECTED) proc; praat_picture_close (); return 1;
 
-/* Used by praat_Sybil.c, if you put an Editor on the screen: */
+/* Used by praat_Sybil.cpp, if you put an Editor on the screen: */
 int praat_installEditor (Editor editor, int iobject);
 /* This routine adds a reference to a new editor (unless it is NULL) to the screen object
    which is in the list at position 'iobject'.
@@ -563,11 +521,11 @@ void praat_setLogo (double width_mm, double height_mm, void (*draw) (Graphics g)
 /* To remove the selected objects of class Klas from the list: */
 /*
 	for (i = praat.n; i >= 1; i --)   // Down!
-		if (praat.list[i].selected && Thing_member (praat.list[i].object, classKlas)
+		if (praat.list[i].selected && Thing_isa (praat.list[i].object, classKlas)
 			praat_removeObject (i);
 	praat_show ();   // Needed because the selection has changed.
 */
-void praat_removeObject (int i);   /* i = 1..praat.n */
+void praat_removeObject (int i);   // i = 1..praat.n
 void praat_show (void);   // forces an update of the dynamic menu
 void praat_updateSelection ();
 	/* If you require the correct selection immediately after calling praat_new. */

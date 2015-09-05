@@ -59,7 +59,7 @@ Thing_implement (GuiCheckButton, GuiControl, 0);
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
-		Melder_assert (userData == NULL || Thing_member (userData, classGuiCheckButton));
+		Melder_assert (userData == NULL || Thing_isa (userData, classGuiCheckButton));
 		d_userData = static_cast <GuiCheckButton> (userData);
 	}
 	- (void) _guiCocoaButton_activateCallback: (id) widget {

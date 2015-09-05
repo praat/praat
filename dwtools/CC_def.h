@@ -23,7 +23,7 @@ oo_DEFINE_STRUCT (CC_Frame)
 
 	oo_LONG (numberOfCoefficients)
 	#if oo_READING_BINARY
-		if (localVersion == 0)
+		if (formatVersion == 0)
 		{
 			oo_FLOAT (c0)
 			oo_FLOAT_VECTOR (c, numberOfCoefficients)

@@ -38,7 +38,7 @@ struct structClassInfo theClassInfo_Thing = {
 	U"Thing",
 	NULL,      // no parent class
 	sizeof (class structThing),
-	NULL,      // no _new function (not needed; plus, it would have to be called "_Thing_new", but that name has been given to something else)
+	NULL,      // no _new function (not needed, because Thing is never instantiated)
 	0,         // version
 	0,         // sequentialUniqueIdOfReadableClass
 	NULL       // dummyObject
@@ -47,12 +47,12 @@ ClassInfo classThing = & theClassInfo_Thing;
 
 const char32 * Thing_className (Thing me) { return my classInfo -> className; }
 
-Any _Thing_new (ClassInfo classInfo) {
-	Thing me = (Thing) classInfo -> _new ();
+Thing Thing_newFromClass (ClassInfo classInfo) {
+	Thing me = classInfo -> _new ();
 	trace (U"created ", classInfo -> className);
 	theTotalNumberOfThings += 1;
 	my classInfo = classInfo;
-	Melder_assert (my name == NULL);   // check that _new called calloc
+	Melder_assert (my name == NULL);   // confirm that _new called calloc
 	if (Melder_debug == 40) Melder_casual (U"created ", classInfo -> className, U" (", Melder_pointer (classInfo), U", ", me, U")");
 	return me;
 }
@@ -99,16 +99,15 @@ void Thing_recognizeClassByOtherName (ClassInfo readableClass, const char32 *oth
 	theAliases [theNumberOfAliases]. otherName = otherName;
 }
 
-long Thing_version;   // global variable!
-ClassInfo Thing_classFromClassName (const char32 *klas) {
+ClassInfo Thing_classFromClassName (const char32 *klas, int *p_formatVersion) {
 	static char32 buffer [1+100];
 	str32ncpy (buffer, klas ? klas : U"", 100);
 	char32 *space = str32chr (buffer, U' ');
 	if (space) {
-		*space = '\0';   // strip version number
-		Thing_version = Melder_atoi (space + 1);
+		*space = U'\0';   // strip version number
+		if (p_formatVersion) *p_formatVersion = Melder_atoi (space + 1);
 	} else {
-		Thing_version = 0;
+		if (p_formatVersion) *p_formatVersion = 0;
 	}
 
 	/*
@@ -134,10 +133,10 @@ ClassInfo Thing_classFromClassName (const char32 *klas) {
 	Melder_throw (U"Class \"", buffer, U"\" not recognized.");
 }
 
-Any Thing_newFromClassName (const char32 *className) {
+Thing Thing_newFromClassName (const char32 *className, int *p_formatVersion) {
 	try {
-		ClassInfo classInfo = Thing_classFromClassName (className);
-		return _Thing_new (classInfo);
+		ClassInfo classInfo = Thing_classFromClassName (className, p_formatVersion);
+		return Thing_newFromClass (classInfo);
 	} catch (MelderError) {
 		Melder_throw (className, U" not created.");
 	}
@@ -168,14 +167,14 @@ void _Thing_forget (Thing me) {
 	theTotalNumberOfThings -= 1;
 }
 
-bool Thing_subclass (ClassInfo klas, ClassInfo ancestor) {
+bool Thing_isSubclass (ClassInfo klas, ClassInfo ancestor) {
 	while (klas != ancestor && klas != NULL) klas = klas -> parent;
 	return klas != NULL;
 }
 
-bool Thing_member (Thing me, ClassInfo klas) {
-	if (! me) Melder_fatal (U"(Thing_member:) Found NULL object.");
-	return Thing_subclass (my classInfo, klas);
+bool Thing_isa (Thing me, ClassInfo klas) {
+	if (! me) Melder_fatal (U"(Thing_isa:) Found NULL object.");
+	return Thing_isSubclass (my classInfo, klas);
 }
 
 void * _Thing_check (Thing me, ClassInfo klas, const char *fileName, int line) {

@@ -169,17 +169,16 @@ void OTGrammar_checkIndex (OTGrammar me) {
 	OTGrammar_sort (me);
 }
 
-void structOTGrammar :: v_readText (MelderReadText text) {
-	int localVersion = Thing_version;
-	OTGrammar_Parent :: v_readText (text);
-	if (localVersion >= 1) {
+void structOTGrammar :: v_readText (MelderReadText text, int formatVersion) {
+	OTGrammar_Parent :: v_readText (text, formatVersion);
+	if (formatVersion >= 1) {
 		try {
 			decisionStrategy = texgete1 (text, kOTGrammar_decisionStrategy_getValue);
 		} catch (MelderError) {
 			Melder_throw (U"Trying to read decision strategy.");
 		}
 	}
-	if (localVersion >= 2) {
+	if (formatVersion >= 2) {
 		try {
 			leak = texgetr8 (text);
 		} catch (MelderError) {
@@ -210,7 +209,7 @@ void structOTGrammar :: v_readText (MelderReadText text) {
 		} catch (MelderError) {
 			Melder_throw (U"Trying to read disharmony of constraint ", icons, U".");
 		}
-		if (localVersion < 2) {
+		if (formatVersion < 2) {
 			constraint -> plasticity = 1.0;
 		} else {
 			try {

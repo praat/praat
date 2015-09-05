@@ -704,7 +704,7 @@ static void cb_SoundEditor_publication (Editor editor, void *closure, Data publi
 	try {
 		praat_new (publication, U"");
 		praat_updateSelection ();
-		if (Thing_member (publication, classSpectrum)) {
+		if (Thing_isa (publication, classSpectrum)) {
 			int IOBJECT;
 			LOOP {
 				iam (Spectrum);
@@ -2273,7 +2273,7 @@ static int recordFromFileProc (MelderFile file) {
 	melderSoundFromFile = (Sound) Data_readFromFile (file);
 	Melder_warningOn ();
 	if (! melderSoundFromFile) return 0;
-	if (! Thing_member (melderSoundFromFile, classSound)) { forget (melderSoundFromFile); return 0; }
+	if (! Thing_isa (melderSoundFromFile, classSound)) { forget (melderSoundFromFile); return 0; }
 	last = melderSoundFromFile;
 	Sound_play (melderSoundFromFile, NULL, NULL);
 	return 1;

@@ -3398,22 +3398,22 @@ static void do_selected (void) {
 	Stackel n = pop;
 	long result = 0;
 	if (n->number == 0) {
-		result = praat_getIdOfSelected (NULL, 0);
+		result = praat_idOfSelected (NULL, 0);
 	} else if (n->number == 1) {
 		Stackel a = pop;
 		if (a->which == Stackel_STRING) {
-			ClassInfo klas = Thing_classFromClassName (a->string);
-			result = praat_getIdOfSelected (klas, 0);
+			ClassInfo klas = Thing_classFromClassName (a->string, NULL);
+			result = praat_idOfSelected (klas, 0);
 		} else if (a->which == Stackel_NUMBER) {
-			result = praat_getIdOfSelected (NULL, lround (a->number));
+			result = praat_idOfSelected (NULL, lround (a->number));
 		} else {
 			Melder_throw (U"The function \"selected\" requires a string (an object type name) and/or a number.");
 		}
 	} else if (n->number == 2) {
 		Stackel x = pop, s = pop;
 		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-			ClassInfo klas = Thing_classFromClassName (s->string);
-			result = praat_getIdOfSelected (klas, lround (x->number));
+			ClassInfo klas = Thing_classFromClassName (s->string, NULL);
+			result = praat_idOfSelected (klas, lround (x->number));
 		} else {
 			Melder_throw (U"The function \"selected\" requires a string (an object type name) and/or a number.");
 		}
@@ -3426,22 +3426,22 @@ static void do_selectedStr (void) {
 	Stackel n = pop;
 	autostring32 result;
 	if (n->number == 0) {
-		result.reset (Melder_dup (praat_getNameOfSelected (NULL, 0)));
+		result.reset (Melder_dup (praat_nameOfSelected (NULL, 0)));
 	} else if (n->number == 1) {
 		Stackel a = pop;
 		if (a->which == Stackel_STRING) {
-			ClassInfo klas = Thing_classFromClassName (a->string);
-			result.reset (Melder_dup (praat_getNameOfSelected (klas, 0)));
+			ClassInfo klas = Thing_classFromClassName (a->string, NULL);
+			result.reset (Melder_dup (praat_nameOfSelected (klas, 0)));
 		} else if (a->which == Stackel_NUMBER) {
-			result.reset (Melder_dup (praat_getNameOfSelected (NULL, lround (a->number))));
+			result.reset (Melder_dup (praat_nameOfSelected (NULL, lround (a->number))));
 		} else {
 			Melder_throw (U"The function \"selected$\" requires a string (an object type name) and/or a number.");
 		}
 	} else if (n->number == 2) {
 		Stackel x = pop, s = pop;
 		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-			ClassInfo klas = Thing_classFromClassName (s->string);
-			result.reset (Melder_dup (praat_getNameOfSelected (klas, lround (x->number))));
+			ClassInfo klas = Thing_classFromClassName (s->string, NULL);
+			result.reset (Melder_dup (praat_nameOfSelected (klas, lround (x->number))));
 		} else {
 			Melder_throw (U"The function \"selected$\" requires 0, 1, or 2 arguments, not ", n->number, U".");
 		}
@@ -3452,12 +3452,12 @@ static void do_numberOfSelected (void) {
 	Stackel n = pop;
 	long result = 0;
 	if (n->number == 0) {
-		result = praat_selection (NULL);
+		result = praat_numberOfSelected (NULL);
 	} else if (n->number == 1) {
 		Stackel s = pop;
 		if (s->which == Stackel_STRING) {
-			ClassInfo klas = Thing_classFromClassName (s->string);
-			result = praat_selection (klas);
+			ClassInfo klas = Thing_classFromClassName (s->string, NULL);
+			result = praat_numberOfSelected (klas);
 		} else {
 			Melder_throw (U"The function \"numberOfSelected\" requires a string (an object type name), not ", Stackel_whichText (s), U".");
 		}
@@ -3490,7 +3490,7 @@ static int praat_findObjectFromString (const char32 *name) {
 			if (str32equ (className, Thing_className ((Thing) OBJECT)) && str32equ (givenName, object -> name))
 				return IOBJECT;
 		}
-		ClassInfo klas = Thing_classFromClassName (className);
+		ClassInfo klas = Thing_classFromClassName (className, NULL);
 		WHERE_DOWN (1) {
 			Data object = (Data) OBJECT;
 			if (str32equ (klas -> className, Thing_className ((Thing) OBJECT)) && str32equ (givenName, object -> name))

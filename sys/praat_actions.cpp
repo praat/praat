@@ -83,23 +83,23 @@ static long lookUpMatchingAction (ClassInfo class1, ClassInfo class2, ClassInfo 
 }
 
 void praat_addAction (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
-	const char32 *title, const char32 *after, unsigned long flags, void (*callback) (UiForm, int, Stackel, const char32 *, Interpreter, const char32 *, bool, void *))
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback)
 { praat_addAction4 (class1, n1, class2, n2, class3, n3, NULL, 0, title, after, flags, callback); }
 
 void praat_addAction1 (ClassInfo class1, int n1,
-	const char32 *title, const char32 *after, unsigned long flags, void (*callback) (UiForm, int, Stackel, const char32 *, Interpreter, const char32 *, bool, void *))
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback)
 { praat_addAction4 (class1, n1, NULL, 0, NULL, 0, NULL, 0, title, after, flags, callback); }
 
 void praat_addAction2 (ClassInfo class1, int n1, ClassInfo class2, int n2,
-	const char32 *title, const char32 *after, unsigned long flags, void (*callback) (UiForm, int, Stackel, const char32 *, Interpreter, const char32 *, bool, void *))
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback)
 { praat_addAction4 (class1, n1, class2, n2, NULL, 0, NULL, 0, title, after, flags, callback); }
 
 void praat_addAction3 (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
-	const char32 *title, const char32 *after, unsigned long flags, void (*callback) (UiForm, int, Stackel, const char32 *, Interpreter, const char32 *, bool, void *))
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback)
 { praat_addAction4 (class1, n1, class2, n2, class3, n3, NULL, 0, title, after, flags, callback); }
 
 void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3, ClassInfo class4, int n4,
-	const char32 *title, const char32 *after, unsigned long flags, void (*callback) (UiForm, int, Stackel, const char32 *, Interpreter, const char32 *, bool, void *))
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback)
 {
 	try {
 		int depth = flags, unhidable = FALSE, hidden = FALSE, key = 0, attractive = 0;
@@ -234,13 +234,13 @@ void praat_addActionScript (const char32 *className1, int n1, const char32 *clas
 		ClassInfo class1 = NULL, class2 = NULL, class3 = NULL;
 		Melder_assert (className1 && className2 && className3 && title && after && script);
 		if (str32len (className1)) {
-			class1 = Thing_classFromClassName (className1);
+			class1 = Thing_classFromClassName (className1, NULL);
 		}
 		if (str32len (className2)) {
-			class2 = Thing_classFromClassName (className2);
+			class2 = Thing_classFromClassName (className2, NULL);
 		}
 		if (str32len (className3)) {
-			class3 = Thing_classFromClassName (className3);
+			class3 = Thing_classFromClassName (className3, NULL);
 		}
 		fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
 
@@ -345,13 +345,13 @@ void praat_removeAction_classNames (const char32 *className1, const char32 *clas
 		ClassInfo class1 = NULL, class2 = NULL, class3 = NULL;
 		Melder_assert (className1 && className2 && className3 && title);
 		if (str32len (className1)) {
-			class1 = Thing_classFromClassName (className1);
+			class1 = Thing_classFromClassName (className1, NULL);
 		}
 		if (str32len (className2)) {
-			class2 = Thing_classFromClassName (className2);
+			class2 = Thing_classFromClassName (className2, NULL);
 		}
 		if (str32len (className3)) {
-			class3 = Thing_classFromClassName (className3);
+			class3 = Thing_classFromClassName (className3, NULL);
 		}
 		praat_removeAction (class1, class2, class3, title);
 		updateDynamicMenu ();
@@ -388,13 +388,13 @@ void praat_hideAction_classNames (const char32 *className1, const char32 *classN
 		ClassInfo class1 = NULL, class2 = NULL, class3 = NULL;
 		Melder_assert (className1 && className2 && className3 && title);
 		if (str32len (className1)) {
-			class1 = Thing_classFromClassName (className1);
+			class1 = Thing_classFromClassName (className1, NULL);
 		}
 		if (str32len (className2)) {
-			class2 = Thing_classFromClassName (className2);
+			class2 = Thing_classFromClassName (className2, NULL);
 		}
 		if (str32len (className3)) {
-			class3 = Thing_classFromClassName (className3);
+			class3 = Thing_classFromClassName (className3, NULL);
 		}
 		praat_hideAction (class1, class2, class3, title);
 	} catch (MelderError) {
@@ -430,13 +430,13 @@ void praat_showAction_classNames (const char32 *className1, const char32 *classN
 		ClassInfo class1 = NULL, class2 = NULL, class3 = NULL;
 		Melder_assert (className1 && className2 && className3 && title);
 		if (str32len (className1)) {
-			class1 = Thing_classFromClassName (className1);
+			class1 = Thing_classFromClassName (className1, NULL);
 		}
 		if (str32len (className2)) {
-			class2 = Thing_classFromClassName (className2);
+			class2 = Thing_classFromClassName (className2, NULL);
 		}
 		if (str32len (className3)) {
-			class3 = Thing_classFromClassName (className3);
+			class3 = Thing_classFromClassName (className3, NULL);
 		}
 		praat_showAction (class1, class2, class3, title);
 	} catch (MelderError) {
@@ -479,7 +479,7 @@ static const char32 *objectString (int number) {
 	return number == 1 ? U"object" : U"objects";
 }
 static bool allowExecutionHook (void *closure) {
-	void (*callback) (UiForm, int, Stackel, const char32 *, Interpreter, const char32 *, bool, void *) = (void (*) (UiForm, int, Stackel, const char32 *, Interpreter, const char32 *, bool, void *)) closure;
+	UiCallback callback = (UiCallback) closure;
 	Melder_assert (sizeof (callback) == sizeof (void *));
 	long numberOfMatchingCallbacks = 0, firstMatchingCallback = 0;
 	for (long i = 1; i <= theNumberOfActions; i ++) {
@@ -489,11 +489,11 @@ static bool allowExecutionHook (void *closure) {
 			if (! my class1) Melder_throw (U"No class1???");
 			numberOfMatchingCallbacks += 1;
 			if (! firstMatchingCallback) firstMatchingCallback = i;
-			sel1 = my class1 == classData ? theCurrentPraatObjects -> totalSelection : praat_selection (my class1);
+			sel1 = my class1 == classData ? theCurrentPraatObjects -> totalSelection : praat_numberOfSelected (my class1);
 			if (sel1 == 0) continue;
-			if (my class2 && (sel2 = praat_selection (my class2)) == 0) continue;
-			if (my class3 && (sel3 = praat_selection (my class3)) == 0) continue;
-			if (my class4 && (sel4 = praat_selection (my class4)) == 0) continue;
+			if (my class2 && (sel2 = praat_numberOfSelected (my class2)) == 0) continue;
+			if (my class3 && (sel3 = praat_numberOfSelected (my class3)) == 0) continue;
+			if (my class4 && (sel4 = praat_numberOfSelected (my class4)) == 0) continue;
 			if (sel1 + sel2 + sel3 + sel4 != theCurrentPraatObjects -> totalSelection) continue;
 			if ((my n1 && sel1 != my n1) || (my n2 && sel2 != my n2) || (my n3 && sel3 != my n3) || (my n4 && sel4 != my n4)) continue;
 			return true;   // found a matching action
@@ -519,7 +519,7 @@ static void do_menu (I, bool modified) {
  *	Call that callback!
  *	Catch the error queue for menu commands without dots (...).
  */
-	void (*callback) (UiForm, int, Stackel, const char32 *, Interpreter, const char32 *, bool, void *) = (void (*) (UiForm, int, Stackel, const char32 *, Interpreter, const char32 *, bool, void *)) void_me;
+	UiCallback callback = (UiCallback) void_me;
 	for (long i = 1; i <= theNumberOfActions; i ++) {
 		praat_Command me = & theActions [i];
 		if (my callback == callback) {
@@ -598,11 +598,11 @@ void praat_actions_show (void) {
 		/* Match the actually selected classes with the selection required for this visibility. */
 
 		if (! theActions [i]. class1) continue;   /* At least one class selected. */
-		sel1 = theActions [i]. class1 == classData ? theCurrentPraatObjects -> totalSelection : praat_selection (theActions [i]. class1);
+		sel1 = theActions [i]. class1 == classData ? theCurrentPraatObjects -> totalSelection : praat_numberOfSelected (theActions [i]. class1);
 		if (sel1 == 0) continue;
-		if (theActions [i]. class2 && (sel2 = praat_selection (theActions [i]. class2)) == 0) continue;
-		if (theActions [i]. class3 && (sel3 = praat_selection (theActions [i]. class3)) == 0) continue;
-		if (theActions [i]. class4 && (sel4 = praat_selection (theActions [i]. class4)) == 0) continue;
+		if (theActions [i]. class2 && (sel2 = praat_numberOfSelected (theActions [i]. class2)) == 0) continue;
+		if (theActions [i]. class3 && (sel3 = praat_numberOfSelected (theActions [i]. class3)) == 0) continue;
+		if (theActions [i]. class4 && (sel4 = praat_numberOfSelected (theActions [i]. class4)) == 0) continue;
 		if (sel1 + sel2 + sel3 + sel4 != theCurrentPraatObjects -> totalSelection) continue;   /* Other classes selected? Do not show. */
 		theActions [i]. visible = ! theActions [i]. hidden;
 

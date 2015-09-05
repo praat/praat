@@ -24,7 +24,7 @@ oo_DEFINE_CLASS (Polygon, Data)
 	oo_LONG (numberOfPoints)
 
 	#if oo_READING
-		if (localVersion >= 1) {
+		if (formatVersion >= 1) {
 			oo_DOUBLE_VECTOR (x, numberOfPoints)
 			oo_DOUBLE_VECTOR (y, numberOfPoints)
 		} else {

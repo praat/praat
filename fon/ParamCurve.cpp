@@ -69,11 +69,11 @@ void structParamCurve :: v_writeText (MelderFile file) {
 	Data_writeText (y, file);
 }
 
-void structParamCurve :: v_readText (MelderReadText text) {
+void structParamCurve :: v_readText (MelderReadText text, int formatVersion) {
 	x = Thing_new (Sound);
 	y = Thing_new (Sound);
-	Data_readText (x, text);
-	Data_readText (y, text);
+	Data_readText (x, text, formatVersion);
+	Data_readText (y, text, formatVersion);
 	xmin = x -> xmin > y -> xmin ? x -> xmin : y -> xmin;
 	xmax = x -> xmax < y -> xmax ? x -> xmax : y -> xmax;
 }
@@ -83,14 +83,11 @@ void structParamCurve :: v_writeBinary (FILE *f) {
 	Data_writeBinary (y, f);
 }
 
-void structParamCurve :: v_readBinary (FILE *f) {
-	long saveVersion = Thing_version;
-	Thing_version = 2;
+void structParamCurve :: v_readBinary (FILE *f, int /*formatVersion*/) {
 	x = Thing_new (Sound);
 	y = Thing_new (Sound);
-	Data_readBinary (x, f);
-	Data_readBinary (y, f);
-	Thing_version = saveVersion;
+	Data_readBinary (x, f, 2);
+	Data_readBinary (y, f, 2);
 	xmin = x -> xmin > y -> xmin ? x -> xmin : y -> xmin;
 	xmax = x -> xmax < y -> xmax ? x -> xmax : y -> xmax;
 }

@@ -50,7 +50,7 @@ void structPolygon :: v_writeText (MelderFile file) {
 	}
 }
 
-void structPolygon :: v_readText (MelderReadText text) {
+void structPolygon :: v_readText (MelderReadText text, int /*formatVersion*/) {
 	our numberOfPoints = texgeti4 (text);
 	if (our numberOfPoints < 1)
 		Melder_throw (U"Cannot read a Polygon with only ", our numberOfPoints, U" points.");

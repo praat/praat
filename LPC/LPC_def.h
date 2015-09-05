@@ -23,7 +23,7 @@ oo_DEFINE_STRUCT (LPC_Frame)
 
 	oo_INT (nCoefficients)
 	#if oo_READING_BINARY
-		if (localVersion == 0)
+		if (formatVersion == 0)
 		{
 			oo_FLOAT_VECTOR (a, nCoefficients)
 			oo_FLOAT (gain)

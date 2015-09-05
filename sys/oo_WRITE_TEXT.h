@@ -166,8 +166,6 @@
 
 #define oo_ENDFROM
 
-#define oo_VERSION(version)
-
 #define oo_IF(condition)  if (condition) {
 #define oo_ENDIF  }
 #define oo_DECLARING  0

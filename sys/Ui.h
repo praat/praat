@@ -94,6 +94,8 @@ Thing_define (UiField, Thing) {
 		override;
 };
 
+typedef void (*UiCallback) (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure);
+
 #define MAXIMUM_NUMBER_OF_FIELDS  50
 #define MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS  10
 
@@ -101,7 +103,7 @@ Thing_define (UiForm, Thing) {
 	EditorCommand command;
 	GuiWindow d_dialogParent;
 	GuiDialog d_dialogForm;
-	void (*okCallback) (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure);
+	UiCallback okCallback;
 	void (*applyCallback) (Any dia, void *closure);
 	void (*cancelCallback) (Any dia, void *closure);
 	void *buttonClosure;
@@ -121,7 +123,7 @@ Thing_define (UiForm, Thing) {
 
 /* The following routines work on the screen and from batch. */
 UiForm UiForm_create (GuiWindow parent, const char32 *title,
-	void (*okCallback) (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure), void *buttonClosure,
+	UiCallback okCallback, void *buttonClosure,
 	const char32 *invokingButtonTitle, const char32 *helpTitle);
 Any UiForm_addReal (I, const char32 *label, const char32 *defaultValue);
 Any UiForm_addRealOrUndefined (I, const char32 *label, const char32 *defaultValue);
@@ -210,11 +212,11 @@ void UiForm_call (I, int narg, Stackel args, Interpreter interpreter);
 void UiForm_parseString (I, const char32 *arguments, Interpreter interpreter);
 
 UiForm UiInfile_create (GuiWindow parent, const char32 *title,
-  void (*okCallback) (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure), void *okClosure,
+  UiCallback okCallback, void *okClosure,
   const char32 *invokingButtonTitle, const char32 *helpTitle, bool allowMultipleFiles);
 
 UiForm UiOutfile_create (GuiWindow parent, const char32 *title,
-  void (*okCallback) (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure), void *okClosure,
+  UiCallback okCallback, void *okClosure,
   const char32 *invokingButtonTitle, const char32 *helpTitle);
 
 void UiInfile_do (Any dia);

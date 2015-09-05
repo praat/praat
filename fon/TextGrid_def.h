@@ -25,9 +25,9 @@ oo_DEFINE_CLASS (TextPoint, AnyPoint)
 
 	/* 'after' was a temporary attribute (19970211-19970307). */
 	#if oo_READING_TEXT
-		if (Thing_version == 1) texgetw2 (a_text);
+		if (formatVersion == 1) texgetw2 (a_text);
 	#elif oo_READING_BINARY
-		if (Thing_version == 1) bingetw2 (f);
+		if (formatVersion == 1) bingetw2 (f);
 	#endif
 
 oo_END_CLASS (TextPoint)
@@ -56,8 +56,8 @@ oo_DEFINE_CLASS (TextTier, Function)
 	#if oo_DECLARING
 		long numberOfPoints () // accessor
 			{ return our points -> size; }
-		TextPoint point (long i) // accessor
-			{ return static_cast <TextPoint> (our points -> item [i]); }
+		TextPoint& point (long i) // accessor
+			{ return reinterpret_cast <TextPoint&> (our points -> item [i]); }
 
 		int v_domainQuantity ()
 			override { return MelderQuantity_TIME_SECONDS; }
@@ -79,11 +79,8 @@ oo_DEFINE_CLASS (IntervalTier, Function)
 	#if oo_DECLARING
 		long numberOfIntervals () // accessor
 			{ return our intervals -> size; }
-		TextInterval interval (long i) // accessor
-			{ return static_cast <TextInterval> (our intervals -> item [i]); }
-		TextInterval operator[] (long i) { return static_cast <TextInterval> (our intervals -> item [i]); }
-		//template <class T> T& operator[] (long i) { return (T) (our intervals -> item [i]); }
-		TextInterval* intervalss () { return (TextInterval *) (our intervals -> item); }
+		TextInterval& interval (long i) // accessor
+			{ return reinterpret_cast <TextInterval&> (our intervals -> item [i]); }
 
 		int v_domainQuantity ()
 			override { return MelderQuantity_TIME_SECONDS; }
@@ -105,8 +102,8 @@ oo_DEFINE_CLASS (TextGrid, Function)
 	#if oo_DECLARING
 		long numberOfTiers () // accessor
 			{ return our tiers -> size; }
-		Function tier (long i) // accessor
-			{ return static_cast <Function> (our tiers -> item [i]); }
+		Function& tier (long i) // accessor
+			{ return reinterpret_cast <Function&> (our tiers -> item [i]); }
 
 		void v_info ()
 			override;

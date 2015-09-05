@@ -78,7 +78,7 @@ Any CommandHistory_getItem (I) {
 void CommandHistory_insertItem (I, Any data) {
 	iam (CommandHistory);
 
-	Melder_assert (data && (Thing_member ( (Thing) data, my itemClass) || my itemClass == NULL));
+	Melder_assert (data && (Thing_isa ( (Thing) data, my itemClass) || my itemClass == NULL));
 	if (my current < my size) {
 		for (long i = my current + 1; i <= my size; i++) {
 			forget ( ( (Command *) my item) [i]);

@@ -123,7 +123,7 @@ Thing_implement (GuiList, GuiControl, 0);
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
-		Melder_assert (userData == NULL || Thing_member (userData, classGuiList));
+		Melder_assert (userData == NULL || Thing_isa (userData, classGuiList));
 		d_userData = static_cast <GuiList> (userData);
 	}
 

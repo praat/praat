@@ -63,7 +63,7 @@ Thing_implement (GuiButton, GuiControl, 0);
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
-		Melder_assert (userData == NULL || Thing_member (userData, classGuiButton));
+		Melder_assert (userData == NULL || Thing_isa (userData, classGuiButton));
 		d_userData = static_cast <GuiButton> (userData);
 	}
 	- (void) _guiCocoaButton_activateCallback: (id) widget {

@@ -128,8 +128,6 @@
 
 #define oo_ENDFROM
 
-#define oo_VERSION(version)
-
 #define oo_DECLARING  0
 #define oo_DESTROYING  0
 #define oo_COPYING  1

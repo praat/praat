@@ -825,7 +825,7 @@ void _GuiText_exit (void) {
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
-		Melder_assert (userData == NULL || Thing_member (userData, classGuiText));
+		Melder_assert (userData == NULL || Thing_isa (userData, classGuiText));
 		d_userData = static_cast <GuiText> (userData);
 	}
 	- (void) textDidChange: (NSNotification *) notification {
@@ -850,7 +850,7 @@ void _GuiText_exit (void) {
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
-		Melder_assert (userData == NULL || Thing_member (userData, classGuiText));
+		Melder_assert (userData == NULL || Thing_isa (userData, classGuiText));
 		d_userData = static_cast <GuiText> (userData);
 	}
 	/*

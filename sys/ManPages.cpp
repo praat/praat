@@ -234,7 +234,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 	++ par;   // Room for the final zero-type paragraph.
 	page -> paragraphs = (ManPage_Paragraph) Melder_realloc (page -> paragraphs, (int64) sizeof (struct structManPage_Paragraph) * (par - page -> paragraphs));
 }
-void structManPages :: v_readText (MelderReadText text) {
+void structManPages :: v_readText (MelderReadText text, int /*formatVersion*/) {
 	dynamic = TRUE;
 	pages = Ordered_create ();
 	MelderDir_copy (& Data_directoryBeingRead, & rootDirectory);

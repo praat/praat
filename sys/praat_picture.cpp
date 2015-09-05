@@ -437,9 +437,9 @@ END2 }
 
 /***** "File" MENU *****/
 
-FORM_READ (Picture_readFromPraatPictureFile, U"Read picture from praat picture file", 0, false) {
+FORM_READ2 (Picture_readFromPraatPictureFile, U"Read picture from praat picture file", 0, false) {
 	Picture_readFromPraatPictureFile (praat_picture, file);
-} END
+END2 }
 
 static void DO_Picture_writeToEpsFile (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *dummy) {
 	static Any dia;

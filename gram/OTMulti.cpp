@@ -102,17 +102,16 @@ void OTMulti_checkIndex (OTMulti me) {
 	OTMulti_sort (me);
 }
 
-void structOTMulti :: v_readText (MelderReadText text) {
-	int localVersion = Thing_version;
-	OTMulti_Parent :: v_readText (text);
-	if (localVersion >= 1) {
+void structOTMulti :: v_readText (MelderReadText text, int formatVersion) {
+	OTMulti_Parent :: v_readText (text, formatVersion);
+	if (formatVersion >= 1) {
 		try {
 			decisionStrategy = texgete1 (text, kOTGrammar_decisionStrategy_getValue);
 		} catch (MelderError) {
 			Melder_throw (U"Decision strategy not read.");
 		}
 	}
-	if (localVersion >= 2) {
+	if (formatVersion >= 2) {
 		try {
 			leak = texgetr8 (text);
 		} catch (MelderError) {
@@ -126,7 +125,7 @@ void structOTMulti :: v_readText (MelderReadText text) {
 		constraint -> name = texgetw2 (text);
 		constraint -> ranking = texgetr8 (text);
 		constraint -> disharmony = texgetr8 (text);
-		if (localVersion < 2) {
+		if (formatVersion < 2) {
 			constraint -> plasticity = 1.0;
 		} else {
 			try {

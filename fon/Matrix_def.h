@@ -26,7 +26,7 @@ oo_DEFINE_CLASS (Matrix, SampledXY)
 			Melder_casual (U"structMatrix :: read:"
 				U" Going to read ", ny, U" rows"
 				U" of ", nx, U" columns.");
-		if (localVersion >= 2) {
+		if (formatVersion >= 2) {
 			oo_DOUBLE_MATRIX (z, ny, nx)
 		} else {
 			oo_FLOAT_MATRIX (z, ny, nx)

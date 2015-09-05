@@ -1205,7 +1205,7 @@ void structFunctionEditor :: v_createChildren () {
 
 void structFunctionEditor :: v_dataChanged () {
 	Function function = (Function) our data;
-	Melder_assert (Thing_member (function, classFunction));
+	Melder_assert (Thing_isa (function, classFunction));
 	our tmin = function -> xmin;
  	our tmax = function -> xmax;
  	if (our d_startWindow < our tmin || our d_startWindow > our tmax) our d_startWindow = our tmin;

@@ -52,7 +52,7 @@ Thing_implement (GuiScrolledWindow, GuiControl, 0);
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
-		Melder_assert (userData == NULL || Thing_member (userData, classGuiScrolledWindow));
+		Melder_assert (userData == NULL || Thing_isa (userData, classGuiScrolledWindow));
 		d_userData = static_cast <GuiScrolledWindow> (userData);
 	}
 	@end

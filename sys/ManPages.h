@@ -30,7 +30,7 @@ Thing_define (ManPages, Data) {
 
 	void v_destroy ()
 		override;
-	void v_readText (MelderReadText text)
+	void v_readText (MelderReadText text, int formatVersion)
 		override;
 };
 

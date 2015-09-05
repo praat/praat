@@ -28,7 +28,7 @@ oo_DEFINE_STRUCT (OTGrammarConstraint)
 		oo_DOUBLE (plasticity)
 	oo_ENDFROM
 	#if oo_READING
-		if (localVersion < 2) {
+		if (formatVersion < 2) {
 			plasticity = 1.0;
 		}
 	#endif

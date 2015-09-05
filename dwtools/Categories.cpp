@@ -1,6 +1,6 @@
 /* Categories.cpp
  *
- * Copyright (C) 1993-2013 David Weenink
+ * Copyright (C) 1993-2013 David Weenink, 2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,18 +24,18 @@
 
 #include "Categories.h"
 
-void structCategories :: v_readText (MelderReadText a_text) {
+void structCategories :: v_readText (MelderReadText a_text, int /*formatVersion*/) {
 	long l_size = texgeti4 (a_text);
 	if (l_size == 0) {
 		OrderedOfString_init (this, 1);
 	} else if (l_size < 0) {
 		Melder_throw (U"Size cannot be negative.");
 	} else {
-		OrderedOfString_init (this, l_size);   // David, in je vorige versie kon dit tweemaal aangeroepen worden (en in dat geval crashend): Ja dat was een bug, Ok nu
+		OrderedOfString_init (this, l_size);
 	}
 	for (long i = 1; i <= l_size; i ++) {
 		autoSimpleString itemi = Thing_new (SimpleString);
-		itemi -> v_readText (a_text);
+		itemi -> v_readText (a_text, 0);
 		Ordered_addItemPos (this, itemi.transfer(), i);
 	}
 }

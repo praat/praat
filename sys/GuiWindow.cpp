@@ -60,9 +60,9 @@ Thing_implement (GuiWindow, GuiShell, 0);
 		Thing_cast (GuiThing, child, _GuiObject_getUserData (childWidget));
 		if (child) {
 			GuiControl control = NULL;
-			if (Thing_member (child, classGuiControl)) {
+			if (Thing_isa (child, classGuiControl)) {
 				control = static_cast <GuiControl> (child);
-			} else if (Thing_member (child, classGuiMenu)) {
+			} else if (Thing_isa (child, classGuiMenu)) {
 				Thing_cast (GuiMenu, menu, child);
 				control = menu -> d_cascadeButton;
 			}
@@ -121,7 +121,7 @@ Thing_implement (GuiWindow, GuiShell, 0);
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
-		Melder_assert (userData == NULL || Thing_member (userData, classGuiWindow));
+		Melder_assert (userData == NULL || Thing_isa (userData, classGuiWindow));
 		d_userData = static_cast <GuiWindow> (userData);
 	}
 	- (void) keyDown: (NSEvent *) theEvent {
