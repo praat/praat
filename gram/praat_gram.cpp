@@ -388,7 +388,9 @@ END2 }
 
 #pragma mark New
 
-DIRECT2 (OT_learning_tutorial) { Melder_help (U"OT learning"); END2 }
+DIRECT2 (OT_learning_tutorial) {
+	Melder_help (U"OT learning");
+END2 }
 
 DIRECT2 (Create_NoCoda_grammar) {
 	autoOTGrammar me = OTGrammar_create_NoCoda_grammar ();
@@ -455,7 +457,9 @@ END2 }
 
 #pragma mark Help
 
-DIRECT2 (OTGrammar_help) { Melder_help (U"OTGrammar"); END2 }
+DIRECT2 (OTGrammar_help) {
+	Melder_help (U"OTGrammar");
+END2 }
 
 #pragma mark Edit
 
@@ -1655,11 +1659,11 @@ void praat_uvafon_gram_init (void) {
 	praat_addAction1 (classOTGrammar, 1, U"Write to headerless spreadsheet file...", 0, praat_HIDDEN, DO_OTGrammar_writeToHeaderlessSpreadsheetFile);
 
 	praat_addAction1 (classOTGrammar, 0, U"OTGrammar help", 0, 0, DO_OTGrammar_help);
+	praat_addAction1 (classOTGrammar, 0, U"View & Edit", 0, praat_ATTRACTIVE, DO_OTGrammar_edit);
+	praat_addAction1 (classOTGrammar, 0, U"Edit", 0, praat_HIDDEN, DO_OTGrammar_edit);
 	praat_addAction1 (classOTGrammar, 0, U"Draw -", 0, 0, 0);
 		praat_addAction1 (classOTGrammar, 0, U"Draw tableau...", 0, 0, DO_OTGrammar_drawTableau);
 		praat_addAction1 (classOTGrammar, 0, U"Draw tableau (narrowly)...", 0, 0, DO_OTGrammar_drawTableau_narrowly);
-	praat_addAction1 (classOTGrammar, 0, U"View & Edit", 0, praat_ATTRACTIVE, DO_OTGrammar_edit);
-	praat_addAction1 (classOTGrammar, 0, U"Edit", 0, praat_HIDDEN, DO_OTGrammar_edit);
 	praat_addAction1 (classOTGrammar, 0, U"Query -", 0, 0, 0);
 		praat_addAction1 (classOTGrammar, 1, U"Get number of constraints", 0, 1, DO_OTGrammar_getNumberOfConstraints);
 		praat_addAction1 (classOTGrammar, 1, U"Get constraint...", 0, 1, DO_OTGrammar_getConstraint);

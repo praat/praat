@@ -24,23 +24,23 @@
 
 /***** CATEGORIES *****/
 
-DIRECT (Categories_getEntropy)
+DIRECT2 (Categories_getEntropy) {
 	iam_ONLY (Categories);
 	double entropy = Categories_getEntropy (me);
 	Melder_informationReal (entropy, U"bits");
-END
+END2 }
 
-DIRECT (Categories_sort)
+DIRECT2 (Categories_sort) {
 	WHERE (SELECTED) {
 		iam_LOOP (Categories);
 		Categories_sort (me);
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
 /***** EXPERIMENT_MFC *****/
 
-DIRECT (ExperimentMFC_run)
+DIRECT2 (ExperimentMFC_run) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot run experiments from the command line.");
 	autoOrdered experiments = Ordered_create ();
 	Collection_dontOwnItems (experiments.peek());
@@ -49,7 +49,7 @@ DIRECT (ExperimentMFC_run)
 		Melder_assert (my classInfo == classExperimentMFC);
 		Collection_addItem (experiments.peek(), me);   // reference copy of me
 	}
-	Melder_assert (experiments-> size >= 1);
+	Melder_assert (experiments -> size >= 1);
 	Melder_assert (((Data) experiments -> item [1]) -> classInfo == classExperimentMFC);
 	Melder_assert (((Data) experiments -> item [experiments -> size]) -> classInfo == classExperimentMFC);
 	autoOrdered experimentsCopy = experiments.clone();   // we need a copy, because we do a transfer, then a peek
@@ -58,69 +58,69 @@ DIRECT (ExperimentMFC_run)
 	Melder_assert (experimentsCopy -> item [experimentsCopy -> size] == experiments -> item [experiments -> size]);
 	autoRunnerMFC runner = RunnerMFC_create (U"listening experiments", experimentsCopy.transfer());
 	praat_installEditorN (runner.transfer(), experiments.peek());
-END
+END2 }
 
-DIRECT (ExperimentMFC_extractResults)
+DIRECT2 (ExperimentMFC_extractResults) {
 	WHERE (SELECTED) {
 		iam_LOOP (ExperimentMFC);
 		autoResultsMFC thee = ExperimentMFC_extractResults (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
 /***** RESULTS_MFC *****/
 
-DIRECT (ResultsMFC_getNumberOfTrials)
+DIRECT2 (ResultsMFC_getNumberOfTrials) {
 	iam_ONLY (ResultsMFC);
 	Melder_information (my numberOfTrials);
-END
+END2 }
 
-FORM (ResultsMFC_getResponse, U"ResultsMFC: Get response", 0)
+FORM (ResultsMFC_getResponse, U"ResultsMFC: Get response", 0) {
 	NATURAL (U"Trial", U"1")
-	OK
+	OK2
 DO
 	iam_ONLY (ResultsMFC);
 	long trial = GET_INTEGER (U"Trial");
 	if (trial > my numberOfTrials)
 		Melder_throw (U"Trial ", trial, U" does not exist (maximum ", my numberOfTrials, U").");
 	Melder_information (my result [trial]. response);
-END
+END2 }
 
-FORM (ResultsMFC_getStimulus, U"ResultsMFC: Get stimulus", 0)
+FORM (ResultsMFC_getStimulus, U"ResultsMFC: Get stimulus", 0) {
 	NATURAL (U"Trial", U"1")
-	OK
+	OK2
 DO
 	iam_ONLY (ResultsMFC);
 	long trial = GET_INTEGER (U"Trial");
 	if (trial > my numberOfTrials)
 		Melder_throw (U"Trial ", trial, U" does not exist (maximum ", my numberOfTrials, U").");
 	Melder_information (my result [trial]. stimulus);
-END
+END2 }
 
-DIRECT (ResultsMFC_removeUnsharedStimuli)
+DIRECT2 (ResultsMFC_removeUnsharedStimuli) {
 	ResultsMFC res1 = NULL, res2 = NULL;
 	WHERE (SELECTED) { if (res1) res2 = (ResultsMFC) OBJECT; else res1 = (ResultsMFC) OBJECT; }
 	Melder_assert (res1 && res2);
 	praat_new (ResultsMFC_removeUnsharedStimuli (res1, res2), res2 -> name, U"_shared");
-END
+END2 }
 
-DIRECT (ResultsMFC_to_Categories_stimuli)
+DIRECT2 (ResultsMFC_to_Categories_stimuli) {
 	WHERE (SELECTED) {
 		iam_LOOP (ResultsMFC);
 		autoCategories thee = ResultsMFC_to_Categories_stimuli (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (ResultsMFC_to_Categories_responses)
+DIRECT2 (ResultsMFC_to_Categories_responses) {
 	WHERE (SELECTED) {
 		iam_LOOP (ResultsMFC);
 		autoCategories thee = ResultsMFC_to_Categories_responses (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (ResultsMFCs_to_Table)
+DIRECT2 (ResultsMFCs_to_Table) {
 	autoCollection collection = Collection_create (classResultsMFC, 100);
 	Collection_dontOwnItems (collection.peek());
 	WHERE (SELECTED) {
@@ -129,7 +129,7 @@ DIRECT (ResultsMFCs_to_Table)
 	}
 	autoTable thee = ResultsMFCs_to_Table (collection.peek());
 	praat_new (thee.transfer(), U"allResults");
-END
+END2 }
 
 /***** buttons *****/
 

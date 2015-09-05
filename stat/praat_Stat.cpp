@@ -183,7 +183,9 @@ DO
 	}
 END2 }
 
-DIRECT2 (PairDistribution_help) { Melder_help (U"PairDistribution"); END2 }
+DIRECT2 (PairDistribution_help) {
+	Melder_help (U"PairDistribution");
+END2 }
 
 DIRECT2 (PairDistribution_removeZeroWeights) {
 	LOOP {
@@ -623,7 +625,9 @@ DO
 	}
 END2 }
 
-DIRECT2 (Table_help) { Melder_help (U"Table"); END2 }
+DIRECT2 (Table_help) {
+	Melder_help (U"Table");
+END2 }
 
 FORM (Table_insertColumn, U"Table: Insert column", 0) {
 	NATURAL (U"Position", U"1")
@@ -1512,7 +1516,9 @@ DO
 	}
 END2 }
 
-DIRECT2 (TableOfReal_help) { Melder_help (U"TableOfReal"); END2 }
+DIRECT2 (TableOfReal_help) {
+	Melder_help (U"TableOfReal");
+END2 }
 
 FORM (TableOfReal_insertColumn, U"Insert column", 0) {
 	NATURAL (U"Column number", U"1")
@@ -1680,7 +1686,9 @@ FORM_WRITE2 (TableOfReal_writeToHeaderlessSpreadsheetFile, U"Save TableOfReal as
 END2 }
 
 
-DIRECT2 (StatisticsTutorial) { Melder_help (U"Statistics"); END2 }
+DIRECT2 (StatisticsTutorial) {
+	Melder_help (U"Statistics");
+END2 }
 
 static bool isTabSeparated_8bit (int nread, const char *header) {
 	for (long i = 0; i < nread; i ++) {
