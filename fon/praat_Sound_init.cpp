@@ -1276,7 +1276,9 @@ DO_ALTERNATIVE (old_Sound_getValueAtTime)
 	}
 END2 }
 
-DIRECT2 (Sound_help) { Melder_help (U"Sound"); END2 }
+DIRECT2 (Sound_help) {
+	Melder_help (U"Sound");
+END2 }
 
 FORM (Sound_lengthen_overlapAdd, U"Sound: Lengthen (overlap-add)", U"Sound: Lengthen (overlap-add)...") {
 	POSITIVE (U"Minimum pitch (Hz)", U"75")
@@ -2196,8 +2198,13 @@ END2 }
 
 /***** Help menus *****/
 
-DIRECT2 (AnnotationTutorial) { Melder_help (U"Intro 7. Annotation"); END2 }
-DIRECT2 (FilteringTutorial) { Melder_help (U"Filtering"); END2 }
+DIRECT2 (AnnotationTutorial) {
+	Melder_help (U"Intro 7. Annotation");
+END2 }
+
+DIRECT2 (FilteringTutorial) {
+	Melder_help (U"Filtering");
+END2 }
 
 /***** file recognizers *****/
 

@@ -271,7 +271,6 @@ DO
 	theGraphicsCjkFontStyle = GET_ENUM (kGraphics_cjkFontStyle, U"CJK font style");
 END2 }
 
-
 /********** Callbacks of the Goodies menu. **********/
 
 FORM (praat_calculator, U"Calculator", U"Calculator") {

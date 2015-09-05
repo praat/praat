@@ -1,6 +1,6 @@
 /* praat_contrib_Ola_KNN.cpp
  *
- * Copyright (C) 2007-2009 Ola Söder, 2010-2011 Paul Boersma
+ * Copyright (C) 2007-2009 Ola Söder, 2010-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,30 +36,29 @@ static const char32 *QUERY_BUTTON   = U"Query -";
 static const char32 *MODIFY_BUTTON  = U"Modify -";
 static const char32 *EXTRACT_BUTTON = U"Extract -";
 
-
 /////////////////////////////////////////////////////////////////////////////////////////
 // KNN creations                                                                      //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-FORM (KNN_create, U"Create kNN Classifier", U"kNN classifiers 1. What is a kNN classifier?")
-    WORD (U"Name", U"Classifier")
-    OK  
+FORM (KNN_create, U"Create kNN Classifier", U"kNN classifiers 1. What is a kNN classifier?") {
+	WORD (U"Name", U"Classifier")
+	OK2
 DO
-    autoKNN knn = KNN_create ();
-    praat_new (knn.transfer(), GET_STRING (U"Name"));
-END
+	autoKNN knn = KNN_create ();
+	praat_new (knn.transfer(), GET_STRING (U"Name"));
+END2 }
 
-FORM (KNN_Pattern_Categories_to_KNN, U"Create kNN classifier", U"kNN classifiers 1. What is a kNN classifier?" )
-    WORD (U"Name", U"Classifier")
-    RADIO (U"Ordering", 1)
-    RADIOBUTTON (U"Random")
-    RADIOBUTTON (U"Sequential")
-    OK
+FORM (KNN_Pattern_Categories_to_KNN, U"Create kNN classifier", U"kNN classifiers 1. What is a kNN classifier?") {
+	WORD (U"Name", U"Classifier")
+	RADIO (U"Ordering", 1)
+	RADIOBUTTON (U"Random")
+	RADIOBUTTON (U"Sequential")
+	OK2
 DO
 	iam_ONLY (Pattern);
 	thouart_ONLY (Categories);
-    int ordering = GET_INTEGER (U"Ordering");
-    autoKNN knn = KNN_create ();
+	int ordering = GET_INTEGER (U"Ordering");
+	autoKNN knn = KNN_create ();
 	switch (ordering) {
 		case 1:
 			ordering = kOla_SHUFFLE;
@@ -76,739 +75,696 @@ DO
 		default:
 			praat_new (knn.transfer(), GET_STRING(U"Name"));
 	}
-END
-
-
-
-
+END2 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // KNN extractions, queries and modifications                                         //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-DIRECT (KNN_getNumberOfInstances)
+DIRECT2 (KNN_getNumberOfInstances) {
     iam_ONLY (KNN);
     Melder_information (my nInstances, U" units");
-END
+END2 }
 
-FORM (KNN_getOptimumModel, U"kNN model selection", U"kNN classifiers 1.1.2. Model selection")
-    RADIO (U"Evaluation method", 1)
-    RADIOBUTTON (U"Leave one out")
-    RADIOBUTTON (U"10-fold cross-validation")
-    INTEGER (U"k max", U"50")
-    INTEGER (U"Number of seeds", U"10")
-    POSITIVE (U"Learning rate", U"0.2")
-    OK
+FORM (KNN_getOptimumModel, U"kNN model selection", U"kNN classifiers 1.1.2. Model selection") {
+	RADIO (U"Evaluation method", 1)
+	RADIOBUTTON (U"Leave one out")
+	RADIOBUTTON (U"10-fold cross-validation")
+	INTEGER (U"k max", U"50")
+	INTEGER (U"Number of seeds", U"10")
+	POSITIVE (U"Learning rate", U"0.2")
+	OK2
 DO
-    iam_ONLY (KNN);
-    long k = GET_INTEGER (U"k max");
-    double lrate = GET_REAL (U"Learning rate");
-    if (k < 1 || k > my nInstances)
-        Melder_throw (U"Please select a value of k max such that 0 < k max < ", my nInstances + 1, U".");
-    long nseeds = GET_INTEGER (U"Number of seeds");
-    if (nseeds < 1)
-        Melder_throw (U"The number of seeds should exceed 1.");
-    int mode = GET_INTEGER (U"Evaluation method");
-    switch (mode) {
-        case 2:
-            mode = kOla_TEN_FOLD_CROSS_VALIDATION;
-            break;
-        case 1:
-            mode = kOla_LEAVE_ONE_OUT;
-            break;
-    }
-    autoFeatureWeights fws = FeatureWeights_create ((my input) -> nx);
-    int dist;
-    KNN_modelSearch (me, fws.peek(), &k, &dist, mode, lrate, nseeds);
-    switch (dist) {
-        case kOla_SQUARED_DISTANCE_WEIGHTED_VOTING:
-            Melder_information (U"Vote weighting: Inversed squared distance\n", U"k: ", k);
-            break;
-        case kOla_DISTANCE_WEIGHTED_VOTING:
-            Melder_information (U"Vote weighting: Inversed distance\n", U"k: ", k);
-            break;
-        case kOla_FLAT_VOTING:
-            Melder_information (U"Vote weighting: Flat\n", U"k: ", k);
-            break;
-    }
-END
-
-FORM (KNN_evaluate, U"Evaluation", U"KNN: Get accuracy estimate...")
-    RADIO (U"Evaluation method", 1)
-    RADIOBUTTON (U"Leave one out")
-    RADIOBUTTON (U"10-fold cross-validation")
-    INTEGER (U"k neighbours", U"1")
-    RADIO (U"Vote weighting", 1)
-    RADIOBUTTON (U"Inversed squared distance")
-    RADIOBUTTON (U"Inversed distance")
-    RADIOBUTTON (U"Flat")
-    OK
-
-DO
-    iam_ONLY (KNN);
-    if (my nInstances < 1)
-        Melder_throw (U"Instance base is empty.");
-    long k = GET_INTEGER (U"k neighbours");
-    if (k < 1 || k > my nInstances)
-        Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U".");
-    int vt = GET_INTEGER (U"Vote weighting");
-	switch (vt) {
-        case 1:
-            vt = kOla_SQUARED_DISTANCE_WEIGHTED_VOTING;
-            break;
-        case 2:
-            vt = kOla_DISTANCE_WEIGHTED_VOTING;
-            break;
-        case 3:
-            vt = kOla_FLAT_VOTING;
-            break;
-    }
-    int mode = GET_INTEGER (U"Evaluation method");
-    switch (mode) {
-        case 2:
-            mode = kOla_TEN_FOLD_CROSS_VALIDATION;
-            break;
-        case 1: 
-            mode = kOla_LEAVE_ONE_OUT;
-            break;
-    }
-    autoFeatureWeights fws = FeatureWeights_create (my input -> nx);
-    double result = KNN_evaluate (me, fws.peek(), k, vt, mode);
-    if (lround (result) == kOla_FWEIGHTS_MISMATCH)
-		Melder_throw (U"The number of feature weights should be equal to the dimensionality of the Pattern.");
-    Melder_information (100 * result, U" percent of the instances correctly classified.");   // BUG: use Melder_percent
-END
-
-FORM (KNN_evaluateWithFeatureWeights, U"Evaluation", U"KNN & FeatureWeights: Get accuracy estimate...")
-    RADIO (U"Evaluation method", 1)
-    RADIOBUTTON (U"Leave one out")
-    RADIOBUTTON (U"10-fold cross-validation")
-    INTEGER (U"k neighbours", U"1")
-    RADIO (U"Vote weighting", 1)
-    RADIOBUTTON (U"Inversed squared distance")
-    RADIOBUTTON (U"Inversed distance")
-    RADIOBUTTON (U"Flat")
-    OK
-
-DO
-    iam_ONLY (KNN);
-    if (my nInstances < 1)
-		Melder_throw (U"Instance base is empty");
-    thouart_ONLY (FeatureWeights);
-    long k = GET_INTEGER (U"k neighbours");
-    if (k < 1 || k > my nInstances)
-        Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U".");
-    int vt = GET_INTEGER (U"Vote weighting");
-    switch (vt) {
-        case 1:
-            vt = kOla_SQUARED_DISTANCE_WEIGHTED_VOTING;
-            break;
-        case 2:
-            vt = kOla_DISTANCE_WEIGHTED_VOTING;
-            break;
-        case 3:
-            vt = kOla_FLAT_VOTING;
-            break;
-    }   
+	iam_ONLY (KNN);
+	long k = GET_INTEGER (U"k max");
+	double lrate = GET_REAL (U"Learning rate");
+	if (k < 1 || k > my nInstances)
+		Melder_throw (U"Please select a value of k max such that 0 < k max < ", my nInstances + 1, U".");
+	long nseeds = GET_INTEGER (U"Number of seeds");
+	if (nseeds < 1)
+		Melder_throw (U"The number of seeds should exceed 1.");
 	int mode = GET_INTEGER (U"Evaluation method");
-    switch (mode) {
-        case 2:
-            mode = kOla_TEN_FOLD_CROSS_VALIDATION;
-            break;
-        case 1:
-            mode = kOla_LEAVE_ONE_OUT;
-            break;
-    }
-    double result = KNN_evaluate (me, thee, k, vt, mode);
-    if (lround (result) == kOla_FWEIGHTS_MISMATCH)
-        Melder_throw (U"The number of feature weights should be equal to the dimensionality of the Pattern.");
-    Melder_information (100 * result, U" percent of the instances correctly classified.");
-END
-
-
-DIRECT  (KNN_extractInputPatterns)
-    iam_ONLY (KNN);
-    if (my nInstances > 0) {
-        praat_new (Data_copy (my input), U"Input Patterns");
-    } else {
-        Melder_throw (U"Instance base is empty.");
+	switch (mode) {
+		case 2:
+			mode = kOla_TEN_FOLD_CROSS_VALIDATION;
+			break;
+		case 1:
+			mode = kOla_LEAVE_ONE_OUT;
+			break;
 	}
-END
-
-DIRECT  (KNN_extractOutputCategories)
-    iam_ONLY (KNN);
-    if (my nInstances > 0) {
-        praat_new (Data_copy (my output), U"Output Categories");
-    } else {
-        Melder_throw (U"Instance base is empty.");
+	autoFeatureWeights fws = FeatureWeights_create ((my input) -> nx);
+	int dist;
+	KNN_modelSearch (me, fws.peek(), &k, &dist, mode, lrate, nseeds);
+	switch (dist) {
+		case kOla_SQUARED_DISTANCE_WEIGHTED_VOTING:
+			Melder_information (U"Vote weighting: Inversed squared distance\n", U"k: ", k);
+			break;
+		case kOla_DISTANCE_WEIGHTED_VOTING:
+			Melder_information (U"Vote weighting: Inversed distance\n", U"k: ", k);
+			break;
+		case kOla_FLAT_VOTING:
+			Melder_information (U"Vote weighting: Flat\n", U"k: ", k);
+			break;
 	}
-END
+END2 }
 
-FORM (KNN_reset, U"Reset", U"KNN: Reset...")
+FORM (KNN_evaluate, U"Evaluation", U"KNN: Get accuracy estimate...") {
+	RADIO (U"Evaluation method", 1)
+	RADIOBUTTON (U"Leave one out")
+	RADIOBUTTON (U"10-fold cross-validation")
+	INTEGER (U"k neighbours", U"1")
+	RADIO (U"Vote weighting", 1)
+	RADIOBUTTON (U"Inversed squared distance")
+	RADIOBUTTON (U"Inversed distance")
+	RADIOBUTTON (U"Flat")
+	OK2
+DO
+	iam_ONLY (KNN);
+	if (my nInstances < 1)
+		Melder_throw (U"Instance base is empty.");
+	long k = GET_INTEGER (U"k neighbours");
+	if (k < 1 || k > my nInstances)
+		Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U".");
+	int vt = GET_INTEGER (U"Vote weighting");
+	switch (vt) {
+		case 1:
+			vt = kOla_SQUARED_DISTANCE_WEIGHTED_VOTING;
+			break;
+		case 2:
+			vt = kOla_DISTANCE_WEIGHTED_VOTING;
+			break;
+		case 3:
+			vt = kOla_FLAT_VOTING;
+			break;
+	}
+	int mode = GET_INTEGER (U"Evaluation method");
+	switch (mode) {
+		case 2:
+			mode = kOla_TEN_FOLD_CROSS_VALIDATION;
+			break;
+		case 1: 
+			mode = kOla_LEAVE_ONE_OUT;
+			break;
+	}
+	autoFeatureWeights fws = FeatureWeights_create (my input -> nx);
+	double result = KNN_evaluate (me, fws.peek(), k, vt, mode);
+	if (lround (result) == kOla_FWEIGHTS_MISMATCH)
+		Melder_throw (U"The number of feature weights should be equal to the dimensionality of the Pattern.");
+	Melder_information (100 * result, U" percent of the instances correctly classified.");   // BUG: use Melder_percent
+END2 }
+
+FORM (KNN_evaluateWithFeatureWeights, U"Evaluation", U"KNN & FeatureWeights: Get accuracy estimate...") {
+	RADIO (U"Evaluation method", 1)
+	RADIOBUTTON (U"Leave one out")
+	RADIOBUTTON (U"10-fold cross-validation")
+	INTEGER (U"k neighbours", U"1")
+	RADIO (U"Vote weighting", 1)
+	RADIOBUTTON (U"Inversed squared distance")
+	RADIOBUTTON (U"Inversed distance")
+	RADIOBUTTON (U"Flat")
+	OK2
+DO
+	iam_ONLY (KNN);
+	if (my nInstances < 1)
+		Melder_throw (U"Instance base is empty");
+	thouart_ONLY (FeatureWeights);
+	long k = GET_INTEGER (U"k neighbours");
+	if (k < 1 || k > my nInstances)
+		Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U".");
+	int vt = GET_INTEGER (U"Vote weighting");
+	switch (vt) {
+		case 1:
+			vt = kOla_SQUARED_DISTANCE_WEIGHTED_VOTING;
+			break;
+		case 2:
+			vt = kOla_DISTANCE_WEIGHTED_VOTING;
+			break;
+		case 3:
+			vt = kOla_FLAT_VOTING;
+			break;
+	}   
+	int mode = GET_INTEGER (U"Evaluation method");
+	switch (mode) {
+		case 2:
+			mode = kOla_TEN_FOLD_CROSS_VALIDATION;
+			break;
+		case 1:
+			mode = kOla_LEAVE_ONE_OUT;
+			break;
+	}
+	double result = KNN_evaluate (me, thee, k, vt, mode);
+	if (lround (result) == kOla_FWEIGHTS_MISMATCH)
+		Melder_throw (U"The number of feature weights should be equal to the dimensionality of the Pattern.");
+	Melder_information (100 * result, U" percent of the instances correctly classified.");
+END2 }
+
+DIRECT2 (KNN_extractInputPatterns) {
+	iam_ONLY (KNN);
+	if (my nInstances > 0) {
+		praat_new (Data_copy (my input), U"Input Patterns");
+	} else {
+		Melder_throw (U"Instance base is empty.");
+	}
+END2 }
+
+DIRECT2 (KNN_extractOutputCategories) {
+	iam_ONLY (KNN);
+	if (my nInstances > 0) {
+		praat_new (Data_copy (my output), U"Output Categories");
+	} else {
+		Melder_throw (U"Instance base is empty.");
+	}
+END2 }
+
+FORM (KNN_reset, U"Reset", U"KNN: Reset...") {
     LABEL (U"", U"Warning: this command destroys all previous learning.")
-    OK
+    OK2
 DO
-    iam_ONLY (KNN);
-    forget (my input);
-    forget (my output);
-    my nInstances = 0;
+	iam_ONLY (KNN);
+	forget (my input);
+	forget (my output);
+	my nInstances = 0;
 	praat_dataChanged (me);   // BUG: this should be inserted much more often
-END
+END2 }
 
-DIRECT  (KNN_shuffle)
-    iam_ONLY (KNN);
-    if (my nInstances > 0)  
-        KNN_shuffleInstances (me);
-    else
-        Melder_throw (U"Instance base is empty.");
-END
+DIRECT2 (KNN_shuffle) {
+	iam_ONLY (KNN);
+	if (my nInstances > 0)  
+		KNN_shuffleInstances (me);
+	else
+		Melder_throw (U"Instance base is empty.");
+END2 }
 
-FORM (KNN_prune, U"Pruning", U"KNN: Prune...")
-    POSITIVE (U"Noise pruning degree", U"1")
-    POSITIVE (U"Redundancy pruning degree", U"1")
-    INTEGER (U"k neighbours", U"1")
-    OK
+FORM (KNN_prune, U"Pruning", U"KNN: Prune...") {
+	POSITIVE (U"Noise pruning degree", U"1")
+	POSITIVE (U"Redundancy pruning degree", U"1")
+	INTEGER (U"k neighbours", U"1")
+	OK2
 DO
-    iam_ONLY (KNN);
-    if (my nInstances < 1)
-        Melder_throw (U"Instance base is empty.");
-    long oldn = my nInstances;   // save before it changes!
-    long k = GET_INTEGER (U"k neighbours");
-    if (k < 1 || k > my nInstances)
-        Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U".");
-    double n = GET_REAL (U"Noise pruning degree");
-    double r = GET_REAL (U"Redundancy pruning degree");
-    if (n <= 0 || n > 1 || r <= 0 || r > 1)
-        Melder_throw (U"Please select a pruning degree d such that 0 < d <= 1.");
-    long npruned = KNN_prune_prune (me, n, r, k);
-    Melder_information (npruned, U" instances discarded. \n", U"Size of new instance base: ", oldn - npruned);
-END
-
-
-
-
+	iam_ONLY (KNN);
+	if (my nInstances < 1)
+		Melder_throw (U"Instance base is empty.");
+	long oldn = my nInstances;   // save before it changes!
+	long k = GET_INTEGER (U"k neighbours");
+	if (k < 1 || k > my nInstances)
+		Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U".");
+	double n = GET_REAL (U"Noise pruning degree");
+	double r = GET_REAL (U"Redundancy pruning degree");
+	if (n <= 0 || n > 1 || r <= 0 || r > 1)
+		Melder_throw (U"Please select a pruning degree d such that 0 < d <= 1.");
+	long npruned = KNN_prune_prune (me, n, r, k);
+	Melder_information (npruned, U" instances discarded. \n", U"Size of new instance base: ", oldn - npruned);
+END2 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Learning                                                                            //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-FORM (KNN_learn, U"Learning", U"kNN classifiers 1. What is a kNN classifier?")
-    RADIO (U"Learning method", 1)
-    RADIOBUTTON (U"Append new information")
-    RADIOBUTTON (U"Replace current intancebase")
-    RADIO (U"Ordering", 1)
-    RADIOBUTTON (U"Random")
-    RADIOBUTTON (U"Sequential")
-    OK
+FORM (KNN_learn, U"Learning", U"kNN classifiers 1. What is a kNN classifier?") {
+	RADIO (U"Learning method", 1)
+	RADIOBUTTON (U"Append new information")
+	RADIOBUTTON (U"Replace current intancebase")
+	RADIO (U"Ordering", 1)
+	RADIOBUTTON (U"Random")
+	RADIOBUTTON (U"Sequential")
+	OK2
 DO
-    iam_ONLY (KNN);
-    thouart_ONLY (Pattern);
-    heis_ONLY (Categories);
-    int ordering = GET_INTEGER (U"Ordering");
-    switch (ordering) {
-        case 1:
-            ordering = kOla_SHUFFLE;
-            break;
-        case 2:
-            ordering = kOla_SEQUENTIAL;
-    }
-    int method = GET_INTEGER (U"Learning method");
-    int result = kOla_ERROR;
-    switch (method) {
-        case 1:
-            result = KNN_learn (me, thee, him, my nInstances == 0 ? kOla_REPLACE : kOla_APPEND, ordering);
-            break;
-        case 2:
-            result = KNN_learn (me, thee, him, kOla_REPLACE, ordering);
-            break;
-    }
-    switch (result) {
-        case kOla_PATTERN_CATEGORIES_MISMATCH:  
-            Melder_throw (U"The number of Categories should be equal to the number of rows in Pattern.");
-        case kOla_DIMENSIONALITY_MISMATCH:
-            Melder_throw (U"The dimensionality of Pattern should be equal to that of the instance base.");
-    }
-END
-
-
-
+	iam_ONLY (KNN);
+	thouart_ONLY (Pattern);
+	heis_ONLY (Categories);
+	int ordering = GET_INTEGER (U"Ordering");
+	switch (ordering) {
+		case 1:
+			ordering = kOla_SHUFFLE;
+			break;
+		case 2:
+			ordering = kOla_SEQUENTIAL;
+	}
+	int method = GET_INTEGER (U"Learning method");
+	int result = kOla_ERROR;
+	switch (method) {
+		case 1:
+			result = KNN_learn (me, thee, him, my nInstances == 0 ? kOla_REPLACE : kOla_APPEND, ordering);
+			break;
+		case 2:
+			result = KNN_learn (me, thee, him, kOla_REPLACE, ordering);
+			break;
+	}
+	switch (result) {
+		case kOla_PATTERN_CATEGORIES_MISMATCH:  
+			Melder_throw (U"The number of Categories should be equal to the number of rows in Pattern.");
+		case kOla_DIMENSIONALITY_MISMATCH:
+			Melder_throw (U"The dimensionality of Pattern should be equal to that of the instance base.");
+	}
+END2 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Evaluation                                                                          //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-
-FORM (KNN_evaluateWithTestSet, U"Evaluation", U"KNN & Pattern & Categories: Evaluate...")
-    INTEGER (U"k neighbours", U"1")
-    RADIO (U"Vote weighting", 1)
-    RADIOBUTTON (U"Inversed squared distance")
-    RADIOBUTTON (U"Inversed distance")
-    RADIOBUTTON (U"Flat")
-    OK
+FORM (KNN_evaluateWithTestSet, U"Evaluation", U"KNN & Pattern & Categories: Evaluate...") {
+	INTEGER (U"k neighbours", U"1")
+	RADIO (U"Vote weighting", 1)
+	RADIOBUTTON (U"Inversed squared distance")
+	RADIOBUTTON (U"Inversed distance")
+	RADIOBUTTON (U"Flat")
+	OK2
 DO
-    iam_ONLY (KNN);
-    if (my nInstances < 1)
-        Melder_throw (U"Instance base is empty");
-    thouart_ONLY (Pattern);
-    heis_ONLY (Categories);
-    long k = GET_INTEGER (U"k neighbours");
-    if (k < 1 || k > my nInstances)
-        Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U".");
-    int vt = GET_INTEGER (U"Vote weighting");
-    switch (vt) {
-        case 1:
-            vt = kOla_SQUARED_DISTANCE_WEIGHTED_VOTING;
-            break;
-        case 2:
-            vt = kOla_DISTANCE_WEIGHTED_VOTING;
-            break;
-        case 3:
-            vt = kOla_FLAT_VOTING;
-            break;
-    }
-    if (thy ny != his size)
-        Melder_throw (U"The number of Categories should be equal to the number of rows in Pattern.");
-    if (thy nx != (my input)->nx)
-        Melder_throw (U"The dimensionality of Pattern should be equal to that of the instance base.");
-    autoFeatureWeights fws = FeatureWeights_create (thy nx);
-    double result = KNN_evaluateWithTestSet (me, thee, him, fws.peek(), k, vt);
-    Melder_information (100 * result, U" percent of the instances correctly classified.");
-END
+	iam_ONLY (KNN);
+	if (my nInstances < 1)
+		Melder_throw (U"Instance base is empty");
+	thouart_ONLY (Pattern);
+	heis_ONLY (Categories);
+	long k = GET_INTEGER (U"k neighbours");
+	if (k < 1 || k > my nInstances)
+		Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U".");
+	int vt = GET_INTEGER (U"Vote weighting");
+	switch (vt) {
+		case 1:
+			vt = kOla_SQUARED_DISTANCE_WEIGHTED_VOTING;
+			break;
+		case 2:
+			vt = kOla_DISTANCE_WEIGHTED_VOTING;
+			break;
+		case 3:
+			vt = kOla_FLAT_VOTING;
+			break;
+	}
+	if (thy ny != his size)
+		Melder_throw (U"The number of Categories should be equal to the number of rows in Pattern.");
+	if (thy nx != (my input)->nx)
+		Melder_throw (U"The dimensionality of Pattern should be equal to that of the instance base.");
+	autoFeatureWeights fws = FeatureWeights_create (thy nx);
+	double result = KNN_evaluateWithTestSet (me, thee, him, fws.peek(), k, vt);
+	Melder_information (100 * result, U" percent of the instances correctly classified.");
+END2 }
 
-FORM (KNN_evaluateWithTestSetAndFeatureWeights, U"Evaluation", U"KNN & Pattern & Categories & FeatureWeights: Evaluate...")
-    INTEGER (U"k neighbours", U"1")
-    RADIO (U"Vote weighting", 1)
-    RADIOBUTTON (U"Inversed squared distance")
-    RADIOBUTTON (U"Inversed distance")
-    RADIOBUTTON (U"Flat")
-    OK
+FORM (KNN_evaluateWithTestSetAndFeatureWeights, U"Evaluation", U"KNN & Pattern & Categories & FeatureWeights: Evaluate...") {
+	INTEGER (U"k neighbours", U"1")
+	RADIO (U"Vote weighting", 1)
+	RADIOBUTTON (U"Inversed squared distance")
+	RADIOBUTTON (U"Inversed distance")
+	RADIOBUTTON (U"Flat")
+	OK2
 DO
-    iam_ONLY (KNN);
-    if (my nInstances < 1)
-        Melder_throw (U"Instance base is empty");
-    Pattern p = (Pattern) ONLY (classPattern);
-    Categories c = (Categories) ONLY (classCategories);
-    FeatureWeights fws = (FeatureWeights) ONLY (classFeatureWeights);
-    long k = GET_INTEGER (U"k neighbours");
-    if (k < 1 || k > my nInstances)
-        Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U".");
-    int vt = GET_INTEGER (U"Vote weighting");
-    switch (vt) {
-        case 1:
-            vt = kOla_SQUARED_DISTANCE_WEIGHTED_VOTING;
-            break;
-        case 2:
-            vt = kOla_DISTANCE_WEIGHTED_VOTING;
-            break;
-        case 3:
-            vt = kOla_FLAT_VOTING;
-            break;
-    }
-    if (p -> ny != c -> size)
-        Melder_throw (U"The number of Categories should be equal to the number of rows in Pattern.");
-    if (p -> nx != my input -> nx)
-        Melder_throw (U"The dimensionality of Pattern should be equal to that of the instance base.");
-    if (p->nx != fws -> fweights -> numberOfColumns)
-        Melder_throw (U"The number of feature weights should be equal to the dimensionality of the Pattern.");
-    double result = KNN_evaluateWithTestSet (me, p, c, fws, k, vt);
-    Melder_information (100 * result, U" percent of the instances correctly classified.");
-END
-
-
-
+	iam_ONLY (KNN);
+	if (my nInstances < 1)
+		Melder_throw (U"Instance base is empty");
+	Pattern p = (Pattern) ONLY (classPattern);
+	Categories c = (Categories) ONLY (classCategories);
+	FeatureWeights fws = (FeatureWeights) ONLY (classFeatureWeights);
+	long k = GET_INTEGER (U"k neighbours");
+	if (k < 1 || k > my nInstances)
+		Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U".");
+	int vt = GET_INTEGER (U"Vote weighting");
+	switch (vt) {
+		case 1:
+			vt = kOla_SQUARED_DISTANCE_WEIGHTED_VOTING;
+			break;
+		case 2:
+			vt = kOla_DISTANCE_WEIGHTED_VOTING;
+			break;
+		case 3:
+			vt = kOla_FLAT_VOTING;
+			break;
+	}
+	if (p -> ny != c -> size)
+		Melder_throw (U"The number of Categories should be equal to the number of rows in Pattern.");
+	if (p -> nx != my input -> nx)
+		Melder_throw (U"The dimensionality of Pattern should be equal to that of the instance base.");
+	if (p->nx != fws -> fweights -> numberOfColumns)
+		Melder_throw (U"The number of feature weights should be equal to the dimensionality of the Pattern.");
+	double result = KNN_evaluateWithTestSet (me, p, c, fws, k, vt);
+	Melder_information (100 * result, U" percent of the instances correctly classified.");
+END2 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Classification                                                                      //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-FORM (KNN_toCategories, U"Classification", U"KNN & Pattern: To Categories...")
-    INTEGER (U"k neighbours", U"1")
-    RADIO (U"Vote weighting", 1)
-    RADIOBUTTON (U"Inversed squared distance")
-    RADIOBUTTON (U"Inversed distance")
-    RADIOBUTTON (U"Flat")
-    OK
+FORM (KNN_toCategories, U"Classification", U"KNN & Pattern: To Categories...") {
+	INTEGER (U"k neighbours", U"1")
+	RADIO (U"Vote weighting", 1)
+	RADIOBUTTON (U"Inversed squared distance")
+	RADIOBUTTON (U"Inversed distance")
+	RADIOBUTTON (U"Flat")
+	OK2
 DO
-    iam_ONLY (KNN);
-    if (my nInstances < 1)
-        Melder_throw (U"Instance base is empty.");
-    thouart_ONLY (Pattern);
-    long k = GET_INTEGER (U"k neighbours");
-    if (k < 1 || k > my nInstances)
-        Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U".");
-    int vt = GET_INTEGER (U"Vote weighting");
-    switch (vt) {
-        case 1:
-            vt = kOla_SQUARED_DISTANCE_WEIGHTED_VOTING;
-            break;
-        case 2:
-            vt = kOla_DISTANCE_WEIGHTED_VOTING;
-            break;
-        case 3:
-            vt = kOla_FLAT_VOTING;
-            break;
-    }
-    if (thy nx != my input -> nx)
-        Melder_throw (U"The dimensionality of Pattern should match that of the instance base.");
-    autoFeatureWeights fws = FeatureWeights_create (thy nx);
-    praat_new (KNN_classifyToCategories (me, thee, fws.peek(), k, vt), U"Output");
-END
+	iam_ONLY (KNN);
+	if (my nInstances < 1)
+		Melder_throw (U"Instance base is empty.");
+	thouart_ONLY (Pattern);
+	long k = GET_INTEGER (U"k neighbours");
+	if (k < 1 || k > my nInstances)
+		Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U".");
+	int vt = GET_INTEGER (U"Vote weighting");
+	switch (vt) {
+		case 1:
+			vt = kOla_SQUARED_DISTANCE_WEIGHTED_VOTING;
+			break;
+		case 2:
+			vt = kOla_DISTANCE_WEIGHTED_VOTING;
+			break;
+		case 3:
+			vt = kOla_FLAT_VOTING;
+			break;
+	}
+	if (thy nx != my input -> nx)
+		Melder_throw (U"The dimensionality of Pattern should match that of the instance base.");
+	autoFeatureWeights fws = FeatureWeights_create (thy nx);
+	praat_new (KNN_classifyToCategories (me, thee, fws.peek(), k, vt), U"Output");
+END2 }
 
-FORM (KNN_toTableOfReal, U"Classification", U"KNN & Pattern: To TabelOfReal...")
-    INTEGER (U"k neighbours", U"1")
-    RADIO (U"Vote weighting", 1)
-    RADIOBUTTON (U"Inversed squared distance")
-    RADIOBUTTON (U"Inversed distance")
-    RADIOBUTTON (U"Flat")
-    OK
+FORM (KNN_toTableOfReal, U"Classification", U"KNN & Pattern: To TabelOfReal...") {
+	INTEGER (U"k neighbours", U"1")
+	RADIO (U"Vote weighting", 1)
+	RADIOBUTTON (U"Inversed squared distance")
+	RADIOBUTTON (U"Inversed distance")
+	RADIOBUTTON (U"Flat")
+	OK2
 DO
-    iam_ONLY (KNN);
-    if (my nInstances < 1)
-        Melder_throw (U"Instance base is empty.");
-    thouart_ONLY (Pattern);
-    long k = GET_INTEGER (U"k neighbours");
-    if (k < 1 || k > my nInstances)
-        Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U".");
-    autoFeatureWeights fws = FeatureWeights_create(thy nx);
-    int vt = GET_INTEGER (U"Vote weighting");
-    switch (vt) {
-        case 1:
-            vt = kOla_SQUARED_DISTANCE_WEIGHTED_VOTING;
-            break;
-        case 2:
-            vt = kOla_DISTANCE_WEIGHTED_VOTING;
-            break;
-        case 3:
-            vt = kOla_FLAT_VOTING;
-            break;
-    }
-    if (thy nx != my input -> nx)
-        Melder_throw (U"The dimensionality of Pattern should match that of the instance base.");
-    praat_new (KNN_classifyToTableOfReal (me, thee, fws.peek(), k, vt), U"Output");
-END
+	iam_ONLY (KNN);
+	if (my nInstances < 1)
+		Melder_throw (U"Instance base is empty.");
+	thouart_ONLY (Pattern);
+	long k = GET_INTEGER (U"k neighbours");
+	if (k < 1 || k > my nInstances)
+		Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U".");
+	autoFeatureWeights fws = FeatureWeights_create(thy nx);
+	int vt = GET_INTEGER (U"Vote weighting");
+	switch (vt) {
+		case 1:
+			vt = kOla_SQUARED_DISTANCE_WEIGHTED_VOTING;
+			break;
+		case 2:
+			vt = kOla_DISTANCE_WEIGHTED_VOTING;
+			break;
+		case 3:
+			vt = kOla_FLAT_VOTING;
+			break;
+	}
+	if (thy nx != my input -> nx)
+		Melder_throw (U"The dimensionality of Pattern should match that of the instance base.");
+	praat_new (KNN_classifyToTableOfReal (me, thee, fws.peek(), k, vt), U"Output");
+END2 }
 
-FORM (KNN_toCategoriesWithFeatureWeights, U"Classification", U"KNN & Pattern & FeatureWeights: To Categories...")
-    INTEGER (U"k neighbours", U"KNN & Pattern & FeatureWeights: To Categories...")
-    RADIO (U"Vote weighting", 1)
-    RADIOBUTTON (U"Inversed squared distance")  
-    RADIOBUTTON (U"Inversed distance")
-    RADIOBUTTON (U"Flat")
-    OK
+FORM (KNN_toCategoriesWithFeatureWeights, U"Classification", U"KNN & Pattern & FeatureWeights: To Categories...") {
+	INTEGER (U"k neighbours", U"KNN & Pattern & FeatureWeights: To Categories...")
+	RADIO (U"Vote weighting", 1)
+	RADIOBUTTON (U"Inversed squared distance")  
+	RADIOBUTTON (U"Inversed distance")
+	RADIOBUTTON (U"Flat")
+	OK2
 DO
-    iam_ONLY (KNN);
-    if (my nInstances < 1)
-        Melder_throw (U"Instance base is empty.");
-    thouart_ONLY (Pattern);
-    heis_ONLY (FeatureWeights);
-    int vt = GET_INTEGER (U"Vote weighting");
-    switch (vt) {
-        case 1:
-            vt = kOla_SQUARED_DISTANCE_WEIGHTED_VOTING;
-            break;
-        case 2:
-            vt = kOla_DISTANCE_WEIGHTED_VOTING;  
-            break;
-        case 3:
-            vt = kOla_FLAT_VOTING;
-            break;
-    }
-    long k = GET_INTEGER (U"k neighbours");
-    if (k < 1 || k > my nInstances)
-        Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U".");
-    if (thy nx != (my input)->nx)
-        Melder_throw (U"The dimensionality of Pattern should be equal to that of the instance base.");
-    if (thy nx != his fweights -> numberOfColumns)
-        Melder_throw (U"The number of feature weights should be equal to the dimensionality of the Pattern.");
+	iam_ONLY (KNN);
+	if (my nInstances < 1)
+		Melder_throw (U"Instance base is empty.");
+	thouart_ONLY (Pattern);
+	heis_ONLY (FeatureWeights);
+	int vt = GET_INTEGER (U"Vote weighting");
+	switch (vt) {
+		case 1:
+			vt = kOla_SQUARED_DISTANCE_WEIGHTED_VOTING;
+			break;
+		case 2:
+			vt = kOla_DISTANCE_WEIGHTED_VOTING;  
+			break;
+		case 3:
+			vt = kOla_FLAT_VOTING;
+			break;
+	}
+	long k = GET_INTEGER (U"k neighbours");
+	if (k < 1 || k > my nInstances)
+		Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U".");
+	if (thy nx != (my input)->nx)
+		Melder_throw (U"The dimensionality of Pattern should be equal to that of the instance base.");
+	if (thy nx != his fweights -> numberOfColumns)
+		Melder_throw (U"The number of feature weights should be equal to the dimensionality of the Pattern.");
 	praat_new (KNN_classifyToCategories (me, thee, him, k, vt), U"Output");
-END
+END2 }
 
-FORM (KNN_toTableOfRealWithFeatureWeights, U"Classification", U"KNN & Pattern & FeatureWeights: To TableOfReal...")
-    INTEGER (U"k neighbours", U"1")
-    RADIO (U"Vote weighting", 1)
-    RADIOBUTTON (U"Inversed squared distance")
-    RADIOBUTTON (U"Inversed distance")
-    RADIOBUTTON (U"Flat")
-    OK
+FORM (KNN_toTableOfRealWithFeatureWeights, U"Classification", U"KNN & Pattern & FeatureWeights: To TableOfReal...") {
+	INTEGER (U"k neighbours", U"1")
+	RADIO (U"Vote weighting", 1)
+	RADIOBUTTON (U"Inversed squared distance")
+	RADIOBUTTON (U"Inversed distance")
+	RADIOBUTTON (U"Flat")
+	OK2
 DO
-    iam_ONLY (KNN);
-    if (my nInstances < 1)
-        Melder_throw (U"Instance base is empty.");
-    thouart_ONLY (Pattern);
-    heis_ONLY (FeatureWeights);
-    long k = GET_INTEGER (U"k neighbours");
-    int vt = GET_INTEGER (U"Vote weighting");
-    if (k < 1 || k > my nInstances)
-        Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U"\n");
-    if (thy nx != his fweights -> numberOfColumns)
-        Melder_throw (U"The number of features and the number of feature weights should be equal.");
-    switch (vt) {
-        case 1:
-            vt = kOla_SQUARED_DISTANCE_WEIGHTED_VOTING;
-            break;
-        case 2:
-            vt = kOla_DISTANCE_WEIGHTED_VOTING;
-            break;
-        case 3:
-            vt = kOla_FLAT_VOTING;
-            break;
-    }
-    praat_new (KNN_classifyToTableOfReal (me, thee, him, k, vt), U"Output");
-END
-
-
-
-
-
+	iam_ONLY (KNN);
+	if (my nInstances < 1)
+		Melder_throw (U"Instance base is empty.");
+	thouart_ONLY (Pattern);
+	heis_ONLY (FeatureWeights);
+	long k = GET_INTEGER (U"k neighbours");
+	int vt = GET_INTEGER (U"Vote weighting");
+	if (k < 1 || k > my nInstances)
+		Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U"\n");
+	if (thy nx != his fweights -> numberOfColumns)
+		Melder_throw (U"The number of features and the number of feature weights should be equal.");
+	switch (vt) {
+		case 1:
+			vt = kOla_SQUARED_DISTANCE_WEIGHTED_VOTING;
+			break;
+		case 2:
+			vt = kOla_DISTANCE_WEIGHTED_VOTING;
+			break;
+		case 3:
+			vt = kOla_FLAT_VOTING;
+			break;
+	}
+	praat_new (KNN_classifyToTableOfReal (me, thee, him, k, vt), U"Output");
+END2 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Clustering                                                                          //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-FORM (Pattern_to_Categories_cluster, U"k-means clustering", U"Pattern: To Categories...")
-    INTEGER (U"k clusters", U"1")
-    POSITIVE (U"Cluster size ratio constraint", U"0.0000001");
-    INTEGER (U"Maximum number of reseeds", U"1000")
-    OK
+FORM (Pattern_to_Categories_cluster, U"k-means clustering", U"Pattern: To Categories...") {
+	INTEGER (U"k clusters", U"1")
+	POSITIVE (U"Cluster size ratio constraint", U"0.0000001");
+	INTEGER (U"Maximum number of reseeds", U"1000")
+	OK2
 DO
-    iam_ONLY (Pattern);
-    if (my nx > 0 && my ny > 0) {
-        long k = GET_INTEGER (U"k clusters");
-        if (k < 1 || k > my ny)
-            Melder_throw (U"Please select a value of k such that 0 < k <= ", my ny, U".");
-        long rs =  GET_INTEGER (U"Maximum number of reseeds");
-        if (rs < 0)
-            Melder_throw (U"The maximum number of reseeds should not be negative.");
-        double rc =  GET_REAL (U"Cluster size ratio constraint");
+	iam_ONLY (Pattern);
+	if (my nx > 0 && my ny > 0) {
+		long k = GET_INTEGER (U"k clusters");
+		if (k < 1 || k > my ny)
+			Melder_throw (U"Please select a value of k such that 0 < k <= ", my ny, U".");
+		long rs =  GET_INTEGER (U"Maximum number of reseeds");
+		if (rs < 0)
+			Melder_throw (U"The maximum number of reseeds should not be negative.");
+		double rc =  GET_REAL (U"Cluster size ratio constraint");
 		if (rc > 1 || rc <= 0)
-            Melder_throw (U"Please select a value of the cluster size ratio constraint c such that 0 < c <= 1.");
-        autoFeatureWeights fws = FeatureWeights_create (my nx);
-        praat_new (Pattern_to_Categories_cluster (me, fws.peek(), k, rc, rs), U"Output");
-    } else {
-        Melder_throw (U"Pattern is empty.");
+			Melder_throw (U"Please select a value of the cluster size ratio constraint c such that 0 < c <= 1.");
+		autoFeatureWeights fws = FeatureWeights_create (my nx);
+		praat_new (Pattern_to_Categories_cluster (me, fws.peek(), k, rc, rs), U"Output");
+	} else {
+		Melder_throw (U"Pattern is empty.");
 	}
-END
+END2 }
 
-FORM (Pattern_to_Categories_clusterWithFeatureWeights, U"k-means clustering", U"Pattern & FeatureWeights: To Categories...")
-    INTEGER (U"k clusters", U"1")
-    POSITIVE (U"Cluster size ratio constraint", U"0.0000001");
-    INTEGER (U"Maximum number of reseeds", U"1000")
-    OK
+FORM (Pattern_to_Categories_clusterWithFeatureWeights, U"k-means clustering", U"Pattern & FeatureWeights: To Categories...") {
+	INTEGER (U"k clusters", U"1")
+	POSITIVE (U"Cluster size ratio constraint", U"0.0000001");
+	INTEGER (U"Maximum number of reseeds", U"1000")
+	OK2
 DO
-    iam_ONLY (Pattern);
-    if (my nx > 0 && my ny > 0) {
-        thouart_ONLY (FeatureWeights); 
-        if (my nx != thy fweights -> numberOfColumns)
-            Melder_throw (U"The number of features and the number of feature weights should be equal.");
+	iam_ONLY (Pattern);
+	if (my nx > 0 && my ny > 0) {
+		thouart_ONLY (FeatureWeights); 
+		if (my nx != thy fweights -> numberOfColumns)
+			Melder_throw (U"The number of features and the number of feature weights should be equal.");
 		long k = GET_INTEGER(U"k clusters");
-        if (k < 1 || k > my ny)
-            Melder_throw (U"Please select a value of k such that 0 < k <= ", my ny, U".");
-        long rs =  GET_INTEGER(U"Maximum number of reseeds");
-        if (rs < 0)
-            Melder_throw (U"The maximum number of reseeds should not be negative.");
-        double rc =  GET_REAL(U"Cluster size ratio constraint");
+		if (k < 1 || k > my ny)
+			Melder_throw (U"Please select a value of k such that 0 < k <= ", my ny, U".");
+		long rs =  GET_INTEGER(U"Maximum number of reseeds");
+		if (rs < 0)
+			Melder_throw (U"The maximum number of reseeds should not be negative.");
+		double rc =  GET_REAL(U"Cluster size ratio constraint");
 		if (rc > 1 || rc <= 0)
-            Melder_throw (U"Please select a value of the cluster size ratio constraint c such that 0 < c <= 1.");
-        praat_new (Pattern_to_Categories_cluster (me, thee, k, rc, rs), U"Output");
-    } else {
-        Melder_throw (U"Pattern is empty.");
+			Melder_throw (U"Please select a value of the cluster size ratio constraint c such that 0 < c <= 1.");
+		praat_new (Pattern_to_Categories_cluster (me, thee, k, rc, rs), U"Output");
+	} else {
+		Melder_throw (U"Pattern is empty.");
 	}
-END
-
-
-
-
-
+END2 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Dissimilarity computations                                                          //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-DIRECT (KNN_patternToDissimilarity)
-    iam_ONLY (Pattern);
-    autoFeatureWeights fws = FeatureWeights_create (my nx);
-    praat_new (KNN_patternToDissimilarity (me, fws.peek()), U"Output");
-END
+DIRECT2 (KNN_patternToDissimilarity) {
+	iam_ONLY (Pattern);
+	autoFeatureWeights fws = FeatureWeights_create (my nx);
+	praat_new (KNN_patternToDissimilarity (me, fws.peek()), U"Output");
+END2 }
 
-DIRECT (KNN_patternToDissimilarityWithFeatureWeights)
-    iam_ONLY (Pattern);
-    thouart_ONLY (FeatureWeights);  
-    if (my nx != thy fweights -> numberOfColumns)
-        Melder_throw (U"The number of features and the number of feature weights should be equal.");
+DIRECT2 (KNN_patternToDissimilarityWithFeatureWeights) {
+	iam_ONLY (Pattern);
+	thouart_ONLY (FeatureWeights);  
+	if (my nx != thy fweights -> numberOfColumns)
+		Melder_throw (U"The number of features and the number of feature weights should be equal.");
 	praat_new (KNN_patternToDissimilarity (me, thee), U"Output");
-END
-
+END2 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Computation of permutation                                                          //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-
-FORM (KNN_SA_computePermutation, U"To Permutation...", U"Pattern & Categories: To FeatureWeights...")
-    
-    NATURAL(U"Tries per step", U"200")
-    NATURAL(U"Iterations", U"10")
-    POSITIVE(U"Step size", U"10")
-    POSITIVE(U"Boltzmann constant", U"1.0")
-    POSITIVE(U"Initial temperature", U"0.002")
-    POSITIVE(U"Damping factor", U"1.005")
-    POSITIVE(U"Final temperature", U"0.000002")
-    OK
+FORM (KNN_SA_computePermutation, U"To Permutation...", U"Pattern & Categories: To FeatureWeights...") {
+	NATURAL (U"Tries per step", U"200")
+	NATURAL (U"Iterations", U"10")
+	POSITIVE (U"Step size", U"10")
+	POSITIVE (U"Boltzmann constant", U"1.0")
+	POSITIVE (U"Initial temperature", U"0.002")
+	POSITIVE (U"Damping factor", U"1.005")
+	POSITIVE (U"Final temperature", U"0.000002")
+	OK2
 DO
-    iam_ONLY (KNN);
-    long tries = GET_INTEGER (U"Tries per step");
-    long iterations = GET_INTEGER (U"Iterations");
-    double step_size = GET_REAL (U"Step size");
-    double bolzmann_c = GET_REAL (U"Boltzmann constant");
-    double temp_start = GET_REAL (U"Initial temperature");
-    double temp_damp = GET_REAL (U"Damping factor");
-    double temp_stop = GET_REAL (U"Final temperature");
+	iam_ONLY (KNN);
+	long tries = GET_INTEGER (U"Tries per step");
+	long iterations = GET_INTEGER (U"Iterations");
+	double step_size = GET_REAL (U"Step size");
+	double bolzmann_c = GET_REAL (U"Boltzmann constant");
+	double temp_start = GET_REAL (U"Initial temperature");
+	double temp_damp = GET_REAL (U"Damping factor");
+	double temp_stop = GET_REAL (U"Final temperature");
 	praat_new (KNN_SA_ToPermutation (me, tries, iterations, step_size, bolzmann_c, temp_start, temp_damp, temp_stop), U"Output");
-END
-
-
+END2 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Computation of feature weights                                                      //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-
-FORM (FeatureWeights_computeRELIEF, U"Feature weights", U"Pattern & Categories: To FeatureWeights...")
-    INTEGER (U"Number of neighbours", U"1")
-    OK
+FORM (FeatureWeights_computeRELIEF, U"Feature weights", U"Pattern & Categories: To FeatureWeights...") {
+	INTEGER (U"Number of neighbours", U"1")
+	OK2
 DO
-    iam_ONLY (Pattern);
-    thouart_ONLY (Categories);
-    if (my ny < 2)
-        Melder_throw (U"The Pattern object should contain at least 2 rows.");
-    if (my ny != thy size)
-        Melder_throw (U"The number of rows in the Pattern object should equal the number of categories in the Categories object.");
-    praat_new (FeatureWeights_compute (me, thee, GET_INTEGER (U"Number of neighbours")), U"Output");
-END
+	iam_ONLY (Pattern);
+	thouart_ONLY (Categories);
+	if (my ny < 2)
+		Melder_throw (U"The Pattern object should contain at least 2 rows.");
+	if (my ny != thy size)
+		Melder_throw (U"The number of rows in the Pattern object should equal the number of categories in the Categories object.");
+	praat_new (FeatureWeights_compute (me, thee, GET_INTEGER (U"Number of neighbours")), U"Output");
+END2 }
 
-FORM (FeatureWeights_computeWrapperExt, U"Feature weights", U"KNN & Pattern & Categories: To FeatureWeights..")
-    POSITIVE(U"Learning rate", U"0.02")
-    NATURAL(U"Number of seeds", U"20")
-    POSITIVE(U"Stop at", U"1")
-    RADIO (U"Optimization", 1)
-    RADIOBUTTON (U"Co-optimization")
-    RADIOBUTTON (U"Single feature")
-
-    NATURAL (U"k neighbours", U"1")
-    RADIO (U"Vote weighting", 3)
-    RADIOBUTTON (U"Inversed squared distance")
-    RADIOBUTTON (U"Inversed distance")  
-    RADIOBUTTON (U"Flat")
-    OK
-
-DO
-    iam_ONLY (KNN);
-    if (my nInstances < 1)
-        Melder_throw (U"Instance base is empty");
-    thouart_ONLY (Pattern);
-    heis_ONLY (Categories);
-    int mode = GET_INTEGER (U"Vote weighting");
-    switch (mode) {
-        case 1:
-            mode = kOla_SQUARED_DISTANCE_WEIGHTED_VOTING;
-            break;
-        case 2:
-            mode = kOla_DISTANCE_WEIGHTED_VOTING;
-            break;
-        case 3:
-            mode = kOla_FLAT_VOTING;
-            break;
-    }
-    long k = GET_INTEGER (U"k neighbours");
-    if (k < 1 || k > my nInstances)
-        Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U".");
-    if (thy nx != my input -> nx)
-        Melder_throw (U"The dimensionality of Pattern should be equal to that of the instance base.");
-    praat_new (FeatureWeights_computeWrapperExt (me, thee, him, k, mode, GET_INTEGER (U"Number of seeds"),
-		GET_REAL (U"Learning rate"), GET_REAL (U"Stop at"), (int) GET_INTEGER (U"Optimization")), U"Output");
-END
-
-FORM (FeatureWeights_computeWrapperInt, U"Feature weights", U"KNN: To FeatureWeights...")
-    POSITIVE(U"Learning rate", U"0.02")
-    NATURAL(U"Number of seeds", U"10")
-    POSITIVE(U"Stop at", U"1")
-    RADIO (U"Optimization", 1)
-    RADIOBUTTON (U"Co-optimization")
-    RADIOBUTTON (U"Single feature")
-    RADIO (U"Evaluation method", 1)
-    RADIOBUTTON (U"Leave one out")
-    RADIOBUTTON (U"10-fold cross-validation")
-    NATURAL (U"k neighbours", U"1")
-    RADIO (U"Vote weighting", 3)
-    RADIOBUTTON (U"Inversed squared distance")
-    RADIOBUTTON (U"Inversed distance")
-    RADIOBUTTON (U"Flat")
-    OK
-
+FORM (FeatureWeights_computeWrapperExt, U"Feature weights", U"KNN & Pattern & Categories: To FeatureWeights..") {
+	POSITIVE (U"Learning rate", U"0.02")
+	NATURAL (U"Number of seeds", U"20")
+	POSITIVE (U"Stop at", U"1")
+	RADIO (U"Optimization", 1)
+		RADIOBUTTON (U"Co-optimization")
+		RADIOBUTTON (U"Single feature")
+	NATURAL (U"k neighbours", U"1")
+	RADIO (U"Vote weighting", 3)
+		RADIOBUTTON (U"Inversed squared distance")
+		RADIOBUTTON (U"Inversed distance")
+		RADIOBUTTON (U"Flat")
+	OK2
 DO
 	iam_ONLY (KNN);
-    if (my nInstances < 1)
-        Melder_throw (U"Instance base is empty");
-    int emode = GET_INTEGER (U"Evaluation method");
-    switch (emode) {
-        case 2:
-            emode = kOla_TEN_FOLD_CROSS_VALIDATION;
-            break;
-        case 1:
-            emode = kOla_LEAVE_ONE_OUT;
-            break;
-    }
-    int mode = GET_INTEGER (U"Vote weighting");
-    switch (mode) {
-        case 1:
-            mode = kOla_SQUARED_DISTANCE_WEIGHTED_VOTING;
-            break;
-        case 2:
-            mode = kOla_DISTANCE_WEIGHTED_VOTING;
-            break;
-        case 3:
-            mode = kOla_FLAT_VOTING;
-            break;
-    }
-    long k = GET_INTEGER (U"k neighbours");
-    if (k < 1 || k > my nInstances)
-        Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U".");
-    praat_new (FeatureWeights_computeWrapperInt (me, k, mode, GET_INTEGER (U"Number of seeds"), GET_REAL (U"Learning rate"),
+	if (my nInstances < 1)
+		Melder_throw (U"Instance base is empty");
+	thouart_ONLY (Pattern);
+	heis_ONLY (Categories);
+	int mode = GET_INTEGER (U"Vote weighting");
+	switch (mode) {
+		case 1:
+			mode = kOla_SQUARED_DISTANCE_WEIGHTED_VOTING;
+			break;
+		case 2:
+			mode = kOla_DISTANCE_WEIGHTED_VOTING;
+			break;
+		case 3:
+			mode = kOla_FLAT_VOTING;
+			break;
+	}
+	long k = GET_INTEGER (U"k neighbours");
+	if (k < 1 || k > my nInstances)
+		Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U".");
+	if (thy nx != my input -> nx)
+		Melder_throw (U"The dimensionality of Pattern should be equal to that of the instance base.");
+	praat_new (FeatureWeights_computeWrapperExt (me, thee, him, k, mode, GET_INTEGER (U"Number of seeds"),
+		GET_REAL (U"Learning rate"), GET_REAL (U"Stop at"), (int) GET_INTEGER (U"Optimization")), U"Output");
+END2 }
+
+FORM (FeatureWeights_computeWrapperInt, U"Feature weights", U"KNN: To FeatureWeights...") {
+	POSITIVE (U"Learning rate", U"0.02")
+	NATURAL (U"Number of seeds", U"10")
+	POSITIVE (U"Stop at", U"1")
+	RADIO (U"Optimization", 1)
+		RADIOBUTTON (U"Co-optimization")
+		RADIOBUTTON (U"Single feature")
+	RADIO (U"Evaluation method", 1)
+		RADIOBUTTON (U"Leave one out")
+		RADIOBUTTON (U"10-fold cross-validation")
+	NATURAL (U"k neighbours", U"1")
+	RADIO (U"Vote weighting", 3)
+		RADIOBUTTON (U"Inversed squared distance")
+		RADIOBUTTON (U"Inversed distance")
+		RADIOBUTTON (U"Flat")
+	OK2
+DO
+	iam_ONLY (KNN);
+	if (my nInstances < 1)
+		Melder_throw (U"Instance base is empty");
+	int emode = GET_INTEGER (U"Evaluation method");
+	switch (emode) {
+		case 2:
+			emode = kOla_TEN_FOLD_CROSS_VALIDATION;
+			break;
+		case 1:
+			emode = kOla_LEAVE_ONE_OUT;
+			break;
+	}
+	int mode = GET_INTEGER (U"Vote weighting");
+	switch (mode) {
+		case 1:
+			mode = kOla_SQUARED_DISTANCE_WEIGHTED_VOTING;
+			break;
+		case 2:
+			mode = kOla_DISTANCE_WEIGHTED_VOTING;
+			break;
+		case 3:
+			mode = kOla_FLAT_VOTING;
+			break;
+	}
+	long k = GET_INTEGER (U"k neighbours");
+	if (k < 1 || k > my nInstances)
+		Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U".");
+	praat_new (FeatureWeights_computeWrapperInt (me, k, mode, GET_INTEGER (U"Number of seeds"), GET_REAL (U"Learning rate"),
 		GET_REAL (U"Stop at"), (int) GET_INTEGER (U"Optimization"), emode), U"Output");
-END
-
-
-
-
-
+END2 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Creation and processing of auxiliary datatypes                                      //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-FORM (Pattern_create, U"Create Pattern", 0)
-    WORD (U"Name", U"1x1")
-    NATURAL (U"Dimension of a pattern", U"1")
-    NATURAL (U"Number of patterns", U"1")
-    OK
+FORM (Pattern_create, U"Create Pattern", 0) {
+	WORD (U"Name", U"1x1")
+	NATURAL (U"Dimension of a pattern", U"1")
+	NATURAL (U"Number of patterns", U"1")
+	OK2
 DO
-    praat_new (Pattern_create (GET_INTEGER (U"Number of patterns"), GET_INTEGER (U"Dimension of a pattern")), GET_STRING (U"Name"));
-END
+	praat_new (Pattern_create (GET_INTEGER (U"Number of patterns"), GET_INTEGER (U"Dimension of a pattern")), GET_STRING (U"Name"));
+END2 }
 
-FORM (Categories_create, U"Create Categories", 0)
-    WORD (U"Name", U"empty")
-    OK
+FORM (Categories_create, U"Create Categories", 0) {
+	WORD (U"Name", U"empty")
+	OK2
 DO
-    praat_new (Categories_create (), GET_STRING (U"Name"));
-END
+	praat_new (Categories_create (), GET_STRING (U"Name"));
+END2 }
 
-FORM (FeatureWeights_create, U"Create FeatureWeights", 0)
-    WORD (U"Name", U"empty")
-NATURAL (U"Number of weights", U"1")
-OK
+FORM (FeatureWeights_create, U"Create FeatureWeights", 0) {
+	WORD (U"Name", U"empty")
+	NATURAL (U"Number of weights", U"1")
+	OK2
 DO
-    praat_new (FeatureWeights_create (GET_INTEGER (U"Number of weights")), GET_STRING (U"Name"));
-END
-
+	praat_new (FeatureWeights_create (GET_INTEGER (U"Number of weights")), GET_STRING (U"Name"));
+END2 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // DEBUG                                                                               //
@@ -848,54 +804,45 @@ END
 #endif
 */
 
-
-
-
 /////////////////////////////////////////////////////////////////////////////////////////
 // Help                                                                                //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-DIRECT (KNN_help)
-    Melder_help (U"KNN classifiers");
-END
+DIRECT2 (KNN_help) {
+	Melder_help (U"KNN classifiers");
+END2 }
 
-DIRECT (hint_KNN_and_FeatureWeights_evaluate)
-    Melder_information (U"The accuracy of a KNN can be estimated by selecting a KNN and a FeatureWeights object and choosing \"Evaluate...\".");
-END
+DIRECT2 (hint_KNN_and_FeatureWeights_evaluate) {
+	Melder_information (U"The accuracy of a KNN can be estimated by selecting a KNN and a FeatureWeights object and choosing \"Evaluate...\".");
+END2 }
 
-DIRECT (hint_KNN_and_Pattern_classify)
-    Melder_information (U"You can use the KNN as a classifier by selecting a KNN and a Pattern and choosing \"To Categories...\" or \"To TableOfReal...\".");
-END
+DIRECT2 (hint_KNN_and_Pattern_classify) {
+	Melder_information (U"You can use the KNN as a classifier by selecting a KNN and a Pattern and choosing \"To Categories...\" or \"To TableOfReal...\".");
+END2 }
 
-DIRECT (hint_KNN_and_Pattern_and_FeatureWeights_classify)
-    Melder_information (U"You can use the KNN as a classifier by selecting a KNN, a Pattern and an FeatureWeights object and choosing \"To Categories...\" or \"To TableOfReal...\".");
-END
+DIRECT2 (hint_KNN_and_Pattern_and_FeatureWeights_classify) {
+	Melder_information (U"You can use the KNN as a classifier by selecting a KNN, a Pattern and an FeatureWeights object and choosing \"To Categories...\" or \"To TableOfReal...\".");
+END2 }
 
-DIRECT (hint_KNN_and_Pattern_and_Categories_learn)
-    Melder_information (U"You can train a KNN by selecting a KNN, a Pattern and a Categories object together and choosing \"Learn...\".");
-END
+DIRECT2 (hint_KNN_and_Pattern_and_Categories_learn) {
+	Melder_information (U"You can train a KNN by selecting a KNN, a Pattern and a Categories object together and choosing \"Learn...\".");
+END2 }
 
-DIRECT (hint_KNN_and_Pattern_and_Categories_evaluate)
-    Melder_information (U"The accuracy of a KNN can be estimated by selecting a KNN, a test Pattern and the corresponding Categories object and choosing \"Evaluate...\".");
-END
+DIRECT2 (hint_KNN_and_Pattern_and_Categories_evaluate) {
+	Melder_information (U"The accuracy of a KNN can be estimated by selecting a KNN, a test Pattern and the corresponding Categories object and choosing \"Evaluate...\".");
+END2 }
 
-DIRECT (hint_KNN_and_Pattern_and_Categories_and_FeatureWeights_evaluate)
-    Melder_information (U"The accuracy of a KNN can be estimated by selecting a KNN, a test Pattern, an FeatureWeights object, and the corresponding Categories object and choosing \"Evaluate...\".");
-END
+DIRECT2 (hint_KNN_and_Pattern_and_Categories_and_FeatureWeights_evaluate) {
+	Melder_information (U"The accuracy of a KNN can be estimated by selecting a KNN, a test Pattern, an FeatureWeights object, and the corresponding Categories object and choosing \"Evaluate...\".");
+END2 }
 
-DIRECT (hint_Pattern_and_FeatureWeights_to_Categories)
-    Melder_information (U"A Pattern object and a FeatureWeights object can be used to compute a fixed number of clusters using the k-means clustering clustering algorithm.");
-END
+DIRECT2 (hint_Pattern_and_FeatureWeights_to_Categories) {
+	Melder_information (U"A Pattern object and a FeatureWeights object can be used to compute a fixed number of clusters using the k-means clustering clustering algorithm.");
+END2 }
 
-DIRECT (hint_Pattern_and_FeatureWeights_to_Dissimilarity)
-    Melder_information (U"A Dissimilarity matrix can be generated from a Pattern and a FeatureWeights object.");
-END
-
-
-
-
-
-
+DIRECT2 (hint_Pattern_and_FeatureWeights_to_Dissimilarity) {
+	Melder_information (U"A Dissimilarity matrix can be generated from a Pattern and a FeatureWeights object.");
+END2 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Setting callbacks                                                                   //
@@ -904,7 +851,6 @@ END
 void praat_contrib_Ola_KNN_init (void);
 void praat_contrib_Ola_KNN_init (void)
 {
-
     Thing_recognizeClassesByName (classKNN, NULL);
     Thing_recognizeClassesByName (classFeatureWeights, NULL);
 
@@ -923,7 +869,6 @@ void praat_contrib_Ola_KNN_init (void)
     praat_addMenuCommand (U"Objects", U"New", U"Create Pattern...", 0, 2, DO_Pattern_create);
     praat_addMenuCommand (U"Objects", U"New", U"Create Categories...", 0, 2, DO_Categories_create);
     praat_addMenuCommand (U"Objects", U"New", U"Create FeatureWeights...", 0, 2, DO_FeatureWeights_create);
-
 
 /////////////
 // Actions //
@@ -996,6 +941,7 @@ void praat_contrib_Ola_KNN_init (void)
     praat_addAction1 (classKNN, 0, U"& Pattern & Categories: Evaluate?", 0, 0, DO_hint_KNN_and_Pattern_and_Categories_evaluate);
     praat_addAction1 (classKNN, 0, U"& Pattern & Categories & FeatureWeights: Evaluate?", 0, 0, DO_hint_KNN_and_Pattern_and_Categories_and_FeatureWeights_evaluate);
 
-
     INCLUDE_MANPAGES (manual_KNN_init)
 }
+
+/* End of file praat_contrib_Ola_KNN.cpp */

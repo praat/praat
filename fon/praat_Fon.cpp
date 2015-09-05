@@ -171,47 +171,47 @@ extern "C" Graphics Movie_create (const char32 *title, int width, int height) {
 
 /***** AMPLITUDETIER *****/
 
-FORM (AmplitudeTier_addPoint, U"Add one point", U"AmplitudeTier: Add point...")
+FORM (AmplitudeTier_addPoint, U"Add one point", U"AmplitudeTier: Add point...") {
 	REAL (U"Time (s)", U"0.5")
 	REAL (U"Sound pressure (Pa)", U"0.8")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (AmplitudeTier);
 		RealTier_addPoint (me, GET_REAL (U"Time"), GET_REAL (U"Sound pressure"));
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-FORM (AmplitudeTier_create, U"Create empty AmplitudeTier", NULL)
+FORM (AmplitudeTier_create, U"Create empty AmplitudeTier", NULL) {
 	WORD (U"Name", U"empty")
 	REAL (U"Start time (s)", U"0.0")
 	REAL (U"End time (s)", U"1.0")
-	OK
+	OK2
 DO
 	double startTime = GET_REAL (U"Start time"), endTime = GET_REAL (U"End time");
 	if (endTime <= startTime) Melder_throw (U"End time must be greater than start time.");
 	autoAmplitudeTier thee = AmplitudeTier_create (startTime, endTime);
 	praat_new (thee.transfer(), GET_STRING (U"Name"));
-END
+END2 }
 
-DIRECT (AmplitudeTier_downto_PointProcess)
+DIRECT2 (AmplitudeTier_downto_PointProcess) {
 	LOOP {
 		iam (AmplitudeTier);
 		autoPointProcess thee = AnyTier_downto_PointProcess (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (AmplitudeTier_downto_TableOfReal)
+DIRECT2 (AmplitudeTier_downto_TableOfReal) {
 	LOOP {
 		iam (AmplitudeTier);
 		autoTableOfReal thee = AmplitudeTier_downto_TableOfReal (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (AmplitudeTier_edit)
+DIRECT2 (AmplitudeTier_edit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit an AmplitudeTier from batch.");
 	Sound sound = NULL;
 	LOOP {
@@ -222,9 +222,9 @@ DIRECT (AmplitudeTier_edit)
 		autoAmplitudeTierEditor editor = AmplitudeTierEditor_create (ID_AND_FULL_NAME, me, sound, TRUE);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
-END
+END2 }
 
-FORM (AmplitudeTier_formula, U"AmplitudeTier: Formula", U"AmplitudeTier: Formula...")
+FORM (AmplitudeTier_formula, U"AmplitudeTier: Formula", U"AmplitudeTier: Formula...") {
 	LABEL (U"", U"# ncol = the number of points")
 	LABEL (U"", U"for col from 1 to ncol")
 	LABEL (U"", U"   # x = the time of the colth point, in seconds")
@@ -232,7 +232,7 @@ FORM (AmplitudeTier_formula, U"AmplitudeTier: Formula", U"AmplitudeTier: Formula
 	LABEL (U"", U"   self = `formula'")
 	LABEL (U"", U"endfor")
 	TEXTFIELD (U"formula", U"- self ; upside down")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (AmplitudeTier);
@@ -244,7 +244,7 @@ DO
 			throw;
 		}
 	}
-END
+END2 }
 
 static void dia_AmplitudeTier_getRangeProperty (Any dia) {
 	REAL (U"Shortest period (s)", U"0.0001")
@@ -252,9 +252,9 @@ static void dia_AmplitudeTier_getRangeProperty (Any dia) {
 	POSITIVE (U"Maximum amplitude factor", U"1.6")
 }
 
-FORM (AmplitudeTier_getShimmer_local, U"AmplitudeTier: Get shimmer (local)", U"AmplitudeTier: Get shimmer (local)...")
+FORM (AmplitudeTier_getShimmer_local, U"AmplitudeTier: Get shimmer (local)", U"AmplitudeTier: Get shimmer (local)...") {
 	dia_AmplitudeTier_getRangeProperty (dia);
-	OK
+	OK2
 DO
 	LOOP {
 		iam (AmplitudeTier);
@@ -262,11 +262,11 @@ DO
 			GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum amplitude factor"));
 		Melder_informationReal (shimmer, NULL);
 	}
-END
+END2 }
 
-FORM (AmplitudeTier_getShimmer_local_dB, U"AmplitudeTier: Get shimmer (local, dB)", U"AmplitudeTier: Get shimmer (local, dB)...")
+FORM (AmplitudeTier_getShimmer_local_dB, U"AmplitudeTier: Get shimmer (local, dB)", U"AmplitudeTier: Get shimmer (local, dB)...") {
 	dia_AmplitudeTier_getRangeProperty (dia);
-	OK
+	OK2
 DO
 	LOOP {
 		iam (AmplitudeTier);
@@ -274,11 +274,11 @@ DO
 			GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum amplitude factor"));
 		Melder_informationReal (shimmer, NULL);
 	}
-END
+END2 }
 
-FORM (AmplitudeTier_getShimmer_apq3, U"AmplitudeTier: Get shimmer (apq3)", U"AmplitudeTier: Get shimmer (apq3)...")
+FORM (AmplitudeTier_getShimmer_apq3, U"AmplitudeTier: Get shimmer (apq3)", U"AmplitudeTier: Get shimmer (apq3)...") {
 	dia_AmplitudeTier_getRangeProperty (dia);
-	OK
+	OK2
 DO
 	LOOP {
 		iam (AmplitudeTier);
@@ -286,11 +286,11 @@ DO
 			GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum amplitude factor"));
 		Melder_informationReal (shimmer, NULL);
 	}
-END
+END2 }
 
-FORM (AmplitudeTier_getShimmer_apq5, U"AmplitudeTier: Get shimmer (apq5)", U"AmplitudeTier: Get shimmer (apq5)...")
+FORM (AmplitudeTier_getShimmer_apq5, U"AmplitudeTier: Get shimmer (apq5)", U"AmplitudeTier: Get shimmer (apq5)...") {
 	dia_AmplitudeTier_getRangeProperty (dia);
-	OK
+	OK2
 DO
 	LOOP {
 		iam (AmplitudeTier);
@@ -298,11 +298,11 @@ DO
 			GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum amplitude factor"));
 		Melder_informationReal (shimmer, NULL);
 	}
-END
+END2 }
 
-FORM (AmplitudeTier_getShimmer_apq11, U"AmplitudeTier: Get shimmer (apq11)", U"AmplitudeTier: Get shimmer (apq11)...")
+FORM (AmplitudeTier_getShimmer_apq11, U"AmplitudeTier: Get shimmer (apq11)", U"AmplitudeTier: Get shimmer (apq11)...") {
 	dia_AmplitudeTier_getRangeProperty (dia);
-	OK
+	OK2
 DO
 	LOOP {
 		iam (AmplitudeTier);
@@ -310,11 +310,11 @@ DO
 			GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum amplitude factor"));
 		Melder_informationReal (shimmer, NULL);
 	}
-END
+END2 }
 
-FORM (AmplitudeTier_getShimmer_dda, U"AmplitudeTier: Get shimmer (dda)", U"AmplitudeTier: Get shimmer (dda)...")
+FORM (AmplitudeTier_getShimmer_dda, U"AmplitudeTier: Get shimmer (dda)", U"AmplitudeTier: Get shimmer (dda)...") {
 	dia_AmplitudeTier_getRangeProperty (dia);
-	OK
+	OK2
 DO
 	LOOP {
 		iam (AmplitudeTier);
@@ -322,55 +322,57 @@ DO
 			GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum amplitude factor"));
 		Melder_informationReal (shimmer, NULL);
 	}
-END
+END2 }
 
-/*FORM (AmplitudeTier_getValueAtTime, U"Get AmplitudeTier value", U"AmplitudeTier: Get value at time...")
+/*FORM (AmplitudeTier_getValueAtTime, U"Get AmplitudeTier value", U"AmplitudeTier: Get value at time...") {
 	REAL (U"Time (s)", U"0.5")
-	OK
+	OK2
 DO
 	Melder_informationReal (RealTier_getValueAtTime (ONLY_OBJECT, GET_REAL (U"Time")), U"Pa");
-END
+END2 }
 	
-FORM (AmplitudeTier_getValueAtIndex, U"Get AmplitudeTier value", U"AmplitudeTier: Get value at index...")
+FORM (AmplitudeTier_getValueAtIndex, U"Get AmplitudeTier value", U"AmplitudeTier: Get value at index...") {
 	INTEGER (U"Point number", U"10")
-	OK
+	OK2
 DO
 	Melder_informationReal (RealTier_getValueAtIndex (ONLY_OBJECT, GET_INTEGER (U"Point number")), U"Pa");
-END*/
+END2 }*/
 
-DIRECT (AmplitudeTier_help) Melder_help (U"AmplitudeTier"); END
+DIRECT2 (AmplitudeTier_help) {
+	Melder_help (U"AmplitudeTier");
+END2 }
 
-FORM (AmplitudeTier_to_IntensityTier, U"AmplitudeTier: To IntensityTier", U"AmplitudeTier: To IntensityTier...")
+FORM (AmplitudeTier_to_IntensityTier, U"AmplitudeTier: To IntensityTier", U"AmplitudeTier: To IntensityTier...") {
 	REAL (U"Threshold (dB)", U"-10000.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (AmplitudeTier);
 		autoIntensityTier thee = AmplitudeTier_to_IntensityTier (me, GET_REAL (U"Threshold"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (AmplitudeTier_to_Sound, U"AmplitudeTier: To Sound (pulse train)", U"AmplitudeTier: To Sound (pulse train)...")
+FORM (AmplitudeTier_to_Sound, U"AmplitudeTier: To Sound (pulse train)", U"AmplitudeTier: To Sound (pulse train)...") {
 	POSITIVE (U"Sampling frequency (Hz)", U"44100")
 	NATURAL (U"Interpolation depth (samples)", U"2000")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (AmplitudeTier);
 		autoSound thee = AmplitudeTier_to_Sound (me, GET_REAL (U"Sampling frequency"), GET_INTEGER (U"Interpolation depth"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (info_AmplitudeTier_Sound_edit)
+DIRECT2 (info_AmplitudeTier_Sound_edit) {
 	Melder_information (U"To include a copy of a Sound in your AmplitudeTier editor:\n"
 		"   select an AmplitudeTier and a Sound, and click \"View & Edit\".");
-END
+END2 }
 
 /***** AMPLITUDETIER & SOUND *****/
 
-DIRECT (Sound_AmplitudeTier_multiply)
+DIRECT2 (Sound_AmplitudeTier_multiply) {
 	Sound sound = NULL;
 	AmplitudeTier tier = NULL;
 	LOOP {
@@ -379,26 +381,26 @@ DIRECT (Sound_AmplitudeTier_multiply)
 	}
 	autoSound thee = Sound_AmplitudeTier_multiply (sound, tier);
 	praat_new (thee.transfer(), sound -> name, U"_amp");
-END
+END2 }
 
 /***** COCHLEAGRAM *****/
 
-FORM (Cochleagram_difference, U"Cochleagram difference", 0)
+FORM (Cochleagram_difference, U"Cochleagram difference", 0) {
 	praat_dia_timeRange (dia);
-	OK
+	OK2
 DO
 	Cochleagram coch1 = NULL, coch2 = NULL;
 	LOOP (coch1 ? coch2 : coch1) = (Cochleagram) OBJECT;
 	Melder_informationReal (Cochleagram_difference (coch1, coch2,
 		GET_REAL (U"left Time range"), GET_REAL (U"right Time range")), U"Hertz (root-mean-square)");
-END
+END2 }
 
-FORM (Cochleagram_formula, U"Cochleagram Formula", U"Cochleagram: Formula...")
+FORM (Cochleagram_formula, U"Cochleagram Formula", U"Cochleagram: Formula...") {
 	LABEL (U"label", U"`x' is time in seconds, `y' is place in Bark")
 	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
 	TEXTFIELD (U"formula", U"self")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Cochleagram);
@@ -410,88 +412,90 @@ DO
 			throw;
 		}
 	}
-END
+END2 }
 
-DIRECT (Cochleagram_help) Melder_help (U"Cochleagram"); END
+DIRECT2 (Cochleagram_help) {
+	Melder_help (U"Cochleagram");
+END2 }
 
-DIRECT (Cochleagram_movie)
+DIRECT2 (Cochleagram_movie) {
 	Graphics g = Movie_create (U"Cochleagram movie", 300, 300);
 	LOOP {
 		iam (Cochleagram);
 		Matrix_movie (me, g);
 	}
-END
+END2 }
 
-FORM (Cochleagram_paint, U"Paint Cochleagram", 0)
+FORM (Cochleagram_paint, U"Paint Cochleagram", 0) {
 	praat_dia_timeRange (dia);
 	BOOLEAN (U"Garnish", 1)
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Cochleagram);
 		autoPraatPicture picture;
 		Cochleagram_paint (me, GRAPHICS, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Garnish"));
 	}
-END
+END2 }
 
-FORM (Cochleagram_to_Excitation, U"From Cochleagram to Excitation", 0)
+FORM (Cochleagram_to_Excitation, U"From Cochleagram to Excitation", 0) {
 	REAL (U"Time (s)", U"0.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Cochleagram);
 		autoExcitation thee = Cochleagram_to_Excitation (me, GET_REAL (U"Time"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Cochleagram_to_Matrix)
+DIRECT2 (Cochleagram_to_Matrix) {
 	LOOP {
 		iam (Cochleagram);
 		autoMatrix thee = Cochleagram_to_Matrix (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
 /***** CORPUS *****/
 
-FORM (Corpus_create, U"Create Corpus", U"Create Corpus...")
+FORM (Corpus_create, U"Create Corpus", U"Create Corpus...") {
 	WORD (U"Name", U"myCorpus")
 	LABEL (U"", U"Folder with sound files:")
 	TEXTFIELD (U"folderWithSoundFiles", U"")
 	LABEL (U"", U"Folder with annotation files:")
 	TEXTFIELD (U"folderWithAnnotationFiles", U"")
-	OK
+	OK2
 DO
-END
+END2 }
 
-DIRECT (Corpus_edit)
+DIRECT2 (Corpus_edit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot edit a Corpus from batch.");
 	LOOP {
 		iam (Corpus);
 		autoTableEditor editor = TableEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
-END
+END2 }
 
 /***** DISTRIBUTIONS *****/
 
-FORM (Distributions_to_Transition, U"To Transition", 0)
+FORM (Distributions_to_Transition, U"To Transition", 0) {
 	NATURAL (U"Environment", U"1")
 	BOOLEAN (U"Greedy", 1)
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Distributions);
 		autoTransition thee = Distributions_to_Transition (me, NULL, GET_INTEGER (U"Environment"), NULL, GET_INTEGER (U"Greedy"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (Distributions_to_Transition_adj, U"To Transition", 0)
+FORM (Distributions_to_Transition_adj, U"To Transition", 0) {
 	NATURAL (U"Environment", U"1")
 	BOOLEAN (U"Greedy", 1)
-	OK
+	OK2
 DO
 	Distributions dist = NULL;
 	Transition trans = NULL;
@@ -501,23 +505,23 @@ DO
 	}
 	autoTransition thee = Distributions_to_Transition (dist, NULL, GET_INTEGER (U"Environment"), trans, GET_INTEGER (U"Greedy"));
 	praat_new (thee.transfer());
-END
+END2 }
 
-FORM (Distributions_to_Transition_noise, U"To Transition (noise)", 0)
+FORM (Distributions_to_Transition_noise, U"To Transition (noise)", 0) {
 	NATURAL (U"Environment", U"1")
 	BOOLEAN (U"Greedy", 1)
-	OK
+	OK2
 DO
 	Distributions underlying = NULL, surface = NULL;
 	LOOP (underlying ? surface : underlying) = (Distributions) OBJECT;
 	autoTransition thee = Distributions_to_Transition (underlying, surface, GET_INTEGER (U"Environment"), NULL, GET_INTEGER (U"Greedy"));
 	praat_new (thee.transfer());
-END
+END2 }
 
-FORM (Distributions_to_Transition_noise_adj, U"To Transition (noise)", 0)
+FORM (Distributions_to_Transition_noise_adj, U"To Transition (noise)", 0) {
 	NATURAL (U"Environment", U"1")
 	BOOLEAN (U"Greedy", 1)
-	OK
+	OK2
 DO
 	Distributions underlying = NULL, surface = NULL;
 	Transition trans = NULL;
@@ -527,11 +531,11 @@ DO
 	}
 	autoTransition thee = Distributions_to_Transition (underlying, surface, GET_INTEGER (U"Environment"), trans, GET_INTEGER (U"Greedy"));
 	praat_new (thee.transfer());
-END
+END2 }
 
 /***** DISTRIBUTIONS & TRANSITION *****/
 
-DIRECT (Distributions_Transition_map)
+DIRECT2 (Distributions_Transition_map) {
 	Distributions dist = NULL;
 	Transition trans = NULL;
 	LOOP {
@@ -540,43 +544,43 @@ DIRECT (Distributions_Transition_map)
 	}
 	autoDistributions thee = Distributions_Transition_map (dist, trans);
 	praat_new (thee.transfer(), U"surface");
-END
+END2 }
 
 /***** DURATIONTIER *****/
 
-FORM (DurationTier_addPoint, U"Add one point to DurationTier", U"DurationTier: Add point...")
+FORM (DurationTier_addPoint, U"Add one point to DurationTier", U"DurationTier: Add point...") {
 	REAL (U"Time (s)", U"0.5")
 	REAL (U"Relative duration", U"1.5")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (DurationTier);
 		RealTier_addPoint (me, GET_REAL (U"Time"), GET_REAL (U"Relative duration"));
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-FORM (DurationTier_create, U"Create empty DurationTier", U"Create DurationTier...")
+FORM (DurationTier_create, U"Create empty DurationTier", U"Create DurationTier...") {
 	WORD (U"Name", U"empty")
 	REAL (U"Start time (s)", U"0.0")
 	REAL (U"End time (s)", U"1.0")
-	OK
+	OK2
 DO
 	double startTime = GET_REAL (U"Start time"), endTime = GET_REAL (U"End time");
 	if (endTime <= startTime) Melder_throw (U"End time must be greater than start time.");
 	autoDurationTier thee = DurationTier_create (startTime, endTime);
 	praat_new (thee.transfer(), GET_STRING (U"Name"));
-END
+END2 }
 
-DIRECT (DurationTier_downto_PointProcess)
+DIRECT2 (DurationTier_downto_PointProcess) {
 	LOOP {
 		iam (DurationTier);
 		autoPointProcess thee = AnyTier_downto_PointProcess (OBJECT);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (DurationTier_edit)
+DIRECT2 (DurationTier_edit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a DurationTier from batch.");
 	Sound sound = NULL;
 	LOOP {
@@ -587,9 +591,9 @@ DIRECT (DurationTier_edit)
 		autoDurationTierEditor editor = DurationTierEditor_create (ID_AND_FULL_NAME, me, sound, TRUE);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
-END
+END2 }
 
-FORM (DurationTier_formula, U"DurationTier: Formula", U"DurationTier: Formula...")
+FORM (DurationTier_formula, U"DurationTier: Formula", U"DurationTier: Formula...") {
 	LABEL (U"", U"# ncol = the number of points")
 	LABEL (U"", U"for col from 1 to ncol")
 	LABEL (U"", U"   # x = the time of the colth point, in seconds")
@@ -597,7 +601,7 @@ FORM (DurationTier_formula, U"DurationTier: Formula", U"DurationTier: Formula...
 	LABEL (U"", U"   self = `formula'")
 	LABEL (U"", U"endfor")
 	TEXTFIELD (U"formula", U"self * 1.5 ; slow down")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (DurationTier);
@@ -609,58 +613,60 @@ DO
 			throw;
 		}
 	}
-END
+END2 }
 
-FORM (DurationTier_getTargetDuration, U"Get target duration", 0)
+FORM (DurationTier_getTargetDuration, U"Get target duration", 0) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"1.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (DurationTier);
 		double area = RealTier_getArea (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
 		Melder_informationReal (area, U"seconds");
 	}
-END
+END2 }
 
-FORM (DurationTier_getValueAtTime, U"Get DurationTier value", U"DurationTier: Get value at time...")
+FORM (DurationTier_getValueAtTime, U"Get DurationTier value", U"DurationTier: Get value at time...") {
 	REAL (U"Time (s)", U"0.5")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (DurationTier);
 		double value = RealTier_getValueAtTime (me, GET_REAL (U"Time"));
 		Melder_informationReal (value, NULL);
 	}
-END
+END2 }
 	
-FORM (DurationTier_getValueAtIndex, U"Get DurationTier value", U"Duration: Get value at index...")
+FORM (DurationTier_getValueAtIndex, U"Get DurationTier value", U"Duration: Get value at index...") {
 	INTEGER (U"Point number", U"10")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (DurationTier);
 		double value = RealTier_getValueAtIndex (me, GET_INTEGER (U"Point number"));
 		Melder_informationReal (value, NULL);
 	}
-END
+END2 }
 
-DIRECT (DurationTier_help) Melder_help (U"DurationTier"); END
+DIRECT2 (DurationTier_help) {
+	Melder_help (U"DurationTier");
+END2 }
 
-DIRECT (info_DurationTier_Sound_edit)
+DIRECT2 (info_DurationTier_Sound_edit) {
 	Melder_information (U"To include a copy of a Sound in your DurationTier editor:\n"
 		"   select a DurationTier and a Sound, and click \"View & Edit\".");
-END
+END2 }
 
 /***** EXCITATION *****/
 
-FORM (Excitation_draw, U"Draw Excitation", 0)
+FORM (Excitation_draw, U"Draw Excitation", 0) {
 	REAL (U"From frequency (Bark)", U"0")
 	REAL (U"To frequency (Bark)", U"25.6")
 	REAL (U"Minimum (phon)", U"0")
 	REAL (U"Maximum (phon)", U"100")
 	BOOLEAN (U"Garnish", 1)
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Excitation);
@@ -669,13 +675,13 @@ DO
 			GET_REAL (U"From frequency"), GET_REAL (U"To frequency"),
 			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"), GET_INTEGER (U"Garnish"));
 	}
-END
+END2 }
 
-FORM (Excitation_formula, U"Excitation Formula", U"Excitation: Formula...")
+FORM (Excitation_formula, U"Excitation Formula", U"Excitation: Formula...") {
 	LABEL (U"label", U"`x' is the place in Bark, `col' is the bin number")
 	LABEL (U"label", U"x := 0;   for col := 1 to ncol do { self [1, col] := `formula' ; x := x + dx }")
 	TEXTFIELD (U"formula", U"self")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Excitation);
@@ -687,61 +693,63 @@ DO
 			throw;
 		}
 	}
-END
+END2 }
 
-DIRECT (Excitation_getLoudness)
+DIRECT2 (Excitation_getLoudness) {
 	LOOP {
 		iam (Excitation);
 		double loudness = Excitation_getLoudness (me);
 		Melder_informationReal (loudness, U"sones");
 	}
-END
+END2 }
 
-DIRECT (Excitation_help) Melder_help (U"Excitation"); END
+DIRECT2 (Excitation_help) {
+	Melder_help (U"Excitation");
+END2 }
 
-FORM (Excitation_to_Formant, U"From Excitation to Formant", 0)
+FORM (Excitation_to_Formant, U"From Excitation to Formant", 0) {
 	NATURAL (U"Maximum number of formants", U"20")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Excitation);
 		autoFormant thee = Excitation_to_Formant (me, GET_INTEGER (U"Maximum number of formants"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Excitation_to_Matrix)
+DIRECT2 (Excitation_to_Matrix) {
 	LOOP {
 		iam (Excitation);
 		autoMatrix thee = Excitation_to_Matrix (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
 /***** FORMANT *****/
 
-DIRECT (Formant_downto_FormantGrid)
+DIRECT2 (Formant_downto_FormantGrid) {
 	LOOP {
 		iam (Formant);
 		autoFormantGrid thee = Formant_downto_FormantGrid (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Formant_downto_FormantTier)
+DIRECT2 (Formant_downto_FormantTier) {
 	LOOP {
 		iam (Formant);
 		autoFormantTier thee = Formant_downto_FormantTier (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (Formant_drawSpeckles, U"Draw Formant", U"Formant: Draw speckles...")
+FORM (Formant_drawSpeckles, U"Draw Formant", U"Formant: Draw speckles...") {
 	praat_dia_timeRange (dia);
 	POSITIVE (U"Maximum frequency (Hz)", U"5500.0")
 	REAL (U"Dynamic range (dB)", U"30.0")
 	BOOLEAN (U"Garnish", 1)
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Formant);
@@ -750,13 +758,13 @@ DO
 			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_REAL (U"Maximum frequency"),
 			GET_REAL (U"Dynamic range"), GET_INTEGER (U"Garnish"));
 	}
-END
+END2 }
 
-FORM (Formant_drawTracks, U"Draw formant tracks", U"Formant: Draw tracks...")
+FORM (Formant_drawTracks, U"Draw formant tracks", U"Formant: Draw tracks...") {
 	praat_dia_timeRange (dia);
 	POSITIVE (U"Maximum frequency (Hz)", U"5500.0")
 	BOOLEAN (U"Garnish", 1)
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Formant);
@@ -765,12 +773,12 @@ DO
 			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_REAL (U"Maximum frequency"),
 			GET_INTEGER (U"Garnish"));
 	}
-END
+END2 }
 
-FORM (Formant_formula_bandwidths, U"Formant: Formula (bandwidths)", U"Formant: Formula (bandwidths)...")
+FORM (Formant_formula_bandwidths, U"Formant: Formula (bandwidths)", U"Formant: Formula (bandwidths)...") {
 	LABEL (U"", U"row is formant number, col is frame number: for row from 1 to nrow do for col from 1 to ncol do B (row, col) :=")
 	TEXTFIELD (U"formula", U"self / 2 ; sharpen all peaks")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Formant);
@@ -782,12 +790,12 @@ DO
 			throw;
 		}
 	}
-END
+END2 }
 
-FORM (Formant_formula_frequencies, U"Formant: Formula (frequencies)", U"Formant: Formula (frequencies)...")
+FORM (Formant_formula_frequencies, U"Formant: Formula (frequencies)", U"Formant: Formula (frequencies)...") {
 	LABEL (U"", U"row is formant number, col is frame number: for row from 1 to nrow do for col from 1 to ncol do F (row, col) :=")
 	TEXTFIELD (U"formula", U"if row = 2 then self + 200 else self fi")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Formant);
@@ -799,9 +807,9 @@ DO
 			throw;
 		}
 	}
-END
+END2 }
 
-FORM (Formant_getBandwidthAtTime, U"Formant: Get bandwidth", U"Formant: Get bandwidth at time...")
+FORM (Formant_getBandwidthAtTime, U"Formant: Get bandwidth", U"Formant: Get bandwidth at time...") {
 	NATURAL (U"Formant number", U"1")
 	REAL (U"Time (s)", U"0.5")
 	RADIO (U"Unit", 1)
@@ -809,7 +817,7 @@ FORM (Formant_getBandwidthAtTime, U"Formant: Get bandwidth", U"Formant: Get band
 		RADIOBUTTON (U"Bark")
 	RADIO (U"Interpolation", 1)
 		RADIOBUTTON (U"Linear")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Formant);
@@ -817,9 +825,9 @@ DO
 		Melder_informationReal (bandwidth, GET_STRING (U"Unit"));
 		break;
 	}
-END
+END2 }
 	
-FORM (Formant_getMaximum, U"Formant: Get maximum", U"Formant: Get maximum...")
+FORM (Formant_getMaximum, U"Formant: Get maximum", U"Formant: Get maximum...") {
 	NATURAL (U"Formant number", U"1")
 	praat_dia_timeRange (dia);
 	RADIO (U"Unit", 1)
@@ -828,7 +836,7 @@ FORM (Formant_getMaximum, U"Formant: Get maximum", U"Formant: Get maximum...")
 	RADIO (U"Interpolation", 2)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Formant);
@@ -837,24 +845,24 @@ DO
 		Melder_informationReal (maximum, GET_STRING (U"Unit"));
 		break;
 	}
-END
+END2 }
 
-DIRECT (Formant_getMaximumNumberOfFormants)
+DIRECT2 (Formant_getMaximumNumberOfFormants) {
 	LOOP {
 		iam (Formant);
 		long maximumNumberOfFormants = Formant_getMaxNumFormants (me);
 		Melder_information (maximumNumberOfFormants, U" (there are at most this many formants in every frame)");
 		break;
 	}
-END
+END2 }
 
-FORM (Formant_getMean, U"Formant: Get mean", U"Formant: Get mean...")
+FORM (Formant_getMean, U"Formant: Get mean", U"Formant: Get mean...") {
 	NATURAL (U"Formant number", U"1")
 	praat_dia_timeRange (dia);
 	RADIO (U"Unit", 1)
 		RADIOBUTTON (U"Hertz")
 		RADIOBUTTON (U"Bark")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Formant);
@@ -863,9 +871,9 @@ DO
 		Melder_informationReal (mean, GET_STRING (U"Unit"));
 		break;
 	}
-END
+END2 }
 
-FORM (Formant_getMinimum, U"Formant: Get minimum", U"Formant: Get minimum...")
+FORM (Formant_getMinimum, U"Formant: Get minimum", U"Formant: Get minimum...") {
 	NATURAL (U"Formant number", U"1")
 	praat_dia_timeRange (dia);
 	RADIO (U"Unit", 1)
@@ -874,7 +882,7 @@ FORM (Formant_getMinimum, U"Formant: Get minimum", U"Formant: Get minimum...")
 	RADIO (U"Interpolation", 2)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Formant);
@@ -884,20 +892,20 @@ DO
 		Melder_informationReal (minimum, GET_STRING (U"Unit"));
 		break;
 	}
-END
+END2 }
 
-DIRECT (Formant_getMinimumNumberOfFormants)
+DIRECT2 (Formant_getMinimumNumberOfFormants) {
 	LOOP {
 		iam (Formant);
 		long minimumNumberOfFormants = Formant_getMinNumFormants (me);
 		Melder_information (minimumNumberOfFormants, U" (there are at least this many formants in every frame)");
 		break;
 	}
-END
+END2 }
 
-FORM (Formant_getNumberOfFormants, U"Formant: Get number of formants", U"Formant: Get number of formants...")
+FORM (Formant_getNumberOfFormants, U"Formant: Get number of formants", U"Formant: Get number of formants...") {
 	NATURAL (U"Frame number", U"1")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Formant);
@@ -906,16 +914,16 @@ DO
 		Melder_information (my d_frames [frame]. nFormants, U" formants");
 		break;
 	}
-END
+END2 }
 
-FORM (Formant_getQuantile, U"Formant: Get quantile", 0)
+FORM (Formant_getQuantile, U"Formant: Get quantile", 0) {
 	NATURAL (U"Formant number", U"1")
 	praat_dia_timeRange (dia);
 	RADIO (U"Unit", 1)
 		RADIOBUTTON (U"Hertz")
 		RADIOBUTTON (U"Bark")
 	REAL (U"Quantile", U"0.50 (= median)")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Formant);
@@ -924,16 +932,16 @@ DO
 		Melder_informationReal (quantile, GET_STRING (U"Unit"));
 		break;
 	}
-END
+END2 }
 
-FORM (Formant_getQuantileOfBandwidth, U"Formant: Get quantile of bandwidth", 0)
+FORM (Formant_getQuantileOfBandwidth, U"Formant: Get quantile of bandwidth", 0) {
 	NATURAL (U"Formant number", U"1")
 	praat_dia_timeRange (dia);
 	RADIO (U"Unit", 1)
 		RADIOBUTTON (U"Hertz")
 		RADIOBUTTON (U"Bark")
 	REAL (U"Quantile", U"0.50 (= median)")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Formant);
@@ -942,15 +950,15 @@ DO
 		Melder_informationReal (quantile, GET_STRING (U"Unit"));
 		break;
 	}
-END
+END2 }
 
-FORM (Formant_getStandardDeviation, U"Formant: Get standard deviation", 0)
+FORM (Formant_getStandardDeviation, U"Formant: Get standard deviation", 0) {
 	NATURAL (U"Formant number", U"1")
 	praat_dia_timeRange (dia);
 	RADIO (U"Unit", 1)
 		RADIOBUTTON (U"Hertz")
 		RADIOBUTTON (U"Bark")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Formant);
@@ -959,9 +967,9 @@ DO
 		Melder_informationReal (stdev, GET_STRING (U"Unit"));
 		break;
 	}
-END
+END2 }
 
-FORM (Formant_getTimeOfMaximum, U"Formant: Get time of maximum", U"Formant: Get time of maximum...")
+FORM (Formant_getTimeOfMaximum, U"Formant: Get time of maximum", U"Formant: Get time of maximum...") {
 	NATURAL (U"Formant number", U"1")
 	praat_dia_timeRange (dia);
 	RADIO (U"Unit", 1)
@@ -970,7 +978,7 @@ FORM (Formant_getTimeOfMaximum, U"Formant: Get time of maximum", U"Formant: Get 
 	RADIO (U"Interpolation", 2)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Formant);
@@ -980,9 +988,9 @@ DO
 		Melder_informationReal (time, U"seconds");
 		break;
 	}
-END
+END2 }
 
-FORM (Formant_getTimeOfMinimum, U"Formant: Get time of minimum", U"Formant: Get time of minimum...")
+FORM (Formant_getTimeOfMinimum, U"Formant: Get time of minimum", U"Formant: Get time of minimum...") {
 	NATURAL (U"Formant number", U"1")
 	praat_dia_timeRange (dia);
 	RADIO (U"Unit", 1)
@@ -991,7 +999,7 @@ FORM (Formant_getTimeOfMinimum, U"Formant: Get time of minimum", U"Formant: Get 
 	RADIO (U"Interpolation", 2)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Formant);
@@ -1001,9 +1009,9 @@ DO
 		Melder_informationReal (time, U"seconds");
 		break;
 	}
-END
+END2 }
 
-FORM (Formant_getValueAtTime, U"Formant: Get value", U"Formant: Get value at time...")
+FORM (Formant_getValueAtTime, U"Formant: Get value", U"Formant: Get value at time...") {
 	NATURAL (U"Formant number", U"1")
 	REAL (U"Time (s)", U"0.5")
 	RADIO (U"Unit", 1)
@@ -1011,7 +1019,7 @@ FORM (Formant_getValueAtTime, U"Formant: Get value", U"Formant: Get value at tim
 		RADIOBUTTON (U"Bark")
 	RADIO (U"Interpolation", 1)
 		RADIOBUTTON (U"Linear")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Formant);
@@ -1019,11 +1027,13 @@ DO
 		Melder_informationReal (value, GET_STRING (U"Unit"));
 		break;
 	}
-END
+END2 }
 	
-DIRECT (Formant_help) Melder_help (U"Formant"); END
+DIRECT2 (Formant_help) {
+	Melder_help (U"Formant");
+END2 }
 
-FORM (Formant_downto_Table, U"Formant: Down to Table", 0)
+FORM (Formant_downto_Table, U"Formant: Down to Table", 0) {
 	BOOLEAN (U"Include frame number", false)
 	BOOLEAN (U"Include time", true)
 	NATURAL (U"Time decimals", U"6")
@@ -1032,7 +1042,7 @@ FORM (Formant_downto_Table, U"Formant: Down to Table", 0)
 	BOOLEAN (U"Include number of formants", true)
 	NATURAL (U"Frequency decimals", U"3")
 	BOOLEAN (U"Include bandwidths", true)
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Formant);
@@ -1043,9 +1053,9 @@ DO
 			GET_INTEGER (U"Include bandwidths"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (Formant_list, U"Formant: List", 0)
+FORM (Formant_list, U"Formant: List", 0) {
 	BOOLEAN (U"Include frame number", false)
 	BOOLEAN (U"Include time", true)
 	NATURAL (U"Time decimals", U"6")
@@ -1054,7 +1064,7 @@ FORM (Formant_list, U"Formant: List", 0)
 	BOOLEAN (U"Include number of formants", true)
 	NATURAL (U"Frequency decimals", U"3")
 	BOOLEAN (U"Include bandwidths", true)
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Formant);
@@ -1065,9 +1075,9 @@ DO
 			GET_INTEGER (U"Include bandwidths"));
 		break;
 	}
-END
+END2 }
 
-FORM (Formant_scatterPlot, U"Formant: Scatter plot", 0)
+FORM (Formant_scatterPlot, U"Formant: Scatter plot", 0) {
 	praat_dia_timeRange (dia);
 	NATURAL (U"Horizontal formant number", U"2")
 	REAL (U"left Horizontal range (Hz)", U"3000")
@@ -1078,7 +1088,7 @@ FORM (Formant_scatterPlot, U"Formant: Scatter plot", 0)
 	POSITIVE (U"Mark size (mm)", U"1.0")
 	BOOLEAN (U"Garnish", 1)
 	SENTENCE (U"Mark string (+xo.)", U"+")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Formant);
@@ -1091,28 +1101,28 @@ DO
 			GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"),
 			GET_REAL (U"Mark size"), GET_STRING (U"Mark string"), GET_INTEGER (U"Garnish"));
 	}
-END
+END2 }
 
-DIRECT (Formant_sort)
+DIRECT2 (Formant_sort) {
 	LOOP {
 		iam (Formant);
 		Formant_sort (me);
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-FORM (Formant_to_Matrix, U"From Formant to Matrix", 0)
+FORM (Formant_to_Matrix, U"From Formant to Matrix", 0) {
 	INTEGER (U"Formant", U"1")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Formant);
 		autoMatrix thee = Formant_to_Matrix (me, GET_INTEGER (U"Formant"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (Formant_tracker, U"Formant tracker", U"Formant: Track...")
+FORM (Formant_tracker, U"Formant tracker", U"Formant: Track...") {
 	NATURAL (U"Number of tracks (1-5)", U"3")
 	REAL (U"Reference F1 (Hz)", U"550")
 	REAL (U"Reference F2 (Hz)", U"1650")
@@ -1122,7 +1132,7 @@ FORM (Formant_tracker, U"Formant tracker", U"Formant: Track...")
 	REAL (U"Frequency cost (/kHz)", U"1.0")
 	REAL (U"Bandwidth cost", U"1.0")
 	REAL (U"Transition cost (/octave)", U"1.0")
-	OK
+	OK2
 DO
 	long numberOfTracks = GET_INTEGER (U"Number of tracks");
 	if (numberOfTracks > 5) Melder_throw (U"Number of tracks cannot be more than 5.");
@@ -1135,11 +1145,11 @@ DO
 			GET_REAL (U"Bandwidth cost"), GET_REAL (U"Transition cost"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
 /***** FORMANT & POINTPROCESS *****/
 
-DIRECT (Formant_PointProcess_to_FormantTier)
+DIRECT2 (Formant_PointProcess_to_FormantTier) {
 	Formant formant = NULL;
 	PointProcess point = NULL;
 	LOOP {
@@ -1149,11 +1159,11 @@ DIRECT (Formant_PointProcess_to_FormantTier)
 	}
 	autoFormantTier thee = Formant_PointProcess_to_FormantTier (formant, point);
 	praat_new (thee.transfer(), formant -> name, U"_", point -> name);
-END
+END2 }
 
 /***** FORMANT & SOUND *****/
 
-DIRECT (Sound_Formant_filter)
+DIRECT2 (Sound_Formant_filter) {
 	Sound sound = NULL;
 	Formant formant = NULL;
 	LOOP {
@@ -1163,9 +1173,9 @@ DIRECT (Sound_Formant_filter)
 	}
 	autoSound thee = Sound_Formant_filter (sound, formant);
 	praat_new (thee.transfer(), sound -> name, U"_filt");
-END
+END2 }
 
-DIRECT (Sound_Formant_filter_noscale)
+DIRECT2 (Sound_Formant_filter_noscale) {
 	Sound sound = NULL;
 	Formant formant = NULL;
 	LOOP {
@@ -1175,37 +1185,37 @@ DIRECT (Sound_Formant_filter_noscale)
 	}
 	autoSound thee = Sound_Formant_filter_noscale (sound, formant);
 	praat_new (thee.transfer(), sound -> name, U"_filt");
-END
+END2 }
 
 /***** FORMANTGRID *****/
 
-FORM (FormantGrid_addBandwidthPoint, U"FormantGrid: Add bandwidth point", U"FormantGrid: Add bandwidth point...")
+FORM (FormantGrid_addBandwidthPoint, U"FormantGrid: Add bandwidth point", U"FormantGrid: Add bandwidth point...") {
 	NATURAL (U"Formant number", U"1")
 	REAL (U"Time (s)", U"0.5")
 	POSITIVE (U"Bandwidth (Hz)", U"100")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (FormantGrid);
 		FormantGrid_addBandwidthPoint (me, GET_INTEGER (U"Formant number"), GET_REAL (U"Time"), GET_REAL (U"Bandwidth"));
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-FORM (FormantGrid_addFormantPoint, U"FormantGrid: Add formant point", U"FormantGrid: Add formant point...")
+FORM (FormantGrid_addFormantPoint, U"FormantGrid: Add formant point", U"FormantGrid: Add formant point...") {
 	NATURAL (U"Formant number", U"1")
 	REAL (U"Time (s)", U"0.5")
 	POSITIVE (U"Frequency (Hz)", U"550")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (FormantGrid);
 		FormantGrid_addFormantPoint (me, GET_INTEGER (U"Formant number"), GET_REAL (U"Time"), GET_REAL (U"Frequency"));
 		praat_dataChanged (OBJECT);
 	}
-END
+END2 }
 
-FORM (FormantGrid_create, U"Create FormantGrid", NULL)
+FORM (FormantGrid_create, U"Create FormantGrid", NULL) {
 	WORD (U"Name", U"schwa")
 	REAL (U"Start time (s)", U"0.0")
 	REAL (U"End time (s)", U"1.0")
@@ -1214,7 +1224,7 @@ FORM (FormantGrid_create, U"Create FormantGrid", NULL)
 	POSITIVE (U"Initial formant spacing (Hz)", U"1100")
 	REAL (U"Initial first bandwidth (Hz)", U"60")
 	REAL (U"Initial bandwidth spacing (Hz)", U"50")
-	OK
+	OK2
 DO
 	double startTime = GET_REAL (U"Start time"), endTime = GET_REAL (U"End time");
 	if (endTime <= startTime) Melder_throw (U"End time must be greater than start time.");
@@ -1222,7 +1232,7 @@ DO
 		GET_REAL (U"Initial first formant"), GET_REAL (U"Initial formant spacing"),
 		GET_REAL (U"Initial first bandwidth"), GET_REAL (U"Initial bandwidth spacing"));
 	praat_new (thee.transfer(), GET_STRING (U"Name"));
-END
+END2 }
 
 static void cb_FormantGridEditor_publish (Editor me, void *closure, Data publish) {
 	(void) me;
@@ -1237,7 +1247,7 @@ static void cb_FormantGridEditor_publish (Editor me, void *closure, Data publish
 		Melder_flushError ();
 	}
 }
-DIRECT (FormantGrid_edit)
+DIRECT2 (FormantGrid_edit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a FormantGrid from batch.");
 	LOOP {
 		iam (FormantGrid);
@@ -1245,13 +1255,13 @@ DIRECT (FormantGrid_edit)
 		Editor_setPublicationCallback (editor.peek(), cb_FormantGridEditor_publish, NULL);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
-END
+END2 }
 
-FORM (FormantGrid_formula_bandwidths, U"FormantGrid: Formula (bandwidths)", U"Formant: Formula (bandwidths)...")
+FORM (FormantGrid_formula_bandwidths, U"FormantGrid: Formula (bandwidths)", U"Formant: Formula (bandwidths)...") {
 	LABEL (U"", U"row is formant number, col is point number: for row from 1 to nrow do for col from 1 to ncol do B (row, col) :=")
 	LABEL (U"", U"self [] is the FormantGrid itself, so it returns frequencies, not bandwidths!")
 	TEXTFIELD (U"formula", U"self / 10 ; one tenth of the formant frequency")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (FormantGrid);
@@ -1263,12 +1273,12 @@ DO
 			throw;
 		}
 	}
-END
+END2 }
 
-FORM (FormantGrid_formula_frequencies, U"FormantGrid: Formula (frequencies)", U"Formant: Formula (frequencies)...")
+FORM (FormantGrid_formula_frequencies, U"FormantGrid: Formula (frequencies)", U"Formant: Formula (frequencies)...") {
 	LABEL (U"", U"row is formant number, col is point number: for row from 1 to nrow do for col from 1 to ncol do F (row, col) :=")
 	TEXTFIELD (U"formula", U"if row = 2 then self + 200 else self fi")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (FormantGrid);
@@ -1280,40 +1290,42 @@ DO
 			throw;
 		}
 	}
-END
+END2 }
 
-DIRECT (FormantGrid_help) Melder_help (U"FormantGrid"); END
+DIRECT2 (FormantGrid_help) {
+	Melder_help (U"FormantGrid");
+END2 }
 
-FORM (FormantGrid_removeBandwidthPointsBetween, U"Remove bandwidth points between", U"FormantGrid: Remove bandwidth points between...")
+FORM (FormantGrid_removeBandwidthPointsBetween, U"Remove bandwidth points between", U"FormantGrid: Remove bandwidth points between...") {
 	NATURAL (U"Formant number", U"1")
 	REAL (U"From time (s)", U"0.3")
 	REAL (U"To time (s)", U"0.7")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (FormantGrid);
 		FormantGrid_removeBandwidthPointsBetween (me, GET_INTEGER (U"Formant number"), GET_REAL (U"From time"), GET_REAL (U"To time"));
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-FORM (FormantGrid_removeFormantPointsBetween, U"Remove formant points between", U"FormantGrid: Remove formant points between...")
+FORM (FormantGrid_removeFormantPointsBetween, U"Remove formant points between", U"FormantGrid: Remove formant points between...") {
 	NATURAL (U"Formant number", U"1")
 	REAL (U"From time (s)", U"0.3")
 	REAL (U"To time (s)", U"0.7")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (FormantGrid);
 		FormantGrid_removeFormantPointsBetween (me, GET_INTEGER (U"Formant number"), GET_REAL (U"From time"), GET_REAL (U"To time"));
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-FORM (FormantGrid_to_Formant, U"FormantGrid: To Formant", 0)
+FORM (FormantGrid_to_Formant, U"FormantGrid: To Formant", 0) {
 	POSITIVE (U"Time step (s)", U"0.01")
 	REAL (U"Intensity (Pa\u00B2)", U"0.1")
-	OK
+	OK2
 DO
 	double intensity = GET_REAL (U"Intensity");
 	if (intensity < 0.0) Melder_throw (U"Intensity cannot be negative.");
@@ -1322,11 +1334,11 @@ DO
 		autoFormant thee = FormantGrid_to_Formant (me, GET_REAL (U"Time step"), intensity);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
 /***** FORMANTGRID & SOUND *****/
 
-DIRECT (Sound_FormantGrid_filter)
+DIRECT2 (Sound_FormantGrid_filter) {
 	Sound me = NULL;
 	FormantGrid grid = NULL;
 	LOOP {
@@ -1336,9 +1348,9 @@ DIRECT (Sound_FormantGrid_filter)
 	}
 	autoSound thee = Sound_FormantGrid_filter (me, grid);
 	praat_new (thee.transfer(), my name, U"_filt");
-END
+END2 }
 
-DIRECT (Sound_FormantGrid_filter_noscale)
+DIRECT2 (Sound_FormantGrid_filter_noscale) {
 	Sound me = NULL;
 	FormantGrid grid = NULL;
 	LOOP {
@@ -1348,15 +1360,15 @@ DIRECT (Sound_FormantGrid_filter_noscale)
 	}
 	autoSound thee = Sound_FormantGrid_filter_noscale (me, grid);
 	praat_new (thee.transfer(), my name, U"_filt");
-END
+END2 }
 
 /***** FORMANTTIER *****/
 
-FORM (FormantTier_addPoint, U"Add one point", U"FormantTier: Add point...")
+FORM (FormantTier_addPoint, U"Add one point", U"FormantTier: Add point...") {
 	REAL (U"Time (s)", U"0.5")
 	LABEL (U"", U"Frequencies and bandwidths (Hz):")
 	TEXTFIELD (U"fb pairs", U"500 50 1500 100 2500 150 3500 200 4500 300")
-	OK
+	OK2
 DO
 	autoFormantPoint point = FormantPoint_create (GET_REAL (U"Time"));
 	double *f = point -> formant, *b = point -> bandwidth;
@@ -1372,74 +1384,76 @@ DO
 		AnyTier_addPoint (me, point2.transfer());
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-FORM (FormantTier_create, U"Create empty FormantTier", NULL)
+FORM (FormantTier_create, U"Create empty FormantTier", NULL) {
 	WORD (U"Name", U"empty")
 	REAL (U"Start time (s)", U"0.0")
 	REAL (U"End time (s)", U"1.0")
-	OK
+	OK2
 DO
 	double startTime = GET_REAL (U"Start time"), endTime = GET_REAL (U"End time");
 	if (endTime <= startTime) Melder_throw (U"End time must be greater than start time.");
 	autoFormantTier thee = FormantTier_create (startTime, endTime);
 	praat_new (thee.transfer(), GET_STRING (U"Name"));
-END
+END2 }
 
-FORM (FormantTier_downto_TableOfReal, U"Down to TableOfReal", 0)
+FORM (FormantTier_downto_TableOfReal, U"Down to TableOfReal", 0) {
 	BOOLEAN (U"Include formants", 1)
 	BOOLEAN (U"Include bandwidths", 0)
-	OK
+	OK2
 DO
 	LOOP {
 		iam (FormantTier);
 		autoTableOfReal thee = FormantTier_downto_TableOfReal (me, GET_INTEGER (U"Include formants"), GET_INTEGER (U"Include bandwidths"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (FormantTier_getBandwidthAtTime, U"FormantTier: Get bandwidth", U"FormantTier: Get bandwidth at time...")
+FORM (FormantTier_getBandwidthAtTime, U"FormantTier: Get bandwidth", U"FormantTier: Get bandwidth at time...") {
 	NATURAL (U"Formant number", U"1")
 	REAL (U"Time (s)", U"0.5")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (FormantTier);
 		double bandwidth = FormantTier_getBandwidthAtTime (me, GET_INTEGER (U"Formant number"), GET_REAL (U"Time"));
 		Melder_informationReal (bandwidth, U"hertz");
 	}
-END
+END2 }
 	
-FORM (FormantTier_getValueAtTime, U"FormantTier: Get value", U"FormantTier: Get value at time...")
+FORM (FormantTier_getValueAtTime, U"FormantTier: Get value", U"FormantTier: Get value at time...") {
 	NATURAL (U"Formant number", U"1")
 	REAL (U"Time (s)", U"0.5")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (FormantTier);
 		double value = FormantTier_getValueAtTime (me, GET_INTEGER (U"Formant number"), GET_REAL (U"Time"));
 		Melder_informationReal (value, U"hertz");
 	}
-END
+END2 }
 	
-DIRECT (FormantTier_help) Melder_help (U"FormantTier"); END
+DIRECT2 (FormantTier_help) {
+	Melder_help (U"FormantTier");
+END2 }
 
-FORM (FormantTier_speckle, U"Draw FormantTier", 0)
+FORM (FormantTier_speckle, U"Draw FormantTier", 0) {
 	praat_dia_timeRange (dia);
 	POSITIVE (U"Maximum frequency (Hz)", U"5500.0")
 	BOOLEAN (U"Garnish", 1)
-	OK
+	OK2
 DO
 	LOOP {
 		iam (FormantTier);
 		autoPraatPicture picture;
 		FormantTier_speckle (me, GRAPHICS, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_REAL (U"Maximum frequency"), GET_INTEGER (U"Garnish"));
 	}
-END
+END2 }
 
 /***** FORMANTTIER & SOUND *****/
 
-DIRECT (Sound_FormantTier_filter)
+DIRECT2 (Sound_FormantTier_filter) {
 	Sound me = NULL;
 	FormantTier tier = NULL;
 	LOOP {
@@ -1449,9 +1463,9 @@ DIRECT (Sound_FormantTier_filter)
 	}
 	autoSound thee = Sound_FormantTier_filter (me, tier);
 	praat_new (thee.transfer(), my name, U"_filt");
-END
+END2 }
 
-DIRECT (Sound_FormantTier_filter_noscale)
+DIRECT2 (Sound_FormantTier_filter_noscale) {
 	Sound me = NULL;
 	FormantTier tier = NULL;
 	LOOP {
@@ -1461,15 +1475,15 @@ DIRECT (Sound_FormantTier_filter_noscale)
 	}
 	autoSound thee = Sound_FormantTier_filter_noscale (me, tier);
 	praat_new (thee.transfer(), my name, U"_filt");
-END
+END2 }
 
 /***** HARMONICITY *****/
 
-FORM (Harmonicity_draw, U"Draw harmonicity", 0)
+FORM (Harmonicity_draw, U"Draw harmonicity", 0) {
 	praat_dia_timeRange (dia);
 	REAL (U"Minimum", U"0.0")
 	REAL (U"Maximum", U"0.0 (= auto)")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Harmonicity);
@@ -1478,13 +1492,13 @@ DO
 			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), 0.0, 0.0,
 			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"));
 	}
-END
+END2 }
 
-FORM (Harmonicity_formula, U"Harmonicity Formula", U"Harmonicity: Formula...")
+FORM (Harmonicity_formula, U"Harmonicity Formula", U"Harmonicity: Formula...") {
 	LABEL (U"label", U"x is time")
 	LABEL (U"label", U"for col := 1 to ncol do { self [col] := `formula' ; x := x + dx }")
 	TEXTFIELD (U"formula", U"self")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Harmonicity);
@@ -1496,11 +1510,11 @@ DO
 			throw;
 		}
 	}
-END
+END2 }
 
-FORM (Harmonicity_getMaximum, U"Harmonicity: Get maximum", U"Harmonicity: Get maximum...")
+FORM (Harmonicity_getMaximum, U"Harmonicity: Get maximum", U"Harmonicity: Get maximum...") {
 	dia_Vector_getExtremum (dia);
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Harmonicity);
@@ -1508,22 +1522,22 @@ DO
 			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Interpolation") - 1);
 		Melder_informationReal (maximum, U"dB");
 	}
-END
+END2 }
 
-FORM (Harmonicity_getMean, U"Harmonicity: Get mean", U"Harmonicity: Get mean...")
+FORM (Harmonicity_getMean, U"Harmonicity: Get mean", U"Harmonicity: Get mean...") {
 	praat_dia_timeRange (dia);
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Harmonicity);
 		double mean = Harmonicity_getMean (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
 		Melder_informationReal (mean, U"dB");
 	}
-END
+END2 }
 
-FORM (Harmonicity_getMinimum, U"Harmonicity: Get minimum", U"Harmonicity: Get minimum...")
+FORM (Harmonicity_getMinimum, U"Harmonicity: Get minimum", U"Harmonicity: Get minimum...") {
 	dia_Vector_getExtremum (dia);
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Harmonicity);
@@ -1531,11 +1545,11 @@ DO
 			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Interpolation") - 1);
 		Melder_informationReal (minimum, U"dB");
 	}
-END
+END2 }
 
-FORM (Harmonicity_getStandardDeviation, U"Harmonicity: Get standard deviation", U"Harmonicity: Get standard deviation...")
+FORM (Harmonicity_getStandardDeviation, U"Harmonicity: Get standard deviation", U"Harmonicity: Get standard deviation...") {
 	praat_dia_timeRange (dia);
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Harmonicity);
@@ -1543,11 +1557,11 @@ DO
 			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
 		Melder_informationReal (stdev, U"dB");
 	}
-END
+END2 }
 
-FORM (Harmonicity_getTimeOfMaximum, U"Harmonicity: Get time of maximum", U"Harmonicity: Get time of maximum...")
+FORM (Harmonicity_getTimeOfMaximum, U"Harmonicity: Get time of maximum", U"Harmonicity: Get time of maximum...") {
 	dia_Vector_getExtremum (dia);
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Harmonicity);
@@ -1555,11 +1569,11 @@ DO
 			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Interpolation") - 1);
 		Melder_informationReal (maximum, U"seconds");
 	}
-END
+END2 }
 
-FORM (Harmonicity_getTimeOfMinimum, U"Harmonicity: Get time of minimum", U"Harmonicity: Get time of minimum...")
+FORM (Harmonicity_getTimeOfMinimum, U"Harmonicity: Get time of minimum", U"Harmonicity: Get time of minimum...") {
 	dia_Vector_getExtremum (dia);
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Harmonicity);
@@ -1567,48 +1581,50 @@ DO
 			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Interpolation") - 1);
 		Melder_informationReal (minimum, U"seconds");
 	}
-END
+END2 }
 
-FORM (Harmonicity_getValueAtTime, U"Harmonicity: Get value", U"Harmonicity: Get value at time...")
+FORM (Harmonicity_getValueAtTime, U"Harmonicity: Get value", U"Harmonicity: Get value at time...") {
 	dia_Vector_getValue (dia);
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Harmonicity);
 		double value = Vector_getValueAtX (me, GET_REAL (U"Time"), 1, GET_INTEGER (U"Interpolation") - 1);
 		Melder_informationReal (value, U"dB");
 	}
-END
+END2 }
 	
-FORM (Harmonicity_getValueInFrame, U"Get value in frame", U"Harmonicity: Get value in frame...")
+FORM (Harmonicity_getValueInFrame, U"Get value in frame", U"Harmonicity: Get value in frame...") {
 	INTEGER (U"Frame number", U"10")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Harmonicity);
 		long frameNumber = GET_INTEGER (U"Frame number");
 		Melder_informationReal (frameNumber < 1 || frameNumber > my nx ? NUMundefined : my z [1] [frameNumber], U"dB");
 	}
-END
+END2 }
 
-DIRECT (Harmonicity_help) Melder_help (U"Harmonicity"); END
+DIRECT2 (Harmonicity_help) {
+	Melder_help (U"Harmonicity");
+END2 }
 
-DIRECT (Harmonicity_to_Matrix)
+DIRECT2 (Harmonicity_to_Matrix) {
 	LOOP {
 		iam (Harmonicity);
 		autoMatrix thee = Harmonicity_to_Matrix (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
 /***** INTENSITY *****/
 
-FORM (Intensity_draw, U"Draw Intensity", 0)
+FORM (Intensity_draw, U"Draw Intensity", 0) {
 	praat_dia_timeRange (dia);
 	REAL (U"Minimum (dB)", U"0.0")
 	REAL (U"Maximum (dB)", U"0.0 (= auto)")
 	BOOLEAN (U"Garnish", 1)
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Intensity);
@@ -1616,29 +1632,29 @@ DO
 		Intensity_draw (me, GRAPHICS, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
 			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"), GET_INTEGER (U"Garnish"));
 	}
-END
+END2 }
 
-DIRECT (Intensity_downto_IntensityTier)
+DIRECT2 (Intensity_downto_IntensityTier) {
 	LOOP {
 		iam (Intensity);
 		autoIntensityTier thee = Intensity_downto_IntensityTier (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Intensity_downto_Matrix)
+DIRECT2 (Intensity_downto_Matrix) {
 	LOOP {
 		iam (Intensity);
 		autoMatrix thee = Intensity_to_Matrix (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (Intensity_formula, U"Intensity Formula", 0)
+FORM (Intensity_formula, U"Intensity Formula", 0) {
 	LABEL (U"label", U"`x' is the time in seconds, `col' is the frame number, `self' is in dB")
 	LABEL (U"label", U"x := x1;   for col := 1 to ncol do { self [col] := `formula' ; x := x + dx }")
 	TEXTFIELD (U"formula", U"0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Intensity);
@@ -1650,11 +1666,11 @@ DO
 			throw;
 		}
 	}
-END
+END2 }
 
-FORM (Intensity_getMaximum, U"Intensity: Get maximum", U"Intensity: Get maximum...")
+FORM (Intensity_getMaximum, U"Intensity: Get maximum", U"Intensity: Get maximum...") {
 	dia_Vector_getExtremum (dia);
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Intensity);
@@ -1663,11 +1679,11 @@ DO
 		Melder_informationReal (maximum, U"dB");
 		break;   // OPTIMIZE
 	}
-END
+END2 }
 
-FORM (old_Intensity_getMean, U"Intensity: Get mean", U"Intensity: Get mean...")
+FORM (old_Intensity_getMean, U"Intensity: Get mean", U"Intensity: Get mean...") {
 	praat_dia_timeRange (dia);
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Intensity);
@@ -1675,15 +1691,15 @@ DO
 		Melder_informationReal (mean, U"dB");
 		break;   // OPTIMIZE
 	}
-END
+END2 }
 
-FORM (Intensity_getMean, U"Intensity: Get mean", U"Intensity: Get mean...")
+FORM (Intensity_getMean, U"Intensity: Get mean", U"Intensity: Get mean...") {
 	praat_dia_timeRange (dia);
 	RADIO (U"Averaging method", 1)
 		RADIOBUTTON (U"energy")
 		RADIOBUTTON (U"sones")
 		RADIOBUTTON (U"dB")
-	OK
+	OK2
 DO_ALTERNATIVE (old_Intensity_getMean)
 	LOOP {
 		iam (Intensity);
@@ -1692,11 +1708,11 @@ DO_ALTERNATIVE (old_Intensity_getMean)
 		Melder_informationReal (mean, U"dB");
 		break;   // OPTIMIZE
 	}
-END
+END2 }
 
-FORM (Intensity_getMinimum, U"Intensity: Get minimum", U"Intensity: Get minimum...")
+FORM (Intensity_getMinimum, U"Intensity: Get minimum", U"Intensity: Get minimum...") {
 	dia_Vector_getExtremum (dia);
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Intensity);
@@ -1705,34 +1721,34 @@ DO
 		Melder_informationReal (minimum, U"dB");
 		break;   // OPTIMIZE
 	}
-END
+END2 }
 
-FORM (Intensity_getQuantile, U"Intensity: Get quantile", 0)
+FORM (Intensity_getQuantile, U"Intensity: Get quantile", 0) {
 	praat_dia_timeRange (dia);
 	REAL (U"Quantile (0-1)", U"0.50")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Intensity);
 		double quantile = Intensity_getQuantile (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_REAL (U"Quantile"));
 		Melder_informationReal (quantile, U"dB");
 	}
-END
+END2 }
 
-FORM (Intensity_getStandardDeviation, U"Intensity: Get standard deviation", U"Intensity: Get standard deviation...")
+FORM (Intensity_getStandardDeviation, U"Intensity: Get standard deviation", U"Intensity: Get standard deviation...") {
 	praat_dia_timeRange (dia);
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Intensity);
 		double stdev = Vector_getStandardDeviation (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), 1);
 		Melder_informationReal (stdev, U"dB");
 	}
-END
+END2 }
 
-FORM (Intensity_getTimeOfMaximum, U"Intensity: Get time of maximum", U"Intensity: Get time of maximum...")
+FORM (Intensity_getTimeOfMaximum, U"Intensity: Get time of maximum", U"Intensity: Get time of maximum...") {
 	dia_Vector_getExtremum (dia);
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Intensity);
@@ -1740,11 +1756,11 @@ DO
 			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Interpolation") - 1);
 		Melder_informationReal (time, U"seconds");
 	}
-END
+END2 }
 
-FORM (Intensity_getTimeOfMinimum, U"Intensity: Get time of minimum", U"Intensity: Get time of minimum...")
+FORM (Intensity_getTimeOfMinimum, U"Intensity: Get time of minimum", U"Intensity: Get time of minimum...") {
 	dia_Vector_getExtremum (dia);
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Intensity);
@@ -1752,51 +1768,53 @@ DO
 			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Interpolation") - 1);
 		Melder_informationReal (time, U"seconds");
 	}
-END
+END2 }
 
-FORM (Intensity_getValueAtTime, U"Intensity: Get value", U"Intensity: Get value at time...")
+FORM (Intensity_getValueAtTime, U"Intensity: Get value", U"Intensity: Get value at time...") {
 	dia_Vector_getValue (dia);
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Intensity);
 		double value = Vector_getValueAtX (me, GET_REAL (U"Time"), 1, GET_INTEGER (U"Interpolation") - 1);
 		Melder_informationReal (value, U"dB");
 	}
-END
+END2 }
 	
-FORM (Intensity_getValueInFrame, U"Get value in frame", U"Intensity: Get value in frame...")
+FORM (Intensity_getValueInFrame, U"Get value in frame", U"Intensity: Get value in frame...") {
 	INTEGER (U"Frame number", U"10")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Intensity);
 		long frameNumber = GET_INTEGER (U"Frame number");
 		Melder_informationReal (frameNumber < 1 || frameNumber > my nx ? NUMundefined : my z [1] [frameNumber], U"dB");
 	}
-END
+END2 }
 
-DIRECT (Intensity_help) Melder_help (U"Intensity"); END
+DIRECT2 (Intensity_help) {
+	Melder_help (U"Intensity");
+END2 }
 
-DIRECT (Intensity_to_IntensityTier_peaks)
+DIRECT2 (Intensity_to_IntensityTier_peaks) {
 	LOOP {
 		iam (Intensity);
 		autoIntensityTier thee = Intensity_to_IntensityTier_peaks (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Intensity_to_IntensityTier_valleys)
+DIRECT2 (Intensity_to_IntensityTier_valleys) {
 	LOOP {
 		iam (Intensity);
 		autoIntensityTier thee = Intensity_to_IntensityTier_valleys (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
 /***** INTENSITY & PITCH *****/
 
-FORM (Pitch_Intensity_draw, U"Plot intensity by pitch", 0)
+FORM (Pitch_Intensity_draw, U"Plot intensity by pitch", 0) {
 	REAL (U"From frequency (Hz)", U"0.0")
 	REAL (U"To frequency (Hz)", U"0.0 (= auto)")
 	REAL (U"From intensity (dB)", U"0.0")
@@ -1806,7 +1824,7 @@ FORM (Pitch_Intensity_draw, U"Plot intensity by pitch", 0)
 		RADIOBUTTON (U"Speckles")
 		RADIOBUTTON (U"Curve")
 		RADIOBUTTON (U"Speckles and curve")
-	OK
+	OK2
 DO
 	Pitch pitch = NULL;
 	Intensity intensity = NULL;
@@ -1819,15 +1837,15 @@ DO
 	Pitch_Intensity_draw (pitch, intensity, GRAPHICS,
 		GET_REAL (U"From frequency"), GET_REAL (U"To frequency"),
 		GET_REAL (U"From intensity"), GET_REAL (U"To intensity"), GET_INTEGER (U"Garnish"), GET_INTEGER (U"Drawing method"));
-END
+END2 }
 
-FORM (Pitch_Intensity_speckle, U"Plot intensity by pitch", 0)
+FORM (Pitch_Intensity_speckle, U"Plot intensity by pitch", 0) {
 	REAL (U"From frequency (Hz)", U"0.0")
 	REAL (U"To frequency (Hz)", U"0.0 (= auto)")
 	REAL (U"From intensity (dB)", U"0.0")
 	REAL (U"To intensity (dB)", U"100.0")
 	BOOLEAN (U"Garnish", 1)
-	OK
+	OK2
 DO
 	Pitch pitch = NULL;
 	Intensity intensity = NULL;
@@ -1840,11 +1858,11 @@ DO
 	Pitch_Intensity_draw (pitch, intensity, GRAPHICS,
 		GET_REAL (U"From frequency"), GET_REAL (U"To frequency"),
 		GET_REAL (U"From intensity"), GET_REAL (U"To intensity"), GET_INTEGER (U"Garnish"), 1);
-END
+END2 }
 
 /***** INTENSITY & POINTPROCESS *****/
 
-DIRECT (Intensity_PointProcess_to_IntensityTier)
+DIRECT2 (Intensity_PointProcess_to_IntensityTier) {
 	Intensity intensity = NULL;
 	PointProcess point = NULL;
 	LOOP {
@@ -1854,51 +1872,51 @@ DIRECT (Intensity_PointProcess_to_IntensityTier)
 	}
 	autoIntensityTier thee = Intensity_PointProcess_to_IntensityTier (intensity, point);
 	praat_new (thee.transfer(), intensity -> name);
-END
+END2 }
 
 /***** INTENSITYTIER *****/
 
-FORM (IntensityTier_addPoint, U"Add one point", U"IntensityTier: Add point...")
+FORM (IntensityTier_addPoint, U"Add one point", U"IntensityTier: Add point...") {
 	REAL (U"Time (s)", U"0.5")
 	REAL (U"Intensity (dB)", U"75")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (IntensityTier);
 		RealTier_addPoint (me, GET_REAL (U"Time"), GET_REAL (U"Intensity"));
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-FORM (IntensityTier_create, U"Create empty IntensityTier", NULL)
+FORM (IntensityTier_create, U"Create empty IntensityTier", NULL) {
 	WORD (U"Name", U"empty")
 	REAL (U"Start time (s)", U"0.0")
 	REAL (U"End time (s)", U"1.0")
-	OK
+	OK2
 DO
 	double startTime = GET_REAL (U"Start time"), endTime = GET_REAL (U"End time");
 	if (endTime <= startTime) Melder_throw (U"End time must be greater than start time.");
 	autoIntensityTier thee = IntensityTier_create (startTime, endTime);
 	praat_new (thee.transfer(), GET_STRING (U"Name"));
-END
+END2 }
 
-DIRECT (IntensityTier_downto_PointProcess)
+DIRECT2 (IntensityTier_downto_PointProcess) {
 	LOOP {
 		iam (IntensityTier);
 		autoPointProcess thee = AnyTier_downto_PointProcess (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (IntensityTier_downto_TableOfReal)
+DIRECT2 (IntensityTier_downto_TableOfReal) {
 	LOOP {
 		iam (IntensityTier);
 		autoTableOfReal thee = IntensityTier_downto_TableOfReal (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (IntensityTier_edit)
+DIRECT2 (IntensityTier_edit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit an IntensityTier from batch.");
 	Sound sound = NULL;
 	LOOP {
@@ -1910,9 +1928,9 @@ DIRECT (IntensityTier_edit)
 		autoIntensityTierEditor editor = IntensityTierEditor_create (ID_AND_FULL_NAME, me, sound, TRUE);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
-END
+END2 }
 
-FORM (IntensityTier_formula, U"IntensityTier: Formula", U"IntensityTier: Formula...")
+FORM (IntensityTier_formula, U"IntensityTier: Formula", U"IntensityTier: Formula...") {
 	LABEL (U"", U"# ncol = the number of points")
 	LABEL (U"", U"for col from 1 to ncol")
 	LABEL (U"", U"   # x = the time of the colth point, in seconds")
@@ -1920,7 +1938,7 @@ FORM (IntensityTier_formula, U"IntensityTier: Formula", U"IntensityTier: Formula
 	LABEL (U"", U"   self = `formula'")
 	LABEL (U"", U"endfor")
 	TEXTFIELD (U"formula", U"self + 3.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (IntensityTier);
@@ -1932,48 +1950,50 @@ DO
 			throw;
 		}
 	}
-END
+END2 }
 
-FORM (IntensityTier_getValueAtTime, U"Get IntensityTier value", U"IntensityTier: Get value at time...")
+FORM (IntensityTier_getValueAtTime, U"Get IntensityTier value", U"IntensityTier: Get value at time...") {
 	REAL (U"Time (s)", U"0.5")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (IntensityTier);
 		double value = RealTier_getValueAtTime (me, GET_REAL (U"Time"));
 		Melder_informationReal (value, U"dB");
 	}
-END
+END2 }
 	
-FORM (IntensityTier_getValueAtIndex, U"Get IntensityTier value", U"IntensityTier: Get value at index...")
+FORM (IntensityTier_getValueAtIndex, U"Get IntensityTier value", U"IntensityTier: Get value at index...") {
 	INTEGER (U"Point number", U"10")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (IntensityTier);
 		double value = RealTier_getValueAtIndex (me, GET_INTEGER (U"Point number"));
 		Melder_informationReal (value, U"dB");
 	}
-END
+END2 }
 
-DIRECT (IntensityTier_help) Melder_help (U"IntensityTier"); END
+DIRECT2 (IntensityTier_help) {
+	Melder_help (U"IntensityTier");
+END2 }
 
-DIRECT (IntensityTier_to_AmplitudeTier)
+DIRECT2 (IntensityTier_to_AmplitudeTier) {
 	LOOP {
 		iam (IntensityTier);
 		autoAmplitudeTier thee = IntensityTier_to_AmplitudeTier (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (info_IntensityTier_Sound_edit)
+DIRECT2 (info_IntensityTier_Sound_edit) {
 	Melder_information (U"To include a copy of a Sound in your IntensityTier editor:\n"
 		"   select an IntensityTier and a Sound, and click \"View & Edit\".");
-END
+END2 }
 
 /***** INTENSITYTIER & POINTPROCESS *****/
 
-DIRECT (IntensityTier_PointProcess_to_IntensityTier)
+DIRECT2 (IntensityTier_PointProcess_to_IntensityTier) {
 	IntensityTier intensity = NULL;
 	PointProcess point = NULL;
 	LOOP {
@@ -1983,11 +2003,11 @@ DIRECT (IntensityTier_PointProcess_to_IntensityTier)
 	}
 	autoIntensityTier thee = IntensityTier_PointProcess_to_IntensityTier (intensity, point);
 	praat_new (thee.transfer(), intensity -> name);
-END
+END2 }
 
 /***** INTENSITYTIER & SOUND *****/
 
-DIRECT (Sound_IntensityTier_multiply_old)
+DIRECT2 (Sound_IntensityTier_multiply_old) {
 	Sound sound = NULL;
 	IntensityTier intensity = NULL;
 	LOOP {
@@ -1997,11 +2017,11 @@ DIRECT (Sound_IntensityTier_multiply_old)
 	}
 	autoSound thee = Sound_IntensityTier_multiply (sound, intensity, TRUE);
 	praat_new (thee.transfer(), sound -> name, U"_int");
-END
+END2 }
 
-FORM (Sound_IntensityTier_multiply, U"Sound & IntervalTier: Multiply", 0)
+FORM (Sound_IntensityTier_multiply, U"Sound & IntervalTier: Multiply", 0) {
 	BOOLEAN (U"Scale to 0.9", 1)
-	OK
+	OK2
 DO
 	Sound sound = NULL;
 	IntensityTier intensity = NULL;
@@ -2012,7 +2032,7 @@ DO
 	}
 	autoSound thee = Sound_IntensityTier_multiply (sound, intensity, GET_INTEGER (U"Scale to 0.9"));
 	praat_new (thee.transfer(), sound -> name, U"_int");
-END
+END2 }
 
 /***** INTERVALTIER, rest in praat_TextGrid_init.cpp *****/
 
@@ -2023,31 +2043,31 @@ END2 }
 
 /***** LTAS *****/
 
-DIRECT (Ltases_average)
+DIRECT2 (Ltases_average) {
 	autoCollection ltases = praat_getSelectedObjects ();
 	autoLtas thee = Ltases_average (ltases.peek());
 	praat_new (thee.transfer(), U"averaged");
-END
+END2 }
 
-FORM (Ltas_computeTrendLine, U"Ltas: Compute trend line", U"Ltas: Compute trend line...")
+FORM (Ltas_computeTrendLine, U"Ltas: Compute trend line", U"Ltas: Compute trend line...") {
 	REAL (U"left Frequency range (Hz)", U"600.0")
 	POSITIVE (U"right Frequency range (Hz)", U"4000.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Ltas);
 		autoLtas thee = Ltas_computeTrendLine (me, GET_REAL (U"left Frequency range"), GET_REAL (U"right Frequency range"));
 		praat_new (thee.transfer(), my name, U"_trend");
 	}
-END
+END2 }
 
-FORM (old_Ltas_draw, U"Ltas: Draw", 0)
+FORM (old_Ltas_draw, U"Ltas: Draw", 0) {
 	REAL (U"left Frequency range (Hz)", U"0.0")
 	REAL (U"right Frequency range (Hz)", U"0.0 (= all)")
 	REAL (U"left Power range (dB/Hz)", U"-20.0")
 	REAL (U"right Power range (dB/Hz)", U"80.0")
 	BOOLEAN (U"Garnish", 1)
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Ltas);
@@ -2055,9 +2075,9 @@ DO
 		Ltas_draw (me, GRAPHICS, GET_REAL (U"left Frequency range"), GET_REAL (U"right Frequency range"),
 			GET_REAL (U"left Power range"), GET_REAL (U"right Power range"), GET_INTEGER (U"Garnish"), U"Bars");
 	}
-END
+END2 }
 
-FORM (Ltas_draw, U"Ltas: Draw", 0)
+FORM (Ltas_draw, U"Ltas: Draw", 0) {
 	REAL (U"left Frequency range (Hz)", U"0.0")
 	REAL (U"right Frequency range (Hz)", U"0.0 (= all)")
 	REAL (U"left Power range (dB/Hz)", U"-20.0")
@@ -2069,7 +2089,7 @@ FORM (Ltas_draw, U"Ltas: Draw", 0)
 		OPTION (U"Bars")
 		OPTION (U"Poles")
 		OPTION (U"Speckles")
-	OK
+	OK2
 DO_ALTERNATIVE (old_Ltas_draw)
 	LOOP {
 		iam (Ltas);
@@ -2077,13 +2097,13 @@ DO_ALTERNATIVE (old_Ltas_draw)
 		Ltas_draw (me, GRAPHICS, GET_REAL (U"left Frequency range"), GET_REAL (U"right Frequency range"),
 			GET_REAL (U"left Power range"), GET_REAL (U"right Power range"), GET_INTEGER (U"Garnish"), GET_STRING (U"Drawing method"));
 	}
-END
+END2 }
 
-FORM (Ltas_formula, U"Ltas Formula", 0)
+FORM (Ltas_formula, U"Ltas Formula", 0) {
 	LABEL (U"label", U"`x' is the frequency in hertz, `col' is the bin number")
 	LABEL (U"label", U"x := x1;   for col := 1 to ncol do { self [1, col] := `formula' ; x := x + dx }")
 	TEXTFIELD (U"formula", U"0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Ltas);
@@ -2095,32 +2115,32 @@ DO
 			throw;
 		}
 	}
-END
+END2 }
 
-FORM (Ltas_getBinNumberFromFrequency, U"Ltas: Get band from frequency", U"Ltas: Get band from frequency...")
+FORM (Ltas_getBinNumberFromFrequency, U"Ltas: Get band from frequency", U"Ltas: Get band from frequency...") {
 	REAL (U"Frequency (Hz)", U"2000")
-	OK
+	OK2
 DO
 	Ltas me = FIRST (Ltas);
 	double binNumber = Sampled_xToIndex (me, GET_REAL (U"Frequency"));
 	Melder_informationReal (binNumber, NULL);
-END
+END2 }
 
-DIRECT (Ltas_getBinWidth)
+DIRECT2 (Ltas_getBinWidth) {
 	Ltas me = FIRST (Ltas);
 	Melder_informationReal (my dx, U"hertz");
-END
+END2 }
 
-FORM (Ltas_getFrequencyFromBinNumber, U"Ltas: Get frequency from bin number", U"Ltas: Get frequency from bin number...")
+FORM (Ltas_getFrequencyFromBinNumber, U"Ltas: Get frequency from bin number", U"Ltas: Get frequency from bin number...") {
 	NATURAL (U"Bin number", U"1")
-	OK
+	OK2
 DO
 	Ltas me = FIRST (Ltas);
 	double frequency = Sampled_indexToX (me, GET_INTEGER (U"Bin number"));
 	Melder_informationReal (frequency, U"hertz");
-END
+END2 }
 
-FORM (Ltas_getFrequencyOfMaximum, U"Ltas: Get frequency of maximum", U"Ltas: Get frequency of maximum...")
+FORM (Ltas_getFrequencyOfMaximum, U"Ltas: Get frequency of maximum", U"Ltas: Get frequency of maximum...") {
 	REAL (U"From frequency (Hz)", U"0.0")
 	REAL (U"To frequency (Hz)", U"0.0 (= all)")
 	RADIO (U"Interpolation", 1)
@@ -2129,15 +2149,15 @@ FORM (Ltas_getFrequencyOfMaximum, U"Ltas: Get frequency of maximum", U"Ltas: Get
 		RADIOBUTTON (U"Cubic")
 		RADIOBUTTON (U"Sinc70")
 		RADIOBUTTON (U"Sinc700")
-	OK
+	OK2
 DO
 	Ltas me = FIRST (Ltas);
 	double frequency = Vector_getXOfMaximum (me,
 		GET_REAL (U"From frequency"), GET_REAL (U"To frequency"), GET_INTEGER (U"Interpolation") - 1);
 	Melder_informationReal (frequency, U"hertz");
-END
+END2 }
 
-FORM (Ltas_getFrequencyOfMinimum, U"Ltas: Get frequency of minimum", U"Ltas: Get frequency of minimum...")
+FORM (Ltas_getFrequencyOfMinimum, U"Ltas: Get frequency of minimum", U"Ltas: Get frequency of minimum...") {
 	REAL (U"From frequency (Hz)", U"0.0")
 	REAL (U"To frequency (Hz)", U"0.0 (= all)")
 	RADIO (U"Interpolation", 1)
@@ -2146,20 +2166,20 @@ FORM (Ltas_getFrequencyOfMinimum, U"Ltas: Get frequency of minimum", U"Ltas: Get
 		RADIOBUTTON (U"Cubic")
 		RADIOBUTTON (U"Sinc70")
 		RADIOBUTTON (U"Sinc700")
-	OK
+	OK2
 DO
 	Ltas me = FIRST (Ltas);
 	double frequency = Vector_getXOfMinimum (me,
 		GET_REAL (U"From frequency"), GET_REAL (U"To frequency"), GET_INTEGER (U"Interpolation") - 1);
 	Melder_informationReal (frequency, U"hertz");
-END
+END2 }
 
-DIRECT (Ltas_getHighestFrequency)
+DIRECT2 (Ltas_getHighestFrequency) {
 	Ltas me = FIRST (Ltas);
 	Melder_informationReal (my xmax, U"Hz");
-END
+END2 }
 
-FORM (Ltas_getLocalPeakHeight, U"Ltas: Get local peak height", 0)
+FORM (Ltas_getLocalPeakHeight, U"Ltas: Get local peak height", 0) {
 	REAL (U"left Environment (Hz)", U"1700.0")
 	REAL (U"right Environment (Hz)", U"4200.0")
 	REAL (U"left Peak (Hz)", U"2400.0")
@@ -2168,7 +2188,7 @@ FORM (Ltas_getLocalPeakHeight, U"Ltas: Get local peak height", 0)
 		RADIOBUTTON (U"energy")
 		RADIOBUTTON (U"sones")
 		RADIOBUTTON (U"dB")
-	OK
+	OK2
 DO
 	Ltas me = FIRST (Ltas);
 	double environmentMin = GET_REAL (U"left Environment"), environmentMax = GET_REAL (U"right Environment");
@@ -2179,14 +2199,14 @@ DO
 	double localPeakHeight = Ltas_getLocalPeakHeight (me, environmentMin, environmentMax,
 		peakMin, peakMax, GET_INTEGER (U"Averaging method"));
 	Melder_informationReal (localPeakHeight, U"dB");
-END
+END2 }
 
-DIRECT (Ltas_getLowestFrequency)
+DIRECT2 (Ltas_getLowestFrequency) {
 	Ltas me = FIRST (Ltas);
 	Melder_informationReal (my xmin, U"hertz");
-END
+END2 }
 
-FORM (Ltas_getMaximum, U"Ltas: Get maximum", U"Ltas: Get maximum...")
+FORM (Ltas_getMaximum, U"Ltas: Get maximum", U"Ltas: Get maximum...") {
 	REAL (U"From frequency (Hz)", U"0.0")
 	REAL (U"To frequency (Hz)", U"0.0 (= all)")
 	RADIO (U"Interpolation", 1)
@@ -2195,30 +2215,30 @@ FORM (Ltas_getMaximum, U"Ltas: Get maximum", U"Ltas: Get maximum...")
 		RADIOBUTTON (U"Cubic")
 		RADIOBUTTON (U"Sinc70")
 		RADIOBUTTON (U"Sinc700")
-	OK
+	OK2
 DO
 	Ltas me = FIRST (Ltas);
 	double maximum = Vector_getMaximum (me,
 		GET_REAL (U"From frequency"), GET_REAL (U"To frequency"), GET_INTEGER (U"Interpolation") - 1);
 	Melder_informationReal (maximum, U"dB");
-END
+END2 }
 
-FORM (Ltas_getMean, U"Ltas: Get mean", U"Ltas: Get mean...")
+FORM (Ltas_getMean, U"Ltas: Get mean", U"Ltas: Get mean...") {
 	REAL (U"From frequency (Hz)", U"0.0")
 	REAL (U"To frequency (Hz)", U"0.0 (= all)")
 	RADIO (U"Averaging method", 1)
 		RADIOBUTTON (U"energy")
 		RADIOBUTTON (U"sones")
 		RADIOBUTTON (U"dB")
-	OK
+	OK2
 DO
 	Ltas me = FIRST (Ltas);
 	double mean = Sampled_getMean_standardUnit (me, GET_REAL (U"From frequency"), GET_REAL (U"To frequency"),
 		0, GET_INTEGER (U"Averaging method"), FALSE);
 	Melder_informationReal (mean, U"dB");
-END
+END2 }
 
-FORM (Ltas_getMinimum, U"Ltas: Get minimum", U"Ltas: Get minimum...")
+FORM (Ltas_getMinimum, U"Ltas: Get minimum", U"Ltas: Get minimum...") {
 	REAL (U"From frequency (Hz)", U"0.0")
 	REAL (U"To frequency (Hz)", U"0.0 (= all)")
 	RADIO (U"Interpolation", 1)
@@ -2227,21 +2247,21 @@ FORM (Ltas_getMinimum, U"Ltas: Get minimum", U"Ltas: Get minimum...")
 		RADIOBUTTON (U"Cubic")
 		RADIOBUTTON (U"Sinc70")
 		RADIOBUTTON (U"Sinc700")
-	OK
+	OK2
 DO
 	Ltas me = FIRST (Ltas);
 	double minimum = Vector_getMinimum (me,
 		GET_REAL (U"From frequency"), GET_REAL (U"To frequency"), GET_INTEGER (U"Interpolation") - 1);
 	Melder_informationReal (minimum, U"dB");
-END
+END2 }
 
-DIRECT (Ltas_getNumberOfBins)
+DIRECT2 (Ltas_getNumberOfBins) {
 	Ltas me = FIRST (Ltas);
 	long numberOfBins = my nx;
 	Melder_information (numberOfBins, U" bins");
-END
+END2 }
 
-FORM (Ltas_getSlope, U"Ltas: Get slope", 0)
+FORM (Ltas_getSlope, U"Ltas: Get slope", 0) {
 	REAL (U"left Low band (Hz)", U"0.0")
 	REAL (U"right Low band (Hz)", U"1000.0")
 	REAL (U"left High band (Hz)", U"1000.0")
@@ -2250,30 +2270,30 @@ FORM (Ltas_getSlope, U"Ltas: Get slope", 0)
 		RADIOBUTTON (U"energy")
 		RADIOBUTTON (U"sones")
 		RADIOBUTTON (U"dB")
-	OK
+	OK2
 DO
 	Ltas me = FIRST (Ltas);
 	double slope = Ltas_getSlope (me, GET_REAL (U"left Low band"), GET_REAL (U"right Low band"),
 		GET_REAL (U"left High band"), GET_REAL (U"right High band"), GET_INTEGER (U"Averaging method"));
 	Melder_informationReal (slope, U"dB");
-END
+END2 }
 
-FORM (Ltas_getStandardDeviation, U"Ltas: Get standard deviation", U"Ltas: Get standard deviation...")
+FORM (Ltas_getStandardDeviation, U"Ltas: Get standard deviation", U"Ltas: Get standard deviation...") {
 	REAL (U"From frequency (Hz)", U"0.0")
 	REAL (U"To frequency (Hz)", U"0.0 (= all)")
 	RADIO (U"Averaging method", 1)
 		RADIOBUTTON (U"energy")
 		RADIOBUTTON (U"sones")
 		RADIOBUTTON (U"dB")
-	OK
+	OK2
 DO
 	Ltas me = FIRST (Ltas);
 	double stdev = Sampled_getStandardDeviation_standardUnit (me, GET_REAL (U"From frequency"), GET_REAL (U"To frequency"),
 		0, GET_INTEGER (U"Averaging method"), FALSE);
 	Melder_informationReal (stdev, U"dB");
-END
+END2 }
 
-FORM (Ltas_getValueAtFrequency, U"Ltas: Get value", U"Ltas: Get value at frequency...")
+FORM (Ltas_getValueAtFrequency, U"Ltas: Get value", U"Ltas: Get value at frequency...") {
 	REAL (U"Frequency (Hz)", U"1500")
 	RADIO (U"Interpolation", 1)
 		RADIOBUTTON (U"Nearest")
@@ -2281,58 +2301,60 @@ FORM (Ltas_getValueAtFrequency, U"Ltas: Get value", U"Ltas: Get value at frequen
 		RADIOBUTTON (U"Cubic")
 		RADIOBUTTON (U"Sinc70")
 		RADIOBUTTON (U"Sinc700")
-	OK
+	OK2
 DO
 	Ltas me = FIRST (Ltas);
 	double value = Vector_getValueAtX (me, GET_REAL (U"Frequency"), 1, GET_INTEGER (U"Interpolation") - 1);
 	Melder_informationReal (value, U"dB");
-END
+END2 }
 	
-FORM (Ltas_getValueInBin, U"Get value in bin", U"Ltas: Get value in bin...")
+FORM (Ltas_getValueInBin, U"Get value in bin", U"Ltas: Get value in bin...") {
 	INTEGER (U"Bin number", U"100")
-	OK
+	OK2
 DO
 	Ltas me = FIRST (Ltas);
 	long binNumber = GET_INTEGER (U"Bin number");
 	double value = binNumber < 1 || binNumber > my nx ? NUMundefined : my z [1] [binNumber];
 	Melder_informationReal (value, U"dB");
-END
+END2 }
 
-DIRECT (Ltas_help) Melder_help (U"Ltas"); END
+DIRECT2 (Ltas_help) {
+	Melder_help (U"Ltas");
+END2 }
 
-DIRECT (Ltases_merge)
+DIRECT2 (Ltases_merge) {
 	autoCollection ltases = praat_getSelectedObjects ();
 	autoLtas thee = Ltases_merge (ltases.peek());
 	praat_new (thee.transfer(), U"merged");
-END
+END2 }
 
-FORM (Ltas_subtractTrendLine, U"Ltas: Subtract trend line", U"Ltas: Subtract trend line...")
+FORM (Ltas_subtractTrendLine, U"Ltas: Subtract trend line", U"Ltas: Subtract trend line...") {
 	REAL (U"left Frequency range (Hz)", U"600.0")
 	POSITIVE (U"right Frequency range (Hz)", U"4000.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Ltas);
 		autoLtas thee = Ltas_subtractTrendLine (me, GET_REAL (U"left Frequency range"), GET_REAL (U"right Frequency range"));
 		praat_new (thee.transfer(), my name, U"_fit");
 	}
-END
+END2 }
 
-DIRECT (Ltas_to_Matrix)
+DIRECT2 (Ltas_to_Matrix) {
 	LOOP {
 		iam (Ltas);
 		autoMatrix thee = Ltas_to_Matrix (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Ltas_to_SpectrumTier_peaks)
+DIRECT2 (Ltas_to_SpectrumTier_peaks) {
 	LOOP {
 		iam (Ltas);
 		autoSpectrumTier thee = Ltas_to_SpectrumTier_peaks (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
 /***** MANIPULATION *****/
 
@@ -2346,7 +2368,7 @@ static void cb_ManipulationEditor_publication (Editor editor, void *closure, Dat
 		Melder_flushError ();
 	}
 }
-DIRECT (Manipulation_edit)
+DIRECT2 (Manipulation_edit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a Manipulation from batch.");
 	LOOP {
 		iam (Manipulation);
@@ -2354,91 +2376,93 @@ DIRECT (Manipulation_edit)
 		Editor_setPublicationCallback (editor.peek(), cb_ManipulationEditor_publication, NULL);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
-END
+END2 }
 
-DIRECT (Manipulation_extractDurationTier)
+DIRECT2 (Manipulation_extractDurationTier) {
 	LOOP {
 		iam (Manipulation);
 		if (! my duration) Melder_throw (me, U": I don't contain a DurationTier.");
 		autoDurationTier thee = Data_copy (my duration);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Manipulation_extractOriginalSound)
+DIRECT2 (Manipulation_extractOriginalSound) {
 	LOOP {
 		iam (Manipulation);
 		if (! my sound) Melder_throw (me, U": I don't contain a Sound.");
 		autoSound thee = Data_copy (my sound);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Manipulation_extractPitchTier)
+DIRECT2 (Manipulation_extractPitchTier) {
 	LOOP {
 		iam (Manipulation);
 		if (! my pitch) Melder_throw (me, U": I don't contain a PitchTier.");
 		autoPitchTier thee = Data_copy (my pitch);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Manipulation_extractPulses)
+DIRECT2 (Manipulation_extractPulses) {
 	LOOP {
 		iam (Manipulation);
 		if (! my pulses) Melder_throw (me, U": I don't contain a PointProcess.");
 		autoPointProcess thee = Data_copy (my pulses);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Manipulation_getResynthesis_lpc)
+DIRECT2 (Manipulation_getResynthesis_lpc) {
 	LOOP {
 		iam (Manipulation);
 		autoSound thee = Manipulation_to_Sound (me, Manipulation_PITCH_LPC);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Manipulation_getResynthesis_overlapAdd)
+DIRECT2 (Manipulation_getResynthesis_overlapAdd) {
 	LOOP {
 		iam (Manipulation);
 		autoSound thee = Manipulation_to_Sound (me, Manipulation_OVERLAPADD);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Manipulation_help) Melder_help (U"Manipulation"); END
+DIRECT2 (Manipulation_help) {
+	Melder_help (U"Manipulation");
+END2 }
 
-DIRECT (Manipulation_play_lpc)
+DIRECT2 (Manipulation_play_lpc) {
 	LOOP {
 		iam (Manipulation);
 		Manipulation_play (me, Manipulation_PITCH_LPC);
 	}
-END
+END2 }
 
-DIRECT (Manipulation_play_overlapAdd)
+DIRECT2 (Manipulation_play_overlapAdd) {
 	LOOP {
 		iam (Manipulation);
 		Manipulation_play (me, Manipulation_OVERLAPADD);
 	}
-END
+END2 }
 
-DIRECT (Manipulation_removeDuration)
+DIRECT2 (Manipulation_removeDuration) {
 	LOOP {
 		iam (Manipulation);
 		forget (my duration);
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-DIRECT (Manipulation_removeOriginalSound)
+DIRECT2 (Manipulation_removeOriginalSound) {
 	LOOP {
 		iam (Manipulation);
 		forget (my sound);
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
 FORM_WRITE (Manipulation_writeToBinaryFileWithoutSound, U"Binary file without Sound", 0, 0)
 	Manipulation_writeToBinaryFileWithoutSound (FIRST_ANY (Manipulation), file);
@@ -2448,71 +2472,75 @@ FORM_WRITE (Manipulation_writeToTextFileWithoutSound, U"Text file without Sound"
 	Manipulation_writeToTextFileWithoutSound (FIRST_ANY (Manipulation), file);
 END
 
-DIRECT (info_DurationTier_Manipulation_replace)
+DIRECT2 (info_DurationTier_Manipulation_replace) {
 	Melder_information (U"To replace the DurationTier in a Manipulation object,\n"
 		"select a DurationTier object and a Manipulation object\nand choose \"Replace duration\".");
-END
+END2 }
 
-DIRECT (info_PitchTier_Manipulation_replace)
+DIRECT2 (info_PitchTier_Manipulation_replace) {
 	Melder_information (U"To replace the PitchTier in a Manipulation object,\n"
 		"select a PitchTier object and a Manipulation object\nand choose \"Replace pitch\".");
-END
+END2 }
 
 /***** MANIPULATION & DURATIONTIER *****/
 
-DIRECT (Manipulation_replaceDurationTier)
+DIRECT2 (Manipulation_replaceDurationTier) {
 	Manipulation me = FIRST (Manipulation);
 	Manipulation_replaceDurationTier (me, FIRST (DurationTier));
 	praat_dataChanged (me);
-END
+END2 }
 
-DIRECT (Manipulation_replaceDurationTier_help) Melder_help (U"Manipulation: Replace duration tier"); END
+DIRECT2 (Manipulation_replaceDurationTier_help) {
+	Melder_help (U"Manipulation: Replace duration tier");
+END2 }
 
 /***** MANIPULATION & PITCHTIER *****/
 
-DIRECT (Manipulation_replacePitchTier)
+DIRECT2 (Manipulation_replacePitchTier) {
 	Manipulation me = FIRST (Manipulation);
 	Manipulation_replacePitchTier (me, FIRST (PitchTier));
 	praat_dataChanged (me);
-END
+END2 }
 
-DIRECT (Manipulation_replacePitchTier_help) Melder_help (U"Manipulation: Replace pitch tier"); END
+DIRECT2 (Manipulation_replacePitchTier_help) {
+	Melder_help (U"Manipulation: Replace pitch tier");
+END2 }
 
 /***** MANIPULATION & POINTPROCESS *****/
 
-DIRECT (Manipulation_replacePulses)
+DIRECT2 (Manipulation_replacePulses) {
 	Manipulation me = FIRST (Manipulation);
 	Manipulation_replacePulses (me, FIRST (PointProcess));
 	praat_dataChanged (me);
-END
+END2 }
 
 /***** MANIPULATION & SOUND *****/
 
-DIRECT (Manipulation_replaceOriginalSound)
+DIRECT2 (Manipulation_replaceOriginalSound) {
 	Manipulation me = FIRST (Manipulation);
 	Manipulation_replaceOriginalSound (me, FIRST (Sound));
 	praat_dataChanged (me);
-END
+END2 }
 
 /***** MANIPULATION & TEXTTIER *****/
 
-DIRECT (Manipulation_TextTier_to_Manipulation)
+DIRECT2 (Manipulation_TextTier_to_Manipulation) {
 	Manipulation me = FIRST (Manipulation);
 	TextTier thee = FIRST (TextTier);
 	autoManipulation him = Manipulation_AnyTier_to_Manipulation (me, reinterpret_cast <AnyTier> (thee));
 	praat_new (him.transfer(), my name);	
-END
+END2 }
 
 /***** MATRIX *****/
 
-DIRECT (Matrix_appendRows)
+DIRECT2 (Matrix_appendRows) {
 	Matrix m1 = NULL, m2 = NULL;
 	LOOP (m1 ? m2 : m1) = (Matrix) OBJECT;
 	autoMatrix thee = Matrix_appendRows (m1, m2, classMatrix);
 	praat_new (thee.transfer(), m1 -> name, U"_", m2 -> name);
-END
+END2 }
 
-FORM (Matrix_create, U"Create Matrix", U"Create Matrix...")
+FORM (Matrix_create, U"Create Matrix", U"Create Matrix...") {
 	WORD (U"Name", U"xy")
 	REAL (U"xmin", U"1.0")
 	REAL (U"xmax", U"1.0")
@@ -2526,7 +2554,7 @@ FORM (Matrix_create, U"Create Matrix", U"Create Matrix...")
 	REAL (U"y1", U"1.0")
 	LABEL (U"", U"Formula:")
 	TEXTFIELD (U"formula", U"x*y")
-	OK
+	OK2
 DO
 	double xmin = GET_REAL (U"xmin"), xmax = GET_REAL (U"xmax");
 	double ymin = GET_REAL (U"ymin"), ymax = GET_REAL (U"ymax");
@@ -2537,28 +2565,28 @@ DO
 		ymin, ymax, GET_INTEGER (U"Number of rows"), GET_REAL (U"dy"), GET_REAL (U"y1"));
 	Matrix_formula (me.peek(), GET_STRING (U"formula"), interpreter, NULL);
 	praat_new (me.transfer(), GET_STRING (U"Name"));
-END
+END2 }
 
-FORM (Matrix_createSimple, U"Create simple Matrix", U"Create simple Matrix...")
+FORM (Matrix_createSimple, U"Create simple Matrix", U"Create simple Matrix...") {
 	WORD (U"Name", U"xy")
 	NATURAL (U"Number of rows", U"10")
 	NATURAL (U"Number of columns", U"10")
 	LABEL (U"", U"Formula:")
 	TEXTFIELD (U"formula", U"x*y")
-	OK
+	OK2
 DO
 	autoMatrix me = Matrix_createSimple (GET_INTEGER (U"Number of rows"), GET_INTEGER (U"Number of columns"));
 	Matrix_formula (me.peek(), GET_STRING (U"formula"), interpreter, NULL);
 	praat_new (me.transfer(), GET_STRING (U"Name"));
-END
+END2 }
 
-FORM (Matrix_drawOneContour, U"Draw one altitude contour", 0)
+FORM (Matrix_drawOneContour, U"Draw one altitude contour", 0) {
 	REAL (U"From x =", U"0.0")
 	REAL (U"To x =", U"0.0")
 	REAL (U"From y =", U"0.0")
 	REAL (U"To y =", U"0.0")
 	REAL (U"Height", U"0.5")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Matrix);
@@ -2567,16 +2595,16 @@ DO
 			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="),
 			GET_REAL (U"Height"));
 	}
-END
+END2 }
 
-FORM (Matrix_drawContours, U"Draw altitude contours", 0)
+FORM (Matrix_drawContours, U"Draw altitude contours", 0) {
 	REAL (U"From x =", U"0.0")
 	REAL (U"To x =", U"0.0")
 	REAL (U"From y =", U"0.0")
 	REAL (U"To y =", U"0.0")
 	REAL (U"Minimum", U"0.0")
 	REAL (U"Maximum", U"0.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Matrix);
@@ -2585,16 +2613,16 @@ DO
 			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="),
 			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"));
 	}
-END
+END2 }
 
-FORM (Matrix_drawRows, U"Draw rows", 0)
+FORM (Matrix_drawRows, U"Draw rows", 0) {
 	REAL (U"From x =", U"0.0")
 	REAL (U"To x =", U"0.0")
 	REAL (U"From y =", U"0.0")
 	REAL (U"To y =", U"0.0")
 	REAL (U"Minimum", U"0.0")
 	REAL (U"Maximum", U"0.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Matrix);
@@ -2604,9 +2632,9 @@ DO
 			GET_REAL (U"From y ="), GET_REAL (U"To y ="),
 			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"));
 	}
-END
+END2 }
 
-DIRECT (Matrix_eigen)
+DIRECT2 (Matrix_eigen) {
 	LOOP {
 		iam (Matrix);
 		Matrix vec_ = NULL, val_ = NULL;
@@ -2616,13 +2644,13 @@ DIRECT (Matrix_eigen)
 		praat_new (vec.transfer(), U"eigenvectors");
 		praat_new (val.transfer(), U"eigenvalues");
 	}
-END
+END2 }
 
-FORM (Matrix_formula, U"Matrix Formula", U"Formula...")
+FORM (Matrix_formula, U"Matrix Formula", U"Formula...") {
 	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
 	TEXTFIELD (U"formula", U"self")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Matrix);
@@ -2634,127 +2662,129 @@ DO
 			throw;
 		}
 	}
-END
+END2 }
 
-DIRECT (Matrix_getHighestX)
+DIRECT2 (Matrix_getHighestX) {
 	Matrix me = FIRST_ANY (Matrix);
 	Melder_informationReal (my xmax, NULL);
-END
+END2 }
 
-DIRECT (Matrix_getHighestY)
+DIRECT2 (Matrix_getHighestY) {
 	Matrix me = FIRST_ANY (Matrix);
 	Melder_informationReal (my ymax, NULL);
-END
+END2 }
 
-DIRECT (Matrix_getLowestX)
+DIRECT2 (Matrix_getLowestX) {
 	Matrix me = FIRST_ANY (Matrix);
 	Melder_informationReal (my xmin, NULL);
-END
+END2 }
 
-DIRECT (Matrix_getLowestY)
+DIRECT2 (Matrix_getLowestY) {
 	Matrix me = FIRST_ANY (Matrix);
 	Melder_informationReal (my ymin, NULL);
-END
+END2 }
 
-DIRECT (Matrix_getNumberOfColumns)
+DIRECT2 (Matrix_getNumberOfColumns) {
 	Matrix me = FIRST_ANY (Matrix);
 	Melder_information (my nx);
-END
+END2 }
 
-DIRECT (Matrix_getNumberOfRows)
+DIRECT2 (Matrix_getNumberOfRows) {
 	Matrix me = FIRST_ANY (Matrix);
 	Melder_information (my ny);
-END
+END2 }
 
-DIRECT (Matrix_getColumnDistance)
+DIRECT2 (Matrix_getColumnDistance) {
 	Matrix me = FIRST_ANY (Matrix);
 	Melder_informationReal (my dx, NULL);
-END
+END2 }
 
-DIRECT (Matrix_getRowDistance)
+DIRECT2 (Matrix_getRowDistance) {
 	Matrix me = FIRST_ANY (Matrix);
 	Melder_informationReal (my dy, NULL);
-END
+END2 }
 
-DIRECT (Matrix_getSum)
+DIRECT2 (Matrix_getSum) {
 	Matrix me = FIRST_ANY (Matrix);
 	double sum = Matrix_getSum (me);
 	Melder_informationReal (sum, NULL);
-END
+END2 }
 
-DIRECT (Matrix_getMaximum)
+DIRECT2 (Matrix_getMaximum) {
 	Matrix me = FIRST_ANY (Matrix);
 	double minimum = NUMundefined, maximum = NUMundefined;
 	Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
 	Melder_informationReal (maximum, NULL);
-END
+END2 }
 
-DIRECT (Matrix_getMinimum)
+DIRECT2 (Matrix_getMinimum) {
 	Matrix me = FIRST_ANY (Matrix);
 	double minimum = NUMundefined, maximum = NUMundefined;
 	Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
 	Melder_informationReal (minimum, NULL);
-END
+END2 }
 
-FORM (Matrix_getValueAtXY, U"Matrix: Get value at xy", 0)
+FORM (Matrix_getValueAtXY, U"Matrix: Get value at xy", 0) {
 	REAL (U"X", U"0")
 	REAL (U"Y", U"0")
-	OK
+	OK2
 DO
 	Matrix me = FIRST_ANY (Matrix);
 	double x = GET_REAL (U"X"), y = GET_REAL (U"Y");
 	double value = Matrix_getValueAtXY (me, x, y);
 	Melder_information (value, U" (at x = ", x, U" and y = ", y, U")");
-END
+END2 }
 
-FORM (Matrix_getValueInCell, U"Matrix: Get value in cell", 0)
+FORM (Matrix_getValueInCell, U"Matrix: Get value in cell", 0) {
 	NATURAL (U"Row number", U"1")
 	NATURAL (U"Column number", U"1")
-	OK
+	OK2
 DO
 	Matrix me = FIRST_ANY (Matrix);
 	long row = GET_INTEGER (U"Row number"), column = GET_INTEGER (U"Column number");
 	if (row > my ny) Melder_throw (U"Row number must not exceed number of rows.");
 	if (column > my nx) Melder_throw (U"Column number must not exceed number of columns.");
 	Melder_informationReal (my z [row] [column], NULL);
-END
+END2 }
 
-FORM (Matrix_getXofColumn, U"Matrix: Get x of column", 0)
+FORM (Matrix_getXofColumn, U"Matrix: Get x of column", 0) {
 	NATURAL (U"Column number", U"1")
-	OK
+	OK2
 DO
 	Matrix me = FIRST_ANY (Matrix);
 	double x = Matrix_columnToX (me, GET_INTEGER (U"Column number"));
 	Melder_informationReal (x, NULL);
-END
+END2 }
 
-FORM (Matrix_getYofRow, U"Matrix: Get y of row", 0)
+FORM (Matrix_getYofRow, U"Matrix: Get y of row", 0) {
 	NATURAL (U"Row number", U"1")
-	OK
+	OK2
 DO
 	Matrix me = FIRST_ANY (Matrix);
 	double y = Matrix_rowToY (me, GET_INTEGER (U"Row number"));
 	Melder_informationReal (y, NULL);
-END
+END2 }
 
-DIRECT (Matrix_help) Melder_help (U"Matrix"); END
+DIRECT2 (Matrix_help) {
+	Melder_help (U"Matrix");
+END2 }
 
-DIRECT (Matrix_movie)
+DIRECT2 (Matrix_movie) {
 	Graphics g = Movie_create (U"Matrix movie", 300, 300);
 	LOOP {
 		iam (Matrix);
 		Matrix_movie (me, g);
 	}
-END
+END2 }
 
-FORM (Matrix_paintCells, U"Matrix: Paint cells with greys", U"Matrix: Paint cells...")
+FORM (Matrix_paintCells, U"Matrix: Paint cells with greys", U"Matrix: Paint cells...") {
 	REAL (U"From x =", U"0.0")
 	REAL (U"To x =", U"0.0")
 	REAL (U"From y =", U"0.0")
 	REAL (U"To y =", U"0.0")
 	REAL (U"Minimum", U"0.0")
 	REAL (U"Maximum", U"0.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Matrix);
@@ -2763,16 +2793,16 @@ DO
 			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="),
 			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"));
 	}
-END
+END2 }
 
-FORM (Matrix_paintContours, U"Matrix: Paint altitude contours with greys", 0)
+FORM (Matrix_paintContours, U"Matrix: Paint altitude contours with greys", 0) {
 	REAL (U"From x =", U"0.0")
 	REAL (U"To x =", U"0.0")
 	REAL (U"From y =", U"0.0")
 	REAL (U"To y =", U"0.0")
 	REAL (U"Minimum", U"0.0")
 	REAL (U"Maximum", U"0.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Matrix);
@@ -2781,16 +2811,16 @@ DO
 			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="),
 			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"));
 	}
-END
+END2 }
 
-FORM (Matrix_paintImage, U"Matrix: Paint grey image", 0)
+FORM (Matrix_paintImage, U"Matrix: Paint grey image", 0) {
 	REAL (U"From x =", U"0.0")
 	REAL (U"To x =", U"0.0")
 	REAL (U"From y =", U"0.0")
 	REAL (U"To y =", U"0.0")
 	REAL (U"Minimum", U"0.0")
 	REAL (U"Maximum", U"0.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Matrix);
@@ -2799,16 +2829,16 @@ DO
 			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="),
 			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"));
 	}
-END
+END2 }
 
-FORM (Matrix_paintSurface, U"Matrix: Paint 3-D surface plot", 0)
+FORM (Matrix_paintSurface, U"Matrix: Paint 3-D surface plot", 0) {
 	REAL (U"From x =", U"0.0")
 	REAL (U"To x =", U"0.0")
 	REAL (U"From y =", U"0.0")
 	REAL (U"To y =", U"0.0")
 	REAL (U"Minimum", U"0.0")
 	REAL (U"Maximum", U"0.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Matrix);
@@ -2817,18 +2847,18 @@ DO
 			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="),
 			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"), 30, 45);
 	}
-END
+END2 }
 
-FORM (Matrix_power, U"Matrix: Power...", 0)
+FORM (Matrix_power, U"Matrix: Power...", 0) {
 	NATURAL (U"Power", U"2")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Matrix);
 		autoMatrix thee = Matrix_power (me, GET_INTEGER (U"Power"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
 FORM_READ2 (Matrix_readFromRawTextFile, U"Read Matrix from raw text file", 0, true) {
 	autoMatrix me = Matrix_readFromRawTextFile (file);
@@ -2840,11 +2870,11 @@ FORM_READ2 (Matrix_readAP, U"Read Matrix from LVS AP file", 0, true) {
 	praat_new (me.transfer(), MelderFile_name (file));
 END2 }
 
-FORM (Matrix_setValue, U"Matrix: Set value", U"Matrix: Set value...")
+FORM (Matrix_setValue, U"Matrix: Set value", U"Matrix: Set value...") {
 	NATURAL (U"Row number", U"1")
 	NATURAL (U"Column number", U"1")
 	REAL (U"New value", U"0.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Matrix);
@@ -2854,139 +2884,139 @@ DO
 		my z [row] [column] = GET_REAL (U"New value");
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-DIRECT (Matrix_to_Cochleagram)
+DIRECT2 (Matrix_to_Cochleagram) {
 	LOOP {
 		iam (Matrix);
 		autoCochleagram thee = Matrix_to_Cochleagram (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Matrix_to_Excitation)
+DIRECT2 (Matrix_to_Excitation) {
 	LOOP {
 		iam (Matrix);
 		autoExcitation thee = Matrix_to_Excitation (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Matrix_to_Harmonicity)
+DIRECT2 (Matrix_to_Harmonicity) {
 	LOOP {
 		iam (Matrix);
 		autoHarmonicity thee = Matrix_to_Harmonicity (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Matrix_to_Intensity)
+DIRECT2 (Matrix_to_Intensity) {
 	LOOP {
 		iam (Matrix);
 		autoIntensity thee = Matrix_to_Intensity (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Matrix_to_Pitch)
+DIRECT2 (Matrix_to_Pitch) {
 	LOOP {
 		iam (Matrix);
 		autoPitch thee = Matrix_to_Pitch (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Matrix_to_Spectrogram)
+DIRECT2 (Matrix_to_Spectrogram) {
 	LOOP {
 		iam (Matrix);
 		autoSpectrogram thee = Matrix_to_Spectrogram (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Matrix_to_Spectrum)
+DIRECT2 (Matrix_to_Spectrum) {
 	LOOP {
 		iam (Matrix);
 		autoSpectrum thee = Matrix_to_Spectrum (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Matrix_to_Ltas)
+DIRECT2 (Matrix_to_Ltas) {
 	LOOP {
 		iam (Matrix);
 		autoLtas thee = Matrix_to_Ltas (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Matrix_to_ParamCurve)
+DIRECT2 (Matrix_to_ParamCurve) {
 	Matrix m1 = NULL, m2 = NULL;
 	LOOP (m1 ? m2 : m1) = (Matrix) OBJECT;
 	autoSound sound1 = Matrix_to_Sound (m1), sound2 = Matrix_to_Sound (m2);
 	autoParamCurve thee = ParamCurve_create (sound1.peek(), sound2.peek());
 	praat_new (thee.transfer(), m1 -> name, U"_", m2 -> name);
-END
+END2 }
 
-DIRECT (Matrix_to_PointProcess)
+DIRECT2 (Matrix_to_PointProcess) {
 	LOOP {
 		iam (Matrix);
 		autoPointProcess thee = Matrix_to_PointProcess (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Matrix_to_Polygon)
+DIRECT2 (Matrix_to_Polygon) {
 	LOOP {
 		iam (Matrix);
 		autoPolygon thee = Matrix_to_Polygon (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Matrix_to_Sound)
+DIRECT2 (Matrix_to_Sound) {
 	LOOP {
 		iam (Matrix);
 		autoSound thee = Matrix_to_Sound (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (Matrix_to_Sound_mono, U"Matrix: To Sound (mono)", 0)
+FORM (Matrix_to_Sound_mono, U"Matrix: To Sound (mono)", 0) {
 	INTEGER (U"Row", U"1")
 	LABEL (U"", U"(negative values count from last row)")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Matrix);
 		autoSound thee = Matrix_to_Sound_mono (me, GET_INTEGER (U"Row"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Matrix_to_TableOfReal)
+DIRECT2 (Matrix_to_TableOfReal) {
 	LOOP {
 		iam (Matrix);
 		autoTableOfReal thee = Matrix_to_TableOfReal (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Matrix_to_Transition)
+DIRECT2 (Matrix_to_Transition) {
 	LOOP {
 		iam (Matrix);
 		autoTransition thee = Matrix_to_Transition (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Matrix_to_VocalTract)
+DIRECT2 (Matrix_to_VocalTract) {
 	LOOP {
 		iam (Matrix);
 		autoVocalTract thee = Matrix_to_VocalTract (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
 FORM_WRITE (Matrix_writeToMatrixTextFile, U"Save Matrix as matrix text file", 0, U"mat")
 	Matrix me = FIRST (Matrix);
@@ -3005,13 +3035,13 @@ FORM_READ2 (Movie_openFromSoundFile, U"Open movie file", 0, true) {
 	praat_new (me.transfer(), MelderFile_name (file));
 END2 }
 
-FORM (Movie_paintOneImage, U"Movie: Paint one image", 0)
+FORM (Movie_paintOneImage, U"Movie: Paint one image", 0) {
 	NATURAL (U"Frame number", U"1")
 	REAL (U"From x =", U"0.0")
 	REAL (U"To x =", U"1.0")
 	REAL (U"From y =", U"0.0")
 	REAL (U"To y =", U"1.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Movie);
@@ -3019,20 +3049,20 @@ DO
 		Movie_paintOneImage (me, GRAPHICS, GET_INTEGER (U"Frame number"),
 			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="));
 	}
-END
+END2 }
 
-DIRECT (Movie_viewAndEdit)
+DIRECT2 (Movie_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a Movie from batch.");
 	LOOP {
 		iam (Movie);
 		autoMovieWindow editor = MovieWindow_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
-END
+END2 }
 
 /***** PARAMCURVE *****/
 
-FORM (ParamCurve_draw, U"Draw parametrized curve", 0)
+FORM (ParamCurve_draw, U"Draw parametrized curve", 0) {
 	REAL (U"Tmin", U"0.0")
 	REAL (U"Tmax", U"0.0")
 	REAL (U"Step", U"0.0")
@@ -3041,7 +3071,7 @@ FORM (ParamCurve_draw, U"Draw parametrized curve", 0)
 	REAL (U"Ymin", U"0.0")
 	REAL (U"Ymax", U"0.0")
 	BOOLEAN (U"Garnish", 1)
-	OK
+	OK2
 DO
 	LOOP {
 		iam (ParamCurve);
@@ -3051,13 +3081,13 @@ DO
 			GET_REAL (U"Xmin"), GET_REAL (U"Xmax"), GET_REAL (U"Ymin"), GET_REAL (U"Ymax"),
 			GET_INTEGER (U"Garnish"));
 	}
-END
+END2 }
 
 DIRECT (ParamCurve_help) Melder_help (U"ParamCurve"); END
 
 /***** PHOTO *****/
 
-FORM (Photo_create, U"Create Photo", U"Create Photo...")
+FORM (Photo_create, U"Create Photo", U"Create Photo...") {
 	WORD (U"Name", U"xy")
 	REAL (U"xmin", U"1.0")
 	REAL (U"xmax", U"1.0")
@@ -3075,7 +3105,7 @@ FORM (Photo_create, U"Create Photo", U"Create Photo...")
 	TEXTFIELD (U"greenFormula", U"x*y/1000")
 	LABEL (U"", U"Blue formula:")
 	TEXTFIELD (U"blueFormula", U"x*y/100")
-	OK
+	OK2
 DO
 	double xmin = GET_REAL (U"xmin"), xmax = GET_REAL (U"xmax");
 	double ymin = GET_REAL (U"ymin"), ymax = GET_REAL (U"ymax");
@@ -3088,9 +3118,9 @@ DO
 	Matrix_formula (my d_green, GET_STRING (U"greenFormula"), interpreter, NULL);
 	Matrix_formula (my d_blue,  GET_STRING (U"blueFormula"),  interpreter, NULL);
 	praat_new (me.transfer(), GET_STRING (U"Name"));
-END
+END2 }
 
-FORM (Photo_createSimple, U"Create simple Photo", U"Create simple Photo...")
+FORM (Photo_createSimple, U"Create simple Photo", U"Create simple Photo...") {
 	WORD (U"Name", U"xy")
 	NATURAL (U"Number of rows", U"10")
 	NATURAL (U"Number of columns", U"10")
@@ -3100,52 +3130,52 @@ FORM (Photo_createSimple, U"Create simple Photo", U"Create simple Photo...")
 	TEXTFIELD (U"greenFormula", U"x*y/1000")
 	LABEL (U"", U"Blue formula:")
 	TEXTFIELD (U"blueFormula", U"x*y/100")
-	OK
+	OK2
 DO
 	autoPhoto me = Photo_createSimple (GET_INTEGER (U"Number of rows"), GET_INTEGER (U"Number of columns"));
 	Matrix_formula (my d_red,   GET_STRING (U"redFormula"),   interpreter, NULL);
 	Matrix_formula (my d_green, GET_STRING (U"greenFormula"), interpreter, NULL);
 	Matrix_formula (my d_blue,  GET_STRING (U"blueFormula"),  interpreter, NULL);
 	praat_new (me.transfer(), GET_STRING (U"Name"));
-END
+END2 }
 
-DIRECT (Photo_extractBlue)
+DIRECT2 (Photo_extractBlue) {
 	LOOP {
 		iam (Photo);
 		autoMatrix thee = Data_copy (my d_blue);
 		praat_new (thee.transfer(), my name, U"_blue");
 	}
-END
+END2 }
 
-DIRECT (Photo_extractGreen)
+DIRECT2 (Photo_extractGreen) {
 	LOOP {
 		iam (Photo);
 		autoMatrix thee = Data_copy (my d_green);
 		praat_new (thee.transfer(), my name, U"_green");
 	}
-END
+END2 }
 
-DIRECT (Photo_extractRed)
+DIRECT2 (Photo_extractRed) {
 	LOOP {
 		iam (Photo);
 		autoMatrix thee = Data_copy (my d_red);
 		praat_new (thee.transfer(), my name, U"_red");
 	}
-END
+END2 }
 
-DIRECT (Photo_extractTransparency)
+DIRECT2 (Photo_extractTransparency) {
 	LOOP {
 		iam (Photo);
 		autoMatrix thee = Data_copy (my d_transparency);
 		praat_new (thee.transfer(), my name, U"_transparency");
 	}
-END
+END2 }
 
-FORM (Photo_formula_red, U"Photo Formula (red)", U"Formula (red)...")
+FORM (Photo_formula_red, U"Photo Formula (red)", U"Formula (red)...") {
 	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
 	TEXTFIELD (U"formula", U"self")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Photo);
@@ -3157,13 +3187,13 @@ DO
 			throw;
 		}
 	}
-END
+END2 }
 
-FORM (Photo_formula_green, U"Photo Formula (green)", U"Formula (green)...")
+FORM (Photo_formula_green, U"Photo Formula (green)", U"Formula (green)...") {
 	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
 	TEXTFIELD (U"formula", U"self")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Photo);
@@ -3175,13 +3205,13 @@ DO
 			throw;
 		}
 	}
-END
+END2 }
 
-FORM (Photo_formula_blue, U"Photo Formula (blue)", U"Formula (blue)...")
+FORM (Photo_formula_blue, U"Photo Formula (blue)", U"Formula (blue)...") {
 	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
 	TEXTFIELD (U"formula", U"self")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Photo);
@@ -3193,13 +3223,13 @@ DO
 			throw;
 		}
 	}
-END
+END2 }
 
-FORM (Photo_formula_transparency, U"Photo Formula (transparency)", U"Formula (transparency)...")
+FORM (Photo_formula_transparency, U"Photo Formula (transparency)", U"Formula (transparency)...") {
 	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
 	TEXTFIELD (U"formula", U"self")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Photo);
@@ -3211,14 +3241,14 @@ DO
 			throw;
 		}
 	}
-END
+END2 }
 
-FORM (Photo_paintCells, U"Photo: Paint cells with colour", U"Photo: Paint cells...")
+FORM (Photo_paintCells, U"Photo: Paint cells with colour", U"Photo: Paint cells...") {
 	REAL (U"From x =", U"0.0")
 	REAL (U"To x =", U"0.0")
 	REAL (U"From y =", U"0.0")
 	REAL (U"To y =", U"0.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Photo);
@@ -3226,14 +3256,14 @@ DO
 		Photo_paintCells (me, GRAPHICS,
 			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="));
 	}
-END
+END2 }
 
-FORM (Photo_paintImage, U"Photo: Paint colour image", 0)
+FORM (Photo_paintImage, U"Photo: Paint colour image", 0) {
 	REAL (U"From x =", U"0.0")
 	REAL (U"To x =", U"0.0")
 	REAL (U"From y =", U"0.0")
 	REAL (U"To y =", U"0.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Photo);
@@ -3241,7 +3271,7 @@ DO
 		Photo_paintImage (me, GRAPHICS,
 			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="));
 	}
-END
+END2 }
 
 FORM_WRITE (Photo_saveAsAppleIconFile, U"Save as Apple icon file", 0, U"icns")
 	LOOP {
@@ -3301,53 +3331,53 @@ END
 
 /***** PHOTO & MATRIX *****/
 
-DIRECT (Photo_Matrix_replaceBlue)
+DIRECT2 (Photo_Matrix_replaceBlue) {
 	Photo me = FIRST (Photo);
 	Matrix thee = FIRST (Matrix);
 	Photo_replaceBlue (me, thee);
 	praat_dataChanged (me);
-END
+END2 }
 
-DIRECT (Photo_Matrix_replaceGreen)
+DIRECT2 (Photo_Matrix_replaceGreen) {
 	Photo me = FIRST (Photo);
 	Matrix thee = FIRST (Matrix);
 	Photo_replaceGreen (me, thee);
 	praat_dataChanged (me);
-END
+END2 }
 
-DIRECT (Photo_Matrix_replaceRed)
+DIRECT2 (Photo_Matrix_replaceRed) {
 	Photo me = FIRST (Photo);
 	Matrix thee = FIRST (Matrix);
 	Photo_replaceRed (me, thee);
 	praat_dataChanged (me);
-END
+END2 }
 
-DIRECT (Photo_Matrix_replaceTransparency)
+DIRECT2 (Photo_Matrix_replaceTransparency) {
 	Photo me = FIRST (Photo);
 	Matrix thee = FIRST (Matrix);
 	Photo_replaceTransparency (me, thee);
 	praat_dataChanged (me);
-END
+END2 }
 
 /***** PITCH *****/
 
-DIRECT (Pitch_getNumberOfVoicedFrames)
+DIRECT2 (Pitch_getNumberOfVoicedFrames) {
 	Pitch me = FIRST (Pitch);
 	Melder_information (Pitch_countVoicedFrames (me), U" voiced frames");
-END
+END2 }
 
-DIRECT (Pitch_difference)
+DIRECT2 (Pitch_difference) {
 	Pitch pit1 = NULL, pit2 = NULL;
 	LOOP (pit1 ? pit2 : pit1) = (Pitch) OBJECT;
 	Pitch_difference (pit1, pit2);
-END
+END2 }
 
-FORM (Pitch_draw, U"Pitch: Draw", U"Pitch: Draw...")
+FORM (Pitch_draw, U"Pitch: Draw", U"Pitch: Draw...") {
 	praat_dia_timeRange (dia);
 	REAL (STRING_FROM_FREQUENCY_HZ, U"0.0")
 	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
 	BOOLEAN (U"Garnish", 1)
-	OK
+	OK2
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	LOOP {
@@ -3356,15 +3386,15 @@ DO
 		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax,
 			GET_INTEGER (U"Garnish"), Pitch_speckle_NO, kPitch_unit_HERTZ);
 	}
-END
+END2 }
 
-FORM (Pitch_drawErb, U"Pitch: Draw erb", U"Pitch: Draw...")
+FORM (Pitch_drawErb, U"Pitch: Draw erb", U"Pitch: Draw...") {
 	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
 	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
 	REAL (U"left Frequency range (ERB)", U"0")
 	REAL (U"right Frequency range (ERB)", U"10.0")
 	BOOLEAN (U"Garnish", 1)
-	OK
+	OK2
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	LOOP {
@@ -3373,15 +3403,15 @@ DO
 		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax,
 			GET_INTEGER (U"Garnish"), Pitch_speckle_NO, kPitch_unit_ERB);
 	}
-END
+END2 }
 
-FORM (Pitch_drawLogarithmic, U"Pitch: Draw logarithmic", U"Pitch: Draw...")
+FORM (Pitch_drawLogarithmic, U"Pitch: Draw logarithmic", U"Pitch: Draw...") {
 	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
 	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
 	POSITIVE (STRING_FROM_FREQUENCY_HZ, U"50.0")
 	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
 	BOOLEAN (U"Garnish", 1)
-	OK
+	OK2
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	LOOP {
@@ -3390,15 +3420,15 @@ DO
 		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax,
 			GET_INTEGER (U"Garnish"), Pitch_speckle_NO, kPitch_unit_HERTZ_LOGARITHMIC);
 	}
-END
+END2 }
 
-FORM (Pitch_drawMel, U"Pitch: Draw mel", U"Pitch: Draw...")
+FORM (Pitch_drawMel, U"Pitch: Draw mel", U"Pitch: Draw...") {
 	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
 	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
 	REAL (U"left Frequency range (mel)", U"0.0")
 	REAL (U"right Frequency range (mel)", U"500.0")
 	BOOLEAN (U"Garnish", 1)
-	OK
+	OK2
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	LOOP {
@@ -3407,16 +3437,16 @@ DO
 		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax,
 			GET_INTEGER (U"Garnish"), Pitch_speckle_NO, kPitch_unit_MEL);
 	}
-END
+END2 }
 
-FORM (Pitch_drawSemitones100, U"Pitch: Draw semitones (re 100 Hz)", U"Pitch: Draw...")
+FORM (Pitch_drawSemitones100, U"Pitch: Draw semitones (re 100 Hz)", U"Pitch: Draw...") {
 	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
 	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
 	LABEL (U"", U"Range in semitones re 100 Hz:")
 	REAL (U"left Frequency range (st)", U"-12.0")
 	REAL (U"right Frequency range (st)", U"30.0")
 	BOOLEAN (U"Garnish", 1)
-	OK
+	OK2
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	LOOP {
@@ -3425,16 +3455,16 @@ DO
 		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax,
 			GET_INTEGER (U"Garnish"), Pitch_speckle_NO, kPitch_unit_SEMITONES_100);
 	}
-END
+END2 }
 
-FORM (Pitch_drawSemitones200, U"Pitch: Draw semitones (re 200 Hz)", U"Pitch: Draw...")
+FORM (Pitch_drawSemitones200, U"Pitch: Draw semitones (re 200 Hz)", U"Pitch: Draw...") {
 	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
 	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
 	LABEL (U"", U"Range in semitones re 200 Hz:")
 	REAL (U"left Frequency range (st)", U"-24.0")
 	REAL (U"right Frequency range (st)", U"18.0")
 	BOOLEAN (U"Garnish", 1)
-	OK
+	OK2
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	LOOP {
@@ -3443,16 +3473,16 @@ DO
 		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax,
 			GET_INTEGER (U"Garnish"), Pitch_speckle_NO, kPitch_unit_SEMITONES_200);
 	}
-END
+END2 }
 
-FORM (Pitch_drawSemitones440, U"Pitch: Draw semitones (re 440 Hz)", U"Pitch: Draw...")
+FORM (Pitch_drawSemitones440, U"Pitch: Draw semitones (re 440 Hz)", U"Pitch: Draw...") {
 	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
 	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
 	LABEL (U"", U"Range in semitones re 440 Hz:")
 	REAL (U"left Frequency range (st)", U"-36.0")
 	REAL (U"right Frequency range (st)", U"6.0")
 	BOOLEAN (U"Garnish", 1)
-	OK
+	OK2
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	LOOP {
@@ -3461,21 +3491,21 @@ DO
 		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax,
 			GET_INTEGER (U"Garnish"), Pitch_speckle_NO, kPitch_unit_SEMITONES_440);
 	}
-END
+END2 }
 
-DIRECT (Pitch_edit)
+DIRECT2 (Pitch_edit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a Pitch from batch.");
 	LOOP {
 		iam (Pitch);
 		autoPitchEditor editor = PitchEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
-END
+END2 }
 
-FORM (Pitch_formula, U"Pitch: Formula", U"Formula...")
+FORM (Pitch_formula, U"Pitch: Formula", U"Formula...") {
 	LABEL (U"", U"x = time; col = frame; row = candidate (1 = current path); frequency (time, candidate) :=")
 	TEXTFIELD (U"formula", U"self*2; Example: octave jump up")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Pitch);
@@ -3487,42 +3517,42 @@ DO
 			throw;
 		}
 	}
-END
+END2 }
 
-FORM (Pitch_getMaximum, U"Pitch: Get maximum", 0)
+FORM (Pitch_getMaximum, U"Pitch: Get maximum", 0) {
 	praat_dia_timeRange (dia);
 	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
 	RADIO (U"Interpolation", 2)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
-	OK
+	OK2
 DO
 	enum kPitch_unit unit = GET_ENUM (kPitch_unit, U"Unit");
 	Pitch me = FIRST (Pitch);
 	double value = Pitch_getMaximum (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), unit, GET_INTEGER (U"Interpolation") - 1);
 	value = Function_convertToNonlogarithmic (me, value, Pitch_LEVEL_FREQUENCY, unit);
 	Melder_informationReal (value, Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
-END
+END2 }
 
-FORM (Pitch_getMean, U"Pitch: Get mean", 0)
+FORM (Pitch_getMean, U"Pitch: Get mean", 0) {
 	praat_dia_timeRange (dia);
 	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
-	OK
+	OK2
 DO
 	enum kPitch_unit unit = GET_ENUM (kPitch_unit, U"Unit");
 	Pitch me = FIRST (Pitch);
 	double value = Pitch_getMean (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), unit);
 	value = Function_convertToNonlogarithmic (me, value, Pitch_LEVEL_FREQUENCY, unit);
 	Melder_informationReal (value, Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
-END
+END2 }
 
-FORM (Pitch_getMeanAbsoluteSlope, U"Pitch: Get mean absolute slope", 0)
+FORM (Pitch_getMeanAbsoluteSlope, U"Pitch: Get mean absolute slope", 0) {
 	RADIO (U"Unit", 1)
 		RADIOBUTTON (U"Hertz")
 		RADIOBUTTON (U"Mel")
 		RADIOBUTTON (U"Semitones")
 		RADIOBUTTON (U"ERB")
-	OK
+	OK2
 DO
 	int unit = GET_INTEGER (U"Unit");
 	Pitch me = FIRST (Pitch);
@@ -3534,22 +3564,22 @@ DO
 	} else {
 		Melder_information (slope, U" ", GET_STRING (U"Unit"), U"/s");
 	}
-END
+END2 }
 
-DIRECT (Pitch_getMeanAbsSlope_noOctave)
+DIRECT2 (Pitch_getMeanAbsSlope_noOctave) {
 	Pitch me = FIRST (Pitch);
 	double slope;
 	(void) Pitch_getMeanAbsSlope_noOctave (me, & slope);
 	Melder_informationReal (slope, U"Semitones/s");
-END
+END2 }
 
-FORM (Pitch_getMinimum, U"Pitch: Get minimum", 0)
+FORM (Pitch_getMinimum, U"Pitch: Get minimum", 0) {
 	praat_dia_timeRange (dia);
 	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
 	RADIO (U"Interpolation", 2)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
-	OK
+	OK2
 DO
 	enum kPitch_unit unit = GET_ENUM (kPitch_unit, U"Unit");
 	Pitch me = FIRST (Pitch);
@@ -3557,13 +3587,13 @@ DO
 		Pitch_LEVEL_FREQUENCY, unit, GET_INTEGER (U"Interpolation") - 1);
 	value = Function_convertToNonlogarithmic (me, value, Pitch_LEVEL_FREQUENCY, unit);
 	Melder_informationReal (value, Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
-END
+END2 }
 
-FORM (Pitch_getQuantile, U"Pitch: Get quantile", 0)
+FORM (Pitch_getQuantile, U"Pitch: Get quantile", 0) {
 	praat_dia_timeRange (dia);
 	REAL (U"Quantile", U"0.50 (= median)")
 	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
-	OK
+	OK2
 DO
 	enum kPitch_unit unit = GET_ENUM (kPitch_unit, U"Unit");
 	Pitch me = FIRST (Pitch);
@@ -3571,9 +3601,9 @@ DO
 		GET_REAL (U"Quantile"), Pitch_LEVEL_FREQUENCY, unit);
 	value = Function_convertToNonlogarithmic (me, value, Pitch_LEVEL_FREQUENCY, unit);
 	Melder_informationReal (value, Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
-END
+END2 }
 
-FORM (Pitch_getStandardDeviation, U"Pitch: Get standard deviation", 0)
+FORM (Pitch_getStandardDeviation, U"Pitch: Get standard deviation", 0) {
 	praat_dia_timeRange (dia);
 	OPTIONMENU (U"Unit", 1)
 		OPTION (U"Hertz")
@@ -3581,7 +3611,7 @@ FORM (Pitch_getStandardDeviation, U"Pitch: Get standard deviation", 0)
 		OPTION (U"logHertz")
 		OPTION (U"semitones")
 		OPTION (U"ERB")
-	OK
+	OK2
 DO
 	int unit = GET_INTEGER (U"Unit");
 	unit =
@@ -3599,115 +3629,117 @@ DO
 		unit == kPitch_unit_SEMITONES_1 ? U"semitones" :
 		U"ERB";
 	Melder_informationReal (value, unitText);
-END
+END2 }
 
-FORM (Pitch_getTimeOfMaximum, U"Pitch: Get time of maximum", 0)
+FORM (Pitch_getTimeOfMaximum, U"Pitch: Get time of maximum", 0) {
 	praat_dia_timeRange (dia);
 	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
 	RADIO (U"Interpolation", 2)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
-	OK
+	OK2
 DO
 	Pitch me = FIRST (Pitch);
 	double time = Pitch_getTimeOfMaximum (me,
 		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
 		GET_ENUM (kPitch_unit, U"Unit"), GET_INTEGER (U"Interpolation") - 1);
 	Melder_informationReal (time, U"seconds");
-END
+END2 }
 
-FORM (Pitch_getTimeOfMinimum, U"Pitch: Get time of minimum", 0)
+FORM (Pitch_getTimeOfMinimum, U"Pitch: Get time of minimum", 0) {
 	praat_dia_timeRange (dia);
 	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
 	RADIO (U"Interpolation", 2)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
-	OK
+	OK2
 DO
 	Pitch me = FIRST (Pitch);
 	double time = Pitch_getTimeOfMinimum (me,
 		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
 		GET_ENUM (kPitch_unit, U"Unit"), GET_INTEGER (U"Interpolation") - 1);
 	Melder_informationReal (time, U"seconds");
-END
+END2 }
 
-FORM (Pitch_getValueAtTime, U"Pitch: Get value at time", U"Pitch: Get value at time...")
+FORM (Pitch_getValueAtTime, U"Pitch: Get value at time", U"Pitch: Get value at time...") {
 	REAL (U"Time (s)", U"0.5")
 	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
 	RADIO (U"Interpolation", 2)
 		RADIOBUTTON (U"Nearest")
 		RADIOBUTTON (U"Linear")
-	OK
+	OK2
 DO
 	enum kPitch_unit unit = GET_ENUM (kPitch_unit, U"Unit");
 	Pitch me = FIRST (Pitch);
 	double value = Sampled_getValueAtX (me, GET_REAL (U"Time"), Pitch_LEVEL_FREQUENCY, unit, GET_INTEGER (U"Interpolation") - 1);
 	value = Function_convertToNonlogarithmic (me, value, Pitch_LEVEL_FREQUENCY, unit);
 	Melder_informationReal (value, Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
-END
+END2 }
 	
-FORM (Pitch_getValueInFrame, U"Pitch: Get value in frame", U"Pitch: Get value in frame...")
+FORM (Pitch_getValueInFrame, U"Pitch: Get value in frame", U"Pitch: Get value in frame...") {
 	INTEGER (U"Frame number", U"10")
 	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
-	OK
+	OK2
 DO
 	enum kPitch_unit unit = GET_ENUM (kPitch_unit, U"Unit");
 	Pitch me = FIRST (Pitch);
 	double value = Sampled_getValueAtSample (me, GET_INTEGER (U"Frame number"), Pitch_LEVEL_FREQUENCY, unit);
 	value = Function_convertToNonlogarithmic (me, value, Pitch_LEVEL_FREQUENCY, unit);
 	Melder_informationReal (value, Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
-END
+END2 }
 
-DIRECT (Pitch_help) Melder_help (U"Pitch"); END
+DIRECT2 (Pitch_help) {
+	Melder_help (U"Pitch");
+END2 }
 
-DIRECT (Pitch_hum)
+DIRECT2 (Pitch_hum) {
 	LOOP {
 		iam (Pitch);
 		Pitch_hum (me, 0, 0);
 	}
-END
+END2 }
 
-DIRECT (Pitch_interpolate)
+DIRECT2 (Pitch_interpolate) {
 	LOOP {
 		iam (Pitch);
 		autoPitch thee = Pitch_interpolate (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Pitch_killOctaveJumps)
+DIRECT2 (Pitch_killOctaveJumps) {
 	LOOP {
 		iam (Pitch);
 		autoPitch thee = Pitch_killOctaveJumps (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Pitch_play)
+DIRECT2 (Pitch_play) {
 	LOOP {
 		iam (Pitch);
 		Pitch_play (me, 0, 0);
 	}
-END
+END2 }
 
-FORM (Pitch_smooth, U"Pitch: Smooth", U"Pitch: Smooth...")
+FORM (Pitch_smooth, U"Pitch: Smooth", U"Pitch: Smooth...") {
 	REAL (U"Bandwidth (Hz)", U"10.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Pitch);
 		autoPitch thee = Pitch_smooth (me, GET_REAL (U"Bandwidth"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (Pitch_speckle, U"Pitch: Speckle", U"Pitch: Draw...")
+FORM (Pitch_speckle, U"Pitch: Speckle", U"Pitch: Draw...") {
 	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
 	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
 	REAL (STRING_FROM_FREQUENCY_HZ, U"0.0")
 	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
 	BOOLEAN (U"Garnish", 1)
-	OK
+	OK2
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	LOOP {
@@ -3715,15 +3747,15 @@ DO
 		autoPraatPicture picture;
 		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax, GET_INTEGER (U"Garnish"), Pitch_speckle_YES, kPitch_unit_HERTZ);
 	}
-END
+END2 }
 
-FORM (Pitch_speckleErb, U"Pitch: Speckle erb", U"Pitch: Draw...")
+FORM (Pitch_speckleErb, U"Pitch: Speckle erb", U"Pitch: Draw...") {
 	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
 	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
 	REAL (U"left Frequency range (ERB)", U"0")
 	REAL (U"right Frequency range (ERB)", U"10.0")
 	BOOLEAN (U"Garnish", 1)
-	OK
+	OK2
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	LOOP {
@@ -3731,15 +3763,15 @@ DO
 		autoPraatPicture picture;
 		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax, GET_INTEGER (U"Garnish"), Pitch_speckle_YES, kPitch_unit_ERB);
 	}
-END
+END2 }
 
-FORM (Pitch_speckleLogarithmic, U"Pitch: Speckle logarithmic", U"Pitch: Draw...")
+FORM (Pitch_speckleLogarithmic, U"Pitch: Speckle logarithmic", U"Pitch: Draw...") {
 	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
 	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
 	POSITIVE (STRING_FROM_FREQUENCY_HZ, U"50.0")
 	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
 	BOOLEAN (U"Garnish", 1)
-	OK
+	OK2
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	LOOP {
@@ -3747,15 +3779,15 @@ DO
 		autoPraatPicture picture;
 		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax, GET_INTEGER (U"Garnish"), Pitch_speckle_YES, kPitch_unit_HERTZ_LOGARITHMIC);
 	}
-END
+END2 }
 
-FORM (Pitch_speckleMel, U"Pitch: Speckle mel", U"Pitch: Draw...")
+FORM (Pitch_speckleMel, U"Pitch: Speckle mel", U"Pitch: Draw...") {
 	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
 	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
 	REAL (U"left Frequency range (mel)", U"0")
 	REAL (U"right Frequency range (mel)", U"500")
 	BOOLEAN (U"Garnish", 1)
-	OK
+	OK2
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	LOOP {
@@ -3763,16 +3795,16 @@ DO
 		autoPraatPicture picture;
 		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax, GET_INTEGER (U"Garnish"), Pitch_speckle_YES, kPitch_unit_MEL);
 	}
-END
+END2 }
 
-FORM (Pitch_speckleSemitones100, U"Pitch: Speckle semitones (re 100 Hz)", U"Pitch: Draw...")
+FORM (Pitch_speckleSemitones100, U"Pitch: Speckle semitones (re 100 Hz)", U"Pitch: Draw...") {
 	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
 	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
 	LABEL (U"", U"Range in semitones re 100 hertz:")
 	REAL (U"left Frequency range (st)", U"-12.0")
 	REAL (U"right Frequency range (st)", U"30.0")
 	BOOLEAN (U"Garnish", 1)
-	OK
+	OK2
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	LOOP {
@@ -3780,16 +3812,16 @@ DO
 		autoPraatPicture picture;
 		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax, GET_INTEGER (U"Garnish"), Pitch_speckle_YES, kPitch_unit_SEMITONES_100);
 	}
-END
+END2 }
 
-FORM (Pitch_speckleSemitones200, U"Pitch: Speckle semitones (re 200 Hz)", U"Pitch: Draw...")
+FORM (Pitch_speckleSemitones200, U"Pitch: Speckle semitones (re 200 Hz)", U"Pitch: Draw...") {
 	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
 	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
 	LABEL (U"", U"Range in semitones re 200 hertz:")
 	REAL (U"left Frequency range (st)", U"-24.0")
 	REAL (U"right Frequency range (st)", U"18.0")
 	BOOLEAN (U"Garnish", 1)
-	OK
+	OK2
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	LOOP {
@@ -3797,16 +3829,16 @@ DO
 		autoPraatPicture picture;
 		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax, GET_INTEGER (U"Garnish"), Pitch_speckle_YES, kPitch_unit_SEMITONES_200);
 	}
-END
+END2 }
 
-FORM (Pitch_speckleSemitones440, U"Pitch: Speckle semitones (re 440 Hz)", U"Pitch: Draw...")
+FORM (Pitch_speckleSemitones440, U"Pitch: Speckle semitones (re 440 Hz)", U"Pitch: Draw...") {
 	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
 	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
 	LABEL (U"", U"Range in semitones re 440 hertz:")
 	REAL (U"left Frequency range (st)", U"-36.0")
 	REAL (U"right Frequency range (st)", U"6.0")
 	BOOLEAN (U"Garnish", 1)
-	OK
+	OK2
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	LOOP {
@@ -3814,109 +3846,109 @@ DO
 		autoPraatPicture picture;
 		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax, GET_INTEGER (U"Garnish"), Pitch_speckle_YES, kPitch_unit_SEMITONES_440);
 	}
-END
+END2 }
 
-FORM (Pitch_subtractLinearFit, U"Pitch: subtract linear fit", 0)
+FORM (Pitch_subtractLinearFit, U"Pitch: subtract linear fit", 0) {
 	RADIO (U"Unit", 1)
 		RADIOBUTTON (U"Hertz")
 		RADIOBUTTON (U"Hertz (logarithmic)")
 		RADIOBUTTON (U"Mel")
 		RADIOBUTTON (U"Semitones")
 		RADIOBUTTON (U"ERB")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Pitch);
 		autoPitch thee = Pitch_subtractLinearFit (me, GET_INTEGER (U"Unit") - 1);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Pitch_to_IntervalTier)
+DIRECT2 (Pitch_to_IntervalTier) {
 	LOOP {
 		iam (Pitch);
 		autoIntervalTier thee = IntervalTier_create (my xmin, my xmax);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Pitch_to_Matrix)
+DIRECT2 (Pitch_to_Matrix) {
 	LOOP {
 		iam (Pitch);
 		autoMatrix thee = Pitch_to_Matrix (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Pitch_to_PitchTier)
+DIRECT2 (Pitch_to_PitchTier) {
 	LOOP {
 		iam (Pitch);
 		autoPitchTier thee = Pitch_to_PitchTier (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Pitch_to_PointProcess)
+DIRECT2 (Pitch_to_PointProcess) {
 	LOOP {
 		iam (Pitch);
 		autoPointProcess thee = Pitch_to_PointProcess (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Pitch_to_Sound_pulses)
+DIRECT2 (Pitch_to_Sound_pulses) {
 	LOOP {
 		iam (Pitch);
 		autoSound thee = Pitch_to_Sound (me, 0, 0, FALSE);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Pitch_to_Sound_hum)
+DIRECT2 (Pitch_to_Sound_hum) {
 	LOOP {
 		iam (Pitch);
 		autoSound thee = Pitch_to_Sound (me, 0, 0, TRUE);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (Pitch_to_Sound_sine, U"Pitch: To Sound (sine)", 0)
+FORM (Pitch_to_Sound_sine, U"Pitch: To Sound (sine)", 0) {
 	POSITIVE (U"Sampling frequency (Hz)", U"44100")
 	RADIO (U"Cut voiceless stretches", 2)
 		OPTION (U"exactly")
 		OPTION (U"at nearest zero crossings")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Pitch);
 		autoSound thee = Pitch_to_Sound_sine (me, 0, 0, GET_REAL (U"Sampling frequency"), GET_INTEGER (U"Cut voiceless stretches") - 1);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (Pitch_to_TextGrid, U"To TextGrid...", U"Pitch: To TextGrid...")
+FORM (Pitch_to_TextGrid, U"To TextGrid...", U"Pitch: To TextGrid...") {
 	SENTENCE (U"Tier names", U"Mary John bell")
 	SENTENCE (U"Point tiers", U"bell")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Pitch);
 		autoTextGrid thee = TextGrid_create (my xmin, my xmax, GET_STRING (U"Tier names"), GET_STRING (U"Point tiers"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Pitch_to_TextTier)
+DIRECT2 (Pitch_to_TextTier) {
 	LOOP {
 		iam (Pitch);
 		autoTextTier thee = TextTier_create (my xmin, my xmax);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
 /***** PITCH & PITCHTIER *****/
 
-FORM (old_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", 0)
+FORM (old_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", 0) {
 	praat_dia_timeRange (dia);
 	REAL (U"From frequency (Hz)", U"0.0")
 	REAL (U"To frequency (Hz)", U"500.0")
@@ -3925,7 +3957,7 @@ FORM (old_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", 0)
 		RADIOBUTTON (U"Dotted")
 		RADIOBUTTON (U"Blank")
 	BOOLEAN (U"Garnish", 1)
-	OK
+	OK2
 DO
 	PitchTier me = FIRST (PitchTier);
 	Pitch thee = FIRST (Pitch);
@@ -3935,9 +3967,9 @@ DO
 		GET_REAL (U"From frequency"), GET_REAL (U"To frequency"),
 		GET_INTEGER (U"Line type for non-periodic intervals") - 1,
 		GET_INTEGER (U"Garnish"), U"lines and speckles");
-END
+END2 }
 
-FORM (PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", 0)
+FORM (PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", 0) {
 	praat_dia_timeRange (dia);
 	REAL (U"From frequency (Hz)", U"0.0")
 	REAL (U"To frequency (Hz)", U"500.0")
@@ -3951,7 +3983,7 @@ FORM (PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", 0)
 		OPTION (U"lines")
 		OPTION (U"speckles")
 		OPTION (U"lines and speckles")
-	OK
+	OK2
 DO_ALTERNATIVE (old_PitchTier_Pitch_draw)
 	PitchTier me = FIRST (PitchTier);
 	Pitch thee = FIRST (Pitch);
@@ -3961,104 +3993,104 @@ DO_ALTERNATIVE (old_PitchTier_Pitch_draw)
 		GET_REAL (U"From frequency"), GET_REAL (U"To frequency"),
 		GET_INTEGER (U"Line type for non-periodic intervals") - 1,
 		GET_INTEGER (U"Garnish"), GET_STRING (U"Drawing method"));
-END
+END2 }
 
-DIRECT (Pitch_PitchTier_to_Pitch)
+DIRECT2 (Pitch_PitchTier_to_Pitch) {
 	Pitch pitch = FIRST (Pitch);
 	PitchTier tier = FIRST (PitchTier);
 	autoPitch thee = Pitch_PitchTier_to_Pitch (pitch, tier);
 	praat_new (thee.transfer(), pitch -> name, U"_stylized");
-END
+END2 }
 
 /***** PITCH & POINTPROCESS *****/
 
-DIRECT (Pitch_PointProcess_to_PitchTier)
+DIRECT2 (Pitch_PointProcess_to_PitchTier) {
 	Pitch pitch = FIRST (Pitch);
 	PointProcess point = FIRST (PointProcess);
 	autoPitchTier thee = Pitch_PointProcess_to_PitchTier (pitch, point);
 	praat_new (thee.transfer(), pitch -> name);
-END
+END2 }
 
 /***** PITCH & SOUND *****/
 
-DIRECT (Sound_Pitch_to_Manipulation)
+DIRECT2 (Sound_Pitch_to_Manipulation) {
 	Pitch pitch = FIRST (Pitch);
 	Sound sound = FIRST (Sound);
 	autoManipulation thee = Sound_Pitch_to_Manipulation (sound, pitch);
 	praat_new (thee.transfer(), pitch -> name);
-END
+END2 }
 
-DIRECT (Sound_Pitch_to_PointProcess_cc)
+DIRECT2 (Sound_Pitch_to_PointProcess_cc) {
 	Sound sound = FIRST (Sound);
 	Pitch pitch = FIRST (Pitch);
 	autoPointProcess thee = Sound_Pitch_to_PointProcess_cc (sound, pitch);
 	praat_new (thee.transfer(), sound -> name, U"_", pitch -> name);
-END
+END2 }
 
-FORM (Sound_Pitch_to_PointProcess_peaks, U"Sound & Pitch: To PointProcess (peaks)", 0)
+FORM (Sound_Pitch_to_PointProcess_peaks, U"Sound & Pitch: To PointProcess (peaks)", 0) {
 	BOOLEAN (U"Include maxima", 1)
 	BOOLEAN (U"Include minima", 0)
-	OK
+	OK2
 DO
 	Sound sound = FIRST (Sound);
 	Pitch pitch = FIRST (Pitch);
 	autoPointProcess thee = Sound_Pitch_to_PointProcess_peaks (sound, pitch, GET_INTEGER (U"Include maxima"), GET_INTEGER (U"Include minima"));
 	praat_new (thee.transfer(), sound -> name, U"_", pitch -> name);
-END
+END2 }
 
 /***** PITCHTIER *****/
 
-FORM (PitchTier_addPoint, U"PitchTier: Add point", U"PitchTier: Add point...")
+FORM (PitchTier_addPoint, U"PitchTier: Add point", U"PitchTier: Add point...") {
 	REAL (U"Time (s)", U"0.5")
 	REAL (U"Pitch (Hz)", U"200")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (PitchTier);
 		RealTier_addPoint (me, GET_REAL (U"Time"), GET_REAL (U"Pitch"));
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-FORM (PitchTier_create, U"Create empty PitchTier", NULL)
+FORM (PitchTier_create, U"Create empty PitchTier", NULL) {
 	WORD (U"Name", U"empty")
 	REAL (U"Start time (s)", U"0.0")
 	REAL (U"End time (s)", U"1.0")
-	OK
+	OK2
 DO
 	double startTime = GET_REAL (U"Start time"), endTime = GET_REAL (U"End time");
 	if (endTime <= startTime) Melder_throw (U"End time must be greater than start time.");
 	autoPitchTier me = PitchTier_create (startTime, endTime);
 	praat_new (me.transfer(), GET_STRING (U"Name"));
-END
+END2 }
 
-DIRECT (PitchTier_downto_PointProcess)
+DIRECT2 (PitchTier_downto_PointProcess) {
 	LOOP {
 		iam (PitchTier);
 		autoPointProcess thee = AnyTier_downto_PointProcess (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (PitchTier_downto_TableOfReal, U"PitchTier: Down to TableOfReal", NULL)
+FORM (PitchTier_downto_TableOfReal, U"PitchTier: Down to TableOfReal", NULL) {
 	RADIO (U"Unit", 1)
 		RADIOBUTTON (U"Hertz")
 		RADIOBUTTON (U"Semitones")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (PitchTier);
 		autoTableOfReal thee = PitchTier_downto_TableOfReal (me, GET_INTEGER (U"Unit") - 1);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (old_PitchTier_draw, U"PitchTier: Draw", 0)
+FORM (old_PitchTier_draw, U"PitchTier: Draw", 0) {
 	praat_dia_timeRange (dia);
 	REAL (STRING_FROM_FREQUENCY_HZ, U"0.0")
 	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
 	BOOLEAN (U"Garnish", 1)
-	OK
+	OK2
 DO
 	double minimumFrequency = GET_REAL (STRING_FROM_FREQUENCY);
 	double maximumFrequency = GET_REAL (STRING_TO_FREQUENCY);
@@ -4070,9 +4102,9 @@ DO
 			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), minimumFrequency, maximumFrequency,
 			GET_INTEGER (U"Garnish"), U"lines and speckles");
 	}
-END
+END2 }
 
-FORM (PitchTier_draw, U"PitchTier: Draw", 0)
+FORM (PitchTier_draw, U"PitchTier: Draw", 0) {
 	praat_dia_timeRange (dia);
 	REAL (STRING_FROM_FREQUENCY_HZ, U"0.0")
 	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
@@ -4082,7 +4114,7 @@ FORM (PitchTier_draw, U"PitchTier: Draw", 0)
 		OPTION (U"lines")
 		OPTION (U"speckles")
 		OPTION (U"lines and speckles")
-	OK
+	OK2
 DO_ALTERNATIVE (old_PitchTier_draw)
 	double minimumFrequency = GET_REAL (STRING_FROM_FREQUENCY);
 	double maximumFrequency = GET_REAL (STRING_TO_FREQUENCY);
@@ -4094,9 +4126,9 @@ DO_ALTERNATIVE (old_PitchTier_draw)
 			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), minimumFrequency, maximumFrequency,
 			GET_INTEGER (U"Garnish"), GET_STRING (U"Drawing method"));
 	}
-END
+END2 }
 
-DIRECT (PitchTier_edit)
+DIRECT2 (PitchTier_edit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a PitchTier from batch.");
 	Sound sound = FIRST (Sound);
 	LOOP if (CLASS == classPitchTier) {
@@ -4104,9 +4136,9 @@ DIRECT (PitchTier_edit)
 		autoPitchTierEditor editor = PitchTierEditor_create (ID_AND_FULL_NAME, me, sound, TRUE);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
-END
+END2 }
 
-FORM (PitchTier_formula, U"PitchTier: Formula", U"PitchTier: Formula...")
+FORM (PitchTier_formula, U"PitchTier: Formula", U"PitchTier: Formula...") {
 	LABEL (U"", U"# ncol = the number of points")
 	LABEL (U"", U"for col from 1 to ncol")
 	LABEL (U"", U"   # x = the time of the colth point, in seconds")
@@ -4114,7 +4146,7 @@ FORM (PitchTier_formula, U"PitchTier: Formula", U"PitchTier: Formula...")
 	LABEL (U"", U"   self = `formula'")
 	LABEL (U"", U"endfor")
 	TEXTFIELD (U"formula", U"self * 2 ; one octave up")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (PitchTier);
@@ -4126,88 +4158,90 @@ DO
 			throw;
 		}
 	}
-END
+END2 }
 
-FORM (PitchTier_getMean_curve, U"PitchTier: Get mean (curve)", U"PitchTier: Get mean (curve)...")
+FORM (PitchTier_getMean_curve, U"PitchTier: Get mean (curve)", U"PitchTier: Get mean (curve)...") {
 	praat_dia_timeRange (dia);
-	OK
+	OK2
 DO
 	Melder_informationReal (RealTier_getMean_curve (FIRST_ANY (PitchTier), GET_REAL (U"left Time range"), GET_REAL (U"right Time range")), U"Hz");
-END
+END2 }
 	
-FORM (PitchTier_getMean_points, U"PitchTier: Get mean (points)", U"PitchTier: Get mean (points)...")
+FORM (PitchTier_getMean_points, U"PitchTier: Get mean (points)", U"PitchTier: Get mean (points)...") {
 	praat_dia_timeRange (dia);
-	OK
+	OK2
 DO
 	Melder_informationReal (RealTier_getMean_points (FIRST_ANY (PitchTier), GET_REAL (U"left Time range"), GET_REAL (U"right Time range")), U"Hz");
-END
+END2 }
 	
-FORM (PitchTier_getStandardDeviation_curve, U"PitchTier: Get standard deviation (curve)", U"PitchTier: Get standard deviation (curve)...")
+FORM (PitchTier_getStandardDeviation_curve, U"PitchTier: Get standard deviation (curve)", U"PitchTier: Get standard deviation (curve)...") {
 	praat_dia_timeRange (dia);
-	OK
+	OK2
 DO
 	Melder_informationReal (RealTier_getStandardDeviation_curve (FIRST_ANY (PitchTier), GET_REAL (U"left Time range"), GET_REAL (U"right Time range")), U"Hz");
-END
+END2 }
 	
-FORM (PitchTier_getStandardDeviation_points, U"PitchTier: Get standard deviation (points)", U"PitchTier: Get standard deviation (points)...")
+FORM (PitchTier_getStandardDeviation_points, U"PitchTier: Get standard deviation (points)", U"PitchTier: Get standard deviation (points)...") {
 	praat_dia_timeRange (dia);
-	OK
+	OK2
 DO
 	Melder_informationReal (RealTier_getStandardDeviation_points (FIRST_ANY (PitchTier), GET_REAL (U"left Time range"), GET_REAL (U"right Time range")), U"Hz");
-END
+END2 }
 	
-FORM (PitchTier_getValueAtTime, U"PitchTier: Get value at time", U"PitchTier: Get value at time...")
+FORM (PitchTier_getValueAtTime, U"PitchTier: Get value at time", U"PitchTier: Get value at time...") {
 	REAL (U"Time (s)", U"0.5")
-	OK
+	OK2
 DO
 	Melder_informationReal (RealTier_getValueAtTime (FIRST_ANY (PitchTier), GET_REAL (U"Time")), U"Hz");
-END
+END2 }
 	
-FORM (PitchTier_getValueAtIndex, U"PitchTier: Get value at index", U"PitchTier: Get value at index...")
+FORM (PitchTier_getValueAtIndex, U"PitchTier: Get value at index", U"PitchTier: Get value at index...") {
 	INTEGER (U"Point number", U"10")
-	OK
+	OK2
 DO
 	Melder_informationReal (RealTier_getValueAtIndex (FIRST_ANY (PitchTier), GET_INTEGER (U"Point number")), U"Hz");
-END
+END2 }
 
-DIRECT (PitchTier_help) Melder_help (U"PitchTier"); END
+DIRECT2 (PitchTier_help) {
+	Melder_help (U"PitchTier");
+END2 }
 
-DIRECT (PitchTier_hum)
+DIRECT2 (PitchTier_hum) {
 	LOOP {
 		iam (PitchTier);
 		PitchTier_hum (me);
 	}
-END
+END2 }
 
-FORM (PitchTier_interpolateQuadratically, U"PitchTier: Interpolate quadratically", 0)
+FORM (PitchTier_interpolateQuadratically, U"PitchTier: Interpolate quadratically", 0) {
 	NATURAL (U"Number of points per parabola", U"4")
 	RADIO (U"Unit", 2)
 		RADIOBUTTON (U"Hz")
 		RADIOBUTTON (U"Semitones")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (PitchTier);
 		RealTier_interpolateQuadratically (me, GET_INTEGER (U"Number of points per parabola"), GET_INTEGER (U"Unit") - 1);
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-DIRECT (PitchTier_play)
+DIRECT2 (PitchTier_play) {
 	LOOP {
 		iam (PitchTier);
 		PitchTier_play (me);
 	}
-END
+END2 }
 
-DIRECT (PitchTier_playSine)
+DIRECT2 (PitchTier_playSine) {
 	LOOP {
 		iam (PitchTier);
 		PitchTier_playPart_sine (me, 0.0, 0.0);
 	}
-END
+END2 }
 
-FORM (PitchTier_shiftFrequencies, U"PitchTier: Shift frequencies", 0)
+FORM (PitchTier_shiftFrequencies, U"PitchTier: Shift frequencies", 0) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"1000.0")
 	REAL (U"Frequency shift", U"-20.0")
@@ -4217,7 +4251,7 @@ FORM (PitchTier_shiftFrequencies, U"PitchTier: Shift frequencies", 0)
 		OPTION (U"logHertz")
 		OPTION (U"semitones")
 		OPTION (U"ERB")
-	OK
+	OK2
 DO
 	int unit = GET_INTEGER (U"Unit");
 	unit =
@@ -4236,44 +4270,44 @@ DO
 			throw;
 		}
 	}
-END
+END2 }
 
-FORM (PitchTier_multiplyFrequencies, U"PitchTier: Multiply frequencies", 0)
+FORM (PitchTier_multiplyFrequencies, U"PitchTier: Multiply frequencies", 0) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"1000.0")
 	POSITIVE (U"Factor", U"1.2")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (PitchTier);
 		PitchTier_multiplyFrequencies (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_REAL (U"Factor"));
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-FORM (PitchTier_stylize, U"PitchTier: Stylize", U"PitchTier: Stylize...")
+FORM (PitchTier_stylize, U"PitchTier: Stylize", U"PitchTier: Stylize...") {
 	REAL (U"Frequency resolution", U"4.0")
 	RADIO (U"Unit", 2)
 		RADIOBUTTON (U"Hz")
 		RADIOBUTTON (U"Semitones")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (PitchTier);
 		PitchTier_stylize (me, GET_REAL (U"Frequency resolution"), GET_INTEGER (U"Unit") - 1);
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-DIRECT (PitchTier_to_PointProcess)
+DIRECT2 (PitchTier_to_PointProcess) {
 	LOOP {
 		iam (PitchTier);
 		autoPointProcess thee = PitchTier_to_PointProcess (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (PitchTier_to_Sound_phonation, U"PitchTier: To Sound (phonation)", 0)
+FORM (PitchTier_to_Sound_phonation, U"PitchTier: To Sound (phonation)", 0) {
 	POSITIVE (U"Sampling frequency (Hz)", U"44100")
 	POSITIVE (U"Adaptation factor", U"1.0")
 	POSITIVE (U"Maximum period (s)", U"0.05")
@@ -4282,7 +4316,7 @@ FORM (PitchTier_to_Sound_phonation, U"PitchTier: To Sound (phonation)", 0)
 	POSITIVE (U"Power 1", U"3.0")
 	POSITIVE (U"Power 2", U"4.0")
 	BOOLEAN (U"Hum", 0)
-	OK
+	OK2
 DO
 	LOOP {
 		iam (PitchTier);
@@ -4291,15 +4325,15 @@ DO
 			GET_REAL (U"Open phase"), GET_REAL (U"Collision phase"), GET_REAL (U"Power 1"), GET_REAL (U"Power 2"), GET_INTEGER (U"Hum"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (PitchTier_to_Sound_pulseTrain, U"PitchTier: To Sound (pulse train)", 0)
+FORM (PitchTier_to_Sound_pulseTrain, U"PitchTier: To Sound (pulse train)", 0) {
 	POSITIVE (U"Sampling frequency (Hz)", U"44100")
 	POSITIVE (U"Adaptation factor", U"1.0")
 	POSITIVE (U"Adaptation time", U"0.05")
 	NATURAL (U"Interpolation depth (samples)", U"2000")
 	BOOLEAN (U"Hum", 0)
-	OK
+	OK2
 DO
 	LOOP {
 		iam (PitchTier);
@@ -4308,23 +4342,23 @@ DO
 			GET_INTEGER (U"Interpolation depth"), GET_INTEGER (U"Hum"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (PitchTier_to_Sound_sine, U"PitchTier: To Sound (sine)", 0)
+FORM (PitchTier_to_Sound_sine, U"PitchTier: To Sound (sine)", 0) {
 	POSITIVE (U"Sampling frequency (Hz)", U"44100")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (PitchTier);
 		autoSound thee = PitchTier_to_Sound_sine (me, 0.0, 0.0, GET_REAL (U"Sampling frequency"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (info_PitchTier_Sound_edit)
+DIRECT2 (info_PitchTier_Sound_edit) {
 	Melder_information (U"To include a copy of a Sound in your PitchTier editor:\n"
 		"   select a PitchTier and a Sound, and click \"View & Edit\".");
-END
+END2 }
 
 FORM_WRITE (PitchTier_writeToPitchTierSpreadsheetFile, U"Save PitchTier as spreadsheet", 0, U"PitchTier")
 	LOOP {
@@ -4342,63 +4376,63 @@ END
 
 /***** PITCHTIER & POINTPROCESS *****/
 
-DIRECT (PitchTier_PointProcess_to_PitchTier)
+DIRECT2 (PitchTier_PointProcess_to_PitchTier) {
 	PitchTier pitch = FIRST (PitchTier);
 	PointProcess point = FIRST (PointProcess);
 	autoPitchTier thee = PitchTier_PointProcess_to_PitchTier (pitch, point);
 	praat_new (thee.transfer(), pitch -> name);
-END
+END2 }
 
 /***** POINTPROCESS *****/
 
-FORM (PointProcess_addPoint, U"PointProcess: Add point", U"PointProcess: Add point...")
+FORM (PointProcess_addPoint, U"PointProcess: Add point", U"PointProcess: Add point...") {
 	REAL (U"Time (s)", U"0.5")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (PointProcess);
 		PointProcess_addPoint (me, GET_REAL (U"Time"));
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-FORM (PointProcess_createEmpty, U"Create an empty PointProcess", U"Create empty PointProcess...")
+FORM (PointProcess_createEmpty, U"Create an empty PointProcess", U"Create empty PointProcess...") {
 	WORD (U"Name", U"empty")
 	REAL (U"Start time (s)", U"0.0")
 	REAL (U"End time (s)", U"1.0")
-	OK
+	OK2
 DO
 	double tmin = GET_REAL (U"Start time"), tmax = GET_REAL (U"End time");
 	if (tmax < tmin) Melder_throw (U"End time (", tmax, U") should not be less than start time (", tmin, U").");
 	autoPointProcess me = PointProcess_create (tmin, tmax, 0);
 	praat_new (me.transfer(), GET_STRING (U"Name"));
-END
+END2 }
 
-FORM (PointProcess_createPoissonProcess, U"Create Poisson process", U"Create Poisson process...")
+FORM (PointProcess_createPoissonProcess, U"Create Poisson process", U"Create Poisson process...") {
 	WORD (U"Name", U"poisson")
 	REAL (U"Start time (s)", U"0.0")
 	REAL (U"End time (s)", U"1.0")
 	POSITIVE (U"Density (/s)", U"100.0")
-	OK
+	OK2
 DO
 	double tmin = GET_REAL (U"Start time"), tmax = GET_REAL (U"End time");
 	if (tmax < tmin)
 		Melder_throw (U"End time (", tmax, U") should not be less than start time (", tmin, U").");
 	autoPointProcess me = PointProcess_createPoissonProcess (tmin, tmax, GET_REAL (U"Density"));
 	praat_new (me.transfer(), GET_STRING (U"Name"));
-END
+END2 }
 
-DIRECT (PointProcess_difference)
+DIRECT2 (PointProcess_difference) {
 	PointProcess point1 = NULL, point2 = NULL;
 	LOOP (point1 ? point2 : point1) = (PointProcess) OBJECT;
 	autoPointProcess thee = PointProcesses_difference (point1, point2);
 	praat_new (thee.transfer(), U"difference");
-END
+END2 }
 
-FORM (PointProcess_draw, U"PointProcess: Draw", 0)
+FORM (PointProcess_draw, U"PointProcess: Draw", 0) {
 	praat_dia_timeRange (dia);
 	BOOLEAN (U"Garnish", 1)
-	OK
+	OK2
 DO
 	LOOP {
 		iam (PointProcess);
@@ -4406,9 +4440,9 @@ DO
 		PointProcess_draw (me, GRAPHICS,
 			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Garnish"));
 	}
-END
+END2 }
 
-DIRECT (PointProcess_edit)
+DIRECT2 (PointProcess_edit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a PointProcess from batch.");
 	Sound sound = FIRST (Sound);
 	LOOP if (CLASS == classPointProcess) {
@@ -4416,12 +4450,12 @@ DIRECT (PointProcess_edit)
 		autoPointEditor editor = PointEditor_create (ID_AND_FULL_NAME, me, sound);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
-END
+END2 }
 
-FORM (PointProcess_fill, U"PointProcess: Fill", 0)
+FORM (PointProcess_fill, U"PointProcess: Fill", 0) {
 	praat_dia_timeRange (dia);
 	POSITIVE (U"Period (s)", U"0.01")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (PointProcess);
@@ -4433,14 +4467,14 @@ DO
 			throw;
 		}
 	}
-END
+END2 }
 
-FORM (PointProcess_getInterval, U"PointProcess: Get interval", U"PointProcess: Get interval...")
+FORM (PointProcess_getInterval, U"PointProcess: Get interval", U"PointProcess: Get interval...") {
 	REAL (U"Time (s)", U"0.5")
-	OK
+	OK2
 DO
 	Melder_informationReal (PointProcess_getInterval (FIRST_ANY (PointProcess), GET_REAL (U"Time")), U"seconds");
-END
+END2 }
 
 static void dia_PointProcess_getRangeProperty (Any dia) {
 	praat_dia_timeRange (dia);
@@ -4449,243 +4483,245 @@ static void dia_PointProcess_getRangeProperty (Any dia) {
 	POSITIVE (U"Maximum period factor", U"1.3")
 }
 
-FORM (PointProcess_getJitter_local, U"PointProcess: Get jitter (local)", U"PointProcess: Get jitter (local)...")
+FORM (PointProcess_getJitter_local, U"PointProcess: Get jitter (local)", U"PointProcess: Get jitter (local)...") {
 	dia_PointProcess_getRangeProperty (dia);
-	OK
+	OK2
 DO
 	Melder_informationReal (PointProcess_getJitter_local (FIRST_ANY (PointProcess),
 		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
 		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")), NULL);
-END
+END2 }
 
-FORM (PointProcess_getJitter_local_absolute, U"PointProcess: Get jitter (local, absolute)", U"PointProcess: Get jitter (local, absolute)...")
+FORM (PointProcess_getJitter_local_absolute, U"PointProcess: Get jitter (local, absolute)", U"PointProcess: Get jitter (local, absolute)...") {
 	dia_PointProcess_getRangeProperty (dia);
-	OK
+	OK2
 DO
 	Melder_informationReal (PointProcess_getJitter_local_absolute (FIRST_ANY (PointProcess),
 		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
 		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")), U"seconds");
-END
+END2 }
 
-FORM (PointProcess_getJitter_rap, U"PointProcess: Get jitter (rap)", U"PointProcess: Get jitter (rap)...")
+FORM (PointProcess_getJitter_rap, U"PointProcess: Get jitter (rap)", U"PointProcess: Get jitter (rap)...") {
 	dia_PointProcess_getRangeProperty (dia);
-	OK
+	OK2
 DO
 	Melder_informationReal (PointProcess_getJitter_rap (FIRST_ANY (PointProcess),
 		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
 		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")), NULL);
-END
+END2 }
 
-FORM (PointProcess_getJitter_ppq5, U"PointProcess: Get jitter (ppq5)", U"PointProcess: Get jitter (ppq5)...")
+FORM (PointProcess_getJitter_ppq5, U"PointProcess: Get jitter (ppq5)", U"PointProcess: Get jitter (ppq5)...") {
 	dia_PointProcess_getRangeProperty (dia);
-	OK
+	OK2
 DO
 	Melder_informationReal (PointProcess_getJitter_ppq5 (FIRST_ANY (PointProcess),
 		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
 		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")), NULL);
-END
+END2 }
 
-FORM (PointProcess_getJitter_ddp, U"PointProcess: Get jitter (ddp)", U"PointProcess: Get jitter (ddp)...")
+FORM (PointProcess_getJitter_ddp, U"PointProcess: Get jitter (ddp)", U"PointProcess: Get jitter (ddp)...") {
 	dia_PointProcess_getRangeProperty (dia);
-	OK
+	OK2
 DO
 	Melder_informationReal (PointProcess_getJitter_ddp (FIRST_ANY (PointProcess),
 		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
 		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")), NULL);
-END
+END2 }
 
-FORM (PointProcess_getMeanPeriod, U"PointProcess: Get mean period", U"PointProcess: Get mean period...")
+FORM (PointProcess_getMeanPeriod, U"PointProcess: Get mean period", U"PointProcess: Get mean period...") {
 	dia_PointProcess_getRangeProperty (dia);
-	OK
+	OK2
 DO
 	Melder_informationReal (PointProcess_getMeanPeriod (FIRST_ANY (PointProcess),
 		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
 		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")), U"seconds");
-END
+END2 }
 
-FORM (PointProcess_getStdevPeriod, U"PointProcess: Get stdev period", U"PointProcess: Get stdev period...")
+FORM (PointProcess_getStdevPeriod, U"PointProcess: Get stdev period", U"PointProcess: Get stdev period...") {
 	dia_PointProcess_getRangeProperty (dia);
-	OK
+	OK2
 DO
 	Melder_informationReal (PointProcess_getStdevPeriod (FIRST_ANY (PointProcess),
 		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
 		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")), U"seconds");
-END
+END2 }
 
-FORM (PointProcess_getLowIndex, U"PointProcess: Get low index", U"PointProcess: Get low index...")
+FORM (PointProcess_getLowIndex, U"PointProcess: Get low index", U"PointProcess: Get low index...") {
 	REAL (U"Time (s)", U"0.5")
-	OK
+	OK2
 DO
 	Melder_information (PointProcess_getLowIndex (FIRST_ANY (PointProcess), GET_REAL (U"Time")));
-END
+END2 }
 
-FORM (PointProcess_getHighIndex, U"PointProcess: Get high index", U"PointProcess: Get high index...")
+FORM (PointProcess_getHighIndex, U"PointProcess: Get high index", U"PointProcess: Get high index...") {
 	REAL (U"Time (s)", U"0.5")
-	OK
+	OK2
 DO
 	Melder_information (PointProcess_getHighIndex (FIRST_ANY (PointProcess), GET_REAL (U"Time")));
-END
+END2 }
 
-FORM (PointProcess_getNearestIndex, U"PointProcess: Get nearest index", U"PointProcess: Get nearest index...")
+FORM (PointProcess_getNearestIndex, U"PointProcess: Get nearest index", U"PointProcess: Get nearest index...") {
 	REAL (U"Time (s)", U"0.5")
-	OK
+	OK2
 DO
 	Melder_information (PointProcess_getNearestIndex (FIRST_ANY (PointProcess), GET_REAL (U"Time")));
-END
+END2 }
 
-DIRECT (PointProcess_getNumberOfPoints)
+DIRECT2 (PointProcess_getNumberOfPoints) {
 	PointProcess me = FIRST_ANY (PointProcess);
 	Melder_information (my nt);
-END
+END2 }
 
-FORM (PointProcess_getNumberOfPeriods, U"PointProcess: Get number of periods", U"PointProcess: Get number of periods...")
+FORM (PointProcess_getNumberOfPeriods, U"PointProcess: Get number of periods", U"PointProcess: Get number of periods...") {
 	dia_PointProcess_getRangeProperty (dia);
-	OK
+	OK2
 DO
 	Melder_information (PointProcess_getNumberOfPeriods (FIRST_ANY (PointProcess),
 		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
 		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")));
-END
+END2 }
 
-FORM (PointProcess_getTimeFromIndex, U"Get time", 0 /*"PointProcess: Get time from index..."*/)
+FORM (PointProcess_getTimeFromIndex, U"Get time", 0 /*"PointProcess: Get time from index..."*/) {
 	NATURAL (U"Point number", U"10")
-	OK
+	OK2
 DO
 	PointProcess me = FIRST_ANY (PointProcess);
 	long i = GET_INTEGER (U"Point number");
 	if (i > my nt) Melder_information (U"--undefined--");
 	else Melder_informationReal (my t [i], U"seconds");
-END
+END2 }
 
-DIRECT (PointProcess_help) Melder_help (U"PointProcess"); END
+DIRECT2 (PointProcess_help) {
+	Melder_help (U"PointProcess");
+END2 }
 
-DIRECT (PointProcess_hum)
+DIRECT2 (PointProcess_hum) {
 	LOOP {
 		iam (PointProcess);
 		PointProcess_hum (me, my xmin, my xmax);
 	}
-END
+END2 }
 
-DIRECT (PointProcess_intersection)
+DIRECT2 (PointProcess_intersection) {
 	PointProcess point1 = NULL, point2 = NULL;
 	LOOP (point1 ? point2 : point1) = (PointProcess) OBJECT;
 	autoPointProcess thee = PointProcesses_intersection (point1, point2);
 	praat_new (thee.transfer(), U"intersection");
-END
+END2 }
 
-DIRECT (PointProcess_play)
+DIRECT2 (PointProcess_play) {
 	LOOP {
 		iam (PointProcess);
 		PointProcess_play (me);
 	}
-END
+END2 }
 
-FORM (PointProcess_removePoint, U"PointProcess: Remove point", U"PointProcess: Remove point...")
+FORM (PointProcess_removePoint, U"PointProcess: Remove point", U"PointProcess: Remove point...") {
 	NATURAL (U"Index", U"1")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (PointProcess);
 		PointProcess_removePoint (me, GET_INTEGER (U"Index"));
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-FORM (PointProcess_removePointNear, U"PointProcess: Remove point near", U"PointProcess: Remove point near...")
+FORM (PointProcess_removePointNear, U"PointProcess: Remove point near", U"PointProcess: Remove point near...") {
 	REAL (U"Time (s)", U"0.5")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (PointProcess);
 		PointProcess_removePointNear (me, GET_REAL (U"Time"));
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-FORM (PointProcess_removePoints, U"PointProcess: Remove points", U"PointProcess: Remove points...")
+FORM (PointProcess_removePoints, U"PointProcess: Remove points", U"PointProcess: Remove points...") {
 	NATURAL (U"From index", U"1")
 	NATURAL (U"To index", U"10")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (PointProcess);
 		PointProcess_removePoints (me, GET_INTEGER (U"From index"), GET_INTEGER (U"To index"));
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-FORM (PointProcess_removePointsBetween, U"PointProcess: Remove points between", U"PointProcess: Remove points between...")
+FORM (PointProcess_removePointsBetween, U"PointProcess: Remove points between", U"PointProcess: Remove points between...") {
 	REAL (U"left Time range (s)", U"0.3")
 	REAL (U"right Time range (s)", U"0.7")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (PointProcess);
 		PointProcess_removePointsBetween (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-DIRECT (PointProcess_to_IntervalTier)
+DIRECT2 (PointProcess_to_IntervalTier) {
 	LOOP {
 		iam (PointProcess);
 		autoIntervalTier thee = IntervalTier_create (my xmin, my xmax);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (PointProcess_to_Matrix)
+DIRECT2 (PointProcess_to_Matrix) {
 	LOOP {
 		iam (PointProcess);
 		autoMatrix thee = PointProcess_to_Matrix (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (PointProcess_to_PitchTier, U"PointProcess: To PitchTier", U"PointProcess: To PitchTier...")
+FORM (PointProcess_to_PitchTier, U"PointProcess: To PitchTier", U"PointProcess: To PitchTier...") {
 	POSITIVE (U"Maximum interval (s)", U"0.02")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (PointProcess);
 		autoPitchTier thee = PointProcess_to_PitchTier (me, GET_REAL (U"Maximum interval"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (PointProcess_to_TextGrid, U"PointProcess: To TextGrid...", U"PointProcess: To TextGrid...")
+FORM (PointProcess_to_TextGrid, U"PointProcess: To TextGrid...", U"PointProcess: To TextGrid...") {
 	SENTENCE (U"Tier names", U"Mary John bell")
 	SENTENCE (U"Point tiers", U"bell")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (PointProcess);
 		autoTextGrid thee = TextGrid_create (my xmin, my xmax, GET_STRING (U"Tier names"), GET_STRING (U"Point tiers"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (PointProcess_to_TextGrid_vuv, U"PointProcess: To TextGrid (vuv)...", U"PointProcess: To TextGrid (vuv)...")
+FORM (PointProcess_to_TextGrid_vuv, U"PointProcess: To TextGrid (vuv)...", U"PointProcess: To TextGrid (vuv)...") {
 	POSITIVE (U"Maximum period (s)", U"0.02")
 	REAL (U"Mean period (s)", U"0.01")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (PointProcess);
 		autoTextGrid thee = PointProcess_to_TextGrid_vuv (me, GET_REAL (U"Maximum period"), GET_REAL (U"Mean period"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (PointProcess_to_TextTier)
+DIRECT2 (PointProcess_to_TextTier) {
 	LOOP {
 		iam (PointProcess);
 		autoTextTier thee = TextTier_create (my xmin, my xmax);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (PointProcess_to_Sound_phonation, U"PointProcess: To Sound (phonation)", U"PointProcess: To Sound (phonation)...")
+FORM (PointProcess_to_Sound_phonation, U"PointProcess: To Sound (phonation)", U"PointProcess: To Sound (phonation)...") {
 	POSITIVE (U"Sampling frequency (Hz)", U"44100")
 	POSITIVE (U"Adaptation factor", U"1.0")
 	POSITIVE (U"Maximum period (s)", U"0.05")
@@ -4693,7 +4729,7 @@ FORM (PointProcess_to_Sound_phonation, U"PointProcess: To Sound (phonation)", U"
 	REAL (U"Collision phase", U"0.03")
 	POSITIVE (U"Power 1", U"3.0")
 	POSITIVE (U"Power 2", U"4.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (PointProcess);
@@ -4702,14 +4738,14 @@ DO
 			GET_REAL (U"Open phase"), GET_REAL (U"Collision phase"), GET_REAL (U"Power 1"), GET_REAL (U"Power 2"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (PointProcess_to_Sound_pulseTrain, U"PointProcess: To Sound (pulse train)", U"PointProcess: To Sound (pulse train)...")
+FORM (PointProcess_to_Sound_pulseTrain, U"PointProcess: To Sound (pulse train)", U"PointProcess: To Sound (pulse train)...") {
 	POSITIVE (U"Sampling frequency (Hz)", U"44100")
 	POSITIVE (U"Adaptation factor", U"1.0")
 	POSITIVE (U"Adaptation time (s)", U"0.05")
 	NATURAL (U"Interpolation depth (samples)", U"2000")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (PointProcess);
@@ -4718,60 +4754,60 @@ DO
 			GET_INTEGER (U"Interpolation depth"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (PointProcess_to_Sound_hum)
+DIRECT2 (PointProcess_to_Sound_hum) {
 	LOOP {
 		iam (PointProcess);
 		autoSound thee = PointProcess_to_Sound_hum (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (PointProcess_union)
+DIRECT2 (PointProcess_union) {
 	PointProcess point1 = NULL, point2 = NULL;
 	LOOP (point1 ? point2 : point1) = (PointProcess) OBJECT;
 	autoPointProcess thee = PointProcesses_union (point1, point2);
 	praat_new (thee.transfer(), U"union");
-END
+END2 }
 
-FORM (PointProcess_upto_IntensityTier, U"PointProcess: Up to IntensityTier", U"PointProcess: Up to IntensityTier...")
+FORM (PointProcess_upto_IntensityTier, U"PointProcess: Up to IntensityTier", U"PointProcess: Up to IntensityTier...") {
 	POSITIVE (U"Intensity (dB)", U"70.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (PointProcess);
 		autoIntensityTier thee = PointProcess_upto_IntensityTier (me, GET_REAL (U"Intensity"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (PointProcess_upto_PitchTier, U"PointProcess: Up to PitchTier", U"PointProcess: Up to PitchTier...")
+FORM (PointProcess_upto_PitchTier, U"PointProcess: Up to PitchTier", U"PointProcess: Up to PitchTier...") {
 	POSITIVE (U"Frequency (Hz)", U"190.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (PointProcess);
 		autoPitchTier thee = PointProcess_upto_PitchTier (me, GET_REAL (U"Frequency"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (PointProcess_upto_TextTier, U"PointProcess: Up to TextTier", U"PointProcess: Up to TextTier...")
+FORM (PointProcess_upto_TextTier, U"PointProcess: Up to TextTier", U"PointProcess: Up to TextTier...") {
 	SENTENCE (U"Text", U"")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (PointProcess);
 		autoTextTier thee = PointProcess_upto_TextTier (me, GET_STRING (U"Text"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (PointProcess_voice, U"PointProcess: Fill unvoiced parts", 0)
+FORM (PointProcess_voice, U"PointProcess: Fill unvoiced parts", 0) {
 	POSITIVE (U"Period (s)", U"0.01")
 	POSITIVE (U"Maximum voiced period (s)", U"0.02000000001")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (PointProcess);
@@ -4783,12 +4819,12 @@ DO
 			throw;
 		}
 	}
-END
+END2 }
 
-DIRECT (info_PointProcess_Sound_edit)
+DIRECT2 (info_PointProcess_Sound_edit) {
 	Melder_information (U"To include a copy of a Sound in your PointProcess editor:\n"
 		"   select a PointProcess and a Sound, and click \"View & Edit\".");
-END
+END2 }
 
 /***** POINTPROCESS & SOUND *****/
 
@@ -4798,18 +4834,18 @@ END
 	if (! praat_new1 (Sound_PointProcess_to_Manipulation (sound, point), point -> name)) return 0;
 END*/
 
-DIRECT (Point_Sound_transplantDomain)
+DIRECT2 (Point_Sound_transplantDomain) {
 	PointProcess point = FIRST (PointProcess);
 	Sound sound = FIRST (Sound);
 	point -> xmin = sound -> xmin;
 	point -> xmax = sound -> xmax;
 	praat_dataChanged (point);
-END
+END2 }
 
-FORM (Point_Sound_getShimmer_local, U"PointProcess & Sound: Get shimmer (local)", U"PointProcess & Sound: Get shimmer (local)...")
+FORM (Point_Sound_getShimmer_local, U"PointProcess & Sound: Get shimmer (local)", U"PointProcess & Sound: Get shimmer (local)...") {
 	dia_PointProcess_getRangeProperty (dia);
 	POSITIVE (U"Maximum amplitude factor", U"1.6")
-	OK
+	OK2
 DO
 	PointProcess point = FIRST (PointProcess);
 	Sound sound = FIRST (Sound);
@@ -4818,12 +4854,12 @@ DO
 		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"),
 		GET_REAL (U"Maximum period factor"), GET_REAL (U"Maximum amplitude factor"));
 	Melder_informationReal (shimmer, NULL);
-END
+END2 }
 
-FORM (Point_Sound_getShimmer_local_dB, U"PointProcess & Sound: Get shimmer (local, dB)", U"PointProcess & Sound: Get shimmer (local, dB)...")
+FORM (Point_Sound_getShimmer_local_dB, U"PointProcess & Sound: Get shimmer (local, dB)", U"PointProcess & Sound: Get shimmer (local, dB)...") {
 	dia_PointProcess_getRangeProperty (dia);
 	POSITIVE (U"Maximum amplitude factor", U"1.6")
-	OK
+	OK2
 DO
 	PointProcess point = FIRST (PointProcess);
 	Sound sound = FIRST (Sound);
@@ -4832,12 +4868,12 @@ DO
 		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"),
 		GET_REAL (U"Maximum period factor"), GET_REAL (U"Maximum amplitude factor"));
 	Melder_informationReal (shimmer, NULL);
-END
+END2 }
 
-FORM (Point_Sound_getShimmer_apq3, U"PointProcess & Sound: Get shimmer (apq3)", U"PointProcess & Sound: Get shimmer (apq3)...")
+FORM (Point_Sound_getShimmer_apq3, U"PointProcess & Sound: Get shimmer (apq3)", U"PointProcess & Sound: Get shimmer (apq3)...") {
 	dia_PointProcess_getRangeProperty (dia);
 	POSITIVE (U"Maximum amplitude factor", U"1.6")
-	OK
+	OK2
 DO
 	PointProcess point = FIRST (PointProcess);
 	Sound sound = FIRST (Sound);
@@ -4846,12 +4882,12 @@ DO
 		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"),
 		GET_REAL (U"Maximum period factor"), GET_REAL (U"Maximum amplitude factor"));
 	Melder_informationReal (shimmer, NULL);
-END
+END2 }
 
-FORM (Point_Sound_getShimmer_apq5, U"PointProcess & Sound: Get shimmer (apq)", U"PointProcess & Sound: Get shimmer (apq5)...")
+FORM (Point_Sound_getShimmer_apq5, U"PointProcess & Sound: Get shimmer (apq)", U"PointProcess & Sound: Get shimmer (apq5)...") {
 	dia_PointProcess_getRangeProperty (dia);
 	POSITIVE (U"Maximum amplitude factor", U"1.6")
-	OK
+	OK2
 DO
 	PointProcess point = FIRST (PointProcess);
 	Sound sound = FIRST (Sound);
@@ -4860,12 +4896,12 @@ DO
 		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"),
 		GET_REAL (U"Maximum period factor"), GET_REAL (U"Maximum amplitude factor"));
 	Melder_informationReal (shimmer, NULL);
-END
+END2 }
 
-FORM (Point_Sound_getShimmer_apq11, U"PointProcess & Sound: Get shimmer (apq11)", U"PointProcess & Sound: Get shimmer (apq11)...")
+FORM (Point_Sound_getShimmer_apq11, U"PointProcess & Sound: Get shimmer (apq11)", U"PointProcess & Sound: Get shimmer (apq11)...") {
 	dia_PointProcess_getRangeProperty (dia);
 	POSITIVE (U"Maximum amplitude factor", U"1.6")
-	OK
+	OK2
 DO
 	PointProcess point = FIRST (PointProcess);
 	Sound sound = FIRST (Sound);
@@ -4874,12 +4910,12 @@ DO
 		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"),
 		GET_REAL (U"Maximum period factor"), GET_REAL (U"Maximum amplitude factor"));
 	Melder_informationReal (shimmer, NULL);
-END
+END2 }
 
-FORM (Point_Sound_getShimmer_dda, U"PointProcess & Sound: Get shimmer (dda)", U"PointProcess & Sound: Get shimmer (dda)...")
+FORM (Point_Sound_getShimmer_dda, U"PointProcess & Sound: Get shimmer (dda)", U"PointProcess & Sound: Get shimmer (dda)...") {
 	dia_PointProcess_getRangeProperty (dia);
 	POSITIVE (U"Maximum amplitude factor", U"1.6")
-	OK
+	OK2
 DO
 	PointProcess point = FIRST (PointProcess);
 	Sound sound = FIRST (Sound);
@@ -4888,11 +4924,11 @@ DO
 		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"),
 		GET_REAL (U"Maximum period factor"), GET_REAL (U"Maximum amplitude factor"));
 	Melder_informationReal (shimmer, NULL);
-END
+END2 }
 
-FORM (PointProcess_Sound_to_AmplitudeTier_period, U"PointProcess & Sound: To AmplitudeTier (period)", 0)
+FORM (PointProcess_Sound_to_AmplitudeTier_period, U"PointProcess & Sound: To AmplitudeTier (period)", 0) {
 	dia_PointProcess_getRangeProperty (dia);
-	OK
+	OK2
 DO
 	PointProcess point = FIRST (PointProcess);
 	Sound sound = FIRST (Sound);
@@ -4900,22 +4936,22 @@ DO
 		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
 		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor"));
 	praat_new (thee.transfer(), sound -> name, U"_", point -> name);
-END
+END2 }
 
-DIRECT (PointProcess_Sound_to_AmplitudeTier_point)
+DIRECT2 (PointProcess_Sound_to_AmplitudeTier_point) {
 	PointProcess point = FIRST (PointProcess);
 	Sound sound = FIRST (Sound);
 	autoAmplitudeTier thee = PointProcess_Sound_to_AmplitudeTier_point (point, sound);
 	praat_new (thee.transfer(), sound -> name, U"_", point -> name);
-END
+END2 }
 
-FORM (PointProcess_Sound_to_Ltas, U"PointProcess & Sound: To Ltas", 0)
+FORM (PointProcess_Sound_to_Ltas, U"PointProcess & Sound: To Ltas", 0) {
 	POSITIVE (U"Maximum frequency (Hz)", U"5000")
 	POSITIVE (U"Band width (Hz)", U"100")
 	REAL (U"Shortest period (s)", U"0.0001")
 	REAL (U"Longest period (s)", U"0.02")
 	POSITIVE (U"Maximum period factor", U"1.3")
-	OK
+	OK2
 DO
 	PointProcess point = FIRST (PointProcess);
 	Sound sound = FIRST (Sound);
@@ -4923,14 +4959,14 @@ DO
 		GET_REAL (U"Maximum frequency"), GET_REAL (U"Band width"),
 		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor"));
 	praat_new (thee.transfer(), sound -> name);
-END
+END2 }
 
-FORM (PointProcess_Sound_to_Ltas_harmonics, U"PointProcess & Sound: To Ltas (harmonics", 0)
+FORM (PointProcess_Sound_to_Ltas_harmonics, U"PointProcess & Sound: To Ltas (harmonics", 0) {
 	NATURAL (U"Maximum harmonic", U"20")
 	REAL (U"Shortest period (s)", U"0.0001")
 	REAL (U"Longest period (s)", U"0.02")
 	POSITIVE (U"Maximum period factor", U"1.3")
-	OK
+	OK2
 DO
 	PointProcess point = FIRST (PointProcess);
 	Sound sound = FIRST (Sound);
@@ -4938,42 +4974,42 @@ DO
 		GET_INTEGER (U"Maximum harmonic"),
 		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor"));
 	praat_new (thee.transfer(), sound -> name);
-END
+END2 }
 
-FORM (Sound_PointProcess_to_SoundEnsemble_correlate, U"Sound & PointProcess: To SoundEnsemble (correlate)", 0)
+FORM (Sound_PointProcess_to_SoundEnsemble_correlate, U"Sound & PointProcess: To SoundEnsemble (correlate)", 0) {
 	REAL (U"From time (s)", U"-0.1")
 	REAL (U"To time (s)", U"1.0")
-	OK
+	OK2
 DO
 	PointProcess point = FIRST (PointProcess);
 	Sound sound = FIRST (Sound);
 	autoSound thee = Sound_PointProcess_to_SoundEnsemble_correlate (sound, point, GET_REAL (U"From time"), GET_REAL (U"To time"));
 	praat_new (thee.transfer(), point -> name);
-END
+END2 }
 
 /***** POLYGON *****/
 
-FORM (Polygon_draw, U"Polygon: Draw", 0)
+FORM (Polygon_draw, U"Polygon: Draw", 0) {
 	REAL (U"Xmin", U"0.0")
 	REAL (U"Xmax", U"0.0")
 	REAL (U"Ymin", U"0.0")
 	REAL (U"Ymax", U"0.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Polygon);
 		autoPraatPicture picture;
 		Polygon_draw (me, GRAPHICS, GET_REAL (U"Xmin"), GET_REAL (U"Xmax"), GET_REAL (U"Ymin"), GET_REAL (U"Ymax"));
 	}
-END
+END2 }
 
-FORM (Polygon_drawCircles, U"Polygon: Draw circles", 0)
+FORM (Polygon_drawCircles, U"Polygon: Draw circles", 0) {
 	REAL (U"Xmin", U"0.0")
 	REAL (U"Xmax", U"0.0 (= all)")
 	REAL (U"Ymin", U"0.0")
 	REAL (U"Ymax", U"0.0 (= all)")
 	POSITIVE (U"Diameter (mm)", U"3")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Polygon);
@@ -4982,30 +5018,30 @@ DO
 			GET_REAL (U"Xmin"), GET_REAL (U"Xmax"), GET_REAL (U"Ymin"), GET_REAL (U"Ymax"),
 			GET_REAL (U"Diameter"));
 	}
-END
+END2 }
 
-FORM (Polygon_drawClosed, U"Polygon: Draw", 0)
+FORM (Polygon_drawClosed, U"Polygon: Draw", 0) {
 	REAL (U"Xmin", U"0.0")
 	REAL (U"Xmax", U"0.0")
 	REAL (U"Ymin", U"0.0")
 	REAL (U"Ymax", U"0.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Polygon);
 		autoPraatPicture picture;
 		Polygon_drawClosed (me, GRAPHICS, GET_REAL (U"Xmin"), GET_REAL (U"Xmax"), GET_REAL (U"Ymin"), GET_REAL (U"Ymax"));
 	}
-END
+END2 }
 
-FORM (Polygons_drawConnection, U"Polygons: Draw connection", 0)
+FORM (Polygons_drawConnection, U"Polygons: Draw connection", 0) {
 	REAL (U"Xmin", U"0.0")
 	REAL (U"Xmax", U"0.0 (= all)")
 	REAL (U"Ymin", U"0.0")
 	REAL (U"Ymax", U"0.0 (= all)")
 	BOOLEAN (U"Arrow", 0)
 	POSITIVE (U"Relative length", U"0.9")
-	OK
+	OK2
 DO
 	Polygon polygon1 = NULL, polygon2 = NULL;
 	LOOP (polygon1 ? polygon2 : polygon1) = (Polygon) OBJECT;
@@ -5013,32 +5049,34 @@ DO
 	Polygons_drawConnection (polygon1, polygon2, GRAPHICS,
 		GET_REAL (U"Xmin"), GET_REAL (U"Xmax"), GET_REAL (U"Ymin"), GET_REAL (U"Ymax"),
 		GET_INTEGER (U"Arrow"), GET_REAL (U"Relative length"));
-END
+END2 }
 
-DIRECT (Polygon_help) Melder_help (U"Polygon"); END
+DIRECT2 (Polygon_help) {
+	Melder_help (U"Polygon");
+END2 }
 
-FORM (Polygon_paint, U"Polygon: Paint", 0)
+FORM (Polygon_paint, U"Polygon: Paint", 0) {
 	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.5")
 	REAL (U"Xmin", U"0.0")
 	REAL (U"Xmax", U"0.0 (= all)")
 	REAL (U"Ymin", U"0.0")
 	REAL (U"Ymax", U"0.0 (= all)")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Polygon);
 		autoPraatPicture picture;
 		Polygon_paint (me, GRAPHICS, GET_COLOUR (U"Colour"), GET_REAL (U"Xmin"), GET_REAL (U"Xmax"), GET_REAL (U"Ymin"), GET_REAL (U"Ymax"));
 	}
-END
+END2 }
 
-FORM (Polygon_paintCircles, U"Polygon: Paint circles", 0)
+FORM (Polygon_paintCircles, U"Polygon: Paint circles", 0) {
 	REAL (U"Xmin", U"0.0")
 	REAL (U"Xmax", U"0.0 (= all)")
 	REAL (U"Ymin", U"0.0")
 	REAL (U"Ymax", U"0.0 (= all)")
 	POSITIVE (U"Diameter (mm)", U"3")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Polygon);
@@ -5046,38 +5084,38 @@ DO
 		Polygon_paintCircles (me, GRAPHICS,
 			GET_REAL (U"Xmin"), GET_REAL (U"Xmax"), GET_REAL (U"Ymin"), GET_REAL (U"Ymax"), GET_REAL (U"Diameter"));
 	}
-END
+END2 }
 
-DIRECT (Polygon_randomize)
+DIRECT2 (Polygon_randomize) {
 	LOOP {
 		iam (Polygon);
 		Polygon_randomize (me);
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-FORM (Polygon_salesperson, U"Polygon: Find shortest path", 0)
+FORM (Polygon_salesperson, U"Polygon: Find shortest path", 0) {
 	NATURAL (U"Number of iterations", U"1")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Polygon);
 		Polygon_salesperson (me, GET_INTEGER (U"Number of iterations"));
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-DIRECT (Polygon_to_Matrix)
+DIRECT2 (Polygon_to_Matrix) {
 	LOOP {
 		iam (Polygon);
 		autoMatrix thee = Polygon_to_Matrix (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
 /***** SOUND & PITCH & POINTPROCESS *****/
 
-FORM (Sound_Pitch_PointProcess_voiceReport, U"Voice report", U"Voice")
+FORM (Sound_Pitch_PointProcess_voiceReport, U"Voice report", U"Voice") {
 	praat_dia_timeRange (dia);
 	POSITIVE (U"left Pitch range (Hz)", U"75.0")
 	POSITIVE (U"right Pitch range (Hz)", U"600.0")
@@ -5085,7 +5123,7 @@ FORM (Sound_Pitch_PointProcess_voiceReport, U"Voice report", U"Voice")
 	POSITIVE (U"Maximum amplitude factor", U"1.6")
 	REAL (U"Silence threshold", U"0.03")
 	REAL (U"Voicing threshold", U"0.45")
-	OK
+	OK2
 DO
 	MelderInfo_open ();
 	Sound_Pitch_PointProcess_voiceReport (FIRST (Sound), FIRST (Pitch), FIRST (PointProcess),
@@ -5094,22 +5132,22 @@ DO
 		GET_REAL (U"Maximum period factor"), GET_REAL (U"Maximum amplitude factor"),
 		GET_REAL (U"Silence threshold"), GET_REAL (U"Voicing threshold"));
 	MelderInfo_close ();
-END
+END2 }
 
 /***** SOUND & POINTPROCESS & PITCHTIER & DURATIONTIER *****/
 
-FORM (Sound_Point_Pitch_Duration_to_Sound, U"To Sound", 0)
+FORM (Sound_Point_Pitch_Duration_to_Sound, U"To Sound", 0) {
 	POSITIVE (U"Longest period (s)", U"0.02")
-	OK
+	OK2
 DO
 	autoSound thee = Sound_Point_Pitch_Duration_to_Sound (FIRST (Sound), FIRST (PointProcess),
 		FIRST (PitchTier), FIRST (DurationTier), GET_REAL (U"Longest period"));
 	praat_new (thee.transfer(), U"manip");
-END
+END2 }
 
 /***** SPECTROGRAM *****/
 
-FORM (Spectrogram_paint, U"Spectrogram: Paint", U"Spectrogram: Paint...")
+FORM (Spectrogram_paint, U"Spectrogram: Paint", U"Spectrogram: Paint...") {
 	praat_dia_timeRange (dia);
 	REAL (U"left Frequency range (Hz)", U"0.0")
 	REAL (U"right Frequency range (Hz)", U"0.0 (= all)")
@@ -5119,7 +5157,7 @@ FORM (Spectrogram_paint, U"Spectrogram: Paint", U"Spectrogram: Paint...")
 	REAL (U"Pre-emphasis (dB/oct)", U"6.0")
 	REAL (U"Dynamic compression (0-1)", U"0.0")
 	BOOLEAN (U"Garnish", 1)
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Spectrogram);
@@ -5130,16 +5168,16 @@ DO
 			GET_REAL (U"Dynamic range"), GET_REAL (U"Pre-emphasis"),
 			GET_REAL (U"Dynamic compression"), GET_INTEGER (U"Garnish"));
 	}
-END
+END2 }
 
-FORM (Spectrogram_formula, U"Spectrogram: Formula", U"Spectrogram: Formula...")
+FORM (Spectrogram_formula, U"Spectrogram: Formula", U"Spectrogram: Formula...") {
 	LABEL (U"label", U"Do for all times and frequencies:")
 	LABEL (U"label", U"   `x' is the time in seconds")
 	LABEL (U"label", U"   `y' is the frequency in hertz")
 	LABEL (U"label", U"   `self' is the current value in Pa\u00B2/Hz")
 	LABEL (U"label", U"   Replace all values with:")
 	TEXTFIELD (U"formula", U"self * exp (- x / 0.1)")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Spectrogram);
@@ -5151,12 +5189,12 @@ DO
 			throw;
 		}
 	}
-END
+END2 }
 
-FORM (Spectrogram_getPowerAt, U"Spectrogram: Get power at (time, frequency)", 0)
+FORM (Spectrogram_getPowerAt, U"Spectrogram: Get power at (time, frequency)", 0) {
 	REAL (U"Time (s)", U"0.5")
 	REAL (U"Frequency (Hz)", U"1000")
-	OK
+	OK2
 DO
 	Spectrogram me = FIRST_ANY (Spectrogram);
 	double time = GET_REAL (U"Time"), frequency = GET_REAL (U"Frequency");
@@ -5164,77 +5202,79 @@ DO
 	MelderInfo_write (Matrix_getValueAtXY (me, time, frequency));
 	MelderInfo_write (U" Pa2/Hz (at time = ", time, U" seconds and frequency = ", frequency, U" Hz)");
 	MelderInfo_close ();
-END
+END2 }
 
-DIRECT (Spectrogram_help) Melder_help (U"Spectrogram"); END
+DIRECT2 (Spectrogram_help) {
+	Melder_help (U"Spectrogram");
+END2 }
 
-DIRECT (Spectrogram_movie)
+DIRECT2 (Spectrogram_movie) {
 	Graphics g = Movie_create (U"Spectrogram movie", 300, 300);
 	LOOP {
 		iam (Spectrogram);
 		Matrix_movie (me, g);
 	}
-END
+END2 }
 
-DIRECT (Spectrogram_to_Matrix)
+DIRECT2 (Spectrogram_to_Matrix) {
 	LOOP {
 		iam (Spectrogram);
 		autoMatrix thee = Spectrogram_to_Matrix (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (Spectrogram_to_Sound, U"Spectrogram: To Sound", 0)
+FORM (Spectrogram_to_Sound, U"Spectrogram: To Sound", 0) {
 	REAL (U"Sampling frequency (Hz)", U"44100")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Spectrogram);
 		autoSound thee = Spectrogram_to_Sound (me, GET_REAL (U"Sampling frequency"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (Spectrogram_to_Spectrum, U"Spectrogram: To Spectrum (slice)", 0)
+FORM (Spectrogram_to_Spectrum, U"Spectrogram: To Spectrum (slice)", 0) {
 	REAL (U"Time (seconds)", U"0.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Spectrogram);
 		autoSpectrum thee = Spectrogram_to_Spectrum (me, GET_REAL (U"Time"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Spectrogram_view)
+DIRECT2 (Spectrogram_view) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a Spectrogram from batch.");
 	LOOP {
 		iam (Spectrogram);
 		autoSpectrogramEditor editor = SpectrogramEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
-END
+END2 }
 
 /***** SPECTRUM *****/
 
-FORM (Spectrum_cepstralSmoothing, U"Spectrum: Cepstral smoothing", 0)
+FORM (Spectrum_cepstralSmoothing, U"Spectrum: Cepstral smoothing", 0) {
 	POSITIVE (U"Bandwidth (Hz)", U"500.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Spectrum);
 		autoSpectrum thee = Spectrum_cepstralSmoothing (me, GET_REAL (U"Bandwidth"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (Spectrum_draw, U"Spectrum: Draw", 0)
+FORM (Spectrum_draw, U"Spectrum: Draw", 0) {
 	REAL (U"left Frequency range (Hz)", U"0.0")
 	REAL (U"right Frequency range (Hz)", U"0.0 (= all)")
 	REAL (U"Minimum power (dB/Hz)", U"0 (= auto)")
 	REAL (U"Maximum power (dB/Hz)", U"0 (= auto)")
 	BOOLEAN (U"Garnish", 1)
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Spectrum);
@@ -5243,15 +5283,15 @@ DO
 			GET_REAL (U"right Frequency range"), GET_REAL (U"Minimum power"), GET_REAL (U"Maximum power"),
 			GET_INTEGER (U"Garnish"));
 	}
-END
+END2 }
 
-FORM (Spectrum_drawLogFreq, U"Spectrum: Draw (log freq)", 0)
+FORM (Spectrum_drawLogFreq, U"Spectrum: Draw (log freq)", 0) {
 	POSITIVE (U"left Frequency range (Hz)", U"10.0")
 	POSITIVE (U"right Frequency range (Hz)", U"10000.0")
 	REAL (U"Minimum power (dB/Hz)", U"0 (= auto)")
 	REAL (U"Maximum power (dB/Hz)", U"0 (= auto)")
 	BOOLEAN (U"Garnish", 1)
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Spectrum);
@@ -5260,18 +5300,18 @@ DO
 			GET_REAL (U"right Frequency range"), GET_REAL (U"Minimum power"), GET_REAL (U"Maximum power"),
 			GET_INTEGER (U"Garnish"));
 	}
-END
+END2 }
 
-DIRECT (Spectrum_edit)
+DIRECT2 (Spectrum_edit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a Spectrum from batch.");
 	LOOP {
 		iam (Spectrum);
 		autoSpectrumEditor editor = SpectrumEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
-END
+END2 }
 
-FORM (Spectrum_formula, U"Spectrum: Formula", U"Spectrum: Formula...")
+FORM (Spectrum_formula, U"Spectrum: Formula", U"Spectrum: Formula...") {
 	LABEL (U"label", U"`x' is the frequency in hertz, `col' is the bin number;   "
 		"`y' = `row' is 1 (real part) or 2 (imaginary part)")
 	LABEL (U"label", U"y := 1;   row := 1;   "
@@ -5279,7 +5319,7 @@ FORM (Spectrum_formula, U"Spectrum: Formula", U"Spectrum: Formula...")
 	LABEL (U"label", U"y := 2;   row := 2;   "
 		"x := 0;   for col := 1 to ncol do { self [2, col] := `formula' ; x := x + dx }")
 	TEXTFIELD (U"formula", U"0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Spectrum);
@@ -5291,26 +5331,26 @@ DO
 			throw;
 		}
 	}
-END
+END2 }
 
-FORM (Spectrum_getBandDensity, U"Spectrum: Get band density", 0)
+FORM (Spectrum_getBandDensity, U"Spectrum: Get band density", 0) {
 	REAL (U"Band floor (Hz)", U"200.0")
 	REAL (U"Band ceiling (Hz)", U"1000")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Spectrum);
 		double density = Spectrum_getBandDensity (me, GET_REAL (U"Band floor"), GET_REAL (U"Band ceiling"));
 		Melder_informationReal (density, U"Pa2 / Hz2");
 	}
-END
+END2 }
 
-FORM (Spectrum_getBandDensityDifference, U"Spectrum: Get band density difference", 0)
+FORM (Spectrum_getBandDensityDifference, U"Spectrum: Get band density difference", 0) {
 	REAL (U"Low band floor (Hz)", U"0")
 	REAL (U"Low band ceiling (Hz)", U"500")
 	REAL (U"High band floor (Hz)", U"500")
 	REAL (U"High band ceiling (Hz)", U"4000")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Spectrum);
@@ -5318,26 +5358,26 @@ DO
 			GET_REAL (U"Low band floor"), GET_REAL (U"Low band ceiling"), GET_REAL (U"High band floor"), GET_REAL (U"High band ceiling"));
 		Melder_informationReal (difference, U"dB");
 	}
-END
+END2 }
 
-FORM (Spectrum_getBandEnergy, U"Spectrum: Get band energy", 0)
+FORM (Spectrum_getBandEnergy, U"Spectrum: Get band energy", 0) {
 	REAL (U"Band floor (Hz)", U"200.0")
 	REAL (U"Band ceiling (Hz)", U"1000")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Spectrum);
 		double energy = Spectrum_getBandEnergy (me, GET_REAL (U"Band floor"), GET_REAL (U"Band ceiling"));
 		Melder_informationReal (energy, U"Pa2 sec");
 	}
-END
+END2 }
 
-FORM (Spectrum_getBandEnergyDifference, U"Spectrum: Get band energy difference", 0)
+FORM (Spectrum_getBandEnergyDifference, U"Spectrum: Get band energy difference", 0) {
 	REAL (U"Low band floor (Hz)", U"0")
 	REAL (U"Low band ceiling (Hz)", U"500")
 	REAL (U"High band floor (Hz)", U"500")
 	REAL (U"High band ceiling (Hz)", U"4000")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Spectrum);
@@ -5345,70 +5385,70 @@ DO
 			GET_REAL (U"Low band floor"), GET_REAL (U"Low band ceiling"), GET_REAL (U"High band floor"), GET_REAL (U"High band ceiling"));
 		Melder_informationReal (difference, U"dB");
 	}
-END	
+END2 }
 
-FORM (Spectrum_getBinFromFrequency, U"Spectrum: Get bin from frequency", 0)
+FORM (Spectrum_getBinFromFrequency, U"Spectrum: Get bin from frequency", 0) {
 	REAL (U"Frequency (Hz)", U"2000")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Spectrum);
 		double bin = Sampled_xToIndex (me, GET_REAL (U"Frequency"));
 		Melder_informationReal (bin, NULL);
 	}
-END
+END2 }
 
-DIRECT (Spectrum_getBinWidth)
+DIRECT2 (Spectrum_getBinWidth) {
 	LOOP {
 		iam (Spectrum);
 		Melder_informationReal (my dx, U"hertz");
 	}
-END
+END2 }
 
-FORM (Spectrum_getCentralMoment, U"Spectrum: Get central moment", U"Spectrum: Get central moment...")
+FORM (Spectrum_getCentralMoment, U"Spectrum: Get central moment", U"Spectrum: Get central moment...") {
 	POSITIVE (U"Moment", U"3.0")
 	POSITIVE (U"Power", U"2.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Spectrum);
 		double moment = Spectrum_getCentralMoment (me, GET_REAL (U"Moment"), GET_REAL (U"Power"));
 		Melder_informationReal (moment, U"hertz to the power 'moment'");
 	}
-END
+END2 }
 
-FORM (Spectrum_getCentreOfGravity, U"Spectrum: Get centre of gravity", U"Spectrum: Get centre of gravity...")
+FORM (Spectrum_getCentreOfGravity, U"Spectrum: Get centre of gravity", U"Spectrum: Get centre of gravity...") {
 	POSITIVE (U"Power", U"2.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Spectrum);
 		double centreOfGravity = Spectrum_getCentreOfGravity (me, GET_REAL (U"Power"));
 		Melder_informationReal (centreOfGravity, U"hertz");
 	}
-END
+END2 }
 
-FORM (Spectrum_getFrequencyFromBin, U"Spectrum: Get frequency from bin", 0)
+FORM (Spectrum_getFrequencyFromBin, U"Spectrum: Get frequency from bin", 0) {
 	NATURAL (U"Band number", U"1")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Spectrum);
 		double frequency = Sampled_indexToX (me, GET_INTEGER (U"Band number"));
 		Melder_informationReal (frequency, U"hertz");
 	}
-END
+END2 }
 
-DIRECT (Spectrum_getHighestFrequency)
+DIRECT2 (Spectrum_getHighestFrequency) {
 	LOOP {
 		iam (Spectrum);
 		Melder_informationReal (my xmax, U"hertz");
 	}
-END
+END2 }
 
-FORM (Spectrum_getImaginaryValueInBin, U"Spectrum: Get imaginary value in bin", 0)
+FORM (Spectrum_getImaginaryValueInBin, U"Spectrum: Get imaginary value in bin", 0) {
 	NATURAL (U"Bin number", U"100")
-	OK
+	OK2
 DO
 	long binNumber = GET_INTEGER (U"Bin number");
 	LOOP {
@@ -5416,36 +5456,36 @@ DO
 		if (binNumber > my nx) Melder_throw (U"Bin number must not exceed number of bins.");
 		Melder_informationReal (my z [2] [binNumber], NULL);
 	}
-END
+END2 }
 
-FORM (Spectrum_getKurtosis, U"Spectrum: Get kurtosis", U"Spectrum: Get kurtosis...")
+FORM (Spectrum_getKurtosis, U"Spectrum: Get kurtosis", U"Spectrum: Get kurtosis...") {
 	POSITIVE (U"Power", U"2.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Spectrum);
 		double kurtosis = Spectrum_getKurtosis (me, GET_REAL (U"Power"));
 		Melder_informationReal (kurtosis, NULL);
 	}
-END
+END2 }
 
-DIRECT (Spectrum_getLowestFrequency)
+DIRECT2 (Spectrum_getLowestFrequency) {
 	LOOP {
 		iam (Spectrum);
 		Melder_informationReal (my xmin, U"hertz");
 	}
-END
+END2 }
 
-DIRECT (Spectrum_getNumberOfBins)
+DIRECT2 (Spectrum_getNumberOfBins) {
 	LOOP {
 		iam (Spectrum);
 		Melder_information (my nx, U" bins");
 	}
-END
+END2 }
 
-FORM (Spectrum_getRealValueInBin, U"Spectrum: Get real value in bin", 0)
+FORM (Spectrum_getRealValueInBin, U"Spectrum: Get real value in bin", 0) {
 	NATURAL (U"Bin number", U"100")
-	OK
+	OK2
 DO
 	long binNumber = GET_INTEGER (U"Bin number");
 	LOOP {
@@ -5453,40 +5493,42 @@ DO
 		if (binNumber > my nx) Melder_throw (U"Bin number must not exceed number of bins.");
 		Melder_informationReal (my z [1] [binNumber], NULL);
 	}
-END
+END2 }
 
-FORM (Spectrum_getSkewness, U"Spectrum: Get skewness", U"Spectrum: Get skewness...")
+FORM (Spectrum_getSkewness, U"Spectrum: Get skewness", U"Spectrum: Get skewness...") {
 	POSITIVE (U"Power", U"2.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Spectrum);
 		double skewness = Spectrum_getSkewness (me, GET_REAL (U"Power"));
 		Melder_informationReal (skewness, NULL);
 	}
-END
+END2 }
 
-FORM (Spectrum_getStandardDeviation, U"Spectrum: Get standard deviation", U"Spectrum: Get standard deviation...")
+FORM (Spectrum_getStandardDeviation, U"Spectrum: Get standard deviation", U"Spectrum: Get standard deviation...") {
 	POSITIVE (U"Power", U"2.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Spectrum);
 		double stdev = Spectrum_getStandardDeviation (me, GET_REAL (U"Power"));
 		Melder_informationReal (stdev, U"hertz");
 	}
-END
+END2 }
 
-DIRECT (Spectrum_help) Melder_help (U"Spectrum"); END
+DIRECT2 (Spectrum_help) {
+	Melder_help (U"Spectrum");
+END2 }
 
-FORM (Spectrum_list, U"Spectrum: List", 0)
+FORM (Spectrum_list, U"Spectrum: List", 0) {
 	BOOLEAN (U"Include bin number", false)
 	BOOLEAN (U"Include frequency", true)
 	BOOLEAN (U"Include real part", false)
 	BOOLEAN (U"Include imaginary part", false)
 	BOOLEAN (U"Include energy density", false)
 	BOOLEAN (U"Include power density", true)
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Spectrum);
@@ -5494,137 +5536,137 @@ DO
 			GET_INTEGER (U"Include real part"), GET_INTEGER (U"Include imaginary part"),
 			GET_INTEGER (U"Include energy density"), GET_INTEGER (U"Include power density"));
 	}
-END
+END2 }
 
-FORM (Spectrum_lpcSmoothing, U"Spectrum: LPC smoothing", 0)
+FORM (Spectrum_lpcSmoothing, U"Spectrum: LPC smoothing", 0) {
 	NATURAL (U"Number of peaks", U"5")
 	POSITIVE (U"Pre-emphasis from (Hz)", U"50.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Spectrum);
 		autoSpectrum thee = Spectrum_lpcSmoothing (me, GET_INTEGER (U"Number of peaks"), GET_REAL (U"Pre-emphasis from"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (Spectrum_passHannBand, U"Spectrum: Filter (pass Hann band)", U"Spectrum: Filter (pass Hann band)...")
+FORM (Spectrum_passHannBand, U"Spectrum: Filter (pass Hann band)", U"Spectrum: Filter (pass Hann band)...") {
 	REAL (U"From frequency (Hz)", U"500")
 	REAL (U"To frequency (Hz)", U"1000")
 	POSITIVE (U"Smoothing (Hz)", U"100")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Spectrum);
 		Spectrum_passHannBand (me, GET_REAL (U"From frequency"), GET_REAL (U"To frequency"), GET_REAL (U"Smoothing"));
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-FORM (Spectrum_stopHannBand, U"Spectrum: Filter (stop Hann band)", U"Spectrum: Filter (stop Hann band)...")
+FORM (Spectrum_stopHannBand, U"Spectrum: Filter (stop Hann band)", U"Spectrum: Filter (stop Hann band)...") {
 	REAL (U"From frequency (Hz)", U"500")
 	REAL (U"To frequency (Hz)", U"1000")
 	POSITIVE (U"Smoothing (Hz)", U"100")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Spectrum);
 		Spectrum_stopHannBand (me, GET_REAL (U"From frequency"), GET_REAL (U"To frequency"), GET_REAL (U"Smoothing"));
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-FORM (Spectrum_to_Excitation, U"Spectrum: To Excitation", 0)
+FORM (Spectrum_to_Excitation, U"Spectrum: To Excitation", 0) {
 	POSITIVE (U"Frequency resolution (Bark)", U"0.1")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Spectrum);
 		autoExcitation thee = Spectrum_to_Excitation (me, GET_REAL (U"Frequency resolution"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (Spectrum_to_Formant_peaks, U"Spectrum: To Formant (peaks)", 0)
+FORM (Spectrum_to_Formant_peaks, U"Spectrum: To Formant (peaks)", 0) {
 	LABEL (U"", U"Warning: this simply picks peaks from 0 Hz up!")
 	NATURAL (U"Maximum number of formants", U"1000")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Spectrum);
 		autoFormant thee = Spectrum_to_Formant (me, GET_INTEGER (U"Maximum number of formants"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (Spectrum_to_Ltas, U"Spectrum: To Long-term average spectrum", 0)
+FORM (Spectrum_to_Ltas, U"Spectrum: To Long-term average spectrum", 0) {
 	POSITIVE (U"Bandwidth (Hz)", U"1000")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Spectrum);
 		autoLtas thee = Spectrum_to_Ltas (me, GET_REAL (U"Bandwidth"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Spectrum_to_Ltas_1to1)
+DIRECT2 (Spectrum_to_Ltas_1to1) {
 	LOOP {
 		iam (Spectrum);
 		autoLtas thee = Spectrum_to_Ltas_1to1 (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Spectrum_to_Matrix)
+DIRECT2 (Spectrum_to_Matrix) {
 	LOOP {
 		iam (Spectrum);
 		autoMatrix thee = Spectrum_to_Matrix (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Spectrum_to_Sound)
+DIRECT2 (Spectrum_to_Sound) {
 	LOOP {
 		iam (Spectrum);
 		autoSound thee = Spectrum_to_Sound (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Spectrum_to_Spectrogram)
+DIRECT2 (Spectrum_to_Spectrogram) {
 	LOOP {
 		iam (Spectrum);
 		autoSpectrogram thee = Spectrum_to_Spectrogram (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Spectrum_to_SpectrumTier_peaks)
+DIRECT2 (Spectrum_to_SpectrumTier_peaks) {
 	LOOP {
 		iam (Spectrum);
 		autoSpectrumTier thee = Spectrum_to_SpectrumTier_peaks (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
 /***** SPECTRUMTIER *****/
 
-DIRECT (SpectrumTier_downto_Table)
+DIRECT2 (SpectrumTier_downto_Table) {
 	LOOP {
 		iam (SpectrumTier);
 		autoTable thee = SpectrumTier_downto_Table (me, true, true, true);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (old_SpectrumTier_draw, U"SpectrumTier: Draw", 0)   // 2010/10/19
+FORM (old_SpectrumTier_draw, U"SpectrumTier: Draw", 0) {   // 2010/10/19
 	REAL (U"left Frequency range (Hz)", U"0.0")
 	REAL (U"right Frequency range (Hz)", U"10000.0")
 	REAL (U"left Power range (dB)", U"20.0")
 	REAL (U"right Power range (dB)", U"80.0")
 	BOOLEAN (U"Garnish", 1)
-	OK
+	OK2
 DO
 	LOOP {
 		iam (SpectrumTier);
@@ -5634,9 +5676,9 @@ DO
 			GET_REAL (U"left Power range"), GET_REAL (U"right Power range"),
 			GET_INTEGER (U"Garnish"), U"lines and speckles");
 	}
-END
+END2 }
 
-FORM (SpectrumTier_draw, U"SpectrumTier: Draw", 0)
+FORM (SpectrumTier_draw, U"SpectrumTier: Draw", 0) {
 	REAL (U"left Frequency range (Hz)", U"0.0")
 	REAL (U"right Frequency range (Hz)", U"10000.0")
 	REAL (U"left Power range (dB)", U"20.0")
@@ -5647,7 +5689,7 @@ FORM (SpectrumTier_draw, U"SpectrumTier: Draw", 0)
 		OPTION (U"lines")
 		OPTION (U"speckles")
 		OPTION (U"lines and speckles")
-	OK
+	OK2
 DO_ALTERNATIVE (old_SpectrumTier_draw)
 	LOOP {
 		iam (SpectrumTier);
@@ -5657,38 +5699,38 @@ DO_ALTERNATIVE (old_SpectrumTier_draw)
 			GET_REAL (U"left Power range"), GET_REAL (U"right Power range"),
 			GET_INTEGER (U"Garnish"), GET_STRING (U"Drawing method"));
 	}
-END
+END2 }
 
-FORM (SpectrumTier_list, U"SpectrumTier: List", 0)
+FORM (SpectrumTier_list, U"SpectrumTier: List", 0) {
 	BOOLEAN (U"Include indexes", true)
 	BOOLEAN (U"Include frequency", true)
 	BOOLEAN (U"Include power density", true)
-	OK
+	OK2
 DO
 	LOOP {
 		iam (SpectrumTier);
 		SpectrumTier_list (me, GET_INTEGER (U"Include indexes"), GET_INTEGER (U"Include frequency"), GET_INTEGER (U"Include power density"));
 	}
-END
+END2 }
 
-FORM (SpectrumTier_removePointsBelow, U"SpectrumTier: Remove points below", 0)
+FORM (SpectrumTier_removePointsBelow, U"SpectrumTier: Remove points below", 0) {
 	REAL (U"Remove all points below (dB)", U"40.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (SpectrumTier);
 		RealTier_removePointsBelow ((RealTier) me, GET_REAL (U"Remove all points below"));
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
 /***** STRINGS *****/
 
-FORM (Strings_createAsFileList, U"Create Strings as file list", U"Create Strings as file list...")
+FORM (Strings_createAsFileList, U"Create Strings as file list", U"Create Strings as file list...") {
 	SENTENCE (U"Name", U"fileList")
 	LABEL (U"", U"File path:")
 	TEXTFIELD (U"path", U"/people/Miep/*.wav")
-	OK
+	OK2
 static int inited;
 if (! inited) {
 	structMelderDir defaultDir = { { 0 } };
@@ -5711,13 +5753,13 @@ if (! inited) {
 DO
 	autoStrings me = Strings_createAsFileList (GET_STRING (U"path"));
 	praat_new (me.transfer(), GET_STRING (U"Name"));
-END
+END2 }
 
-FORM (Strings_createAsDirectoryList, U"Create Strings as directory list", U"Create Strings as directory list...")
+FORM (Strings_createAsDirectoryList, U"Create Strings as directory list", U"Create Strings as directory list...") {
 	SENTENCE (U"Name", U"directoryList")
 	LABEL (U"", U"Path:")
 	TEXTFIELD (U"path", U"/people/Miep/*")
-	OK
+	OK2
 static int inited;
 if (! inited) {
 	structMelderDir defaultDir = { { 0 } };
@@ -5740,25 +5782,25 @@ if (! inited) {
 DO
 	autoStrings me = Strings_createAsDirectoryList (GET_STRING (U"path"));
 	praat_new (me.transfer(), GET_STRING (U"Name"));
-END
+END2 }
 
-DIRECT (Strings_edit)
+DIRECT2 (Strings_edit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a Strings from batch.");
 	LOOP {
 		iam (Strings);
 		autoStringsEditor editor = StringsEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
-END
+END2 }
 
-DIRECT (Strings_equal)
+DIRECT2 (Strings_equal) {
 	Strings s1 = NULL, s2 = NULL;
 	LOOP (s1 ? s2 : s1) = (Strings) OBJECT;
 	bool equal = Data_equal (s1, s2);
 	Melder_information ((int) equal);   // we need a 0 or 1
-END
+END2 }
 
-DIRECT (Strings_genericize)
+DIRECT2 (Strings_genericize) {
 	LOOP {
 		iam (Strings);
 		try {
@@ -5769,42 +5811,44 @@ DIRECT (Strings_genericize)
 			throw;
 		}
 	}
-END
+END2 }
 
-DIRECT (Strings_getNumberOfStrings)
+DIRECT2 (Strings_getNumberOfStrings) {
 	LOOP {
 		iam (Strings);
 		Melder_information (my numberOfStrings);
 	}
-END
+END2 }
 
-FORM (Strings_getString, U"Get string", 0)
+FORM (Strings_getString, U"Get string", 0) {
 	NATURAL (U"Position", U"1")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Strings);
 		long index = GET_INTEGER (U"Position");
 		Melder_information (index > my numberOfStrings ? U"" : my strings [index]);   // TODO
 	}
-END
+END2 }
 
-DIRECT (Strings_help) Melder_help (U"Strings"); END
+DIRECT2 (Strings_help) {
+	Melder_help (U"Strings");
+END2 }
 
-FORM (Strings_insertString, U"Strings: Insert string", 0)
+FORM (Strings_insertString, U"Strings: Insert string", 0) {
 	NATURAL (U"At position", U"1")
 	LABEL (U"", U"String:")
 	TEXTFIELD (U"string", U"")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Strings);
 		Strings_insert (me, GET_INTEGER (U"At position"), GET_STRING (U"string"));
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-DIRECT (Strings_nativize)
+DIRECT2 (Strings_nativize) {
 	LOOP {
 		iam (Strings);
 		try {
@@ -5815,40 +5859,40 @@ DIRECT (Strings_nativize)
 			throw;
 		}
 	}
-END
+END2 }
 
-DIRECT (Strings_randomize)
+DIRECT2 (Strings_randomize) {
 	LOOP {
 		iam (Strings);
 		Strings_randomize (me);
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
 FORM_READ2 (Strings_readFromRawTextFile, U"Read Strings from raw text file", 0, true) {
 	autoStrings me = Strings_readFromRawTextFile (file);
 	praat_new (me.transfer(), MelderFile_name (file));
 END2 }
 
-FORM (Strings_removeString, U"Strings: Remove string", 0)
+FORM (Strings_removeString, U"Strings: Remove string", 0) {
 	NATURAL (U"Position", U"1")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Strings);
 		Strings_remove (me, GET_INTEGER (U"Position"));
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-FORM (Strings_replaceAll, U"Strings: Replace all", 0)
+FORM (Strings_replaceAll, U"Strings: Replace all", 0) {
 	SENTENCE (U"Find", U"a")
 	SENTENCE (U"Replace with", U"b")
 	INTEGER (U"Replace limit per string", U"0 (=unlimited)")
 	RADIO (U"Find and replace strings are", 1)
 		RADIOBUTTON (U"literals")
 		RADIOBUTTON (U"regular expressions")
-	OK
+	OK2
 DO
 	long numberOfMatches, numberOfStringMatches;
 	LOOP {
@@ -5856,44 +5900,44 @@ DO
 		praat_new (Strings_change (me, GET_STRING (U"Find"), GET_STRING (U"Replace with"),
 			GET_INTEGER (U"Replace limit per string"), & numberOfMatches, & numberOfStringMatches, GET_INTEGER (U"Find and replace strings are") - 1), 0);
 	}
-END
+END2 }
 
-FORM (Strings_setString, U"Strings: Set string", 0)
+FORM (Strings_setString, U"Strings: Set string", 0) {
 	NATURAL (U"Position", U"1")
 	LABEL (U"", U"New string:")
 	TEXTFIELD (U"newString", U"")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Strings);
 		Strings_replace (me, GET_INTEGER (U"Position"), GET_STRING (U"newString"));
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-DIRECT (Strings_sort)
+DIRECT2 (Strings_sort) {
 	LOOP {
 		iam (Strings);
 		Strings_sort (me);
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-DIRECT (Strings_to_Distributions)
+DIRECT2 (Strings_to_Distributions) {
 	LOOP {
 		iam (Strings);
 		autoDistributions thee = Strings_to_Distributions (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Strings_to_WordList)
+DIRECT2 (Strings_to_WordList) {
 	LOOP {
 		iam (Strings);
 		autoWordList thee = Strings_to_WordList (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
 FORM_WRITE (Strings_writeToRawTextFile, U"Save Strings as text file", 0, U"txt")
 	LOOP {
@@ -5904,30 +5948,30 @@ END
 
 /***** TABLE, rest in praat_Stat.cpp *****/
 
-DIRECT (Table_to_Matrix)
+DIRECT2 (Table_to_Matrix) {
 	LOOP {
 		iam (Table);
 		autoMatrix thee = Table_to_Matrix (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
 /***** TEXTGRID, rest in praat_TextGrid_init.cpp *****/
 
-FORM (TextGrid_create, U"Create TextGrid", U"Create TextGrid...")
+FORM (TextGrid_create, U"Create TextGrid", U"Create TextGrid...") {
 	LABEL (U"", U"Hint: to label or segment an existing Sound,")
 	LABEL (U"", U"select that Sound and choose \"To TextGrid...\".")
 	REAL (U"Start time (s)", U"0.0")
 	REAL (U"End time (s)", U"1.0")
 	SENTENCE (U"All tier names", U"Mary John bell")
 	SENTENCE (U"Which of these are point tiers?", U"bell")
-	OK
+	OK2
 DO
 	double tmin = GET_REAL (U"Start time"), tmax = GET_REAL (U"End time");
 	if (tmax <= tmin) Melder_throw (U"End time should be greater than start time");
 	autoTextGrid thee = TextGrid_create (tmin, tmax, GET_STRING (U"All tier names"), GET_STRING (U"Which of these are point tiers?"));
 	praat_new (thee.transfer(), GET_STRING (U"All tier names"));
-END
+END2 }
 
 /***** TEXTTIER, rest in praat_TextGrid_init.cpp *****/
 
@@ -5938,85 +5982,85 @@ END2 }
 
 /***** TIMEFRAMESAMPLED *****/
 
-DIRECT (TimeFrameSampled_getNumberOfFrames)
+DIRECT2 (TimeFrameSampled_getNumberOfFrames) {
 	LOOP {
 		iam (Sampled);
 		long numberOfFrames = my nx;
 		Melder_information (numberOfFrames, U" frames");
 	}
-END
+END2 }
 
-FORM (TimeFrameSampled_getFrameFromTime, U"Get frame number from time", U"Get frame number from time...")
+FORM (TimeFrameSampled_getFrameFromTime, U"Get frame number from time", U"Get frame number from time...") {
 	REAL (U"Time (s)", U"0.5")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Sampled);
 		double frame = Sampled_xToIndex (me, GET_REAL (U"Time"));
 		Melder_informationReal (frame, NULL);
 	}
-END
+END2 }
 
-DIRECT (TimeFrameSampled_getFrameLength)
+DIRECT2 (TimeFrameSampled_getFrameLength) {
 	LOOP {
 		iam (Sampled);
 		double frameLength = my dx;
 		Melder_informationReal (frameLength, U"seconds");
 	}
-END
+END2 }
 
-FORM (TimeFrameSampled_getTimeFromFrame, U"Get time from frame number", U"Get time from frame number...")
+FORM (TimeFrameSampled_getTimeFromFrame, U"Get time from frame number", U"Get time from frame number...") {
 	NATURAL (U"Frame number", U"1")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Sampled);
 		double time = Sampled_indexToX (me, GET_INTEGER (U"Frame number"));
 		Melder_informationReal (time, U"seconds");
 	}
-END
+END2 }
 
 /***** TIMEFUNCTION *****/
 
-DIRECT (TimeFunction_getDuration)
+DIRECT2 (TimeFunction_getDuration) {
 	LOOP {
 		iam (Function);
 		double duration = my xmax - my xmin;
 		Melder_informationReal (duration, U"seconds");
 	}
-END
+END2 }
 
-DIRECT (TimeFunction_getEndTime)
+DIRECT2 (TimeFunction_getEndTime) {
 	LOOP {
 		iam (Function);
 		double endTime = my xmax;
 		Melder_informationReal (endTime, U"seconds");
 	}
-END
+END2 }
 
-DIRECT (TimeFunction_getStartTime)
+DIRECT2 (TimeFunction_getStartTime) {
 	LOOP {
 		iam (Function);
 		double startTime = my xmin;
 		Melder_informationReal (startTime, U"seconds");
 	}
-END
+END2 }
 
-FORM (TimeFunction_scaleTimesBy, U"Scale times by", 0)
+FORM (TimeFunction_scaleTimesBy, U"Scale times by", 0) {
 	POSITIVE (U"Factor", U"2.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Function);
 		Function_scaleXBy (me, GET_REAL (U"Factor"));
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-FORM (TimeFunction_scaleTimesTo, U"Scale times to", 0)
+FORM (TimeFunction_scaleTimesTo, U"Scale times to", 0) {
 	REAL (U"New start time (s)", U"0.0")
 	REAL (U"New end time (s)", U"1.0")
-	OK
+	OK2
 DO
 	double tminto = GET_REAL (U"New start time"), tmaxto = GET_REAL (U"New end time");
 	if (tminto >= tmaxto) Melder_throw (U"New end time should be greater than new start time.");
@@ -6025,26 +6069,26 @@ DO
 		Function_scaleXTo (me, tminto, tmaxto);
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-FORM (TimeFunction_shiftTimesBy, U"Shift times by", 0)
+FORM (TimeFunction_shiftTimesBy, U"Shift times by", 0) {
 	REAL (U"Shift (s)", U"0.5")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Function);
 		Function_shiftXBy (me, GET_REAL (U"Shift"));
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-FORM (TimeFunction_shiftTimesTo, U"Shift times to", 0)
+FORM (TimeFunction_shiftTimesTo, U"Shift times to", 0) {
 	RADIO (U"Shift", 1)
 		OPTION (U"start time")
 		OPTION (U"centre time")
 		OPTION (U"end time")
 	REAL (U"To time (s)", U"0.0")
-	OK
+	OK2
 DO
 	int shift = GET_INTEGER (U"Shift");
 	LOOP {
@@ -6052,58 +6096,58 @@ DO
 		Function_shiftXTo (me, shift == 1 ? my xmin : shift == 2 ? 0.5 * (my xmin + my xmax) : my xmax, GET_REAL (U"To time"));
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-DIRECT (TimeFunction_shiftToZero)
+DIRECT2 (TimeFunction_shiftToZero) {
 	LOOP {
 		iam (Function);
 		Function_shiftXTo (me, my xmin, 0.0);
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
 /***** TIMETIER *****/
 
-FORM (TimeTier_getHighIndexFromTime, U"Get high index", U"AnyTier: Get high index from time...")
+FORM (TimeTier_getHighIndexFromTime, U"Get high index", U"AnyTier: Get high index from time...") {
 	REAL (U"Time (s)", U"0.5")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (AnyTier);
 		Melder_information (my points -> size == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToHighIndex (me, GET_REAL (U"Time"))));
 	}
-END
+END2 }
 
-FORM (TimeTier_getLowIndexFromTime, U"Get low index", U"AnyTier: Get low index from time...")
+FORM (TimeTier_getLowIndexFromTime, U"Get low index", U"AnyTier: Get low index from time...") {
 	REAL (U"Time (s)", U"0.5")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (AnyTier);
 		Melder_information (my points -> size == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToLowIndex (me, GET_REAL (U"Time"))));
 	}
-END
+END2 }
 
-FORM (TimeTier_getNearestIndexFromTime, U"Get nearest index", U"AnyTier: Get nearest index from time...")
+FORM (TimeTier_getNearestIndexFromTime, U"Get nearest index", U"AnyTier: Get nearest index from time...") {
 	REAL (U"Time (s)", U"0.5")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (AnyTier);
 		Melder_information (my points -> size == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToNearestIndex (me, GET_REAL (U"Time"))));
 	}
-END
+END2 }
 
-DIRECT (TimeTier_getNumberOfPoints)
+DIRECT2 (TimeTier_getNumberOfPoints) {
 	LOOP {
 		iam (AnyTier);
 		Melder_information (my points -> size, U" points");
 	}
-END
+END2 }
 
-FORM (TimeTier_getTimeFromIndex, U"Get time", 0 /*"AnyTier: Get time from index..."*/)
+FORM (TimeTier_getTimeFromIndex, U"Get time", 0 /*"AnyTier: Get time from index..."*/) {
 	NATURAL (U"Point number", U"10")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (AnyTier);
@@ -6111,69 +6155,69 @@ DO
 		if (i > my points -> size) Melder_information (U"--undefined--");
 		else Melder_informationReal (((AnyPoint) my points -> item [i]) -> number, U"seconds");
 	}
-END
+END2 }
 
-FORM (TimeTier_removePoint, U"Remove one point", U"AnyTier: Remove point...")
+FORM (TimeTier_removePoint, U"Remove one point", U"AnyTier: Remove point...") {
 	NATURAL (U"Point number", U"1")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (AnyTier);
 		AnyTier_removePoint (me, GET_INTEGER (U"Point number"));
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-FORM (TimeTier_removePointNear, U"Remove one point", U"AnyTier: Remove point near...")
+FORM (TimeTier_removePointNear, U"Remove one point", U"AnyTier: Remove point near...") {
 	REAL (U"Time (s)", U"0.5")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (AnyTier);
 		AnyTier_removePointNear (me, GET_REAL (U"Time"));
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
-FORM (TimeTier_removePointsBetween, U"Remove points", U"AnyTier: Remove points between...")
+FORM (TimeTier_removePointsBetween, U"Remove points", U"AnyTier: Remove points between...") {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"1.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (AnyTier);
 		AnyTier_removePointsBetween (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
 		praat_dataChanged (me);
 	}
-END
+END2 }
 
 /***** TRANSITION *****/
 
-DIRECT (Transition_conflate)
+DIRECT2 (Transition_conflate) {
 	LOOP {
 		iam (Transition);
 		autoDistributions thee = Transition_to_Distributions_conflate (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-FORM (Transition_drawAsNumbers, U"Draw as numbers", 0)
+FORM (Transition_drawAsNumbers, U"Draw as numbers", 0) {
 	RADIO (U"Format", 1)
 		RADIOBUTTON (U"decimal")
 		RADIOBUTTON (U"exponential")
 		RADIOBUTTON (U"free")
 		RADIOBUTTON (U"rational")
 	NATURAL (U"Precision", U"2")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Transition);
 		autoPraatPicture picture;
 		Transition_drawAsNumbers (me, GRAPHICS, GET_INTEGER (U"Format"), GET_INTEGER (U"Precision"));
 	}
-END
+END2 }
 
-DIRECT (Transition_eigen)
+DIRECT2 (Transition_eigen) {
 	LOOP {
 		iam (Transition);
 		Matrix vec_, val_;
@@ -6183,42 +6227,44 @@ DIRECT (Transition_eigen)
 		praat_new (vec.transfer(), U"eigenvectors");
 		praat_new (val.transfer(), U"eigenvalues");
 	}
-END
+END2 }
 
-DIRECT (Transition_help) Melder_help (U"Transition"); END
+DIRECT2 (Transition_help) {
+	Melder_help (U"Transition");
+END2 }
 
-FORM (Transition_power, U"Transition: Power...", 0)
+FORM (Transition_power, U"Transition: Power...", 0) {
 	NATURAL (U"Power", U"2")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Transition);
 		autoTransition thee = Transition_power (me, GET_INTEGER (U"Power"));
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
-DIRECT (Transition_to_Matrix)
+DIRECT2 (Transition_to_Matrix) {
 	LOOP {
 		iam (Transition);
 		autoMatrix thee = Transition_to_Matrix (me);
 		praat_new (thee.transfer(), my name);
 	}
-END
+END2 }
 
 /***** Praat menu *****/
 
-FORM (Praat_test, U"Praat test", 0)
+FORM (Praat_test, U"Praat test", 0) {
 	OPTIONMENU_ENUM (U"Test", kPraatTests, DEFAULT)
 	SENTENCE (U"arg1", U"1000000")
 	SENTENCE (U"arg2", U"")
 	SENTENCE (U"arg3", U"")
 	SENTENCE (U"arg4", U"")
-	OK
+	OK2
 DO
 	Praat_tests (GET_ENUM (kPraatTests, U"Test"), GET_STRING (U"arg1"),
 		GET_STRING (U"arg2"), GET_STRING (U"arg3"), GET_STRING (U"arg4"));
-END
+END2 }
 
 /***** Help menu *****/
 

@@ -107,7 +107,9 @@ DO
 	}
 END2 }
 
-DIRECT2 (IntervalTier_help) { Melder_help (U"IntervalTier"); END2 }
+DIRECT2 (IntervalTier_help) {
+	Melder_help (U"IntervalTier");
+END2 }
 
 FORM_WRITE2 (IntervalTier_writeToXwaves, U"Xwaves label file", 0, 0) {
 	LOOP {
@@ -1185,7 +1187,9 @@ DO
 	Melder_information (point -> mark);
 END2 }
 
-DIRECT2 (TextGrid_help) { Melder_help (U"TextGrid"); END2 }
+DIRECT2 (TextGrid_help) {
+	Melder_help (U"TextGrid");
+END2 }
 
 FORM (TextGrid_insertBoundary, U"TextGrid: Insert boundary", 0) {
 	NATURAL (STRING_TIER_NUMBER, U"1")
@@ -1645,7 +1649,9 @@ DO
 	}
 END2 }
 
-DIRECT2 (TextTier_help) { Melder_help (U"TextTier"); END2 }
+DIRECT2 (TextTier_help) {
+	Melder_help (U"TextTier");
+END2 }
 
 /***** WORDLIST *****/
 

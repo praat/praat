@@ -128,7 +128,7 @@ DO
 	}
 END
 
-FORM (DataModeler_getParameterStandardDeviation, U"DataModeler: Get parameter standard deviatio", 0)
+FORM (DataModeler_getParameterStandardDeviation, U"DataModeler: Get parameter standard deviation", 0)
 	NATURAL (U"Parameter number", U"1")
 	OK
 DO
@@ -149,7 +149,7 @@ DO
 	LOOP {
 		iam (DataModeler);
 		double var = DataModeler_getVarianceOfParameters (me, GET_INTEGER (U"left Parameter range"), GET_INTEGER (U"right Parameter range"), &nofp);
-		Melder_information (var, U" (for ", nofp, U" free parameters.)");
+		Melder_information (var, U" (for ", nofp, U" free parameters)");
 	}
 END
 
@@ -422,13 +422,13 @@ FORM (Formants_extractSmoothestPart, U"Formants: Extract smoothest part", U"Form
 	REAL (U"right Time range (s)", U"0.0")
 	NATURAL (U"Number of formant tracks", U"4")
 	INTEGER (U"Order of polynomials", U"3")
-	LABEL (U"", U"Use bandwidths to model the formant tracks")
+	LABEL (U"", U"Use bandwidths to model the formant tracks:")
 	OPTIONMENU (U"Weigh data", 2)
 		OPTION (U"Equally")
 		OPTION (U"Bandwidth")
 		OPTION (U"Bandwidth / frequency")
 		OPTION (U"Sqrt bandwidth")
-	LABEL (U"", U"Zero parameter values whose range include zero.")
+	LABEL (U"", U"Zero parameter values whose range include zero:")
 	REAL (U"Number of sigmas", U"1.0")
 	REAL (U"Parameter variance power", U"1.5")
 	OK
@@ -442,9 +442,7 @@ DO
 	Formant him = NULL;
 	LOOP {
 		iselected ++;
-		if (iselected != index) {
-			praat_deselect (IOBJECT);
-		} else {
+		if (iselected == index) {
 			him = static_cast<Formant> (OBJECT);
 		}
 	}
@@ -459,16 +457,16 @@ FORM (Formants_extractSmoothestPart_constrained, U"Formants: Extract smoothest p
 	REAL (U"right Time range (s)", U"0.0")
 	NATURAL (U"Number of formant tracks", U"4")
 	INTEGER (U"Order of polynomials", U"3")
-	LABEL (U"", U"Use bandwidths to model the formant tracks")
+	LABEL (U"", U"Use bandwidths to model the formant tracks:")
 	OPTIONMENU (U"Weigh data", 2)
 		OPTION (U"Equally")
 		OPTION (U"Bandwidth")
 		OPTION (U"Bandwidth / frequency")
 		OPTION (U"Sqrt bandwidth")
-	LABEL (U"", U"Zero parameter values whose range include zero.")
+	LABEL (U"", U"Zero parameter values whose range include zero:")
 	REAL (U"Number of sigmas", U"1.0")
 	REAL (U"Parameter variance power", U"1.5")
-	LABEL (U"", U"The constraints on the formants")
+	LABEL (U"", U"The constraints on the formants:")
 	REAL (U"Minimum F1 (Hz)", U"100.0")
 	REAL (U"Maximum F1 (Hz)", U"1200.0")
 	REAL (U"Minimum F2 (Hz)", U"0.0")
@@ -486,9 +484,7 @@ DO
 	Formant him = NULL;
 	LOOP {
 		iselected ++;
-		if (iselected != index) {
-			praat_deselect (IOBJECT);
-		} else {
+		if (iselected == index) {
 			him = static_cast<Formant> (OBJECT);
 		}
 	}
@@ -1518,4 +1514,4 @@ void praat_DataModeler_init (void) {
 	praat_addAction1 (classTable, 0, U"To DataModeler...", U"To logistic regression...", praat_DEPTH_1 + praat_HIDDEN, DO_Table_to_DataModeler);
 }
 
-/* End of file praat_DataModeler_init.c */
+/* End of file praat_DataModeler_init.cpp */
