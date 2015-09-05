@@ -68,7 +68,7 @@ static long lookUpMatchingMenuCommand (const char32 *window, const char32 *menu,
 }
 
 static void do_menu (I, unsigned long modified) {
-	void (*callback) (UiForm, int, Stackel, const char32 *, Interpreter, const char32 *, bool, void *) = (void (*) (UiForm, int, Stackel, const char32 *, Interpreter, const char32 *, bool, void *)) void_me;
+	UiCallback callback = (UiCallback) void_me;
 	Melder_assert (callback != NULL);
 	for (long i = 1; i <= theNumberOfCommands; i ++) {
 		praat_Command me = & theCommands [i];
@@ -119,7 +119,7 @@ static GuiMenu windowMenuToWidget (const char32 *window, const char32 *menu) {
 }
 
 GuiMenuItem praat_addMenuCommand (const char32 *window, const char32 *menu, const char32 *title /* cattable */,
-	const char32 *after, unsigned long flags, void (*callback) (UiForm, int, Stackel, const char32 *, Interpreter, const char32 *, bool, void *))
+	const char32 *after, unsigned long flags, UiCallback callback)
 {
 	long position;
 	int depth = flags, unhidable = FALSE, hidden = FALSE, key = 0;
@@ -391,7 +391,7 @@ void praat_saveMenuCommands (MelderString *buffer) {
 
 /***** FIXED BUTTONS *****/
 
-void praat_addFixedButtonCommand (GuiForm parent, const char32 *title, void (*callback) (UiForm, int, Stackel, const char32 *, Interpreter, const char32 *, bool, void *), int x, int y) {
+void praat_addFixedButtonCommand (GuiForm parent, const char32 *title, UiCallback callback, int x, int y) {
 	praat_Command me = & theCommands [++ theNumberOfCommands];
 	my window = Melder_dup_f (U"Objects");
 	my title = title;

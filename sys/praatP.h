@@ -46,7 +46,7 @@ void praat_addMenuCommandScript (const char32 *window, const char32 *menu, const
 void praat_hideMenuCommand (const char32 *window, const char32 *menu, const char32 *title);
 void praat_showMenuCommand (const char32 *window, const char32 *menu, const char32 *title);
 void praat_saveMenuCommands (MelderString *buffer);
-void praat_addFixedButtonCommand (GuiForm parent, const char32 *title, void (*callback) (UiForm, int, Stackel, const char32 *, Interpreter, const char32 *, bool, void *), int x, int y);
+void praat_addFixedButtonCommand (GuiForm parent, const char32 *title, UiCallback callback, int x, int y);
 void praat_sensitivizeFixedButtonCommand (const char32 *title, int sensitive);
 void praat_sortMenuCommands ();
 
@@ -57,8 +57,8 @@ typedef struct structPraat_Command {
 	ClassInfo class1, class2, class3, class4;   // selected classes
 	int32 n1, n2, n3, n4;   // number of selected objects of each class; 0 means "any number"
 	const char32 *title;   // button text = command text
-	void (*callback) (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure);   // multi-purpose
-		/* If both sendingForm and sendingString are NULL, this routine is an activate callback;
+	UiCallback callback;   // multi-purpose
+		/* If both UiCallback::sendingForm and sendingString are NULL, this routine is an activate callback;
 			you should directly execute the command, or call UiForm_do(dialog) if you need arguments;
 			UiForm_do will call this routine again with sendingForm = dialog. */
 		/* If sendingForm exists, this routine is an ok callback,

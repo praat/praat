@@ -61,21 +61,16 @@ void praat_run (void);
 void praat_setStandAloneScriptText (const char32 *text);   // call before praat_init if you want to create a stand-alone application without Objects and Picture window
 
 void praat_addAction (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
-	const char32 *title, const char32 *after, unsigned long flags,
-	void (*callback) (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure));
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback);
 /* 'class2', 'class3', 'title', 'after', and 'callback' may be NULL; 'title' is reference-copied. */
 void praat_addAction1 (ClassInfo class1, int n1,
-	const char32 *title, const char32 *after, unsigned long flags,
-	void (*callback) (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure));
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback);
 void praat_addAction2 (ClassInfo class1, int n1, ClassInfo class2, int n2,
-	const char32 *title, const char32 *after, unsigned long flags,
-	void (*callback) (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure));
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback);
 void praat_addAction3 (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
-	const char32 *title, const char32 *after, unsigned long flags,
-	void (*callback) (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure));
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback);
 void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3, ClassInfo class4, int n4,
-	const char32 *title, const char32 *after, unsigned long flags,
-	void (*callback) (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure));
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback);
 /*
 	'title' is the name that will appear in the dynamic menu,
 		and also the command that is used in command files.
@@ -122,7 +117,7 @@ void praat_removeAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, c
 	/* 'title' may be NULL; reference-copied. */
 
 GuiMenuItem praat_addMenuCommand (const char32 *window, const char32 *menu, const char32 *title /* cattable */,
-	const char32 *after, unsigned long flags, void (*callback) (UiForm, int narg, Stackel args, const char32 *, Interpreter, const char32 *, bool, void *));
+	const char32 *after, unsigned long flags, UiCallback callback);
 /* All strings are reference-copied; 'title', 'after', and 'callback' may be NULL. */
 
 #define praat_MAXNUM_EDITORS 5
@@ -373,7 +368,6 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		(void) narg; \
 		(void) interpreter; \
 		(void) modified; \
-		(void) okClosure; \
 		if (dia == NULL) \
 			dia = UiInfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, okClosure, invokingButtonTitle, help, allowMult); \
 		if (sendingForm == NULL && args == NULL && sendingString == NULL) { \
@@ -389,7 +383,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				} else { \
 					Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); \
 					file = & file2; \
-				} \
+				}
 
 #define FORM_WRITE(proc,title,help,ext) \
 	static void DO_##proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *okClosure) { \
@@ -397,7 +391,6 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		(void) narg; \
 		(void) interpreter; \
 		(void) modified; \
-		(void) okClosure; \
 		if (dia == NULL) \
 			dia = UiOutfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, okClosure, invokingButtonTitle, help); \
 		if (sendingForm == NULL && args == NULL && sendingString == NULL) { \
@@ -422,7 +415,6 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		(void) narg; \
 		(void) interpreter; \
 		(void) modified; \
-		(void) okClosure; \
 		if (dia == NULL) \
 			dia = UiOutfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, okClosure, invokingButtonTitle, help); \
 		if (sendingForm == NULL && args == NULL && sendingString == NULL) { \

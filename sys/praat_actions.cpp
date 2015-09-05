@@ -83,23 +83,23 @@ static long lookUpMatchingAction (ClassInfo class1, ClassInfo class2, ClassInfo 
 }
 
 void praat_addAction (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
-	const char32 *title, const char32 *after, unsigned long flags, void (*callback) (UiForm, int, Stackel, const char32 *, Interpreter, const char32 *, bool, void *))
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback)
 { praat_addAction4 (class1, n1, class2, n2, class3, n3, NULL, 0, title, after, flags, callback); }
 
 void praat_addAction1 (ClassInfo class1, int n1,
-	const char32 *title, const char32 *after, unsigned long flags, void (*callback) (UiForm, int, Stackel, const char32 *, Interpreter, const char32 *, bool, void *))
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback)
 { praat_addAction4 (class1, n1, NULL, 0, NULL, 0, NULL, 0, title, after, flags, callback); }
 
 void praat_addAction2 (ClassInfo class1, int n1, ClassInfo class2, int n2,
-	const char32 *title, const char32 *after, unsigned long flags, void (*callback) (UiForm, int, Stackel, const char32 *, Interpreter, const char32 *, bool, void *))
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback)
 { praat_addAction4 (class1, n1, class2, n2, NULL, 0, NULL, 0, title, after, flags, callback); }
 
 void praat_addAction3 (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
-	const char32 *title, const char32 *after, unsigned long flags, void (*callback) (UiForm, int, Stackel, const char32 *, Interpreter, const char32 *, bool, void *))
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback)
 { praat_addAction4 (class1, n1, class2, n2, class3, n3, NULL, 0, title, after, flags, callback); }
 
 void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3, ClassInfo class4, int n4,
-	const char32 *title, const char32 *after, unsigned long flags, void (*callback) (UiForm, int, Stackel, const char32 *, Interpreter, const char32 *, bool, void *))
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback)
 {
 	try {
 		int depth = flags, unhidable = FALSE, hidden = FALSE, key = 0, attractive = 0;
@@ -519,7 +519,7 @@ static void do_menu (I, bool modified) {
  *	Call that callback!
  *	Catch the error queue for menu commands without dots (...).
  */
-	void (*callback) (UiForm, int, Stackel, const char32 *, Interpreter, const char32 *, bool, void *) = (void (*) (UiForm, int, Stackel, const char32 *, Interpreter, const char32 *, bool, void *)) void_me;
+	UiCallback callback = (UiCallback) void_me;
 	for (long i = 1; i <= theNumberOfActions; i ++) {
 		praat_Command me = & theActions [i];
 		if (my callback == callback) {
