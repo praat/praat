@@ -2016,10 +2016,10 @@ END
 
 /***** INTERVALTIER, rest in praat_TextGrid_init.cpp *****/
 
-FORM_READ (IntervalTier_readFromXwaves, U"Read IntervalTier from Xwaves", 0, true)
+FORM_READ2 (IntervalTier_readFromXwaves, U"Read IntervalTier from Xwaves", 0, true) {
 	autoIntervalTier me = IntervalTier_readFromXwaves (file);
 	praat_newWithFile (me.transfer(), file, MelderFile_name (file));
-END
+END2 }
 
 /***** LTAS *****/
 
@@ -2830,15 +2830,15 @@ DO
 	}
 END
 
-FORM_READ (Matrix_readFromRawTextFile, U"Read Matrix from raw text file", 0, true)
+FORM_READ2 (Matrix_readFromRawTextFile, U"Read Matrix from raw text file", 0, true) {
 	autoMatrix me = Matrix_readFromRawTextFile (file);
 	praat_new (me.transfer(), MelderFile_name (file));
-END
+END2 }
 
-FORM_READ (Matrix_readAP, U"Read Matrix from LVS AP file", 0, true)
+FORM_READ2 (Matrix_readAP, U"Read Matrix from LVS AP file", 0, true) {
 	autoMatrix me = Matrix_readAP (file);
 	praat_new (me.transfer(), MelderFile_name (file));
-END
+END2 }
 
 FORM (Matrix_setValue, U"Matrix: Set value", U"Matrix: Set value...")
 	NATURAL (U"Row number", U"1")
@@ -3000,10 +3000,10 @@ END
 
 /***** MOVIE *****/
 
-FORM_READ (Movie_openFromSoundFile, U"Open movie file", 0, true)
+FORM_READ2 (Movie_openFromSoundFile, U"Open movie file", 0, true) {
 	autoMovie me = Movie_openFromSoundFile (file);
 	praat_new (me.transfer(), MelderFile_name (file));
-END
+END2 }
 
 FORM (Movie_paintOneImage, U"Movie: Paint one image", 0)
 	NATURAL (U"Frame number", U"1")
@@ -5825,10 +5825,10 @@ DIRECT (Strings_randomize)
 	}
 END
 
-FORM_READ (Strings_readFromRawTextFile, U"Read Strings from raw text file", 0, true)
+FORM_READ2 (Strings_readFromRawTextFile, U"Read Strings from raw text file", 0, true) {
 	autoStrings me = Strings_readFromRawTextFile (file);
 	praat_new (me.transfer(), MelderFile_name (file));
-END
+END2 }
 
 FORM (Strings_removeString, U"Strings: Remove string", 0)
 	NATURAL (U"Position", U"1")
@@ -5931,10 +5931,10 @@ END
 
 /***** TEXTTIER, rest in praat_TextGrid_init.cpp *****/
 
-FORM_READ (TextTier_readFromXwaves, U"Read TextTier from Xwaves", 0, true)
+FORM_READ2 (TextTier_readFromXwaves, U"Read TextTier from Xwaves", 0, true) {
 	autoTextTier me = TextTier_readFromXwaves (file);
 	praat_new (me.transfer(), MelderFile_name (file));
-END
+END2 }
 
 /***** TIMEFRAMESAMPLED *****/
 

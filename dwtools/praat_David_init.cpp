@@ -2673,10 +2673,10 @@ END
 /************************* FileInMemory ***********************************/
 
 
-FORM_READ (FileInMemory_create, U"Create file in memory", 0, true)
+FORM_READ2 (FileInMemory_create, U"Create file in memory", 0, true) {
 	autoFileInMemory me = FileInMemory_create (file);
 	praat_new (me.transfer(), MelderFile_name (file));
-END
+END2 }
 
 FORM (FileInMemory_setId, U"FileInMemory: Set id", 0)
 	SENTENCE (U"New id", U"New id")
@@ -3740,10 +3740,10 @@ DIRECT (LegendreSeries_to_Polynomial)
 END
 /********************* LongSound **************************************/
 
-FORM_READ (LongSounds_appendToExistingSoundFile, U"LongSound: Append to existing sound file", 0, false)
+FORM_READ2 (LongSounds_appendToExistingSoundFile, U"LongSound: Append to existing sound file", 0, false) {
 	autoCollection set = praat_getSelectedObjects ();
 	LongSounds_appendToExistingSoundFile (set.peek(), file);
-END
+END2 }
 
 FORM_WRITE (LongSounds_writeToStereoAiffFile, U"LongSound: Save as AIFF file", 0, U"aiff")
 	LongSound s1 = 0, s2 = 0;
@@ -6153,17 +6153,17 @@ DO
 		GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"), GET_INTEGER (U"Garnish"));
 END
 
-FORM_READ (Sound_readFromRawFileLE, U"Read Sound from raw Little Endian file", 0, true)
+FORM_READ2 (Sound_readFromRawFileLE, U"Read Sound from raw Little Endian file", 0, true) {
 	praat_new (Sound_readFromRawFile (file, NULL, 16, 1, 0, 0, 16000), MelderFile_name (file));
-END
+END2 }
 
-FORM_READ (Sound_readFromRawFileBE, U"Read Sound from raw 16-bit Little Endian file", 0, true)
+FORM_READ2 (Sound_readFromRawFileBE, U"Read Sound from raw 16-bit Little Endian file", 0, true) {
 	praat_new (Sound_readFromRawFile (file, NULL, 16, 0, 0, 0, 16000), MelderFile_name (file));
-END
+END2 }
 
-FORM_READ (KlattTable_readFromRawTextFile, U"KlattTable_readFromRawTextFile", 0, true)
+FORM_READ2 (KlattTable_readFromRawTextFile, U"KlattTable_readFromRawTextFile", 0, true) {
 	praat_new (KlattTable_readFromRawTextFile (file), MelderFile_name (file));
-END
+END2 }
 
 /************ Spectrograms *********************************************/
 

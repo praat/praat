@@ -367,31 +367,6 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				int IOBJECT = 0; \
 				(void) IOBJECT;
 
-#define FORM_READ(proc,title,help,allowMult) \
-	static void DO_##proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *okClosure) { \
-		static UiForm dia; \
-		(void) narg; \
-		(void) interpreter; \
-		(void) modified; \
-		(void) okClosure; \
-		if (dia == NULL) \
-			dia = UiInfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, okClosure, invokingButtonTitle, help, allowMult); \
-		if (sendingForm == NULL && args == NULL && sendingString == NULL) { \
-			UiInfile_do (dia); \
-		} else { \
-			try { \
-				MelderFile file; \
-				int IOBJECT = 0; \
-				structMelderFile file2 = { 0 }; \
-				(void) IOBJECT; \
-				if (args == NULL && sendingString == NULL) { \
-					file = UiFile_getFile (dia); \
-				} else { \
-					Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); \
-					file = & file2; \
-				} \
-				{
-
 #define FORM_READ2(proc,title,help,allowMult) \
 	static void DO_##proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *okClosure) { \
 		static UiForm dia; \
