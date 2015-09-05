@@ -1331,13 +1331,13 @@ static void sgmlToPraat (char *text) {
 
 TextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 	try {
-		Thing_version = 0;
+		int formatVersion = 0;
 		autoMelderReadText text = MelderReadText_createFromFile (file);
 		autostring32 tag = texgetw2 (text.peek());
 		if (! str32equ (tag.peek(), U"Praat chronological TextGrid text file"))
 			Melder_throw (U"This is not a chronological TextGrid text file.");
 		autoTextGrid me = Thing_new (TextGrid);
-		my structFunction :: v_readText (text.peek());
+		my structFunction :: v_readText (text.peek(), formatVersion);
 		my tiers = Ordered_create ();
 		long numberOfTiers = texgeti4 (text.peek());
 		for (long itier = 1; itier <= numberOfTiers; itier ++) {
@@ -1345,13 +1345,13 @@ TextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 			if (str32equ (klas.peek(), U"IntervalTier")) {
 				autoIntervalTier tier = Thing_new (IntervalTier);
 				tier -> name = texgetw2 (text.peek());
-				tier -> structFunction :: v_readText (text.peek());
+				tier -> structFunction :: v_readText (text.peek(), formatVersion);
 				tier -> intervals = SortedSetOfDouble_create ();
 				Collection_addItem (my tiers, tier.transfer());
 			} else if (str32equ (klas.peek(), U"TextTier")) {
 				autoTextTier tier = Thing_new (TextTier);
 				tier -> name = texgetw2 (text.peek());
-				tier -> structFunction :: v_readText (text.peek());
+				tier -> structFunction :: v_readText (text.peek(), formatVersion);
 				tier -> points = SortedSetOfDouble_create ();
 				Collection_addItem (my tiers, tier.transfer());
 			} else {
@@ -1374,12 +1374,12 @@ TextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 			if (anyTier -> classInfo == classIntervalTier) {
 				IntervalTier tier = static_cast <IntervalTier> (anyTier);
 				autoTextInterval interval = Thing_new (TextInterval);
-				interval -> v_readText (text.peek());
+				interval -> v_readText (text.peek(), formatVersion);
 				Collection_addItem (tier -> intervals, interval.transfer());   // not earlier: sorting depends on contents of interval
 			} else {
 				TextTier tier = static_cast <TextTier> (anyTier);
 				autoTextPoint point = Thing_new (TextPoint);
-				point -> v_readText (text.peek());
+				point -> v_readText (text.peek(), formatVersion);
 				Collection_addItem (tier -> points, point.transfer());   // not earlier: sorting depends on contents of point
 			}
 		}

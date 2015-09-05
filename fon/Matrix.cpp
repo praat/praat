@@ -59,8 +59,8 @@ void structMatrix :: v_info () {
 	MelderInfo_writeLine (U"Maximum value: ", maximum);
 }
 
-void structMatrix :: v_readText (MelderReadText text) {
-	if (Thing_version < 0) {
+void structMatrix :: v_readText (MelderReadText text, int formatVersion) {
+	if (formatVersion < 0) {
 		our xmin = texgetr8 (text);
 		our xmax = texgetr8 (text);
 		our ymin = texgetr8 (text);
@@ -72,7 +72,7 @@ void structMatrix :: v_readText (MelderReadText text) {
 		our x1 = texgetr8 (text);
 		our y1 = texgetr8 (text);
 	} else {
-		Matrix_Parent :: v_readText (text);
+		Matrix_Parent :: v_readText (text, formatVersion);
 	}
 	if (our xmin > our xmax)
 		Melder_throw (U"xmin should be less than or equal to xmax.");

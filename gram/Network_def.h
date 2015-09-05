@@ -43,7 +43,7 @@ oo_DEFINE_STRUCT (NetworkConnection)
 		oo_DOUBLE (plasticity)
 	oo_ENDFROM
 	#if oo_READING
-		if (localVersion < 1) {
+		if (formatVersion < 1) {
 			plasticity = 1.0;
 		}
 	#endif
@@ -78,8 +78,8 @@ oo_DEFINE_CLASS (Network, Data)
 	oo_ENDFROM
 	oo_DOUBLE (weightLeak)
 	#if oo_READING
-		if (localVersion < 6) {
-			if (localVersion < 5) {
+		if (formatVersion < 6) {
+			if (formatVersion < 5) {
 				if (our learningRate != 0.0) our weightLeak /= our learningRate;
 				if (our dummyWeightUpdateRule == 1) our instar = 1.0, our outstar = 0.0;
 				if (our dummyWeightUpdateRule == 2) our instar = 0.0, our outstar = 1.0;

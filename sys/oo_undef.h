@@ -56,8 +56,6 @@
 #undef oo_FROM
 #undef oo_ENDFROM
 
-#undef oo_VERSION
-
 #undef oo_DECLARING
 #undef oo_DESTROYING
 #undef oo_COPYING

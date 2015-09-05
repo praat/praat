@@ -128,9 +128,9 @@ typedef struct {
 	char32 *name;   // the name of the object as it appears in the List
 	structMelderFile file;   // is this Object associated with a file?
 	long id;   // the unique number of the object
-	int selected;   // is the name of the object inverted in the list?
+	bool isSelected;   // is the name of the object inverted in the list?
 	Editor editors [praat_MAXNUM_EDITORS];   // are there editors open with this Object in it?
-	int _beingCreated;
+	bool isBeingCreated;
 } structPraat_Object, *praat_Object;
 
 #define praat_MAXNUM_OBJECTS 10000   /* Maximum number of objects in the list. */
@@ -363,11 +363,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				(void) IOBJECT;
 
 #define FORM_READ2(proc,title,help,allowMult) \
-	static void DO_##proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *okClosure) { \
+	static void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
 		static UiForm dia; \
-		(void) narg; \
-		(void) interpreter; \
-		(void) modified; \
 		if (dia == NULL) \
 			dia = UiInfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, okClosure, invokingButtonTitle, help, allowMult); \
 		if (sendingForm == NULL && args == NULL && sendingString == NULL) { \
@@ -386,11 +383,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				}
 
 #define FORM_WRITE(proc,title,help,ext) \
-	static void DO_##proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *okClosure) { \
+	static void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
 		static Any dia; \
-		(void) narg; \
-		(void) interpreter; \
-		(void) modified; \
 		if (dia == NULL) \
 			dia = UiOutfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, okClosure, invokingButtonTitle, help); \
 		if (sendingForm == NULL && args == NULL && sendingString == NULL) { \
@@ -410,11 +404,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				{
 
 #define FORM_WRITE2(proc,title,help,ext) \
-	static void DO_##proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *okClosure) { \
+	static void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
 		static Any dia; \
-		(void) narg; \
-		(void) interpreter; \
-		(void) modified; \
 		if (dia == NULL) \
 			dia = UiOutfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, okClosure, invokingButtonTitle, help); \
 		if (sendingForm == NULL && args == NULL && sendingString == NULL) { \
@@ -454,7 +445,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
 #define WHERE(condition)  for (IOBJECT = 1; IOBJECT <= theCurrentPraatObjects -> n; IOBJECT ++) if (condition)
 #define WHERE_DOWN(condition)  for (IOBJECT = theCurrentPraatObjects -> n; IOBJECT > 0; IOBJECT --) if (condition)
-#define SELECTED  (theCurrentPraatObjects -> list [IOBJECT]. selected)
+#define SELECTED  (theCurrentPraatObjects -> list [IOBJECT]. isSelected)
 #define CLASS  (theCurrentPraatObjects -> list [IOBJECT]. klas)
 #define OBJECT  (theCurrentPraatObjects -> list [IOBJECT]. object)
 #define GRAPHICS  theCurrentPraatPicture -> graphics
@@ -478,7 +469,7 @@ Data praat_firstObject_any ();
 #define EVERY_DRAW(proc) \
 	praat_picture_open (); WHERE (SELECTED) proc; praat_picture_close (); return 1;
 
-/* Used by praat_Sybil.c, if you put an Editor on the screen: */
+/* Used by praat_Sybil.cpp, if you put an Editor on the screen: */
 int praat_installEditor (Editor editor, int iobject);
 /* This routine adds a reference to a new editor (unless it is NULL) to the screen object
    which is in the list at position 'iobject'.
@@ -534,7 +525,7 @@ void praat_setLogo (double width_mm, double height_mm, void (*draw) (Graphics g)
 			praat_removeObject (i);
 	praat_show ();   // Needed because the selection has changed.
 */
-void praat_removeObject (int i);   /* i = 1..praat.n */
+void praat_removeObject (int i);   // i = 1..praat.n
 void praat_show (void);   // forces an update of the dynamic menu
 void praat_updateSelection ();
 	/* If you require the correct selection immediately after calling praat_new. */

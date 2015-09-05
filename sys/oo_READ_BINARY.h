@@ -87,24 +87,24 @@
 	}
 
 #define oo_STRUCT(Type,x)  \
-	our x. readBinary (f);
+	our x. readBinary (f, formatVersion);
 
 #define oo_STRUCT_ARRAY(Type,x,cap,n) \
 	if (n > cap) Melder_throw (U"Number of \"", #x, U"\" (", n, U") greater than ", cap, U"."); \
 	for (int i = 0; i < n; i ++) { \
-		our x [i]. readBinary (f); \
+		our x [i]. readBinary (f, formatVersion); \
 	}
 
 #define oo_STRUCT_SET(Type,x,setType) \
 	for (int i = 0; i <= setType##_MAX; i ++) { \
-		our x [i]. readBinary (f); \
+		our x [i]. readBinary (f, formatVersion); \
 	}
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
 	if (max >= min) { \
 		our x = NUMvector <struct##Type> (min, max); \
 		for (long i = min; i <= max; i ++) { \
-			our x [i]. readBinary (f); \
+			our x [i]. readBinary (f, formatVersion); \
 		} \
 	}
 
@@ -113,30 +113,24 @@
 		our x = NUMmatrix <struct##Type> (row1, row2, col1, col2); \
 		for (long i = row1; i <= row2; i ++) { \
 			for (long j = col1; j <= col2; j ++) { \
-				our x [i] [j]. readBinary (f); \
+				our x [i] [j]. readBinary (f, formatVersion); \
 			} \
 		} \
 	}
 
-#define oo_OBJECT(Class,version,x)  \
+#define oo_OBJECT(Class,formatVersion,x)  \
 	if (bingetex (f)) { \
-		long saveVersion = Thing_version; \
 		our x = Thing_new (Class); \
-		Thing_version = version; \
-		our x -> v_readBinary (f); \
-		Thing_version = saveVersion; \
+		our x -> v_readBinary (f, formatVersion); \
 	}
 
-#define oo_COLLECTION(Class,x,ItemClass,version)  \
+#define oo_COLLECTION(Class,x,ItemClass,formatVersion)  \
 	{ \
 		int32_t n = bingeti4 (f); \
 		our x = Class##_create (); \
 		for (int32_t i = 1; i <= n; i ++) { \
-			long saveVersion = Thing_version; \
 			auto##ItemClass item = (ItemClass) Thing_new (ItemClass); \
-			Thing_version = version; \
-			item.peek() -> v_readBinary (f); \
-			Thing_version = saveVersion; \
+			item.peek() -> v_readBinary (f, formatVersion); \
 			Collection_addItem (our x, item.transfer()); \
 		} \
 	}
@@ -146,18 +140,16 @@
 #define oo_DIR(x)
 
 #define oo_DEFINE_STRUCT(Type)  \
-	void struct##Type :: readBinary (FILE *f) { \
-		int localVersion = Thing_version; (void) localVersion;
+	void struct##Type :: readBinary (FILE *f, int formatVersion) {
 
 #define oo_END_STRUCT(Type)  \
 	}
 
 #define oo_DEFINE_CLASS(Class,Parent)  \
-	void struct##Class :: v_readBinary (FILE *f) { \
-		int localVersion = Thing_version; (void) localVersion; \
-		if (localVersion > our classInfo -> version) \
+	void struct##Class :: v_readBinary (FILE *f, int formatVersion) { \
+		if (formatVersion > our classInfo -> version) \
 			Melder_throw (U"The format of this file is too new. Download a newer version of Praat."); \
-		Class##_Parent :: v_readBinary (f);
+		Class##_Parent :: v_readBinary (f, formatVersion);
 
 #define oo_END_CLASS(Class)  \
 	}
@@ -169,13 +161,10 @@
 	}
 
 #define oo_FROM(from)  \
-	if (localVersion >= from) {
+	if (formatVersion >= from) {
 
 #define oo_ENDFROM  \
 	}
-
-#define oo_VERSION(version)  \
-	Thing_version = version;
 
 #define oo_DECLARING  0
 #define oo_DESTROYING  0

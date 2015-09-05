@@ -267,9 +267,9 @@
 		static Data_Description s_description; \
 		bool canWriteAsEncoding (int outputEncoding); \
 		void writeText (MelderFile openFile); \
-		void readText (MelderReadText text); \
+		void readText (MelderReadText text, int formatVersion); \
 		void writeBinary (FILE *f); \
-		void readBinary (FILE *f); \
+		void readBinary (FILE *f, int formatVersion); \
 	};
 
 #define oo_DEFINE_CLASS(klas,parent) \
@@ -285,9 +285,9 @@
 		Data_Description v_description () override { return s_description; } \
 		bool v_canWriteAsEncoding (int outputEncoding) override; \
 		void v_writeText (MelderFile openFile) override; \
-		void v_readText (MelderReadText text) override; \
+		void v_readText (MelderReadText text, int formatVersion) override; \
 		void v_writeBinary (FILE *f) override; \
-		void v_readBinary (FILE *f) override; \
+		void v_readBinary (FILE *f, int formatVersion) override; \
 	};
 
 /*** Miscellaneous. ***/
@@ -299,9 +299,6 @@
 /* For fields that should not be read in older versions: */
 #define oo_FROM(from)
 #define oo_ENDFROM
-
-/* For OBJECT fields that have version numbers: */
-#define oo_VERSION(version)
 
 /* Examples of the usage of the following macros:
 	For code that should only appear in reading methods (consistency checks etc.),

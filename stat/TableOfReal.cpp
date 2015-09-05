@@ -64,7 +64,7 @@ void structTableOfReal :: v_writeText (MelderFile file) {
 	}
 }
 
-void structTableOfReal :: v_readText (MelderReadText a_text) {
+void structTableOfReal :: v_readText (MelderReadText a_text, int /*formatVersion*/) {
 	numberOfColumns = texgeti4 (a_text);
 	if (numberOfColumns >= 1) {
 		columnLabels = NUMvector <char32*> (1, numberOfColumns);

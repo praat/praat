@@ -41,13 +41,13 @@ bool structData :: v_canWriteAsEncoding (int /*encoding*/) {
 void structData :: v_writeText (MelderFile /*openFile*/) {
 }
 
-void structData :: v_readText (MelderReadText) {
+void structData :: v_readText (MelderReadText, int /*formatVersion*/) {
 }
 
 void structData :: v_writeBinary (FILE *) {
 }
 
-void structData :: v_readBinary (FILE *) {
+void structData :: v_readBinary (FILE *, int /*formatVersion*/) {
 }
 
 Data _Data_copy (Data me) {
@@ -176,9 +176,9 @@ bool Data_canReadText (Data me) {
 	return my v_writable ();
 }
 
-void Data_readText (Data me, MelderReadText text) {
+void Data_readText (Data me, MelderReadText text, int formatVersion) {
 	try {
-		my v_readText (text);
+		my v_readText (text, formatVersion);
 		my v_repair ();
 	} catch (MelderError) {
 		Melder_throw (Thing_className (me), U" not read.");
@@ -193,19 +193,20 @@ Data Data_readFromTextFile (MelderFile file) {
 			Melder_throw (U"No lines.");
 		char32 *end = str32str (line, U"ooTextFile");   // oo format?
 		autoData me = NULL;
+		int formatVersion;
 		if (end) {
 			autostring32 klas = texgetw2 (text.peek());
-			me.reset (static_cast <Data> (Thing_newFromClassName (klas.peek())));
+			me.reset (static_cast <Data> (Thing_newFromClassName (klas.peek(), & formatVersion)));
 		} else {
 			end = str32str (line, U"TextFile");
 			if (end == NULL)
 				Melder_throw (U"Not an old-type text file; should not occur.");
 			*end = U'\0';
-			me.reset (static_cast <Data> (Thing_newFromClassName (line)));
-			Thing_version = -1;   // old version: override version number, which was set to 0 by newFromClassName
+			me.reset (static_cast <Data> (Thing_newFromClassName (line, NULL)));
+			formatVersion = -1;   // old version
 		}
 		MelderFile_getParentDir (file, & Data_directoryBeingRead);
-		Data_readText (me.peek(), text.peek());
+		Data_readText (me.peek(), text.peek(), formatVersion);
 		file -> format = structMelderFile :: Format :: text;
 		return me.transfer();
 	} catch (MelderError) {
@@ -217,9 +218,9 @@ bool Data_canReadBinary (Data me) {
 	return my v_writable ();
 }
 
-void Data_readBinary (Data me, FILE *f) {
+void Data_readBinary (Data me, FILE *f, int formatVersion) {
 	try {
-		my v_readBinary (f);
+		my v_readBinary (f, formatVersion);
 		if (feof (f))
 			Melder_throw (U"Early end of file.");
 		if (ferror (f))
@@ -237,23 +238,24 @@ Data Data_readFromBinaryFile (MelderFile file) {
 		int n = fread (line, 1, 199, f); line [n] = '\0';
 		char *end = strstr (line, "ooBinaryFile");
 		autoData me = NULL;
+		int formatVersion;
 		if (end) {
 			fseek (f, strlen ("ooBinaryFile"), 0);
 			autostring8 klas = bingets1 (f);
-			me.reset (static_cast <Data> (Thing_newFromClassName (Melder_peek8to32 (klas.peek()))));
+			me.reset (static_cast <Data> (Thing_newFromClassName (Melder_peek8to32 (klas.peek()), & formatVersion)));
 		} else {
 			end = strstr (line, "BinaryFile");
 			if (! end) {
 				Melder_throw (U"File ", file, U" is not a Data binary file.");
 			}
 			*end = '\0';
-			me.reset (static_cast <Data> (Thing_newFromClassName (Melder_peek8to32 (line))));
-			Thing_version = -1;   // old version: override version number, which was set to 0 by newFromClassName
+			me.reset (static_cast <Data> (Thing_newFromClassName (Melder_peek8to32 (line), NULL)));
+			formatVersion = -1;   // old version: override version number, which was set to 0 by newFromClassName
 			rewind (f);
 			fread (line, 1, end - line + strlen ("BinaryFile"), f);
 		}
 		MelderFile_getParentDir (file, & Data_directoryBeingRead);
-		Data_readBinary (me.peek(), f);
+		Data_readBinary (me.peek(), f, formatVersion);
 		file -> format = structMelderFile :: Format :: binary;
 		f.close (file);
 		return me.transfer();

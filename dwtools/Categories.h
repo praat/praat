@@ -2,7 +2,7 @@
 #define _Categories_h_
 /* Categories.h
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011 David Weenink, 2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 #include "Graphics.h"
 
 Thing_define (Categories, OrderedOfString) {
-	void v_readText (MelderReadText text)
+	void v_readText (MelderReadText text, int formatVersion)
 		override;
 	void v_writeText (MelderFile file)
 		override;

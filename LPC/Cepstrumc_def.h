@@ -27,7 +27,7 @@ oo_DEFINE_STRUCT (Cepstrumc_Frame)
 
 	oo_INT (nCoefficients)
 	#if oo_READING_BINARY
-		if (localVersion == 0)
+		if (formatVersion == 0)
 		{
 			oo_FLOAT_VECTOR_FROM (c, 0, nCoefficients)
 		}

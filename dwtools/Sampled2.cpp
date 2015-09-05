@@ -39,7 +39,7 @@
 
 Thing_implement (Sampled2, Sampled, 0);
 
-void structSampled2 :: v_readText (MelderReadText text) {
+void structSampled2 :: v_readText (MelderReadText text, int /*formatVersion*/) {
 	xmin = texgetr8 (text);
 	xmax = texgetr8 (text);
 	nx = texgeti4 (text);

@@ -110,8 +110,8 @@ void structCollection :: v_writeText (MelderFile file) {
 	texexdent (file);
 }
 
-void structCollection :: v_readText (MelderReadText text) {
-	if (Thing_version < 0) {
+void structCollection :: v_readText (MelderReadText text, int formatVersion) {
+	if (formatVersion < 0) {
 		long l_size;
 		autostring8 line = Melder_32to8 (MelderReadText_readLine (text));
 		if (line.peek() == NULL || ! sscanf (line.peek(), "%ld", & l_size) || l_size < 0)
@@ -134,12 +134,11 @@ void structCollection :: v_readText (MelderReadText text) {
 					U" while expecting ", i, U".");
 			if (stringsRead == 3 && ! strequ (nameTag, "name"))
 				Melder_throw (U"Collection::readText: wrong header at object ", i, U".");
-			our item [i] = Thing_newFromClassName (Melder_peek8to32 (klas));
-			Thing_version = -1;   // override
+			our item [i] = Thing_newFromClassName (Melder_peek8to32 (klas), NULL);
 			our size ++;
 			if (! Thing_isa ((Thing) our item [i], classData) || ! Data_canReadText ((Data) our item [i]))
 				Melder_throw (U"Cannot read item of class ", Thing_className ((Thing) our item [i]), U" in collection.");
-			Data_readText ((Data) our item [i], text);
+			Data_readText ((Data) our item [i], text, -1);
 			if (stringsRead == 3) {
 				if (line [n] == U' ') n ++;   // skip space character
 				length = strlen (line.peek()+n);
@@ -152,16 +151,15 @@ void structCollection :: v_readText (MelderReadText text) {
 		int32_t l_size = texgeti4 (text);
 		Collection_init (this, NULL, l_size);
 		for (int32_t i = 1; i <= l_size; i ++) {
-			long saveVersion = Thing_version;   // the version of the Collection...
 			autostring32 className = texgetw2 (text);
-			our item [i] = Thing_newFromClassName (className.peek());
+			int elementFormatVersion;
+			our item [i] = Thing_newFromClassName (className.peek(), & elementFormatVersion);
 			our size ++;
 			if (! Thing_isa ((Thing) our item [i], classData) || ! Data_canReadText ((Data) our item [i]))
 				Melder_throw (U"Cannot read item of class ", Thing_className ((Thing) our item [i]), U" in collection.");
 			autostring32 objectName = texgetw2 (text);
 			Thing_setName ((Thing) our item [i], objectName.peek());
-			Data_readText ((Data) our item [i], text);
-			Thing_version = saveVersion;
+			Data_readText ((Data) our item [i], text, elementFormatVersion);
 		}
 	}
 }
@@ -180,8 +178,8 @@ void structCollection :: v_writeBinary (FILE *f) {
 	}
 }
 
-void structCollection :: v_readBinary (FILE *f) {
-	if (Thing_version < 0) {
+void structCollection :: v_readBinary (FILE *f, int formatVersion) {
+	if (formatVersion < 0) {
 		int32 l_size = bingeti4 (f);
 		if (l_size < 0)
 			Melder_throw (U"Empty collection.");
@@ -190,14 +188,13 @@ void structCollection :: v_readBinary (FILE *f) {
 			char klas [200], name [2000];
 			if (fscanf (f, "%s%s", klas, name) < 2)   // BUG
 				Melder_throw (U"Cannot read class and name.");
-			our item [i] = Thing_newFromClassName (Melder_peek8to32 (klas));
-			Thing_version = -1;   /* Override. */
+			our item [i] = Thing_newFromClassName (Melder_peek8to32 (klas), NULL);
 			our size ++;
 			if (! Thing_isa ((Thing) our item [i], classData))
 				Melder_throw (U"Cannot read item of class ", Thing_className ((Thing) our item [i]), U".");
 			if (fgetc (f) != ' ')
 				Melder_throw (U"Cannot read space.");
-			Data_readBinary ((Data) our item [i], f);
+			Data_readBinary ((Data) our item [i], f, -1);
 			if (strcmp (name, "?"))
 				Thing_setName ((Thing) our item [i], Melder_peek8to32 (name));
 		}
@@ -207,11 +204,11 @@ void structCollection :: v_readBinary (FILE *f) {
 			Melder_casual (U"structCollection :: v_readBinary: Reading ", l_size, U" objects");
 		Collection_init (this, NULL, l_size);
 		for (int32_t i = 1; i <= l_size; i ++) {
-			long saveVersion = Thing_version;   // the version of the Collection...
 			autostring8 klas = bingets1 (f);
 			if (Melder_debug == 44)
 				Melder_casual (U"structCollection :: v_readBinary: Reading object of type ", Melder_peek8to32 (klas.peek()));
-			our item [i] = Thing_newFromClassName (Melder_peek8to32 (klas.peek()));
+			int elementFormatVersion;
+			our item [i] = Thing_newFromClassName (Melder_peek8to32 (klas.peek()), & elementFormatVersion);
 			our size ++;
 			if (! Thing_isa ((Thing) our item [i], classData) || ! Data_canReadBinary ((Data) our item [i]))
 				Melder_throw (U"Objects of class ", Thing_className ((Thing) our item [i]), U" cannot be read.");
@@ -219,8 +216,7 @@ void structCollection :: v_readBinary (FILE *f) {
 			if (Melder_debug == 44)
 				Melder_casual (U"structCollection :: v_readBinary: Reading object with name ", name.peek());
 			Thing_setName ((Thing) our item [i], name.peek());
-			Data_readBinary ((Data) our item [i], f);
-			Thing_version = saveVersion;
+			Data_readBinary ((Data) our item [i], f, elementFormatVersion);
 		}
 	}
 }

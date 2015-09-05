@@ -43,11 +43,11 @@ Thing_define (Collection, Data) {
 		override;
 	void v_writeText (MelderFile openFile)
 		override;
-	void v_readText (MelderReadText text)
+	void v_readText (MelderReadText text, int formatVersion)
 		override;
 	void v_writeBinary (FILE *f)
 		override;
-	void v_readBinary (FILE *f)
+	void v_readBinary (FILE *f, int formatVersion)
 		override;
 	static Data_Description s_description;
 	Data_Description v_description ()

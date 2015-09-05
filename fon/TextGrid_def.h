@@ -25,9 +25,9 @@ oo_DEFINE_CLASS (TextPoint, AnyPoint)
 
 	/* 'after' was a temporary attribute (19970211-19970307). */
 	#if oo_READING_TEXT
-		if (Thing_version == 1) texgetw2 (a_text);
+		if (formatVersion == 1) texgetw2 (a_text);
 	#elif oo_READING_BINARY
-		if (Thing_version == 1) bingetw2 (f);
+		if (formatVersion == 1) bingetw2 (f);
 	#endif
 
 oo_END_CLASS (TextPoint)

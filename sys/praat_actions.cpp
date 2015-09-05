@@ -234,13 +234,13 @@ void praat_addActionScript (const char32 *className1, int n1, const char32 *clas
 		ClassInfo class1 = NULL, class2 = NULL, class3 = NULL;
 		Melder_assert (className1 && className2 && className3 && title && after && script);
 		if (str32len (className1)) {
-			class1 = Thing_classFromClassName (className1);
+			class1 = Thing_classFromClassName (className1, NULL);
 		}
 		if (str32len (className2)) {
-			class2 = Thing_classFromClassName (className2);
+			class2 = Thing_classFromClassName (className2, NULL);
 		}
 		if (str32len (className3)) {
-			class3 = Thing_classFromClassName (className3);
+			class3 = Thing_classFromClassName (className3, NULL);
 		}
 		fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
 
@@ -345,13 +345,13 @@ void praat_removeAction_classNames (const char32 *className1, const char32 *clas
 		ClassInfo class1 = NULL, class2 = NULL, class3 = NULL;
 		Melder_assert (className1 && className2 && className3 && title);
 		if (str32len (className1)) {
-			class1 = Thing_classFromClassName (className1);
+			class1 = Thing_classFromClassName (className1, NULL);
 		}
 		if (str32len (className2)) {
-			class2 = Thing_classFromClassName (className2);
+			class2 = Thing_classFromClassName (className2, NULL);
 		}
 		if (str32len (className3)) {
-			class3 = Thing_classFromClassName (className3);
+			class3 = Thing_classFromClassName (className3, NULL);
 		}
 		praat_removeAction (class1, class2, class3, title);
 		updateDynamicMenu ();
@@ -388,13 +388,13 @@ void praat_hideAction_classNames (const char32 *className1, const char32 *classN
 		ClassInfo class1 = NULL, class2 = NULL, class3 = NULL;
 		Melder_assert (className1 && className2 && className3 && title);
 		if (str32len (className1)) {
-			class1 = Thing_classFromClassName (className1);
+			class1 = Thing_classFromClassName (className1, NULL);
 		}
 		if (str32len (className2)) {
-			class2 = Thing_classFromClassName (className2);
+			class2 = Thing_classFromClassName (className2, NULL);
 		}
 		if (str32len (className3)) {
-			class3 = Thing_classFromClassName (className3);
+			class3 = Thing_classFromClassName (className3, NULL);
 		}
 		praat_hideAction (class1, class2, class3, title);
 	} catch (MelderError) {
@@ -430,13 +430,13 @@ void praat_showAction_classNames (const char32 *className1, const char32 *classN
 		ClassInfo class1 = NULL, class2 = NULL, class3 = NULL;
 		Melder_assert (className1 && className2 && className3 && title);
 		if (str32len (className1)) {
-			class1 = Thing_classFromClassName (className1);
+			class1 = Thing_classFromClassName (className1, NULL);
 		}
 		if (str32len (className2)) {
-			class2 = Thing_classFromClassName (className2);
+			class2 = Thing_classFromClassName (className2, NULL);
 		}
 		if (str32len (className3)) {
-			class3 = Thing_classFromClassName (className3);
+			class3 = Thing_classFromClassName (className3, NULL);
 		}
 		praat_showAction (class1, class2, class3, title);
 	} catch (MelderError) {

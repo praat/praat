@@ -22,7 +22,7 @@
 oo_DEFINE_STRUCT (Formant_Formant)
 
 	#if oo_READING
-		if (localVersion <= 1) {
+		if (formatVersion <= 1) {
 			oo_FLOAT (frequency)
 			oo_FLOAT (bandwidth)
 		} else {

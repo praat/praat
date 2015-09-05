@@ -202,7 +202,7 @@ void Thing_recognizeClassesByName (ClassInfo readableClass, ...);
 void Thing_recognizeClassByOtherName (ClassInfo readableClass, const char32 *otherName);
 long Thing_listReadableClasses (void);
 
-Thing Thing_newFromClassName (const char32 *className);
+Thing Thing_newFromClassName (const char32 *className, int *p_formatVersion);
 /*
 	Function:
 		return a new object of class 'className', or NULL if the class name is not recognized.
@@ -213,16 +213,15 @@ Thing Thing_newFromClassName (const char32 *className);
 		see Thing_classFromClassName.
 */
 
-ClassInfo Thing_classFromClassName (const char32 *className);
+ClassInfo Thing_classFromClassName (const char32 *className, int *formatVersion);
 /*
 	Function:
 		Return the class info table of class 'className', or NULL if it is not recognized.
 		E.g. the value returned from Thing_classFromClassName (L"PietjePuk")
 		will be equal to classPietjePuk.
 	Side effect:
-		Sets the global variable Thing_version.
 		If 'className' equals L"PietjePuk 300", the value returned will be classPietjePuk,
-		and Thing_version will be set to 300.
+		and formatVersion (if not NULL) will be set to 300.
 */
 
 #define Thing_dummyObject(klas) \
@@ -269,9 +268,6 @@ void * _Thing_check (Thing me, ClassInfo table, const char *fileName, int line);
 
 long Thing_getTotalNumberOfThings (void);
 /* This number is 0 initially, increments at every successful `new', and decrements at every `forget'. */
-
-extern long Thing_version;
-/* Set by Thing_classFromClassName. */
 
 template <class T>
 class _Thing_auto {

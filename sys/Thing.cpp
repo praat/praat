@@ -99,16 +99,15 @@ void Thing_recognizeClassByOtherName (ClassInfo readableClass, const char32 *oth
 	theAliases [theNumberOfAliases]. otherName = otherName;
 }
 
-long Thing_version;   // global variable!
-ClassInfo Thing_classFromClassName (const char32 *klas) {
+ClassInfo Thing_classFromClassName (const char32 *klas, int *p_formatVersion) {
 	static char32 buffer [1+100];
 	str32ncpy (buffer, klas ? klas : U"", 100);
 	char32 *space = str32chr (buffer, U' ');
 	if (space) {
 		*space = U'\0';   // strip version number
-		Thing_version = Melder_atoi (space + 1);
+		if (p_formatVersion) *p_formatVersion = Melder_atoi (space + 1);
 	} else {
-		Thing_version = 0;
+		if (p_formatVersion) *p_formatVersion = 0;
 	}
 
 	/*
@@ -134,9 +133,9 @@ ClassInfo Thing_classFromClassName (const char32 *klas) {
 	Melder_throw (U"Class \"", buffer, U"\" not recognized.");
 }
 
-Thing Thing_newFromClassName (const char32 *className) {
+Thing Thing_newFromClassName (const char32 *className, int *p_formatVersion) {
 	try {
-		ClassInfo classInfo = Thing_classFromClassName (className);
+		ClassInfo classInfo = Thing_classFromClassName (className, p_formatVersion);
 		return Thing_newFromClass (classInfo);
 	} catch (MelderError) {
 		Melder_throw (className, U" not created.");

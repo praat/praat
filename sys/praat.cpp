@@ -217,7 +217,7 @@ Data praat_firstObject (ClassInfo klas) {
 
 Data praat_onlyObject_generic (ClassInfo klas) {
 	int IOBJECT, result = 0, found = 0;
-	WHERE (SELECTED && Thing_isSubclass ((ClassInfo) CLASS, klas)) { result = IOBJECT; found += 1; }
+	WHERE (SELECTED && Thing_isSubclass (CLASS, klas)) { result = IOBJECT; found += 1; }
 	if (found != 1) return NULL;
 	return theCurrentPraatObjects -> list [result]. object;
 }
@@ -225,7 +225,7 @@ Data praat_onlyObject_generic (ClassInfo klas) {
 Data praat_firstObject_generic (ClassInfo klas) {
 	int IOBJECT;
 	LOOP {
-		if (Thing_isSubclass ((ClassInfo) CLASS, klas)) return theCurrentPraatObjects -> list [IOBJECT]. object;
+		if (Thing_isSubclass (CLASS, klas)) return theCurrentPraatObjects -> list [IOBJECT]. object;
 	}
 	return NULL;   // this is often OK
 }
@@ -265,7 +265,7 @@ void praat_write_do (Any dia, const char32 *extension) {
 	WHERE (SELECTED) { if (! data) data = (Data) OBJECT; found += 1; }
 	if (found == 1) {
 		MelderString_copy (& defaultFileName, data -> name);
-		if (defaultFileName.length > 50) { defaultFileName.string [50] = '\0'; defaultFileName.length = 50; }
+		if (defaultFileName.length > 50) { defaultFileName.string [50] = U'\0'; defaultFileName.length = 50; }
 		MelderString_append (& defaultFileName, U".", extension ? extension : Thing_className (data));
 	} else if (extension == NULL) {
 		MelderString_copy (& defaultFileName, U"praat.Collection");
@@ -294,8 +294,8 @@ static void praat_remove (int iobject) {
 /* Kill everything to do with selection. */
 	int ieditor;
 	Melder_assert (iobject >= 1 && iobject <= theCurrentPraatObjects -> n);
-	if (theCurrentPraatObjects -> list [iobject]. _beingCreated) {
-		theCurrentPraatObjects -> list [iobject]. _beingCreated = FALSE;
+	if (theCurrentPraatObjects -> list [iobject]. isBeingCreated) {
+		theCurrentPraatObjects -> list [iobject]. isBeingCreated = FALSE;
 		theCurrentPraatObjects -> totalBeingCreated --;
 	}
 	praat_deselect (iobject);
@@ -320,11 +320,7 @@ void praat_cleanUpName (char32 *name) {
 	 * Replaces spaces and special characters by underscores.
 	 */
 	for (; *name; name ++) {
-		#if 1
-			if (str32chr (U" ,.:;\\/()[]{}~`\'<>*&^%#@!?$\"|", *name)) *name = U'_';
-		#else
-			if (! iswalnum (*name) && *name != '-' && *name != '+') *name = '_';
-		#endif
+		if (str32chr (U" ,.:;\\/()[]{}~`\'<>*&^%#@!?$\"|", *name)) *name = U'_';
 	}
 }
 
@@ -396,7 +392,7 @@ void praat_newWithFile (Data me, MelderFile file, const char32 *myName) {
 		MelderFile_setToNull (& theCurrentPraatObjects -> list [IOBJECT]. file);
 	}
 	ID = theCurrentPraatObjects -> uniqueId;
-	theCurrentPraatObjects -> list [IOBJECT]. _beingCreated = TRUE;
+	theCurrentPraatObjects -> list [IOBJECT]. isBeingCreated = TRUE;
 	Thing_setName ((Thing) OBJECT, givenName.string);
 	theCurrentPraatObjects -> totalBeingCreated ++;
 }
@@ -445,9 +441,9 @@ void praat_updateSelection (void) {
 	if (theCurrentPraatObjects -> totalBeingCreated) {
 		int IOBJECT;
 		praat_deselectAll ();
-		WHERE (theCurrentPraatObjects -> list [IOBJECT]. _beingCreated) {
+		WHERE (theCurrentPraatObjects -> list [IOBJECT]. isBeingCreated) {
 			praat_select (IOBJECT);
-			theCurrentPraatObjects -> list [IOBJECT]. _beingCreated = FALSE;
+			theCurrentPraatObjects -> list [IOBJECT]. isBeingCreated = FALSE;
 		}
 		theCurrentPraatObjects -> totalBeingCreated = 0;
 		praat_show ();
@@ -496,9 +492,9 @@ void praat_list_renameAndSelect (int position, const char32 *name) {
 
 void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2) {
 	int i1 = 1;
-	while (theCurrentPraatObjects -> list [i1]. selected == 0 || theCurrentPraatObjects -> list [i1]. klas != klas1) i1 ++;
+	while (theCurrentPraatObjects -> list [i1]. isSelected == 0 || theCurrentPraatObjects -> list [i1]. klas != klas1) i1 ++;
 	int i2 = 1;
-	while (theCurrentPraatObjects -> list [i2]. selected == 0 || theCurrentPraatObjects -> list [i2]. klas != klas2) i2 ++;
+	while (theCurrentPraatObjects -> list [i2]. isSelected == 0 || theCurrentPraatObjects -> list [i2]. klas != klas2) i2 ++;
 	char32 *name1 = str32chr (theCurrentPraatObjects -> list [i1]. name, U' ') + 1;
 	char32 *name2 = str32chr (theCurrentPraatObjects -> list [i2]. name, U' ') + 1;
 	if (str32equ (name1, name2))
@@ -514,7 +510,7 @@ void praat_removeObject (int i) {
 		theCurrentPraatObjects -> list [j] = theCurrentPraatObjects -> list [j + 1];   // undangle but create second references
 	theCurrentPraatObjects -> list [theCurrentPraatObjects -> n]. name = NULL;   // undangle or remove second reference
 	theCurrentPraatObjects -> list [theCurrentPraatObjects -> n]. object = NULL;   // undangle or remove second reference
-	theCurrentPraatObjects -> list [theCurrentPraatObjects -> n]. selected = 0;
+	theCurrentPraatObjects -> list [theCurrentPraatObjects -> n]. isSelected = 0;
 	for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
 		theCurrentPraatObjects -> list [theCurrentPraatObjects -> n]. editors [ieditor] = NULL;   // undangle or remove second reference
 	MelderFile_setToNull (& theCurrentPraatObjects -> list [theCurrentPraatObjects -> n]. file);   // undangle or remove second reference

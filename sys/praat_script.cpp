@@ -48,7 +48,7 @@ static int praat_findObjectFromString (Interpreter interpreter, const char32 *st
 			/*
 			 * No object with that name. Perhaps the class name was wrong?
 			 */
-			ClassInfo klas = Thing_classFromClassName (className);
+			ClassInfo klas = Thing_classFromClassName (className, NULL);
 			WHERE_DOWN (1) {
 				Data object = (Data) OBJECT;
 				if (str32equ (klas -> className, Thing_className ((Thing) OBJECT)) && str32equ (givenName, object -> name))

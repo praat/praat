@@ -22,7 +22,7 @@
 oo_DEFINE_CLASS (Manipulation, Function)
 
 	#if oo_READING
-		if (localVersion >= 5 || (Melder_debug == 25 && localVersion == 4)) {
+		if (formatVersion >= 5 || (Melder_debug == 25 && formatVersion == 4)) {
 			oo_OBJECT (Sound, 2, sound)
 		} else {
 			oo_OBJECT (Sound, 0, sound)
@@ -65,7 +65,7 @@ oo_DEFINE_CLASS (Manipulation, Function)
 		oo_DOUBLE (dummy11)
 		oo_DOUBLE (dummy12)
 		oo_OBJECT (Intensity, 0, dummyIntensityAnalysis)
-		oo_VERSION (1) oo_OBJECT (Formant, 1, dummyFormantAnalysis)
+		oo_OBJECT (Formant, 1, dummyFormantAnalysis)
 		oo_INT (dummy4)
 		oo_DOUBLE (dummy5)
 		oo_DOUBLE (dummy6)

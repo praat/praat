@@ -939,7 +939,7 @@ static void drawWhileDragging (ManipulationEditor me, double xWC, double yWC, lo
 	 * Draw all selected pitch points as magenta empty circles, if inside the window.
 	 */
 	for (long i = first; i <= last; i ++) {
-		RealPoint point = (RealPoint) pitch -> points -> item [i];
+		RealPoint point = pitch -> point (i);
 		double t = point -> number + dt, f = YLIN (point -> value) + df;
 		if (t >= my d_startWindow && t <= my d_endWindow)
 			Graphics_circle_mm (my d_graphics, t,
@@ -950,7 +950,7 @@ static void drawWhileDragging (ManipulationEditor me, double xWC, double yWC, lo
 		/*
 		 * Draw a crosshair with time and frequency.
 		 */
-		RealPoint point = (RealPoint) pitch -> points -> item [first];
+		RealPoint point = pitch -> point (first);
 		double t = point -> number + dt, fWC = YLIN (point -> value) + df;
 		Graphics_line (my d_graphics, t, my p_pitch_minimum, t, my p_pitch_maximum - Graphics_dyMMtoWC (my d_graphics, 4.0));
 		Graphics_setTextAlignment (my d_graphics, Graphics_CENTRE, Graphics_TOP);

@@ -1,6 +1,6 @@
 /* ExperimentMFC_def.h
  *
- * Copyright (C) 2001-2011,2013 Paul Boersma
+ * Copyright (C) 2001-2011,2013,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -180,7 +180,7 @@ oo_DEFINE_CLASS (ExperimentMFC, Data)
 	oo_DIR (rootDirectory)
 	#if oo_READING
 		MelderDir_copy (& Data_directoryBeingRead, & rootDirectory);
-		if (localVersion < 4) stimuliAreSounds = TRUE;
+		if (formatVersion < 4) stimuliAreSounds = TRUE;
 	#endif
 
 oo_END_CLASS (ExperimentMFC)
