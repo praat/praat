@@ -206,6 +206,8 @@ static void LongSound_init (LongSound me, MelderFile file) {
 		Melder_throw (U"File not recognized (LongSound only supports AIFF, AIFC, WAV, NeXT/Sun, NIST and FLAC).");
 	if (my encoding == Melder_SHORTEN || my encoding == Melder_POLYPHONE)
 		Melder_throw (U"LongSound does not support sound files compressed with \"shorten\".");
+	if (my nx < 1)
+		Melder_throw (U"Audio file contains 0 samples.");
 	my xmin = 0.0;
 	my dx = 1 / my sampleRate;
 	my xmax = my nx * my dx;
@@ -597,7 +599,7 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 			} else if (my numberOfChannels == 2) {
 				for (i = 0; i < newN; i ++) {
 					double t = t1 + i * dt;
-					double index = (t - t1) * newSampleRate;
+					double index = (t - t1) * my sampleRate;
 					long flore = index;
 					double fraction = index - flore;
 					long ii = i + silenceBefore;
@@ -607,7 +609,7 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 			} else {
 				for (i = 0; i < newN; i ++) {
 					double t = t1 + i * dt;
-					double index = (t - t1) * newSampleRate;
+					double index = (t - t1) * my sampleRate;
 					long flore = index;
 					double fraction = index - flore;
 					long ii = (i + silenceBefore) * my numberOfChannels;

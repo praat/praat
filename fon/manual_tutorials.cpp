@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20150820)
+MAN_BEGIN (U"What's new?", U"ppgb", 20150905)
 INTRO (U"Latest changes in Praat.")
 /*LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (U"##5.4.18# (5 September 2015)")
+LIST_ITEM (U"• Regular expressions: if the pattern is illegal, you'll now get an error message instead of an empty string.")
+LIST_ITEM (U"• LongSound: removed a bug introduced in 1999 that could play long stereo sounds much too fast if they had unusual sampling frequencies. "
+	"This bug has become more noticeable on the Mac since January 2015.")
 NORMAL (U"##5.4.17# (20 August 2015)")
 LIST_ITEM (U"• Scripting: removed a bug that could cause Praat to crash when calling $$writeFile()$ with an empty text.")
 NORMAL (U"##5.4.16# (16 August 2015)")
@@ -59,7 +63,7 @@ LIST_ITEM (U"• Updated manual.")
 NORMAL (U"##5.4.08# (24 March 2015)")
 LIST_ITEM (U"• Sound window: removed a bug that caused a crash in \"Editor info\".")
 NORMAL (U"##5.4.07# (22 March 2015)")
-LIST_ITEM (U"• TextGrid window: ##Add interval# now does the same thing as ##Add boundary# if a time strectch is selected.")
+LIST_ITEM (U"• TextGrid window: ##Add interval# now does the same thing as ##Add boundary# if a time stretch is selected.")
 LIST_ITEM (U"• Linux: better redrawing in TextGrid window.")
 NORMAL (U"##5.4.06# (21 February 2015)")
 LIST_ITEM (U"• Windows: repaired a bug that could cause Praat to crash if a metafile resolution was 200 dpi.")
