@@ -154,6 +154,9 @@ void NUMrandom_init () {
 	for (int threadNumber = 0; threadNumber <= 16; threadNumber ++) {
 		const int numberOfKeys = 6;
 		uint64_t keys [numberOfKeys];
+		#if defined (macintosh) && useCarbon==1
+			#define llround lround
+		#endif
 		keys [0] = (uint64_t) llround (1e6 * Melder_clock ());   // unique between boots of the same computer
 		keys [1] = UINT64_C (7320321686725470078) + (uint64_t) threadNumber;   // unique between threads in the same process
 		switch (threadNumber) {
