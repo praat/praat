@@ -78,6 +78,8 @@ Sound Sound_readFromSoundFile (MelderFile file) {
 			Melder_throw (U"Not an audio file.");
 		if (fseek (file -> filePointer, startOfData, SEEK_SET) == EOF)   // start from beginning of Data Chunk
 			Melder_throw (U"No data in audio file.");
+		if (numberOfSamples < 1)
+			Melder_throw (U"Audio file contains 0 samples.");
 		autoSound me = Sound_createSimple (numberOfChannels, numberOfSamples / sampleRate, sampleRate);
 		if (encoding == Melder_SHORTEN || encoding == Melder_POLYPHONE)
 			Melder_throw (U"Cannot unshorten. Write to paul.boersma@uva.nl for more information.");
