@@ -387,6 +387,10 @@ DIRECT2 (praat_listReadableTypesOfObjects) {
 	Thing_listReadableClasses ();
 END2 }
 
+DIRECT2 (praat_reportSystemProperties) {
+	praat_reportSystemProperties ();
+END2 }
+
 DIRECT2 (praat_reportGraphicalProperties) {
 	praat_reportGraphicalProperties ();
 END2 }
@@ -680,6 +684,7 @@ void praat_addMenus (GuiWindow window) {
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report memory use", 0, 0, DO_praat_reportMemoryUse);
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report integer properties", 0, 0, DO_praat_reportIntegerProperties);
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report text properties", 0, 0, DO_praat_reportTextProperties);
+	praat_addMenuCommand (U"Objects", U"Technical", U"Report system properties", 0, 0, DO_praat_reportSystemProperties);
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report graphical properties", 0, 0, DO_praat_reportGraphicalProperties);
 	praat_addMenuCommand (U"Objects", U"Technical", U"Debug...", 0, 0, DO_praat_debug);
 

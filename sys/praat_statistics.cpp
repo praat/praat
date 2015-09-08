@@ -69,6 +69,42 @@ void praat_reportTextProperties () {
 	MelderInfo_open ();
 	MelderInfo_writeLine (U"Text properties of this edition of Praat on this computer:\n");
 	MelderInfo_writeLine (U"Locale: ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
+	MelderInfo_writeLine (U"A \"char\" is ",                                      8, U" bits.");
+	MelderInfo_writeLine (U"A \"char16_t\" is ",           sizeof (char16_t)    * 8, U" bits.");
+	MelderInfo_writeLine (U"A \"wchar_t\" is ",            sizeof (wchar_t)     * 8, U" bits.");
+	MelderInfo_writeLine (U"A \"char32_t\" is ",           sizeof (char32_t)    * 8, U" bits.");
+	MelderInfo_close ();
+}
+
+void praat_reportSystemProperties () {
+	#define xstr(s) str(s)
+	#define str(s) #s
+	MelderInfo_open ();
+	MelderInfo_writeLine (U"System properties of this edition of Praat on this computer:\n");
+	#ifdef _WIN32
+		MelderInfo_writeLine (U"_WIN32 is \"" xstr (_WIN32) "\".");
+	#endif
+	#ifdef WINVER
+		MelderInfo_writeLine (U"WINVER is \"" xstr (WINVER) "\".");
+	#endif
+	#ifdef _WIN32_WINNT
+		MelderInfo_writeLine (U"_WIN32_WINNT is \"" xstr (_WIN32_WINNT) "\".");
+	#endif
+	#ifdef _WIN32_IE
+		MelderInfo_writeLine (U"_WIN32_IE is \"" xstr (_WIN32_IE) "\".");
+	#endif
+	#ifdef UNICODE
+		MelderInfo_writeLine (U"UNICODE is \"" xstr (UNICODE) "\".");
+	#endif
+	#ifdef _FILE_OFFSET_BITS
+		MelderInfo_writeLine (U"_FILE_OFFSET_BITS is \"" xstr (_FILE_OFFSET_BITS) "\".");
+	#endif
+	#ifdef macintosh
+		MelderInfo_writeLine (U"macintosh is \"" xstr (macintosh) "\".");
+	#endif
+	#ifdef linux
+		MelderInfo_writeLine (U"linux is \"" xstr (linux) "\".");
+	#endif
 	MelderInfo_close ();
 }
 

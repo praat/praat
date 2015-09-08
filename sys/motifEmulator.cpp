@@ -4530,7 +4530,7 @@ void GuiMainLoop () {
 }
 
 #if win
-	extern int main (int argc, char *argv []);
+	extern int wingwmain (int argc, char *argv []);
 	int APIENTRY WinMain (HINSTANCE instance, HINSTANCE previousInstance, LPSTR commandLine, int commandShow) {
 		int argc = 4;
 		char instanceString [20], commandShowString [20];
@@ -4551,7 +4551,7 @@ void GuiMainLoop () {
 			while (argv [3] [0] != ' ' && argv [3] [0] != '\0')  { argv [3] ++; }
 			if (argv [3] [0] == ' ') argv [3] ++;
 		}
-		return main (argc, (char **) & argv [0]);
+		return wingwmain (argc, (char **) & argv [0]);
 	}
 
 	static void on_close (HWND window) {

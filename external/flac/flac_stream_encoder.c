@@ -33,7 +33,7 @@
 #  include <config.h>
 #endif
 
-#if defined _WIN32
+#if defined (_WIN32)
 #include <io.h> /* for _setmode() */
 #include <fcntl.h> /* for _O_BINARY */
 #endif
@@ -4286,7 +4286,7 @@ FILE *get_binary_stdout_(void)
 	_setmode(_fileno(stdout), _O_BINARY);
 #elif defined __CYGWIN__
 	/* almost certainly not needed for any modern Cygwin, but let's be safe... */
-	setmode(_fileno(stdout), _O_BINARY);
+	setmode(fileno(stdout), O_BINARY);
 #elif defined __EMX__
 	setmode(fileno(stdout), O_BINARY);
 #endif

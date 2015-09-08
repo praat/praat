@@ -99,12 +99,20 @@ extern const char * ipaSerifRegularPS [];
 
 #if win
 static bool charisAvailable = false, doulosAvailable = false;
-static int CALLBACK fontFuncEx_charis (const LOGFONTW *oldLogFont, const TEXTMETRICW *oldTextMetric, unsigned long fontType, LPARAM lparam) {
+#ifdef __CYGWIN__
+static int CALLBACK fontFuncEx_charis (const LOGFONTW *oldLogFont, const TEXTMETRICW *oldTextMetric, unsigned int fontType, LPARAM lparam) {
+#else
+static int CALLBACK fontFuncEx_charis (const LOGFONTW *oldLogFont, const TEXTMETRICW *oldTextMetric, unsigned long int fontType, LPARAM lparam) {
+#endif
 	const LPENUMLOGFONTW logFont = (LPENUMLOGFONTW) oldLogFont; (void) oldTextMetric; (void) fontType; (void) lparam;
 	charisAvailable = TRUE;
 	return 1;
 }
-static int CALLBACK fontFuncEx_doulos (const LOGFONTW *oldLogFont, const TEXTMETRICW *oldTextMetric, unsigned long fontType, LPARAM lparam) {
+#ifdef __CYGWIN__
+static int CALLBACK fontFuncEx_doulos (const LOGFONTW *oldLogFont, const TEXTMETRICW *oldTextMetric, unsigned int fontType, LPARAM lparam) {
+#else
+static int CALLBACK fontFuncEx_doulos (const LOGFONTW *oldLogFont, const TEXTMETRICW *oldTextMetric, unsigned long int fontType, LPARAM lparam) {
+#endif
 	const LPENUMLOGFONTW logFont = (LPENUMLOGFONTW) oldLogFont; (void) oldTextMetric; (void) fontType; (void) lparam;
 	doulosAvailable = TRUE;
 	return 1;

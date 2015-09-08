@@ -226,7 +226,7 @@ Sound Sound_readFromKayFile (MelderFile file) {
 
 		if (fread (data, 1, 4, f) < 4) readError ();
 		while (! strnequ (data, "SDA_", 4) && ! strnequ (data, "SD_B", 4)) {
-			if (feof (f))
+			if (feof ((FILE *) f))
 				Melder_throw (U"Missing or unreadable SD chunk. Please report to paul.boersma@uva.nl.");
 			chunkSize = bingetu4LE (f);
 			if (chunkSize & 1) ++ chunkSize;

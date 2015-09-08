@@ -313,6 +313,7 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 	return errorMessage [0] == '\0' ? NULL : errorMessage;
 }
 
+#ifndef __CYGWIN__
 wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, const wchar_t *text) {
 	wchar_t nativeProgramName [100];
 	#if gtk
@@ -534,6 +535,7 @@ wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, co
 	 */
 	return errorMessageW [0] == '\0' ? NULL : errorMessageW;
 }
+#endif
 
 /*
  * To compile sendpraat as a stand-alone program, use the -DSTAND_ALONE option to the C compiler:

@@ -398,7 +398,7 @@ void Sound_writeToRawFile (Sound me, MelderFile file, const char *format, int li
 		}
 		if (nClip > 0) Melder_warning (nClip, U" from ", my nx,
 			                               U" samples have been clipped.\nAdvice: you could scale the amplitudes or save as a binary file.");
-		if (feof (f) || ferror (f)) {
+		if (feof ((FILE *) f) || ferror ((FILE *) f)) {
 			Melder_throw (U"Sound_writeToRawFile: not completed");
 		}
 		f.close (file);
