@@ -545,4 +545,8 @@ struct autoPraatPicture {
 	~autoPraatPicture () { praat_picture_close (); }
 };
 
+#ifdef _WIN32
+	#define main wingwmain
+#endif
+
 /* End of file praat.h */

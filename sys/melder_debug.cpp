@@ -350,7 +350,7 @@ void Melder_tracingToFile (MelderFile file) {
 
 static FILE * Melder_trace_open (const char *fileName, int lineNumber, const char *functionName) {
 	FILE *f;
-	#ifdef _WIN32
+	#if defined (_WIN32) && ! defined (__CYGWIN__)
 		f = _wfopen ((const wchar_t *) peek32to16 (theTracingFile. path), L"a");
 	#else
 		char utf8path [kMelder_MAXPATH+1];

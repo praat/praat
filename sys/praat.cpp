@@ -905,7 +905,11 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = true; }
 		 * this is especially likely to happen for a path that contains spaces.
 		 */
 		Melder_sprint (text,500, U"Read from file... ", file -> path);
-		sendpraatW (NULL, Melder_peek32toW (praatP.title), 0, Melder_peek32toW (text));
+		#ifdef __CYGWIN__
+			sendpraat (NULL, Melder_peek32to8 (praatP.title), 0, Melder_peek32to8 (text));
+		#else
+			sendpraatW (NULL, Melder_peek32toW (praatP.title), 0, Melder_peek32toW (text));
+		#endif
 	}
 #elif cocoa
 	static int (*theUserMessageCallback) (char32 *message);
