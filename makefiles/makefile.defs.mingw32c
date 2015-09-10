@@ -1,0 +1,27 @@
+# File: makefile.defs.mingw32
+
+# System: MinGW on Windows under Cygwin
+# Paul Boersma, 10 September 2015
+
+PREFIX = i686-w64-mingw32-
+
+CC = $(PREFIX)gcc -std=gnu99
+
+CXX = $(PREFIX)g++ -std=gnu++11 -Wshadow
+
+CFLAGS = -municode -D_FILE_OFFSET_BITS=64 -Dmain=wingwmain -DCONSOLE_APPLICATION -O1
+# Probably implicit: -m32 -mwin32 -march=i686 -mtune=generic
+
+CXXFLAGS = $(CFLAGS)
+
+LINK = $(PREFIX)g++
+
+EXECUTABLE = Praat.exe
+
+LIBS = -lwinmm -lwsock32 -lcomctl32 -lole32 -lgdi32 -lgdiplus -lcomdlg32 -static-libgcc -static-libstdc++ -mconsole
+
+AR = $(PREFIX)ar
+RANLIB = $(PREFIX)ranlib
+WINDRES = $(PREFIX)windres
+ICON = praat_win.o
+MAIN_ICON = main/praat_win.o
