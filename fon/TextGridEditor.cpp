@@ -1026,7 +1026,7 @@ static void menu_cb_RenameTier (EDITOR_ARGS) {
 	EDITOR_OK
 		TextGrid grid = (TextGrid) my data;
 		checkTierSelection (me, U"rename a tier");
-		Data tier = (Data) grid -> tiers -> item [my selectedTier];
+		Daata tier = (Daata) grid -> tiers -> item [my selectedTier];
 		SET_STRING (U"Name", tier -> name ? tier -> name : U"")
 	EDITOR_DO
 		TextGrid grid = (TextGrid) my data;

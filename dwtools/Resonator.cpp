@@ -25,7 +25,7 @@
 
 #include "Resonator.h"
 
-Thing_implement (Filter, Data, 0);
+Thing_implement (Filter, Daata, 0);
 
 #define SETBC(f,bw) \
 	double r = exp (-NUMpi * dT * bw); \

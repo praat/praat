@@ -38,7 +38,7 @@
 #include "oo_DESCRIPTION.h"
 #include "Artword_def.h"
 
-Thing_implement (Artword, Data, 0);
+Thing_implement (Artword, Daata, 0);
 
 Artword Artword_create (double totalTime) {
 	Artword me = Thing_new (Artword);

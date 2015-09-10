@@ -449,7 +449,7 @@ DIRECT (Configuration_Weight_to_Similarity_cc)
 	Collection_dontOwnItems (thee.peek());
 	Weight w = 0;
 	LOOP {
-		iam (Data);
+		iam (Daata);
 		if (CLASS == classConfiguration) {
 			Collection_addItem (thee.peek(), me);
 		} else if (CLASS == classWeight) {
@@ -1306,7 +1306,7 @@ DO
 	Collection_dontOwnItems (thee.peek());
 	Configuration c = 0;
 	LOOP {
-		iam (Data);
+		iam (Daata);
 		if (CLASS == classDistance) {
 			Collection_addItem (thee.peek(), me);
 		} else if (CLASS == classConfiguration) {
@@ -1331,7 +1331,7 @@ DO
 	Collection_dontOwnItems (thee.peek());
 	Configuration c = 0;
 	LOOP {
-		iam (Data);
+		iam (Daata);
 		if (CLASS == classDistance) {
 			Collection_addItem (thee.peek(), me);
 		} else if (CLASS == classConfiguration) {
@@ -1352,7 +1352,7 @@ DO
 	Collection_dontOwnItems (thee.peek());
 	Configuration c = 0; Salience s = 0;
 	LOOP {
-		iam (Data);
+		iam (Daata);
 		if (CLASS == classDistance) {
 			Collection_addItem (thee.peek(), me);
 		} else if (CLASS == classConfiguration) {
@@ -1379,7 +1379,7 @@ DO
 	Collection_dontOwnItems (thee.peek());
 	Configuration c = 0; Salience s = 0;
 	LOOP {
-		iam (Data);
+		iam (Daata);
 		if (CLASS == classDissimilarity) {
 			Collection_addItem (thee.peek(), me);
 		} else if (CLASS == classConfiguration) {
@@ -1408,7 +1408,7 @@ DO
 	Collection_dontOwnItems (thee.peek());
 	Configuration c = 0; Salience s = 0;
 	LOOP {
-		iam (Data);
+		iam (Daata);
 		if (CLASS == classDistance) {
 			Collection_addItem (thee.peek(), me);
 		} else if (CLASS == classConfiguration) {

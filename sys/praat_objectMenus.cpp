@@ -89,7 +89,7 @@ DO
 		Melder_throw (U"Selection changed!\nCannot copy more than one object at a time.");
 	WHERE (SELECTED) {
 		char32 *name = GET_STRING (U"newName");
-		praat_new (Data_copy ((Data) OBJECT), name);
+		praat_new (Data_copy ((Daata) OBJECT), name);
 	}
 END2 }
 
@@ -410,7 +410,7 @@ END2 }
 /********** Callbacks of the Open menu. **********/
 
 static void readFromFile (MelderFile file) {
-	autoData object = (Data) Data_readFromFile (file);
+	autoDaata object = (Daata) Data_readFromFile (file);
 	if (object.peek() == NULL) return;
 	if (Thing_isa (object.peek(), classManPages) && ! Melder_batch) {
 		ManPages pages = (ManPages) object.peek();
@@ -438,7 +438,7 @@ END2 }
 FORM_WRITE2 (Data_writeToTextFile, U"Save Object(s) as one text file", 0, 0) {
 	if (theCurrentPraatObjects -> totalSelection == 1) {
 		LOOP {
-			iam (Data);
+			iam (Daata);
 			Data_writeToTextFile (me, file);
 		}
 	} else {
@@ -450,7 +450,7 @@ END2 }
 FORM_WRITE2 (Data_writeToShortTextFile, U"Save Object(s) as one short text file", 0, 0) {
 	if (theCurrentPraatObjects -> totalSelection == 1) {
 		LOOP {
-			iam (Data);
+			iam (Daata);
 			Data_writeToShortTextFile (me, file);
 		}
 	} else {
@@ -462,7 +462,7 @@ END2 }
 FORM_WRITE2 (Data_writeToBinaryFile, U"Save Object(s) as one binary file", 0, 0) {
 	if (theCurrentPraatObjects -> totalSelection == 1) {
 		LOOP {
-			iam (Data);
+			iam (Daata);
 			Data_writeToBinaryFile (me, file);
 		}
 	} else {
@@ -690,12 +690,12 @@ void praat_addMenus (GuiWindow window) {
 
 	praat_addMenuCommand (U"Objects", U"Open", U"Read from file...", 0, praat_ATTRACTIVE + 'O', DO_Data_readFromFile);
 
-	praat_addAction1 (classData, 0, U"Save as text file...", 0, 0, DO_Data_writeToTextFile);
-	praat_addAction1 (classData, 0, U"Write to text file...", 0, praat_HIDDEN, DO_Data_writeToTextFile);
-	praat_addAction1 (classData, 0, U"Save as short text file...", 0, 0, DO_Data_writeToShortTextFile);
-	praat_addAction1 (classData, 0, U"Write to short text file...", 0, praat_HIDDEN, DO_Data_writeToShortTextFile);
-	praat_addAction1 (classData, 0, U"Save as binary file...", 0, 0, DO_Data_writeToBinaryFile);
-	praat_addAction1 (classData, 0, U"Write to binary file...", 0, praat_HIDDEN, DO_Data_writeToBinaryFile);
+	praat_addAction1 (classDaata, 0, U"Save as text file...", 0, 0, DO_Data_writeToTextFile);
+	praat_addAction1 (classDaata, 0, U"Write to text file...", 0, praat_HIDDEN, DO_Data_writeToTextFile);
+	praat_addAction1 (classDaata, 0, U"Save as short text file...", 0, 0, DO_Data_writeToShortTextFile);
+	praat_addAction1 (classDaata, 0, U"Write to short text file...", 0, praat_HIDDEN, DO_Data_writeToShortTextFile);
+	praat_addAction1 (classDaata, 0, U"Save as binary file...", 0, 0, DO_Data_writeToBinaryFile);
+	praat_addAction1 (classDaata, 0, U"Write to binary file...", 0, praat_HIDDEN, DO_Data_writeToBinaryFile);
 
 	praat_addAction1 (classManPages, 1, U"Save to HTML directory...", 0, 0, DO_ManPages_saveToHtmlDirectory);
 	praat_addAction1 (classManPages, 1, U"View", 0, 0, DO_ManPages_view);

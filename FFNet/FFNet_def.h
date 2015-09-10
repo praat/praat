@@ -25,7 +25,7 @@
 */
 
 #define ooSTRUCT FFNet
-oo_DEFINE_CLASS (FFNet, Data)
+oo_DEFINE_CLASS (FFNet, Daata)
 
 	oo_LONG (nLayers)	/* number of layers */
 	

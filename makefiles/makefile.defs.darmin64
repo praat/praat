@@ -1,0 +1,24 @@
+# File: makefile.defs.mingw64
+
+# System: MinGW
+# Paul Boersma, 17 December 2014
+
+CC = /mingw64/bin/gcc -std=gnu99 -isystem /mingw64/include
+
+CXX = /mingw64/bin/g++ -std=c++0x -isystem /mingw64/include/c++/4.7.0 -isystem /mingw64/include -Wshadow -m64
+
+CFLAGS = -DWINVER=0x0500 -D_WIN32_WINNT=0x0500 -D_WIN32_IE=0x0500 -DUNICODE -D_FILE_OFFSET_BITS=64 -Dmain=wingwmain -O1 -pthread
+
+CXXFLAGS = $(CFLAGS)
+
+LINK = /mingw64/bin/g++
+
+EXECUTABLE = Praat.exe
+
+LIBS = -L/mingw64/lib -lwinmm -lwsock32 -lcomctl32 -lole32 -lgdi32 /mingw64/lib/GdiPlus.dll -lcomdlg32 -static-libgcc -static-libstdc++ -mwindows
+
+AR = /mingw64/bin/ar
+RANLIB = /mingw64/bin/ranlib
+WINDRES = /mingw64/bin/windres
+ICON = praat_win.o
+MAIN_ICON = main/praat_win.o

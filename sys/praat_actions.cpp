@@ -448,7 +448,7 @@ static int compareActions (const void *void_me, const void *void_thee) {
 	praat_Command me = (praat_Command) void_me, thee = (praat_Command) void_thee;
 	int compare;
 	compare = str32cmp (my class1 -> className, thy class1 -> className);
-	if (compare) return my class1 == classData ? -1 : thy class1 == classData ? 1 : compare;
+	if (compare) return my class1 == classDaata ? -1 : thy class1 == classDaata ? 1 : compare;
 	if (my class2) {
 		if (! thy class2) return 1;
 		compare = str32cmp (my class2 -> className, thy class2 -> className);
@@ -473,7 +473,7 @@ static const char32 *numberString (int number) {
 	return number == 1 ? U"one" : number == 2 ? U"two" : number == 3 ? U"three" : U"any number of";
 }
 static const char32 *classString (ClassInfo klas) {
-	return klas == classData ? U"" : klas -> className;
+	return klas == classDaata ? U"" : klas -> className;
 }
 static const char32 *objectString (int number) {
 	return number == 1 ? U"object" : U"objects";
@@ -489,7 +489,7 @@ static bool allowExecutionHook (void *closure) {
 			if (! my class1) Melder_throw (U"No class1???");
 			numberOfMatchingCallbacks += 1;
 			if (! firstMatchingCallback) firstMatchingCallback = i;
-			sel1 = my class1 == classData ? theCurrentPraatObjects -> totalSelection : praat_numberOfSelected (my class1);
+			sel1 = my class1 == classDaata ? theCurrentPraatObjects -> totalSelection : praat_numberOfSelected (my class1);
 			if (sel1 == 0) continue;
 			if (my class2 && (sel2 = praat_numberOfSelected (my class2)) == 0) continue;
 			if (my class3 && (sel3 = praat_numberOfSelected (my class3)) == 0) continue;
@@ -598,7 +598,7 @@ void praat_actions_show (void) {
 		/* Match the actually selected classes with the selection required for this visibility. */
 
 		if (! theActions [i]. class1) continue;   /* At least one class selected. */
-		sel1 = theActions [i]. class1 == classData ? theCurrentPraatObjects -> totalSelection : praat_numberOfSelected (theActions [i]. class1);
+		sel1 = theActions [i]. class1 == classDaata ? theCurrentPraatObjects -> totalSelection : praat_numberOfSelected (theActions [i]. class1);
 		if (sel1 == 0) continue;
 		if (theActions [i]. class2 && (sel2 = praat_numberOfSelected (theActions [i]. class2)) == 0) continue;
 		if (theActions [i]. class3 && (sel3 = praat_numberOfSelected (theActions [i]. class3)) == 0) continue;

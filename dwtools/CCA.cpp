@@ -57,13 +57,13 @@
 #include "CCA_def.h"
 
 void structCCA :: v_info () {
-	structData :: v_info ();
+	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Number of coefficients: ", numberOfCoefficients);
 	MelderInfo_writeLine (U"ny: ", y -> dimension);
 	MelderInfo_writeLine (U"nx: ", x -> dimension);
 }
 
-Thing_implement (CCA, Data, 0);
+Thing_implement (CCA, Daata, 0);
 
 CCA CCA_create (long numberOfCoefficients, long ny, long nx) {
 	try {

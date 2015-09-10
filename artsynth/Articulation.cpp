@@ -43,7 +43,7 @@
 #include "enums_getValue.h"
 #include "Articulation_enums.h"
 
-Thing_implement (Art, Data, 0);
+Thing_implement (Art, Daata, 0);
 
 Art Art_create (void) {
 	return Thing_new (Art);

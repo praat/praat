@@ -237,7 +237,7 @@ TextGrid DTW_and_TextGrid_to_TextGrid_old (DTW me, TextGrid thee) {
 		his tiers = Ordered_create ();
 
 		for (long i = 1; i <= thy tiers -> size; i++) {
-			Data anyTier = (Data) thy tiers -> item[i];
+			Daata anyTier = (Daata) thy tiers -> item[i];
 
 			if (anyTier -> classInfo == classIntervalTier) {
 

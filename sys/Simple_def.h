@@ -18,25 +18,25 @@
  */
 
 #define ooSTRUCT SimpleInt
-oo_DEFINE_CLASS (SimpleInt, Data)
+oo_DEFINE_CLASS (SimpleInt, Daata)
 	oo_INT (number)
 oo_END_CLASS (SimpleInt)
 #undef ooSTRUCT
 
 #define ooSTRUCT SimpleLong
-oo_DEFINE_CLASS (SimpleLong, Data)
+oo_DEFINE_CLASS (SimpleLong, Daata)
 	oo_LONG (number)
 oo_END_CLASS (SimpleLong)
 #undef ooSTRUCT
 
 #define ooSTRUCT SimpleDouble
-oo_DEFINE_CLASS (SimpleDouble, Data)
+oo_DEFINE_CLASS (SimpleDouble, Daata)
 	oo_DOUBLE (number)
 oo_END_CLASS (SimpleDouble)
 #undef ooSTRUCT
 
 #define ooSTRUCT SimpleString
-oo_DEFINE_CLASS (SimpleString, Data)
+oo_DEFINE_CLASS (SimpleString, Daata)
 	oo_STRING (string)
 oo_END_CLASS (SimpleString)
 #undef ooSTRUCT

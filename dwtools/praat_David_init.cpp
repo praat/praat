@@ -1641,7 +1641,7 @@ FORM (DTW_and_Sounds_draw, U"DTW & Sounds: Draw", U"DTW & Sounds: Draw...")
 DO
 	Sound s1 = 0, s2 = 0; DTW dtw = 0;
 	LOOP {
-		iam (Data);
+		iam (Daata);
 		if (CLASS == classSound) {
 			(s1 ? s2 : s1) = (Sound) me;
 		} else if (CLASS == classDTW) {
@@ -2793,7 +2793,7 @@ END
 DIRECT (FilesInMemory_addItems)
 	FilesInMemory thee = FIRST (FilesInMemory);
 	LOOP {
-		iam (Data);
+		iam (Daata);
 		if (CLASS == classFileInMemory) {
 			FileInMemory t1 = (FileInMemory) Data_copy (me);
 			Collection_addItem (thee, t1);

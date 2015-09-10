@@ -1234,7 +1234,7 @@ DO
 	praat_new (thee.transfer(), GET_STRING (U"Name"));
 END2 }
 
-static void cb_FormantGridEditor_publish (Editor me, void *closure, Data publish) {
+static void cb_FormantGridEditor_publish (Editor me, void *closure, Daata publish) {
 	(void) me;
 	(void) closure;
 	/*
@@ -2358,7 +2358,7 @@ END2 }
 
 /***** MANIPULATION *****/
 
-static void cb_ManipulationEditor_publication (Editor editor, void *closure, Data publication) {
+static void cb_ManipulationEditor_publication (Editor editor, void *closure, Daata publication) {
 	(void) editor;
 	(void) closure;
 	try {

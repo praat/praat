@@ -26,8 +26,8 @@
 #include "Experiment_enums.h"
 
 #include "ExperimentMFC_def.h"
-oo_CLASS_CREATE (ExperimentMFC, Data);
-oo_CLASS_CREATE (ResultsMFC, Data);
+oo_CLASS_CREATE (ExperimentMFC, Daata);
+oo_CLASS_CREATE (ResultsMFC, Daata);
 
 void ExperimentMFC_start (ExperimentMFC me);
 void ExperimentMFC_playStimulus (ExperimentMFC me, long istim);

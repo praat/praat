@@ -56,13 +56,13 @@ Thing_define (Editor, Thing) {
 	GuiWindow d_windowForm;
 	GuiMenuItem undoButton, searchButton;
 	Ordered menus;
-	Data data, previousData;   // the data that can be displayed and edited
+	Daata data, previousData;   // the data that can be displayed and edited
 	bool d_ownData;
 	char32 undoText [100];
 	Graphics pictureGraphics;
-	void (*d_dataChangedCallback) (Editor me, void *closure);                   void *d_dataChangedClosure;
-	void (*d_destructionCallback) (Editor me, void *closure);                   void *d_destructionClosure;
-	void (*d_publicationCallback) (Editor me, void *closure, Data publication); void *d_publicationClosure;
+	void (*d_dataChangedCallback) (Editor me, void *closure);                    void *d_dataChangedClosure;
+	void (*d_destructionCallback) (Editor me, void *closure);                    void *d_destructionClosure;
+	void (*d_publicationCallback) (Editor me, void *closure, Daata publication); void *d_publicationClosure;
 	const char *callbackSocket;
 
 	void v_destroy ()
@@ -175,7 +175,7 @@ inline static void Editor_broadcastDestruction (Editor me)
 		if (my d_destructionCallback)
 			my d_destructionCallback (me, my d_destructionClosure);
 	}
-inline static void Editor_setPublicationCallback (Editor me, void (*publicationCallback) (Editor me, void *closure, Data publication), void *publicationClosure)
+inline static void Editor_setPublicationCallback (Editor me, void (*publicationCallback) (Editor me, void *closure, Daata publication), void *publicationClosure)
 	/*
 	 * Message from boss: "notify me by calling this publicationCallback every time you have a piece of data to publish."
 	 *
@@ -188,7 +188,7 @@ inline static void Editor_setPublicationCallback (Editor me, void (*publicationC
 		my d_publicationCallback = publicationCallback;
 		my d_publicationClosure = publicationClosure;
 	}
-inline static void Editor_broadcastPublication (Editor me, Data publication)
+inline static void Editor_broadcastPublication (Editor me, Daata publication)
 	/*
 	 * Message to boss: "I have a piece of data for you to publish."
 	 *
@@ -206,7 +206,7 @@ inline static void Editor_broadcastPublication (Editor me, Data publication)
 /***** For inheritors. *****/
 
 void Editor_init (Editor me, int x, int y , int width, int height,
-	const char32 *title, Data data);
+	const char32 *title, Daata data);
 /*
 	This creates my shell and my d_windowForm,
 	calls the v_createMenus and v_createChildren methods,

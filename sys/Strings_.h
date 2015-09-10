@@ -22,7 +22,7 @@
 #include "Data.h"
 
 #include "Strings_def.h"
-oo_CLASS_CREATE (Strings, Data);
+oo_CLASS_CREATE (Strings, Daata);
 
 Strings Strings_createAsFileList (const char32 *path /* cattable */);
 Strings Strings_createAsDirectoryList (const char32 *path /* cattable */);

@@ -34,10 +34,10 @@
 #include "oo_DESCRIPTION.h"
 #include "Polygon_def.h"
 
-Thing_implement (Polygon, Data, 1);
+Thing_implement (Polygon, Daata, 1);
 
 void structPolygon :: v_info () {
-	our structData :: v_info ();
+	our structDaata :: v_info ();
 	MelderInfo_writeLine (U"Number of points: ", our numberOfPoints);
 	MelderInfo_writeLine (U"Perimeter: ", Melder_single (Polygon_perimeter (this)));
 }

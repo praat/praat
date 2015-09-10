@@ -38,10 +38,10 @@
 #include "oo_DESCRIPTION.h"
 #include "Transition_def.h"
 
-Thing_implement (Transition, Data, 0);
+Thing_implement (Transition, Daata, 0);
 
 void structTransition :: v_info () {
-	structData :: v_info ();
+	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Number of states: ", numberOfStates);
 }
 

@@ -19,7 +19,7 @@
 
 
 #define ooSTRUCT Harmonics
-oo_DEFINE_CLASS (Harmonics, Data)
+oo_DEFINE_CLASS (Harmonics, Daata)
 
 	oo_LONG (numberOfHarmonics)
 

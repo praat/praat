@@ -18,7 +18,7 @@
  */
 
 #define ooSTRUCT SVD
-oo_DEFINE_CLASS (SVD, Data)
+oo_DEFINE_CLASS (SVD, Daata)
 
 	oo_DOUBLE (tolerance)
 	oo_LONG (numberOfRows)
@@ -37,7 +37,7 @@ oo_END_CLASS (SVD)
 
 
 #define ooSTRUCT GSVD
-oo_DEFINE_CLASS (GSVD, Data)
+oo_DEFINE_CLASS (GSVD, Daata)
 
 	oo_DOUBLE (tolerance)
 	oo_LONG (numberOfColumns)

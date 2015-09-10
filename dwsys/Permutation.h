@@ -22,7 +22,7 @@
 #include "Collection.h"
 
 #include "Permutation_def.h"
-oo_CLASS_CREATE (Permutation, Data);
+oo_CLASS_CREATE (Permutation, Daata);
 
 /*
 	Class invariant: any permutation equals the identity permutation after all its elements are sorted ascendingly.

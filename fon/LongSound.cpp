@@ -87,7 +87,7 @@ void structLongSound :: v_info () {
 		U"mu-law", U"A-law", U"shorten", U"polyphone",
 		U"IEEE float 32 bit big-endian", U"IEEE float 32 bit little-endian",
 		U"FLAC", U"FLAC", U"FLAC", U"MP3", U"MP3", U"MP3" };
-	structData :: v_info ();
+	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Duration: ", xmax - xmin, U" seconds");
 	MelderInfo_writeLine (U"File name: ", Melder_fileToPath (& file));
 	MelderInfo_writeLine (U"File type: ", audioFileType > Melder_NUMBER_OF_AUDIO_FILE_TYPES ? U"unknown" : Melder_audioFileTypeString (audioFileType));

@@ -79,7 +79,7 @@ Thing_define (VowelEditor, Editor) {
 		virtual void v_createHelpMenuItems (EditorMenu menu);
 };
 
-VowelEditor VowelEditor_create (const char32 *title, Data data);
+VowelEditor VowelEditor_create (const char32 *title, Daata data);
 
 void VowelEditor_prefs ();
 

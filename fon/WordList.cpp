@@ -37,7 +37,7 @@
 
 /* BUG: not Unicode-savvy */
 
-Thing_implement (WordList, Data, 0);
+Thing_implement (WordList, Daata, 0);
 
 static long WordList_count (WordList me) {
 	long n = 0;
@@ -48,7 +48,7 @@ static long WordList_count (WordList me) {
 }
 
 void structWordList :: v_info () {
-	structData :: v_info ();
+	structDaata :: v_info ();
 	long n = WordList_count (this);
 	if (! our length) our length = str32len (our string);
 	MelderInfo_writeLine (U"Number of words: ", n);

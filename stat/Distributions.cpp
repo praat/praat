@@ -22,7 +22,7 @@
 Thing_implement (Distributions, TableOfReal, 0);
 
 void structDistributions :: v_info () {
-	structData :: v_info ();
+	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Number of distributions: ", numberOfColumns);
 	MelderInfo_writeLine (U"Number of values: ", numberOfRows);
 }

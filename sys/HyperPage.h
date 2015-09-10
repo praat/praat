@@ -23,7 +23,7 @@
 #include "Collection.h"
 #include "Graphics.h"
 
-Thing_define (HyperLink, Data) {
+Thing_define (HyperLink, Daata) {
 	double x1DC, x2DC, y1DC, y2DC;
 };
 
@@ -110,7 +110,7 @@ int HyperPage_script (HyperPage me, double width_inches, double height_inches, c
 int HyperPage_goToPage (HyperPage me, const char32 *title);
 void HyperPage_goToPage_i (HyperPage me, long i);
 
-void HyperPage_init (HyperPage me, const char32 *title, Data data);
+void HyperPage_init (HyperPage me, const char32 *title, Daata data);
 
 void HyperPage_setEntryHint (HyperPage me, const char32 *entry);
 void HyperPage_initSheetOfPaper (HyperPage me);

@@ -73,12 +73,12 @@ static void Ordered_moveItems (I, long position[], long npos, long newpos) {
 
 	Melder_assert (min >= 1 && max <= my size && (newpos <= min || newpos >= max));
 
-	autoNUMvector<Data> tmp (1, npos);
+	autoNUMvector<Daata> tmp (1, npos);
 
 	// 'remove'
 
 	for (long i = 1; i <= npos; i++) {
-		tmp[i] = (Data) my item[position[i]];
+		tmp[i] = (Daata) my item[position[i]];
 		my item[position[i]] = 0;
 	}
 
@@ -130,7 +130,7 @@ static void Ordered_moveItem (I, long from, long to) {
 	if (from == to) {
 		return;
 	}
-	Data tmp = (Data) my item[from];
+	Daata tmp = (Daata) my item[from];
 	if (from > to) {
 		for (long i = from; i > to; i--) {
 			my item[i] = my item[i - 1];

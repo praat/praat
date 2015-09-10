@@ -19,41 +19,41 @@
 
 #include "Collection.h"
 
-Thing_implement (Data, Thing, 0);
+Thing_implement (Daata, Thing, 0);
 
 structMelderDir Data_directoryBeingRead = { { 0 } };
 
-void structData :: v_copy (thou) {
-	thouart (Data);
+void structDaata :: v_copy (thou) {
+	thouart (Daata);
 	(void) thee;
 }
 
-bool structData :: v_equal (thou) {
-	thouart (Data);
+bool structDaata :: v_equal (thou) {
+	thouart (Daata);
 	(void) thee;
 	return true;
 }   // names of "identical" objects are allowed to be different
 
-bool structData :: v_canWriteAsEncoding (int /*encoding*/) {
+bool structDaata :: v_canWriteAsEncoding (int /*encoding*/) {
 	return true;
 }
 
-void structData :: v_writeText (MelderFile /*openFile*/) {
+void structDaata :: v_writeText (MelderFile /*openFile*/) {
 }
 
-void structData :: v_readText (MelderReadText, int /*formatVersion*/) {
+void structDaata :: v_readText (MelderReadText, int /*formatVersion*/) {
 }
 
-void structData :: v_writeBinary (FILE *) {
+void structDaata :: v_writeBinary (FILE *) {
 }
 
-void structData :: v_readBinary (FILE *, int /*formatVersion*/) {
+void structDaata :: v_readBinary (FILE *, int /*formatVersion*/) {
 }
 
-Data _Data_copy (Data me) {
+Daata _Data_copy (Daata me) {
 	try {
 		if (me == NULL) return NULL;
-		autoData thee = static_cast <Data> (Thing_newFromClass (my classInfo));
+		autoDaata thee = static_cast <Daata> (Thing_newFromClass (my classInfo));
 		my v_copy (thee.peek());
 		Thing_setName (thee.peek(), my name);
 		return thee.transfer();
@@ -62,29 +62,29 @@ Data _Data_copy (Data me) {
 	}
 }
 
-bool Data_equal (Data me, Data thee) {
+bool Data_equal (Daata me, Daata thee) {
 	if (my classInfo != thy classInfo) return false;   // different class: not equal
-	int offset = sizeof (struct structData);   // we already compared the methods, and are going to skip the names
+	int offset = sizeof (struct structDaata);   // we already compared the methods, and are going to skip the names
 	if (! memcmp ((char *) me + offset, (char *) thee + offset, my classInfo -> size - offset))
 		return true;   // no shallow differences
 	return my v_equal (thee);
 }
 
-bool Data_canWriteAsEncoding (Data me, int encoding) {
+bool Data_canWriteAsEncoding (Daata me, int encoding) {
 	return my v_canWriteAsEncoding (encoding);
 }
 
-bool Data_canWriteText (Data me) {
+bool Data_canWriteText (Daata me) {
 	return my v_writable ();
 }
 
-void Data_writeText (Data me, MelderFile openFile) {
+void Data_writeText (Daata me, MelderFile openFile) {
 	my v_writeText (openFile);
 	if (ferror (openFile -> filePointer))
 		Melder_throw (U"I/O error.");
 }
 
-MelderFile Data_createTextFile (Data me, MelderFile file, bool verbose) {
+MelderFile Data_createTextFile (Daata me, MelderFile file, bool verbose) {
 	autoMelderFile mfile = MelderFile_create (file);
 	#if defined (_WIN32)
 		file -> requiresCRLF = true;
@@ -101,7 +101,7 @@ MelderFile Data_createTextFile (Data me, MelderFile file, bool verbose) {
 	return mfile.transfer();
 }
 
-static void _Data_writeToTextFile (Data me, MelderFile file, bool verbose) {
+static void _Data_writeToTextFile (Daata me, MelderFile file, bool verbose) {
 	try {
 		if (! Data_canWriteText (me))
 			Melder_throw (U"Objects of class ", my classInfo -> className, U" cannot be written to a text file.");
@@ -127,7 +127,7 @@ static void _Data_writeToTextFile (Data me, MelderFile file, bool verbose) {
 	}
 }
 
-void Data_writeToTextFile (Data me, MelderFile file) {
+void Data_writeToTextFile (Daata me, MelderFile file) {
 	try {
 		_Data_writeToTextFile (me, file, true);
 	} catch (MelderError) {
@@ -135,7 +135,7 @@ void Data_writeToTextFile (Data me, MelderFile file) {
 	}
 }
 
-void Data_writeToShortTextFile (Data me, MelderFile file) {
+void Data_writeToShortTextFile (Daata me, MelderFile file) {
 	try {
 		_Data_writeToTextFile (me, file, false);
 	} catch (MelderError) {
@@ -143,17 +143,17 @@ void Data_writeToShortTextFile (Data me, MelderFile file) {
 	}
 }
 
-bool Data_canWriteBinary (Data me) {
+bool Data_canWriteBinary (Daata me) {
 	return my v_writable ();
 }
 
-void Data_writeBinary (Data me, FILE *f) {
+void Data_writeBinary (Daata me, FILE *f) {
 	my v_writeBinary (f);
 	if (ferror (f))
 		Melder_throw (U"I/O error.");
 }
 
-void Data_writeToBinaryFile (Data me, MelderFile file) {
+void Data_writeToBinaryFile (Daata me, MelderFile file) {
 	try {
 		if (! Data_canWriteBinary (me))
 			Melder_throw (U"Objects of class ", my classInfo -> className, U" cannot be written to a generic binary file.");
@@ -172,11 +172,11 @@ void Data_writeToBinaryFile (Data me, MelderFile file) {
 	}
 }
 
-bool Data_canReadText (Data me) {
+bool Data_canReadText (Daata me) {
 	return my v_writable ();
 }
 
-void Data_readText (Data me, MelderReadText text, int formatVersion) {
+void Data_readText (Daata me, MelderReadText text, int formatVersion) {
 	try {
 		my v_readText (text, formatVersion);
 		my v_repair ();
@@ -185,24 +185,24 @@ void Data_readText (Data me, MelderReadText text, int formatVersion) {
 	}
 }
 
-Data Data_readFromTextFile (MelderFile file) {
+Daata Data_readFromTextFile (MelderFile file) {
 	try {
 		autoMelderReadText text = MelderReadText_createFromFile (file);
 		char32 *line = MelderReadText_readLine (text.peek());
 		if (line == NULL)
 			Melder_throw (U"No lines.");
 		char32 *end = str32str (line, U"ooTextFile");   // oo format?
-		autoData me = NULL;
+		autoDaata me = NULL;
 		int formatVersion;
 		if (end) {
 			autostring32 klas = texgetw2 (text.peek());
-			me.reset (static_cast <Data> (Thing_newFromClassName (klas.peek(), & formatVersion)));
+			me.reset (static_cast <Daata> (Thing_newFromClassName (klas.peek(), & formatVersion)));
 		} else {
 			end = str32str (line, U"TextFile");
 			if (end == NULL)
 				Melder_throw (U"Not an old-type text file; should not occur.");
 			*end = U'\0';
-			me.reset (static_cast <Data> (Thing_newFromClassName (line, NULL)));
+			me.reset (static_cast <Daata> (Thing_newFromClassName (line, NULL)));
 			formatVersion = -1;   // old version
 		}
 		MelderFile_getParentDir (file, & Data_directoryBeingRead);
@@ -214,11 +214,11 @@ Data Data_readFromTextFile (MelderFile file) {
 	}
 }
 
-bool Data_canReadBinary (Data me) {
+bool Data_canReadBinary (Daata me) {
 	return my v_writable ();
 }
 
-void Data_readBinary (Data me, FILE *f, int formatVersion) {
+void Data_readBinary (Daata me, FILE *f, int formatVersion) {
 	try {
 		my v_readBinary (f, formatVersion);
 		if (feof (f))
@@ -231,25 +231,25 @@ void Data_readBinary (Data me, FILE *f, int formatVersion) {
 	}
 }
 
-Data Data_readFromBinaryFile (MelderFile file) {
+Daata Data_readFromBinaryFile (MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "rb");
 		char line [200];
 		int n = fread (line, 1, 199, f); line [n] = '\0';
 		char *end = strstr (line, "ooBinaryFile");
-		autoData me = NULL;
+		autoDaata me = NULL;
 		int formatVersion;
 		if (end) {
 			fseek (f, strlen ("ooBinaryFile"), 0);
 			autostring8 klas = bingets1 (f);
-			me.reset (static_cast <Data> (Thing_newFromClassName (Melder_peek8to32 (klas.peek()), & formatVersion)));
+			me.reset (static_cast <Daata> (Thing_newFromClassName (Melder_peek8to32 (klas.peek()), & formatVersion)));
 		} else {
 			end = strstr (line, "BinaryFile");
 			if (! end) {
 				Melder_throw (U"File ", file, U" is not a Data binary file.");
 			}
 			*end = '\0';
-			me.reset (static_cast <Data> (Thing_newFromClassName (Melder_peek8to32 (line), NULL)));
+			me.reset (static_cast <Daata> (Thing_newFromClassName (Melder_peek8to32 (line), NULL)));
 			formatVersion = -1;   // old version: override version number, which was set to 0 by newFromClassName
 			rewind (f);
 			fread (line, 1, end - line + strlen ("BinaryFile"), f);
@@ -273,7 +273,7 @@ void Data_recognizeFileType (Any (*recognizer) (int nread, const char *header, M
 	fileTypeRecognizers [++ numFileTypeRecognizers] = recognizer;
 }
 
-Data Data_readFromFile (MelderFile file) {
+Daata Data_readFromFile (MelderFile file) {
 	int nread, i;
 	char header [513];
 	autofile f = Melder_fopen (file, "rb");
@@ -311,8 +311,8 @@ Data Data_readFromFile (MelderFile file) {
 
 	MelderFile_getParentDir (file, & Data_directoryBeingRead);
 	for (i = 1; i <= numFileTypeRecognizers; i ++) {
-		Data object = (Data) fileTypeRecognizers [i] (nread, header, file);
-		if (object == (Data) 1) return NULL;
+		Daata object = (Daata) fileTypeRecognizers [i] (nread, header, file);
+		if (object == (Daata) 1) return NULL;
 		if (object) return object;
 	}
 
@@ -333,7 +333,7 @@ int Data_Description_countMembers (Data_Description structDescription) {
 	for (Data_Description desc = structDescription; desc -> name; desc ++)
 		count ++;
 	if (structDescription [0]. type == inheritwa) {
-		Data_Description parentDescription = ((Data) _Thing_dummyObject ((ClassInfo) structDescription [0]. tagType)) -> v_description ();
+		Data_Description parentDescription = ((Daata) _Thing_dummyObject ((ClassInfo) structDescription [0]. tagType)) -> v_description ();
 		if (parentDescription)
 			return count + Data_Description_countMembers (parentDescription);
 	}
@@ -344,7 +344,7 @@ Data_Description Data_Description_findMatch (Data_Description structDescription,
 	for (Data_Description desc = structDescription; desc -> name; desc ++)
 		if (str32equ (name, desc -> name)) return desc;
 	if (structDescription [0]. type == inheritwa) {
-		Data_Description parentDescription = ((Data) _Thing_dummyObject ((ClassInfo) structDescription [0]. tagType)) -> v_description ();
+		Data_Description parentDescription = ((Daata) _Thing_dummyObject ((ClassInfo) structDescription [0]. tagType)) -> v_description ();
 		if (parentDescription)
 			return Data_Description_findMatch (parentDescription, name);
 	}
@@ -357,7 +357,7 @@ Data_Description Data_Description_findNumberUse (Data_Description structDescript
 		if (desc -> max2 && str32equ (desc -> max2, string)) return desc;
 	}
 	if (structDescription [0]. type == inheritwa) {
-		Data_Description parentDescription = ((Data) _Thing_dummyObject ((ClassInfo) structDescription [0]. tagType)) -> v_description ();
+		Data_Description parentDescription = ((Daata) _Thing_dummyObject ((ClassInfo) structDescription [0]. tagType)) -> v_description ();
 		if (parentDescription)
 			return Data_Description_findNumberUse (parentDescription, string);
 	}

@@ -19,7 +19,7 @@
 
 
 #define ooSTRUCT RegressionParameter
-oo_DEFINE_CLASS (RegressionParameter, Data)
+oo_DEFINE_CLASS (RegressionParameter, Daata)
 
 	oo_STRING (label)
 	oo_DOUBLE (minimum)
@@ -34,7 +34,7 @@ oo_END_CLASS (RegressionParameter)
 
 
 #define ooSTRUCT Regression
-oo_DEFINE_CLASS (Regression, Data)
+oo_DEFINE_CLASS (Regression, Daata)
 
 	oo_DOUBLE (intercept)
 	oo_COLLECTION (Ordered, parameters, RegressionParameter, 0)

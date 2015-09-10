@@ -48,7 +48,7 @@
 Thing_implement (Tube, Sampled, 0);
 
 void structTube :: v_info () {
-	structData :: v_info ();
+	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Time domain: ", xmin, U" to ", xmax, U" seconds");
 	MelderInfo_writeLine (U"Maximum number of segments: ", maxnSegments);
 	MelderInfo_writeLine (U"Number of frames: ", nx);

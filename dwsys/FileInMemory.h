@@ -28,7 +28,7 @@
 #include "melder.h"
 #include "Strings_.h"
 
-Thing_define (FileInMemory, Data) {
+Thing_define (FileInMemory, Daata) {
 	char32 *d_path;
 	char32 *d_id;
 	long d_numberOfBytes;

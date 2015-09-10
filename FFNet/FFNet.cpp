@@ -62,7 +62,7 @@ static void bookkeeping (FFNet me);
 #include "oo_DESCRIPTION.h"
 #include "FFNet_def.h"
 
-Thing_implement (FFNet, Data, 0);
+Thing_implement (FFNet, Daata, 0);
 
 static void FFNet_checkLayerNumber (FFNet me, long layer) {
 	if (layer < 1 || layer > my nLayers) {
@@ -200,7 +200,7 @@ void bookkeeping (FFNet me) {
 }
 
 void structFFNet :: v_info () {
-	structData :: v_info ();
+	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Number of layers: ", nLayers);
 	MelderInfo_writeLine (U"Total number of units: ", FFNet_getNumberOfUnits (this));
 	MelderInfo_writeLine (U"   Number of units in layer ", nLayers, U" (output): ", nUnitsInLayer[nLayers]);
@@ -718,7 +718,7 @@ void FFNet_drawCostHistory (FFNet me, Graphics g, long iFrom, long iTo, double c
 
 Collection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidden2) {
 	try {
-		autoCollection c = Collection_create (classData, 3);
+		autoCollection c = Collection_create (classDaata, 3);
 		autoCategories uniq = Categories_sequentialNumbers (3);
 		autoFFNet me = FFNet_create (4, numberOfHidden1, numberOfHidden2, 3, 0);
 		FFNet_setOutputCategories (me.peek(), uniq.peek());

@@ -53,7 +53,7 @@ oo_END_STRUCT (NetworkConnection)
 
 
 #define ooSTRUCT Network
-oo_DEFINE_CLASS (Network, Data)
+oo_DEFINE_CLASS (Network, Daata)
 
 	oo_DOUBLE (minimumActivity)
 	oo_DOUBLE (maximumActivity)

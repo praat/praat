@@ -49,10 +49,10 @@
 #include "Index_def.h"
 
 
-Thing_implement (Index, Data, 0);
+Thing_implement (Index, Daata, 0);
 
 void structIndex :: v_info () {
-	structData :: v_info ();
+	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Number of elements: ", numberOfElements);
 }
 

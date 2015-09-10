@@ -18,7 +18,7 @@
  */
 
 #define ooSTRUCT SpeechSynthesizerVoice
-oo_DEFINE_CLASS (SpeechSynthesizerVoice, Data)
+oo_DEFINE_CLASS (SpeechSynthesizerVoice, Daata)
 	oo_STRING (d_v_name)
 
 	oo_LONG (d_phoneme_tab_ix)  // phoneme table number
@@ -63,7 +63,7 @@ oo_END_CLASS (SpeechSynthesizerVoice)
 
 
 #define ooSTRUCT SpeechSynthesizer
-oo_DEFINE_CLASS (SpeechSynthesizer, Data)
+oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
 
 	// sythesizers language /voice
 	oo_STRING (d_voiceLanguageName)

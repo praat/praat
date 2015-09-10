@@ -20,12 +20,12 @@
  */
 
 /*
- * Collection objects contain a number of items whose class is a subclass of Data.
+ * Collection objects contain a number of items whose class is a subclass of Daata.
  */
 
 #include "Simple.h"
 
-Thing_define (Collection, Data) {
+Thing_define (Collection, Daata) {
 	ClassInfo itemClass;   // the class of which all items must be members (see Thing_isa)
 	long _capacity, size;
 	bool _dontOwnItems;
@@ -83,7 +83,7 @@ void Collection_dontOwnItems (Collection me);
 /*
 	Data_copy, Data_equal, Data_writeXXX, Data_readXXX
 	try to copy, compare, write, or read all the items.
-	However, if any of the items is not of class Data,
+	However, if any of the items is not of class Daata,
 	these routines fail with a message and return 0.
 */
 

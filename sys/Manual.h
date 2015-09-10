@@ -60,8 +60,8 @@ Thing_define (Manual, HyperPage) {
 		override { return true; }
 };
 
-void Manual_init (Manual me, const char32 *title, Data data, bool ownData);
-Manual Manual_create (const char32 *title, Data data, bool ownData);
+void Manual_init (Manual me, const char32 *title, Daata data, bool ownData);
+Manual Manual_create (const char32 *title, Daata data, bool ownData);
 
 void Manual_search (Manual me, const char32 *query);
 

@@ -39,7 +39,7 @@
 #include "oo_DESCRIPTION.h"
 #include "Regression_def.h"
 
-Thing_implement (RegressionParameter, Data, 0);
+Thing_implement (RegressionParameter, Daata, 0);
 
 void structRegression :: v_info () {
 	Regression_Parent :: v_info ();
@@ -63,7 +63,7 @@ void structRegression :: v_info () {
 	}
 }
 
-Thing_implement (Regression, Data, 0);
+Thing_implement (Regression, Daata, 0);
 
 void Regression_init (Regression me) {
 	my parameters = Ordered_create ();

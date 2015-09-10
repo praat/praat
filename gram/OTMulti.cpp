@@ -54,7 +54,7 @@
 
 void structOTMulti :: v_info ()
 {
-	structData :: v_info ();
+	structDaata :: v_info ();
 	long numberOfViolations = 0;
 	for (long icand = 1; icand <= numberOfCandidates; icand ++) {
 		for (long icons = 1; icons <= numberOfConstraints; icons ++) {
@@ -149,7 +149,7 @@ void structOTMulti :: v_readText (MelderReadText text, int formatVersion) {
 	OTMulti_checkIndex (this);
 }
 
-Thing_implement (OTMulti, Data, 2);
+Thing_implement (OTMulti, Daata, 2);
 
 long OTMulti_getConstraintIndexFromName (OTMulti me, const char32 *name) {
 	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {

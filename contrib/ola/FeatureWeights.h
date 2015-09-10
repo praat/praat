@@ -44,7 +44,7 @@
 /////////////////////////////////////////////////////
 
 #include "FeatureWeights_def.h"
-oo_CLASS_CREATE (FeatureWeights, Data);
+oo_CLASS_CREATE (FeatureWeights, Daata);
 
 /////////////////////////////////////////////////////
 // Private definitions and macros                  //

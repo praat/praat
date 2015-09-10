@@ -26,7 +26,7 @@ Thing_implement (ContingencyTable, TableOfReal, 0);
 #define TINY 1e-30
 
 void structContingencyTable :: v_info () {
-	structData :: v_info ();
+	structDaata :: v_info ();
 
 	long ndf;
 	double h, hx, hy, hygx, hxgy, uygx, uxgy, uxy, chisq;

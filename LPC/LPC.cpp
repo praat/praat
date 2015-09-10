@@ -53,7 +53,7 @@
 Thing_implement (LPC, Sampled, 1);
 
 void structLPC :: v_info () {
-	structData :: v_info ();
+	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Time domain: ", xmin, U" to ", xmax, U" (s).");
 	MelderInfo_writeLine (U"Prediction order: ", maxnCoefficients);
 	MelderInfo_writeLine (U"Number of frames: ", nx);

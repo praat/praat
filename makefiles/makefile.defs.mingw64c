@@ -1,24 +1,27 @@
-# File: makefile.defs.mingw64c
+# File: makefile.defs.mingw64
 
-# System: MinGW
-# Paul Boersma, 17 December 2014
+# System: MinGW on Windows under Cygwin
+# Paul Boersma, 10 September 2015
 
-CC = /mingw64/bin/gcc -std=gnu99 -isystem /mingw64/include
+PREFIX = x86_64-w64-mingw32-
 
-CXX = /mingw64/bin/g++ -std=c++0x -isystem /mingw64/include/c++/4.7.0 -isystem /mingw64/include -Wshadow -m64
+CC = $(PREFIX)gcc -std=gnu99
 
-CFLAGS = -DWINVER=0x0500 -D_WIN32_WINNT=0x0500 -D_WIN32_IE=0x0500 -DUNICODE -D_FILE_OFFSET_BITS=64 -DCONSOLE_APPLICATION -O1 -pthread
+CXX = $(PREFIX)g++ -std=gnu++11 -Wshadow
+
+CFLAGS = -municode -D_FILE_OFFSET_BITS=64 -DCONSOLE_APPLICATION -O1
+# Probably implicit: -m64 -mwin32 -march=x86_64 -mtune=generic
 
 CXXFLAGS = $(CFLAGS)
 
-LINK = /mingw64/bin/g++
+LINK = $(PREFIX)g++
 
-EXECUTABLE = praatcon.exe
+EXECUTABLE = Praat.exe
 
-LIBS = -L/mingw64/lib -lwinmm -lwsock32 -lcomctl32 -lole32 -lgdi32 /mingw64/lib/GdiPlus.dll -lcomdlg32 -static-libgcc -static-libstdc++
+LIBS = -lwinmm -lwsock32 -lcomctl32 -lole32 -lgdi32 -lgdiplus -lcomdlg32 -static-libgcc -static-libstdc++ -mconsole
 
-AR = /mingw64/bin/ar
-RANLIB = /mingw64/bin/ranlib
-WINDRES = /mingw64/bin/windres
+AR = $(PREFIX)ar
+RANLIB = $(PREFIX)ranlib
+WINDRES = $(PREFIX)windres
 ICON = praat_win.o
 MAIN_ICON = main/praat_win.o

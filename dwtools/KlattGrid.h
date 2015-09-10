@@ -34,17 +34,17 @@
 #include "Interpreter_decl.h"
 
 #include "KlattGrid_def.h"
-oo_CLASS_CREATE (PhonationPoint, Data);
+oo_CLASS_CREATE (PhonationPoint, Daata);
 oo_CLASS_CREATE (PhonationTier, Function);
-oo_CLASS_CREATE (PhonationGridPlayOptions, Data);
+oo_CLASS_CREATE (PhonationGridPlayOptions, Daata);
 oo_CLASS_CREATE (PhonationGrid, Function);
-oo_CLASS_CREATE (VocalTractGridPlayOptions, Data);
+oo_CLASS_CREATE (VocalTractGridPlayOptions, Daata);
 oo_CLASS_CREATE (VocalTractGrid, Function);
-oo_CLASS_CREATE (CouplingGridPlayOptions, Data);
+oo_CLASS_CREATE (CouplingGridPlayOptions, Daata);
 oo_CLASS_CREATE (CouplingGrid, Function);
-oo_CLASS_CREATE (FricationGridPlayOptions, Data);
+oo_CLASS_CREATE (FricationGridPlayOptions, Daata);
 oo_CLASS_CREATE (FricationGrid, Function);
-oo_CLASS_CREATE (KlattGridPlayOptions, Data);
+oo_CLASS_CREATE (KlattGridPlayOptions, Daata);
 oo_CLASS_CREATE (KlattGrid, Function);
 
 /******************** PhonationPoint & Tier ************************************/

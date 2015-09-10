@@ -23,7 +23,7 @@
 #include "Collection.h"
 
 #include "SpellingChecker_def.h"
-oo_CLASS_CREATE (SpellingChecker, Data);
+oo_CLASS_CREATE (SpellingChecker, Daata);
 
 SpellingChecker WordList_upto_SpellingChecker (WordList me);
 WordList SpellingChecker_extractWordList (SpellingChecker me);

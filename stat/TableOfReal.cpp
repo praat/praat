@@ -86,7 +86,7 @@ void structTableOfReal :: v_readText (MelderReadText a_text, int /*formatVersion
 }
 
 void structTableOfReal :: v_info () {
-	structData :: v_info ();
+	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Number of rows: ", numberOfRows);
 	MelderInfo_writeLine (U"Number of columns: ", numberOfColumns);
 }
@@ -111,7 +111,7 @@ double structTableOfReal :: v_getColIndex (const char32 *columnLabel) {
 	return TableOfReal_columnLabelToIndex (this, columnLabel);
 }
 
-Thing_implement (TableOfReal, Data, 0);
+Thing_implement (TableOfReal, Daata, 0);
 
 void TableOfReal_init (TableOfReal me, long numberOfRows, long numberOfColumns) {
 	if (numberOfRows < 1 || numberOfColumns < 1)

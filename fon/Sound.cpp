@@ -37,7 +37,7 @@ Thing_implement (Sound, Vector, 2);
 Sound Sound_clipboard;
 
 void structSound :: v_info () {
-	structData :: v_info ();
+	structDaata :: v_info ();
 	const double rho_c = 400;   /* rho = 1.14 kg m-3; c = 353 m s-1; [rho c] = kg m-2 s-1 */
 	double minimum = z [1] [1], maximum = minimum;
 	MelderInfo_writeLine (U"Number of channels: ", ny, ny == 1 ? U" (mono)" : ny == 2 ? U" (stereo)" : U"");

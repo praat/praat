@@ -22,7 +22,7 @@
 #include "Strings_.h"
 
 #include "WordList_def.h"
-oo_CLASS_CREATE (WordList, Data);
+oo_CLASS_CREATE (WordList, Daata);
 
 WordList Strings_to_WordList (Strings me);
 Strings WordList_to_Strings (WordList me);

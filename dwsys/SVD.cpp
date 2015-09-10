@@ -68,7 +68,7 @@ void structSVD :: v_info () {
 	MelderInfo_writeLine (U"Number of columns: ", numberOfColumns);
 }
 
-Thing_implement (SVD, Data, 0);
+Thing_implement (SVD, Daata, 0);
 
 static void NUMtranspose_d (double **m, long n);
 
@@ -381,7 +381,7 @@ void SVD_synthesize (SVD me, long sv_from, long sv_to, double **m) {
 	}
 }
 
-Thing_implement (GSVD, Data, 0);
+Thing_implement (GSVD, Daata, 0);
 
 void structGSVD :: v_info () {
 	MelderInfo_writeLine (U"Number of columns: ", numberOfColumns);

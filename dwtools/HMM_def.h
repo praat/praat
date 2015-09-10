@@ -24,7 +24,7 @@
 
 
 #define ooSTRUCT HMM_State
-oo_DEFINE_CLASS (HMM_State, Data)
+oo_DEFINE_CLASS (HMM_State, Daata)
 
 	oo_STRING(label)
 
@@ -33,7 +33,7 @@ oo_END_CLASS(HMM_State)
 
 
 #define ooSTRUCT HMM_Observation
-oo_DEFINE_CLASS (HMM_Observation, Data)
+oo_DEFINE_CLASS (HMM_Observation, Daata)
 
 	oo_STRING(label)
 	oo_OBJECT (GaussianMixture, 1, gm)
@@ -43,7 +43,7 @@ oo_END_CLASS(HMM_Observation)
 
 
 #define ooSTRUCT HMM
-oo_DEFINE_CLASS (HMM, Data)
+oo_DEFINE_CLASS (HMM, Daata)
 
 	oo_INT (notHidden) // to model a Markov model instead of HMM
 	oo_INT (leftToRight)
@@ -67,7 +67,7 @@ oo_END_CLASS(HMM)
 
 
 #define ooSTRUCT HMM_Viterbi
-oo_DEFINE_CLASS (HMM_Viterbi, Data)
+oo_DEFINE_CLASS (HMM_Viterbi, Daata)
 	oo_LONG (numberOfTimes)
 	oo_LONG (numberOfStates)
 	oo_DOUBLE (prob)

@@ -20,7 +20,7 @@
 #include "FileInMemory.h"
 #include "Strings_.h"
 
-Thing_implement (FileInMemory, Data, 0);
+Thing_implement (FileInMemory, Daata, 0);
 
 void structFileInMemory :: v_copy (thou) {
 	thouart (FileInMemory);
@@ -40,7 +40,7 @@ void structFileInMemory :: v_destroy () {
 }
 
 void structFileInMemory :: v_info () {
-	structData :: v_info ();
+	structDaata :: v_info ();
 	MelderInfo_writeLine (U"File name: ", d_path);
 	MelderInfo_writeLine (U"Id: ", d_id);
 	MelderInfo_writeLine (U"Number of bytes: ", d_numberOfBytes);

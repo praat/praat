@@ -18,7 +18,7 @@
  */
 
 #define ooSTRUCT GaussianMixture
-oo_DEFINE_CLASS (GaussianMixture, Data)
+oo_DEFINE_CLASS (GaussianMixture, Daata)
 
 	oo_LONG (numberOfComponents)
 	oo_LONG (dimension)

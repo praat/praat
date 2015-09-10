@@ -591,7 +591,7 @@ static void menu_cb_viewSpectralSlice (EDITOR_ARGS) {
 		my p_spectrogram_windowShape == kSound_to_Spectrogram_windowShape_HANNING ? kSound_windowShape_HANNING :
 		my p_spectrogram_windowShape == kSound_to_Spectrogram_windowShape_GAUSSIAN ? kSound_windowShape_GAUSSIAN_2 : kSound_windowShape_RECTANGULAR);
 	autoSpectrum publish = Sound_to_Spectrum (sound.peek(), TRUE);
-	Thing_setName (publish.peek(), Melder_cat (( my data == NULL ? U"untitled" : ((Data) my data) -> name ),
+	Thing_setName (publish.peek(), Melder_cat (( my data == NULL ? U"untitled" : ((Daata) my data) -> name ),
 		U"_", Melder_fixed (0.5 * (my d_startSelection + my d_endSelection), 3)));
 	Editor_broadcastPublication (me, publish.transfer());
 }

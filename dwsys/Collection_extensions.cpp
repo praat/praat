@@ -47,7 +47,7 @@ Collection Collection_and_Permutation_permuteItems (Collection me, Permutation h
 		for (long i = 1; i <= my size; i++) {
 			long ti = pos[i], which = Permutation_getValueAtIndex (him, i);
 			long where = pos[which]; /* where >= i */
-			Data tmp =  static_cast<Data> (thy item[i]);
+			Daata tmp =  static_cast<Daata> (thy item[i]);
 			if (i == where) {
 				continue;
 			}
@@ -78,7 +78,7 @@ Collection Collection_permuteItems (Collection me) {
 /****************** class OrderedOfString ******************/
 
 void structOrderedOfString :: v_info () {
-	structData :: v_info ();
+	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Number of strings: ", size);
 	autoOrderedOfString uStrings = OrderedOfString_selectUniqueItems (this, 1);
 	MelderInfo_writeLine (U"Number of unique categories: ", uStrings -> size);
@@ -169,7 +169,7 @@ OrderedOfString OrderedOfString_selectUniqueItems (OrderedOfString me, int sort)
 void OrderedOfString_frequency (OrderedOfString me, OrderedOfString thee, long *count) {
 	for (long i = 1; i <= my size; i++) {
 		for (long j = 1; j <= thy size; j++) {
-			if (Data_equal ( (Data) my item[i], (Data) thy item[j])) {
+			if (Data_equal ( (Daata) my item[i], (Daata) thy item[j])) {
 				count[j]++;
 				break;
 			}
@@ -221,7 +221,7 @@ long OrderedOfString_indexOfItem_c (OrderedOfString me, const char32 *str) {
 	autoSimpleString s = SimpleString_create (str);
 
 	for (long i = 1; i <= my size; i++) {
-		if (Data_equal ( (Data) my item[i], s.peek())) {
+		if (Data_equal ( (Daata) my item[i], s.peek())) {
 			index = i;
 			break;
 		}

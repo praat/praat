@@ -1,6 +1,6 @@
 /* AffineTransform.cpp
  *
- * Copyright (C) 1993-2013 David Weenink
+ * Copyright (C) 1993-2013,2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +75,7 @@ Any structAffineTransform :: v_invert () {
 	return thee.transfer();
 }
 
-Thing_implement (AffineTransform, Data, 0);
+Thing_implement (AffineTransform, Daata, 0);
 
 void AffineTransform_init (I, long n) {
 	iam (AffineTransform);

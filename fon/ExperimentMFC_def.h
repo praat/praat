@@ -97,7 +97,7 @@ oo_END_STRUCT (GoodnessMFC)
 
 
 #define ooSTRUCT ExperimentMFC
-oo_DEFINE_CLASS (ExperimentMFC, Data)
+oo_DEFINE_CLASS (ExperimentMFC, Daata)
 
 	oo_FROM (6)
 		oo_QUESTION (blankWhilePlaying)
@@ -206,7 +206,7 @@ oo_END_STRUCT (TrialMFC)
 
 
 #define ooSTRUCT ResultsMFC
-oo_DEFINE_CLASS (ResultsMFC, Data)
+oo_DEFINE_CLASS (ResultsMFC, Daata)
 
 	oo_LONG (numberOfTrials)
 	oo_STRUCT_VECTOR (TrialMFC, result, numberOfTrials)

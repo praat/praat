@@ -2,7 +2,7 @@
 #define _AnyTier_h_
 /* AnyTier.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ long AnyTier_timeToHighIndex (I, double time);
 long AnyTier_getWindowPoints (I, double tmin, double tmax, long *imin, long *imax);
 long AnyTier_timeToNearestIndex (I, double time);
 long AnyTier_hasPoint (I, double t);
-void AnyTier_addPoint (I, Data point);
+void AnyTier_addPoint (I, Daata point);
 void AnyTier_removePoint (I, long i);
 void AnyTier_removePointNear (I, double time);
 void AnyTier_removePointsBetween (I, double tmin, double tmax);

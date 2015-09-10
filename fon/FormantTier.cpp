@@ -49,7 +49,7 @@
 #include "oo_DESCRIPTION.h"
 #include "FormantTier_def.h"
 
-Thing_implement (FormantPoint, Data, 0);
+Thing_implement (FormantPoint, Daata, 0);
 
 FormantPoint FormantPoint_create (double time) {
 	try {

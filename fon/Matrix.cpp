@@ -42,7 +42,7 @@
 Thing_implement (Matrix, SampledXY, 2);
 
 void structMatrix :: v_info () {
-	structData :: v_info ();
+	structDaata :: v_info ();
 	double minimum = 0.0, maximum = 0.0;
 	Matrix_getWindowExtrema (this, 1, our nx, 1, our ny, & minimum, & maximum);
 	MelderInfo_writeLine (U"xmin: ", our xmin);

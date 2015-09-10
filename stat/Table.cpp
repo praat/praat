@@ -81,12 +81,12 @@
 #include "oo_DESCRIPTION.h"
 #include "Table_def.h"
 
-Thing_implement (TableRow, Data, 0);
+Thing_implement (TableRow, Daata, 0);
 
-Thing_implement (Table, Data, 0);
+Thing_implement (Table, Daata, 0);
 
 void structTable :: v_info () {
-	structData :: v_info ();
+	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Number of rows: ", rows -> size);
 	MelderInfo_writeLine (U"Number of columns: ", numberOfColumns);
 }

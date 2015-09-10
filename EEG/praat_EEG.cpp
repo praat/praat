@@ -299,7 +299,7 @@ DO
 	}
 END2 }
 
-static void cb_EEGWindow_publication (Editor editor, void *closure, Data publication) {
+static void cb_EEGWindow_publication (Editor editor, void *closure, Daata publication) {
 	(void) editor;
 	(void) closure;
 	/*
@@ -617,7 +617,7 @@ DO
 	}
 END2 }
 
-static void cb_ERPWindow_publication (Editor editor, void *closure, Data publication) {
+static void cb_ERPWindow_publication (Editor editor, void *closure, Daata publication) {
 	(void) editor;
 	(void) closure;
 	/*

@@ -751,7 +751,7 @@ DO
 	Graphics_unsetInner (GRAPHICS);
 END2 }
 
-Thing_define (PraatPictureFunction, Data) {
+Thing_define (PraatPictureFunction, Daata) {
 	// new data:
 	public:
 		double xmin, xmax, dx, x1;
@@ -763,7 +763,7 @@ Thing_define (PraatPictureFunction, Data) {
 		virtual bool v_hasGetDx   () { return true; }   virtual double v_getDx   ()        { return dx; }
 		virtual bool v_hasGetX    () { return true; }   virtual double v_getX    (long ix) { return x1 + (ix - 1) * dx; }
 };
-Thing_implement (PraatPictureFunction, Data, 0);
+Thing_implement (PraatPictureFunction, Daata, 0);
 
 FORM (DrawFunction, U"Praat picture: Draw function", 0) {
 	LABEL (U"", U"This command assumes that the x and y axes")

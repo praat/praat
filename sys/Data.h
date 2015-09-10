@@ -35,7 +35,12 @@ typedef struct structData_Description {
 	const char32 *min2, *max2;   // for matrices
 } *Data_Description;
 
-Thing_define (Data, Thing) {
+/*
+ * We call the class Daata instead of Data,
+ * because of a conflict with the use of "Data" in assembler strings in intrin-impl.h on Windows.
+ */
+
+Thing_define (Daata, Thing) {
 	virtual void v_copy (Any data_to);
 	virtual bool v_equal (Any otherData);
 	virtual Data_Description v_description () { return NULL; }
@@ -77,7 +82,7 @@ Thing_define (Data, Thing) {
 template <class T> T* Data_copy (T* data) {
 	return static_cast <T*> (_Data_copy (data));
 }
-Data _Data_copy (Data me);
+Daata _Data_copy (Daata me);
 /*
 	Message:
 		"return a deep copy of yourself."
@@ -85,7 +90,7 @@ Data _Data_copy (Data me);
 		result -> name == NULL;	  // the only attribute NOT copied
 */
 
-bool Data_equal (Data data1, Data data2);
+bool Data_equal (Daata data1, Daata data2);
 /*
 	Message:
 		"return 1 if the shallow or deep attributes of 'data1' and 'data2' are equal;
@@ -96,14 +101,14 @@ bool Data_equal (Data data1, Data data2);
 
 typedef int (*Data_CompareFunction) (Any data1, Any data2);
 
-bool Data_canWriteAsEncoding (Data me, int outputEncoding);
+bool Data_canWriteAsEncoding (Daata me, int outputEncoding);
 /*
 	Message:
 		"Can you write yourself in that encoding?"
 	The answer depends on whether all members can be written in that encoding.
 */
 
-bool Data_canWriteText (Data me);
+bool Data_canWriteText (Daata me);
 /*
 	Message:
 		"Can you write yourself as text?"
@@ -111,12 +116,12 @@ bool Data_canWriteText (Data me);
 */
 
 MelderFile Data_createTextFile (
-	Data me,
+	Daata me,
 	MelderFile file,
 	bool verbose
 );   // returns the input MelderFile in order to be caught by an autoMelderFile
 
-void Data_writeText (Data me, MelderFile openFile);
+void Data_writeText (Daata me, MelderFile openFile);
 /*
 	Message:
 		"try to write yourself as text to an open file."
@@ -129,7 +134,7 @@ void Data_writeText (Data me, MelderFile openFile);
 		The format depends on the 'writeText' method defined by the subclass.
 */
 
-void Data_writeToTextFile (Data me, MelderFile file);
+void Data_writeToTextFile (Daata me, MelderFile file);
 /*
 	Message:
 		"try to write yourself as text to a file".
@@ -140,7 +145,7 @@ void Data_writeToTextFile (Data me, MelderFile file);
 		The format of the lines after the second line is the same as in Data_writeText.
 */
 
-void Data_writeToShortTextFile (Data me, MelderFile file);
+void Data_writeToShortTextFile (Daata me, MelderFile file);
 /*
 	Message:
 		"try to write yourself as text to a file".
@@ -151,14 +156,14 @@ void Data_writeToShortTextFile (Data me, MelderFile file);
 		The format of the lines after the second line is the same as in Data_writeText.
 */
 
-bool Data_canWriteBinary (Data me);
+bool Data_canWriteBinary (Daata me);
 /*
 	Message:
 		"Can you write yourself as binary data?"
 	The answer depends on whether the subclass defines the 'writeBinary' method.
 */
 
-void Data_writeBinary (Data me, FILE *f);
+void Data_writeBinary (Daata me, FILE *f);
 /*
 	Message:
 		"try to write yourself as binary data to an open file."
@@ -171,7 +176,7 @@ void Data_writeBinary (Data me, FILE *f);
 		and IEEE floating-point format.
 */
 
-void Data_writeToBinaryFile (Data me, MelderFile file);
+void Data_writeToBinaryFile (Daata me, MelderFile file);
 /*
 	Message:
 		"try to write yourself as binary data to a file".
@@ -181,7 +186,7 @@ void Data_writeToBinaryFile (Data me, MelderFile file);
 		The format of the file after this is the same as in Data_writeBinary.
 */
 
-bool Data_canReadText (Data me);
+bool Data_canReadText (Daata me);
 /*
 	Message:
 		"Can you read yourself as text?"
@@ -189,7 +194,7 @@ bool Data_canReadText (Data me);
 	but is preferably the same as the answer from Data_canWriteText.
 */
 
-void Data_readText (Data me, MelderReadText text, int formatVersion);
+void Data_readText (Daata me, MelderReadText text, int formatVersion);
 /*
 	Message:
 		"try to read yourself as text from a string."
@@ -202,7 +207,7 @@ void Data_readText (Data me, MelderReadText text, int formatVersion);
 		but is preferably the same as the format produced by the 'writeText' method.
 */
 
-Data Data_readFromTextFile (MelderFile file);
+Daata Data_readFromTextFile (MelderFile file);
 /*
 	Message:
 		"try to read a Data as text from a file".
@@ -218,7 +223,7 @@ Data Data_readFromTextFile (MelderFile file);
 		(plus those from Data_readText)
 */
 
-bool Data_canReadBinary (Data me);
+bool Data_canReadBinary (Daata me);
 /*
 	Message:
 		"Can you read yourself as binary data?"
@@ -226,7 +231,7 @@ bool Data_canReadBinary (Data me);
 	but is preferably the same as the answer from Data_canWriteBinary.
 */
 
-void Data_readBinary (Data me, FILE *f, int formatVersion);
+void Data_readBinary (Daata me, FILE *f, int formatVersion);
 /*
 	Message:
 		"try to read yourself as binary data from the stream <f>."
@@ -239,7 +244,7 @@ void Data_readBinary (Data me, FILE *f, int formatVersion);
 		but is preferably the same as the format produced by the 'writeBinary' method.
 */
 
-Data Data_readFromBinaryFile (MelderFile file);
+Daata Data_readFromBinaryFile (MelderFile file);
 /*
 	Message:
 		"try to read a Data as binary data from a file".
@@ -297,7 +302,7 @@ Registering a file-type recognizer:
 	After this, Data_readFromFile is able to read Sun audio files.
 */
 
-Data Data_readFromFile (MelderFile file);
+Daata Data_readFromFile (MelderFile file);
 /*
 Purpose:
 	to read a file with data of any kind.

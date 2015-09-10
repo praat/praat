@@ -31,7 +31,7 @@ oo_END_STRUCT (TableCell)
 
 
 #define ooSTRUCT TableRow
-oo_DEFINE_CLASS (TableRow, Data)
+oo_DEFINE_CLASS (TableRow, Daata)
 
 	#if oo_DECLARING || oo_COPYING
 		oo_LONG (sortingIndex)
@@ -56,7 +56,7 @@ oo_END_STRUCT (TableColumnHeader)
 
 
 #define ooSTRUCT Table
-oo_DEFINE_CLASS (Table, Data)
+oo_DEFINE_CLASS (Table, Daata)
 
 	oo_LONG (numberOfColumns)
 	oo_STRUCT_VECTOR (TableColumnHeader, columnHeaders, numberOfColumns)

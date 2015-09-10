@@ -29,7 +29,7 @@ oo_END_STRUCT (PairOfInteger)
 #undef ooSTRUCT
 
 #define ooSTRUCT WarpingPath
-oo_DEFINE_CLASS (WarpingPath, Data)
+oo_DEFINE_CLASS (WarpingPath, Daata)
 	oo_LONG (_capacity)
 	oo_LONG (pathLength)
 	oo_STRUCT_VECTOR (PairOfInteger, path, pathLength)

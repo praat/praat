@@ -56,7 +56,7 @@
 
 void structNetwork :: v_info ()
 {
-	structData :: v_info ();
+	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Spreading rate: ", our spreadingRate);
 	MelderInfo_writeLine (U"Activity clipping rule: ", kNetwork_activityClippingRule_getText (our activityClippingRule));
 	MelderInfo_writeLine (U"Minimum activity: ", our minimumActivity);
@@ -70,7 +70,7 @@ void structNetwork :: v_info ()
 	MelderInfo_writeLine (U"Number of connections: ", our numberOfConnections);
 }
 
-Thing_implement (Network, Data, 6);
+Thing_implement (Network, Daata, 6);
 
 void Network_init (Network me, double spreadingRate, enum kNetwork_activityClippingRule activityClippingRule,
 	double minimumActivity, double maximumActivity, double activityLeak,

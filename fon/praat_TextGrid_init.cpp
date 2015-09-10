@@ -480,7 +480,7 @@ DO
 	Pitch pitch = NULL;
 	TextTier tier = NULL;
 	LOOP {
-		iam (Data);
+		iam (Daata);
 		if (CLASS == classPitch) pitch = (Pitch) me;
 		if (CLASS == classTextTier) tier = (TextTier) me;
 	}
@@ -835,7 +835,7 @@ DO
 	}
 END2 }
 
-static void cb_TextGridEditor_publication (Editor editor, void *closure, Data publication) {
+static void cb_TextGridEditor_publication (Editor editor, void *closure, Daata publication) {
 	(void) editor;
 	(void) closure;
 	/*
@@ -1165,7 +1165,7 @@ FORM (TextGrid_getTierName, U"TextGrid: Get tier name", 0) {
 	NATURAL (STRING_TIER_NUMBER, U"1")
 	OK2
 DO
-	Data tier = pr_TextGrid_peekTier (dia);
+	Daata tier = pr_TextGrid_peekTier (dia);
 	Melder_information (tier -> name);
 END2 }
 
@@ -1255,7 +1255,7 @@ FORM (TextGrid_isIntervalTier, U"TextGrid: Is interval tier?", 0) {
 	NATURAL (STRING_TIER_NUMBER, U"1")
 	OK2
 DO
-	Data tier = pr_TextGrid_peekTier (dia);
+	Daata tier = pr_TextGrid_peekTier (dia);
 	if (tier -> classInfo == classIntervalTier) {
 		Melder_information (U"1 (yes, tier ", GET_INTEGER (STRING_TIER_NUMBER), U" is an interval tier)");
 	} else {

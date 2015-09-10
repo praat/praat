@@ -21,7 +21,7 @@
 
 #include "Data.h"
 
-Thing_define (Script, Data) {
+Thing_define (Script, Daata) {
 	structMelderFile file;
 };
 

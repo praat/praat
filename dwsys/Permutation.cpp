@@ -47,7 +47,7 @@
 #include "oo_DESCRIPTION.h"
 #include "Permutation_def.h"
 
-Thing_implement (Permutation, Data, 0);
+Thing_implement (Permutation, Daata, 0);
 
 static long Permutation_checkRange (Permutation me, long *from, long *to) {
 	if ( (*from < 0 || *from > my numberOfElements) || (*to < 0 || *to > my numberOfElements)) {
@@ -73,7 +73,7 @@ void Permutation_checkInvariant (Permutation me) {
 }
 
 void structPermutation :: v_info () {
-	structData :: v_info ();
+	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Number of elements: ", numberOfElements);
 }
 

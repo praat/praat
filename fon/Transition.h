@@ -2,7 +2,7 @@
 #define _Transition_h_
 /* Transition.h
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,12 +19,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* Transition inherits from Data */
 #include "Matrix.h"
 #include "Graphics.h"
 
 #include "Transition_def.h"
-oo_CLASS_CREATE (Transition, Data);
+oo_CLASS_CREATE (Transition, Daata);
 
 void Transition_init (Transition me, long numberOfStates);
 Transition Transition_create (long numberOfStates);

@@ -55,7 +55,7 @@ EditCostsTable EditCostsTable_createDefault ();
  * cell [n][m] if nomatch target != nomatch source
  */
 
-Thing_implement (WarpingPath, Data, 0);
+Thing_implement (WarpingPath, Daata, 0);
 
 WarpingPath WarpingPath_create (long length) {
 	try {

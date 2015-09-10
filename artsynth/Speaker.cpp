@@ -38,7 +38,7 @@
 #include "oo_DESCRIPTION.h"
 #include "Speaker_def.h"
 
-Thing_implement (Speaker, Data, 0);
+Thing_implement (Speaker, Daata, 0);
 
 Speaker Speaker_create (char32 *kindOfSpeaker, int numberOfVocalCordMasses) {
 	Speaker me = Thing_new (Speaker);

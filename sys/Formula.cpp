@@ -36,7 +36,7 @@
 #include "DemoEditor.h"
 
 static Interpreter theInterpreter, theLocalInterpreter;
-static Data theSource;
+static Daata theSource;
 static const char32 *theExpression;
 static int theLevel = 1;
 #define MAXIMUM_NUMBER_OF_LEVELS  20
@@ -53,7 +53,7 @@ typedef struct structFormulaInstruction {
 		int label;
 		char32 *string;
 		//struct Formula_NumericArray numericArray;
-		Data object;
+		Daata object;
 		InterpreterVariable variable;
 	} content;
 } *FormulaInstruction;
@@ -591,7 +591,7 @@ static void Formula_lexan (void) {
 				if (i == 0)
 					formulefout (U"No such object (note: variables start with lower case)", ikar);
 				nieuwtok (endsInDollarSign ? MATRIKSSTR_ : MATRIKS_)
-				tokmatriks ((Data) theCurrentPraatObjects -> list [i]. object);
+				tokmatriks ((Daata) theCurrentPraatObjects -> list [i]. object);
 			} else {
 				int i = theCurrentPraatObjects -> n;
 				*underscore = ' ';
@@ -601,7 +601,7 @@ static void Formula_lexan (void) {
 				if (i == 0)
 					formulefout (U"No such object (note: variables start with lower case)", ikar);
 				nieuwtok (endsInDollarSign ? MATRIKSSTR_ : MATRIKS_)
-				tokmatriks ((Data) theCurrentPraatObjects -> list [i]. object);
+				tokmatriks ((Daata) theCurrentPraatObjects -> list [i]. object);
 			}
 		} else if (kar == U'(') {
 			nieuwtok (HAAKJEOPENEN_)
@@ -1019,7 +1019,7 @@ static void parsePowerFactor (void) {
 	}
 
 	if (symbol == MATRIKS_) {
-		Data thee = lexan [ilexan]. content.object;
+		Daata thee = lexan [ilexan]. content.object;
 		Melder_assert (thee != NULL);
 		symbol = nieuwlees;
 		if (symbol == RECHTEHAAKOPENEN_) {
@@ -1173,7 +1173,7 @@ static void parsePowerFactor (void) {
 	}
 
 	if (symbol == MATRIKSSTR_) {
-		Data thee = lexan [ilexan]. content.object;
+		Daata thee = lexan [ilexan]. content.object;
 		Melder_assert (thee != NULL);
 		symbol = nieuwlees;
 		if (symbol == RECHTEHAAKOPENEN_) {
@@ -1844,7 +1844,7 @@ void Formula_compile (Any interpreter, Any data, const char32 *expression, int e
 		Collection_removeAllItems (theInterpreter -> variables);
 		#endif
 	}
-	theSource = (Data) data;
+	theSource = (Daata) data;
 	theExpression = expression;
 	theExpressionType [theLevel] = expressionType;
 	theOptimize = optimize;
@@ -2389,11 +2389,11 @@ static void do_objects_are_identical (void) {
 		int i = theCurrentPraatObjects -> n;
 		while (i > 0 && id1 != theCurrentPraatObjects -> list [i]. id) i --;
 		if (i == 0) Melder_throw (U"Object #", id1, U" does not exist in function objectsAreIdentical.");
-		Data object1 = (Data) theCurrentPraatObjects -> list [i]. object;
+		Daata object1 = (Daata) theCurrentPraatObjects -> list [i]. object;
 		i = theCurrentPraatObjects -> n;
 		while (i > 0 && id2 != theCurrentPraatObjects -> list [i]. id) i --;
 		if (i == 0) Melder_throw (U"Object #", id2, U" does not exist in function objectsAreIdentical.");
-		Data object2 = (Data) theCurrentPraatObjects -> list [i]. object;
+		Daata object2 = (Daata) theCurrentPraatObjects -> list [i]. object;
 		pushNumber (x->number == NUMundefined || y->number == NUMundefined ? NUMundefined : Data_equal (object1, object2));
 	} else {
 		Melder_throw (U"The function objectsAreIdentical requires two numeric arguments (object IDs), not ",
@@ -3486,13 +3486,13 @@ static int praat_findObjectFromString (const char32 *name) {
 		*space = U'\0';
 		char32 *className = & buffer.string [0], *givenName = space + 1;
 		WHERE_DOWN (1) {
-			Data object = (Data) OBJECT;
+			Daata object = (Daata) OBJECT;
 			if (str32equ (className, Thing_className ((Thing) OBJECT)) && str32equ (givenName, object -> name))
 				return IOBJECT;
 		}
 		ClassInfo klas = Thing_classFromClassName (className, NULL);
 		WHERE_DOWN (1) {
-			Data object = (Data) OBJECT;
+			Daata object = (Daata) OBJECT;
 			if (str32equ (klas -> className, Thing_className ((Thing) OBJECT)) && str32equ (givenName, object -> name))
 				return IOBJECT;
 		}
@@ -4137,7 +4137,7 @@ static void do_demoExtraControlKeyPressed (void) {
 	bool result = Demo_extraControlKeyPressed ();
 	pushNumber (result);
 }
-static long Stackel_getRowNumber (Stackel row, Data thee) {
+static long Stackel_getRowNumber (Stackel row, Daata thee) {
 	long result = 0;
 	if (row->which == Stackel_NUMBER) {
 		result = lround (row->number);
@@ -4152,7 +4152,7 @@ static long Stackel_getRowNumber (Stackel row, Data thee) {
 	}
 	return result;
 }
-static long Stackel_getColumnNumber (Stackel column, Data thee) {
+static long Stackel_getColumnNumber (Stackel column, Daata thee) {
 	long result = 0;
 	if (column->which == Stackel_NUMBER) {
 		result = lround (column->number);
@@ -4168,7 +4168,7 @@ static long Stackel_getColumnNumber (Stackel column, Data thee) {
 	return result;
 }
 static void do_self0 (long irow, long icol) {
-	Data me = theSource;
+	Daata me = theSource;
 	if (me == NULL) Melder_throw (U"The name \"self\" is restricted to formulas for objects.");
 	if (my v_hasGetCell ()) {
 		pushNumber (my v_getCell ());
@@ -4200,7 +4200,7 @@ static void do_self0 (long irow, long icol) {
 	}
 }
 static void do_selfStr0 (long irow, long icol) {
-	Data me = theSource;
+	Daata me = theSource;
 	if (me == NULL) Melder_throw (U"The name \"self$\" is restricted to formulas for objects.");
 	if (my v_hasGetCellStr ()) {
 		autostring32 result = Melder_dup (my v_getCellStr ());
@@ -4234,8 +4234,8 @@ static void do_selfStr0 (long irow, long icol) {
 		Melder_throw (Thing_className (me), U" objects (like self) accept no [] indexing.");
 	}
 }
-static Data getObjectFromUniqueID (Stackel object) {
-	Data thee = NULL;
+static Daata getObjectFromUniqueID (Stackel object) {
+	Daata thee = NULL;
 	if (object->which == Stackel_NUMBER) {
 		int i = theCurrentPraatObjects -> n;
 		while (i > 0 && object->number != theCurrentPraatObjects -> list [i]. id)
@@ -4243,7 +4243,7 @@ static Data getObjectFromUniqueID (Stackel object) {
 		if (i == 0) {
 			Melder_throw (U"No such object: ", object->number);
 		}
-		thee = (Data) theCurrentPraatObjects -> list [i]. object;
+		thee = (Daata) theCurrentPraatObjects -> list [i]. object;
 	} else if (object->which == Stackel_STRING) {
 		int i = theCurrentPraatObjects -> n;
 		while (i > 0 && ! Melder_equ (object->string, theCurrentPraatObjects -> list [i]. name))
@@ -4251,14 +4251,14 @@ static Data getObjectFromUniqueID (Stackel object) {
 		if (i == 0) {
 			Melder_throw (U"No such object: ", object->string);
 		}
-		thee = (Data) theCurrentPraatObjects -> list [i]. object;
+		thee = (Daata) theCurrentPraatObjects -> list [i]. object;
 	} else {
 		Melder_throw (U"The first argument to \"object\" must be a number (unique ID) or a string (name), not ", Stackel_whichText (object), U".");
 	}
 	return thee;
 }
 static void do_objectCell0 (long irow, long icol) {
-	Data thee = getObjectFromUniqueID (pop);
+	Daata thee = getObjectFromUniqueID (pop);
 	if (thy v_hasGetCell ()) {
 		pushNumber (thy v_getCell ());
 	} else if (thy v_hasGetVector ()) {
@@ -4288,7 +4288,7 @@ static void do_objectCell0 (long irow, long icol) {
 	}
 }
 static void do_matriks0 (long irow, long icol) {
-	Data thee = parse [programPointer]. content.object;
+	Daata thee = parse [programPointer]. content.object;
 	if (thy v_hasGetCell ()) {
 		pushNumber (thy v_getCell ());
 	} else if (thy v_hasGetVector ()) {
@@ -4318,7 +4318,7 @@ static void do_matriks0 (long irow, long icol) {
 	}
 }
 static void do_selfMatriks1 (long irow) {
-	Data me = theSource;
+	Daata me = theSource;
 	Stackel column = pop;
 	if (me == NULL) Melder_throw (U"The name \"self\" is restricted to formulas for objects.");
 	long icol = Stackel_getColumnNumber (column, me);
@@ -4337,7 +4337,7 @@ static void do_selfMatriks1 (long irow) {
 	}
 }
 static void do_selfMatriksStr1 (long irow) {
-	Data me = theSource;
+	Daata me = theSource;
 	Stackel column = pop;
 	if (me == NULL) Melder_throw (U"The name \"self$\" is restricted to formulas for objects.");
 	long icol = Stackel_getColumnNumber (column, me);
@@ -4359,7 +4359,7 @@ static void do_selfMatriksStr1 (long irow) {
 }
 static void do_objectCell1 (long irow) {
 	Stackel column = pop;
-	Data thee = getObjectFromUniqueID (pop);
+	Daata thee = getObjectFromUniqueID (pop);
 	long icol = Stackel_getColumnNumber (column, thee);
 	if (thy v_hasGetVector ()) {
 		pushNumber (thy v_getVector (irow, icol));
@@ -4376,7 +4376,7 @@ static void do_objectCell1 (long irow) {
 	}
 }
 static void do_matriks1 (long irow) {
-	Data thee = parse [programPointer]. content.object;
+	Daata thee = parse [programPointer]. content.object;
 	Stackel column = pop;
 	long icol = Stackel_getColumnNumber (column, thee);
 	if (thy v_hasGetVector ()) {
@@ -4395,7 +4395,7 @@ static void do_matriks1 (long irow) {
 }
 static void do_objectCellStr1 (long irow) {
 	Stackel column = pop;
-	Data thee = getObjectFromUniqueID (pop);
+	Daata thee = getObjectFromUniqueID (pop);
 	long icol = Stackel_getColumnNumber (column, thee);
 	if (thy v_hasGetVectorStr ()) {
 		autostring32 result = Melder_dup (thy v_getVectorStr (icol));
@@ -4414,7 +4414,7 @@ static void do_objectCellStr1 (long irow) {
 	}
 }
 static void do_matrixStr1 (long irow) {
-	Data thee = parse [programPointer]. content.object;
+	Daata thee = parse [programPointer]. content.object;
 	Stackel column = pop;
 	long icol = Stackel_getColumnNumber (column, thee);
 	if (thy v_hasGetVectorStr ()) {
@@ -4434,7 +4434,7 @@ static void do_matrixStr1 (long irow) {
 	}
 }
 static void do_selfMatriks2 (void) {
-	Data me = theSource;
+	Daata me = theSource;
 	Stackel column = pop, row = pop;
 	if (me == NULL) Melder_throw (U"The name \"self\" is restricted to formulas for objects.");
 	long irow = Stackel_getRowNumber (row, me);
@@ -4444,7 +4444,7 @@ static void do_selfMatriks2 (void) {
 	pushNumber (my v_getMatrix (irow, icol));
 }
 static void do_selfMatriksStr2 (void) {
-	Data me = theSource;
+	Daata me = theSource;
 	Stackel column = pop, row = pop;
 	if (me == NULL) Melder_throw (U"The name \"self$\" is restricted to formulas for objects.");
 	long irow = Stackel_getRowNumber (row, me);
@@ -4456,7 +4456,7 @@ static void do_selfMatriksStr2 (void) {
 }
 static void do_objectCell2 (void) {
 	Stackel column = pop, row = pop;
-	Data thee = getObjectFromUniqueID (pop);
+	Daata thee = getObjectFromUniqueID (pop);
 	long irow = Stackel_getRowNumber (row, thee);
 	long icol = Stackel_getColumnNumber (column, thee);
 	if (! thy v_hasGetMatrix ())
@@ -4464,7 +4464,7 @@ static void do_objectCell2 (void) {
 	pushNumber (thy v_getMatrix (irow, icol));
 }
 static void do_matriks2 (void) {
-	Data thee = parse [programPointer]. content.object;
+	Daata thee = parse [programPointer]. content.object;
 	Stackel column = pop, row = pop;
 	long irow = Stackel_getRowNumber (row, thee);
 	long icol = Stackel_getColumnNumber (column, thee);
@@ -4474,7 +4474,7 @@ static void do_matriks2 (void) {
 }
 static void do_objectCellStr2 (void) {
 	Stackel column = pop, row = pop;
-	Data thee = getObjectFromUniqueID (pop);
+	Daata thee = getObjectFromUniqueID (pop);
 	long irow = Stackel_getRowNumber (row, thee);
 	long icol = Stackel_getColumnNumber (column, thee);
 	if (! thy v_hasGetMatrixStr ())
@@ -4483,7 +4483,7 @@ static void do_objectCellStr2 (void) {
 	pushString (result.transfer());
 }
 static void do_matriksStr2 (void) {
-	Data thee = parse [programPointer]. content.object;
+	Daata thee = parse [programPointer]. content.object;
 	Stackel column = pop, row = pop;
 	long irow = Stackel_getRowNumber (row, thee);
 	long icol = Stackel_getColumnNumber (column, thee);
@@ -4493,11 +4493,11 @@ static void do_matriksStr2 (void) {
 	pushString (result.transfer());
 }
 static void do_objectLocation0 (long irow, long icol) {
-	Data thee = getObjectFromUniqueID (pop);
+	Daata thee = getObjectFromUniqueID (pop);
 	if (thy v_hasGetFunction0 ()) {
 		pushNumber (thy v_getFunction0 ());
 	} else if (thy v_hasGetFunction1 ()) {
-		Data me = theSource;
+		Daata me = theSource;
 		if (me == NULL)
 			Melder_throw (U"No current object (we are not in a Formula command),\n"
 				U"hence no implicit x value for this ", Thing_className (thee), U" object.\n"
@@ -4510,7 +4510,7 @@ static void do_objectLocation0 (long irow, long icol) {
 		double x = my v_getX (icol);
 		pushNumber (thy v_getFunction1 (irow, x));
 	} else if (thy v_hasGetFunction2 ()) {
-		Data me = theSource;
+		Daata me = theSource;
 		if (me == NULL)
 			Melder_throw (U"No current object (we are not in a Formula command),\n"
 				U"hence no implicit x or y values for this ", Thing_className (thee), U" object.\n"
@@ -4531,11 +4531,11 @@ static void do_objectLocation0 (long irow, long icol) {
 	}
 }
 static void do_funktie0 (long irow, long icol) {
-	Data thee = parse [programPointer]. content.object;
+	Daata thee = parse [programPointer]. content.object;
 	if (thy v_hasGetFunction0 ()) {
 		pushNumber (thy v_getFunction0 ());
 	} else if (thy v_hasGetFunction1 ()) {
-		Data me = theSource;
+		Daata me = theSource;
 		if (me == NULL)
 			Melder_throw (U"No current object (we are not in a Formula command),\n"
 				U"hence no implicit x value for this ", Thing_className (thee), U" object.\n"
@@ -4548,7 +4548,7 @@ static void do_funktie0 (long irow, long icol) {
 		double x = my v_getX (icol);
 		pushNumber (thy v_getFunction1 (irow, x));
 	} else if (thy v_hasGetFunction2 ()) {
-		Data me = theSource;
+		Daata me = theSource;
 		if (me == NULL)
 			Melder_throw (U"No current object (we are not in a Formula command),\n"
 				U"hence no implicit x or y values for this ", Thing_className (thee), U" object.\n"
@@ -4569,7 +4569,7 @@ static void do_funktie0 (long irow, long icol) {
 	}
 }
 static void do_selfFunktie1 (long irow) {
-	Data me = theSource;
+	Daata me = theSource;
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
 		if (me == NULL) Melder_throw (U"The name \"self\" is restricted to formulas for objects.");
@@ -4590,12 +4590,12 @@ static void do_selfFunktie1 (long irow) {
 }
 static void do_objectLocation1 (long irow) {
 	Stackel x = pop;
-	Data thee = getObjectFromUniqueID (pop);
+	Daata thee = getObjectFromUniqueID (pop);
 	if (x->which == Stackel_NUMBER) {
 		if (thy v_hasGetFunction1 ()) {
 			pushNumber (thy v_getFunction1 (irow, x->number));
 		} else if (thy v_hasGetFunction2 ()) {
-			Data me = theSource;
+			Daata me = theSource;
 			if (me == NULL)
 				Melder_throw (U"No current object (we are not in a Formula command),\n"
 					U"hence no implicit y value for this ", Thing_className (thee), U" object.\n"
@@ -4614,13 +4614,13 @@ static void do_objectLocation1 (long irow) {
 	}
 }
 static void do_funktie1 (long irow) {
-	Data thee = parse [programPointer]. content.object;
+	Daata thee = parse [programPointer]. content.object;
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
 		if (thy v_hasGetFunction1 ()) {
 			pushNumber (thy v_getFunction1 (irow, x->number));
 		} else if (thy v_hasGetFunction2 ()) {
-			Data me = theSource;
+			Daata me = theSource;
 			if (me == NULL)
 				Melder_throw (U"No current object (we are not in a Formula command),\n"
 					U"hence no implicit y value for this ", Thing_className (thee), U" object.\n"
@@ -4639,7 +4639,7 @@ static void do_funktie1 (long irow) {
 	}
 }
 static void do_selfFunktie2 (void) {
-	Data me = theSource;
+	Daata me = theSource;
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		if (me == NULL) Melder_throw (U"The name \"self\" is restricted to formulas for objects.");
@@ -4652,7 +4652,7 @@ static void do_selfFunktie2 (void) {
 }
 static void do_objectLocation2 (void) {
 	Stackel y = pop, x = pop;
-	Data thee = getObjectFromUniqueID (pop);
+	Daata thee = getObjectFromUniqueID (pop);
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		if (! thy v_hasGetFunction2 ())
 			Melder_throw (Thing_className (thee), U" objects accept no (x, y) values.");
@@ -4662,7 +4662,7 @@ static void do_objectLocation2 (void) {
 	}
 }
 static void do_funktie2 (void) {
-	Data thee = parse [programPointer]. content.object;
+	Daata thee = parse [programPointer]. content.object;
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		if (! thy v_hasGetFunction2 ())
@@ -4673,7 +4673,7 @@ static void do_funktie2 (void) {
 	}
 }
 static void do_rowStr (void) {
-	Data thee = parse [programPointer]. content.object;
+	Daata thee = parse [programPointer]. content.object;
 	Stackel row = pop;
 	long irow = Stackel_getRowNumber (row, thee);
 	autostring32 result = Melder_dup (thy v_getRowStr (irow));
@@ -4682,7 +4682,7 @@ static void do_rowStr (void) {
 	pushString (result.transfer());
 }
 static void do_colStr (void) {
-	Data thee = parse [programPointer]. content.object;
+	Daata thee = parse [programPointer]. content.object;
 	Stackel col = pop;
 	long icol = Stackel_getColumnNumber (col, thee);
 	autostring32 result = Melder_dup (thy v_getColStr (icol));
@@ -4721,11 +4721,11 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case ROW_: { pushNumber (row);
 } break; case COL_: { pushNumber (col);
 } break; case X_: {
-	Data me = theSource;
+	Daata me = theSource;
 	if (! my v_hasGetX ()) Melder_throw (U"No values for \"x\" for this object.");
 	pushNumber (my v_getX (col));
 } break; case Y_: {
-	Data me = theSource;
+	Daata me = theSource;
 	if (! my v_hasGetY ()) Melder_throw (U"No values for \"y\" for this object.");
 	pushNumber (my v_getY (row));
 } break; case NOT_: { do_not ();

@@ -22,7 +22,7 @@
 */
 
 #define ooSTRUCT DoubleVector
-oo_DEFINE_CLASS (DoubleVector, Data)
+oo_DEFINE_CLASS (DoubleVector, Daata)
 
 	oo_LONG (min)
 	oo_LONG (max)
@@ -32,7 +32,7 @@ oo_END_CLASS (DoubleVector)
 #undef ooSTRUCT
 
 #define ooSTRUCT ComplexVector
-oo_DEFINE_CLASS (ComplexVector, Data)
+oo_DEFINE_CLASS (ComplexVector, Daata)
 
 	oo_LONG (min)
 	oo_LONG (max)

@@ -27,12 +27,12 @@
 #include "Index.h"
 
 #include "HMM_def.h"
-oo_CLASS_CREATE (HMM_State, Data);
-oo_CLASS_CREATE (HMM_Observation, Data);
-oo_CLASS_CREATE (HMM_Viterbi, Data);
-oo_CLASS_CREATE (HMM, Data);
+oo_CLASS_CREATE (HMM_State, Daata);
+oo_CLASS_CREATE (HMM_Observation, Daata);
+oo_CLASS_CREATE (HMM_Viterbi, Daata);
+oo_CLASS_CREATE (HMM, Daata);
 
-Thing_define (HMM_BaumWelch, Data) {
+Thing_define (HMM_BaumWelch, Daata) {
 	// new data:
 	public:
 		long capacity;

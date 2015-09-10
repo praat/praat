@@ -19,7 +19,7 @@
 
 
 #define ooSTRUCT Polygon
-oo_DEFINE_CLASS (Polygon, Data)
+oo_DEFINE_CLASS (Polygon, Daata)
 
 	oo_LONG (numberOfPoints)
 

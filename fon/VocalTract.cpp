@@ -22,7 +22,7 @@
 Thing_implement (VocalTract, Vector, 2);
 
 void structVocalTract :: v_info () {
-	structData :: v_info ();
+	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Vocal tract length: ", Melder_single (xmax), U" metres");
 	MelderInfo_writeLine (U"Number of sections: ", nx);
 	MelderInfo_writeLine (U"Section length: ", Melder_single (dx), U" metres");

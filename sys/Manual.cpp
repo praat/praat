@@ -545,7 +545,7 @@ int structManual :: v_goToPage (const char32 *title) {
 	}
 }
 
-void Manual_init (Manual me, const char32 *title, Data data, bool ownData) {
+void Manual_init (Manual me, const char32 *title, Daata data, bool ownData) {
 	ManPages manPages = (ManPages) data;
 	char32 windowTitle [101];
 	long i;
@@ -572,7 +572,7 @@ void Manual_init (Manual me, const char32 *title, Data data, bool ownData) {
 	my history [0]. page = Melder_dup_f (title);   // BAD
 }
 
-Manual Manual_create (const char32 *title, Data data, bool ownData) {
+Manual Manual_create (const char32 *title, Daata data, bool ownData) {
 	try {
 		autoManual me = Thing_new (Manual);
 		Manual_init (me.peek(), title, data, ownData);

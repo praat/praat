@@ -48,7 +48,7 @@
 /////////////////////////////////////////////////////
 
 #include "KNN_def.h"
-oo_CLASS_CREATE (KNN, Data);
+oo_CLASS_CREATE (KNN, Daata);
 
 /////////////////////////////////////////////////////
 // Private definitions and macros                  //

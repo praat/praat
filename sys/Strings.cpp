@@ -60,7 +60,7 @@
 #include "oo_DESCRIPTION.h"
 #include "Strings_def.h"
 
-Thing_implement (Strings, Data, 0);
+Thing_implement (Strings, Daata, 0);
 
 static long Strings_totalLength (Strings me) {
 	long totalLength = 0;
@@ -82,7 +82,7 @@ static long Strings_maximumLength (Strings me) {
 }
 
 void structStrings :: v_info () {
-	structData :: v_info ();
+	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Number of strings: ", numberOfStrings);
 	MelderInfo_writeLine (U"Total length: ", Strings_totalLength (this), U" characters");
 	MelderInfo_writeLine (U"Longest string: ", Strings_maximumLength (this), U" characters");

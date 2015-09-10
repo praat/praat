@@ -108,7 +108,7 @@ oo_END_STRUCT (Speaker_Nose)
 
 
 #define ooSTRUCT Speaker
-oo_DEFINE_CLASS (Speaker, Data)
+oo_DEFINE_CLASS (Speaker, Daata)
 
 	oo_DOUBLE (relativeSize)   /* Different for female, male, child. */
 

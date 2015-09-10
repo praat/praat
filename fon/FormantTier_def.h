@@ -19,7 +19,7 @@
 
 
 #define ooSTRUCT FormantPoint
-oo_DEFINE_CLASS (FormantPoint, Data)
+oo_DEFINE_CLASS (FormantPoint, Daata)
 
 	oo_DOUBLE (time)   /* AnyPoint */
 	oo_INT (numberOfFormants)

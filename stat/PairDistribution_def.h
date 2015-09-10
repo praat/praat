@@ -19,7 +19,7 @@
 
 
 #define ooSTRUCT PairProbability
-oo_DEFINE_CLASS (PairProbability, Data)
+oo_DEFINE_CLASS (PairProbability, Daata)
 
 	oo_STRING (string1)
 	oo_STRING (string2)
@@ -30,7 +30,7 @@ oo_END_CLASS (PairProbability)
 
 
 #define ooSTRUCT PairDistribution
-oo_DEFINE_CLASS (PairDistribution, Data)
+oo_DEFINE_CLASS (PairDistribution, Daata)
 
 	oo_COLLECTION (Ordered, pairs, PairProbability, 0)
 

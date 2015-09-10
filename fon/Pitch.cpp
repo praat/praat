@@ -304,7 +304,7 @@ long Pitch_getMeanAbsSlope_noOctave (Pitch me, double *slope) {
 void structPitch :: v_info () {
 	long nVoiced;
 	autoNUMvector <double> frequencies (Sampled_getSortedValues (this, Pitch_LEVEL_FREQUENCY, kPitch_unit_HERTZ, & nVoiced), 1);
-	structData :: v_info ();
+	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Time domain:");
 	MelderInfo_writeLine (U"   Start time: ", xmin, U" seconds");
 	MelderInfo_writeLine (U"   End time: ", xmax, U" seconds");

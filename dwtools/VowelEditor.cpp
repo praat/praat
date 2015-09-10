@@ -732,7 +732,7 @@ static void VowelEditor_setMarks (VowelEditor me, int marksDataset, int speakerT
 static void VowelEditor_getVowelMarksFromTableFile (VowelEditor me, MelderFile file)
 {
 	try {
-		autoData data =  (Data) Data_readFromFile (file);
+		autoDaata data =  (Daata) Data_readFromFile (file);
 		if (! Thing_isa ((Thing) data.peek(), classTable)) Melder_throw (U"\"", MelderFile_name (file), U"\" is not a Table file");
 		autoTable marks = (Table) data.transfer();
 		// check if columns Vowel F1 & F2 are present
@@ -1463,7 +1463,7 @@ static void gui_drawingarea_cb_key (I, GuiDrawingAreaKeyEvent event) {
 	(void) event;
 }
 
-static void cb_publish (Editor editor, void *closure, Data publish) {
+static void cb_publish (Editor editor, void *closure, Daata publish) {
 	(void) editor;
 	(void) closure;
 	try {
@@ -1605,7 +1605,7 @@ static Sound VowelEditor_createTarget (VowelEditor me) {
 	}
 }
 
-VowelEditor VowelEditor_create (const char32 *title, Data data) {
+VowelEditor VowelEditor_create (const char32 *title, Daata data) {
 	try {
 		trace (U"enter");
 		autoVowelEditor me = Thing_new (VowelEditor);

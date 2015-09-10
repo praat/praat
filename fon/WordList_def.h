@@ -19,7 +19,7 @@
 
 
 #define ooSTRUCT WordList
-oo_DEFINE_CLASS (WordList, Data)
+oo_DEFINE_CLASS (WordList, Daata)
 
 	#if !oo_DESCRIBING
 		oo_LSTRING (string)

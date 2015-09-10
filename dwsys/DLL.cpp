@@ -19,7 +19,7 @@
 
 #include "DLL.h"
 
-Thing_implement (DLLNode, Data, 0);
+Thing_implement (DLLNode, Daata, 0);
 
 void structDLLNode :: v_destroy () {
 	forget (data);
@@ -49,7 +49,7 @@ int structDLL :: s_compare (Any node1, Any node2) {
 	return 0;
 }
 
-DLLNode DLLNode_create (Data data) {
+DLLNode DLLNode_create (Daata data) {
 	DLLNode me = Thing_new (DLLNode);
 	my data = data;
 	return me;
