@@ -50,7 +50,7 @@
 
 #include "longchar.h"
 
-Thing_implement (SpellingChecker, Data, 0);
+Thing_implement (SpellingChecker, Daata, 0);
 
 SpellingChecker WordList_upto_SpellingChecker (WordList me) {
 	try {

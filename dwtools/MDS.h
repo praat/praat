@@ -95,7 +95,7 @@ void Salience_draw (Salience me, Graphics g, int xdimension, int ydimension,
 
 /************************** class MDSVec ******************************/
 
-Thing_define (MDSVec, Data) {
+Thing_define (MDSVec, Daata) {
 	// new data:
 	public:
 		long nProximities, nPoints;

@@ -49,7 +49,7 @@
 #include "KNN_def.h"
 
 
-Thing_implement (KNN, Data, 0);
+Thing_implement (KNN, Daata, 0);
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 // Praat specifics                                                                         //
@@ -57,7 +57,7 @@ Thing_implement (KNN, Data, 0);
 
 void structKNN :: v_info ()
 {
-    structData :: v_info ();
+    structDaata :: v_info ();
     MelderInfo_writeLine (U"Size of instancebase: ", nInstances);
 }
 

@@ -51,11 +51,11 @@ void structCollection :: v_copy (thou) {
 	for (long i = 1; i <= size; i ++) {
 		Thing itempie = (Thing) item [i];
 		if (_dontOwnItems) {
-			thy item [i] = itempie;   // reference copy: if me doesn't own the items, then thee shouldn't either   // NOTE: the items don't have to be Data
+			thy item [i] = itempie;   // reference copy: if me doesn't own the items, then thee shouldn't either   // NOTE: the items don't have to be Daata
 		} else {
-			if (! Thing_isa (itempie, classData))
+			if (! Thing_isa (itempie, classDaata))
 				Melder_throw (U"Cannot copy item of class ", Thing_className (itempie), U".");
-			thy item [i] = Data_copy ((Data) itempie);
+			thy item [i] = Data_copy ((Daata) itempie);
 		}
 	}
 }
@@ -65,13 +65,13 @@ bool structCollection :: v_equal (thou) {
 	if (! Collection_Parent :: v_equal (thee)) return false;
 	if (size != thy size) return false;
 	for (long i = 1; i <= size; i ++) {
-		if (! Thing_isa ((Thing) item [i], classData))
+		if (! Thing_isa ((Thing) item [i], classDaata))
 			Melder_throw (U"Collection::equal: "
 				U"cannot compare items of class ", Thing_className ((Thing) item [i]), U".");
-		if (! Thing_isa ((Thing) thy item [i], classData))
+		if (! Thing_isa ((Thing) thy item [i], classDaata))
 			Melder_throw (U"Collection::equal: "
 				U"cannot compare items of class ", Thing_className ((Thing) thy item [i]), U".");
-		bool equal = Data_equal ((Data) item [i], (Data) thy item [i]);
+		bool equal = Data_equal ((Daata) item [i], (Daata) thy item [i]);
 		//Melder_casual (U"classCollection_equal: ", equal,
 		//	U", item ", i,
 		//  U", types ", Thing_className (my item [i]), U" and ", Thing_className (thy item [i]));
@@ -82,7 +82,7 @@ bool structCollection :: v_equal (thou) {
 
 bool structCollection :: v_canWriteAsEncoding (int encoding) {
 	for (long i = 1; i <= size; i ++) {
-		Data data = (Data) item [i];
+		Daata data = (Daata) item [i];
 		if (data -> name != NULL && ! Melder_isEncodable (data -> name, encoding)) return false;
 		if (! Data_canWriteAsEncoding (data, encoding)) return false;
 	}
@@ -96,7 +96,7 @@ void structCollection :: v_writeText (MelderFile file) {
 		Thing thing = (Thing) item [i];
 		ClassInfo classInfo = thing -> classInfo;
 		texputintro (file, U"item [", Melder_integer (i), U"]:", 0,0,0);
-		if (! Thing_isa (thing, classData) || ! Data_canWriteText ((Data) thing))
+		if (! Thing_isa (thing, classDaata) || ! Data_canWriteText ((Daata) thing))
 			Melder_throw (U"Objects of class ", classInfo -> className, U" cannot be written.");
 		texputw2 (file,
 			classInfo -> version > 0 ?
@@ -104,7 +104,7 @@ void structCollection :: v_writeText (MelderFile file) {
 				classInfo -> className,
 			U"class", 0,0,0,0,0);
 		texputw2 (file, thing -> name, U"name", 0,0,0,0,0);
-		Data_writeText ((Data) thing, file);
+		Data_writeText ((Daata) thing, file);
 		texexdent (file);
 	}
 	texexdent (file);
@@ -136,9 +136,9 @@ void structCollection :: v_readText (MelderReadText text, int formatVersion) {
 				Melder_throw (U"Collection::readText: wrong header at object ", i, U".");
 			our item [i] = Thing_newFromClassName (Melder_peek8to32 (klas), NULL);
 			our size ++;
-			if (! Thing_isa ((Thing) our item [i], classData) || ! Data_canReadText ((Data) our item [i]))
+			if (! Thing_isa ((Thing) our item [i], classDaata) || ! Data_canReadText ((Daata) our item [i]))
 				Melder_throw (U"Cannot read item of class ", Thing_className ((Thing) our item [i]), U" in collection.");
-			Data_readText ((Data) our item [i], text, -1);
+			Data_readText ((Daata) our item [i], text, -1);
 			if (stringsRead == 3) {
 				if (line [n] == U' ') n ++;   // skip space character
 				length = strlen (line.peek()+n);
@@ -155,11 +155,11 @@ void structCollection :: v_readText (MelderReadText text, int formatVersion) {
 			int elementFormatVersion;
 			our item [i] = Thing_newFromClassName (className.peek(), & elementFormatVersion);
 			our size ++;
-			if (! Thing_isa ((Thing) our item [i], classData) || ! Data_canReadText ((Data) our item [i]))
+			if (! Thing_isa ((Thing) our item [i], classDaata) || ! Data_canReadText ((Daata) our item [i]))
 				Melder_throw (U"Cannot read item of class ", Thing_className ((Thing) our item [i]), U" in collection.");
 			autostring32 objectName = texgetw2 (text);
 			Thing_setName ((Thing) our item [i], objectName.peek());
-			Data_readText ((Data) our item [i], text, elementFormatVersion);
+			Data_readText ((Daata) our item [i], text, elementFormatVersion);
 		}
 	}
 }
@@ -169,12 +169,12 @@ void structCollection :: v_writeBinary (FILE *f) {
 	for (long i = 1; i <= our size; i ++) {
 		Thing thing = (Thing) our item [i];
 		ClassInfo classInfo = thing -> classInfo;
-		if (! Thing_isa (thing, classData) || ! Data_canWriteBinary ((Data) thing))
+		if (! Thing_isa (thing, classDaata) || ! Data_canWriteBinary ((Daata) thing))
 			Melder_throw (U"Objects of class ", classInfo -> className, U" cannot be written.");
 		binputw1 (classInfo -> version > 0 ?
 			Melder_cat (classInfo -> className, U" ", classInfo -> version) : classInfo -> className, f);
 		binputw2 (thing -> name, f);
-		Data_writeBinary ((Data) thing, f);
+		Data_writeBinary ((Daata) thing, f);
 	}
 }
 
@@ -190,11 +190,11 @@ void structCollection :: v_readBinary (FILE *f, int formatVersion) {
 				Melder_throw (U"Cannot read class and name.");
 			our item [i] = Thing_newFromClassName (Melder_peek8to32 (klas), NULL);
 			our size ++;
-			if (! Thing_isa ((Thing) our item [i], classData))
+			if (! Thing_isa ((Thing) our item [i], classDaata))
 				Melder_throw (U"Cannot read item of class ", Thing_className ((Thing) our item [i]), U".");
 			if (fgetc (f) != ' ')
 				Melder_throw (U"Cannot read space.");
-			Data_readBinary ((Data) our item [i], f, -1);
+			Data_readBinary ((Daata) our item [i], f, -1);
 			if (strcmp (name, "?"))
 				Thing_setName ((Thing) our item [i], Melder_peek8to32 (name));
 		}
@@ -210,25 +210,25 @@ void structCollection :: v_readBinary (FILE *f, int formatVersion) {
 			int elementFormatVersion;
 			our item [i] = Thing_newFromClassName (Melder_peek8to32 (klas.peek()), & elementFormatVersion);
 			our size ++;
-			if (! Thing_isa ((Thing) our item [i], classData) || ! Data_canReadBinary ((Data) our item [i]))
+			if (! Thing_isa ((Thing) our item [i], classDaata) || ! Data_canReadBinary ((Daata) our item [i]))
 				Melder_throw (U"Objects of class ", Thing_className ((Thing) our item [i]), U" cannot be read.");
 			autostring32 name = bingetw2 (f);
 			if (Melder_debug == 44)
 				Melder_casual (U"structCollection :: v_readBinary: Reading object with name ", name.peek());
 			Thing_setName ((Thing) our item [i], name.peek());
-			Data_readBinary ((Data) our item [i], f, elementFormatVersion);
+			Data_readBinary ((Daata) our item [i], f, elementFormatVersion);
 		}
 	}
 }
 
 static struct structData_Description theCollection_description [] = {
 	{ U"size", longwa, Melder_offsetof (Collection, size), sizeof (long) },
-	{ U"item", objectwa, Melder_offsetof (Collection, item), sizeof (Data), U"Data", & theClassInfo_Data, 1, 0, U"size" },
+	{ U"item", objectwa, Melder_offsetof (Collection, item), sizeof (Daata), U"Daata", & theClassInfo_Daata, 1, 0, U"size" },
 	{ 0 }
 };
 Data_Description structCollection :: s_description = & theCollection_description [0];
 
-Thing_implement (Collection, Data, 0);
+Thing_implement (Collection, Daata, 0);
 
 void Collection_init (Collection me, ClassInfo itemClass_, long initialCapacity) {
 	my itemClass = itemClass_;
@@ -327,9 +327,9 @@ Any Collections_merge (Collection me, Collection thee) {
 			if (my _dontOwnItems) {
 				Collection_addItem (him.peek(), item);
 			} else {
-				if (! Thing_isa (item, classData))
+				if (! Thing_isa (item, classDaata))
 					Melder_throw (U"Cannot copy item of class ", Thing_className (item), U".");
-				Collection_addItem (him.peek(), Data_copy ((Data) item));
+				Collection_addItem (him.peek(), Data_copy ((Daata) item));
 			}
 		}
 		return him.transfer();
@@ -557,7 +557,7 @@ int structCyclic :: s_compare (I, thou) {
 
 void Cyclic_cycleLeft (Cyclic me) {
 	if (my size == 0) return;   // for size == 1 no motion will take place either, but in that case the algorithm determines that automatically
-	Data help = (Data) my item [1];
+	Daata help = (Daata) my item [1];
 	for (long i = 1; i < my size; i ++) my item [i] = my item [i + 1];
 	my item [my size] = help;
 }

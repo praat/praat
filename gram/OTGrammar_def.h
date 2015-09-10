@@ -80,7 +80,7 @@ oo_END_STRUCT (OTGrammarTableau)
 
 
 #define ooSTRUCT OTGrammar
-oo_DEFINE_CLASS (OTGrammar, Data)
+oo_DEFINE_CLASS (OTGrammar, Daata)
 
 	oo_FROM (1)
 		oo_ENUM (kOTGrammar_decisionStrategy, decisionStrategy)

@@ -142,7 +142,7 @@ static double HMM_and_HMM_getCrossEntropy_asym (HMM me, HMM thee, long observati
 
 /**************** HMM_Observation ******************************/
 
-Thing_implement (HMM_Observation, Data, 0);
+Thing_implement (HMM_Observation, Daata, 0);
 
 void HMM_Observation_init (I, const char32 *label, long numberOfComponents, long dimension, long storage) {
 	iam (HMM_Observation);
@@ -202,7 +202,7 @@ long StringsIndex_getLongestSequence (StringsIndex me, long index, long *pos) {
 
 /**************** HMM_State ******************************/
 
-Thing_implement (HMM_State, Data, 0);
+Thing_implement (HMM_State, Daata, 0);
 
 void HMM_State_init (I, const char32 *label) {
 	iam (HMM_State);
@@ -226,7 +226,7 @@ void HMM_State_setLabel (HMM_State me, char32 *label) {
 
 /**************** HMM_BaumWelch ******************************/
 
-Thing_implement (HMM_BaumWelch, Data, 0);
+Thing_implement (HMM_BaumWelch, Daata, 0);
 
 void structHMM_BaumWelch :: v_destroy () {
 	for (long it = 1; it <= numberOfTimes; it++) {
@@ -279,7 +279,7 @@ void HMM_BaumWelch_getGamma (HMM_BaumWelch me) {
 
 /**************** HMM_Viterbi ******************************/
 
-Thing_implement (HMM_Viterbi, Data, 0);
+Thing_implement (HMM_Viterbi, Daata, 0);
 
 HMM_Viterbi HMM_Viterbi_create (long nstates, long ntimes) {
 	try {
@@ -409,10 +409,10 @@ Strings HMM_StateSequence_to_Strings (HMM_StateSequence me) {
 
 /**************** HMM ******************************/
 
-Thing_implement (HMM, Data, 0);
+Thing_implement (HMM, Daata, 0);
 
 void structHMM :: v_info () {
-	structData :: v_info ();
+	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Number of states: ", numberOfStates);
 	for (long i = 1; i <= numberOfStates; i++) {
 		HMM_State hmms = (HMM_State) states -> item[i];

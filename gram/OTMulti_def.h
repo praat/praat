@@ -57,7 +57,7 @@ oo_END_STRUCT (OTCandidate)
 
 
 #define ooSTRUCT OTMulti
-oo_DEFINE_CLASS (OTMulti, Data)
+oo_DEFINE_CLASS (OTMulti, Daata)
 
 	oo_FROM (1)
 		oo_ENUM (kOTGrammar_decisionStrategy, decisionStrategy)

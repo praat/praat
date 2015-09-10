@@ -62,7 +62,7 @@ double Excitation_soundPressureToPhon (double soundPressure, double bark) {
 void structExcitation :: v_info () {
 	double *y = z [1];
 	long numberOfMaxima = 0;
-	structData :: v_info ();
+	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Loudness: ", Melder_half (Excitation_getLoudness (this)), U" sones");
 	for (long i = 2; i < nx; i ++) if (y [i] > y [i - 1] && y [i] >= y [i + 1]) {
 		double i_real, formant_bark, strength;

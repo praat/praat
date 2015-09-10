@@ -18,7 +18,7 @@
  */
 
 #define ooSTRUCT PhonationPoint
-oo_DEFINE_CLASS (PhonationPoint, Data)
+oo_DEFINE_CLASS (PhonationPoint, Daata)
 	oo_DOUBLE (time)  /* AnyPoint : glottis closing time */
 	oo_DOUBLE (period)  /* 1/F0 */
 	oo_DOUBLE (openPhase)
@@ -37,7 +37,7 @@ oo_END_CLASS (PhonationTier)
 #undef ooSTRUCT
 
 #define ooSTRUCT PhonationGridPlayOptions
-oo_DEFINE_CLASS (PhonationGridPlayOptions, Data)
+oo_DEFINE_CLASS (PhonationGridPlayOptions, Daata)
 	oo_INT (voicing)
 	oo_INT (aspiration)
 	oo_INT (breathiness)
@@ -79,7 +79,7 @@ oo_END_CLASS (PhonationGrid)
 #undef ooSTRUCT
 
 #define ooSTRUCT VocalTractGridPlayOptions
-oo_DEFINE_CLASS (VocalTractGridPlayOptions, Data)
+oo_DEFINE_CLASS (VocalTractGridPlayOptions, Daata)
 	oo_INT (filterModel)
 	oo_LONG (startOralFormant)
 	oo_LONG (endOralFormant)
@@ -113,7 +113,7 @@ oo_END_CLASS (VocalTractGrid)
 #undef ooSTRUCT
 
 #define ooSTRUCT CouplingGridPlayOptions
-oo_DEFINE_CLASS (CouplingGridPlayOptions, Data)
+oo_DEFINE_CLASS (CouplingGridPlayOptions, Daata)
 	oo_LONG (startTrachealFormant)
 	oo_LONG (endTrachealFormant)
 	oo_LONG (startTrachealAntiFormant)
@@ -150,7 +150,7 @@ oo_END_CLASS (CouplingGrid)
 #undef ooSTRUCT
 
 #define ooSTRUCT FricationGridPlayOptions
-oo_DEFINE_CLASS (FricationGridPlayOptions, Data)
+oo_DEFINE_CLASS (FricationGridPlayOptions, Daata)
 	oo_LONG (startFricationFormant)
 	oo_LONG (endFricationFormant)
 	oo_INT (bypass)
@@ -178,7 +178,7 @@ oo_END_CLASS (FricationGrid)
 #undef ooSTRUCT
 
 #define ooSTRUCT KlattGridPlayOptions
-oo_DEFINE_CLASS (KlattGridPlayOptions, Data)
+oo_DEFINE_CLASS (KlattGridPlayOptions, Daata)
 	oo_DOUBLE (samplingFrequency)
 	oo_INT (scalePeak)
 	oo_DOUBLE (xmin)

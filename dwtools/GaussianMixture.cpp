@@ -46,7 +46,7 @@
 #include "oo_DESCRIPTION.h"
 #include "GaussianMixture_def.h"
 
-Thing_implement (GaussianMixture, Data, 0);
+Thing_implement (GaussianMixture, Daata, 0);
 
 const char32 *GaussianMixture_criterionText (int criterion) {
 	const char32 *criterionText[6] =  { U"(1/n)*LLH", U"(1/n)*MML", U"(1/n)*BIC", U"(1/n)*AIC", U"(1/n)*AICc", U"(1/n)*CD_LLH" };
@@ -146,7 +146,7 @@ static void GaussianMixture_addCovarianceFraction (GaussianMixture me, long im, 
 }
 
 void structGaussianMixture :: v_info () {
-	structData :: v_info ();
+	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Number of components: ", numberOfComponents);
 	MelderInfo_writeLine (U"Dimension of component: ", dimension);
 	MelderInfo_writeLine (U"Mixing probabilities:");

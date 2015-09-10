@@ -36,7 +36,7 @@
 #include "TableOfReal.h"
 
 #include "FFNet_def.h"
-oo_CLASS_CREATE (FFNet, Data);
+oo_CLASS_CREATE (FFNet, Daata);
 
 /* Parameters:
  *  long nLayers	    : the #layers in the net (exclusive the inputs)

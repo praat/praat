@@ -19,7 +19,7 @@
 
 #include "Script.h"
 
-Thing_implement (Script, Data, 0);
+Thing_implement (Script, Daata, 0);
 
 Script Script_createFromFile (MelderFile file) {
 	autoScript me = Thing_new (Script);

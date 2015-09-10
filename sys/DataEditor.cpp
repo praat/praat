@@ -33,7 +33,7 @@
 #include "machine.h"
 
 static Data_Description Class_getDescription (ClassInfo table) {
-	return ((Data) _Thing_dummyObject (table)) -> v_description ();
+	return ((Daata) _Thing_dummyObject (table)) -> v_description ();
 }
 
 /*static const char * typeStrings [] = { "none",
@@ -475,7 +475,7 @@ static void showStructMember (
 		Melder_free (fieldData -> history); fieldData -> history = Melder_dup_f (history);
 		GuiThing_show (fieldData -> button);
 	} else if (type == objectwa || type == collectionwa) {
-		fieldData -> address = * (Data *) memberAddress;   /* Indirect. */
+		fieldData -> address = * (Daata *) memberAddress;   /* Indirect. */
 		if (! fieldData -> address) return;   /* No button if no object. */
 		fieldData -> description = memberDescription;
 		fieldData -> rank = 0;
@@ -593,7 +593,7 @@ void structVectorEditor :: v_showMembers () {
 			GuiLabel_setText (fieldData -> label, Melder_cat (strip_d (d_description -> name), U" [", ielement, U"]"));
 			GuiThing_show (fieldData -> label);
 
-			Data object = * (Data *) elementAddress;
+			Daata object = * (Daata *) elementAddress;
 			if (object == NULL) return;   // no button if no object
 			if (! Class_getDescription (object -> classInfo)) return;   // no button if no description for this class
 			fieldData -> address = object;
@@ -691,7 +691,7 @@ static void ClassEditor_showMembers_recursive (ClassEditor me, ClassInfo klas) {
 	int classFieldsTraversed = 0;
 	while (Class_getDescription (parentClass) == description)
 		parentClass = parentClass -> parent;
-	if (parentClass != classData) {
+	if (parentClass != classDaata) {
 		ClassEditor_showMembers_recursive (me, parentClass);
 		classFieldsTraversed = Data_Description_countMembers (Class_getDescription (parentClass));
 		//Melder_casual (U"ClassEditor_showMembers_recursive: classFieldsTraversed = ", classFieldsTraversed);
@@ -700,7 +700,7 @@ static void ClassEditor_showMembers_recursive (ClassEditor me, ClassInfo klas) {
 }
 
 void structClassEditor :: v_showMembers () {
-	ClassEditor_showMembers_recursive (this, ((Data) d_address) -> classInfo);
+	ClassEditor_showMembers_recursive (this, ((Daata) d_address) -> classInfo);
 }
 
 static void ClassEditor_init (ClassEditor me, DataEditor root, const char32 *title, void *address, Data_Description description) {
@@ -753,7 +753,7 @@ void structDataEditor :: v_dataChanged () {
 	}
 }
 
-DataEditor DataEditor_create (const char32 *title, Data data) {
+DataEditor DataEditor_create (const char32 *title, Daata data) {
 	try {
 		ClassInfo klas = data -> classInfo;
 		if (Class_getDescription (klas) == NULL)

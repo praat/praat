@@ -19,7 +19,7 @@
 
 
 #define ooSTRUCT TableOfReal
-oo_DEFINE_CLASS (TableOfReal, Data)
+oo_DEFINE_CLASS (TableOfReal, Daata)
 
 	oo_LONG (numberOfRows)
 	oo_LONG (numberOfColumns)

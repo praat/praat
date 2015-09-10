@@ -98,7 +98,7 @@
 
 void structOTGrammar :: v_info ()
 {
-	structData :: v_info ();
+	structDaata :: v_info ();
 	long numberOfCandidates = 0, numberOfViolations = 0;
 	for (long itab = 1; itab <= numberOfTableaus; itab ++) {
 		numberOfCandidates += tableaus [itab]. numberOfCandidates;
@@ -296,7 +296,7 @@ void structOTGrammar :: v_readText (MelderReadText text, int formatVersion) {
 	OTGrammar_checkIndex (this);
 }
 
-Thing_implement (OTGrammar, Data, 2);
+Thing_implement (OTGrammar, Daata, 2);
 
 Thing_implement (OTHistory, TableOfReal, 0);
 
@@ -2539,13 +2539,13 @@ void OTGrammar_removeHarmonicallyBoundedCandidates (OTGrammar me, int singly) {
 	}
 }
 
-Thing_define (OTGrammar_List4, Data) {
+Thing_define (OTGrammar_List4, Daata) {
 	// new data:
 	public:
 		long hi1, lo1, hi2, lo2;
 };
 
-Thing_implement (OTGrammar_List4, Data, 0);
+Thing_implement (OTGrammar_List4, Daata, 0);
 
 void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistribution thee) {
 	/*

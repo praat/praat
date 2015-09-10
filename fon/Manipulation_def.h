@@ -54,9 +54,9 @@ oo_DEFINE_CLASS (Manipulation, Function)
 			dummySpectrogram = save; }
 		#endif
 		oo_OBJECT (FormantTier, 0, dummyFormantTier)
-		oo_OBJECT (Data, 0, dummy1)
-		oo_OBJECT (Data, 0, dummy2)
-		oo_OBJECT (Data, 0, dummy3)
+		oo_OBJECT (Daata, 0, dummy1)
+		oo_OBJECT (Daata, 0, dummy2)
+		oo_OBJECT (Daata, 0, dummy3)
 	oo_ENDFROM
 
 	oo_FROM (4)

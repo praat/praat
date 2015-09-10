@@ -28,7 +28,7 @@
 #include "Graphics.h"
 #include "FFNet_Pattern_Activation.h"
 
-static double func (Data object, const double p[]) {
+static double func (Daata object, const double p[]) {
 	FFNet me = (FFNet) object;
 	Minimizer thee = my minimizer;
 	double fp = 0;
@@ -52,7 +52,7 @@ static double func (Data object, const double p[]) {
 	return fp;
 }
 
-static void dfunc_optimized (Data object, const double p[], double dp[]) {
+static void dfunc_optimized (Daata object, const double p[], double dp[]) {
 	FFNet me = (FFNet) object;
 	(void) p;
 

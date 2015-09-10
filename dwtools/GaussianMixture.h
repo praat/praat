@@ -30,7 +30,7 @@
 #include "TableOfReal_extensions.h"
 
 #include "GaussianMixture_def.h"
-oo_CLASS_CREATE (GaussianMixture, Data);
+oo_CLASS_CREATE (GaussianMixture, Daata);
 
 /*
 	Constraints for a Gaussian mixture:

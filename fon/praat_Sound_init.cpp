@@ -695,7 +695,7 @@ DO_ALTERNATIVE (old_Sound_draw)
 	}
 END2 }
 
-static void cb_SoundEditor_publication (Editor editor, void *closure, Data publication) {
+static void cb_SoundEditor_publication (Editor editor, void *closure, Daata publication) {
 	(void) editor;
 	(void) closure;
 	/*
@@ -1387,7 +1387,7 @@ static void cb_SoundRecorder_destruction (Editor editor, void *closure) {
 	(void) closure;
 	theSoundRecorder = NULL;
 }
-static void cb_SoundRecorder_publication (Editor editor, void *closure, Data publication) {
+static void cb_SoundRecorder_publication (Editor editor, void *closure, Daata publication) {
 	(void) editor;
 	(void) closure;
 	try {

@@ -22,7 +22,7 @@
  */
 
 #define ooSTRUCT SpellingChecker
-oo_DEFINE_CLASS (SpellingChecker, Data)           // CGN:
+oo_DEFINE_CLASS (SpellingChecker, Daata)           // CGN:
 	oo_STRING (forbiddenStrings)              // : ; "
 	oo_BOOLEAN (checkMatchingParentheses)     // true
 	oo_STRING (separatingCharacters)          // .,:;()!?

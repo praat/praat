@@ -41,7 +41,7 @@ static int praat_findObjectFromString (Interpreter interpreter, const char32 *st
 			*space = U'\0';
 			char32 *className = & buffer.string [0], *givenName = space + 1;
 			WHERE_DOWN (1) {
-				Data object = (Data) OBJECT;
+				Daata object = (Daata) OBJECT;
 				if (str32equ (className, Thing_className ((Thing) OBJECT)) && str32equ (givenName, object -> name))
 					return IOBJECT;
 			}
@@ -50,7 +50,7 @@ static int praat_findObjectFromString (Interpreter interpreter, const char32 *st
 			 */
 			ClassInfo klas = Thing_classFromClassName (className, NULL);
 			WHERE_DOWN (1) {
-				Data object = (Data) OBJECT;
+				Daata object = (Daata) OBJECT;
 				if (str32equ (klas -> className, Thing_className ((Thing) OBJECT)) && str32equ (givenName, object -> name))
 					return IOBJECT;
 			}

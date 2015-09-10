@@ -771,7 +771,7 @@ void Salience_draw (Salience me, Graphics g, int ix, int iy, int garnish) {
 
 /******** MDSVEC *******************************************/
 
-Thing_implement (MDSVec, Data, 0);
+Thing_implement (MDSVec, Daata, 0);
 
 void structMDSVec :: v_destroy () {
 	NUMvector_free<double> (proximity, 1);
@@ -2215,7 +2215,7 @@ static void MDSVec_Distances_getStressValues (MDSVec me, Distance ddist,
 	*stress = *t > 0 ? sqrt (*s / *t) : 0;
 }
 
-static double func (Data object, const double p[]) {
+static double func (Daata object, const double p[]) {
 	Kruskal me = (Kruskal) object;
 	MDSVec him = my vec;
 	double **x = my configuration -> data, s, t, dbar, stress;
@@ -2283,7 +2283,7 @@ static double func (Data object, const double p[]) {
 }
 
 /* Precondition: configuration was not changed since previous call to func */
-static void dfunc (Data object, const double p[], double dp[]) {
+static void dfunc (Daata object, const double p[], double dp[]) {
 	Kruskal me = (Kruskal) object;
 	Configuration thee = my configuration;
 	(void) p;
@@ -2468,7 +2468,7 @@ Configuration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configurati
 		Collection_addItem (thy proximities, dissimilarity.transfer());
 		thy vec = Dissimilarity_to_MDSVec (me);
 
-		thy minimizer = (Minimizer) VDSmagtMinimizer_create (numberOfCoordinates, (Data) thee.peek(), func, dfunc);
+		thy minimizer = (Minimizer) VDSmagtMinimizer_create (numberOfCoordinates, (Daata) thee.peek(), func, dfunc);
 
 		NUMdmatrix_into_vector (his data, thy minimizer -> p, 1, his numberOfRows, 1, his numberOfColumns);
 
@@ -2480,7 +2480,7 @@ Configuration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configurati
 
 		/* call the function to get the best configuration */
 
-		(void) func ( (Data) thee.peek(), ( (Minimizer) (thy minimizer)) -> p);
+		(void) func ( (Daata) thee.peek(), ( (Minimizer) (thy minimizer)) -> p);
 
 		autoConfiguration result = Data_copy (thy configuration);
 		return result.transfer();
@@ -3056,7 +3056,7 @@ Collection INDSCAL_createCarrollWishExample (double noiseRange) {
 		autoConfiguration c = Configuration_createCarrollWishExample ();
 		long nObjects = c -> numberOfRows, nSources = 8;
 		autoSalience s = Salience_createCarrollWishExample ();
-		autoCollection me = Collection_create (classData, nSources);
+		autoCollection me = Collection_create (classDaata, nSources);
 		for (long l = 1; l <= nSources; l++) {
 			c -> w[1] = s -> data[l][1];
 			c -> w[2] = s -> data[l][2];

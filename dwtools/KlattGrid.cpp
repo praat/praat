@@ -488,7 +488,7 @@ static void draw_oneSection (Graphics g, double xmin, double xmax, double ymin, 
 
 /********************* PhonationTier ************************/
 
-Thing_implement (PhonationPoint, Data, 0);
+Thing_implement (PhonationPoint, Daata, 0);
 
 PhonationPoint PhonationPoint_create (double time, double period, double openPhase, double collisionPhase, double te,
                                       double power1, double power2, double pulseScale) {
@@ -534,7 +534,7 @@ PointProcess PhonationTier_to_PointProcess_closures (PhonationTier me) {
 
 /********************** PhonationGridPlayOptions **********************/
 
-Thing_implement (PhonationGridPlayOptions, Data, 0);
+Thing_implement (PhonationGridPlayOptions, Daata, 0);
 
 static void PhonationGridPlayOptions_setDefaults (PhonationGridPlayOptions me) {
 	my flowDerivative = my voicing = 1;
@@ -560,7 +560,7 @@ PhonationGridPlayOptions PhonationGridPlayOptions_create () {
 Thing_implement (PhonationGrid, Function, 0);
 
 void structPhonationGrid :: v_info () {
-	structData :: v_info ();
+	structDaata :: v_info ();
 	const char32 *in1 = U"  ", *in2 = U"    ";
 	MelderInfo_writeLine (in1, U"Time domain:");
 	MelderInfo_writeLine (in2, U"Start time:     ", xmin, U" seconds");
@@ -1137,7 +1137,7 @@ static Ordered formantsAmplitudes_create (double tmin, double tmax, long numberO
 
 /********************** VocalTractGridPlayOptions **********************/
 
-Thing_implement (VocalTractGridPlayOptions, Data, 0);
+Thing_implement (VocalTractGridPlayOptions, Daata, 0);
 
 static void VocalTractGridPlayOptions_setDefaults (VocalTractGridPlayOptions me, VocalTractGrid thee) {
 	my filterModel = KlattGrid_FILTER_CASCADE;
@@ -1205,7 +1205,7 @@ static void FormantGrid_info (FormantGrid me, Ordered amplitudes, const char32 *
 }
 
 void structVocalTractGrid :: v_info () {
-	structData :: v_info ();
+	structDaata :: v_info ();
 	const char32 *in1 = U"  ", *in2 = U"    ", *in3 = U"      ";
 	MelderInfo_writeLine (in1, U"Time domain:");
 	MelderInfo_writeLine (in2, U"Start time:     ", xmin, U" seconds");
@@ -1654,7 +1654,7 @@ Sound Sound_VocalTractGrid_CouplingGrid_filter (Sound me, VocalTractGrid thee, C
 
 /********************** CouplingGridPlayOptions **********************/
 
-Thing_implement (CouplingGridPlayOptions, Data, 0);
+Thing_implement (CouplingGridPlayOptions, Daata, 0);
 
 static void CouplingGridPlayOptions_setDefaults (CouplingGridPlayOptions me, CouplingGrid thee) {
 	my fadeFraction = 0.1;
@@ -1683,7 +1683,7 @@ CouplingGridPlayOptions CouplingGridPlayOptions_create () {
 Thing_implement (CouplingGrid, Function, 0);
 
 void structCouplingGrid :: v_info () {
-	structData :: v_info ();
+	structDaata :: v_info ();
 	const char32 *in1 = U"  ", *in2 = U"    ", *in3 = U"      ";
 	MelderInfo_writeLine (in1, U"Time domain:");
 	MelderInfo_writeLine (in2, U"Start time:     ", xmin, U" seconds");
@@ -1865,7 +1865,7 @@ Sound Sound_FormantGrid_Intensities_filter (Sound me, FormantGrid thee, Ordered 
 
 /********************** FricationGridPlayOptions **********************/
 
-Thing_implement (FricationGridPlayOptions, Data, 0);
+Thing_implement (FricationGridPlayOptions, Daata, 0);
 
 static void FricationGridPlayOptions_setDefaults (FricationGridPlayOptions me, FricationGrid thee) {
 	my endFricationFormant = MIN (thy frication_formants -> formants -> size, thy frication_formants -> bandwidths -> size);
@@ -1885,7 +1885,7 @@ FricationGridPlayOptions FricationGridPlayOptions_create () {
 /************************ FricationGrid (& Sound) *********************************************/
 
 void structFricationGrid :: v_info () {
-	structData :: v_info ();
+	structDaata :: v_info ();
 	const static char32 *in1 = U"  ", *in2 = U"    ", *in3 = U"      ";
 	MelderInfo_writeLine (in1, U"Time domain:");
 	MelderInfo_writeLine (in2, U"Start time:     ", xmin, U" seconds");
@@ -2061,7 +2061,7 @@ Sound Sound_FricationGrid_filter (Sound me, FricationGrid thee) {
 
 /********************** KlattGridPlayOptions **********************/
 
-Thing_implement (KlattGridPlayOptions, Data, 0);
+Thing_implement (KlattGridPlayOptions, Daata, 0);
 
 static void KlattGridPlayOptions_setDefaults (KlattGridPlayOptions me, KlattGrid thee) {
 	my samplingFrequency = 44100;
@@ -2092,7 +2092,7 @@ void KlattGrid_setDefaultPlayOptions (KlattGrid me) {
 Thing_implement (KlattGrid, Function, 0);
 
 void structKlattGrid :: v_info () {
-	structData :: v_info ();
+	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Time domain:");
 	MelderInfo_writeLine (U"   Start time:     ", xmin, U" seconds");
 	MelderInfo_writeLine (U"   End time:       ", xmax, U" seconds");

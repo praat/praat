@@ -51,7 +51,7 @@
 Thing_implement (SPINET, Sampled2, 0);
 
 void structSPINET :: v_info () {
-	structData :: v_info ();
+	structDaata :: v_info ();
 	double miny, maxy, mins, maxs;
 	if (! Sampled2_getWindowExtrema_d (this, y, 1, nx, 1, ny, & miny, & maxy) ||
 	        ! Sampled2_getWindowExtrema_d (this, s, 1, nx, 1, ny, & mins, & maxs)) {

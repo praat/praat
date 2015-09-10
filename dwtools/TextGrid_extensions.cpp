@@ -645,7 +645,7 @@ void TextGrid_changeLabels (TextGrid me, int tier, long from, long to, const cha
 			        U"larger than the number of tiers (", ntiers, U").");
 		if (use_regexp && str32len (search) == 0) Melder_throw (U"The regex search string cannot be empty.\n"
 			        U"You may search for an empty string with the expression \"^$\"");
-		Data anyTier = (Data) my tiers -> item [tier];
+		Daata anyTier = (Daata) my tiers -> item [tier];
 		if (anyTier -> classInfo == classIntervalTier) {
 			IntervalTier_changeLabels (anyTier, from, to, search, replace, use_regexp, nmatches, nstringmatches);
 		} else {
@@ -680,7 +680,7 @@ void IntervalTiers_append_inline (IntervalTier me, IntervalTier thee, bool prese
 			Collection_addItem (my intervals, connection.transfer());
 		}
 		for (long iint = 1; iint <= thy intervals -> size; iint++) {
-			autoTextInterval ti = (TextInterval) Data_copy ((Data) thy intervals -> item[iint]);
+			autoTextInterval ti = (TextInterval) Data_copy ((Daata) thy intervals -> item[iint]);
 			if (preserveTimes) {
 				Collection_addItem (my intervals, ti.transfer());
 			} else {
@@ -710,7 +710,7 @@ void IntervalTiers_append_inline (IntervalTier me, IntervalTier thee, bool prese
 void TextTiers_append_inline (TextTier me, TextTier thee, bool preserveTimes) {
 	try {
 		for (long iint = 1; iint <= thy points -> size; iint++) {
-			autoTextPoint tp = (TextPoint) Data_copy ((Data) thy points -> item[iint]);
+			autoTextPoint tp = (TextPoint) Data_copy ((Daata) thy points -> item[iint]);
 			if (not preserveTimes) {
 				tp -> number += my xmax - thy xmin;
 			}

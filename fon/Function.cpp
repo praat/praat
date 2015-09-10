@@ -38,7 +38,7 @@
 #include "oo_DESCRIPTION.h"
 #include "Function_def.h"
 
-Thing_implement (Function, Data, 0);
+Thing_implement (Function, Daata, 0);
 
 void structFunction :: v_info () {
 	Function_Parent :: v_info ();

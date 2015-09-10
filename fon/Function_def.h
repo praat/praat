@@ -19,7 +19,7 @@
 
 
 #define ooSTRUCT Function
-oo_DEFINE_CLASS (Function, Data)
+oo_DEFINE_CLASS (Function, Daata)
 
 	oo_DOUBLE (xmin)
 	oo_DOUBLE (xmax)

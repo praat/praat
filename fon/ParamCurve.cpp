@@ -44,7 +44,7 @@ void structParamCurve :: v_info () {
 		if (value < ymin) ymin = value;
 		if (value > ymax) ymax = value;
 	}
-	structData :: v_info ();
+	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Domain:");
 	MelderInfo_writeLine (U"   tmin: ", xmin);
 	MelderInfo_writeLine (U"   tmax: ", xmax);

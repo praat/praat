@@ -43,7 +43,7 @@
 #include "oo_DESCRIPTION.h"
 #include "SimpleVector_def.h"
 
-Thing_implement (DoubleVector, Data, 0);
+Thing_implement (DoubleVector, Daata, 0);
 
 void DoubleVector_init (I, long min, long max) {
 	iam (DoubleVector);
@@ -61,7 +61,7 @@ DoubleVector DoubleVector_create (long min, long max) {
 	}
 }
 
-Thing_implement (ComplexVector, Data, 0);
+Thing_implement (ComplexVector, Daata, 0);
 
 void ComplexVector_init (I, long min, long max) {
 	iam (ComplexVector);

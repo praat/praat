@@ -26,7 +26,7 @@
 	
 #include "Sound.h"
 
-Thing_define (Filter, Data) {
+Thing_define (Filter, Daata) {
 	double dT;
 	double a, b, c;
 	double p1, p2;

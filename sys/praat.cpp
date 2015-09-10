@@ -200,14 +200,14 @@ void praat_list_foreground (void) {
 	}
 }
 
-Data praat_onlyObject (ClassInfo klas) {
+Daata praat_onlyObject (ClassInfo klas) {
 	int IOBJECT, result = 0, found = 0;
 	WHERE (SELECTED && CLASS == klas) { result = IOBJECT; found += 1; }
 	if (found != 1) return NULL;
 	return theCurrentPraatObjects -> list [result]. object;
 }
 
-Data praat_firstObject (ClassInfo klas) {
+Daata praat_firstObject (ClassInfo klas) {
 	int IOBJECT;
 	LOOP {
 		if (CLASS == klas) return theCurrentPraatObjects -> list [IOBJECT]. object;
@@ -215,14 +215,14 @@ Data praat_firstObject (ClassInfo klas) {
 	return NULL;   // this is often OK
 }
 
-Data praat_onlyObject_generic (ClassInfo klas) {
+Daata praat_onlyObject_generic (ClassInfo klas) {
 	int IOBJECT, result = 0, found = 0;
 	WHERE (SELECTED && Thing_isSubclass (CLASS, klas)) { result = IOBJECT; found += 1; }
 	if (found != 1) return NULL;
 	return theCurrentPraatObjects -> list [result]. object;
 }
 
-Data praat_firstObject_generic (ClassInfo klas) {
+Daata praat_firstObject_generic (ClassInfo klas) {
 	int IOBJECT;
 	LOOP {
 		if (Thing_isSubclass (CLASS, klas)) return theCurrentPraatObjects -> list [IOBJECT]. object;
@@ -237,7 +237,7 @@ praat_Object praat_onlyScreenObject (void) {
 	return & theCurrentPraatObjects -> list [result];
 }
 
-Data praat_firstObject_any () {
+Daata praat_firstObject_any () {
 	int IOBJECT;
 	LOOP {
 		return theCurrentPraatObjects -> list [IOBJECT]. object;
@@ -250,7 +250,7 @@ Collection praat_getSelectedObjects (void) {
 	Collection_dontOwnItems (thee.peek());
 	int IOBJECT;
 	LOOP {
-		iam_LOOP (Data);
+		iam_LOOP (Daata);
 		Collection_addItem (thee.peek(), me);
 	}
 	return thee.transfer();
@@ -260,9 +260,9 @@ char32 *praat_name (int IOBJECT) { return str32chr (FULL_NAME, U' ') + 1; }
 
 void praat_write_do (Any dia, const char32 *extension) {
 	int IOBJECT, found = 0;
-	Data data = NULL;
+	Daata data = NULL;
 	static MelderString defaultFileName { 0 };
-	WHERE (SELECTED) { if (! data) data = (Data) OBJECT; found += 1; }
+	WHERE (SELECTED) { if (! data) data = (Daata) OBJECT; found += 1; }
 	if (found == 1) {
 		MelderString_copy (& defaultFileName, data -> name);
 		if (defaultFileName.length > 50) { defaultFileName.string [50] = U'\0'; defaultFileName.length = 50; }
@@ -326,7 +326,7 @@ void praat_cleanUpName (char32 *name) {
 
 /***** objects + commands *****/
 
-void praat_newWithFile (Data me, MelderFile file, const char32 *myName) {
+void praat_newWithFile (Daata me, MelderFile file, const char32 *myName) {
 	int IOBJECT, ieditor;   // must be local: praat_new can be called from within a loop!!!
 	if (me == NULL)
 		Melder_throw (U"No object was put into the list.");
@@ -337,7 +337,7 @@ void praat_newWithFile (Data me, MelderFile file, const char32 *myName) {
 		Collection list = (Collection) me;
 		try {
 			for (long idata = 1; idata <= list -> size; idata ++) {
-				Data object = (Data) list -> item [idata];
+				Daata object = (Daata) list -> item [idata];
 				const char32 *name = object -> name ? object -> name : myName;
 				Melder_assert (name != NULL);
 				praat_new (object, name);   // recurse
@@ -398,41 +398,41 @@ void praat_newWithFile (Data me, MelderFile file, const char32 *myName) {
 }
 
 static MelderString thePraatNewName { 0 };
-void praat_new (Data me) {
+void praat_new (Daata me) {
 	praat_newWithFile (me, NULL, U"");
 }
-void praat_new (Data me, Melder_1_ARG) {
+void praat_new (Daata me, Melder_1_ARG) {
 	praat_newWithFile (me, NULL, Melder_1_ARG_CALL);
 }
-void praat_new (Data me, Melder_2_ARGS) {
+void praat_new (Daata me, Melder_2_ARGS) {
 	MelderString_copy (& thePraatNewName, Melder_2_ARGS_CALL);
 	praat_new (me, thePraatNewName.string);
 }
-void praat_new (Data me, Melder_3_ARGS) {
+void praat_new (Daata me, Melder_3_ARGS) {
 	MelderString_copy (& thePraatNewName, Melder_3_ARGS_CALL);
 	praat_new (me, thePraatNewName.string);
 }
-void praat_new (Data me, Melder_4_ARGS) {
+void praat_new (Daata me, Melder_4_ARGS) {
 	MelderString_copy (& thePraatNewName, Melder_4_ARGS_CALL);
 	praat_new (me, thePraatNewName.string);
 }
-void praat_new (Data me, Melder_5_ARGS) {
+void praat_new (Daata me, Melder_5_ARGS) {
 	MelderString_copy (& thePraatNewName, Melder_5_ARGS_CALL);
 	praat_new (me, thePraatNewName.string);
 }
-void praat_new (Data me, Melder_6_ARGS) {
+void praat_new (Daata me, Melder_6_ARGS) {
 	MelderString_copy (& thePraatNewName, Melder_6_ARGS_CALL);
 	praat_new (me, thePraatNewName.string);
 }
-void praat_new (Data me, Melder_7_ARGS) {
+void praat_new (Daata me, Melder_7_ARGS) {
 	MelderString_copy (& thePraatNewName, Melder_7_ARGS_CALL);
 	praat_new (me, thePraatNewName.string);
 }
-void praat_new (Data me, Melder_8_ARGS) {
+void praat_new (Daata me, Melder_8_ARGS) {
 	MelderString_copy (& thePraatNewName, Melder_8_ARGS_CALL);
 	praat_new (me, thePraatNewName.string);
 }
-void praat_new (Data me, Melder_9_ARGS) {
+void praat_new (Daata me, Melder_9_ARGS) {
 	MelderString_copy (& thePraatNewName, Melder_9_ARGS_CALL);
 	praat_new (me, thePraatNewName.string);
 }
@@ -623,7 +623,7 @@ static void cb_Editor_dataChanged (Editor me, void *closure) {
 	}
 }
 
-static void cb_Editor_publication (Editor me, void *closure, Data publication) {
+static void cb_Editor_publication (Editor me, void *closure, Daata publication) {
 /*
    The default publish callback.
    Works nicely if the publisher invents a name.
@@ -712,7 +712,7 @@ int praat_installEditorN (Editor editor, Ordered objects) {
 	 * and check whether there is room to add an editor for each.
 	 */
 	for (iOrderedObject = 1; iOrderedObject <= objects -> size; iOrderedObject ++) {
-		Data object = (Data) objects -> item [iOrderedObject];
+		Daata object = (Daata) objects -> item [iOrderedObject];
 		for (iPraatObject = 1; iPraatObject <= theCurrentPraatObjects -> n; iPraatObject ++) {
 			if (object == theCurrentPraatObjects -> list [iPraatObject]. object) {
 				int ieditor = 0;
@@ -734,7 +734,7 @@ int praat_installEditorN (Editor editor, Ordered objects) {
 	 * There appears to be room for all elements of the Ordered. The editor window can appear. Install the editor in all objects.
 	 */
 	for (iOrderedObject = 1; iOrderedObject <= objects -> size; iOrderedObject ++) {
-		Data object = (Data) objects -> item [iOrderedObject];
+		Daata object = (Daata) objects -> item [iOrderedObject];
 		for (iPraatObject = 1; iPraatObject <= theCurrentPraatObjects -> n; iPraatObject ++) {
 			if (object == theCurrentPraatObjects -> list [iPraatObject]. object) {
 				int ieditor = 0;
@@ -796,7 +796,7 @@ static void helpProc (const char32 *query) {
 
 static int publishProc (void *anything) {
 	try {
-		praat_new ((Data) anything, U"");
+		praat_new ((Daata) anything, U"");
 		praat_updateSelection ();
 		return 1;
 	} catch (MelderError) {

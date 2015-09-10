@@ -23,7 +23,7 @@
 #include "Interpreter.h"
 #include "praat.h"
 
-Thing_implement (ManPages, Data, 0);
+Thing_implement (ManPages, Daata, 0);
 
 #define LONGEST_FILE_NAME  55
 

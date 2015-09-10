@@ -30,7 +30,7 @@ Thing_implement (Ltas, Vector, 2);
 
 void structLtas :: v_info () {
 	double meanPowerDensity;
-	structData :: v_info ();
+	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Frequency domain:");
 	MelderInfo_writeLine (U"   Lowest frequency: ", xmin, U" Hz");
 	MelderInfo_writeLine (U"   Highest frequency: ", xmax, U" Hz");

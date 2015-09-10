@@ -25,7 +25,7 @@
 #include "OTGrammar.h"
 
 #include "OTMulti_def.h"
-oo_CLASS_CREATE (OTMulti, Data);
+oo_CLASS_CREATE (OTMulti, Daata);
 
 long OTMulti_getConstraintIndexFromName (OTMulti me, const char32 *name);
 

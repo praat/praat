@@ -577,7 +577,7 @@ DO
 	autoHMM_ObservationSequences hmm_oss = HMM_ObservationSequences_create (); HMM hmm = 0;
 	Collection_dontOwnItems (hmm_oss.peek());
 	LOOP {
-		iam (Data);
+		iam (Daata);
 		if (CLASS == classHMM_ObservationSequence) {
 			Collection_addItem (hmm_oss.peek(), me);
 		} else { hmm = (HMM) me; }

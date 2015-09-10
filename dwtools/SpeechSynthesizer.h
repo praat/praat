@@ -38,8 +38,8 @@
 #define SpeechSynthesizer_INPUT_TAGGEDTEXT 3
 
 #include "SpeechSynthesizer_def.h"
-oo_CLASS_CREATE (SpeechSynthesizerVoice, Data);
-oo_CLASS_CREATE (SpeechSynthesizer, Data);
+oo_CLASS_CREATE (SpeechSynthesizerVoice, Daata);
+oo_CLASS_CREATE (SpeechSynthesizer, Daata);
 
 SpeechSynthesizerVoice SpeechSynthesizerVoice_create (long numberOfFormants);
 void SpeechSynthesizerVoice_setDefaults (SpeechSynthesizerVoice me);

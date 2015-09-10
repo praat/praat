@@ -77,7 +77,7 @@ static void classMinimizer_after (I, Any aclosure) {
 	                  U", Cost: ", my minimum);
 }
 
-void Minimizer_init (I, long nParameters, Data object) {
+void Minimizer_init (I, long nParameters, Daata object) {
 	iam (Minimizer);
 	my nParameters = nParameters;
 	my p = NUMvector<double> (1, nParameters);
@@ -281,9 +281,9 @@ void structSteepestDescentMinimizer :: v_setParameters (Any parameters) {
 	}
 }
 
-SteepestDescentMinimizer SteepestDescentMinimizer_create (long nParameters, Data object,
-        double (*func) (Data object, const double p[]),
-        void (*dfunc) (Data object, const double p[], double dp[])) {
+SteepestDescentMinimizer SteepestDescentMinimizer_create (long nParameters, Daata object,
+        double (*func) (Daata object, const double p[]),
+        void (*dfunc) (Daata object, const double p[], double dp[])) {
 	try {
 		autoSteepestDescentMinimizer me = Thing_new (SteepestDescentMinimizer);
 		Minimizer_init (me.peek(), nParameters, object);
@@ -522,8 +522,8 @@ void structVDSmagtMinimizer :: v_setParameters (Any parameters) {
 	}
 }
 
-VDSmagtMinimizer VDSmagtMinimizer_create (long nParameters, Data object, double (*func) (Data object, const double x[]),
-        void (*dfunc) (Data object, const double x[], double dx[])) {
+VDSmagtMinimizer VDSmagtMinimizer_create (long nParameters, Daata object, double (*func) (Daata object, const double x[]),
+        void (*dfunc) (Daata object, const double x[], double dx[])) {
 	try {
 		autoVDSmagtMinimizer me = Thing_new (VDSmagtMinimizer);
 		Minimizer_init (me.peek(), nParameters, object);
@@ -554,7 +554,7 @@ void structLineMinimizer :: v_destroy () {
 
 Thing_implement (LineMinimizer, Minimizer, 0);
 
-void LineMinimizer_init (I, long nParameters, Data object, double (*func) (Data, const double [])) {
+void LineMinimizer_init (I, long nParameters, Daata object, double (*func) (Daata, const double [])) {
 	iam (LineMinimizer);
 	Minimizer_init (me, nParameters, object);
 	my direction = NUMvector<double> (1, nParameters);

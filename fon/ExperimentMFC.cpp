@@ -63,7 +63,7 @@
 #include "oo_DESCRIPTION.h"
 #include "ExperimentMFC_def.h"
 
-Thing_implement (ExperimentMFC, Data, 6);
+Thing_implement (ExperimentMFC, Daata, 6);
 
 #include "enums_getText.h"
 #include "Experiment_enums.h"
@@ -345,7 +345,7 @@ void ExperimentMFC_playResponse (ExperimentMFC me, long iresp) {
 		my responseCarrierBefore. sound, my responseCarrierAfter. sound, my responseInitialSilenceDuration, my responseFinalSilenceDuration);
 }
 
-Thing_implement (ResultsMFC, Data, 2);
+Thing_implement (ResultsMFC, Daata, 2);
 
 ResultsMFC ResultsMFC_create (long numberOfTrials) {
 	try {

@@ -48,11 +48,11 @@
 
 void structFeatureWeights :: v_info ()
 {
-    this -> structData :: v_info ();
+    this -> structDaata :: v_info ();
     MelderInfo_writeLine (U"Number of weights: ", fweights -> numberOfColumns);
 }
 
-Thing_implement (FeatureWeights, Data, 0);
+Thing_implement (FeatureWeights, Daata, 0);
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 // Creation...    //

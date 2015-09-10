@@ -29,7 +29,7 @@
 #include "TableOfReal.h"
 
 #include "CCA_def.h"
-oo_CLASS_CREATE (CCA, Data);
+oo_CLASS_CREATE (CCA, Daata);
 
 /*
 	Class CCA represents the Canonical Correlation Analysis of two datasets

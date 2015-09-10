@@ -63,7 +63,7 @@
 #include "oo_DESCRIPTION.h"
 #include "Eigen_def.h"
 
-Thing_implement (Eigen, Data, 0);
+Thing_implement (Eigen, Daata, 0);
 
 #define MAX(m,n) ((m) > (n) ? (m) : (n))
 #define MIN(m,n) ((m) < (n) ? (m) : (n))

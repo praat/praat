@@ -19,7 +19,7 @@
 
 
 #define ooSTRUCT Permutation
-oo_DEFINE_CLASS (Permutation, Data)
+oo_DEFINE_CLASS (Permutation, Daata)
 
 	oo_LONG (numberOfElements)
 	oo_LONG_VECTOR (p, numberOfElements)

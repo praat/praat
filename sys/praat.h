@@ -124,7 +124,7 @@ GuiMenuItem praat_addMenuCommand (const char32 *window, const char32 *menu, cons
 #include "Ui.h"
 typedef struct {
 	ClassInfo klas;   // the class
-	Data object;   // the instance
+	Daata object;   // the instance
 	char32 *name;   // the name of the object as it appears in the List
 	structMelderFile file;   // is this Object associated with a file?
 	long id;   // the unique number of the object
@@ -162,24 +162,24 @@ extern structPraatPicture theForegroundPraatPicture;
 extern PraatPicture theCurrentPraatPicture;
 	/* The global objects containing the state of the application; only reachable from interface files. */
 
-Data praat_onlyObject (ClassInfo klas);
-	/* Returns a selected Data of class 'klas'. */
-Data praat_onlyObject_generic (ClassInfo klas);
-	/* Returns a selected Data of class 'klas' or a subclass. */
+Daata praat_onlyObject (ClassInfo klas);
+	/* Returns a selected Daata of class 'klas'. */
+Daata praat_onlyObject_generic (ClassInfo klas);
+	/* Returns a selected Daata of class 'klas' or a subclass. */
 praat_Object praat_onlyScreenObject (void);
 char32 *praat_name (int iobject);
 void praat_write_do (Any dia, const char32 *extension);
-void praat_new (Data me);
-void praat_new (Data me, Melder_1_ARG);
-void praat_new (Data me, Melder_2_ARGS);
-void praat_new (Data me, Melder_3_ARGS);
-void praat_new (Data me, Melder_4_ARGS);
-void praat_new (Data me, Melder_5_ARGS);
-void praat_new (Data me, Melder_6_ARGS);
-void praat_new (Data me, Melder_7_ARGS);
-void praat_new (Data me, Melder_8_ARGS);
-void praat_new (Data me, Melder_9_ARGS);
-void praat_newWithFile (Data me, MelderFile file, const char32 *name);
+void praat_new (Daata me);
+void praat_new (Daata me, Melder_1_ARG);
+void praat_new (Daata me, Melder_2_ARGS);
+void praat_new (Daata me, Melder_3_ARGS);
+void praat_new (Daata me, Melder_4_ARGS);
+void praat_new (Daata me, Melder_5_ARGS);
+void praat_new (Daata me, Melder_6_ARGS);
+void praat_new (Daata me, Melder_7_ARGS);
+void praat_new (Daata me, Melder_8_ARGS);
+void praat_new (Daata me, Melder_9_ARGS);
+void praat_newWithFile (Daata me, MelderFile file, const char32 *name);
 void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
 /* Macros for description of forms (dialog boxes).
@@ -459,9 +459,9 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define ONLY(klas)  praat_onlyObject (klas)
 #define ONLY_GENERIC(klas)  praat_onlyObject_generic (klas)
 #define ONLY_OBJECT  (praat_onlyScreenObject () -> object)
-Data praat_firstObject (ClassInfo klas);
-Data praat_firstObject_generic (ClassInfo klas);
-Data praat_firstObject_any ();
+Daata praat_firstObject (ClassInfo klas);
+Daata praat_firstObject_generic (ClassInfo klas);
+Daata praat_firstObject_any ();
 #define FIRST(Klas)  (Klas) praat_firstObject (class##Klas)
 #define FIRST_GENERIC(Klas)  (Klas) praat_firstObject_generic (class##Klas)
 #define FIRST_ANY(Klas)  (Klas) praat_firstObject_any ()

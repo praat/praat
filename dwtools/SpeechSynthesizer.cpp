@@ -50,7 +50,7 @@
 extern structMelderDir praatDir;
 extern int option_phoneme_events;
 
-Thing_implement (SpeechSynthesizerVoice, Data, 0);
+Thing_implement (SpeechSynthesizerVoice, Daata, 0);
 
 SpeechSynthesizerVoice SpeechSynthesizerVoice_create (long numberOfFormants) {
 	try {
@@ -118,7 +118,7 @@ void SpeechSynthesizerVoice_initFromEspeakVoice (SpeechSynthesizerVoice me, voic
 	}
 }
 
-Thing_implement (SpeechSynthesizer, Data, 0);
+Thing_implement (SpeechSynthesizer, Daata, 0);
 
 void structSpeechSynthesizer :: v_info () {
 	SpeechSynthesizer_Parent :: v_info ();

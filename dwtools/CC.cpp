@@ -51,7 +51,7 @@
 Thing_implement (CC, Sampled, 1);
 
 void structCC :: v_info () {
-	structData :: v_info ();
+	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Time domain:", xmin, U" to ", xmax, U" seconds");
 	MelderInfo_writeLine (U"Number of frames: ", nx);
 	MelderInfo_writeLine (U"Time step: ", dx, U" seconds");

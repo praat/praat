@@ -38,9 +38,9 @@
 #include "oo_DESCRIPTION.h"
 #include "PairDistribution_def.h"
 
-Thing_implement (PairProbability, Data, 0);
+Thing_implement (PairProbability, Daata, 0);
 
-Thing_implement (PairDistribution, Data, 0);
+Thing_implement (PairDistribution, Daata, 0);
 
 void structPairDistribution :: v_info () {
 	PairDistribution_Parent :: v_info ();

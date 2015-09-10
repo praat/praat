@@ -52,7 +52,7 @@
 Thing_implement (Photo, SampledXY, 0);
 
 void structPhoto :: v_info () {
-	our structData :: v_info ();
+	our structDaata :: v_info ();
 	MelderInfo_writeLine (U"xmin: ", our xmin);
 	MelderInfo_writeLine (U"xmax: ", our xmax);
 	MelderInfo_writeLine (U"Number of columns: ", our nx);

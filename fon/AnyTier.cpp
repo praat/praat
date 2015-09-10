@@ -191,7 +191,7 @@ long AnyTier_hasPoint (I, double t) {
 	return 0;   /* Point not found. */
 }
 
-void AnyTier_addPoint (I, Data point) {
+void AnyTier_addPoint (I, Daata point) {
 	iam (AnyTier);
 	try {
 		Collection_addItem (my points, point);

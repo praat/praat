@@ -42,7 +42,7 @@ Thing_implement (Movie, Sampled, 0);
 
 void structMovie :: v_info ()
 {
-	structData :: v_info ();
+	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Start time: ", xmin, U" seconds");
 	MelderInfo_writeLine (U"End time: ", xmax, U" seconds");
 	MelderInfo_writeLine (U"Total duration: ", xmax - xmin, U" seconds");

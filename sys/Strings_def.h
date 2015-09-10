@@ -19,7 +19,7 @@
 
 
 #define ooSTRUCT Strings
-oo_DEFINE_CLASS (Strings, Data)
+oo_DEFINE_CLASS (Strings, Daata)
 
 	oo_LONG (numberOfStrings)
 	oo_STRING_VECTOR (strings, numberOfStrings)

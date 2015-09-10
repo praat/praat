@@ -22,7 +22,7 @@
 */
 
 #define ooSTRUCT Eigen
-oo_DEFINE_CLASS (Eigen, Data)
+oo_DEFINE_CLASS (Eigen, Daata)
 
 	oo_LONG (numberOfEigenvalues)
 	oo_LONG (dimension)

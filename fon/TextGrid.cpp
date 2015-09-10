@@ -279,7 +279,7 @@ long IntervalTier_hasBoundary (IntervalTier me, double t) {
 }
 
 void structTextGrid :: v_info () {
-	structData :: v_info ();
+	structDaata :: v_info ();
 
 	long intervalTierCount = 0, pointTierCount = 0, intervalCount = 0, pointCount = 0;
 	for (long itier = 1; itier <= our numberOfTiers(); itier ++) {

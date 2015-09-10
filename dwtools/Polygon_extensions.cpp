@@ -544,7 +544,7 @@ static int LineSegments_getIntersection (double x1, double y1, double x2, double
 // first node has prev = 0, last node has next = 0;
 // entry marks the entrance of the OTHER polygon
 
-Thing_define (Vertex, Data) {
+Thing_define (Vertex, Daata) {
 	// new data:
 public:
 	double x, y, alpha;
@@ -556,7 +556,7 @@ public:
 	virtual void v_copy (Any data_to);
 };
 
-Thing_implement (Vertex, Data, 0);
+Thing_implement (Vertex, Daata, 0);
 
 void structVertex :: v_copy (thou) {
 	thouart (Vertex);
@@ -779,7 +779,7 @@ Vertices Polygon_to_Vertices (Polygon me, bool close) {
 		for (long i = 1 ; i <= my numberOfPoints; i++) {
 			autoVertex v = Vertex_create ();
 			v -> x = my x[i]; v -> y = my y[i];
-			autoDLLNode n = DLLNode_create ( (Data) v.transfer());
+			autoDLLNode n = DLLNode_create ( (Daata) v.transfer());
 			DLL_addBack ( (DLL) thee.peek(), n.transfer());
 		}
 		Melder_assert (thy numberOfNodes == my numberOfPoints);
@@ -894,8 +894,8 @@ void Vertices_addIntersections (Vertices me, Vertices thee) {
 					DLLNode njc = ins -> neighbour = nc.peek();
 					DLLNode nic = inc -> neighbour = ns.peek();
 					// 4. transfer the vertices to the nodes
-					ns -> data = (Data) ins.transfer();
-					nc -> data = (Data) inc.transfer();
+					ns -> data = (Daata) ins.transfer();
+					nc -> data = (Daata) inc.transfer();
 					// 5. add the nodes to the list
 					DLL_addAfter ( (DLL) me, ni, ns.transfer());
 					DLL_addAfter ( (DLL) thee, nj, nc.transfer());

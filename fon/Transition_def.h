@@ -19,7 +19,7 @@
 
 
 #define ooSTRUCT Transition
-oo_DEFINE_CLASS (Transition, Data)
+oo_DEFINE_CLASS (Transition, Daata)
 
 	oo_LONG (numberOfStates)
 	oo_STRING_VECTOR (stateLabels, numberOfStates)

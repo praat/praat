@@ -405,7 +405,7 @@ static void gui_window_cb_goAway (I) {
 }
 
 void praat_addCommandsToEditor (Editor me);
-void Editor_init (Editor me, int x, int y, int width, int height, const char32 *title, Data data) {
+void Editor_init (Editor me, int x, int y, int width, int height, const char32 *title, Daata data) {
 	double xmin, ymin, widthmax, heightmax;
 	Gui_getWindowPositioningBounds (& xmin, & ymin, & widthmax, & heightmax);
 	/*

@@ -25,7 +25,7 @@
 #include "Sound.h"
 
 #include "FormantTier_def.h"
-oo_CLASS_CREATE (FormantPoint, Data);
+oo_CLASS_CREATE (FormantPoint, Daata);
 oo_CLASS_CREATE (FormantTier, Function);
 
 FormantPoint FormantPoint_create (double time);

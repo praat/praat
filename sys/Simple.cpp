@@ -38,7 +38,7 @@
 #include "oo_DESCRIPTION.h"
 #include "Simple_def.h"
 
-Thing_implement (SimpleInt, Data, 0);
+Thing_implement (SimpleInt, Daata, 0);
 
 SimpleInt SimpleInt_create (int number) {
 	autoSimpleInt me = Thing_new (SimpleInt);
@@ -46,7 +46,7 @@ SimpleInt SimpleInt_create (int number) {
 	return me.transfer();
 }
 
-Thing_implement (SimpleLong, Data, 0);
+Thing_implement (SimpleLong, Daata, 0);
 
 SimpleLong SimpleLong_create (long number) {
 	autoSimpleLong me = Thing_new (SimpleLong);
@@ -54,7 +54,7 @@ SimpleLong SimpleLong_create (long number) {
 	return me.transfer();
 }
 
-Thing_implement (SimpleDouble, Data, 0);
+Thing_implement (SimpleDouble, Daata, 0);
 
 SimpleDouble SimpleDouble_create (double number) {
 	autoSimpleDouble me = Thing_new (SimpleDouble);
@@ -62,7 +62,7 @@ SimpleDouble SimpleDouble_create (double number) {
 	return me.transfer();
 }
 
-Thing_implement (SimpleString, Data, 0);
+Thing_implement (SimpleString, Daata, 0);
 
 SimpleString SimpleString_create (const char32 *string) {
 	autoSimpleString me = Thing_new (SimpleString);

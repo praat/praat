@@ -22,7 +22,7 @@
 #include "ManPage.h"
 #include "Collection.h"
 
-Thing_define (ManPages, Data) {
+Thing_define (ManPages, Daata) {
 	Ordered pages;
 	const char32 **titles;
 	int ground, dynamic, executable;

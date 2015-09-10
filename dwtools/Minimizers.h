@@ -36,7 +36,7 @@ Thing_define (Minimizer, Thing) {
 	double minimum;		/* current minimum */
 	double *history;	/* previous minima */
 	double tolerance;	/* stop criterium */
-	Data object;		/* reference to the object that uses this Minimizer */
+	Daata object;		/* reference to the object that uses this Minimizer */
 	long funcCalls;		/* the number of times 'func' has been called */
 	long success;		/* indicates whether I'm done */
 	long start;			/* start iteration series */
@@ -56,7 +56,7 @@ Thing_define (Minimizer, Thing) {
 	virtual void v_setParameters (Any parameters) { (void) parameters; }
 };
 
-void Minimizer_init (I, long nParameters, Data object);
+void Minimizer_init (I, long nParameters, Daata object);
 /*
 	Preconditions:
 		nParameters > 0;
@@ -108,7 +108,7 @@ Thing_define (LineMinimizer, Minimizer) {
 	// new data:
 	public:
 		/* the function to be minimized */
-		double (*func) (Data object, const double p[]);
+		double (*func) (Daata object, const double p[]);
 		double maxLineStep;	/*maximum step in line search direction */
 		double *direction;	/* search direction vector */
 		double *ptry;		/* point in search direction */
@@ -118,8 +118,8 @@ Thing_define (LineMinimizer, Minimizer) {
 		//virtual void v_linmin (double p[], double fp, double direction[], double *fret);	 // David, is dit correct? ja
 };
 
-void LineMinimizer_init (I, long nParameters, Data object, double (*func)
-	(Data object, const double p[]));
+void LineMinimizer_init (I, long nParameters, Daata object, double (*func)
+	(Daata object, const double p[]));
 
 
 /******************  class SteepestDescentMinimizer**************************/
@@ -132,16 +132,16 @@ Thing_define (SteepestDescentMinimizer, Minimizer) {
 	// new data:
 	public:
 		double eta, momentum;
-		double (*func) (Data object, const double p[]);
-		void  (*dfunc) (Data object, const double p[], double dp[]);
+		double (*func) (Daata object, const double p[]);
+		void  (*dfunc) (Daata object, const double p[], double dp[]);
 		/* calculates gradient at position p */
 	// overridden methods:
 		virtual void v_minimize ();
 		virtual void v_setParameters (Any parameters);
 };
 
-SteepestDescentMinimizer SteepestDescentMinimizer_create (long nParameters, Data object, double (*func)
-	(Data object, const double p[]), void (*dfunc) (Data object, const double p[],
+SteepestDescentMinimizer SteepestDescentMinimizer_create (long nParameters, Daata object, double (*func)
+	(Daata object, const double p[]), void (*dfunc) (Daata object, const double p[],
 	double dp[]));
 
 
@@ -155,8 +155,8 @@ typedef struct structVDSmagtMinimizer_parameters {
 Thing_define (VDSmagtMinimizer, Minimizer) {
 	// new data:
 	public:
-		double (*func) (Data object, const double p[]);
-		void  (*dfunc) (Data object, const double p[], double dp[]);
+		double (*func) (Daata object, const double p[]);
+		void  (*dfunc) (Daata object, const double p[], double dp[]);
 		double *dp;
 		double lineSearchGradient;
 		long lineSearchMaxNumOfIterations;
@@ -178,8 +178,8 @@ Thing_define (VDSmagtMinimizer, Minimizer) {
 		virtual void v_setParameters (Any parameters);
 };
 
-VDSmagtMinimizer VDSmagtMinimizer_create (long dimension, Data object, double (*func)
-	(Data object, const double p[]), void (*dfunc) (Data object, const double p[],
+VDSmagtMinimizer VDSmagtMinimizer_create (long dimension, Daata object, double (*func)
+	(Daata object, const double p[]), void (*dfunc) (Daata object, const double p[],
 	double dp[]));
 
 #endif /* _Minimizer_h_ */

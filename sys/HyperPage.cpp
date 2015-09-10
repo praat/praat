@@ -45,7 +45,7 @@ static double resolution;
 
 /********** class HyperLink **********/
 
-Thing_implement (HyperLink, Data, 0);
+Thing_implement (HyperLink, Daata, 0);
 
 HyperLink HyperLink_create (const char32 *name, double x1DC, double x2DC, double y1DC, double y2DC) {
 	autoHyperLink me = Thing_new (HyperLink);
@@ -955,7 +955,7 @@ void structHyperPage :: v_createChildren () {
 	GuiDrawingArea_setSwipable (drawingArea, NULL, our verticalScrollBar);
 }
 
-void HyperPage_init (HyperPage me, const char32 *title, Data data) {
+void HyperPage_init (HyperPage me, const char32 *title, Daata data) {
 	resolution = Gui_getResolution (NULL);
 	Editor_init (me, 0, 0, (int) floor (6 * resolution + 30), 800, title, data);
 	#if motif

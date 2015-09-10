@@ -22,11 +22,11 @@
 
 #include "Data.h"
 
-Thing_define (DLLNode, Data) {
+Thing_define (DLLNode, Daata) {
 	// new data:
 	public:
 		DLLNode next, prev;
-		Data data;
+		Daata data;
 	// overridden methods:
 	protected:
 		virtual void v_destroy ();
@@ -47,7 +47,7 @@ Thing_define (DLL, Thing) {
 		virtual Data_CompareFunction v_getCompareFunction () { return s_compare; }
 };
 
-DLLNode DLLNode_create (Data data); // DLLNode owns the data
+DLLNode DLLNode_create (Daata data); // DLLNode owns the data
 
 void DLL_init (DLL me);
 DLL DLL_create ();

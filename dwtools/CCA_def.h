@@ -26,7 +26,7 @@
  */
 
 #define ooSTRUCT CCA
-oo_DEFINE_CLASS (CCA, Data)
+oo_DEFINE_CLASS (CCA, Daata)
 
 	oo_LONG (numberOfCoefficients)
 	oo_LONG (numberOfObservations)
