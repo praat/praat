@@ -1,6 +1,6 @@
 /* winport_on.h
  *
- * Copyright (C) 2011 Paul Boersma
+ * Copyright (C) 2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  */
 
 #define Graphics WindowsGraphics
-#define Data WindowsData
 #define Polygon WindowsPolygon
 
 /* End of file winport_on.h */
