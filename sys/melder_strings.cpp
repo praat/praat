@@ -29,7 +29,7 @@ void MelderString16_free (MelderString16 *me) {
 	Melder_free (my string);
 	if (Melder_debug == 34) fprintf (stderr, "from MelderString16_free\t%p\t%lld\t%d\n", my string, (long long) my bufferSize, 2);
 	totalNumberOfDeallocations += 1;
-	totalDeallocationSize += my bufferSize * (int64_t) sizeof (char16_t);
+	totalDeallocationSize += my bufferSize * (int64) sizeof (char16_t);
 	my bufferSize = 0;
 	my length = 0;
 }
@@ -39,7 +39,7 @@ void MelderString_free (MelderString *me) {
 	Melder_free (my string);
 	if (Melder_debug == 34) fprintf (stderr, "from MelderString32_free\t%p\t%lld\t%d\n", my string, (long long) my bufferSize, 2);
 	totalNumberOfDeallocations += 1;
-	totalDeallocationSize += my bufferSize * (int64_t) sizeof (char32);
+	totalDeallocationSize += my bufferSize * (int64) sizeof (char32);
 	my bufferSize = 0;
 	my length = 0;
 }
@@ -97,7 +97,7 @@ void MelderString16_empty (MelderString16 *me) {
 	if (my bufferSize * (int64) sizeof (char16) >= FREE_THRESHOLD_BYTES) {
 		MelderString16_free (me);
 	}
-	int64_t sizeNeeded = 1;
+	int64 sizeNeeded = 1;
 	expandIfNecessary (char16)
 	my string [0] = '\0';
 	my length = 0;

@@ -143,11 +143,11 @@ void MelderFile_writeAudioFileHeader (MelderFile file, int audioFileType, long s
 					double dataSize_f = (double) numberOfSamples * (double) numberOfBytesPerSamplePoint * (double) numberOfChannels;
 					if (dataSize_f > INT54_MAX)
 						Melder_throw (U"Cannot save data over the 9-petabyte limit.");
-					int64_t dataSize = (int64_t) dataSize_f;
+					int64 dataSize = (int64) dataSize_f;
 
 					/* RIFF Chunk: contains all other chunks. */
 					if (fwrite ("RIFF", 1, 4, f) != 4) Melder_throw (U"Error in file while trying to write the RIFF statement.");
-					int64_t sizeOfRiffChunk_i64 = 4 + (12 + formatSize) + (4 + dataSize);
+					int64 sizeOfRiffChunk_i64 = 4 + (12 + formatSize) + (4 + dataSize);
 					if (sizeOfRiffChunk_i64 > UINT32_MAX)
 						Melder_throw (U"Cannot save a WAV file with more than ", UINT32_MAX, U" bytes.");
 					uint32_t sizeOfRiffChunk_u32 = (uint32_t) sizeOfRiffChunk_i64;

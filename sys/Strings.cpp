@@ -225,7 +225,7 @@ Strings Strings_readFromRawTextFile (MelderFile file) {
 		/*
 		 * Count number of strings.
 		 */
-		int64_t n = MelderReadText_getNumberOfLines (text.peek());
+		int64 n = MelderReadText_getNumberOfLines (text.peek());
 
 		/*
 		 * Create.

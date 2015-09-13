@@ -23,7 +23,7 @@
  * pb 2010/03/09 support Unicode values above 0xFFFF
  * pb 2011/04/05 C++
  * pb 2011/07/03 C++
- * pb 2014/12/17 int64_t
+ * pb 2014/12/17 int64
  * pb 2015/05/26 char32
  */
 
@@ -112,8 +112,8 @@ char32 * MelderReadText_readLine (MelderReadText me) {
 	}
 }
 
-int64_t MelderReadText_getNumberOfLines (MelderReadText me) {
-	int64_t n = 0;
+int64 MelderReadText_getNumberOfLines (MelderReadText me) {
+	int64 n = 0;
 	if (my string32 != NULL) {
 		char32 *p = & my string32 [0];
 		for (; *p != U'\0'; p ++) if (*p == U'\n') n ++;
@@ -127,7 +127,7 @@ int64_t MelderReadText_getNumberOfLines (MelderReadText me) {
 }
 
 const char32 * MelderReadText_getLineNumber (MelderReadText me) {
-	int64_t result = 1;
+	int64 result = 1;
 	if (my string32 != NULL) {
 		char32 *p = my string32;
 		while (my readPointer32 - p > 0) {
@@ -172,7 +172,7 @@ static char32 * _MelderFile_readText (MelderFile file, char **string8) {
 			Melder_throw (U"Cannot count the bytes in the file.");
 		}
 		Melder_assert (sizeof (off_t) >= 8);
-		int64_t length = ftello (f);
+		int64 length = ftello (f);
 		rewind (f);
 		if (length >= 2) {
 			int firstByte = fgetc (f), secondByte = fgetc (f);
@@ -187,7 +187,7 @@ static char32 * _MelderFile_readText (MelderFile file, char **string8) {
 			autostring8 text8bit = Melder_malloc (char, length + 1);
 			Melder_assert (text8bit.peek() != NULL);
 			size_t numberOfBytesRead = fread_multi (text8bit.peek(), (size_t) length, f);
-			if ((int64_t) numberOfBytesRead < length)
+			if ((int64) numberOfBytesRead < length)
 				Melder_throw (U"The file contains ", length, U" bytes, but we could read only ",
 					numberOfBytesRead, U" of them.");
 			text8bit [length] = '\0';
@@ -195,14 +195,14 @@ static char32 * _MelderFile_readText (MelderFile file, char **string8) {
 			 * Count and repair null bytes.
 			 */
 			if (length > 0) {
-				int64_t numberOfNullBytes = 0;
-				for (char *p = & text8bit [length - 1]; (int64_t) (p - text8bit.peek()) >= 0; p --) {
+				int64 numberOfNullBytes = 0;
+				for (char *p = & text8bit [length - 1]; (int64) (p - text8bit.peek()) >= 0; p --) {
 					if (*p == '\0') {
 						numberOfNullBytes += 1;
 						/*
 						 * Shift.
 						 */
-						for (char *q = p; (int64_t) (q - text8bit.peek()) < length; q ++) {
+						for (char *q = p; (int64) (q - text8bit.peek()) < length; q ++) {
 							*q = q [1];
 						}
 					}
@@ -222,7 +222,7 @@ static char32 * _MelderFile_readText (MelderFile file, char **string8) {
 			length = length / 2 - 1;   // Byte Order Mark subtracted. Length = number of UTF-16 codes
 			text.reset (Melder_malloc (char32, length + 1));
 			if (type == 1) {
-				for (int64_t i = 0; i < length; i ++) {
+				for (int64 i = 0; i < length; i ++) {
 					char16 kar1 = bingetu2 (f);
 					if (kar1 < 0xD800) {
 						text [i] = (char32) kar1;   // convert up without sign extension
@@ -243,7 +243,7 @@ static char32 * _MelderFile_readText (MelderFile file, char **string8) {
 					}
 				}
 			} else {
-				for (int64_t i = 0; i < length; i ++) {
+				for (int64 i = 0; i < length; i ++) {
 					char16 kar1 = bingetu2LE (f);
 					if (kar1 < 0xD800) {
 						text [i] = (char32) kar1;   // convert up without sign extension

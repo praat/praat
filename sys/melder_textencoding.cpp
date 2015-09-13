@@ -494,7 +494,7 @@ void Melder_32to8_inline (const char32 *string, char *utf8) {
 
 char * Melder_32to8 (const char32 *string) {
 	if (string == NULL) return NULL;
-	autostring8 result = Melder_malloc (char, (int64_t) str32len_utf8 (string, true) + 1);
+	autostring8 result = Melder_malloc (char, (int64) str32len_utf8 (string, true) + 1);
 	Melder_32to8_inline (string, result.peek());
 	return result.transfer();
 }
@@ -525,9 +525,9 @@ char16 * Melder_peek32to16 (const char32 *text, bool nativizeNewlines) {
 	static int ibuffer = 0;
 	if (++ ibuffer == 19) ibuffer = 0;
 	MelderString16_empty (& buffers [ibuffer]);
-	int64_t n = str32len (text);
+	int64 n = str32len (text);
 	if (nativizeNewlines) {
-		for (int64_t i = 0; i <= n; i ++) {
+		for (int64 i = 0; i <= n; i ++) {
 			#ifdef _WIN32
 				if (text [i] == U'\n')
 					MelderString16_appendCharacter (& buffers [ibuffer], (char32) 13);
@@ -535,7 +535,7 @@ char16 * Melder_peek32to16 (const char32 *text, bool nativizeNewlines) {
 			MelderString16_appendCharacter (& buffers [ibuffer], text [i]);
 		}
 	} else {
-		for (int64_t i = 0; i <= n; i ++) {
+		for (int64 i = 0; i <= n; i ++) {
 			MelderString16_appendCharacter (& buffers [ibuffer], text [i]);
 		}
 	}

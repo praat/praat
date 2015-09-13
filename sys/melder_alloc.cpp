@@ -27,7 +27,7 @@
  * pb 2009/07/31 tracing by Melder_debug 34
  * pb 2010/12/28 split into _e and _f versions, and created a rainy-day fund
  * pb 2011/04/05 C++
- * pb 2014/12/17 made everything int64_t
+ * pb 2014/12/17 made everything int64
  */
 
 #include "melder.h"
@@ -295,7 +295,7 @@ int Melder_cmp (const char32 *string1, const char32 *string2) {
 	return str32cmp (string1, string2);
 }
 
-int Melder_ncmp (const char32 *string1, const char32 *string2, int64_t n) {
+int Melder_ncmp (const char32 *string1, const char32 *string2, int64 n) {
 	if (string1 == NULL) string1 = U"";
 	if (string2 == NULL) string2 = U"";
 	return str32ncmp (string1, string2, n);
