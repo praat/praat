@@ -294,9 +294,9 @@ void Melder_writeToConsole (const char32 *message, bool useStderr);
 void Melder_alloc_init (void);   // to be called around program start-up
 void Melder_message_init (void);   // to be called around program start-up
 void * _Melder_malloc (int64 size);
-#define Melder_malloc(type,numberOfElements)  (type *) _Melder_malloc ((numberOfElements) * (int64_t) sizeof (type))
+#define Melder_malloc(type,numberOfElements)  (type *) _Melder_malloc ((numberOfElements) * (int64) sizeof (type))
 void * _Melder_malloc_f (int64 size);
-#define Melder_malloc_f(type,numberOfElements)  (type *) _Melder_malloc_f ((numberOfElements) * (int64_t) sizeof (type))
+#define Melder_malloc_f(type,numberOfElements)  (type *) _Melder_malloc_f ((numberOfElements) * (int64) sizeof (type))
 void * Melder_realloc (void *pointer, int64 size);
 void * Melder_realloc_f (void *pointer, int64 size);
 void * _Melder_calloc (int64 numberOfElements, int64 elementSize);
@@ -307,7 +307,7 @@ char * Melder_strdup (const char *string);
 char * Melder_strdup_f (const char *string);
 
 int Melder_cmp (const char32 *string1, const char32 *string2);   // regards null string as empty string
-int Melder_ncmp (const char32 *string1, const char32 *string2, int64_t n);
+int Melder_ncmp (const char32 *string1, const char32 *string2, int64 n);
 char32 * Melder_tok (char32 *string, const char32 *delimiter);
 
 /**

@@ -1482,7 +1482,7 @@ char * bingets1 (FILE *f) {
 char * bingets2 (FILE *f) {
 	try {
 		uint16_t length = bingetu2 (f);
-		autostring8 result = Melder_malloc (char, (int64_t) length + 1);
+		autostring8 result = Melder_malloc (char, (int64) length + 1);
 		if (fread (result.peek(), sizeof (char), length, f) != length)
 			Melder_throw (feof (f) ? U"Reached end of file" : U"Error in file", U" while trying to read ", length, U" one-byte characters.");
 		result [length] = 0;   // trailing null byte
@@ -1495,7 +1495,7 @@ char * bingets2 (FILE *f) {
 char * bingets4 (FILE *f) {
 	try {
 		uint32_t length = bingetu4 (f);
-		autostring8 result = Melder_malloc (char, (int64_t) length + 1);
+		autostring8 result = Melder_malloc (char, (int64) length + 1);
 		if (fread (result.peek(), sizeof (char), length, f) != length)
 			Melder_throw (feof (f) ? U"Reached end of file" : U"Error in file", U" while trying to read ", length, U" one-byte characters.");
 		result [length] = 0;   // trailing null byte
@@ -1514,7 +1514,7 @@ char32 * bingetw1 (FILE *f) {
 			 * UTF-16
 			 */
 			length = bingetu1 (f);
-			result.reset (Melder_malloc (char32, (int64_t) length + 1));
+			result.reset (Melder_malloc (char32, (int64) length + 1));
 			for (unsigned short i = 0; i < length; i ++) {
 				uint16 kar = bingetu2 (f);
 				if ((kar & 0xF800) == 0xD800) {
@@ -1532,7 +1532,7 @@ char32 * bingetw1 (FILE *f) {
 			/*
 			 * ASCII
 			 */
-			result.reset (Melder_malloc (char32, (int64_t) length + 1));
+			result.reset (Melder_malloc (char32, (int64) length + 1));
 			for (unsigned short i = 0; i < length; i ++) {
 				result [i] = bingetu1 (f);
 			}
@@ -1553,7 +1553,7 @@ char32 * bingetw2 (FILE *f) {
 			 * UTF-16
 			 */
 			length = bingetu2 (f);
-			result.reset (Melder_malloc (char32, (int64_t) length + 1));
+			result.reset (Melder_malloc (char32, (int64) length + 1));
 			for (uint16 i = 0; i < length; i ++) {
 				char32 kar = (char32) (char16) bingetu2 (f);
 				if ((kar & 0x00F800) == 0x00D800) {
@@ -1592,7 +1592,7 @@ char32 * bingetw4 (FILE *f) {
 			 * UTF-16
 			 */
 			length = bingetu4 (f);
-			result.reset (Melder_malloc (char32, (int64_t) length + 1));
+			result.reset (Melder_malloc (char32, (int64) length + 1));
 			for (uint32_t i = 0; i < length; i ++) {
 				uint16_t kar = bingetu2 (f);
 				if ((kar & 0xF800) == 0xD800) {
@@ -1610,7 +1610,7 @@ char32 * bingetw4 (FILE *f) {
 			/*
 			 * ASCII
 			 */
-			result.reset (Melder_malloc (char32, (int64_t) length + 1));
+			result.reset (Melder_malloc (char32, (int64) length + 1));
 			for (uint32_t i = 0; i < length; i ++) {
 				result [i] = bingetu1 (f);
 			}
