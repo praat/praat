@@ -64,7 +64,7 @@ You can find toolchains for 32 and 64 bits
 [here](http://sourceforge.net/projects/mingw-w64/files/) (look for Automated Builds).
 Install the GDI+ headers and the GDI+ library ([32-bit](http://www.fon.hum.uva.nl/praat/libgdiplus.a-32.zip);
 for 64-bit Windows just extract a GDI+ DLL from somewhere).
-Then copy the file `makefiles/makefile.defs.mingw32` or `makefiles/makefile.defs.mingw64`
+Then copy the file `makefiles/makefile.defs.darmin32` or `makefiles/makefile.defs.darmin64`
 to the sources directory and rename it to `makefile.defs`.
 Then type `make`.
 
