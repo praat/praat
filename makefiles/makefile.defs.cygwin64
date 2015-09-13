@@ -1,13 +1,13 @@
 # File: makefile.defs.cygwin64
 
 # System: Cygwin on Windows
-# Paul Boersma, 10 September 2015
+# Paul Boersma, 13 September 2015
 
 CC = gcc -std=gnu99
 
 CXX = g++ -std=gnu++11 -Wshadow
 
-CFLAGS = -D_WIN32 -DUNICODE -D_FILE_OFFSET_BITS=64 -O1
+CFLAGS = -mwin32 -DUNICODE -D_FILE_OFFSET_BITS=64 -O1
 # Probably implicit: -m64 -mwin32 -march=x86_64 -mtune=generic
 
 CXXFLAGS = $(CFLAGS)

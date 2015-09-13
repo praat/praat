@@ -91,13 +91,7 @@ char32 * Melder_getShellDirectory (void) {
 }
 
 void Melder_str32To8bitFileRepresentation_inline (const char32 *string, char *utf8) {
-	#if defined (_WIN32)
-		int n = str32len (string), i, j;
-		for (i = 0, j = 0; i < n; i ++) {
-			utf8 [j ++] = string [i] <= 255 ? string [i] : '?';   // the usual replacement on Windows
-		}
-		utf8 [j] = '\0';
-	#elif defined (macintosh)
+	#if defined (macintosh)
 		/*
 			On the Mac, the POSIX path name is stored in canonically decomposed UTF-8 encoding.
 			The path is probably in precomposed UTF-32.
@@ -124,12 +118,20 @@ void Melder_str32To8bitFileRepresentation_inline (const char32 *string, char *ut
 		CFStringNormalize (cfpath2, kCFStringNormalizationFormD);   // Mac requires decomposed characters
 		CFStringGetCString (cfpath2, (char *) utf8, kMelder_MAXPATH+1, kCFStringEncodingUTF8);   // Mac POSIX requires UTF-8
 		CFRelease (cfpath2);
-	#else
+	#elif defined (UNIX) || defined (__CYGWIN__)
 		Melder_32to8_inline (string, utf8);
+	#elif defined (_WIN32)
+		int n = str32len (string), i, j;
+		for (i = 0, j = 0; i < n; i ++) {
+			utf8 [j ++] = string [i] <= 255 ? string [i] : '?';   // the usual replacement on Windows
+		}
+		utf8 [j] = '\0';
+	#else
+		#error Unsupported platform.
 	#endif
 }
 
-#if ! defined (_WIN32)
+#if defined (UNIX)
 void Melder_8bitFileRepresentationToStr32_inline (const char *path8, char32 *path32) {
 	#if defined (macintosh)
 		CFStringRef cfpath = CFStringCreateWithCString (NULL, path8, kCFStringEncodingUTF8);
@@ -738,12 +740,12 @@ long MelderFile_length (MelderFile file) {
 
 void MelderFile_delete (MelderFile file) {
 	if (! file) return;
-	#if defined (_WIN32)
-		DeleteFile (Melder_peek32toW (file -> path));
-	#else
+	#if defined (UNIX)
 		char utf8path [kMelder_MAXPATH+1];
 		Melder_str32To8bitFileRepresentation_inline (file -> path, utf8path);
 		remove ((char *) utf8path);
+	#elif defined (_WIN32)
+		DeleteFile (Melder_peek32toW (file -> path));
 	#endif
 }
 
@@ -766,22 +768,22 @@ const char32 * MelderFile_messageName (MelderFile file) {
 }
 
 void Melder_getDefaultDir (MelderDir dir) {
-	#if defined (_WIN32)
-		static WCHAR dirPathW [kMelder_MAXPATH+1];
-		GetCurrentDirectory (kMelder_MAXPATH+1, dirPathW);
-		Melder_sprint (dir -> path,kMelder_MAXPATH+1, Melder_peekWto32 (dirPathW));
-	#else
+	#if defined (UNIX)
 		char path [kMelder_MAXPATH+1];
 		getcwd (path, kMelder_MAXPATH+1);
 		Melder_8bitFileRepresentationToStr32_inline (path, dir -> path);
+	#elif defined (_WIN32)
+		static WCHAR dirPathW [kMelder_MAXPATH+1];
+		GetCurrentDirectory (kMelder_MAXPATH+1, dirPathW);
+		Melder_sprint (dir -> path,kMelder_MAXPATH+1, Melder_peekWto32 (dirPathW));
 	#endif
 }
 
 void Melder_setDefaultDir (MelderDir dir) {
-	#if defined (_WIN32)
-		SetCurrentDirectory (Melder_peek32toW (dir -> path));
-	#else
+	#if defined (UNIX)
 		chdir (Melder_peek32to8 (dir -> path));
+	#elif defined (_WIN32)
+		SetCurrentDirectory (Melder_peek32toW (dir -> path));
 	#endif
 }
 
@@ -792,7 +794,20 @@ void MelderFile_setDefaultDir (MelderFile file) {
 }
 
 void Melder_createDirectory (MelderDir parent, const char32 *dirName, int mode) {
-#if defined (_WIN32)
+#if defined (UNIX)
+	structMelderFile file = { 0 };
+	if (dirName [0] == U'/') {
+		Melder_sprint (file. path,kMelder_MAXPATH+1, dirName);   // absolute path
+	} else if (parent -> path [0] == U'/' && parent -> path [1] == U'\0') {
+		Melder_sprint (file. path,kMelder_MAXPATH+1, U"/", dirName);   // relative path in root directory
+	} else {
+		Melder_sprint (file. path,kMelder_MAXPATH+1, parent -> path, U"/", dirName);   // relative path
+	}
+	char utf8path [kMelder_MAXPATH+1];
+	Melder_str32To8bitFileRepresentation_inline (file. path, utf8path);
+	if (mkdir (utf8path, mode) == -1 && errno != EEXIST)   // ignore if directory already exists
+		Melder_throw (U"Cannot create directory ", & file, U".");
+#elif defined (_WIN32)
 	structMelderFile file = { 0 };
 	SECURITY_ATTRIBUTES sa;
 	(void) mode;
@@ -807,18 +822,7 @@ void Melder_createDirectory (MelderDir parent, const char32 *dirName, int mode) 
 	if (! CreateDirectoryW (Melder_peek32toW (file. path), & sa) && GetLastError () != ERROR_ALREADY_EXISTS)   // ignore if directory already exists
 		Melder_throw (U"Cannot create directory ", & file, U".");
 #else
-	structMelderFile file = { 0 };
-	if (dirName [0] == U'/') {
-		Melder_sprint (file. path,kMelder_MAXPATH+1, dirName);   // absolute path
-	} else if (parent -> path [0] == U'/' && parent -> path [1] == U'\0') {
-		Melder_sprint (file. path,kMelder_MAXPATH+1, U"/", dirName);   // relative path in root directory
-	} else {
-		Melder_sprint (file. path,kMelder_MAXPATH+1, parent -> path, U"/", dirName);   // relative path
-	}
-	char utf8path [kMelder_MAXPATH+1];
-	Melder_str32To8bitFileRepresentation_inline (file. path, utf8path);
-	if (mkdir (utf8path, mode) == -1 && errno != EEXIST)   // ignore if directory already exists
-		Melder_throw (U"Cannot create directory ", & file, U".");
+	#error Unsupported operating system.
 #endif
 }
 
