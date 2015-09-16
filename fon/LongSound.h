@@ -71,7 +71,7 @@ void LongSound_getWindowExtrema (LongSound me, double tmin, double tmax, int cha
 void LongSound_playPart (LongSound me, double tmin, double tmax,
 	int (*callback) (void *closure, int phase, double tmin, double tmax, double t), void *closure);
 
-void LongSound_writePartToAudioFile (LongSound me, int audioFileType, double tmin, double tmax, MelderFile file);
+void LongSound_writePartToAudioFile (LongSound me, int audioFileType, double tmin, double tmax, MelderFile file, int numberOfBitsPerSamplePoint);
 void LongSound_writeChannelToAudioFile (LongSound me, int audioFileType, int channel, MelderFile file);
 
 void LongSound_readAudioToFloat (LongSound me, double **buffer, long firstSample, long numberOfSamples);

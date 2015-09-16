@@ -368,7 +368,7 @@ static void writePartToOpenFile (LongSound me, int audioFileType, long imin, lon
 	my imax = 0;
 }
 
-void LongSound_writePartToAudioFile (LongSound me, int audioFileType, double tmin, double tmax, MelderFile file) {
+void LongSound_writePartToAudioFile (LongSound me, int audioFileType, double tmin, double tmax, MelderFile file, int numberOfBitsPerSamplePoint) {
 	try {
 		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 		if (tmin < my xmin) tmin = my xmin;
@@ -377,9 +377,9 @@ void LongSound_writePartToAudioFile (LongSound me, int audioFileType, double tmi
 		long n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
 		if (n < 1) Melder_throw (U"Less than 1 sample selected.");
 		autoMelderFile mfile = MelderFile_create (file);
-		MelderFile_writeAudioFileHeader (file, audioFileType, my sampleRate, n, my numberOfChannels, 8 * my numberOfBytesPerSamplePoint);
-		writePartToOpenFile (me, audioFileType, imin, n, file, 0, 8 * my numberOfBytesPerSamplePoint);
-		MelderFile_writeAudioFileTrailer (file, audioFileType, my sampleRate, n, my numberOfChannels, 8 * my numberOfBytesPerSamplePoint);
+		MelderFile_writeAudioFileHeader (file, audioFileType, my sampleRate, n, my numberOfChannels, numberOfBitsPerSamplePoint);
+		writePartToOpenFile (me, audioFileType, imin, n, file, 0, numberOfBitsPerSamplePoint);
+		MelderFile_writeAudioFileTrailer (file, audioFileType, my sampleRate, n, my numberOfChannels, numberOfBitsPerSamplePoint);
 		mfile.close ();
 	} catch (MelderError) {
 		Melder_throw (me, U": not written to sound file ", file, U".");

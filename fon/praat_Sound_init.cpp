@@ -155,7 +155,7 @@ DO
 		structMelderFile file = { 0 };
 		Melder_relativePathToFile (GET_STRING (U"Audio file"), & file);
 		LongSound_writePartToAudioFile (me, GET_INTEGER (U"Type"),
-			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), & file);
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), & file, 16);
 	}
 END2 }
 	
