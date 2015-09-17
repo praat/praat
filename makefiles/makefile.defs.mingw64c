@@ -1,7 +1,7 @@
 # File: makefile.defs.mingw64
 
 # System: MinGW on Windows under Cygwin
-# Paul Boersma, 10 September 2015
+# Paul Boersma, 17 September 2015
 
 PREFIX = x86_64-w64-mingw32-
 
@@ -16,7 +16,7 @@ CXXFLAGS = $(CFLAGS)
 
 LINK = $(PREFIX)g++
 
-EXECUTABLE = Praat.exe
+EXECUTABLE = praatcon.exe
 
 LIBS = -lwinmm -lwsock32 -lcomctl32 -lole32 -lgdi32 -lgdiplus -lcomdlg32 -static-libgcc -static-libstdc++ -mconsole
 
