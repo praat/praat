@@ -38,8 +38,9 @@ FORM (DataModeler_createSimple, U"Create simple DataModeler", 0)
 	SENTENCE (U"Parameters", U"0.0 1.0 1.0")
 	POSITIVE (U"Gaussian noise stdev", U"0.2")
 	OPTIONMENU (U"Basis functions", 2)
-		OPTION (U"Polynome")
+		OPTION (U"Polynomial")
 		OPTION (U"Legendre")
+		
 	OK
 DO
 	praat_new (DataModeler_createSimple (GET_REAL (U"left X range"), GET_REAL (U"right X range"), GET_INTEGER (U"Number of data points"),
@@ -1435,9 +1436,9 @@ void praat_DataModeler_init (void) {
 	praat_addAction1 (classDataModeler, 0, U"To Covariance (parameters)...", 0, 0, DO_DataModeler_to_Covariance_parameters);
 	praat_addAction1 (classDataModeler, 0, U"To Table (z-scores)...", 0, 0, DO_DataModeler_to_Table_zscores);
 
-	praat_addAction1 (classFormant, 0, U"To FormantModeler...", U"To LPC...", 0, DO_Formant_to_FormantModeler);
-	praat_addAction1 (classFormant, 0, U"Extract smoothest part...", 0, 0, DO_Formants_extractSmoothestPart);
-	praat_addAction1 (classFormant, 0, U"Extract smoothest part (constrained)...", 0, 0, DO_Formants_extractSmoothestPart_constrained);
+	praat_addAction1 (classFormant, 0, U"To FormantModeler...", U"To LPC...", praat_HIDDEN, DO_Formant_to_FormantModeler);
+	praat_addAction1 (classFormant, 0, U"Extract smoothest part...", 0, praat_HIDDEN, DO_Formants_extractSmoothestPart);
+	praat_addAction1 (classFormant, 0, U"Extract smoothest part (constrained)...", 0, praat_HIDDEN, DO_Formants_extractSmoothestPart_constrained);
 
 	praat_addAction1 (classFormantModeler, 0, U"Draw -", 0, 0, 0);
 	praat_addAction1 (classFormantModeler, 0, U"Speckle...", 0, 1, DO_FormantModeler_speckle);
