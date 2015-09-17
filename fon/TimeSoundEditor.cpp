@@ -191,11 +191,11 @@ static void menu_cb_ExtractSelectedSoundForOverlap (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void do_write (TimeSoundEditor me, MelderFile file, int format, int numberOfBitsPersamplePoint) {
+static void do_write (TimeSoundEditor me, MelderFile file, int format, int numberOfBitsPerSamplePoint) {
 	if (my d_startSelection >= my d_endSelection)
 		Melder_throw (U"No samples selected.");
 	if (my d_longSound.data) {
-		LongSound_writePartToAudioFile (my d_longSound.data, format, my d_startSelection, my d_endSelection, file);
+		LongSound_writePartToAudioFile (my d_longSound.data, format, my d_startSelection, my d_endSelection, file, numberOfBitsPerSamplePoint);
 	} else if (my d_sound.data) {
 		Sound sound = my d_sound.data;
 		double margin = 0.0;
@@ -214,7 +214,7 @@ static void do_write (TimeSoundEditor me, MelderFile file, int format, int numbe
 					save -> z [channel] [i - offset] = sound -> z [channel] [i];
 				}
 			}
-			Sound_writeToAudioFile (save.peek(), file, format, numberOfBitsPersamplePoint);
+			Sound_writeToAudioFile (save.peek(), file, format, numberOfBitsPerSamplePoint);
 		}
 	}
 }

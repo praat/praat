@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20150907)
+MAN_BEGIN (U"What's new?", U"ppgb", 20150916)
 INTRO (U"Latest changes in Praat.")
 /*LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (U"##5.4.19# (16 September 2015)")
+LIST_ITEM (U"• LongSound: corrected saving of 8-bit files as 16-bit.")
 NORMAL (U"##5.4.18# (7 September 2015)")
 LIST_ITEM (U"• Regular expressions: if the pattern is illegal, you'll now get an error message instead of an empty string.")
 LIST_ITEM (U"• LongSound: removed a bug introduced in 1999 that could play long stereo sounds much too fast if they had unusual sampling frequencies. "
