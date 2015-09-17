@@ -40,6 +40,7 @@ FORM (DataModeler_createSimple, U"Create simple DataModeler", 0)
 	OPTIONMENU (U"Basis functions", 2)
 		OPTION (U"Polynomial")
 		OPTION (U"Legendre")
+		
 	OK
 DO
 	praat_new (DataModeler_createSimple (GET_REAL (U"left X range"), GET_REAL (U"right X range"), GET_INTEGER (U"Number of data points"),
