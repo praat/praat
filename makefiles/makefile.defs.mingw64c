@@ -1,7 +1,7 @@
-# File: makefile.defs.mingw64
+# File: makefile.defs.mingw64c
 
 # System: MinGW on Windows under Cygwin
-# Paul Boersma, 17 September 2015
+# Paul Boersma, 18 September 2015
 
 PREFIX = x86_64-w64-mingw32-
 
