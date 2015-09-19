@@ -134,6 +134,17 @@ void praat_reportGraphicalProperties () {
 	MelderInfo_close ();
 }
 
+#if _Thing_REFCOUNT
+static void testAutoData (autoDaata data) {
+	printf ("testAutoData ref count: %d\n", data -> refCount);
+}
+static autoDaata newAutoData () {
+	autoDaata data = Thing_new (Daata);
+	printf ("newAutoData ref count: %d\n", data -> refCount);
+	return data;
+}
+#endif
+
 void praat_reportMemoryUse () {
 	MelderInfo_open ();
 	MelderInfo_writeLine (U"Memory use by Praat:\n");
@@ -173,6 +184,15 @@ void praat_reportMemoryUse () {
 	MelderInfo_writeLine (U"\nNumber of fixed menu commands: ", praat_getNumberOfMenuCommands ());
 	MelderInfo_writeLine (U"Number of dynamic menu commands: ", praat_getNumberOfActions ());
 	MelderInfo_close ();
+	#if _Thing_REFCOUNT
+		autoDaata data = Thing_new (Daata);
+		printf ("before testAudoData ref count: %d\n", data -> refCount);
+		testAutoData (data);
+		printf ("after testAutoData ref count: %d\n", data -> refCount);
+		autoDaata data2 = newAutoData ();
+		printf ("after newAutoData ref count: %d\n", data2 -> refCount);
+		//data2 = data;
+	#endif
 }
 
 /* End of file praat_statistics.cpp */

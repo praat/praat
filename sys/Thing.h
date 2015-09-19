@@ -31,6 +31,8 @@
 	/* The input/output mechanism: */
 		#include "abcio.h"
 
+#define _Thing_REFCOUNT  0
+
 /* Public. */
 
 typedef void *Any;   /* Prevent compile-time type checking. */
@@ -98,6 +100,9 @@ extern ClassInfo classThing;
 extern struct structClassInfo theClassInfo_Thing;
 struct structThing {
 	ClassInfo classInfo;   // the Praat class pointer (every object also has a C++ class pointer initialized by C++ "new")
+	#if _Thing_REFCOUNT
+		int32 refCount;
+	#endif
 	char32 *name;
 	void * operator new (size_t size) { return Melder_calloc (char, (int64) size); }
 	void operator delete (void *ptr, size_t /* size */) { Melder_free (ptr); }
@@ -280,14 +285,26 @@ public:
 	 *    autoPitch pitch = Pitch_create (...);
 	 * should work.
 	 */
-	_Thing_auto (T *a_ptr) : d_ptr (a_ptr) { }
+	_Thing_auto (T *a_ptr) : d_ptr (a_ptr) {
+		#if _Thing_REFCOUNT
+			if (a_ptr) {
+				a_ptr -> refCount = 1;
+			}
+		#endif
+	}
 	_Thing_auto () : d_ptr (NULL) { }
 	/*
 	 * pitch should be destroyed when going out of scope,
 	 * both at the end of the try block and when a throw occurs.
 	 */
 	~_Thing_auto () {
-		if (d_ptr) forget (d_ptr);
+		if (d_ptr) {
+			#if _Thing_REFCOUNT
+				printf ("_Thing_forget ref count %d\n", d_ptr -> refCount);
+				if (-- d_ptr -> refCount > 0) return;
+			#endif
+			forget (d_ptr);
+		}
 	}
 	T* peek () const {
 		return d_ptr;
@@ -341,16 +358,36 @@ public:
 	 * In order not to leak memory, the old object is destroyed.
 	 */
 	void reset (T* const ptr) {
-		if (d_ptr) forget (d_ptr);
+		T* oldPtr = d_ptr;
 		d_ptr = ptr;
+		#if _Thing_REFCOUNT
+			if (ptr) {
+				ptr -> refCount = 1;
+			}
+		#endif
+		if (oldPtr) {
+			#if _Thing_REFCOUNT
+				printf ("reset before _Thing_forget ref count %d\n", oldPtr -> refCount);
+				if (-- oldPtr -> refCount > 0) return;
+			#endif
+			forget (oldPtr);
+		}
 	}
+	#if _Thing_REFCOUNT
+		template <class Y> _Thing_auto (_Thing_auto<Y> & thing) : d_ptr (thing. d_ptr) {
+			printf ("copy constructor %d\n", d_ptr -> refCount);
+			d_ptr -> refCount ++;
+		}
+	#endif
 private:
-	/*
-	 * The compiler should prevent initializations like
-	 *    autoPitch pitch2 = pitch;
-	 */
-	template <class Y> _Thing_auto (_Thing_auto<Y> &);   // copy constructor
-	//_Thing_auto (const _Thing_auto &);
+	#if ! _Thing_REFCOUNT
+		/*
+		 * The compiler should prevent initializations like
+		 *    autoPitch pitch2 = pitch;
+		 */
+		template <class Y> _Thing_auto (_Thing_auto<Y> &);   // copy constructor
+		//_Thing_auto (const _Thing_auto &);
+	#endif
 	/*
 	 * The compiler should prevent assignments like
 	 *    pitch2 = pitch;
