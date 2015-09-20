@@ -191,6 +191,8 @@ void praat_reportMemoryUse () {
 		printf ("after testAutoData ref count: %d\n", data -> refCount);
 		autoDaata data2 = newAutoData ();
 		printf ("after newAutoData ref count: %d\n", data2 -> refCount);
+		autoDaata data3 = newAutoData ();
+		printf ("after newAutoData ref count: %d\n", data3 -> refCount);
 		//data2 = data;
 	#endif
 }

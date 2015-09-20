@@ -943,7 +943,8 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			[my d_cocoaTextView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 			[[my d_cocoaTextView textContainer] setContainerSize: NSMakeSize (FLT_MAX, FLT_MAX)];
 			[[my d_cocoaTextView textContainer] setWidthTracksTextView: NO];
-			[my d_cocoaScrollView setDocumentView: my d_cocoaTextView];
+			[my d_cocoaScrollView setDocumentView: my d_cocoaTextView];   // the scroll view will own the text view?
+			[my d_cocoaTextView release];   // so we release the text view itself
 			[[my d_cocoaScrollView window] makeFirstResponder: my d_cocoaTextView];
 			static NSFont *theTextFont;
 			if (! theTextFont) {

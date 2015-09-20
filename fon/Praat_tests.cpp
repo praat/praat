@@ -105,6 +105,17 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			}
 			t = Melder_stopwatch ();
 		} break;
+		case kPraatTests_TIME_STRING_MELDER_32_ALLOC: {
+			char32 word [] { U"abc" };
+			word [2] = NUMrandomInteger ('a', 'z');
+			for (int64 i = 1; i <= n; i ++) {
+				autoMelderString string;
+				MelderString_copy (& string, word);
+				for (int j = 1; j <= 30; j ++)
+					MelderString_append (& string, word);
+			}
+			t = Melder_stopwatch ();
+		} break;
 		case kPraatTests_TIME_STRING_CPP_S: {
 			std::string s = "";
 			char word [] { "abc" };

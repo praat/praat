@@ -1,5 +1,5 @@
 /* Praat_tests_enums.h */
-/* Paul Boersma, 29 June 2015 */
+/* Paul Boersma, 19 September 2015 */
 
 enums_begin (kPraatTests, 0)
 	enums_add (kPraatTests, 0, _, U"_")
@@ -14,16 +14,17 @@ enums_begin (kPraatTests, 0)
 	enums_add (kPraatTests, 9, TIME_UNSIGNED_TO_FLOAT_BUILTIN, U"TimeUnsignedToFloat_builtin")
 	enums_add (kPraatTests, 10, TIME_UNSIGNED_TO_FLOAT_EXTERN, U"TimeUnsignedToFloat_extern")
 	enums_add (kPraatTests, 11, TIME_STRING_MELDER_32, U"TimeStringMelder32")
-	enums_add (kPraatTests, 12, TIME_STRING_CPP_S, U"TimeStringC++S")
-	enums_add (kPraatTests, 13, TIME_STRING_CPP_C, U"TimeStringC++C")
-	enums_add (kPraatTests, 14, TIME_STRING_CPP_WS, U"TimeStringC++WS")
-	enums_add (kPraatTests, 15, TIME_STRING_CPP_WC, U"TimeStringC++WC")
-	enums_add (kPraatTests, 16, TIME_STRING_CPP_32, U"TimeStringC++32")
-	enums_add (kPraatTests, 17, TIME_STRING_CPP_U32STRING, U"TimeStringC++U32STRING")
-	enums_add (kPraatTests, 18, TIME_STRCPY, U"TimeStrcpy")
-	enums_add (kPraatTests, 19, TIME_WCSCPY, U"TimeWcscpy")
-	enums_add (kPraatTests, 20, TIME_STR32CPY, U"TimeStr32cpy")
-	enums_add (kPraatTests, 21, TIME_GRAPHICS_TEXT_TOP, U"TimeGraphicsTextTop")
-enums_end (kPraatTests, 21, CHECK_RANDOM_1009_2009)
+	enums_add (kPraatTests, 12, TIME_STRING_MELDER_32_ALLOC, U"TimeStringMelder32_alloc")
+	enums_add (kPraatTests, 13, TIME_STRING_CPP_S, U"TimeStringC++S")
+	enums_add (kPraatTests, 14, TIME_STRING_CPP_C, U"TimeStringC++C")
+	enums_add (kPraatTests, 15, TIME_STRING_CPP_WS, U"TimeStringC++WS")
+	enums_add (kPraatTests, 16, TIME_STRING_CPP_WC, U"TimeStringC++WC")
+	enums_add (kPraatTests, 17, TIME_STRING_CPP_32, U"TimeStringC++32")
+	enums_add (kPraatTests, 18, TIME_STRING_CPP_U32STRING, U"TimeStringC++U32STRING")
+	enums_add (kPraatTests, 19, TIME_STRCPY, U"TimeStrcpy")
+	enums_add (kPraatTests, 20, TIME_WCSCPY, U"TimeWcscpy")
+	enums_add (kPraatTests, 21, TIME_STR32CPY, U"TimeStr32cpy")
+	enums_add (kPraatTests, 22, TIME_GRAPHICS_TEXT_TOP, U"TimeGraphicsTextTop")
+enums_end (kPraatTests, 22, CHECK_RANDOM_1009_2009)
 
 /* End of file Praat_tests_enums.h */
