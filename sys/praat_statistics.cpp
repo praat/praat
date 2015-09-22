@@ -134,16 +134,23 @@ void praat_reportGraphicalProperties () {
 	MelderInfo_close ();
 }
 
-#if _Thing_REFCOUNT
 static void testAutoData (autoDaata data) {
-	printf ("testAutoData ref count: %d\n", data -> refCount);
+	#if _Thing_REFCOUNT
+		printf ("testAutoData ref count: %d\n", data -> refCount);
+	#endif
+}
+static void testData (Daata data) {
+	#if _Thing_REFCOUNT
+		printf ("testAutoData ref count: %d\n", data -> refCount);
+	#endif
 }
 static autoDaata newAutoData () {
 	autoDaata data = Thing_new (Daata);
-	printf ("newAutoData ref count: %d\n", data -> refCount);
+	#if _Thing_REFCOUNT
+		printf ("newAutoData ref count: %d\n", data -> refCount);
+	#endif
 	return data;
 }
-#endif
 
 void praat_reportMemoryUse () {
 	MelderInfo_open ();
@@ -193,7 +200,24 @@ void praat_reportMemoryUse () {
 		printf ("after newAutoData ref count: %d\n", data2 -> refCount);
 		autoDaata data3 = newAutoData ();
 		printf ("after newAutoData ref count: %d\n", data3 -> refCount);
-		//data2 = data;
+		data2 = data;
+		printf ("after copy assignment ref counts: %d %d\n", data -> refCount, data2 -> refCount);
+		autoOrdered ordered = Thing_new (Ordered);
+		data = ordered;
+		//ordered = data;   // rightfully refused by compiler
+		//autoOrdered ordered2 = Thing_new (Daata);   // rightfully refused by compiler
+		autoDaata data4 = Thing_new (Ordered);
+	#else
+		autoDaata data = Thing_new (Daata);
+		testData (data.peek());
+		autoDaata data2 = newAutoData ();
+		autoDaata data3 = newAutoData ();
+		data2 = data;
+		autoOrdered ordered = Thing_new (Ordered);
+		data = ordered;
+		//ordered = data;   // rightfully refused by compiler
+		//autoOrdered ordered2 = Thing_new (Daata);   // rightfully refused by compiler
+		autoDaata data4 = Thing_new (Ordered);
 	#endif
 }
 

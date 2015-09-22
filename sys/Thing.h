@@ -32,6 +32,7 @@
 		#include "abcio.h"
 
 #define _Thing_REFCOUNT  0
+#define _Thing_auto_DEBUG  1
 
 /* Public. */
 
@@ -276,6 +277,7 @@ long Thing_getTotalNumberOfThings (void);
 
 template <class T>
 class _Thing_auto {
+private:
 	T *d_ptr;
 public:
 	/*
@@ -288,10 +290,26 @@ public:
 	_Thing_auto (T *a_ptr) : d_ptr (a_ptr) {
 		#if _Thing_REFCOUNT
 			if (a_ptr) {
+				#if _Thing_auto_DEBUG
+					fprintf (stderr, "constructor %p %s %d->%d\n",
+						a_ptr,
+						Melder_peek32to8 (a_ptr -> classInfo -> className),
+						a_ptr -> refCount,
+						1);
+				#endif
 				a_ptr -> refCount = 1;
 			}
+		#else
+			#if _Thing_auto_DEBUG
+				fprintf (stderr, "constructor %p %s\n", a_ptr, Melder_peek32to8 (a_ptr -> classInfo -> className));
+			#endif
 		#endif
 	}
+	/*
+	 * Things like
+	 *    autoPitch pitch;
+	 * should initialize the pointer to NULL.
+	 */
 	_Thing_auto () : d_ptr (NULL) { }
 	/*
 	 * pitch should be destroyed when going out of scope,
@@ -300,8 +318,18 @@ public:
 	~_Thing_auto () {
 		if (d_ptr) {
 			#if _Thing_REFCOUNT
-				printf ("_Thing_forget ref count %d\n", d_ptr -> refCount);
+				#if _Thing_auto_DEBUG
+					fprintf (stderr, "destructor %p %s %d->%d\n",
+						d_ptr,
+						Melder_peek32to8 (d_ptr -> classInfo -> className),
+						d_ptr -> refCount,
+						d_ptr -> refCount - 1);
+				#endif
 				if (-- d_ptr -> refCount > 0) return;
+			#else
+				#if _Thing_auto_DEBUG
+					fprintf (stderr, "destructor %p %s\n", d_ptr, Melder_peek32to8 (d_ptr -> classInfo -> className));
+				#endif
 			#endif
 			forget (d_ptr);
 		}
@@ -343,8 +371,10 @@ public:
 		d_ptr = NULL;   // make the pointer non-automatic again
 		return temp;
 	}
-	//operator T* () { return d_ptr; }   // this way only if peek() and transfer() are the same, e.g. in case of reference counting
-	// template <class Y> Y* operator= (_Thing_auto<Y>& a) { }
+	#if _Thing_REFCOUNT
+		operator T* () { return d_ptr; }   // this way only if peek() and transfer() are the same, e.g. in case of reference counting
+		// template <class Y> Y* operator= (_Thing_auto<Y>& a) { }
+	#endif
 	/*
 	 * An autoThing can be cloned. This can be used for giving ownership without losing ownership.
 	 */
@@ -357,7 +387,7 @@ public:
 	 * so that you can easily spot ugly places in your source code.
 	 * In order not to leak memory, the old object is destroyed.
 	 */
-	void reset (T* const ptr) {
+	void reset (T* ptr) {
 		T* oldPtr = d_ptr;
 		d_ptr = ptr;
 		#if _Thing_REFCOUNT
@@ -367,33 +397,104 @@ public:
 		#endif
 		if (oldPtr) {
 			#if _Thing_REFCOUNT
-				printf ("reset before _Thing_forget ref count %d\n", oldPtr -> refCount);
+				#if _Thing_auto_DEBUG
+					fprintf (stderr, "reset %p %s %d->%d\n",
+						oldPtr,
+						Melder_peek32to8 (oldPtr -> classInfo -> className),
+						oldPtr -> refCount,
+						oldPtr -> refCount - 1);
+				#endif
 				if (-- oldPtr -> refCount > 0) return;
 			#endif
 			forget (oldPtr);
 		}
 	}
 	#if _Thing_REFCOUNT
-		template <class Y> _Thing_auto (_Thing_auto<Y> & thing) : d_ptr (thing. d_ptr) {
-			printf ("copy constructor %d\n", d_ptr -> refCount);
-			d_ptr -> refCount ++;
+		// copy constructor:
+		template <class Y> _Thing_auto<T> (_Thing_auto<Y> & thing) {
+			d_ptr = thing.peek();   // so class Y has to be a descendant of class T; FIXME this assignment could go in declarator?
+			if (d_ptr) {
+				#if _Thing_auto_DEBUG
+					fprintf (stderr, "copy constructor %p %s %d->%d\n",
+						d_ptr,
+						Melder_peek32to8 (d_ptr -> classInfo -> className),
+						d_ptr -> refCount,
+						d_ptr -> refCount + 1);
+				#endif
+				d_ptr -> refCount ++;
+			}
+		}
+		// copy assignment:
+		template <class Y> _Thing_auto<T>& operator= (_Thing_auto<Y> & thing) {
+			if (thing.peek() != d_ptr) {
+				T* oldPtr = d_ptr;
+				d_ptr = thing.peek();   // so class Y has to be a descendant of class T
+				if (d_ptr) {
+					#if _Thing_auto_DEBUG
+						fprintf (stderr, "copy assignment %p %s %d->%d\n",
+							d_ptr,
+							Melder_peek32to8 (d_ptr -> classInfo -> className),
+							d_ptr -> refCount,
+							d_ptr -> refCount + 1);
+					#endif
+					d_ptr -> refCount ++;
+				}
+				if (oldPtr) {
+					#if _Thing_auto_DEBUG
+						fprintf (stderr, "copy assignment %p %s %d->%d\n",
+							oldPtr,
+							Melder_peek32to8 (oldPtr -> classInfo -> className),
+							oldPtr -> refCount,
+							oldPtr -> refCount - 1);
+					#endif
+					if (-- oldPtr -> refCount <= 0) forget (oldPtr);
+				}
+			}
+			return *this;
+		}
+	#else
+		// copy constructor:
+		template <class Y> _Thing_auto<T> (_Thing_auto<Y> & thing) {
+			d_ptr = thing.peek();   // so class Y has to be a descendant of class T; FIXME this assignment could go in declarator?
+			#if _Thing_auto_DEBUG
+				fprintf (stderr, "copy constructor %p %s\n", d_ptr, Melder_peek32to8 (d_ptr -> classInfo -> className));
+			#endif
+			thing. d_ptr = NULL;
+		}
+		// copy assignment:
+		template <class Y> _Thing_auto<T>& operator= (_Thing_auto<Y> & thing) {
+			if (thing.peek() != d_ptr) {
+				if (d_ptr) {
+					#if _Thing_auto_DEBUG
+						fprintf (stderr, "copy assignment before %p %s\n", d_ptr, Melder_peek32to8 (d_ptr -> classInfo -> className));
+					#endif
+					forget (d_ptr);
+				}
+				d_ptr = thing.peek();   // so class Y has to be a descendant of class T
+				#if _Thing_auto_DEBUG
+					if (d_ptr)
+						fprintf (stderr, "copy assignment after %p %s\n", d_ptr, Melder_peek32to8 (d_ptr -> classInfo -> className));
+				#endif
+				(reinterpret_cast <_Thing_auto<T>&> (thing)). d_ptr = NULL;
+			}
+			return *this;
 		}
 	#endif
 private:
 	#if ! _Thing_REFCOUNT
 		/*
-		 * The compiler should prevent initializations like
+		 * If not reference counting, the compiler should prevent initializations like
 		 *    autoPitch pitch2 = pitch;
 		 */
-		template <class Y> _Thing_auto (_Thing_auto<Y> &);   // copy constructor
+		//template <class Y> _Thing_auto (_Thing_auto<Y> &);   // copy constructor
 		//_Thing_auto (const _Thing_auto &);
+		/*
+		 * If not reference counting, the compiler should prevent assignments like
+		 *    pitch2 = pitch;
+		 */
+		//_Thing_auto& operator= (const _Thing_auto&);   // copy assignment
+		//template <class Y> _Thing_auto& operator= (const _Thing_auto<Y>&);
 	#endif
-	/*
-	 * The compiler should prevent assignments like
-	 *    pitch2 = pitch;
-	 */
-	_Thing_auto& operator= (const _Thing_auto&);   // copy assignment
-	//template <class Y> _Thing_auto& operator= (const _Thing_auto<Y>&);
 };
 
 template <class T>
