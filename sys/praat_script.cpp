@@ -590,7 +590,7 @@ void praat_executeScriptFromText (const char32 *text) {
 	}
 }
 
-void praat_executeScriptFromDialog (Any dia) {
+void praat_executeScriptFromDialog (UiForm dia) {
 	char32 *path = UiForm_getString (dia, U"$file");
 	structMelderFile file = { 0 };
 	Melder_pathToFile (path, & file);
@@ -620,7 +620,7 @@ static void firstPassThroughScript (MelderFile file) {
 		}
 		autoInterpreter interpreter = Interpreter_createFromEnvironment (praatP.editor);
 		if (Interpreter_readParameters (interpreter.peek(), text.peek()) > 0) {
-			Any form = Interpreter_createForm (interpreter.peek(),
+			UiForm form = Interpreter_createForm (interpreter.peek(),
 				praatP.editor ? ((Editor) praatP.editor) -> d_windowForm : theCurrentPraatApplication -> topShell,
 				Melder_fileToPath (file), secondPassThroughScript, NULL, false);
 			UiForm_destroyWhenUnmanaged (form);

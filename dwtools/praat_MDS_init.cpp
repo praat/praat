@@ -231,7 +231,7 @@ DIRECT (Configuration_help)
 	Melder_help (U"Configuration");
 END
 
-static void Configuration_draw_addCommonFields (void *dia) {
+static void Configuration_draw_addCommonFields (UiForm dia) {
 	NATURAL (U"Horizontal dimension", U"1")
 	NATURAL (U"Vertical dimension", U"2")
 	REAL (U"left Horizontal range", U"0.0")
@@ -574,14 +574,14 @@ END
 
 /**************** Dissimilarity ***************************************/
 
-static void Dissimilarity_to_Configuration_addCommonFields (void *dia) {
+static void Dissimilarity_to_Configuration_addCommonFields (UiForm dia) {
 	LABEL (U"", U"Minimization parameters")
 	REAL (U"Tolerance", U"1e-5")
 	NATURAL (U"Maximum number of iterations", U"50 (= each repetition)")
 	NATURAL (U"Number of repetitions", U"1")
 }
 
-static void Dissimilarity_and_Configuration_getStress_addCommonFields (void *dia, void *radio) {
+static void Dissimilarity_and_Configuration_getStress_addCommonFields (UiForm dia, void *radio) {
 	RADIO (U"Stress measure", 1)
 	RADIOBUTTON (U"Normalized")
 	RADIOBUTTON (U"Kruskal's stress-1")
@@ -589,7 +589,7 @@ static void Dissimilarity_and_Configuration_getStress_addCommonFields (void *dia
 	RADIOBUTTON (U"Raw")
 }
 
-static void Dissimilarity_Configuration_drawDiagram_addCommonFields (void *dia) {
+static void Dissimilarity_Configuration_drawDiagram_addCommonFields (UiForm dia) {
 	REAL (U"left Proximity range", U"0.0")
 	REAL (U"right Proximity range", U"0.0")
 	REAL (U"left Distance range", U"0.0")

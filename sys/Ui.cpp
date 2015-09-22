@@ -77,22 +77,17 @@ static UiField UiField_create (int type, const char32 *name) {
 	Thing_setName (me.peek(), shortName);
 	return me.transfer();
 }
-static UiField UiField_create (int type, const char *name) {
-	return UiField_create (type, Melder_peek8to32 (name));
-}
 
 /***** class UiOption: radio buttons and menu options *****/
 
 Thing_define (UiOption, Thing) {
-	// new data:
-	public:
-		GuiRadioButton radioButton;
-		GuiObject menuItem;
+	GuiRadioButton radioButton;
+	GuiObject menuItem;
 };
 
 Thing_implement (UiOption, Thing, 0);
 
-static Any UiOption_create (const char32 *label) {
+static UiOption UiOption_create (const char32 *label) {
 	UiOption me = Thing_new (UiOption);
 	Thing_setName (me, label);
 	return me;
@@ -100,20 +95,18 @@ static Any UiOption_create (const char32 *label) {
 
 Any UiRadio_addButton (I, const char32 *label) {
 	iam (UiField);
-	UiOption thee;
 	if (me == NULL) return NULL;
 	Melder_assert (my type == UI_RADIO || my type == UI_OPTIONMENU);
-	thee = static_cast <UiOption> (UiOption_create (label));
+	UiOption thee = UiOption_create (label);
 	Collection_addItem (my options, thee);
 	return thee;
 }
 
 Any UiOptionMenu_addButton (I, const char32 *label) {
 	iam (UiField);
-	UiOption thee;
 	if (me == NULL) return NULL;
 	Melder_assert (my type == UI_RADIO || my type == UI_OPTIONMENU);
-	thee = static_cast <UiOption> (UiOption_create (label));
+	UiOption thee = UiOption_create (label);
 	Collection_addItem (my options, thee);
 	return thee;
 }
@@ -405,8 +398,7 @@ void structUiForm :: v_destroy () {
 	UiForm_Parent :: v_destroy ();
 }
 
-static void gui_button_cb_revert (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_revert (I, GuiButtonEvent /* event */) {
 	iam (UiForm);
 	for (int ifield = 1; ifield <= my numberOfFields; ifield ++)
 		UiField_setDefault (my field [ifield]);
@@ -418,16 +410,14 @@ static void gui_dialog_cb_close (I) {
 	GuiThing_hide (my d_dialogForm);
 	if (my destroyWhenUnmanaged) forget (me);
 }
-static void gui_button_cb_cancel (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_cancel (I, GuiButtonEvent /* event */) {
 	iam (UiForm);
 	if (my cancelCallback) my cancelCallback (me, my buttonClosure);
 	GuiThing_hide (my d_dialogForm);
 	if (my destroyWhenUnmanaged) forget (me);
 }
 
-void UiForm_widgetsToValues (I) {
-	iam (UiForm);
+void UiForm_widgetsToValues (UiForm me) {
 	try {
 		for (int ifield = 1; ifield <= my numberOfFields; ifield ++)
 			UiField_widgetToValue (my field [ifield]);
@@ -436,8 +426,7 @@ void UiForm_widgetsToValues (I) {
 	}
 }
 
-static void UiForm_okOrApply (I, GuiButton button, int hide) {
-	iam (UiForm);
+static void UiForm_okOrApply (UiForm me, GuiButton button, int hide) {
 	if (my allowExecutionHook && ! my allowExecutionHook (my allowExecutionClosure)) {
 		Melder_flushError (U"Cannot execute command window " U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U".");
 		return;
@@ -551,19 +540,16 @@ static void UiForm_okOrApply (I, GuiButton button, int hide) {
 }
 
 static void gui_button_cb_ok (I, GuiButtonEvent event) {
-	(void) event;
 	iam (UiForm);
 	UiForm_okOrApply (me, event -> button, true);
 }
 
 static void gui_button_cb_apply (I, GuiButtonEvent event) {
-	(void) event;
 	iam (UiForm);
 	UiForm_okOrApply (me, event -> button, false);
 }
 
-static void gui_button_cb_help (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_help (I, GuiButtonEvent /* event */) {
 	iam (UiForm);
 	Melder_help (my helpTitle);
 }
@@ -582,7 +568,7 @@ UiForm UiForm_create (GuiWindow parent, const char32 *title,
 	return me.transfer();
 }
 
-void UiForm_setPauseForm (I,
+void UiForm_setPauseForm (UiForm me,
 	int numberOfContinueButtons, int defaultContinueButton, int cancelContinueButton,
 	const char32 *continue1, const char32 *continue2, const char32 *continue3,
 	const char32 *continue4, const char32 *continue5, const char32 *continue6,
@@ -590,7 +576,6 @@ void UiForm_setPauseForm (I,
 	const char32 *continue10,
 	void (*cancelCallback) (Any dia, void *closure))
 {
-	iam (UiForm);
 	my isPauseForm = true;
 	my numberOfContinueButtons = numberOfContinueButtons;
 	my defaultContinueButton = defaultContinueButton;
@@ -627,100 +612,82 @@ static UiField UiForm_addField (UiForm me, int type, const char32 *label) {
 		Melder_throw (U"Cannot have more than ", MAXIMUM_NUMBER_OF_FIELDS, U"in a form.");
 	return my field [++ my numberOfFields] = UiField_create (type, label);
 }
-static UiField UiForm_addField (UiForm me, int type, const char *label) {
-	if (my numberOfFields == MAXIMUM_NUMBER_OF_FIELDS)
-		Melder_throw (U"Cannot have more than ", MAXIMUM_NUMBER_OF_FIELDS, U"in a form.");
-	return my field [++ my numberOfFields] = UiField_create (type, label);
-}
 
-Any UiForm_addReal (I, const char32 *label, const char32 *defaultValue) {
-	iam (UiForm);
+Any UiForm_addReal (UiForm me, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee = UiForm_addField (me, UI_REAL, label);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	return thee.transfer();
 }
 
-Any UiForm_addRealOrUndefined (I, const char32 *label, const char32 *defaultValue) {
-	iam (UiForm);
+Any UiForm_addRealOrUndefined (UiForm me, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee = UiForm_addField (me, UI_REAL_OR_UNDEFINED, label);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	return thee.transfer();
 }
 
-Any UiForm_addPositive (I, const char32 *label, const char32 *defaultValue) {
-	iam (UiForm);
+Any UiForm_addPositive (UiForm me, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee = UiForm_addField (me, UI_POSITIVE, label);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	return thee.transfer();
 }
 
-Any UiForm_addInteger (I, const char32 *label, const char32 *defaultValue) {
-	iam (UiForm);
+Any UiForm_addInteger (UiForm me, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee = UiForm_addField (me, UI_INTEGER, label);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	return thee.transfer();
 }
 
-Any UiForm_addNatural (I, const char32 *label, const char32 *defaultValue) {
-	iam (UiForm);
+Any UiForm_addNatural (UiForm me, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee = UiForm_addField (me, UI_NATURAL, label);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	return thee.transfer();
 }
 
-Any UiForm_addWord (I, const char32 *label, const char32 *defaultValue) {
-	iam (UiForm);
+Any UiForm_addWord (UiForm me, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee = UiForm_addField (me, UI_WORD, label);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	return thee.transfer();
 }
 
-Any UiForm_addSentence (I, const char32 *label, const char32 *defaultValue) {
-	iam (UiForm);
+Any UiForm_addSentence (UiForm me, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee = UiForm_addField (me, UI_SENTENCE, label);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	return thee.transfer();
 }
 
-Any UiForm_addLabel (I, const char32 *name, const char32 *label) {
-	iam (UiForm);
+Any UiForm_addLabel (UiForm me, const char32 *name, const char32 *label) {
 	autoUiField thee = UiForm_addField (me, UI_LABEL, name);
 	thy stringValue = Melder_dup (label);
 	return thee.transfer();
 }
 
-Any UiForm_addBoolean (I, const char32 *label, int defaultValue) {
-	iam (UiForm);
+Any UiForm_addBoolean (UiForm me, const char32 *label, int defaultValue) {
 	autoUiField thee = UiForm_addField (me, UI_BOOLEAN, label);
 	thy integerDefaultValue = defaultValue;
 	return thee.transfer();
 }
 
-Any UiForm_addText (I, const char32 *name, const char32 *defaultValue) {
-	iam (UiForm);
+Any UiForm_addText (UiForm me, const char32 *name, const char32 *defaultValue) {
 	autoUiField thee = UiForm_addField (me, UI_TEXT, name);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	return thee.transfer();
 }
 
-Any UiForm_addRadio (I, const char32 *label, int defaultValue) {
-	iam (UiForm);
+Any UiForm_addRadio (UiForm me, const char32 *label, int defaultValue) {
 	autoUiField thee = UiForm_addField (me, UI_RADIO, label);
 	thy integerDefaultValue = defaultValue;
 	thy options = Ordered_create ();
 	return thee.transfer();
 }
 
-Any UiForm_addOptionMenu (I, const char32 *label, int defaultValue) {
-	iam (UiForm);
+Any UiForm_addOptionMenu (UiForm me, const char32 *label, int defaultValue) {
 	autoUiField thee = UiForm_addField (me, UI_OPTIONMENU, label);
 	thy integerDefaultValue = defaultValue;
 	thy options = Ordered_create ();
 	return thee.transfer();
 }
 
-Any UiForm_addList (I, const char32 *label, long numberOfStrings, const char32 **strings, long defaultValue) {
-	iam (UiForm);
+Any UiForm_addList (UiForm me, const char32 *label, long numberOfStrings, const char32 **strings, long defaultValue) {
 	autoUiField thee = UiForm_addField (me, UI_LIST, label);
 	thy numberOfStrings = numberOfStrings;
 	thy strings = strings;
@@ -728,15 +695,13 @@ Any UiForm_addList (I, const char32 *label, long numberOfStrings, const char32 *
 	return thee.transfer();
 }
 
-Any UiForm_addColour (I, const char32 *label, const char32 *defaultValue) {
-	iam (UiForm);
+Any UiForm_addColour (UiForm me, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee = UiForm_addField (me, UI_COLOUR, label);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	return thee.transfer();
 }
 
-Any UiForm_addChannel (I, const char32 *label, const char32 *defaultValue) {
-	iam (UiForm);
+Any UiForm_addChannel (UiForm me, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee = UiForm_addField (me, UI_CHANNEL, label);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	return thee.transfer();
@@ -761,8 +726,7 @@ static void appendColon (void) {
 	MelderString_appendCharacter (& theFinishBuffer, U':');
 }
 
-void UiForm_finish (I) {
-	iam (UiForm);
+void UiForm_finish (UiForm me) {
 	if (! my d_dialogParent && ! my isPauseForm) return;
 
 	int size = my numberOfFields;
@@ -979,13 +943,11 @@ void UiForm_finish (I) {
 	/*GuiObject_show (separator);*/
 }
 
-void UiForm_destroyWhenUnmanaged (I) {
-	iam (UiForm);
+void UiForm_destroyWhenUnmanaged (UiForm me) {
 	my destroyWhenUnmanaged = true;
 }
 
-void UiForm_do (I, bool modified) {
-	iam (UiForm);
+void UiForm_do (UiForm me, bool modified) {
 	my allowExecutionHook = theAllowExecutionHookHint;
 	my allowExecutionClosure = theAllowExecutionClosureHint;
 	Melder_assert (my d_dialogForm);
@@ -1099,8 +1061,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 	}
 }
 
-void UiForm_call (I, int narg, Stackel args, Interpreter interpreter) {
-	iam (UiForm);
+void UiForm_call (UiForm me, int narg, Stackel args, Interpreter interpreter) {
 	int size = my numberOfFields, iarg = 0;
 	while (size >= 1 && my field [size] -> type == UI_LABEL)
 		size --;   // ignore trailing fields without a value
@@ -1117,8 +1078,7 @@ void UiForm_call (I, int narg, Stackel args, Interpreter interpreter) {
 	my okCallback (me, 0, NULL, NULL, interpreter, NULL, false, my buttonClosure);
 }
 
-void UiForm_parseString (I, const char32 *arguments, Interpreter interpreter) {
-	iam (UiForm);
+void UiForm_parseString (UiForm me, const char32 *arguments, Interpreter interpreter) {
 	int size = my numberOfFields;
 	while (size >= 1 && my field [size] -> type == UI_LABEL)
 		size --;   // ignore trailing fields without a value
@@ -1191,8 +1151,7 @@ static void fatalField (UiForm dia) {
 	Melder_fatal (U"Wrong field in command window \"", dia -> name, U"\".");
 }
 
-void UiForm_setReal (I, const char32 *fieldName, double value) {
-	iam (UiForm);
+void UiForm_setReal (UiForm me, const char32 *fieldName, double value) {
 	UiField field = findField (me, fieldName);
 	if (field == NULL) Melder_fatal (U"(UiForm_setReal:) No field \"", fieldName, U"\" in command window \"", my name, U"\".");
 	switch (field -> type) {
@@ -1220,8 +1179,7 @@ void UiForm_setReal (I, const char32 *fieldName, double value) {
 	}
 }
 
-void UiForm_setInteger (I, const char32 *fieldName, long value) {
-	iam (UiForm);
+void UiForm_setInteger (UiForm me, const char32 *fieldName, long value) {
 	UiField field = findField (me, fieldName);
 	if (field == NULL) Melder_fatal (U"(UiForm_setInteger:) No field \"", fieldName, U"\" in command window \"", my name, U"\".");
 	switch (field -> type) {
@@ -1253,8 +1211,7 @@ void UiForm_setInteger (I, const char32 *fieldName, long value) {
 	}
 }
 
-void UiForm_setString (I, const char32 *fieldName, const char32 *value /* cattable */) {
-	iam (UiForm);
+void UiForm_setString (UiForm me, const char32 *fieldName, const char32 *value /* cattable */) {
 	UiField field = findField (me, fieldName);
 	if (field == NULL) Melder_fatal (U"(UiForm_setString:) No field \"", fieldName, U"\" in command window \"", my name, U"\".");
 	if (value == NULL) value = U"";   /* Accept NULL strings. */
@@ -1306,8 +1263,7 @@ static UiField findField_check (UiForm me, const char32 *fieldName) {
 	return result;
 }
 
-double UiForm_getReal (I, const char32 *fieldName) {
-	iam (UiForm);
+double UiForm_getReal (UiForm me, const char32 *fieldName) {
 	UiField field = findField (me, fieldName);
 	if (field == NULL) Melder_fatal (U"(UiForm_getReal:) No field \"", fieldName, U"\" in command window \"", my name, U"\".");
 	switch (field -> type) {
@@ -1320,8 +1276,7 @@ double UiForm_getReal (I, const char32 *fieldName) {
 	return 0.0;
 }
 
-double UiForm_getReal_check (I, const char32 *fieldName) {
-	iam (UiForm);
+double UiForm_getReal_check (UiForm me, const char32 *fieldName) {
 	UiField field = findField_check (me, fieldName);
 	switch (field -> type) {
 		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
@@ -1335,8 +1290,7 @@ double UiForm_getReal_check (I, const char32 *fieldName) {
 	return 0.0;
 }
 
-long UiForm_getInteger (I, const char32 *fieldName) {
-	iam (UiForm);
+long UiForm_getInteger (UiForm me, const char32 *fieldName) {
 	UiField field = findField (me, fieldName);
 	if (field == NULL) Melder_fatal (U"(UiForm_getInteger:) No field \"", fieldName, U"\" in command window \"", my name, U"\".");
 	switch (field -> type) {
@@ -1351,8 +1305,7 @@ long UiForm_getInteger (I, const char32 *fieldName) {
 	return 0L;
 }
 
-long UiForm_getInteger_check (I, const char32 *fieldName) {
-	iam (UiForm);
+long UiForm_getInteger_check (UiForm me, const char32 *fieldName) {
 	UiField field = findField_check (me, fieldName);
 	switch (field -> type) {
 		case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: case UI_BOOLEAN: case UI_RADIO:
@@ -1368,8 +1321,7 @@ long UiForm_getInteger_check (I, const char32 *fieldName) {
 	return 0L;
 }
 
-char32 * UiForm_getString (I, const char32 *fieldName) {
-	iam (UiForm);
+char32 * UiForm_getString (UiForm me, const char32 *fieldName) {
 	UiField field = findField (me, fieldName);
 	if (field == NULL) Melder_fatal (U"(UiForm_getString:) No field \"", fieldName, U"\" in command window \"", my name, U"\".");
 	switch (field -> type) {
@@ -1387,8 +1339,7 @@ char32 * UiForm_getString (I, const char32 *fieldName) {
 	return NULL;
 }
 
-char32 * UiForm_getString_check (I, const char32 *fieldName) {
-	iam (UiForm);
+char32 * UiForm_getString_check (UiForm me, const char32 *fieldName) {
 	UiField field = findField_check (me, fieldName);
 	switch (field -> type) {
 		case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
@@ -1407,8 +1358,7 @@ char32 * UiForm_getString_check (I, const char32 *fieldName) {
 	return NULL;
 }
 
-Graphics_Colour UiForm_getColour (I, const char32 *fieldName) {
-	iam (UiForm);
+Graphics_Colour UiForm_getColour (UiForm me, const char32 *fieldName) {
 	UiField field = findField (me, fieldName);
 	if (field == NULL) Melder_fatal (U"(UiForm_getColour:) No field \"", fieldName, U"\" in command window \"", my name, U"\".");
 	switch (field -> type) {
@@ -1421,8 +1371,7 @@ Graphics_Colour UiForm_getColour (I, const char32 *fieldName) {
 	return Graphics_BLACK;
 }
 
-Graphics_Colour UiForm_getColour_check (I, const char32 *fieldName) {
-	iam (UiForm);
+Graphics_Colour UiForm_getColour_check (UiForm me, const char32 *fieldName) {
 	UiField field = findField_check (me, fieldName);
 	switch (field -> type) {
 		case UI_COLOUR: {
@@ -1436,8 +1385,7 @@ Graphics_Colour UiForm_getColour_check (I, const char32 *fieldName) {
 	return Graphics_BLACK;
 }
 
-void UiForm_Interpreter_addVariables (I, Interpreter interpreter) {
-	iam (UiForm);
+void UiForm_Interpreter_addVariables (UiForm me, Interpreter interpreter) {
 	static MelderString lowerCaseFieldName { 0 };
 	for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
 		UiField field = my field [ifield];

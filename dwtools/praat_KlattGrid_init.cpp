@@ -35,7 +35,7 @@
 
 static const char32 *formant_names[] = { U"", U"oral ", U"nasal ", U"frication ", U"tracheal ", U"nasal anti", U"tracheal anti", U"delta "};
 
-static void KlattGrid_4formants_addCommonField (void *dia) {
+static void KlattGrid_4formants_addCommonField (UiForm dia) {
 	Any radio;
 	OPTIONMENU (U"Formant type", 1)
 	OPTION (U"Normal formant")
@@ -44,7 +44,7 @@ static void KlattGrid_4formants_addCommonField (void *dia) {
 	OPTION (U"Tracheal formant")
 }
 
-static void KlattGrid_6formants_addCommonField (void *dia) {
+static void KlattGrid_6formants_addCommonField (UiForm dia) {
 	Any radio;
 	OPTIONMENU (U"Formant type", 1)
 	OPTION (U"Normal formant")
@@ -56,7 +56,7 @@ static void KlattGrid_6formants_addCommonField (void *dia) {
 	//	OPTION (U"Delta formant")
 }
 
-static void KlattGrid_7formants_addCommonField (void *dia) {
+static void KlattGrid_7formants_addCommonField (UiForm dia) {
 	Any radio;
 	OPTIONMENU (U"Formant type", 1)
 	OPTION (U"Normal formant")
@@ -68,7 +68,7 @@ static void KlattGrid_7formants_addCommonField (void *dia) {
 	OPTION (U"Delta formant")
 }
 
-static void KlattGrid_PhonationGridPlayOptions_addCommonFields (void *dia) {
+static void KlattGrid_PhonationGridPlayOptions_addCommonFields (UiForm dia) {
 	Any radio;
 	//LABEL (U"", U"Phonation options")
 	BOOLEAN (U"Voicing", 1)
@@ -85,7 +85,7 @@ static void KlattGrid_PhonationGridPlayOptions_addCommonFields (void *dia) {
 	BOOLEAN (U"Breathiness", 1)
 }
 
-static void KlattGrid_PhonationGridPlayOptions_getCommonFields (void *dia, KlattGrid thee) {
+static void KlattGrid_PhonationGridPlayOptions_getCommonFields (UiForm dia, KlattGrid thee) {
 	PhonationGridPlayOptions pp = thy phonation -> options;
 	pp -> voicing = GET_INTEGER (U"Voicing");
 	pp -> flutter = GET_INTEGER (U"Flutter");
@@ -98,7 +98,7 @@ static void KlattGrid_PhonationGridPlayOptions_getCommonFields (void *dia, Klatt
 	pp -> breathiness = GET_INTEGER (U"Breathiness");
 }
 
-static void KlattGrid_PlayOptions_addCommonFields (void *dia, int sound) {
+static void KlattGrid_PlayOptions_addCommonFields (UiForm dia, int sound) {
 	Any radio;
 	//LABEL (U"", U"Time domain")
 	REAL (U"left Time range (s)", U"0")
@@ -130,7 +130,7 @@ static void KlattGrid_PlayOptions_addCommonFields (void *dia, int sound) {
 	BOOLEAN (U"Frication bypass", 1)
 }
 
-static void KlattGrid_PlayOptions_getCommonFields (void *dia, int sound, KlattGrid thee) {
+static void KlattGrid_PlayOptions_getCommonFields (UiForm dia, int sound, KlattGrid thee) {
 	KlattGrid_setDefaultPlayOptions (thee);
 	KlattGridPlayOptions pk = thy options;
 	pk -> scalePeak = GET_INTEGER (U"Scale peak");

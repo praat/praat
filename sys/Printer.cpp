@@ -251,7 +251,7 @@ static void DO_Printer_postScriptSettings (UiForm dia, int /* narg */, Stackel /
 }
 
 int Printer_postScriptSettings (void) {
-	static Any dia;
+	static UiForm dia;
 	if (dia == NULL) {
 		Any radio;
 		dia = UiForm_create (theCurrentPraatApplication -> topShell, U"PostScript settings", DO_Printer_postScriptSettings, NULL, U"PostScript settings...", U"PostScript settings...");

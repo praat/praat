@@ -473,7 +473,7 @@ DO
 	praat_new (thee.transfer(), s1 -> name, U"_", s2 -> name);
 END2 }
 
-static void common_Sound_create (void *dia, Interpreter interpreter, bool allowMultipleChannels) {
+static void common_Sound_create (UiForm dia, Interpreter interpreter, bool allowMultipleChannels) {
 	long numberOfChannels = allowMultipleChannels ? GET_INTEGER (U"Number of channels") : 1;
 	double startTime = GET_REAL (U"Start time");
 	double endTime = GET_REAL (U"End time");

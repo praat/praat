@@ -148,8 +148,8 @@ void praat_TableOfReal_init2 (ClassInfo klas);
 void praat_SSCP_as_TableOfReal_init (ClassInfo klas);
 
 void praat_CC_init (ClassInfo klas);
-void DTW_constraints_addCommonFields (void *dia);
-void DTW_constraints_getCommonFields (void *dia, int *begin, int *end, int *slope);
+void DTW_constraints_addCommonFields (UiForm dia);
+void DTW_constraints_getCommonFields (UiForm dia, int *begin, int *end, int *slope);
 void praat_BandFilterSpectrogram_query_init (ClassInfo klas);
 int praat_Fon_formula (UiForm dia, Interpreter interpreter);
 void praat_EditDistanceTable_as_TableOfReal_init (ClassInfo klas);
@@ -1678,7 +1678,7 @@ DO
 		GET_REAL (U"Time"), GET_INTEGER (U"Garnish"));
 END
 
-void DTW_constraints_addCommonFields (void *dia) {
+void DTW_constraints_addCommonFields (UiForm dia) {
 	Any radio;
 	LABEL (U"", U"Boundary conditions")
 	BOOLEAN (U"Match begin positions", 0)
@@ -1690,7 +1690,7 @@ void DTW_constraints_addCommonFields (void *dia) {
 	RADIOBUTTON (U"2/3 < slope < 3/2")
 }
 
-void DTW_constraints_getCommonFields (void *dia, int *begin, int *end, int *slope) {
+void DTW_constraints_getCommonFields (UiForm dia, int *begin, int *end, int *slope) {
 	*begin = GET_INTEGER (U"Match begin positions");
 	*end = GET_INTEGER (U"Match end positions");
 	*slope = GET_INTEGER (U"Slope constraint");
@@ -5416,13 +5416,13 @@ END
 
 /******************** Sound ****************************************/
 
-static void Sound_create_addCommonFields (void *dia, const char32 *endTime) {
+static void Sound_create_addCommonFields (UiForm dia, const char32 *endTime) {
 	REAL (U"Starting time (s)", U"0.0")
 	REAL (U"Finishing time (s)", endTime)
 	POSITIVE (U"Sampling frequency (Hz)", U"44100.0")
 }
 
-static void Sound_create_checkCommonFields (void *dia, double *startingTime, double *finishingTime,
+static void Sound_create_checkCommonFields (UiForm dia, double *startingTime, double *finishingTime,
         double *samplingFrequency) {
 	double numberOfSamples_real;
 	*startingTime = GET_REAL (U"Starting time");

@@ -30,9 +30,9 @@
 #undef iam
 #define iam iam_LOOP
 
-void praat_dia_timeRange (Any dia);
-void praat_get_timeRange (Any dia, double *tmin, double *tmax);
-int praat_get_frequencyRange (Any dia, double *fmin, double *fmax);
+void praat_dia_timeRange (UiForm dia);
+void praat_get_timeRange (UiForm dia, double *tmin, double *tmax);
+int praat_get_frequencyRange (UiForm dia, double *fmin, double *fmax);
 
 static const char32 *STRING_FROM_FREQUENCY_HZ = U"left Frequency range (Hz)";
 static const char32 *STRING_TO_FREQUENCY_HZ = U"right Frequency range (Hz)";
@@ -170,7 +170,7 @@ END2 }
 
 /***** PITCH & TEXTGRID *****/
 
-static void pr_TextGrid_Pitch_draw (Any dia, int speckle, int unit) {
+static void pr_TextGrid_Pitch_draw (UiForm dia, int speckle, int unit) {
 	TextGrid grid = NULL;
 	Pitch pitch = NULL;
 	int IOBJECT;
@@ -258,7 +258,7 @@ DO
 	pr_TextGrid_Pitch_draw (dia, Pitch_speckle_NO, kPitch_unit_SEMITONES_100);
 END2 }
 
-static void pr_TextGrid_Pitch_drawSeparately (Any dia, int speckle, int unit) {
+static void pr_TextGrid_Pitch_drawSeparately (UiForm dia, int speckle, int unit) {
 	TextGrid grid = NULL;
 	Pitch pitch = NULL;
 	int IOBJECT;
@@ -950,7 +950,7 @@ DO
 	}
 END2 }
 
-static Function pr_TextGrid_peekTier (Any dia) {
+static Function pr_TextGrid_peekTier (UiForm dia) {
 	int IOBJECT;
 	LOOP {
 		iam (TextGrid);
@@ -962,27 +962,27 @@ static Function pr_TextGrid_peekTier (Any dia) {
 	return NULL;   // should not occur
 }
 
-static IntervalTier pr_TextGrid_peekIntervalTier (Any dia) {
+static IntervalTier pr_TextGrid_peekIntervalTier (UiForm dia) {
 	Function tier = pr_TextGrid_peekTier (dia);
 	if (tier -> classInfo != classIntervalTier) Melder_throw (U"Tier should be interval tier.");
 	return (IntervalTier) tier;
 }
 
-static TextTier pr_TextGrid_peekTextTier (Any dia) {
+static TextTier pr_TextGrid_peekTextTier (UiForm dia) {
 	Function tier = pr_TextGrid_peekTier (dia);
 	if (! tier) return NULL;
 	if (tier -> classInfo != classTextTier) Melder_throw (U"Tier should be point tier (TextTier).");
 	return (TextTier) tier;
 }
 
-static TextInterval pr_TextGrid_peekInterval (Any dia) {
+static TextInterval pr_TextGrid_peekInterval (UiForm dia) {
 	int intervalNumber = GET_INTEGER (STRING_INTERVAL_NUMBER);
 	IntervalTier intervalTier = pr_TextGrid_peekIntervalTier (dia);
 	if (intervalNumber > intervalTier -> intervals -> size) Melder_throw (U"Interval number too large.");
 	return (TextInterval) intervalTier -> intervals -> item [intervalNumber];
 }
 
-static TextPoint pr_TextGrid_peekPoint (Any dia) {	
+static TextPoint pr_TextGrid_peekPoint (UiForm dia) {	
 	long pointNumber = GET_INTEGER (STRING_POINT_NUMBER);
 	TextTier textTier = pr_TextGrid_peekTextTier (dia);
 	if (pointNumber > textTier -> points -> size) Melder_throw (U"Point number too large.");

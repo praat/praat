@@ -168,7 +168,7 @@ Daata praat_onlyObject_generic (ClassInfo klas);
 	/* Returns a selected Daata of class 'klas' or a subclass. */
 praat_Object praat_onlyScreenObject (void);
 char32 *praat_name (int iobject);
-void praat_write_do (Any dia, const char32 *extension);
+void praat_write_do (UiForm dia, const char32 *extension);
 void praat_new (Daata me);
 void praat_new (Daata me, Melder_1_ARG);
 void praat_new (Daata me, Melder_2_ARGS);
@@ -384,7 +384,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
 #define FORM_WRITE(proc,title,help,ext) \
 	static void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
-		static Any dia; \
+		static UiForm dia; \
 		if (dia == NULL) \
 			dia = UiOutfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, okClosure, invokingButtonTitle, help); \
 		if (sendingForm == NULL && args == NULL && sendingString == NULL) { \
@@ -405,7 +405,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
 #define FORM_WRITE2(proc,title,help,ext) \
 	static void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
-		static Any dia; \
+		static UiForm dia; \
 		if (dia == NULL) \
 			dia = UiOutfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, okClosure, invokingButtonTitle, help); \
 		if (sendingForm == NULL && args == NULL && sendingString == NULL) { \

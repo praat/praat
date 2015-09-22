@@ -588,7 +588,7 @@ static void insertBoundaryOrPoint (TextGridEditor me, int itier, double t1, doub
 			rightNewInterval = TextInterval_create (t2, interval -> xmax, text + right);
 			text [right] = '\0';
 			midNewInterval = TextInterval_create (t1, t2, text + left);
-			if (! wholeTextIsSelected || t1 != t2) text [left] = '\0';
+			if (! wholeTextIsSelected || t1 != t2) text [left] = U'\0';
 			TextInterval_setText (interval, text);
 			Melder_free (text);
 		} else {
