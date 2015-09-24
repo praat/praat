@@ -130,8 +130,8 @@ void structTimeSoundAnalysisEditor :: v_info () {
 void structTimeSoundAnalysisEditor :: v_destroy_analysis () {
 	forget (d_spectrogram);
 	forget (d_pitch);
-	forget (d_intensity);
-	forget (d_formant);
+	//forget_nozero (d_intensity.peek());
+	//forget_nozero (d_formant.peek());
 	forget (d_pulses);
 }
 
@@ -955,7 +955,7 @@ static void menu_cb_extractVisibleIntensityContour (EDITOR_ARGS) {
 		TimeSoundAnalysisEditor_computeIntensity (me);
 		if (! my d_intensity) Melder_throw (theMessage_Cannot_compute_intensity);
 	}
-	autoIntensity publish = Data_copy (my d_intensity);
+	autoIntensity publish = Data_copy (my d_intensity.peek());
 	Editor_broadcastPublication (me, publish.transfer());
 }
 
@@ -1134,7 +1134,7 @@ static void menu_cb_extractVisibleFormantContour (EDITOR_ARGS) {
 		TimeSoundAnalysisEditor_computeFormants (me);
 		if (! my d_formant) Melder_throw (theMessage_Cannot_compute_formant);
 	}
-	autoFormant publish = Data_copy (my d_formant);
+	autoFormant publish = Data_copy (my d_formant.peek());
 	Editor_broadcastPublication (me, publish.transfer());
 }
 
@@ -1665,7 +1665,7 @@ void TimeSoundAnalysisEditor_computeIntensity (TimeSoundAnalysisEditor me) {
 		(my d_intensity == NULL || my d_intensity -> xmin != my d_startWindow || my d_intensity -> xmax != my d_endWindow))
 	{
 		double margin = 3.2 / my p_pitch_floor;
-		forget (my d_intensity);
+		//forget (my d_intensity);
 		try {
 			autoSound sound = extractSound (me, my d_startWindow - margin, my d_endWindow + margin);
 			my d_intensity = Sound_to_Intensity (sound.peek(), my p_pitch_floor,
@@ -1685,7 +1685,7 @@ void TimeSoundAnalysisEditor_computeFormants (TimeSoundAnalysisEditor me) {
 		(my d_formant == NULL || my d_formant -> xmin != my d_startWindow || my d_formant -> xmax != my d_endWindow))
 	{
 		double margin = my p_formant_windowLength;
-		forget (my d_formant);
+		//forget (my d_formant);
 		try {
 			autoSound sound =
 				my d_endWindow - my d_startWindow > my p_longestAnalysis ?

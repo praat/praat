@@ -31,8 +31,7 @@
 	/* The input/output mechanism: */
 		#include "abcio.h"
 
-#define _Thing_REFCOUNT  0
-#define _Thing_auto_DEBUG  1
+#define _Thing_auto_DEBUG  0
 
 /* Public. */
 
@@ -101,12 +100,18 @@ extern ClassInfo classThing;
 extern struct structClassInfo theClassInfo_Thing;
 struct structThing {
 	ClassInfo classInfo;   // the Praat class pointer (every object also has a C++ class pointer initialized by C++ "new")
-	#if _Thing_REFCOUNT
-		int32 refCount;
-	#endif
 	char32 *name;
 	void * operator new (size_t size) { return Melder_calloc (char, (int64) size); }
 	void operator delete (void *ptr, size_t /* size */) { Melder_free (ptr); }
+
+	/*
+	 * If a Thing has members of type autoThing,
+	 * then we want the destructors of autoThing to be called automatically whenever Thing is `delete`d.
+	 * For this to happen, it is necessary that every Thing itself has a destructor.
+	 * We therefore define a destructor here,
+	 * and we make it virtual to ensure that every subclass has its own automatic version.
+	 */
+	virtual ~structThing () { }
 
 	virtual void v_destroy () { Melder_free (name); };
 		/*
@@ -277,7 +282,6 @@ long Thing_getTotalNumberOfThings (void);
 
 template <class T>
 class _Thing_auto {
-private:
 	T *d_ptr;
 public:
 	/*
@@ -288,21 +292,8 @@ public:
 	 * should work.
 	 */
 	_Thing_auto (T *a_ptr) : d_ptr (a_ptr) {
-		#if _Thing_REFCOUNT
-			if (a_ptr) {
-				#if _Thing_auto_DEBUG
-					fprintf (stderr, "constructor %p %s %d->%d\n",
-						a_ptr,
-						Melder_peek32to8 (a_ptr -> classInfo -> className),
-						a_ptr -> refCount,
-						1);
-				#endif
-				a_ptr -> refCount = 1;
-			}
-		#else
-			#if _Thing_auto_DEBUG
-				fprintf (stderr, "constructor %p %s\n", a_ptr, Melder_peek32to8 (a_ptr -> classInfo -> className));
-			#endif
+		#if _Thing_auto_DEBUG
+			if (d_ptr) fprintf (stderr, "constructor %p %s\n", d_ptr, Melder_peek32to8 (d_ptr -> classInfo -> className));
 		#endif
 	}
 	/*
@@ -310,26 +301,19 @@ public:
 	 *    autoPitch pitch;
 	 * should initialize the pointer to NULL.
 	 */
-	_Thing_auto () : d_ptr (NULL) { }
+	_Thing_auto () : d_ptr (NULL) {
+		#if _Thing_auto_DEBUG
+			fprintf (stderr, "default constructor\n");
+		#endif
+	}
 	/*
 	 * pitch should be destroyed when going out of scope,
 	 * both at the end of the try block and when a throw occurs.
 	 */
 	~_Thing_auto () {
 		if (d_ptr) {
-			#if _Thing_REFCOUNT
-				#if _Thing_auto_DEBUG
-					fprintf (stderr, "destructor %p %s %d->%d\n",
-						d_ptr,
-						Melder_peek32to8 (d_ptr -> classInfo -> className),
-						d_ptr -> refCount,
-						d_ptr -> refCount - 1);
-				#endif
-				if (-- d_ptr -> refCount > 0) return;
-			#else
-				#if _Thing_auto_DEBUG
-					fprintf (stderr, "destructor %p %s\n", d_ptr, Melder_peek32to8 (d_ptr -> classInfo -> className));
-				#endif
+			#if _Thing_auto_DEBUG
+				if (d_ptr) fprintf (stderr, "destructor %p %s\n", d_ptr, Melder_peek32to8 (d_ptr -> classInfo -> className));
 			#endif
 			forget (d_ptr);
 		}
@@ -371,7 +355,7 @@ public:
 		d_ptr = NULL;   // make the pointer non-automatic again
 		return temp;
 	}
-	#if _Thing_REFCOUNT
+	#if 1
 		operator T* () { return d_ptr; }   // this way only if peek() and transfer() are the same, e.g. in case of reference counting
 		// template <class Y> Y* operator= (_Thing_auto<Y>& a) { }
 	#endif
@@ -388,113 +372,78 @@ public:
 	 * In order not to leak memory, the old object is destroyed.
 	 */
 	void reset (T* ptr) {
-		T* oldPtr = d_ptr;
+		forget (d_ptr);
 		d_ptr = ptr;
-		#if _Thing_REFCOUNT
-			if (ptr) {
-				ptr -> refCount = 1;
-			}
-		#endif
-		if (oldPtr) {
-			#if _Thing_REFCOUNT
-				#if _Thing_auto_DEBUG
-					fprintf (stderr, "reset %p %s %d->%d\n",
-						oldPtr,
-						Melder_peek32to8 (oldPtr -> classInfo -> className),
-						oldPtr -> refCount,
-						oldPtr -> refCount - 1);
-				#endif
-				if (-- oldPtr -> refCount > 0) return;
-			#endif
-			forget (oldPtr);
-		}
 	}
-	#if _Thing_REFCOUNT
-		// copy constructor:
-		template <class Y> _Thing_auto<T> (_Thing_auto<Y> & thing) {
-			d_ptr = thing.peek();   // so class Y has to be a descendant of class T; FIXME this assignment could go in declarator?
-			if (d_ptr) {
-				#if _Thing_auto_DEBUG
-					fprintf (stderr, "copy constructor %p %s %d->%d\n",
-						d_ptr,
-						Melder_peek32to8 (d_ptr -> classInfo -> className),
-						d_ptr -> refCount,
-						d_ptr -> refCount + 1);
-				#endif
-				d_ptr -> refCount ++;
-			}
-		}
-		// copy assignment:
-		template <class Y> _Thing_auto<T>& operator= (_Thing_auto<Y> & thing) {
-			if (thing.peek() != d_ptr) {
-				T* oldPtr = d_ptr;
-				d_ptr = thing.peek();   // so class Y has to be a descendant of class T
-				if (d_ptr) {
-					#if _Thing_auto_DEBUG
-						fprintf (stderr, "copy assignment %p %s %d->%d\n",
-							d_ptr,
-							Melder_peek32to8 (d_ptr -> classInfo -> className),
-							d_ptr -> refCount,
-							d_ptr -> refCount + 1);
-					#endif
-					d_ptr -> refCount ++;
-				}
-				if (oldPtr) {
-					#if _Thing_auto_DEBUG
-						fprintf (stderr, "copy assignment %p %s %d->%d\n",
-							oldPtr,
-							Melder_peek32to8 (oldPtr -> classInfo -> className),
-							oldPtr -> refCount,
-							oldPtr -> refCount - 1);
-					#endif
-					if (-- oldPtr -> refCount <= 0) forget (oldPtr);
-				}
-			}
-			return *this;
-		}
-	#else
-		// copy constructor:
-		template <class Y> _Thing_auto<T> (_Thing_auto<Y> & thing) {
-			d_ptr = thing.peek();   // so class Y has to be a descendant of class T; FIXME this assignment could go in declarator?
-			#if _Thing_auto_DEBUG
-				fprintf (stderr, "copy constructor %p %s\n", d_ptr, Melder_peek32to8 (d_ptr -> classInfo -> className));
-			#endif
-			thing. d_ptr = NULL;
-		}
-		// copy assignment:
-		template <class Y> _Thing_auto<T>& operator= (_Thing_auto<Y> & thing) {
-			if (thing.peek() != d_ptr) {
-				if (d_ptr) {
-					#if _Thing_auto_DEBUG
-						fprintf (stderr, "copy assignment before %p %s\n", d_ptr, Melder_peek32to8 (d_ptr -> classInfo -> className));
-					#endif
-					forget (d_ptr);
-				}
-				d_ptr = thing.peek();   // so class Y has to be a descendant of class T
-				#if _Thing_auto_DEBUG
-					if (d_ptr)
-						fprintf (stderr, "copy assignment after %p %s\n", d_ptr, Melder_peek32to8 (d_ptr -> classInfo -> className));
-				#endif
-				(reinterpret_cast <_Thing_auto<T>&> (thing)). d_ptr = NULL;
-			}
-			return *this;
-		}
-	#endif
+	void zero () {
+		d_ptr = NULL;
+	}
 private:
-	#if ! _Thing_REFCOUNT
-		/*
-		 * If not reference counting, the compiler should prevent initializations like
-		 *    autoPitch pitch2 = pitch;
-		 */
-		//template <class Y> _Thing_auto (_Thing_auto<Y> &);   // copy constructor
-		//_Thing_auto (const _Thing_auto &);
-		/*
-		 * If not reference counting, the compiler should prevent assignments like
-		 *    pitch2 = pitch;
-		 */
-		//_Thing_auto& operator= (const _Thing_auto&);   // copy assignment
-		//template <class Y> _Thing_auto& operator= (const _Thing_auto<Y>&);
-	#endif
+	/*
+	 * The compiler should prevent initializations from _Thing_auto l-values, as in
+	 *    autoPitch pitch2 = pitch;
+	 * This is because the syntax of this statement is *copy* syntax,
+	 * but the semantics of this statement has to be, confusingly, *move* semantics
+	 * (i.e., pitch.d_ptr should be set to NULL),
+	 * because if the semantics were copy semantics instead,
+	 * a destructor would be called at some point for both pitch and pitch 2,
+	 * twice deleting the same object, which is a run-time error.
+	 */
+	//_Thing_auto<T> (const _Thing_auto<T>&);   // FIXME: disable copy constructor from an l-value of class T*
+	//template <class Y> _Thing_auto<T> (const _Thing_auto<Y>&);   // disable copy constructor from an l-value of a descendant class of T*
+	/*
+	 * The compiler should prevent assignments from _Thing_auto l-values, as in
+	 *    pitch2 = pitch;
+	 * This is because the syntax of this statement is *copy* syntax,
+	 * but the semantics of this statement has to be, confusingly, *move* semantics
+	 * (i.e., pitch.d_ptr should be set to NULL),
+	 * because if the semantics were copy semantics instead,
+	 * a destructor would be called at some point for both pitch and pitch 2,
+	 * twice deleting the same object, which is a run-time error.
+	 */
+	//_Thing_auto<T>& operator= (const _Thing_auto<T>&);   // disable copy assignment from an l-value of class T*
+	//template <class Y> _Thing_auto<T>& operator= (const _Thing_auto<Y>&);   // disable copy assignment from an l-value of a descendant class of T*
+public:
+	_Thing_auto<T> (_Thing_auto<T>&& other) : d_ptr (other.d_ptr) {
+		#if _Thing_auto_DEBUG
+			if (d_ptr) fprintf (stderr, "move constructor %p from same class %s\n", d_ptr, Melder_peek32to8 (d_ptr -> classInfo -> className));
+		#endif
+		other.d_ptr = NULL;
+	}
+	template <class Y> _Thing_auto<T> (_Thing_auto<Y>&& other) : d_ptr (other.peek()) {
+		#if _Thing_auto_DEBUG
+			if (d_ptr) fprintf (stderr, "move constructor %p from other class %s\n", d_ptr, Melder_peek32to8 (d_ptr -> classInfo -> className));
+		#endif
+		other.zero();
+	}
+	_Thing_auto<T>& operator= (_Thing_auto<T>&& other) {
+		if (other. d_ptr != d_ptr) {
+			forget (d_ptr);
+			#if _Thing_auto_DEBUG
+				if (d_ptr) fprintf (stderr, "move assignment before %p from same class %s\n", d_ptr, Melder_peek32to8 (d_ptr -> classInfo -> className));
+			#endif
+			d_ptr = other. d_ptr;
+			#if _Thing_auto_DEBUG
+				if (d_ptr) fprintf (stderr, "move assignment after %p from same class %s\n", d_ptr, Melder_peek32to8 (d_ptr -> classInfo -> className));
+			#endif
+			other. d_ptr = NULL;
+		}
+		return *this;
+	}
+	template <class Y> _Thing_auto<T>& operator= (_Thing_auto<Y>&& other) {
+		if (other.peek() != d_ptr) {
+			forget (d_ptr);
+			#if _Thing_auto_DEBUG
+				if (d_ptr) fprintf (stderr, "move assignment before %p from other class %s\n", d_ptr, Melder_peek32to8 (d_ptr -> classInfo -> className));
+			#endif
+			d_ptr = other.peek();
+			#if _Thing_auto_DEBUG
+				if (d_ptr) fprintf (stderr, "move assignment after %p from other class %s\n", d_ptr, Melder_peek32to8 (d_ptr -> classInfo -> className));
+			#endif
+			other.zero();
+		}
+		return *this;
+	}
 };
 
 template <class T>

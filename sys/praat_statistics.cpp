@@ -135,21 +135,12 @@ void praat_reportGraphicalProperties () {
 }
 
 static void testAutoData (autoDaata data) {
-	#if _Thing_REFCOUNT
-		printf ("testAutoData ref count: %d\n", data -> refCount);
-	#endif
 }
 static void testData (Daata data) {
-	#if _Thing_REFCOUNT
-		printf ("testAutoData ref count: %d\n", data -> refCount);
-	#endif
 }
 static autoDaata newAutoData () {
 	autoDaata data = Thing_new (Daata);
-	#if _Thing_REFCOUNT
-		printf ("newAutoData ref count: %d\n", data -> refCount);
-	#endif
-	return data;
+	return std::move (data);
 }
 
 void praat_reportMemoryUse () {
@@ -191,33 +182,48 @@ void praat_reportMemoryUse () {
 	MelderInfo_writeLine (U"\nNumber of fixed menu commands: ", praat_getNumberOfMenuCommands ());
 	MelderInfo_writeLine (U"Number of dynamic menu commands: ", praat_getNumberOfActions ());
 	MelderInfo_close ();
-	#if _Thing_REFCOUNT
+	#if _Thing_auto_DEBUG
+		fprintf (stderr, "1\n");
 		autoDaata data = Thing_new (Daata);
-		printf ("before testAudoData ref count: %d\n", data -> refCount);
-		testAutoData (data);
-		printf ("after testAutoData ref count: %d\n", data -> refCount);
-		autoDaata data2 = newAutoData ();
-		printf ("after newAutoData ref count: %d\n", data2 -> refCount);
-		autoDaata data3 = newAutoData ();
-		printf ("after newAutoData ref count: %d\n", data3 -> refCount);
-		data2 = data;
-		printf ("after copy assignment ref counts: %d %d\n", data -> refCount, data2 -> refCount);
-		autoOrdered ordered = Thing_new (Ordered);
-		data = ordered;
-		//ordered = data;   // rightfully refused by compiler
-		//autoOrdered ordered2 = Thing_new (Daata);   // rightfully refused by compiler
-		autoDaata data4 = Thing_new (Ordered);
-	#else
-		autoDaata data = Thing_new (Daata);
+		fprintf (stderr, "2\n");
 		testData (data.peek());
+		fprintf (stderr, "3\n");
 		autoDaata data2 = newAutoData ();
+		fprintf (stderr, "4\n");
 		autoDaata data3 = newAutoData ();
-		data2 = data;
+		fprintf (stderr, "5\n");
+		//data2 = data;   // disabled l-value copy assignment from same class
+		fprintf (stderr, "6\n");
 		autoOrdered ordered = Thing_new (Ordered);
-		data = ordered;
+		fprintf (stderr, "7\n");
+		//data = ordered;   // disabled l-value copy assignment from subclass
+		data = std::move (ordered);
+		fprintf (stderr, "8\n");
+		data2 = newAutoData ();
+		fprintf (stderr, "8a\n");
+		autoDaata data5 = newAutoData ();
+		fprintf (stderr, "8b\n");
+		data2 = std::move (data5);
+		fprintf (stderr, "9\n");
 		//ordered = data;   // rightfully refused by compiler
+		fprintf (stderr, "10\n");
 		//autoOrdered ordered2 = Thing_new (Daata);   // rightfully refused by compiler
-		autoDaata data4 = Thing_new (Ordered);
+		fprintf (stderr, "11\n");
+		autoDaata data4 = Thing_new (Ordered);   // constructor
+		fprintf (stderr, "12\n");
+		//autoDaata data6 = data4;   // implicitly disabled l-value copy constructor from same class
+		fprintf (stderr, "13\n");
+		autoDaata data7 = std::move (data4);
+		fprintf (stderr, "14\n");
+		autoOrdered ordered3 = Thing_new (Ordered);
+		autoDaata data8 = std::move (ordered3);
+		fprintf (stderr, "15\n");
+		//autoDaata data9 = ordered;   // disabled l-value copy constructor from subclass
+		fprintf (stderr, "16\n");
+		autoDaata data10 = std::move (data7);
+		fprintf (stderr, "17\n");
+		autoDaata data11 = Thing_new (Daata);
+		fprintf (stderr, "18\n");
 	#endif
 }
 
