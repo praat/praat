@@ -58,7 +58,7 @@
 Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 	Spectrogram d_spectrogram;
 	double d_spectrogram_cursor;
-	Pitch d_pitch;
+	autoPitch d_pitch;
 	autoIntensity d_intensity;
 	autoFormant d_formant;
 	PointProcess d_pulses;

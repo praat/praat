@@ -108,11 +108,22 @@ PointProcess Sound_to_PointProcess_zeroes (Sound me, long channel, bool includeR
 	}
 }
 
-PointProcess Sound_to_PointProcess_periodic_cc (Sound me, double fmin, double fmax) {
+static void SomeCollection_addItem (autoDaata me) {
+	(void) me;
+}
+
+autoPointProcess Sound_to_PointProcess_periodic_cc (Sound me, double fmin, double fmax) {
 	try {
-		autoPitch pitch = Sound_to_Pitch (me, 0.0, fmin, fmax);
-		autoPointProcess thee = Sound_Pitch_to_PointProcess_cc (me, pitch.peek());
-		return thee.transfer();
+		/*
+		 * TRYOUT
+		 */
+		autoPitch pitch = Pitch_create (my xmin, my xmax, 1, 1, 1, 1, 1);
+		//SomeCollection_addItem (pitch);   // not accepted by compiler
+		SomeCollection_addItem (pitch.move());   // accepted by compiler
+
+		pitch = Sound_to_Pitch (me, 0.0, fmin, fmax);
+		autoPointProcess thee = Sound_Pitch_to_PointProcess_cc (me, pitch);
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": periodic pulses (cc) not computed.");
 	}

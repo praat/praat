@@ -1,5 +1,5 @@
 /* Praat_tests_enums.h */
-/* Paul Boersma, 19 September 2015 */
+/* Paul Boersma, 26 September 2015 */
 
 enums_begin (kPraatTests, 0)
 	enums_add (kPraatTests, 0, _, U"_")
@@ -25,6 +25,7 @@ enums_begin (kPraatTests, 0)
 	enums_add (kPraatTests, 20, TIME_WCSCPY, U"TimeWcscpy")
 	enums_add (kPraatTests, 21, TIME_STR32CPY, U"TimeStr32cpy")
 	enums_add (kPraatTests, 22, TIME_GRAPHICS_TEXT_TOP, U"TimeGraphicsTextTop")
-enums_end (kPraatTests, 22, CHECK_RANDOM_1009_2009)
+	enums_add (kPraatTests, 23, THING_AUTO, U"ThingAuto")
+enums_end (kPraatTests, 23, CHECK_RANDOM_1009_2009)
 
 /* End of file Praat_tests_enums.h */

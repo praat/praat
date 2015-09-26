@@ -129,7 +129,7 @@ void structTimeSoundAnalysisEditor :: v_info () {
 
 void structTimeSoundAnalysisEditor :: v_destroy_analysis () {
 	forget (d_spectrogram);
-	forget (d_pitch);
+	//forget (d_pitch);
 	//forget_nozero (d_intensity.peek());
 	//forget_nozero (d_formant.peek());
 	forget (d_pulses);
@@ -864,7 +864,7 @@ static void menu_cb_extractVisiblePitchContour (EDITOR_ARGS) {
 		TimeSoundAnalysisEditor_computePitch (me);
 		if (! my d_pitch) Melder_throw (theMessage_Cannot_compute_pitch);
 	}
-	autoPitch publish = Data_copy (my d_pitch);
+	autoPitch publish = Data_copy (my d_pitch.peek());
 	Editor_broadcastPublication (me, publish.transfer());
 }
 
@@ -1629,7 +1629,7 @@ void TimeSoundAnalysisEditor_computeSpectrogram (TimeSoundAnalysisEditor me) {
 
 static void computePitch_inside (TimeSoundAnalysisEditor me) {
 	double margin = my p_pitch_veryAccurate ? 3.0 / my p_pitch_floor : 1.5 / my p_pitch_floor;
-	forget (my d_pitch);
+	//forget (my d_pitch);
 	try {
 		autoSound sound = extractSound (me, my d_startWindow - margin, my d_endWindow + margin);
 		double pitchTimeStep =

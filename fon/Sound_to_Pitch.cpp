@@ -341,7 +341,7 @@ static MelderThread_RETURN_TYPE Sound_into_Pitch (Sound_into_Pitch_Args me)
 	MelderThread_RETURN;
 }
 
-Pitch Sound_to_Pitch_any (Sound me,
+autoPitch Sound_to_Pitch_any (Sound me,
 	double dt, double minimumPitch, double periodsPerWindow, int maxnCandidates,
 	int method,
 	double silenceThreshold, double voicingThreshold,
@@ -548,21 +548,21 @@ Pitch Sound_to_Pitch_any (Sound me,
 		MelderThread_run (Sound_into_Pitch, args, numberOfThreads);
 
 		Melder_progress (0.95, U"Sound to Pitch: path finder");
-		Pitch_pathFinder (thee.peek(), silenceThreshold, voicingThreshold,
+		Pitch_pathFinder (thee, silenceThreshold, voicingThreshold,
 			octaveCost, octaveJumpCost, voicedUnvoicedCost, ceiling, Melder_debug == 31 ? true : false);
 
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": pitch analysis not performed.");
 	}
 }
 
-Pitch Sound_to_Pitch (Sound me, double timeStep, double minimumPitch, double maximumPitch) {
+autoPitch Sound_to_Pitch (Sound me, double timeStep, double minimumPitch, double maximumPitch) {
 	return Sound_to_Pitch_ac (me, timeStep, minimumPitch,
 		3.0, 15, FALSE, 0.03, 0.45, 0.01, 0.35, 0.14, maximumPitch);
 }
 
-Pitch Sound_to_Pitch_ac (Sound me,
+autoPitch Sound_to_Pitch_ac (Sound me,
 	double dt, double minimumPitch, double periodsPerWindow, int maxnCandidates, int accurate,
 	double silenceThreshold, double voicingThreshold,
 	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost, double ceiling)
@@ -571,7 +571,7 @@ Pitch Sound_to_Pitch_ac (Sound me,
 		silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost, ceiling);
 }
 
-Pitch Sound_to_Pitch_cc (Sound me,
+autoPitch Sound_to_Pitch_cc (Sound me,
 	double dt, double minimumPitch, double periodsPerWindow, int maxnCandidates, int accurate,
 	double silenceThreshold, double voicingThreshold,
 	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost, double ceiling)

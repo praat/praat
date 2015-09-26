@@ -31,6 +31,8 @@
 	/* The input/output mechanism: */
 		#include "abcio.h"
 
+#include <string>
+
 #define _Thing_auto_DEBUG  0
 
 /* Public. */
@@ -291,7 +293,7 @@ public:
 	 *    autoPitch pitch = Pitch_create (...);
 	 * should work.
 	 */
-	_Thing_auto (T *a_ptr) : d_ptr (a_ptr) {
+	inline _Thing_auto (T *a_ptr) : d_ptr (a_ptr) {
 		#if _Thing_auto_DEBUG
 			if (d_ptr) fprintf (stderr, "constructor %p %s\n", d_ptr, Melder_peek32to8 (d_ptr -> classInfo -> className));
 		#endif
@@ -301,7 +303,7 @@ public:
 	 *    autoPitch pitch;
 	 * should initialize the pointer to NULL.
 	 */
-	_Thing_auto () : d_ptr (NULL) {
+	inline _Thing_auto () : d_ptr (NULL) {
 		#if _Thing_auto_DEBUG
 			fprintf (stderr, "default constructor\n");
 		#endif
@@ -310,15 +312,16 @@ public:
 	 * pitch should be destroyed when going out of scope,
 	 * both at the end of the try block and when a throw occurs.
 	 */
-	~_Thing_auto () {
+	inline ~_Thing_auto () {
+		#if _Thing_auto_DEBUG
+			fprintf (stderr, "destructor %p %s\n", d_ptr, d_ptr ? Melder_peek32to8 (d_ptr -> classInfo -> className) : "(class unknown)");
+		#endif
 		if (d_ptr) {
-			#if _Thing_auto_DEBUG
-				if (d_ptr) fprintf (stderr, "destructor %p %s\n", d_ptr, Melder_peek32to8 (d_ptr -> classInfo -> className));
-			#endif
-			forget (d_ptr);
+			_Thing_forget (d_ptr);
+			d_ptr = NULL;
 		}
 	}
-	T* peek () const {
+	inline T* peek () const {
 		return d_ptr;
 	}
 	/*
@@ -327,10 +330,10 @@ public:
 	 * should be abbreviatable by
 	 *    pitch -> xmin
 	 */
-	T* operator-> () const {   // as r-value
+	inline T* operator-> () const {   // as r-value
 		return d_ptr;
 	}
-	T& operator* () const {   // as l-value
+	inline T& operator* () const {   // as l-value
 		return *d_ptr;
 	}
 	/*
@@ -350,19 +353,19 @@ public:
 	 * and
 	 *    praat_new (pitch.transfer(), my name);
 	 */
-	T* transfer () {
+	inline T* transfer () {
 		T* temp = d_ptr;
 		d_ptr = NULL;   // make the pointer non-automatic again
 		return temp;
 	}
 	#if 1
-		operator T* () { return d_ptr; }   // this way only if peek() and transfer() are the same, e.g. in case of reference counting
+		inline operator T* () { return d_ptr; }   // this way only if peek() and transfer() are the same, e.g. in case of reference counting
 		// template <class Y> Y* operator= (_Thing_auto<Y>& a) { }
 	#endif
 	/*
 	 * An autoThing can be cloned. This can be used for giving ownership without losing ownership.
 	 */
-	T* clone () const {
+	inline T* clone () const {
 		return static_cast<T *> (Data_copy (d_ptr));
 	}
 	/*
@@ -371,11 +374,11 @@ public:
 	 * so that you can easily spot ugly places in your source code.
 	 * In order not to leak memory, the old object is destroyed.
 	 */
-	void reset (T* ptr) {
-		forget (d_ptr);
+	inline void reset (T* ptr) {
+		_Thing_forget (d_ptr);
 		d_ptr = ptr;
 	}
-	void zero () {
+	inline void zero () {
 		d_ptr = NULL;
 	}
 private:
@@ -389,8 +392,8 @@ private:
 	 * a destructor would be called at some point for both pitch and pitch 2,
 	 * twice deleting the same object, which is a run-time error.
 	 */
-	//_Thing_auto<T> (const _Thing_auto<T>&);   // FIXME: disable copy constructor from an l-value of class T*
-	//template <class Y> _Thing_auto<T> (const _Thing_auto<Y>&);   // disable copy constructor from an l-value of a descendant class of T*
+	inline _Thing_auto<T> (const _Thing_auto<T>&);   // disable copy constructor from an l-value of class T*
+	template <class Y> inline _Thing_auto<T> (const _Thing_auto<Y>&);   // disable copy constructor from an l-value of a descendant class of T*
 	/*
 	 * The compiler should prevent assignments from _Thing_auto l-values, as in
 	 *    pitch2 = pitch;
@@ -401,49 +404,85 @@ private:
 	 * a destructor would be called at some point for both pitch and pitch 2,
 	 * twice deleting the same object, which is a run-time error.
 	 */
-	//_Thing_auto<T>& operator= (const _Thing_auto<T>&);   // disable copy assignment from an l-value of class T*
-	//template <class Y> _Thing_auto<T>& operator= (const _Thing_auto<Y>&);   // disable copy assignment from an l-value of a descendant class of T*
+	inline _Thing_auto<T>& operator= (const _Thing_auto<T>&);   // disable copy assignment from an l-value of class T*
+	template <class Y> inline _Thing_auto<T>& operator= (const _Thing_auto<Y>&);   // disable copy assignment from an l-value of a descendant class of T*
 public:
-	_Thing_auto<T> (_Thing_auto<T>&& other) : d_ptr (other.d_ptr) {
+	/*
+	 * The compiler should treat initializations from _Thing_auto r-values, as in
+	 *    extern autoPitch Pitch_create (...);
+	 *    autoPitch pitch = Pitch_create (...);
+	 * as move constructors.
+	 */
+	inline _Thing_auto<T> (_Thing_auto<T>&& other) noexcept : d_ptr (other.d_ptr) {
 		#if _Thing_auto_DEBUG
 			if (d_ptr) fprintf (stderr, "move constructor %p from same class %s\n", d_ptr, Melder_peek32to8 (d_ptr -> classInfo -> className));
 		#endif
 		other.d_ptr = NULL;
 	}
-	template <class Y> _Thing_auto<T> (_Thing_auto<Y>&& other) : d_ptr (other.peek()) {
+	template <class Y> inline _Thing_auto<T> (_Thing_auto<Y>&& other) noexcept : d_ptr (other.peek()) {
 		#if _Thing_auto_DEBUG
 			if (d_ptr) fprintf (stderr, "move constructor %p from other class %s\n", d_ptr, Melder_peek32to8 (d_ptr -> classInfo -> className));
 		#endif
 		other.zero();
 	}
-	_Thing_auto<T>& operator= (_Thing_auto<T>&& other) {
+	/*
+	 * The compiler should treat assignments from _Thing_auto r-values, as in
+	 *    extern autoPitch Pitch_create (...);
+	 *    autoPitch pitch;
+	 *    pitch = Pitch_create (...);
+	 * as move assignments.
+	 */
+	inline _Thing_auto<T>& operator= (_Thing_auto<T>&& other) noexcept {
 		if (other. d_ptr != d_ptr) {
-			forget (d_ptr);
 			#if _Thing_auto_DEBUG
-				if (d_ptr) fprintf (stderr, "move assignment before %p from same class %s\n", d_ptr, Melder_peek32to8 (d_ptr -> classInfo -> className));
+				fprintf (stderr, "move assignment before %p from same class %s\n", d_ptr, d_ptr ? Melder_peek32to8 (d_ptr -> classInfo -> className) : "(class unknown)");
 			#endif
+			_Thing_forget (d_ptr);
 			d_ptr = other. d_ptr;
 			#if _Thing_auto_DEBUG
-				if (d_ptr) fprintf (stderr, "move assignment after %p from same class %s\n", d_ptr, Melder_peek32to8 (d_ptr -> classInfo -> className));
+				fprintf (stderr, "move assignment after %p from same class %s\n", d_ptr, d_ptr ? Melder_peek32to8 (d_ptr -> classInfo -> className) : "(class unknown)");
 			#endif
 			other. d_ptr = NULL;
 		}
 		return *this;
 	}
-	template <class Y> _Thing_auto<T>& operator= (_Thing_auto<Y>&& other) {
+	template <class Y> inline _Thing_auto<T>& operator= (_Thing_auto<Y>&& other) noexcept {
 		if (other.peek() != d_ptr) {
-			forget (d_ptr);
 			#if _Thing_auto_DEBUG
-				if (d_ptr) fprintf (stderr, "move assignment before %p from other class %s\n", d_ptr, Melder_peek32to8 (d_ptr -> classInfo -> className));
+				fprintf (stderr, "move assignment before %p from other class %s\n", d_ptr, d_ptr ? Melder_peek32to8 (d_ptr -> classInfo -> className) : "(class unknown)");
 			#endif
+			_Thing_forget (d_ptr);
 			d_ptr = other.peek();
 			#if _Thing_auto_DEBUG
-				if (d_ptr) fprintf (stderr, "move assignment after %p from other class %s\n", d_ptr, Melder_peek32to8 (d_ptr -> classInfo -> className));
+				fprintf (stderr, "move assignment after %p from other class %s\n", d_ptr, d_ptr ? Melder_peek32to8 (d_ptr -> classInfo -> className) : "(class unknown)");
 			#endif
 			other.zero();
 		}
 		return *this;
 	}
+	/*
+	 * Move semantics from l-values can be achieved with move syntax:
+	 *    autoPitch pitch2 = pitch.move();   // calls the move constructor and therefore nullifies pitch
+	 *
+	 *    pitch2 = pitch.move();   // performs move assignment and therefore nullifies pitch
+	 */
+	inline _Thing_auto<T>&& move () noexcept { return static_cast <_Thing_auto<T>&&> (*this); }
+	/*
+	 * Returning _Thing_auto from a function works as hoped for:
+	 *    autoPitch Sound_to_Pitch (Sound me) {
+	 *       autoPitch thee = Pitch_create (...);
+	 *       ...
+	 *       return thee;
+	 *    }
+	 *    autoPitch pitch = Sound_to_Pitch (sound);
+	 * returns a moved thee in pitch.
+	 *
+	 * In function arguments, transfer of ownership works only explicitly:
+	 *    extern void Collection_addItem (Collection me, autoDaata item);
+	 *    autoPitch pitch = Pitch_create (...);
+	 *    Collection_addItem (collection, pitch.move());   // compiler error if you don't call move()
+	 */
+
 };
 
 template <class T>
