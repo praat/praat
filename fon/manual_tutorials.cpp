@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20150916)
+MAN_BEGIN (U"What's new?", U"ppgb", 20150926)
 INTRO (U"Latest changes in Praat.")
 /*LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (U"##5.4.20# (26 September 2015)")
+LIST_ITEM (U"• Corrected the graphical representation of numbers with exponents (wrong since 5.4.10).")
 NORMAL (U"##5.4.19# (16 September 2015)")
 LIST_ITEM (U"• LongSound: corrected saving of 8-bit files as 16-bit.")
 NORMAL (U"##5.4.18# (7 September 2015)")

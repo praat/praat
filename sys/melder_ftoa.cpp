@@ -262,7 +262,7 @@ const char32 * Melder_float (const char32 *number) {
 		if (number [0] == '1' && number [1] == 'e') {
 			str32cpy (buffers32 [ibuffer], U"10^^"); b = buffers32 [ibuffer] + 4;
 		} else {
-			str32cpy (buffers32 [ibuffer] + str32len (buffers32 [ibuffer]), U"·10^^"); b += 7;
+			str32cpy (buffers32 [ibuffer] + str32len (buffers32 [ibuffer]), U"·10^^"); b += 5;
 		}
 		Melder_assert (*n == 'e');
 		if (*++n == '+') n ++;   // ignore leading plus sign in exponent
@@ -270,7 +270,8 @@ const char32 * Melder_float (const char32 *number) {
 		while (*n == '0') n ++;   // ignore leading zeroes in exponent
 		while (*n >= '0' && *n <= '9') *(b++) = *(n++);
 		*(b++) = '^';
-		while (*n != '\0') *(b++) = *(n++); *b = '\0';
+		while (*n != '\0') *(b++) = *(n++);
+		*b = '\0';
 	}
 	return buffers32 [ibuffer];
 }
