@@ -17,6 +17,15 @@
 #include "Praat_tests_enums.h"
 #include <string>
 
+static void testAutoData (autoDaata data) {
+}
+static void testData (Daata data) {
+}
+static autoDaata newAutoData () {
+	autoDaata data (Thing_new (Daata));
+	return data;
+}
+
 int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *arg4) {
 	int64 n = Melder_atoi (arg1);
 	double t;
@@ -99,6 +108,17 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			char32 word [] { U"abc" };
 			word [2] = NUMrandomInteger ('a', 'z');
 			for (int64 i = 1; i <= n; i ++) {
+				MelderString_copy (& string, word);
+				for (int j = 1; j <= 30; j ++)
+					MelderString_append (& string, word);
+			}
+			t = Melder_stopwatch ();
+		} break;
+		case kPraatTests_TIME_STRING_MELDER_32_ALLOC: {
+			char32 word [] { U"abc" };
+			word [2] = NUMrandomInteger ('a', 'z');
+			for (int64 i = 1; i <= n; i ++) {
+				autoMelderString string;
 				MelderString_copy (& string, word);
 				for (int j = 1; j <= 30; j ++)
 					MelderString_append (& string, word);
@@ -214,6 +234,54 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 				Graphics_textTop (GRAPHICS, false, U"hello world");
 			}
 			t = Melder_stopwatch ();
+		} break;
+		case kPraatTests_THING_AUTO: {
+			int numberOfThingsBefore = Thing_getTotalNumberOfThings ();
+			{
+				fprintf (stderr, "1\n");
+				autoDaata data = Thing_new (Daata);
+				fprintf (stderr, "2\n");
+				testData (data.peek());
+				fprintf (stderr, "3\n");
+				autoDaata data2 = newAutoData ();
+				fprintf (stderr, "4\n");
+				autoDaata data3 = newAutoData ();
+				fprintf (stderr, "5\n");
+				//data2 = data;   // disabled l-value copy assignment from same class
+				fprintf (stderr, "6\n");
+				autoOrdered ordered = Thing_new (Ordered);
+				fprintf (stderr, "7\n");
+				//data = ordered;   // disabled l-value copy assignment from subclass
+				data = ordered.move();
+				fprintf (stderr, "8\n");
+				data2 = newAutoData ();
+				fprintf (stderr, "8a\n");
+				autoDaata data5 = newAutoData ();
+				fprintf (stderr, "8b\n");
+				data2 = data5.move();
+				fprintf (stderr, "9\n");
+				//ordered = data;   // rightfully refused by compiler
+				fprintf (stderr, "10\n");
+				//autoOrdered ordered2 = Thing_new (Daata);   // rightfully refused by compiler
+				fprintf (stderr, "11\n");
+				autoDaata data4 = Thing_new (Ordered);   // constructor
+				fprintf (stderr, "12\n");
+				//autoDaata data6 = data4;   // implicitly disabled l-value copy constructor from same class
+				fprintf (stderr, "13\n");
+				autoDaata data7 = data4.move();
+				fprintf (stderr, "14\n");
+				autoOrdered ordered3 = Thing_new (Ordered);
+				autoDaata data8 = ordered3.move();
+				fprintf (stderr, "15\n");
+				//autoDaata data9 = ordered;   // disabled l-value copy constructor from subclass
+				fprintf (stderr, "16\n");
+				autoDaata data10 = data7.move();
+				fprintf (stderr, "17\n");
+				autoDaata data11 = Thing_new (Daata);
+				fprintf (stderr, "18\n");
+			}
+			int numberOfThingsAfter = Thing_getTotalNumberOfThings ();
+			fprintf (stderr, "Number of things: before %d, after %d\n", numberOfThingsBefore, numberOfThingsAfter);
 		} break;
 	}
 	MelderInfo_writeLine (Melder_single (t / n * 1e9), U" nanoseconds");

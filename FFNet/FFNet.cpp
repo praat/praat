@@ -94,7 +94,7 @@ char32 *FFNet_createNameFromTopology (FFNet me) {
 		MelderString_appendCharacter (&name, U'-');
 		MelderString_append (&name, my nUnitsInLayer[i]);
 	}
-	return name.transfer();
+	return Melder_dup (name.string);
 }
 
 /****** non-linearities ****************************************************/

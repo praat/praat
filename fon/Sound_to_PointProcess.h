@@ -27,7 +27,7 @@ PointProcess Sound_to_PointProcess_allExtrema (Sound me, long channel, int inter
 
 PointProcess Sound_to_PointProcess_zeroes (Sound me, long channel, bool includeRaisers, bool includeFallers);
 
-PointProcess Sound_to_PointProcess_periodic_cc (Sound me, double fmin, double fmax);
+autoPointProcess Sound_to_PointProcess_periodic_cc (Sound me, double fmin, double fmax);
 
 PointProcess Sound_to_PointProcess_periodic_peaks (Sound me, double fmin, double fmax, bool includeMaxima, bool includeMinima);
 

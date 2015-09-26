@@ -125,27 +125,27 @@ Thing_define (UiForm, Thing) {
 UiForm UiForm_create (GuiWindow parent, const char32 *title,
 	UiCallback okCallback, void *buttonClosure,
 	const char32 *invokingButtonTitle, const char32 *helpTitle);
-Any UiForm_addReal (I, const char32 *label, const char32 *defaultValue);
-Any UiForm_addRealOrUndefined (I, const char32 *label, const char32 *defaultValue);
-Any UiForm_addPositive (I, const char32 *label, const char32 *defaultValue);
-Any UiForm_addInteger (I, const char32 *label, const char32 *defaultValue);
-Any UiForm_addNatural (I, const char32 *label, const char32 *defaultValue);
-Any UiForm_addWord (I, const char32 *label, const char32 *defaultValue);
-Any UiForm_addSentence (I, const char32 *label, const char32 *defaultValue);
-Any UiForm_addLabel (I, const char32 *name, const char32 *label);
-Any UiForm_addBoolean (I, const char32 *label, int defaultValue);
-Any UiForm_addText (I, const char32 *name, const char32 *defaultValue);
-Any UiForm_addRadio (I, const char32 *label, int defaultValue);
+Any UiForm_addReal (UiForm me, const char32 *label, const char32 *defaultValue);
+Any UiForm_addRealOrUndefined (UiForm me, const char32 *label, const char32 *defaultValue);
+Any UiForm_addPositive (UiForm me, const char32 *label, const char32 *defaultValue);
+Any UiForm_addInteger (UiForm me, const char32 *label, const char32 *defaultValue);
+Any UiForm_addNatural (UiForm me, const char32 *label, const char32 *defaultValue);
+Any UiForm_addWord (UiForm me, const char32 *label, const char32 *defaultValue);
+Any UiForm_addSentence (UiForm me, const char32 *label, const char32 *defaultValue);
+Any UiForm_addLabel (UiForm me, const char32 *name, const char32 *label);
+Any UiForm_addBoolean (UiForm me, const char32 *label, int defaultValue);
+Any UiForm_addText (UiForm me, const char32 *name, const char32 *defaultValue);
+Any UiForm_addRadio (UiForm me, const char32 *label, int defaultValue);
 Any UiRadio_addButton (I, const char32 *label);
-Any UiForm_addOptionMenu (I, const char32 *label, int defaultValue);
+Any UiForm_addOptionMenu (UiForm me, const char32 *label, int defaultValue);
 Any UiOptionMenu_addButton (I, const char32 *label);
-Any UiForm_addList (I, const char32 *label, long numberOfStrings, const char32 **strings, long defaultValue);
-Any UiForm_addColour (I, const char32 *label, const char32 *defaultValue);
-Any UiForm_addChannel (I, const char32 *label, const char32 *defaultValue);
-void UiForm_finish (I);
+Any UiForm_addList (UiForm me, const char32 *label, long numberOfStrings, const char32 **strings, long defaultValue);
+Any UiForm_addColour (UiForm me, const char32 *label, const char32 *defaultValue);
+Any UiForm_addChannel (UiForm me, const char32 *label, const char32 *defaultValue);
+void UiForm_finish (UiForm me);
 
-void UiForm_destroyWhenUnmanaged (I);
-void UiForm_setPauseForm (I,
+void UiForm_destroyWhenUnmanaged (UiForm me);
+void UiForm_setPauseForm (UiForm me,
 	int numberOfContinueButtons, int defaultContinueButton, int cancelContinueButton,
 	const char32 *continue1, const char32 *continue2, const char32 *continue3,
 	const char32 *continue4, const char32 *continue5, const char32 *continue6,
@@ -157,14 +157,14 @@ void UiForm_setPauseForm (I,
 /* Do not call from batch. */
 /* 'fieldName' is name from UiForm_addXXXXXX (), */
 /* without anything from and including the first " (" or ":". */
-void UiForm_setString (I, const char32 *fieldName, const char32 *text /* cattable */);
+void UiForm_setString (UiForm me, const char32 *fieldName, const char32 *text /* cattable */);
 	/* Real, Positive, Integer, Natural, Word, Sentence, Label, Text, Radio, List. */
-void UiForm_setReal (I, const char32 *fieldName, double value);
+void UiForm_setReal (UiForm me, const char32 *fieldName, double value);
 	/* Real, Positive. */
-void UiForm_setInteger (I, const char32 *fieldName, long value);
+void UiForm_setInteger (UiForm me, const char32 *fieldName, long value);
 	/* Integer, Natural, Boolean, Radio, List. */
 
-void UiForm_do (I, bool modified);
+void UiForm_do (UiForm me, bool modified);
 /*
 	Function:
 		put the form on the screen.
@@ -197,19 +197,19 @@ void UiForm_do (I, bool modified);
 /* The field names are the 'label' or 'name' arguments to UiForm_addXXXXXX (), */
 /* without anything from parentheses or from a colon. */
 /* These routines work from the screen and from batch. */
-double UiForm_getReal (I, const char32 *fieldName);	// Real, Positive
-long UiForm_getInteger (I, const char32 *fieldName);	// Integer, Natural, Boolean, Radio, List
-char32 * UiForm_getString (I, const char32 *fieldName);	// Word, Sentence, Text, Radio, List
-Graphics_Colour UiForm_getColour (I, const char32 *fieldName);   // Colour
-MelderFile UiForm_getFile (I, const char32 *fieldName); // FileIn, FileOut
+double UiForm_getReal (UiForm me, const char32 *fieldName);	// Real, Positive
+long UiForm_getInteger (UiForm me, const char32 *fieldName);	// Integer, Natural, Boolean, Radio, List
+char32 * UiForm_getString (UiForm me, const char32 *fieldName);	// Word, Sentence, Text, Radio, List
+Graphics_Colour UiForm_getColour (UiForm me, const char32 *fieldName);   // Colour
+MelderFile UiForm_getFile (UiForm me, const char32 *fieldName); // FileIn, FileOut
 
-double UiForm_getReal_check (I, const char32 *fieldName);
-long UiForm_getInteger_check (I, const char32 *fieldName);
-char32 * UiForm_getString_check (I, const char32 *fieldName);
-Graphics_Colour UiForm_getColour_check (I, const char32 *fieldName);
+double UiForm_getReal_check (UiForm me, const char32 *fieldName);
+long UiForm_getInteger_check (UiForm me, const char32 *fieldName);
+char32 * UiForm_getString_check (UiForm me, const char32 *fieldName);
+Graphics_Colour UiForm_getColour_check (UiForm me, const char32 *fieldName);
 
-void UiForm_call (I, int narg, Stackel args, Interpreter interpreter);
-void UiForm_parseString (I, const char32 *arguments, Interpreter interpreter);
+void UiForm_call (UiForm me, int narg, Stackel args, Interpreter interpreter);
+void UiForm_parseString (UiForm me, const char32 *arguments, Interpreter interpreter);
 
 UiForm UiInfile_create (GuiWindow parent, const char32 *title,
   UiCallback okCallback, void *okClosure,
@@ -219,11 +219,11 @@ UiForm UiOutfile_create (GuiWindow parent, const char32 *title,
   UiCallback okCallback, void *okClosure,
   const char32 *invokingButtonTitle, const char32 *helpTitle);
 
-void UiInfile_do (Any dia);
+void UiInfile_do (I);
 
-void UiOutfile_do (Any dia, const char32 *defaultName);
+void UiOutfile_do (I, const char32 *defaultName);
 
-MelderFile UiFile_getFile (Any dia);
+MelderFile UiFile_getFile (I);
 
 void UiFile_hide (void);
 /*
@@ -244,8 +244,8 @@ void UiHistory_clear (void);
 
 void Ui_setAllowExecutionHook (bool (*allowExecutionHook) (void *closure), void *allowExecutionClosure);
 
-void UiForm_widgetsToValues (I);
-void UiForm_Interpreter_addVariables (I, Interpreter interpreter);
+void UiForm_widgetsToValues (UiForm me);
+void UiForm_Interpreter_addVariables (UiForm me, Interpreter interpreter);
 int UiForm_getClickedContinueButton (UiForm me);
 
 /* End of file Ui.h */

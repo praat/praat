@@ -57,22 +57,22 @@ static char32 const *EXTRACT_BUTTON = U"Extract -";
 
 /**************** New FFNet ***************************/
 
-static void FFNet_create_addCommonFields_inputOutput (void *dia) {
+static void FFNet_create_addCommonFields_inputOutput (UiForm dia) {
 	NATURAL (U"Number of inputs", U"4")
 	NATURAL (U"Number of outputs", U"3")
 }
 
-static void FFNet_create_checkCommonFields_inputOutput (void *dia, long *numberOfInputs, long *numberOfOutputs) {
+static void FFNet_create_checkCommonFields_inputOutput (UiForm dia, long *numberOfInputs, long *numberOfOutputs) {
 	*numberOfInputs = GET_INTEGER (U"Number of inputs");
 	*numberOfOutputs = GET_INTEGER (U"Number of outputs");
 }
 
-static void FFNet_create_addCommonFields_hidden (void *dia) {
+static void FFNet_create_addCommonFields_hidden (UiForm dia) {
 	INTEGER (U"Number of units in hidden layer 1", U"0")
 	INTEGER (U"Number of units in hidden layer 2", U"0")
 }
 
-static void FFNet_create_checkCommonFields_hidden (void *dia, 	long *numberOfHidden1, long *numberOfHidden2) {
+static void FFNet_create_checkCommonFields_hidden (UiForm dia, 	long *numberOfHidden1, long *numberOfHidden2) {
 	*numberOfHidden1 = GET_INTEGER (U"Number of units in hidden layer 1");
 	*numberOfHidden2 = GET_INTEGER (U"Number of units in hidden layer 2");
 	if (*numberOfHidden1 < 0 || *numberOfHidden2 < 0) {
@@ -80,12 +80,12 @@ static void FFNet_create_checkCommonFields_hidden (void *dia, 	long *numberOfHid
 	}
 }
 
-static void FFNet_create_addCommonFields (void *dia) {
+static void FFNet_create_addCommonFields (UiForm dia) {
 	FFNet_create_addCommonFields_inputOutput (dia);
 	FFNet_create_addCommonFields_hidden (dia);
 }
 
-static void FFNet_create_checkCommonFields (void *dia, long *numberOfInputs, long *numberOfOutputs,
+static void FFNet_create_checkCommonFields (UiForm dia, long *numberOfInputs, long *numberOfOutputs,
         long *numberOfHidden1, long *numberOfHidden2) {
 	FFNet_create_checkCommonFields_inputOutput (dia, numberOfInputs, numberOfOutputs);
 	FFNet_create_checkCommonFields_hidden (dia, numberOfHidden1, numberOfHidden2);

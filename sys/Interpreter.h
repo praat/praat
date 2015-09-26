@@ -83,7 +83,7 @@ Thing_declare (UiForm);
 UiForm Interpreter_createForm (Interpreter me, GuiWindow parent, const char32 *fileName,
 	void (*okCallback) (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure), void *okClosure,
 	bool selectionOnly);
-void Interpreter_getArgumentsFromDialog (Interpreter me, Any dialog);
+void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog);
 void Interpreter_getArgumentsFromString (Interpreter me, const char32 *arguments);
 void Interpreter_getArgumentsFromArgs (Interpreter me, int nargs, Stackel args);
 void Interpreter_run (Interpreter me, char32 *text);   // destroys 'text'

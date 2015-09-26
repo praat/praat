@@ -301,6 +301,7 @@ GuiMenu GuiMenu_createInWindow (GuiWindow window, const char32 *title, uint32 fl
 		my d_cocoaMenu = [[GuiCocoaMenu alloc]
 			initWithTitle: (NSString *) Melder_peek32toCfstring (title)];
 		my d_widget = my d_cocoaMenu;
+		[my d_cocoaMenu   setUserData: me];
 		[my d_cocoaMenu   setAutoenablesItems: NO];
 		if (window == NULL) {
 			/*
@@ -431,7 +432,8 @@ GuiMenu GuiMenu_createInMenu (GuiMenu supermenu, const char32 *title, uint32 fla
 		trace (U"creating menu ", title);
 		my d_cocoaMenu = [[GuiCocoaMenu alloc]
 			initWithTitle: (NSString *) Melder_peek32toCfstring (title)];
-		[my d_cocoaMenu setAutoenablesItems: NO];
+		[my d_cocoaMenu   setUserData: me];
+		[my d_cocoaMenu   setAutoenablesItems: NO];
 		trace (U"adding the new menu ", Melder_pointer (me), U" to its supermenu ", Melder_pointer (supermenu));
 		[supermenu -> d_cocoaMenu   setSubmenu: my d_cocoaMenu   forItem: item];   // the supermenu will retain the menu...
 		Melder_assert ([my d_cocoaMenu retainCount] == 2);

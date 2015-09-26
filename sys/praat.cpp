@@ -258,7 +258,7 @@ Collection praat_getSelectedObjects (void) {
 
 char32 *praat_name (int IOBJECT) { return str32chr (FULL_NAME, U' ') + 1; }
 
-void praat_write_do (Any dia, const char32 *extension) {
+void praat_write_do (UiForm dia, const char32 *extension) {
 	int IOBJECT, found = 0;
 	Daata data = NULL;
 	static MelderString defaultFileName { 0 };

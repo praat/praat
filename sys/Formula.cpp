@@ -2605,7 +2605,7 @@ static void do_writeFile () {
 	}
 	structMelderFile file = { 0 };
 	Melder_relativePathToFile (fileName -> string, & file);
-	MelderFile_writeText (& file, text.transfer(), Melder_getOutputEncoding ());
+	MelderFile_writeText (& file, text.string, Melder_getOutputEncoding ());
 	pushNumber (1);
 }
 static void do_writeFileLine () {
@@ -2630,7 +2630,7 @@ static void do_writeFileLine () {
 	MelderString_appendCharacter (& text, U'\n');
 	structMelderFile file = { 0 };
 	Melder_relativePathToFile (fileName -> string, & file);
-	MelderFile_writeText (& file, text.transfer(), Melder_getOutputEncoding ());
+	MelderFile_writeText (& file, text.string, Melder_getOutputEncoding ());
 	pushNumber (1);
 }
 static void do_appendFile () {
@@ -2654,7 +2654,7 @@ static void do_appendFile () {
 	}
 	structMelderFile file = { 0 };
 	Melder_relativePathToFile (fileName -> string, & file);
-	MelderFile_appendText (& file, text.transfer());
+	MelderFile_appendText (& file, text.string);
 	pushNumber (1);
 }
 static void do_appendFileLine () {
@@ -2679,7 +2679,7 @@ static void do_appendFileLine () {
 	MelderString_appendCharacter (& text, '\n');
 	structMelderFile file = { 0 };
 	Melder_relativePathToFile (fileName -> string, & file);
-	MelderFile_appendText (& file, text.transfer());
+	MelderFile_appendText (& file, text.string);
 	pushNumber (1);
 }
 static void do_pauseScript () {

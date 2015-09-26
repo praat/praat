@@ -442,7 +442,7 @@ FORM_READ2 (Picture_readFromPraatPictureFile, U"Read picture from praat picture 
 END2 }
 
 static void DO_Picture_writeToEpsFile (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *dummy) {
-	static Any dia;
+	static UiForm dia;
 	(void) narg;
 	(void) interpreter;
 	(void) modified;
@@ -462,7 +462,7 @@ static void DO_Picture_writeToEpsFile (UiForm sendingForm, int narg, Stackel arg
 END*/
 
 static void DO_Picture_writeToFontlessEpsFile_xipa (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *dummy) {
-	static Any dia;
+	static UiForm dia;
 	(void) narg;
 	(void) interpreter;
 	(void) modified;
@@ -479,7 +479,7 @@ static void DO_Picture_writeToFontlessEpsFile_xipa (UiForm sendingForm, int narg
 }
 
 static void DO_Picture_writeToFontlessEpsFile_silipa (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *dummy) {
-	static Any dia;
+	static UiForm dia;
 	(void) narg;
 	(void) interpreter;
 	(void) modified;
@@ -496,7 +496,7 @@ static void DO_Picture_writeToFontlessEpsFile_silipa (UiForm sendingForm, int na
 }
 
 static void DO_Picture_writeToPdfFile (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *dummy) {
-	static Any dia;
+	static UiForm dia;
 	(void) narg;
 	(void) interpreter;
 	(void) modified;
@@ -523,7 +523,7 @@ static void DO_Picture_writeToPdfFile (UiForm sendingForm, int narg, Stackel arg
 }
 
 static void DO_Picture_writeToPngFile_300 (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *dummy) {
-	static Any dia;
+	static UiForm dia;
 	(void) narg;
 	(void) interpreter;
 	(void) modified;
@@ -549,7 +549,7 @@ static void DO_Picture_writeToPngFile_300 (UiForm sendingForm, int narg, Stackel
 }
 
 static void DO_Picture_writeToPngFile_600 (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *dummy) {
-	static Any dia;
+	static UiForm dia;
 	(void) narg;
 	(void) interpreter;
 	(void) modified;
@@ -575,7 +575,7 @@ static void DO_Picture_writeToPngFile_600 (UiForm sendingForm, int narg, Stackel
 }
 
 static void DO_Picture_writeToPraatPictureFile (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *dummy) {
-	static Any dia;
+	static UiForm dia;
 	(void) narg;
 	(void) interpreter;
 	(void) modified;
@@ -712,7 +712,7 @@ DO
 	Graphics_unsetInner (GRAPHICS);
 END2 }
 
-static void dia_line (Any dia) {
+static void dia_line (UiForm dia) {
 	REAL (U"From x", U"0.0")
 	REAL (U"From y", U"0.0")
 	REAL (U"To x", U"1.0")
@@ -801,7 +801,7 @@ DO
 	Graphics_unsetInner (GRAPHICS);
 END2 }
 
-static void dia_rectangle (Any dia) {
+static void dia_rectangle (UiForm dia) {
 	REAL (U"From x", U"0.0")
 	REAL (U"To x", U"1.0")
 	REAL (U"From y", U"0.0")
@@ -1022,14 +1022,14 @@ DO
 	Graphics_textBottom (GRAPHICS, GET_INTEGER (U"Far"), GET_STRING (U"text"));
 END2 }
 
-static void dia_marksEvery (Any dia) {
+static void dia_marksEvery (UiForm dia) {
 	POSITIVE (U"Units", U"1.0")
 	POSITIVE (U"Distance", U"0.1")
 	BOOLEAN (U"Write numbers", 1)
 	BOOLEAN (U"Draw ticks", 1)
 	BOOLEAN (U"Draw dotted lines", 1)
 }
-static void do_marksEvery (Any dia, void (*Graphics_marksEvery) (Graphics, double, double, bool, bool, bool)) {
+static void do_marksEvery (UiForm dia, void (*Graphics_marksEvery) (Graphics, double, double, bool, bool, bool)) {
 	autoPraatPicture picture;
 	Graphics_marksEvery (GRAPHICS, GET_REAL (U"Units"), GET_REAL (U"Distance"),
 		GET_INTEGER (U"Write numbers"),
@@ -1044,13 +1044,13 @@ FORM (Marks_bottom_every, U"Praat picture: Marks bottom every...", U"Marks left/
 FORM (Marks_top_every, U"Praat picture: Marks top every...", U"Marks left/right/top/bottom every...") {
 	dia_marksEvery (dia); OK2 DO do_marksEvery (dia, Graphics_marksTopEvery); END2 }
 
-static void dia_marks (Any dia) {
+static void dia_marks (UiForm dia) {
 	NATURAL (U"Number of marks", U"6")
 	BOOLEAN (U"Write numbers", 1)
 	BOOLEAN (U"Draw ticks", 1)
 	BOOLEAN (U"Draw dotted lines", 1)
 }
-static void do_marks (Any dia, void (*Graphics_marks) (Graphics, int, bool, bool, bool)) {
+static void do_marks (UiForm dia, void (*Graphics_marks) (Graphics, int, bool, bool, bool)) {
 	long numberOfMarks = GET_INTEGER (U"Number of marks");
 	REQUIRE (numberOfMarks >= 2, U"`Number of marks' must be at least 2.")
 	autoPraatPicture picture;
@@ -1066,13 +1066,13 @@ FORM (Marks_bottom, U"Praat picture: Marks bottom", U"Marks left/right/top/botto
 FORM (Marks_top, U"Praat picture: Marks top", U"Marks left/right/top/bottom...") {
 	dia_marks (dia); OK2 DO do_marks (dia, Graphics_marksTop); END2 }
 
-static void dia_marksLogarithmic (Any dia) {
+static void dia_marksLogarithmic (UiForm dia) {
 	NATURAL (U"Marks per decade", U"3")
 	BOOLEAN (U"Write numbers", 1)
 	BOOLEAN (U"Draw ticks", 1)
 	BOOLEAN (U"Draw dotted lines", 1)
 }
-static void do_marksLogarithmic (Any dia, void (*Graphics_marksLogarithmic) (Graphics, int, bool, bool, bool)) {
+static void do_marksLogarithmic (UiForm dia, void (*Graphics_marksLogarithmic) (Graphics, int, bool, bool, bool)) {
 	long numberOfMarksPerDecade = GET_INTEGER (U"Marks per decade");
 	autoPraatPicture picture;
 	Graphics_marksLogarithmic (GRAPHICS, numberOfMarksPerDecade, GET_INTEGER (U"Write numbers"),
@@ -1093,7 +1093,7 @@ static void sortBoundingBox (double *x1WC, double *x2WC, double *y1WC, double *y
 	if (*y1WC > *y2WC) temp = *y1WC, *y1WC = *y2WC, *y2WC = temp;
 }
 
-static void dia_oneMark (Any dia) {
+static void dia_oneMark (UiForm dia) {
 	REAL (U"Position", U"0.0")
 	BOOLEAN (U"Write number", 1)
 	BOOLEAN (U"Draw tick", 1)
@@ -1181,7 +1181,7 @@ DO
 		GET_STRING (U"text"));
 END2 }
 
-static void dia_oneLogarithmicMark (Any dia) {
+static void dia_oneLogarithmicMark (UiForm dia) {
 	REAL (U"Position", U"1.0")
 	BOOLEAN (U"Write number", 1)
 	BOOLEAN (U"Draw tick", 1)

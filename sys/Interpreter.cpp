@@ -383,7 +383,7 @@ UiForm Interpreter_createForm (Interpreter me, GuiWindow parent, const char32 *p
 	return form;
 }
 
-void Interpreter_getArgumentsFromDialog (Interpreter me, Any dialog) {
+void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog) {
 	for (int ipar = 1; ipar <= my numberOfParameters; ipar ++) {
 		char32 parameter [100], *p;
 		/*

@@ -950,7 +950,7 @@ DO
 	}
 END
 
-static void Sound_to_LPC_addCommonFields (void *dia) {
+static void Sound_to_LPC_addCommonFields (UiForm dia) {
 	LABEL (U"", U"Warning 1:  for formant analysis, use \"To Formant\" instead.")
 	LABEL (U"", U"Warning 2:  if you do use \"To LPC\", you may want to resample first.")
 	LABEL (U"", U"Click Help for more details.")
@@ -961,7 +961,7 @@ static void Sound_to_LPC_addCommonFields (void *dia) {
 	REAL (U"Pre-emphasis frequency (Hz)", U"50.0")
 }
 
-static void Sound_to_LPC_checkCommonFields (void *dia, long *predictionOrder, double *analysisWindowDuration,
+static void Sound_to_LPC_checkCommonFields (UiForm dia, long *predictionOrder, double *analysisWindowDuration,
         double *timeStep, double *preemphasisFrequency) {
 	*predictionOrder = GET_INTEGER (U"Prediction order");
 	*analysisWindowDuration = GET_REAL (U"Window length");
