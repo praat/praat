@@ -80,7 +80,7 @@ static void updateMenus (ManipulationEditor me) {
 /*
  * The "sound area" contains the original sound and the pulses.
  */
-static int getSoundArea (ManipulationEditor me, double *ymin, double *ymax) {
+static bool getSoundArea (ManipulationEditor me, double *ymin, double *ymax) {
 	Manipulation ana = (Manipulation) my data;
 	*ymin = 0.66;
 	*ymax = 1.00;
@@ -89,18 +89,18 @@ static int getSoundArea (ManipulationEditor me, double *ymin, double *ymax) {
 /*
  * The "pitch area" contains the grey pitch analysis based on the pulses, and the blue pitch tier.
  */
-static int getPitchArea (ManipulationEditor me, double *ymin, double *ymax) {
+static bool getPitchArea (ManipulationEditor me, double *ymin, double *ymax) {
 	Manipulation ana = (Manipulation) my data;
 	*ymin = ana -> duration ? 0.16 : 0.00;
 	*ymax = 0.65;
-	return ana -> pulses != NULL || ana -> pitch != NULL;
+	return ana -> pulses != NULL || ana -> pitch;
 }
-static int getDurationArea (ManipulationEditor me, double *ymin, double *ymax) {
+static bool getDurationArea (ManipulationEditor me, double *ymin, double *ymax) {
 	Manipulation ana = (Manipulation) my data;
-	if (! ana -> duration) return FALSE;
+	if (! ana -> duration) return false;
 	*ymin = 0.00;
 	*ymax = 0.15;
-	return TRUE;
+	return true;
 }
 
 /********** DESTRUCTION **********/
@@ -136,7 +136,7 @@ static void menu_cb_extractPitchTier (EDITOR_ARGS) {
 	EDITOR_IAM (ManipulationEditor);
 	Manipulation ana = (Manipulation) my data;
 	if (! ana -> pitch) return;
-	autoPitchTier publish = Data_copy (ana -> pitch);
+	autoPitchTier publish = Data_copy (ana -> pitch.get());
 	Editor_broadcastPublication (me, publish.transfer());
 }
 
@@ -163,7 +163,7 @@ void structManipulationEditor :: v_saveData () {
 	forget (our previousPitch);
 	forget (our previousDuration);
 	if (ana -> pulses)   our previousPulses   = Data_copy (ana -> pulses);
-	if (ana -> pitch)    our previousPitch    = Data_copy (ana -> pitch);
+	if (ana -> pitch)    our previousPitch    = Data_copy (ana -> pitch.get());
 	if (ana -> duration) our previousDuration = Data_copy (ana -> duration);
 }
 
@@ -171,7 +171,7 @@ void structManipulationEditor :: v_restoreData () {
 	Manipulation ana = (Manipulation) our data;
 	Any dummy;
 	dummy = ana -> pulses;   ana -> pulses   = our previousPulses;   our previousPulses   = (PointProcess) dummy;
-	dummy = ana -> pitch;    ana -> pitch    = our previousPitch;    our previousPitch    = (PitchTier)    dummy;
+	autoPitchTier dummyp = ana -> pitch.move();    ana -> pitch    = our previousPitch;    our previousPitch = dummyp.transfer();
 	dummy = ana -> duration; ana -> duration = our previousDuration; our previousDuration = (DurationTier) dummy;
 }
 
@@ -224,9 +224,9 @@ static void menu_cb_removePitchPoints (EDITOR_ARGS) {
 	if (! ana -> pitch) return;
 	Editor_save (me, U"Remove pitch point(s)");
 	if (my d_startSelection == my d_endSelection)
-		AnyTier_removePointNear (ana -> pitch, my d_startSelection);
+		AnyTier_removePointNear (ana -> pitch.get(), my d_startSelection);
 	else
-		AnyTier_removePointsBetween (ana -> pitch, my d_startSelection, my d_endSelection);
+		AnyTier_removePointsBetween (ana -> pitch.get(), my d_startSelection, my d_endSelection);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
@@ -236,7 +236,7 @@ static void menu_cb_addPitchPointAtCursor (EDITOR_ARGS) {
 	Manipulation ana = (Manipulation) my data;
 	if (! ana -> pitch) return;
 	Editor_save (me, U"Add pitch point");
-	RealTier_addPoint (ana -> pitch, 0.5 * (my d_startSelection + my d_endSelection), YLININV (my pitchTier.cursor));
+	RealTier_addPoint (ana -> pitch.get(), 0.5 * (my d_startSelection + my d_endSelection), YLININV (my pitchTier.cursor));
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
@@ -274,7 +274,7 @@ static void menu_cb_addPitchPointAtSlice (EDITOR_ARGS) {
 		else if (tmid != 0.0) f = YLIN (2 / (tmid + tright));   // median of 2
 		else if (tright != 0.0) f = YLIN (1 / tright);   // median of 1
 	}
-	RealTier_addPoint (ana -> pitch, 0.5 * (my d_startSelection + my d_endSelection), YLININV (f));
+	RealTier_addPoint (ana -> pitch.get(), 0.5 * (my d_startSelection + my d_endSelection), YLININV (f));
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }	
@@ -291,7 +291,7 @@ static void menu_cb_addPitchPointAt (EDITOR_ARGS) {
 		Manipulation ana = (Manipulation) my data;
 		if (! ana -> pitch) return;
 		Editor_save (me, U"Add pitch point");
-		RealTier_addPoint (ana -> pitch, GET_REAL (U"Time"), YLININV (GET_REAL (U"Frequency")));
+		RealTier_addPoint (ana -> pitch.get(), GET_REAL (U"Time"), YLININV (GET_REAL (U"Frequency")));
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -311,7 +311,7 @@ static void menu_cb_stylizePitch (EDITOR_ARGS) {
 		Manipulation ana = (Manipulation) my data;
 		if (! ana -> pitch) return;
 		Editor_save (me, U"Stylize pitch");
-		PitchTier_stylize (ana -> pitch,
+		PitchTier_stylize (ana -> pitch.get(),
 			my pref_pitch_stylize_frequencyResolution () = my p_pitch_stylize_frequencyResolution = GET_REAL (U"Frequency resolution"),
 			my pref_pitch_stylize_useSemitones        () = my p_pitch_stylize_useSemitones        = GET_INTEGER (U"Units") - 1);
 		FunctionEditor_redraw (me);
@@ -324,7 +324,7 @@ static void menu_cb_stylizePitch_2st (EDITOR_ARGS) {
 	Manipulation ana = (Manipulation) my data;
 	if (! ana -> pitch) return;
 	Editor_save (me, U"Stylize pitch");
-	PitchTier_stylize (ana -> pitch, 2.0, TRUE);
+	PitchTier_stylize (ana -> pitch.get(), 2.0, TRUE);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
@@ -339,7 +339,7 @@ static void menu_cb_interpolateQuadratically (EDITOR_ARGS) {
 		Manipulation ana = (Manipulation) my data;
 		if (! ana -> pitch) return;
 		Editor_save (me, U"Interpolate quadratically");
-		RealTier_interpolateQuadratically (ana -> pitch,
+		RealTier_interpolateQuadratically (ana -> pitch.get(),
 			my pref_pitch_interpolateQuadratically_numberOfPointsPerParabola () = my p_pitch_interpolateQuadratically_numberOfPointsPerParabola = GET_INTEGER (U"Number of points per parabola"),
 			my p_pitch_units == kManipulationEditor_pitchUnits_SEMITONES);
 		FunctionEditor_redraw (me);
@@ -352,7 +352,7 @@ static void menu_cb_interpolateQuadratically_4pts (EDITOR_ARGS) {
 	Manipulation ana = (Manipulation) my data;
 	if (! ana -> pitch) return;
 	Editor_save (me, U"Interpolate quadratically");
-	RealTier_interpolateQuadratically (ana -> pitch, 4, my p_pitch_units == kManipulationEditor_pitchUnits_SEMITONES);
+	RealTier_interpolateQuadratically (ana -> pitch.get(), 4, my p_pitch_units == kManipulationEditor_pitchUnits_SEMITONES);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
@@ -380,7 +380,7 @@ static void menu_cb_shiftPitchFrequencies (EDITOR_ARGS) {
 		if (! ana -> pitch) return;
 		Editor_save (me, U"Shift pitch frequencies");
 		try {
-			PitchTier_shiftFrequencies (ana -> pitch, my d_startSelection, my d_endSelection, GET_REAL (U"Frequency shift"), unit);
+			PitchTier_shiftFrequencies (ana -> pitch.get(), my d_startSelection, my d_endSelection, GET_REAL (U"Frequency shift"), unit);
 			FunctionEditor_redraw (me);
 			Editor_broadcastDataChanged (me);
 		} catch (MelderError) {
@@ -402,7 +402,7 @@ static void menu_cb_multiplyPitchFrequencies (EDITOR_ARGS) {
 		Manipulation ana = (Manipulation) my data;
 		if (! ana -> pitch) return;
 		Editor_save (me, U"Multiply pitch frequencies");
-		PitchTier_multiplyFrequencies (ana -> pitch, my d_startSelection, my d_endSelection, GET_REAL (U"Factor"));
+		PitchTier_multiplyFrequencies (ana -> pitch.get(), my d_startSelection, my d_endSelection, GET_REAL (U"Factor"));
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -709,7 +709,7 @@ static void drawSoundArea (ManipulationEditor me, double ymin, double ymax) {
 static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 	Manipulation ana = (Manipulation) my data;
 	PointProcess pulses = ana -> pulses;
-	PitchTier pitch = ana -> pitch;
+	PitchTier pitch = ana -> pitch.get();
 	long ifirstSelected, ilastSelected, n = pitch ? pitch -> points -> size : 0, imin, imax, i;
 	int cursorVisible = my d_startSelection == my d_endSelection && my d_startSelection >= my d_startWindow && my d_startSelection <= my d_endWindow;
 	double minimumFrequency = YLIN (50);
@@ -931,7 +931,7 @@ void structManipulationEditor :: v_draw () {
 
 static void drawWhileDragging (ManipulationEditor me, double xWC, double yWC, long first, long last, double dt, double df) {
 	Manipulation ana = (Manipulation) my data;
-	PitchTier pitch = ana -> pitch;
+	PitchTier pitch = ana -> pitch.get();
 	(void) xWC;
 	(void) yWC;
 
@@ -963,7 +963,7 @@ static void drawWhileDragging (ManipulationEditor me, double xWC, double yWC, lo
 
 static int clickPitch (ManipulationEditor me, double xWC, double yWC, bool shiftKeyPressed) {
 	Manipulation ana = (Manipulation) my data;
-	PitchTier pitch = ana -> pitch;
+	PitchTier pitch = ana -> pitch.get();
 	long inearestPoint, ifirstSelected, ilastSelected, i;
 	RealPoint nearestPoint;
 	double dt = 0, df = 0;
@@ -1261,7 +1261,7 @@ ManipulationEditor ManipulationEditor_create (const char32 *title, Manipulation 
 		autoManipulationEditor me = Thing_new (ManipulationEditor);
 		FunctionEditor_init (me.peek(), title, ana);
 
-		double maximumPitchValue = RealTier_getMaximumValue (ana -> pitch);
+		double maximumPitchValue = RealTier_getMaximumValue (ana -> pitch.get());
 		if (my p_pitch_units == kManipulationEditor_pitchUnits_HERTZ) {
 			my p_pitch_minimum = 25.0;
 			my pitchTier.minPeriodic = 50.0;

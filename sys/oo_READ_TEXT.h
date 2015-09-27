@@ -145,6 +145,12 @@
 		our x -> v_readText (a_text, formatVersion); \
 	}
 
+#define oo_AUTO_OBJECT(Class,formatVersion,x)  \
+	if (texgetex (a_text) == 1) { \
+		our x = Thing_new (Class); \
+		our x -> v_readText (a_text, formatVersion); \
+	}
+
 #define oo_COLLECTION(Class,x,ItemClass,formatVersion)  \
 	{ \
 		long n = texgeti4 (a_text); \

@@ -321,7 +321,10 @@ public:
 			d_ptr = NULL;
 		}
 	}
-	inline T* peek () const {
+	T* get () const {
+		return d_ptr;
+	}
+	T* peek () const {
 		return d_ptr;
 	}
 	/*
@@ -358,7 +361,7 @@ public:
 		d_ptr = NULL;   // make the pointer non-automatic again
 		return temp;
 	}
-	#if 1
+	#if 0
 		inline operator T* () { return d_ptr; }   // this way only if peek() and transfer() are the same, e.g. in case of reference counting
 		// template <class Y> Y* operator= (_Thing_auto<Y>& a) { }
 	#endif
@@ -374,12 +377,21 @@ public:
 	 * so that you can easily spot ugly places in your source code.
 	 * In order not to leak memory, the old object is destroyed.
 	 */
-	inline void reset (T* ptr) {
+	inline void reset (T* ptr = 0) {
 		_Thing_forget (d_ptr);
 		d_ptr = ptr;
 	}
 	inline void zero () {
 		d_ptr = NULL;
+	}
+	operator bool () {
+		return d_ptr != NULL;
+	}
+	bool operator== (_Thing_auto<T> other) {
+		other. d_ptr == d_ptr;
+	}
+	bool operator!= (_Thing_auto<T> other) {
+		other. d_ptr != d_ptr;
 	}
 private:
 	/*

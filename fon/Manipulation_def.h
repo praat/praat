@@ -31,7 +31,7 @@ oo_DEFINE_CLASS (Manipulation, Function)
 		oo_OBJECT (Sound, 0, sound)
 	#endif
 	oo_OBJECT (PointProcess, 0, pulses)
-	oo_OBJECT (PitchTier, 0, pitch)
+	oo_AUTO_OBJECT (PitchTier, 0, pitch)
 
 	oo_FROM (1)
 		oo_OBJECT (IntensityTier, 0, dummyIntensity)
