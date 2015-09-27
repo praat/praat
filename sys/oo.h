@@ -250,6 +250,7 @@
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  struct struct##Type **x;
 
 #define oo_OBJECT(Class,version,x)  Class x;
+#define oo_AUTO_OBJECT(Class,version,x)  auto##Class x;
 #define oo_COLLECTION(Class,x,ItemClass,version)  Class x;
 #define oo_FILE(x)  structMelderFile x;
 #define oo_DIR(x)  structMelderDir x;

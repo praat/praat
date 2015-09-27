@@ -130,9 +130,14 @@
 	texexdent (file);
 
 #define oo_OBJECT(Class,version,x)  \
-	texputex (file, our x != NULL, U"" #x, 0,0,0,0,0); \
+	texputex (file, our x, U"" #x, 0,0,0,0,0); \
 	if (our x) \
 		Data_writeText (our x, file);
+
+#define oo_AUTO_OBJECT(Class,version,x)  \
+	texputex (file, our x, U"" #x, 0,0,0,0,0); \
+	if (our x) \
+		Data_writeText (our x.get(), file);
 
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
 	texputi4 (file, our x ? our x -> size : 0, U"" #x U": size", 0,0,0,0,0); \

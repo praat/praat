@@ -124,6 +124,12 @@
 		our x -> v_readBinary (f, formatVersion); \
 	}
 
+#define oo_AUTO_OBJECT(Class,formatVersion,x)  \
+	if (bingetex (f)) { \
+		our x = Thing_new (Class); \
+		our x -> v_readBinary (f, formatVersion); \
+	}
+
 #define oo_COLLECTION(Class,x,ItemClass,formatVersion)  \
 	{ \
 		int32_t n = bingeti4 (f); \

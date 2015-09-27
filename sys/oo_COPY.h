@@ -95,6 +95,9 @@
 #define oo_OBJECT(Class,version,x)  \
 	if (our x) thy x = Data_copy (our x);
 
+#define oo_AUTO_OBJECT(Class,version,x)  \
+	if (our x) thy x = Data_copy (our x.get());
+
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
 	if (our x) thy x = Data_copy (our x);
 

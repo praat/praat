@@ -30,7 +30,7 @@
 #include "Sound_to_Pitch.h"
 #include "Pitch_to_PointProcess.h"
 
-PointProcess Sound_to_PointProcess_extrema (Sound me, long channel, int interpolation, bool includeMaxima, bool includeMinima) {
+autoPointProcess Sound_to_PointProcess_extrema (Sound me, long channel, int interpolation, bool includeMaxima, bool includeMinima) {
 	try {
 		/*
 		 * Pass 1: count the extrema. There may be a maximum and minimum in the same interval!
@@ -62,20 +62,20 @@ PointProcess Sound_to_PointProcess_extrema (Sound me, long channel, int interpol
 				PointProcess_addPoint (thee.peek(), time);
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": extrema not computed.");
 	}
 }
 
-PointProcess Sound_to_PointProcess_maxima (Sound me, long channel, int interpolation)
+autoPointProcess Sound_to_PointProcess_maxima (Sound me, long channel, int interpolation)
 	{ return Sound_to_PointProcess_extrema (me, channel, interpolation, true, false); }
-PointProcess Sound_to_PointProcess_minima (Sound me, long channel, int interpolation)
+autoPointProcess Sound_to_PointProcess_minima (Sound me, long channel, int interpolation)
 	{ return Sound_to_PointProcess_extrema (me, channel, interpolation, false, true); }
-PointProcess Sound_to_PointProcess_allExtrema (Sound me, long channel, int interpolation)
+autoPointProcess Sound_to_PointProcess_allExtrema (Sound me, long channel, int interpolation)
 	{ return Sound_to_PointProcess_extrema (me, channel, interpolation, true, true); }
 
-PointProcess Sound_to_PointProcess_zeroes (Sound me, long channel, bool includeRaisers, bool includeFallers) {
+autoPointProcess Sound_to_PointProcess_zeroes (Sound me, long channel, bool includeRaisers, bool includeFallers) {
 	try {
 		/*
 		 * Pass 1: count the zeroes.
@@ -102,7 +102,7 @@ PointProcess Sound_to_PointProcess_zeroes (Sound me, long channel, bool includeR
 				PointProcess_addPoint (thee.peek(), time);
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": zeroes not computed.");
 	}
@@ -114,26 +114,19 @@ static void SomeCollection_addItem (autoDaata me) {
 
 autoPointProcess Sound_to_PointProcess_periodic_cc (Sound me, double fmin, double fmax) {
 	try {
-		/*
-		 * TRYOUT
-		 */
-		autoPitch pitch = Pitch_create (my xmin, my xmax, 1, 1, 1, 1, 1);
-		//SomeCollection_addItem (pitch);   // not accepted by compiler
-		SomeCollection_addItem (pitch.move());   // accepted by compiler
-
-		pitch = Sound_to_Pitch (me, 0.0, fmin, fmax);
-		autoPointProcess thee = Sound_Pitch_to_PointProcess_cc (me, pitch);
+		autoPitch pitch = Sound_to_Pitch (me, 0.0, fmin, fmax);
+		autoPointProcess thee = Sound_Pitch_to_PointProcess_cc (me, pitch.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": periodic pulses (cc) not computed.");
 	}
 }
 
-PointProcess Sound_to_PointProcess_periodic_peaks (Sound me, double fmin, double fmax, bool includeMaxima, bool includeMinima) {
+autoPointProcess Sound_to_PointProcess_periodic_peaks (Sound me, double fmin, double fmax, bool includeMaxima, bool includeMinima) {
 	try {
 		autoPitch pitch = Sound_to_Pitch (me, 0.0, fmin, fmax);
 		autoPointProcess thee = Sound_Pitch_to_PointProcess_peaks (me, pitch.peek(), includeMaxima, includeMinima);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": periodic pulses (peaks) not computed.");
 	}

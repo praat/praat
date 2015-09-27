@@ -2400,7 +2400,7 @@ DIRECT2 (Manipulation_extractPitchTier) {
 	LOOP {
 		iam (Manipulation);
 		if (! my pitch) Melder_throw (me, U": I don't contain a PitchTier.");
-		autoPitchTier thee = Data_copy (my pitch);
+		autoPitchTier thee = Data_copy (my pitch.get());
 		praat_new (thee.transfer(), my name);
 	}
 END2 }

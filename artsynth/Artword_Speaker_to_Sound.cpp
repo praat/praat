@@ -38,11 +38,11 @@
 #define MASS_LEAPFROG  0
 #define B91 0
 
-Sound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
+autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 	double fsamp, int oversampling,
-	Sound *out_w1, int iw1, Sound *out_w2, int iw2, Sound *out_w3, int iw3,
-	Sound *out_p1, int ip1, Sound *out_p2, int ip2, Sound *out_p3, int ip3,
-	Sound *out_v1, int iv1, Sound *out_v2, int iv2, Sound *out_v3, int iv3)
+	autoSound *out_w1, int iw1, autoSound *out_w2, int iw2, autoSound *out_w3, int iw3,
+	autoSound *out_p1, int ip1, autoSound *out_p2, int ip2, autoSound *out_p3, int ip3,
+	autoSound *out_v1, int iv1, autoSound *out_v2, int iv2, autoSound *out_v3, int iv3)
 {
 	try {
 		autoSound result = Sound_createSimple (1, artword -> totalTime, fsamp);
@@ -409,16 +409,16 @@ Sound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 		for (m = 1; m <= M; m ++)
 			totalVolume += delta->tube [m]. V;
 		//Melder_casual (U"Ending volume: ", totalVolume * 1000, U" litres.");
-		if (out_w1) *out_w1 = w1.transfer();
-		if (out_w2) *out_w2 = w2.transfer();
-		if (out_w3) *out_w3 = w3.transfer();
-		if (out_p1) *out_p1 = p1.transfer();
-		if (out_p2) *out_p2 = p2.transfer();
-		if (out_p3) *out_p3 = p3.transfer();
-		if (out_v1) *out_v1 = v1.transfer();
-		if (out_v2) *out_v2 = v2.transfer();
-		if (out_v3) *out_v3 = v3.transfer();
-		return result.transfer();
+		if (out_w1) *out_w1 = w1.move();
+		if (out_w2) *out_w2 = w2.move();
+		if (out_w3) *out_w3 = w3.move();
+		if (out_p1) *out_p1 = p1.move();
+		if (out_p2) *out_p2 = p2.move();
+		if (out_p3) *out_p3 = p3.move();
+		if (out_v1) *out_v1 = v1.move();
+		if (out_v2) *out_v2 = v2.move();
+		if (out_v3) *out_v3 = v3.move();
+		return result;
 	} catch (MelderError) {
 		Melder_throw (artword, U" & ", speaker, U": articulatory synthesis not performed.");
 	}

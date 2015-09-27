@@ -527,13 +527,13 @@ static void menu_cb_DrawTextGridAndPitch (EDITOR_ARGS) {
 			if (! my d_pitch) Melder_throw (U"Cannot compute pitch.");
 		}
 		Editor_openPraatPicture (me);
-		double pitchFloor_hidden = Function_convertStandardToSpecialUnit (my d_pitch, my p_pitch_floor, Pitch_LEVEL_FREQUENCY, my p_pitch_unit);
-		double pitchCeiling_hidden = Function_convertStandardToSpecialUnit (my d_pitch, my p_pitch_ceiling, Pitch_LEVEL_FREQUENCY, my p_pitch_unit);
-		double pitchFloor_overt = Function_convertToNonlogarithmic (my d_pitch, pitchFloor_hidden, Pitch_LEVEL_FREQUENCY, my p_pitch_unit);
-		double pitchCeiling_overt = Function_convertToNonlogarithmic (my d_pitch, pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, my p_pitch_unit);
+		double pitchFloor_hidden = Function_convertStandardToSpecialUnit (my d_pitch.peek(), my p_pitch_floor, Pitch_LEVEL_FREQUENCY, my p_pitch_unit);
+		double pitchCeiling_hidden = Function_convertStandardToSpecialUnit (my d_pitch.peek(), my p_pitch_ceiling, Pitch_LEVEL_FREQUENCY, my p_pitch_unit);
+		double pitchFloor_overt = Function_convertToNonlogarithmic (my d_pitch.peek(), pitchFloor_hidden, Pitch_LEVEL_FREQUENCY, my p_pitch_unit);
+		double pitchCeiling_overt = Function_convertToNonlogarithmic (my d_pitch.peek(), pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, my p_pitch_unit);
 		double pitchViewFrom_overt = my p_pitch_viewFrom < my p_pitch_viewTo ? my p_pitch_viewFrom : pitchFloor_overt;
 		double pitchViewTo_overt = my p_pitch_viewFrom < my p_pitch_viewTo ? my p_pitch_viewTo : pitchCeiling_overt;
-		TextGrid_Pitch_drawSeparately ((TextGrid) my data, my d_pitch, my pictureGraphics, my d_startWindow, my d_endWindow,
+		TextGrid_Pitch_drawSeparately ((TextGrid) my data, my d_pitch.peek(), my pictureGraphics, my d_startWindow, my d_endWindow,
 			pitchViewFrom_overt, pitchViewTo_overt, GET_INTEGER (U"Show boundaries and points"), my p_useTextStyles, GET_INTEGER (U"Garnish"),
 			GET_INTEGER (U"Speckle"), my p_pitch_unit);
 		FunctionEditor_garnish (me);

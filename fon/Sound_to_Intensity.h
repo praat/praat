@@ -1,6 +1,6 @@
 /* Sound_to_Intensity.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #include "Intensity.h"
 #include "IntensityTier.h"
 
-Intensity Sound_to_Intensity (Sound me, double minimumPitch, double timeStep, int subtractMean);
+autoIntensity Sound_to_Intensity (Sound me, double minimumPitch, double timeStep, int subtractMean);
 /*
 	Function:
 		smooth away the periodic part of a signal,
@@ -46,6 +46,6 @@ Intensity Sound_to_Intensity (Sound me, double minimumPitch, double timeStep, in
 		actual window duration = 64 ms;
 */
 
-IntensityTier Sound_to_IntensityTier (Sound me, double minimumPitch, double timeStep, int subtractMean);
+autoIntensityTier Sound_to_IntensityTier (Sound me, double minimumPitch, double timeStep, int subtractMean);
 
 /* End of file Sound_to_Intensity.h */

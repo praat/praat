@@ -194,7 +194,7 @@ FORM (Artword_Speaker_to_Sound, U"Articulatory synthesizer", U"Artword & Speaker
 	INTEGER (U"Velocity 3", U"0")
 	OK2
 DO
-	Sound w1, w2, w3, p1, p2, p3, v1, v2, v3;
+	autoSound w1, w2, w3, p1, p2, p3, v1, v2, v3;
 	int iw1 = GET_INTEGER (U"Width 1");
 	int iw2 = GET_INTEGER (U"Width 2");
 	int iw3 = GET_INTEGER (U"Width 3");
@@ -212,15 +212,15 @@ DO
 			& p1, ip1, & p2, ip2, & p3, ip3,
 			& v1, iv1, & v2, iv2, & v3, iv3);
 	praat_new (him.transfer(), my name, U"_", thy name);
-	if (iw1) praat_new (w1, U"width", iw1);
-	if (iw2) praat_new (w2, U"width", iw2);
-	if (iw3) praat_new (w3, U"width", iw3);
-	if (ip1) praat_new (p1, U"pressure", ip1);
-	if (ip2) praat_new (p2, U"pressure", ip2);
-	if (ip3) praat_new (p3, U"pressure", ip3);
-	if (iv1) praat_new (v1, U"velocity", iv1);
-	if (iv2) praat_new (v2, U"velocity", iv2);
-	if (iv3) praat_new (v3, U"velocity", iv3);
+	if (iw1) praat_new (w1.transfer(), U"width", iw1);
+	if (iw2) praat_new (w2.transfer(), U"width", iw2);
+	if (iw3) praat_new (w3.transfer(), U"width", iw3);
+	if (ip1) praat_new (p1.transfer(), U"pressure", ip1);
+	if (ip2) praat_new (p2.transfer(), U"pressure", ip2);
+	if (ip3) praat_new (p3.transfer(), U"pressure", ip3);
+	if (iv1) praat_new (v1.transfer(), U"velocity", iv1);
+	if (iv2) praat_new (v2.transfer(), U"velocity", iv2);
+	if (iv3) praat_new (v3.transfer(), U"velocity", iv3);
 END2 }
 
 /***** ARTWORD & SPEAKER [ & SOUND ] *****/

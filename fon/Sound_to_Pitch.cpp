@@ -548,7 +548,7 @@ autoPitch Sound_to_Pitch_any (Sound me,
 		MelderThread_run (Sound_into_Pitch, args, numberOfThreads);
 
 		Melder_progress (0.95, U"Sound to Pitch: path finder");
-		Pitch_pathFinder (thee, silenceThreshold, voicingThreshold,
+		Pitch_pathFinder (thee.peek(), silenceThreshold, voicingThreshold,
 			octaveCost, octaveJumpCost, voicedUnvoicedCost, ceiling, Melder_debug == 31 ? true : false);
 
 		return thee;
