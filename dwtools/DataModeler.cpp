@@ -77,7 +77,7 @@ void structDataModeler :: v_info () {
 	}
 }
 
-static double polynome_evaluate (DataModeler me, double xin, double p[])
+static double polynomial_evaluate (DataModeler me, double xin, double p[])
 {
 	double xpi = 1, result = p[1];
 	// From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
@@ -89,7 +89,7 @@ static double polynome_evaluate (DataModeler me, double xin, double p[])
 	return result;
 }
 
-static void polynome_evaluateBasisFunctions (DataModeler me, double xin, double term[]) {
+static void polynomial_evaluateBasisFunctions (DataModeler me, double xin, double term[]) {
 	term[1] = 1;
 	// From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
 	double x = (2 * xin - my xmin - my xmax) / 2;
@@ -705,8 +705,8 @@ void DataModeler_setBasisFunctions (DataModeler me, int type) {
 		my f_evaluate = legendre_evaluate;
 		my f_evaluateBasisFunctions = legendre_evaluateBasisFunctions;
 	} else {
-		my f_evaluate = polynome_evaluate;
-		my f_evaluateBasisFunctions = polynome_evaluateBasisFunctions;
+		my f_evaluate = polynomial_evaluate;
+		my f_evaluateBasisFunctions = polynomial_evaluateBasisFunctions;
 	}
 	my type = type;
 }
@@ -847,10 +847,11 @@ void DataModeler_fit (DataModeler me)
 					cov -> data[i][j] = cov -> data[j][i] = 0;
 				}
 			}
-			long ipar = 0, jpar;
+			ipar = 0;
 			for (long i = 1; i <= my numberOfParameters; i++) {
 				if (my parameterStatus[i] != DataModeler_PARAMETER_FIXED) {
-					jpar = 0; ipar++;
+					long jpar = 0;
+					ipar++;
 					for (long j = 1; j <= my numberOfParameters; j++) {
 						if (my parameterStatus[j] != DataModeler_PARAMETER_FIXED) {
 							jpar++;
@@ -2042,12 +2043,13 @@ Formant Sound_to_Formant_interval (Sound me, double startTime, double endTime, d
 		if (maxFreq > nyquistFrequency) {
 			Melder_throw (U"The upper value of the maximum frequency range is higher than the Nyquist frequency of the sound.");
 		}
-		double df = 0, ceiling_best, mincriterium = 1e28;
+		double df = 0, mincriterium = 1e28;
 		if (minFreq >= maxFreq) {
 			numberOfFrequencySteps = 1;
 		} else {
 			df = (maxFreq - minFreq) / (numberOfFrequencySteps - 1);
 		}
+		double ceiling_best = minFreq;
 		long i_best = 0;
 		
 		// extract part +- windowLength because of Gaussian windowing in the formant analysis
@@ -2096,14 +2098,14 @@ Formant Sound_to_Formant_interval_robust (Sound me, double startTime, double end
 		if (maxFreq > nyquistFrequency) {
 			Melder_throw (U"The upper value of the maximum frequency range is higher than the Nyquist frequency of the sound.");
 		}
-		double df = 0, ceiling_best, mincriterium = 1e28;
+		double df = 0, mincriterium = 1e28;
 		if (minFreq >= maxFreq) {
 			numberOfFrequencySteps = 1;
 		} else {
 			df = (maxFreq - minFreq) / (numberOfFrequencySteps - 1);
 		}
 		long i_best = 0;
-		
+		double ceiling_best = minFreq;
 		// extract part +- windowLength because of Gaussian windowing in the formant analysis
 		// +timeStep/2 to have the analysis points maximally spread in the new domain.
 		
