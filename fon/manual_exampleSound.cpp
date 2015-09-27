@@ -2598,13 +2598,13 @@ Sound manual_exampleSound (void) {
 }
 
 Pitch manual_examplePitch (void) {
-	static Pitch me = NULL;
-	if (me == NULL) {
+	static autoPitch me = NULL;
+	if (! me) {
 		Melder_progressOff ();
 		me = Sound_to_Pitch (manual_exampleSound (), 0.0, 200.0, 500.0);
 		Melder_progressOn ();
 	}
-	return me;
+	return me.peek();
 }
 
 /* End of file manual_exampleSound.cpp */
