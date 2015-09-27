@@ -34,7 +34,7 @@
 
 #include "Sound_to_Intensity.h"
 
-static Intensity Sound_to_Intensity_ (Sound me, double minimumPitch, double timeStep, int subtractMeanPressure) {
+static autoIntensity Sound_to_Intensity_ (Sound me, double minimumPitch, double timeStep, int subtractMeanPressure) {
 	try {
 		/*
 		 * Preconditions.
@@ -101,29 +101,29 @@ static Intensity Sound_to_Intensity_ (Sound me, double minimumPitch, double time
 			intensity /= 4e-10;
 			thy z [1] [iframe] = intensity < 1e-30 ? -300 : 10 * log10 (intensity);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": intensity analysis not performed.");
 	}
 }
 
-Intensity Sound_to_Intensity (Sound me, double minimumPitch, double timeStep, int subtractMeanPressure) {
+autoIntensity Sound_to_Intensity (Sound me, double minimumPitch, double timeStep, int subtractMeanPressure) {
 	bool veryAccurate = false;
 	if (veryAccurate) {
 		autoSound up = Sound_upsample (me);   // because squaring doubles the frequency content, i.e. you get super-Nyquist components
 		autoIntensity thee = Sound_to_Intensity_ (up.peek(), minimumPitch, timeStep, subtractMeanPressure);
-		return thee.transfer();
+		return thee;
 	} else {
 		autoIntensity thee = Sound_to_Intensity_ (me, minimumPitch, timeStep, subtractMeanPressure);
-		return thee.transfer();
+		return thee;
 	}
 }
 
-IntensityTier Sound_to_IntensityTier (Sound me, double minimumPitch, double timeStep, int subtractMean) {
+autoIntensityTier Sound_to_IntensityTier (Sound me, double minimumPitch, double timeStep, int subtractMean) {
 	try {
 		autoIntensity intensity = Sound_to_Intensity (me, minimumPitch, timeStep, subtractMean);
 		autoIntensityTier thee = Intensity_downto_IntensityTier (intensity.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no IntensityTier created.");
 	}

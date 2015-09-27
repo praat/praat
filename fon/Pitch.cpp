@@ -391,7 +391,7 @@ void Pitch_Frame_init (Pitch_Frame me, int nCandidates) {
 	my nCandidates = nCandidates;
 }
 
-Pitch Pitch_create (double tmin, double tmax, long nt, double dt, double t1,
+autoPitch Pitch_create (double tmin, double tmax, long nt, double dt, double t1,
 	double ceiling, int maxnCandidates)
 {
 	try {
@@ -406,7 +406,7 @@ Pitch Pitch_create (double tmin, double tmax, long nt, double dt, double t1,
 			Pitch_Frame_init (& my frame [it], 1);
 		}
 
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Pitch not created.");
 	}

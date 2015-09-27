@@ -1,6 +1,6 @@
 /* PointProcess_and_Sound.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #include "PointProcess.h"
 #include "Sound.h"
 
-Sound PointProcess_to_Sound_pulseTrain (PointProcess me, double samplingFrequency,
+autoSound PointProcess_to_Sound_pulseTrain (PointProcess me, double samplingFrequency,
 	double adaptFactor, double adaptTime, long interpolationDepth);
 /*
 	Function:
@@ -34,7 +34,7 @@ Sound PointProcess_to_Sound_pulseTrain (PointProcess me, double samplingFrequenc
 		"interpolationDepth" is the number of samples for sinxx interpolation in each direction.
 */
 
-Sound PointProcess_to_Sound_phonation
+autoSound PointProcess_to_Sound_phonation
 	(PointProcess me, double samplingFrequency, double adaptFactor, double maximumPeriod,
 	 double openPhase, double collisionPhase, double power1, double power2);
 #define PointProcess_to_Sound_phonation_DEFAULT_ADAPT_FACTOR  1.0
@@ -47,6 +47,6 @@ Sound PointProcess_to_Sound_phonation
 void PointProcess_playPart (PointProcess me, double tmin, double tmax);
 void PointProcess_play (PointProcess me);
 void PointProcess_hum (PointProcess me, double tmin, double tmax);
-Sound PointProcess_to_Sound_hum (PointProcess me);
+autoSound PointProcess_to_Sound_hum (PointProcess me);
 
 /* End of file PointProcess_and_Sound.h */

@@ -28,7 +28,7 @@
 #include "Pitch_def.h"
 oo_CLASS_CREATE (Pitch, Sampled);
 
-Pitch Pitch_create (double tmin, double tmax, long nt, double dt, double t1,
+autoPitch Pitch_create (double tmin, double tmax, long nt, double dt, double t1,
 	double ceiling, int maxnCandidates);
 /*
 	Function:

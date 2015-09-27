@@ -31,7 +31,7 @@
 
 #include "PointProcess_and_Sound.h"
 
-Sound PointProcess_to_Sound_pulseTrain
+autoSound PointProcess_to_Sound_pulseTrain
 	(PointProcess me, double samplingFrequency,
 	 double adaptFactor, double adaptTime, long interpolationDepth)
 {
@@ -74,7 +74,7 @@ Sound PointProcess_to_Sound_pulseTrain
 	}
 }
 
-Sound PointProcess_to_Sound_phonation
+autoSound PointProcess_to_Sound_phonation
 	(PointProcess me, double samplingFrequency, double adaptFactor, double maximumPeriod,
 	 double openPhase, double collisionPhase, double power1, double power2)
 {
@@ -186,7 +186,7 @@ Sound PointProcess_to_Sound_phonation
 			}
 		}
 		Vector_scale (thee.peek(), 0.9);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound (phonation).");
 	}
@@ -213,13 +213,13 @@ void PointProcess_hum (PointProcess me, double tmin, double tmax) {
 	Sound_playPart (sound.peek(), tmin, tmax, NULL, NULL);
 }
 
-Sound PointProcess_to_Sound_hum (PointProcess me) {
+autoSound PointProcess_to_Sound_hum (PointProcess me) {
 	static double formant [1 + 6] = { 0, 600, 1400, 2400, 3400, 4500, 5500 };
 	static double bandwidth [1 + 6] = { 0, 50, 100, 200, 300, 400, 500 };
 	try {
 		autoSound sound = PointProcess_to_Sound_pulseTrain (me, 44100, 0.7, 0.05, 30);
 		Sound_filterWithFormants (sound.peek(), my xmin, my xmax, 6, formant, bandwidth);
-		return sound.transfer();
+		return sound;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound (hum).");
 	}
