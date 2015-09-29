@@ -38,11 +38,11 @@
 #include "Pitch_to_PitchTier.h"
 #include <ctype.h>
 
-PointProcess Pitch_to_PointProcess (Pitch pitch) {
+autoPointProcess Pitch_to_PointProcess (Pitch pitch) {
 	try {
 		autoPitchTier pitchTier = Pitch_to_PitchTier (pitch);
 		autoPointProcess point = PitchTier_Pitch_to_PointProcess (pitchTier.peek(), pitch);
-		return point.transfer();
+		return point;
 	} catch (MelderError) {
 		Melder_throw (pitch, U": not converted to PointProcess.");
 	}
@@ -50,13 +50,13 @@ PointProcess Pitch_to_PointProcess (Pitch pitch) {
 
 static int Pitch_getVoicedIntervalAfter (Pitch me, double after, double *tleft, double *tright) {
 	long ileft = Sampled_xToHighIndex (me, after), iright;
-	if (ileft > my nx) return 0;   /* Offright. */
-	if (ileft < 1) ileft = 1;   /* Offleft. */
+	if (ileft > my nx) return 0;   // offright
+	if (ileft < 1) ileft = 1;   // offleft
 
 	/* Search for first voiced frame. */
 	for (; ileft <= my nx; ileft ++)
 		if (Pitch_isVoiced_i (me, ileft)) break;
-	if (ileft > my nx) return 0;   /* Offright. */
+	if (ileft > my nx) return 0;   // offright
 
 	/* Search for last voiced frame. */
 	for (iright = ileft; iright <= my nx; iright ++)
@@ -68,6 +68,7 @@ static int Pitch_getVoicedIntervalAfter (Pitch me, double after, double *tleft, 
 	if (*tleft >= my xmax - 0.5 * my dx) return 0;
 	if (*tleft < my xmin) *tleft = my xmin;
 	if (*tright > my xmax) *tright = my xmax;
+	if (*tright <= after) return 0;
 	return 1;
 }
 
@@ -77,9 +78,9 @@ static double findExtremum_3 (double *channel1_base, double *channel2_base, long
 	long imin = 1, imax = 1, i, iextr;
 	double minimum, maximum;
 	if (n < 3) {
-		if (n <= 0) return 0.0;   /* Outside. */
+		if (n <= 0) return 0.0;   // outside
 		else if (n == 1) return 1.0;
-		else {   /* n == 2 */
+		else {   // n == 2
 			double x1 = channel2 ? 0.5 * (channel1 [1] + channel2 [1]) : channel1 [1];
 			double x2 = channel2 ? 0.5 * (channel1 [2] + channel2 [2]) : channel1 [2];
 			double xleft = includeAll ? fabs (x1) : includeMaxima ? x1 : - x1;
@@ -96,7 +97,7 @@ static double findExtremum_3 (double *channel1_base, double *channel2_base, long
 		if (value > maximum) { maximum = value; imax = i; }
 	}
 	if (minimum == maximum) {
-		return 0.5 * (n + 1.0);   /* All equal. */
+		return 0.5 * (n + 1.0);   // all equal
 	}
 	iextr = includeAll ? ( fabs (minimum) > fabs (maximum) ? imin : imax ) : includeMaxima ? imax : imin;
 	if (iextr == 1) return 1.0;
@@ -188,6 +189,8 @@ PointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch) {
 		for (;;) {
 			double tleft, tright;
 			if (! Pitch_getVoicedIntervalAfter (pitch, t, & tleft, & tright)) break;
+			Melder_assert (tright > t);
+
 			/*
 			 * Go to the middle of the voice stretch.
 			 */

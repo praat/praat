@@ -1035,7 +1035,7 @@ static void mac_message (NSAlertStyle macAlertType, const char32 *message32) {
 	int messageLength = str32len (message32);
 	int j = 0;
 	for (int i = 0; i < messageLength && j <= 4000 - 3; i ++) {
-		char32 kar = message32 [i];   // change sign
+		char32 kar = message32 [i];
 		if (kar <= 0x00FFFF) {
 			messageU [j ++] = kar;
 		} else if (kar <= 0x10FFFF) {
