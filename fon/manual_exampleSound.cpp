@@ -2581,16 +2581,16 @@ static const char *data [] = {
 "57??58??0:??19??5=??3<??=4?>" };
 
 Sound manual_exampleSound (void) {
-	static Sound me = NULL;
-	if (me == NULL) {
+	static Sound me;
+	if (! me) {
 		long istring = 0, ichar = 24;
 		me = Sound_create (1, 0.0, 20457.0/44100, 20457, 1.0/44100, 0.5/44100);
 		for (long isamp = 1; isamp <= 20457; isamp ++) {
-			unsigned short part1 = data [istring] [ichar] - '0';
-			unsigned short part2 = data [istring] [++ ichar] - '0';
-			unsigned short part3 = data [istring] [++ ichar] - '0';
-			unsigned short part4 = data [istring] [++ ichar] - '0';
-			my z [1] [isamp] = (signed short) ((part3 << 12) + (part4 << 8) + (part1 << 4) + part2) / 32768.0;
+			uint16 part1 = data [istring] [ichar] - '0';
+			uint16 part2 = data [istring] [++ ichar] - '0';
+			uint16 part3 = data [istring] [++ ichar] - '0';
+			uint16 part4 = data [istring] [++ ichar] - '0';
+			my z [1] [isamp] = (int16) ((part3 << 12) + (part4 << 8) + (part1 << 4) + part2) / 32768.0;
 			if (++ ichar == 32) istring ++, ichar = 0;
 		}
 	}
@@ -2598,13 +2598,13 @@ Sound manual_exampleSound (void) {
 }
 
 Pitch manual_examplePitch (void) {
-	static autoPitch me = NULL;
+	static autoPitch me;
 	if (! me) {
 		Melder_progressOff ();
 		me = Sound_to_Pitch (manual_exampleSound (), 0.0, 200.0, 500.0);
 		Melder_progressOn ();
 	}
-	return me.peek();
+	return me.get();
 }
 
 /* End of file manual_exampleSound.cpp */

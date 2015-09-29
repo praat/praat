@@ -71,26 +71,35 @@ void Collection_init (Collection me, ClassInfo itemClass, long initialCapacity);
 Collection Collection_create (ClassInfo itemClass, long initialCapacity);
 /*
 	Function:
-		return a new empty Collection, or NULL if out of memory.
+		return a new empty Collection.
 	Preconditions:
 		initialCapacity >= 1;
 	Postconditions:
 		my _capacity == initialCapacity;
+	Failures:
+		Out of memory.
 */
 
+/**
+	Normally, the Collection is the owner of all the items, which means that
+	the Collection will destroy all its items when the Collection itself is destroyed.
+	By calling `Collection_dontOwnItems()` immediately after creating the Collection,
+	you make sure that the Collection contains *references* to the items instead.
+	The result is that the items will not be destroyed when the Collection is destroyed.
+*/
 void Collection_dontOwnItems (Collection me);
 
 /*
 	Data_copy, Data_equal, Data_writeXXX, Data_readXXX
 	try to copy, compare, write, or read all the items.
 	However, if any of the items is not of class Daata,
-	these routines fail with a message and return 0.
+	these routines fail with a message.
 */
 
 void Collection_addItem (Collection me, Thing item);
 /*
 	Function:
-		add the 'item' to the collection. Return 0 if out of memory, else 1.
+		add the 'item' to the collection.
 	Preconditions:
  		item != NULL;
 	Postconditions if result == 1:

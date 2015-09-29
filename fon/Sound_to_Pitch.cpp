@@ -458,7 +458,7 @@ autoPitch Sound_to_Pitch_any (Sound me,
 			}
 		}
 		if (globalPeak == 0.0) {
-			return thee.transfer();
+			return thee;
 		}
 
 		autoNUMvector <double> window;

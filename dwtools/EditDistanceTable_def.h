@@ -50,7 +50,7 @@ oo_END_CLASS (EditCostsTable)
 #undef ooSTRUCT
 
 #define ooSTRUCT EditDistanceTable
-	oo_DEFINE_CLASS (EditDistanceTable, TableOfReal)
+oo_DEFINE_CLASS (EditDistanceTable, TableOfReal)
 	oo_OBJECT (WarpingPath, 0, warpingPath)
 	#if oo_DECLARING
 		oo_OBJECT (EditCostsTable, 0, editCostsTable)

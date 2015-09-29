@@ -18,8 +18,13 @@
 #include <string>
 
 static void testAutoData (autoDaata data) {
+	fprintf (stderr, "testAutoData: %p %p\n", data.get(), data -> name);
+}
+static void testAutoDataRef (autoDaata& data) {
+	fprintf (stderr, "testAutoDataRef: %p %p\n", data.get(), data -> name);
 }
 static void testData (Daata data) {
+	fprintf (stderr, "testData: %p %s\n", data, Melder_peek32to8 (data -> name));
 }
 static autoDaata newAutoData () {
 	autoDaata data (Thing_new (Daata));
@@ -240,8 +245,10 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			{
 				fprintf (stderr, "1\n");
 				autoDaata data = Thing_new (Daata);
+				Thing_setName (data.get(), U"hello");
 				fprintf (stderr, "2\n");
 				testData (data.peek());
+				testAutoData (data.move());
 				fprintf (stderr, "3\n");
 				autoDaata data2 = newAutoData ();
 				fprintf (stderr, "4\n");
@@ -266,7 +273,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 				fprintf (stderr, "11\n");
 				autoDaata data4 = Thing_new (Ordered);   // constructor
 				fprintf (stderr, "12\n");
-				//autoDaata data6 = data4;   // implicitly disabled l-value copy constructor from same class
+				//autoDaata data6 = data4;   // disabled l-value copy constructor from same class
 				fprintf (stderr, "13\n");
 				autoDaata data7 = data4.move();
 				fprintf (stderr, "14\n");
@@ -277,8 +284,12 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 				fprintf (stderr, "16\n");
 				autoDaata data10 = data7.move();
 				fprintf (stderr, "17\n");
-				autoDaata data11 = Thing_new (Daata);
+				autoDaata data11 = Thing_new (Daata);   // constructor, move assignment, null destructor
 				fprintf (stderr, "18\n");
+				data11 = Thing_new (Ordered);
+				fprintf (stderr, "19\n");
+				testAutoDataRef (data11);
+				fprintf (stderr, "20\n");
 			}
 			int numberOfThingsAfter = Thing_getTotalNumberOfThings ();
 			fprintf (stderr, "Number of things: before %d, after %d\n", numberOfThingsBefore, numberOfThingsAfter);
