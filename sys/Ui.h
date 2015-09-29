@@ -28,7 +28,7 @@ Thing_declare (EditorCommand);
 
 /* Example of usage:
 {
-	static Any dia = NULL;
+	static UiForm dia = NULL;
 	if (dia == NULL) {
 		Any radio;
 		dia = UiForm_create
@@ -41,7 +41,7 @@ Thing_declare (EditorCommand);
 		UiForm_addNatural (dia, U"Age (years)", U"18");
 		UiForm_addPositive (dia, U"Length (metres)", U"1.68 (average)");
 		UiForm_addBoolean (dia, U"Beard", FALSE);
-		radio = UiForm_addRadio (U"Sex", 1);
+		radio = UiForm_addRadio (dia, U"Sex", 1);
 			UiRadio_addButton (radio, U"Female");
 			UiRadio_addButton (radio, U"Male");
 		UiForm_addWord (dia, U"Colour", U"black");
