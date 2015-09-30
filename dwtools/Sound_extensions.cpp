@@ -1459,7 +1459,7 @@ Sound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAndEnd,
         }
         autoSound thee = Sound_and_IntervalTier_cutPartsMatchingLabel (me, itg.peek(), trimLabel);
         if (tg != NULL) {
-			TextGrid_addTier (dbs.peek(), itg.peek());
+			TextGrid_addTier_copy (dbs.peek(), itg.peek());
             *tg = dbs.transfer();
         }
         return thee.transfer();

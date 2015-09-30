@@ -48,7 +48,7 @@ DIRECT2 (AnyTier_into_TextGrid) {
 	autoTextGrid grid = TextGrid_createWithoutTiers (1e30, -1e30);
 	LOOP {
 		iam (AnyTier);
-		TextGrid_addTier (grid.peek(), me);
+		TextGrid_addTier_copy (grid.peek(), me);
 	}
 	praat_new (grid.transfer(), U"grid");
 END2 }
@@ -995,7 +995,7 @@ FORM (TextGrid_extractOneTier, U"TextGrid: Extract one tier", 0) {
 DO
 	Function tier = pr_TextGrid_peekTier (dia);   // a reference
 	autoTextGrid grid = TextGrid_createWithoutTiers (1e30, -1e30);
-	TextGrid_addTier (grid.peek(), tier);   // no transfer of tier ownership, because a copy is made
+	TextGrid_addTier_copy (grid.peek(), tier);   // no transfer of tier ownership, because a copy is made
 	praat_new (grid.transfer(), tier -> name);
 END2 }
 
@@ -1566,7 +1566,7 @@ DIRECT2 (TextGrid_AnyTier_append) {
 	autoTextGrid newGrid = Data_copy (oldGrid);
 	LOOP if (OBJECT != oldGrid) {
 		iam (AnyTier);
-		TextGrid_addTier (newGrid.peek(), me);
+		TextGrid_addTier_copy (newGrid.peek(), me);
 	}
 	praat_new (newGrid.transfer(), oldGrid -> name);
 END2 }

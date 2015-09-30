@@ -85,7 +85,7 @@ Function TextGrid_checkSpecifiedTierNumberWithinRange (TextGrid me, long tierNum
 IntervalTier TextGrid_checkSpecifiedTierIsIntervalTier (TextGrid me, long tierNumber);
 TextTier TextGrid_checkSpecifiedTierIsPointTier (TextGrid me, long tierNumber);
 
-void TextGrid_addTier (TextGrid me, Function tier);
+void TextGrid_addTier_copy (TextGrid me, Function tier);
 TextGrid TextGrid_merge (Collection textGrids);
 TextGrid TextGrid_extractPart (TextGrid me, double tmin, double tmax, int preserveTimes);
 

@@ -514,7 +514,7 @@ long TextGrid_countPointsWhere (TextGrid me, long tierNumber, int which_Melder_S
 	}
 }
 
-void TextGrid_addTier (TextGrid me, Function anyTier) {
+void TextGrid_addTier_copy (TextGrid me, Function anyTier) {
 	try {
 		autoFunction tier = Data_copy (anyTier);
 		if (tier -> xmin < my xmin) my xmin = tier -> xmin;
@@ -533,7 +533,7 @@ TextGrid TextGrid_merge (Collection textGrids) {
 		for (long igrid = 2; igrid <= textGrids -> size; igrid ++) {
 			TextGrid textGrid = (TextGrid) textGrids -> item [igrid];
 			for (long itier = 1; itier <= textGrid -> numberOfTiers(); itier ++) {
-				TextGrid_addTier (thee.peek(), textGrid -> tier (itier));
+				TextGrid_addTier_copy (thee.peek(), textGrid -> tier (itier));
 			}
 		}
 		return thee.transfer();

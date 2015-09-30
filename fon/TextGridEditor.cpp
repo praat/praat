@@ -1049,7 +1049,7 @@ static void menu_cb_PublishTier (EDITOR_ARGS) {
 	checkTierSelection (me, U"publish a tier");
 	Function tier = (Function) grid -> tiers -> item [my selectedTier];
 	autoTextGrid publish = TextGrid_createWithoutTiers (1e30, -1e30);
-	TextGrid_addTier (publish.peek(), tier);
+	TextGrid_addTier_copy (publish.peek(), tier);
 	Thing_setName (publish.peek(), tier -> name);
 	Editor_broadcastPublication (me, publish.transfer());
 }
