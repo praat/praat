@@ -388,10 +388,10 @@ public:
 		return d_ptr != NULL;
 	}
 	bool operator== (_Thing_auto<T> other) const noexcept {
-		other. d_ptr == d_ptr;
+		return other. d_ptr == d_ptr;
 	}
 	bool operator!= (_Thing_auto<T> other) const noexcept {
-		other. d_ptr != d_ptr;
+		return other. d_ptr != d_ptr;
 	}
 	/*
 	 * The compiler should prevent initializations from _Thing_auto l-values, as in
