@@ -42,7 +42,7 @@ static int praat_findObjectFromString (Interpreter interpreter, const char32 *st
 			char32 *className = & buffer.string [0], *givenName = space + 1;
 			WHERE_DOWN (1) {
 				Daata object = (Daata) OBJECT;
-				if (str32equ (className, Thing_className ((Thing) OBJECT)) && str32equ (givenName, object -> name))
+				if (str32equ (className, Thing_className (OBJECT)) && str32equ (givenName, object -> name))
 					return IOBJECT;
 			}
 			/*
@@ -51,7 +51,7 @@ static int praat_findObjectFromString (Interpreter interpreter, const char32 *st
 			ClassInfo klas = Thing_classFromClassName (className, NULL);
 			WHERE_DOWN (1) {
 				Daata object = (Daata) OBJECT;
-				if (str32equ (klas -> className, Thing_className ((Thing) OBJECT)) && str32equ (givenName, object -> name))
+				if (str32equ (klas -> className, Thing_className (OBJECT)) && str32equ (givenName, object -> name))
 					return IOBJECT;
 			}
 			Melder_throw (U"No object with that name.");
@@ -77,7 +77,7 @@ Editor praat_findEditorFromString (const char32 *string) {
 	if (*string >= U'A' && *string <= U'Z') {
 		WHERE_DOWN (1) {
 			for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
-				Editor editor = (Editor) theCurrentPraatObjects -> list [IOBJECT]. editors [ieditor];
+				Editor editor = theCurrentPraatObjects -> list [IOBJECT]. editors [ieditor];
 				if (editor != NULL) {
 					const char32 *name = str32chr (editor -> name, U' ') + 1;
 					if (str32equ (name, string)) return editor;
@@ -87,7 +87,7 @@ Editor praat_findEditorFromString (const char32 *string) {
 	} else {
 		WHERE_DOWN (1) {
 			for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
-				Editor editor = (Editor) theCurrentPraatObjects -> list [IOBJECT]. editors [ieditor];
+				Editor editor = theCurrentPraatObjects -> list [IOBJECT]. editors [ieditor];
 				if (editor && str32equ (editor -> name, string)) return editor;
 			}
 		}
@@ -100,7 +100,7 @@ Editor praat_findEditorById (long id) {
 	WHERE (1) {
 		if (ID == id) {
 			for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
-				Editor editor = (Editor) theCurrentPraatObjects -> list [IOBJECT]. editors [ieditor];
+				Editor editor = theCurrentPraatObjects -> list [IOBJECT]. editors [ieditor];
 				if (editor) return editor;
 			}
 		}
@@ -429,9 +429,9 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 		}
 		if (theCurrentPraatObjects == & theForegroundPraatObjects && praatP. editor != NULL) {
 			if (hasColon) {
-				Editor_doMenuCommand ((Editor) praatP. editor, command2, narg, args, NULL, interpreter);
+				Editor_doMenuCommand (praatP. editor, command2, narg, args, NULL, interpreter);
 			} else {
-				Editor_doMenuCommand ((Editor) praatP. editor, command, 0, NULL, arguments, interpreter);
+				Editor_doMenuCommand (praatP. editor, command, 0, NULL, arguments, interpreter);
 			}
 		} else if (theCurrentPraatObjects != & theForegroundPraatObjects &&
 		    (str32nequ (command, U"Save ", 5) ||
@@ -501,7 +501,10 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 }
 
 void praat_executeCommandFromStandardInput (const char32 *programName) {
-	char command8 [1000]; // can be recursive
+	char command8 [1000];   // can be recursive
+	/*
+	 * FIXME: implement for Windows.
+	 */
 	for (;;) {
 		printf ("%s > ", Melder_peek32to8 (programName));
 		if (! fgets (command8, 999, stdin))
@@ -524,10 +527,10 @@ void praat_executeScriptFromFile (MelderFile file, const char32 *arguments) {
 		Melder_includeIncludeFiles (& text);
 		autoInterpreter interpreter = Interpreter_createFromEnvironment (praatP.editor);
 		if (arguments) {
-			Interpreter_readParameters (interpreter.peek(), text.peek());
-			Interpreter_getArgumentsFromString (interpreter.peek(), arguments);
+			Interpreter_readParameters (interpreter.get(), text.peek());
+			Interpreter_getArgumentsFromString (interpreter.get(), arguments);
 		}
-		Interpreter_run (interpreter.peek(), text.peek());
+		Interpreter_run (interpreter.get(), text.peek());
 	} catch (MelderError) {
 		Melder_throw (U"Script ", file, U" not completed.");
 	}
@@ -544,9 +547,9 @@ void praat_executeScriptFromFileName (const char32 *fileName, int narg, Stackel 
 		autoMelderFileSetDefaultDir dir (& file);   // so that relative file names can be used inside the script
 		Melder_includeIncludeFiles (& text);
 		autoInterpreter interpreter = Interpreter_createFromEnvironment (praatP.editor);
-		Interpreter_readParameters (interpreter.peek(), text.peek());
-		Interpreter_getArgumentsFromArgs (interpreter.peek(), narg, args);
-		Interpreter_run (interpreter.peek(), text.peek());
+		Interpreter_readParameters (interpreter.get(), text.peek());
+		Interpreter_getArgumentsFromArgs (interpreter.get(), narg, args);
+		Interpreter_run (interpreter.get(), text.peek());
 	} catch (MelderError) {
 		Melder_throw (U"Script ", & file, U" not completed.");   // don't refer to 'fileName', because its contents may have changed
 	}
@@ -583,7 +586,7 @@ void praat_executeScriptFromFileNameWithArguments (const char32 *nameAndArgument
 void praat_executeScriptFromText (const char32 *text) {
 	try {
 		autoInterpreter interpreter = Interpreter_create (NULL, NULL);
-		autostring32 string = Melder_dup (text);
+		autostring32 string = Melder_dup (text);   // copy, because Interpreter will change it (UGLY)
 		Interpreter_run (interpreter.peek(), string.peek());
 	} catch (MelderError) {
 		Melder_throw (U"Script not completed.");
@@ -619,9 +622,9 @@ static void firstPassThroughScript (MelderFile file) {
 			Melder_includeIncludeFiles (& text);
 		}
 		autoInterpreter interpreter = Interpreter_createFromEnvironment (praatP.editor);
-		if (Interpreter_readParameters (interpreter.peek(), text.peek()) > 0) {
+		if (Interpreter_readParameters (interpreter.get(), text.peek()) > 0) {
 			UiForm form = Interpreter_createForm (interpreter.peek(),
-				praatP.editor ? ((Editor) praatP.editor) -> d_windowForm : theCurrentPraatApplication -> topShell,
+				praatP.editor ? praatP.editor -> d_windowForm : theCurrentPraatApplication -> topShell,
 				Melder_fileToPath (file), secondPassThroughScript, NULL, false);
 			UiForm_destroyWhenUnmanaged (form);
 			UiForm_do (form, false);

@@ -732,8 +732,8 @@ static void VowelEditor_setMarks (VowelEditor me, int marksDataset, int speakerT
 static void VowelEditor_getVowelMarksFromTableFile (VowelEditor me, MelderFile file)
 {
 	try {
-		autoDaata data =  (Daata) Data_readFromFile (file);
-		if (! Thing_isa ((Thing) data.peek(), classTable)) Melder_throw (U"\"", MelderFile_name (file), U"\" is not a Table file");
+		autoDaata data = Data_readFromFile (file);
+		if (! Thing_isa (data.peek(), classTable)) Melder_throw (U"\"", MelderFile_name (file), U"\" is not a Table file");
 		autoTable marks = (Table) data.transfer();
 		// check if columns Vowel F1 & F2 are present
 		Table_getColumnIndexFromColumnLabel (marks.peek(), U"Vowel");

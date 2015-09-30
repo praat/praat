@@ -163,7 +163,7 @@ void praat_deselect (int IOBJECT) {
 	if (! SELECTED) return;
 	SELECTED = FALSE;
 	theCurrentPraatObjects -> totalSelection -= 1;
-	long readableClassId = ((Thing) theCurrentPraatObjects -> list [IOBJECT]. object) -> classInfo -> sequentialUniqueIdOfReadableClass;
+	long readableClassId = theCurrentPraatObjects -> list [IOBJECT]. object -> classInfo -> sequentialUniqueIdOfReadableClass;
 	Melder_assert (readableClassId != 0);
 	theCurrentPraatObjects -> numberOfSelected [readableClassId] -= 1;
 	if (! theCurrentPraatApplication -> batch && ! Melder_backgrounding) {
@@ -177,7 +177,7 @@ void praat_select (int IOBJECT) {
 	if (SELECTED) return;
 	SELECTED = TRUE;
 	theCurrentPraatObjects -> totalSelection += 1;
-	Thing object = (Thing) theCurrentPraatObjects -> list [IOBJECT]. object;
+	Thing object = theCurrentPraatObjects -> list [IOBJECT]. object;
 	Melder_assert (object != NULL);
 	long readableClassId = object -> classInfo -> sequentialUniqueIdOfReadableClass;
 	if (readableClassId == 0) Melder_fatal (U"No sequential unique ID for class ", object -> classInfo -> className, U".");
@@ -304,7 +304,7 @@ static void praat_remove (int iobject) {
 	 * To prevent synchronization problems, kill editors before killing the data.
 	 */
 	for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
-		Editor editor = (Editor) theCurrentPraatObjects -> list [iobject]. editors [ieditor];   /* Save this one reference. */
+		Editor editor = theCurrentPraatObjects -> list [iobject]. editors [ieditor];   // save this one reference
 		if (editor) {
 			removeAllReferencesToEditor (editor);
 			forget (editor);
@@ -393,7 +393,7 @@ void praat_newWithFile (Daata me, MelderFile file, const char32 *myName) {
 	}
 	ID = theCurrentPraatObjects -> uniqueId;
 	theCurrentPraatObjects -> list [IOBJECT]. isBeingCreated = TRUE;
-	Thing_setName ((Thing) OBJECT, givenName.string);
+	Thing_setName (OBJECT, givenName.string);
 	theCurrentPraatObjects -> totalBeingCreated ++;
 }
 
@@ -455,7 +455,7 @@ static void gui_cb_list (void *void_me, GuiListEvent event) {
 	int IOBJECT, first = TRUE;
 	WHERE (SELECTED) {
 		SELECTED = FALSE;
-		long readableClassId = ((Thing) theCurrentPraatObjects -> list [IOBJECT]. object) -> classInfo -> sequentialUniqueIdOfReadableClass;
+		long readableClassId = theCurrentPraatObjects -> list [IOBJECT]. object -> classInfo -> sequentialUniqueIdOfReadableClass;
 		theCurrentPraatObjects -> numberOfSelected [readableClassId] --;
 		Melder_assert (theCurrentPraatObjects -> numberOfSelected [readableClassId] >= 0);
 	}
@@ -466,7 +466,7 @@ static void gui_cb_list (void *void_me, GuiListEvent event) {
 		for (long iselected = 1; iselected <= numberOfSelected; iselected ++) {
 			IOBJECT = selected [iselected];
 			SELECTED = TRUE;
-			long readableClassId = ((Thing) theCurrentPraatObjects -> list [IOBJECT]. object) -> classInfo -> sequentialUniqueIdOfReadableClass;
+			long readableClassId = theCurrentPraatObjects -> list [IOBJECT]. object -> classInfo -> sequentialUniqueIdOfReadableClass;
 			theCurrentPraatObjects -> numberOfSelected [readableClassId] ++;
 			Melder_assert (theCurrentPraatObjects -> numberOfSelected [readableClassId] > 0);
 			UiHistory_write (first ? U"\nselectObject: \"" : U"\nplusObject: \"");
@@ -614,7 +614,7 @@ static void cb_Editor_dataChanged (Editor me, void *closure) {
 			 * Notify all other editors associated with this object.
 			 */
 			for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
-				Editor otherEditor = (Editor) theCurrentPraatObjects -> list [iobject]. editors [ieditor];
+				Editor otherEditor = theCurrentPraatObjects -> list [iobject]. editors [ieditor];
 				if (otherEditor != NULL && otherEditor != me) {
 					Editor_dataChanged (otherEditor);
 				}
@@ -770,7 +770,7 @@ void praat_dataChanged (Any object) {
 	int IOBJECT;
 	WHERE (OBJECT == object) {
 		for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
-			Editor editor = (Editor) EDITOR [ieditor];
+			Editor editor = EDITOR [ieditor];
 			if (editor != NULL) {
 				Editor_dataChanged (editor);
 			}

@@ -133,14 +133,14 @@ static void commonOutfileCallback (UiForm sendingForm, int narg, Stackel args, c
 }
 
 UiForm UiOutfile_createE (EditorCommand cmd, const char32 *title, const char32 *invokingButtonTitle, const char32 *helpTitle) {
-	Editor editor = (Editor) cmd -> d_editor;
+	Editor editor = cmd -> d_editor;
 	UiOutfile dia = (UiOutfile) UiOutfile_create (editor -> d_windowForm, title, commonOutfileCallback, cmd, invokingButtonTitle, helpTitle);
 	dia -> command = cmd;
 	return (UiForm) dia;   // BUG
 }
 
 UiForm UiInfile_createE (EditorCommand cmd, const char32 *title, const char32 *invokingButtonTitle, const char32 *helpTitle) {
-	Editor editor = (Editor) cmd -> d_editor;
+	Editor editor = cmd -> d_editor;
 	UiInfile dia = (UiInfile) UiInfile_create (editor -> d_windowForm, title, commonOutfileCallback, cmd, invokingButtonTitle, helpTitle, false);
 	dia -> command = cmd;
 	return (UiForm) dia;   // BUG

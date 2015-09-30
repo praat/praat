@@ -144,7 +144,7 @@ Thing Thing_newFromClassName (const char32 *className, int *p_formatVersion) {
 
 Thing _Thing_dummyObject (ClassInfo classInfo) {
 	if (classInfo -> dummyObject == NULL) {
-		classInfo -> dummyObject = (Thing) classInfo -> _new ();
+		classInfo -> dummyObject = classInfo -> _new ();
 	}
 	Melder_assert (classInfo -> dummyObject != NULL);
 	return classInfo -> dummyObject;
