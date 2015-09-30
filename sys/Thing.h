@@ -31,7 +31,7 @@
 	/* The input/output mechanism: */
 		#include "abcio.h"
 
-#include <string>
+//#include <string>
 
 #define _Thing_auto_DEBUG  0
 
@@ -275,7 +275,6 @@ void Thing_swap (Thing me, Thing thee);
 void _Thing_forget (Thing me);
 void _Thing_forget_nozero (Thing me);
 void * _Thing_check (Thing me, ClassInfo table, const char *fileName, int line);
-	/* Macros 'iam', 'thouart', 'heis'. */
 
 /* For debugging. */
 
@@ -293,7 +292,7 @@ public:
 	 *    autoPitch pitch = Pitch_create (...);
 	 * should work.
 	 */
-	inline _Thing_auto (T *a_ptr) : d_ptr (a_ptr) {
+	_Thing_auto (T *a_ptr) : d_ptr (a_ptr) {
 		#if _Thing_auto_DEBUG
 			if (d_ptr) fprintf (stderr, "constructor %p %s\n", d_ptr, Melder_peek32to8 (d_ptr -> classInfo -> className));
 		#endif
@@ -303,7 +302,7 @@ public:
 	 *    autoPitch pitch;
 	 * should initialize the pointer to NULL.
 	 */
-	inline _Thing_auto () : d_ptr (NULL) {
+	_Thing_auto () : d_ptr (NULL) {
 		#if _Thing_auto_DEBUG
 			fprintf (stderr, "default constructor\n");
 		#endif
@@ -312,7 +311,7 @@ public:
 	 * pitch should be destroyed when going out of scope,
 	 * both at the end of the try block and when a throw occurs.
 	 */
-	inline ~_Thing_auto () {
+	~_Thing_auto () {
 		#if _Thing_auto_DEBUG
 			fprintf (stderr, "destructor %p %s\n", d_ptr, d_ptr ? Melder_peek32to8 (d_ptr -> classInfo -> className) : "(class unknown)");
 		#endif
@@ -333,10 +332,10 @@ public:
 	 * should be abbreviatable by
 	 *    pitch -> xmin
 	 */
-	inline T* operator-> () const {   // as r-value
+	T* operator-> () const {   // as r-value
 		return d_ptr;
 	}
-	inline T& operator* () const {   // as l-value
+	T& operator* () const {   // as l-value
 		return *d_ptr;
 	}
 	/*
@@ -356,19 +355,20 @@ public:
 	 * and
 	 *    praat_new (pitch.transfer(), my name);
 	 */
-	inline T* transfer () {
+	T* transfer () {
 		T* temp = d_ptr;
 		d_ptr = NULL;   // make the pointer non-automatic again
 		return temp;
 	}
 	#if 0
-		inline operator T* () { return d_ptr; }   // this way only if peek() and transfer() are the same, e.g. in case of reference counting
-		// template <class Y> Y* operator= (_Thing_auto<Y>& a) { }
+		operator T* () {
+			return d_ptr;
+		}
 	#endif
 	/*
 	 * An autoThing can be cloned. This can be used for giving ownership without losing ownership.
 	 */
-	inline T* clone () const {
+	T* clone () const {
 		return static_cast<T *> (Data_copy (d_ptr));
 	}
 	/*
@@ -377,23 +377,22 @@ public:
 	 * so that you can easily spot ugly places in your source code.
 	 * In order not to leak memory, the old object is destroyed.
 	 */
-	inline void reset (T* ptr = 0) {
+	void reset (T* ptr = 0) noexcept {
 		_Thing_forget (d_ptr);
 		d_ptr = ptr;
 	}
-	inline void zero () {
+	void zero () {
 		d_ptr = NULL;
 	}
-	operator bool () {
+	explicit operator bool () const {
 		return d_ptr != NULL;
 	}
-	bool operator== (_Thing_auto<T> other) {
-		other. d_ptr == d_ptr;
+	bool operator== (_Thing_auto<T> other) const noexcept {
+		return other. d_ptr == d_ptr;
 	}
-	bool operator!= (_Thing_auto<T> other) {
-		other. d_ptr != d_ptr;
+	bool operator!= (_Thing_auto<T> other) const noexcept {
+		return other. d_ptr != d_ptr;
 	}
-private:
 	/*
 	 * The compiler should prevent initializations from _Thing_auto l-values, as in
 	 *    autoPitch pitch2 = pitch;
@@ -404,8 +403,8 @@ private:
 	 * a destructor would be called at some point for both pitch and pitch 2,
 	 * twice deleting the same object, which is a run-time error.
 	 */
-	inline _Thing_auto<T> (const _Thing_auto<T>&);   // disable copy constructor from an l-value of class T*
-	template <class Y> inline _Thing_auto<T> (const _Thing_auto<Y>&);   // disable copy constructor from an l-value of a descendant class of T*
+	_Thing_auto<T> (const _Thing_auto<T>&) = delete;   // disable copy constructor from an l-value of class T*
+	template <class Y> _Thing_auto<T> (const _Thing_auto<Y>&) = delete;   // disable copy constructor from an l-value of a descendant class of T*
 	/*
 	 * The compiler should prevent assignments from _Thing_auto l-values, as in
 	 *    pitch2 = pitch;
@@ -416,22 +415,21 @@ private:
 	 * a destructor would be called at some point for both pitch and pitch 2,
 	 * twice deleting the same object, which is a run-time error.
 	 */
-	inline _Thing_auto<T>& operator= (const _Thing_auto<T>&);   // disable copy assignment from an l-value of class T*
-	template <class Y> inline _Thing_auto<T>& operator= (const _Thing_auto<Y>&);   // disable copy assignment from an l-value of a descendant class of T*
-public:
+	_Thing_auto<T>& operator= (const _Thing_auto<T>&) = delete;   // disable copy assignment from an l-value of class T*
+	template <class Y> _Thing_auto<T>& operator= (const _Thing_auto<Y>&) = delete;   // disable copy assignment from an l-value of a descendant class of T*
 	/*
 	 * The compiler should treat initializations from _Thing_auto r-values, as in
 	 *    extern autoPitch Pitch_create (...);
 	 *    autoPitch pitch = Pitch_create (...);
 	 * as move constructors.
 	 */
-	inline _Thing_auto<T> (_Thing_auto<T>&& other) noexcept : d_ptr (other.d_ptr) {
+	_Thing_auto<T> (_Thing_auto<T>&& other) noexcept : d_ptr (other.d_ptr) {
 		#if _Thing_auto_DEBUG
 			if (d_ptr) fprintf (stderr, "move constructor %p from same class %s\n", d_ptr, Melder_peek32to8 (d_ptr -> classInfo -> className));
 		#endif
 		other.d_ptr = NULL;
 	}
-	template <class Y> inline _Thing_auto<T> (_Thing_auto<Y>&& other) noexcept : d_ptr (other.peek()) {
+	template <class Y> _Thing_auto<T> (_Thing_auto<Y>&& other) noexcept : d_ptr (other.peek()) {
 		#if _Thing_auto_DEBUG
 			if (d_ptr) fprintf (stderr, "move constructor %p from other class %s\n", d_ptr, Melder_peek32to8 (d_ptr -> classInfo -> className));
 		#endif
@@ -444,7 +442,7 @@ public:
 	 *    pitch = Pitch_create (...);
 	 * as move assignments.
 	 */
-	inline _Thing_auto<T>& operator= (_Thing_auto<T>&& other) noexcept {
+	_Thing_auto<T>& operator= (_Thing_auto<T>&& other) noexcept {
 		if (other. d_ptr != d_ptr) {
 			#if _Thing_auto_DEBUG
 				fprintf (stderr, "move assignment before %p from same class %s\n", d_ptr, d_ptr ? Melder_peek32to8 (d_ptr -> classInfo -> className) : "(class unknown)");
@@ -458,7 +456,7 @@ public:
 		}
 		return *this;
 	}
-	template <class Y> inline _Thing_auto<T>& operator= (_Thing_auto<Y>&& other) noexcept {
+	template <class Y> _Thing_auto<T>& operator= (_Thing_auto<Y>&& other) noexcept {
 		if (other.peek() != d_ptr) {
 			#if _Thing_auto_DEBUG
 				fprintf (stderr, "move assignment before %p from other class %s\n", d_ptr, d_ptr ? Melder_peek32to8 (d_ptr -> classInfo -> className) : "(class unknown)");
@@ -478,7 +476,7 @@ public:
 	 *
 	 *    pitch2 = pitch.move();   // performs move assignment and therefore nullifies pitch
 	 */
-	inline _Thing_auto<T>&& move () noexcept { return static_cast <_Thing_auto<T>&&> (*this); }
+	_Thing_auto<T>&& move () noexcept { return static_cast <_Thing_auto<T>&&> (*this); }
 	/*
 	 * Returning _Thing_auto from a function works as hoped for:
 	 *    autoPitch Sound_to_Pitch (Sound me) {
@@ -487,12 +485,12 @@ public:
 	 *       return thee;
 	 *    }
 	 *    autoPitch pitch = Sound_to_Pitch (sound);
-	 * returns a moved thee in pitch.
+	 * returns a moved `thee` in `pitch`. This works because return values from automatic (i.e. non-static) variables are r-values.
 	 *
 	 * In function arguments, transfer of ownership works only explicitly:
-	 *    extern void Collection_addItem (Collection me, autoDaata item);
+	 *    extern void Collection_addItem_transfer (Collection me, autoDaata item);
 	 *    autoPitch pitch = Pitch_create (...);
-	 *    Collection_addItem (collection, pitch.move());   // compiler error if you don't call move()
+	 *    Collection_addItem_transfer (collection, pitch.move());   // compiler error if you don't call move()
 	 */
 
 };

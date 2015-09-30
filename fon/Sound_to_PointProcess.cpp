@@ -108,10 +108,6 @@ autoPointProcess Sound_to_PointProcess_zeroes (Sound me, long channel, bool incl
 	}
 }
 
-static void SomeCollection_addItem (autoDaata me) {
-	(void) me;
-}
-
 autoPointProcess Sound_to_PointProcess_periodic_cc (Sound me, double fmin, double fmax) {
 	try {
 		autoPitch pitch = Sound_to_Pitch (me, 0.0, fmin, fmax);

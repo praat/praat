@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20150926)
+MAN_BEGIN (U"What's new?", U"ppgb", 20150929)
 INTRO (U"Latest changes in Praat.")
 /*LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (U"##5.4.21# (29 September 2015)")
+LIST_ITEM (U"• Corrected a bug introduced in 5.4.20 that could cause the Sound window to crash.")
+LIST_ITEM (U"• Repaired a very old hang with pulses in the Sound window.")
 NORMAL (U"##5.4.20# (26 September 2015)")
 LIST_ITEM (U"• Corrected the graphical representation of numbers with exponents (wrong since 5.4.10).")
 LIST_ITEM (U"• Windows: prevented flashing console window in $$runScript()$.")

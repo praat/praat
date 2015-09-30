@@ -21,7 +21,7 @@
 #include "PointProcess.h"
 #include "Sound.h"
 
-PointProcess Pitch_to_PointProcess (Pitch pitch);
+autoPointProcess Pitch_to_PointProcess (Pitch pitch);
 
 PointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch);
 

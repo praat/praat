@@ -135,7 +135,7 @@
 		Data_writeText (our x, file);
 
 #define oo_AUTO_OBJECT(Class,version,x)  \
-	texputex (file, our x, U"" #x, 0,0,0,0,0); \
+	texputex (file, !! our x, U"" #x, 0,0,0,0,0); \
 	if (our x) \
 		Data_writeText (our x.get(), file);
 

@@ -107,15 +107,15 @@ static autoIntensity Sound_to_Intensity_ (Sound me, double minimumPitch, double 
 	}
 }
 
-autoIntensity Sound_to_Intensity (Sound me, double minimumPitch, double timeStep, int subtractMeanPressure) {
+Intensity Sound_to_Intensity (Sound me, double minimumPitch, double timeStep, int subtractMeanPressure) {
 	bool veryAccurate = false;
 	if (veryAccurate) {
 		autoSound up = Sound_upsample (me);   // because squaring doubles the frequency content, i.e. you get super-Nyquist components
 		autoIntensity thee = Sound_to_Intensity_ (up.peek(), minimumPitch, timeStep, subtractMeanPressure);
-		return thee;
+		return thee.transfer();
 	} else {
 		autoIntensity thee = Sound_to_Intensity_ (me, minimumPitch, timeStep, subtractMeanPressure);
-		return thee;
+		return thee.transfer();
 	}
 }
 

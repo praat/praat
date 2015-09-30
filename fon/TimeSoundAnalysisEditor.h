@@ -59,7 +59,7 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 	autoSpectrogram d_spectrogram;
 	double d_spectrogram_cursor;
 	autoPitch d_pitch;
-	autoIntensity d_intensity;
+	Intensity d_intensity;
 	autoFormant d_formant;
 	autoPointProcess d_pulses;
 	GuiMenuItem spectrogramToggle, pitchToggle, intensityToggle, formantToggle, pulsesToggle;
