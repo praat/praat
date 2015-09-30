@@ -119,8 +119,8 @@ NORMAL (U"2. According to the procedure described in @@Covariance: To TableOfRea
 	"data point will be generated.")
 MAN_END
 
-MAN_BEGIN (U"TableOfReal: To GaussianMixture...", U"djmw", 20111130)
-INTRO (U"Creates a  @@GaussianMixture@ from the selected  @@TableOfReal@ by an @@expectation-maximization|"
+MAN_BEGIN (U"TableOfReal: To GaussianMixture...", U"djmw", 20150930)
+INTRO (U"Creates a  @@GaussianMixture@ from the selected @@TableOfReal@ by an @@expectation-maximization|"
 	"expectation-maximization@ procedure.")
 ENTRY (U"Settings")
 TAG (U"##Number of components")
@@ -137,6 +137,8 @@ DEFINITION (U"defines the fraction of the total covariance that will be added to
 	"covariance matrices during the EM iteration. This may prevent one or more of these matrices to become singular.")
 TAG (U"##Covariance matrices are")
 DEFINITION (U"defines whether the complete covariance matrices in the mixture have to be calculated or only the diagonal.")
+TAG (U"##Criterion based on")
+DEFINITION (U"defines how the @@GaussianMixture & TableOfReal: Get likelihood value...|likelihood of the data given the model is calculated@.")
 ENTRY (U"Expectation\\--Maximization Algorithm")
 NORMAL (U"The Expectation\\--Maximization (EM) algorithm is an iterative procedure to maximize the likelihood of the data given a model. For a "
 	"GaussianMixture, the parameters in the model are the centers and the covariances of all components in the mixture "

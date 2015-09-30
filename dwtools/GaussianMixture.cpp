@@ -905,8 +905,7 @@ void GaussianMixture_unExpandPCA (GaussianMixture me) {
 	}
 }
 
-void GaussianMixture_and_TableOfReal_improveLikelihood (GaussianMixture me, thou, double delta_lnp,
-        long maxNumberOfIterations, double lambda, int criterion) {
+void GaussianMixture_and_TableOfReal_improveLikelihood (GaussianMixture me, thou, double delta_lnp, long maxNumberOfIterations, double lambda, int criterion) {
 	thouart (TableOfReal);
 	try {
 		const char32 *criterionText = GaussianMixture_criterionText (criterion);
