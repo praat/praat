@@ -559,7 +559,7 @@ autoPitch Sound_to_Pitch_any (Sound me,
 
 autoPitch Sound_to_Pitch (Sound me, double timeStep, double minimumPitch, double maximumPitch) {
 	return Sound_to_Pitch_ac (me, timeStep, minimumPitch,
-		3.0, 15, FALSE, 0.03, 0.45, 0.01, 0.35, 0.14, maximumPitch);
+		3.0, 15, false, 0.03, 0.45, 0.01, 0.35, 0.14, maximumPitch);
 }
 
 autoPitch Sound_to_Pitch_ac (Sound me,

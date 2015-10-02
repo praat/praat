@@ -2,7 +2,7 @@
 #define _PointProcess_h_
 /* PointProcess.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ oo_CLASS_CREATE (PointProcess, Function);
 
 PointProcess PointProcess_create (double startingTime, double finishingTime, long initialMaxnt);
 PointProcess PointProcess_createPoissonProcess (double startingTime, double finishingTime, double density);
-void PointProcess_init (I, double startingTime, double finishingTime, long initialMaxnt);
+void PointProcess_init (PointProcess me, double startingTime, double finishingTime, long initialMaxnt);
 long PointProcess_getLowIndex (PointProcess me, double t);
 long PointProcess_getHighIndex (PointProcess me, double t);
 long PointProcess_getNearestIndex (PointProcess me, double t);

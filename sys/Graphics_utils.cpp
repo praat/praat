@@ -35,11 +35,11 @@ void Graphics_drawInnerBox (Graphics me) {
 	double lineWidth = my lineWidth;
 	Graphics_Colour colour = my colour;
 	Graphics_setInner (me);
-	Graphics_setWindow (me, 0, 1, 0, 1);
+	Graphics_setWindow (me, 0.0, 1.0, 0.0, 1.0);
 	Graphics_setLineType (me, Graphics_DRAWN);
 	Graphics_setLineWidth (me, 2.0 * lineWidth);
 	Graphics_setColour (me, Graphics_BLACK);
-	Graphics_rectangle (me, 0, 1, 0, 1);
+	Graphics_rectangle (me, 0.0, 1.0, 0.0, 1.0);
 	Graphics_unsetInner (me);
 	Graphics_setWindow (me, x1WC, x2WC, y1WC, y2WC);
 	Graphics_setLineType (me, lineType);
@@ -52,13 +52,13 @@ void Graphics_textLeft (Graphics me, bool farr, const char32 *text) {
 	int vert = farr ? Graphics_TOP : Graphics_BOTTOM;
 	Graphics_Colour colour = my colour;
 	Graphics_setColour (me, Graphics_BLACK);
-	Graphics_setWindow (me, 0, 1, 0, 1);
-	Graphics_setTextRotation (me, 90);
+	Graphics_setWindow (me, 0.0, 1.0, 0.0, 1.0);
+	Graphics_setTextRotation (me, 90.0);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, vert);
 	if (! farr) Graphics_setInner (me);
-	Graphics_text (me, 0, 0.5, text);
+	Graphics_text (me, 0.0, 0.5, text);
 	if (! farr) Graphics_unsetInner (me);
-	Graphics_setTextRotation (me, 0);
+	Graphics_setTextRotation (me, 0.0);
 	Graphics_setWindow (me, x1WC, x2WC, y1WC, y2WC);
 	Graphics_setColour (me, colour);
 }
@@ -69,12 +69,12 @@ void Graphics_textRight (Graphics me, bool farr, const char32 *text) {
 	Graphics_Colour colour = my colour;
 	Graphics_setColour (me, Graphics_BLACK);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, vert);
-	Graphics_setWindow (me, 0, 1, 0, 1);
-	Graphics_setTextRotation (me, 270);
+	Graphics_setWindow (me, 0.0, 1.0, 0.0, 1.0);
+	Graphics_setTextRotation (me, 270.0);
 	if (! farr) Graphics_setInner (me);
-	Graphics_text (me, 1, 0.5, text);
+	Graphics_text (me, 1.0, 0.5, text);
 	if (! farr) Graphics_unsetInner (me);
-	Graphics_setTextRotation (me, 0);
+	Graphics_setTextRotation (me, 0.0);
 	Graphics_setWindow (me, x1WC, x2WC, y1WC, y2WC);
 	Graphics_setColour (me, colour);
 }
@@ -83,10 +83,10 @@ void Graphics_textBottom (Graphics me, bool farr, const char32 *text) {
 	double x1WC = my d_x1WC, x2WC = my d_x2WC, y1WC = my d_y1WC, y2WC = my d_y2WC;
 	Graphics_Colour colour = my colour;
 	Graphics_setColour (me, Graphics_BLACK);
-	Graphics_setWindow (me, 0, 1, 0, 1);
+	Graphics_setWindow (me, 0.0, 1.0, 0.0, 1.0);
 	if (farr) {
 		Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_BOTTOM);
-		Graphics_text (me, 0.5, 0, text);
+		Graphics_text (me, 0.5, 0.0, text);
 	} else {
 		Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_TOP);
 		Graphics_setInner (me);
@@ -101,14 +101,14 @@ void Graphics_textTop (Graphics me, bool farr, const char32 *text) {
 	double x1WC = my d_x1WC, x2WC = my d_x2WC, y1WC = my d_y1WC, y2WC = my d_y2WC;
 	Graphics_Colour colour = my colour;
 	Graphics_setColour (me, Graphics_BLACK);
-	Graphics_setWindow (me, 0, 1, 0, 1);
+	Graphics_setWindow (me, 0.0, 1.0, 0.0, 1.0);
 	if (farr) {
 		Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_TOP);
-		Graphics_text (me, 0.5, 1, text);
+		Graphics_text (me, 0.5, 1.0, text);
 	} else {
 		Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_BOTTOM);
 		Graphics_setInner (me);
-		Graphics_text (me, 0.5, 1 + my vertTick, text);
+		Graphics_text (me, 0.5, 1.0 + my vertTick, text);
 		Graphics_unsetInner (me);
 	}
 	Graphics_setWindow (me, x1WC, x2WC, y1WC, y2WC);
@@ -140,7 +140,7 @@ void Graphics_marksLeft (Graphics me, int numberOfMarks, bool haveNumbers, bool 
 		Graphics_setLineWidth (me, 0.67 * lineWidth);
 		for (int i = 2; i < numberOfMarks; i ++) {
 			double f = (i - 1.0) / (numberOfMarks - 1), yWC = y1WC + (y2WC - y1WC) * f;
-			Graphics_line (me, 0, yWC, 1, yWC);
+			Graphics_line (me, 0.0, yWC, 1.0, yWC);
 		}
 		Graphics_setLineWidth (me, lineWidth);
 	}
@@ -166,8 +166,8 @@ void Graphics_marksRight (Graphics me, int numberOfMarks, bool haveNumbers, bool
 	}
 	for (int i = 1; i <= numberOfMarks; i ++) {
 		double f = (i - 1.0) / (numberOfMarks - 1), yWC = y1WC + (y2WC - y1WC) * f;
-		if (haveNumbers) Graphics_text (me, 1 + my horTick, yWC, Melder_float (Melder_half (yWC)));
-		if (haveTicks) Graphics_line (me, 1, yWC, 1 + my horTick, yWC);
+		if (haveNumbers) Graphics_text (me, 1.0 + my horTick, yWC, Melder_float (Melder_half (yWC)));
+		if (haveTicks) Graphics_line (me, 1.0, yWC, 1.0 + my horTick, yWC);
 	}
 	if (haveTicks) Graphics_setLineWidth (me, lineWidth);
 	if (haveDottedLines && numberOfMarks > 2) {
@@ -175,7 +175,7 @@ void Graphics_marksRight (Graphics me, int numberOfMarks, bool haveNumbers, bool
 		Graphics_setLineWidth (me, 0.67 * lineWidth);
 		for (int i = 2; i < numberOfMarks; i ++) {
 			double f = (i - 1.0) / (numberOfMarks - 1), yWC = y1WC + (y2WC - y1WC) * f;
-			Graphics_line (me, 0, yWC, 1, yWC);
+			Graphics_line (me, 0.0, yWC, 1.0, yWC);
 		}
 		Graphics_setLineWidth (me, lineWidth);
 	}
@@ -192,7 +192,7 @@ void Graphics_marksBottom (Graphics me, int numberOfMarks, bool haveNumbers, boo
 	Graphics_Colour colour = my colour;
 	if (numberOfMarks < 2) return;
 	Graphics_setColour (me, Graphics_BLACK);
-	Graphics_setWindow (me, x1WC, x2WC, 0, 1);
+	Graphics_setWindow (me, x1WC, x2WC, 0.0, 1.0);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_TOP);
 	Graphics_setInner (me);
 	if (haveTicks) {
@@ -211,7 +211,7 @@ void Graphics_marksBottom (Graphics me, int numberOfMarks, bool haveNumbers, boo
 		for (int i = 2; i < numberOfMarks; i ++)
 		{
 			double f = (i - 1.0) / (numberOfMarks - 1), xWC = x1WC + (x2WC - x1WC) * f;
-			Graphics_line (me, xWC, 0, xWC, 1);
+			Graphics_line (me, xWC, 0.0, xWC, 1.0);
 		}
 		Graphics_setLineWidth (me, lineWidth);
 	}
@@ -228,7 +228,7 @@ void Graphics_marksTop (Graphics me, int numberOfMarks, bool haveNumbers, bool h
 	Graphics_Colour colour = my colour;
 	if (numberOfMarks < 2) return;
 	Graphics_setColour (me, Graphics_BLACK);
-	Graphics_setWindow (me, x1WC, x2WC, 0, 1);
+	Graphics_setWindow (me, x1WC, x2WC, 0.0, 1.0);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_BOTTOM);
 	Graphics_setInner (me);
 	if (haveTicks) {
@@ -237,8 +237,8 @@ void Graphics_marksTop (Graphics me, int numberOfMarks, bool haveNumbers, bool h
 	}
 	for (int i = 1; i <= numberOfMarks; i ++) {
 		double f = (i - 1.0) / (numberOfMarks - 1), xWC = x1WC + (x2WC - x1WC) * f;
-		if (haveNumbers) Graphics_text (me, xWC, 1 + my vertTick, Melder_float (Melder_half (xWC)));
-		if (haveTicks) Graphics_line (me, xWC, 1, xWC, 1 + my vertTick);
+		if (haveNumbers) Graphics_text (me, xWC, 1.0 + my vertTick, Melder_float (Melder_half (xWC)));
+		if (haveTicks) Graphics_line (me, xWC, 1.0, xWC, 1.0 + my vertTick);
 	}
 	if (haveTicks) Graphics_setLineWidth (me, lineWidth);
 	if (haveDottedLines && numberOfMarks > 2) {
@@ -246,7 +246,7 @@ void Graphics_marksTop (Graphics me, int numberOfMarks, bool haveNumbers, bool h
 		Graphics_setLineWidth (me, 0.67 * lineWidth);
 		for (int i = 2; i < numberOfMarks; i ++) {
 			double f = (i - 1.0) / (numberOfMarks - 1), xWC = x1WC + (x2WC - x1WC) * f;
-			Graphics_line (me, xWC, 0, xWC, 1);
+			Graphics_line (me, xWC, 0.0, xWC, 1.0);
 		}
 		Graphics_setLineWidth (me, lineWidth);
 	}
@@ -284,9 +284,9 @@ void Graphics_marksLeftLogarithmic (Graphics me, int numberOfMarksPerDecade, boo
 	Graphics_setInner (me);
 	for (int i = 1; i <= numberOfMarksPerDecade; i ++) {
 		double y = decade_y [numberOfMarksPerDecade] [i];
-		while (y < (y1<y2?py1:py2)) y *= 10;
-		while (y >= (y1<y2?py1:py2)) y /= 10;
-		for (y *= 10; y <= (y1<y2?py2:py1); y *= 10) {
+		while (y < (y1<y2?py1:py2)) y *= 10.0;
+		while (y >= (y1<y2?py1:py2)) y /= 10.0;
+		for (y *= 10.0; y <= (y1<y2?py2:py1); y *= 10.0) {
 			if (haveNumbers) Graphics_text (me, - my horTick, log10 (y), Melder_float (Melder_half (y)));
 			if (haveTicks) {
 				Graphics_setLineWidth (me, 2.0 * lineWidth);
@@ -297,7 +297,7 @@ void Graphics_marksLeftLogarithmic (Graphics me, int numberOfMarksPerDecade, boo
 			if (haveDottedLines) {
 				Graphics_setLineType (me, Graphics_DOTTED);
 				Graphics_setLineWidth (me, 0.67 * lineWidth);
-				Graphics_line (me, 0, log10 (y), 1, log10 (y));
+				Graphics_line (me, 0.0, log10 (y), 1.0, log10 (y));
 				Graphics_setLineType (me, lineType);
 				Graphics_setLineWidth (me, lineWidth);
 			}
@@ -315,29 +315,29 @@ void Graphics_marksRightLogarithmic (Graphics me, int numberOfMarksPerDecade, bo
 	Graphics_Colour colour = my colour;
 	if (numberOfMarksPerDecade < 1) numberOfMarksPerDecade = 1;
 	if (numberOfMarksPerDecade > MAXNUM_MARKS_PER_DECADE) numberOfMarksPerDecade = MAXNUM_MARKS_PER_DECADE;
-	if (y1 > 300 || y2 > 300) return;
-	double py1 = pow (10, y1 + ( y1 < y2 ? -1e-6 : 1e-6 ));
-	double py2 = pow (10, y2 + ( y1 < y2 ? 1e-6 : -1e-6 ));
+	if (y1 > 300.0 || y2 > 300.0) return;
+	double py1 = pow (10.0, y1 + ( y1 < y2 ? -1e-6 : 1e-6 ));
+	double py2 = pow (10.0, y2 + ( y1 < y2 ? 1e-6 : -1e-6 ));
 	Graphics_setColour (me, Graphics_BLACK);
-	Graphics_setWindow (me, 0, 1, y1, y2);
+	Graphics_setWindow (me, 0.0, 1.0, y1, y2);
 	Graphics_setTextAlignment (me, Graphics_LEFT, Graphics_HALF);
 	Graphics_setInner (me);
 	for (int i = 1; i <= numberOfMarksPerDecade; i ++) {
 		double y = decade_y [numberOfMarksPerDecade] [i];
-		while (y < (y1<y2?py1:py2)) y *= 10;
-		while (y >= (y1<y2?py1:py2)) y /= 10;
-		for (y *= 10; y <= (y1<y2?py2:py1); y *= 10) {
-			if (haveNumbers) Graphics_text (me, 1 + my horTick, log10 (y), Melder_float (Melder_half (y)));
+		while (y < (y1<y2?py1:py2)) y *= 10.0;
+		while (y >= (y1<y2?py1:py2)) y /= 10.0;
+		for (y *= 10.0; y <= (y1<y2?py2:py1); y *= 10.0) {
+			if (haveNumbers) Graphics_text (me, 1.0 + my horTick, log10 (y), Melder_float (Melder_half (y)));
 			if (haveTicks) {
 				Graphics_setLineWidth (me, 2.0 * lineWidth);
 				Graphics_setLineType (me, Graphics_DRAWN);
-				Graphics_line (me, 1, log10 (y), 1 + my horTick, log10 (y));
+				Graphics_line (me, 1.0, log10 (y), 1.0 + my horTick, log10 (y));
 				Graphics_setLineWidth (me, lineWidth);
 			}
 			if (haveDottedLines) {
 				Graphics_setLineType (me, Graphics_DOTTED);
 				Graphics_setLineWidth (me, 0.67 * lineWidth);
-				Graphics_line (me, 0, log10 (y), 1, log10 (y));
+				Graphics_line (me, 0.0, log10 (y), 1.0, log10 (y));
 				Graphics_setLineType (me, lineType);
 				Graphics_setLineWidth (me, lineWidth);
 			}
@@ -355,29 +355,29 @@ void Graphics_marksTopLogarithmic (Graphics me, int numberOfMarksPerDecade, bool
 	Graphics_Colour colour = my colour;
 	if (numberOfMarksPerDecade < 1) numberOfMarksPerDecade = 1;
 	if (numberOfMarksPerDecade > MAXNUM_MARKS_PER_DECADE) numberOfMarksPerDecade = MAXNUM_MARKS_PER_DECADE;
-	if (x1 > 300 || x2 > 300) return;
-	double px1 = pow (10, x1 + ( x1 < x2 ? -1e-6 : 1e-6 ));
-	double px2 = pow (10, x2 + ( x1 < x2 ? 1e-6 : -1e-6 ));
+	if (x1 > 300.0 || x2 > 300.0) return;
+	double px1 = pow (10.0, x1 + ( x1 < x2 ? -1e-6 : 1e-6 ));
+	double px2 = pow (10.0, x2 + ( x1 < x2 ? 1e-6 : -1e-6 ));
 	Graphics_setColour (me, Graphics_BLACK);
-	Graphics_setWindow (me, x1, x2, 0, 1);
+	Graphics_setWindow (me, x1, x2, 0.0, 1.0);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_BOTTOM);
 	Graphics_setInner (me);
 	for (int i = 1; i <= numberOfMarksPerDecade; i ++) {
 		double x = decade_y [numberOfMarksPerDecade] [i];
-		while (x < (x1<x2?px1:px2)) x *= 10;
-		while (x >= (x1<x2?px1:px2)) x /= 10;
-		for (x *= 10; x <= (x1<x2?px2:px1); x *= 10) {
-			if (haveNumbers) Graphics_text (me, log10 (x), 1 + my vertTick, Melder_float (Melder_half (x)));
+		while (x < (x1<x2?px1:px2)) x *= 10.0;
+		while (x >= (x1<x2?px1:px2)) x /= 10.0;
+		for (x *= 10.0; x <= (x1<x2?px2:px1); x *= 10.0) {
+			if (haveNumbers) Graphics_text (me, log10 (x), 1.0 + my vertTick, Melder_float (Melder_half (x)));
 			if (haveTicks) {
 				Graphics_setLineWidth (me, 2.0 * lineWidth);
 				Graphics_setLineType (me, Graphics_DRAWN);
-				Graphics_line (me, log10 (x), 1, log10 (x), 1 + my vertTick);
+				Graphics_line (me, log10 (x), 1.0, log10 (x), 1.0 + my vertTick);
 				Graphics_setLineWidth (me, lineWidth);
 			}
 			if (haveDottedLines) {
 				Graphics_setLineType (me, Graphics_DOTTED);
 				Graphics_setLineWidth (me, 0.67 * lineWidth);
-				Graphics_line (me, log10 (x), 0, log10 (x), 1);
+				Graphics_line (me, log10 (x), 0.0, log10 (x), 1.0);
 				Graphics_setLineType (me, lineType);
 				Graphics_setLineWidth (me, lineWidth);
 			}
@@ -395,29 +395,29 @@ void Graphics_marksBottomLogarithmic (Graphics me, int numberOfMarksPerDecade, b
 	Graphics_Colour colour = my colour;
 	if (numberOfMarksPerDecade < 1) numberOfMarksPerDecade = 1;
 	if (numberOfMarksPerDecade > MAXNUM_MARKS_PER_DECADE) numberOfMarksPerDecade = MAXNUM_MARKS_PER_DECADE;
-	if (x1 > 300 || x2 > 300) return;
-	double px1 = pow (10, x1 + ( x1 < x2 ? -1e-6 : 1e-6 ));
-	double px2 = pow (10, x2 + ( x1 < x2 ? 1e-6 : -1e-6 ));
+	if (x1 > 300.0 || x2 > 300.0) return;
+	double px1 = pow (10.0, x1 + ( x1 < x2 ? -1e-6 : 1e-6 ));
+	double px2 = pow (10.0, x2 + ( x1 < x2 ? 1e-6 : -1e-6 ));
 	Graphics_setColour (me, Graphics_BLACK);
 	Graphics_setWindow (me, x1, x2, 0, 1);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_TOP);
 	Graphics_setInner (me);
 	for (int i = 1; i <= numberOfMarksPerDecade; i ++) {
 		double x = decade_y [numberOfMarksPerDecade] [i];
-		while (x < (x1<x2?px1:px2)) x *= 10;
-		while (x >= (x1<x2?px1:px2)) x /= 10;
-		for (x *= 10; x <= (x1<x2?px2:px1); x *= 10) {
+		while (x < (x1<x2?px1:px2)) x *= 10.0;
+		while (x >= (x1<x2?px1:px2)) x /= 10.0;
+		for (x *= 10.0; x <= (x1<x2?px2:px1); x *= 10.0) {
 			if (haveNumbers) Graphics_text (me, log10 (x), - my vertTick, Melder_float (Melder_half (x)));
 			if (haveTicks) {
 				Graphics_setLineWidth (me, 2.0 * lineWidth);
 				Graphics_setLineType (me, Graphics_DRAWN);
-				Graphics_line (me, log10 (x), - my vertTick, log10 (x), 0);
+				Graphics_line (me, log10 (x), - my vertTick, log10 (x), 0.0);
 				Graphics_setLineWidth (me, lineWidth);
 			}
 			if (haveDottedLines) {
 				Graphics_setLineType (me, Graphics_DOTTED);
 				Graphics_setLineWidth (me, 0.67 * lineWidth);
-				Graphics_line (me, log10 (x), 0, log10 (x), 1);
+				Graphics_line (me, log10 (x), 0.0, log10 (x), 1.0);
 				Graphics_setLineType (me, lineType);
 				Graphics_setLineWidth (me, lineWidth);
 			}
@@ -434,20 +434,20 @@ void Graphics_markLeft (Graphics me, double position, bool hasNumber, bool hasTi
 	double lineWidth = my lineWidth;
 	Graphics_Colour colour = my colour;
 	Graphics_setColour (me, Graphics_BLACK);
-	Graphics_setWindow (me, 0, 1, y1WC, y2WC);
+	Graphics_setWindow (me, 0.0, 1.0, y1WC, y2WC);
 	Graphics_setTextAlignment (me, Graphics_RIGHT, Graphics_HALF);
 	Graphics_setInner (me);
 	if (hasNumber) Graphics_text (me, - my horTick, position, Melder_float (Melder_half (position)));
 	if (hasTick) {
 		Graphics_setLineType (me, Graphics_DRAWN);
 		Graphics_setLineWidth (me, 2.0 * lineWidth);
-		Graphics_line (me, - my horTick, position, 0, position);
+		Graphics_line (me, - my horTick, position, 0.0, position);
 		Graphics_setLineWidth (me, lineWidth);
 	}
 	if (hasDottedLine) {
 		Graphics_setLineType (me, Graphics_DOTTED);
 		Graphics_setLineWidth (me, 0.67 * lineWidth);
-		Graphics_line (me, 0, position, 1, position);
+		Graphics_line (me, 0.0, position, 1.0, position);
 		Graphics_setLineWidth (me, lineWidth);
 	}
 	if (text && text [0]) Graphics_text (me, - my horTick, position, text);   // 'text' has to stay valid until here; no Graphics is allowed to use the cat buffer!
@@ -463,23 +463,23 @@ void Graphics_markRight (Graphics me, double position, bool hasNumber, bool hasT
 	double lineWidth = my lineWidth;
 	Graphics_Colour colour = my colour;
 	Graphics_setColour (me, Graphics_BLACK);
-	Graphics_setWindow (me, 0, 1, y1WC, y2WC);
+	Graphics_setWindow (me, 0.0, 1.0, y1WC, y2WC);
 	Graphics_setTextAlignment (me, Graphics_LEFT, Graphics_HALF);
 	Graphics_setInner (me);
-	if (hasNumber) Graphics_text (me, 1 + my horTick, position, Melder_float (Melder_half (position)));
+	if (hasNumber) Graphics_text (me, 1.0 + my horTick, position, Melder_float (Melder_half (position)));
 	if (hasTick) {
 		Graphics_setLineType (me, Graphics_DRAWN);
 		Graphics_setLineWidth (me, 2.0 * lineWidth);
-		Graphics_line (me, 1, position, 1 + my horTick, position);
+		Graphics_line (me, 1.0, position, 1.0 + my horTick, position);
 		Graphics_setLineWidth (me, lineWidth);
 	}
 	if (hasDottedLine) {
 		Graphics_setLineType (me, Graphics_DOTTED);
 		Graphics_setLineWidth (me, 0.67 * lineWidth);
-		Graphics_line (me, 0, position, 1, position);
+		Graphics_line (me, 0.0, position, 1.0, position);
 		Graphics_setLineWidth (me, lineWidth);
 	}
-	if (text && text [0]) Graphics_text (me, 1 + my horTick, position, text);
+	if (text && text [0]) Graphics_text (me, 1.0 + my horTick, position, text);
 	Graphics_unsetInner (me);
 	Graphics_setWindow (me, x1WC, x2WC, y1WC, y2WC);
 	Graphics_setLineType (me, lineType);
@@ -492,23 +492,23 @@ void Graphics_markTop (Graphics me, double position, bool hasNumber, bool hasTic
 	double lineWidth = my lineWidth;
 	Graphics_Colour colour = my colour;
 	Graphics_setColour (me, Graphics_BLACK);
-	Graphics_setWindow (me, x1WC, x2WC, 0, 1);
+	Graphics_setWindow (me, x1WC, x2WC, 0.0, 1.0);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_BOTTOM);
 	Graphics_setInner (me);
-	if (hasNumber) Graphics_text (me, position, 1 + my vertTick, Melder_float (Melder_single (position)));
+	if (hasNumber) Graphics_text (me, position, 1.0 + my vertTick, Melder_float (Melder_single (position)));
 	if (hasTick) {
 		Graphics_setLineType (me, Graphics_DRAWN);
 		Graphics_setLineWidth (me, 2.0 * lineWidth);
-		Graphics_line (me, position, 1, position, 1 + my vertTick);
+		Graphics_line (me, position, 1.0, position, 1.0 + my vertTick);
 		Graphics_setLineWidth (me, lineWidth);
 	}
 	if (hasDottedLine) {
 		Graphics_setLineType (me, Graphics_DOTTED);
 		Graphics_setLineWidth (me, 0.67 * lineWidth);
-		Graphics_line (me, position, 0, position, 1);
+		Graphics_line (me, position, 0.0, position, 1.0);
 		Graphics_setLineWidth (me, lineWidth);
 	}
-	if (text && text [0]) Graphics_text (me, position, 1 + my vertTick, text);
+	if (text && text [0]) Graphics_text (me, position, 1.0 + my vertTick, text);
 	Graphics_unsetInner (me);
 	Graphics_setWindow (me, x1WC, x2WC, y1WC, y2WC);
 	Graphics_setLineType (me, lineType);
@@ -521,20 +521,20 @@ void Graphics_markBottom (Graphics me, double position, bool hasNumber, bool has
 	double lineWidth = my lineWidth;
 	Graphics_Colour colour = my colour;
 	Graphics_setColour (me, Graphics_BLACK);
-	Graphics_setWindow (me, x1WC, x2WC, 0, 1);
+	Graphics_setWindow (me, x1WC, x2WC, 0.0, 1.0);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_TOP);
 	Graphics_setInner (me);
 	if (hasNumber) Graphics_text (me, position, - my vertTick, Melder_float (Melder_single (position)));
 	if (hasTick) {
 		Graphics_setLineType (me, Graphics_DRAWN);
 		Graphics_setLineWidth (me, 2.0 * lineWidth);
-		Graphics_line (me, position, - my vertTick, position, 0);
+		Graphics_line (me, position, - my vertTick, position, 0.0);
 		Graphics_setLineWidth (me, lineWidth);
 	}
 	if (hasDottedLine) {
 		Graphics_setLineType (me, Graphics_DOTTED);
 		Graphics_setLineWidth (me, 0.67 * lineWidth);
-		Graphics_line (me, position, 0, position, 1);
+		Graphics_line (me, position, 0.0, position, 1.0);
 		Graphics_setLineWidth (me, lineWidth);
 	}
 	if (text && text [0]) Graphics_text (me, position, - my vertTick, text);
@@ -549,7 +549,7 @@ void Graphics_markLeftLogarithmic (Graphics me, double position, bool hasNumber,
 	int lineType = my lineType;
 	double lineWidth = my lineWidth;
 	Graphics_Colour colour = my colour;
-	if (position <= 0) return;
+	if (position <= 0.0) return;
 	Graphics_setColour (me, Graphics_BLACK);
 	Graphics_setWindow (me, 0, 1, y1WC, y2WC);
 	Graphics_setTextAlignment (me, Graphics_RIGHT, Graphics_HALF);
@@ -558,13 +558,13 @@ void Graphics_markLeftLogarithmic (Graphics me, double position, bool hasNumber,
 	if (hasTick) {
 		Graphics_setLineType (me, Graphics_DRAWN);
 		Graphics_setLineWidth (me, 2.0 * lineWidth);
-		Graphics_line (me, - my horTick, log10 (position), 0, log10 (position));
+		Graphics_line (me, - my horTick, log10 (position), 0.0, log10 (position));
 		Graphics_setLineWidth (me, lineWidth);
 	}
 	if (hasDottedLine) {
 		Graphics_setLineType (me, Graphics_DOTTED);
 		Graphics_setLineWidth (me, 0.67 * lineWidth);
-		Graphics_line (me, 0, log10 (position), 1, log10 (position));
+		Graphics_line (me, 0.0, log10 (position), 1.0, log10 (position));
 		Graphics_setLineWidth (me, lineWidth);
 	}
 	if (text && text [0]) Graphics_text (me, - my horTick, log10 (position), text);
@@ -579,25 +579,25 @@ void Graphics_markRightLogarithmic (Graphics me, double position, bool hasNumber
 	int lineType = my lineType;
 	double lineWidth = my lineWidth;
 	Graphics_Colour colour = my colour;
-	if (position <= 0) return;
+	if (position <= 0.0) return;
 	Graphics_setColour (me, Graphics_BLACK);
-	Graphics_setWindow (me, 0, 1, y1WC, y2WC);
+	Graphics_setWindow (me, 0.0, 1.0, y1WC, y2WC);
 	Graphics_setTextAlignment (me, Graphics_LEFT, Graphics_HALF);
 	Graphics_setInner (me);
-	if (hasNumber) Graphics_text (me, 1 + my horTick, log10 (position), Melder_float (Melder_half (position)));
+	if (hasNumber) Graphics_text (me, 1.0 + my horTick, log10 (position), Melder_float (Melder_half (position)));
 	if (hasTick) {
 		Graphics_setLineType (me, Graphics_DRAWN);
 		Graphics_setLineWidth (me, 2.0 * lineWidth);
-		Graphics_line (me, 1, log10 (position), 1 + my horTick, log10 (position));
+		Graphics_line (me, 1.0, log10 (position), 1.0 + my horTick, log10 (position));
 		Graphics_setLineWidth (me, lineWidth);
 	}
 	if (hasDottedLine) {
 		Graphics_setLineType (me, Graphics_DOTTED);
 		Graphics_setLineWidth (me, 0.67 * lineWidth);
-		Graphics_line (me, 0, log10 (position), 1, log10 (position));
+		Graphics_line (me, 0.0, log10 (position), 1.0, log10 (position));
 		Graphics_setLineWidth (me, lineWidth);
 	}
-	if (text && text [0]) Graphics_text (me, 1 + my horTick, log10 (position), text);
+	if (text && text [0]) Graphics_text (me, 1.0 + my horTick, log10 (position), text);
 	Graphics_unsetInner (me);
 	Graphics_setWindow (me, x1WC, x2WC, y1WC, y2WC);
 	Graphics_setLineType (me, lineType);
@@ -609,25 +609,25 @@ void Graphics_markTopLogarithmic (Graphics me, double position, bool hasNumber, 
 	int lineType = my lineType;
 	double lineWidth = my lineWidth;
 	Graphics_Colour colour = my colour;
-	if (position <= 0) return;
+	if (position <= 0.0) return;
 	Graphics_setColour (me, Graphics_BLACK);
-	Graphics_setWindow (me, x1WC, x2WC, 0, 1);
+	Graphics_setWindow (me, x1WC, x2WC, 0.0, 1.0);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_BOTTOM);
 	Graphics_setInner (me);
-	if (hasNumber) Graphics_text (me, log10 (position), 1 + my vertTick, Melder_float (Melder_half (position)));
+	if (hasNumber) Graphics_text (me, log10 (position), 1.0 + my vertTick, Melder_float (Melder_half (position)));
 	if (hasTick) {
 		Graphics_setLineType (me, Graphics_DRAWN);
 		Graphics_setLineWidth (me, 2.0 * lineWidth);
-		Graphics_line (me, log10 (position), 1, log10 (position), 1 + my vertTick);
+		Graphics_line (me, log10 (position), 1.0, log10 (position), 1.0 + my vertTick);
 		Graphics_setLineWidth (me, lineWidth);
 	}
 	if (hasDottedLine) {
 		Graphics_setLineType (me, Graphics_DOTTED);
 		Graphics_setLineWidth (me, 0.67 * lineWidth);
-		Graphics_line (me, log10 (position), 0, log10 (position), 1);
+		Graphics_line (me, log10 (position), 0.0, log10 (position), 1.0);
 		Graphics_setLineWidth (me, lineWidth);
 	}
-	if (text && text [0]) Graphics_text (me, log10 (position), 1 + my vertTick, text);
+	if (text && text [0]) Graphics_text (me, log10 (position), 1.0 + my vertTick, text);
 	Graphics_unsetInner (me);
 	Graphics_setWindow (me, x1WC, x2WC, y1WC, y2WC);
 	Graphics_setLineType (me, lineType);
@@ -639,22 +639,22 @@ void Graphics_markBottomLogarithmic (Graphics me, double position, bool hasNumbe
 	int lineType = my lineType;
 	double lineWidth = my lineWidth;
 	Graphics_Colour colour = my colour;
-	if (position <= 0) return;
+	if (position <= 0.0) return;
 	Graphics_setColour (me, Graphics_BLACK);
-	Graphics_setWindow (me, x1WC, x2WC, 0, 1);
+	Graphics_setWindow (me, x1WC, x2WC, 0.0, 1.0);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_TOP);
 	Graphics_setInner (me);
 	if (hasNumber) Graphics_text (me, log10 (position), - my vertTick, Melder_float (Melder_half (position)));
 	if (hasTick) {
 		Graphics_setLineType (me, Graphics_DRAWN);
 		Graphics_setLineWidth (me, 2.0 * lineWidth);
-		Graphics_line (me, log10 (position), - my vertTick, log10 (position), 0);
+		Graphics_line (me, log10 (position), - my vertTick, log10 (position), 0.0);
 		Graphics_setLineWidth (me, lineWidth);
 	}
 	if (hasDottedLine) {
 		Graphics_setLineType (me, Graphics_DOTTED);
 		Graphics_setLineWidth (me, 0.67 * lineWidth);
-		Graphics_line (me, log10 (position), 0, log10 (position), 1);
+		Graphics_line (me, log10 (position), 0.0, log10 (position), 1.0);
 		Graphics_setLineWidth (me, lineWidth);
 	}
 	if (text && text [0]) Graphics_text (me, log10 (position), - my vertTick, text);
@@ -683,7 +683,7 @@ void Graphics_marksLeftEvery (Graphics me, double units, double distance, bool h
 	for (int i = first; i <= last; i ++) {
 		double yWC = i * distance;
 		if (haveNumbers) Graphics_text (me, - my horTick, yWC, Melder_float (Melder_half (yWC / units)));
-		if (haveTicks) Graphics_line (me, - my horTick, yWC, 0, yWC);
+		if (haveTicks) Graphics_line (me, - my horTick, yWC, 0.0, yWC);
 	}
 	if (haveTicks) Graphics_setLineWidth (me, lineWidth);
 	if (haveDottedLines) {
@@ -691,7 +691,7 @@ void Graphics_marksLeftEvery (Graphics me, double units, double distance, bool h
 		Graphics_setLineWidth (me, 0.67 * lineWidth);
 		for (int i = first; i <= last; i ++) {
 			double yWC = i * distance;
-			Graphics_line (me, 0, yWC, 1, yWC);
+			Graphics_line (me, 0.0, yWC, 1.0, yWC);
 		}
 		Graphics_setLineWidth (me, lineWidth);
 	}
@@ -720,8 +720,8 @@ void Graphics_marksRightEvery (Graphics me, double units, double distance, bool 
 	}
 	for (int i = first; i <= last; i ++) {
 		double yWC = i * distance;
-		if (haveNumbers) Graphics_text (me, 1 + my horTick, yWC, Melder_float (Melder_half (yWC / units)));
-		if (haveTicks) Graphics_line (me, 1, yWC, 1 + my horTick, yWC);
+		if (haveNumbers) Graphics_text (me, 1.0 + my horTick, yWC, Melder_float (Melder_half (yWC / units)));
+		if (haveTicks) Graphics_line (me, 1.0, yWC, 1.0 + my horTick, yWC);
 	}
 	if (haveTicks) Graphics_setLineWidth (me, lineWidth);
 	if (haveDottedLines) {
@@ -729,7 +729,7 @@ void Graphics_marksRightEvery (Graphics me, double units, double distance, bool 
 		Graphics_setLineWidth (me, 0.67 * lineWidth);
 		for (int i = first; i <= last; i ++) {
 			double yWC = i * distance;
-			Graphics_line (me, 0, yWC, 1, yWC);
+			Graphics_line (me, 0.0, yWC, 1.0, yWC);
 		}
 		Graphics_setLineWidth (me, lineWidth);
 	}
@@ -748,7 +748,7 @@ void Graphics_marksBottomEvery (Graphics me, double units, double distance, bool
 	first = (int) ceil (( x1WC < x2WC ? x1WC : x2WC ) / distance - 1e-5);
 	last = (int) floor (( x1WC < x2WC ? x2WC : x1WC) / distance + 1e-5);
 	Graphics_setColour (me, Graphics_BLACK);
-	Graphics_setWindow (me, x1WC, x2WC, 0, 1);
+	Graphics_setWindow (me, x1WC, x2WC, 0.0, 1.0);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_TOP);
 	Graphics_setInner (me);
 	if (haveTicks) {
@@ -758,7 +758,7 @@ void Graphics_marksBottomEvery (Graphics me, double units, double distance, bool
 	for (int i = first; i <= last; i ++) {
 		double xWC = i * distance;
 		if (haveNumbers) Graphics_text (me, xWC, - my vertTick, Melder_float (Melder_half (xWC / units)));
-		if (haveTicks) Graphics_line (me, xWC, - my vertTick, xWC, 0);
+		if (haveTicks) Graphics_line (me, xWC, - my vertTick, xWC, 0.0);
 	}
 	if (haveTicks) Graphics_setLineWidth (me, lineWidth);
 	if (haveDottedLines) {
@@ -766,7 +766,7 @@ void Graphics_marksBottomEvery (Graphics me, double units, double distance, bool
 		Graphics_setLineWidth (me, 0.67 * lineWidth);
 		for (int i = first; i <= last; i ++) {
 			double xWC = i * distance;
-			Graphics_line (me, xWC, 0, xWC, 1);
+			Graphics_line (me, xWC, 0.0, xWC, 1.0);
 		}
 		Graphics_setLineWidth (me, lineWidth);
 	}
@@ -785,7 +785,7 @@ void Graphics_marksTopEvery (Graphics me, double units, double distance, bool ha
 	first = (int) ceil (( x1WC < x2WC ? x1WC : x2WC ) / distance - 1e-5);
 	last = (int) floor (( x1WC < x2WC ? x2WC : x1WC) / distance + 1e-5);
 	Graphics_setColour (me, Graphics_BLACK);
-	Graphics_setWindow (me, x1WC, x2WC, 0, 1);
+	Graphics_setWindow (me, x1WC, x2WC, 0.0, 1.0);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_BOTTOM);
 	Graphics_setInner (me);
 	if (haveTicks) {
@@ -794,8 +794,8 @@ void Graphics_marksTopEvery (Graphics me, double units, double distance, bool ha
 	}
 	for (int i = first; i <= last; i ++) {
 		double xWC = i * distance;
-		if (haveNumbers) Graphics_text (me, xWC, 1 + my vertTick, Melder_float (Melder_half (xWC / units)));
-		if (haveTicks) Graphics_line (me, xWC, 1, xWC, 1 + my vertTick);
+		if (haveNumbers) Graphics_text (me, xWC, 1.0 + my vertTick, Melder_float (Melder_half (xWC / units)));
+		if (haveTicks) Graphics_line (me, xWC, 1.0, xWC, 1.0 + my vertTick);
 	}
 	if (haveTicks) Graphics_setLineWidth (me, lineWidth);
 	if (haveDottedLines) {
@@ -803,7 +803,7 @@ void Graphics_marksTopEvery (Graphics me, double units, double distance, bool ha
 		Graphics_setLineWidth (me, 0.67 * lineWidth);
 		for (int i = first; i <= last; i ++) {
 			double xWC = i * distance;
-			Graphics_line (me, xWC, 0, xWC, 1);
+			Graphics_line (me, xWC, 0.0, xWC, 1.0);
 		}
 		Graphics_setLineWidth (me, lineWidth);
 	}
@@ -827,7 +827,7 @@ void Graphics_mark (Graphics me, double x, double y, double size_mm, const char3
 		int oldSize = my fontSize;
 		int oldHorizontalAlignment = my horizontalTextAlignment;
 		int oldVerticalAlignment = my verticalTextAlignment;
-		Graphics_setFontSize (me, size_mm * 72 / 25.4);
+		Graphics_setFontSize (me, size_mm * 72.0 / 25.4);
 		Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_HALF);
 		Graphics_text (me, x, y, markString);
 		Graphics_setFontSize (me, oldSize);
@@ -857,7 +857,7 @@ void Graphics_setTextRotation_vector (Graphics me, double dx, double dy) {
 		angle = dy > 0.0 ? 90.0 : 270.0;
 	} else {
 		double dxDC = dx * my scaleX, dyDC = my yIsZeroAtTheTop ? -dy * my scaleY : dy * my scaleY;
-		angle = atan2 (dyDC, dxDC) * (180 / NUMpi);
+		angle = atan2 (dyDC, dxDC) * (180.0 / NUMpi);
 	}
 	Graphics_setTextRotation (me, angle);
 }

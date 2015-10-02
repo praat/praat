@@ -212,12 +212,13 @@ void structGraphicsScreen :: v_destroy () {
 			CFURLRef url = CFURLCreateWithFileSystemPath (NULL,
 				(CFStringRef) Melder_peek32toCfstring (d_file. path), kCFURLPOSIXPathStyle, false);
 			CGImageDestinationRef imageDestination = CGImageDestinationCreateWithURL (url, kUTTypePNG, 1, NULL);
-			Melder_assert (imageDestination != NULL);
-			CGImageDestinationAddImage (imageDestination, image, properties);
+			if (imageDestination != NULL) {
+				CGImageDestinationAddImage (imageDestination, image, properties);
+				CGImageDestinationFinalize (imageDestination);
+				CFRelease (imageDestination);
+			}
 			CGImageRelease (image);
 			CFRelease (properties);
-			CGImageDestinationFinalize (imageDestination);
-			CFRelease (imageDestination);
 			CFRelease (url);
 		}
 		Melder_free (d_bits);

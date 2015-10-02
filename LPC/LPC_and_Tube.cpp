@@ -99,7 +99,7 @@ double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refL
 	try {
 		long m = my nCoefficients;
 		double length, dlength = 0.001, wakita_length = NUMundefined;
-		double varMin = 1e38;
+		double varMin = 1e308;
 
 		memset (& lpc_struct, 0, sizeof (lpc_struct));
 		memset (& f_struct, 0, sizeof (f_struct));

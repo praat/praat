@@ -274,10 +274,10 @@ void BandFilterSpectrogram_drawFrequencyScale (BandFilterSpectrogram me, Graphic
 
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, Melder_cat (U"Frequency (", my v_getFrequencyUnit (), U")"));
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_textBottom (g, 1, U"Frequency (Hz)");
+		Graphics_marksLeft (g, 2, true, true, false);
+		Graphics_textLeft (g, true, Melder_cat (U"Frequency (", my v_getFrequencyUnit (), U")"));
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_textBottom (g, true, U"Frequency (Hz)");
 	}
 }
 
@@ -311,10 +311,10 @@ void BandFilterSpectrogram_paintImage (BandFilterSpectrogram me, Graphics g, dou
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, Melder_cat (U"Frequency (", my v_getFrequencyUnit (), U")"));
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_textBottom (g, 1, U"Time (s)");
+		Graphics_marksLeft (g, 2, true, true, false);
+		Graphics_textLeft (g, true, Melder_cat (U"Frequency (", my v_getFrequencyUnit (), U")"));
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_textBottom (g, true, U"Time (s)");
 	}
 }
 
@@ -367,10 +367,10 @@ void BandFilterSpectrogram_drawSpectrumAtNearestTimeSlice (BandFilterSpectrogram
 
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, U"Power (dB)");
-		Graphics_textBottom (g, 1, Melder_cat (U"Frequency (", my v_getFrequencyUnit (), U")"));
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeft (g, 2, true, true, false);
+		Graphics_textLeft (g, true, U"Power (dB)");
+		Graphics_textBottom (g, true, Melder_cat (U"Frequency (", my v_getFrequencyUnit (), U")"));
 	}
 }
 
@@ -385,8 +385,8 @@ void BarkSpectrogram_drawSekeyHansonFilterFunctions (BarkSpectrogram me, Graphic
 		zmin = my v_hertzToFrequency (xmin); zmax = my v_hertzToFrequency (xmax);
 	}
 	if (ymin >= ymax) {
-		ymin = yscale_dB ? -60 : 0;
-		ymax = yscale_dB ? 0 : 1;
+		ymin = yscale_dB ? -60 : 0.0;
+		ymax = yscale_dB ? 0.0 : 1.0;
 	}
 	fromFilter = fromFilter <= 0 ? 1 : fromFilter;
 	toFilter = toFilter <= 0 || toFilter > my ny ? my ny : toFilter;
@@ -409,8 +409,8 @@ void BarkSpectrogram_drawSekeyHansonFilterFunctions (BarkSpectrogram me, Graphic
 		double zMid = Matrix_rowToY (me, ifilter);
 		for (long iz = 1; iz <= n; iz++) {
 			double z = xz[iz] - (zMid - 0.215);
-			double amp = 7 - 7.5 * z - 17.5 * sqrt (0.196 + z * z);
-			y[iz] = yscale_dB ? amp : pow (10, amp / 10);
+			double amp = 7.0 - 7.5 * z - 17.5 * sqrt (0.196 + z * z);
+			y[iz] = yscale_dB ? amp : pow (10.0, amp / 10.0);
 		}
 		// the drawing
 		double x1 = xIsHertz ? xhz[1] : xz[1], y1 = y[1];
@@ -428,12 +428,12 @@ void BarkSpectrogram_drawSekeyHansonFilterFunctions (BarkSpectrogram me, Graphic
 	Graphics_unsetInner (g);
 
 	if (garnish) {
-		double distance = yscale_dB ? 10 : 0.5;
+		double distance = yscale_dB ? 10.0 : 0.5;
 		Graphics_drawInnerBox (g);
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_marksLeftEvery (g, 1, distance, 1, 1, 0);
-		Graphics_textLeft (g, 1, yscale_dB ? U"Amplitude (dB)" : U"Amplitude");
-		Graphics_textBottom (g, 1, Melder_cat (U"Frequency (", xIsHertz ? U"Hz" : my v_getFrequencyUnit (), U")"));
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeftEvery (g, 1.0, distance, true, true, false);
+		Graphics_textLeft (g, true, yscale_dB ? U"Amplitude (dB)" : U"Amplitude");
+		Graphics_textBottom (g, true, Melder_cat (U"Frequency (", xIsHertz ? U"Hz" : my v_getFrequencyUnit (), U")"));
 	}
 }
 
@@ -455,10 +455,10 @@ void BandFilterSpectrogram_drawTimeSlice (I, Graphics g, double t, double fmin,
 	Matrix_drawSliceY (me, g, t, fmin, fmax, min, max);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeft (g, 2, true, true, false);
 		if (xlabel) {
-			Graphics_textBottom (g, 0, xlabel);
+			Graphics_textBottom (g, false, xlabel);
 		}
 	}
 }
@@ -475,8 +475,8 @@ void MelSpectrogram_drawTriangularFilterFunctions (MelSpectrogram me, Graphics g
 	}
 
 	if (ymin >= ymax) {
-		ymin = yscale_dB ? -60 : 0;
-		ymax = yscale_dB ? 0 : 1;
+		ymin = yscale_dB ? -60.0 : 0.0;
+		ymax = yscale_dB ? 0.0 : 1.0;
 	}
 	fromFilter = fromFilter <= 0 ? 1 : fromFilter;
 	toFilter = toFilter <= 0 || toFilter > my ny ? my ny : toFilter;
@@ -504,7 +504,7 @@ void MelSpectrogram_drawTriangularFilterFunctions (MelSpectrogram me, Graphics g
 			for (long iz = 1; iz <= n; iz++) {
 				double z = xz[iz];
 				double amp = NUMtriangularfilter_amplitude (zl, zc, zh, z);
-				y[iz] = yscale_dB ? (amp > 0 ? 20 * log10 (amp) : ymin - 10) : amp;
+				y[iz] = yscale_dB ? (amp > 0.0 ? 20.0 * log10 (amp) : ymin - 10.0) : amp;
 			}
 			double x1 = xIsHertz ? xhz[1] : xz[1], y1 = y[1];
 			if (NUMdefined (y1)) {
@@ -535,10 +535,10 @@ void MelSpectrogram_drawTriangularFilterFunctions (MelSpectrogram me, Graphics g
 
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_marksLeftEvery (g, 1, yscale_dB ? 10 : 0.5, 1, 1, 0);
-		Graphics_textLeft (g, 1, yscale_dB ? U"Amplitude (dB)" : U"Amplitude");
-		Graphics_textBottom (g, 1, Melder_cat (U"Frequency (", ( xIsHertz ? U"Hz" : my v_getFrequencyUnit () ), U")"));
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeftEvery (g, 1.0, yscale_dB ? 10.0 : 0.5, true, true, false);
+		Graphics_textLeft (g, true, yscale_dB ? U"Amplitude (dB)" : U"Amplitude");
+		Graphics_textBottom (g, true, Melder_cat (U"Frequency (", ( xIsHertz ? U"Hz" : my v_getFrequencyUnit () ), U")"));
 	}
 }
 

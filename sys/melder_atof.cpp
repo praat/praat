@@ -151,15 +151,15 @@ static const char *findEndOfNumericString_nothrow (const char *string) {
 }
 
 bool Melder_isStringNumeric_nothrow (const char32 *string) {
-	if (string == NULL) return false;
+	if (! string) return false;
 	const char32 *p = findEndOfNumericString_nothrow (string);
-	if (p == NULL) return FALSE;
+	if (! p) return false;
 	/*
 	 * We accept only white space after the numeric string.
 	 */
-	while (*p == ' ' || *p == '\t' || *p == '\n' || *p == '\r')
+	while (*p == U' ' || *p == U'\t' || *p == U'\n' || *p == U'\r')
 		p ++;
-	return *p == '\0';
+	return *p == U'\0';
 }
 
 double Melder_a8tof (const char *string) {

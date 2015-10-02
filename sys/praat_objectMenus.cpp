@@ -54,25 +54,25 @@ DO
 	WHERE (SELECTED) break;
 	praat_cleanUpName (string);   // this is allowed because "string" is local and dispensible
 	#if 0
-	std::u32string newFullName = std::u32string (Thing_className ((Thing) OBJECT)) + U" " + string;
+	std::u32string newFullName = std::u32string (Thing_className (OBJECT) + U" " + string;
 	if (newFullName != std::u32string (FULL_NAME)) {
 		Melder_free (FULL_NAME), FULL_NAME = Melder_dup_f (newFullName.c_str());
 		praat_list_renameAndSelect (IOBJECT, (std::u32string (Melder_integer (ID)) + U". " + newFullName). c_str());
 		for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
-			if (EDITOR [ieditor]) Thing_setName ((Thing) EDITOR [ieditor], newFullName.c_str());
-		Thing_setName ((Thing) OBJECT, string);
+			if (EDITOR [ieditor]) Thing_setName (EDITOR [ieditor], newFullName.c_str());
+		Thing_setName (OBJECT, string);
 	}
 	#else
 	static MelderString fullName { 0 };
-	MelderString_copy (& fullName, Thing_className ((Thing) OBJECT), U" ", string);
+	MelderString_copy (& fullName, Thing_className (OBJECT), U" ", string);
 	if (! str32equ (fullName.string, FULL_NAME)) {
 		Melder_free (FULL_NAME), FULL_NAME = Melder_dup_f (fullName.string);
 		autoMelderString listName;
 		MelderString_append (& listName, ID, U". ", fullName.string);
 		praat_list_renameAndSelect (IOBJECT, listName.string);
 		for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
-			if (EDITOR [ieditor]) Thing_setName ((Thing) EDITOR [ieditor], fullName.string);
-		Thing_setName ((Thing) OBJECT, string);
+			if (EDITOR [ieditor]) Thing_setName (EDITOR [ieditor], fullName.string);
+		Thing_setName (OBJECT, string);
 	}
 	#endif
 END2 }
@@ -98,7 +98,7 @@ DIRECT2 (Info) {
 		Melder_throw (U"Selection changed!\nNo object selected. Cannot query.");
 	if (theCurrentPraatObjects -> totalSelection > 1)
 		Melder_throw (U"Selection changed!\nCannot query more than one object at a time.");
-	WHERE (SELECTED) Thing_infoWithIdAndFile ((Thing) OBJECT, ID, & theCurrentPraatObjects -> list [IOBJECT]. file);
+	WHERE (SELECTED) Thing_infoWithIdAndFile (OBJECT, ID, & theCurrentPraatObjects -> list [IOBJECT]. file);
 END2 }
 
 DIRECT2 (Inspect) {
@@ -141,7 +141,7 @@ GuiMenu praat_objects_resolveMenu (const char32 *menu) {
 /********** Callbacks of the Praat menu. **********/
 
 DIRECT2 (About) {
-	praat_showLogo (FALSE);
+	praat_showLogo (false);
 END2 }
 
 DIRECT2 (praat_newScript) {

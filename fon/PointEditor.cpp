@@ -168,7 +168,7 @@ void structPointEditor :: v_createHelpMenuItems (EditorMenu menu) {
 /********** DRAWING AREA **********/
 
 void structPointEditor :: v_draw () {
-	PointProcess point = (PointProcess) data;
+	PointProcess point = static_cast <PointProcess> (our data);
 	Sound sound = d_sound.data;
 	Graphics_setColour (d_graphics, Graphics_WHITE);
 	Graphics_setWindow (d_graphics, 0, 1, 0, 1);
@@ -212,14 +212,14 @@ void structPointEditor :: v_play (double a_tmin, double a_tmax) {
 	}
 }
 
-PointEditor PointEditor_create (const char32 *title, PointProcess point, Sound sound) {
+autoPointEditor PointEditor_create (const char32 *title, PointProcess point, Sound sound) {
 	try {
 		autoPointEditor me = Thing_new (PointEditor);
 		if (sound) {
 			my monoSound = Sound_convertToMono (sound);
 		}
 		TimeSoundEditor_init (me.peek(), title, point, my monoSound, false);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PointProcess window not created.");
 	}

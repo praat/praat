@@ -168,13 +168,13 @@ void Polygon_Categories_draw (Polygon me, thou, Graphics graphics, double xmin, 
 	Graphics_unsetInner (graphics);
 	if (garnish) {
 		Graphics_drawInnerBox (graphics);
-		Graphics_marksLeft (graphics, 2, 1, 1, 0);
+		Graphics_marksLeft (graphics, 2, true, true, false);
 		if (ymin * ymax < 0.0) {
-			Graphics_markLeft (graphics, 0.0, 1, 1, 1, NULL);
+			Graphics_markLeft (graphics, 0.0, true, true, true, nullptr);
 		}
-		Graphics_marksBottom (graphics, 2, 1, 1, 0);
+		Graphics_marksBottom (graphics, 2, true, true, false);
 		if (xmin * xmax < 0.0) {
-			Graphics_markBottom (graphics, 0.0, 1, 1, 1, NULL);
+			Graphics_markBottom (graphics, 0.0, true, true, true, nullptr);
 		}
 	}
 }

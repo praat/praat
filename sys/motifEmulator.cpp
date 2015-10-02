@@ -2791,13 +2791,13 @@ void XtUnmanageChildren (GuiObjectList children, Cardinal num_children) {
 		return noErr;
 	}
 	static pascal OSErr _motif_processSignal8 (const AppleEvent *theAppleEvent, AppleEvent *reply, long handlerRefCon) {
-		static int duringAppleEvent = FALSE;
+		static bool duringAppleEvent = false;
 		(void) reply;
 		(void) handlerRefCon;
 		if (! duringAppleEvent) {
 			char *buffer;
 			long actualSize;
-			duringAppleEvent = TRUE;
+			duringAppleEvent = true;
 			//AEInteractWithUser (kNoTimeOut, NULL, NULL);   // use time out of 0 to execute immediately (without bringing to foreground)
 			ProcessSerialNumber psn;
 			GetCurrentProcess (& psn);
@@ -2810,18 +2810,18 @@ void XtUnmanageChildren (GuiObjectList children, Cardinal num_children) {
 				theUserMessageCallback (buffer32.peek());
 			}
 			free (buffer);
-			duringAppleEvent = FALSE;
+			duringAppleEvent = false;
 		}
 		return noErr;
 	}
 	static pascal OSErr _motif_processSignal16 (const AppleEvent *theAppleEvent, AppleEvent *reply, long handlerRefCon) {
-		static int duringAppleEvent = FALSE;
+		static bool duringAppleEvent = false;
 		(void) reply;
 		(void) handlerRefCon;
 		if (! duringAppleEvent) {
 			char16 *buffer;
 			long actualSize;
-			duringAppleEvent = TRUE;
+			duringAppleEvent = true;
 			//AEInteractWithUser (kNoTimeOut, NULL, NULL);   // use time out of 0 to execute immediately (without bringing to foreground)
 			ProcessSerialNumber psn;
 			GetCurrentProcess (& psn);
@@ -2834,7 +2834,7 @@ void XtUnmanageChildren (GuiObjectList children, Cardinal num_children) {
 				theUserMessageCallback (buffer32.peek());
 			}
 			free (buffer);
-			duringAppleEvent = FALSE;
+			duringAppleEvent = false;
 		}
 		return noErr;
 	}

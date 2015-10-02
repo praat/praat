@@ -688,27 +688,27 @@ static void cellArrayOrImage (Graphics me, double **z_float, double_rgbt **z_rgb
 
 void Graphics_cellArray (Graphics me, double **z, long ix1, long ix2, double x1WC, double x2WC,
 	long iy1, long iy2, double y1WC, double y2WC, double minimum, double maximum)
-{ cellArrayOrImage (me, z, NULL, NULL, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, FALSE); }
+{ cellArrayOrImage (me, z, NULL, NULL, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, false); }
 
 void Graphics_cellArray_colour (Graphics me, double_rgbt **z, long ix1, long ix2, double x1WC, double x2WC,
 	long iy1, long iy2, double y1WC, double y2WC, double minimum, double maximum)
-{ cellArrayOrImage (me, NULL, z, NULL, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, FALSE); }
+{ cellArrayOrImage (me, NULL, z, NULL, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, false); }
 
 void Graphics_cellArray8 (Graphics me, unsigned char **z, long ix1, long ix2, double x1WC, double x2WC,
 	long iy1, long iy2, double y1WC, double y2WC, unsigned char minimum, unsigned char maximum)
-{ cellArrayOrImage (me, NULL, NULL, z, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, FALSE); }
+{ cellArrayOrImage (me, NULL, NULL, z, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, false); }
 
 void Graphics_image (Graphics me, double **z, long ix1, long ix2, double x1WC, double x2WC,
 	long iy1, long iy2, double y1WC, double y2WC, double minimum, double maximum)
-{ cellArrayOrImage (me, z, NULL, NULL, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, TRUE); }
+{ cellArrayOrImage (me, z, NULL, NULL, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, true); }
 
 void Graphics_image_colour (Graphics me, double_rgbt **z, long ix1, long ix2, double x1WC, double x2WC,
 	long iy1, long iy2, double y1WC, double y2WC, double minimum, double maximum)
-{ cellArrayOrImage (me, NULL, z, NULL, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, TRUE); }
+{ cellArrayOrImage (me, NULL, z, NULL, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, true); }
 
 void Graphics_image8 (Graphics me, unsigned char **z, long ix1, long ix2, double x1WC, double x2WC,
 	long iy1, long iy2, double y1WC, double y2WC, unsigned char minimum, unsigned char maximum)
-{ cellArrayOrImage (me, NULL, NULL, z, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, TRUE); }
+{ cellArrayOrImage (me, NULL, NULL, z, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, true); }
 
 static void _GraphicsScreen_imageFromFile (GraphicsScreen me, const char32 *relativeFileName, double x1, double x2, double y1, double y2) {
 	long x1DC = wdx (x1), x2DC = wdx (x2), y1DC = wdy (y1), y2DC = wdy (y2);

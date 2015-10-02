@@ -94,7 +94,7 @@ static void gui_cb_goAway (I) {
  	GuiThing_hide (theLogo.form);
 }
 
-void praat_showLogo (int autoPopDown) {
+void praat_showLogo (bool autoPopDown) {
 	#if gtk
 		static const gchar *authors [3] = { "Paul Boersma", "David Weenink", NULL };
 

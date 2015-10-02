@@ -33,7 +33,7 @@
 Thing_implement (ParamCurve, Function, 2);
 
 void structParamCurve :: v_info () {
-	double xmin = 1e300, xmax = -1e300, ymin = 1e300, ymax = -1e300;
+	double xmin = 1e308, xmax = -1e308, ymin = 1e308, ymax = -1e308;
 	for (long i = 1; i <= x -> nx; i ++) {
 		double value = x -> z [1] [i];
 		if (value < xmin) xmin = value;
@@ -146,8 +146,8 @@ void ParamCurve_draw (ParamCurve me, Graphics g, double t1, double t2, double dt
 	}
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeft (g, 2, true, true, false);
 	}
 }
 

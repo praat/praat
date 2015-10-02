@@ -150,10 +150,10 @@ void FormantTier_speckle (FormantTier me, Graphics g, double tmin, double tmax, 
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, TRUE, U"Time (s)");
-		Graphics_marksBottom (g, 2, TRUE, TRUE, FALSE);
-		Graphics_marksLeft (g, 2, TRUE, TRUE, FALSE);
-		Graphics_textLeft (g, TRUE, U"Frequency (Hz)");
+		Graphics_textBottom (g, true, U"Time (s)");
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeft (g, 2, true, true, false);
+		Graphics_textLeft (g, true, U"Frequency (Hz)");
 	}
 }
 

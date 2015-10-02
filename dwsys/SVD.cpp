@@ -318,7 +318,7 @@ long SVD_zeroSmallSingularValues (SVD me, double tolerance) {
 	long numberOfZeroed = 0, mn_min = MIN (my numberOfRows, my numberOfColumns);
 	double dmax = my d[1];
 
-	if (tolerance == 0) {
+	if (tolerance == 0.0) {
 		tolerance = my tolerance;
 	}
 	for (long i = 2; i <= mn_min; i++) {
@@ -328,7 +328,7 @@ long SVD_zeroSmallSingularValues (SVD me, double tolerance) {
 	}
 	for (long i = 1; i <= mn_min; i++) {
 		if (my d[i] < dmax * tolerance) {
-			my d[i] = 0; numberOfZeroed++;
+			my d[i] = 0.0; numberOfZeroed++;
 		}
 	}
 	return numberOfZeroed;
@@ -338,7 +338,7 @@ long SVD_zeroSmallSingularValues (SVD me, double tolerance) {
 long SVD_getRank (SVD me) {
 	long rank = 0, mn_min = MIN (my numberOfRows, my numberOfColumns);
 	for (long i = 1; i <= mn_min; i++) {
-		if (my d[i] > 0) {
+		if (my d[i] > 0.0) {
 			rank++;
 		}
 	}
@@ -365,7 +365,7 @@ void SVD_synthesize (SVD me, long sv_from, long sv_to, double **m) {
 
 		for (long i = 1; i <= my numberOfRows; i++) {
 			for (long j = 1; j <= my numberOfColumns; j++) {
-				m[i][j] = 0;
+				m[i][j] = 0.0;
 			}
 		}
 

@@ -22,56 +22,58 @@
 #include "Sound.h"
 
 static void draw_SoundDeepen_filter (Graphics g) {
-	Sound s = Sound_createSimple (1, 100, 10);
-	int i;
-	double alpha = sqrt (log (2.0));
-	if (! s) return;
-	Graphics_setWindow (g, 0, 100, 0, 1);
-	for (i = 1; i <= s -> nx; i ++) {
-		double alpha_f = alpha * (s -> x1 + (i - 1) * s -> dx);
-		double slow = alpha_f / 3.0, fast = alpha_f / 30.0;
-		s -> z [1] [i] = exp (- fast * fast) - exp (- slow * slow);
+	try {
+		autoSound s = Sound_createSimple (1, 100.0, 10.0);
+		double alpha = sqrt (log (2.0));
+		Graphics_setWindow (g, 0.0, 100.0, 0.0, 1.0);
+		for (int i = 1; i <= s -> nx; i ++) {
+			double alpha_f = alpha * (s -> x1 + (i - 1) * s -> dx);
+			double slow = alpha_f / 3.0, fast = alpha_f / 30.0;
+			s -> z [1] [i] = exp (- fast * fast) - exp (- slow * slow);
+		}
+		Graphics_drawInnerBox (g);
+		Graphics_textBottom (g, true, U"Frequency %f (Hz)");
+		Graphics_textLeft (g, true, U"Amplitude filter %H (%f)");
+		Graphics_markLeft (g, 0.0, true, true, false, nullptr);
+		Graphics_markLeft (g, 0.5, true, true, true, nullptr);
+		Graphics_markLeft (g, 1.0, true, true, false, nullptr);
+		Graphics_markRight (g, 1.0, false, true, false, U"0 dB");
+		Graphics_markRight (g, 0.5, false, true, false, U"-6 dB");
+		Graphics_markBottom (g, 0.0, true, true, false, nullptr);
+		Graphics_markBottom (g, 3.0, true, true, true, nullptr);
+		Graphics_markBottom (g, 30.0, true, true, true, nullptr);
+		Graphics_markBottom (g, 100.0, true, true, false, nullptr);
+		Graphics_setColour (g, Graphics_RED);
+		Sound_draw (s.get(), g, 0.0, 0.0, 0.0, 1.0, false, U"curve");
+		Graphics_setColour (g, Graphics_BLACK);
+	} catch (MelderError) {
+		Melder_clearError ();
 	}
-	Graphics_drawInnerBox (g);
-	Graphics_textBottom (g, TRUE, U"Frequency %f (Hz)");
-	Graphics_textLeft (g, TRUE, U"Amplitude filter %H (%f)");
-	Graphics_markLeft (g, 0, TRUE, TRUE, FALSE, NULL);
-	Graphics_markLeft (g, 0.5, TRUE, TRUE, TRUE, NULL);
-	Graphics_markLeft (g, 1, TRUE, TRUE, FALSE, NULL);
-	Graphics_markRight (g, 1, FALSE, TRUE, FALSE, U"0 dB");
-	Graphics_markRight (g, 0.5, FALSE, TRUE, FALSE, U"-6 dB");
-	Graphics_markBottom (g, 0, TRUE, TRUE, FALSE, NULL);
-	Graphics_markBottom (g, 3, TRUE, TRUE, TRUE, NULL);
-	Graphics_markBottom (g, 30, TRUE, TRUE, TRUE, NULL);
-	Graphics_markBottom (g, 100, TRUE, TRUE, FALSE, NULL);
-	Graphics_setColour (g, Graphics_RED);
-	Sound_draw (s, g, 0, 0, 0, 1, FALSE, U"curve");
-	Graphics_setColour (g, Graphics_BLACK);
-	forget (s);
 }
 
 static void draw_SoundDeepen_impulse (Graphics g) {
-	Sound s = Sound_create (1, -0.2, 0.2, 1000, 4e-4, -0.1998);
-	int i;
-	double pibyalpha = NUMpi / sqrt (log (2.0)), twosqrtpitimespibyalpha = 2 * sqrt (NUMpi) * pibyalpha;
-	if (! s) return;
-	Graphics_setWindow (g, -0.2, 0.2, -100, 400);
-	for (i = 1; i <= s -> nx; i ++) {
-		double pibyalpha_f = pibyalpha * (s -> x1 + (i - 1) * s -> dx);
-		double slow = pibyalpha_f * 3.0, fast = pibyalpha_f * 30.0;
-		s -> z [1] [i] = twosqrtpitimespibyalpha * (30.0 * exp (- fast * fast) - 3.0 * exp (- slow * slow));
+	try {
+		autoSound s = Sound_create (1, -0.2, 0.2, 1000, 4e-4, -0.1998);
+		double pibyalpha = NUMpi / sqrt (log (2.0)), twosqrtpitimespibyalpha = 2 * sqrt (NUMpi) * pibyalpha;
+		Graphics_setWindow (g, -0.2, 0.2, -100.0, 400.0);
+		for (int i = 1; i <= s -> nx; i ++) {
+			double pibyalpha_f = pibyalpha * (s -> x1 + (i - 1) * s -> dx);
+			double slow = pibyalpha_f * 3.0, fast = pibyalpha_f * 30.0;
+			s -> z [1] [i] = twosqrtpitimespibyalpha * (30.0 * exp (- fast * fast) - 3.0 * exp (- slow * slow));
+		}
+		Graphics_drawInnerBox (g);
+		Graphics_textBottom (g, true, U"Time %t (s)");
+		Graphics_textLeft (g, true, U"Intensity impulse reponse %h (%t)");
+		Graphics_markBottom (g, -0.2, true, true, false, nullptr);
+		Graphics_markBottom (g, 0, true, true, true, nullptr);
+		Graphics_markBottom (g, 0.2, true, true, false, nullptr);
+		Graphics_markLeft (g, 0, true, true, true, nullptr);
+		Graphics_setColour (g, Graphics_RED);
+		Sound_draw (s.get(), g, 0.0, 0.0, -100.0, 400.0, false, U"curve");
+		Graphics_setColour (g, Graphics_BLACK);
+	} catch (MelderError) {
+		Melder_clearError ();
 	}
-	Graphics_drawInnerBox (g);
-	Graphics_textBottom (g, TRUE, U"Time %t (s)");
-	Graphics_textLeft (g, TRUE, U"Intensity impulse reponse %h (%t)");
-	Graphics_markBottom (g, -0.2, TRUE, TRUE, FALSE, NULL);
-	Graphics_markBottom (g, 0, TRUE, TRUE, TRUE, NULL);
-	Graphics_markBottom (g, 0.2, TRUE, TRUE, FALSE, NULL);
-	Graphics_markLeft (g, 0, TRUE, TRUE, TRUE, NULL);
-	Graphics_setColour (g, Graphics_RED);
-	Sound_draw (s, g, 0, 0, -100, 400, FALSE, U"curve");
-	Graphics_setColour (g, Graphics_BLACK);
-	forget (s);
 }
 
 void manual_sound_init (ManPages me);

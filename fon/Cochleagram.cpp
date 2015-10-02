@@ -33,8 +33,8 @@ Cochleagram Cochleagram_create (double tmin, double tmax, long nt, double dt, do
 }
 
 void Cochleagram_paint (Cochleagram me, Graphics g, double tmin, double tmax, int garnish) {
-	static double border [1 + 12] =
-		{ 0, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80 };
+	static double border [1 + 12]
+		{ 0.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0, 55.0, 60.0, 65.0, 70.0, 75.0, 80.0 };
 	try {
 		autoCochleagram copy = Data_copy (me);
 		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
@@ -45,12 +45,12 @@ void Cochleagram_paint (Cochleagram me, Graphics g, double tmin, double tmax, in
 				if (my z [iy] [ix] > my z [iy - 1] [ix] &&
 					my z [iy] [ix] > my z [iy + 1] [ix])
 				{
-					copy -> z [iy - 1] [ix] += 10;
-					copy -> z [iy] [ix] += 10;
-					copy -> z [iy + 1] [ix] += 10;
+					copy -> z [iy - 1] [ix] += 10.0;
+					copy -> z [iy] [ix] += 10.0;
+					copy -> z [iy + 1] [ix] += 10.0;
 				}
 		Graphics_setInner (g);
-		Graphics_setWindow (g, tmin, tmax, 0, my ny * my dy);
+		Graphics_setWindow (g, tmin, tmax, 0.0, my ny * my dy);
 		Graphics_grey (g, copy -> z,
 			itmin, itmax, Matrix_columnToX (me, itmin), Matrix_columnToX (me, itmax),
 			1, my ny, 0.5 * my dy, (my ny - 0.5) * my dy,
@@ -58,13 +58,13 @@ void Cochleagram_paint (Cochleagram me, Graphics g, double tmin, double tmax, in
 		Graphics_unsetInner (g);
 		if (garnish) {
 			Graphics_drawInnerBox (g);
-			Graphics_textBottom (g, 1, U"Time (s)");
-			Graphics_marksBottom (g, 2, 1, 1, 0);
-			Graphics_textLeft (g, 1, U"Place (Bark)");
-			Graphics_marksLeftEvery (g, 1.0, 5.0, 1, 1, 0);
+			Graphics_textBottom (g, true, U"Time (s)");
+			Graphics_marksBottom (g, 2, true, true, false);
+			Graphics_textLeft (g, true, U"Place (Bark)");
+			Graphics_marksLeftEvery (g, 1.0, 5.0, true, true, false);
 		}
 	} catch (MelderError) {
-		Melder_clearError ();   // BUG
+		Melder_clearError ();
 	}
 }
 

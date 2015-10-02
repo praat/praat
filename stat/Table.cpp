@@ -1786,12 +1786,12 @@ void Table_scatterPlot_mark (Table me, Graphics g, long xcolumn, long ycolumn,
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_marksBottom (g, 2, TRUE, TRUE, FALSE);
+		Graphics_marksBottom (g, 2, true, true, false);
 		if (my columnHeaders [xcolumn]. label)
-			Graphics_textBottom (g, TRUE, my columnHeaders [xcolumn]. label);
-		Graphics_marksLeft (g, 2, TRUE, TRUE, FALSE);
+			Graphics_textBottom (g, true, my columnHeaders [xcolumn]. label);
+		Graphics_marksLeft (g, 2, true, true, false);
 		if (my columnHeaders [ycolumn]. label)
-			Graphics_textLeft (g, TRUE, my columnHeaders [ycolumn]. label);
+			Graphics_textLeft (g, true, my columnHeaders [ycolumn]. label);
 	}
 }
 
@@ -1826,12 +1826,12 @@ void Table_scatterPlot (Table me, Graphics g, long xcolumn, long ycolumn,
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_marksBottom (g, 2, TRUE, TRUE, FALSE);
+		Graphics_marksBottom (g, 2, true, true, false);
 		if (my columnHeaders [xcolumn]. label)
-			Graphics_textBottom (g, TRUE, my columnHeaders [xcolumn]. label);
-		Graphics_marksLeft (g, 2, TRUE, TRUE, FALSE);
+			Graphics_textBottom (g, true, my columnHeaders [xcolumn]. label);
+		Graphics_marksLeft (g, 2, true, true, false);
 		if (my columnHeaders [ycolumn]. label)
-			Graphics_textLeft (g, TRUE, my columnHeaders [ycolumn]. label);
+			Graphics_textLeft (g, true, my columnHeaders [ycolumn]. label);
 	}
 }
 

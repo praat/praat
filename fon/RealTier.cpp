@@ -318,10 +318,10 @@ void RealTier_draw (RealTier me, Graphics g, double tmin, double tmax, double fm
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, TRUE, my v_getUnitText (0, 0, 0));
-		Graphics_marksBottom (g, 2, TRUE, TRUE, FALSE);
-		Graphics_marksLeft (g, 2, TRUE, TRUE, FALSE);
-		if (quantity) Graphics_textLeft (g, TRUE, quantity);
+		Graphics_textBottom (g, true, my v_getUnitText (0, 0, 0));
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeft (g, 2, true, true, false);
+		if (quantity) Graphics_textLeft (g, true, quantity);
 	}
 }
 

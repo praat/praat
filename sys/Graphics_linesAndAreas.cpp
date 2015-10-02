@@ -389,7 +389,7 @@ void structGraphicsScreen :: v_circle (double xDC, double yDC, double rDC) {
 		if (duringXor) {
 			#if ALLOW_GDK_DRAWING
 				gdkPrepareLine (this);
-				gdk_draw_arc (d_window, d_gdkGraphicsContext, FALSE, xDC - rDC, yDC - rDC, rDC + rDC, rDC + rDC, 0, 360 * 64);
+				gdk_draw_arc (d_window, d_gdkGraphicsContext, false, xDC - rDC, yDC - rDC, rDC + rDC, rDC + rDC, 0, 360 * 64);
 				gdkRevertLine (this);
 				gdk_flush ();
 			#endif

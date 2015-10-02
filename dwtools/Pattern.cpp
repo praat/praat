@@ -86,8 +86,8 @@ void Pattern_draw (Pattern me, Graphics g, long pattern, double xmin, double xma
 	Matrix_drawRows (me, g, xmin, xmax, pattern - 0.5, pattern + 0.5, ymin, ymax);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeft (g, 2, true, true, false);
 	}
 }
 

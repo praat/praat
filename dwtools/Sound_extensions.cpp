@@ -885,7 +885,7 @@ Sound Sound_createShepardToneComplex (double minimumTime, double maximumTime,
 			octaveTime = 12 / fabs (frequencyChange_st);
 			sweeptime = numberOfComponents * octaveTime;
 		} else {
-			octaveTime = sweeptime = 1e38;
+			octaveTime = sweeptime = 1e308;
 		}
 		autoSound me = Sound_create2 (minimumTime, maximumTime, samplingFrequency);
 
@@ -1118,7 +1118,7 @@ void Sound_localPeak (Sound me, double fromTime, double toTime, double ref, doub
 	long n1 = Sampled_xToNearestIndex (me, fromTime);
 	long n2 = Sampled_xToNearestIndex (me, toTime);
 	double *s = my z[1];
-	*peak = -1e38;
+	*peak = -1e308;
 	if (fromTime > toTime) {
 		return;
 	}
@@ -1459,7 +1459,7 @@ Sound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAndEnd,
         }
         autoSound thee = Sound_and_IntervalTier_cutPartsMatchingLabel (me, itg.peek(), trimLabel);
         if (tg != NULL) {
-			TextGrid_addTier (dbs.peek(), itg.peek());
+			TextGrid_addTier_copy (dbs.peek(), itg.peek());
             *tg = dbs.transfer();
         }
         return thee.transfer();
@@ -1637,20 +1637,20 @@ void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double ami
 	}
 	if (garnish) {
 		if (direction == FROM_BOTTOM_TO_TOP) {
-			if (amin * amax < 0) {
-				Graphics_markBottom (g, 0, 0, 1, 1, NULL);
+			if (amin * amax < 0.0) {
+				Graphics_markBottom (g, 0.0, false, true, true, nullptr);
 			}
 		} else if (direction == FROM_TOP_TO_BOTTOM) {
-			if (amin * amax < 0) {
-				Graphics_markTop (g, 0, 0, 1, 1, NULL);
+			if (amin * amax < 0.0) {
+				Graphics_markTop (g, 0.0, false, true, true, nullptr);
 			}
 		} else if (direction == FROM_RIGHT_TO_LEFT) {
-			if (amin * amax < 0) {
-				Graphics_markRight (g, 0, 0, 1, 1, NULL);
+			if (amin * amax < 0.0) {
+				Graphics_markRight (g, 0.0, false, true, true, nullptr);
 			}
 		} else { //if (direction == FROM_LEFT_TO_RIGHT)
-			if (amin * amax < 0) {
-				Graphics_markLeft (g, 0, 0, 1, 1, NULL);
+			if (amin * amax < 0.0) {
+				Graphics_markLeft (g, 0.0, false, true, true, nullptr);
 			}
 		}
 		Graphics_rectangle (g, xmin, xmax, ymin, ymax);
@@ -1725,16 +1725,16 @@ void Sound_fade (Sound me, int channel, double t, double fadeTime, int inout, in
 			if (inout <= 0) {
 				cosp = -cosp;    // fade-in
 			}
-			my z[ichannel][i] *= 0.5 * (1 + cosp);
+			my z[ichannel][i] *= 0.5 * (1.0 + cosp);
 		}
 		if (fadeGlobal) {
 			if (inout <= 0) {
 				for (long i = 1; i < istart; i++) {
-					my z[ichannel][i] = 0;
+					my z[ichannel][i] = 0.0;
 				}
 			} else {
 				for (long i = iend; i < my nx; i++) {
-					my z[ichannel][i] = 0;
+					my z[ichannel][i] = 0.0;
 				}
 			}
 		}
@@ -1818,20 +1818,20 @@ Sound Sound_localAverage (Sound me, double averagingInterval, int windowType) {
 
 static void _Sound_garnish (Sound me, Graphics g, double tmin, double tmax, double minimum, double maximum) {
 	Graphics_drawInnerBox (g);
-	Graphics_textBottom (g, 1, U"Time (s)");
-	Graphics_marksBottom (g, 2, 1, 1, 0);
+	Graphics_textBottom (g, true, U"Time (s)");
+	Graphics_marksBottom (g, 2, true, true, false);
 	Graphics_setWindow (g, tmin, tmax, minimum - (my ny - 1) * (maximum - minimum), maximum);
-	Graphics_markLeft (g, minimum, 1, 1, 0, NULL);
-	Graphics_markLeft (g, maximum, 1, 1, 0, NULL);
+	Graphics_markLeft (g, minimum, true, true, false, nullptr);
+	Graphics_markLeft (g, maximum, true, true, false, nullptr);
 	if (minimum != 0.0 && maximum != 0.0 && (minimum > 0.0) != (maximum > 0.0)) {
-		Graphics_markLeft (g, 0.0, 1, 1, 1, NULL);
+		Graphics_markLeft (g, 0.0, true, true, true, nullptr);
 	}
 	if (my ny == 2) {
 		Graphics_setWindow (g, tmin, tmax, minimum, maximum + (my ny - 1) * (maximum - minimum));
-		Graphics_markRight (g, minimum, 1, 1, 0, NULL);
-		Graphics_markRight (g, maximum, 1, 1, 0, NULL);
+		Graphics_markRight (g, minimum, true, true, false, nullptr);
+		Graphics_markRight (g, maximum, true, true, false, nullptr);
 		if (minimum != 0.0 && maximum != 0.0 && (minimum > 0.0) != (maximum > 0.0)) {
-			Graphics_markRight (g, 0.0, 1, 1, 1, NULL);
+			Graphics_markRight (g, 0.0, true, true, true, nullptr);
 		}
 	}
 }

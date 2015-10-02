@@ -2,7 +2,7 @@
 #define _Picture_h_
 /* Picture.h
  *
- * Copyright (C) 1992-2011,2012,2013,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,15 +33,15 @@
 		Any g = Picture_getGraphics (p);
 		Picture_unhighlight (p);
 		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
-		Graphics_text (g, 0.5, 0.7, L"Hello");
-		Graphics_text (g, 0.5, 0.6, L"there");
+		Graphics_text (g, 0.5, 0.7, U"Hello");
+		Graphics_text (g, 0.5, 0.6, U"there");
 		Picture_highlight (p);
 		... (event handling)
 		Picture_unhighlight (p);
-		Graphics_text (g, 0.5, 0.3, L"Goodbye");
+		Graphics_text (g, 0.5, 0.3, U"Goodbye");
 		Picture_highlight (p);
 		... (event handling)
-		Picture_writeToEpsFile (p, L"HelloGoodbye.eps");
+		Picture_writeToEpsFile (p, U"HelloGoodbye.eps", false, false);
 		Picture_print (p, GraphicsPostscript_FINE);
 		Picture_remove (& p);
 */
@@ -113,7 +113,7 @@ void Picture_erase (Picture me);   /* Clears the screen. */
 void Picture_writeToPraatPictureFile (Picture me, MelderFile file);
 void Picture_readFromPraatPictureFile (Picture me, MelderFile file);
 
-void Picture_writeToEpsFile (Picture me, MelderFile file, int includeFonts, int useSilipaPS);
+void Picture_writeToEpsFile (Picture me, MelderFile file, bool includeFonts, bool useSilipaPS);
 void Picture_writeToPdfFile (Picture me, MelderFile file);
 void Picture_writeToPngFile_300 (Picture me, MelderFile file);
 void Picture_writeToPngFile_600 (Picture me, MelderFile file);

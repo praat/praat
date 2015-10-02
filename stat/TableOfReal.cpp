@@ -936,9 +936,9 @@ void TableOfReal_drawAsSquares (TableOfReal me, Graphics graphics, long rowmin, 
 	Graphics_unsetInner (graphics);
 	if (garnish) {
 		for (long irow = rowmin; irow <= rowmax; irow ++) if (my rowLabels [irow]) 
-			Graphics_markLeft (graphics, rowmax + rowmin - irow, 0, 0, 0, my rowLabels [irow]);
+			Graphics_markLeft (graphics, rowmax + rowmin - irow, false, false, false, my rowLabels [irow]);
 		for (long icol = colmin; icol <= colmax; icol ++) if (my columnLabels [icol])
-			Graphics_markTop (graphics, icol, 0, 0, 0, my columnLabels [icol]);
+			Graphics_markTop (graphics, icol, false, false, false, my columnLabels [icol]);
 	}
 }
 

@@ -20,18 +20,18 @@
 #include "ManPagesM.h"
 
 static void draw_CreateDurationTier (Graphics g) {
-	static double x [] = { 0, 0.3, 0.6, 0.7, 0.9 }, y [] = { 1, 1, 2.3, 1, 1 };
-	Graphics_setWindow (g, 0, 0.9, 0, 2.5);
+	static double x [] = { 0.0, 0.3, 0.6, 0.7, 0.9 }, y [] = { 1.0, 1.0, 2.3, 1.0, 1.0 };
+	Graphics_setWindow (g, 0.0, 0.9, 0.0, 2.5);
 	Graphics_drawInnerBox (g);
-	Graphics_marksLeftEvery (g, 1, 1, TRUE, TRUE, FALSE);
-	Graphics_marksBottomEvery (g, 1, 0.1, TRUE, TRUE, FALSE);
+	Graphics_marksLeftEvery (g, 1.0, 1.0, true, true, false);
+	Graphics_marksBottomEvery (g, 1.0, 0.1, true, true, false);
 	Graphics_setInner (g);
 	Graphics_setColour (g, Graphics_RED);
 	Graphics_polyline (g, 5, x, y);
 	Graphics_setColour (g, Graphics_BLACK);
 	Graphics_unsetInner (g);
-	Graphics_textBottom (g, TRUE, U"Time (s)");
-	Graphics_textLeft (g, TRUE, U"Relative duration");
+	Graphics_textBottom (g, true, U"Time (s)");
+	Graphics_textLeft (g, true, U"Relative duration");
 }
 
 void manual_Sampling_init (ManPages me);

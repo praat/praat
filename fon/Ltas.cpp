@@ -39,7 +39,7 @@ void structLtas :: v_info () {
 	MelderInfo_writeLine (U"   Number of frequency bands: ", nx);
 	MelderInfo_writeLine (U"   Width of each band: ", dx, U" Hz");
 	MelderInfo_writeLine (U"   First band centred at: ", x1, U" Hz");
-	meanPowerDensity = Sampled_getMean (this, xmin, xmax, 0, 1, FALSE);
+	meanPowerDensity = Sampled_getMean (this, xmin, xmax, 0, 1, false);
 	MelderInfo_writeLine (U"Total SPL: ", Melder_single (10.0 * log10 (meanPowerDensity * (xmax - xmin))), U" dB");
 }
 
@@ -77,24 +77,24 @@ void Ltas_draw (Ltas me, Graphics g, double fmin, double fmax, double minimum, d
 	Vector_draw (me, g, & fmin, & fmax, & minimum, & maximum, 1.0, method);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, U"Frequency (Hz)");
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, U"Sound pressure level (dB/Hz)");
-		Graphics_marksLeft (g, 2, 1, 1, 0);
+		Graphics_textBottom (g, true, U"Frequency (Hz)");
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_textLeft (g, true, U"Sound pressure level (dB/Hz)");
+		Graphics_marksLeft (g, 2, true, true, false);
 	}
 }
 
 double Ltas_getSlope (Ltas me, double f1min, double f1max, double f2min, double f2max, int averagingUnits) {
-	double low = Sampled_getMean (me, f1min, f1max, 0, averagingUnits, FALSE);
-	double high = Sampled_getMean (me, f2min, f2max, 0, averagingUnits, FALSE);
+	double low = Sampled_getMean (me, f1min, f1max, 0, averagingUnits, false);
+	double high = Sampled_getMean (me, f2min, f2max, 0, averagingUnits, false);
 	if (low == NUMundefined || high == NUMundefined) return NUMundefined;
 	return averagingUnits == 3 ? high - low : Function_convertSpecialToStandardUnit (me, high / low, 0, averagingUnits);
 }
 
 double Ltas_getLocalPeakHeight (Ltas me, double environmentMin, double environmentMax, double peakMin, double peakMax, int averagingUnits) {
-	double environmentLow = Sampled_getMean (me, environmentMin, peakMin, 0, averagingUnits, FALSE);
-	double environmentHigh = Sampled_getMean (me, peakMax, environmentMax, 0, averagingUnits, FALSE);
-	double peak = Sampled_getMean (me, peakMin, peakMax, 0, averagingUnits, FALSE);
+	double environmentLow = Sampled_getMean (me, environmentMin, peakMin, 0, averagingUnits, false);
+	double environmentHigh = Sampled_getMean (me, peakMax, environmentMax, 0, averagingUnits, false);
+	double peak = Sampled_getMean (me, peakMin, peakMax, 0, averagingUnits, false);
 	if (environmentLow == NUMundefined || environmentHigh == NUMundefined || peak == NUMundefined) return NUMundefined;
 	return averagingUnits == 3 ? peak - 0.5 * (environmentLow + environmentHigh) :
 		Function_convertSpecialToStandardUnit (me, peak / (0.5 * (environmentLow + environmentHigh)), 0, averagingUnits);
@@ -264,10 +264,10 @@ Ltas Spectrum_to_Ltas (Spectrum me, double bandWidth) {
 		if (bandWidth <= my dx)
 			Melder_throw (U"Bandwidth must be greater than ", my dx, U".");
 		autoLtas thee = Thing_new (Ltas);
-		Matrix_init (thee.peek(), my xmin, my xmax, numberOfBands, bandWidth, my xmin + 0.5 * bandWidth, 1, 1, 1, 1, 1);
+		Matrix_init (thee.peek(), my xmin, my xmax, numberOfBands, bandWidth, my xmin + 0.5 * bandWidth, 1.0, 1.0, 1, 1.0, 1.0);
 		for (long iband = 1; iband <= numberOfBands; iband ++) {
 			double fmin = thy xmin + (iband - 1) * bandWidth;
-			double meanEnergyDensity = Sampled_getMean (me, fmin, fmin + bandWidth, 0, 1, FALSE);
+			double meanEnergyDensity = Sampled_getMean (me, fmin, fmin + bandWidth, 0, 1, false);
 			double meanPowerDensity = meanEnergyDensity * my dx;   // as an approximation for a division by the original duration
 			thy z [1] [iband] = meanPowerDensity == 0.0 ? -300.0 : 10.0 * log10 (meanPowerDensity / 4.0e-10);
 		}
@@ -330,8 +330,8 @@ Ltas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 				 */
 				autoSound period = Sound_extractPart (sound,
 					pulses -> t [ipulse] - 0.5 * leftInterval, pulses -> t [ipulse] + 0.5 * rightInterval,
-					kSound_windowShape_RECTANGULAR, 1.0, FALSE);
-				autoSpectrum spectrum = Sound_to_Spectrum (period.peek(), FALSE);
+					kSound_windowShape_RECTANGULAR, 1.0, false);
+				autoSpectrum spectrum = Sound_to_Spectrum (period.peek(), false);
 				for (long ifreq = 1; ifreq <= spectrum -> nx; ifreq ++) {
 					double frequency = spectrum -> xmin + (ifreq - 1) * spectrum -> dx;
 					double realPart = spectrum -> z [1] [ifreq];
@@ -443,8 +443,8 @@ Ltas PointProcess_Sound_to_Ltas_harmonics (PointProcess pulses, Sound sound,
 				long localMaximumHarmonic;
 				autoSound period = Sound_extractPart (sound,
 					pulses -> t [ipulse] - 0.5 * leftInterval, pulses -> t [ipulse] + 0.5 * rightInterval,
-					kSound_windowShape_RECTANGULAR, 1.0, FALSE);
-				autoSpectrum spectrum = Sound_to_Spectrum (period.peek(), FALSE);
+					kSound_windowShape_RECTANGULAR, 1.0, false);
+				autoSpectrum spectrum = Sound_to_Spectrum (period.peek(), false);
 				localMaximumHarmonic = maximumHarmonic < spectrum -> nx ? maximumHarmonic : spectrum -> nx;
 				for (long iharm = 1; iharm <= localMaximumHarmonic; iharm ++) {
 					double realPart = spectrum -> z [1] [iharm];

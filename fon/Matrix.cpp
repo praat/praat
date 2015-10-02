@@ -357,7 +357,7 @@ void Matrix_paintContours (Matrix me, Graphics g, double xmin, double xmax, doub
 }
 
 static void cellArrayOrImage (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	double minimum, double maximum, int interpolate)
+	double minimum, double maximum, bool interpolate)
 {
 	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
 	if (ymax <= ymin) { ymin = my ymin; ymax = my ymax; }
@@ -389,13 +389,13 @@ static void cellArrayOrImage (Matrix me, Graphics g, double xmin, double xmax, d
 void Matrix_paintImage (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	double minimum, double maximum)
 {
-	cellArrayOrImage (me, g, xmin, xmax, ymin, ymax, minimum, maximum, TRUE);
+	cellArrayOrImage (me, g, xmin, xmax, ymin, ymax, minimum, maximum, true);
 }
 
 void Matrix_paintCells (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	double minimum, double maximum)
 {
-	cellArrayOrImage (me, g, xmin, xmax, ymin, ymax, minimum, maximum, FALSE);
+	cellArrayOrImage (me, g, xmin, xmax, ymin, ymax, minimum, maximum, false);
 }
 
 void Matrix_paintSurface (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,

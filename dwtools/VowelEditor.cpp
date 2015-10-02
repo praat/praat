@@ -732,8 +732,8 @@ static void VowelEditor_setMarks (VowelEditor me, int marksDataset, int speakerT
 static void VowelEditor_getVowelMarksFromTableFile (VowelEditor me, MelderFile file)
 {
 	try {
-		autoDaata data =  (Daata) Data_readFromFile (file);
-		if (! Thing_isa ((Thing) data.peek(), classTable)) Melder_throw (U"\"", MelderFile_name (file), U"\" is not a Table file");
+		autoDaata data = Data_readFromFile (file);
+		if (! Thing_isa (data.peek(), classTable)) Melder_throw (U"\"", MelderFile_name (file), U"\" is not a Table file");
 		autoTable marks = (Table) data.transfer();
 		// check if columns Vowel F1 & F2 are present
 		Table_getColumnIndexFromColumnLabel (marks.peek(), U"Vowel");
@@ -787,12 +787,12 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
 	double x1, y1, x2, y2, f1, f2;
 
 	Graphics_setInner (g);
-	Graphics_setWindow (g, 0, 1, 0, 1);
-	Graphics_setGrey (g, 0);
+	Graphics_setWindow (g, 0.0, 1.0, 0.0, 1.0);
+	Graphics_setGrey (g, 0.0);
 	Graphics_setLineType (g, Graphics_DRAWN);
-	Graphics_setLineWidth (g, 2);
-	Graphics_rectangle (g, 0, 1, 0, 1);
-	Graphics_setLineWidth (g, 1);
+	Graphics_setLineWidth (g, 2.0);
+	Graphics_rectangle (g, 0.0, 1.0, 0.0, 1.0);
+	Graphics_setLineWidth (g, 1.0);
 	Graphics_setGrey (g, 0.5);
 	int fontSize = Graphics_inqFontSize (g);
 	// draw the marks
@@ -821,22 +821,21 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
 	// Draw the line F1=F2
 	//
 	VowelEditor_getXYFromF1F2 (me, my f2min, my f2min, &x1, &y1);
-	if (y1 >= 0 && y1 <= 1) {
+	if (y1 >= 0.0 && y1 <= 1.0) {
 		VowelEditor_getXYFromF1F2 (me, my f1max, my f1max, &x2, &y2);
-		if (x2 >= 0 && x2 <= 1) {
-			Polygon p = Polygon_create (3);
+		if (x2 >= 0.0 && x2 <= 1.0) {
+			autoPolygon p = Polygon_create (3);
 			p -> x[1] = x1; p -> y[1] = y1;
 			p -> x[2] = x2; p -> y[2] = y2;
 			p -> x[3] =  1; p -> y[3] =  0;
 			Graphics_fillArea (g, p -> numberOfPoints, & p -> x[1], & p -> y[1]);
 			// Polygon_paint does not work because of use of Graphics_setInner.
-			forget (p);
 			Graphics_line (g, x1, y1, x2, y2);
 		}
 	}
 	// Draw the grid
 	if (my grid.df1 < (my f1max - my f1min)) { // Horizontal lines
-		long iline = (my f1min + my grid.df1) / my grid.df1;
+		long iline = (my f1min + my grid.df1) / my grid.df1;   // FIXME: if truncating down is deliberate, then do `floor`
 		Graphics_setGrey (g, 0.5);
 		Graphics_setLineType (g, Graphics_DOTTED);
 		while ( (f1 = iline * my grid.df1) < my f1max) {
@@ -848,10 +847,10 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
 			iline++;
 		}
 		Graphics_setLineType (g, Graphics_DRAWN);
-		Graphics_setGrey (g, 0); // black
+		Graphics_setGrey (g, 0.0); // black
 	}
 	if (my grid.df2 < (my f2max - my f2min)) {
-		long iline = (my f2min + my grid.df2) / my grid.df2;
+		long iline = (my f2min + my grid.df2) / my grid.df2;   // FIXME: if truncating down is deliberate, then do `floor`
 		Graphics_setGrey (g, 0.5);
 		Graphics_setLineType (g, Graphics_DOTTED);
 		while ( (f2 = iline * my grid.df2) < my f2max) { // vert line
@@ -863,14 +862,14 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
 			iline++;
 		}
 		Graphics_setLineType (g, Graphics_DRAWN);
-		Graphics_setGrey (g, 0); // black
+		Graphics_setGrey (g, 0.0); // black
 	}
 	Graphics_unsetInner (g);
-	Graphics_setGrey (g, 0); // black
-	Graphics_markLeft (g, 0, 0, 1, 0, Melder_double (my f1max));
-	Graphics_markLeft (g, 1, 0, 1, 0, Melder_double (my f1min));
-	Graphics_markTop (g, 0, 0, 1, 0, Melder_double (my f2max));
-	Graphics_markTop (g, 1, 0, 1, 0, Melder_double (my f2min));
+	Graphics_setGrey (g, 0.0); // black
+	Graphics_markLeft (g, 0.0, false, true, false, Melder_double (my f1max));
+	Graphics_markLeft (g, 1.0, false, true, false, Melder_double (my f1min));
+	Graphics_markTop (g, 0.0, false, true, false, Melder_double (my f2max));
+	Graphics_markTop (g, 1.0, false, true, false, Melder_double (my f2min));
 
 }
 
@@ -1586,9 +1585,7 @@ void structVowelEditor :: v_createChildren ()
 static void VowelEditor_setSource (VowelEditor me) {
 	autoPitchTier pt = VowelEditor_to_PitchTier (me, my maximumDuration);
 	autoSound thee = PitchTier_to_Sound_pulseTrain (pt.peek(), my f0.samplingFrequency, my f0.adaptFactor, my f0.adaptTime, my f0.interpolationDepth, 0);
-	if (my source != 0) {
-		forget (my source);
-	}
+	forget (my source);
 	my source = thee.transfer();
 }
 //

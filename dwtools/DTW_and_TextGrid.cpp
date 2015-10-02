@@ -116,10 +116,10 @@ TextGrid DTW_and_TextGrid_to_TextGrid (DTW me, TextGrid thee, double precision) 
 
 			if (anyTier -> classInfo == classIntervalTier) {
 				autoIntervalTier tier = DTW_and_IntervalTier_to_IntervalTier (me, (IntervalTier) anyTier, precision);
-				TextGrid_addTier (him.peek(), tier.peek());
+				TextGrid_addTier_copy (him.peek(), tier.peek());
 			} else if (anyTier -> classInfo == classTextTier) {
 				autoTextTier tier = DTW_and_TextTier_to_TextTier (me, (TextTier) anyTier, precision);
-				TextGrid_addTier (him.peek(), tier.peek());
+				TextGrid_addTier_copy (him.peek(), tier.peek());
 			} else {
 				Melder_throw (U"Unknown tier.");
 			}
@@ -242,10 +242,10 @@ TextGrid DTW_and_TextGrid_to_TextGrid_old (DTW me, TextGrid thee) {
 			if (anyTier -> classInfo == classIntervalTier) {
 
 				autoIntervalTier tier = DTW_and_IntervalTier_to_IntervalTier_old (me, (IntervalTier) anyTier);
-				TextGrid_addTier (him.peek(), tier.peek());
+				TextGrid_addTier_copy (him.peek(), tier.peek());
 			} else if (anyTier -> classInfo == classTextTier) {
 				autoTextTier tier = DTW_and_TextTier_to_TextTier_old (me, (TextTier) anyTier);
-				TextGrid_addTier (him.peek(), tier.peek());
+				TextGrid_addTier_copy (him.peek(), tier.peek());
 			} else {
 				Melder_throw (U"Unknown tier.");
 			}

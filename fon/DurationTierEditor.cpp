@@ -33,7 +33,7 @@ void structDurationTierEditor :: v_play (double fromTime, double toTime) {
 	if (our d_sound.data) {
 		Sound_playPart (our d_sound.data, fromTime, toTime, NULL, NULL);
 	} else {
-		//DurationTier_playPart (data, fromTime, toTime, FALSE);
+		//DurationTier_playPart (data, fromTime, toTime, false);
 	}
 }
 

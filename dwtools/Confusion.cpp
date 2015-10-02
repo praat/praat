@@ -345,13 +345,13 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, long index, d
 
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_marksBottom (g, 2, 1, 1, 0);
+		Graphics_marksBottom (g, 2, true, true, false);
 		if (ymin * ymax < 0.0) {
-			Graphics_markLeft (g, 0.0, 1, 1, 1, NULL);
+			Graphics_markLeft (g, 0.0, true, true, true, nullptr);
 		}
-		Graphics_marksLeft (g, 2, 1, 1, 0);
+		Graphics_marksLeft (g, 2, true, true, false);
 		if (xmin * xmax < 0.0) {
-			Graphics_markBottom (g, 0.0, 1, 1, 1, NULL);
+			Graphics_markBottom (g, 0.0, true, true, true, NULL);
 		}
 	}
 }
@@ -362,8 +362,8 @@ Matrix Confusion_difference (Confusion me, Confusion thee) {
 		if (my numberOfColumns != thy numberOfColumns || my numberOfRows != thy numberOfRows) Melder_throw
 			(U"Dimensions not equal.");
 
-		autoMatrix him = Matrix_create (0.5, my numberOfColumns + 0.5, my numberOfColumns,
-		                                1, 1, 0.5, my numberOfRows + 0.5, my numberOfRows, 1, 1);
+		autoMatrix him = Matrix_create (0.5, my numberOfColumns + 0.5, my numberOfColumns, 1.0, 1.0,
+		                                0.5, my numberOfRows + 0.5, my numberOfRows, 1.0, 1.0);
 
 		for (long i = 1; i <= my numberOfRows; i++) {
 			for (long j = 1; j <= my numberOfColumns; j++) {

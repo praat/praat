@@ -114,8 +114,7 @@ void Artword_removeTarget (Artword me, int feature, int iTarget) {
 	else if (iTarget == f -> numberOfTargets)
 		f -> targets [f -> numberOfTargets] = 0.0;
 	else {
-		int i;
-		for (i = iTarget; i < f -> numberOfTargets; i ++) {
+		for (int i = iTarget; i < f -> numberOfTargets; i ++) {
 			f -> times [i] = f -> times [i + 1];
 			f -> targets [i] = f -> targets [i + 1];
 		}
@@ -136,7 +135,7 @@ void Artword_draw (Artword me, Graphics g, int feature, int garnish) {
 		autoNUMvector <double> x (1, numberOfTargets);
 		autoNUMvector <double> y (1, numberOfTargets);
 		Graphics_setInner (g);
-		Graphics_setWindow (g, 0, my totalTime, -1, 1);
+		Graphics_setWindow (g, 0, my totalTime, -1.0, 1.0);
 		for (int i = 1; i <= numberOfTargets; i ++) {
 			x [i] = my data [feature]. times [i];
 			y [i] = my data [feature]. targets [i];
@@ -147,10 +146,10 @@ void Artword_draw (Artword me, Graphics g, int feature, int garnish) {
 
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_marksBottom (g, 2, TRUE, TRUE, FALSE);
-		Graphics_marksLeft (g, 3, TRUE, TRUE, TRUE);
-		Graphics_textTop (g, FALSE, kArt_muscle_getText (feature));
-		Graphics_textBottom (g, TRUE, U"Time (s)");
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeft (g, 3, true, true, true);
+		Graphics_textTop (g, false, kArt_muscle_getText (feature));
+		Graphics_textBottom (g, true, U"Time (s)");
 	}
 }
 

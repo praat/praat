@@ -231,7 +231,7 @@ static void do_oops (RunnerMFC me) {
 	experiment -> trial --;
 	experiment -> responses [experiment -> trial] = 0;
 	experiment -> goodnesses [experiment -> trial] = 0;
-	experiment -> pausing = FALSE;
+	experiment -> pausing = false;
 	my numberOfReplays = 0;
 	Editor_broadcastDataChanged (me);
 	if (experiment -> blankWhilePlaying) {
@@ -306,7 +306,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 		{
 			do_oops (me);
 		} else {
-			experiment -> pausing = FALSE;
+			experiment -> pausing = false;
 			experiment -> trial ++;
 			Editor_broadcastDataChanged (me);
 			if (experiment -> blankWhilePlaying) {

@@ -414,12 +414,12 @@ void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, const char32 *
 		double xb = (xoffsetFraction + 0.5 * (nrows + (nrows - 1) * interbarFraction)) * bar_width;
 		for (long j = colb; j <= cole; j++) {
 			if (my columnLabels[j]) {
-				Graphics_markBottom (g, xb, 0, 0, 0, my columnLabels[j]);
+				Graphics_markBottom (g, xb, false, false, false, my columnLabels[j]);
 			}
 			xb += dx;
 		}
 		Graphics_drawInnerBox (g);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
+		Graphics_marksLeft (g, 2, true, true, false);
 	}
 }
 
@@ -430,10 +430,10 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 	autoSVD svd = SVD_create (nr, nc);
 
 	NUMmatrix_copyElements (my data, svd -> u, 1, nr, 1, nc);
-	NUMcentreColumns (svd -> u, 1, nr, 1, nc, 0);
+	NUMcentreColumns (svd -> u, 1, nr, 1, nc, nullptr);
 
 	SVD_compute (svd.peek());
-	long numberOfZeroed = SVD_zeroSmallSingularValues (svd.peek(), 0);
+	long numberOfZeroed = SVD_zeroSmallSingularValues (svd.peek(), 0.0);
 
 	long nmin = MIN (nr, nc) - numberOfZeroed;
 	if (nmin < 2) {
@@ -496,8 +496,8 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
-		Graphics_marksBottom (g, 2, 1, 1, 0);
+		Graphics_marksLeft (g, 2, true, true, false);
+		Graphics_marksBottom (g, 2, true, true, false);
 	}
 
 	if (labelsize > 0) {
@@ -549,10 +549,10 @@ void TableOfReal_drawBoxPlots (TableOfReal me, Graphics g, long rowmin, long row
 		Graphics_drawInnerBox (g);
 		for (long j = colmin; j <= colmax; j++) {
 			if (my columnLabels && my columnLabels[j] && my columnLabels[j][0]) {
-				Graphics_markBottom (g, j, 0, 1, 0, my columnLabels [j]);
+				Graphics_markBottom (g, j, false, true, false, my columnLabels [j]);
 			}
 		}
-		Graphics_marksLeft (g, 2, 1, 1, 0);
+		Graphics_marksLeft (g, 2, true, true, false);
 	}
 }
 
@@ -874,8 +874,8 @@ void TableOfReal_drawAsSquares_area (TableOfReal me, Graphics g, double zmin, do
 		Graphics_unsetInner (g);
 		if (garnish) {
 			Graphics_drawInnerBox (g);
-			Graphics_marksBottomEvery (g, 1, 1, false, true, false);
-			Graphics_marksLeftEvery (g, 1, 1, false, true, false);
+			Graphics_marksBottomEvery (g, 1.0, 1.0, false, true, false);
+			Graphics_marksLeftEvery (g, 1.0, 1.0, false, true, false);
 		}
 	} catch (MelderError) {
 		Melder_clearError ();   // drawing errors shall be ignored
@@ -937,25 +937,25 @@ void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g, long icx, long icy
 		Graphics_drawInnerBox (g);
 		if (ymin < ymax) {
 			if (my columnLabels[icx]) {
-				Graphics_textBottom (g, 1, my columnLabels[icx]);
+				Graphics_textBottom (g, true, my columnLabels[icx]);
 			}
-			Graphics_marksBottom (g, 2, 1, 1, 0);
+			Graphics_marksBottom (g, 2, true, true, false);
 		} else {
 			if (my columnLabels[icx]) {
-				Graphics_textTop (g, 1, my columnLabels[icx]);
+				Graphics_textTop (g, true, my columnLabels[icx]);
 			}
-			Graphics_marksTop (g, 2, 1, 1, 0);
+			Graphics_marksTop (g, 2, true, true, false);
 		}
 		if (xmin < xmax) {
 			if (my columnLabels[icy]) {
-				Graphics_textLeft (g, 1, my columnLabels[icy]);
+				Graphics_textLeft (g, true, my columnLabels[icy]);
 			}
-			Graphics_marksLeft (g, 2, 1, 1, 0);
+			Graphics_marksLeft (g, 2, true, true, false);
 		} else {
 			if (my columnLabels[icy]) {
-				Graphics_textRight (g, 1, my columnLabels[icy]);
+				Graphics_textRight (g, true, my columnLabels[icy]);
 			}
-			Graphics_marksRight (g, 2, 1, 1, 0);
+			Graphics_marksRight (g, 2, true, true, false);
 		}
 	}
 	if (noLabel > 0) {
@@ -1290,8 +1290,8 @@ void TableOfReal_drawVectors (TableOfReal me, Graphics g, long colx1, long coly1
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
-		Graphics_marksBottom (g, 2, 1, 1, 0);
+		Graphics_marksLeft (g, 2, true, true, false);
+		Graphics_marksBottom (g, 2, true, true, false);
 	}
 }
 
@@ -1301,9 +1301,9 @@ void TableOfReal_drawColumnAsDistribution (TableOfReal me, Graphics g, int colum
 		return;
 	}
 	autoMatrix thee = TableOfReal_to_Matrix (me);
-	Matrix_drawDistribution (thee.peek(), g,  column - 0.5, column + 0.5, 0, 0, minimum, maximum, nBins, freqMin,  freqMax,  cumulative,  garnish);
+	Matrix_drawDistribution (thee.peek(), g, column - 0.5, column + 0.5, 0.0, 0.0, minimum, maximum, nBins, freqMin, freqMax, cumulative, garnish);
 	if (garnish && my columnLabels[column] != 0) {
-		Graphics_textBottom (g, 1, my columnLabels[column]);
+		Graphics_textBottom (g, true, my columnLabels[column]);
 	}
 }
 

@@ -65,7 +65,7 @@ static void classMinimizer_after (I, Any aclosure) {
 		char32 s[35];
 		Minimizer_drawHistory (me, my gmonitor, 0, my maxNumOfIterations, 0, 1.1 * my history[1], 1);
 		Melder_sprint (s,35, U"Dimension of search space: ", my nParameters);
-		Graphics_textTop (my gmonitor, 0, s);
+		Graphics_textTop (my gmonitor, false, s);
 	}
 	Graphics_setInner (my gmonitor);
 	Graphics_line (my gmonitor, my iteration, my history[my iteration],
@@ -229,9 +229,9 @@ void Minimizer_drawHistory (Minimizer me, Graphics g, long iFrom, long iTo, doub
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, U"Number of iterations");
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
+		Graphics_textBottom (g, true, U"Number of iterations");
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeft (g, 2, true, true, false);
 	}
 }
 

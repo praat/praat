@@ -153,7 +153,7 @@ bool Pitch_isVoiced_i (Pitch me, long iframe) {
 }
 
 bool Pitch_isVoiced_t (Pitch me, double time) {
-	return NUMdefined (Sampled_getValueAtX (me, time, Pitch_LEVEL_FREQUENCY, kPitch_unit_HERTZ, FALSE));
+	return NUMdefined (Sampled_getValueAtX (me, time, Pitch_LEVEL_FREQUENCY, kPitch_unit_HERTZ, false));
 }
 
 double Pitch_getValueAtTime (Pitch me, double time, int unit, int interpolate) {
@@ -169,11 +169,11 @@ long Pitch_countVoicedFrames (Pitch me) {
 }
 
 double Pitch_getMean (Pitch me, double tmin, double tmax, int unit) {
-	return Sampled_getMean (me, tmin, tmax, Pitch_LEVEL_FREQUENCY, unit, TRUE);
+	return Sampled_getMean (me, tmin, tmax, Pitch_LEVEL_FREQUENCY, unit, true);
 }
 
 double Pitch_getMeanStrength (Pitch me, double tmin, double tmax, int unit) {
-	return Sampled_getMean (me, tmin, tmax, Pitch_LEVEL_STRENGTH, unit, TRUE);
+	return Sampled_getMean (me, tmin, tmax, Pitch_LEVEL_STRENGTH, unit, true);
 }
 
 double Pitch_getQuantile (Pitch me, double tmin, double tmax, double quantile, int unit) {
@@ -185,7 +185,7 @@ double Pitch_getQuantile (Pitch me, double tmin, double tmax, double quantile, i
 }
 
 double Pitch_getStandardDeviation (Pitch me, double tmin, double tmax, int unit) {
-	return Sampled_getStandardDeviation (me, tmin, tmax, Pitch_LEVEL_FREQUENCY, unit, TRUE);
+	return Sampled_getStandardDeviation (me, tmin, tmax, Pitch_LEVEL_FREQUENCY, unit, true);
 }
 
 #define MEL(f)  NUMhertzToMel (f)
@@ -204,13 +204,13 @@ void Pitch_getMaximumAndTime (Pitch me, double tmin, double tmax, int unit, int 
 
 double Pitch_getMaximum (Pitch me, double tmin, double tmax, int unit, int interpolate) {
 	double maximum;
-	Pitch_getMaximumAndTime (me, tmin, tmax, unit, interpolate, & maximum, NULL);
+	Pitch_getMaximumAndTime (me, tmin, tmax, unit, interpolate, & maximum, nullptr);
 	return maximum;
 }
 
 double Pitch_getTimeOfMaximum (Pitch me, double tmin, double tmax, int unit, int interpolate) {
 	double time;
-	Pitch_getMaximumAndTime (me, tmin, tmax, unit, interpolate, NULL, & time);
+	Pitch_getMaximumAndTime (me, tmin, tmax, unit, interpolate, nullptr, & time);
 	return time;
 }
 
@@ -226,35 +226,35 @@ void Pitch_getMinimumAndTime (Pitch me, double tmin, double tmax, int unit, int 
 
 double Pitch_getMinimum (Pitch me, double tmin, double tmax, int unit, int interpolate) {
 	double minimum;
-	Pitch_getMinimumAndTime (me, tmin, tmax, unit, interpolate, & minimum, NULL);
+	Pitch_getMinimumAndTime (me, tmin, tmax, unit, interpolate, & minimum, nullptr);
 	return minimum;
 }
 
 double Pitch_getTimeOfMinimum (Pitch me, double tmin, double tmax, int unit, int interpolate) {
 	double time;
-	Pitch_getMinimumAndTime (me, tmin, tmax, unit, interpolate, NULL, & time);
+	Pitch_getMinimumAndTime (me, tmin, tmax, unit, interpolate, nullptr, & time);
 	return time;
 }
 
 static long Pitch_getMeanAbsoluteSlope (Pitch me,
 	double *out_hertz, double *out_mel, double *out_semitones, double *out_erb, double *out_withoutOctaveJumps)
 {
-	long firstVoicedFrame = 0, lastVoicedFrame = 0, nVoiced = 0, i;
+	long firstVoicedFrame = 0, lastVoicedFrame = 0, nVoiced = 0;
 	autoNUMvector <double> frequencies (1, my nx);
-	for (i = 1; i <= my nx; i ++) {
+	for (long i = 1; i <= my nx; i ++) {
 		double frequency = my frame [i]. candidate [1]. frequency;
 		frequencies [i] = frequency > 0.0 && frequency < my ceiling ? frequency : 0.0;
 		if (frequencies [i] != 0.0) nVoiced ++;
 	}
-	for (i = 1; i <= my nx; i ++)   // look for first voiced frame
+	for (long i = 1; i <= my nx; i ++)   // look for first voiced frame
 		if (frequencies [i] != 0.0) { firstVoicedFrame = i; break; }
-	for (i = my nx; i >= 1; i --)   // look for last voiced frame
+	for (long i = my nx; i >= 1; i --)   // look for last voiced frame
 		if (frequencies [i] != 0.0) { lastVoicedFrame = i; break; }
 	if (nVoiced > 1) {
 		int ilast = firstVoicedFrame;
 		double span = (lastVoicedFrame - firstVoicedFrame) * my dx, flast = frequencies [ilast];
-		double slopeHz = 0, slopeMel = 0, slopeSemitones = 0, slopeErb = 0, slopeRobust = 0;
-		for (i = firstVoicedFrame + 1; i <= lastVoicedFrame; i ++) if (frequencies [i] != 0.0) {
+		double slopeHz = 0.0, slopeMel = 0.0, slopeSemitones = 0.0, slopeErb = 0.0, slopeRobust = 0.0;
+		for (long i = firstVoicedFrame + 1; i <= lastVoicedFrame; i ++) if (frequencies [i] != 0.0) {
 			double localStepSemitones = fabs (SEMITONES (frequencies [i]) - SEMITONES (flast));
 			slopeHz += fabs (frequencies [i] - flast);
 			slopeMel += fabs (MEL (frequencies [i]) - MEL (flast));
@@ -282,23 +282,23 @@ static long Pitch_getMeanAbsoluteSlope (Pitch me,
 }
 
 long Pitch_getMeanAbsSlope_hertz (Pitch me, double *slope) {
-	return Pitch_getMeanAbsoluteSlope (me, slope, NULL, NULL, NULL, NULL);
+	return Pitch_getMeanAbsoluteSlope (me, slope, nullptr, nullptr, nullptr, nullptr);
 }
 
 long Pitch_getMeanAbsSlope_mel (Pitch me, double *slope) {
-	return Pitch_getMeanAbsoluteSlope (me, NULL, slope, NULL, NULL, NULL);
+	return Pitch_getMeanAbsoluteSlope (me, nullptr, slope, nullptr, nullptr, nullptr);
 }
 
 long Pitch_getMeanAbsSlope_semitones (Pitch me, double *slope) {
-	return Pitch_getMeanAbsoluteSlope (me, NULL, NULL, slope, NULL, NULL);
+	return Pitch_getMeanAbsoluteSlope (me, nullptr, nullptr, slope, nullptr, nullptr);
 }
 
 long Pitch_getMeanAbsSlope_erb (Pitch me, double *slope) {
-	return Pitch_getMeanAbsoluteSlope (me, NULL, NULL, NULL, slope, NULL);
+	return Pitch_getMeanAbsoluteSlope (me, nullptr, nullptr, nullptr, slope, nullptr);
 }
 
 long Pitch_getMeanAbsSlope_noOctave (Pitch me, double *slope) {
-	return Pitch_getMeanAbsoluteSlope (me, NULL, NULL, NULL, NULL, slope);
+	return Pitch_getMeanAbsoluteSlope (me, nullptr, nullptr, nullptr, nullptr, slope);
 }
 
 void structPitch :: v_info () {
@@ -345,8 +345,8 @@ void structPitch :: v_info () {
 		}
 	}
 	if (nVoiced >= 1) {   // extrema, range, mean and standard deviation
-		double minimum = Pitch_getMinimum (this, xmin, xmax, kPitch_unit_HERTZ, FALSE);
-		double maximum = Pitch_getMaximum (this, xmin, xmax, kPitch_unit_HERTZ, FALSE);
+		double minimum = Pitch_getMinimum (this, xmin, xmax, kPitch_unit_HERTZ, false);
+		double maximum = Pitch_getMaximum (this, xmin, xmax, kPitch_unit_HERTZ, false);
 		double meanHertz, meanMel, meanSemitones, meanErb;
 		MelderInfo_write (U"\nMinimum ", Melder_single (minimum), U" Hz = ", Melder_single (MEL (minimum)), U" Mel = ");
 		MelderInfo_writeLine (Melder_single (SEMITONES (minimum)), U" semitones above 100 Hz = ", Melder_single (ERB (minimum)), U" ERB");

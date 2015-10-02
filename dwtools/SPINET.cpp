@@ -98,11 +98,11 @@ void SPINET_spectralRepresentation (SPINET me, Graphics g, double fromTime, doub
 	Matrix_paintCells (thee.peek(), g, fromTime, toTime, fromErb, toErb, minimum, maximum);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, U"Time (s)");
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, U"Frequency (ERB)");
-		Graphics_marksLeft (g, 2, 1, 1, 0);
-		Graphics_textTop (g, 0, enhanced ? U"Cooperative interaction output" :
+		Graphics_textBottom (g, true, U"Time (s)");
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_textLeft (g, true, U"Frequency (ERB)");
+		Graphics_marksLeft (g, 2, true, true, false);
+		Graphics_textTop (g, false, enhanced ? U"Cooperative interaction output" :
 		                  U"Gammatone filterbank output");
 	}
 }
@@ -144,10 +144,10 @@ void SPINET_drawSpectrum (SPINET me, Graphics g, double time, double fromErb, do
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, U"Frequency (ERB)");
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, U"strength");
-		Graphics_marksLeft (g, 2, 1, 1, 0);
+		Graphics_textBottom (g, true, U"Frequency (ERB)");
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_textLeft (g, true, U"strength");
+		Graphics_marksLeft (g, 2, true, true, false);
 	}
 }
 

@@ -69,25 +69,25 @@ Thing_implement (Eigen, Daata, 0);
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
 #define SWAP(a,b) {temp=(a);(a)=(b);(b)=temp;}
 
-static void Graphics_ticks (Graphics g, double min, double max, int hasNumber,
-                            int hasTick, int hasDottedLine, int integers) {
-	double range = max - min, scale = 1, tick = min, dtick = 1;
+static void Graphics_ticks (Graphics g, double min, double max, bool hasNumber,
+                            bool hasTick, bool hasDottedLine, bool integers) {
+	double range = max - min, scale = 1.0, tick = min, dtick = 1.0;
 
-	if (range == 0) {
+	if (range == 0.0) {
 		return;
-	} else if (range > 1) {
-		while (range / scale > 10) {
-			scale *= 10;
+	} else if (range > 1.0) {
+		while (range / scale > 10.0) {
+			scale *= 10.0;
 		}
 		range /= scale;
 	} else {
-		while (range / scale < 10) {
-			scale /= 10;
+		while (range / scale < 10.0) {
+			scale /= 10.0;
 		}
 		range *= scale;
 	}
 
-	if (range < 3) {
+	if (range < 3.0) {
 		dtick = 0.5;
 	}
 	dtick *= scale;
@@ -96,8 +96,8 @@ static void Graphics_ticks (Graphics g, double min, double max, int hasNumber,
 		tick += dtick;
 	}
 	while (tick <= max) {
-		double num = integers ? floor (tick + 0.5) : tick;
-		Graphics_markBottom (g, num, hasNumber, hasTick, hasDottedLine, NULL);
+		double num = integers ? round (tick) : tick;
+		Graphics_markBottom (g, num, hasNumber, hasTick, hasDottedLine, nullptr);
 		tick += dtick;
 	}
 }
@@ -444,11 +444,11 @@ void Eigen_drawEigenvalues (I, Graphics g, long first, long last, double ymin, d
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textLeft (g, 1, fractionOfTotal ? (cumulative ? U"Cumulative fractional eigenvalue" : U"Fractional eigenvalue") :
+		Graphics_textLeft (g, true, fractionOfTotal ? (cumulative ? U"Cumulative fractional eigenvalue" : U"Fractional eigenvalue") :
 			                   (cumulative ? U"Cumulative eigenvalue" : U"Eigenvalue"));
-		Graphics_ticks (g, first, last, 1, 1, 0, 1);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
-		Graphics_textBottom (g, 1, U"Index");
+		Graphics_ticks (g, first, last, true, true, false, true);
+		Graphics_marksLeft (g, 2, true, true, false);
+		Graphics_textBottom (g, true, U"Index");
 	}
 }
 
@@ -467,7 +467,7 @@ void Eigen_drawEigenvector (I, Graphics g, long ivec, long first, long last,
 		xmin = 0.5; xmax = last + 0.5;
 	}
 	vec = my eigenvectors[ivec];
-	w = weigh ? sqrt (my eigenvalues[ivec]) : 1;
+	w = weigh ? sqrt (my eigenvalues[ivec]) : 1.0;
 	/*
 		If ymax < ymin the eigenvector will automatically be drawn inverted.
 	*/
@@ -487,15 +487,15 @@ void Eigen_drawEigenvector (I, Graphics g, long ivec, long first, long last,
 	}
 	Graphics_unsetInner (g);
 	if (garnish) {
-		Graphics_markBottom (g, first, 0, 1, 0, rowLabels ? rowLabels[first] : Melder_integer (first));
-		Graphics_markBottom (g, last, 0, 1, 0, rowLabels ? rowLabels[last] : Melder_integer (last));
+		Graphics_markBottom (g, first, false, true, false, rowLabels ? rowLabels[first] : Melder_integer (first));
+		Graphics_markBottom (g, last, false, true, false, rowLabels ? rowLabels[last] : Melder_integer (last));
 		Graphics_drawInnerBox (g);
 		if (ymin * ymax < 0) {
-			Graphics_markLeft (g, 0.0, 1, 1, 1, NULL);
+			Graphics_markLeft (g, 0.0, true, true, true, nullptr);
 		}
-		Graphics_marksLeft (g, 2, 1, 1, 0);
-		if (rowLabels == NULL) {
-			Graphics_textBottom (g, 1, U"Element number");
+		Graphics_marksLeft (g, 2, true, true, false);
+		if (! rowLabels) {
+			Graphics_textBottom (g, true, U"Element number");
 		}
 	}
 }
@@ -573,7 +573,7 @@ static void Eigens_getAnglesBetweenSubspaces (I, thou, long ivec_from, long ivec
 	}
 	autoSVD svd = SVD_create_d (c.peek(), nvectors, nvectors);
 	for (long i = 1; i <= nvectors; i++) {
-		angles_degrees[i] = acos (svd -> d[i]) * 180 / NUMpi;
+		angles_degrees[i] = acos (svd -> d[i]) * 180.0 / NUMpi;
 	}
 }
 

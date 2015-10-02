@@ -243,7 +243,7 @@ static void makeClosedContour (int row0, int col0, int ori0) {
 
 	{
 		int i;
-		double xmin = 1e300, xmax = -1e300, ymin = 1e300, ymax = -1e300;
+		double xmin = 1e308, xmax = -1e308, ymin = 1e308, ymax = -1e308;
 		c -> grey = up ? iBorder + 1 : iBorder;
 		for (i = 1; i <= numberOfPoints; i ++) {
 			c -> x [i] = x [i];

@@ -161,9 +161,9 @@ int praat_numberOfSelected (ClassInfo klas) {
 
 void praat_deselect (int IOBJECT) {
 	if (! SELECTED) return;
-	SELECTED = FALSE;
+	SELECTED = false;
 	theCurrentPraatObjects -> totalSelection -= 1;
-	long readableClassId = ((Thing) theCurrentPraatObjects -> list [IOBJECT]. object) -> classInfo -> sequentialUniqueIdOfReadableClass;
+	long readableClassId = theCurrentPraatObjects -> list [IOBJECT]. object -> classInfo -> sequentialUniqueIdOfReadableClass;
 	Melder_assert (readableClassId != 0);
 	theCurrentPraatObjects -> numberOfSelected [readableClassId] -= 1;
 	if (! theCurrentPraatApplication -> batch && ! Melder_backgrounding) {
@@ -177,7 +177,7 @@ void praat_select (int IOBJECT) {
 	if (SELECTED) return;
 	SELECTED = TRUE;
 	theCurrentPraatObjects -> totalSelection += 1;
-	Thing object = (Thing) theCurrentPraatObjects -> list [IOBJECT]. object;
+	Thing object = theCurrentPraatObjects -> list [IOBJECT]. object;
 	Melder_assert (object != NULL);
 	long readableClassId = object -> classInfo -> sequentialUniqueIdOfReadableClass;
 	if (readableClassId == 0) Melder_fatal (U"No sequential unique ID for class ", object -> classInfo -> className, U".");
@@ -295,7 +295,7 @@ static void praat_remove (int iobject) {
 	int ieditor;
 	Melder_assert (iobject >= 1 && iobject <= theCurrentPraatObjects -> n);
 	if (theCurrentPraatObjects -> list [iobject]. isBeingCreated) {
-		theCurrentPraatObjects -> list [iobject]. isBeingCreated = FALSE;
+		theCurrentPraatObjects -> list [iobject]. isBeingCreated = false;
 		theCurrentPraatObjects -> totalBeingCreated --;
 	}
 	praat_deselect (iobject);
@@ -304,7 +304,7 @@ static void praat_remove (int iobject) {
 	 * To prevent synchronization problems, kill editors before killing the data.
 	 */
 	for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
-		Editor editor = (Editor) theCurrentPraatObjects -> list [iobject]. editors [ieditor];   /* Save this one reference. */
+		Editor editor = theCurrentPraatObjects -> list [iobject]. editors [ieditor];   // save this one reference
 		if (editor) {
 			removeAllReferencesToEditor (editor);
 			forget (editor);
@@ -372,7 +372,7 @@ void praat_newWithFile (Daata me, MelderFile file, const char32 *myName) {
 	}
 		
 	IOBJECT = ++ theCurrentPraatObjects -> n;
-	Melder_assert (FULL_NAME == NULL);
+	Melder_assert (FULL_NAME == nullptr);
 	FULL_NAME = Melder_dup_f (name.string);   // all right to crash if out of memory
 	++ theCurrentPraatObjects -> uniqueId;
 
@@ -382,27 +382,27 @@ void praat_newWithFile (Daata me, MelderFile file, const char32 *myName) {
 			theCurrentPraatObjects -> n);
 	}
 	OBJECT = me;
-	SELECTED = FALSE;
+	SELECTED = false;
 	CLASS = my classInfo;
 	for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
-		EDITOR [ieditor] = NULL;
+		EDITOR [ieditor] = nullptr;
 	if (file != NULL) {
 		MelderFile_copy (file, & theCurrentPraatObjects -> list [IOBJECT]. file);
 	} else {
 		MelderFile_setToNull (& theCurrentPraatObjects -> list [IOBJECT]. file);
 	}
 	ID = theCurrentPraatObjects -> uniqueId;
-	theCurrentPraatObjects -> list [IOBJECT]. isBeingCreated = TRUE;
-	Thing_setName ((Thing) OBJECT, givenName.string);
+	theCurrentPraatObjects -> list [IOBJECT]. isBeingCreated = true;
+	Thing_setName (OBJECT, givenName.string);
 	theCurrentPraatObjects -> totalBeingCreated ++;
 }
 
 static MelderString thePraatNewName { 0 };
 void praat_new (Daata me) {
-	praat_newWithFile (me, NULL, U"");
+	praat_newWithFile (me, nullptr, U"");
 }
 void praat_new (Daata me, Melder_1_ARG) {
-	praat_newWithFile (me, NULL, Melder_1_ARG_CALL);
+	praat_newWithFile (me, nullptr, Melder_1_ARG_CALL);
 }
 void praat_new (Daata me, Melder_2_ARGS) {
 	MelderString_copy (& thePraatNewName, Melder_2_ARGS_CALL);
@@ -443,7 +443,7 @@ void praat_updateSelection (void) {
 		praat_deselectAll ();
 		WHERE (theCurrentPraatObjects -> list [IOBJECT]. isBeingCreated) {
 			praat_select (IOBJECT);
-			theCurrentPraatObjects -> list [IOBJECT]. isBeingCreated = FALSE;
+			theCurrentPraatObjects -> list [IOBJECT]. isBeingCreated = false;
 		}
 		theCurrentPraatObjects -> totalBeingCreated = 0;
 		praat_show ();
@@ -452,10 +452,11 @@ void praat_updateSelection (void) {
 
 static void gui_cb_list (void *void_me, GuiListEvent event) {
 	(void) event; (void) void_me;
-	int IOBJECT, first = TRUE;
+	int IOBJECT;
+	bool first = true;
 	WHERE (SELECTED) {
-		SELECTED = FALSE;
-		long readableClassId = ((Thing) theCurrentPraatObjects -> list [IOBJECT]. object) -> classInfo -> sequentialUniqueIdOfReadableClass;
+		SELECTED = false;
+		long readableClassId = theCurrentPraatObjects -> list [IOBJECT]. object -> classInfo -> sequentialUniqueIdOfReadableClass;
 		theCurrentPraatObjects -> numberOfSelected [readableClassId] --;
 		Melder_assert (theCurrentPraatObjects -> numberOfSelected [readableClassId] >= 0);
 	}
@@ -465,14 +466,14 @@ static void gui_cb_list (void *void_me, GuiListEvent event) {
 	if (selected != NULL) {
 		for (long iselected = 1; iselected <= numberOfSelected; iselected ++) {
 			IOBJECT = selected [iselected];
-			SELECTED = TRUE;
-			long readableClassId = ((Thing) theCurrentPraatObjects -> list [IOBJECT]. object) -> classInfo -> sequentialUniqueIdOfReadableClass;
+			SELECTED = true;
+			long readableClassId = theCurrentPraatObjects -> list [IOBJECT]. object -> classInfo -> sequentialUniqueIdOfReadableClass;
 			theCurrentPraatObjects -> numberOfSelected [readableClassId] ++;
 			Melder_assert (theCurrentPraatObjects -> numberOfSelected [readableClassId] > 0);
 			UiHistory_write (first ? U"\nselectObject: \"" : U"\nplusObject: \"");
 			UiHistory_write_expandQuotes (FULL_NAME);
 			UiHistory_write (U"\"");
-			first = FALSE;
+			first = false;
 			theCurrentPraatObjects -> totalSelection += 1;
 		}
 		NUMvector_free <long> (selected, 1);
@@ -505,14 +506,14 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2) {
 
 void praat_removeObject (int i) {
 	int j, ieditor;
-	praat_remove (i);   /* Dangle. */
+	praat_remove (i);   // dangle
 	for (j = i; j < theCurrentPraatObjects -> n; j ++)
 		theCurrentPraatObjects -> list [j] = theCurrentPraatObjects -> list [j + 1];   // undangle but create second references
-	theCurrentPraatObjects -> list [theCurrentPraatObjects -> n]. name = NULL;   // undangle or remove second reference
-	theCurrentPraatObjects -> list [theCurrentPraatObjects -> n]. object = NULL;   // undangle or remove second reference
+	theCurrentPraatObjects -> list [theCurrentPraatObjects -> n]. name = nullptr;   // undangle or remove second reference
+	theCurrentPraatObjects -> list [theCurrentPraatObjects -> n]. object = nullptr;   // undangle or remove second reference
 	theCurrentPraatObjects -> list [theCurrentPraatObjects -> n]. isSelected = 0;
 	for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
-		theCurrentPraatObjects -> list [theCurrentPraatObjects -> n]. editors [ieditor] = NULL;   // undangle or remove second reference
+		theCurrentPraatObjects -> list [theCurrentPraatObjects -> n]. editors [ieditor] = nullptr;   // undangle or remove second reference
 	MelderFile_setToNull (& theCurrentPraatObjects -> list [theCurrentPraatObjects -> n]. file);   // undangle or remove second reference
 	-- theCurrentPraatObjects -> n;
 	if (! theCurrentPraatApplication -> batch) {
@@ -614,7 +615,7 @@ static void cb_Editor_dataChanged (Editor me, void *closure) {
 			 * Notify all other editors associated with this object.
 			 */
 			for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
-				Editor otherEditor = (Editor) theCurrentPraatObjects -> list [iobject]. editors [ieditor];
+				Editor otherEditor = theCurrentPraatObjects -> list [iobject]. editors [ieditor];
 				if (otherEditor != NULL && otherEditor != me) {
 					Editor_dataChanged (otherEditor);
 				}
@@ -770,7 +771,7 @@ void praat_dataChanged (Any object) {
 	int IOBJECT;
 	WHERE (OBJECT == object) {
 		for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
-			Editor editor = (Editor) EDITOR [ieditor];
+			Editor editor = EDITOR [ieditor];
 			if (editor != NULL) {
 				Editor_dataChanged (editor);
 			}
@@ -917,13 +918,13 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = true; }
 		theUserMessageCallback = userMessageCallback;
 	}
 	static pascal OSErr mac_processSignal8 (const AppleEvent *theAppleEvent, AppleEvent *reply, long handlerRefCon) {
-		static int duringAppleEvent = FALSE;
+		static bool duringAppleEvent = false;   // FIXME: may have to be atomic?
 		(void) reply;
 		(void) handlerRefCon;
 		if (! duringAppleEvent) {
 			char *buffer;
 			Size actualSize;
-			duringAppleEvent = TRUE;
+			duringAppleEvent = true;
 			//AEInteractWithUser (kNoTimeOut, NULL, NULL);   // use time out of 0 to execute immediately (without bringing to foreground)
 			ProcessSerialNumber psn;
 			GetCurrentProcess (& psn);
@@ -936,18 +937,18 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = true; }
 				theUserMessageCallback (buffer32.peek());
 			}
 			free (buffer);
-			duringAppleEvent = FALSE;
+			duringAppleEvent = false;
 		}
 		return noErr;
 	}
 	static pascal OSErr mac_processSignal16 (const AppleEvent *theAppleEvent, AppleEvent *reply, long handlerRefCon) {
-		static int duringAppleEvent = FALSE;
+		static bool duringAppleEvent = false;   // FIXME: may have to be atomic?
 		(void) reply;
 		(void) handlerRefCon;
 		if (! duringAppleEvent) {
 			char16 *buffer;
 			Size actualSize;
-			duringAppleEvent = TRUE;
+			duringAppleEvent = true;
 			//AEInteractWithUser (kNoTimeOut, NULL, NULL);   // use time out of 0 to execute immediately (without bringing to foreground)
 			ProcessSerialNumber psn;
 			GetCurrentProcess (& psn);
@@ -960,7 +961,7 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = true; }
 				theUserMessageCallback (buffer32.peek());
 			}
 			free (buffer);
-			duringAppleEvent = FALSE;
+			duringAppleEvent = false;
 		}
 		return noErr;
 	}
@@ -974,7 +975,7 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = true; }
 		return 0;
 	}
 	static int cb_quitApplication (void) {
-		DO_Quit (NULL, 0, NULL, NULL, NULL, NULL, false, NULL);
+		DO_Quit (nullptr, 0, nullptr, nullptr, nullptr, nullptr, false, nullptr);
 		return 0;
 	}
 #elif defined (macintosh)
@@ -988,7 +989,7 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = true; }
 		return 0;
 	}
 	static int cb_quitApplication (void) {
-		DO_Quit (NULL, 0, NULL, NULL, NULL, NULL, false, NULL);
+		DO_Quit (nullptr, 0, nullptr, nullptr, nullptr, nullptr, false, nullptr);
 		return 0;
 	}
 #endif

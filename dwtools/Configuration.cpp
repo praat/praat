@@ -392,14 +392,14 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_marksBottom (g, 2, 1, 1, 0);
+		Graphics_marksBottom (g, 2, true, true, false);
 		if (numberOfDimensions > 1) {
-			Graphics_marksLeft (g, 2, 1, 1, 0);
+			Graphics_marksLeft (g, 2, true, true, false);
 			if (my columnLabels[xCoordinate]) {
-				Graphics_textBottom (g, 1, my columnLabels[xCoordinate]);
+				Graphics_textBottom (g, true, my columnLabels[xCoordinate]);
 			}
 			if (my columnLabels[yCoordinate]) {
-				Graphics_textLeft (g, 1, my columnLabels[yCoordinate]);
+				Graphics_textLeft (g, true, my columnLabels[yCoordinate]);
 			}
 		}
 	}

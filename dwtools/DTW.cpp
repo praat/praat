@@ -64,7 +64,7 @@
 
 Thing_implement (DTW, Matrix, 2);
 
-#define DTW_BIG 1e38
+#define DTW_BIG 1e308
 
 void structDTW :: v_info () {
 	structDaata :: v_info ();
@@ -612,8 +612,8 @@ static void DTW_paintDistances_raw (DTW me, Graphics g, double xmin, double xmax
 		Graphics_unsetInner (g);
 	}
 	if (garnish) {
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeft (g, 2, true, true, false);
 	}
 }
 
@@ -652,8 +652,8 @@ static void DTW_drawPath_raw (DTW me, Graphics g, double xmin, double xmax, doub
 	}
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeft (g, 2, true, true, false);
 	}
 }
 
@@ -694,9 +694,9 @@ static void DTW_drawWarpX_raw (DTW me, Graphics g, double xmin, double xmax, dou
 	}
 
 	if (garnish) {
-		Graphics_markBottom (g, tx, 1, 1, 0, (char32 *)  NULL);
+		Graphics_markBottom (g, tx, true, true, false, nullptr);
 		if (ty <= ymax) {
-			Graphics_markLeft (g, ty, 1, 1, 0, (char32 *)  NULL);
+			Graphics_markLeft (g, ty, true, true, false, nullptr);
 		}
 	}
 }
@@ -794,11 +794,11 @@ void DTW_and_Sounds_draw (DTW me, Sound y, Sound x, Graphics g, double xmin, dou
 	Graphics_unsetInner (g);
 
 	if (garnish) {
-		Graphics_markLeft (g, ymin, 1, 1, 0, NULL);
-		Graphics_markLeft (g, ymax, 1, 1, 0, NULL);
+		Graphics_markLeft (g, ymin, true, true, false, nullptr);
+		Graphics_markLeft (g, ymax, true, true, false, nullptr);
 
-		Graphics_markBottom (g, xmin, 1, 1, 0, NULL);
-		Graphics_markBottom (g, xmax, 1, 1, 0, NULL);
+		Graphics_markBottom (g, xmin, true, true, false, nullptr);
+		Graphics_markBottom (g, xmax, true, true, false, nullptr);
 	}
 }
 
@@ -828,8 +828,8 @@ void DTW_and_Sounds_drawWarpX (DTW me, Sound yy, Sound xx, Graphics g, double xm
 	Graphics_unsetInner (g);
 
 	if (garnish) {
-		Graphics_markBottom (g, tx, 1, 1, 0, NULL);
-		Graphics_markLeft (g, ty, 1, 1, 0, NULL);
+		Graphics_markBottom (g, tx, true, true, false, nullptr);
+		Graphics_markLeft (g, ty, true, true, false, nullptr);
 	}
 }
 
@@ -889,9 +889,9 @@ void DTW_drawDistancesAlongPath (DTW me, Graphics g, double xmin, double xmax, d
 
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textLeft (g, 1, U"distance");
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
+		Graphics_textLeft (g, true, U"distance");
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeft (g, 2, true, true, false);
 	}
 }
 

@@ -378,16 +378,15 @@ static void grind (ManPages me) {
 	 */
 	for (ipage = 1; ipage <= my pages -> size; ipage ++) {
 		ManPage page = (ManPage) my pages -> item [ipage];
-		int ipar;
-		for (ipar = 0; page -> paragraphs [ipar]. type; ipar ++) {
+		for (int ipar = 0; page -> paragraphs [ipar]. type; ipar ++) {
 			const char32 *text = page -> paragraphs [ipar]. text, *p;
 			char32 link [301];
 			if (text) for (p = extractLink (text, NULL, link); p != NULL; p = extractLink (text, p, link)) {
 				if (link [0] == U'\\' && ((link [1] == U'F' && link [2] == U'I') || (link [1] == U'S' && link [2] == U'C')))
 					continue;   // ignore "FILE" links
 				if ((jpage = lookUp_sorted (me, link)) != 0) {
-					int ilink, alreadyPresent = FALSE;
-					for (ilink = 1; ilink <= page -> nlinksThither; ilink ++) {
+					bool alreadyPresent = false;
+					for (int ilink = 1; ilink <= page -> nlinksThither; ilink ++) {
 						if (page -> linksThither [ilink] == jpage) {
 							alreadyPresent = TRUE;
 							break;
@@ -635,9 +634,9 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 			p ++;
 		}
 		while (*p) {
-				if (wordItalic && ! isSingleWordCharacter (*p)) { MelderString_append (buffer, U"</i>"); wordItalic = FALSE; }
-				if (wordBold && ! isSingleWordCharacter (*p)) { MelderString_append (buffer, U"</b>"); wordBold = FALSE; }
-				if (wordCode && ! isSingleWordCharacter (*p)) { MelderString_append (buffer, U"</code>"); wordCode = FALSE; }
+				if (wordItalic && ! isSingleWordCharacter (*p)) { MelderString_append (buffer, U"</i>"); wordItalic = false; }
+				if (wordBold && ! isSingleWordCharacter (*p)) { MelderString_append (buffer, U"</b>"); wordBold = false; }
+				if (wordCode && ! isSingleWordCharacter (*p)) { MelderString_append (buffer, U"</code>"); wordCode = false; }
 			if (*p == U'@') {
 				char32 link [301], linkText [301], *q = link;
 				if (p [1] == U'@') {
@@ -686,48 +685,48 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 				}
 				MelderString_append (buffer, U"\">", linkText, U"</a>");
 			} else if (*p == U'%') {
-				if (inItalic) { MelderString_append (buffer, U"</i>"); inItalic = FALSE; p ++; }
-				else if (p [1] == U'%') { MelderString_append (buffer, U"<i>"); inItalic = TRUE; p += 2; }
-				else if (p [1] == U'#') { MelderString_append (buffer, U"<i><b>"); wordItalic = TRUE; wordBold = TRUE; p += 2; }
-				else { MelderString_append (buffer, U"<i>"); wordItalic = TRUE; p ++; }
+				if (inItalic) { MelderString_append (buffer, U"</i>"); inItalic = false; p ++; }
+				else if (p [1] == U'%') { MelderString_append (buffer, U"<i>"); inItalic = true; p += 2; }
+				else if (p [1] == U'#') { MelderString_append (buffer, U"<i><b>"); wordItalic = true; wordBold = true; p += 2; }
+				else { MelderString_append (buffer, U"<i>"); wordItalic = true; p ++; }
 			} else if (*p == U'_') {
 				if (inSub) {
-					/*if (wordItalic) { MelderString_append (buffer, U"</i>"); wordItalic = FALSE; }
-					if (wordBold) { MelderString_append (buffer, U"</b>"); wordBold = FALSE; }*/
-					MelderString_append (buffer, U"</sub>"); inSub = FALSE; p ++;
+					/*if (wordItalic) { MelderString_append (buffer, U"</i>"); wordItalic = false; }
+					if (wordBold) { MelderString_append (buffer, U"</b>"); wordBold = false; }*/
+					MelderString_append (buffer, U"</sub>"); inSub = false; p ++;
 				} else if (p [1] == U'_') {
-					if (wordItalic) { MelderString_append (buffer, U"</i>"); wordItalic = FALSE; }
-					if (wordBold) { MelderString_append (buffer, U"</b>"); wordBold = FALSE; }
+					if (wordItalic) { MelderString_append (buffer, U"</i>"); wordItalic = false; }
+					if (wordBold) { MelderString_append (buffer, U"</b>"); wordBold = false; }
 					MelderString_append (buffer, U"<sub>"); inSub = TRUE; p += 2;
 				} else { MelderString_append (buffer, U"_"); p ++; }
 			} else if (*p == U'#') {
-				if (inBold) { MelderString_append (buffer, U"</b>"); inBold = FALSE; p ++; }
-				else if (p [1] == U'#') { MelderString_append (buffer, U"<b>"); inBold = TRUE; p += 2; }
-				else if (p [1] == U'%') { MelderString_append (buffer, U"<b><i>"); wordBold = TRUE; wordItalic = TRUE; p += 2; }
-				else { MelderString_append (buffer, U"<b>"); wordBold = TRUE; p ++; }
+				if (inBold) { MelderString_append (buffer, U"</b>"); inBold = false; p ++; }
+				else if (p [1] == U'#') { MelderString_append (buffer, U"<b>"); inBold = true; p += 2; }
+				else if (p [1] == U'%') { MelderString_append (buffer, U"<b><i>"); wordBold = true; wordItalic = true; p += 2; }
+				else { MelderString_append (buffer, U"<b>"); wordBold = true; p ++; }
 			} else if (*p == U'$') {
-				if (inCode) { MelderString_append (buffer, U"</code>"); inCode = FALSE; p ++; }
-				else if (p [1] == U'$') { MelderString_append (buffer, U"<code>"); inCode = TRUE; p += 2; }
-				else { MelderString_append (buffer, U"<code>"); wordCode = TRUE; p ++; }
+				if (inCode) { MelderString_append (buffer, U"</code>"); inCode = false; p ++; }
+				else if (p [1] == U'$') { MelderString_append (buffer, U"<code>"); inCode = true; p += 2; }
+				else { MelderString_append (buffer, U"<code>"); wordCode = true; p ++; }
 			} else if (*p == U'^') {
 				if (inSuper) {
-					/*if (wordItalic) { MelderString_append (buffer, U"</i>"); wordItalic = FALSE; }
-					if (wordBold) { MelderString_append (buffer, U"</b>"); wordBold = FALSE; }*/
-					MelderString_append (buffer, U"</sup>"); inSuper = FALSE; p ++;
+					/*if (wordItalic) { MelderString_append (buffer, U"</i>"); wordItalic = false; }
+					if (wordBold) { MelderString_append (buffer, U"</b>"); wordBold = false; }*/
+					MelderString_append (buffer, U"</sup>"); inSuper = false; p ++;
 				} else if (p [1] == U'^') {
-					/*if (wordItalic) { MelderString_append (buffer, U"</i>"); wordItalic = FALSE; }
-					if (wordBold) { MelderString_append (buffer, U"</b>"); wordBold = FALSE; }*/
-					MelderString_append (buffer, U"<sup>"); inSuper = TRUE; p += 2;
+					/*if (wordItalic) { MelderString_append (buffer, U"</i>"); wordItalic = false; }
+					if (wordBold) { MelderString_append (buffer, U"</b>"); wordBold = false; }*/
+					MelderString_append (buffer, U"<sup>"); inSuper = true; p += 2;
 				} else {
-					/*if (wordItalic) { MelderString_append (buffer, U"</i>"); wordItalic = FALSE; }
-					if (wordBold) { MelderString_append (buffer, U"</b>"); wordBold = FALSE; }*/
-					MelderString_append (buffer, U"<sup>"); letterSuper = TRUE; p ++;
+					/*if (wordItalic) { MelderString_append (buffer, U"</i>"); wordItalic = false; }
+					if (wordBold) { MelderString_append (buffer, U"</b>"); wordBold = false; }*/
+					MelderString_append (buffer, U"<sup>"); letterSuper = true; p ++;
 				}
 			} else if (*p == U'}') {
-				if (inSmall) { MelderString_append (buffer, U"</font>"); inSmall = FALSE; p ++; }
+				if (inSmall) { MelderString_append (buffer, U"</font>"); inSmall = false; p ++; }
 				else { MelderString_append (buffer, U"}"); p ++; }
 			} else if (*p == U'\\' && p [1] == U's' && p [2] == U'{') {
-				MelderString_append (buffer, U"<font size=-1>"); inSmall = TRUE; p += 3;
+				MelderString_append (buffer, U"<font size=-1>"); inSmall = true; p += 3;
 			} else if (*p == U'\t' && inTable) {
 				MelderString_append (buffer, U"<td width=100 align=middle>"); p ++;
 			} else if (*p == U'<') {
@@ -737,9 +736,9 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 			} else if (*p == U'&') {
 				MelderString_append (buffer, U"&amp;"); p ++;
 			} else {
-				/*if (wordItalic && ! isSingleWordCharacter (*p)) { MelderString_append (buffer, U"</i>"); wordItalic = FALSE; }
-				if (wordBold && ! isSingleWordCharacter (*p)) { MelderString_append (buffer, U"</b>"); wordBold = FALSE; }
-				if (wordCode && ! isSingleWordCharacter (*p)) { MelderString_append (buffer, U"</code>"); wordCode = FALSE; }*/
+				/*if (wordItalic && ! isSingleWordCharacter (*p)) { MelderString_append (buffer, U"</i>"); wordItalic = false; }
+				if (wordBold && ! isSingleWordCharacter (*p)) { MelderString_append (buffer, U"</b>"); wordBold = false; }
+				if (wordCode && ! isSingleWordCharacter (*p)) { MelderString_append (buffer, U"</code>"); wordCode = false; }*/
 				if (*p == U'\\') {
 					int kar1 = *++p, kar2 = *++p;
 					Longchar_Info info = Longchar_getInfo (kar1, kar2);
@@ -758,21 +757,21 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 					p ++;
 				}
 				if (letterSuper) {
-					if (wordItalic) { MelderString_append (buffer, U"</i>"); wordItalic = FALSE; }
-					if (wordBold) { MelderString_append (buffer, U"</b>"); wordBold = FALSE; }
-					MelderString_append (buffer, U"</sup>"); letterSuper = FALSE;
+					if (wordItalic) { MelderString_append (buffer, U"</i>"); wordItalic = false; }
+					if (wordBold) { MelderString_append (buffer, U"</b>"); wordBold = false; }
+					MelderString_append (buffer, U"</sup>"); letterSuper = false;
 				}
 			}
 		}
-		if (inItalic || wordItalic) { MelderString_append (buffer, U"</i>"); inItalic = wordItalic = FALSE; }
-		if (inBold || wordBold) { MelderString_append (buffer, U"</b>"); inBold = wordBold = FALSE; }
-		if (inCode || wordCode) { MelderString_append (buffer, U"</code>"); inCode = wordCode = FALSE; }
-		if (inSub) { MelderString_append (buffer, U"</sub>"); inSub = FALSE; }
-		if (inSuper || letterSuper) { MelderString_append (buffer, U"</sup>"); inSuper = letterSuper = FALSE; }
-		if (inTable) { MelderString_append (buffer, U"</table>"); inTable = FALSE; }
+		if (inItalic || wordItalic) { MelderString_append (buffer, U"</i>"); inItalic = wordItalic = false; }
+		if (inBold || wordBold) { MelderString_append (buffer, U"</b>"); inBold = wordBold = false; }
+		if (inCode || wordCode) { MelderString_append (buffer, U"</code>"); inCode = wordCode = false; }
+		if (inSub) { MelderString_append (buffer, U"</sub>"); inSub = false; }
+		if (inSuper || letterSuper) { MelderString_append (buffer, U"</sup>"); inSuper = letterSuper = false; }
+		if (inTable) { MelderString_append (buffer, U"</table>"); inTable = false; }
 		MelderString_append (buffer, stylesInfo [paragraph -> type]. htmlOut, U"\n");
 	}
-	if (inList) { MelderString_append (buffer, ul ? U"</ul>\n" : U"</dl>\n"); inList = FALSE; }
+	if (inList) { MelderString_append (buffer, ul ? U"</ul>\n" : U"</dl>\n"); inList = false; }
 }
 
 static const char32 *month [] =
@@ -801,10 +800,10 @@ static void writePageAsHtml (ManPages me, MelderFile file, long ipage, MelderStr
 		MelderString_append (buffer, U"<ul>\n");
 		for (ilink = 1; ilink <= page -> nlinksHither; ilink ++) {
 			long link = page -> linksHither [ilink];
-			int alreadyShown = FALSE;
+			bool alreadyShown = false;
 			for (jlink = 1; jlink <= page -> nlinksThither; jlink ++)
 				if (page -> linksThither [jlink] == link)
-					alreadyShown = TRUE;
+					alreadyShown = true;
 			if (! alreadyShown) {
 				const char32 *title = ((ManPage) my pages -> item [page -> linksHither [ilink]]) -> title, *p;
 				MelderString_append (buffer, U"<li><a href=\"");

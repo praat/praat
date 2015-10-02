@@ -320,14 +320,14 @@ static void Sampled_getSum2AndDefinitionRange
 		Outside [x1-dx/2, xN+dx/2], the curve is undefined and neither times nor values are counted.
 		In [x1-dx/2,x1] and [xN,xN+dx/2], the curve is linearly extrapolated.
 	*/
-	long imin, imax, isamp;
+	long imin, imax;
 	double sum2 = 0.0, definitionRange = 0.0;
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	if (Function_intersectRangeWithDomain (me, & xmin, & xmax)) {
 		if (interpolate) {
 			if (Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax)) {
 				double leftEdge = my x1 - 0.5 * my dx, rightEdge = leftEdge + my nx * my dx;
-				for (isamp = imin; isamp <= imax; isamp ++) {
+				for (long isamp = imin; isamp <= imax; isamp ++) {
 					double value = my v_getValueAtSample (isamp, ilevel, unit);   // a fast way to integrate a linearly interpolated curve; works everywhere except at the edges
 					if (NUMdefined (value)) {
 						value -= mean;
@@ -426,9 +426,9 @@ static void Sampled_getSum2AndDefinitionRange
 		} else {   // no interpolation
 			double rimin = Sampled_xToIndex (me, xmin), rimax = Sampled_xToIndex (me, xmax);
 			if (rimax >= 0.5 && rimin < my nx + 0.5) {
-				imin = rimin < 0.5 ? 0 : (long) floor (rimin + 0.5);
-				imax = rimax >= my nx + 0.5 ? my nx + 1 : (long) floor (rimax + 0.5);
-				for (isamp = imin + 1; isamp < imax; isamp ++) {
+				imin = rimin < 0.5 ? 0 : lround (rimin);
+				imax = rimax >= my nx + 0.5 ? my nx + 1 : lround (rimax);
+				for (long isamp = imin + 1; isamp < imax; isamp ++) {
 					double value = my v_getValueAtSample (isamp, ilevel, unit);
 					if (NUMdefined (value)) {
 						value -= mean;
@@ -490,7 +490,6 @@ double Sampled_getStandardDeviation_standardUnit (Sampled me, double xmin, doubl
 void Sampled_getMinimumAndX (Sampled me, double xmin, double xmax, long ilevel, int unit, bool interpolate,
 	double *return_minimum, double *return_xOfMinimum)
 {
-	long imin, imax, i;
 	double minimum = 1e301, xOfMinimum = 0.0;
 	if (xmin == NUMundefined || xmax == NUMundefined) {
 		minimum = xOfMinimum = NUMundefined;
@@ -501,6 +500,7 @@ void Sampled_getMinimumAndX (Sampled me, double xmin, double xmax, long ilevel, 
 		minimum = xOfMinimum = NUMundefined;   // requested range and logical domain do not intersect
 		goto end;
 	}
+	long imin, imax;
 	if (! Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax)) {
 		/*
 		 * No sample centres between xmin and xmax.
@@ -511,10 +511,10 @@ void Sampled_getMinimumAndX (Sampled me, double xmin, double xmax, long ilevel, 
 		if (NUMdefined (fleft) && fleft < minimum) minimum = fleft, xOfMinimum = xmin;
 		if (NUMdefined (fright) && fright < minimum) minimum = fright, xOfMinimum = xmax;
 	} else {
-		for (i = imin; i <= imax; i ++) {
+		for (long i = imin; i <= imax; i ++) {
 			double fmid = my v_getValueAtSample (i, ilevel, unit);
 			if (fmid == NUMundefined) continue;
-			if (interpolate == FALSE) {
+			if (! interpolate) {
 				if (fmid < minimum) minimum = fmid, xOfMinimum = i;
 			} else {
 				/*
@@ -533,11 +533,11 @@ void Sampled_getMinimumAndX (Sampled me, double xmin, double xmax, long ilevel, 
 				}
 			}
 		}
-		xOfMinimum = my x1 + (xOfMinimum - 1) * my dx;   /* From index plus phase to time. */
+		xOfMinimum = my x1 + (xOfMinimum - 1) * my dx;   // from index plus phase to time
 		/* Check boundary values. */
 		if (interpolate) {
-			double fleft = Sampled_getValueAtX (me, xmin, ilevel, unit, TRUE);
-			double fright = Sampled_getValueAtX (me, xmax, ilevel, unit, TRUE);
+			double fleft = Sampled_getValueAtX (me, xmin, ilevel, unit, true);
+			double fright = Sampled_getValueAtX (me, xmax, ilevel, unit, true);
 			if (NUMdefined (fleft) && fleft < minimum) minimum = fleft, xOfMinimum = xmin;
 			if (NUMdefined (fright) && fright < minimum) minimum = fright, xOfMinimum = xmax;
 		}
@@ -552,20 +552,19 @@ end:
 
 double Sampled_getMinimum (Sampled me, double xmin, double xmax, long ilevel, int unit, bool interpolate) {
 	double minimum;
-	Sampled_getMinimumAndX (me, xmin, xmax, ilevel, unit, interpolate, & minimum, NULL);
+	Sampled_getMinimumAndX (me, xmin, xmax, ilevel, unit, interpolate, & minimum, nullptr);
 	return minimum;
 }
 
 double Sampled_getXOfMinimum (Sampled me, double xmin, double xmax, long ilevel, int unit, bool interpolate) {
 	double time;
-	Sampled_getMinimumAndX (me, xmin, xmax, ilevel, unit, interpolate, NULL, & time);
+	Sampled_getMinimumAndX (me, xmin, xmax, ilevel, unit, interpolate, nullptr, & time);
 	return time;
 }
 
 void Sampled_getMaximumAndX (Sampled me, double xmin, double xmax, long ilevel, int unit, bool interpolate,
 	double *return_maximum, double *return_xOfMaximum)
 {
-	long imin, imax, i;
 	double maximum = -1e301, xOfMaximum = 0.0;
 	if (xmin == NUMundefined || xmax == NUMundefined) {
 		maximum = xOfMaximum = NUMundefined;
@@ -576,6 +575,7 @@ void Sampled_getMaximumAndX (Sampled me, double xmin, double xmax, long ilevel, 
 		maximum = xOfMaximum = NUMundefined;   // requested range and logical domain do not intersect
 		goto end;
 	}
+	long imin, imax;
 	if (! Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax)) {
 		/*
 		 * No sample centres between tmin and tmax.
@@ -586,10 +586,10 @@ void Sampled_getMaximumAndX (Sampled me, double xmin, double xmax, long ilevel, 
 		if (NUMdefined (fleft) && fleft > maximum) maximum = fleft, xOfMaximum = xmin;
 		if (NUMdefined (fright) && fright > maximum) maximum = fright, xOfMaximum = xmax;
 	} else {
-		for (i = imin; i <= imax; i ++) {
+		for (long i = imin; i <= imax; i ++) {
 			double fmid = my v_getValueAtSample (i, ilevel, unit);
 			if (fmid == NUMundefined) continue;
-			if (interpolate == FALSE) {
+			if (! interpolate) {
 				if (fmid > maximum) maximum = fmid, xOfMaximum = i;
 			} else {
 				/*
@@ -611,8 +611,8 @@ void Sampled_getMaximumAndX (Sampled me, double xmin, double xmax, long ilevel, 
 		xOfMaximum = my x1 + (xOfMaximum - 1) * my dx;   // from index plus phase to time
 		/* Check boundary values. */
 		if (interpolate) {
-			double fleft = Sampled_getValueAtX (me, xmin, ilevel, unit, TRUE);
-			double fright = Sampled_getValueAtX (me, xmax, ilevel, unit, TRUE);
+			double fleft = Sampled_getValueAtX (me, xmin, ilevel, unit, true);
+			double fright = Sampled_getValueAtX (me, xmax, ilevel, unit, true);
 			if (NUMdefined (fleft) && fleft > maximum) maximum = fleft, xOfMaximum = xmin;
 			if (NUMdefined (fright) && fright > maximum) maximum = fright, xOfMaximum = xmax;
 		}

@@ -187,7 +187,7 @@ void structTextGridEditor :: v_createMenuItems_file_extract (EditorMenu menu) {
 static void menu_cb_WriteToTextFile (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
 	EDITOR_FORM_WRITE (U"Save as TextGrid text file", 0)
-		Melder_sprint (defaultName,300, ((Thing) my data) -> name, U".TextGrid");
+		Melder_sprint (defaultName,300, my data -> name, U".TextGrid");
 	EDITOR_DO_WRITE
 		Data_writeToTextFile (my data, file);
 	EDITOR_END
@@ -1049,7 +1049,7 @@ static void menu_cb_PublishTier (EDITOR_ARGS) {
 	checkTierSelection (me, U"publish a tier");
 	Function tier = (Function) grid -> tiers -> item [my selectedTier];
 	autoTextGrid publish = TextGrid_createWithoutTiers (1e30, -1e30);
-	TextGrid_addTier (publish.peek(), tier);
+	TextGrid_addTier_copy (publish.peek(), tier);
 	Thing_setName (publish.peek(), tier -> name);
 	Editor_broadcastPublication (me, publish.transfer());
 }

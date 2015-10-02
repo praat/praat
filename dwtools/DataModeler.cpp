@@ -81,7 +81,7 @@ static double polynomial_evaluate (DataModeler me, double xin, double p[])
 {
 	double xpi = 1, result = p[1];
 	// From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
-	double x = (2 * xin - my xmin - my xmax) / 2;
+	double x = (2.0 * xin - my xmin - my xmax) / 2.0;
 	for (long i = 2; i <= my numberOfParameters; i++) {
 		xpi *= x;
 		result += p[i] * xpi;
@@ -92,7 +92,7 @@ static double polynomial_evaluate (DataModeler me, double xin, double p[])
 static void polynomial_evaluateBasisFunctions (DataModeler me, double xin, double term[]) {
 	term[1] = 1;
 	// From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
-	double x = (2 * xin - my xmin - my xmax) / 2;
+	double x = (2.0 * xin - my xmin - my xmax) / 2.0;
 	for (long i = 2; i <= my numberOfParameters; i++) {
 		term[i] = term[i-1] * x;
 	}
@@ -100,10 +100,10 @@ static void polynomial_evaluateBasisFunctions (DataModeler me, double xin, doubl
 
 static double legendre_evaluate (DataModeler me, double xin, double p[]) {
 	// From domain [xmin, xmax] to domain [-1, 1]
-	double x = (2 * xin - my xmin - my xmax) / (my xmax - my xmin);
+	double x = (2.0 * xin - my xmin - my xmax) / (my xmax - my xmin);
 	double pti, ptim1, ptim2 = 1, result = p[1];
 	if (my numberOfParameters > 1) {
-		double twox = 2 * x, f2 = x, d = 1.0;
+		double twox = 2.0 * x, f2 = x, d = 1.0;
 		result += p[2] * (ptim1 = x);
 		for (long i = 3; i <= my numberOfParameters; i++) {
 			double f1 = d++;
@@ -116,11 +116,11 @@ static double legendre_evaluate (DataModeler me, double xin, double p[]) {
 }
 
 static void legendre_evaluateBasisFunctions (DataModeler me, double xin, double term[]) {
-	term[1] = 1;
+	term[1] = 1.0;
 	/* transform x from domain [xmin, xmax] to domain [-1, 1] */
-	double x = ( 2 * xin - my xmin - my xmax) / (my xmax - my xmin);
+	double x = (2.0 * xin - my xmin - my xmax) / (my xmax - my xmin);
 	if (my numberOfParameters > 1) {
-		double twox = 2 * x, f2 = term[2] = x, d = 1.0;
+		double twox = 2.0 * x, f2 = term[2] = x, d = 1.0;
 		for (long i = 3; i <= my numberOfParameters; i++) {
 			double f1 = d++;
 			f2 += twox;
@@ -131,7 +131,7 @@ static void legendre_evaluateBasisFunctions (DataModeler me, double xin, double 
 
 static void chisqFromZScores (double *zscores, long numberOfZScores, double *chisq, long *numberOfValidZScores) {
 	long numberOfValid = numberOfZScores;
-	double chisqt = 0;
+	double chisqt = 0.0;
 	for (long i = 1; i <= numberOfZScores; i++) {
 		if (NUMdefined (zscores[i])) {
 			chisqt += zscores[i] * zscores[i];
@@ -147,8 +147,8 @@ static void chisqFromZScores (double *zscores, long numberOfZScores, double *chi
 	}
 }
 
-double DataModeler_getDataPointInverseWeight (DataModeler me, long iPoint, int useSigmaY ) {
-	double iweight = 1;
+static double DataModeler_getDataPointInverseWeight (DataModeler me, long iPoint, int useSigmaY ) {
+	double iweight = 1.0;
 	if (iPoint > 0 && iPoint <= my numberOfDataPoints && my dataPointStatus[iPoint] != DataModeler_DATA_INVALID) {
 		if (useSigmaY == DataModeler_DATA_WEIGH_SIGMA) {
 			iweight = my sigmaY[iPoint];
@@ -179,7 +179,7 @@ double DataModeler_getModelValueAtIndex (DataModeler me, long index) {
 }
 
 void DataModeler_getExtremaY (DataModeler me, double *ymin, double *ymax) {
-	double min = 1e38, max = -min;
+	double min = 1e308, max = -min;
 	for (long i = 1; i <= my numberOfDataPoints; i++) {
 		if (my dataPointStatus[i] != DataModeler_DATA_INVALID) {
 			if (my y[i] < min) {
@@ -243,7 +243,7 @@ void DataModeler_setDataPointStatus (DataModeler me, long index, int status) {
 	}
 }
 
-void DataModeler_setDataPointValueAndStatus (DataModeler me, long index, double value, int dataStatus) {
+static void DataModeler_setDataPointValueAndStatus (DataModeler me, long index, double value, int dataStatus) {
 	if (index > 0 && index <= my numberOfDataPoints) {
 		my y[index] = value;
 		my dataPointStatus[index] = dataStatus;
@@ -324,7 +324,7 @@ void DataModeler_setParameterValuesToZero (DataModeler me, double numberOfSigmas
 			double value = my parameter[i];
 			double sigmas = numberOfSigmas * DataModeler_getParameterStandardDeviation (me, i);
 			if ((value - sigmas) * (value + sigmas) < 0) {
-				DataModeler_setParameterValueFixed (me, i, 0);
+				DataModeler_setParameterValueFixed (me, i, 0.0);
 				numberOfChangedParameters++;
 			}
 		}
@@ -402,7 +402,7 @@ void DataModeler_getZScores (DataModeler me, int useSigmaY, double zscores[]) {
 static void DataModeler_getChisqScoresFromZScores (DataModeler me, double *zscores, bool substituteAverage, double *chisq) {
 	Melder_assert (zscores != NULL && chisq != NULL);
 	long numberOfDefined = my numberOfDataPoints;
-	double sumchisq = 0;
+	double sumchisq = 0.0;
 	for (long i = 1; i <= my numberOfDataPoints; i++) {
 		if (NUMdefined (zscores[i])) {
 			chisq[i] = zscores[i] * zscores[i];
@@ -428,7 +428,7 @@ double DataModeler_getChiSquaredQ (DataModeler me, int useSigmaY, double *probab
 	DataModeler_getZScores (me, useSigmaY, zscores.peek());
 	chisqFromZScores (zscores.peek(), my numberOfDataPoints, & chisq, & numberOfValidZScores);
 	double dof = numberOfValidZScores;
-	dof = useSigmaY == DataModeler_DATA_WEIGH_EQUAL ? dof - 1 : dof; // we loose one dof if sigma is estimated from the data
+	dof = useSigmaY == DataModeler_DATA_WEIGH_EQUAL ? dof - 1.0 : dof; // we loose one dof if sigma is estimated from the data
 	if (probability != NULL) {
 		*probability = NUMchiSquareQ (chisq, dof);
 	}
@@ -439,11 +439,11 @@ double DataModeler_getChiSquaredQ (DataModeler me, int useSigmaY, double *probab
 }
 
 double DataModeler_getWeightedMean (DataModeler me) {
-	double ysum = 0, wsum = 0;
+	double ysum = 0.0, wsum = 0.0;
 	for (long i = 1; i <= my numberOfDataPoints; i++) {
 		if (my dataPointStatus[i] != DataModeler_DATA_INVALID) {
 			double s = DataModeler_getDataPointInverseWeight (me, i, my useSigmaY);
-			double weight =  1 / (s * s);
+			double weight = 1.0 / (s * s);
 			ysum += my y[i] * weight;
 			wsum += weight;
 		}
@@ -460,7 +460,7 @@ double DataModeler_getCoefficientOfDetermination (DataModeler me, double *ssreg,
 	 */
 
 	double ymean = DataModeler_getWeightedMean (me);
-	double ss_tot = 0, ss_reg = 0;
+	double ss_tot = 0.0, ss_reg = 0.0;
 	for (long i = 1; i <= my numberOfDataPoints; i++) {
 		if (my dataPointStatus[i] != DataModeler_DATA_INVALID) {
 			double s = DataModeler_getDataPointInverseWeight (me, i, my useSigmaY);
@@ -471,7 +471,7 @@ double DataModeler_getCoefficientOfDetermination (DataModeler me, double *ssreg,
 			ss_reg += diff * diff; // regression sum of squares
 		}
 	}
-	double rSquared = ss_tot > 0 ? 1 - ss_reg / ss_tot : 1;
+	double rSquared = ss_tot > 0.0 ? 1.0 - ss_reg / ss_tot : 1.0;
 	if (ssreg != NULL) {
 		*ssreg = ss_tot - ss_reg;
 	}
@@ -481,7 +481,7 @@ double DataModeler_getCoefficientOfDetermination (DataModeler me, double *ssreg,
 	return rSquared;
 }
 
-void DataModeler_drawBasisFunction_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
+static void DataModeler_drawBasisFunction_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
  	long iterm, bool scale, long numberOfPoints) {
 	if (xmax <= xmin) {
 		xmin = my xmin; xmax = my xmax;
@@ -496,7 +496,7 @@ void DataModeler_drawBasisFunction_inside (DataModeler me, Graphics g, double xm
 		y[i] = scale ? y[i] * my parameter[iterm] : y[i];
 	}
 	if (ymax <= ymin) {
-		ymin = 1e38;ymax = -ymin;
+		ymin = 1e308; ymax = -ymin;
 		for (long i = 1; i <= numberOfPoints; i++) {
 			ymax = y[i] > ymax ? y[i] : ymax;
 			ymin = y[i] < ymin ? y[i] : ymin;
@@ -577,7 +577,7 @@ void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xm
 	
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	double horizontalOffset_wc = Graphics_dxMMtoWC (g, horizontalOffset_mm);
-	double barWidth_wc = barWidth_mm <= 0 ? 0 : Graphics_dxMMtoWC (g, barWidth_mm);
+	double barWidth_wc = barWidth_mm <= 0.0 ? 0.0 : Graphics_dxMMtoWC (g, barWidth_mm);
 	double x1, y1, x2, y2;
 	bool x1defined = false, x2defined = false;
 	for (long idata = ixmin; idata <= ixmax; idata++) {
@@ -651,8 +651,8 @@ void DataModeler_drawTrack (DataModeler me, Graphics g, double xmin, double xmax
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeft (g, 2, true, true, false);
 	}
 }
 
@@ -671,8 +671,8 @@ void DataModeler_speckle (DataModeler me, Graphics g, double xmin, double xmax, 
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeft (g, 2, true, true, false);
 	}
 }
 
@@ -691,7 +691,7 @@ Table DataModeler_to_Table_zscores (DataModeler me, int useSigmaY) {
 	}	
 }
 
-void DataModeler_normalProbabilityPlot (DataModeler me, Graphics g, int useSigmaY, long numberOfQuantiles, double numberOfSigmas, int labelSize, const char32 *label, int garnish) {
+static void DataModeler_normalProbabilityPlot (DataModeler me, Graphics g, int useSigmaY, long numberOfQuantiles, double numberOfSigmas, int labelSize, const char32 *label, int garnish) {
 	try {
 		autoTable thee = DataModeler_to_Table_zscores (me, useSigmaY);
 		Table_normalProbabilityPlot (thee.peek(), g, 2, numberOfQuantiles, numberOfSigmas, labelSize, label, garnish);
@@ -1056,7 +1056,7 @@ void FormantModeler_setDataPointStatus (FormantModeler me, long iformant, long i
 	}
 }
 
-void FormantModeler_setDataPointValueAndStatus (FormantModeler me, long iformant, long index, double value, int dataStatus)
+static void FormantModeler_setDataPointValueAndStatus (FormantModeler me, long iformant, long index, double value, int dataStatus)
 {
 	if (iformant > 0 && iformant <= my trackmodelers -> size) {
 		DataModeler ff = (DataModeler) my trackmodelers -> item[iformant];
@@ -1123,11 +1123,11 @@ void FormantModeler_drawBasisFunction (FormantModeler me, Graphics g, double tmi
 	if (garnish) {
 		Graphics_inqWindow (g, &tmin, &tmax, &fmin, &fmax);
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, U"Time (s)");
-		Graphics_textLeft (g, 1, (scaled ? U"Frequency (Hz)" : U"Amplitude"));
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_markLeft (g, fmin, 1, 1, 0, U"");
-		Graphics_markLeft (g, fmax, 1, 1, 0, U"");
+		Graphics_textBottom (g, true, U"Time (s)");
+		Graphics_textLeft (g, true, (scaled ? U"Frequency (Hz)" : U"Amplitude"));
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_markLeft (g, fmin, true, true, false, U"");
+		Graphics_markLeft (g, fmax, true, true, false, U"");
 	}
 }
 
@@ -1136,7 +1136,7 @@ static long FormantModeler_drawingSpecifiers_x (FormantModeler me, double *xmin,
 	return DataModeler_drawingSpecifiers_x (fm, xmin, xmax, ixmin, ixmax);
 }
 
-void FormantModeler_getCumulativeChiScores (FormantModeler me, int useSigmaY, double chisq[]) {
+static void FormantModeler_getCumulativeChiScores (FormantModeler me, int useSigmaY, double chisq[]) {
 	try {
 		long numberOfDataPoints = FormantModeler_getNumberOfDataPoints (me);
 		long numberOfFormants = my trackmodelers -> size;
@@ -1190,8 +1190,8 @@ void FormantModeler_drawVariancesOfShiftedTracks (FormantModeler me, Graphics g,
 		Graphics_unsetInner (g);
 		if (garnish) {
 			Graphics_drawInnerBox (g);
-			Graphics_marksBottom (g, 2, 1, 1, 0);
-			Graphics_marksLeft (g, 2, 1, 1, 0);
+			Graphics_marksBottom (g, 2, true, true, false);
+			Graphics_marksLeft (g, 2, true, true, false);
 		}
 
 	} catch (MelderError) {
@@ -1221,8 +1221,8 @@ void FormantModeler_drawCumulativeChiScores (FormantModeler me, Graphics g, doub
 		Graphics_unsetInner (g);
 		if (garnish) {
 			Graphics_drawInnerBox (g);
-			Graphics_marksBottom (g, 2, 1, 1, 0);
-			Graphics_marksLeft (g, 2, 1, 1, 0);
+			Graphics_marksBottom (g, 2, true, true, false);
+			Graphics_marksLeft (g, 2, true, true, false);
 		}
 	} catch (MelderError) {
 		//
@@ -1252,10 +1252,10 @@ void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tm
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, U"Time (s)");
-		Graphics_textLeft (g, 1, U"Formant frequency (Hz)");
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_marksLeftEvery (g, 1.0, 1000.0, 1, 1, 1);
+		Graphics_textBottom (g, true, U"Time (s)");
+		Graphics_textLeft (g, true, U"Formant frequency (Hz)");
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeftEvery (g, 1.0, 1000.0, true, true, true);
 	}
 }
 
@@ -1266,7 +1266,7 @@ void FormantModeler_normalProbabilityPlot (FormantModeler me, Graphics g, long i
 	}
 }
 
-void FormantModeler_drawTracks_inside (FormantModeler me, Graphics g, double xmin, double xmax, double fmax,
+static void FormantModeler_drawTracks_inside (FormantModeler me, Graphics g, double xmin, double xmax, double fmax,
 	long fromTrack, long toTrack, int estimated, long numberOfParameters, double horizontalOffset_mm) {
 	for (long iformant = fromTrack; iformant <= toTrack; iformant++) {
 		DataModeler ffi =  (DataModeler) my trackmodelers -> item[iformant];
@@ -1293,10 +1293,10 @@ void FormantModeler_drawTracks (FormantModeler me, Graphics g, double tmin, doub
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, U"Time (s)");
-		Graphics_textLeft (g, 1, U"Formant frequency (Hz)");
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_marksLeftEvery (g, 1.0, 1000.0, 1, 1, 1);
+		Graphics_textBottom (g, true, U"Time (s)");
+		Graphics_textLeft (g, true, U"Formant frequency (Hz)");
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeftEvery (g, 1.0, 1000.0, true, true, true);
 	}
 }
 
@@ -1327,10 +1327,10 @@ void FormantModeler_speckle (FormantModeler me, Graphics g, double tmin, double 
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, U"Time (s)");
-		Graphics_textLeft (g, 1, U"Formant frequency (Hz)");
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_marksLeftEvery (g, 1.0, 1000.0, 1, 1, 1);
+		Graphics_textBottom (g, true, U"Time (s)");
+		Graphics_textLeft (g, true, U"Formant frequency (Hz)");
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeftEvery (g, 1.0, 1000.0, true, true, true);
 	}
 }
 
@@ -1464,7 +1464,7 @@ double FormantModeler_getVarianceOfParameters (FormantModeler me, long fromForma
 		fromFormant = 1; toFormant = numberOfFormants;
 	}
 	if (fromFormant <= toFormant && fromFormant > 0 && toFormant <= numberOfFormants) {
-		variance = 0;
+		variance = 0.0;
 		for (long iformant = fromFormant; iformant <= toFormant; iformant++) {
 			DataModeler ff = (DataModeler) my trackmodelers -> item[iformant];
 			variance += DataModeler_getVarianceOfParameters (ff, fromIndex, toIndex, &nofp);
@@ -1638,7 +1638,7 @@ Formant FormantModeler_to_Formant (FormantModeler me, int useEstimates, int esti
 }
 
 double FormantModeler_getChiSquaredQ (FormantModeler me, long fromFormant, long toFormant, int useSigmaY, double *probability, double *ndf) {
-	double chisq = NUMundefined, ndfTotal = 0;
+	double chisq = NUMundefined, ndfTotal = 0.0;
 	if (toFormant < fromFormant || (fromFormant == 0 && toFormant == 0)) {
 		fromFormant = 1; toFormant = my trackmodelers -> size;
 	}
@@ -1905,7 +1905,7 @@ long Formants_getSmoothestInInterval (Collection me, double tmin, double tmax, l
 		 * This is not what we want.
 		 * We test therefore the variances of the parameters because if sigma1[i] < sigma2[i] than pvar1 < pvar2.
 		 */
-		double minChiVar = 1e38;
+		double minChiVar = 1e308;
 		long index = 0;
 		for (long iobject = 1; iobject <= numberOfFormantObjects; iobject++) {
 			if (invalid[iobject] != 1) {
@@ -2020,10 +2020,10 @@ void PitchModeler_draw (PitchModeler me, Graphics g, double tmin, double tmax, d
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, U"Time (s)");
-		Graphics_textLeft (g, 1, U"Frequency (Hz)");
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_marksLeftEvery (g, 1.0, 100.0, 1, 1, 1);
+		Graphics_textBottom (g, true, U"Time (s)");
+		Graphics_textLeft (g, true, U"Frequency (Hz)");
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeftEvery (g, 1.0, 100.0, true, true, true);
 	}
 }
 

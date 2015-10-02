@@ -115,11 +115,11 @@ double SSCP_getEllipseScalefactor (SSCP me, double scale, int confidence) {
 			return -1;
 		}
 		/* D.E. Johnson (1998), Applied Multivariate methods, page 410 */
-		f = NUMinvFisherQ (1 - scale, p, n - p);
-		scale = 2 * sqrt (f * p * (n - 1) / ( ( (double) n) * (n - p)));
+		f = NUMinvFisherQ (1.0 - scale, p, n - p);
+		scale = 2.0 * sqrt (f * p * (n - 1) / ( ( (double) n) * (n - p)));
 	} else {
 		// very ugly, temporary hack
-		scale *= 2 / (scale < 0 ? -1 : sqrt (n - 1));
+		scale *= 2.0 / (scale < 0.0 ? -1.0 : sqrt (n - 1));
 	}
 	return scale;
 }
@@ -132,15 +132,15 @@ static void getEllipseBoundingBoxCoordinates (SSCP me, double scale, int confide
 	NUMeigencmp22 (my data[1][1], my data[1][2], my data[2][2], &a, &b, &cs, &sn);
 	NUMgetEllipseBoundingBox (sqrt (a), sqrt (b), cs, & width, & height);
 
-	*xmin = my centroid[1] - lscale * width / 2;
+	*xmin = my centroid[1] - lscale * width / 2.0;
 	*xmax = *xmin + lscale * width;
-	*ymin = my centroid[2] - lscale * height / 2;
+	*ymin = my centroid[2] - lscale * height / 2.0;
 	*ymax = *ymin + lscale * height;
 }
 
 void SSCPs_getEllipsesBoundingBoxCoordinates (SSCPs me, double scale, int confidence,
         double *xmin, double *xmax, double *ymin, double *ymax) {
-	*xmin = *ymin = 1e38;
+	*xmin = *ymin = 1e308;
 	*xmax = *ymax = - *xmin;
 
 	for (long i = 1; i <= my size; i++) {
@@ -415,8 +415,8 @@ void SSCP_drawConcentrationEllipse (SSCP me, Graphics g, double scale,
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
-		Graphics_marksBottom (g, 2, 1, 1, 0);
+		Graphics_marksLeft (g, 2, true, true, false);
+		Graphics_marksBottom (g, 2, true, true, false);
 	}
 }
 
@@ -1080,10 +1080,10 @@ void SSCPs_drawConcentrationEllipses (SSCPs me, Graphics g, double scale, int co
 	if (garnish) {
 		t = (SSCP) my item[1];
 		Graphics_drawInnerBox (g);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, t -> columnLabels[d2] ? t -> columnLabels[d2] : Melder_cat (U"Dimension ", d2));
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_textBottom (g, 1, t -> columnLabels[d1] ? t -> columnLabels[d1] : Melder_cat (U"Dimension ", d1));
+		Graphics_marksLeft (g, 2, true, true, false);
+		Graphics_textLeft (g, true, t -> columnLabels[d2] ? t -> columnLabels[d2] : Melder_cat (U"Dimension ", d2));
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_textBottom (g, true, t -> columnLabels[d1] ? t -> columnLabels[d1] : Melder_cat (U"Dimension ", d1));
 	}
 }
 

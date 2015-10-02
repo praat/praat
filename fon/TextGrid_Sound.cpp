@@ -418,8 +418,8 @@ void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, dou
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, U"Time (s)");
-		Graphics_marksBottom (g, 2, 1, 1, 1);
+		Graphics_textBottom (g, true, U"Time (s)");
+		Graphics_marksBottom (g, 2, true, true, false);
 	}
 }
 
@@ -483,22 +483,22 @@ Collection TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound, long 
 
 static void autoMarks (Graphics g, double ymin, double ymax, bool haveDottedLines) {
 	double dy = ymax - ymin;
-	if (dy < 26) {
+	if (dy < 26.0) {
 		long imin = (long) ceil ((ymin + 2.0) / 5.0), imax = (long) floor ((ymax - 2.0) / 5.0);
 		for (long i = imin; i <= imax; i ++)
-			Graphics_markLeft (g, i * 5, TRUE, TRUE, haveDottedLines, NULL);
-	} else if (dy < 110) {
+			Graphics_markLeft (g, i * 5.0, true, true, haveDottedLines, nullptr);
+	} else if (dy < 110.0) {
 		long imin = (long) ceil ((ymin + 8.0) / 20.0), imax = (long) floor ((ymax - 8.0) / 20.0);
 		for (long i = imin; i <= imax; i ++)
-			Graphics_markLeft (g, i * 20, TRUE, TRUE, haveDottedLines, NULL);
-	} else if (dy < 260) {
+			Graphics_markLeft (g, i * 20.0, true, true, haveDottedLines, nullptr);
+	} else if (dy < 260.0) {
 		long imin = (long) ceil ((ymin + 20.0) / 50.0), imax = (long) floor ((ymax - 20.0) / 50.0);
 		for (long i = imin; i <= imax; i ++)
-			Graphics_markLeft (g, i * 50, TRUE, TRUE, haveDottedLines, NULL);
-	} else if (dy < 510) {
+			Graphics_markLeft (g, i * 50.0, true, true, haveDottedLines, nullptr);
+	} else if (dy < 510.0) {
 		long imin = (long) ceil ((ymin + 40.0) / 100.0), imax = (long) floor ((ymax - 40.0) / 100.0);
 		for (long i = imin; i <= imax; i ++)
-			Graphics_markLeft (g, i * 100, TRUE, TRUE, haveDottedLines, NULL);
+			Graphics_markLeft (g, i * 100.0, true, true, haveDottedLines, nullptr);
 	}
 }
 
@@ -507,35 +507,35 @@ static void autoMarks_logarithmic (Graphics g, double ymin, double ymax, bool ha
 	for (int i = -12; i <= 12; i ++) {
 		double power = pow (10, i), y = power;
 		if (y > ymin * 1.2 && y < ymax / 1.2)
-			Graphics_markLeftLogarithmic (g, y, TRUE, TRUE, haveDottedLines, NULL);
+			Graphics_markLeftLogarithmic (g, y, true, true, haveDottedLines, nullptr);
 		if (fy > 2100) {
 			;   /* Enough. */
 		} else if (fy > 210) {
 			y = 3.0 * power;
 			if (y > ymin * 1.2 && y < ymax / 1.2)
-				Graphics_markLeftLogarithmic (g, y, TRUE, TRUE, haveDottedLines, NULL);
+				Graphics_markLeftLogarithmic (g, y, true, true, haveDottedLines, nullptr);
 		} else {
 			y = 2.0 * power;
 			if (y > ymin * 1.2 && y < ymax / 1.2)
-				Graphics_markLeftLogarithmic (g, y, TRUE, TRUE, haveDottedLines, NULL);
+				Graphics_markLeftLogarithmic (g, y, true, true, haveDottedLines, nullptr);
 			y = 5.0 * power;
 			if (y > ymin * 1.2 && y < ymax / 1.2)
-				Graphics_markLeftLogarithmic (g, y, TRUE, TRUE, haveDottedLines, NULL);
+				Graphics_markLeftLogarithmic (g, y, true, true, haveDottedLines, nullptr);
 			if (fy < 21) {
 				y = 3.0 * power;
 				if (y > ymin * 1.2 && y < ymax / 1.2)
-					Graphics_markLeftLogarithmic (g, y, TRUE, TRUE, haveDottedLines, NULL);
+					Graphics_markLeftLogarithmic (g, y, true, true, haveDottedLines, nullptr);
 				y = 7.0 * power;
 				if (y > ymin * 1.2 && y < ymax / 1.2)
-					Graphics_markLeftLogarithmic (g, y, TRUE, TRUE, haveDottedLines, NULL);
+					Graphics_markLeftLogarithmic (g, y, true, true, haveDottedLines, nullptr);
 			}
 			if (fy < 4.1) {
 				y = 1.5 * power;
 				if (y > ymin * 1.2 && y < ymax / 1.2)
-					Graphics_markLeftLogarithmic (g, y, TRUE, TRUE, haveDottedLines, NULL);
+					Graphics_markLeftLogarithmic (g, y, true, true, haveDottedLines, nullptr);
 				y = 4.0 * power;
 				if (y > ymin * 1.2 && y < ymax / 1.2)
-					Graphics_markLeftLogarithmic (g, y, TRUE, TRUE, haveDottedLines, NULL);
+					Graphics_markLeftLogarithmic (g, y, true, true, haveDottedLines, nullptr);
 			}
 		}
 	}
@@ -546,19 +546,19 @@ static void autoMarks_semitones (Graphics g, double ymin, double ymax, bool have
 	if (dy < 16) {
 		long imin = (long) ceil ((ymin + 1.2) / 3.0), imax = (long) floor ((ymax - 1.2) / 3.0);
 		for (long i = imin; i <= imax; i ++)
-			Graphics_markLeft (g, i * 3, TRUE, TRUE, haveDottedLines, NULL);
+			Graphics_markLeft (g, i * 3.0, true, true, haveDottedLines, nullptr);
 	} else if (dy < 32) {
 		long imin = (long) ceil ((ymin + 2.4) / 6.0), imax = (long) floor ((ymax - 2.4) / 6.0);
 		for (long i = imin; i <= imax; i ++)
-			Graphics_markLeft (g, i * 6, TRUE, TRUE, haveDottedLines, NULL);
+			Graphics_markLeft (g, i * 6.0, true, true, haveDottedLines, nullptr);
 	} else if (dy < 64) {
 		long imin = (long) ceil ((ymin + 4.8) / 12.0), imax = (long) floor ((ymax - 4.8) / 12.0);
 		for (long i = imin; i <= imax; i ++)
-			Graphics_markLeft (g, i * 12, TRUE, TRUE, haveDottedLines, NULL);
+			Graphics_markLeft (g, i * 12.0, true, true, haveDottedLines, nullptr);
 	} else if (dy < 128) {
 		long imin = (long) ceil ((ymin + 9.6) / 24.0), imax = (long) floor ((ymax - 9.6) / 24.0);
 		for (long i = imin; i <= imax; i ++)
-			Graphics_markLeft (g, i * 24, TRUE, TRUE, haveDottedLines, NULL);
+			Graphics_markLeft (g, i * 24.0, true, true, haveDottedLines, nullptr);
 	}
 }
 
@@ -572,34 +572,34 @@ void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, doub
 		fmax = Function_convertStandardToSpecialUnit (pitch, fmax, Pitch_LEVEL_FREQUENCY, unit);
 	}
 	if (unit == kPitch_unit_HERTZ_LOGARITHMIC)
-		Pitch_draw (pitch, g, tmin, tmax, pow (10, fmin - 0.25 * (fmax - fmin) * ntier), pow (10, fmax), FALSE, speckle, unit);
+		Pitch_draw (pitch, g, tmin, tmax, pow (10.0, fmin - 0.25 * (fmax - fmin) * ntier), pow (10.0, fmax), false, speckle, unit);
 	else
-		Pitch_draw (pitch, g, tmin, tmax, fmin - 0.25 * (fmax - fmin) * ntier, fmax, FALSE, speckle, unit);
-	TextGrid_Sound_draw (grid, NULL, g, tmin, tmax, showBoundaries, useTextStyles, FALSE);
+		Pitch_draw (pitch, g, tmin, tmax, fmin - 0.25 * (fmax - fmin) * ntier, fmax, false, speckle, unit);
+	TextGrid_Sound_draw (grid, NULL, g, tmin, tmax, showBoundaries, useTextStyles, false);
 	/*
 	 * Restore window for the sake of margin drawing.
 	 */
 	Graphics_setWindow (g, tmin, tmax, fmin - 0.25 * (fmax - fmin) * ntier, fmax);
 	if (unit == kPitch_unit_HERTZ_LOGARITHMIC)
-		fmin = pow (10, fmin), fmax = pow (10, fmax);
+		fmin = pow (10, fmin), fmax = pow (10.0, fmax);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
 		if (unit == kPitch_unit_HERTZ_LOGARITHMIC) {
-			Graphics_markLeftLogarithmic (g, fmin, TRUE, TRUE, FALSE, NULL);
-			Graphics_markLeftLogarithmic (g, fmax, TRUE, TRUE, FALSE, NULL);
-			autoMarks_logarithmic (g, fmin, fmax, FALSE);
+			Graphics_markLeftLogarithmic (g, fmin, true, true, false, nullptr);
+			Graphics_markLeftLogarithmic (g, fmax, true, true, false, nullptr);
+			autoMarks_logarithmic (g, fmin, fmax, false);
 		} else if (unit == kPitch_unit_SEMITONES_100) {
-			Graphics_markLeft (g, fmin, TRUE, TRUE, FALSE, NULL);
-			Graphics_markLeft (g, fmax, TRUE, TRUE, FALSE, NULL);
-			autoMarks_semitones (g, fmin, fmax, FALSE);
+			Graphics_markLeft (g, fmin, true, true, false, nullptr);
+			Graphics_markLeft (g, fmax, true, true, false, nullptr);
+			autoMarks_semitones (g, fmin, fmax, false);
 		} else {
-			Graphics_markLeft (g, fmin, TRUE, TRUE, FALSE, NULL);
-			Graphics_markLeft (g, fmax, TRUE, TRUE, FALSE, NULL);
-			autoMarks (g, fmin, fmax, FALSE);
+			Graphics_markLeft (g, fmin, true, true, false, nullptr);
+			Graphics_markLeft (g, fmax, true, true, false, nullptr);
+			autoMarks (g, fmin, fmax, false);
 		}
 		Graphics_textLeft (g, true, Melder_cat (U"Pitch (", Function_getUnitText (pitch, Pitch_LEVEL_FREQUENCY, unit, Function_UNIT_TEXT_GRAPHICAL), U")"));
 		Graphics_textBottom (g, true, U"Time (s)");
-		Graphics_marksBottom (g, 2, true, true, true);
+		Graphics_marksBottom (g, 2, true, true, false);
 	}
 }
 
@@ -652,10 +652,10 @@ void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 				Graphics_text (g, t, f0, point -> mark);
 			}
 		}
-		Graphics_setPercentSignIsItalic (g, TRUE);
-		Graphics_setNumberSignIsBold (g, TRUE);
-		Graphics_setCircumflexIsSuperscript (g, TRUE);
-		Graphics_setUnderscoreIsSubscript (g, TRUE);
+		Graphics_setPercentSignIsItalic (g, true);
+		Graphics_setNumberSignIsBold (g, true);
+		Graphics_setCircumflexIsSuperscript (g, true);
+		Graphics_setUnderscoreIsSubscript (g, true);
 		Graphics_setFontSize (g, oldFontSize);
 		Graphics_unsetInner (g);
 	} catch (MelderError) {

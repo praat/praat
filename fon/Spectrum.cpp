@@ -89,7 +89,7 @@ double structSpectrum :: v_getValueAtSample (long isamp, long which, int units) 
 Spectrum Spectrum_create (double fmax, long nf) {
 	try {
 		autoSpectrum me = Thing_new (Spectrum);
-		Matrix_init (me.peek(), 0.0, fmax, nf, fmax / (nf - 1), 0.0, 1, 2, 2, 1, 1);
+		Matrix_init (me.peek(), 0.0, fmax, nf, fmax / (nf - 1), 0.0, 1.0, 2.0, 2, 1.0, 1.0);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw (U"Spectrum not created.");
@@ -97,10 +97,10 @@ Spectrum Spectrum_create (double fmax, long nf) {
 }
 
 int Spectrum_getPowerDensityRange (Spectrum me, double *minimum, double *maximum) {
-	*minimum = 1e300, *maximum = 0;
+	*minimum = 1e308, *maximum = 0.0;
 	for (long ifreq = 1; ifreq <= my nx; ifreq ++) {
 		double oneSidedPowerSpectralDensity =   /* Pa2 Hz-2 s-1 */
-			2 * (my z [1] [ifreq] * my z [1] [ifreq] + my z [2] [ifreq] * my z [2] [ifreq]) * my dx;
+			2.0 * (my z [1] [ifreq] * my z [1] [ifreq] + my z [2] [ifreq] * my z [2] [ifreq]) * my dx;
 		if (oneSidedPowerSpectralDensity < *minimum) *minimum = oneSidedPowerSpectralDensity;
 		if (oneSidedPowerSpectralDensity > *maximum) *maximum = oneSidedPowerSpectralDensity;
 	}
@@ -148,9 +148,9 @@ void Spectrum_draw (Spectrum me, Graphics g, double fmin, double fmax, double mi
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, U"Frequency (Hz)");
+		Graphics_textBottom (g, true, U"Frequency (Hz)");
 		Graphics_marksBottom (g, 2, true, true, false);
-		Graphics_textLeft (g, 1, U"Sound pressure level (dB/Hz)");
+		Graphics_textLeft (g, true, U"Sound pressure level (dB/Hz)");
 		Graphics_marksLeftEvery (g, 1.0, 20.0, true, true, false);
 	}
 }
@@ -189,10 +189,10 @@ if(ifmin==1)ifmin=2;  /* BUG */
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, U"Frequency (Hz)");
-		Graphics_marksBottomLogarithmic (g, 3, TRUE, TRUE, FALSE);
-		Graphics_textLeft (g, 1, U"Sound pressure level (dB/Hz)");
-		Graphics_marksLeftEvery (g, 1.0, 20.0, TRUE, TRUE, FALSE);
+		Graphics_textBottom (g, true, U"Frequency (Hz)");
+		Graphics_marksBottomLogarithmic (g, 3, true, true, false);
+		Graphics_textLeft (g, true, U"Sound pressure level (dB/Hz)");
+		Graphics_marksLeftEvery (g, 1.0, 20.0, true, true, false);
 	}
 }
 
@@ -266,7 +266,7 @@ Spectrum Spectrum_cepstralSmoothing (Spectrum me, double bandWidth) {
 		autoSpectrum dBspectrum = Data_copy (me);
 		double *re = dBspectrum -> z [1], *im = dBspectrum -> z [2];
 		for (long i = 1; i <= dBspectrum -> nx; i ++) {
-			re [i] = log (re [i] * re [i] + im [i] * im [i] + 1e-300);
+			re [i] = log (re [i] * re [i] + im [i] * im [i] + 1e-308);
 			im [i] = 0.0;
 		}
 
@@ -287,7 +287,7 @@ Spectrum Spectrum_cepstralSmoothing (Spectrum me, double bandWidth) {
 		/*
 		 * Smoothed power spectrum is original power spectrum convolved with a Gaussian.
 		 */
-		autoSpectrum thee = Sound_to_Spectrum (cepstrum.peek(), TRUE);
+		autoSpectrum thee = Sound_to_Spectrum (cepstrum.peek(), true);
 
 		/*
 		 * Convert power spectrum back into a "complex" spectrum without phase information.
@@ -366,12 +366,12 @@ double Spectrum_getBandEnergy (Spectrum me, double fmin, double fmax) {
 	 *
 	 * All this truncation is automatically performed by Sampled_getMean ().
 	 */
-	return Sampled_getIntegral (me, fmin, fmax, 0, 1, FALSE);
+	return Sampled_getIntegral (me, fmin, fmax, 0, 1, false);
 }
 
 double Spectrum_getBandDensity (Spectrum me, double fmin, double fmax) {
-	if (my xmin < 0.0) return NUMundefined;   /* No negative frequencies allowed in one-sided spectral density. */
-	return Sampled_getMean (me, fmin, fmax, 0, 1, FALSE);
+	if (my xmin < 0.0) return NUMundefined;   // no negative frequencies allowed in one-sided spectral density
+	return Sampled_getMean (me, fmin, fmax, 0, 1, false);
 }
 
 double Spectrum_getBandDensityDifference (Spectrum me, double lowBandMin, double lowBandMax, double highBandMin, double highBandMax) {
@@ -387,7 +387,7 @@ double Spectrum_getBandEnergyDifference (Spectrum me, double lowBandMin, double 
 	double highBandEnergy = Spectrum_getBandEnergy (me, highBandMin, highBandMax);
 	if (lowBandEnergy == NUMundefined || highBandEnergy == NUMundefined) return NUMundefined;
 	if (lowBandEnergy == 0.0 || highBandEnergy == 0.0) return NUMundefined;
-	return 10 * log10 (highBandEnergy / lowBandEnergy);
+	return 10.0 * log10 (highBandEnergy / lowBandEnergy);
 }
 
 double Spectrum_getCentreOfGravity (Spectrum me, double power) {

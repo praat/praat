@@ -217,7 +217,7 @@ void structOTMultiEditor :: v_draw () {
 		);
 		HyperPage_listItem (this, buffer.string);
 	}
-	Graphics_setAtSignIsLink (g, FALSE);
+	Graphics_setAtSignIsLink (g, false);
 	drawTableau_grammar = grammar;
 	for (long icand = 1; icand <= grammar -> numberOfCandidates; icand ++) {
 		if (OTMulti_candidateMatches (grammar, icand, form1, form2)) {

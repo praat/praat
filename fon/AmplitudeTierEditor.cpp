@@ -33,7 +33,7 @@ void structAmplitudeTierEditor :: v_play (double fromTime, double toTime) {
 	if (our d_sound.data) {
 		Sound_playPart (our d_sound.data, fromTime, toTime, theFunctionEditor_playCallback, this);
 	} else {
-		//AmplitudeTier_playPart (data, fromTime, toTime, FALSE);
+		//AmplitudeTier_playPart (data, fromTime, toTime, false);
 	}
 }
 

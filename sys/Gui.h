@@ -916,7 +916,7 @@ bool GuiWindow_setDirty (GuiWindow me, bool dirty);
 		Purpose: on OSX you get a little dot in the red close button,
 			and the window proxy icon dims.
 		Return value:
-			TRUE if the system supports this feature, FALSE if not;
+			`true` if the system supports this feature, `false` if not;
 			the point of this is that you can use a different user feedback strategy, like appending
 			the text "(modified)" to the window title, if this feature is not supported.
 	*/

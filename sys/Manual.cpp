@@ -203,13 +203,13 @@ static void print (I, Graphics graphics) {
 	ManPages manPages = (ManPages) my data;
 	long numberOfPages = manPages -> pages -> size, savePage = my path;
 	my ps = graphics;
-	Graphics_setDollarSignIsCode (my ps, TRUE);
-	Graphics_setAtSignIsLink (my ps, TRUE);
+	Graphics_setDollarSignIsCode (my ps, true);
+	Graphics_setAtSignIsLink (my ps, true);
 	my printing = TRUE;
 	HyperPage_initSheetOfPaper ((HyperPage) me);
 	for (long ipage = 1; ipage <= numberOfPages; ipage ++) {
 		ManPage page = (ManPage) manPages -> pages -> item [ipage];
-		if (my printPagesStartingWith == NULL ||
+		if (my printPagesStartingWith == nullptr ||
 		    Melder_stringMatchesCriterion (page -> title, kMelder_string_STARTS_WITH, my printPagesStartingWith))
 		{
 			ManPage_Paragraph par;
@@ -225,8 +225,8 @@ static void print (I, Graphics graphics) {
 			my v_goToPage_i (savePage);
 		}
 	}
-	my printing = FALSE;
-	my printPagesStartingWith = NULL;
+	my printing = false;
+	my printPagesStartingWith = nullptr;
 }
 
 static void menu_cb_printRange (EDITOR_ARGS) {
@@ -238,14 +238,14 @@ static void menu_cb_printRange (EDITOR_ARGS) {
 		SENTENCE (U"Left or inside footer", U"")
 		SENTENCE (U"Middle footer", U"")
 		SENTENCE (U"Right or outside footer", U"")
-		BOOLEAN (U"Mirror even/odd headers", TRUE)
+		BOOLEAN (U"Mirror even/odd headers", true)
 		LABEL (U"", U"Print all pages whose title starts with:")
 		TEXTFIELD (U"Print pages starting with", U"Intro")
 		INTEGER (U"First page number", U"1")
-		BOOLEAN (U"Suppress \"Links to this page\"", FALSE)
+		BOOLEAN (U"Suppress \"Links to this page\"", false)
 	EDITOR_OK
 		ManPages manPages = (ManPages) my data;
-		time_t today = time (NULL);
+		time_t today = time (nullptr);
 		char dateA [50];
 		#ifdef UNIX
 			struct tm *tm = localtime (& today);

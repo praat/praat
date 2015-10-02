@@ -41,7 +41,7 @@ static const char32 *theExpression;
 static int theLevel = 1;
 #define MAXIMUM_NUMBER_OF_LEVELS  20
 static int theExpressionType [1 + MAXIMUM_NUMBER_OF_LEVELS];
-static int theOptimize;
+static bool theOptimize;
 
 static struct Formula_NumericArray theZeroNumericArray = { 0, 0, NULL };
 
@@ -557,7 +557,7 @@ static void Formula_lexan (void) {
 				}
 			}
 		} else if (kar >= U'A' && kar <= U'Z') {
-			int endsInDollarSign = FALSE;
+			bool endsInDollarSign = false;
 			char32 *underscore;
 			stokaan;
 			do stokkar while (isalnum ((int) kar) || kar == U'_');   // TODO: allow more than just ASCII
@@ -1813,7 +1813,7 @@ static void Formula_print (FormulaInstruction f) {
 		else if (symbol == MATRIKS_ || symbol == MATRIKSSTR_ || symbol == MATRIKS1_ || symbol == MATRIKSSTR1_ ||
 		         symbol == MATRIKS2_ || symbol == MATRIKSSTR2_ || symbol == ROWSTR_ || symbol == COLSTR_)
 		{
-			Thing object = (Thing) f [i]. content.object;
+			Thing object = f [i]. content.object;
 			if (object) {
 				Melder_casual (i, U" ", instructionName, U" ", Thing_className (object), U" ", object -> name);
 			} else {
@@ -1827,7 +1827,7 @@ static void Formula_print (FormulaInstruction f) {
 	} while (symbol != END_);
 }
 
-void Formula_compile (Any interpreter, Any data, const char32 *expression, int expressionType, int optimize) {
+void Formula_compile (Any interpreter, Any data, const char32 *expression, int expressionType, bool optimize) {
 	theInterpreter = (Interpreter) interpreter;
 	if (theInterpreter == NULL) {
 		if (theLocalInterpreter == NULL) {
@@ -2442,7 +2442,7 @@ static void do_do (void) {
 		MelderString_appendCharacter (& valueString, 1);   // TODO: check whether this is needed at all, or is just MelderString_empty enough?
 		autoMelderDivertInfo divert (& valueString);
 		autostring32 command2 = Melder_dup (command);   // allow the menu command to reuse the stack (?)
-		Editor_doMenuCommand ((Editor) praatP. editor, command2.peek(), numberOfArguments, & stack [0], NULL, theInterpreter);
+		Editor_doMenuCommand (praatP. editor, command2.peek(), numberOfArguments, & stack [0], NULL, theInterpreter);
 		pushNumber (Melder_atof (valueString.string));
 		return;
 	} else if (theCurrentPraatObjects != & theForegroundPraatObjects &&
@@ -2496,7 +2496,7 @@ static void do_doStr (void) {
 		MelderString_empty (& info);
 		autoMelderDivertInfo divert (& info);
 		autostring32 command2 = Melder_dup (command);
-		Editor_doMenuCommand ((Editor) praatP. editor, command2.peek(), numberOfArguments, & stack [0], NULL, theInterpreter);
+		Editor_doMenuCommand (praatP. editor, command2.peek(), numberOfArguments, & stack [0], NULL, theInterpreter);
 		pushString (Melder_dup (info.string));
 		return;
 	} else if (theCurrentPraatObjects != & theForegroundPraatObjects &&
@@ -3283,7 +3283,7 @@ static void do_index_regex (int backward) {
 				pushNumber (place - s->string + 1);
 				free (compiled_regexp);
 			} else {
-				pushNumber (FALSE);
+				pushNumber (false);
 			}
 		}
 	} else {
@@ -3486,14 +3486,14 @@ static int praat_findObjectFromString (const char32 *name) {
 		*space = U'\0';
 		char32 *className = & buffer.string [0], *givenName = space + 1;
 		WHERE_DOWN (1) {
-			Daata object = (Daata) OBJECT;
-			if (str32equ (className, Thing_className ((Thing) OBJECT)) && str32equ (givenName, object -> name))
+			Daata object = OBJECT;
+			if (str32equ (className, Thing_className (OBJECT)) && str32equ (givenName, object -> name))
 				return IOBJECT;
 		}
 		ClassInfo klas = Thing_classFromClassName (className, NULL);
 		WHERE_DOWN (1) {
-			Daata object = (Daata) OBJECT;
-			if (str32equ (klas -> className, Thing_className ((Thing) OBJECT)) && str32equ (givenName, object -> name))
+			Daata object = OBJECT;
+			if (str32equ (klas -> className, Thing_className (OBJECT)) && str32equ (givenName, object -> name))
 				return IOBJECT;
 		}
 	}
@@ -4862,12 +4862,12 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case STARTS_WITH_: { do_stringMatchesCriterion (kMelder_string_STARTS_WITH);
 } break; case ENDS_WITH_: { do_stringMatchesCriterion (kMelder_string_ENDS_WITH);
 } break; case REPLACESTR_: { do_replaceStr ();
-} break; case INDEX_REGEX_: { do_index_regex (FALSE);
-} break; case RINDEX_REGEX_: { do_index_regex (TRUE);
+} break; case INDEX_REGEX_: { do_index_regex (false);
+} break; case RINDEX_REGEX_: { do_index_regex (true);
 } break; case REPLACE_REGEXSTR_: { do_replace_regexStr ();
 } break; case EXTRACT_NUMBER_: { do_extractNumber ();
-} break; case EXTRACT_WORDSTR_: { do_extractTextStr (TRUE);
-} break; case EXTRACT_LINESTR_: { do_extractTextStr (FALSE);
+} break; case EXTRACT_WORDSTR_: { do_extractTextStr (true);
+} break; case EXTRACT_LINESTR_: { do_extractTextStr (false);
 } break; case SELECTED_: { do_selected ();
 } break; case SELECTEDSTR_: { do_selectedStr ();
 } break; case NUMBER_OF_SELECTED_: { do_numberOfSelected ();

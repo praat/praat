@@ -36,7 +36,7 @@ void structPitchTierEditor :: v_play (double a_tmin, double a_tmax) {
 	if (d_sound.data) {
 		Sound_playPart (d_sound.data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
 	} else {
-		PitchTier_playPart ((PitchTier) data, a_tmin, a_tmax, FALSE);
+		PitchTier_playPart ((PitchTier) data, a_tmin, a_tmax, false);
 	}
 }
 

@@ -75,7 +75,7 @@ static void burg (double sample [], long nsamp_window, double cof [], int nPoles
 	 * Second pass: fill in the formants.
 	 */
 	int iformant = 0;
-	for (int i = roots -> min; i <= roots -> max; i ++) if (roots -> v [i]. im >= 0) {
+	for (int i = roots -> min; i <= roots -> max; i ++) if (roots -> v [i]. im >= 0.0) {
 		double f = fabs (atan2 (roots -> v [i].im, roots -> v [i].re)) * nyquistFrequency / NUMpi;
 		if (f >= safetyMargin && f <= nyquistFrequency - safetyMargin) {
 			Formant_Formant formant = & frame -> formant [++ iformant];
@@ -296,7 +296,7 @@ static Formant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOf
 	/* Gaussian window. */
 	for (long i = 1; i <= nsamp_window; i ++) {
 		double imid = 0.5 * (nsamp_window + 1), edge = exp (-12.0);
-		window [i] = (exp (-48.0 * (i - imid) * (i - imid) / (nsamp_window + 1) / (nsamp_window + 1)) - edge) / (1 - edge);
+		window [i] = (exp (-48.0 * (i - imid) * (i - imid) / (nsamp_window + 1) / (nsamp_window + 1)) - edge) / (1.0 - edge);
 	}
 
 	for (long iframe = 1; iframe <= nFrames; iframe ++) {

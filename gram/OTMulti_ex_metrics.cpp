@@ -51,7 +51,7 @@ static const char32 *constraintNames [1+NUMBER_OF_CONSTRAINTS] { 0,
 	U"Trochaic", U"FtBimor", U"FtBisyl", U"Peripheral", U"MainNonfinal", U"HeadNonfinal", U"*Clash", U"*Lapse", U"WeightByPosition", U"*C\\mu" };
 
 static void addCandidate (OTMulti me, const char32 *underlyingForm, long numberOfSyllables, int stress [],
-	int footedToTheLeft [], int footedToTheRight [], int surfaceWeightPattern [],
+	bool footedToTheLeft [], bool footedToTheRight [], int surfaceWeightPattern [],
 	int overtFormsHaveSecondaryStress)
 {
 	static const char32 *syllable [] { U"L", U"L1", U"L2", U"H", U"H1", U"H2", U"K", U"K1", U"K2", U"J", U"J1", U"J2" };
@@ -76,7 +76,7 @@ static void addCandidate (OTMulti me, const char32 *underlyingForm, long numberO
 }
 
 static void fillSurfaceWeightPattern (OTMulti me, const char32 *underlyingForm, long numberOfSyllables, int stress [],
-	int footedToTheLeft [], int footedToTheRight [], int underlyingWeightPattern [],
+	bool footedToTheLeft [], bool footedToTheRight [], int underlyingWeightPattern [],
 	int overtFormsHaveSecondaryStress)
 {
 	int surfaceWeightPattern [1+7], minSurfaceWeight [1+7], maxSurfaceWeight [1+7];
@@ -114,10 +114,10 @@ static void fillSurfaceWeightPattern (OTMulti me, const char32 *underlyingForm, 
 }
 
 static void path (OTMulti me, const char32 *underlyingForm, long numberOfSyllables, int stress [],
-	int startingSyllable, int footedToTheLeft_in [], int footedToTheRight_in [], int underlyingWeightPattern [],
+	int startingSyllable, bool footedToTheLeft_in [], bool footedToTheRight_in [], int underlyingWeightPattern [],
 	int overtFormsHaveSecondaryStress)
 {
-	int footedToTheLeft [10], footedToTheRight [10];
+	bool footedToTheLeft [10], footedToTheRight [10];
 	long isyll;
 	/* Localize all arguments. */
 	for (isyll = 1; isyll <= startingSyllable; isyll ++) {
@@ -132,18 +132,18 @@ static void path (OTMulti me, const char32 *underlyingForm, long numberOfSyllabl
 		path (me, underlyingForm, numberOfSyllables, stress, startingSyllable + 1,
 			footedToTheLeft, footedToTheRight, underlyingWeightPattern, overtFormsHaveSecondaryStress);
 		if (stress [startingSyllable] == 0 && startingSyllable < numberOfSyllables && stress [startingSyllable + 1] != 0) {
-			footedToTheLeft [startingSyllable + 1] = TRUE;
-			footedToTheRight [startingSyllable] = TRUE;
+			footedToTheLeft [startingSyllable + 1] = true;
+			footedToTheRight [startingSyllable] = true;
 			path (me, underlyingForm, numberOfSyllables, stress, startingSyllable + 1,
 				footedToTheLeft, footedToTheRight, underlyingWeightPattern, overtFormsHaveSecondaryStress);
-			footedToTheLeft [startingSyllable + 1] = FALSE;
-			footedToTheRight [startingSyllable] = FALSE;
+			footedToTheLeft [startingSyllable + 1] = false;
+			footedToTheRight [startingSyllable] = false;
 		}
 		if (stress [startingSyllable] == 0 && startingSyllable > 1 && stress [startingSyllable - 1] != 0
 		    && ! footedToTheLeft [startingSyllable - 1])
 		{
-			footedToTheRight [startingSyllable - 1] = TRUE;
-			footedToTheLeft [startingSyllable] = TRUE;
+			footedToTheRight [startingSyllable - 1] = true;
+			footedToTheLeft [startingSyllable] = true;
 			path (me, underlyingForm, numberOfSyllables, stress, startingSyllable + 1,
 				footedToTheLeft, footedToTheRight, underlyingWeightPattern, overtFormsHaveSecondaryStress);
 		}
@@ -153,7 +153,7 @@ static void path (OTMulti me, const char32 *underlyingForm, long numberOfSyllabl
 static void fillOvertStressPattern (OTMulti me, const char32 *underlyingForm, long numberOfSyllables, int stress [], int underlyingWeightPattern [],
 	int overtFormsHaveSecondaryStress)
 {
-	int footedToTheLeft [10], footedToTheRight [10];
+	bool footedToTheLeft [10], footedToTheRight [10];
 	for (int isyll = 1; isyll <= numberOfSyllables; isyll ++)
 		footedToTheLeft [isyll] = footedToTheRight [isyll] = 0;
 	path (me, underlyingForm, numberOfSyllables, stress, 1, footedToTheLeft, footedToTheRight, underlyingWeightPattern, overtFormsHaveSecondaryStress);
@@ -175,27 +175,27 @@ static void fillTableau (OTMulti me, long numberOfSyllables, int underlyingWeigh
 	for (long mainStressed = 1; mainStressed <= numberOfSyllables; mainStressed ++) {
 		int stress [10];
 		stress [mainStressed] = 1;
-		for (int secondary1 = FALSE; secondary1 <= TRUE; secondary1 ++) {
+		for (int secondary1 = false; secondary1 <= true; secondary1 ++) {
 			stress [mainStressed <= 1 ? 2 : 1] = secondary1 ? 2 : 0;
 			if (numberOfSyllables == 2) {
 				fillOvertStressPattern (me, underlyingForm, 2, stress, underlyingWeightPattern, overtFormsHaveSecondaryStress);
-			} else for (int secondary2 = FALSE; secondary2 <= TRUE; secondary2 ++) {
+			} else for (int secondary2 = false; secondary2 <= true; secondary2 ++) {
 				stress [mainStressed <= 2 ? 3 : 2] = secondary2 ? 2 : 0;
 				if (numberOfSyllables == 3) {
 					fillOvertStressPattern (me, underlyingForm, 3, stress, underlyingWeightPattern, overtFormsHaveSecondaryStress);
-				} else for (int secondary3 = FALSE; secondary3 <= TRUE; secondary3 ++) {
+				} else for (int secondary3 = false; secondary3 <= true; secondary3 ++) {
 					stress [mainStressed <= 3 ? 4 : 3] = secondary3 ? 2 : 0;
 					if (numberOfSyllables == 4) {
 						fillOvertStressPattern (me, underlyingForm, 4, stress, underlyingWeightPattern, overtFormsHaveSecondaryStress);
-					} else for (int secondary4 = FALSE; secondary4 <= TRUE; secondary4 ++) {
+					} else for (int secondary4 = false; secondary4 <= true; secondary4 ++) {
 						stress [mainStressed <= 4 ? 5 : 4] = secondary4 ? 2 : 0;
 						if (numberOfSyllables == 5) {
 							fillOvertStressPattern (me, underlyingForm, 5, stress, underlyingWeightPattern, overtFormsHaveSecondaryStress);
-						} else for (int secondary5 = FALSE; secondary5 <= TRUE; secondary5 ++) {
+						} else for (int secondary5 = false; secondary5 <= true; secondary5 ++) {
 							stress [mainStressed <= 5 ? 6 : 5] = secondary5 ? 2 : 0;
 							if (numberOfSyllables == 6) {
 								fillOvertStressPattern (me, underlyingForm, 6, stress, underlyingWeightPattern, overtFormsHaveSecondaryStress);
-							} else for (int secondary6 = FALSE; secondary6 <= TRUE; secondary6 ++) {
+							} else for (int secondary6 = false; secondary6 <= true; secondary6 ++) {
 								stress [mainStressed <= 6 ? 7 : 6] = secondary6 ? 2 : 0;
 								fillOvertStressPattern (me, underlyingForm, 7, stress, underlyingWeightPattern, overtFormsHaveSecondaryStress);
 							}
@@ -376,7 +376,7 @@ static void computeViolationMarks (OTCandidate me) {
 }
 
 static void replaceOutput (OTCandidate me) {
-	int abstract = FALSE;
+	bool abstract = false;
 	Melder_assert (my string != NULL);
 	char32 newString [150], *q = & newString [0];
 	for (const char32 *p = & my string [0]; *p != U'\0'; p ++) {
@@ -411,7 +411,7 @@ static void replaceOutput (OTCandidate me) {
 		} else if (isStress (p [0]) && abstract) {
 			;
 		} else {
-			if (p [0] == U'/') abstract = TRUE;
+			if (p [0] == U'/') abstract = true;
 			*q ++ = p [0];
 		}
 	}

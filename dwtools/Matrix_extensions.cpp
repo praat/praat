@@ -71,13 +71,13 @@ void Matrix_scatterPlot (Matrix me, Graphics g, long icx, long icy, double xmin,
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
+		Graphics_marksLeft (g, 2, true, true, false);
 		if (ymin * ymax < 0.0) {
-			Graphics_markLeft (g, 0.0, 1, 1, 1, NULL);
+			Graphics_markLeft (g, 0.0, true, true, true, NULL);
 		}
-		Graphics_marksBottom (g, 2, 1, 1, 0);
+		Graphics_marksBottom (g, 2, true, true, false);
 		if (xmin * xmax < 0.0) {
-			Graphics_markBottom (g, 0.0, 1, 1, 1, NULL);
+			Graphics_markBottom (g, 0.0, true, true, true, NULL);
 		}
 	}
 }
@@ -123,13 +123,13 @@ void Matrix_drawAsSquares (Matrix me, Graphics g, double xmin, double xmax, doub
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
+		Graphics_marksLeft (g, 2, true, true, false);
 		if (ymin * ymax < 0.0) {
-			Graphics_markLeft (g, 0.0, 1, 1, 1, NULL);
+			Graphics_markLeft (g, 0.0, true, true, true, NULL);
 		}
-		Graphics_marksBottom (g, 2, 1, 1, 0);
+		Graphics_marksBottom (g, 2, true, true, false);
 		if (xmin * xmax < 0.0) {
-			Graphics_markBottom (g, 0.0, 1, 1, 1, NULL);
+			Graphics_markBottom (g, 0.0, true, true, true, NULL);
 		}
 	}
 }
@@ -242,7 +242,7 @@ void Matrix_drawDistribution (Matrix me, Graphics g, double xmin, double xmax,
 		} else {
 			NUMvector_extrema (freq.peek(), 1, nBins, & freqMin, & freqMax);
 			if (freqMax <= freqMin) {
-				freqMin = freqMin > 1 ? freqMin - 1 : 0;
+				freqMin = freqMin > 1.0 ? freqMin - 1.0 : 0.0;
 				freqMax += 1.0;
 			}
 		}
@@ -250,7 +250,7 @@ void Matrix_drawDistribution (Matrix me, Graphics g, double xmin, double xmax,
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, minimum, maximum, freqMin, freqMax);
-	double fi = 0;
+	double fi = 0.0;
 	for (long i = 1; i <= nBins; i++) {
 		double ftmp = freq[i];
 		fi = cumulative ? fi + freq[i] / nxy : freq[i];
@@ -264,10 +264,10 @@ void Matrix_drawDistribution (Matrix me, Graphics g, double xmin, double xmax,
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeft (g, 2, true, true, false);
 		if (! cumulative) {
-			Graphics_textLeft (g, 1, U"Number/bin");
+			Graphics_textLeft (g, true, U"Number/bin");
 		}
 	}
 }

@@ -236,7 +236,7 @@ void structOTGrammarEditor :: v_draw () {
 		}
 		HyperPage_listItem (this, text);
 	}
-	Graphics_setAtSignIsLink (g, FALSE);
+	Graphics_setAtSignIsLink (g, false);
 	for (long itab = 1; itab <= ot -> numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & ot -> tableaus [itab];
 		double rowHeight = 0.25;
