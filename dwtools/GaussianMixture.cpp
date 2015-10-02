@@ -500,10 +500,10 @@ void GaussianMixture_and_PCA_drawMarginalPdf (GaussianMixture me, PCA thee, Grap
 
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_markBottom (g, xmin, 1, 1, 0, NULL);
-		Graphics_markBottom (g, xmax, 1, 1, 0, NULL);
-		Graphics_markLeft (g, ymin, 1, 1, 0, NULL);
-		Graphics_markLeft (g, ymax, 1, 1, 0, NULL);
+		Graphics_markBottom (g, xmin, true, true, false, nullptr);
+		Graphics_markBottom (g, xmax, true, true, false, nullptr);
+		Graphics_markLeft (g, ymin, true, true, false, nullptr);
+		Graphics_markLeft (g, ymax, true, true, false, nullptr);
 	}
 }
 
@@ -547,10 +547,10 @@ void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, long d, do
 
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_markBottom (g, xmin, 1, 1, 0, NULL);
-		Graphics_markBottom (g, xmax, 1, 1, 0, NULL);
-		Graphics_markLeft (g, ymin, 1, 1, 0, NULL);
-		Graphics_markLeft (g, ymax, 1, 1, 0, NULL);
+		Graphics_markBottom (g, xmin, true, true, false, nullptr);
+		Graphics_markBottom (g, xmax, true, true, false, nullptr);
+		Graphics_markLeft (g, ymin, true, true, false, nullptr);
+		Graphics_markLeft (g, ymax, true, true, false, nullptr);
 	}
 }
 
@@ -589,12 +589,12 @@ void GaussianMixture_and_PCA_drawConcentrationEllipses (GaussianMixture me, PCA 
 	if (garnish) {
 		char32 llabel[40];
 		Graphics_drawInnerBox (g);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
+		Graphics_marksLeft (g, 2, true, true, false);
 		Melder_sprint (llabel,40, U"pc ", d2);
-		Graphics_textLeft (g, 1, llabel);
-		Graphics_marksBottom (g, 2, 1, 1, 0);
+		Graphics_textLeft (g, true, llabel);
+		Graphics_marksBottom (g, 2, true, true, false);
 		Melder_sprint (llabel,40, U"pc ", d1);
-		Graphics_textBottom (g, 1, llabel);
+		Graphics_textBottom (g, true, llabel);
 	}
 }
 
@@ -650,8 +650,8 @@ void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double 
 			a = nSigmas * sqrt (a); b = nSigmas * sqrt (b);
 			double angle = 0, angle_inc = NUM2pi / my numberOfComponents;
 			for (long im = 1; im <= my numberOfComponents; im++, angle += angle_inc) {
-				double xc = a * (1 + NUMrandomUniform (-ru_range, ru_range)) * cos (angle);
-				double yc = b * (1 + NUMrandomUniform (-ru_range, ru_range)) * sin (angle);
+				double xc = a * (1.0 + NUMrandomUniform (-ru_range, ru_range)) * cos (angle);
+				double yc = b * (1.0 + NUMrandomUniform (-ru_range, ru_range)) * sin (angle);
 				means2d -> data[im][1] = s2d -> centroid[1] + xc * cs - yc * sn;
 				means2d -> data[im][2] = s2d -> centroid[2] + xc * sn + yc * cs;
 			}
@@ -679,7 +679,7 @@ void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double 
 				for (long im = 1; im <= my numberOfComponents; im++) {
 					Covariance covi = (Covariance) my covariances -> item[im];
 					for (long ic = 1; ic <= my dimension; ic++) {
-						covi -> centroid[ic] -= (1 - scale) * (covi -> centroid[ic] - cov_b -> centroid[ic]);
+						covi -> centroid[ic] -= (1.0 - scale) * (covi -> centroid[ic] - cov_b -> centroid[ic]);
 					}
 				}
 				cov_b.reset (GaussianMixture_to_Covariance_between (me));
@@ -689,7 +689,7 @@ void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double 
 
 			for (long ir = 1; ir <= my dimension; ir++) {
 				for (long ic = ir; ic <= my dimension; ic++) {
-					double scalef = my numberOfComponents == 1 ? 1 : (var_b / var_t) / my numberOfComponents;
+					double scalef = my numberOfComponents == 1 ? 1.0 : (var_b / var_t) / my numberOfComponents;
 					cov_t -> data[ic][ir] = cov_t -> data[ir][ic] *= scalef;
 				}
 			}
@@ -726,10 +726,10 @@ ClassificationTable GaussianMixture_and_TableOfReal_to_ClassificationTable (Gaus
 			TableOfReal_setColumnLabel (him.peek(), im, Thing_getName (cov));
 		}
 
-		double ln2pid = - 0.5 * my dimension * log (NUM2pi);
+		double ln2pid = -0.5 * my dimension * log (NUM2pi);
 		autoNUMvector<double> lnN (1, my numberOfComponents);
 		for (long i = 1; i <=  thy numberOfRows; i++) {
-			double psum = 0;
+			double psum = 0.0;
 			for (long im = 1; im <= my numberOfComponents; im++) {
 				Covariance cov = (Covariance) my covariances -> item[im];
 				double dsq = NUMmahalanobisDistance_chi (cov -> lowerCholesky, thy data[i], cov -> centroid, cov -> numberOfRows, my dimension);
@@ -765,10 +765,10 @@ void GaussianMixture_and_TableOfReal_getGammas (GaussianMixture me, TableOfReal 
 
 		double *nk = gamma[thy numberOfRows + 1];
 		for (long im = 1; im <= my numberOfComponents; im++) {
-			nk[im] = 0;
+			nk[im] = 0.0;
 		}
 
-		*lnp = 0;
+		*lnp = 0.0;
 		double ln2pid = - 0.5 * my dimension * log (NUM2pi);
 		autoNUMvector<double> lnN (1, my numberOfComponents);
 		for (long i = 1; i <=  thy numberOfRows; i++) {
@@ -783,7 +783,7 @@ void GaussianMixture_and_TableOfReal_getGammas (GaussianMixture me, TableOfReal 
 
 			// If the gamma[i]'s are too small, their sum will be zero and the scaling will overflow
 
-			if (rowsum == 0) {
+			if (rowsum == 0.0) {
 				continue;    // This is ok because gamma[i]'s will all be zero
 			}
 
@@ -820,10 +820,10 @@ void GaussianMixture_splitComponent (GaussianMixture me, long component) {
 		}
 		double gamma = 0.5, lambda = 0.5, eta = 0.5, mu = 0.5;
 		mixingProbabilities[component] = gamma * my mixingProbabilities[component];
-		mixingProbabilities[my numberOfComponents + 1] = (1 - gamma) * my mixingProbabilities[component];
+		mixingProbabilities[my numberOfComponents + 1] = (1.0 - gamma) * my mixingProbabilities[component];
 		double mp12 =  mixingProbabilities[component] / mixingProbabilities[my numberOfComponents + 1];
 		double factor1 = (eta - eta * lambda * lambda - 1) / gamma + 1;
-		double factor2 = (eta * lambda * lambda - eta - lambda * lambda) / (1 - gamma) + 1;
+		double factor2 = (eta * lambda * lambda - eta - lambda * lambda) / (1.0 - gamma) + 1.0;
 		double *ev = thy pca -> eigenvectors[1];
 		double d2 = thy pca -> eigenvalues[1];
 
@@ -1025,7 +1025,7 @@ double GaussianMixture_getLikelihoodValue (GaussianMixture me, double **p, long 
 	// Because we try to _maximize_ a criterion, all criteria are negative numbers.
 
 	if (criterion == GaussianMixture_CD_LIKELIHOOD) {
-		double lnpcd = 0;
+		double lnpcd = 0.0;
 		for (long i = 1; i <= numberOfRows; i++) {
 			double psum = 0, lnsum = 0;
 			for (long ic = 1; ic <= my numberOfComponents; ic++) {
@@ -1042,13 +1042,13 @@ double GaussianMixture_getLikelihoodValue (GaussianMixture me, double **p, long 
 
 	// The common factor for all other criteria is the log(likelihood)
 
-	double lnp = 0;
+	double lnp = 0.0;
 	for (long i = 1; i <= numberOfRows; i++) {
-		double psum = 0;
+		double psum = 0.0;
 		for (long ic = 1; ic <= my numberOfComponents; ic++) {
 			psum += my mixingProbabilities[ic] * p[i][ic];
 		}
-		if (psum > 0) {
+		if (psum > 0.0) {
 			lnp += log (psum);
 		}
 	}
@@ -1066,14 +1066,14 @@ double GaussianMixture_getLikelihoodValue (GaussianMixture me, double **p, long 
 			L(theta,Y)= N/2*sum(m=1..k, log(n*alpha[k]/12)) +k/2*ln(n/12) +k(N+1)/2
 				- log (sum(i=1..n, sum(m=1..k, alpha[k]*p(k))))
 		*/
-		double logmpn = 0;
+		double logmpn = 0.0;
 		for (long ic = 1; ic <= my numberOfComponents; ic++) {
 			logmpn += log (my mixingProbabilities[ic]);
 		}
 
 		// a rewritten L(theta,Y) is
 
-		return lnp - 0.5 * my numberOfComponents * (npars + 1) * (log (numberOfRows / 12.0) + 1)
+		return lnp - 0.5 * my numberOfComponents * (npars + 1) * (log (numberOfRows / 12.0) + 1.0)
 		       + 0.5 * npars * logmpn;
 	} else if (criterion == GaussianMixture_BIC) {
 		return 2 * lnp - np * log (numberOfRows);
@@ -1089,7 +1089,7 @@ double GaussianMixture_getLikelihoodValue (GaussianMixture me, double **p, long 
 GaussianMixture GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM (GaussianMixture gm, TableOfReal thee, long minNumberOfComponents, double delta_l, long maxNumberOfIterations, double lambda, int criterion) {
 	try {
 		const char32 *criterionText = GaussianMixture_criterionText (criterion);
-		int deleteWeakComponents = minNumberOfComponents > 0;
+		bool deleteWeakComponents = ( minNumberOfComponents > 0 );
 		autoGaussianMixture me = Data_copy (gm);
 		autoNUMmatrix<double> p (1, thy numberOfRows + 2, 1, my numberOfComponents + 1);
 
@@ -1132,14 +1132,14 @@ GaussianMixture GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM (Gaussia
 								support += support_ic;
 							}
 						}
-						my mixingProbabilities[component] = support_im > 0 ? support_im : 0;
+						my mixingProbabilities[component] = support_im > 0.0 ? support_im : 0.0;
 						if (support > 0) {
 							my mixingProbabilities[component] /= support;
 						}
 
 						NUMdvector_scaleAsProbabilities (my mixingProbabilities, my numberOfComponents);
 
-						if (my mixingProbabilities[component] > 0) { // update p for component
+						if (my mixingProbabilities[component] > 0.0) { // update p for component
 							GaussianMixture_and_TableOfReal_getProbabilities (me.peek(), thee, component, p.peek());
 							component++;
 						} else {
@@ -1216,7 +1216,7 @@ GaussianMixture TableOfReal_to_GaussianMixture (TableOfReal me, long numberOfCom
 
 		autoGaussianMixture thee = GaussianMixture_create (numberOfComponents, my numberOfColumns, storage);
 		GaussianMixture_setLabelsFromTableOfReal (thee.peek(), me);
-		GaussianMixture_initialGuess (thee.peek(), me, 1, 0.05);
+		GaussianMixture_initialGuess (thee.peek(), me, 1.0, 0.05);
 		if (maxNumberOfIterations <= 0) {
 			return thee.transfer();
 		}
@@ -1401,7 +1401,7 @@ TableOfReal GaussianMixture_and_TableOfReal_to_TableOfReal_BHEPNormalityTests (G
 				So d[j][k]= d[k][j] and d[j][j] = 0
 			*/
 			for (long j = 1; j <= n; j++) {
-				double wj = p[j][nocp1] > 0 ? mixingP * p[j][im] / p[j][nocp1] : 0;
+				double wj = p[j][nocp1] > 0.0 ? mixingP * p[j][im] / p[j][nocp1] : 0.0;
 				for (long k = 1; k < j; k++) {
 					djk = NUMmahalanobisDistance_chi (cov -> lowerCholesky, thy data[j], thy data[k], d, d);
 					double w = p[k][nocp1] > 0 ? wj * mixingP * p[k][im] / p[k][nocp1] : 0;

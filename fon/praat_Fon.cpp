@@ -2234,7 +2234,7 @@ FORM (Ltas_getMean, U"Ltas: Get mean", U"Ltas: Get mean...") {
 DO
 	Ltas me = FIRST (Ltas);
 	double mean = Sampled_getMean_standardUnit (me, GET_REAL (U"From frequency"), GET_REAL (U"To frequency"),
-		0, GET_INTEGER (U"Averaging method"), FALSE);
+		0, GET_INTEGER (U"Averaging method"), false);
 	Melder_informationReal (mean, U"dB");
 END2 }
 
@@ -2289,7 +2289,7 @@ FORM (Ltas_getStandardDeviation, U"Ltas: Get standard deviation", U"Ltas: Get st
 DO
 	Ltas me = FIRST (Ltas);
 	double stdev = Sampled_getStandardDeviation_standardUnit (me, GET_REAL (U"From frequency"), GET_REAL (U"To frequency"),
-		0, GET_INTEGER (U"Averaging method"), FALSE);
+		0, GET_INTEGER (U"Averaging method"), false);
 	Melder_informationReal (stdev, U"dB");
 END2 }
 
@@ -3899,7 +3899,7 @@ END2 }
 DIRECT2 (Pitch_to_Sound_pulses) {
 	LOOP {
 		iam (Pitch);
-		autoSound thee = Pitch_to_Sound (me, 0, 0, FALSE);
+		autoSound thee = Pitch_to_Sound (me, 0, 0, false);
 		praat_new (thee.transfer(), my name);
 	}
 END2 }
@@ -3907,7 +3907,7 @@ END2 }
 DIRECT2 (Pitch_to_Sound_hum) {
 	LOOP {
 		iam (Pitch);
-		autoSound thee = Pitch_to_Sound (me, 0, 0, TRUE);
+		autoSound thee = Pitch_to_Sound (me, 0, 0, true);
 		praat_new (thee.transfer(), my name);
 	}
 END2 }

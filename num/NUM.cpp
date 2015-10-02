@@ -497,7 +497,7 @@ void NUM_viterbi (
 	}
 	for (long iframe = 2; iframe <= numberOfFrames; iframe ++) {
 		for (long icand2 = 1; icand2 <= numberOfCandidates [iframe]; icand2 ++) {
-			double maximum = -1e300;
+			double maximum = -1e308;
 			long place = 0;
 			for (long icand1 = 1; icand1 <= numberOfCandidates [iframe - 1]; icand1 ++) {
 				double value = delta [iframe - 1] [icand1] + delta [iframe] [icand2]

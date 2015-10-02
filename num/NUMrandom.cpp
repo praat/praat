@@ -101,7 +101,7 @@ class NUMrandom_State { public:
 		// when NUMrandomFraction() is called without NUMrandom_init() having been called before;
 		// without this initialization, it would be detected only after 312 calls to NUMrandomFraction()
 
-	int secondAvailable;
+	bool secondAvailable;
 	double y;
 
 	/**
@@ -283,7 +283,7 @@ double NUMrandomGauss (double mean, double standardDeviation) {
 		Knuth, p. 122.
 	*/
 	if (my secondAvailable) {
-		my secondAvailable = FALSE;
+		my secondAvailable = false;
 		return mean + standardDeviation * my y;
 	} else {
 		double s, x;
@@ -298,7 +298,7 @@ double NUMrandomGauss (double mean, double standardDeviation) {
 			double factor = sqrt (-2.0 * log (s) / s);
 			x *= factor, my y *= factor;
 		}
-		my secondAvailable = TRUE;
+		my secondAvailable = true;
 		return mean + standardDeviation * x;
 	}
 }
@@ -309,7 +309,7 @@ double NUMrandomGauss_mt (int threadNumber, double mean, double standardDeviatio
 		Knuth, p. 122.
 	*/
 	if (my secondAvailable) {
-		my secondAvailable = FALSE;
+		my secondAvailable = false;
 		return mean + standardDeviation * my y;
 	} else {
 		double s, x;
@@ -324,7 +324,7 @@ double NUMrandomGauss_mt (int threadNumber, double mean, double standardDeviatio
 			double factor = sqrt (-2.0 * log (s) / s);
 			x *= factor, my y *= factor;
 		}
-		my secondAvailable = TRUE;
+		my secondAvailable = true;
 		return mean + standardDeviation * x;
 	}
 }

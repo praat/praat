@@ -768,7 +768,8 @@ void Interpreter_run (Interpreter me, char32 *text) {
 		autoMelderString command2;
 		autoMelderString buffer;
 		long numberOfLines = 0, assertErrorLineNumber = 0, callStack [1 + Interpreter_MAX_CALL_DEPTH];
-		int atLastLine = FALSE, fromif = FALSE, fromendfor = FALSE, callDepth = 0, chopped = 0, ipar;
+		bool atLastLine = false, fromif = false, fromendfor = false;
+		int callDepth = 0, chopped = 0, ipar;
 		my callDepth = 0;
 		/*
 		 * The "environment" is NULL if we are in the Praat shell, or an editor otherwise.
@@ -927,7 +928,8 @@ void Interpreter_run (Interpreter me, char32 *text) {
 					 * Found a left quote. Search for a matching right quote.
 					 */
 					char32 *q = p + 1, varName [300], *r, *s, *colon;
-					int precision = -1, percent = FALSE;
+					int precision = -1;
+					bool percent = false;
 					while (*q != U'\0' && *q != U'\'' && q - p < 299) q ++;
 					if (*q == U'\0') break;   // no matching right quote? done with this line!
 					if (q - p == 1 || q - p >= 299) continue;   // ignore empty and too long variable names
@@ -1270,7 +1272,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						} else if (str32nequ (command2.string, U"elsif ", 6) || str32nequ (command2.string, U"elif ", 5)) {
 							if (fromif) {
 								double value;
-								fromif = FALSE;
+								fromif = false;
 								Interpreter_numericExpression (me, command2.string + 5, & value);
 								if (value == 0.0) {
 									int depth = 0;
@@ -1329,7 +1331,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							InterpreterVariable var = Interpreter_lookUpVariable (me, varpos);
 							Interpreter_numericExpression (me, topos + 4, & toValue);
 							if (fromendfor) {
-								fromendfor = FALSE;
+								fromendfor = false;
 								loopVariable = var -> numericValue + 1.0;
 							} else if (frompos) {
 								*topos = '\0';
@@ -1361,20 +1363,20 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						break;
 					case U'g':
 						if (str32nequ (command2.string, U"goto ", 5)) {
-							char32 labelName [1+Interpreter_MAX_LABEL_LENGTH], *space;
-							int dojump = TRUE, ilabel;
+							char32 labelName [1+Interpreter_MAX_LABEL_LENGTH];
 							str32ncpy (labelName, command2.string + 5, 1+Interpreter_MAX_LABEL_LENGTH);
 							labelName [Interpreter_MAX_LABEL_LENGTH] = U'\0';
-							space = str32chr (labelName, U' ');
+							char32 *space = str32chr (labelName, U' ');
 							if (space == labelName) Melder_throw (U"Missing label name after 'goto'.");
+							bool dojump = true;
 							if (space) {
 								double value;
 								*space = '\0';
 								Interpreter_numericExpression (me, command2.string + 6 + str32len (labelName), & value);
-								if (value == 0.0) dojump = FALSE;
+								if (value == 0.0) dojump = false;
 							}
 							if (dojump) {
-								ilabel = lookupLabel (me, labelName);
+								int ilabel = lookupLabel (me, labelName);
 								lineNumber = my labelLines [ilabel];   // loop will add 1
 							}
 						} else fail = true;
@@ -1853,7 +1855,7 @@ void Interpreter_stop (Interpreter me) {
 }
 
 void Interpreter_voidExpression (Interpreter me, const char32 *expression) {
-	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_NUMERIC, FALSE);
+	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_NUMERIC, false);
 	struct Formula_Result result;
 	Formula_run (0, 0, & result);
 }
@@ -1863,7 +1865,7 @@ void Interpreter_numericExpression (Interpreter me, const char32 *expression, do
 	if (str32str (expression, U"(=")) {
 		*value = Melder_atof (expression);
 	} else {
-		Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_NUMERIC, FALSE);
+		Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_NUMERIC, false);
 		struct Formula_Result result;
 		Formula_run (0, 0, & result);
 		*value = result. result.numericResult;
@@ -1871,21 +1873,21 @@ void Interpreter_numericExpression (Interpreter me, const char32 *expression, do
 }
 
 void Interpreter_stringExpression (Interpreter me, const char32 *expression, char32 **value) {
-	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_STRING, FALSE);
+	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_STRING, false);
 	struct Formula_Result result;
 	Formula_run (0, 0, & result);
 	*value = result. result.stringResult;
 }
 
 void Interpreter_numericArrayExpression (Interpreter me, const char32 *expression, struct Formula_NumericArray *value) {
-	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_NUMERIC_ARRAY, FALSE);
+	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_NUMERIC_ARRAY, false);
 	struct Formula_Result result;
 	Formula_run (0, 0, & result);
 	*value = result. result.numericArrayResult;
 }
 
 void Interpreter_anyExpression (Interpreter me, const char32 *expression, struct Formula_Result *result) {
-	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_UNKNOWN, FALSE);
+	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_UNKNOWN, false);
 	Formula_run (0, 0, result);
 }
 

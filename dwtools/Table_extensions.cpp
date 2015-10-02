@@ -53,7 +53,7 @@ static bool Table_selectedColumnPartIsNumeric (Table me, long column, long *sele
 
 // column and selectedRows are valid; *min & *max must be intialized
 static void Table_columnExtremesFromSelectedRows (Table me, long column, long *selectedRows, long numberOfSelectedRows, double *min, double *max) {
-	double cmin = 1e38, cmax = - cmin;
+	double cmin = 1e308, cmax = - cmin;
 	for (long irow = 1; irow <= numberOfSelectedRows; irow++) {
 		double val = Table_getNumericValue_Assert (me, selectedRows[irow], column);
 		if (val < cmin) { cmin = val; }
@@ -3249,11 +3249,11 @@ void Table_horizontalErrorBarsPlotWhere (Table me, Graphics g, long xcolumn, lon
 
 		if (garnish) {
 			Graphics_drawInnerBox (g);
-			Graphics_marksLeft (g, 2, 1, 1, 0);
-			Graphics_marksBottom (g, 2, 1, 1, 0);
+			Graphics_marksLeft (g, 2, true, true, false);
+			Graphics_marksBottom (g, 2, true, true, false);
 		}
 	} catch (MelderError) {
-		//
+		Melder_clearError ();
 	}
 }
 
@@ -3270,7 +3270,7 @@ void Table_verticalErrorBarsPlotWhere (Table me, Graphics g, long xcolumn, long 
 		if (xmin >= xmax) {
 			Table_columnExtremesFromSelectedRows (me, ycolumn, selectedRows.peek(), numberOfSelectedRows, &ymin, &ymax);
 			if (xmin >= xmax) {
-				xmin -= 1; xmax += 1;
+				xmin -= 1.0; xmax += 1.0;
 			}
 		}
 		double y1min, y1max;
@@ -3285,7 +3285,7 @@ void Table_verticalErrorBarsPlotWhere (Table me, Graphics g, long xcolumn, long 
 				ymax += y1max;
 			}
 			if (ymin >= ymax) {
-				ymin -= 1; ymax += 1;
+				ymin -= 1.0; ymax += 1.0;
 			}
 		}
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
@@ -3294,19 +3294,19 @@ void Table_verticalErrorBarsPlotWhere (Table me, Graphics g, long xcolumn, long 
 		for (long row = 1; row <= numberOfSelectedRows; row++) {
 			double x  = Table_getNumericValue_Assert (me, selectedRows[row], xcolumn);
 			double y  = Table_getNumericValue_Assert (me, selectedRows[row], ycolumn);
-			double dy1 = yci_min > 0 ? Table_getNumericValue_Assert (me, selectedRows[row], yci_min) : 0;
-			double dy2 = yci_max > 0 ? Table_getNumericValue_Assert (me, selectedRows[row], yci_max) : 0;
+			double dy1 = yci_min > 0 ? Table_getNumericValue_Assert (me, selectedRows[row], yci_min) : 0.0;
+			double dy2 = yci_max > 0 ? Table_getNumericValue_Assert (me, selectedRows[row], yci_max) : 0.0;
 			double y1 = y - dy1, y2 = y + dy2, xc1, yc1, xc2, yc2;
 
 			if (x <= xmax && x >= xmin && y <= ymax && y >= ymin) {
 				// vertical confidence interval
 				if (intervalsIntersect (y1, y2, ymin, ymax, &yc1, &yc2)) {
 					Graphics_line (g, x, yc1, x, yc2);
-					if (dx > 0 && intervalsIntersect (x - dx / 2, x + dx / 2, xmin, xmax, &xc1, &xc2)) {
-						if (yc1 >= ymin && dy1 > 0) {
+					if (dx > 0 && intervalsIntersect (x - dx / 2.0, x + dx / 2.0, xmin, xmax, &xc1, &xc2)) {
+						if (yc1 >= ymin && dy1 > 0.0) {
 							Graphics_line (g, xc1, yc1, xc2, yc1);
 						}
-						if (yc2 <= ymax && dy2 > 0) {
+						if (yc2 <= ymax && dy2 > 0.0) {
 							Graphics_line (g, xc1, yc2, xc2, yc2);
 						}
 					}
@@ -3317,11 +3317,11 @@ void Table_verticalErrorBarsPlotWhere (Table me, Graphics g, long xcolumn, long 
 
 		if (garnish) {
 			Graphics_drawInnerBox (g);
-			Graphics_marksLeft (g, 2, 1, 1, 0);
-			Graphics_marksBottom (g, 2, 1, 1, 0);
+			Graphics_marksLeft (g, 2, true, true, false);
+			Graphics_marksBottom (g, 2, true, true, false);
 		}
 	} catch (MelderError) {
-		//
+		Melder_clearError ();
 	}
 }
 
@@ -3342,7 +3342,7 @@ double Table_getMedianAbsoluteDeviation (Table me, long columnNumber)
 			}
 		}
 		double mad, location;
-		NUMmad (data.peek(), my rows -> size, &location, 1, &mad, 0);
+		NUMmad (data.peek(), my rows -> size, &location, 1, &mad, nullptr);
 		return mad;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot compute median absolute deviation of column ", columnNumber, U".");
@@ -3373,7 +3373,7 @@ Table Table_getOneWayKruskalWallis (Table me, long column, long factorColumn, do
 
 		// Get correctionfactor for ties
 		// Hayes pg. 831
-		double c = 0;
+		double c = 0.0;
 		long jt, j = 1;
 		while (j < numberOfData) {
         	for (jt = j + 1; jt <= numberOfData && data[jt] == data[j]; jt++) {}
@@ -3402,9 +3402,9 @@ Table Table_getOneWayKruskalWallis (Table me, long column, long factorColumn, do
 			}
 			h += factorLevelSums[j] * factorLevelSums[j] / factorLevelSizes[j]; // = factorLevelMeans * groupMean * factorLevelSizes
 		}
-		h = (12.0 / (numberOfData * (numberOfData + 1))) * h - 3 * (numberOfData + 1);
+		h = (12.0 / (numberOfData * (numberOfData + 1.0))) * h - 3.0 * (numberOfData + 1);
 		h /= tiesCorrection;
-		double dof = numberOfLevels - 1;
+		double dof = numberOfLevels - 1.0;
 		if (degreesOfFreedom) {
 			*degreesOfFreedom = dof;
 		}
@@ -3887,7 +3887,7 @@ void Table_normalProbabilityPlot (Table me, Graphics g, long column, long number
 		}
 		double mean, var;
 		NUMvector_avevar (data.peek(), numberOfData, &mean, &var);
-		double xmin = 100, xmax = -xmin, ymin = 1e38, ymax = -ymin, stdev = sqrt (var / (numberOfData - 1));
+		double xmin = 100, xmax = -xmin, ymin = 1e308, ymax = -ymin, stdev = sqrt (var / (numberOfData - 1));
 		if (numberOfSigmas != 0) {
 			xmin = -numberOfSigmas; 
 			xmax =  numberOfSigmas;
@@ -3901,7 +3901,7 @@ void Table_normalProbabilityPlot (Table me, Graphics g, long column, long number
 		TableOfReal_setColumnLabel (thee.peek(), 2, my columnHeaders[column].label);
 		double un = pow (0.5, 1.0 / numberOfQuantiles);
 		for (long irow = 1; irow <= numberOfQuantiles; irow++) {
-			double ui = irow == 1 ? 1 - un : (irow == numberOfQuantiles ? un : (irow - 0.3175) / (numberOfQuantiles + 0.365));
+			double ui = irow == 1 ? 1.0 - un : (irow == numberOfQuantiles ? un : (irow - 0.3175) / (numberOfQuantiles + 0.365));
 			double q = NUMquantile (numberOfData, data.peek(), ui);
 			double zq = - NUMinvGaussQ (ui);
 			thy data[irow][1] = zq; // along x
@@ -3947,13 +3947,13 @@ void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g, long dataCo
 		if (xmin == xmax) {
 			NUMvector_extrema<double> (xdata.peek(), 1, xnumberOfData, &xmin, &xmax);
 			if (xmin == xmax) {
-				xmin -= 1; xmax += 1;
+				xmin -= 1.0; xmax += 1.0;
 			}
 		}
 		if (ymin == ymax) {
 			NUMvector_extrema<double> (ydata.peek(), 1, ynumberOfData, &ymin, &ymax);
 			if (ymin == ymax) {
-				ymin -= 1; ymax += 1;
+				ymin -= 1.0; ymax += 1.0;
 			}
 		}
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
@@ -3964,11 +3964,11 @@ void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g, long dataCo
 		if (garnish) {
 			Graphics_drawInnerBox (g);
 
-			Graphics_textBottom (g, 1, Melder_cat (my columnHeaders [dataColumn].label, U" (", xlevel, U")"));
-			Graphics_marksBottom (g, 2, 1, 1, 0);
+			Graphics_textBottom (g, true, Melder_cat (my columnHeaders [dataColumn].label, U" (", xlevel, U")"));
+			Graphics_marksBottom (g, 2, true, true, false);
 
-			Graphics_textLeft (g, 1, Melder_cat (my columnHeaders [dataColumn].label, U" (", ylevel, U")"));
-			Graphics_marksLeft (g, 2, 1, 1, 0);
+			Graphics_textLeft (g, true, Melder_cat (my columnHeaders [dataColumn].label, U" (", ylevel, U")"));
+			Graphics_marksLeft (g, 2, true, true, false);
 		}
 	} catch (MelderError) {
 		Melder_clearError ();   // drawing errors shall be ignored
@@ -3990,13 +3990,13 @@ void Table_quantileQuantilePlot (Table me, Graphics g, long xcolumn, long ycolum
 		if (xmin == xmax) {
 			NUMvector_extrema<double> (xdata.peek(), 1, numberOfData, &xmin, &xmax);
 			if (xmin == xmax) {
-				xmin -= 1; xmax += 1;
+				xmin -= 1.0; xmax += 1.0;
 			}
 		}
 		if (ymin == ymax) {
 			NUMvector_extrema<double> (ydata.peek(), 1, numberOfData, &ymin, &ymax);
 			if (ymin == ymax) {
-				ymin -= 1; ymax += 1;
+				ymin -= 1.0; ymax += 1.0;
 			}
 		}
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
@@ -4007,13 +4007,13 @@ void Table_quantileQuantilePlot (Table me, Graphics g, long xcolumn, long ycolum
 		if (garnish) {
 			Graphics_drawInnerBox (g);
 			if (my columnHeaders [xcolumn].label != NULL) {
-				Graphics_textBottom (g, 1, my columnHeaders [xcolumn].label);
+				Graphics_textBottom (g, true, my columnHeaders [xcolumn].label);
 			}
-			Graphics_marksBottom (g, 2, 1, 1, 0);
+			Graphics_marksBottom (g, 2, true, true, false);
 			if (my columnHeaders [ycolumn].label != NULL) {
-				Graphics_textLeft (g, 1, my columnHeaders [ycolumn].label);
+				Graphics_textLeft (g, true, my columnHeaders [ycolumn].label);
 			}
-			Graphics_marksLeft (g, 2, 1, 1, 0);
+			Graphics_marksLeft (g, 2, true, true, false);
 		}
 	} catch (MelderError) {
 		Melder_clearError ();   // drawing errors shall be ignored
@@ -4031,10 +4031,10 @@ void Table_boxPlots (Table me, Graphics g, long dataColumn, long factorColumn, d
 			ymax = Table_getMaximum (me, dataColumn);
 			ymin = Table_getMinimum (me, dataColumn);
 			if (ymax == ymin) {
-				ymax += 1; ymin -= 1;
+				ymax += 1.0; ymin -= 1.0;
 			}
 		}
-		Graphics_setWindow (g, 1 - 0.5, numberOfLevels + 0.5, ymin, ymax);
+		Graphics_setWindow (g, 1.0 - 0.5, numberOfLevels + 0.5, ymin, ymax);
 		Graphics_setInner (g);
 		autoNUMvector<double> data (1, numberOfData);
 		for (long ilevel = 1; ilevel <= numberOfLevels; ilevel++) {
@@ -4051,9 +4051,9 @@ void Table_boxPlots (Table me, Graphics g, long dataColumn, long factorColumn, d
 			Graphics_drawInnerBox (g);
 			for (long ilevel = 1; ilevel <= numberOfLevels; ilevel++) {
 				SimpleString ss = (SimpleString) si -> classes -> item[ilevel];
-				Graphics_markBottom (g, ilevel, 0, 1, 0, ss -> string);
+				Graphics_markBottom (g, ilevel, false, true, false, ss -> string);
 			}
-			Graphics_marksLeft (g, 2, 1, 1, 0);
+			Graphics_marksLeft (g, 2, true, true, false);
 		}
 	} catch (MelderError) {
 		Melder_clearError ();   // drawing errors shall be ignored
@@ -4072,7 +4072,7 @@ void Table_boxPlotsWhere (Table me, Graphics g, char32 *dataColumns_string, long
 		autoStringsIndex si = Table_to_StringsIndex_column (me, factorColumn);
 		long numberOfLevels = si -> classes -> size;
 		if (ymin == ymax) {
-			ymin = 1e38, ymax = -ymin;
+			ymin = 1e308, ymax = -ymin;
 			for (long icol = 1; icol <= numberOfSelectedColumns; icol++) {
 				double ymaxi = Table_getMaximum (me, dataColumns[icol]);
 				double ymini = Table_getMinimum (me, dataColumns[icol]);
@@ -4080,13 +4080,13 @@ void Table_boxPlotsWhere (Table me, Graphics g, char32 *dataColumns_string, long
 				ymin = ymini < ymin ? ymini : ymin;
 			}
 			if (ymax == ymin) {
-				ymax += 1; ymin -= 1;
+				ymax += 1.0; ymin -= 1.0;
 			}
 		}
-		Graphics_setWindow (g, 1 - 0.5, numberOfLevels + 0.5, ymin, ymax);
+		Graphics_setWindow (g, 1.0 - 0.5, numberOfLevels + 0.5, ymin, ymax);
 		Graphics_setInner (g);
-		double boxWidth = 4, spaceBetweenBoxesInGroup = 1, barWidth = boxWidth / 3;
-		double spaceBetweenGroupsdiv2 = 3.0 / 2; 
+		double boxWidth = 4.0, spaceBetweenBoxesInGroup = 1.0, barWidth = boxWidth / 3.0;
+		double spaceBetweenGroupsdiv2 = 3.0 / 2.0;
 		double widthUnit = 1.0 / (numberOfSelectedColumns * boxWidth + (numberOfSelectedColumns - 1) * spaceBetweenBoxesInGroup + spaceBetweenGroupsdiv2 + spaceBetweenGroupsdiv2);
 		autoNUMvector<double> data (1, numberOfData);
 		for (long ilevel = 1; ilevel <= numberOfLevels; ilevel++) {
@@ -4114,9 +4114,9 @@ void Table_boxPlotsWhere (Table me, Graphics g, char32 *dataColumns_string, long
 			Graphics_drawInnerBox (g);
 			for (long ilevel = 1; ilevel <= numberOfLevels; ilevel++) {
 				SimpleString ss = (SimpleString) si -> classes -> item[ilevel];
-				Graphics_markBottom (g, ilevel, 0, 1, 0, ss -> string);
+				Graphics_markBottom (g, ilevel, false, true, false, ss -> string);
 			}
-			Graphics_marksLeft (g, 2, 1, 1, 0);
+			Graphics_marksLeft (g, 2, true, true, false);
 		}
 	} catch (MelderError) {
 		Melder_clearError ();   // drawing errors shall be ignored
@@ -4245,7 +4245,7 @@ void Table_barPlotWhere (Table me, Graphics g, const char32 *columnLabels, doubl
 		
 		autoNUMvector<long> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, &numberOfRowMatches), 1);
 		if (ymax <= ymin) { // autoscaling
-			ymin = 1e38; ymax= - ymin;
+			ymin = 1e308; ymax= - ymin;
 			for (long icol = 1; icol <= numberOfColumns; icol++) {
 				double cmin, cmax;
 				Table_columnExtremesFromSelectedRows (me, columnIndex[icol], selectedRows.peek(), numberOfRowMatches, &cmin, &cmax);
@@ -4306,7 +4306,7 @@ void Table_barPlotWhere (Table me, Graphics g, const char32 *columnLabels, doubl
 				for (long irow = 1; irow <= numberOfGroups; irow++) {
 					const char32 *label = Table_getStringValue_Assert (me, selectedRows[irow], labelIndex);
 					if (label) {
-						//Graphics_markBottom (g, xb, 0, 0, 0, label);
+						//Graphics_markBottom (g, xb, false, false, false, label);
 						Graphics_text (g, xb, ymin - g -> vertTick, label); // was y
 					}
 					xb += dx;
@@ -4318,11 +4318,11 @@ void Table_barPlotWhere (Table me, Graphics g, const char32 *columnLabels, doubl
 		Graphics_unsetInner (g);
 		if (garnish) {
 			if (ymin * ymax < 0) {
-				Graphics_markLeft (g, 0, TRUE,TRUE, TRUE, NULL);
+				Graphics_markLeft (g, 0.0, true, true, true, nullptr);
 			}
 
 			Graphics_drawInnerBox (g);
-			Graphics_marksLeft (g, 2, 1, 1, 0);
+			Graphics_marksLeft (g, 2, true, true, false);
 		}
 	} catch (MelderError) {
 		Melder_clearError ();   // drawing errors shall be ignored
@@ -4334,10 +4334,10 @@ static int Graphics_getConnectingLine (Graphics g, const char32 *text1, double x
 	double width1 = Graphics_textWidth (g, text1), width2 = Graphics_textWidth (g, text2);
 	double h = Graphics_dyMMtoWC (g, 1.5 * Graphics_inqFontSize (g) * 25.4 / 72) / 1.5;
 	double xi[3], yi[3], xleft = x1 < x2 ? x1 : x2, xright = x2 > x1 ? x2 : x1;
-	int numberOfIntersections = NUMgetIntersectionsWithRectangle (x1, y1, x2, y2, xleft - width1 / 2, y1 - h/2, xleft +width1 / 2, y1 + h/2, xi, yi);
+	int numberOfIntersections = NUMgetIntersectionsWithRectangle (x1, y1, x2, y2, xleft - width1 / 2.0, y1 - h/2, xleft + width1 / 2.0, y1 + h/2, xi, yi);
 	if (numberOfIntersections == 1) {
 		*x3 = xi[1]; *y3 = yi[1];
-		numberOfIntersections = NUMgetIntersectionsWithRectangle (x1, y1, x2, y2, xright - width2 / 2, y2 - h/2, xright + width2 / 2, y2 + h/2, xi, yi);
+		numberOfIntersections = NUMgetIntersectionsWithRectangle (x1, y1, x2, y2, xright - width2 / 2.0, y2 - h/2, xright + width2 / 2.0, y2 + h/2, xi, yi);
 		if (numberOfIntersections == 1) {
 			*x4 = xi[1]; *y4 = yi[1];
 			drawLine = 1;
@@ -4368,7 +4368,7 @@ void Table_lineGraphWhere (Table me, Graphics g, long xcolumn, double xmin, doub
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 		double x1, y1;
-		double lineSpacing = Graphics_dyMMtoWC (g, 1.5 * Graphics_inqFontSize (g) * 25.4 / 72);
+		double lineSpacing = Graphics_dyMMtoWC (g, 1.5 * Graphics_inqFontSize (g) * 25.4 / 72.0);
 		//double symbolHeight = lineSpacing / 1.5;
 		for (long i = 1; i <= numberOfSelectedRows; i++) {
 			double y2 = Table_getNumericValue_Assert (me, selectedRows[i], ycolumn);
@@ -4415,7 +4415,7 @@ void Table_lineGraphWhere (Table me, Graphics g, long xcolumn, double xmin, doub
 				if (x2 >= xmin && x2 <= xmax) {
 					const char32 *label = Table_getStringValue_Assert (me, selectedRows[i], xcolumn);
 					if (label) {
-						//Graphics_markBottom (g, xb, 0, 0, 0, label);
+						//Graphics_markBottom (g, xb, false, false, false, label);
 						Graphics_text (g, x2 + dx, ymin - g -> vertTick, label); // was y
 					}
 				}
@@ -4427,9 +4427,9 @@ void Table_lineGraphWhere (Table me, Graphics g, long xcolumn, double xmin, doub
 
 		if (garnish) {
 			Graphics_drawInnerBox (g);
-			Graphics_marksLeft (g, 2, 1, 1, 0);
+			Graphics_marksLeft (g, 2, true, true, false);
 			if (xIsNumeric) {
-				Graphics_marksBottom (g, 2, 1, 1, 0);
+				Graphics_marksBottom (g, 2, true, true, false);
 			}
 		}
 	} catch (MelderError) {
@@ -4457,11 +4457,11 @@ void Table_lagPlotWhere (Table me, Graphics g, long column, long lag, double xmi
 		Graphics_unsetInner (g);
 		if (garnish) {
 			Graphics_drawInnerBox (g);
-			Graphics_marksBottom (g, 2, TRUE, TRUE, FALSE);
-			Graphics_marksLeft (g, 2, TRUE, TRUE, FALSE);
+			Graphics_marksBottom (g, 2, true, true, false);
+			Graphics_marksLeft (g, 2, true, true, false);
 			if (my columnHeaders [column]. label) {
-				Graphics_textLeft (g, TRUE, my columnHeaders[column].label);
-				Graphics_textBottom (g, TRUE, Melder_cat (my columnHeaders[column].label, U" (lag = ", lag, U")"));
+				Graphics_textLeft (g, true, my columnHeaders[column].label);
+				Graphics_textBottom (g, true, Melder_cat (my columnHeaders[column].label, U" (lag = ", lag, U")"));
 			}
 		}
 	} catch (MelderError) {
@@ -4630,13 +4630,13 @@ void Table_drawEllipsesWhere (Table me, Graphics g, long xcolumn, long ycolumn, 
 
 		if (garnish) {
 			Graphics_drawInnerBox (g);
-			Graphics_marksBottom (g, 2, TRUE, TRUE, FALSE);
-			Graphics_marksLeft (g, 2, TRUE, TRUE, FALSE);
+			Graphics_marksBottom (g, 2, true, true, false);
+			Graphics_marksLeft (g, 2, true, true, false);
 			if (my columnHeaders [xcolumn]. label) {
-				Graphics_textBottom (g, TRUE, my columnHeaders[xcolumn].label);
+				Graphics_textBottom (g, true, my columnHeaders[xcolumn].label);
 			}
 			if (my columnHeaders [ycolumn]. label) {
-				Graphics_textLeft (g, TRUE, my columnHeaders[ycolumn].label);
+				Graphics_textLeft (g, true, my columnHeaders[ycolumn].label);
 			}
 		}
 	} catch (MelderError) {

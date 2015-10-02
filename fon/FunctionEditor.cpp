@@ -1646,15 +1646,15 @@ void FunctionEditor_drawGridLine (FunctionEditor me, double yWC) {
 void FunctionEditor_garnish (FunctionEditor me) {
 	if (my pref_picture_drawSelectionTimes ()) {
 		if (my d_startSelection >= my d_startWindow && my d_startSelection <= my d_endWindow)
-			Graphics_markTop (my pictureGraphics, my d_startSelection, true, true, false, NULL);
+			Graphics_markTop (my pictureGraphics, my d_startSelection, true, true, false, nullptr);
 		if (my d_endSelection != my d_startSelection && my d_endSelection >= my d_startWindow && my d_endSelection <= my d_endWindow)
-			Graphics_markTop (my pictureGraphics, my d_endSelection, true, true, false, NULL);
+			Graphics_markTop (my pictureGraphics, my d_endSelection, true, true, false, nullptr);
 	}
 	if (my pref_picture_drawSelectionHairs ()) {
 		if (my d_startSelection >= my d_startWindow && my d_startSelection <= my d_endWindow)
-			Graphics_markTop (my pictureGraphics, my d_startSelection, false, false, true, NULL);
+			Graphics_markTop (my pictureGraphics, my d_startSelection, false, false, true, nullptr);
 		if (my d_endSelection != my d_startSelection && my d_endSelection >= my d_startWindow && my d_endSelection <= my d_endWindow)
-			Graphics_markTop (my pictureGraphics, my d_endSelection, false, false, true, NULL);
+			Graphics_markTop (my pictureGraphics, my d_endSelection, false, false, true, nullptr);
 	}
 }
 

@@ -426,7 +426,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 					const char **p;
 					for (p = & ipaSerifRegularPS [0]; *p; p ++)
 						my d_printf (my d_file, "%s", *p);
-					my loadedXipa = TRUE;
+					my loadedXipa = true;
 				}
 				fontInfo = my useSilipaPS ?
 					(style == Graphics_BOLD || style == Graphics_BOLD_ITALIC ? "SILDoulosIPA93Bold" : "SILDoulosIPA93Regular") :
@@ -1280,7 +1280,7 @@ static void drawOneCell (Graphics me, int xDC, int yDC, _Graphics_widechar lc []
 	 * We must continue even if width is zero (for adjusting textY).
 	 */
 	_Graphics_widechar *plc, *lastlc;
-	int inLink = 0;
+	bool inLink = false;
 	switch (my horizontalTextAlignment) {
 		case Graphics_LEFT:      dx = 1 + (0.1/72) * my fontSize * my resolution; break;
 		case Graphics_CENTRE:    dx = - width / 2; break;
@@ -1375,11 +1375,11 @@ static void drawOneCell (Graphics me, int xDC, int yDC, _Graphics_widechar lc []
 					links [++ numberOfLinks]. x1 = x;
 					links [numberOfLinks]. y1 = y - descent;
 					links [numberOfLinks]. y2 = y + 3 * descent;
-					inLink = TRUE;
+					inLink = true;
 				}
 			} else if (inLink) {
 				links [numberOfLinks]. x2 = x;
-				inLink = FALSE;
+				inLink = false;
 			}
 			if (plc -> kar == U'\n') {
 				xbegin = x = xDC + dx + my secondIndent * my scaleX;
@@ -1402,7 +1402,7 @@ static void drawOneCell (Graphics me, int xDC, int yDC, _Graphics_widechar lc []
 		}
 		if (inLink) {
 			links [numberOfLinks]. x2 = x;
-			inLink = FALSE;
+			inLink = false;
 		}
 		my textX = (x - my deltaX) / my scaleX;
 		my textY = (( my yIsZeroAtTheTop ? y + dy : y - dy ) - my deltaY) / my scaleY;
@@ -1667,7 +1667,7 @@ void Graphics_textRect (Graphics me, double x1, double x2, double y1, double y2,
 	initText (me);
 	parseTextIntoCellsLinesRuns (me, txt, theWidechar);
 	charSizes (me, theWidechar, true);
-	for (plc = theWidechar; plc -> kar > '\t'; plc ++) {
+	for (plc = theWidechar; plc -> kar > U'\t'; plc ++) {
 		width += plc -> width;
 		if (width > availableWidth) {
 			if (++ linesNeeded > linesAvailable) break;
@@ -1679,16 +1679,16 @@ void Graphics_textRect (Graphics me, double x1, double x2, double y1, double y2,
 	for (iline = 1; iline <= lines; iline ++) {
 		width = 0.0;
 		for (plc = startOfLine; plc -> kar > U'\t'; plc ++) {
-			int flush = FALSE;
+			bool flush = false;
 			width += plc -> width;
-			if (width > availableWidth) flush = TRUE;
+			if (width > availableWidth) flush = true;
 			/*
 			 * Trick for incorporating end-of-text.
 			 */
 			if (! flush && plc [1]. kar <= U'\t') {
 				Melder_assert (iline == lines);
 				plc ++;   // brr
-				flush = TRUE;
+				flush = true;
 			}
 			if (flush) {
 				char32 saveKar = plc -> kar;
@@ -1815,13 +1815,13 @@ double Graphics_inqTextY (Graphics me) { return my textY; }
 
 int Graphics_getLinks (Graphics_Link **plinks) { *plinks = & links [0]; return numberOfLinks; }
 
-static double psTextWidth (_Graphics_widechar string [], int useSilipaPS) {
+static double psTextWidth (_Graphics_widechar string [], bool useSilipaPS) {
 	_Graphics_widechar *character;
 	/*
 	 * The following has to be kept IN SYNC with GraphicsPostscript::charSize.
 	 */
 	double textWidth = 0;
-	for (character = string; character -> kar > '\t'; character ++) {
+	for (character = string; character -> kar > U'\t'; character ++) {
 		Longchar_Info info = Longchar_getInfoFromNative (character -> kar);
 		int font = info -> alphabet == Longchar_SYMBOL ? kGraphics_font_SYMBOL :
 				info -> alphabet == Longchar_PHONETIC ? kGraphics_font_IPATIMES :
@@ -1864,7 +1864,7 @@ static double psTextWidth (_Graphics_widechar string [], int useSilipaPS) {
 	/*
 	 * The following has to be kept IN SYNC with charSizes ().
 	 */
-	for (character = string; character -> kar > '\t'; character ++) {
+	for (character = string; character -> kar > U'\t'; character ++) {
 		if ((character -> style & Graphics_ITALIC) != 0) {
 			_Graphics_widechar *nextCharacter = character + 1;
 			if (nextCharacter -> kar <= '\t') {
@@ -1872,7 +1872,7 @@ static double psTextWidth (_Graphics_widechar string [], int useSilipaPS) {
 			} else if (((nextCharacter -> style & Graphics_ITALIC) == 0 && nextCharacter -> baseline >= character -> baseline)
 				|| (character -> baseline == 0 && nextCharacter -> baseline > 0))
 			{
-				if (nextCharacter -> kar == '.' || nextCharacter -> kar == ',')
+				if (nextCharacter -> kar == U'.' || nextCharacter -> kar == U',')
 					textWidth += 0.5 * POSTSCRIPT_SLANT_CORRECTION;
 				else
 					textWidth += POSTSCRIPT_SLANT_CORRECTION;

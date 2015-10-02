@@ -141,7 +141,7 @@ GuiMenu praat_objects_resolveMenu (const char32 *menu) {
 /********** Callbacks of the Praat menu. **********/
 
 DIRECT2 (About) {
-	praat_showLogo (FALSE);
+	praat_showLogo (false);
 END2 }
 
 DIRECT2 (praat_newScript) {

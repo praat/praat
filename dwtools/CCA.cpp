@@ -129,7 +129,7 @@ CCA TableOfReal_to_CCA (TableOfReal me, long ny) {
 		double **vx = svdx -> v;
 		double fnormy = NUMfrobeniusnorm (n, ny, uy);
 		double fnormx = NUMfrobeniusnorm (n, nx, ux);
-		if (fnormy == 0 || fnormx == 0) {
+		if (fnormy == 0.0 || fnormx == 0.0) {
 			Melder_throw (U"One of the parts of the table contains only zeros.");
 		}
 
@@ -142,8 +142,8 @@ CCA TableOfReal_to_CCA (TableOfReal me, long ny) {
 
 		SVD_compute (svdy.peek()); SVD_compute (svdx.peek());
 
-		long numberOfZeroedy = SVD_zeroSmallSingularValues (svdy.peek(), 0);
-		long numberOfZeroedx = SVD_zeroSmallSingularValues (svdx.peek(), 0);
+		long numberOfZeroedy = SVD_zeroSmallSingularValues (svdy.peek(), 0.0);
+		long numberOfZeroedx = SVD_zeroSmallSingularValues (svdx.peek(), 0.0);
 
 		/*
 			Form the matrix C = ux' uy (use svd-object storage)
@@ -164,7 +164,7 @@ CCA TableOfReal_to_CCA (TableOfReal me, long ny) {
 		}
 
 		SVD_compute (svdc.peek());
-		long numberOfZeroedc = SVD_zeroSmallSingularValues (svdc.peek(), 0);
+		long numberOfZeroedc = SVD_zeroSmallSingularValues (svdc.peek(), 0.0);
 		long numberOfCoefficients = ny - numberOfZeroedc;
 
 		autoCCA thee = CCA_create (numberOfCoefficients, ny, nx);
@@ -189,14 +189,14 @@ CCA TableOfReal_to_CCA (TableOfReal me, long ny) {
 			double ccc = svdc -> d[i];
 			thy y -> eigenvalues[i] = thy x -> eigenvalues[i] = ccc * ccc;
 			for (long j = 1; j <= ny; j++) {
-				double t = 0;
+				double t = 0.0;
 				for (long q = 1; q <= ny - numberOfZeroedy; q++) {
 					t += vc[q][i] * vy[j][q] / svdy -> d[q];
 				}
 				evecy[i][j] = t;
 			}
 			for (long j = 1; j <= nx; j++) {
-				double t = 0;
+				double t = 0.0;
 				for (long q = 1; q <= nx - numberOfZeroedx; q++) {
 					t += uc[q][i] * vx[j][q] / svdx -> d[q];
 				}
@@ -278,7 +278,7 @@ TableOfReal CCA_and_TableOfReal_predict (CCA me, TableOfReal thee, long from) {
 		for (long i = 1; i <= thy numberOfRows; i++) {
 			NUMvector_copyElements (his data[i], buf.peek(), 1, ny);
 			for (long j = 1; j <= ny; j++) {
-				double t = 0;
+				double t = 0.0;
 				for (long k = 1; k <= ny; k++) {
 					t += sqrt (d[k]) * v[k][j] * buf[k];
 				}
@@ -310,7 +310,7 @@ double CCA_getCorrelationCoefficient (CCA me, long index) {
 }
 
 void CCA_getZeroCorrelationProbability (CCA me, long index, double *chisq, long *ndf, double *probability) {
-	double lambda = 1, *ev = my y -> eigenvalues;
+	double lambda = 1.0, *ev = my y -> eigenvalues;
 	long nev = my y -> numberOfEigenvalues;
 	long ny = my y -> dimension, nx = my x -> dimension;
 
@@ -322,10 +322,10 @@ void CCA_getZeroCorrelationProbability (CCA me, long index, double *chisq, long 
 	}
 
 	for (long i = index; i <= nev; i++) {
-		lambda *= (1 - ev[i]);
+		lambda *= (1.0 - ev[i]);
 	}
 	*ndf = (ny - index + 1) * (nx - index + 1);
-	*chisq = - (my numberOfObservations - (ny + nx + 3) / 2) * log (lambda);
+	*chisq = - (my numberOfObservations - (ny + nx + 3.0) / 2.0) * log (lambda);
 	*probability = NUMchiSquareQ (*chisq, *ndf);
 }
 

@@ -102,7 +102,8 @@ void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, Class
 	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback)
 {
 	try {
-		int depth = flags, unhidable = FALSE, hidden = FALSE, key = 0, attractive = 0;
+		int depth = flags, key = 0;
+		bool unhidable = false, hidden = false, attractive = false;
 		unsigned long motifFlags = 0;
 		if (flags > 7) {
 			depth = ((flags & praat_DEPTH_7) >> 16);
@@ -165,8 +166,8 @@ void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, Class
 		theActions [position]. title = Melder_dup_f (title);
 		theActions [position]. depth = depth;
 		theActions [position]. callback = callback;   // NULL for a separator
-		theActions [position]. button = NULL;
-		theActions [position]. script = NULL;
+		theActions [position]. button = nullptr;
+		theActions [position]. script = nullptr;
 		theActions [position]. hidden = hidden;
 		theActions [position]. unhidable = unhidable;
 		theActions [position]. attractive = attractive;
@@ -296,9 +297,9 @@ void praat_addActionScript (const char32 *className1, int n1, const char32 *clas
 		theActions [position]. n2 = n2;
 		theActions [position]. class3 = class3;
 		theActions [position]. n3 = n3;
-		theActions [position]. title = str32len (title) ? Melder_dup_f (title) : NULL;   // allow old-fashioned untitled separators
+		theActions [position]. title = str32len (title) ? Melder_dup_f (title) : nullptr;   // allow old-fashioned untitled separators
 		theActions [position]. depth = depth;
-		theActions [position]. callback = str32len (script) ? DO_RunTheScriptFromAnyAddedMenuCommand : NULL;   // NULL for a separator
+		theActions [position]. callback = str32len (script) ? DO_RunTheScriptFromAnyAddedMenuCommand : nullptr;   // NULL for a separator
 		theActions [position]. button = NULL;
 		if (str32len (script) == 0) {
 			theActions [position]. script = NULL;
@@ -307,7 +308,7 @@ void praat_addActionScript (const char32 *className1, int n1, const char32 *clas
 			Melder_relativePathToFile (script, & file);
 			theActions [position]. script = Melder_dup_f (Melder_fileToPath (& file));
 		}
-		theActions [position]. after = str32len (after) ? Melder_dup_f (after) : NULL;
+		theActions [position]. after = str32len (after) ? Melder_dup_f (after) : nullptr;
 		theActions [position]. phase = praatP.phase;
 		if (praatP.phase >= praat_READING_BUTTONS) {
 			static long uniqueID = 0;
@@ -323,7 +324,7 @@ void praat_removeAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, c
 	try {
 		int n1, n2, n3;
 		fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
-		long found = lookUpMatchingAction (class1, class2, class3, NULL, title);
+		long found = lookUpMatchingAction (class1, class2, class3, nullptr, title);
 		if (! found) {
 			Melder_throw (U"Action command \"", class1 -> className,
 				class2 ? U" & ": U"", class2 -> className,
@@ -342,16 +343,16 @@ void praat_removeAction_classNames (const char32 *className1, const char32 *clas
 	const char32 *className3, const char32 *title)
 {
 	try {
-		ClassInfo class1 = NULL, class2 = NULL, class3 = NULL;
+		ClassInfo class1 = nullptr, class2 = nullptr, class3 = nullptr;
 		Melder_assert (className1 && className2 && className3 && title);
 		if (str32len (className1)) {
-			class1 = Thing_classFromClassName (className1, NULL);
+			class1 = Thing_classFromClassName (className1, nullptr);
 		}
 		if (str32len (className2)) {
-			class2 = Thing_classFromClassName (className2, NULL);
+			class2 = Thing_classFromClassName (className2, nullptr);
 		}
 		if (str32len (className3)) {
-			class3 = Thing_classFromClassName (className3, NULL);
+			class3 = Thing_classFromClassName (className3, nullptr);
 		}
 		praat_removeAction (class1, class2, class3, title);
 		updateDynamicMenu ();
@@ -364,15 +365,15 @@ void praat_hideAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, con
 	try {
 		int n1, n2, n3;
 		fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
-		long found = lookUpMatchingAction (class1, class2, class3, NULL, title);
+		long found = lookUpMatchingAction (class1, class2, class3, nullptr, title);
 		if (! found) {
-			Melder_throw (U"Praat: action command \"", class1 ? class1 -> className : NULL,
-				class2 ? U" & ": NULL, class2 ? class2 -> className : NULL,
-				class3 ? U" & ": NULL, class3 ? class3 -> className : NULL,
+			Melder_throw (U"Praat: action command \"", class1 ? class1 -> className : nullptr,
+				class2 ? U" & ": NULL, class2 ? class2 -> className : nullptr,
+				class3 ? U" & ": NULL, class3 ? class3 -> className : nullptr,
 				U": ", title, U"\" not found.");
 		}
 		if (! theActions [found]. hidden) {
-			theActions [found]. hidden = TRUE;
+			theActions [found]. hidden = true;
 			if (praatP.phase >= praat_READING_BUTTONS) theActions [found]. toggled = ! theActions [found]. toggled;
 			updateDynamicMenu ();
 		}
@@ -385,16 +386,16 @@ void praat_hideAction_classNames (const char32 *className1, const char32 *classN
 	const char32 *className3, const char32 *title)
 {
 	try {
-		ClassInfo class1 = NULL, class2 = NULL, class3 = NULL;
+		ClassInfo class1 = nullptr, class2 = nullptr, class3 = nullptr;
 		Melder_assert (className1 && className2 && className3 && title);
 		if (str32len (className1)) {
-			class1 = Thing_classFromClassName (className1, NULL);
+			class1 = Thing_classFromClassName (className1, nullptr);
 		}
 		if (str32len (className2)) {
-			class2 = Thing_classFromClassName (className2, NULL);
+			class2 = Thing_classFromClassName (className2, nullptr);
 		}
 		if (str32len (className3)) {
-			class3 = Thing_classFromClassName (className3, NULL);
+			class3 = Thing_classFromClassName (className3, nullptr);
 		}
 		praat_hideAction (class1, class2, class3, title);
 	} catch (MelderError) {
@@ -408,13 +409,13 @@ void praat_showAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, con
 		fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
 		long found = lookUpMatchingAction (class1, class2, class3, NULL, title);
 		if (! found) {
-			Melder_throw (U"Action command \"", class1 ? class1 -> className : NULL,
-				class2 ? U" & ": NULL, class2 ? class2 -> className : NULL,
-				class3 ? U" & ": NULL, class3 ? class3 -> className : NULL,
+			Melder_throw (U"Action command \"", class1 ? class1 -> className : nullptr,
+				class2 ? U" & ": NULL, class2 ? class2 -> className : nullptr,
+				class3 ? U" & ": NULL, class3 ? class3 -> className : nullptr,
 				U": ", title, U"\" not found.");
 		}
 		if (theActions [found]. hidden) {
-			theActions [found]. hidden = FALSE;
+			theActions [found]. hidden = false;
 			if (praatP.phase >= praat_READING_BUTTONS) theActions [found]. toggled = ! theActions [found]. toggled;
 			updateDynamicMenu ();
 		}
@@ -427,16 +428,16 @@ void praat_showAction_classNames (const char32 *className1, const char32 *classN
 	const char32 *className3, const char32 *title)
 {
 	try {
-		ClassInfo class1 = NULL, class2 = NULL, class3 = NULL;
+		ClassInfo class1 = nullptr, class2 = nullptr, class3 = nullptr;
 		Melder_assert (className1 && className2 && className3 && title);
 		if (str32len (className1)) {
-			class1 = Thing_classFromClassName (className1, NULL);
+			class1 = Thing_classFromClassName (className1, nullptr);
 		}
 		if (str32len (className2)) {
-			class2 = Thing_classFromClassName (className2, NULL);
+			class2 = Thing_classFromClassName (className2, nullptr);
 		}
 		if (str32len (className3)) {
-			class3 = Thing_classFromClassName (className3, NULL);
+			class3 = Thing_classFromClassName (className3, nullptr);
 		}
 		praat_showAction (class1, class2, class3, title);
 	} catch (MelderError) {
@@ -529,7 +530,7 @@ static void do_menu (I, bool modified) {
 			}
 			Ui_setAllowExecutionHook (allowExecutionHook, (void *) callback);   // BUG: one shouldn't assign a function pointer to a void pointer
 			try {
-				callback (NULL, 0, NULL, NULL, NULL, my title, modified, NULL);
+				callback (nullptr, 0, nullptr, nullptr, nullptr, my title, modified, nullptr);
 			} catch (MelderError) {
 				Melder_flushError (U"Command \"", my title, U"\" not executed.");
 			}
@@ -546,7 +547,7 @@ static void do_menu (I, bool modified) {
 				UiHistory_write (U"\"");
 			}
 			try {
-				DO_RunTheScriptFromAnyAddedMenuCommand (NULL, 0, NULL, my script, NULL, NULL, false, NULL);
+				DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, my script, nullptr, nullptr, false, nullptr);
 			} catch (MelderError) {
 				Melder_flushError (U"Command \"", my title, U"\" not executed.");
 			}
@@ -597,32 +598,32 @@ void praat_actions_show (void) {
 
 		/* Match the actually selected classes with the selection required for this visibility. */
 
-		if (! theActions [i]. class1) continue;   /* At least one class selected. */
+		if (! theActions [i]. class1) continue;   // at least one class selected
 		sel1 = theActions [i]. class1 == classDaata ? theCurrentPraatObjects -> totalSelection : praat_numberOfSelected (theActions [i]. class1);
 		if (sel1 == 0) continue;
 		if (theActions [i]. class2 && (sel2 = praat_numberOfSelected (theActions [i]. class2)) == 0) continue;
 		if (theActions [i]. class3 && (sel3 = praat_numberOfSelected (theActions [i]. class3)) == 0) continue;
 		if (theActions [i]. class4 && (sel4 = praat_numberOfSelected (theActions [i]. class4)) == 0) continue;
-		if (sel1 + sel2 + sel3 + sel4 != theCurrentPraatObjects -> totalSelection) continue;   /* Other classes selected? Do not show. */
+		if (sel1 + sel2 + sel3 + sel4 != theCurrentPraatObjects -> totalSelection) continue;   // other classes selected? Do not show
 		theActions [i]. visible = ! theActions [i]. hidden;
 
 		/* Match the actually selected objects with the selection required for this action. */
 
-		if (! theActions [i]. callback) continue;   /* Separators are not executable. */
+		if (! theActions [i]. callback) continue;   // separators are not executable
 		if ((n1 && sel1 != n1) || (n2 && sel2 != n2) || (n3 && sel3 != n3) || (n4 && sel4 != n4)) continue;
-		theActions [i]. executable = TRUE;
+		theActions [i]. executable = true;
 	}
 
 	/* Create a new column of buttons in the dynamic menu. */
 	if (! theCurrentPraatApplication -> batch && ! Melder_backgrounding) {
 		actionsInvisible = false;
-		GuiMenu currentSubmenu1 = NULL, currentSubmenu2 = NULL;
-		int writeMenuGoingToSeparate = FALSE;
+		GuiMenu currentSubmenu1 = NULL, currentSubmenu2 = nullptr;
+		bool writeMenuGoingToSeparate = false;
 		int y = Machine_getMenuBarHeight () + 10;
-		for (long i = 1; i <= theNumberOfActions; i ++) {   /* Add buttons or make existing buttons sensitive (executable). */
+		for (long i = 1; i <= theNumberOfActions; i ++) {   // add buttons or make existing buttons sensitive (executable)
 			praat_Command me = & theActions [i];
-			if (my depth == 0) currentSubmenu1 = NULL, currentSubmenu2 = NULL;   /* Prevent attachment of later deep actions to earlier submenus after removal of label. */
-			if (my depth == 1) currentSubmenu2 = NULL;   /* Prevent attachment of later deep actions to earlier submenus after removal of label. */
+			if (my depth == 0) currentSubmenu1 = nullptr, currentSubmenu2 = nullptr;   // prevent attachment of later deep actions to earlier submenus after removal of label
+			if (my depth == 1) currentSubmenu2 = nullptr;   // prevent attachment of later deep actions to earlier submenus after removal of label
 			if (! my visible) continue;
 			if (my callback) {
 				/* Apparently a true command: create a button in the dynamic menu.
@@ -637,7 +638,7 @@ void praat_actions_show (void) {
 						if (writeMenuGoingToSeparate)
 							praat_writeMenuSeparator = GuiMenu_addSeparator (parentMenu);
 						else if (str32equ (my title, U"Save as binary file..."))
-							writeMenuGoingToSeparate = TRUE;
+							writeMenuGoingToSeparate = true;
 					}
 				}
 				if (parentMenu) {
@@ -667,7 +668,7 @@ void praat_actions_show (void) {
 				/*
 				 * Apparently a separator in a submenu.
 				 */
-				if (currentSubmenu2 || currentSubmenu1) {   /* These separators are not shown in a flattened menu. */
+				if (currentSubmenu2 || currentSubmenu1) {   // these separators are not shown in a flattened menu
 					my button = GuiMenu_addSeparator (currentSubmenu2 ? currentSubmenu2 : currentSubmenu1);
 					GuiThing_show (my button);
 				}
@@ -743,7 +744,7 @@ int praat_doAction (const char32 *command, const char32 *arguments, Interpreter 
 	long i = 1;
 	while (i <= theNumberOfActions && (! theActions [i]. executable || str32cmp (theActions [i]. title, command))) i ++;
 	if (i > theNumberOfActions) return 0;   // not found
-	theActions [i]. callback (NULL, 0, NULL, arguments, interpreter, command, false, NULL);
+	theActions [i]. callback (nullptr, 0, nullptr, arguments, interpreter, command, false, nullptr);
 	return 1;
 }
 
@@ -751,14 +752,14 @@ int praat_doAction (const char32 *command, int narg, Stackel args, Interpreter i
 	long i = 1;
 	while (i <= theNumberOfActions && (! theActions [i]. executable || str32cmp (theActions [i]. title, command))) i ++;
 	if (i > theNumberOfActions) return 0;   // not found
-	theActions [i]. callback (NULL, narg, args, NULL, interpreter, command, false, NULL);
+	theActions [i]. callback (nullptr, narg, args, nullptr, interpreter, command, false, nullptr);
 	return 1;
 }
 
 long praat_getNumberOfActions (void) { return theNumberOfActions; }
 
 praat_Command praat_getAction (long i)
-	{ return i < 0 || i > theNumberOfActions ? NULL : & theActions [i]; }
+	{ return i < 0 || i > theNumberOfActions ? nullptr : & theActions [i]; }
 
 void praat_background (void) {
 	if (Melder_batch) return;

@@ -23,7 +23,7 @@ Thing_implement (Excitation, Vector, 2);
 
 double Excitation_hertzToBark (double hertz) {
 	double h650 = hertz / 650;
-	return 7.0 * log (h650 + sqrt (1 + h650 * h650));
+	return 7.0 * log (h650 + sqrt (1.0 + h650 * h650));
 }
 
 double Excitation_barkToHertz (double bark) {
@@ -31,11 +31,11 @@ double Excitation_barkToHertz (double bark) {
 }
 
 double Excitation_phonToDifferenceLimens (double phon) {
-	return 30 * (pow (61.0 / 60, phon) - 1);
+	return 30.0 * (pow (61.0 / 60.0, phon) - 1);
 }
 
 double Excitation_differenceLimensToPhon (double ndli) {
-	return log (1 + ndli / 30) / log (61.0 / 60);
+	return log (1 + ndli / 30.0) / log (61.0 / 60.0);
 }
 
 double Excitation_soundPressureToPhon (double soundPressure, double bark) {
@@ -44,18 +44,18 @@ double Excitation_soundPressureToPhon (double soundPressure, double bark) {
 	if (soundPressure <= 0.0) return 0.0;
 
 	/*  dB = 20 * log10 (soundPressure / threshold)  */
-	result = 20 * log10 (soundPressure / 2.0e-5);   /* First approximation: phon = dB */
+	result = 20.0 * log10 (soundPressure / 2.0e-5);   /* First approximation: phon = dB */
 
 	/*  Phones from dB  */
-	if (result < 90 && bark < 8.0)
+	if (result < 90.0 && bark < 8.0)
 	{
-		dum = (90 - result) * (8.0 - bark);
+		dum = (90.0 - result) * (8.0 - bark);
 		result -= dum * dum / 2500;
 	}
-	dum = bark / 3.6 - 5;
-	result += 5 * exp (- dum * dum);
-	if (bark > 20.0) { dum = bark - 20; result -= 0.5 * dum * dum; }
-	if (result < 0) result = 0;
+	dum = bark / 3.6 - 5.0;
+	result += 5.0 * exp (- dum * dum);
+	if (bark > 20.0) { dum = bark - 20.0; result -= 0.5 * dum * dum; }
+	if (result < 0.0) result = 0.0;
 	return result;
 }
 
@@ -65,10 +65,10 @@ void structExcitation :: v_info () {
 	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Loudness: ", Melder_half (Excitation_getLoudness (this)), U" sones");
 	for (long i = 2; i < nx; i ++) if (y [i] > y [i - 1] && y [i] >= y [i + 1]) {
-		double i_real, formant_bark, strength;
 		if (++ numberOfMaxima > 15) break;
-		strength = NUMimproveMaximum (z [1], nx, i, NUM_PEAK_INTERPOLATE_SINC70, & i_real);
-		formant_bark = x1 + (i_real - 1) * dx;
+		double i_real;
+		double strength = NUMimproveMaximum (z [1], nx, i, NUM_PEAK_INTERPOLATE_SINC70, & i_real);
+		double formant_bark = x1 + (i_real - 1.0) * dx;
 		MelderInfo_write (U"Peak at ", Melder_single (formant_bark), U" Bark");
 		MelderInfo_write (U", ", (long) NUMbarkToHertz (formant_bark), U" Hz");
 		MelderInfo_writeLine (U", ", Melder_half (strength), U" phon.");
@@ -78,7 +78,7 @@ void structExcitation :: v_info () {
 Excitation Excitation_create (double df, long nf) {
 	try {
 		autoExcitation me = Thing_new (Excitation);
-		Matrix_init (me.peek(), 0.0, nf * df, nf, df, 0.5 * df, 1, 1, 1, 1, 1);
+		Matrix_init (me.peek(), 0.0, nf * df, nf, df, 0.5 * df, 1.0, 1.0, 1, 1.0, 1.0);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw (U"Excitation not created.");
@@ -103,7 +103,7 @@ double Excitation_getLoudness (Excitation me) {
 	double loudness = 0.0;
 	for (int i = 1; i <= my nx; i ++)
 		/*  Sones = 2 ** ((Phones - 40) / 10)  */
-		loudness += pow (2, (my z [1] [i] - 40) / 10);
+		loudness += pow (2.0, (my z [1] [i] - 40.0) / 10.0);
 	return my dx * loudness;
 }
 
@@ -115,7 +115,7 @@ void Excitation_draw (Excitation me, Graphics g,
 	Matrix_getWindowSamplesX (me, fmin, fmax, & ifmin, & ifmax);
 	if (maximum <= minimum)
 		Matrix_getWindowExtrema (me, ifmin, ifmax, 1, 1, & minimum, & maximum);
-	if (maximum <= minimum) { minimum -= 20; maximum += 20; }
+	if (maximum <= minimum) { minimum -= 20.0; maximum += 20.0; }
 	Graphics_setInner (g);
 	Graphics_setWindow (g, fmin, fmax, minimum, maximum);
 	Graphics_function (g, my z [1], ifmin, ifmax,
@@ -123,10 +123,10 @@ void Excitation_draw (Excitation me, Graphics g,
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, U"Frequency (Bark)");
-		Graphics_textLeft (g, 1, U"Excitation (phon)");
-		Graphics_marksBottomEvery (g, 1, 5, 1, 1, 0);
-		Graphics_marksLeftEvery (g, 1, 20, 1, 1, 0);
+		Graphics_textBottom (g, true, U"Frequency (Bark)");
+		Graphics_textLeft (g, true, U"Excitation (phon)");
+		Graphics_marksBottomEvery (g, 1.0, 5.0, true, true, false);
+		Graphics_marksLeftEvery (g, 1.0, 20.0, true, true, false);
 	}
 }
 

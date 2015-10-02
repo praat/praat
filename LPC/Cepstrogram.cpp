@@ -70,7 +70,7 @@ void PowerCepstrogram_paint (PowerCepstrogram me, Graphics g, double tmin, doubl
 		return;
 	}
 	autoMatrix thee = (Matrix) Data_copy (me);
-	double min = 1e38, max = -min;
+	double min = 1e308, max = -min;
 	for (long i = 1; i <= my ny; i++) {
 		for (long j = 1; j <= my nx; j++) {
 			double val = TO10LOG (my z[i][j]);
@@ -111,10 +111,10 @@ void PowerCepstrogram_paint (PowerCepstrogram me, Graphics g, double tmin, doubl
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, U"Time (s)");
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, U"Quefrency (s)");
+		Graphics_textBottom (g, true, U"Time (s)");
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeft (g, 2, true, true, false);
+		Graphics_textLeft (g, true, U"Quefrency (s)");
 	}
 }
 

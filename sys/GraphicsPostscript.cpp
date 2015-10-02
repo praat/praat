@@ -112,18 +112,18 @@ static void exitPage (GraphicsPostscript me) {
 	for (font = 0; font <= kGraphics_font_DINGBATS; font ++)
 		for (style = 0; style <= Graphics_BOLD_ITALIC; style ++)
 			Melder_free (my fontInfos [font] [style]);
-	my loadedXipa = FALSE;   /* BUG. Include this because of the unpredictable page order with DSC? */
+	my loadedXipa = false;   // FIXME: include this because of the unpredictable page order with DSC?
 }
 
 void structGraphicsPostscript :: v_destroy () {
 	exitPage (this);
-	if (d_file) {
-		if (job) {
-			d_printf (d_file, "%%%%Trailer\n");
-			d_printf (d_file, "%%%%Pages: %d\n", pageNumber);
+	if (our d_file) {
+		if (our job) {
+			our d_printf (our d_file, "%%%%Trailer\n");
+			our d_printf (our d_file, "%%%%Pages: %d\n", our pageNumber);
 		}
-		d_printf (d_file, "%%%%EOF\n");   // BUG. Correct according to DSC. But not good in EPS files?
-		fclose (d_file);
+		our d_printf (our d_file, "%%%%EOF\n");   // BUG. Correct according to DSC. But not good in EPS files?
+		fclose (our d_file);
 	}
 	GraphicsPostscript_Parent :: v_destroy ();
 }
@@ -134,7 +134,7 @@ Graphics Graphics_create_postscriptjob (MelderFile file, int resolution, enum kG
 	autoGraphicsPostscript me = Thing_new (GraphicsPostscript);
 	time_t today;
 	my postScript = true, my yIsZeroAtTheTop = false, my languageLevel = 2;
-	my job = TRUE, my eps = FALSE, my printer = FALSE;
+	my job = true, my eps = false, my printer = false;
 	my d_printf = (int (*)(void *, const char*, ...)) fprintf;
 	Graphics_init (me.peek(), resolution);   // virtual resolution; may differ from that of the printer; OK if always 600 dpi
 	my photocopyable = spots == kGraphicsPostscript_spots_PHOTOCOPYABLE;
@@ -168,7 +168,7 @@ Graphics Graphics_create_postscriptjob (MelderFile file, int resolution, enum kG
 	my d_printf (my d_file, "%%%%Creator: Praat Shell 4.2\n");
 	my d_printf (my d_file, "%%%%Title: %s\n", Melder_peek32to8 (MelderFile_name (file)));
 	today = time (NULL);
-	my d_printf (my d_file, "%%%%CreationDate: %s", ctime (& today));   /* Contains newline symbol. */
+	my d_printf (my d_file, "%%%%CreationDate: %s", ctime (& today));   // contains newline symbol
 	my d_printf (my d_file, "%%%%PageOrder: Special\n");
 	my d_printf (my d_file, "%%%%Pages: (atend)\n");
 	my d_printf (my d_file, "%%%%EndComments\n");
@@ -209,7 +209,7 @@ Graphics Graphics_create_epsfile (MelderFile file, int resolution, enum kGraphic
 	if (my photocopyable) { my spotsDensity = 85; my spotsAngle = 35; }
 	else { my spotsDensity = 106; my spotsAngle = 46; }
 	my paperWidth = 7.5, my paperHeight = 11.0;
-	my landscape = FALSE;
+	my landscape = false;
 	my magnification = 1.0;
 	my includeFonts = includeFonts;
 	my useSilipaPS = useSilipaPS;
@@ -247,7 +247,7 @@ Graphics Graphics_create_epsfile (MelderFile file, int resolution, enum kGraphic
 Graphics Graphics_create_postscriptprinter (void) {
 	GraphicsPostscript me = Thing_new (GraphicsPostscript);
 	my postScript = TRUE, my languageLevel = 2;
-	my job = FALSE, my eps = FALSE, my printer = TRUE;
+	my job = false, my eps = false, my printer = true;
 	my d_printf = Printer_postScript_printf;
 	Graphics_init (me, thePrinter. resolution);   // virtual resolution
 	my photocopyable = thePrinter. spots == kGraphicsPostscript_spots_PHOTOCOPYABLE;
@@ -257,7 +257,7 @@ Graphics Graphics_create_postscriptprinter (void) {
 	my paperHeight = (double) thePrinter. paperHeight / my resolution;
 	my landscape = thePrinter. orientation == kGraphicsPostscript_orientation_LANDSCAPE;
 	my magnification = thePrinter. magnification;
-	my includeFonts = TRUE;
+	my includeFonts = true;
 	my d_x1DC = my d_x1DCmin = my resolution / 2;
 	my d_x2DC = my d_x2DCmax = (my paperWidth - 0.5) * my resolution;
 	my d_y1DC = my d_y1DCmin = my resolution / 2;

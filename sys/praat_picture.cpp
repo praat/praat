@@ -454,11 +454,11 @@ static void DO_Picture_writeToEpsFile (UiForm sendingForm, int narg, Stackel arg
 	} else { MelderFile file; structMelderFile file2 = { 0 };
 		if (args == NULL && sendingString == NULL) file = UiFile_getFile (dia);
 		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
-		Picture_writeToEpsFile (praat_picture, file, TRUE, FALSE);
+		Picture_writeToEpsFile (praat_picture, file, true, false);
 	}
 }
 /*FORM_WRITE (Picture_writeToEpsFile, U"Save picture as Encapsulated PostScript file", 0, U"praat.eps")
-	if (! Picture_writeToEpsFile (praat_picture, fileName, TRUE)) return 0;
+	if (! Picture_writeToEpsFile (praat_picture, fileName, true, false)) return 0;
 END*/
 
 static void DO_Picture_writeToFontlessEpsFile_xipa (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *dummy) {
@@ -474,7 +474,7 @@ static void DO_Picture_writeToFontlessEpsFile_xipa (UiForm sendingForm, int narg
 	} else { MelderFile file; structMelderFile file2 = { 0 };
 		if (args == NULL && sendingString == NULL) file = UiFile_getFile (dia);
 		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
-		Picture_writeToEpsFile (praat_picture, file, FALSE, FALSE);
+		Picture_writeToEpsFile (praat_picture, file, false, false);
 	}
 }
 
@@ -491,7 +491,7 @@ static void DO_Picture_writeToFontlessEpsFile_silipa (UiForm sendingForm, int na
 	} else { MelderFile file; structMelderFile file2 = { 0 };
 		if (args == NULL && sendingString == NULL) file = UiFile_getFile (dia);
 		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
-		Picture_writeToEpsFile (praat_picture, file, FALSE, TRUE);
+		Picture_writeToEpsFile (praat_picture, file, false, true);
 	}
 }
 

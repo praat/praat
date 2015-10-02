@@ -33,7 +33,7 @@ struct structPicture {
 	double selx1, selx2, sely1, sely2;   // selection in NDC co-ordinates
 	void (*selectionChangedCallback) (struct structPicture *, void *, double, double, double, double);
 	void *selectionChangedClosure;
-	int backgrounding, mouseSelectsInnerViewport;
+	bool backgrounding, mouseSelectsInnerViewport;
 };
 
 static void drawMarkers (Picture me)
@@ -426,7 +426,7 @@ void Picture_writeToWindowsMetafile (Picture me, MelderFile file) {
 }
 #endif
 
-void Picture_writeToEpsFile (Picture me, MelderFile file, int includeFonts, int useSilipaPS) {
+void Picture_writeToEpsFile (Picture me, MelderFile file, bool includeFonts, bool useSilipaPS) {
 	try {
 		MelderFile_delete (file);   // to kill resources as well (fopen only kills data fork)
 		/* BUG: no message if file cannot be deleted (e.g. because still open by Microsoft Word 2001 after reading). */
@@ -503,7 +503,7 @@ void Picture_setSelection
 	}
 }
 
-void Picture_background (Picture me) { my backgrounding = TRUE; }
-void Picture_foreground (Picture me) { my backgrounding = FALSE; }
+void Picture_background (Picture me) { my backgrounding = true; }
+void Picture_foreground (Picture me) { my backgrounding = false; }
 
 /* End of file Picture.cpp */

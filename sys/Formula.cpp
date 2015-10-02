@@ -41,7 +41,7 @@ static const char32 *theExpression;
 static int theLevel = 1;
 #define MAXIMUM_NUMBER_OF_LEVELS  20
 static int theExpressionType [1 + MAXIMUM_NUMBER_OF_LEVELS];
-static int theOptimize;
+static bool theOptimize;
 
 static struct Formula_NumericArray theZeroNumericArray = { 0, 0, NULL };
 
@@ -557,7 +557,7 @@ static void Formula_lexan (void) {
 				}
 			}
 		} else if (kar >= U'A' && kar <= U'Z') {
-			int endsInDollarSign = FALSE;
+			bool endsInDollarSign = false;
 			char32 *underscore;
 			stokaan;
 			do stokkar while (isalnum ((int) kar) || kar == U'_');   // TODO: allow more than just ASCII
@@ -1827,7 +1827,7 @@ static void Formula_print (FormulaInstruction f) {
 	} while (symbol != END_);
 }
 
-void Formula_compile (Any interpreter, Any data, const char32 *expression, int expressionType, int optimize) {
+void Formula_compile (Any interpreter, Any data, const char32 *expression, int expressionType, bool optimize) {
 	theInterpreter = (Interpreter) interpreter;
 	if (theInterpreter == NULL) {
 		if (theLocalInterpreter == NULL) {
@@ -3283,7 +3283,7 @@ static void do_index_regex (int backward) {
 				pushNumber (place - s->string + 1);
 				free (compiled_regexp);
 			} else {
-				pushNumber (FALSE);
+				pushNumber (false);
 			}
 		}
 	} else {
@@ -4862,12 +4862,12 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case STARTS_WITH_: { do_stringMatchesCriterion (kMelder_string_STARTS_WITH);
 } break; case ENDS_WITH_: { do_stringMatchesCriterion (kMelder_string_ENDS_WITH);
 } break; case REPLACESTR_: { do_replaceStr ();
-} break; case INDEX_REGEX_: { do_index_regex (FALSE);
-} break; case RINDEX_REGEX_: { do_index_regex (TRUE);
+} break; case INDEX_REGEX_: { do_index_regex (false);
+} break; case RINDEX_REGEX_: { do_index_regex (true);
 } break; case REPLACE_REGEXSTR_: { do_replace_regexStr ();
 } break; case EXTRACT_NUMBER_: { do_extractNumber ();
-} break; case EXTRACT_WORDSTR_: { do_extractTextStr (TRUE);
-} break; case EXTRACT_LINESTR_: { do_extractTextStr (FALSE);
+} break; case EXTRACT_WORDSTR_: { do_extractTextStr (true);
+} break; case EXTRACT_LINESTR_: { do_extractTextStr (false);
 } break; case SELECTED_: { do_selected ();
 } break; case SELECTEDSTR_: { do_selectedStr ();
 } break; case NUMBER_OF_SELECTED_: { do_numberOfSelected ();

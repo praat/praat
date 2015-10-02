@@ -708,11 +708,11 @@ void FFNet_drawCostHistory (FFNet me, Graphics g, long iFrom, long iTo, double c
 		        costMin, costMax, 0);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textLeft (g, 1, my costFunctionType == FFNet_COST_MSE ?
+		Graphics_textLeft (g, true, my costFunctionType == FFNet_COST_MSE ?
 		                   U"Minimum squared error" : U"Minimum cross entropy");
-		Graphics_marksLeft (g, 2, 1, 1, 0);
-		Graphics_textBottom (g, 1, U"Number of epochs");
-		Graphics_marksBottom (g, 2, 1, 1, 0);
+		Graphics_marksLeft (g, 2, true, true, false);
+		Graphics_textBottom (g, true, U"Number of epochs");
+		Graphics_marksBottom (g, 2, true, true, false);
 	}
 }
 
@@ -735,7 +735,8 @@ Collection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidden2) 
 			}
 		}
 
-		Pattern thee = 0; Categories him = 0;
+		Pattern thee = nullptr;
+		Categories him = nullptr;
 		TableOfReal_to_Pattern_and_Categories (iris.peek(), 0, 0, 0, 0, &thee, &him);
 		autoPattern ap = thee; autoCategories ac = him;
 		Thing_setName (ap.peek(), U"iris");

@@ -75,7 +75,7 @@ void structPointProcess :: v_info () {
 	MelderInfo_writeLine (U"with a maximum \"period factor\" of 1.3:");
 	infoPeriods (this, 1e-4, 20e-3, 1.3, 3);
 	MelderInfo_writeLine (U"All periods:");
-	infoPeriods (this, 0.0, 0.0, 1e300, 6);
+	infoPeriods (this, 0.0, 0.0, 1e308, 6);
 }
 
 void structPointProcess :: v_shiftX (double xfrom, double xto) {
@@ -92,8 +92,7 @@ void structPointProcess :: v_scaleX (double xminfrom, double xmaxfrom, double xm
 	}
 }
 
-void PointProcess_init (I, double tmin, double tmax, long initialMaxnt) {
-	iam (PointProcess);
+void PointProcess_init (PointProcess me, double tmin, double tmax, long initialMaxnt) {
 	Function_init (me, tmin, tmax);
 	if (initialMaxnt < 1) initialMaxnt = 1;
 	my maxnt = initialMaxnt;
@@ -234,22 +233,22 @@ void PointProcess_removePointsBetween (PointProcess me, double tmin, double tmax
 
 void PointProcess_draw (PointProcess me, Graphics g, double tmin, double tmax, int garnish) {
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
-	Graphics_setWindow (g, tmin, tmax, -1, 1);
+	Graphics_setWindow (g, tmin, tmax, -1.0, 1.0);
 	if (my nt) {
 		long imin = PointProcess_getHighIndex (me, tmin), imax = PointProcess_getLowIndex (me, tmax), i;
 		int lineType = Graphics_inqLineType (g);
 		Graphics_setLineType (g, Graphics_DOTTED);
 		Graphics_setInner (g);
 		for (i = imin; i <= imax; i ++) {
-			Graphics_line (g, my t [i], -1, my t [i], 1);
+			Graphics_line (g, my t [i], -1.0, my t [i], 1.0);
 		}
 		Graphics_setLineType (g, lineType);
 		Graphics_unsetInner (g);
 	}
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, U"Time (s)");
-		Graphics_marksBottom (g, 2, 1, 1, 0);
+		Graphics_textBottom (g, true, U"Time (s)");
+		Graphics_marksBottom (g, 2, true, true, false);
 	}
 }
 
@@ -357,7 +356,7 @@ long PointProcess_getWindowPoints (PointProcess me, double tmin, double tmax, lo
 	return imax - imin + 1;
 }
 
-static int PointProcess_isPeriod (PointProcess me, long ileft, double minimumPeriod, double maximumPeriod, double maximumPeriodFactor) {
+static bool PointProcess_isPeriod (PointProcess me, long ileft, double minimumPeriod, double maximumPeriod, double maximumPeriodFactor) {
 	/*
 	 * This function answers the question: is the interval from point 'ileft' to point 'ileft+1' a period?
 	 */
@@ -366,19 +365,19 @@ static int PointProcess_isPeriod (PointProcess me, long ileft, double minimumPer
 	 * Period condition 1: both 'ileft' and 'iright' have to be within the point process.
 	 */
 	if (ileft < 1 || iright > my nt) {
-		return FALSE;
+		return false;
 	} else {
 		/*
 		 * Period condition 2: the interval has to be within the boundaries, if specified.
 		 */
 		if (minimumPeriod == maximumPeriod) {
-			return TRUE;   /* All intervals count as periods, irrespective of absolute size and relative size. */
+			return true;   /* All intervals count as periods, irrespective of absolute size and relative size. */
 		} else {
 			double interval = my t [iright] - my t [ileft];
 			if (interval <= 0.0 || interval < minimumPeriod || interval > maximumPeriod) {
-				return FALSE;
+				return false;
 			} else if (! NUMdefined (maximumPeriodFactor) || maximumPeriodFactor < 1.0) {
-				return TRUE;
+				return true;
 			} else {
 				/*
 				 * Period condition 3: the interval cannot be too different from both of its neigbours, if any.
@@ -388,7 +387,7 @@ static int PointProcess_isPeriod (PointProcess me, long ileft, double minimumPer
 				double previousIntervalFactor = NUMdefined (previousInterval) && previousInterval > 0.0 ? interval / previousInterval : NUMundefined;
 				double nextIntervalFactor = NUMdefined (nextInterval) && nextInterval > 0.0 ? interval / nextInterval : NUMundefined;
 				if (! NUMdefined (previousIntervalFactor) && ! NUMdefined (nextIntervalFactor)) {
-					return TRUE;   /* No neighbours: this is a period. */
+					return true;   /* No neighbours: this is a period. */
 				}
 				if (NUMdefined (previousIntervalFactor) && previousIntervalFactor > 0.0 && previousIntervalFactor < 1.0) {
 					previousIntervalFactor = 1.0 / previousIntervalFactor;
@@ -399,26 +398,26 @@ static int PointProcess_isPeriod (PointProcess me, long ileft, double minimumPer
 				if (NUMdefined (previousIntervalFactor) && previousIntervalFactor > maximumPeriodFactor &&
 					NUMdefined (nextIntervalFactor) && nextIntervalFactor > maximumPeriodFactor)
 				{
-					return FALSE;
+					return false;
 				}
 			}
 		}
 	}
-	return TRUE;
+	return true;
 }
 
 long PointProcess_getNumberOfPeriods (PointProcess me, double tmin, double tmax,
 	double minimumPeriod, double maximumPeriod, double maximumPeriodFactor)
 {
-	long imin, imax, numberOfPeriods, i;
-	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   /* Autowindowing. */
-	numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
+	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   // autowindowing
+	long imin, imax;
+	long numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
 	if (numberOfPeriods < 1) return 0;
-	for (i = imin; i < imax; i ++) {
+	for (long i = imin; i < imax; i ++) {
 		if (PointProcess_isPeriod (me, i, minimumPeriod, maximumPeriod, maximumPeriodFactor)) {
-			(void) 0;   /* This interval counts as a period. */
+			(void) 0;   // this interval counts as a period
 		} else {
-			numberOfPeriods --;   /* This interval does not count as a period. */
+			numberOfPeriods --;   // this interval does not count as a period
 		}
 	}
 	return numberOfPeriods;
@@ -427,16 +426,16 @@ long PointProcess_getNumberOfPeriods (PointProcess me, double tmin, double tmax,
 double PointProcess_getMeanPeriod (PointProcess me, double tmin, double tmax,
 	double minimumPeriod, double maximumPeriod, double maximumPeriodFactor)
 {
-	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   /* Autowindowing. */
+	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   // autowindowing
 	long imin, imax;
 	long numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
 	if (numberOfPeriods < 1) return NUMundefined;
 	double sum = 0.0;
 	for (long i = imin; i < imax; i ++) {
 		if (PointProcess_isPeriod (me, i, minimumPeriod, maximumPeriod, maximumPeriodFactor)) {
-			sum += my t [i + 1] - my t [i];   /* This interval counts as a period. */
+			sum += my t [i + 1] - my t [i];   // this interval counts as a period
 		} else {
-			numberOfPeriods --;   /* This interval does not count as a period. */
+			numberOfPeriods --;   // this interval does not count as a period
 		}
 	}
 	return numberOfPeriods > 0 ? sum / numberOfPeriods : NUMundefined;
@@ -445,7 +444,7 @@ double PointProcess_getMeanPeriod (PointProcess me, double tmin, double tmax,
 double PointProcess_getStdevPeriod (PointProcess me, double tmin, double tmax,
 	double minimumPeriod, double maximumPeriod, double maximumPeriodFactor)
 {
-	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   /* Autowindowing. */
+	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   // autowindowing
 	long imin, imax;
 	long numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
 	if (numberOfPeriods < 2) return NUMundefined;
@@ -455,9 +454,9 @@ double PointProcess_getStdevPeriod (PointProcess me, double tmin, double tmax,
 	double sum = 0.0;
 	for (long i = imin; i < imax; i ++) {
 		if (PointProcess_isPeriod (me, i, minimumPeriod, maximumPeriod, maximumPeriodFactor)) {
-			sum += my t [i + 1] - my t [i];   /* This interval counts as a period. */
+			sum += my t [i + 1] - my t [i];   // this interval counts as a period
 		} else {
-			numberOfPeriods --;   /* This interval does not count as a period. */
+			numberOfPeriods --;   // this interval does not count as a period
 		}
 	}
 	if (numberOfPeriods < 2) return NUMundefined;

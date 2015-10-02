@@ -966,7 +966,7 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, const char3
 				if (my decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_HG ||
 					my decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_MAXIMUM_ENTROPY)
 				{
-					//value = value > -1e-300 ? 1000 : value < -1e300 ? -1000 : - log (- value);
+					//value = value > 1e-308 ? 1000 : value < -1e308 ? -1000 : - log (- value);
 					Graphics_text (g, x, y + descent, Melder_float (Melder_half (value)));
 				} else {
 					Graphics_text (g, x, y + descent, Melder_fixed (value, 3));
@@ -1229,17 +1229,17 @@ static double learningStep (double mean, double relativeSpreading) {
 	return relativeSpreading == 0.0 ? mean : NUMrandomGauss (mean, relativeSpreading * mean);
 }
 
-static void OTGrammar_honourLocalRankings (OTGrammar me, double plasticity, double relativePlasticityNoise, int *grammarHasChanged) {
-	int improved;
+static void OTGrammar_honourLocalRankings (OTGrammar me, double plasticity, double relativePlasticityNoise, bool *grammarHasChanged) {
+	bool improved;
 	do {
-		improved = FALSE;
+		improved = false;
 		for (long irank = 1; irank <= my numberOfFixedRankings; irank ++) {
 			OTGrammarFixedRanking fixedRanking = & my fixedRankings [irank];
 			OTGrammarConstraint higher = & my constraints [fixedRanking -> higher], lower = & my constraints [fixedRanking -> lower];
 			while (higher -> ranking <= lower -> ranking) {
 				lower -> ranking -= learningStep (plasticity, relativePlasticityNoise);
 				if (grammarHasChanged != NULL) *grammarHasChanged = TRUE;
-				improved = TRUE;
+				improved = true;
 			}
 		}
 	} while (improved);
@@ -1247,7 +1247,7 @@ static void OTGrammar_honourLocalRankings (OTGrammar me, double plasticity, doub
 
 static void OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, long iadult,
 	int updateRule, int honourLocalRankings,
-	double plasticity, double relativePlasticityNoise, int warnIfStalled, int *grammarHasChanged)
+	double plasticity, double relativePlasticityNoise, int warnIfStalled, bool *grammarHasChanged)
 {
 	try {
 		OTGrammarTableau tableau = & my tableaus [itab];
@@ -1669,12 +1669,12 @@ static void OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, lon
 }
 
 void OTGrammar_learnOne (OTGrammar me, const char32 *input, const char32 *adultOutput,
-	double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, int honourLocalRankings,
-	double plasticity, double relativePlasticityNoise, int newDisharmonies, int warnIfStalled, int *grammarHasChanged)
+	double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, bool honourLocalRankings,
+	double plasticity, double relativePlasticityNoise, bool newDisharmonies, bool warnIfStalled, bool *grammarHasChanged)
 {
 	try {
 		if (newDisharmonies) OTGrammar_newDisharmonies (me, evaluationNoise);
-		if (grammarHasChanged != NULL) *grammarHasChanged = FALSE;
+		if (grammarHasChanged != NULL) *grammarHasChanged = false;
 
 		/*
 		 * Evaluate the input in the learner's hypothesis.
@@ -1718,7 +1718,7 @@ void OTGrammar_learnOne (OTGrammar me, const char32 *input, const char32 *adultO
 }
 
 void OTGrammar_learn (OTGrammar me, Strings inputs, Strings outputs,
-	double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, int honourLocalRankings,
+	double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, bool honourLocalRankings,
 	double plasticity, double relativePlasticityNoise, long numberOfChews)
 {
 	if (! inputs) inputs = outputs;
@@ -1739,7 +1739,7 @@ void OTGrammar_learn (OTGrammar me, Strings inputs, Strings outputs,
 }
 
 void OTGrammar_PairDistribution_learn (OTGrammar me, PairDistribution thee,
-	double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, int honourLocalRankings,
+	double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, bool honourLocalRankings,
 	double initialPlasticity, long replicationsPerPlasticity, double plasticityDecrement,
 	long numberOfPlasticities, double relativePlasticityNoise, long numberOfChews)
 {
@@ -1957,8 +1957,8 @@ static void OTGrammar_restore (OTGrammar me) {
 }
 
 void OTGrammar_learnOneFromPartialOutput (OTGrammar me, const char32 *partialAdultOutput,
-	double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, int honourLocalRankings,
-	double plasticity, double relativePlasticityNoise, long numberOfChews, int warnIfStalled)
+	double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, bool honourLocalRankings,
+	double plasticity, double relativePlasticityNoise, long numberOfChews, bool warnIfStalled)
 {
 	try {
 		OTGrammar_newDisharmonies (me, evaluationNoise);
@@ -1969,7 +1969,7 @@ void OTGrammar_learnOneFromPartialOutput (OTGrammar me, const char32 *partialAdu
 		for (; ichew <= numberOfChews; ichew ++) {
 			long assumedAdultInputTableau, assumedAdultCandidate;
 			OTGrammar_getInterpretiveParse (me, partialAdultOutput, & assumedAdultInputTableau, & assumedAdultCandidate);
-			int grammarHasChanged;
+			bool grammarHasChanged = false;
 			OTGrammar_learnOne (me,
 				my tableaus [assumedAdultInputTableau]. input,
 				my tableaus [assumedAdultInputTableau]. candidates [assumedAdultCandidate]. output,
@@ -1999,8 +1999,8 @@ void OTGrammar_learnOneFromPartialOutput (OTGrammar me, const char32 *partialAdu
 }
 
 static void OTGrammar_learnOneFromPartialOutput_opt (OTGrammar me, const char32 *partialAdultOutput, long ipartialAdultOutput,
-	double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, int honourLocalRankings,
-	double plasticity, double relativePlasticityNoise, long numberOfChews, int warnIfStalled,
+	double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, bool honourLocalRankings,
+	double plasticity, double relativePlasticityNoise, long numberOfChews, bool warnIfStalled,
 	bool resampleForVirtualProduction, bool compareOnlyPartialOutput, long resampleForCorrectForm)
 {
 	try {
@@ -2050,7 +2050,7 @@ static void OTGrammar_learnOneFromPartialOutput_opt (OTGrammar me, const char32 
 			 * Now we know that the current hypothesis prefers the (wrong) learner's winner over the (correct) adult output.
 			 * The grammar will have to change.
 			 */
-			int grammarHasChanged = FALSE;
+			bool grammarHasChanged = false;
 			OTGrammar_modifyRankings (me, assumedAdultInputTableau, iwinner, assumedAdultCandidate, updateRule, honourLocalRankings,
 				plasticity, relativePlasticityNoise, warnIfStalled, & grammarHasChanged);
 			if (! grammarHasChanged) return;
@@ -2126,7 +2126,7 @@ static void OTGrammar_finalizeHistory (OTGrammar me, OTHistory thee, long idatum
 }
 
 void OTGrammar_learnFromPartialOutputs (OTGrammar me, Strings partialOutputs,
-	double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, int honourLocalRankings,
+	double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, bool honourLocalRankings,
 	double plasticity, double relativePlasticityNoise, long numberOfChews,
 	long storeHistoryEvery, OTHistory *history_out)
 {
@@ -2140,7 +2140,7 @@ void OTGrammar_learnFromPartialOutputs (OTGrammar me, Strings partialOutputs,
 				try {
 					OTGrammar_learnOneFromPartialOutput (me, partialOutputs -> strings [idatum],
 						evaluationNoise, updateRule, honourLocalRankings,
-						plasticity, relativePlasticityNoise, numberOfChews, FALSE);
+						plasticity, relativePlasticityNoise, numberOfChews, false);
 				} catch (MelderError) {
 					if (history.peek()) {
 						OTGrammar_updateHistory (me, history.peek(), storeHistoryEvery, idatum, partialOutputs -> strings [idatum]);   // so that we can inspect
@@ -2215,7 +2215,7 @@ static void OTGrammar_Distributions_opt_createOutputMatching (OTGrammar me, Dist
 }
 
 void OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distributions thee, long columnNumber,
-	double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, int honourLocalRankings,
+	double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, bool honourLocalRankings,
 	double initialPlasticity, long replicationsPerPlasticity, double plasticityDecrement,
 	long numberOfPlasticities, double relativePlasticityNoise, long numberOfChews,
 	long storeHistoryEvery, OTHistory *history_out,
@@ -2256,7 +2256,7 @@ void OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distribution
 					try {
 						OTGrammar_learnOneFromPartialOutput_opt (me, partialOutput, ipartialOutput,
 							evaluationNoise, updateRule, honourLocalRankings,
-							plasticity, relativePlasticityNoise, numberOfChews, FALSE,
+							plasticity, relativePlasticityNoise, numberOfChews, false,
 							resampleForVirtualProduction, compareOnlyPartialOutput, resampleForCorrectForm);   // no warning if stalled: RIP form is allowed to be harmonically bounded
 					} catch (MelderError) {
 						if (history.peek()) {
@@ -2475,14 +2475,14 @@ static bool OTGrammarTableau_candidateIsPossibleWinner (OTGrammar me, long itab,
 	OTGrammar_save (me);
 	OTGrammar_reset (me, 100.0);
 	for (;;) {
-		int grammarHasChanged;
-		double previousStratum = 101.0;
+		bool grammarHasChanged = false;
 		OTGrammar_learnOne (me, my tableaus [itab]. input, my tableaus [itab]. candidates [icand]. output,
-			1e-3, kOTGrammar_rerankingStrategy_EDCD, FALSE, 1.0, 0.0, TRUE, TRUE, & grammarHasChanged);
+			1e-3, kOTGrammar_rerankingStrategy_EDCD, false, 1.0, 0.0, true, true, & grammarHasChanged);
 		if (! grammarHasChanged) {
 			OTGrammar_restore (me);
 			return true;
 		}
+		double previousStratum = 101.0;
 		OTGrammar_newDisharmonies (me, 0.0);
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 			double stratum = my constraints [my index [icons]]. ranking;
@@ -2505,7 +2505,7 @@ static bool OTGrammarTableau_candidateIsPossibleWinner (OTGrammar me, long itab,
 	return false;   // cannot occur
 }
 
-void OTGrammar_removeHarmonicallyBoundedCandidates (OTGrammar me, int singly) {
+void OTGrammar_removeHarmonicallyBoundedCandidates (OTGrammar me, bool singly) {
 	try {
 		/*
 		 * First, the candidates that are harmonically bounded by one or more single other candidates have to be removed;
@@ -2558,7 +2558,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 	try {
 		long ifixedRanking, icons, jcons, kcons, lcons, ipair = 0, npair = my numberOfConstraints * (my numberOfConstraints - 1);
 		long ilist, jlist, itrial, iform;
-		int improved;
+		bool improved;
 		double evaluationNoise = 1e-9;
 		/*
 		 * Add room for two more fixed rankings.
@@ -2573,16 +2573,16 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 		 */
 		OTGrammar_reset (me, 100.0);
 		for (itrial = 1; itrial <= 40; itrial ++) {
-			int grammarHasChangedDuringCycle = FALSE;
+			bool grammarHasChangedDuringCycle = false;
 			OTGrammar_honourLocalRankings (me, 1.0, 0.0, & grammarHasChangedDuringCycle);
 			OTGrammar_newDisharmonies (me, evaluationNoise);
 			for (iform = 1; iform <= thy pairs -> size; iform ++) {
 				PairProbability prob = (PairProbability) thy pairs -> item [iform];
 				if (prob -> weight > 0.0) {
-					int grammarHasChanged;
+					bool grammarHasChanged = false;
 					OTGrammar_learnOne (me, prob -> string1, prob -> string2,
-						evaluationNoise, kOTGrammar_rerankingStrategy_EDCD, TRUE /* honour fixed rankings; very important */,
-						1.0, 0.0, FALSE, TRUE, & grammarHasChanged);
+						evaluationNoise, kOTGrammar_rerankingStrategy_EDCD, true /* honour fixed rankings; very important */,
+						1.0, 0.0, false, true, & grammarHasChanged);
 					if (grammarHasChanged) {
 						OTGrammar_newDisharmonies (me, evaluationNoise);
 					}
@@ -2611,16 +2611,16 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 					my constraints [icons]. name, U" >> ", my constraints [jcons]. name);
 				ipair ++;
 				for (itrial = 1; itrial <= 40; itrial ++) {
-					int grammarHasChangedDuringCycle = FALSE;
+					bool grammarHasChangedDuringCycle = false;
 					OTGrammar_honourLocalRankings (me, 1.0, 0.0, & grammarHasChangedDuringCycle);
 					OTGrammar_newDisharmonies (me, evaluationNoise);
 					for (iform = 1; iform <= thy pairs -> size; iform ++) {
 						PairProbability prob = (PairProbability) thy pairs -> item [iform];
 						if (prob -> weight > 0.0) {
-							int grammarHasChanged;
+							bool grammarHasChanged = false;
 							OTGrammar_learnOne (me, prob -> string1, prob -> string2,
-								evaluationNoise, kOTGrammar_rerankingStrategy_EDCD, TRUE /* honour fixed rankings; very important */,
-								1.0, 0.0, FALSE, TRUE, & grammarHasChanged);
+								evaluationNoise, kOTGrammar_rerankingStrategy_EDCD, true /* honour fixed rankings; very important */,
+								1.0, 0.0, false, true, & grammarHasChanged);
 							if (grammarHasChanged) {
 								OTGrammar_newDisharmonies (me, evaluationNoise);
 							}
@@ -2657,16 +2657,16 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 						Melder_progress ((double) ipair / npair, ipair + 1, U"/", npair);
 						ipair ++;
 						for (itrial = 1; itrial <= 40; itrial ++) {
-							int grammarHasChangedDuringCycle = FALSE;
+							bool grammarHasChangedDuringCycle = false;
 							OTGrammar_honourLocalRankings (me, 1.0, 0.0, & grammarHasChangedDuringCycle);
 							OTGrammar_newDisharmonies (me, evaluationNoise);
 							for (iform = 1; iform <= thy pairs -> size; iform ++) {
 								PairProbability prob = (PairProbability) thy pairs -> item [iform];
 								if (prob -> weight > 0.0) {
-									int grammarHasChanged;
+									bool grammarHasChanged = false;
 									OTGrammar_learnOne (me, prob -> string1, prob -> string2,
 										evaluationNoise, kOTGrammar_rerankingStrategy_EDCD, TRUE /* honour fixed rankings; very important */,
-										1.0, 0.0, FALSE, TRUE, & grammarHasChanged);
+										1.0, 0.0, false, true, & grammarHasChanged);
 									if (grammarHasChanged) {
 										OTGrammar_newDisharmonies (me, evaluationNoise);
 									}
@@ -2691,9 +2691,9 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 		/*
 		 * Improve list.
 		 */
-		improved = TRUE;
+		improved = true;
 		while (improved) {
-			improved = FALSE;
+			improved = false;
 			for (ilist = 1; ilist <= list -> size; ilist ++) {
 				for (jlist = 1; jlist <= list -> size; jlist ++) if (ilist != jlist) {
 					OTGrammar_List4 elA = (OTGrammar_List4) list -> item [ilist], elB = (OTGrammar_List4) list -> item [jlist];
@@ -2711,9 +2711,9 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 				if (improved) break;
 			}
 		}
-		improved = TRUE;
+		improved = true;
 		while (improved) {
-			improved = FALSE;
+			improved = false;
 			for (ilist = 1; ilist <= list -> size; ilist ++) {
 				for (jlist = 1; jlist <= list -> size; jlist ++) if (ilist != jlist) {
 					OTGrammar_List4 elA = (OTGrammar_List4) list -> item [ilist], elB = (OTGrammar_List4) list -> item [jlist];

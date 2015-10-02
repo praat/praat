@@ -1986,7 +1986,7 @@ END2 }
 DIRECT2 (Sound_to_Spectrum_dft) {
 	LOOP {
 		iam (Sound);
-		autoSpectrum thee = Sound_to_Spectrum (me, FALSE);
+		autoSpectrum thee = Sound_to_Spectrum (me, false);
 		praat_new (thee.transfer(), my name);
 	}
 END2 }
@@ -1994,7 +1994,7 @@ END2 }
 DIRECT2 (Sound_to_Spectrum_fft) {
 	LOOP {
 		iam (Sound);
-		autoSpectrum thee = Sound_to_Spectrum (me, TRUE);
+		autoSpectrum thee = Sound_to_Spectrum (me, true);
 		praat_new (thee.transfer(), my name);
 	}
 END2 }

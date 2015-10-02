@@ -134,10 +134,10 @@ void Formant_drawTracks (Formant me, Graphics g, double tmin, double tmax, doubl
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, U"Time (s)");
-		Graphics_textLeft (g, 1, U"Formant frequency (Hz)");
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_marksLeftEvery (g, 1.0, 1000.0, 1, 1, 1);
+		Graphics_textBottom (g, true, U"Time (s)");
+		Graphics_textLeft (g, true, U"Formant frequency (Hz)");
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeftEvery (g, 1.0, 1000.0, true, true, true);
 	}
 }
 
@@ -156,7 +156,7 @@ void Formant_drawSpeckles_inside (Formant me, Graphics g, double tmin, double tm
 			maximumIntensity = frame -> intensity;
 	}
 	if (maximumIntensity == 0.0 || suppress_dB <= 0.0)
-		minimumIntensity = 0.0;   /* Ignore. */
+		minimumIntensity = 0.0;   // ignore
 	else
 		minimumIntensity = maximumIntensity / pow (10.0, suppress_dB / 10.0);
 
@@ -180,10 +180,10 @@ void Formant_drawSpeckles (Formant me, Graphics g, double tmin, double tmax, dou
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, U"Time (s)");
-		Graphics_textLeft (g, 1, U"Formant frequency (Hz)");
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_marksLeftEvery (g, 1.0, 1000.0, 1, 1, 1);
+		Graphics_textBottom (g, true, U"Time (s)");
+		Graphics_textLeft (g, true, U"Formant frequency (Hz)");
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeftEvery (g, 1.0, 1000.0, true, true, true);
 	}
 }
 
@@ -192,7 +192,7 @@ void Formant_formula_bandwidths (Formant me, const char32 *formula, Interpreter 
 		long nrow = Formant_getMaxNumFormants (me);
 		if (nrow < 1)
 			Melder_throw (U"No formants available.");
-		autoMatrix mat = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, nrow + 0.5, nrow, 1, 1);
+		autoMatrix mat = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, nrow + 0.5, nrow, 1.0, 1.0);
 		for (long iframe = 1; iframe <= my nx; iframe ++) {
 			Formant_Frame frame = & my d_frames [iframe];
 			for (long iformant = 1; iformant <= frame -> nFormants; iformant ++)
@@ -214,7 +214,7 @@ void Formant_formula_frequencies (Formant me, const char32 *formula, Interpreter
 		long nrow = Formant_getMaxNumFormants (me);
 		if (nrow < 1)
 			Melder_throw (U"No formants available.");
-		autoMatrix mat = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, nrow + 0.5, nrow, 1, 1);
+		autoMatrix mat = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, nrow + 0.5, nrow, 1.0, 1.0);
 		for (long iframe = 1; iframe <= my nx; iframe ++) {
 			Formant_Frame frame = & my d_frames [iframe];
 			for (long iformant = 1; iformant <= frame -> nFormants; iformant ++)
@@ -355,10 +355,10 @@ void Formant_scatterPlot (Formant me, Graphics g, double tmin, double tmax,
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, Melder_cat (U"%%F_", iformant1, U" (Hz)"));
-		Graphics_textLeft (g, 1, Melder_cat (U"%%F_", iformant2, U" (Hz)"));
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
+		Graphics_textBottom (g, true, Melder_cat (U"%%F_", iformant1, U" (Hz)"));
+		Graphics_textLeft (g, true, Melder_cat (U"%%F_", iformant2, U" (Hz)"));
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeft (g, 2, true, true, false);
 	}
 }
 

@@ -134,7 +134,7 @@ void LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct
 	double *e = hs -> e -> z[1], *s = thy z[1];
 
 	hs -> iter = 0;
-	hs -> scale = 1e38;
+	hs -> scale = 1e308;
 	hs -> p = p;
 
 	double s0;

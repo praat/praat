@@ -302,7 +302,7 @@ static void _OTMulti_fillInHarmonies (OTMulti me, const char32 *form1, const cha
 }
 
 static void _OTMulti_fillInProbabilities (OTMulti me, const char32 *form1, const char32 *form2) {
-	double maximumHarmony = -1e300;
+	double maximumHarmony = -1e308;
 	for (long icand = 1; icand <= my numberOfCandidates; icand ++) if (OTMulti_candidateMatches (me, icand, form1, form2)) {
 		OTCandidate candidate = & my candidates [icand];
 		if (candidate -> harmony > maximumHarmony) {

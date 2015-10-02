@@ -761,10 +761,10 @@ void Salience_draw (Salience me, Graphics g, int ix, int iy, int garnish) {
 
 	if (garnish) {
 		if (my columnLabels[ix]) {
-			Graphics_textBottom (g, 0, my columnLabels[ix]);
+			Graphics_textBottom (g, false, my columnLabels[ix]);
 		}
 		if (my columnLabels[iy]) {
-			Graphics_textLeft (g, 0, my columnLabels[iy]);
+			Graphics_textLeft (g, false, my columnLabels[iy]);
 		}
 	}
 }
@@ -1384,10 +1384,10 @@ void Proximity_Distance_drawScatterDiagram (I, Distance thee, Graphics g,
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textLeft (g, 1, U"Distance");
-		Graphics_textBottom (g, 1, U"Dissimilarity");
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
+		Graphics_textLeft (g, true, U"Distance");
+		Graphics_textBottom (g, true, U"Dissimilarity");
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeft (g, 2, true, true, false);
 	}
 }
 
@@ -1933,7 +1933,7 @@ Configuration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissimila
 		Transformator t = (Transformator) transformator;
 		long nPoints = conf -> numberOfRows;
 		long nDimensions = conf -> numberOfColumns;
-		double tol = 1e-6, stressp = 1e38;
+		double tol = 1e-6, stressp = 1e308;
 		bool no_weight = weight == 0;
 
 		if (my numberOfRows != nPoints || (!no_weight && weight -> numberOfRows != nPoints) ||
@@ -2024,7 +2024,7 @@ Configuration Dissimilarity_Configuration_Weight_Transformator_multiSmacof (Diss
 	int showMulti = showProgress && numberOfRepetitions > 1;
 	try {
 		int showSingle = showProgress && numberOfRepetitions == 1;
-		double stress, stressmax = 1e38;
+		double stress, stressmax = 1e308;
 
 		autoConfiguration cstart = Data_copy (conf);
 		autoConfiguration  cbest = Data_copy (conf);
@@ -3140,9 +3140,9 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 		static MelderString ts { 0 };
 		long lastKnot = type == MDS_ISPLINE ? numberOfKnots - 2 : numberOfKnots;
 		Graphics_drawInnerBox (g);
-		Graphics_textLeft (g, 0, type == MDS_MSPLINE ? U"\\s{M}\\--spline" : U"\\s{I}\\--spline");
-		Graphics_marksTop (g, 2, 1, 1, 0);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
+		Graphics_textLeft (g, false, type == MDS_MSPLINE ? U"\\s{M}\\--spline" : U"\\s{I}\\--spline");
+		Graphics_marksTop (g, 2, true, true, false);
+		Graphics_marksLeft (g, 2, true, true, false);
 		if (low <= knot[order]) {
 			if (order == 1) {
 				MelderString_copy (&ts, U"t__1_");
@@ -3151,13 +3151,13 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 			} else {
 				MelderString_copy (&ts, U"{t__1_..t__", order, U"_}");
 			}
-			Graphics_markBottom (g, low, 0, 0, 0, ts.string);
+			Graphics_markBottom (g, low, false, false, false, ts.string);
 		}
 		for (long i = 1; i <= numberOfInteriorKnots; i++) {
 			if (low <= knot[k + i] && knot[k + i] < high) {
 				MelderString_copy (&ts, U"t__", order + i, U"_");
-				Graphics_markBottom (g, knot[k + i], 0, 1, 1, ts.string);
-				Graphics_markTop (g, knot[k + i], 1, 0, 0, NULL);
+				Graphics_markBottom (g, knot[k + i], false, true, true, ts.string);
+				Graphics_markTop (g, knot[k + i], true, false, false, nullptr);
 			}
 		}
 		if (knot[lastKnot - order + 1] <= high) {
@@ -3166,7 +3166,7 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 			} else {
 				MelderString_copy (&ts, U"{t__", (order == 2 ? lastKnot - 1 : lastKnot - order + 1), U"_, t__", lastKnot, U"_}");
 			}
-			Graphics_markBottom (g, high, 0, 0, 0, ts.string);
+			Graphics_markBottom (g, high, false, false, false, ts.string);
 		}
 	}
 }
@@ -3299,7 +3299,7 @@ void drawMDSClassRelations (Graphics g) {
 	// Restore settings
 
 	Graphics_setLineType (g, Graphics_DRAWN);
-	Graphics_setLineWidth (g, 1);
+	Graphics_setLineWidth (g, 1.0);
 	Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_BOTTOM);
 
 }

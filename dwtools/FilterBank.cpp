@@ -248,10 +248,10 @@ void FilterBank_drawFrequencyScales (I, Graphics g, int horizontalScale, double 
 
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, GetFreqScaleText (verticalScale));
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_textBottom (g, 1, GetFreqScaleText (horizontalScale));
+		Graphics_marksLeft (g, 2, true, true, false);
+		Graphics_textLeft (g, true, GetFreqScaleText (verticalScale));
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_textBottom (g, true, GetFreqScaleText (horizontalScale));
 	}
 }
 
@@ -284,10 +284,10 @@ void FilterBank_paint (FilterBank me, Graphics g, double xmin, double xmax, doub
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, GetFreqScaleText (my v_getFrequencyScale ()));
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_textBottom (g, 1, U"Time (s)");
+		Graphics_marksLeft (g, 2, true, true, false);
+		Graphics_textLeft (g, true, GetFreqScaleText (my v_getFrequencyScale ()));
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_textBottom (g, true, U"Time (s)");
 	}
 }
 
@@ -317,9 +317,9 @@ void BarkFilter_drawSekeyHansonFilterFunctions (BarkFilter me, Graphics g,
 				a[i] = NUMundefined;
 			} else {
 				z -= zMid + 0.215;
-				a[i] = 7 - 7.5 * z - 17.5 * sqrt (0.196 + z * z);
+				a[i] = 7.0 - 7.5 * z - 17.5 * sqrt (0.196 + z * z);
 				if (! dbScale) {
-					a[i] = pow (10, a[i]);
+					a[i] = pow (10.0, a[i]);
 				}
 			}
 		}
@@ -337,13 +337,13 @@ void BarkFilter_drawSekeyHansonFilterFunctions (BarkFilter me, Graphics g,
 	Graphics_unsetInner (g);
 
 	if (garnish) {
-		double distance = dbScale ? 10 : 1;
+		double distance = dbScale ? 10.0 : 1.0;
 		const char32 *ytext = dbScale ? U"Amplitude (dB)" : U"Amplitude";
 		Graphics_drawInnerBox (g);
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_marksLeftEvery (g, 1, distance, 1, 1, 0);
-		Graphics_textLeft (g, 1, ytext);
-		Graphics_textBottom (g, 1, GetFreqScaleText (toFreqScale));
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeftEvery (g, 1.0, distance, true, true, false);
+		Graphics_textLeft (g, true, ytext);
+		Graphics_textBottom (g, true, GetFreqScaleText (toFreqScale));
 	}
 }
 
@@ -377,10 +377,10 @@ void FilterBank_drawTimeSlice (I, Graphics g, double t, double fmin,
 	Matrix_drawSliceY (me, g, t, fmin, fmax, min, max);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeft (g, 2, true, true, false);
 		if (xlabel) {
-			Graphics_textBottom (g, 0, xlabel);
+			Graphics_textBottom (g, false, xlabel);
 		}
 	}
 }
@@ -433,13 +433,13 @@ void MelFilter_drawFilterFunctions (MelFilter me, Graphics g,
 	Graphics_unsetInner (g);
 
 	if (garnish) {
-		double distance = dbScale ? 10 : 1;
+		double distance = dbScale ? 10.0 : 1.0;
 		char32 const *ytext = dbScale ? U"Amplitude (dB)" : U"Amplitude";
 		Graphics_drawInnerBox (g);
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_marksLeftEvery (g, 1, distance, 1, 1, 0);
-		Graphics_textLeft (g, 1, ytext);
-		Graphics_textBottom (g, 1, GetFreqScaleText (toFreqScale));
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeftEvery (g, 1.0, distance, true, true, false);
+		Graphics_textLeft (g, true, ytext);
+		Graphics_textBottom (g, true, GetFreqScaleText (toFreqScale));
 	}
 }
 
@@ -461,7 +461,7 @@ void MelFilter_drawFilters (MelFilter me, Graphics g, long from, long to,
 		from = 1;
 		to = my ny;
 	}
-	Graphics_setWindow (g, my ymin, my ymax, 0, 1);
+	Graphics_setWindow (g, my ymin, my ymax, 0.0, 1.0);
 	Graphics_setInner (g);
 	for (i = from; i <= to; i++)
 	{
@@ -472,8 +472,8 @@ void MelFilter_drawFilters (MelFilter me, Graphics g, long from, long to,
 		*//*
 			Draw triangle
 		*//*
-		Graphics_line (g, fl_hz, 0, fc_hz, 1);
-		Graphics_line (g, fc_hz, 1, fh_hz, 0);
+		Graphics_line (g, fl_hz, 0.0, fc_hz, 1.0);
+		Graphics_line (g, fc_hz, 1.0, fh_hz, 0.0);
 	}
 	Graphics_unsetInner (g);
 }
@@ -579,10 +579,10 @@ void FormantFilter_drawFilterFunctions (FormantFilter me, Graphics g, double ban
 		double distance = dbScale ? 10 : 1;
 		char32 const *ytext = dbScale ? U"Amplitude (dB)" : U"Amplitude";
 		Graphics_drawInnerBox (g);
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_marksLeftEvery (g, 1, distance, 1, 1, 0);
-		Graphics_textLeft (g, 1, ytext);
-		Graphics_textBottom (g, 1, GetFreqScaleText (toFreqScale));
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeftEvery (g, 1.0, distance, true, true, false);
+		Graphics_textLeft (g, true, ytext);
+		Graphics_textBottom (g, true, GetFreqScaleText (toFreqScale));
 	}
 }
 

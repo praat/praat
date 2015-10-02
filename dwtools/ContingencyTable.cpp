@@ -63,18 +63,18 @@ double ContingencyTable_chisqProbability (ContingencyTable me) {
 	double chisq;
 	long df;
 	ContingencyTable_chisq (me, &chisq, &df);
-	if (chisq == 0 && df == 0) {
-		return 0;
+	if (chisq == 0.0 && df == 0) {
+		return 0.0;
 	}
 	return NUMchiSquareQ (chisq, df);
 }
 
 double ContingencyTable_cramersStatistic (ContingencyTable me) {
-	double chisq, sum = 0;
+	double chisq, sum = 0.0;
 	long df, nr = my numberOfRows, nc = my numberOfColumns, nmin = nr;
 
 	if (nr == 1 || nc == 1) {
-		return 0;
+		return 0.0;
 	}
 
 	for (long i = 1; i <= nr; i++) {
@@ -89,14 +89,14 @@ double ContingencyTable_cramersStatistic (ContingencyTable me) {
 	nmin--;
 
 	ContingencyTable_chisq (me, &chisq, &df);
-	if (chisq == 0 && df == 0) {
-		return 0;
+	if (chisq == 0.0 && df == 0) {
+		return 0.0;
 	}
 	return sqrt (chisq / (sum * nmin));
 }
 
 double ContingencyTable_contingencyCoefficient (ContingencyTable me) {
-	double chisq, sum = 0;
+	double chisq, sum = 0.0;
 	long df, nr = my numberOfRows, nc = my numberOfColumns;
 
 	for (long i = 1; i <= nr; i++) {
@@ -106,8 +106,8 @@ double ContingencyTable_contingencyCoefficient (ContingencyTable me) {
 	}
 
 	ContingencyTable_chisq (me, &chisq, &df);
-	if (chisq == 0 && df == 0) {
-		return 0;
+	if (chisq == 0.0 && df == 0) {
+		return 0.0;
 	}
 	return sqrt (chisq / (chisq + sum));
 }
@@ -115,7 +115,7 @@ double ContingencyTable_contingencyCoefficient (ContingencyTable me) {
 void ContingencyTable_chisq (ContingencyTable me, double *chisq, long *df) {
 	long nr = my numberOfRows, nc = my numberOfColumns;
 
-	*chisq = 0; *df = 0;
+	*chisq = 0.0; *df = 0;
 
 	autoNUMvector<double> rowsum (1, nr);
 	autoNUMvector<double> colsum (1, nc);
@@ -124,7 +124,7 @@ void ContingencyTable_chisq (ContingencyTable me, double *chisq, long *df) {
 		row and column marginals
 	*/
 
-	double sum = 0;
+	double sum = 0.0;
 	for (long i = 1; i <= my numberOfRows; i++) {
 		for (long j = 1; j <= my numberOfColumns; j++) {
 			rowsum[i] += my data[i][j];
@@ -134,23 +134,23 @@ void ContingencyTable_chisq (ContingencyTable me, double *chisq, long *df) {
 	}
 
 	for (long i = 1; i <= my numberOfRows; i++) {
-		if (rowsum[i] == 0) {
+		if (rowsum[i] == 0.0) {
 			--nr;
 		}
 	}
 	for (long j = 1; j <= my numberOfColumns; j++) {
-		if (colsum[j] == 0) {
+		if (colsum[j] == 0.0) {
 			--nc;
 		}
 	}
 
 	*df = (nr - 1) * (nc - 1);
 	for (long i = 1; i <= my numberOfRows; i++) {
-		if (rowsum[i] == 0) {
+		if (rowsum[i] == 0.0) {
 			continue;
 		}
 		for (long j = 1; j <= my numberOfColumns; j++) {
-			if (colsum[j] == 0) {
+			if (colsum[j] == 0.0) {
 				continue;
 			}
 			double expt = rowsum[i] * colsum[j] / sum;
@@ -185,7 +185,7 @@ void ContingencyTable_entropies (ContingencyTable me, double *h, double *hx, dou
 	*/
 
 	for (long j = 1; j <= my numberOfColumns; j++) {
-		if (colsum[j] > 0) {
+		if (colsum[j] > 0.0) {
 			double p = colsum[j] / sum;
 			*hx -= p * NUMlog2 (p);
 		}
@@ -196,7 +196,7 @@ void ContingencyTable_entropies (ContingencyTable me, double *h, double *hx, dou
 	*/
 
 	for (long i = 1; i <= my numberOfRows; i++) {
-		if (rowsum[i] > 0) {
+		if (rowsum[i] > 0.0) {
 			double p = rowsum[i] / sum;
 			*hy -= p * NUMlog2 (p);
 		}

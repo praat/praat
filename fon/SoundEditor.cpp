@@ -43,8 +43,8 @@ static void menu_cb_Copy (EDITOR_ARGS) {
 		/*
 		 * Create without change.
 		 */
-		autoSound publish = my d_longSound.data ? LongSound_extractPart ((LongSound) my data, my d_startSelection, my d_endSelection, FALSE) :
-			Sound_extractPart ((Sound) my data, my d_startSelection, my d_endSelection, kSound_windowShape_RECTANGULAR, 1.0, FALSE);
+		autoSound publish = my d_longSound.data ? LongSound_extractPart ((LongSound) my data, my d_startSelection, my d_endSelection, false) :
+			Sound_extractPart ((Sound) my data, my d_startSelection, my d_endSelection, kSound_windowShape_RECTANGULAR, 1.0, false);
 		/*
 		 * Change without error.
 		 */

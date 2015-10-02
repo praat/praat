@@ -118,10 +118,10 @@ void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, do
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, U"Time (seconds)");
-		Graphics_textLeft (g, 1, U"Gain");
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
+		Graphics_textBottom (g, true, U"Time (seconds)");
+		Graphics_textLeft (g, true, U"Gain");
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeft (g, 2, true, true, false);
 	}
 }
 

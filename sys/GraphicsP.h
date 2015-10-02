@@ -145,11 +145,13 @@ Thing_define (GraphicsPostscript, Graphics) {
 	FILE *d_file;
 	int (*d_printf) (void *stream, const char *format, ...);
 	int languageLevel;
-	int photocopyable, spotsDensity, spotsAngle, landscape, includeFonts, loadedXipa, useSilipaPS;
+	int photocopyable, spotsDensity, spotsAngle;
+	bool loadedXipa, useSilipaPS, landscape, includeFonts;
 	double magnification;
 	char *fontInfos [1 + kGraphics_font_DINGBATS] [1 + Graphics_BOLD_ITALIC];
 	const char *lastFid;
-	int job, eps, pageNumber, lastSize;
+	int pageNumber, lastSize;
+	bool job, eps;
 
 	void v_destroy ()
 		override;

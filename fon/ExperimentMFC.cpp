@@ -183,7 +183,7 @@ void ExperimentMFC_start (ExperimentMFC me) {
 		NUMvector_free <double> (my goodnesses, 1);
 		NUMvector_free <double> (my reactionTimes, 1);
 		forget (my playBuffer);
-		my pausing = FALSE;
+		my pausing = false;
 		my numberOfTrials = my numberOfDifferentStimuli * my numberOfReplicationsPerStimulus;
 		my stimuli = NUMvector <long> (1, my numberOfTrials);
 		my responses = NUMvector <long> (1, my numberOfTrials);

@@ -813,20 +813,20 @@ void Sound_draw (Sound me, Graphics g,
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, U"Time (s)");
-		Graphics_marksBottom (g, 2, 1, 1, 0);
+		Graphics_textBottom (g, true, U"Time (s)");
+		Graphics_marksBottom (g, 2, true, true, false);
 		Graphics_setWindow (g, tmin, tmax, minimum - (my ny - 1) * (maximum - minimum), maximum);
-		Graphics_markLeft (g, minimum, 1, 1, 0, NULL);
-		Graphics_markLeft (g, maximum, 1, 1, 0, NULL);
+		Graphics_markLeft (g, minimum, true, true, false, nullptr);
+		Graphics_markLeft (g, maximum, true, true, false, nullptr);
 		if (minimum != 0.0 && maximum != 0.0 && (minimum > 0.0) != (maximum > 0.0)) {
-			Graphics_markLeft (g, 0.0, 1, 1, 1, NULL);
+			Graphics_markLeft (g, 0.0, true, true, true, nullptr);
 		}
 		if (my ny == 2) {
 			Graphics_setWindow (g, treversed ? tmax : tmin, treversed ? tmin : tmax, minimum, maximum + (my ny - 1) * (maximum - minimum));
-			Graphics_markRight (g, minimum, 1, 1, 0, NULL);
-			Graphics_markRight (g, maximum, 1, 1, 0, NULL);
+			Graphics_markRight (g, minimum, true, true, false, nullptr);
+			Graphics_markRight (g, maximum, true, true, false, nullptr);
 			if (minimum != 0.0 && maximum != 0.0 && (minimum > 0.0) != (maximum > 0.0)) {
-				Graphics_markRight (g, 0.0, 1, 1, 1, NULL);
+				Graphics_markRight (g, 0.0, true, true, true, nullptr);
 			}
 		}
 	}
@@ -838,7 +838,7 @@ static double interpolate (Sound me, long i1, long channel)
 	long i2 = i1 + 1;
 	double x1 = Sampled_indexToX (me, i1), x2 = Sampled_indexToX (me, i2);
 	double y1 = my z [channel] [i1], y2 = my z [channel] [i2];
-	return x1 + (x2 - x1) * y1 / (y1 - y2);   /* Linear. */
+	return x1 + (x2 - x1) * y1 / (y1 - y2);   // linear
 }
 double Sound_getNearestZeroCrossing (Sound me, double position, long channel) {
 	double *amplitude = my z [channel];

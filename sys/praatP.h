@@ -121,7 +121,7 @@ void praat_foreground ();
 Editor praat_findEditorFromString (const char32 *string);
 Editor praat_findEditorById (long id);
 
-void praat_showLogo (int autoPopDown);
+void praat_showLogo (bool autoPopDown);
 
 /* Communication with praat_menuCommands.cpp: */
 void praat_menuCommands_init ();

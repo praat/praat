@@ -28,7 +28,7 @@
 
 void Pitch_Frame_addPitch (Pitch_Frame me, double f, double strength, int maxnCandidates) {
 	long pos = 0;
-	double weakest = 1e38;
+	double weakest = 1e308;
 	if (my nCandidates < maxnCandidates) {
 		pos = ++ my nCandidates;
 	} else {

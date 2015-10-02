@@ -59,7 +59,7 @@ struct Formula_Result {
 	} result;
 };
 
-void Formula_compile (Any interpreter, Any data, const char32 *expression, int expressionType, int optimize);
+void Formula_compile (Any interpreter, Any data, const char32 *expression, int expressionType, bool optimize);
 
 void Formula_run (long row, long col, struct Formula_Result *result);
 

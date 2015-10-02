@@ -116,10 +116,10 @@ void PitchTier_Pitch_draw (PitchTier me, Pitch uv, Graphics g,
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, U"Time (s)");
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, U"Frequency (Hz)");
+		Graphics_textBottom (g, true, U"Time (s)");
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeft (g, 2, true, true, false);
+		Graphics_textLeft (g, true, U"Frequency (Hz)");
 	}
 }
 

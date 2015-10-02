@@ -173,10 +173,10 @@ static void _Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax, d
 
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, U"Quefrency (s)");
-		Graphics_marksBottom (g, 2, TRUE, TRUE, FALSE);
-		Graphics_textLeft (g, 1, power ? U"Amplitude (dB)" : U"Amplitude");
-		Graphics_marksLeft (g, 2, TRUE, TRUE, FALSE);
+		Graphics_textBottom (g, true, U"Quefrency (s)");
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_textLeft (g, true, power ? U"Amplitude (dB)" : U"Amplitude");
+		Graphics_marksLeft (g, 2, true, true, false);
 	}
 }
 

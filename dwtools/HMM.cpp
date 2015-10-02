@@ -987,16 +987,16 @@ void HMM_and_HMM_StateSequence_drawTrellis (HMM me, HMM_StateSequence thee, Grap
 		}
 	}
 	Graphics_unsetInner (g);
-	Graphics_setLineWidth (g, 1);
+	Graphics_setLineWidth (g, 1.0);
 	Graphics_setLineType (g, Graphics_DRAWN);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
 		for (long js = 1; js <= my numberOfStates; js++) {
 			HMM_State hmms = (HMM_State) my states -> item[js];
-			Graphics_markLeft (g, js, 0, 0, 0, hmms -> label);
+			Graphics_markLeft (g, js, false, false, false, hmms -> label);
 		}
-		Graphics_marksBottomEvery (g, 1, 1, 1, 1, 0);
-		Graphics_textBottom (g, 1, U"Time index");
+		Graphics_marksBottomEvery (g, 1.0, 1.0, true, true, false);
+		Graphics_textBottom (g, true, U"Time index");
 	}
 }
 
@@ -1119,11 +1119,11 @@ void HMM_drawForwardProbabilitiesIllustration (Graphics g, bool garnish) {
 }
 
 void HMM_drawForwardAndBackwardProbabilitiesIllustration (Graphics g, bool garnish) {
-	double xfrac = 0.1, xs =  1 / (0.5 - xfrac), r = 0.03;
-	Graphics_Viewport vp = Graphics_insetViewport (g, 0, 0.5-xfrac, 0, 1);
+	double xfrac = 0.1, xs = 1.0 / (0.5 - xfrac), r = 0.03;
+	Graphics_Viewport vp = Graphics_insetViewport (g, 0.0, 0.5-xfrac, 0.0, 1.0);
 	HMM_drawForwardProbabilitiesIllustration (g, false);
 	Graphics_resetViewport (g, vp);
-	Graphics_insetViewport (g, 0.5 + xfrac, 1, 0, 1);
+	Graphics_insetViewport (g, 0.5 + xfrac, 1.0, 0.0, 1.0);
 	HMM_drawBackwardProbabilitiesIllustration (g, false);
 	Graphics_resetViewport (g, vp);
 	Graphics_setWindow (g, 0, xs, 0, 1);
@@ -1142,8 +1142,8 @@ void HMM_drawForwardAndBackwardProbabilitiesIllustration (Graphics g, bool garni
 		Graphics_text (g, rx2, 0, U"%t+2");
 		Graphics_setLineType (g, Graphics_DASHED);
 		double x4 = rx1 - 0.06, x3 = 0.9 + 0.06;
-		Graphics_line (g, x3, 0.7, x3, 0);
-		Graphics_line (g, x4, 0.7, x4, 0);
+		Graphics_line (g, x3, 0.7, x3, 0.0);
+		Graphics_line (g, x4, 0.7, x4, 0.0);
 		Graphics_setLineType (g, Graphics_DRAWN);
 		Graphics_arrow (g, x4, y1, x4 + 0.2, y1);
 		Graphics_arrow (g, x3, y1, x3 - 0.2, y1);
@@ -1177,7 +1177,7 @@ void HMM_and_HMM_BaumWelch_addEstimate (HMM me, HMM_BaumWelch thee, long *obs) {
 
 	for (is = 1; is <= my numberOfStates; is++) {
 		// only for valid start states with p > 0
-		if (my transitionProbs[0][is] > 0) {
+		if (my transitionProbs[0][is] > 0.0) {
 			thy aij_num[0][is] += thy gamma[is][1];
 			thy aij_denom[0][is] += 1;
 		}
@@ -1195,7 +1195,7 @@ void HMM_and_HMM_BaumWelch_addEstimate (HMM me, HMM_BaumWelch thee, long *obs) {
 				xisum += thy xi[it][is][js];
 			}
 			// zero probs signal invalid connections, don't reestimate
-			if (my transitionProbs[is][js] > 0) {
+			if (my transitionProbs[is][js] > 0.0) {
 				thy aij_num[is][js] += xisum;
 				thy aij_denom[is][js] += gammasum;
 			}
@@ -1215,7 +1215,7 @@ void HMM_and_HMM_BaumWelch_addEstimate (HMM me, HMM_BaumWelch thee, long *obs) {
 					}
 				}
 				// only reestimate probs > 0 !
-				if (my emissionProbs[is][k] > 0) {
+				if (my emissionProbs[is][k] > 0.0) {
 					thy bik_num[is][k] += gammasum_k;
 					thy bik_denom[is][k] += gammasum;
 				}
@@ -1245,27 +1245,27 @@ void HMM_and_HMM_BaumWelch_reestimate (HMM me, HMM_BaumWelch thee) {
 			We can prevent this from happening by asumimg a minimal probability for valid transitions
 			i.e. which have initially p > 0.
 		*/
-		if (my transitionProbs[0][is] > 0) {
+		if (my transitionProbs[0][is] > 0.0) {
 			p = thy aij_num[0][is] / thy aij_denom[0][is];
-			my transitionProbs[0][is] = p > 0 ? p : thy minProb;
+			my transitionProbs[0][is] = p > 0.0 ? p : thy minProb;
 		}
 		for (long js = 1; js <= my numberOfStates; js++) {
-			if (my transitionProbs[is][js] > 0) {
+			if (my transitionProbs[is][js] > 0.0) {
 				p = thy aij_num[is][js] / thy aij_denom[is][js];
-				my transitionProbs[is][js] = p > 0 ? p : thy minProb;
+				my transitionProbs[is][js] = p > 0.0 ? p : thy minProb;
 			}
 		}
 		if (! my notHidden) {
 			for (long k = 1; k <= my numberOfObservationSymbols; k++) {
-				if (my emissionProbs[is][k] > 0) {
+				if (my emissionProbs[is][k] > 0.0) {
 					p = thy bik_num[is][k] / thy bik_denom[is][k];
-					my emissionProbs[is][k] = p > 0 ? p : thy minProb;
+					my emissionProbs[is][k] = p > 0.0 ? p : thy minProb;
 				}
 			}
 		}
-		if (my leftToRight && my transitionProbs[is][my numberOfStates + 1] > 0) {
+		if (my leftToRight && my transitionProbs[is][my numberOfStates + 1] > 0.0) {
 			p = thy aij_num[is][my numberOfStates + 1] / thy aij_denom[is][my numberOfStates + 1];
-			my transitionProbs[is][my numberOfStates + 1] = p > 0 ? p : thy minProb;
+			my transitionProbs[is][my numberOfStates + 1] = p > 0.0 ? p : thy minProb;
 		}
 	}
 }

@@ -125,7 +125,7 @@ static void polynomial_divide (double *u, long m, double *v, long n, double *q, 
 
 static void Polynomial_polish_realroot (I, double *x, long maxit) {
 	iam (Polynomial);
-	double xbest = *x, pmin = 1e38;
+	double xbest = *x, pmin = 1e308;
 	if (! NUMfpp) {
 		NUMmachar ();
 	}
@@ -153,7 +153,7 @@ static void Polynomial_polish_realroot (I, double *x, long maxit) {
 static void Polynomial_polish_complexroot_nr (I, dcomplex *z, long maxit) {
 	iam (Polynomial);
 	dcomplex zbest = *z;
-	double pmin = 1e38;
+	double pmin = 1e308;
 	if (! NUMfpp) {
 		NUMmachar ();
 	}
@@ -482,8 +482,8 @@ void FunctionTerms_draw (I, Graphics g, double xmin, double xmax, double ymin,
 
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeft (g, 2, true, true, false);
 	}
 }
 
@@ -1019,15 +1019,15 @@ void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin,
 	if (garnish) {
 		Graphics_drawInnerBox (g);
 		if (rmin * rmax < 0) {
-			Graphics_markLeft (g, 0, 1, 1, 1, U"0");
+			Graphics_markLeft (g, 0.0, true, true, true, U"0");
 		}
 		if (imin * imax < 0) {
-			Graphics_markBottom (g, 0, 1, 1, 1, U"0");
+			Graphics_markBottom (g, 0.0, true, true, true, U"0");
 		}
-		Graphics_marksLeft (g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, U"Imaginary part");
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_textBottom (g, 1, U"Real part");
+		Graphics_marksLeft (g, 2, true, true, false);
+		Graphics_textLeft (g, true, U"Imaginary part");
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_textBottom (g, true, U"Real part");
 	}
 }
 
@@ -1648,7 +1648,7 @@ void Spline_drawKnots (I, Graphics g, double xmin, double xmax, double ymin, dou
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 
 	if (my knots[1] >= xmin && my knots[1] <= xmax) {
-		Graphics_markTop (g, my knots[1], 0, 1, 1,
+		Graphics_markTop (g, my knots[1], false, true, true,
 				! garnish ? U"" :
 				order == 1 ? U"t__1_" :
 				order == 2 ? U"{t__1_, t__2_}" :
@@ -1657,7 +1657,7 @@ void Spline_drawKnots (I, Graphics g, double xmin, double xmax, double ymin, dou
 	}
 	for (long i = 2; i <= my numberOfKnots - 1; i++) {
 		if (my knots[i] >= xmin && my knots[i] <= xmax) {
-			Graphics_markTop (g, my knots[i], 0, 1, 1,
+			Graphics_markTop (g, my knots[i], false, true, true,
 					! garnish ? U"" :
 					Melder_cat (U"t__", i + order - 1, U"_")
 				);
@@ -1665,7 +1665,7 @@ void Spline_drawKnots (I, Graphics g, double xmin, double xmax, double ymin, dou
 	}
 	if (my knots[my numberOfKnots] >= xmin && my knots[my numberOfKnots] <= xmax) {
 		long numberOfKnots = ! garnish ? 0 : my numberOfKnots + 2 * (order - 1);
-		Graphics_markTop (g, my knots[my numberOfKnots], 0, 1, 1,
+		Graphics_markTop (g, my knots[my numberOfKnots], false, true, true,
 				! garnish ? U"" :
 				order == 1 ? Melder_cat (U"t__", numberOfKnots, U"_") :
 				order == 2 ? Melder_cat (U"{t__", numberOfKnots - 1, U"_, t__", numberOfKnots, U"_}") :

@@ -179,7 +179,7 @@ PointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch) {
 	try {
 		autoPointProcess point = PointProcess_create (sound -> xmin, sound -> xmax, 10);
 		double t = pitch -> xmin;
-		double addedRight = -1e300;
+		double addedRight = -1e308;
 		double globalPeak = Vector_getAbsoluteExtremum (sound, sound -> xmin, sound -> xmax, 0), peak;
 		
 		/*
@@ -261,7 +261,7 @@ PointProcess Sound_Pitch_to_PointProcess_peaks (Sound sound, Pitch pitch, int in
 	try {
 		autoPointProcess point = PointProcess_create (sound -> xmin, sound -> xmax, 10);
 		double t = pitch -> xmin;
-		double addedRight = -1e300;
+		double addedRight = -1e308;
 		/*
 		 * Cycle over all voiced intervals.
 		 */

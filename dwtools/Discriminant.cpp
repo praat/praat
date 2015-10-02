@@ -270,7 +270,7 @@ void Discriminant_getPartialDiscriminationProbability (Discriminant me,
 	double degreesOfFreedom = Discriminant_getDegreesOfFreedom (me);
 	double lambda;
 
-	*probability = 1; *chisq = 0; *ndf = 0;
+	*probability = 1.0; *chisq = 0.0; *ndf = 0;
 
 	if (k >= numberOfFunctions) {
 		return;
@@ -278,11 +278,11 @@ void Discriminant_getPartialDiscriminationProbability (Discriminant me,
 
 	lambda = NUMwilksLambda (my eigenvalues, k + 1, numberOfFunctions);
 
-	if (lambda == 1) {
+	if (lambda == 1.0) {
 		return;
 	}
 
-	*chisq = - (degreesOfFreedom + (g - p) / 2 - 1) * log (lambda);
+	*chisq = - (degreesOfFreedom + (g - p) / 2.0 - 1.0) * log (lambda);
 	*ndf = (p - k) * (g - k - 1);
 	*probability =  NUMchiSquareQ (*chisq, *ndf);
 }
@@ -397,12 +397,12 @@ void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g,
 	if (garnish) {
 		char32 llabel[40];
 		Graphics_drawInnerBox (g);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
+		Graphics_marksLeft (g, 2, true, true, false);
 		Melder_sprint (llabel,40, U"function ", d2);
-		Graphics_textLeft (g, 1, llabel);
-		Graphics_marksBottom (g, 2, 1, 1, 0);
+		Graphics_textLeft (g, true, llabel);
+		Graphics_marksBottom (g, 2, true, true, false);
 		Melder_sprint (llabel,40, U"function ", d1);
-		Graphics_textBottom (g, 1, llabel);
+		Graphics_textBottom (g, true, llabel);
 	}
 }
 
@@ -642,7 +642,7 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Discrim
 		// D^2(x) = (x - mu)' S^-1 (x - mu) + ln (determinant(S)) - 2 ln (apriori)
 
 		for (long i = 1; i <= m; i++) {
-			double norm = 0, pt_max = -1e38;
+			double norm = 0, pt_max = -1e308;
 			for (long j = 1; j <= g; j++) {
 				SSCP t = (SSCP) groups -> item[j];
 				double md = mahalanobisDistanceSq (sscpvec[j] -> data, p, thy data[i], t -> centroid, buf.peek());
@@ -767,7 +767,7 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (Disc
 
 		for (long i = 1; i <= m; i++) {
 			SSCP winner;
-			double norm = 0, pt_max = -1e38;
+			double norm = 0, pt_max = -1e308;
 			long iwinner = 1;
 			for (long k = 1; k <= p; k++) {
 				x[k] = thy data[i][k] + displacement[k];

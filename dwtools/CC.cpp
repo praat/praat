@@ -102,10 +102,10 @@ void CC_paint (I, Graphics g, double xmin, double xmax, long cmin,
 	Matrix_paintCells (thee.peek(), g, xmin, xmax, cmin, cmax, minimum, maximum);
 
 	if (garnish) {
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_textBottom (g, 1, U"Time (s)");
-		Graphics_marksLeft (g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, U"Coefficients");
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_textBottom (g, true, U"Time (s)");
+		Graphics_marksLeft (g, 2, true, true, false);
+		Graphics_textLeft (g, true, U"Coefficients");
 	}
 }
 

@@ -75,11 +75,11 @@ void PitchTier_playPart (PitchTier me, double tmin, double tmax, int hum) {
 }
 
 void PitchTier_play (PitchTier me) {
-	PitchTier_playPart (me, my xmin, my xmax, FALSE);
+	PitchTier_playPart (me, my xmin, my xmax, false);
 }
 
 void PitchTier_hum (PitchTier me) {
-	PitchTier_playPart (me, my xmin, my xmax, TRUE);
+	PitchTier_playPart (me, my xmin, my xmax, true);
 }
 
 Sound PitchTier_to_Sound_sine (PitchTier me, double tmin, double tmax, double samplingFrequency) {

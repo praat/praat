@@ -61,7 +61,7 @@ void PitchTier_stylize (PitchTier me, double frequencyResolution, int useSemiton
 	double dfmin;
 	for (;;) {
 		long i, imin = 0;
-		dfmin = 1e300;
+		dfmin = 1e308;
 		for (i = 2; i <= my points -> size - 1; i ++) {
 			RealPoint pm = (RealPoint) my points -> item [i];
 			RealPoint pl = (RealPoint) my points -> item [i - 1];
@@ -81,7 +81,7 @@ void PitchTier_stylize (PitchTier me, double frequencyResolution, int useSemiton
 	}
 }
 
-static void PitchTier_writeToSpreadsheetFile (PitchTier me, MelderFile file, int hasHeader) {
+static void PitchTier_writeToSpreadsheetFile (PitchTier me, MelderFile file, bool hasHeader) {
 	autofile f = Melder_fopen (file, "w");
 	if (hasHeader)
 		fprintf (f, "\"ooTextFile\"\n\"PitchTier\"\n%.17g %.17g %ld\n", my xmin, my xmax, my points -> size);
@@ -94,7 +94,7 @@ static void PitchTier_writeToSpreadsheetFile (PitchTier me, MelderFile file, int
 
 void PitchTier_writeToPitchTierSpreadsheetFile (PitchTier me, MelderFile file) {
 	try {
-		PitchTier_writeToSpreadsheetFile (me, file, TRUE);
+		PitchTier_writeToSpreadsheetFile (me, file, true);
 	} catch (MelderError) {
 		Melder_throw (me, U" not written to tab-separated PitchTier file.");
 	}
@@ -102,7 +102,7 @@ void PitchTier_writeToPitchTierSpreadsheetFile (PitchTier me, MelderFile file) {
 
 void PitchTier_writeToHeaderlessSpreadsheetFile (PitchTier me, MelderFile file) {
 	try {
-		PitchTier_writeToSpreadsheetFile (me, file, FALSE);
+		PitchTier_writeToSpreadsheetFile (me, file, false);
 	} catch (MelderError) {
 		Melder_throw (me, U" not written to tab-separated table file.");
 	}

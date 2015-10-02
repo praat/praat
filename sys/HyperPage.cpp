@@ -585,7 +585,7 @@ static void print (I, Graphics graphics) {
 	my printing = TRUE;
 	HyperPage_initSheetOfPaper (me);
 	my v_draw ();
-	my printing = FALSE;
+	my printing = false;
 }
 
 /********** class HyperPage **********/

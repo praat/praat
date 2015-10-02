@@ -21,65 +21,66 @@
 
 #include "Sound.h"
 
-static void draw_SpectrumHann (Graphics g, double f1, double f2, int stop, int garnish) {
-	double fmin = garnish == 1 ? 300 : 0, fmax = garnish == 1 ? 1300 : 4000, df = garnish == 1 ? 1 : 4;
-	Sound me = Sound_create (1, fmin, fmax, (long) floor ((fmax - fmin) / df) + 1, df, fmin);
-	double w = 100, f1left = f1 - w, f1right = f1 + w, f2left = f2 - w, f2right = f2 + w, halfpibysmooth = NUMpi / (w + w);
-	int i;
-	if (! me) return;
-	Graphics_setWindow (g, fmin, fmax, -0.1, 1.1);
-	for (i = 1; i <= my nx; i ++) {
-		double f = my x1 + (i - 1) * my dx;
-		my z [1] [i] = f < f1left ? 0.0 : f < f1right ? ( f1 > 0.0 ? 0.5 - 0.5 * cos (halfpibysmooth * (f - f1left)) : 1.0 ) :
-			f < f2left ? 1.0 : f < f2right ? ( f2 < fmax ? 0.5 + 0.5 * cos (halfpibysmooth * (f - f2left)) : 1.0 ) : 0.0;
+static void draw_SpectrumHann (Graphics g, double f1, double f2, bool stop, int garnish) {
+	try {
+		double fmin = garnish == 1 ? 300 : 0, fmax = garnish == 1 ? 1300 : 4000, df = garnish == 1 ? 1 : 4;
+		autoSound me = Sound_create (1, fmin, fmax, (long) floor ((fmax - fmin) / df) + 1, df, fmin);
+		double w = 100, f1left = f1 - w, f1right = f1 + w, f2left = f2 - w, f2right = f2 + w, halfpibysmooth = NUMpi / (w + w);
+		Graphics_setWindow (g, fmin, fmax, -0.1, 1.1);
+		for (int i = 1; i <= my nx; i ++) {
+			double f = my x1 + (i - 1) * my dx;
+			my z [1] [i] = f < f1left ? 0.0 : f < f1right ? ( f1 > 0.0 ? 0.5 - 0.5 * cos (halfpibysmooth * (f - f1left)) : 1.0 ) :
+				f < f2left ? 1.0 : f < f2right ? ( f2 < fmax ? 0.5 + 0.5 * cos (halfpibysmooth * (f - f2left)) : 1.0 ) : 0.0;
+		}
+		if (stop)
+			for (int i = 1; i <= my nx; i ++)
+				my z [1] [i] = 1.0 - my z [1] [i];
+		if (garnish) {
+			Graphics_drawInnerBox (g);
+			Graphics_textLeft (g, true, U"Amplitude filter %H (%f)");
+			Graphics_markLeft (g, 0.0, true, true, false, nullptr);
+			Graphics_markLeft (g, 1.0, true, true, false, nullptr);
+		}
+		if (garnish == 1) {
+			Graphics_textBottom (g, true, U"Frequency %f");
+			Graphics_markBottom (g, f1left, false, true, true, U"%f__1_-%w");
+			Graphics_markBottom (g, f1, false, true, true, U"%f__1_");
+			Graphics_markBottom (g, f1right, false, true, true, U"%f__1_+%w");
+			Graphics_markBottom (g, f2left, false, true, true, U"%f__2_-%w");
+			Graphics_markBottom (g, f2, false, true, true, U"%f__2_");
+			Graphics_markBottom (g, f2right, false, true, true, U"%f__2_+%w");
+			Graphics_markRight (g, 1.0, false, true, false, U"0 dB");
+			Graphics_markLeft (g, 0.5, true, true, true, nullptr);
+			Graphics_markRight (g, 0.5, false, true, false, U"-6 dB");
+		}
+		if (garnish == 2) {
+			Graphics_textBottom (g, true, U"Frequency %f (Hz)");
+			Graphics_markBottom (g, 0.0, true, true, false, nullptr);
+			Graphics_markBottom (g, 500.0, true, true, false, nullptr);
+			Graphics_markBottom (g, 1000.0, true, true, false, nullptr);
+			Graphics_markBottom (g, 2000.0, true, true, false, nullptr);
+			Graphics_markBottom (g, 4000.0, true, true, false, nullptr);
+		}
+		Graphics_setColour (g, stop ? Graphics_BLUE : Graphics_RED);
+		Sound_draw (me.get(), g, 0.0, 0.0, -0.1, 1.1, false, U"curve");
+		Graphics_setColour (g, Graphics_BLACK);
+	} catch (MelderError) {
+		Melder_clearError ();
 	}
-	if (stop)
-		for (i = 1; i <= my nx; i ++)
-			my z [1] [i] = 1.0 - my z [1] [i];
-	if (garnish) {
-		Graphics_drawInnerBox (g);
-		Graphics_textLeft (g, TRUE, U"Amplitude filter %H (%f)");
-		Graphics_markLeft (g, 0, TRUE, TRUE, FALSE, NULL);
-		Graphics_markLeft (g, 1, TRUE, TRUE, FALSE, NULL);
-	}
-	if (garnish == 1) {
-		Graphics_textBottom (g, TRUE, U"Frequency %f");
-		Graphics_markBottom (g, f1left, FALSE, TRUE, TRUE, U"%f__1_-%w");
-		Graphics_markBottom (g, f1, FALSE, TRUE, TRUE, U"%f__1_");
-		Graphics_markBottom (g, f1right, FALSE, TRUE, TRUE, U"%f__1_+%w");
-		Graphics_markBottom (g, f2left, FALSE, TRUE, TRUE, U"%f__2_-%w");
-		Graphics_markBottom (g, f2, FALSE, TRUE, TRUE, U"%f__2_");
-		Graphics_markBottom (g, f2right, FALSE, TRUE, TRUE, U"%f__2_+%w");
-		Graphics_markRight (g, 1, FALSE, TRUE, FALSE, U"0 dB");
-		Graphics_markLeft (g, 0.5, TRUE, TRUE, TRUE, NULL);
-		Graphics_markRight (g, 0.5, FALSE, TRUE, FALSE, U"-6 dB");
-	}
-	if (garnish == 2) {
-		Graphics_textBottom (g, TRUE, U"Frequency %f (Hz)");
-		Graphics_markBottom (g, 0, TRUE, TRUE, FALSE, NULL);
-		Graphics_markBottom (g, 500, TRUE, TRUE, FALSE, NULL);
-		Graphics_markBottom (g, 1000, TRUE, TRUE, FALSE, NULL);
-		Graphics_markBottom (g, 2000, TRUE, TRUE, FALSE, NULL);
-		Graphics_markBottom (g, 4000, TRUE, TRUE, FALSE, NULL);
-	}
-	Graphics_setColour (g, stop ? Graphics_BLUE : Graphics_RED);
-	Sound_draw (me, g, 0, 0, -0.1, 1.1, FALSE, U"curve");
-	Graphics_setColour (g, Graphics_BLACK);
-	forget (me);
 }
 static void draw_SpectrumPassHann (Graphics g) {
-	draw_SpectrumHann (g, 500, 1000, 0, 1);
+	draw_SpectrumHann (g, 500.0, 1000.0, false, 1);
 }
 static void draw_SpectrumPassHann_decompose (Graphics g) {
-	draw_SpectrumHann (g, 0, 500, 0, 2);
-	draw_SpectrumHann (g, 500, 1000, 0, 0);
-	draw_SpectrumHann (g, 1000, 2000, 0, 0);
-	draw_SpectrumHann (g, 2000, 4000, 0, 0);
+	draw_SpectrumHann (g, 0.0, 500.0, false, 2);
+	draw_SpectrumHann (g, 500, 1000, false, 0);
+	draw_SpectrumHann (g, 1000, 2000, false, 0);
+	draw_SpectrumHann (g, 2000, 4000, false, 0);
 }
 static void draw_SpectrumStopHann (Graphics g) { draw_SpectrumHann (g, 500, 1000, 1, 1); }
 static void draw_SpectrumStopHann_decompose (Graphics g) {
-	draw_SpectrumHann (g, 500, 1000, 0, 2);
-	draw_SpectrumHann (g, 500, 1000, 1, 0);
+	draw_SpectrumHann (g, 500.0, 1000.0, false, 2);
+	draw_SpectrumHann (g, 500.0, 1000.0, true, 0);
 }
 
 void manual_spectrum_init (ManPages me);
