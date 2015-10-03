@@ -411,10 +411,10 @@ void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, dou
 			}
 		}
 	}
-	Graphics_setPercentSignIsItalic (g, TRUE);
-	Graphics_setNumberSignIsBold (g, TRUE);
-	Graphics_setCircumflexIsSuperscript (g, TRUE);
-	Graphics_setUnderscoreIsSubscript (g, TRUE);
+	Graphics_setPercentSignIsItalic (g, true);
+	Graphics_setNumberSignIsBold (g, true);
+	Graphics_setCircumflexIsSuperscript (g, true);
+	Graphics_setUnderscoreIsSubscript (g, true);
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);

@@ -180,7 +180,7 @@ oo_DEFINE_CLASS (ExperimentMFC, Daata)
 	oo_DIR (rootDirectory)
 	#if oo_READING
 		MelderDir_copy (& Data_directoryBeingRead, & rootDirectory);
-		if (formatVersion < 4) stimuliAreSounds = TRUE;
+		if (formatVersion < 4) stimuliAreSounds = true;
 	#endif
 
 oo_END_CLASS (ExperimentMFC)

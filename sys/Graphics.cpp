@@ -135,7 +135,7 @@ void Graphics_init (Graphics me, int resolution) {
 	my font = kGraphics_font_HELVETICA;
 	my fontSize = 10;
 	my fontStyle = Graphics_NORMAL;
-	my record = NULL;
+	my record = nullptr;
 	my irecord = my nrecord = 0;
 	my percentSignIsItalic = 1;
 	my numberSignIsBold = 1;

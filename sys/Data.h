@@ -43,7 +43,7 @@ typedef struct structData_Description {
 Thing_define (Daata, Thing) {
 	virtual void v_copy (Any data_to);
 	virtual bool v_equal (Any otherData);
-	virtual Data_Description v_description () { return NULL; }
+	virtual Data_Description v_description () { return nullptr; }
 	virtual bool v_writable () { return true; }
 	virtual bool v_canWriteAsEncoding (int outputEncoding);
 	virtual void v_writeText (MelderFile openFile);
@@ -64,14 +64,14 @@ Thing_define (Daata, Thing) {
 	virtual bool v_hasGetDy        () { return false; }   virtual double        v_getDy        ()                      { return NUMundefined; }
 	virtual bool v_hasGetX         () { return false; }   virtual double        v_getX         (long ix)               { return NUMundefined; (void) ix;   }
 	virtual bool v_hasGetY         () { return false; }   virtual double        v_getY         (long iy)               { return NUMundefined; (void) iy;   }
-	virtual bool v_hasGetRowStr    () { return false; }   virtual const char32 *v_getRowStr    (long irow)             { return NULL;         (void) irow; }
-	virtual bool v_hasGetColStr    () { return false; }   virtual const char32 *v_getColStr    (long icol)             { return NULL;         (void) icol; }
+	virtual bool v_hasGetRowStr    () { return false; }   virtual const char32 *v_getRowStr    (long irow)             { return nullptr;      (void) irow; }
+	virtual bool v_hasGetColStr    () { return false; }   virtual const char32 *v_getColStr    (long icol)             { return nullptr;      (void) icol; }
 	virtual bool v_hasGetCell      () { return false; }   virtual double        v_getCell      ()                      { return NUMundefined; }
-	virtual bool v_hasGetCellStr   () { return false; }   virtual const char32 *v_getCellStr   ()                      { return NULL; }
+	virtual bool v_hasGetCellStr   () { return false; }   virtual const char32 *v_getCellStr   ()                      { return nullptr; }
 	virtual bool v_hasGetVector    () { return false; }   virtual double        v_getVector    (long irow, long icol)  { return NUMundefined; (void) irow; (void) icol; }
-	virtual bool v_hasGetVectorStr () { return false; }   virtual const char32 *v_getVectorStr (long icol)             { return NULL;         (void) icol; }
+	virtual bool v_hasGetVectorStr () { return false; }   virtual const char32 *v_getVectorStr (long icol)             { return nullptr;      (void) icol; }
 	virtual bool v_hasGetMatrix    () { return false; }   virtual double        v_getMatrix    (long irow, long icol)  { return NUMundefined; (void) irow; (void) icol; }
-	virtual bool v_hasGetMatrixStr () { return false; }   virtual const char32 *v_getMatrixStr (long irow, long icol)  { return NULL;         (void) irow; (void) icol; }
+	virtual bool v_hasGetMatrixStr () { return false; }   virtual const char32 *v_getMatrixStr (long irow, long icol)  { return nullptr;      (void) irow; (void) icol; }
 	virtual bool v_hasGetFunction0 () { return false; }   virtual double        v_getFunction0 ()                      { return NUMundefined; }
 	virtual bool v_hasGetFunction1 () { return false; }   virtual double        v_getFunction1 (long irow, double x)   { return NUMundefined; (void) irow; (void) x; }
 	virtual bool v_hasGetFunction2 () { return false; }   virtual double        v_getFunction2 (double x, double y)    { return NUMundefined; (void) x; (void) y; }
@@ -87,7 +87,7 @@ Daata _Data_copy (Daata me);
 	Message:
 		"return a deep copy of yourself."
 	Postconditions:
-		result -> name == NULL;	  // the only attribute NOT copied
+		result -> name == nullptr;	  // the only attribute NOT copied
 */
 
 bool Data_equal (Daata data1, Daata data2);
@@ -290,11 +290,11 @@ Defining a file-type recognizer:
 		if (nread >= 24 && strnequ (& header [0], ".snd", 4))
 			return Sound_readFromSunAudioFile (fileName);
 		else
-			return NULL;
+			return nullptr;
 	}
 	From this example, we see that if the file is recognized, it should be read immediately,
 	and the resulting object (always a descendant of class Data) should be returned.
-	We also see that the return value NULL is used for notifying Data_readFromFile
+	We also see that the return value nullptr is used for notifying Data_readFromFile
 	of the fact that the file is not a Sun audio file.
 Registering a file-type recognizer:
 	You would put a statement like the following in the initialization section of your program:
@@ -307,15 +307,15 @@ Daata Data_readFromFile (MelderFile file);
 Purpose:
 	to read a file with data of any kind.
 Return value:
-	the object read from the file fs,
-	or NULL if the file was not recognized (an error message is queued in that case).
+	the object read from `file`.
+Failure:
+	the file was not recognized.
 Behaviour:
 	Data_readFromFile first checks whether the file is a text file
 	that is readable by Data_readFromTextFile, or a binary file
 	written by Data_writeToBinaryFile, or a file as written by Data_writeToLispFile.
 	If one of these succeeds, the file is read and the resulting object is returned.
 	If not, the recognizers installed with Data_recognizeFileType are tried.
-	If this also fails, Data_readFromFile returns NULL.
 */
 
 extern structMelderDir Data_directoryBeingRead;

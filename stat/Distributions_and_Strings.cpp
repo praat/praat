@@ -33,7 +33,7 @@ Strings Distributions_to_Strings (Distributions me, long column, long numberOfSt
 		thy strings = NUMvector <char32*> (1, numberOfStrings);
 		for (long istring = 1; istring <= numberOfStrings; istring ++) {
 			char32 *string;
-			Distributions_peek (me, column, & string, NULL);
+			Distributions_peek (me, column, & string, nullptr);
 			thy strings [istring] = Melder_dup (string);
 		}
 		return thee.transfer();

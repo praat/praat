@@ -77,7 +77,7 @@ Thing_implement (GuiScrollBar, GuiControl, 0);
     return d_userData;
 }
 - (void) setUserData: (GuiThing) userData {
-	Melder_assert (userData == NULL || Thing_isa (userData, classGuiScrollBar));
+	Melder_assert (userData == nullptr || Thing_isa (userData, classGuiScrollBar));
 	d_userData = static_cast <GuiScrollBar> (userData);
 }
 - (void) setMinimum:(double)minimum maximum:(double)maximum value:(double)value sliderSize:(double)sliderSize increment:(double)increment pageIncrement:(double)pageIncrement {
@@ -244,7 +244,7 @@ GuiScrollBar GuiScrollBar_create (GuiForm parent, int left, int right, int top, 
 			XmNsliderSize, (int) sliderSize,
 			XmNincrement, (int) increment,
 			XmNpageIncrement, (int) pageIncrement,
-			NULL);
+			nullptr);
 		_GuiObject_setUserData (my d_widget, me);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		XtAddCallback (my d_widget, XmNvalueChangedCallback, _GuiMotifScrollBar_valueChangedCallback, (XtPointer) me);
@@ -259,7 +259,7 @@ GuiScrollBar GuiScrollBar_create (GuiForm parent, int left, int right, int top, 
 			XmNsliderSize, (int) sliderSize,
 			XmNincrement, (int) increment,
 			XmNpageIncrement, (int) pageIncrement,
-			NULL);
+			nullptr);
 		_GuiObject_setUserData (my d_widget, me);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		XtAddCallback (my d_widget, XmNvalueChangedCallback, _GuiMotifScrollBar_valueChangedCallback, (XtPointer) me);
@@ -324,9 +324,9 @@ void GuiScrollBar_set (GuiScrollBar me, double minimum, double maximum, double v
 			pageIncrement: NUMdefined (pageIncrement) ? pageIncrement : [scroller m_pageIncrement]];
 	#elif motif
 		if (NUMdefined (minimum))
-			XtVaSetValues (my d_widget, XmNminimum, (int) minimum, NULL);
+			XtVaSetValues (my d_widget, XmNminimum, (int) minimum, nullptr);
 		if (NUMdefined (maximum))
-			XtVaSetValues (my d_widget, XmNmaximum, (int) maximum, NULL);
+			XtVaSetValues (my d_widget, XmNmaximum, (int) maximum, nullptr);
 		int oldValue, oldSliderSize, oldIncrement, oldPageIncrement;
 		XmScrollBarGetValues (my d_widget, & oldValue, & oldSliderSize, & oldIncrement, & oldPageIncrement);
 		XmScrollBarSetValues (my d_widget,

@@ -88,7 +88,7 @@ Matrix Sound_to_Harmonicity_GNE (Sound me,
 		 */
 		autoLPC lpc = Sound_to_LPC_auto (original10k.peek(), 13, 30e-3, 10e-3, 1e9);
 		autoSound flat = LPC_and_Sound_filterInverse (lpc.peek(), original10k.peek());
-		autoSpectrum flatSpectrum = Sound_to_Spectrum (flat.peek(), TRUE);
+		autoSpectrum flatSpectrum = Sound_to_Spectrum (flat.peek(), true);
 		autoSpectrum hilbertSpectrum = Data_copy (flatSpectrum.peek());
 		for (long col = 1; col <= hilbertSpectrum -> nx; col ++) {
 			hilbertSpectrum -> z [1] [col] = flatSpectrum -> z [2] [col];
@@ -114,11 +114,11 @@ Matrix Sound_to_Harmonicity_GNE (Sound me,
 			autoSound band = Spectrum_to_Sound (bandSpectrum.peek());
 			/*if (graphics) {
 				Graphics_clearWs (graphics);
-				Spectrum_draw (bandSpectrum, graphics, 0, 5000, 0, 0, TRUE);
+				Spectrum_draw (bandSpectrum, graphics, 0, 5000, 0, 0, true);
 			}*/
 			Melder_monitor (ienvelope / (nenvelopes + 1.0), U"Computing Hilbert envelope ", ienvelope, U"...");
 			autoSound hilbertBand = Spectrum_to_Sound (hilbertBandSpectrum.peek());
-			envelope [ienvelope].reset (Sound_extractPart (band.peek(), 0, duration, kSound_windowShape_RECTANGULAR, 1.0, TRUE));
+			envelope [ienvelope].reset (Sound_extractPart (band.peek(), 0, duration, kSound_windowShape_RECTANGULAR, 1.0, true));
 			/*
 			 * 3c: Compute the Hilbert envelope of the band-passed flat signal.
 			 */
@@ -141,7 +141,7 @@ Matrix Sound_to_Harmonicity_GNE (Sound me,
 		autoMatrix cc = Matrix_createSimple (nenvelopes, nenvelopes);
 		for (long row = 2; row <= nenvelopes; row ++) {
 			for (long col = 1; col <= row - 1; col ++) {
-				autoSound crossCorrelation = Sounds_crossCorrelate_short (envelope [row].peek(), envelope [col].peek(), -3.1e-4, 3.1e-4, TRUE);
+				autoSound crossCorrelation = Sounds_crossCorrelate_short (envelope [row].peek(), envelope [col].peek(), -3.1e-4, 3.1e-4, true);
 				/*
 				 * Step 5: the maximum of each correlation function
 				 */

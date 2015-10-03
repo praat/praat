@@ -102,20 +102,20 @@ void GuiOptionMenu_init (GuiOptionMenu me, GuiForm parent, int left, int right, 
 
 
 	#elif motif
-		my d_xmMenuBar = XmCreateMenuBar (parent -> d_widget, "UiOptionMenu", NULL, 0);
+		my d_xmMenuBar = XmCreateMenuBar (parent -> d_widget, "UiOptionMenu", nullptr, 0);
 		XtVaSetValues (my d_xmMenuBar, XmNx, left - 4, XmNy, top - 4
 			#if mac
 				- 1
 			#endif
-			, XmNwidth, right - left + 8, XmNheight, bottom - top + 8, NULL);
-		my d_xmCascadeButton = XmCreateCascadeButton (my d_xmMenuBar, "choice", NULL, 0);
-		my d_widget = XmCreatePulldownMenu (my d_xmMenuBar, "choice", NULL, 0);
+			, XmNwidth, right - left + 8, XmNheight, bottom - top + 8, nullptr);
+		my d_xmCascadeButton = XmCreateCascadeButton (my d_xmMenuBar, "choice", nullptr, 0);
+		my d_widget = XmCreatePulldownMenu (my d_xmMenuBar, "choice", nullptr, 0);
 		if (flags & GuiMenu_INSENSITIVE)
 			XtSetSensitive (my d_widget, False);
-		XtVaSetValues (my d_xmCascadeButton, XmNsubMenuId, my d_widget, NULL);
+		XtVaSetValues (my d_xmCascadeButton, XmNsubMenuId, my d_widget, nullptr);
 		XtManageChild (my d_xmCascadeButton);
-		XtVaSetValues (my d_xmMenuBar, XmNwidth, right - left + 8, NULL);   // BUG: twice?
-		XtVaSetValues (my d_xmCascadeButton, XmNx, 4, XmNy, 4, XmNwidth, right - left, XmNheight, bottom - top, NULL);
+		XtVaSetValues (my d_xmMenuBar, XmNwidth, right - left + 8, nullptr);   // BUG: twice?
+		XtVaSetValues (my d_xmCascadeButton, XmNx, 4, XmNy, 4, XmNwidth, right - left, XmNheight, bottom - top, nullptr);
 	#endif
 
 	#if gtk
@@ -145,13 +145,13 @@ static void cb_optionChanged (GuiObject w, XtPointer void_me, XtPointer call) {
 	for (int i = 1; i <= my d_options -> size; i ++) {
 		GuiMenuItem item = static_cast <GuiMenuItem> (my d_options -> item [i]);
 		if (item -> d_widget == w) {
-			XtVaSetValues (my d_xmCascadeButton, XmNlabelString, Melder_peek32to8 (item -> d_widget -> name), NULL);
-			XmToggleButtonSetState (item -> d_widget, TRUE, FALSE);
+			XtVaSetValues (my d_xmCascadeButton, XmNlabelString, Melder_peek32to8 (item -> d_widget -> name), nullptr);
+			XmToggleButtonSetState (item -> d_widget, true, false);
 			if (Melder_debug == 11) {
 				Melder_warning (i, U" \"", item -> d_widget -> name, U"\"");
 			}
 		} else {
-			XmToggleButtonSetState (item -> d_widget, FALSE, FALSE);
+			XmToggleButtonSetState (item -> d_widget, false, false);
 		}
 	}
 }
@@ -162,7 +162,7 @@ void GuiOptionMenu_addOption (GuiOptionMenu me, const char32 *text) {
 		gtk_combo_box_append_text (GTK_COMBO_BOX (my d_widget), Melder_peek32to8 (text));
 	#elif motif
 		GuiMenuItem menuItem = Thing_new (GuiMenuItem);
-		menuItem -> d_widget = XtVaCreateManagedWidget (Melder_peek32to8 (text), xmToggleButtonWidgetClass, my d_widget, NULL);
+		menuItem -> d_widget = XtVaCreateManagedWidget (Melder_peek32to8 (text), xmToggleButtonWidgetClass, my d_widget, nullptr);
 		XtAddCallback (menuItem -> d_widget, XmNvalueChangedCallback, cb_optionChanged, (XtPointer) me);
 		Collection_addItem (my d_options, menuItem);
     #elif cocoa
@@ -200,7 +200,7 @@ void GuiOptionMenu_setValue (GuiOptionMenu me, int value) {
 			GuiMenuItem menuItem = static_cast <GuiMenuItem> (my d_options -> item [i]);
 			XmToggleButtonSetState (menuItem -> d_widget, i == value, False);
 			if (i == value) {
-				XtVaSetValues (my d_xmCascadeButton, XmNlabelString, Melder_peek32to8 (menuItem -> d_widget -> name), NULL);
+				XtVaSetValues (my d_xmCascadeButton, XmNlabelString, Melder_peek32to8 (menuItem -> d_widget -> name), nullptr);
 			}
 		}
 	#endif

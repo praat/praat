@@ -91,7 +91,7 @@ static void initPage (GraphicsPostscript me) {
 	}
 	my d_printf (my d_file, "%.6g dup scale\n", 72.0 * my magnification / my resolution);
 	if (my job) my d_printf (my d_file, "%%%%EndPageSetup\n");
-	my lastFid = NULL;
+	my lastFid = nullptr;
 }
 
 static void exitPage (GraphicsPostscript me) {
@@ -145,7 +145,7 @@ Graphics Graphics_create_postscriptjob (MelderFile file, int resolution, enum kG
 	else my paperWidth = 595 / 72.0, my paperHeight = 842 / 72.0;
 	my landscape = rotation == kGraphicsPostscript_orientation_LANDSCAPE;
 	my magnification = magnification;
-	my includeFonts = TRUE;
+	my includeFonts = true;
 	my d_file = Melder_fopen (file, "w");
 	/*
 	 * The Device Coordinates are the PostScript user coordinates.
@@ -167,7 +167,7 @@ Graphics Graphics_create_postscriptjob (MelderFile file, int resolution, enum kG
 	my d_printf (my d_file, "%%!PS-Adobe-3.0\n");
 	my d_printf (my d_file, "%%%%Creator: Praat Shell 4.2\n");
 	my d_printf (my d_file, "%%%%Title: %s\n", Melder_peek32to8 (MelderFile_name (file)));
-	today = time (NULL);
+	today = time (nullptr);
 	my d_printf (my d_file, "%%%%CreationDate: %s", ctime (& today));   // contains newline symbol
 	my d_printf (my d_file, "%%%%PageOrder: Special\n");
 	my d_printf (my d_file, "%%%%Pages: (atend)\n");
@@ -235,7 +235,7 @@ Graphics Graphics_create_epsfile (MelderFile file, int resolution, enum kGraphic
 	 * This leaves us room to show a warning that should keep users from thinking anything is wrong.
 	 */
 	my d_printf (my d_file, "%%%%Title: NO SCREEN PREVIEW, BUT WILL PRINT CORRECTLY\n");
-	today = time (NULL);
+	today = time (nullptr);
 	my d_printf (my d_file, "%%%%CreationDate: %s", ctime (& today));   /* Contains newline symbol. */
 	my d_printf (my d_file, "%%%%EndComments\n");
 	downloadPrologAndSetUp (me.peek());
@@ -246,7 +246,7 @@ Graphics Graphics_create_epsfile (MelderFile file, int resolution, enum kGraphic
 #ifndef UNIX
 Graphics Graphics_create_postscriptprinter (void) {
 	GraphicsPostscript me = Thing_new (GraphicsPostscript);
-	my postScript = TRUE, my languageLevel = 2;
+	my postScript = true, my languageLevel = 2;
 	my job = false, my eps = false, my printer = true;
 	my d_printf = Printer_postScript_printf;
 	Graphics_init (me, thePrinter. resolution);   // virtual resolution

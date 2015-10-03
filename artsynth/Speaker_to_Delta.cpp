@@ -19,7 +19,7 @@
 
 #include "Art_Speaker.h"
 #include "Speaker_to_Delta.h"
-#define SMOOTH_LUNGS  TRUE
+#define SMOOTH_LUNGS  true
 #define FIRST_TUBE  7
 
 Delta Speaker_to_Delta (Speaker me) {

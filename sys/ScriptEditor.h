@@ -57,7 +57,7 @@ ScriptEditor ScriptEditor_createFromScript (
 	Script script
 );
 
-int ScriptEditors_dirty (void);   // are there any modified and unsaved scripts? Ask before quitting the program.
+bool ScriptEditors_dirty (void);   // are there any modified and unsaved scripts? Ask before quitting the program.
 
 /* End of file ScriptEditor.h */
 #endif

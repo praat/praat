@@ -62,7 +62,7 @@ void Distributions_peek (Distributions me, long column, char32 **string, long *n
 			if (rand <= sum) break;
 		}
 	} while (irow > my numberOfRows);   // guard against rounding errors
-	if (my rowLabels [irow] == NULL)
+	if (! my rowLabels [irow])
 		Melder_throw (me, U": no string in row ", irow, U".");
 	if (string)
 		*string = my rowLabels [irow];
@@ -98,8 +98,8 @@ static void unicize (Distributions me) {
 	/* Must have been sorted beforehand. */
 	long nrow = 0, ifrom = 1;
 	for (long irow = 1; irow <= my numberOfRows; irow ++) {
-		if (irow == my numberOfRows || (my rowLabels [irow] == NULL) != (my rowLabels [irow + 1] == NULL) ||
-		    (my rowLabels [irow] != NULL && ! str32equ (my rowLabels [irow], my rowLabels [irow + 1])))
+		if (irow == my numberOfRows || (my rowLabels [irow] == nullptr) != (my rowLabels [irow + 1] == nullptr) ||
+		    (my rowLabels [irow] != nullptr && ! str32equ (my rowLabels [irow], my rowLabels [irow + 1])))
 		{
 			/*
 			 * Detected a change.
@@ -111,8 +111,8 @@ static void unicize (Distributions me) {
 			 */
 			if (ifrom != nrow) {
 				Melder_free (my rowLabels [nrow]);
-				my rowLabels [nrow] = my rowLabels [ifrom];   /* Surface copy. */
-				my rowLabels [ifrom] = NULL;   /* Undangle. */
+				my rowLabels [nrow] = my rowLabels [ifrom];   // surface copy
+				my rowLabels [ifrom] = nullptr;   // undangle
 				for (long icol = 1; icol <= my numberOfColumns; icol ++)
 					my data [nrow] [icol] = my data [ifrom] [icol];
 			}

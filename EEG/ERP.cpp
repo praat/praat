@@ -88,12 +88,12 @@ void ERP_drawChannel_number (ERP me, Graphics graphics, long channelNumber, doub
 		Graphics_textBottom (graphics, true, U"Time (s)");
 		Graphics_marksBottom (graphics, 2, true, true, false);
 		if (0.0 > tmin && 0.0 < tmax)
-			Graphics_markBottom (graphics, 0.0, true, true, true, NULL);
-		Graphics_markLeft (graphics, vmin, true, true, false, NULL);
-		Graphics_markLeft (graphics, vmax, true, true, false, NULL);
-			Graphics_markBottom (graphics, 0.0, true, true, true, NULL);
+			Graphics_markBottom (graphics, 0.0, true, true, true, nullptr);
+		Graphics_markLeft (graphics, vmin, true, true, false, nullptr);
+		Graphics_markLeft (graphics, vmax, true, true, false, nullptr);
+			Graphics_markBottom (graphics, 0.0, true, true, true, nullptr);
 		if (vmin != 0.0 && vmax != 0.0 && (vmin > 0.0) != (vmax > 0.0)) {
-			Graphics_markLeft (graphics, 0.0, true, true, true, NULL);
+			Graphics_markLeft (graphics, 0.0, true, true, true, nullptr);
 		}
 	}
 

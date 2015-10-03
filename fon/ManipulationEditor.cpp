@@ -324,7 +324,7 @@ static void menu_cb_stylizePitch_2st (EDITOR_ARGS) {
 	Manipulation ana = (Manipulation) my data;
 	if (! ana -> pitch) return;
 	Editor_save (me, U"Stylize pitch");
-	PitchTier_stylize (ana -> pitch.get(), 2.0, TRUE);
+	PitchTier_stylize (ana -> pitch.get(), 2.0, true);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }

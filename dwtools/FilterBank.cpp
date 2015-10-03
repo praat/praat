@@ -876,7 +876,7 @@ static MelFilter MFCC_to_MelFilter2 (MFCC me, long first_cc, long last_cc, doubl
 			Melder_throw (U"MFCC_to_MelFilter: coefficients must be in interval [1,", my maximumNumberOfCoefficients, U"].");
 		}
 		autoNUMmatrix<double> dct (NUMcosinesTable (first_cc, last_cc, nf), first_cc, 1); // TODO ??
-		//if ((dct = NUMcosinesTable (first_cc, last_cc, nf)) == NULL) return NULL;
+		//if ((dct = NUMcosinesTable (first_cc, last_cc, nf)) == nullptr) return nullptr;
 
 		autoMelFilter thee = MelFilter_create (my xmin, my xmax, my nx, my dx, my x1, fmin, fmax, nf, df_mel, f1_mel);
 
@@ -933,7 +933,7 @@ static double gaussian_window_squared_correction (long n) {
 
 static Matrix Sound_to_spectralpower (Sound me) {
 	try {
-		autoSpectrum s = Sound_to_Spectrum (me, TRUE);
+		autoSpectrum s = Sound_to_Spectrum (me, true);
 		autoMatrix thee = Matrix_create (s -> xmin, s -> xmax, s -> nx, s -> dx, s -> x1, 1, 1, 1, 1, 1);
 		double scale = 2.0 * s -> dx / (my xmax - my xmin);
 

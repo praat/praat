@@ -25,7 +25,7 @@
  * pb 2006/02/20 corrected bingeti3, bingeti3LE, binputi3, binputi3LE
  * pb 2006/03/28 support for systems where a long is not 32 bits and a short is not 16 bits
  * pb 2007/07/21 MelderReadString
- * pb 2007/08/14 check for NULL pointer before Melder_isValidAscii
+ * pb 2007/08/14 check for null pointer before Melder_isValidAscii
  * pb 2009/03/18 modern enums
  * fb 2010/02/26 UTF-16 via bin(get|put)utf16()
  * pb 2010/03/09 more support for Unicode values above 0xFFFF
@@ -80,7 +80,7 @@ static long getInteger (MelderReadText me) {
 	if (i >= 40)
 		Melder_throw (U"Found long text while looking for an integer in text (line ", MelderReadText_getLineNumber (me), U").");
 	buffer [i + 1] = '\0';
-	return strtol (buffer, NULL, 10);
+	return strtol (buffer, nullptr, 10);
 }
 
 static unsigned long getUnsigned (MelderReadText me) {
@@ -119,7 +119,7 @@ static unsigned long getUnsigned (MelderReadText me) {
 	if (i >= 40)
 		Melder_throw (U"Found long text while searching for an unsigned integer in text (line ", MelderReadText_getLineNumber (me), U").");
 	buffer [i + 1] = '\0';
-	return strtoul (buffer, NULL, 10);
+	return strtoul (buffer, nullptr, 10);
 }
 
 static double getReal (MelderReadText me) {
@@ -379,45 +379,45 @@ void texputintro (MelderFile file, const char32 *s1, const char32 *s2, const cha
 
 void texputi1 (MelderFile file, int i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
-	MelderFile_write (file, file -> verbose ? U" = " : NULL, i, file -> verbose ? U" " : NULL);
+	MelderFile_write (file, file -> verbose ? U" = " : nullptr, i, file -> verbose ? U" " : nullptr);
 }
 void texputi2 (MelderFile file, int i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
-	MelderFile_write (file, file -> verbose ? U" = " : NULL, i, file -> verbose ? U" " : NULL);
+	MelderFile_write (file, file -> verbose ? U" = " : nullptr, i, file -> verbose ? U" " : nullptr);
 }
 void texputi4 (MelderFile file, long i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
-	MelderFile_write (file, file -> verbose ? U" = " : NULL, i, file -> verbose ? U" " : NULL);
+	MelderFile_write (file, file -> verbose ? U" = " : nullptr, i, file -> verbose ? U" " : nullptr);
 }
 void texputu1 (MelderFile file, unsigned int u, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
-	MelderFile_write (file, file -> verbose ? U" = " : NULL, u, file -> verbose ? U" " : NULL);
+	MelderFile_write (file, file -> verbose ? U" = " : nullptr, u, file -> verbose ? U" " : nullptr);
 }
 void texputu2 (MelderFile file, unsigned int u, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
-	MelderFile_write (file, file -> verbose ? U" = " : NULL, u, file -> verbose ? U" " : NULL);
+	MelderFile_write (file, file -> verbose ? U" = " : nullptr, u, file -> verbose ? U" " : nullptr);
 }
 void texputu4 (MelderFile file, unsigned long u, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
-	MelderFile_write (file, file -> verbose ? U" = " : NULL, u, file -> verbose ? U" " : NULL);
+	MelderFile_write (file, file -> verbose ? U" = " : nullptr, u, file -> verbose ? U" " : nullptr);
 }
 void texputr4 (MelderFile file, double x, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
-	MelderFile_write (file, file -> verbose ? U" = " : NULL, Melder_single (x), file -> verbose ? U" " : NULL);
+	MelderFile_write (file, file -> verbose ? U" = " : nullptr, Melder_single (x), file -> verbose ? U" " : nullptr);
 }
 void texputr8 (MelderFile file, double x, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
-	MelderFile_write (file, file -> verbose ? U" = " : NULL, x, file -> verbose ? U" " : NULL);
+	MelderFile_write (file, file -> verbose ? U" = " : nullptr, x, file -> verbose ? U" " : nullptr);
 }
 void texputc8 (MelderFile file, fcomplex z, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
-	MelderFile_write (file, file -> verbose ? U" = " : NULL, Melder_single (z.re),
-		file -> verbose ? U" + " : U" ", Melder_single (z.im), file -> verbose ? U" i " : NULL);
+	MelderFile_write (file, file -> verbose ? U" = " : nullptr, Melder_single (z.re),
+		file -> verbose ? U" + " : U" ", Melder_single (z.im), file -> verbose ? U" i " : nullptr);
 }
 void texputc16 (MelderFile file, dcomplex z, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
-	MelderFile_write (file, file -> verbose ? U" = " : NULL, z.re,
-		file -> verbose ? U" + " : U" ", z.im, file -> verbose ? U" i " : NULL);
+	MelderFile_write (file, file -> verbose ? U" = " : nullptr, z.re,
+		file -> verbose ? U" + " : U" ", z.im, file -> verbose ? U" i " : nullptr);
 }
 void texpute1 (MelderFile file, int i, const char32 * (*getText) (int), const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
@@ -429,20 +429,20 @@ void texpute2 (MelderFile file, int i, const char32 * (*getText) (int), const ch
 }
 void texputeb (MelderFile file, bool i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
-	MelderFile_write (file, file -> verbose ? U" = " : NULL, i ? U"<true>" : U"<false>", file -> verbose ? U" " : NULL);
+	MelderFile_write (file, file -> verbose ? U" = " : nullptr, i ? U"<true>" : U"<false>", file -> verbose ? U" " : nullptr);
 }
 void texputeq (MelderFile file, bool i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
-	MelderFile_write (file, file -> verbose ? U"? " : NULL, i ? U"<yes>" : U"<no>", file -> verbose ? U" " : NULL);
+	MelderFile_write (file, file -> verbose ? U"? " : nullptr, i ? U"<yes>" : U"<no>", file -> verbose ? U" " : nullptr);
 }
 void texputex (MelderFile file, bool i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
-	MelderFile_write (file, file -> verbose ? U"? " : NULL, i ? U"<exists>" : U"<absent>", file -> verbose ? U" " : NULL);
+	MelderFile_write (file, file -> verbose ? U"? " : nullptr, i ? U"<exists>" : U"<absent>", file -> verbose ? U" " : nullptr);
 }
 void texputs1 (MelderFile file, const char *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = \"" : U"\"");
-	if (s != NULL) {
+	if (s) {
 		char c;
 		while ((c = *s ++) != '\0') {
 			MelderFile_writeCharacter (file, (char32) (char8) c);
@@ -454,7 +454,7 @@ void texputs1 (MelderFile file, const char *s, const char32 *s1, const char32 *s
 void texputs2 (MelderFile file, const char *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = \"" : U"\"");
-	if (s != NULL) {
+	if (s) {
 		char c;
 		while ((c = *s ++) != '\0') {
 			MelderFile_writeCharacter (file, (char32) (char8) c);
@@ -466,7 +466,7 @@ void texputs2 (MelderFile file, const char *s, const char32 *s1, const char32 *s
 void texputs4 (MelderFile file, const char *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = \"" : U"\"");
-	if (s != NULL) {
+	if (s) {
 		char c;
 		while ((c = *s ++) != '\0') {
 			MelderFile_writeCharacter (file, (char32) (char8) c);
@@ -478,7 +478,7 @@ void texputs4 (MelderFile file, const char *s, const char32 *s1, const char32 *s
 void texputw2 (MelderFile file, const char32 *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = \"" : U"\"");
-	if (s != NULL) {
+	if (s) {
 		char32 c;
 		while ((c = *s ++) != U'\0') {
 			MelderFile_writeCharacter (file, c);
@@ -490,7 +490,7 @@ void texputw2 (MelderFile file, const char32 *s, const char32 *s1, const char32 
 void texputw4 (MelderFile file, const char32 *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = \"" : U"\"");
-	if (s != NULL) {
+	if (s) {
 		char32 c;
 		while ((c = *s ++) != '\0') {
 			MelderFile_writeCharacter (file, c);
@@ -1507,7 +1507,7 @@ char * bingets4 (FILE *f) {
 
 char32 * bingetw1 (FILE *f) {
 	try {
-		autostring32 result = NULL;
+		autostring32 result;
 		unsigned short length = bingetu1 (f);
 		if (length == 0xFF) {   // an escape for encoding
 			/*
@@ -1546,7 +1546,7 @@ char32 * bingetw1 (FILE *f) {
 
 char32 * bingetw2 (FILE *f) {
 	try {
-		autostring32 result = NULL;
+		autostring32 result;
 		uint16 length = bingetu2 (f);
 		if (length == 0xFFFF) {   // an escape for encoding
 			/*
@@ -1585,8 +1585,8 @@ char32 * bingetw2 (FILE *f) {
 
 char32 * bingetw4 (FILE *f) {
 	try {
-		autostring32 result = NULL;
-		uint32_t length = bingetu4 (f);
+		autostring32 result;
+		uint32 length = bingetu4 (f);
 		if (length == 0xFFFFFFFF) {   // an escape for encoding
 			/*
 			 * UTF-16
@@ -1624,7 +1624,7 @@ char32 * bingetw4 (FILE *f) {
 
 void binputs1 (const char *s, FILE *f) {
 	try {
-		if (s == NULL) {
+		if (! s) {
 			binputu1 (0, f);
 		} else {
 			size_t length = strlen (s);
@@ -1643,7 +1643,7 @@ void binputs1 (const char *s, FILE *f) {
 
 void binputs2 (const char *s, FILE *f) {
 	try {
-		if (s == NULL) {
+		if (! s) {
 			binputu2 (0, f);
 		} else {
 			size_t length = strlen (s);
@@ -1662,7 +1662,7 @@ void binputs2 (const char *s, FILE *f) {
 
 void binputs4 (const char *s, FILE *f) {
 	try {
-		if (s == NULL) {
+		if (! s) {
 			binputu4 (0, f);
 		} else {
 			size_t length = strlen (s);
@@ -1693,7 +1693,7 @@ static inline void binpututf16 (char32 kar, FILE *f) {
 
 void binputw1 (const char32 *s, FILE *f) {
 	try {
-		if (s == NULL) {
+		if (! s) {
 			binputu1 (0, f);
 		} else {
 			uint32 length = str32len (s);
@@ -1727,7 +1727,7 @@ void binputw1 (const char32 *s, FILE *f) {
 
 void binputw2 (const char32 *s, FILE *f) {
 	try {
-		if (s == NULL) {
+		if (! s) {
 			binputu2 (0, f);
 		} else {
 			int64 length = str32len (s);
@@ -1761,7 +1761,7 @@ void binputw2 (const char32 *s, FILE *f) {
 
 void binputw4 (const char32 *s, FILE *f) {
 	try {
-		if (s == NULL) {
+		if (! s) {
 			binputu4 (0, f);
 		} else {
 			int64 length = str32len (s);

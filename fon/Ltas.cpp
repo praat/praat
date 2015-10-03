@@ -292,7 +292,7 @@ Ltas Spectrum_to_Ltas_1to1 (Spectrum me) {
 
 Ltas Sound_to_Ltas (Sound me, double bandwidth) {
 	try {
-		autoSpectrum thee = Sound_to_Spectrum (me, TRUE);
+		autoSpectrum thee = Sound_to_Spectrum (me, true);
 		autoLtas him = Spectrum_to_Ltas (thee.peek(), bandwidth);
 		double correction = -10.0 * log10 (thy dx * my nx * my dx);
 		for (long iband = 1; iband <= his nx; iband ++) {

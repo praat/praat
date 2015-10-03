@@ -70,9 +70,9 @@ extern const char * ipaSerifRegularPS [];
  * The ISO8859-1 character encoding, which is used on Xwin and Win, has not.
  */
 #if mac
-	#define HAS_FI_AND_FL_LIGATURES  TRUE
+	#define HAS_FI_AND_FL_LIGATURES  true
 #else
-	#define HAS_FI_AND_FL_LIGATURES  ( my postScript == TRUE )
+	#define HAS_FI_AND_FL_LIGATURES  ( my postScript == true )
 #endif
 
 #if win
@@ -106,12 +106,12 @@ extern const char * ipaSerifRegularPS [];
 static bool charisAvailable = false, doulosAvailable = false;
 static int CALLBACK fontFuncEx_charis (const LOGFONTW *oldLogFont, const TEXTMETRICW *oldTextMetric, FONT_TYPE_TYPE fontType, LPARAM lparam) {
 	const LPENUMLOGFONTW logFont = (LPENUMLOGFONTW) oldLogFont; (void) oldTextMetric; (void) fontType; (void) lparam;
-	charisAvailable = TRUE;
+	charisAvailable = true;
 	return 1;
 }
 static int CALLBACK fontFuncEx_doulos (const LOGFONTW *oldLogFont, const TEXTMETRICW *oldTextMetric, FONT_TYPE_TYPE fontType, LPARAM lparam) {
 	const LPENUMLOGFONTW logFont = (LPENUMLOGFONTW) oldLogFont; (void) oldTextMetric; (void) fontType; (void) lparam;
-	doulosAvailable = TRUE;
+	doulosAvailable = true;
 	return 1;
 }
 static HFONT loadFont (GraphicsScreen me, int font, int size, int style) {
@@ -148,7 +148,7 @@ static HFONT loadFont (GraphicsScreen me, int font, int size, int style) {
 		EnumFontFamiliesExW (my d_gdiGraphicsContext, & logFont, fontFuncEx_charis, 0, 0);
 		wcscpy (logFont. lfFaceName, L"Doulos SIL");
 		EnumFontFamiliesExW (my d_gdiGraphicsContext, & logFont, fontFuncEx_doulos, 0, 0);
-		ipaInited = TRUE;
+		ipaInited = true;
 		if (! charisAvailable && ! doulosAvailable) {
 			/* BUG: The next warning may cause reentry of drawing (on window exposure) and lead to crash. Some code must be non-reentrant !! */
 			Melder_warning (U"The phonetic font is not available.\nSeveral characters may not look correct.\nSee www.praat.org");
@@ -182,11 +182,11 @@ static void charSize (I, _Graphics_widechar *lc) {
 				lc -> width = 10;
 				lc -> baseline *= my fontSize * 0.01;
 				lc -> code = lc -> kar;
-				lc -> font.string = NULL;
+				lc -> font.string = nullptr;
 				lc -> font.integer = 0;
 				lc -> size = size;
 			} else {
-				if (my d_cairoGraphicsContext == NULL) return;
+				if (! my d_cairoGraphicsContext) return;
 				Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
 				int font, size, style;
 				int normalSize = my fontSize * my resolution / 72.0;
@@ -219,7 +219,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 				trace (U"width ", lc -> width);
 				lc -> baseline *= my fontSize * 0.01;
 				lc -> code = lc -> kar;
-				lc -> font.string = NULL;
+				lc -> font.string = nullptr;
 				lc -> font.integer = font;
 				lc -> size = size;
 			}
@@ -281,7 +281,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 			}
 			lc -> width = extent. cx;
 			lc -> baseline *= my fontSize * 0.01 * my resolution / 72.0;
-			lc -> font.string = NULL;
+			lc -> font.string = nullptr;
 			lc -> font.integer = font;   // kGraphics_font_HELVETICA .. kGraphics_font_DINGBATS
 			lc -> size = size;   // 0..4 instead of 10..24
 			lc -> style = style;   // without Graphics_CODE
@@ -292,7 +292,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 			lc -> size = lc -> size < 100 ? (3 * normalSize + 2) / 4 : /*lc -> size > 100 ? 1.2 * normalSize :*/ normalSize;
 			lc -> baseline *= 0.01 * normalSize;
 			long saveFont = lc -> font.integer;   // save!
-			lc -> font.string = NULL;   // this erases font.integer!
+			lc -> font.string = nullptr;   // this erases font.integer!
 			ATSFontRef atsuiFont =
 				info -> alphabet == Longchar_SYMBOL ? theSymbolAtsuiFont :
 				info -> alphabet == Longchar_PHONETIC ? ( my font == kGraphics_font_TIMES && lc -> style == 0 ? theIpaTimesAtsuiFont : theIpaPalatinoAtsuiFont ) :
@@ -304,7 +304,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 				my font == kGraphics_font_COURIER ? theCourierAtsuiFont : theTimesAtsuiFont;
 			Melder_assert (atsuiFont != 0);
 			lc -> font.integer = (long) atsuiFont;
-			//CTFontRef ctFont = CTFontCreateWithName (CFSTR("Times"), 48, NULL);
+			//CTFontRef ctFont = CTFontCreateWithName (CFSTR("Times"), 48, nullptr);
 			lc -> code = lc -> kar;
 			if (lc -> code == 0) {
 				_Graphics_widechar *lc2;
@@ -329,8 +329,8 @@ static void charSize (I, _Graphics_widechar *lc) {
 			/*
 			 * Define the text layout.
 			 */
-			static ATSUTextLayout textLayout;
-			if (textLayout == NULL) {
+			static ATSUTextLayout textLayout = nullptr;
+			if (! textLayout) {
 				OSStatus err = ATSUCreateTextLayout (& textLayout);
 				if (err != 0) Melder_fatal (U"Graphics_text/ATSUCreateTextLayout: unknown MacOS error ", (int) err, U".");
 			}
@@ -350,10 +350,10 @@ static void charSize (I, _Graphics_widechar *lc) {
 					kATSUFromTextBeginning, kATSUToTextEnd, 2);   // BUG: not 64-bit
 				if (err != 0) Melder_fatal (U"Graphics_text/ATSUSetTextPointerLocation high Unicode: unknown MacOS error ", (int) err, U".");
 			}
-			static ATSUFontFallbacks fontFallbacks = NULL;
-			if (fontFallbacks == NULL) {
+			static ATSUFontFallbacks fontFallbacks = nullptr;
+			if (! fontFallbacks) {
 				ATSUCreateFontFallbacks (& fontFallbacks);
-				ATSUSetObjFontFallbacks (fontFallbacks, 0, NULL, kATSUDefaultFontFallbacks);
+				ATSUSetObjFontFallbacks (fontFallbacks, 0, nullptr, kATSUDefaultFontFallbacks);
 			}
 			ATSUAttributeTag attributeTags [] = { kATSUCGContextTag, kATSULineFontFallbacksTag };
 			ByteCount valueSizes [] = { sizeof (CGContextRef), sizeof (ATSUFontFallbacks) };
@@ -363,8 +363,8 @@ static void charSize (I, _Graphics_widechar *lc) {
 			/*
 			 * Set styles: font, size, colour, bold, italic.
 			 */
-			static ATSUStyle atsuStyle;
-			if (atsuStyle == NULL) {
+			static ATSUStyle atsuStyle = nullptr;
+			if (! atsuStyle) {
 				ATSUCreateStyle (& atsuStyle);
 			}
 			Fixed fontSize = lc -> size << 16;
@@ -390,7 +390,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 			lc -> style == Graphics_BOLD || lc -> link ? Graphics_BOLD :
 			lc -> style == Graphics_BOLD_ITALIC ? Graphics_BOLD_ITALIC : 0;
 		if (! my fontInfos [font] [style]) {
-			const char *fontInfo, *secondaryFontInfo = NULL, *tertiaryFontInfo = NULL;
+			const char *fontInfo, *secondaryFontInfo = nullptr, *tertiaryFontInfo = nullptr;
 			if (font == kGraphics_font_COURIER) {
 				fontInfo = style == Graphics_BOLD ? "Courier-Bold" :
 					style == Graphics_ITALIC ? "Courier-Oblique" :
@@ -459,7 +459,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 					my d_printf (my d_file, "/%s /%s-Praat PraatEncode\n", secondaryFontInfo, fontInfo);
 				} else {
 					/* Automatic font choice strategy. */
-					if (secondaryFontInfo != NULL) {
+					if (secondaryFontInfo) {
 						my d_printf (my d_file,
 							"/%s /Font resourcestatus\n"
 							"{ pop pop /%s /%s-Praat PraatEncode }\n"
@@ -587,7 +587,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 		#if cairo
 			if (my duringXor) {
 			} else {
-				if (my d_cairoGraphicsContext == NULL) return;
+				if (! my d_cairoGraphicsContext) return;
 				// TODO!
 			}
 			int font = lc -> font.integer;
@@ -610,9 +610,9 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 				CTFontSymbolicTraits ctStyle = ( style & Graphics_BOLD ? kCTFontBoldTrait : 0 ) | ( lc -> style & Graphics_ITALIC ? kCTFontItalicTrait : 0 );
 			#if 1
 				CFStringRef key = kCTFontSymbolicTrait;
-				CFNumberRef value = CFNumberCreate (NULL, kCFNumberIntType, & ctStyle);
+				CFNumberRef value = CFNumberCreate (nullptr, kCFNumberIntType, & ctStyle);
 				CFIndex numberOfValues = 1;
-				CFDictionaryRef styleDict = CFDictionaryCreate (NULL, (const void **) & key, (const void **) & value, numberOfValues,
+				CFDictionaryRef styleDict = CFDictionaryCreate (nullptr, (const void **) & key, (const void **) & value, numberOfValues,
 					& kCFTypeDictionaryKeyCallBacks, & kCFTypeDictionaryValueCallBacks);
 				CFRelease (value);
 				CFStringRef keys [2];
@@ -634,7 +634,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 					case kGraphics_font_DINGBATS:    { cfFont = (CFStringRef) Melder_peek32toCfstring (U"Zapf Dingbats"  ); } break;
 				}
 				void *values [2] = { (void *) styleDict, (void *) cfFont };
-				CFDictionaryRef attributes = CFDictionaryCreate (NULL, (const void **) & keys, (const void **) & values, 2,
+				CFDictionaryRef attributes = CFDictionaryCreate (nullptr, (const void **) & keys, (const void **) & values, 2,
 					& kCFTypeDictionaryKeyCallBacks, & kCFTypeDictionaryValueCallBacks);
 				CFRelease (styleDict);
 				CTFontDescriptorRef ctFontDescriptor = CTFontDescriptorCreateWithAttributes (attributes);
@@ -662,14 +662,14 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 				[styleDict release];
 				[attributes release];
 			#endif
-				ctFont = CTFontCreateWithFontDescriptor (ctFontDescriptor, lc -> size, NULL);
+				ctFont = CTFontCreateWithFontDescriptor (ctFontDescriptor, lc -> size, nullptr);
 				CFRelease (ctFontDescriptor);
 				theScreenFonts [font] [lc -> size] [style] = ctFont;
 			}
 
 			const char16 *codes16 = Melder_peek32to16 (codes);
 			#if 1
-				CFStringRef s = CFStringCreateWithBytes (NULL,
+				CFStringRef s = CFStringCreateWithBytes (nullptr,
 					(const UInt8 *) codes16, str16len (codes16) * 2,
 					kCFStringEncodingUTF16LE, false);
 				int length = CFStringGetLength (s);
@@ -697,13 +697,13 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 				CTTextAlignment textAlignment = kCTLeftTextAlignment;
 				CTParagraphStyleSetting paragraphSettings [1] = { { kCTParagraphStyleSpecifierAlignment, sizeof (CTTextAlignment), & textAlignment } };
 				paragraphStyle = CTParagraphStyleCreate (paragraphSettings, 1);
-				Melder_assert (paragraphStyle != NULL);
+				Melder_assert (paragraphStyle != nullptr);
 			}
             CFAttributedStringSetAttribute (string, textRange, kCTParagraphStyleAttributeName, paragraphStyle);
 
             RGBColor *macColor = lc -> link ? & theBlueColour : my duringXor ? & theWhiteColour : & my d_macColour;
             CGColorRef color = CGColorCreateGenericRGB (macColor->red / 65536.0, macColor->green / 65536.0, macColor->blue / 65536.0, 1.0);
-			Melder_assert (color != NULL);
+			Melder_assert (color != nullptr);
             CFAttributedStringSetAttribute (string, textRange, kCTForegroundColorAttributeName, color);
 
             /*
@@ -754,8 +754,8 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 			/*
 			 * Define the text layout.
 			 */
-			static ATSUTextLayout theAtsuiTextLayout;
-			if (theAtsuiTextLayout == NULL) {
+			static ATSUTextLayout theAtsuiTextLayout = nullptr;
+			if (! theAtsuiTextLayout) {
 				OSStatus err = ATSUCreateTextLayout (& theAtsuiTextLayout);
 				if (err != 0) {
 					if (err == kATSUInvalidFontID) {
@@ -773,10 +773,10 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 				kATSUFromTextBeginning, kATSUToTextEnd, nchars);
 			if (err != 0) Melder_fatal (U"Graphics_text/ATSUSetTextPointerLocation: unknown MacOS error ", (int) err, U".");
 
-			static ATSUFontFallbacks fontFallbacks = NULL;
-			if (fontFallbacks == NULL) {
+			static ATSUFontFallbacks fontFallbacks = nullptr;
+			if (! fontFallbacks) {
 				ATSUCreateFontFallbacks (& fontFallbacks);
-				ATSUSetObjFontFallbacks (fontFallbacks, 0, NULL, kATSUDefaultFontFallbacks);
+				ATSUSetObjFontFallbacks (fontFallbacks, 0, nullptr, kATSUDefaultFontFallbacks);
 				ATSUSetObjFontFallbacks (fontFallbacks, 1, & theArabicAtsuiFont, kATSUSequentialFallbacksPreferred);
 			}
 			ATSUAttributeTag attributeTags [] = { kATSUCGContextTag, kATSULineFontFallbacksTag };
@@ -787,8 +787,8 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 			/*
 			 * Set styles: font, size, colour, bold, italic.
 			 */
-			static ATSUStyle theAtsuStyle;
-			if (theAtsuStyle == NULL) {
+			static ATSUStyle theAtsuStyle = nullptr;
+			if (! theAtsuStyle) {
 				ATSUCreateStyle (& theAtsuStyle);
 			}
 			Fixed fontSize = lc -> size << 16;
@@ -846,8 +846,8 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 			#if cairo
 				if (my duringXor) {
 					#if ALLOW_GDK_DRAWING
-						static GdkFont *font = NULL;
-						if (font == NULL) {
+						static GdkFont *font = nullptr;
+						if (! font) {
 							font = gdk_font_load ("-*-courier-medium-r-normal--*-120-*-*-*-*-iso8859-1");
 							if (! font) {
 								font = gdk_font_load ("-*-courier 10 pitch-medium-r-normal--*-120-*-*-*-*-iso8859-1");
@@ -982,7 +982,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 				static HBITMAP bitmap;
 				if (! inited) {
 					dc = CreateCompatibleDC (my d_gdiGraphicsContext);
-					bitmap = CreateBitmap (/*my d_gdiGraphicsContext,*/ maxWidth, maxHeight, 1, 1, NULL);
+					bitmap = CreateBitmap (/*my d_gdiGraphicsContext,*/ maxWidth, maxHeight, 1, 1, nullptr);
 					SelectBitmap (dc, bitmap);
 					inited = 1;
 				}
@@ -1133,7 +1133,7 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 					) :
 				my font;   // why not lc -> font.integer?
 			Melder_assert (font >= 0 && font <= kGraphics_font_DINGBATS);
-			lc -> font.string = NULL;   // this erases font.integer!
+			lc -> font.string = nullptr;   // this erases font.integer!
 
 			/*
 			 * Determine the style.
@@ -1145,7 +1145,7 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 			 * Determine the font-style combination.
 			 */
 			CTFontRef ctFont = theScreenFonts [font] [100] [style];
-			if (ctFont == NULL) {
+			if (! ctFont) {
 				CTFontSymbolicTraits ctStyle = ( style & Graphics_BOLD ? kCTFontBoldTrait : 0 ) | ( lc -> style & Graphics_ITALIC ? kCTFontItalicTrait : 0 );
 				NSMutableDictionary *styleDict = [[NSMutableDictionary alloc] initWithCapacity: 1];
 				[styleDict   setObject: [NSNumber numberWithUnsignedInt: ctStyle]   forKey: (id) kCTFontSymbolicTrait];
@@ -1168,7 +1168,7 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
  				CTFontDescriptorRef ctFontDescriptor = CTFontDescriptorCreateWithAttributes ((CFMutableDictionaryRef) attributes);
 				[styleDict release];
 				[attributes release];
-				ctFont = CTFontCreateWithFontDescriptor (ctFontDescriptor, 100.0, NULL);
+				ctFont = CTFontCreateWithFontDescriptor (ctFontDescriptor, 100.0, nullptr);
 				CFRelease (ctFontDescriptor);
  				theScreenFonts [font] [100] [style] = ctFont;
 			}
@@ -1196,9 +1196,11 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 			{
 				charCodes [nchars] = U'\0';
 				const char16 *codes16 = Melder_peek32to16 (charCodes);
+				int64 length = str16len (codes16);
+
 				NSString *s = [[NSString alloc]
 					initWithBytes: codes16
-					length: (NSUInteger) (str16len (codes16) * 2)
+					length: (NSUInteger) (length * 2)
 					encoding: NSUTF16LittleEndianStringEncoding   // BUG: should be NSUTF16NativeStringEncoding, except that that doesn't exist
 					];
 
@@ -1216,12 +1218,12 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 				// Create a path to render text in
 				CGMutablePathRef path = CGPathCreateMutable ();
 				NSRect measureRect = NSMakeRect (0, 0, CGFLOAT_MAX, CGFLOAT_MAX);
-				CGPathAddRect (path, NULL, (CGRect) measureRect);
+				CGPathAddRect (path, nullptr, (CGRect) measureRect);
 			
 				CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString ((CFAttributedStringRef) cfstring);
 				CFRange fitRange;
 				CGSize targetSize = CGSizeMake (lc -> width, CGFLOAT_MAX);
-				CGSize frameSize = CTFramesetterSuggestFrameSizeWithConstraints (framesetter, textRange, NULL, targetSize, & fitRange);
+				CGSize frameSize = CTFramesetterSuggestFrameSizeWithConstraints (framesetter, textRange, nullptr, targetSize, & fitRange);
 				CFRelease (framesetter);
 				CFRelease (cfstring);
 				[s release];
@@ -1230,6 +1232,17 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 				//bool isDiacritic = info -> ps.times == 0;
 				//lc -> width = isDiacritic ? 0.0 : frameSize.width * lc -> size / 100.0;
 				lc -> width = frameSize.width * lc -> size / 100.0;
+				#if cocoa
+					if (Melder_systemVersion >= 101100) {
+						/*
+						 * If the text ends in a space, CTFramesetterSuggestFrameSizeWithConstraints() ignores the space.
+						 * we correct for this.
+						 */
+						if (codes16 [length - 1] == u' ') {
+							lc -> width += 25.0 * lc -> size / 100.0;
+						}
+					}
+				#endif
 				nchars = 0;
 			}
 		}
@@ -1620,7 +1633,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const char32 *txt /* catta
 			(wordLink | globalLink) && my fontStyle != Graphics_CODE ? Graphics_BOLD :
 			((my fontStyle & Graphics_ITALIC) | charItalic | wordItalic | globalItalic ? Graphics_ITALIC : 0) +
 			((my fontStyle & Graphics_BOLD) | charBold | wordBold | globalBold ? Graphics_BOLD : 0);
-		out -> font.string = NULL;
+		out -> font.string = nullptr;
 		out -> font.integer = my fontStyle == Graphics_CODE || wordCode || globalCode ||
 			kar == U'/' || kar == U'|' ? kGraphics_font_COURIER : my font;
 		out -> link = wordLink | globalLink;
@@ -1729,10 +1742,10 @@ static void _Graphics_text (Graphics me, double xWC, double yWC, const char32 *t
 		char32 *p = & linesToDraw [0];
 		for (;;) {
 			char32 *newline = str32chr (p, U'\n');
-			if (newline != NULL) *newline = U'\0';
+			if (newline) *newline = U'\0';
 			Graphics_text (me, xWC, yWC, p);
 			yWC -= lineSpacingWC;
-			if (newline != NULL) {
+			if (newline) {
 				p = newline + 1;
 			} else {
 				break;
@@ -1941,7 +1954,7 @@ bool _GraphicsMac_tryToInitializeFonts (void) {
 		theIpaPalatinoAtsuiFont = theIpaTimesAtsuiFont;
 	}
 	Melder_assert (theTimesAtsuiFont != 0);
-	ATSUFindFontFromName (NULL, 0, 0, 0, 0, kFontArabicLanguage, & theArabicAtsuiFont);
+	ATSUFindFontFromName (nullptr, 0, 0, 0, 0, kFontArabicLanguage, & theArabicAtsuiFont);
 	return true;
 #else
     static bool inited = false;

@@ -121,7 +121,7 @@ double Intensity_getAverage (Intensity me, double tmin, double tmax, int averagi
 	return
 		averagingMethod == Intensity_averaging_MEDIAN ?
 			Intensity_getQuantile (me, tmin, tmax, 0.50) :
-			Sampled_getMean_standardUnit (me, tmin, tmax, 0, averagingMethod, TRUE);
+			Sampled_getMean_standardUnit (me, tmin, tmax, 0, averagingMethod, true);
 }
 
 /* End of file Intensity.cpp */

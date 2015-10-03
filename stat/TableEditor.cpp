@@ -288,8 +288,8 @@ TableEditor TableEditor_create (const char32 *title, Table table) {
 		Graphics_setViewport (my graphics, 0, size_pixels, 0, size_pixels);
 		Graphics_setFont (my graphics, kGraphics_font_COURIER);
 		Graphics_setFontSize (my graphics, 12);
-		Graphics_setUnderscoreIsSubscript (my graphics, FALSE);
-		Graphics_setAtSignIsLink (my graphics, TRUE);
+		Graphics_setUnderscoreIsSubscript (my graphics, false);
+		Graphics_setAtSignIsLink (my graphics, true);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw (U"TableEditor not created.");

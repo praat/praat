@@ -25,7 +25,7 @@
 Thing_define (ManPages, Daata) {
 	Ordered pages;
 	const char32 **titles;
-	int ground, dynamic, executable;
+	bool ground, dynamic, executable;
 	structMelderDir rootDirectory;
 
 	void v_destroy ()

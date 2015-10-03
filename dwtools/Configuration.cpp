@@ -75,7 +75,7 @@ Configuration Configuration_create (long numberOfPoints,
 		autoConfiguration me = Thing_new (Configuration);
 		TableOfReal_init (me.peek(), numberOfPoints, numberOfDimensions);
 		my w = NUMvector<double> (1, numberOfDimensions);
-		TableOfReal_setSequentialRowLabels (me.peek(), 0, 0, NULL, 1, 1);
+		TableOfReal_setSequentialRowLabels (me.peek(), 0, 0, nullptr, 1, 1);
 		TableOfReal_setSequentialColumnLabels (me.peek(), 0, 0, U"dimension ", 1, 1);
 
 		my metric = 2;

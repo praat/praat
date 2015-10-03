@@ -59,7 +59,7 @@ Thing_define (DurationTierEditor, RealTierEditor) {
 DurationTierEditor DurationTierEditor_create (const char32 *title,
 	DurationTier duration, Sound sound, bool ownSound);
 /*
-	'sound' may be NULL.
+	'sound' may be null.
 */
 
 /* End of file DurationTierEditor.h */

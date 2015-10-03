@@ -146,15 +146,15 @@ Sound Sound_filter_formula (Sound me, const char32 *formula, Interpreter interpr
 	try {
 		autoSound thee = Data_copy (me);
 		if (my ny == 1) {
-			autoSpectrum spec = Sound_to_Spectrum (me, TRUE);
-			Matrix_formula ((Matrix) spec.peek(), formula, interpreter, NULL);
+			autoSpectrum spec = Sound_to_Spectrum (me, true);
+			Matrix_formula ((Matrix) spec.peek(), formula, interpreter, nullptr);
 			autoSound him = Spectrum_to_Sound (spec.peek());
 			NUMvector_copyElements (his z [1], thy z [1], 1, thy nx);
 		} else {
 			for (long ichan = 1; ichan <= my ny; ichan ++) {
 				autoSound channel = Sound_extractChannel (me, ichan);
-				autoSpectrum spec = Sound_to_Spectrum (channel.peek(), TRUE);
-				Matrix_formula ((Matrix) spec.peek(), formula, interpreter, NULL);
+				autoSpectrum spec = Sound_to_Spectrum (channel.peek(), true);
+				Matrix_formula ((Matrix) spec.peek(), formula, interpreter, nullptr);
 				autoSound him = Spectrum_to_Sound (spec.peek());
 				NUMvector_copyElements (his z [1], thy z [ichan], 1, thy nx);
 			}
@@ -169,14 +169,14 @@ Sound Sound_filter_passHannBand (Sound me, double fmin, double fmax, double smoo
 	try {
 		autoSound thee = Data_copy (me);
 		if (my ny == 1) {
-			autoSpectrum spec = Sound_to_Spectrum (me, TRUE);
+			autoSpectrum spec = Sound_to_Spectrum (me, true);
 			Spectrum_passHannBand (spec.peek(), fmin, fmax, smooth);
 			autoSound him = Spectrum_to_Sound (spec.peek());
 			NUMvector_copyElements (his z [1], thy z [1], 1, thy nx);
 		} else {
 			for (long ichan = 1; ichan <= my ny; ichan ++) {
 				autoSound channel = Sound_extractChannel (me, ichan);
-				autoSpectrum spec = Sound_to_Spectrum (channel.peek(), TRUE);
+				autoSpectrum spec = Sound_to_Spectrum (channel.peek(), true);
 				Spectrum_passHannBand (spec.peek(), fmin, fmax, smooth);
 				autoSound him = Spectrum_to_Sound (spec.peek());
 				NUMvector_copyElements (his z [1], thy z [ichan], 1, thy nx);
@@ -192,14 +192,14 @@ Sound Sound_filter_stopHannBand (Sound me, double fmin, double fmax, double smoo
 	try {
 		autoSound thee = Data_copy (me);
 		if (my ny == 1) {
-			autoSpectrum spec = Sound_to_Spectrum (me, TRUE);
+			autoSpectrum spec = Sound_to_Spectrum (me, true);
 			Spectrum_stopHannBand (spec.peek(), fmin, fmax, smooth);
 			autoSound him = Spectrum_to_Sound (spec.peek());
 			NUMvector_copyElements (his z [1], thy z [1], 1, thy nx);
 		} else {
 			for (long ichan = 1; ichan <= my ny; ichan ++) {
 				autoSound channel = Sound_extractChannel (me, ichan);
-				autoSpectrum spec = Sound_to_Spectrum (channel.peek(), TRUE);
+				autoSpectrum spec = Sound_to_Spectrum (channel.peek(), true);
 				Spectrum_stopHannBand (spec.peek(), fmin, fmax, smooth);
 				autoSound him = Spectrum_to_Sound (spec.peek());
 				NUMvector_copyElements (his z [1], thy z [ichan], 1, thy nx);

@@ -205,7 +205,7 @@ static void print (I, Graphics graphics) {
 	my ps = graphics;
 	Graphics_setDollarSignIsCode (my ps, true);
 	Graphics_setAtSignIsLink (my ps, true);
-	my printing = TRUE;
+	my printing = true;
 	HyperPage_initSheetOfPaper ((HyperPage) me);
 	for (long ipage = 1; ipage <= numberOfPages; ipage ++) {
 		ManPage page = (ManPage) manPages -> pages -> item [ipage];

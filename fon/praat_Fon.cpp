@@ -219,7 +219,7 @@ DIRECT2 (AmplitudeTier_edit) {
 	}
 	LOOP if (CLASS == classAmplitudeTier) {
 		iam (AmplitudeTier);
-		autoAmplitudeTierEditor editor = AmplitudeTierEditor_create (ID_AND_FULL_NAME, me, sound, TRUE);
+		autoAmplitudeTierEditor editor = AmplitudeTierEditor_create (ID_AND_FULL_NAME, me, sound, true);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END2 }
@@ -588,7 +588,7 @@ DIRECT2 (DurationTier_edit) {
 	}
 	LOOP if (CLASS == classDurationTier) {
 		iam (DurationTier);
-		autoDurationTierEditor editor = DurationTierEditor_create (ID_AND_FULL_NAME, me, sound, TRUE);
+		autoDurationTierEditor editor = DurationTierEditor_create (ID_AND_FULL_NAME, me, sound, true);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END2 }
@@ -1687,7 +1687,7 @@ FORM (old_Intensity_getMean, U"Intensity: Get mean", U"Intensity: Get mean...") 
 DO
 	LOOP {
 		iam (Intensity);
-		double mean = Sampled_getMean_standardUnit (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), 0, 0, TRUE);
+		double mean = Sampled_getMean_standardUnit (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), 0, 0, true);
 		Melder_informationReal (mean, U"dB");
 		break;   // OPTIMIZE
 	}
@@ -1704,7 +1704,7 @@ DO_ALTERNATIVE (old_Intensity_getMean)
 	LOOP {
 		iam (Intensity);
 		double mean = Sampled_getMean_standardUnit (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
-			0, GET_INTEGER (U"Averaging method"), TRUE);
+			0, GET_INTEGER (U"Averaging method"), true);
 		Melder_informationReal (mean, U"dB");
 		break;   // OPTIMIZE
 	}
@@ -1925,7 +1925,7 @@ DIRECT2 (IntensityTier_edit) {
 	}
 	LOOP if (CLASS == classIntensityTier) {
 		iam (IntensityTier);
-		autoIntensityTierEditor editor = IntensityTierEditor_create (ID_AND_FULL_NAME, me, sound, TRUE);
+		autoIntensityTierEditor editor = IntensityTierEditor_create (ID_AND_FULL_NAME, me, sound, true);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END2 }
@@ -2015,7 +2015,7 @@ DIRECT2 (Sound_IntensityTier_multiply_old) {
 		if (CLASS == classIntensityTier) intensity = (IntensityTier) OBJECT;
 		if (sound && intensity) break;   // OPTIMIZE
 	}
-	autoSound thee = Sound_IntensityTier_multiply (sound, intensity, TRUE);
+	autoSound thee = Sound_IntensityTier_multiply (sound, intensity, true);
 	praat_new (thee.transfer(), sound -> name, U"_int");
 END2 }
 
@@ -4133,7 +4133,7 @@ DIRECT2 (PitchTier_edit) {
 	Sound sound = FIRST (Sound);
 	LOOP if (CLASS == classPitchTier) {
 		iam (PitchTier);
-		autoPitchTierEditor editor = PitchTierEditor_create (ID_AND_FULL_NAME, me, sound, TRUE);
+		autoPitchTierEditor editor = PitchTierEditor_create (ID_AND_FULL_NAME, me, sound, true);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END2 }
@@ -5731,7 +5731,7 @@ FORM (Strings_createAsFileList, U"Create Strings as file list", U"Create Strings
 	LABEL (U"", U"File path:")
 	TEXTFIELD (U"path", U"/people/Miep/*.wav")
 	OK2
-static int inited;
+static bool inited;
 if (! inited) {
 	structMelderDir defaultDir = { { 0 } };
 	Melder_getDefaultDir (& defaultDir);
@@ -5748,7 +5748,7 @@ if (! inited) {
 		Melder_sprint (path, kMelder_MAXPATH+1, workingDirectory, U"*.wav");
 	#endif
 	SET_STRING (U"path", path);
-	inited = TRUE;
+	inited = true;
 }
 DO
 	autoStrings me = Strings_createAsFileList (GET_STRING (U"path"));
@@ -5760,7 +5760,7 @@ FORM (Strings_createAsDirectoryList, U"Create Strings as directory list", U"Crea
 	LABEL (U"", U"Path:")
 	TEXTFIELD (U"path", U"/people/Miep/*")
 	OK2
-static int inited;
+static bool inited;
 if (! inited) {
 	structMelderDir defaultDir = { { 0 } };
 	Melder_getDefaultDir (& defaultDir);
@@ -5777,7 +5777,7 @@ if (! inited) {
 		Melder_sprint (path, kMelder_MAXPATH+1, workingDirectory, U"*");
 	#endif
 	SET_STRING (U"path", path);
-	inited = TRUE;
+	inited = true;
 }
 DO
 	autoStrings me = Strings_createAsDirectoryList (GET_STRING (U"path"));

@@ -196,7 +196,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 				if (! MelderFile_exists (& file2)) {
 					Melder_warning (U"Cannot find script ", MelderFile_messageName (& file2), U".");
 				}
-				my executable = TRUE;
+				my executable = true;
 			} else {
 				char32 *q;
 				/*
@@ -235,7 +235,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 	page -> paragraphs = (ManPage_Paragraph) Melder_realloc (page -> paragraphs, (int64) sizeof (struct structManPage_Paragraph) * (par - page -> paragraphs));
 }
 void structManPages :: v_readText (MelderReadText text, int /*formatVersion*/) {
-	dynamic = TRUE;
+	dynamic = true;
 	pages = Ordered_create ();
 	MelderDir_copy (& Data_directoryBeingRead, & rootDirectory);
 	readOnePage (this, text);
@@ -355,7 +355,7 @@ static void grind (ManPages me) {
 	 * Some optimization required: use only two mallocs.
 	 * Forget nlinksHither and nlinksThither.
 	 */
-	if (grandNlinks == 0) { my ground = TRUE; return; }
+	if (grandNlinks == 0) { my ground = true; return; }
 	if (! (grandLinksHither = NUMvector <long> (1, grandNlinks)) || ! (grandLinksThither = NUMvector <long> (1, grandNlinks))) {
 		Melder_flushError ();
 		return;
@@ -388,7 +388,7 @@ static void grind (ManPages me) {
 					bool alreadyPresent = false;
 					for (int ilink = 1; ilink <= page -> nlinksThither; ilink ++) {
 						if (page -> linksThither [ilink] == jpage) {
-							alreadyPresent = TRUE;
+							alreadyPresent = true;
 							break;
 						}
 					}
@@ -402,7 +402,7 @@ static void grind (ManPages me) {
 		}
 	}
 
-	my ground = TRUE;
+	my ground = true;
 }
 
 long ManPages_uniqueLinksHither (ManPages me, long ipage) {
@@ -697,7 +697,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 				} else if (p [1] == U'_') {
 					if (wordItalic) { MelderString_append (buffer, U"</i>"); wordItalic = false; }
 					if (wordBold) { MelderString_append (buffer, U"</b>"); wordBold = false; }
-					MelderString_append (buffer, U"<sub>"); inSub = TRUE; p += 2;
+					MelderString_append (buffer, U"<sub>"); inSub = true; p += 2;
 				} else { MelderString_append (buffer, U"_"); p ++; }
 			} else if (*p == U'#') {
 				if (inBold) { MelderString_append (buffer, U"</b>"); inBold = false; p ++; }

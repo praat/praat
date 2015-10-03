@@ -294,7 +294,7 @@ double Vector_getAbsoluteExtremum (Vector me, double xmin, double xmax, int inte
 /***** Get statistics. *****/
 
 double Vector_getMean (Vector me, double xmin, double xmax, long channel) {
-	return Sampled_getMean (me, xmin, xmax, channel, 0, TRUE);
+	return Sampled_getMean (me, xmin, xmax, channel, 0, true);
 }
 
 double Vector_getStandardDeviation (Vector me, double xmin, double xmax, long ilevel) {

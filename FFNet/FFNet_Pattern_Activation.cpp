@@ -40,7 +40,7 @@ static double func (Daata object, const double p[]) {
 		}
 	}
 	for (long i = 1; i <= my nPatterns; i++) {
-		FFNet_propagate (me, my inputPattern[i], NULL);
+		FFNet_propagate (me, my inputPattern[i], nullptr);
 		fp += FFNet_computeError (me, my targetActivation[i]);
 		FFNet_computeDerivative (me);
 		/* derivative (cumulative) */
@@ -109,12 +109,12 @@ static void _FFNet_Pattern_Activation_learn (FFNet me, Pattern pattern,
 		// Unlink
 
 		my nPatterns = 0;
-		my inputPattern = NULL;
-		my targetActivation = NULL;
+		my inputPattern = nullptr;
+		my targetActivation = nullptr;
 	} catch (MelderError) {
 		my nPatterns = 0;
-		my inputPattern = 0;
-		my targetActivation = 0;
+		my inputPattern = nullptr;
+		my targetActivation = nullptr;
 	}
 }
 

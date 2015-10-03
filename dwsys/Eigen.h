@@ -84,7 +84,7 @@ void Eigen_drawEigenvector (I, Graphics g, long ivec, long first, long last,
 	double minimum, double maximum, int weigh, double size_mm, const char32 *mark,
 	int connect, char32 **rowLabels, int garnish);
 /*
-	Draw eigenvector. When rowLabels != NULL, draw row text labels on bottom axis.
+	Draw eigenvector. When rowLabels != nullptr, draw row text labels on bottom axis.
 */
 
 void Eigens_alignEigenvectors (Collection me);

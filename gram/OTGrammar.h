@@ -131,7 +131,7 @@ OTGrammar OTGrammar_create_tongueRoot_grammar (int small_large, int equal_random
 OTGrammar OTGrammar_create_metrics (int equal_footForm_wsp,
 	int trochaicityConstraint, int includeFootBimoraic, int includeFootBisyllabic,
 	int includePeripheral, int nonfinalityConstraint, int overtFormsHaveSecondaryStress, int includeClashAndLapse, int includeCodas);
-	/* T&S: 1, FALSE, FALSE, FALSE, 1, TRUE, FALSE, FALSE */
+	/* T&S: 1, false, false, false, 1, true, false, false */
 
 void OTGrammar_reset (OTGrammar me, double ranking);
 void OTGrammar_resetToRandomRanking (OTGrammar me, double mean, double standardDeviation);

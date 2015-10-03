@@ -44,7 +44,7 @@ Cochleagram Cochleagram_create (double tmin, double tmax, long nt, double dt, do
 	double df, long nf);
 /*
 	Function:
-		return a new instance of Cochleagram, or NULL if out of memory.
+		return a new instance of Cochleagram.
 	Preconditions:
 		dt > 0.0;						df > 0.0;
 		nt >= 1;						nf >= 1;
@@ -66,7 +66,7 @@ Cochleagram Matrix_to_Cochleagram (Matrix me);
 	Function:
 		create a Cochleagram from a Matrix,
 		with deep copy of all its attributes, except class information and methods.
-	Return NULL if out of memory.  
+	Fail if out of memory.
 */
 
 Matrix Cochleagram_to_Matrix (Cochleagram me);
@@ -74,7 +74,7 @@ Matrix Cochleagram_to_Matrix (Cochleagram me);
 	Function:
 		create a Matrix from a Cochleagram,
 		with deep copy of all its attributes, except class information and methods.
-	Return NULL if out of memory.  
+	Fail if out of memory.
 */
 
 /* End of file Cochleagram.h */

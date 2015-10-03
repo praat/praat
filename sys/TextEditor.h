@@ -25,7 +25,7 @@ Thing_define (TextEditor, Editor) {
 	structMelderFile file;
 	GuiText textWidget;
 	UiForm openDialog, saveDialog, printDialog, findDialog;
-	int dirty;
+	bool dirty;
 	GuiDialog dirtyNewDialog, dirtyOpenDialog, dirtyCloseDialog;
 	GuiMenuItem fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24;
 

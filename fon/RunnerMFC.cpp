@@ -199,7 +199,7 @@ static void do_ok (RunnerMFC me) {
 		Editor_broadcastDataChanged (me);
 		Graphics_updateWs (my graphics);
 	} else if (experiment -> breakAfterEvery != 0 && experiment -> trial % experiment -> breakAfterEvery == 0) {
-		experiment -> pausing = TRUE;
+		experiment -> pausing = true;
 		Editor_broadcastDataChanged (me);
 		Graphics_updateWs (my graphics);
 	} else {

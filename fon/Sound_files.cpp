@@ -270,7 +270,7 @@ void Sound_writeToAudioFile (Sound me, MelderFile file, int audioFileType, int n
 	try {
 		autoMelderFile mfile = MelderFile_create (file);
 		MelderFile_writeAudioFileHeader (file, audioFileType, lround (1.0 / my dx), my nx, my ny, numberOfBitsPerSamplePoint);
-		MelderFile_writeFloatToAudio (file, my ny, Melder_defaultAudioFileEncoding (audioFileType, numberOfBitsPerSamplePoint), my z, my nx, TRUE);
+		MelderFile_writeFloatToAudio (file, my ny, Melder_defaultAudioFileEncoding (audioFileType, numberOfBitsPerSamplePoint), my z, my nx, true);
 		MelderFile_writeAudioFileTrailer (file, audioFileType, lround (1.0 / my dx), my nx, my ny, numberOfBitsPerSamplePoint);
 		mfile.close ();
 	} catch (MelderError) {
@@ -345,9 +345,9 @@ void Sound_writeToKayFile (Sound me, MelderFile file) {
 		fwrite ("SDA_", 1, 4, file -> filePointer);
 		binputi4LE (my nx * 2, file -> filePointer);   // chunk size
 
-		MelderFile_writeFloatToAudio (file, 1, Melder_LINEAR_16_LITTLE_ENDIAN, my z, my nx, TRUE);
+		MelderFile_writeFloatToAudio (file, 1, Melder_LINEAR_16_LITTLE_ENDIAN, my z, my nx, true);
 		if (my ny > 1)
-			MelderFile_writeFloatToAudio (file, 1, Melder_LINEAR_16_LITTLE_ENDIAN, my z + 1, my nx, TRUE);
+			MelderFile_writeFloatToAudio (file, 1, Melder_LINEAR_16_LITTLE_ENDIAN, my z + 1, my nx, true);
 		mfile.close ();
 	} catch (MelderError) {
 		Melder_throw (me, U": not written to Kay sound file ", file, U".");
@@ -357,7 +357,7 @@ void Sound_writeToKayFile (Sound me, MelderFile file) {
 void Sound_writeToRawSoundFile (Sound me, MelderFile file, int encoding) {
 	try {
 		autoMelderFile mfile = MelderFile_create (file);
-		MelderFile_writeFloatToAudio (file, my ny, encoding, my z, my nx, TRUE);
+		MelderFile_writeFloatToAudio (file, my ny, encoding, my z, my nx, true);
 		mfile.close ();
 	} catch (MelderError) {
 		Melder_throw (me, U": not written to raw sound file ", file, U".");

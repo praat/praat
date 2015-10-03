@@ -52,7 +52,7 @@ Thing_implement (GuiScrolledWindow, GuiControl, 0);
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
-		Melder_assert (userData == NULL || Thing_isa (userData, classGuiScrolledWindow));
+		Melder_assert (userData == nullptr || Thing_isa (userData, classGuiScrolledWindow));
 		d_userData = static_cast <GuiScrolledWindow> (userData);
 	}
 	@end
@@ -81,7 +81,7 @@ GuiScrolledWindow GuiScrolledWindow_create (GuiForm parent, int left, int right,
 	my d_shell = parent -> d_shell;
 	my d_parent = parent;
 	#if gtk
-		my d_widget = gtk_scrolled_window_new (NULL, NULL);
+		my d_widget = gtk_scrolled_window_new (nullptr, nullptr);
 		gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (my d_widget),
 			horizontalScrollbarPersistence == 0 ? GTK_POLICY_NEVER : horizontalScrollbarPersistence == 1 ? GTK_POLICY_AUTOMATIC : GTK_POLICY_ALWAYS,
 			verticalScrollbarPersistence   == 0 ? GTK_POLICY_NEVER : verticalScrollbarPersistence   == 1 ? GTK_POLICY_AUTOMATIC : GTK_POLICY_ALWAYS);
@@ -97,7 +97,7 @@ GuiScrolledWindow GuiScrolledWindow_create (GuiForm parent, int left, int right,
         [scrollView setHasHorizontalScroller: YES];
         [scrollView setBackgroundColor: [NSColor lightGrayColor]];
 	#elif motif
-		my d_widget = XmCreateScrolledWindow (parent -> d_widget, "scrolledWindow", NULL, 0);
+		my d_widget = XmCreateScrolledWindow (parent -> d_widget, "scrolledWindow", nullptr, 0);
 		_GuiObject_setUserData (my d_widget, me);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		Melder_assert (my classInfo == classGuiScrolledWindow);

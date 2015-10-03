@@ -256,7 +256,7 @@ int Printer_postScriptSettings (void) {
 		Any radio;
 		dia = UiForm_create (theCurrentPraatApplication -> topShell, U"PostScript settings", DO_Printer_postScriptSettings, NULL, U"PostScript settings...", U"PostScript settings...");
 		#if defined (_WIN32)
-			BOOLEAN (U"Allow direct PostScript", TRUE);
+			BOOLEAN (U"Allow direct PostScript", true);
 		#endif
 		RADIO_ENUM (U"Grey resolution", kGraphicsPostscript_spots, DEFAULT)
 		#if defined (UNIX)
@@ -297,7 +297,7 @@ int Printer_postScriptSettings (void) {
 			TranslateMessage (& msg);
 			DispatchMessage (& msg);
 		}
-		return TRUE;
+		return true;
 	}
 	HDC Printer_getDC (void) {
 		if (! theWinPrint. hDevMode) {
@@ -460,7 +460,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 				thePrinter. paperWidth = 1000;
 				thePrinter. paperHeight = 1000;
 			}
-			EnableWindow ((HWND) XtWindow (theCurrentPraatApplication -> topShell -> d_xmShell), FALSE);
+			EnableWindow ((HWND) XtWindow (theCurrentPraatApplication -> topShell -> d_xmShell), false);
 			SetAbortProc (theWinDC, AbortFunc);
 			memset (& docInfo, 0, sizeof (DOCINFO));
 			docInfo. cbSize = sizeof (DOCINFO);
@@ -488,7 +488,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 					EndDoc (theWinDC);
 				}
 			}
-			EnableWindow ((HWND) XtWindow (theCurrentPraatApplication -> topShell -> d_xmShell), TRUE);
+			EnableWindow ((HWND) XtWindow (theCurrentPraatApplication -> topShell -> d_xmShell), true);
 			DeleteDC (theWinDC), theWinDC = NULL;
 		#elif defined (macintosh)
 			Boolean result;

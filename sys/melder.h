@@ -1483,7 +1483,7 @@ public:
 	_autostring (T *string) : ptr (string) {
 		//if (Melder_debug == 39) Melder_casual (U"autostring: constructor from C-string ", Melder_pointer (ptr));
 	}
-	_autostring () : ptr (0) {
+	_autostring () : ptr (nullptr) {
 		//if (Melder_debug == 39) Melder_casual (U"autostring: zero constructor");
 	}
 	~_autostring () {

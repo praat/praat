@@ -683,7 +683,7 @@ void LongSound_concatenate (Collection me, MelderFile file, int audioFileType, i
 				Sound sound = (Sound) data;
 				if (file -> filePointer) {
 					MelderFile_writeFloatToAudio (file, sound -> ny, Melder_defaultAudioFileEncoding (audioFileType, numberOfBitsPerSamplePoint),
-						sound -> z, sound -> nx, TRUE);
+						sound -> z, sound -> nx, true);
 				}
 			} else {
 				LongSound longSound = (LongSound) data;

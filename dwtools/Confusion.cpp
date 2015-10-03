@@ -351,7 +351,7 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, long index, d
 		}
 		Graphics_marksLeft (g, 2, true, true, false);
 		if (xmin * xmax < 0.0) {
-			Graphics_markBottom (g, 0.0, true, true, true, NULL);
+			Graphics_markBottom (g, 0.0, true, true, true, nullptr);
 		}
 	}
 }

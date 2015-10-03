@@ -64,7 +64,7 @@ Thing_implement (GuiText, GuiControl, 0);
 
 #if mac
 	#define isTextControl(w)  ((w) -> isControl != 0)
-	#define isMLTE(w)  ((w) -> d_macMlteObject != NULL)
+	#define isMLTE(w)  ((w) -> d_macMlteObject != nullptr)
 #endif
 
 #if win
@@ -141,7 +141,7 @@ void _GuiText_handleFocusLoss (GuiObject widget) {
 	 * 4. on window unmanaging
 	 */
 	if (widget == theGui.textFocus)
-		theGui.textFocus = NULL;
+		theGui.textFocus = nullptr;
 }
 
 #if mac
@@ -162,7 +162,7 @@ void _GuiMac_clearTheTextFocus (void) {
 #endif
 
 void _GuiText_setTheTextFocus (GuiObject widget) {
-	if (widget == NULL || theGui.textFocus == widget
+	if (! widget || theGui.textFocus == widget
 		|| ! widget -> managed) return;   // perhaps not-yet-managed; test: open Praat's DataEditor with a Sound, then type
 	#if gtk
 		gtk_widget_grab_focus (GTK_WIDGET (widget));   // not used: gtk is not 1 when motif is 1
@@ -261,7 +261,7 @@ void _GuiText_handleValueChanged (GuiObject widget) {
 		_GuiText_setTheTextFocus (widget);
 		_GuiMac_clipOnParent (widget);
 		if (isTextControl (widget)) {
-			HandleControlClick (widget -> nat.control.handle, event -> where, event -> modifiers, NULL);
+			HandleControlClick (widget -> nat.control.handle, event -> where, event -> modifiers, nullptr);
 		} else if (isMLTE (me)) {
 			LocalToGlobal (& event -> where);
 			TXNClick (my d_macMlteObject, event);   // handles text selection and scrolling
@@ -347,9 +347,9 @@ void _GuiText_unmanage (GuiObject widget) {
 #if win
 	void _GuiWinText_destroy (GuiObject widget) {
 		if (widget == theGui.textFocus)
-			theGui.textFocus = NULL;   // remove dangling reference
+			theGui.textFocus = nullptr;   // remove dangling reference
 		if (widget == widget -> shell -> textFocus)
-			widget -> shell -> textFocus = NULL;   // remove dangling reference
+			widget -> shell -> textFocus = nullptr;   // remove dangling reference
 		iam_text;
 		DestroyWindow (widget -> window);
 		forget (me);   // NOTE: my widget is not destroyed here
@@ -361,9 +361,9 @@ void _GuiText_unmanage (GuiObject widget) {
 #elif mac
 	void _GuiMacText_destroy (GuiObject widget) {
 		if (widget == theGui.textFocus)
-			theGui.textFocus = NULL;   // remove dangling reference
+			theGui.textFocus = nullptr;   // remove dangling reference
 		if (widget == widget -> shell -> textFocus)
-			widget -> shell -> textFocus = NULL;   // remove dangling reference
+			widget -> shell -> textFocus = nullptr;   // remove dangling reference
 		iam_text;
 		if (isTextControl (widget)) {
 			_GuiMac_clipOnParent (widget);
@@ -380,7 +380,7 @@ void _GuiText_unmanage (GuiObject widget) {
 		if (isTextControl (widget)) {
 			Draw1Control (widget -> nat.control.handle);
 		} else if (isMLTE (me)) {
-			TXNDraw (my d_macMlteObject, NULL);
+			TXNDraw (my d_macMlteObject, nullptr);
 		}
 		GuiMac_clipOff ();
 	}
@@ -407,7 +407,7 @@ static long NativeText_getLength (GuiObject widget) {
 		if (isTextControl (widget)) {
 			Size size;
 			CFStringRef cfString;
-			GetControlData (widget -> nat.control.handle, kControlEntireControl, kControlEditTextCFStringTag, sizeof (CFStringRef), & cfString, NULL);
+			GetControlData (widget -> nat.control.handle, kControlEntireControl, kControlEditTextCFStringTag, sizeof (CFStringRef), & cfString, nullptr);
 			size = CFStringGetLength (cfString);
 			CFRelease (cfString);
 			return size;
@@ -429,7 +429,7 @@ static void NativeText_getText (GuiObject widget, char32 *buffer, long length) {
 	iam_text;
 	if (isTextControl (widget)) {
 		CFStringRef cfString;
-		GetControlData (widget -> nat.control.handle, kControlEntireControl, kControlEditTextCFStringTag, sizeof (CFStringRef), & cfString, NULL);
+		GetControlData (widget -> nat.control.handle, kControlEntireControl, kControlEditTextCFStringTag, sizeof (CFStringRef), & cfString, nullptr);
 		UniChar *macText = Melder_malloc_f (UniChar, length + 1);
 		CFRange range = { 0, length };
 		CFStringGetCharacters (cfString, range, macText);
@@ -485,7 +485,7 @@ static int NativeText_getSelectionRange (GuiObject widget, long *out_left, long 
 		iam_text;
 		if (isTextControl (widget)) {
 			ControlEditTextSelectionRec rec;
-			GetControlData (widget -> nat.control.handle, kControlEntireControl, kControlEditTextSelectionTag, sizeof (rec), & rec, NULL);
+			GetControlData (widget -> nat.control.handle, kControlEntireControl, kControlEditTextSelectionTag, sizeof (rec), & rec, nullptr);
 			left = rec.selStart;
 			right = rec. selEnd;
 		} else if (isMLTE (me)) {
@@ -564,17 +564,17 @@ void _GuiText_exit (void) {
 
 	/* Tests the previous elements of the history for mergability with the one to insert given via parameters.
 	 * If successful, it returns a pointer to the last valid entry in the merged history list, otherwise
-	 * returns NULL.
+	 * returns nullptr.
 	 * Specifically the function expands the previous insert/delete event(s)
 	 *  - with the current, if current also is an insert/delete event and the ranges of previous and current event match
 	 *  - with the previous delete and current insert event, in case the ranges of both event-pairs respectively match
 	 */
 	static history_entry * history_addAndMerge (void *void_me, history_data text_new, long first, long last, bool deleted) {
 		iam(GuiText);
-		history_entry *he = NULL;
+		history_entry *he = nullptr;
 		
-		if (!(my d_prev))
-			return NULL;
+		if (! my d_prev)
+			return nullptr;
 		
 		if (my d_prev->type_del == deleted) {
 			// extend the last history event by this one
@@ -654,10 +654,10 @@ void _GuiText_exit (void) {
 			free (old_hnext);
 			old_hnext = hnext;
 		}
-		my d_next = NULL;
+		my d_next = nullptr;
 		
 		history_entry *he = history_addAndMerge (void_me, text_new, first, last, deleted);
-		if (he == NULL) {
+		if (! he) {
 			he = (history_entry *) malloc (sizeof (history_entry));
 			he->first = first;
 			he->last = last;
@@ -665,12 +665,12 @@ void _GuiText_exit (void) {
 			he->text = text_new;
 			
 			he->prev = my d_prev;
-			he->next = NULL;
+			he->next = nullptr;
 			if (my d_prev)
 				my d_prev->next = he;
 		}
 		my d_prev = he;
-		he->next = NULL;
+		he->next = nullptr;
 		
 		if (my d_undo_item) GuiThing_setSensitive (my d_undo_item, true);
 		if (my d_redo_item) GuiThing_setSensitive (my d_redo_item, false);
@@ -678,18 +678,18 @@ void _GuiText_exit (void) {
 
 	static bool history_has_undo (void *void_me) {
 		iam (GuiText);
-		return my d_prev != NULL;
+		return my d_prev != nullptr;
 	}
 
 	static bool history_has_redo (void *void_me) {
 		iam (GuiText);
-		return my d_next != NULL;
+		return my d_next != nullptr;
 	}
 
 	static void history_do (void *void_me, bool undo) {
 		iam (GuiText);
 		history_entry *he = undo ? my d_prev : my d_next;
-		if (he == NULL) // TODO: this function should not be called in that case
+		if (! he) // TODO: this function should not be called in that case
 			return;
 		
 		my d_history_change = 1;
@@ -723,7 +723,7 @@ void _GuiText_exit (void) {
 			free(h1);
 			h1 = h2;
 		}
-		my d_prev = NULL;
+		my d_prev = nullptr;
 		
 		h1 = my d_next;
 		while (h1) {
@@ -732,7 +732,7 @@ void _GuiText_exit (void) {
 			free(h1);
 			h1 = h2;
 		}
-		my d_next = NULL;
+		my d_next = nullptr;
 		
 		if (my d_undo_item) GuiThing_setSensitive (my d_undo_item, false);
 		if (my d_redo_item) GuiThing_setSensitive (my d_redo_item, false);
@@ -767,7 +767,7 @@ void _GuiText_exit (void) {
 		if (my d_history_change) return;
 		int from_pos = gtk_text_iter_get_offset (from);
 		int to_pos = gtk_text_iter_get_offset (to);
-		history_add (me, gtk_text_buffer_get_text (buffer, from, to, FALSE), from_pos, to_pos, 1);
+		history_add (me, gtk_text_buffer_get_text (buffer, from, to, false), from_pos, to_pos, 1);
 	}
 	
 	static void _GuiGtkTextBuf_history_insert_cb (GtkTextBuffer *buffer, GtkTextIter *from, gchar *utf8_text, gint len, gpointer void_me) {
@@ -784,8 +784,8 @@ void _GuiText_exit (void) {
 	static void _GuiGtkText_valueChangedCallback (GuiObject widget, gpointer void_me) {
 		iam (GuiText);
 		trace (U"begin");
-		Melder_assert (me != NULL);
-		if (my d_changeCallback != NULL) {
+		Melder_assert (me);
+		if (my d_changeCallback) {
 			struct structGuiTextEvent event = { me };
 			my d_changeCallback (my d_changeBoss, & event);
 		}
@@ -794,7 +794,7 @@ void _GuiText_exit (void) {
 	static void _GuiGtkText_destroyCallback (GuiObject widget, gpointer void_me) {
 		(void) widget;
 		iam (GuiText);
-		Melder_assert (me != NULL);
+		Melder_assert (me);
 		Melder_assert (my classInfo == classGuiText);
 		trace (U"begin");
 		if (my d_undo_item) {
@@ -805,8 +805,8 @@ void _GuiText_exit (void) {
 			trace (U"redo");
 			//g_object_unref (my d_redo_item -> d_widget);
 		}
-		my d_undo_item = NULL;
-		my d_redo_item = NULL;
+		my d_undo_item = nullptr;
+		my d_redo_item = nullptr;
 		trace (U"history");
 		history_clear (me);
 		forget (me);
@@ -825,7 +825,7 @@ void _GuiText_exit (void) {
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
-		Melder_assert (userData == NULL || Thing_isa (userData, classGuiText));
+		Melder_assert (userData == nullptr || Thing_isa (userData, classGuiText));
 		d_userData = static_cast <GuiText> (userData);
 	}
 	- (void) textDidChange: (NSNotification *) notification {
@@ -850,7 +850,7 @@ void _GuiText_exit (void) {
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
-		Melder_assert (userData == NULL || Thing_isa (userData, classGuiText));
+		Melder_assert (userData == nullptr || Thing_isa (userData, classGuiText));
 		d_userData = static_cast <GuiText> (userData);
 	}
 	/*
@@ -880,10 +880,10 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 	my d_shell = parent -> d_shell;
 	my d_parent = parent;
 	#if gtk
-		trace (U"before creating a GTK text widget: locale is ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
+		trace (U"before creating a GTK text widget: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 		if (flags & GuiText_SCROLLED) {
 			GtkWrapMode ww;
-			GuiObject scrolled = gtk_scrolled_window_new (NULL, NULL);
+			GuiObject scrolled = gtk_scrolled_window_new (nullptr, nullptr);
 			gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 			my d_widget = gtk_text_view_new ();
 			gtk_container_add (GTK_CONTAINER (scrolled), GTK_WIDGET (my d_widget));
@@ -912,17 +912,17 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 			gtk_entry_set_activates_default (GTK_ENTRY (my d_widget), true);
 		}
-		trace (U"after creating a GTK text widget: locale is ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
-		my d_prev = NULL;
-		my d_next = NULL;
+		trace (U"after creating a GTK text widget: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
+		my d_prev = nullptr;
+		my d_next = nullptr;
 		my d_history_change = 0;
-		my d_undo_item = NULL;
-		my d_redo_item = NULL;
+		my d_undo_item = nullptr;
+		my d_redo_item = nullptr;
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkText_destroyCallback), me);
 	#elif cocoa
 		if (flags & GuiText_SCROLLED) {
 			my d_cocoaScrollView = [[GuiCocoaScrolledWindow alloc] init];
-			[my d_cocoaScrollView setUserData: NULL];   // because those user data can only be GuiScrolledWindow
+			[my d_cocoaScrollView setUserData: nullptr];   // because those user data can only be GuiScrolledWindow
 			my d_widget = my d_cocoaScrollView;
 			my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 			[my d_cocoaScrollView setBorderType: NSNoBorder];
@@ -974,12 +974,12 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 		my d_widget = _Gui_initializeWidget (xmTextWidgetClass, parent -> d_widget, flags & GuiText_SCROLLED ? U"scrolledText" : U"text");
 		_GuiObject_setUserData (my d_widget, me);
 		my d_editable = (flags & GuiText_NONEDITABLE) == 0;
-		my d_widget -> window = CreateWindow (L"edit", NULL, WS_CHILD | WS_BORDER
+		my d_widget -> window = CreateWindow (L"edit", nullptr, WS_CHILD | WS_BORDER
 			| ( flags & GuiText_WORDWRAP ? ES_AUTOVSCROLL : ES_AUTOHSCROLL )
 			| ES_MULTILINE | WS_CLIPSIBLINGS
 			| ( flags & GuiText_SCROLLED ? WS_HSCROLL | WS_VSCROLL : 0 ),
 			my d_widget -> x, my d_widget -> y, my d_widget -> width, my d_widget -> height,
-			my d_widget -> parent -> window, (HMENU) 1, theGui.instance, NULL);
+			my d_widget -> parent -> window, (HMENU) 1, theGui.instance, nullptr);
 		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
 		if (! font10) {
 			font10 = CreateFont (13, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0/*FIXED_PITCH | FF_MODERN*/, /*L"Doulos SIL"*/L"Courier New");
@@ -988,7 +988,7 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			font18 = CreateFont (24, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0/*FIXED_PITCH | FF_MODERN*/, /*L"Doulos SIL"*/L"Courier New");
 			font24 = CreateFont (32, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0/*FIXED_PITCH | FF_MODERN*/, /*L"Doulos SIL"*/L"Courier New");
 		}
-		SetWindowFont (my d_widget -> window, font12 /*theScrolledHint ? font : GetStockFont (ANSI_VAR_FONT)*/, FALSE);
+		SetWindowFont (my d_widget -> window, font12 /*theScrolledHint ? font : GetStockFont (ANSI_VAR_FONT)*/, false);
 		Edit_LimitText (my d_widget -> window, 0);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		/*
@@ -1006,7 +1006,7 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			TXNMargins margins;
 			TXNControlData controlData;
 			TXNControlTag controlTag = kTXNMarginsTag;
-			TXNNewObject (NULL,   // no file
+			TXNNewObject (nullptr,   // no file
 				my d_widget -> macWindow, & my d_widget -> rect, kTXNWantHScrollBarMask | kTXNWantVScrollBarMask
 					| kTXNMonostyledTextMask | kTXNDrawGrowIconMask,
 				kTXNTextEditStyleFrameType, kTXNTextensionFile,
@@ -1015,13 +1015,13 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			destRect. top = 0;
 			destRect. right = 10000;
 			destRect. bottom = 2000000000;
-			TXNSetRectBounds (my d_macMlteObject, NULL, & destRect, FALSE);
+			TXNSetRectBounds (my d_macMlteObject, nullptr, & destRect, false);
 			margins. leftMargin = 3;
 			margins. topMargin = 3;
 			margins. rightMargin = 0;
 			margins. bottomMargin = 0;
 			controlData. marginsPtr = & margins;
-			TXNSetTXNObjectControls (my d_macMlteObject, FALSE, 1, & controlTag, & controlData);
+			TXNSetTXNObjectControls (my d_macMlteObject, false, 1, & controlTag, & controlData);
 			my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		} else {
 			my d_widget = _Gui_initializeWidget (xmTextWidgetClass, parent -> d_widget, U"text");
@@ -1029,9 +1029,9 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			my d_editable = (flags & GuiText_NONEDITABLE) == 0;
 			Rect r = my d_widget -> rect;
 			InsetRect (& r, 3, 3);
-			CreateEditUnicodeTextControl (my d_widget -> macWindow, & r, NULL, false, NULL, & my d_widget -> nat.control.handle);
+			CreateEditUnicodeTextControl (my d_widget -> macWindow, & r, nullptr, false, nullptr, & my d_widget -> nat.control.handle);
 			SetControlReference (my d_widget -> nat.control.handle, (long) my d_widget);
-			my d_widget -> isControl = TRUE;
+			my d_widget -> isControl = true;
 			my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		}
 		/*
@@ -1067,10 +1067,10 @@ void GuiText_copy (GuiText me) {
 			[[[(GuiCocoaTextField *) my d_widget   window]   fieldEditor: NO   forObject: nil] copy: nil];
 		}
 	#elif win
-		if (! NativeText_getSelectionRange (my d_widget, NULL, NULL)) return;
+		if (! NativeText_getSelectionRange (my d_widget, nullptr, nullptr)) return;
 		SendMessage (my d_widget -> window, WM_COPY, 0, 0);
 	#elif mac
-		if (! NativeText_getSelectionRange (my d_widget, NULL, NULL)) return;
+		if (! NativeText_getSelectionRange (my d_widget, nullptr, nullptr)) return;
 		if (isTextControl (my d_widget)) {
 			HandleControlKey (my d_widget -> nat.control.handle, 0, 'C', cmdKey);
 		} else if (isMLTE (me)) {
@@ -1095,11 +1095,11 @@ void GuiText_cut (GuiText me) {
 			[[[(GuiCocoaTextField *) my d_widget   window]   fieldEditor: NO   forObject: nil] cut: nil];
 		}
 	#elif win
-		if (! my d_editable || ! NativeText_getSelectionRange (my d_widget, NULL, NULL)) return;
+		if (! my d_editable || ! NativeText_getSelectionRange (my d_widget, nullptr, nullptr)) return;
 		SendMessage (my d_widget -> window, WM_CUT, 0, 0);   // this will send the EN_CHANGE message, hence no need to call the valueChangedCallbacks
 		UpdateWindow (my d_widget -> window);
 	#elif mac
-		if (! my d_editable || ! NativeText_getSelectionRange (my d_widget, NULL, NULL)) return;
+		if (! my d_editable || ! NativeText_getSelectionRange (my d_widget, nullptr, nullptr)) return;
 		if (isTextControl (my d_widget)) {
 			_GuiMac_clipOnParent (my d_widget);
 			HandleControlKey (my d_widget -> nat.control.handle, 0, 'X', cmdKey);
@@ -1129,7 +1129,7 @@ char32 * GuiText_getSelection (GuiText me) {
 			if (gtk_text_buffer_get_has_selection (textBuffer)) {   // at least one character selected?
 				GtkTextIter start, end;
 				gtk_text_buffer_get_selection_bounds (textBuffer, & start, & end);
-				gchar *text = gtk_text_buffer_get_text (textBuffer, & start, & end, TRUE);
+				gchar *text = gtk_text_buffer_get_text (textBuffer, & start, & end, true);
 				char32 *result = Melder_8to32 (text);
 				g_free (text);
 				return result;
@@ -1191,7 +1191,7 @@ char32 * GuiText_getSelection (GuiText me) {
 			return result;
 		}
 	#endif
-	return NULL;   // zero characters selected
+	return nullptr;   // zero characters selected
 }
 
 char32 * GuiText_getString (GuiText me) {
@@ -1212,7 +1212,7 @@ char32 * GuiText_getStringAndSelectionPosition (GuiText me, long *first, long *l
 			GtkTextIter start, end;
 			gtk_text_buffer_get_start_iter (textBuffer, & start);
 			gtk_text_buffer_get_end_iter (textBuffer, & end);
-			gchar *text = gtk_text_buffer_get_text (textBuffer, & start, & end, TRUE);   // TODO: Hidden chars ook maar doen he?
+			gchar *text = gtk_text_buffer_get_text (textBuffer, & start, & end, true);   // TODO: Hidden chars ook maar doen he?
 			char32 *result = Melder_8to32 (text);
 			g_free (text);
 			gtk_text_buffer_get_selection_bounds (textBuffer, & start, & end);
@@ -1220,7 +1220,7 @@ char32 * GuiText_getStringAndSelectionPosition (GuiText me, long *first, long *l
 			*last = gtk_text_iter_get_offset (& end);
 			return result;
 		}
-		return NULL;
+		return nullptr;
 	#elif cocoa
 		if (my d_cocoaTextView) {
 			NSString *nsString = [my d_cocoaTextView   string];
@@ -1287,7 +1287,7 @@ void GuiText_paste (GuiText me) {
 		} else if (G_OBJECT_TYPE (G_OBJECT (my d_widget)) == GTK_TYPE_TEXT_VIEW) {
 			GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (my d_widget));
 			GtkClipboard *cb = gtk_clipboard_get (GDK_SELECTION_CLIPBOARD);
-			gtk_text_buffer_paste_clipboard (buffer, cb, NULL, gtk_text_view_get_editable (GTK_TEXT_VIEW (my d_widget)));
+			gtk_text_buffer_paste_clipboard (buffer, cb, nullptr, gtk_text_view_get_editable (GTK_TEXT_VIEW (my d_widget)));
 		}
 	#elif cocoa
 		if (my d_cocoaTextView) {
@@ -1333,18 +1333,18 @@ void GuiText_remove (GuiText me) {
 			gtk_editable_delete_selection (GTK_EDITABLE (my d_widget));
 		} else if (G_OBJECT_TYPE (G_OBJECT (my d_widget)) == GTK_TYPE_TEXT_VIEW) {
 			GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (my d_widget));
-			gtk_text_buffer_delete_selection (buffer, TRUE, gtk_text_view_get_editable (GTK_TEXT_VIEW (my d_widget)));
+			gtk_text_buffer_delete_selection (buffer, true, gtk_text_view_get_editable (GTK_TEXT_VIEW (my d_widget)));
 		}
 	#elif cocoa
 		if (my d_cocoaTextView) {
 			[my d_cocoaTextView   delete: nil];
 		}
 	#elif win
-		if (! my d_editable || ! NativeText_getSelectionRange (my d_widget, NULL, NULL)) return;
+		if (! my d_editable || ! NativeText_getSelectionRange (my d_widget, nullptr, nullptr)) return;
 		SendMessage (my d_widget -> window, WM_CLEAR, 0, 0);   // this will send the EN_CHANGE message, hence no need to call the valueChangedCallbacks
 		UpdateWindow (my d_widget -> window);
 	#elif mac
-		if (! my d_editable || ! NativeText_getSelectionRange (my d_widget, NULL, NULL)) return;
+		if (! my d_editable || ! NativeText_getSelectionRange (my d_widget, nullptr, nullptr)) return;
 		if (isTextControl (my d_widget)) {
 			_GuiMac_clipOnParent (my d_widget);
 			HandleControlKey (my d_widget -> nat.control.handle, 0, 8, 0);   // backspace key
@@ -1463,7 +1463,7 @@ void GuiText_scrollToSelection (GuiText me) {
 		GtkTextBuffer *textBuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (my d_widget));
 		GtkTextIter start, end;
 		gtk_text_buffer_get_selection_bounds (textBuffer, & start, & end);
-		//GtkTextMark *mark = gtk_text_buffer_create_mark (textBuffer, NULL, & start, true);
+		//GtkTextMark *mark = gtk_text_buffer_create_mark (textBuffer, nullptr, & start, true);
 		gtk_text_view_scroll_to_iter (GTK_TEXT_VIEW (my d_widget), & start, 0.1, false, 0.0, 0.0);
 		//gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (my d_widget), mark, 0.1, false, 0.0, 0.0);
 	#elif cocoa
@@ -1488,16 +1488,16 @@ void GuiText_setChangeCallback (GuiText me, void (*changeCallback) (void *boss, 
 void GuiText_setFontSize (GuiText me, int size) {
 	#if gtk
 		GtkRcStyle *modStyle = gtk_widget_get_modifier_style (GTK_WIDGET (my d_widget));
-		trace (U"before initializing Pango: locale is ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
-		PangoFontDescription *fontDesc = modStyle -> font_desc != NULL ? modStyle -> font_desc :
+		trace (U"before initializing Pango: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
+		PangoFontDescription *fontDesc = modStyle -> font_desc != nullptr ? modStyle -> font_desc :
 			#if ALLOW_GDK_DRAWING
 				pango_font_description_copy (GTK_WIDGET (my d_widget) -> style -> font_desc);
 			#else
-				NULL;
+				nullptr;
 			#endif
-		trace (U"during initializing Pango: locale is ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
+		trace (U"during initializing Pango: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 		pango_font_description_set_absolute_size (fontDesc, size * PANGO_SCALE);
-		trace (U"after initializing Pango: locale is ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
+		trace (U"after initializing Pango: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 		modStyle -> font_desc = fontDesc;
 		gtk_widget_modify_style (GTK_WIDGET (my d_widget), modStyle);
 	#elif cocoa
@@ -1511,15 +1511,15 @@ void GuiText_setFontSize (GuiText me, int size) {
 		GuiText_setString (me, U"");   // erase all
 		UpdateWindow (my d_widget -> window);
 		if (size <= 10) {
-			SetWindowFont (my d_widget -> window, font10, FALSE);
+			SetWindowFont (my d_widget -> window, font10, false);
 		} else if (size <= 12) {
-			SetWindowFont (my d_widget -> window, font12, FALSE);
+			SetWindowFont (my d_widget -> window, font12, false);
 		} else if (size <= 14) {
-			SetWindowFont (my d_widget -> window, font14, FALSE);
+			SetWindowFont (my d_widget -> window, font14, false);
 		} else if (size <= 18) {
-			SetWindowFont (my d_widget -> window, font18, FALSE);
+			SetWindowFont (my d_widget -> window, font18, false);
 		} else {
-			SetWindowFont (my d_widget -> window, font24, FALSE);
+			SetWindowFont (my d_widget -> window, font24, false);
 		}
 		GuiText_setString (me, text);
 		Melder_free (text);
@@ -1552,7 +1552,7 @@ void GuiText_setRedoItem (GuiText me, GuiMenuItem item) {
 }
 
 void GuiText_setSelection (GuiText me, long first, long last) {
-	if (my d_widget != NULL) {
+	if (my d_widget) {
 	#if gtk
 		if (G_OBJECT_TYPE (G_OBJECT (my d_widget)) == GTK_TYPE_ENTRY) {
 			gtk_editable_select_region (GTK_EDITABLE (my d_widget), first, last);
@@ -1673,8 +1673,8 @@ void GuiText_setString (GuiText me, const char32 *text) {
 	#elif mac
 		long length_utf32 = str32len (text), length_utf16 = str32len_utf16 (text, false);
 		UniChar *macText = Melder_malloc_f (UniChar, length_utf16 + 1);
-		//Melder_assert (macText != NULL);
-		//Melder_assert (my d_widget != NULL);
+		//Melder_assert (macText);
+		//Melder_assert (my d_widget);
 		//Melder_assert (my d_widget -> widgetClass == xmTextWidgetClass);
 		/*
 		 * Convert from UTF-32 to UTF-16 and replace all LF with CR.
@@ -1697,7 +1697,7 @@ void GuiText_setString (GuiText me, const char32 *text) {
 		if (j != length_utf16)
 			Melder_fatal (U"GuiText_setString: incorrect number of UTF-16 words (", j, U" instead of ", length_utf16, U"): <<", text, U">>.");
 		if (isTextControl (my d_widget)) {
-			CFStringRef cfString = CFStringCreateWithCharacters (NULL, macText, length_utf16);
+			CFStringRef cfString = CFStringCreateWithCharacters (nullptr, macText, length_utf16);
 			SetControlData (my d_widget -> nat.control.handle, kControlEntireControl, kControlEditTextCFStringTag, sizeof (CFStringRef), & cfString);
 			CFRelease (cfString);
 		} else if (isMLTE (me)) {

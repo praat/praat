@@ -41,12 +41,11 @@
 Thing_implement (Artword, Daata, 0);
 
 Artword Artword_create (double totalTime) {
-	Artword me = Thing_new (Artword);
-	if (! me) return NULL;
+	autoArtword me = Thing_new (Artword);
 	my totalTime = totalTime;
 	for (int i = 1; i <= kArt_muscle_MAX; i ++)
-		Artword_setDefault (me, i);
-	return me;
+		Artword_setDefault (me.get(), i);
+	return me.transfer();
 }
 
 void Artword_setDefault (Artword me, int feature) {

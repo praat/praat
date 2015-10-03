@@ -27,9 +27,9 @@ void structGuiThing :: v_destroy () {
 void structGuiThing :: v_hide () {
 	#if gtk
 		GuiObject parent = gtk_widget_get_parent (GTK_WIDGET (d_widget));
-		if (parent != NULL && GTK_IS_DIALOG (parent)) {   // I am the top GtkFixed of a dialog
+		if (parent && GTK_IS_DIALOG (parent)) {   // I am the top GtkFixed of a dialog
 			gtk_widget_hide (GTK_WIDGET (parent));
-		} else if (parent != NULL && GTK_IS_DIALOG (gtk_widget_get_parent (GTK_WIDGET (parent)))) {
+		} else if (parent && GTK_IS_DIALOG (gtk_widget_get_parent (GTK_WIDGET (parent)))) {
 			trace (U"hiding a dialog indirectly");
 			gtk_widget_hide (GTK_WIDGET (gtk_widget_get_parent (GTK_WIDGET (parent))));
 		} else {

@@ -97,7 +97,7 @@ int KNN_getNumberOfCPUs(void)
     if(!Glpi) 
         return(1);
     
-    done = FALSE;
+    done = false;
     buffer = NULL;
     returnLength = 0;
 
@@ -112,7 +112,7 @@ int KNN_getNumberOfCPUs(void)
                     free(buffer);
                 return (1);
             } 
-            else done = TRUE;
+            else done = true;
         }
         byteOffset = 0;
         ptr=buffer;

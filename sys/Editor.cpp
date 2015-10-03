@@ -68,7 +68,7 @@ static void commonCallback (GUI_ARGS) {
 		UiHistory_write_colonize (my itemTitle);
 	}
 	try {
-		my commandCallback (my d_editor, me, NULL, 0, NULL, NULL, NULL);
+		my commandCallback (my d_editor, me, nullptr, 0, nullptr, nullptr, nullptr);
 	} catch (MelderError) {
 		if (! Melder_hasError (U"Script exited.")) {
 			Melder_appendError (U"Menu command \"", my itemTitle, U"\" not completed.");
@@ -85,8 +85,8 @@ GuiMenuItem EditorMenu_addCommand (EditorMenu me, const char32 *itemTitle /* cat
 	thy menu = me;
 	thy itemTitle = Melder_dup (itemTitle);
 	thy itemWidget =
-		commandCallback == NULL ? GuiMenu_addSeparator (my menuWidget) :
-		flags & Editor_HIDDEN ? NULL :
+		commandCallback == nullptr ? GuiMenu_addSeparator (my menuWidget) :
+		flags & Editor_HIDDEN ? nullptr :
 		GuiMenu_addItem (my menuWidget, itemTitle, flags, commonCallback, thee.peek());   // DANGLE BUG: me can be killed by Collection_addItem(), but EditorCommand::destroy doesn't remove the item
 	thy commandCallback = commandCallback;
 	GuiMenuItem result = thy itemWidget;
@@ -145,7 +145,7 @@ GuiMenuItem Editor_addCommandScript (Editor me, const char32 *menuTitle, const c
 			cmd -> d_editor = me;
 			cmd -> menu = menu;
 			cmd -> itemTitle = Melder_dup_f (itemTitle);
-			cmd -> itemWidget = script == NULL ? GuiMenu_addSeparator (menu -> menuWidget) :
+			cmd -> itemWidget = script == nullptr ? GuiMenu_addSeparator (menu -> menuWidget) :
 				GuiMenu_addItem (menu -> menuWidget, itemTitle, flags, commonCallback, cmd.peek());   // DANGLE BUG
 			cmd -> commandCallback = Editor_scriptCallback;
 			if (str32len (script) == 0) {
@@ -165,7 +165,7 @@ GuiMenuItem Editor_addCommandScript (Editor me, const char32 *menuTitle, const c
 		U"Command \"", itemTitle, U"\" not inserted in menu \"", menuTitle, U".\n"
 		U"To fix this, go to Praat->Preferences->Buttons->Editors, and remove the script from this menu.\n"
 		U"You may want to install the script in a different menu.");
-	return NULL;
+	return nullptr;
 }
 
 void Editor_setMenuSensitive (Editor me, const char32 *menuTitle, int sensitive) {
@@ -203,7 +203,7 @@ void Editor_doMenuCommand (Editor me, const char32 *commandTitle, int narg, Stac
 		for (long icommand = 1; icommand <= numberOfCommands; icommand ++) {
 			EditorCommand command = (EditorCommand) menu -> commands -> item [icommand];
 			if (str32equ (commandTitle, command -> itemTitle)) {
-				command -> commandCallback (me, command, NULL, narg, args, arguments, interpreter);
+				command -> commandCallback (me, command, nullptr, narg, args, arguments, interpreter);
 				return;
 			}
 		}
@@ -231,7 +231,7 @@ void structEditor :: v_destroy () {
 		#elif cocoa
 			if (our d_windowForm -> d_cocoaWindow) {
 				NSWindow *cocoaWindow = our d_windowForm -> d_cocoaWindow;
-				//d_windowForm -> d_cocoaWindow = NULL;
+				//d_windowForm -> d_cocoaWindow = nullptr;
 				[cocoaWindow close];
 			}
 		#elif motif
@@ -249,7 +249,7 @@ void structEditor :: v_destroy () {
 void structEditor :: v_info () {
 	MelderInfo_writeLine (U"Editor type: ", Thing_className (this));
 	MelderInfo_writeLine (U"Editor name: ", our name ? our name : U"<no name>");
-	time_t today = time (NULL);
+	time_t today = time (nullptr);
 	MelderInfo_writeLine (U"Date: ", Melder_peek8to32 (ctime (& today)));   // includes a newline
 	if (our data) {
 		MelderInfo_writeLine (U"Data type: ", our data -> classInfo -> className);
@@ -302,7 +302,7 @@ static void menu_cb_undo (EDITOR_ARGS) {
 		[(GuiCocoaMenuItem *) my undoButton -> d_widget   setTitle: (NSString *) Melder_peek32toCfstring (my undoText)];
 	#elif motif
 		char *text_utf8 = Melder_peek32to8 (my undoText);
-		XtVaSetValues (my undoButton -> d_widget, XmNlabelString, text_utf8, NULL);
+		XtVaSetValues (my undoButton -> d_widget, XmNlabelString, text_utf8, nullptr);
 	#endif
 	/*
 	 * Send a message to myself (e.g., I will redraw myself).
@@ -321,12 +321,12 @@ static void menu_cb_searchManual (EDITOR_ARGS) {
 
 static void menu_cb_newScript (EDITOR_ARGS) {
 	EDITOR_IAM (Editor);
-	(void) ScriptEditor_createFromText (me, NULL);
+	(void) ScriptEditor_createFromText (me, nullptr);
 }
 
 static void menu_cb_openScript (EDITOR_ARGS) {
 	EDITOR_IAM (Editor);
-	autoScriptEditor scriptEditor = ScriptEditor_createFromText (me, NULL);
+	autoScriptEditor scriptEditor = ScriptEditor_createFromText (me, nullptr);
 	TextEditor_showOpen (scriptEditor.transfer());
 }
 
@@ -399,7 +399,7 @@ void structEditor :: v_do_pictureMargins (EditorCommand cmd) {
 
 static void gui_window_cb_goAway (I) {
 	iam (Editor);
-	Melder_assert (me != NULL);
+	Melder_assert (me != nullptr);
 	Melder_assert (Thing_isa (me, classEditor));
 	my v_goAway ();
 }
@@ -490,7 +490,7 @@ void Editor_init (Editor me, int x, int y, int width, int height, const char32 *
 		my v_createMenus ();
 		EditorMenu helpMenu = Editor_addMenu (me, U"Help", 0);
 		my v_createHelpMenuItems (helpMenu);
-		EditorMenu_addCommand (helpMenu, U"-- search --", 0, NULL);
+		EditorMenu_addCommand (helpMenu, U"-- search --", 0, nullptr);
 		my searchButton = EditorMenu_addCommand (helpMenu, U"Search manual...", 'M', menu_cb_searchManual);
 		if (my v_scriptable ()) {
 			Editor_addCommand (me, U"File", U"New editor script", 0, menu_cb_newScript);
@@ -519,7 +519,7 @@ void Editor_save (Editor me, const char32 *text) {
 		[(GuiCocoaMenuItem *) my undoButton -> d_widget   setTitle: (NSString *) Melder_peek32toCfstring (my undoText)];
 	#elif motif
 		char *text_utf8 = Melder_peek32to8 (my undoText);
-		XtVaSetValues (my undoButton -> d_widget, XmNlabelString, text_utf8, NULL);
+		XtVaSetValues (my undoButton -> d_widget, XmNlabelString, text_utf8, nullptr);
 	#endif
 }
 
@@ -527,7 +527,7 @@ void Editor_openPraatPicture (Editor me) {
 	my pictureGraphics = praat_picture_editor_open (my pref_picture_eraseFirst ());
 }
 void Editor_closePraatPicture (Editor me) {
-	if (my data != NULL && my pref_picture_writeNameAtTop () != kEditor_writeNameAtTop_NO) {
+	if (my data && my pref_picture_writeNameAtTop () != kEditor_writeNameAtTop_NO) {
 		Graphics_setNumberSignIsBold (my pictureGraphics, false);
 		Graphics_setPercentSignIsItalic (my pictureGraphics, false);
 		Graphics_setCircumflexIsSuperscript (my pictureGraphics, false);

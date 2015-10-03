@@ -868,7 +868,7 @@ DO
 			GET_REAL (U"Evaluation noise"),
 			GET_ENUM (kOTGrammar_rerankingStrategy, U"Update rule"),
 			GET_INTEGER (U"Honour local rankings"),
-			GET_REAL (U"Plasticity"), GET_REAL (U"Rel. plasticity spreading"), TRUE, TRUE, NULL);
+			GET_REAL (U"Plasticity"), GET_REAL (U"Rel. plasticity spreading"), true, true, nullptr);
 		praat_dataChanged (me);
 	} catch (MelderError) {
 		praat_dataChanged (OBJECT);
@@ -893,7 +893,7 @@ DO
 			GET_REAL (U"Evaluation noise"),
 			GET_ENUM (kOTGrammar_rerankingStrategy, U"Update rule"),
 			GET_INTEGER (U"Honour local rankings"),
-			GET_REAL (U"Plasticity"), GET_REAL (U"Rel. plasticity spreading"), GET_INTEGER (U"Number of chews"), TRUE);
+			GET_REAL (U"Plasticity"), GET_REAL (U"Rel. plasticity spreading"), GET_INTEGER (U"Number of chews"), true);
 		praat_dataChanged (me);
 	} catch (MelderError) {
 		praat_dataChanged (OBJECT);

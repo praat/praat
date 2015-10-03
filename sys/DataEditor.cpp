@@ -79,8 +79,8 @@ static void update (DataSubEditor me) {
 	/* Hide all the existing widgets. */
 
 	for (int i = 1; i <= kDataSubEditor_MAXNUM_ROWS; i ++) {
-		my d_fieldData [i]. address = NULL;
-		my d_fieldData [i]. description = NULL;
+		my d_fieldData [i]. address = nullptr;
+		my d_fieldData [i]. description = nullptr;
 		GuiThing_hide (my d_fieldData [i]. label);
 		GuiThing_hide (my d_fieldData [i]. button);
 		GuiThing_hide (my d_fieldData [i]. text);
@@ -93,18 +93,18 @@ static void update (DataSubEditor me) {
 static Data_Description DataSubEditor_findNumberUse (DataSubEditor me, const char32 *number) {
 	Data_Description structDescription, result;
 	char32 string [100];
-	if (my classInfo == classMatrixEditor) return NULL;   // no structs inside
+	if (my classInfo == classMatrixEditor) return nullptr;   // no structs inside
 	if (my classInfo == classVectorEditor) {
-		if (my d_description -> type != structwa) return NULL;   // no structs inside
+		if (my d_description -> type != structwa) return nullptr;   // no structs inside
 		structDescription = * (Data_Description *) my d_description -> tagType;
 	} else { /* StructEditor or ClassEditor or DataEditor. */
 		structDescription = my d_description;
 	}
 	Melder_sprint (string,100, number);
-	if ((result = Data_Description_findNumberUse (structDescription, string)) != NULL) return result;
+	if ((result = Data_Description_findNumberUse (structDescription, string)) != nullptr) return result;
 	Melder_sprint (string,100, number, U" - 1");
-	if ((result = Data_Description_findNumberUse (structDescription, string)) != NULL) return result;
-	return NULL;
+	if ((result = Data_Description_findNumberUse (structDescription, string)) != nullptr) return result;
+	return nullptr;
 }
 
 static void gui_button_cb_change (I, GuiButtonEvent event) {
@@ -116,7 +116,7 @@ static void gui_button_cb_change (I, GuiButtonEvent event) {
 			bool visible = XtIsManaged (my d_fieldData [irow]. text -> d_widget);
 		#elif gtk
 			gboolean visible;
-			g_object_get (G_OBJECT (my d_fieldData [irow]. text), "visible", & visible, NULL);
+			g_object_get (G_OBJECT (my d_fieldData [irow]. text), "visible", & visible, nullptr);
 		#elif defined (macintosh) && ! useCarbon
 			bool visible = ! [(GuiCocoaTextField *) my d_fieldData [irow]. text -> d_widget   isHidden];
 		#else
@@ -330,7 +330,7 @@ static void DataSubEditor_init (DataSubEditor me, DataEditor root, const char32 
 	my d_description = description;
 	my d_topField = 1;
 	my d_numberOfFields = my v_countFields ();
-	Editor_init (me, 0, 0, EDITOR_WIDTH, EDITOR_HEIGHT, title, NULL);
+	Editor_init (me, 0, 0, EDITOR_WIDTH, EDITOR_HEIGHT, title, nullptr);
 	update (me);
 }
 
@@ -364,7 +364,7 @@ static const char32 * singleTypeToText (void *address, int type, void *tagType, 
 		case stringwa:
 		case lstringwa: {
 			char32 *string = * (char32 **) address;
-			if (string == NULL) { MelderString_empty (buffer); return buffer -> string; }   // convert NULL string to empty string
+			if (! string) { MelderString_empty (buffer); return buffer -> string; }   // convert null string to empty string
 			return string;   // may be much longer than the usual size of 'buffer'
 		} break;
 		default: return U"(unknown)";
@@ -395,7 +395,7 @@ static void showStructMember (
 	/* Show the value (for a single type) or a button (for a composite type). */
 	if (isSingleType) {
 		#if motif
-			XtVaSetValues (fieldData -> text -> d_widget, XmNcolumns, stringLengths [type], NULL);   // TODO: change to GuiObject_size
+			XtVaSetValues (fieldData -> text -> d_widget, XmNcolumns, stringLengths [type], nullptr);   // TODO: change to GuiObject_size
 		#endif
 		autoMelderString buffer;
 		const char32 *text = singleTypeToText (memberAddress, type, memberDescription -> tagType, & buffer);
@@ -407,7 +407,7 @@ static void showStructMember (
 	} else if (rank == 1) {
 		void *arrayAddress = * (void **) memberAddress;
 		long minimum, maximum;
-		if (arrayAddress == NULL) return;   // no button for empty fields
+		if (! arrayAddress) return;   // no button for empty fields
 		Data_Description_evaluateInteger (structAddress, structDescription,
 			memberDescription -> min1, & minimum);
 		Data_Description_evaluateInteger (structAddress, structDescription,
@@ -449,7 +449,7 @@ static void showStructMember (
 	} else if (rank == 2) {
 		void *arrayAddress = * (void **) memberAddress;
 		long min1, max1, min2, max2;
-		if (arrayAddress == NULL) return;   // no button for empty fields
+		if (! arrayAddress) return;   // no button for empty fields
 		Data_Description_evaluateInteger (structAddress, structDescription,
 			memberDescription -> min1,  & min1);
 		Data_Description_evaluateInteger (structAddress, structDescription,
@@ -487,9 +487,9 @@ static void showStructMember (
 static void showStructMembers (DataSubEditor me, void *structAddress, Data_Description structDescription, int fromMember, char32 *history) {
 	int i = 1;
 	Data_Description memberDescription = structDescription;
-	for (; i < fromMember && memberDescription -> name != NULL; i ++, memberDescription ++)
+	for (; i < fromMember && memberDescription -> name != nullptr; i ++, memberDescription ++)
 		(void) 0;
-	for (; memberDescription -> name != NULL; memberDescription ++) {
+	for (; memberDescription -> name != nullptr; memberDescription ++) {
 		if (++ my d_irow > kDataSubEditor_MAXNUM_ROWS) return;
 		showStructMember (structAddress, structDescription, memberDescription, & my d_fieldData [my d_irow], history);
 	}
@@ -549,7 +549,7 @@ void structVectorEditor :: v_showMembers () {
 			autoMelderString buffer;
 			const char32 *text = singleTypeToText (elementAddress, type, d_description -> tagType, & buffer);
 			#if motif
-				XtVaSetValues (fieldData -> text -> d_widget, XmNcolumns, stringLengths [type], NULL);   // TODO: change to GuiObject_size
+				XtVaSetValues (fieldData -> text -> d_widget, XmNcolumns, stringLengths [type], nullptr);   // TODO: change to GuiObject_size
 			#endif
 			GuiText_setString (fieldData -> text, text);
 			GuiThing_show (fieldData -> text);
@@ -563,7 +563,7 @@ void structVectorEditor :: v_showMembers () {
 
 			if (history.string [history.length - 1] == ']') {
 				char32 *openingBracket = str32rchr (history.string, U'[');
-				Melder_assert (openingBracket != NULL);
+				Melder_assert (openingBracket != nullptr);
 				* openingBracket = '\0';
 				history.length = openingBracket - history.string;
 			}
@@ -583,7 +583,7 @@ void structVectorEditor :: v_showMembers () {
 			MelderString_copy (& history, name);
 			if (history.string [history.length - 1] == U']') {
 				char32 *openingBracket = str32rchr (history.string, U'[');
-				Melder_assert (openingBracket != NULL);
+				Melder_assert (openingBracket != nullptr);
 				* openingBracket = U'\0';
 				history.length = openingBracket - history.string;
 			}
@@ -594,7 +594,7 @@ void structVectorEditor :: v_showMembers () {
 			GuiThing_show (fieldData -> label);
 
 			Daata object = * (Daata *) elementAddress;
-			if (object == NULL) return;   // no button if no object
+			if (! object) return;   // no button if no object
 			if (! Class_getDescription (object -> classInfo)) return;   // no button if no description for this class
 			fieldData -> address = object;
 			fieldData -> description = Class_getDescription (object -> classInfo);
@@ -655,7 +655,7 @@ void structMatrixEditor :: v_showMembers () {
 			autoMelderString buffer;
 			const char32 *text = singleTypeToText (elementAddress, type, d_description -> tagType, & buffer);
 			#if motif
-				XtVaSetValues (fieldData -> text -> d_widget, XmNcolumns, stringLengths [type], NULL);   // TODO: change to GuiObject_size
+				XtVaSetValues (fieldData -> text -> d_widget, XmNcolumns, stringLengths [type], nullptr);   // TODO: change to GuiObject_size
 			#endif
 			GuiText_setString (fieldData -> text, text);
 			GuiThing_show (fieldData -> text);
@@ -704,7 +704,7 @@ void structClassEditor :: v_showMembers () {
 }
 
 static void ClassEditor_init (ClassEditor me, DataEditor root, const char32 *title, void *address, Data_Description description) {
-	if (description == NULL)
+	if (! description)
 		Melder_throw (U"Class ", Thing_className ((Thing) address), U" cannot be inspected.");
 	StructEditor_init (me, root, title, address, description);
 }
@@ -729,7 +729,7 @@ void structDataEditor :: v_destroy () {
 
 	for (int i = 1; i <= d_children -> size; i ++) {
 		DataSubEditor child = (DataSubEditor) d_children -> item [i];
-		child -> d_root = NULL;
+		child -> d_root = nullptr;
 	}
 
 	forget (d_children);
@@ -756,7 +756,7 @@ void structDataEditor :: v_dataChanged () {
 DataEditor DataEditor_create (const char32 *title, Daata data) {
 	try {
 		ClassInfo klas = data -> classInfo;
-		if (Class_getDescription (klas) == NULL)
+		if (Class_getDescription (klas) == nullptr)
 			Melder_throw (U"Class ", klas -> className, U" cannot be inspected.");
 		autoDataEditor me = Thing_new (DataEditor);
 		my d_children = Collection_create (classDataSubEditor, 10);

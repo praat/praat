@@ -31,7 +31,7 @@ static DemoEditor theDemoEditor;
 void structDemoEditor :: v_destroy () {
 	Melder_free (praatPicture);
 	forget (graphics);
-	theDemoEditor = NULL;
+	theDemoEditor = nullptr;
 	DemoEditor_Parent :: v_destroy ();
 }
 
@@ -57,7 +57,7 @@ void structDemoEditor :: v_createMenus () {
 static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 	iam (DemoEditor);
 	(void) event;
-	if (my graphics == NULL) return;   // Could be the case in the very beginning.
+	if (! my graphics) return;   // could be the case in the very beginning
 	/*
 	 * Erase the background. Don't record this erasure!
 	 */
@@ -72,7 +72,7 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 
 static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	iam (DemoEditor);
-	if (my graphics == NULL) return;   // Could be the case in the very beginning.
+	if (! my graphics) return;   // could be the case in the very beginning
 	my clicked = true;
 	my keyPressed = false;
 	my x = event -> x;
@@ -86,7 +86,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 
 static void gui_drawingarea_cb_key (I, GuiDrawingAreaKeyEvent event) {
 	iam (DemoEditor);
-	if (my graphics == NULL) return;   // Could be the case in the very beginning.
+	if (! my graphics) return;   // could be the case in the very beginning
 	my clicked = false;
 	my keyPressed = true;
 	my x = 0;
@@ -101,7 +101,7 @@ static void gui_drawingarea_cb_key (I, GuiDrawingAreaKeyEvent event) {
 
 static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 	iam (DemoEditor);
-	if (my graphics == NULL) return;   // Could be the case in the very beginning.
+	if (! my graphics) return;   // could be the case in the very beginning
 	trace (event -> width, U" ", event -> height);
 	Graphics_setWsViewport (my graphics, 0, event -> width, 0, event -> height);
 	Graphics_setWsWindow (my graphics, 0, 100, 0, 100);
@@ -115,17 +115,17 @@ void structDemoEditor :: v_createChildren () {
 }
 
 void DemoEditor_init (DemoEditor me) {
-	Editor_init (me, 0, 0, 1024, 768, U"", NULL);
+	Editor_init (me, 0, 0, 1024, 768, U"", nullptr);
 	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
 	Graphics_setColour (my graphics, Graphics_WHITE);
-	Graphics_setWindow (my graphics, 0, 1, 0, 1);
-	Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
+	Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
+	Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 1.0);
 	Graphics_setColour (my graphics, Graphics_BLACK);
 	Graphics_startRecording (my graphics);
-	Graphics_setWsViewport (my graphics, 0, GuiControl_getWidth  (my drawingArea),
-	                                     0, GuiControl_getHeight (my drawingArea));
-	Graphics_setWsWindow (my graphics, 0, 100, 0, 100);
-	Graphics_setViewport (my graphics, 0, 100, 0, 100);
+	Graphics_setWsViewport (my graphics, 0.0, GuiControl_getWidth  (my drawingArea),
+	                                     0.0, GuiControl_getHeight (my drawingArea));
+	Graphics_setWsWindow (my graphics, 0.0, 100.0, 0.0, 100.0);
+	Graphics_setViewport (my graphics, 0.0, 100.0, 0.0, 100.0);
 	Graphics_updateWs (my graphics);
 }
 
@@ -147,7 +147,7 @@ void Demo_open (void) {
 			 */
 			//Melder_batch = false;
 		}
-		if (theDemoEditor == NULL) {
+		if (theDemoEditor == nullptr) {
 			theDemoEditor = DemoEditor_create ();
 			Melder_assert (theDemoEditor != NULL);
 			//GuiObject_show (theDemoEditor -> d_windowForm);
@@ -184,7 +184,7 @@ int Demo_windowTitle (const char32 *title) {
 }
 
 int Demo_show (void) {
-	if (theDemoEditor == NULL) return 0;
+	if (! theDemoEditor) return 0;
 	autoDemoOpen demo;
 	GuiThing_show (theDemoEditor -> d_windowForm);
 	GuiShell_drain (theDemoEditor -> d_windowForm);
@@ -192,7 +192,7 @@ int Demo_show (void) {
 }
 
 void Demo_waitForInput (Interpreter interpreter) {
-	if (theDemoEditor == NULL) return;
+	if (! theDemoEditor) return;
 	if (theDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
@@ -221,7 +221,7 @@ void Demo_waitForInput (Interpreter interpreter) {
 						inMode: NSDefaultRunLoopMode
 						dequeue: YES
 					];
-					Melder_assert (nsEvent != NULL);
+					Melder_assert (nsEvent != nullptr);
 					[NSApp  sendEvent: nsEvent];
 					[NSApp  updateWindows];   // called automatically?
 					[pool release];
@@ -254,7 +254,7 @@ void Demo_waitForInput (Interpreter interpreter) {
 }
 
 bool Demo_clicked (void) {
-	if (theDemoEditor == NULL) return false;
+	if (! theDemoEditor) return false;
 	if (theDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
@@ -263,7 +263,7 @@ bool Demo_clicked (void) {
 }
 
 double Demo_x (void) {
-	if (theDemoEditor == NULL) return NUMundefined;
+	if (! theDemoEditor) return NUMundefined;
 	if (theDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
@@ -280,7 +280,7 @@ double Demo_x (void) {
 }
 
 double Demo_y (void) {
-	if (theDemoEditor == NULL) return NUMundefined;
+	if (! theDemoEditor) return NUMundefined;
 	if (theDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
@@ -293,7 +293,7 @@ double Demo_y (void) {
 }
 
 bool Demo_keyPressed (void) {
-	if (theDemoEditor == NULL) return false;
+	if (! theDemoEditor) return false;
 	if (theDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
@@ -302,7 +302,7 @@ bool Demo_keyPressed (void) {
 }
 
 char32 Demo_key (void) {
-	if (theDemoEditor == NULL) return 0;
+	if (! theDemoEditor) return 0;
 	if (theDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
@@ -311,7 +311,7 @@ char32 Demo_key (void) {
 }
 
 bool Demo_shiftKeyPressed (void) {
-	if (theDemoEditor == NULL) return false;
+	if (! theDemoEditor) return false;
 	if (theDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
@@ -320,7 +320,7 @@ bool Demo_shiftKeyPressed (void) {
 }
 
 bool Demo_commandKeyPressed (void) {
-	if (theDemoEditor == NULL) return false;
+	if (! theDemoEditor) return false;
 	if (theDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
@@ -329,7 +329,7 @@ bool Demo_commandKeyPressed (void) {
 }
 
 bool Demo_optionKeyPressed (void) {
-	if (theDemoEditor == NULL) return false;
+	if (! theDemoEditor) return false;
 	if (theDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
@@ -338,7 +338,7 @@ bool Demo_optionKeyPressed (void) {
 }
 
 bool Demo_extraControlKeyPressed (void) {
-	if (theDemoEditor == NULL) return false;
+	if (! theDemoEditor) return false;
 	if (theDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
@@ -347,16 +347,16 @@ bool Demo_extraControlKeyPressed (void) {
 }
 
 bool Demo_input (const char32 *keys) {
-	if (theDemoEditor == NULL) return false;
+	if (! theDemoEditor) return false;
 	if (theDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
 	}
-	return str32chr (keys, theDemoEditor -> key) != NULL;
+	return str32chr (keys, theDemoEditor -> key) != nullptr;
 }
 
 bool Demo_clickedIn (double left, double right, double bottom, double top) {
-	if (theDemoEditor == NULL || ! theDemoEditor -> clicked) return false;
+	if (! theDemoEditor || ! theDemoEditor -> clicked) return false;
 	if (theDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");

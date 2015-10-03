@@ -44,22 +44,22 @@ Thing_implement (GuiWindow, GuiShell, 0);
 		(void) widget;
 		iam (GuiWindow);
 		forget (me);
-		return TRUE;
+		return true;
 	}
 	static gboolean _GuiWindow_goAwayCallback (GuiObject widget, GdkEvent *event, gpointer void_me) {
 		(void) widget;
 		iam (GuiWindow);
-		if (my d_goAwayCallback != NULL) {
+		if (my d_goAwayCallback) {
 			my d_goAwayCallback (my d_goAwayBoss);
 		}
-		return TRUE;
+		return true;
 	}
 	static void _GuiWindow_child_resizeCallback (GtkWidget *childWidget, gpointer data) {
 		GtkAllocation *allocation = (GtkAllocation *) data;
 		GtkWidget *parentWidget = gtk_widget_get_parent (childWidget);
 		Thing_cast (GuiThing, child, _GuiObject_getUserData (childWidget));
 		if (child) {
-			GuiControl control = NULL;
+			GuiControl control = nullptr;
 			if (Thing_isa (child, classGuiControl)) {
 				control = static_cast <GuiControl> (child);
 			} else if (Thing_isa (child, classGuiMenu)) {
@@ -104,7 +104,7 @@ Thing_implement (GuiWindow, GuiShell, 0);
 			gtk_widget_set_size_request (GTK_WIDGET (widget), allocation -> width, allocation -> height);
 		}
 		trace (U"end");
-		return FALSE;
+		return false;
 	}
 #elif cocoa
 	@implementation GuiCocoaWindow {
@@ -112,7 +112,7 @@ Thing_implement (GuiWindow, GuiShell, 0);
 	}
 	- (void) dealloc {   // override
 		GuiWindow me = d_userData;
-		my d_cocoaWindow = NULL;   // this is already under destruction, so undangle
+		my d_cocoaWindow = nullptr;   // this is already under destruction, so undangle
 		forget (me);
 		trace (U"deleting a window");
 		[super dealloc];
@@ -121,7 +121,7 @@ Thing_implement (GuiWindow, GuiShell, 0);
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
-		Melder_assert (userData == NULL || Thing_isa (userData, classGuiWindow));
+		Melder_assert (userData == nullptr || Thing_isa (userData, classGuiWindow));
 		d_userData = static_cast <GuiWindow> (userData);
 	}
 	- (void) keyDown: (NSEvent *) theEvent {
@@ -134,14 +134,14 @@ Thing_implement (GuiWindow, GuiShell, 0);
 	- (BOOL) windowShouldClose: (id) sender {
 		GuiCocoaWindow *widget = (GuiCocoaWindow *) sender;
 		GuiWindow me = (GuiWindow) [widget userData];
-		if (my d_goAwayCallback != NULL) {
+		if (my d_goAwayCallback) {
 			trace (U"calling goAwayCallback)");
 			my d_goAwayCallback (my d_goAwayBoss);
 		} else {
 			trace (U"hiding window");
 			[widget orderOut: nil];
 		}
-		return FALSE;
+		return false;
 	}
 	@end
 	//static GuiCocoaWindowDelegate *theGuiCocoaWindowDelegate;
@@ -157,7 +157,7 @@ Thing_implement (GuiWindow, GuiShell, 0);
 	static void _GuiMotifWindow_goAwayCallback (GuiObject widget, XtPointer void_me, XtPointer call) {
 		(void) widget; (void) call;
 		iam (GuiWindow);
-		if (my d_goAwayCallback != NULL) {
+		if (my d_goAwayCallback) {
 			my d_goAwayCallback (my d_goAwayBoss);
 		}
 	}
@@ -167,7 +167,7 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidt
 	const char32 *title /* cattable */, void (*goAwayCallback) (void *goAwayBoss), void *goAwayBoss, uint32 flags)
 {
 	GuiWindow me = Thing_new (GuiWindow);
-	my d_parent = NULL;
+	my d_parent = nullptr;
 	my d_goAwayCallback = goAwayCallback;
 	my d_goAwayBoss = goAwayBoss;
 	#if gtk
@@ -177,7 +177,7 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidt
 		g_signal_connect (G_OBJECT (my d_gtkWindow), "destroy-event", G_CALLBACK (_GuiWindow_destroyCallback), me);
 
 		gtk_window_set_default_size (GTK_WINDOW (my d_gtkWindow), width, height);
-		gtk_window_set_resizable (GTK_WINDOW (my d_gtkWindow), TRUE);
+		gtk_window_set_resizable (GTK_WINDOW (my d_gtkWindow), true);
 		GuiShell_setTitle (me, title);
 
 		my d_widget = gtk_fixed_new ();
@@ -205,17 +205,17 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidt
 		//}
 		//[my d_cocoaWindow setDelegate: theGuiCocoaWindowDelegate];
 	#elif motif
-		my d_xmShell = XmCreateShell (NULL, flags & GuiWindow_FULLSCREEN ? "Praatwulgfullscreen" : "Praatwulg", NULL, 0);
-		XtVaSetValues (my d_xmShell, XmNdeleteResponse, goAwayCallback ? XmDO_NOTHING : XmUNMAP, NULL);
-		XtVaSetValues (my d_xmShell, XmNx, x, XmNy, y, XmNwidth, (Dimension) width, XmNheight, (Dimension) height, NULL);
+		my d_xmShell = XmCreateShell (nullptr, flags & GuiWindow_FULLSCREEN ? "Praatwulgfullscreen" : "Praatwulg", nullptr, 0);
+		XtVaSetValues (my d_xmShell, XmNdeleteResponse, goAwayCallback ? XmDO_NOTHING : XmUNMAP, nullptr);
+		XtVaSetValues (my d_xmShell, XmNx, x, XmNy, y, XmNwidth, (Dimension) width, XmNheight, (Dimension) height, nullptr);
 		if (goAwayCallback) {
 			XmAddWMProtocolCallback (my d_xmShell, 'delw', _GuiMotifWindow_goAwayCallback, (char *) me);
 		}
 		GuiShell_setTitle (me, title);
-		my d_widget = XmCreateForm (my d_xmShell, "dialog", NULL, 0);
+		my d_widget = XmCreateForm (my d_xmShell, "dialog", nullptr, 0);
 		_GuiObject_setUserData (my d_widget, me);
 		XtAddCallback (my d_widget, XmNdestroyCallback, _GuiMotifWindow_destroyCallback, me);
-		XtVaSetValues (my d_widget, XmNdialogStyle, XmDIALOG_MODELESS, XmNautoUnmanage, False, NULL);
+		XtVaSetValues (my d_widget, XmNdialogStyle, XmDIALOG_MODELESS, XmNautoUnmanage, False, nullptr);
 	#endif
 	my d_width = width;
 	my d_height = height;
@@ -245,11 +245,11 @@ void GuiWindow_addMenuBar (GuiWindow me) {
 	#elif cocoa
 	#elif motif
 		if (win || theGuiTopMenuBar) {
-			my d_xmMenuBar = XmCreateMenuBar (my d_widget, "menuBar", NULL, 0);
-			XtVaSetValues (my d_xmMenuBar, XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM, NULL);
+			my d_xmMenuBar = XmCreateMenuBar (my d_widget, "menuBar", nullptr, 0);
+			XtVaSetValues (my d_xmMenuBar, XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM, nullptr);
 			XtManageChild (my d_xmMenuBar);
 		} else {
-			theGuiTopMenuBar = XmCreateMenuBar (NULL, "menuBar", NULL, 0);
+			theGuiTopMenuBar = XmCreateMenuBar (nullptr, "menuBar", nullptr, 0);
 			//XtManageChild (topBar);
 		}
 	#endif

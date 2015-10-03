@@ -40,7 +40,7 @@ Thing_implement (GuiCheckButton, GuiControl, 0);
 	}
 	static void _GuiGtkCheckButton_valueChangedCallback (GuiObject widget, gpointer void_me) {
 		iam (GuiCheckButton);
-		if (my d_valueChangedCallback != NULL && ! my d_blockValueChangedCallbacks) {
+		if (my d_valueChangedCallback && ! my d_blockValueChangedCallbacks) {
 			struct structGuiCheckButtonEvent event = { me };
 			my d_valueChangedCallback (my d_valueChangedBoss, & event);
 		}
@@ -59,13 +59,13 @@ Thing_implement (GuiCheckButton, GuiControl, 0);
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
-		Melder_assert (userData == NULL || Thing_isa (userData, classGuiCheckButton));
+		Melder_assert (userData == nullptr || Thing_isa (userData, classGuiCheckButton));
 		d_userData = static_cast <GuiCheckButton> (userData);
 	}
 	- (void) _guiCocoaButton_activateCallback: (id) widget {
 		Melder_assert (self == widget);   // sender (widget) and receiver (self) happen to be the same object
 		GuiCheckButton me = d_userData;
-		if (my d_valueChangedCallback != NULL) {
+		if (my d_valueChangedCallback) {
 			Melder_assert (! my d_blockValueChangedCallbacks);
 			struct structGuiCheckButtonEvent event = { me };
 			my d_valueChangedCallback (my d_valueChangedBoss, & event);
@@ -81,7 +81,7 @@ Thing_implement (GuiCheckButton, GuiControl, 0);
 	}
 	void _GuiWinCheckButton_handleClick (GuiObject widget) {
 		iam_checkbutton;
-		if (my d_valueChangedCallback != NULL) {
+		if (my d_valueChangedCallback) {
 			struct structGuiCheckButtonEvent event = { me };
 			my d_valueChangedCallback (my d_valueChangedBoss, & event);
 		}
@@ -95,10 +95,10 @@ Thing_implement (GuiCheckButton, GuiControl, 0);
 	void _GuiMacCheckButton_handleClick (GuiObject widget, EventRecord *macEvent) {
 		iam_checkbutton;
 		_GuiMac_clipOnParent (widget);
-		bool clicked = HandleControlClick (widget -> nat.control.handle, macEvent -> where, macEvent -> modifiers, NULL);
+		bool clicked = HandleControlClick (widget -> nat.control.handle, macEvent -> where, macEvent -> modifiers, nullptr);
 		GuiMac_clipOff ();
 		if (clicked) {
-			if (my d_valueChangedCallback != NULL) {
+			if (my d_valueChangedCallback) {
 				struct structGuiCheckButtonEvent event = { me };
 				my d_valueChangedCallback (my d_valueChangedBoss, & event);
 			}
@@ -143,9 +143,9 @@ GuiCheckButton GuiCheckButton_create (GuiForm parent, int left, int right, int t
 		my d_widget -> window = CreateWindow (L"button", Melder_peek32toW (_GuiWin_expandAmpersands (buttonText)),
 			WS_CHILD | BS_AUTOCHECKBOX | WS_CLIPSIBLINGS,
 			my d_widget -> x, my d_widget -> y, my d_widget -> width, my d_widget -> height,
-			my d_widget -> parent -> window, (HMENU) 1, theGui.instance, NULL);
+			my d_widget -> parent -> window, (HMENU) 1, theGui.instance, nullptr);
 		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
-		SetWindowFont (my d_widget -> window, GetStockFont (ANSI_VAR_FONT), FALSE);
+		SetWindowFont (my d_widget -> window, GetStockFont (ANSI_VAR_FONT), false);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		if (flags & GuiCheckButton_SET) {
 			Button_SetCheck (my d_widget -> window, BST_CHECKED);
@@ -157,9 +157,9 @@ GuiCheckButton GuiCheckButton_create (GuiForm parent, int left, int right, int t
 		my d_widget = _Gui_initializeWidget (xmToggleButtonWidgetClass, parent -> d_widget, buttonText);
 		_GuiObject_setUserData (my d_widget, me);
 		my d_widget -> isRadioButton = false;
-		CreateCheckBoxControl (my d_widget -> macWindow, & my d_widget -> rect, NULL,
+		CreateCheckBoxControl (my d_widget -> macWindow, & my d_widget -> rect, nullptr,
 			(flags & GuiCheckButton_SET) != 0, true, & my d_widget -> nat.control.handle);
-		Melder_assert (my d_widget -> nat.control.handle != NULL);
+		Melder_assert (my d_widget -> nat.control.handle != nullptr);
 		SetControlReference (my d_widget -> nat.control.handle, (long) my d_widget);
 		my d_widget -> isControl = true;
 		_GuiNativeControl_setFont (my d_widget, 0, 13);

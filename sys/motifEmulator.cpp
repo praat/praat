@@ -428,7 +428,7 @@ GuiObject _Gui_initializeWidget (int widgetClass, GuiObject parent, const char32
 				my width = NativeButton_preferredWidth (me);
 				my height = NativeButton_preferredHeight (me) + 4;   // BUG: menu bar should be large enough
 			} else {
-				my motiff.cascadeButton.inBar = TRUE;
+				my motiff.cascadeButton.inBar = true;
 			}
 		} break; case xmToggleButtonWidgetClass: {
 			my x = 2;
@@ -782,7 +782,7 @@ static void NativeScrollBar_set (GuiObject me) {
 			scrollInfo. nPage = my sliderSize;
 			scrollInfo. nPos = my value;
 		#endif
-		if (my window) SetScrollInfo (my window, SB_CTL, & scrollInfo, TRUE);
+		if (my window) SetScrollInfo (my window, SB_CTL, & scrollInfo, true);
 	}
 	#elif mac
 		if (! my nat.control.handle) return;
@@ -993,7 +993,7 @@ static void _GuiNativizeWidget (GuiObject me) {
 				int id;
 				for (id = MINIMUM_MENU_ITEM_ID; id <= MAXIMUM_MENU_ITEM_ID; id ++) if (! theMenuItems [id]) break;
 				my nat.entry.id = id;   // install unique ID
-				theMenuItems [id] = TRUE;
+				theMenuItems [id] = true;
 			}
 			#endif
 		}
@@ -1137,7 +1137,7 @@ static void _GuiNativizeWidget (GuiObject me) {
 						WS_CHILD | BS_PUSHBUTTON | WS_CLIPSIBLINGS,
 						my x, my y, my width, my height, my parent -> window, (HMENU) 1, theGui.instance, NULL);
 					SetWindowLongPtr (my window, GWLP_USERDATA, (LONG_PTR) me);
-					SetWindowFont (my window, GetStockFont (ANSI_VAR_FONT), FALSE);
+					SetWindowFont (my window, GetStockFont (ANSI_VAR_FONT), false);
 				#elif mac
 					if (str32str (my name, U" -") || (my parent -> rowColumnType == XmMENU_BAR && my parent -> y < 5)) {
 						my nat.control.isBevel = true;
@@ -1145,7 +1145,7 @@ static void _GuiNativizeWidget (GuiObject me) {
 							kControlBehaviorPushbutton, NULL, 1, kControlBehaviorCommandMenu, 0, & my nat.control.handle);
 						Melder_assert (my nat.control.handle != NULL);
 						SetControlReference (my nat.control.handle, (long) me);
-						my isControl = TRUE;
+						my isControl = true;
 						_GuiNativeControl_setFont (me, 0, 13);
 						_GuiNativeControl_setTitle (me);
 					} else {
@@ -1155,7 +1155,7 @@ static void _GuiNativizeWidget (GuiObject me) {
 							0, teFlushLeft, 0, & my nat.control.handle);
 						Melder_assert (my nat.control.handle != NULL);
 						SetControlReference (my nat.control.handle, (long) me);
-						my isControl = TRUE;
+						my isControl = true;
 						_GuiNativeControl_setFont (me, 0, 13);
 						_GuiNativeControl_setTitle (me);
 						SetControlMaximum (my nat.control.handle, 32767);   // the default seems to be 9 on MacOS X
@@ -1185,7 +1185,7 @@ static void _GuiNativizeWidget (GuiObject me) {
 				my nat.control.handle = NewControl (my macWindow, & my rect,
 					(const unsigned char *) "\000", false, 0, 0, 0, kControlScrollBarLiveProc, (long) me);
 				Melder_assert (my nat.control.handle);
-				my isControl = TRUE;
+				my isControl = true;
 			#endif
 			my minimum = 0;
 			my maximum = 100;
@@ -1311,12 +1311,12 @@ static void Native_move (GuiObject me, int dx, int dy) {
 		my nat.shell.duringMoveWindow = True;
 		if (my motiff.shell.isDialog)
 			MoveWindow (my window, my x, my y, my width + 2 * GetSystemMetrics (SM_CXFIXEDFRAME),
-				my height + 2 * GetSystemMetrics (SM_CYFIXEDFRAME) + GetSystemMetrics (SM_CYCAPTION), TRUE);
+				my height + 2 * GetSystemMetrics (SM_CYFIXEDFRAME) + GetSystemMetrics (SM_CYCAPTION), true);
 		else
 			MoveWindow (my window, my x, my y,
 				my width + 2 * GetSystemMetrics (SM_CXSIZEFRAME),
 				my height + 2 * GetSystemMetrics (SM_CYSIZEFRAME) + GetSystemMetrics (SM_CYCAPTION) +
-				( my nat.shell.menuBar != NULL ? GetSystemMetrics (SM_CYMENU) : 0 ), TRUE);
+				( my nat.shell.menuBar != NULL ? GetSystemMetrics (SM_CYMENU) : 0 ), true);
 	} else
 		MoveWindow (my window, my x, my y, my width, my height, True);
 #elif mac
@@ -1413,7 +1413,7 @@ static void shellResizeWidget (GuiObject me, int dx, int dy, int dw, int dh) {
 			if (rect.left!=my x||rect.right!=my x + my width||rect.top !=my y||rect.bottom!=my y +my height)
 			Melder_warning ("class %d x %d left %d y %d top %d width %d right %d height %d bottom %d",
 			my widgetClass, my x, rect.left, my y, rect.top, my width, rect.right, my height, rect.bottom);*/
-			MoveWindow (my window, my x, my y, my width, my height, TRUE);
+			MoveWindow (my window, my x, my y, my width, my height, true);
 			if (MEMBER (me, DrawingArea)) _GuiWinDrawingArea_shellResize (me);
 		}
 	#elif mac
@@ -1493,7 +1493,7 @@ static void resizeWidget (GuiObject me, int dw, int dh) {
 	GuiObject child;
 	#if win
 		if (my window && ! MEMBER (me, Shell)) {
-			MoveWindow (my window, my x, my y, my width, my height, TRUE);
+			MoveWindow (my window, my x, my y, my width, my height, true);
 			if (MEMBER (me, DrawingArea)) _GuiWinDrawingArea_shellResize (me);
 		}
 	#elif mac
@@ -2304,7 +2304,7 @@ void XtDestroyWidget (GuiObject me) {
 		case xmPushButtonWidgetClass: {
 			if (my inMenu) {
 				#if win
-					if (my nat.entry.id) theMenuItems [my nat.entry.id] = FALSE;
+					if (my nat.entry.id) theMenuItems [my nat.entry.id] = false;
 				#elif mac
 					DeleteMenuItem (my nat.entry.handle, my nat.entry.item);
 					for (subview = my parent -> firstChild; subview; subview = subview -> nextSibling) {
@@ -2323,7 +2323,7 @@ void XtDestroyWidget (GuiObject me) {
 		case xmToggleButtonWidgetClass: {
 			if (my inMenu) {
 				#if win
-					if (my nat.entry.id) theMenuItems [my nat.entry.id] = FALSE;
+					if (my nat.entry.id) theMenuItems [my nat.entry.id] = false;
 				#elif mac
 					DeleteMenuItem (my nat.entry.handle, my nat.entry.item);
 					for (subview = my parent -> firstChild; subview; subview = subview -> nextSibling) {
@@ -2365,7 +2365,7 @@ void XtDestroyWidget (GuiObject me) {
 		case xmSeparatorWidgetClass: {
 			if (my inMenu) {
 				#if win
-					if (my nat.entry.id) theMenuItems [my nat.entry.id] = FALSE;
+					if (my nat.entry.id) theMenuItems [my nat.entry.id] = false;
 				#elif mac
 					DeleteMenuItem (my nat.entry.handle, my nat.entry.item);
 					for (subview = my parent -> firstChild; subview; subview = subview -> nextSibling) {

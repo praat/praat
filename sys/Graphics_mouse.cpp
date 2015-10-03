@@ -59,7 +59,7 @@ bool Graphics_mouseStillDown (Graphics me) {
 void structGraphicsScreen :: v_getMouseLocation (double *xWC, double *yWC) {
 	#if cairo
 		gint xDC, yDC;
-		gdk_window_get_pointer (d_window, & xDC, & yDC, NULL);
+		gdk_window_get_pointer (d_window, & xDC, & yDC, nullptr);
 		Graphics_DCtoWC (this, xDC, yDC, xWC, yWC);
 	#elif cocoa
         NSPoint mouseLoc = [[d_macView window]  mouseLocationOutsideOfEventStream];

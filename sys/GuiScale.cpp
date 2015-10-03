@@ -58,7 +58,7 @@ Thing_implement (GuiScale, GuiControl, 0);
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
-		Melder_assert (userData == NULL || Thing_isa (userData, classGuiScale));
+		Melder_assert (userData == nullptr || Thing_isa (userData, classGuiScale));
 		d_userData = static_cast <GuiScale> (userData);
 	}
 	@end
@@ -87,7 +87,7 @@ GuiScale GuiScale_create (GuiForm parent, int left, int right, int top, int bott
 	my d_shell = parent -> d_shell;
 	my d_parent = parent;
 	#if gtk
-		my d_widget = gtk_hscrollbar_new (NULL);
+		my d_widget = gtk_hscrollbar_new (nullptr);
 		gtk_range_set_range (GTK_RANGE (my d_widget), 0, 1000);
 		GtkAdjustment *adj = gtk_range_get_adjustment (GTK_RANGE (my d_widget));
 		adj -> page_size = 150;
@@ -105,7 +105,7 @@ GuiScale GuiScale_create (GuiForm parent, int left, int right, int top, int bott
 		[my d_cocoaScale   setMaxValue: maximum];
 		[my d_cocoaScale   setDoubleValue: value];
 	#elif motif
-		my d_widget = XmCreateScale (parent -> d_widget, "scale", NULL, 0);
+		my d_widget = XmCreateScale (parent -> d_widget, "scale", nullptr, 0);
 		_GuiObject_setUserData (my d_widget, me);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		XtVaSetValues (my d_widget, XmNorientation, XmHORIZONTAL,
@@ -113,7 +113,7 @@ GuiScale GuiScale_create (GuiForm parent, int left, int right, int top, int bott
 			#ifdef macintosh
 				//XmNscaleWidth, 340,
 			#endif
-			NULL);
+			nullptr);
 	#endif
 	return me;
 }

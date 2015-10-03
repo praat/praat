@@ -19,7 +19,7 @@
 
 /*
  * pb 2007/12/26 abstraction from Motif
- * pb 2009/01/31 NUMlvector_free has to be followed by assigning a NULL
+ * pb 2009/01/31 NUMlvector_free has to be followed by assigning a nullptr
  * fb 2010/02/23 GTK
  * pb 2010/06/14 HandleControlClick
  * pb 2010/07/05 blockSelectionChangedCallback
@@ -56,7 +56,7 @@ Thing_implement (GuiList, GuiControl, 0);
 	}
 	static void _GuiGtkList_selectionChangedCallback (GtkTreeSelection *sel, gpointer void_me) {
 		iam (GuiList);
-		if (my d_selectionChangedCallback != NULL && ! my d_blockValueChangedCallbacks) {
+		if (my d_selectionChangedCallback && ! my d_blockValueChangedCallbacks) {
 			trace (U"Selection changed.");
 			struct structGuiListEvent event { me };
 			my d_selectionChangedCallback (my d_selectionChangedBoss, & event);
@@ -123,7 +123,7 @@ Thing_implement (GuiList, GuiControl, 0);
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
-		Melder_assert (userData == NULL || Thing_isa (userData, classGuiList));
+		Melder_assert (userData == nullptr || Thing_isa (userData, classGuiList));
 		d_userData = static_cast <GuiList> (userData);
 	}
 
@@ -185,7 +185,7 @@ Thing_implement (GuiList, GuiControl, 0);
 	}
 	void _GuiWinList_handleClick (GuiObject widget) {
 		iam_list;
-		if (my d_selectionChangedCallback != NULL) {
+		if (my d_selectionChangedCallback) {
 			struct structGuiListEvent event { me };
 			my d_selectionChangedCallback (my d_selectionChangedBoss, & event);
 		}
@@ -225,7 +225,7 @@ Thing_implement (GuiList, GuiControl, 0);
 	void _GuiMacList_handleControlClick (GuiObject widget, EventRecord *macEvent) {
 		iam_list;
 		_GuiMac_clipOnParent (widget);
-		bool pushed = HandleControlClick (widget -> nat.control.handle, macEvent -> where, macEvent -> modifiers, NULL);
+		bool pushed = HandleControlClick (widget -> nat.control.handle, macEvent -> where, macEvent -> modifiers, nullptr);
 		GuiMac_clipOff ();
 		if (pushed && my d_selectionChangedCallback) {
 			struct structGuiListEvent event { me };
@@ -282,7 +282,7 @@ Thing_implement (GuiList, GuiControl, 0);
 		switch (message) {
 			case lDrawMsg:
 			case lHiliteMsg:   // We redraw everything, even when just highlighting. The reason is anti-aliasing.
-				Melder_assert (widget != NULL);
+				Melder_assert (widget);
 				SetPortWindowPort (widget -> macWindow);
 				_GuiMac_clipOnParent (widget);
 				/*
@@ -310,10 +310,10 @@ Thing_implement (GuiList, GuiControl, 0);
 				CGContextRef macGraphicsContext;
 				QDBeginCGContext (GetWindowPort (widget -> macWindow), & macGraphicsContext);
 				int shellHeight = GuiMac_clipOn_graphicsContext (widget, macGraphicsContext);
-				static ATSUFontFallbacks fontFallbacks = NULL;
-				if (fontFallbacks == NULL) {
+				static ATSUFontFallbacks fontFallbacks = nullptr;
+				if (! fontFallbacks) {
 					ATSUCreateFontFallbacks (& fontFallbacks);
-					ATSUSetObjFontFallbacks (fontFallbacks, 0, NULL, kATSUDefaultFontFallbacks);
+					ATSUSetObjFontFallbacks (fontFallbacks, 0, nullptr, kATSUDefaultFontFallbacks);
 				}
 				char *text_utf8 = (char *) *(*handle) -> cells + dataOffset;
 				static char buffer [30001];
@@ -351,7 +351,7 @@ Thing_implement (GuiList, GuiControl, 0);
 				GuiMac_clipOff ();
 				break;
 	/*		case lHiliteMsg:
-				Melder_assert (me != NULL);
+				Melder_assert (me);
 				SetPortWindowPort (my macWindow);
 				_GuiMac_clipOnParent (me);
 				LMSetHiliteMode (LMGetHiliteMode () & ~ 128L);
@@ -375,16 +375,16 @@ GuiList GuiList_create (GuiForm parent, int left, int right, int top, int bottom
 	my d_parent = parent;
 	my d_allowMultipleSelection = allowMultipleSelection;
 	#if gtk
-		GtkCellRenderer *renderer = NULL;
-		GtkTreeViewColumn *col = NULL;
-		GtkTreeSelection *sel = NULL;
-		GtkListStore *liststore = NULL;
+		GtkCellRenderer *renderer = nullptr;
+		GtkTreeViewColumn *col = nullptr;
+		GtkTreeSelection *sel = nullptr;
+		GtkListStore *liststore = nullptr;
 
 		liststore = gtk_list_store_new (1, G_TYPE_STRING);   // 1 column, of type String (this is a vararg list)
-		GuiObject scrolled = gtk_scrolled_window_new (NULL, NULL);
+		GuiObject scrolled = gtk_scrolled_window_new (nullptr, nullptr);
 		gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 		my d_widget = gtk_tree_view_new_with_model (GTK_TREE_MODEL (liststore));
-		gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (my d_widget), FALSE);
+		gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (my d_widget), false);
 		gtk_container_add (GTK_CONTAINER (scrolled), GTK_WIDGET (my d_widget));
 		gtk_widget_show (GTK_WIDGET (scrolled));   // BUG
 		gtk_tree_view_set_rubber_banding (GTK_TREE_VIEW (my d_widget), allowMultipleSelection ? GTK_SELECTION_MULTIPLE : GTK_SELECTION_SINGLE);
@@ -395,9 +395,9 @@ GuiList GuiList_create (GuiForm parent, int left, int right, int top, int bottom
 
 		renderer = gtk_cell_renderer_text_new ();
 		col = gtk_tree_view_column_new ();
-		gtk_tree_view_column_pack_start (col, renderer, TRUE);
+		gtk_tree_view_column_pack_start (col, renderer, true);
 		gtk_tree_view_column_add_attribute (col, renderer, "text", 0);   // zeroeth column
-		if (header != NULL) {
+		if (header) {
 			//gtk_tree_view_column_set_title (col, Melder_peek32to8 (header));
 		}
 		gtk_tree_view_append_column (GTK_TREE_VIEW (my d_widget), col);
@@ -411,21 +411,21 @@ GuiList GuiList_create (GuiForm parent, int left, int right, int top, int bottom
 
 		renderer = gtk_cell_renderer_text_new ();
 		col = gtk_tree_view_column_new ();
-		gtk_tree_view_column_pack_start (col, renderer, TRUE);
+		gtk_tree_view_column_pack_start (col, renderer, true);
 		gtk_tree_view_column_add_attribute (col, renderer, "text", COL_ID);
 		gtk_tree_view_column_set_title (col, " ID ");
 		gtk_tree_view_append_column (GTK_TREE_VIEW (view), col);
 		
 		renderer = gtk_cell_renderer_text_new ();
 		col = gtk_tree_view_column_new ();
-		gtk_tree_view_column_pack_start (col, renderer, TRUE);
+		gtk_tree_view_column_pack_start (col, renderer, true);
 		gtk_tree_view_column_add_attribute (col, renderer, "text", COL_TYPE);
 		gtk_tree_view_column_set_title (col, " Type ");
 		gtk_tree_view_append_column (GTK_TREE_VIEW (view), col);
 
 		renderer = gtk_cell_renderer_text_new ();
 		col = gtk_tree_view_column_new ();
-		gtk_tree_view_column_pack_start (col, renderer, TRUE);
+		gtk_tree_view_column_pack_start (col, renderer, true);
 		gtk_tree_view_column_add_attribute (col, renderer, "text", COL_NAME);
 		gtk_tree_view_column_set_title (col, " Name ");
 		gtk_tree_view_append_column (GTK_TREE_VIEW (view), col);
@@ -452,18 +452,18 @@ GuiList GuiList_create (GuiForm parent, int left, int right, int top, int bottom
 			WS_CHILD | WS_BORDER | WS_VSCROLL | LBS_NOTIFY | WS_CLIPSIBLINGS |
 			( allowMultipleSelection ? LBS_EXTENDEDSEL : 0 ),
 			my d_widget -> x, my d_widget -> y, my d_widget -> width, my d_widget -> height,
-			my d_widget -> parent -> window, NULL, theGui.instance, NULL);
+			my d_widget -> parent -> window, nullptr, theGui.instance, nullptr);
 		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
-		SetWindowFont (my d_widget -> window, GetStockFont (ANSI_VAR_FONT), FALSE);
+		SetWindowFont (my d_widget -> window, GetStockFont (ANSI_VAR_FONT), false);
 		/*if (MEMBER (my parent, ScrolledWindow)) {
 			XtDestroyWidget (my d_widget -> parent -> motiff.scrolledWindow.horizontalBar);
-			my d_widget -> parent -> motiff.scrolledWindow.horizontalBar = NULL;
+			my d_widget -> parent -> motiff.scrolledWindow.horizontalBar = nullptr;
 			XtDestroyWidget (my d_widget -> parent -> motiff.scrolledWindow.verticalBar);
-			my d_widget -> parent -> motiff.scrolledWindow.verticalBar = NULL;
+			my d_widget -> parent -> motiff.scrolledWindow.verticalBar = nullptr;
 		}*/
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 	#elif mac
-		my d_xmScrolled = XmCreateScrolledWindow (parent -> d_widget, "scrolled", NULL, 0);
+		my d_xmScrolled = XmCreateScrolledWindow (parent -> d_widget, "scrolled", nullptr, 0);
 		my v_positionInForm (my d_xmScrolled, left, right, top, bottom, parent);
 		my d_xmList = my d_widget = _Gui_initializeWidget (xmListWidgetClass, my d_xmScrolled, U"list");
 		_GuiObject_setUserData (my d_xmScrolled, me);
@@ -472,7 +472,7 @@ GuiList GuiList_create (GuiForm parent, int left, int right, int top, int bottom
 		Point cSize;
 		SetPt (& cSize, my d_xmList -> rect.right - my d_xmList -> rect.left + 1, CELL_HEIGHT);
 		static ListDefSpec listDefSpec;
-		if (listDefSpec. u. userProc == NULL) {
+		if (! listDefSpec. u. userProc) {
 			listDefSpec. defType = kListDefUserProcType;
 			listDefSpec. u. userProc = mac_listDefinition;
 		}
@@ -481,7 +481,7 @@ GuiList GuiList_create (GuiForm parent, int left, int right, int top, int bottom
 		SetListRefCon (my d_macListHandle, (long) my d_xmList);
 		if (allowMultipleSelection)
 			SetListSelectionFlags (my d_macListHandle, lExtendDrag | lNoRect);
-		XtVaSetValues (my d_xmList, XmNwidth, right > 0 ? right - left + 100 : 530, NULL);
+		XtVaSetValues (my d_xmList, XmNwidth, right > 0 ? right - left + 100 : 530, nullptr);
 	#endif
 	return me;
 }
@@ -515,7 +515,7 @@ void GuiList_deleteItem (GuiList me, long position) {
 	#if gtk
 		GtkTreeIter iter;
 		GtkTreeModel *tree_model = gtk_tree_view_get_model (GTK_TREE_VIEW (my d_widget));
-		if (gtk_tree_model_iter_nth_child (tree_model, & iter, NULL, (gint) (position - 1))) {
+		if (gtk_tree_model_iter_nth_child (tree_model, & iter, nullptr, (gint) (position - 1))) {
 			gtk_list_store_remove (GTK_LIST_STORE (tree_model), & iter);
 		}
 	#elif cocoa
@@ -529,7 +529,7 @@ void GuiList_deleteItem (GuiList me, long position) {
 		LDelRow (1, position - 1, my d_macListHandle);
 		GuiMac_clipOff ();
 		long n = (** my d_macListHandle). dataBounds. bottom;
-		XtVaSetValues (my d_widget, XmNheight, n * CELL_HEIGHT, NULL);
+		XtVaSetValues (my d_widget, XmNheight, n * CELL_HEIGHT, nullptr);
 	#endif
 }
 
@@ -562,7 +562,7 @@ void GuiList_deselectItem (GuiList me, long position) {
 //		gtk_tree_model_get_iter (GTK_TREE_MODEL (list_store), & iter, path);
 //		gtk_tree_path_free (path);
 		GtkTreeModel *tree_model = gtk_tree_view_get_model (GTK_TREE_VIEW (my d_widget));
-		if (gtk_tree_model_iter_nth_child (tree_model, & iter, NULL, (gint) (position - 1))) {
+		if (gtk_tree_model_iter_nth_child (tree_model, & iter, nullptr, (gint) (position - 1))) {
 			gtk_tree_selection_unselect_iter (selection, & iter);
 		}
 	#elif cocoa
@@ -582,7 +582,7 @@ void GuiList_deselectItem (GuiList me, long position) {
 
 long * GuiList_getSelectedPositions (GuiList me, long *numberOfSelectedPositions) {
 	*numberOfSelectedPositions = 0;
-	long *selectedPositions = NULL;
+	long *selectedPositions = nullptr;
 	#if gtk
 		GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (my d_widget));
 		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (my d_widget)));
@@ -592,13 +592,13 @@ long * GuiList_getSelectedPositions (GuiList me, long *numberOfSelectedPositions
 			long ipos = 1;
 			*numberOfSelectedPositions = n;
 			selectedPositions = NUMvector <long> (1, *numberOfSelectedPositions);
-			Melder_assert (selectedPositions != NULL);
-			for (GList *l = g_list_first (list); l != NULL; l = g_list_next (l)) {
+			Melder_assert (selectedPositions);
+			for (GList *l = g_list_first (list); l != nullptr; l = g_list_next (l)) {
 				gint *index = gtk_tree_path_get_indices ((GtkTreePath *) l -> data);
 				selectedPositions [ipos] = index [0] + 1;
 				ipos ++;
 			}
-			g_list_foreach (list, (GFunc) gtk_tree_path_free, NULL);
+			g_list_foreach (list, (GFunc) gtk_tree_path_free, nullptr);
 			g_list_free (list);
 		}
 		return selectedPositions;
@@ -629,7 +629,7 @@ long * GuiList_getSelectedPositions (GuiList me, long *numberOfSelectedPositions
 		}
 		*numberOfSelectedPositions = n;
 		selectedPositions = NUMvector <long> (1, *numberOfSelectedPositions);
-		Melder_assert (selectedPositions != NULL);
+		Melder_assert (selectedPositions);
 		for (long ipos = 1; ipos <= *numberOfSelectedPositions; ipos ++) {
 			selectedPositions [ipos] = indices [ipos - 1] + 1;   // convert from zero-based list of zero-based indices
 		}
@@ -649,7 +649,7 @@ long * GuiList_getSelectedPositions (GuiList me, long *numberOfSelectedPositions
 		}
 		if (*numberOfSelectedPositions == 0) {
 			NUMvector_free (selectedPositions, 1);
-			selectedPositions = NULL;
+			selectedPositions = nullptr;
 		}
 	#endif
 	return selectedPositions;
@@ -686,7 +686,7 @@ long GuiList_getNumberOfItems (GuiList me) {
 	long numberOfItems = 0;
 	#if gtk
 		GtkTreeModel *model = gtk_tree_view_get_model (GTK_TREE_VIEW (my d_widget));
-		numberOfItems = gtk_tree_model_iter_n_children (model, NULL); 
+		numberOfItems = gtk_tree_model_iter_n_children (model, nullptr);
 	#elif cocoa
 		GuiCocoaList *list = (GuiCocoaList *) my d_widget;
 		numberOfItems = [[list contents] count];
@@ -731,10 +731,10 @@ void GuiList_insertItem (GuiList me, const char32 *itemText /* cattable */, long
 	 */
 	#if gtk
 		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (my d_widget)));
-		gtk_list_store_insert_with_values (list_store, NULL, (gint) position - 1, COLUMN_STRING, Melder_peek32to8 (itemText), -1);
+		gtk_list_store_insert_with_values (list_store, nullptr, (gint) position - 1, COLUMN_STRING, Melder_peek32to8 (itemText), -1);
 		// TODO: Tekst opsplitsen
 		// does GTK know the '0' trick?
-		// it does know about NULL, to append in another function
+		// it does know about nullptr, to append in another function
 	#elif cocoa
 		GuiCocoaList *list = (GuiCocoaList *) my d_widget;
 		NSString *nsString = [[NSString alloc] initWithUTF8String: Melder_peek32to8 (itemText)];
@@ -762,7 +762,7 @@ void GuiList_insertItem (GuiList me, const char32 *itemText /* cattable */, long
 		LSetCell (itemText_utf8, (short) strlen (itemText_utf8), cell, my d_macListHandle);
 		(** my d_macListHandle). visible. bottom = n + 1;
 		_GuiMac_clipOffInvalid (my d_widget);
-		XtVaSetValues (my d_widget, XmNheight, (n + 1) * CELL_HEIGHT, NULL);
+		XtVaSetValues (my d_widget, XmNheight, (n + 1) * CELL_HEIGHT, nullptr);
 	#endif
 }
 
@@ -771,7 +771,7 @@ void GuiList_replaceItem (GuiList me, const char32 *itemText, long position) {
 	#if gtk
 		GtkTreeIter iter;
 		GtkTreeModel *tree_model = gtk_tree_view_get_model (GTK_TREE_VIEW (my d_widget));
-		if (gtk_tree_model_iter_nth_child (tree_model, & iter, NULL, (gint) (position - 1))) {
+		if (gtk_tree_model_iter_nth_child (tree_model, & iter, nullptr, (gint) (position - 1))) {
 			gtk_list_store_set (GTK_LIST_STORE (tree_model), & iter, COLUMN_STRING, Melder_peek32to8 (itemText), -1);
 		}
 /*
@@ -860,7 +860,7 @@ void GuiList_setTopPosition (GuiList me, long topPosition) {
 	#if gtk
 //		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (my md_widget)));
 		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) topPosition);
-		gtk_tree_view_scroll_to_cell (GTK_TREE_VIEW (my d_widget), path, NULL, FALSE, 0.0, 0.0);
+		gtk_tree_view_scroll_to_cell (GTK_TREE_VIEW (my d_widget), path, nullptr, false, 0.0, 0.0);
 		gtk_tree_path_free (path);
 	#elif cocoa
 	 // TODO: implement
@@ -871,7 +871,7 @@ void GuiList_setTopPosition (GuiList me, long topPosition) {
 		//LScroll (0, topPosition - (** d_macListHandle). visible. top - 1, my d_macListHandle);   // TODO: implement
 		//GuiMac_clipOff ();
 		//my d_scrolled -> motiff.scrolledWindow.verticalBar;   // TODO: implement
-		XtVaSetValues (my d_widget, XmNy, - (topPosition - 1) * CELL_HEIGHT, NULL);
+		XtVaSetValues (my d_widget, XmNy, - (topPosition - 1) * CELL_HEIGHT, nullptr);
 	#endif
 }
 

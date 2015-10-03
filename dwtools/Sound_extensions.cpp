@@ -1227,7 +1227,7 @@ void Sound_overwritePart (Sound me, double t1, double t2, Sound thee, double t3)
 void Sound_filter_part_formula (Sound me, double t1, double t2, const char32 *formula, Interpreter interpreter) {
 	try {
 		autoSound part = Sound_extractPart (me, t1, t2, kSound_windowShape_RECTANGULAR, 1, 1);
-		autoSpectrum spec = Sound_to_Spectrum (part.peek(), TRUE);
+		autoSpectrum spec = Sound_to_Spectrum (part.peek(), true);
 		Matrix_formula ( (Matrix) spec.peek(), formula, interpreter, 0);
 		autoSound filtered = Spectrum_to_Sound (spec.peek());
 

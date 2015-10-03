@@ -358,7 +358,7 @@ void structFunctionEditor :: v_destroy () {
 			Melder_assert (i < maxGroup);
 			i ++;
 		}
-		theGroup [i] = NULL;
+		theGroup [i] = nullptr;
 		nGroup --;
 	}
 	forget (our d_graphics);
@@ -381,7 +381,7 @@ void structFunctionEditor :: v_info () {
 
 static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 	iam (FunctionEditor);
-	if (my d_graphics == NULL) return;   // Could be the case in the very beginning.
+	if (! my d_graphics) return;   // could be the case in the very beginning
 	Graphics_setWsViewport (my d_graphics, 0, event -> width, 0, event -> height);
 	int width = event -> width + 21;
 	/*
@@ -890,7 +890,7 @@ static void menu_cb_moveEright (EDITOR_ARGS) {
 
 static void gui_cb_scroll (I, GuiScrollBarEvent event) {
 	iam (FunctionEditor);
-	if (my d_graphics == NULL) return;   // ignore events during creation
+	if (! my d_graphics) return;   // ignore events during creation
 	double value = GuiScrollBar_getValue (event -> scrollBar);
 	double shift = my tmin + (value - 1) * (my tmax - my tmin) / maximumScrollBarValue - my d_startWindow;
 	bool shifted = shift != 0.0;
@@ -945,7 +945,7 @@ static void gui_checkbutton_cb_group (I, GuiCheckButtonEvent event) {
 		FunctionEditor thee;
 		i = 1; while (theGroup [i]) i ++; theGroup [i] = me;
 		if (++ nGroup == 1) { Graphics_updateWs (my d_graphics); return; }
-		i = 1; while (theGroup [i] == NULL || theGroup [i] == me) i ++; thee = theGroup [i];
+		i = 1; while (theGroup [i] == nullptr || theGroup [i] == me) i ++; thee = theGroup [i];
 		if (my pref_synchronizedZoomAndScroll ()) {
 			my d_startWindow = thy d_startWindow;
 			my d_endWindow = thy d_endWindow;
@@ -974,7 +974,7 @@ static void gui_checkbutton_cb_group (I, GuiCheckButtonEvent event) {
 				}
 		}
 	} else {
-		i = 1; while (theGroup [i] != me) i ++; theGroup [i] = NULL;
+		i = 1; while (theGroup [i] != me) i ++; theGroup [i] = nullptr;
 		nGroup --;
 		my v_updateText ();
 		Graphics_updateWs (my d_graphics);   // for setting buttons in draw method
@@ -1062,23 +1062,22 @@ void structFunctionEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"Intro", 0, menu_cb_intro);
 }
 
-static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
+static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent /* event */) {
 	iam (FunctionEditor);
-	(void) event;
-	if (my d_graphics == NULL) return;   // Could be the case in the very beginning.
+	if (! my d_graphics) return;   // could be the case in the very beginning
 	if (my enableUpdates)
 		drawNow (me);
 }
 
 static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	iam (FunctionEditor);
-	if (my d_graphics == NULL) return;   // Could be the case in the very beginning.
-	double xWC, yWC;
+	if (! my d_graphics) return;   // could be the case in the very beginning
 	my shiftKeyPressed = event -> shiftKeyPressed;
 	Graphics_setWindow (my d_graphics, my functionViewerLeft, my functionViewerRight, 0, my height);
+	double xWC, yWC;
 	Graphics_DCtoWC (my d_graphics, event -> x, event -> y, & xWC, & yWC);
 
-	if (yWC > BOTTOM_MARGIN + space * 3 && yWC < my height - (TOP_MARGIN + space)) {   /* In signal region? */
+	if (yWC > BOTTOM_MARGIN + space * 3 && yWC < my height - (TOP_MARGIN + space)) {   // in signal region?
 		int needsUpdate;
 		Graphics_setViewport (my d_graphics, my functionViewerLeft + MARGIN, my functionViewerRight - MARGIN,
 			BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
@@ -1199,8 +1198,8 @@ void structFunctionEditor :: v_createChildren () {
 	our drawingArea = GuiDrawingArea_createShown (our d_windowForm,
 		0, 0,
 		Machine_getMenuBarHeight () + ( our v_hasText () ? TEXT_HEIGHT + marginBetweenTextAndDrawingAreaToEnsureCorrectUnhighlighting : 0), -8 - Gui_PUSHBUTTON_HEIGHT,
-		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, this, 0);
-	GuiDrawingArea_setSwipable (our drawingArea, our scrollBar, NULL);
+		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, nullptr, gui_drawingarea_cb_resize, this, 0);
+	GuiDrawingArea_setSwipable (our drawingArea, our scrollBar, nullptr);
 }
 
 void structFunctionEditor :: v_dataChanged () {
@@ -1550,7 +1549,7 @@ gui_drawingarea_cb_resize (me, & event);
 
 	my v_updateText ();
 	if (group_equalDomain (my tmin, my tmax))
-		gui_checkbutton_cb_group (me, NULL);   // BUG: NULL
+		gui_checkbutton_cb_group (me, nullptr);   // BUG: nullptr
 	my enableUpdates = true;
 }
 
@@ -1580,7 +1579,7 @@ void FunctionEditor_ungroup (FunctionEditor me) {
 	GuiCheckButton_setValue (my groupButton, false);
 	int i = 1;
 	while (theGroup [i] != me) i ++;
-	theGroup [i] = NULL;
+	theGroup [i] = nullptr;
 	nGroup --;
 	my v_updateText ();
 	Graphics_updateWs (my d_graphics);   // for setting buttons in v_draw() method

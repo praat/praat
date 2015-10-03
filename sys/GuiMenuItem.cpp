@@ -65,9 +65,9 @@ static void NativeMenuItem_setText (GuiObject me) {
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 			const char32 *keyString = keyStrings [acc] ? keyStrings [acc] : U"???";
 			MelderString_copy (& title, _GuiWin_expandAmpersands (my name), U"\t",
-				modifiers & _motif_COMMAND_MASK ? U"Ctrl-" : NULL,
-				modifiers & _motif_OPTION_MASK ? U"Alt-" : NULL,
-				modifiers & _motif_SHIFT_MASK ? U"Shift-" : NULL, keyString);
+				modifiers & _motif_COMMAND_MASK ? U"Ctrl-" : nullptr,
+				modifiers & _motif_OPTION_MASK ? U"Alt-" : nullptr,
+				modifiers & _motif_SHIFT_MASK ? U"Shift-" : nullptr, keyString);
 		}
 		ModifyMenu (my nat.entry.handle, my nat.entry.id, MF_BYCOMMAND | MF_STRING, my nat.entry.id, Melder_peek32toW (title.string));
 	#elif mac
@@ -129,13 +129,13 @@ static void NativeMenuItem_setText (GuiObject me) {
 		return self -> d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
-		Melder_assert (userData == NULL || Thing_isa (userData, classGuiMenuItem));
+		Melder_assert (userData == nullptr || Thing_isa (userData, classGuiMenuItem));
 		self -> d_userData = static_cast <GuiMenuItem> (userData);
 	}
 	- (void) _guiCocoaMenuItem_activateCallback: (id) widget {
 		Melder_assert (self == widget);   // sender (widget) and receiver (self) happen to be the same object
 		GuiMenuItem me = self -> d_userData;
-		if (my d_commandCallback != NULL) {
+		if (my d_commandCallback) {
 			struct structGuiMenuItemEvent event = { me, 0 };
 			try {
 				my d_commandCallback (my d_boss, & event);
@@ -153,7 +153,7 @@ static void NativeMenuItem_setText (GuiObject me) {
 	}
 	static void _guiMotifMenuItem_activateCallback (GuiObject widget, XtPointer void_me, XtPointer call) {
 		iam (GuiMenuItem);
-		if (my d_commandCallback != NULL) {
+		if (my d_commandCallback) {
 			struct structGuiMenuItemEvent event = { me, 0 };
 			try {
 				my d_commandCallback (my d_boss, & event);
@@ -175,11 +175,11 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, uint32 flags,
 	trace (U"creating item \"", title, U"\" in menu ", Melder_pointer (menu));
 	bool toggle = flags & (GuiMenu_CHECKBUTTON | GuiMenu_RADIO_FIRST | GuiMenu_RADIO_NEXT | GuiMenu_TOGGLE_ON) ? true : false;
 	uint32 accelerator = flags & 127;
-	Melder_assert (title != NULL);
+	Melder_assert (title);
 	#if gtk
-		static GSList *group = NULL;
+		static GSList *group = nullptr;
 		if (toggle) {
-			if (flags & (GuiMenu_RADIO_FIRST)) group = NULL;
+			if (flags & (GuiMenu_RADIO_FIRST)) group = nullptr;
 			if (flags & (GuiMenu_RADIO_FIRST | GuiMenu_RADIO_NEXT)) {
 				my d_widget = gtk_radio_menu_item_new_with_label (group, Melder_peek32to8 (title));
 				group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (my d_widget));
@@ -198,7 +198,7 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, uint32 flags,
 		NSString *string = (NSString *) Melder_peek32toCfstring (title);
 		GuiCocoaMenuItem *menuItem = [[GuiCocoaMenuItem alloc]
 			initWithTitle:string
-			action: NULL
+			action: nullptr
 			keyEquivalent: @""];
 		//Melder_assert ([string retainCount] == 2 || [string retainCount] == -1);   // the menu item retains the string (assertion can fail on 10.6)
 		trace (U"string retain count = ", [string retainCount]);
@@ -220,10 +220,10 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, uint32 flags,
 		[menuItem setUserData: me];
 	#elif motif
 		my d_widget = XtVaCreateManagedWidget (Melder_peek32to8 (title),
-			toggle ? xmToggleButtonGadgetClass : xmPushButtonGadgetClass, menu -> d_widget, NULL);
+			toggle ? xmToggleButtonGadgetClass : xmPushButtonGadgetClass, menu -> d_widget, nullptr);
 		_GuiObject_setUserData (my d_widget, me);
 	#endif
-	Melder_assert (my d_widget != NULL);
+	Melder_assert (my d_widget);
 
 	trace (U"set sensitivity");
 	if (flags & GuiMenu_INSENSITIVE)
@@ -232,7 +232,7 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, uint32 flags,
 	trace (U"understand toggle menu items");
 	if (flags & GuiMenu_TOGGLE_ON)
 		#if gtk
-			gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (my d_widget), TRUE);
+			gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (my d_widget), true);
 		#elif cocoa
 			[menuItem setState: NSOnState];
 		#elif motif
@@ -342,7 +342,7 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, uint32 flags,
 	my d_commandCallback = commandCallback;
 	my d_boss = boss;
 	#if gtk
-		if (commandCallback != NULL) {
+		if (commandCallback) {
 			if (flags == GuiMenu_TAB) {
 				GtkWidget *shell = gtk_widget_get_toplevel (gtk_menu_get_attach_widget (GTK_MENU (menu -> d_widget)));
 				trace (U"tab set in GTK window ", Melder_pointer (shell));
@@ -359,7 +359,7 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, uint32 flags,
 					G_CALLBACK (_guiGtkMenuItem_activateCallback), (gpointer) me);
 			}
 		} else {
-			gtk_widget_set_sensitive (GTK_WIDGET (my d_widget), FALSE);
+			gtk_widget_set_sensitive (GTK_WIDGET (my d_widget), false);
 		}
 		gtk_widget_show (GTK_WIDGET (my d_widget));
 	#elif cocoa
@@ -410,7 +410,7 @@ GuiMenuItem GuiMenu_addSeparator (GuiMenu menu) {
 		trace (U"set user data");
 		[(GuiCocoaMenuItem *) my d_widget setUserData: me];
 	#elif motif
-		my d_widget = XtVaCreateManagedWidget ("menuSeparator", xmSeparatorGadgetClass, menu -> d_widget, NULL);
+		my d_widget = XtVaCreateManagedWidget ("menuSeparator", xmSeparatorGadgetClass, menu -> d_widget, nullptr);
 	#endif
 
 	trace (U"make sure that I will be destroyed when my widget is destroyed");
@@ -424,7 +424,7 @@ GuiMenuItem GuiMenu_addSeparator (GuiMenu menu) {
 }
 
 void GuiMenuItem_check (GuiMenuItem me, bool check) {
-	Melder_assert (my d_widget != NULL);
+	Melder_assert (my d_widget);
 	#if gtk
 		my d_callbackBlocked = true;
 		gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (my d_widget), check);

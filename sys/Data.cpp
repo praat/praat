@@ -52,7 +52,7 @@ void structDaata :: v_readBinary (FILE *, int /*formatVersion*/) {
 
 Daata _Data_copy (Daata me) {
 	try {
-		if (me == NULL) return NULL;
+		if (! me) return nullptr;
 		autoDaata thee = static_cast <Daata> (Thing_newFromClass (my classInfo));
 		my v_copy (thee.peek());
 		Thing_setName (thee.peek(), my name);
@@ -121,7 +121,7 @@ static void _Data_writeToTextFile (Daata me, MelderFile file, bool verbose) {
 		mfile.close ();
 	} catch (MelderError) {
 		#ifndef _WIN32
-			if (file -> filePointer) funlockfile (file -> filePointer);   // the file pointer is NULL before Data_createTextFile() and after mfile.close()
+			if (file -> filePointer) funlockfile (file -> filePointer);   // the file pointer is null before Data_createTextFile() and after mfile.close()
 		#endif
 		throw;
 	}
@@ -189,20 +189,20 @@ Daata Data_readFromTextFile (MelderFile file) {
 	try {
 		autoMelderReadText text = MelderReadText_createFromFile (file);
 		char32 *line = MelderReadText_readLine (text.peek());
-		if (line == NULL)
+		if (! line)
 			Melder_throw (U"No lines.");
 		char32 *end = str32str (line, U"ooTextFile");   // oo format?
-		autoDaata me = NULL;
+		autoDaata me;
 		int formatVersion;
 		if (end) {
 			autostring32 klas = texgetw2 (text.peek());
 			me.reset (static_cast <Daata> (Thing_newFromClassName (klas.peek(), & formatVersion)));
 		} else {
 			end = str32str (line, U"TextFile");
-			if (end == NULL)
+			if (! end)
 				Melder_throw (U"Not an old-type text file; should not occur.");
 			*end = U'\0';
-			me.reset (static_cast <Daata> (Thing_newFromClassName (line, NULL)));
+			me.reset (static_cast <Daata> (Thing_newFromClassName (line, nullptr)));
 			formatVersion = -1;   // old version
 		}
 		MelderFile_getParentDir (file, & Data_directoryBeingRead);
@@ -237,7 +237,7 @@ Daata Data_readFromBinaryFile (MelderFile file) {
 		char line [200];
 		int n = fread (line, 1, 199, f); line [n] = '\0';
 		char *end = strstr (line, "ooBinaryFile");
-		autoDaata me = NULL;
+		autoDaata me;
 		int formatVersion;
 		if (end) {
 			fseek (f, strlen ("ooBinaryFile"), 0);
@@ -249,7 +249,7 @@ Daata Data_readFromBinaryFile (MelderFile file) {
 				Melder_throw (U"File ", file, U" is not a Data binary file.");
 			}
 			*end = '\0';
-			me.reset (static_cast <Daata> (Thing_newFromClassName (Melder_peek8to32 (line), NULL)));
+			me.reset (static_cast <Daata> (Thing_newFromClassName (Melder_peek8to32 (line), nullptr)));
 			formatVersion = -1;   // old version: override version number, which was set to 0 by newFromClassName
 			rewind (f);
 			fread (line, 1, end - line + strlen ("BinaryFile"), f);
@@ -285,7 +285,7 @@ Daata Data_readFromFile (MelderFile file) {
 
 	if (nread > 11) {
 		char *p = strstr (header, "TextFile");
-		if (p != NULL && p - header < nread - 8 && p - header < 40)
+		if (p && p - header < nread - 8 && p - header < 40)
 			return Data_readFromTextFile (file);
 	}
 	if (nread > 22) {
@@ -295,7 +295,7 @@ Daata Data_readFromFile (MelderFile file) {
 		for (i = 0; i < 100; i ++)
 			if (headerCopy [i] == '\0') headerCopy [i] = '\001';
 		char *p = strstr (headerCopy, "T\001e\001x\001t\001F\001i\001l\001e");
-		if (p != NULL && p - headerCopy < nread - 15 && p - headerCopy < 80)
+		if (p && p - headerCopy < nread - 15 && p - headerCopy < 80)
 			return Data_readFromTextFile (file);
 	}
 
@@ -303,7 +303,7 @@ Daata Data_readFromFile (MelderFile file) {
 
 	if (nread > 13) {
 		char *p = strstr (header, "BinaryFile");
-		if (p != NULL && p - header < nread - 10 && p - header < 40)
+		if (p && p - header < nread - 10 && p - header < 40)
 			return Data_readFromBinaryFile (file);
 	}
 
@@ -312,14 +312,14 @@ Daata Data_readFromFile (MelderFile file) {
 	MelderFile_getParentDir (file, & Data_directoryBeingRead);
 	for (i = 1; i <= numFileTypeRecognizers; i ++) {
 		Daata object = (Daata) fileTypeRecognizers [i] (nread, header, file);
-		if (object == (Daata) 1) return NULL;
+		if (object == (Daata) 1) return nullptr;
 		if (object) return object;
 	}
 
 	/***** 4. Is this a common text file? *****/
 
 	for (i = 0; i < nread; i ++)
-		if (header [i] < 32 || header [i] > 126)   /* Not ASCII? */
+		if (header [i] < 32 || header [i] > 126)   // not ASCII?
 			break;
 	if (i >= nread) return Data_readFromTextFile (file);
 
@@ -348,7 +348,7 @@ Data_Description Data_Description_findMatch (Data_Description structDescription,
 		if (parentDescription)
 			return Data_Description_findMatch (parentDescription, name);
 	}
-	return NULL;   /* Not found. */
+	return nullptr;   // not found
 }
 
 Data_Description Data_Description_findNumberUse (Data_Description structDescription, const char32 *string) {
@@ -361,7 +361,7 @@ Data_Description Data_Description_findNumberUse (Data_Description structDescript
 		if (parentDescription)
 			return Data_Description_findNumberUse (parentDescription, string);
 	}
-	return NULL;
+	return nullptr;
 }
 
 /* Retrieving data from object + description. */
@@ -384,7 +384,7 @@ int64 Data_Description_integer (void *address, Data_Description description) {
 int Data_Description_evaluateInteger (void *structAddress, Data_Description structDescription,
 	const char32 *formula, long *result)
 {
-	if (formula == NULL) {   // this was a VECTOR_FROM array
+	if (! formula) {   // this was a VECTOR_FROM array
 		*result = 1;
 		return 1;
 	}
@@ -392,9 +392,9 @@ int Data_Description_evaluateInteger (void *structAddress, Data_Description stru
 		char32 buffer [100], *minus1, *psize;
 		Data_Description sizeDescription;
 		str32cpy (buffer, formula);
-		if ((minus1 = str32str (buffer, U" - 1")) != NULL)
+		if ((minus1 = str32str (buffer, U" - 1")) != nullptr)
 			*minus1 = U'\0';   // strip trailing " - 1", but remember
-		if ((psize = str32str (buffer, U" -> size")) != NULL)
+		if ((psize = str32str (buffer, U" -> size")) != nullptr)
 			*psize = U'\0';   // strip trailing " -> size"
 		if (! (sizeDescription = Data_Description_findMatch (structDescription, buffer))) {
 			*result = 0;

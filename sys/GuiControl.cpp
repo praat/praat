@@ -98,25 +98,25 @@ void structGuiControl :: v_positionInForm (GuiObject widget, int left, int right
 		(void) parent;
 		if (left >= 0) {
 			if (right > 0) {
-				XtVaSetValues (widget, XmNx, left, XmNwidth, right - left, NULL);
+				XtVaSetValues (widget, XmNx, left, XmNwidth, right - left, nullptr);
 			} else {
-				XtVaSetValues (widget, XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, left, XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, - right, NULL);
+				XtVaSetValues (widget, XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, left, XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, - right, nullptr);
 			}
 		} else {
 			Melder_assert (right <= 0);
 			trace (U"parent width ", parent -> d_widget -> width);
-			XtVaSetValues (widget, XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, - right, XmNwidth, right - left, NULL);
+			XtVaSetValues (widget, XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, - right, XmNwidth, right - left, nullptr);
 			trace (U"parent width ", parent -> d_widget -> width);
 		}
 		if (top >= 0) {
 			if (bottom > 0) {
-				XtVaSetValues (widget, XmNy, top, XmNheight, bottom - top, NULL);
+				XtVaSetValues (widget, XmNy, top, XmNheight, bottom - top, nullptr);
 			} else {
-				XtVaSetValues (widget, XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, top, XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, - bottom, NULL);
+				XtVaSetValues (widget, XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, top, XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, - bottom, nullptr);
 			}
 		} else {
 			Melder_assert (bottom <= 0);
-			XtVaSetValues (widget, XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, - bottom, XmNheight, bottom - top, NULL);
+			XtVaSetValues (widget, XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, - bottom, XmNheight, bottom - top, nullptr);
 		}
 	#endif
 }
@@ -137,7 +137,7 @@ void structGuiControl :: v_positionInScrolledWindow (GuiObject widget, int width
 		[widgetView release];   // ... so we can release the item already
 	#elif motif
 		(void) parent;
-		XtVaSetValues (widget, XmNwidth, width, XmNheight, height, NULL);
+		XtVaSetValues (widget, XmNwidth, width, XmNheight, height, nullptr);
 	#endif
 }
 
@@ -189,7 +189,7 @@ void GuiControl_move (GuiControl me, int x, int y) {
 		}
 	#elif cocoa
 	#elif motif
-		XtVaSetValues (my d_widget, XmNx, (Position) x, XmNy, (Position) y, NULL);   // 64-bit-compatible
+		XtVaSetValues (my d_widget, XmNx, (Position) x, XmNy, (Position) y, nullptr);   // 64-bit-compatible
 	#endif
 }
 
@@ -198,7 +198,7 @@ void GuiControl_setSize (GuiControl me, int width, int height) {
 		gtk_widget_set_size_request (GTK_WIDGET (my d_widget), width, height);
 	#elif cocoa
 	#elif motif
-		XtVaSetValues (my d_widget, XmNwidth, (Dimension) width, XmNheight, (Dimension) height, NULL);   // 64-bit-compatible
+		XtVaSetValues (my d_widget, XmNwidth, (Dimension) width, XmNheight, (Dimension) height, nullptr);   // 64-bit-compatible
 	#endif
 }
 

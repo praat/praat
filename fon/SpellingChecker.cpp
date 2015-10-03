@@ -136,7 +136,7 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, const char32 *word) {
 			/*
 			 * Allow word if it contains this token.
 			 */
-			if (str32str (word, token)) return TRUE;
+			if (str32str (word, token)) return true;
 		}
 	}
 	if (my allowAllNames) {
@@ -144,7 +144,7 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, const char32 *word) {
 		 * Allow word if it starts with a capital.
 		 */
 		if (startsWithCapital (word)) {
-			return TRUE;
+			return true;
 		}
 		if (my namePrefixes && my namePrefixes [0]) {
 			char32 *p = & my namePrefixes [0];
@@ -158,14 +158,14 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, const char32 *word) {
 				 * and this prefix is followed by a capital.
 				 */
 				if (str32str (word, token) == word && startsWithCapital (word + str32len (token))) {
-					return TRUE;
+					return true;
 				}
 			}
 		}
 	} else if (my allowAllAbbreviations && startsWithCapital (word)) {
 		const char32 *p = & word [0];
 		for (;;) {
-			if (*p == '\0') return TRUE;
+			if (*p == '\0') return true;
 			if (iswlower ((int) *p)) break;
 			p ++;
 		}
@@ -180,7 +180,7 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, const char32 *word) {
 			*q = U'\0';   // trailing null character
 			tokenLength = str32len (token);
 			if (wordLength >= tokenLength && str32nequ (token, word, tokenLength)) {
-				return TRUE;
+				return true;
 			}
 		}
 	}
@@ -194,20 +194,20 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, const char32 *word) {
 			*q = U'\0';   // trailing null character
 			tokenLength = str32len (token);
 			if (wordLength >= tokenLength && str32nequ (token, word + wordLength - tokenLength, tokenLength)) {
-				return TRUE;
+				return true;
 			}
 		}
 	}
 	if (WordList_hasWord (my wordList, word))
-		return TRUE;
+		return true;
 	if (my userDictionary != NULL) {
-		if (str32len (word) > 3333) return FALSE;   // superfluous, because WordList_hasWord already checked; but safe
+		if (str32len (word) > 3333) return false;   // superfluous, because WordList_hasWord already checked; but safe
 		static char32 buffer [3*3333+1];
 		Longchar_genericize32 (word, buffer);
 		if (SortedSetOfString_lookUp (my userDictionary, buffer) != 0)
-			return TRUE;
+			return true;
 	}
-	return FALSE;
+	return false;
 }
 
 void SpellingChecker_addNewWord (SpellingChecker me, const char32 *word) {

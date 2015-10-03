@@ -76,8 +76,8 @@ bool Pitch_isVoiced_i (Pitch me, long index);
 
 bool Pitch_isVoiced_t (Pitch me, double t);
 /*
-	Are you voiced at time 't'?
-	The answer is TRUE iff 't' lies within a voiced frame.
+	Are you voiced at time `t`?
+	The answer is `true` iff `t` lies within a voiced frame.
 */
 
 #define Pitch_LEVEL_FREQUENCY  1

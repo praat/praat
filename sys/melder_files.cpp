@@ -813,7 +813,7 @@ void Melder_createDirectory (MelderDir parent, const char32 *dirName, int mode) 
 	(void) mode;
 	sa. nLength = sizeof (SECURITY_ATTRIBUTES);
 	sa. lpSecurityDescriptor = NULL;
-	sa. bInheritHandle = FALSE;
+	sa. bInheritHandle = false;
 	if (str32chr (dirName, U':') || dirName [0] == U'/' && dirName [1] == U'/') {
 		Melder_sprint (file. path,kMelder_MAXPATH+1, dirName);   // absolute path
 	} else {

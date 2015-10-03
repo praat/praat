@@ -49,7 +49,7 @@ void Artword_removeTarget (Artword me, int feature, int iTarget);
 		If "iTarget" is the first or the last target in the list,
 		only set the target to zero (begin and end targets remain).
 	Preconditions:
-		self != NULL;
+		self != nullptr;
 		feature in enum Art_MUSCLE;
 		iTarget >= 1;
 		iTarget <= self -> data [feature]. numberOfTargets;
@@ -78,8 +78,8 @@ void Artword_intoArt (Artword me, Art art, double tim);
 	Function:
 		Linear interpolation between targets, into an existing Art.
 	Preconditions:
-		me != NULL;
-		art != NULL;
+		me != nullptr;
+		art != nullptr;
 */
 	
 void Artword_draw (Artword me, Graphics graphics, int feature, int garnish);

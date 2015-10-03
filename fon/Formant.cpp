@@ -198,7 +198,7 @@ void Formant_formula_bandwidths (Formant me, const char32 *formula, Interpreter 
 			for (long iformant = 1; iformant <= frame -> nFormants; iformant ++)
 				mat -> z [iformant] [iframe] = frame -> formant [iformant]. bandwidth;
 		}
-		Matrix_formula (mat.peek(), formula, interpreter, NULL);
+		Matrix_formula (mat.peek(), formula, interpreter, nullptr);
 		for (long iframe = 1; iframe <= my nx; iframe ++) {
 			Formant_Frame frame = & my d_frames [iframe];
 			for (long iformant = 1; iformant <= frame -> nFormants; iformant ++)
@@ -220,7 +220,7 @@ void Formant_formula_frequencies (Formant me, const char32 *formula, Interpreter
 			for (long iformant = 1; iformant <= frame -> nFormants; iformant ++)
 				mat -> z [iformant] [iframe] = frame -> formant [iformant]. frequency;
 		}
-		Matrix_formula (mat.peek(), formula, interpreter, NULL);
+		Matrix_formula (mat.peek(), formula, interpreter, nullptr);
 		for (long iframe = 1; iframe <= my nx; iframe ++) {
 			Formant_Frame frame = & my d_frames [iframe];
 			for (long iformant = 1; iformant <= frame -> nFormants; iformant ++)
@@ -258,13 +258,13 @@ void Formant_getMinimumAndTime (Formant me, int iformant, double tmin, double tm
 
 double Formant_getMinimum (Formant me, int iformant, double tmin, double tmax, int bark, int interpolate) {
 	double minimum;
-	Formant_getMinimumAndTime (me, iformant, tmin, tmax, bark, interpolate, & minimum, NULL);
+	Formant_getMinimumAndTime (me, iformant, tmin, tmax, bark, interpolate, & minimum, nullptr);
 	return minimum;
 }
 
 double Formant_getTimeOfMinimum (Formant me, int iformant, double tmin, double tmax, int bark, int interpolate) {
 	double time;
-	Formant_getMinimumAndTime (me, iformant, tmin, tmax, bark, interpolate, NULL, & time);
+	Formant_getMinimumAndTime (me, iformant, tmin, tmax, bark, interpolate, nullptr, & time);
 	return time;
 }
 
@@ -272,18 +272,18 @@ void Formant_getMaximumAndTime (Formant me, int iformant, double tmin, double tm
 	double *return_maximum, double *return_timeOfMaximum)
 {
 	Sampled_getMaximumAndX (me, tmin, tmax, iformant << 1, bark, interpolate, return_maximum, return_timeOfMaximum);
-	if (return_maximum && *return_maximum <= 0.0) *return_maximum = NUMundefined;   /* Unlikely. */
+	if (return_maximum && *return_maximum <= 0.0) *return_maximum = NUMundefined;   // unlikely
 }
 
 double Formant_getMaximum (Formant me, int iformant, double tmin, double tmax, int bark, int interpolate) {
 	double maximum;
-	Formant_getMaximumAndTime (me, iformant, tmin, tmax, bark, interpolate, & maximum, NULL);
+	Formant_getMaximumAndTime (me, iformant, tmin, tmax, bark, interpolate, & maximum, nullptr);
 	return maximum;
 }
 
 double Formant_getTimeOfMaximum (Formant me, int iformant, double tmin, double tmax, int bark, int interpolate) {
 	double time;
-	Formant_getMaximumAndTime (me, iformant, tmin, tmax, bark, interpolate, NULL, & time);
+	Formant_getMaximumAndTime (me, iformant, tmin, tmax, bark, interpolate, nullptr, & time);
 	return time;
 }
 
@@ -292,7 +292,7 @@ double Formant_getQuantile (Formant me, int iformant, double quantile, double tm
 }
 
 double Formant_getMean (Formant me, int iformant, double tmin, double tmax, int bark) {
-	return Sampled_getMean (me, tmin, tmax, iformant << 1, bark, TRUE);
+	return Sampled_getMean (me, tmin, tmax, iformant << 1, bark, true);
 }
 
 double Formant_getStandardDeviation (Formant me, int iformant, double tmin, double tmax, int bark) {
@@ -317,11 +317,11 @@ double Formant_getStandardDeviation (Formant me, int iformant, double tmin, doub
 }
 
 double Formant_getValueAtTime (Formant me, int iformant, double time, int bark) {
-	return Sampled_getValueAtX (me, time, iformant << 1, bark, TRUE);
+	return Sampled_getValueAtX (me, time, iformant << 1, bark, true);
 }
 
 double Formant_getBandwidthAtTime (Formant me, int iformant, double time, int bark) {
-	return Sampled_getValueAtX (me, time, (iformant << 1) + 1, bark, TRUE);
+	return Sampled_getValueAtX (me, time, (iformant << 1) + 1, bark, true);
 }
 
 double Formant_getQuantileOfBandwidth (Formant me, int iformant, double quantile, double tmin, double tmax, int bark) {

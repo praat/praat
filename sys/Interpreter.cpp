@@ -789,7 +789,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 		while (! atLastLine) {
 			char32 *endOfLine = command;
 			while (*endOfLine != U'\n' && *endOfLine != U'\0') endOfLine ++;
-			if (*endOfLine == U'\0') atLastLine = TRUE;
+			if (*endOfLine == U'\0') atLastLine = true;
 			*endOfLine = U'\0';
 			numberOfLines ++;
 			command = endOfLine + 1;
@@ -942,7 +942,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 					colon = str32chr (varName, U':');
 					if (colon) {
 						precision = a32tol (colon + 1);
-						if (str32chr (colon + 1, U'%')) percent = TRUE;
+						if (str32chr (colon + 1, U'%')) percent = true;
 						*colon = '\0';
 					}
 					InterpreterVariable var = Interpreter_hasVariable (me, varName);
@@ -1106,7 +1106,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							double value;
 							Interpreter_numericExpression (me, command2.string + 7, & value);
 							if (value == 0.0 || value == NUMundefined) {
-								assertionFailed = TRUE;
+								assertionFailed = true;
 								Melder_throw (U"Script assertion fails in line ", lineNumber,
 									U" (", value == 0.0 ? U"false" : U"undefined", U"):\n   ", command2.string + 7);
 							}
@@ -1233,7 +1233,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								for (iline = lineNumber - 1; iline > 0; iline --) {
 									char32 *line = lines [iline];
 									if (line [0] == U'f' && line [1] == U'o' && line [2] == U'r' && line [3] == U' ') {
-										if (depth == 0) { lineNumber = iline - 1; fromendfor = TRUE; break; }   // go before 'for'
+										if (depth == 0) { lineNumber = iline - 1; fromendfor = true; break; }   // go before 'for'
 										else depth --;
 									} else if (str32nequ (lines [iline], U"endfor", 6) && wordEnd (lines [iline] [6])) {
 										depth ++;
@@ -1285,7 +1285,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 											if (depth == 0) { lineNumber = iline; break; }   // go after 'else'
 										} else if ((str32nequ (lines [iline], U"elsif", 5) && wordEnd (lines [iline] [5]))
 											|| (str32nequ (lines [iline], U"elif", 4) && wordEnd (lines [iline] [4]))) {
-											if (depth == 0) { lineNumber = iline - 1; fromif = TRUE; break; }   // go at next 'elsif' or 'elif'
+											if (depth == 0) { lineNumber = iline - 1; fromif = true; break; }   // go at next 'elsif' or 'elif'
 										} else if (str32nequ (lines [iline], U"if ", 3)) {
 											depth ++;
 										}
@@ -1398,7 +1398,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									} else if (str32nequ (lines [iline], U"else", 4)) {
 										if (depth == 0) { lineNumber = iline; break; }   // go after 'else'
 									} else if (str32nequ (lines [iline], U"elsif ", 6) || str32nequ (lines [iline], U"elif ", 5)) {
-										if (depth == 0) { lineNumber = iline - 1; fromif = TRUE; break; }   // go at 'elsif'
+										if (depth == 0) { lineNumber = iline - 1; fromif = true; break; }   // go at 'elsif'
 									} else if (str32nequ (lines [iline], U"if ", 3)) {
 										depth ++;
 									}

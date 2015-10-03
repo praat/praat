@@ -208,7 +208,7 @@ PointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch) {
 					U", f0middle ", f0middle
 				);
 			}
-			double tmax = Sound_findExtremum (sound, tmiddle - 0.5 / f0middle, tmiddle + 0.5 / f0middle, TRUE, TRUE);
+			double tmax = Sound_findExtremum (sound, tmiddle - 0.5 / f0middle, tmiddle + 0.5 / f0middle, true, true);
 			Melder_assert (NUMdefined (tmax));
 			PointProcess_addPoint (point.peek(), tmax);
 

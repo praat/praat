@@ -45,7 +45,7 @@ static void gui_button_cb_removeTarget (I, GuiButtonEvent event) {
 	Artword artword = (Artword) my data;
 	long numberOfSelectedPositions;
 	long *selectedPositions = GuiList_getSelectedPositions (my list, & numberOfSelectedPositions);   // BUG memory
-	if (selectedPositions != NULL) {
+	if (selectedPositions) {
 		for (long ipos = numberOfSelectedPositions; ipos > 0; ipos --)
 			Artword_removeTarget (artword, my feature, selectedPositions [ipos]);
 	}
@@ -94,18 +94,17 @@ static void gui_radiobutton_cb_toggle (I, GuiRadioButtonEvent event) {
 	updateList (me);
 }
 
-static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
+static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent /* event */) {
 	iam (ArtwordEditor);
-	(void) event;
-	if (my graphics == NULL) return;
+	if (! my graphics) return;
 	Artword artword = (Artword) my data;
 	Graphics_clearWs (my graphics);
-	Artword_draw (artword, my graphics, my feature, TRUE);
+	Artword_draw (artword, my graphics, my feature, true);
 }
 
 static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	iam (ArtwordEditor);
-	if (my graphics == NULL) return;
+	if (! my graphics) return;
 	Artword artword = (Artword) my data;
 	Graphics_setWindow (my graphics, 0, artword -> totalTime, -1.0, 1.0);
 	Graphics_setInner (my graphics);
@@ -126,12 +125,12 @@ void structArtwordEditor :: v_createChildren () {
 	GuiLabel_createShown (d_windowForm, 40, 100, dy + 3, dy + 3 + Gui_LABEL_HEIGHT, U"Targets:", 0);
 	GuiLabel_createShown (d_windowForm, 5, 65, dy + 20, dy + 20 + Gui_LABEL_HEIGHT, U"Times:", 0);
 	GuiLabel_createShown (d_windowForm, 80, 140, dy + 20, dy + 20 + Gui_LABEL_HEIGHT, U"Values:", 0);
-	list = GuiList_createShown (d_windowForm, 0, 140, dy + 40, dy + 340, true, NULL);
+	list = GuiList_createShown (d_windowForm, 0, 140, dy + 40, dy + 340, true, nullptr);
 
 	GuiButton_createShown (d_windowForm, 10, 130, dy + 410, dy + 410 + Gui_PUSHBUTTON_HEIGHT, U"Remove target", gui_button_cb_removeTarget, this, 0);
 
 	drawingArea = GuiDrawingArea_createShown (d_windowForm, 170, 470, dy + 10, dy + 310,
-		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, NULL, this, 0);
+		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, nullptr, nullptr, this, 0);
 
 	GuiLabel_createShown (d_windowForm, 220, 270, dy + 340, dy + 340 + Gui_LABEL_HEIGHT, U"Time:", 0);
 	time = GuiText_createShown (d_windowForm, 270, 370, dy + 340, dy + 340 + Gui_TEXTFIELD_HEIGHT, 0);

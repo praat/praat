@@ -70,7 +70,7 @@ Cochleagram Sound_to_Cochleagram (Sound me, double dt, double df, double dt_wind
 				window -> z [1] [i] =
 					( my ny == 1 ? my z[1][i+startSample-1] : 0.5 * (my z[1][i+startSample-1] + my z[2][i+startSample-1]) ) *
 					(0.5 - 0.5 * cos (2 * NUMpi * i / (nsamp_window + 1)));
-			autoSpectrum spec = Sound_to_Spectrum (window.peek(), TRUE);
+			autoSpectrum spec = Sound_to_Spectrum (window.peek(), true);
 			autoExcitation excitation = Spectrum_to_Excitation (spec.peek(), df);
 			for (long ifreq = 1; ifreq <= nf; ifreq ++)
 				thy z [ifreq] [iframe] = excitation -> z [1] [ifreq] + ( iframe > 1 ? dampingFactor * thy z [ifreq] [iframe - 1] : 0 );

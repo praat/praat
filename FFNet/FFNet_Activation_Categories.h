@@ -34,6 +34,6 @@ Categories FFNet_Activation_to_Categories (FFNet me, Activation activation, int 
 /* labeling = 2 : stochastic */
 
 Activation FFNet_Categories_to_Activation (FFNet me, Categories labels);
-/* Postcondition: my outputCategories != NULL; */
+/* Postcondition: my outputCategories != nullptr; */
 
 #endif /* _FFNet_Activation_Categories_h_ */

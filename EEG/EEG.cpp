@@ -47,7 +47,7 @@ void structEEG :: v_info () {
 	MelderInfo_writeLine (U"   Start time: ", our xmin, U" seconds");
 	MelderInfo_writeLine (U"   End time: ", our xmax, U" seconds");
 	MelderInfo_writeLine (U"   Total duration: ", our xmax - our xmin, U" seconds");
-	if (our sound != NULL) {
+	if (our sound) {
 		MelderInfo_writeLine (U"Time sampling of the signal:");
 		MelderInfo_writeLine (U"   Number of samples: ", our sound -> nx);
 		MelderInfo_writeLine (U"   Sampling period: ", our sound -> dx, U" seconds");
@@ -61,14 +61,14 @@ void structEEG :: v_info () {
 
 void structEEG :: v_shiftX (double xfrom, double xto) {
 	EEG_Parent :: v_shiftX (xfrom, xto);
-	if (our sound    != NULL)  Function_shiftXTo (our sound,    xfrom, xto);
-	if (our textgrid != NULL)  Function_shiftXTo (our textgrid, xfrom, xto);
+	if (our sound   )  Function_shiftXTo (our sound,    xfrom, xto);
+	if (our textgrid)  Function_shiftXTo (our textgrid, xfrom, xto);
 }
 
 void structEEG :: v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
 	EEG_Parent :: v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
-	if (our sound    != NULL)  our sound    -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
-	if (our textgrid != NULL)  our textgrid -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
+	if (our sound   )  our sound    -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
+	if (our textgrid)  our textgrid -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
 }
 
 void EEG_init (EEG me, double tmin, double tmax) {
@@ -115,7 +115,7 @@ EEG EEG_readFromBdfFile (MelderFile file) {
 		fread (buffer, 1, 44, f); buffer [44] = '\0';
 		trace (U"Version of data format: \"", Melder_peek8to32 (buffer), U"\"");
 		fread (buffer, 1, 8, f); buffer [8] = '\0';
-		long numberOfDataRecords = strtol (buffer, NULL, 10);
+		long numberOfDataRecords = strtol (buffer, nullptr, 10);
 		trace (U"Number of data records: ", numberOfDataRecords);
 		fread (buffer, 1, 8, f); buffer [8] = '\0';
 		double durationOfDataRecord = atof (buffer);
@@ -436,7 +436,7 @@ void EEG_filter (EEG me, double lowFrequency, double lowWidth, double highFreque
 */
 		for (long ichan = 1; ichan <= my numberOfChannels - EEG_getNumberOfExtraSensors (me); ichan ++) {
 			autoSound channel = Sound_extractChannel (my sound, ichan);
-			autoSpectrum spec = Sound_to_Spectrum (channel.peek(), TRUE);
+			autoSpectrum spec = Sound_to_Spectrum (channel.peek(), true);
 			Spectrum_passHannBand (spec.peek(), lowFrequency, 0.0, lowWidth);
 			Spectrum_passHannBand (spec.peek(), 0.0, highFrequency, highWidth);
 			if (doNotch50Hz) {

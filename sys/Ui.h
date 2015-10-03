@@ -40,7 +40,7 @@ Thing_declare (EditorCommand);
 			U"Create person...");   // The help string; may be NULL.
 		UiForm_addNatural (dia, U"Age (years)", U"18");
 		UiForm_addPositive (dia, U"Length (metres)", U"1.68 (average)");
-		UiForm_addBoolean (dia, U"Beard", FALSE);
+		UiForm_addBoolean (dia, U"Beard", false);
 		radio = UiForm_addRadio (dia, U"Sex", 1);
 			UiRadio_addButton (radio, U"Female");
 			UiRadio_addButton (radio, U"Male");

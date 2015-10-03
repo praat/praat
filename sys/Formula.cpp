@@ -43,7 +43,7 @@ static int theLevel = 1;
 static int theExpressionType [1 + MAXIMUM_NUMBER_OF_LEVELS];
 static bool theOptimize;
 
-static struct Formula_NumericArray theZeroNumericArray = { 0, 0, NULL };
+static struct Formula_NumericArray theZeroNumericArray = { 0, 0, nullptr };
 
 typedef struct structFormulaInstruction {
 	int symbol;
@@ -284,14 +284,14 @@ static int languageNameCompare (const void *first, const void *second) {
 
 static int Formula_hasLanguageName (const char32 *f) {
 	static int *index;
-	if (index == NULL) {
+	if (! index) {
 		index = NUMvector <int> (1, hoogsteInvoersymbool);
 		for (int tok = 1; tok <= hoogsteInvoersymbool; tok ++) {
 			index [tok] = tok;
 		}
 		qsort (& index [1], hoogsteInvoersymbool, sizeof (int), languageNameCompare);
 	}
-	if (index == NULL) {   // linear search
+	if (! index) {   // linear search
 		for (int tok = 1; tok <= hoogsteInvoersymbool; tok ++) {
 			if (str32equ (f, Formula_instructionNames [tok])) return tok;
 		}
@@ -299,7 +299,7 @@ static int Formula_hasLanguageName (const char32 *f) {
 		int dummy = 0, *found;
 		languageNameCompare_searchString = f;
 		found = (int *) bsearch (& dummy, & index [1], hoogsteInvoersymbool, sizeof (int), languageNameCompare);
-		if (found != NULL) return *found;
+		if (found) return *found;
 	}
 	return 0;
 }
@@ -422,7 +422,7 @@ static void Formula_lexan (void) {
 						 * This could be a variable with the same name as a function.
 						 */
 						InterpreterVariable var = Interpreter_hasVariable (theInterpreter, token.string);
-						if (var == NULL) {
+						if (! var) {
 							nieuwtok (VARIABLE_NAME_)
 							lexan [itok]. content.string = Melder_dup_f (token.string);
 							numberOfStringConstants ++;
@@ -490,7 +490,7 @@ static void Formula_lexan (void) {
 							numberOfStringConstants ++;
 						} else {
 							InterpreterVariable var = Interpreter_hasVariable (theInterpreter, token.string);
-							if (var == NULL) {
+							if (! var) {
 								nieuwtok (VARIABLE_NAME_)
 								lexan [itok]. content.string = Melder_dup_f (token.string);
 								numberOfStringConstants ++;
@@ -534,7 +534,7 @@ static void Formula_lexan (void) {
 					numberOfStringConstants ++;
 				} else {
 					InterpreterVariable var = Interpreter_hasVariable (theInterpreter, token.string);
-					if (var == NULL) {
+					if (! var) {
 						nieuwtok (VARIABLE_NAME_)
 						lexan [itok]. content.string = Melder_dup_f (token.string);
 						numberOfStringConstants ++;
@@ -558,27 +558,26 @@ static void Formula_lexan (void) {
 			}
 		} else if (kar >= U'A' && kar <= U'Z') {
 			bool endsInDollarSign = false;
-			char32 *underscore;
 			stokaan;
 			do stokkar while (isalnum ((int) kar) || kar == U'_');   // TODO: allow more than just ASCII
-			if (kar == U'$') { stokkar endsInDollarSign = TRUE; }
+			if (kar == U'$') { stokkar endsInDollarSign = true; }
 			stokuit;
 			oudkar;
 			/*
 			 * 'token' now contains a word that could be an object name.
 			 */
-			underscore = str32chr (token.string, '_');
+			char32 *underscore = str32chr (token.string, '_');
 			if (str32equ (token.string, U"Self")) {
-				if (theSource == NULL)
+				if (! theSource)
 					formulefout (U"Cannot use \"Self\" if there is no current object.", ikar);
 				nieuwtok (MATRIKS_)
 				tokmatriks (theSource);
 			} else if (str32equ (token.string, U"Self$")) {
-				if (theSource == NULL)
+				if (! theSource)
 					formulefout (U"Cannot use \"Self$\" if there is no current object.", ikar);
 				nieuwtok (MATRIKSSTR_)
 				tokmatriks (theSource);
-			} else if (underscore == NULL) {
+			} else if (! underscore) {
 				Melder_throw (
 					U"Unknown symbol " U_LEFT_GUILLEMET , token.string,
 					U_RIGHT_GUILLEMET U" in formula "
@@ -734,12 +733,12 @@ static void pas (int symbol) {
 	} else {
 		const char32 *symbolName1 = Formula_instructionNames [symbol];
 		const char32 *symbolName2 = Formula_instructionNames [lexan [ilexan]. symbol];
-		bool needQuotes1 = str32chr (symbolName1, U' ') == NULL;
-		bool needQuotes2 = str32chr (symbolName2, U' ') == NULL;
+		bool needQuotes1 = ( str32chr (symbolName1, U' ') == nullptr );
+		bool needQuotes2 = ( str32chr (symbolName2, U' ') == nullptr );
 		static MelderString melding { 0 };
 		MelderString_copy (& melding,
-			U"Expected ", needQuotes1 ? U"\"" : NULL, symbolName1, needQuotes1 ? U"\"" : NULL,
-			U", but found ", needQuotes2 ? U"\"" : NULL, symbolName2, needQuotes2 ? U"\"" : NULL);
+			U"Expected ", needQuotes1 ? U"\"" : nullptr, symbolName1, needQuotes1 ? U"\"" : nullptr,
+			U", but found ", needQuotes2 ? U"\"" : nullptr, symbolName2, needQuotes2 ? U"\"" : nullptr);
 		formulefout (melding.string, lexan [ilexan]. position);
 	}
 }
@@ -749,10 +748,10 @@ static bool pasArguments () {
     if (symbol == HAAKJEOPENEN_) return true;   // success: a function call like: myFunction (...)
     if (symbol == COLON_) return false;   // success: a function call like: myFunction: ...
     const char32 *symbolName2 = Formula_instructionNames [lexan [ilexan]. symbol];
-    bool needQuotes2 = str32chr (symbolName2, U' ') == NULL;
+    bool needQuotes2 = ( str32chr (symbolName2, U' ') == nullptr );
     static MelderString melding { 0 };
     MelderString_copy (& melding,
-		U"Expected \"(\" or \":\", but found ", needQuotes2 ? U"\"" : NULL, symbolName2, needQuotes2 ? U"\"" : NULL);
+		U"Expected \"(\" or \":\", but found ", needQuotes2 ? U"\"" : nullptr, symbolName2, needQuotes2 ? U"\"" : nullptr);
     formulefout (melding.string, lexan [ilexan]. position);
     return false;   // will never occur
 }
@@ -835,7 +834,7 @@ static void parsePowerFactor (void) {
 
 	if (symbol == VARIABLE_NAME_) {
 		InterpreterVariable var = Interpreter_hasVariable (theInterpreter, lexan [ilexan]. content.string);
-		if (var == NULL)
+		if (! var)
 			formulefout (U"Unknown variable", lexan [ilexan]. position);
 		nieuwontleed (NUMERIC_VARIABLE_);
 		parse [iparse]. content.variable = var;
@@ -1020,7 +1019,7 @@ static void parsePowerFactor (void) {
 
 	if (symbol == MATRIKS_) {
 		Daata thee = lexan [ilexan]. content.object;
-		Melder_assert (thee != NULL);
+		Melder_assert (thee != nullptr);
 		symbol = nieuwlees;
 		if (symbol == RECHTEHAAKOPENEN_) {
 			if (nieuwlees == RECHTEHAAKSLUITEN_) {
@@ -1174,7 +1173,7 @@ static void parsePowerFactor (void) {
 
 	if (symbol == MATRIKSSTR_) {
 		Daata thee = lexan [ilexan]. content.object;
-		Melder_assert (thee != NULL);
+		Melder_assert (thee != nullptr);
 		symbol = nieuwlees;
 		if (symbol == RECHTEHAAKOPENEN_) {
 			if (nieuwlees == RECHTEHAAKSLUITEN_) {
@@ -1829,9 +1828,9 @@ static void Formula_print (FormulaInstruction f) {
 
 void Formula_compile (Any interpreter, Any data, const char32 *expression, int expressionType, bool optimize) {
 	theInterpreter = (Interpreter) interpreter;
-	if (theInterpreter == NULL) {
-		if (theLocalInterpreter == NULL) {
-			theLocalInterpreter = Interpreter_create (NULL, NULL);
+	if (! theInterpreter) {
+		if (! theLocalInterpreter) {
+			theLocalInterpreter = Interpreter_create (nullptr, nullptr);
 		}
 		theInterpreter = theLocalInterpreter;
 		#if USE_HASH
@@ -2437,12 +2436,12 @@ static void do_do (void) {
 	if (stack [0]. which != Stackel_STRING)
 		Melder_throw (U"The first argument of the function \"do\" has to be a string, namely a menu command, and not ", Stackel_whichText (& stack [0]), U".");
 	const char32 *command = stack [0]. string;
-	if (theCurrentPraatObjects == & theForegroundPraatObjects && praatP. editor != NULL) {
+	if (theCurrentPraatObjects == & theForegroundPraatObjects && praatP. editor != nullptr) {
 		autoMelderString valueString;
 		MelderString_appendCharacter (& valueString, 1);   // TODO: check whether this is needed at all, or is just MelderString_empty enough?
 		autoMelderDivertInfo divert (& valueString);
 		autostring32 command2 = Melder_dup (command);   // allow the menu command to reuse the stack (?)
-		Editor_doMenuCommand (praatP. editor, command2.peek(), numberOfArguments, & stack [0], NULL, theInterpreter);
+		Editor_doMenuCommand (praatP. editor, command2.peek(), numberOfArguments, & stack [0], nullptr, theInterpreter);
 		pushNumber (Melder_atof (valueString.string));
 		return;
 	} else if (theCurrentPraatObjects != & theForegroundPraatObjects &&
@@ -2491,12 +2490,12 @@ static void do_doStr (void) {
 	if (stack [0]. which != Stackel_STRING)
 		Melder_throw (U"The first argument of the function \"do$\" has to be a string, namely a menu command, and not ", Stackel_whichText (& stack [0]), U".");
 	const char32 *command = stack [0]. string;
-	if (theCurrentPraatObjects == & theForegroundPraatObjects && praatP. editor != NULL) {
+	if (theCurrentPraatObjects == & theForegroundPraatObjects && praatP. editor != nullptr) {
 		static MelderString info;
 		MelderString_empty (& info);
 		autoMelderDivertInfo divert (& info);
 		autostring32 command2 = Melder_dup (command);
-		Editor_doMenuCommand (praatP. editor, command2.peek(), numberOfArguments, & stack [0], NULL, theInterpreter);
+		Editor_doMenuCommand (praatP. editor, command2.peek(), numberOfArguments, & stack [0], nullptr, theInterpreter);
 		pushString (Melder_dup (info.string));
 		return;
 	} else if (theCurrentPraatObjects != & theForegroundPraatObjects &&
@@ -2700,7 +2699,7 @@ static void do_pauseScript () {
 	}
 	UiPause_begin (theCurrentPraatApplication -> topShell, U"stop or continue", theInterpreter);
 	UiPause_comment (numberOfArguments == 0 ? U"..." : buffer.string);
-	UiPause_end (1, 1, 0, U"Continue", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, theInterpreter);
+	UiPause_end (1, 1, 0, U"Continue", nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, theInterpreter);
 	pushNumber (1);
 }
 static void do_exitScript () {
@@ -3058,7 +3057,7 @@ static void do_indexedNumericVariable (void) {
 		MelderString_append (& totalVariableName, index -> number, iindex == nindex ? U"]" : U",");
 	}
 	InterpreterVariable var = Interpreter_hasVariable (theInterpreter, totalVariableName.string);
-	if (var == NULL)
+	if (! var)
 		Melder_throw (U"Undefined indexed variable " U_LEFT_GUILLEMET, totalVariableName.string, U_RIGHT_GUILLEMET U".");
 	pushNumber (var -> numericValue);
 }
@@ -3079,7 +3078,7 @@ static void do_indexedStringVariable (void) {
 		MelderString_append (& totalVariableName, index -> number, iindex == nindex ? U"]" : U",");
 	}
 	InterpreterVariable var = Interpreter_hasVariable (theInterpreter, totalVariableName.string);
-	if (var == NULL)
+	if (! var)
 		Melder_throw (U"Undefined indexed variable " U_LEFT_GUILLEMET, totalVariableName.string, U_RIGHT_GUILLEMET U".");
 	autostring32 result = Melder_dup (var -> stringValue);
 	pushString (result.transfer());
@@ -3113,7 +3112,7 @@ static void do_fileReadable (void) {
 	}
 }
 static void do_dateStr (void) {
-	time_t today = time (NULL);
+	time_t today = time (nullptr);
 	char32 *date, *newline;
 	date = Melder_8to32 (ctime (& today));
 	newline = str32chr (date, U'\n');
@@ -3128,8 +3127,8 @@ static void do_leftStr (void) {
 	trace (U"enter");
 	Stackel narg = pop;
 	if (narg->number == 1 || narg->number == 2) {
-		Stackel x = ( narg->number == 2 ? pop : NULL ), s = pop;
-		if (s->which == Stackel_STRING && (x == NULL || x->which == Stackel_NUMBER)) {
+		Stackel x = ( narg->number == 2 ? pop : nullptr ), s = pop;
+		if (s->which == Stackel_STRING && (x == nullptr || x->which == Stackel_NUMBER)) {
 			long newlength = x ? lround (x->number) : 1;
 			long length = str32len (s->string);
 			if (newlength < 0) newlength = 0;
@@ -3154,8 +3153,8 @@ static void do_leftStr (void) {
 static void do_rightStr (void) {
 	Stackel narg = pop;
 	if (narg->number == 1 || narg->number == 2) {
-		Stackel x = ( narg->number == 2 ? pop : NULL ), s = pop;
-		if (s->which == Stackel_STRING && (x == NULL || x->which == Stackel_NUMBER)) {
+		Stackel x = ( narg->number == 2 ? pop : nullptr ), s = pop;
+		if (s->which == Stackel_STRING && (x == nullptr || x->which == Stackel_NUMBER)) {
 			long newlength = x ? lround (x->number) : 1;
 			long length = str32len (s->string);
 			if (newlength < 0) newlength = 0;
@@ -3171,8 +3170,8 @@ static void do_rightStr (void) {
 static void do_midStr (void) {
 	Stackel narg = pop;
 	if (narg->number == 2 || narg->number == 3) {
-		Stackel y = ( narg->number == 3 ? pop : NULL ), x = pop, s = pop;
-		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER && (y == NULL || y->which == Stackel_NUMBER)) {
+		Stackel y = ( narg->number == 3 ? pop : nullptr ), x = pop, s = pop;
+		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER && (y == nullptr || y->which == Stackel_NUMBER)) {
 			long newlength = y ? lround (y->number) : 1;
 			long start = lround (x->number);
 			long length = str32len (s->string), finish = start + newlength - 1;
@@ -3221,7 +3220,7 @@ static void do_environmentStr (void) {
 	Stackel s = pop;
 	if (s->which == Stackel_STRING) {
 		char32 *value = Melder_getenv (s->string);
-		autostring32 result = Melder_dup (value != NULL ? value : U"");
+		autostring32 result = Melder_dup (value ? value : U"");
 		pushString (result.transfer());
 	} else {
 		Melder_throw (U"The function \"environment$\" requires a string, not ", Stackel_whichText (s), U".");
@@ -3248,7 +3247,7 @@ static void do_rindex (void) {
 		} else if (lastSubstring) {
 			for (;;) {
 				char32 *substring = str32str (lastSubstring + 1, part->string);
-				if (substring == NULL) break;
+				if (! substring) break;
 				lastSubstring = substring;
 			}
 			pushNumber (lastSubstring - whole->string + 1);
@@ -3275,10 +3274,10 @@ static void do_index_regex (int backward) {
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
 		const char32 *errorMessage;
 		regexp *compiled_regexp = CompileRE (t->string, & errorMessage, 0);
-		if (compiled_regexp == NULL) {
+		if (! compiled_regexp) {
 			Melder_throw (U"index_regex(): ", errorMessage, U".");
 		} else {
-			if (ExecRE (compiled_regexp, NULL, s->string, NULL, backward, '\0', '\0', NULL, NULL, NULL)) {
+			if (ExecRE (compiled_regexp, nullptr, s->string, nullptr, backward, '\0', '\0', nullptr, nullptr, nullptr)) {
 				char32 *place = (char32 *) compiled_regexp -> startp [0];
 				pushNumber (place - s->string + 1);
 				free (compiled_regexp);
@@ -3306,7 +3305,7 @@ static void do_replace_regexStr (void) {
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING && u->which == Stackel_STRING && x->which == Stackel_NUMBER) {
 		const char32 *errorMessage;
 		regexp *compiled_regexp = CompileRE (t->string, & errorMessage, 0);
-		if (compiled_regexp == NULL) {
+		if (! compiled_regexp) {
 			Melder_throw (U"replace_regex$(): ", errorMessage, U".");
 		} else {
 			long numberOfMatches;
@@ -3321,7 +3320,7 @@ static void do_extractNumber (void) {
 	Stackel t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
 		char32 *substring = str32str (s->string, t->string);
-		if (substring == NULL) {
+		if (! substring) {
 			pushNumber (NUMundefined);
 		} else {
 			/* Skip the prompt. */
@@ -3365,7 +3364,7 @@ static void do_extractTextStr (int singleWord) {
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
 		char32 *substring = str32str (s->string, t->string);
 		autostring32 result;
-		if (substring == NULL) {
+		if (! substring) {
 			result.reset (Melder_dup (U""));
 		} else {
 			long length;
@@ -3398,21 +3397,21 @@ static void do_selected (void) {
 	Stackel n = pop;
 	long result = 0;
 	if (n->number == 0) {
-		result = praat_idOfSelected (NULL, 0);
+		result = praat_idOfSelected (nullptr, 0);
 	} else if (n->number == 1) {
 		Stackel a = pop;
 		if (a->which == Stackel_STRING) {
-			ClassInfo klas = Thing_classFromClassName (a->string, NULL);
+			ClassInfo klas = Thing_classFromClassName (a->string, nullptr);
 			result = praat_idOfSelected (klas, 0);
 		} else if (a->which == Stackel_NUMBER) {
-			result = praat_idOfSelected (NULL, lround (a->number));
+			result = praat_idOfSelected (nullptr, lround (a->number));
 		} else {
 			Melder_throw (U"The function \"selected\" requires a string (an object type name) and/or a number.");
 		}
 	} else if (n->number == 2) {
 		Stackel x = pop, s = pop;
 		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-			ClassInfo klas = Thing_classFromClassName (s->string, NULL);
+			ClassInfo klas = Thing_classFromClassName (s->string, nullptr);
 			result = praat_idOfSelected (klas, lround (x->number));
 		} else {
 			Melder_throw (U"The function \"selected\" requires a string (an object type name) and/or a number.");
@@ -3426,21 +3425,21 @@ static void do_selectedStr (void) {
 	Stackel n = pop;
 	autostring32 result;
 	if (n->number == 0) {
-		result.reset (Melder_dup (praat_nameOfSelected (NULL, 0)));
+		result.reset (Melder_dup (praat_nameOfSelected (nullptr, 0)));
 	} else if (n->number == 1) {
 		Stackel a = pop;
 		if (a->which == Stackel_STRING) {
-			ClassInfo klas = Thing_classFromClassName (a->string, NULL);
+			ClassInfo klas = Thing_classFromClassName (a->string, nullptr);
 			result.reset (Melder_dup (praat_nameOfSelected (klas, 0)));
 		} else if (a->which == Stackel_NUMBER) {
-			result.reset (Melder_dup (praat_nameOfSelected (NULL, lround (a->number))));
+			result.reset (Melder_dup (praat_nameOfSelected (nullptr, lround (a->number))));
 		} else {
 			Melder_throw (U"The function \"selected$\" requires a string (an object type name) and/or a number.");
 		}
 	} else if (n->number == 2) {
 		Stackel x = pop, s = pop;
 		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-			ClassInfo klas = Thing_classFromClassName (s->string, NULL);
+			ClassInfo klas = Thing_classFromClassName (s->string, nullptr);
 			result.reset (Melder_dup (praat_nameOfSelected (klas, lround (x->number))));
 		} else {
 			Melder_throw (U"The function \"selected$\" requires 0, 1, or 2 arguments, not ", n->number, U".");
@@ -3452,11 +3451,11 @@ static void do_numberOfSelected (void) {
 	Stackel n = pop;
 	long result = 0;
 	if (n->number == 0) {
-		result = praat_numberOfSelected (NULL);
+		result = praat_numberOfSelected (nullptr);
 	} else if (n->number == 1) {
 		Stackel s = pop;
 		if (s->which == Stackel_STRING) {
-			ClassInfo klas = Thing_classFromClassName (s->string, NULL);
+			ClassInfo klas = Thing_classFromClassName (s->string, nullptr);
 			result = praat_numberOfSelected (klas);
 		} else {
 			Melder_throw (U"The function \"numberOfSelected\" requires a string (an object type name), not ", Stackel_whichText (s), U".");
@@ -3481,7 +3480,7 @@ static int praat_findObjectFromString (const char32 *name) {
 		static MelderString buffer { 0 };
 		MelderString_copy (& buffer, name);
 		char32 *space = str32chr (buffer.string, U' ');
-		if (space == NULL)
+		if (space == nullptr)
 			Melder_throw (U"Missing space in object name \"", name, U"\".");
 		*space = U'\0';
 		char32 *className = & buffer.string [0], *givenName = space + 1;
@@ -3490,7 +3489,7 @@ static int praat_findObjectFromString (const char32 *name) {
 			if (str32equ (className, Thing_className (OBJECT)) && str32equ (givenName, object -> name))
 				return IOBJECT;
 		}
-		ClassInfo klas = Thing_classFromClassName (className, NULL);
+		ClassInfo klas = Thing_classFromClassName (className, nullptr);
 		WHERE_DOWN (1) {
 			Daata object = OBJECT;
 			if (str32equ (klas -> className, Thing_className (OBJECT)) && str32equ (givenName, object -> name))
@@ -3628,7 +3627,7 @@ static void do_createDirectory (void) {
 static void do_variableExists (void) {
 	Stackel f = pop;
 	if (f->which == Stackel_STRING) {
-		bool result = Interpreter_hasVariable (theInterpreter, f->string) != NULL;
+		bool result = Interpreter_hasVariable (theInterpreter, f->string) != nullptr;
 		pushNumber (result);
 	} else {
 		Melder_throw (U"The function \"variableExists\" requires a string, not ", Stackel_whichText (f), U".");
@@ -3678,7 +3677,7 @@ static void do_pauseFormAddReal (void) {
 	Stackel n = pop;
 	if (n->number == 2) {
 		Stackel defaultValue = pop;
-		const char32 *defaultString = NULL;
+		const char32 *defaultString = nullptr;
 		if (defaultValue->which == Stackel_STRING) {
 			defaultString = defaultValue->string;
 		} else if (defaultValue->which == Stackel_NUMBER) {
@@ -3703,7 +3702,7 @@ static void do_pauseFormAddPositive (void) {
 	Stackel n = pop;
 	if (n->number == 2) {
 		Stackel defaultValue = pop;
-		const char32 *defaultString = NULL;
+		const char32 *defaultString = nullptr;
 		if (defaultValue->which == Stackel_STRING) {
 			defaultString = defaultValue->string;
 		} else if (defaultValue->which == Stackel_NUMBER) {
@@ -3728,7 +3727,7 @@ static void do_pauseFormAddInteger (void) {
 	Stackel n = pop;
 	if (n->number == 2) {
 		Stackel defaultValue = pop;
-		const char32 *defaultString = NULL;
+		const char32 *defaultString = nullptr;
 		if (defaultValue->which == Stackel_STRING) {
 			defaultString = defaultValue->string;
 		} else if (defaultValue->which == Stackel_NUMBER) {
@@ -3753,7 +3752,7 @@ static void do_pauseFormAddNatural (void) {
 	Stackel n = pop;
 	if (n->number == 2) {
 		Stackel defaultValue = pop;
-		const char32 *defaultString = NULL;
+		const char32 *defaultString = nullptr;
 		if (defaultValue->which == Stackel_STRING) {
 			defaultString = defaultValue->string;
 		} else if (defaultValue->which == Stackel_NUMBER) {
@@ -3952,11 +3951,11 @@ static void do_endPauseForm (void) {
 				U" argument(s) of \"endPause\" has to be a string (a button text), not ", Stackel_whichText (co[i]), U".");
 	}
 	int buttonClicked = UiPause_end (numberOfContinueButtons, defaultContinueButton, cancelContinueButton,
-		co [1] == NULL ? NULL : co[1]->string, co [2] == NULL ? NULL : co[2]->string,
-		co [3] == NULL ? NULL : co[3]->string, co [4] == NULL ? NULL : co[4]->string,
-		co [5] == NULL ? NULL : co[5]->string, co [6] == NULL ? NULL : co[6]->string,
-		co [7] == NULL ? NULL : co[7]->string, co [8] == NULL ? NULL : co[8]->string,
-		co [9] == NULL ? NULL : co[9]->string, co [10] == NULL ? NULL : co[10]->string,
+		! co [1] ? nullptr : co[1]->string, ! co [2] ? nullptr : co[2]->string,
+		! co [3] ? nullptr : co[3]->string, ! co [4] ? nullptr : co[4]->string,
+		! co [5] ? nullptr : co[5]->string, ! co [6] ? nullptr : co[6]->string,
+		! co [7] ? nullptr : co[7]->string, ! co [8] ? nullptr : co[8]->string,
+		! co [9] ? nullptr : co[9]->string, ! co [10] ? nullptr : co[10]->string,
 		theInterpreter);
 	//Melder_casual (U"Button ", buttonClicked);
 	pushNumber (buttonClicked);
@@ -3966,7 +3965,7 @@ static void do_chooseReadFileStr (void) {
 	if (n->number == 1) {
 		Stackel title = pop;
 		if (title->which == Stackel_STRING) {
-			autoSortedSetOfString fileNames = GuiFileSelect_getInfileNames (NULL, title->string, false);
+			autoSortedSetOfString fileNames = GuiFileSelect_getInfileNames (nullptr, title->string, false);
 			if (fileNames -> size == 0) {
 				autostring32 result = Melder_dup (U"");
 				pushString (result.transfer());
@@ -3987,8 +3986,8 @@ static void do_chooseWriteFileStr (void) {
 	if (n->number == 2) {
 		Stackel defaultName = pop, title = pop;
 		if (title->which == Stackel_STRING && defaultName->which == Stackel_STRING) {
-			autostring32 result = GuiFileSelect_getOutfileName (NULL, title->string, defaultName->string);
-			if (result.peek() == NULL) {
+			autostring32 result = GuiFileSelect_getOutfileName (nullptr, title->string, defaultName->string);
+			if (! result.peek()) {
 				result.reset (Melder_dup (U""));
 			}
 			pushString (result.transfer());
@@ -4004,8 +4003,8 @@ static void do_chooseDirectoryStr (void) {
 	if (n->number == 1) {
 		Stackel title = pop;
 		if (title->which == Stackel_STRING) {
-			autostring32 result = GuiFileSelect_getDirectoryName (NULL, title->string);
-			if (result.peek() == NULL) {
+			autostring32 result = GuiFileSelect_getDirectoryName (nullptr, title->string);
+			if (! result.peek()) {
 				result.reset (Melder_dup (U""));
 			}
 			pushString (result.transfer());
@@ -4169,7 +4168,7 @@ static long Stackel_getColumnNumber (Stackel column, Daata thee) {
 }
 static void do_self0 (long irow, long icol) {
 	Daata me = theSource;
-	if (me == NULL) Melder_throw (U"The name \"self\" is restricted to formulas for objects.");
+	if (! me) Melder_throw (U"The name \"self\" is restricted to formulas for objects.");
 	if (my v_hasGetCell ()) {
 		pushNumber (my v_getCell ());
 	} else if (my v_hasGetVector ()) {
@@ -4201,7 +4200,7 @@ static void do_self0 (long irow, long icol) {
 }
 static void do_selfStr0 (long irow, long icol) {
 	Daata me = theSource;
-	if (me == NULL) Melder_throw (U"The name \"self$\" is restricted to formulas for objects.");
+	if (! me) Melder_throw (U"The name \"self$\" is restricted to formulas for objects.");
 	if (my v_hasGetCellStr ()) {
 		autostring32 result = Melder_dup (my v_getCellStr ());
 		pushString (result.transfer());
@@ -4235,7 +4234,7 @@ static void do_selfStr0 (long irow, long icol) {
 	}
 }
 static Daata getObjectFromUniqueID (Stackel object) {
-	Daata thee = NULL;
+	Daata thee = nullptr;
 	if (object->which == Stackel_NUMBER) {
 		int i = theCurrentPraatObjects -> n;
 		while (i > 0 && object->number != theCurrentPraatObjects -> list [i]. id)
@@ -4320,7 +4319,7 @@ static void do_matriks0 (long irow, long icol) {
 static void do_selfMatriks1 (long irow) {
 	Daata me = theSource;
 	Stackel column = pop;
-	if (me == NULL) Melder_throw (U"The name \"self\" is restricted to formulas for objects.");
+	if (! me) Melder_throw (U"The name \"self\" is restricted to formulas for objects.");
 	long icol = Stackel_getColumnNumber (column, me);
 	if (my v_hasGetVector ()) {
 		pushNumber (my v_getVector (irow, icol));
@@ -4339,7 +4338,7 @@ static void do_selfMatriks1 (long irow) {
 static void do_selfMatriksStr1 (long irow) {
 	Daata me = theSource;
 	Stackel column = pop;
-	if (me == NULL) Melder_throw (U"The name \"self$\" is restricted to formulas for objects.");
+	if (! me) Melder_throw (U"The name \"self$\" is restricted to formulas for objects.");
 	long icol = Stackel_getColumnNumber (column, me);
 	if (my v_hasGetVectorStr ()) {
 		autostring32 result = Melder_dup (my v_getVectorStr (icol));
@@ -4436,7 +4435,7 @@ static void do_matrixStr1 (long irow) {
 static void do_selfMatriks2 (void) {
 	Daata me = theSource;
 	Stackel column = pop, row = pop;
-	if (me == NULL) Melder_throw (U"The name \"self\" is restricted to formulas for objects.");
+	if (! me) Melder_throw (U"The name \"self\" is restricted to formulas for objects.");
 	long irow = Stackel_getRowNumber (row, me);
 	long icol = Stackel_getColumnNumber (column, me);
 	if (! my v_hasGetMatrix ())
@@ -4446,7 +4445,7 @@ static void do_selfMatriks2 (void) {
 static void do_selfMatriksStr2 (void) {
 	Daata me = theSource;
 	Stackel column = pop, row = pop;
-	if (me == NULL) Melder_throw (U"The name \"self$\" is restricted to formulas for objects.");
+	if (! me) Melder_throw (U"The name \"self$\" is restricted to formulas for objects.");
 	long irow = Stackel_getRowNumber (row, me);
 	long icol = Stackel_getColumnNumber (column, me);
 	if (! my v_hasGetMatrixStr ())
@@ -4498,7 +4497,7 @@ static void do_objectLocation0 (long irow, long icol) {
 		pushNumber (thy v_getFunction0 ());
 	} else if (thy v_hasGetFunction1 ()) {
 		Daata me = theSource;
-		if (me == NULL)
+		if (! me)
 			Melder_throw (U"No current object (we are not in a Formula command),\n"
 				U"hence no implicit x value for this ", Thing_className (thee), U" object.\n"
 				U"Try using: object (id, x).");
@@ -4511,7 +4510,7 @@ static void do_objectLocation0 (long irow, long icol) {
 		pushNumber (thy v_getFunction1 (irow, x));
 	} else if (thy v_hasGetFunction2 ()) {
 		Daata me = theSource;
-		if (me == NULL)
+		if (! me)
 			Melder_throw (U"No current object (we are not in a Formula command),\n"
 				U"hence no implicit x or y values for this ", Thing_className (thee), U" object.\n"
 				U"Try using: object (id, x, y).");
@@ -4536,7 +4535,7 @@ static void do_funktie0 (long irow, long icol) {
 		pushNumber (thy v_getFunction0 ());
 	} else if (thy v_hasGetFunction1 ()) {
 		Daata me = theSource;
-		if (me == NULL)
+		if (!me)
 			Melder_throw (U"No current object (we are not in a Formula command),\n"
 				U"hence no implicit x value for this ", Thing_className (thee), U" object.\n"
 				U"Try using the (x) argument explicitly.");
@@ -4549,7 +4548,7 @@ static void do_funktie0 (long irow, long icol) {
 		pushNumber (thy v_getFunction1 (irow, x));
 	} else if (thy v_hasGetFunction2 ()) {
 		Daata me = theSource;
-		if (me == NULL)
+		if (! me)
 			Melder_throw (U"No current object (we are not in a Formula command),\n"
 				U"hence no implicit x or y values for this ", Thing_className (thee), U" object.\n"
 				U"Try using both (x, y) arguments explicitly.");
@@ -4572,7 +4571,7 @@ static void do_selfFunktie1 (long irow) {
 	Daata me = theSource;
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		if (me == NULL) Melder_throw (U"The name \"self\" is restricted to formulas for objects.");
+		if (! me) Melder_throw (U"The name \"self\" is restricted to formulas for objects.");
 		if (my v_hasGetFunction1 ()) {
 			pushNumber (my v_getFunction1 (irow, x->number));
 		} else if (my v_hasGetFunction2 ()) {
@@ -4596,7 +4595,7 @@ static void do_objectLocation1 (long irow) {
 			pushNumber (thy v_getFunction1 (irow, x->number));
 		} else if (thy v_hasGetFunction2 ()) {
 			Daata me = theSource;
-			if (me == NULL)
+			if (! me)
 				Melder_throw (U"No current object (we are not in a Formula command),\n"
 					U"hence no implicit y value for this ", Thing_className (thee), U" object.\n"
 					U"Try using: object (id, x, y).");
@@ -4621,7 +4620,7 @@ static void do_funktie1 (long irow) {
 			pushNumber (thy v_getFunction1 (irow, x->number));
 		} else if (thy v_hasGetFunction2 ()) {
 			Daata me = theSource;
-			if (me == NULL)
+			if (! me)
 				Melder_throw (U"No current object (we are not in a Formula command),\n"
 					U"hence no implicit y value for this ", Thing_className (thee), U" object.\n"
 					U"Try using both (x, y) arguments instead.");
@@ -4642,7 +4641,7 @@ static void do_selfFunktie2 (void) {
 	Daata me = theSource;
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		if (me == NULL) Melder_throw (U"The name \"self\" is restricted to formulas for objects.");
+		if (! me) Melder_throw (U"The name \"self\" is restricted to formulas for objects.");
 		if (! my v_hasGetFunction2 ())
 			Melder_throw (Thing_className (me), U" objects like \"self\" accept no (x, y) values.");
 		pushNumber (my v_getFunction2 (x->number, y->number));
@@ -4677,7 +4676,7 @@ static void do_rowStr (void) {
 	Stackel row = pop;
 	long irow = Stackel_getRowNumber (row, thee);
 	autostring32 result = Melder_dup (thy v_getRowStr (irow));
-	if (result.peek() == NULL)
+	if (! result.peek())
 		Melder_throw (U"Row index out of bounds.");
 	pushString (result.transfer());
 }
@@ -4686,7 +4685,7 @@ static void do_colStr (void) {
 	Stackel col = pop;
 	long icol = Stackel_getColumnNumber (col, thee);
 	autostring32 result = Melder_dup (thy v_getColStr (icol));
-	if (result.peek() == NULL)
+	if (! result.peek())
 		Melder_throw (U"Column index out of bounds.");
 	pushString (result.transfer());
 }
@@ -4707,8 +4706,8 @@ static double NUMerf (double x) {
 void Formula_run (long row, long col, struct Formula_Result *result) {
 	FormulaInstruction f = parse;
 	programPointer = 1;   // first symbol of the program
-	if (theStack == NULL) theStack = Melder_calloc_f (struct structStackel, 10000);
-	if (theStack == NULL)
+	if (! theStack) theStack = Melder_calloc_f (struct structStackel, 10000);
+	if (! theStack)
 		Melder_throw (U"Out of memory during formula computation.");
 	w = 0, wmax = 0;   // start new stack
 	try {
@@ -5038,7 +5037,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 			if (theStack [1]. which == Stackel_NUMERIC_ARRAY) Melder_throw (U"Found a numeric array expression instead of a string expression.");
 			result -> expressionType = kFormula_EXPRESSION_TYPE_STRING;
 			result -> result.stringResult = theStack [1]. string;   // dangle...
-			theStack [1]. string = NULL;   // ...undangle (and disown)
+			theStack [1]. string = nullptr;   // ...undangle (and disown)
 		} else if (theExpressionType [theLevel] == kFormula_EXPRESSION_TYPE_NUMERIC_ARRAY) {
 			if (theStack [1]. which == Stackel_NUMBER) Melder_throw (U"Found a numeric expression instead of a numeric array expression.");
 			if (theStack [1]. which == Stackel_STRING) Melder_throw (U"Found a string expression instead of a numeric array expression.");
@@ -5054,7 +5053,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 				Melder_assert (theStack [1]. which == Stackel_STRING);
 				result -> expressionType = kFormula_EXPRESSION_TYPE_STRING;
 				result -> result.stringResult = theStack [1]. string;   // dangle...
-				theStack [1]. string = NULL;   // ...undangle (and disown)
+				theStack [1]. string = nullptr;   // ...undangle (and disown)
 			}
 		}
 		/*

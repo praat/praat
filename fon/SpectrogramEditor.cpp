@@ -39,7 +39,7 @@ void structSpectrogramEditor :: v_draw () {
 	our maximum = spectrogram -> ymax;
 
 	Graphics_setWindow (our d_graphics, our d_startWindow, our d_endWindow, 0.0, our maximum);
-	Spectrogram_paintInside (spectrogram, our d_graphics, our d_startWindow, our d_endWindow, 0, 0, 0.0, TRUE,
+	Spectrogram_paintInside (spectrogram, our d_graphics, our d_startWindow, our d_endWindow, 0, 0, 0.0, true,
 		 60, 6.0, 0);
 
 	/*

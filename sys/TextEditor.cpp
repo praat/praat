@@ -85,23 +85,23 @@ static void openDocument (TextEditor me, MelderFile file) {
 	GuiText_setString (my textWidget, text.peek());
 	/*
 	 * GuiText_setString has invoked the changeCallback,
-	 * which has set 'my dirty' to TRUE. Fix this.
+	 * which has set `my dirty` to `true`. Fix this.
 	 */
-	my dirty = FALSE;
+	my dirty = false;
 	MelderFile_copy (file, & my file);
 	Thing_setName (me, Melder_fileToPath (file));
 }
 
 static void newDocument (TextEditor me) {
-	GuiText_setString (my textWidget, U"");   // implicitly sets my dirty to TRUE
-	my dirty = FALSE;
+	GuiText_setString (my textWidget, U"");   // implicitly sets my dirty to `true`
+	my dirty = false;
 	if (my v_fileBased ()) Thing_setName (me, U"");
 }
 
 static void saveDocument (TextEditor me, MelderFile file) {
 	autostring32 text = GuiText_getString (my textWidget);
 	MelderFile_writeText (file, text.peek(), Melder_getOutputEncoding ());
-	my dirty = FALSE;
+	my dirty = false;
 	MelderFile_copy (file, & my file);
 	if (my v_fileBased ()) Thing_setName (me, Melder_fileToPath (file));
 }
@@ -635,7 +635,7 @@ static void gui_text_cb_change (I, GuiTextEvent event) {
 	(void) event;
 	iam (TextEditor);
 	if (! my dirty) {
-		my dirty = TRUE;
+		my dirty = true;
 		my v_nameChanged ();
 	}
 }

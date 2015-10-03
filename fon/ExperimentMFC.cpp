@@ -146,7 +146,7 @@ static void readSound (ExperimentMFC me, const char32 *fileNameHead, const char3
 		/*
 		 * Append the substimuli, perhaps with silent intervals.
 		 */
-		if (*sound == NULL) {
+		if (! *sound) {
 			*sound = substimulus.transfer();
 		} else {
 			autoSound newStimulus = Sounds_append (*sound, medialSilenceDuration, substimulus.peek());
@@ -157,7 +157,7 @@ static void readSound (ExperimentMFC me, const char32 *fileNameHead, const char3
 		/*
 		 * Cycle.
 		 */
-		if (comma == NULL) break;
+		if (! comma) break;
 		fileNames = & comma [1];
 	}
 }
@@ -278,7 +278,7 @@ void ExperimentMFC_start (ExperimentMFC me) {
 	} catch (MelderError) {
 		Melder_warningOn ();
 		my numberOfTrials = 0;
-		NUMvector_free (my stimuli, 1); my stimuli = NULL;
+		NUMvector_free (my stimuli, 1); my stimuli = nullptr;
 		Melder_throw (me, U": not started.");
 	}
 }
@@ -330,7 +330,7 @@ static void playSound (ExperimentMFC me, Sound sound, Sound carrierBefore, Sound
 
 	if (! my blankWhilePlaying)
 		my startingTime = Melder_clock ();
-	Sound_playPart (my playBuffer, 0.0, numberOfSamplesWritten * my samplePeriod, 0, NULL);
+	Sound_playPart (my playBuffer, 0.0, numberOfSamplesWritten * my samplePeriod, 0, nullptr);
 	if (my blankWhilePlaying)
 		my startingTime = Melder_clock ();
 }
@@ -365,7 +365,7 @@ ResultsMFC ExperimentMFC_extractResults (ExperimentMFC me) {
 		autoResultsMFC thee = ResultsMFC_create (my numberOfTrials);
 		for (long trial = 1; trial <= my numberOfTrials; trial ++) {
 			char32 *pipe = my stimulus [my stimuli [trial]]. visibleText ?
-				str32chr (my stimulus [my stimuli [trial]]. visibleText, U'|') : NULL;
+				str32chr (my stimulus [my stimuli [trial]]. visibleText, U'|') : nullptr;
 			thy result [trial]. stimulus = Melder_dup (Melder_cat (my stimulus [my stimuli [trial]]. name, pipe));
 			//if (my responses [trial] < 1) Melder_throw (U"No response for trial ", trial, U".")
 			thy result [trial]. response = Melder_dup (my responses [trial] ? my response [my responses [trial]]. name : U"");
@@ -483,14 +483,14 @@ void Categories_sort (Categories me) {
 
 double Categories_getEntropy (Categories me) {
 	long numberOfTokens = 0;
-	char32 *previousString = NULL;
+	char32 *previousString = nullptr;
 	double entropy = 0.0;
 	autoCategories thee = Data_copy (me);
 	Categories_sort (thee.peek());
 	for (long i = 1; i <= thy size; i ++) {
 		SimpleString s = (SimpleString) thy item [i];
 		char32 *string = s -> string;
-		if (previousString != NULL && ! str32equ (string, previousString)) {
+		if (previousString && ! str32equ (string, previousString)) {
 			double p = (double) numberOfTokens / thy size;
 			entropy -= p * NUMlog2 (p);
 			numberOfTokens = 1;

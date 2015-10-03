@@ -593,8 +593,8 @@ void praat_actions_show (void) {
 
 		/* Clean up from previous selection. */
 
-		theActions [i]. visible = FALSE;
-		theActions [i]. executable = FALSE;
+		theActions [i]. visible = false;
+		theActions [i]. executable = false;
 
 		/* Match the actually selected classes with the selection required for this visibility. */
 

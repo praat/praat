@@ -253,8 +253,8 @@ void FormantGrid_playPart (FormantGrid me, double tmin, double tmax, double samp
 
 void FormantGrid_formula_bandwidths (FormantGrid me, const char32 *expression, Interpreter interpreter, FormantGrid thee) {
 	try {
-		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE);
-		if (thee == NULL) thee = me;
+		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
+		if (! thee) thee = me;
 		for (long irow = 1; irow <= my formants -> size; irow ++) {
 			RealTier bandwidth = (RealTier) thy bandwidths -> item [irow];
 			for (long icol = 1; icol <= bandwidth -> points -> size; icol ++) {
@@ -272,8 +272,8 @@ void FormantGrid_formula_bandwidths (FormantGrid me, const char32 *expression, I
 
 void FormantGrid_formula_frequencies (FormantGrid me, const char32 *expression, Interpreter interpreter, FormantGrid thee) {
 	try {
-		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE);
-		if (thee == NULL) thee = me;
+		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
+		if (! thee) thee = me;
 		for (long irow = 1; irow <= my formants -> size; irow ++) {
 			RealTier formant = (RealTier) thy formants -> item [irow];
 			for (long icol = 1; icol <= formant -> points -> size; icol ++) {

@@ -58,7 +58,7 @@ void structDataModeler :: v_info () {
 	MelderInfo_writeLine (U"      Start time: ", xmin, U" seconds");
 	MelderInfo_writeLine (U"      End time: ", xmax, U" seconds");
 	MelderInfo_writeLine (U"      Total duration: ", xmax - xmin, U" seconds");
-	double ndf, rSquared = DataModeler_getCoefficientOfDetermination (this, NULL, NULL);
+	double ndf, rSquared = DataModeler_getCoefficientOfDetermination (this, nullptr, nullptr);
 	double probability, chisq = DataModeler_getChiSquaredQ (this, useSigmaY, &probability, &ndf);
 	MelderInfo_writeLine (U"   Fit:");
 	MelderInfo_writeLine (U"      Number of data points: ", numberOfDataPoints);
@@ -190,10 +190,10 @@ void DataModeler_getExtremaY (DataModeler me, double *ymin, double *ymax) {
 			}
 		}
 	}
-	if (ymin != NULL) {
+	if (ymin) {
 		*ymin = min;
 	}
-	if (ymax != NULL) {
+	if (ymax) {
 		*ymax = max;
 	}
 }
@@ -300,7 +300,7 @@ double DataModeler_getVarianceOfParameters (DataModeler me, long fromIndex, long
 			}
 		}
 	}
-	if (numberOfFreeParameters != NULL) {
+	if (numberOfFreeParameters) {
 		*numberOfFreeParameters = numberOfParameters;
 	}
 	return variance;
@@ -374,7 +374,7 @@ double DataModeler_getDegreesOfFreedom (DataModeler me) {
 
 void DataModeler_getZScores (DataModeler me, int useSigmaY, double zscores[]) {
 	try {
-		Melder_assert (zscores != NULL);
+		Melder_assert (zscores != nullptr);
 		double estimatedSigmaY;
 		if (useSigmaY == DataModeler_DATA_WEIGH_EQUAL) {
 			long numberOfValidDataPoints;
@@ -400,7 +400,7 @@ void DataModeler_getZScores (DataModeler me, int useSigmaY, double zscores[]) {
 
 // chisq and zscores may be the same arrays!
 static void DataModeler_getChisqScoresFromZScores (DataModeler me, double *zscores, bool substituteAverage, double *chisq) {
-	Melder_assert (zscores != NULL && chisq != NULL);
+	Melder_assert (zscores != nullptr && chisq != nullptr);
 	long numberOfDefined = my numberOfDataPoints;
 	double sumchisq = 0.0;
 	for (long i = 1; i <= my numberOfDataPoints; i++) {
@@ -429,10 +429,10 @@ double DataModeler_getChiSquaredQ (DataModeler me, int useSigmaY, double *probab
 	chisqFromZScores (zscores.peek(), my numberOfDataPoints, & chisq, & numberOfValidZScores);
 	double dof = numberOfValidZScores;
 	dof = useSigmaY == DataModeler_DATA_WEIGH_EQUAL ? dof - 1.0 : dof; // we loose one dof if sigma is estimated from the data
-	if (probability != NULL) {
+	if (probability) {
 		*probability = NUMchiSquareQ (chisq, dof);
 	}
-	if (ndf != NULL) {
+	if (ndf) {
 		*ndf = dof;
 	}
 	return chisq;
@@ -472,10 +472,10 @@ double DataModeler_getCoefficientOfDetermination (DataModeler me, double *ssreg,
 		}
 	}
 	double rSquared = ss_tot > 0.0 ? 1.0 - ss_reg / ss_tot : 1.0;
-	if (ssreg != NULL) {
+	if (ssreg) {
 		*ssreg = ss_tot - ss_reg;
 	}
-	if (sstot != NULL) {
+	if (sstot) {
 		*sstot = ss_tot;
 	}
 	return rSquared;
@@ -990,7 +990,7 @@ double DataModeler_estimateSigmaY (DataModeler me) {
 			}
 		}
 		double variance;
-		NUMvector_avevar (y.peek(), numberOfDataPoints, NULL, &variance);
+		NUMvector_avevar (y.peek(), numberOfDataPoints, nullptr, &variance);
 		double sigma = NUMdefined (variance) ? sqrt (variance / (numberOfDataPoints - 1)) : NUMundefined;
 		return sigma;
 	} catch (MelderError) {
@@ -1471,7 +1471,7 @@ double FormantModeler_getVarianceOfParameters (FormantModeler me, long fromForma
 			numberOfParameters += nofp;
 		}
 	}
-	if (numberOfFreeParameters != NULL) {
+	if (numberOfFreeParameters) {
 		*numberOfFreeParameters = numberOfParameters;
 	}
 	return variance;
@@ -1655,10 +1655,10 @@ double FormantModeler_getChiSquaredQ (FormantModeler me, long fromFormant, long 
 		}
 		if (numberOfDefined == toFormant - fromFormant + 1) { // chisq of all tracks defined
 			chisq /= ndfTotal;
-			if (ndf != NULL) {
+			if (ndf) {
 				*ndf = ndfTotal;
 			}
-			if (probability != NULL) {
+			if (probability) {
 				*probability = NUMchiSquareQ (chisq, ndfTotal);
 			}
 		}
@@ -1806,7 +1806,7 @@ double FormantModeler_getSmoothnessValue (FormantModeler me, long fromFormant, l
 	if (fromFormant > 0 && fromFormant <= toFormant && toFormant <= my trackmodelers -> size) {
 		long nofp;
 		double ndof, var = FormantModeler_getVarianceOfParameters (me, fromFormant, toFormant, 1, numberOfParametersPerTrack, &nofp);
-		double chisq = FormantModeler_getChiSquaredQ (me, fromFormant, toFormant, TRUE, NULL, &ndof);
+		double chisq = FormantModeler_getChiSquaredQ (me, fromFormant, toFormant, true, nullptr, &ndof);
 		if (NUMdefined (var) && NUMdefined (chisq) && nofp > 0) {
 			smoothness = log10 (pow (var / nofp, power) * (chisq / ndof));
 		}

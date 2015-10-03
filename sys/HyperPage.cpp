@@ -580,9 +580,9 @@ if (! my printing) {
 static void print (I, Graphics graphics) {
 	iam (HyperPage);
 	my ps = graphics;
-	Graphics_setDollarSignIsCode (graphics, TRUE);
-	Graphics_setAtSignIsLink (graphics, TRUE);
-	my printing = TRUE;
+	Graphics_setDollarSignIsCode (graphics, true);
+	Graphics_setAtSignIsLink (graphics, true);
+	my printing = true;
 	HyperPage_initSheetOfPaper (me);
 	my v_draw ();
 	my printing = false;
@@ -669,7 +669,7 @@ static void menu_cb_print (EDITOR_ARGS) {
 		SENTENCE (U"Left or inside footer", U"")
 		SENTENCE (U"Middle footer", U"")
 		SENTENCE (U"Right or outside footer", U"")
-		BOOLEAN (U"Mirror even/odd headers", TRUE)
+		BOOLEAN (U"Mirror even/odd headers", true)
 		INTEGER (U"First page number", U"0 (= no page numbers)")
 	EDITOR_OK
 		my v_defaultHeaders (cmd);
@@ -962,8 +962,8 @@ void HyperPage_init (HyperPage me, const char32 *title, Daata data) {
 		Melder_assert (XtWindow (my drawingArea -> d_widget));
 	#endif
 	my g = Graphics_create_xmdrawingarea (my drawingArea);
-	Graphics_setAtSignIsLink (my g, TRUE);
-	Graphics_setDollarSignIsCode (my g, TRUE);
+	Graphics_setAtSignIsLink (my g, true);
+	Graphics_setDollarSignIsCode (my g, true);
 	Graphics_setFont (my g, kGraphics_font_TIMES);
 	if (my p_font != kGraphics_font_TIMES && my p_font != kGraphics_font_HELVETICA)
 		my pref_font () = my p_font = kGraphics_font_TIMES;   // ensure Unicode compatibility
