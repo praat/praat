@@ -230,7 +230,7 @@ long OrderedOfString_indexOfItem_c (OrderedOfString me, const char32 *str) {
 }
 
 const char32 *OrderedOfString_itemAtIndex_c (OrderedOfString me, long index) {
-	return index > 0 && index <= my size ? SimpleString_c ( (SimpleString) my item[index]) : NULL;
+	return index > 0 && index <= my size ? SimpleString_c ( (SimpleString) my item[index]) : nullptr;
 }
 
 void OrderedOfString_sequentialNumbers (OrderedOfString me, long n) {
@@ -244,14 +244,14 @@ void OrderedOfString_sequentialNumbers (OrderedOfString me, long n) {
 }
 void OrderedOfString_changeStrings (OrderedOfString me, char32 *search, char32 *replace,
                                     int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, int use_regexp) {
-	regexp *compiled_search = NULL;
+	regexp *compiled_search = nullptr;
 	try {
 		char32 *r;
 
-		if (search == NULL) {
+		if (! search) {
 			Melder_throw (U"Missing search string.");
 		}
-		if (replace == NULL) {
+		if (! replace) {
 			Melder_throw (U"Missing replace string.");
 		}
 
@@ -316,7 +316,7 @@ long OrderedOfString_getSize (OrderedOfString me) {
 }
 
 void OrderedOfString_removeOccurrences (OrderedOfString me, const char32 *search, int use_regexp) {
-	if (search == NULL) {
+	if (! search) {
 		return;
 	}
 	for (long i = my size; i >= 1; i--) {

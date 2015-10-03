@@ -51,7 +51,7 @@ Thing_implement (GuiLabel, GuiControl, 0);
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
-		Melder_assert (userData == NULL || Thing_isa (userData, classGuiLabel));
+		Melder_assert (userData == nullptr || Thing_isa (userData, classGuiLabel));
 		d_userData = static_cast <GuiLabel> (userData);
 	}
 	@end
@@ -111,9 +111,9 @@ GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bott
 			| ( flags & GuiLabel_RIGHT ? SS_RIGHT : flags & GuiLabel_CENTRE ? SS_CENTER : SS_LEFT )
 			| SS_CENTERIMAGE,
 			my d_widget -> x, my d_widget -> y, my d_widget -> width, my d_widget -> height,
-			my d_widget -> parent -> window, (HMENU) 1, theGui.instance, NULL);
+			my d_widget -> parent -> window, (HMENU) 1, theGui.instance, nullptr);
 		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
-		SetWindowFont (my d_widget -> window, GetStockFont (ANSI_VAR_FONT), FALSE);
+		SetWindowFont (my d_widget -> window, GetStockFont (ANSI_VAR_FONT), false);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 	#elif mac
 		my d_widget = _Gui_initializeWidget (xmLabelWidgetClass, parent -> d_widget, labelText);
@@ -123,8 +123,8 @@ GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bott
 		macFontStyleRecord. font = systemFont;
 		macFontStyleRecord. size = 13;
 		macFontStyleRecord. just = ( flags & GuiLabel_RIGHT ? teFlushRight : flags & GuiLabel_CENTRE ? teCenter : teFlushLeft );
-		CreateStaticTextControl (my d_widget -> macWindow, & my d_widget -> rect, NULL, & macFontStyleRecord, & my d_widget -> nat.control.handle);
-		Melder_assert (my d_widget -> nat.control.handle != NULL);
+		CreateStaticTextControl (my d_widget -> macWindow, & my d_widget -> rect, nullptr, & macFontStyleRecord, & my d_widget -> nat.control.handle);
+		Melder_assert (my d_widget -> nat.control.handle);
 		SetControlReference (my d_widget -> nat.control.handle, (long) my d_widget);
 		my d_widget -> isControl = true;
 		_GuiNativeControl_setTitle (my d_widget);

@@ -118,27 +118,27 @@ const char * Melder8_bigInteger (int64 value) {
 	bool firstDigitPrinted = false;
 	if (quintillions) {
 		sprintf (text + strlen (text), firstDigitPrinted ? "%03d," : "%d,", quintillions);
-		firstDigitPrinted = TRUE;
+		firstDigitPrinted = true;
 	}
 	if (quadrillions || firstDigitPrinted) {
 		sprintf (text + strlen (text), firstDigitPrinted ? "%03d," : "%d,", quadrillions);
-		firstDigitPrinted = TRUE;
+		firstDigitPrinted = true;
 	}
 	if (trillions || firstDigitPrinted) {
 		sprintf (text + strlen (text), firstDigitPrinted ? "%03d," : "%d,", trillions);
-		firstDigitPrinted = TRUE;
+		firstDigitPrinted = true;
 	}
 	if (billions || firstDigitPrinted) {
 		sprintf (text + strlen (text), firstDigitPrinted ? "%03d," : "%d,", billions);
-		firstDigitPrinted = TRUE;
+		firstDigitPrinted = true;
 	}
 	if (millions || firstDigitPrinted) {
 		sprintf (text + strlen (text), firstDigitPrinted ? "%03d," : "%d,", millions);
-		firstDigitPrinted = TRUE;
+		firstDigitPrinted = true;
 	}
 	if (thousands || firstDigitPrinted) {
 		sprintf (text + strlen (text), firstDigitPrinted ? "%03d," : "%d,", thousands);
-		firstDigitPrinted = TRUE;
+		firstDigitPrinted = true;
 	}
 	sprintf (text + strlen (text), firstDigitPrinted ? "%03d" : "%d", units);
 	return text;

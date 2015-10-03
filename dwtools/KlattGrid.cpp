@@ -2425,7 +2425,7 @@ void KlattGrid_formula_bandwidths (KlattGrid me, int formantType, const char32 *
 void KlattGrid_formula_amplitudes (KlattGrid me, int formantType, const char32 *expression, Interpreter interpreter) {
 	try {
 		Ordered *ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
-		Formula_compile (interpreter, *ordered, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE);
+		Formula_compile (interpreter, *ordered, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 		for (long irow = 1; irow <= (*ordered) -> size; irow++) {
 			RealTier amplitudes = (RealTier) (*ordered) -> item[irow];
 			for (long icol = 1; icol <= amplitudes -> points -> size; icol++) {

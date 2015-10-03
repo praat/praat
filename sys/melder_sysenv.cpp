@@ -89,7 +89,7 @@ void Melder_system (const char32 *command) {
 		MelderString_append (& buffer, U" /c ", command);
         memset (& siStartInfo, 0, sizeof (siStartInfo));
         siStartInfo. cb = sizeof (siStartInfo);
-		if (! CreateProcess (NULL, Melder_peek32toW (buffer.string), NULL, NULL, TRUE, CREATE_NO_WINDOW, NULL, NULL, & siStartInfo, & piProcInfo))
+		if (! CreateProcess (NULL, Melder_peek32toW (buffer.string), NULL, NULL, true, CREATE_NO_WINDOW, NULL, NULL, & siStartInfo, & piProcInfo))
 			Melder_throw (U"Cannot create subprocess.");
 		WaitForSingleObject (piProcInfo. hProcess, -1);
 		CloseHandle (piProcInfo. hProcess);

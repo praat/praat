@@ -41,7 +41,7 @@ Thing_implement (GuiButton, GuiControl, 0);
 	static void _GuiGtkButton_activateCallback (GuiObject widget, gpointer void_me) {
 		iam (GuiButton);
 		struct structGuiButtonEvent event = { me, 0 };
-		if (my d_activateCallback != NULL) {
+		if (my d_activateCallback) {
 			try {
 				my d_activateCallback (my d_activateBoss, & event);
 			} catch (MelderError) {
@@ -63,13 +63,13 @@ Thing_implement (GuiButton, GuiControl, 0);
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
-		Melder_assert (userData == NULL || Thing_isa (userData, classGuiButton));
+		Melder_assert (userData == nullptr || Thing_isa (userData, classGuiButton));
 		d_userData = static_cast <GuiButton> (userData);
 	}
 	- (void) _guiCocoaButton_activateCallback: (id) widget {
 		Melder_assert (self == widget);   // sender (widget) and receiver (self) happen to be the same object
 		GuiButton me = d_userData;
-		if (my d_activateCallback != NULL) {
+		if (my d_activateCallback) {
 			struct structGuiButtonEvent event = { me, 0 };
 			try {
 				my d_activateCallback (my d_activateBoss, & event);
@@ -83,15 +83,15 @@ Thing_implement (GuiButton, GuiControl, 0);
 	void _GuiWinButton_destroy (GuiObject widget) {
 		iam_button;
 		if (widget == widget -> shell -> defaultButton)
-			widget -> shell -> defaultButton = NULL;   // remove dangling reference
+			widget -> shell -> defaultButton = nullptr;   // remove dangling reference
 		if (widget == widget -> shell -> cancelButton)
-			widget -> shell -> cancelButton = NULL;   // remove dangling reference
+			widget -> shell -> cancelButton = nullptr;   // remove dangling reference
 		_GuiNativeControl_destroy (widget);
 		forget (me);   // NOTE: my widget is not destroyed here
 	}
 	void _GuiWinButton_handleClick (GuiObject widget) {
 		iam_button;
-		if (my d_activateCallback != NULL) {
+		if (my d_activateCallback) {
 			struct structGuiButtonEvent event = { me, 0 };
 			try {
 				my d_activateCallback (my d_activateBoss, & event);
@@ -102,7 +102,7 @@ Thing_implement (GuiButton, GuiControl, 0);
 	}
 	bool _GuiWinButton_tryToHandleShortcutKey (GuiObject widget) {
 		iam_button;
-		if (my d_activateCallback != NULL) {
+		if (my d_activateCallback) {
 			struct structGuiButtonEvent event = { me, 0 };
 			try {
 				my d_activateCallback (my d_activateBoss, & event);
@@ -117,18 +117,18 @@ Thing_implement (GuiButton, GuiControl, 0);
 	void _GuiMacButton_destroy (GuiObject widget) {
 		iam_button;
 		if (widget == widget -> shell -> defaultButton)
-			widget -> shell -> defaultButton = NULL;   // remove dangling reference
+			widget -> shell -> defaultButton = nullptr;   // remove dangling reference
 		if (widget == widget -> shell -> cancelButton)
-			widget -> shell -> cancelButton = NULL;   // remove dangling reference
+			widget -> shell -> cancelButton = nullptr;   // remove dangling reference
 		_GuiNativeControl_destroy (widget);
 		forget (me);   // NOTE: my widget is not destroyed here
 	}
 	void _GuiMacButton_handleClick (GuiObject widget, EventRecord *macEvent) {
 		iam_button;
 		_GuiMac_clipOnParent (widget);
-		bool pushed = HandleControlClick (widget -> nat.control.handle, macEvent -> where, macEvent -> modifiers, NULL);
+		bool pushed = HandleControlClick (widget -> nat.control.handle, macEvent -> where, macEvent -> modifiers, nullptr);
 		GuiMac_clipOff ();
-		if (pushed && my d_activateCallback != NULL) {
+		if (pushed && my d_activateCallback) {
 			struct structGuiButtonEvent event = { me, 0 };
 			//enum { cmdKey = 256, shiftKey = 512, optionKey = 2048, controlKey = 4096 };
 			Melder_assert (macEvent -> what == mouseDown);
@@ -145,7 +145,7 @@ Thing_implement (GuiButton, GuiControl, 0);
 	}
 	bool _GuiMacButton_tryToHandleShortcutKey (GuiObject widget, EventRecord *macEvent) {
 		iam_button;
-		if (my d_activateCallback != NULL) {
+		if (my d_activateCallback) {
 			struct structGuiButtonEvent event = { me, 0 };
 			// ignore modifier keys for Enter
 			try {
@@ -223,9 +223,9 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 			| ( flags & (GuiButton_DEFAULT | GuiButton_ATTRACTIVE) ? BS_DEFPUSHBUTTON : BS_PUSHBUTTON )
 			| WS_CLIPSIBLINGS,
 			my d_widget -> x, my d_widget -> y, my d_widget -> width, my d_widget -> height,
-			my d_widget -> parent -> window, (HMENU) 1, theGui.instance, NULL);
+			my d_widget -> parent -> window, (HMENU) 1, theGui.instance, nullptr);
 		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
-		SetWindowFont (my d_widget -> window, GetStockFont (ANSI_VAR_FONT), FALSE);
+		SetWindowFont (my d_widget -> window, GetStockFont (ANSI_VAR_FONT), false);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		if (flags & GuiButton_DEFAULT || flags & GuiButton_ATTRACTIVE) {
 			parent -> d_widget -> shell -> defaultButton = parent -> d_widget -> defaultButton = my d_widget;
@@ -236,8 +236,8 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 	#elif mac
 		my d_widget = _Gui_initializeWidget (xmPushButtonWidgetClass, parent -> d_widget, buttonText);
 		_GuiObject_setUserData (my d_widget, me);
-		CreatePushButtonControl (my d_widget -> macWindow, & my d_widget -> rect, NULL, & my d_widget -> nat.control.handle);
-		Melder_assert (my d_widget -> nat.control.handle != NULL);
+		CreatePushButtonControl (my d_widget -> macWindow, & my d_widget -> rect, nullptr, & my d_widget -> nat.control.handle);
+		Melder_assert (my d_widget -> nat.control.handle);
 		SetControlReference (my d_widget -> nat.control.handle, (long) my d_widget);
 		my d_widget -> isControl = true;
 		_GuiNativeControl_setFont (my d_widget, flags & GuiButton_ATTRACTIVE ? /*1*/0 : 0, 13);

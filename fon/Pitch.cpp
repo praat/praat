@@ -594,7 +594,7 @@ void Pitch_draw (Pitch me, Graphics g, double tmin, double tmax, double fmin, do
 		Graphics_drawInnerBox (g);
 		Graphics_textBottom (g, true, U"Time (s)");
 		Graphics_marksBottom (g, 2, true, true, false);
-		Graphics_textLeft (g, TRUE, Melder_cat (U"Pitch (", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, Function_UNIT_TEXT_GRAPHICAL), U")"));
+		Graphics_textLeft (g, true, Melder_cat (U"Pitch (", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, Function_UNIT_TEXT_GRAPHICAL), U")"));
 		if (Function_isUnitLogarithmic (me, Pitch_LEVEL_FREQUENCY, unit)) {
 			Graphics_marksLeftLogarithmic (g, 6, true, true, false);
 		} else {
@@ -792,7 +792,7 @@ Pitch Pitch_smooth (Pitch me, double bandWidth) {
 			sound1 -> z [1] [i] = fextrap;
 
 		/* Smooth. */
-		autoSpectrum spectrum = Sound_to_Spectrum (sound1.peek(), TRUE);
+		autoSpectrum spectrum = Sound_to_Spectrum (sound1.peek(), true);
 		for (long i = 1; i <= spectrum -> nx; i ++) {
 			double f = (i - 1) * spectrum -> dx, fT = f / bandWidth, factor = exp (- fT * fT);
 			spectrum -> z [1] [i] *= factor;

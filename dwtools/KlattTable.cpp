@@ -362,8 +362,6 @@ Thing_implement (KlattTable, Table, 0);
 #define ALL_PARALLEL     2
 #define KlattTable_NPAR	40        /* Number of control parameters */
 #define MAX_SAM          20000     /* Maximum sample rate */
-#define TRUE             1
-#define FALSE            0
 #define IMPULSIVE        1         /* Type of voicing source */
 #define NATURAL          2
 #define SAMPLED          3

@@ -61,7 +61,7 @@ static int _GuiRadioButton_getPosition (GuiRadioButton me) {
 		trace (U"enter");
 		if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget))) {
 			trace (U"on");
-			if (my d_valueChangedCallback != NULL && ! my d_blockValueChangedCallbacks) {
+			if (my d_valueChangedCallback && ! my d_blockValueChangedCallbacks) {
 				struct structGuiRadioButtonEvent event = { me };
 				event. position = _GuiRadioButton_getPosition (me);
 				my d_valueChangedCallback (my d_valueChangedBoss, & event);
@@ -82,7 +82,7 @@ static int _GuiRadioButton_getPosition (GuiRadioButton me) {
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
-		Melder_assert (userData == NULL || Thing_isa (userData, classGuiRadioButton));
+		Melder_assert (userData == nullptr || Thing_isa (userData, classGuiRadioButton));
 		d_userData = static_cast <GuiRadioButton> (userData);
 	}
 	- (void) _guiCocoaRadioButton_activateCallback: (id) widget {
@@ -92,13 +92,13 @@ static int _GuiRadioButton_getPosition (GuiRadioButton me) {
 		/*
 		 * Deselect the sister buttons.
 		 */
-		for (GuiRadioButton sibling = my d_previous; sibling != NULL; sibling = sibling -> d_previous) {
+		for (GuiRadioButton sibling = my d_previous; sibling != nullptr; sibling = sibling -> d_previous) {
 			[sibling -> d_cocoaRadioButton   setState: NSOffState];
 		}
-		for (GuiRadioButton sibling = my d_next; sibling != NULL; sibling = sibling -> d_next) {
+		for (GuiRadioButton sibling = my d_next; sibling != nullptr; sibling = sibling -> d_next) {
 			[sibling -> d_cocoaRadioButton   setState: NSOffState];
 		}
-		if (my d_valueChangedCallback != NULL) {
+		if (my d_valueChangedCallback) {
 			Melder_assert (! my d_blockValueChangedCallbacks);
 			struct structGuiRadioButtonEvent event = { me };
 			event. position = _GuiRadioButton_getPosition (me);
@@ -118,13 +118,13 @@ static int _GuiRadioButton_getPosition (GuiRadioButton me) {
 		/*
 		 * Deselect the sister buttons.
 		 */
-		for (GuiRadioButton sibling = my d_previous; sibling != NULL; sibling = sibling -> d_previous) {
+		for (GuiRadioButton sibling = my d_previous; sibling != nullptr; sibling = sibling -> d_previous) {
 			Button_SetCheck (sibling -> d_widget -> window, BST_UNCHECKED);
 		}
-		for (GuiRadioButton sibling = my d_next; sibling != NULL; sibling = sibling -> d_next) {
+		for (GuiRadioButton sibling = my d_next; sibling != nullptr; sibling = sibling -> d_next) {
 			Button_SetCheck (sibling -> d_widget -> window, BST_UNCHECKED);
 		}
-		if (my d_valueChangedCallback != NULL) {
+		if (my d_valueChangedCallback) {
 			struct structGuiRadioButtonEvent event = { me };
 			event. position = _GuiRadioButton_getPosition (me);
 			my d_valueChangedCallback (my d_valueChangedBoss, & event);
@@ -139,19 +139,19 @@ static int _GuiRadioButton_getPosition (GuiRadioButton me) {
 	void _GuiMacRadioButton_handleClick (GuiObject widget, EventRecord *macEvent) {
 		iam_radiobutton;
 		_GuiMac_clipOnParent (widget);
-		bool clicked = HandleControlClick (widget -> nat.control.handle, macEvent -> where, macEvent -> modifiers, NULL);
+		bool clicked = HandleControlClick (widget -> nat.control.handle, macEvent -> where, macEvent -> modifiers, nullptr);
 		GuiMac_clipOff ();
 		if (clicked) {
 			/*
 			 * Deselect the sister buttons.
 			 */
-			for (GuiRadioButton sibling = my d_previous; sibling != NULL; sibling = sibling -> d_previous) {
+			for (GuiRadioButton sibling = my d_previous; sibling != nullptr; sibling = sibling -> d_previous) {
 				SetControlValue (sibling -> d_widget -> nat.control.handle, 0);
 			}
-			for (GuiRadioButton sibling = my d_next; sibling != NULL; sibling = sibling -> d_next) {
+			for (GuiRadioButton sibling = my d_next; sibling != nullptr; sibling = sibling -> d_next) {
 				SetControlValue (sibling -> d_widget -> nat.control.handle, 0);
 			}
-			if (my d_valueChangedCallback != NULL) {
+			if (my d_valueChangedCallback != nullptr) {
 				struct structGuiRadioButtonEvent event = { me };
 				event. position = _GuiRadioButton_getPosition (me);
 				my d_valueChangedCallback (my d_valueChangedBoss, & event);
@@ -160,14 +160,14 @@ static int _GuiRadioButton_getPosition (GuiRadioButton me) {
 	}
 #endif
 
-static GuiRadioButton latestRadioButton = NULL;
+static GuiRadioButton latestRadioButton = nullptr;
 
 void GuiRadioGroup_begin () {
-	latestRadioButton = NULL;
+	latestRadioButton = nullptr;
 }
 
 void GuiRadioGroup_end () {
-	latestRadioButton = NULL;
+	latestRadioButton = nullptr;
 }
 
 GuiRadioButton GuiRadioButton_create (GuiForm parent, int left, int right, int top, int bottom,
@@ -180,15 +180,15 @@ GuiRadioButton GuiRadioButton_create (GuiForm parent, int left, int right, int t
 	my d_valueChangedCallback = valueChangedCallback;
 	my d_valueChangedBoss = valueChangedBoss;
 	my d_previous = latestRadioButton;
-	my d_next = NULL;
+	my d_next = nullptr;
 	#if gtk
-		my d_widget = gtk_radio_button_new_with_label_from_widget (latestRadioButton ? GTK_RADIO_BUTTON (latestRadioButton -> d_widget) : NULL, Melder_peek32to8 (buttonText));
+		my d_widget = gtk_radio_button_new_with_label_from_widget (latestRadioButton ? GTK_RADIO_BUTTON (latestRadioButton -> d_widget) : nullptr, Melder_peek32to8 (buttonText));
 		_GuiObject_setUserData (my d_widget, me);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		if (flags & GuiRadioButton_SET) {
-			gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (my d_widget), TRUE);
+			gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (my d_widget), true);
 		} else {
-			gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (my d_widget), FALSE);
+			gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (my d_widget), false);
 		}
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkRadioButton_destroyCallback), me);
 		g_signal_connect (GTK_TOGGLE_BUTTON (my d_widget), "toggled", G_CALLBACK (_GuiGtkRadioButton_handleToggle), me);
@@ -248,9 +248,9 @@ GuiRadioButton GuiRadioButton_create (GuiForm parent, int left, int right, int t
 			| ( my d_widget -> parent -> radioBehavior ? BS_AUTORADIOBUTTON : BS_RADIOBUTTON )
 			| WS_CLIPSIBLINGS,
 			my d_widget -> x, my d_widget -> y, my d_widget -> width, my d_widget -> height,
-			my d_widget -> parent -> window, (HMENU) 1, theGui.instance, NULL);
+			my d_widget -> parent -> window, (HMENU) 1, theGui.instance, nullptr);
 		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
-		SetWindowFont (my d_widget -> window, GetStockFont (ANSI_VAR_FONT), FALSE);
+		SetWindowFont (my d_widget -> window, GetStockFont (ANSI_VAR_FONT), false);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		if (flags & GuiRadioButton_SET) {
 			Button_SetCheck (my d_widget -> window, BST_CHECKED);
@@ -259,9 +259,9 @@ GuiRadioButton GuiRadioButton_create (GuiForm parent, int left, int right, int t
 		my d_widget = _Gui_initializeWidget (xmToggleButtonWidgetClass, parent -> d_widget, buttonText);
 		_GuiObject_setUserData (my d_widget, me);
 		my d_widget -> isRadioButton = true;
-		CreateRadioButtonControl (my d_widget -> macWindow, & my d_widget -> rect, NULL,
+		CreateRadioButtonControl (my d_widget -> macWindow, & my d_widget -> rect, nullptr,
 			(flags & GuiRadioButton_SET) != 0, true, & my d_widget -> nat.control.handle);
-		Melder_assert (my d_widget -> nat.control.handle != NULL);
+		Melder_assert (my d_widget -> nat.control.handle);
 		SetControlReference (my d_widget -> nat.control.handle, (long) my d_widget);
 		my d_widget -> isControl = true;
 		_GuiNativeControl_setFont (my d_widget, 0, 13);
@@ -272,7 +272,7 @@ GuiRadioButton GuiRadioButton_create (GuiForm parent, int left, int right, int t
 		GuiThing_setSensitive (me, false);
 	}
 	if (my d_previous) {
-		Melder_assert (my d_previous != NULL);
+		Melder_assert (my d_previous);
 		Melder_assert (my d_previous -> classInfo == classGuiRadioButton);
 		my d_previous -> d_next = me;
 	}
@@ -307,16 +307,16 @@ void GuiRadioButton_set (GuiRadioButton me) {
 	trace (U"enter");
 	GuiControlBlockValueChangedCallbacks block (me);   // the value should be set without calling the valueChanged callback (crucial on GTK)
 	#if gtk
-		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (my d_widget), TRUE);
+		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (my d_widget), true);
 	#elif cocoa
 		[my d_cocoaRadioButton   setState: NSOnState];
 		/*
 		 * Deselect the sister buttons.
 		 */
-		for (GuiRadioButton sibling = my d_previous; sibling != NULL; sibling = sibling -> d_previous) {
+		for (GuiRadioButton sibling = my d_previous; sibling != nullptr; sibling = sibling -> d_previous) {
 			[sibling -> d_cocoaRadioButton   setState: NSOffState];
 		}
-		for (GuiRadioButton sibling = my d_next; sibling != NULL; sibling = sibling -> d_next) {
+		for (GuiRadioButton sibling = my d_next; sibling != nullptr; sibling = sibling -> d_next) {
 			[sibling -> d_cocoaRadioButton   setState: NSOffState];
 		}
 	#elif win
@@ -324,10 +324,10 @@ void GuiRadioButton_set (GuiRadioButton me) {
 		/*
 		 * Deselect the sister buttons.
 		 */
-		for (GuiRadioButton sibling = my d_previous; sibling != NULL; sibling = sibling -> d_previous) {
+		for (GuiRadioButton sibling = my d_previous; sibling != nullptr; sibling = sibling -> d_previous) {
 			Button_SetCheck (sibling -> d_widget -> window, BST_UNCHECKED);
 		}
-		for (GuiRadioButton sibling = my d_next; sibling != NULL; sibling = sibling -> d_next) {
+		for (GuiRadioButton sibling = my d_next; sibling != nullptr; sibling = sibling -> d_next) {
 			Button_SetCheck (sibling -> d_widget -> window, BST_UNCHECKED);
 		}
 	#elif mac
@@ -335,10 +335,10 @@ void GuiRadioButton_set (GuiRadioButton me) {
 		/*
 		 * Deselect the sister buttons.
 		 */
-		for (GuiRadioButton sibling = my d_previous; sibling != NULL; sibling = sibling -> d_previous) {
+		for (GuiRadioButton sibling = my d_previous; sibling != nullptr; sibling = sibling -> d_previous) {
 			SetControlValue (sibling -> d_widget -> nat.control.handle, false);
 		}
-		for (GuiRadioButton sibling = my d_next; sibling != NULL; sibling = sibling -> d_next) {
+		for (GuiRadioButton sibling = my d_next; sibling != nullptr; sibling = sibling -> d_next) {
 			SetControlValue (sibling -> d_widget -> nat.control.handle, false);
 		}
 	#endif

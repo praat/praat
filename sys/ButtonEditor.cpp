@@ -35,9 +35,9 @@ Thing_implement (ButtonEditor, HyperPage, 0);
 
 static void drawMenuCommand (ButtonEditor me, praat_Command cmd, long i) {
 	static MelderString text { 0 };
-	int isAdded = cmd -> uniqueID != 0 || cmd -> script != NULL;
-	int isHidden = cmd -> hidden;
-	int isToggled = cmd -> toggled;
+	bool isAdded = cmd -> uniqueID != 0 || cmd -> script != nullptr;
+	bool isHidden = cmd -> hidden;
+	bool isToggled = cmd -> toggled;
 	const char32 *clickText = isHidden ? (isToggled ? (isAdded ? U"REMOVED" : U"HIDDEN") : U"hidden") :
 		(isToggled ? U"SHOWN" :  (isAdded ? (cmd -> uniqueID ? U"ADDED" : U"START-UP") : U"shown"));
 	MelderString_empty (& text);
@@ -71,8 +71,8 @@ static void drawMenuCommand (ButtonEditor me, praat_Command cmd, long i) {
 
 static void drawAction (ButtonEditor me, praat_Command cmd, long i) {
 	static MelderString text { 0 };
-	int isAdded = cmd -> uniqueID != 0 || cmd -> script != NULL;
-	int isHidden = cmd -> hidden, isToggled = cmd -> toggled;
+	bool isAdded = cmd -> uniqueID != 0 || cmd -> script != nullptr;
+	bool isHidden = cmd -> hidden, isToggled = cmd -> toggled;
 	const char32 *clickText = isHidden ? (isToggled ? (isAdded ? U"REMOVED" : U"HIDDEN") : U"hidden") :
 		(isToggled ? U"SHOWN" :  (isAdded ? (cmd -> uniqueID ? U"ADDED" : U"START-UP") : U"shown"));
 	int n1 = cmd -> n1;
@@ -202,13 +202,13 @@ int structButtonEditor :: v_goToPage (const char32 *title) {
 			}
 			if (action -> script) {
 				try {
-					DO_RunTheScriptFromAnyAddedMenuCommand (NULL, 0, NULL, action -> script, NULL, NULL, false, NULL);
+					DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, action -> script, nullptr, nullptr, false, nullptr);
 				} catch (MelderError) {
 					Melder_flushError (U"Command not executed.");
 				}
 			} else {
 				try {
-					action -> callback (NULL, 0, NULL, NULL, NULL, NULL, false, NULL);
+					action -> callback (nullptr, 0, nullptr, nullptr, nullptr, nullptr, false, nullptr);
 				} catch (MelderError) {
 					Melder_flushError (U"Command not executed.");
 				}
@@ -225,13 +225,13 @@ int structButtonEditor :: v_goToPage (const char32 *title) {
 			}
 			if (menuCommand -> script) {
 				try {
-					DO_RunTheScriptFromAnyAddedMenuCommand (NULL, 0, NULL, menuCommand -> script, NULL, NULL, false, NULL);
+					DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, menuCommand -> script, nullptr, nullptr, false, nullptr);
 				} catch (MelderError) {
 					Melder_flushError (U"Command not executed.");
 				}
 			} else {
 				try {
-					menuCommand -> callback (NULL, 0, NULL, NULL, NULL, NULL, false, NULL);
+					menuCommand -> callback (nullptr, 0, nullptr, nullptr, nullptr, nullptr, false, nullptr);
 				} catch (MelderError) {
 					Melder_flushError (U"Command not executed.");
 				}
@@ -286,7 +286,7 @@ void structButtonEditor :: v_createHelpMenuItems (EditorMenu menu) {
 ButtonEditor ButtonEditor_create () {
 	try {
 		autoButtonEditor me = Thing_new (ButtonEditor);
-		HyperPage_init (me.peek(), U"Buttons", NULL);
+		HyperPage_init (me.peek(), U"Buttons", nullptr);
 		which (me.peek(), 1);
 		return me.transfer();
 	} catch (MelderError) {

@@ -63,11 +63,11 @@ int Gui_getResolution (GuiObject widget) {
 void GuiGtk_initialize () {
 	static bool gtkHasBeenInitialized = false;
 	if (! gtkHasBeenInitialized) {
-		trace (U"before initing GTK: locale is ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
+		trace (U"before initing GTK: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 		gtk_disable_setlocale ();   // otherwise 1.5 will be written "1,5" on computers with a French or German locale
-		trace (U"during initing GTK: locale is ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
-		gtk_init_check (NULL, NULL);
-		trace (U"after initing GTK: locale is ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
+		trace (U"during initing GTK: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
+		gtk_init_check (nullptr, nullptr);
+		trace (U"after initing GTK: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 		gtkHasBeenInitialized = true;
 	}
 	}
@@ -122,9 +122,9 @@ void Gui_getWindowPositioningBounds (double *x, double *y, double *width, double
 		GuiGtk_initialize ();
 		GdkScreen *screen = gdk_screen_get_default ();
 		/*
-		if (parent != NULL) {
+		if (parent) {
 			GuiObject parent_win = gtk_widget_get_ancestor (GTK_WIDGET (parent), GTK_TYPE_WINDOW);
-			if (parent_win != NULL) {
+			if (parent_win) {
 				screen = gtk_window_get_screen (GTK_WINDOW (parent_win));
 			}
 		}

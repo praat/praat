@@ -1246,7 +1246,7 @@ double GaussianMixture_getProbabilityAtPosition_string (GaussianMixture me, cons
 	autoNUMvector<double> v (1, my dimension);
 
 	long i = 0;
-	for (char32 *token = Melder_firstToken (vector); token != NULL; token = Melder_nextToken ()) {
+	for (char32 *token = Melder_firstToken (vector); token != nullptr; token = Melder_nextToken ()) {
 		v[++i] = Melder_atof (token);
 		if (i == my dimension) {
 			break;

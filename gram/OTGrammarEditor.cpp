@@ -112,7 +112,7 @@ static void menu_cb_learnOne (EDITOR_ARGS) {
 		Editor_save (me, U"Learn one");
 		OTGrammar_learnOne ((OTGrammar) my data, GET_STRING (U"Input string"), GET_STRING (U"Output string"),
 			GET_REAL (U"Evaluation noise"), GET_ENUM (kOTGrammar_rerankingStrategy, U"Update rule"), GET_INTEGER (U"Honour local rankings"),
-			GET_REAL (U"Plasticity"), GET_REAL (U"Rel. plasticity spreading"), TRUE, TRUE, NULL);
+			GET_REAL (U"Plasticity"), GET_REAL (U"Rel. plasticity spreading"), true, true, nullptr);
 		OTGrammar_sort ((OTGrammar) my data);
 		Graphics_updateWs (my g);
 		Editor_broadcastDataChanged (me);
@@ -135,7 +135,7 @@ static void menu_cb_learnOneFromPartialOutput (EDITOR_ARGS) {
 		Editor_save (me, U"Learn one from partial output");
 		OTGrammar_learnOneFromPartialOutput ((OTGrammar) my data, GET_STRING (U"Partial output"),
 			GET_REAL (U"Evaluation noise"), GET_ENUM (kOTGrammar_rerankingStrategy, U"Update rule"), GET_INTEGER (U"Honour local rankings"),
-			GET_REAL (U"Plasticity"), GET_REAL (U"Rel. plasticity spreading"), GET_INTEGER (U"Number of chews"), TRUE);
+			GET_REAL (U"Plasticity"), GET_REAL (U"Rel. plasticity spreading"), GET_INTEGER (U"Number of chews"), true);
 		OTGrammar_sort ((OTGrammar) my data);
 		Graphics_updateWs (my g);
 		Editor_broadcastDataChanged (me);
@@ -246,7 +246,7 @@ void structOTGrammarEditor :: v_draw () {
 		drawTableau_constraintsAreDrawnVertically = d_constraintsAreDrawnVertically;
 		HyperPage_picture (this, 20, tableauHeight, drawTableau);
 	}
-	Graphics_setAtSignIsLink (g, TRUE);
+	Graphics_setAtSignIsLink (g, true);
 }
 
 int structOTGrammarEditor :: v_goToPage (const char32 *title) {

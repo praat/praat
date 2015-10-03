@@ -47,8 +47,8 @@ GuiForm GuiForm_createInScrolledWindow (GuiScrolledWindow parent)
 		gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (parent -> d_widget), GTK_WIDGET (my d_widget));
 	#elif cocoa
 	#elif motif
-		//my d_widget = XmCreateRowColumn (parent -> d_widget, "menu", NULL, 0);
-		my d_widget = XmCreateForm (parent -> d_widget, "menu", NULL, 0);
+		//my d_widget = XmCreateRowColumn (parent -> d_widget, "menu", nullptr, 0);
+		my d_widget = XmCreateForm (parent -> d_widget, "menu", nullptr, 0);
 	#endif
 	GuiThing_show (me);
 

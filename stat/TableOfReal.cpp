@@ -309,7 +309,7 @@ void TableOfReal_setColumnLabel (TableOfReal me, long columnNumber, const char32
 
 void TableOfReal_formula (TableOfReal me, const char32 *expression, Interpreter interpreter, TableOfReal thee) {
 	try {
-		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE);
+		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 		if (thee == NULL) thee = me;
 		for (long irow = 1; irow <= my numberOfRows; irow ++) {
 			for (long icol = 1; icol <= my numberOfColumns; icol ++) {
@@ -567,7 +567,7 @@ TableOfReal TableOfReal_extractColumnRanges (TableOfReal me, const char32 *range
 
 TableOfReal TableOfReal_extractRowsWhere (TableOfReal me, const char32 *condition, Interpreter interpreter) {
 	try {
-		Formula_compile (interpreter, me, condition, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE);
+		Formula_compile (interpreter, me, condition, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 		/*
 		 * Count the new number of rows.
 		 */
@@ -611,7 +611,7 @@ TableOfReal TableOfReal_extractRowsWhere (TableOfReal me, const char32 *conditio
 
 TableOfReal TableOfReal_extractColumnsWhere (TableOfReal me, const char32 *condition, Interpreter interpreter) {
 	try {
-		Formula_compile (interpreter, me, condition, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE);
+		Formula_compile (interpreter, me, condition, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 		/*
 		 * Count the new number of columns.
 		 */
@@ -731,16 +731,16 @@ static double getMaxRowLabelWidth (TableOfReal me, Graphics graphics, long rowmi
 	if (! my rowLabels) return 0.0;
 	fixRows (me, & rowmin, & rowmax);
 	for (long irow = rowmin; irow <= rowmax; irow ++) if (my rowLabels [irow] && my rowLabels [irow] [0]) {
-		double textWidth = Graphics_textWidth_ps (graphics, my rowLabels [irow], TRUE);   /* SILIPA is bigger than XIPA */
+		double textWidth = Graphics_textWidth_ps (graphics, my rowLabels [irow], true);   // SILIPA is bigger than XIPA
 		if (textWidth > maxWidth) maxWidth = textWidth;
 	}
 	return maxWidth;
 }
 static double getLeftMargin (Graphics graphics) {
-	return Graphics_dxMMtoWC (graphics, 1);
+	return Graphics_dxMMtoWC (graphics, 1.0);
 }
 static double getLineSpacing (Graphics graphics) {
-	return Graphics_dyMMtoWC (graphics, 1.5 * Graphics_inqFontSize (graphics) * 25.4 / 72);
+	return Graphics_dyMMtoWC (graphics, 1.5 * Graphics_inqFontSize (graphics) * 25.4 / 72.0);
 }
 static double getMaxColumnLabelHeight (TableOfReal me, Graphics graphics, long colmin, long colmax) {
 	double maxHeight = 0.0, lineSpacing = getLineSpacing (graphics);
@@ -755,7 +755,7 @@ static double getMaxColumnLabelHeight (TableOfReal me, Graphics graphics, long c
 void TableOfReal_drawAsNumbers (TableOfReal me, Graphics graphics, long rowmin, long rowmax, int iformat, int precision) {
 	fixRows (me, & rowmin, & rowmax);
 	Graphics_setInner (graphics);
-	Graphics_setWindow (graphics, 0.5, my numberOfColumns + 0.5, 0, 1);
+	Graphics_setWindow (graphics, 0.5, my numberOfColumns + 0.5, 0.0, 1.0);
 	double leftMargin = getLeftMargin (graphics);   // not earlier!
 	double lineSpacing = getLineSpacing (graphics);   // not earlier!
 	double maxTextWidth = getMaxRowLabelWidth (me, graphics, rowmin, rowmax);
@@ -781,7 +781,7 @@ void TableOfReal_drawAsNumbers (TableOfReal me, Graphics graphics, long rowmin, 
 	if (maxTextHeight != 0.0) {
 		double left = 0.5;
 		if (maxTextWidth > 0.0) left -= maxTextWidth + 2 * leftMargin;
-		Graphics_line (graphics, left, 1, my numberOfColumns + 0.5, 1);
+		Graphics_line (graphics, left, 1.0, my numberOfColumns + 0.5, 1.0);
 	}
 	Graphics_unsetInner (graphics);
 }
@@ -794,7 +794,7 @@ void TableOfReal_drawAsNumbers_if (TableOfReal me, Graphics graphics, long rowmi
 		autoMatrix conditions = original.clone ();
 		fixRows (me, & rowmin, & rowmax);
 		Graphics_setInner (graphics);
-		Graphics_setWindow (graphics, 0.5, my numberOfColumns + 0.5, 0, 1);
+		Graphics_setWindow (graphics, 0.5, my numberOfColumns + 0.5, 0.0, 1.0);
 		double leftMargin = getLeftMargin (graphics);   // not earlier!
 		double lineSpacing = getLineSpacing (graphics);   // not earlier!
 		double maxTextWidth = getMaxRowLabelWidth (me, graphics, rowmin, rowmax);
@@ -821,7 +821,7 @@ void TableOfReal_drawAsNumbers_if (TableOfReal me, Graphics graphics, long rowmi
 		if (maxTextHeight != 0.0) {
 			double left = 0.5;
 			if (maxTextWidth > 0.0) left -= maxTextWidth + 2 * leftMargin;
-			Graphics_line (graphics, left, 1, my numberOfColumns + 0.5, 1);
+			Graphics_line (graphics, left, 1.0, my numberOfColumns + 0.5, 1.0);
 		}
 		Graphics_unsetInner (graphics);
 	} catch (MelderError) {
@@ -840,7 +840,7 @@ void TableOfReal_drawVerticalLines (TableOfReal me, Graphics graphics, long rowm
 
 	if (maxTextWidth > 0.0) colmin -= 1;
 	for (long col = colmin + 1; col <= colmax; col ++)
-		Graphics_line (graphics, col - 0.5, 1 + maxTextHeight, col - 0.5, 1 - lineSpacing * (rowmax - rowmin + 1));
+		Graphics_line (graphics, col - 0.5, 1.0 + maxTextHeight, col - 0.5, 1.0 - lineSpacing * (rowmax - rowmin + 1));
 	Graphics_unsetInner (graphics);
 }
 
@@ -848,16 +848,16 @@ void TableOfReal_drawLeftAndRightLines (TableOfReal me, Graphics graphics, long 
 	long colmin = 1, colmax = my numberOfColumns;
 	fixRows (me, & rowmin, & rowmax);
 	Graphics_setInner (graphics);
-	Graphics_setWindow (graphics, colmin - 0.5, colmax + 0.5, 0, 1);
+	Graphics_setWindow (graphics, colmin - 0.5, colmax + 0.5, 0.0, 1.0);
 	double lineSpacing = getLineSpacing (graphics);
 	double maxTextWidth = getMaxRowLabelWidth (me, graphics, rowmin, rowmax);
 	double maxTextHeight = getMaxColumnLabelHeight (me, graphics, 1, my numberOfColumns);
 
 	double left = 0.5;
-	if (maxTextWidth > 0.0) left -= maxTextWidth + 2 * lineSpacing;
+	if (maxTextWidth > 0.0) left -= maxTextWidth + 2.0 * lineSpacing;
 	double right = colmax + 0.5;
-	double top = 1 + maxTextHeight;
-	double bottom = 1 - lineSpacing * (rowmax - rowmin + 1);
+	double top = 1.0 + maxTextHeight;
+	double bottom = 1.0 - lineSpacing * (rowmax - rowmin + 1);
 	Graphics_line (graphics, left, top, left, bottom);
 	Graphics_line (graphics, right, top, right, bottom);
 	Graphics_unsetInner (graphics);
@@ -874,11 +874,11 @@ void TableOfReal_drawHorizontalLines (TableOfReal me, Graphics graphics, long ro
 
 	double left = 0.5;
 	double top = rowmin;
-	if (maxTextWidth > 0.0) left -= maxTextWidth + 2 * lineSpacing;
+	if (maxTextWidth > 0.0) left -= maxTextWidth + 2.0 * lineSpacing;
 	if (maxTextHeight > 0.0) rowmin -= 1;
 	double right = colmax + 0.5;
 	for (long irow = rowmin; irow < rowmax; irow ++) {
-		double y = 1 - lineSpacing * (irow - top + 1);
+		double y = 1.0 - lineSpacing * (irow - top + 1);
 		Graphics_line (graphics, left, y, right, y);
 	}
 	Graphics_unsetInner (graphics);
@@ -888,7 +888,7 @@ void TableOfReal_drawTopAndBottomLines (TableOfReal me, Graphics graphics, long 
 	long colmin = 1, colmax = my numberOfColumns;
 	fixRows (me, & rowmin, & rowmax);
 	Graphics_setInner (graphics);
-	Graphics_setWindow (graphics, colmin - 0.5, colmax + 0.5, 0, 1);
+	Graphics_setWindow (graphics, colmin - 0.5, colmax + 0.5, 0.0, 1.0);
 	double lineSpacing = getLineSpacing (graphics);
 	double maxTextWidth = getMaxRowLabelWidth (me, graphics, rowmin, rowmax);
 	double maxTextHeight = getMaxColumnLabelHeight (me, graphics, 1, my numberOfColumns);
@@ -896,8 +896,8 @@ void TableOfReal_drawTopAndBottomLines (TableOfReal me, Graphics graphics, long 
 	double left = 0.5;
 	if (maxTextWidth > 0.0) left -= maxTextWidth + 2 * lineSpacing;
 	double right = colmax + 0.5;
-	double top = 1 + maxTextHeight;
-	double bottom = 1 - lineSpacing * (rowmax - rowmin + 1);
+	double top = 1.0 + maxTextHeight;
+	double bottom = 1.0 - lineSpacing * (rowmax - rowmin + 1);
 	Graphics_line (graphics, left, top, right, top);
 	Graphics_line (graphics, left, bottom, right, bottom);
 	Graphics_unsetInner (graphics);
@@ -906,7 +906,7 @@ void TableOfReal_drawTopAndBottomLines (TableOfReal me, Graphics graphics, long 
 void TableOfReal_drawAsSquares (TableOfReal me, Graphics graphics, long rowmin, long rowmax,
 	long colmin, long colmax, int garnish)
 {
-	double dx = 1, dy = 1;
+	double dx = 1.0, dy = 1.0;
 	Graphics_Colour colour = Graphics_inqColour (graphics);
 	fixRows (me, & rowmin, & rowmax);
 	fixColumns (me, & colmin, & colmax);
@@ -924,8 +924,8 @@ void TableOfReal_drawAsSquares (TableOfReal me, Graphics graphics, long rowmin, 
 			double x = icol;
 			/* two neighbouring squares should not touch -> 0.95 */
 			double d = 0.95 * sqrt (fabs (my data [irow] [icol]) / datamax);
-			double x1WC = x - d * dx / 2, x2WC = x + d * dx / 2;
-			double y1WC = y - d * dy / 2, y2WC = y + d * dy / 2;
+			double x1WC = x - d * dx / 2.0, x2WC = x + d * dx / 2.0;
+			double y1WC = y - d * dy / 2.0, y2WC = y + d * dy / 2.0;
 			if (my data [irow] [icol] > 0) Graphics_setColour (graphics, Graphics_WHITE);
 			Graphics_fillRectangle (graphics, x1WC, x2WC, y1WC, y2WC);
 			Graphics_setColour (graphics, colour);
@@ -1016,7 +1016,7 @@ static void TableOfReal_sort (TableOfReal me, bool useLabels, long column1, long
 			} else if (my rowLabels [jrow] != NULL) continue;
 		}
 		/*
-		 * If we arrive here, the two labels are equal or both NULL (or useLabels is FALSE).
+		 * If we arrive here, the two labels are equal or both NULL (or useLabels is `false`).
 		 */
 		if (column1 > 0 && column1 <= my numberOfColumns) {
 			if (my data [irow] [column1] < my data [jrow] [column1]) continue;

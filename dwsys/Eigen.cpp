@@ -155,7 +155,7 @@ void Eigen_initFromSquareRoot (I, double **a, long numberOfRows, long numberOfCo
 void Eigen_initFromSquareRootPair (I, double **a, long numberOfRows,
                                    long numberOfColumns, double **b, long numberOfRows_b) {
 	iam (Eigen);
-	double *u = NULL, *v = NULL, maxsv2 = -10;
+	double *u = nullptr, *v = nullptr, maxsv2 = -10.0;
 	char jobu = 'N', jobv = 'N', jobq = 'Q';
 	long k, ll, m = numberOfRows, n = numberOfColumns, p = numberOfRows_b;
 	long lda = m, ldb = p, ldu = lda, ldv = ldb, ldq = n;
@@ -185,7 +185,7 @@ void Eigen_initFromSquareRootPair (I, double **a, long numberOfRows,
 		Calculate the eigenvalues (alpha[i]/beta[i])^2 and store in alpha[i].
 	*/
 
-	maxsv2 = -1;
+	maxsv2 = -1.0;
 	for (long i = k + 1; i <= k + ll; i++) {
 		double t = alpha[i] / beta[i];
 		alpha[i] = t * t;
@@ -200,7 +200,7 @@ void Eigen_initFromSquareRootPair (I, double **a, long numberOfRows,
 	n = 0;
 	for (long i = k + 1; i <= k + ll; i++) {
 		if (alpha[i] < NUMfpp -> eps * maxsv2) {
-			n++; alpha[i] = -1;
+			n++; alpha[i] = -1.0;
 		}
 	}
 
@@ -212,7 +212,7 @@ void Eigen_initFromSquareRootPair (I, double **a, long numberOfRows,
 
 	long ii = 0;
 	for (long i = k + 1; i <= k + ll; i++) {
-		if (alpha[i] == -1) {
+		if (alpha[i] == -1.0) {
 			continue;
 		}
 
@@ -247,7 +247,7 @@ void Eigen_initFromSymmetricMatrix (I, double **a, long n) {
 
 	my dimension = my numberOfEigenvalues = n;
 
-	if (my eigenvectors == NULL) {
+	if (! my eigenvectors) {
 		Eigen_init (me, n, n);
 	}
 

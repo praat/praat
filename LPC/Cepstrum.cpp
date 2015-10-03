@@ -522,7 +522,7 @@ double PowerCepstrum_getPeakProminence (PowerCepstrum me, double pitchFloor, dou
 	double xq = lineType == 2 ? log(quefrency) : quefrency;
 	double db_background = slope * xq + intercept;
 	double cpp = peakdB - db_background;
-	if (qpeak != NULL) {
+	if (qpeak != nullptr) {
 		*qpeak = quefrency;
 	}
 	return cpp;

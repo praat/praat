@@ -56,7 +56,7 @@ Thing_define (AmplitudeTierEditor, RealTierEditor) {
 
 AmplitudeTierEditor AmplitudeTierEditor_create (const char32 *title,
 	AmplitudeTier amplitude,
-	Sound sound,   // may be NULL
+	Sound sound,   // may be null
 	bool ownSound);
 
 /* End of file AmplitudeTierEditor.h */

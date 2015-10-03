@@ -29,7 +29,7 @@ oo_CLASS_CREATE (Formant, Sampled);
 Formant Formant_create (double tmin, double tmax, long nt, double dt, double t1, int maxnFormants);
 /*
 	Function:
-		return a new instance of Formant, or NULL if out of memory.
+		return a new instance of Formant.
 	Preconditions:
 		nt >= 1;
 		dt > 0.0;

@@ -22,33 +22,23 @@
 #include "Art_Speaker_Delta.h"
 #include "Art_Speaker_to_VocalTract.h"
 
-VocalTract Art_Speaker_to_VocalTract (Art art, Speaker speaker)
-{
-	VocalTract thee = NULL;
-	long isection;
+VocalTract Art_Speaker_to_VocalTract (Art art, Speaker speaker) {
+	autoDelta delta = Speaker_to_Delta (speaker);
+	Art_Speaker_intoDelta (art, speaker, delta.get());
 	double area [300];
-	int numberOfSections;
-	double sectionLength = 0.001;   // one millimetre
-	Delta delta = NULL;
-
-	delta = Speaker_to_Delta (speaker); if (! delta) goto end;
-	Art_Speaker_intoDelta (art, speaker, delta);
-	numberOfSections = 0;
-	for (isection = 1; isection <= 27; isection ++)
-	{
+	constexpr double sectionLength = 0.001;   // one millimetre
+	int numberOfSections = 0;
+	for (long isection = 1; isection <= 27; isection ++) {
 		Delta_Tube tube = delta -> tube + 37 + isection;
 		int numberOfConstantSections = lround (tube -> Dxeq / sectionLength);
 		double constantArea = tube -> Dyeq * tube -> Dzeq;
-		int jsection; for (jsection = 1; jsection <= numberOfConstantSections; jsection ++)
+		for (int jsection = 1; jsection <= numberOfConstantSections; jsection ++)
 			area [++ numberOfSections] = constantArea;
 	}
-	thee = VocalTract_create (numberOfSections, sectionLength); if (! thee) goto end;
-	for (isection = 1; isection <= numberOfSections; isection ++)
+	autoVocalTract thee = VocalTract_create (numberOfSections, sectionLength);
+	for (long isection = 1; isection <= numberOfSections; isection ++)
 		thy z [1] [isection] = area [isection];
-
-end:
-	forget (delta);
-	return thee;
+	return thee.transfer();
 }
 
 /* End of file Art_Speaker_to_VocalTract.cpp */

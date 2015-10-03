@@ -172,7 +172,7 @@ FeatureWeights FeatureWeights_computeWrapperInt
 )
 
 {
-	if (! me) return NULL;
+	if (! me) return nullptr;
 
 	try {
 		double pivot = 0.5;
@@ -240,7 +240,7 @@ FeatureWeights FeatureWeights_computeWrapperInt
 		}
 
 		FeatureWeights result = cs [nseeds];
-		cs [nseeds] = NULL;   // prevent destruction
+		cs [nseeds] = nullptr;   // prevent destruction
 		return result;
 	} catch (MelderError) {
 		Melder_throw (U"FeatureWeights: wrapper not computed.");
@@ -278,7 +278,7 @@ FeatureWeights FeatureWeights_computeWrapperExt
 )
 
 {
-	if (nn == NULL) return NULL;
+	if (! nn) return nullptr;
 
 	try {
 		double pivot = 0.5;
@@ -346,7 +346,7 @@ FeatureWeights FeatureWeights_computeWrapperExt
 		}
 
 		FeatureWeights result = cs [nseeds];
-		cs [nseeds] = NULL;   // prevent destruction
+		cs [nseeds] = nullptr;   // prevent destruction
 		return result;
 	} catch (MelderError) {
 		Melder_throw (U"FeatureWeights: wrapper not computed.");

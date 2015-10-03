@@ -273,7 +273,7 @@ FFNet FFNet_create (long numberOfInputs, long numberInLayer1, long numberInLayer
 void FFNet_setNonLinearity (FFNet me, int nonLinearityType) {
 	my nonLinearityType = nonLinearityType;
 	my nonLinearity = sigmoid;
-	my nlClosure = NULL;
+	my nlClosure = nullptr;
 }
 
 void FFNet_setCostFunction (FFNet me, int costType) {
@@ -283,7 +283,7 @@ void FFNet_setCostFunction (FFNet me, int costType) {
 	} else {
 		my costFunction = minimumSquaredError;
 	}
-	my cfClosure = NULL;
+	my cfClosure = nullptr;
 }
 
 double FFNet_getBias (FFNet me, long layer, long unit) {

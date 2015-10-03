@@ -25,12 +25,12 @@ Thing_implement (GuiShell, GuiForm, 0);
 void structGuiShell :: v_destroy () {
 	#if cocoa
 		if (our d_cocoaWindow) {
-			[our d_cocoaWindow setUserData: NULL];   // undangle reference to this
+			[our d_cocoaWindow setUserData: nullptr];   // undangle reference to this
 			Melder_fatal (U"ordering out?");
 			[our d_cocoaWindow orderOut: nil];
 			[our d_cocoaWindow close];
 			[our d_cocoaWindow release];
-			our d_cocoaWindow = NULL;   // undangle
+			our d_cocoaWindow = nullptr;   // undangle
 		}
 	#endif
 	GuiShell_Parent :: v_destroy ();
@@ -82,9 +82,9 @@ void GuiShell_drain (GuiShell me) {
 		//[my d_cocoaWindow   display];
 	#elif win
 	#elif mac
-		Melder_assert (my d_xmShell != NULL);
-		Melder_assert (my d_xmShell -> nat.window.ptr != NULL);
-		QDFlushPortBuffer (GetWindowPort (my d_xmShell -> nat.window.ptr), NULL);
+		Melder_assert (my d_xmShell);
+		Melder_assert (my d_xmShell -> nat.window.ptr);
+		QDFlushPortBuffer (GetWindowPort (my d_xmShell -> nat.window.ptr), nullptr);
 		/*
 		 * The following TRICK cost me half a day to work out.
 		 * It turns out that after a call to QDFlushPortBuffer (),

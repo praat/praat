@@ -1663,7 +1663,7 @@ Table Table_createFromPetersonBarneyData () {
 		}
 		for (long j = 1; j <= ncols; j++) {
 			Table_setColumnLabel (me.peek(), j, columnLabels[j - 1]);
-			my columnHeaders [j]. numericized = FALSE;
+			my columnHeaders [j]. numericized = false;
 		}
 		return me.transfer();
 	} catch (MelderError) {
@@ -4067,7 +4067,7 @@ void Table_boxPlotsWhere (Table me, Graphics g, char32 *dataColumns_string, long
 		if (factorColumn < 1 || factorColumn > my numberOfColumns) {
 			return;
 		}
-		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_UNKNOWN, TRUE);
+		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_UNKNOWN, true);
 		long numberOfData = my rows -> size;
 		autoStringsIndex si = Table_to_StringsIndex_column (me, factorColumn);
 		long numberOfLevels = si -> classes -> size;
@@ -4126,7 +4126,7 @@ void Table_boxPlotsWhere (Table me, Graphics g, char32 *dataColumns_string, long
 void Table_distributionPlotWhere (Table me, Graphics g, long dataColumn, double minimum, double maximum, long nBins, double freqMin, double freqMax, int garnish, const char32 *formula, Interpreter interpreter) {
 	try {
 		if (dataColumn < 1 || dataColumn > my numberOfColumns) return;
-		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_UNKNOWN, TRUE);
+		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_UNKNOWN, true);
 		Table_numericize_Assert (me, dataColumn);
 		long n = my rows -> size, mrow = 0;
 		autoMatrix thee = Matrix_create (1, 1, 1, 1, 1, 0, n + 1, n, 1, 1);
@@ -4201,7 +4201,7 @@ static Graphics_Colour Strings_colourToValue  (Strings me, long index) {
 
 long Table_getNumberOfRowsWhere (Table me, const char32 *formula, Interpreter interpreter) {
 	long numberOfRows = 0;
-	Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_UNKNOWN, TRUE);
+	Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_UNKNOWN, true);
 	for (long irow = 1; irow <= my rows -> size; irow ++) {
 		struct Formula_Result result;
 		Formula_run (irow, 1, & result);
@@ -4218,7 +4218,7 @@ long *Table_findRowsMatchingCriterion (Table me, const char32 *formula, Interpre
 		if (*numberOfMatches < 1) {
 			Melder_throw (U"No rows selected.");
 		}
-		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_UNKNOWN, TRUE); // again?
+		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_UNKNOWN, true);   // again?
 		autoNUMvector<long> selectedRows (1, *numberOfMatches);
 		long n = 0;
 		for (long irow =1; irow <= my rows -> size; irow++) {
@@ -4471,7 +4471,7 @@ void Table_lagPlotWhere (Table me, Graphics g, long column, long lag, double xmi
 
 Table Table_extractRowsWhere (Table me, const char32 *formula, Interpreter interpreter) {
 	try {
-		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_UNKNOWN, TRUE);
+		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_UNKNOWN, true);
 		autoTable thee = Table_create (0, my numberOfColumns);
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 			autostring32 newLabel = Melder_dup (my columnHeaders [icol]. label);

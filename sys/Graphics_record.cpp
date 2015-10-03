@@ -36,7 +36,7 @@
 
 double * _Graphics_check (Graphics me, long number) {
 	static bool messageHasAlreadyBeenShownOnce = false;
-	double *result = NULL;
+	double *result = nullptr;
 	double *record = my record;
 	long nrecord = my nrecord;
 	if (nrecord == 0) {
@@ -51,7 +51,7 @@ double * _Graphics_check (Graphics me, long number) {
 				Melder_flushError (U"_Graphics_growRecorder: out of memory.\n"
 					U"This message will not show up on future occasions.");   // because of loop danger when redrawing
 			}
-			return NULL;
+			return nullptr;
 		}
 		my record = record; my nrecord = nrecord;
 	}
@@ -67,7 +67,7 @@ double * _Graphics_check (Graphics me, long number) {
 				Melder_flushError (U"_Graphics_growRecorder: out of memory.\n"
 					U"This message will not show up on future occasions.");   // because of loop danger when redrawing
 			}
-			return NULL;
+			return nullptr;
 		}
 		my record = record; my nrecord = nrecord;
 	}
@@ -446,7 +446,7 @@ void Graphics_writeRecordings (Graphics me, FILE *f) {
 void Graphics_readRecordings (Graphics me, FILE *f) {
 	long old_irecord = my irecord;
 	long added_irecord = 0;
-	double *p = NULL, *endp = NULL;
+	double *p = nullptr, *endp = nullptr;
 	signed long numberOfArguments = 0;
 	int opcode = 0;
 	try {

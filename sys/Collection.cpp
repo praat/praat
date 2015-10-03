@@ -23,14 +23,14 @@
 /********** class Collection **********/
 
 void structCollection :: v_destroy () {
-	if (item != NULL) {
-		if (! _dontOwnItems) {
-			for (long i = 1; i <= size; i ++) {
-				forget (((Thing *) item) [i]);
+	if (our item) {
+		if (! our _dontOwnItems) {
+			for (long i = 1; i <= our size; i ++) {
+				forget (((Thing *) our item) [i]);
 			}
 		}
-		item ++;   // base 1
-		Melder_free (item);
+		our item ++;   // base 1
+		Melder_free (our item);
 	}
 	Collection_Parent :: v_destroy ();
 }
@@ -41,12 +41,12 @@ void structCollection :: v_info () {
 
 void structCollection :: v_copy (thou) {
 	thouart (Collection);
-	thy item = NULL;   // kill shallow copy of item  // BUG
+	thy item = nullptr;   // kill shallow copy of item  // BUG
 	Collection_Parent :: v_copy (thee);
 	thy itemClass = itemClass;
 	thy _capacity = _capacity;
 	thy size = size;
-	thy item = Melder_calloc (void *, _capacity);   // filled with NULL
+	thy item = Melder_calloc (void *, _capacity);   // filled with null pointers
 	thy item --;   // immediately turn from base-0 into base-1  // BUG use NUMvector
 	for (long i = 1; i <= size; i ++) {
 		Thing itempie = (Thing) item [i];
@@ -83,7 +83,7 @@ bool structCollection :: v_equal (thou) {
 bool structCollection :: v_canWriteAsEncoding (int encoding) {
 	for (long i = 1; i <= size; i ++) {
 		Daata data = (Daata) item [i];
-		if (data -> name != NULL && ! Melder_isEncodable (data -> name, encoding)) return false;
+		if (data -> name != nullptr && ! Melder_isEncodable (data -> name, encoding)) return false;
 		if (! Data_canWriteAsEncoding (data, encoding)) return false;
 	}
 	return true;
@@ -91,7 +91,7 @@ bool structCollection :: v_canWriteAsEncoding (int encoding) {
 
 void structCollection :: v_writeText (MelderFile file) {
 	texputi4 (file, size, U"size", 0,0,0,0,0);
-	texputintro (file, U"item []: ", size ? NULL : U"(empty)", 0,0,0,0);
+	texputintro (file, U"item []: ", size ? nullptr : U"(empty)", 0,0,0,0);
 	for (long i = 1; i <= size; i ++) {
 		Thing thing = (Thing) item [i];
 		ClassInfo classInfo = thing -> classInfo;
@@ -114,16 +114,16 @@ void structCollection :: v_readText (MelderReadText text, int formatVersion) {
 	if (formatVersion < 0) {
 		long l_size;
 		autostring8 line = Melder_32to8 (MelderReadText_readLine (text));
-		if (line.peek() == NULL || ! sscanf (line.peek(), "%ld", & l_size) || l_size < 0)
+		if (! line.peek() || ! sscanf (line.peek(), "%ld", & l_size) || l_size < 0)
 			Melder_throw (U"Collection::readText: cannot read size.");
-		Collection_init (this, NULL, l_size);
+		Collection_init (this, nullptr, l_size);
 		for (long i = 1; i <= l_size; i ++) {
 			long itemNumberRead;
 			int n = 0, length, stringsRead;
 			char klas [200], nameTag [2000];
 			do {
 				line.reset (Melder_32to8 (MelderReadText_readLine (text)));
-				if (line.peek() == NULL)
+				if (! line.peek())
 					Melder_throw (U"Missing object line.");
 			} while (strncmp (line.peek(), "Object ", 7));
 			stringsRead = sscanf (line.peek(), "Object %ld: class %s %s%n", & itemNumberRead, klas, nameTag, & n);
@@ -134,7 +134,7 @@ void structCollection :: v_readText (MelderReadText text, int formatVersion) {
 					U" while expecting ", i, U".");
 			if (stringsRead == 3 && ! strequ (nameTag, "name"))
 				Melder_throw (U"Collection::readText: wrong header at object ", i, U".");
-			our item [i] = Thing_newFromClassName (Melder_peek8to32 (klas), NULL);
+			our item [i] = Thing_newFromClassName (Melder_peek8to32 (klas), nullptr);
 			our size ++;
 			if (! Thing_isa ((Thing) our item [i], classDaata) || ! Data_canReadText ((Daata) our item [i]))
 				Melder_throw (U"Cannot read item of class ", Thing_className ((Thing) our item [i]), U" in collection.");
@@ -149,7 +149,7 @@ void structCollection :: v_readText (MelderReadText text, int formatVersion) {
 		}
 	} else {
 		int32_t l_size = texgeti4 (text);
-		Collection_init (this, NULL, l_size);
+		Collection_init (this, nullptr, l_size);
 		for (int32_t i = 1; i <= l_size; i ++) {
 			autostring32 className = texgetw2 (text);
 			int elementFormatVersion;
@@ -183,12 +183,12 @@ void structCollection :: v_readBinary (FILE *f, int formatVersion) {
 		int32 l_size = bingeti4 (f);
 		if (l_size < 0)
 			Melder_throw (U"Empty collection.");
-		Collection_init (this, NULL, l_size);
+		Collection_init (this, nullptr, l_size);
 		for (int32_t i = 1; i <= l_size; i ++) {
 			char klas [200], name [2000];
 			if (fscanf (f, "%s%s", klas, name) < 2)   // BUG
 				Melder_throw (U"Cannot read class and name.");
-			our item [i] = Thing_newFromClassName (Melder_peek8to32 (klas), NULL);
+			our item [i] = Thing_newFromClassName (Melder_peek8to32 (klas), nullptr);
 			our size ++;
 			if (! Thing_isa ((Thing) our item [i], classDaata))
 				Melder_throw (U"Cannot read item of class ", Thing_className ((Thing) our item [i]), U".");
@@ -202,7 +202,7 @@ void structCollection :: v_readBinary (FILE *f, int formatVersion) {
 		int32_t l_size = bingeti4 (f);
 		if (Melder_debug == 44)
 			Melder_casual (U"structCollection :: v_readBinary: Reading ", l_size, U" objects");
-		Collection_init (this, NULL, l_size);
+		Collection_init (this, nullptr, l_size);
 		for (int32_t i = 1; i <= l_size; i ++) {
 			autostring8 klas = bingets1 (f);
 			if (Melder_debug == 44)
@@ -268,7 +268,7 @@ void _Collection_insertItem (Collection me, Thing data, long pos) {
 
 void Collection_addItem (Collection me, Thing data) {
 	try {
-		Melder_assert (data != NULL);
+		Melder_assert (data != nullptr);
 		long index = my v_position (data);
 		if (index != 0) {
 			_Collection_insertItem (me, data, index);
@@ -348,7 +348,7 @@ void Ordered_init (Ordered me, ClassInfo itemClass, long initialMaximumLength) {
 
 Ordered Ordered_create (void) {
 	autoOrdered me = Thing_new (Ordered);
-	Ordered_init (me.peek(), NULL, 10);
+	Ordered_init (me.peek(), nullptr, 10);
 	return me.transfer();
 }
 
@@ -533,7 +533,7 @@ long SortedSetOfString_lookUp (SortedSetOfString me, const char32 *string) {
 
 void SortedSetOfString_addString (SortedSetOfString me, const char32 *string) {
 	static SimpleString simp;
-	if (simp == NULL) {
+	if (! simp) {
 		simp = SimpleString_create (U"");
 		Melder_free (simp -> string);
 	}

@@ -1730,7 +1730,7 @@ DO
 	LOOP {
 		iam (Sound);
 		autoIntensity thee = Sound_to_Intensity (me,
-			GET_REAL (U"Minimum pitch"), GET_REAL (U"Time step"), FALSE);
+			GET_REAL (U"Minimum pitch"), GET_REAL (U"Time step"), false);
 		praat_new (thee.transfer(), my name);
 	}
 END2 }

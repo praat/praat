@@ -1086,7 +1086,7 @@ DTW Pitches_to_DTW (Pitch me, Pitch thee, double vuv_costs, double time_weight, 
 
 DurationTier DTW_to_DurationTier (DTW me) {
 	(void) me;
-	DurationTier thee = NULL;
+	DurationTier thee = nullptr;
 	return thee;
 }
 

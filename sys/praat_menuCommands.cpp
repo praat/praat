@@ -122,7 +122,8 @@ GuiMenuItem praat_addMenuCommand (const char32 *window, const char32 *menu, cons
 	const char32 *after, unsigned long flags, UiCallback callback)
 {
 	long position;
-	int depth = flags, unhidable = FALSE, hidden = FALSE, key = 0;
+	int depth = flags, key = 0;
+	bool unhidable = false, hidden = false;
 	unsigned long guiFlags = 0;
 	if (flags > 7) {
 		depth = ((flags & praat_DEPTH_7) >> 16);
@@ -351,7 +352,7 @@ void praat_hideMenuCommand (const char32 *window, const char32 *menu, const char
 	if (! found) return;
 	praat_Command command = & theCommands [found];
 	if (! command -> hidden && ! command -> unhidable) {
-		command -> hidden = TRUE;
+		command -> hidden = true;
 		if (praatP.phase >= praat_READING_BUTTONS) command -> toggled = ! command -> toggled;
 		if (command -> button) GuiThing_hide (command -> button);
 	}
@@ -363,7 +364,7 @@ void praat_showMenuCommand (const char32 *window, const char32 *menu, const char
 	if (! found) return;
 	praat_Command command = & theCommands [found];
 	if (command -> hidden) {
-		command -> hidden = FALSE;
+		command -> hidden = false;
 		if (praatP.phase >= praat_READING_BUTTONS) command -> toggled = ! command -> toggled;
 		if (command -> button) GuiThing_show (command -> button);
 	}
@@ -396,7 +397,7 @@ void praat_addFixedButtonCommand (GuiForm parent, const char32 *title, UiCallbac
 	my window = Melder_dup_f (U"Objects");
 	my title = title;
 	my callback = callback;
-	my unhidable = TRUE;
+	my unhidable = true;
 	if (theCurrentPraatApplication -> batch) {
 		my button = NULL;
 	} else {

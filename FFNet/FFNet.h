@@ -155,7 +155,7 @@ void FFNet_propagateToLayer (FFNet me, const double input[], double activity[], 
 
 void FFNet_propagate (FFNet me, const double input[], double output[]);
 /* step (1) feed forward input from "input layer" to "output layer"
- * if output != NULL the output activity is copied into output.
+ * if output != nullptr the output activity is copied into output.
  * postcondition: my activities defined
  */
 

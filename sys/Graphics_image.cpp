@@ -201,7 +201,7 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 			bitmapInfo. header.biClrUsed = 0;
 			bitmapInfo. header.biClrImportant = 0;
 			bitmap = CreateDIBSection (my d_gdiGraphicsContext /* ignored */, (CONST BITMAPINFO *) & bitmapInfo,
-				DIB_RGB_COLORS, (VOID **) & bits, NULL, 0);
+				DIB_RGB_COLORS, (VOID **) & bits, nullptr, 0);
 		#elif mac
 			long bytesPerRow = (clipx2 - clipx1) * 4;
 			Melder_assert (bytesPerRow > 0);
@@ -275,7 +275,7 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 					} \
 				}
 		#else
-			#define ROW_START_ADDRESS  NULL
+			#define ROW_START_ADDRESS  nullptr
 			#define PUT_PIXEL
 		#endif
 		if (interpolate) {
@@ -411,34 +411,34 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 			//	bits, (CONST BITMAPINFO *) & bitmapInfo, DIB_RGB_COLORS, SRCCOPY);
 		#elif mac
 			CGImageRef image;
-			static CGColorSpaceRef colourSpace = NULL;
-			if (colourSpace == NULL) {
+			static CGColorSpaceRef colourSpace = nullptr;
+			if (! colourSpace) {
 				colourSpace = CGColorSpaceCreateWithName (kCGColorSpaceGenericRGB);   // used to be kCGColorSpaceUserRGB
-				Melder_assert (colourSpace != NULL);
+				Melder_assert (colourSpace != nullptr);
 			}
 			if (1) {
-				CGDataProviderRef dataProvider = CGDataProviderCreateWithData (NULL,
+				CGDataProviderRef dataProvider = CGDataProviderCreateWithData (nullptr,
 					imageData,
 					bytesPerRow * numberOfRows,
 					_mac_releaseDataCallback   // we need this because we cannot release the image data immediately after drawing,
 						// because in PDF files the imageData has to stay available through EndPage
 				);
-				Melder_assert (dataProvider != NULL);
+				Melder_assert (dataProvider != nullptr);
 				image = CGImageCreate (clipx2 - clipx1, numberOfRows,
-					8, 32, bytesPerRow, colourSpace, kCGImageAlphaNone, dataProvider, NULL, false, kCGRenderingIntentDefault);
+					8, 32, bytesPerRow, colourSpace, kCGImageAlphaNone, dataProvider, nullptr, false, kCGRenderingIntentDefault);
 				CGDataProviderRelease (dataProvider);
 			} else if (0) {
-				Melder_assert (CGBitmapContextCreate != NULL);
+				Melder_assert (CGBitmapContextCreate != nullptr);
 				CGContextRef bitmaptest = CGBitmapContextCreate (imageData, 100, 100,
 					8, 800, colourSpace, 0);
-				Melder_assert (bitmaptest != NULL);
+				Melder_assert (bitmaptest != nullptr);
 				CGContextRef bitmap = CGBitmapContextCreate (NULL/*imageData*/, clipx2 - clipx1, numberOfRows,
 					8, bytesPerRow, colourSpace, kCGImageAlphaLast);
-				Melder_assert (bitmap != NULL);
+				Melder_assert (bitmap != nullptr);
 				image = CGBitmapContextCreateImage (bitmap);
 				// release bitmap?
 			}
-			Melder_assert (image != NULL);
+			Melder_assert (image != nullptr);
 			GraphicsQuartz_initDraw (me);
 			CGContextDrawImage (my d_macGraphicsContext, CGRectMake (clipx1, clipy2, clipx2 - clipx1, clipy1 - clipy2), image);
 			GraphicsQuartz_exitDraw (me);
@@ -688,27 +688,27 @@ static void cellArrayOrImage (Graphics me, double **z_float, double_rgbt **z_rgb
 
 void Graphics_cellArray (Graphics me, double **z, long ix1, long ix2, double x1WC, double x2WC,
 	long iy1, long iy2, double y1WC, double y2WC, double minimum, double maximum)
-{ cellArrayOrImage (me, z, NULL, NULL, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, false); }
+{ cellArrayOrImage (me, z, nullptr, nullptr, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, false); }
 
 void Graphics_cellArray_colour (Graphics me, double_rgbt **z, long ix1, long ix2, double x1WC, double x2WC,
 	long iy1, long iy2, double y1WC, double y2WC, double minimum, double maximum)
-{ cellArrayOrImage (me, NULL, z, NULL, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, false); }
+{ cellArrayOrImage (me, nullptr, z, nullptr, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, false); }
 
 void Graphics_cellArray8 (Graphics me, unsigned char **z, long ix1, long ix2, double x1WC, double x2WC,
 	long iy1, long iy2, double y1WC, double y2WC, unsigned char minimum, unsigned char maximum)
-{ cellArrayOrImage (me, NULL, NULL, z, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, false); }
+{ cellArrayOrImage (me, nullptr, nullptr, z, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, false); }
 
 void Graphics_image (Graphics me, double **z, long ix1, long ix2, double x1WC, double x2WC,
 	long iy1, long iy2, double y1WC, double y2WC, double minimum, double maximum)
-{ cellArrayOrImage (me, z, NULL, NULL, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, true); }
+{ cellArrayOrImage (me, z, nullptr, nullptr, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, true); }
 
 void Graphics_image_colour (Graphics me, double_rgbt **z, long ix1, long ix2, double x1WC, double x2WC,
 	long iy1, long iy2, double y1WC, double y2WC, double minimum, double maximum)
-{ cellArrayOrImage (me, NULL, z, NULL, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, true); }
+{ cellArrayOrImage (me, nullptr, z, nullptr, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, true); }
 
 void Graphics_image8 (Graphics me, unsigned char **z, long ix1, long ix2, double x1WC, double x2WC,
 	long iy1, long iy2, double y1WC, double y2WC, unsigned char minimum, unsigned char maximum)
-{ cellArrayOrImage (me, NULL, NULL, z, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, true); }
+{ cellArrayOrImage (me, nullptr, nullptr, z, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, true); }
 
 static void _GraphicsScreen_imageFromFile (GraphicsScreen me, const char32 *relativeFileName, double x1, double x2, double y1, double y2) {
 	long x1DC = wdx (x1), x2DC = wdx (x2), y1DC = wdy (y1), y2DC = wdy (y2);
@@ -737,7 +737,7 @@ static void _GraphicsScreen_imageFromFile (GraphicsScreen me, const char32 *rela
 					z [iy] [ix]. transparency = photo -> d_transparency -> z [iy] [ix];
 				}
 			}
-			_cellArrayOrImage (me, NULL, z.peek(), NULL,
+			_cellArrayOrImage (me, nullptr, z.peek(), nullptr,
 				1, photo -> nx, x1DC, x2DC, 1, photo -> ny, y1DC, y2DC,
 				0.0, 1.0,
 				//wdx (my d_x1WC), wdx (my d_x2WC), wdy (my d_y1WC), wdy (my d_y2WC),   // in case of clipping
@@ -771,15 +771,15 @@ static void _GraphicsScreen_imageFromFile (GraphicsScreen me, const char32 *rela
 		Melder_relativePathToFile (relativeFileName, & file);
 		char utf8 [500];
 		Melder_str32To8bitFileRepresentation_inline (file. path, utf8);
-		CFStringRef path = CFStringCreateWithCString (NULL, utf8, kCFStringEncodingUTF8);
-		CFURLRef url = CFURLCreateWithFileSystemPath (NULL, path, kCFURLPOSIXPathStyle, false);
+		CFStringRef path = CFStringCreateWithCString (nullptr, utf8, kCFStringEncodingUTF8);
+		CFURLRef url = CFURLCreateWithFileSystemPath (nullptr, path, kCFURLPOSIXPathStyle, false);
 		CFRelease (path);
-		CGImageSourceRef imageSource = CGImageSourceCreateWithURL (url, NULL);
+		CGImageSourceRef imageSource = CGImageSourceCreateWithURL (url, nullptr);
 		CFRelease (url);
-		if (imageSource != NULL) {
-			CGImageRef image = CGImageSourceCreateImageAtIndex (imageSource, 0, NULL);
+		if (imageSource) {
+			CGImageRef image = CGImageSourceCreateImageAtIndex (imageSource, 0, nullptr);
 			CFRelease (imageSource);
-			if (image != NULL) {
+			if (image) {
 				if (x1 == x2 && y1 == y2) {
 					width = CGImageGetWidth (image), x1DC -= width / 2, x2DC = x1DC + width;
 					height = CGImageGetHeight (image), y2DC -= height / 2, y1DC = y2DC + height;

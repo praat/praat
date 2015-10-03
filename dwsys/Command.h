@@ -82,6 +82,6 @@ int CommandHistory_offright (I);
 
 char32 *CommandHistory_commandName (I, long offsetFromCurrent);
 /* offsetFromCurrent may be zero, positive or negative. */
-/* References outside the list will return NULL. */
+/* References outside the list will return nullptr. */
 
 #endif /* _Command_h_ */

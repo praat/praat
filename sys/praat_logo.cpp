@@ -31,7 +31,7 @@ static void logo_defaultDraw (Graphics g) {
 	Graphics_setFont (g, kGraphics_font_TIMES);
 	Graphics_setFontSize (g, 24);
 	Graphics_setFontStyle (g, Graphics_ITALIC);
-	Graphics_setUnderscoreIsSubscript (g, FALSE);   // because program names may contain underscores
+	Graphics_setUnderscoreIsSubscript (g, false);   // because program names may contain underscores
 	Graphics_text (g, 0.5, 0.6, praatP.title);
 	Graphics_setFontStyle (g, 0);
 	Graphics_setFontSize (g, 12);

@@ -48,14 +48,14 @@ Thing_implement (ERPTier, Function, 0);
 
 void structERPTier :: v_shiftX (double xfrom, double xto) {
 	ERPTier_Parent :: v_shiftX (xfrom, xto);
-	//if (our sound    != NULL)  Function_shiftXTo (our sound,    xfrom, xto);
-	//if (our textgrid != NULL)  Function_shiftXTo (our textgrid, xfrom, xto);
+	//if (our sound   )  Function_shiftXTo (our sound,    xfrom, xto);
+	//if (our textgrid)  Function_shiftXTo (our textgrid, xfrom, xto);
 }
 
 void structERPTier :: v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
 	ERPTier_Parent :: v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
-	//if (our sound    != NULL)  our sound    -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
-	//if (our textgrid != NULL)  our textgrid -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
+	//if (our sound   )  our sound    -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
+	//if (our textgrid)  our textgrid -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
 }
 
 long ERPTier_getChannelNumber (ERPTier me, const char32 *channelName) {
@@ -133,7 +133,7 @@ ERPTier EEG_to_ERPTier_bit (EEG me, double fromTime, double toTime, int markerBi
 
 static PointProcess TextGrid_getStartingPoints_multiNumeric (TextGrid me, uint16_t number) {
 	try {
-		autoPointProcess thee = NULL;
+		autoPointProcess thee;
 		int numberOfBits = my numberOfTiers();
 		for (int ibit = 0; ibit < numberOfBits; ibit ++) {
 			(void) TextGrid_checkSpecifiedTierIsIntervalTier (me, ibit + 1);

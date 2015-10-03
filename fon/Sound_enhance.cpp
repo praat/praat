@@ -60,7 +60,7 @@ Sound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 
 		for (long channel = 1; channel <= my ny; channel ++) {
 			autoSound channelSound = Sound_extractChannel (me, channel);
-			autoSpectrum orgspec = Sound_to_Spectrum (channelSound.peek(), TRUE);
+			autoSpectrum orgspec = Sound_to_Spectrum (channelSound.peek(), true);
 
 			/*
 			 * Keep the part of the sound that is outside the filter bank.
@@ -92,7 +92,7 @@ Sound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 				n = intensity -> nx;
 				amp = intensity -> z [1];
 				for (long i = 1; i <= n; i ++) amp [i] = 10 * log10 (amp [i] * amp [i] + 1e-6);
-				autoSpectrum intensityFilter = Sound_to_Spectrum (intensity.peek(), TRUE);
+				autoSpectrum intensityFilter = Sound_to_Spectrum (intensity.peek(), true);
 				n = intensityFilter -> nx;
 				for (long i = 1; i <= n; i ++) {
 					double frequency = intensityFilter -> x1 + (i - 1) * intensityFilter -> dx;

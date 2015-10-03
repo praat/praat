@@ -1412,10 +1412,10 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier
 	 * Draw a grey bar and a selection button at the cursor position.
 	 */
 	if (my d_startSelection == my d_endSelection && my d_startSelection >= my d_startWindow && my d_startSelection <= my d_endWindow) {
-		int cursorAtBoundary = FALSE;
+		bool cursorAtBoundary = false;
 		for (iinterval = 2; iinterval <= ninterval; iinterval ++) {
 			TextInterval interval = (TextInterval) tier -> intervals -> item [iinterval];
-			if (interval -> xmin == my d_startSelection) cursorAtBoundary = TRUE;
+			if (interval -> xmin == my d_startSelection) cursorAtBoundary = true;
 		}
 		if (! cursorAtBoundary) {
 			double dy = Graphics_dyMMtoWC (my d_graphics, 1.5);
@@ -1468,10 +1468,10 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier
 		}
 
 	}
-	Graphics_setPercentSignIsItalic (my d_graphics, TRUE);
-	Graphics_setNumberSignIsBold (my d_graphics, TRUE);
-	Graphics_setCircumflexIsSuperscript (my d_graphics, TRUE);
-	Graphics_setUnderscoreIsSubscript (my d_graphics, TRUE);
+	Graphics_setPercentSignIsItalic (my d_graphics, true);
+	Graphics_setNumberSignIsBold (my d_graphics, true);
+	Graphics_setCircumflexIsSuperscript (my d_graphics, true);
+	Graphics_setUnderscoreIsSubscript (my d_graphics, true);
 }
 
 static void do_drawTextTier (TextGridEditor me, TextTier tier, int itier) {
@@ -1490,10 +1490,10 @@ static void do_drawTextTier (TextGridEditor me, TextTier tier, int itier) {
 	 * Draw a grey bar and a selection button at the cursor position.
 	 */
 	if (my d_startSelection == my d_endSelection && my d_startSelection >= my d_startWindow && my d_startSelection <= my d_endWindow) {
-		int cursorAtPoint = FALSE;
+		bool cursorAtPoint = false;
 		for (ipoint = 1; ipoint <= npoint; ipoint ++) {
 			TextPoint point = (TextPoint) tier -> points -> item [ipoint];
-			if (point -> number == my d_startSelection) cursorAtPoint = TRUE;
+			if (point -> number == my d_startSelection) cursorAtPoint = true;
 		}
 		if (! cursorAtPoint) {
 			double dy = Graphics_dyMMtoWC (my d_graphics, 1.5);
@@ -1537,10 +1537,10 @@ static void do_drawTextTier (TextGridEditor me, TextTier tier, int itier) {
 			if (point -> mark) Graphics_text (my d_graphics, t, 0.5, point -> mark);
 		}
 	}
-	Graphics_setPercentSignIsItalic (my d_graphics, TRUE);
-	Graphics_setNumberSignIsBold (my d_graphics, TRUE);
-	Graphics_setCircumflexIsSuperscript (my d_graphics, TRUE);
-	Graphics_setUnderscoreIsSubscript (my d_graphics, TRUE);
+	Graphics_setPercentSignIsItalic (my d_graphics, true);
+	Graphics_setNumberSignIsBold (my d_graphics, true);
+	Graphics_setCircumflexIsSuperscript (my d_graphics, true);
+	Graphics_setUnderscoreIsSubscript (my d_graphics, true);
 }
 
 void structTextGridEditor :: v_draw () {
@@ -1680,32 +1680,32 @@ void structTextGridEditor :: v_draw () {
 	v_updateMenuItems_file ();
 }
 
-static void do_drawWhileDragging (TextGridEditor me, double numberOfTiers, int *selectedTier, double x, double soundY) {
+static void do_drawWhileDragging (TextGridEditor me, double numberOfTiers, bool selectedTier [], double x, double soundY) {
 	long itier;
 	for (itier = 1; itier <= numberOfTiers; itier ++) if (selectedTier [itier]) {
 		double ymin = soundY * (1.0 - (double) itier / numberOfTiers);
 		double ymax = soundY * (1.0 - (double) (itier - 1) / numberOfTiers);
-		Graphics_setLineWidth (my d_graphics, 7);
+		Graphics_setLineWidth (my d_graphics, 7.0);
 		Graphics_line (my d_graphics, x, ymin, x, ymax);
 	}
 	Graphics_setLineWidth (my d_graphics, 1);
-	Graphics_line (my d_graphics, x, 0, x, 1.01);
+	Graphics_line (my d_graphics, x, 0.0, x, 1.01);
 	Graphics_text (my d_graphics, x, 1.01, Melder_fixed (x, 6));
 }
 
 static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier, int shiftKeyPressed) {
 	TextGrid grid = (TextGrid) my data;
-	int itier, numberOfTiers = grid -> tiers -> size, itierDrop;
+	int numberOfTiers = grid -> tiers -> size, itierDrop;
 	double xWC = xbegin, yWC;
 	double leftDraggingBoundary = my tmin, rightDraggingBoundary = my tmax;   // initial dragging range
-	int selectedTier [100];
+	bool selectedTier [1000];
 	double soundY = _TextGridEditor_computeSoundY (me);
 
 	/*
 	 * Determine the set of selected boundaries and points, and the dragging range.
 	 */
-	for (itier = 1; itier <= numberOfTiers; itier ++) {
-		selectedTier [itier] = FALSE;   /* The default. */
+	for (int itier = 1; itier <= numberOfTiers; itier ++) {
+		selectedTier [itier] = false;   // the default
 		/*
 		 * If she has pressed the shift key, let her drag all the boundaries and points at this time.
 		 * Otherwise, let her only drag the boundary or point on the clicked tier.
@@ -1719,7 +1719,7 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 				if (ibound) {
 					TextInterval leftInterval = (TextInterval) intervalTier -> intervals -> item [ibound - 1];
 					TextInterval rightInterval = (TextInterval) intervalTier -> intervals -> item [ibound];
-					selectedTier [itier] = TRUE;
+					selectedTier [itier] = true;
 					/*
 					 * Prevent her to drag the boundary past its left or right neighbours on the same tier.
 					 */
@@ -1736,7 +1736,7 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 					 * Other than with boundaries on interval tiers,
 					 * points on text tiers can be dragged past their neighbours.
 					 */
-					selectedTier [itier] = TRUE;
+					selectedTier [itier] = true;
 				}
 			}
 		}
@@ -1817,7 +1817,7 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 
 	Editor_save (me, U"Drag");
 
-	for (itier = 1; itier <= numberOfTiers; itier ++) if (selectedTier [itier]) {
+	for (int itier = 1; itier <= numberOfTiers; itier ++) if (selectedTier [itier]) {
 		IntervalTier intervalTier;
 		TextTier textTier;
 		_AnyTier_identifyClass ((Function) grid -> tiers -> item [itier], & intervalTier, & textTier);
@@ -1871,7 +1871,8 @@ int structTextGridEditor :: v_click (double xclick, double yWC, bool shiftKeyPre
 	TextGrid grid = (TextGrid) our data;
 	double tmin, tmax, x, y;
 	long ntiers = grid -> tiers -> size, iClickedTier, iClickedInterval, iClickedPoint;
-	int clickedLeftBoundary = 0, nearBoundaryOrPoint, nearCursorCircle, drag = FALSE;
+	int clickedLeftBoundary = 0;
+	bool nearBoundaryOrPoint, nearCursorCircle, drag = false;
 	IntervalTier intervalTier;
 	TextTier textTier;
 	TextInterval interval = NULL;
@@ -1941,9 +1942,9 @@ int structTextGridEditor :: v_click (double xclick, double yWC, bool shiftKeyPre
 	/*
 	 * Where did she click?
 	 */
-	nearBoundaryOrPoint = tnear != NUMundefined && fabs (Graphics_dxWCtoMM (our d_graphics, xclick - tnear)) < 1.5;
-	nearCursorCircle = our d_startSelection == our d_endSelection && Graphics_distanceWCtoMM (our d_graphics, xclick, yWC,
-		our d_startSelection, (ntiers + 1 - iClickedTier) * soundY / ntiers - Graphics_dyMMtoWC (our d_graphics, 1.5)) < 1.5;
+	nearBoundaryOrPoint = ( tnear != NUMundefined && fabs (Graphics_dxWCtoMM (our d_graphics, xclick - tnear)) < 1.5 );
+	nearCursorCircle = ( our d_startSelection == our d_endSelection && Graphics_distanceWCtoMM (our d_graphics, xclick, yWC,
+		our d_startSelection, (ntiers + 1 - iClickedTier) * soundY / ntiers - Graphics_dyMMtoWC (our d_graphics, 1.5)) < 1.5 );
 
 	/*
 	 * Find out whether this is a click or a drag.
@@ -1953,7 +1954,7 @@ int structTextGridEditor :: v_click (double xclick, double yWC, bool shiftKeyPre
 		if (x < our d_startWindow) x = our d_startWindow;
 		if (x > our d_endWindow) x = our d_endWindow;
 		if (fabs (Graphics_dxWCtoMM (our d_graphics, x - xclick)) > 1.5) {
-			drag = TRUE;
+			drag = true;
 			break;
 		}
 	}
@@ -2100,12 +2101,12 @@ void structTextGridEditor :: v_updateText () {
 	}
 	//Melder_casual ("v_updateText in editor %ld %ls %d", this, name, (int) suppressRedraw);
 	if (our text) {
-		our suppressRedraw = TRUE;   // prevent valueChangedCallback from redrawing
+		our suppressRedraw = true;   // prevent valueChangedCallback from redrawing
 		trace (U"setting new text ", newText);
 		GuiText_setString (text, newText);
 		long cursor = str32len (newText);   // at end
 		GuiText_setSelection (text, cursor, cursor);
-		our suppressRedraw = FALSE;
+		our suppressRedraw = false;
 	}
 }
 

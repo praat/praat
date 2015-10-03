@@ -150,14 +150,14 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 	#elif defined (_WIN32)
 		HWAVEIN hWaveIn = 0;
 	#else
-		int fd = -1;   /* Other systems use stream I/O with a file descriptor. */
+		int fd = -1;   // other systems use stream I/O with a file descriptor
 		int fd_mixer = -1;
 	#endif
 	try {
 		long numberOfSamples, i;
-		int mulaw = FALSE;
-		int can16bit = TRUE;
-		int fakeMonoByStereo = FALSE;   /* Will be set to TRUE for systems (like MacOS X) that do not allow direct mono recording. */
+		bool mulaw = false;
+		bool can16bit = true;
+		bool fakeMonoByStereo = false;   // will be set to `true` for systems (like MacOS X) that do not allow direct mono recording
 
 		/* Declare system-dependent data structures. */
 

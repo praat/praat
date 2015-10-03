@@ -66,7 +66,7 @@ static void _Spectrogram_windowCorrection (Spectrogram me, long numberOfSamples_
 
 static Spectrum Sound_to_Spectrum_power (Sound me) {
 	try {
-		autoSpectrum thee = Sound_to_Spectrum (me, TRUE);
+		autoSpectrum thee = Sound_to_Spectrum (me, true);
 		double scale = 2.0 * thy dx / (my xmax - my xmin);
 
 		// factor '2' because we combine positive and negative frequencies

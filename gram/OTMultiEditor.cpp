@@ -228,7 +228,7 @@ void structOTMultiEditor :: v_draw () {
 	drawTableau_form2 = form2;
 	drawTableau_constraintsAreDrawnVertically = d_constraintsAreDrawnVertically;
 	HyperPage_picture (this, 20, tableauHeight, drawTableau);
-	Graphics_setAtSignIsLink (g, TRUE);
+	Graphics_setAtSignIsLink (g, true);
 }
 
 int structOTMultiEditor :: v_goToPage (const char32 *title) {

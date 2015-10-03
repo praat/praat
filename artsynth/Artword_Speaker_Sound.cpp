@@ -27,12 +27,9 @@ struct playInfo {
 	Graphics graphics;
 };
 
-static int playCallback (void *playClosure, int phase, double tmin, double tmax, double t) {
+static int playCallback (void *playClosure, int /* phase */, double /* tmin */, double /* tmax */, double t) {
 	struct playInfo *me = (struct playInfo *) playClosure;
 	static Art art;
-	(void) phase;
-	(void) tmin;
-	(void) tmax;
 	if (! art) art = Art_create ();
 	Artword_intoArt (my artword, art, t);
 	Graphics_clearWs (my graphics);
@@ -46,7 +43,7 @@ void Artword_Speaker_Sound_movie (Artword artword, Speaker speaker, Sound sound,
 		info. artword = artword;
 		info. speaker = speaker;
 		info. graphics = graphics;
-		autoSound mySound = sound ? NULL : Sound_createSimple (1, artword -> totalTime, 44100);
+		autoSound mySound = sound ? nullptr : Sound_createSimple (1, artword -> totalTime, 44100);
 		Sound_play (sound ? sound : mySound.peek(), playCallback, & info);
 	} catch (MelderError) {
 		Melder_throw (artword, U" & ", speaker, U": movie not played.");

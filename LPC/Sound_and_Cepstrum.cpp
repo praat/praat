@@ -112,7 +112,7 @@ Cepstrum Sound_to_Cepstrum_bw (Sound me) {
 
 Cepstrum Sound_to_Cepstrum (Sound me) {
 	try {
-		autoSpectrum spectrum = Sound_to_Spectrum (me, TRUE);
+		autoSpectrum spectrum = Sound_to_Spectrum (me, true);
 		autoCepstrum thee = Spectrum_to_Cepstrum (spectrum.peek());
 		return thee.transfer();
 	} catch (MelderError) {

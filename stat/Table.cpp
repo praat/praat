@@ -192,7 +192,7 @@ void Table_removeRow (Table me, long rowNumber) {
 		Table_checkSpecifiedRowNumberWithinRange (me, rowNumber);
 		Collection_removeItem (my rows, rowNumber);
 		for (long icol = 1; icol <= my numberOfColumns; icol ++)
-			my columnHeaders [icol]. numericized = FALSE;
+			my columnHeaders [icol]. numericized = false;
 	} catch (MelderError) {
 		Melder_throw (me, U": row ", rowNumber, U" not removed.");
 	}
@@ -247,7 +247,7 @@ void Table_insertRow (Table me, long rowNumber) {
 		 * Changes without error.
 		 */
 		for (long icol = 1; icol <= my numberOfColumns; icol ++)
-			my columnHeaders [icol]. numericized = FALSE;
+			my columnHeaders [icol]. numericized = false;
 	} catch (MelderError) {
 		Melder_throw (me, U": row ", rowNumber, U" not inserted.");
 	}
@@ -387,7 +387,7 @@ void Table_setStringValue (Table me, long rowNumber, long columnNumber, const ch
 		TableRow row = static_cast <TableRow> (my rows -> item [rowNumber]);
 		Melder_free (row -> cells [columnNumber]. string);
 		row -> cells [columnNumber]. string = newValue.transfer();
-		my columnHeaders [columnNumber]. numericized = FALSE;
+		my columnHeaders [columnNumber]. numericized = false;
 	} catch (MelderError) {
 		Melder_throw (me, U": string value not set.");
 	}
@@ -407,7 +407,7 @@ void Table_setNumericValue (Table me, long rowNumber, long columnNumber, double 
 		TableRow row = static_cast <TableRow> (my rows -> item [rowNumber]);
 		Melder_free (row -> cells [columnNumber]. string);
 		row -> cells [columnNumber]. string = newValue.transfer();
-		my columnHeaders [columnNumber]. numericized = FALSE;
+		my columnHeaders [columnNumber]. numericized = false;
 	} catch (MelderError) {
 		Melder_throw (me, U": numeric value not set.");
 	}
@@ -500,7 +500,7 @@ void Table_numericize_Assert (Table me, long columnNumber) {
 		}
 		sortRowsByIndex_NoError (me);
 	}
-	my columnHeaders [columnNumber]. numericized = TRUE;
+	my columnHeaders [columnNumber]. numericized = true;
 }
 
 static void Table_numericize_checkDefined (Table me, long columnNumber) {
@@ -1363,7 +1363,7 @@ void Table_formula_columnRange (Table me, long fromColumn, long toColumn, const 
 	try {
 		Table_checkSpecifiedColumnNumberWithinRange (me, fromColumn);
 		Table_checkSpecifiedColumnNumberWithinRange (me, toColumn);
-		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_UNKNOWN, TRUE);
+		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_UNKNOWN, true);
 		for (long irow = 1; irow <= my rows -> size; irow ++) {
 			for (long icol = fromColumn; icol <= toColumn; icol ++) {
 				struct Formula_Result result;

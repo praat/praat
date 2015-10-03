@@ -30,7 +30,7 @@ Transition Distributions_to_Transition (Distributions underlying, Distributions 
 	Transition adjacency, int greedy)
 {
 	try {
-		if (underlying == NULL) return NULL;
+		if (! underlying) return nullptr;
 
 		/*
 		 * Preconditions: range check and matrix matching.
@@ -46,7 +46,7 @@ Transition Distributions_to_Transition (Distributions underlying, Distributions 
 		/*
 		 * Defaults.
 		 */
-		if (surface == NULL) surface = underlying;
+		if (! surface) surface = underlying;
 
 		/*
 		 * Create the output object.

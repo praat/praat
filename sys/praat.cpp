@@ -175,7 +175,7 @@ void praat_deselectAll (void) { int IOBJECT; WHERE (1) praat_deselect (IOBJECT);
 
 void praat_select (int IOBJECT) {
 	if (SELECTED) return;
-	SELECTED = TRUE;
+	SELECTED = true;
 	theCurrentPraatObjects -> totalSelection += 1;
 	Thing object = theCurrentPraatObjects -> list [IOBJECT]. object;
 	Melder_assert (object != NULL);
@@ -1415,7 +1415,7 @@ static void executeStartUpFile (MelderDir startUpDirectory, const char32 *fileNa
 							trace (U"a tab callback exists");
 							void *tabClosure = g_object_get_data (G_OBJECT (widget), "tabClosure");
 							tabCallback (widget, tabClosure);
-							return TRUE;
+							return true;
 						}
 					}
 				} else if ((event -> state & GDK_MODIFIER_MASK) == GDK_SHIFT_MASK) {
@@ -1427,13 +1427,13 @@ static void executeStartUpFile (MelderDir startUpDirectory, const char32 *fileNa
 							trace (U"a shift tab callback exists");
 							void *tabClosure = g_object_get_data (G_OBJECT (widget), "shiftTabClosure");
 							tabCallback (widget, tabClosure);
-							return TRUE;
+							return true;
 						}
 					}
 				}
 			}
 			trace (U"end");
-			return FALSE;   // pass event on
+			return false;   // pass event on
 		}
 	#endif
 #endif

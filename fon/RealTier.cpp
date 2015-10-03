@@ -465,7 +465,7 @@ RealTier PointProcess_upto_RealTier (PointProcess me, double value, ClassInfo kl
 
 void RealTier_formula (RealTier me, const char32 *expression, Interpreter interpreter, RealTier thee) {
 	try {
-		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE);
+		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 		if (thee == NULL) thee = me;
 		for (long icol = 1; icol <= my numberOfPoints (); icol ++) {
 			struct Formula_Result result;

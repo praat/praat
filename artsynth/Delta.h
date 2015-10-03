@@ -26,10 +26,10 @@ struct structDelta_Tube
 {
 	/* Structure: static. */
 
-	Delta_Tube left1;   /* If NULL: closed at left edge. */
-	Delta_Tube left2;   /* If not NULL: two merging streams. */
-	Delta_Tube right1;  /* If NULL: radiation at right edge. */
-	Delta_Tube right2;  /* If not NULL: a stream splitting into two. */
+	Delta_Tube left1;   /* If null: closed at left edge. */
+	Delta_Tube left2;   /* If not null: two merging streams. */
+	Delta_Tube right1;  /* If null: radiation at right edge. */
+	Delta_Tube right2;  /* If not null: a stream splitting into two. */
 	long parallel;   /* Parallel subdivision. */
 
 	/* Controlled by articulation: quasistatic. */
@@ -71,7 +71,7 @@ Delta Delta_create (int numberOfTubes);
 		numberOfTubes >= 1;
 	Postconditions:
 		result -> numberOfTubes = numberOfTubes;
-		all members of result -> tube [1..numberOfTubes] are zero or NULL,
+		all members of result -> tube [1..numberOfTubes] are zero or null,
 		except 'parallel', which is 1.
 */
 

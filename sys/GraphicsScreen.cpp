@@ -44,7 +44,7 @@
 	static bool _GraphicsWindows_tryToInitializeGdiPlus (void) {
 		Gdiplus::GdiplusStartupInput gdiplusStartupInput;
 		ULONG_PTR gdiplusToken;
-		GdiplusStartup (& gdiplusToken, & gdiplusStartupInput, NULL);
+		GdiplusStartup (& gdiplusToken, & gdiplusStartupInput, nullptr);
 		return true;
 	}
 #elif mac
@@ -60,16 +60,16 @@ Thing_implement (GraphicsScreen, Graphics, 0);
 void structGraphicsScreen :: v_destroy () {
 	#if cairo
 		#if ALLOW_GDK_DRAWING
-			if (d_gdkGraphicsContext != NULL) {
+			if (d_gdkGraphicsContext) {
 				g_object_unref (d_gdkGraphicsContext);			
-				d_gdkGraphicsContext = NULL;
+				d_gdkGraphicsContext = nullptr;
 			}
 		#endif
-		if (d_cairoGraphicsContext != NULL) {
+		if (d_cairoGraphicsContext) {
 			cairo_destroy (d_cairoGraphicsContext);
-			d_cairoGraphicsContext = NULL;
+			d_cairoGraphicsContext = nullptr;
 		}
-		if (d_cairoSurface != NULL) {
+		if (d_cairoSurface) {
 			cairo_surface_flush (d_cairoSurface);
 			if (d_isPng) {
 				#if 1
@@ -83,25 +83,25 @@ void structGraphicsScreen :: v_destroy () {
 			cairo_surface_destroy (d_cairoSurface);
 		}
 	#elif win
-		if (d_gdiGraphicsContext != NULL) {
+		if (d_gdiGraphicsContext) {
 			SelectPen (d_gdiGraphicsContext, GetStockPen (BLACK_PEN));
 			SelectBrush (d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));
 		}
-		if (d_winPen != NULL) {
+		if (d_winPen) {
 			DeleteObject (d_winPen);
-			d_winPen = NULL;
+			d_winPen = nullptr;
 		}
-		if (d_winBrush != NULL) {
+		if (d_winBrush) {
 			DeleteObject (d_winBrush);
-			d_winBrush = NULL;
+			d_winBrush = nullptr;
 		}
 		if (d_isPng && d_gdiBitmap) {
 			trace (U"saving the filled bitmap to a PNG file");
 			/*
 			 * Deselect the bitmap from the device context (otherwise GetDIBits won't work).
 			 */
-			//SelectBitmap (d_gdiGraphicsContext, NULL);
-			//SelectBitmap (d_gdiGraphicsContext, CreateCompatibleBitmap (NULL, 1, 1));
+			//SelectBitmap (d_gdiGraphicsContext, nullptr);
+			//SelectBitmap (d_gdiGraphicsContext, CreateCompatibleBitmap (nullptr, 1, 1));
 
 			BITMAP bitmap;
 			GetObject (d_gdiBitmap, sizeof (BITMAP), & bitmap);
@@ -127,7 +127,7 @@ void structGraphicsScreen :: v_destroy () {
 			unsigned char *bits = Melder_calloc (unsigned char, 4 * width * height);
 			//HANDLE handle = GlobalAlloc (GHND, 4 * width * height);
 			//unsigned char *bits = (unsigned char *) GlobalLock (handle);
-			int numberOfLinesScanned = GetDIBits (GetDC (NULL), d_gdiBitmap, 0, height, bits, (BITMAPINFO *) & bitmapInfo, DIB_RGB_COLORS);
+			int numberOfLinesScanned = GetDIBits (GetDC (nullptr), d_gdiBitmap, 0, height, bits, (BITMAPINFO *) & bitmapInfo, DIB_RGB_COLORS);
 			trace (numberOfLinesScanned, U" lines scanned");
 
 			trace (U"creating a savable bitmap");
@@ -156,7 +156,7 @@ void structGraphicsScreen :: v_destroy () {
 			Gdiplus::GetImageEncoders (numberOfImageEncoders, sizeOfImageEncoderArray, imageEncoderInfos);
 			for (int iencoder = 0; iencoder < numberOfImageEncoders; iencoder ++) {
 				if (! wcscmp (imageEncoderInfos [iencoder]. MimeType, L"image/png")) {
-					gdiplusBitmap. Save (Melder_peek32toW (our d_file. path), & imageEncoderInfos [iencoder]. Clsid, NULL);
+					gdiplusBitmap. Save (Melder_peek32toW (our d_file. path), & imageEncoderInfos [iencoder]. Clsid, nullptr);
 				}
 			}
 
@@ -175,15 +175,15 @@ void structGraphicsScreen :: v_destroy () {
 		 * No ReleaseDC here, because we have not created it ourselves,
 		 * not even with GetDC. Is this a BUG?
 		 */
-		d_gdiGraphicsContext = NULL;
+		d_gdiGraphicsContext = nullptr;
 	#elif mac
         #if useCarbon
-            if (d_macPort == NULL && ! d_isPng) {
+            if (! d_macPort && ! d_isPng) {
                 CGContextEndPage (d_macGraphicsContext);
                 CGContextRelease (d_macGraphicsContext);
             }
         #else
-            if (d_macView == NULL && ! d_isPng) {
+            if (! d_macView && ! d_isPng) {
                 CGContextEndPage (d_macGraphicsContext);
                 CGContextRelease (d_macGraphicsContext);
             }
@@ -193,7 +193,7 @@ void structGraphicsScreen :: v_destroy () {
 			 * Turn the offscreen bitmap into an image.
 			 */
 			CGImageRef image = CGBitmapContextCreateImage (d_macGraphicsContext);
-			Melder_assert (image != NULL);
+			Melder_assert (image);
 			//CGContextRelease (d_macGraphicsContext);
 			/*
 			 * Create a dictionary with resolution properties.
@@ -202,17 +202,17 @@ void structGraphicsScreen :: v_destroy () {
 			keys [0] = kCGImagePropertyDPIWidth;
 			keys [1] = kCGImagePropertyDPIHeight;
 			float resolution_float = resolution;
-			values [1] = values [0] = CFNumberCreate (NULL, kCFNumberFloatType, & resolution_float);
-			CFDictionaryRef properties = CFDictionaryCreate (NULL,
+			values [1] = values [0] = CFNumberCreate (nullptr, kCFNumberFloatType, & resolution_float);
+			CFDictionaryRef properties = CFDictionaryCreate (nullptr,
 				(const void **) keys, (const void **) values, 2,
 				& kCFTypeDictionaryKeyCallBacks, & kCFTypeDictionaryValueCallBacks);
-			Melder_assert (properties != NULL);
+			Melder_assert (properties);
 			/*
 			 */
-			CFURLRef url = CFURLCreateWithFileSystemPath (NULL,
+			CFURLRef url = CFURLCreateWithFileSystemPath (nullptr,
 				(CFStringRef) Melder_peek32toCfstring (d_file. path), kCFURLPOSIXPathStyle, false);
-			CGImageDestinationRef imageDestination = CGImageDestinationCreateWithURL (url, kUTTypePNG, 1, NULL);
-			if (imageDestination != NULL) {
+			CGImageDestinationRef imageDestination = CGImageDestinationCreateWithURL (url, kUTTypePNG, 1, nullptr);
+			if (imageDestination) {
 				CGImageDestinationAddImage (imageDestination, image, properties);
 				CGImageDestinationFinalize (imageDestination);
 				CFRelease (imageDestination);
@@ -231,7 +231,7 @@ void structGraphicsScreen :: v_destroy () {
 void structGraphicsScreen :: v_flushWs () {
 	#if cairo
 		// Ik weet niet of dit is wat het zou moeten zijn ;)
-		//gdk_window_process_updates (d_window, TRUE);   // this "works" but is incorrect because it's not the expose events that have to be carried out
+		//gdk_window_process_updates (d_window, true);   // this "works" but is incorrect because it's not the expose events that have to be carried out
 		//gdk_window_flush (d_window);
 		gdk_flush ();
 		// TODO: een aanroep die de eventuele grafische buffer ledigt,
@@ -239,7 +239,7 @@ void structGraphicsScreen :: v_flushWs () {
 	#elif cocoa
 		if (d_drawingArea) {
 			GuiShell shell = d_drawingArea -> d_shell;
-			Melder_assert (shell != NULL);
+			Melder_assert (shell);
         	[shell -> d_cocoaWindow   flushWindow];
 		}
 	#elif win
@@ -247,7 +247,7 @@ void structGraphicsScreen :: v_flushWs () {
 	#elif mac
 		if (d_drawingArea) {
 			GuiShell shell = d_drawingArea -> d_shell;
-			Melder_assert (shell != NULL);
+			Melder_assert (shell);
 			GuiShell_drain (shell);
 		}
 	#endif
@@ -274,7 +274,7 @@ void structGraphicsScreen :: v_clearWs () {
 			rect.y = this -> d_y2DC;
 			rect.height = this -> d_y1DC - this -> d_y2DC;
 		}
-		if (d_cairoGraphicsContext == NULL) {
+		if (! d_cairoGraphicsContext) {
 			trace (U"clear and null");
 			//gdk_window_clear (this -> window);
 			//gdk_window_invalidate_rect (this -> window, & rect, true);   // BUG: it seems weird that this is necessary.
@@ -408,7 +408,7 @@ void structGraphicsScreen :: v_updateWs () {
     
 	#elif win
 		//clear (this); // lll
-		if (d_winWindow) InvalidateRect (d_winWindow, NULL, TRUE);
+		if (d_winWindow) InvalidateRect (d_winWindow, nullptr, true);
 	#elif mac
 		Rect r;
 		if (d_drawingArea) GuiMac_clipOn (d_drawingArea -> d_widget);   // to prevent invalidating invisible parts of the canvas
@@ -446,12 +446,12 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *void
 			my d_gdiGraphicsContext = (HDC) voidWindow;
 		} else if (voidDisplay) {
 			my d_gdiGraphicsContext = (HDC) voidDisplay;
-			my metafile = TRUE;
+			my metafile = true;
 		} else {
 			my d_winWindow = (HWND) voidWindow;
 			my d_gdiGraphicsContext = GetDC (my d_winWindow);   // window must have a constant display context; see XtInitialize ()
 		}
-		Melder_assert (my d_gdiGraphicsContext != NULL);
+		Melder_assert (my d_gdiGraphicsContext);
 		SetBkMode (my d_gdiGraphicsContext, TRANSPARENT);   // not the default!
 		/*
 		 * Create pens and brushes.
@@ -543,7 +543,7 @@ Graphics Graphics_create_screenPrinter (void *display, void *window) {
 static void cb_move (GuiObject w, XtPointer void_me, XtPointer call) {
 	iam (GraphicsScreen);
 	Dimension width, height;
-	XtVaGetValues (w, XmNwidth, & width, XmNheight, & height, NULL);
+	XtVaGetValues (w, XmNwidth, & width, XmNheight, & height, nullptr);
 
 	/* The four values returned are probably equal to the previous ones.
 	 * However, the following call forces a new computation of the device coordinates
@@ -576,7 +576,7 @@ Graphics Graphics_create_xmdrawingarea (GuiDrawingArea w) {
 		_GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
 	#if mac
-		Graphics_init (me, Gui_getResolution (NULL));
+		Graphics_init (me, Gui_getResolution (nullptr));
 		#if useCarbon
             GraphicsScreen_init (me,
                 XtDisplay (my d_drawingArea -> d_widget),
@@ -604,7 +604,7 @@ Graphics Graphics_create_xmdrawingarea (GuiDrawingArea w) {
 		trace (U"requested ", realsize.width, U" x ", realsize.height, U", allocated ", allocation.width, U" x ", allocation.height);
 		Graphics_setWsViewport ((Graphics) me, 0, realsize.width, 0, realsize.height);
 	#elif motif
-		XtVaGetValues (my d_drawingArea -> d_widget, XmNwidth, & width, XmNheight, & height, NULL);
+		XtVaGetValues (my d_drawingArea -> d_widget, XmNwidth, & width, XmNheight, & height, nullptr);
 		Graphics_setWsViewport ((Graphics) me, 0, width, 0, height);
     #elif cocoa
         NSView *view = (NSView *)my d_drawingArea -> d_widget;
@@ -651,10 +651,10 @@ Graphics Graphics_create_pngfile (MelderFile file, int resolution,
 		long stride = width * 4;
 		stride = (stride + 15) & ~15;   // CommonCode/AppDrawing.c: "a multiple of 16 bytes, for best performance"
 		my d_bits = Melder_malloc (uint8_t, stride * height);
-		static CGColorSpaceRef colourSpace = NULL;
-		if (colourSpace == NULL) {
+		static CGColorSpaceRef colourSpace = nullptr;
+		if (! colourSpace) {
 			colourSpace = CGColorSpaceCreateWithName (kCGColorSpaceGenericRGB);
-			Melder_assert (colourSpace != NULL);
+			Melder_assert (colourSpace);
 		}
 		my d_macGraphicsContext = CGBitmapContextCreate (my d_bits,
 			width, height,
@@ -662,7 +662,7 @@ Graphics Graphics_create_pngfile (MelderFile file, int resolution,
 			stride,
 			colourSpace,
 			kCGImageAlphaPremultipliedLast);
-    	if (my d_macGraphicsContext == NULL)
+    	if (! my d_macGraphicsContext)
 			Melder_throw (U"Could not create PNG file ", file, U".");
 		CGRect rect = CGRectMake (0, 0, width, height);
 		CGContextSetAlpha (my d_macGraphicsContext, 1.0);
@@ -672,15 +672,15 @@ Graphics Graphics_create_pngfile (MelderFile file, int resolution,
 		CGContextTranslateCTM (my d_macGraphicsContext, 0, height);
 		CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
 	#elif win
-		my metafile = TRUE;
-		HDC screenDC = GetDC (NULL);
+		my metafile = true;
+		HDC screenDC = GetDC (nullptr);
 		my d_gdiGraphicsContext = CreateCompatibleDC (screenDC);
 		trace (U"d_gdiGraphicsContext ", Melder_pointer (my d_gdiGraphicsContext));
-		Melder_assert (my d_gdiGraphicsContext != NULL);
+		Melder_assert (my d_gdiGraphicsContext);
 		my d_gdiBitmap = CreateCompatibleBitmap (screenDC, (x2inches - x1inches) * resolution, (y2inches - y1inches) * resolution);
 		trace (U"d_gdiBitmap ", Melder_pointer (my d_gdiBitmap));
-		Melder_assert (my d_gdiBitmap != NULL);
-		ReleaseDC (NULL, screenDC);
+		Melder_assert (my d_gdiBitmap);
+		ReleaseDC (nullptr, screenDC);
 		SelectObject (my d_gdiGraphicsContext, my d_gdiBitmap);
 		trace (U"bitmap selected into device context");
 		my resolution = resolution;
@@ -724,19 +724,19 @@ Graphics Graphics_create_pdffile (MelderFile file, int resolution,
 			NUMdefined (y1inches) ? 1.0 : 0.0, NUMdefined (y1inches) ? 12.0 : y2inches);
 		cairo_scale (my d_cairoGraphicsContext, 72.0 / resolution, 72.0 / resolution);
 	#elif mac
-		CFURLRef url = CFURLCreateWithFileSystemPath (NULL, (CFStringRef) Melder_peek32toCfstring (file -> path), kCFURLPOSIXPathStyle, false);
+		CFURLRef url = CFURLCreateWithFileSystemPath (nullptr, (CFStringRef) Melder_peek32toCfstring (file -> path), kCFURLPOSIXPathStyle, false);
 		CGRect rect = CGRectMake (0, 0,
 			(NUMdefined (x1inches) ? x2inches - x1inches : x2inches) * 72.0,
 			(NUMdefined (y1inches) ? y2inches - y1inches : y2inches) * 72.0);   // don't tire PDF viewers with funny origins
 		CFStringRef key = (CFStringRef) Melder_peek32toCfstring (U"Creator");
 		CFStringRef value = (CFStringRef) Melder_peek32toCfstring (U"Praat");
 		CFIndex numberOfValues = 1;
-		CFDictionaryRef dictionary = CFDictionaryCreate (NULL, (const void **) & key, (const void **) & value, numberOfValues,
+		CFDictionaryRef dictionary = CFDictionaryCreate (nullptr, (const void **) & key, (const void **) & value, numberOfValues,
 			& kCFTypeDictionaryKeyCallBacks, & kCFTypeDictionaryValueCallBacks);
 		my d_macGraphicsContext = CGPDFContextCreateWithURL (url, & rect, dictionary);
 		CFRelease (url);
 		CFRelease (dictionary);
-    	if (my d_macGraphicsContext == NULL)
+    	if (! my d_macGraphicsContext)
 			Melder_throw (U"Could not create PDF file ", file, U".");
 		my d_x1DC = my d_x1DCmin = 0;
 		my d_x2DC = my d_x2DCmax = (NUMdefined (x1inches) ?  7.5 : x2inches) * resolution;
@@ -772,7 +772,7 @@ Graphics Graphics_create_pdf (void *context, int resolution,
 		my d_y1DC = my d_y1DCmin = 0;
 		my d_y2DC = my d_y2DCmax = 11.0 * resolution;
 		Graphics_setWsWindow ((Graphics) me, 0, 7.5, 1.0, 12.0);
-    	Melder_assert (my d_macGraphicsContext != NULL);
+    	Melder_assert (my d_macGraphicsContext);
 		CGContextBeginPage (my d_macGraphicsContext, & rect);
 		CGContextScaleCTM (my d_macGraphicsContext, 72.0 / resolution, 72.0 / resolution);
 		CGContextTranslateCTM (my d_macGraphicsContext, - x1inches * resolution, (12.0 - y1inches) * resolution);
@@ -796,8 +796,8 @@ Graphics Graphics_create_pdf (void *context, int resolution,
 			if (my d_macPort) {
 				QDBeginCGContext (my d_macPort, & my d_macGraphicsContext);
 				//CGContextSetAlpha (my macGraphicsContext, 1.0);
-				//CGContextSetAllowsAntialiasing (my macGraphicsContext, false);
-				if (my d_drawingArea != NULL) {
+				CGContextSetAllowsAntialiasing (my d_macGraphicsContext, true);
+				if (my d_drawingArea) {
 					int shellHeight = GuiMac_clipOn_graphicsContext (my d_drawingArea -> d_widget, my d_macGraphicsContext);
 					CGContextTranslateCTM (my d_macGraphicsContext, 0, shellHeight);
 				} else if (my printer) {
@@ -811,7 +811,7 @@ Graphics Graphics_create_pdf (void *context, int resolution,
 				//if (! my printer) {
 					my d_macGraphicsContext = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
 				//}
-                Melder_assert (my d_macGraphicsContext != NULL);
+                Melder_assert (my d_macGraphicsContext);
 				if (my printer) {
 					//CGContextTranslateCTM (my d_macGraphicsContext, 0, [my d_macView bounds]. size. height);
 					//CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);

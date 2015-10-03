@@ -104,7 +104,7 @@ void _Graphics_setColour (Graphics graphics, Graphics_Colour colour) {
 	if (graphics -> screen) {
 		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
 		#if cairo
-			if (my d_cairoGraphicsContext == NULL) return;
+			if (! my d_cairoGraphicsContext) return;
 			cairo_set_source_rgb (my d_cairoGraphicsContext, colour. red, colour. green, colour. blue);
 		#elif win
 			my d_winForegroundColour = RGB (colour. red * 255, colour. green * 255, colour. blue * 255);
@@ -141,7 +141,7 @@ void _Graphics_setGrey (Graphics graphics, double fgrey) {
 	if (graphics -> screen) {
 		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
 		#if cairo
-			if (my d_cairoGraphicsContext == NULL) return;
+			if (! my d_cairoGraphicsContext) return;
 			if (fgrey < 0.0) fgrey = 0.0; else if (fgrey > 1.0) fgrey = 1.0;
 			cairo_set_source_rgb (my d_cairoGraphicsContext, fgrey, fgrey, fgrey);
 		#elif win
@@ -174,14 +174,14 @@ static void highlight (Graphics graphics, long x1DC, long x2DC, long y1DC, long 
 	if (graphics -> screen) {
 		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
 		#if cairo
-			if (my d_cairoGraphicsContext == NULL) return;
+			if (! my d_cairoGraphicsContext) return;
 			int width = x2DC - x1DC, height = y1DC - y2DC;
 			if (width <= 0 || height <= 0) return;
 			#if ALLOW_GDK_DRAWING
 				gdk_gc_set_function (my d_gdkGraphicsContext, GDK_XOR);
 				GdkColor pinkXorWhite = { 0, 0x0000, 0x4000, 0x4000 }, black = { 0, 0x0000, 0x0000, 0x0000 };
 				gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & pinkXorWhite);
-				gdk_draw_rectangle (my d_window, my d_gdkGraphicsContext, TRUE, x1DC, y2DC, width, height);
+				gdk_draw_rectangle (my d_window, my d_gdkGraphicsContext, true, x1DC, y2DC, width, height);
 				gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & black);
 				gdk_gc_set_function (my d_gdkGraphicsContext, GDK_COPY);
 				gdk_flush ();
@@ -292,17 +292,17 @@ static void highlight2 (Graphics graphics, long x1DC, long x2DC, long y1DC, long
 	if (graphics -> screen) {
 		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
 		#if cairo
-			if (my d_cairoGraphicsContext == NULL) return;
+			if (! my d_cairoGraphicsContext) return;
 			int width = x2DC - x1DC, height = y1DC - y2DC;
 			if (width <= 0 || height <= 0) return;
 			#if ALLOW_GDK_DRAWING
 				gdk_gc_set_function (my d_gdkGraphicsContext, GDK_XOR);
 				GdkColor pinkXorWhite = { 0, 0x0000, 0x4000, 0x4000 }, black = { 0, 0x0000, 0x0000, 0x0000 };
 				gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & pinkXorWhite);
-				gdk_draw_rectangle (my d_window, my d_gdkGraphicsContext, TRUE, x1DC, y2DC, x2DC - x1DC, y2DC_inner - y2DC); // upper
-				gdk_draw_rectangle (my d_window, my d_gdkGraphicsContext, TRUE, x1DC, y2DC_inner, x1DC_inner - x1DC, y1DC_inner - y2DC_inner); // left part
-				gdk_draw_rectangle (my d_window, my d_gdkGraphicsContext, TRUE, x2DC_inner, y2DC_inner, x2DC - x2DC_inner, y1DC_inner - y2DC_inner); // right part
-				gdk_draw_rectangle (my d_window, my d_gdkGraphicsContext, TRUE, x1DC, y1DC_inner, x2DC - x1DC, y1DC - y1DC_inner); // lower
+				gdk_draw_rectangle (my d_window, my d_gdkGraphicsContext, true, x1DC, y2DC, x2DC - x1DC, y2DC_inner - y2DC); // upper
+				gdk_draw_rectangle (my d_window, my d_gdkGraphicsContext, true, x1DC, y2DC_inner, x1DC_inner - x1DC, y1DC_inner - y2DC_inner); // left part
+				gdk_draw_rectangle (my d_window, my d_gdkGraphicsContext, true, x2DC_inner, y2DC_inner, x2DC - x2DC_inner, y1DC_inner - y2DC_inner); // right part
+				gdk_draw_rectangle (my d_window, my d_gdkGraphicsContext, true, x1DC, y1DC_inner, x2DC - x1DC, y1DC - y1DC_inner); // lower
 				gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & black);
 				gdk_gc_set_function (my d_gdkGraphicsContext, GDK_COPY);
 				gdk_flush ();

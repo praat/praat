@@ -141,12 +141,12 @@ static void do_ExtractSelectedSound (TimeSoundEditor me, bool preserveTimes) {
 
 static void menu_cb_ExtractSelectedSound_timeFromZero (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
-	do_ExtractSelectedSound (me, FALSE);
+	do_ExtractSelectedSound (me, false);
 }
 
 static void menu_cb_ExtractSelectedSound_preserveTimes (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
-	do_ExtractSelectedSound (me, TRUE);
+	do_ExtractSelectedSound (me, true);
 }
 
 static void menu_cb_ExtractSelectedSound_windowed (EDITOR_ARGS) {

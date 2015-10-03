@@ -137,8 +137,8 @@ CCA TableOfReal_to_CCA (TableOfReal me, long ny) {
 			Centre the data and svd it.
 		*/
 
-		NUMcentreColumns (uy, 1, n, 1, ny, NULL);
-		NUMcentreColumns (ux, 1, n, 1, nx, NULL);
+		NUMcentreColumns (uy, 1, n, 1, ny, nullptr);
+		NUMcentreColumns (ux, 1, n, 1, nx, nullptr);
 
 		SVD_compute (svdy.peek()); SVD_compute (svdx.peek());
 

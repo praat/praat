@@ -177,7 +177,7 @@ void structFormantGridEditor :: v_createMenus () {
 	our d_bandwidthsToggle = EditorMenu_addCommand (menu, U"Show bandwidths", GuiMenu_CHECKBUTTON, menu_cb_showBandwidths);
 	EditorMenu_addCommand (menu, U"Set formant range...", 0, menu_cb_setFormantRange);
 	EditorMenu_addCommand (menu, U"Set bandwidth range...", 0, menu_cb_setBandwidthRange);
-	EditorMenu_addCommand (menu, U"-- select formant --", 0, NULL);
+	EditorMenu_addCommand (menu, U"-- select formant --", 0, nullptr);
 	EditorMenu_addCommand (menu, U"Select first", '1', menu_cb_selectFirst);
 	EditorMenu_addCommand (menu, U"Select second", '2', menu_cb_selectSecond);
 	EditorMenu_addCommand (menu, U"Select third", '3', menu_cb_selectThird);
@@ -191,7 +191,7 @@ void structFormantGridEditor :: v_createMenus () {
 	menu = Editor_addMenu (this, U"Point", 0);
 	EditorMenu_addCommand (menu, U"Add point at cursor", 'T', menu_cb_addPointAtCursor);
 	EditorMenu_addCommand (menu, U"Add point at...", 0, menu_cb_addPointAt);
-	EditorMenu_addCommand (menu, U"-- remove point --", 0, NULL);
+	EditorMenu_addCommand (menu, U"-- remove point --", 0, nullptr);
 	EditorMenu_addCommand (menu, U"Remove point(s)", GuiMenu_OPTION + 'T', menu_cb_removePoints);
 	if (our v_hasSourceMenu ()) {
 		menu = Editor_addMenu (this, U"Source", 0);
@@ -449,7 +449,7 @@ void structFormantGridEditor :: v_play (double tmin, double tmax) {
 }
 
 void FormantGridEditor_init (FormantGridEditor me, const char32 *title, FormantGrid data) {
-	Melder_assert (data != NULL);
+	Melder_assert (data != nullptr);
 	Melder_assert (Thing_isa (data, classFormantGrid));
 	FunctionEditor_init (me, title, data);
 	my ycursor = 0.382 * my p_formantFloor + 0.618 * my p_formantCeiling;

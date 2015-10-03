@@ -31,7 +31,7 @@ void structDurationTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 
 void structDurationTierEditor :: v_play (double fromTime, double toTime) {
 	if (our d_sound.data) {
-		Sound_playPart (our d_sound.data, fromTime, toTime, NULL, NULL);
+		Sound_playPart (our d_sound.data, fromTime, toTime, nullptr, nullptr);
 	} else {
 		//DurationTier_playPart (data, fromTime, toTime, false);
 	}

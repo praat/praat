@@ -413,7 +413,7 @@ static double getMaxRowLabelWidth (TableOfReal me, Graphics graphics, long rowmi
 	if (! my rowLabels) return 0.0;
 	fixRows (me, & rowmin, & rowmax);
 	for (long irow = rowmin; irow <= rowmax; irow ++) if (my rowLabels [irow] && my rowLabels [irow] [0]) {
-		double textWidth = Graphics_textWidth_ps (graphics, my rowLabels [irow], TRUE);   /* SILIPA is bigger than XIPA */
+		double textWidth = Graphics_textWidth_ps (graphics, my rowLabels [irow], true);   /* SILIPA is bigger than XIPA */
 		if (textWidth > maxWidth) maxWidth = textWidth;
 	}
 	return maxWidth;

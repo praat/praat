@@ -41,7 +41,7 @@ Thing_implement (GuiProgressBar, GuiControl, 0);
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
-		Melder_assert (userData == NULL || Thing_isa (userData, classGuiProgressBar));
+		Melder_assert (userData == nullptr || Thing_isa (userData, classGuiProgressBar));
 		d_userData = static_cast <GuiProgressBar> (userData);
 	}
 	@end
@@ -72,7 +72,7 @@ GuiProgressBar GuiProgressBar_create (GuiForm parent, int left, int right, int t
 		[my d_cocoaProgressBar   setIndeterminate: false];
 		[my d_cocoaProgressBar   setMaxValue: 1.0];
 	#elif motif
-		my d_widget = XmCreateScale (parent -> d_widget, "scale", NULL, 0);
+		my d_widget = XmCreateScale (parent -> d_widget, "scale", nullptr, 0);
 		_GuiObject_setUserData (my d_widget, me);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		XtVaSetValues (my d_widget, XmNorientation, XmHORIZONTAL,
@@ -83,7 +83,7 @@ GuiProgressBar GuiProgressBar_create (GuiForm parent, int left, int right, int t
 			#ifdef macintosh
 				//XmNscaleWidth, 340,
 			#endif
-			NULL);
+			nullptr);
 	#endif
 
 	#if gtk

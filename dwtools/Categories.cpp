@@ -44,7 +44,7 @@ void structCategories :: v_writeText (MelderFile file) {
 	texputi4 (file, size, U"size", 0, 0, 0, 0, 0);
 	for (long i = 1; i <= size; i++) {
 		SimpleString data = (SimpleString) item [i];
-		texputintro (file, U"item" " [", Melder_integer (i), U"]:", NULL, NULL, NULL);
+		texputintro (file, U"item" " [", Melder_integer (i), U"]:", nullptr, nullptr, nullptr);
 		data -> structSimpleString :: v_writeText (file);
 		texexdent (file);
 	}

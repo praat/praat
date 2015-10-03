@@ -59,7 +59,7 @@ Thing_define (Collection, Daata) {
 	An object of type Collection is a collection of items of any class.
 	It is the owner of its items.
 	You can access the items in the collection as item [1] through item [size].
-	There can be no NULL items.
+	There can be no null items.
 
 	Attributes:
 		_capacity >= size		// private; grows as you add items.
@@ -101,7 +101,7 @@ void Collection_addItem (Collection me, Thing item);
 	Function:
 		add the 'item' to the collection.
 	Preconditions:
- 		item != NULL;
+ 		item != nullptr;
 	Postconditions if result == 1:
 		my size >= my old size + 1;
 		if (my size > my old _capacity) my _capacity == 2 * my old _capacity;

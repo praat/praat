@@ -3720,7 +3720,7 @@ static int match (char32 *prog, int *branch_index_param) {
 			case LOOK_BEHIND_CLOSE:
 				MATCH_RETURN (1);  /* We have reached the end of the look-ahead or
 	                    look-behind which implies that we matched it,
-			    so return TRUE. */
+			    so return `true`. */
 			default:
 				if ( (GET_OP_CODE (scan) > OPEN) &&
 				        (GET_OP_CODE (scan) < OPEN + NSUBEXP)) {

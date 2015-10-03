@@ -26,13 +26,13 @@ Thing_implement (ScriptEditor, TextEditor, 0);
 
 static Collection theScriptEditors;
 
-int ScriptEditors_dirty (void) {
-	if (! theScriptEditors) return FALSE;
+bool ScriptEditors_dirty (void) {
+	if (! theScriptEditors) return false;
 	for (long i = 1; i <= theScriptEditors -> size; i ++) {
 		ScriptEditor me = (ScriptEditor) theScriptEditors -> item [i];
-		if (my dirty) return TRUE;
+		if (my dirty) return true;
 	}
-	return FALSE;
+	return false;
 }
 
 void structScriptEditor :: v_destroy () {

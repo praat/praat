@@ -60,10 +60,10 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 				//GdkRectangle rect = { event. x, event. y, event. width, event. height };
 				//gdk_window_begin_paint_rect ((GTK_WIDGET (widget)) -> window, & rect);
 				trace (U"send the expose callback");
-				trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
+				trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 				my d_exposeCallback (my d_exposeBoss, & event);
 				trace (U"the expose callback finished");
-				trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
+				trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 				//gdk_window_end_paint ((GTK_WIDGET (widget)) -> window);
 				//gdk_window_flush ((GTK_WIDGET (widget)) -> window);
 				//gdk_flush ();
@@ -71,14 +71,14 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 				Melder_flushError (U"Redrawing not completed");
 			}
 			trace (U"the expose callback handled drawing");
-			return TRUE;
+			return true;
 		}
 		trace (U"GTK will handle redrawing");
-		return FALSE;
+		return false;
 	}
 	static gboolean _GuiGtkDrawingArea_clickCallback (GuiObject widget, GdkEvent *e, gpointer void_me) {
 		iam (GuiDrawingArea);
-		if (e -> type != GDK_BUTTON_PRESS) return FALSE;
+		if (e -> type != GDK_BUTTON_PRESS) return false;
 		if (my d_clickCallback) {
 			struct structGuiDrawingAreaClickEvent event = { me, 0 };
 			event. button = ((GdkEventButton *) e) -> button;
@@ -90,9 +90,9 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			} catch (MelderError) {
 				Melder_flushError (U"Mouse click not completely handled.");
 			}
-			return TRUE;
+			return true;
 		}
-		return FALSE;
+		return false;
 	}
 	static gboolean _GuiGtkDrawingArea_keyCallback (GuiObject widget, GdkEvent *gevent, gpointer void_me) {
 		iam (GuiDrawingArea);
@@ -121,9 +121,9 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			/*
 			 * FIXME: here we should empty the type-ahead buffer
 			 */
-			return TRUE;
+			return true;
 		}
-		return FALSE;   // if the drawing area has no keyCallback, the system will send the key press to a text field.
+		return false;   // if the drawing area has no keyCallback, the system will send the key press to a text field.
 	}
 	static gboolean _GuiGtkDrawingArea_resizeCallback (GuiObject widget, GtkAllocation *allocation, gpointer void_me) {
 		iam (GuiDrawingArea);
@@ -138,9 +138,9 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			} catch (MelderError) {
 				Melder_flushError (U"Window resizing not completely handled.");
 			}
-			return TRUE;
+			return true;
 		}
-		return FALSE;
+		return false;
 	}
 #elif cocoa
 	@interface GuiCocoaDrawingArea ()
@@ -223,7 +223,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		 * the key focus from the Search field, a situation that cannot hurt).
 		 */
 		GuiDrawingArea me = (GuiDrawingArea) d_userData;
-		return my d_keyCallback != NULL;
+		return my d_keyCallback != nullptr;
 	}
 	- (void) mouseEntered: (NSEvent *) nsEvent {
 		(void) nsEvent;
@@ -459,7 +459,7 @@ static gboolean _guiGtkDrawingArea_swipeCallback (GuiObject w, GdkEventScroll *e
 		double hv = gtk_range_get_value (GTK_RANGE (my d_horizontalScrollBar -> d_widget));
 		GtkAdjustment *adjustment = gtk_range_get_adjustment (GTK_RANGE (my d_horizontalScrollBar -> d_widget));
 		gdouble hi;
-		g_object_get (adjustment, "step_increment", & hi, NULL);
+		g_object_get (adjustment, "step_increment", & hi, nullptr);
 		switch (event -> direction) {
 			case GDK_SCROLL_LEFT:
 				gtk_range_set_value (GTK_RANGE (my d_horizontalScrollBar -> d_widget), hv - hi);
@@ -473,7 +473,7 @@ static gboolean _guiGtkDrawingArea_swipeCallback (GuiObject w, GdkEventScroll *e
 		double vv = gtk_range_get_value (GTK_RANGE (my d_verticalScrollBar -> d_widget));
 		GtkAdjustment *adjustment = gtk_range_get_adjustment (GTK_RANGE (my d_verticalScrollBar -> d_widget));
 		gdouble vi;
-		g_object_get (adjustment, "step_increment", & vi, NULL);
+		g_object_get (adjustment, "step_increment", & vi, nullptr);
 		switch (event -> direction) {
 			case GDK_SCROLL_UP:
 				gtk_range_set_value (GTK_RANGE (my d_verticalScrollBar -> d_widget), vv - vi);
@@ -483,7 +483,7 @@ static gboolean _guiGtkDrawingArea_swipeCallback (GuiObject w, GdkEventScroll *e
 				break;
 		}
 	}
-	return TRUE;
+	return true;
 }
 #endif
 
@@ -518,7 +518,7 @@ GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int t
 		g_signal_connect (G_OBJECT (my d_widget), "button-press-event",   G_CALLBACK (_GuiGtkDrawingArea_clickCallback),   me);
 		g_signal_connect (G_OBJECT (my d_widget), "button-release-event", G_CALLBACK (_GuiGtkDrawingArea_clickCallback),   me);
 		g_signal_connect (G_OBJECT (my d_widget), "motion-notify-event",  G_CALLBACK (_GuiGtkDrawingArea_clickCallback),   me);
-		if (parent != NULL) {
+		if (parent) {
 			Melder_assert (parent -> d_widget);
 			g_signal_connect (G_OBJECT (gtk_widget_get_toplevel (GTK_WIDGET (parent -> d_widget))), "key-press-event",
 				G_CALLBACK (_GuiGtkDrawingArea_keyCallback), me);
@@ -527,7 +527,7 @@ GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int t
 
 		_GuiObject_setUserData (my d_widget, me);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
-		gtk_widget_set_double_buffered (GTK_WIDGET (my d_widget), FALSE);
+		gtk_widget_set_double_buffered (GTK_WIDGET (my d_widget), false);
 	#elif cocoa
 		GuiCocoaDrawingArea *drawingArea = [[GuiCocoaDrawingArea alloc] init];
 		my d_widget = (GuiObject) drawingArea;
@@ -541,7 +541,7 @@ GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int t
 		_GuiObject_setUserData (my d_widget, me);
 		my d_widget -> window = CreateWindowEx (0, Melder_peek32toW (_GuiWin_getDrawingAreaClassName ()), L"drawingArea",
 			WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS,
-			my d_widget -> x, my d_widget -> y, my d_widget -> width, my d_widget -> height, my d_widget -> parent -> window, NULL, theGui.instance, NULL);
+			my d_widget -> x, my d_widget -> y, my d_widget -> width, my d_widget -> height, my d_widget -> parent -> window, nullptr, theGui.instance, nullptr);
 		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 	#elif mac
@@ -595,14 +595,14 @@ GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int h
 		g_signal_connect (G_OBJECT (my d_widget), "button-press-event",   G_CALLBACK (_GuiGtkDrawingArea_clickCallback),   me);
 		g_signal_connect (G_OBJECT (my d_widget), "button-release-event", G_CALLBACK (_GuiGtkDrawingArea_clickCallback),   me);
 		g_signal_connect (G_OBJECT (my d_widget), "motion-notify-event",  G_CALLBACK (_GuiGtkDrawingArea_clickCallback),   me);
-		if (parent != NULL) {
+		if (parent) {
 			g_signal_connect (G_OBJECT (gtk_widget_get_toplevel (GTK_WIDGET (parent -> d_widget))), "key-press-event",
 				G_CALLBACK (_GuiGtkDrawingArea_keyCallback), me);
 		}
 		g_signal_connect (G_OBJECT (my d_widget), "size-allocate", G_CALLBACK (_GuiGtkDrawingArea_resizeCallback), me);
 		_GuiObject_setUserData (my d_widget, me);
 		my v_positionInScrolledWindow (my d_widget, width, height, parent);
-		gtk_widget_set_double_buffered (GTK_WIDGET (my d_widget), FALSE);
+		gtk_widget_set_double_buffered (GTK_WIDGET (my d_widget), false);
 	#elif cocoa
 		GuiCocoaDrawingArea *drawingArea = [[GuiCocoaDrawingArea alloc] init];
 		my d_widget = (GuiObject) drawingArea;
@@ -613,7 +613,7 @@ GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int h
 		_GuiObject_setUserData (my d_widget, me);
 		my d_widget -> window = CreateWindowEx (0, Melder_peek32toW (_GuiWin_getDrawingAreaClassName ()), L"drawingArea",
 			WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS,
-			0, 0, my d_widget -> width, my d_widget -> height, my d_widget -> parent -> window, NULL, theGui.instance, NULL);
+			0, 0, my d_widget -> width, my d_widget -> height, my d_widget -> parent -> window, nullptr, theGui.instance, nullptr);
 		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
 		my v_positionInScrolledWindow (my d_widget, width, height, parent);
 	#elif mac

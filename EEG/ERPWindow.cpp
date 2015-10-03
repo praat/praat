@@ -403,7 +403,7 @@ void structERPWindow :: v_prefs_getValues (EditorCommand cmd) {
 }
 
 ERPWindow ERPWindow_create (const char32 *title, ERP data) {
-	Melder_assert (data != NULL);
+	Melder_assert (data != nullptr);
 	try {
 		autoERPWindow me = Thing_new (ERPWindow);
 		SoundEditor_init (me.peek(), title, data);

@@ -41,7 +41,7 @@ void structEEGWindow :: v_createHelpMenuItems (EditorMenu menu) {
 }
 
 const char32 * structEEGWindow :: v_getChannelName (long channelNumber) {
-	Melder_assert (our eeg != NULL);
+	Melder_assert (our eeg != nullptr);
 	return our eeg -> channelNames [channelNumber];
 }
 
@@ -75,7 +75,7 @@ void structEEGWindow :: v_updateMenuItems_file () {
 
 void EEGWindow_init (EEGWindow me, const char32 *title, EEG eeg) {
 	my eeg = eeg;   // before initing, because initing will already draw!
-	TextGridEditor_init (me, title, eeg -> textgrid, eeg -> sound, false, NULL, NULL);
+	TextGridEditor_init (me, title, eeg -> textgrid, eeg -> sound, false, nullptr, nullptr);
 }
 
 EEGWindow EEGWindow_create (const char32 *title, EEG eeg) {

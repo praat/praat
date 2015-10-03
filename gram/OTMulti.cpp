@@ -990,7 +990,7 @@ static long OTMulti_crucialCell (OTMulti me, long icand, long iwinner, long numb
 
 static double OTMulti_constraintWidth (Graphics g, OTConstraint constraint, bool showDisharmony) {
 	char32 text [100], *newLine;
-	double maximumWidth = showDisharmony ? 0.8 * Graphics_textWidth_ps (g, Melder_fixed (constraint -> disharmony, 1), TRUE) : 0.0,
+	double maximumWidth = showDisharmony ? 0.8 * Graphics_textWidth_ps (g, Melder_fixed (constraint -> disharmony, 1), true) : 0.0,
 		firstWidth, secondWidth;
 	str32cpy (text, constraint -> name);
 	newLine = str32chr (text, U'\n');
@@ -1064,7 +1064,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const char32 *form1, const cha
 	 * Compute longest candidate string.
 	 * Also count the number of optimal candidates (if there are more than one, the fingers will be drawn in red).
 	 */
-	double candWidth = Graphics_textWidth_ps (g, form1, TRUE) + Graphics_textWidth_ps (g, form2, true);
+	double candWidth = Graphics_textWidth_ps (g, form1, true) + Graphics_textWidth_ps (g, form2, true);
 	long numberOfMatchingCandidates = 0;
 	long numberOfOptimalCandidates = 0;
 	long numberOfOptimalCandidates1 = 0;

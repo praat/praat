@@ -1119,7 +1119,7 @@ void TextGrid_nativize (TextGrid me) {
 				for (long i = 1; i <= tier -> numberOfIntervals(); i ++) {
 					TextInterval interval = tier -> interval (i);
 					if (interval -> text) {
-						Longchar_nativize32 (interval -> text, buffer.peek(), FALSE);
+						Longchar_nativize32 (interval -> text, buffer.peek(), false);
 						str32cpy (interval -> text, buffer.peek());
 					}
 				}
@@ -1128,7 +1128,7 @@ void TextGrid_nativize (TextGrid me) {
 				for (long i = 1; i <= tier -> numberOfPoints(); i ++) {
 					TextPoint point = tier -> point (i);
 					if (point -> mark) {
-						Longchar_nativize32 (point -> mark, buffer.peek(), FALSE);
+						Longchar_nativize32 (point -> mark, buffer.peek(), false);
 						str32cpy (point -> mark, buffer.peek());
 					}
 				}

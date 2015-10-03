@@ -1238,7 +1238,7 @@ static void OTGrammar_honourLocalRankings (OTGrammar me, double plasticity, doub
 			OTGrammarConstraint higher = & my constraints [fixedRanking -> higher], lower = & my constraints [fixedRanking -> lower];
 			while (higher -> ranking <= lower -> ranking) {
 				lower -> ranking -= learningStep (plasticity, relativePlasticityNoise);
-				if (grammarHasChanged != NULL) *grammarHasChanged = TRUE;
+				if (grammarHasChanged != NULL) *grammarHasChanged = true;
 				improved = true;
 			}
 		}
@@ -1730,7 +1730,7 @@ void OTGrammar_learn (OTGrammar me, Strings inputs, Strings outputs,
 			for (long ichew = 1; ichew <= numberOfChews; ichew ++) {
 				OTGrammar_learnOne (me, inputs -> strings [i], outputs -> strings [i],
 					evaluationNoise, updateRule, honourLocalRankings,
-					plasticity, relativePlasticityNoise, TRUE, TRUE, NULL);
+					plasticity, relativePlasticityNoise, true, true, nullptr);
 			}
 		}
 	} catch (MelderError) {
@@ -1770,7 +1770,7 @@ void OTGrammar_PairDistribution_learn (OTGrammar me, PairDistribution thee,
 				for (long ichew = 1; ichew <= numberOfChews; ichew ++) {
 					OTGrammar_learnOne (me, input, output,
 						evaluationNoise, updateRule, honourLocalRankings,
-						plasticity, relativePlasticityNoise, TRUE, TRUE, NULL);
+						plasticity, relativePlasticityNoise, true, true, nullptr);
 				}
 			}
 			plasticity *= plasticityDecrement;
@@ -2599,7 +2599,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 		 * Test learnability of every possible ranked pair.
 		 */
 		my numberOfFixedRankings ++;
-		autoNUMmatrix <int> obligatory (1, my numberOfConstraints, 1, my numberOfConstraints);
+		autoNUMmatrix <bool> obligatory (1, my numberOfConstraints, 1, my numberOfConstraints);
 		MelderInfo_open ();
 		autoMelderProgress progress (U"Finding obligatory rankings.");
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
@@ -2630,7 +2630,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 					if (! grammarHasChangedDuringCycle) break;
 				}
 				if (itrial > 40) {
-					obligatory [jcons] [icons] = TRUE;
+					obligatory [jcons] [icons] = true;
 					MelderInfo_writeLine (my constraints [jcons]. name, U" >> ", my constraints [icons]. name);
 					MelderInfo_close ();
 				}
@@ -2665,7 +2665,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 								if (prob -> weight > 0.0) {
 									bool grammarHasChanged = false;
 									OTGrammar_learnOne (me, prob -> string1, prob -> string2,
-										evaluationNoise, kOTGrammar_rerankingStrategy_EDCD, TRUE /* honour fixed rankings; very important */,
+										evaluationNoise, kOTGrammar_rerankingStrategy_EDCD, true /* honour fixed rankings; very important */,
 										1.0, 0.0, false, true, & grammarHasChanged);
 									if (grammarHasChanged) {
 										OTGrammar_newDisharmonies (me, evaluationNoise);
@@ -2797,7 +2797,7 @@ void OTGrammar_Distributions_listObligatoryRankings (OTGrammar me, Distributions
 				ipair ++;
 				Melder_progressOff ();
 				OTGrammar_Distributions_learnFromPartialOutputs (me, thee, columnNumber,
-					1e-9, kOTGrammar_rerankingStrategy_EDCD, TRUE /* honour fixed rankings; very important */,
+					1e-9, kOTGrammar_rerankingStrategy_EDCD, true /* honour fixed rankings; very important */,
 					1.0, 1000, 0.0, 1, 0.0, 1, 0, NULL, false, false, 0);
 				Melder_progressOn ();
 				for (kcons = 1; kcons <= my numberOfConstraints; kcons ++) {

@@ -83,14 +83,14 @@ void texputw4 (MelderFile file, const char32 *s, const char32 *s1, const char32 
 	The 42 routines are analogous to fgetc and fputc, who read or write one character:
 		int fgetc (FILE *f);   int fputc (int c, FILE *f);   // 0..255
 */
-unsigned int bingetu1 (FILE *f);   void binputu1 (unsigned int i, FILE *f);   /* 0..255 */
-uint16_t bingetu2 (FILE *f);   void binputu2 (uint16_t i, FILE *f);   /* 0..65535 */
-uint32_t bingetu4 (FILE *f);   void binputu4 (uint32_t i, FILE *f);   /* 0..4294967295 */
+unsigned int bingetu1 (FILE *f);   void binputu1 (unsigned int i, FILE *f);   // 0..255
+uint16 bingetu2 (FILE *f);   void binputu2 (uint16 i, FILE *f);   // 0..65535
+uint32 bingetu4 (FILE *f);   void binputu4 (uint32 i, FILE *f);   // 0..4294967295
 
 int bingeti1 (FILE *f);   void binputi1 (int i, FILE *f);   /* -128..127 */
-int16_t bingeti2 (FILE *f);   void binputi2 (int16_t i, FILE *f);   /* -32768..32767 */
-int32_t bingeti3 (FILE *f);   void binputi3 (int32_t i, FILE *f);   /* -8388608..2148388607 */
-int32_t bingeti32 (FILE *f);   void binputi32 (int32_t i, FILE *f);   /* -2147483648..2147483647 */
+int16 bingeti2 (FILE *f);   void binputi2 (int16 i, FILE *f);   // -32768..32767
+int32 bingeti3 (FILE *f);   void binputi3 (int32 i, FILE *f);   // -8388608..8388607
+int32 bingeti32 (FILE *f);   void binputi32 (int32 i, FILE *f);   // -2147483648..2147483647
 #define bingeti4 bingeti32
 #define binputi4 binputi32
 /*
@@ -99,38 +99,38 @@ int32_t bingeti32 (FILE *f);   void binputi32 (int32_t i, FILE *f);   /* -214748
 	This is the native integer format on Macintosh and Silicon Graphics Iris.
 */
 
-int16_t bingeti2LE (FILE *f);   void binputi2LE (int16_t i, FILE *f);   /* -32768..32767 */
-int32_t bingeti3LE (FILE *f);   void binputi3LE (int32_t i, FILE *f);   /* -8388608..2148388607 */
-int32_t bingeti4LE (FILE *f);   void binputi4LE (int32_t i, FILE *f);   /* -2147483648..2147483647 */
-uint16_t bingetu2LE (FILE *f);   void binputu2LE (uint16_t i, FILE *f);   /* 0..65535 */
-uint32_t bingetu4LE (FILE *f);   void binputu4LE (uint32_t i, FILE *f);   /* 0..4294967295 */
+int16 bingeti2LE (FILE *f);   void binputi2LE (int16 i, FILE *f);   // -32768..32767
+int32 bingeti3LE (FILE *f);   void binputi3LE (int32 i, FILE *f);   // -8388608..8388607
+int32 bingeti4LE (FILE *f);   void binputi4LE (int32 i, FILE *f);   // -2147483648..2147483647
+uint16 bingetu2LE (FILE *f);   void binputu2LE (uint16 i, FILE *f);   // 0..65535
+uint32 bingetu4LE (FILE *f);   void binputu4LE (uint32 i, FILE *f);   // 0..4294967295
 /*
 	Read or write signed or unsigned integers from or to 2 or 4 bytes in the stream 'f',
 	in little-endian byte order (least significant byte first).
 	This is the native integer format on Vax and IBM PC.
 */
 
-unsigned int bingetb1 (FILE *f);   void binputb1 (unsigned int value, FILE *f);   /* 0..1*/
-unsigned int bingetb2 (FILE *f);   void binputb2 (unsigned int value, FILE *f);   /* 0..3 */
-unsigned int bingetb3 (FILE *f);   void binputb3 (unsigned int value, FILE *f);   /* 0..7 */
-unsigned int bingetb4 (FILE *f);   void binputb4 (unsigned int value, FILE *f);   /* 0..15 */
-unsigned int bingetb5 (FILE *f);   void binputb5 (unsigned int value, FILE *f);   /* 0..31 */
-unsigned int bingetb6 (FILE *f);   void binputb6 (unsigned int value, FILE *f);   /* 0..63 */
-unsigned int bingetb7 (FILE *f);   void binputb7 (unsigned int value, FILE *f);   /* 0..127 */
+unsigned int bingetb1 (FILE *f);   void binputb1 (unsigned int value, FILE *f);   // 0..1
+unsigned int bingetb2 (FILE *f);   void binputb2 (unsigned int value, FILE *f);   // 0..3
+unsigned int bingetb3 (FILE *f);   void binputb3 (unsigned int value, FILE *f);   // 0..7
+unsigned int bingetb4 (FILE *f);   void binputb4 (unsigned int value, FILE *f);   // 0..15
+unsigned int bingetb5 (FILE *f);   void binputb5 (unsigned int value, FILE *f);   // 0..31
+unsigned int bingetb6 (FILE *f);   void binputb6 (unsigned int value, FILE *f);   // 0..63
+unsigned int bingetb7 (FILE *f);   void binputb7 (unsigned int value, FILE *f);   // 0..127
 void bingetb (FILE *f);   void binputb (FILE *f);
 /*
 	Read or write an unsigned integer from or to a number of bits in the stream 'f'.
 	After an uninterrupted sequence of bingetbxxx or binputbxxx, call bingetb or binputb.
 	Not reentrant: uses a static one-byte buffer. Do not call from interrupt routines.
 	Example 1:
-		int hasTitle = bingetb1 (f);   // One bit.
-		int category = bingetb3 (f);   // A number in the range 0..7.
-		int sense = bingetb2 (f);   // A number in the range 0..3.
+		int hasTitle = bingetb1 (f);   // one bit
+		int category = bingetb3 (f);   // a number in the range 0..7
+		int sense = bingetb2 (f);   // a number in the range 0..3
 		bingetb (f);
 	Example 2:
-		binputb1 (hasTitle, f);   // One bit.
-		binputb3 (category, f);   // A number in the range 0..7.
-		binputb2 (sense, f);   // A number in the range 0..3.
+		binputb1 (hasTitle, f);   // one bit
+		binputb3 (category, f);   // a number in the range 0..7
+		binputb2 (sense, f);   // a number in the range 0..3
 		binputb (f);
 */
 
@@ -148,35 +148,35 @@ void binpute2 (int value, FILE *f);
 
 double bingetr4 (FILE *f);   void binputr4 (double x, FILE *f);
 /*
-	Read or write a real number from or to 4 bytes in the stream 'f',
+	Read or write a real number from or to 4 bytes in the stream `f`,
 	in IEEE single-precision binary real format, with the most significant bit first.
 	NaN's (Not-a-Numbers) and infinities get the value HUGE, which equals infinity on IEEE machines.
 	Absolute values of normalized numbers (23 bits precision): 1.2e-38 .. 3.4e38.
 	Denormalized: from 1.4e-45.
-	This is the native format of a 'float' on Macintosh and Silicon Graphics Iris.
+	This is the native format of a `float` on Macintosh and Silicon Graphics Iris.
 */
-double bingetr4LE (FILE *f);   void binputr4LE (double x, FILE *f);   // Least significant bit first.
+double bingetr4LE (FILE *f);   void binputr4LE (double x, FILE *f);   // least significant bit first
 
 double bingetr8 (FILE *f);   void binputr8 (double x, FILE *f);
 /*
-	Read or write a real number from or to 8 bytes in the stream 'f',
+	Read or write a real number from or to 8 bytes in the stream `f`,
 	in IEEE double-precision binary real format, with the most significant bit first.
 	NaN's (Not-a-Numbers) and infinities get the value HUGE, which equals infinity on IEEE machines.
 	Absolute values of normalized numbers (52 bits precision): 2.2e-308 .. 1.8e308.
 	Denormalized: from 4.9e-324.
-	This is the native format of a 'double' on Silicon Graphics Iris and PowerMac.
+	This is the native format of a `double` on Silicon Graphics Iris and PowerMac.
 */
 
 double bingetr10 (FILE *f);   void binputr10 (double x, FILE *f);
 /*
-	Read or write a real number from or to 10 bytes in the stream 'f',
+	Read or write a real number from or to 10 bytes in the stream `f`,
 	in IEEE extended-precision binary real format, with the most significant bit first,
 	as implemented in Motorola's MC68881 floating-point coprocessor.
 	NaN's (Not-a-Numbers) and infinities get the value HUGE, which equals infinity on IEEE machines.
 	Absolute values of normalized numbers (63 bits precision): 8e-4933 .. 6e4931.
 	Denormalized: from 9e-4952.
 	This format is used to encode the sampling rate in AIFF (Audio Interchange File Format) files,
-	and is the native format of a 'double' on 68k Macintosh.
+	and is the native format of a `double` on 68k Macintosh.
 */
 
 fcomplex bingetc8 (FILE *f);
@@ -184,15 +184,15 @@ dcomplex bingetc16 (FILE *f);
 void binputc8 (fcomplex z, FILE *f);
 void binputc16 (dcomplex z, FILE *f);
 
-char * bingets1 (FILE *f);   void binputs1 (const char *s, FILE *f);   /* 0..255 characters. */
-char * bingets2 (FILE *f);   void binputs2 (const char *s, FILE *f);   /* 0..65535 characters. */
-char * bingets4 (FILE *f);   void binputs4 (const char *s, FILE *f);   /* 0..4294967295 characters. */
+char * bingets1 (FILE *f);   void binputs1 (const char *s, FILE *f);   // 0..255 characters
+char * bingets2 (FILE *f);   void binputs2 (const char *s, FILE *f);   // 0..65535 characters
+char * bingets4 (FILE *f);   void binputs4 (const char *s, FILE *f);   // 0..4294967295 characters
 /*
-	Read or write a string from or to str32len (s) UTF-16LE or ASCII characters + 1, 2, or 4 bytes in the stream 'f',
+	Read or write a string from or to `str32len(s)` UTF-16LE or ASCII characters plus 1, 2, or 4 bytes in the stream `f`,
 	in a Pascal-style format: first the length, then the characters, without a trailing null byte.
-	bingetsxxx returns a new 'malloc'ed null-terminated C string (for the caller to 'free' it),
-	or NULL if out of memory.
-	binputsxxx expects a null-terminated C string whose 'str32len' fits in 1, 2, or 4 bytes.
+	bingetsxxx returns a new 'malloc'ed null-terminated C string (for the caller to `free` it).
+	Fail if out of memory.
+	binputsxxx expects a null-terminated C string whose `str32len` fits in 1, 2, or 4 bytes.
 */
 char32 * bingetw1 (FILE *f);   void binputw1 (const char32 *s, FILE *f);
 char32 * bingetw2 (FILE *f);   void binputw2 (const char32 *s, FILE *f);

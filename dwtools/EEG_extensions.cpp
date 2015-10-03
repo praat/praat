@@ -97,7 +97,7 @@ CrossCorrelationTable EEG_to_CrossCorrelationTable (EEG me, double startTime, do
 		}
 		autoEEG thee = EEG_extractPart (me, startTime, endTime, true);
 		long numberOfChannels;
-		autoNUMvector <long> channels (NUMstring_getElementsOfRanges (channelRanges, thy numberOfChannels, & numberOfChannels, NULL, U"channel", true), 1);
+		autoNUMvector <long> channels (NUMstring_getElementsOfRanges (channelRanges, thy numberOfChannels, & numberOfChannels, nullptr, U"channel", true), 1);
 		autoSound soundPart = Sound_copyChannelRanges (thy sound, channelRanges);
 		autoCrossCorrelationTable him = Sound_to_CrossCorrelationTable (soundPart.peek(), startTime, endTime, lagStep);
 		// assign channel names
@@ -141,7 +141,7 @@ CrossCorrelationTables EEG_to_CrossCorrelationTables (EEG me, double startTime, 
 		}
 		autoEEG thee = EEG_extractPart (me, startTime, endTime, true);
 		long numberOfChannels;
-		autoNUMvector <long> channels (NUMstring_getElementsOfRanges (channelRanges, thy numberOfChannels, & numberOfChannels, NULL, U"channel", true), 1);
+		autoNUMvector <long> channels (NUMstring_getElementsOfRanges (channelRanges, thy numberOfChannels, & numberOfChannels, nullptr, U"channel", true), 1);
 		autoSound soundPart = Sound_copyChannelRanges (thy sound, channelRanges);
 		autoCrossCorrelationTables him = Sound_to_CrossCorrelationTables (soundPart.peek(), startTime, endTime, lagStep, ncovars);
 		return him.transfer();
@@ -223,7 +223,7 @@ EEG EEG_to_EEG_bss (EEG me, double startTime, double endTime, long ncovars, doub
 			endTime = my xmax;
 		}
 		long numberOfChannels;
-		autoNUMvector <long> channelNumbers (NUMstring_getElementsOfRanges (channelRanges, my numberOfChannels, & numberOfChannels, NULL, U"channel", true), 1);
+		autoNUMvector <long> channelNumbers (NUMstring_getElementsOfRanges (channelRanges, my numberOfChannels, & numberOfChannels, nullptr, U"channel", true), 1);
 		autoEEG thee = EEG_extractPart (me, startTime, endTime, true);
 		if (whiteningMethod != 0) {
 			bool fromCorrelation = whiteningMethod == 2;
@@ -250,7 +250,7 @@ EEG EEG_to_EEG_bss (EEG me, double startTime, double endTime, long ncovars, doub
 Sound EEG_to_Sound_modulated (EEG me, double baseFrequency, double channelBandwidth, const char32 *channelRanges) {
 	try {
 		long numberOfChannels;
-		autoNUMvector <long> channelNumbers (NUMstring_getElementsOfRanges (channelRanges, my numberOfChannels, & numberOfChannels, NULL, U"channel", true), 1);
+		autoNUMvector <long> channelNumbers (NUMstring_getElementsOfRanges (channelRanges, my numberOfChannels, & numberOfChannels, nullptr, U"channel", true), 1);
 		double maxFreq = baseFrequency + my numberOfChannels * channelBandwidth;
 		double samplingFrequency = 2 * maxFreq;
 		samplingFrequency = samplingFrequency < 44100 ? 44100 : samplingFrequency;
