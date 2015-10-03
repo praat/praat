@@ -107,6 +107,7 @@ struct _MP3_FILE
 	MP3F_OFFSET first_offset;
 	unsigned skip_amount;
 	int need_seek;
+	MP3F_OFFSET id3TagSize_bytes; /* David Weenink */
 };
 
 static enum mad_flow mp3f_mad_error (void *context, struct mad_stream *stream, struct mad_frame *frame);
@@ -165,6 +166,56 @@ void mp3f_set_file (MP3_FILE mp3f, FILE *f)
 	if (! f)
 		return;
 	fseek (f, 0, SEEK_SET);
+	/*
+		According to http://id3.org/id3v2-00:
+		The ID3v2 tag header, which should be the first information in the file, is 10 bytes as follows:
+
+		ID3/file identifier      "ID3"
+		ID3 version              $02 00
+		ID3 flags                %xx000000
+		ID3 size             4 * %0xxxxxxx
+
+		The first three bytes of the tag are always "ID3" to indicate that
+		this is an ID3 tag, directly followed by the two version bytes. The
+		first byte of ID3 version is it's major version, while the second byte
+		is its revision number. All revisions are backwards compatible while
+		major versions are not. If software with ID3v2 and below support
+		should encounter version three or higher it should simply ignore the
+		whole tag. Version and revision will never be $FF.
+
+		The first bit (bit 7) in the 'ID3 flags' is indicating whether or not
+		unsynchronisation is used (see section 5 for details); a set bit
+		indicates usage.
+
+		The second bit (bit 6) is indicating whether or not compression is
+		used; a set bit indicates usage. Since no compression scheme has been
+		decided yet, the ID3 decoder (for now) should just ignore the entire
+		tag if the compression bit is set.
+
+		The ID3 tag size is encoded with four bytes where the first bit (bit
+		7) is set to zero in every byte, making a total of 28 bits. The zeroed
+		bits are ignored, so a 257 bytes long tag is represented as $00 00 02 01.
+
+		The ID3 tag size is the size of the complete tag after
+		unsychronisation, including padding, excluding the header (total tag
+		size - 10). The reason to use 28 bits (representing up to 256MB) for
+		size description is that we don't want to run out of space here.
+
+		A ID3v2 tag can be detected with the following pattern:
+		$49 44 33 yy yy xx zz zz zz zz
+		Where yy is less than $FF, xx is the 'flags' byte and zz is less than$80.
+	*/
+	{
+		unsigned char bytes [11];
+		(void) fread (& bytes, 1, 10, mp3f -> f);
+		mp3f -> id3TagSize_bytes = 0;
+		if (bytes[0] == 'I' && bytes[1] == 'D' && bytes[2] == '3') { // ID3 tag
+			if (bytes[3] < 0xFF && bytes[4] < 0xFF &&
+				bytes[6] < 0x80 && bytes[7] < 0x80 && bytes[8] < 0x80 && bytes[9] < 0x80 ) {
+				mp3f -> id3TagSize_bytes = (bytes[6] << 21 | bytes[7] << 14 | bytes[8] << 7 | bytes[9]) + 10;
+			}
+		}
+	}
 	mp3f -> next_read_position = 0;
 	mp3f -> need_seek = 0;
 	mp3f -> delay = MP3F_DECODER_DELAY + MP3F_ENCODER_DELAY;
@@ -183,7 +234,7 @@ int mp3f_analyze (MP3_FILE mp3f)
 	if (! mp3f || ! mp3f -> f)
 		return 0;
 
-	fseek (mp3f -> f, 0, SEEK_SET);
+	fseek (mp3f -> f, mp3f -> id3TagSize_bytes, SEEK_SET);
 
 	mp3f -> xing = 0;
 	mp3f -> channels = 0;
@@ -219,7 +270,7 @@ int mp3f_analyze (MP3_FILE mp3f)
 		frame_size = mp3f -> locations [1] - mp3f -> locations[0];
 
 		/* For file size, seek to end */
-		fseek (mp3f -> f, 0, SEEK_END);
+		fseek (mp3f -> f, mp3f -> id3TagSize_bytes, SEEK_END);
 		file_size = ftell (mp3f -> f);
 
 		/* This estimate will be pretty accurate for CBR */
@@ -249,7 +300,7 @@ int mp3f_analyze (MP3_FILE mp3f)
 	mp3f -> frames = 0;
 	mp3f -> samples = 0;
 
-	fseek (mp3f -> f, 0, SEEK_SET);
+	fseek (mp3f -> f, mp3f -> id3TagSize_bytes, SEEK_SET);
 	mad_decoder_init (decoder, 
 			mp3f,
 			mp3f_mad_input,
