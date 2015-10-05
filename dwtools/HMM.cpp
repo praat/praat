@@ -1,6 +1,6 @@
 /* HMM.cpp
  *
- * Copyright (C) 2010-2012 David Weenink
+ * Copyright (C) 2010-2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,8 +107,8 @@ static double *NUMwstring_to_probs (char32 *s, long nwanted) {
 
 int NUMget_line_intersection_with_circle (double xc, double yc, double r, double a, double b,
         double *x1, double *y1, double *x2, double *y2) {
-	double ca = a * a + 1, bmyc = (b - yc);
-	double cb = 2 * (a * bmyc - xc);
+	double ca = a * a + 1.0, bmyc = (b - yc);
+	double cb = 2.0 * (a * bmyc - xc);
 	double cc = bmyc * bmyc + xc * xc - r * r;
 	long nroots = NUMsolveQuadraticEquation (ca, cb, cc, x1, x2);
 	if (nroots == 1) {
@@ -548,9 +548,9 @@ void HMM_setDefaultObservations (HMM me) {
 
 void HMM_setDefaultTransitionProbs (HMM me) {
 	for (long i = 1; i <= my numberOfStates; i++) {
-		double p = my leftToRight ? 1.0 / (my numberOfStates - i + 1) : 1.0 / my numberOfStates;
+		double p = my leftToRight ? 1.0 / (my numberOfStates - i + 1.0) : 1.0 / my numberOfStates;
 		for (long j = 1; j <= my numberOfStates; j++) {
-			my transitionProbs[i][j] = my leftToRight && j < i ? 0 : p;
+			my transitionProbs[i][j] = my leftToRight && j < i ? 0.0 : p;
 		}
 	}
 	// leftToRight must have end state!
@@ -569,7 +569,7 @@ void HMM_setDefaultEmissionProbs (HMM me) {
 	double p = 1.0 / my numberOfObservationSymbols;
 	for (long i = 1; i <= my numberOfStates; i++)
 		for (long j = 1; j <= my numberOfObservationSymbols; j++) {
-			my emissionProbs[i][j] = my notHidden ? (i == j ? 1 : 0) : p;
+			my emissionProbs[i][j] = my notHidden ? (i == j ? 1.0 : 0.0) : p;
 		}
 }
 
@@ -698,7 +698,7 @@ double HMM_getProbabilityOfStayingInState (HMM me, long istate, long numberOfTim
 	if (istate < 0 || istate > my numberOfStates) {
 		return NUMundefined;
 	}
-	return pow (my transitionProbs[istate][istate], numberOfTimeUnits - 1) * (1 - my transitionProbs[istate][istate]);
+	return pow (my transitionProbs[istate][istate], numberOfTimeUnits - 1.0) * (1.0 - my transitionProbs[istate][istate]);
 }
 
 double HMM_and_HMM_getCrossEntropy (HMM me, HMM thee, long observationLength, int symmetric) {
@@ -710,7 +710,7 @@ double HMM_and_HMM_getCrossEntropy (HMM me, HMM thee, long observationLength, in
 	if (ce2 == NUMundefined || ce2 == INFINITY) {
 		return ce2;
 	}
-	return (ce1 + ce2) / 2;
+	return (ce1 + ce2) / 2.0;
 }
 
 double HMM_and_HMM_and_HMM_ObservationSequence_getCrossEntropy (HMM me, HMM thee, HMM_ObservationSequence him) {
@@ -722,13 +722,13 @@ double HMM_and_HMM_and_HMM_ObservationSequence_getCrossEntropy (HMM me, HMM thee
 	if (ce2 == NUMundefined || ce2 == INFINITY) {
 		return ce2;
 	}
-	return (ce1 + ce2) / 2;
+	return (ce1 + ce2) / 2.0;
 }
 
 void HMM_draw (HMM me, Graphics g, int garnish) {
 	double xwidth = sqrt (my numberOfStates);
 	double rstate = 0.3 / xwidth, r = xwidth / 3.0;
-	double xmax = 1.2 * xwidth / 2, xmin = -xmax, ymin = xmin, ymax = xmax;
+	double xmax = 1.2 * xwidth / 2.0, xmin = -xmax, ymin = xmin, ymax = xmax;
 
 	autoNUMvector<double> xs (1, my numberOfStates);
 	autoNUMvector<double> ys (1, my numberOfStates);
@@ -738,7 +738,7 @@ void HMM_draw (HMM me, Graphics g, int garnish) {
 	xs[1] = ys[1] = 0;
 	if (my numberOfStates > 1) {
 		for (long is = 1; is <= my numberOfStates; is++) {
-			double alpha = - NUMpi + NUMpi * 2 * (is - 1) / my numberOfStates;
+			double alpha = - NUMpi + NUMpi * 2.0 * (is - 1.0) / my numberOfStates;
 			xs[is] = r * cos (alpha); ys[is] = r * sin (alpha);
 		}
 	}
@@ -758,7 +758,7 @@ void HMM_draw (HMM me, Graphics g, int garnish) {
 		}
 	}
 	int new_fontSize = fontSize;
-	while (max_width > 2 * rstate && new_fontSize > 4) {
+	while (max_width > 2.0 * rstate && new_fontSize > 4) {
 		new_fontSize --;
 		Graphics_setFontSize (g, new_fontSize);
 		max_width = Graphics_textWidth (g, widest_label);
@@ -778,7 +778,7 @@ void HMM_draw (HMM me, Graphics g, int garnish) {
 	for (long is = 1; is <= my numberOfStates; is++) {
 		double x1 = xs[is], y1 = ys[is];
 		for (long js = 1; js <= my numberOfStates; js++) {
-			if (my transitionProbs[is][js] > 0 && is != js) {
+			if (my transitionProbs[is][js] > 0.0 && is != js) {
 				double x2 = xs[js], y2 = ys[js];
 				double dx = x2 - x1, dy = y2 - y1, h = sqrt (dx * dx + dy * dy), cosa = dx / h, sina = dy / h;
 				double cosabp = cosa * cosb - sina * sinb, cosabm = cosa * cosb + sina * sinb;
@@ -819,7 +819,7 @@ HMM_ObservationSequence HMM_to_HMM_ObservationSequence (HMM me, long startState,
 		for (long i = 1; i <= numberOfItems; i++) {
 			// Emit a symbol from istate
 
-			long isymbol = NUMgetIndexFromProbability (my emissionProbs[istate], my numberOfObservationSymbols, NUMrandomUniform (0, 1));
+			long isymbol = NUMgetIndexFromProbability (my emissionProbs[istate], my numberOfObservationSymbols, NUMrandomUniform (0.0, 1.0));
 			HMM_Observation s = (HMM_Observation) my observationSymbols -> item[isymbol];
 
 			if (my componentDimension > 0) {
@@ -1173,13 +1173,13 @@ void HMM_and_HMM_BaumWelch_getXi (HMM me, HMM_BaumWelch thee, long *obs) {
 }
 
 void HMM_and_HMM_BaumWelch_addEstimate (HMM me, HMM_BaumWelch thee, long *obs) {
-	long is; // yes, outside
+	long is;
 
 	for (is = 1; is <= my numberOfStates; is++) {
 		// only for valid start states with p > 0
 		if (my transitionProbs[0][is] > 0.0) {
 			thy aij_num[0][is] += thy gamma[is][1];
-			thy aij_denom[0][is] += 1;
+			thy aij_denom[0][is] += 1.0;
 		}
 	}
 
@@ -1224,7 +1224,7 @@ void HMM_and_HMM_BaumWelch_addEstimate (HMM me, HMM_BaumWelch thee, long *obs) {
 		// For a left-to-right model the final state determines the transition prob to go to the END state
 		if (my leftToRight) {
 			thy aij_num[is][my numberOfStates + 1] += thy gamma[is][thy numberOfTimes];
-			thy aij_denom[is][my numberOfStates + 1] += 1;
+			thy aij_denom[is][my numberOfStates + 1] += 1.0;
 		}
 	}
 }
