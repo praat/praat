@@ -166,9 +166,11 @@ void mp3f_set_file (MP3_FILE mp3f, FILE *f)
 	if (! f)
 		return;
 	fseek (f, 0, SEEK_SET);
-	/*
+	/* David Weenink 20151005
+		Check if an ID3 header version 2 or newer is present at the START of the file (older header types are always at the END of the file). We calculate the size of the header (in bytes), store it in the mp3f -> id3TagSize_bytes field and simply skip this amount of bytes before analyzing/decoding starts.
+		
 		According to http://id3.org/id3v2-00:
-		The ID3v2 tag header, which should be the first information in the file, is 10 bytes as follows:
+		The ID3v2 tag header, which should be the FIRST information in the file, is 10 bytes as follows:
 
 		ID3/file identifier      "ID3"
 		ID3 version              $02 00
@@ -206,16 +208,28 @@ void mp3f_set_file (MP3_FILE mp3f, FILE *f)
 		Where yy is less than $FF, xx is the 'flags' byte and zz is less than$80.
 	*/
 	{
-		unsigned char bytes [11];
+		unsigned char bytes [10];
 		(void) fread (& bytes, 1, 10, mp3f -> f);
 		mp3f -> id3TagSize_bytes = 0;
-		if (bytes[0] == 'I' && bytes[1] == 'D' && bytes[2] == '3') { // ID3 tag
+		if (bytes[0] == 'I' && bytes[1] == 'D' && bytes[2] == '3') {
 			if (bytes[3] < 0xFF && bytes[4] < 0xFF &&
 				bytes[6] < 0x80 && bytes[7] < 0x80 && bytes[8] < 0x80 && bytes[9] < 0x80 ) {
+				/* 
+				Ignore version: bytes[3] & bytes[4] 
+				Ignore flags: bytes[5]
+					The only purpose of the 'unsychronisation scheme' is to make the ID3v2
+					tag as compatible as possible with existing software. There is no use
+					in 'unsynchronising' tags if the file is only to be processed by new
+					software. Unsynchronisation may only be made with MPEG 2 layer I, II
+					and III and MPEG 2.5 files.
+				 */
 				mp3f -> id3TagSize_bytes = (bytes[6] << 21 | bytes[7] << 14 | bytes[8] << 7 | bytes[9]) + 10;
 			}
 		}
 	}
+	
+	fseek (f, mp3f -> id3TagSize_bytes, SEEK_SET); // David Weenink
+
 	mp3f -> next_read_position = 0;
 	mp3f -> need_seek = 0;
 	mp3f -> delay = MP3F_DECODER_DELAY + MP3F_ENCODER_DELAY;
@@ -234,7 +248,7 @@ int mp3f_analyze (MP3_FILE mp3f)
 	if (! mp3f || ! mp3f -> f)
 		return 0;
 
-	fseek (mp3f -> f, mp3f -> id3TagSize_bytes, SEEK_SET);
+	fseek (mp3f -> f, mp3f -> id3TagSize_bytes, SEEK_SET); // David Weenink
 
 	mp3f -> xing = 0;
 	mp3f -> channels = 0;
@@ -270,7 +284,7 @@ int mp3f_analyze (MP3_FILE mp3f)
 		frame_size = mp3f -> locations [1] - mp3f -> locations[0];
 
 		/* For file size, seek to end */
-		fseek (mp3f -> f, mp3f -> id3TagSize_bytes, SEEK_END);
+		fseek (mp3f -> f, mp3f -> id3TagSize_bytes, SEEK_END); // David Weenink
 		file_size = ftell (mp3f -> f);
 
 		/* This estimate will be pretty accurate for CBR */
@@ -300,7 +314,7 @@ int mp3f_analyze (MP3_FILE mp3f)
 	mp3f -> frames = 0;
 	mp3f -> samples = 0;
 
-	fseek (mp3f -> f, mp3f -> id3TagSize_bytes, SEEK_SET);
+	fseek (mp3f -> f, mp3f -> id3TagSize_bytes, SEEK_SET); // David Weenink
 	mad_decoder_init (decoder, 
 			mp3f,
 			mp3f_mad_input,
