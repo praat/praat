@@ -1,6 +1,6 @@
 /* LPC_to_Spectrum.cpp
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ void LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduc
                               double deEmphasisFrequency) {
 	if (my nCoefficients == 0) {
 		for (long i = 1; i <= thy nx; i++) {
-			thy z[1][i] = thy z[2][i] = 0;
+			thy z[1][i] = thy z[2][i] = 0.0;
 		}
 		return;
 	}
@@ -46,7 +46,7 @@ void LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduc
 	// When deEmphasisFrequency is effective we need 1 extra position in the fftbuffer.
 
 	long nfft = 2 * (thy nx - 1), ndata = my nCoefficients + 1;
-	double scale = 1.0 / sqrt (2 * thy xmax * thy dx);
+	double scale = 1.0 / sqrt (2.0 * thy xmax * thy dx);
 	if (ndata >= nfft - 1 && (deEmphasisFrequency < thy xmax || ndata > nfft)) {
 		Melder_throw (U"Spectrum size not large enough.");
 	}
@@ -121,7 +121,7 @@ Spectrum LPC_to_Spectrum (LPC me, double t, double dfMin, double bandwidthReduct
 		while (samplingFrequency / nfft > dfMin || nfft <= my d_frames[index].nCoefficients) {
 			nfft *= 2;
 		}
-		autoSpectrum thee = Spectrum_create (samplingFrequency / 2, nfft / 2 + 1);
+		autoSpectrum thee = Spectrum_create (samplingFrequency / 2.0, nfft / 2 + 1);
 		LPC_Frame_into_Spectrum (& my d_frames[index], thee.peek(), bandwidthReduction, deEmphasisFrequency);
 		return thee.transfer();
 	} catch (MelderError) {

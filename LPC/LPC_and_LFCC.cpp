@@ -1,6 +1,6 @@
 /* LPC_and_LFCC.cpp
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ void CC_Frame_into_LPC_Frame (CC_Frame me, LPC_Frame thee) {
 	long n = MIN (my numberOfCoefficients, thy nCoefficients);
 	double *c = my c, *a = thy a;
 
-	thy gain = exp (2 * my c0);
+	thy gain = exp (2.0 * my c0);
 
 	if (n < 1) {
 		return;

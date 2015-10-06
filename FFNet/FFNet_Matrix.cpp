@@ -1,6 +1,6 @@
 /* FFNet_Matrix.cpp
  *
- * Copyright (C) 1997-2011 David Weenink
+ * Copyright (C) 1997-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,9 +29,8 @@ Matrix FFNet_weightsToMatrix (FFNet me, long layer, int deltaWeights) {
 		if (layer < 1 || layer > my nLayers) {
 			Melder_throw (U"Layer must be > 0 and < ", my nLayers, U".");
 		}
-		autoMatrix thee = Matrix_create (
-		                      0.5, my nUnitsInLayer[layer] + 0.5, my nUnitsInLayer[layer], 1, 1,
-		                      0.5, my nUnitsInLayer[layer - 1] + 1 + 0.5, my nUnitsInLayer[layer - 1] + 1, 1, 1);
+		autoMatrix thee = Matrix_create (0.5, my nUnitsInLayer[layer] + 0.5, my nUnitsInLayer[layer], 1.0, 1.0,
+		    0.5, my nUnitsInLayer[layer - 1] + 1 + 0.5, my nUnitsInLayer[layer - 1] + 1, 1.0, 1.0);
 		long node = 1;
 		for (long i = 0; i < layer; i++) {
 			node += my nUnitsInLayer[i] + 1;
@@ -53,8 +52,9 @@ FFNet FFNet_weightsFromMatrix (FFNet me, Matrix him, long layer) {
 		if (layer < 1 || layer > my nLayers) {
 			Melder_throw (U"Layer must be > 0 and < ", my nLayers, U".");
 		}
-		if (my nUnitsInLayer[layer] != his nx) Melder_throw (U"The #columns (", his nx, U") must equal "
-			        U"#units (", my nUnitsInLayer[layer], U") in layer ", layer, U".");
+		if (my nUnitsInLayer[layer] != his nx) {
+			Melder_throw (U"The #columns (", his nx, U") must equal #units (", my nUnitsInLayer[layer], U") in layer ", layer, U".");
+		}
 		long nunits = my nUnitsInLayer[layer - 1] + 1;
 		if (nunits != his ny) {
 			Melder_throw (U" The #rows (", his ny, U")  must equal #units (", nunits , U") in layer ", layer - 1, U".");

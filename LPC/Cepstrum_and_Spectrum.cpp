@@ -1,6 +1,6 @@
 /* Cepstrum_and_Spectrum.cpp
  *
- * Copyright (C) 1994-2012 David Weenink
+ * Copyright (C) 1994-2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ static Cepstrum Spectrum_to_Cepstrum_cmplx (Spectrum me) {
 
 		for (long i = 1; i <= my nx; i ++) {
 			double xa = unwrap -> z[1][i];
-			sx -> z[1][i] = xa > 0 ? 0.5 * log (xa) : -300;
+			sx -> z[1][i] = xa > 0.0 ? 0.5 * log (xa) : -300.0;
 			sx -> z[2][i] = unwrap -> z[2][i];
 		}
 
@@ -131,7 +131,7 @@ static Cepstrum Spectrum_to_Cepstrum2 (Spectrum me) {
 		fftbuf[1] = my v_getValueAtSample (1, 0, 2);
 		for (long i = 2; i < my nx; i++) {
 			fftbuf [i + i - 2] = my v_getValueAtSample (i, 0, 2);
-			fftbuf [i + i - 1] = 0;
+			fftbuf [i + i - 1] = 0.0;
 		}
 		fftbuf [numberOfSamples] = my v_getValueAtSample (my nx, 0, 2);
 		NUMfft_backward (&fftTable, fftbuf.peek());
@@ -155,7 +155,7 @@ static Spectrum Cepstrum_to_Spectrum2 (Cepstrum me) { //TODO power cepstrum
 		autoSpectrum thee = Spectrum_create (0.5 / my dx, my nx);
 		fftbuf[1] = sqrt (my z[1][1]);
 		for (long i = 2; i <= my nx; i++) {
-			fftbuf[i] = 2 * sqrt (my z[1][i]);
+			fftbuf[i] = 2.0 * sqrt (my z[1][i]);
 		}
 		// fftbuf[my nx+1 ... numberOfSamples] = 0
 		NUMfft_Table_init (&fftTable, numberOfSamples);
@@ -168,8 +168,8 @@ static Spectrum Cepstrum_to_Spectrum2 (Cepstrum me) { //TODO power cepstrum
 		}
 		thy z[1][my nx] = fabs (fftbuf[numberOfSamples]);
 		for (long i = 1; i <= my nx; i++) {
-			thy z[1][i] = exp (NUMln10 * thy z[1][i] / 20) * 2e-5 / sqrt (2 * thy dx);
-			thy z[2][i] = 0;
+			thy z[1][i] = exp (NUMln10 * thy z[1][i] / 20.0) * 2e-5 / sqrt (2 * thy dx);
+			thy z[2][i] = 0.0;
 		}
 		return thee.transfer();
 	} catch (MelderError) {

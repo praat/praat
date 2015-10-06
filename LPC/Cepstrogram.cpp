@@ -1,6 +1,6 @@
 /* Cepstrogram.cpp
  *
- * Copyright (C) 2013 David Weenink
+ * Copyright (C) 2013, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -272,8 +272,8 @@ PowerCepstrogram Matrix_to_PowerCepstrogram (Matrix me) {
 PowerCepstrogram Sound_to_PowerCepstrogram (Sound me, double pitchFloor, double dt, double maximumFrequency, double preEmphasisFrequency) {
 	try {
 		// minimum analysis window has 3 periods of lowest pitch
-		double analysisWidth = 3  / pitchFloor;
-		double windowDuration = 2 * analysisWidth; /* gaussian window */
+		double analysisWidth = 3.0  / pitchFloor;
+		double windowDuration = 2.0 * analysisWidth; /* gaussian window */
 		long nFrames;
 
 		// Convenience: analyse the whole sound into one Cepstrogram_frame
@@ -372,10 +372,10 @@ PowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double minimum
 		if (analysisWidth > my dx * my nx) {
 			analysisWidth = my dx * my nx;
 		}
-		double t1, samplingFrequency = 1 / my dx;
+		double t1, samplingFrequency = 1.0 / my dx;
 		autoSound thee;
 		if (samplingFrequency > 30000) {
-			samplingFrequency = samplingFrequency / 2;
+			samplingFrequency = samplingFrequency / 2.0;
 			thee.reset (Sound_resample (me, samplingFrequency, 1));
 		} else {
 			thee.reset (Data_copy (me));

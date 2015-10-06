@@ -178,7 +178,7 @@ DO
 		iam (PowerCepstrum);
 		double peakdB, quefrency;
 		PowerCepstrum_getMaximumAndQuefrency (me, GET_REAL (U"left Search peak in pitch range"), GET_REAL (U"right Search peak in pitch range"), GET_INTEGER (U"Interpolation") - 1, &peakdB, &quefrency);
-		double f = 1 / quefrency;
+		double f = 1.0 / quefrency;
 		Melder_information (quefrency, U" s (f =", f, U" Hz)");
 	}
 END
@@ -206,7 +206,7 @@ DO
 		double qpeak, cpp = PowerCepstrum_getPeakProminence_hillenbrand (me,
 			GET_REAL (U"left Search peak in pitch range"), GET_REAL (U"right Search peak in pitch range"), &qpeak);
 		Melder_information (cpp, U" dB; quefrency=", qpeak, U" s (f=",
-			1 / qpeak, U" Hz).");
+			1.0 / qpeak, U" Hz).");
 	}
 END
 
@@ -279,7 +279,7 @@ DO
 			GET_REAL (U"left Tilt line quefrency range"), GET_REAL (U"right Tilt line quefrency range"),
 			GET_INTEGER (U"Line type"), GET_INTEGER (U"Fit method"), &qpeak);
 		Melder_information (cpp, U" dB; quefrency=", qpeak, U" s (f=",
-			1 / qpeak, U" Hz).");
+			1.0 / qpeak, U" Hz).");
 	}
 END
 
@@ -1056,8 +1056,8 @@ FORM (VocalTract_drawSegments, U"VocalTract: Draw segments", 0)
 	OK
 DO
 	autoPraatPicture picture;
-	double maxLength = GET_REAL (U"Maximum length") / 100;
-	double maxArea = GET_REAL (U"Maximum area") / 10000;
+	double maxLength = GET_REAL (U"Maximum length") / 100.0;
+	double maxArea = GET_REAL (U"Maximum area") / 10000.0;
 	bool closedAtGlottis = GET_INTEGER (U"Closed at glottis");
 	LOOP {
 		iam (VocalTract);
