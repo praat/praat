@@ -367,7 +367,7 @@ typedef struct structconnections {
 } *connections;
 
 static void connections_free (connections me) {
-	if (me == NULL) {
+	if (! me) {
 		return;
 	}
 	NUMvector_free (my x, 1);
@@ -673,20 +673,20 @@ static void PhonationGrid_draw_inside (PhonationGrid me, Graphics g, double xmin
 
 	double x1 = xmin, x2 = x1 + xw[1];
 	double y2 = ymax, y1 = y2 - dy;
-	draw_oneSection (g, x1, x2, y1, y2, NULL, U"Voicing", 0);
+	draw_oneSection (g, x1, x2, y1, y2, nullptr, U"Voicing", 0);
 
 	x1 = x2; x2 = x1 + xw[2];
 	double ymid = (y1 + y2) / 2;
 	Graphics_line (g, x1, ymid, x2, ymid);
 
 	x1 = x2; x2 = x1 + xw[3];
-	draw_oneSection (g, x1, x2, y1, y2, NULL, U"Tilt", 0);
+	draw_oneSection (g, x1, x2, y1, y2, nullptr, U"Tilt", 0);
 
 	thy x[1] = x2; thy y[1] = ymid;
 
 	y2 = y1 - 0.5 * dy; y1 = y2 - dy; ymid = (y1 + y2) / 2;
 	x2 = xmin + xws[3]; x1 = x2 - 1.5 * xw[3]; // some extra space
-	draw_oneSection (g, x1, x2, y1, y2, NULL, U"Aspiration", 0);
+	draw_oneSection (g, x1, x2, y1, y2, nullptr, U"Aspiration", 0);
 
 	thy x[2] = x2; thy y[2] = ymid;
 
@@ -1186,7 +1186,7 @@ static long Ordered_getNumberOfAmplitudePoints (Ordered me, long iformant) {
 
 static void FormantGrid_info (FormantGrid me, Ordered amplitudes, const char32 *in1, const char32 *in2) {
 	long nformants = my formants -> size;
-	long namplitudes = amplitudes != NULL ? amplitudes -> size : 0;
+	long namplitudes = amplitudes ? amplitudes -> size : 0;
 	long nmax = MAX (nformants, namplitudes);
 
 	for (long iformant = 1; iformant <= nmax; iformant++) {
@@ -1197,7 +1197,7 @@ static void FormantGrid_info (FormantGrid me, Ordered amplitudes, const char32 *
 			MelderInfo_writeLine (in2, U"formants:   ", (nfp >= 0 ? Melder_integer (nfp) : U"--undefined--"));
 			MelderInfo_writeLine (in2, U"bandwidths: ", (nbp >= 0 ? Melder_integer (nbp) : U"--undefined--"));
 		}
-		if (amplitudes != NULL) {
+		if (amplitudes) {
 			long nap = Ordered_getNumberOfAmplitudePoints (amplitudes, iformant);
 			MelderInfo_writeLine (in2, U"amplitudes: ", (nap >= 0 ? Melder_integer (nap) : U"--undefined--"));
 		}
@@ -1216,7 +1216,7 @@ void structVocalTractGrid :: v_info () {
 	MelderInfo_writeLine (in1, U"\nNumber of points in the NASAL FORMANT tiers:");
 	FormantGrid_info (nasal_formants, nasal_formants_amplitudes, in2, in3);
 	MelderInfo_writeLine (in1, U"\nNumber of points in the NASAL ANTIFORMANT tiers:");
-	FormantGrid_info (nasal_antiformants, NULL, in2, in3);
+	FormantGrid_info (nasal_antiformants, nullptr, in2, in3);
 }
 
 Thing_implement (VocalTractGrid, Function, 0);
@@ -1251,8 +1251,8 @@ static void VocalTractGrid_CouplingGrid_drawCascade_inline (VocalTractGrid me, C
 	long numberOfOralFormants = my oral_formants -> formants -> size;
 	long numberOfNasalFormants = my nasal_formants -> formants -> size;
 	long numberOfNasalAntiFormants = my nasal_antiformants -> formants -> size;
-	long numberOfTrachealFormants = thee != NULL ? thy tracheal_formants -> formants -> size : 0;
-	long numberOfTrachealAntiFormants = thee != NULL ? thy tracheal_antiformants -> formants -> size : 0;
+	long numberOfTrachealFormants = thee ? thy tracheal_formants -> formants -> size : 0;
+	long numberOfTrachealAntiFormants = thee ? thy tracheal_antiformants -> formants -> size : 0;
 	double x1, y1 = ymin, x2, y2 = ymax, dx, ddx = 0.2, ymid = (y1 + y2) / 2;
 	const char32 *text[6] = { 0, U"TF", U"TAF", U"NF", U"NAF", U""};
 	long nf[6] = {0, numberOfTrachealFormants, numberOfTrachealAntiFormants, numberOfNasalFormants, numberOfNasalAntiFormants, numberOfOralFormants};
@@ -1318,7 +1318,7 @@ static void VocalTractGrid_CouplingGrid_drawParallel_inline (VocalTractGrid me, 
 	long numberOfXSections = 8, ic = 0, numberOfYSections = 4;
 	long numberOfNasalFormants = my nasal_formants -> formants -> size;
 	long numberOfOralFormants = my oral_formants -> formants -> size;
-	long numberOfTrachealFormants = thee != NULL ? thy tracheal_formants -> formants -> size : 0;
+	long numberOfTrachealFormants = thee ? thy tracheal_formants -> formants -> size : 0;
 	long numberOfFormants = numberOfNasalFormants + numberOfOralFormants + numberOfTrachealFormants;
 	long numberOfUpperPartFormants = numberOfNasalFormants + (numberOfOralFormants > 0 ? 1 : 0);
 	long numberOfLowerPartFormants = numberOfFormants - numberOfUpperPartFormants;
@@ -1333,10 +1333,10 @@ static void VocalTractGrid_CouplingGrid_drawParallel_inline (VocalTractGrid me, 
 	if (numberOfFormants == 0) {
 		y1 = y2 = (ymin + ymax) / 2;
 		Graphics_line (g, xmin, y1, xmax, y1);
-		if (yin != NULL) {
+		if (yin) {
 			*yin = y1;
 		}
-		if (yout != NULL) {
+		if (yout) {
 			*yout = y2;
 		}
 		return;
@@ -1359,7 +1359,7 @@ static void VocalTractGrid_CouplingGrid_drawParallel_inline (VocalTractGrid me, 
 			y1 = y2 - dy; ymid = (y1 + y2) / 2;
 			const char32 *fi = Melder_integer (i);
 			MelderString_copy (&fba, U"A", fi, U" F", fi, U" B", fi);
-			draw_oneSection (g, x1, x2, y1, y2, text[isection], fba.string, NULL);
+			draw_oneSection (g, x1, x2, y1, y2, text[isection], fba.string, nullptr);
 			Graphics_line (g, x3, ymid, x1, ymid); // to the left
 			ic++;
 			local_in -> x[ic] = x3; local_out -> x[ic] = x2;
@@ -1390,7 +1390,7 @@ static void VocalTractGrid_CouplingGrid_drawParallel_inline (VocalTractGrid me, 
 		x2 = xmin + xws[3]; // right of diff
 		Graphics_line (g, x1, y1, x2, y1); // from vertical to diff
 		x1 = xmin + xws[2]; // left of diff
-		draw_oneSection (g, x1, x2, y1 + 0.5 * dy, y1 - 0.5 * dy, U"Pre-emphasis", NULL, NULL);
+		draw_oneSection (g, x1, x2, y1 + 0.5 * dy, y1 - 0.5 * dy, U"Pre-emphasis", nullptr, nullptr);
 		x2 = x1;
 		if (numberOfUpperPartFormants > 0) {
 			x2 = xmin + xw[1]; y2 = y1; // at split
@@ -1409,10 +1409,10 @@ static void VocalTractGrid_CouplingGrid_drawParallel_inline (VocalTractGrid me, 
 
 	connections_free (local_out); connections_free (local_in);
 
-	if (yin != NULL) {
+	if (yin) {
 		*yin = y1;
 	}
-	if (yout != NULL) {
+	if (yout) {
 		*yout = y2;
 	}
 }
@@ -1692,9 +1692,9 @@ void structCouplingGrid :: v_info () {
 	MelderInfo_writeLine (in1, U"\nNumber of points in the TRACHEAL FORMANT tiers:");
 	FormantGrid_info (tracheal_formants, tracheal_formants_amplitudes, in2, in3);
 	MelderInfo_writeLine (in1, U"\nNumber of points in the TRACHEAL ANTIFORMANT tiers:");
-	FormantGrid_info (tracheal_antiformants, NULL, in2, in3);
+	FormantGrid_info (tracheal_antiformants, nullptr, in2, in3);
 	MelderInfo_writeLine (in1, U"\nNumber of points in the DELTA FORMANT tiers:");
-	FormantGrid_info (delta_formants, NULL, in2, in3);
+	FormantGrid_info (delta_formants, nullptr, in2, in3);
 }
 
 void CouplingGrid_setNames (CouplingGrid me) {
@@ -1943,7 +1943,7 @@ static void FricationGrid_draw_inside (FricationGrid me, Graphics g, double xmin
 
 	// section 1
 	x1 = xmin; x2 = x1 + xw[1]; y1 = ymid - 0.5 * dy; y2 = y1 + dy;
-	draw_oneSection (g, x1, x2, y1, y2, U"Frication", U"noise", NULL);
+	draw_oneSection (g, x1, x2, y1, y2, U"Frication", U"noise", nullptr);
 
 	// section 2, horizontal line halfway, vertical line
 	x1 = x2; x2 = x1 + xw[2] / 2;
@@ -1961,7 +1961,7 @@ static void FricationGrid_draw_inside (FricationGrid me, Graphics g, double xmin
 		} else {
 			MelderString_copy (&fba,  U"Bypass");
 		}
-		draw_oneSection (g, x1, x2, y1, y2, NULL, fba.string, NULL);
+		draw_oneSection (g, x1, x2, y1, y2, nullptr, fba.string, nullptr);
 		double ymidi = (y1 + y2) / 2;
 		Graphics_line (g, x3, ymidi, x1, ymidi); // from noise to filter
 		cp -> x[i] = x2; cp -> y[i] = ymidi;
@@ -1979,7 +1979,7 @@ static void FricationGrid_draw_inside (FricationGrid me, Graphics g, double xmin
 
 	connections_free (cp);
 
-	if (yout != NULL) {
+	if (yout) {
 		*yout = ys;
 	}
 }
@@ -2219,7 +2219,7 @@ static void getYpositions (double h1, double h2, double h3, double h4, double h5
 }
 
 void KlattGrid_drawVocalTract (KlattGrid me, Graphics g, int filterModel, int withTrachea) {
-	VocalTractGrid_CouplingGrid_draw (my vocalTract, withTrachea ? my coupling : NULL, g, filterModel);
+	VocalTractGrid_CouplingGrid_draw (my vocalTract, withTrachea ? my coupling : nullptr, g, filterModel);
 }
 
 void KlattGrid_draw (KlattGrid me, Graphics g, int filterModel) {
@@ -2381,14 +2381,14 @@ FormantGrid *KlattGrid_getAddressOfFormantGrid (KlattGrid me, int formantType) {
 	       formantType == KlattGrid_TRACHEAL_FORMANTS ? & (my coupling -> tracheal_formants) :
 	       formantType == KlattGrid_NASAL_ANTIFORMANTS ? & (my vocalTract -> nasal_antiformants) :
 	       formantType == KlattGrid_TRACHEAL_ANTIFORMANTS ? & (my coupling -> tracheal_antiformants) :
-	       formantType == KlattGrid_DELTA_FORMANTS ? & (my coupling -> delta_formants) : 0;
+	       formantType == KlattGrid_DELTA_FORMANTS ? & (my coupling -> delta_formants) : nullptr;
 }
 
 Ordered *KlattGrid_getAddressOfAmplitudes (KlattGrid me, int formantType) {
 	return formantType == KlattGrid_ORAL_FORMANTS ? & (my vocalTract -> oral_formants_amplitudes) :
 	       formantType == KlattGrid_NASAL_FORMANTS ? & (my vocalTract -> nasal_formants_amplitudes) :
 	       formantType == KlattGrid_FRICATION_FORMANTS ? & (my frication -> frication_formants_amplitudes) :
-	       formantType == KlattGrid_TRACHEAL_FORMANTS ? & (my coupling -> tracheal_formants_amplitudes) : NULL;
+	       formantType == KlattGrid_TRACHEAL_FORMANTS ? & (my coupling -> tracheal_formants_amplitudes) : nullptr;
 }
 
 #define KlattGrid_QUERY_ADD_REMOVE(Name) \

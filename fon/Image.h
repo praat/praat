@@ -43,7 +43,7 @@ oo_CLASS_CREATE (Image, Sampled);
 //	 double ymin, double ymax, long ny, double dy, double y1);
 /*
 	Function:
-		return a new empty Image, or NULL if out of memory.
+		return a new empty Image.
 	Preconditions:
 		xmin <= xmax;   ymin <= ymax;
 		nx >= 1;  ny >= 1;

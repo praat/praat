@@ -133,7 +133,7 @@ static void VowelEditor_Vowel_addData (VowelEditor me, Vowel thee, double time, 
 static void VowelEditor_getXYFromF1F2 (VowelEditor me, double f1, double f2, double *x, double *y);
 static void VowelEditor_getF1F2FromXY (VowelEditor me, double x, double y, double *f1, double *f2);
 static void VowelEditor_updateVowel (VowelEditor me);
-static Sound VowelEditor_createTarget (VowelEditor me);
+static autoSound VowelEditor_createTarget (VowelEditor me);
 static void VowelEditor_Vowel_reverseFormantTier (VowelEditor me);
 static void VowelEditor_shiftF1F2 (VowelEditor me, double f1_st, double f2_st);
 static void VowelEditor_setSource (VowelEditor me);
@@ -150,7 +150,7 @@ static void copyVowelMarksInPreferences_volatile (Table me);
 static Vowel Vowel_create (double duration);
 static Vowel Vowel_create_twoFormantSchwa (double duration);
 static void Vowel_newDuration (Vowel me, structVowelEditor_F0 *f0p, double newDuration);
-static Sound Vowel_to_Sound_pulses (Vowel me, double samplingFrequency, double adaptFactor, double adaptTime, long interpolationDepth);
+static autoSound Vowel_to_Sound_pulses (Vowel me, double samplingFrequency, double adaptFactor, double adaptTime, long interpolationDepth);
 // forward declarations end
 
 static struct structVowelEditor_F0 f0default = { 140.0, 0.0, 40.0, 2000.0, SAMPLING_FREQUENCY, 1, 0.0, 2000 };
@@ -236,12 +236,12 @@ static Vowel Vowel_create_twoFormantSchwa (double duration) {
 	}
 }
 
-static Sound Vowel_to_Sound_pulses (Vowel me, double samplingFrequency, double adaptFactor, double adaptTime, long interpolationDepth) {
+static autoSound Vowel_to_Sound_pulses (Vowel me, double samplingFrequency, double adaptFactor, double adaptTime, long interpolationDepth) {
 	try {
 		autoPointProcess pp = PitchTier_to_PointProcess (my pt);
 		autoSound thee = PointProcess_to_Sound_pulseTrain (pp.peek(), samplingFrequency, adaptFactor, adaptTime, interpolationDepth);
 		Sound_FormantTier_filter_inline (thee.peek(), my ft);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": Sound with pulses not created.");
 	}
@@ -472,7 +472,7 @@ static void PitchTier_newDuration (PitchTier me, structVowelEditor_F0 *f0p, doub
 static void VowelEditor_updateVowel (VowelEditor me) {
 	double newDuration = VowelEditor_updateDurationInfo (me); // Get new duration from TextWidget
 	VowelEditor_updateF0Info (me); // Get new pitch and slope values from TextWidgets
-	Vowel_newDuration (my vowel, & my f0, newDuration);
+	Vowel_newDuration (my vowel.get(), & my f0, newDuration);
 }
 
 static double getCoordinate (double fmin, double fmax, double f) {
@@ -1167,23 +1167,22 @@ static void menu_cb_newTrajectory (EDITOR_ARGS) {
 	EDITOR_OK
 	EDITOR_DO
 		double f0, f1, f2, time, duration = GET_REAL (U"Duration");
-		autoVowel vowel = Vowel_create (duration);
+		autoVowel newVowel = Vowel_create (duration);
 		time = 0;
 		f0 =  getF0 (&my f0, time);
 		f1 = GET_REAL (U"Start F1");
 		f2 = GET_REAL (U"Start F2");
 		checkF1F2 (me, &f1, &f2);
-		VowelEditor_Vowel_addData (me, vowel.peek(), time, f1, f2, f0);
+		VowelEditor_Vowel_addData (me, newVowel.peek(), time, f1, f2, f0);
 		time = duration;
 		f0 =  getF0 (&my f0, time);
 		f1 = GET_REAL (U"End F1");
 		f2 = GET_REAL (U"End F2");
 		checkF1F2 (me, &f1, &f2);
-		VowelEditor_Vowel_addData (me, vowel.peek(), time, f1, f2, f0);
+		VowelEditor_Vowel_addData (me, newVowel.peek(), time, f1, f2, f0);
 
 		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (duration)));
-		forget (my vowel);
-		my vowel = vowel.transfer();
+		my vowel = newVowel.move();
 
 		Graphics_updateWs (my g);
 	EDITOR_END
@@ -1197,7 +1196,7 @@ static void menu_cb_extendTrajectory (EDITOR_ARGS) {
 		POSITIVE (U"Extra duration (s)", U"0.1")
 	EDITOR_OK
 	EDITOR_DO
-		Vowel thee = my vowel;
+		Vowel thee = my vowel.get();
 		double newDuration = thy xmax + GET_REAL (U"Extra duration");
 		double f0 =  getF0 (&my f0, newDuration);
 		double f1 = GET_REAL (U"To F1");
@@ -1379,9 +1378,8 @@ static void VowelEditor_Vowel_updateTiers (VowelEditor me, Vowel thee, double ti
 // Special case : !soundFollowsMouse. The first click just defines the vowel's first f1f2-position,
 static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	iam (VowelEditor);
-	(void) event;
-	Vowel thee = 0; autoVowel athee = 0;
-	double x, y, xb, yb, tb, t, dt = 0;
+	Vowel thee = nullptr; autoVowel athee;
+	double x, y, xb, yb, tb, t, dt = 0.0;
 	double t0 = Melder_clock ();
 	long iskipped = 0;
 	struct structGuiButtonEvent gb_event = { 0 };
@@ -1393,18 +1391,18 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	if (event -> shiftKeyPressed) {
 		VowelEditor_updateExtendDuration (me);
 		(my shiftKeyPressed) ++;
-		thee = my vowel;
+		thee = my vowel.get();
 		dt = thy xmax + my extendDuration;
-		t = 0 + dt;
+		t = 0.0 + dt;
 		VowelEditor_Vowel_updateTiers (me, thee, t, x, y);
 		GuiText_setString (my durationTextField, Melder_double (t));
 		if (! my soundFollowsMouse) {
 			goto end;
 		}
 	} else {
-		t = 0;
+		t = 0.0;
 		my shiftKeyPressed = 0;
-		athee.reset (Vowel_create (MINIMUM_SOUND_DURATION));
+		athee = Vowel_create (MINIMUM_SOUND_DURATION);
 		thee = athee.peek();
 		VowelEditor_Vowel_updateTiers (me, thee, t, x, y);
 		GuiText_setString (my durationTextField, Melder_double (t));
@@ -1449,9 +1447,8 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 end:
 	Graphics_unsetInner (my g);
 
-	if (my shiftKeyPressed == 0) {
-		forget (my vowel);
-		my vowel = athee.transfer();
+	if (! my shiftKeyPressed) {
+		my vowel = athee.move();
 	}
 	gui_button_cb_play (me, & gb_event);
 }
@@ -1481,9 +1478,9 @@ static void updateWidgets (I) {
 void structVowelEditor :: v_destroy () {
 	forget (g);
 	forget (marks);
-	forget (source);
+	//forget (source);
 	forget (target);
-	forget (vowel);
+	//forget (vowel);
 	forget (f3); forget (b3);
 	forget (f4); forget (b4);
 	VowelEditor_Parent :: v_destroy ();
@@ -1584,19 +1581,18 @@ void structVowelEditor :: v_createChildren ()
 
 static void VowelEditor_setSource (VowelEditor me) {
 	autoPitchTier pt = VowelEditor_to_PitchTier (me, my maximumDuration);
-	autoSound thee = PitchTier_to_Sound_pulseTrain (pt.peek(), my f0.samplingFrequency, my f0.adaptFactor, my f0.adaptTime, my f0.interpolationDepth, 0);
-	forget (my source);
-	my source = thee.transfer();
+	//forget (my source);
+	my source = PitchTier_to_Sound_pulseTrain (pt.peek(), my f0.samplingFrequency, my f0.adaptFactor, my f0.adaptTime, my f0.interpolationDepth, 0);
 }
 //
-static Sound VowelEditor_createTarget (VowelEditor me) {
+static autoSound VowelEditor_createTarget (VowelEditor me) {
 	try {
 		VowelEditor_updateVowel (me); // update pitch and duration
-		autoSound thee = Vowel_to_Sound_pulses (my vowel, 44100, 0.7, 0.05, 30);
+		autoSound thee = Vowel_to_Sound_pulses (my vowel.get(), 44100, 0.7, 0.05, 30);
 		Vector_scale (thee.peek(), 0.99);
 		Sound_fadeIn (thee.peek(), 0.005, 1);
 		Sound_fadeOut (thee.peek(), 0.005);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Target Sound not created.");
 	}
@@ -1606,13 +1602,13 @@ VowelEditor VowelEditor_create (const char32 *title, Daata data) {
 	try {
 		trace (U"enter");
 		autoVowelEditor me = Thing_new (VowelEditor);
-		Melder_assert (me.peek() != NULL);
+		Melder_assert (me.peek());
 		Editor_init (me.peek(), 0, 0, prefs.shellWidth, prefs.shellHeight, title, data);
 #if motif
 		Melder_assert (XtWindow (my drawingArea -> d_widget));
 #endif
 		my g = Graphics_create_xmdrawingarea (my drawingArea);
-		Melder_assert (my g != NULL);
+		Melder_assert (my g);
 		Graphics_setFontSize (my g, 12);
 		Editor_setPublicationCallback (me.peek(), cb_publish, NULL);
 

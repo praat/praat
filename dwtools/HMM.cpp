@@ -466,7 +466,7 @@ HMM HMM_createFullContinuousModel (int leftToRight, long numberOfStates, long nu
 	(void) numberOfFeatureStreams;
 	(void) dimensionOfStream;
 	(void) numberOfGaussiansforStream;
-	return NULL;
+	return nullptr;
 }
 
 HMM HMM_createContinuousModel (int leftToRight, long numberOfStates, long numberOfObservationSymbols,
@@ -525,7 +525,7 @@ HMM HMM_createSimple (int leftToRight, const char32 *states_string, const char32
 			autoHMM_State state = HMM_State_create (token);
 			HMM_addState (me.peek(), state.transfer());
 		}
-		for (char32 *token = Melder_firstToken (symbols); token != NULL; token = Melder_nextToken ()) {
+		for (char32 *token = Melder_firstToken (symbols); token != nullptr; token = Melder_nextToken ()) {
 			autoHMM_Observation symbol = HMM_Observation_create (token, 0, 0, 0);
 			HMM_addObservation (me.peek(), symbol.transfer());
 		}
@@ -738,7 +738,7 @@ void HMM_draw (HMM me, Graphics g, int garnish) {
 	xs[1] = ys[1] = 0;
 	if (my numberOfStates > 1) {
 		for (long is = 1; is <= my numberOfStates; is++) {
-			double alpha = - NUMpi + NUMpi * 2.0 * (is - 1.0) / my numberOfStates;
+			double alpha = - NUMpi + NUMpi * 2.0 * (is - 1) / my numberOfStates;
 			xs[is] = r * cos (alpha); ys[is] = r * sin (alpha);
 		}
 	}
@@ -748,10 +748,10 @@ void HMM_draw (HMM me, Graphics g, int garnish) {
 	// find fontsize
 	int fontSize = Graphics_inqFontSize (g);
 	const char32 *widest_label = U"";
-	double max_width = 0;
+	double max_width = 0.0;
 	for (long is = 1; is <= my numberOfStates; is++) {
 		HMM_State hmms = (HMM_State) my states -> item[is];
-		double w = hmms -> label == NULL ? 0 : Graphics_textWidth (g, hmms -> label);
+		double w = ( hmms -> label == nullptr ? 0.0 : Graphics_textWidth (g, hmms -> label) );
 		if (w > max_width) {
 			widest_label = hmms -> label;
 			max_width = w;
@@ -774,7 +774,7 @@ void HMM_draw (HMM me, Graphics g, int garnish) {
 	// draw connections from is to js
 	// 1 -> 2 / 2-> : increase / decrease angle between 1 and 2 with pi /10
 	// use cos(a+b) and cos(a -b) rules
-	double cosb = cos (NUMpi / 10), sinb = sin (NUMpi / 10);
+	double cosb = cos (NUMpi / 10.0), sinb = sin (NUMpi / 10.0);
 	for (long is = 1; is <= my numberOfStates; is++) {
 		double x1 = xs[is], y1 = ys[is];
 		for (long js = 1; js <= my numberOfStates; js++) {
@@ -815,7 +815,7 @@ HMM_ObservationSequence HMM_to_HMM_ObservationSequence (HMM me, long startState,
 			obs.reset (1, my componentDimension);
 			buf.reset (1, my componentDimension);
 		}
-		long istate = startState == 0 ? NUMgetIndexFromProbability (my transitionProbs[0], my numberOfStates, NUMrandomUniform (0, 1)) : startState;
+		long istate = startState == 0 ? NUMgetIndexFromProbability (my transitionProbs[0], my numberOfStates, NUMrandomUniform (0.0, 1.0)) : startState;
 		for (long i = 1; i <= numberOfItems; i++) {
 			// Emit a symbol from istate
 
@@ -834,7 +834,7 @@ HMM_ObservationSequence HMM_to_HMM_ObservationSequence (HMM me, long startState,
 
 			// get next state
 
-			istate = NUMgetIndexFromProbability (my transitionProbs[istate], my numberOfStates + 1, NUMrandomUniform (0, 1));
+			istate = NUMgetIndexFromProbability (my transitionProbs[istate], my numberOfStates + 1, NUMrandomUniform (0.0, 1.0));
 			if (istate == my numberOfStates + 1) { // final state
 				for (long j = numberOfItems; j > i; j--) {
 					HMM_ObservationSequence_removeObservation (thee.peek(), j);
@@ -882,14 +882,14 @@ void HMM_BaumWelch_reInit (HMM_BaumWelch me) {
 	*/
 	for (long is = 0; is <= my numberOfStates; is++) {
 		for (long js = 1; js <= my numberOfStates + 1; js++) {
-			my aij_num[is][js] = 0;
-			my aij_denom[is][js] = 0;
+			my aij_num[is][js] = 0.0;
+			my aij_denom[is][js] = 0.0;
 		}
 	}
 	for (long is = 1; is <= my numberOfStates; is++) {
 		for (long js = 1; js <= my numberOfSymbols; js++) {
-			my bik_num[is][js] = 0;
-			my bik_denom[is][js] = 0;
+			my bik_num[is][js] = 0.0;
+			my bik_denom[is][js] = 0.0;
 		}
 	}
 }
@@ -957,7 +957,7 @@ void HMM_and_HMM_ObservationSequences_learn (HMM me, HMM_ObservationSequences th
 void HMM_and_HMM_StateSequence_drawTrellis (HMM me, HMM_StateSequence thee, Graphics g, int connect, int garnish) {
 	long numberOfTimes = thy numberOfStrings;
 	autoStringsIndex si = HMM_and_HMM_StateSequence_to_StringsIndex (me, thee);
-	double xmin = 0, xmax = numberOfTimes + 1, ymin = 0.5, ymax = my numberOfStates + 0.5;
+	double xmin = 0.0, xmax = numberOfTimes + 1.0, ymin = 0.5, ymax = my numberOfStates + 0.5;
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
@@ -971,7 +971,7 @@ void HMM_and_HMM_StateSequence_drawTrellis (HMM me, HMM_StateSequence thee, Grap
 			if (it > 1) {
 				for (long is = 1; is <= my numberOfStates; is++) {
 					bool indexedConnection = si -> classIndex[it - 1] == is && si -> classIndex[it] == js;
-					Graphics_setLineWidth (g, indexedConnection ? 2 : 1);
+					Graphics_setLineWidth (g, indexedConnection ? 2.0 : 1.0);
 					Graphics_setLineType (g, indexedConnection ? Graphics_DRAWN : Graphics_DOTTED);
 					double x1 = it - 1, y1 = is;
 					if (connect || indexedConnection) {
@@ -1001,11 +1001,11 @@ void HMM_and_HMM_StateSequence_drawTrellis (HMM me, HMM_StateSequence thee, Grap
 }
 
 void HMM_drawBackwardProbabilitiesIllustration (Graphics g, bool garnish) {
-	double xmin = 0, xmax = 1, ymin = 0, ymax = 1;
+	double xmin = 0.0, xmax = 1.0, ymin = 0.0, ymax = 1.0;
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	double xleft  = 0.1, xright = 0.9, r = 0.03;
 	long np = 6;
-	double dy = (1 - 0.3) / (np - 1);
+	double dy = (1.0 - 0.3) / (np - 1);
 	double x0 = xleft, y0 = 0.5;
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	Graphics_circle (g, x0, y0, r);
@@ -1049,8 +1049,8 @@ void HMM_drawBackwardProbabilitiesIllustration (Graphics g, bool garnish) {
 		Graphics_text (g, x0 - 1.5 * r, y0, U"%s__%i_");
 
 		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
-		Graphics_text (g, x0, 0, U"%t");
-		Graphics_text (g, x, 0, U"%t+1");
+		Graphics_text (g, x0, 0.0, U"%t");
+		Graphics_text (g, x, 0.0, U"%t+1");
 
 		double y3 = 0.10;
 		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
@@ -1060,11 +1060,11 @@ void HMM_drawBackwardProbabilitiesIllustration (Graphics g, bool garnish) {
 }
 
 void HMM_drawForwardProbabilitiesIllustration (Graphics g, bool garnish) {
-	double xmin = 0, xmax = 1, ymin = 0, ymax = 1;
+	double xmin = 0.0, xmax = 1.0, ymin = 0.0, ymax = 1.0;
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	double xleft  = 0.1, xright = 0.9, r = 0.03;
+	double xleft = 0.1, xright = 0.9, r = 0.03;
 	long np = 6;
-	double dy = (1 - 0.3) / (np - 1);
+	double dy = (1.0 - 0.3) / (np - 1);
 	double x0 = xright, y0 = 0.5;
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	Graphics_circle (g, x0, y0, r);
@@ -1077,7 +1077,7 @@ void HMM_drawForwardProbabilitiesIllustration (Graphics g, bool garnish) {
 			double cosa = xx / c, sina = yy / c;
 			Graphics_line (g, x0 - r * cosa, y0 + r * sina, x + r * cosa, y - r * sina);
 		} else if (i == 4) {
-			double ddy = 3*dy/4;
+			double ddy = 3.0 * dy / 4.0;
 			Graphics_fillCircle (g, x, y + dy - ddy, 0.5 * r);
 			Graphics_fillCircle (g, x, y + dy - 2 * ddy, 0.5 * r);
 			Graphics_fillCircle (g, x, y + dy - 3 * ddy, 0.5 * r);
@@ -1108,8 +1108,8 @@ void HMM_drawForwardProbabilitiesIllustration (Graphics g, bool garnish) {
 		Graphics_text (g, x0 + 1.5 * r, y0, U"%s__%j_");
 
 		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
-		Graphics_text (g, x, 0, U"%t");
-		Graphics_text (g, x0, 0, U"%t+1");
+		Graphics_text (g, x, 0.0, U"%t");
+		Graphics_text (g, x0, 0.0, U"%t+1");
 
 		double y3 = 0.10;
 		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
@@ -1126,9 +1126,9 @@ void HMM_drawForwardAndBackwardProbabilitiesIllustration (Graphics g, bool garni
 	Graphics_insetViewport (g, 0.5 + xfrac, 1.0, 0.0, 1.0);
 	HMM_drawBackwardProbabilitiesIllustration (g, false);
 	Graphics_resetViewport (g, vp);
-	Graphics_setWindow (g, 0, xs, 0, 1);
+	Graphics_setWindow (g, 0.0, xs, 0.0, 1.0);
 	if (garnish) {
-		double rx1 = 1 + xs * 2 * xfrac + 0.1, rx2 = rx1 + 0.9 - 0.1, y1 = 0.1;
+		double rx1 = 1.0 + xs * 2.0 * xfrac + 0.1, rx2 = rx1 + 0.9 - 0.1, y1 = 0.1;
 		Graphics_line (g, 0.9 + r, 0.5, rx1 - r, 0.5);
 		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
 		Graphics_text (g, 0.9, 0.5 + r, U"%s__%i_");
@@ -1136,10 +1136,10 @@ void HMM_drawForwardAndBackwardProbabilitiesIllustration (Graphics g, bool garni
 		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_TOP);
 		Graphics_text (g, 1.0 + xfrac * xs, 0.5, U"%a__%%ij%_%b__%j_(O__%t+1_)");
 		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
-		Graphics_text (g, 0.1, 0, U"%t-1");
-		Graphics_text (g, 0.9, 0, U"%t");
-		Graphics_text (g, rx1, 0, U"%t+1");
-		Graphics_text (g, rx2, 0, U"%t+2");
+		Graphics_text (g, 0.1, 0.0, U"%t-1");
+		Graphics_text (g, 0.9, 0.0, U"%t");
+		Graphics_text (g, rx1, 0.0, U"%t+1");
+		Graphics_text (g, rx2, 0.0, U"%t+2");
 		Graphics_setLineType (g, Graphics_DASHED);
 		double x4 = rx1 - 0.06, x3 = 0.9 + 0.06;
 		Graphics_line (g, x3, 0.7, x3, 0.0);
@@ -1167,7 +1167,7 @@ void HMM_and_HMM_BaumWelch_getXi (HMM me, HMM_BaumWelch thee, long *obs) {
 		}
 		for (long is = 1; is <= my numberOfStates; is++)
 			for (long js = 1; js <= my numberOfStates; js++) {
-				thy xi[it][is][js]  /= sum;
+				thy xi[it][is][js] /= sum;
 			}
 	}
 }
@@ -1272,7 +1272,7 @@ void HMM_and_HMM_BaumWelch_reestimate (HMM me, HMM_BaumWelch thee) {
 
 void HMM_and_HMM_BaumWelch_forward (HMM me, HMM_BaumWelch thee, long *obs) {
 	// initialise at t = 1 & scale
-	thy scale[1] = 0;
+	thy scale[1] = 0.0;
 	for (long js = 1; js <= my numberOfStates; js++) {
 		thy alpha[js][1] = my transitionProbs[0][js] * my emissionProbs[js][ obs[1] ];
 		thy scale[1] += thy alpha[js][1];

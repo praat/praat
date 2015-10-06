@@ -158,7 +158,7 @@ double FFNet_Pattern_Activation_getCosts_total (FFNet me, Pattern p, Activation 
 
 		double cost = 0.0;
 		for (long i = 1; i <= p -> ny; i++) {
-			FFNet_propagate (me, p -> z[i], NULL);
+			FFNet_propagate (me, p -> z[i], nullptr);
 			cost += FFNet_computeError (me, a -> z[i]);
 		}
 		return cost;

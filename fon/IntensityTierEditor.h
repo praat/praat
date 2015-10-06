@@ -57,7 +57,7 @@ Thing_define (IntensityTierEditor, RealTierEditor) {
 IntensityTierEditor IntensityTierEditor_create (const char32 *title,
 	IntensityTier intensity, Sound sound, bool ownSound);
 /*
-	'sound' may be NULL.
+	'sound' may be null.
 */
 
 /* End of file IntensityTierEditor.h */

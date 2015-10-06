@@ -386,7 +386,7 @@ if (! my printing) {
 
 int HyperPage_script (HyperPage me, double width_inches, double height_inches, const char32 *script) {
 	char32 *text = Melder_dup (script);
-	Interpreter interpreter = Interpreter_createFromEnvironment (NULL);
+	Interpreter interpreter = Interpreter_createFromEnvironment (nullptr);
 	double topSpacing = 0.1, bottomSpacing = 0.1, minFooterDistance = 0.0;
 	kGraphics_font font = my p_font;
 	int size = my p_fontSize;
@@ -408,9 +408,9 @@ if (! my printing) {
 		double x1NDCold, x2NDCold, y1NDCold, y2NDCold;
 		Graphics_inqWsWindow (my g, & x1NDCold, & x2NDCold, & y1NDCold, & y2NDCold);
 		{
-			if (my praatApplication == NULL) my praatApplication = Melder_calloc_f (structPraatApplication, 1);
-			if (my praatObjects == NULL) my praatObjects = Melder_calloc_f (structPraatObjects, 1);
-			if (my praatPicture == NULL) my praatPicture = Melder_calloc_f (structPraatPicture, 1);
+			if (! my praatApplication) my praatApplication = Melder_calloc_f (structPraatApplication, 1);
+			if (! my praatObjects) my praatObjects = Melder_calloc_f (structPraatObjects, 1);
+			if (! my praatPicture) my praatPicture = Melder_calloc_f (structPraatPicture, 1);
 			theCurrentPraatApplication = (PraatApplication) my praatApplication;
 			theCurrentPraatApplication -> batch = true;   // prevent creation of editor windows
 			theCurrentPraatApplication -> topShell = theForegroundPraatApplication. topShell;   // needed for UiForm_create () in dialogs
@@ -505,9 +505,9 @@ if (! my printing) {
 	double x1NDCold, x2NDCold, y1NDCold, y2NDCold;
 	Graphics_inqWsWindow (my ps, & x1NDCold, & x2NDCold, & y1NDCold, & y2NDCold);
 	{
-		if (my praatApplication == NULL) my praatApplication = Melder_calloc_f (structPraatApplication, 1);
-		if (my praatObjects == NULL) my praatObjects = Melder_calloc_f (structPraatObjects, 1);
-		if (my praatPicture == NULL) my praatPicture = Melder_calloc_f (structPraatPicture, 1);
+		if (! my praatApplication) my praatApplication = Melder_calloc_f (structPraatApplication, 1);
+		if (! my praatObjects) my praatObjects = Melder_calloc_f (structPraatObjects, 1);
+		if (! my praatPicture) my praatPicture = Melder_calloc_f (structPraatPicture, 1);
 		theCurrentPraatApplication = (PraatApplication) my praatApplication;
 		theCurrentPraatApplication -> batch = true;
 		theCurrentPraatApplication -> topShell = theForegroundPraatApplication. topShell;   // needed for UiForm_create () in dialogs
@@ -596,7 +596,7 @@ void structHyperPage :: v_destroy () {
 	forget (our g);
 	for (int i = 0; i < 20; i ++) Melder_free (our history [i]. page);
 	Melder_free (our currentPageTitle);
-	if (praatApplication != NULL) {
+	if (our praatApplication) {
 		for (int iobject = ((PraatObjects) our praatObjects) -> n; iobject >= 1; iobject --) {
 			Melder_free (((PraatObjects) our praatObjects) -> list [iobject]. name);
 			forget (((PraatObjects) our praatObjects) -> list [iobject]. object);
@@ -611,7 +611,7 @@ void structHyperPage :: v_destroy () {
 static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 	iam (HyperPage);
 	(void) event;
-	if (my g == NULL) return;   // could be the case in the very beginning
+	if (! my g) return;   // could be the case in the very beginning
 	Graphics_clearWs (my g);
 	initScreen (me);
 	trace (U"going to draw");
@@ -629,11 +629,11 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 
 static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	iam (HyperPage);
-	if (my g == NULL) return;   // could be the case in the very beginning
+	if (! my g) return;   // could be the case in the very beginning
 	if (! my links) return;
 	for (long ilink = 1; ilink <= my links -> size; ilink ++) {
 		HyperLink link = (HyperLink) my links -> item [ilink];		
-		if (link == NULL)
+		if (! link)
 			Melder_fatal (U"gui_drawingarea_cb_click: empty link ", ilink, U"/", my links -> size, U".");
 		if (event -> y > link -> y2DC && event -> y < link -> y1DC && event -> x > link -> x1DC && event -> x < link -> x2DC) {
 			saveHistory (me, my currentPageTitle);
@@ -874,14 +874,14 @@ void structHyperPage :: v_createMenus () {
 		Editor_addCommand (this, U"File", U"Page setup...", 0, menu_cb_pageSetup);
 	#endif
 	Editor_addCommand (this, U"File", U"Print page...", 'P', menu_cb_print);
-	Editor_addCommand (this, U"File", U"-- close --", 0, NULL);
+	Editor_addCommand (this, U"File", U"-- close --", 0, nullptr);
 
 	if (our v_hasHistory ()) {
 		Editor_addMenu (this, U"Go to", 0);
 		Editor_addCommand (this, U"Go to", U"Search for page...", 0, menu_cb_searchForPage);
 		Editor_addCommand (this, U"Go to", U"Back", GuiMenu_OPTION | GuiMenu_LEFT_ARROW, menu_cb_back);
 		Editor_addCommand (this, U"Go to", U"Forward", GuiMenu_OPTION | GuiMenu_RIGHT_ARROW, menu_cb_forth);
-		Editor_addCommand (this, U"Go to", U"-- page --", 0, NULL);
+		Editor_addCommand (this, U"Go to", U"-- page --", 0, nullptr);
 		Editor_addCommand (this, U"Go to", U"Page up", GuiMenu_PAGE_UP, menu_cb_pageUp);
 		Editor_addCommand (this, U"Go to", U"Page down", GuiMenu_PAGE_DOWN, menu_cb_pageDown);
 	}
@@ -893,7 +893,7 @@ void structHyperPage :: v_createMenus () {
 	fontSizeButton_14 = Editor_addCommand (this, U"Font", U"14", GuiMenu_CHECKBUTTON, menu_cb_14);
 	fontSizeButton_18 = Editor_addCommand (this, U"Font", U"18", GuiMenu_CHECKBUTTON, menu_cb_18);
 	fontSizeButton_24 = Editor_addCommand (this, U"Font", U"24", GuiMenu_CHECKBUTTON, menu_cb_24);
-	Editor_addCommand (this, U"Font", U"-- font --", 0, NULL);
+	Editor_addCommand (this, U"Font", U"-- font --", 0, nullptr);
 	Editor_addCommand (this, U"Font", U"Font...", 0, menu_cb_font);
 }
 
@@ -901,7 +901,7 @@ void structHyperPage :: v_createMenus () {
 
 static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 	iam (HyperPage);
-	if (my g == NULL) return;
+	if (! my g) return;
 	Graphics_setWsViewport (my g, 0, event -> width, 0, event -> height);
 	Graphics_setWsWindow (my g, 0.0, my rightMargin = event -> width / resolution,
 		PAGE_HEIGHT - event -> height / resolution, PAGE_HEIGHT);
@@ -951,12 +951,12 @@ void structHyperPage :: v_createChildren () {
 	drawingArea = GuiDrawingArea_createShown (our d_windowForm,
 		0, - Machine_getScrollBarWidth (),
 		y + ( our d_hasExtraRowOfTools ? 2 * height + 16 : height + 9 ), - Machine_getScrollBarWidth (),
-		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, this, GuiDrawingArea_BORDER);
-	GuiDrawingArea_setSwipable (drawingArea, NULL, our verticalScrollBar);
+		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, nullptr, gui_drawingarea_cb_resize, this, GuiDrawingArea_BORDER);
+	GuiDrawingArea_setSwipable (drawingArea, nullptr, our verticalScrollBar);
 }
 
 void HyperPage_init (HyperPage me, const char32 *title, Daata data) {
-	resolution = Gui_getResolution (NULL);
+	resolution = Gui_getResolution (nullptr);
 	Editor_init (me, 0, 0, (int) floor (6 * resolution + 30), 800, title, data);
 	#if motif
 		Melder_assert (XtWindow (my drawingArea -> d_widget));

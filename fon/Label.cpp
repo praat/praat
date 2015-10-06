@@ -30,8 +30,8 @@ void structAutosegment :: v_copy (thou) {
 bool structAutosegment :: v_equal (thou) {
 	thouart (Autosegment);
 	if (! Autosegment_Parent :: v_equal (thee)) return false;
-	if (name == NULL && thy name == NULL) return true;   // shortcut: no names
-	if (name == NULL || thy name == NULL) return false;
+	if (! our name && ! thy name) return true;   // shortcut: no names
+	if (! our name || ! thy name) return false;
 	return str32equ (name, thy name);
 }
 
@@ -45,7 +45,7 @@ Autosegment Autosegment_create (double tmin, double tmax, const char32 *label) {
 	try {
 		autoAutosegment me = Thing_new (Autosegment);
 		Function_init (me.peek(), tmin, tmax);
-		if (label != NULL) {
+		if (label) {
 			Thing_setName (me.peek(), label);
 		}
 		return me.transfer();
@@ -68,7 +68,7 @@ Thing_implement (Tier, Sorted, 0);
 void Tier_init (I, long initialCapacity) {
 	iam (Tier);
 	Sorted_init (me, classAutosegment, initialCapacity);
-	Collection_addItem (me, Autosegment_create (-1e30, 1e30, NULL));
+	Collection_addItem (me, Autosegment_create (-1e30, 1e30, nullptr));
 }
 
 Tier Tier_create (long initialCapacity) {

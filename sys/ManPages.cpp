@@ -65,13 +65,13 @@ void structManPages :: v_destroy () {
 
 static const char32 *extractLink (const char32 *text, const char32 *p, char32 *link) {
 	char32 *to = link, *max = link + 300;
-	if (p == NULL) p = text;
+	if (! p) p = text;
 	/*
 	 * Search for next '@' that is not in a backslash sequence.
 	 */
 	for (;;) {
 		p = str32chr (p, U'@');
-		if (! p) return NULL;   // no more '@'
+		if (! p) return nullptr;   // no more '@'
 		if (p - text <= 0 || (p [-1] != U'\\' && (p - text <= 1 || p [-2] != U'\\'))) break;
 		p ++;
 	}
@@ -163,7 +163,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 		} catch (MelderError) {
 			Melder_throw (U"Cannot find text.");
 		}
-		for (const char32 *plink = extractLink (par -> text, NULL, link); plink != NULL; plink = extractLink (par -> text, plink, link)) {
+		for (const char32 *plink = extractLink (par -> text, nullptr, link); plink != nullptr; plink = extractLink (par -> text, plink, link)) {
 			/*
 			 * Now, `link' contains the link text, with spaces and all.
 			 * Transform it into a file name.
@@ -331,7 +331,7 @@ static void grind (ManPages me) {
 		for (ipar = 0; page -> paragraphs [ipar]. type; ipar ++) {
 			const char32 *text = page -> paragraphs [ipar]. text, *p;
 			char32 link [301];
-			if (text) for (p = extractLink (text, NULL, link); p != NULL; p = extractLink (text, p, link)) {
+			if (text) for (p = extractLink (text, nullptr, link); p != nullptr; p = extractLink (text, p, link)) {
 				if (link [0] == U'\\' && ((link [1] == U'F' && link [2] == U'I') || (link [1] == U'S' && link [2] == U'C')))
 					continue;   // ignore "FILE" links
 				if ((jpage = lookUp_sorted (me, link)) != 0) {
@@ -381,7 +381,7 @@ static void grind (ManPages me) {
 		for (int ipar = 0; page -> paragraphs [ipar]. type; ipar ++) {
 			const char32 *text = page -> paragraphs [ipar]. text, *p;
 			char32 link [301];
-			if (text) for (p = extractLink (text, NULL, link); p != NULL; p = extractLink (text, p, link)) {
+			if (text) for (p = extractLink (text, nullptr, link); p != nullptr; p = extractLink (text, p, link)) {
 				if (link [0] == U'\\' && ((link [1] == U'F' && link [2] == U'I') || (link [1] == U'S' && link [2] == U'C')))
 					continue;   // ignore "FILE" links
 				if ((jpage = lookUp_sorted (me, link)) != 0) {
@@ -523,7 +523,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 			continue;
 		}
 		if (type == kManPage_type_SCRIPT) {
-			autoInterpreter interpreter = Interpreter_createFromEnvironment (NULL);
+			autoInterpreter interpreter = Interpreter_createFromEnvironment (nullptr);
 			numberOfPictures ++;
 			structMelderFile pdfFile;
 			MelderFile_copy (file, & pdfFile);
@@ -867,7 +867,7 @@ void ManPages_writeAllToHtmlDir (ManPages me, const char32 *dirPath) {
 		} catch (MelderError) {
 			Melder_clearError ();
 		}
-		if (oldText.peek() == NULL   // doesn't the file exist yet?
+		if (! oldText.peek()   // doesn't the file exist yet?
 			|| str32cmp (buffer.string, oldText.peek()))   // isn't the old file identical to the new text?
 		{
 			MelderFile_writeText (& file, buffer.string, kMelder_textOutputEncoding_UTF8);   // then write the new text

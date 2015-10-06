@@ -381,7 +381,7 @@ GuiMenu GuiMenu_createInWindow (GuiWindow window, const char32 *title, uint32 fl
 			my d_xmMenuTitle = XmCreateCascadeButton (window -> d_xmMenuBar, Melder_peek32to8 (title), nullptr, 0);
 			if (str32equ (title, U"Help"))
 				XtVaSetValues (window -> d_xmMenuBar, XmNmenuHelpWidget, my d_xmMenuTitle, nullptr);
-			my d_widget = XmCreatePulldownMenu (window -> d_xmMenuBar, Melder_peek32to8 (title), NULL, 0);
+			my d_widget = XmCreatePulldownMenu (window -> d_xmMenuBar, Melder_peek32to8 (title), nullptr, 0);
 			if (flags & GuiMenu_INSENSITIVE)
 				XtSetSensitive (my d_xmMenuTitle, False);
 			XtVaSetValues (my d_xmMenuTitle, XmNsubMenuId, my d_widget, nullptr);

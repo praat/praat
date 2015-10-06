@@ -157,7 +157,7 @@ void structManual :: v_draw () {
 		while (page -> paragraphs [lastParagraph]. type != 0) lastParagraph ++;
 		if (lastParagraph > 0) {
 			const char32 *text = page -> paragraphs [lastParagraph - 1]. text;
-			if (text == NULL || text [0] == U'\0' || text [str32len (text) - 1] != U':') {
+			if (! text || text [0] == U'\0' || text [str32len (text) - 1] != U':') {
 				if (our printing && our suppressLinksHither)
 					goAhead = false;
 				else
@@ -378,14 +378,14 @@ static void gui_button_cb_record (I, GuiButtonEvent event) {
 	(void) event;
 	iam (Manual);
 	ManPages manPages = (ManPages) my data;
-	ManPage manPage = (ManPage) (my path < 1 ? NULL : manPages -> pages -> item [my path]);
+	ManPage manPage = (ManPage) (my path < 1 ? nullptr : manPages -> pages -> item [my path]);
 	GuiThing_setSensitive (my recordButton,  false);
 	GuiThing_setSensitive (my playButton,    false);
 	GuiThing_setSensitive (my publishButton, false);
 	#if motif
 		XmUpdateDisplay (my d_windowForm -> d_xmShell);
 	#endif
-	if (! Melder_record (manPage == NULL ? 1.0 : manPage -> recordingTime)) Melder_flushError ();
+	if (! Melder_record (manPage == nullptr ? 1.0 : manPage -> recordingTime)) Melder_flushError ();
 	GuiThing_setSensitive (my recordButton,  true);
 	GuiThing_setSensitive (my playButton,    true);
 	GuiThing_setSensitive (my publishButton, true);
@@ -463,7 +463,7 @@ void structManual :: v_createMenus () {
 	Editor_addCommand (this, U"File", U"Print manual...", 0, menu_cb_printRange);
 	Editor_addCommand (this, U"File", U"Save page as HTML file...", 0, menu_cb_writeOneToHtmlFile);
 	Editor_addCommand (this, U"File", U"Save manual to HTML directory...", 0, menu_cb_writeAllToHtmlDir);
-	Editor_addCommand (this, U"File", U"-- close --", 0, NULL);
+	Editor_addCommand (this, U"File", U"-- close --", 0, nullptr);
 
 	Editor_addCommand (this, U"Go to", U"Search for page (list)...", 0, menu_cb_searchForPageList);
 }

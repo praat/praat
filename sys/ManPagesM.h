@@ -50,7 +50,7 @@
 #define CODE5(text)  { kManPage_type_CODE5, text },
 #define PROTOTYPE(text)  { kManPage_type_PROTOTYPE, text },
 #define FORMULA(text)  { kManPage_type_FORMULA, text },
-#define PICTURE(width,height,draw)  { kManPage_type_PICTURE, NULL, width, height, draw },
+#define PICTURE(width,height,draw)  { kManPage_type_PICTURE, nullptr, width, height, draw },
 #define SCRIPT(width,height,text)  { kManPage_type_SCRIPT, text, width, height },
 #define MAN_END  { 0 } }; ManPages_addPage (me, title, author, date, page); }
 

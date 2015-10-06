@@ -37,15 +37,15 @@ Autosegment Autosegment_create (double tmin, double tmax, const char32 *label);
 	Function:
 		create a new instance of Autosegment.
 	Return value:
-		the new Autosegment, or NULL if out of memory.
+		the new Autosegment.
 	Preconditions:
 		tmax > tmin;
-		label may be NULL;
+		label may be null;
 	Postconditions:
 		result -> tmin == tmin;
 		result -> tmax == tmax;
-		if (label != NULL)
-			result -> name == NULL;
+		if (label)
+			result -> name == nullptr;
 		else
 			result -> name [] == label [];   // 'label' copied into 'name'
 */
@@ -63,13 +63,13 @@ Tier Tier_create (long initialCapacity);
 	Function:
 		create a new Tier containing one Autosegment from -1e30 to 1e30.
 	Return value:
-		the new Tier, or NULL if out of memory.
+		the new Tier.
 	Postconditions:
 		my size == 1;
 		my item [1] -> methods == classAutosegment;
 		my item [1] -> xmin == -1e30;
 		my item [1] -> xmax == 1e30;
-		my item [1] -> name == NULL;
+		my item [1] -> name == nullptr;
 */
 
 long Tier_timeToIndex (Tier me, double t);
