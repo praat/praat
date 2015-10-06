@@ -60,10 +60,10 @@ autoSound PointProcess_to_Sound_pulseTrain
 					sound [j] += amplitude;
 				else if (angle < 0.0)
 					sound [j] += halfampsinangle *
-						(1 + cos (angle / (mid - begin + 1))) / angle;
+						(1.0 + cos (angle / (mid - begin + 1))) / angle;
 				else
 					sound [j] += halfampsinangle *
-						(1 + cos (angle / (end - mid + 1))) / angle;
+						(1.0 + cos (angle / (end - mid + 1))) / angle;
 				angle += NUMpi;
 				halfampsinangle = - halfampsinangle;
 			}
@@ -126,15 +126,15 @@ autoSound PointProcess_to_Sound_phonation
 					period = NUMundefined;
 				}
 			}
-			if (period == NUMundefined) {
+			if (! NUMdefined (period)) {
 				if (it < my nt) {
 					period = my t [it + 1] - my t [it];
 					if (period > maximumPeriod) {
 						period = NUMundefined;
 					}
 				}
-				if (period == NUMundefined) {
-					period = 0.5 * maximumPeriod;   /* Some default value. */
+				if (! NUMdefined (period)) {
+					period = 0.5 * maximumPeriod;   // some default value
 				}
 			}
 			te = re * period;
@@ -177,7 +177,7 @@ autoSound PointProcess_to_Sound_phonation
 				double value = flowDerivative * factorPerSample;
 				long beginSample = midSample + 1;
 				if (beginSample < 1) beginSample = 1;
-				long endSample = midSample + (long) floor (20 * ta / thy dx);
+				long endSample = midSample + (long) floor (20.0 * ta / thy dx);
 				if (endSample > thy nx) endSample = thy nx;
 				for (long isamp = beginSample; isamp <= endSample; isamp ++) {
 					sound [isamp] += value;

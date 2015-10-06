@@ -32,8 +32,7 @@
 #include "Vowel_def.h"
 oo_CLASS_CREATE (Vowel, Function);
 
-struct structVowelEditor_F0
-{
+struct structVowelEditor_F0 {
 	double start;
 	double slopeOctPerSec;
 	double minimum, maximum;
@@ -41,46 +40,46 @@ struct structVowelEditor_F0
 	long interpolationDepth;
 };
 
-struct structVowelEditor_F1F2Grid
-{
+struct structVowelEditor_F1F2Grid {
 	double df1, df2;
 	int text_left, text_right, text_bottom, text_top;
 	double grey;
 };
 
 Thing_define (VowelEditor, Editor) {
-	// new data:
-	public:
-		int soundFollowsMouse, shiftKeyPressed;
-		double f1min, f1max, f2min, f2max;   // domain of graphics F1-F2 area
-		Matrix f3, b3, f4, b4;
-		int frequencyScale;   // 0: lin, 1: log, 2: bark, 3: mel
-		int axisOrientation;  // 0: origin topright + f1 down + f2 to left, 0: origin lb + f1 right +f2 up
-		int marksDataset, speakerType;   // 1 = male, 2 = female, 3 = child
-		int marksFontSize;
-		Graphics g;   // the drawing
-		short width, height;  // size of drawing area in pixels
-		Table marks;   // Vowel, F1, F2, Colour...
-		autoVowel vowel;
-		double markTraceEvery;
-		structVowelEditor_F0 f0;
-		double maximumDuration, extendDuration;
-		autoSound source;
-		Sound target;
-		GuiDrawingArea drawingArea;
-		GuiButton playButton, reverseButton, publishButton;
-		GuiText f0TextField, f0SlopeTextField, durationTextField, extendTextField;
-		GuiLabel startInfo, endInfo;
-		structVowelEditor_F1F2Grid grid;
-	// overridden methods:
-		virtual void v_destroy ();
-		virtual bool v_scriptable () { return false; }
-		virtual void v_createChildren ();
-		virtual void v_createMenus ();
-		virtual void v_createHelpMenuItems (EditorMenu menu);
+	int soundFollowsMouse, shiftKeyPressed;
+	double f1min, f1max, f2min, f2max;   // domain of graphics F1-F2 area
+	Matrix f3, b3, f4, b4;
+	int frequencyScale;   // 0: lin, 1: log, 2: bark, 3: mel
+	int axisOrientation;  // 0: origin topright + f1 down + f2 to left, 0: origin lb + f1 right +f2 up
+	int marksDataset, speakerType;   // 1 = male, 2 = female, 3 = child
+	int marksFontSize;
+	Graphics g;   // the drawing
+	short width, height;  // size of drawing area in pixels
+	autoTable marks;   // Vowel, F1, F2, Colour...
+	autoVowel vowel;
+	double markTraceEvery;
+	structVowelEditor_F0 f0;
+	double maximumDuration, extendDuration;
+	GuiDrawingArea drawingArea;
+	GuiButton playButton, reverseButton, publishButton;
+	GuiText f0TextField, f0SlopeTextField, durationTextField, extendTextField;
+	GuiLabel startInfo, endInfo;
+	structVowelEditor_F1F2Grid grid;
+
+	void v_destroy ()
+		override;
+	bool v_scriptable ()
+		override { return false; }
+	void v_createChildren ()
+		override;
+	void v_createMenus ()
+		override;
+	void v_createHelpMenuItems (EditorMenu menu)
+		override;
 };
 
-VowelEditor VowelEditor_create (const char32 *title, Daata data);
+autoVowelEditor VowelEditor_create (const char32 *title, Daata data);
 
 void VowelEditor_prefs ();
 

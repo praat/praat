@@ -41,7 +41,7 @@ void structPreference :: v_destroy () {
 static SortedSetOfString thePreferences;
 
 static void Preferences_add (const char32 *string, int type, void *value, int min, int max, const char32 * (*getText) (int value), int (*getValue) (const char32 *text)) {
-	Preference me = Thing_new (Preference);
+	autoPreference me = Thing_new (Preference);
 	my string = Melder_dup (string);
 	for (char32 *p = & my string [0]; *p != U'\0'; p ++) if (*p == U'_') *p = U'.';
 	my type = type;
@@ -51,7 +51,7 @@ static void Preferences_add (const char32 *string, int type, void *value, int mi
 	my getText = getText;
 	my getValue = getValue;
 	if (! thePreferences) thePreferences = SortedSetOfString_create ();
-	Collection_addItem (thePreferences, me);
+	Collection_addItem (thePreferences, me.transfer());
 }
 
 void Preferences_addByte (const char32 *string, signed char *value, signed char defaultValue)
@@ -61,25 +61,25 @@ void Preferences_addInt (const char32 *string, int *value, int defaultValue)
 	{ *value = defaultValue; Preferences_add (string, intwa, value, 0, 0, nullptr, nullptr); }
 
 void Preferences_addLong (const char32 *string, long *value, long defaultValue)
-	{ *value = defaultValue; Preferences_add (string, longwa, value, 0, 0, NULL, NULL); }
+	{ *value = defaultValue; Preferences_add (string, longwa, value, 0, 0, nullptr, nullptr); }
 
 void Preferences_addUbyte (const char32 *string, unsigned char *value, unsigned char defaultValue)
-	{ *value = defaultValue; Preferences_add (string, ubytewa, value, 0, 0, NULL, NULL); }
+	{ *value = defaultValue; Preferences_add (string, ubytewa, value, 0, 0, nullptr, nullptr); }
 
 void Preferences_addUint (const char32 *string, unsigned int *value, unsigned int defaultValue)
-	{ *value = defaultValue; Preferences_add (string, uintwa, value, 0, 0, NULL, NULL); }
+	{ *value = defaultValue; Preferences_add (string, uintwa, value, 0, 0, nullptr, nullptr); }
 
 void Preferences_addUlong (const char32 *string, unsigned long *value, unsigned long defaultValue)
-	{ *value = defaultValue; Preferences_add (string, ulongwa, value, 0, 0, NULL, NULL); }
+	{ *value = defaultValue; Preferences_add (string, ulongwa, value, 0, 0, nullptr, nullptr); }
 
 void Preferences_addBool (const char32 *string, bool *value, bool defaultValue)
-	{ *value = defaultValue; Preferences_add (string, boolwa, value, 0, 0, NULL, NULL); }
+	{ *value = defaultValue; Preferences_add (string, boolwa, value, 0, 0, nullptr, nullptr); }
 
 void Preferences_addDouble (const char32 *string, double *value, double defaultValue)
-	{ *value = defaultValue; Preferences_add (string, doublewa, value, 0, 0, NULL, NULL); }
+	{ *value = defaultValue; Preferences_add (string, doublewa, value, 0, 0, nullptr, nullptr); }
 
 void Preferences_addString (const char32 *string, char32 *value, const char32 *defaultValue)
-	{ str32cpy (value, defaultValue); Preferences_add (string, stringwa, value, 0, 0, NULL, NULL); }
+	{ str32cpy (value, defaultValue); Preferences_add (string, stringwa, value, 0, 0, nullptr, nullptr); }
 
 void _Preferences_addEnum (const char32 *string, enum kPreferences_dummy *value, int min, int max,
 	const char32 *(*getText) (int value), int (*getValue) (const char32 *text), enum kPreferences_dummy defaultValue)
@@ -116,26 +116,26 @@ void Preferences_read (MelderFile file) {
 			Preference pref = (Preference) thePreferences -> item [ipref];
 			switch (pref -> type) {
 				case bytewa: * (signed char *) pref -> value =
-					strtol (Melder_peek32to8 (value), NULL, 10); break;
+					strtol (Melder_peek32to8 (value), nullptr, 10); break;
 				case intwa: * (int *) pref -> value =
-					strtol (Melder_peek32to8 (value), NULL, 10); break;
+					strtol (Melder_peek32to8 (value), nullptr, 10); break;
 				case longwa: * (long *) pref -> value =
-					strtol (Melder_peek32to8 (value), NULL, 10); break;
+					strtol (Melder_peek32to8 (value), nullptr, 10); break;
 				case ubytewa: * (unsigned char *) pref -> value =
-					strtoul (Melder_peek32to8 (value), NULL, 10); break;
+					strtoul (Melder_peek32to8 (value), nullptr, 10); break;
 				case uintwa: * (unsigned int *) pref -> value =
-					strtoul (Melder_peek32to8 (value), NULL, 10); break;
+					strtoul (Melder_peek32to8 (value), nullptr, 10); break;
 				case ulongwa: * (unsigned long *) pref -> value =
-					strtoul (Melder_peek32to8 (value), NULL, 10); break;
+					strtoul (Melder_peek32to8 (value), nullptr, 10); break;
 				case boolwa: * (bool *) pref -> value =
 					str32nequ (value, U"yes", 3) ? true :
 					str32nequ (value, U"no", 2) ? false :
-					strtol (Melder_peek32to8 (value), NULL, 10) != 0; break;
+					strtol (Melder_peek32to8 (value), nullptr, 10) != 0; break;
 				case doublewa: * (double *) pref -> value =
 					Melder_a8tof (Melder_peek32to8 (value)); break;
 				case stringwa: {
 					str32ncpy ((char32 *) pref -> value, value, Preferences_STRING_BUFFER_SIZE);
-					((char32 *) pref -> value) [Preferences_STRING_BUFFER_SIZE - 1] = '\0'; break;
+					((char32 *) pref -> value) [Preferences_STRING_BUFFER_SIZE - 1] = U'\0'; break;
 				}
 				case enumwa: {
 					int intValue = pref -> getValue (value);
