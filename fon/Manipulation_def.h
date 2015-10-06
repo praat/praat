@@ -47,7 +47,7 @@ oo_DEFINE_CLASS (Manipulation, Function)
 		 * but allow it to be read (a legacy of writing but not reading the version 3 stuff).
 		 */
 		#if oo_WRITING
-			{ Image save = dummySpectrogram; dummySpectrogram = NULL;
+			{ Image save = dummySpectrogram; dummySpectrogram = nullptr;
 		#endif
 		oo_OBJECT (Image, 0, dummySpectrogram)
 		#if oo_WRITING

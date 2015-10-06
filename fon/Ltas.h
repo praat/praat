@@ -49,7 +49,7 @@ Thing_define (Ltas, Vector) {
 Ltas Ltas_create (long nx, double dx);
 /*
 	Function:
-		create an Ltas, or NULL if out of memory.
+		create an Ltas.
 	Preconditions:
 		nx >= 1;
 		dx > 0.0;

@@ -57,23 +57,23 @@ static int prefs_synthesisMethod = Manipulation_OVERLAPADD;   /* Remembered acro
 #define YLININV(freq)  (my p_pitch_units == kManipulationEditor_pitchUnits_HERTZ ? (freq) : NUMsemitonesToHertz (freq))
 
 static void updateMenus (ManipulationEditor me) {
-	Melder_assert (my synthPulsesButton != NULL);
+	Melder_assert (my synthPulsesButton);
 	GuiMenuItem_check (my synthPulsesButton, my synthesisMethod == Manipulation_PULSES);
-	Melder_assert (my synthPulsesHumButton != NULL);
+	Melder_assert (my synthPulsesHumButton);
 	GuiMenuItem_check (my synthPulsesHumButton, my synthesisMethod == Manipulation_PULSES_HUM);
-	Melder_assert (my synthPulsesLpcButton != NULL);
+	Melder_assert (my synthPulsesLpcButton);
 	GuiMenuItem_check (my synthPulsesLpcButton, my synthesisMethod == Manipulation_PULSES_LPC);
-	Melder_assert (my synthPitchButton != NULL);
+	Melder_assert (my synthPitchButton);
 	GuiMenuItem_check (my synthPitchButton, my synthesisMethod == Manipulation_PITCH);
-	Melder_assert (my synthPitchHumButton != NULL);
+	Melder_assert (my synthPitchHumButton);
 	GuiMenuItem_check (my synthPitchHumButton, my synthesisMethod == Manipulation_PITCH_HUM);
-	Melder_assert (my synthPulsesPitchButton != NULL);
+	Melder_assert (my synthPulsesPitchButton);
 	GuiMenuItem_check (my synthPulsesPitchButton, my synthesisMethod == Manipulation_PULSES_PITCH);
-	Melder_assert (my synthPulsesPitchHumButton != NULL);
+	Melder_assert (my synthPulsesPitchHumButton);
 	GuiMenuItem_check (my synthPulsesPitchHumButton, my synthesisMethod == Manipulation_PULSES_PITCH_HUM);
-	Melder_assert (my synthOverlapAddButton != NULL);
+	Melder_assert (my synthOverlapAddButton);
 	GuiMenuItem_check (my synthOverlapAddButton, my synthesisMethod == Manipulation_OVERLAPADD);
-	Melder_assert (my synthPitchLpcButton != NULL);
+	Melder_assert (my synthPitchLpcButton);
 	GuiMenuItem_check (my synthPitchLpcButton, my synthesisMethod == Manipulation_PITCH_LPC);
 }
 
@@ -84,7 +84,7 @@ static bool getSoundArea (ManipulationEditor me, double *ymin, double *ymax) {
 	Manipulation ana = (Manipulation) my data;
 	*ymin = 0.66;
 	*ymax = 1.00;
-	return ana -> sound != NULL || ana -> pulses != NULL;
+	return ana -> sound || ana -> pulses;
 }
 /*
  * The "pitch area" contains the grey pitch analysis based on the pulses, and the blue pitch tier.
@@ -93,7 +93,7 @@ static bool getPitchArea (ManipulationEditor me, double *ymin, double *ymax) {
 	Manipulation ana = (Manipulation) my data;
 	*ymin = ana -> duration ? 0.16 : 0.00;
 	*ymax = 0.65;
-	return ana -> pulses != NULL || ana -> pitch;
+	return ana -> pulses || ana -> pitch;
 }
 static bool getDurationArea (ManipulationEditor me, double *ymin, double *ymax) {
 	Manipulation ana = (Manipulation) my data;
@@ -576,25 +576,25 @@ void structManipulationEditor :: v_createMenus () {
 	Editor_addCommand (this, U"File", U"Extract pitch tier", 0, menu_cb_extractPitchTier);
 	Editor_addCommand (this, U"File", U"Extract duration tier", 0, menu_cb_extractDurationTier);
 	Editor_addCommand (this, U"File", U"Publish resynthesis", 0, menu_cb_extractManipulatedSound);
-	Editor_addCommand (this, U"File", U"-- close --", 0, NULL);
+	Editor_addCommand (this, U"File", U"-- close --", 0, nullptr);
 
 	Editor_addMenu (this, U"Pulse", 0);
 	Editor_addCommand (this, U"Pulse", U"Add pulse at cursor", 'P', menu_cb_addPulseAtCursor);
 	Editor_addCommand (this, U"Pulse", U"Add pulse at...", 0, menu_cb_addPulseAt);
-	Editor_addCommand (this, U"Pulse", U"-- remove pulses --", 0, NULL);
+	Editor_addCommand (this, U"Pulse", U"-- remove pulses --", 0, nullptr);
 	Editor_addCommand (this, U"Pulse", U"Remove pulse(s)", GuiMenu_OPTION + 'P', menu_cb_removePulses);
 
 	Editor_addMenu (this, U"Pitch", 0);
 	Editor_addCommand (this, U"Pitch", U"Add pitch point at cursor", 'T', menu_cb_addPitchPointAtCursor);
 	Editor_addCommand (this, U"Pitch", U"Add pitch point at time slice", 0, menu_cb_addPitchPointAtSlice);
 	Editor_addCommand (this, U"Pitch", U"Add pitch point at...", 0, menu_cb_addPitchPointAt);
-	Editor_addCommand (this, U"Pitch", U"-- remove pitch --", 0, NULL);
+	Editor_addCommand (this, U"Pitch", U"-- remove pitch --", 0, nullptr);
 	Editor_addCommand (this, U"Pitch", U"Remove pitch point(s)", GuiMenu_OPTION + 'T', menu_cb_removePitchPoints);
-	Editor_addCommand (this, U"Pitch", U"-- pitch prefs --", 0, NULL);
+	Editor_addCommand (this, U"Pitch", U"-- pitch prefs --", 0, nullptr);
 	Editor_addCommand (this, U"Pitch", U"Set pitch range...", 0, menu_cb_setPitchRange);
 	Editor_addCommand (this, U"Pitch", U"Set pitch units...", 0, menu_cb_setPitchUnits);
 	Editor_addCommand (this, U"Pitch", U"Set pitch dragging strategy...", 0, menu_cb_setDraggingStrategy);
-	Editor_addCommand (this, U"Pitch", U"-- modify pitch --", 0, NULL);
+	Editor_addCommand (this, U"Pitch", U"-- modify pitch --", 0, nullptr);
 	Editor_addCommand (this, U"Pitch", U"Shift pitch frequencies...", 0, menu_cb_shiftPitchFrequencies);
 	Editor_addCommand (this, U"Pitch", U"Multiply pitch frequencies...", 0, menu_cb_multiplyPitchFrequencies);
 	Editor_addCommand (this, U"Pitch", U"All:", GuiMenu_INSENSITIVE, menu_cb_stylizePitch);
@@ -606,11 +606,11 @@ void structManipulationEditor :: v_createMenus () {
 	Editor_addMenu (this, U"Dur", 0);
 	Editor_addCommand (this, U"Dur", U"Add duration point at cursor", 'D', menu_cb_addDurationPointAtCursor);
 	Editor_addCommand (this, U"Dur", U"Add duration point at...", 0, menu_cb_addDurationPointAt);
-	Editor_addCommand (this, U"Dur", U"-- remove duration --", 0, NULL);
+	Editor_addCommand (this, U"Dur", U"-- remove duration --", 0, nullptr);
 	Editor_addCommand (this, U"Dur", U"Remove duration point(s)", GuiMenu_OPTION + 'D', menu_cb_removeDurationPoints);
-	Editor_addCommand (this, U"Dur", U"-- duration prefs --", 0, NULL);
+	Editor_addCommand (this, U"Dur", U"-- duration prefs --", 0, nullptr);
 	Editor_addCommand (this, U"Dur", U"Set duration range...", 0, menu_cb_setDurationRange);
-	Editor_addCommand (this, U"Dur", U"-- refresh duration --", 0, NULL);
+	Editor_addCommand (this, U"Dur", U"-- refresh duration --", 0, nullptr);
 	Editor_addCommand (this, U"Dur", U"New duration", 0, menu_cb_newDuration);
 	Editor_addCommand (this, U"Dur", U"Forget duration", 0, menu_cb_forgetDuration);
 
@@ -619,12 +619,12 @@ void structManipulationEditor :: v_createMenus () {
 	our synthPulsesHumButton = Editor_addCommand (this, U"Synth", U"Pulses (hum) --", GuiMenu_RADIO_NEXT, menu_cb_Synth_Pulses_hum);
 
 	our synthPulsesLpcButton = Editor_addCommand (this, U"Synth", U"Pulses & LPC -- (\"LPC resynthesis\")", GuiMenu_RADIO_NEXT, menu_cb_Synth_Pulses_Lpc);
-	Editor_addCommand (this, U"Synth", U"-- pitch resynth --", 0, NULL);
+	Editor_addCommand (this, U"Synth", U"-- pitch resynth --", 0, nullptr);
 	our synthPitchButton = Editor_addCommand (this, U"Synth", U" -- Pitch", GuiMenu_RADIO_NEXT, menu_cb_Synth_Pitch);
 	our synthPitchHumButton = Editor_addCommand (this, U"Synth", U" -- Pitch (hum)", GuiMenu_RADIO_NEXT, menu_cb_Synth_Pitch_hum);
 	our synthPulsesPitchButton = Editor_addCommand (this, U"Synth", U"Pulses -- Pitch", GuiMenu_RADIO_NEXT, menu_cb_Synth_Pulses_Pitch);
 	our synthPulsesPitchHumButton = Editor_addCommand (this, U"Synth", U"Pulses -- Pitch (hum)", GuiMenu_RADIO_NEXT, menu_cb_Synth_Pulses_Pitch_hum);
-	Editor_addCommand (this, U"Synth", U"-- full resynth --", 0, NULL);
+	Editor_addCommand (this, U"Synth", U"-- full resynth --", 0, nullptr);
 	our synthOverlapAddButton = Editor_addCommand (this, U"Synth", U"Sound & Pulses -- Pitch & Duration  (\"Overlap-add manipulation\")", GuiMenu_RADIO_NEXT | GuiMenu_TOGGLE_ON, menu_cb_Synth_OverlapAdd);
 	our synthPitchLpcButton = Editor_addCommand (this, U"Synth", U"LPC -- Pitch  (\"LPC pitch manipulation\")", GuiMenu_RADIO_NEXT, menu_cb_Synth_Pitch_Lpc);
 }

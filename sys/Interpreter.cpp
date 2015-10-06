@@ -141,7 +141,7 @@ Interpreter Interpreter_create (char32 *environmentName, ClassInfo editorClass) 
 }
 
 Interpreter Interpreter_createFromEnvironment (Editor editor) {
-	if (editor == NULL) return Interpreter_create (NULL, NULL);
+	if (! editor) return Interpreter_create (nullptr, nullptr);
 	return Interpreter_create (editor -> name, editor -> classInfo);
 }
 
@@ -158,7 +158,7 @@ void Melder_includeIncludeFiles (char32 **text) {
 				Look for an include statement. If not found, we have finished.
 			 */
 			includeLocation = str32nequ (head, U"include ", 8) ? head : str32str (head, U"\ninclude ");
-			if (includeLocation == NULL) break;
+			if (! includeLocation) break;
 			if (includeLocation != head) includeLocation += 1;
 			numberOfIncludes += 1;
 			/*
@@ -213,7 +213,7 @@ void Melder_includeIncludeFiles (char32 **text) {
 }
 
 long Interpreter_readParameters (Interpreter me, char32 *text) {
-	char32 *formLocation = NULL;
+	char32 *formLocation = nullptr;
 	long npar = 0;
 	my dialogTitle [0] = U'\0';
 	/*
@@ -249,7 +249,7 @@ long Interpreter_readParameters (Interpreter me, char32 *text) {
 			while (*line == U' ' || *line == U'\t') line ++;
 			while (*line == U'#' || *line == U';' || *line == U'!' || *line == U'\n') {
 				newLine = str32chr (line, U'\n');
-				if (newLine == NULL)
+				if (! newLine)
 					Melder_throw (U"Unfinished form.");
 				line = newLine + 1;
 				while (*line == U' ' || *line == U'\t') line ++;
@@ -327,8 +327,8 @@ UiForm Interpreter_createForm (Interpreter me, GuiWindow parent, const char32 *p
 {
 	UiForm form = UiForm_create (parent,
 		Melder_cat (selectionOnly ? U"Run script (selection only): " : U"Run script: ", my dialogTitle),
-		okCallback, okClosure, NULL, NULL);
-	Any radio = NULL;
+		okCallback, okClosure, nullptr, nullptr);
+	Any radio = nullptr;
 	if (path) UiForm_addText (form, U"$file", path);
 	for (int ipar = 1; ipar <= my numberOfParameters; ipar ++) {
 		/*
@@ -372,7 +372,7 @@ UiForm Interpreter_createForm (Interpreter me, GuiWindow parent, const char32 *p
 		/*
 		 * Strip parentheses and colon off parameter name.
 		 */
-		if ((p = str32chr (my parameters [ipar], U'(')) != NULL) {
+		if ((p = str32chr (my parameters [ipar], U'(')) != nullptr) {
 			*p = U'\0';
 			if (p - my parameters [ipar] > 0 && p [-1] == U'_') p [-1] = U'\0';
 		}
@@ -389,7 +389,7 @@ void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog) {
 		/*
 		 * Strip parentheses and colon off parameter name.
 		 */
-		if ((p = str32chr (my parameters [ipar], U'(')) != NULL) {
+		if ((p = str32chr (my parameters [ipar], U'(')) != nullptr) {
 			*p = U'\0';
 			if (p - my parameters [ipar] > 0 && p [-1] == U'_') p [-1] = U'\0';
 		}
@@ -421,7 +421,7 @@ void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog) {
 			case Interpreter_CHOICE:
 			case Interpreter_OPTIONMENU: {
 				long integerValue = 0;
-				char32 *stringValue = NULL;
+				char32 *stringValue = nullptr;
 				integerValue = UiForm_getInteger (dialog, parameter);
 				stringValue = UiForm_getString (dialog, parameter);
 				Melder_free (my arguments [ipar]);
@@ -458,7 +458,7 @@ void Interpreter_getArgumentsFromString (Interpreter me, const char32 *arguments
 		/*
 		 * Strip parentheses and colon off parameter name.
 		 */
-		if ((p = str32chr (p, U'(')) != NULL) {
+		if ((p = str32chr (p, U'(')) != nullptr) {
 			*p = U'\0';
 			if (p - my parameters [ipar] > 0 && p [-1] == U'_') p [-1] = U'\0';
 		}
@@ -571,7 +571,7 @@ void Interpreter_getArgumentsFromArgs (Interpreter me, int narg, Stackel args) {
 		/*
 		 * Strip parentheses and colon off parameter name.
 		 */
-		if ((p = str32chr (p, U'(')) != NULL) {
+		if ((p = str32chr (p, U'(')) != nullptr) {
 			*p = U'\0';
 			if (p - my parameters [ipar] > 0 && p [-1] == U'_') p [-1] = U'\0';
 		}
@@ -590,8 +590,8 @@ void Interpreter_getArgumentsFromArgs (Interpreter me, int narg, Stackel args) {
 		Stackel arg = & args [++ iarg];
 		my arguments [ipar] =
 			arg -> which == Stackel_NUMBER ? Melder_dup (Melder_double (arg -> number)) :
-			arg -> which == Stackel_STRING ? Melder_dup (arg -> string) : NULL;   // replace with the actual arguments
-		Melder_assert (my arguments [ipar] != NULL);
+			arg -> which == Stackel_STRING ? Melder_dup (arg -> string) : nullptr;   // replace with the actual arguments
+		Melder_assert (my arguments [ipar]);
 	}
 	if (iarg < narg)
 		Melder_throw (U"Found ", narg, U" arguments but expected only ", iarg, U".");
@@ -669,23 +669,23 @@ static void Interpreter_addStringVariable (Interpreter me, const char32 *key, co
 }
 
 InterpreterVariable Interpreter_hasVariable (Interpreter me, const char32 *key) {
-	Melder_assert (key != NULL);
+	Melder_assert (key);
 	#if USE_HASH
 	auto it = my variablesMap -> find (key [0] == U'.' ? Melder_cat (my procedureNames [my callDepth], key) : key);
 	if (it != my variablesMap -> end()) {
 		return it -> second;
 	} else {
-		return NULL;
+		return nullptr;
 	}
 	#else
 	long variableNumber = SortedSetOfString_lookUp (my variables,
 		key [0] == U'.' ? Melder_cat (my procedureNames [my callDepth], key) : key);
-	return variableNumber ? (InterpreterVariable) my variables -> item [variableNumber] : NULL;
+	return variableNumber ? (InterpreterVariable) my variables -> item [variableNumber] : nullptr;
 	#endif
 }
 
 InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const char32 *key) {
-	Melder_assert (key != NULL);
+	Melder_assert (key);
 	const char32 *variableNameIncludingProcedureName =
 		key [0] == U'.' ? Melder_cat (my procedureNames [my callDepth], key) : key;
 	#if USE_HASH
@@ -772,12 +772,12 @@ void Interpreter_run (Interpreter me, char32 *text) {
 		int callDepth = 0, chopped = 0, ipar;
 		my callDepth = 0;
 		/*
-		 * The "environment" is NULL if we are in the Praat shell, or an editor otherwise.
+		 * The "environment" is null if we are in the Praat shell, or an editor otherwise.
 		 */
 		if (my editorClass) {
 			praatP. editor = praat_findEditorFromString (my environmentName);
 		} else {
-			praatP. editor = NULL;
+			praatP. editor = nullptr;
 		}
 		/*
 		 * Start.
@@ -1773,7 +1773,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							 * Modify an existing variable.
 							 */
 							InterpreterVariable var = Interpreter_hasVariable (me, variableName);
-							if (var == NULL) Melder_throw (U"Unknown variable ", variableName, U".");
+							if (! var) Melder_throw (U"Unknown variable ", variableName, U".");
 							if (var -> numericValue == NUMundefined) {
 								/* Keep it that way. */
 							} else {
@@ -1855,17 +1855,17 @@ void Interpreter_stop (Interpreter me) {
 }
 
 void Interpreter_voidExpression (Interpreter me, const char32 *expression) {
-	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_NUMERIC, false);
+	Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_NUMERIC, false);
 	struct Formula_Result result;
 	Formula_run (0, 0, & result);
 }
 
 void Interpreter_numericExpression (Interpreter me, const char32 *expression, double *value) {
-	Melder_assert (value != NULL);
+	Melder_assert (value);
 	if (str32str (expression, U"(=")) {
 		*value = Melder_atof (expression);
 	} else {
-		Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_NUMERIC, false);
+		Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_NUMERIC, false);
 		struct Formula_Result result;
 		Formula_run (0, 0, & result);
 		*value = result. result.numericResult;
@@ -1873,21 +1873,21 @@ void Interpreter_numericExpression (Interpreter me, const char32 *expression, do
 }
 
 void Interpreter_stringExpression (Interpreter me, const char32 *expression, char32 **value) {
-	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_STRING, false);
+	Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_STRING, false);
 	struct Formula_Result result;
 	Formula_run (0, 0, & result);
 	*value = result. result.stringResult;
 }
 
 void Interpreter_numericArrayExpression (Interpreter me, const char32 *expression, struct Formula_NumericArray *value) {
-	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_NUMERIC_ARRAY, false);
+	Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_NUMERIC_ARRAY, false);
 	struct Formula_Result result;
 	Formula_run (0, 0, & result);
 	*value = result. result.numericArrayResult;
 }
 
 void Interpreter_anyExpression (Interpreter me, const char32 *expression, struct Formula_Result *result) {
-	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_UNKNOWN, false);
+	Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_UNKNOWN, false);
 	Formula_run (0, 0, result);
 }
 

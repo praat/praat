@@ -61,11 +61,12 @@ Thing_define (VowelEditor, Editor) {
 		Graphics g;   // the drawing
 		short width, height;  // size of drawing area in pixels
 		Table marks;   // Vowel, F1, F2, Colour...
-		Vowel vowel;
+		autoVowel vowel;
 		double markTraceEvery;
 		structVowelEditor_F0 f0;
 		double maximumDuration, extendDuration;
-		Sound source, target;
+		autoSound source;
+		Sound target;
 		GuiDrawingArea drawingArea;
 		GuiButton playButton, reverseButton, publishButton;
 		GuiText f0TextField, f0SlopeTextField, durationTextField, extendTextField;

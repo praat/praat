@@ -174,7 +174,7 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 		if (flags & GuiButton_DEFAULT || flags & GuiButton_ATTRACTIVE) {
 			GTK_WIDGET_SET_FLAGS (my d_widget, GTK_CAN_DEFAULT);
 			GtkWidget *shell = gtk_widget_get_toplevel (GTK_WIDGET (my d_widget));
-			Melder_assert (shell != NULL);
+			Melder_assert (shell);
 			gtk_window_set_default (GTK_WINDOW (shell), GTK_WIDGET (my d_widget));
 		} else if (1) {
 			gtk_button_set_focus_on_click (GTK_BUTTON (my d_widget), false);
