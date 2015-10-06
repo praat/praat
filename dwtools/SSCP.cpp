@@ -1458,7 +1458,7 @@ void Covariances_equality (Collection me, int method, double *prob, double *chis
 			}
 		}
 
-		if (method == 1) { // bartlett
+		if (method == 1) { // bartlett (see Morrison page 297)
 			double lnd;
 			try {
 				NUMdeterminant_cholesky (s.peek(), p, &lnd);
@@ -1477,9 +1477,9 @@ void Covariances_equality (Collection me, int method, double *prob, double *chis
 				m -= (ci -> numberOfObservations - 1) * lnd;
 			}
 
-			double c1 = 1.0 - (2.0 * p * p - 3 * p - 1) / (6.0 * (p + 1) * (nc - 1)) * (nsi - 1 / ns);
+			double c1 = 1.0 - (2.0 * p * p + 3.0 * p - 1.0) / (6.0 * (p + 1) * (nc - 1)) * (nsi - 1 / ns);
 
-			*df = (nc - 1) * p * (p + 1) / 2;
+			*df = (nc - 1.0) * p * (p + 1) / 2.0;
 			*chisq = m * c1;
 		} else if (method == 2) { // Schott (2001) Wald 1
 			// sum(i, ni/n *tr((si*s^-1)^2)- sum(i,sum(j, (ni/n)*(nj/n) *tr(si*s^-1*sj*s^-1))) =
@@ -1500,11 +1500,11 @@ void Covariances_equality (Collection me, int method, double *prob, double *chis
 					double nj = cj -> numberOfObservations - 1;
 					autoNUMmatrix<double> s2 (productOfSquareMatrices (cj -> data, si.peek(), p), 1, 1);
 					double trace_ij = NUMtrace2 (s1.peek(), s2.peek(), p);
-					trace -= 2 * (ni / ns) * (nj / ns) * trace_ij;
+					trace -= 2.0 * (ni / ns) * (nj / ns) * trace_ij;
 				}
 			}
-			*df = (nc - 1) * p * (p + 1) / 2;
-			*chisq = (ns / 2) * trace;
+			*df = (nc - 1) * p * (p + 1) / 2.0;
+			*chisq = (ns / 2.0) * trace;
 		} else {
 			return;
 		}
@@ -1556,7 +1556,7 @@ void Covariance_difference (Covariance me, Covariance thee, double *prob, double
 	}
 
 	double l = (numberOfObservations - 1) * fabs (ln_thee - ln_me + trace - p);
-	*chisq = l * fabs (1 - (2 * p + 1 - 2 / (p + 1)) / (numberOfObservations - 1) / 6);  // ppgb CHECK fabs versus labs
+	*chisq = l * fabs (1.0 - (2.0 * p + 1.0 - 2.0 / (p + 1)) / (numberOfObservations - 1) / 6.0);
 	*ndf = p * (p + 1) / 2;
 	*prob = NUMchiSquareQ (*chisq, *ndf);
 }
@@ -1584,12 +1584,12 @@ void Covariance_getSignificanceOfOneMean (Covariance me, long index, double mu,
 
 	checkOneIndex (me, index);
 
-	if ( (var = my data[index][index]) == 0) {
+	if ( (var = my data[index][index]) == 0.0) {
 		return;
 	}
 
 	*t = (my centroid[index] - mu) / sqrt (var / my numberOfObservations);
-	*probability = 2 * NUMstudentQ (fabs (*t), *ndf);
+	*probability = 2.0 * NUMstudentQ (fabs (*t), *ndf);
 }
 
 void Covariance_getSignificanceOfMeansDifference (Covariance me,
@@ -1599,7 +1599,7 @@ void Covariance_getSignificanceOfMeansDifference (Covariance me,
 	double df, var1, var2, var_pooled;
 
 	*probability = *t = NUMundefined;
-	*ndf = 2 * (n - 1);
+	*ndf = 2.0 * (n - 1);
 
 	checkTwoIndices (me, index1, index2);
 
@@ -1612,8 +1612,8 @@ void Covariance_getSignificanceOfMeansDifference (Covariance me,
 		return;
 	}
 	if (paired) {
-		var_pooled -= 2 * my data[index1][index2];
-		*ndf /= 2;
+		var_pooled -= 2.0 * my data[index1][index2];
+		*ndf /= 2.0;
 	}
 
 	if (var_pooled == 0) {
@@ -1631,8 +1631,8 @@ void Covariance_getSignificanceOfMeansDifference (Covariance me,
 	if (equalVariances) {
 		*probability = 2 * NUMstudentQ (fabs (*t), *ndf);
 	} else {
-		df = (1 + 2 * var1 * var2 / (var1 * var1 + var2 * var2)) * (n - 1);
-		*probability = NUMincompleteBeta (df / 2, 0.5, df / (df + (*t) * (*t)));
+		df = (1.0 + 2.0 * var1 * var2 / (var1 * var1 + var2 * var2)) * (n - 1);
+		*probability = NUMincompleteBeta (df / 2.0, 0.5, df / (df + (*t) * (*t)));
 		*ndf = df;
 	}
 }
@@ -1677,9 +1677,9 @@ void Covariance_getSignificanceOfVariancesRatio (Covariance me,
 		ratio2 = (var2 / var1) * ratio;
 	}
 
-	*probability = 2 * NUMfisherQ (ratio2, *ndf, *ndf);
-	if (*probability > 1) {
-		*probability = 2 - *probability;
+	*probability = 2.0 * NUMfisherQ (ratio2, *ndf, *ndf);
+	if (*probability > 1.0) {
+		*probability = 2.0 - *probability;
 	}
 }
 
@@ -1687,7 +1687,7 @@ TableOfReal Correlation_confidenceIntervals (Correlation me, double confidenceLe
 	try {
 		long m_bonferroni = my numberOfRows * (my numberOfRows - 1) / 2;
 
-		if (confidenceLevel <= 0 || confidenceLevel > 1) {
+		if (confidenceLevel <= 0 || confidenceLevel > 1.0) {
 			Melder_throw (U"Confidence level must be in interval (0-1).");
 		}
 
@@ -1716,9 +1716,9 @@ TableOfReal Correlation_confidenceIntervals (Correlation me, double confidenceLe
 		// values of confidence intervals in lower part of resulting table.
 
 
-		double z = NUMinvGaussQ ( (1 - confidenceLevel) / (2 * numberOfTests));
-		double zf = z / sqrt (my numberOfObservations - 3);
-		double  two_n = 2 * my numberOfObservations;
+		double z = NUMinvGaussQ ( (1 - confidenceLevel) / (2.0 * numberOfTests));
+		double zf = z / sqrt (my numberOfObservations - 3.0);
+		double  two_n = 2.0 * my numberOfObservations;
 
 		for (long i = 1; i <= my numberOfRows; i++) {
 			for (long j = i + 1; j <= my numberOfRows; j++) {
@@ -1732,10 +1732,10 @@ TableOfReal Correlation_confidenceIntervals (Correlation me, double confidenceLe
 				} else if (method == 1) {
 					// Ruben's approximation
 
-					double rs = rij / sqrt (1 - rij * rij);
-					double a = two_n - 3 - z * z;
-					double b = rs * sqrt ( (two_n - 3) * (two_n - 5));
-					double c = (a - 2) * rs * rs - 2 * z * z;
+					double rs = rij / sqrt (1.0 - rij * rij);
+					double a = two_n - 3.0 - z * z;
+					double b = rs * sqrt ( (two_n - 3.0) * (two_n - 5.0));
+					double c = (a - 2.0) * rs * rs - 2.0 * z * z;
 
 					// Solve:  a y^2 - 2b y + c = 0
 					// q = -0.5((-2b) + sgn(-2b) sqrt((-2b)^2 - 4ac))
@@ -1747,8 +1747,8 @@ TableOfReal Correlation_confidenceIntervals (Correlation me, double confidenceLe
 						d = - d;
 					}
 					q = b - d;
-					rmin = q / a; rmin /= sqrt (1 + rmin * rmin);
-					rmax = c / q; rmax /= sqrt (1 + rmax * rmax);
+					rmin = q / a; rmin /= sqrt (1.0 + rmin * rmin);
+					rmax = c / q; rmax /= sqrt (1.0 + rmax * rmax);
 					if (rmin > rmax) {
 						double t = rmin; rmin = rmax; rmax = t;
 					}
@@ -1787,7 +1787,7 @@ void Correlation_testDiagonality_bartlett (Correlation me, long numberOfContrain
 	double ln_determinant;
 	NUMdeterminant_cholesky (my data, p, &ln_determinant);
 
-	*chisq = - ln_determinant * (my numberOfObservations - numberOfContraints - (2 * p + 5) / 6);
+	*chisq = - ln_determinant * (my numberOfObservations - numberOfContraints - (2.0 * p + 5.0) / 6.0);
 	*probability = NUMchiSquareQ (*chisq, p * (p - 1) / 2);
 }
 
@@ -1856,11 +1856,11 @@ void SSCP_expandLowerCholesky (SSCP me) {
 			my lnd = 0;
 			for (long i = 1; i <= my numberOfRows; i++) {
 				for (long j = i; j <= my numberOfColumns; j++) {
-					my lowerCholesky[i][j] =  my lowerCholesky[j][i] = i == j ? 1. / sqrt (my data[i][i]) : 0;
+					my lowerCholesky[i][j] =  my lowerCholesky[j][i] = i == j ? 1. / sqrt (my data[i][i]) : 0.0;
 				}
 				my lnd += log (my data[i][i]);
 			}
-			my lnd *= 2;
+			my lnd *= 2.0;
 		}
 	}
 }

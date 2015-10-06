@@ -772,7 +772,7 @@ void GaussianMixture_and_TableOfReal_getGammas (GaussianMixture me, TableOfReal 
 		double ln2pid = - 0.5 * my dimension * log (NUM2pi);
 		autoNUMvector<double> lnN (1, my numberOfComponents);
 		for (long i = 1; i <=  thy numberOfRows; i++) {
-			double rowsum = 0;
+			double rowsum = 0.0;
 			for (long im = 1; im <= my numberOfComponents; im++) {
 				Covariance cov = (Covariance) my covariances -> item[im];
 				double dsq = NUMmahalanobisDistance_chi (cov -> lowerCholesky, thy data[i], cov -> centroid, cov -> numberOfRows, my dimension);
@@ -905,8 +905,7 @@ void GaussianMixture_unExpandPCA (GaussianMixture me) {
 	}
 }
 
-void GaussianMixture_and_TableOfReal_improveLikelihood (GaussianMixture me, thou, double delta_lnp,
-        long maxNumberOfIterations, double lambda, int criterion) {
+void GaussianMixture_and_TableOfReal_improveLikelihood (GaussianMixture me, thou, double delta_lnp, long maxNumberOfIterations, double lambda, int criterion) {
 	thouart (TableOfReal);
 	try {
 		const char32 *criterionText = GaussianMixture_criterionText (criterion);
@@ -965,7 +964,7 @@ void GaussianMixture_and_TableOfReal_improveLikelihood (GaussianMixture me, thou
 				} else {
 					for (long j = 1; j <= thy numberOfColumns; j++)
 						for (long k = j; k <= thy numberOfColumns; k++) {
-							cov -> data[j][k] = cov -> data[k][j] *= cov -> numberOfObservations / (cov -> numberOfObservations - 1);
+							cov -> data[j][k] = cov -> data[k][j] *= cov -> numberOfObservations / (cov -> numberOfObservations - 1.0);
 						}
 				}
 			}
@@ -1076,12 +1075,12 @@ double GaussianMixture_getLikelihoodValue (GaussianMixture me, double **p, long 
 		return lnp - 0.5 * my numberOfComponents * (npars + 1) * (log (numberOfRows / 12.0) + 1.0)
 		       + 0.5 * npars * logmpn;
 	} else if (criterion == GaussianMixture_BIC) {
-		return 2 * lnp - np * log (numberOfRows);
+		return 2.0 * lnp - np * log (numberOfRows);
 	} else if (criterion == GaussianMixture_AIC) {
-		return 2 * (lnp - np);
+		return 2.0 * (lnp - np);
 	} else if (criterion == GaussianMixture_AICC) {
 		np = npars * my numberOfComponents;
-		return 2 * (lnp - np * (numberOfRows / (numberOfRows - np - 1)));
+		return 2.0 * (lnp - np * (numberOfRows / (numberOfRows - np - 1.0)));
 	}
 	return lnp;
 }
@@ -1098,7 +1097,7 @@ GaussianMixture GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM (Gaussia
 		autoCovariance covg = TableOfReal_to_Covariance (thee);
 
 		double npars = GaussianMixture_getNumberOfParametersInComponent (me.peek());
-		double nparsd2 = deleteWeakComponents ? npars / 2 : 0;
+		double nparsd2 = deleteWeakComponents ? npars / 2.0 : 0.0;
 
 		// Initial E-step: Update all p's.
 
@@ -1266,7 +1265,7 @@ double GaussianMixture_getMarginalProbabilityAtPosition (GaussianMixture me, dou
 }
 
 double GaussianMixture_getProbabilityAtPosition (GaussianMixture me, double *xpos) {
-	double p = 0;
+	double p = 0.0;
 	for (long im = 1; im <= my numberOfComponents; im++) {
 		double pim = Covariance_getProbabilityAtPosition ( (Covariance) my covariances -> item[im], xpos);
 		p += my mixingProbabilities[im] * pim;
@@ -1285,7 +1284,7 @@ Matrix GaussianMixture_and_PCA_to_Matrix_density (GaussianMixture me, PCA thee, 
 		autoNUMvector<double> v (1, my dimension);
 
 		if (xmax == xmin || ymax == ymin) {
-			double xmind, xmaxd, ymind, ymaxd, nsigmas = 2;
+			double xmind, xmaxd, ymind, ymaxd, nsigmas = 2.0;
 
 			GaussianMixture_and_PCA_getIntervalsAlongDirections (me, thee, d1, d2, nsigmas, &xmind, &xmaxd, &ymind, &ymaxd);
 			if (xmax == xmin) {
@@ -1375,14 +1374,14 @@ TableOfReal GaussianMixture_and_TableOfReal_to_TableOfReal_BHEPNormalityTests (G
 			Covariance cov = (Covariance) my covariances -> item[im];
 			double mixingP = my mixingProbabilities[im];
 			double nd = his data[im][indata], d2 = d / 2.0;
-			double beta = h > 0 ? NUMsqrt1_2 / h : NUMsqrt1_2 * pow ( (1.0 + 2 * d) / 4, 1.0 / (d + 4)) * pow (nd, 1.0 / (d + 4));
+			double beta = h > 0.0 ? NUMsqrt1_2 / h : NUMsqrt1_2 * pow ( (1.0 + 2.0 * d) / 4.0, 1.0 / (d + 4.0)) * pow (nd, 1.0 / (d + 4.0));
 			double beta2 = beta * beta, beta4 = beta2 * beta2, beta8 = beta4 * beta4;
-			double gamma = 1 + 2 * beta2, gamma2 = gamma * gamma, gamma4 = gamma2 * gamma2;
-			double delta = 1.0 + beta2 * (4 + 3 * beta2), delta2 = delta * delta;
-			double mu = 1.0 - pow (gamma, -d2) * (1.0 + d * beta2 / gamma + d * (d + 2) * beta4 / (2 * gamma2));
-			double var = 2.0 * pow (1 + 4 * beta2, -d2)
-			             + 2.0 * pow (gamma,  -d) * (1.0 + 2 * d * beta4 / gamma2  + 3 * d * (d + 2) * beta8 / (4 * gamma4))
-			             - 4.0 * pow (delta, -d2) * (1.0 + 3 * d * beta4 / (2 * delta) + d * (d + 2) * beta8 / (2 * delta2));
+			double gamma = 1.0 + 2.0 * beta2, gamma2 = gamma * gamma, gamma4 = gamma2 * gamma2;
+			double delta = 1.0 + beta2 * (4.0 + 3.0 * beta2), delta2 = delta * delta;
+			double mu = 1.0 - pow (gamma, -d2) * (1.0 + d * beta2 / gamma + d * (d + 2.0) * beta4 / (2.0 * gamma2));
+			double var = 2.0 * pow (1.0 + 4.0 * beta2, -d2)
+			             + 2.0 * pow (gamma,  -d) * (1.0 + 2.0 * d * beta4 / gamma2  + 3.0 * d * (d + 2.0) * beta8 / (4.0 * gamma4))
+			             - 4.0 * pow (delta, -d2) * (1.0 + 3.0 * d * beta4 / (2.0 * delta) + d * (d + 2.0) * beta8 / (2.0 * delta2));
 			double mu2 = mu * mu;
 
 			double prob = NUMundefined, tnb = NUMundefined, lnmu = NUMundefined, lnvar = NUMundefined;
@@ -1390,11 +1389,11 @@ TableOfReal GaussianMixture_and_TableOfReal_to_TableOfReal_BHEPNormalityTests (G
 			try {
 				SSCP_expandLowerCholesky (cov);
 			} catch (MelderError) {
-				tnb = 4 * nd;
+				tnb = 4.0 * nd;
 			}
 
-			double djk, djj, sumjk = 0, sumj = 0;
-			double b1 = beta2 / 2, b2 = b1 / (1.0 + beta2);
+			double djk, djj, sumjk = 0.0, sumj = 0.0;
+			double b1 = beta2 / 2.0, b2 = b1 / (1.0 + beta2);
 
 			/* Heinze & Wagner (1997), page 3
 				We use d[j][k] = ||Y[j]-Y[k]||^2 = (Y[j]-Y[k])'S^(-1)(Y[j]-Y[k])
@@ -1404,8 +1403,8 @@ TableOfReal GaussianMixture_and_TableOfReal_to_TableOfReal_BHEPNormalityTests (G
 				double wj = p[j][nocp1] > 0.0 ? mixingP * p[j][im] / p[j][nocp1] : 0.0;
 				for (long k = 1; k < j; k++) {
 					djk = NUMmahalanobisDistance_chi (cov -> lowerCholesky, thy data[j], thy data[k], d, d);
-					double w = p[k][nocp1] > 0 ? wj * mixingP * p[k][im] / p[k][nocp1] : 0;
-					sumjk += 2 * w * exp (-b1 * djk); // factor 2 because d[j][k] == d[k][j]
+					double w = p[k][nocp1] > 0.0 ? wj * mixingP * p[k][im] / p[k][nocp1] : 0.0;
+					sumjk += 2.0 * w * exp (-b1 * djk); // factor 2 because d[j][k] == d[k][j]
 				}
 				sumjk += wj * wj; // for k == j. Is this ok now for probability weighing ????
 				djj = NUMmahalanobisDistance_chi (cov -> lowerCholesky, thy data[j], cov -> centroid, d, d);
