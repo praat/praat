@@ -98,7 +98,7 @@ int KNN_getNumberOfCPUs(void)
         return(1);
     
     done = false;
-    buffer = NULL;
+    buffer = nullptr;
     returnLength = 0;
 
     while(!done) 
@@ -169,7 +169,7 @@ void * KNN_threadDistribution
         /*
         HANDLE hHandle[nthreads];
         for(int i = 0; i < nthreds; ++)
-            hHandle[i] = CreateThread(NULL, 0, function, input[i], 0, NULL);    
+            hHandle[i] = CreateThread(nullptr, 0, function, input[i], 0, nullptr);
         while(nthreads--)
             WaitForSingleObject(hHandle[nthreds], INFINITE);
         */
@@ -178,10 +178,10 @@ void * KNN_threadDistribution
         /*
         pthread_t thread_ids[nthreads];
         for(int i = 0; i < nthreads; ++i)
-            pthread_create(&thread_ids[i], NULL, function, input[i]);
+            pthread_create(&thread_ids[i], nullptr, function, input[i]);
         while(nthreads--)
-            pthread_join(thread_ids[nthreads], NULL);
-        return(NULL);
+            pthread_join(thread_ids[nthreads], nullptr);
+        return nullptr;
         */
 #endif
 	}
@@ -209,12 +209,12 @@ void KNN_threadTest(void)
 
 void * KNN_threadTestAux(void * dummy)
 {
-    dummy = NULL; // dummy assignment to avoid compiler warnings;
+    dummy = nullptr; // dummy assignment to avoid compiler warnings;
 
     for(int i = 0; i < 50000; ++i)
         for(int i = 0; i < 50000; ++i) ;
 
-    return(NULL);
+    return nullptr;
 }
 
 

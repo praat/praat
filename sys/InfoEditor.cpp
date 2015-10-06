@@ -24,7 +24,7 @@ Thing_implement (InfoEditor, TextEditor, 0);
 static InfoEditor theInfoEditor;
 
 void structInfoEditor :: v_destroy () {
-	theInfoEditor = NULL;   // undangle
+	theInfoEditor = nullptr;   // undangle
 	InfoEditor_Parent :: v_destroy ();
 }
 

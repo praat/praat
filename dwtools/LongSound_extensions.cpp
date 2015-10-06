@@ -124,14 +124,14 @@ static void MelderFile_truncate (MelderFile me, long size) {
 	HANDLE hFile;
 	DWORD fdwAccess = GENERIC_READ | GENERIC_WRITE, fPos;
 	DWORD fdwShareMode = 0; /* File cannot be shared */
-	LPSECURITY_ATTRIBUTES lpsa = NULL;
+	LPSECURITY_ATTRIBUTES lpsa = nullptr;
 	DWORD fdwCreate = OPEN_EXISTING;
 	LARGE_INTEGER fileSize;
 
 	MelderFile_close (me);
 
 	hFile = CreateFileW (Melder_peek32toW (my path), fdwAccess, fdwShareMode, lpsa, fdwCreate,
-	                     FILE_ATTRIBUTE_NORMAL, NULL);
+	                     FILE_ATTRIBUTE_NORMAL, nullptr);
 	if (hFile == INVALID_HANDLE_VALUE) {
 		Melder_throw (U"Can't open file ", me, U".");
 	}

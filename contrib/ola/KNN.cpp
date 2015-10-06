@@ -216,8 +216,8 @@ Categories KNN_classifyToCategories
     Categories output = Categories_create();
     KNN_input_ToCategories_t ** input = (KNN_input_ToCategories_t **) malloc(nthreads * sizeof(KNN_input_ToCategories_t *));
 
-    if(!input)
-        return(NULL);
+    if (!input)
+        return nullptr;
 
     for(int i = 0; i < nthreads; ++i)
     {
@@ -228,7 +228,7 @@ Categories KNN_classifyToCategories
                 free(input[i]);
 
             free(input);
-            return(NULL);
+            return nullptr;
         }
     }
 
@@ -264,7 +264,7 @@ Categories KNN_classifyToCategories
     if (error)           // Something went very wrong, you ought to inform the user!
     {
         free (error);
-        return NULL;
+        return nullptr;
     }
 
     if (output)
@@ -351,7 +351,7 @@ void * KNN_classifyToCategoriesAux
 	NUMvector_free (freqindices, 0);
 	NUMvector_free (distances, 0);
 	NUMvector_free (freqs, 0);
-    return(NULL);
+    return nullptr;
 
 }
 
@@ -401,7 +401,7 @@ TableOfReal KNN_classifyToTableOfReal
     Melder_assert(k > 0 && k <= my nInstances);
  
     if(!ncategories)
-        return(NULL);
+        return nullptr;
 
     if(chunksize < 1)
     {
@@ -415,7 +415,7 @@ TableOfReal KNN_classifyToTableOfReal
     KNN_input_ToTableOfReal_t ** input = (KNN_input_ToTableOfReal_t **) malloc(nthreads * sizeof(KNN_input_ToTableOfReal_t *));
     
     if(!input)
-        return(NULL);
+        return nullptr;
 
     TableOfReal output = TableOfReal_create(ps->ny, ncategories);
 
@@ -431,7 +431,7 @@ TableOfReal KNN_classifyToTableOfReal
                 free(input[i]);
 
             free(input);
-            return(NULL);
+            return nullptr;
         }
     }
 
@@ -467,7 +467,7 @@ TableOfReal KNN_classifyToTableOfReal
     if(error)           // Something went very wrong, you ought to inform the user!
     {
         free(error);
-        return(NULL);
+        return nullptr;
     }
     return(output);
 }
@@ -550,7 +550,7 @@ void * KNN_classifyToTableOfRealAux
     }
 	NUMvector_free (indices, 0);
 	NUMvector_free (distances, 0);
-    return(NULL);
+    return nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -1310,7 +1310,7 @@ long KNN_kUniqueEnemies
     Melder_assert (jy <= j->ny);
 	Melder_assert (k <= p->ny);
 	Melder_assert (k > 0);
-    Melder_assert (indices != NULL);
+    Melder_assert (indices);
 
     while (dc < k && py <= p->ny)
     {
@@ -1602,7 +1602,7 @@ Permutation KNN_SA_ToPermutation
                     KNN_SA_t_energy, 
                     KNN_SA_t_step, 
                     KNN_SA_t_metric, 
-                    NULL,                // KNN_SA_t_print, 
+                    nullptr,                // KNN_SA_t_print
                     KNN_SA_t_copy, 
                     KNN_SA_t_copy_construct, 
                     KNN_SA_t_destroy, 

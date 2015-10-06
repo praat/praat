@@ -224,7 +224,7 @@ char * FilesInMemory_getCopyOfData (FilesInMemory me, const char32 *id, long *nu
 	FileInMemory fim = (FileInMemory) my item[index];
 	char *data = (char *) _Melder_malloc (fim -> d_numberOfBytes);
 	if (data == 0 ||
-		(memcpy (data, fim -> d_data, fim -> d_numberOfBytes) == NULL)) {
+		! memcpy (data, fim -> d_data, fim -> d_numberOfBytes)) {
 		//Melder_appendError (U"No memory for dictionary.");
 		return 0;
 	}

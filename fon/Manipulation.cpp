@@ -51,20 +51,20 @@ Thing_implement (Manipulation, Function, 5);
 
 void structManipulation :: v_shiftX (double xfrom, double xto) {
 	Manipulation_Parent :: v_shiftX (xfrom, xto);
-	if (sound    != NULL)  Function_shiftXTo (sound,    xfrom, xto);
-	if (pulses   != NULL)  Function_shiftXTo (pulses,   xfrom, xto);
-	if (our pitch)  Function_shiftXTo (our pitch.get(),    xfrom, xto);
-	if (duration != NULL)  Function_shiftXTo (duration, xfrom, xto);
-	if (lpc      != NULL)  Function_shiftXTo (lpc,      xfrom, xto);
+	if (our sound   )  Function_shiftXTo (our sound,    xfrom, xto);
+	if (our pulses  )  Function_shiftXTo (our pulses,   xfrom, xto);
+	if (our pitch   )  Function_shiftXTo (our pitch.get(),    xfrom, xto);
+	if (our duration)  Function_shiftXTo (our duration, xfrom, xto);
+	if (our lpc     )  Function_shiftXTo (our lpc,      xfrom, xto);
 }
 
 void structManipulation :: v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
 	Manipulation_Parent :: v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
-	if (sound    != NULL)  sound    -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
-	if (pulses   != NULL)  pulses   -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
-	if (our pitch)  our pitch    -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
-	if (duration != NULL)  duration -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
-	if (lpc      != NULL)  lpc      -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
+	if (our sound   )  our sound    -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
+	if (our pulses  )  our pulses   -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
+	if (our pitch   )  our pitch    -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
+	if (our duration)  our duration -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
+	if (our lpc     )  our lpc      -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
 }
 
 autoManipulation Manipulation_create (double tmin, double tmax) {
@@ -183,14 +183,14 @@ int Manipulation_playPart (Manipulation me, double tmin, double tmax, int method
 					if (amp [imin] != 0.0) break;
 				for (imax = played -> nx; imax >= 1; imax --)
 					if (amp [imax] != 0.0) break;
-				Sound_playPart (played.peek(), played -> x1 + (imin - 1.5) * played -> dx, played -> x1 + (imax - 0.5) * played -> dx, NULL, 0);
+				Sound_playPart (played.peek(), played -> x1 + (imin - 1.5) * played -> dx, played -> x1 + (imax - 0.5) * played -> dx, nullptr, nullptr);
 			} catch (MelderError) {
 				my sound = saved;
 				throw;
 			}
 		} else {
 			autoSound sound = Manipulation_to_Sound (me, method);
-			Sound_playPart (sound.peek(), tmin, tmax, NULL, 0);
+			Sound_playPart (sound.peek(), tmin, tmax, nullptr, nullptr);
 		}
 		return 1;
 	} catch (MelderError) {
@@ -201,7 +201,7 @@ int Manipulation_playPart (Manipulation me, double tmin, double tmax, int method
 int Manipulation_play (Manipulation me, int method) {
 	try {
 		autoSound sound = Manipulation_to_Sound (me, method);
-		Sound_play (sound.peek(), NULL, NULL);
+		Sound_play (sound.peek(), nullptr, nullptr);
 		return 1;
 	} catch (MelderError) {
 		Melder_throw (me, U": not played.");
@@ -575,7 +575,7 @@ static Sound synthesize_pulses_formant (Manipulation me, int useIntensity) {
 		if (! my pulses)  Melder_throw (U"Missing pulses analysis.");
 		if (! my formant) Melder_throw (U"Missing formant information.");
 		autoSound thee = PointProcess_to_Sound (my pulses, 44100, 0.7, 0.05, 30);
-		Sound_Formant_Intensity_filter (thee.peek(), my formant, useIntensity ? my intensity : NULL);
+		Sound_Formant_Intensity_filter (thee.peek(), my formant, useIntensity ? my intensity : nullptr);
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, U": formant and pulses manipulation not synthesized.");
@@ -689,7 +689,7 @@ autoManipulation Manipulation_AnyTier_to_Manipulation (Manipulation me, AnyTier 
 int Manipulation_writeToTextFileWithoutSound (Manipulation me, MelderFile file) {
 	Sound saved = my sound;
 	try {
-		my sound = NULL;
+		my sound = nullptr;
 		Data_writeToTextFile (me, file);
 		my sound = saved;
 		return 1;
@@ -702,7 +702,7 @@ int Manipulation_writeToTextFileWithoutSound (Manipulation me, MelderFile file) 
 int Manipulation_writeToBinaryFileWithoutSound (Manipulation me, MelderFile file) {
 	Sound saved = my sound;
 	try {
-		my sound = NULL;
+		my sound = nullptr;
 		Data_writeToBinaryFile (me, file);
 		my sound = saved;
 		return 1;

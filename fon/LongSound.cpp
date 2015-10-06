@@ -228,12 +228,12 @@ static void LongSound_init (LongSound me, MelderFile file) {
 	}
 	my imin = 1;
 	my imax = 0;
-	my flacDecoder = NULL;
+	my flacDecoder = nullptr;
 	if (my audioFileType == Melder_FLAC) {
 		my flacDecoder = FLAC__stream_decoder_new ();
-		FLAC__stream_decoder_init_FILE (my flacDecoder, my f, _LongSound_FLAC_write, NULL, _LongSound_FLAC_error, me);
+		FLAC__stream_decoder_init_FILE (my flacDecoder, my f, _LongSound_FLAC_write, nullptr, _LongSound_FLAC_error, me);
 	}
-	my mp3f = NULL;
+	my mp3f = nullptr;
 	if (my audioFileType == Melder_MP3) {
 		my mp3f = mp3f_new ();
 		mp3f_set_file (my mp3f, my f);
@@ -247,8 +247,8 @@ static void LongSound_init (LongSound me, MelderFile file) {
 
 void structLongSound :: v_copy (thou) {
 	thouart (LongSound);
-	thy f = NULL;
-	thy buffer = NULL;
+	thy f = nullptr;
+	thy buffer = nullptr;
 	LongSound_init (thee, & file);
 }
 

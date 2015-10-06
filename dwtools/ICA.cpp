@@ -194,7 +194,7 @@ static void Diagonalizer_and_CrossCorrelationTables_ffdiag (Diagonalizer me, Cro
 		}
 
 		autoMelderProgress progress (U"Simultaneous diagonalization of many CrossCorrelationTables...");
-		double dm_new = CrossCorrelationTables_getDiagonalityMeasure (ccts.peek(), NULL, 0, 0);
+		double dm_new = CrossCorrelationTables_getDiagonalityMeasure (ccts.peek(), nullptr, 0, 0);
 		try {
 			double dm_old, theta = 1, dm_start = dm_new;
 			do {
@@ -633,7 +633,7 @@ MixingMatrix MixingMatrix_createSimple (long numberOfChannels, long numberOfComp
 
 		// Construct the full matrix from the elements
 		double number;
-		for (char32 *token = Melder_firstToken (elements); token != NULL && inum <= ntokens; token = Melder_nextToken (), inum++) {
+		for (char32 *token = Melder_firstToken (elements); token != nullptr && inum <= ntokens; token = Melder_nextToken (), inum++) {
 			long irow = (inum - 1) / numberOfComponents + 1;
 			long icol = (inum - 1) % numberOfComponents + 1;
 			Interpreter_numericExpression (0, token, &number);
@@ -791,13 +791,13 @@ CrossCorrelationTable CrossCorrelationTable_createSimple (char32 *covars, char32
 		// Construct the full matrix from the upper-diagonal elements
 
 		long inum = 1, irow = 1;
-		for (char32 *token = Melder_firstToken (covars); token != NULL && inum <= ncovars_wanted; token = Melder_nextToken (), inum++) {
+		for (char32 *token = Melder_firstToken (covars); token != nullptr && inum <= ncovars_wanted; token = Melder_nextToken (), inum++) {
 			double number;
 			long nmissing = (irow - 1) * irow / 2;
 			long inumc = inum + nmissing;
 			irow = (inumc - 1) / dimension + 1;
 			long icol = ( (inumc - 1) % dimension) + 1;
-			Interpreter_numericExpression (NULL, token, &number);
+			Interpreter_numericExpression (nullptr, token, &number);
 			my data[irow][icol] = my data[icol][irow] = number;
 			if (icol == dimension) {
 				irow++;
@@ -805,9 +805,9 @@ CrossCorrelationTable CrossCorrelationTable_createSimple (char32 *covars, char32
 		}
 
 		inum = 1;
-		for (char32 *token = Melder_firstToken (centroid); token != NULL && inum <= dimension; token = Melder_nextToken (), inum++) {
+		for (char32 *token = Melder_firstToken (centroid); token != nullptr && inum <= dimension; token = Melder_nextToken (), inum++) {
 			double number;
-			Interpreter_numericExpression (NULL, token, &number);
+			Interpreter_numericExpression (nullptr, token, &number);
 			my centroid[inum] = number;
 		}
 		my numberOfObservations = numberOfSamples;
@@ -857,12 +857,12 @@ double CrossCorrelationTables_getDiagonalityMeasure (CrossCorrelationTables me, 
 		end = my size;
 	}
 	long ntables = end - start + 1;
-	long dimension = ( (Covariance) (my item[1]))-> numberOfColumns;
+	long dimension = ((Covariance) my item[1]) -> numberOfColumns;
 	double dmsq = 0;
 	for (long k = start; k <= end; k++) {
 		CrossCorrelationTable thee = (CrossCorrelationTable) my item[k];
 		double dmksq = NUMdmatrix_diagonalityMeasure (thy data, dimension);
-		dmsq += w == NULL ? dmksq / ntables : dmksq * w[k];
+		dmsq += ( w ? dmksq * w[k] : dmksq / ntables );
 	}
 	return dmsq;
 }

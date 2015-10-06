@@ -312,9 +312,9 @@ void structKlattGrid_formantGridEditor :: v_play (double ltmin, double ltmax) {
 
 KlattGrid_formantGridEditor KlattGrid_formantGridEditor_create (const char32 *title, KlattGrid data, int formantType) {
 	try {
-		Melder_assert (data != NULL);
+		Melder_assert (data);
 		FormantGrid *fg = KlattGrid_getAddressOfFormantGrid (data, formantType);
-		if (fg == NULL) {
+		if (fg) {
 			Melder_throw (U"Formant type unknown.");
 		}
 		if (FormantGrid_isEmpty (*fg)) {
