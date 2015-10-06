@@ -1,6 +1,6 @@
 /* Activation.cpp
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ Thing_implement (Activation, Matrix, 2);
 int _Activation_checkElements (Activation me) {
 	for (long i = 1; i <= my ny; i++) {
 		for (long j = 1; j <= my nx; j++) {
-			if (my z[i][j] < 0 || my z[i][j] > 1) {
+			if (my z[i][j] < 0.0 || my z[i][j] > 1) {
 				return 0;
 			}
 		}
@@ -39,8 +39,7 @@ int _Activation_checkElements (Activation me) {
 	return 1;
 }
 
-void Activation_init (I, long ny, long nx) {
-	iam (Activation);
+void Activation_init (Activation me, long ny, long nx) {
 	double xmin = 1, xmax = nx, dx = 1, x1 = 1, ymin = 1, ymax = ny;
 	double dy = 1, y1 = 1;
 	my ny = ny; my nx = nx;
@@ -57,8 +56,7 @@ Activation Activation_create (long ny, long nx) {
 	}
 }
 
-Activation Matrix_to_Activation (I) {
-	iam (Matrix);
+Activation Matrix_to_Activation (Matrix me) {
 	try {
 		autoActivation thee = Activation_create (my ny, my nx);
 		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
@@ -68,11 +66,9 @@ Activation Matrix_to_Activation (I) {
 	}
 }
 
-Matrix Activation_to_Matrix (I) {
-	iam (Activation);
+Matrix Activation_to_Matrix (Activation me) {
 	try {
-		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
-		                                 my ymin, my ymax, my ny, my dy, my y1);
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
 		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {

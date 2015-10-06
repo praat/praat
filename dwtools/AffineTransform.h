@@ -2,7 +2,7 @@
 #define _AffineTransform_h_
 /* AffineTransform.h
  *
- * Copyright (C) 2001-2011 David Weenink
+ * Copyright (C) 2001-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,18 +25,18 @@
 #include "AffineTransform_def.h"
 oo_CLASS_CREATE (AffineTransform, Daata);
 
-void AffineTransform_init (I, long n);
+void AffineTransform_init (AffineTransform me, long n);
 
 AffineTransform AffineTransform_create (long n);
 
-Any AffineTransform_invert (I);
+Any AffineTransform_invert (AffineTransform me);
 /*
 	Get inverse transform for y = A x + t:
 		x = A^(-1)y - A^(-1) t
 */
 
-TableOfReal AffineTransform_extractMatrix (I);
+TableOfReal AffineTransform_extractMatrix (AffineTransform me);
 
-TableOfReal AffineTransform_extractTranslationVector (I);
+TableOfReal AffineTransform_extractTranslationVector (AffineTransform me);
 
 #endif /* _AffineTransform_h_ */

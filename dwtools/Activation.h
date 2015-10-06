@@ -2,7 +2,7 @@
 #define _Activation_h_
 /* Activation.h
  * 
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink
  * 
  * This program is free oftware; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,13 +43,13 @@ Thing_define (Activation, Matrix) {
    z[iy][ix]		:the activities
 */
 
-void Activation_init (I, long ny, long nx);
+void Activation_init (Activation me, long ny, long nx);
 
 Activation Activation_create (long ny, long nx);
 
-Activation Matrix_to_Activation (I);
+Activation Matrix_to_Activation (Matrix me);
 
-Matrix Activation_to_Matrix (I);
+Matrix Activation_to_Matrix (Activation me);
 
 
 int _Activation_checkElements (Activation me);

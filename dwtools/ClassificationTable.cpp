@@ -1,6 +1,6 @@
 /* ClassificationTable.cpp
  *
- * Copyright (C) 1993-2011, 2014 David Weenink
+ * Copyright (C) 1993-2011, 2014, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,16 +119,16 @@ Correlation ClassificationTable_to_Correlation_columns (ClassificationTable me) 
 		}
 
 		for (long irow = 1; irow <= thy numberOfColumns; irow++) {
-			thy data[irow][irow] = 1;
+			thy data[irow][irow] = 1.0;
 			for (long icol = irow + 1; icol <= thy numberOfColumns; icol++) {
-				double n11 = 0, n22 = 0, n12 = 0;
+				double n11 = 0.0, n22 = 0.0, n12 = 0.0;
 				for (long i = 1; i <= my numberOfRows; i++) {
 					n12 += my data[i][irow] * my data[i][icol];
 					n11 += my data[i][irow] * my data[i][irow];
 					n22 += my data[i][icol] * my data[i][icol];
 				}
 				// probabilities might be very low!
-				if (n12 > 0 && n22 > 0) {
+				if (n12 > 0.0 && n22 > 0.0) {
 					thy data[irow][icol] = thy data[icol][irow] = n12 / sqrt (n11 * n22);
 				}
 			}

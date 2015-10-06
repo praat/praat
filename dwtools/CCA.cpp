@@ -1,6 +1,6 @@
 /* CCA.c
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,8 +102,10 @@ CCA TableOfReal_to_CCA (TableOfReal me, long ny) {
 		if (ny < 1 || ny > my numberOfColumns - 1) {
 			Melder_throw (U"Dimension of first part not correct.");
 		}
-		if (ny > nx) Melder_throw (U"The dimension of the dependent part (", ny, U") must be less than or equal to "
-			                           "the dimension of the independent part (", nx, U").");
+		if (ny > nx) {
+			Melder_throw (U"The dimension of the dependent part (", ny, U") must be less than or equal to "
+				"the dimension of the independent part (", nx, U").");
+		}
 		if (n < ny) {
 			Melder_throw (U"The number of observations must be larger then ", ny, U".");
 		}
@@ -133,9 +135,7 @@ CCA TableOfReal_to_CCA (TableOfReal me, long ny) {
 			Melder_throw (U"One of the parts of the table contains only zeros.");
 		}
 
-		/*
-			Centre the data and svd it.
-		*/
+		// Centre the data and svd it.
 
 		NUMcentreColumns (uy, 1, n, 1, ny, nullptr);
 		NUMcentreColumns (ux, 1, n, 1, nx, nullptr);
@@ -145,9 +145,7 @@ CCA TableOfReal_to_CCA (TableOfReal me, long ny) {
 		long numberOfZeroedy = SVD_zeroSmallSingularValues (svdy.peek(), 0.0);
 		long numberOfZeroedx = SVD_zeroSmallSingularValues (svdx.peek(), 0.0);
 
-		/*
-			Form the matrix C = ux' uy (use svd-object storage)
-		*/
+		// Form the matrix C = ux' uy (use svd-object storage)
 
 		autoSVD svdc = SVD_create (nx, ny);
 		double **uc = svdc -> u;
@@ -204,9 +202,8 @@ CCA TableOfReal_to_CCA (TableOfReal me, long ny) {
 			}
 		}
 
-		/*
-			Normalize eigenvectors.
-		*/
+		// Normalize eigenvectors.
+
 		NUMnormalizeRows (thy y -> eigenvectors, numberOfCoefficients, ny, 1);
 		NUMnormalizeRows (thy x -> eigenvectors, numberOfCoefficients, nx, 1);
 		Melder_assert (thy x -> dimension == thy xLabels -> numberOfStrings &&
@@ -222,15 +219,16 @@ TableOfReal CCA_and_TableOfReal_scores (CCA me, TableOfReal thee, long numberOfF
 		long n = thy numberOfRows;
 		long nx = my x -> dimension, ny = my y -> dimension;
 
-		if (ny + nx != thy numberOfColumns) Melder_throw (U"The number of columns in the table (", thy numberOfColumns,
-			        U") does not agree with the dimensions of the CCA object (ny + nx = ", ny, U" + ", nx, U").");
-
+		if (ny + nx != thy numberOfColumns) {
+			Melder_throw (U"The number of columns in the table (", thy numberOfColumns,
+				U") does not agree with the dimensions of the CCA object (ny + nx = ", ny, U" + ", nx, U").");
+		}
 		if (numberOfFactors == 0) {
 			numberOfFactors = my numberOfCoefficients;
 		}
-		if (numberOfFactors < 1 || numberOfFactors > my numberOfCoefficients) Melder_throw
-			(U"The number of factors must be in interval [1, ", my numberOfCoefficients, U"].");
-
+		if (numberOfFactors < 1 || numberOfFactors > my numberOfCoefficients) {
+			Melder_throw (U"The number of factors must be in interval [1, ", my numberOfCoefficients, U"].");
+		}
 		autoTableOfReal him = TableOfReal_create (n, 2 * numberOfFactors);
 		TableOfReal phim = him.peek();
 		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows);
