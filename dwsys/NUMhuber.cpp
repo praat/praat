@@ -1,6 +1,6 @@
 /* NUMhuber.cpp
 *
-* Copyright (C) 1994-2008 David Weenink
+* Copyright (C) 1994-2008, 2015 David Weenink
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ void NUMmad (double *x, long n, double *location, int wantlocation, double *mad,
 		return;
 	}
 	autoNUMvector<double> atmp;
-	if (work == 0)  {
+	if (! work)  {
 		atmp.reset (1, n);
 		tmp = atmp.peek();
 	}
@@ -65,8 +65,8 @@ static double NUMgauss (double x) {
 void NUMstatistics_huber (double *x, long n, double *location, int wantlocation,
                           double *scale, int wantscale, double k, double tol, double *work) {
 	double *tmp = work;
-	double theta = 2 * NUMgaussP (k) - 1;
-	double beta = theta + k * k * (1 - theta) - 2 * k * NUMgauss (k);
+	double theta = 2.0 * NUMgaussP (k) - 1.0;
+	double beta = theta + k * k * (1.0 - theta) - 2.0 * k * NUMgauss (k);
 	long n1 = n;
 
 	autoNUMvector<double> atmp;
@@ -107,14 +107,14 @@ void NUMstatistics_huber (double *x, long n, double *location, int wantlocation,
 			}
 		}
 		if (wantlocation) {
-			mu1 = 0;
+			mu1 = 0.0;
 			for (long i = 1; i <= n; i++) {
 				mu1 += tmp[i];
 			}
 			mu1 /= n;
 		}
 		if (wantscale) {
-			s1 = 0;
+			s1 = 0.0;
 			for (long i = 1; i <= n; i++) {
 				double dx = tmp[i] - mu1;
 				s1 += dx * dx;

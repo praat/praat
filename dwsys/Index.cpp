@@ -1,6 +1,6 @@
 /* Index.cpp
  *
- * Copyright (C) 2005-2011 David Weenink
+ * Copyright (C) 2005-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,11 +75,12 @@ Index Index_extractPart (I, long from, long to) {
 		if (to == 0) {
 			to = my numberOfElements;
 		}
-		if (to < from || from < 1 || to > my numberOfElements) Melder_throw
-			(U"Range should be in interval [1,", my numberOfElements, U"].");
+		if (to < from || from < 1 || to > my numberOfElements) {
+			Melder_throw (U"Range should be in interval [1,", my numberOfElements, U"].");
+		}
 		autoIndex thee = Data_copy (me);
 		thy numberOfElements = to - from + 1;
-		/* */
+		
 		for (long i = 1; i <= thy numberOfElements; i++) {
 			thy classIndex[i] = my classIndex[from + i - 1];
 		}

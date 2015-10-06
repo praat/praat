@@ -1,6 +1,6 @@
 /* Graphics_extensions.c
  *
- * Copyright (C) 2012 -2014 David Weenink
+ * Copyright (C) 2012 -2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@
 void Graphics_boxAndWhiskerPlot (Graphics g, double data[], long ndata, double x, double r, double w, double ymin, double ymax) {
 	int lineType = Graphics_inqLineType (g);
 
-	Melder_assert (r > 0 && w > 0);
+	Melder_assert (r > 0.0 && w > 0.0);
 	if (ndata < 3) {
 		return;
 	}
@@ -60,7 +60,7 @@ void Graphics_boxAndWhiskerPlot (Graphics g, double data[], long ndata, double x
 		return;
 	}
 
-	double mean = 0;
+	double mean = 0.0;
 	for (long i = 1; i <= ndata; i++) {
 		mean += data[i];
 	}
@@ -187,7 +187,7 @@ void Graphics_quantileQuantilePlot (Graphics g, long numberOfQuantiles, double x
 	long numberOfData = xnumberOfData < ynumberOfData ? xnumberOfData : ynumberOfData;
 	numberOfQuantiles = numberOfData < numberOfQuantiles ? numberOfData : numberOfQuantiles;
 	double un = pow (0.5, 1.0 / numberOfQuantiles);
-	double u1 = 1 - un;
+	double u1 = 1.0 - un;
 	if (xmin == xmax) {
 		xmin = NUMquantile (xnumberOfData, xsorted.peek(), u1);
 		xmax = NUMquantile (xnumberOfData, xsorted.peek(), un);
@@ -239,7 +239,7 @@ void Graphics_matrixAsSquares (Graphics g, double **matrix, long numberOfRows, l
 		y1 = y1 < y1WC ? y1WC : y1;
 		double y2 = y1WC + ycenter + zweight * 0.5 * dy * cellSizeFactor;
 		y2 = y2 > y2WC ? y2WC : y2;
-		if (z > 0) {
+		if (z > 0.0) {
 			Graphics_setColour (g, Graphics_WHITE);
 		}
 		Graphics_fillRectangle (g, x1, x2, y1, y2);

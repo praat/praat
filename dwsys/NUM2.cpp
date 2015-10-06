@@ -132,19 +132,13 @@ void NUMdmatrix_printMatlabForm (double **m, long nr, long nc, const char32 *nam
 	for (long i = 1; i <= nr; i++) {
 		for (long j = 1; j <= n.quot; j++) {
 			for (long k = 1; k <= npc; k++) {
-				MelderInfo_write (
-					m[i][ (j - 1) *npc + k],
-					(k < npc ? U", " : U"")
-				);
+				MelderInfo_write (m[i][ (j - 1) *npc + k], (k < npc ? U", " : U""));
 			}
 			MelderInfo_write (j < n.quot ? U",\n" : U"");
 		}
 
 		for (long k = 1; k <= n.rem; k++) {
-			MelderInfo_write (
-				m[i][n.quot * npc + k],
-				(k < n.rem ? U", " : U"")
-			);
+			MelderInfo_write (m[i][n.quot * npc + k], (k < n.rem ? U", " : U""));
 		}
 		MelderInfo_write (i < nr ? U";\n" : U"];\n");
 	}
@@ -153,7 +147,7 @@ void NUMdmatrix_printMatlabForm (double **m, long nr, long nc, const char32 *nam
 
 void NUMcentreRows (double **a, long rb, long re, long cb, long ce) {
 	for (long i = rb; i <= re; i++) {
-		double rowmean = 0;
+		double rowmean = 0.0;
 		for (long j = cb; j <= ce; j++) {
 			rowmean += a[i][j];
 		}
@@ -166,7 +160,7 @@ void NUMcentreRows (double **a, long rb, long re, long cb, long ce) {
 
 void NUMcentreColumns (double **a, long rb, long re, long cb, long ce, double *centres) {
 	for (long j = cb; j <= ce; j++) {
-		double colmean = 0;
+		double colmean = 0.0;
 		for (long i = rb; i <= re; i++) {
 			colmean += a[i][j];
 		}
@@ -174,7 +168,7 @@ void NUMcentreColumns (double **a, long rb, long re, long cb, long ce, double *c
 		for (long i = rb; i <= re; i++) {
 			a[i][j] -= colmean;
 		}
-		if (centres != NULL) {
+		if (centres) {
 			centres[j - cb + 1] = colmean;
 		}
 	}
@@ -188,11 +182,11 @@ void NUMdoubleCentre (double **a, long rb, long re, long cb, long ce) {
 void NUMnormalizeColumns (double **a, long nr, long nc, double norm) {
 	Melder_assert (norm > 0);
 	for (long j = 1; j <= nc; j++) {
-		double s = 0;
+		double s = 0.0;
 		for (long i = 1; i <= nr; i++) {
 			s += a[i][j] * a[i][j];
 		}
-		if (s <= 0) {
+		if (s <= 0.0) {
 			continue;
 		}
 		s = sqrt (norm / s);
@@ -205,11 +199,11 @@ void NUMnormalizeColumns (double **a, long nr, long nc, double norm) {
 void NUMnormalizeRows (double **a, long nr, long nc, double norm) {
 	Melder_assert (norm > 0);
 	for (long i = 1; i <= nr; i++) {
-		double s = 0;
+		double s = 0.0;
 		for (long j = 1; j <= nc; j++) {
 			s += a[i][j] * a[i][j];
 		}
-		if (s <= 0) {
+		if (s <= 0.0) {
 			continue;
 		}
 		s = sqrt (norm / s);
@@ -221,13 +215,13 @@ void NUMnormalizeRows (double **a, long nr, long nc, double norm) {
 
 void NUMnormalize (double **a, long nr, long nc, double norm) {
 	Melder_assert (norm > 0);
-	double sq = 0;
+	double sq = 0.0;
 	for (long i = 1; i <= nr; i++) {
 		for (long j = 1; j <= nc; j++) {
 			sq += a[i][j] * a[i][j];
 		}
 	}
-	if (sq <= 0) {
+	if (sq <= 0.0) {
 		return;
 	}
 	norm = sqrt (norm / sq);
@@ -244,7 +238,7 @@ void NUMstandardizeColumns (double **a, long rb, long re, long cb, long ce) {
 		return;
 	}
 	for (long j = cb; j <= ce; j++) {
-		double ep = 0, s = 0, sdev, var = 0;
+		double ep = 0.0, s = 0.0, sdev, var = 0.0;
 		for (long i = rb; i <= re; i++) {
 			s += a[i][j];
 		}
@@ -254,12 +248,12 @@ void NUMstandardizeColumns (double **a, long rb, long re, long cb, long ce) {
 			ep += s;
 			var += s * s;
 		}
-		if (ave != 0) {
+		if (ave != 0.0) {
 			for (long i = rb; i <= re; i++) {
 				a[i][j] -= ave;
 			}
 		}
-		if (var > 0) {
+		if (var > 0.0) {
 			var = (var - ep * ep / n) / (n - 1);
 			sdev = sqrt (var);
 			for (long i = rb; i <= re; i++) {
@@ -275,7 +269,7 @@ void NUMstandardizeRows (double **a, long rb, long re, long cb, long ce) {
 		return;
 	}
 	for (long i = rb; i <= re; i++) {
-		double ep = 0, s = 0, sdev, var = 0;
+		double ep = 0.0, s = 0.0, sdev, var = 0.0;
 		for (long j = cb; j <= ce; j++) {
 			s += a[i][j];
 		}
@@ -285,12 +279,12 @@ void NUMstandardizeRows (double **a, long rb, long re, long cb, long ce) {
 			ep += s;
 			var += s * s;
 		}
-		if (ave != 0) {
+		if (ave != 0.0) {
 			for (long j = cb; j <= ce; j++) {
 				a[i][j] -= ave;
 			}
 		}
-		if (var > 0) {
+		if (var > 0.0) {
 			var = (var - ep * ep / n) / (n - 1);
 			sdev = sqrt (var);
 			for (long j = cb; j <= ce; j++) {
@@ -306,7 +300,7 @@ void NUMaverageColumns (double **a, long rb, long re, long cb, long ce) {
 		return;
 	}
 	for (long j = cb; j <= ce; j++) {
-		double ave = 0;
+		double ave = 0.0;
 		for (long i = rb; i <= re; i++) {
 			ave += a[i][j];
 		}
@@ -320,7 +314,7 @@ void NUMaverageColumns (double **a, long rb, long re, long cb, long ce) {
 
 void NUMvector_avevar (double *a, long n, double *average, double *variance) {
 
-	double eps = 0, mean = 0, var = 0;
+	double eps = 0.0, mean = 0.0, var = 0.0;
 
 	for (long i = 1; i <= n; i++) {
 		mean += a[i];
@@ -328,11 +322,11 @@ void NUMvector_avevar (double *a, long n, double *average, double *variance) {
 
 	mean /= n;
 
-	if (average != NULL) {
+	if (average) {
 		*average = mean;
 	}
 
-	if (variance == NULL) {
+	if (! variance) {
 		return;
 	}
 
@@ -352,7 +346,7 @@ void NUMvector_avevar (double *a, long n, double *average, double *variance) {
 
 void NUMcolumn_avevar (double **a, long nr, long nc, long icol, double *average, double *variance) {
 
-	double eps = 0, mean = 0, var = 0;
+	double eps = 0.0, mean = 0.0, var = 0.0;
 
 	Melder_assert (nr > 0 && nc > 0 && icol > 0 && icol <= nc);
 
@@ -362,11 +356,11 @@ void NUMcolumn_avevar (double **a, long nr, long nc, long icol, double *average,
 
 	mean /= nr;
 
-	if (average != NULL) {
+	if (average) {
 		*average = mean;
 	}
 
-	if (variance == NULL) {
+	if (! variance) {
 		return;
 	}
 
@@ -385,11 +379,9 @@ void NUMcolumn_avevar (double **a, long nr, long nc, long icol, double *average,
 	*variance = var;
 }
 
-void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2,
-                        double *average1, double *variance1, double *average2, double *variance2,
-                        double *covariance) {
-	double eps1 = 0, eps2 = 0, mean1 = 0, mean2 = 0;
-	double var1 = 0, var2 = 0, covar = 0;
+void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2, double *average1, double *variance1, double *average2, double *variance2, double *covariance) {
+	double eps1 = 0.0, eps2 = 0.0, mean1 = 0.0, mean2 = 0.0;
+	double var1 = 0.0, var2 = 0.0, covar = 0.0;
 
 	Melder_assert (icol1 > 0 && icol1 <= nc && icol2 > 0 && icol2 <= nc);
 
@@ -401,14 +393,14 @@ void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2,
 	mean1 /= nr;
 	mean2 /= nr;
 
-	if (average1 != NULL) {
+	if (average1) {
 		*average1 = mean1;
 	}
-	if (average2 != NULL) {
+	if (average2) {
 		*average2 = mean2;
 	}
 
-	if (variance1 == NULL && variance2 == NULL && covariance == NULL) {
+	if (! variance1 && ! variance2 && ! covariance) {
 		return;
 	}
 
@@ -431,13 +423,13 @@ void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2,
 		covar = NUMundefined;
 	}
 
-	if (variance1 != NULL) {
+	if (variance1) {
 		*variance1 = var1;
 	}
-	if (variance2 != NULL) {
+	if (variance2) {
 		*variance2 = var2;
 	}
-	if (covariance != NULL) {
+	if (covariance) {
 		*covariance = covar;
 	}
 	if (icol1 == icol2) {
@@ -468,7 +460,7 @@ void NUMcovarianceFromColumnCentredMatrix (double **x, long nrows, long ncols, l
 	}
 	for (long i = 1; i <= ncols; i++) {
 		for (long j = i; j <= ncols; j++) {
-			double sum = 0;
+			double sum = 0.0;
 			for (long k = 1; k <= nrows; k++) {
 				sum += x[k][i] * x[k][j];
 			}
@@ -488,18 +480,18 @@ double NUMmultivariateKurtosis (double **x, long nrows, long ncols, int method) 
 	NUMcentreColumns (x, 1, nrows, 1, ncols, mean.peek());
 	NUMcovarianceFromColumnCentredMatrix (x, nrows, ncols, 1, covar.peek());
 	if (method == 1) { // Schott (2001, page 33)
-		kurt = 0;
+		kurt = 0.0;
 		for (long l = 1; l <= ncols; l++) {
-			double zl = 0, wl, sll2 = covar[l][l] * covar[l][l];
+			double zl = 0.0, wl, sll2 = covar[l][l] * covar[l][l];
 			for (long j = 1; j <= nrows; j++) {
 				double d = x[j][l] - mean[l], d2 = d * d;
 				zl += d2 * d2;
 			}
-			zl = (zl - 6 * sll2) / (nrows - 4);
+			zl = (zl - 6.0 * sll2) / (nrows - 4);
 			wl = (sll2 - zl / nrows) * nrows / (nrows - 1);
 			kurt += zl / wl;
 		}
-		kurt = kurt / (3 * ncols) - 1;
+		kurt = kurt / (3 * ncols) - 1.0;
 	}
 	return kurt;
 }
@@ -539,14 +531,14 @@ void eigenSort (double d[], double **v, long n, int sort) {
 }
 
 int NUMstrcmp (const char *s1, const char *s2) {
-	if (s1 == NULL || s1[0] == '\0') {
-		if (s2 != NULL && s2[0] != '\0') {
+	if (! s1 || s1[0] == '\0') {
+		if (s2 && s2[0] != '\0') {
 			return -1;
 		} else {
 			return 0;
 		}
 	} else {
-		if (s2 == NULL) {
+		if (! s2) {
 			return +1;
 		} else {
 			return strcmp (s1, s2);
@@ -629,41 +621,45 @@ void NUMmonotoneRegression (const double x[], long n, double xs[]) {
 }
 
 double NUMvector_getNorm1 (const double v[], long n) {
-	double norm = 0; long i;
-	for (i = 1; i <= n; i++) {
+	double norm = 0;
+	for (long i = 1; i <= n; i++) {
 		norm += fabs (v[i]);
 	}
 	return norm;
 }
 
 double NUMvector_getNorm2 (const double v[], long n) {
-	double norm = 0; long i;
-	for (i = 1; i <= n; i++) {
+	double norm = 0.0;
+	for (long i = 1; i <= n; i++) {
 		norm += v[i] * v[i];
 	}
 	return sqrt (norm);
 }
 
 double NUMvector_normalize1 (double v[], long n) {
-	double norm = 0; long i;
-	for (i = 1; i <= n; i++) {
+	double norm = 0.0;
+	for (long i = 1; i <= n; i++) {
 		norm += fabs (v[i]);
 	}
-	if (norm > 0) for (i = 1; i <= n; i++) {
+	if (norm > 0.0) {
+		for (long i = 1; i <= n; i++) {
 			v[i] /= norm;
 		}
+	}
 	return norm;
 }
 
 double NUMvector_normalize2 (double v[], long n) {
-	double norm = 0; long i;
-	for (i = 1; i <= n; i++) {
+	double norm = 0;
+	for (long i = 1; i <= n; i++) {
 		norm += v[i] * v[i];
 	}
 	norm = sqrt (norm);
-	if (norm > 0) for (i = 1; i <= n; i++) {
+	if (norm > 0) {
+		for (long i = 1; i <= n; i++) {
 			v[i] /= norm;
 		}
+	}
 	return norm;
 }
 
@@ -703,12 +699,12 @@ void NUMdeterminant_cholesky (double **a, long n, double *lnd) {
 	}
 
 	// Determinant from diagonal, restore diagonal
-	*lnd = 0;
+	*lnd = 0.0;
 	for (long i = 1; i <= n; i++) {
 		*lnd += log (a[i][i]);
 		a[i][i] = d[i];
 	}
-	*lnd *= 2; // because A = L . L'
+	*lnd *= 2.0; // because A = L . L' TODO
 
 	// Restore lower from upper */
 
@@ -735,11 +731,11 @@ void NUMlowerCholeskyInverse (double **a, long n, double *lnd) {
 	// Determinant from diagonal, diagonal is now sqrt (a[i][i]) !
 
 	if (lnd != NULL) {
-		*lnd = 0;
+		*lnd = 0.0;
 		for (long i = 1; i <= n; i++) {
 			*lnd += log (a[i][i]);
 		}
-		*lnd *= 2; /* because A = L . L' */
+		*lnd *= 2.0; /* because A = L . L' */
 	}
 
 	// Get the inverse */
@@ -773,7 +769,7 @@ double NUMmahalanobisDistance_chi (double **linv, double *v, double *m, long nr,
 		}
 	} else { // nxn matrix
 		for (long i = n; i > 0; i--) {
-			double t = 0;
+			double t = 0.0;
 			for (long j = 1; j <= i; j++) {
 				t += linv[i][j] * (v[j] - m[j]);
 			}
@@ -784,7 +780,7 @@ double NUMmahalanobisDistance_chi (double **linv, double *v, double *m, long nr,
 }
 
 double NUMtrace (double **a, long n) {
-	double trace = 0;
+	double trace = 0.0;
 	for (long i = 1; i <= n; i++) {
 		trace += a[i][i];
 	}
@@ -792,7 +788,7 @@ double NUMtrace (double **a, long n) {
 }
 
 double NUMtrace2 (double **a1, double **a2, long n) {
-	double trace = 0;
+	double trace = 0.0;
 	for (long i = 1; i <= n; i++) {
 		for (long k = 1; k <= n; k++) {
 			trace += a1[i][k] * a2[k][i];
@@ -815,21 +811,21 @@ void NUMeigensystem (double **a, long n, double **evec, double eval[]) {
 void NUMdominantEigenvector (double **mns, long n, double *q, double *lambda, double tolerance) {
 	autoNUMvector<double> z (1, n);
 
-	double val, cval = 0;
+	double val, cval = 0.0;
 	for (long k = 1; k <= n; k++) {
 		for (long l = 1; l <= n; l++) {
 			cval += q[k] * mns[k][l] * q[l];
 		}
 	}
-	if (cval == 0) {
+	if (cval == 0.0) {
 		Melder_throw (U"Zero matrices ??");
 	}
 
 	long iter = 0;
 	do {
-		double znorm2 = 0;
+		double znorm2 = 0.0;
 		for (long l = 1; l <= n; l++) {
-			z[l] = 0;
+			z[l] = 0.0;
 			for (long k = 1; k <= n; k++) {
 				z[l] += mns[l][k] * q[k];
 			}
@@ -844,7 +840,7 @@ void NUMdominantEigenvector (double **mns, long n, double *q, double *lambda, do
 			q[k] = z[k] / znorm2;
 		}
 
-		val = cval; cval = 0;
+		val = cval; cval = 0.0;
 
 		for (long k = 1; k <= n; k++) {
 			for (long l = 1; l <= n; l++) {
@@ -861,7 +857,7 @@ void NUMprincipalComponents (double **a, long n, long nComponents, double **pc) 
 	NUMeigensystem (a, n, evec.peek(), NULL);
 	for (long i = 1; i <= n; i++) {
 		for (long j = 1; j <= nComponents; j++) {
-			double s = 0;
+			double s = 0.0;
 			for (long k = 1; k <= n; k++) {
 				s += a[k][i] * evec[k][j]; /* times sqrt(eigenvalue) ?? */
 			}
@@ -878,7 +874,7 @@ void NUMdmatrix_into_principalComponents (double **m, long nrows, long ncols, lo
 	autoSVD svd = SVD_create_d (mc.peek(), nrows, ncols);
 	for (long i = 1; i <= nrows; i++) {
 		for (long j = 1; j <= numberOfComponents; j++) {
-			pc[i][j] = 0;
+			pc[i][j] = 0.0;
 			for (long k = 1; k <= ncols; k++) {
 				pc[i][j] += svd -> v[k][j] * m[i][k];
 			}
@@ -892,9 +888,9 @@ void NUMpseudoInverse (double **y, long nr, long nc, double **yinv, double toler
 	(void) SVD_zeroSmallSingularValues (me.peek(), tolerance);
 	for (long i = 1; i <= nc; i++) {
 		for (long j = 1; j <= nr; j++) {
-			double s = 0;
+			double s = 0.0;
 			for (long k = 1; k <= nc; k++) {
-				if (my d[k] != 0) {
+				if (my d[k] != 0.0) {
 					s += my v[i][k] * my u[j][k] / my d[k];
 				}
 			}
@@ -948,15 +944,14 @@ void NUMsolveEquations (double **a, long nr, long nc, double **b, long ncb, doub
 
 
 void NUMsolveNonNegativeLeastSquaresRegression (double **m, long nr, long nc, double *d, double tol, long itermax, double *b) {
-	double difsq, difsqp = 0;
+	double difsq, difsqp = 0.0;
 
 	for (long iter = 1; iter <= itermax; iter++) {
-		/*
-			Fix all weights except b[j]
-		*/
+
+		// Fix all weights except b[j]
 
 		for (long j = 1; j <= nc; j++) {
-			double mjr = 0, mjmj = 0;
+			double mjr = 0.0, mjmj = 0.0;
 			for (long i = 1; i <= nr; i++) {
 				double ri = d[i], mij = m[i][j];
 				for (long l = 1; l <= nc; l++) {
@@ -968,16 +963,14 @@ void NUMsolveNonNegativeLeastSquaresRegression (double **m, long nr, long nc, do
 				mjmj += mij * mij;
 			}
 			b[j] = mjr / mjmj;
-			if (b[j] < 0) {
-				b[j] = 0;
+			if (b[j] < 0.0) {
+				b[j] = 0.0;
 			}
 		}
 
-		/*
-			Calculate t(b) and compare with previous result.
-		*/
+		// Calculate t(b) and compare with previous result.
 
-		difsq = 0;
+		difsq = 0.0;
 		for (long i = 1; i <= nr; i++) {
 			double dmb = d[i];
 			for (long j = 1; j <= nc; j++) {
@@ -1003,7 +996,7 @@ struct nr_struct {
 
 static void nr_func (double x, double *f, double *df, void *data) {
 	struct nr_struct *me = (struct nr_struct *) data;
-	*f = *df = 0;
+	*f = *df = 0.0;
 	for (long i = 1; i <= 3; i++) {
 		double t1 = (my delta[i] - x);
 		double t2 = my y[i] / t1;
@@ -1049,19 +1042,19 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[], lon
 	if (info != 0) {
 		Melder_throw (U"dpotf2 fails.");
 	}
-	ftinv[1][2] = ftinv[1][3] = ftinv[2][3] = 0;
+	ftinv[1][2] = ftinv[1][3] = ftinv[2][3] = 0.0;
 
 	// Construct G and its eigen-decomposition (eq. (4,5))
 	// Sort eigenvalues (& eigenvectors) ascending.
 
-	b[3][1] = b[1][3] = -0.5; b[2][2] = 1;
+	b[3][1] = b[1][3] = -0.5; b[2][2] = 1.0;
 
 	// G = F^-1 B (F')^-1 (eq. 4)
 
 	for (long i = 1; i <= 3; i++) {
 		for (long j = 1; j <= 3; j++) {
 			for (long k = 1; k <= 3; k++) {
-				if (ftinv[k][i] != 0) {
+				if (ftinv[k][i] != 0.0) {
 					for (long l = 1; l <= 3; l++) {
 						g[i][j] += ftinv[k][i] * b[k][l] * ftinv[l][j];
 					}
@@ -1081,7 +1074,7 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[], lon
 
 	for (long i = 1; i <= 3; i++) {
 		for (long j = 1; j <= 3; j++) {
-			if (ftinv[i][j] != 0) {
+			if (ftinv[i][j] != 0.0) {
 				for (long k = 1; k <= 3; k++) {
 					ftinvp[i][k] += ftinv[i][j] * p[3 + 1 - j][k]; /* is sorted desc. */
 				}
@@ -1124,8 +1117,7 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[], lon
 		t1 = y[1] / (delta[1] - delta[2]);
 		t3 = y[3] / (delta[3] - delta[2]);
 		w[1] = t1 * delta[1];
-		if ( (delta[2] < delta[3] &&
-		        (t2 = (t1 * t1 * delta[1] + t3 * t3 * delta[3])) < eps)) {
+		if ( (delta[2] < delta[3] && (t2 = (t1 * t1 * delta[1] + t3 * t3 * delta[3])) < eps)) {
 			w[2] = sqrt (- delta[2] * t2); /* +- */
 			w[3] = t3 * delta[3];
 			NUMsolveEquation (ptfinv.peek(), 3, 3, w.peek(), 1e-6, chi.peek());
@@ -1133,8 +1125,7 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[], lon
 			if (fabs (chi[3] / chi[1]) < eps) {
 				NUMsolveEquation (ptfinvc.peek(), 3, 3, w.peek(), 1e-6, chi.peek());
 			}
-		} else if ( ( (delta[2] < delta[3] + eps) || (delta[2] > delta[3] - eps))
-		            && fabs (y[3]) < eps) {
+		} else if (((delta[2] < delta[3] + eps) || (delta[2] > delta[3] - eps)) && fabs (y[3]) < eps) {
 			// choose one value for w[2] from an infinite number
 
 			w[2] = w[1];
@@ -1189,12 +1180,12 @@ void NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m, doub
 	autoNUMvector<long> indx (1, m);
 
 	for (long j = 1; j <= m; j++) {
-		t[j] = 0;
+		t[j] = 0.0;
 	}
 
 	autoSVD svd = SVD_create_d (f, n, m);
 
-	if (alpha == 0) {
+	if (alpha == 0.0) {
 		SVD_solve (svd.peek(), phi, t);    // standard least squares
 	}
 
@@ -1240,7 +1231,7 @@ void NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m, doub
 	me.x = x.peek();
 	me.c = c.peek();
 
-	double xqsq = 0;
+	double xqsq = 0.0;
 	for (long j = m - q + 1; j <= m; j++) {
 		xqsq += x[j] * x[j];
 	}
@@ -1251,7 +1242,7 @@ void NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m, doub
 		r = m - q;
 		me.m = r;
 		nr2_func (c[m], &fm, &df, & me);
-		if (fm >= 0) { /* step 3.b1 */
+		if (fm >= 0.0) { /* step 3.b1 */
 			x[r + 1] = sqrt (fm);
 			for (long j = 1; j <= r; j++) {
 				x[j] /= c[j] - c[m];
@@ -1263,16 +1254,16 @@ void NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m, doub
 			}
 			return;
 		}
-		/* else continue with r = m - q */
+		// else continue with r = m - q
 	}
 
 	// step 3a & 3b2, determine interval lower bound for Newton-Raphson root finder
 
-	double xCx = 0;
+	double xCx = 0.0;
 	for (long j = 1; j <= r; j++) {
 		xCx += x[j] * x[j] / c[j];
 	}
-	double b0, bmin = delta > 0 ? - xCx / delta : -2 * sqrt (alpha * xCx);
+	double b0, bmin = delta > 0.0 ? - xCx / delta : -2.0 * sqrt (alpha * xCx);
 	double eps = (c[m] - bmin) * tol;
 
 	// find the root of d(psi(b)/db in interval (bmin, c[m])
@@ -1286,8 +1277,8 @@ void NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m, doub
 	}
 }
 
-void NUMProcrustes (double **x, double **y, long nPoints, long nDimensions, double **t, double *v, double *s) {
-	int orthogonal = v == 0 || s == 0; /* else similarity transform */
+void NUMProcrustes (double **x, double **y, long nPoints, long nDimensions, double **t, double v[], double *s) {
+	bool orthogonal = ! v || ! s; // else similarity transform
 
 	autoNUMmatrix<double> c (1, nDimensions, 1, nDimensions);
 	autoNUMmatrix<double> yc (1, nPoints, 1, nDimensions);
@@ -1315,12 +1306,12 @@ void NUMProcrustes (double **x, double **y, long nPoints, long nDimensions, doub
 	// 2. Decompose C by SVD:  C = PDQ' (SVD attribute is Q instead of Q'!)
 
 	autoSVD svd = SVD_create_d (c.peek(), nDimensions, nDimensions);
-	double trace = 0;
+	double trace = 0.0;
 	for (long i = 1; i <= nDimensions; i++) {
 		trace += svd -> d[i];
 	}
 
-	if (trace == 0) {
+	if (trace == 0.0) {
 		Melder_throw (U"NUMProcrustes: degenerate configuration(s).");
 	}
 
@@ -1328,7 +1319,7 @@ void NUMProcrustes (double **x, double **y, long nPoints, long nDimensions, doub
 
 	for (long i = 1; i <= nDimensions; i++) {
 		for (long j = 1; j <= nDimensions; j++) {
-			t[i][j] = 0;
+			t[i][j] = 0.0;
 			for (long k = 1; k <= nDimensions; k++) {
 				t[i][j] += svd -> v[i][k] * svd -> u[j][k];
 			}
@@ -1357,13 +1348,13 @@ void NUMProcrustes (double **x, double **y, long nPoints, long nDimensions, doub
 
 		// tr X'J YT == tr xc' yt
 
-		double traceXtJYT = 0;
+		double traceXtJYT = 0.0;
 		for (long i = 1; i <= nDimensions; i++) {
 			for (long j = 1; j <= nPoints; j++) {
 				traceXtJYT += xc[j][i] * yt[j][i];
 			}
 		}
-		double traceYtJY = 0;
+		double traceYtJY = 0.0;
 		for (long i = 1; i <= nDimensions; i++) {
 			for (long j = 1; j <= nPoints; j++) {
 				traceYtJY += y[j][i] * yc[j][i];
@@ -1396,7 +1387,7 @@ void NUMmspline (double knot[], long nKnots, long order, long i, double x, doubl
 	// First and last 'order' knots are equal, i.e.,
 	// knot[1] = ... = knot[order] && knot[nKnots-order+1] = ... knot[nKnots].
 
-	*y = 0;
+	*y = 0.0;
 	if (i > nSplines || order < 1) {
 		Melder_throw (U"Combination of order and index not correct.");
 	}
@@ -1425,7 +1416,7 @@ void NUMmspline (double knot[], long nKnots, long order, long i, double x, doubl
 		for (long j = i; j <= i + order - k; j++) {
 			double kj = knot[j], kjpk = knot[j + k];
 			if (kjpk > kj) {
-				m[j] = k * ( (x - kj) * m[j] + (kjpk - x) * m[j + 1]) / ( (k - 1) * (kjpk - kj));
+				m[j] = k * ((x - kj) * m[j] + (kjpk - x) * m[j + 1]) / ((k - 1) * (kjpk - kj));
 			}
 		}
 	}
@@ -1435,7 +1426,7 @@ void NUMmspline (double knot[], long nKnots, long order, long i, double x, doubl
 void NUMispline (double aknot[], long nKnots, long order, long i, double x, double *y) {
 	long j, orderp1 = order + 1;
 
-	*y = 0;
+	*y = 0.0;
 
 	for (j = orderp1; j <= nKnots - order; j++) {
 		if (x < aknot[j]) {
@@ -1447,7 +1438,7 @@ void NUMispline (double aknot[], long nKnots, long order, long i, double x, doub
 		return;
 	}
 	if (j > i + order || (j == nKnots - order && x == aknot[j])) {
-		*y = 1; return;
+		*y = 1.0; return;
 	}
 
 	// Equation 5 in Ramsay's article contains some errors!!!
@@ -1464,9 +1455,9 @@ void NUMispline (double aknot[], long nKnots, long order, long i, double x, doub
 }
 
 double NUMwilksLambda (double *lambda, long from, long to) {
-	double result = 1;
+	double result = 1.0;
 	for (long i = from; i <= to; i++) {
-		result /= (1 + lambda[i]);
+		result /= (1.0 + lambda[i]);
 	}
 	return result;
 }
@@ -1534,7 +1525,7 @@ void NUMnrbis (void (*f) (double x, double *fx, double *dfx, void *closure), dou
 				return;
 			}
 		}
-		tol = NUMfpp -> eps	* (*root == 0 ? 1 : fabs (*root));
+		tol = NUMfpp -> eps	* (*root == 0.0 ? 1.0 : fabs (*root));
 		if (fabs (dx) < tol) {
 			return;
 		}
@@ -1572,7 +1563,7 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 	if (f2 == NUMundefined) {
 		return NUMundefined;
 	}
-	if ( (f1 < 0 && f2 < 0) || (f1 > 0 && f2 > 0)) {
+	if ( (f1 < 0.0 && f2 < 0.0) || (f1 > 0.0 && f2 > 0.0)) {
 		Melder_warning (U"NUMridders: root must be bracketed.");
 		return NUMundefined;
 	}
@@ -1587,10 +1578,7 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 			return NUMundefined;
 		}
 
-		/*
-			New guess:
-			x4 = x3 + (x3 - x1) * sign(f1 - f2) * f3 / sqrt(f3^2 - f1*f2)
-		*/
+		// New guess: x4 = x3 + (x3 - x1) * sign(f1 - f2) * f3 / sqrt(f3^2 - f1*f2)
 
 		d = f3 * f3 - f1 * f2;
 		if (d < 0.0) {
@@ -1599,59 +1587,59 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 		}
 
 		if (d == 0.0) {
-			/* pb test added because f1 f2 f3 may be 1e-170 or so */
+			// pb test added because f1 f2 f3 may be 1e-170 or so
 			tol = NUMfpp -> eps * fabs (x3);
 			if (iter > 1 && fabs (x3 - root) < tol) {
 				return root;
 			}
 			root = x3;
-			/*
-			 * Perform bisection.
-			 */
-			if (f1 > 0.0) {
-				/* falling curve: f1 > 0, f2 < 0 */
+
+			// Perform bisection.
+
+			if (f1 > 0.0) { 
+				// falling curve: f1 > 0, f2 < 0 
 				if (f3 > 0.0) {
-					x1 = x3; f1 = f3;   /* retain invariant: f1 > 0, f2 < 0 */
+					x1 = x3; f1 = f3;   // retain invariant: f1 > 0, f2 < 0
 				} else {
-					/* f3 < 0.0 */
-					x2 = x3; f2 = f3;   /* retain invariant: f1 > 0, f2 < 0 */
+					// f3 <= 0.0
+					x2 = x3; f2 = f3;   // retain invariant: f1 > 0, f2 < 0
 				}
 			} else {
-				/* rising curve: f1 < 0, f2 > 0 */
+				// rising curve: f1 < 0, f2 > 0 
 				if (f3 > 0.0) {
-					x2 = x3; f2 = f3;   /* retain invariant: f1 < 0, f2 > 0 */
+					x2 = x3; f2 = f3;   // retain invariant: f1 < 0, f2 > 0
 				} else {
-					/* f3 < 0.0 */
-					x1 = x3; f1 = f3;   /* retain invariant: f1 < 0, f2 > 0 */
+					// f3 < 0.0
+					x1 = x3; f1 = f3;   // retain invariant: f1 < 0, f2 > 0
 				}
 			}
 		} else {
 			d = sqrt (d);
 			if (isnan (d)) {
-				/* pb: square root of denormalized small number fails on some computers */
+				// pb: square root of denormalized small number fails on some computers
 				tol = NUMfpp -> eps * fabs (x3);
 				if (iter > 1 && fabs (x3 - root) < tol) {
 					return root;
 				}
 				root = x3;
-				/*
-				 * Perform bisection.
-				 */
+
+				// Perform bisection.
+
 				if (f1 > 0.0) {
-					/* falling curve: f1 > 0, f2 < 0 */
+					// falling curve: f1 > 0, f2 < 0
 					if (f3 > 0.0) {
-						x1 = x3; f1 = f3;   /* retain invariant: f1 > 0, f2 < 0 */
+						x1 = x3; f1 = f3;   // retain invariant: f1 > 0, f2 < 0
 					} else {
-						/* f3 < 0.0 */
-						x2 = x3; f2 = f3;   /* retain invariant: f1 > 0, f2 < 0 */
+						// f3 <= 0.0
+						x2 = x3; f2 = f3;   // retain invariant: f1 > 0, f2 < 0
 					}
 				} else {
-					/* rising curve: f1 < 0, f2 > 0 */
+					// rising curve: f1 < 0, f2 > 0
 					if (f3 > 0.0) {
-						x2 = x3; f2 = f3;   /* retain invariant: f1 < 0, f2 > 0 */
+						x2 = x3; f2 = f3;   // retain invariant: f1 < 0, f2 > 0
 					} else {
-						/* f3 < 0.0 */
-						x1 = x3; f1 = f3;   /* retain invariant: f1 < 0, f2 > 0 */
+						// f3 < 0.0
+						x1 = x3; f1 = f3;   // retain invariant: f1 < 0, f2 > 0 */
 					}
 				}
 			} else {
@@ -1669,7 +1657,7 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 				if (f4 == NUMundefined) {
 					return NUMundefined;
 				}
-				if ( (f1 > f2) == (d > 0.0) /* pb: instead of x3 < x4 */) {
+				if ((f1 > f2) == (d > 0.0) /* pb: instead of x3 < x4 */) {
 					if (SIGN (f3, f4) != f3) {
 						x1 = x3; f1 = f3;
 						x2 = x4; f2 = f4;
@@ -1708,7 +1696,7 @@ double NUMlogNormalQ (double x, double zeta, double sigma) {
 }
 
 double NUMstudentP (double t, double df) {
-	if (df < 1) {
+	if (df < 1.0) {
 		return NUMundefined;
 	}
 	double ib = NUMincompleteBeta (0.5 * df, 0.5, df / (df + t * t));
@@ -1716,7 +1704,7 @@ double NUMstudentP (double t, double df) {
 		return NUMundefined;
 	}
 	ib *= 0.5;
-	return t < 0 ? ib : 1 - ib;
+	return t < 0.0 ? ib : 1.0 - ib;
 }
 
 double NUMstudentQ (double t, double df) {
@@ -1728,22 +1716,22 @@ double NUMstudentQ (double t, double df) {
 		return NUMundefined;
 	}
 	ib *= 0.5;
-	return t > 0 ? ib : 1 - ib;
+	return t > 0.0 ? ib : 1.0 - ib;
 }
 
 double NUMfisherP (double f, double df1, double df2) {
-	if (f < 0 || df1 < 1 || df2 < 1) {
+	if (f < 0.0 || df1 < 1.0 || df2 < 1.0) {
 		return NUMundefined;
 	}
 	double ib = NUMincompleteBeta (0.5 * df2, 0.5 * df1, df2 / (df2 + f * df1));
 	if (ib == NUMundefined) {
 		return NUMundefined;
 	}
-	return 1 - ib;
+	return 1.0 - ib;
 }
 
 double NUMfisherQ (double f, double df1, double df2) {
-	if (f < 0 || df1 < 1 || df2 < 1) {
+	if (f < 0.0 || df1 < 1.0 || df2 < 1.0) {
 		return NUMundefined;
 	}
 	if (Melder_debug == 28) {
@@ -1759,11 +1747,11 @@ double NUMfisherQ (double f, double df1, double df2) {
 
 double NUMinvGaussQ (double p) {
 	double pc = p;
-	if (p <= 0 || p >= 1.0) {
+	if (p <= 0.0 || p >= 1.0) {
 		return NUMundefined;
 	}
 	if (p > 0.5) {
-		pc = 1 - p;
+		pc = 1.0 - p;
 	}
 	double t = sqrt (- 2.0 * log (pc));
 	t -= (2.515517 + (0.802853 + 0.010328 * t) * t) /
@@ -1779,15 +1767,15 @@ static double studentQ_func (double x, void *voidParams) {
 
 double NUMinvStudentQ (double p, double df) {
 	struct pdf1_struct params;
-	double pc = p > 0.5 ? 1 - p : p, xmin, xmax = 1, x;
+	double pc = p > 0.5 ? 1.0 - p : p, xmin, xmax = 1.0, x;
 
-	if (p < 0 || p >= 1) {
+	if (p < 0.0 || p >= 1.0) {
 		return NUMundefined;
 	}
 
-	/*
-		Bracket the function f(x) = NUMstudentQ (x, df) - p.
-	*/
+
+	// Bracket the function f(x) = NUMstudentQ (x, df) - p.
+
 	for (;;) {
 		double q = NUMstudentQ (xmax, df);
 		if (q == NUMundefined) {
@@ -1796,14 +1784,13 @@ double NUMinvStudentQ (double p, double df) {
 		if (q < pc) {
 			break;
 		}
-		xmax *= 2;
+		xmax *= 2.0;
 	}
 
-	xmin = xmax > 1 ? xmax / 2 : 0;
+	xmin = xmax > 1.0 ? xmax / 2.0 : 0.0;
 
-	/*
-		Find zero of f(x) with Ridders' method.
-	*/
+	// Find zero of f(x) with Ridders' method.
+
 	params. df = df;
 	params. p = pc;
 	x = NUMridders (studentQ_func, xmin, xmax, & params);
@@ -1824,13 +1811,12 @@ double NUMinvChiSquareQ (double p, double df) {
 	struct pdf1_struct params;
 	double xmin, xmax = 1;
 
-	if (p < 0 || p >= 1) {
+	if (p < 0.0 || p >= 1.0) {
 		return NUMundefined;
 	}
 
-	/*
-		Bracket the function f(x) = NUMchiSquareQ (x, df) - p.
-	*/
+	// Bracket the function f(x) = NUMchiSquareQ (x, df) - p.
+
 	for (;;) {
 		double q = NUMchiSquareQ (xmax, df);
 		if (q == NUMundefined) {
@@ -1839,13 +1825,12 @@ double NUMinvChiSquareQ (double p, double df) {
 		if (q < p) {
 			break;
 		}
-		xmax *= 2;
+		xmax *= 2.0;
 	}
-	xmin = xmax > 1 ? xmax / 2 : 0;
+	xmin = xmax > 1.0 ? xmax / 2.0 : 0.0;
 
-	/*
-		Find zero of f(x) with Ridders' method.
-	*/
+	// Find zero of f(x) with Ridders' method.
+
 	params. df = df;
 	params. p = p;
 	return NUMridders (chiSquareQ_func, xmin, xmax, & params);
@@ -1858,7 +1843,7 @@ static double fisherQ_func (double x, void *voidParams) {
 }
 
 double NUMinvFisherQ (double p, double df1, double df2) {
-	if (p <= 0.0 || p > 1.0 || df1 < 1 || df2 < 1) {
+	if (p <= 0.0 || p > 1.0 || df1 < 1.0 || df2 < 1.0) {
 		return NUMundefined;
 	}
 	if (Melder_debug == 29) {
@@ -1904,12 +1889,12 @@ double NUMlnBeta (double a, double b) {
 
 double NUMnormalityTest_HenzeZirkler (double **data, long n, long p, double *beta, double *tnb, double *lnmu, double *lnvar) {
 	if (*beta <= 0) {
-		*beta = (1.0 / sqrt (2)) * pow ( (1.0 + 2 * p) / 4, 1.0 / (p + 4)) * pow (n, 1.0 / (p + 4));
+		*beta = (1.0 / sqrt (2.0)) * pow ((1.0 + 2 * p) / 4.0, 1.0 / (p + 4)) * pow (n, 1.0 / (p + 4));
 	}
 	double p2 = p / 2.0;
 	double beta2 = *beta * *beta, beta4 = beta2 * beta2, beta8 = beta4 * beta4;
-	double gamma = 1 + 2 * beta2, gamma2 = gamma * gamma, gamma4 = gamma2 * gamma2;
-	double delta = 1.0 + beta2 * (4 + 3 * beta2), delta2 = delta * delta;
+	double gamma = 1.0 + 2.0 * beta2, gamma2 = gamma * gamma, gamma4 = gamma2 * gamma2;
+	double delta = 1.0 + beta2 * (4.0 + 3.0 * beta2), delta2 = delta * delta;
 	double prob = NUMundefined;
 
 	*tnb = *lnmu = *lnvar = NUMundefined;
@@ -1928,8 +1913,8 @@ double NUMnormalityTest_HenzeZirkler (double **data, long n, long p, double *bet
 
 	try {
 		NUMlowerCholeskyInverse (covar.peek(), p, NULL);
-		double djk, djj, sumjk = 0, sumj = 0;
-		double b1 = beta2 / 2, b2 = b1 / (1.0 + beta2);
+		double djk, djj, sumjk = 0.0, sumj = 0.0;
+		double b1 = beta2 / 2.0, b2 = b1 / (1.0 + beta2);
 		/* Heinze & Wagner (1997), page 3
 			We use d[j][k] = ||Y[j]-Y[k]||^2 = (Y[j]-Y[k])'S^(-1)(Y[j]-Y[k])
 			So d[j][k]= d[k][j] and d[j][j] = 0
@@ -1937,22 +1922,22 @@ double NUMnormalityTest_HenzeZirkler (double **data, long n, long p, double *bet
 		for (long j = 1; j <= n; j++) {
 			for (long k = 1; k < j; k++) {
 				djk = NUMmahalanobisDistance_chi (covar.peek(), x[j], x[k], p, p);
-				sumjk += 2 * exp (-b1 * djk); // factor 2 because d[j][k] == d[k][j]
+				sumjk += 2.0 * exp (-b1 * djk); // factor 2 because d[j][k] == d[k][j]
 			}
-			sumjk += 1; // for k == j
+			sumjk += 1.0; // for k == j
 			djj = NUMmahalanobisDistance_chi (covar.peek(), x[j], zero.peek(), p, p);
 			sumj += exp (-b2 * djj);
 		}
 		*tnb = (1.0 / n) * sumjk - 2.0 * pow (1.0 + beta2, - p2) * sumj + n * pow (gamma, - p2); // n *
 	} catch (MelderError) {
 		Melder_clearError ();
-		*tnb = 4 * n;
+		*tnb = 4.0 * n;
 	}
 
-	double mu = 1.0 - pow (gamma, -p2) * (1.0 + p * beta2 / gamma + p * (p + 2) * beta4 / (2 * gamma2));
-	double var = 2.0 * pow (1 + 4 * beta2, -p2)
-	             + 2.0 * pow (gamma,  -p) * (1.0 + 2 * p * beta4 / gamma2  + 3 * p * (p + 2) * beta8 / (4 * gamma4))
-	             - 4.0 * pow (delta, -p2) * (1.0 + 3 * p * beta4 / (2 * delta) + p * (p + 2) * beta8 / (2 * delta2));
+	double mu = 1.0 - pow (gamma, -p2) * (1.0 + p * beta2 / gamma + p * (p + 2) * beta4 / (2.0 * gamma2));
+	double var = 2.0 * pow (1.0 + 4.0 * beta2, -p2)
+	     + 2.0 * pow (gamma,  -p) * (1.0 + 2.0 * p * beta4 / gamma2  + 3.0 * p * (p + 2) * beta8 / (4.0 * gamma4))
+	     - 4.0 * pow (delta, -p2) * (1.0 + 3.0 * p * beta4 / (2.0 * delta) + p * (p + 2) * beta8 / (2.0 * delta2));
 	double mu2 = mu * mu;
 	*lnmu = log (sqrt (mu2 * mu2 / (mu2 + var)));
 	*lnvar = sqrt (log ( (mu2 + var) / mu2));
@@ -1963,45 +1948,45 @@ double NUMnormalityTest_HenzeZirkler (double **data, long n, long p, double *bet
 /*************** Hz <--> other freq reps *********************/
 
 double NUMmelToHertz3 (double mel) {
-	if (mel < 0) {
+	if (mel < 0.0) {
 		return NUMundefined;
 	}
-	return mel < 1000 ? mel : 1000 * (exp (mel * log10 (2) / 1000) - 1);
+	return mel < 1000.0 ? mel : 1000.0 * (exp (mel * log10 (2.0) / 1000.0) - 1.0);
 }
 
 double NUMhertzToMel3 (double hz) {
-	if (hz < 0) {
+	if (hz < 0.0) {
 		return NUMundefined;
 	}
-	return hz < 1000 ? hz : 1000 * log10 (1 + hz / 1000) / log10 (2);
+	return hz < 1000.0 ? hz : 1000.0 * log10 (1.0 + hz / 1000.0) / log10 (2.0);
 }
 
 double NUMmelToHertz2 (double mel) {
-	if (mel < 0) {
+	if (mel < 0.0) {
 		return NUMundefined;
 	}
-	return 700 * (pow (10.0, mel / 2595.0) - 1);
+	return 700.0 * (pow (10.0, mel / 2595.0) - 1.0);
 }
 
 double NUMhertzToMel2 (double hz) {
-	if (hz < 0) {
+	if (hz < 0.0) {
 		return NUMundefined;
 	}
-	return 2595 * log10 (1 + hz / 700);
+	return 2595.0 * log10 (1.0 + hz / 700.0);
 }
 
 double NUMhertzToBark_traunmueller (double hz) {
-	if (hz < 0) {
+	if (hz < 0.0) {
 		return NUMundefined;
 	}
-	return 26.81 * hz / (1960 + hz) - 0.53;
+	return 26.81 * hz / (1960.0 + hz) - 0.53;
 }
 
 double NUMbarkToHertz_traunmueller (double bark) {
-	if (bark < 0 || bark > 26.28) {
+	if (bark < 0.0 || bark > 26.28) {
 		return NUMundefined;
 	}
-	return 1960 * (bark + 0.53) / (26.28 - bark);
+	return 1960.0 * (bark + 0.53) / (26.28 - bark);
 }
 
 double NUMbarkToHertz_schroeder (double bark) {
@@ -2009,23 +1994,22 @@ double NUMbarkToHertz_schroeder (double bark) {
 }
 
 double NUMbarkToHertz_zwickerterhardt (double hz) {
-	if (hz < 0) {
+	if (hz < 0.0) {
 		return NUMundefined;
 	}
-	return 13 * atan (0.00076 * hz) + 3.5 * atan (hz / 7500);
+	return 13.0 * atan (0.00076 * hz) + 3.5 * atan (hz / 7500.0);
 }
 
 double NUMhertzToBark_schroeder (double hz) {
-	double h650;
-	if (hz < 0) {
+	if (hz < 0.0) {
 		return NUMundefined;
 	}
-	h650 = hz / 650;
-	return 7.0 * log (h650 + sqrt (1 + h650 * h650));
+	double h650 = hz / 650.0;
+	return 7.0 * log (h650 + sqrt (1.0 + h650 * h650));
 }
 
 double NUMbarkToHertz2 (double bark) {
-	if (bark < 0) {
+	if (bark < 0.0) {
 		return NUMundefined;
 	}
 	return 650.0 * sinh (bark / 7.0);
@@ -2035,22 +2019,22 @@ double NUMhertzToBark2 (double hz) {
 	if (hz < 0) {
 		return NUMundefined;
 	}
-	double h650 = hz / 650;
-	return 7.0 * log (h650 + sqrt (1 + h650 * h650));
+	double h650 = hz / 650.0;
+	return 7.0 * log (h650 + sqrt (1.0 + h650 * h650));
 }
 
 double NUMbladonlindblomfilter_amplitude (double zc, double z) {
 	double dz = zc - z + 0.474;
-	return pow (10, 1.581 + 0.75 * dz - 1.75 * sqrt (1 + dz * dz));
+	return pow (10.0, 1.581 + 0.75 * dz - 1.75 * sqrt (1.0 + dz * dz));
 }
 
 double NUMsekeyhansonfilter_amplitude (double zc, double z) {
 	double dz = zc - z - 0.215;
-	return pow (10, 0.7 - 0.75 * dz - 1.75 * sqrt (0.196 + dz * dz));
+	return pow (10.0, 0.7 - 0.75 * dz - 1.75 * sqrt (0.196 + dz * dz));
 }
 
 double NUMtriangularfilter_amplitude (double fl, double fc, double fh, double f) {
-	double a = 0;
+	double a = 0.0;
 	if (f > fl && f < fh) {
 		a = f < fc ? (f - fl) / (fc - fl) : (fh - f) / (fh - fc);
 
@@ -2075,7 +2059,7 @@ for (i=1; i<=n+n+n; i++) work[i]=0;
 */
 int NUMburg (double x[], long n, double a[], int m, double *xms) {
 	for (long j = 1; j <= m; j++) {
-		a[j] = 0;
+		a[j] = 0.0;
 	}
 
 	autoNUMvector<double> b1 (1, n);
@@ -2090,7 +2074,7 @@ int NUMburg (double x[], long n, double a[], int m, double *xms) {
 	}
 
 	*xms = p / n;
-	if (*xms <= 0) {
+	if (*xms <= 0.0) {
 		return 0;    // warning empty
 	}
 
@@ -2111,7 +2095,7 @@ int NUMburg (double x[], long n, double a[], int m, double *xms) {
 			denum += b1[j] * b1[j] + b2[j] * b2[j];
 		}
 
-		if (denum <= 0) {
+		if (denum <= 0.0) {
 			return 0;    // warning ill-conditioned
 		}
 
@@ -2144,7 +2128,7 @@ int NUMburg (double x[], long n, double a[], int m, double *xms) {
 }
 
 void NUMdmatrix_to_dBs (double **m, long rb, long re, long cb, long ce, double ref, double factor, double floor) {
-	double ref_db, factor10 = factor * 10;
+	double ref_db, factor10 = factor * 10.0;
 	double max = m[rb][cb], min = max;
 
 	Melder_assert (ref > 0 && factor > 0 && rb <= re && cb <= ce);
@@ -2167,7 +2151,7 @@ void NUMdmatrix_to_dBs (double **m, long rb, long re, long cb, long ce, double r
 	for (long i = rb; i <= re; i++) {
 		for (long j = cb; j <= ce; j++) {
 			double mij = floor;
-			if (m[i][j] > 0) {
+			if (m[i][j] > 0.0) {
 				mij = factor10 * log10 (m[i][j]) - ref_db;
 				if (mij < floor) {
 					mij = floor;
@@ -2190,8 +2174,7 @@ double **NUMcosinesTable (long first, long last, long npoints) {
 	return m.transfer();
 }
 
-void NUMspline (double x[], double y[], long n, double yp1, double ypn,
-                double y2[]) {
+void NUMspline (double x[], double y[], long n, double yp1, double ypn, double y2[]) {
 	autoNUMvector<double> u (1, n - 1);
 
 	if (yp1 > 0.99e30) {
@@ -2262,7 +2245,7 @@ int NUMdoLineSegmentsIntersect (double x1, double y1, double x2, double y2, doub
 	int o12 = NUMgetOrientationOfPoints (x1, y1, x2, y2, x4, y4);
 	int o21 = NUMgetOrientationOfPoints (x3, y3, x4, y4, x1, y1);
 	int o22 = NUMgetOrientationOfPoints (x3, y3, x4, y4, x2, y2);
-	return ( (o11 * o12 < 0) && (o21 * o22 < 0)) || (o11 *o12 *o21 *o22 == 0);
+	return ((o11 * o12 < 0) && (o21 * o22 < 0)) || (o11 *o12 *o21 *o22 == 0);
 }
 
 int NUMgetOrientationOfPoints (double x1, double y1, double x2, double y2, double x3, double y3) {
@@ -2274,9 +2257,9 @@ int NUMgetOrientationOfPoints (double x1, double y1, double x2, double y2, doubl
 	} else if (dx2 * dy3 < dy2 * dx3) {
 		orientation = -1;
 	} else {
-		if ( (dx2 * dx3 < 0) || (dy2 * dy3 < 0)) {
+		if ((dx2 * dx3 < 0) || (dy2 * dy3 < 0)) {
 			orientation = -1;
-		} else if ( (dx2 * dx2 + dy2 * dy2) >= (dx3 * dx3 + dy3 * dy3)) {
+		} else if ((dx2 * dx2 + dy2 * dy2) >= (dx3 * dx3 + dy3 * dy3)) {
 			orientation = 0;
 		} else {
 			orientation = 1;
@@ -2325,7 +2308,7 @@ int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2
 	for (long i = 1; i <= 4; i++) {
 		double denom = (x[i + 1] - x[i]) * (y2 - y1) - (y[i + 1] - y[i]) * (x2 - x1);
 		double s, t, x3, y3;
-		if (denom == 0) {
+		if (denom == 0.0) {
 			continue;
 		}
 		/* We have an intersection. */
@@ -2496,16 +2479,14 @@ void NUMgetEllipseBoundingBox (double a, double b, double cospsi, double *width,
 	Melder_assert (cospsi >= -1 && cospsi <= 1);
 
 	if (cospsi == 1) {
-		/*
-			a-axis along x-axis
-		*/
+
+		// a-axis along x-axis
 
 		*width = a;
 		*height = b;
 	} else if (cospsi == 0) {
-		/*
-			a-axis along y-axis
-		*/
+
+		// a-axis along y-axis
 
 		*width = b;
 		*height = a;
@@ -2521,8 +2502,7 @@ void NUMgetEllipseBoundingBox (double a, double b, double cospsi, double *width,
 /*
 Closely modelled after the netlib code by Oleg Keselyov.
 */
-double NUMminimize_brent (double (*f) (double x, void *closure), double a, double b,
-                          void *closure, double tol, double *fx) {
+double NUMminimize_brent (double (*f) (double x, void *closure), double a, double b, void *closure, double tol, double *fx) {
 	double x, v, fv, w, fw;
 	const double golden = 1 - NUM_goldenSection;
 	const double sqrt_epsilon = sqrt (NUMfpp -> eps);
@@ -2539,22 +2519,19 @@ double NUMminimize_brent (double (*f) (double x, void *closure), double a, doubl
 
 	for (long iter = 1; iter <= itermax; iter++) {
 		double range = b - a;
-		double middle_range = (a + b) / 2;
-		double tol_act = sqrt_epsilon * fabs (x) + tol / 3;
+		double middle_range = (a + b) / 2.0;
+		double tol_act = sqrt_epsilon * fabs (x) + tol / 3.0;
 		double new_step; /* Step at this iteration */
 
-
-
-		if (fabs (x - middle_range) + range / 2 <= 2 * tol_act) {
+		if (fabs (x - middle_range) + range / 2.0 <= 2.0 * tol_act) {
 			return x;
 		}
 
-		/* Obtain the golden section step */
+		// Obtain the golden section step
 
 		new_step = golden * (x < middle_range ? b - x : a - x);
 
-
-		/* Decide if the parabolic interpolation can be tried	*/
+		// Decide if the parabolic interpolation can be tried
 
 		if (fabs (x - w) >= tol_act) {
 			/*
@@ -2562,14 +2539,12 @@ double NUMminimize_brent (double (*f) (double x, void *closure), double a, doubl
 				division operation is delayed until last moment.
 			*/
 
-			double p, q, t;
+			double t = (x - w) * (*fx - fv);
+			double q = (x - v) * (*fx - fw);
+			double p = (x - v) * q - (x - w) * t;
+			q = 2.0 * (q - t);
 
-			t = (x - w) * (*fx - fv);
-			q = (x - v) * (*fx - fw);
-			p = (x - v) * q - (x - w) * t;
-			q = 2 * (q - t);
-
-			if (q > 0) {
+			if (q > 0.0) {
 				p = -p;
 			} else {
 				q = -q;
@@ -2583,22 +2558,22 @@ double NUMminimize_brent (double (*f) (double x, void *closure), double a, doubl
 			*/
 
 			if (fabs (p) < fabs (new_step * q) &&
-			        p > q * (a - x + 2 * tol_act) &&
-			        p < q * (b - x - 2 * tol_act)) {
+			        p > q * (a - x + 2.0 * tol_act) &&
+			        p < q * (b - x - 2.0 * tol_act)) {
 				new_step = p / q;
 			}
 		}
 
-		/* Adjust the step to be not less than tolerance. */
+		// Adjust the step to be not less than tolerance.
 
 		if (fabs (new_step) < tol_act) {
-			new_step = new_step > 0 ? tol_act : - tol_act;
+			new_step = new_step > 0.0 ? tol_act : - tol_act;
 		}
 
-		/* Obtain the next approximation to min	and reduce the enveloping range */
+		// Obtain the next approximation to min	and reduce the enveloping range
 
 		{
-			double t = x + new_step;	/* Tentative point for the min	*/
+			double t = x + new_step;	// Tentative point for the min
 			double ft = (*f) (t, closure);
 
 			/*
@@ -2703,13 +2678,13 @@ void NUMlineFit_theil (double *x, double *y, long numberOfPoints, double *m, dou
 }
 
 void NUMlineFit_LS (double *x, double *y, long numberOfPoints, double *m, double *intercept) {
-	double sx = 0, sy = 0;
+	double sx = 0.0, sy = 0.0;
 	for (long i = 1; i <= numberOfPoints; i++) {
 		sx += x[i];
 		sy += y[i];
 	}
 	double xmean = sx / numberOfPoints;
-	double st2 = 0, a = 0;
+	double st2 = 0.0, a = 0.0;
 	for (long i = 1; i <= numberOfPoints; i++) {
 		double t = x[i] - xmean;
 		st2 += t * t;
@@ -2790,7 +2765,7 @@ void NUMlpc_lpc_to_rc2 (double *lpc, long m, double *rc) { // klopt nog niet
 		long jb = m + 1 - j;
 		long mh = (jb + 1) / 2;
 		double rct = rc[jb+1];
-		double d = 1 - rct * rct;
+		double d = 1.0 - rct * rct;
 		for (long k = 1; k <= mh; k++) {
 			rc[k] *= (1 - rct) / d;
 		}
@@ -2800,7 +2775,7 @@ void NUMlpc_lpc_to_rc2 (double *lpc, long m, double *rc) { // klopt nog niet
 void NUMlpc_rc_to_area (double *rc, long m, double *area) {
 	area[m+1] = 0.0001; /* 1.0 cm^2 */
 	for (long j = 1; j <= m; j++) {
-		double ar = (1 - rc[m+1-j]) / (1 + rc[m+1-j]);
+		double ar = (1.0 - rc[m+1-j]) / (1.0 + rc[m+1-j]);
 		area[m+1-j] = area[m+2-j] / ar;
 	}
 }
@@ -2809,7 +2784,7 @@ void NUMlpc_rc_to_area (double *rc, long m, double *area) {
 void NUMlpc_area_to_rc (double *area, long m, double *rc) {
 	for (long j = 1; j <= m - 1; j++) {
 		double ar = area[j+1] / area[j];
-		rc[j] = (1 - ar) / (1 + ar);
+		rc[j] = (1.0 - ar) / (1.0 + ar);
 	}
 }
 
@@ -2869,7 +2844,7 @@ inline static double Stirling (double y1)
 // djmw 20121211 replaced calls to gsl_rng_uniform with NUMrandomUniform (0,1)
 
 long NUMrandomBinomial (double p, long n) {
-	if (p < 0 || p > 1 || n < 0) {
+	if (p < 0.0 || p > 1.0 || n < 0) {
 		return -100000000;
 	}
 	long ix;                       /* return value */
@@ -2883,7 +2858,7 @@ long NUMrandomBinomial (double p, long n) {
 		flipped = 1;
 	}
 
-	double q = 1 - p;
+	double q = 1.0 - p;
 	double s = p / q;
 	double np = n * p;
 
@@ -2902,7 +2877,7 @@ long NUMrandomBinomial (double p, long n) {
 			*/
 
 			double f = f0;
-			double u = NUMrandomUniform (0, 1); //djmw gsl_rng_uniform (rng);
+			double u = NUMrandomUniform (0.0, 1.0); //djmw gsl_rng_uniform (rng);
 
 			for (ix = 0; ix <= BINV_CUTOFF; ++ix) {
 				if (u < f) {
@@ -2910,7 +2885,7 @@ long NUMrandomBinomial (double p, long n) {
 				}
 				u -= f;
 				/* Use recursion f(x+1) = f(x)*[(n-x)/(x+1)]*[p/(1-p)] */
-				f *= s * (n - ix) / (ix + 1);
+				f *= s * (n - ix) / (ix + 1.0);
 			}
 
 			/* It should be the case that the 'goto Finish' was encountered
@@ -2978,8 +2953,8 @@ long NUMrandomBinomial (double p, long n) {
 TryAgain:
 
 		/* generate random variates, u specifies which region: Tri, Par, Tail */
-		u = p4 * NUMrandomUniform (0, 1); // djmw gsl_rng_uniform (rng) * p4;
-		v = NUMrandomUniform (0, 1); // djmw gsl_rng_uniform (rng);
+		u = p4 * NUMrandomUniform (0.0, 1.0); // djmw gsl_rng_uniform (rng) * p4;
+		v = NUMrandomUniform (0.0, 1.0); // djmw gsl_rng_uniform (rng);
 
 		if (u <= p1) {
 			/* Triangular region */

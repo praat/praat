@@ -1,6 +1,6 @@
 /* Eigen.cpp
  *
- * Copyright (C) 1993-2014 David Weenink
+ * Copyright (C) 1993-2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,8 +69,7 @@ Thing_implement (Eigen, Daata, 0);
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
 #define SWAP(a,b) {temp=(a);(a)=(b);(b)=temp;}
 
-static void Graphics_ticks (Graphics g, double min, double max, bool hasNumber,
-                            bool hasTick, bool hasDottedLine, bool integers) {
+static void Graphics_ticks (Graphics g, double min, double max, bool hasNumber, bool hasTick, bool hasDottedLine, bool integers) {
 	double range = max - min, scale = 1.0, tick = min, dtick = 1.0;
 
 	if (range == 0.0) {
@@ -134,7 +133,7 @@ void Eigen_initFromSquareRoot (I, double **a, long numberOfRows, long numberOfCo
 		basis.)
 	*/
 
-	numberOfZeroed = SVD_zeroSmallSingularValues (svd.peek(), 0);
+	numberOfZeroed = SVD_zeroSmallSingularValues (svd.peek(), 0.0);
 
 	numberOfEigenvalues = nsv - numberOfZeroed;
 
@@ -142,7 +141,7 @@ void Eigen_initFromSquareRoot (I, double **a, long numberOfRows, long numberOfCo
 	long k = 0;
 	for (long i = 1; i <= nsv; i++) {
 		double t = svd -> d[i];
-		if (t > 0) {
+		if (t > 0.0) {
 			my eigenvalues[++k] = t * t;
 			for (long j = 1; j <= numberOfColumns; j++) {
 				my eigenvectors[k][j] = svd -> v[j][i];
@@ -181,9 +180,7 @@ void Eigen_initFromSquareRootPair (I, double **a, long numberOfRows,
 		Melder_throw (U"dggsvd fails.");
 	}
 
-	/*
-		Calculate the eigenvalues (alpha[i]/beta[i])^2 and store in alpha[i].
-	*/
+	// Calculate the eigenvalues (alpha[i]/beta[i])^2 and store in alpha[i].
 
 	maxsv2 = -1.0;
 	for (long i = k + 1; i <= k + ll; i++) {
@@ -194,9 +191,8 @@ void Eigen_initFromSquareRootPair (I, double **a, long numberOfRows,
 		}
 	}
 
-	/*
-		Deselect the eigenvalues < eps * max_eigenvalue.
-	*/
+	// Deselect the eigenvalues < eps * max_eigenvalue.
+
 	n = 0;
 	for (long i = k + 1; i <= k + ll; i++) {
 		if (alpha[i] < NUMfpp -> eps * maxsv2) {
@@ -253,9 +249,7 @@ void Eigen_initFromSymmetricMatrix (I, double **a, long n) {
 
 	NUMmatrix_copyElements (a, my eigenvectors, 1, n, 1, n);
 
-	/*
-		Get size of work array
-	*/
+	// Get size of work array
 
 	(void) NUMlapack_dsyev (&jobz, &uplo, &n, &my eigenvectors[1][1], &n,
 	                        &my eigenvalues[1], wt, &lwork, &info);
@@ -266,15 +260,12 @@ void Eigen_initFromSymmetricMatrix (I, double **a, long n) {
 	lwork = (long) floor (wt[0]);
 	autoNUMvector<double> work (0L, lwork);
 
-	(void) NUMlapack_dsyev (&jobz, &uplo, &n, &my eigenvectors[1][1], &n,
-	                        &my eigenvalues[1], work.peek(), &lwork, &info);
+	(void) NUMlapack_dsyev (&jobz, &uplo, &n, &my eigenvectors[1][1], &n, &my eigenvalues[1], work.peek(), &lwork, &info);
 	if (info != 0) {
 		Melder_throw (U"dsyev fails");
 	}
 
-	/*
-		We want descending order instead of ascending.
-	*/
+	// We want descending order instead of ascending.
 
 	for (long i = 1; i <= n / 2; i++) {
 		long ilast = n - i + 1;
@@ -326,7 +317,7 @@ double Eigen_getSumOfEigenvalues (I, long from, long to) {
 	if (to > my numberOfEigenvalues || from > to) {
 		return NUMundefined;
 	}
-	double sum = 0;
+	double sum = 0.0;
 	for (long i = from; i <= to; i++) {
 		sum += my eigenvalues[i];
 	}
@@ -335,7 +326,7 @@ double Eigen_getSumOfEigenvalues (I, long from, long to) {
 
 double Eigen_getCumulativeContributionOfComponents (I, long from, long to) {
 	iam (Eigen);
-	double partial = 0, sum = 0;
+	double partial = 0.0, sum = 0.0;
 
 	if (to == 0) {
 		to = my numberOfEigenvalues;
@@ -348,7 +339,7 @@ double Eigen_getCumulativeContributionOfComponents (I, long from, long to) {
 			}
 		}
 	}
-	return sum > 0 ? partial / sum : 0;
+	return sum > 0.0 ? partial / sum : 0.0;
 
 }
 
@@ -356,7 +347,7 @@ long Eigen_getDimensionOfFraction (I, double fraction) {
 	iam (Eigen);
 	double sum = Eigen_getSumOfEigenvalues (me, 0, 0);
 
-	if (sum == 0) {
+	if (sum == 0.0) {
 		return 1;
 	}
 
@@ -381,9 +372,8 @@ void Eigen_sort (I) {
 			}
 		}
 		if (k != i) {
-			/*
-				Swap eigenvalues and eigenvectors
-			*/
+
+			// Swap eigenvalues and eigenvectors
 
 			SWAP (e[i], e[k])
 			for (long j = 1; j <= my dimension; j++) {
@@ -405,10 +395,9 @@ void Eigen_invertEigenvector (I, long ivec) {
 	}
 }
 
-void Eigen_drawEigenvalues (I, Graphics g, long first, long last, double ymin, double ymax,
-                            int fractionOfTotal, int cumulative, double size_mm, const char32 *mark, int garnish) {
+void Eigen_drawEigenvalues (I, Graphics g, long first, long last, double ymin, double ymax, int fractionOfTotal, int cumulative, double size_mm, const char32 *mark, int garnish) {
 	iam (Eigen);
-	double xmin = first, xmax = last, scale = 1, sumOfEigenvalues = 0;
+	double xmin = first, xmax = last, scale = 1.0, sumOfEigenvalues = 0.0;
 	long i;
 
 	if (first < 1) {
@@ -423,8 +412,8 @@ void Eigen_drawEigenvalues (I, Graphics g, long first, long last, double ymin, d
 	xmin = first - 0.5; xmax = last + 0.5;
 	if (fractionOfTotal || cumulative) {
 		sumOfEigenvalues = Eigen_getSumOfEigenvalues (me, 0, 0);
-		if (sumOfEigenvalues <= 0) {
-			sumOfEigenvalues = 1;
+		if (sumOfEigenvalues <= 0.0) {
+			sumOfEigenvalues = 1.0;
 		}
 		scale = sumOfEigenvalues;
 	}
@@ -452,11 +441,9 @@ void Eigen_drawEigenvalues (I, Graphics g, long first, long last, double ymin, d
 	}
 }
 
-void Eigen_drawEigenvector (I, Graphics g, long ivec, long first, long last,
-                            double ymin, double ymax, int weigh, double size_mm, const char32 *mark,
-                            int connect, char32 **rowLabels, int garnish) {
+void Eigen_drawEigenvector (I, Graphics g, long ivec, long first, long last, double ymin, double ymax, int weigh, double size_mm, const char32 *mark, int connect, char32 **rowLabels, int garnish) {
 	iam (Eigen);
-	double xmin = first, xmax = last, *vec, w;
+	double xmin = first, xmax = last;
 
 	if (ivec < 1 || ivec > my numberOfEigenvalues) {
 		return;
@@ -466,11 +453,10 @@ void Eigen_drawEigenvector (I, Graphics g, long ivec, long first, long last,
 		first = 1; last = my dimension;
 		xmin = 0.5; xmax = last + 0.5;
 	}
-	vec = my eigenvectors[ivec];
-	w = weigh ? sqrt (my eigenvalues[ivec]) : 1.0;
-	/*
-		If ymax < ymin the eigenvector will automatically be drawn inverted.
-	*/
+	double *vec = my eigenvectors[ivec];
+	double w = weigh ? sqrt (my eigenvalues[ivec]) : 1.0;
+
+	// If ymax < ymin the eigenvector will automatically be drawn inverted.
 
 	if (ymax == ymin) {
 		NUMvector_extrema (vec, first, last, &ymin, &ymax);
@@ -482,7 +468,7 @@ void Eigen_drawEigenvector (I, Graphics g, long ivec, long first, long last,
 	for (long i = first; i <= last; i++) {
 		Graphics_mark (g, i, w * vec[i], size_mm, mark);
 		if (connect && i > first) {
-			Graphics_line (g, i - 1, w * vec[i - 1], i, w * vec[i]);
+			Graphics_line (g, i - 1.0, w * vec[i - 1], i, w * vec[i]);
 		}
 	}
 	Graphics_unsetInner (g);
@@ -490,7 +476,7 @@ void Eigen_drawEigenvector (I, Graphics g, long ivec, long first, long last,
 		Graphics_markBottom (g, first, false, true, false, rowLabels ? rowLabels[first] : Melder_integer (first));
 		Graphics_markBottom (g, last, false, true, false, rowLabels ? rowLabels[last] : Melder_integer (last));
 		Graphics_drawInnerBox (g);
-		if (ymin * ymax < 0) {
+		if (ymin * ymax < 0.0) {
 			Graphics_markLeft (g, 0.0, true, true, true, nullptr);
 		}
 		Graphics_marksLeft (g, 2, true, true, false);
@@ -527,11 +513,11 @@ void Eigens_alignEigenvectors (Collection me) {
 		double **evec2 = e2 -> eigenvectors;
 
 		for (long j = 1; j <= MIN (nev1, e2 -> numberOfEigenvalues); j++) {
-			double ip = 0;
+			double ip = 0.0;
 			for (long k = 1; k <= dimension; k++) {
 				ip += evec1[j][k] * evec2[j][k];
 			}
-			if (ip < 0) {
+			if (ip < 0.0) {
 				for (long k = 1; k <= dimension; k++) {
 					evec2[j][k] = - evec2[j][k];
 				}
