@@ -2,7 +2,7 @@
 #define _Configuration_AffineTransform_h_
 /* Configuration_AffineTransform.c
  * 
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,10 +27,8 @@
 #include "Configuration.h"
 #include "AffineTransform.h"
 
-AffineTransform Configurations_to_AffineTransform_congruence (Configuration me,
-	Configuration thee, long maximumNumberOfIterations, double tolerance);
+AffineTransform Configurations_to_AffineTransform_congruence (Configuration me,	Configuration thee, long maximumNumberOfIterations, double tolerance);
 
-Configuration Configuration_and_AffineTransform_to_Configuration 
-	(Configuration me, thou);
+Configuration Configuration_and_AffineTransform_to_Configuration (Configuration me, AffineTransform thee);
 
 #endif /* _Configuration_AffineTransform_h_ */

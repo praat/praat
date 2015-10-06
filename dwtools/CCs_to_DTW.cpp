@@ -2,7 +2,7 @@
  *
  *	Dynamic Time Warp of two CCs.
  *
- * Copyright (C) 1993-2013 David Weenink
+ * Copyright (C) 1993-2013, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,14 +32,14 @@ static void regression (CC me, long frame, double r[], long nr) {
 	// sum(i^2;i=-n..n) = 2n^3/3 + n^2 +n/3 = n (n (2n/3 + 1) + 1/3);
 
 	long nrd2 = nr / 2;
-	double sumsq = nrd2 * (nrd2 * (nr / 3 + 1) + 1 / 3);
+	double sumsq = nrd2 * (nrd2 * (nr / 3.0 + 1.0) + 1.0 / 3.0);
 
 	if (frame <= nrd2 || frame >= my nx - nrd2) {
 		return;
 	}
 
 	for (long i = 0; i <= my maximumNumberOfCoefficients; i++) {
-		r[i] = 0;
+		r[i] = 0.0;
 	}
 
 	long nmin = CC_getMinimumNumberOfCoefficients (me, frame - nrd2, frame + nrd2);
@@ -61,14 +61,14 @@ DTW CCs_to_DTW (CC me, CC thee, double wc, double wle, double wr, double wer, do
 			Melder_throw (U"CC orders must be equal.");
 		}
 		long nr = (long) floor (dtr / my dx);
-		if (wr != 0 && nr < 2) {
+		if (wr != 0.0 && nr < 2) {
 			Melder_throw (U"Time window for regression is too small.");
 		}
 
 		if (nr % 2 == 0) {
 			nr++;
 		}
-		if (wr != 0) {
+		if (wr != 0.0) {
 			Melder_casual (nr, U" frames used for regression coefficients.");
 		}
 
@@ -86,11 +86,11 @@ DTW CCs_to_DTW (CC me, CC thee, double wc, double wle, double wr, double wer, do
 
 			for (long j = 1; j <= thy nx; j++) {
 				CC_Frame fj = & thy frame[j];
-				double dist = 0, distr = 0;
+				double dist = 0.0, distr = 0.0;
 
 				// Cepstral distance
 
-				if (wc != 0) {
+				if (wc != 0.0) {
 					for (long k = 1; k <= fj -> numberOfCoefficients; k++) {
 						double d = fi -> c[k] - fj -> c[k];
 						dist += d * d;
@@ -100,14 +100,14 @@ DTW CCs_to_DTW (CC me, CC thee, double wc, double wle, double wr, double wer, do
 
 				// Log energy distance
 
-				if (wle != 0) {
+				if (wle != 0.0) {
 					double d = fi -> c0 - fj -> c0;
 					dist += wle * d * d;
 				}
 
 				// Regression distance
 
-				if (wr != 0) {
+				if (wr != 0.0) {
 					regression (thee, j, rj.peek(), nr);
 					for (long k = 1; k <= fj -> numberOfCoefficients; k++) {
 						double d = ri[k] - rj[k];
@@ -118,8 +118,8 @@ DTW CCs_to_DTW (CC me, CC thee, double wc, double wle, double wr, double wer, do
 
 				// Regression on c[0]: log(energy)
 
-				if (wer != 0) {
-					if (wr == 0) {
+				if (wer != 0.0) {
+					if (wr == 0.0) {
 						regression (thee, j, rj.peek(), nr);
 					}
 					double d = ri[0] - rj[0];
@@ -130,7 +130,7 @@ DTW CCs_to_DTW (CC me, CC thee, double wc, double wle, double wr, double wer, do
 				his z[i][j] = sqrt (dist);	/* prototype along y-direction */
 			}
 
-			if ( (i % 10) == 1) {
+			if ((i % 10) == 1) {
 				Melder_progress (0.999 * i / my nx, U"Calculate distances: frame ", i, U" from ", my nx, U".");
 			}
 		}

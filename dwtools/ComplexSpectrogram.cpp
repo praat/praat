@@ -1,6 +1,6 @@
 /* ComplexSpectrogram.cpp
  * 
- * Copyright (C) 2014 David Weenink
+ * Copyright (C) 2014-2015 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,9 +78,9 @@ ComplexSpectrogram Sound_to_ComplexSpectrogram (Sound me, double windowLength, d
 		long df = (long) floor (samplingFrequency / (numberOfFrequencies - 1));
 		
 		autoComplexSpectrogram thee = ComplexSpectrogram_create (my xmin, my xmax, numberOfFrames, timeStep, t1,
-			0, 0.5 * samplingFrequency, numberOfFrequencies, df, 0);
+			0, 0.5 * samplingFrequency, numberOfFrequencies, df, 0.0);
 		// 
-		autoSound analysisWindow = Sound_create (1, 0, nsamp_window * my dx, nsamp_window, my dx, 0.5 * my dx);
+		autoSound analysisWindow = Sound_create (1, 0.0, nsamp_window * my dx, nsamp_window, my dx, 0.5 * my dx);
 		
 		for (long iframe = 1; iframe <= numberOfFrames; iframe++) {
 			double t = Sampled_indexToX (thee.peek(), iframe);
@@ -97,7 +97,7 @@ ComplexSpectrogram Sound_to_ComplexSpectrogram (Sound me, double windowLength, d
 			autoSpectrum spec = Sound_to_Spectrum (analysisWindow.peek(), 0);
 			
 			thy z[1][iframe] = spec -> z[1][1] * spec -> z[1][1];
-			thy phase[1][iframe] = 0;
+			thy phase[1][iframe] = 0.0;
 			for (long ifreq = 2; ifreq <= numberOfFrequencies - 1; ifreq++) {
 				double x = spec -> z[1][ifreq], y = spec -> z[2][ifreq];
 				thy z[ifreq][iframe] = x * x + y * y; // power
@@ -105,7 +105,7 @@ ComplexSpectrogram Sound_to_ComplexSpectrogram (Sound me, double windowLength, d
 			}
 			// even number of samples
 			thy z[numberOfFrequencies][iframe] = spec -> z[1][numberOfFrequencies] * spec -> z[1][numberOfFrequencies];
-			thy phase[numberOfFrequencies][iframe] = 0;
+			thy phase[numberOfFrequencies][iframe] = 0.0;
 		}
 		return thee.transfer();
 	} catch (MelderError) {
@@ -118,8 +118,8 @@ Sound ComplexSpectrogram_to_Sound (ComplexSpectrogram me, double stretchFactor) 
 		/* original number of samples is odd: imaginary part of last spectral value is zero -> 
 		 * phase is either zero or +/-pi
 		 */
-		double pi = atan2 (0, - 0.5);
-		double samplingFrequency = 2 * my ymax;
+		double pi = atan2 (0.0, - 0.5);
+		double samplingFrequency = 2.0 * my ymax;
 		double lastFrequency = my y1 + (my ny - 1) * my dy, lastPhase = my phase[my ny][1];
 		int originalNumberOfSamplesProbablyOdd = (lastPhase != 0.0 && lastPhase != pi && lastPhase != -pi) || 
 			my ymax - lastFrequency > 0.25 * my dx;
@@ -156,16 +156,16 @@ Sound ComplexSpectrogram_to_Sound (ComplexSpectrogram me, double stretchFactor) 
 				double f = my y1 + (ifreq - 1) * my dy;
 				double a = sqrt (my z[ifreq][iframe]);
 				double phi = my phase[ifreq][iframe], intPart;
-				double extraPhase = 2 * pi * modf (extraTime * f, &intPart); // fractional part
+				double extraPhase = 2.0 * pi * modf (extraTime * f, &intPart); // fractional part
 				phi += extraPhase;
 				spectrum -> z[1][ifreq] = a * cos (phi);
 				spectrum -> z[2][ifreq] = a * sin (phi);
 			}
 
 			autoSound synthesis = Spectrum_to_Sound (spectrum.peek());
-			/*
-			 * Where should the sound be placed?
-			 */
+
+			// Where should the sound be placed?
+
 			long thyEndSampleP = (long) floor (fmin (thyStartSample + synthesis -> nx - 1, thyStartSample + stretchedStepSizeSamples - 1)); // guard against extreme stretches
 			if (iframe == my nx) {
 				thyEndSampleP = (long) floor (fmin (thy nx, thyStartSample + synthesis -> nx - 1));   // ppgb: waarom naar beneden afgerond?
@@ -186,8 +186,8 @@ static Sound ComplexSpectrogram_to_Sound2 (ComplexSpectrogram me, double stretch
 		/* original number of samples is odd: imaginary part of last spectral value is zero -> 
 		 * phase is either zero or pi
 		 */
-		double pi = atan2 (0, - 0.5);
-		double samplingFrequency = 2 * my ymax;
+		double pi = atan2 (0.0, - 0.5);
+		double samplingFrequency = 2.0 * my ymax;
 		double lastFrequency = my y1 + (my ny - 1) * my dy;
 		int originalNumberOfSamplesProbablyOdd = (my phase [my ny][1] != 0.0 && my phase[my ny][1] != pi) || my ymax - lastFrequency > 0.25 * my dx;
 		if (my y1 != 0.0) {
@@ -207,7 +207,7 @@ static Sound ComplexSpectrogram_to_Sound2 (ComplexSpectrogram me, double stretch
 				double f = my y1 + (ifreq - 1) * my dy;
 				double a = sqrt (my z[ifreq][iframe]);
 				double phi = my phase[ifreq][iframe];
-				double extraPhase = 2 * pi * (stretchFactor - 1) * my dx * f;
+				double extraPhase = 2.0 * pi * (stretchFactor - 1.0) * my dx * f;
 				phi += extraPhase;
 				spectrum -> z[1][ifreq] = a * cos (phi);
 				spectrum -> z[2][ifreq] = a * sin (phi);

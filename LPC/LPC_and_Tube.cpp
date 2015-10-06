@@ -1,6 +1,6 @@
 /* LPC_and_Tube.cpp
  *
- * Copyright (C) 1993-2012, 2014 David Weenink
+ * Copyright (C) 1993-2012, 2014-2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ double VocalTract_and_LPC_Frame_getMatchingLength (VocalTract me, LPC_Frame thee
 	try {
 		// match the average distance between the first two formants in the VocaTract and the LPC spectrum
 		long numberOfFrequencies = 1000;
-		double maximumFrequency = 5000;
+		double maximumFrequency = 5000.0;
 		autoSpectrum vts = VocalTract_to_Spectrum (me, numberOfFrequencies, maximumFrequency, glottalDamping, radiationDamping, internalDamping);
 		double samplingFrequency =  1000.0 * my nx;
 		autoSpectrum lps = Spectrum_create (0.5 * samplingFrequency, numberOfFrequencies);
@@ -159,14 +159,14 @@ double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refL
 
 			// step 6.2 Log(areas)
 
-			double logSum = 0;
+			double logSum = 0.0;
 			for (long i = 1; i <= af -> nSegments; i++) {
 				area[i] = log (area[i]);
 				logSum += area[i];
 			}
 
 			// step 6.3 and 7
-			double var = 0;
+			double var = 0.0;
 			for (long i = 1; i <= af -> nSegments; i++) {
 				double delta = area[i] - logSum / af -> nSegments;
 				var += delta * delta;

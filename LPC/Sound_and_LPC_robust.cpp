@@ -1,6 +1,6 @@
 /* Sound_and_LPC_robust.cpp
  *
- * Copyright (C) 1994-2013 David Weenink
+ * Copyright (C) 1994-2013, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,8 +50,8 @@ struct huber_struct {
 
 static void huber_struct_init (struct huber_struct *hs, double windowDuration,
                                long p, double samplingFrequency, double location, int wantlocation) {
-	hs -> w = hs -> work = hs -> a = hs -> c = 0;
-	hs -> covar = 0; hs -> svd = 0;
+	hs -> w = hs -> work = hs -> a = hs -> c = nullptr;
+	hs -> covar = nullptr; hs -> svd = nullptr;
 	hs -> e = Sound_createSimple (1, windowDuration, samplingFrequency);
 	long n = hs -> e -> nx;
 	hs -> n = n;
@@ -85,7 +85,7 @@ static void huber_struct_getWeights (struct huber_struct *hs, double *e) {
 
 	for (long i = 1 ; i <= hs -> n; i++) {
 		double ei = e[i] - hs -> location;
-		w[i] = ei > -ks && ei < ks ? 1 : ks / fabs (ei);
+		w[i] = ei > -ks && ei < ks ? 1.0 : ks / fabs (ei);
 	}
 }
 
@@ -228,8 +228,7 @@ LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, doubl
 			iter += struct_huber.iter;
 
 			if ( (i % 10) == 1) {
-				Melder_progress ( (double) i / nFrames, U"LPC analysis of frame ",
-				                   i, U" out of ", nFrames, U".");
+				Melder_progress ( (double) i / nFrames, U"LPC analysis of frame ", i, U" out of ", nFrames, U".");
 			}
 		}
 
@@ -253,10 +252,10 @@ Formant Sound_to_Formant_robust (Sound me, double dt_in, double numberOfFormants
 	int predictionOrder = (long) floor (2 * numberOfFormants);
 	try {
 		autoSound sound = NULL;
-		if (maximumFrequency <= 0.0 || fabs (maximumFrequency / nyquist - 1) < 1.0e-12) {
+		if (maximumFrequency <= 0.0 || fabs (maximumFrequency / nyquist - 1.0) < 1.0e-12) {
 			sound.reset (Data_copy (me));   // will be modified
 		} else {
-			sound.reset (Sound_resample (me, maximumFrequency * 2, 50));
+			sound.reset (Sound_resample (me, maximumFrequency * 2.0, 50));
 		}
 
 		autoLPC lpc = Sound_to_LPC_auto (sound.peek(), predictionOrder, halfdt_window, dt, preEmphasisFrequency);

@@ -1,6 +1,6 @@
 /* Permutation.cpp
  *
- * Copyright (C) 2005-2012 David Weenink
+ * Copyright (C) 2005-2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -227,7 +227,7 @@ void Permutation_swapOneFromRange (Permutation me, long from, long to, long pos,
 			if (n == 1) {
 				Melder_throw (U"Impossible to satisfy \"forbid same\" constraint within the chosen range.");
 			}
-			while ( (newpos = NUMrandomInteger (from, to)) == pos) {
+			while ((newpos = NUMrandomInteger (from, to)) == pos) {
 				;
 			}
 		}
@@ -237,7 +237,6 @@ void Permutation_swapOneFromRange (Permutation me, long from, long to, long pos,
 		Melder_throw (me, U": one from range not swapped.");
 	}
 }
-
 
 Permutation Permutation_permuteBlocksRandomly (Permutation me, long from, long to, long blocksize,
         int permuteWithinBlocks, int noDoublets) {
@@ -254,7 +253,7 @@ Permutation Permutation_permuteBlocksRandomly (Permutation me, long from, long t
 
 		long nblocks  = n / blocksize, nrest = n % blocksize;
 		if (nrest != 0) Melder_throw (U"It is not possible to fit an integer number of blocks "
-			                              U"in the range.\n(The last block is only of size ", nrest, U").");
+			U"in the range.\n(The last block is only of size ", nrest, U").");
 
 		autoPermutation pblocks = Permutation_create (nblocks);
 
@@ -287,8 +286,10 @@ Permutation Permutation_interleave (Permutation me, long from, long to, long blo
 		long n = Permutation_checkRange (me, &from, &to);
 		long nblocks = n / blocksize;
 		long nrest = n % blocksize;
-		if (nrest != 0) Melder_throw (U"There is not an integer number of blocks in the range.\n"
-			                              U"(The last block is only of size ", nrest, U" instead of ", blocksize, U").");
+		if (nrest != 0) {
+			Melder_throw (U"There is not an integer number of blocks in the range.\n"
+				U"(The last block is only of size ", nrest, U" instead of ", blocksize, U").");
+		}
 		if (offset >= blocksize) {
 			Melder_throw (U"Offset must be smaller than blocksize.");
 		}
@@ -381,25 +382,25 @@ void Permutation_next_inline (Permutation me) {
 
 	long i = size - 2;
 
-	while ( (p[i] > p[i + 1]) && (i != 0)) {
+	while ((p[i] > p[i + 1]) && (i != 0)) {
 		i--;
 	}
 
-	if ( (i == 0) && (p[0] > p[1])) {
+	if ((i == 0) && (p[0] > p[1])) {
 		Melder_throw (U"No next.");
 	}
 
 	long k = i + 1;
 
 	for (long j = i + 2; j < size; j++) {
-		if ( (p[j] > p[i]) && (p[j] < p[k])) {
+		if ((p[j] > p[i]) && (p[j] < p[k])) {
 			k = j;
 		}
 	}
 
 	long tmp = p[i]; p[i] = p[k]; p[k] = tmp;
 
-	for (long j = i + 1; j <= ( (size + i) / 2); j++) {
+	for (long j = i + 1; j <= (size + i) / 2; j++) {
 		tmp = p[j];
 		p[j] = p[size + i - j];
 		p[size + i - j] = tmp;
@@ -420,18 +421,18 @@ void Permutation_previous_inline (Permutation me) {
 
 	long i = size - 2;
 
-	while ( (p[i] < p[i + 1]) && (i != 0)) {
+	while ((p[i] < p[i + 1]) && (i != 0)) {
 		i--;
 	}
 
-	if ( (i == 0) && (p[0] < p[1])) {
+	if ((i == 0) && (p[0] < p[1])) {
 		Melder_throw (U"No previous");
 	}
 
 	long k = i + 1;
 
 	for (long j = i + 2; j < size; j++) {
-		if ( (p[j] < p[i]) && (p[j] > p[k])) {
+		if ((p[j] < p[i]) && (p[j] > p[k])) {
 			k = j;
 		}
 	}

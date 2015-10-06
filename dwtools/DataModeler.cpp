@@ -154,7 +154,7 @@ static double DataModeler_getDataPointInverseWeight (DataModeler me, long iPoint
 			iweight = my sigmaY[iPoint];
 		} else if (useSigmaY == DataModeler_DATA_WEIGH_RELATIVE) {
 			double q = my y[iPoint] / my sigmaY[iPoint];
-			iweight = 500 / q; //
+			iweight = 500.0 / q; //
 		} else if (useSigmaY == DataModeler_DATA_WEIGH_SQRT) {
 			iweight = 7.071 * sqrt (my sigmaY[iPoint]); // .bw = 50 gives 50
 		}
@@ -358,7 +358,7 @@ long DataModeler_getNumberOfInvalidDataPoints (DataModeler me) {
 }
 
 void DataModeler_setTolerance (DataModeler me, double tolerance) {
-	my tolerance = tolerance > 0 ? tolerance : my numberOfDataPoints * NUMfpp -> eps;
+	my tolerance = tolerance > 0.0 ? tolerance : my numberOfDataPoints * NUMfpp -> eps;
 }
 
 double DataModeler_getDegreesOfFreedom (DataModeler me) {
@@ -614,14 +614,14 @@ void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xm
 				double ym = y1;
 				double yt = ym + 0.5 * sigma, yb = ym - 0.5 * sigma;
 				if (estimated) {
-					yt = (y - y1) > 0 ? y : y1;
-					yb = (y - y1) > 0 ? y1 : y;
+					yt = (y - y1) > 0.0 ? y : y1;
+					yb = (y - y1) > 0.0 ? y1 : y;
 				}
 				int topOutside = yt > ymax, bottomOutside = yb < ymin;
 				yt = topOutside ? ymax : yt;
 				yb = bottomOutside ? ymin : yb;
 				Graphics_line (g, x1 + horizontalOffset_wc, yb, x1 + horizontalOffset_wc, yt);
-				if (barWidth_wc > 0 && ! estimated) {
+				if (barWidth_wc > 0.0 && ! estimated) {
 					double xl = x1 - 0.5 * barWidth_wc + horizontalOffset_wc;
 					double xr = xl + barWidth_wc;
 					if (! topOutside) {
@@ -761,7 +761,7 @@ DataModeler DataModeler_createSimple (double xmin, double xmax, long numberOfDat
 		for (long i = 1; i <= numberOfDataPoints; i++) {
 			my x[i] = xmin + (i - 0.5) * (xmax - xmin) / numberOfDataPoints;
 			double modelY = my f_evaluate (me.peek(), my x[i], my parameter);
-			my y[i] = modelY + NUMrandomGauss (0, gaussianNoiseStd);
+			my y[i] = modelY + NUMrandomGauss (0.0, gaussianNoiseStd);
 			my sigmaY[i] = NUMundefined;
 		}
 		my useSigmaY = DataModeler_DATA_WEIGH_EQUAL;
@@ -787,7 +787,7 @@ void DataModeler_fit (DataModeler me)
 		// For function evaluation with only the FIXED parameters
 
 		for (long ipar = 1; ipar <= my numberOfParameters; ipar++) {
-			parameter[ipar] = my parameterStatus[ipar] == DataModeler_PARAMETER_FIXED ? my parameter[ipar] : 0;
+			parameter[ipar] = my parameterStatus[ipar] == DataModeler_PARAMETER_FIXED ? my parameter[ipar] : 0.0;
 		}
 
 		// estimate sigma if we weigh all datapoint equally. 
@@ -824,7 +824,7 @@ void DataModeler_fit (DataModeler me)
 		if (! NUMfpp) {
 			NUMmachar ();
 		}
-		SVD_zeroSmallSingularValues (thee.peek(), my tolerance > 0 ? my tolerance : numberOfDataPoints * NUMfpp -> eps);
+		SVD_zeroSmallSingularValues (thee.peek(), my tolerance > 0.0 ? my tolerance : numberOfDataPoints * NUMfpp -> eps);
 		SVD_solve (thee.peek(), b.peek(), parameter.peek()); // re-use parameter
 
 		// Put the calculated parameters at the correct position in 'my p'
@@ -844,7 +844,7 @@ void DataModeler_fit (DataModeler me)
 			// Set fixed parameters variances and covariances to zero.
 			for (long i = 1; i <= my numberOfParameters; i++) {
 				for (long j = i; j <= my numberOfParameters; j++) {
-					cov -> data[i][j] = cov -> data[j][i] = 0;
+					cov -> data[i][j] = cov -> data[j][i] = 0.0;
 				}
 			}
 			ipar = 0;
@@ -966,7 +966,7 @@ void structFormantModeler :: v_info () {
 
 double DataModeler_getResidualSumOfSquares (DataModeler me, long *numberOfDataPoints) {
 	long n = 0;
-	double rss = 0;
+	double rss = 0.0;
 	for (long i = 1; i <= my numberOfDataPoints; i++) {
 		if (my dataPointStatus[i] != DataModeler_DATA_INVALID) {
 				++n;
@@ -1449,7 +1449,7 @@ double FormantModeler_getParameterStandardDeviation ( FormantModeler me, long if
 }
 
 double FormantModeler_getDegreesOfFreedom (FormantModeler me, long iformant) {
-	double dof = 0;
+	double dof = 0.0;
 	if (iformant > 0 && iformant <= my trackmodelers -> size) {
 		DataModeler ff = (DataModeler) my trackmodelers -> item[iformant];
 		dof = DataModeler_getDegreesOfFreedom (ff);
@@ -1612,7 +1612,7 @@ Formant FormantModeler_to_Formant (FormantModeler me, int useEstimates, int esti
 		}
 		for (long iframe = 1; iframe <= numberOfFrames; iframe++) {
 			Formant_Frame thyFrame = & thy d_frames [iframe];
-			thyFrame -> intensity = 1; //???
+			thyFrame -> intensity = 1.0; //???
 			thyFrame -> formant = NUMvector <structFormant_Formant> (1, numberOfFormants);
 			
 			for (long iformant = 1; iformant <= numberOfFormants; iformant++) {
@@ -1643,7 +1643,7 @@ double FormantModeler_getChiSquaredQ (FormantModeler me, long fromFormant, long 
 		fromFormant = 1; toFormant = my trackmodelers -> size;
 	}
 	if (fromFormant >= 1 && toFormant <= my trackmodelers -> size) {
-		chisq = 0;
+		chisq = 0.0;
 		long numberOfDefined = 0;
 		for (long iformant= fromFormant; iformant <= toFormant; iformant++) {
 			DataModeler ffi = (DataModeler) my trackmodelers -> item[iformant];
@@ -1672,13 +1672,13 @@ double FormantModeler_getCoefficientOfDetermination (FormantModeler me, long fro
 		fromFormant = 1; toFormant = my trackmodelers -> size;
 	}
 	if (fromFormant >= 1 && toFormant <= my trackmodelers -> size) {
-		double ssreg = 0, sstot = 0, ssregi, sstoti;
+		double ssreg = 0.0, sstot = 0.0, ssregi, sstoti;
 		for (long iformant= fromFormant; iformant <= toFormant; iformant++) {
 			DataModeler ffi = (DataModeler) my trackmodelers -> item[iformant];
 			DataModeler_getCoefficientOfDetermination (ffi, &ssregi, &sstoti);
 			sstot += sstoti; ssreg += ssregi;
 		}
-		rSquared = sstot > 0 ? ssreg / sstot : 1;
+		rSquared = sstot > 0.0 ? ssreg / sstot : 1.0;
 	}
 	return rSquared;
 }
@@ -1842,13 +1842,13 @@ double FormantModeler_getAverageDistanceBetweenTracks (FormantModeler me, long t
 
 double FormantModeler_getFormantsConstraintsFactor (FormantModeler me, double minF1, double maxF1, double minF2, double maxF2, double minF3) {
 	double f1 = FormantModeler_getParameterValue (me, 1, 1); // trackmodelers -> item[1] -> parameter[1]
-	double minF1Factor = f1 > minF1 ? 1 : sqrt (minF1 - f1 + 1);
-	double maxF1Factor = f1 < maxF1 ? 1 : sqrt (f1 - maxF1 + 1);
+	double minF1Factor = f1 > minF1 ? 1 : sqrt (minF1 - f1 + 1.0);
+	double maxF1Factor = f1 < maxF1 ? 1 : sqrt (f1 - maxF1 + 1.0);
 	double f2 = FormantModeler_getParameterValue (me, 2, 1); // trackmodelers -> item[2] -> parameter[1]
-	double minF2Factor = f2 > minF2 ? 1 : sqrt (minF2 - f2 + 1);
-	double maxF2Factor = f2 < maxF2 ? 1 : sqrt (f2 - maxF2 + 1);
+	double minF2Factor = f2 > minF2 ? 1 : sqrt (minF2 - f2 + 1.0);
+	double maxF2Factor = f2 < maxF2 ? 1 : sqrt (f2 - maxF2 + 1.0);
 	double f3 = FormantModeler_getParameterValue (me, 3, 1); // trackmodelers -> item[3] -> parameter[1]
-	double minF3Factor = f3 > minF3 ? 1 : sqrt (minF3 - f3 + 1);
+	double minF3Factor = f3 > minF3 ? 1 : sqrt (minF3 - f3 + 1.0);
 	return minF1Factor * maxF1Factor * minF2Factor * maxF2Factor * minF3Factor;
 }
 
@@ -1863,7 +1863,7 @@ long Formants_getSmoothestInInterval (Collection me, double tmin, double tmax, l
 		}
 		autoNUMvector<long> numberOfFormants (1, numberOfFormantObjects);
 		autoNUMvector<int> invalid (1, numberOfFormantObjects);
-		double tminf = 0, tmaxf = 0;
+		double tminf = 0.0, tmaxf = 0.0;
 		for (long iobject = 1; iobject <= numberOfFormantObjects; iobject++) {
 			// Check that all Formants have the same domain
 			Formant fi = (Formant) my item[iobject];
@@ -1955,7 +1955,7 @@ Formant Formants_extractSmoothestPart (Collection me, double tmin, double tmax, 
 {
 	try {
 		long index = Formants_getSmoothestInInterval (me, tmin, tmax, numberOfFormantTracks, numberOfParametersPerTrack,
-			useBandWidthsForTrackEstimation, 0, numberOfSigmas, power, 1, 1, 1, 1, 1); // last five are just fillers
+			useBandWidthsForTrackEstimation, 0, numberOfSigmas, power, 1.0, 1.0, 1.0, 1.0, 1.0); // last five are just fillers
 		Formant bestfit = (Formant) my item[index];
 		autoFormant thee = Formant_extractPart (bestfit, tmin, tmax);
 		return thee.transfer();
@@ -1965,9 +1965,7 @@ Formant Formants_extractSmoothestPart (Collection me, double tmin, double tmax, 
 }
 
 
-Formant Formants_extractSmoothestPart_withFormantsConstraints (Collection me, double tmin, double tmax, long numberOfFormantTracks, long numberOfParametersPerTrack,
-	int useBandWidthsForTrackEstimation, double numberOfSigmas, double power, double minF1, double maxF1, double minF2, double maxF2, double minF3)
-{
+Formant Formants_extractSmoothestPart_withFormantsConstraints (Collection me, double tmin, double tmax, long numberOfFormantTracks, long numberOfParametersPerTrack,	int useBandWidthsForTrackEstimation, double numberOfSigmas, double power, double minF1, double maxF1, double minF2, double maxF2, double minF3) {
 	try {
 		long index = Formants_getSmoothestInInterval (me, tmin, tmax, numberOfFormantTracks, numberOfParametersPerTrack,
 			useBandWidthsForTrackEstimation, 1, numberOfSigmas, power, minF1, maxF1, minF2, maxF2, minF3);
@@ -2029,7 +2027,7 @@ void PitchModeler_draw (PitchModeler me, Graphics g, double tmin, double tmax, d
 
 double Sound_getOptimalFormantCeiling (Sound me, double startTime, double endTime, double windowLength, double timeStep, double minFreq, double maxFreq, long numberOfFrequencySteps, double preemphasisFrequency, long numberOfFormantTracks, long numberOfParametersPerTrack, int weighData, double numberOfSigmas, double power) {
 	double optimalCeiling;
-	autoFormant thee = Sound_to_Formant_interval (me, startTime, endTime, windowLength, timeStep, minFreq, maxFreq,  numberOfFrequencySteps, preemphasisFrequency, numberOfFormantTracks, numberOfParametersPerTrack, weighData,  numberOfSigmas, power, false, 0, 5000, 0, 5000, 0, &optimalCeiling);
+	autoFormant thee = Sound_to_Formant_interval (me, startTime, endTime, windowLength, timeStep, minFreq, maxFreq,  numberOfFrequencySteps, preemphasisFrequency, numberOfFormantTracks, numberOfParametersPerTrack, weighData,  numberOfSigmas, power, false, 0.0, 5000.0, 0.0, 5000.0, 0.0, &optimalCeiling);
 	return optimalCeiling;
 }
 
@@ -2055,16 +2053,16 @@ Formant Sound_to_Formant_interval (Sound me, double startTime, double endTime, d
 		// extract part +- windowLength because of Gaussian windowing in the formant analysis
 		// +timeStep/2 to have the analysis points maximally spread in the new domain.
 		
-		autoSound part = Sound_extractPart (me, startTime - windowLength + timeStep / 2, endTime + windowLength + timeStep / 2, kSound_windowShape_RECTANGULAR, 1, 1);
+		autoSound part = Sound_extractPart (me, startTime - windowLength + timeStep / 2.0, endTime + windowLength + timeStep / 2.0, kSound_windowShape_RECTANGULAR, 1, 1);
 
 		// Resample to 2*maxFreq to reduce resampling load in Sound_to_Formant
 		
-		autoSound resampled = Sound_resample (part.peek(), 2 * maxFreq, 50);
+		autoSound resampled = Sound_resample (part.peek(), 2.0 * maxFreq, 50);
 		autoOrdered formants = Ordered_create ();
 		Melder_progressOff ();
 		for (long i = 1; i <= numberOfFrequencySteps; i++) {
 			double currentCeiling = minFreq + (i - 1) * df;
-			autoFormant formant = Sound_to_Formant_burg (resampled.peek(), timeStep, 5, currentCeiling, windowLength, preemphasisFrequency);
+			autoFormant formant = Sound_to_Formant_burg (resampled.peek(), timeStep, 5.0, currentCeiling, windowLength, preemphasisFrequency);
 			autoFormantModeler fm = Formant_to_FormantModeler (formant.peek(), startTime, endTime, numberOfFormantTracks, numberOfParametersPerTrack, weighData);
 			FormantModeler_setParameterValuesToZero (fm.peek(), 1, numberOfFormantTracks, numberOfSigmas);
 			Collection_addItem (formants.peek(), formant.transfer());
@@ -2113,12 +2111,12 @@ Formant Sound_to_Formant_interval_robust (Sound me, double startTime, double end
 
 		// Resample to 2*maxFreq to reduce resampling load in Sound_to_Formant
 		
-		autoSound resampled = Sound_resample (part.peek(), 2 * maxFreq, 50);
+		autoSound resampled = Sound_resample (part.peek(), 2.0 * maxFreq, 50);
 		autoOrdered formants = Ordered_create ();
 		Melder_progressOff ();
 		for (long i = 1; i <= numberOfFrequencySteps; i++) {
 			double currentCeiling = minFreq + (i - 1) * df;
-			autoFormant formant = Sound_to_Formant_robust (resampled.peek(), timeStep, 5, currentCeiling, windowLength, preemphasisFrequency, 50, 1.5, 3, 0.0000001, 1);
+			autoFormant formant = Sound_to_Formant_robust (resampled.peek(), timeStep, 5.0, currentCeiling, windowLength, preemphasisFrequency, 50.0, 1.5, 3, 0.0000001, 1);
 			autoFormantModeler fm = Formant_to_FormantModeler (formant.peek(), startTime, endTime, numberOfFormantTracks, numberOfParametersPerTrack, weighData);
 			FormantModeler_setParameterValuesToZero (fm.peek(), 1, numberOfFormantTracks, numberOfSigmas);
 			Collection_addItem (formants.peek(), formant.transfer());
@@ -2177,10 +2175,9 @@ OptimalCeilingTier Sound_to_OptimalCeilingTier (Sound me, double windowLength, d
 		Sampled_shortTermAnalysis (me, smoothingWindow, modelingTimeStep, & numberOfFrames, & firstTime);
 		for (long iframe = 1; iframe <= numberOfFrames; iframe++) {
 			double time = firstTime + (iframe - 1) * modelingTimeStep;
-			double tmin = time - smoothingWindow / 2;
+			double tmin = time - smoothingWindow / 2.0;
 			double tmax = tmin + smoothingWindow;
-			long index = Formants_getSmoothestInInterval (formants.peek(), tmin, tmax, numberOfFormantTracks, numberOfParametersPerTrack,
-				weighData, 0, numberOfSigmas, power, 200, 1500, 300, 3000, 1000); // min/max values are not used
+			long index = Formants_getSmoothestInInterval (formants.peek(), tmin, tmax, numberOfFormantTracks, numberOfParametersPerTrack,	weighData, 0, numberOfSigmas, power, 200.0, 1500.0, 300.0, 3000.0, 1000.0); // min/max values are not used
 			double ceiling = minCeiling + (index - 1) * frequencyStep;
 			RealTier_addPoint (octier.peek(), time, ceiling);
 		}

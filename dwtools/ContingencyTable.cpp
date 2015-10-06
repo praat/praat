@@ -1,6 +1,6 @@
 /* ContingencyTable.cpp
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ Thing_implement (ContingencyTable, TableOfReal, 0);
 void structContingencyTable :: v_info () {
 	structDaata :: v_info ();
 
-	long ndf;
+	double ndf;
 	double h, hx, hy, hygx, hxgy, uygx, uxgy, uxy, chisq;
 	ContingencyTable_entropies (this, &h, &hx, &hy, &hygx, &hxgy, &uygx, &uxgy, &uxy);
 	ContingencyTable_chisq (this, &chisq, &ndf);
@@ -60,18 +60,17 @@ ContingencyTable ContingencyTable_create (long numberOfRows, long numberOfColumn
 }
 
 double ContingencyTable_chisqProbability (ContingencyTable me) {
-	double chisq;
-	long df;
+	double chisq, df;
 	ContingencyTable_chisq (me, &chisq, &df);
-	if (chisq == 0.0 && df == 0) {
+	if (chisq == 0.0 && df == 0.0) {
 		return 0.0;
 	}
 	return NUMchiSquareQ (chisq, df);
 }
 
 double ContingencyTable_cramersStatistic (ContingencyTable me) {
-	double chisq, sum = 0.0;
-	long df, nr = my numberOfRows, nc = my numberOfColumns, nmin = nr;
+	double chisq, sum = 0.0, df;
+	long nr = my numberOfRows, nc = my numberOfColumns, nmin = nr;
 
 	if (nr == 1 || nc == 1) {
 		return 0.0;
@@ -89,15 +88,15 @@ double ContingencyTable_cramersStatistic (ContingencyTable me) {
 	nmin--;
 
 	ContingencyTable_chisq (me, &chisq, &df);
-	if (chisq == 0.0 && df == 0) {
+	if (chisq == 0.0 && df == 0.0) {
 		return 0.0;
 	}
 	return sqrt (chisq / (sum * nmin));
 }
 
 double ContingencyTable_contingencyCoefficient (ContingencyTable me) {
-	double chisq, sum = 0.0;
-	long df, nr = my numberOfRows, nc = my numberOfColumns;
+	double chisq, sum = 0.0, df;
+	long nr = my numberOfRows, nc = my numberOfColumns;
 
 	for (long i = 1; i <= nr; i++) {
 		for (long j = 1; j <= nc; j++) {
@@ -106,23 +105,21 @@ double ContingencyTable_contingencyCoefficient (ContingencyTable me) {
 	}
 
 	ContingencyTable_chisq (me, &chisq, &df);
-	if (chisq == 0.0 && df == 0) {
+	if (chisq == 0.0 && df == 0.0) {
 		return 0.0;
 	}
 	return sqrt (chisq / (chisq + sum));
 }
 
-void ContingencyTable_chisq (ContingencyTable me, double *chisq, long *df) {
+void ContingencyTable_chisq (ContingencyTable me, double *chisq, double *df) {
 	long nr = my numberOfRows, nc = my numberOfColumns;
 
-	*chisq = 0.0; *df = 0;
+	*chisq = 0.0; *df = 0.0;
 
 	autoNUMvector<double> rowsum (1, nr);
 	autoNUMvector<double> colsum (1, nc);
 
-	/*
-		row and column marginals
-	*/
+	// row and column marginals
 
 	double sum = 0.0;
 	for (long i = 1; i <= my numberOfRows; i++) {
@@ -144,7 +141,7 @@ void ContingencyTable_chisq (ContingencyTable me, double *chisq, long *df) {
 		}
 	}
 
-	*df = (nr - 1) * (nc - 1);
+	*df = (nr - 1.0) * (nc - 1.0);
 	for (long i = 1; i <= my numberOfRows; i++) {
 		if (rowsum[i] == 0.0) {
 			continue;
@@ -160,16 +157,13 @@ void ContingencyTable_chisq (ContingencyTable me, double *chisq, long *df) {
 	}
 }
 
-void ContingencyTable_entropies (ContingencyTable me, double *h, double *hx, double *hy,
-                                 double *hygx, double *hxgy, double *uygx, double *uxgy, double *uxy) {
+void ContingencyTable_entropies (ContingencyTable me, double *h, double *hx, double *hy, double *hygx, double *hxgy, double *uygx, double *uxgy, double *uxy) {
 	*h = *hx = *hy = *hxgy = *hygx = *uygx = *uxgy = *uxy = 0;
 
 	autoNUMvector<double> rowsum (1, my numberOfRows);
 	autoNUMvector<double> colsum (1, my numberOfColumns);
 
-	/*
-		row and column totals
-	*/
+	// row and column totals
 
 	double sum = 0.0;
 	for (long i = 1; i <= my numberOfRows; i++) {
@@ -180,9 +174,7 @@ void ContingencyTable_entropies (ContingencyTable me, double *h, double *hx, dou
 		sum += rowsum[i];
 	}
 
-	/*
-		Entropy of x distribution
-	*/
+	// Entropy of x distribution
 
 	for (long j = 1; j <= my numberOfColumns; j++) {
 		if (colsum[j] > 0.0) {
@@ -191,9 +183,7 @@ void ContingencyTable_entropies (ContingencyTable me, double *h, double *hx, dou
 		}
 	}
 
-	/*
-		Entropy of y distribution
-	*/
+	// Entropy of y distribution
 
 	for (long i = 1; i <= my numberOfRows; i++) {
 		if (rowsum[i] > 0.0) {
@@ -202,22 +192,18 @@ void ContingencyTable_entropies (ContingencyTable me, double *h, double *hx, dou
 		}
 	}
 
-	/*
-		Total entropy
-	*/
+	// Total entropy
 
 	for (long i = 1; i <= my numberOfRows; i++) {
 		for (long j = 1; j <= my numberOfColumns; j++) {
-			if (my data[i][j] > 0) {
+			if (my data[i][j] > 0.0) {
 				double p = my data[i][j] / sum;
 				*h -= p * NUMlog2 (p);
 			}
 		}
 	}
 
-	/*
-		Conditional entropies
-	*/
+	// Conditional entropies
 
 	*hygx = *h - *hx;
 	*hxgy = *h - *hy;

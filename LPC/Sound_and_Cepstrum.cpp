@@ -1,6 +1,6 @@
 /* Sound_and_Cepstrum.cpp
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,13 +62,13 @@ Cepstrum Sound_to_Cepstrum_bw (Sound me) {
 		// Compute Avg (ln |X(f)|) as Avg (ln |X(f)|^2) / 2.
 		// Treat i=1 separately: x[1] * nx[1] / |x[1]|^2
 
-		double lnxa = 0;
-		if (x[1] != 0) {
-			lnxa = 2 * log (fabs (x[1]));
+		double lnxa = 0.0;
+		if (x[1] != 0.0) {
+			lnxa = 2.0 * log (fabs (x[1]));
 			x[1] = nx[1] / x[1];
 		}
-		if (x[2] != 0) {
-			lnxa = 2 * log (fabs (x[2]));
+		if (x[2] != 0.0) {
+			lnxa = 2.0 * log (fabs (x[2]));
 			x[2] = nx[2] / x[2];
 		}
 
@@ -76,16 +76,16 @@ Cepstrum Sound_to_Cepstrum_bw (Sound me) {
 			double xr = x[i], nxr = nx[i];
 			double xi = x[i + 1], nxi = nx[i + 1];
 			double xa = xr * xr + xi * xi;
-			if (xa > 0) {
+			if (xa > 0.0) {
 				x[i]   = (xr * nxr + xi * nxi) / xa;
 				x[i + 1] = (xr * nxi - xi * nxr) / xa;
 				lnxa += log (xa);
 			} else {
-				x[i] = x[i + 1] = 0;
+				x[i] = x[i + 1] = 0.0;
 			}
 		}
 
-		lnxa /= 2 * nfft / 2;
+		lnxa /= 2.0 * nfft / 2.0; // TODO
 
 		// Step 4: Inverse transform of complex array x
 		//	results in: n * xhat (n)

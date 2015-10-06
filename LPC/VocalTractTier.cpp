@@ -1,6 +1,6 @@
 /* VocalTractTier.cpp
  *
- * Copyright (C) 2012 David Weenink
+ * Copyright (C) 2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ void VocalTract_drawSegments (VocalTract me, Graphics g, double maxLength, doubl
 	double maxCrossection = sqrt (maxArea);
 	Graphics_setWindow (g, 0, maxLength, -maxCrossection, maxCrossection);
 	for (long isection = 1; isection <= my nx; isection++) {
-		double x1 = (isection - 1) * my dx, x2 = x1 + my dx;
+		double x1 = (isection - 1.0) * my dx, x2 = x1 + my dx;
 		double crosssection2 = sqrt (my z[1][isection]);
 		Graphics_line (g, x1, crosssection2, x2, crosssection2);
 		Graphics_line (g, x1, -crosssection2, x2, -crosssection2);

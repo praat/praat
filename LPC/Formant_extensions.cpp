@@ -1,6 +1,6 @@
 /* Formant_extensions.c
  *
- * Copyright (C) 2012 David Weenink
+ * Copyright (C) 2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ void Formant_formula (Formant me, double tmin, double tmax, long formantmin, lon
 			}
 		}
 		// Apply formula
-		double ymin = 2 * formantmin - 1, ymax = 2 * formantmax;
+		double ymin = 2.0 * formantmin - 1.0, ymax = 2.0 * formantmax;
 		Matrix_formula_part (fb.peek(), tmin, tmax, ymin, ymax, expression, interpreter, nullptr);
 		// Put results back in Formant
 		long ixmin, ixmax, iymin, iymax;
@@ -99,7 +99,7 @@ IntensityTier Formant_and_Spectrogram_to_IntensityTier (Formant me, Spectrogram 
 			Melder_throw (U"Formant number not in range [1, ", my maxnFormants, U"].");
 		}
 		autoIntensityTier him = IntensityTier_create (my xmin, my xmax);
-		double previousValue = -80000; // can never occur
+		double previousValue = -80000.0; // can never occur
 		double previousTime = my xmin;
 		for (long iframe = 1; iframe <= my nx; iframe++) {
 			Formant_Frame frame = & my d_frames [iframe];

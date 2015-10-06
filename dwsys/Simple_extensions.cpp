@@ -1,6 +1,6 @@
 /* Simple_extensions.cpp
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ void SimpleString_append (SimpleString me, SimpleString thee) {
 }
 
 void SimpleString_append_c (SimpleString me, const char32 *str) {
-	if (str == 0) {
+	if (! str) {
 		return;
 	}
 	long myLength = str32len (my string);

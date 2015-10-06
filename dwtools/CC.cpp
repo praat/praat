@@ -66,8 +66,7 @@ void CC_Frame_init (CC_Frame me, long numberOfCoefficients) {
 	my numberOfCoefficients = numberOfCoefficients;
 }
 
-void CC_init (I, double tmin, double tmax, long nt, double dt, double t1,
-              long maximumNumberOfCoefficients, double fmin, double fmax) {
+void CC_init (I, double tmin, double tmax, long nt, double dt, double t1, long maximumNumberOfCoefficients, double fmin, double fmax) {
 	iam (CC);
 	my fmin = fmin;
 	my fmax = fmax;
@@ -79,8 +78,7 @@ void CC_init (I, double tmin, double tmax, long nt, double dt, double t1,
 Matrix CC_to_Matrix (I) {
 	iam (CC);
 	try {
-		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
-		                                 1, my maximumNumberOfCoefficients, my maximumNumberOfCoefficients, 1, 1);
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, my maximumNumberOfCoefficients, my maximumNumberOfCoefficients, 1.0, 1.0);
 
 		for (long i = 1; i <= my nx; i++) {
 			CC_Frame cf = & my frame[i];

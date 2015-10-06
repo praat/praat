@@ -6,8 +6,8 @@
 
 double d_sign (double *a, double *b) {
 	double x;
-	x = (*a >= 0 ? *a : - *a);
-	return (*b >= 0 ? x : -x);
+	x = (*a >= 0.0 ? *a : - *a);
+	return (*b >= 0.0 ? x : -x);
 }
 
 long int lsame_ (const char *ca, const char *cb) {
@@ -28,7 +28,7 @@ double pow_di (double *ap, long *bp) {
 	if (n != 0) {
 		if (n < 0) {
 			n = -n;
-			x = 1 / x;
+			x = 1.0 / x;
 		}
 		for (u = n; ;) {
 			if (u & 01) {
