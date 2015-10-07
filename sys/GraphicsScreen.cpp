@@ -623,7 +623,9 @@ Graphics Graphics_create_pngfile (MelderFile file, int resolution,
 	autoGraphicsScreen me = Thing_new (GraphicsScreen);
 	my screen = true;
 	my yIsZeroAtTheTop = true;
-	#ifdef macintosh
+	#if win
+		my d_useGdiplus = _GraphicsWindows_tryToInitializeGdiPlus ();
+	#elif mac
 		_GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
 	Graphics_init (me.peek(), resolution);
