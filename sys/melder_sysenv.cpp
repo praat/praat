@@ -47,13 +47,13 @@ char32 * Melder_getenv (const char32 *variableName) {
 		static int ibuffer = 0;
 		if (++ ibuffer == 11) ibuffer = 0;
 		long n = GetEnvironmentVariableW (variableName, buffer [ibuffer], 255);   BUG
-		if (n == ERROR_ENVVAR_NOT_FOUND) return NULL;
+		if (n == ERROR_ENVVAR_NOT_FOUND) return nullptr;
 		return & buffer [ibuffer] [0];
 	#endif
 }
 
 void Melder_system (const char32 *command) {
-	if (command == NULL) command = U"";
+	if (! command) command = U"";
 	#if defined (macintosh) || defined (UNIX)
 		if (system (Melder_peek32to8 (command)) != 0)
 			Melder_throw (U"System command failed.");
@@ -61,11 +61,11 @@ void Melder_system (const char32 *command) {
 		STARTUPINFO siStartInfo;
 		PROCESS_INFORMATION piProcInfo;
 		char32 *comspec = Melder_getenv (U"COMSPEC");   // e.g. "C:\WINDOWS\COMMAND.COM" or "C:\WINNT\windows32\cmd.exe"
-		if (comspec == NULL) {
+		if (! comspec) {
 			comspec = Melder_getenv (U"ComSpec");
 		}
 		autoMelderString buffer;
-		if (comspec != NULL) {
+		if (comspec) {
 			MelderString_copy (& buffer, comspec);
 		} else {
 			OSVERSIONINFOEX osVersionInfo;
@@ -89,7 +89,7 @@ void Melder_system (const char32 *command) {
 		MelderString_append (& buffer, U" /c ", command);
         memset (& siStartInfo, 0, sizeof (siStartInfo));
         siStartInfo. cb = sizeof (siStartInfo);
-		if (! CreateProcess (NULL, Melder_peek32toW (buffer.string), NULL, NULL, true, CREATE_NO_WINDOW, NULL, NULL, & siStartInfo, & piProcInfo))
+		if (! CreateProcess (nullptr, Melder_peek32toW (buffer.string), nullptr, nullptr, true, CREATE_NO_WINDOW, nullptr, nullptr, & siStartInfo, & piProcInfo))
 			Melder_throw (U"Cannot create subprocess.");
 		WaitForSingleObject (piProcInfo. hProcess, -1);
 		CloseHandle (piProcInfo. hProcess);

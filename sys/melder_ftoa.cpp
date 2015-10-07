@@ -68,7 +68,7 @@ const char * Melder8_integer (int64 value) {
 		 * There are also buggy platforms (namely 32-bit gcc on Linux) that support long long and %I64d but that convert
 		 * the argument to a 32-bit long.
 		 */
-		static const char *formatString = NULL;
+		static const char *formatString = nullptr;
 		if (! formatString) {
 			char tryBuffer [MAXIMUM_NUMERIC_STRING_LENGTH + 1];
 			formatString = "%lld";
@@ -159,9 +159,9 @@ const char * Melder8_double (double value) {
 	if (value == NUMundefined) return "--undefined--";
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	sprintf (buffers8 [ibuffer], "%.15g", value);
-	if (strtod (buffers8 [ibuffer], NULL) != value) {
+	if (strtod (buffers8 [ibuffer], nullptr) != value) {
 		sprintf (buffers8 [ibuffer], "%.16g", value);
-		if (strtod (buffers8 [ibuffer], NULL) != value) {
+		if (strtod (buffers8 [ibuffer], nullptr) != value) {
 			sprintf (buffers8 [ibuffer], "%.17g", value);
 		}
 	}
@@ -253,25 +253,25 @@ const char32 * Melder_percent (double value, int precision) {
 
 const char32 * Melder_float (const char32 *number) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
-	if (str32chr (number, 'e') == NULL) {
+	if (! str32chr (number, 'e')) {
 		str32cpy (buffers32 [ibuffer], number);
 	} else {
 		char32 *b = buffers32 [ibuffer];
 		const char32 *n = number;
-		while (*n != 'e') *(b++) = *(n++); *b = '\0';
+		while (*n != U'e') *(b++) = *(n++); *b = U'\0';
 		if (number [0] == '1' && number [1] == 'e') {
 			str32cpy (buffers32 [ibuffer], U"10^^"); b = buffers32 [ibuffer] + 4;
 		} else {
 			str32cpy (buffers32 [ibuffer] + str32len (buffers32 [ibuffer]), U"·10^^"); b += 5;
 		}
-		Melder_assert (*n == 'e');
-		if (*++n == '+') n ++;   // ignore leading plus sign in exponent
-		if (*n == '-') *(b++) = *(n++);   // copy sign of negative exponent
-		while (*n == '0') n ++;   // ignore leading zeroes in exponent
-		while (*n >= '0' && *n <= '9') *(b++) = *(n++);
-		*(b++) = '^';
-		while (*n != '\0') *(b++) = *(n++);
-		*b = '\0';
+		Melder_assert (*n == U'e');
+		if (*++n == U'+') n ++;   // ignore leading plus sign in exponent
+		if (*n == U'-') *(b++) = *(n++);   // copy sign of negative exponent
+		while (*n == U'0') n ++;   // ignore leading zeroes in exponent
+		while (*n >= U'0' && *n <= U'9') *(b++) = *(n++);
+		*(b++) = U'^';
+		while (*n != U'\0') *(b++) = *(n++);
+		*b = U'\0';
 	}
 	return buffers32 [ibuffer];
 }
@@ -280,19 +280,19 @@ const char * Melder8_naturalLogarithm (double lnNumber) {
 	if (lnNumber == NUMundefined) return "--undefined--";
 	if (lnNumber == -INFINITY) return "0";
 	double log10Number = lnNumber * NUMlog10e;
-	if (log10Number < -41) {
+	if (log10Number < -41.0) {
 		if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 		long ceiling = (long) ceil (log10Number);
 		double remainder = log10Number - ceiling;
-		double remainder10 = pow (10, remainder);
+		double remainder10 = pow (10.0, remainder);
 		while (remainder10 < 1.0) {
-			remainder10 *= 10;
+			remainder10 *= 10.0;
 			ceiling --;
 		}
 		sprintf (buffers8 [ibuffer], "%.15g", remainder10);
-		if (strtod (buffers8 [ibuffer], NULL) != remainder10) {
+		if (strtod (buffers8 [ibuffer], nullptr) != remainder10) {
 			sprintf (buffers8 [ibuffer], "%.16g", remainder10);
-			if (strtod (buffers8 [ibuffer], NULL) != remainder10) sprintf (buffers8 [ibuffer], "%.17g", remainder10);
+			if (strtod (buffers8 [ibuffer], nullptr) != remainder10) sprintf (buffers8 [ibuffer], "%.17g", remainder10);
 		}
 		sprintf (buffers8 [ibuffer] + strlen (buffers8 [ibuffer]), "e-%ld", ceiling);
 	} else {

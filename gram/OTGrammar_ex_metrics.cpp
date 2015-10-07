@@ -392,7 +392,7 @@ static void computeViolationMarks (OTGrammarCandidate me) {
 
 static void replaceOutput (OTGrammarCandidate me) {
 	bool abstract = false;
-	Melder_assert (my output != NULL);
+	Melder_assert (my output);
 	char32 newOutput [100], *q = & newOutput [0];
 	for (const char32 *p = & my output [0]; *p != U'\0'; p ++) {
 		if (p [0] == U' ') {

@@ -1,6 +1,6 @@
 /* Matrix_and_PointProcess.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 Matrix PointProcess_to_Matrix (PointProcess me);
 /*
 	Function:
-		create a Matrix from a PointProcess; return NULL if out of memory.
+		create a Matrix from a PointProcess.
 	Postconditions:
 		thy xmin == 1;
 		thy xmax == my numberOfEvents;
@@ -37,7 +37,7 @@ Matrix PointProcess_to_Matrix (PointProcess me);
 PointProcess Matrix_to_PointProcess (Matrix me);
 /*
 	Function:
-		create a PointProcess from a Matrix; return NULL if out of memory.
+		create a PointProcess from a Matrix.
 	Postconditions:
 		thy maximumNumberOfEvents == my nx;
 		thy numberOfEvents == my nx;

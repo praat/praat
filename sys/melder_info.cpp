@@ -464,7 +464,7 @@ void Melder_informationReal (double value, const char32 *units) {
 	MelderInfo_open ();
 	if (value == NUMundefined)
 		MelderInfo_write (U"--undefined--");
-	else if (units == NULL)
+	else if (! units)
 		MelderInfo_write (value);
 	else
 		MelderInfo_write (value, U" ", units);
@@ -472,7 +472,7 @@ void Melder_informationReal (double value, const char32 *units) {
 }
 
 void Melder_divertInfo (MelderString *buffer) {
-	theInfos = buffer == NULL ? & theForegroundBuffer : buffer;
+	theInfos = ( buffer ? buffer : & theForegroundBuffer );
 }
 
 void Melder_clearInfo (void) {

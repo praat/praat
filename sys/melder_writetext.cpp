@@ -79,7 +79,7 @@ void Melder_fwrite32to8 (const char32 *ptr, int64 n, FILE *f) {
 }
 
 void MelderFile_writeText (MelderFile file, const char32 *text, enum kMelder_textOutputEncoding outputEncoding) {
-	if (text == NULL) text = U"";
+	if (! text) text = U"";
 	autofile f = Melder_fopen (file, "wb");
 	if (outputEncoding == kMelder_textOutputEncoding_UTF8) {
 		Melder_fwrite32to8 (text, str32len (text), f);
@@ -124,7 +124,7 @@ void MelderFile_writeText (MelderFile file, const char32 *text, enum kMelder_tex
 }
 
 void MelderFile_appendText (MelderFile file, const char32 *text) {
-	if (text == NULL) text = U"";
+	if (! text) text = U"";
 	autofile f1;
 	try {
 		f1.reset (Melder_fopen (file, "rb"));
@@ -246,7 +246,7 @@ void MelderFile_appendText (MelderFile file, const char32 *text) {
 }
 
 static void _MelderFile_write (MelderFile file, const char32 *string) {
-	if (string == NULL) return;
+	if (! string) return;
 	int64 length = str32len (string);
 	FILE *f = file -> filePointer;
 	if (file -> outputEncoding == kMelder_textOutputEncoding_ASCII || file -> outputEncoding == kMelder_textOutputEncoding_ISO_LATIN1) {
@@ -329,29 +329,29 @@ void MelderFile_writeCharacter (MelderFile file, char32 kar) {
 }
 
 void MelderFile_write (MelderFile file, Melder_1_ARG) {
-	if (file -> filePointer == NULL) return;
+	if (! file -> filePointer) return;
 	_MelderFile_write (file, arg1. _arg);
 }
 void MelderFile_write (MelderFile file, Melder_2_ARGS) {
-	if (file -> filePointer == NULL) return;
+	if (! file -> filePointer) return;
 	_MelderFile_write (file, arg1. _arg);
 	_MelderFile_write (file, arg2. _arg);
 }
 void MelderFile_write (MelderFile file, Melder_3_ARGS) {
-	if (file -> filePointer == NULL) return;
+	if (! file -> filePointer) return;
 	_MelderFile_write (file, arg1. _arg);
 	_MelderFile_write (file, arg2. _arg);
 	_MelderFile_write (file, arg3. _arg);
 }
 void MelderFile_write (MelderFile file, Melder_4_ARGS) {
-	if (file -> filePointer == NULL) return;
+	if (! file -> filePointer) return;
 	_MelderFile_write (file, arg1. _arg);
 	_MelderFile_write (file, arg2. _arg);
 	_MelderFile_write (file, arg3. _arg);
 	_MelderFile_write (file, arg4. _arg);
 }
 void MelderFile_write (MelderFile file, Melder_5_ARGS) {
-	if (file -> filePointer == NULL) return;
+	if (! file -> filePointer) return;
 	_MelderFile_write (file, arg1. _arg);
 	_MelderFile_write (file, arg2. _arg);
 	_MelderFile_write (file, arg3. _arg);
@@ -359,7 +359,7 @@ void MelderFile_write (MelderFile file, Melder_5_ARGS) {
 	_MelderFile_write (file, arg5. _arg);
 }
 void MelderFile_write (MelderFile file, Melder_6_ARGS) {
-	if (file -> filePointer == NULL) return;
+	if (! file -> filePointer) return;
 	_MelderFile_write (file, arg1. _arg);
 	_MelderFile_write (file, arg2. _arg);
 	_MelderFile_write (file, arg3. _arg);
@@ -368,7 +368,7 @@ void MelderFile_write (MelderFile file, Melder_6_ARGS) {
 	_MelderFile_write (file, arg6. _arg);
 }
 void MelderFile_write (MelderFile file, Melder_7_ARGS) {
-	if (file -> filePointer == NULL) return;
+	if (! file -> filePointer) return;
 	_MelderFile_write (file, arg1. _arg);
 	_MelderFile_write (file, arg2. _arg);
 	_MelderFile_write (file, arg3. _arg);
@@ -378,7 +378,7 @@ void MelderFile_write (MelderFile file, Melder_7_ARGS) {
 	_MelderFile_write (file, arg7. _arg);
 }
 void MelderFile_write (MelderFile file, Melder_8_ARGS) {
-	if (file -> filePointer == NULL) return;
+	if (! file -> filePointer) return;
 	_MelderFile_write (file, arg1. _arg);
 	_MelderFile_write (file, arg2. _arg);
 	_MelderFile_write (file, arg3. _arg);
@@ -389,7 +389,7 @@ void MelderFile_write (MelderFile file, Melder_8_ARGS) {
 	_MelderFile_write (file, arg8. _arg);
 }
 void MelderFile_write (MelderFile file, Melder_9_ARGS) {
-	if (file -> filePointer == NULL) return;
+	if (! file -> filePointer) return;
 	_MelderFile_write (file, arg1. _arg);
 	_MelderFile_write (file, arg2. _arg);
 	_MelderFile_write (file, arg3. _arg);
@@ -401,7 +401,7 @@ void MelderFile_write (MelderFile file, Melder_9_ARGS) {
 	_MelderFile_write (file, arg9. _arg);
 }
 void MelderFile_write (MelderFile file, Melder_10_ARGS) {
-	if (file -> filePointer == NULL) return;
+	if (! file -> filePointer) return;
 	_MelderFile_write (file, arg1. _arg);
 	_MelderFile_write (file, arg2. _arg);
 	_MelderFile_write (file, arg3. _arg);
@@ -414,7 +414,7 @@ void MelderFile_write (MelderFile file, Melder_10_ARGS) {
 	_MelderFile_write (file, arg10._arg);
 }
 void MelderFile_write (MelderFile file, Melder_11_ARGS) {
-	if (file -> filePointer == NULL) return;
+	if (! file -> filePointer) return;
 	_MelderFile_write (file, arg1. _arg);
 	_MelderFile_write (file, arg2. _arg);
 	_MelderFile_write (file, arg3. _arg);
@@ -428,7 +428,7 @@ void MelderFile_write (MelderFile file, Melder_11_ARGS) {
 	_MelderFile_write (file, arg11._arg);
 }
 void MelderFile_write (MelderFile file, Melder_13_ARGS) {
-	if (file -> filePointer == NULL) return;
+	if (! file -> filePointer) return;
 	_MelderFile_write (file, arg1. _arg);
 	_MelderFile_write (file, arg2. _arg);
 	_MelderFile_write (file, arg3. _arg);
@@ -444,7 +444,7 @@ void MelderFile_write (MelderFile file, Melder_13_ARGS) {
 	_MelderFile_write (file, arg13._arg);
 }
 void MelderFile_write (MelderFile file, Melder_15_ARGS) {
-	if (file -> filePointer == NULL) return;
+	if (! file -> filePointer) return;
 	_MelderFile_write (file, arg1. _arg);
 	_MelderFile_write (file, arg2. _arg);
 	_MelderFile_write (file, arg3. _arg);
@@ -462,7 +462,7 @@ void MelderFile_write (MelderFile file, Melder_15_ARGS) {
 	_MelderFile_write (file, arg15._arg);
 }
 void MelderFile_write (MelderFile file, Melder_19_ARGS) {
-	if (file -> filePointer == NULL) return;
+	if (! file -> filePointer) return;
 	_MelderFile_write (file, arg1. _arg);
 	_MelderFile_write (file, arg2. _arg);
 	_MelderFile_write (file, arg3. _arg);

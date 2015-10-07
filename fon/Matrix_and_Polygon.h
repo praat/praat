@@ -1,6 +1,6 @@
 /* Matrix_and_Polygon.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 Polygon Matrix_to_Polygon (Matrix me);
 /*
 	Function:
-		create a Polygon from a Matrix; return NULL in case of failure.
+		create a Polygon from a Matrix.
 	Failures:
 		my ny != 2 && my nx != 2;   //  Matrix must have exactly 2 rows or columns.
 		Out of memory.
@@ -41,7 +41,7 @@ Polygon Matrix_to_Polygon (Matrix me);
 Matrix Polygon_to_Matrix (Polygon me);
 /*
 	Function:
-		create a Matrix from a Polygon; return NULL if out of memory.
+		create a Matrix from a Polygon.
 	Postconditions:
 		thy xmin xmax nx dx x1 == 1 my numberOfPoints my numberOfPoints 1 1;
 		thy ymin ymax ny dy y1 == 1 2 2 1 1;

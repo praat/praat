@@ -200,7 +200,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 }
 
 Picture Picture_create (GuiDrawingArea drawingArea, bool sensitive) {
-	Picture me = NULL;
+	Picture me = nullptr;
 	try {
 		me = Melder_calloc (struct structPicture, 1);
 		my drawingArea = drawingArea;
@@ -256,7 +256,7 @@ void Picture_remove (Picture *pme) {
 	forget (my graphics);
 	if (my sensitive) forget (my selectionGraphics);
 	Melder_free (me);
-	*pme = NULL;
+	*pme = nullptr;
 }
 
 Graphics Picture_getGraphics (Picture me) { return my graphics; }
@@ -318,18 +318,18 @@ void Picture_copyToClipboard (Picture me) {
 	/*
 	 * Find the clipboard and clear it.
 	 */
-	PasteboardRef clipboard = NULL;
+	PasteboardRef clipboard = nullptr;
 	PasteboardCreate (kPasteboardClipboard, & clipboard);
 	PasteboardClear (clipboard);
 	/*
 	 * Add a PDF flavour to the clipboard.
 	 */
-	static CGDataConsumerCallbacks callbacks = { appendBytes, NULL };
+	static CGDataConsumerCallbacks callbacks = { appendBytes, nullptr };
 	CFDataRef data = CFDataCreateMutable (kCFAllocatorDefault, 0);
 	CGDataConsumerRef consumer = CGDataConsumerCreate ((void *) data, & callbacks);
 	int resolution = 600;
 	CGRect rect = CGRectMake (0, 0, (my selx2 - my selx1) * resolution, (my sely1 - my sely2) * resolution);
-	CGContextRef context = CGPDFContextCreate (consumer, & rect, NULL);
+	CGContextRef context = CGPDFContextCreate (consumer, & rect, nullptr);
 	//my selx1 * RES, (12 - my sely2) * RES, my selx2 * RES, (12 - my sely1) * RES)
 	Graphics graphics = Graphics_create_pdf (context, resolution, my selx1, my selx2, my sely1, my sely2);
 	Graphics_play ((Graphics) my graphics, graphics);
@@ -358,7 +358,7 @@ static HENHMETAFILE copyToMetafile (Picture me) {
 	defaultPrinter. Flags = PD_RETURNDEFAULT | PD_RETURNDC;
 	PrintDlg (& defaultPrinter);
 	SetRect (& rect, my selx1 * 2540, (12 - my sely2) * 2540, my selx2 * 2540, (12 - my sely1) * 2540);
-	dc = CreateEnhMetaFile (defaultPrinter. hDC, NULL, & rect, L"Praat\0");
+	dc = CreateEnhMetaFile (defaultPrinter. hDC, nullptr, & rect, L"Praat\0");
 	if (! dc) Melder_throw (U"Cannot create Windows metafile.");
 	resolution = GetDeviceCaps (dc, LOGPIXELSX);   // Virtual PC: 360; Parallels Desktop: 600
 	//Melder_fatal (U"resolution ", resolution);
@@ -392,7 +392,7 @@ static HENHMETAFILE copyToMetafile (Picture me) {
 			MelderInfo_writeLine (U"orientation ", devMode -> dmOrientation);
 		MelderInfo_close ();
 	}
-	autoGraphics pictGraphics = Graphics_create_screen ((void *) dc, NULL, resolution);
+	autoGraphics pictGraphics = Graphics_create_screen ((void *) dc, nullptr, resolution);
 	Graphics_setWsViewport (pictGraphics.peek(), 0, WIN_WIDTH * resolution, 0, WIN_HEIGHT * resolution);
 	Graphics_setWsWindow (pictGraphics.peek(), 0.0, WIN_WIDTH, 12.0 - WIN_HEIGHT, 12.0);
 	Graphics_play ((Graphics) my graphics, pictGraphics.peek());

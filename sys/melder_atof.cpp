@@ -43,7 +43,7 @@ static const char32 *findEndOfNumericString_nothrow (const char32 *string) {
 	 * The next character must be a decimal digit.
 	 * So we don't allow things like ".5".
 	 */
-	if (*p < '0' || *p > '9') return NULL;   // string is not numeric
+	if (*p < '0' || *p > '9') return nullptr;   // string is not numeric
 	p ++;
 	/*
 	 * Then we accept any number of decimal digits.
@@ -72,7 +72,7 @@ static const char32 *findEndOfNumericString_nothrow (const char32 *string) {
 		 * The exponent must contain a decimal digit.
 		 * So we don't allow things like "+2.1E".
 		 */
-		if (*p < '0' || *p > '9') return NULL;   // string is not numeric
+		if (*p < '0' || *p > '9') return nullptr;   // string is not numeric
 		p ++;
 		/*
 		 * Then we accept any number of decimal digits.
@@ -104,7 +104,7 @@ static const char *findEndOfNumericString_nothrow (const char *string) {
 	 * The next character must be a decimal digit.
 	 * So we don't allow things like ".5".
 	 */
-	if (*p < '0' || *p > '9') return NULL;   // string is not numeric
+	if (*p < '0' || *p > '9') return nullptr;   // string is not numeric
 	p ++;
 	/*
 	 * Then we accept any number of decimal digits.
@@ -133,7 +133,7 @@ static const char *findEndOfNumericString_nothrow (const char *string) {
 		 * The exponent must contain a decimal digit.
 		 * So we don't allow things like "+2.1E".
 		 */
-		if (*p < '0' || *p > '9') return NULL;   // string is not numeric
+		if (*p < '0' || *p > '9') return nullptr;   // string is not numeric
 		p ++;
 		/*
 		 * Then we accept any number of decimal digits.
@@ -163,11 +163,11 @@ bool Melder_isStringNumeric_nothrow (const char32 *string) {
 }
 
 double Melder_a8tof (const char *string) {
-	if (string == NULL) return NUMundefined;
+	if (! string) return NUMundefined;
 	const char *p = findEndOfNumericString_nothrow (string);
-	if (p == NULL) return NUMundefined;
+	if (! p) return NUMundefined;
 	Melder_assert (p - string > 0);
-	return p [-1] == '%' ? 0.01 * strtod (string, NULL) : strtod (string, NULL);
+	return p [-1] == '%' ? 0.01 * strtod (string, nullptr) : strtod (string, nullptr);
 }
 
 double Melder_atof (const char32 *string) {
@@ -175,7 +175,7 @@ double Melder_atof (const char32 *string) {
 }
 
 int64 Melder_atoi (const char32 *string) {
-	return strtoll (Melder_peek32to8 (string), NULL, 10);
+	return strtoll (Melder_peek32to8 (string), nullptr, 10);
 }
 
 /* End of file melder_atof.cpp */

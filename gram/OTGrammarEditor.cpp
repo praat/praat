@@ -174,7 +174,7 @@ static void menu_cb_OTLearningTutorial (EDITOR_ARGS) { EDITOR_IAM (OTGrammarEdit
 
 void structOTGrammarEditor :: v_createMenus () {
 	OTGrammarEditor_Parent :: v_createMenus ();
-	Editor_addCommand (this, U"Edit", U"-- edit ot --", 0, NULL);
+	Editor_addCommand (this, U"Edit", U"-- edit ot --", 0, nullptr);
 	Editor_addCommand (this, U"Edit", U"Evaluate...", 0, menu_cb_evaluate);
 	Editor_addCommand (this, U"Edit", U"Evaluate (noise 2.0)", '2', menu_cb_evaluate_noise_2_0);
 	Editor_addCommand (this, U"Edit", U"Evaluate (zero noise)", '0', menu_cb_evaluate_zeroNoise);
@@ -183,7 +183,7 @@ void structOTGrammarEditor :: v_createMenus () {
 	Editor_addCommand (this, U"Edit", U"Reset all rankings...", 'R', menu_cb_resetAllRankings);
 	Editor_addCommand (this, U"Edit", U"Learn one...", 0, menu_cb_learnOne);
 	Editor_addCommand (this, U"Edit", U"Learn one from partial output...", '1', menu_cb_learnOneFromPartialOutput);
-	Editor_addCommand (this, U"Edit", U"-- remove ot --", 0, NULL);
+	Editor_addCommand (this, U"Edit", U"-- remove ot --", 0, nullptr);
 	Editor_addCommand (this, U"Edit", U"Remove constraint", 0, menu_cb_removeConstraint);
 }
 
@@ -250,7 +250,7 @@ void structOTGrammarEditor :: v_draw () {
 }
 
 int structOTGrammarEditor :: v_goToPage (const char32 *title) {
-	if (title == NULL) return 1;
+	if (! title) return 1;
 	selected = Melder_atoi (title);
 	return 1;
 }

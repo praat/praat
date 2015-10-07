@@ -94,8 +94,8 @@ static void draw_IPA_consonant_chart (Graphics graphics) {
 { 17, 14, U"\\h-" }, { 17, 13, U"\\9e" },
 { 18, 17, U"\\?-" }, { 18, 14, U"\\hc" }, { 18, 13, U"\\9-" },
 { 19, 17, U"\\?g" }, { 19, 14, U"h" }, { 19, 13, U"\\h^" },
-		{ 0, 0, NULL } };
-		for (int i = 0; symbols [i]. string != NULL; i ++)
+		{ 0, 0, nullptr } };
+		for (int i = 0; symbols [i]. string != nullptr; i ++)
 			drawOneIpaSymbol (graphics, symbols [i]. x, symbols [i]. y, symbols [i]. string);
 	}
 }
@@ -125,8 +125,8 @@ static void draw_IPA_vowel_chart (Graphics graphics) {
 { 4, 2, U"\\ef" }, { 5, 2, U"\\oe" }, { 6.5, 2, U"\\er" }, { 7.5, 2, U"\\kb" }, { 9, 2, U"\\vt" }, { 10, 2, U"\\ct" },
 { 4, 1, U"\\ae" },
 { 4, 0, U"a" }, { 5, 0, U"\\Oe" }, { 9, 0, U"\\as" }, { 10, 0, U"\\ab" },
-		{ 0, 0, NULL } };
-		for (int i = 0; symbols [i]. string != NULL; i ++)
+		{ 0, 0, nullptr } };
+		for (int i = 0; symbols [i]. string != nullptr; i ++)
 			drawOneIpaSymbol (graphics, symbols [i]. x, symbols [i]. y, symbols [i]. string);
 	}
 }

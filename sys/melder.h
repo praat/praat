@@ -137,12 +137,12 @@ inline static int str32ncmp (const char32 *string1, const char32 *string2, int64
 inline static char32 * str32chr (const char32 *string, char32 kar) {
 	for (; *string != kar; ++ string) {
 		if (*string == U'\0')
-			return NULL;
+			return nullptr;
 	}
 	return (char32 *) string;
 }
 inline static char32 * str32rchr (const char32 *string, char32 kar) {
-	char32 *result = NULL;
+	char32 *result = nullptr;
 	for (; *string != U'\0'; ++ string) {
 		if (*string == kar) result = (char32 *) string;
 	}
@@ -156,7 +156,7 @@ inline static char32 * str32str (const char32 *string, const char32 *find) {
 		char32 kar;
 		do {
 			kar = * string ++;
-			if (kar == U'\0') return NULL;
+			if (kar == U'\0') return nullptr;
 		} while (kar != firstCharacter);
 	} while (str32ncmp (string, find, length - 1));
 	return (char32 *) (string - 1);
@@ -174,7 +174,7 @@ cont:
 extern "C" char * Melder_peek32to8 (const char32 *string);
 inline static long a32tol (const char32 *string) {
 	if (sizeof (wchar_t) == 4) {
-		return wcstol ((const wchar_t *) string, NULL, 10);
+		return wcstol ((const wchar_t *) string, nullptr, 10);
 	} else {
 		return atol (Melder_peek32to8 (string));
 	}
@@ -659,15 +659,15 @@ void MelderFile_setDefaultDir (MelderFile file);
 void _Melder_free (void **pointer);
 /*
 	Preconditions:
-		none (*pointer may be NULL).
+		none (*pointer may be null).
 	Postconditions:
-		*pointer == NULL;
+		*pointer == nullptr;
 */
 
 int64 Melder_allocationCount (void);
 /*
 	Returns the total number of successful calls to
-	Melder_malloc, Melder_realloc (if 'ptr' is NULL), Melder_calloc, and Melder_strdup,
+	Melder_malloc, Melder_realloc (if 'ptr' is null), Melder_calloc, and Melder_strdup,
 	since the start of the process. Mainly for debugging purposes.
 */
 
@@ -811,7 +811,7 @@ bool Melder_stringMatchesCriterion (const char32 *value, int which_kMelder_strin
 	separated (and perhaps preceded and followed) by white space.
 	The tokens cannot contain spaces themselves (there are no escapes).
 	Typical use:
-		for (token = Melder_firstToken (string); token != NULL; token = Melder_nextToken ()) {
+		for (token = Melder_firstToken (string); token != nullptr; token = Melder_nextToken ()) {
 			... do something with the token ...
 		}
 */
@@ -899,14 +899,14 @@ void Melder_information (Melder_12_OR_13_ARGS);
 void Melder_information (Melder_14_OR_15_ARGS);
 void Melder_information (Melder_16_TO_19_ARGS);
 
-void Melder_informationReal (double value, const char32 *units);   // %.17g or --undefined--; units may be NULL
+void Melder_informationReal (double value, const char32 *units);   // %.17g or --undefined--; units may be null
 
-void Melder_divertInfo (MelderString *buffer);   // NULL = back to normal
+void Melder_divertInfo (MelderString *buffer);   // nullptr = back to normal
 
 class autoMelderDivertInfo {
 	public:
 		autoMelderDivertInfo (MelderString *buffer) { Melder_divertInfo (buffer); }
-		~autoMelderDivertInfo () { Melder_divertInfo (NULL); }
+		~autoMelderDivertInfo () { Melder_divertInfo (nullptr); }
 };
 
 void Melder_clearInfo (void);   // clear the Info window
@@ -1043,7 +1043,7 @@ void Melder_progressOn (void);
 	Function:
 		Show the progress of a time-consuming process.
 	Arguments:
-		Any of 'arg1' through 'arg19' may be NULL.
+		Any of 'arg1' through 'arg19' may be null.
 	Batch behaviour:
 		Does nothing, always returns 1.
 	Interactive behaviour:
@@ -1098,15 +1098,15 @@ void * Melder_monitor (double progress, Melder_16_TO_19_ARGS);
 	Function:
 		Show the progress of a time-consuming process.
 	Arguments:
-		Any of 'arg1' through 'arg19' may be NULL.
+		Any of 'arg1' through 'arg19' may be null.
 	Batch behaviour:
-		Does nothing, returns NULL if 'progress' <= 0.0 and a non-NULL pointer otherwise.
+		Does nothing, returns nullptr if 'progress' <= 0.0 and a non-nullptr pointer otherwise.
 	Interactive behaviour:
 		Shows the progress of a time-consuming process:
 		- if 'progress' <= 0.0, show a window with text and a Cancel button and
 		  room for a square drawing, and return a Graphics;
 		- if 0.0 < 'progress' < 1.0, show text and a partially filled progress bar,
-		  and return NULL if user interrupts, else return a non-NULL pointer;
+		  and return nullptr if user interrupts, else return a non-null pointer;
 		- if 'progress' >= 1, hide the window.
 	Usage:
 		- call with 'progress' = 0.0 before the process starts.
@@ -1128,7 +1128,7 @@ void * Melder_monitor (double progress, Melder_16_TO_19_ARGS);
 		          break;
 		      }
 		- after the process has finished, call with 'progress' = 1.0:
-		      (void) Melder_monitor (1.0, NULL);
+		      (void) Melder_monitor (1.0, nullptr);
 		- the first and third steps can be automated by autoMelderMonitor:
 		      autoMelderMonitor monitor ("Starting work...");
 		      if (monitor.graphics()) {   // always check; might be batch
@@ -1345,7 +1345,7 @@ struct autoMelderProgressOff {
 };
 
 struct autoMelderString : MelderString {
-	autoMelderString () { length = 0; bufferSize = 0; string = NULL; }
+	autoMelderString () { length = 0; bufferSize = 0; string = nullptr; }
 	~autoMelderString () { MelderString_free (this); }
 };
 
@@ -1364,7 +1364,7 @@ struct autoMelderReadText {
 	}
 	MelderReadText transfer () {
 		MelderReadText tmp = text;
-		text = NULL;
+		text = nullptr;
 		return tmp;
 	}
 };
@@ -1374,7 +1374,7 @@ class autofile {
 public:
 	autofile (FILE *f) : ptr (f) {
 	}
-	autofile () : ptr (NULL) {
+	autofile () : ptr (nullptr) {
 	}
 	~autofile () {
 		if (ptr) fclose (ptr);   // no error checking, because this is a destructor, only called after a throw, because otherwise you'd use f.close(file)
@@ -1389,7 +1389,7 @@ public:
 	void close (MelderFile file) {
 		if (ptr) {
 			FILE *tmp = ptr;
-			ptr = NULL;
+			ptr = nullptr;
 			Melder_fclose (file, tmp);
 		}
 	}
@@ -1406,13 +1406,13 @@ public:
 	void close () {
 		if (file && file -> filePointer) {
 			MelderFile tmp = file;
-			file = NULL;
+			file = nullptr;
 			MelderFile_close (tmp);
 		}
 	}
 	MelderFile transfer () {
 		MelderFile tmp = file;
-		file = NULL;
+		file = nullptr;
 		return tmp;
 	}
 };
@@ -1456,7 +1456,7 @@ class autoMelderTokens {
 	char32 **tokens;
 public:
 	autoMelderTokens () {
-		tokens = NULL;
+		tokens = nullptr;
 	}
 	autoMelderTokens (const char32 *string, long *n) {
 		tokens = Melder_getTokens (string, n);
@@ -1510,7 +1510,7 @@ public:
 	}
 	T * transfer () {
 		T *tmp = ptr;
-		ptr = NULL;
+		ptr = nullptr;
 		return tmp;
 	}
 	void reset (T *string) {

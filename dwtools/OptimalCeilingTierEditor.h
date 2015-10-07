@@ -56,7 +56,7 @@ Thing_define (OptimalCeilingTierEditor, RealTierEditor) {
 
 OptimalCeilingTierEditor OptimalCeilingTierEditor_create (const char32 *title,
 	OptimalCeilingTier amplitude,
-	Sound sound,   // may be NULL
+	Sound sound,   // may be null
 	bool ownSound);
 
 /* End of file OptimalCeilingTierEditor.h */

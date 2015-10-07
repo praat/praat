@@ -112,8 +112,8 @@ void Melder_str32To8bitFileRepresentation_inline (const char32 *string, char *ut
 			}
 		}
 		unipath [n_utf16] = u'\0';
-		CFStringRef cfpath = CFStringCreateWithCharacters (NULL, unipath, n_utf16);
-		CFMutableStringRef cfpath2 = CFStringCreateMutableCopy (NULL, 0, cfpath);
+		CFStringRef cfpath = CFStringCreateWithCharacters (nullptr, unipath, n_utf16);
+		CFMutableStringRef cfpath2 = CFStringCreateMutableCopy (nullptr, 0, cfpath);
 		CFRelease (cfpath);
 		CFStringNormalize (cfpath2, kCFStringNormalizationFormD);   // Mac requires decomposed characters
 		CFStringGetCString (cfpath2, (char *) utf8, kMelder_MAXPATH+1, kCFStringEncodingUTF8);   // Mac POSIX requires UTF-8
@@ -134,9 +134,9 @@ void Melder_str32To8bitFileRepresentation_inline (const char32 *string, char *ut
 #if defined (UNIX)
 void Melder_8bitFileRepresentationToStr32_inline (const char *path8, char32 *path32) {
 	#if defined (macintosh)
-		CFStringRef cfpath = CFStringCreateWithCString (NULL, path8, kCFStringEncodingUTF8);
+		CFStringRef cfpath = CFStringCreateWithCString (nullptr, path8, kCFStringEncodingUTF8);
 		Melder_assert (cfpath != 0);
-		CFMutableStringRef cfpath2 = CFStringCreateMutableCopy (NULL, 0, cfpath);
+		CFMutableStringRef cfpath2 = CFStringCreateMutableCopy (nullptr, 0, cfpath);
 		CFRelease (cfpath);
 		CFStringNormalize (cfpath2, kCFStringNormalizationFormC);   // Praat requires composed characters
 		long n_utf16 = CFStringGetLength (cfpath2);
@@ -243,7 +243,7 @@ void Melder_relativePathToFile (const char32 *path, MelderFile file) {
 			Melder_sprint (file -> path,kMelder_MAXPATH+1, dir. path, & path [1]);
 			for (;;) {
 				char32 *slash = str32chr (file -> path, U'/');
-				if (slash == NULL) break;
+				if (! slash) break;
 				*slash = U'\\';
 			}
 			return;
@@ -253,7 +253,7 @@ void Melder_relativePathToFile (const char32 *path, MelderFile file) {
 			Melder_sprint (winPath,kMelder_MAXPATH+1, path);
 			for (;;) {
 				char32 *slash = str32chr (winPath, U'/');
-				if (slash == NULL) break;
+				if (! slash) break;
 				*slash = U'\\';
 			}
 			Melder_relativePathToFile (winPath, file);
@@ -300,7 +300,7 @@ void MelderFile_setToNull (MelderFile file) {
 }
 
 bool MelderFile_isNull (MelderFile file) {
-	return file == NULL || file -> path [0] == U'\0';
+	return ! file || file -> path [0] == U'\0';
 }
 
 void MelderDir_setToNull (MelderDir dir) {
@@ -592,7 +592,7 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 		/* Handle errors. */
 		if (CURLreturn) {
 			Melder_appendError (Melder_peek8to32 (errorbuffer));
-			f = NULL;
+			f = nullptr;
 		};
 		/* Clean up session. */
 		curl_easy_cleanup (CURLhandle);
@@ -619,7 +619,7 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 		else if (str32chr (path, U'\n'))
 			Melder_appendError (U"Hint: file name contains a newline symbol.");
 		throw MelderError ();
-		return NULL;
+		return nullptr;
 	}
 	return f;
 }
@@ -668,7 +668,7 @@ void Melder_fclose (MelderFile file, FILE *f) {
 		/* Handle errors. */
 		if (CURLreturn) {
 			curl_easy_cleanup (CURLhandle);
-			f = NULL;
+			f = nullptr;
 			Melder_throw (Melder_peek8to32 (errorbuffer), U"\n");
 	    };
 		/* Clean up session */
@@ -812,7 +812,7 @@ void Melder_createDirectory (MelderDir parent, const char32 *dirName, int mode) 
 	SECURITY_ATTRIBUTES sa;
 	(void) mode;
 	sa. nLength = sizeof (SECURITY_ATTRIBUTES);
-	sa. lpSecurityDescriptor = NULL;
+	sa. lpSecurityDescriptor = nullptr;
 	sa. bInheritHandle = false;
 	if (str32chr (dirName, U':') || dirName [0] == U'/' && dirName [1] == U'/') {
 		Melder_sprint (file. path,kMelder_MAXPATH+1, dirName);   // absolute path
@@ -842,8 +842,8 @@ char * MelderFile_readLine (MelderFile me) {
 	long i;
 	static char *buffer;
 	static long capacity;
-	if (! my filePointer) return NULL;
-	if (feof (my filePointer)) return NULL;
+	if (! my filePointer) return nullptr;
+	if (feof (my filePointer)) return nullptr;
 	if (! buffer) {
 		buffer = Melder_malloc (char, capacity = 100);
 	}
@@ -888,7 +888,7 @@ void MelderFile_seek (MelderFile me, long position, int direction) {
 	if (! my filePointer) return;
 	if (fseek (my filePointer, position, direction)) {
 		fclose (my filePointer);
-		my filePointer = NULL;
+		my filePointer = nullptr;
 		Melder_throw (U"Cannot seek in file ", me, U".");
 	}
 }
@@ -898,7 +898,7 @@ long MelderFile_tell (MelderFile me) {
 	if (! my filePointer) return 0;
 	if ((result = ftell (my filePointer)) == -1) {
 		fclose (my filePointer);
-		my filePointer = NULL;
+		my filePointer = nullptr;
 		Melder_throw (U"Cannot tell in file ", me, U".");
 	}
 	return result;
@@ -915,7 +915,7 @@ static void _MelderFile_close (MelderFile me, bool mayThrow) {
 			FLAC__stream_encoder_finish (my flacEncoder);   // This already calls fclose! BUG: we cannot get any error messages out.
 			FLAC__stream_encoder_delete (my flacEncoder);
 		}
-	} else if (my filePointer != NULL) {
+	} else if (my filePointer) {
 		if (mayThrow) {
 			Melder_fclose (me, my filePointer);
 		} else {
@@ -923,10 +923,10 @@ static void _MelderFile_close (MelderFile me, bool mayThrow) {
 		}
 	}
 	/* Set everything to zero, except paths (they stay around for error messages and the like). */
-	my filePointer = NULL;
+	my filePointer = nullptr;
 	my openForWriting = my openForReading = false;
 	my indent = 0;
-	my flacEncoder = NULL;
+	my flacEncoder = nullptr;
 }
 void MelderFile_close (MelderFile me) {
 	_MelderFile_close (me, true);

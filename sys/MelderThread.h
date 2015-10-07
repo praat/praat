@@ -52,7 +52,7 @@
 	#define MelderThread_LOCK(_mutex)  pthread_mutex_lock (& _mutex)
 	#define MelderThread_UNLOCK(_mutex)  pthread_mutex_unlock (& _mutex)
 	#define MelderThread_RETURN_TYPE  void *
-	#define MelderThread_RETURN  return NULL;
+	#define MelderThread_RETURN  return nullptr;
 #elif USE_CPPTHREADS
 	#include <mutex>
 	#include <thread>
@@ -100,8 +100,8 @@ static int MelderThread_getNumberOfProcessors () {
 			std::vector <HANDLE> threads (numberOfThreads);
 			try {
 				for (int ithread = 1; ithread < numberOfThreads; ithread ++) {
-					threads [ithread - 1] = CreateThread (NULL, 0,
-						(DWORD (WINAPI *)(void *)) func, (void *) args [ithread - 1].peek(), 0, NULL);
+					threads [ithread - 1] = CreateThread (nullptr, 0,
+						(DWORD (WINAPI *)(void *)) func, (void *) args [ithread - 1].peek(), 0, nullptr);
 				}
 				func (args [numberOfThreads - 1].peek());
 			} catch (MelderError) {
@@ -126,17 +126,17 @@ static int MelderThread_getNumberOfProcessors () {
 			try {
 				for (int ithread = 1; ithread < numberOfThreads; ithread ++) {
 					(void) pthread_create (& threads [ithread - 1],
-						NULL, (void*(*)(void *)) func, (void *) args [ithread - 1].peek());
+						nullptr, (void*(*)(void *)) func, (void *) args [ithread - 1].peek());
 				}
 				func (args [numberOfThreads - 1].peek());
 			} catch (MelderError) {
 				for (int ithread = 1; ithread < numberOfThreads; ithread ++) {
-					pthread_join (threads [ithread - 1], NULL);
+					pthread_join (threads [ithread - 1], nullptr);
 				}
 				throw;
 			}
 			for (int ithread = 1; ithread < numberOfThreads; ithread ++) {
-				pthread_join (threads [ithread - 1], NULL);
+				pthread_join (threads [ithread - 1], nullptr);
 			}
 		}
 	}

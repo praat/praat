@@ -33,11 +33,11 @@
 #define my  me ->
 
 char32 MelderReadText_getChar (MelderReadText me) {
-	if (my string32 != NULL) {
-		if (* my readPointer32 == '\0') return 0;
+	if (my string32) {
+		if (* my readPointer32 == U'\0') return U'\0';
 		return * my readPointer32 ++;
 	} else {
-		if (* my readPointer8 == '\0') return 0;
+		if (* my readPointer8 == '\0') return U'\0';
 		if (my input8Encoding == kMelder_textInputEncoding_UTF8) {
 			char32 kar1 = (char32) (char8) * my readPointer8 ++;
 			if (kar1 <= 0x00007F) {
@@ -69,37 +69,37 @@ char32 MelderReadText_getChar (MelderReadText me) {
 }
 
 char32 * MelderReadText_readLine (MelderReadText me) {
-	if (my string32 != NULL) {
-		Melder_assert (my readPointer32 != NULL);
-		Melder_assert (my readPointer8 == NULL);
-		if (*my readPointer32 == '\0') {   // tried to read past end of file
-			return NULL;
+	if (my string32) {
+		Melder_assert (my readPointer32);
+		Melder_assert (! my readPointer8);
+		if (*my readPointer32 == U'\0') {   // tried to read past end of file
+			return nullptr;
 		}
 		char32 *result = my readPointer32;
 		char32 *newline = str32chr (result, U'\n');
-		if (newline != NULL) {
-			*newline = '\0';
+		if (newline) {
+			*newline = U'\0';
 			my readPointer32 = newline + 1;
 		} else {
 			my readPointer32 += str32len (result);
 		}
 		return result;
 	} else {
-		Melder_assert (my string8 != NULL);
-		Melder_assert (my readPointer32 == NULL);
-		Melder_assert (my readPointer8 != NULL);
+		Melder_assert (my string8);
+		Melder_assert (! my readPointer32);
+		Melder_assert (my readPointer8);
 		if (*my readPointer8 == '\0') {   // tried to read past end of file
-			return NULL;
+			return nullptr;
 		}
 		char *result8 = my readPointer8;
 		char *newline = strchr (result8, '\n');
-		if (newline != NULL) {
+		if (newline) {
 			*newline = '\0';
 			my readPointer8 = newline + 1;
 		} else {
 			my readPointer8 += strlen (result8);
 		}
-		static char32 *text32 = NULL;
+		static char32 *text32 = nullptr;
 		static int64 size = 0;
 		int64 sizeNeeded = (int64) strlen (result8) + 1;
 		if (sizeNeeded > size) {
@@ -114,7 +114,7 @@ char32 * MelderReadText_readLine (MelderReadText me) {
 
 int64 MelderReadText_getNumberOfLines (MelderReadText me) {
 	int64 n = 0;
-	if (my string32 != NULL) {
+	if (my string32) {
 		char32 *p = & my string32 [0];
 		for (; *p != U'\0'; p ++) if (*p == U'\n') n ++;
 		if (p - my string32 > 1 && p [-1] != U'\n') n ++;
@@ -128,7 +128,7 @@ int64 MelderReadText_getNumberOfLines (MelderReadText me) {
 
 const char32 * MelderReadText_getLineNumber (MelderReadText me) {
 	int64 result = 1;
-	if (my string32 != NULL) {
+	if (my string32) {
 		char32 *p = my string32;
 		while (my readPointer32 - p > 0) {
 			if (*p == U'\0' || *p == U'\n') result ++;
@@ -185,7 +185,7 @@ static char32 * _MelderFile_readText (MelderFile file, char **string8) {
 		if (type == 0) {
 			rewind (f);   // length and type already set correctly.
 			autostring8 text8bit = Melder_malloc (char, length + 1);
-			Melder_assert (text8bit.peek() != NULL);
+			Melder_assert (text8bit.peek());
 			size_t numberOfBytesRead = fread_multi (text8bit.peek(), (size_t) length, f);
 			if ((int64) numberOfBytesRead < length)
 				Melder_throw (U"The file contains ", length, U" bytes, but we could read only ",
@@ -211,10 +211,10 @@ static char32 * _MelderFile_readText (MelderFile file, char **string8) {
 					Melder_warning (U"Ignored ", numberOfNullBytes, U" null bytes in text file ", file, U".");
 				}
 			}
-			if (string8 != NULL) {
+			if (string8) {
 				*string8 = text8bit.transfer();
 				(void) Melder_killReturns_inline (*string8);
-				return NULL;   // OK
+				return nullptr;   // OK
 			} else {
 				text.reset (Melder_8to32 (text8bit.peek(), 0));
 			}
@@ -277,16 +277,16 @@ static char32 * _MelderFile_readText (MelderFile file, char **string8) {
 }
 
 char32 * MelderFile_readText (MelderFile file) {
-	return _MelderFile_readText (file, NULL);
+	return _MelderFile_readText (file, nullptr);
 }
 
 MelderReadText MelderReadText_createFromFile (MelderFile file) {
 	autoMelderReadText me = Melder_calloc (struct structMelderReadText, 1);
 	my string32 = _MelderFile_readText (file, & my string8);
-	if (my string32 != NULL) {
+	if (my string32) {
 		my readPointer32 = & my string32 [0];
 	} else {
-		Melder_assert (my string8 != NULL);
+		Melder_assert (my string8);
 		my readPointer8 = & my string8 [0];
 		my input8Encoding = Melder_getInputEncoding ();
 		if (my input8Encoding == kMelder_textInputEncoding_UTF8 ||
@@ -313,7 +313,7 @@ MelderReadText MelderReadText_createFromFile (MelderFile file) {
 MelderReadText MelderReadText_createFromString (const char32 *string);
 
 void MelderReadText_delete (MelderReadText me) {
-	if (me == NULL) return;
+	if (! me) return;
 	Melder_free (my string32);
 	Melder_free (my string8);
 	Melder_free (me);

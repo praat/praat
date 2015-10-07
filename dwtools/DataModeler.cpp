@@ -1823,7 +1823,8 @@ double FormantModeler_getAverageDistanceBetweenTracks (FormantModeler me, long t
 		DataModeler fi = (DataModeler) my trackmodelers -> item[track1];
 		DataModeler fj = (DataModeler) my trackmodelers -> item[track2];
 		// fi and fj have equal number of data points
-		long numberOfDataPoints = 0; diff = 0;
+		long numberOfDataPoints = 0;
+		diff = 0.0;
 		for (long i = 1; i <= fi -> numberOfDataPoints; i++) {
 			if (type != 0) {
 				double fie = fi -> f_evaluate (fi, fi -> x[i], fi -> parameter);

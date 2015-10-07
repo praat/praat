@@ -377,7 +377,7 @@ static void computeViolationMarks (OTCandidate me) {
 
 static void replaceOutput (OTCandidate me) {
 	bool abstract = false;
-	Melder_assert (my string != NULL);
+	Melder_assert (my string);
 	char32 newString [150], *q = & newString [0];
 	for (const char32 *p = & my string [0]; *p != U'\0'; p ++) {
 		if (p [0] == U' ') {

@@ -129,7 +129,6 @@ void * NUMvector (long elementSize, long lo, long hi);
 /*
 	Function:
 		create a vector [lo...hi] with all values initialized to 0.
-		Queue an error message and return NULL if anything went wrong.
 	Preconditions:
 		hi >= lo;
 */
@@ -146,9 +145,8 @@ void * NUMvector_copy (long elementSize, void *v, long lo, long hi);
 /*
 	Function:
 		copy (part of) a vector v, which need not have been created with NUMvector, to a new one.
-		Queue an error message and return NULL if anything went wrong.
 	Preconditions:
-		if v != NULL, the values v [lo..hi] must exist.
+		if v != nullptr, the values v [lo..hi] must exist.
 */
 
 void NUMvector_copyElements (long elementSize, void *v, void *to, long lo, long hi);
@@ -159,8 +157,8 @@ void NUMvector_copyElements (long elementSize, void *v, void *to, long lo, long 
 
 bool NUMvector_equal (long elementSize, void *v1, void *v2, long lo, long hi);
 /*
-	return 1 if the vector elements v1 [lo..hi] are equal
-	to the corresponding elements of the vector v2; otherwise, return 0.
+	return true if the vector elements v1 [lo..hi] are equal
+	to the corresponding elements of the vector v2; otherwise, return false.
 	The vectors need not have been created by NUMvector.
 */
 
@@ -179,7 +177,6 @@ void * NUMmatrix (long elementSize, long row1, long row2, long col1, long col2);
 /*
 	Function:
 		create a matrix [row1...row2] [col1...col2] with all values initialized to 0.
-		Queue an error message and return NULL if anything went wrong.
 	Preconditions:
 		row2 >= row1;
 		col2 >= col1;
@@ -190,7 +187,7 @@ void NUMmatrix_free (long elementSize, void *m, long row1, long col1);
 	Function:
 		destroy a matrix m created with NUM...matrix.
 	Preconditions:
-		if m != NULL: row1 and row2
+		if m != nullptr: row1 and col1
 		must have the same value as with the creation of the matrix.
 */
 
@@ -198,9 +195,8 @@ void * NUMmatrix_copy (long elementSize, void *m, long row1, long row2, long col
 /*
 	Function:
 		copy (part of) a matrix m, wich does not have to be created with NUMmatrix, to a new one.
-		Queue an error message and return NULL if anything went wrong.
 	Preconditions:
-		if m != NULL: the values m [rowmin..rowmax] [colmin..colmax] must exist.
+		if m != nullptr: the values m [rowmin..rowmax] [colmin..colmax] must exist.
 */
 
 void NUMmatrix_copyElements (long elementSize, void *m, void *to, long row1, long row2, long col1, long col2);
@@ -222,14 +218,14 @@ long NUM_getTotalNumberOfArrays (void);   /* For debugging. */
 
 double NUMlnGamma (double x);
 double NUMbeta (double z, double w);
-double NUMbesselI (long n, double x);   /* Precondition: n >= 0 */
+double NUMbesselI (long n, double x);   // precondition: n >= 0
 double NUMbessel_i0_f (double x);
 double NUMbessel_i1_f (double x);
-double NUMbesselK (long n, double x);   /* Preconditions: n >= 0 && x > 0.0 */
+double NUMbesselK (long n, double x);   // preconditions: n >= 0 && x > 0.0
 double NUMbessel_k0_f (double x);
 double NUMbessel_k1_f (double x);
 double NUMbesselK_f (long n, double x);
-double NUMsigmoid (double x);   /* Correct also for large positive or negative x. */
+double NUMsigmoid (double x);   // correct also for large positive or negative x
 double NUMinvSigmoid (double x);
 double NUMerfcc (double x);
 double NUMgaussP (double z);
@@ -262,7 +258,7 @@ double NUMerbToHertz (double erb);
 
 /********** Sorting (NUMsort.cpp) **********/
 
-void NUMsort_d (long n, double ra []);   /* Heap sort. */
+void NUMsort_d (long n, double ra []);   // heap sort
 void NUMsort_i (long n, int ra []);
 void NUMsort_l (long n, long ra []);
 void NUMsort_str (long n, char32 *a []);
@@ -467,7 +463,7 @@ public:
 	}
 	autoNUMvector (T *ptr, long from) : d_ptr (ptr), d_from (from) {
 	}
-	autoNUMvector () : d_ptr (NULL), d_from (1) {
+	autoNUMvector () : d_ptr (nullptr), d_from (1) {
 	}
 	~autoNUMvector<T> () {
 		if (d_ptr) NUMvector_free (sizeof (T), d_ptr, d_from);
@@ -480,13 +476,13 @@ public:
 	}
 	T* transfer () {
 		T* temp = d_ptr;
-		d_ptr = NULL;   // make the pointer non-automatic again
+		d_ptr = nullptr;   // make the pointer non-automatic again
 		return temp;
 	}
 	void reset (long from, long to) {
 		if (d_ptr) {
 			NUMvector_free (sizeof (T), d_ptr, d_from);
-			d_ptr = NULL;
+			d_ptr = nullptr;
 		}
 		d_from = from;
 		d_ptr = static_cast <T*> (NUMvector (sizeof (T), from, to));
@@ -530,7 +526,7 @@ public:
 	}
 	autoNUMmatrix (T **ptr, long row1, long col1) : d_ptr (ptr), d_row1 (row1), d_col1 (col1) {
 	}
-	autoNUMmatrix () : d_ptr (NULL), d_row1 (0), d_col1 (0) {
+	autoNUMmatrix () : d_ptr (nullptr), d_row1 (0), d_col1 (0) {
 	}
 	~autoNUMmatrix () {
 		if (d_ptr) NUMmatrix_free (sizeof (T), d_ptr, d_row1, d_col1);
@@ -543,13 +539,13 @@ public:
 	}
 	T** transfer () {
 		T** temp = d_ptr;
-		d_ptr = NULL;
+		d_ptr = nullptr;
 		return temp;
 	}
 	void reset (long row1, long row2, long col1, long col2) {
 		if (d_ptr) {
 			NUMmatrix_free (sizeof (T), d_ptr, d_row1, d_col1);
-			d_ptr = NULL;
+			d_ptr = nullptr;
 		}
 		d_row1 = row1;
 		d_col1 = col1;
@@ -567,7 +563,7 @@ public:
 	}
 	autodatavector (T *ptr, long from, long to) : d_ptr (ptr), d_from (from), d_to (to) {
 	}
-	autodatavector () : d_ptr (NULL), d_from (1), d_to (0) {
+	autodatavector () : d_ptr (nullptr), d_from (1), d_to (0) {
 	}
 	~autodatavector<T> () {
 		if (d_ptr) {
@@ -584,7 +580,7 @@ public:
 	}
 	T* transfer () {
 		T* temp = d_ptr;
-		d_ptr = NULL;   // make the pointer non-automatic again
+		d_ptr = nullptr;   // make the pointer non-automatic again
 		return temp;
 	}
 	void reset (long from, long to) {
@@ -592,9 +588,9 @@ public:
 			for (long i = d_from; i <= d_to; i ++)
 				Melder_free (d_ptr [i]);
 			NUMvector_free (sizeof (T), d_ptr, d_from);
-			d_ptr = NULL;
+			d_ptr = nullptr;
 		}
-		d_from = from;   // this assignment is safe, because d_ptr is NULL
+		d_from = from;   // this assignment is safe, because d_ptr is null
 		d_to = to;
 		d_ptr = static_cast <T*> (NUMvector (sizeof (T), from, to));
 	}

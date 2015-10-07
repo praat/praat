@@ -73,11 +73,11 @@ void Matrix_scatterPlot (Matrix me, Graphics g, long icx, long icy, double xmin,
 		Graphics_drawInnerBox (g);
 		Graphics_marksLeft (g, 2, true, true, false);
 		if (ymin * ymax < 0.0) {
-			Graphics_markLeft (g, 0.0, true, true, true, NULL);
+			Graphics_markLeft (g, 0.0, true, true, true, nullptr);
 		}
 		Graphics_marksBottom (g, 2, true, true, false);
 		if (xmin * xmax < 0.0) {
-			Graphics_markBottom (g, 0.0, true, true, true, NULL);
+			Graphics_markBottom (g, 0.0, true, true, true, nullptr);
 		}
 	}
 }
@@ -125,11 +125,11 @@ void Matrix_drawAsSquares (Matrix me, Graphics g, double xmin, double xmax, doub
 		Graphics_drawInnerBox (g);
 		Graphics_marksLeft (g, 2, true, true, false);
 		if (ymin * ymax < 0.0) {
-			Graphics_markLeft (g, 0.0, true, true, true, NULL);
+			Graphics_markLeft (g, 0.0, true, true, true, nullptr);
 		}
 		Graphics_marksBottom (g, 2, true, true, false);
 		if (xmin * xmax < 0.0) {
-			Graphics_markBottom (g, 0.0, true, true, true, NULL);
+			Graphics_markBottom (g, 0.0, true, true, true, nullptr);
 		}
 	}
 }

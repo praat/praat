@@ -161,19 +161,19 @@ Photo Photo_readFromImageFile (MelderFile file) {
 			}
 			return me.transfer();
 		#elif defined (macintosh)
-			autoPhoto me = NULL;
+			autoPhoto me;
 			char utf8 [500];
 			Melder_str32To8bitFileRepresentation_inline (file -> path, utf8);
-			CFStringRef path = CFStringCreateWithCString (NULL, utf8, kCFStringEncodingUTF8);
-			CFURLRef url = CFURLCreateWithFileSystemPath (NULL, path, kCFURLPOSIXPathStyle, false);
+			CFStringRef path = CFStringCreateWithCString (nullptr, utf8, kCFStringEncodingUTF8);
+			CFURLRef url = CFURLCreateWithFileSystemPath (nullptr, path, kCFURLPOSIXPathStyle, false);
 			CFRelease (path);
-			CGImageSourceRef imageSource = CGImageSourceCreateWithURL (url, NULL);
+			CGImageSourceRef imageSource = CGImageSourceCreateWithURL (url, nullptr);
 			CFRelease (url);
-			if (imageSource == NULL)
+			if (! imageSource)
 				Melder_throw (U"Cannot open picture file ", file, U".");
-			CGImageRef image = CGImageSourceCreateImageAtIndex (imageSource, 0, NULL);
+			CGImageRef image = CGImageSourceCreateImageAtIndex (imageSource, 0, nullptr);
 			CFRelease (imageSource);
-			if (image != NULL) {
+			if (image) {
 				long width = CGImageGetWidth (image);
 				long height = CGImageGetHeight (image);
 				me.reset (Photo_createSimple (height, width));
@@ -269,7 +269,7 @@ Photo Photo_readFromImageFile (MelderFile file) {
 		for (int iencoder = 0; iencoder < numberOfImageEncoders; iencoder ++) {
 			trace (U"Supported MIME type: ", Melder_peekWto32 (imageEncoderInfos [iencoder]. MimeType));
 			if (str32equ (Melder_peekWto32 (imageEncoderInfos [iencoder]. MimeType), mimeType)) {
-				Gdiplus::EncoderParameters *p = NULL;
+				Gdiplus::EncoderParameters *p = nullptr;
 				Gdiplus::EncoderParameters encoderParameters;
 				if (str32equ (mimeType, U"image/jpeg")) {
 					encoderParameters. Count = 1;
@@ -304,24 +304,24 @@ Photo Photo_readFromImageFile (MelderFile file) {
 				* rowAddress ++ = 255 - (uint8) lround (my d_transparency -> z [irow] [icol] * 255.0);
 			}
 		}
-		static CGColorSpaceRef colourSpace = NULL;
-		if (colourSpace == NULL) {
+		static CGColorSpaceRef colourSpace = nullptr;
+		if (! colourSpace) {
 			colourSpace = CGColorSpaceCreateWithName (kCGColorSpaceGenericRGB);   // used to be kCGColorSpaceUserRGB
-			Melder_assert (colourSpace != NULL);
+			Melder_assert (colourSpace);
 		}
-		CGDataProviderRef dataProvider = CGDataProviderCreateWithData (NULL,
+		CGDataProviderRef dataProvider = CGDataProviderCreateWithData (nullptr,
 			imageData,
 			bytesPerRow * numberOfRows,
 			_mac_releaseDataCallback   // needed?
 		);
-		Melder_assert (dataProvider != NULL);
+		Melder_assert (dataProvider);
 		CGImageRef image = CGImageCreate (my nx, numberOfRows,
-			8, 32, bytesPerRow, colourSpace, kCGImageAlphaNone, dataProvider, NULL, false, kCGRenderingIntentDefault);
+			8, 32, bytesPerRow, colourSpace, kCGImageAlphaNone, dataProvider, nullptr, false, kCGRenderingIntentDefault);
 		CGDataProviderRelease (dataProvider);
-		Melder_assert (image != NULL);
+		Melder_assert (image);
 		NSString *path = (NSString *) Melder_peek32toCfstring (Melder_fileToPath (file));
 		CFURLRef url = (CFURLRef) [NSURL   fileURLWithPath: path   isDirectory: NO];
-		CGImageDestinationRef destination = CGImageDestinationCreateWithURL (url, (CFStringRef) which, 1, NULL);
+		CGImageDestinationRef destination = CGImageDestinationCreateWithURL (url, (CFStringRef) which, 1, nullptr);
 		CGImageDestinationAddImage (destination, image, nil);
 
 		if (! CGImageDestinationFinalize (destination)) {

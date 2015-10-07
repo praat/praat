@@ -438,7 +438,7 @@ Uses auditory filter (width apx. 1 Bark) for masking.
 
 Excitation Excitation_create (double df, long nf);
 	Function:
-		return a new instance of Excitation, or NULL if out of memory.
+		return a new instance of Excitation.
 	Preconditions:
 		df > 0.0;
 		nf >= 1;
@@ -457,11 +457,9 @@ Matrix Excitation_to_Matrix (Excitation me);
 	Function:
 		Create a Matrix from an Excitation,
 		with deep copy of all of its Matrix attributes, except class information and methods.
-	Return NULL if out of memory.  
 Excitation Matrix_to_Excitation (Matrix me);
 	Function:
 		create an Excitation from a Matrix.
-		Return NULL if out of memory.
 	Postconditions:
 		thy xmin == 0.0;
 		thy xmax == my nx / (1 / my dx);

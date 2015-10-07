@@ -139,7 +139,7 @@ static double PairDistributions_getTotalWeight_checkPositive (PairDistribution m
 
 void PairDistribution_to_Stringses (PairDistribution me, long nout, Strings *strings1_out, Strings *strings2_out) {
 	try {
-		*strings1_out = *strings2_out = NULL;
+		*strings1_out = *strings2_out = nullptr;
 		long nin = my pairs -> size, iin;
 		if (nin < 1)
 			Melder_throw (U"No candidates.");
@@ -176,7 +176,7 @@ void PairDistribution_to_Stringses (PairDistribution me, long nout, Strings *str
 
 void PairDistribution_peekPair (PairDistribution me, char32 **string1, char32 **string2) {
 	try {
-		*string1 = *string2 = NULL;
+		*string1 = *string2 = nullptr;
 		double total = 0.0;
 		long nin = my pairs -> size, iin;
 		PairProbability prob;

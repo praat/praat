@@ -123,7 +123,7 @@ void structMovieWindow :: v_play (double tmin, double tmax) {
 }
 
 void MovieWindow_init (MovieWindow me, const char32 *title, Movie movie) {
-	Melder_assert (movie != NULL);
+	Melder_assert (movie);
 	TimeSoundAnalysisEditor_init (me, title, movie, movie -> d_sound, false);
 }
 

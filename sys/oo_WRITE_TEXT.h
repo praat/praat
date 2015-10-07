@@ -23,7 +23,7 @@
 	texput##storage (file, our x, U"" #x, 0,0,0,0,0);
 
 #define oo_ARRAY(type,storage,x,cap,n)  \
-	texputintro (file, U"" #x U" []: ", n ? NULL : U"(empty)", 0,0,0,0); \
+	texputintro (file, U"" #x U" []: ", n ? nullptr : U"(empty)", 0,0,0,0); \
 	for (int i = 0; i < n; i ++) \
 		texput##storage (file, our x [i], U"" #x " [", Melder_integer (i), U"]", 0,0,0); \
 	texexdent (file);
@@ -52,13 +52,13 @@
 	texexdent (file);
 
 #define oo_ENUMx_SET(type,storage,Type,x,setType)  \
-	texputintro (file, U"" #x U" []: ", n ? NULL : U"(empty)", 0,0,0,0); \
+	texputintro (file, U"" #x U" []: ", n ? nullptr : U"(empty)", 0,0,0,0); \
 	for (int i = 0; i <= setType##_MAX; i ++) \
 		texput##storage (file, our x [i], Type##_getText, U"" #x U" [", setType##_getText (i), U"]", 0,0,0); \
 	texexdent (file);
 
 #define oo_ENUMx_VECTOR(type,storage,Type,x,min,max)  \
-	texputintro (file, U"" #x U" []: ", max >= min ? NULL : U"(empty)", 0,0,0,0); \
+	texputintro (file, U"" #x U" []: ", max >= min ? nullptr : U"(empty)", 0,0,0,0); \
 	for (long i = min; i <= max; i ++) \
 		texput##storage (file, our x [i], Type##_getText, U"" #x U" [", Melder_integer (i), U"]", 0,0,0); \
 	texexdent (file);
@@ -67,7 +67,7 @@
 	texput##storage (file, our x, U""#x, 0,0,0,0,0);
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	texputintro (file, U"" #x U" []: ", n ? NULL : U"(empty)", 0,0,0,0); \
+	texputintro (file, U"" #x U" []: ", n ? nullptr : U"(empty)", 0,0,0,0); \
 	for (int i = 0; i < n; i ++) \
 		texput##storage (file, our x [i], U"" #x U" [", Melder_integer (i), U"]", 0,0,0); \
 	texexdent (file);
@@ -79,7 +79,7 @@
 	texexdent (file);
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
-	texputintro (file, U"" #x U" []: ", max >= min ? NULL : U"(empty)", 0,0,0,0); \
+	texputintro (file, U"" #x U" []: ", max >= min ? nullptr : U"(empty)", 0,0,0,0); \
 	for (long i = min; i <= max; i ++) \
 		texput##storage (file, our x [i], U"" #x U" [", Melder_integer (i), U"]", 0,0,0); \
 	texexdent (file);
@@ -90,7 +90,7 @@
 	texexdent (file);
 
 #define oo_STRUCT_ARRAY(Type,x,cap,n)  \
-	texputintro (file, U"" #x U" []: ", n ? NULL : U"(empty)", 0,0,0,0); \
+	texputintro (file, U"" #x U" []: ", n ? nullptr : U"(empty)", 0,0,0,0); \
 	for (int i = 0; i < n; i ++) { \
 		texputintro (file, U"" #x " [", Melder_integer (i), U"]:", 0,0,0); \
 		our x [i]. writeText (file); \
@@ -108,7 +108,7 @@
 	texexdent (file);
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
-	texputintro (file, U"" #x U" []: ", max >= min ? NULL : U"(empty)", 0,0,0,0); \
+	texputintro (file, U"" #x U" []: ", max >= min ? nullptr : U"(empty)", 0,0,0,0); \
 	for (long i = min; i <= max; i ++) { \
 		texputintro (file, U"" #x U" [", Melder_integer (i), U"]:", 0,0,0); \
 		our x [i]. writeText (file); \
@@ -117,7 +117,7 @@
 	texexdent (file);
 
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
-	texputintro (file, U"" #x U" [] []: ", row2 >= row1 ? NULL : U"(empty)", 0,0,0,0); \
+	texputintro (file, U"" #x U" [] []: ", row2 >= row1 ? nullptr : U"(empty)", 0,0,0,0); \
 	for (long i = row1; i <= row2; i ++) { \
 		texputintro (file, U"" #x U" [", Melder_integer (i), U"]:", 0,0,0); \
 		for (long j = col1; j <= col2; j ++) { \

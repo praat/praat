@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20150929)
+MAN_BEGIN (U"What's new?", U"ppgb", 20151007)
 INTRO (U"Latest changes in Praat.")
 /*LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (U"##5.4.22# (7 October 2015)")
+LIST_ITEM (U"• Sound files: added support for MP3 files with ID3 version 2 headers.")
+LIST_ITEM (U"• Mac: corrected a bug that would cause Praat to crash if a PNG file could not be saved (from a script).")
+LIST_ITEM (U"• Windows: enabled PNG saving from Praatcon.")
 NORMAL (U"##5.4.21# (29 September 2015)")
 LIST_ITEM (U"• Corrected a bug introduced in 5.4.20 that could cause the Sound window to crash.")
 LIST_ITEM (U"• Repaired a very old hang with pulses in the Sound window.")

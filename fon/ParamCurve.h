@@ -38,8 +38,7 @@ void ParamCurve_init (ParamCurve me, Sound x, Sound y);
 ParamCurve ParamCurve_create (Sound x, Sound y);
 /*
 	Return value:
-		a newly created ParamCurve object,
-		or NULL in case of failure.
+		a newly created ParamCurve object.
 	Failures:
 		Out of memory.
 		Domains do not overlap:

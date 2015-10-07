@@ -179,14 +179,14 @@ void structOTMultiEditor :: v_createChildren () {
 
 void structOTMultiEditor :: v_createMenus () {
 	OTMultiEditor_Parent :: v_createMenus ();
-	Editor_addCommand (this, U"Edit", U"-- edit ot --", 0, NULL);
+	Editor_addCommand (this, U"Edit", U"-- edit ot --", 0, nullptr);
 	Editor_addCommand (this, U"Edit", U"Evaluate...", 0, menu_cb_evaluate);
 	Editor_addCommand (this, U"Edit", U"Evaluate (noise 2.0)", '2', menu_cb_evaluate_noise_2_0);
 	Editor_addCommand (this, U"Edit", U"Evaluate (tiny noise)", '9', menu_cb_evaluate_tinyNoise);
 	Editor_addCommand (this, U"Edit", U"Edit ranking...", 'E', menu_cb_editRanking);
 	Editor_addCommand (this, U"Edit", U"Reset all rankings...", 'R', menu_cb_resetAllRankings);
 	Editor_addCommand (this, U"Edit", U"Learn one...", '1', menu_cb_learnOne);
-	Editor_addCommand (this, U"Edit", U"-- remove --", 0, NULL);
+	Editor_addCommand (this, U"Edit", U"-- remove --", 0, nullptr);
 	Editor_addCommand (this, U"Edit", U"Remove constraint", 0, menu_cb_removeConstraint);
 }
 
@@ -232,7 +232,7 @@ void structOTMultiEditor :: v_draw () {
 }
 
 int structOTMultiEditor :: v_goToPage (const char32 *title) {
-	if (title == NULL) return 1;
+	if (! title) return 1;
 	selectedConstraint = Melder_atoi (title);
 	return 1;
 }

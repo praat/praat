@@ -188,7 +188,7 @@ bool MelderAudio_stopWasExplicit (void) {
 static bool flush (void) {
 	struct MelderPlay *me = & thePlay;
 	if (my usePortAudio) {
-		if (my stream != NULL) {
+		if (my stream) {
 			#ifdef linux
 
 				Pa_Sleep (200);   // this reduces the chance of seeing the Alsa/PulseAudio deadlock:
@@ -279,7 +279,7 @@ static bool flush (void) {
 				*/
 			#endif
 			Pa_CloseStream (my stream);
-			my stream = NULL;
+			my stream = nullptr;
 		}
 	} else {
 	#if defined (macintosh)
@@ -309,7 +309,7 @@ static bool flush (void) {
 	}
 	if (my fakeMono) {
 		NUMvector_free ((short *) my buffer, 0);
-		my buffer = NULL;
+		my buffer = nullptr;
 	}
 	MelderAudio_isPlaying = false;
 	if (my samplesPlayed >= my numberOfSamples)
@@ -487,7 +487,7 @@ static int thePaStreamCallback (const void *input, void *output,
 		long dsamples = my samplesLeft > (long) frameCount ? (long) frameCount : my samplesLeft;
 		if (Melder_debug == 20) Melder_casual (U"play ", dsamples, U" ", Pa_GetStreamCpuLoad (my stream));
 		memset (output, '\0', 2 * frameCount * my numberOfChannels);
-		Melder_assert (my buffer != NULL);
+		Melder_assert (my buffer);
 		memcpy (output, (char *) & my buffer [my samplesSent * my numberOfChannels], 2 * dsamples * my numberOfChannels);
 		my samplesLeft -= dsamples;
 		my samplesSent += dsamples;
@@ -576,9 +576,9 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 		}
 		outputParameters. channelCount = my numberOfChannels;
 		outputParameters. sampleFormat = paInt16;
-		if (deviceInfo != NULL) outputParameters. suggestedLatency = deviceInfo -> defaultLowOutputLatency;
-		outputParameters. hostApiSpecificStreamInfo = NULL;
-		err = Pa_OpenStream (& my stream, NULL, & outputParameters, my sampleRate, paFramesPerBufferUnspecified,
+		if (deviceInfo) outputParameters. suggestedLatency = deviceInfo -> defaultLowOutputLatency;
+		outputParameters. hostApiSpecificStreamInfo = nullptr;
+		err = Pa_OpenStream (& my stream, nullptr, & outputParameters, my sampleRate, paFramesPerBufferUnspecified,
 			paDitherOff, thePaStreamCallback, me);
 		if (err) Melder_throw (U"PortAudio cannot open sound output: ", Melder_peek8to32 (Pa_GetErrorText (err)), U".");
 		theStartingTime = Melder_clock ();
@@ -661,14 +661,14 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 			#endif
 		} else /* my asynchronicity == kMelder_asynchronicityLevel_ASYNCHRONOUS */ {
 			#if cocoa
-				CFRunLoopTimerContext context = { 0, NULL, NULL, NULL, NULL };
-				my cocoaTimer = CFRunLoopTimerCreate (NULL, CFAbsoluteTimeGetCurrent () + 0.02,
+				CFRunLoopTimerContext context = { 0, nullptr, nullptr, nullptr, nullptr };
+				my cocoaTimer = CFRunLoopTimerCreate (nullptr, CFAbsoluteTimeGetCurrent () + 0.02,
 					0.02, 0, 0, workProc_cocoa, & context);
 				CFRunLoopAddTimer (CFRunLoopGetCurrent (), my cocoaTimer, kCFRunLoopCommonModes);
 			#elif motif
-				my workProcId_motif = GuiAddWorkProc (workProc_motif, NULL);
+				my workProcId_motif = GuiAddWorkProc (workProc_motif, nullptr);
 			#elif gtk
-				my workProcId_gtk = g_idle_add (workProc_gtk, NULL);
+				my workProcId_gtk = g_idle_add (workProc_gtk, nullptr);
 			#endif
 			return;
 		}
@@ -749,7 +749,7 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 					}
 				} else /* my asynchronicity == kMelder_asynchronicityLevel_ASYNCHRONOUS */ {
 					#ifndef NO_GRAPHICS
-						my workProcId_gtk = g_idle_add (workProc_gtk, NULL);
+						my workProcId_gtk = g_idle_add (workProc_gtk, nullptr);
 					#endif
 					return;
 				}
@@ -836,7 +836,7 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 				my waveHeader. lpData = (char *) my buffer;
 				my waveHeader. dwBufferLength = my numberOfSamples * 2 * my numberOfChannels;
 				my waveHeader. dwLoops = 1;
-				my waveHeader. lpNext = NULL;
+				my waveHeader. lpNext = nullptr;
 				my waveHeader. reserved = 0;
 				err = waveOutPrepareHeader (my hWaveOut, & my waveHeader, sizeof (WAVEHDR));
 			//waveOutReset (my hWaveOut);
@@ -885,7 +885,7 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 						}
 					}
 				} else {
-					my workProcId_motif = GuiAddWorkProc (workProc_motif, NULL);
+					my workProcId_motif = GuiAddWorkProc (workProc_motif, nullptr);
 					return;
 				}
 				flush ();

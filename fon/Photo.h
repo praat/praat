@@ -33,7 +33,7 @@ Photo Photo_create
 	 double ymin, double ymax, long ny, double dy, double y1);
 /*
 	Function:
-		return a new opaque black Photo, or NULL if out of memory.
+		return a new opaque black Photo.
 	Preconditions:
 		xmin <= xmax;   ymin <= ymax;
 		nx >= 1;  ny >= 1;
@@ -58,7 +58,7 @@ Photo Photo_create
 Photo Photo_createSimple (long numberOfRows, long numberOfColumns);
 /*
 	Function:
-		return a new opaque black Photo, or NULL if out of memory.
+		return a new opaque black Photo.
 	Preconditions:
 		numberOfRows >= 1;  numberOfColumns >= 1;
 	Postconditions:
