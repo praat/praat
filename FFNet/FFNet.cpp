@@ -382,9 +382,11 @@ void FFNet_propagate (FFNet me, const double input[], double output[]) {
 		}
 	}
 	k = my nNodes - my nOutputs + 1;
-	if (output) for (long i = 1; i <= my nOutputs; i++, k++) {
+	if (output) {
+		for (long i = 1; i <= my nOutputs; i++, k++) {
 			output[i] = my activity[k];
 		}
+	}
 }
 
 
@@ -426,14 +428,16 @@ void FFNet_computeDerivative (FFNet me) {
 long FFNet_getWinningUnit (FFNet me, int labeling) {
 	long pos = 1, k = my nNodes - my nOutputs;
 	if (labeling == 2) { /* stochastic */
-		double sum = 0;
+		double sum = 0.0;
 		for (long i = 1; i <= my nOutputs; i++) {
 			sum += my activity[k + i];
 		}
-		double random = NUMrandomUniform (0, sum);
-		for (pos = my nOutputs; pos >= 2; pos--) if (random > (sum -= my activity[k + pos])) {
+		double random = NUMrandomUniform (0.0, sum);
+		for (pos = my nOutputs; pos >= 2; pos--) {
+			if (random > (sum -= my activity[k + pos])) {
 				break;
 			}
+		}
 	} else { /* winner-takes-all */
 		double max = my activity[k + 1];
 		for (long i = 2; i <= my nOutputs; i++) if (my activity[k + i] > max) {
@@ -447,7 +451,7 @@ long FFNet_getWinningUnit (FFNet me, int labeling) {
 void FFNet_propagateToLayer (FFNet me, const double input[], double activity[], long layer) {
 	Melder_assert (activity);
 	long k = 0;
-	FFNet_propagate (me, input, 0);
+	FFNet_propagate (me, input, nullptr);
 	for (long i = 0; i < layer; i++) {
 		k += my nUnitsInLayer[i] + 1;
 	}
@@ -479,7 +483,7 @@ void FFNet_selectBiasesInLayer (FFNet me, long layer) {
 		return;
 	}
 	for (long i = 1; i <= my nWeights; i++) {
-		my wSelected[i] = 0;
+		my wSelected[i] = 0.0;
 	}
 	for (long i = 1; i < layer; i++) {
 		node += my nUnitsInLayer[i] + 1;
@@ -570,7 +574,7 @@ void FFNet_drawTopology (FFNet me, Graphics g) {
 		}
 	}
 	double dx = 1.0 / maxNumOfUnits;
-	double radius = dx / 10;
+	double radius = dx / 10.0;
 	Graphics_setInner (g);
 	Graphics_setWindow (g, 0.0, 1.0, 0.0, 1.0);
 	for (long i = 0; i <= my nLayers; i++) {
@@ -579,13 +583,13 @@ void FFNet_drawTopology (FFNet me, Graphics g) {
 		/* draw the units */
 		if (! dxIsFixed) {
 			dx2 = 1.0 / my nUnitsInLayer[i];
-			x2 = dx2 / 2;
+			x2 = dx2 / 2.0;
 		}
 		if (i == 0) {
 			Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_TOP);
 			x2WC = x2;
 			for (long j = 1; j <= my nInputs; j++) {
-				Graphics_arrow (g, x2WC, y2WC - radius - dy / 4, x2WC, y2WC - radius);
+				Graphics_arrow (g, x2WC, y2WC - radius - dy / 4.0, x2WC, y2WC - radius);
 				x2WC += dx2;
 			}
 		}
@@ -601,11 +605,11 @@ void FFNet_drawTopology (FFNet me, Graphics g) {
 		Graphics_setColour (g, Graphics_BLACK);
 		if (i > 0) {
 			double dx1 = dx;
-			double x1 = (maxNumOfUnits - my nUnitsInLayer[i - 1] + 1) * dx1 / 2;
+			double x1 = (maxNumOfUnits - my nUnitsInLayer[i - 1] + 1) * dx1 / 2.0;
 			double y1WC = y2WC - dy;
 			if (! dxIsFixed) {
 				dx1 = 1.0 / my nUnitsInLayer[i - 1];
-				x1 = dx1 / 2;
+				x1 = dx1 / 2.0;
 			}
 			x2WC = x2;
 			for (long j = 1; j <= my nUnitsInLayer[i]; j++) {
@@ -624,9 +628,9 @@ void FFNet_drawTopology (FFNet me, Graphics g) {
 			x2WC = x2;
 			Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
 			for (long j = 1; j <= my nOutputs; j++) {
-				Graphics_arrow (g, x2WC, y2WC + radius, x2WC, y2WC + radius + dy / 4);
+				Graphics_arrow (g, x2WC, y2WC + radius, x2WC, y2WC + radius + dy / 4.0);
 				if (my outputCategories) {
-					Categories_drawItem (my outputCategories, g, j, x2WC, y2WC + radius + dy / 4);
+					Categories_drawItem (my outputCategories, g, j, x2WC, y2WC + radius + dy / 4.0);
 				}
 				x2WC += dx2;
 			}
@@ -649,13 +653,13 @@ void FFNet_drawActivation (FFNet me, Graphics g) {
 		}
 	}
 	double dx = 1.0 / maxNumOfUnits;
-	double r1 = dx / 2; /* May touch when neighbouring activities are both 1 (very rare). */
+	double r1 = dx / 2.0; /* May touch when neighbouring activities are both 1 (very rare). */
 	for (long i = 0; i <= my nLayers; i++, node++) {
-		double dx2 = dx, x2WC, y2WC = dy / 2 + i * dy;
-		double x2 = (maxNumOfUnits - my nUnitsInLayer[i] + 1) * dx2 / 2;
+		double dx2 = dx, x2WC, y2WC = dy / 2.0 + i * dy;
+		double x2 = (maxNumOfUnits - my nUnitsInLayer[i] + 1) * dx2 / 2.0;
 		if (! dxIsFixed) {
 			dx2 = 1.0 / my nUnitsInLayer[i];
-			x2 = dx2 / 2;
+			x2 = dx2 / 2.0;
 		}
 		x2WC = x2;
 		for (long j = 1; j <= my nUnitsInLayer[i]; j++, node++) {
@@ -680,7 +684,7 @@ void FFNet_drawWeightsToLayer (FFNet me, Graphics g, int layer, int scaling, int
 	}
 	autoMatrix weights = FFNet_weightsToMatrix (me, layer, 0);
 	Matrix_scale (weights.peek(), scaling);
-	Matrix_drawAsSquares (weights.peek(), g, 0, 0, 0, 0, 0);
+	Matrix_drawAsSquares (weights.peek(), g, 0.0, 0.0, 0.0, 0.0, 0);
 	if (garnish) {
 		double x1WC, x2WC, y1WC, y2WC;
 		Graphics_inqWindow (g, & x1WC, & x2WC, & y1WC, & y2WC);
@@ -759,12 +763,12 @@ TableOfReal FFNet_extractWeights (FFNet me, long layer) {
 
 		char32 label[40];
 		for (long i = 1; i <= numberOfUnitsFrom - 1; i++) {
-			Melder_sprint (label,40, U"L", layer - 1, U"-", i);   // ppgb: 20 chars is niet genoeg voor een long
+			Melder_sprint (label,40, U"L", layer - 1, U"-", i);
 			TableOfReal_setRowLabel (thee.peek(), i, label);
 		}
 		TableOfReal_setRowLabel (thee.peek(), numberOfUnitsFrom, U"Bias");
 		for (long i = 1; i <= numberOfUnitsTo; i++) {
-			Melder_sprint (label,40, U"L", layer, U"-", i);   // ppgb: 20 chars is niet genoeg voor een long
+			Melder_sprint (label,40, U"L", layer, U"-", i);
 			TableOfReal_setColumnLabel (thee.peek(), i, label);
 		}
 
@@ -802,10 +806,10 @@ FFNet FFNet_and_TabelOfReal_to_FFNet (FFNet me, TableOfReal him, long layer) {
 				}
 			}
 			if (! rows[layer]) Melder_throw (U"The number of rows in the TableOfReal does not equal \n"
-				                                 U"the number of units in the layer that connect to layer ", layer, U".");
+				U"the number of units in the layer that connect to layer ", layer, U".");
 			else
 				Melder_throw (U"The number of columns in the TableOfReal does not equal \n"
-				              U"the number of units in layer ", layer, U".");
+				    U"the number of units in layer ", layer, U".");
 			if (ok == 0) {
 				Melder_throw (U"Please quit, there is no appropriate layer in the FFNet for this TableOfReal.");
 			} else {

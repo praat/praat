@@ -679,7 +679,7 @@ void NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m, doub
 */
 
 void NUMProcrustes (double **x, double **y, long nPoints,
-	long nDimensions, double **t, double *v, double *s);
+	long nDimensions, double **t, double v[], double *s);
 /*
 	Given two configurations x and y (nPoints x nDimensions), find the
 	the Procrustes rotation/reflection matrix T, the translation vector v and the scaling

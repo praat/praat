@@ -1,6 +1,6 @@
 /* Cepstrum.cpp
  *
- * Copyright (C) 1994-2014 David Weenink
+ * Copyright (C) 1994-2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ static void NUMvector_filter (double *input, long numberOfDataPoints, double *fi
 			long jfrom = ifrom < 1 ? 1 : ifrom;
 			long jto = ito > numberOfDataPoints ? numberOfDataPoints : ito;
 			long index = ifrom < 1 ? 2 - ifrom : 1;
-			double out = 0, sum = 0;
+			double out = 0.0, sum = 0.0;
 			for (long j = jfrom; j <= jto; j++, index++) {
 				out += filter[index] * input[j];
 				sum += filter[index];
@@ -105,7 +105,7 @@ Cepstrum Cepstrum_create (double qmax, long nq) {
 		autoCepstrum me = Thing_new (Cepstrum);
 		double dq = qmax / (nq - 1);
 
-		Matrix_init (me.peek(), 0, qmax, nq, dq, 0, 1, 1, 1, 1, 1);
+		Matrix_init (me.peek(), 0.0, qmax, nq, dq, 0.0, 1.0, 1.0, 1, 1, 1.0);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw (U"Cepstrum not created.");
@@ -129,7 +129,7 @@ PowerCepstrum PowerCepstrum_create (double qmax, long nq) {
 		autoPowerCepstrum me = Thing_new (PowerCepstrum);
 		double dq = qmax / (nq - 1);
 
-		Matrix_init (me.peek(), 0, qmax, nq, dq, 0, 1, 1, 1, 1, 1);
+		Matrix_init (me.peek(), 0.0, qmax, nq, dq, 0.0, 1.0, 1.0, 1, 1, 1.0);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw (U"PowerCepstrum not created.");
@@ -339,7 +339,7 @@ static void PowerCepstrum_subtractTiltLine_inline (PowerCepstrum me, double slop
 		if (diff < 0) {
 			diff = 0;
 		}
-		my z[1][j] = exp (diff * NUMln10 / 10) - 1e-30;
+		my z[1][j] = exp (diff * NUMln10 / 10.0) - 1e-30;
 	}
 }
 
@@ -442,8 +442,8 @@ static void Cepstrum_getZ2 (Cepstrum me, long imin, long imax, double peakdB, lo
 	double mean, variance;
 	NUMvector_avevar (&ymax[npeaks], ipeak, &mean, &variance);
 	double sigma = sqrt (variance / (ipeak - 1));
-	double peak = exp (peakdB * NUMln10 / 10) - 1e-30;
-	*z = sigma <= 0 ? NUMundefined : peak / sigma;
+	double peak = exp (peakdB * NUMln10 / 10.0) - 1e-30;
+	*z = sigma <= 0.0 ? NUMundefined : peak / sigma;
 }
 
 static void Cepstrum_getZ (Cepstrum me, long imin, long imax, double peakdB, double slope, double intercept, int lineType, double *z) {
@@ -455,12 +455,12 @@ static void Cepstrum_getZ (Cepstrum me, long imin, long imax, double peakdB, dou
 		double xq = lineType == 2 ? log(q) : q;
 		double db_background = slope * xq + intercept;
 		double db_cepstrum = my v_getValueAtSample (i, 1, 0);
-		double diff = exp ((db_cepstrum - db_background) * NUMln10 / 10) - 1e-30;
+		double diff = exp ((db_cepstrum - db_background) * NUMln10 / 10.0) - 1e-30;
 		//double diff = fabs (db_cepstrum - db_background);
 		dabs[i - imin + 1] = diff;
 	}
 	double q50 = NUMquantile (ndata, dabs.peek(), 0.5);
-	double peak = exp (peakdB * NUMln10 / 10) - 1e-30;
+	double peak = exp (peakdB * NUMln10 / 10.0) - 1e-30;
 	//*z = peakdB / q50;
 	*z = peak / q50;
 }

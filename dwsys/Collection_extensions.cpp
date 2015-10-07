@@ -1,6 +1,6 @@
 /* Collection_extensions.c
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,7 +103,7 @@ OrderedOfString OrderedOfString_create () {
 
 int OrderedOfString_append (OrderedOfString me, char32 *append) {
 	try {
-		if (append == 0) {
+		if (append == nullptr) {
 			return 1;    // BUG: lege string appenden??
 		}
 		autoSimpleString item = SimpleString_create (append);
@@ -116,8 +116,6 @@ int OrderedOfString_append (OrderedOfString me, char32 *append) {
 
 OrderedOfString OrderedOfString_joinItems (OrderedOfString me, OrderedOfString thee) {
 	try {
-
-
 		if (my size != thy size) {
 			Melder_throw (U"sizes must be equal.");
 		}
@@ -197,7 +195,7 @@ double OrderedOfString_getFractionDifferent (OrderedOfString me, OrderedOfString
 	if (numberOfDifferences < 0) {
 		return NUMundefined;
 	}
-	return my size == 0 ? 0 : (0.0 + numberOfDifferences) / my size;
+	return my size == 0 ? 0.0 : (0.0 + numberOfDifferences) / my size;
 }
 
 int OrderedOfString_difference (OrderedOfString me, OrderedOfString thee, long *ndif, double *fraction) {
@@ -237,17 +235,14 @@ void OrderedOfString_sequentialNumbers (OrderedOfString me, long n) {
 	Collection_removeAllItems (me);
 	for (long i = 1; i <= n; i++) {
 		char32 s[40];
-		Melder_sprint (s,40, i);   // ppgb: 20 chars is niet genoeg voor een long
+		Melder_sprint (s,40, i);
 		autoSimpleString str = SimpleString_create (s);
 		Collection_addItem (me, str.transfer());
 	}
 }
-void OrderedOfString_changeStrings (OrderedOfString me, char32 *search, char32 *replace,
-                                    int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, int use_regexp) {
+void OrderedOfString_changeStrings (OrderedOfString me, char32 *search, char32 *replace, int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, int use_regexp) {
 	regexp *compiled_search = nullptr;
 	try {
-		char32 *r;
-
 		if (! search) {
 			Melder_throw (U"Missing search string.");
 		}
@@ -261,12 +256,7 @@ void OrderedOfString_changeStrings (OrderedOfString me, char32 *search, char32 *
 		for (long i = 1; i <= my size; i++) {
 			SimpleString ss = (SimpleString) my item[i];
 			long nmatches_sub;
-
-			if (use_regexp) {
-				r = str_replace_regexp (ss -> string, compiled_search,
-				                        replace, maximumNumberOfReplaces, &nmatches_sub);
-			} else r = str_replace_literal (ss -> string, search, replace,
-				                                maximumNumberOfReplaces, &nmatches_sub);
+			char32 *r = use_regexp ? str_replace_regexp (ss -> string, compiled_search, replace, maximumNumberOfReplaces, &nmatches_sub) : str_replace_literal (ss -> string, search, replace, maximumNumberOfReplaces, &nmatches_sub);
 
 			// Change without error:
 			Melder_free (ss -> string);
@@ -307,7 +297,7 @@ long OrderedOfString_isSubsetOf (OrderedOfString me, OrderedOfString thee, long 
 
 void OrderedOfString_drawItem (OrderedOfString me, Graphics g, long index, double xWC, double yWC) {
 	if (index > 0 && index <= my size) {
-		SimpleString_draw ( (SimpleString) my item[index], g, xWC, yWC);
+		SimpleString_draw ((SimpleString) my item[index], g, xWC, yWC);
 	}
 }
 

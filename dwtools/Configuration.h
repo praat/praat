@@ -2,7 +2,7 @@
 #define _Configuration_h_
 /* Configuration.h
  *
- * Copyright (C) 1992-2011 David Weenink
+ * Copyright (C) 1992-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,10 +90,9 @@ void Configuration_drawConcentrationEllipses (Configuration me, Graphics g,
 	double scale, int confidence, const char32 *label, long d1, long d2, double xmin, double xmax,
 	double ymin, double ymax, int fontSize, int garnish);
 
-Configuration TableOfReal_to_Configuration (I);
+Configuration TableOfReal_to_Configuration (TableOfReal me);
 
-Configuration TableOfReal_to_Configuration_pca (TableOfReal me,
-	long numberOfDimensions);
+Configuration TableOfReal_to_Configuration_pca (TableOfReal me, long numberOfDimensions);
 /*
 	Precondition:
 		numberOfDimensions > 0

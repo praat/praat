@@ -1,6 +1,6 @@
 /* FileInMemory.cpp
  *
- * Copyright (C) 2012-2013 David Weenink
+ * Copyright (C) 2012-2013, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -223,10 +223,9 @@ char * FilesInMemory_getCopyOfData (FilesInMemory me, const char32 *id, long *nu
 	if (index == 0) return 0;
 	FileInMemory fim = (FileInMemory) my item[index];
 	char *data = (char *) _Melder_malloc (fim -> d_numberOfBytes);
-	if (data == 0 ||
-		! memcpy (data, fim -> d_data, fim -> d_numberOfBytes)) {
+	if (data == 0 || ! memcpy (data, fim -> d_data, fim -> d_numberOfBytes)) {
 		//Melder_appendError (U"No memory for dictionary.");
-		return 0;
+		return nullptr;
 	}
 	*numberOfBytes = fim -> d_numberOfBytes;
 	return data;

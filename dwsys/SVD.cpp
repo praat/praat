@@ -133,14 +133,14 @@ SVD SVD_create_f (float **m, long numberOfRows, long numberOfColumns) {
 
 void SVD_svd_d (SVD me, double **m) {
 	if (my numberOfRows >= my numberOfColumns) {
-		/* Store m in u */
+		// Store m in u
 		for (long i = 1; i <= my numberOfRows; i++) {
 			for (long j = 1; j <= my numberOfColumns; j++) {
 				my u[i][j] = m[i][j];
 			}
 		}
 	} else {
-		/* Store m transposed in v */
+		// Store m transposed in v
 		for (long i = 1; i <= my numberOfRows; i++) {
 			for (long j = 1; j <= my numberOfColumns; j++) {
 				my v[j][i] = m[i][j];
@@ -152,14 +152,14 @@ void SVD_svd_d (SVD me, double **m) {
 
 void SVD_svd_f (SVD me, float **m) {
 	if (my numberOfRows >= my numberOfColumns) {
-		/* Store in u */
+		// Store in u
 		for (long i = 1; i <= my numberOfRows; i++) {
 			for (long j = 1; j <= my numberOfColumns; j++) {
 				my u[j][i] = m[i][j];
 			}
 		}
 	} else {
-		/* Store transposed in v */
+		// Store transposed in v
 		for (long i = 1; i <= my numberOfRows; i++) {
 			for (long j = 1; j <= my numberOfColumns; j++) {
 				my v[i][j] = m[j][i];
@@ -210,7 +210,7 @@ void SVD_compute (SVD me) {
 		double wt[2];
 		int transpose = my numberOfRows < my numberOfColumns;
 
-		/* transpose: if rows < cols then data in v */
+		// Transpose: if rows < cols then data in v
 		if (transpose) {
 			SVD_transpose (me);
 		}
@@ -218,8 +218,7 @@ void SVD_compute (SVD me) {
 		lda = ldu = ldvt = m = my numberOfColumns;
 		long n = my numberOfRows;
 
-		(void) NUMlapack_dgesvd (&jobu, &jobvt, &m, &n, &my u[1][1], &lda, &my d[1], &my v[1][1], &ldu,
-		                         NULL, &ldvt, wt, &lwork, &info);
+		(void) NUMlapack_dgesvd (&jobu, &jobvt, &m, &n, &my u[1][1], &lda, &my d[1], &my v[1][1], &ldu, nullptr, &ldvt, wt, &lwork, &info);
 
 		if (info != 0) {
 			Melder_throw (U"SVD not precomputed.");
@@ -227,8 +226,7 @@ void SVD_compute (SVD me) {
 
 		lwork = wt[0];
 		autoNUMvector<double> work (0L, lwork);
-		(void) NUMlapack_dgesvd (&jobu, &jobvt, &m, &n, &my u[1][1], &lda, &my d[1], &my v[1][1], &ldu,
-		                         NULL, &ldvt, work.peek(), &lwork, &info);
+		(void) NUMlapack_dgesvd (&jobu, &jobvt, &m, &n, &my u[1][1], &lda, &my d[1], &my v[1][1], &ldu, nullptr, &ldvt, work.peek(), &lwork, &info);
 		if (info != 0) {
 			Melder_throw (U"SVD not computed.");
 		}
@@ -246,11 +244,11 @@ void SVD_compute (SVD me) {
 void SVD_getSquared (SVD me, double **m, bool inverse) {
 	for (long i = 1; i <= my numberOfColumns; i++) {
 		for (long j = 1; j <= my numberOfColumns; j++) {
-			double val = 0;
+			double val = 0.0;
 			for (long k = 1; k <= my numberOfColumns; k++) {
-				if (my d[k] > 0) {
+				if (my d[k] > 0.0) {
 					double dsq = my d[k] * my d[k];
-					double factor = inverse ? 1 / dsq : dsq;
+					double factor = inverse ? 1.0 / dsq : dsq;
 					val += my v[i][k] * my v[j][k] * factor;
 				}
 			}
@@ -269,8 +267,8 @@ void SVD_solve (SVD me, double b[], double x[]) {
 			Solution: x = V D^-1 U' b */
 
 		for (long j = 1; j <= mn_min; j++) {
-			double tmp = 0;
-			if (my d[j] > 0) {
+			double tmp = 0.0;
+			if (my d[j] > 0.0) {
 				for (long i = 1; i <= my numberOfRows; i++) {
 					tmp += my u[i][j] * b[i];
 				}
@@ -280,7 +278,7 @@ void SVD_solve (SVD me, double b[], double x[]) {
 		}
 
 		for (long j = 1; j <= my numberOfColumns; j++) {
-			double tmp = 0;
+			double tmp = 0.0;
 			for (long i = 1; i <= mn_min; i++) {
 				tmp += my v[j][i] * t[i];
 			}
@@ -420,8 +418,8 @@ GSVD GSVD_create_d (double **m1, long numberOfRows1, long numberOfColumns, doubl
 		char jobu1 = 'N', jobu2 = 'N', jobq = 'Q';
 		long k, l, info;
 		NUMlapack_dggsvd (&jobu1, &jobu2, &jobq, &m, &n, &p, &k, &l,
-		    &a[1][1], &m, &b[1][1], &p, &alpha[1], &beta[1], NULL, &m,
-		    NULL, &p, &q[1][1], &n, &work[1], &iwork[1], &info);
+		    &a[1][1], &m, &b[1][1], &p, &alpha[1], &beta[1], nullptr, &m,
+		    nullptr, &p, &q[1][1], &n, &work[1], &iwork[1], &info);
 		if (info != 0) {
 			Melder_throw (U"dggsvd failed, error = ", info);
 		}

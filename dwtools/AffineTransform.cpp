@@ -1,6 +1,6 @@
 /* AffineTransform.cpp
  *
- * Copyright (C) 1993-2013,2015 David Weenink
+ * Copyright (C) 1993-2013, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ Any structAffineTransform :: v_invert () {
 
 	NUMpseudoInverse (r, n, n, thy r, tolerance);
 	for (long i = 1; i <= n; i++) {
-		thy t[i] = 0;
+		thy t[i] = 0.0;
 		for (long j = 1; j <= thy n; j++) {
 			thy t[i] -= thy r[i][j] * t[j];
 		}
@@ -77,8 +77,7 @@ Any structAffineTransform :: v_invert () {
 
 Thing_implement (AffineTransform, Daata, 0);
 
-void AffineTransform_init (I, long n) {
-	iam (AffineTransform);
+void AffineTransform_init (AffineTransform me, long n) {
 	if (n < 1) {
 		Melder_throw (U"Dimensionality must be at least 1.");
 	}
@@ -97,20 +96,18 @@ AffineTransform AffineTransform_create (long n) {
 	}
 }
 
-Any AffineTransform_invert (I) {
-	iam (AffineTransform);
+Any AffineTransform_invert (AffineTransform me) {
 	AffineTransform thee = (AffineTransform) my v_invert ();
 	return thee;
 }
 
-TableOfReal AffineTransform_extractMatrix (I) {
-	iam (AffineTransform);
+TableOfReal AffineTransform_extractMatrix (AffineTransform me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my n, my n);
 		NUMmatrix_copyElements (my r, thy data, 1, my n, 1, my n);
 		for (long i = 1; i <= my n; i++) {
 			char32 label[40];
-			Melder_sprint (label,40, i);   // ppgb: 20 chars is niet genoeg voor een long
+			Melder_sprint (label,40, i);
 			TableOfReal_setRowLabel (thee.peek(), i, label);
 			TableOfReal_setColumnLabel (thee.peek(), i, label);
 		}
@@ -120,8 +117,7 @@ TableOfReal AffineTransform_extractMatrix (I) {
 	}
 }
 
-TableOfReal AffineTransform_extractTranslationVector (I) {
-	iam (AffineTransform);
+TableOfReal AffineTransform_extractTranslationVector (AffineTransform me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (1, my n);
 		for (long i = 1; i <= my n; i++) {

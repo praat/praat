@@ -1,6 +1,6 @@
 /* LPC_and_Formant.cpp
  *
- * Copyright (C) 1994-2013 David Weenink
+ * Copyright (C) 1994-2013, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ void Roots_into_Formant_Frame (Roots me, Formant_Frame thee, double samplingFreq
 		if (my v[i].im < 0) {
 			continue;
 		}
-		double f = fabs (atan2 (my v[i].im, my v[i].re)) * samplingFrequency / 2 / NUMpi;
+		double f = fabs (atan2 (my v[i].im, my v[i].re)) * samplingFrequency / 2.0 / NUMpi;
 		if (f >= fLow && f <= fHigh) {
 			/*b = - log (my v[i].re * my v[i].re + my v[i].im * my v[i].im) * samplingFrequency / 2 / NUMpi;*/
 			double b = - log (dcomplex_abs (my v[i])) * samplingFrequency / NUMpi;

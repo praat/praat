@@ -1,6 +1,6 @@
 /* FFNet_Eigen.cpp
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,7 @@
 #include "Graphics.h"
 #include "NUM2.h"
 
-void FFNet_Eigen_drawIntersection (FFNet me, Eigen eigen, Graphics g, long pcx, long pcy,
-                                   double xmin, double xmax, double ymin, double ymax) {
+void FFNet_Eigen_drawIntersection (FFNet me, Eigen eigen, Graphics g, long pcx, long pcy, double xmin, double xmax, double ymin, double ymax) {
 	long ix = labs (pcx), iy = labs (pcy);
 	long numberOfEigenvalues = eigen -> numberOfEigenvalues;
 	long dimension = eigen -> dimension;
@@ -86,8 +85,7 @@ void FFNet_Eigen_drawIntersection (FFNet me, Eigen eigen, Graphics g, long pcx, 
 	Draw the intersection line of the decision hyperplane 'w.e-b' of the weights of unit i
 	from layer j with the plane spanned by eigenvectors pcx and pcy.
 */
-void FFNet_Eigen_drawDecisionPlaneInEigenspace (FFNet me, thou, Graphics g, long unit,
-        long layer, long pcx, long pcy, double xmin, double xmax, double ymin, double ymax) {
+void FFNet_Eigen_drawDecisionPlaneInEigenspace (FFNet me, thou, Graphics g, long unit, long layer, long pcx, long pcy, double xmin, double xmax, double ymin, double ymax) {
 	thouart (Eigen);
 
 	if (layer < 1 || layer > my nLayers) {
@@ -146,7 +144,7 @@ void FFNet_Eigen_drawDecisionPlaneInEigenspace (FFNet me, thou, Graphics g, long
 	*/
 
 	long iw = my wFirst[node] - 1;
-	double we1 = 0, we2 = 0;
+	double we1 = 0.0, we2 = 0.0;
 	for (long i = 1; i <= my nUnitsInLayer[layer - 1]; i++) {
 		we1 += my w[iw + i] * thy eigenvectors[pcx][i];
 		we2 += my w[iw + i] * thy eigenvectors[pcy][i];
@@ -155,24 +153,24 @@ void FFNet_Eigen_drawDecisionPlaneInEigenspace (FFNet me, thou, Graphics g, long
 	double bias = my w[my wLast[node]];
 	x1 = xmin; x2 = xmax;
 	y1 = ymin; y2 = ymax;
-	if (we1 != 0) {
-		x1 = -bias / we1; y1 = 0;
+	if (we1 != 0.0) {
+		x1 = -bias / we1; y1 = 0.0;
 	}
-	if (we2 != 0) {
-		x2 = 0; y2 = -bias / we2;
+	if (we2 != 0.0) {
+		x2 = 0.0; y2 = -bias / we2;
 	}
-	if (we1 == 0 && we2 == 0) {
+	if (we1 == 0.0 && we2 == 0.0) {
 		Melder_warning (U"We cannot draw the intersection of the neural net decision plane\n"
-		                 "for unit ", unit, U" in layer ", layer,
-		                 U" with the plane spanned by the eigenvectors because \nboth planes are parallel.");
+		    "for unit ", unit, U" in layer ", layer, U" with the plane spanned by the eigenvectors because \nboth planes are parallel.");
 		return;
 	}
 	double xi[3], yi[3]; /* Intersections */
 	double ni = NUMgetIntersectionsWithRectangle (x1, y1, x2, y2, xmin, ymin, xmax, ymax, xi, yi);
 	if (ni == 2) {
 		Graphics_line (g, xi[1], yi[1], xi[2], yi[2]);
-	} else Melder_warning (U"There were no intersections in the drawing area.\n"
-		                        U"Please enlarge the drawing area.");
+	} else {
+		Melder_warning (U"There were no intersections in the drawing area.\nPlease enlarge the drawing area.");
+	}
 	Graphics_unsetInner (g);
 }
 

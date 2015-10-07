@@ -1,6 +1,6 @@
 /* LPC.cpp
  *
- * Copyright (C) 1994-2014 David Weenink
+ * Copyright (C) 1994-2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,12 +128,12 @@ void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, do
 void LPC_drawPoles (LPC me, Graphics g, double time, int garnish) {
 	autoPolynomial p = LPC_to_Polynomial (me, time);
 	autoRoots r = Polynomial_to_Roots (p.peek());
-	Roots_draw (r.peek(), g, -1, 1, -1, 1, U"+", 12, garnish);
+	Roots_draw (r.peek(), g, -1.0, 1.0, -1.0, 1.0, U"+", 12, garnish);
 }
 
 Matrix LPC_downto_Matrix_lpc (LPC me) {
 	try {
-		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maxnCoefficients, my maxnCoefficients, 1, 1);
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maxnCoefficients, my maxnCoefficients, 1.0, 1.0);
 		for (long j = 1; j <= my nx; j++) {
 			LPC_Frame lpc = & my d_frames[j];
 			for (long i = 1; i <= lpc -> nCoefficients; i++) {
@@ -148,7 +148,7 @@ Matrix LPC_downto_Matrix_lpc (LPC me) {
 
 Matrix LPC_downto_Matrix_rc (LPC me) {
 	try {
-		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maxnCoefficients, my maxnCoefficients, 1, 1);
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maxnCoefficients, my maxnCoefficients, 1.0, 1.0);
 		autoNUMvector<double> rc (1, my maxnCoefficients);
 		for (long j = 1; j <= my nx; j++) {
 			LPC_Frame lpc = & my d_frames[j];
@@ -165,7 +165,7 @@ Matrix LPC_downto_Matrix_rc (LPC me) {
 
 Matrix LPC_downto_Matrix_area (LPC me) {
 	try {
-		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maxnCoefficients, my maxnCoefficients, 1, 1);
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maxnCoefficients, my maxnCoefficients, 1.0, 1.0);
 		autoNUMvector<double> rc (1, my maxnCoefficients);
 		autoNUMvector<double> area (1, my maxnCoefficients);
 		for (long j = 1; j <= my nx; j++) {

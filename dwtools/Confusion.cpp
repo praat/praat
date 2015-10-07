@@ -1,6 +1,6 @@
 /* Confusion.cpp
  *
- * Copyright (C) 1993-2011, 2014 David Weenink
+ * Copyright (C) 1993-2011, 2014, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,8 +41,7 @@ void structConfusion :: v_info () {
 	double h, hx, hy, hygx, hxgy, uygx, uxgy, uxy, frac;
 	long nCorrect;
 
-	Confusion_getEntropies (this, & h, & hx, & hy, & hygx, & hxgy, & uygx,
-	                        & uxgy, & uxy);
+	Confusion_getEntropies (this, & h, & hx, & hy, & hygx, & hxgy, & uygx, & uxgy, & uxy);
 	Confusion_getFractionCorrect (this, & frac, & nCorrect);
 	MelderInfo_writeLine (U"Number of rows: ", numberOfRows);
 	MelderInfo_writeLine (U"Number of colums: ", numberOfColumns);
@@ -143,9 +142,8 @@ Confusion Categories_to_Confusion (Categories me, Categories thee) {
 
 #define TINY 1.0e-30
 
-void Confusion_getEntropies (Confusion me, double *h, double *hx, double *hy,
-                             double *hygx, double *hxgy, double *uygx, double *uxgy, double *uxy) {
-	*h = *hx = *hy = *hxgy = *hygx = *uygx = *uxgy = *uxy = 0;
+void Confusion_getEntropies (Confusion me, double *h, double *hx, double *hy, double *hygx, double *hxgy, double *uygx, double *uxgy, double *uxy) {
+	*h = *hx = *hy = *hxgy = *hygx = *uygx = *uxgy = *uxy = 0.0;
 
 	autoNUMvector<double> rowSum (1, my numberOfRows);
 	autoNUMvector<double> colSum (1, my numberOfColumns);
@@ -159,18 +157,18 @@ void Confusion_getEntropies (Confusion me, double *h, double *hx, double *hy,
 		}
 	}
 	for (long i = 1; i <= my numberOfRows; i++) {
-		if (rowSum[i] > 0) {
+		if (rowSum[i] > 0.0) {
 			*hy -= rowSum[i] / sum * NUMlog2 (rowSum[i] / sum);
 		}
 	}
 	for (long j = 1; j <= my numberOfColumns; j++) {
-		if (colSum[j] > 0) {
+		if (colSum[j] > 0.0) {
 			*hx -= colSum[j] / sum * NUMlog2 (colSum[j] / sum);
 		}
 	}
 	for (long i = 1; i <= my numberOfRows; i++) {
 		for (long j = 1; j <= my numberOfColumns; j++) {
-			if (my data[i][j] > 0) {
+			if (my data[i][j] > 0.0) {
 				*h -= my data[i][j] / sum * NUMlog2 (my data[i][j] / sum);
 			}
 		}
@@ -194,7 +192,7 @@ void Confusion_increase (Confusion me, const char32 *stim, const char32 *resp) {
 			Melder_throw (U"Response not valid.");
 		}
 
-		my data[stimIndex][respIndex] += 1;
+		my data[stimIndex][respIndex] += 1.0;
 	} catch (MelderError) {
 		Melder_throw (me, U": not increased.");
 	}
@@ -216,10 +214,10 @@ void Confusion_getFractionCorrect (Confusion me, double *fraction, long *numberO
 	*fraction = NUMundefined;
 	*numberOfCorrect = -1;
 
-	double c = 0, ct = 0;
+	double c = 0.0, ct = 0.0;
 	for (long i = 1; i <= my numberOfRows; i++) {
 		for (long j = 1; j <= my numberOfColumns; j++) {
-			if (my rowLabels[i] == 0 || my columnLabels[j] == 0) {
+			if (! my rowLabels[i] || ! my columnLabels[j]) {
 				return;
 			}
 			ct += my data[i][j];
@@ -229,7 +227,7 @@ void Confusion_getFractionCorrect (Confusion me, double *fraction, long *numberO
 		}
 	}
 
-	if (ct != 0) {
+	if (ct != 0.0) {
 		*fraction = c / ct;
 	}
 	*numberOfCorrect = (long) floor (c);
@@ -241,8 +239,8 @@ void Confusion_getFractionCorrect (Confusion me, double *fraction, long *numberO
 
 static Polygon Polygon_createPointer () {
 	try {
-		double x[NPOINTS + 1] = { 0, 0, 0.9, 1, 0.9, 0, 0 };
-		double y[NPOINTS + 1] = { 0, 0, 0, 0.5,   1, 1, 0 };
+		double x[NPOINTS + 1] = { 0.0, 0.0, 0.9, 1.0, 0.9, 0.0, 0.0 };
+		double y[NPOINTS + 1] = { 0.0, 0.0, 0.0, 0.5, 1.0, 1.0, 0.0 };
 		autoPolygon me = Polygon_create (NPOINTS);
 		for (long i = 1; i <= NPOINTS; i++) {
 			my x[i] = x[i]; my y[i] = y[i];
@@ -253,13 +251,11 @@ static Polygon Polygon_createPointer () {
 	}
 }
 
-static void Polygon_drawInside (I, Graphics g) {
-	iam (Polygon);
+static void Polygon_drawInside (Polygon me, Graphics g) {
 	Graphics_polyline (g, my numberOfPoints, & my x[1], & my y[1]);
 }
 
-void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, long index, double lowerPercentage,
-                            double xmin, double xmax, double ymin, double ymax, int garnish) {
+void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, long index, double lowerPercentage, double xmin, double xmax, double ymin, double ymax, int garnish) {
 	long ib = 1, ie = my numberOfRows;
 	if (index > 0 && index <= my numberOfColumns) {
 		ib = ie = index;
@@ -284,7 +280,7 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, long index, d
 	if (ymax <= ymin) {
 		return;
 	}
-	double rmax = fabs (xmax - xmin) / 10;
+	double rmax = fabs (xmax - xmin) / 10.0;
 	double rmin = rmax / 10;
 
 	Graphics_setInner (g);
@@ -294,12 +290,12 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, long index, d
 		Graphics_text (g, thy z[i][1], thy z[i][2], my rowLabels[i]);
 	}
 	for (long i = ib; i <= ie; i++) {
-		double xSum = 0;
+		double xSum = 0.0;
 		for (long j = 1; j <= my numberOfColumns; j++) {
 			xSum += my data[i][j];
 		}
 
-		if (xSum <= 0) {
+		if (xSum <= 0.0) {
 			continue;    /* no confusions */
 		}
 
@@ -311,11 +307,11 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, long index, d
 
 		for (long j = 1; j <= my numberOfColumns; j++) {
 			double x2 = thy z[j][1], y2 = thy z[j][2];
-			double perc =  100 * my data[i][j] / xSum;
+			double perc =  100.0 * my data[i][j] / xSum;
 			double dx = x2 - x1, dy = y2 - y1;
 			double alpha = atan2 (dy, dx);
 
-			if (perc == 0 || perc < lowerPercentage || j == i) {
+			if (perc == 0.0 || perc < lowerPercentage || j == i) {
 				continue;
 			}
 
@@ -329,10 +325,10 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, long index, d
 			}
 			autoPolygon p = Polygon_createPointer();
 			double xs = sqrt (dx * dx + dy * dy) - 2.2 * r;
-			if (xs < 0) {
-				xs = 0;
+			if (xs < 0.0) {
+				xs = 0.0;
 			}
-			double ys = perc * rmax / 100;
+			double ys = perc * rmax / 100.0;
 			Polygon_scale (p.peek(), xs, ys);
 			Polygon_translate (p.peek(), x1, y1 - ys / 2);
 			Polygon_rotate (p.peek(), alpha, x1, y1);
@@ -359,11 +355,11 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, long index, d
 Matrix Confusion_difference (Confusion me, Confusion thee) {
 	try {
 		/* categories must be the same too*/
-		if (my numberOfColumns != thy numberOfColumns || my numberOfRows != thy numberOfRows) Melder_throw
-			(U"Dimensions not equal.");
+		if (my numberOfColumns != thy numberOfColumns || my numberOfRows != thy numberOfRows) {
+			Melder_throw (U"Dimensions not equal.");
+		}
 
-		autoMatrix him = Matrix_create (0.5, my numberOfColumns + 0.5, my numberOfColumns, 1.0, 1.0,
-		                                0.5, my numberOfRows + 0.5, my numberOfRows, 1.0, 1.0);
+		autoMatrix him = Matrix_create (0.5, my numberOfColumns + 0.5, my numberOfColumns, 1.0, 1.0, 0.5, my numberOfRows + 0.5, my numberOfRows, 1.0, 1.0);
 
 		for (long i = 1; i <= my numberOfRows; i++) {
 			for (long j = 1; j <= my numberOfColumns; j++) {
@@ -377,7 +373,7 @@ Matrix Confusion_difference (Confusion me, Confusion thee) {
 }
 
 long Confusion_getNumberOfEntries (Confusion me) {
-	double total = 0;
+	double total = 0.0;
 	for (long i = 1; i <= my numberOfRows; i++) {
 		for (long j = 1; j <= my numberOfColumns; j++) {
 			total += my data[i][j];
@@ -596,9 +592,9 @@ TableOfReal Confusion_to_TableOfReal_marginals (Confusion me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows + 1, my numberOfColumns + 1);
 
-		double total = 0;
+		double total = 0.0;
 		for (long i = 1; i <= my numberOfRows; i++) {
-			double rowsum = 0;
+			double rowsum = 0.0;
 			for (long j = 1; j <= my numberOfColumns; j++) {
 				thy data[i][j] = my data[i][j];
 				rowsum += my data[i][j];

@@ -1,6 +1,6 @@
 /* Configuration.cpp
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,8 +69,7 @@ void structConfiguration :: v_info () {
 	MelderInfo_writeLine (U"Metric: ", metric);
 }
 
-Configuration Configuration_create (long numberOfPoints,
-                                    long numberOfDimensions) {
+Configuration Configuration_create (long numberOfPoints, long numberOfDimensions) {
 	try {
 		autoConfiguration me = Thing_new (Configuration);
 		TableOfReal_init (me.peek(), numberOfPoints, numberOfDimensions);
@@ -106,27 +105,26 @@ void Configuration_setSqWeights (Configuration me, const double weight[]) {
 void Configuration_normalize (Configuration me, double sumsq, int columns) {
 	TableOfReal_centreColumns (me);
 	if (columns) {
-		sumsq = sumsq <= 0 ? 1.0 : sqrt (sumsq);
+		sumsq = sumsq <= 0.0 ? 1.0 : sqrt (sumsq);
 		NUMnormalizeColumns (my data, my numberOfRows, my numberOfColumns, sumsq);
 	} else {
-		if (sumsq <= 0) {
+		if (sumsq <= 0.0) {
 			sumsq = my numberOfRows;
 		}
-		NUMnormalize (my data, my numberOfRows, my numberOfColumns,
-		              sqrt (sumsq));
+		NUMnormalize (my data, my numberOfRows, my numberOfColumns, sqrt (sumsq));
 	}
 }
 
 void Configuration_randomize (Configuration me) {
 	for (long i = 1; i <= my numberOfRows; i++) {
 		for (long j = 1; j <= my numberOfColumns; j++) {
-			my data[i][j] = NUMrandomUniform (-1, 1);
+			my data[i][j] = NUMrandomUniform (-1.0, 1.0);
 		}
 	}
 }
 
 void Configuration_rotate (Configuration me, long dimension1, long dimension2, double angle_degrees) {
-	double f = NUMpi * (2 - angle_degrees / 180);
+	double f = NUMpi * (2.0 - angle_degrees / 180.0);
 	double cosa = cos (f), sina = sin (f);
 
 	if (dimension1 == dimension2 || angle_degrees == 0) {
@@ -158,10 +156,10 @@ void Configuration_invertDimension (Configuration me, int dimension) {
 
 
 static double NUMsquaredVariance (double **a, long nr, long nc, int rawPowers) {
-	double v4 = 0;
+	double v4 = 0.0;
 
 	for (long j = 1; j <= nc; j++) {
-		double sum4 = 0, mean = 0;
+		double sum4 = 0.0, mean = 0.0;
 		for (long i = 1; i <= nr; i++) {
 			double sq = a[i][j] * a[i][j];
 			sum4 += sq * sq;
@@ -181,8 +179,7 @@ static double NUMsquaredVariance (double **a, long nr, long nc, int rawPowers) {
 		planar rotations: a remedy against nonoptimal varimax rotations",
 		Psychometrika 60, 437-446.
 */
-static void NUMvarimax (double **xm, double **ym, long nr, long nc, int normalizeRows, int quartimax,
-                        long maximumNumberOfIterations, double tolerance) {
+static void NUMvarimax (double **xm, double **ym, long nr, long nc, int normalizeRows, int quartimax, long maximumNumberOfIterations, double tolerance) {
 	Melder_assert (nr > 0 && nc > 0);
 
 	NUMmatrix_copyElements (xm, ym, 1, nr, 1, nc);
@@ -207,7 +204,7 @@ static void NUMvarimax (double **xm, double **ym, long nr, long nc, int normaliz
 			for (long j = 1; j <= nc; j++) {
 				norm[i] += ym[i][j] * ym[i][j];
 			}
-			if (norm[i] <= 0) {
+			if (norm[i] <= 0.0) {
 				continue;
 			}
 			norm[i] = sqrt (norm[i]);
@@ -220,7 +217,7 @@ static void NUMvarimax (double **xm, double **ym, long nr, long nc, int normaliz
 	// Initial squared "variance".
 
 	double varianceSq = NUMsquaredVariance (ym, nr, nc, quartimax);
-	if (varianceSq == 0) {
+	if (varianceSq == 0.0) {
 		return;
 	}
 
@@ -231,17 +228,17 @@ static void NUMvarimax (double **xm, double **ym, long nr, long nc, int normaliz
 	do {
 		for (long c1 = 1; c1 <= nc; c1++) {
 			for (long c2 = c1 + 1; c2 <= nc; c2++) {
-				double um = 0, vm = 0;
+				double um = 0.0, vm = 0.0;
 				for (long i = 1; i <= nr; i++) {
 					double x = ym[i][c1], y = ym[i][c2];
 					u[i] = x * x - y * y;
 					um += u[i];
-					v[i] = 2 * x * y;
+					v[i] = 2.0 * x * y;
 					vm += v[i];
 				}
 				um /= nr; vm /= nr;
 				if (quartimax || nr == 1) {
-					um = vm = 0;
+					um = vm = 0.0;
 				}
 
 				/*
@@ -251,15 +248,15 @@ static void NUMvarimax (double **xm, double **ym, long nr, long nc, int normaliz
 					Tricks: multiplication with n drops out!
 						a's multiplication by 2 outside the loop.
 				*/
-				double a = 0, b = 0;
+				double a = 0.0, b = 0.0;
 				for (long i = 1; i <= nr; i++) {
 					double ui = u[i] - um, vi = v[i] - vm;
 					a += ui * vi;
 					b += ui * ui - vi * vi;
 				}
-				double c = sqrt (4 * a * a + b * b);
-				double w = sqrt ( (c + b) / (2 * c));
-				if (a > 0) {
+				double c = sqrt (4.0 * a * a + b * b);
+				double w = sqrt ( (c + b) / (2.0 * c));
+				if (a > 0.0) {
 					w = -w;
 				}
 				double cost = sqrt (0.5 + 0.5 * w);
@@ -271,7 +268,7 @@ static void NUMvarimax (double **xm, double **ym, long nr, long nc, int normaliz
 
 				// Prevent permutations: when w < 0, i.e., a > 0, swap columns of T:/
 
-				if (w < 0) {
+				if (w < 0.0) {
 					t11 = sint; t12 = t21 = cost; t22 = -sint;
 				}
 
@@ -305,8 +302,7 @@ Configuration Configuration_varimax (Configuration me, int normalizeRows,
                                      int quartimax, long maximumNumberOfIterations, double tolerance) {
 	try {
 		autoConfiguration thee = Data_copy (me);
-		NUMvarimax (my data, thy data, my numberOfRows, my numberOfColumns, normalizeRows, quartimax,
-		            maximumNumberOfIterations, tolerance);
+		NUMvarimax (my data, thy data, my numberOfRows, my numberOfColumns, normalizeRows, quartimax, maximumNumberOfIterations, tolerance);
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, U": varimax rotation not performed.");
@@ -337,12 +333,10 @@ void Configuration_rotateToPrincipalDirections (Configuration me) {
 	}
 }
 
-void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoordinate, double xmin, double xmax,
-                         double ymin, double ymax, int labelSize, int useRowLabels, const char32 *label, int garnish) {
+void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoordinate, double xmin, double xmax, double ymin, double ymax, int labelSize, int useRowLabels, const char32 *label, int garnish) {
 	long nPoints = my numberOfRows, numberOfDimensions = my numberOfColumns;
 
-	if (numberOfDimensions > 1 && (xCoordinate > numberOfDimensions ||
-	                               yCoordinate > numberOfDimensions)) {
+	if (numberOfDimensions > 1 && (xCoordinate > numberOfDimensions || yCoordinate > numberOfDimensions)) {
 		return;
 	}
 	if (numberOfDimensions == 1) {
@@ -357,21 +351,21 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 
 	for (long i = 1; i <= nPoints; i++) {
 		x[i] = my data[i][xCoordinate] * my w[xCoordinate];
-		y[i] = numberOfDimensions > 1 ? my data[i][yCoordinate] * my w[yCoordinate] : 0;
+		y[i] = numberOfDimensions > 1 ? my data[i][yCoordinate] * my w[yCoordinate] : 0.0;
 	}
 	if (xmax <= xmin) {
 		NUMvector_extrema (x.peek(), 1, nPoints, &xmin, &xmax);
 	}
 	if (xmax <= xmin) {
-		xmax += 1;
-		xmin -= 1;
+		xmax += 1.0;
+		xmin -= 1.0;
 	}
 	if (ymax <= ymin) {
 		NUMvector_extrema (y.peek(), 1, nPoints, &ymin, &ymax);
 	}
 	if (ymax <= ymin) {
-		ymax += 1;
-		ymin -= 1;
+		ymax += 1.0;
+		ymin -= 1.0;
 	}
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	Graphics_setInner (g);
@@ -404,20 +398,17 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 		}
 	}
 
-	if (noLabel > 0) Melder_warning (U"Configuration_draw: ", noLabel, U" from ", my numberOfRows,
-		                                 U" labels are not visible because they are empty or they contain only spaces or they contain only non-printable characters");
+	if (noLabel > 0) {
+		Melder_warning (U"Configuration_draw: ", noLabel, U" from ", my numberOfRows, U" labels are not visible because they are empty or they contain only spaces or they contain only non-printable characters");
+	}
 }
 
-void Configuration_drawConcentrationEllipses (Configuration me, Graphics g,
-        double scale, int confidence, const char32 *label, long d1, long d2, double xmin, double xmax,
-        double ymin, double ymax, int fontSize, int garnish) {
+void Configuration_drawConcentrationEllipses (Configuration me, Graphics g, double scale, int confidence, const char32 *label, long d1, long d2, double xmin, double xmax, double ymin, double ymax, int fontSize, int garnish) {
 	autoSSCPs sscps = TableOfReal_to_SSCPs_byLabel (me);
-	SSCPs_drawConcentrationEllipses (sscps.peek(), g, scale, confidence, label,
-	                                 d1, d2, xmin, xmax, ymin, ymax, fontSize, garnish);
+	SSCPs_drawConcentrationEllipses (sscps.peek(), g, scale, confidence, label, d1, d2, xmin, xmax, ymin, ymax, fontSize, garnish);
 }
 
-Configuration TableOfReal_to_Configuration (I) {
-	iam (TableOfReal);
+Configuration TableOfReal_to_Configuration (TableOfReal me) {
 	try {
 		autoConfiguration thee = Configuration_create (my numberOfRows, my numberOfColumns);
 
@@ -447,39 +438,35 @@ Configuration TableOfReal_to_Configuration_pca (TableOfReal me, long numberOfDim
 
 Configuration Configuration_createLetterRExample (int choice) {
 	double x1[33] = { 0,
-	                  -5, -5, -5, -5, -5, -5, -5,   -5, -5, -5,
-	                  -5, -4, -3, -2, -1,  0,  1, 2.25,  3,  3,
-	                  2.25,  1,  0, -1, -2, -3, -4,   -1,  0,  1, 2, 3
-	                };
+		-5, -5, -5, -5, -5, -5, -5,   -5, -5, -5,
+		-5, -4, -3, -2, -1,  0,  1, 2.25,  3,  3,
+		2.25,  1,  0, -1, -2, -3, -4,   -1,  0,  1, 2, 3 };
 	double y1[33] = { 0,
-	                  -6, -5, -4, -3, -2, -1, 0,   1,  2,  3,
-	                  4,  4,  4,  4,  4,  4, 4, 3.5,  2,  1,
-	                  -0.5, -1, -1, -1, -1, -1, -1, -2, -3, -4, -5, -6
-	                };
+		-6, -5, -4, -3, -2, -1, 0,   1,  2,  3,
+		4,  4,  4,  4,  4,  4, 4, 3.5,  2,  1,
+		-0.5, -1, -1, -1, -1, -1, -1, -2, -3, -4, -5, -6 };
 	double x2[33] = {0, 0.94756043346272423, 0.73504466902509913,
-	                 0.4528453515175927,    0.46311499024105723,   0.30345454816993439,
-	                 0.075184942115601547, -0.090010071904764719, -0.19630977381424003,
-	                 -0.36341509807865086,  -0.54216996409132612,  -0.68704678013309872,
-	                 -0.67370169194623086,  -0.69336494336440502,  -0.67809065144478664,
-	                 -0.61382610572366281,  -0.68656530656078996,  -0.57704879646736551,
-	                 -0.63417502349009069,  -0.37153350651419026,  -0.091809666009009777,
-	                 0.054833807442559397,  0.1445593164362155,    0.055587230806920782,
-	                 0.18201798315035453,   0.048445620192953162,  0.081595930742961439,
-	                 0.20063623749033621,   0.28546520751183313,   0.39384438699721991,
-	                 0.62832258520372286,   0.78548335015622228,   1.0610707888793069
-	                };
+		0.4528453515175927,    0.46311499024105723,   0.30345454816993439,
+		0.075184942115601547, -0.090010071904764719, -0.19630977381424003,
+		-0.36341509807865086,  -0.54216996409132612,  -0.68704678013309872,
+		-0.67370169194623086,  -0.69336494336440502,  -0.67809065144478664,
+		-0.61382610572366281,  -0.68656530656078996,  -0.57704879646736551,
+		-0.63417502349009069,  -0.37153350651419026,  -0.091809666009009777,
+		0.054833807442559397,  0.1445593164362155,    0.055587230806920782,
+		0.18201798315035453,   0.048445620192953162,  0.081595930742961439,
+		0.20063623749033621,   0.28546520751183313,   0.39384438699721991,
+		0.62832258520372286,   0.78548335015622228,   1.0610707888793069 };
 	double y2[33] = {0, 0.49630791172076621, 0.53320347382055022,
-	                 0.62384637225470441,  0.47592708487655661,  0.50364353255684202,
-	                 0.55311720162084443,  0.55118713773007066,  0.50007736370068601,
-	                 0.40432332354648709,  0.49817059660482677,  0.49803436631629411,
-	                 0.33213829258059019,  0.14585700576425648, -0.022110500334692869,
-	                 -0.1752555003289698,  -0.29448744336706828, -0.45639468287493545,
-	                 -0.59177815505008013, -0.74980550818568981, -0.78095916436791279,
-	                 -0.64447562732895125, -0.49526830813007033, -0.22443396573313243,
-	                 -0.066378148077667398, -0.03498490725857361,  0.16196028200653381,
-	                 0.30633527000982519, -0.14894460651161745, -0.30808798640907431,
-	                 -0.35920781945385832, -0.62766325578928184, -0.60389363590825562
-	                };
+		0.62384637225470441,  0.47592708487655661,  0.50364353255684202,
+		0.55311720162084443,  0.55118713773007066,  0.50007736370068601,
+		0.40432332354648709,  0.49817059660482677,  0.49803436631629411,
+		0.33213829258059019,  0.14585700576425648, -0.022110500334692869,
+		-0.1752555003289698,  -0.29448744336706828, -0.45639468287493545,
+		-0.59177815505008013, -0.74980550818568981, -0.78095916436791279,
+		-0.64447562732895125, -0.49526830813007033, -0.22443396573313243,
+		-0.066378148077667398, -0.03498490725857361,  0.16196028200653381,
+		0.30633527000982519, -0.14894460651161745, -0.30808798640907431,
+		-0.35920781945385832, -0.62766325578928184, -0.60389363590825562 };
 	try {
 		double *x, *y;
 		autoConfiguration me = Configuration_create (32, 2);
@@ -506,8 +493,8 @@ Configuration Configuration_createLetterRExample (int choice) {
 }
 
 Configuration Configuration_createCarrollWishExample () {
-	double  x[10] = {0, -1, 0, 1, -1, 0, 1, -1,  0,  1};
-	double  y[10] = {0,  1, 1, 1,  0, 0, 0, -1, -1, -1};
+	double  x[10] = {0.0, -1.0, 0.0, 1.0, -1.0, 0.0, 1.0, -1.0,  0.0,  1.0};
+	double  y[10] = {0.0,  1.0, 1.0, 1.0,  0.0, 0.0, 0.0, -1.0, -1.0, -1.0};
 	char32 const *label[] = { U"", U"A", U"B", U"C", U"D", U"E", U"F", U"G", U"H", U"I"};
 	try {
 		long nObjects = 9;

@@ -1,6 +1,6 @@
 /* FFNet_Pattern_Categories.cpp
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,18 +30,18 @@
 
 static void _FFNet_Pattern_Categories_checkDimensions (FFNet me, Pattern p, Categories c) {
 
-	if (my nInputs != p -> nx) Melder_throw (U"The Pattern and the FFNet do not match.\n"
-		        U"The number of colums in the Pattern must equal the number of inputs in the FFNet.");
-	if (p -> ny != c -> size) Melder_throw (U"The Pattern and the categories do not match.\n"
-		                                        U"The number of rows in the Pattern must equal the number of categories.");
-	if (! _Pattern_checkElements (p)) Melder_throw (U"The elements in the Pattern are not all "
-		        U"in the interval [0, 1].\nThe input of the neural net can only process values that are between 0 "
-		        U"and 1.\nYou could use \"Formula...\" to scale the Pattern values first.");
+	if (my nInputs != p -> nx) {
+		Melder_throw (U"The Pattern and the FFNet do not match.\nThe number of colums in the Pattern must equal the number of inputs in the FFNet.");
+	}
+	if (p -> ny != c -> size) {
+		Melder_throw (U"The Pattern and the categories do not match.\nThe number of rows in the Pattern must equal the number of categories.");
+	}
+	if (! _Pattern_checkElements (p)) {
+		Melder_throw (U"All Pattern elements must be in the interval [0, 1].\nYou could use \"Formula...\" to scale the Pattern values first.");
+	}
 }
 
-static void _FFNet_Pattern_Categories_learn (FFNet me, Pattern p, Categories c,
-        long maxNumOfEpochs, double tolerance, Any parameters, int costFunctionType,
-        void (*learn) (FFNet, Pattern, Activation, long, double, Any, int)) {
+static void _FFNet_Pattern_Categories_learn (FFNet me, Pattern p, Categories c, long maxNumOfEpochs, double tolerance, Any parameters, int costFunctionType, void (*learn) (FFNet, Pattern, Activation, long, double, Any, int)) {
 	_FFNet_Pattern_Categories_checkDimensions (me, p, c);
 	autoActivation activation = FFNet_Categories_to_Activation (me, c);
 	double min, max;
@@ -64,13 +64,11 @@ double FFNet_Pattern_Categories_getCosts_average (FFNet me, Pattern p, Categorie
 	return costs == NUMundefined ? NUMundefined : costs / p -> ny;
 }
 
-void FFNet_Pattern_Categories_learnSM (FFNet me, Pattern p, Categories c,
-                                       long maxNumOfEpochs, double tolerance, Any parameters, int costFunctionType) {
+void FFNet_Pattern_Categories_learnSM (FFNet me, Pattern p, Categories c, long maxNumOfEpochs, double tolerance, Any parameters, int costFunctionType) {
 	_FFNet_Pattern_Categories_learn (me, p, c, maxNumOfEpochs, tolerance, parameters, costFunctionType, FFNet_Pattern_Activation_learnSM);
 }
 
-void FFNet_Pattern_Categories_learnSD (FFNet me, Pattern p, Categories c,
-                                       long maxNumOfEpochs, double tolerance, Any parameters, int costFunctionType) {
+void FFNet_Pattern_Categories_learnSD (FFNet me, Pattern p, Categories c, long maxNumOfEpochs, double tolerance, Any parameters, int costFunctionType) {
 	_FFNet_Pattern_Categories_learn (me, p, c, maxNumOfEpochs, tolerance, parameters, costFunctionType, FFNet_Pattern_Activation_learnSD);
 }
 
@@ -79,18 +77,17 @@ Categories FFNet_Pattern_to_Categories (FFNet me, Pattern thee, int labeling) {
 		if (my outputCategories == 0) {
 			Melder_throw (U"The FFNet has no output categories.");
 		}
-		if (my nInputs != thy nx) Melder_throw (U"The number of colums in the Pattern (", thy nx,
-			                                        U") should equal the number of inputs in the FFNet (", my nInputs, U").");
-		if (! _Pattern_checkElements (thee)) Melder_throw
-			(U"The elements in the Pattern are not all in the interval [0, 1].\n"
-			 U"The input of the neural net can only process values that are between 0 and 1.\n"
-			 U"You could use \"Formula...\" to scale the Pattern values first.");
-
+		if (my nInputs != thy nx) {
+			Melder_throw (U"The number of colums in the Pattern (", thy nx, U") should equal the number of inputs in the FFNet (", my nInputs, U").");
+		}
+		if (! _Pattern_checkElements (thee)) {
+			Melder_throw (U"All Pattern elements must be in the interval [0, 1].\nYou could use \"Formula...\" to scale the Pattern values first.");
+		}
 
 		autoCategories him = Categories_create ();
 
 		for (long k = 1; k <= thy ny; k++) {
-			FFNet_propagate (me, thy z[k], 0);
+			FFNet_propagate (me, thy z[k], nullptr);
 			long index = FFNet_getWinningUnit (me, labeling);
 			autoDaata item = Data_copy ( (Daata) my outputCategories -> item[index]);
 			Collection_addItem (him.peek(), item.transfer());

@@ -1,6 +1,6 @@
 /* FFNet_Activation_Categories.cpp
  *
- * Copyright (C) 1997-2011 David Weenink
+ * Copyright (C) 1997-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,12 +39,11 @@ static long winnerTakesAll (FFNet me, const double activation[]) {
 
 static long stochastic (FFNet me, const double activation[]) {
 	long i;
-	double range = 0;
+	double range = 0.0, lower = 0.0;
 	for (i = 1; i <= my nOutputs; i++) {
 		range += activation[i];
 	}
-	double number = NUMrandomUniform (0, range);
-	double lower = 0;
+	double number = NUMrandomUniform (0.0, range);
 	for (i = 1; i <= my nOutputs; i++) {
 		lower += activation[i];
 		if (number < lower) {
