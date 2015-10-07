@@ -32,7 +32,7 @@ autoPitch Pitch_create (double tmin, double tmax, long nt, double dt, double t1,
 	double ceiling, int maxnCandidates);
 /*
 	Function:
-		create an empty pitch contour (voiceless), or NULL if out of memory.
+		create an empty pitch contour (voiceless).
 	Preconditions:
 		tmax > tmin;
 		nt >= 1;

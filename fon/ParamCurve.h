@@ -61,8 +61,6 @@ void ParamCurve_draw (ParamCurve me, Graphics g, double t1, double t2, double dt
 		dt <= 0.0: time step is the smaller of my x -> dx and my y -> dx.
 		x2 <= x1: autoscaling along horizontal axis.
 		y2 <= y1: autoscaling along vertical axis.
-	Return value:
-		1 if OK, 0 if out of memory.
 */
 
 void ParamCurve_swapXY (ParamCurve me);

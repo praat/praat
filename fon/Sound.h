@@ -58,7 +58,7 @@ Thing_define (Sound, Vector) {
 Sound Sound_create (long numberOfChannels, double xmin, double xmax, long nx, double dx, double x1);
 /*
 	Function:
-		return a new silent Sound, or NULL if out of memory.
+		return a new silent Sound.
 	Preconditions:
 		xmax > xmin;
 		nx >= 1;
@@ -80,7 +80,7 @@ Sound Sound_create (long numberOfChannels, double xmin, double xmax, long nx, do
 Sound Sound_createSimple (long numberOfChannels, double duration, double samplingFrequency);
 /*
 	Function:
-		return a new silent Sound, or NULL if out of memory.
+		return a new silent Sound.
 	Preconditions:
 		duration > 0.0;
 		samplingFrequency > 0.0;
@@ -197,7 +197,6 @@ Matrix Sound_to_Matrix (Sound me);
 /*
 	Create a Matrix from a Sound,
 	with deep copy of all its Matrix attributes, except class information and methods.
-	Return NULL if out of memory.  
 */
 
 Sound Matrix_to_Sound (Matrix me);
@@ -209,7 +208,6 @@ Sound Matrix_to_Sound_mono (Matrix me, long row);
 		"row" is forced inside the segment [1, my ny];
 		negative values count from the last row;
 		e.g., if "row" is -1, the last row is taken.
-		Return NULL if out of memory.
 	Postconditions:
 		thy xmin == my xmin;
 		thy xmax == my xmax;

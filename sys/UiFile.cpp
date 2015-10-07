@@ -54,9 +54,7 @@ MelderFile UiFile_getFile (I) {
 /********** READING A FILE **********/
 
 Thing_define (UiInfile, UiFile) {
-	// new data:
-	public:
-		bool allowMultipleFiles;
+	bool allowMultipleFiles;
 };
 
 Thing_implement (UiInfile, UiFile, 0);
@@ -90,7 +88,7 @@ void UiInfile_do (I) {
 			structMelderFile file;
 			MelderFile_copy (& my file, & file);
 			try {
-				my okCallback ((UiForm) me, 0, NULL, NULL, NULL, my invokingButtonTitle, false, my okClosure);
+				my okCallback ((UiForm) me, 0, nullptr, nullptr, nullptr, my invokingButtonTitle, false, my okClosure);
 			} catch (MelderError) {
 				Melder_throw (U"File ", & file, U" not finished.");
 			}
@@ -103,10 +101,8 @@ void UiInfile_do (I) {
 /********** WRITING A FILE **********/
 
 Thing_define (UiOutfile, UiFile) {
-	// new data:
-	public:
-		bool (*allowExecutionHook) (void *closure);
-		void *allowExecutionClosure;   // I am owner (see destroy)
+	bool (*allowExecutionHook) (void *closure);
+	void *allowExecutionClosure;   // I am owner (see destroy)
 };
 
 Thing_implement (UiOutfile, UiFile, 0);
@@ -148,8 +144,8 @@ UiForm UiInfile_createE (EditorCommand cmd, const char32 *title, const char32 *i
 
 void UiOutfile_do (I, const char32 *defaultName) {
 	iam (UiOutfile);
-	char32 *outfileName = GuiFileSelect_getOutfileName (NULL, my name, defaultName);
-	if (outfileName == NULL) return;   // cancelled
+	char32 *outfileName = GuiFileSelect_getOutfileName (nullptr, my name, defaultName);
+	if (! outfileName) return;   // cancelled
 	if (my allowExecutionHook && ! my allowExecutionHook (my allowExecutionClosure)) {
 		Melder_flushError (U"Dialog \"", my name, U"\" cancelled.");
 		return;
@@ -160,7 +156,7 @@ void UiOutfile_do (I, const char32 *defaultName) {
 	UiHistory_write (U"\n");
 	UiHistory_write_colonize (my invokingButtonTitle);
 	try {
-		my okCallback ((UiForm) me, 0, NULL, NULL, NULL, my invokingButtonTitle, false, my okClosure);
+		my okCallback ((UiForm) me, 0, nullptr, nullptr, nullptr, my invokingButtonTitle, false, my okClosure);
 	} catch (MelderError) {
 		Melder_flushError (U"File ", & file, U" not finished.");
 	}

@@ -87,14 +87,12 @@ Spectrogram Matrix_to_Spectrogram (Matrix me);
 /*
 	Create a Spectrogram from a Matrix,
 	with deep copy of all its attributes, except class information and methods.
-	Return NULL if out of memory.  
 */
 
 Matrix Spectrogram_to_Matrix (Spectrogram me);
 /*
 	Create a Matrix from a Spectrogram,
 	with deep copy of all its attributes, except class information and methods.
-	Return NULL if out of memory.  
 */
 
 /* End of file Spectrogram.h */

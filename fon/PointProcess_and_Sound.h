@@ -24,8 +24,7 @@ autoSound PointProcess_to_Sound_pulseTrain (PointProcess me, double samplingFreq
 	double adaptFactor, double adaptTime, long interpolationDepth);
 /*
 	Function:
-		create a time signal out of a point process;
-		return NULL if out of memory.
+		create a time signal out of a point process.
 	Preconditions:
 		samplingFrequency > 0.0;
 	Arguments:

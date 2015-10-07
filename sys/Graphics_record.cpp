@@ -446,7 +446,8 @@ void Graphics_writeRecordings (Graphics me, FILE *f) {
 void Graphics_readRecordings (Graphics me, FILE *f) {
 	long old_irecord = my irecord;
 	long added_irecord = 0;
-	double *p = nullptr, *endp = nullptr;
+	double* p = nullptr;
+	double* endp = nullptr;
 	signed long numberOfArguments = 0;
 	int opcode = 0;
 	try {
