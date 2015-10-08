@@ -4349,7 +4349,7 @@ static int Graphics_getConnectingLine (Graphics g, const char32 *text1, double x
 // take the xcolumn as labels if non-numeric column else as numbers and arrange distances accordingly.
 void Table_lineGraphWhere (Table me, Graphics g, long xcolumn, double xmin, double xmax, long ycolumn, double ymin, double ymax, const char32 *symbol, double angle, int garnish, const char32 *formula, Interpreter interpreter) {
 	try {
-		if (ycolumn < 1 || ycolumn > my rows -> size) return;
+		if (ycolumn < 1 || ycolumn > my numberOfColumns) return;
 		long numberOfSelectedRows = 0;
 		autoNUMvector<long> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, &numberOfSelectedRows), 1);	
 		if (ymax <= ymin) { // autoscaling
