@@ -573,7 +573,7 @@ void NUM_viterbi_multi (
 	void *closure)
 {
 	struct parm2 parm;
-	parm.indices = NULL;
+	parm.indices = nullptr;
 
 	if (ntrack > ncand) Melder_throw (U"(NUM_viterbi_multi:) "
 		U"Number of tracks (", ntrack, U") should not exceed number of candidates (", ncand, U").");

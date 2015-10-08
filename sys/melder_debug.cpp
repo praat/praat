@@ -97,20 +97,20 @@ the behaviour of that program changes in the following way:
  * also, we need no newline nativization, as Melder_32to8_inline() does.
  */
 static const char * peek32to8 (const char32 *string) {
-	if (string == NULL) return "";
-	static char *buffer { NULL };
+	if (! string) return "";
+	static char *buffer { nullptr };
 	static int64 bufferSize { 0 };
 	int64 n = str32len (string);
 	int64 sizeNeeded = n * 4 + 1;
 	if ((bufferSize - sizeNeeded) * (int64) sizeof (char) >= 10000) {
 		free (buffer);
-		buffer = NULL;   // undangle
+		buffer = nullptr;   // undangle
 		bufferSize = 0;
 	}
 	if (sizeNeeded > bufferSize) {
 		sizeNeeded = (int64) floor (sizeNeeded * 1.61803) + 100;
 		buffer = (char *) realloc (buffer, (size_t) sizeNeeded * sizeof (char));
-		if (buffer == NULL) {
+		if (buffer == nullptr) {
 			bufferSize = 0;
 			return "(out of memory during Melder_casual)";
 		}
@@ -140,8 +140,8 @@ static const char * peek32to8 (const char32 *string) {
 }
 #ifdef _WIN32
 static const char16 * peek32to16 (const char32 *string) {
-	if (string == NULL) return u"";
-	static char16 *buffer { NULL };
+	if (! string) return u"";
+	static char16 *buffer { nullptr };
 	static int64 bufferSize { 0 };
 	int64 n = str32len (string);
 	int64 sizeNeeded = n * 2 + 1;
@@ -152,7 +152,7 @@ static const char16 * peek32to16 (const char32 *string) {
 	if (sizeNeeded > bufferSize) {
 		sizeNeeded = (int64) floor (sizeNeeded * 1.61803) + 100;
 		buffer = (char16 *) realloc (buffer, (size_t) sizeNeeded * sizeof (char16));
-		if (buffer == NULL) {
+		if (! buffer) {
 			bufferSize = 0;
 			return u"(out of memory during trace)";
 		}
@@ -558,24 +558,24 @@ void Melder_trace (const char *fileName, int lineNumber, const char *functionNam
 
 #ifdef linux
 static void theGtkLogHandler (const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer unused_data) {
-	FILE *f = Melder_trace_open (NULL, 0, "GTK");
+	FILE *f = Melder_trace_open (nullptr, 0, "GTK");
 	fprintf (f, "%s", message);
 	Melder_trace_close (f);
 }
 static void theGlibLogHandler (const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer unused_data) {
-	FILE *f = Melder_trace_open (NULL, 0, "GLib");
+	FILE *f = Melder_trace_open (nullptr, 0, "GLib");
 	fprintf (f, "%s", message);
 	Melder_trace_close (f);
 }
 static void theGlibGobjectLogHandler (const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer unused_data) {
-	FILE *f = Melder_trace_open (NULL, 0, "GLib-GObject");
+	FILE *f = Melder_trace_open (nullptr, 0, "GLib-GObject");
 	fprintf (f, "%s", message);
 	Melder_trace_close (f);
 }
 #endif
 
 void Melder_setTracing (bool tracing) {
-	time_t today = time (NULL);	
+	time_t today = time (nullptr);
 	#define xstr(s) str(s)
 	#define str(s) #s
 	if (! tracing)
@@ -587,9 +587,9 @@ void Melder_setTracing (bool tracing) {
 	#ifdef linux
 		static guint handler_id1, handler_id2, handler_id3;
 		if (tracing) {
-			handler_id1 = g_log_set_handler ("Gtk",          (GLogLevelFlags) (G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION), theGtkLogHandler,         NULL);
-			handler_id2 = g_log_set_handler ("GLib",         (GLogLevelFlags) (G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION), theGlibLogHandler,        NULL);
-			handler_id3 = g_log_set_handler ("GLib-GObject", (GLogLevelFlags) (G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION), theGlibGobjectLogHandler, NULL);
+			handler_id1 = g_log_set_handler ("Gtk",          (GLogLevelFlags) (G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION), theGtkLogHandler,         nullptr);
+			handler_id2 = g_log_set_handler ("GLib",         (GLogLevelFlags) (G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION), theGlibLogHandler,        nullptr);
+			handler_id3 = g_log_set_handler ("GLib-GObject", (GLogLevelFlags) (G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION), theGlibGobjectLogHandler, nullptr);
 		} else {
 			if (handler_id1) g_log_remove_handler ("Gtk",          handler_id1);
 			if (handler_id2) g_log_remove_handler ("GLib",         handler_id2);

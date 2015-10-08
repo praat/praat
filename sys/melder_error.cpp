@@ -42,7 +42,7 @@ static void appendError (const char32 *message) {
 
 bool Melder_hasError () { return errors [0] != U'\0'; }
 
-bool Melder_hasError (const char32 *partialError) { return str32str (errors, partialError) != NULL; }
+bool Melder_hasError (const char32 *partialError) { return !! str32str (errors, partialError); }
 
 void Melder_clearError (void) { errors [0] = U'\0'; }
 

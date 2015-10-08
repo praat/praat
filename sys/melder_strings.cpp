@@ -25,7 +25,7 @@
 static int64 totalNumberOfAllocations = 0, totalNumberOfDeallocations = 0, totalAllocationSize = 0, totalDeallocationSize = 0;
 
 void MelderString16_free (MelderString16 *me) {
-	if (my string == NULL) return;
+	if (! my string) return;
 	Melder_free (my string);
 	if (Melder_debug == 34) fprintf (stderr, "from MelderString16_free\t%p\t%lld\t%d\n", my string, (long long) my bufferSize, 2);
 	totalNumberOfDeallocations += 1;
@@ -35,7 +35,7 @@ void MelderString16_free (MelderString16 *me) {
 }
 
 void MelderString_free (MelderString *me) {
-	if (my string == NULL) return;
+	if (! my string) return;
 	Melder_free (my string);
 	if (Melder_debug == 34) fprintf (stderr, "from MelderString32_free\t%p\t%lld\t%d\n", my string, (long long) my bufferSize, 2);
 	totalNumberOfDeallocations += 1;
@@ -419,7 +419,7 @@ void MelderString_copy (MelderString *me, Melder_19_ARGS) {
 void MelderString_ncopy (MelderString *me, const char32 *source, int64 n) {
 	if (my bufferSize * (int64) sizeof (char32) >= FREE_THRESHOLD_BYTES)
 		MelderString_free (me);
-	if (source == NULL) source = U"";
+	if (! source) source = U"";
 	int64 length = str32len (source);
 	if (length > n) length = n;
 	int64 sizeNeeded = length + 1;

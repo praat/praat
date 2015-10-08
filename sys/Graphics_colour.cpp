@@ -310,7 +310,7 @@ static void highlight2 (Graphics graphics, long x1DC, long x2DC, long y1DC, long
 		#elif cocoa
 			GuiCocoaDrawingArea *drawingArea = (GuiCocoaDrawingArea *) my d_drawingArea -> d_widget;
 			if (drawingArea) {
-				bool cacheImageInRectWillWork = ( Melder_systemVersion < 101100 );
+				bool cacheImageInRectWillWork = ( Melder_systemVersion < 101100 /*|| Melder_systemVersion > 111111*/);
 				if (cacheImageInRectWillWork) {
 					NSView *nsView = my d_macView;
 					if (direction == 1) {
@@ -423,9 +423,9 @@ void Graphics_xorOn (Graphics graphics, Graphics_Colour colour) {
 		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
 		#if cairo
 			GdkColor colourXorWhite = { 0,
-				(uint16_t) ((uint16_t) (colour. red * 65535.0) ^ (uint16_t) 0xFFFF),
-				(uint16_t) ((uint16_t) (colour. green * 65535.0) ^ (uint16_t) 0xFFFF),
-				(uint16_t) ((uint16_t) (colour. blue * 65535.0) ^ (uint16_t) 0xFFFF) };
+				(uint16) ((uint16) (colour. red   * 65535.0) ^ (uint16) 0xFFFF),
+				(uint16) ((uint16) (colour. green * 65535.0) ^ (uint16) 0xFFFF),
+				(uint16) ((uint16) (colour. blue  * 65535.0) ^ (uint16) 0xFFFF) };
 			#if ALLOW_GDK_DRAWING
 				gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & colourXorWhite);
 				gdk_gc_set_function (my d_gdkGraphicsContext, GDK_XOR);
@@ -436,9 +436,9 @@ void Graphics_xorOn (Graphics graphics, Graphics_Colour colour) {
 			#endif
 		#elif win
 			SetROP2 (my d_gdiGraphicsContext, R2_XORPEN);
-			colour. red = ((uint16_t) (colour. red * 65535.0) ^ 0xFFFF) / 65535.0;
-			colour. green = ((uint16_t) (colour. green * 65535.0) ^ 0xFFFF) / 65535.0;
-			colour. blue = ((uint16_t) (colour. blue * 65535.0) ^ 0xFFFF) / 65535.0;
+			colour. red   = ((uint16) (colour. red   * 65535.0) ^ 0xFFFF) / 65535.0;
+			colour. green = ((uint16) (colour. green * 65535.0) ^ 0xFFFF) / 65535.0;
+			colour. blue  = ((uint16) (colour. blue  * 65535.0) ^ 0xFFFF) / 65535.0;
 			_Graphics_setColour (me, colour);
 		#elif cocoa
 		#elif mac

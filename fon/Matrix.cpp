@@ -547,8 +547,8 @@ Matrix Matrix_readFromRawTextFile (MelderFile file) {   // BUG: not Unicode-comp
 }
 
 void Matrix_eigen (Matrix me, Matrix *out_eigenvectors, Matrix *out_eigenvalues) {
-	*out_eigenvectors = NULL;
-	*out_eigenvalues = NULL;
+	*out_eigenvectors = nullptr;
+	*out_eigenvalues = nullptr;
 	try {
 		if (my nx != my ny)
 			Melder_throw (U"(Matrix not square.");
@@ -630,7 +630,7 @@ void Matrix_formula (Matrix me, const char32 *expression, Interpreter interprete
 	try {
 		struct Formula_Result result;
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
-		if (target == NULL) target = me;
+		if (! target) target = me;
 		for (long irow = 1; irow <= my ny; irow ++) {
 			for (long icol = 1; icol <= my nx; icol ++) {
 				Formula_run (irow, icol, & result);
@@ -653,7 +653,7 @@ void Matrix_formula_part (Matrix me, double xmin, double xmax, double ymin, doub
 		(void) Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax);
 		struct Formula_Result result;
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
-		if (target == NULL) target = me;
+		if (! target) target = me;
 		for (long irow = iymin; irow <= iymax; irow ++) {
 			for (long icol = ixmin; icol <= ixmax; icol ++) {
 				Formula_run (irow, icol, & result);

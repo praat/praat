@@ -51,16 +51,16 @@ char32 *Melder_firstToken (const char32 *string) {
 }
 
 char32 *Melder_nextToken (void) {
-	return Melder_tok (NULL, U" \t\n\r");
+	return Melder_tok (nullptr, U" \t\n\r");
 }
 
 char32 ** Melder_getTokens (const char32 *string, long *n) {
 	char32 *token;
 	long itoken = 0;
 	*n = Melder_countTokens (string);
-	if (*n == 0) return NULL;
+	if (*n == 0) return nullptr;
 	autostring32vector result (1, *n);
-	for (token = Melder_firstToken (string); token != NULL; token = Melder_nextToken ()) {
+	for (token = Melder_firstToken (string); token != nullptr; token = Melder_nextToken ()) {
 		result [++ itoken] = Melder_dup (token);
 	}
 	return result.transfer();
@@ -68,7 +68,7 @@ char32 ** Melder_getTokens (const char32 *string, long *n) {
 
 void Melder_freeTokens (char32 ***tokens) {
 	NUMvector_free (*tokens, 1);
-	*tokens = NULL;
+	*tokens = nullptr;
 }
 
 long Melder_searchToken (const char32 *string, char32 **tokens, long n) {

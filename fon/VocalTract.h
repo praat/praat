@@ -43,7 +43,7 @@ Thing_define (VocalTract, Vector) {
 VocalTract VocalTract_create (long nx, double dx);
 /*
 	Function:
-		create a VocalTract, or NULL if out of memory.
+		create a VocalTract.
 	Preconditions:
 		nx >= 1;
 		dx > 0.0;
@@ -65,14 +65,12 @@ Matrix VocalTract_to_Matrix (VocalTract me);
 /*
 	Create a Matrix from a VocalTract,
 	with deep copy of all of its Matrix attributes, except class information and methods.
-	Return NULL if out of memory.  
 */
 
 VocalTract Matrix_to_VocalTract (Matrix me);
 /*
 	Function:
 		create a VocalTract from a Matrix.
-		Return NULL if out of memory.
 	Postconditions:
 		thy xmin == my xmin;
 		thy xmax == my xmax;

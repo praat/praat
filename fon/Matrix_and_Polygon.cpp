@@ -30,13 +30,13 @@ Polygon Matrix_to_Polygon (Matrix me) {
 	try {
 		if (my nx != 2 && my ny != 2)
 			Melder_throw (U"Matrix must have exactly 2 rows or columns.");
-		autoPolygon thee = NULL;
+		autoPolygon thee;
 		if (my ny == 2) {
-			thee.reset (Polygon_create (my nx));
+			thee = Polygon_create (my nx);
 			NUMvector_copyElements (my z [1], thy x, 1, my nx);
 			NUMvector_copyElements (my z [2], thy y, 1, my nx);
 		} else {
-			thee.reset (Polygon_create (my ny));
+			thee = Polygon_create (my ny);
 			for (long i = 1; i <= my ny; i ++) {
 				thy x [i] = my z [i] [1];
 				thy y [i] = my z [i] [2];

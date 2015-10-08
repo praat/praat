@@ -224,7 +224,7 @@ static bool waitWhileProgress (double progress, const char32 *message, GuiDialog
 		if (progress <= 0.0) progress = 0.0;
 		GuiThing_show (dia);   // TODO: prevent raising to the front
 		const char32 *newline = str32chr (message, U'\n');
-		if (newline != NULL) {
+		if (newline) {
 			static MelderString buffer { 0 };
 			MelderString_copy (& buffer, message);
 			buffer.string [newline - message] = U'\0';
@@ -289,7 +289,7 @@ static void _Melder_dia_init (GuiDialog *dia, GuiProgressBar *scale, GuiLabel *l
 		#if gtk || macintosh
 			progress_dia_close, cancelButton,
 		#else
-			NULL, NULL,
+			nullptr, nullptr,
 		#endif
 		0);
 
@@ -306,7 +306,7 @@ static void _Melder_dia_init (GuiDialog *dia, GuiProgressBar *scale, GuiLabel *l
 		#if gtk || macintosh
 			progress_cancel_btn_press, cancelButton,
 		#else
-			NULL, NULL,
+			nullptr, nullptr,
 		#endif
 		0);
 	trace (U"end");
@@ -318,15 +318,15 @@ static void _Melder_progress (double progress, const char32 *message) {
 	#ifndef CONSOLE_APPLICATION
 	if (! Melder_batch && theProgressDepth >= 0 && Melder_debug != 14) {
 		static clock_t lastTime;
-		static GuiDialog dia = NULL;
-		static GuiProgressBar scale = NULL;
-		static GuiButton cancelButton = NULL;
-		static GuiLabel label1 = NULL, label2 = NULL;
+		static GuiDialog dia = nullptr;
+		static GuiProgressBar scale = nullptr;
+		static GuiButton cancelButton = nullptr;
+		static GuiLabel label1 = nullptr, label2 = nullptr;
 		clock_t now = clock ();
 		if (progress <= 0.0 || progress >= 1.0 ||
 			now - lastTime > CLOCKS_PER_SEC / 4)   // this time step must be much longer than the null-event waiting time
 		{
-			if (dia == NULL)
+			if (! dia)
 				_Melder_dia_init (& dia, & scale, & label1, & label2, & cancelButton, false);
 			if (! waitWhileProgress (progress, message, dia, scale, label1, label2, cancelButton))
 				Melder_throw (U"Interrupted!");
@@ -402,19 +402,19 @@ static void * _Melder_monitor (double progress, const char32 *message) {
 	#ifndef CONSOLE_APPLICATION
 	if (! Melder_batch && theProgressDepth >= 0) {
 		static clock_t lastTime;
-		static GuiDialog dia = NULL;
-		static GuiProgressBar scale = NULL;
-		static GuiDrawingArea drawingArea = NULL;
-		static GuiButton cancelButton = NULL;
-		static GuiLabel label1 = NULL, label2 = NULL;
+		static GuiDialog dia = nullptr;
+		static GuiProgressBar scale = nullptr;
+		static GuiDrawingArea drawingArea = nullptr;
+		static GuiButton cancelButton = nullptr;
+		static GuiLabel label1 = nullptr, label2 = nullptr;
 		clock_t now = clock ();
-		static Any graphics = NULL;
+		static Any graphics = nullptr;
 		if (progress <= 0.0 || progress >= 1.0 ||
 			now - lastTime > CLOCKS_PER_SEC / 4)   // this time step must be much longer than the null-event waiting time
 		{
-			if (dia == NULL) {
+			if (! dia) {
 				_Melder_dia_init (& dia, & scale, & label1, & label2, & cancelButton, true);
-				drawingArea = GuiDrawingArea_createShown (dia, 0, 400, 230, 430, NULL, NULL, NULL, NULL, NULL, 0);
+				drawingArea = GuiDrawingArea_createShown (dia, 0, 400, 230, 430, nullptr, nullptr, nullptr, nullptr, nullptr, 0);
 				GuiThing_show (dia);
 				graphics = Graphics_create_xmdrawingarea (drawingArea);
 			}
@@ -426,7 +426,7 @@ static void * _Melder_monitor (double progress, const char32 *message) {
 		}
 	}
 	#endif
-	return progress <= 0.0 ? NULL /* no Graphics */ : (void *) -1 /* any non-NULL pointer */;
+	return progress <= 0.0 ? nullptr /* no Graphics */ : (void *) -1 /* any non-null pointer */;
 }
 
 void * Melder_monitor (double progress) {
@@ -502,36 +502,36 @@ bool Melder_numberMatchesCriterion (double value, int which_kMelder_number, doub
 }
 
 bool Melder_stringMatchesCriterion (const char32 *value, int which_kMelder_string, const char32 *criterion) {
-	if (value == NULL) {
+	if (! value) {
 		value = U"";   // regard null strings as empty strings, as is usual in Praat
 	}
-	if (criterion == NULL) {
+	if (! criterion) {
 		criterion = U"";   // regard null strings as empty strings, as is usual in Praat
 	}
 	if (which_kMelder_string <= kMelder_string_NOT_EQUAL_TO) {
-		int matchPositiveCriterion = str32equ (value, criterion);
-		return (which_kMelder_string == kMelder_string_EQUAL_TO) == matchPositiveCriterion;
+		bool matchPositiveCriterion = str32equ (value, criterion);
+		return ( which_kMelder_string == kMelder_string_EQUAL_TO ) == matchPositiveCriterion;
 	}
 	if (which_kMelder_string <= kMelder_string_DOES_NOT_CONTAIN) {
-		int matchPositiveCriterion = str32str (value, criterion) != NULL;
-		return (which_kMelder_string == kMelder_string_CONTAINS) == matchPositiveCriterion;
+		bool matchPositiveCriterion = !! str32str (value, criterion);
+		return ( which_kMelder_string == kMelder_string_CONTAINS ) == matchPositiveCriterion;
 	}
 	if (which_kMelder_string <= kMelder_string_DOES_NOT_START_WITH) {
-		int matchPositiveCriterion = str32nequ (value, criterion, str32len (criterion));
-		return (which_kMelder_string == kMelder_string_STARTS_WITH) == matchPositiveCriterion;
+		bool matchPositiveCriterion = str32nequ (value, criterion, str32len (criterion));
+		return ( which_kMelder_string == kMelder_string_STARTS_WITH ) == matchPositiveCriterion;
 	}
 	if (which_kMelder_string <= kMelder_string_DOES_NOT_END_WITH) {
 		int criterionLength = str32len (criterion), valueLength = str32len (value);
-		int matchPositiveCriterion = criterionLength <= valueLength && str32equ (value + valueLength - criterionLength, criterion);
+		bool matchPositiveCriterion = ( criterionLength <= valueLength && str32equ (value + valueLength - criterionLength, criterion) );
 		return (which_kMelder_string == kMelder_string_ENDS_WITH) == matchPositiveCriterion;
 	}
 	if (which_kMelder_string == kMelder_string_MATCH_REGEXP) {
-		char32 *place = NULL;
+		char32 *place = nullptr;
 		regexp *compiled_regexp = CompileRE_throwable (criterion, 0);
-		if (ExecRE (compiled_regexp, NULL, value, NULL, 0, '\0', '\0', NULL, NULL, NULL))
+		if (ExecRE (compiled_regexp, nullptr, value, nullptr, 0, '\0', '\0', nullptr, nullptr, nullptr))
 			place = compiled_regexp -> startp [0];
 		free (compiled_regexp);
-		return place != NULL;
+		return !! place;
 	}
 	return false;   // should not occur
 }
@@ -1066,10 +1066,10 @@ static void mac_message (NSAlertStyle macAlertType, const char32 *message32) {
 	}
 	#if useCarbon
         DialogRef dialog;
-		CFStringRef messageCF = CFStringCreateWithCharacters (NULL, messageU, j);
-		CreateStandardAlert (macAlertType, messageCF, NULL, NULL, & dialog);
+		CFStringRef messageCF = CFStringCreateWithCharacters (nullptr, messageU, j);
+		CreateStandardAlert (macAlertType, messageCF, nullptr, nullptr, & dialog);
 		CFRelease (messageCF);
-		RunStandardAlert (dialog, NULL, NULL);
+		RunStandardAlert (dialog, nullptr, nullptr);
 	#else
 		/*
 		 * Create an alert dialog with an icon that is appropriate for the level.
@@ -1104,7 +1104,7 @@ static void mac_message (NSAlertStyle macAlertType, const char32 *message32) {
 #endif
 
 #define theMessageFund_SIZE  100000
-static char * theMessageFund = NULL;
+static char * theMessageFund = nullptr;
 
 static void gui_fatal (const char32 *message) {
 	free (theMessageFund);
@@ -1122,7 +1122,7 @@ static void gui_fatal (const char32 *message) {
 			SysError (11);
 		#endif
 	#elif defined (_WIN32)
-		MessageBox (NULL, Melder_peek32toW (message), L"Fatal error", MB_OK | MB_TOPMOST | MB_ICONSTOP);
+		MessageBox (nullptr, Melder_peek32toW (message), L"Fatal error", MB_OK | MB_TOPMOST | MB_ICONSTOP);
 	#endif
 }
 
@@ -1147,11 +1147,11 @@ static void gui_error (const char32 *message) {
 			mac_message (NSWarningAlertStyle, message);
 		#endif
 	#elif defined (_WIN32)
-		MessageBox (NULL, Melder_peek32toW (message), L"Message", MB_OK | MB_TOPMOST | MB_ICONWARNING);   // or (HWND) XtWindow ((GuiObject) Melder_topShell)
+		MessageBox (nullptr, Melder_peek32toW (message), L"Message", MB_OK | MB_TOPMOST | MB_ICONWARNING);   // or (HWND) XtWindow ((GuiObject) Melder_topShell)
 	#endif
 	if (memoryIsLow) {
 		theMessageFund = (char *) malloc (theMessageFund_SIZE);
-		if (theMessageFund == NULL) {
+		if (! theMessageFund) {
 			#if gtk
 				GuiObject dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell -> d_gtkWindow), GTK_DIALOG_DESTROY_WITH_PARENT,
 					GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
@@ -1165,7 +1165,7 @@ static void gui_error (const char32 *message) {
 					mac_message (NSCriticalAlertStyle, U"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
 				#endif
 			#elif defined (_WIN32)
-				MessageBox (NULL, L"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.", L"Message", MB_OK);
+				MessageBox (nullptr, L"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.", L"Message", MB_OK);
 			#endif
 		}
 	}
@@ -1185,14 +1185,14 @@ static void gui_warning (const char32 *message) {
 			mac_message (NSInformationalAlertStyle, message);
 		#endif
 	#elif defined (_WIN32)
-		MessageBox (NULL, Melder_peek32toW (message), L"Warning", MB_OK | MB_TOPMOST | MB_ICONINFORMATION);
+		MessageBox (nullptr, Melder_peek32toW (message), L"Warning", MB_OK | MB_TOPMOST | MB_ICONINFORMATION);
 	#endif
 }
 
 void gui_information (const char32 *);   // BUG: no prototype
 void MelderGui_create (void *parent) {
 	theMessageFund = (char *) malloc (theMessageFund_SIZE);
-	assert (theMessageFund != NULL);
+	assert (theMessageFund);
 	Melder_topShell = (GuiWindow) parent;
 	Melder_setInformationProc (gui_information);
 	Melder_setFatalProc (gui_fatal);

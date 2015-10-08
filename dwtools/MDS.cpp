@@ -533,7 +533,7 @@ Configuration ContingencyTable_to_Configuration_ca (ContingencyTable me, long nu
 			}
 		}
 
-		TableOfReal_setSequentialColumnLabels (thee.peek(), 0, 0, NULL, 1, 1);
+		TableOfReal_setSequentialColumnLabels (thee.peek(), 0, 0, nullptr, 1, 1);
 		NUMstrings_copyElements (my rowLabels, thy rowLabels, 1, nr);
 		for (long i = 1; i <= nc; i++) {
 			if (my columnLabels[i]) {
@@ -635,7 +635,7 @@ Configuration SSCP_to_Configuration (SSCP me, long numberOfDimensions) {
 	try {
 		autoConfiguration thee = Configuration_create (my numberOfRows, numberOfDimensions);
 		autoPCA a = SSCP_to_PCA (me);
-		TableOfReal_setSequentialColumnLabels (thee.peek(), 0, 0, NULL, 1, 1);
+		TableOfReal_setSequentialColumnLabels (thee.peek(), 0, 0, nullptr, 1, 1);
 
 		for (long i = 1; i <= my numberOfRows; i++) {
 			for (long j = 1; j <= numberOfDimensions; j++) {
@@ -996,7 +996,7 @@ int Dissimilarity_getAdditiveConstant (I, double *c) { // Why not: double Diss..
 			Get eigenvalues and sort them descending
 		*/
 
-		NUMeigensystem (b.peek(), nPoints2, NULL, eigenvalue.peek());
+		NUMeigensystem (b.peek(), nPoints2, nullptr, eigenvalue.peek());
 		if (eigenvalue[1] <= 0) {
 			Melder_throw (U"Negative eigenvalue.");
 		}
@@ -1531,7 +1531,7 @@ ScalarProducts Distances_to_ScalarProducts (Distances me, int normalize) {
 int Distances_to_Configuration_ytl (Distances me, int numberOfDimensions,
                                     int normalizeScalarProducts, Configuration *out1, Salience *out2) {
 	try {
-		*out1 = NULL; *out2 = NULL;
+		*out1 = nullptr; *out2 = nullptr;
 		autoScalarProducts sp = Distances_to_ScalarProducts (me, normalizeScalarProducts);
 		ScalarProducts_to_Configuration_ytl (sp.peek(), numberOfDimensions, out1, out2);
 		return 1;
@@ -1559,7 +1559,7 @@ void ScalarProducts_to_Configuration_ytl (ScalarProducts me, int numberOfDimensi
 		autoNUMmatrix<double> evec (1, numberOfSources, 1, numberOfSources);
 		autoNUMmatrix<double> K (1, numberOfDimensions, 1, numberOfDimensions);
 
-		*out1 = NULL; *out2 = NULL;
+		*out1 = nullptr; *out2 = nullptr;
 
 		Thing_setName (mdsw.peek(), U"ytl");
 		Thing_setName (thee.peek(), U"ytl");
@@ -1643,7 +1643,7 @@ void ScalarProducts_to_Configuration_ytl (ScalarProducts me, int numberOfDimensi
 		// The rotation K is obtained from the eigenvectors of cl
 		// Is the following still correct??? eigensystem was not sorted??
 
-		NUMeigensystem (cl.peek(), numberOfDimensions, K.peek(), NULL);
+		NUMeigensystem (cl.peek(), numberOfDimensions, K.peek(), nullptr);
 
 		// Now get the configuration: X = Y.K
 
@@ -2231,7 +2231,7 @@ static double func (Daata object, const double p[]) {
 
 	// Normalize
 
-	NUMcentreColumns (x, 1, numberOfPoints, 1, numberOfDimensions, NULL);
+	NUMcentreColumns (x, 1, numberOfPoints, 1, numberOfDimensions, nullptr);
 	NUMnormalize (x, numberOfPoints, numberOfDimensions, sqrt (numberOfPoints));
 
 	// Calculate interpoint distances from the configuration

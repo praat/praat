@@ -264,9 +264,9 @@ int mp3f_analyze (MP3_FILE mp3f)
 			mp3f_mad_input,
 			mp3f_mad_first_header,
 			mp3f_mad_first_filter,
-			NULL /* Output: Don't actually decode for now */,
+			nullptr /* Output: Don't actually decode for now */,
 			mp3f_mad_error,
-			NULL /* Message */);
+			nullptr /* Message */);
 
 	status = mad_decoder_run (decoder, MAD_DECODER_MODE_SYNC);
 	if (status != 0)
@@ -319,10 +319,10 @@ int mp3f_analyze (MP3_FILE mp3f)
 			mp3f,
 			mp3f_mad_input,
 			mp3f_mad_scan_header,
-			NULL /* Filter */,
-			NULL /* Output */,
+			nullptr /* Filter */,
+			nullptr /* Output */,
 			mp3f_mad_error,
-			NULL /* Message */);
+			nullptr /* Message */);
 
 	status = mad_decoder_run (decoder, MAD_DECODER_MODE_SYNC);
 
@@ -435,11 +435,11 @@ int mp3f_read (MP3_FILE mp3f, MP3F_OFFSET num_samples)
 	mad_decoder_init (decoder, 
 			mp3f,
 			mp3f_mad_input,
-			NULL /* Header */,
-			NULL /* Filter */,
+			nullptr /* Header */,
+			nullptr /* Filter */,
 			mp3f_mad_report_samples,
 			mp3f_mad_error,
-			NULL /* Message */);
+			nullptr /* Message */);
 
 	mp3f -> read_amount = num_samples;
 	status = mad_decoder_run (decoder, MAD_DECODER_MODE_SYNC);
@@ -521,7 +521,7 @@ static enum mad_flow mp3f_mad_input(void *context, struct mad_stream *stream)
 {
 	MP3_FILE mp3f = (MP3_FILE) context;
 	FILE *f = mp3f -> f;
-	unsigned char *buffer = NULL;
+	unsigned char *buffer = nullptr;
 	unsigned nthrown = 0, ncopied = 0, size = 0;
 	size_t nread = 0;
 	MP3F_OFFSET offset;

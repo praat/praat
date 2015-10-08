@@ -386,7 +386,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 	enum kOTGrammar_rerankingStrategy updateRule,
 	double plasticity, double relativePlasticityNoise)
 {
-	bool *grammarHasChanged = NULL;   // to be implemented
+	bool *grammarHasChanged = nullptr;   // to be implemented
 	bool warnIfStalled = false;   // to be implemented
 	if (iwinner == iloser) return;
 	OTCandidate winner = & my candidates [iwinner], loser = & my candidates [iloser];
@@ -414,12 +414,12 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 		if (loserMarks > winnerMarks) {
 			if (multiplyStepByNumberOfViolations) constraintStep *= loserMarks - winnerMarks;
 			constraint -> ranking -= constraintStep * (1.0 + constraint -> ranking * my leak);
-			if (grammarHasChanged != NULL) *grammarHasChanged = true;
+			if (grammarHasChanged) *grammarHasChanged = true;
 		}
 		if (winnerMarks > loserMarks) {
 			if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - loserMarks;
 			constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak);
-			if (grammarHasChanged != NULL) *grammarHasChanged = true;
+			if (grammarHasChanged) *grammarHasChanged = true;
 		}
 	} else if (updateRule == kOTGrammar_rerankingStrategy_SYMMETRIC_ALL) {
 		bool changed = false;
@@ -449,7 +449,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 				my constraints [icons]. ranking -= averageWeight;
 			}
 		}
-		if (grammarHasChanged != NULL) *grammarHasChanged = changed;
+		if (grammarHasChanged) *grammarHasChanged = changed;
 	} else if (updateRule == kOTGrammar_rerankingStrategy_SYMMETRIC_ALL_SKIPPABLE) {
 		bool changed = false;
 		int winningConstraints = 0, losingConstraints = 0;
@@ -485,7 +485,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 				my constraints [icons]. ranking -= averageWeight;
 			}
 		}
-		if (grammarHasChanged != NULL) *grammarHasChanged = changed;
+		if (grammarHasChanged) *grammarHasChanged = changed;
 	} else if (updateRule == kOTGrammar_rerankingStrategy_WEIGHTED_UNCANCELLED) {
 		int winningConstraints = 0, losingConstraints = 0;
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
@@ -504,13 +504,13 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 					if (multiplyStepByNumberOfViolations) constraintStep *= loserMarks - winnerMarks;
 					constraint -> ranking -= constraintStep * (1.0 + constraint -> ranking * my leak) / losingConstraints;
 					//constraint -> ranking -= constraintStep * (1.0 + constraint -> ranking * my leak) * winningConstraints;
-					if (grammarHasChanged != NULL) *grammarHasChanged = true;
+					if (grammarHasChanged) *grammarHasChanged = true;
 				}
 				if (winnerMarks > loserMarks) {
 					if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - loserMarks;
 					constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak) / winningConstraints;
 					//constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak) * losingConstraints;
-					if (grammarHasChanged != NULL) *grammarHasChanged = true;
+					if (grammarHasChanged) *grammarHasChanged = true;
 				}
 			}
 		}
@@ -530,12 +530,12 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 			if (loserMarks > 0) {
 				if (multiplyStepByNumberOfViolations) constraintStep *= loserMarks - winnerMarks;
 				constraint -> ranking -= constraintStep * (1.0 + constraint -> ranking * my leak) / losingConstraints;
-				if (grammarHasChanged != NULL) *grammarHasChanged = true;
+				if (grammarHasChanged) *grammarHasChanged = true;
 			}
 			if (winnerMarks > 0) {
 				if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - loserMarks;
 				constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak) / winningConstraints;
-				if (grammarHasChanged != NULL) *grammarHasChanged = true;
+				if (grammarHasChanged) *grammarHasChanged = true;
 			}
 		}
 	} else if (updateRule == kOTGrammar_rerankingStrategy_EDCD || updateRule == kOTGrammar_rerankingStrategy_EDCD_WITH_VACATION) {
@@ -578,7 +578,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 					OTConstraint constraint = & my constraints [icons];
 					if (constraint -> ranking < pivotRanking) {
 						constraint -> ranking -= numberOfConstraintsToDemote * step * constraint -> plasticity;
-						if (grammarHasChanged != NULL) *grammarHasChanged = true;
+						if (grammarHasChanged) *grammarHasChanged = true;
 					}
 				}
 			}
@@ -597,7 +597,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 				if (constraint -> ranking >= pivotRanking) {
 					numberOfConstraintsDemoted += 1;
 					constraint -> ranking = pivotRanking - numberOfConstraintsDemoted * constraintStep;   // This preserves the order of the demotees.
-					if (grammarHasChanged != NULL) *grammarHasChanged = true;
+					if (grammarHasChanged) *grammarHasChanged = true;
 				}
 			}
 		}
@@ -636,7 +636,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 			offendingConstraint = & my constraints [my index [crucialLoserMark]];
 			double constraintStep = step * offendingConstraint -> plasticity;
 			offendingConstraint -> ranking -= constraintStep;
-			if (grammarHasChanged != NULL) *grammarHasChanged = true;
+			if (grammarHasChanged) *grammarHasChanged = true;
 		}
 	} else if (updateRule == kOTGrammar_rerankingStrategy_WEIGHTED_ALL_UP_HIGHEST_DOWN) {
 		bool changed = false;
@@ -693,7 +693,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 				offendingConstraint -> ranking -= /*numberOfUp **/ constraintStep * (1.0 - offendingConstraint -> ranking * my leak);
 			}
 		}
-		if (grammarHasChanged != NULL) *grammarHasChanged = changed;
+		if (grammarHasChanged) *grammarHasChanged = changed;
 	} else if (updateRule == kOTGrammar_rerankingStrategy_WEIGHTED_ALL_UP_HIGHEST_DOWN_2012) {
 		bool changed = false;
 		long numberOfUp = 0;
@@ -749,7 +749,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 				offendingConstraint -> ranking -= /*numberOfUp **/ constraintStep * (1.0 - offendingConstraint -> ranking * my leak);
 			}
 		}
-		if (grammarHasChanged != NULL) *grammarHasChanged = changed;
+		if (grammarHasChanged) *grammarHasChanged = changed;
 	} else if (updateRule == kOTGrammar_rerankingStrategy_WEIGHTED_ALL_UP_HIGH_DOWN) {
 		long numberOfDown = 0, numberOfUp = 0, lowestDemotableConstraint = 0;
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
@@ -783,7 +783,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 					}
 				}
 			}
-			if (grammarHasChanged != NULL) *grammarHasChanged = true;
+			if (grammarHasChanged) *grammarHasChanged = true;
 		}
 	} else if (updateRule == kOTGrammar_rerankingStrategy_WEIGHTED_ALL_UP_HIGH_DOWN_2012) {
 		long numberOfDown = 0, numberOfUp = 0, lowestDemotableConstraint = 0;
@@ -818,7 +818,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 					}
 				}
 			}
-			if (grammarHasChanged != NULL) *grammarHasChanged = true;
+			if (grammarHasChanged) *grammarHasChanged = true;
 		}
 	}
 }

@@ -69,7 +69,7 @@ Movie Movie_openFromSoundFile (MelderFile file)
 		autoMelderString fileNameHead;
 		MelderString_copy (& fileNameHead, Melder_fileToPath (file));
 		char32 *extensionLocation = str32rchr (fileNameHead.string, U'.');
-		if (extensionLocation == NULL)
+		if (! extensionLocation)
 			extensionLocation = & fileNameHead.string [fileNameHead.length];
 		*extensionLocation = U'\0';
 		fileNameHead.length = extensionLocation - fileNameHead.string;

@@ -66,7 +66,7 @@
 void MelderFile_writeAudioFileHeader (MelderFile file, int audioFileType, long sampleRate, long numberOfSamples, int numberOfChannels, int numberOfBitsPerSamplePoint) {
 	try {
 		FILE *f = file -> filePointer;
-		if (f == NULL) return;
+		if (! f) return;
 		const int numberOfBytesPerSamplePoint = (numberOfBitsPerSamplePoint + 7) / 8;
 		switch (audioFileType) {
 			case Melder_AIFF: {
@@ -214,16 +214,16 @@ void MelderFile_writeAudioFileHeader (MelderFile file, int audioFileType, long s
 			} break;
 			case Melder_FLAC: {
 				try {
-					FLAC__StreamEncoder *encoder = NULL;
+					FLAC__StreamEncoder *encoder = nullptr;
 					if (numberOfChannels > (int) FLAC__MAX_CHANNELS)
 						Melder_throw (U"FLAC files cannot have more than 8 channels.");
-					if ((encoder = FLAC__stream_encoder_new ()) == NULL)
+					if ((encoder = FLAC__stream_encoder_new ()) == nullptr)
 						Melder_throw (U"Error creating FLAC stream encoder.");
 					FLAC__stream_encoder_set_bits_per_sample (encoder, numberOfBitsPerSamplePoint);
 					FLAC__stream_encoder_set_channels (encoder, numberOfChannels);
 					FLAC__stream_encoder_set_sample_rate (encoder, sampleRate);
 					FLAC__stream_encoder_set_total_samples_estimate (encoder, numberOfSamples);
-					if (FLAC__stream_encoder_init_FILE (encoder, file -> filePointer, NULL, NULL) != FLAC__STREAM_ENCODER_INIT_STATUS_OK) {
+					if (FLAC__stream_encoder_init_FILE (encoder, file -> filePointer, nullptr, nullptr) != FLAC__STREAM_ENCODER_INIT_STATUS_OK) {
 						FLAC__stream_encoder_delete (encoder);
 						Melder_throw (U"Error creating FLAC stream encoder");
 					}
@@ -724,7 +724,7 @@ int MelderFile_checkSoundFile (MelderFile file, int *numberOfChannels, int *enco
 {
 	char data [16];
 	FILE *f = file -> filePointer;
-	if (f == NULL || fread (data, 1, 16, f) < 16) return 0;
+	if (! f || fread (data, 1, 16, f) < 16) return 0;
 	rewind (f);
 	if (strnequ (data, "FORM", 4) && strnequ (data + 8, "AIFF", 4)) {
 		Melder_checkAiffFile (f, numberOfChannels, encoding, sampleRate, startOfData, numberOfSamples);
@@ -847,12 +847,12 @@ static void Melder_readFlacFile (FILE *f, int numberOfChannels, double **buffer,
 	}
 	c.numberOfSamples = numberOfSamples;
 
-	if ((decoder = FLAC__stream_decoder_new ()) == NULL)
+	if ((decoder = FLAC__stream_decoder_new ()) == nullptr)
 		goto end;
 	if (FLAC__stream_decoder_init_stream (decoder,
 				Melder_DecodeFlac_read,
-				NULL, NULL, NULL, NULL,
-				Melder_DecodeFlac_convert, NULL,
+				nullptr, nullptr, nullptr, nullptr,
+				Melder_DecodeFlac_convert, nullptr,
 				Melder_DecodeFlac_error, &c) != FLAC__STREAM_DECODER_INIT_STATUS_OK)
 		goto end;
 	result = FLAC__stream_decoder_process_until_end_of_stream (decoder);
@@ -1333,7 +1333,7 @@ void Melder_readAudioToShort (FILE *f, int numberOfChannels, int encoding, short
 void MelderFile_writeShortToAudio (MelderFile file, int numberOfChannels, int encoding, const short *buffer, long numberOfSamples) {
 	try {
 		FILE *f = file -> filePointer;
-		if (f == NULL) Melder_throw (U"File not open.");
+		if (! f) Melder_throw (U"File not open.");
 		long n = numberOfSamples * numberOfChannels, start = 0, step = 1, i;
 		if (numberOfChannels < 0) {
 			n = numberOfSamples * 2;   // stereo

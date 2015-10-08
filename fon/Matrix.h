@@ -37,7 +37,7 @@ Matrix Matrix_create
 	 double ymin, double ymax, long ny, double dy, double y1);
 /*
 	Function:
-		return a new empty Matrix, or NULL if out of memory.
+		return a new empty Matrix.
 	Preconditions:
 		xmin <= xmax;   ymin <= ymax;
 		nx >= 1;  ny >= 1;
@@ -59,7 +59,7 @@ Matrix Matrix_create
 Matrix Matrix_createSimple (long numberOfRows, long numberOfColumns);
 /*
 	Function:
-		return a new empty Matrix, or NULL if out of memory.
+		return a new empty Matrix.
 	Preconditions:
 		numberOfRows >= 1;  numberOfColumns >= 1;
 	Postconditions:
@@ -187,7 +187,7 @@ void Matrix_formula (Matrix me, const char32 *expression, Interpreter interprete
 				ENDFOR
 			ENDFOR
 		"expression" is the text to be compiled and interpreted.
-		If "target" is NULL, the result will go to "me"; otherwise, to "target".
+		If "target" is null, the result will go to "me"; otherwise, to "target".
 	Return value:
 		0 in case of failure, otherwise 1.
 */

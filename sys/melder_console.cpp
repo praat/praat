@@ -31,12 +31,12 @@
 bool Melder_consoleIsAnsi = false;
 
 void Melder_writeToConsole (const char32 *message, bool useStderr) {
-	if (message == NULL) return;
+	if (! message) return;
 	#if defined (_WIN32)
 		(void) useStderr;
-		static HANDLE console = NULL;
-		if (console == NULL) {
-			console = CreateFileW (L"CONOUT$", GENERIC_WRITE, FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, 0);
+		static HANDLE console = nullptr;
+		if (! console) {
+			console = CreateFileW (L"CONOUT$", GENERIC_WRITE, FILE_SHARE_WRITE, nullptr, OPEN_EXISTING, 0, 0);
 		}
 		if (Melder_consoleIsAnsi) {
 			size_t n = str32len (message);
@@ -49,7 +49,7 @@ void Melder_writeToConsole (const char32 *message, bool useStderr) {
 			//fprintf (stdout, "%s", messageA);
 		} else {
 			WCHAR *messageW = Melder_peek32toW (message);
-			WriteConsoleW (console, messageW, wcslen (messageW), NULL, NULL);
+			WriteConsoleW (console, messageW, wcslen (messageW), nullptr, nullptr);
 		}
 	#else
 		Melder_fwrite32to8 (message, str32len (message), useStderr ? stderr : stdout);
@@ -60,7 +60,7 @@ void Melder_writeToConsole (const char32 *message, bool useStderr) {
 int main (int argc, char *argvA []);
 extern "C" int wmain (int argc, wchar_t *argvW []);
 extern "C" int wmain (int argc, wchar_t *argvW []) {
-	char **argvA = NULL;
+	char **argvA = nullptr;
 	if (argc > 0) {
 		argvA = NUMvector <char *> (0, argc - 1);
 		for (int iarg = 0; iarg < argc; iarg ++) {
