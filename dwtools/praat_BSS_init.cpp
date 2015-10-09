@@ -1,6 +1,6 @@
 /* praat_BSS_init.c
  *
- * Copyright (C) 2010-2014 David Weenink
+ * Copyright (C) 2010-2014, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -298,12 +298,12 @@ FORM (Sounds_to_CrossCorrelationTable_combined, U"Sound: To CrossCorrelationTabl
 	REAL (U"Lag step (s)", U"0.0")
 	OK
 DO
-	Sound s1 = NULL, s2 = NULL;
+	Sound s1 = nullptr, s2 = nullptr;
 	LOOP {
 		iam (Sound);
 		(s1 ? s2 : s1) = me;
 	}
-	Melder_assert (s1 != NULL && s2 != NULL);
+	Melder_assert (s1 && s2);
 	autoCrossCorrelationTable thee = Sounds_to_CrossCorrelationTable_combined (s1, s2, GET_REAL (U"left Time range"),
 		GET_REAL (U"right Time range"), GET_REAL (U"Lag step"));
 	praat_new (thee.transfer(), s1 -> name, U"_", s2 -> name, U"_cc");
@@ -513,12 +513,12 @@ FORM (TableOfReal_and_TableOfReal_crossCorrelations, U"TableOfReal & TableOfReal
 	BOOLEAN (U"Normalize", 0)
 	OK
 DO
-	TableOfReal t1 = 0, t2 = 0;
+	TableOfReal t1 = nullptr, t2 = nullptr;
 	LOOP {
 		iam (TableOfReal);
 		(t1 ? t2 : t1) = me;
 	}
-	Melder_assert (t1 != NULL && t2 != NULL);
+	Melder_assert (t1 && t2);
 	int by_columns = GET_INTEGER (U"Correlations between") - 1;
 	praat_new (TableOfReal_and_TableOfReal_crossCorrelations (t1, t2, by_columns,
 		GET_INTEGER (U"Center"), GET_INTEGER (U"Normalize")),
@@ -532,7 +532,7 @@ void praat_TableOfReal_init3 (ClassInfo klas) {
 
 void praat_BSS_init (void);
 void praat_BSS_init (void) {
-	Thing_recognizeClassesByName (classDiagonalizer, classMixingMatrix, classCrossCorrelationTable, classCrossCorrelationTables, NULL);
+	Thing_recognizeClassesByName (classDiagonalizer, classMixingMatrix, classCrossCorrelationTable, classCrossCorrelationTables, nullptr);
 
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple CrossCorrelationTable...", U"Create simple Covariance...", praat_HIDDEN + praat_DEPTH_1, DO_CrossCorrelationTable_createSimple);
 	praat_addMenuCommand (U"Objects", U"New", U"Create test CrossCorrelationTables...", U"Create simple CrossCorrelationTable...", praat_HIDDEN + praat_DEPTH_1, DO_CrossCorrelationTables_createTestSet);

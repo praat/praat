@@ -63,16 +63,14 @@ void structSPINET :: v_info () {
 	MelderInfo_writeLine (U"Maximum powerrectified: ", maxs);
 }
 
-SPINET SPINET_create (double tmin, double tmax, long nt, double dt, double t1,
-                      double minimumFrequency, double maximumFrequency, long nFilters,
-                      double excitationErbProportion, double inhibitionErbProportion) {
+SPINET SPINET_create (double tmin, double tmax, long nt, double dt, double t1, double minimumFrequency, double maximumFrequency, long nFilters, double excitationErbProportion, double inhibitionErbProportion) {
 	try {
 		autoSPINET me = Thing_new (SPINET);
 		double minErb = NUMhertzToErb (minimumFrequency);
 		double maxErb = NUMhertzToErb (maximumFrequency);
 		double dErb = (maxErb - minErb) / nFilters;
 		Sampled2_init (me.peek(), tmin, tmax, nt, dt, t1,
-		               minErb - dErb / 2, maxErb + dErb / 2, nFilters, dErb, minErb);
+		               minErb - dErb / 2.0, maxErb + dErb / 2.0, nFilters, dErb, minErb);
 		my y = NUMmatrix<double> (1, nFilters, 1, nt);
 		my s = NUMmatrix<double> (1, nFilters, 1, nt);
 		my gamma = 4;
@@ -84,12 +82,9 @@ SPINET SPINET_create (double tmin, double tmax, long nt, double dt, double t1,
 	}
 }
 
-void SPINET_spectralRepresentation (SPINET me, Graphics g, double fromTime, double toTime,
-                                    double fromErb, double toErb, double minimum, double maximum, int enhanced,
-                                    int garnish) {
+void SPINET_spectralRepresentation (SPINET me, Graphics g, double fromTime, double toTime, double fromErb, double toErb, double minimum, double maximum, int enhanced, int garnish) {
 	double **z = enhanced ? my s : my y;
-	autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
-	                                 my ymin, my ymax, my ny, my dy, my y1);
+	autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
 	for (long j = 1; j <= my ny; j++) {
 		for (long i = 1; i <= my nx; i++) {
 			thy z[j][i] = z[j][i];
@@ -102,13 +97,11 @@ void SPINET_spectralRepresentation (SPINET me, Graphics g, double fromTime, doub
 		Graphics_marksBottom (g, 2, true, true, false);
 		Graphics_textLeft (g, true, U"Frequency (ERB)");
 		Graphics_marksLeft (g, 2, true, true, false);
-		Graphics_textTop (g, false, enhanced ? U"Cooperative interaction output" :
-		                  U"Gammatone filterbank output");
+		Graphics_textTop (g, false, enhanced ? U"Cooperative interaction output" : U"Gammatone filterbank output");
 	}
 }
 
-void SPINET_drawSpectrum (SPINET me, Graphics g, double time, double fromErb, double toErb,
-                          double minimum, double maximum, int enhanced, int garnish) {
+void SPINET_drawSpectrum (SPINET me, Graphics g, double time, double fromErb, double toErb, double minimum, double maximum, int enhanced, int garnish) {
 	long ifmin, ifmax, icol = Sampled2_xToLowColumn (me, time);   // ppgb: don't use Sampled2_xToColumn for integer rounding
 	double **z = enhanced ? my s : my y;
 	if (icol < 1 || icol > my nx) {

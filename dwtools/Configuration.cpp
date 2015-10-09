@@ -24,7 +24,7 @@
  djmw 20030801 Configuration_drawConcentrationEllipses extra argument
  djmw 20040303 Moved containsPrintableCharacter to NUM2.c
  djmw 20041026 Removed non-used code.
- djmw 20050314 Configuration_draw crashed when rowlabel==NULL
+ djmw 20050314 Configuration_draw crashed when rowlabel==nullptr
  djmw 20061021 printf expects %ld for 'long int'
  djmw 20061212 Changed info to Melder_writeLine<x> format.
  djmw 20071009 wchar

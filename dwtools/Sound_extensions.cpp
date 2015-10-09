@@ -1,6 +1,6 @@
 /* Sound_extensions.cpp
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -851,7 +851,7 @@ Sound Sound_createShepardTone (double minimumTime, double maximumTime, double sa
 	double twoPi = 2.0 * NUMpi, f = baseFrequency * (1 + frequencyShiftFraction);
 	if (nComponents < 2) Melder_warning (U"Sound_createShepardTone: only 1 component.");
 	Melder_casual (U"Sound_createShepardTone: ", nComponents, U" components.");
-	if (! (me = Sound_create2 (minimumTime, maximumTime, samplingFrequency))) return NULL;
+	if (! (me = Sound_create2 (minimumTime, maximumTime, samplingFrequency))) return nullptr;
 
 	for (j=1; j <= nComponents; j++)
 	{
@@ -1154,15 +1154,14 @@ IntervalTier Sound_PointProcess_to_IntervalTier (Sound me, PointProcess thee, do
 	long i;
 
 	him = IntervalTier_create (my xmin, my xmax);
-	if (him == NULL) return NULL;
+	if (!him) return nullptr;
 
 	t1 = thy t[1] - window2;
 	if (t1 < my xmin) t1 = my xmin;
 	t2 = t1 + window2;
 	if (t2 > my xmax) t2 = my xmax;
 	interval = TextInterval_create (t1, t2, "yes");
-	if (interval == NULL ||
-		! Collection_addItem (his intervals, interval)) goto end;
+	if (!interval || ! Collection_addItem (his intervals, interval)) goto end;
 
 	for (i = 2; i <= thy nt; i++)
 	{
@@ -1458,7 +1457,7 @@ Sound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAndEnd,
             }
         }
         autoSound thee = Sound_and_IntervalTier_cutPartsMatchingLabel (me, itg.peek(), trimLabel);
-        if (tg != NULL) {
+        if (tg) {
 			TextGrid_addTier_copy (dbs.peek(), itg.peek());
             *tg = dbs.transfer();
         }
@@ -2150,7 +2149,7 @@ void Sounds_paintEnclosed (Sound me, Sound thee, Graphics g, Graphics_Colour col
 Sound Sound_copyChannelRanges (Sound me, const char32 *ranges) {
 	try {
 		long numberOfChannels;
-		autoNUMvector <long> channels (NUMstring_getElementsOfRanges (ranges, my ny, & numberOfChannels, NULL, U"channel", true), 1);
+		autoNUMvector <long> channels (NUMstring_getElementsOfRanges (ranges, my ny, & numberOfChannels, nullptr, U"channel", true), 1);
 		autoSound thee = Sound_create (numberOfChannels, my xmin, my xmax, my nx, my dx, my x1);
 		for (long i = 1; i <= numberOfChannels; i++) {
 			double *from = my z[channels[i]], *to = thy z[i];
@@ -2270,7 +2269,7 @@ void Sound_playAsFrequencyShifted (Sound me, double shiftBy, double newSamplingF
 		autoSpectrum spectrum = Sound_to_Spectrum (me, 1);
 		autoSpectrum shifted = Spectrum_shiftFrequencies (spectrum.peek(), shiftBy, newSamplingFrequency / 2, precision);
 		autoSound thee = Spectrum_to_Sound (shifted.peek());
-		Sound_playPart (thee.peek(), my xmin, my xmax, NULL, NULL);
+		Sound_playPart (thee.peek(), my xmin, my xmax, nullptr, nullptr);
 	} catch (MelderError) {
 		Melder_throw (me, U" not played with frequencies shifted.");
 	}

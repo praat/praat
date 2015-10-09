@@ -3466,10 +3466,10 @@ static void _Table_postHocTukeyHSD (Table me, double sumOfSquaresWithin, double 
 				Table_setNumericValue (meansP.peek(), irow, icol, p);
 			}
 		}
-		if (meansDiff != NULL) {
+		if (meansDiff) {
 			*meansDiff = meansD.transfer();
 		}
-		if (meansDiffProbabilities != NULL) {
+		if (meansDiffProbabilities) {
 			*meansDiffProbabilities = meansP.transfer();
 		}
 	} catch (MelderError) {
@@ -3516,7 +3516,7 @@ void Table_printAsMeansTable (Table me) {
 	}
 	for (long j = 1; j <= my numberOfColumns; j++) {
 		MelderString_append (&s,
-			Melder_padOrTruncate (10, my columnHeaders[j].label == NULL ? U"" : my columnHeaders[j].label),
+			Melder_padOrTruncate (10, ! my columnHeaders[j].label ? U"" : my columnHeaders[j].label),
 			j == my numberOfColumns ? U"" : U"\t");
 	}
 	MelderInfo_writeLine (s.string);
@@ -4006,11 +4006,11 @@ void Table_quantileQuantilePlot (Table me, Graphics g, long xcolumn, long ycolum
 		Graphics_unsetInner (g);
 		if (garnish) {
 			Graphics_drawInnerBox (g);
-			if (my columnHeaders [xcolumn].label != NULL) {
+			if (my columnHeaders [xcolumn].label) {
 				Graphics_textBottom (g, true, my columnHeaders [xcolumn].label);
 			}
 			Graphics_marksBottom (g, 2, true, true, false);
-			if (my columnHeaders [ycolumn].label != NULL) {
+			if (my columnHeaders [ycolumn].label) {
 				Graphics_textLeft (g, true, my columnHeaders [ycolumn].label);
 			}
 			Graphics_marksLeft (g, 2, true, true, false);
@@ -4166,10 +4166,10 @@ static Graphics_Colour Strings_colourToValue  (Strings me, long index) {
 	if (first == U'{') {
 		colourValue.red = Melder_atof (++ p);
 		p = (char32 *) str32chr (p, U',');
-		if (p == NULL) return Graphics_GREY;
+		if (! p) return Graphics_GREY;
 		colourValue.green = Melder_atof (++ p);
 		p = (char32 *) str32chr (p, U',');
-		if (p == NULL) return Graphics_GREY;
+		if (! p) return Graphics_GREY;
 		colourValue.blue = Melder_atof (++ p);
 	} else {
 		*p = (char32) tolower ((int) *p);
@@ -4647,7 +4647,7 @@ void Table_drawEllipsesWhere (Table me, Graphics g, long xcolumn, long ycolumn, 
 Table Table_extractColumnRanges (Table me, char32 *ranges) {
 	try {
 		long numberOfSelectedColumns, numberOfRows = my rows -> size;
-		autoNUMvector<long> columnRanges (NUMstring_getElementsOfRanges (ranges, my numberOfColumns, & numberOfSelectedColumns, NULL, U"columnn number", true), 1);
+		autoNUMvector<long> columnRanges (NUMstring_getElementsOfRanges (ranges, my numberOfColumns, & numberOfSelectedColumns, nullptr, U"columnn number", true), 1);
 		autoTable thee = Table_createWithoutColumnNames (numberOfRows, numberOfSelectedColumns); 
 		for (long icol = 1; icol <= numberOfSelectedColumns; icol++) {
 			Table_setColumnLabel (thee.peek(), icol, my v_getColStr (columnRanges[icol]));

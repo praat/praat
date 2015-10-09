@@ -1,6 +1,6 @@
 /* SpeechSynthesizer_and_TextGrid.cpp
  *
- * Copyright (C) 2011-2012 David Weenink
+ * Copyright (C) 2011-2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,10 +40,10 @@ static Table IntervalTiers_to_Table_textAlignmentment (IntervalTier target, Inte
 Sound SpeechSynthesizer_and_TextInterval_to_Sound (SpeechSynthesizer me, TextInterval thee, TextGrid *tg)
 {
 	try {
-		if (thy text == NULL || thy text[0] == '\0') {
+		if (! thy text || thy text[0] == '\0') {
 			Melder_throw (U"No text in TextInterval.");
 		}
-		autoSound him = SpeechSynthesizer_to_Sound (me, thy text, tg, NULL);
+		autoSound him = SpeechSynthesizer_to_Sound (me, thy text, tg, nullptr);
 		return him.transfer();
 	} catch (MelderError) {
 		Melder_throw (U"Sound not created from TextInterval.");
@@ -115,8 +115,8 @@ static void IntervalTier_getLabelInfo (IntervalTier me, const char32 *label, dou
 #define TIMES_ARE_CLOSE(x,y) (fabs((x)-(y)) < precision)
 void IntervalTier_splitInterval (IntervalTier me, double time, const char32 *leftLabel, long interval, double precision) {
     try {
-
-        long index = 0; TextInterval ti = NULL;
+        TextInterval ti = nullptr;
+		long index = 0; 
         for (long i = interval; i <= my intervals -> size; i++) { // interval > 0
             ti = (TextInterval) my intervals -> item[i];
             if (time < ti -> xmax + precision && time > ti -> xmin - precision) {
@@ -611,7 +611,7 @@ TextGrid SpeechSynthesizer_and_Sound_and_IntervalTier_align (SpeechSynthesizer m
         autoTextGrid result = TextGrid_create (tb -> xmin, te -> xmax, U"sentence clause word phoneme", U"");
         for (long iint = istart; iint <= iend; iint ++) {
             TextInterval ti = (TextInterval) his intervals -> item[iint];
-            if (ti -> text != NULL && str32len (ti -> text) > 0) {
+            if (ti -> text && str32len (ti -> text) > 0) {
                 autoSound sound = Sound_extractPart (thee, ti -> xmin, ti -> xmax,  kSound_windowShape_RECTANGULAR, 1, true);
                 autoTextGrid atg = SpeechSynthesizer_and_Sound_and_TextInterval_align (me, sound.peek(), ti, silenceThreshold, minSilenceDuration, minSoundingDuration);
                 Collection_addItem (textgrids.peek(), atg.transfer());
@@ -638,7 +638,7 @@ TextGrid SpeechSynthesizer_and_Sound_and_IntervalTier_align2 (SpeechSynthesizer 
         autoTextGrid result = TextGrid_create (tb -> xmin, te -> xmax, U"sentence clause word phoneme", U"");
         for (long iint = istart; iint <= iend; iint ++) {
             TextInterval ti = (TextInterval) his intervals -> item[iint];
-            if (ti -> text != NULL && str32len (ti -> text) > 0) {
+            if (ti -> text && str32len (ti -> text) > 0) {
                 autoSound sound = Sound_extractPart (thee, ti -> xmin, ti -> xmax,  kSound_windowShape_RECTANGULAR, 1, true);
                 autoTextGrid atg = SpeechSynthesizer_and_Sound_and_TextInterval_align2 (me, sound.peek(), ti, silenceThreshold, minSilenceDuration, minSoundingDuration, trimDuration);
                 Collection_addItem (textgrids.peek(), atg.transfer());
@@ -703,7 +703,7 @@ Table IntervalTiers_to_Table_textAlignmentment (IntervalTier target, IntervalTie
 		autoEditDistanceTable edit = EditDistanceTable_create (targets.peek(), sources.peek());
 		if (costs != 0) {
 			EditDistanceTable_setEditCosts (edit.peek(), costs);
-			EditDistanceTable_findPath (edit.peek(), NULL);
+			EditDistanceTable_findPath (edit.peek(), nullptr);
 		}
 		long pathLength = edit -> warpingPath -> pathLength;
 		autoTable thee = Table_createWithColumnNames (pathLength - 1, U"targetInterval targetText targetStart targetEnd sourceInterval sourceText sourceStart sourceEnd operation");

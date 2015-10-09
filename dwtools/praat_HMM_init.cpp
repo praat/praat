@@ -1,6 +1,6 @@
 /* praat_HMM_init.cpp
  *
- * Copyright (C) 2010-2011 David Weenink
+ * Copyright (C) 2010-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,7 +90,7 @@ DO
 	GaussianMixture me = FIRST (GaussianMixture);
 	PCA pca = FIRST (PCA);
 	GaussianMixture_and_PCA_drawConcentrationEllipses (me, pca, GRAPHICS,
-		GET_REAL (U"Number of sigmas"), 0, NULL, GET_INTEGER (U"X-dimension"), GET_INTEGER (U"Y-dimension"),
+		GET_REAL (U"Number of sigmas"), 0, nullptr, GET_INTEGER (U"X-dimension"), GET_INTEGER (U"Y-dimension"),
 		GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
 		GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"),
 		GET_INTEGER (U"Label size"), GET_INTEGER (U"Garnish"));
@@ -796,8 +796,7 @@ END
 
 void praat_HMM_init ();
 void praat_HMM_init () {
-	Thing_recognizeClassesByName (classHMM, classHMM_State, classHMM_Observation,
-	                              classHMM_ObservationSequence, classHMM_StateSequence, classGaussianMixture, NULL);
+	Thing_recognizeClassesByName (classHMM, classHMM_State, classHMM_Observation, classHMM_ObservationSequence, classHMM_StateSequence, classGaussianMixture, nullptr);
 
 	praat_addMenuCommand (U"Objects", U"New", U"Markov models", 0, praat_HIDDEN, 0);
 	praat_addMenuCommand (U"Objects", U"New", U"Create HMM...", 0, praat_HIDDEN + praat_DEPTH_1, DO_HMM_create);

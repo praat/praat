@@ -262,7 +262,7 @@ DO \
 	LOOP { \
 		iam (KlattGrid); \
 		Ordered *amp = KlattGrid_getAddressOfAmplitudes (me, formantType); \
-		if (amp == NULL) Melder_throw (U"Unknown formant type"); \
+		if (! amp) Melder_throw (U"Unknown formant type"); \
 		if (formantNumber > (*amp) -> size) Melder_throw (U"Formant number does not exist."); \
 		const char32 *id_and_name = Melder_cat (ID, U". ", formant_names[formantType], U"formant amplitude tier"); \
 		autoKlattGrid_decibelTierEditor editor = KlattGrid_decibelTierEditor_create (id_and_name, me, (RealTier) (*amp)->item[formantNumber]); \
@@ -962,7 +962,7 @@ END
 void praat_KlattGrid_init ();
 void praat_KlattGrid_init () {
 
-	Thing_recognizeClassesByName (classKlattGrid, NULL);
+	Thing_recognizeClassesByName (classKlattGrid, nullptr);
 
 	praat_addMenuCommand (U"Objects", U"New", U"Acoustic synthesis (Klatt)", 0, 0, 0);
 	praat_addMenuCommand (U"Objects", U"New", U"KlattGrid help", 0, 1, DO_KlattGrid_help);

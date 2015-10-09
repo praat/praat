@@ -175,7 +175,7 @@ DO
 	LOOP {
 		iam (DataModeler);
 		double y = DataModeler_getModelValueAtX (me, GET_REAL (U"X"));
-		Melder_informationReal (y, NULL);
+		Melder_informationReal (y, nullptr);
 	}
 END
 
@@ -235,7 +235,7 @@ END
 DIRECT (DataModeler_getCoefficientOfDetermination)
 	LOOP {
 		iam (DataModeler);
-		double rSquared = DataModeler_getCoefficientOfDetermination (me, NULL, NULL);
+		double rSquared = DataModeler_getCoefficientOfDetermination (me, nullptr, nullptr);
 		Melder_informationReal (rSquared, U" (= R^2)");
 	}
 END
@@ -440,14 +440,14 @@ DO
 		GET_INTEGER (U"Weigh data") - 1, 0, GET_REAL (U"Number of sigmas"), GET_REAL (U"Parameter variance power"), 1, 1, 1, 1, 1);
 	// next code is necessary to get the Formant at postion index selected and to get its name
 	long iselected = 0;
-	Formant him = NULL;
+	Formant him = nullptr;
 	LOOP {
 		iselected ++;
 		if (iselected == index) {
 			him = static_cast<Formant> (OBJECT);
 		}
 	}
-	Melder_assert (him != NULL);
+	Melder_assert (him);
 	autoFormant thee = Formant_extractPart (him, tmin, tmax);
 	praat_new (thee.transfer(), his name, U"_part");
 END
@@ -482,14 +482,14 @@ DO
 		GET_REAL (U"Minimum F1"), GET_REAL (U"Maximum F1"), GET_REAL (U"Minimum F2"), GET_REAL (U"Maximum F2"), GET_REAL (U"Minimum F3"));
 	// next code is necessary to get the Formant at postion index selected and to get its name
 	long iselected = 0;
-	Formant him = NULL;
+	Formant him = nullptr;
 	LOOP {
 		iselected ++;
 		if (iselected == index) {
 			him = static_cast<Formant> (OBJECT);
 		}
 	}
-	Melder_assert (him != NULL);
+	Melder_assert (him);
 	autoFormant thee = Formant_extractPart (him, tmin, tmax);
 	praat_new (thee.transfer(), his name, U"_part");
 END
@@ -1138,9 +1138,11 @@ END
 
 DIRECT (OptimalCeilingTier_edit)
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit an OptimalCeilingTier from batch.");
-	Sound sound = NULL;
+	Sound sound = nullptr;
 	LOOP {
-		if (CLASS == classSound) sound = (Sound) OBJECT;   // may stay NULL
+		if (CLASS == classSound) {
+			sound = (Sound) OBJECT;   // may stay nullptr
+		}
 	}
 	LOOP if (CLASS == classOptimalCeilingTier) {
 		iam (OptimalCeilingTier);
@@ -1390,7 +1392,7 @@ END
 
 void praat_DataModeler_init (void);
 void praat_DataModeler_init (void) {
-	Thing_recognizeClassesByName (classDataModeler, classFormantModeler, classOptimalCeilingTier, classOptimalCeilingTierEditor, classPitchModeler, NULL);
+	Thing_recognizeClassesByName (classDataModeler, classFormantModeler, classOptimalCeilingTier, classOptimalCeilingTierEditor, classPitchModeler, nullptr);
 
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple DataModeler...", U"Create ISpline...", praat_HIDDEN + praat_DEPTH_1, DO_DataModeler_createSimple);
 

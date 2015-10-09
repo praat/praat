@@ -147,7 +147,9 @@ static int isTimitWord (const char label[]) {
 }
 
 Any TextGrid_TIMITLabelFileRecognizer (int nread, const char *header, MelderFile file) {
-	long it[5]; int length, phnFile = 0; char hkruis[3] = "h#", label1[512], label2[512];
+	char hkruis[3] = "h#", label1[512], label2[512];
+	int length, phnFile = 0;
+	long it[5]; 
 	if (nread < 12 ||
 	        sscanf (header, "%ld%ld%s%n\n", &it[1], &it[2], label1, &length) != 3 ||
 	        it[1] < 0 || it[2] <= it[1] ||
@@ -208,7 +210,7 @@ TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile) {
 		// Ending time will only be known after all labels have been read.
 		// We start with a sufficiently long duration (one hour) and correct this later.
 
-		autoTextGrid me = TextGrid_create (0, 3600, U"wrd", 0);
+		autoTextGrid me = TextGrid_create (0.0, 3600.0, U"wrd", 0);
 		IntervalTier timit = (IntervalTier) my tiers -> item[1];
 		long linesRead = 0;
 		char line[200], label[200];
@@ -230,8 +232,8 @@ TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile) {
 				// Instead they start with "<number1> <number2> h#", where number1 > 0.
 				// We override number1 with 0. */
 
-				if (xmin > 0 && phnFile) {
-					xmin = 0;
+				if (xmin > 0.0 && phnFile) {
+					xmin = 0.0;
 				}
 			}
 			TextInterval interval = (TextInterval) timit -> intervals -> item[ni];
@@ -262,8 +264,8 @@ TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile) {
 			for (long i = 1; i <= ipa -> intervals -> size; i++) {
 				interval = (TextInterval) timit -> intervals -> item[i];
 
-				TextInterval_setText ( (TextInterval) ipa -> intervals -> item[i],
-				                       Melder_peek8to32 (timitLabelToIpaLabel (Melder_peek32to8 (interval -> text))));
+				TextInterval_setText ((TextInterval) ipa -> intervals -> item[i],
+					Melder_peek8to32 (timitLabelToIpaLabel (Melder_peek32to8 (interval -> text))));
 			}
 			Collection_addItem (my tiers, ipa.transfer()); // Then: add to collection
 			Thing_setName (timit, U"phn");  // rename wrd
@@ -316,7 +318,7 @@ void IntervalTier_setLaterEndTime (IntervalTier me, double xmax, const char32 *m
 		if (xmax <= my xmax) return; // nothing to be done
 		TextInterval ti = (TextInterval) my intervals -> item[my intervals -> size];
 		Melder_assert (xmax > ti -> xmax);
-		if (mark != NULL) {
+		if (mark) {
 			autoTextInterval interval = TextInterval_create (ti -> xmax, xmax, mark);
 			Collection_addItem (my intervals, interval.transfer());
 		} else {
@@ -334,7 +336,7 @@ void IntervalTier_setEarlierStartTime (IntervalTier me, double xmin, const char3
 		if (xmin >= my xmin) return; // nothing to be done
 		TextInterval ti = (TextInterval) my intervals -> item[1];
 		Melder_assert (xmin < ti -> xmin);
-		if (mark != NULL) {
+		if (mark) {
 			autoTextInterval interval = TextInterval_create (xmin, ti -> xmin, mark);
 			Collection_addItem (my intervals, interval.transfer());
 		} else {
@@ -378,7 +380,7 @@ void IntervalTier_moveBoundary (IntervalTier me, long iint, bool atStart, double
 void TextTier_setLaterEndTime (TextTier me, double xmax, const char32 *mark) {
 	try {
 		if (xmax <= my xmax) return; // nothing to be done
-		if (mark != NULL) {
+		if (mark) {
 			autoTextPoint textpoint = TextPoint_create (my xmax, mark);
 			Collection_addItem (my points, textpoint.transfer());
 		}
@@ -391,7 +393,7 @@ void TextTier_setLaterEndTime (TextTier me, double xmax, const char32 *mark) {
 void TextTier_setEarlierStartTime (TextTier me, double xmin, const char32 *mark) {
 	try {
 		if (xmin >= my xmin) return; // nothing to be done
-		if (mark != NULL) {
+		if (mark) {
 			autoTextPoint textpoint = TextPoint_create (my xmin, mark);
 			Collection_addItem (my points, textpoint.transfer());
 		}
@@ -403,12 +405,13 @@ void TextTier_setEarlierStartTime (TextTier me, double xmin, const char32 *mark)
 
 void TextGrid_setEarlierStartTime (TextGrid me, double xmin, const char32 *imark, const char32 *pmark) {
 	try {
-		if (xmin >= my xmin) return;
+		if (xmin >= my xmin) {
+			return;
+		}
 		for (long tierNumber = 1 ; tierNumber <= my tiers -> size; tierNumber++) {
 			Function tier = (Function) my tiers -> item [tierNumber];
 			if (tier -> classInfo == classIntervalTier) {
 				IntervalTier_setEarlierStartTime ((IntervalTier) tier, xmin, imark);
-
 			} else {
 				TextTier_setEarlierStartTime ((TextTier) tier, xmin, pmark);
 			}
@@ -543,7 +546,7 @@ void IntervalTier_cutIntervals_minimumDuration (IntervalTier me, const char32 *l
 	long i = 1;
 	while (i <= my intervals -> size) {
 		TextInterval ti = (TextInterval) my intervals -> item[i];
-		if ( (label == 0 || (ti -> text != 0 && str32equ (ti -> text, label))) &&
+		if ( (! label || (ti -> text && str32equ (ti -> text, label))) &&
 		        ti -> xmax - ti -> xmin < minimumDuration) {
 			IntervalTier_cutInterval (me, i, 0);
 		} else {
@@ -557,7 +560,7 @@ void IntervalTier_cutIntervalsOnLabelMatch (IntervalTier me, const char32 *label
 	while (i < my intervals -> size) {
 		TextInterval ti = (TextInterval) my intervals -> item[i];
 		TextInterval tip1 = (TextInterval) my intervals -> item[i + 1];
-		if ( (label == 0 || (ti -> text != 0 && str32equ (ti -> text, label))) &&
+		if ( (! label || (ti -> text && str32equ (ti -> text, label))) &&
 		        (Melder_cmp (ti -> text, tip1 -> text) == 0)) {
 
 			IntervalTier_cutInterval (me, i, 1);
@@ -579,8 +582,9 @@ void IntervalTier_changeLabels (I, long from, long to, const char32 *search, con
 		if (from > to || from < 1 || to > my intervals -> size) {
 			Melder_throw (U"Incorrect specification of where to act.");
 		}
-		if (use_regexp && str32len (search) == 0) Melder_throw (U"The regex search string cannot be empty.\n"
-			        U"You may search for an empty string with the expression \"^$\"");
+		if (use_regexp && str32len (search) == 0) {
+			Melder_throw (U"The regex search string cannot be empty.\nYou may search for an empty string with the expression \"^$\"");
+		}
 
 		long nlabels = to - from + 1;
 		autoNUMvector<char32 *> labels (1, nlabels);
@@ -595,7 +599,7 @@ void IntervalTier_changeLabels (I, long from, long to, const char32 *search, con
 			TextInterval interval = (TextInterval) my intervals -> item[i];
 			Melder_free (interval -> text);
 			interval -> text = newlabels[i - from + 1];   // Transfer of ownership.
-			newlabels[i - from + 1] = 0;
+			newlabels[i - from + 1] = nullptr;
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": labels not changed.");
@@ -614,9 +618,9 @@ void TextTier_changeLabels (I, long from, long to, const char32 *search, const c
 		if (from > to || from < 1 || to > my points -> size) {
 			Melder_throw (U"Incorrect specification of where to act.");
 		}
-		if (use_regexp && str32len (search) == 0) Melder_throw (U"The regex search string cannot be empty.\n"
-			        U"You may search for an empty string with the expression \"^$\"");
-
+		if (use_regexp && str32len (search) == 0) {
+			Melder_throw (U"The regex search string cannot be empty.\nYou may search for an empty string with the expression \"^$\"");
+		}
 		long nmarks = to - from + 1;
 		autoNUMvector<char32 *> marks (1, nmarks);
 
@@ -641,10 +645,12 @@ void TextGrid_changeLabels (TextGrid me, int tier, long from, long to, const cha
 	try {
 		long ntiers = my tiers -> size;
 
-		if (tier < 1 || tier > ntiers) Melder_throw (U"The tier number (", tier, U") should not be "
-			        U"larger than the number of tiers (", ntiers, U").");
-		if (use_regexp && str32len (search) == 0) Melder_throw (U"The regex search string cannot be empty.\n"
-			        U"You may search for an empty string with the expression \"^$\"");
+		if (tier < 1 || tier > ntiers) {
+			Melder_throw (U"The tier number (", tier, U") should not be larger than the number of tiers (", ntiers, U").");
+		}
+		if (use_regexp && str32len (search) == 0) {
+			Melder_throw (U"The regex search string cannot be empty.\nYou may search for an empty string with the expression \"^$\"");
+		}
 		Daata anyTier = (Daata) my tiers -> item [tier];
 		if (anyTier -> classInfo == classIntervalTier) {
 			IntervalTier_changeLabels (anyTier, from, to, search, replace, use_regexp, nmatches, nstringmatches);
