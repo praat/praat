@@ -1,6 +1,6 @@
 /* VowelEditor.cpp
  *
- * Copyright (C) 2008-2013 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 2008-2013, 2015 David Weenink, 2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -284,7 +284,7 @@ static double getRealFromTextWidget (GuiText me) {
 	double value = NUMundefined;
 	char32 *dirty = GuiText_getString (me);
 	try {
-		Interpreter_numericExpression (NULL, dirty, & value);
+		Interpreter_numericExpression (nullptr, dirty, & value);
 	} catch (MelderError) {
 		Melder_clearError (); value = NUMundefined;
 	}
@@ -1437,30 +1437,30 @@ void structVowelEditor :: v_createMenus () {
 
 	Editor_addMenu (this, U"View", 0);
 	Editor_addCommand (this, U"File", U"Preferences...", 0, menu_cb_prefs);
-	Editor_addCommand (this, U"File", U"-- publish data --", 0, NULL);
+	Editor_addCommand (this, U"File", U"-- publish data --", 0, nullptr);
 	Editor_addCommand (this, U"File", U"Publish Sound", 0, menu_cb_publishSound);
 	Editor_addCommand (this, U"File", U"Extract KlattGrid", 0, menu_cb_extract_KlattGrid);
 	Editor_addCommand (this, U"File", U"Extract FormantGrid", 0, menu_cb_extract_FormantGrid);
 	Editor_addCommand (this, U"File", U"Extract PitchTier", 0, menu_cb_extract_PitchTier);
-	Editor_addCommand (this, U"File", U"-- drawing --", 0, NULL);
+	Editor_addCommand (this, U"File", U"-- drawing --", 0, nullptr);
 	Editor_addCommand (this, U"File", U"Draw trajectory...", 0, menu_cb_drawTrajectory);
-	Editor_addCommand (this, U"File", U"-- scripting --", 0, NULL);
-	Editor_addCommand (this, U"Edit", U"-- f0 --", 0, NULL);
+	Editor_addCommand (this, U"File", U"-- scripting --", 0, nullptr);
+	Editor_addCommand (this, U"Edit", U"-- f0 --", 0, nullptr);
 	Editor_addCommand (this, U"Edit", U"Set F0...", 0, menu_cb_setF0);
 	Editor_addCommand (this, U"Edit", U"Set F3 & F4...", 0, menu_cb_setF3F4);
-	Editor_addCommand (this, U"Edit", U"-- trajectory commands --", 0, NULL);
+	Editor_addCommand (this, U"Edit", U"-- trajectory commands --", 0, nullptr);
 	Editor_addCommand (this, U"Edit", U"Reverse trajectory", 0, menu_cb_reverseTrajectory);
 	Editor_addCommand (this, U"Edit", U"Modify trajectory duration...", 0, menu_cb_modifyTrajectoryDuration);
 	Editor_addCommand (this, U"Edit", U"New trajectory...", 0, menu_cb_newTrajectory);
 	Editor_addCommand (this, U"Edit", U"Extend trajectory...", 0, menu_cb_extendTrajectory);
 	Editor_addCommand (this, U"Edit", U"Shift trajectory...", 0, menu_cb_shiftTrajectory);
 	Editor_addCommand (this, U"View", U"F1 & F2 range...", 0, menu_cb_ranges_f1f2);
-	Editor_addCommand (this, U"View", U"--show vowel marks--", 0, NULL);
+	Editor_addCommand (this, U"View", U"--show vowel marks--", 0, nullptr);
 	Editor_addCommand (this, U"View", U"Show one vowel mark...", Editor_HIDDEN, menu_cb_showOneVowelMark);
 	Editor_addCommand (this, U"View", U"Show vowel marks...", Editor_HIDDEN, menu_cb_showVowelMarks);
 	Editor_addCommand (this, U"View", U"Show vowel marks from fixed set...", 0, menu_cb_showVowelMarks);
 	Editor_addCommand (this, U"View", U"Show vowel marks from Table file...", 0, menu_cb_showVowelMarksFromTableFile);
-	Editor_addCommand (this, U"View", U"--show trajectory time marks--", 0, NULL);
+	Editor_addCommand (this, U"View", U"--show trajectory time marks--", 0, nullptr);
 	Editor_addCommand (this, U"View", U"Show trajectory time marks every...", 0, menu_cb_showTrajectoryTimeMarksEvery);
 }
 
@@ -1520,7 +1520,7 @@ void structVowelEditor :: v_createChildren ()
 	//drawingArea = GuiDrawingArea_createShown (d_windowForm, 0, 0, Machine_getMenuBarHeight (), -MARGIN_BOTTOM,
 	//	gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
 	drawingArea = GuiDrawingArea_createShown (d_windowForm, 0, 0, Machine_getMenuBarHeight (), -MARGIN_BOTTOM,
-		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, this, 0);
+		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, nullptr, gui_drawingarea_cb_resize, this, 0);
 	width  = GuiControl_getWidth  (drawingArea);
 	height = GuiControl_getHeight (drawingArea);
 }

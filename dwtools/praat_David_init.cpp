@@ -55,7 +55,7 @@
  djmw 20090109 KlattGrid formulas for formant
  djmw 20090708 KlattTable <-> Table
  djmw 20090822 Thing_recognizeClassesByName: added classCepstrum, classIndex, classKlattTable
- djmw 20090914 Excitation to Excitations crashed because of NULL reference
+ djmw 20090914 Excitation to Excitations crashed because of nullptr reference
  djmw 20090927 TableOfReal_drawRow(s)asHistogram
  djmw 20091023 Sound_draw_selectedIntervals
  djmw 20091230 Covariance_and_TableOfReal_mahalanobis
@@ -525,7 +525,7 @@ DO
         GET_REAL (U"Regression weight"), GET_REAL (U"Regression weight log energy"),
         GET_REAL (U"Regression coefficients window"));
     DTW_findPath (thee.peek(), begin, end, slope);
-	praat_new (thee.transfer(), U"");   // ppgb: geen expliciete NULL meer meegeven als naam (dat wordt "0")
+	praat_new (thee.transfer(), U"");
 END
 
 DIRECT (CC_to_Matrix)
@@ -1486,7 +1486,7 @@ DO
 	LOOP {
 		iam (Discriminant);
 		Discriminant_drawConcentrationEllipses (me, GRAPHICS,
-		GET_REAL (U"Confidence level"), 1, NULL, GET_INTEGER (U"Discriminant plane"),
+		GET_REAL (U"Confidence level"), 1, nullptr, GET_INTEGER (U"Discriminant plane"),
 		GET_INTEGER (U"X-dimension"), GET_INTEGER (U"Y-dimension"),
 		GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
 		GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"),
@@ -2214,7 +2214,7 @@ FORM (EditCostsTable_getTargetIndex, U"EditCostsTable: Get target index", 0)
 DO
 	LOOP {
 		iam (EditCostsTable);
-		Melder_informationReal (EditCostsTable_getTargetIndex (me, GET_STRING (U"Target")), NULL);
+		Melder_informationReal (EditCostsTable_getTargetIndex (me, GET_STRING (U"Target")), nullptr);
 	}
 END
 
@@ -2224,7 +2224,7 @@ FORM (EditCostsTable_getSourceIndex, U"EditCostsTable: Get source index", 0)
 DO
 	LOOP {
 		iam (EditCostsTable);
-		Melder_informationReal (EditCostsTable_getSourceIndex (me, GET_STRING (U"Source")), NULL);
+		Melder_informationReal (EditCostsTable_getSourceIndex (me, GET_STRING (U"Source")), nullptr);
 	}
 END
 
@@ -2234,7 +2234,7 @@ FORM (EditCostsTable_getInsertionCost, U"EditCostsTable: Get insertion cost", 0)
 DO
 	LOOP {
 		iam (EditCostsTable);
-		Melder_informationReal (EditCostsTable_getInsertionCost (me, GET_STRING (U"Target")), NULL);
+		Melder_informationReal (EditCostsTable_getInsertionCost (me, GET_STRING (U"Target")), nullptr);
 	}
 END
 
@@ -2244,7 +2244,7 @@ FORM (EditCostsTable_getDeletionCost, U"EditCostsTable: Get deletion cost", 0)
 DO
 	LOOP {
 		iam (EditCostsTable);
-		Melder_informationReal (EditCostsTable_getDeletionCost (me, GET_STRING (U"Source")), NULL);
+		Melder_informationReal (EditCostsTable_getDeletionCost (me, GET_STRING (U"Source")), nullptr);
 	}
 END
 
@@ -2255,7 +2255,7 @@ FORM (EditCostsTable_getSubstitutionCost, U"EditCostsTable: Get substitution cos
 DO
 	LOOP {
 		iam (EditCostsTable);
-		Melder_informationReal (EditCostsTable_getSubstitutionCost (me, GET_STRING (U"Target"), GET_STRING (U"Source")), NULL);
+		Melder_informationReal (EditCostsTable_getSubstitutionCost (me, GET_STRING (U"Target"), GET_STRING (U"Source")), nullptr);
 	}
 END
 
@@ -2269,7 +2269,7 @@ FORM (EditCostsTable_getOthersCost, U"EditCostsTable: Get cost (others)", 0)
 DO
 	LOOP {
 		iam (EditCostsTable);
-		Melder_informationReal (EditCostsTable_getOthersCost (me, GET_INTEGER (U"Others cost type")), NULL);
+		Melder_informationReal (EditCostsTable_getOthersCost (me, GET_INTEGER (U"Others cost type")), nullptr);
 	}
 END
 
@@ -3862,7 +3862,7 @@ DO
 	Matrix me = FIRST_ANY (Matrix);
 	double mean = Matrix_getMean (me, GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
 		GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"));
-	Melder_informationReal (mean, NULL);
+	Melder_informationReal (mean, nullptr);
 END
 
 FORM (Matrix_getStandardDeviation, U"Matrix: Get standard deviation", 0)
@@ -3875,7 +3875,7 @@ DO
 	Matrix me = FIRST_ANY (Matrix);
 	double stdev = Matrix_getStandardDeviation (me, GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
 		GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"));
-	Melder_informationReal (stdev, NULL);
+	Melder_informationReal (stdev, nullptr);
 END
 
 FORM (Matrix_scale, U"Matrix: Scale", 0)
@@ -5014,7 +5014,7 @@ END
 DIRECT (Polygon_getAreaOfConvexHull)
 	LOOP {
 		iam (Polygon);
-		Melder_informationReal (Polygon_getAreaOfConvexHull (me), NULL);
+		Melder_informationReal (Polygon_getAreaOfConvexHull (me), nullptr);
 	}
 END
 
@@ -5232,8 +5232,8 @@ FORM (Polynomials_divide, U"Polynomials: Divide", U"Polynomials: Divide...")
 	OK
 DO
 /* With gcc (GCC) 3.2.2 20030217 (Red Hat Linux 8.0 3.2.2-2)
-	The following line initiates pq = NULL and I don't know why
-Polynomial p1 = NULL, p2 = NULL, pq, pr;
+	The following line initiates pq = nullptr and I don't know why
+Polynomial p1 = nullptr, p2 = nullptr, pq, pr;
 */
 
 	bool wantq = GET_INTEGER (U"Want quotient");
@@ -5398,7 +5398,7 @@ DO
 	double q = GET_REAL (U"Critical value");
 	REQUIRE (q > 0 , U"Critical value must be > 0.")
 	double val = NUMtukeyQ (q, GET_INTEGER (U"Number of means"), GET_REAL (U"Degrees of freedom"), GET_INTEGER (U"Number of rows") );
-	Melder_informationReal (val, NULL);
+	Melder_informationReal (val, nullptr);
 END
 
 FORM (Praat_getInvTukeyQ, U"Get invTukeyQ", 0)
@@ -5411,7 +5411,7 @@ DO
 	double p = GET_REAL (U"Probability");
 	REQUIRE (p >= 0 && p <= 1, U"Probability must be in (0,1).")
 	double val = NUMinvTukeyQ (p, GET_INTEGER (U"Number of means"), GET_REAL (U"Degrees of freedom"), GET_INTEGER (U"Number of rows"));
-	Melder_informationReal (val, NULL);
+	Melder_informationReal (val, nullptr);
 END
 
 /******************** Sound ****************************************/
@@ -5737,7 +5737,7 @@ DO
     const char32 *trimlabel = GET_STRING (U"Trim label");
 	LOOP {
 		iam (Sound);
-        TextGrid tg = NULL;
+        TextGrid tg = nullptr;
 		autoSound thee = Sound_trimSilences (me, trimDuration, onlyAtStartAndEnd, minPitch, timeStep, silenceThreshold,
 			minSilenceDuration, minSoundingDuration, (saveTextGrid ? &tg : 0), trimlabel);
         autoTextGrid atg = tg;
@@ -6154,11 +6154,11 @@ DO
 END
 
 FORM_READ2 (Sound_readFromRawFileLE, U"Read Sound from raw Little Endian file", 0, true) {
-	praat_new (Sound_readFromRawFile (file, NULL, 16, 1, 0, 0, 16000), MelderFile_name (file));
+	praat_new (Sound_readFromRawFile (file, nullptr, 16, 1, 0, 0, 16000), MelderFile_name (file));
 END2 }
 
 FORM_READ2 (Sound_readFromRawFileBE, U"Read Sound from raw 16-bit Little Endian file", 0, true) {
-	praat_new (Sound_readFromRawFile (file, NULL, 16, 0, 0, 0, 16000), MelderFile_name (file));
+	praat_new (Sound_readFromRawFile (file, nullptr, 16, 0, 0, 0, 16000), MelderFile_name (file));
 END2 }
 
 FORM_READ2 (KlattTable_readFromRawTextFile, U"KlattTable_readFromRawTextFile", 0, true) {
@@ -6359,7 +6359,7 @@ DO
 	LOOP {
 		iam (SpeechSynthesizer);
 		TextGrid tg = 0; Table t = 0;
-		autoSound thee = SpeechSynthesizer_to_Sound (me, text, (createTextGrid ? &tg : NULL), (Melder_debug == -2 ? &t : NULL));
+		autoSound thee = SpeechSynthesizer_to_Sound (me, text, (createTextGrid ? &tg : nullptr), (Melder_debug == -2 ? &t : nullptr));
 		autoTextGrid atg = tg; autoTable atr = t;
 		praat_new (thee.transfer(), my name);
 		if (createTextGrid) {
@@ -6445,7 +6445,7 @@ DO
 	SpeechSynthesizer me = FIRST (SpeechSynthesizer);
 	TextGrid thee = FIRST (TextGrid), tg = 0;
 	autoSound him = SpeechSynthesizer_and_TextGrid_to_Sound (me, thee, GET_INTEGER (U"Tier number"),
-		GET_INTEGER (U"Interval number"), (createTextGrid ? &tg : NULL));
+		GET_INTEGER (U"Interval number"), (createTextGrid ? &tg : nullptr));
 	autoTextGrid atg = tg;
 	praat_new (him.transfer(), my name);
 	if (createTextGrid) {
@@ -6696,7 +6696,7 @@ END
 DIRECT (SSCP_to_Correlation)
 	LOOP {
 		iam (SSCP);
-		praat_new (SSCP_to_Correlation (me), U"");   // ppgb: geen expliciete NULL meer meegeven als naam (dat wordt "0")
+		praat_new (SSCP_to_Correlation (me), U"");
 	}
 END
 
@@ -6707,34 +6707,34 @@ DO
 	long noc = GET_INTEGER (U"Number of constraints");
 	LOOP {
 		iam (SSCP);
-		praat_new (SSCP_to_Covariance (me, noc), U"");   // ppgb: geen expliciete NULL meer meegeven als naam (dat wordt "0")
+		praat_new (SSCP_to_Covariance (me, noc), U"");
 	}
 END
 
 DIRECT (SSCP_to_PCA)
 	LOOP {
 		iam (SSCP);
-		praat_new (SSCP_to_PCA (me), U"");   // ppgb: geen expliciete NULL meer meegeven als naam (dat wordt "0")
+		praat_new (SSCP_to_PCA (me), U"");
 	}
 END
 
 /******************* Strings ****************************/
 DIRECT (Strings_createFromEspeakVoices)
-	praat_new (NULL, U"voices");
+	praat_new (nullptr, U"voices"); // TODO ??
 END
 
 FORM (Strings_createAsCharacters, U"Strings: Create as characters", 0)
 	SENTENCE (U"Text", U"intention")
 	OK
 DO
-	praat_new (Strings_createAsCharacters (GET_STRING (U"Text")), U"");   // ppgb: geen expliciete NULL meer meegeven als naam (dat wordt "0")
+	praat_new (Strings_createAsCharacters (GET_STRING (U"Text")), U"");
 END
 
 FORM (Strings_createAsTokens, U"Strings: Create as tokens", 0)
 	SENTENCE (U"Text", U"There are seven tokens in this text")
 	OK
 DO
-	praat_new (Strings_createAsTokens (GET_STRING (U"Text")), U"");   // ppgb: geen expliciete NULL meer meegeven als naam (dat wordt "0")
+	praat_new (Strings_createAsTokens (GET_STRING (U"Text")), U"");
 END
 
 DIRECT (Strings_append)
@@ -6745,7 +6745,7 @@ END
 DIRECT (Strings_to_Categories)
 	LOOP {
 		iam (Strings);
-		praat_new (Strings_to_Categories (me), U"");   // ppgb: geen expliciete NULL meer meegeven als naam (dat wordt "0")
+		praat_new (Strings_to_Categories (me), U"");
 	}
 END
 
@@ -6778,12 +6778,12 @@ DO
 END
 
 DIRECT (Strings_to_EditDistanceTable)
-	Strings s1 = NULL, s2 = NULL;
+	Strings s1 = nullptr, s2 = nullptr;
 	LOOP {
 		iam(Strings);
 		(s1 ? s2 : s1) = me;
 	}
-	Melder_assert (s1 != NULL && s2 != NULL);
+	Melder_assert (s1 && s2);
 	autoEditDistanceTable table = EditDistanceTable_create (s1, s2);
 	praat_new (table.transfer(), s1 -> name, U"_", s2 -> name);
 END
@@ -7424,7 +7424,7 @@ END
 /******************* TableOfReal ****************************/
 
 DIRECT (New_CreateIrisDataset)
-	praat_new (TableOfReal_createIrisDataset (), U"");   // ppgb: geen expliciete NULL meer meegeven (dan krijg je "0" i.p.v. "iris")
+	praat_new (TableOfReal_createIrisDataset (), U"");
 END
 
 FORM (TableOfReal_reportMultivariateNormality, U"TableOfReal: Report multivariate normality (BHEP)", U"TableOfReal: Report multivariate normality (BHEP)...")
@@ -8020,13 +8020,13 @@ DIRECT (VowelEditor_create)
 	if (theCurrentPraatApplication -> batch) {
 		Melder_throw (U"Cannot edit from batch.");
 	}
-	autoVowelEditor vowelEditor = VowelEditor_create (U"VowelEditor", NULL);
+	autoVowelEditor vowelEditor = VowelEditor_create (U"VowelEditor", nullptr);
 	vowelEditor.transfer(); // user becomes the owner
 END
 
 static Any cmuAudioFileRecognizer (int nread, const char *header, MelderFile fs) {
 	return nread < 12 || header [0] != 6 || header [1] != 0 ?
-	       NULL : Sound_readFromCmuAudioFile (fs);
+	       nullptr : Sound_readFromCmuAudioFile (fs);
 }
 
 void praat_CC_init (ClassInfo klas) {
@@ -8234,7 +8234,7 @@ END
 
 void praat_SSCP_as_TableOfReal_init (ClassInfo klas) {
 	praat_TableOfReal_init (klas);
-	praat_removeAction (klas, NULL, NULL, U"Set value...");
+	praat_removeAction (klas, nullptr, nullptr, U"Set value...");
 	praat_addAction1 (klas, 1, U"Set centroid...", U"Formula...", 1, DO_SSCP_setCentroid);
 	praat_addAction1 (klas, 1, U"Set value...", U"Formula...", 1, DO_SSCP_setValue);
 	praat_addAction1 (klas, 0, U"To TableOfReal", U"To Matrix", 1, DO_TableOfReal_to_TableOfReal);
@@ -8249,16 +8249,16 @@ void praat_TableOfReal_init2 (ClassInfo klas) {
 void praat_EditDistanceTable_as_TableOfReal_init (ClassInfo klas) {
 	praat_TableOfReal_init (klas);
 	praat_addAction1 (klas, 0, U"Set default costs...", U"Formula...", 1, DO_EditDistanceTable_setDefaultCosts);
-	praat_removeAction (klas, NULL, NULL, U"Draw as numbers...");
+	praat_removeAction (klas, nullptr, nullptr, U"Draw as numbers...");
 	praat_addAction1 (klas, 0, U"Draw...", U"Draw -", 1, DO_EditDistanceTable_draw);
 	praat_addAction1 (klas, 0, U"Draw edit operations", U"Draw...", 1, DO_EditDistanceTable_drawEditOperations);
-	praat_removeAction (klas, NULL, NULL, U"Draw as numbers if...");
-	praat_removeAction (klas, NULL, NULL, U"Draw as squares...");
-	praat_removeAction (klas, NULL, NULL, U"Draw vertical lines...");
-	praat_removeAction (klas, NULL, NULL, U"Draw horizontal lines...");
-	praat_removeAction (klas, NULL, NULL, U"Draw left and right lines...");
-	praat_removeAction (klas, NULL, NULL, U"Draw top and bottom lines...");
-	praat_removeAction (klas, NULL, NULL, U"-- draw lines --");
+	praat_removeAction (klas, nullptr, nullptr, U"Draw as numbers if...");
+	praat_removeAction (klas, nullptr, nullptr, U"Draw as squares...");
+	praat_removeAction (klas, nullptr, nullptr, U"Draw vertical lines...");
+	praat_removeAction (klas, nullptr, nullptr, U"Draw horizontal lines...");
+	praat_removeAction (klas, nullptr, nullptr, U"Draw left and right lines...");
+	praat_removeAction (klas, nullptr, nullptr, U"Draw top and bottom lines...");
+	praat_removeAction (klas, nullptr, nullptr, U"-- draw lines --");
 }
 
 void praat_uvafon_David_init ();
@@ -8276,7 +8276,7 @@ void praat_uvafon_David_init () {
 		classPermutation, classISpline, classLegendreSeries,
 		classMelFilter, classMelSpectrogram, classMSpline, classPattern, classPCA, classPolynomial, classRoots,
 		classSimpleString, classStringsIndex, classSpeechSynthesizer, classSPINET, classSSCP,
-		classSVD, NULL);
+		classSVD, nullptr);
 
 	VowelEditor_prefs ();
 
@@ -8415,9 +8415,9 @@ void praat_uvafon_David_init () {
 
 	praat_addAction1 (classConfusion, 0, U"Confusion help", 0, 0, DO_Confusion_help);
 	praat_TableOfReal_init2 (classConfusion);
-	praat_removeAction (classConfusion, NULL, NULL, U"Draw as numbers...");
-	praat_removeAction (classConfusion, NULL, NULL, U"Sort by label...");
-	praat_removeAction (classConfusion, NULL, NULL, U"Sort by column...");
+	praat_removeAction (classConfusion, nullptr, nullptr, U"Draw as numbers...");
+	praat_removeAction (classConfusion, nullptr, nullptr, U"Sort by label...");
+	praat_removeAction (classConfusion, nullptr, nullptr, U"Sort by column...");
 	praat_addAction1 (classConfusion, 0, U"Draw as numbers...", U"Draw -", 1, DO_Confusion_drawAsNumbers);
 	praat_addAction1 (classConfusion, 1, U"Get value (labels)...", U"Get value...", 1, DO_Confusion_getValue);
 	praat_addAction1 (classConfusion, 0, U"-- confusion statistics --", U"Get value (labels)...", 1, 0);
@@ -8950,7 +8950,7 @@ void praat_uvafon_David_init () {
 
 	praat_addAction1 (classSSCP, 0, U"SSCP help", 0, 0, DO_SSCP_help);
 	praat_TableOfReal_init2 (classSSCP);
-	praat_removeAction (classSSCP, NULL, NULL, U"Append");
+	praat_removeAction (classSSCP, nullptr, nullptr, U"Append");
 	praat_addAction1 (classSSCP, 0, U"Draw sigma ellipse...", DRAW_BUTTON, 1, DO_SSCP_drawSigmaEllipse);
 	praat_addAction1 (classSSCP, 0, U"Draw confidence ellipse...", DRAW_BUTTON, 1, DO_SSCP_drawConfidenceEllipse);
 	praat_SSCP_query_init (classSSCP);

@@ -1,6 +1,6 @@
 /* Proximity.cpp
  *
- * Copyright (C) 1993-2004 David Weenink
+ * Copyright (C) 1993-2004, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,8 @@ Thing_implement (Proximity, TableOfReal, 0);
 
 void Proximity_init (Proximity me, long numberOfPoints) {
 	TableOfReal_init (me, numberOfPoints, numberOfPoints);
-	TableOfReal_setSequentialRowLabels (me, 0, 0, NULL, 1, 1);
-	TableOfReal_setSequentialColumnLabels (me, 0, 0, NULL, 1, 1);
+	TableOfReal_setSequentialRowLabels (me, 0, 0, nullptr, 1, 1);
+	TableOfReal_setSequentialColumnLabels (me, 0, 0, nullptr, 1, 1);
 }
 
 /* End of file Proximity.cpp */

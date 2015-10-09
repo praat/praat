@@ -1,6 +1,6 @@
 /* praat_MDS_init.cpp
  *
- * Copyright (C) 1992-2012 David Weenink
+ * Copyright (C) 1992-2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,7 +110,7 @@ FORM (Dissimilarity_createLetterRExample, U"Create letter R example", U"Create l
 	REAL (U"Noise range", U"32.5")
 	OK
 DO
-	praat_new (Dissimilarity_createLetterRExample (GET_REAL (U"Noise range")), U"");   // ppgb: geen expliciete NULL meer meegeven als naam (dat wordt "0")
+	praat_new (Dissimilarity_createLetterRExample (GET_REAL (U"Noise range")), U"");
 END
 
 FORM (INDSCAL_createCarrollWishExample,
@@ -119,7 +119,7 @@ FORM (INDSCAL_createCarrollWishExample,
 	REAL (U"Noise standard deviation", U"0.0")
 OK
 	DO
-	praat_new (INDSCAL_createCarrollWishExample (GET_REAL (U"Noise standard deviation")), U"");   // ppgb: geen expliciete NULL meer meegeven als naam (dat wordt "0")
+	praat_new (INDSCAL_createCarrollWishExample (GET_REAL (U"Noise standard deviation")), U""); 
 END
 
 FORM (Configuration_create, U"Create Configuration", U"Create Configuration...")
@@ -1052,7 +1052,7 @@ DO
 	LOOP {
 		iam (Dissimilarity);
 		int showProgress = 1;
-		praat_new (Dissimilarity_Weight_absolute_mds (me, NULL, GET_INTEGER (U"Number of dimensions"),
+		praat_new (Dissimilarity_Weight_absolute_mds (me, nullptr, GET_INTEGER (U"Number of dimensions"),
 			GET_REAL (U"Tolerance"), GET_INTEGER (U"Maximum number of iterations"),
 			GET_INTEGER (U"Number of repetitions"), showProgress), my name, U"_absolute");
 	}
@@ -1686,10 +1686,8 @@ void praat_TableOfReal_extras (ClassInfo klas) {
 
 void praat_uvafon_MDS_init ();
 void praat_uvafon_MDS_init () {
-	Thing_recognizeClassesByName (classAffineTransform, classProcrustes,
-	                              classContingencyTable, classDissimilarity,
-	                              classSimilarity, classConfiguration, classDistance,
-	                              classSalience, classScalarProduct, classWeight, NULL);
+	Thing_recognizeClassesByName (classAffineTransform, classProcrustes, classContingencyTable, classDissimilarity,
+		classSimilarity, classConfiguration, classDistance, classSalience, classScalarProduct, classWeight, nullptr);
 	Thing_recognizeClassByOtherName (classProcrustes, U"Procrustus");
 
 	praat_addMenuCommand (U"Objects", U"New", U"Multidimensional scaling", 0, 0, 0);
@@ -1710,9 +1708,9 @@ void praat_uvafon_MDS_init () {
 	praat_addAction1 (classConfiguration, 0, U"Configuration help", 0, 0, DO_Configuration_help);
 	praat_TableOfReal_init2 (classConfiguration);
 	praat_TableOfReal_extras (classConfiguration);
-	(void) praat_removeAction (classConfiguration, NULL, NULL, U"Insert column (index)...");
-	(void) praat_removeAction (classConfiguration, NULL, NULL, U"Remove column (index)...");
-	(void) praat_removeAction (classConfiguration, NULL, NULL, U"Append");
+	(void) praat_removeAction (classConfiguration, nullptr, nullptr, U"Insert column (index)...");
+	(void) praat_removeAction (classConfiguration, nullptr, nullptr, U"Remove column (index)...");
+	(void) praat_removeAction (classConfiguration, nullptr, nullptr, U"Append");
 	praat_addAction1 (classConfiguration, 0, U"Draw...", DRAW_BUTTON, 1, DO_Configuration_draw);
 	praat_addAction1 (classConfiguration, 0, U"Draw sigma ellipses...", U"Draw...", 1, DO_Configuration_drawSigmaEllipses);
 	praat_addAction1 (classConfiguration, 0, U"Draw one sigma ellipse...", U"Draw...", 1, DO_Configuration_drawOneSigmaEllipse);
