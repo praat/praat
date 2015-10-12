@@ -124,7 +124,7 @@ Configuration ContingencyTable_to_Configuration_ca (ContingencyTable me,
 Thing_define (Proximities, TablesOfReal) {
 };
 
-void Proximities_init (I, ClassInfo klas);
+void Proximities_init (Proximities me, ClassInfo klas);
 
 Proximities Proximities_create ();
 
@@ -166,13 +166,11 @@ Thing_define (Dissimilarity, Proximity) {
 
 Dissimilarity Dissimilarity_create (long numberOfPoints);
 
-int Dissimilarity_getAdditiveConstant (I, double *c);
+double Dissimilarity_getAdditiveConstant (Dissimilarity me);
 /*
 	Get the best estimate for the additive constant:
 		"distance = dissimilarity + constant"
-	F. Cailliez (1983), The analytical solution of the additive
-		constant problem,
-	Psychometrika 48, 305-308.
+	F. Cailliez (1983), The analytical solution of the additive constant problem, Psychometrika 48, 305-308.
 */
 
 /****************** class Transformator *******************************/
@@ -186,13 +184,13 @@ Thing_define (Transformator, Thing) {
 		virtual Distance v_transform (MDSVec vec, Distance dist, Weight w);
 };
 
-void Transformator_init (I, long numberOfPoints);
+void Transformator_init (Transformator me, long numberOfPoints);
 
 Transformator Transformator_create (long numberOfPoints);
 
-void Transformator_setNormalization (I, int normalization);
+void Transformator_setNormalization (Transformator me, int normalization);
 
-Distance Transformator_transform (I, MDSVec vec, Distance dist, Weight w);
+Distance Transformator_transform (Transformator me, MDSVec vec, Distance dist, Weight w);
 
 Thing_define (ISplineTransformator, Transformator) {
 	// new data:
@@ -294,7 +292,7 @@ void Distance_Weight_rawStressComponents (Distance fit, Distance conf,
 */
 
 double Dissimilarity_Configuration_Transformator_Weight_stress
-	(Dissimilarity d, Configuration c, Any t, Weight w, int type);
+	(Dissimilarity d, Configuration c, Transformator t, Weight w, int type);
 
 double Dissimilarity_Configuration_Weight_absolute_stress
 	(Dissimilarity d, Configuration c, Weight w, int type);
@@ -314,33 +312,18 @@ double Dissimilarity_Configuration_Weight_ispline_stress
 
 void Distance_Weight_smacofNormalize (Distance d, Weight w);
 
-Configuration Dissimilarity_Configuration_Weight_Transformator_smacof
-	(Dissimilarity me, Configuration conf, Weight weight, Any transformator,
-	double tolerance, long numberOfIterations, int showProgress,
-	double *stress);
+Configuration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissimilarity me, Configuration conf, Weight weight, Transformator t, double tolerance, long numberOfIterations, int showProgress, double *stress);
 
-Configuration Dissimilarity_Configuration_Weight_Transformator_multiSmacof
-	(Dissimilarity me, Configuration conf, Weight w, Any transformator,
-	double tolerance, long numberOfIterations, long numberOfRepetitions,
-	int showProgress);
+Configuration Dissimilarity_Configuration_Weight_Transformator_multiSmacof (Dissimilarity me, Configuration conf, Weight w, Transformator t,	double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress);
 
 
-Configuration Dissimilarity_Configuration_Weight_absolute_mds
-	(Dissimilarity dis, Configuration cstart, Weight w, double tolerance,
-	long numberOfIterations, long numberOfRepetitions, int showProgress);
+Configuration Dissimilarity_Configuration_Weight_absolute_mds (Dissimilarity dis, Configuration cstart, Weight w, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress);
 
-Configuration Dissimilarity_Configuration_Weight_ratio_mds
-	(Dissimilarity dis, Configuration cstart, Weight w, double tolerance,
-	long numberOfIterations, long numberOfRepetitions, int showProgress);
+Configuration Dissimilarity_Configuration_Weight_ratio_mds (Dissimilarity dis, Configuration cstart, Weight w, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress);
 
-Configuration Dissimilarity_Configuration_Weight_interval_mds
-	(Dissimilarity dis, Configuration cstart, Weight w, double tolerance,
-	long numberOfIterations, long numberOfRepetitions, int showProgress);
+Configuration Dissimilarity_Configuration_Weight_interval_mds (Dissimilarity dis, Configuration cstart, Weight w, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress);
 
-Configuration Dissimilarity_Configuration_Weight_monotone_mds
-	(Dissimilarity dis, Configuration cstart, Weight w, int tiesProcessing,
-	double tolerance, long numberOfIterations, long numberOfRepetitions,
-	int showProgress);
+Configuration Dissimilarity_Configuration_Weight_monotone_mds (Dissimilarity dis, Configuration cstart, Weight w, int tiesProcessing, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress);
 
 Configuration Dissimilarity_Configuration_Weight_ispline_mds
 	(Dissimilarity me, Configuration cstart, Weight w,
@@ -390,13 +373,11 @@ void Dissimilarity_Configuration_Weight_drawMonotoneRegression
 	int tiesProcessing, double xmin, double xmax, double ymin, double ymax,
 	double size_mm, const char32 *mark, int garnish);
 
-void Dissimilarity_Configuration_Weight_drawISplineRegression
-	(Dissimilarity d, Configuration c, Weight w, Graphics g,
+void Dissimilarity_Configuration_Weight_drawISplineRegression (Dissimilarity d, Configuration c, Weight w, Graphics g,
 	long numberOfInternalKnots, long order, double xmin, double xmax,
 	double ymin, double ymax, double size_mm, const char32 *mark, int garnish);
 
-Distance Dissimilarity_Configuration_Transformator_Weight_transform
-	(Dissimilarity d, Configuration c, Any t, Weight w);
+Distance Dissimilarity_Configuration_Transformator_Weight_transform (Dissimilarity d, Configuration c, Transformator t, Weight w);
 
 /******** DISTANCE & SCALARPRODUCT *******************************/
 
@@ -642,17 +623,17 @@ Salience Dissimilarities_Configuration_to_Salience (Dissimilarities me,
 
 /********* Casts from & to TableOfReal *****************************/
 
-Dissimilarity TableOfReal_to_Dissimilarity (I);
+Dissimilarity TableOfReal_to_Dissimilarity (TableOfReal me);
 
-Similarity TableOfReal_to_Similarity (I);
+Similarity TableOfReal_to_Similarity (TableOfReal me);
 
-Distance TableOfReal_to_Distance (I);
+Distance TableOfReal_to_Distance (TableOfReal me);
 
-Salience TableOfReal_to_Salience (I);
+Salience TableOfReal_to_Salience (TableOfReal me);
 
-Weight TableOfReal_to_Weight (I);
+Weight TableOfReal_to_Weight (TableOfReal me);
 
-ScalarProduct TableOfReal_to_ScalarProduct (I);
+ScalarProduct TableOfReal_to_ScalarProduct (TableOfReal me);
 
 /**************  EXAMPLES  ***************************************************/
 
