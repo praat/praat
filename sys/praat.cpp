@@ -167,7 +167,9 @@ void praat_deselect (int IOBJECT) {
 	Melder_assert (readableClassId != 0);
 	theCurrentPraatObjects -> numberOfSelected [readableClassId] -= 1;
 	if (! theCurrentPraatApplication -> batch && ! Melder_backgrounding) {
+		trace (U"deselecting object ", IOBJECT);
 		GuiList_deselectItem (praatList_objects, IOBJECT);
+		trace (U"deselected object ", IOBJECT);
 	}
 }
 
@@ -289,30 +291,40 @@ static void removeAllReferencesToEditor (Any editor) {
 		praatP. editor = NULL;
 }
 
-static void praat_remove (int iobject) {
+static void praat_remove (int iobject, bool removeVisibly) {
 /* Remove the "object" from the list. */
 /* Kill everything to do with selection. */
-	int ieditor;
+
 	Melder_assert (iobject >= 1 && iobject <= theCurrentPraatObjects -> n);
 	if (theCurrentPraatObjects -> list [iobject]. isBeingCreated) {
 		theCurrentPraatObjects -> list [iobject]. isBeingCreated = false;
 		theCurrentPraatObjects -> totalBeingCreated --;
 	}
-	praat_deselect (iobject);
+	trace (U"deselect object ", iobject);
+	if (removeVisibly)
+		praat_deselect (iobject);
+	trace (U"deselected object ", iobject);
 
 	/*
 	 * To prevent synchronization problems, kill editors before killing the data.
 	 */
-	for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
+	for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 		Editor editor = theCurrentPraatObjects -> list [iobject]. editors [ieditor];   // save this one reference
 		if (editor) {
+			trace (U"remove references to editor ", ieditor);
 			removeAllReferencesToEditor (editor);
-			forget (editor);
+			trace (U"forget editor ", ieditor);
+			if (removeVisibly)
+				forget (editor);
+			trace (U"forgeotten editor ", ieditor);
 		}
 	}
 	MelderFile_setToNull (& theCurrentPraatObjects -> list [iobject]. file);
+	trace (U"free name");
 	Melder_free (theCurrentPraatObjects -> list [iobject]. name);
+	trace (U"forget object");
 	forget (theCurrentPraatObjects -> list [iobject]. object);
+	trace (U"forgotten object");
 }
 
 void praat_cleanUpName (char32 *name) {
@@ -506,7 +518,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2) {
 
 void praat_removeObject (int i) {
 	int j, ieditor;
-	praat_remove (i);   // dangle
+	praat_remove (i, true);   // dangle
 	for (j = i; j < theCurrentPraatObjects -> n; j ++)
 		theCurrentPraatObjects -> list [j] = theCurrentPraatObjects -> list [j + 1];   // undangle but create second references
 	theCurrentPraatObjects -> list [theCurrentPraatObjects -> n]. name = nullptr;   // undangle or remove second reference
@@ -522,6 +534,7 @@ void praat_removeObject (int i) {
 }
 
 static void praat_exit (int exit_code) {
+//Melder_setTracing (true);
 	int IOBJECT;
 	#ifdef _WIN32
 		if (! theCurrentPraatApplication -> batch) {
@@ -586,7 +599,10 @@ static void praat_exit (int exit_code) {
 	}
 
 	trace (U"flush the file-based objects");
-	WHERE_DOWN (! MelderFile_isNull (& theCurrentPraatObjects -> list [IOBJECT]. file)) praat_remove (IOBJECT);
+	WHERE_DOWN (! MelderFile_isNull (& theCurrentPraatObjects -> list [IOBJECT]. file)) {
+		trace (U"removing object based on file ", & theCurrentPraatObjects -> list [IOBJECT]. file);
+		praat_remove (IOBJECT, false);
+	}
 	Melder_files_cleanUp ();   // in case a URL is open
 
 	trace (U"leave the program");
@@ -899,11 +915,9 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = true; }
 	extern "C" char *sendpraat (void *display, const char *programName, long timeOut, const char *text);
 	extern "C" wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, const wchar_t *text);
 	static void cb_openDocument (MelderFile file) {
-		char32 text [500];
+		char32 text [kMelder_MAXPATH+25];
 		/*
 		 * The user dropped a file on the Praat icon, while Praat is already running.
-		 * Windows may have enclosed the path between quotes;
-		 * this is especially likely to happen for a path that contains spaces.
 		 */
 		Melder_sprint (text,500, U"Read from file... ", file -> path);
 		#ifdef __CYGWIN__
@@ -1000,7 +1014,15 @@ void praat_setStandAloneScriptText (const char32 *text) {
 	thePraatStandAloneScriptText = text;
 }
 
+unsigned int theArgc;
+char** theArgv;
+unsigned int theArgumentNumber;
+
 void praat_init (const char32 *title, unsigned int argc, char **argv) {
+	theArgc = argc;
+	theArgv = argv;
+	theArgumentNumber = 0;
+
 	for (unsigned int iarg = 0; iarg < argc; iarg ++) {
 		//Melder_casual (U"arg ", iarg, U": <<", Melder_peek8to32 (argv [iarg]), U">>");
 	}
@@ -1046,105 +1068,84 @@ void praat_init (const char32 *title, unsigned int argc, char **argv) {
 	Printer_prefs ();   // paper size, printer command...
 	structTextEditor :: f_preferences ();   // font size...
 
-	uint32 iarg_batchName = 1;
+	theArgumentNumber = 1;
 	const char32 *unknownCommandLineOption = nullptr;
 
-	#if defined (UNIX) || defined (macintosh) || defined (_WIN32) && defined (CONSOLE_APPLICATION)
-		/*
-		 * Running the Praat shell from the Unix command line,
-		 * or running PRAATCON.EXE from the Windows command prompt:
-		 *    <programName> <scriptFileName>
-		 */
-		while (iarg_batchName < argc && argv [iarg_batchName] [0] == '-') {
-			if (strequ (argv [iarg_batchName], "-")) {
-				praatP.hasCommandLineInput = true;
-			} else if (strequ (argv [iarg_batchName], "-a") || strequ (argv [iarg_batchName], "--ansi")) {
-				Melder_consoleIsAnsi = true;
-				iarg_batchName += 1;
-			} else if (strequ (argv [iarg_batchName], "--no-pref-files")) {
-				praatP.ignorePreferenceFiles = true;
-				iarg_batchName += 1;
-			} else if (strequ (argv [iarg_batchName], "--no-plugins")) {
-				praatP.ignorePlugins = true;
-				iarg_batchName += 1;
-			} else if (strnequ (argv [iarg_batchName], "--pref-dir=", 11)) {
-				Melder_pathToDir (Melder_peek8to32 (argv [iarg_batchName] + 11), & praatDir);
-				iarg_batchName += 1;
-			#if defined (macintosh)
-			} else if (strequ (argv [iarg_batchName], "-NSDocumentRevisionsDebugMode")) {
-				(void) 0;   // ignore this option, which was added by Xcode
-				iarg_batchName += 2;   // jump over the argument, which is usually "YES" (this jump works correctly even if this argument is missing)
-			} else if (strnequ (argv [iarg_batchName], "-psn_", 5)) {
-				(void) 0;   // ignore this option, which was added by the Finder, perhaps when dragging a file on Praat (Process Serial Number)
-				iarg_batchName += 1;
-			#endif
-			} else {
-				unknownCommandLineOption = Melder_8to32 (argv [iarg_batchName]);
-				iarg_batchName = UINT32_MAX;   // ignore all other command line options
-				break;
-			}
+	/*
+	 * Running Praat from the command line.
+	 */
+	while (theArgumentNumber < argc && argv [theArgumentNumber] [0] == '-') {
+		if (strequ (argv [theArgumentNumber], "-")) {
+			praatP.hasCommandLineInput = true;
+		} else if (strequ (argv [theArgumentNumber], "--run")) {
+			Melder_batch = true;
+			theArgumentNumber += 1;
+		} else if (strequ (argv [theArgumentNumber], "-a") || strequ (argv [theArgumentNumber], "--ansi")) {
+			Melder_consoleIsAnsi = true;
+			theArgumentNumber += 1;
+		} else if (strequ (argv [theArgumentNumber], "--no-pref-files")) {
+			praatP.ignorePreferenceFiles = true;
+			theArgumentNumber += 1;
+		} else if (strequ (argv [theArgumentNumber], "--no-plugins")) {
+			praatP.ignorePlugins = true;
+			theArgumentNumber += 1;
+		} else if (strnequ (argv [theArgumentNumber], "--pref-dir=", 11)) {
+			Melder_pathToDir (Melder_peek8to32 (argv [theArgumentNumber] + 11), & praatDir);
+			theArgumentNumber += 1;
+		#if defined (macintosh)
+		} else if (strequ (argv [theArgumentNumber], "-NSDocumentRevisionsDebugMode")) {
+			(void) 0;   // ignore this option, which was added by Xcode
+			theArgumentNumber += 2;   // jump over the argument, which is usually "YES" (this jump works correctly even if this argument is missing)
+		} else if (strnequ (argv [theArgumentNumber], "-psn_", 5)) {
+			(void) 0;   // ignore this option, which was added by the Finder, perhaps when dragging a file on Praat (Process Serial Number)
+			theArgumentNumber += 1;
+		#endif
+		} else {
+			unknownCommandLineOption = Melder_8to32 (argv [theArgumentNumber]);
+			theArgumentNumber = UINT32_MAX;   // ignore all other command line options
+			break;
 		}
+	}
 
+	if (Melder_batch) {
+		if (theArgumentNumber >= argc) {
+			Melder_casual (U"Command line option --run was given, but no script file name was specified.");
+			exit (-1);
+		}
 		/*
-		 * We now figure out the script file name, if there is any.
+		 * We now get the script file name, if there is any.
 		 * If there is a script file name, it is next on the command line
 		 * (not necessarily *last* on the line, because there may be script arguments after it).
 		 */
-		if (iarg_batchName < argc) {
-			MelderString_copy (& theCurrentPraatApplication -> batchName, Melder_peek8to32 (argv [iarg_batchName]));
-			if (praatP.hasCommandLineInput) Melder_throw (U"Cannot have both command line input and a script file.");
-		} else {
-			MelderString_copy (& theCurrentPraatApplication -> batchName, U"");
-		}
+		MelderString_copy (& theCurrentPraatApplication -> batchName, Melder_peek8to32 (argv [theArgumentNumber ++]));
+		if (praatP.hasCommandLineInput)
+			Melder_throw (U"Cannot have both command line input and a script file.");
+	} else {
+		MelderString_copy (& theCurrentPraatApplication -> batchName, U"");
+	}
+	//Melder_casual (U"Script file name <<", theCurrentPraatApplication -> batchName.string, U">>");
 
-		Melder_batch = theCurrentPraatApplication -> batchName.string [0] != U'\0' || thePraatStandAloneScriptText != NULL;
-
-		#if defined (_WIN32) && defined (CONSOLE_APPLICATION)
-			if (! Melder_batch) {
-				fprintf (stderr, "Usage: PRAATCON <scriptFileName>\n");
-				exit (0);
-			}
-		#endif
-		/*
-		 * Running the Praat shell from the command line:
-		 *    praat -
-		 */
-		if (praatP.hasCommandLineInput) {
-			Melder_batch = true;
-		}
-
-		/* Take from 'title' ("myProg 3.2" becomes "myProg") or from command line ("/ifa/praat" becomes "praat"). */
-		str32cpy (truncatedTitle, argc && argv [0] [0] ? Melder_peek8to32 (argv [0]) : title && title [0] ? title : U"praat");
-		//Melder_fatal (U"<", argv [0], U">");
-	#else
-		#if defined (_WIN32)
-			MelderString_copy (& theCurrentPraatApplication -> batchName,
-				argv [3] ? Melder_peek8to32 (argv [3]) : U"");   // the command line
-		#endif
-		Melder_batch = false;   // PRAAT.EXE on Windows is always interactive
-		str32cpy (truncatedTitle, title && title [0] ? title : U"praat");
-	#endif
-	theCurrentPraatApplication -> batch = Melder_batch;
+	Melder_batch |= !! thePraatStandAloneScriptText;
 
 	/*
-	 * Construct a program name like "myProg 3.2" by removing directory path.
+	 * Running the Praat shell from the command line:
+	 *    praat -
 	 */
-	char32 *p = str32rchr (truncatedTitle, Melder_DIRECTORY_SEPARATOR);
-	praatP.title = p ? p + 1 : truncatedTitle;
+	Melder_batch |= praatP.hasCommandLineInput;
+
+	praatP.title = Melder_dup (title && title [0] ? title : U"Praat");
+
+	theCurrentPraatApplication -> batch = Melder_batch;
 
 	/*
 	 * Construct a program name like "myProg" for file and directory names.
 	 */
 	str32cpy (programName, praatP.title);
-	if ((p = str32chr (programName, U' ')) != NULL) *p = U'\0';
-	#if defined (_WIN32)
-		if ((p = str32chr (programName, U'.')) != NULL) *p = U'\0';   // chop off ".exe"
-	#endif
 
 	/*
 	 * Construct a main-window title like "MyProg 3.2".
 	 */
-	praatP.title [0] = (char32) toupper ((int) praatP.title [0]);
+	programName [0] = (char32) tolower ((int) programName [0]);
 
 	/*
 	 * Get home directory, e.g. "/home/miep/", or "/Users/miep/", or just "/".
@@ -1216,6 +1217,7 @@ void praat_init (const char32 *title, unsigned int argc, char **argv) {
 		#endif
 		Melder_tracingToFile (& tracingFile);
 	}
+
 	#if defined (UNIX)
 		if (! Melder_batch) {
 			/*
@@ -1259,18 +1261,14 @@ void praat_init (const char32 *title, unsigned int argc, char **argv) {
 
 	GuiWindow raam = NULL;
 	if (Melder_batch) {
-		#if defined (UNIX) || defined (macintosh) || defined (_WIN32) && defined (CONSOLE_APPLICATION)
-			MelderString_empty (& theCurrentPraatApplication -> batchName);
-			for (unsigned int i = iarg_batchName; i < argc; i ++) {
-				int needsQuoting = strchr (argv [i], ' ') != NULL && (i == iarg_batchName || i < argc - 1);
-				if (i > 1) MelderString_append (& theCurrentPraatApplication -> batchName, U" ");
-				if (needsQuoting) MelderString_append (& theCurrentPraatApplication -> batchName, U"\"");
-				MelderString_append (& theCurrentPraatApplication -> batchName, Melder_peek8to32 (argv [i]));
-				if (needsQuoting) MelderString_append (& theCurrentPraatApplication -> batchName, U"\"");
-			}
-		#elif defined (_WIN32)
-			MelderString_copy (& theCurrentPraatApplication -> batchName, Melder_peek8to32 (argv [3]));
-		#endif
+		MelderString_empty (& theCurrentPraatApplication -> batchName);
+		for (unsigned int i = theArgumentNumber - 1; i < argc; i ++) {
+			if (i >= theArgumentNumber) MelderString_append (& theCurrentPraatApplication -> batchName, U" ");
+			bool needsQuoting = !! strchr (argv [i], ' ') && (i == theArgumentNumber - 1 || i < argc - 1);
+			if (needsQuoting) MelderString_append (& theCurrentPraatApplication -> batchName, U"\"");
+			MelderString_append (& theCurrentPraatApplication -> batchName, Melder_peek8to32 (argv [i]));
+			if (needsQuoting) MelderString_append (& theCurrentPraatApplication -> batchName, U"\"");
+		}
 	} else {
 		trace (U"starting the application");
 		Machine_initLookAndFeel (argc, argv);
@@ -1287,9 +1285,9 @@ void praat_init (const char32 *title, unsigned int argc, char **argv) {
 		#elif defined (_WIN32)
 			argv [0] = Melder_32to8 (praatP. title);   // argc == 4
 			Gui_setOpenDocumentCallback (cb_openDocument);
-			GuiAppInitialize ("Praatwulg", NULL, 0, & argc, argv, NULL, NULL);
+			GuiAppInitialize ("Praatwulg", argc, argv);
 		#elif defined (macintosh)
-			GuiAppInitialize ("Praatwulg", NULL, 0, & argc, argv, NULL, NULL);
+			GuiAppInitialize ("Praatwulg", argc, argv);
 		#endif
 
 		trace (U"creating and installing the Objects window");
@@ -1299,8 +1297,9 @@ void praat_init (const char32 *title, unsigned int argc, char **argv) {
 		trace (U"locale ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
 		Gui_getWindowPositioningBounds (& x, & y, NULL, NULL);
 		trace (U"locale ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
-		theCurrentPraatApplication -> topShell = raam = GuiWindow_create (x + 10, y, WINDOW_WIDTH, WINDOW_HEIGHT, 450, 250,
-			objectWindowTitle, gui_cb_quit, NULL, 0);
+		theCurrentPraatApplication -> topShell = raam =
+			GuiWindow_create (x + 10, y, WINDOW_WIDTH, WINDOW_HEIGHT, 450, 250,
+				objectWindowTitle, gui_cb_quit, NULL, 0);
 		trace (U"locale ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
 		#if motif
 			GuiApp_setApplicationShell (theCurrentPraatApplication -> topShell -> d_xmShell);
@@ -1364,7 +1363,7 @@ void praat_init (const char32 *title, unsigned int argc, char **argv) {
 				Preferences_read (& prefsFile);
 			}
 		#endif
-		#if ! defined (CONSOLE_APPLICATION) && ! defined (macintosh)
+		#if ! defined (macintosh)
 			trace (U"initializing the Gui late");
 			MelderGui_create (theCurrentPraatApplication -> topShell);   // Mac: done this earlier
 		#endif
@@ -1551,7 +1550,7 @@ void praat_run (void) {
 		Melder_fatal (U"sizeof(off_t) is less than 8. Compile Praat with -D_FILE_OFFSET_BITS=64.");
 
 	if (Melder_batch) {
-		if (thePraatStandAloneScriptText != NULL) {
+		if (thePraatStandAloneScriptText) {
 			try {
 				praat_executeScriptFromText (thePraatStandAloneScriptText);
 				praat_exit (0);
@@ -1569,22 +1568,12 @@ void praat_run (void) {
 			}
 		} else {
 			try {
+				//Melder_casual (U"Script <<", theCurrentPraatApplication -> batchName.string, U">>");
 				praat_executeScriptFromFileNameWithArguments (theCurrentPraatApplication -> batchName.string);
 				praat_exit (0);
 			} catch (MelderError) {
-				/*
-				 * Try to get the error message out; this is a bit complicated...
-				 */
-				structMelderFile batchFile { 0 };
-				try {
-					Melder_relativePathToFile (theCurrentPraatApplication -> batchName.string, & batchFile);
-				} catch (MelderError) {
-					praat_exit (-1);
-				}
-				#if defined (_WIN32) && ! defined (CONSOLE_APPLICATION)
-					MelderGui_create (NULL);
-				#endif
-				Melder_flushError (praatP.title, U": command file ", & batchFile, U" not completed.");
+				Melder_flushError (praatP.title, U": script command <<",
+					theCurrentPraatApplication -> batchName.string, U">> not completed.");
 				praat_exit (-1);
 			}
 		}
@@ -1623,6 +1612,22 @@ void praat_run (void) {
 		praat_sortMenuCommands ();
 		praat_sortActions ();
 
+		/*
+		 * If there are command line arguments left, then Praat may have been called from the command line like
+		 *    praat.exe hello.wav goodbye.TextGrid
+		 * or the user may have dropped one or more files on the Praat icon, while Praat was not running yet
+		 * (this second possibility goes for Windows and Linux).
+		 */
+		for (unsigned int iarg = theArgumentNumber; iarg < theArgc; iarg ++) {
+			//Melder_casual (U"File to open <<", Melder_peek8to32 (theArgv [iarg]), U">>");
+			autostring32 text = Melder_dup (Melder_cat (U"Read from file... ", Melder_peek8to32 (theArgv [iarg])));
+			try {
+				praat_executeScriptFromText (text.peek());
+			} catch (MelderError) {
+				Melder_flushError ();
+			}
+		}
+
 		praatP.phase = praat_HANDLING_EVENTS;
 
 		#if gtk
@@ -1642,46 +1647,6 @@ void praat_run (void) {
 		#elif cocoa
 			[NSApp run];
 		#elif motif
-			#if defined (_WIN32)
-				if (theCurrentPraatApplication -> batchName.string [0] != U'\0') {
-					char32 text [500];
-					/*
-					 * The user dropped one or more files on the Praat icon, while Praat was not running yet.
-					 * Windows may have enclosed each path between quotes;
-					 * this is especially likely to happen for paths that contain spaces (which is usual).
-					 */
-
-					char32 *s = theCurrentPraatApplication -> batchName.string;
-					for (;;) {
-						bool endSeen = false;
-						while (*s == U' ' || *s == U'\n') s ++;
-						if (*s == '\0') break;
-						char32 *path = s;
-						if (*s == U'\"') {
-							path = ++ s;
-							while (*s != U'\"' && *s != U'\0') s ++;
-							if (*s == '\0') break;
-							Melder_assert (*s == U'\"');
-							*s = U'\0';
-						} else {
-							while (*s != U' ' && *s != U'\n' && *s != U'\0') s ++;
-							if (*s == U' ' || *s == U'\n') {
-								*s = U'\0';
-							} else {
-								endSeen = true;
-							}
-						}
-						autostring32 text = Melder_dup (Melder_cat (U"Read from file... ", path));
-						try {
-							praat_executeScriptFromText (text.peek());
-						} catch (MelderError) {
-							Melder_flushError ();
-						}
-						if (endSeen) break;
-						s ++;
-					}
-				}
-			#endif
 			for (;;) {
 				XEvent event;
 				GuiNextEvent (& event);

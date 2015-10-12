@@ -33,7 +33,7 @@ static autoDaata newAutoData () {
 
 int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *arg4) {
 	int64 n = Melder_atoi (arg1);
-	double t;
+	double t = 0.0;
 	(void) arg1;
 	(void) arg2;
 	(void) arg3;
@@ -63,7 +63,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			NUMvector_free (array, 1);
 		} break;
 		case kPraatTests_TIME_INTEGER: {
-			double sum = 0;
+			int64 sum = 0;
 			for (int64 i = 1; i <= n; i ++)
 				sum += i * (i - 1) * (i - 2);
 			t = Melder_stopwatch ();
@@ -77,34 +77,34 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			MelderInfo_writeLine (sum);
 		} break;
 		case kPraatTests_TIME_FLOAT_TO_UNSIGNED_BUILTIN: {
-			uint64_t sum = 0;
+			uint64 sum = 0;
 			double fn = n;
 			for (double fi = 1.0; fi <= fn; fi = fi + 1.0)
-				sum += (uint32_t) fi;
+				sum += (uint32) fi;
 			t = Melder_stopwatch ();   // 2.59   // 1.60
 			MelderInfo_writeLine (sum);
 		} break;
 		case kPraatTests_TIME_FLOAT_TO_UNSIGNED_EXTERN: {
-			uint64_t sum = 0;
+			uint64 sum = 0;
 			double fn = n;
 			for (double fi = 1.0; fi <= fn; fi = fi + 1.0)
-				sum += (uint32_t) ((int32_t) (fi - 2147483648.0) + 2147483647L + 1);
+				sum += (uint32) ((int32) (fi - 2147483648.0) + 2147483647L + 1);
 			t = Melder_stopwatch ();   // 1.60
 			MelderInfo_writeLine (sum);
 		} break;
 		case kPraatTests_TIME_UNSIGNED_TO_FLOAT_BUILTIN: {
 			double sum = 0.0;
-			uint32_t nu = (uint32_t) n;
-			for (uint32_t iu = 1; iu <= nu; iu ++)
+			uint32 nu = (uint32) n;
+			for (uint32 iu = 1; iu <= nu; iu ++)
 				sum += (double) iu;
 			t = Melder_stopwatch ();   // 1.35
 			MelderInfo_writeLine (sum);
 		} break;
 		case kPraatTests_TIME_UNSIGNED_TO_FLOAT_EXTERN: {
 			double sum = 0.0;
-			uint32_t nu = (uint32_t) n;
-			for (uint32_t iu = 1; iu <= nu; iu ++)
-				sum += (double) (int32_t) (iu - 2147483647L - 1) + 2147483648.0;
+			uint32 nu = (uint32) n;
+			for (uint32 iu = 1; iu <= nu; iu ++)
+				sum += (double) (int32) (iu - 2147483647L - 1) + 2147483648.0;
 			t = Melder_stopwatch ();   // 0.96
 			MelderInfo_writeLine (sum);
 		} break;
@@ -243,10 +243,10 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 		case kPraatTests_THING_AUTO: {
 			int numberOfThingsBefore = Thing_getTotalNumberOfThings ();
 			{
-				fprintf (stderr, "1\n");
+				Melder_casual (U"1\n");
 				autoDaata data = Thing_new (Daata);
 				Thing_setName (data.get(), U"hello");
-				fprintf (stderr, "2\n");
+				Melder_casual (U"2\n");
 				testData (data.peek());
 				testAutoData (data.move());
 				fprintf (stderr, "3\n");

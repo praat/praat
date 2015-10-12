@@ -143,7 +143,7 @@ static const char *motif_resourceNames [] = {
 
 /* Modes. */
 
-struct Gui theGui;   /* Global variable. */
+struct Gui theGui;   // global variable
 
 /********** XWindows routines. **********/
 
@@ -211,7 +211,6 @@ void _Gui_callCallbacks (GuiObject w, XtCallbackList *callbacks, XtPointer call)
 #endif
 static GuiObject theMenus [1+MAXIMUM_NUMBER_OF_MENUS];   // we can freely use and reuse these menu ids
 #if win
-	static int theCommandShow = False;   // last argument of WinMain
 	static char32 theApplicationName [100], theWindowClassName [100], theDrawingAreaClassName [100], theApplicationClassName [100];
 	char32 * _GuiWin_getDrawingAreaClassName (void) { return theDrawingAreaClassName; }
 	static int (*theUserMessageCallback) (void);
@@ -2421,7 +2420,7 @@ void XtMapWidget (GuiObject me) {
 	switch (my widgetClass) {
 		case xmShellWidgetClass:
 			#if win
-				ShowWindow (my window, theCommandShow);
+				ShowWindow (my window, theGui.commandShow);
 				//UpdateWindow (my window);
 			#elif mac
 				ShowWindow (my nat.window.ptr);
@@ -2520,7 +2519,7 @@ static void mapWidget (GuiObject me) {
 		#endif
 		case xmShellWidgetClass: {
 			#if win
-				ShowWindow (my window, theCommandShow);
+				ShowWindow (my window, theGui.commandShow);
 			#elif mac
 				SelectWindow (my nat.window.ptr);
 				ShowWindow (my nat.window.ptr);
@@ -2842,7 +2841,7 @@ void XtUnmanageChildren (GuiObjectList children, Cardinal num_children) {
 	static LRESULT CALLBACK windowProc (HWND window, UINT message, WPARAM wParam, LPARAM lParam);
 #endif
 
-void GuiInitialize (const char *name, unsigned int *argc, char **argv)
+void GuiAppInitialize (const char *name, unsigned int argc, char **argv)
 {
 	(void) argc;
 	#if mac
@@ -2862,7 +2861,7 @@ void GuiInitialize (const char *name, unsigned int *argc, char **argv)
 	{
 		HWND window;
 		WNDCLASSEX windowClass;
-		Melder_sprint (theApplicationName,100, argv [0] ? Melder_peek8to32 (argv [0]) : U"Unknown");
+		Melder_sprint (theApplicationName,100, Melder_peek8to32 (argv [0]));
 		Melder_sprint (theApplicationClassName,100, U"PraatShell", PRAAT_WINDOW_CLASS_NUMBER, U" ", theApplicationName);
 		Melder_sprint (theWindowClassName,100, U"PraatChildWindow", PRAAT_WINDOW_CLASS_NUMBER, U" ", theApplicationName);
 		Melder_sprint (theDrawingAreaClassName,100, U"PraatDrawingArea", PRAAT_WINDOW_CLASS_NUMBER, U" ", theApplicationName);
@@ -2876,45 +2875,20 @@ void GuiInitialize (const char *name, unsigned int *argc, char **argv)
 			 */
 			if (IsIconic (window)) ShowWindow (window, SW_RESTORE);
 			SetForegroundWindow (window);
-			if (theOpenDocumentCallback && argv [3] [0]) {
-				structMelderFile file = { 0 };
-				/*
-				 * The user dropped a file on the Praat icon or double-clicked a Praat file
-				 * while Praat was already running.
-				 * Windows may have enclosed the path between quotes;
-				 * this is especially likely to happen if the path contains spaces,
-				 * which on Windows XP is very usual.
-				 */
-				char32 *s = Melder_8to32 (argv [3]);
-				for (;;) {
-					bool endSeen = false;
-					while (*s == U' ' || *s == U'\n') s ++;
-					if (*s == U'\0') break;
-					char32 *path = s;
-					if (*s == U'\"') {
-						path = ++ s;
-						while (*s != U'\"' && *s != U'\0') s ++;
-						if (*s == U'\0') break;
-						Melder_assert (*s == U'\"');
-						*s = U'\0';
-					} else {
-						while (*s != U' ' && *s != U'\n' && *s != U'\0') s ++;
-						if (*s == U' ' || *s == U'\n') {
-							*s = U'\0';
-						} else {
-							endSeen = true;
-						}
+			if (theOpenDocumentCallback) {
+				for (unsigned int iarg = 1; iarg < argc; iarg ++) {
+					if (argv [iarg] [0] != '-') {
+						structMelderDir dir { 0 };
+						Melder_sprint (dir. path,kMelder_MAXPATH+1, Melder_getShellDirectory ());
+						Melder_setDefaultDir (& dir);
+						structMelderFile file = { 0 };
+						Melder_relativePathToFile (Melder_peek8to32 (argv [iarg]), & file);
+						theOpenDocumentCallback (& file);
 					}
-					Melder_sprint (file. path,kMelder_MAXPATH+1, path);
-					theOpenDocumentCallback (& file);
-					if (endSeen) break;
-					s ++;
 				}
 			}
 			exit (0);   // possible problem
 		}
-
-		sscanf (argv [1], "%p", & theGui.instance);
 
 		windowClass. cbSize = sizeof (WNDCLASSEX);
 		windowClass. style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS |
@@ -2937,17 +2911,8 @@ void GuiInitialize (const char *name, unsigned int *argc, char **argv)
 		windowClass. lpszClassName = Melder_32toW (theApplicationClassName);
 		RegisterClassEx (& windowClass);
 		InitCommonControls ();
-		theCommandShow = atoi (argv [2]);
 	}
 	#endif
-}
-
-void GuiAppInitialize (const char *name,
-	void *dum2, int dum3, unsigned int *argc, char **argv, void *dum4, void *dum5)
-{
-	(void) dum4;
-	(void) dum5;
-	GuiInitialize (name, argc, argv);
 }
 
 void GuiApp_setApplicationShell (GuiObject shell) {
@@ -4534,27 +4499,16 @@ void GuiMainLoop () {
 		#define main wingwmain
 	#endif
 	extern int main (int argc, char *argv []);
-	int APIENTRY WinMain (HINSTANCE instance, HINSTANCE previousInstance, LPSTR commandLine, int commandShow) {
-		int argc = 4;
-		char instanceString [20], commandShowString [20];
-		const char *argv [4];
-		(void) previousInstance;
-		argv [0] = "dummy";
-		sprintf (instanceString, "%p", instance);
-		sprintf (commandShowString, "%d", commandShow);
-		argv [1] = & instanceString [0];
-		argv [2] = & commandShowString [0];
-		argv [3] = Melder_32to8 (Melder_peekWto32 (GetCommandLineW ()));   // it's OK to ignore the possibility of low memory
-		if (argv [3] [0] == '\"') {
-			argv [3] ++;   // skip quote
-			while (argv [3] [0] != '\"') { argv [3] ++; }
-			argv [3] ++;   // skip quote
-			if (argv [3] [0] == ' ') argv [3] ++;
-		} else {
-			while (argv [3] [0] != ' ' && argv [3] [0] != '\0')  { argv [3] ++; }
-			if (argv [3] [0] == ' ') argv [3] ++;
+	int APIENTRY WinMain (HINSTANCE instance, HINSTANCE /*previousInstance*/, LPSTR commandLine, int commandShow) {
+		theGui.instance = instance;
+		theGui.commandShow = commandShow;
+		int argc;
+		WCHAR** argvW = CommandLineToArgvW (GetCommandLineW (), & argc);
+		char** argv = Melder_malloc (char*, argc);
+		for (int iarg = 0; iarg < argc; iarg ++) {
+			argv [iarg] = Melder_32to8 (Melder_peekWto32 (argvW [iarg]));
 		}
-		return main (argc, (char **) & argv [0]);
+		return main (argc, argv);
 	}
 
 	static void on_close (HWND window) {
