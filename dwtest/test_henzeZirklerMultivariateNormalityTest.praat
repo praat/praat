@@ -7,9 +7,9 @@ ir50 = Extract row ranges...  1:50
 report$ = Report multivariate normality... 0
 tol = 1e-10
 stat = extractNumber (report$, "statistic:")
-assert abs(stat - 0.958366538697967)<tol
+assert abs(stat - 0.9583666347568522)<tol
 prob = extractNumber (report$, " normality:")
-assert abs (prob - 0.04292525730817163) < tol
+assert abs (prob - 0.042925190989665477) < tol
 lmean = extractNumber (report$, " mean:")
 assert abs (lmean  + 0.27940830765481794)<tol
 lvariance = extractNumber (report$, " variance:")

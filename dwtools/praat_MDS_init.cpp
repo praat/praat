@@ -606,8 +606,7 @@ END
 DIRECT (Dissimilarity_getAdditiveConstant)
 	LOOP {
 		iam (Dissimilarity);
-		double c;
-		Dissimilarity_getAdditiveConstant (me, &c);
+		double c = Dissimilarity_getAdditiveConstant (me);
 		Melder_information (c);
 	}
 END
