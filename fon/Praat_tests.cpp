@@ -77,7 +77,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			MelderInfo_writeLine (sum);
 		} break;
 		case kPraatTests_TIME_FLOAT_TO_UNSIGNED_BUILTIN: {
-			uint64 sum = 0;
+			uint64_t sum = 0;
 			double fn = n;
 			for (double fi = 1.0; fi <= fn; fi = fi + 1.0)
 				sum += (uint32) fi;
@@ -85,7 +85,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			MelderInfo_writeLine (sum);
 		} break;
 		case kPraatTests_TIME_FLOAT_TO_UNSIGNED_EXTERN: {
-			uint64 sum = 0;
+			uint64_t sum = 0;
 			double fn = n;
 			for (double fi = 1.0; fi <= fn; fi = fi + 1.0)
 				sum += (uint32) ((int32) (fi - 2147483648.0) + 2147483647L + 1);

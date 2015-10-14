@@ -67,15 +67,15 @@ autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 		Art_Speaker_intoDelta (art.peek(), speaker, delta.peek());
 		int M = delta -> numberOfTubes;
 		autoSound w1, w2, w3, p1, p2, p3, v1, v2, v3;
-		if (iw1 > 0 && iw1 <= M) w1.reset (Sound_createSimple (1, artword -> totalTime, fsamp)); else iw1 = 0;
-		if (iw2 > 0 && iw2 <= M) w2.reset (Sound_createSimple (1, artword -> totalTime, fsamp)); else iw2 = 0;
-		if (iw3 > 0 && iw3 <= M) w3.reset (Sound_createSimple (1, artword -> totalTime, fsamp)); else iw3 = 0;
-		if (ip1 > 0 && ip1 <= M) p1.reset (Sound_createSimple (1, artword -> totalTime, fsamp)); else ip1 = 0;
-		if (ip2 > 0 && ip2 <= M) p2.reset (Sound_createSimple (1, artword -> totalTime, fsamp)); else ip2 = 0;
-		if (ip3 > 0 && ip3 <= M) p3.reset (Sound_createSimple (1, artword -> totalTime, fsamp)); else ip3 = 0;
-		if (iv1 > 0 && iv1 <= M) v1.reset (Sound_createSimple (1, artword -> totalTime, fsamp)); else iv1 = 0;
-		if (iv2 > 0 && iv2 <= M) v2.reset (Sound_createSimple (1, artword -> totalTime, fsamp)); else iv2 = 0;
-		if (iv3 > 0 && iv3 <= M) v3.reset (Sound_createSimple (1, artword -> totalTime, fsamp)); else iv3 = 0;
+		if (iw1 > 0 && iw1 <= M) w1 = Sound_createSimple (1, artword -> totalTime, fsamp); else iw1 = 0;
+		if (iw2 > 0 && iw2 <= M) w2 = Sound_createSimple (1, artword -> totalTime, fsamp); else iw2 = 0;
+		if (iw3 > 0 && iw3 <= M) w3 = Sound_createSimple (1, artword -> totalTime, fsamp); else iw3 = 0;
+		if (ip1 > 0 && ip1 <= M) p1 = Sound_createSimple (1, artword -> totalTime, fsamp); else ip1 = 0;
+		if (ip2 > 0 && ip2 <= M) p2 = Sound_createSimple (1, artword -> totalTime, fsamp); else ip2 = 0;
+		if (ip3 > 0 && ip3 <= M) p3 = Sound_createSimple (1, artword -> totalTime, fsamp); else ip3 = 0;
+		if (iv1 > 0 && iv1 <= M) v1 = Sound_createSimple (1, artword -> totalTime, fsamp); else iv1 = 0;
+		if (iv2 > 0 && iv2 <= M) v2 = Sound_createSimple (1, artword -> totalTime, fsamp); else iv2 = 0;
+		if (iv3 > 0 && iv3 <= M) v3 = Sound_createSimple (1, artword -> totalTime, fsamp); else iv3 = 0;
 		/* Initialize drawing. */
 		for (int i = 1; i <= 78; i ++) {
 			minTract [i] = 100.0;
