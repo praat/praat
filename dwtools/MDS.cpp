@@ -1478,24 +1478,20 @@ ScalarProducts Distances_to_ScalarProducts (Distances me, int normalize) {
 	}
 }
 
-int Distances_to_Configuration_ytl (Distances me, int numberOfDimensions, int normalizeScalarProducts, Configuration *out1, Salience *out2) {
+void Distances_to_Configuration_ytl (Distances me, int numberOfDimensions, int normalizeScalarProducts, autoConfiguration *out1, autoSalience *out2) {
 	try {
-		*out1 = nullptr; *out2 = nullptr;
 		autoScalarProducts sp = Distances_to_ScalarProducts (me, normalizeScalarProducts);
 		ScalarProducts_to_Configuration_ytl (sp.peek(), numberOfDimensions, out1, out2);
-		return 1;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Configuration created (ytl method).");
 	}
 }
 
-void ScalarProducts_to_Configuration_ytl (ScalarProducts me, int numberOfDimensions, Configuration *out1, Salience *out2) {
+void ScalarProducts_to_Configuration_ytl (ScalarProducts me, int numberOfDimensions, autoConfiguration *out1, autoSalience *out2) {
 	long numberOfSources = my size;
 	autoNUMvector<double **> ci (1, numberOfSources);
 	try {
 		long nPoints = ((ScalarProduct) my item[1]) -> numberOfRows;
-
-		*out1 = nullptr; *out2 = nullptr;
 
 		autoConfiguration thee = Configuration_create (nPoints, numberOfDimensions);
 		autoSalience mdsw = Salience_create (numberOfSources, numberOfDimensions);
@@ -1624,7 +1620,7 @@ void ScalarProducts_to_Configuration_ytl (ScalarProducts me, int numberOfDimensi
 			}
 		}
 		
-		*out1 = thee.transfer(); *out2 = mdsw.transfer();
+		*out1 = thee.move(); *out2 = mdsw.move();
 		for (long i = 1; i <= numberOfSources; i++) {
 			NUMmatrix_free<double> (ci[i], 1, 1);
 		}
@@ -1764,20 +1760,27 @@ double Distance_Weight_stress (Distance fit, Distance conf, Weight weight, int t
 void Distance_Weight_rawStressComponents (Distance fit, Distance conf, Weight weight, double *eta_fit, double *eta_conf, double *rho) {
 	long nPoints = conf -> numberOfRows;
 
-	*eta_fit = *eta_conf = *rho = 0.0;
+	double etafit = 0.0, etaconf = 0.0, ro = 0.0;
 
-	double wsum = 0.0;
 	for (long i = 1; i <= nPoints - 1; i++) {
 		double *wi = weight -> data[i];
 		double *fiti = fit -> data[i];
 		double *confi = conf -> data[i];
 
 		for (long j = i + 1; j <= nPoints; j++) {
-			*eta_fit += wi[j] * fiti[j] * fiti[j];
-			*eta_conf += wi[j] * confi[j] * confi[j];
-			*rho += wi[j] * fiti[j] * confi[j];
-			wsum += wi[j];
+			etafit += wi[j] * fiti[j] * fiti[j];
+			etaconf += wi[j] * confi[j] * confi[j];
+			ro += wi[j] * fiti[j] * confi[j];
 		}
+	}
+	if (eta_fit) {
+		*eta_fit = etafit;
+	}
+	if (eta_conf) {
+		*eta_conf = etaconf;
+	}
+	if (rho) {
+		*rho = ro;
 	}
 }
 
@@ -1873,7 +1876,7 @@ Configuration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissimila
 	try {
 		long nPoints = conf -> numberOfRows;
 		long nDimensions = conf -> numberOfColumns;
-		double tol = 1e-6, stressp = 1e308;
+		double tol = 1e-6, stressp = 1e308, stres;
 		bool no_weight = ! weight;
 
 		if (my numberOfRows != nPoints || (!no_weight && weight -> numberOfRows != nPoints) || t -> numberOfPoints != nPoints) {
@@ -1928,11 +1931,11 @@ Configuration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissimila
 
 			autoDistance cdist = Configuration_to_Distance (conf);
 
-			*stress = Distance_Weight_stress (fit.peek(), cdist.peek(), weight, MDS_NORMALIZED_STRESS);
+			stres = Distance_Weight_stress (fit.peek(), cdist.peek(), weight, MDS_NORMALIZED_STRESS);
 
 			// Check stop criterium
 
-			if (fabs (*stress - stressp) / stressp < tolerance) {
+			if (fabs (stres - stressp) / stressp < tolerance) {
 				break;
 			}
 
@@ -1940,14 +1943,16 @@ Configuration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissimila
 
 			NUMmatrix_copyElements (conf -> data, z -> data, 1, nPoints, 1, nDimensions);
 
-			stressp = *stress;
+			stressp = stres;
 			if (showProgress) {
-				Melder_progress ( (double) iter / (numberOfIterations + 1), U"kruskal: stress ",
-				                   *stress);
+				Melder_progress ((double) iter / (numberOfIterations + 1), U"kruskal: stress ", stres);
 			}
 		}
 		if (showProgress) {
 			Melder_progress (1.0);
+		}
+		if (stress) {
+			*stress = stres;
 		}
 		return z.transfer();
 	} catch (MelderError) {
@@ -2482,15 +2487,13 @@ static void indscal_iteration_tenBerge (ScalarProducts zc, Configuration xc, Sal
 }
 
 
-void ScalarProducts_Configuration_Salience_indscal (ScalarProducts sp, Configuration configuration, Salience weights, double tolerance, long numberOfIterations, int showProgress, Configuration *out1, Salience *out2, double *vaf) {
+void ScalarProducts_Configuration_Salience_indscal (ScalarProducts sp, Configuration configuration, Salience weights, double tolerance, long numberOfIterations, int showProgress, autoConfiguration *out1, autoSalience *out2, double *varianceAccountedFor) {
 	try {
-		double tol = 1e-6, vafp = 0.0;
+		double tol = 1e-6, vafp = 0.0, vaf;
 		long nZeros = 0, nSources = sp -> size, iter;
 
 		autoConfiguration x = Data_copy (configuration);
 		autoSalience w = Data_copy (weights);
-
-		*out1 = nullptr; *out2 = nullptr;
 
 		if (showProgress) {
 			Melder_progress (0.0, U"INDSCAL analysis");
@@ -2503,14 +2506,14 @@ void ScalarProducts_Configuration_Salience_indscal (ScalarProducts sp, Configura
 
 			// Goodness of fit and test criterion.
 
-			ScalarProducts_Configuration_Salience_vaf (sp, x.peek(), w.peek(), vaf);
+			ScalarProducts_Configuration_Salience_vaf (sp, x.peek(), w.peek(), &vaf);
 
-			if (*vaf > 1.0 - tol || fabs (*vaf - vafp) /  vafp < tolerance) {
+			if (vaf > 1.0 - tol || fabs (vaf - vafp) /  vafp < tolerance) {
 				break;
 			}
-			vafp = *vaf;
+			vafp = vaf;
 			if (showProgress) {
-				Melder_progress ( (double) iter / (numberOfIterations + 1), U"indscal: vaf ", *vaf);
+				Melder_progress ( (double) iter / (numberOfIterations + 1), U"indscal: vaf ", vaf);
 			}
 		}
 
@@ -2524,8 +2527,10 @@ void ScalarProducts_Configuration_Salience_indscal (ScalarProducts sp, Configura
 		Thing_setName (w.peek(), U"indscal");
 		TableOfReal_labelsFromCollectionItemNames (w.peek(), sp, 1, 0);
 
-		*out1 = x.transfer(); *out2 = w.transfer();
-
+		*out1 = x.move(); *out2 = w.move();
+		if (varianceAccountedFor) {
+			*varianceAccountedFor = vaf;
+		}
 		if (showProgress) {
 			MelderInfo_writeLine (U"**************** INDSCAL results on Distances *******************\n\n", 
 				Thing_className (sp), U"number of objects: ", nSources);
@@ -2535,7 +2540,7 @@ void ScalarProducts_Configuration_Salience_indscal (ScalarProducts sp, Configura
 			if (nZeros > 0) {
 				MelderInfo_writeLine (U"WARNING: ", nZeros,  U" zero weight", (nZeros > 1 ? U"s" : U""), U"!");
 			}
-			MelderInfo_writeLine (U"\n\nVariance Accounted For = ", *vaf, U"\nThe optimal configuration was reached in ",
+			MelderInfo_writeLine (U"\n\nVariance Accounted For = ", vaf, U"\nThe optimal configuration was reached in ",
 				(iter > numberOfIterations ? numberOfIterations : iter), U" iterations.");
 			MelderInfo_drain();
 		}
@@ -2550,9 +2555,8 @@ void ScalarProducts_Configuration_Salience_indscal (ScalarProducts sp, Configura
 	}
 }
 
-void Distances_Configuration_Salience_indscal (Distances distances, Configuration configuration, Salience weights, int normalizeScalarProducts, double tolerance, long numberOfIterations, int showProgress, Configuration *out1, Salience *out2, double *vaf) {
+void Distances_Configuration_Salience_indscal (Distances distances, Configuration configuration, Salience weights, int normalizeScalarProducts, double tolerance, long numberOfIterations, int showProgress, autoConfiguration *out1, autoSalience *out2, double *vaf) {
 	try {
-		*out1 = nullptr; *out2 = nullptr;
 		autoScalarProducts sp = Distances_to_ScalarProducts (distances, normalizeScalarProducts);
 		ScalarProducts_Configuration_Salience_indscal (sp.peek(), configuration, weights, tolerance, numberOfIterations, showProgress, out1, out2, vaf);
 	} catch (MelderError) {
@@ -2560,15 +2564,13 @@ void Distances_Configuration_Salience_indscal (Distances distances, Configuratio
 	}
 }
 
-void Dissimilarities_Configuration_Salience_indscal (Dissimilarities dissims, Configuration configuration, Salience weights, int tiesProcessing, int normalizeScalarProducts, double tolerance, long numberOfIterations, int showProgress, Configuration *out1, Salience *out2, double *vaf) {
+void Dissimilarities_Configuration_Salience_indscal (Dissimilarities dissims, Configuration configuration, Salience weights, int tiesProcessing, int normalizeScalarProducts, double tolerance, long numberOfIterations, int showProgress, autoConfiguration *out1, autoSalience *out2, double *varianceAccountedFor) {
 	try {
-		double tol = 1e-6, vafp = 0;
+		double tol = 1e-6, vafp = 0, vaf;
 		long iter, nSources = dissims -> size;;
 		autoConfiguration x = Data_copy (configuration);
 		autoSalience w = Data_copy (weights);
 		autoMDSVecs vecs = Dissimilarities_to_MDSVecs (dissims);
-
-		*out1 = nullptr; *out2 = nullptr;
 
 		if (showProgress) {
 			Melder_progress (0.0, U"INDSCAL analysis");
@@ -2582,14 +2584,14 @@ void Dissimilarities_Configuration_Salience_indscal (Dissimilarities dissims, Co
 
 			// Goodness of fit and test criterion.
 
-			Distances_Configuration_Salience_vaf (distances.peek(), x.peek(), w.peek(), normalizeScalarProducts, vaf);
+			Distances_Configuration_Salience_vaf (distances.peek(), x.peek(), w.peek(), normalizeScalarProducts, &vaf);
 
-			if (*vaf > 1.0 - tol || fabs (*vaf - vafp) / vafp < tolerance) {
+			if (vaf > 1.0 - tol || fabs (vaf - vafp) / vafp < tolerance) {
 				break;
 			}
-			vafp = *vaf;
+			vafp = vaf;
 			if (showProgress) {
-				Melder_progress ((double) iter / (numberOfIterations + 1), U"indscal: vaf ", *vaf);
+				Melder_progress ((double) iter / (numberOfIterations + 1), U"indscal: vaf ", vaf);
 			}
 		}
 
@@ -2602,7 +2604,10 @@ void Dissimilarities_Configuration_Salience_indscal (Dissimilarities dissims, Co
 		Thing_setName (x.peek(), U"indscal_mr"); Thing_setName (w.peek(), U"indscal_mr");
 		TableOfReal_labelsFromCollectionItemNames (w.peek(), dissims, 1, 0);
 
-		*out1 = x.transfer(); *out2 = w.transfer();
+		*out1 = x.move(); *out2 = w.move();
+		if (varianceAccountedFor) {
+			*varianceAccountedFor = vaf;
+		}
 
 		if (showProgress) {
 			MelderInfo_writeLine (U"**************** INDSCAL with monotone regression *******************");
@@ -2614,7 +2619,7 @@ void Dissimilarities_Configuration_Salience_indscal (Dissimilarities dissims, Co
 			if (nZeros > 0) {
 				MelderInfo_writeLine (U"WARNING: ", nZeros, U" zero weight", (nZeros > 1 ? U"s" : U""));
 			}
-			MelderInfo_writeLine (U"Variance Accounted For: ", *vaf);
+			MelderInfo_writeLine (U"Variance Accounted For: ", vaf);
 			MelderInfo_writeLine (U"Based on MONOTONE REGRESSION");
 			MelderInfo_writeLine (U"number of iterations: ", (iter > numberOfIterations ?	numberOfIterations : iter));
 			MelderInfo_drain();
@@ -2630,7 +2635,7 @@ void Dissimilarities_Configuration_Salience_indscal (Dissimilarities dissims, Co
 	}
 }
 
-void Distances_Configuration_indscal (Distances dists, Configuration conf, int normalizeScalarProducts, double tolerance, long numberOfIterations, int showProgress, Configuration *out1, Salience *out2) {
+void Distances_Configuration_indscal (Distances dists, Configuration conf, int normalizeScalarProducts, double tolerance, long numberOfIterations, int showProgress, autoConfiguration *out1, autoSalience *out2) {
 	try {
 		autoSalience w = Salience_create (dists -> size, conf -> numberOfColumns);
 		double vaf;
@@ -2689,9 +2694,8 @@ Salience Dissimilarities_Configuration_to_Salience (Dissimilarities me, Configur
 	}
 }
 
-void Dissimilarities_Configuration_indscal (Dissimilarities dissims, Configuration conf, int tiesProcessing, int normalizeScalarProducts, double tolerance, long numberOfIterations, int showProgress, Configuration *out1, Salience *out2) {
+void Dissimilarities_Configuration_indscal (Dissimilarities dissims, Configuration conf, int tiesProcessing, int normalizeScalarProducts, double tolerance, long numberOfIterations, int showProgress, autoConfiguration *out1, autoSalience *out2) {
 	try {
-		*out1 = nullptr; *out2 = nullptr;
 		autoDistances distances = Dissimilarities_Configuration_monotoneRegression (dissims, conf, tiesProcessing);
 		autoSalience weights = Distances_Configuration_to_Salience (distances.peek(), conf, normalizeScalarProducts);
 		double vaf;
@@ -2701,19 +2705,15 @@ void Dissimilarities_Configuration_indscal (Dissimilarities dissims, Configurati
 	}
 }
 
-void Dissimilarities_indscal (Dissimilarities me, long numberOfDimensions, int tiesProcessing, int normalizeScalarProducts, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress, Configuration *out1, Salience *out2) {
+void Dissimilarities_indscal (Dissimilarities me, long numberOfDimensions, int tiesProcessing, int normalizeScalarProducts, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress, autoConfiguration *out1, autoSalience *out2) {
 	int showMulti = showProgress && numberOfRepetitions > 1;
 	try {
 		int showSingle = showProgress && numberOfRepetitions == 1;
 		double vaf, vafmin = 0.0;
 
-		*out1 = nullptr; *out2 = nullptr;
-
 		autoDistances distances = Dissimilarities_to_Distances (me, MDS_ORDINAL);
-		Configuration cstart1 = nullptr; Salience wstart1 = nullptr;
-		Distances_to_Configuration_ytl (distances.peek(), numberOfDimensions, normalizeScalarProducts, &cstart1, &wstart1);
-		autoConfiguration cstart = cstart1;
-		autoSalience wstart = wstart1;
+		autoConfiguration cstart; autoSalience wstart;
+		Distances_to_Configuration_ytl (distances.peek(), numberOfDimensions, normalizeScalarProducts, &cstart, &wstart);
 		autoConfiguration cbest = Data_copy (cstart.peek());
 		autoSalience wbest = Data_copy (wstart.peek());
 
@@ -2722,10 +2722,10 @@ void Dissimilarities_indscal (Dissimilarities me, long numberOfDimensions, int t
 		}
 
 		for (long iter = 1; iter <= numberOfRepetitions; iter++) {
-			Configuration cresult1 = nullptr; Salience wresult1 = nullptr;
-			Dissimilarities_Configuration_Salience_indscal (me, cstart.peek(), wstart.peek(), tiesProcessing, normalizeScalarProducts, tolerance, numberOfIterations, showSingle, &cresult1, &wresult1, &vaf);
-			autoConfiguration cresult = cresult1;
-			autoSalience wresult = wresult1;
+			autoConfiguration cresult; 
+			autoSalience wresult;
+			Dissimilarities_Configuration_Salience_indscal (me, cstart.peek(), wstart.peek(), tiesProcessing,
+				normalizeScalarProducts, tolerance, numberOfIterations, showSingle, &cresult, &wresult, &vaf);
 			if (vaf > vafmin) {
 				vafmin = vaf;
 				cbest.reset (cresult.transfer());
@@ -2740,7 +2740,8 @@ void Dissimilarities_indscal (Dissimilarities me, long numberOfDimensions, int t
 			}
 		}
 
-		*out1 = cbest.transfer(); *out2 = wbest.transfer();
+		*out1 = cbest.move();
+		*out2 = wbest.move();
 		if (showMulti) {
 			Melder_progress (1.0);
 		}
@@ -2753,17 +2754,15 @@ void Dissimilarities_indscal (Dissimilarities me, long numberOfDimensions, int t
 }
 
 
-void Distances_indscal (Distances distances, long numberOfDimensions, int normalizeScalarProducts, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress, Configuration *out1, Salience *out2) {
+void Distances_indscal (Distances distances, long numberOfDimensions, int normalizeScalarProducts, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress, autoConfiguration *out1, autoSalience *out2) {
 	int showMulti = showProgress && numberOfRepetitions > 1;
 	try {
 		int showSingle = showProgress && numberOfRepetitions == 1;
 		double vaf, vafmin = 0;
 
-		*out1 = nullptr; *out2 = nullptr;
-		Configuration cstart1 = nullptr; Salience wstart1 = nullptr;
-		Distances_to_Configuration_ytl (distances, numberOfDimensions, normalizeScalarProducts, &cstart1, &wstart1);
-		autoConfiguration cstart = cstart1;
-		autoSalience wstart = wstart1;
+		autoConfiguration cstart;
+		autoSalience wstart;
+		Distances_to_Configuration_ytl (distances, numberOfDimensions, normalizeScalarProducts, &cstart, &wstart);
 		autoConfiguration cbest = Data_copy (cstart.peek());
 		autoSalience wbest = Data_copy (wstart.peek());
 
@@ -2772,10 +2771,9 @@ void Distances_indscal (Distances distances, long numberOfDimensions, int normal
 		}
 
 		for (long i = 1; i <= numberOfRepetitions; i++) {
-			Configuration cresult1 = nullptr; Salience wresult1 = nullptr;
-			Distances_Configuration_Salience_indscal (distances, cstart.peek(), wstart.peek(), normalizeScalarProducts,  tolerance, numberOfIterations, showSingle, &cresult1, &wresult1, &vaf);
-			autoConfiguration cresult = cresult1;
-			autoSalience wresult = wresult1;
+			autoConfiguration cresult;
+			autoSalience wresult;
+			Distances_Configuration_Salience_indscal (distances, cstart.peek(), wstart.peek(), normalizeScalarProducts,  tolerance, numberOfIterations, showSingle, &cresult, &wresult, &vaf);
 			if (vaf > vafmin) {
 				vafmin = vaf;
 				cbest.reset (cresult.transfer());
@@ -2790,7 +2788,7 @@ void Distances_indscal (Distances distances, long numberOfDimensions, int normal
 			}
 		}
 
-		*out1 = cbest.transfer(); *out2 = wbest.transfer();
+		*out1 = cbest.move(); *out2 = wbest.move();
 		if (showMulti) {
 			Melder_progress (1.0);
 		}
@@ -2827,7 +2825,7 @@ void Distances_Configuration_Salience_vaf (Distances me, Configuration thee, Sal
 }
 
 void ScalarProduct_Configuration_getVariances (ScalarProduct me, Configuration thee, double *varianceExplained, double *varianceTotal) {
-	*varianceExplained = *varianceTotal = 0.0;
+	double varExplained = 0.0, varTotal = 0.0;
 	autoDistance distance = Configuration_to_Distance (thee);
 	autoScalarProduct fit = Distance_to_ScalarProduct (distance.peek(), 0);
 
@@ -2836,9 +2834,15 @@ void ScalarProduct_Configuration_getVariances (ScalarProduct me, Configuration t
 	for (long j = 1; j <= my numberOfRows; j++) {
 		for (long k = 1; k <= my numberOfColumns; k++) {
 			double d2 = my data[j][k] - fit -> data[j][k];
-			*varianceExplained += d2 * d2;
-			*varianceTotal += my data[j][k] * my data[j][k];
+			varExplained += d2 * d2;
+			varTotal += my data[j][k] * my data[j][k];
 		}
+	}
+	if (varianceExplained) {
+		*varianceExplained = varExplained;
+	}
+	if (varianceTotal) {
+		*varianceTotal = varTotal;
 	}
 }
 
@@ -2869,7 +2873,9 @@ void ScalarProducts_Configuration_Salience_vaf (ScalarProducts me, Configuration
 			t += vare; n += vart;
 		}
 
-		*vaf = n > 0.0 ? 1.0 - t / n : 0.0;
+		if (vaf) {
+			*vaf = n > 0.0 ? 1.0 - t / n : 0.0;
+		}
 		NUMvector_copyElements (w.peek(), thy w, 1, thy numberOfColumns); // restore weights
 	} catch (MelderError) {
 		NUMvector_copyElements (w.peek(), thy w, 1, thy numberOfColumns);
