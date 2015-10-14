@@ -1265,11 +1265,10 @@ FORM (Distances_indscal, U"Distance: To Configuration (indscal)", U"Distance: To
 	OK
 DO
 	autoDistances me = (Distances) praat_getSelectedObjects ();
-	Configuration c; Salience s;
+	autoConfiguration ac; autoSalience as;
 	Distances_indscal (me.peek(), GET_INTEGER (U"Number of dimensions"), GET_INTEGER (U"Normalize scalar products"),
 		GET_REAL (U"Tolerance"), GET_INTEGER (U"Maximum number of iterations"), GET_INTEGER (U"Number of repetitions"),
-		1, &c, &s);
-	autoConfiguration ac = c; autoSalience as = s;
+		1, &ac, &as);
 	praat_new (ac.transfer(), U"indscal");
 	praat_new (as.transfer(), U"indscal");
 END
@@ -1313,11 +1312,10 @@ DO
 		}
 	}
 	Melder_assert (thy size > 0 && c);
-	Configuration cr; Salience sr;
+	autoConfiguration ac; autoSalience as;
 	Distances_Configuration_indscal (thee.peek(), c,
 		GET_INTEGER (U"Normalize scalar products"), GET_REAL (U"Tolerance"),
-		GET_INTEGER (U"Maximum number of iterations"), 1, &cr, &sr);
-	autoConfiguration ac = cr; autoSalience as = sr;
+		GET_INTEGER (U"Maximum number of iterations"), 1, &ac, &as);
 	praat_new (ac.transfer(), U"indscal");
 	praat_new (as.transfer(), U"indscal");
 END
@@ -1418,11 +1416,10 @@ DO
 	}
 	Melder_assert (thy size > 0 && c && s);
 	double vaf;
-	Configuration cr; Salience sr;
+	autoConfiguration ac; autoSalience as;
 	Distances_Configuration_Salience_indscal (thee.peek(), c, s,
 		GET_INTEGER (U"Normalize scalar products"), GET_REAL (U"Tolerance"),
-		GET_INTEGER (U"Maximum number of iterations"), 1, &cr, &sr, &vaf);
-	autoConfiguration ac = cr; autoSalience as = sr;
+		GET_INTEGER (U"Maximum number of iterations"), 1, &ac, &as, &vaf);
 	praat_new (ac.transfer(), U"indscal");
 	praat_new (as.transfer(), U"indscal");
 END
@@ -1434,10 +1431,9 @@ FORM (Distances_to_Configuration_ytl, U"Distance: To Configuration (ytl)", U"Dis
 	OK
 DO
 	autoDistances me = (Distances) praat_getSelectedObjects ();
-	Configuration cr; Salience sr;
+	autoConfiguration ac; autoSalience as;
 	Distances_to_Configuration_ytl (me.peek(), GET_INTEGER (U"Number of dimensions"),
-		GET_INTEGER (U"Normalize scalar products"), &cr, &sr);
-	autoConfiguration ac = cr; autoSalience as = sr;
+		GET_INTEGER (U"Normalize scalar products"), &ac, &as);
 	praat_new (ac.transfer(), U"ytl");
 	if (GET_INTEGER (U"Salience object")) {
 		praat_new (as.transfer(), U"ytl");
