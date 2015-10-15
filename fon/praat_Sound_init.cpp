@@ -2038,15 +2038,24 @@ FORM (SoundOutputPrefs, U"Sound playing preferences", 0) {
 	#define str(s) #s
 	REAL (U"Silence before (s)", U"" xstr (kMelderAudio_outputSilenceBefore_DEFAULT))
 	REAL (U"Silence after (s)", U"" xstr (kMelderAudio_outputSilenceAfter_DEFAULT))
+#ifdef USE_PULSEAUDIO
+	BOOLEAN (U"Use pulse audio", 0)
+#endif
 	OK2
 SET_ENUM (U"Maximum asynchronicity", kMelder_asynchronicityLevel, MelderAudio_getOutputMaximumAsynchronicity ())
 SET_REAL (U"Silence before", MelderAudio_getOutputSilenceBefore ())
 SET_REAL (U"Silence after", MelderAudio_getOutputSilenceAfter ())
+#ifdef USE_PULSEAUDIO
+SET_INTEGER (U"Use pulse audio", ! MelderAudio_getOutputUsesPortAudio ())
+#endif
 DO
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	MelderAudio_setOutputMaximumAsynchronicity (GET_ENUM (kMelder_asynchronicityLevel, U"Maximum asynchronicity"));
 	MelderAudio_setOutputSilenceBefore (GET_REAL (U"Silence before"));
 	MelderAudio_setOutputSilenceAfter (GET_REAL (U"Silence after"));
+#ifdef USE_PULSEAUDIO
+	MelderAudio_setOutputUsesPortAudio (! GET_INTEGER (U"Use pulse audio"));
+#endif
 END2 }
 
 FORM_WRITE2 (Sound_writeToAifcFile, U"Save as AIFC file", 0, U"aifc") {
