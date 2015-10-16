@@ -2038,16 +2038,35 @@ FORM (SoundOutputPrefs, U"Sound playing preferences", 0) {
 	#define str(s) #s
 	REAL (U"Silence before (s)", U"" xstr (kMelderAudio_outputSilenceBefore_DEFAULT))
 	REAL (U"Silence after (s)", U"" xstr (kMelderAudio_outputSilenceAfter_DEFAULT))
+#ifdef USE_PULSEAUDIO
+	// Either pulse audio or portaudio
+	BOOLEAN (U"Use pulse audio", 0)
+#endif
 	OK2
 SET_ENUM (U"Maximum asynchronicity", kMelder_asynchronicityLevel, MelderAudio_getOutputMaximumAsynchronicity ())
 SET_REAL (U"Silence before", MelderAudio_getOutputSilenceBefore ())
 SET_REAL (U"Silence after", MelderAudio_getOutputSilenceAfter ())
+#ifdef USE_PULSEAUDIO
+	bool outputUsesPortAudio = MelderAudio_getOutputUsesPortAudio ();
+SET_INTEGER (U"Use pulse audio", ! outputUsesPortAudio)
+#endif
 DO
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	MelderAudio_setOutputMaximumAsynchronicity (GET_ENUM (kMelder_asynchronicityLevel, U"Maximum asynchronicity"));
 	MelderAudio_setOutputSilenceBefore (GET_REAL (U"Silence before"));
 	MelderAudio_setOutputSilenceAfter (GET_REAL (U"Silence after"));
+#ifdef USE_PULSEAUDIO
+	bool outputUsesPulseAudio = GET_INTEGER (U"Use pulse audio");
+	MelderAudio_setOutputUsesPortAudio (! outputUsesPulseAudio);
+#endif
 END2 }
+
+#ifdef USE_PULSEAUDIO
+void pulseAudio_serverReport (void);
+DIRECT (Praat_reportSoundServerProperties)
+	pulseAudio_serverReport ();
+END
+#endif
 
 FORM_WRITE2 (Sound_writeToAifcFile, U"Save as AIFC file", 0, U"aifc") {
 	autoCollection set = praat_getSelectedObjects ();
@@ -2347,6 +2366,9 @@ void praat_uvafon_Sound_init (void) {
 	praat_addMenuCommand (U"Objects", U"Preferences", U"Sound recording preferences...", 0, 0, DO_SoundInputPrefs);
 	praat_addMenuCommand (U"Objects", U"Preferences", U"Sound playing preferences...", 0, 0, DO_SoundOutputPrefs);
 	praat_addMenuCommand (U"Objects", U"Preferences", U"LongSound preferences...", 0, 0, DO_LongSoundPrefs);
+#ifdef USE_PULSEAUDIO
+	praat_addMenuCommand (U"Objects", U"Technical", U"Report sound server properties", U"Report system properties", 0, DO_Praat_reportSoundServerProperties);
+#endif
 
 	praat_addAction1 (classLongSound, 0, U"LongSound help", 0, 0, DO_LongSound_help);
 	praat_addAction1 (classLongSound, 1, U"View", 0, praat_ATTRACTIVE, DO_LongSound_view);

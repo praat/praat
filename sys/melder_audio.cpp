@@ -1,6 +1,6 @@
 /* melder_audio.cpp
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma, David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,6 +57,9 @@
 	#include <sys/ioctl.h>
 	#include <fcntl.h>
 	#include <unistd.h>
+	#if defined USE_PULSEAUDIO
+		#include <pulse/pulseaudio.h>
+	#endif
 	#if defined (__OpenBSD__) || defined (__NetBSD__)
 		#include <soundcard.h>
 	#else
@@ -65,14 +68,19 @@
 	#include <errno.h>
 #endif
 
-#include "melder.h"
 #include "Gui.h"
 #include "Preferences.h"
 #include "NUM.h"
 #include <time.h>
-#define my  me ->
+#define my me ->
 
 #include "../external/portaudio/portaudio.h"
+
+void pulseAudio_cleanup (void);
+void stream_drain_complete_cb (pa_stream *stream, int success, void *userdata);
+void context_state_cb (pa_context *context, void *userdata);
+void context_drain_complete_cb (pa_context *context, void *userdata);
+void stream_write_cb (pa_stream *stream, size_t length, void *userdata);
 
 static struct {
 	enum kMelder_asynchronicityLevel maximumAsynchronicity;
@@ -83,10 +91,10 @@ static struct {
 void Melder_audio_prefs (void) {
 	Preferences_addEnum (U"Audio.maximumAsynchronicity", & preferences. maximumAsynchronicity, kMelder_asynchronicityLevel, kMelder_asynchronicityLevel_DEFAULT);
 	Preferences_addBool (U"Audio.useInternalSpeaker", & preferences. useInternalSpeaker, true);
-	Preferences_addBool (U"Audio.outputUsesPortAudio2", & preferences. outputUsesPortAudio, kMelderAudio_outputUsesPortAudio_DEFAULT);
+	Preferences_addBool (U"Audio.outputUsesPortAudio", & preferences. outputUsesPortAudio, kMelderAudio_outputUsesPortAudio_DEFAULT);
 	Preferences_addDouble (U"Audio.silenceBefore", & preferences. silenceBefore, kMelderAudio_outputSilenceBefore_DEFAULT);
 	Preferences_addDouble (U"Audio.silenceAfter", & preferences. silenceAfter, kMelderAudio_outputSilenceAfter_DEFAULT);
-	Preferences_addBool (U"Audio.inputUsesPortAudio2", & preferences. inputUsesPortAudio, kMelderAudio_inputUsesPortAudio_DEFAULT);
+	Preferences_addBool (U"Audio.inputUsesPortAudio", & preferences. inputUsesPortAudio, kMelderAudio_inputUsesPortAudio_DEFAULT);
 }
 
 void MelderAudio_setOutputMaximumAsynchronicity (enum kMelder_asynchronicityLevel maximumAsynchronicity) {
@@ -141,6 +149,33 @@ bool MelderAudio_isPlaying;
 
 static double theStartingTime = 0.0;
 
+#define PA_INFO_GETTING 1
+#define PA_INFO_FOUND 2
+#define PA_WRITING 4
+#define PA_WRITING_DONE 8
+
+typedef struct pulseAudio {
+	pa_sample_spec sample_spec;
+	pa_threaded_mainloop *mainloop = nullptr;
+	pa_mainloop_api *mainloop_api = nullptr;
+	pa_context *context = nullptr;
+	pa_stream *stream = nullptr;
+	pa_operation *operation_drain = nullptr;
+	pa_operation *operation_info = nullptr;
+	pa_stream_flags_t stream_flags;
+	const pa_timing_info *timing_info = nullptr;
+	struct timeval startTime = {0, 0};
+	pa_usec_t timer_event_usec = 50000; // 50 ms
+	pa_time_event *timer_event = nullptr;
+	const pa_channel_map *channel_map = nullptr;
+	pa_usec_t r_usec;
+	pa_buffer_attr buffer_attr;
+	uint32_t latency = 0; // in bytes of buffer
+	int32_t latency_msec = 20;
+	bool pulseAudioInitialized = false;
+	unsigned int occupation = PA_WRITING;
+} pulseAudioStruct;
+	
 static struct MelderPlay {
 	int16_t *buffer;
 	long sampleRate, numberOfSamples, samplesLeft, samplesSent, samplesPlayed;
@@ -155,9 +190,9 @@ static struct MelderPlay {
 	#elif motif
 		XtWorkProcId workProcId_motif;
 	#elif gtk
-		gint workProcId_gtk;
+		gint workProcId_gtk = 0;
 	#endif
-	bool usePortAudio, supports_paComplete;
+	bool usePortAudio, supports_paComplete, usePulseAudio;
 	PaStream *stream;
 	double paStartingTime;
 	#if defined (macintosh)
@@ -168,6 +203,7 @@ static struct MelderPlay {
 		WAVEHDR waveHeader;
 		MMRESULT status;
 	#endif
+	pulseAudioStruct pulseAudio;
 } thePlay;
 
 long MelderAudio_getSamplesPlayed (void) {
@@ -281,9 +317,28 @@ static bool flush (void) {
 			Pa_CloseStream (my stream);
 			my stream = nullptr;
 		}
+	} else if (my usePulseAudio) {
+		if (my pulseAudio.mainloop) {
+			pa_threaded_mainloop_lock (my pulseAudio.mainloop);
+			if (my pulseAudio.stream) {
+				pa_operation *operation = pa_stream_flush (my pulseAudio.stream, stream_drain_complete_cb, me);
+				// wait because of a threaded_mainloop
+				if (operation) {
+					while (MelderAudio_isPlaying) {
+						pa_threaded_mainloop_wait (my pulseAudio.mainloop);
+						trace (U"wait");
+					}
+					pa_operation_unref (operation);
+				}
+			}
+			MelderAudio_isPlaying = false;
+			pa_threaded_mainloop_unlock (my pulseAudio.mainloop);
+			pulseAudio_cleanup ();
+		}
 	} else {
 	#if defined (macintosh)
 	#elif defined (linux)
+		
 		/*
 		 * As on Sun.
 		 */
@@ -332,13 +387,17 @@ bool MelderAudio_stopPlaying (bool explicitStop) {
 	//Melder_casual (U"stop playing!");
 	struct MelderPlay *me = & thePlay;
 	my explicitStop = explicitStop;
+	trace (U"playing = ", MelderAudio_isPlaying);
 	if (! MelderAudio_isPlaying || my asynchronicity < kMelder_asynchronicityLevel_ASYNCHRONOUS) return false;
 	#if cocoa
 		CFRunLoopRemoveTimer (CFRunLoopGetCurrent (), thePlay. cocoaTimer, kCFRunLoopCommonModes);
 	#elif motif
 		XtRemoveWorkProc (thePlay. workProcId_motif);
 	#elif gtk
-		g_source_remove (thePlay. workProcId_gtk);
+		if (thePlay.workProcId_gtk && ! my usePulseAudio) {
+			g_source_remove (thePlay.workProcId_gtk);
+		}
+		thePlay.workProcId_gtk = 0;
 	#endif
 	(void) flush ();
 	return true;
@@ -396,6 +455,25 @@ static bool workProc (void *closure) {
 			}
 			Pa_Sleep (10);
 		#endif
+	} else if (my usePulseAudio) {
+		if (my pulseAudio.mainloop) {
+			pa_threaded_mainloop_lock (my pulseAudio.mainloop);
+			long samplesPlayed = 0;
+			pa_usec_t diff_usec = 0;
+			if (my pulseAudio.startTime.tv_usec != 0) {
+				diff_usec = pa_timeval_age (& my pulseAudio.startTime);
+				double timeElapsed = diff_usec / 1000000.0;
+				samplesPlayed = timeElapsed * my sampleRate;
+			}
+			pa_threaded_mainloop_unlock (my pulseAudio.mainloop);
+			trace (U"diff = ", diff_usec, U", samples played = ", samplesPlayed);
+			if (my callback && ! my callback (my closure, samplesPlayed)) {
+				my volatile_interrupted = 1;
+				return flush ();
+			} else if (my samplesLeft == 0 || samplesPlayed > my numberOfSamples) {
+				return flush ();
+			}
+		}
 	} else {
 	#if defined (macintosh)
 	#elif defined (linux)
@@ -501,6 +579,411 @@ static int thePaStreamCallback (const void *input, void *output,
 	return paContinue;
 }
 
+void pulseAudio_initialize (void) {
+	struct MelderPlay *me = & thePlay;
+	if (! my pulseAudio.pulseAudioInitialized) {
+		my pulseAudio.mainloop = pa_threaded_mainloop_new ();
+		if (! my pulseAudio.mainloop) {
+			MelderAudio_isPlaying = false;
+			Melder_throw (U"No connection to pulse audio server.");
+		}
+		pa_threaded_mainloop_start (my pulseAudio.mainloop);
+		pa_threaded_mainloop_lock (my pulseAudio.mainloop);
+		my pulseAudio.mainloop_api = pa_threaded_mainloop_get_api (my pulseAudio.mainloop);
+		my pulseAudio.context = pa_context_new (my pulseAudio.mainloop_api, "praat");
+		pa_context_set_state_callback (my pulseAudio.context, context_state_cb, me);
+		pa_context_connect (my pulseAudio.context, nullptr, PA_CONTEXT_NOFLAGS, nullptr);
+		trace (U"threading");
+		my pulseAudio.pulseAudioInitialized = true;
+		pa_threaded_mainloop_unlock (my pulseAudio.mainloop);
+	}
+}
+
+void pulseAudio_cleanup (void) {
+	struct MelderPlay *me = & thePlay;
+
+	pa_threaded_mainloop_lock (my pulseAudio.mainloop);
+	trace (U"mainloop to be freed, occupation was ", my pulseAudio.occupation);
+
+	if (my pulseAudio.context) {
+		trace (U"still context");
+		pa_context_unref (my pulseAudio.context);
+		my pulseAudio.context = nullptr;
+	}
+	if (my pulseAudio.timer_event) {
+		my pulseAudio.mainloop_api -> time_free (my pulseAudio.timer_event);
+		my pulseAudio.timer_event = nullptr;
+	}
+	pa_threaded_mainloop_unlock (my pulseAudio.mainloop);
+	pa_threaded_mainloop_free (my pulseAudio.mainloop); // automatically frees the mainloop_api too!
+	my pulseAudio.mainloop = nullptr;
+	my pulseAudio.mainloop_api = nullptr;
+	my pulseAudio.r_usec = 0;
+	MelderAudio_isPlaying = false;
+	my pulseAudio.occupation = 0;
+	my pulseAudio.startTime = {0, 0};
+	my pulseAudio.pulseAudioInitialized = false;
+}
+
+void pulseAudio_server_info_cb (pa_context *context, const pa_server_info *info, void *userdata) {
+	struct MelderPlay *me = (struct MelderPlay *) userdata;
+	if (! info) {
+		return;
+	}
+	const pa_sample_spec *sp = & (info -> sample_spec);
+	long numberOfChannels = sp -> channels;
+	Melder_assert (context == my pulseAudio.context);
+	MelderInfo_open ();
+	MelderInfo_writeLine (U"PulseAudio Server characteristics:");
+	MelderInfo_writeLine (U"User name: ", Melder_peek8to32 (info -> user_name));
+	MelderInfo_writeLine (U"Host name: ", Melder_peek8to32 (info -> host_name));
+	MelderInfo_writeLine (U"Server version: ", Melder_peek8to32 (info -> server_version));
+	MelderInfo_writeLine (U"Server name: ", Melder_peek8to32 (info -> server_name));
+	MelderInfo_writeLine (U"Sample specification: ");
+		MelderInfo_writeLine (U"\tNumber of channels: ", numberOfChannels);
+		MelderInfo_writeLine (U"\tSampling frequency: ", sp->rate);
+		const char *sample_format_string = pa_sample_format_to_string (sp -> format);
+		MelderInfo_writeLine (U"\tSample format: ", Melder_peek8to32 (sample_format_string));
+	MelderInfo_writeLine (U"Default sink name: ", Melder_peek8to32 (info -> default_sink_name));
+	MelderInfo_writeLine (U"Default source name: ", Melder_peek8to32 (info -> default_source_name));
+	const pa_channel_map *cm = &(info -> channel_map);
+	MelderInfo_writeLine (U"Channel specification: ");
+	for (long channel = 1; channel <= cm -> channels; channel++) {
+		const char *channel_text = pa_channel_position_to_pretty_string (cm -> map[channel - 1]); // 0-..
+		MelderInfo_writeLine (U"\t Channel ", channel, U": ", Melder_peek8to32 (channel_text));
+	}
+	MelderInfo_close ();
+	trace (U"before signal");
+	my pulseAudio.occupation |= PA_INFO_FOUND;
+	 // We are done, signal it to pulseAudio_serverReport
+	pa_threaded_mainloop_signal (my pulseAudio.mainloop, 0);
+}
+
+void pulseAudio_serverReport (void) {
+	// TODO: initiaize context
+	struct MelderPlay *me = & thePlay;
+	if (my pulseAudio.mainloop) {
+		pa_threaded_mainloop_lock (my pulseAudio.mainloop);
+		my pulseAudio.occupation |= PA_INFO_GETTING;
+		if (my pulseAudio.context) {
+			pa_operation *operation = pa_context_get_server_info (my pulseAudio.context, pulseAudio_server_info_cb, me);
+			trace (U"operation started");
+			if (! operation) {
+				Melder_throw (U"pulseAudioServer report: ", Melder_peek8to32 (pa_strerror (pa_context_errno (my pulseAudio.context))));
+			}
+			while ((my pulseAudio.occupation & PA_INFO_FOUND) != PA_INFO_FOUND) {
+				pa_threaded_mainloop_wait (my pulseAudio.mainloop);
+			}
+			// Now it is save to unref because the server info operation has completed
+			pa_operation_unref (operation);
+			my pulseAudio.occupation ^= ~PA_INFO_FOUND;
+		}
+		my pulseAudio.occupation ^= ~PA_INFO_GETTING;
+		pa_threaded_mainloop_unlock (my pulseAudio.mainloop);
+	} else {
+		my pulseAudio.occupation |= PA_INFO_GETTING;
+		pulseAudio_initialize ();
+		/*
+		 * First acquire a lock because the operation to get server info (in context_state_cb) may not have started yet.
+		 * We therefore use our own signaling and wait until information has been acquired.
+		 */
+		pa_threaded_mainloop_lock (my pulseAudio.mainloop);
+
+		while ((my pulseAudio.occupation & PA_INFO_FOUND) != PA_INFO_FOUND) {
+			pa_threaded_mainloop_wait (my pulseAudio.mainloop);
+		}
+		// Now we know that the operation to get server info has succeeded!
+		pa_operation_unref (my pulseAudio.operation_info);
+		my pulseAudio.operation_info = nullptr;
+		my pulseAudio.occupation ^= ~PA_INFO_GETTING;
+		my pulseAudio.occupation ^= ~PA_INFO_FOUND;
+		pa_threaded_mainloop_unlock (my pulseAudio.mainloop);
+		if (! MelderAudio_isPlaying) {
+			my pulseAudio.occupation = 0;
+			trace (U"before cleanup");
+			pulseAudio_cleanup ();
+		}
+	}
+}
+
+void context_drain_complete_cb (pa_context *context, void *userdata) {
+	struct MelderPlay *me = (struct MelderPlay *) userdata;
+	Melder_assert (context == my pulseAudio.context);
+	if (context) {
+		trace (U"context exists");
+		pa_context_disconnect (my pulseAudio.context);
+		pa_context_unref (my pulseAudio.context);
+		my pulseAudio.context = nullptr;
+	}
+	trace (U"after context test");
+	pulseAudio_cleanup ();
+}
+
+void stream_drain_complete_cb (pa_stream *stream, int success, void *userdata) {
+	(void) stream;
+	struct MelderPlay *me = (struct MelderPlay *) userdata;
+	// Melder_assert (stream == my pulseAudio.stream); // not always true
+
+	trace (U"succes = ", success);
+	if (stream == my pulseAudio.stream) {
+		trace (U"stream exists");
+		pa_stream_disconnect (my pulseAudio.stream);
+		pa_stream_unref (my pulseAudio.stream);
+		my pulseAudio.stream = nullptr;
+		my pulseAudio.occupation ^= ~PA_WRITING;
+		my pulseAudio.occupation |= PA_WRITING_DONE;
+		MelderAudio_isPlaying = false;
+		if (my pulseAudio.timer_event) {
+			my pulseAudio.mainloop_api -> time_free (my pulseAudio.timer_event);
+			my pulseAudio.timer_event = nullptr;
+		}
+		pa_threaded_mainloop_signal (my pulseAudio.mainloop, 0);
+	} else {
+		trace (U"??");
+	}
+}
+
+static void free_cb(void *p) { // to prevent copying of data
+	(void) p;
+}
+// asynchronous version
+void stream_write_cb2 (pa_stream *stream, size_t length, void *userdata) {
+	struct MelderPlay *me = (struct MelderPlay *) userdata;
+	if (stream == my pulseAudio.stream) {
+		//length = my pulseAudio.latency; // overrule length given by server
+		long writeSize_samples = length / (2 * my numberOfChannels);
+		my samplesLeft = my numberOfSamples - my samplesSent;
+		trace (U"length = ", length, U" left = ", my samplesLeft);
+		MelderAudio_isPlaying = true;
+		if (my samplesLeft == my numberOfSamples) {
+			pa_gettimeofday (& my pulseAudio.startTime);
+		}
+		if (my samplesLeft > 0) {
+			if (my volatile_interrupted) {
+				my samplesPlayed = my numberOfSamples;
+				my samplesLeft = 0;
+				flush ();
+			} else {
+				writeSize_samples = my samplesLeft < writeSize_samples ? my samplesLeft : writeSize_samples;
+				if (pa_stream_write (stream, my buffer + my samplesSent * my numberOfChannels, 2 * writeSize_samples * my numberOfChannels, free_cb, 0, PA_SEEK_RELATIVE) < 0) {
+					 Melder_throw (U"pa_stream_write() failed: ", Melder_peek8to32 (pa_strerror (pa_context_errno (my pulseAudio.context))));
+				}
+				long samplesSent = writeSize_samples;
+				my samplesSent += samplesSent;
+				my samplesPlayed = my samplesSent; // not true: use timer info
+				trace (U"written ", samplesSent, U" (samples), total ", my samplesSent);
+				if (my samplesSent == my numberOfSamples) {
+					// my samplesLeft = 0; not here because still playing
+					trace (U"nothing left 1");
+					//pa_stream_set_write_callback(my pulseAudio.stream, nullptr, nullptr);
+					my pulseAudio.operation_drain = pa_stream_drain (my pulseAudio.stream, stream_drain_complete_cb, me);
+					if (! my pulseAudio.operation_drain) {
+						pa_stream_disconnect (my pulseAudio.stream);
+						pa_stream_unref (my pulseAudio.stream);
+						my pulseAudio.stream = nullptr;
+						trace (U"stream exists");
+						my pulseAudio.occupation ^= ~PA_WRITING;
+						my pulseAudio.occupation |= PA_WRITING_DONE;
+						pa_threaded_mainloop_signal (my pulseAudio.mainloop, 0);
+						if (my pulseAudio.timer_event) {
+							my pulseAudio.mainloop_api -> time_free (my pulseAudio.timer_event);
+							my pulseAudio.timer_event = nullptr;
+						}
+					}
+				}
+			}
+		} else {
+			trace (U"nothing left");
+		}
+	} else {
+		trace (U"stream?");
+	}
+}
+
+void stream_write_cb (pa_stream *stream, size_t length, void *userdata) {
+	struct MelderPlay *me = (struct MelderPlay *) userdata;
+	if (stream == my pulseAudio.stream) {
+		my samplesLeft = my numberOfSamples - my samplesSent;
+		trace (U"length = ", length, U", left = ", my samplesLeft);
+		if (my samplesLeft > 0) {
+			if (my samplesLeft == my numberOfSamples) {
+				pa_gettimeofday (& my pulseAudio.startTime);
+			}
+			if (my volatile_interrupted) {
+				my samplesPlayed = my numberOfSamples;
+				my samplesLeft = 0;
+				flush ();
+			} else {
+				int16_t *pa_buffer; // an internal pa buffer to minimize the number of memory transfers between client and server
+				size_t nbytes_left = my samplesLeft * my numberOfChannels * 2; // how many bytes do we still need to write ?
+				size_t nbytes = nbytes_left;
+				// returns the address of an internal buffer and the number of bytes that can maximally be written to it.
+				if (pa_stream_begin_write (stream, (void **) & pa_buffer, & nbytes) < 0) {
+					trace (U"error: no memory");
+				}
+				trace (U"buffer size = ", nbytes);
+				// do we need the full buffer space ?
+				nbytes = nbytes <= nbytes_left ? nbytes : nbytes_left;
+				memcpy (pa_buffer, (void *)(my buffer + my samplesSent * my numberOfChannels), nbytes);
+				//memset (pa_buffer, 0, nbytes);
+				
+				if (pa_stream_write (stream, pa_buffer, nbytes, nullptr, 0, PA_SEEK_RELATIVE) < 0) {
+					 Melder_throw (U"pa_stream_write() failed: ", Melder_peek8to32 (pa_strerror (pa_context_errno (my pulseAudio.context))));
+				}
+				Melder_assert (nbytes % (my numberOfChannels * 2) == 0);
+				long samplesSent = nbytes / (my numberOfChannels * 2);
+				my samplesSent += samplesSent;
+				my samplesPlayed = my samplesSent; // not true: use timer info
+				trace (U"written ", samplesSent, U" (samples), total ", my samplesSent, U", address = ", (long) pa_buffer);
+				if (my samplesSent == my numberOfSamples) {
+					// my samplesLeft = 0; not here because still playing
+					trace (U"nothing left 1");
+					pa_stream_set_write_callback (my pulseAudio.stream, nullptr, nullptr);
+					my pulseAudio.operation_drain = pa_stream_drain (my pulseAudio.stream, stream_drain_complete_cb, me);
+					if (! my pulseAudio.operation_drain) {
+						pa_stream_disconnect (my pulseAudio.stream);
+						pa_stream_unref (my pulseAudio.stream);
+						my pulseAudio.stream = nullptr;
+						trace (U"stream exists");
+						my pulseAudio.occupation ^= ~PA_WRITING;
+						my pulseAudio.occupation |= PA_WRITING_DONE;
+						pa_threaded_mainloop_signal (my pulseAudio.mainloop, 0);
+						if (my pulseAudio.timer_event) {
+							my pulseAudio.mainloop_api -> time_free (my pulseAudio.timer_event);
+							my pulseAudio.timer_event = nullptr;
+						}
+					}
+				}
+			}
+		} else {
+			trace (U"nothing left");
+		}
+	} else {
+		trace (U"stream?");
+	}
+}
+
+void stream_state_cb (pa_stream *stream, void *userdata) {
+	struct MelderPlay *me = (struct MelderPlay *) userdata;
+
+	if (stream == my pulseAudio.stream) {
+		switch (pa_stream_get_state (stream)) {
+			case PA_STREAM_UNCONNECTED:
+				trace (U"PA_STREAM_UNCONNECTED");
+				break;
+			case PA_STREAM_CREATING:
+				trace (U"PA_STREAM_CREATING");
+				break;
+			case PA_STREAM_TERMINATED:
+				trace (U"PA_STREAM_TERMINATED");
+				break;
+			case PA_STREAM_READY: {
+				const pa_buffer_attr* buffer_attr = pa_stream_get_buffer_attr (my pulseAudio.stream);
+				trace (U"PA_STREAM_READY : tlength = ", buffer_attr -> tlength, U", prebuf = ", buffer_attr -> prebuf, U", maxlength = ", buffer_attr -> maxlength);
+				break;
+			}
+			default:
+				trace (U"default");
+				break;
+			case PA_STREAM_FAILED:
+				trace (U"PA_STREAM_FAILED");
+				break;
+		}
+	}
+}
+
+static void stream_underflow_callback (pa_stream *s, void *userdata) {
+	(void) s;
+	(void) userdata;
+	trace (U"yes");
+}
+
+static void stream_overflow_callback(pa_stream *s, void *userdata) {
+	(void) s;
+	(void) userdata;
+	trace (U"yes");
+}
+
+void context_state_cb (pa_context *context, void *userdata) {
+	struct MelderPlay *me = (struct MelderPlay *) userdata;
+
+	pa_context_state context_state = pa_context_get_state (context);
+	switch (context_state) {
+		case PA_CONTEXT_UNCONNECTED:
+			trace (U"PA_CONTEXT_UNCONNECTED");
+			break;
+		case PA_CONTEXT_CONNECTING:
+			trace (U"PA_CONTEXT_CONNECTING");
+			break;
+		case PA_CONTEXT_AUTHORIZING:
+			trace (U"PA_CONTEXT_AUTHORIZING");
+			break;
+		case PA_CONTEXT_SETTING_NAME:
+			trace (U"PA_CONTEXT_SETTING_NAME");
+			break;
+		case PA_CONTEXT_FAILED:
+			trace (U"PA_CONTEXT_FAILED");
+			break;
+		case PA_CONTEXT_TERMINATED:
+			trace (U"PA_CONTEXT_TERMINATED");
+			break;
+		case PA_CONTEXT_READY: {
+			trace (U"PA_CONTEXT_READY");
+			if ((my pulseAudio.occupation & PA_INFO_GETTING) == PA_INFO_GETTING) {
+				my pulseAudio.operation_info = pa_context_get_server_info (my pulseAudio.context, pulseAudio_server_info_cb, me);
+				trace (U"operation started");
+				if (! my pulseAudio.operation_info) {
+					Melder_throw (U"pulseAudioServer report: ", Melder_peek8to32 (pa_strerror (pa_context_errno (my pulseAudio.context))));
+				}
+			} else if ((my pulseAudio.occupation & PA_WRITING) == PA_WRITING) {
+				#if __BYTE_ORDER == __BIG_ENDIAN
+					my pulseAudio.sample_spec.format = PA_SAMPLE_S16BE;
+				#else
+					my pulseAudio.sample_spec.format = PA_SAMPLE_S16LE;
+				#endif
+				my samplesPlayed = my samplesSent = 0;
+				my pulseAudio.sample_spec.rate = my sampleRate;
+				my pulseAudio.sample_spec.channels = my numberOfChannels;
+				my pulseAudio.stream = pa_stream_new (my pulseAudio.context, "Praat", &(my pulseAudio.sample_spec), nullptr);
+				if (! my pulseAudio.stream) {
+					Melder_throw (U"Cannot connect to sound server: ", Melder_peek8to32 (pa_strerror (pa_context_errno (my pulseAudio.context))));
+				}
+
+				//my pulseAudio.stream_flags = PA_STREAM_NOFLAGS;
+				my pulseAudio.stream_flags = (pa_stream_flags_t) (PA_STREAM_ADJUST_LATENCY | PA_STREAM_INTERPOLATE_TIMING | PA_STREAM_AUTO_TIMING_UPDATE);
+				my pulseAudio.latency = pa_usec_to_bytes (1000 * my pulseAudio.latency_msec, &(my pulseAudio.sample_spec));
+				
+				my pulseAudio.buffer_attr.maxlength = (uint32_t) -1;
+				my pulseAudio.buffer_attr.prebuf = (uint32_t) -1;
+				my pulseAudio.buffer_attr.minreq = (uint32_t) -1;
+				my pulseAudio.buffer_attr.prebuf = (uint32_t) -1;
+				my pulseAudio.buffer_attr.tlength = my pulseAudio.latency;
+				my pulseAudio.buffer_attr.fragsize = (uint32_t) -1;
+
+				pa_stream_set_state_callback (my pulseAudio.stream, stream_state_cb, me);
+				pa_stream_set_write_callback (my pulseAudio.stream, stream_write_cb, me);
+			    pa_stream_set_underflow_callback (my pulseAudio.stream, stream_underflow_callback, me);
+			    pa_stream_set_overflow_callback (my pulseAudio.stream, stream_overflow_callback, me);
+				
+				// BUG in pa 5.9  & 6.0: the server doesn't honour our wish for a reasonable tlength. Instead it uses some
+				//   ridiculously low value for tlength that will constantly give underflows.
+				//   audio playback was completely shit if in the stream_write_cb we used pa_stream_write instead of
+				// first pa_stream_begin_write followed by pa_stream_write.
+				//
+				my pulseAudio.stream_flags = PA_STREAM_NOFLAGS;
+				if (pa_stream_connect_playback (my pulseAudio.stream, nullptr, &(my pulseAudio.buffer_attr), my pulseAudio.stream_flags, nullptr, nullptr) < 0) {
+					Melder_throw (U"pa_stream_connect_playback() failed: ", Melder_peek8to32 (pa_strerror (pa_context_errno (my pulseAudio.context))));
+				}
+				trace (U"tlength = ", my pulseAudio.buffer_attr.tlength, U", channels = ", my numberOfChannels);
+			}
+			break;
+		}
+		default:
+			trace (U"default");
+			break;
+	}
+}
+
 void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples, int numberOfChannels,
 	bool (*playCallback) (void *playClosure, long numberOfSamplesPlayed), void *playClosure)
 {
@@ -509,6 +992,9 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 		bool wasPlaying = MelderAudio_isPlaying;
 	#endif
 	if (MelderAudio_isPlaying) MelderAudio_stopPlaying (MelderAudio_IMPLICIT);   // otherwise, keep "explicitStop" tag
+	if (my usePulseAudio && my pulseAudio.mainloop) {
+		pulseAudio_cleanup ();
+	}
 	my buffer = buffer;
 	my sampleRate = sampleRate;
 	my numberOfSamples = numberOfSamples;
@@ -523,6 +1009,8 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 		my asynchronicity = preferences. maximumAsynchronicity;
 	trace (U"asynchronicity ", my asynchronicity);
 	my usePortAudio = preferences. outputUsesPortAudio;
+	my usePulseAudio = ! my usePortAudio; 
+	
 	my explicitStop = MelderAudio_IMPLICIT;
 	my fakeMono = false;
 	my volatile_interrupted = 0;
@@ -668,12 +1156,50 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 			#elif motif
 				my workProcId_motif = GuiAddWorkProc (workProc_motif, nullptr);
 			#elif gtk
+				trace (U"g_idle_add");
 				my workProcId_gtk = g_idle_add (workProc_gtk, nullptr);
 			#endif
 			return;
 		}
 		flush ();
 		return;
+	} if (my usePulseAudio) {
+		my pulseAudio.occupation |= PA_WRITING;
+		pulseAudio_initialize ();
+		if (my asynchronicity < kMelder_asynchronicityLevel_ASYNCHRONOUS) {
+			pa_threaded_mainloop_lock (my pulseAudio.mainloop);
+			trace (U"occupation ", my pulseAudio.occupation);
+			while ((my pulseAudio.occupation & PA_WRITING_DONE) != PA_WRITING_DONE) {
+				trace (U"waiting");
+				pa_threaded_mainloop_wait (my pulseAudio.mainloop);
+			}
+			// Now we know that the stream drain operation has succeeded !
+			if (my pulseAudio.operation_drain) {
+				pa_operation_unref (my pulseAudio.operation_drain);
+			}
+			my pulseAudio.operation_drain = nullptr;
+			my pulseAudio.occupation ^= ~PA_WRITING_DONE;
+
+			pa_threaded_mainloop_unlock (my pulseAudio.mainloop);
+			//pa_threaded_mainloop_accept (my pulseAudio.mainloop);
+			trace (U"before cleanup");
+			pulseAudio_cleanup ();
+		} else {
+			#if cocoa
+				CFRunLoopTimerContext context = { 0, nullptr, nullptr, nullptr, nullptr };
+				my cocoaTimer = CFRunLoopTimerCreate (nullptr, CFAbsoluteTimeGetCurrent () + 0.02,
+					0.02, 0, 0, workProc_cocoa, & context);
+				CFRunLoopAddTimer (CFRunLoopGetCurrent (), my cocoaTimer, kCFRunLoopCommonModes);
+			#elif motif
+				my workProcId_motif = GuiAddWorkProc (workProc_motif, nullptr);
+			#elif gtk
+				// my workProcId_gtk = g_timeout_add (ms, workProc_gtk, nullptr);
+				// without a timer, on my computer the workproc would be called almost once in every sampling period.
+				// Such frequent updates are not necessary, some 50 updates a second is fast enough for displayong a runnning cursor
+				// the timeout will be automatically stopped if workProc_gtk returns false.
+				my workProcId_gtk = g_timeout_add (20, workProc_gtk, nullptr);
+			#endif
+		}
 	} else {
 		#if defined (macintosh)
 		#elif defined (linux)
@@ -756,7 +1282,7 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 				flush ();
 				return;
 			} catch (MelderError) {
-				struct MelderPlay *me = & thePlay;
+			//struct MelderPlay *me = & thePlay;
 				if (my audio_fd) close (my audio_fd), my audio_fd = 0;
 				MelderAudio_isPlaying = false;
 				Melder_throw (U"16-bit audio not played.");
