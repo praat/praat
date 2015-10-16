@@ -21,7 +21,7 @@
  djmw 20020813 GPL header
  djmw 20030619 Added SVD_compute before SVD_solve
  djmw 20060510 Polynomial_to_Roots: changed behaviour. All roots found are now saved.
- 	In previous version a NULL pointer was returned. New error messages.
+ 	In previous version a nullptr pointer was returned. New error messages.
  djmw 20061021 printf expects %ld for 'long int'
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
  djmw 20071201 Melder_warning<n>
@@ -1845,10 +1845,9 @@ RationalFunction RationalFunction_createFromString (I, double xmin, double xmax,
 // divide out common roots
 RationalFunction RationalFunction_simplify (RationalFunction me)
 {
-	Roots num = NULL, denum = NULL; RationalFunction thee = NULL;
+	Roots num = nullptr, denum = nullptr; RationalFunction thee = nullptr;
 	if (! (num = Polynomial_to_Roots (my num)) ||
 		! (denum = Polynomial_to_Roots (my denum))) goto end;
-
 }
 
 */

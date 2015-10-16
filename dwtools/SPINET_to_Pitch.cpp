@@ -1,6 +1,6 @@
 /* SPINET_to_Pitch.cpp
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ Pitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceiling, i
 		double dfl2 = (fmaxl2 - fminl2) / (points - 1);
 		long nFrequencyPoints = (long) floor (points);
 		long maxHarmonic = (long) floor (fmax / fmin);
-		double maxStrength = 0, unvoicedCriterium = 0.45, maxPower = 0;
+		double maxStrength = 0.0, unvoicedCriterium = 0.45, maxPower = 0.0;
 
 		if (nFrequencyPoints < 2) {
 			Melder_throw (U"Frequency range too small.");
@@ -68,7 +68,7 @@ Pitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceiling, i
 		// Determine global maximum power in frame
 
 		for (long j = 1; j <= my nx; j++) {
-			double p = 0;
+			double p = 0.0;
 			for (long i = 1; i <= my ny; i++) {
 				p += my s[i][j];
 			}
@@ -77,7 +77,7 @@ Pitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceiling, i
 			}
 			power[j] = p;
 		}
-		if (maxPower == 0) {
+		if (maxPower == 0.0) {
 			Melder_throw (U"No power");
 		}
 
@@ -92,7 +92,7 @@ Pitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceiling, i
 			for (long k = 1; k <= nFrequencyPoints; k++) {
 				double f = fminl2 + (k - 1) * dfl2;
 				NUMsplint (fl2.peek(), y.peek(), yv2.peek(), my ny, f, & pitch[k]);
-				sumspec[k] = 0;
+				sumspec[k] = 0.0;
 			}
 
 			// Formula (8): weighted harmonic summation.
@@ -101,7 +101,7 @@ Pitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceiling, i
 				double hm = 1 - harmonicFallOffSlope * NUMlog2 (m);
 				long kb = 1 + (long) floor (nPointsPerOctave * NUMlog2 (m));
 				for (long k = kb; k <= nFrequencyPoints; k++) {
-					if (pitch[k] > 0) {
+					if (pitch[k] > 0.0) {
 						sumspec[k - kb + 1] += pitch[k] * hm;
 					}
 				}
@@ -116,10 +116,10 @@ Pitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceiling, i
 			for (long k = 2; k <= nFrequencyPoints - 1; k++) {
 				double y1 = sumspec[k - 1], y2 = sumspec[k], y3 = sumspec[k + 1];
 				if (y2 > y1 && y2 >= y3) {
-					double denum = y1 - 2 * y2 + y3, tmp = y3 - 4 * y2;
+					double denum = y1 - 2.0 * y2 + y3, tmp = y3 - 4.0 * y2;
 					double x = dfl2 * (y1 - y3) / (2 * denum);
-					double f = pow (2, fminl2 + (k - 1) * dfl2 + x);
-					double strength = (2 * y1 * (4 * y2 + y3) - y1 * y1 - tmp * tmp) / (8 * denum);
+					double f = pow (2.0, fminl2 + (k - 1) * dfl2 + x);
+					double strength = (2.0 * y1 * (4.0 * y2 + y3) - y1 * y1 - tmp * tmp) / (8.0 * denum);
 					if (strength > maxStrength) {
 						maxStrength = strength;
 					}

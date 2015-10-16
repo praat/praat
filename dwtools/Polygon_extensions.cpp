@@ -1065,7 +1065,7 @@ static Vertices Verticeses_connectClippingPaths (Vertices me, bool /* use_myinte
 
 //
 Polygon Vertices_to_Polygon (Vertices me, DLLNode *ni);
-Polygon Vertices_to_Polygon (Vertices me, DLLNode *ni) {
+Polygon Vertices_to_Polygon (Vertices /* me */, DLLNode *ni) {
 	DLLNode n = *ni;
 	try {
 		long i = 1, nPoints = VERTEX (n) -> poly_npoints;
@@ -1105,7 +1105,7 @@ Collection Polygons_findClippings (Polygon me, bool use_myinterior, Polygon thee
 		autoVertices s = Polygon_to_Vertices (me, true); // subject
 		long ns = s -> numberOfNodes;
 		autoVertices c = Polygon_to_Vertices (thee, true); // clip
-		long nc = c -> numberOfNodes;
+		// long nc = c -> numberOfNodes;
 		double eps = 1e-15;
 
 		// phase 1: Get all intersections and add them to both lists

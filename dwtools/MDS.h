@@ -4,7 +4,7 @@
  *
  * Multi Dimensional Scaling
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,8 +90,7 @@ void Salience_setDefaults (Salience me);
 
 long Salience_correctNegatives (Salience me);
 
-void Salience_draw (Salience me, Graphics g, int xdimension, int ydimension,
-	int garnish);
+void Salience_draw (Salience me, Graphics g, int xdimension, int ydimension, int garnish);
 
 /************************** class MDSVec ******************************/
 
@@ -116,15 +115,14 @@ Thing_define (MDSVecs, Ordered) {
 MDSVecs MDSVecs_create ();
 
 
-Configuration ContingencyTable_to_Configuration_ca (ContingencyTable me,
-	long numberOfDimensions, int scaling);
+Configuration ContingencyTable_to_Configuration_ca (ContingencyTable me, long numberOfDimensions, int scaling);
 
 /********************* class Proximities *******************************/
 
 Thing_define (Proximities, TablesOfReal) {
 };
 
-void Proximities_init (I, ClassInfo klas);
+void Proximities_init (Proximities me, ClassInfo klas);
 
 Proximities Proximities_create ();
 
@@ -166,13 +164,11 @@ Thing_define (Dissimilarity, Proximity) {
 
 Dissimilarity Dissimilarity_create (long numberOfPoints);
 
-int Dissimilarity_getAdditiveConstant (I, double *c);
+double Dissimilarity_getAdditiveConstant (Dissimilarity me);
 /*
 	Get the best estimate for the additive constant:
 		"distance = dissimilarity + constant"
-	F. Cailliez (1983), The analytical solution of the additive
-		constant problem,
-	Psychometrika 48, 305-308.
+	F. Cailliez (1983), The analytical solution of the additive constant problem, Psychometrika 48, 305-308.
 */
 
 /****************** class Transformator *******************************/
@@ -186,13 +182,13 @@ Thing_define (Transformator, Thing) {
 		virtual Distance v_transform (MDSVec vec, Distance dist, Weight w);
 };
 
-void Transformator_init (I, long numberOfPoints);
+void Transformator_init (Transformator me, long numberOfPoints);
 
 Transformator Transformator_create (long numberOfPoints);
 
-void Transformator_setNormalization (I, int normalization);
+void Transformator_setNormalization (Transformator me, int normalization);
 
-Distance Transformator_transform (I, MDSVec vec, Distance dist, Weight w);
+Distance Transformator_transform (Transformator me, MDSVec vec, Distance dist, Weight w);
 
 Thing_define (ISplineTransformator, Transformator) {
 	// new data:
@@ -204,8 +200,7 @@ Thing_define (ISplineTransformator, Transformator) {
 		virtual Distance v_transform (MDSVec vec, Distance dist, Weight w);
 };
 
-ISplineTransformator ISplineTransformator_create (long numberOfPoints, long numberOfInteriorKnots,
-	long order);
+ISplineTransformator ISplineTransformator_create (long numberOfPoints, long numberOfInteriorKnots, long order);
 
 Thing_define (RatioTransformator, Transformator) {
 	// new data:
@@ -281,8 +276,7 @@ double Distance_Weight_congruenceCoefficient (Distance x, Distance y, Weight w);
 	Congruence coefficient B&G page 350.
 */
 
-void Distance_Weight_rawStressComponents (Distance fit, Distance conf,
-	Weight weight, double *eta_fit, double *eta_conf, double *rho);
+void Distance_Weight_rawStressComponents (Distance fit, Distance conf, Weight weight, double *eta_fit, double *eta_conf, double *rho);
 /*
 	Computes
 		eta_fit = sum (i<j,i=1..n; w[i][j] * dfit[i][j]^2)
@@ -293,54 +287,32 @@ void Distance_Weight_rawStressComponents (Distance fit, Distance conf,
 		conf[i][j] = distance between x[i] and x[j] (in the configuration)
 */
 
-double Dissimilarity_Configuration_Transformator_Weight_stress
-	(Dissimilarity d, Configuration c, Any t, Weight w, int type);
+double Dissimilarity_Configuration_Transformator_Weight_stress (Dissimilarity d, Configuration c, Transformator t, Weight w, int type);
 
-double Dissimilarity_Configuration_Weight_absolute_stress
-	(Dissimilarity d, Configuration c, Weight w, int type);
+double Dissimilarity_Configuration_Weight_absolute_stress (Dissimilarity d, Configuration c, Weight w, int type);
 
-double Dissimilarity_Configuration_Weight_ratio_stress
-	(Dissimilarity d, Configuration c, Weight w, int type);
+double Dissimilarity_Configuration_Weight_ratio_stress (Dissimilarity d, Configuration c, Weight w, int type);
 
-double Dissimilarity_Configuration_Weight_interval_stress
-	(Dissimilarity d, Configuration c, Weight w, int type);
+double Dissimilarity_Configuration_Weight_interval_stress (Dissimilarity d, Configuration c, Weight w, int type);
 
-double Dissimilarity_Configuration_Weight_monotone_stress
-	(Dissimilarity d, Configuration c, Weight w, int tiesProcessing, int type);
+double Dissimilarity_Configuration_Weight_monotone_stress (Dissimilarity d, Configuration c, Weight w, int tiesProcessing, int type);
 
-double Dissimilarity_Configuration_Weight_ispline_stress
-	(Dissimilarity d, Configuration c, Weight w, long numberOfInteriorKnots,
-	long order, int type);
+double Dissimilarity_Configuration_Weight_ispline_stress (Dissimilarity d, Configuration c, Weight w, long numberOfInteriorKnots, long order, int type);
 
 void Distance_Weight_smacofNormalize (Distance d, Weight w);
 
-Configuration Dissimilarity_Configuration_Weight_Transformator_smacof
-	(Dissimilarity me, Configuration conf, Weight weight, Any transformator,
-	double tolerance, long numberOfIterations, int showProgress,
-	double *stress);
+Configuration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissimilarity me, Configuration conf, Weight weight, Transformator t, double tolerance, long numberOfIterations, int showProgress, double *stress);
 
-Configuration Dissimilarity_Configuration_Weight_Transformator_multiSmacof
-	(Dissimilarity me, Configuration conf, Weight w, Any transformator,
-	double tolerance, long numberOfIterations, long numberOfRepetitions,
-	int showProgress);
+Configuration Dissimilarity_Configuration_Weight_Transformator_multiSmacof (Dissimilarity me, Configuration conf, Weight w, Transformator t,	double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress);
 
 
-Configuration Dissimilarity_Configuration_Weight_absolute_mds
-	(Dissimilarity dis, Configuration cstart, Weight w, double tolerance,
-	long numberOfIterations, long numberOfRepetitions, int showProgress);
+Configuration Dissimilarity_Configuration_Weight_absolute_mds (Dissimilarity dis, Configuration cstart, Weight w, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress);
 
-Configuration Dissimilarity_Configuration_Weight_ratio_mds
-	(Dissimilarity dis, Configuration cstart, Weight w, double tolerance,
-	long numberOfIterations, long numberOfRepetitions, int showProgress);
+Configuration Dissimilarity_Configuration_Weight_ratio_mds (Dissimilarity dis, Configuration cstart, Weight w, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress);
 
-Configuration Dissimilarity_Configuration_Weight_interval_mds
-	(Dissimilarity dis, Configuration cstart, Weight w, double tolerance,
-	long numberOfIterations, long numberOfRepetitions, int showProgress);
+Configuration Dissimilarity_Configuration_Weight_interval_mds (Dissimilarity dis, Configuration cstart, Weight w, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress);
 
-Configuration Dissimilarity_Configuration_Weight_monotone_mds
-	(Dissimilarity dis, Configuration cstart, Weight w, int tiesProcessing,
-	double tolerance, long numberOfIterations, long numberOfRepetitions,
-	int showProgress);
+Configuration Dissimilarity_Configuration_Weight_monotone_mds (Dissimilarity dis, Configuration cstart, Weight w, int tiesProcessing, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress);
 
 Configuration Dissimilarity_Configuration_Weight_ispline_mds
 	(Dissimilarity me, Configuration cstart, Weight w,
@@ -390,13 +362,11 @@ void Dissimilarity_Configuration_Weight_drawMonotoneRegression
 	int tiesProcessing, double xmin, double xmax, double ymin, double ymax,
 	double size_mm, const char32 *mark, int garnish);
 
-void Dissimilarity_Configuration_Weight_drawISplineRegression
-	(Dissimilarity d, Configuration c, Weight w, Graphics g,
+void Dissimilarity_Configuration_Weight_drawISplineRegression (Dissimilarity d, Configuration c, Weight w, Graphics g,
 	long numberOfInternalKnots, long order, double xmin, double xmax,
 	double ymin, double ymax, double size_mm, const char32 *mark, int garnish);
 
-Distance Dissimilarity_Configuration_Transformator_Weight_transform
-	(Dissimilarity d, Configuration c, Any t, Weight w);
+Distance Dissimilarity_Configuration_Transformator_Weight_transform (Dissimilarity d, Configuration c, Transformator t, Weight w);
 
 /******** DISTANCE & SCALARPRODUCT *******************************/
 
@@ -407,23 +377,19 @@ ScalarProduct Distance_to_ScalarProduct (Distance me, int normalize);
 /************** DISTANCE & PROXIMITY ********************************/
 
 
-void Proximity_Distance_drawScatterDiagram (I, Distance thee, Graphics g,
-	double xmin, double xmax, double ymin, double ymax, double size_mm,
-	const char32 *mark, int garnish);
+void Proximity_Distance_drawScatterDiagram (I, Distance thee, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, int garnish);
 
 
 /********** COVARIANCE & CONFIGURATION ***************************/
 
 
-Configuration Covariance_to_Configuration (Covariance me,
-	long numberOfDimensions);
+Configuration Covariance_to_Configuration (Covariance me, long numberOfDimensions);
 
 
 /************ CORRELATION & CONFIGURATION ************************/
 
 
-Configuration Correlation_to_Configuration (Correlation me,
-	long numberOfDimensions);
+Configuration Correlation_to_Configuration (Correlation me, long numberOfDimensions);
 
 
 /************** DISTANCE & CONFIGURATION **************************/
@@ -432,42 +398,27 @@ Configuration Correlation_to_Configuration (Correlation me,
 Distance Configuration_to_Distance (Configuration me);
 /* Calculates distances between the points */
 
-void Distance_and_Configuration_drawScatterDiagram
-	(Distance me, Configuration him, Graphics g, double xmin, double xmax,
-	double ymin, double ymax, double size_mm, const char32 *mark, int garnish);
+void Distance_and_Configuration_drawScatterDiagram (Distance me, Configuration him, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, int garnish);
 
-Configuration Distance_to_Configuration_torsca (Distance me,
-	int numberOfDimensions);
+Configuration Distance_to_Configuration_torsca (Distance me, int numberOfDimensions);
 
 
 /************** DISSIMILARITY & CONFIGURATION ************************/
 
 
-Configuration Dissimilarity_kruskal (Dissimilarity me, long numberOfDimensions,
-	long metric, int processTies, int stress_formula, double tolerance,
-	long numberOfIterations, long numberOfRepetitions);
+Configuration Dissimilarity_kruskal (Dissimilarity me, long numberOfDimensions, long metric, int processTies, int stress_formula, double tolerance, long numberOfIterations, long numberOfRepetitions);
 
-Configuration Dissimilarity_Configuration_kruskal
-	(Dissimilarity me, Configuration him, int processTies, int stress_formula,
-	double tolerance, long numberOfIterations, long numberOfRepetitions);
+Configuration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configuration him, int processTies, int stress_formula, double tolerance, long numberOfIterations, long numberOfRepetitions);
 
-double Dissimilarity_Configuration_getStress
-	(Dissimilarity me, Configuration him, int processTies, int stress_formula);
+double Dissimilarity_Configuration_getStress (Dissimilarity me, Configuration him, int processTies, int stress_formula);
 
-void Dissimilarity_Configuration_drawShepardDiagram
-	(Dissimilarity me, Configuration him, Graphics g, double xmin, double xmax,
-	double ymin, double ymax, double size_mm, const char32 *mark, int garnish);
+void Dissimilarity_Configuration_drawShepardDiagram (Dissimilarity me, Configuration him, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, int garnish);
 
-Distance Dissimilarity_Configuration_monotoneRegression
-	(Dissimilarity dis, Configuration conf, int processTies);
+Distance Dissimilarity_Configuration_monotoneRegression (Dissimilarity dis, Configuration conf, int processTies);
 
-Distances Dissimilarities_Configuration_monotoneRegression
-	(Dissimilarities dissims, Configuration conf, int processTies);
+Distances Dissimilarities_Configuration_monotoneRegression (Dissimilarities dissims, Configuration conf, int processTies);
 
-void Dissimilarity_Configuration_drawMonotoneRegression
-	(Dissimilarity me, Configuration him, Graphics g, int processTies,
-	double xmin, double xmax, double ymin, double ymax,
-	double size_mm, const char32 *mark, int garnish);
+void Dissimilarity_Configuration_drawMonotoneRegression	(Dissimilarity me, Configuration him, Graphics g, int processTies, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, int garnish);
 
 /************** SIMILARITY & TABLESOFREAL ********************************/
 
@@ -543,8 +494,7 @@ Distances Dissimilarities_to_Distances (Dissimilarities me, int scale);
 /************** DISTANCES & CONFIGURATION ************************************/
 
 
-int Distances_to_Configuration_ytl (Distances me, int numberOfDimensions,
-	int normalizeScalarProducts, Configuration *out1, Salience *out2);
+void Distances_to_Configuration_ytl (Distances me, int numberOfDimensions, int normalizeScalarProducts, autoConfiguration *out1, autoSalience *out2);
 /*
 	F.W. Young, Y. Takane & R. Lewyckyj (1978), Three notes on ALSCAL,
 	Psychometrika 43, 433-435.
@@ -558,30 +508,22 @@ Distances Configurations_to_Distances (Configurations me);
 /************** MDSVEC(S) & DISTANCE(S) **********************************/
 
 
-Distance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee,
-	int processTies);
+Distance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int processTies);
 
-Distances MDSVecs_Distance_monotoneRegression (MDSVecs me, Distance thee,
-	int processTies);
+Distances MDSVecs_Distance_monotoneRegression (MDSVecs me, Distance thee, int processTies);
 
 
 /************** SCALARPRODUCT(S) & ...... **********************************/
 
-void ScalarProduct_Configuration_getVariances (ScalarProduct me,
-	Configuration thee, double *varianceExplained, double *varianceTotal);
+void ScalarProduct_Configuration_getVariances (ScalarProduct me, Configuration thee, double *varianceExplained, double *varianceTotal);
 
-void ScalarProducts_Configuration_Salience_vaf (ScalarProducts me,
-	Configuration thee, Salience him, double *vaf);
+void ScalarProducts_Configuration_Salience_vaf (ScalarProducts me, Configuration thee, Salience him, double *vaf);
 
 ScalarProducts Distances_to_ScalarProducts (Distances me, int normalize);
 
-void ScalarProducts_to_Configuration_ytl (ScalarProducts me,
-	int numberOfDimensions, Configuration *out1, Salience *out2);
+void ScalarProducts_to_Configuration_ytl (ScalarProducts me, int numberOfDimensions, autoConfiguration *out1, autoSalience *out2);
 
-void ScalarProducts_Configuration_Salience_indscal (ScalarProducts sp,
-	Configuration conf, Salience weights, double tolerance,
-	long numberOfIterations, int showProgress,
-	Configuration *out1, Salience *out2, double *vaf);
+void ScalarProducts_Configuration_Salience_indscal (ScalarProducts sp, Configuration conf, Salience weights, double tolerance, long numberOfIterations, int showProgress, autoConfiguration *out1, autoSalience *out2, double *vaf);
 
 /************** INDSCAL & ....... ***********************************/
 
@@ -589,26 +531,25 @@ void ScalarProducts_Configuration_Salience_indscal (ScalarProducts sp,
 void Dissimilarities_indscal (Dissimilarities me, long numberOfDimensions,
 	int processTies, int normalizeScalarProducts, double tolerance,
 	long numberOfIterations, long numberOfRepetitions, int showProgress,
-	Configuration *out1, Salience *out2);
+	autoConfiguration *out1, autoSalience *out2);
 
 void Distances_indscal (Distances me, long numberOfDimensions,
 	int normalizeScalarProducts, double tolerance, long numberOfIterations,
-	long numberOfRepetitions, int showProgress,
-	Configuration *out1, Salience *out2);
+	long numberOfRepetitions, int showProgress,	autoConfiguration *out1, autoSalience *out2);
 
 void Dissimilarities_Configuration_indscal (Dissimilarities me,
 	Configuration conf, int processTies, int normalizeScalarProducts,
 	double tolerance, long numberOfIterations,
-	int showProgress, Configuration *out1, Salience *out2);
+	int showProgress, autoConfiguration *out1, autoSalience *out2);
 
 void Distances_Configuration_indscal (Distances dists, Configuration conf,
 	int normalizeScalarProducts, double tolerance, long numberOfIterations,
-	int showProgress, Configuration *out1, Salience *out2);
+	int showProgress, autoConfiguration *out1, autoSalience *out2);
 
 void Dissimilarities_Configuration_Salience_indscal (Dissimilarities dissims,
 	Configuration conf, Salience w, int processTies,
 	int normalizeScalarProducts, double tolerance, long numberOfIterations,
-	int showProgress, Configuration *out1, Salience *out2, double *vaf);
+	int showProgress, autoConfiguration *out1, autoSalience *out2, double *vaf);
 
 Distances MDSVecs_Configuration_Salience_monotoneRegression (MDSVecs vecs,
 	Configuration conf, Salience weights, int processTies);
@@ -616,7 +557,7 @@ Distances MDSVecs_Configuration_Salience_monotoneRegression (MDSVecs vecs,
 void Distances_Configuration_Salience_indscal (Distances dists,
 	Configuration conf, Salience weights,
 	int normalizeScalarProducts, double tolerance, long numberOfIterations,
-	int showProgress, Configuration *out1, Salience *out2, double *vaf);
+	int showProgress, autoConfiguration *out1, autoSalience *out2, double *vaf);
 
 void Distances_Configuration_Salience_vaf (Distances me, Configuration thee,
 	Salience him, int normalizeScalarProducts, double *vaf);
@@ -624,35 +565,31 @@ void Distances_Configuration_Salience_vaf (Distances me, Configuration thee,
 void Dissimilarities_Configuration_Salience_vaf (Dissimilarities me, Configuration thee,
 	Salience him, int processTies, int normalizeScalarProducts, double *vaf);
 
-void Distances_Configuration_vaf (Distances me, Configuration thee,
-	int normalizeScalarProducts, double *vaf);
+void Distances_Configuration_vaf (Distances me, Configuration thee, int normalizeScalarProducts, double *vaf);
 
 void Dissimilarities_Configuration_vaf (Dissimilarities me, Configuration thee,
 	int processTies, int normalizeScalarProducts, double *vaf);
 
-Salience ScalarProducts_Configuration_to_Salience (ScalarProducts me,
-	Configuration him);
+Salience ScalarProducts_Configuration_to_Salience (ScalarProducts me, Configuration him);
 
-Salience Distances_Configuration_to_Salience (Distances me, Configuration him,
-	int normalizeScalarProducts);
+Salience Distances_Configuration_to_Salience (Distances me, Configuration him, int normalizeScalarProducts);
 
-Salience Dissimilarities_Configuration_to_Salience (Dissimilarities me,
-	Configuration him, int processTies, int normalizeScalarProducts);
+Salience Dissimilarities_Configuration_to_Salience (Dissimilarities me, Configuration him, int processTies, int normalizeScalarProducts);
 
 
 /********* Casts from & to TableOfReal *****************************/
 
-Dissimilarity TableOfReal_to_Dissimilarity (I);
+Dissimilarity TableOfReal_to_Dissimilarity (TableOfReal me);
 
-Similarity TableOfReal_to_Similarity (I);
+Similarity TableOfReal_to_Similarity (TableOfReal me);
 
-Distance TableOfReal_to_Distance (I);
+Distance TableOfReal_to_Distance (TableOfReal me);
 
-Salience TableOfReal_to_Salience (I);
+Salience TableOfReal_to_Salience (TableOfReal me);
 
-Weight TableOfReal_to_Weight (I);
+Weight TableOfReal_to_Weight (TableOfReal me);
 
-ScalarProduct TableOfReal_to_ScalarProduct (I);
+ScalarProduct TableOfReal_to_ScalarProduct (TableOfReal me);
 
 /**************  EXAMPLES  ***************************************************/
 
@@ -663,8 +600,7 @@ Collection INDSCAL_createCarrollWishExample (double noiseStd);
 
 Salience Salience_createCarrollWishExample ();
 
-void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
-	int type, long order, char32 const *interiorKnots, int garnish);
+void drawSplines (Graphics g, double low, double high, double ymin, double ymax, int type, long order, char32 const *interiorKnots, int garnish);
 
 void drawMDSClassRelations (Graphics g);
 

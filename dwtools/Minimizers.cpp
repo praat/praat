@@ -1,6 +1,6 @@
 /* Minimizers.cpp
  *
- * Copyright (C) 2001-2013 David Weenink
+ * Copyright (C) 2001-2013, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,19 +62,14 @@ static void classMinimizer_after (I, Any aclosure) {
 	}
 
 	if (my start == 1) {
-		char32 s[35];
 		Minimizer_drawHistory (me, my gmonitor, 0, my maxNumOfIterations, 0, 1.1 * my history[1], 1);
-		Melder_sprint (s,35, U"Dimension of search space: ", my nParameters);
-		Graphics_textTop (my gmonitor, false, s);
+		Graphics_textTop (my gmonitor, false, Melder_cat (U"Dimension of search space: ", my nParameters));
 	}
 	Graphics_setInner (my gmonitor);
-	Graphics_line (my gmonitor, my iteration, my history[my iteration],
-	               my iteration, my history[my iteration]);
+	Graphics_line (my gmonitor, my iteration, my history[my iteration], my iteration, my history[my iteration]);
 	Graphics_unsetInner (my gmonitor);
-	Melder_monitor ( (double) (my iteration) / my maxNumOfIterations,
-	                  U"Iterations: ", my iteration,
-	                  U", Function calls: ", my funcCalls,
-	                  U", Cost: ", my minimum);
+	Melder_monitor ( (double) (my iteration) / my maxNumOfIterations, U"Iterations: ", my iteration, 
+		U", Function calls: ", my funcCalls, U", Cost: ", my minimum);
 }
 
 void Minimizer_init (I, long nParameters, Daata object) {
@@ -94,7 +89,7 @@ static void monitor_off (Minimizer me) {
 	Melder_monitor (1.1);
 	if (my gmonitor) {
 		Graphics_clearWs (my gmonitor); // DON'T forget (my gmonitor)
-		my gmonitor = NULL;
+		my gmonitor = nullptr;
 	}
 }
 
@@ -112,8 +107,7 @@ void Minimizer_minimize (Minimizer me, long maxNumOfIterations, double tolerance
 			if (my history) {
 				my history++;    /* arrays start at 1 !! */
 			}
-			history = (double *) Melder_realloc (my history, my maxNumOfIterations *
-			                                     (int64) sizeof (double));
+			history = (double *) Melder_realloc (my history, my maxNumOfIterations * (int64) sizeof (double));
 			my history = --history; /* arrays start at 1 !! */
 		}
 		if (monitor) {
@@ -124,11 +118,8 @@ void Minimizer_minimize (Minimizer me, long maxNumOfIterations, double tolerance
 		if (monitor) {
 			monitor_off (me);
 		}
-		if (my success) Melder_casual (U"Minimizer_minimize:",
-		                               U" minimum ", my minimum,
-		                               U" reached \nafter ", my iteration,
-									   U" iterations and ", my funcCalls,
-									   U" function calls.");
+		if (my success) Melder_casual (U"Minimizer_minimize:", U" minimum ", my minimum, U" reached \nafter ", my iteration,
+			U" iterations and ", my funcCalls, U" function calls.");
 	} catch (MelderError) {
 		if (monitor) {
 			monitor_off (me);    // temporarily until better monitor facilities
@@ -188,7 +179,7 @@ void Minimizer_reset (Minimizer me, const double guess[]) {
 	/*
 		Don't use NUMdvector_free: realloc in Minimizer_minimize
 	*/
-	if (my history != 0) {
+	if (my history) {
 		my history++;
 		Melder_free (my history);
 	}
@@ -197,12 +188,11 @@ void Minimizer_reset (Minimizer me, const double guess[]) {
 	my v_reset ();
 }
 
-void Minimizer_drawHistory (Minimizer me, Graphics g, long iFrom, long iTo, double hmin,
-                            double hmax, int garnish) {
-	if (my history == 0) {
+void Minimizer_drawHistory (Minimizer me, Graphics g, long iFrom, long iTo, double hmin, double hmax, int garnish) {
+	if (! my history) {
 		return;
 	}
-	autoNUMvector<double> history (1, my iteration);
+	autoNUMvector<double> history (1, my iteration);  // TODO why copy
 	for (long i = 1; i <= my iteration; i++) {
 		history[i] = my history[i];
 	}
@@ -281,9 +271,7 @@ void structSteepestDescentMinimizer :: v_setParameters (Any parameters) {
 	}
 }
 
-SteepestDescentMinimizer SteepestDescentMinimizer_create (long nParameters, Daata object,
-        double (*func) (Daata object, const double p[]),
-        void (*dfunc) (Daata object, const double p[], double dp[])) {
+SteepestDescentMinimizer SteepestDescentMinimizer_create (long nParameters, Daata object, double (*func) (Daata object, const double p[]), void (*dfunc) (Daata object, const double p[], double dp[])) {
 	try {
 		autoSteepestDescentMinimizer me = Thing_new (SteepestDescentMinimizer);
 		Minimizer_init (me.peek(), nParameters, object);
@@ -301,7 +289,7 @@ Thing_implement (VDSmagtMinimizer, Minimizer, 0);
 
 void structVDSmagtMinimizer :: v_minimize () {
 	int decrease_direction_found = 1;
-	int l_iteration = 1;   // David, dat is gevaarlijk: een locale variabele met dezelfde naam als een member; daarom hernoemd, maar is het correct? yes, we can iterate in steps, therefore local and global counter
+	int l_iteration = 1;   // yes, we can iterate in steps, therefore local and global counter
 	double rtemp, rtemp2;
 
 	// df is estimate of function reduction obtainable during line search
@@ -516,7 +504,7 @@ void structVDSmagtMinimizer :: v_reset () {
 
 void structVDSmagtMinimizer :: v_setParameters (Any parameters) {
 	if (parameters) {
-		VDSmagtMinimizer_parameters  vdspars = (VDSmagtMinimizer_parameters) parameters;  // David, weer link: dezelfde naam,: Nu niet meer
+		VDSmagtMinimizer_parameters  vdspars = (VDSmagtMinimizer_parameters) parameters;
 		lineSearchGradient = vdspars -> lineSearchGradient;
 		lineSearchMaxNumOfIterations = vdspars -> lineSearchMaxNumOfIterations;
 	}

@@ -1,6 +1,6 @@
 /* Strings_extensions.cpp
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -229,7 +229,7 @@ StringsIndex Strings_to_StringsIndex (Strings me) {
 		autoStringsIndex thee = StringsIndex_create (my numberOfStrings);
 		autoPermutation sorted = Strings_to_Permutation (me, 1);
 		long numberOfClasses = 0;
-		char32 *strings = NULL;
+		char32 *strings = nullptr;
 		for (long i = 1; i <= sorted -> numberOfElements; i++) {
 			long index = sorted -> p[i];
 			char32 *stringsi = my strings[index];

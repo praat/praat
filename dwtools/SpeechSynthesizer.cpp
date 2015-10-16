@@ -1,6 +1,6 @@
 /* SpeechSynthesizer.cpp
  *
-//  * Copyright (C) 2011-2013 David Weenink
+//  * Copyright (C) 2011-2013, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,7 +139,7 @@ static void NUMvector_extendNumberOfElements (long elementSize, void **v, long l
 {
 	try {
 		char *result;
-		if (*v == NULL) {
+		if (! *v) {
 			long newhi = lo + extraDemand - 1;
 			result = reinterpret_cast <char *> (NUMvector (elementSize, lo, newhi));
 			*hi = newhi;
@@ -147,7 +147,7 @@ static void NUMvector_extendNumberOfElements (long elementSize, void **v, long l
 			long offset = lo * elementSize;
 			for (;;) {   // not very infinite: 99.999 % of the time once, 0.001 % twice
 				result = reinterpret_cast <char *> (Melder_realloc ((char *) *v + offset, (*hi - lo + 1 + extraDemand) * elementSize));
-				if ((result -= offset) != NULL) break;   // this will normally succeed at the first try
+				if ((result -= offset)) break;   // this will normally succeed at the first try
 				(void) Melder_realloc_f (result + offset, 1);   // ??make "sure" that the second try will succeed
 			}
 			(*hi) += extraDemand;
@@ -257,7 +257,7 @@ const char32 *SpeechSynthesizer_getVoiceVariantCodeFromName (SpeechSynthesizer m
 void SpeechSynthesizer_initSoundBuffer (SpeechSynthesizer me) {
 	my d_wavCapacity = 2 * 22050; // 2 seconds
 	my d_wav = NUMvector<int> (1, my d_wavCapacity);
-	int fsamp = espeak_Initialize (AUDIO_OUTPUT_SYNCHRONOUS, 0, NULL, espeakINITIALIZE_PHONEME_EVENTS); // 4000 ms
+	int fsamp = espeak_Initialize (AUDIO_OUTPUT_SYNCHRONOUS, 0, nullptr, espeakINITIALIZE_PHONEME_EVENTS); // 4000 ms
 	if (fsamp == -1) {
 		Melder_throw (U"Internal espeak error.");
 	}
@@ -474,7 +474,7 @@ static void espeakdata_SetVoiceByName (const char *name, const char *variantName
 	memset(&voice_selector, 0, sizeof(voice_selector));
 	voice_selector.name = Melder_peek32to8 (Melder_cat (Melder_peek8to32 (name), U"+", Melder_peek8to32 (variantName)));  // include variant name in voice stack ??
 
-	if (LoadVoice (name,1) != NULL)
+	if (LoadVoice (name,1))
 	{
 		LoadVoice(variantName, 2);
 		DoVoiceChange(voice);
@@ -484,7 +484,7 @@ static void espeakdata_SetVoiceByName (const char *name, const char *variantName
 
 Sound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, TextGrid *tg, Table *events) {
 	try {
-		int fsamp = espeak_Initialize (AUDIO_OUTPUT_SYNCHRONOUS, 0, NULL, // 5000ms
+		int fsamp = espeak_Initialize (AUDIO_OUTPUT_SYNCHRONOUS, 0, nullptr, // 5000ms
 			espeakINITIALIZE_PHONEME_EVENTS|espeakINITIALIZE_PHONEME_IPA);
 		if (fsamp == -1) Melder_throw (U"Internal espeak error.");
 		int synth_flags = espeakCHARS_WCHAR;
@@ -513,9 +513,9 @@ Sound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, Text
 		
 		#ifdef _WIN32
                 wchar_t *textW = Melder_peek32toW (text);
-                espeak_Synth (textW, wcslen (textW) + 1, 0, POS_CHARACTER, 0, synth_flags, NULL, me);
+                espeak_Synth (textW, wcslen (textW) + 1, 0, POS_CHARACTER, 0, synth_flags, nullptr, me);
 		#else
-                espeak_Synth (text, str32len (text) + 1, 0, POS_CHARACTER, 0, synth_flags, NULL, me);
+                espeak_Synth (text, str32len (text) + 1, 0, POS_CHARACTER, 0, synth_flags, nullptr, me);
 		#endif
 
 		espeak_Terminate ();
@@ -525,7 +525,7 @@ Sound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, Text
 			thee.reset (Sound_resample (thee.peek(), my d_samplingFrequency, 50));
 		}
 		my d_numberOfSamples = 0; // re-use the wav-buffer
-		if (tg != NULL) {
+		if (tg) {
 			double xmin = Table_getNumericValue_Assert (my d_events, 1, 1);
 			if (xmin > thy xmin) xmin = thy xmin;
 			double xmax = Table_getNumericValue_Assert (my d_events, my d_events -> rows -> size, 1);
@@ -534,10 +534,10 @@ Sound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, Text
 			autoTextGrid atg2 =  TextGrid_extractPart (atg1.peek(), thy xmin, thy xmax, 0);
 			*tg = atg2.transfer();
 		}
-		if (events != NULL) {
+		if (events) {
 			Table_setEventTypeString (my d_events);
 			*events = my d_events;
-			my d_events = 0;
+			my d_events = nullptr;
 		}
 		forget (my d_events);
 		return thee.transfer();

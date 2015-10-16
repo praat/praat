@@ -1,6 +1,6 @@
 /* TableOfReal_extensions.cpp
  *
- * Copyright (C) 1993-2012, 2014 David Weenink
+ * Copyright (C) 1993-2012, 2014, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@
 #include "regularExp.h"
 #include "Formula.h"
 
-#define EMPTY_STRING(s) ((s) == NULL || s[0] == '\0')
+#define EMPTY_STRING(s) (! (s) || s[0] == '\0')
 #define MAX(m,n) ((m) > (n) ? (m) : (n))
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
 
@@ -151,7 +151,7 @@ void TableOfReal_copyOneRowWithLabel (TableOfReal me, TableOfReal thee, long myr
 }
 
 int TableOfReal_hasRowLabels (TableOfReal me) {
-	if (my rowLabels == NULL) {
+	if (! my rowLabels) {
 		return 0;
 	}
 	for (long i = 1; i <= my numberOfRows; i++) {
@@ -163,7 +163,7 @@ int TableOfReal_hasRowLabels (TableOfReal me) {
 }
 
 int TableOfReal_hasColumnLabels (TableOfReal me) {
-	if (my columnLabels == NULL) {
+	if (! my columnLabels) {
 		return 0;
 	}
 	for (long i = 1; i <= my numberOfColumns; i++) {
@@ -286,9 +286,8 @@ TableOfReal TableOfReal_transpose (TableOfReal me) {
 	}
 }
 
-int TableOfReal_to_Pattern_and_Categories (TableOfReal me, long fromrow, long torow, long fromcol, long tocol,
-        Pattern *p, Categories *c) {
-	*p = 0; *c = 0;
+int TableOfReal_to_Pattern_and_Categories (TableOfReal me, long fromrow, long torow, long fromcol, long tocol, Pattern *p, Categories *c) {
+	*p = nullptr; *c = nullptr;
 	try {
 		long ncol = my numberOfColumns, nrow = my numberOfRows;
 
@@ -346,7 +345,7 @@ void TableOfReal_getColumnExtrema (TableOfReal me, long col, double *min, double
 }
 
 void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, const char32 *rows, long colb, long cole, double ymin,
-                                      double ymax, double xoffsetFraction, double interbarFraction, double interbarsFraction, const char32 *greys, int garnish) {
+	double ymax, double xoffsetFraction, double interbarFraction, double interbarsFraction, const char32 *greys, int garnish) {
 	if (colb >= cole) {
 		colb = 1; cole = my numberOfColumns;
 	}
@@ -379,16 +378,16 @@ void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, const char32 *
 	long ngreys;
 	autoNUMvector<double> igreys (NUMstring_to_numbers (greys, &ngreys), 1);
 
-	Graphics_setWindow (g, 0, 1, ymin, ymax);
+	Graphics_setWindow (g, 0.0, 1.0, ymin, ymax);
 	Graphics_setInner (g);
 
 	long ncols = cole - colb + 1;
-	double bar_width = 1 / (ncols * nrows + 2 * xoffsetFraction + (ncols - 1) * interbarsFraction + ncols * (nrows - 1) * interbarFraction);
+	double bar_width = 1.0 / (ncols * nrows + 2.0 * xoffsetFraction + (ncols - 1) * interbarsFraction + ncols * (nrows - 1) * interbarFraction);
 	double dx = (interbarsFraction + nrows + (nrows - 1) * interbarFraction) * bar_width;
 
 	for (long i = 1; i <= nrows; i++) {
 		long irow = (long) floor (irows[i]);
-		double xb = xoffsetFraction * bar_width + (i - 1) * (1 + interbarFraction) * bar_width;
+		double xb = xoffsetFraction * bar_width + (i - 1) * (1.0 + interbarFraction) * bar_width;
 
 		double x1 = xb;
 		double grey = i <= ngreys ? igreys[i] : igreys[ngreys];
@@ -465,8 +464,8 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 		NUMvector_extrema (y.peek(), 1, nPoints, &ymin, &ymax);
 	}
 	if (ymax <= ymin) {
-		ymax += 1;
-		ymin -= 1;
+		ymax += 1.0;
+		ymin -= 1.0;
 	}
 
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
@@ -480,12 +479,12 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 		char32 const *label;
 		if (i <= nr) {
 			label = my rowLabels[i];
-			if (label == NULL) {
+			if (! label) {
 				label = U"?__r_";
 			}
 		} else {
 			label = my columnLabels[i - nr];
-			if (label == NULL) {
+			if (! label) {
 				label = U"?__c_";
 			}
 		}
@@ -634,7 +633,7 @@ void TableOfReal_labelsFromCollectionItemNames (TableOfReal me, Collection thee,
 }
 
 void TableOfReal_centreColumns (TableOfReal me) {
-	NUMcentreColumns (my data, 1, my numberOfRows, 1, my numberOfColumns, NULL);
+	NUMcentreColumns (my data, 1, my numberOfRows, 1, my numberOfColumns, nullptr);
 }
 
 void TableOfReal_and_Categories_setRowLabels (TableOfReal me, Categories thee) {
@@ -673,7 +672,7 @@ void TableOfReal_centreColumns_byRowLabel (TableOfReal me) {
 			label = li; index = i;
 		}
 	}
-	NUMcentreColumns (my data, index, my numberOfRows, 1, my numberOfColumns, NULL);
+	NUMcentreColumns (my data, index, my numberOfRows, 1, my numberOfColumns, nullptr);
 }
 
 double TableOfReal_getRowSum (TableOfReal me, long index) {
@@ -681,7 +680,7 @@ double TableOfReal_getRowSum (TableOfReal me, long index) {
 		return NUMundefined;
 	}
 
-	double sum = 0;
+	double sum = 0.0;
 	for (long j = 1; j <= my numberOfColumns; j++) {
 		sum += my data[index][j];
 	}
@@ -709,7 +708,7 @@ double TableOfReal_getColumnSum (TableOfReal me, long index) {
 		return NUMundefined;
 	}
 
-	double sum = 0;
+	double sum = 0.0;
 	for (long i = 1; i <= my numberOfRows; i++) {
 		sum += my data[i][index];
 	}
@@ -717,7 +716,7 @@ double TableOfReal_getColumnSum (TableOfReal me, long index) {
 }
 
 double TableOfReal_getGrandSum (TableOfReal me) {
-	double sum = 0;
+	double sum = 0.0;
 	for (long i = 1; i <= my numberOfRows; i++) {
 		for (long j = 1; j <= my numberOfColumns; j++) {
 			sum += my data[i][j];
@@ -755,7 +754,7 @@ void TableOfReal_normalizeTable (TableOfReal me, double norm) {
 }
 
 double TableOfReal_getTableNorm (TableOfReal me) {
-	double sumsq = 0;
+	double sumsq = 0.0;
 	for (long i = 1; i <= my numberOfRows; i++) {
 		for (long j = 1; j <= my numberOfColumns; j++) {
 			sumsq += my data[i][j] * my data[i][j];
@@ -769,7 +768,7 @@ int TableOfReal_checkPositive (TableOfReal me) {
 
 	for (long i = 1; i <= my numberOfRows; i++) {
 		for (long j = 1; j <= my numberOfColumns; j++) {
-			if (my data[i][j] < 0) {
+			if (my data[i][j] < 0.0) {
 				negative ++; break;
 			}
 		}
@@ -827,18 +826,18 @@ void TableOfReal_drawScatterPlotMatrix (TableOfReal me, Graphics g, long colb, l
 		xmin[j] -= extra; xmax[j] += extra;
 	}
 
-	Graphics_setWindow (g, 0, n, 0, n);
+	Graphics_setWindow (g, 0.0, n, 0.0, n);
 	Graphics_setInner (g);
-	Graphics_line (g, 0, n, n, n);
-	Graphics_line (g, 0, 0, 0, n);
+	Graphics_line (g, 0.0, n, n, n);
+	Graphics_line (g, 0.0, 0.0, 0.0, n);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 
 	for (long i = 1; i <= n; i++) {
 		long xcol, ycol = colb + i - 1;
 		const char32 *mark;
 		char32 label[40];
-		Graphics_line (g, 0, n - i, n, n - i);
-		Graphics_line (g, i, n, i, 0);
+		Graphics_line (g, 0.0, n - i, n, n - i);
+		Graphics_line (g, i, n, i, 0.0);
 		for (long j = 1; j <= n; j++) {
 			xcol = colb + j - 1;
 			if (i == j) {
@@ -863,11 +862,11 @@ void TableOfReal_drawScatterPlotMatrix (TableOfReal me, Graphics g, long colb, l
 
 void TableOfReal_drawAsSquares_area (TableOfReal me, Graphics g, double zmin, double zmax, double cellSizeFactor, int randomFillOrder, int garnish) {
 	try {
-		cellSizeFactor = cellSizeFactor <= 0 ? 1 : cellSizeFactor;
+		cellSizeFactor = cellSizeFactor <= 0.0 ? 1.0 : cellSizeFactor;
 		if (zmin == 0 && zmax == 0) {
 			NUMmatrix_extrema<double> (my data, 1, my numberOfRows, 1, my numberOfColumns, &zmin, &zmax);
 		}
-		double xmin = 0, xmax = my numberOfColumns + 1, ymin = 0, ymax = my numberOfRows + 1;
+		double xmin = 0.0, xmax = my numberOfColumns + 1.0, ymin = 0.0, ymax = my numberOfRows + 1.0;
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 		Graphics_setInner (g);
 		Graphics_matrixAsSquares (g, my data, my numberOfRows, my numberOfColumns, zmin, zmax, cellSizeFactor, randomFillOrder);
@@ -901,12 +900,12 @@ void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g, long icx, long icy
 
 	if (xmax == xmin) {
 		NUMdmatrix_getColumnExtrema (my data, rowb, rowe, icx, & xmin, & xmax);
-		double tmp = xmax - xmin == 0 ? 0.5 : 0.0;
+		double tmp = xmax - xmin == 0.0 ? 0.5 : 0.0;
 		xmin -= tmp; xmax += tmp;
 	}
 	if (ymax == ymin) {
 		NUMdmatrix_getColumnExtrema (my data, rowb, rowe, icy, & ymin, & ymax);
-		double tmp = ymax - ymin == 0 ? 0.5 : 0.0;
+		double tmp = ymax - ymin == 0.0 ? 0.5 : 0.0;
 		ymin -= tmp; ymax += tmp;
 	}
 
@@ -919,8 +918,8 @@ void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g, long icx, long icy
 	for (long i = rowb; i <= rowe; i++) {
 		double x = my data[i][icx], y = my data[i][icy];
 
-		if ( ( (xmin < xmax && x >= xmin && x <= xmax) || (xmin > xmax && x <= xmin && x >= xmax)) &&
-		        ( (ymin < ymax && y >= ymin && y <= ymax) || (ymin > ymax && y <= ymin && y >= ymax))) {
+		if (((xmin < xmax && x >= xmin && x <= xmax) || (xmin > xmax && x <= xmin && x >= xmax)) &&
+		        ((ymin < ymax && y >= ymin && y <= ymax) || (ymin > ymax && y <= ymin && y >= ymax))) {
 			const char32 *plotLabel = useRowLabels ? my rowLabels[i] : label;
 			if (! NUMstring_containsPrintableCharacter (plotLabel)) {
 				noLabel++;
@@ -985,9 +984,9 @@ TablesOfReal TablesOfReal_create () {
 TableOfReal TablesOfReal_sum (TablesOfReal me) {
 	try {
 		if (my size <= 0) {
-			return 0;
+			return nullptr;
 		}
-		autoTableOfReal thee = Data_copy ( (TableOfReal) my item[1]);
+		autoTableOfReal thee = Data_copy ((TableOfReal) my item[1]);
 
 		for (long i = 2; i <= my size; i++) {
 			TableOfReal him = (TableOfReal) my item[i];
@@ -1182,9 +1181,9 @@ void TableOfReal_changeColumnLabels (TableOfReal me, const char32 *search, const
 long TableOfReal_getNumberOfLabelMatches (TableOfReal me, const char32 *search, int columnLabels, int use_regexp) {
 	long nmatches = 0, numberOfLabels = my numberOfRows;
 	char32 **labels = my rowLabels;
-	regexp *compiled_regexp = 0;
+	regexp *compiled_regexp = nullptr;
 
-	if (search == 0 || str32len (search) == 0) {
+	if (! search || str32len (search) == 0) {
 		return 0;
 	}
 	if (columnLabels) {
@@ -1195,11 +1194,11 @@ long TableOfReal_getNumberOfLabelMatches (TableOfReal me, const char32 *search, 
 		compiled_regexp = CompileRE_throwable (search, 0);
 	}
 	for (long i = 1; i <= numberOfLabels; i++) {
-		if (labels[i] == 0) {
+		if (! labels[i]) {
 			continue;
 		}
 		if (use_regexp) {
-			if (ExecRE (compiled_regexp, 0, labels[i], NULL, 0, U'\0', U'\0', 0, 0, 0)) {
+			if (ExecRE (compiled_regexp, 0, labels[i], nullptr, 0, U'\0', U'\0', 0, 0, 0)) {
 				nmatches++;
 			}
 		} else if (str32equ (labels[i], search)) {
@@ -1212,8 +1211,7 @@ long TableOfReal_getNumberOfLabelMatches (TableOfReal me, const char32 *search, 
 	return nmatches;
 }
 
-void TableOfReal_drawVectors (TableOfReal me, Graphics g, long colx1, long coly1, long colx2, long coly2, double xmin, double xmax,
-                              double ymin, double ymax, int vectype, int labelsize, int garnish) {
+void TableOfReal_drawVectors (TableOfReal me, Graphics g, long colx1, long coly1, long colx2, long coly2, double xmin, double xmax, double ymin, double ymax, int vectype, int labelsize, int garnish) {
 	long nx = my numberOfColumns, ny = my numberOfRows;
 	int fontsize = Graphics_inqFontSize (g);
 
@@ -1295,8 +1293,7 @@ void TableOfReal_drawVectors (TableOfReal me, Graphics g, long colx1, long coly1
 	}
 }
 
-void TableOfReal_drawColumnAsDistribution (TableOfReal me, Graphics g, int column, double minimum, double maximum, long nBins,
-        double freqMin, double freqMax, int cumulative, int garnish) {
+void TableOfReal_drawColumnAsDistribution (TableOfReal me, Graphics g, int column, double minimum, double maximum, long nBins, double freqMin, double freqMax, int cumulative, int garnish) {
 	if (column < 1 || column > my numberOfColumns) {
 		return;
 	}
@@ -1321,10 +1318,10 @@ TableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, long *index, int revers
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
 
 		for (long i = 1; i <= my numberOfRows; i++) {
-			long    myindex = reverse ? i : index[i];
-			long   thyindex = reverse ? index[i] : i;
+			long myindex = reverse ? i : index[i];
+			long thyindex = reverse ? index[i] : i;
 			const char32 *mylabel = my rowLabels[myindex];
-			double  *mydata = my data[myindex];
+			double *mydata = my data[myindex];
 			double *thydata = thy data[thyindex];
 
 			// Copy the row label
@@ -1397,7 +1394,7 @@ static void NUMstatsColumns (double **a, long rb, long re, long cb, long ce, int
 
 TableOfReal TableOfReal_meansByRowLabels (TableOfReal me, int expand, int stats) {
 	try {
-		autoTableOfReal thee = 0;
+		autoTableOfReal thee;
 		autoNUMvector<long> index (TableOfReal_getSortedIndexFromRowLabels (me), 1);
 		autoTableOfReal sorted = TableOfReal_sortRowsByIndex (me, index.peek(), 0);
 
@@ -1499,11 +1496,11 @@ TableOfReal TableOfReal_choleskyDecomposition (TableOfReal me, int upper, int in
 
 		if (upper) {
 			for (long i = 2; i <= n; i++) for (long j = 1; j < i; j++) {
-					thy data[i][j] = 0;
+					thy data[i][j] = 0.0;
 				}
 		} else {
 			for (long i = 1; i < n; i++) for (long j = i + 1; j <= n; j++) {
-					thy data[i][j] = 0;
+					thy data[i][j] = 0.0;
 				}
 		}
 		char uplo = upper ? 'L' : 'U';
@@ -1537,7 +1534,7 @@ TableOfReal TableOfReal_appendColumns (TableOfReal me, TableOfReal thee) {
 			(my rowLabels[i] == thy rowlabels[i], i=1..my numberOfRows) or
 			(my rowLabels[i] == 'empty', i=1..my numberOfRows)  or
 			(thy rowLabels[i] == 'empty', i=1..my numberOfRows);
-			'empty':  NULL or \w*
+			'empty':  nullptr or \w*
 		*/
 		autoTableOfReal him = TableOfReal_create (my numberOfRows, ncols);
 		NUMstrings_copyElements (my rowLabels, his rowLabels, 1, my numberOfRows);
@@ -1574,8 +1571,7 @@ TableOfReal TableOfReal_appendColumnsMany (Collection me) {
 				Melder_throw (U"Numbers of rows in item ", itab, U" differs from previous.");
 			}
 		}
-		autoTableOfReal him = Thing_new (TableOfReal);
-		TableOfReal_init (him.peek(), nrow, ncol);
+		autoTableOfReal him = TableOfReal_create (nrow, ncol);
 		/* Unsafe: new attributes not initialized. */
 		for (long irow = 1; irow <= nrow; irow++) {
 			TableOfReal_setRowLabel (him.peek(), irow, thy rowLabels [irow]);
@@ -1625,8 +1621,8 @@ double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *tnb, d
 			*tnb = 4 * n;
 		}
 		{
-			double djk, djj, sumjk = 0, sumj = 0;
-			double b1 = beta2 / 2, b2 = b1 / (1.0 + beta2);
+			double djk, djj, sumjk = 0.0, sumj = 0.0;
+			double b1 = beta2 / 2.0, b2 = b1 / (1.0 + beta2);
 			/* Heinze & Wagner (1997), page 3
 				We use d[j][k] = ||Y[j]-Y[k]||^2 = (Y[j]-Y[k])'S^(-1)(Y[j]-Y[k])
 				So d[j][k]= d[k][j] and d[j][j] = 0
@@ -1634,7 +1630,7 @@ double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *tnb, d
 			for (long j = 1; j <= n; j++) {
 				for (long k = 1; k < j; k++) {
 					djk = NUMmahalanobisDistance_chi (thy lowerCholesky, my data[j], my data[k], p, p);
-					sumjk += 2 * exp (-b1 * djk); // factor 2 because d[j][k] == d[k][j]
+					sumjk += 2.0 * exp (-b1 * djk); // factor 2 because d[j][k] == d[k][j]
 				}
 				sumjk += 1; // for k == j
 				djj = NUMmahalanobisDistance_chi (thy lowerCholesky, my data[j], thy centroid, p, p);
@@ -1642,10 +1638,10 @@ double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *tnb, d
 			}
 			*tnb = (1.0 / n) * sumjk - 2.0 * pow (1.0 + beta2, - p2) * sumj + n * pow (gamma, - p2); // n *
 		}
-		double mu = 1.0 - pow (gamma, -p2) * (1.0 + p * beta2 / gamma + p * (p + 2) * beta4 / (2 * gamma2));
+		double mu = 1.0 - pow (gamma, -p2) * (1.0 + p * beta2 / gamma + p * (p + 2) * beta4 / (2.0 * gamma2));
 		double var = 2.0 * pow (1 + 4 * beta2, -p2)
-		             + 2.0 * pow (gamma,  -p) * (1.0 + 2 * p * beta4 / gamma2  + 3 * p * (p + 2) * beta8 / (4 * gamma4))
-		             - 4.0 * pow (delta, -p2) * (1.0 + 3 * p * beta4 / (2 * delta) + p * (p + 2) * beta8 / (2 * delta2));
+		             + 2.0 * pow (gamma,  -p) * (1.0 + 2 * p * beta4 / gamma2  + 3 * p * (p + 2) * beta8 / (4.0 * gamma4))
+		             - 4.0 * pow (delta, -p2) * (1.0 + 3 * p * beta4 / (2 * delta) + p * (p + 2) * beta8 / (2.0 * delta2));
 		double mu2 = mu * mu;
 		*lnmu = 0.5 * log (mu2 * mu2 / (mu2 + var)); //log (sqrt (mu2 * mu2 /(mu2 + var)));
 		*lnvar = sqrt (log ( (mu2 + var) / mu2));
@@ -1705,8 +1701,8 @@ TableOfReal TableOfReal_and_TableOfReal_columnCorrelations (TableOfReal me, Tabl
 		autoNUMmatrix<double> my_data (NUMmatrix_copy (my data, 1, my numberOfRows, 1, my numberOfColumns), 1, 1);
 		autoNUMmatrix<double> thy_data (NUMmatrix_copy (thy data, 1, thy numberOfRows, 1, thy numberOfColumns), 1, 1);
 		if (center) {
-			NUMcentreColumns (my_data.peek(), 1, my numberOfRows, 1, my numberOfColumns, NULL);
-			NUMcentreColumns (thy_data.peek(), 1, thy numberOfRows, 1, thy numberOfColumns, NULL);
+			NUMcentreColumns (my_data.peek(), 1, my numberOfRows, 1, my numberOfColumns, nullptr);
+			NUMcentreColumns (thy_data.peek(), 1, thy numberOfRows, 1, thy numberOfColumns, nullptr);
 		}
 		if (normalize) {
 			NUMnormalizeColumns (my_data.peek(), my numberOfRows, my numberOfColumns, 1);
@@ -1717,7 +1713,7 @@ TableOfReal TableOfReal_and_TableOfReal_columnCorrelations (TableOfReal me, Tabl
 
 		for (long j = 1; j <= my numberOfColumns; j++) {
 			for (long k = 1; k <= thy numberOfColumns; k++) {
-				double ctmp = 0;
+				double ctmp = 0.0;
 				for (long i = 1; i <= my numberOfRows; i++) {
 					ctmp += my_data[i][j] * thy_data[i][k];
 				}

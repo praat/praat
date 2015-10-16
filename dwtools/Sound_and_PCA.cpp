@@ -1,6 +1,6 @@
 /* Sound_and_PCA.cpp
  *
- * Copyright (C) 2012 David Weenink
+ * Copyright (C) 2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +75,7 @@ Sound Sound_and_PCA_to_Sound_pc_selectedChannels (Sound me, PCA thee, long numbe
 }
 
 Sound Sound_and_PCA_principalComponents (Sound me, PCA thee, long numberOfComponents) {
-	return Sound_and_PCA_to_Sound_pc_selectedChannels (me, thee, numberOfComponents, NULL, 0);
+	return Sound_and_PCA_to_Sound_pc_selectedChannels (me, thee, numberOfComponents, nullptr, 0);
 }
 
 Sound Sound_and_PCA_whitenSelectedChannels (Sound me, PCA thee, long numberOfComponents, long *channels, long numberOfChannels) {
@@ -116,7 +116,7 @@ Sound Sound_and_PCA_whitenSelectedChannels (Sound me, PCA thee, long numberOfCom
 }
 
 Sound Sound_and_PCA_whitenChannels (Sound me, PCA thee, long numberOfComponents) {
-	return Sound_and_PCA_whitenSelectedChannels (me, thee, numberOfComponents, NULL, 0);
+	return Sound_and_PCA_whitenSelectedChannels (me, thee, numberOfComponents, nullptr, 0);
 }
 
 /* End of file Sound_and_PCA.cpp */

@@ -1,6 +1,6 @@
 /* manual_MDS.cpp
  *
- * Copyright (C) 1993-2014 David Weenink
+ * Copyright (C) 1993-2014, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,7 +98,7 @@ NORMAL (U"where %S__%i_ is a known symmetric %numberOfPoints \\xx %numberOfPoint
 	"the diagonal %numberOfDimensions \\xx %numberOfDimensions weight matrix for source %i. The function "
 	"above has no analytical solution for %X and the %W__%i_. It can be solved, however, "
 	"by an iterative procedure which Carroll & Chang have christened CANDECOMP "
-	"(CANonical DECOMPosition).  This method minimizes, instead of the function "
+	"(CANonical DECOMPosition). This method minimizes, instead of the function "
 	"given above, the following function:")
 LIST_ITEM (U"%g(%X, %Y, %W__1_,..., %W__%numberOfSources_) = \\su__%i=1..%numberOfSources_ "
 	"| %S__%i_ \\-- %X%W__%i_%Y\\'p |^2")
@@ -361,7 +361,7 @@ NORMAL (U"Sometimes the criterion used in a @@Procrustes transform@ is too "
 FORMULA (U"%f(#T) = \\su__%i=1..%numberOfDimensions_ #t\\'p__%i_#A\\'p#b__%i_ /"
 	" ((#t\\'p__%i_#A\\'p#A#t__%i_)^^1/2^(#b\\'p__%i_#b__%i_)^^1/2^),")
 NORMAL (U"where #t\\'p__%i_ and #b\\'p__%i_ are the %i^^th^ column of #T and "
-	"#B, respectively.  A direct solution for #T is not available, it can only "
+	"#B, respectively. A direct solution for #T is not available, it can only "
 	"be obtained by an iterative procedure. The implemented algorithm is from "
 	"@@Kiers & Groenen (1996)@ and shows excellent convergence properties.")
 MAN_END
@@ -616,7 +616,7 @@ INTRO (U"Creates a @Dissimilarity object that bears the name %R. The "
 	"transformation of the distances between the 32 two-dimensional points "
 	"that make up the capital letter #R.")
 PICTURE (4.0, 4.0, drawLetterRConfigurationExample)
-NORMAL (U"All 32 \\.c (32-1)/2 interpoint distances  were subjected to the "
+NORMAL (U"All 32 \\.c (32-1)/2 interpoint distances were subjected to the "
 	"transformation: ")
 FORMULA (U"%dissimilarity__%ij_^ = %distance__%ij_^2 + 5 + %noiseRange \\.c #u, ")
 NORMAL (U"where #u is a uniform random variable between 0 and 1.")
@@ -802,7 +802,7 @@ NORMAL (U"There is no feasible way to be certain that you have found the "
 	"on a %linear relation between distance and (dis)similarity, it gives a "
 	"very good approximation of the optimal #Configuration and "
 	"the #Minimizer practically always finds the global minimum from it "
-	"(I guess...).  A way to find out is to try the %numberOfRepetitions "
+	"(I guess...). A way to find out is to try the %numberOfRepetitions "
 	"parameter which gives you the possibility to fit many times and each "
 	"time start with another random initial configuration.")
 ENTRY (U"Algorithm")
@@ -1346,7 +1346,7 @@ ENTRY (U"Representation functions")
 NORMAL (U"In the application of MDS we try to find a configuration #X such that "
 	"the following relations are satisfied as well as possible:")
 FORMULA (U"%f(%\\de__%ij_) \\~~ %d__%ij_(#X)")
-NORMAL (U"The numbers that result from applying  %f on  %\\de__%ij_ are sometimes "
+NORMAL (U"The numbers that result from applying %f on %\\de__%ij_ are sometimes "
 	"called @disparities %d\\'p__%ij_. In most applications of MDS, besides "
 	"the configuration #X, also the function %f is not "
 	"completely specified, i.e., the exact parameters of %f are unknown and "
@@ -1382,7 +1382,7 @@ NORMAL (U"The most important object types used in Praat for MDS and the conversi
 PICTURE (6, 6, drawMDSClassRelations)
 MAN_END
 
-MAN_BEGIN (U"Measurement levels", U"djmw", 19970502)
+MAN_BEGIN (U"Measurement levels", U"djmw", 20151014)
 INTRO (U"According to the measurement theory of @@Stevens (1951)@, there are four measurement levels, namely "
 	"#Nominal, #Ordinal, #Interval and #Ratio. In the light of multidimensional scaling, the first "
 	"two levels, Nominal and Ordinal, are often called %non-%metric. The last two are %metric.")
@@ -1390,7 +1390,7 @@ MAN_END
 
 MAN_BEGIN (U"Multidimensional scaling", U"djmw", 20140117)
 INTRO (U"This tutorial describes how you can use P\\s{RAAT} to "
-	"perform ##M#ulti##D#imensional ##S#caling (MDS) analysis.")
+	"perform ##M#ulti ##D#imensional ##S#caling (MDS) analysis.")
 NORMAL (U"MDS helps us to represent %dissimilarities between objects as "
 	"%distances in a %%Euclidean space%. In effect, the more dissimilar two "
 	"objects are, the larger the distance between the objects in the Euclidean "
@@ -1411,13 +1411,13 @@ NORMAL (U"Let us first create a Dissimilarity object. You can for example "
 	"distortions between the dissimilarities and the distances.")
 NORMAL (U"Now you can do the following, for example:")
 NORMAL (U"Select the Dissimilarity and choose @@Dissimilarity: To Configuration "
-	"(monotone mds)...|To Configuration (monotone mds)...@, and  you perform "
+	"(monotone mds)...|To Configuration (monotone mds)...@, and you perform "
 	"a @@Kruskal analysis|kruskal@-like multidimensional scaling which "
 	"results in a new "
 	"Configuration object. (This Configuration could subsequently be used as "
 	"the starting Configuration for a new MDS-analysis!).")
 NORMAL (U"Select the Configuration and choose @@Configuration: Draw...|Draw...@ "
-	"and the following picture will result")
+	"and the following picture might result.")
 PICTURE (4.0, 4.0, drawLetterRConfigurationExample2)
 NORMAL (U"The following script summarizes:")
 CODE (U"dissimilarity = Create letter R example: 32.5")
@@ -1429,7 +1429,7 @@ NORMAL (U"Select the Dissimilarity and the Configuration together and query for 
 	"@@Dissimilarity & Configuration: Get stress (monotone mds)...|"
 	"Get stress (monotone mds)...@. ")
 NORMAL (U"The following script summarizes:")
-CODE (U"selectObject (dissimilarity, configuration)")
+CODE (U"selectObject: dissimilarity, configuration")
 CODE (U"Get stress (monotone mds): \"Primary approach\", \"Kruskals's "
 	"stress-1\"")
 ENTRY (U"The Shepard diagram")
@@ -1438,7 +1438,7 @@ NORMAL (U"Select the Dissimilarity and the Configuration together to "
 	"draw the Shepard diagram@.")
 PICTURE (4.0, 4.0, drawLetterRShepard)
 NORMAL (U"The following script summarizes:")
-CODE (U"selectObject (dissimilarity, configuration)")
+CODE (U"selectObject: dissimilarity, configuration")
 CODE (U"Draw Shepard diagram: 0, 200, 0, 2.2, 1, \"+\", \"yes\"")
 ENTRY (U"The (monotone) regression")
 NORMAL (U"Select the Dissimilarity and the Configuration together to "
@@ -1446,7 +1446,7 @@ NORMAL (U"Select the Dissimilarity and the Configuration together to "
 	"draw the monotone regression@ of distances on dissimilarities.")
 PICTURE (4.0, 4.0, drawLetterRRegression)
 NORMAL (U"The following script summarizes:")
-CODE (U"selectObject (dissimilarity, configuration)")
+CODE (U"selectObject: dissimilarity, configuration")
 CODE (U"Draw monotone regresion: \"Primary approach\", 0, 200, 0, 2.2, 1, \"+\", \"yes\"")
 NORMAL (U"When you enter %noiseRange = 0 in the form for the letter #R, perfect "
 	"reconstruction is possible. The Shepard diagram then will show "
@@ -1460,29 +1460,28 @@ NORMAL (U"When you can't have equal confidence in all the number in the "
 	"individual weights in the Weight object with the @@TableOfReal: Set "
 	"value...| Set value...@ command (remember: make %w__%ij_ = %w__%ji_).")
 NORMAL (U"The following script summarizes:")
-CODE (U"selectObject (dissimilarity)")
+CODE (U"selectObject: dissimilarity")
 CODE (U"weight = To Weight")
 CODE (U"! Change [i][j] and [j][i] cells in the Weight object")
 CODE (U"Set value: i, j, val")
 CODE (U"Set value: j, i, val")
 CODE (U"...")
 CODE (U"! now we can do a weighed analysis.")
-CODE (U"selectObject (dissimilarity, weight)")
+CODE (U"selectObject: dissimilarity, weight")
 CODE (U"To Configuration (monotone mds): 2, \"Primary approach\", 0.00001, 50, 1)")
 NORMAL (U"You can also query the @stress values with three objects selected. "
 	"The following script summarizes:")
-CODE (U"selectObject (dissimilarity, weight, configuration)")
-CODE (U"Get stress (monotone mds): \"Primary approach\", \"Kruskals's "
-	"stress-1\"")
+CODE (U"selectObject: dissimilarity, weight, configuration")
+CODE (U"Get stress (monotone mds): \"Primary approach\", \"Kruskals's stress-1\"")
 ENTRY (U"Using a start Configuration")
 NORMAL (U"You could also use a Configuration object as a starting "
 	"configuration in the minimization process. "
-	"Lets assume that you are not satisfied with the stress value from the "
+	"Let's assume that you are not satisfied with the stress value from the "
 	"Configuration object that you obtained in the previous analysis. "
 	"You can than use this Configuration object as a "
 	"starting point for further analysis:")
 NORMAL (U"The following script summarizes:")
-CODE (U"selectObject (dissimilarity, configuration, weight)")
+CODE (U"selectObject: dissimilarity, configuration, weight")
 CODE (U"To Configuration (monotone mds): 2, \"Primary approach\", 0.00001, 50, 1")
 ENTRY (U"Multiple Dissimilarity's (INDSCAL)")
 NORMAL (U"When you have multiple Dissimilarity objects you can also perform "
