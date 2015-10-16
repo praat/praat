@@ -2,7 +2,7 @@
 #define _AmplitudeTier_h_
 /* AmplitudeTier.h
  *
- * Copyright (C) 2003-2011 Paul Boersma
+ * Copyright (C) 2003-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,20 +30,20 @@ Thing_define (AmplitudeTier, RealTier) {
 		override { return MelderQuantity_TIME_SECONDS; }
 };
 
-AmplitudeTier AmplitudeTier_create (double tmin, double tmax);
+autoAmplitudeTier AmplitudeTier_create (double tmin, double tmax);
 
 void AmplitudeTier_draw (AmplitudeTier me, Graphics g, double tmin, double tmax,
 	double ymin, double ymax, const char32 *method, int garnish);
 
-AmplitudeTier PointProcess_upto_AmplitudeTier (PointProcess me, double soundPressure);
-AmplitudeTier IntensityTier_to_AmplitudeTier (IntensityTier me);
-IntensityTier AmplitudeTier_to_IntensityTier (AmplitudeTier me, double threshold_dB);
-TableOfReal AmplitudeTier_downto_TableOfReal (AmplitudeTier me);
+autoAmplitudeTier PointProcess_upto_AmplitudeTier (PointProcess me, double soundPressure);
+autoAmplitudeTier IntensityTier_to_AmplitudeTier (IntensityTier me);
+autoIntensityTier AmplitudeTier_to_IntensityTier (AmplitudeTier me, double threshold_dB);
+autoTableOfReal AmplitudeTier_downto_TableOfReal (AmplitudeTier me);
 void Sound_AmplitudeTier_multiply_inline (Sound me, AmplitudeTier intensity);
-Sound Sound_AmplitudeTier_multiply (Sound me, AmplitudeTier intensity);
+autoSound Sound_AmplitudeTier_multiply (Sound me, AmplitudeTier intensity);
 
-AmplitudeTier PointProcess_Sound_to_AmplitudeTier_point (PointProcess me, Sound thee);
-AmplitudeTier PointProcess_Sound_to_AmplitudeTier_period (PointProcess me, Sound thee,
+autoAmplitudeTier PointProcess_Sound_to_AmplitudeTier_point (PointProcess me, Sound thee);
+autoAmplitudeTier PointProcess_Sound_to_AmplitudeTier_period (PointProcess me, Sound thee,
 	double tmin, double tmax, double shortestPeriod, double longestPeriod, double maximumPeriodFactor);
 double AmplitudeTier_getShimmer_local (AmplitudeTier me, double shortestPeriod, double longestPeriod, double maximumAmplitudeFactor);
 double AmplitudeTier_getShimmer_local_dB (AmplitudeTier me, double shortestPeriod, double longestPeriod, double maximumAmplitudeFactor);
@@ -52,7 +52,7 @@ double AmplitudeTier_getShimmer_apq5 (AmplitudeTier me, double shortestPeriod, d
 double AmplitudeTier_getShimmer_apq11 (AmplitudeTier me, double shortestPeriod, double longestPeriod, double maximumAmplitudeFactor);
 double AmplitudeTier_getShimmer_dda (AmplitudeTier me, double shortestPeriod, double longestPeriod, double maximumAmplitudeFactor);
 
-Sound AmplitudeTier_to_Sound (AmplitudeTier me, double samplingFrequency, long interpolationDepth);
+autoSound AmplitudeTier_to_Sound (AmplitudeTier me, double samplingFrequency, long interpolationDepth);
 
 /* End of file AmplitudeTier.h */
 #endif

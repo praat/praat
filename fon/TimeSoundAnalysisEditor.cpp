@@ -1859,7 +1859,6 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 	}
 	if (my p_intensity_show) {
 		double intensityCursor = NUMundefined;
-		int intensityCursorVisible;
 		Graphics_Colour textColour;
 		int alignment;
 		double y;
@@ -1876,7 +1875,8 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 				}
 			}
 			Graphics_setColour (my d_graphics, textColour);
-			intensityCursorVisible = NUMdefined (intensityCursor) && intensityCursor > my p_intensity_viewFrom && intensityCursor < my p_intensity_viewTo;
+			bool intensityCursorVisible = NUMdefined (intensityCursor) &&
+				intensityCursor > my p_intensity_viewFrom && intensityCursor < my p_intensity_viewTo;
 			if (intensityCursorVisible) {
 				static const char32 *methodString [] = { U" (.5)", U" (μE)", U" (μS)", U" (μ)" };
 				Graphics_setTextAlignment (my d_graphics, alignment, Graphics_HALF);
@@ -1898,7 +1898,7 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 		}
 	}
 	if (my p_spectrogram_show || my p_formant_show) {
-		int frequencyCursorVisible = my d_spectrogram_cursor > my p_spectrogram_viewFrom && my d_spectrogram_cursor < my p_spectrogram_viewTo;
+		bool frequencyCursorVisible = my d_spectrogram_cursor > my p_spectrogram_viewFrom && my d_spectrogram_cursor < my p_spectrogram_viewTo;
 		Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, my p_spectrogram_viewFrom, my p_spectrogram_viewTo);
 		/*
 		 * Range marks.

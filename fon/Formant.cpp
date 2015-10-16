@@ -85,7 +85,7 @@ double structFormant :: v_getValueAtSample (long iframe, long which, int units) 
 	return NUMundefined;
 }
 
-Formant Formant_create (double tmin, double tmax, long nt, double dt, double t1,
+autoFormant Formant_create (double tmin, double tmax, long nt, double dt, double t1,
 	int maxnFormants)
 {
 	try {
@@ -93,7 +93,7 @@ Formant Formant_create (double tmin, double tmax, long nt, double dt, double t1,
 		Sampled_init (me.peek(), tmin, tmax, nt, dt, t1);
 		my d_frames = NUMvector <structFormant_Frame> (1, nt);
 		my maxnFormants = maxnFormants;
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Formant object not created.");
 	}
@@ -362,7 +362,7 @@ void Formant_scatterPlot (Formant me, Graphics g, double tmin, double tmax,
 	}
 }
 
-Matrix Formant_to_Matrix (Formant me, int iformant) {
+autoMatrix Formant_to_Matrix (Formant me, int iformant) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1.0, 1.0, 1, 1.0, 1.0);
 		for (long iframe = 1; iframe <= my nx; iframe ++) {
@@ -370,13 +370,13 @@ Matrix Formant_to_Matrix (Formant me, int iformant) {
 			thy z [1] [iframe] = iformant <= frame -> nFormants ?
 				frame -> formant [iformant]. frequency : 0.0;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": frequencies of formant ", iformant, U" not converted to Matrix.");
 	}
 }
 
-Matrix Formant_to_Matrix_bandwidths (Formant me, int iformant) {
+autoMatrix Formant_to_Matrix_bandwidths (Formant me, int iformant) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1.0, 1.0, 1, 1.0, 1.0);
 		for (long iframe = 1; iframe <= my nx; iframe ++) {
@@ -384,7 +384,7 @@ Matrix Formant_to_Matrix_bandwidths (Formant me, int iformant) {
 			thy z [1] [iframe] = iformant <= frame -> nFormants ?
 				frame -> formant [iformant]. bandwidth : 0.0;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": bandwidths of formant ", iformant, U" not converted to Matrix.");
 	}
@@ -428,7 +428,7 @@ static void putResult (long iframe, long place, int itrack, void *closure) {
 	my thy d_frames [iframe]. formant [itrack] = my my d_frames [iframe]. formant [place];
 }
 
-Formant Formant_tracker (Formant me, int ntrack,
+autoFormant Formant_tracker (Formant me, int ntrack,
 	double refF1, double refF2, double refF3, double refF4, double refF5,
 	double dfCost,   /* Per kHz. */
 	double bfCost, double octaveJumpCost)
@@ -456,13 +456,13 @@ Formant Formant_tracker (Formant me, int ntrack,
 		parm.refF [5] = refF5;
 		NUM_viterbi_multi (my nx, my maxnFormants, ntrack,
 			getLocalCost, getTransitionCost, putResult, & parm);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not tracked.");
 	}
 }
 
-Table Formant_downto_Table (Formant me, bool includeFrameNumbers,
+autoTable Formant_downto_Table (Formant me, bool includeFrameNumbers,
 	bool includeTimes, int timeDecimals,
 	bool includeIntensity, int intensityDecimals,
 	bool includeNumberOfFormants, int frequencyDecimals,
@@ -503,7 +503,7 @@ Table Formant_downto_Table (Formant me, bool includeFrameNumbers,
 					Table_setNumericValue (thee.peek(), iframe, ++ icol, NUMundefined);
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Table.");
 	}

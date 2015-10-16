@@ -26,7 +26,7 @@
 
 #include "Distributions_and_Transition.h"
 
-Transition Distributions_to_Transition (Distributions underlying, Distributions surface, long environment,
+autoTransition Distributions_to_Transition (Distributions underlying, Distributions surface, long environment,
 	Transition adjacency, int greedy)
 {
 	try {
@@ -123,13 +123,13 @@ Transition Distributions_to_Transition (Distributions underlying, Distributions 
 			thy data [i] [i] = sum > 1.0 ? 0.0 : 1.0 - sum;   // guard against rounding errors
 		}
 
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (underlying, U": Transition not computed.");
 	}
 }
 
-Distributions Distributions_Transition_map (Distributions me, Transition map) {
+autoDistributions Distributions_Transition_map (Distributions me, Transition map) {
 	try {
 		/*
 		 * Preconditions: matrix matching.
@@ -152,13 +152,13 @@ Distributions Distributions_Transition_map (Distributions me, Transition map) {
 				thy data [row] [col] += my data [m] [col] * map -> data [m] [row];
 		}
 
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not mapped to Transition.");
 	}
 }
 
-Distributions Transition_to_Distributions_conflate (Transition me) {
+autoDistributions Transition_to_Distributions_conflate (Transition me) {
 	try {
 		autoDistributions thee = Distributions_create (my numberOfStates, 1);
 
@@ -178,7 +178,7 @@ Distributions Transition_to_Distributions_conflate (Transition me) {
 			thy data [i] [1] /= my numberOfStates;
 		}
 
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not conflated to Distributions.");
 	}

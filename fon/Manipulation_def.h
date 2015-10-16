@@ -23,22 +23,22 @@ oo_DEFINE_CLASS (Manipulation, Function)
 
 	#if oo_READING
 		if (formatVersion >= 5 || (Melder_debug == 25 && formatVersion == 4)) {
-			oo_OBJECT (Sound, 2, sound)
+			oo_AUTO_OBJECT (Sound, 2, sound)
 		} else {
-			oo_OBJECT (Sound, 0, sound)
+			oo_AUTO_OBJECT (Sound, 0, sound)
 		}
 	#else
-		oo_OBJECT (Sound, 0, sound)
+		oo_AUTO_OBJECT (Sound, 0, sound)
 	#endif
-	oo_OBJECT (PointProcess, 0, pulses)
+	oo_AUTO_OBJECT (PointProcess, 0, pulses)
 	oo_AUTO_OBJECT (PitchTier, 0, pitch)
 
 	oo_FROM (1)
-		oo_OBJECT (IntensityTier, 0, dummyIntensity)
+		oo_AUTO_OBJECT (IntensityTier, 0, dummyIntensity)
 	oo_ENDFROM
 
 	oo_FROM (2)
-		oo_OBJECT (DurationTier, 0, duration)
+		oo_AUTO_OBJECT (DurationTier, 0, duration)
 	oo_ENDFROM
 
 	oo_FROM (3)

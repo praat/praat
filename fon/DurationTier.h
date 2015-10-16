@@ -31,12 +31,12 @@ Thing_define (DurationTier, RealTier) {
 		override { return MelderQuantity_TIME_SECONDS; }
 };
 
-DurationTier DurationTier_create (double tmin, double tmax);
+autoDurationTier DurationTier_create (double tmin, double tmax);
 
 void DurationTier_draw (DurationTier me, Graphics g, double tmin, double tmax,
 	double ymin, double ymax, const char32 *method, int garnish);
 
-DurationTier PointProcess_upto_DurationTier (PointProcess me);
+autoDurationTier PointProcess_upto_DurationTier (PointProcess me);
 
 /* End of file DurationTier.h */
 #endif

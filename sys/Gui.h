@@ -190,7 +190,6 @@
 	void XtDestroyWidget (GuiObject w);
 	void XtDispatchEvent (XEvent *event);
 	#define XtDisplay(w)  0
-	void GuiInitialize (const char *name, unsigned int *argc, char **argv);
 	Boolean XtIsManaged (GuiObject w);
 	Boolean XtIsShell (GuiObject w);
 	void XtManageChild (GuiObject w);
@@ -203,8 +202,7 @@
 	void XtSetSensitive (GuiObject w, Boolean value);
 	void XtUnmanageChild (GuiObject self);
 	void XtUnmanageChildren (GuiObjectList children, Cardinal num_children);
-	void GuiAppInitialize (const char *name,
-		void *dum1, int dum2, unsigned int *argc, char **argv, void *dum3, void *dum4);
+	void GuiAppInitialize (const char *name, unsigned int argc, char **argv);
 	void GuiApp_setApplicationShell (GuiObject shell);
 	GuiObject XtVaCreateWidget (const char *name, int widgetClass, GuiObject parent, ...);
 	GuiObject XtVaCreateManagedWidget (const char *name, int widgetClass, GuiObject parent, ...);

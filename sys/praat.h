@@ -179,7 +179,7 @@ void praat_new (Daata me, Melder_6_ARGS);
 void praat_new (Daata me, Melder_7_ARGS);
 void praat_new (Daata me, Melder_8_ARGS);
 void praat_new (Daata me, Melder_9_ARGS);
-void praat_newWithFile (Daata me, MelderFile file, const char32 *name);
+void praat_newWithFile (autoDaata me, MelderFile file, const char32 *name);
 void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
 /* Macros for description of forms (dialog boxes).

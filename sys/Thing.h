@@ -90,7 +90,7 @@ struct structClassInfo {
 
 #define Thing_implement(klas,parentKlas,version) \
 	static Thing _##klas##_new () { return new struct##klas; } \
-	struct structClassInfo theClassInfo_##klas = { U"" #klas, & theClassInfo_##parentKlas, sizeof (class struct##klas), _##klas##_new, version, 0, NULL }; \
+	struct structClassInfo theClassInfo_##klas = { U"" #klas, & theClassInfo_##parentKlas, sizeof (class struct##klas), _##klas##_new, version, 0, nullptr}; \
 	ClassInfo class##klas = & theClassInfo_##klas
 
 /*
@@ -141,12 +141,12 @@ struct structThing {
 		 */
 };
 
-#define forget(thing)  do { _Thing_forget (thing); thing = NULL; } while (false)
+#define forget(thing)  do { _Thing_forget (thing); thing = nullptr; } while (false)
 /*
 	Function:
 		free all memory associated with 'thing'.
 	Postcondition:
-		thing == NULL;
+		thing == nullptr;
 */
 #define forget_nozero(thing)  do { _Thing_forget_nozero (thing); delete thing; } while (false)
 /*
@@ -154,7 +154,7 @@ struct structThing {
 		free all memory associated with 'thing'.
 */
 
-/* All functions with 'Thing me' as the first argument assume that it is not NULL. */
+/* All functions with 'Thing me' as the first argument assume that it is not null. */
 
 const char32 * Thing_className (Thing me);
 /* Return your class name. */
@@ -200,7 +200,7 @@ void Thing_recognizeClassesByName (ClassInfo readableClass, ...);
 		make Thing_classFromClassName () and Thing_newFromClassName ()
 		recognize a class from its name (a string).
 	Arguments:
-		as many classes as you want; finish with a NULL.
+		as many classes as you want; finish with a nullptr.
 		It is not an error if a class occurs more than once in the list.
 	Behaviour:
 		calling this routine more than once, each time for different classes,
@@ -218,7 +218,7 @@ long Thing_listReadableClasses (void);
 Thing Thing_newFromClassName (const char32 *className, int *p_formatVersion);
 /*
 	Function:
-		return a new object of class 'className', or NULL if the class name is not recognized.
+		return a new object of class 'className', or null if the class name is not recognized.
 	Postconditions:
 		result -> classInfo == class'className';
 		other members are 0.
@@ -229,12 +229,12 @@ Thing Thing_newFromClassName (const char32 *className, int *p_formatVersion);
 ClassInfo Thing_classFromClassName (const char32 *className, int *formatVersion);
 /*
 	Function:
-		Return the class info table of class 'className', or NULL if it is not recognized.
+		Return the class info table of class 'className', or null if it is not recognized.
 		E.g. the value returned from Thing_classFromClassName (L"PietjePuk")
 		will be equal to classPietjePuk.
 	Side effect:
 		If 'className' equals L"PietjePuk 300", the value returned will be classPietjePuk,
-		and formatVersion (if not NULL) will be set to 300.
+		and formatVersion (if not null) will be set to 300.
 */
 
 #define Thing_dummyObject(klas) \
@@ -242,7 +242,7 @@ ClassInfo Thing_classFromClassName (const char32 *className, int *formatVersion)
 Thing _Thing_dummyObject (ClassInfo classInfo);
 
 char32 * Thing_getName (Thing me);
-/* Return a pointer to your internal name (which can be NULL). */
+/* Return a pointer to your internal name (which can be null). */
 char32 * Thing_messageName (Thing me);
 
 void Thing_setName (Thing me, const char32 *name /* cattable */);
@@ -255,7 +255,7 @@ void Thing_setName (Thing me, const char32 *name /* cattable */);
 
 #define Thing_cast(Klas,var,expr) \
 	Klas var = static_cast <Klas> (expr);   /* The compiler checks this. */ \
-	Melder_assert (var == NULL || Thing_isa (var, class##Klas));
+	Melder_assert (! var || Thing_isa (var, class##Klas));
 
 void Thing_swap (Thing me, Thing thee);
 /*
@@ -283,8 +283,19 @@ long Thing_getTotalNumberOfThings (void);
 
 template <class T>
 class _Thing_auto {
-	T *d_ptr;
+	T *ptr;
 public:
+	/*
+	 * The default constructor.
+	 * Things like
+	 *    autoPitch pitch;
+	 * should initialize the pointer to null.
+	 */
+	_Thing_auto () : ptr (nullptr) {
+		#if _Thing_auto_DEBUG
+			fprintf (stderr, "default constructor\n");
+		#endif
+	}
 	/*
 	 * Things like
 	 *    autoPitch pitch (Pitch_create (...));
@@ -292,19 +303,11 @@ public:
 	 *    autoPitch pitch = Pitch_create (...);
 	 * should work.
 	 */
-	_Thing_auto (T *a_ptr) : d_ptr (a_ptr) {
+	_Thing_auto (T *newPtr) : ptr (newPtr) {
 		#if _Thing_auto_DEBUG
-			if (d_ptr) fprintf (stderr, "constructor %p %s\n", d_ptr, Melder_peek32to8 (d_ptr -> classInfo -> className));
-		#endif
-	}
-	/*
-	 * Things like
-	 *    autoPitch pitch;
-	 * should initialize the pointer to NULL.
-	 */
-	_Thing_auto () : d_ptr (NULL) {
-		#if _Thing_auto_DEBUG
-			fprintf (stderr, "default constructor\n");
+			if (our ptr)
+				fprintf (stderr, "constructor %p %s\n",
+					our ptr, Melder_peek32to8 (our ptr -> classInfo -> className));
 		#endif
 	}
 	/*
@@ -313,18 +316,19 @@ public:
 	 */
 	~_Thing_auto () {
 		#if _Thing_auto_DEBUG
-			fprintf (stderr, "destructor %p %s\n", d_ptr, d_ptr ? Melder_peek32to8 (d_ptr -> classInfo -> className) : "(class unknown)");
+			fprintf (stderr, "destructor %p %s\n",
+				our ptr, our ptr ? Melder_peek32to8 (our ptr -> classInfo -> className) : "(class unknown)");
 		#endif
-		if (d_ptr) {
-			_Thing_forget (d_ptr);
-			d_ptr = NULL;
+		if (our ptr) {
+			_Thing_forget (our ptr);
+			our ptr = nullptr;
 		}
 	}
 	T* get () const {
-		return d_ptr;
+		return our ptr;
 	}
 	T* peek () const {
-		return d_ptr;
+		return our ptr;
 	}
 	/*
 	 * The expression
@@ -333,16 +337,15 @@ public:
 	 *    pitch -> xmin
 	 */
 	T* operator-> () const {   // as r-value
-		return d_ptr;
+		return our ptr;
 	}
 	T& operator* () const {   // as l-value
-		return *d_ptr;
+		return *our ptr;
 	}
 	/*
-	 * There are two ways to access the pointer; with and without transfer of ownership.
+	 * After construction, there are two ways to access the pointer: with and without transfer of ownership.
 	 *
 	 * Without transfer:
-	 *    autoPitch pitch = Sound_to_Pitch (...);
 	 *    Pitch_draw (pitch.peek());
 	 *
 	 * With transfer:
@@ -356,20 +359,20 @@ public:
 	 *    praat_new (pitch.transfer(), my name);
 	 */
 	T* transfer () {
-		T* temp = d_ptr;
-		d_ptr = NULL;   // make the pointer non-automatic again
+		T* temp = our ptr;
+		our ptr = nullptr;   // make the pointer non-automatic again
 		return temp;
 	}
 	#if 0
 		operator T* () {
-			return d_ptr;
+			return our ptr;
 		}
 	#endif
 	/*
 	 * An autoThing can be cloned. This can be used for giving ownership without losing ownership.
 	 */
 	T* clone () const {
-		return static_cast<T *> (Data_copy (d_ptr));
+		return static_cast<T *> (Data_copy (our ptr));
 	}
 	/*
 	 * Replacing a pointer in an existing autoThing should be an exceptional phenomenon,
@@ -377,28 +380,28 @@ public:
 	 * so that you can easily spot ugly places in your source code.
 	 * In order not to leak memory, the old object is destroyed.
 	 */
-	void reset (T* ptr = 0) noexcept {
-		_Thing_forget (d_ptr);
-		d_ptr = ptr;
+	void reset (T* newPtr = nullptr) noexcept {
+		_Thing_forget (our ptr);
+		our ptr = newPtr;
 	}
 	void zero () {
-		d_ptr = NULL;
+		our ptr = nullptr;
 	}
 	explicit operator bool () const {
-		return d_ptr != NULL;
+		return !! our ptr;
 	}
 	bool operator== (_Thing_auto<T> other) const noexcept {
-		return other. d_ptr == d_ptr;
+		return other. ptr == our ptr;
 	}
 	bool operator!= (_Thing_auto<T> other) const noexcept {
-		return other. d_ptr != d_ptr;
+		return other. ptr != our ptr;
 	}
 	/*
 	 * The compiler should prevent initializations from _Thing_auto l-values, as in
 	 *    autoPitch pitch2 = pitch;
 	 * This is because the syntax of this statement is *copy* syntax,
 	 * but the semantics of this statement has to be, confusingly, *move* semantics
-	 * (i.e., pitch.d_ptr should be set to NULL),
+	 * (i.e., pitch.ptr should be set to null),
 	 * because if the semantics were copy semantics instead,
 	 * a destructor would be called at some point for both pitch and pitch 2,
 	 * twice deleting the same object, which is a run-time error.
@@ -410,7 +413,7 @@ public:
 	 *    pitch2 = pitch;
 	 * This is because the syntax of this statement is *copy* syntax,
 	 * but the semantics of this statement has to be, confusingly, *move* semantics
-	 * (i.e., pitch.d_ptr should be set to NULL),
+	 * (i.e., pitch.ptr should be set to null),
 	 * because if the semantics were copy semantics instead,
 	 * a destructor would be called at some point for both pitch and pitch 2,
 	 * twice deleting the same object, which is a run-time error.
@@ -423,15 +426,19 @@ public:
 	 *    autoPitch pitch = Pitch_create (...);
 	 * as move constructors.
 	 */
-	_Thing_auto<T> (_Thing_auto<T>&& other) noexcept : d_ptr (other.d_ptr) {
+	_Thing_auto<T> (_Thing_auto<T>&& other) noexcept : ptr (other. ptr) {
 		#if _Thing_auto_DEBUG
-			if (d_ptr) fprintf (stderr, "move constructor %p from same class %s\n", d_ptr, Melder_peek32to8 (d_ptr -> classInfo -> className));
+			if (our ptr)
+				fprintf (stderr, "move constructor %p from same class %s\n",
+					our ptr, Melder_peek32to8 (our ptr -> classInfo -> className));
 		#endif
-		other.d_ptr = NULL;
+		other. ptr = nullptr;
 	}
-	template <class Y> _Thing_auto<T> (_Thing_auto<Y>&& other) noexcept : d_ptr (other.peek()) {
+	template <class Y> _Thing_auto<T> (_Thing_auto<Y>&& other) noexcept : ptr (other.peek()) {
 		#if _Thing_auto_DEBUG
-			if (d_ptr) fprintf (stderr, "move constructor %p from other class %s\n", d_ptr, Melder_peek32to8 (d_ptr -> classInfo -> className));
+			if (our ptr)
+				fprintf (stderr, "move constructor %p from other class %s\n",
+					our ptr, Melder_peek32to8 (our ptr -> classInfo -> className));
 		#endif
 		other.zero();
 	}
@@ -443,28 +450,32 @@ public:
 	 * as move assignments.
 	 */
 	_Thing_auto<T>& operator= (_Thing_auto<T>&& other) noexcept {
-		if (other. d_ptr != d_ptr) {
+		if (other. ptr != our ptr) {
 			#if _Thing_auto_DEBUG
-				fprintf (stderr, "move assignment before %p from same class %s\n", d_ptr, d_ptr ? Melder_peek32to8 (d_ptr -> classInfo -> className) : "(class unknown)");
+				fprintf (stderr, "move assignment before %p from same class %s\n",
+					our ptr, our ptr ? Melder_peek32to8 (our ptr -> classInfo -> className) : "(class unknown)");
 			#endif
-			_Thing_forget (d_ptr);
-			d_ptr = other. d_ptr;
+			_Thing_forget (our ptr);
+			our ptr = other. ptr;
 			#if _Thing_auto_DEBUG
-				fprintf (stderr, "move assignment after %p from same class %s\n", d_ptr, d_ptr ? Melder_peek32to8 (d_ptr -> classInfo -> className) : "(class unknown)");
+				fprintf (stderr, "move assignment after %p from same class %s\n",
+					our ptr, our ptr ? Melder_peek32to8 (our ptr -> classInfo -> className) : "(class unknown)");
 			#endif
-			other. d_ptr = NULL;
+			other. ptr = nullptr;
 		}
 		return *this;
 	}
 	template <class Y> _Thing_auto<T>& operator= (_Thing_auto<Y>&& other) noexcept {
-		if (other.peek() != d_ptr) {
+		if (other.peek() != our ptr) {
 			#if _Thing_auto_DEBUG
-				fprintf (stderr, "move assignment before %p from other class %s\n", d_ptr, d_ptr ? Melder_peek32to8 (d_ptr -> classInfo -> className) : "(class unknown)");
+				fprintf (stderr, "move assignment before %p from other class %s\n",
+					our ptr, our ptr ? Melder_peek32to8 (our ptr -> classInfo -> className) : "(class unknown)");
 			#endif
-			_Thing_forget (d_ptr);
-			d_ptr = other.peek();
+			_Thing_forget (our ptr);
+			our ptr = other.peek();
 			#if _Thing_auto_DEBUG
-				fprintf (stderr, "move assignment after %p from other class %s\n", d_ptr, d_ptr ? Melder_peek32to8 (d_ptr -> classInfo -> className) : "(class unknown)");
+				fprintf (stderr, "move assignment after %p from other class %s\n",
+					our ptr, our ptr ? Melder_peek32to8 (our ptr -> classInfo -> className) : "(class unknown)");
 			#endif
 			other.zero();
 		}
@@ -492,7 +503,9 @@ public:
 	 *    autoPitch pitch = Pitch_create (...);
 	 *    Collection_addItem_transfer (collection, pitch.move());   // compiler error if you don't call move()
 	 */
-
+	template <class Y> _Thing_auto<Y> static_cast_move () {
+		return _Thing_auto<Y> (static_cast<Y*> (our transfer()));
+	}
 };
 
 template <class T>
@@ -505,7 +518,7 @@ public:
 	}
 	autoThingVector (T *ptr, long from, long to) : d_ptr (ptr), d_from (from), d_to (to) {
 	}
-	autoThingVector () : d_ptr (NULL), d_from (1), d_to (0) {
+	autoThingVector () : d_ptr (nullptr), d_from (1), d_to (0) {
 	}
 	~autoThingVector<T> () {
 		if (d_ptr) {
@@ -522,7 +535,7 @@ public:
 	}
 	T* transfer () {
 		T* temp = d_ptr;
-		d_ptr = NULL;   // make the pointer non-automatic again
+		d_ptr = nullptr;   // make the pointer non-automatic again
 		return temp;
 	}
 	void reset (long from, long to) {
@@ -530,9 +543,9 @@ public:
 			for (long i = d_from; i <= d_to; i ++)
 				forget (d_ptr [i]);
 			NUMvector_free (sizeof (T), d_ptr, d_from);
-			d_ptr = NULL;
+			d_ptr = nullptr;
 		}
-		d_from = from;   // this assignment is safe, because d_ptr is NULL
+		d_from = from;   // this assignment is safe, because d_ptr is null
 		d_to = to;
 		d_ptr = static_cast <T*> (NUMvector (sizeof (T), from, to));
 	}

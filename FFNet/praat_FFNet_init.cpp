@@ -120,7 +120,7 @@ FORM (FFNet_createIrisExample, U"Create iris example", U"Create iris example..."
 DO
 	long numberOfHidden1, numberOfHidden2;
 	FFNet_create_checkCommonFields_hidden (dia, &numberOfHidden1, &numberOfHidden2);
-	praat_new (FFNet_createIrisExample (numberOfHidden1, numberOfHidden2), U"");   // ppgb: geen expliciete NULL meer meegeven als naam (dat wordt "0")
+	praat_new (FFNet_createIrisExample (numberOfHidden1, numberOfHidden2));
 END
 
 DIRECT (FFNet_getNumberOfInputs)

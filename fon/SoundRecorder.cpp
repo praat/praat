@@ -608,7 +608,7 @@ static void publish (SoundRecorder me) {
 	double fsamp = theControlPanel. sampleRate;
 	if (fsamp <= 0.0) fsamp = 44100.0;   // safe
 	try {
-		sound.reset (Sound_createSimple (my numberOfChannels, (double) nsamp / fsamp, fsamp));
+		sound = Sound_createSimple (my numberOfChannels, (double) nsamp / fsamp, fsamp);
 	} catch (MelderError) {
 		Melder_flushError (U"You can still save to file.");
 		return;

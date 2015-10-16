@@ -26,7 +26,7 @@
 
 #include "Cochleagram_and_Excitation.h"
 
-Excitation Cochleagram_to_Excitation (Cochleagram me, double t) {
+autoExcitation Cochleagram_to_Excitation (Cochleagram me, double t) {
 	try {
 		long column = Matrix_xToNearestColumn (me, t);
 		if (column < 1) column = 1;
@@ -34,7 +34,7 @@ Excitation Cochleagram_to_Excitation (Cochleagram me, double t) {
 		autoExcitation thee = Excitation_create (my dy, my ny);
 		for (long ifreq = 1; ifreq <= my ny; ifreq ++)
 			thy z [1] [ifreq] = my z [ifreq] [column];
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": slice at time ", t, U" seconds not extracted to Excitation.");
 	}
