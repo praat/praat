@@ -52,7 +52,7 @@ static void huber_struct_init (struct huber_struct *hs, double windowDuration,
                                long p, double samplingFrequency, double location, int wantlocation) {
 	hs -> w = hs -> work = hs -> a = hs -> c = nullptr;
 	hs -> covar = nullptr; hs -> svd = nullptr;
-	hs -> e = Sound_createSimple (1, windowDuration, samplingFrequency);
+	hs -> e = Sound_createSimple (1, windowDuration, samplingFrequency).transfer();
 	long n = hs -> e -> nx;
 	hs -> n = n;
 	hs -> p = p;

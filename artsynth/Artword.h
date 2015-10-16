@@ -25,7 +25,7 @@
 #include "Artword_def.h"
 oo_CLASS_CREATE (Artword, Daata);
 
-Artword Artword_create (double totalTime);
+autoArtword Artword_create (double totalTime);
 
 void Artword_setDefault (Artword me, int feature);
 /*

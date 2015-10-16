@@ -2581,7 +2581,7 @@ static const char *data [] = {
 "57??58??0:??19??5=??3<??=4?>" };
 
 Sound manual_exampleSound (void) {
-	static Sound me;
+	static autoSound me;
 	if (! me) {
 		long istring = 0, ichar = 24;
 		me = Sound_create (1, 0.0, 20457.0/44100, 20457, 1.0/44100, 0.5/44100);
@@ -2594,7 +2594,7 @@ Sound manual_exampleSound (void) {
 			if (++ ichar == 32) istring ++, ichar = 0;
 		}
 	}
-	return me;
+	return me.get();   // reference
 }
 
 Pitch manual_examplePitch (void) {
@@ -2604,7 +2604,7 @@ Pitch manual_examplePitch (void) {
 		me = Sound_to_Pitch (manual_exampleSound (), 0.0, 200.0, 500.0);
 		Melder_progressOn ();
 	}
-	return me.get();
+	return me.get();   // reference
 }
 
 /* End of file manual_exampleSound.cpp */

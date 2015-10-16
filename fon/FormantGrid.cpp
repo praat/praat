@@ -89,17 +89,17 @@ void FormantGrid_init (FormantGrid me, double tmin, double tmax, long numberOfFo
 	my xmax = tmax;
 }
 
-FormantGrid FormantGrid_createEmpty (double tmin, double tmax, long numberOfFormants) {
+autoFormantGrid FormantGrid_createEmpty (double tmin, double tmax, long numberOfFormants) {
 	try {
 		autoFormantGrid me = Thing_new (FormantGrid);
 		FormantGrid_init (me.peek(), tmin, tmax, numberOfFormants);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Empty FormantGrid not created.");
 	}
 }
 
-FormantGrid FormantGrid_create (double tmin, double tmax, long numberOfFormants,
+autoFormantGrid FormantGrid_create (double tmin, double tmax, long numberOfFormants,
 	double initialFirstFormant, double initialFormantSpacing,
 	double initialFirstBandwidth, double initialBandwidthSpacing)
 {
@@ -111,7 +111,7 @@ FormantGrid FormantGrid_create (double tmin, double tmax, long numberOfFormants,
 			FormantGrid_addBandwidthPoint (me.peek(), iformant, 0.5 * (tmin + tmax),
 				initialFirstBandwidth + (iformant - 1) * initialBandwidthSpacing);
 		}
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FormantGrid not created.");
 	}
@@ -196,28 +196,28 @@ void Sound_FormantGrid_filter_inline (Sound me, FormantGrid formantGrid) {
 	}
 }
 
-Sound Sound_FormantGrid_filter (Sound me, FormantGrid formantGrid) {
+autoSound Sound_FormantGrid_filter (Sound me, FormantGrid formantGrid) {
 	try {
 		autoSound thee = Data_copy (me);
 		Sound_FormantGrid_filter_inline (thee.peek(), formantGrid);
 		Vector_scale (thee.peek(), 0.99);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered with ", formantGrid, U".");
 	}
 }
 
-Sound Sound_FormantGrid_filter_noscale (Sound me, FormantGrid formantGrid) {
+autoSound Sound_FormantGrid_filter_noscale (Sound me, FormantGrid formantGrid) {
 	try {
 		autoSound thee = Data_copy (me);
 		Sound_FormantGrid_filter_inline (thee.peek(), formantGrid);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered with ", formantGrid, U".");
 	}
 }
 
-Sound FormantGrid_to_Sound (FormantGrid me, double samplingFrequency,
+autoSound FormantGrid_to_Sound (FormantGrid me, double samplingFrequency,
 	double tStart, double f0Start, double tMid, double f0Mid, double tEnd, double f0End,
 	double adaptFactor, double maximumPeriod, double openPhase, double collisionPhase, double power1, double power2)
 {
@@ -229,7 +229,7 @@ Sound FormantGrid_to_Sound (FormantGrid me, double samplingFrequency,
 		autoSound thee = PitchTier_to_Sound_phonation (pitch.peek(), samplingFrequency,
 			adaptFactor, maximumPeriod, openPhase, collisionPhase, power1, power2, false);
 		Sound_FormantGrid_filter_inline (thee.peek(), me);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound.");
 	}
@@ -289,7 +289,7 @@ void FormantGrid_formula_frequencies (FormantGrid me, const char32 *expression, 
 	}
 }
 
-FormantGrid Formant_downto_FormantGrid (Formant me) {
+autoFormantGrid Formant_downto_FormantGrid (Formant me) {
 	try {
 		autoFormantGrid thee = FormantGrid_createEmpty (my xmin, my xmax, my maxnFormants);
 		for (long iframe = 1; iframe <= my nx; iframe ++) {
@@ -301,13 +301,13 @@ FormantGrid Formant_downto_FormantGrid (Formant me) {
 				FormantGrid_addBandwidthPoint (thee.peek(), iformant, t, pair -> bandwidth);
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to FormantGrid.");
 	}
 }
 
-Formant FormantGrid_to_Formant (FormantGrid me, double dt, double intensity) {
+autoFormant FormantGrid_to_Formant (FormantGrid me, double dt, double intensity) {
 	try {
 		Melder_assert (dt > 0.0);
 		Melder_assert (intensity >= 0.0);
@@ -326,27 +326,27 @@ Formant FormantGrid_to_Formant (FormantGrid me, double dt, double intensity) {
 				formant -> bandwidth = RealTier_getValueAtTime ((RealTier) my bandwidths -> item [iformant], t);
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Formant.");
 	}
 }
 
-Sound Sound_Formant_filter (Sound me, Formant formant) {
+autoSound Sound_Formant_filter (Sound me, Formant formant) {
 	try {
 		autoFormantGrid grid = Formant_downto_FormantGrid (formant);
 		autoSound thee = Sound_FormantGrid_filter (me, grid.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered with ", formant, U".");
 	}
 }
 
-Sound Sound_Formant_filter_noscale (Sound me, Formant formant) {
+autoSound Sound_Formant_filter_noscale (Sound me, Formant formant) {
 	try {
 		autoFormantGrid grid = Formant_downto_FormantGrid (formant);
 		autoSound thee = Sound_FormantGrid_filter_noscale (me, grid.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered with ", formant, U".");
 	}

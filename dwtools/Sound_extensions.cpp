@@ -567,7 +567,7 @@ Sound Sound_createHamming (double windowDuration, double samplingFrequency) {
 	try {
 		autoSound me = Sound_createSimple (1, windowDuration, samplingFrequency);
 		double *s = my z[1];
-		double p = 2 * NUMpi / (my nx - 1);
+		double p = 2.0 * NUMpi / (my nx - 1);
 		for (long i = 1; i <= my nx; i++) {
 			s[i] = 0.54 - 0.46 * cos ( (i - 1) * p);
 		}
@@ -577,7 +577,7 @@ Sound Sound_createHamming (double windowDuration, double samplingFrequency) {
 	};
 }
 
-static Sound Sound_create2 (double minimumTime, double maximumTime, double samplingFrequency) {
+static autoSound Sound_create2 (double minimumTime, double maximumTime, double samplingFrequency) {
 	return Sound_create (1, minimumTime, maximumTime, lround ( (maximumTime - minimumTime) * samplingFrequency),
 	                     1.0 / samplingFrequency, minimumTime + 0.5 / samplingFrequency);
 }

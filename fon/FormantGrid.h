@@ -29,9 +29,9 @@ Thing_declare (Interpreter);
 oo_CLASS_CREATE (FormantGrid, Function);
 
 void FormantGrid_init (FormantGrid me, double tmin, double tmax, long numberOfFormants);
-FormantGrid FormantGrid_createEmpty (double tmin, double tmax, long numberOfFormants);
+autoFormantGrid FormantGrid_createEmpty (double tmin, double tmax, long numberOfFormants);
 
-FormantGrid FormantGrid_create (double tmin, double tmax, long numberOfFormants,
+autoFormantGrid FormantGrid_create (double tmin, double tmax, long numberOfFormants,
 	double initialFirstFormant, double initialFormantSpacing,
 	double initialFirstBandwidth, double initialBandwidthSpacing);
 
@@ -44,10 +44,10 @@ void FormantGrid_removeFormantPointsBetween (FormantGrid me, long iformant, doub
 void FormantGrid_removeBandwidthPointsBetween (FormantGrid me, long iformant, double tmin, double tmax);
 
 void Sound_FormantGrid_filter_inline (Sound me, FormantGrid formantGrid);
-Sound Sound_FormantGrid_filter (Sound me, FormantGrid formantGrid);
-Sound Sound_FormantGrid_filter_noscale (Sound me, FormantGrid formantGrid);
+autoSound Sound_FormantGrid_filter (Sound me, FormantGrid formantGrid);
+autoSound Sound_FormantGrid_filter_noscale (Sound me, FormantGrid formantGrid);
 
-Sound FormantGrid_to_Sound (FormantGrid me, double samplingFrequency,
+autoSound FormantGrid_to_Sound (FormantGrid me, double samplingFrequency,
 	double tStart, double f0Start, double tMid, double f0Mid, double tEnd, double f0End,
 	double adaptFactor, double maximumPeriod, double openPhase, double collisionPhase, double power1, double power2);
 void FormantGrid_playPart (FormantGrid me, double tmin, double tmax, double samplingFrequency,
@@ -58,11 +58,11 @@ void FormantGrid_playPart (FormantGrid me, double tmin, double tmax, double samp
 void FormantGrid_formula_frequencies (FormantGrid me, const char32 *expression, Interpreter interpreter, FormantGrid thee);
 void FormantGrid_formula_bandwidths (FormantGrid me, const char32 *expression, Interpreter interpreter, FormantGrid thee);
 
-FormantGrid Formant_downto_FormantGrid (Formant me);
-Formant FormantGrid_to_Formant (FormantGrid me, double dt, double intensity);
+autoFormantGrid Formant_downto_FormantGrid (Formant me);
+autoFormant FormantGrid_to_Formant (FormantGrid me, double dt, double intensity);
 
-Sound Sound_Formant_filter (Sound me, Formant formant);
-Sound Sound_Formant_filter_noscale (Sound me, Formant formant);
+autoSound Sound_Formant_filter (Sound me, Formant formant);
+autoSound Sound_Formant_filter_noscale (Sound me, Formant formant);
 
 /* End of file FormantGrid.h */
 #endif

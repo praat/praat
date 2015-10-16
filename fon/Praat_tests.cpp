@@ -249,6 +249,8 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 				Melder_casual (U"2\n");
 				testData (data.peek());
 				testAutoData (data.move());
+				autoDaata data18 = Thing_new (Daata);
+				testAutoData (data18.move());
 				fprintf (stderr, "3\n");
 				autoDaata data2 = newAutoData ();
 				fprintf (stderr, "4\n");
@@ -290,6 +292,8 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 				fprintf (stderr, "19\n");
 				testAutoDataRef (data11);
 				fprintf (stderr, "20\n");
+				data11 = nullptr;
+				fprintf (stderr, "21\n");
 			}
 			int numberOfThingsAfter = Thing_getTotalNumberOfThings ();
 			fprintf (stderr, "Number of things: before %d, after %d\n", numberOfThingsBefore, numberOfThingsAfter);

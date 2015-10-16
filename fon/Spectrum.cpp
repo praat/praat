@@ -79,7 +79,7 @@ double structSpectrum :: v_getValueAtSample (long isamp, long which, int units) 
 			double powerDensity = energyDensity * dx;   /* Pa^2 Hz-2 s-1, after division by approximate duration */
 			if (units == 2) {
 				/* "dB/Hz" */
-				return powerDensity == 0.0 ? -300.0 : 10 * log10 (powerDensity / 4.0e-10);
+				return powerDensity == 0.0 ? -300.0 : 10.0 * log10 (powerDensity / 4.0e-10);
 			}
 		}
 	}
@@ -111,7 +111,7 @@ int Spectrum_getPowerDensityRange (Spectrum me, double *minimum, double *maximum
 }
 
 void Spectrum_drawInside (Spectrum me, Graphics g, double fmin, double fmax, double minimum, double maximum) {
-	int autoscaling = minimum >= maximum;
+	bool autoscaling = ( minimum >= maximum );
 
 	if (fmax <= fmin) { fmin = my xmin; fmax = my xmax; }
 	long ifmin, ifmax;
@@ -156,7 +156,7 @@ void Spectrum_draw (Spectrum me, Graphics g, double fmin, double fmax, double mi
 }
 
 void Spectrum_drawLogFreq (Spectrum me, Graphics g, double fmin, double fmax, double minimum, double maximum, int garnish) {
-	int autoscaling = minimum >= maximum;
+	bool autoscaling = ( minimum >= maximum );
 	if (fmax <= fmin) { fmin = my xmin; fmax = my xmax; }
 	long ifmin, ifmax;
 	if (! Matrix_getWindowSamplesX (me, fmin, fmax, & ifmin, & ifmax)) return;
@@ -281,7 +281,7 @@ Spectrum Spectrum_cepstralSmoothing (Spectrum me, double bandWidth) {
 		double factor = - bandWidth * bandWidth;
 		for (long i = 1; i <= cepstrum -> nx; i ++) {
 			double t = (i - 1) * cepstrum -> dx;
-			cepstrum -> z [1] [i] *= exp (factor * t * t) * ( i == 1 ? 1 : 2 );
+			cepstrum -> z [1] [i] *= exp (factor * t * t) * ( i == 1 ? 1.0 : 2.0 );
 		}
 
 		/*
@@ -306,7 +306,7 @@ Spectrum Spectrum_cepstralSmoothing (Spectrum me, double bandWidth) {
 void Spectrum_passHannBand (Spectrum me, double fmin, double fmax0, double smooth) {
 	double fmax = fmax0 == 0.0 ? my xmax : fmax0;
 	double f1 = fmin - smooth, f2 = fmin + smooth, f3 = fmax - smooth, f4 = fmax + smooth;
-	double halfpibysmooth = smooth != 0.0 ? NUMpi / (2 * smooth) : 0.0;
+	double halfpibysmooth = smooth != 0.0 ? NUMpi / (2.0 * smooth) : 0.0;
 	double *re = my z [1], *im = my z [2];
 	for (long i = 1; i <= my nx; i ++) {
 		double frequency = my x1 + (i - 1) * my dx;
@@ -326,7 +326,7 @@ void Spectrum_passHannBand (Spectrum me, double fmin, double fmax0, double smoot
 void Spectrum_stopHannBand (Spectrum me, double fmin, double fmax0, double smooth) {
 	double fmax = fmax0 == 0.0 ? my xmax : fmax0;
 	double f1 = fmin - smooth, f2 = fmin + smooth, f3 = fmax - smooth, f4 = fmax + smooth;
-	double halfpibysmooth = smooth != 0.0 ? NUMpi / (2 * smooth) : 0.0;
+	double halfpibysmooth = smooth != 0.0 ? NUMpi / (2.0 * smooth) : 0.0;
 	double *re = my z [1], *im = my z [2];
 	for (long i = 1; i <= my nx; i ++) {
 		double frequency = my x1 + (i - 1) * my dx;
@@ -423,14 +423,14 @@ double Spectrum_getStandardDeviation (Spectrum me, double power) {
 double Spectrum_getSkewness (Spectrum me, double power) {
 	double m2 = Spectrum_getCentralMoment (me, 2.0, power);
 	double m3 = Spectrum_getCentralMoment (me, 3.0, power);
-	if (m2 == NUMundefined || m3 == NUMundefined || m2 == 0) return NUMundefined;
+	if (m2 == NUMundefined || m3 == NUMundefined || m2 == 0.0) return NUMundefined;
 	return m3 / (m2 * sqrt (m2));
 }
 
 double Spectrum_getKurtosis (Spectrum me, double power) {
 	double m2 = Spectrum_getCentralMoment (me, 2.0, power);
 	double m4 = Spectrum_getCentralMoment (me, 4.0, power);
-	if (m2 == NUMundefined || m4 == NUMundefined || m2 == 0) return NUMundefined;
+	if (m2 == NUMundefined || m4 == NUMundefined || m2 == 0.0) return NUMundefined;
 	return m4 / (m2 * m2) - 3;
 }
 

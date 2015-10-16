@@ -1,6 +1,6 @@
 /* Cochleagram_and_Excitation.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,6 @@
 #include "Cochleagram.h"
 #include "Excitation.h"
 
-Excitation Cochleagram_to_Excitation (Cochleagram me, double t);
+autoExcitation Cochleagram_to_Excitation (Cochleagram me, double t);
 
 /* End of file Cochleagram_and_Excitation.h */

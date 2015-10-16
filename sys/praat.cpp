@@ -338,29 +338,24 @@ void praat_cleanUpName (char32 *name) {
 
 /***** objects + commands *****/
 
-void praat_newWithFile (Daata me, MelderFile file, const char32 *myName) {
-	int IOBJECT, ieditor;   // must be local: praat_new can be called from within a loop!!!
-	if (me == NULL)
+static void praat_new_unpackCollection (autoCollection me, const char32* myName) {
+	for (long idata = 1; idata <= my size; idata ++) {
+		autoDaata object = (Daata) my item [idata];
+		my item [idata] = nullptr;   // disown; once the elements are autoThings, the move will handle this
+		const char32 *name = object -> name ? object -> name : myName;
+		Melder_assert (name);
+		praat_new (object.transfer(), name);   // recurse
+	}
+}
+
+void praat_newWithFile (autoDaata me, MelderFile file, const char32 *myName) {
+	if (! me)
 		Melder_throw (U"No object was put into the list.");
-	/*
-	 * If my class is Collection, I'll have to be unpacked.
-	 */
+
 	if (my classInfo == classCollection) {
-		Collection list = (Collection) me;
-		try {
-			for (long idata = 1; idata <= list -> size; idata ++) {
-				Daata object = (Daata) list -> item [idata];
-				const char32 *name = object -> name ? object -> name : myName;
-				Melder_assert (name != NULL);
-				praat_new (object, name);   // recurse
-			}
-		} catch (MelderError) {
-			list -> size = 0;   // disown
-			forget (list);
-			throw;
-		}
-		list -> size = 0;   // disown
-		forget (list);
+		praat_new_unpackCollection (me.static_cast_move<structCollection>(), myName);
+		//praat_new_unpackCollection (static_cast<Collection> (me.transfer()), myName);
+			// yuck; this should be done with move(), but how do we cast an autoDaata to autoCollection?
 		return;
 	}
 
@@ -376,14 +371,14 @@ void praat_newWithFile (Daata me, MelderFile file, const char32 *myName) {
 	} else {
 		MelderString_copy (& givenName, my name && my name [0] ? my name : U"untitled");
 	}
-	MelderString_append (& name, Thing_className (me), U" ", givenName.string);
+	MelderString_append (& name, Thing_className (me.get()), U" ", givenName.string);
 
 	if (theCurrentPraatObjects -> n == praat_MAXNUM_OBJECTS) {
-		forget (me);
+		//forget (me);
 		Melder_throw (U"The Object Window cannot contain more than ", praat_MAXNUM_OBJECTS, U" objects. You could remove some objects.");
 	}
 		
-	IOBJECT = ++ theCurrentPraatObjects -> n;
+	int IOBJECT = ++ theCurrentPraatObjects -> n;
 	Melder_assert (FULL_NAME == nullptr);
 	FULL_NAME = Melder_dup_f (name.string);   // all right to crash if out of memory
 	++ theCurrentPraatObjects -> uniqueId;
@@ -393,12 +388,12 @@ void praat_newWithFile (Daata me, MelderFile file, const char32 *myName) {
 			Melder_cat (theCurrentPraatObjects -> uniqueId, U". ", name.string),
 			theCurrentPraatObjects -> n);
 	}
-	OBJECT = me;
-	SELECTED = false;
 	CLASS = my classInfo;
-	for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
+	OBJECT = me.transfer();
+	SELECTED = false;
+	for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
 		EDITOR [ieditor] = nullptr;
-	if (file != NULL) {
+	if (file) {
 		MelderFile_copy (file, & theCurrentPraatObjects -> list [IOBJECT]. file);
 	} else {
 		MelderFile_setToNull (& theCurrentPraatObjects -> list [IOBJECT]. file);

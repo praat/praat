@@ -39,11 +39,11 @@ oo_CLASS_CREATE (Manipulation, Function);
 /* How to create an Manipulation. */
 
 autoManipulation Manipulation_create (double tmin, double tmax);
-int Manipulation_replaceOriginalSound (Manipulation me, Sound sound);
-int Manipulation_replacePulses (Manipulation me, PointProcess pulses);
-int Manipulation_replaceIntensityTier (Manipulation me, IntensityTier intensity);
-int Manipulation_replacePitchTier (Manipulation me, PitchTier pitch);
-int Manipulation_replaceDurationTier (Manipulation me, DurationTier duration);
+void Manipulation_replaceOriginalSound (Manipulation me, Sound sound);
+void Manipulation_replacePulses (Manipulation me, PointProcess pulses);
+void Manipulation_replaceIntensityTier (Manipulation me, IntensityTier intensity);
+void Manipulation_replacePitchTier (Manipulation me, PitchTier pitch);
+void Manipulation_replaceDurationTier (Manipulation me, DurationTier duration);
 
 autoManipulation Sound_to_Manipulation (Sound me, double timeStep, double minimumPitch, double maximumPitch);
 autoManipulation Sound_Pitch_to_Manipulation (Sound sound, Pitch pitch);
@@ -73,8 +73,8 @@ autoSound Sound_Point_Point_to_Sound (Sound me, PointProcess source, PointProces
 autoSound Manipulation_to_Sound (Manipulation me, int method);
 int Manipulation_playPart (Manipulation me, double tmin, double tmax, int method);
 int Manipulation_play (Manipulation me, int method);
-int Manipulation_writeToTextFileWithoutSound (Manipulation me, MelderFile fs);
-int Manipulation_writeToBinaryFileWithoutSound (Manipulation me, MelderFile fs);
+void Manipulation_writeToTextFileWithoutSound (Manipulation me, MelderFile file);
+void Manipulation_writeToBinaryFileWithoutSound (Manipulation me, MelderFile file);
 
 /* The low-level synthesis routines. */
 
