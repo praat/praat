@@ -76,11 +76,13 @@
 
 #include "../external/portaudio/portaudio.h"
 
-void pulseAudio_cleanup (void);
-void stream_drain_complete_cb (pa_stream *stream, int success, void *userdata);
-void context_state_cb (pa_context *context, void *userdata);
-void context_drain_complete_cb (pa_context *context, void *userdata);
-void stream_write_cb (pa_stream *stream, size_t length, void *userdata);
+#ifdef USE_PULSEAUDIO
+	void pulseAudio_cleanup (void);
+	void stream_drain_complete_cb (pa_stream *stream, int success, void *userdata);
+	void context_state_cb (pa_context *context, void *userdata);
+	void context_drain_complete_cb (pa_context *context, void *userdata);
+	void stream_write_cb (pa_stream *stream, size_t length, void *userdata);
+#endif
 
 static struct {
 	enum kMelder_asynchronicityLevel maximumAsynchronicity;
@@ -154,6 +156,7 @@ static double theStartingTime = 0.0;
 #define PA_WRITING 4
 #define PA_WRITING_DONE 8
 
+#ifdef USE_PULSEAUDIO
 typedef struct pulseAudio {
 	pa_sample_spec sample_spec;
 	pa_threaded_mainloop *mainloop = nullptr;
@@ -175,7 +178,8 @@ typedef struct pulseAudio {
 	bool pulseAudioInitialized = false;
 	unsigned int occupation = PA_WRITING;
 } pulseAudioStruct;
-	
+#endif
+
 static struct MelderPlay {
 	int16_t *buffer;
 	long sampleRate, numberOfSamples, samplesLeft, samplesSent, samplesPlayed;
@@ -203,7 +207,9 @@ static struct MelderPlay {
 		WAVEHDR waveHeader;
 		MMRESULT status;
 	#endif
-	pulseAudioStruct pulseAudio;
+	#ifdef USE_PULSEAUDIO
+		pulseAudioStruct pulseAudio;
+	#endif
 } thePlay;
 
 long MelderAudio_getSamplesPlayed (void) {
@@ -317,6 +323,7 @@ static bool flush (void) {
 			Pa_CloseStream (my stream);
 			my stream = nullptr;
 		}
+	#ifdef USE_PULSEAUDIO
 	} else if (my usePulseAudio) {
 		if (my pulseAudio.mainloop) {
 			pa_threaded_mainloop_lock (my pulseAudio.mainloop);
@@ -335,6 +342,7 @@ static bool flush (void) {
 			pa_threaded_mainloop_unlock (my pulseAudio.mainloop);
 			pulseAudio_cleanup ();
 		}
+	#endif
 	} else {
 	#if defined (macintosh)
 	#elif defined (linux)
@@ -455,6 +463,7 @@ static bool workProc (void *closure) {
 			}
 			Pa_Sleep (10);
 		#endif
+	#ifdef USE_PULSEAUDIO
 	} else if (my usePulseAudio) {
 		if (my pulseAudio.mainloop) {
 			pa_threaded_mainloop_lock (my pulseAudio.mainloop);
@@ -474,6 +483,7 @@ static bool workProc (void *closure) {
 				return flush ();
 			}
 		}
+	#endif
 	} else {
 	#if defined (macintosh)
 	#elif defined (linux)
@@ -579,6 +589,7 @@ static int thePaStreamCallback (const void *input, void *output,
 	return paContinue;
 }
 
+#ifdef USE_PULSEAUDIO
 void pulseAudio_initialize (void) {
 	struct MelderPlay *me = & thePlay;
 	if (! my pulseAudio.pulseAudioInitialized) {
@@ -983,6 +994,7 @@ void context_state_cb (pa_context *context, void *userdata) {
 			break;
 	}
 }
+#endif
 
 void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples, int numberOfChannels,
 	bool (*playCallback) (void *playClosure, long numberOfSamplesPlayed), void *playClosure)
@@ -992,9 +1004,11 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 		bool wasPlaying = MelderAudio_isPlaying;
 	#endif
 	if (MelderAudio_isPlaying) MelderAudio_stopPlaying (MelderAudio_IMPLICIT);   // otherwise, keep "explicitStop" tag
-	if (my usePulseAudio && my pulseAudio.mainloop) {
-		pulseAudio_cleanup ();
-	}
+	#ifdef USE_PULSEAUDIO
+		if (my usePulseAudio && my pulseAudio.mainloop) {
+			pulseAudio_cleanup ();
+		}
+	#endif
 	my buffer = buffer;
 	my sampleRate = sampleRate;
 	my numberOfSamples = numberOfSamples;
@@ -1009,8 +1023,8 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 		my asynchronicity = preferences. maximumAsynchronicity;
 	trace (U"asynchronicity ", my asynchronicity);
 	my usePortAudio = preferences. outputUsesPortAudio;
-	my usePulseAudio = ! my usePortAudio; 
-	
+	my usePulseAudio = ! my usePortAudio;
+
 	my explicitStop = MelderAudio_IMPLICIT;
 	my fakeMono = false;
 	my volatile_interrupted = 0;
@@ -1163,6 +1177,7 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 		}
 		flush ();
 		return;
+	#ifdef USE_PULSEAUDIO
 	} if (my usePulseAudio) {
 		my pulseAudio.occupation |= PA_WRITING;
 		pulseAudio_initialize ();
@@ -1200,6 +1215,7 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 				my workProcId_gtk = g_timeout_add (20, workProc_gtk, nullptr);
 			#endif
 		}
+	#endif
 	} else {
 		#if defined (macintosh)
 		#elif defined (linux)

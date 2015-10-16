@@ -1619,8 +1619,8 @@ Sound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, VocalTractGri
 			if (startOralFormant2 <= oral_formants -> formants -> size) {
 				autoSound vocalTract = Sound_FormantGrid_Intensities_filter (me_diff.peek(), oral_formants, thy oral_formants_amplitudes, startOralFormant2, pv -> endOralFormant, alternatingSign);
 
-				if (him.peek() == 0) {
-					him.reset (Data_copy (vocalTract.peek()));
+				if (! him) {
+					him = Data_copy (vocalTract.peek());
 				} else {
 					_Sounds_add_inline (him.peek(), vocalTract.peek());
 				}
