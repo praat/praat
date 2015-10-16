@@ -75,7 +75,7 @@ ComplexSpectrogram Sound_to_ComplexSpectrogram (Sound me, double windowLength, d
 		// Compute sampling of the spectrum
 
 		long numberOfFrequencies = halfnsamp_window + 1;
-		long df = (long) floor (samplingFrequency / (numberOfFrequencies - 1));
+		double df = samplingFrequency / (numberOfFrequencies - 1);
 		
 		autoComplexSpectrogram thee = ComplexSpectrogram_create (my xmin, my xmax, numberOfFrames, timeStep, t1,
 			0, 0.5 * samplingFrequency, numberOfFrequencies, df, 0.0);
