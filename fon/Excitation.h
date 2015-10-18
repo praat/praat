@@ -35,12 +35,12 @@ double Excitation_phonToDifferenceLimens (double phon);
 double Excitation_differenceLimensToPhon (double ndli);
 double Excitation_soundPressureToPhon (double soundPressure, double bark);
 
-Excitation Excitation_create (double df, long nf);
+autoExcitation Excitation_create (double df, long nf);
 double Excitation_getDistance (Excitation me, Excitation thee);
 double Excitation_getLoudness (Excitation me);
 void Excitation_draw (Excitation me, Graphics g, double fmin, double fmax, double minimum, double maximum, int garnish);
-Matrix Excitation_to_Matrix (Excitation me);
-Excitation Matrix_to_Excitation (Matrix me);
+autoMatrix Excitation_to_Matrix (Excitation me);
+autoExcitation Matrix_to_Excitation (Matrix me);
 
 /* End of file Excitation.h */
 #endif

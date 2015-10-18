@@ -21,7 +21,7 @@
 #define ooSTRUCT ERPPoint
 oo_DEFINE_CLASS (ERPPoint, AnyPoint)
 
-	oo_OBJECT (Sound, 2, erp)
+	oo_AUTO_OBJECT (Sound, 2, erp)
 
 oo_END_CLASS (ERPPoint)
 #undef ooSTRUCT

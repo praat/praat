@@ -32,11 +32,11 @@ void structDurationTier :: v_info () {
 	MelderInfo_writeLine (U"Maximum relative duration value: ", RealTier_getMaximumValue (this));
 }
 
-DurationTier DurationTier_create (double tmin, double tmax) {
+autoDurationTier DurationTier_create (double tmin, double tmax) {
 	try {
 		autoDurationTier me = Thing_new (DurationTier);
 		RealTier_init (me.peek(), tmin, tmax);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"DurationTier not created.");
 	}
@@ -48,13 +48,13 @@ void DurationTier_draw (DurationTier me, Graphics g, double tmin, double tmax,
 	RealTier_draw (me, g, tmin, tmax, ymin, ymax, garnish, method, U"Relative duration");
 }
 
-DurationTier PointProcess_upto_DurationTier (PointProcess me) {
+autoDurationTier PointProcess_upto_DurationTier (PointProcess me) {
 	try {
 		autoDurationTier thee = DurationTier_create (my xmin, my xmax);
 		for (long i = 1; i <= my nt; i ++) {
 			RealTier_addPoint (thee.peek(), my t [i], 1.0);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to DurationTier.");
 	}

@@ -513,8 +513,8 @@ static void common_Sound_create (UiForm dia, Interpreter interpreter, bool allow
 	int64 numberOfSamples = (int64) numberOfSamples_real;
 	autoSound sound;
 	try {
-		sound.reset (Sound_create (numberOfChannels, startTime, endTime, numberOfSamples, 1.0 / samplingFrequency,
-			startTime + 0.5 * (endTime - startTime - (numberOfSamples - 1) / samplingFrequency)));
+		sound = Sound_create (numberOfChannels, startTime, endTime, numberOfSamples, 1.0 / samplingFrequency,
+			startTime + 0.5 * (endTime - startTime - (numberOfSamples - 1) / samplingFrequency));
 	} catch (MelderError) {
 		if (str32str (Melder_getError (), U"memory")) {
 			Melder_clearError ();

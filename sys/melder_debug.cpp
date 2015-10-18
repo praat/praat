@@ -26,6 +26,9 @@
 #include "praat_version.h"
 #ifdef _WIN32
 	#include "UnicodeData.h"
+	#include <windows.h>
+	#include <fcntl.h>
+	#include <io.h>
 #endif
 
 int Melder_debug = 0;
@@ -180,162 +183,236 @@ static const char16 * peek32to16 (const char32 *string) {
 }
 #endif
 
+bool Melder_consoleIsAnsi = false;
+
+void Melder_writeToConsole (const char32 *message, bool useStderr) {
+	if (! message) return;
+	#if defined (_WIN32)
+		(void) useStderr;
+		static HANDLE console = nullptr;
+		if (! console) {
+			#if ! defined (CONSOLE_APPLICATION)
+				if (AttachConsole (ATTACH_PARENT_PROCESS)) {
+					/*
+					 * Redirect stdout to the console (note: no UTF-8!).
+					 */
+					HANDLE handle = GetStdHandle (STD_OUTPUT_HANDLE);
+					int fileHandle = _open_osfhandle ((intptr_t) handle, _O_TEXT);
+					FILE* f = _fdopen (fileHandle, "w");
+					*stdout = *f;
+					setvbuf (stdout, NULL, _IONBF, 0);
+					/*
+					 * Redirect stderr to the console (note: no UTF-8!).
+					 */
+					handle = GetStdHandle (STD_ERROR_HANDLE);
+					fileHandle = _open_osfhandle ((intptr_t) handle, _O_TEXT);
+					f = _fdopen (fileHandle, "w");
+					*stderr = *f;
+					setvbuf (stderr, NULL, _IONBF, 0);
+					/*
+					 * Redirect stdin from the console (note: no UTF-8!).
+					 */
+					handle = GetStdHandle (STD_INPUT_HANDLE);
+					fileHandle = _open_osfhandle ((intptr_t) handle, _O_TEXT);
+					f = _fdopen (fileHandle, "r");
+					*stdin = *f;
+					setvbuf (stdin, NULL, _IONBF, 0);
+				}
+			#endif
+			console = CreateFileW (L"CONOUT$", GENERIC_WRITE, FILE_SHARE_WRITE, nullptr, OPEN_EXISTING, 0, 0);
+		}
+		if (Melder_consoleIsAnsi) {
+			size_t n = str32len (message);
+			for (long i = 0; i < n; i ++) {
+				unsigned int kar = (unsigned short) message [i];
+				fputc (kar, stdout);
+			}
+		//} else if (Melder_consoleIsUtf8) {
+			//char *messageA = Melder_peek32to8 (message);
+			//fprintf (stdout, "%s", messageA);
+		} else {
+			WCHAR* messageW = (WCHAR*) peek32to16 (message);
+			WriteConsoleW (console, messageW, wcslen (messageW), nullptr, nullptr);
+		}
+	#else
+		FILE *f = ( useStderr ? stderr : stdout );
+		for (const char32* p = message; *p != U'\0'; p ++) {
+			char32 kar = *p;
+			if (kar <= 0x00007F) {
+				fputc ((int) kar, f);   // because fputc wants an int instead of an uint8 (guarded conversion)
+			} else if (kar <= 0x0007FF) {
+				fputc (0xC0 | (kar >> 6), f);
+				fputc (0x80 | (kar & 0x00003F), f);
+			} else if (kar <= 0x00FFFF) {
+				fputc (0xE0 | (kar >> 12), f);
+				fputc (0x80 | ((kar >> 6) & 0x00003F), f);
+				fputc (0x80 | (kar & 0x00003F), f);
+			} else {
+				fputc (0xF0 | (kar >> 18), f);
+				fputc (0x80 | ((kar >> 12) & 0x00003F), f);
+				fputc (0x80 | ((kar >> 6) & 0x00003F), f);
+				fputc (0x80 | (kar & 0x00003F), f);
+			}
+		}
+	#endif
+}
+
 /********** CASUAL **********/
 
 void Melder_casual (Melder_1_ARG) {
-	fprintf (stderr, "%s", peek32to8 (arg1. _arg));
-	fprintf (stderr, "\n");
+	Melder_writeToConsole (arg1. _arg, true);
+	Melder_writeToConsole (U"\n", true);
 }
 void Melder_casual (Melder_2_ARGS) {
-	fprintf (stderr, "%s", peek32to8 (arg1. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg2. _arg));
-	fprintf (stderr, "\n");
+	Melder_writeToConsole (arg1. _arg, true);
+	Melder_writeToConsole (arg2. _arg, true);
+	Melder_writeToConsole (U"\n", true);
 }
 void Melder_casual (Melder_3_ARGS) {
-	fprintf (stderr, "%s", peek32to8 (arg1. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg2. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg3. _arg));
-	fprintf (stderr, "\n");
+	Melder_writeToConsole (arg1. _arg, true);
+	Melder_writeToConsole (arg2. _arg, true);
+	Melder_writeToConsole (arg3. _arg, true);
+	Melder_writeToConsole (U"\n", true);
 }
 void Melder_casual (Melder_4_ARGS) {
-	fprintf (stderr, "%s", peek32to8 (arg1. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg2. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg3. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg4. _arg));
-	fprintf (stderr, "\n");
+	Melder_writeToConsole (arg1. _arg, true);
+	Melder_writeToConsole (arg2. _arg, true);
+	Melder_writeToConsole (arg3. _arg, true);
+	Melder_writeToConsole (arg4. _arg, true);
+	Melder_writeToConsole (U"\n", true);
 }
 void Melder_casual (Melder_5_ARGS) {
-	fprintf (stderr, "%s", peek32to8 (arg1. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg2. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg3. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg4. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg5. _arg));
-	fprintf (stderr, "\n");
+	Melder_writeToConsole (arg1. _arg, true);
+	Melder_writeToConsole (arg2. _arg, true);
+	Melder_writeToConsole (arg3. _arg, true);
+	Melder_writeToConsole (arg4. _arg, true);
+	Melder_writeToConsole (arg5. _arg, true);
+	Melder_writeToConsole (U"\n", true);
 }
 void Melder_casual (Melder_6_ARGS) {
-	fprintf (stderr, "%s", peek32to8 (arg1. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg2. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg3. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg4. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg5. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg6. _arg));
-	fprintf (stderr, "\n");
+	Melder_writeToConsole (arg1. _arg, true);
+	Melder_writeToConsole (arg2. _arg, true);
+	Melder_writeToConsole (arg3. _arg, true);
+	Melder_writeToConsole (arg4. _arg, true);
+	Melder_writeToConsole (arg5. _arg, true);
+	Melder_writeToConsole (arg6. _arg, true);
+	Melder_writeToConsole (U"\n", true);
 }
 void Melder_casual (Melder_7_ARGS) {
-	fprintf (stderr, "%s", peek32to8 (arg1. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg2. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg3. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg4. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg5. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg6. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg7. _arg));
-	fprintf (stderr, "\n");
+	Melder_writeToConsole (arg1. _arg, true);
+	Melder_writeToConsole (arg2. _arg, true);
+	Melder_writeToConsole (arg3. _arg, true);
+	Melder_writeToConsole (arg4. _arg, true);
+	Melder_writeToConsole (arg5. _arg, true);
+	Melder_writeToConsole (arg6. _arg, true);
+	Melder_writeToConsole (arg7. _arg, true);
+	Melder_writeToConsole (U"\n", true);
 }
 void Melder_casual (Melder_8_ARGS) {
-	fprintf (stderr, "%s", peek32to8 (arg1. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg2. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg3. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg4. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg5. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg6. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg7. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg8. _arg));
-	fprintf (stderr, "\n");
+	Melder_writeToConsole (arg1. _arg, true);
+	Melder_writeToConsole (arg2. _arg, true);
+	Melder_writeToConsole (arg3. _arg, true);
+	Melder_writeToConsole (arg4. _arg, true);
+	Melder_writeToConsole (arg5. _arg, true);
+	Melder_writeToConsole (arg6. _arg, true);
+	Melder_writeToConsole (arg7. _arg, true);
+	Melder_writeToConsole (arg8. _arg, true);
+	Melder_writeToConsole (U"\n", true);
 }
 void Melder_casual (Melder_9_ARGS) {
-	fprintf (stderr, "%s", peek32to8 (arg1. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg2. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg3. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg4. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg5. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg6. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg7. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg8. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg9. _arg));
-	fprintf (stderr, "\n");
+	Melder_writeToConsole (arg1. _arg, true);
+	Melder_writeToConsole (arg2. _arg, true);
+	Melder_writeToConsole (arg3. _arg, true);
+	Melder_writeToConsole (arg4. _arg, true);
+	Melder_writeToConsole (arg5. _arg, true);
+	Melder_writeToConsole (arg6. _arg, true);
+	Melder_writeToConsole (arg7. _arg, true);
+	Melder_writeToConsole (arg8. _arg, true);
+	Melder_writeToConsole (arg9. _arg, true);
+	Melder_writeToConsole (U"\n", true);
 }
 void Melder_casual (Melder_10_ARGS) {
-	fprintf (stderr, "%s", peek32to8 (arg1. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg2. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg3. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg4. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg5. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg6. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg7. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg8. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg9. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg10._arg));
-	fprintf (stderr, "\n");
+	Melder_writeToConsole (arg1. _arg, true);
+	Melder_writeToConsole (arg2. _arg, true);
+	Melder_writeToConsole (arg3. _arg, true);
+	Melder_writeToConsole (arg4. _arg, true);
+	Melder_writeToConsole (arg5. _arg, true);
+	Melder_writeToConsole (arg6. _arg, true);
+	Melder_writeToConsole (arg7. _arg, true);
+	Melder_writeToConsole (arg8. _arg, true);
+	Melder_writeToConsole (arg9. _arg, true);
+	Melder_writeToConsole (arg10._arg, true);
+	Melder_writeToConsole (U"\n", true);
 }
 void Melder_casual (Melder_11_ARGS) {
-	fprintf (stderr, "%s", peek32to8 (arg1. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg2. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg3. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg4. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg5. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg6. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg7. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg8. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg9. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg10._arg));
-	fprintf (stderr, "%s", peek32to8 (arg11._arg));
-	fprintf (stderr, "\n");
+	Melder_writeToConsole (arg1. _arg, true);
+	Melder_writeToConsole (arg2. _arg, true);
+	Melder_writeToConsole (arg3. _arg, true);
+	Melder_writeToConsole (arg4. _arg, true);
+	Melder_writeToConsole (arg5. _arg, true);
+	Melder_writeToConsole (arg6. _arg, true);
+	Melder_writeToConsole (arg7. _arg, true);
+	Melder_writeToConsole (arg8. _arg, true);
+	Melder_writeToConsole (arg9. _arg, true);
+	Melder_writeToConsole (arg10._arg, true);
+	Melder_writeToConsole (arg11._arg, true);
+	Melder_writeToConsole (U"\n", true);
 }
 void Melder_casual (Melder_13_ARGS) {
-	fprintf (stderr, "%s", peek32to8 (arg1. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg2. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg3. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg4. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg5. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg6. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg7. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg8. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg9. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg10._arg));
-	fprintf (stderr, "%s", peek32to8 (arg11._arg));
-	fprintf (stderr, "%s", peek32to8 (arg12._arg));
-	fprintf (stderr, "%s", peek32to8 (arg13._arg));
-	fprintf (stderr, "\n");
+	Melder_writeToConsole (arg1. _arg, true);
+	Melder_writeToConsole (arg2. _arg, true);
+	Melder_writeToConsole (arg3. _arg, true);
+	Melder_writeToConsole (arg4. _arg, true);
+	Melder_writeToConsole (arg5. _arg, true);
+	Melder_writeToConsole (arg6. _arg, true);
+	Melder_writeToConsole (arg7. _arg, true);
+	Melder_writeToConsole (arg8. _arg, true);
+	Melder_writeToConsole (arg9. _arg, true);
+	Melder_writeToConsole (arg10._arg, true);
+	Melder_writeToConsole (arg11._arg, true);
+	Melder_writeToConsole (arg12._arg, true);
+	Melder_writeToConsole (arg13._arg, true);
+	Melder_writeToConsole (U"\n", true);
 }
 void Melder_casual (Melder_15_ARGS) {
-	fprintf (stderr, "%s", peek32to8 (arg1. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg2. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg3. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg4. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg5. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg6. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg7. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg8. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg9. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg10._arg));
-	fprintf (stderr, "%s", peek32to8 (arg11._arg));
-	fprintf (stderr, "%s", peek32to8 (arg12._arg));
-	fprintf (stderr, "%s", peek32to8 (arg13._arg));
-	fprintf (stderr, "%s", peek32to8 (arg14._arg));
-	fprintf (stderr, "%s", peek32to8 (arg15._arg));
-	fprintf (stderr, "\n");
+	Melder_writeToConsole (arg1. _arg, true);
+	Melder_writeToConsole (arg2. _arg, true);
+	Melder_writeToConsole (arg3. _arg, true);
+	Melder_writeToConsole (arg4. _arg, true);
+	Melder_writeToConsole (arg5. _arg, true);
+	Melder_writeToConsole (arg6. _arg, true);
+	Melder_writeToConsole (arg7. _arg, true);
+	Melder_writeToConsole (arg8. _arg, true);
+	Melder_writeToConsole (arg9. _arg, true);
+	Melder_writeToConsole (arg10._arg, true);
+	Melder_writeToConsole (arg11._arg, true);
+	Melder_writeToConsole (arg12._arg, true);
+	Melder_writeToConsole (arg13._arg, true);
+	Melder_writeToConsole (arg14._arg, true);
+	Melder_writeToConsole (arg15._arg, true);
+	Melder_writeToConsole (U"\n", true);
 }
 void Melder_casual (Melder_19_ARGS) {
-	fprintf (stderr, "%s", peek32to8 (arg1. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg2. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg3. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg4. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg5. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg6. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg7. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg8. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg9. _arg));
-	fprintf (stderr, "%s", peek32to8 (arg10._arg));
-	fprintf (stderr, "%s", peek32to8 (arg11._arg));
-	fprintf (stderr, "%s", peek32to8 (arg12._arg));
-	fprintf (stderr, "%s", peek32to8 (arg13._arg));
-	fprintf (stderr, "%s", peek32to8 (arg14._arg));
-	fprintf (stderr, "%s", peek32to8 (arg15._arg));
-	fprintf (stderr, "%s", peek32to8 (arg16._arg));
-	fprintf (stderr, "%s", peek32to8 (arg17._arg));
-	fprintf (stderr, "%s", peek32to8 (arg18._arg));
-	fprintf (stderr, "%s", peek32to8 (arg19._arg));
-	fprintf (stderr, "\n");
+	Melder_writeToConsole (arg1. _arg, true);
+	Melder_writeToConsole (arg2. _arg, true);
+	Melder_writeToConsole (arg3. _arg, true);
+	Melder_writeToConsole (arg4. _arg, true);
+	Melder_writeToConsole (arg5. _arg, true);
+	Melder_writeToConsole (arg6. _arg, true);
+	Melder_writeToConsole (arg7. _arg, true);
+	Melder_writeToConsole (arg8. _arg, true);
+	Melder_writeToConsole (arg9. _arg, true);
+	Melder_writeToConsole (arg10._arg, true);
+	Melder_writeToConsole (arg11._arg, true);
+	Melder_writeToConsole (arg12._arg, true);
+	Melder_writeToConsole (arg13._arg, true);
+	Melder_writeToConsole (arg14._arg, true);
+	Melder_writeToConsole (arg15._arg, true);
+	Melder_writeToConsole (arg16._arg, true);
+	Melder_writeToConsole (arg17._arg, true);
+	Melder_writeToConsole (arg18._arg, true);
+	Melder_writeToConsole (arg19._arg, true);
+	Melder_writeToConsole (U"\n", true);
 }
 
 /********** TRACE **********/

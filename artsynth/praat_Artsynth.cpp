@@ -65,7 +65,7 @@ FORM (Artword_create, U"Create an empty Artword", U"Create Artword...") {
 	POSITIVE (U"Duration (seconds)", U"1.0")
 	OK2
 DO
-	praat_new (Artword_create (GET_REAL (U"Duration")), GET_STRING (U"Name"));
+	praat_new (Artword_create (GET_REAL (U"Duration")).transfer(), GET_STRING (U"Name"));
 END2 }
 
 FORM (Artword_draw, U"Draw one Artword tier", NULL) {

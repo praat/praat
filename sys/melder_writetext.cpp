@@ -44,28 +44,7 @@
 	#include "macport_off.h"
 #endif
 
-static void Melder_fwriteUnicodeAsUtf8 (char32 unicode, FILE *f) {
-	if (unicode <= 0x0000007F) {
-		#ifdef _WIN32
-			if (unicode == '\n') fputc (13, f);
-		#endif
-		fputc ((int) unicode, f);   // because fputc wants an int instead of an uint8_t (guarded conversion)
-	} else if (unicode <= 0x000007FF) {
-		fputc (0xC0 | (unicode >> 6), f);
-		fputc (0x80 | (unicode & 0x0000003F), f);
-	} else if (unicode <= 0x0000FFFF) {
-		fputc (0xE0 | (unicode >> 12), f);
-		fputc (0x80 | ((unicode >> 6) & 0x0000003F), f);
-		fputc (0x80 | (unicode & 0x0000003F), f);
-	} else {
-		fputc (0xF0 | (unicode >> 18), f);
-		fputc (0x80 | ((unicode >> 12) & 0x0000003F), f);
-		fputc (0x80 | ((unicode >> 6) & 0x0000003F), f);
-		fputc (0x80 | (unicode & 0x0000003F), f);
-	}
-}
-
-void Melder_fwrite32to8 (const char32 *ptr, int64 n, FILE *f) {
+void Melder_fwrite32to8 (const char32 *string, FILE *f) {
 	/*
 	 * Precondition:
 	 *    the string's encoding is UTF-32.
@@ -73,8 +52,26 @@ void Melder_fwrite32to8 (const char32 *ptr, int64 n, FILE *f) {
 	 *    if the precondition does not hold, we don't crash,
 	 *    but the characters that are written may be incorrect.
 	 */
-	for (int64 i = 0; i < n; i ++) {
-		Melder_fwriteUnicodeAsUtf8 (ptr [i], f);
+	for (const char32* p = string; *p != U'\0'; p ++) {
+		char32 kar = *p;
+		if (kar <= 0x00007F) {
+			#ifdef _WIN32
+				if (kar == U'\n') fputc (13, f);
+			#endif
+			fputc ((int) kar, f);   // because fputc wants an int instead of an uint8_t (guarded conversion)
+		} else if (kar <= 0x0007FF) {
+			fputc (0xC0 | (kar >> 6), f);
+			fputc (0x80 | (kar & 0x00003F), f);
+		} else if (kar <= 0x00FFFF) {
+			fputc (0xE0 | (kar >> 12), f);
+			fputc (0x80 | ((kar >> 6) & 0x00003F), f);
+			fputc (0x80 | (kar & 0x00003F), f);
+		} else {
+			fputc (0xF0 | (kar >> 18), f);
+			fputc (0x80 | ((kar >> 12) & 0x00003F), f);
+			fputc (0x80 | ((kar >> 6) & 0x00003F), f);
+			fputc (0x80 | (kar & 0x00003F), f);
+		}
 	}
 }
 
@@ -82,7 +79,7 @@ void MelderFile_writeText (MelderFile file, const char32 *text, enum kMelder_tex
 	if (! text) text = U"";
 	autofile f = Melder_fopen (file, "wb");
 	if (outputEncoding == kMelder_textOutputEncoding_UTF8) {
-		Melder_fwrite32to8 (text, str32len (text), f);
+		Melder_fwrite32to8 (text, f);
 	} else if ((outputEncoding == kMelder_textOutputEncoding_ASCII_THEN_UTF16 && Melder_isValidAscii (text)) ||
 		(outputEncoding == kMelder_textOutputEncoding_ISO_LATIN1_THEN_UTF16 && Melder_isEncodable (text, kMelder_textOutputEncoding_ISO_LATIN1)))
 	{
@@ -96,7 +93,7 @@ void MelderFile_writeText (MelderFile file, const char32 *text, enum kMelder_tex
 		for (size_t i = 0; i < n; i ++) {
 			char32 kar = text [i];
 			#ifdef _WIN32
-				if (kar == '\n') putc_unlocked (13, f);
+				if (kar == U'\n') putc_unlocked (13, f);
 			#endif
 			putc_unlocked (kar, f);
 		}
@@ -107,14 +104,14 @@ void MelderFile_writeText (MelderFile file, const char32 *text, enum kMelder_tex
 		for (size_t i = 0; i < n; i ++) {
 			char32 kar = text [i];
 			#ifdef _WIN32
-				if (kar == '\n') binputu2 (13, f);
+				if (kar == U'\n') binputu2 (13, f);
 			#endif
 			if (kar <= 0x00FFFF) {
-				binputu2 ((char16_t) kar, f);   // guarded conversion down
+				binputu2 ((char16) kar, f);   // guarded conversion down
 			} else if (kar <= 0x10FFFF) {
 				kar -= 0x010000;
-				binputu2 (0xD800 | (uint16_t) (kar >> 10), f);
-				binputu2 (0xDC00 | (uint16_t) ((char16) kar & 0x3ff), f);
+				binputu2 (0xD800 | (uint16) (kar >> 10), f);
+				binputu2 (0xDC00 | (uint16) ((char16) kar & 0x3ff), f);
 			} else {
 				binputu2 (UNICODE_REPLACEMENT_CHARACTER, f);
 			}
@@ -148,7 +145,7 @@ void MelderFile_appendText (MelderFile file, const char32 *text) {
 		int outputEncoding = Melder_getOutputEncoding ();
 		if (outputEncoding == kMelder_textOutputEncoding_UTF8) {   // TODO: read as file's encoding
 			autofile f2 = Melder_fopen (file, "ab");
-			Melder_fwrite32to8 (text, str32len (text), f2);
+			Melder_fwrite32to8 (text, f2);
 			f2.close (file);
 		} else if ((outputEncoding == kMelder_textOutputEncoding_ASCII_THEN_UTF16 && Melder_isEncodable (text, kMelder_textOutputEncoding_ASCII))
 		    || (outputEncoding == kMelder_textOutputEncoding_ISO_LATIN1_THEN_UTF16 && Melder_isEncodable (text, kMelder_textOutputEncoding_ISO_LATIN1)))
@@ -193,7 +190,7 @@ void MelderFile_appendText (MelderFile file, const char32 *text) {
 			for (int64 i = 0; i < n; i ++) {
 				char32 kar = text [i];
 				#ifdef _WIN32
-					if (kar == '\n') binputu2 (13, f2);
+					if (kar == U'\n') binputu2 (13, f2);
 				#endif
 				if (kar <= 0x00FFFF) {
 					binputu2 ((uint16) kar, f2);   // guarded conversion down
@@ -280,11 +277,11 @@ static void _MelderFile_write (MelderFile file, const char32 *string) {
 			char32 kar = string [i];
 			if (kar == U'\n' && file -> requiresCRLF) binputu2 (13, f);
 			if (kar <= 0x00FFFF) {
-				binputu2 ((char16_t) kar, f);
+				binputu2 ((char16) kar, f);
 			} else if (kar <= 0x10FFFF) {
 				kar -= 0x010000;
-				binputu2 (0xD800 | (char16_t) (kar >> 10), f);
-				binputu2 (0xDC00 | (char16_t) ((char16_t) kar & 0x03ff), f);
+				binputu2 (0xD800 | (char16) (kar >> 10), f);
+				binputu2 (0xDC00 | (char16) ((char16) kar & 0x03ff), f);
 			} else {
 				binputu2 (UNICODE_REPLACEMENT_CHARACTER, f);
 			}

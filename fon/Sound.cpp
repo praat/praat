@@ -123,24 +123,24 @@ double structSound :: v_getFunction2 (double x, double y) {
 	return v_getFunction1 (channel, x);
 }
 
-Sound Sound_create (long numberOfChannels, double xmin, double xmax, long nx, double dx, double x1) {
+autoSound Sound_create (long numberOfChannels, double xmin, double xmax, long nx, double dx, double x1) {
 	try {
 		autoSound me = Thing_new (Sound);
 		Matrix_init (me.peek(), xmin, xmax, nx, dx, x1, 1, numberOfChannels, numberOfChannels, 1, 1);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not created.");
 	}
 }
 
-Sound Sound_createSimple (long numberOfChannels, double duration, double samplingFrequency) {
+autoSound Sound_createSimple (long numberOfChannels, double duration, double samplingFrequency) {
 	Melder_assert (duration >= 0.0);
 	Melder_assert (samplingFrequency > 0.0);
 	double numberOfSamples_f = round (duration * samplingFrequency);
 	if (numberOfSamples_f > (double) INT32_MAX)
 		Melder_throw (U"Cannot create sounds with more than ", Melder_bigInteger (INT32_MAX), U" samples, because they cannot be saved to disk.");
 	return Sound_create (numberOfChannels, 0.0, duration, (long) (int32_t) numberOfSamples_f,
-		1 / samplingFrequency, 0.5 / samplingFrequency);
+		1.0 / samplingFrequency, 0.5 / samplingFrequency);
 }
 
 Sound Sound_convertToMono (Sound me) {
@@ -344,7 +344,7 @@ Sound Sound_upsample (Sound me) {
 		while (nfft < my nx + 2000) nfft *= 2;
 		autoSound thee = Sound_create (my ny, my xmin, my xmax, my nx * 2, my dx / 2, my x1 - my dx / 4);
 		for (long channel = 1; channel <= my ny; channel ++) {
-			autoNUMvector <double> data (1, 2 * nfft);   // zeroing is important...
+			autoNUMvector<double> data (1, 2 * nfft);   // zeroing is important...
 			NUMvector_copyElements (my z [channel], & data [1000], 1, my nx);   // ...because this fills only part of the sound
 			NUMrealft (data.peek(), nfft, 1);
 			long imin = (long) (nfft * 0.95);
@@ -372,20 +372,20 @@ Sound Sound_resample (Sound me, double samplingFrequency, long precision) {
 		long numberOfSamples = lround ((my xmax - my xmin) * samplingFrequency);
 		if (numberOfSamples < 1)
 			Melder_throw (U"The resampled Sound would have no samples.");
-		autoSound filtered = NULL;
+		autoSound filtered;
 		if (upfactor < 1.0) {   // need anti-aliasing filter?
 			long nfft = 1, antiTurnAround = 1000;
 			while (nfft < my nx + antiTurnAround * 2) nfft *= 2;
-			autoNUMvector <double> data (1, nfft);
-			filtered.reset (Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1));
+			autoNUMvector<double> data (1, nfft);
+			filtered = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1);
 			for (long channel = 1; channel <= my ny; channel ++) {
 				for (long i = 1; i <= nfft; i ++) {
-					data [i] = 0;
+					data [i] = 0.0;
 				}
 				NUMvector_copyElements (my z [channel], & data [antiTurnAround], 1, my nx);
 				NUMrealft (data.peek(), nfft, 1);   // go to the frequency domain
 				for (long i = (long) floor (upfactor * nfft); i <= nfft; i ++) {
-					data [i] = 0;   // filter away high frequencies
+					data [i] = 0.0;   // filter away high frequencies
 				}
 				data [2] = 0.0;
 				NUMrealft (data.peek(), nfft, -1);   // return to the time domain
@@ -432,7 +432,7 @@ Sound Sounds_append (Sound me, double silenceDuration, Sound thee) {
 			Melder_throw (U"The numbers of channels are not equal (e.g. one is mono, the other stereo).");
 		if (my dx != thy dx)
 			Melder_throw (U"The sampling frequencies are not equal.");
-		autoSound him = Sound_create (my ny, 0, nx * my dx, nx, my dx, 0.5 * my dx);
+		autoSound him = Sound_create (my ny, 0.0, nx * my dx, nx, my dx, 0.5 * my dx);
 		for (long channel = 1; channel <= my ny; channel ++) {
 			NUMvector_copyElements (my z [channel], his z [channel], 1, my nx);
 			NUMvector_copyElements (thy z [channel], his z [channel] + my nx + nx_silence, 1, thy nx);
@@ -900,7 +900,7 @@ Sound Sound_createAsPureTone (long numberOfChannels, double startingTime, double
 		if (numberOfSamples_f > (double) INT32_MAX)
 			Melder_throw (U"Cannot create sounds with more than ", Melder_bigInteger (INT32_MAX), U" samples, because they cannot be saved to disk.");
 		autoSound me = Sound_create (numberOfChannels, startingTime, endTime, (long) numberOfSamples_f,
-			1 / sampleRate, startingTime + 0.5 / sampleRate);
+			1.0 / sampleRate, startingTime + 0.5 / sampleRate);
 		for (long isamp = 1; isamp <= my nx; isamp ++) {
 			double time = my x1 + (isamp - 1) * my dx;
 			double value = amplitude * sin (NUM2pi * frequency * time);
@@ -949,7 +949,7 @@ Sound Sound_createFromToneComplex (double startingTime, double endTime, double s
 		 */
 		double factor = 0.99 / numberOfComponents;
 		autoSound me = Sound_create (1, startingTime, endTime, lround ((endTime - startingTime) * sampleRate),
-			1 / sampleRate, startingTime + 0.5 / sampleRate);
+			1.0 / sampleRate, startingTime + 0.5 / sampleRate);
 		double *amplitude = my z [1];
 		for (long isamp = 1; isamp <= my nx; isamp ++) {
 			double value = 0.0, t = Sampled_indexToX (me.peek(), isamp);

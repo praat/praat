@@ -26,7 +26,7 @@
 
 #include "Excitation_to_Formant.h"
 
-Formant Excitation_to_Formant (Excitation me, int maxnFormants) {
+autoFormant Excitation_to_Formant (Excitation me, int maxnFormants) {
 	try {
 		long nfreq = my nx, nform = 0;
 		double *p = my z [1];
@@ -54,7 +54,7 @@ Formant Excitation_to_Formant (Excitation me, int maxnFormants) {
 				if (nform == thy maxnFormants) break;
 			}
 		thy d_frames [1]. nFormants = nform;
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Formant.");
 	}

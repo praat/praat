@@ -21,11 +21,11 @@
 
 Thing_implement (AmplitudeTier, RealTier, 0);
 
-AmplitudeTier AmplitudeTier_create (double tmin, double tmax) {
+autoAmplitudeTier AmplitudeTier_create (double tmin, double tmax) {
 	try {
 		autoAmplitudeTier me = Thing_new (AmplitudeTier);
 		RealTier_init (me.peek(), tmin, tmax);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"AmplitudeTier not created.");
 	}
@@ -37,7 +37,7 @@ void AmplitudeTier_draw (AmplitudeTier me, Graphics g, double tmin, double tmax,
 	RealTier_draw (me, g, tmin, tmax, ymin, ymax, garnish, method, U"Sound pressure (Pa)");
 }
 
-AmplitudeTier PointProcess_upto_AmplitudeTier (PointProcess me, double soundPressure) {
+autoAmplitudeTier PointProcess_upto_AmplitudeTier (PointProcess me, double soundPressure) {
 	try {
 		return (AmplitudeTier) PointProcess_upto_RealTier (me, soundPressure, classAmplitudeTier);
 	} catch (MelderError) {
@@ -45,7 +45,7 @@ AmplitudeTier PointProcess_upto_AmplitudeTier (PointProcess me, double soundPres
 	}
 }
 
-AmplitudeTier IntensityTier_to_AmplitudeTier (IntensityTier me) {
+autoAmplitudeTier IntensityTier_to_AmplitudeTier (IntensityTier me) {
 	try {
 		autoAmplitudeTier thee = Thing_new (AmplitudeTier);
 		my structRealTier :: v_copy (thee.peek());
@@ -53,13 +53,13 @@ AmplitudeTier IntensityTier_to_AmplitudeTier (IntensityTier me) {
 			RealPoint point = thy point (i);
 			point -> value = pow (10.0, point -> value / 20.0) * 2.0e-5;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to AmplitudeTier.");
 	}
 }
 
-IntensityTier AmplitudeTier_to_IntensityTier (AmplitudeTier me, double threshold_dB) {
+autoIntensityTier AmplitudeTier_to_IntensityTier (AmplitudeTier me, double threshold_dB) {
 	try {
 		double threshold_Pa = pow (10.0, threshold_dB / 20.0) * 2.0e-5;   // often zero!
 		autoIntensityTier thee = Thing_new (IntensityTier);
@@ -69,13 +69,13 @@ IntensityTier AmplitudeTier_to_IntensityTier (AmplitudeTier me, double threshold
 			double absoluteValue = fabs (point -> value);
 			point -> value = absoluteValue <= threshold_Pa ? threshold_dB : 20.0 * log10 (absoluteValue / 2.0e-5);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to IntensityTier.");
 	}
 }
 
-TableOfReal AmplitudeTier_downto_TableOfReal (AmplitudeTier me) {
+autoTableOfReal AmplitudeTier_downto_TableOfReal (AmplitudeTier me) {
 	return RealTier_downto_TableOfReal (me, U"Time (s)", U"Sound pressure (Pa)");
 }
 
@@ -90,18 +90,18 @@ void Sound_AmplitudeTier_multiply_inline (Sound me, AmplitudeTier amplitude) {
 	}
 }
 
-Sound Sound_AmplitudeTier_multiply (Sound me, AmplitudeTier amplitude) {
+autoSound Sound_AmplitudeTier_multiply (Sound me, AmplitudeTier amplitude) {
 	try {
 		autoSound thee = Data_copy (me);
 		Sound_AmplitudeTier_multiply_inline (thee.peek(), amplitude);
 		Vector_scale (thee.peek(), 0.9);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not multiplied by ", amplitude, U".");
 	}
 }
 
-AmplitudeTier PointProcess_Sound_to_AmplitudeTier_point (PointProcess me, Sound thee) {
+autoAmplitudeTier PointProcess_Sound_to_AmplitudeTier_point (PointProcess me, Sound thee) {
 	try {
 		long imin, imax, numberOfPeaks = PointProcess_getWindowPoints (me, my xmin, my xmax, & imin, & imax);
 		if (numberOfPeaks < 3) return nullptr;
@@ -110,7 +110,7 @@ AmplitudeTier PointProcess_Sound_to_AmplitudeTier_point (PointProcess me, Sound 
 			double value = Vector_getValueAtX (thee, my t [i], Vector_CHANNEL_AVERAGE, Vector_VALUE_INTERPOLATION_SINC700);
 			if (NUMdefined (value)) RealTier_addPoint (him.peek(), my t [i], value);
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U": not converted to AmplitudeTier.");
 	}
@@ -149,7 +149,7 @@ static double Sound_getHannWindowedRms (Sound me, double tmid, double widthLeft,
 	}
 	return sqrt (sumOfSquares / windowSumOfSquares);
 }
-AmplitudeTier PointProcess_Sound_to_AmplitudeTier_period (PointProcess me, Sound thee, double tmin, double tmax,
+autoAmplitudeTier PointProcess_Sound_to_AmplitudeTier_period (PointProcess me, Sound thee, double tmin, double tmax,
 	double pmin, double pmax, double maximumPeriodFactor)
 {
 	try {
@@ -167,7 +167,7 @@ AmplitudeTier PointProcess_Sound_to_AmplitudeTier_period (PointProcess me, Sound
 					RealTier_addPoint (him.peek(), my t [i], peak);
 			}
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U": not converted to AmplitudeTier.");
 	}
@@ -341,7 +341,7 @@ double AmplitudeTier_getShimmer_dda (AmplitudeTier me, double pmin, double pmax,
 	return NUMdefined (apq3) ? 3.0 * apq3 : NUMundefined;
 }
 
-Sound AmplitudeTier_to_Sound (AmplitudeTier me, double samplingFrequency, long interpolationDepth) {
+autoSound AmplitudeTier_to_Sound (AmplitudeTier me, double samplingFrequency, long interpolationDepth) {
 	try {
 		long sound_nt = 1 + (long) floor ((my xmax - my xmin) * samplingFrequency);   // >= 1
 		double dt = 1.0 / samplingFrequency;
@@ -372,7 +372,7 @@ Sound AmplitudeTier_to_Sound (AmplitudeTier me, double samplingFrequency, long i
 				halfampsinangle = - halfampsinangle;
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound.");
 	}

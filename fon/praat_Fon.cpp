@@ -2382,7 +2382,7 @@ DIRECT2 (Manipulation_extractDurationTier) {
 	LOOP {
 		iam (Manipulation);
 		if (! my duration) Melder_throw (me, U": I don't contain a DurationTier.");
-		autoDurationTier thee = Data_copy (my duration);
+		autoDurationTier thee = Data_copy (my duration.get());
 		praat_new (thee.transfer(), my name);
 	}
 END2 }
@@ -2391,7 +2391,7 @@ DIRECT2 (Manipulation_extractOriginalSound) {
 	LOOP {
 		iam (Manipulation);
 		if (! my sound) Melder_throw (me, U": I don't contain a Sound.");
-		autoSound thee = Data_copy (my sound);
+		autoSound thee = Data_copy (my sound.get());
 		praat_new (thee.transfer(), my name);
 	}
 END2 }
@@ -2409,7 +2409,7 @@ DIRECT2 (Manipulation_extractPulses) {
 	LOOP {
 		iam (Manipulation);
 		if (! my pulses) Melder_throw (me, U": I don't contain a PointProcess.");
-		autoPointProcess thee = Data_copy (my pulses);
+		autoPointProcess thee = Data_copy (my pulses.get());
 		praat_new (thee.transfer(), my name);
 	}
 END2 }
@@ -2451,7 +2451,7 @@ END2 }
 DIRECT2 (Manipulation_removeDuration) {
 	LOOP {
 		iam (Manipulation);
-		forget (my duration);
+		my duration = nullptr;
 		praat_dataChanged (me);
 	}
 END2 }
@@ -2459,7 +2459,7 @@ END2 }
 DIRECT2 (Manipulation_removeOriginalSound) {
 	LOOP {
 		iam (Manipulation);
-		forget (my sound);
+		my sound = nullptr;
 		praat_dataChanged (me);
 	}
 END2 }

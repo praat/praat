@@ -26,7 +26,7 @@
 #include "Formant_def.h"
 oo_CLASS_CREATE (Formant, Sampled);
 
-Formant Formant_create (double tmin, double tmax, long nt, double dt, double t1, int maxnFormants);
+autoFormant Formant_create (double tmin, double tmax, long nt, double dt, double t1, int maxnFormants);
 /*
 	Function:
 		return a new instance of Formant.
@@ -78,17 +78,17 @@ void Formant_scatterPlot (Formant me, Graphics g, double tmin, double tmax,
 	int iformant1, double fmin1, double fmax1, int iformant2, double fmin2, double fmax2,
 	double size_mm, const char32 *mark, int garnish);
 
-Matrix Formant_to_Matrix (Formant me, int iformant);
-Matrix Formant_to_Matrix_bandwidths (Formant me, int iformant);
+autoMatrix Formant_to_Matrix (Formant me, int iformant);
+autoMatrix Formant_to_Matrix_bandwidths (Formant me, int iformant);
 void Formant_formula_frequencies (Formant me, const char32 *formula, Interpreter interpreter);
 void Formant_formula_bandwidths (Formant me, const char32 *formula, Interpreter interpreter);
 
-Formant Formant_tracker (Formant me, int numberOfTracks,
+autoFormant Formant_tracker (Formant me, int numberOfTracks,
 	double refF1, double refF2, double refF3, double refF4, double refF5,
 	double dfCost,   // per kHz
 	double bfCost, double octaveJumpCost);
 
-Table Formant_downto_Table (Formant me, bool includeFrameNumbers,
+autoTable Formant_downto_Table (Formant me, bool includeFrameNumbers,
 	bool includeTimes, int timeDecimals,
 	bool includeIntensity, int intensityDecimals,
 	bool includeNumberOfFormants, int frequencyDecimals,

@@ -71,7 +71,7 @@ double ERPTier_getMean (ERPTier me, long pointNumber, long channelNumber, double
 	if (pointNumber < 1 || pointNumber > my events -> size) return NUMundefined;
 	if (channelNumber < 1 || channelNumber > my numberOfChannels) return NUMundefined;
 	ERPPoint point = my event (pointNumber);
-	return Vector_getMean (point -> erp, tmin, tmax, channelNumber);
+	return Vector_getMean (point -> erp.get(), tmin, tmax, channelNumber);
 }
 
 double ERPTier_getMean (ERPTier me, long pointNumber, const char32 *channelName, double tmin, double tmax) {
@@ -211,7 +211,7 @@ void ERPTier_subtractBaseline (ERPTier me, double tmin, double tmax) {
 	for (long ievent = 1; ievent <= numberOfEvents; ievent ++) {
 		ERPPoint event = my event (ievent);
 		for (long ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
-			double mean = Vector_getMean (event -> erp, tmin, tmax, ichannel);
+			double mean = Vector_getMean (event -> erp.get(), tmin, tmax, ichannel);
 			double *channel = event -> erp -> z [ichannel];
 			for (long isample = 1; isample <= numberOfSamples; isample ++) {
 				channel [isample] -= mean;

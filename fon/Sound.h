@@ -55,7 +55,7 @@ Thing_define (Sound, Vector) {
 	z may be replaced (e.g., in pasting).
 */
 
-Sound Sound_create (long numberOfChannels, double xmin, double xmax, long nx, double dx, double x1);
+autoSound Sound_create (long numberOfChannels, double xmin, double xmax, long nx, double dx, double x1);
 /*
 	Function:
 		return a new silent Sound.
@@ -77,7 +77,7 @@ Sound Sound_create (long numberOfChannels, double xmin, double xmax, long nx, do
 		thy z [i] [1..nx] == 0.0;
 */
 
-Sound Sound_createSimple (long numberOfChannels, double duration, double samplingFrequency);
+autoSound Sound_createSimple (long numberOfChannels, double duration, double samplingFrequency);
 /*
 	Function:
 		return a new silent Sound.

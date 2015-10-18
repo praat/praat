@@ -182,7 +182,7 @@ void ExperimentMFC_start (ExperimentMFC me) {
 		NUMvector_free <long> (my responses, 1);
 		NUMvector_free <double> (my goodnesses, 1);
 		NUMvector_free <double> (my reactionTimes, 1);
-		forget (my playBuffer);
+		my playBuffer.reset();
 		my pausing = false;
 		my numberOfTrials = my numberOfDifferentStimuli * my numberOfReplicationsPerStimulus;
 		my stimuli = NUMvector <long> (1, my numberOfTrials);
@@ -330,7 +330,7 @@ static void playSound (ExperimentMFC me, Sound sound, Sound carrierBefore, Sound
 
 	if (! my blankWhilePlaying)
 		my startingTime = Melder_clock ();
-	Sound_playPart (my playBuffer, 0.0, numberOfSamplesWritten * my samplePeriod, 0, nullptr);
+	Sound_playPart (my playBuffer.get(), 0.0, numberOfSamplesWritten * my samplePeriod, 0, nullptr);
 	if (my blankWhilePlaying)
 		my startingTime = Melder_clock ();
 }

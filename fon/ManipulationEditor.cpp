@@ -103,15 +103,6 @@ static bool getDurationArea (ManipulationEditor me, double *ymin, double *ymax) 
 	return true;
 }
 
-/********** DESTRUCTION **********/
-
-void structManipulationEditor :: v_destroy () {
-	forget (our previousPulses);
-	forget (our previousPitch);
-	forget (our previousDuration);
-	ManipulationEditor_Parent :: v_destroy ();
-}
-
 /********** MENU COMMANDS **********/
 
 /***** FILE MENU *****/
@@ -120,7 +111,7 @@ static void menu_cb_extractOriginalSound (EDITOR_ARGS) {
 	EDITOR_IAM (ManipulationEditor);
 	Manipulation ana = (Manipulation) my data;
 	if (! ana -> sound) return;
-	autoSound publish = Data_copy (ana -> sound);
+	autoSound publish = Data_copy (ana -> sound.get());
 	Editor_broadcastPublication (me, publish.transfer());
 }
 
@@ -128,7 +119,7 @@ static void menu_cb_extractPulses (EDITOR_ARGS) {
 	EDITOR_IAM (ManipulationEditor);
 	Manipulation ana = (Manipulation) my data;
 	if (! ana -> pulses) return;
-	autoPointProcess publish = Data_copy (ana -> pulses);
+	autoPointProcess publish = Data_copy (ana -> pulses.get());
 	Editor_broadcastPublication (me, publish.transfer());
 }
 
@@ -144,7 +135,7 @@ static void menu_cb_extractDurationTier (EDITOR_ARGS) {
 	EDITOR_IAM (ManipulationEditor);
 	Manipulation ana = (Manipulation) my data;
 	if (! ana -> duration) return;
-	autoDurationTier publish = Data_copy (ana -> duration);
+	autoDurationTier publish = Data_copy (ana -> duration.get());
 	Editor_broadcastPublication (me, publish.transfer());
 }
 
@@ -159,20 +150,16 @@ static void menu_cb_extractManipulatedSound (EDITOR_ARGS) {
 
 void structManipulationEditor :: v_saveData () {
 	Manipulation ana = (Manipulation) our data;
-	forget (our previousPulses);
-	forget (our previousPitch);
-	forget (our previousDuration);
-	if (ana -> pulses)   our previousPulses   = Data_copy (ana -> pulses);
+	if (ana -> pulses)   our previousPulses   = Data_copy (ana -> pulses.get());
 	if (ana -> pitch)    our previousPitch    = Data_copy (ana -> pitch.get());
-	if (ana -> duration) our previousDuration = Data_copy (ana -> duration);
+	if (ana -> duration) our previousDuration = Data_copy (ana -> duration.get());
 }
 
 void structManipulationEditor :: v_restoreData () {
 	Manipulation ana = (Manipulation) our data;
-	Any dummy;
-	dummy = ana -> pulses;   ana -> pulses   = our previousPulses;   our previousPulses   = (PointProcess) dummy;
-	autoPitchTier dummyp = ana -> pitch.move();    ana -> pitch    = our previousPitch;    our previousPitch = dummyp.transfer();
-	dummy = ana -> duration; ana -> duration = our previousDuration; our previousDuration = (DurationTier) dummy;
+	autoPointProcess dummy1 = ana -> pulses.move();   ana -> pulses   = our previousPulses.move();   our previousPulses   = dummy1.move();
+	autoPitchTier    dummy2 = ana -> pitch.move();    ana -> pitch    = our previousPitch.move();    our previousPitch    = dummy2.move();
+	autoDurationTier dummy3 = ana -> duration.move(); ana -> duration = our previousDuration.move(); our previousDuration = dummy3.move();
 }
 
 /***** PULSES MENU *****/
@@ -183,9 +170,9 @@ static void menu_cb_removePulses (EDITOR_ARGS) {
 	if (! ana -> pulses) return;
 	Editor_save (me, U"Remove pulse(s)");
 	if (my d_startSelection == my d_endSelection)
-		PointProcess_removePointNear (ana -> pulses, my d_startSelection);
+		PointProcess_removePointNear (ana -> pulses.get(), my d_startSelection);
 	else
-		PointProcess_removePointsBetween (ana -> pulses, my d_startSelection, my d_endSelection);
+		PointProcess_removePointsBetween (ana -> pulses.get(), my d_startSelection, my d_endSelection);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
@@ -195,7 +182,7 @@ static void menu_cb_addPulseAtCursor (EDITOR_ARGS) {
 	Manipulation ana = (Manipulation) my data;
 	if (! ana -> pulses) return;
 	Editor_save (me, U"Add pulse");
-	PointProcess_addPoint (ana -> pulses, 0.5 * (my d_startSelection + my d_endSelection));
+	PointProcess_addPoint (ana -> pulses.get(), 0.5 * (my d_startSelection + my d_endSelection));
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
@@ -210,7 +197,7 @@ static void menu_cb_addPulseAt (EDITOR_ARGS) {
 		Manipulation ana = (Manipulation) my data;
 		if (! ana -> pulses) return;
 		Editor_save (me, U"Add pulse");
-		PointProcess_addPoint (ana -> pulses, GET_REAL (U"Position"));
+		PointProcess_addPoint (ana -> pulses.get(), GET_REAL (U"Position"));
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -244,7 +231,7 @@ static void menu_cb_addPitchPointAtCursor (EDITOR_ARGS) {
 static void menu_cb_addPitchPointAtSlice (EDITOR_ARGS) {
 	EDITOR_IAM (ManipulationEditor);
 	Manipulation ana = (Manipulation) my data;
-	PointProcess pulses = ana -> pulses;
+	PointProcess pulses = ana -> pulses.get();
 	if (! pulses) Melder_throw (U"There are no pulses.");
 	if (! ana -> pitch) return;
 	long ileft = PointProcess_getLowIndex (pulses, 0.5 * (my d_startSelection + my d_endSelection)), iright = ileft + 1, nt = pulses -> nt;
@@ -462,8 +449,8 @@ static void menu_cb_setDurationRange (EDITOR_ARGS) {
 	EDITOR_DO
 		Manipulation ana = (Manipulation) my data;
 		double minimum = GET_REAL (U"Minimum"), maximum = GET_REAL (U"Maximum");
-		double minimumValue = ana -> duration ? RealTier_getMinimumValue (ana -> duration) : NUMundefined;
-		double maximumValue = ana -> duration ? RealTier_getMaximumValue (ana -> duration) : NUMundefined;
+		double minimumValue = ana -> duration ? RealTier_getMinimumValue (ana -> duration.get()) : NUMundefined;
+		double maximumValue = ana -> duration ? RealTier_getMaximumValue (ana -> duration.get()) : NUMundefined;
 		if (minimum > 1) Melder_throw (U"Minimum relative duration must not be greater than 1.");
 		if (maximum < 1) Melder_throw (U"Maximum relative duration must not be less than 1.");
 		if (minimum >= maximum) Melder_throw (U"Maximum relative duration must be greater than minimum.");
@@ -496,9 +483,9 @@ static void menu_cb_removeDurationPoints (EDITOR_ARGS) {
 	if (! ana -> duration) return;
 	Editor_save (me, U"Remove duration point(s)");
 	if (my d_startSelection == my d_endSelection)
-		AnyTier_removePointNear (ana -> duration, 0.5 * (my d_startSelection + my d_endSelection));
+		AnyTier_removePointNear (ana -> duration.get(), 0.5 * (my d_startSelection + my d_endSelection));
 	else
-		AnyTier_removePointsBetween (ana -> duration, my d_startSelection, my d_endSelection);
+		AnyTier_removePointsBetween (ana -> duration.get(), my d_startSelection, my d_endSelection);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
@@ -508,7 +495,7 @@ static void menu_cb_addDurationPointAtCursor (EDITOR_ARGS) {
 	Manipulation ana = (Manipulation) my data;
 	if (! ana -> duration) return;
 	Editor_save (me, U"Add duration point");
-	RealTier_addPoint (ana -> duration, 0.5 * (my d_startSelection + my d_endSelection), my duration.cursor);
+	RealTier_addPoint (ana -> duration.get(), 0.5 * (my d_startSelection + my d_endSelection), my duration.cursor);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
@@ -524,7 +511,7 @@ static void menu_cb_addDurationPointAt (EDITOR_ARGS) {
 		Manipulation ana = (Manipulation) my data;
 		if (! ana -> duration) return;
 		Editor_save (me, U"Add duration point");
-		RealTier_addPoint (ana -> duration, GET_REAL (U"Time"), GET_REAL (U"Relative duration"));
+		RealTier_addPoint (ana -> duration.get(), GET_REAL (U"Time"), GET_REAL (U"Relative duration"));
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -534,7 +521,6 @@ static void menu_cb_newDuration (EDITOR_ARGS) {
 	EDITOR_IAM (ManipulationEditor);
 	Manipulation ana = (Manipulation) my data;
 	Editor_save (me, U"New duration");
-	forget (ana -> duration);
 	ana -> duration = DurationTier_create (ana -> xmin, ana -> xmax);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
@@ -543,7 +529,7 @@ static void menu_cb_newDuration (EDITOR_ARGS) {
 static void menu_cb_forgetDuration (EDITOR_ARGS) {
 	EDITOR_IAM (ManipulationEditor);
 	Manipulation ana = (Manipulation) my data;
-	forget (ana -> duration);
+	ana -> duration = nullptr;
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
@@ -639,8 +625,8 @@ void structManipulationEditor :: v_createHelpMenuItems (EditorMenu menu) {
 
 static void drawSoundArea (ManipulationEditor me, double ymin, double ymax) {
 	Manipulation ana = (Manipulation) my data;
-	Sound sound = ana -> sound;
-	PointProcess pulses = ana -> pulses;
+	Sound sound = ana -> sound.get();
+	PointProcess pulses = ana -> pulses.get();
 	long first, last, i;
 	Graphics_Viewport viewport = Graphics_insetViewport (my d_graphics, 0, 1, ymin, ymax);
 	Graphics_setWindow (my d_graphics, 0, 1, 0, 1);
@@ -708,7 +694,7 @@ static void drawSoundArea (ManipulationEditor me, double ymin, double ymax) {
 
 static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 	Manipulation ana = (Manipulation) my data;
-	PointProcess pulses = ana -> pulses;
+	PointProcess pulses = ana -> pulses.get();
 	PitchTier pitch = ana -> pitch.get();
 	long ifirstSelected, ilastSelected, n = pitch ? pitch -> points -> size : 0, imin, imax, i;
 	int cursorVisible = my d_startSelection == my d_endSelection && my d_startSelection >= my d_startWindow && my d_startSelection <= my d_endWindow;
@@ -818,7 +804,7 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 
 static void drawDurationArea (ManipulationEditor me, double ymin, double ymax) {
 	Manipulation ana = (Manipulation) my data;
-	DurationTier duration = ana -> duration;
+	DurationTier duration = ana -> duration.get();
 	long ifirstSelected, ilastSelected, n = duration ? duration -> points -> size : 0, imin, imax, i;
 	int cursorVisible = my d_startSelection == my d_endSelection && my d_startSelection >= my d_startWindow && my d_startSelection <= my d_endWindow;
 
@@ -1079,7 +1065,7 @@ static int clickPitch (ManipulationEditor me, double xWC, double yWC, bool shift
 
 static void drawDurationWhileDragging (ManipulationEditor me, double xWC, double yWC, long first, long last, double dt, double df) {
 	Manipulation ana = (Manipulation) my data;
-	DurationTier duration = ana -> duration;
+	DurationTier duration = ana -> duration.get();
 	long i;
 	(void) xWC;
 	(void) yWC;
@@ -1112,7 +1098,7 @@ static void drawDurationWhileDragging (ManipulationEditor me, double xWC, double
 
 static int clickDuration (ManipulationEditor me, double xWC, double yWC, int shiftKeyPressed) {
 	Manipulation ana = (Manipulation) my data;
-	DurationTier duration = ana -> duration;
+	DurationTier duration = ana -> duration.get();
 	long inearestPoint, ifirstSelected, ilastSelected, i;
 	RealPoint nearestPoint;
 	double dt = 0, df = 0;
@@ -1250,7 +1236,7 @@ void structManipulationEditor :: v_play (double a_tmin, double a_tmax) {
 	Manipulation ana = (Manipulation) our data;
 	if (our shiftKeyPressed) {
 		if (ana -> sound)
-			Sound_playPart (ana -> sound, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
+			Sound_playPart (ana -> sound.get(), a_tmin, a_tmax, theFunctionEditor_playCallback, this);
 	} else {
 		Manipulation_playPart (ana, a_tmin, a_tmax, our synthesisMethod);
 	}
@@ -1278,13 +1264,13 @@ ManipulationEditor ManipulationEditor_create (const char32 *title, Manipulation 
 		if (my p_pitch_maximum == NUMundefined || my p_pitch_maximum < my pref_pitch_maximum ())
 			my p_pitch_maximum = my pref_pitch_maximum ();
 
-		double minimumDurationValue = ana -> duration ? RealTier_getMinimumValue (ana -> duration) : NUMundefined;
+		double minimumDurationValue = ana -> duration ? RealTier_getMinimumValue (ana -> duration.get()) : NUMundefined;
 		my p_duration_minimum = NUMdefined (minimumDurationValue) ? minimumDurationValue : 1.0;
 		if (my pref_duration_minimum () > 1)
 			my pref_duration_minimum () = Melder_atof (my default_duration_minimum ());
 		if (my p_duration_minimum > my pref_duration_minimum ())
 			my p_duration_minimum = my pref_duration_minimum ();
-		double maximumDurationValue = ana -> duration ? RealTier_getMaximumValue (ana -> duration) : NUMundefined;
+		double maximumDurationValue = ana -> duration ? RealTier_getMaximumValue (ana -> duration.get()) : NUMundefined;
 		my p_duration_maximum = NUMdefined (maximumDurationValue) ? maximumDurationValue : 1.0;
 		if (my pref_duration_maximum () < 1)
 			my pref_duration_maximum () = Melder_atof (my default_duration_maximum ());
@@ -1298,7 +1284,7 @@ ManipulationEditor ManipulationEditor_create (const char32 *title, Manipulation 
 
 		my synthesisMethod = prefs_synthesisMethod;
 		if (ana -> sound)
-			Matrix_getWindowExtrema (ana -> sound, 0, 0, 0, 0, & my soundmin, & my soundmax);
+			Matrix_getWindowExtrema (ana -> sound.get(), 0, 0, 0, 0, & my soundmin, & my soundmax);
 		if (my soundmin == my soundmax) my soundmin = -1.0, my soundmax = +1.0;
 		updateMenus (me.peek());
 		return me.transfer();

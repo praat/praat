@@ -175,7 +175,7 @@ oo_DEFINE_CLASS (ExperimentMFC, Daata)
 		oo_DOUBLE_VECTOR (goodnesses, numberOfTrials)
 		oo_DOUBLE (startingTime)
 		oo_DOUBLE_VECTOR (reactionTimes, numberOfTrials)
-		oo_OBJECT (Sound, 0, playBuffer)
+		oo_AUTO_OBJECT (Sound, 0, playBuffer)
 	#endif
 	oo_DIR (rootDirectory)
 	#if oo_READING

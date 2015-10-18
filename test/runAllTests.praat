@@ -69,25 +69,22 @@ for directory1 to numberOfDirectories1
 endfor
 removeObject: directories1
 
-echo                  ALL PRAAT TESTS WENT OK
-printline
-line5$ = "        #####          #####        #####   #####"
-line8$ = "        #####          #####        #######"
-line1$ = "               ######               #####           #####"
-line2$ = "           ##############           #####         #####"
-line4$ = "        #####          #####        #####     #####"
-line7$ = "        #####          #####        #########"
-line9$ = "        #####          #####        #####"
-line3$ = "         #####        #####         #####       #####"
-line6$ = "        #####          #####        ##### #####"
+writeInfoLine: "                 ALL PRAAT TESTS WENT OK"
+appendInfoLine: ""
+line$ [5] = "        #####          #####        #####   #####"
+line$ [8] = "        #####          #####        #######"
+line$ [1] = "               ######               #####           #####"
+line$ [2] = "           ##############           #####         #####"
+line$ [4] = "        #####          #####        #####     #####"
+line$ [7] = "        #####          #####        #########"
+line$ [9] = "        #####          #####        #####"
+line$ [3] = "         #####        #####         #####       #####"
+line$ [6] = "        #####          #####        ##### #####"
 for line from 1 to 9
-	line$ = line'line'$
-	printline 'line$'
+	appendInfoLine: line$ [line]
 endfor
-for line2 from 1 to 8
-	line = 9 - line2
-	line$ = line'line'$
-	printline 'line$'
+for line from 1 to 8
+	appendInfoLine: line$ [9 - line]
 endfor
 
 memoryReport$ = Report memory use

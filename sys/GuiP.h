@@ -163,7 +163,8 @@ class GuiControlBlockValueChangedCallbacks {
 			GuiObject textFocus;
 			bool duringUpdate;
 			#if win
-				HINSTANCE instance;   /* First argument of WinMain. */
+				HINSTANCE instance;   // first argument of WinMain
+				int commandShow;   // another argument of WinMain
 			#elif mac
 				WindowPtr modalDialog;
 			#endif

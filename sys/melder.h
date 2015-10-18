@@ -375,7 +375,7 @@ extern "C" char16 * Melder_peek32to16 (const char32 *string);
 void Melder_str32To8bitFileRepresentation_inline (const char32 *string, char *utf8);
 void Melder_8bitFileRepresentationToStr32_inline (const char *utf8, char32 *string);
 const void * Melder_peek32toCfstring (const char32 *string);
-void Melder_fwrite32to8 (const char32 *ptr, int64 n, FILE *f);
+void Melder_fwrite32to8 (const char32 *ptr, FILE *f);
 
 
 /********** FILES **********/

@@ -297,7 +297,7 @@ static void check_formants (long numberOfFormants, long *ifb, long *ife) {
 	}
 }
 
-static Sound Sound_createEmptyMono (double xmin, double xmax, double samplingFrequency) {
+static autoSound Sound_createEmptyMono (double xmin, double xmax, double samplingFrequency) {
 	long nt = (long) ceil ( (xmax - xmin) * samplingFrequency);
 	double dt = 1.0 / samplingFrequency;
 	double tmid = (xmin + xmax) / 2;
@@ -965,9 +965,9 @@ Sound PhonationGrid_PhonationTier_to_Sound_voiced (PhonationGrid me, PhonationTi
 		}
 
 		autoSound him = Sound_createEmptyMono (my xmin, my xmax, samplingFrequency);
-		autoSound breathy = 0;
+		autoSound breathy;
 		if (p -> breathiness && my breathinessAmplitude -> points -> size > 0) {
-			breathy.reset (Sound_createEmptyMono (my xmin, my xmax, samplingFrequency));
+			breathy = Sound_createEmptyMono (my xmin, my xmax, samplingFrequency);
 		}
 		/*
 			Cycle through the points of the PhonationTier. Each will become a period.
@@ -1094,12 +1094,12 @@ static Sound PhonationGrid_to_Sound_voiced (PhonationGrid me, double samplingFre
 static Sound PhonationGrid_to_Sound (PhonationGrid me, CouplingGrid him, double samplingFrequency) {
 	try {
 		PhonationGridPlayOptions pp = my options;
-		autoSound thee = 0;
+		autoSound thee;
 		if (pp -> voicing) {
-			if (him != 0 && his glottis -> points -> size > 0) {
-				thee.reset (PhonationGrid_PhonationTier_to_Sound_voiced (me, his glottis, samplingFrequency));
+			if (him && his glottis -> points -> size > 0) {
+				thee = PhonationGrid_PhonationTier_to_Sound_voiced (me, his glottis, samplingFrequency);
 			} else {
-				thee.reset (PhonationGrid_to_Sound_voiced (me, samplingFrequency));
+				thee = PhonationGrid_to_Sound_voiced (me, samplingFrequency);
 			}
 			if (pp -> spectralTilt) {
 				Sound_PhonationGrid_spectralTilt_inline (thee.peek(), me);
@@ -1107,14 +1107,14 @@ static Sound PhonationGrid_to_Sound (PhonationGrid me, CouplingGrid him, double 
 		}
 		if (pp -> aspiration) {
 			autoSound aspiration = PhonationGrid_to_Sound_aspiration (me, samplingFrequency);
-			if (thee.peek() == 0) {
-				thee.reset (aspiration.transfer());
+			if (! thee.peek()) {
+				thee = aspiration.move();
 			} else {
 				_Sounds_add_inline (thee.peek(), aspiration.peek());
 			}
 		}
-		if (thee.peek() == 0) {
-			thee.reset (Sound_createEmptyMono (my xmin, my xmax, samplingFrequency));
+		if (! thee.peek()) {
+			thee = Sound_createEmptyMono (my xmin, my xmax, samplingFrequency);
 		}
 		return thee.transfer();
 	} catch (MelderError) {
@@ -1234,9 +1234,9 @@ VocalTractGrid VocalTractGrid_create (double tmin, double tmax, long numberOfFor
 	try {
 		autoVocalTractGrid me = Thing_new (VocalTractGrid);
 		Function_init (me.peek(), tmin, tmax);
-		my oral_formants = FormantGrid_createEmpty (tmin, tmax, numberOfFormants);
-		my nasal_formants = FormantGrid_createEmpty (tmin, tmax, numberOfNasalFormants);
-		my nasal_antiformants = FormantGrid_createEmpty (tmin, tmax, numberOfNasalAntiFormants);
+		my oral_formants = FormantGrid_createEmpty (tmin, tmax, numberOfFormants).transfer();
+		my nasal_formants = FormantGrid_createEmpty (tmin, tmax, numberOfNasalFormants).transfer();
+		my nasal_antiformants = FormantGrid_createEmpty (tmin, tmax, numberOfNasalAntiFormants).transfer();
 		my oral_formants_amplitudes = formantsAmplitudes_create (tmin, tmax, numberOfFormants);
 		my nasal_formants_amplitudes = formantsAmplitudes_create (tmin, tmax, numberOfNasalFormants);
 		my options = VocalTractGridPlayOptions_create ();
@@ -1440,7 +1440,7 @@ static Sound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, VocalTr
 	try {
 		VocalTractGridPlayOptions pv = thy options;
 		CouplingGridPlayOptions pc = coupling -> options;
-		int useOpenGlottisInfo = pc -> openglottis && coupling && coupling -> glottis && coupling -> glottis -> points -> size > 0;
+		bool useOpenGlottisInfo = pc -> openglottis && coupling && coupling -> glottis && coupling -> glottis -> points -> size > 0;
 		FormantGrid oral_formants = thy oral_formants;
 		FormantGrid nasal_formants = thy nasal_formants;
 		FormantGrid nasal_antiformants = thy nasal_antiformants;
@@ -1461,9 +1461,9 @@ static Sound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, VocalTr
 
 		autoSound him = Data_copy (me);
 
-		autoFormantGrid formants = 0;
+		autoFormantGrid formants;
 		if (useOpenGlottisInfo) {
-			formants.reset (Data_copy (thy oral_formants));
+			formants = Data_copy (thy oral_formants);
 			FormantGrid_CouplingGrid_updateOpenPhases (formants.peek(), coupling);
 		}
 
@@ -1522,8 +1522,8 @@ static Sound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, VocalTr
 		long oral_formant_warning = 0;
 		if (pv -> endOralFormant > 0) { // Oral formants
 			antiformants = 0;
-			if (formants.peek() == 0) {
-				formants.reset (thy oral_formants);
+			if (! formants) {
+				formants = thy oral_formants;   // yuck
 			}
 			for (long iformant = pv -> startOralFormant; iformant <= pv -> endOralFormant; iformant++) {
 				if (FormantGrid_isFormantDefined (formants.peek(), iformant)) {
@@ -1565,10 +1565,11 @@ Sound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, VocalTractGri
 	try {
 		VocalTractGridPlayOptions pv = thy options;
 		CouplingGridPlayOptions pc = coupling -> options;
-		autoSound him = 0;
-		FormantGrid oral_formants = thy oral_formants; autoFormantGrid aof = 0;
+		autoSound him;
+		FormantGrid oral_formants = thy oral_formants;
+		autoFormantGrid aof;
 		int alternatingSign = 0; // 0: no alternating signs in parallel adding of filter outputs, 1/-1 start sign
-		int useOpenGlottisInfo = pc -> openglottis && coupling -> glottis && coupling -> glottis -> points -> size > 0;
+		bool useOpenGlottisInfo = pc -> openglottis && coupling -> glottis && coupling -> glottis -> points -> size > 0;
 		int scale = 1;
 		long numberOfFormants = thy oral_formants -> formants -> size;
 		long numberOfNasalFormants = thy nasal_formants -> formants -> size;
@@ -1579,13 +1580,14 @@ Sound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, VocalTractGri
 		check_formants (numberOfTrachealFormants, & (pc -> startTrachealFormant), & (pc -> endTrachealFormant));
 
 		if (useOpenGlottisInfo) {
-			aof.reset (Data_copy (thy oral_formants)); oral_formants = aof.peek();
+			aof = Data_copy (thy oral_formants);
+			oral_formants = aof.peek();
 			FormantGrid_CouplingGrid_updateOpenPhases (oral_formants, coupling);
 		}
 
 		if (pv -> endOralFormant > 0) {
 			if (pv -> startOralFormant == 1) {
-				him.reset (Data_copy (me));
+				him = Data_copy (me);
 				if (oral_formants -> formants -> size > 0) {
 					Sound_FormantGrid_Intensities_filterWithOneFormant_inline (him.peek(), oral_formants, thy oral_formants_amplitudes, 1);
 				}
@@ -1596,8 +1598,8 @@ Sound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, VocalTractGri
 			alternatingSign = 0;
 			autoSound nasal =  Sound_FormantGrid_Intensities_filter (me, thy nasal_formants, thy nasal_formants_amplitudes, pv -> startNasalFormant, pv -> endNasalFormant, alternatingSign);
 
-			if (him.peek() == 0) {
-				him.reset (Data_copy (nasal.peek()));
+			if (! him) {
+				him = Data_copy (nasal.peek());
 			} else {
 				_Sounds_add_inline (him.peek(), nasal.peek());
 			}
@@ -1617,8 +1619,8 @@ Sound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, VocalTractGri
 			if (startOralFormant2 <= oral_formants -> formants -> size) {
 				autoSound vocalTract = Sound_FormantGrid_Intensities_filter (me_diff.peek(), oral_formants, thy oral_formants_amplitudes, startOralFormant2, pv -> endOralFormant, alternatingSign);
 
-				if (him.peek() == 0) {
-					him.reset (Data_copy (vocalTract.peek()));
+				if (! him) {
+					him = Data_copy (vocalTract.peek());
 				} else {
 					_Sounds_add_inline (him.peek(), vocalTract.peek());
 				}
@@ -1630,15 +1632,15 @@ Sound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, VocalTractGri
 			autoSound trachea =  Sound_FormantGrid_Intensities_filter (me_diff.peek(), coupling -> tracheal_formants, coupling -> tracheal_formants_amplitudes,
 			                     pc -> startTrachealFormant, pc -> endTrachealFormant, alternatingSign);
 
-			if (him.peek() == 0) {
-				him.reset (Data_copy (trachea.peek()));
+			if (! him) {
+				him = Data_copy (trachea.peek());
 			} else {
 				_Sounds_add_inline (him.peek(), trachea.peek());
 			}
 		}
 
-		if (him.peek() == 0) {
-			him.reset (Data_copy (me));
+		if (! him) {
+			him = Data_copy (me);
 		}
 		return him.transfer();
 	} catch (MelderError) {
@@ -1709,10 +1711,10 @@ CouplingGrid CouplingGrid_create (double tmin, double tmax, long numberOfTrachea
 	try {
 		autoCouplingGrid me = Thing_new (CouplingGrid);
 		Function_init (me.peek(), tmin, tmax);
-		my tracheal_formants = FormantGrid_createEmpty (tmin, tmax, numberOfTrachealFormants);
-		my tracheal_antiformants = FormantGrid_createEmpty (tmin, tmax, numberOfTrachealAntiFormants);
+		my tracheal_formants = FormantGrid_createEmpty (tmin, tmax, numberOfTrachealFormants).transfer();
+		my tracheal_antiformants = FormantGrid_createEmpty (tmin, tmax, numberOfTrachealAntiFormants).transfer();
 		my tracheal_formants_amplitudes = formantsAmplitudes_create (tmin, tmax, numberOfTrachealFormants);
-		my delta_formants = FormantGrid_createEmpty (tmin, tmax, numberOfDeltaFormants);
+		my delta_formants = FormantGrid_createEmpty (tmin, tmax, numberOfDeltaFormants).transfer();
 		my glottis = PhonationTier_create (tmin, tmax);
 		my options = CouplingGridPlayOptions_create ();
 		CouplingGrid_setNames (me.peek());
@@ -1912,7 +1914,7 @@ FricationGrid FricationGrid_create (double tmin, double tmax, long numberOfForma
 		autoFricationGrid me = Thing_new (FricationGrid);
 		Function_init (me.peek(), tmin, tmax);
 		my fricationAmplitude = IntensityTier_create (tmin, tmax);
-		my frication_formants = FormantGrid_createEmpty (tmin, tmax, numberOfFormants);
+		my frication_formants = FormantGrid_createEmpty (tmin, tmax, numberOfFormants).transfer();
 		my bypass = IntensityTier_create (tmin, tmax);
 		my frication_formants_amplitudes = formantsAmplitudes_create (tmin, tmax, numberOfFormants);
 		my options = FricationGridPlayOptions_create ();
@@ -2779,7 +2781,7 @@ Sound KlattGrid_to_Sound_phonation (KlattGrid me) {
 
 Sound KlattGrid_to_Sound (KlattGrid me) {
 	try {
-		autoSound thee = 0;
+		autoSound thee;
 		PhonationGridPlayOptions pp = my phonation -> options;
 		FricationGridPlayOptions pf = my frication -> options;
 		double samplingFrequency = my options -> samplingFrequency;
@@ -2804,7 +2806,7 @@ Sound KlattGrid_to_Sound (KlattGrid me) {
 		}
 
 		if (thee.peek() == 0) {
-			thee.reset (Sound_createEmptyMono (my xmin, my xmax, samplingFrequency));
+			thee = Sound_createEmptyMono (my xmin, my xmax, samplingFrequency);
 		} else if (my options -> scalePeak) {
 			Vector_scale (thee.peek(), 0.99);
 		}

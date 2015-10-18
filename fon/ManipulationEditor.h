@@ -25,9 +25,9 @@
 #include "ManipulationEditor_enums.h"
 
 Thing_define (ManipulationEditor, FunctionEditor) {
-	PointProcess previousPulses;
-	PitchTier previousPitch;
-	DurationTier previousDuration;
+	autoPointProcess previousPulses;
+	autoPitchTier previousPitch;
+	autoDurationTier previousDuration;
 	double soundmin, soundmax;
 	int synthesisMethod;
 	GuiMenuItem synthPulsesButton, synthPulsesHumButton;
@@ -40,8 +40,6 @@ Thing_define (ManipulationEditor, FunctionEditor) {
 	struct { double cursor;  } duration;
 	Graphics_Viewport inset;
 
-	void v_destroy ()
-		override;
 	void v_createMenus ()
 		override;
 	void v_createHelpMenuItems (EditorMenu menu)

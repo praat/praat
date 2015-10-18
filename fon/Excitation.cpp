@@ -75,11 +75,11 @@ void structExcitation :: v_info () {
 	}
 }
 
-Excitation Excitation_create (double df, long nf) {
+autoExcitation Excitation_create (double df, long nf) {
 	try {
 		autoExcitation me = Thing_new (Excitation);
 		Matrix_init (me.peek(), 0.0, nf * df, nf, df, 0.5 * df, 1.0, 1.0, 1, 1.0, 1.0);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Excitation not created.");
 	}
@@ -130,21 +130,21 @@ void Excitation_draw (Excitation me, Graphics g,
 	}
 }
 
-Matrix Excitation_to_Matrix (Excitation me) {
+autoMatrix Excitation_to_Matrix (Excitation me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
 		my structMatrix :: v_copy (thee.peek());   // BUG: safe, but compiler should be able to check
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
 	}
 }
 
-Excitation Matrix_to_Excitation (Matrix me) {
+autoExcitation Matrix_to_Excitation (Matrix me) {
 	try {
 		autoExcitation thee = Thing_new (Excitation);
 		my structMatrix :: v_copy (thee.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Excitation.");
 	}

@@ -22,11 +22,11 @@
 
 Thing_implement (Cochleagram, Matrix, 2);
 
-Cochleagram Cochleagram_create (double tmin, double tmax, long nt, double dt, double t1, double df, long nf) {
+autoCochleagram Cochleagram_create (double tmin, double tmax, long nt, double dt, double t1, double df, long nf) {
 	try {
 		autoCochleagram me = Thing_new (Cochleagram);
 		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, 0.0, nf * df, nf, df, 0.5 * df);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Cochleagram with ", nt, U" times and ", nf, U" frequencies not created.");
 	}
@@ -93,21 +93,21 @@ double Cochleagram_difference (Cochleagram me, Cochleagram thee, double tmin, do
 	}
 }
 
-Cochleagram Matrix_to_Cochleagram (Matrix me) {
+autoCochleagram Matrix_to_Cochleagram (Matrix me) {
 	try {
 		autoCochleagram thee = Cochleagram_create (my xmin, my xmax, my nx, my dx, my x1, my dy, my ny);
 		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Cochleagram.");
 	}
 }
 
-Matrix Cochleagram_to_Matrix (Cochleagram me) {
+autoMatrix Cochleagram_to_Matrix (Cochleagram me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
 		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
 	}

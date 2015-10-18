@@ -40,7 +40,7 @@ Thing_define (Cochleagram, Matrix) {
 	z;				// Basilar filter output (milliVolt), or firing rate (Hz), or intensity (phon).
 */
 
-Cochleagram Cochleagram_create (double tmin, double tmax, long nt, double dt, double t1,
+autoCochleagram Cochleagram_create (double tmin, double tmax, long nt, double dt, double t1,
 	double df, long nf);
 /*
 	Function:
@@ -61,7 +61,7 @@ void Cochleagram_paint (Cochleagram me, Graphics g, double tmin, double tmax, in
 
 double Cochleagram_difference (Cochleagram me, Cochleagram thee, double tmin, double tmax);
 
-Cochleagram Matrix_to_Cochleagram (Matrix me);
+autoCochleagram Matrix_to_Cochleagram (Matrix me);
 /*
 	Function:
 		create a Cochleagram from a Matrix,
@@ -69,7 +69,7 @@ Cochleagram Matrix_to_Cochleagram (Matrix me);
 	Fail if out of memory.
 */
 
-Matrix Cochleagram_to_Matrix (Cochleagram me);
+autoMatrix Cochleagram_to_Matrix (Cochleagram me);
 /*
 	Function:
 		create a Matrix from a Cochleagram,
