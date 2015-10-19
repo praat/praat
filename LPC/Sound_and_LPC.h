@@ -2,7 +2,7 @@
 #define _Sound_and_LPC_h_
 /* Sound_and_LPC.h
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,16 +29,16 @@
 #include "LPC.h"
 #include "Sound.h"
 
-LPC Sound_to_LPC_auto (Sound me, int predictionOrder, double analysisWidth, double dt,
+autoLPC Sound_to_LPC_auto (Sound me, int predictionOrder, double analysisWidth, double dt,
 	double preEmphasisFrequency);
 
-LPC Sound_to_LPC_covar (Sound me, int predictionOrder, double analysisWidth, double dt,
+autoLPC Sound_to_LPC_covar (Sound me, int predictionOrder, double analysisWidth, double dt,
 	double preEmphasisFrequency);
 
-LPC Sound_to_LPC_burg (Sound me, int predictionOrder, double analysisWidth, double dt,
+autoLPC Sound_to_LPC_burg (Sound me, int predictionOrder, double analysisWidth, double dt,
 	double preEmphasisFrequency);
 
-LPC Sound_to_LPC_marple (Sound me, int predictionOrder, double analysisWidth, double dt,
+autoLPC Sound_to_LPC_marple (Sound me, int predictionOrder, double analysisWidth, double dt,
 	double preEmphasisFrequency, double tol1, double tol2);
 
 /*
@@ -71,7 +71,7 @@ LPC Sound_to_LPC_marple (Sound me, int predictionOrder, double analysisWidth, do
  */
 
 void LPC_Frame_and_Sound_filterInverse (LPC_Frame me, Sound thee, int channel);
-Sound LPC_and_Sound_filter (LPC me, Sound thee, int useGain);
+autoSound LPC_and_Sound_filter (LPC me, Sound thee, int useGain);
 /*
 	E(z) = X(z)A(z),
 	A(z) = 1 + Sum (k=1, k=m, a(k)z^-k);
@@ -83,9 +83,9 @@ Sound LPC_and_Sound_filter (LPC me, Sound thee, int useGain);
 */
 
 void LPC_and_Sound_filterWithFilterAtTime_inline (LPC me, Sound thee, int channel, double time);
-Sound LPC_and_Sound_filterWithFilterAtTime (LPC me, Sound thee, int channel, double time);
+autoSound LPC_and_Sound_filterWithFilterAtTime (LPC me, Sound thee, int channel, double time);
 
-Sound LPC_and_Sound_filterInverse (LPC me, Sound thee);
+autoSound LPC_and_Sound_filterInverse (LPC me, Sound thee);
 /*
 	E(z) = X(z)A(z),
 	A(z) = 1 + Sum (k=1, k=m, a(k)z^-k);
@@ -95,7 +95,7 @@ Sound LPC_and_Sound_filterInverse (LPC me, Sound thee);
 		e(n) = x(n) + Sum (k=1, m, a(k)x(n-k))
 */
 
-Sound LPC_and_Sound_filterInverseWithFilterAtTime (LPC me, Sound thee, int channel, double time);
+autoSound LPC_and_Sound_filterInverseWithFilterAtTime (LPC me, Sound thee, int channel, double time);
 void LPC_and_Sound_filterInverseWithFilterAtTime_inline (LPC me, Sound thee, int channel, double time);
 
 #endif /* _Sound_and_LPC_h_ */

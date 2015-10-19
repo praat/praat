@@ -973,14 +973,16 @@ FORM (ComplexSpectrogram_to_Sound, U"ComplexSpectrogram: To Sound", 0)
 DO
 	LOOP {
 		iam (ComplexSpectrogram);
-		praat_new (ComplexSpectrogram_to_Sound (me, GET_REAL (U"Duration factor")), my name);
+		autoSound thee = ComplexSpectrogram_to_Sound (me, GET_REAL (U"Duration factor"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
 DIRECT (ComplexSpectrogram_to_Spectrogram)
 	LOOP {
 		iam (ComplexSpectrogram);
-		praat_new (ComplexSpectrogram_to_Spectrogram (me), my name);
+		autoSpectrogram thee = ComplexSpectrogram_to_Spectrogram (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -5872,7 +5874,8 @@ FORM (Sound_to_ComplexSpectrogram, U"Sound: To ComplexSpectrogram", 0)
 DO
 	LOOP {
 		iam (Sound);
-		praat_new (Sound_to_ComplexSpectrogram (me, GET_REAL (U"Window length"), GET_REAL (U"Time step")), my name);
+		autoComplexSpectrogram thee = Sound_to_ComplexSpectrogram (me, GET_REAL (U"Window length"), GET_REAL (U"Time step"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -6302,14 +6305,16 @@ END
 DIRECT (Spectrum_to_PowerCepstrum)
 	LOOP {
 		iam (Spectrum);
-		praat_new (Spectrum_to_PowerCepstrum (me), my name);
+		autoPowerCepstrum thee = Spectrum_to_PowerCepstrum (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
 DIRECT (Spectrum_to_Cepstrum)
 	LOOP {
 		iam (Spectrum);
-		praat_new (Spectrum_to_Cepstrum (me), my name);
+		autoCepstrum thee = Spectrum_to_Cepstrum (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 

@@ -2,7 +2,7 @@
 #define _LPC_and_Tube_h_
 /* LPC_and_Tube.h
  *
- * Copyright (C) 1994-2012 David Weenink
+ * Copyright (C) 1994-2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
 void LPC_Frame_into_Tube_Frame_rc (LPC_Frame me, Tube_Frame thee);
 void LPC_Frame_into_Tube_Frame_area (LPC_Frame me, Tube_Frame thee);
 
-VocalTract LPC_Frame_to_VocalTract (LPC_Frame me, double length);
+autoVocalTract LPC_Frame_to_VocalTract (LPC_Frame me, double length);
 
 double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refLength);
 double VocalTract_and_LPC_Frame_getMatchingLength (VocalTract me, LPC_Frame thee, double glottalDamping, bool radiationDamping, bool internalDamping);
@@ -40,9 +40,9 @@ int Tube_Frame_into_LPC_Frame_area (Tube_Frame me, LPC_Frame thee);
 
 int Tube_Frame_into_LPC_Frame_rc (Tube_Frame me, LPC_Frame thee);
 
-VocalTract LPC_to_VocalTract (LPC me, double time, double length);
+autoVocalTract LPC_to_VocalTract (LPC me, double time, double length);
 void VocalTract_setLength (VocalTract me, double newLength);
 
-VocalTract LPC_to_VocalTract (LPC me, double time, double glottalDamping, bool radiationDamping, bool internalDamping);
+autoVocalTract LPC_to_VocalTract (LPC me, double time, double glottalDamping, bool radiationDamping, bool internalDamping);
 
 #endif /* _LPC_and_Tube_h_ */

@@ -28,16 +28,16 @@
 oo_CLASS_CREATE (ComplexSpectrogram, Matrix);
 
 
-ComplexSpectrogram ComplexSpectrogram_create (double tmin, double tmax, long nt, double dt,
+autoComplexSpectrogram ComplexSpectrogram_create (double tmin, double tmax, long nt, double dt,
 	double t1, double fmin, double fmax, long nf, double df, double f1);
 
-ComplexSpectrogram Sound_to_ComplexSpectrogram (Sound me, double windowLength, double timeStep);
+autoComplexSpectrogram Sound_to_ComplexSpectrogram (Sound me, double windowLength, double timeStep);
 /* Hann window because we want to reconstruct */
 
-Sound ComplexSpectrogram_to_Sound (ComplexSpectrogram me, double stretchFactor);
+autoSound ComplexSpectrogram_to_Sound (ComplexSpectrogram me, double stretchFactor);
 
-Spectrogram ComplexSpectrogram_to_Spectrogram (ComplexSpectrogram me);
+autoSpectrogram ComplexSpectrogram_to_Spectrogram (ComplexSpectrogram me);
 
-Spectrum ComplexSpectrogram_to_Spectrum (ComplexSpectrogram me, double time);
+autoSpectrum ComplexSpectrogram_to_Spectrum (ComplexSpectrogram me, double time);
 
 #endif  /* _ComplexSpectrogram_h_ */

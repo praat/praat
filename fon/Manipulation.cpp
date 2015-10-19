@@ -604,7 +604,7 @@ static autoSound synthesize_pulses_lpc (Manipulation me) {
 		if (! my lpc) {
 			if (! my sound) Melder_throw (U"Missing original sound.");
 			autoSound sound10k = Sound_resample (my sound.get(), 10000.0, 50);
-			my lpc = Sound_to_LPC_burg (sound10k.peek(), 20, 0.025, 0.01, 50.0);
+			my lpc = Sound_to_LPC_burg (sound10k.peek(), 20, 0.025, 0.01, 50.0).transfer();
 		}
 		if (! my pulses) Melder_throw (U"Missing pulses analysis.");
 		autoSound train = PointProcess_to_Sound_pulseTrain (my pulses.get(), 1.0 / my lpc -> samplingPeriod, 0.7, 0.05, 30);
@@ -624,7 +624,7 @@ static autoSound synthesize_pitch_lpc (Manipulation me) {
 		if (! my lpc) {
 			if (! my sound) Melder_throw (U"Missing original sound.");
 			autoSound sound10k = Sound_resample (my sound.get(), 10000.0, 50);
-			my lpc = Sound_to_LPC_burg (sound10k.peek(), 20, 0.025, 0.01, 50.0);
+			my lpc = Sound_to_LPC_burg (sound10k.peek(), 20, 0.025, 0.01, 50.0).transfer();
 		}
 		if (! my pitch)  Melder_throw (U"Missing pitch manipulation.");
 		if (! my pulses) Melder_throw (U"Missing pulses analysis.");

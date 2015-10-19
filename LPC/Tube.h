@@ -2,7 +2,7 @@
 #define _Tube_h_
 /* Tube.h
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ Thing_define (Area, Tube) {
 void Area_init (Area me, double tmin, double tmax, long nt, double dt, double t1,
 	long maxnSegments, double defaultLength);
 
-Area Area_create (double tmin, double tmax, long nt, double dt, double t1,
+autoArea Area_create (double tmin, double tmax, long nt, double dt, double t1,
 	long maxnSegments, double defaultLength);
 
 Thing_define (RC, Tube) {
@@ -65,7 +65,7 @@ Thing_define (RC, Tube) {
 void RC_init (RC me, double tmin, double tmax, long nt, double dt, double t1,
 	long maxnCoefficients, double defaultLength);
 
-RC RC_create (double tmin, double tmax, long nt, double dt, double t1,
+autoRC RC_create (double tmin, double tmax, long nt, double dt, double t1,
 	long maxnCoefficients, double defaultLength);
 
 #endif // _Tube_h_

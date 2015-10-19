@@ -84,7 +84,7 @@ void LPC_Frame_into_Formant_Frame (LPC_Frame me, Formant_Frame thee, double samp
 	Roots_into_Formant_Frame (r.peek(), thee, 1 / samplingPeriod, margin);
 }
 
-Formant LPC_to_Formant (LPC me, double margin) {
+autoFormant LPC_to_Formant (LPC me, double margin) {
 	try {
 		double samplingFrequency = 1.0 / my samplingPeriod;
 		long nmax = my maxnCoefficients, err = 0;
@@ -124,7 +124,7 @@ Formant LPC_to_Formant (LPC me, double margin) {
 		if (err > 0) {
 			Melder_warning (err, U" formant frames out of ", my nx, U" are suspect.");
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Formant created.");
 	}
@@ -169,7 +169,7 @@ void Formant_Frame_into_LPC_Frame (Formant_Frame me, LPC_Frame thee, double samp
 	thy gain = my intensity;
 }
 
-LPC Formant_to_LPC (Formant me, double samplingPeriod) {
+autoLPC Formant_to_LPC (Formant me, double samplingPeriod) {
 	try {
 		autoLPC thee = LPC_create (my xmin, my xmax, my nx, my dx, my x1, 2 * my maxnFormants, samplingPeriod);
 
@@ -181,7 +181,7 @@ LPC Formant_to_LPC (Formant me, double samplingPeriod) {
 			LPC_Frame_init (lpc, m);
 			Formant_Frame_into_LPC_Frame (f, lpc, samplingPeriod);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no LPC created.");
 	}
