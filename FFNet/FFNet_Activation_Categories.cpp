@@ -53,15 +53,15 @@ static long stochastic (FFNet me, const double activation[]) {
 	return i;
 }
 
-Categories FFNet_Activation_to_Categories (FFNet me, Activation activation, int labeling) {
+autoCategories FFNet_Activation_to_Categories (FFNet me, Activation activation, int labeling) {
 	try {
 		Categories categories = (Categories) my outputCategories;
 		long (*labelingFunction) (FFNet me, const double act[]);
 
-		if (my outputCategories == 0) {
+		if (! my outputCategories) {
 			Melder_throw (U"No Categories (has the FFNet been trained yet?).");
 		}
-		if (my nOutputs != activation->nx) {
+		if (my nOutputs != activation -> nx) {
 			Melder_throw (U"Number of columns and number of outputs must be equal.");
 		}
 		autoCategories thee = Categories_create ();
@@ -71,17 +71,17 @@ Categories FFNet_Activation_to_Categories (FFNet me, Activation activation, int 
 			autoSimpleString item = Data_copy ( (SimpleString) categories -> item[index]);
 			Collection_addItem (thee.peek(), item.transfer());
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Categories created.");
 	}
 }
 
-Activation FFNet_Categories_to_Activation (FFNet me, Categories thee) {
+autoActivation FFNet_Categories_to_Activation (FFNet me, Categories thee) {
 	try {
 		autoCategories uniq = Categories_selectUniqueItems (thee, 1);
 
-		if (my outputCategories == 0) {
+		if (! my outputCategories) {
 			Melder_throw (U"The FFNet does not have categories.");
 		}
 		long nl =  OrderedOfString_isSubsetOf (uniq.peek(), my outputCategories, 0);
@@ -98,7 +98,7 @@ Activation FFNet_Categories_to_Activation (FFNet me, Categories thee) {
 			}
 			his z[i][pos] = 1.0;
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Activation created.");
 	}

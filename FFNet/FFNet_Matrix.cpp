@@ -24,7 +24,7 @@
 
 #include "FFNet_Matrix.h"
 
-Matrix FFNet_weightsToMatrix (FFNet me, long layer, int deltaWeights) {
+autoMatrix FFNet_weightsToMatrix (FFNet me, long layer, int deltaWeights) {
 	try {
 		if (layer < 1 || layer > my nLayers) {
 			Melder_throw (U"Layer must be > 0 and < ", my nLayers, U".");
@@ -41,13 +41,13 @@ Matrix FFNet_weightsToMatrix (FFNet me, long layer, int deltaWeights) {
 				thy z[k++][i] = deltaWeights ? my dwi[j] : my w[j];
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Matrix created.");
 	}
 }
 
-FFNet FFNet_weightsFromMatrix (FFNet me, Matrix him, long layer) {
+autoFFNet FFNet_weightsFromMatrix (FFNet me, Matrix him, long layer) {
 	try {
 		if (layer < 1 || layer > my nLayers) {
 			Melder_throw (U"Layer must be > 0 and < ", my nLayers, U".");
@@ -59,7 +59,7 @@ FFNet FFNet_weightsFromMatrix (FFNet me, Matrix him, long layer) {
 		if (nunits != his ny) {
 			Melder_throw (U" The #rows (", his ny, U")  must equal #units (", nunits , U") in layer ", layer - 1, U".");
 		}
-		autoFFNet thee = (FFNet) Data_copy (me);
+		autoFFNet thee = Data_copy (me);
 		long node = 1;
 		for (long i = 0; i < layer; i++) {
 			node += thy nUnitsInLayer[i] + 1;
@@ -70,7 +70,7 @@ FFNet FFNet_weightsFromMatrix (FFNet me, Matrix him, long layer) {
 				thy w[j] = his z[k][i];
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no FFNet created.");
 	}
