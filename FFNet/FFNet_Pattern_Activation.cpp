@@ -1,6 +1,6 @@
 /* FFNet_Pattern_Activation.cpp
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -172,7 +172,7 @@ double FFNet_Pattern_Activation_getCosts_average (FFNet me, Pattern p, Activatio
 	return costs == NUMundefined ? NUMundefined : costs / p -> ny;
 }
 
-Activation FFNet_Pattern_to_Activation (FFNet me, Pattern p, long layer) {
+autoActivation FFNet_Pattern_to_Activation (FFNet me, Pattern p, long layer) {
 	try {
 		if (layer < 1 || layer > my nLayers) {
 			layer = my nLayers;
@@ -189,7 +189,7 @@ Activation FFNet_Pattern_to_Activation (FFNet me, Pattern p, long layer) {
 		for (long i = 1; i <= nPatterns; i++) {
 			FFNet_propagateToLayer (me, p -> z[i], thy z[i], layer);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Activation created.");
 	}

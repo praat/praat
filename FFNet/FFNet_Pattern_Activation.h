@@ -2,7 +2,7 @@
 #define _FFNet_Pattern_Activation_h_
 /* FFNet_Pattern_Activation.h
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ void FFNet_Pattern_Activation_learnSM (FFNet me, Pattern p, Activation a, long m
 double FFNet_Pattern_Activation_getCosts_total (FFNet me, Pattern p, Activation a, int costFunctionType);
 double FFNet_Pattern_Activation_getCosts_average (FFNet me, Pattern p, Activation a, int costFunctionType);
 
-Activation FFNet_Pattern_to_Activation (FFNet me, Pattern p, long layer);
+autoActivation FFNet_Pattern_to_Activation (FFNet me, Pattern p, long layer);
 /* Calculate the activations at a layer */
 /* if (layer<1 || layer > my nLayers) layer = my nLayers; */
 

@@ -72,7 +72,7 @@ void FFNet_Pattern_Categories_learnSD (FFNet me, Pattern p, Categories c, long m
 	_FFNet_Pattern_Categories_learn (me, p, c, maxNumOfEpochs, tolerance, parameters, costFunctionType, FFNet_Pattern_Activation_learnSD);
 }
 
-Categories FFNet_Pattern_to_Categories (FFNet me, Pattern thee, int labeling) {
+autoCategories FFNet_Pattern_to_Categories (FFNet me, Pattern thee, int labeling) {
 	try {
 		if (my outputCategories == 0) {
 			Melder_throw (U"The FFNet has no output categories.");
@@ -92,7 +92,7 @@ Categories FFNet_Pattern_to_Categories (FFNet me, Pattern thee, int labeling) {
 			autoDaata item = Data_copy ( (Daata) my outputCategories -> item[index]);
 			Collection_addItem (him.peek(), item.transfer());
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Categories created.");
 	}

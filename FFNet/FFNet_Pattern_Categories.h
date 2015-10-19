@@ -2,7 +2,7 @@
 #define _FFNet_Pattern_Categories_h_
 /* FFNet_Pattern_Categories.h
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ void FFNet_Pattern_Categories_learnSM (FFNet me, Pattern p, Categories c, long m
 double FFNet_Pattern_Categories_getCosts_total (FFNet me, Pattern p, Categories c, int costFunctionType);
 double FFNet_Pattern_Categories_getCosts_average (FFNet me, Pattern p, Categories c, int costFunctionType);
 
-Categories FFNet_Pattern_to_Categories (FFNet me, Pattern p, int labeling);
+autoCategories FFNet_Pattern_to_Categories (FFNet me, Pattern p, int labeling);
 /* classify the Pattern */
 /* labeling = 1 : winner-takes-all */
 /* labeling = 2 : stochastic */

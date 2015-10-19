@@ -120,7 +120,8 @@ FORM (FFNet_createIrisExample, U"Create iris example", U"Create iris example..."
 DO
 	long numberOfHidden1, numberOfHidden2;
 	FFNet_create_checkCommonFields_hidden (dia, &numberOfHidden1, &numberOfHidden2);
-	praat_new (FFNet_createIrisExample (numberOfHidden1, numberOfHidden2));
+	autoCollection thee = FFNet_createIrisExample (numberOfHidden1, numberOfHidden2);
+	praat_new (thee.transfer());
 END
 
 DIRECT (FFNet_getNumberOfInputs)
@@ -396,7 +397,8 @@ FORM (FFNet_extractWeights, U"FFNet: Extract weights", U"FFNet: Extract weights.
 	DO
 	LOOP {
 		iam (FFNet);
-		praat_new (FFNet_extractWeights (me, GET_INTEGER (U"Layer number")), U"");   // ppgb: geen expliciete NULL meer meegeven als naam (dat wordt "0")
+		autoTableOfReal thee = FFNet_extractWeights (me, GET_INTEGER (U"Layer number"));
+		praat_new (thee.transfer());
 	}
 END
 
@@ -407,7 +409,8 @@ FORM (FFNet_weightsToMatrix, U"FFNet: Weights to Matrix ", 0)
 DO
 	LOOP {
 		iam (FFNet);
-		praat_new (FFNet_weightsToMatrix (me, GET_INTEGER (U"Layer number"), 0), my name);
+		autoMatrix thee = FFNet_weightsToMatrix (me, GET_INTEGER (U"Layer number"), 0);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -421,7 +424,8 @@ FORM (FFNet_Activation_to_Categories, U"FFNet & Activation: To Categories", 0)
 DO
 	FFNet me = FIRST (FFNet);
 	Activation thee = FIRST (Activation);
-	praat_new (FFNet_Activation_to_Categories (me, thee, GET_INTEGER (U"Kind of labeling")), my name, U"_", thy name);
+	autoCategories him = FFNet_Activation_to_Categories (me, thee, GET_INTEGER (U"Kind of labeling"));
+	praat_new (him.transfer(), my name, U"_", thy name);
 END
 
 /******************* FFNet && Eigen ******************************************/
@@ -472,7 +476,8 @@ END
 DIRECT (FFNet_Categories_to_Activation)
 	FFNet me = FIRST (FFNet);
 	Categories thee = FIRST (Categories);
-	praat_new (FFNet_Categories_to_Activation (me, thee), my name);
+	autoActivation him = FFNet_Categories_to_Activation (me, thee);
+	praat_new (him.transfer(), my name);
 END
 
 /************************* FFNet && Matrix **********************************/
@@ -483,7 +488,8 @@ FORM (FFNet_weightsFromMatrix, U"Replace weights by values from Matrix", 0)
 DO
 	FFNet me = FIRST (FFNet);
 	Matrix thee = FIRST (Matrix);
-	praat_new (FFNet_weightsFromMatrix (me, thee, GET_INTEGER (U"Layer")), my name);
+	autoFFNet him = FFNet_weightsFromMatrix (me, thee, GET_INTEGER (U"Layer"));
+	praat_new (him.transfer(), my name);
 END
 
 /************************* FFNet && Pattern **********************************/
@@ -504,7 +510,8 @@ FORM (FFNet_Pattern_to_Activation, U"To activations in layer", 0)
 DO
 	FFNet me = FIRST (FFNet);
 	Pattern thee = FIRST (Pattern);
-	praat_new (FFNet_Pattern_to_Activation (me, thee, GET_INTEGER (U"Layer")), my name, U"_", thy name);
+	autoActivation him = FFNet_Pattern_to_Activation (me, thee, GET_INTEGER (U"Layer"));
+	praat_new (him.transfer(), my name, U"_", thy name);
 END
 
 DIRECT (hint_FFNet_and_Pattern_classify)
@@ -525,7 +532,8 @@ FORM (FFNet_Pattern_to_Categories, U"FFNet & Pattern: To Categories", U"FFNet & 
 DO
 	FFNet me = FIRST (FFNet);
 	Pattern thee = FIRST (Pattern);
-	praat_new (FFNet_Pattern_to_Categories (me, thee, GET_INTEGER (U"Determine output category as")), my name, U"_", thy name);
+	autoCategories him = FFNet_Pattern_to_Categories (me, thee, GET_INTEGER (U"Determine output category as"));
+	praat_new (him.transfer(), my name, U"_", thy name);
 END
 
 /*********** FFNet Pattern Activation **********************************/
