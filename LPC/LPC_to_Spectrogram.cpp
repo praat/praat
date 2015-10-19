@@ -1,6 +1,6 @@
 /* LPC_to_Spectrogram.cpp
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 
 #include "LPC_to_Spectrogram.h"
 
-Spectrogram LPC_to_Spectrogram (LPC me, double dfMin, double bandwidthReduction, double deEmphasisFrequency) {
+autoSpectrogram LPC_to_Spectrogram (LPC me, double dfMin, double bandwidthReduction, double deEmphasisFrequency) {
 	try {
 		double samplingFrequency = 1.0 / my samplingPeriod;
 		long nfft = 2;
@@ -47,7 +47,7 @@ Spectrogram LPC_to_Spectrogram (LPC me, double dfMin, double bandwidthReduction,
 				thy z[j][i] =  re * re + im * im;
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Spectrogram created.");
 	}

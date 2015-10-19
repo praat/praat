@@ -30,7 +30,7 @@
 #include "Spectrum_extensions.h"
 #include "Sound_and_Spectrum.h"
 
-static Cepstrum Spectrum_to_Cepstrum_cmplx (Spectrum me) {
+static autoCepstrum Spectrum_to_Cepstrum_cmplx (Spectrum me) {
 	try {
 		autoMatrix unwrap = Spectrum_unwrap (me);
 		autoSpectrum sx = Data_copy (me);
@@ -48,13 +48,13 @@ static Cepstrum Spectrum_to_Cepstrum_cmplx (Spectrum me) {
 		autoSound x = Spectrum_to_Sound (sx.peek());
 		autoCepstrum thee = Cepstrum_create (x -> xmax - x -> xmin, x -> nx);
 		NUMvector_copyElements (x -> z[1], thy z[1], 1, x -> nx);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Cepstrum created.");
 	}
 }
 
-PowerCepstrum Spectrum_to_PowerCepstrum (Spectrum me) {
+autoPowerCepstrum Spectrum_to_PowerCepstrum (Spectrum me) {
 	try {
 		autoSpectrum dBspectrum = Data_copy (me);
 		double *re = dBspectrum -> z[1], *im = dBspectrum -> z[2];
@@ -68,13 +68,13 @@ PowerCepstrum Spectrum_to_PowerCepstrum (Spectrum me) {
 			double val = cepstrum -> z[1][i];
 			thy z[1][i] = val * val;
 		}
-		return thee.transfer ();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound.");
 	}
 }
 
-Cepstrum Spectrum_to_Cepstrum (Spectrum me) {
+autoCepstrum Spectrum_to_Cepstrum (Spectrum me) {
 	try {
 		autoSpectrum dBspectrum = Data_copy (me);
 		double *re = dBspectrum -> z[1], *im = dBspectrum -> z[2];
@@ -88,13 +88,13 @@ Cepstrum Spectrum_to_Cepstrum (Spectrum me) {
 			double val = cepstrum -> z[1][i];
 			thy z[1][i] = val;
 		}
-		return thee.transfer ();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound.");
 	}
 }
 
-Spectrum Cepstrum_to_Spectrum (Cepstrum me) { //TODO power cepstrum
+autoSpectrum Cepstrum_to_Spectrum (Cepstrum me) { //TODO power cepstrum
 	try {
 		autoCepstrum cepstrum = Data_copy (me);
 		cepstrum ->  z[1][1] = my z[1][1];
@@ -108,13 +108,13 @@ Spectrum Cepstrum_to_Spectrum (Cepstrum me) { //TODO power cepstrum
 			re[i] =  exp (0.5 * re[i]);   // i.e., sqrt (exp(re [i]))
 			im[i] = 0.0;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Spectrum created.");
 	}
 }
 
-static Cepstrum Spectrum_to_Cepstrum2 (Spectrum me) {
+static autoCepstrum Spectrum_to_Cepstrum2 (Spectrum me) {
 	try {
 		autoNUMfft_Table fftTable;
 		// originalNumberOfSamplesProbablyOdd irrelevant
@@ -139,14 +139,14 @@ static Cepstrum Spectrum_to_Cepstrum2 (Spectrum me) {
 			double val = fftbuf[i] / numberOfSamples; // scaling 1/n because ifft(fft(1))= n;
 			thy z[1][i] = val * val; // power cepstrum
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Cepstrum.");
 	}
 }
 
 
-static Spectrum Cepstrum_to_Spectrum2 (Cepstrum me) { //TODO power cepstrum
+static autoSpectrum Cepstrum_to_Spectrum2 (Cepstrum me) { //TODO power cepstrum
 	try {
 		autoNUMfft_Table fftTable;
 		long numberOfSamples = 2 * my nx - 2;
@@ -171,7 +171,7 @@ static Spectrum Cepstrum_to_Spectrum2 (Cepstrum me) { //TODO power cepstrum
 			thy z[1][i] = exp (NUMln10 * thy z[1][i] / 20.0) * 2e-5 / sqrt (2 * thy dx);
 			thy z[2][i] = 0.0;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Spectrum created.");
 	}

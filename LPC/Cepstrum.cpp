@@ -100,37 +100,37 @@ double structPowerCepstrum :: v_getValueAtSample (long isamp, long which, int un
 	return NUMundefined;
 }
 
-Cepstrum Cepstrum_create (double qmax, long nq) {
+autoCepstrum Cepstrum_create (double qmax, long nq) {
 	try {
 		autoCepstrum me = Thing_new (Cepstrum);
 		double dq = qmax / (nq - 1);
 
 		Matrix_init (me.peek(), 0.0, qmax, nq, dq, 0.0, 1.0, 1.0, 1, 1, 1.0);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Cepstrum not created.");
 	}
 }
 
-PowerCepstrum Cepstrum_downto_PowerCepstrum (Cepstrum me ) {
+autoPowerCepstrum Cepstrum_downto_PowerCepstrum (Cepstrum me ) {
 	try {
 		autoPowerCepstrum thee = PowerCepstrum_create (my xmax, my nx);
 		for (long i = 1; i <= my nx; i++) {
 			thy z[1][i] = my z[1][i] * my z[1][i];
 		}
-		return thee.transfer ();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U" not converted.");
 	}
 }
 
-PowerCepstrum PowerCepstrum_create (double qmax, long nq) {
+autoPowerCepstrum PowerCepstrum_create (double qmax, long nq) {
 	try {
 		autoPowerCepstrum me = Thing_new (PowerCepstrum);
 		double dq = qmax / (nq - 1);
 
 		Matrix_init (me.peek(), 0.0, qmax, nq, dq, 0.0, 1.0, 1.0, 1, 1, 1.0);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PowerCepstrum not created.");
 	}
@@ -350,11 +350,11 @@ void PowerCepstrum_subtractTilt_inline (PowerCepstrum me, double qstartFit, doub
 	PowerCepstrum_subtractTiltLine_inline (me, slope, intercept, lineType);
 }
 
-PowerCepstrum PowerCepstrum_subtractTilt (PowerCepstrum me, double qstartFit, double qendFit, int lineType, int fitMethod) {
+autoPowerCepstrum PowerCepstrum_subtractTilt (PowerCepstrum me, double qstartFit, double qendFit, int lineType, int fitMethod) {
 	try {
 		autoPowerCepstrum thee = Data_copy (me);
 		PowerCepstrum_subtractTilt_inline (thee.peek(), qstartFit,  qendFit, lineType, fitMethod);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": couldn't subtract tilt line.");
 	}
@@ -403,10 +403,10 @@ void PowerCepstrum_smooth_inline (PowerCepstrum me, double quefrencyAveragingWin
 	}
 }
 
-PowerCepstrum PowerCepstrum_smooth (PowerCepstrum me, double quefrencyAveragingWindow, long numberOfIterations) {
+autoPowerCepstrum PowerCepstrum_smooth (PowerCepstrum me, double quefrencyAveragingWindow, long numberOfIterations) {
 	autoPowerCepstrum thee = Data_copy (me);
 	PowerCepstrum_smooth_inline (thee.peek(), quefrencyAveragingWindow, numberOfIterations);
-	return thee.transfer();
+	return thee;
 }
 
 void PowerCepstrum_getMaximumAndQuefrency (PowerCepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double *peakdB, double *quefrency) {
@@ -528,42 +528,43 @@ double PowerCepstrum_getPeakProminence (PowerCepstrum me, double pitchFloor, dou
 	return cpp;
 }
 
-Matrix PowerCepstrum_to_Matrix (PowerCepstrum me) {
+autoMatrix PowerCepstrum_to_Matrix (PowerCepstrum me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
 		my structMatrix :: v_copy (thee.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Matrix created.");
 	}
 }
 
-PowerCepstrum Matrix_to_PowerCepstrum (Matrix me) {
+autoPowerCepstrum Matrix_to_PowerCepstrum (Matrix me) {
 	try {
-		if (my ny != 1)
+		if (my ny != 1) {
 			Melder_throw (U"Matrix should have exactly 1 row.");
+		}
 		autoPowerCepstrum thee = Thing_new (PowerCepstrum);
 		my structMatrix :: v_copy (thee.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to PowerCepstrum.");
 	}
 }
 
-PowerCepstrum Matrix_to_PowerCepstrum_row (Matrix me, long row) {
+autoPowerCepstrum Matrix_to_PowerCepstrum_row (Matrix me, long row) {
 	try {
 		autoPowerCepstrum thee = PowerCepstrum_create (my xmax, my nx);
 		if (row < 1 || row > my ny) {
 			Melder_throw (U"Row number should be between 1 and ", my ny, U" inclusive.");
 		}
 		NUMvector_copyElements (my z[row], thy z[1], 1, my nx);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no PowerCepstrum created.");
 	}
 }
 
-PowerCepstrum Matrix_to_PowerCepstrum_column (Matrix me, long col) {
+autoPowerCepstrum Matrix_to_PowerCepstrum_column (Matrix me, long col) {
 	try {
 		autoPowerCepstrum thee = PowerCepstrum_create (my ymax, my ny);
 		if (col < 1 || col > my nx) {
@@ -572,7 +573,7 @@ PowerCepstrum Matrix_to_PowerCepstrum_column (Matrix me, long col) {
 		for (long i = 1; i <= my ny; i++) {
 			thy z[1][i] = my z[i][col];
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no PowerCepstrum created.");
 	}

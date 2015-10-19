@@ -90,7 +90,7 @@ void Formant_formula (Formant me, double tmin, double tmax, long formantmin, lon
 	}
 }
 
-IntensityTier Formant_and_Spectrogram_to_IntensityTier (Formant me, Spectrogram thee, long iformant) {
+autoIntensityTier Formant_and_Spectrogram_to_IntensityTier (Formant me, Spectrogram thee, long iformant) {
 	try {
 		if (my xmin != thy xmin || my xmax != thy xmax) {
 			Melder_throw (U"The start and end times of the Formant and the Spectrogram must be equal.");
@@ -121,7 +121,7 @@ IntensityTier Formant_and_Spectrogram_to_IntensityTier (Formant me, Spectrogram 
 			}
 			previousValue = value;
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"IntensityTier not created from ", me, U" and ", thee, U".");
 	}

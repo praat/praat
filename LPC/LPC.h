@@ -2,7 +2,7 @@
 #define _LPC_h_
 /* LPC.h
  *
- * Copyright (C) 1994-2012 David Weenink
+ * Copyright (C) 1994-2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ oo_CLASS_CREATE (LPC, Sampled);
 void LPC_init (LPC me, double tmin, double tmax, long nt, double dt, double t1,
 	int predictionOrder, double samplingPeriod);
 
-LPC LPC_create (double tmin, double tmax, long nt, double dt, double t1,
+autoLPC LPC_create (double tmin, double tmax, long nt, double dt, double t1,
 	int predictionOrder, double samplingPeriod);
 
 void LPC_drawGain (LPC me, Graphics g, double t1, double t2,
@@ -44,9 +44,9 @@ void LPC_drawGain (LPC me, Graphics g, double t1, double t2,
 
 void LPC_drawPoles (LPC me, Graphics g, double time, int garnish);
 
-Matrix LPC_downto_Matrix_lpc (LPC me);
-Matrix LPC_downto_Matrix_rc (LPC me);
-Matrix LPC_downto_Matrix_area (LPC me);
+autoMatrix LPC_downto_Matrix_lpc (LPC me);
+autoMatrix LPC_downto_Matrix_rc (LPC me);
+autoMatrix LPC_downto_Matrix_area (LPC me);
 
 /******************* Frames ************************************************/
 

@@ -66,7 +66,7 @@ void Cepstrumc_Frame_into_LPC_Frame (Cepstrumc_Frame me, LPC_Frame thee) {
 	}
 }
 
-Cepstrumc LPC_to_Cepstrumc (LPC me) {
+autoCepstrumc LPC_to_Cepstrumc (LPC me) {
 	try {
 		autoCepstrumc thee = Cepstrumc_create (my xmin, my xmax, my nx, my dx, my x1,
 		                                       my maxnCoefficients, 1.0 / my samplingPeriod);
@@ -75,13 +75,13 @@ Cepstrumc LPC_to_Cepstrumc (LPC me) {
 			Cepstrumc_Frame_init (& thy frame[i], my d_frames[i].nCoefficients);
 			LPC_Frame_into_Cepstrumc_Frame (& my d_frames[i], & thy frame[i]);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Cepstrum created.");
 	}
 }
 
-LPC Cepstrumc_to_LPC (Cepstrumc me) {
+autoLPC Cepstrumc_to_LPC (Cepstrumc me) {
 	try {
 		autoLPC thee = LPC_create (my xmin, my xmax, my nx, my dx, my x1,
 		                           my maxnCoefficients, 1.0 / my samplingFrequency);
@@ -89,7 +89,7 @@ LPC Cepstrumc_to_LPC (Cepstrumc me) {
 			LPC_Frame_init (& thy d_frames[i], my frame[i].nCoefficients);
 			Cepstrumc_Frame_into_LPC_Frame (& my frame[i], & thy d_frames[i]);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U":no LPC created.");
 	}

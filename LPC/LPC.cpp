@@ -76,12 +76,12 @@ void LPC_init (LPC me, double tmin, double tmax, long nt, double dt, double t1,
 	my d_frames = NUMvector<structLPC_Frame> (1, nt);
 }
 
-LPC LPC_create (double tmin, double tmax, long nt, double dt, double t1,
+autoLPC LPC_create (double tmin, double tmax, long nt, double dt, double t1,
                 int predictionOrder, double samplingPeriod) {
 	try {
 		autoLPC me = Thing_new (LPC);
 		LPC_init (me.peek(), tmin, tmax, nt, dt, t1, predictionOrder, samplingPeriod);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"LPC not created.");
 	}
@@ -131,7 +131,7 @@ void LPC_drawPoles (LPC me, Graphics g, double time, int garnish) {
 	Roots_draw (r.peek(), g, -1.0, 1.0, -1.0, 1.0, U"+", 12, garnish);
 }
 
-Matrix LPC_downto_Matrix_lpc (LPC me) {
+autoMatrix LPC_downto_Matrix_lpc (LPC me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maxnCoefficients, my maxnCoefficients, 1.0, 1.0);
 		for (long j = 1; j <= my nx; j++) {
@@ -140,13 +140,13 @@ Matrix LPC_downto_Matrix_lpc (LPC me) {
 				thy z[i][j] = lpc -> a[i];
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Matrix with linear prediction coefficients created.");
 	}
 }
 
-Matrix LPC_downto_Matrix_rc (LPC me) {
+autoMatrix LPC_downto_Matrix_rc (LPC me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maxnCoefficients, my maxnCoefficients, 1.0, 1.0);
 		autoNUMvector<double> rc (1, my maxnCoefficients);
@@ -157,13 +157,13 @@ Matrix LPC_downto_Matrix_rc (LPC me) {
 				thy z[i][j] = rc[i];
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Matrix with relection coefficients created.");
 	}
 }
 
-Matrix LPC_downto_Matrix_area (LPC me) {
+autoMatrix LPC_downto_Matrix_area (LPC me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maxnCoefficients, my maxnCoefficients, 1.0, 1.0);
 		autoNUMvector<double> rc (1, my maxnCoefficients);
@@ -176,7 +176,7 @@ Matrix LPC_downto_Matrix_area (LPC me) {
 				thy z[i][j] = area[i];
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Matrix with areas created.");
 	}

@@ -2,7 +2,7 @@
 #define _LPC_to_Spectrogram_h_
 /* LPC_to_Spectrogram.h
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 #include "Spectrogram.h"
 #include "LPC_to_Spectrum.h"
 
-Spectrogram LPC_to_Spectrogram (LPC me, double dfMin, double bandwidthReduction, double deEmphasisFrequency);
+autoSpectrogram LPC_to_Spectrogram (LPC me, double dfMin, double bandwidthReduction, double deEmphasisFrequency);
 /* if(dfMin >= 0) df <= dfMin else df = NyquistFrequency / 512 */
 
 #endif /* _LPC_and_Spectrogram_h_ */

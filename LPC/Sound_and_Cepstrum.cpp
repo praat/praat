@@ -34,7 +34,7 @@
 	without Phase Unwrapping or Integration, IEEE Trans. on ASSP 33,
 	1014-1017 (Does not work yet).
 */
-Cepstrum Sound_to_Cepstrum_bw (Sound me) {
+autoCepstrum Sound_to_Cepstrum_bw (Sound me) {
 	try {
 		long nfft = 2;
 		while (nfft < my nx) {
@@ -102,7 +102,7 @@ Cepstrum Sound_to_Cepstrum_bw (Sound me) {
 		// Step 6: xhat[0] = Avg (ln |X(f)|)
 
 		thy z[1][1] = lnxa;
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Cepstrum created.");
 	}
@@ -110,21 +110,21 @@ Cepstrum Sound_to_Cepstrum_bw (Sound me) {
 
 /* Zijn nog niet elkaars inverse!!!!*/
 
-Cepstrum Sound_to_Cepstrum (Sound me) {
+autoCepstrum Sound_to_Cepstrum (Sound me) {
 	try {
 		autoSpectrum spectrum = Sound_to_Spectrum (me, true);
 		autoCepstrum thee = Spectrum_to_Cepstrum (spectrum.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Cepstrum calculated.");
 	}
 }
 
-Sound Cepstrum_to_Sound (Cepstrum me) {
+autoSound Cepstrum_to_Sound (Cepstrum me) {
 	try {
 		autoSpectrum sx = Cepstrum_to_Spectrum (me);
 		autoSound thee = Spectrum_to_Sound (sx.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Sound calculated.");
 	}

@@ -2,7 +2,7 @@
 #define _LPC_and_Cepstrumc_h_
 /* LPC_and_Cepstrumc.h
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +28,9 @@
 #include "LPC.h"
 #include "Cepstrumc.h"
 
-Cepstrumc LPC_to_Cepstrumc (LPC me);
+autoCepstrumc LPC_to_Cepstrumc (LPC me);
 
-LPC Cepstrumc_to_LPC (Cepstrumc me);
+autoLPC Cepstrumc_to_LPC (Cepstrumc me);
 
 void LPC_Frame_into_Cepstrumc_Frame (LPC_Frame me, Cepstrumc_Frame thee);
 void Cepstrumc_Frame_into_LPC_Frame (Cepstrumc_Frame me, LPC_Frame thee);
