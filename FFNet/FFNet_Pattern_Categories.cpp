@@ -74,7 +74,7 @@ void FFNet_Pattern_Categories_learnSD (FFNet me, Pattern p, Categories c, long m
 
 autoCategories FFNet_Pattern_to_Categories (FFNet me, Pattern thee, int labeling) {
 	try {
-		if (my outputCategories == 0) {
+		if (! my outputCategories) {
 			Melder_throw (U"The FFNet has no output categories.");
 		}
 		if (my nInputs != thy nx) {
@@ -89,7 +89,7 @@ autoCategories FFNet_Pattern_to_Categories (FFNet me, Pattern thee, int labeling
 		for (long k = 1; k <= thy ny; k++) {
 			FFNet_propagate (me, thy z[k], nullptr);
 			long index = FFNet_getWinningUnit (me, labeling);
-			autoDaata item = Data_copy ( (Daata) my outputCategories -> item[index]);
+			autoDaata item = Data_copy ((Daata) my outputCategories -> item[index]);
 			Collection_addItem (him.peek(), item.transfer());
 		}
 		return him;

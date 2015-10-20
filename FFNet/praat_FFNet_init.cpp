@@ -159,12 +159,11 @@ FORM (FFNet_getCategoryOfOutputUnit, U"FFNet: Get category of output unit", U"")
 	DO
 	LOOP {
 		iam (FFNet);
-		Categories c = (Categories) my outputCategories;
 		long unit = GET_INTEGER (U"Output unit");
-		if (unit > c -> size) {
-			Melder_throw (U"Output unit cannot be larger than ", c -> size, U".");
+		if (unit > my outputCategories -> size) {
+			Melder_throw (U"Output unit cannot be larger than ", my outputCategories -> size, U".");
 		}
-		SimpleString ss = (SimpleString) c -> item[unit];
+		SimpleString ss = (SimpleString) my outputCategories -> item[unit];
 		Melder_information (ss -> string);
 	}
 END
@@ -175,11 +174,10 @@ FORM (FFNet_getOutputUnitOfCategory, U"FFNet: Get output unit of category", U"")
 DO
 	LOOP {
 		iam (FFNet);
-		Categories c = my outputCategories;
 		char32 *category = GET_STRING (U"Category");
 		long index = 0;
-		for (long i = 1; i <= c -> size; i++) {
-			SimpleString s = (SimpleString) c -> item[i];
+		for (long i = 1; i <= my outputCategories -> size; i++) {
+			SimpleString s = (SimpleString) my outputCategories -> item[i];
 			if (Melder_equ (s -> string, category)) {
 				index = i;
 				break;
@@ -290,7 +288,8 @@ FORM (Categories_create, U"Create Categories", U"")
 	WORD (U"Name", U"empty")
 	OK
 DO
-	praat_new (Categories_create (), GET_STRING (U"Name"));
+	autoCategories thee = Categories_create ();
+	praat_new (thee.transfer(), GET_STRING (U"Name"));
 END
 
 DIRECT (FFNet_help) Melder_help (U"Feedforward neural networks"); END

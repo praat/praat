@@ -2,7 +2,7 @@
 #define _Confusion_h_
 /* Confusion.h
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,13 +33,13 @@ Thing_define (Confusion, TableOfReal) {
 	A Confusion matrix has both row and column labels.
 */
 
-Confusion Confusion_create (long numberOfStimuli, long numberOfResponses);
+autoConfusion Confusion_create (long numberOfStimuli, long numberOfResponses);
 
-Confusion Confusion_createSimple (const char32 *labels);
+autoConfusion Confusion_createSimple (const char32 *labels);
 
-Confusion Confusion_createFromStringses (Strings stimulusLabels, Strings responseLabels);
+autoConfusion Confusion_createFromStringses (Strings stimulusLabels, Strings responseLabels);
 
-Confusion Categories_to_Confusion (Categories me, Categories thee);
+autoConfusion Categories_to_Confusion (Categories me, Categories thee);
 
 void Confusion_increase (Confusion me, const char32 *stimulus, const char32 *response);
 /* data['stim']['resp'] += 1; */
@@ -79,24 +79,25 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g,
  *	}
  */
 
-Matrix Confusion_difference (Confusion me, Confusion thee);
+autoMatrix Confusion_difference (Confusion me, Confusion thee);
 /* return matrix with the difference between the two confusion matrices */
 
 long Confusion_getNumberOfEntries (Confusion me);
 
-Confusion Confusion_groupStimuli (Confusion me, const char32 *labels, const char32 *newLabel, long newpos);
-Confusion Confusion_groupResponses (Confusion me, const char32 *labels, const char32 *newLabel, long newpos);
-Confusion Confusion_group (Confusion me, const char32 *labels, const char32 *newLabel, long newpos);
+autoConfusion Confusion_groupStimuli (Confusion me, const char32 *labels, const char32 *newLabel, long newpos);
 
-Confusion Confusion_condense (Confusion me, const char32 *search, const char32 *replace,
-	long maximumNumberOfReplaces, int use_regexp);
-/*
+autoConfusion Confusion_groupResponses (Confusion me, const char32 *labels, const char32 *newLabel, long newpos);
+
+autoConfusion Confusion_group (Confusion me, const char32 *labels, const char32 *newLabel, long newpos);
+
+autoConfusion Confusion_condense (Confusion me, const char32 *search, const char32 *replace, long maximumNumberOfReplaces, int use_regexp);
+/* 
 	Group row and column labels according to search and replace.
 */
 
-Confusion TableOfReal_to_Confusion (TableOfReal me);
+autoConfusion TableOfReal_to_Confusion (TableOfReal me);
 
-TableOfReal Confusion_to_TableOfReal_marginals (Confusion me);
+autoTableOfReal Confusion_to_TableOfReal_marginals (Confusion me);
 /*
 	Create a table with one extra row and one extra column with marginals,
 	i.e., column and row sums.

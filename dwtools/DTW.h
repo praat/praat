@@ -46,14 +46,15 @@ oo_CLASS_CREATE (DTW, Matrix);
 void DTW_Path_Query_init (DTW_Path_Query me, long ny, long nx);
 
 /* Prototype on y-axis and test on x-axis */
-DTW DTW_create (double tminp, double tmaxp, long ntp, double dtp, double t1p,
+autoDTW DTW_create (double tminp, double tmaxp, long ntp, double dtp, double t1p,
 	double tminc, double tmaxc, long ntc, double dtc, double t1c);
 
 void DTW_setWeights (DTW me, double wx, double wy, double wd);
 
-DTW DTW_swapAxes (DTW me);
+autoDTW DTW_swapAxes (DTW me);
 
-void DTW_findPath_bandAndSlope (DTW me, double sakoeChibaBand, int localSlope, Matrix *cummulativeDists);
+void DTW_findPath_bandAndSlope (DTW me, double sakoeChibaBand, int localSlope, autoMatrix *cummulativeDists);
+
 void DTW_findPath (DTW me, int matchStart, int matchEnd, int slope); // deprecated
 /* Obsolete
 	Function:
@@ -79,7 +80,9 @@ double DTW_getPathY (DTW me, double tx);
 /*
 	Get the time Y-time that corresponds to time t (along X).
 */
+
 double DTW_getYTimeFromXTime (DTW me, double tx);
+
 double DTW_getXTimeFromYTime (DTW me, double ty);
 
 long DTW_getMaximumConsecutiveSteps (DTW me, int direction);
@@ -89,33 +92,38 @@ void DTW_paintDistances (DTW me, Graphics g, double xmin, double xmax, double ym
 
 void DTW_drawPath (DTW me, Graphics g, double xmin, double xmax, double ymin,
 	double ymax, int garnish);
+
 void DTW_drawWarpX (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double tx, int garnish);
+
 void DTW_pathRemoveRedundantNodes (DTW me);
+
 void DTW_pathQueryRecode (DTW me);
 
-void DTW_drawDistancesAlongPath (DTW me, Graphics g, double xmin, double xmax,
-	double dmin, double dmax, int garnish);
+void DTW_drawDistancesAlongPath (DTW me, Graphics g, double xmin, double xmax, double dmin, double dmax, int garnish);
 
 void DTW_and_Sounds_draw (DTW me, Sound yy, Sound xx, Graphics g, double xmin, double xmax,
 	double ymin, double ymax, int garnish);
+
 void DTW_and_Sounds_drawWarpX (DTW me, Sound yy, Sound xx, Graphics g, double xmin, double xmax,
 	double ymin, double ymax, double tx, int garnish);
 
-Polygon DTW_to_Polygon (DTW me, double band, int slope);
+autoPolygon DTW_to_Polygon (DTW me, double band, int slope);
 
-void DTW_and_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, Matrix *cummulativeDists);
+void DTW_and_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, autoMatrix *cummulativeDists);
 
-Matrix DTW_to_Matrix_distances(DTW me);
-Matrix DTW_to_Matrix_cummulativeDistances (DTW me, double sakoeChibaBand, int slope);
-Matrix DTW_and_Polygon_to_Matrix_cummulativeDistances (DTW me, Polygon thee, int localSlope);
+autoMatrix DTW_to_Matrix_distances(DTW me);
 
-DTW Matrices_to_DTW (I, thou, int matchStart, int matchEnd, int slope, double metric);
+autoMatrix DTW_to_Matrix_cummulativeDistances (DTW me, double sakoeChibaBand, int slope);
 
-DTW Spectrograms_to_DTW (Spectrogram me, Spectrogram thee, int matchStart, int matchEnd, int slope, double metric);
+autoMatrix DTW_and_Polygon_to_Matrix_cummulativeDistances (DTW me, Polygon thee, int localSlope);
 
-DTW Pitches_to_DTW (Pitch me, Pitch thee, double vuv_costs, double time_weight, int matchStart, int matchEnd, int slope);
+autoDTW Matrices_to_DTW (Matrix me, Matrix thee, int matchStart, int matchEnd, int slope, double metric);
 
-DurationTier DTW_to_DurationTier (DTW me);
+autoDTW Spectrograms_to_DTW (Spectrogram me, Spectrogram thee, int matchStart, int matchEnd, int slope, double metric);
+
+autoDTW Pitches_to_DTW (Pitch me, Pitch thee, double vuv_costs, double time_weight, int matchStart, int matchEnd, int slope);
+
+autoDurationTier DTW_to_DurationTier (DTW me);
 
 void DTW_and_Matrix_replace (DTW me, Matrix thee);
 

@@ -35,5 +35,6 @@ procedure means_by_row_labels
 			endif
 			assert .dif <= eps
 		endfor
-	endfor		
+	endfor
+	removeObject: 	.tab1, .tabm	
 endproc

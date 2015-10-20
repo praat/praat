@@ -1,11 +1,12 @@
 # test_Confusion.praat
-# djmw 20110511
+# djmw 20110511, 20151020
+
+printline test_Confusion.praat
 
 l$[1] = "u"
 l$[2] = "i"
 l$[3] = "e"
 nlabels = 3
-printline Confusion test...
 c1 = Create simple Confusion... test 'l$[1]'  'l$[2]'   'l$[3]' 
 nrows = Get number of rows
 ncols = Get number of columns
@@ -60,4 +61,5 @@ assert v = 8
 
 plus c2
 Remove
-printline Confusion test... ok
+
+printline test_Confusion.praat OK

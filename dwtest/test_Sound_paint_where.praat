@@ -34,5 +34,5 @@ plus s1
 Select outer viewport... 0 6 9 12
 Paint enclosed... Grey 0 0 -1 1 yes
 Text top... n Paint enclosed: between sine and straight line
-
+removeObject: s1, s3
 

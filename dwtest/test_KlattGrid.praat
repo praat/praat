@@ -1,6 +1,7 @@
 # test_KlattGrid.praat
+# djmw 20151020
 
-printline test_KlattGrid
+printline test_KlattGrid.praat
 
 t = Create Table with column names... t 25 tier min max nf
 Set string value... 1 tier pitch
@@ -155,4 +156,6 @@ for i from nPhonationTiers+1 to 25
 	print 'newline$'
 endfor
 
-printline test_KlattGrid OK
+removeObject: kg, t
+
+printline test_KlattGrid.praat OK

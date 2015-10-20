@@ -148,7 +148,7 @@ static void Ordered_moveItem (I, long from, long to) {
 Thing_define (CategoriesEditorCommand, Command) {
 	// new data:
 public:
-	Categories categories;
+	autoCategories categories;
 	long *selection; long nSelected, newPos;
 	// overridden methods:
 	virtual void v_destroy ();
@@ -158,7 +158,6 @@ Thing_implement (CategoriesEditorCommand, Command, 0);
 
 void structCategoriesEditorCommand :: v_destroy () {
 	NUMvector_free (selection, 1);
-	forget (categories);
 	CategoriesEditorCommand_Parent :: v_destroy ();
 }
 
@@ -184,7 +183,7 @@ static int CategoriesEditorInsert_execute (I) {
 	iam (CategoriesEditorInsert);
 	CategoriesEditor editor = (CategoriesEditor) my data;
 	Categories categories = (Categories) editor -> data;
-	autoSimpleString str = Data_copy ( (SimpleString) ( (Categories) my categories)->item[1]);
+	autoSimpleString str = Data_copy ((SimpleString) my categories -> item[1]);
 	Ordered_addItemPos (categories, str.transfer(), my selection[1]);
 	update (editor, my selection[1], 0, my selection, 1);
 	return 1;
@@ -202,10 +201,9 @@ static int CategoriesEditorInsert_undo (I) {
 static CategoriesEditorInsert CategoriesEditorInsert_create (Any data, Any str, int position) {
 	try {
 		autoCategoriesEditorInsert me = Thing_new (CategoriesEditorInsert);
-		CategoriesEditorCommand_init (me.peek(), U"Insert", data, CategoriesEditorInsert_execute,
-		                              CategoriesEditorInsert_undo, 1, 1);
+		CategoriesEditorCommand_init (me.peek(), U"Insert", data, CategoriesEditorInsert_execute, CategoriesEditorInsert_undo, 1, 1);
 		my selection[1] = position;
-		Collection_addItem (my categories, (SimpleString) str);
+		Collection_addItem (my categories.peek(), (SimpleString) str);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw (U"CategoriesEditorInsert not created.");
@@ -225,7 +223,7 @@ static int CategoriesEditorRemove_execute (I) {
 	Categories l_categories = (Categories) editor -> data;   // David, weer link: tweemaal dezelfde naam (categories): is ok, geen conflict. Naam toch maar aangepast
 
 	for (long i = my nSelected; i >= 1; i--) {
-		Ordered_addItemPos (my categories, (SimpleString) l_categories -> item[my selection[i]], 1);
+		Ordered_addItemPos (my categories.peek(), (SimpleString) l_categories -> item[my selection[i]], 1);
 		l_categories -> item[my selection[i]] = 0;
 		Collection_removeItem (l_categories, my selection[i]);
 	}
@@ -274,8 +272,8 @@ static int CategoriesEditorReplace_execute (I) {
 	Categories categories = (Categories) editor -> data;
 
 	for (long i = my nSelected; i >= 1; i--) {
-		autoSimpleString str = Data_copy ( (SimpleString) my categories -> item[1]);
-		Ordered_addItemPos (my categories, (SimpleString) categories -> item[my selection[i]], 2);
+		autoSimpleString str = Data_copy ((SimpleString) my categories -> item[1]);
+		Ordered_addItemPos (my categories.peek(), (SimpleString) categories -> item[my selection[i]], 2);
 		categories -> item[my selection[i]] =  str.transfer();
 	}
 	update (editor, my selection[1], my selection[my nSelected], my selection, my nSelected);
@@ -303,7 +301,7 @@ static CategoriesEditorReplace CategoriesEditorReplace_create (Any data, Any str
 		for (long i = 1; i <= posCount; i++) {
 			my selection[i] = posList[i];
 		}
-		Collection_addItem (my categories, (SimpleString) str);
+		Collection_addItem (my categories.peek(), (SimpleString) str);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw (U"CategoriesEditorReplace not created.");

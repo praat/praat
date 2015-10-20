@@ -1,6 +1,6 @@
 /* Distance.cpp
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,11 +26,11 @@
 
 Thing_implement (Distance, Proximity, 0);
 
-Distance Distance_create (long numberOfPoints) {
+autoDistance Distance_create (long numberOfPoints) {
 	try {
 		autoDistance me = Thing_new (Distance);
 		Proximity_init (me.peek(), numberOfPoints);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Distance not created.");
 	}

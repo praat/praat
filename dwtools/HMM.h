@@ -2,7 +2,7 @@
 #define _HMM_h_
 /* HMM.h
  *
- * Copyright (C) 2010-2011 David Weenink
+ * Copyright (C) 2010-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,45 +63,73 @@ Thing_define (HMM_ObservationSequence, Table) {
 Thing_define (HMM_ObservationSequences, Collection) {
 };
 
-HMM_ObservationSequence HMM_ObservationSequence_create (long numberOfItems, long dataLength);
-void HMM_ObservationSequence_removeObservation (HMM_ObservationSequence me, long index);
-Strings HMM_ObservationSequence_to_Strings (HMM_ObservationSequence me);
-HMM_ObservationSequence Strings_to_HMM_ObservationSequence (Strings me);
-StringsIndex HMM_ObservationSequence_to_StringsIndex (HMM_ObservationSequence me);
-StringsIndex HMM_and_HMM_ObservationSequence_to_StringsIndex (HMM me, HMM_ObservationSequence thee);
-TableOfReal HMM_ObservationSequence_to_TableOfReal_transitions (HMM_ObservationSequence me, int probabilities);
-TableOfReal HMM_and_HMM_ObservationSequence_to_TableOfReal_transitions (HMM me, HMM_ObservationSequence thee, int probabilities);
+autoHMM_ObservationSequence HMM_ObservationSequence_create (long numberOfItems, long dataLength);
 
-HMM_ObservationSequences HMM_ObservationSequences_create ();
+void HMM_ObservationSequence_removeObservation (HMM_ObservationSequence me, long index);
+
+autoStrings HMM_ObservationSequence_to_Strings (HMM_ObservationSequence me);
+
+autoHMM_ObservationSequence Strings_to_HMM_ObservationSequence (Strings me);
+
+autoStringsIndex HMM_ObservationSequence_to_StringsIndex (HMM_ObservationSequence me);
+
+autoStringsIndex HMM_and_HMM_ObservationSequence_to_StringsIndex (HMM me, HMM_ObservationSequence thee);
+
+autoTableOfReal HMM_ObservationSequence_to_TableOfReal_transitions (HMM_ObservationSequence me, int probabilities);
+
+autoTableOfReal HMM_and_HMM_ObservationSequence_to_TableOfReal_transitions (HMM me, HMM_ObservationSequence thee, int probabilities);
+
+autoHMM_ObservationSequences HMM_ObservationSequences_create ();
+
 long HMM_ObservationSequence_getNumberOfObservations (HMM_ObservationSequence me);
+
 long HMM_ObservationSequences_getLongestSequence (HMM_ObservationSequences me);
 
-TableOfReal HMM_StateSequence_to_TableOfReal_transitions (HMM_StateSequence me);
-TableOfReal HMM_and_HMM_StateSequence_to_TableOfReal_transitions (HMM me, HMM_StateSequence thee, int probabilities);
-HMM_StateSequence HMM_StateSequence_create (long numberOfItems);
-Strings HMM_StateSequence_to_Strings (HMM_StateSequence me);
+autoTableOfReal HMM_StateSequence_to_TableOfReal_transitions (HMM_StateSequence me);
+
+autoTableOfReal HMM_and_HMM_StateSequence_to_TableOfReal_transitions (HMM me, HMM_StateSequence thee, int probabilities);
+
+autoHMM_StateSequence HMM_StateSequence_create (long numberOfItems);
+
+autoStrings HMM_StateSequence_to_Strings (HMM_StateSequence me);
 
 void HMM_State_setLabel (HMM_State me, char32 *label);
 
 
-HMM HMM_create (int leftToRight, long numberOfStates, long numberOfObservationSymbols);
-HMM HMM_createSimple (int leftToRight, const char32 *states_string, const char32 *symbols_string);
-HMM HMM_createContinuousModel (int leftToRight, long numberOfStates, long numberOfObservationSymbols,
+autoHMM HMM_create (int leftToRight, long numberOfStates, long numberOfObservationSymbols);
+
+autoHMM HMM_createSimple (int leftToRight, const char32 *states_string, const char32 *symbols_string);
+
+autoHMM HMM_createContinuousModel (int leftToRight, long numberOfStates, long numberOfObservationSymbols,
 	long numberOfMixtureComponentsPerSymbol, long componentDimension, long componentStorage);
-HMM HMM_createFullContinuousModel (int leftToRight, long numberOfStates, long numberOfObservationSymbols,
+
+autoHMM HMM_createFullContinuousModel (int leftToRight, long numberOfStates, long numberOfObservationSymbols,
 	long numberOfFeatureStreams, long *dimensionOfStream, long *numberOfGaussiansforStream);
-HMM HMM_createFromHMM_ObservationSequence (HMM_ObservationSequence me, long numberOfStates, int leftToRight);
+
+autoHMM HMM_createFromHMM_ObservationSequence (HMM_ObservationSequence me, long numberOfStates, int leftToRight);
+
 void HMM_draw (HMM me, Graphics g, int garnish);
+
 void HMM_drawBackwardProbabilitiesIllustration (Graphics g, bool garnish);
+
 void HMM_drawForwardProbabilitiesIllustration (Graphics g, bool garnish);
+
 void HMM_drawForwardAndBackwardProbabilitiesIllustration (Graphics g, bool garnish);
+
 void HMM_addObservation (HMM me, thou);
+
 void HMM_addState (HMM me, thou);
+
 void HMM_setDefaultStates (HMM me);
+
 void HMM_setDefaultObservations (HMM me);
+
 void HMM_setDefaultTransitionProbs (HMM me);
+
 void HMM_setDefaultStartProbs (HMM me);
+
 void HMM_setDefaultEmissionProbs (HMM me);
+
 void HMM_setDefaultMixingProbabilities (HMM me);
 
 void HMM_unExpandPCA (HMM me);
@@ -113,34 +141,48 @@ void HMM_unExpandPCA (HMM me);
 	Set the probabilities. A probability zero value indicates that this p cannot be changed during training/learning.
 */
 void HMM_setTransitionProbabilities (HMM me, long state_number, char32 *state_probs);
+
 void HMM_setEmissionProbabilities (HMM me, long state_number, char32 *emission_probs);
+
 void HMM_setStartProbabilities (HMM me, char32 *probs);
 
+
 double HMM_getProbabilityAtTimeBeingInState (HMM me, long itime, long istate);
+
 double HMM_getProbabilityAtTimeBeingInStateEmittingSymbol (HMM me, long itime, long istate, long isymbol);
+
 double HMM_getExpectedValueOfDurationInState (HMM me, long istate);
+
 double HMM_getProbabilityOfStayingInState (HMM me, long istate, long numberOfTimeUnits);
 
 double HMM_and_HMM_getCrossEntropy (HMM me, HMM thee, long observationLength, int symmetric);
+
 double HMM_and_HMM_and_HMM_ObservationSequence_getCrossEntropy (HMM me, HMM thee, HMM_ObservationSequence him);
 
+autoTableOfReal HMM_extractTransitionProbabilities (HMM me);
 
-TableOfReal HMM_extractTransitionProbabilities (HMM me);
-TableOfReal HMM_extractEmissionProbabilities (HMM me);
+autoTableOfReal HMM_extractEmissionProbabilities (HMM me);
 
 /* HMM & HMM_ObservationSequence ****/
 
-HMM_ObservationSequence HMM_to_HMM_ObservationSequence (HMM me, long initialState, long numberOfItems);
-HMM_StateSequence HMM_and_HMM_ObservationSequence_to_HMM_StateSequence (HMM me, HMM_ObservationSequence thee);
+autoHMM_ObservationSequence HMM_to_HMM_ObservationSequence (HMM me, long initialState, long numberOfItems);
+
+autoHMM_StateSequence HMM_and_HMM_ObservationSequence_to_HMM_StateSequence (HMM me, HMM_ObservationSequence thee);
+
 double HMM_and_HMM_StateSequence_getProbability (HMM me, HMM_StateSequence thee);
+
 void HMM_and_HMM_ObservationSequences_learn (HMM me, HMM_ObservationSequences thee, double delta_lnp, double minProb);
+
 void HMM_and_HMM_StateSequence_drawTrellis (HMM me, HMM_StateSequence thee, Graphics g, int connect, int garnish);
+
 double HMM_and_HMM_ObservationSequence_getProbability (HMM me, HMM_ObservationSequence thee);
+
 double HMM_and_HMM_ObservationSequence_getCrossEntropy (HMM me, HMM_ObservationSequence thee);
+
 double HMM_and_HMM_ObservationSequence_getPerplexity (HMM me, HMM_ObservationSequence thee);
 
 // somewhere else
 void MelderInfo_lnp (double logp);
-TableOfReal Strings_to_TableOfReal_transitions (Strings me, int probabilities);
+autoTableOfReal Strings_to_TableOfReal_transitions (Strings me, int probabilities);
 
 #endif /* _HMM_h_ */

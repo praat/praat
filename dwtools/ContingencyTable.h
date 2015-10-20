@@ -29,15 +29,21 @@ Thing_define (ContingencyTable, TableOfReal) {
 
 // entries must be nonnegative numbers
 
-ContingencyTable ContingencyTable_create (long numberOfRows, long numberOfColumns);
+autoContingencyTable ContingencyTable_create (long numberOfRows, long numberOfColumns);
 
 double ContingencyTable_chisqProbability (ContingencyTable me);
+
 double ContingencyTable_cramersStatistic (ContingencyTable me);
+
 double ContingencyTable_contingencyCoefficient (ContingencyTable me);
+
 void ContingencyTable_chisq (ContingencyTable me, double *chisq, double *df);
+
 void ContingencyTable_entropies (ContingencyTable me, double *h, double *hx, double *hy,
-	double *hygx, double *hxgy, double *uygx, double *uxgy, double *uxy);
-ContingencyTable Confusion_to_ContingencyTable (Confusion me);
-ContingencyTable TableOfReal_to_ContingencyTable (I);
+								 double *hygx, double *hxgy, double *uygx, double *uxgy, double *uxy);
+
+autoContingencyTable Confusion_to_ContingencyTable (Confusion me);
+
+autoContingencyTable TableOfReal_to_ContingencyTable (TableOfReal me);
 
 #endif // _ContingencyTable_h_

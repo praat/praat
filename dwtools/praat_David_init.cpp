@@ -169,7 +169,8 @@ END
 DIRECT (Activation_to_Matrix)
 	LOOP {
 		iam (Activation);
-		praat_new (Activation_to_Matrix (me), my name);
+		autoMatrix thee = Activation_to_Matrix (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -385,7 +386,8 @@ END
 DIRECT (Categories_selectUniqueItems)
 	LOOP {
 		iam (Categories);
-		praat_new (Categories_selectUniqueItems (me, 1), my name, U"_uniq");
+		autoCategories thee = Categories_selectUniqueItems (me, 1);
+		praat_new (thee.transfer(), my name, U"_uniq");
 	}
 END
 
@@ -396,7 +398,8 @@ DIRECT (Categories_to_Confusion)
 		(c1 ? c2 : c1) = me;
 	}
 	Melder_assert (c1 && c2);
-	praat_new (Categories_to_Confusion (c1, c2), Thing_getName (c1), U"_", Thing_getName (c2));
+	autoConfusion thee = Categories_to_Confusion (c1, c2);
+	praat_new (thee.transfer(), Thing_getName (c1), U"_", Thing_getName (c2));
 END
 
 DIRECT (Categories_to_Strings)
@@ -783,7 +786,8 @@ FORM (Confusion_createSimple, U"Create simple Confusion", U"Create simple Confus
 	SENTENCE (U"Labels", U"u i a")
 	OK
 DO
-	praat_new (Confusion_createSimple (GET_STRING (U"Labels")), GET_STRING (U"Name"));
+	autoConfusion thee = Confusion_createSimple (GET_STRING (U"Labels"));
+	praat_new (thee.transfer(), GET_STRING (U"Name"));
 END
 
 FORM (Confusion_increase, U"Confusion: Increase", U"Confusion: Increase...")
@@ -835,18 +839,20 @@ END
 DIRECT (Confusion_to_TableOfReal_marginals)
 	LOOP {
 		iam (Confusion);
-		praat_new (Confusion_to_TableOfReal_marginals (me), my name);
+		autoTableOfReal thee = Confusion_to_TableOfReal_marginals (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
 DIRECT (Confusion_difference)
-	Confusion c1 = 0, c2 = 0;
+	Confusion c1 = nullptr, c2 = nullptr;
 	LOOP {
 		iam (Confusion);
 		(c1 ? c2 : c1) = me;
 	}
 	Melder_assert (c1 && c2);
-	praat_new (Confusion_difference (c1, c2), U"diffs");
+	autoMatrix thee = Confusion_difference (c1, c2);
+	praat_new (thee.transfer(), U"diffs");
 END
 
 FORM (Confusion_condense, U"Confusion: Condense", U"Confusion: Condense...")
@@ -860,8 +866,9 @@ FORM (Confusion_condense, U"Confusion: Condense", U"Confusion: Condense...")
 DO
 	LOOP {
 		iam (Confusion);
-		praat_new (Confusion_condense (me, GET_STRING (U"Search"), GET_STRING (U"Replace"),
-		GET_INTEGER (U"Replace limit"), GET_INTEGER (U"Search and replace are") - 1), my name, U"_cnd");
+		autoConfusion thee = Confusion_condense (me, GET_STRING (U"Search"), GET_STRING (U"Replace"),
+		GET_INTEGER (U"Replace limit"), GET_INTEGER (U"Search and replace are") - 1);
+		praat_new (thee.transfer(), my name, U"_cnd");
 	}
 END
 
@@ -874,8 +881,9 @@ DO
 	const char32 *newlabel = GET_STRING (U"New label");
 	LOOP {
 		iam (Confusion);
-		praat_new (Confusion_group (me, GET_STRING (U"Stimuli & Responses"), newlabel,
-		GET_INTEGER (U"New label position")), Thing_getName (me), U"_sr", newlabel);
+		autoConfusion thee = Confusion_group (me, GET_STRING (U"Stimuli & Responses"), newlabel,
+		GET_INTEGER (U"New label position"));
+		praat_new (thee.transfer(), my name, U"_sr", newlabel);
 	}
 END
 
@@ -888,8 +896,9 @@ DO
 	const char32 *newlabel = GET_STRING (U"New label");
 	LOOP {
 		iam (Confusion);
-		praat_new (Confusion_groupStimuli (me, GET_STRING (U"Stimuli"), newlabel,
-		GET_INTEGER (U"New label position")), Thing_getName (me), U"_s", newlabel);
+		autoConfusion thee = Confusion_groupStimuli (me, GET_STRING (U"Stimuli"), newlabel,
+		GET_INTEGER (U"New label position"));
+		praat_new (thee.transfer(), my name, U"_s", newlabel);
 	}
 END
 
@@ -902,8 +911,9 @@ DO
 	const char32 *newlabel = GET_STRING (U"New label");
 	LOOP {
 		iam (Confusion);
-		praat_new (Confusion_groupResponses (me, GET_STRING (U"Responses"), newlabel,
-		GET_INTEGER (U"New label position")), Thing_getName (me), U"_s", newlabel);
+		autoConfusion thee = Confusion_groupResponses (me, GET_STRING (U"Responses"), newlabel,
+		GET_INTEGER (U"New label position"));
+		praat_new (thee.transfer(), my name, U"_s", newlabel);
 	}
 END
 
@@ -1247,8 +1257,8 @@ FORM (Discriminant_and_Pattern_to_Categories, U"Discriminant & Pattern: To Categ
 DO
 	Discriminant me = FIRST (Discriminant);
 	Pattern pat = FIRST (Pattern);
-	praat_new (Discriminant_and_Pattern_to_Categories (me, pat, GET_INTEGER (U"Pool covariance matrices"),
-		GET_INTEGER (U"Use apriori probabilities")), my name, U"_", pat->name);
+	autoCategories thee = Discriminant_and_Pattern_to_Categories (me, pat, GET_INTEGER (U"Pool covariance matrices"), GET_INTEGER (U"Use apriori probabilities"));
+	praat_new (thee.transfer(), my name, U"_", pat->name);
 END
 
 FORM (Discriminant_and_TableOfReal_to_Configuration, U"Discriminant & TableOfReal: To Configuration", U"Discriminant & TableOfReal: To Configuration...")
@@ -1259,7 +1269,8 @@ DO
 	REQUIRE (dimension >= 0, U"Number of dimensions must be greater equal zero.")
 	Discriminant me = FIRST (Discriminant);
 	TableOfReal tr = FIRST_GENERIC (TableOfReal);
-	praat_new (Discriminant_and_TableOfReal_to_Configuration (me, tr, dimension), my name, U"_", tr->name);
+	autoConfiguration thee = Discriminant_and_TableOfReal_to_Configuration (me, tr, dimension);
+	praat_new (thee.transfer(), my name, U"_", tr->name);
 END
 
 DIRECT (hint_Discriminant_and_TableOfReal_to_ClassificationTable)
@@ -1273,9 +1284,9 @@ FORM (Discriminant_and_TableOfReal_to_ClassificationTable, U"Discriminant & Tabl
 DO
 	Discriminant me = FIRST (Discriminant);
 	TableOfReal tr = FIRST_GENERIC (TableOfReal);
-	praat_new (Discriminant_and_TableOfReal_to_ClassificationTable (me, tr,
-		GET_INTEGER (U"Pool covariance matrices"), GET_INTEGER (U"Use apriori probabilities")),
-		my name, U"_", tr->name);
+	autoClassificationTable thee = Discriminant_and_TableOfReal_to_ClassificationTable (me, tr,
+		GET_INTEGER (U"Pool covariance matrices"), GET_INTEGER (U"Use apriori probabilities"));
+	praat_new (thee.transfer(), my name, U"_", tr->name);
 END
 
 FORM (Discriminant_and_TableOfReal_mahalanobis, U"Discriminant & TableOfReal: To TableOfReal (mahalanobis)", U"Discriminant & TableOfReal: To TableOfReal (mahalanobis)...")
@@ -1287,7 +1298,8 @@ DO
 	TableOfReal tr = FIRST (TableOfReal);
 	long group = Discriminant_groupLabelToIndex (me, GET_STRING (U"Group label"));
 	REQUIRE (group > 0, U"Group label does not exist.")
-	praat_new (Discriminant_and_TableOfReal_mahalanobis (me, tr, group, GET_INTEGER (U"Pool covariance matrices")), U"mahalanobis");
+	autoTableOfReal thee = Discriminant_and_TableOfReal_mahalanobis (me, tr, group, GET_INTEGER (U"Pool covariance matrices"));
+	praat_new (thee.transfer(), U"mahalanobis");
 END
 
 FORM (Discriminant_getWilksLambda, U"Discriminant: Get Wilks' lambda", U"Discriminant: Get Wilks' lambda...")
@@ -1526,35 +1538,40 @@ END
 DIRECT (Discriminant_extractBetweenGroupsSSCP)
 	LOOP {
 		iam (Discriminant);
-		praat_new (Discriminant_extractBetweenGroupsSSCP (me), 0);
+		autoSSCP thee = Discriminant_extractBetweenGroupsSSCP (me);
+		praat_new (thee.transfer());
 	}
 END
 
 DIRECT (Discriminant_extractGroupCentroids)
 	LOOP {
 		iam (Discriminant);
-		praat_new (Discriminant_extractGroupCentroids (me), U"centroids");
+		autoTableOfReal thee = Discriminant_extractGroupCentroids (me);
+		praat_new (thee.transfer(), U"centroids");
 	}
 END
 
 DIRECT (Discriminant_extractGroupStandardDeviations)
 	LOOP {
 		iam (Discriminant);
-		praat_new (Discriminant_extractGroupStandardDeviations (me), U"group_stddevs");
+		autoTableOfReal thee = Discriminant_extractGroupStandardDeviations (me);
+		praat_new (thee.transfer(), U"group_stddevs");
 	}
 END
 
 DIRECT (Discriminant_extractGroupLabels)
 	LOOP {
 		iam (Discriminant);
-		praat_new (Discriminant_extractGroupLabels (me), U"group_labels");
+		autoStrings thee = Discriminant_extractGroupLabels (me);
+		praat_new (thee.transfer(), U"group_labels");
 	}
 END
 
 DIRECT (Discriminant_extractPooledWithinGroupsSSCP)
 	LOOP {
 		iam (Discriminant);
-		praat_new (Discriminant_extractPooledWithinGroupsSSCP (me), U"pooled_within");
+		autoSSCP thee = Discriminant_extractPooledWithinGroupsSSCP (me);
+		praat_new (thee.transfer(), U"pooled_within");
 	}
 END
 
@@ -1565,7 +1582,8 @@ DO
 	long index = GET_INTEGER (U"Group index");
 	LOOP {
 		iam (Discriminant);
-		praat_new (Discriminant_extractWithinGroupSSCP (me, index), my name, U"_g", index);
+		autoSSCP thee = Discriminant_extractWithinGroupSSCP (me, index);
+		praat_new (thee.transfer(), my name, U"_g", index);
 	}
 END
 
@@ -2108,14 +2126,16 @@ END
 DIRECT (DTW_to_Matrix_distances)
 	LOOP {
 		iam (DTW);
-		praat_new (DTW_to_Matrix_distances (me), my name);
+		autoMatrix thee = DTW_to_Matrix_distances (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
 DIRECT (DTW_swapAxes)
 	LOOP {
 		iam (DTW);
-		praat_new (DTW_swapAxes (me), my name, U"_axesSwapped");
+		autoDTW thee = DTW_swapAxes (me);
+		praat_new (thee.transfer(), my name, U"_axesSwapped");
 	}
 END
 
@@ -3620,10 +3640,8 @@ DO
 		iam (Table);
 		long factorColumn = Table_getColumnIndexFromColumnLabel (me, factor);
 		long dataColumn = Table_getColumnIndexFromColumnLabel (me, dataLabel);
-		Table tmeans = 0, tmeansDiff = 0, tmeansDiffProbabilities = 0;
-		autoTable anova = Table_getOneWayAnalysisOfVarianceF (me, dataColumn, factorColumn, &tmeans,
-			&tmeansDiff, & tmeansDiffProbabilities);
-		autoTable means = tmeans, meansDiff = tmeansDiff, meansDiffProbabilities = tmeansDiffProbabilities;
+		autoTable means, meansDiff, meansDiffProbabilities;
+		autoTable anova = Table_getOneWayAnalysisOfVarianceF (me, dataColumn, factorColumn, &means, &meansDiff, & meansDiffProbabilities);
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"One-way analysis of \"", dataLabel, U"\" by \"", factor, U"\".\n");
 		Table_printAsAnovaTable (anova.peek());
@@ -3952,7 +3970,8 @@ END
 DIRECT (Matrix_to_Activation)
 	LOOP {
 		iam (Matrix);
-		praat_new (Matrix_to_Activation (me), my name);
+		autoActivation thee = Matrix_to_Activation (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -3970,7 +3989,8 @@ DO
 		(m1 ? m2 : m1) = me;
 	}
 	Melder_assert (m1 && m2);
-	praat_new (Matrices_to_DTW (m1, m2, begin, end, slope, GET_REAL (U"Distance metric")), m1->name, U"_", m2->name);
+	autoDTW thee = Matrices_to_DTW (m1, m2, begin, end, slope, GET_REAL (U"Distance metric"));
+	praat_new (thee.transfer(), m1->name, U"_", m2->name);
 END
 
 FORM (Matrix_to_Pattern, U"Matrix: To Pattern", 0)
@@ -4464,10 +4484,11 @@ DIRECT (MSpline_help) Melder_help (U"MSpline"); END
 DIRECT (Pattern_and_Categories_to_Discriminant)
 	Pattern me = FIRST (Pattern);
 	Categories cat = FIRST (Categories);
-	praat_new (Pattern_and_Categories_to_Discriminant (me, cat), Thing_getName (me), U"_", Thing_getName (cat));
-	END
+	autoDiscriminant thee = Pattern_and_Categories_to_Discriminant (me, cat);
+	praat_new (thee.transfer(), my name, U"_", cat -> name);
+END
 
-	FORM (Pattern_draw, U"Pattern: Draw", 0)
+FORM (Pattern_draw, U"Pattern: Draw", 0)
 	NATURAL (U"Pattern number", U"1")
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0")
@@ -4921,7 +4942,8 @@ DO
 		(p1 ? p2 : p1) = me;
 	}
 	Melder_assert (p1 && p2);
-	praat_new (Pitches_to_DTW (p1, p2, GET_REAL (U"Voiced-unvoiced costs"), GET_REAL (U"Time costs weight"), begin, end, slope), U"dtw_", Thing_getName (p1), U"_", Thing_getName (p2));
+	autoDTW thee = Pitches_to_DTW (p1, p2, GET_REAL (U"Voiced-unvoiced costs"), GET_REAL (U"Time costs weight"), begin, end, slope);
+	praat_new (thee.transfer(), U"dtw_", Thing_getName (p1), U"_", Thing_getName (p2));
 END
 
 FORM (PitchTier_to_Pitch, U"PitchTier: To Pitch", U"PitchTier: To Pitch...")
@@ -6182,7 +6204,8 @@ DO
 		(s1 ? s2 : s1) = me;
 	}
 	Melder_assert (s1 && s2);
-	praat_new (Spectrograms_to_DTW (s1, s2, begin, end, slope, 1), s1->name, U"_", s2->name);
+	autoDTW thee = Spectrograms_to_DTW (s1, s2, begin, end, slope, 1);
+	praat_new (thee.transfer(), s1->name, U"_", s2->name);
 END
 
 /**************** Spectrum *******************************************/
@@ -7709,7 +7732,8 @@ DO
 	}
 	LOOP {
 		iam (TableOfReal);
-		praat_new (TableOfReal_to_Configuration_lda (me, dimension), my name, U"_lda");
+		autoConfiguration thee = TableOfReal_to_Configuration_lda (me, dimension);
+		praat_new (thee.transfer(), my name, U"_lda");
 	}
 END
 
@@ -7729,14 +7753,16 @@ FORM (TableOfReal_to_Configuration_pca, U"TableOfReal: To Configuration (pca)", 
 DO
 	LOOP {
 		iam (TableOfReal);
-		praat_new (TableOfReal_to_Configuration_pca (me, GET_INTEGER (U"Number of dimensions")), my name, U"_pca");
+		autoConfiguration thee = TableOfReal_to_Configuration_pca (me, GET_INTEGER (U"Number of dimensions"));
+		praat_new (thee.transfer(), my name, U"_pca");
 	}
 END
 
 DIRECT (TableOfReal_to_Discriminant)
 	LOOP {
 		iam (TableOfReal);
-		praat_new (TableOfReal_to_Discriminant (me), my name);
+		autoDiscriminant thee = TableOfReal_to_Discriminant (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 

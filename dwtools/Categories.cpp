@@ -1,6 +1,6 @@
 /* Categories.cpp
  *
- * Copyright (C) 1993-2013 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1993-2013, 2015 David Weenink, 2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,32 +56,32 @@ void Categories_init (Categories me, long size) {
 	OrderedOfString_init (me, size);
 }
 
-Categories Categories_create () {
+autoCategories Categories_create () {
 	try {
 		autoCategories me = Thing_new (Categories);
 		Categories_init (me.peek(), 10);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Categories not created.");
 	}
 }
 
-Categories Categories_sequentialNumbers (long n) {
+autoCategories Categories_sequentialNumbers (long n) {
 	try {
 		autoCategories me = Thing_new (Categories);
 		OrderedOfString_init (me.peek(), 5);
 		OrderedOfString_sequentialNumbers (me.peek(), n);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sequential number Categories not created.");
 	}
 }
 
-Categories Categories_selectUniqueItems (Categories me, int sorted) {
+autoCategories Categories_selectUniqueItems (Categories me, int sorted) {
 	try {
 		autoOrderedOfString s = OrderedOfString_selectUniqueItems (me, sorted);
 		autoCategories thee = OrderedOfString_to_Categories (s.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no unique categories created.");
 	}
@@ -94,7 +94,7 @@ void Categories_drawItem (Categories me, Graphics g, long position, double xWC, 
 	SimpleString_draw ((SimpleString) my item[position], g, xWC, yWC);
 }
 
-Categories OrderedOfString_to_Categories (OrderedOfString me) {
+autoCategories OrderedOfString_to_Categories (OrderedOfString me) {
 	try {
 		autoCategories thee = Categories_create();
 
@@ -102,7 +102,7 @@ Categories OrderedOfString_to_Categories (OrderedOfString me) {
 			autoSimpleString item = Data_copy ( (SimpleString) my item [i]);
 			Collection_addItem (thee.peek(), item.transfer());
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Categories.");
 	}
@@ -113,7 +113,7 @@ long Categories_getSize (Categories me) {
 }
 
 /* TableOfReal_Rowlabels_to_Categories  ??? */
-Categories TableOfReal_to_CategoriesRow (TableOfReal me) {
+autoCategories TableOfReal_to_CategoriesRow (TableOfReal me) {
 	try {
 		autoCategories thee = Categories_create ();
 
@@ -123,13 +123,13 @@ Categories TableOfReal_to_CategoriesRow (TableOfReal me) {
 				Collection_addItem (thee.peek(), s.transfer());
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": row labels not converted to Categories.");
 	}
 }
 
-Categories TableOfReal_to_CategoriesColumn (TableOfReal me) {
+autoCategories TableOfReal_to_CategoriesColumn (TableOfReal me) {
 	try {
 		autoCategories thee = Categories_create ();
 
@@ -139,7 +139,7 @@ Categories TableOfReal_to_CategoriesColumn (TableOfReal me) {
 				Collection_addItem (thee.peek(), s.transfer());
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": columnlabels not converted to Categories.");
 	}

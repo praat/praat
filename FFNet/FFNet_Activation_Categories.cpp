@@ -55,7 +55,6 @@ static long stochastic (FFNet me, const double activation[]) {
 
 autoCategories FFNet_Activation_to_Categories (FFNet me, Activation activation, int labeling) {
 	try {
-		Categories categories = (Categories) my outputCategories;
 		long (*labelingFunction) (FFNet me, const double act[]);
 
 		if (! my outputCategories) {
@@ -68,7 +67,7 @@ autoCategories FFNet_Activation_to_Categories (FFNet me, Activation activation, 
 		labelingFunction = labeling == 2 ? stochastic : winnerTakesAll;
 		for (long i = 1; i <= activation->ny; i++) {
 			long index = labelingFunction (me, activation -> z[i]);
-			autoSimpleString item = Data_copy ( (SimpleString) categories -> item[index]);
+			autoSimpleString item = Data_copy ((SimpleString) my outputCategories -> item[index]);
 			Collection_addItem (thee.peek(), item.transfer());
 		}
 		return thee;
@@ -84,7 +83,7 @@ autoActivation FFNet_Categories_to_Activation (FFNet me, Categories thee) {
 		if (! my outputCategories) {
 			Melder_throw (U"The FFNet does not have categories.");
 		}
-		long nl =  OrderedOfString_isSubsetOf (uniq.peek(), my outputCategories, 0);
+		long nl =  OrderedOfString_isSubsetOf (uniq.peek(), my outputCategories.peek(), 0);
 		if (nl == 0) {
 			Melder_throw (U"The Categories do not match the categories of the FFNet.");
 		}
@@ -92,7 +91,7 @@ autoActivation FFNet_Categories_to_Activation (FFNet me, Categories thee) {
 		autoActivation him = Activation_create (thy size, my nOutputs);
 		for (long i = 1; i <= thy size; i++) {
 			const char32 *citem = OrderedOfString_itemAtIndex_c (thee, i);
-			long pos =  OrderedOfString_indexOfItem_c (my outputCategories, citem);
+			long pos =  OrderedOfString_indexOfItem_c (my outputCategories.peek(), citem);
 			if (pos < 1) {
 				Melder_throw (U"The FFNet doesn't know the category ", citem, U".");
 			}

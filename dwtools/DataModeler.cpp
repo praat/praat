@@ -481,8 +481,7 @@ double DataModeler_getCoefficientOfDetermination (DataModeler me, double *ssreg,
 	return rSquared;
 }
 
-static void DataModeler_drawBasisFunction_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
- 	long iterm, bool scale, long numberOfPoints) {
+static void DataModeler_drawBasisFunction_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, long iterm, bool scale, long numberOfPoints) {
 	if (xmax <= xmin) {
 		xmin = my xmin; xmax = my xmax;
 	}
@@ -676,7 +675,7 @@ void DataModeler_speckle (DataModeler me, Graphics g, double xmin, double xmax, 
 	}
 }
 
-Table DataModeler_to_Table_zscores (DataModeler me, int useSigmaY) {
+autoTable DataModeler_to_Table_zscores (DataModeler me, int useSigmaY) {
 	try {
 		autoTable ztable = Table_createWithColumnNames (my numberOfDataPoints, U"x z");
 		autoNUMvector<double> zscores (1, my numberOfDataPoints);
@@ -685,7 +684,7 @@ Table DataModeler_to_Table_zscores (DataModeler me, int useSigmaY) {
 			Table_setNumericValue (ztable.peek(), i, 1, my x[i]);
 			Table_setNumericValue (ztable.peek(), i, 2, zscores[i]);
 		}
-		return ztable.transfer();
+		return ztable;
 	} catch (MelderError) {
 		Melder_throw (U"Table not created.");
 	}	
@@ -732,18 +731,18 @@ void  DataModeler_init (DataModeler me, double xmin, double xmax, long numberOfD
 	my parameterCovariances = Covariance_create (numberOfParameters);
 }
 
-DataModeler DataModeler_create (double xmin, double xmax, long numberOfDataPoints, long numberOfParameters, int type) {
+autoDataModeler DataModeler_create (double xmin, double xmax, long numberOfDataPoints, long numberOfParameters, int type) {
 	try {
 		autoDataModeler me = Thing_new (DataModeler);
 		DataModeler_init (me.peek(), xmin, xmax, numberOfDataPoints, numberOfParameters, type);
 		my xmin = xmin; my xmax = xmax;
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"DataModeler not created.");
 	}
 }
 
-DataModeler DataModeler_createSimple (double xmin, double xmax, long numberOfDataPoints, char32 *parameters, double gaussianNoiseStd, int type) {
+autoDataModeler DataModeler_createSimple (double xmin, double xmax, long numberOfDataPoints, char32 *parameters, double gaussianNoiseStd, int type) {
 	try {
 		long numberOfParameters;
 		autoNUMvector<double> parameter (NUMstring_to_numbers (parameters, &numberOfParameters), 1);
@@ -765,7 +764,7 @@ DataModeler DataModeler_createSimple (double xmin, double xmax, long numberOfDat
 			my sigmaY[i] = NUMundefined;
 		}
 		my useSigmaY = DataModeler_DATA_WEIGH_EQUAL;
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"No simple DataModeler created.");
 	}
@@ -875,16 +874,16 @@ void DataModeler_setDataWeighing (DataModeler me, int useSigmaY) {
 	}
 }
 
-Covariance DataModeler_to_Covariance_parameters (DataModeler me) {
+autoCovariance DataModeler_to_Covariance_parameters (DataModeler me) {
 	try {
 		autoCovariance cov = (Covariance) Data_copy (my parameterCovariances);
-		return cov.transfer();
+		return cov;
 	} catch (MelderError) {
 		Melder_throw (U"Covariance not created.");
 	}
 }
 
-DataModeler Table_to_DataModeler (Table me, double xmin, double xmax, long xcolumn, long ycolumn, long scolumn, long numberOfParameters, int type) {
+autoDataModeler Table_to_DataModeler (Table me, double xmin, double xmax, long xcolumn, long ycolumn, long scolumn, long numberOfParameters, int type) {
 	try {
 		Table_checkSpecifiedColumnNumberWithinRange (me, xcolumn);
 		Table_checkSpecifiedColumnNumberWithinRange (me, ycolumn);
@@ -943,7 +942,7 @@ DataModeler Table_to_DataModeler (Table me, double xmin, double xmax, long xcolu
 		}
 		DataModeler_setDataWeighing (thee.peek(), DataModeler_DATA_WEIGH_SIGMA);
 		DataModeler_fit (thee.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Datamodeler not created from Table.");
 	}
@@ -1334,7 +1333,7 @@ void FormantModeler_speckle (FormantModeler me, Graphics g, double tmin, double 
 	}
 }
 
-FormantModeler FormantModeler_create (double tmin, double tmax, long numberOfFormants, long numberOfDataPoints, long numberOfParameters) {
+autoFormantModeler FormantModeler_create (double tmin, double tmax, long numberOfFormants, long numberOfDataPoints, long numberOfParameters) {
 	try {
 		autoFormantModeler me = Thing_new (FormantModeler);
 		my xmin = tmin; my xmax = tmax;
@@ -1343,7 +1342,7 @@ FormantModeler FormantModeler_create (double tmin, double tmax, long numberOfFor
 			autoDataModeler ff = DataModeler_create (tmin, tmax, numberOfDataPoints, numberOfParameters,  DataModeler_TYPE_LEGENDRE);
 			Collection_addItem (my trackmodelers, ff.transfer());
 		}
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FormantModeler not created.");
 	}
@@ -1483,7 +1482,7 @@ long FormantModeler_getNumberOfDataPoints (FormantModeler me) {
 	return thy numberOfDataPoints;
 }
 
-Table FormantModeler_to_Table_zscores (FormantModeler me, int useSigmaY) {
+autoTable FormantModeler_to_Table_zscores (FormantModeler me, int useSigmaY) {
 	try {
 		long icolt = 1, numberOfFormants = my trackmodelers -> size;
 		long numberOfDataPoints = FormantModeler_getNumberOfDataPoints (me);
@@ -1504,33 +1503,33 @@ Table FormantModeler_to_Table_zscores (FormantModeler me, int useSigmaY) {
 				Table_setNumericValue (ztable.peek(), i, icolz, zscores[i]);
 			}
 		}
-		return ztable.transfer();
+		return ztable;
 	} catch (MelderError) {
 		Melder_throw (U"Table not created.");
 	}	
 }
 
-DataModeler FormantModeler_extractDataModeler (FormantModeler me, long iformant) {
+autoDataModeler FormantModeler_extractDataModeler (FormantModeler me, long iformant) {
 	try {
 		if (! (iformant > 0 && iformant <= my trackmodelers -> size)) {
 			Melder_throw (U"");
 		}
 		DataModeler ff = (DataModeler) my trackmodelers -> item[iformant];
 		autoDataModeler thee = (DataModeler) Data_copy (ff);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"DataModeler not created.");
 	}	
 }
 
-Covariance FormantModeler_to_Covariance_parameters (FormantModeler me, long iformant) {
+autoCovariance FormantModeler_to_Covariance_parameters (FormantModeler me, long iformant) {
 	try {
 		if (iformant < 1 || iformant > my trackmodelers -> size) {
 			Melder_throw (U"The formant should be greater than zero and smaller than or equal to ", my trackmodelers -> size);
 		}
 		DataModeler thee = (DataModeler) my trackmodelers -> item[iformant];
 		autoCovariance cov = (Covariance) Data_copy (thy parameterCovariances);
-		return cov.transfer();
+		return cov;
 	} catch (MelderError) {
 		Melder_throw (U"Covariance not created.");
 	}
@@ -1549,7 +1548,7 @@ double FormantModeler_indexToTime (FormantModeler me, long index) {
 	return index > 0 && index <= thy numberOfDataPoints ? thy x[index] : NUMundefined;
 }
 
-FormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tmax, long numberOfFormants, long numberOfParametersPerTrack, int bandwidthEstimatesSigma) {
+autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tmax, long numberOfFormants, long numberOfParametersPerTrack, int bandwidthEstimatesSigma) {
 	try {
 		long ifmin, ifmax, posInCollection = 0;
 		if (tmax <= tmin) {
@@ -1591,13 +1590,13 @@ FormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tmax, 
 			Melder_throw (U"Not enought data points in all the formants!");
 		}
 		FormantModeler_fit (thee.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"FormantModeler not created.");
 	}
 }
 
-Formant FormantModeler_to_Formant (FormantModeler me, int useEstimates, int estimateUndefineds) {
+autoFormant FormantModeler_to_Formant (FormantModeler me, int useEstimates, int estimateUndefineds) {
 	try {
 		long numberOfFormants = my trackmodelers -> size;
 		DataModeler ff = (DataModeler) my trackmodelers -> item[1];
@@ -1631,7 +1630,7 @@ Formant FormantModeler_to_Formant (FormantModeler me, int useEstimates, int esti
 				thyFrame -> formant[iformant].bandwidth = b;
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Cannot create Formant from FormantModeler.");
 	}
@@ -1756,7 +1755,7 @@ void FormantModeler_getSumOfVariancesBetweenShiftedAndEstimatedTracks (FormantMo
 	}
 }
 
-FormantModeler FormantModeler_processOutliers (FormantModeler me, double numberOfSigmas, int useSigmaY) {
+autoFormantModeler FormantModeler_processOutliers (FormantModeler me, double numberOfSigmas, int useSigmaY) {
 	try {
 		long numberOfFormants = my trackmodelers -> size;
 		if (numberOfFormants < 3) {
@@ -1792,7 +1791,7 @@ FormantModeler FormantModeler_processOutliers (FormantModeler me, double numberO
 			}
 		}
 		FormantModeler_fit (thee.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Cannot calculate track discontinuities");
 	}
@@ -1927,7 +1926,7 @@ long Formants_getSmoothestInInterval (Collection me, double tmin, double tmax, l
 	}
 }
 
-Formant Formant_extractPart (Formant me, double tmin, double tmax) {
+autoFormant Formant_extractPart (Formant me, double tmin, double tmax) {
 	try {
 		if (tmin >= tmax) {
 			tmin = my xmin; tmax = my xmax;
@@ -1944,35 +1943,34 @@ Formant Formant_extractPart (Formant me, double tmin, double tmax) {
 			Formant_Frame thyFrame = & thy d_frames [thyindex];
 			myFrame -> copy (thyFrame);
 		}
-		return thee.transfer();
+		return thee;
 		
 	} catch (MelderError) {
 		Melder_throw (U"Formant part could not be extracted.");
 	}
 }
 
-Formant Formants_extractSmoothestPart (Collection me, double tmin, double tmax, long numberOfFormantTracks, long numberOfParametersPerTrack,
-	int useBandWidthsForTrackEstimation, double numberOfSigmas, double power)
+autoFormant Formants_extractSmoothestPart (Collection me, double tmin, double tmax, long numberOfFormantTracks, long numberOfParametersPerTrack, int useBandWidthsForTrackEstimation, double numberOfSigmas, double power)
 {
 	try {
 		long index = Formants_getSmoothestInInterval (me, tmin, tmax, numberOfFormantTracks, numberOfParametersPerTrack,
 			useBandWidthsForTrackEstimation, 0, numberOfSigmas, power, 1.0, 1.0, 1.0, 1.0, 1.0); // last five are just fillers
 		Formant bestfit = (Formant) my item[index];
 		autoFormant thee = Formant_extractPart (bestfit, tmin, tmax);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Smoothest Formant part could not be extracted.");
 	}
 }
 
 
-Formant Formants_extractSmoothestPart_withFormantsConstraints (Collection me, double tmin, double tmax, long numberOfFormantTracks, long numberOfParametersPerTrack,	int useBandWidthsForTrackEstimation, double numberOfSigmas, double power, double minF1, double maxF1, double minF2, double maxF2, double minF3) {
+autoFormant Formants_extractSmoothestPart_withFormantsConstraints (Collection me, double tmin, double tmax, long numberOfFormantTracks, long numberOfParametersPerTrack,	int useBandWidthsForTrackEstimation, double numberOfSigmas, double power, double minF1, double maxF1, double minF2, double maxF2, double minF3) {
 	try {
 		long index = Formants_getSmoothestInInterval (me, tmin, tmax, numberOfFormantTracks, numberOfParametersPerTrack,
 			useBandWidthsForTrackEstimation, 1, numberOfSigmas, power, minF1, maxF1, minF2, maxF2, minF3);
 		Formant bestfit = (Formant) my item[index];
 		autoFormant thee = Formant_extractPart (bestfit, tmin, tmax);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Smoothest Formant part could not be extracted.");
 	}
@@ -1980,7 +1978,7 @@ Formant Formants_extractSmoothestPart_withFormantsConstraints (Collection me, do
 
 Thing_implement (PitchModeler, DataModeler, 0);
 
-PitchModeler Pitch_to_PitchModeler (Pitch me, double tmin, double tmax, long numberOfParameters) {
+autoPitchModeler Pitch_to_PitchModeler (Pitch me, double tmin, double tmax, long numberOfParameters) {
 	try {
 		long ifmin, ifmax;
 		if (tmax <= tmin) {
@@ -2007,7 +2005,7 @@ PitchModeler Pitch_to_PitchModeler (Pitch me, double tmin, double tmax, long num
 			Melder_throw (U"Not enough valid data in interval.");
 		}
 		DataModeler_fit (thee.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"No PitchModeler could be created.");
 	}
@@ -2032,7 +2030,7 @@ double Sound_getOptimalFormantCeiling (Sound me, double startTime, double endTim
 	return optimalCeiling;
 }
 
-Formant Sound_to_Formant_interval (Sound me, double startTime, double endTime, double windowLength, double timeStep, double minFreq, double maxFreq, long numberOfFrequencySteps, double preemphasisFrequency, long numberOfFormantTracks, long numberOfParametersPerTrack, int weighData, double numberOfSigmas, double power, bool useConstraints, double minF1, double maxF1, double minF2, double maxF2, double minF3, double *optimalCeiling) {
+autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTime, double windowLength, double timeStep, double minFreq, double maxFreq, long numberOfFrequencySteps, double preemphasisFrequency, long numberOfFormantTracks, long numberOfParametersPerTrack, int weighData, double numberOfSigmas, double power, bool useConstraints, double minF1, double maxF1, double minF2, double maxF2, double minF3, double *optimalCeiling) {
 	try {
 		// parameter check
 		if (endTime <= startTime) {
@@ -2081,13 +2079,13 @@ Formant Sound_to_Formant_interval (Sound me, double startTime, double endTime, d
 		if (optimalCeiling) {
 			*optimalCeiling = ceiling_best;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"No Formant object created.");
 	}
 }
 
-Formant Sound_to_Formant_interval_robust (Sound me, double startTime, double endTime, double windowLength, double timeStep, double minFreq, double maxFreq, long numberOfFrequencySteps, double preemphasisFrequency, long numberOfFormantTracks, long numberOfParametersPerTrack, int weighData, double numberOfSigmas, double power, bool useConstraints, double minF1, double maxF1, double minF2, double maxF2, double minF3, double *optimalCeiling) {
+autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double endTime, double windowLength, double timeStep, double minFreq, double maxFreq, long numberOfFrequencySteps, double preemphasisFrequency, long numberOfFormantTracks, long numberOfParametersPerTrack, int weighData, double numberOfSigmas, double power, bool useConstraints, double minF1, double maxF1, double minF2, double maxF2, double minF3, double *optimalCeiling) {
 	try {
 		// parameter check
 		if (endTime <= startTime) {
@@ -2135,7 +2133,7 @@ Formant Sound_to_Formant_interval_robust (Sound me, double startTime, double end
 		if (optimalCeiling) {
 			*optimalCeiling = ceiling_best;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"No Formant object created.");
 	}
@@ -2162,7 +2160,7 @@ void FormantModeler_correctFormantsProbablyIndexedFalsely (FormantModeler me) {
 	
 }
 
-OptimalCeilingTier Sound_to_OptimalCeilingTier (Sound me, double windowLength, double timeStep, double minCeiling, double maxCeiling, long numberOfFrequencySteps, double preemphasisFrequency, double smoothingWindow, long numberOfFormantTracks, long numberOfParametersPerTrack, int weighData, double numberOfSigmas, double power) {
+autoOptimalCeilingTier Sound_to_OptimalCeilingTier (Sound me, double windowLength, double timeStep, double minCeiling, double maxCeiling, long numberOfFrequencySteps, double preemphasisFrequency, double smoothingWindow, long numberOfFormantTracks, long numberOfParametersPerTrack, int weighData, double numberOfSigmas, double power) {
 	try {
 		autoOrdered formants = Ordered_create ();
 		double frequencyStep = numberOfFrequencySteps > 1 ? (maxCeiling - minCeiling) / (numberOfFrequencySteps - 1) : 0;
@@ -2182,7 +2180,7 @@ OptimalCeilingTier Sound_to_OptimalCeilingTier (Sound me, double windowLength, d
 			double ceiling = minCeiling + (index - 1) * frequencyStep;
 			RealTier_addPoint (octier.peek(), time, ceiling);
 		}
-		return octier.transfer();
+		return octier;
 	} catch (MelderError) {
 		Melder_throw (me, U" no OptimalCeilingTier calculated.");
 	}
