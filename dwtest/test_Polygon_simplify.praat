@@ -2,10 +2,6 @@
 
 printline test_Polygon_simplify
 
-
-p = Create simple Polygon... p 0 0 0 1 0.25 0.75 -0.25 0.75 0.25 0.25 -0.25 0.25
-
-
 for j to 10
 	m = Create simple Matrix... ps 2 100  randomUniform (0,1)
 	p1x = Get value in cell... 1 1

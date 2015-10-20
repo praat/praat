@@ -2,7 +2,7 @@
 #define _LPC_and_LFCC_h_
 /* LPC_and_LFCC.h
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +28,9 @@
 #include "LPC.h"
 #include "LFCC.h"
 
-LFCC LPC_to_LFCC (LPC me, long numberOfCoefficients);
+autoLFCC LPC_to_LFCC (LPC me, long numberOfCoefficients);
 
-LPC LFCC_to_LPC (LFCC me, long numberOfCoefficients);
+autoLPC LFCC_to_LPC (LFCC me, long numberOfCoefficients);
 
 void LPC_Frame_into_CC_Frame (LPC_Frame me, CC_Frame thee);
 /*

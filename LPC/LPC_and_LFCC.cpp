@@ -72,26 +72,25 @@ void CC_Frame_into_LPC_Frame (CC_Frame me, LPC_Frame thee) {
 	}
 }
 
-LFCC LPC_to_LFCC (LPC me, long numberOfCoefficients) {
+autoLFCC LPC_to_LFCC (LPC me, long numberOfCoefficients) {
 	try {
 		if (numberOfCoefficients < 1) {
 			numberOfCoefficients = my maxnCoefficients;
 		}
 
-		autoLFCC thee = LFCC_create (my xmin, my xmax, my nx, my dx, my x1,
-		                             numberOfCoefficients, 0, 0.5 / my samplingPeriod);
+		autoLFCC thee = LFCC_create (my xmin, my xmax, my nx, my dx, my x1, numberOfCoefficients, 0, 0.5 / my samplingPeriod);
 
 		for (long i = 1; i <= my nx; i++) {
 			CC_Frame_init (& thy frame[i], numberOfCoefficients);
 			LPC_Frame_into_CC_Frame (& my d_frames[i], & thy frame[i]);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no LFCC created.");
 	}
 }
 
-LPC LFCC_to_LPC (LFCC me, long numberOfCoefficients) {
+autoLPC LFCC_to_LPC (LFCC me, long numberOfCoefficients) {
 	try {
 		if (numberOfCoefficients < 1) {
 			numberOfCoefficients = my maximumNumberOfCoefficients;
@@ -103,7 +102,7 @@ LPC LFCC_to_LPC (LFCC me, long numberOfCoefficients) {
 			LPC_Frame_init (& thy d_frames[i], numberOfCoefficients);
 			CC_Frame_into_LPC_Frame (& my frame[i], & thy d_frames[i]);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no LPC created.");
 	}
@@ -111,4 +110,4 @@ LPC LFCC_to_LPC (LFCC me, long numberOfCoefficients) {
 
 #undef MIN
 
-/* End of file LPC_and_LFCC.c  */
+/* End of file LPC_and_LFCC.cpp  */

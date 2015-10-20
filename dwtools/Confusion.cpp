@@ -58,7 +58,7 @@ void structConfusion :: v_info () {
 	MelderInfo_writeLine (U" Fraction correct: ", frac);
 }
 
-Confusion Confusion_createFromStringses (Strings me, Strings thee) {
+autoConfusion Confusion_createFromStringses (Strings me, Strings thee) {
 	try {
 		if (my numberOfStrings < 1 || thy numberOfStrings < 1) {
 			Melder_throw (U"Empty Strings.");
@@ -72,23 +72,23 @@ Confusion Confusion_createFromStringses (Strings me, Strings thee) {
 			const char32 *label = thy strings[icol];
 			TableOfReal_setColumnLabel (him.peek(), icol, label);
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": could not create Confusion with ", thee);
 	}
 }
 
-Confusion Confusion_create (long numberOfStimuli, long numberOfResponses) {
+autoConfusion Confusion_create (long numberOfStimuli, long numberOfResponses) {
 	try {
 		autoConfusion me = Thing_new (Confusion);
 		TableOfReal_init (me.peek(), numberOfStimuli, numberOfResponses);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Confusion not created.");
 	}
 }
 
-Confusion Confusion_createSimple (const char32 *labels) {
+autoConfusion Confusion_createSimple (const char32 *labels) {
 	try {
 		long numberOfLabels = Melder_countTokens (labels);
 		if (numberOfLabels < 1) {
@@ -106,13 +106,13 @@ Confusion Confusion_createSimple (const char32 *labels) {
 			TableOfReal_setColumnLabel (me.peek(), ilabel, token);
 			ilabel++;
 		}
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Simple Confusion not created.");
 	}
 }
 
-Confusion Categories_to_Confusion (Categories me, Categories thee) {
+autoConfusion Categories_to_Confusion (Categories me, Categories thee) {
 	try {
 		if (my size != thy size) {
 			Melder_throw (U"Categories_to_Confusion: dimensions do not agree.");
@@ -134,7 +134,7 @@ Confusion Categories_to_Confusion (Categories me, Categories thee) {
 			SimpleString myi = (SimpleString) my item[i], thyi = (SimpleString) thy item[i];
 			Confusion_increase (him.peek(), SimpleString_c (myi), SimpleString_c (thyi));
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Confusion created.");
 	}
@@ -237,7 +237,7 @@ void Confusion_getFractionCorrect (Confusion me, double *fraction, long *numberO
 
 #define NPOINTS 6
 
-static Polygon Polygon_createPointer () {
+static autoPolygon Polygon_createPointer () {
 	try {
 		double x[NPOINTS + 1] = { 0.0, 0.0, 0.9, 1.0, 0.9, 0.0, 0.0 };
 		double y[NPOINTS + 1] = { 0.0, 0.0, 0.0, 0.5, 1.0, 1.0, 0.0 };
@@ -245,7 +245,7 @@ static Polygon Polygon_createPointer () {
 		for (long i = 1; i <= NPOINTS; i++) {
 			my x[i] = x[i]; my y[i] = y[i];
 		}
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Polygon not created.");
 	}
@@ -352,7 +352,7 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, long index, d
 	}
 }
 
-Matrix Confusion_difference (Confusion me, Confusion thee) {
+autoMatrix Confusion_difference (Confusion me, Confusion thee) {
 	try {
 		/* categories must be the same too*/
 		if (my numberOfColumns != thy numberOfColumns || my numberOfRows != thy numberOfRows) {
@@ -366,7 +366,7 @@ Matrix Confusion_difference (Confusion me, Confusion thee) {
 				his z[i][j] = my data[i][j] - thy data[i][j];
 			}
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"Matrix not created from two Confusions.");
 	}
@@ -394,7 +394,7 @@ static void create_index (char32 **s, long sb, long se, char32 **ref, long rb, l
 	}
 }
 
-Confusion Confusion_condense (Confusion me, const char32 *search, const char32 *replace,
+autoConfusion Confusion_condense (Confusion me, const char32 *search, const char32 *replace,
 	long maximumNumberOfReplaces, int use_regexp) {
 	try {
 		long nmatches, nstringmatches;
@@ -438,36 +438,36 @@ Confusion Confusion_condense (Confusion me, const char32 *search, const char32 *
 				thy data [rowIndex [i]][columnIndex[j]] += my data[i][j];
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not condensed.");
 	}
 }
 
-Confusion TableOfReal_to_Confusion (TableOfReal me) {
+autoConfusion TableOfReal_to_Confusion (TableOfReal me) {
 	try {
 		if (! TableOfReal_checkPositive (me)) {
 			Melder_throw (U"Elements may not be less than zero.");
 		}
 		autoConfusion thee = Thing_new (Confusion);
 		my structTableOfReal :: v_copy (thee.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Confusion.");
 	}
 }
 
-Confusion Confusion_group (Confusion me, const char32 *labels, const char32 *newLabel, long newpos) {
+autoConfusion Confusion_group (Confusion me, const char32 *labels, const char32 *newLabel, long newpos) {
 	try {
 		autoConfusion stim = Confusion_groupStimuli (me, labels, newLabel, newpos);
 		autoConfusion thee = Confusion_groupResponses (stim.peek(), labels, newLabel, newpos);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not grouped.");
 	}
 }
 
-Confusion Confusion_groupStimuli (Confusion me, const char32 *labels, const char32 *newLabel, long newpos) {
+autoConfusion Confusion_groupStimuli (Confusion me, const char32 *labels, const char32 *newLabel, long newpos) {
 	try {
 		long ncondense = Melder_countTokens (labels);
 		autoNUMvector<long> irow (1, my numberOfRows);
@@ -522,13 +522,13 @@ Confusion Confusion_groupStimuli (Confusion me, const char32 *labels, const char
 				thy data[rowpos][j] += my data[i][j];
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": stimuli not grouped.");
 	}
 }
 
-Confusion Confusion_groupResponses (Confusion me, const char32 *labels, const char32 *newLabel, long newpos) {
+autoConfusion Confusion_groupResponses (Confusion me, const char32 *labels, const char32 *newLabel, long newpos) {
 	try {
 		long ncondense = Melder_countTokens (labels);
 		autoNUMvector<long> icol (1, my numberOfColumns);
@@ -582,13 +582,13 @@ Confusion Confusion_groupResponses (Confusion me, const char32 *labels, const ch
 				thy data[j][colpos] += my data[j][i];
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": responses not grouped.");
 	}
 }
 
-TableOfReal Confusion_to_TableOfReal_marginals (Confusion me) {
+autoTableOfReal Confusion_to_TableOfReal_marginals (Confusion me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows + 1, my numberOfColumns + 1);
 
@@ -615,7 +615,7 @@ TableOfReal Confusion_to_TableOfReal_marginals (Confusion me) {
 
 		NUMstrings_copyElements (my rowLabels, thy rowLabels, 1, my numberOfRows);
 		NUMstrings_copyElements (my columnLabels, thy columnLabels, 1, my numberOfColumns);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": table with marginals not created.");
 	}
@@ -623,9 +623,9 @@ TableOfReal Confusion_to_TableOfReal_marginals (Confusion me) {
 
 void Confusion_drawAsNumbers (Confusion me, Graphics g, int marginals, int iformat, int precision) {
 	TableOfReal thee = me;
-	autoTableOfReal athee = 0;
+	autoTableOfReal athee;
 	if (marginals) {
-		athee.reset (Confusion_to_TableOfReal_marginals (me));
+		athee = Confusion_to_TableOfReal_marginals (me);
 		thee = athee.peek();
 	}
 	TableOfReal_drawAsNumbers (thee, g, 1, thy numberOfRows, iformat, precision);

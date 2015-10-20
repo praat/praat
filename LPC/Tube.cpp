@@ -1,6 +1,6 @@
 /* Tube.cpp
  *
- * Copyright (C) 1994-2012 David Weenink
+ * Copyright (C) 1994-2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,8 +79,7 @@ void Tube_Frames_rc_into_area (Tube_Frame me, Tube_Frame thee) {
 	}
 }
 
-static void Tube_setLengths (I, double length) {
-	iam (Tube);
+static void Tube_setLengths (Tube me, double length) {
 	for (long i = 1; i <= my nx; i++) {
 		Tube_Frame f = & my frame[i];
 		if (f) {
@@ -89,9 +88,7 @@ static void Tube_setLengths (I, double length) {
 	}
 }
 
-void Tube_init (I, double tmin, double tmax, long nt, double dt, double t1,
-                long maxnSegments, double defaultLength) {
-	iam (Tube);
+void Tube_init (Tube me, double tmin, double tmax, long nt, double dt, double t1, long maxnSegments, double defaultLength) {
 	my maxnSegments = maxnSegments;
 	Sampled_init (me, tmin, tmax, nt, dt, t1);
 	my frame = NUMvector<structTube_Frame> (1, nt);
@@ -100,17 +97,15 @@ void Tube_init (I, double tmin, double tmax, long nt, double dt, double t1,
 
 Thing_implement (Area, Tube, 0);
 
-void Area_init (Area me, double tmin, double tmax, long nt, double dt, double t1,
-                long maxnSegments, double defaultLength) {
+void Area_init (Area me, double tmin, double tmax, long nt, double dt, double t1, long maxnSegments, double defaultLength) {
 	Tube_init (me, tmin, tmax, nt, dt, t1, maxnSegments, defaultLength);
 }
 
-Area Area_create (double tmin, double tmax, long nt, double dt, double t1,
-                  long maxnSegments, double defaultLength) {
+autoArea Area_create (double tmin, double tmax, long nt, double dt, double t1, long maxnSegments, double defaultLength) {
 	try {
 		autoArea me = Thing_new (Area);
 		Area_init (me.peek(), tmin, tmax, nt, dt, t1, maxnSegments, defaultLength);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Area not crteated.");
 	}
@@ -118,17 +113,15 @@ Area Area_create (double tmin, double tmax, long nt, double dt, double t1,
 
 Thing_implement (RC, Tube, 0);
 
-void RC_init (RC me, double tmin, double tmax, long nt, double dt, double t1,
-              long maxnSegments, double defaultLength) {
+void RC_init (RC me, double tmin, double tmax, long nt, double dt, double t1, long maxnSegments, double defaultLength) {
 	Tube_init (me, tmin, tmax, nt, dt, t1, maxnSegments, defaultLength);
 }
 
-RC RC_create (double tmin, double tmax, long nt, double dt, double t1,
-              long maxnCoefficients, double defaultLength) {
+autoRC RC_create (double tmin, double tmax, long nt, double dt, double t1, long maxnCoefficients, double defaultLength) {
 	try {
 		autoRC me = Thing_new (RC);
 		RC_init (me.peek(), tmin, tmax, nt, dt, t1, maxnCoefficients, defaultLength);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"RC not crteated.");
 	}

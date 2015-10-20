@@ -281,8 +281,8 @@ FORM (HMM_create, U"Create HMM", U"")
 	NATURAL (U"Number of observations", U"3")
 	OK
 DO
-	praat_new (HMM_create (GET_INTEGER (U"Left to right model"), GET_INTEGER (U"Number of states"),
-		GET_INTEGER (U"Number of observations")), GET_STRING (U"Name"));
+	autoHMM thee = HMM_create (GET_INTEGER (U"Left to right model"), GET_INTEGER (U"Number of states"), GET_INTEGER (U"Number of observations"));
+	praat_new (thee.transfer(), GET_STRING (U"Name"));
 END
 
 FORM (HMM_createSimple, U"HMM: Create simple", U"HMM: Create simple HMM...")
@@ -292,8 +292,8 @@ FORM (HMM_createSimple, U"HMM: Create simple", U"HMM: Create simple HMM...")
 	SENTENCE (U"Observations", U"Walk Shop Clean")
 	OK
 DO
-	praat_new (HMM_createSimple (GET_INTEGER (U"Left to right model"), GET_STRING (U"States"),
-		GET_STRING (U"Observations")), GET_STRING (U"Name"));
+	autoHMM thee = HMM_createSimple (GET_INTEGER (U"Left to right model"), GET_STRING (U"States"), GET_STRING (U"Observations"));
+	praat_new (thee.transfer(), GET_STRING (U"Name"));
 END
 
 FORM (HMM_createContinuousModel, U"HMM: Create continuous model", 0)
@@ -312,10 +312,10 @@ DO
 	long componentStorage = GET_INTEGER (U"Covariance matrices are") - 1;
 	long dimension = GET_INTEGER (U"Dimension of component");
 	REQUIRE (componentStorage >= 0 && componentStorage <= dimension, U"Not a valid covariance matrix type")
-	praat_new (HMM_createContinuousModel (GET_INTEGER (U"Left to right model"),
+	autoHMM thee = HMM_createContinuousModel (GET_INTEGER (U"Left to right model"),
 		GET_INTEGER (U"Number of states"), GET_INTEGER (U"Number of symbols"),
-		GET_INTEGER (U"Number of components"), dimension, componentStorage),
-		GET_STRING (U"Name"));
+		GET_INTEGER (U"Number of components"), dimension, componentStorage);
+	praat_new (thee.transfer(), GET_STRING (U"Name"));
 END
 
 FORM (HMM_ObservationSequence_to_HMM, U"HMM_ObservationSequence: To HMM", 0)
@@ -327,8 +327,8 @@ DO
 	long numberOfStates = GET_INTEGER (U"Number of states");
 	LOOP {
 		iam (HMM_ObservationSequence);
-		praat_new (HMM_createFromHMM_ObservationSequence (me, numberOfStates, GET_INTEGER (U"Left to right model")),
-			my name, U"_", numberOfStates);
+		autoHMM thee = HMM_createFromHMM_ObservationSequence (me, numberOfStates, GET_INTEGER (U"Left to right model"));
+		praat_new (thee.transfer(), my name, U"_", numberOfStates);
 	}
 END
 
@@ -528,8 +528,8 @@ FORM (HMM_to_HMM_ObservationSequence, U"HMM: To HMM_ObservationSequence (generat
 DO
 	LOOP {
 		iam (HMM);
-		praat_new (HMM_to_HMM_ObservationSequence (me, GET_INTEGER (U"Start state"),
-			GET_INTEGER (U"Number of observations")), my name);
+		autoHMM_ObservationSequence thee = HMM_to_HMM_ObservationSequence (me, GET_INTEGER (U"Start state"), GET_INTEGER (U"Number of observations"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -564,7 +564,8 @@ END
 DIRECT (HMM_and_HMM_ObservationSequence_to_HMM_StateSequence)
 	HMM me = FIRST (HMM);
 	HMM_ObservationSequence thee = FIRST (HMM_ObservationSequence);
-	praat_new (HMM_and_HMM_ObservationSequence_to_HMM_StateSequence (me, thee), my name, U"_", thy name, U"_states");
+	autoHMM_StateSequence him = HMM_and_HMM_ObservationSequence_to_HMM_StateSequence (me, thee);
+	praat_new (him.transfer(), my name, U"_", thy name, U"_states");
 END
 
 FORM (HMM_and_HMM_ObservationSequence_learn, U"HMM & HMM_ObservationSequence: Learn", U"HMM & HMM_ObservationSequences: Learn...")
@@ -620,14 +621,16 @@ END
 DIRECT (HMM_extractTransitionProbabilities)
 	LOOP {
 		iam (HMM);
-		praat_new (HMM_extractTransitionProbabilities (me), my name, U"_t");
+		autoTableOfReal thee = HMM_extractTransitionProbabilities (me);
+		praat_new (thee.transfer(), my name, U"_t");
 	}
 END
 
 DIRECT (HMM_extractEmissionProbabilities)
 	LOOP {
 		iam (HMM);
-		praat_new (HMM_extractEmissionProbabilities (me), my name, U"_e");
+		autoTableOfReal thee = HMM_extractEmissionProbabilities (me);
+		praat_new (thee.transfer(), my name, U"_e");
 	}
 END
 
@@ -638,7 +641,8 @@ FORM (HMM_ObservationSequence_to_TableOfReal, U"HMM_ObservationSequence: To Tabl
 DO
 	LOOP {
 		iam (HMM_ObservationSequence);
-		praat_new (HMM_ObservationSequence_to_TableOfReal_transitions (me, GET_INTEGER (U"As probabilities")), my name);
+		autoTableOfReal thee = HMM_ObservationSequence_to_TableOfReal_transitions (me, GET_INTEGER (U"As probabilities"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -648,8 +652,8 @@ FORM (HMM_and_HMM_ObservationSequence_to_TableOfReal, U"HMM & HMM_ObservationSeq
 DO
 	HMM me = FIRST (HMM);
 	HMM_ObservationSequence hmm_os = FIRST (HMM_ObservationSequence);
-	praat_new (HMM_and_HMM_ObservationSequence_to_TableOfReal_transitions (me, hmm_os,
-		GET_INTEGER (U"As probabilities")), hmm_os -> name, U"_m");
+	autoTableOfReal thee = HMM_and_HMM_ObservationSequence_to_TableOfReal_transitions (me, hmm_os,GET_INTEGER (U"As probabilities"));
+	praat_new (thee.transfer(), hmm_os -> name, U"_m");
 END
 
 FORM (HMM_and_HMM_StateSequence_to_TableOfReal, U"HMM & HMM_StateSequence: To TableOfReal", 0)
@@ -658,8 +662,8 @@ FORM (HMM_and_HMM_StateSequence_to_TableOfReal, U"HMM & HMM_StateSequence: To Ta
 DO
 	HMM me = FIRST (HMM);
 	HMM_StateSequence hmm_ss = FIRST (HMM_StateSequence);
-	praat_new (HMM_and_HMM_StateSequence_to_TableOfReal_transitions (me, hmm_ss, GET_INTEGER (U"As probabilities")),
-		Thing_getName (hmm_ss), U"_m");
+	autoTableOfReal thee = HMM_and_HMM_StateSequence_to_TableOfReal_transitions (me, hmm_ss, GET_INTEGER (U"As probabilities"));
+	praat_new (thee.transfer(), Thing_getName (hmm_ss), U"_m");
 END
 
 FORM (HMM_StateSequence_to_TableOfReal, U"HMM_StateSequence: To TableOfReal", 0)
@@ -668,28 +672,32 @@ FORM (HMM_StateSequence_to_TableOfReal, U"HMM_StateSequence: To TableOfReal", 0)
 DO
 	LOOP {
 		iam (HMM_StateSequence);
-		praat_new (Strings_to_TableOfReal_transitions ( (Strings) me, GET_INTEGER (U"As probabilities")), my name);
+		autoTableOfReal thee = Strings_to_TableOfReal_transitions (me, GET_INTEGER (U"As probabilities"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
 DIRECT (HMM_ObservationSequence_to_Strings)
 	LOOP {
 		iam (HMM_ObservationSequence);
-		praat_new (HMM_ObservationSequence_to_Strings (me), my name);
+		autoStrings thee = HMM_ObservationSequence_to_Strings (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
 DIRECT (Strings_to_HMM_ObservationSequence)
 	LOOP {
 		iam (Strings);
-		praat_new (Strings_to_HMM_ObservationSequence (me), my name);
+		autoHMM_ObservationSequence thee = Strings_to_HMM_ObservationSequence (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
 DIRECT (HMM_StateSequence_to_Strings)
 	LOOP {
 		iam (HMM_StateSequence);
-		praat_new (HMM_StateSequence_to_Strings (me), my name);
+		autoStrings thee = HMM_StateSequence_to_Strings (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -703,7 +711,8 @@ DO
 	long storage = GET_INTEGER (U"Covariance matrices are") - 1;
 	LOOP {
 		iam (TableOfReal);
-		praat_new (TableOfReal_to_GaussianMixture_fromRowLabels (me, storage), my name);
+		autoGaussianMixture thee = TableOfReal_to_GaussianMixture_fromRowLabels (me, storage);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -725,9 +734,9 @@ DO
 	long storage = GET_INTEGER (U"Covariance matrices are") - 1;
 	LOOP {
 		iam (TableOfReal);
-		praat_new (TableOfReal_to_GaussianMixture (me, GET_INTEGER (U"Number of components"),
-			GET_REAL (U"Tolerance of minimizer"), GET_INTEGER (U"Maximum number of iterations"),
-			lambda, storage, criterion), my name);
+		autoGaussianMixture thee = TableOfReal_to_GaussianMixture (me, GET_INTEGER (U"Number of components"), 
+			GET_REAL (U"Tolerance of minimizer"), GET_INTEGER (U"Maximum number of iterations"), lambda, storage, criterion);
+		praat_new (thee.transfer(), my name);
 	}
 END
 

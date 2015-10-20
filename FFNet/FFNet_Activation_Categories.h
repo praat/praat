@@ -2,7 +2,7 @@
 #define _FFNet_Activation_Categories_h_
 /* FFNet_Activation_Categories.h
  *
- * Copyright (C) 1997-2011 David Weenink
+ * Copyright (C) 1997-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,11 +29,11 @@
 #include "Activation.h"
 #include "Categories.h"
 
-Categories FFNet_Activation_to_Categories (FFNet me, Activation activation, int labeling);
+autoCategories FFNet_Activation_to_Categories (FFNet me, Activation activation, int labeling);
 /* labeling = 1 : winner-takes-all */
 /* labeling = 2 : stochastic */
 
-Activation FFNet_Categories_to_Activation (FFNet me, Categories labels);
+autoActivation FFNet_Categories_to_Activation (FFNet me, Categories labels);
 /* Postcondition: my outputCategories != nullptr; */
 
 #endif /* _FFNet_Activation_Categories_h_ */

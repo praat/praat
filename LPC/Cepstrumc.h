@@ -2,7 +2,7 @@
 #define _Cepstrumc_h_
 /* Cepstrumc.h
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,14 +36,14 @@ oo_CLASS_CREATE (Cepstrumc, Sampled);
 void Cepstrumc_init (Cepstrumc me, double tmin, double tmax, long nt, double dt, double t1,
 	int nCoefficients, double samplingFrequency);
 	
-Cepstrumc Cepstrumc_create (double tmin, double tmax, long nt, double dt, double t1,
+autoCepstrumc Cepstrumc_create (double tmin, double tmax, long nt, double dt, double t1,
 	int nCoefficients, double samplingFrequency);
 
 /******************* Frames ************************************************/
 
 void Cepstrumc_Frame_init (Cepstrumc_Frame me, int nCoefficients);
 	
-DTW Cepstrumc_to_DTW ( Cepstrumc me, Cepstrumc thee, double wc, double wle,
+autoDTW Cepstrumc_to_DTW ( Cepstrumc me, Cepstrumc thee, double wc, double wle,
 	double wr, double wer, double dtr, int matchStart, int matchEnd, int constraint);
 /*
 	1. Calculate distances between Cepstra:
@@ -64,6 +64,6 @@ DTW Cepstrumc_to_DTW ( Cepstrumc me, Cepstrumc thee, double wc, double wle,
 	at least one of wc, wle, wr, wer != 0
 */
 
-Matrix Cepstrumc_to_Matrix (Cepstrumc me);
+autoMatrix Cepstrumc_to_Matrix (Cepstrumc me);
 
 #endif /* _Cepstrumc_h_ */

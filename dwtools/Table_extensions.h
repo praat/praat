@@ -43,7 +43,8 @@ Table Table_createFromGanongData ();
 double Table_getMedianAbsoluteDeviation (Table me, long columnNumber);
 
 // Two one-way tests for normal and non-normally distributed data, respectively.
-Table Table_getOneWayAnalysisOfVarianceF (Table me, long column, long groupColumn, Table *means, Table *meansDiff, Table *meansDiffProbabilities);
+autoTable Table_getOneWayAnalysisOfVarianceF (Table me, long column, long groupColumn, autoTable *means, autoTable *meansDiff, autoTable *meansDiffProbabilities);
+
 Table Table_getOneWayKruskalWallis (Table me, long column, long groupColumn, double *degreesOfFreedom, double *kruskalWallis, double *probability);
 
 Table Table_getTwoWayAnalysisOfVarianceF (Table me, long column, long groupColumnA, long groupColumnB, Table *means, Table *factorLevelSizes);

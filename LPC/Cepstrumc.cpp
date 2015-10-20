@@ -1,6 +1,6 @@
 /* Cepstrumc.c
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,12 +72,12 @@ void Cepstrumc_init (Cepstrumc me, double tmin, double tmax, long nt, double dt,
 	my frame = NUMvector<structCepstrumc_Frame> (1, nt);
 }
 
-Cepstrumc Cepstrumc_create (double tmin, double tmax, long nt, double dt, double t1,
+autoCepstrumc Cepstrumc_create (double tmin, double tmax, long nt, double dt, double t1,
                             int nCoefficients, double samplingFrequency) {
 	try {
 		autoCepstrumc me = Thing_new (Cepstrumc);
 		Cepstrumc_init (me.peek(), tmin, tmax, nt, dt, t1, nCoefficients, samplingFrequency);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Cepstrum not created.");
 	}
@@ -106,8 +106,7 @@ static void regression (Cepstrumc me, long frame, double r[], long nr) {
 	}
 }
 
-DTW Cepstrumc_to_DTW (Cepstrumc me, Cepstrumc thee, double wc, double wle,
-                      double wr, double wer, double dtr, int matchStart, int matchEnd, int constraint) {
+autoDTW Cepstrumc_to_DTW (Cepstrumc me, Cepstrumc thee, double wc, double wle, double wr, double wer, double dtr, int matchStart, int matchEnd, int constraint) {
 	try {
 		long nr = (long) floor (dtr / my dx);
 
@@ -168,13 +167,13 @@ DTW Cepstrumc_to_DTW (Cepstrumc me, Cepstrumc thee, double wc, double wle,
 			                   i, U" from ", my nx, U".");
 		}
 		DTW_findPath (him.peek(), matchStart, matchEnd, constraint);
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"DTW not created.");
 	}
 }
 
-Matrix Cepstrumc_to_Matrix (Cepstrumc me) {
+autoMatrix Cepstrumc_to_Matrix (Cepstrumc me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
 		                                 0, my maxnCoefficients, my maxnCoefficients + 1, 1, 0);
@@ -185,7 +184,7 @@ Matrix Cepstrumc_to_Matrix (Cepstrumc me) {
 				thy z[j][i] = his c[j - 1];
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Matrix created.");
 	}

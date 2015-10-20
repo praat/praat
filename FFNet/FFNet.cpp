@@ -214,15 +214,14 @@ void structFFNet :: v_info () {
 	MelderInfo_writeLine (U"Number of nodes: ", nNodes);
 }
 
-void FFNet_init (FFNet me, long numberOfInputs, long nodesInLayer1, long nodesInLayer2,
-                 long numberOfOutputs, int outputsAreLinear) {
+void FFNet_init (FFNet me, long numberOfInputs, long nodesInLayer1, long nodesInLayer2, long numberOfOutputs, int outputsAreLinear) {
 	long numberOfLayers = 3;
 
 	if (numberOfInputs < 1) {
-		Melder_throw (U"Number of inputs must be a natrural number.");
+		Melder_throw (U"Number of inputs must be a natural number.");
 	}
 	if (numberOfOutputs < 1) {
-		Melder_throw (U"Number of outputs must be a natrural number.");
+		Melder_throw (U"Number of outputs must be a natural number.");
 	}
 	if (nodesInLayer1 < 1) {
 		numberOfLayers--;
@@ -254,17 +253,15 @@ void FFNet_init (FFNet me, long numberOfInputs, long nodesInLayer1, long nodesIn
 void FFNet_setOutputCategories (FFNet me, Categories thee) {
 	autoCategories uniq = Categories_selectUniqueItems (thee, 1);
 	if (uniq -> size == thy size) {
-		forget (my outputCategories);
 		my outputCategories = uniq.transfer();
 	}
 }
 
-FFNet FFNet_create (long numberOfInputs, long numberInLayer1, long numberInLayer2,
-                    long numberOfOutputs, int outputsAreLinear) {
+autoFFNet FFNet_create (long numberOfInputs, long numberInLayer1, long numberInLayer2, long numberOfOutputs, int outputsAreLinear) {
 	try {
 		autoFFNet me = Thing_new (FFNet);
 		FFNet_init (me.peek(), numberOfInputs, numberInLayer1, numberInLayer2, numberOfOutputs, outputsAreLinear);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FFNet not created.");
 	}
@@ -335,10 +332,11 @@ double FFNet_getWeight (FFNet me, long layer, long unit, long unit_from) {
 }
 
 void FFNet_reset (FFNet me, double wrange) {
-	for (long i = 1; i <= my nWeights; i++)
+	for (long i = 1; i <= my nWeights; i++) {
 		if (my wSelected[i]) {
 			my w[i] = NUMrandomUniform (-wrange, wrange);
 		}
+	}
 	for (long i = 1; i <= my nNodes; i++) {
 		my activity[i] = (my isbias[i] ? 1.0 : 0.0);
 	}
@@ -630,7 +628,7 @@ void FFNet_drawTopology (FFNet me, Graphics g) {
 			for (long j = 1; j <= my nOutputs; j++) {
 				Graphics_arrow (g, x2WC, y2WC + radius, x2WC, y2WC + radius + dy / 4.0);
 				if (my outputCategories) {
-					Categories_drawItem (my outputCategories, g, j, x2WC, y2WC + radius + dy / 4.0);
+					Categories_drawItem (my outputCategories.peek(), g, j, x2WC, y2WC + radius + dy / 4.0);
 				}
 				x2WC += dx2;
 			}
@@ -720,7 +718,7 @@ void FFNet_drawCostHistory (FFNet me, Graphics g, long iFrom, long iTo, double c
 	}
 }
 
-Collection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidden2) {
+autoCollection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidden2) {
 	try {
 		autoCollection c = Collection_create (classDaata, 3);
 		autoCategories uniq = Categories_sequentialNumbers (3);
@@ -747,13 +745,13 @@ Collection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidden2) 
 		Thing_setName (ac.peek(), U"iris");
 		Collection_addItem (c.peek(), ap.transfer());
 		Collection_addItem (c.peek(), ac.transfer());
-		return c.transfer();
+		return c;
 	} catch (MelderError) {
 		Melder_throw (U"Iris example not created.");
 	}
 }
 
-TableOfReal FFNet_extractWeights (FFNet me, long layer) {
+autoTableOfReal FFNet_extractWeights (FFNet me, long layer) {
 	try {
 		FFNet_checkLayerNumber (me, layer);
 
@@ -782,16 +780,16 @@ TableOfReal FFNet_extractWeights (FFNet me, long layer) {
 				thy data[k++][i] = my w[j];
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no TableOfReal created.");
 	}
 }
 
-FFNet FFNet_and_TabelOfReal_to_FFNet (FFNet me, TableOfReal him, long layer) {
+autoFFNet FFNet_and_TabelOfReal_to_FFNet (FFNet me, TableOfReal him, long layer) {
 	try {
 		FFNet_checkLayerNumber (me, layer);
-		if ( (my nUnitsInLayer[layer] != his numberOfColumns) ||
+		if ((my nUnitsInLayer[layer] != his numberOfColumns) ||
 		        (my nUnitsInLayer[layer] == his numberOfColumns && my nUnitsInLayer[layer - 1] + 1 == his numberOfRows)) {
 			long trys[1+3], rows[1+3], cols[1+3], ntry = my nLayers > 3 ? 3 : my nLayers, ok = 0;
 			if (my nLayers > 3) {
@@ -805,18 +803,19 @@ FFNet FFNet_and_TabelOfReal_to_FFNet (FFNet me, TableOfReal him, long layer) {
 					ok ++;
 				}
 			}
-			if (! rows[layer]) Melder_throw (U"The number of rows in the TableOfReal does not equal \n"
+			if (! rows[layer]){
+				Melder_throw (U"The number of rows in the TableOfReal does not equal \n"
 				U"the number of units in the layer that connect to layer ", layer, U".");
-			else
+			} else {
 				Melder_throw (U"The number of columns in the TableOfReal does not equal \n"
 				    U"the number of units in layer ", layer, U".");
+			}
 			if (ok == 0) {
 				Melder_throw (U"Please quit, there is no appropriate layer in the FFNet for this TableOfReal.");
 			} else {
-				if (ok == 1)
-					Melder_throw (U"Please try again with layer number ",
-					              trys[1] ? trys[1] : (trys[2] ? trys[2] : trys[3]), U".");
-				else {
+				if (ok == 1) {
+					Melder_throw (U"Please try again with layer number ", trys[1] ? trys[1] : (trys[2] ? trys[2] : trys[3]), U".");
+				} else {
 					Melder_throw (U"Please try again with one of the other two layer numbers.");
 				}
 			}
@@ -832,7 +831,7 @@ FFNet FFNet_and_TabelOfReal_to_FFNet (FFNet me, TableOfReal him, long layer) {
 				thy w[j] = his data[k][i];
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no FFNet created.");
 	}

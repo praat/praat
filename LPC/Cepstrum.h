@@ -2,7 +2,7 @@
 #define _Cepstrum_h_
 /* Cepstrum.h
  *
- * Copyright (C) 1994-2013 David Weenink
+ * Copyright (C) 1994-2013, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,8 +60,8 @@ Thing_define (PowerCepstrum, Cepstrum) {
 	ny = 1
 */
 
-Cepstrum Cepstrum_create (double qmax, long nq);
-PowerCepstrum PowerCepstrum_create (double qmax, long nq);
+autoCepstrum Cepstrum_create (double qmax, long nq);
+autoPowerCepstrum PowerCepstrum_create (double qmax, long nq);
 /* Preconditions:
 		nq >= 2;
 	Postconditions:
@@ -96,16 +96,16 @@ double PowerCepstrum_getPeakProminence_hillenbrand (PowerCepstrum me, double pit
 double PowerCepstrum_getRNR (PowerCepstrum me, double pitchFloor, double pitchCeiling, double f0fractionalWidth);
 double PowerCepstrum_getPeakProminence (PowerCepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double qstartFit, double qendFit, int lineType, int fitMethod, double *qpeak);
 void PowerCepstrum_fitTiltLine (PowerCepstrum me, double qmin, double qmax, double *slope, double *intercept, int lineType, int method);
-PowerCepstrum PowerCepstrum_subtractTilt (PowerCepstrum me, double qstartFit, double qendFit, int lineType, int fitMethod);
+autoPowerCepstrum PowerCepstrum_subtractTilt (PowerCepstrum me, double qstartFit, double qendFit, int lineType, int fitMethod);
 void PowerCepstrum_subtractTilt_inline (PowerCepstrum me, double qstartFit, double qendFit, int lineType, int fitMethod);
-PowerCepstrum PowerCepstrum_subtractTilt (PowerCepstrum me, double qstartFit, double qendFit, int lineType, int fitMethod);
-void PowerCepstrum_smooth_inline (PowerCepstrum me, double quefrencyAveragingWindow, long numberOfIterations);
-PowerCepstrum PowerCepstrum_smooth (PowerCepstrum me, double quefrencyAveragingWindow, long numberOfIterations);
 
-Matrix PowerCepstrum_to_Matrix (PowerCepstrum me);
-PowerCepstrum Matrix_to_PowerCepstrum (Matrix me);
-PowerCepstrum Matrix_to_PowerCepstrum_row (Matrix me, long row);
-PowerCepstrum Matrix_to_PowerCepstrum_column (Matrix me, long col);
-PowerCepstrum Cepstrum_downto_PowerCepstrum (Cepstrum me);
+void PowerCepstrum_smooth_inline (PowerCepstrum me, double quefrencyAveragingWindow, long numberOfIterations);
+autoPowerCepstrum PowerCepstrum_smooth (PowerCepstrum me, double quefrencyAveragingWindow, long numberOfIterations);
+
+autoMatrix PowerCepstrum_to_Matrix (PowerCepstrum me);
+autoPowerCepstrum Matrix_to_PowerCepstrum (Matrix me);
+autoPowerCepstrum Matrix_to_PowerCepstrum_row (Matrix me, long row);
+autoPowerCepstrum Matrix_to_PowerCepstrum_column (Matrix me, long col);
+autoPowerCepstrum Cepstrum_downto_PowerCepstrum (Cepstrum me);
 
 #endif /* _Cepstrum_h_ */

@@ -2,7 +2,7 @@
 #define _FFNet_h_
 /* FFNet.h
  *
- * Copyright (C) 1997-2011 David Weenink
+ * Copyright (C) 1997-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,7 +120,7 @@ oo_CLASS_CREATE (FFNet, Daata);
 void FFNet_init (FFNet me, long numberOfInputs, long nodesInLayer1, long nodesInLayer2,
 	long numberOfOutputs, int outputsAreLinear);
 
-FFNet FFNet_create (long numberOfInputs, long numberInLayer1, long numberInLayer2,
+autoFFNet FFNet_create (long numberOfInputs, long numberInLayer1, long numberInLayer2,
 	long numberOfOutputs, int outputsAreLinear	);
 
 char32 * FFNet_createNameFromTopology (FFNet me);
@@ -139,8 +139,11 @@ void FFNet_setNonLinearity (FFNet me, int type);
 void FFNet_setOutputCategories (FFNet me, Categories thee);
 
 double FFNet_getBias (FFNet me, long layer, long unit);
+
 void FFNet_setBias (FFNet me, long layer, long node, double value);
+
 void FFNet_setWeight (FFNet me, long later, long node, long node_from, double value);
+
 double FFNet_getWeight (FFNet me, long later, long node, long node_from);
 
 void FFNet_reset (FFNet me, double wrange);
@@ -173,6 +176,7 @@ long FFNet_getWinningUnit (FFNet me, int labeling);
 /* labeling = 2 : stochastic */
 
 void FFNet_selectAllWeights (FFNet me);
+
 void FFNet_selectBiasesInLayer (FFNet me, long layer);
 
 long FFNet_dimensionOfSearchSpace (FFNet me);
@@ -203,7 +207,9 @@ long FFNet_getNumberOfUnitsInLayer (FFNet me, int layer);
 double FFNet_getMinimum (FFNet me);
 
 void FFNet_drawTopology (FFNet me, Graphics g);
+
 void FFNet_drawActivation (FFNet me, Graphics g);
+
 void FFNet_drawWeightsToLayer (FFNet me, Graphics g, int toLayer, int scaling, int garnish);
 /* Deprecated: the strengths of the weights that connect to the nodes in later 'layer' */
 /* are drawn with boxes. The area of each box corresponds to the strength. */
@@ -213,10 +219,12 @@ void FFNet_drawCostHistory (FFNet me, Graphics g, long from_iteration, long to_i
 	double from_cost, double to_cost, int garnish);
 /* draw cost vs epochs */
 
-Collection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidden2);
+autoCollection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidden2);
 
-TableOfReal FFNet_extractWeights (FFNet me, long layer);
+autoTableOfReal FFNet_extractWeights (FFNet me, long layer);
+
 void FFNet_drawWeights (FFNet me, Graphics g, long layer, int garnish);
-FFNet FFNet_and_TabelOfReal_to_FFNet (FFNet me, TableOfReal him, long layer);
+
+autoFFNet FFNet_and_TabelOfReal_to_FFNet (FFNet me, TableOfReal him, long layer);
 
 #endif /* _FFNet_h_ */

@@ -212,7 +212,7 @@ void VocalTract_setLength (VocalTract me, double newLength) {
 	my x1 = 0.5 * my dx;
 }
 
-VocalTract LPC_to_VocalTract (LPC me, double time, double glottalDamping, bool radiationDamping, bool internalDamping) {
+autoVocalTract LPC_to_VocalTract (LPC me, double time, double glottalDamping, bool radiationDamping, bool internalDamping) {
 	try {
 		long iframe = Sampled_xToLowIndex (me, time);   // ppgb: BUG? Is rounding down the correct thing to do? not nearestIndex?
 		if (iframe < 1) {
@@ -225,13 +225,13 @@ VocalTract LPC_to_VocalTract (LPC me, double time, double glottalDamping, bool r
 		autoVocalTract thee = LPC_Frame_to_VocalTract (lpc, 0.17);
 		double length = VocalTract_and_LPC_Frame_getMatchingLength (thee.peek(), lpc, glottalDamping, radiationDamping, internalDamping);
 		VocalTract_setLength (thee.peek(), length);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no VocalTract created.");
 	}
 }
 
-static VocalTract LPC_Frame_to_VocalTract2 (LPC_Frame me, double length) {
+static autoVocalTract LPC_Frame_to_VocalTract2 (LPC_Frame me, double length) {
 	struct structTube_Frame area_struct = { 0 };
 	Tube_Frame area = & area_struct;
 	try {
@@ -248,14 +248,14 @@ static VocalTract LPC_Frame_to_VocalTract2 (LPC_Frame me, double length) {
 			thy z[1][i] = area -> c[m + 1 - i];
 		}
 		area -> destroy ();
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		area -> destroy ();
 		Melder_throw (U"No VocalTract created from LPC_Frame.");
 	}
 }
 
-VocalTract LPC_Frame_to_VocalTract (LPC_Frame me, double length) {
+autoVocalTract LPC_Frame_to_VocalTract (LPC_Frame me, double length) {
 	try {
 		long m = my nCoefficients;
 		autoNUMvector<double> area (1, m + 1);
@@ -267,13 +267,13 @@ VocalTract LPC_Frame_to_VocalTract (LPC_Frame me, double length) {
 		for (long i = 1; i <= m; i++) {
 			thy z[1][i] = area[m + 1 - i];
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"No VocalTract created from LPC_Frame.");
 	}
 }
 
-VocalTract LPC_to_VocalTract (LPC me, double time, double length) {
+autoVocalTract LPC_to_VocalTract (LPC me, double time, double length) {
 	try {
 		long iframe = Sampled_xToLowIndex (me, time);   // ppgb: BUG? Is rounding down the correct thing to do?
 		if (iframe < 1) {
@@ -284,7 +284,7 @@ VocalTract LPC_to_VocalTract (LPC me, double time, double length) {
 		}
 		LPC_Frame lpc = & my d_frames[iframe];
 		autoVocalTract thee = LPC_Frame_to_VocalTract (lpc, length);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no VocalTract created.");
 	}

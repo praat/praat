@@ -3431,7 +3431,7 @@ Table Table_getOneWayKruskalWallis (Table me, long column, long factorColumn, do
 }
 
 // Table with Group Means Cases
-static void _Table_postHocTukeyHSD (Table me, double sumOfSquaresWithin, double degreesOfFreedomWithin, Table *meansDiff, Table *meansDiffProbabilities) {
+static void _Table_postHocTukeyHSD (Table me, double sumOfSquaresWithin, double degreesOfFreedomWithin, autoTable *meansDiff, autoTable *meansDiffProbabilities) {
 	try {
 		Table_numericize_Assert (me, 2);
 		Table_numericize_Assert (me, 3);
@@ -3459,7 +3459,7 @@ static void _Table_postHocTukeyHSD (Table me, double sumOfSquaresWithin, double 
 		for (long irow = 1; irow <= numberOfMeans - 1; irow++) {
 			for (long icol = irow + 1; icol <= numberOfMeans; icol++) {
 				// Tukey-Kramer correction for unequal sample sizes
-				double oneOverNstar =  0.5 * (1 / cases[icol] + 1 / cases[irow]);
+				double oneOverNstar =  0.5 * (1.0 / cases[icol] + 1.0 / cases[irow]);
 				double s = sqrt (sumOfSquaresWithin * oneOverNstar);
 				double q = fabs (means[irow] - means[icol]) / s;
 				double p = NUMtukeyQ (q, numberOfMeans, degreesOfFreedomWithin, 1);
@@ -3467,10 +3467,10 @@ static void _Table_postHocTukeyHSD (Table me, double sumOfSquaresWithin, double 
 			}
 		}
 		if (meansDiff) {
-			*meansDiff = meansD.transfer();
+			*meansDiff = meansD.move();
 		}
 		if (meansDiffProbabilities) {
-			*meansDiffProbabilities = meansP.transfer();
+			*meansDiffProbabilities = meansP.move();
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": no post-hoc performed.");
@@ -3539,7 +3539,7 @@ void Table_printAsMeansTable (Table me) {
 	}
 }
 
-Table Table_getOneWayAnalysisOfVarianceF (Table me, long column, long factorColumn, Table *means, Table *meansDiff, Table *meansDiffProbabilities) {
+autoTable Table_getOneWayAnalysisOfVarianceF (Table me, long column, long factorColumn, autoTable *means, autoTable *meansDiff, autoTable *meansDiffProbabilities) {
 	try {
 		if (column < 1 || column > my numberOfColumns) {
 			Melder_throw (U"Invalid column number.");
@@ -3564,7 +3564,7 @@ Table Table_getOneWayAnalysisOfVarianceF (Table me, long column, long factorColu
 
 		// a, ty, c according to schem of Hayes, 10.14 pg 363
 
-		double a = 0, ty = 0;
+		double a = 0.0, ty = 0.0;
 		for (long i = 1; i <= numberOfData; i++) {
 			long index = levels -> classIndex[i];
 			factorLevelSizes[index] ++;
@@ -3573,7 +3573,7 @@ Table Table_getOneWayAnalysisOfVarianceF (Table me, long column, long factorColu
 			ty += data[i];
 		}
 
-		double c = 0;
+		double c = 0.0;
 		for (long j = 1; j <= numberOfLevels; j++) {
 			if (factorLevelSizes[j] < 2) {
 				SimpleString ss = (SimpleString) levels -> classes -> item[j];
@@ -3625,9 +3625,9 @@ Table Table_getOneWayAnalysisOfVarianceF (Table me, long column, long factorColu
 		Table_sortRows_Assert (ameans.peek(), columns, 1);
 		_Table_postHocTukeyHSD (ameans.peek(), ms_w, dof_w, meansDiff, meansDiffProbabilities);
 		if (means) {
-			*means = ameans.transfer();
+			*means = ameans.move();
 		}
-		return anova.transfer();
+		return anova;
 	} catch (MelderError) {
 		Melder_throw (me, U": no one-way anova performed.");
 	}

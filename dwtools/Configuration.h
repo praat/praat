@@ -26,7 +26,7 @@
 #include "Configuration_def.h"
 oo_CLASS_CREATE (Configuration, TableOfReal);
 
-Configuration Configuration_create (long numberOfPoints, long numberOfDimensions);
+autoConfiguration Configuration_create (long numberOfPoints, long numberOfDimensions);
 
 void Configuration_setMetric (Configuration me, long metric);
 
@@ -64,7 +64,7 @@ void Configuration_invertDimension (Configuration me, int dimension);
 			my data[i][dimension] = - my data[i][dimension];
 */
 
-Configuration Configuration_congruenceRotation (Configuration me, Configuration thee,
+autoConfiguration Configuration_congruenceRotation (Configuration me, Configuration thee,
 	long maximumNumberOfIterations, double tolerance);
 /*
 	Rotate thee for maximum congruence. Algorithm:
@@ -72,8 +72,7 @@ Configuration Configuration_congruenceRotation (Configuration me, Configuration 
 		orthogonal congruence rotation", Psychometrika 61, 375-389.
 */
 
-Configuration Configuration_varimax (Configuration me, int normalizeRows,
-	int quartimax, long maximumNumberOfIterations, double tolerance);
+autoConfiguration Configuration_varimax (Configuration me, int normalizeRows, int quartimax, long maximumNumberOfIterations, double tolerance);
 /*
 	Perform varimax rotation. Algorithm with extra security from:
 	Jos Ten Berge (1995), "Suppressing permutations or rigid planar rotations:
@@ -90,9 +89,9 @@ void Configuration_drawConcentrationEllipses (Configuration me, Graphics g,
 	double scale, int confidence, const char32 *label, long d1, long d2, double xmin, double xmax,
 	double ymin, double ymax, int fontSize, int garnish);
 
-Configuration TableOfReal_to_Configuration (TableOfReal me);
+autoConfiguration TableOfReal_to_Configuration (TableOfReal me);
 
-Configuration TableOfReal_to_Configuration_pca (TableOfReal me, long numberOfDimensions);
+autoConfiguration TableOfReal_to_Configuration_pca (TableOfReal me, long numberOfDimensions);
 /*
 	Precondition:
 		numberOfDimensions > 0
@@ -102,14 +101,14 @@ Configuration TableOfReal_to_Configuration_pca (TableOfReal me, long numberOfDim
 		(Configuration) numberOfColumns = MIN (my numberOfColumns, numberOfDimensions)
 */
 
-Configuration Configuration_createLetterRExample (int choice);
+autoConfiguration Configuration_createLetterRExample (int choice);
 /*
   	Create a two-dimensional configuartion from the letter R.
   	choice = 1 : undistorted;
   	choice = 2 : result of monotone fit on distorted (d^2 + 5 +32.5*z)
 */
 
-Configuration Configuration_createCarrollWishExample ();
+autoConfiguration Configuration_createCarrollWishExample ();
 
 
 /************************** class Configurations **************************************/
@@ -117,6 +116,6 @@ Configuration Configuration_createCarrollWishExample ();
 Thing_define (Configurations, Ordered) {
 };
 
-Configurations Configurations_create ();
+autoConfigurations Configurations_create ();
 
 #endif /* _Configuration_h_ */

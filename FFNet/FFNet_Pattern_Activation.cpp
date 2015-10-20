@@ -1,6 +1,6 @@
 /* FFNet_Pattern_Activation.cpp
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,15 +136,15 @@ void FFNet_Pattern_Activation_learnSD (FFNet me, Pattern p, Activation a, long m
 
 void FFNet_Pattern_Activation_learnSM (FFNet me, Pattern p, Activation a, long maxNumOfEpochs, double tolerance, Any parameters, int costFunctionType) {
 	int resetMinimizer = 0;
-	/*
-		Did we choose another minimizer
-	*/
-	if (my minimizer != nullptr && ! Thing_isa (my minimizer, classVDSmagtMinimizer)) {
+
+	// Did we choose another minimizer
+
+	if (my minimizer && ! Thing_isa (my minimizer, classVDSmagtMinimizer)) {
 		forget (my minimizer);
 		resetMinimizer = 1;
 	}
-	/* create the minimizer if it doesn't exist */
-	if (my minimizer == nullptr) {
+	// create the minimizer if it doesn't exist
+	if (! my minimizer) {
 		resetMinimizer = 1;
 		my minimizer = (Minimizer) VDSmagtMinimizer_create (my dimension, me, func, dfunc_optimized);
 	}
@@ -172,7 +172,7 @@ double FFNet_Pattern_Activation_getCosts_average (FFNet me, Pattern p, Activatio
 	return costs == NUMundefined ? NUMundefined : costs / p -> ny;
 }
 
-Activation FFNet_Pattern_to_Activation (FFNet me, Pattern p, long layer) {
+autoActivation FFNet_Pattern_to_Activation (FFNet me, Pattern p, long layer) {
 	try {
 		if (layer < 1 || layer > my nLayers) {
 			layer = my nLayers;
@@ -189,7 +189,7 @@ Activation FFNet_Pattern_to_Activation (FFNet me, Pattern p, long layer) {
 		for (long i = 1; i <= nPatterns; i++) {
 			FFNet_propagateToLayer (me, p -> z[i], thy z[i], layer);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Activation created.");
 	}

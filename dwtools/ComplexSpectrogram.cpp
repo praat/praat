@@ -42,19 +42,19 @@
 Thing_implement (ComplexSpectrogram, Matrix, 2);
 
 
-ComplexSpectrogram ComplexSpectrogram_create (double tmin, double tmax, long nt, double dt,
+autoComplexSpectrogram ComplexSpectrogram_create (double tmin, double tmax, long nt, double dt,
 	double t1, double fmin, double fmax, long nf, double df, double f1) {
 	try {
 		autoComplexSpectrogram me = Thing_new (ComplexSpectrogram);
 		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
 		my phase = NUMmatrix <double> (1, my ny, 1, my nx);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ComplexSpectrogram not created.");
 	}
 }
 
-ComplexSpectrogram Sound_to_ComplexSpectrogram (Sound me, double windowLength, double timeStep) {
+autoComplexSpectrogram Sound_to_ComplexSpectrogram (Sound me, double windowLength, double timeStep) {
 	try {
 		double samplingFrequency = 1.0 / my dx, myDuration = my xmax - my xmin, t1;
 		if (windowLength > myDuration) {
@@ -75,10 +75,9 @@ ComplexSpectrogram Sound_to_ComplexSpectrogram (Sound me, double windowLength, d
 		// Compute sampling of the spectrum
 
 		long numberOfFrequencies = halfnsamp_window + 1;
-		long df = (long) floor (samplingFrequency / (numberOfFrequencies - 1));
+		double df = samplingFrequency / (numberOfFrequencies - 1);
 		
-		autoComplexSpectrogram thee = ComplexSpectrogram_create (my xmin, my xmax, numberOfFrames, timeStep, t1,
-			0, 0.5 * samplingFrequency, numberOfFrequencies, df, 0.0);
+		autoComplexSpectrogram thee = ComplexSpectrogram_create (my xmin, my xmax, numberOfFrames, timeStep, t1, 0.0, 0.5 * samplingFrequency, numberOfFrequencies, df, 0.0);
 		// 
 		autoSound analysisWindow = Sound_create (1, 0.0, nsamp_window * my dx, nsamp_window, my dx, 0.5 * my dx);
 		
@@ -107,13 +106,13 @@ ComplexSpectrogram Sound_to_ComplexSpectrogram (Sound me, double windowLength, d
 			thy z[numberOfFrequencies][iframe] = spec -> z[1][numberOfFrequencies] * spec -> z[1][numberOfFrequencies];
 			thy phase[numberOfFrequencies][iframe] = 0.0;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no ComplexSpectrogram created.");
 	}
 }
 
-Sound ComplexSpectrogram_to_Sound (ComplexSpectrogram me, double stretchFactor) {
+autoSound ComplexSpectrogram_to_Sound (ComplexSpectrogram me, double stretchFactor) {
 	try {
 		/* original number of samples is odd: imaginary part of last spectral value is zero -> 
 		 * phase is either zero or +/-pi
@@ -137,7 +136,8 @@ Sound ComplexSpectrogram_to_Sound (ComplexSpectrogram me, double stretchFactor) 
 		for (long iframe = 1; iframe <= my nx; iframe++) {
 			// "original" sound :
 			double tmid = Sampled_indexToX (me, iframe);
-			long leftSample = Sampled_xToLowIndex (thee.peek(), tmid), rightSample = leftSample + 1;
+			long leftSample = Sampled_xToLowIndex (thee.peek(), tmid);
+			long rightSample = leftSample + 1;
 			long startSample = rightSample - halfnsamp_window;
 			double startTime = Sampled_indexToX (thee.peek(), startSample);
 			if (iframe == 1) {
@@ -175,13 +175,13 @@ Sound ComplexSpectrogram_to_Sound (ComplexSpectrogram me, double stretchFactor) 
 			}
 			thyStartTime += my dx * stretchFactor;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Sound created.");
 	}
 }
 
-static Sound ComplexSpectrogram_to_Sound2 (ComplexSpectrogram me, double stretchFactor) {
+static autoSound ComplexSpectrogram_to_Sound2 (ComplexSpectrogram me, double stretchFactor) {
 	try {
 		/* original number of samples is odd: imaginary part of last spectral value is zero -> 
 		 * phase is either zero or pi
@@ -218,23 +218,23 @@ static Sound ComplexSpectrogram_to_Sound2 (ComplexSpectrogram me, double stretch
 			}
 			istart = iend + 1; iend = istart + stepSizeSamples - 1;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Sound created.");
 	}
 }
 
-Spectrogram ComplexSpectrogram_to_Spectrogram (ComplexSpectrogram me) {
+autoSpectrogram ComplexSpectrogram_to_Spectrogram (ComplexSpectrogram me) {
 	try {
 		autoSpectrogram thee = Spectrogram_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
 		NUMmatrix_copyElements<double> (my z, thy z, 1, my ny, 1, my nx);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Spectrogram.");
 	}
 }
 
-Spectrum ComplexSpectrogram_to_Spectrum (ComplexSpectrogram me, double time) {
+autoSpectrum ComplexSpectrogram_to_Spectrum (ComplexSpectrogram me, double time) {
 	try {
 		long iframe = Sampled_xToLowIndex (me, time);   // ppgb: geen Sampled_xToIndex gebruiken voor integers (afrondingen altijd expliciet maken)
 		iframe = iframe < 1 ? 1 : (iframe > my nx ? my nx : iframe);
@@ -245,7 +245,7 @@ Spectrum ComplexSpectrogram_to_Spectrum (ComplexSpectrogram me, double time) {
 			thy z[1][ifreq] = a * cos (phi);
 			thy z[2][ifreq] = a * sin (phi);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Spectrum created.");
 	}

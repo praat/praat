@@ -69,7 +69,7 @@ void structConfiguration :: v_info () {
 	MelderInfo_writeLine (U"Metric: ", metric);
 }
 
-Configuration Configuration_create (long numberOfPoints, long numberOfDimensions) {
+autoConfiguration Configuration_create (long numberOfPoints, long numberOfDimensions) {
 	try {
 		autoConfiguration me = Thing_new (Configuration);
 		TableOfReal_init (me.peek(), numberOfPoints, numberOfDimensions);
@@ -80,7 +80,7 @@ Configuration Configuration_create (long numberOfPoints, long numberOfDimensions
 		my metric = 2;
 		Configuration_setDefaultWeights (me.peek());
 		Configuration_randomize (me.peek());
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Configuration not created.");
 	}
@@ -298,22 +298,22 @@ static void NUMvarimax (double **xm, double **ym, long nr, long nc, int normaliz
 	}
 }
 
-Configuration Configuration_varimax (Configuration me, int normalizeRows,
+autoConfiguration Configuration_varimax (Configuration me, int normalizeRows,
                                      int quartimax, long maximumNumberOfIterations, double tolerance) {
 	try {
 		autoConfiguration thee = Data_copy (me);
 		NUMvarimax (my data, thy data, my numberOfRows, my numberOfColumns, normalizeRows, quartimax, maximumNumberOfIterations, tolerance);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": varimax rotation not performed.");
 	}
 }
 
-Configuration Configuration_congruenceRotation (Configuration me, Configuration thee, long maximumNumberOfIterations, double tolerance) {
+autoConfiguration Configuration_congruenceRotation (Configuration me, Configuration thee, long maximumNumberOfIterations, double tolerance) {
 	try {
 		autoAffineTransform at = Configurations_to_AffineTransform_congruence (me, thee, maximumNumberOfIterations, tolerance);
 		autoConfiguration him = Configuration_and_AffineTransform_to_Configuration (me, at.peek());
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": congruence rotation not performed.");
 	}
@@ -408,19 +408,19 @@ void Configuration_drawConcentrationEllipses (Configuration me, Graphics g, doub
 	SSCPs_drawConcentrationEllipses (sscps.peek(), g, scale, confidence, label, d1, d2, xmin, xmax, ymin, ymax, fontSize, garnish);
 }
 
-Configuration TableOfReal_to_Configuration (TableOfReal me) {
+autoConfiguration TableOfReal_to_Configuration (TableOfReal me) {
 	try {
 		autoConfiguration thee = Configuration_create (my numberOfRows, my numberOfColumns);
 
 		NUMmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
 		TableOfReal_copyLabels (me, thee.peek(), 1, 1);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted.");
 	}
 }
 
-Configuration TableOfReal_to_Configuration_pca (TableOfReal me, long numberOfDimensions) {
+autoConfiguration TableOfReal_to_Configuration_pca (TableOfReal me, long numberOfDimensions) {
 	try {
 		if (numberOfDimensions < 1 || numberOfDimensions > my numberOfColumns) {
 			numberOfDimensions = my numberOfColumns;
@@ -428,7 +428,7 @@ Configuration TableOfReal_to_Configuration_pca (TableOfReal me, long numberOfDim
 
 		autoPCA pca = TableOfReal_to_PCA (me);
 		autoConfiguration thee = PCA_and_TableOfReal_to_Configuration (pca.peek(), me, numberOfDimensions);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": pca not performed.");
 	}
@@ -436,7 +436,7 @@ Configuration TableOfReal_to_Configuration_pca (TableOfReal me, long numberOfDim
 
 /********************** Examples *********************************************/
 
-Configuration Configuration_createLetterRExample (int choice) {
+autoConfiguration Configuration_createLetterRExample (int choice) {
 	double x1[33] = { 0,
 		-5, -5, -5, -5, -5, -5, -5,   -5, -5, -5,
 		-5, -4, -3, -2, -1,  0,  1, 2.25,  3,  3,
@@ -486,13 +486,13 @@ Configuration Configuration_createLetterRExample (int choice) {
 			my data [i][1] = x[i];
 			my data [i][2] = y[i];
 		}
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Letter R Configuration not created.");
 	}
 }
 
-Configuration Configuration_createCarrollWishExample () {
+autoConfiguration Configuration_createCarrollWishExample () {
 	double  x[10] = {0.0, -1.0, 0.0, 1.0, -1.0, 0.0, 1.0, -1.0,  0.0,  1.0};
 	double  y[10] = {0.0,  1.0, 1.0, 1.0,  0.0, 0.0, 0.0, -1.0, -1.0, -1.0};
 	char32 const *label[] = { U"", U"A", U"B", U"C", U"D", U"E", U"F", U"G", U"H", U"I"};
@@ -504,7 +504,7 @@ Configuration Configuration_createCarrollWishExample () {
 			my data[i][2] = y[i];
 			TableOfReal_setRowLabel (me.peek(), i, label[i]);
 		}
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Carroll Wish Configuration not created.");
 	}
@@ -514,11 +514,11 @@ Configuration Configuration_createCarrollWishExample () {
 
 Thing_implement (Configurations, Ordered, 0);
 
-Configurations Configurations_create () {
+autoConfigurations Configurations_create () {
 	try {
 		autoConfigurations me = Thing_new (Configurations);
 		Ordered_init (me.peek(), classConfiguration, 10);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Configurations not created.");
 	}

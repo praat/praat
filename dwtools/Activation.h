@@ -45,11 +45,11 @@ Thing_define (Activation, Matrix) {
 
 void Activation_init (Activation me, long ny, long nx);
 
-Activation Activation_create (long ny, long nx);
+autoActivation Activation_create (long ny, long nx);
 
-Activation Matrix_to_Activation (Matrix me);
+autoActivation Matrix_to_Activation (Matrix me);
 
-Matrix Activation_to_Matrix (Activation me);
+autoMatrix Activation_to_Matrix (Activation me);
 
 
 int _Activation_checkElements (Activation me);

@@ -104,7 +104,7 @@ void LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduc
 	thy z[2][thy nx] = 0;
 }
 
-Spectrum LPC_to_Spectrum (LPC me, double t, double dfMin, double bandwidthReduction, double deEmphasisFrequency) {
+autoSpectrum LPC_to_Spectrum (LPC me, double t, double dfMin, double bandwidthReduction, double deEmphasisFrequency) {
 	try {
 		double samplingFrequency = 1.0 / my samplingPeriod;
 		long nfft = 2, index = Sampled_xToNearestIndex (me, t);
@@ -123,7 +123,7 @@ Spectrum LPC_to_Spectrum (LPC me, double t, double dfMin, double bandwidthReduct
 		}
 		autoSpectrum thee = Spectrum_create (samplingFrequency / 2.0, nfft / 2 + 1);
 		LPC_Frame_into_Spectrum (& my d_frames[index], thee.peek(), bandwidthReduction, deEmphasisFrequency);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Spectrum created.");
 	}

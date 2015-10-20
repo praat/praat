@@ -43,8 +43,10 @@ FORM (DataModeler_createSimple, U"Create simple DataModeler", 0)
 		
 	OK
 DO
-	praat_new (DataModeler_createSimple (GET_REAL (U"left X range"), GET_REAL (U"right X range"), GET_INTEGER (U"Number of data points"),
-		GET_STRING (U"Parameters"), GET_REAL (U"Gaussian noise stdev"), GET_INTEGER (U"Basis functions") - 1), GET_STRING (U"Name"));
+	autoDataModeler thee = DataModeler_createSimple (GET_REAL (U"left X range"), GET_REAL (U"right X range"),
+		GET_INTEGER (U"Number of data points"), GET_STRING (U"Parameters"), GET_REAL (U"Gaussian noise stdev"),
+		GET_INTEGER (U"Basis functions") - 1);
+	praat_new (thee.transfer(), GET_STRING (U"Name"));
 END
 
 FORM (DataModeler_speckle, U"DataModeler: Speckle", 0)
@@ -412,8 +414,8 @@ DO
 	REQUIRE (order >= 0, U"The order must be greater than or equal to zero.")
 	LOOP {
 		iam (Formant);
-		autoFormantModeler thee = Formant_to_FormantModeler (me, GET_REAL (U"left Start time"), GET_REAL (U"right End time"),
-			GET_INTEGER (U"Number of formants"), order + 1, GET_INTEGER (U"Weigh data") - 1);
+		autoFormantModeler thee = Formant_to_FormantModeler (me, GET_REAL (U"left Start time"), 
+			GET_REAL (U"right End time"), GET_INTEGER (U"Number of formants"), order + 1, GET_INTEGER (U"Weigh data") - 1);
 		praat_new (thee.transfer(), my name, U"_o", order);
 	}
 END

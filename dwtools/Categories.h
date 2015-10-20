@@ -2,7 +2,7 @@
 #define _Categories_h_
 /* Categories.h
  *
- * Copyright (C) 1993-2011 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1993-2011, 2015 David Weenink, 2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,19 +33,21 @@ Thing_define (Categories, OrderedOfString) {
 
 void Categories_init (Categories me, long size);
 
-Categories Categories_create ();
-Categories Categories_sequentialNumbers (long n);
+autoCategories Categories_create ();
 
-Categories Categories_selectUniqueItems (Categories me, int sorted);
+autoCategories Categories_sequentialNumbers (long n);
+
+autoCategories Categories_selectUniqueItems (Categories me, int sorted);
 
 void Categories_drawItem (Categories me, Graphics g, long position, double xWC, double yWC);
 
-Categories OrderedOfString_to_Categories (OrderedOfString me);
+autoCategories OrderedOfString_to_Categories (OrderedOfString me);
 
 long Categories_getSize (Categories me);
 /* return my size */
 
-Categories TableOfReal_to_CategoriesRow (TableOfReal me);
-Categories TableOfReal_to_CategoriesColumn (TableOfReal me);
+autoCategories TableOfReal_to_CategoriesRow (TableOfReal me);
+
+autoCategories TableOfReal_to_CategoriesColumn (TableOfReal me);
 
 #endif /* _Categories_h_ */

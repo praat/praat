@@ -65,12 +65,12 @@ void VocalTract_drawSegments (VocalTract me, Graphics g, double maxLength, doubl
 
 Thing_implement (VocalTractPoint, AnyPoint, 0);
 
-VocalTractPoint VocalTract_to_VocalTractPoint (VocalTract me, double time) {
+autoVocalTractPoint VocalTract_to_VocalTractPoint (VocalTract me, double time) {
 	try {
 		autoVocalTractPoint thee = Thing_new (VocalTractPoint);
 		thy number = time;
 		thy d_vocalTract = (VocalTract) Data_copy (me);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to VocalTractPoint.");
 	}
@@ -80,22 +80,22 @@ VocalTractPoint VocalTract_to_VocalTractPoint (VocalTract me, double time) {
 
 Thing_implement (VocalTractTier, Function, 0);
 
-VocalTractTier VocalTractTier_create (double fromTime, double toTime) {
+autoVocalTractTier VocalTractTier_create (double fromTime, double toTime) {
 	try {
 		autoVocalTractTier me = Thing_new (VocalTractTier);
 		Function_init (me.peek(), fromTime, toTime);
 		my d_vocalTracts = SortedSetOfDouble_create ();
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U": VocalTractTier not created.");
 	}
 }
 
-VocalTractTier VocalTract_to_VocalTractTier (VocalTract me, double startTime, double endTime, double time) {
+autoVocalTractTier VocalTract_to_VocalTractTier (VocalTract me, double startTime, double endTime, double time) {
 	try {
 		autoVocalTractTier thee = VocalTractTier_create (startTime, endTime);
 		VocalTractTier_addVocalTract (thee.peek(), time, me);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to VocalTractTier");
 	}
@@ -118,7 +118,7 @@ void VocalTractTier_addVocalTract (VocalTractTier me, double time, VocalTract vo
 	}
 }
 
-VocalTract VocalTractTier_to_VocalTract (VocalTractTier me, double time) {
+autoVocalTract VocalTractTier_to_VocalTract (VocalTractTier me, double time) {
 	try {
 		VocalTractPoint vtp = (VocalTractPoint) my d_vocalTracts -> item[1];
 		long numberOfSections = vtp -> d_vocalTract -> nx;
@@ -132,13 +132,13 @@ VocalTract VocalTractTier_to_VocalTract (VocalTractTier me, double time) {
 			}
 			thy z[1][isection] = RealTier_getValueAtTime (section.peek(), time);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no VocalTract created.");
 	}
 }
 
-LPC VocalTractTier_to_LPC (VocalTractTier me, double timeStep) {
+autoLPC VocalTractTier_to_LPC (VocalTractTier me, double timeStep) {
 	try {
 		if (my d_vocalTracts -> size == 0) {
 			Melder_throw (U"Empty VocalTractTier");
@@ -173,7 +173,7 @@ LPC VocalTractTier_to_LPC (VocalTractTier me, double timeStep) {
 			NUMlpc_area_to_lpc (areavec.peek(), numberOfSections + 1, frame -> a);
 			frame -> gain = 1e-6; // something
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (U": not converted to LPC.");
 	}

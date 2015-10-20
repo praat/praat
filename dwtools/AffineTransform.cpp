@@ -86,11 +86,11 @@ void AffineTransform_init (AffineTransform me, long n) {
 	my t = NUMvector<double> (1, n);
 }
 
-AffineTransform AffineTransform_create (long n) {
+autoAffineTransform AffineTransform_create (long n) {
 	try {
 		autoAffineTransform me = Thing_new (AffineTransform);
 		AffineTransform_init (me.peek(), n);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"AffineTransform not created.");
 	}
@@ -101,7 +101,7 @@ Any AffineTransform_invert (AffineTransform me) {
 	return thee;
 }
 
-TableOfReal AffineTransform_extractMatrix (AffineTransform me) {
+autoTableOfReal AffineTransform_extractMatrix (AffineTransform me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my n, my n);
 		NUMmatrix_copyElements (my r, thy data, 1, my n, 1, my n);
@@ -111,19 +111,19 @@ TableOfReal AffineTransform_extractMatrix (AffineTransform me) {
 			TableOfReal_setRowLabel (thee.peek(), i, label);
 			TableOfReal_setColumnLabel (thee.peek(), i, label);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": transformation matrix not extracted.");
 	}
 }
 
-TableOfReal AffineTransform_extractTranslationVector (AffineTransform me) {
+autoTableOfReal AffineTransform_extractTranslationVector (AffineTransform me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (1, my n);
 		for (long i = 1; i <= my n; i++) {
 			thy data[1][i] = my t[i];
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": translation vector not extracted.");
 	}

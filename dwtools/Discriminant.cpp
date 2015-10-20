@@ -1,6 +1,6 @@
 /* Discriminant.c
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ void structDiscriminant :: v_info () {
 	MelderInfo_writeLine (U"Number of observations (total): ", Discriminant_getNumberOfObservations (this, 0));
 }
 
-Discriminant Discriminant_create (long numberOfGroups, long numberOfEigenvalues, long dimension) {
+autoDiscriminant Discriminant_create (long numberOfGroups, long numberOfEigenvalues, long dimension) {
 	try {
 		autoDiscriminant me = Thing_new (Discriminant);
 		my numberOfGroups = numberOfGroups;
@@ -87,7 +87,7 @@ Discriminant Discriminant_create (long numberOfGroups, long numberOfEigenvalues,
 		my total = SSCP_create (dimension);
 		my aprioriProbabilities = NUMvector<double> (1, numberOfGroups);
 		my costs = NUMmatrix<double> (1, numberOfGroups, 1, numberOfGroups);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Discriminant not created.");
 	}
@@ -150,7 +150,7 @@ void Discriminant_setGroupLabels (Discriminant me, Strings thee) {
 	}
 }
 
-Strings Discriminant_extractGroupLabels (Discriminant me) {
+autoStrings Discriminant_extractGroupLabels (Discriminant me) {
 	try {
 		autoStrings thee = Thing_new (Strings);
 		thy strings = NUMvector<char32 *> (1, my numberOfGroups);
@@ -159,13 +159,13 @@ Strings Discriminant_extractGroupLabels (Discriminant me) {
 			char32 *name = Thing_getName ( (Thing) my groups -> item[i]);
 			thy strings[i] = Melder_dup (name);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": group labels not extracted.");
 	}
 }
 
-TableOfReal Discriminant_extractGroupCentroids (Discriminant me) {
+autoTableOfReal Discriminant_extractGroupCentroids (Discriminant me) {
 	try {
 		long m = my groups -> size, n = my dimension;
 		autoTableOfReal thee = TableOfReal_create (m, n);
@@ -176,13 +176,13 @@ TableOfReal Discriminant_extractGroupCentroids (Discriminant me) {
 			NUMvector_copyElements (sscp -> centroid, thy data[i], 1, n);
 		}
 		NUMstrings_copyElements ( ( (SSCP) my groups -> item[m]) -> columnLabels, thy columnLabels, 1, n);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": group centroids not extracted.");
 	}
 }
 
-TableOfReal Discriminant_extractGroupStandardDeviations (Discriminant me) {
+autoTableOfReal Discriminant_extractGroupStandardDeviations (Discriminant me) {
 	try {
 		long m = my groups -> size, n = my dimension;
 		autoTableOfReal thee = TableOfReal_create (m, n);
@@ -196,7 +196,7 @@ TableOfReal Discriminant_extractGroupStandardDeviations (Discriminant me) {
 			}
 		}
 		NUMstrings_copyElements ( ( (SSCP) my groups -> item[m]) -> columnLabels, thy columnLabels, 1, n);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": group standard deviations not extracted.");
 	}
@@ -218,7 +218,7 @@ double Discriminant_getWilksLambda (Discriminant me, long from) {
 	unstandardized u[j]: sqrt(N-g) * r[j]
 	standardized s[j]: u[j] sqrt (w[i][i] / (N-g))
 */
-TableOfReal Discriminant_extractCoefficients (Discriminant me, int choice) {
+autoTableOfReal Discriminant_extractCoefficients (Discriminant me, int choice) {
 	try {
 		int raw = choice == 0, standardized = choice == 2;
 		long nx = my dimension, ny = my numberOfEigenvalues;
@@ -227,9 +227,9 @@ TableOfReal Discriminant_extractCoefficients (Discriminant me, int choice) {
 		autoTableOfReal thee = TableOfReal_create (ny, nx + 1);
 		NUMstrings_copyElements (my total -> columnLabels, thy columnLabels, 1, nx);
 
-		autoSSCP within = 0;
+		autoSSCP within;
 		if (standardized) {
-			within.reset (Discriminant_extractPooledWithinGroupsSSCP (me));
+			within = Discriminant_extractPooledWithinGroupsSSCP (me);
 		}
 
 		TableOfReal_setColumnLabel (thee.peek(), nx + 1, U"constant");
@@ -238,7 +238,7 @@ TableOfReal Discriminant_extractCoefficients (Discriminant me, int choice) {
 		double scale = sqrt (total -> numberOfObservations - my numberOfGroups);
 		double *centroid = my total -> centroid;
 		for (long i = 1; i <= ny; i++) {
-			double u0 = 0, ui;
+			double u0 = 0.0, ui;
 			for (long j = 1; j <= nx; j++) {
 				if (standardized) {
 					scale = sqrt (within -> data[j][j]);
@@ -246,9 +246,9 @@ TableOfReal Discriminant_extractCoefficients (Discriminant me, int choice) {
 				thy data[i][j] = ui = scale * my eigenvectors[i][j];;
 				u0 += ui * centroid[j];
 			}
-			thy data[i][nx + 1] = raw ? 0 : -u0;
+			thy data[i][nx + 1] = raw ? 0.0 : -u0;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": coefficients not extracted.");
 	}
@@ -320,22 +320,22 @@ double Discriminant_getLnDeterminant_total (Discriminant me) {
 	return ln_d;
 }
 
-SSCP Discriminant_extractPooledWithinGroupsSSCP (Discriminant me) {
+autoSSCP Discriminant_extractPooledWithinGroupsSSCP (Discriminant me) {
 	return SSCPs_to_SSCP_pool (my groups);
 }
 
-SSCP Discriminant_extractWithinGroupSSCP (Discriminant me, long index) {
+autoSSCP Discriminant_extractWithinGroupSSCP (Discriminant me, long index) {
 	try {
 		if (index < 1 || index > my numberOfGroups) Melder_throw
 			(U"Index must be in interval [1,", my numberOfGroups, U"].");
 		autoSSCP thee = Data_copy ( (SSCP) my groups -> item[index]);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": within group SSCP not created.");
 	}
 }
 
-SSCP Discriminant_extractBetweenGroupsSSCP (Discriminant me) {
+autoSSCP Discriminant_extractBetweenGroupsSSCP (Discriminant me) {
 	try {
 		long n = my total -> numberOfRows;
 		autoSSCP b = Data_copy (my total);
@@ -345,30 +345,24 @@ SSCP Discriminant_extractBetweenGroupsSSCP (Discriminant me) {
 				b -> data[j][i] = (b -> data[i][j] -= w -> data[i][j]);
 			}
 		}
-		return b.transfer();
+		return b;
 	} catch (MelderError) {
 		Melder_throw (me, U": between group SSCP not created.");
 	}
 }
 
-void Discriminant_drawTerritorialMap (Discriminant me, Graphics g,
-                                      int discriminantDirections, long d1, long d2, double xmin, double xmax,
-                                      double ymin, double ymax, int fontSize, int poolCovarianceMatrices,
-                                      int garnish) {
+void Discriminant_drawTerritorialMap (Discriminant me, Graphics g, int discriminantDirections, long d1, long d2, double xmin, double xmax, double ymin, double ymax, int fontSize, int poolCovarianceMatrices, int garnish) {
 	(void) me; (void) g; (void) discriminantDirections; (void) d1; (void) d2;
 	(void) xmin; (void) xmax; (void) ymin;
 	(void) ymax; (void) fontSize; (void) poolCovarianceMatrices; (void) garnish;
 
 }
 
-void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g,
-        double scale, int confidence, char32 *label, int discriminantDirections, long d1, long d2,
-        double xmin, double xmax, double ymin, double ymax, int fontSize, int garnish) {
+void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g, double scale, int confidence, char32 *label, int discriminantDirections, long d1, long d2, double xmin, double xmax, double ymin, double ymax, int fontSize, int garnish) {
 	long numberOfFunctions = Discriminant_getNumberOfFunctions (me);
 
 	if (! discriminantDirections) {
-		SSCPs_drawConcentrationEllipses (my groups, g, scale, confidence, label,
-		                                 d1, d2, xmin, xmax, ymin, ymax, fontSize, garnish);
+		SSCPs_drawConcentrationEllipses (my groups, g, scale, confidence, label, d1, d2, xmin, xmax, ymin, ymax, fontSize, garnish);
 		return;
 	}
 
@@ -406,7 +400,7 @@ void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g,
 	}
 }
 
-Discriminant TableOfReal_to_Discriminant (TableOfReal me) {
+autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 	try {
 		autoDiscriminant thee = Thing_new (Discriminant);
 		long dimension = my numberOfColumns;
@@ -477,13 +471,13 @@ Discriminant TableOfReal_to_Discriminant (TableOfReal me) {
 				thy costs[k][j] = thy costs[j][k] = 1;
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": Discriminant not created.");
 	}
 }
 
-Configuration Discriminant_and_TableOfReal_to_Configuration (Discriminant me, TableOfReal thee, long numberOfDimensions) {
+autoConfiguration Discriminant_and_TableOfReal_to_Configuration (Discriminant me, TableOfReal thee, long numberOfDimensions) {
 	try {
 		if (numberOfDimensions == 0) {
 			numberOfDimensions = Discriminant_getNumberOfFunctions (me);
@@ -493,7 +487,7 @@ Configuration Discriminant_and_TableOfReal_to_Configuration (Discriminant me, Ta
 		Eigen_and_TableOfReal_project_into (me, thee, 1, thy numberOfColumns, & thim, 1, numberOfDimensions);
 		TableOfReal_copyLabels (thee, thim, 1, 0);
 		TableOfReal_setSequentialColumnLabels (him.peek(), 0, 0, U"Eigenvector ", 1, 1);
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"Configuration not created.");
 	}
@@ -521,7 +515,7 @@ static double mahalanobisDistanceSq (double **li, long n, double *v, double *m,
 	return chisq;
 }
 
-TableOfReal Discriminant_and_TableOfReal_mahalanobis (Discriminant me, TableOfReal thee, long group, bool poolCovarianceMatrices) {
+autoTableOfReal Discriminant_and_TableOfReal_mahalanobis (Discriminant me, TableOfReal thee, long group, bool poolCovarianceMatrices) {
 	try {
 		if (group < 1 || group > my numberOfGroups) {
 			Melder_throw (U"Group does not exist.");
@@ -529,29 +523,29 @@ TableOfReal Discriminant_and_TableOfReal_mahalanobis (Discriminant me, TableOfRe
 		autoSSCP pool = SSCPs_to_SSCP_pool (my groups);
 		autoCovariance covg = SSCP_to_Covariance (pool.peek(), my numberOfGroups);
 		autoCovariance cov = SSCP_to_Covariance ( (SSCP) my groups -> item[group], 1);
-		autoTableOfReal him = 0;
+		autoTableOfReal him;
 		if (poolCovarianceMatrices) { // use group mean instead of overall mean!
 			NUMvector_copyElements (cov -> centroid, covg -> centroid, 1, cov -> numberOfColumns);
 			him.reset (Covariance_and_TableOfReal_mahalanobis (covg.peek(), thee, false));
 		} else {
 			him.reset (Covariance_and_TableOfReal_mahalanobis (cov.peek(), thee, false));
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal not created.");
 	}
 }
 
-ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Discriminant me, TableOfReal thee,
+autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Discriminant me, TableOfReal thee,
         int poolCovarianceMatrices, int useAprioriProbabilities) {
 	try {
 		long g = Discriminant_getNumberOfGroups (me);
 		long p = Eigen_getDimensionOfComponents (me);
 		long m = thy numberOfRows;
 
-		if (p != thy numberOfColumns) Melder_throw
-			(U"The number of columns does not agree with the dimension of the discriminant.");
-
+		if (p != thy numberOfColumns) {
+			Melder_throw (U"The number of columns does not agree with the dimension of the discriminant.");
+		}
 		autoNUMvector<double> log_p (1, g);
 		autoNUMvector<double> log_apriori (1, g);
 		autoNUMvector<double> ln_determinant (1, g);
@@ -570,7 +564,7 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Discrim
 		}
 
 		double lnd;
-		autoSSCPs agroups = 0; SSCPs groups;
+		autoSSCPs agroups; SSCPs groups;
 		if (poolCovarianceMatrices) {
 			/*
 				Covariance matrix S can be decomposed as S = L.L'. Calculate L^-1.
@@ -588,7 +582,8 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Discrim
 			// Calculate the inverses of all group covariance matrices.
 			// In case of a singular matrix, substitute inverse of pooled.
 
-			agroups.reset (Data_copy ( (SSCPs) my groups)); groups = agroups.peek();
+			agroups = Data_copy ((SSCPs) my groups);
+			groups = agroups.peek();
 			long npool = 0;
 			for (long j = 1; j <= g; j++) {
 				SSCP t = (SSCP) groups -> item[j];
@@ -659,14 +654,13 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Discrim
 				his data[i][j] = log_p[j] / norm;
 			}
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"ClassificationTable from Discriminant & TableOfReal not created.");
 	}
 }
 
-ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (Discriminant me, TableOfReal thee,
-        int poolCovarianceMatrices, int useAprioriProbabilities, double alpha, double minProb, TableOfReal *displacements) {
+autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (Discriminant me, TableOfReal thee, int poolCovarianceMatrices, int useAprioriProbabilities, double alpha, double minProb, autoTableOfReal *displacements) {
 	try {
 		long g = Discriminant_getNumberOfGroups (me);
 		long p = Eigen_getDimensionOfComponents (me);
@@ -696,7 +690,7 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (Disc
 		}
 
 		double lnd;
-		autoSSCPs agroups = 0; SSCPs groups;
+		autoSSCPs agroups; SSCPs groups;
 		if (poolCovarianceMatrices) {
 			// Covariance matrix S can be decomposed as S = L.L'. Calculate L^-1.
 			// L^-1 will be used later in the Mahalanobis distance calculation:
@@ -712,7 +706,8 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (Disc
 			//Calculate the inverses of all group covariance matrices.
 			// In case of a singular matrix, substitute inverse of pooled.
 
-			agroups.reset (Data_copy ( (SSCPs) my groups)); groups = agroups.peek();
+			agroups = Data_copy ((SSCPs) my groups); 
+			groups = agroups.peek();
 			long npool = 0;
 			for (long j = 1; j <= g; j++) {
 				SSCP t = (SSCP) groups -> item[j];
@@ -800,18 +795,18 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (Disc
 				}
 			}
 		}
-		*displacements = adisplacements.transfer();
-		return him.transfer();
+		*displacements = adisplacements.move();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"ClassificationTable for Weenink procedure not created.");
 	}
 }
 
-Configuration TableOfReal_to_Configuration_lda (TableOfReal me, long numberOfDimensions) {
+autoConfiguration TableOfReal_to_Configuration_lda (TableOfReal me, long numberOfDimensions) {
 	try {
 		autoDiscriminant thee = TableOfReal_to_Discriminant (me);
 		autoConfiguration him = Discriminant_and_TableOfReal_to_Configuration (thee.peek(), me, numberOfDimensions);
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": Configuration with lda data not created.");
 	}
@@ -820,4 +815,4 @@ Configuration TableOfReal_to_Configuration_lda (TableOfReal me, long numberOfDim
 #undef MAX
 #undef MIN
 
-/* End of file Discriminant.c 1043*/
+/* End of file Discriminant.cpp */

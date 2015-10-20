@@ -49,11 +49,11 @@ void structContingencyTable :: v_info () {
 	MelderInfo_writeLine (U"  Probability: ", ContingencyTable_chisqProbability (this));
 }
 
-ContingencyTable ContingencyTable_create (long numberOfRows, long numberOfColumns) {
+autoContingencyTable ContingencyTable_create (long numberOfRows, long numberOfColumns) {
 	try {
 		autoContingencyTable me = Thing_new (ContingencyTable);
 		TableOfReal_init (me.peek(), numberOfRows, numberOfColumns);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ContingencyTable not created.");
 	}
@@ -213,23 +213,22 @@ void ContingencyTable_entropies (ContingencyTable me, double *h, double *hx, dou
 }
 
 
-ContingencyTable Confusion_to_ContingencyTable (Confusion me) {
+autoContingencyTable Confusion_to_ContingencyTable (Confusion me) {
 	try {
 		autoContingencyTable thee = Thing_new (ContingencyTable);
 		my structTableOfReal :: v_copy (thee.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to ContingencyTable.");
 	}
 }
 
-ContingencyTable TableOfReal_to_ContingencyTable (I) {
-	iam (TableOfReal);
+autoContingencyTable TableOfReal_to_ContingencyTable (TableOfReal me) {
 	try {
 		TableOfReal_checkPositive (me);
 		autoContingencyTable thee = Thing_new (ContingencyTable);
 		my structTableOfReal :: v_copy (thee.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to ContingencyTable.");
 	}
