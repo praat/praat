@@ -3184,17 +3184,21 @@ CODE (U"nocheck Remove")
 NORMAL (U"This would cause the script to continue even if there is nothing to remove.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 6.9. Calling from the command line", U"ppgb", 20151012)
+MAN_BEGIN (U"Scripting 6.9. Calling from the command line", U"ppgb", 20151020)
 INTRO (U"Previous sections of this tutorial have shown you how to run a Praat script from the Script window. "
 	"However, you can also call a Praat script from the command line (text console) instead. "
 	"Information that would normally show up in the Info window, then goes to %stdout, "
 	"and error messages go to %stderr. "
-	"You cannot use commands that create windows, such as ##View & Edit#.")
+	"You cannot use commands in your script that create windows, such as ##View & Edit#. "
+	"Before describing how to achieve this (from section 4 below on), we first describe "
+	"how the normal Praat, with its usual Objects and Picture (and perhaps Info) window, "
+	"can be started from the command line.")
 
 ENTRY (U"1. Starting Praat from the command line")
-NORMAL (U"You should first know that calling Praat from the command line just starts up Praat, "
-	"with its two windows. For instance, on Windows you can start the Command Prompt window (the \"Console\"), "
-	"and type")
+NORMAL (U"Before seeing how a Praat script can be called from the command line, "
+	"you should first know that just calling Praat from the command line just starts up Praat "
+	"with its usual GUI (Graphical User Interface), i.e. with its two windows. "
+	"For instance, on Windows you can start the Command Prompt window (the \"Console\"), and type")
 CODE (U"\"C:\\bsProgram Files\\bsPraat.exe\"")
 NORMAL (U"(including the quotes) if Praat.exe is indeed in the folder $$C:\\bsProgram Files$.")
 NORMAL (U"On the Mac, the executable is hidden inside the $$app$ file, so you open a Terminal window "
@@ -3232,9 +3236,11 @@ NORMAL (U"Note that on all three platforms, you have to supply quotes around the
 	"the Console or Terminal use spaces for separating commands and arguments.")
 
 ENTRY (U"4. Calling Praat to run a script")
+NORMAL (U"Now we are ready to discuss how to run Praat without a GUI.")
 NORMAL (U"On Windows, when you type")
 CODE (U"\"C:\\bsProgram Files\\bsPraat.exe\" --run \"my script.praat\"")
-NORMAL (U"Praat will execute the script $$my script.praat$$ without showing Praat's usual two windows. "
+NORMAL (U"Praat will execute the script $$my script.praat$$ without showing Praat's GUI, "
+	"i.e. without showing its usual two windows. "
 	"In fact, any output that would normally go to the Info window, "
 	"will now go directly to the Console window in which you typed te command. "
 	"If Praat was already running when you typed the command, "
@@ -3293,7 +3299,11 @@ NORMAL (U"A disadvantage of the $$os.system$ method is that you have to use quot
 CODE (U"import subprocess")
 CODE (U"subprocess.call(['C:\\bs\\bsProgram Files\\bs\\bsPraat.exe', '--run', 'testCommandLineCalls.praat', 'I love you', '0.4', 'Me too'])")
 NORMAL (U"This way you specify the arguments directly, with quotes only because they are all strings, "
-	"but without having to worry about spaces.")
+	"but without having to worry about spaces. And perhaps even more importantly, this syntax "
+	"makes it easy to use variables as arguments, as in:")
+CODE (U"first_line = 'I love you'")
+CODE (U"second_line = 'me too'")
+CODE (U"subprocess.call(['C:\\bs\\bsProgram Files\\bs\\bsPraat.exe', '--run', 'testCommandLineCalls.praat', first_line, '0.4', second_line])")
 
 ENTRY (U"7. Running Praat interactively from the command line")
 NORMAL (U"On the Mac and Linux, you have the possibility of running the program interactively from the command line:")
@@ -3306,10 +3316,11 @@ ENTRY (U"8. Calling Praat from a web server")
 NORMAL (U"If you call Praat from a web server, you typically do not want to read and write its preferences and buttons files. "
 	"To achieve this, you use the ##--no-pref-files# command line option before the script name:")
 CODE (U"> /users/apache/praat --run --no-pref-files /user/apache/scripts/computeAnalysis.praat 1234 blibla")
-ENTRY (U"Command line options")
-TAG (U"##-a#, ##--ansi#")
-DEFINITION (U"On Windows: use ISO Latin-1 encoding instead of the Console's native UTF-16 Little Endian encoding. "
-	"This is not recommended, but might be necessary if you want to use Praat in a pipe or redirection.")
+
+ENTRY (U"9. All command line options")
+TAG (U"##--run")
+DEFINITION (U"Instead of as files to be opened in the GUI, the arguments are interpreted as a script file name "
+	"and the arguments of that script. Praat will run the script without a GUI and then quit.")
 TAG (U"##--no-pref-files#")
 DEFINITION (U"Ignore the preferences file and the buttons file at start-up, and don't write them when quitting (see above).")
 TAG (U"##--no-plugins#")
@@ -3317,6 +3328,10 @@ DEFINITION (U"Don't activate the plugins at start-up.")
 TAG (U"##--pref-dir=#/var/www/praat_plugins")
 DEFINITION (U"Set the preferences directory to /var/www/praat_plugins (for instance). "
 	"This can come in handy if you require access to preference files and/or plugins that are not in your home directory.")
+TAG (U"##-a#, ##--ansi#")
+DEFINITION (U"On Windows: use ISO Latin-1 encoding instead of the Console's native UTF-16 Little Endian encoding. "
+	"This is not recommended, but might be necessary if you want to use Praat in a pipe "
+	"or with redirection to a file.")
 MAN_END
 
 MAN_BEGIN (U"Scripting 7. Scripting the editors", U"ppgb", 20040222)

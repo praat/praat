@@ -27,8 +27,6 @@
 #ifdef _WIN32
 	#include "UnicodeData.h"
 	#include <windows.h>
-	#include <fcntl.h>
-	#include <io.h>
 #endif
 
 int Melder_debug = 0;
@@ -191,34 +189,6 @@ void Melder_writeToConsole (const char32 *message, bool useStderr) {
 		(void) useStderr;
 		static HANDLE console = nullptr;
 		if (! console) {
-			#if ! defined (CONSOLE_APPLICATION)
-				if (AttachConsole (ATTACH_PARENT_PROCESS)) {
-					/*
-					 * Redirect stdout to the console (note: no UTF-8!).
-					 */
-					HANDLE handle = GetStdHandle (STD_OUTPUT_HANDLE);
-					int fileHandle = _open_osfhandle ((intptr_t) handle, _O_TEXT);
-					FILE* f = _fdopen (fileHandle, "w");
-					*stdout = *f;
-					setvbuf (stdout, NULL, _IONBF, 0);
-					/*
-					 * Redirect stderr to the console (note: no UTF-8!).
-					 */
-					handle = GetStdHandle (STD_ERROR_HANDLE);
-					fileHandle = _open_osfhandle ((intptr_t) handle, _O_TEXT);
-					f = _fdopen (fileHandle, "w");
-					*stderr = *f;
-					setvbuf (stderr, NULL, _IONBF, 0);
-					/*
-					 * Redirect stdin from the console (note: no UTF-8!).
-					 */
-					handle = GetStdHandle (STD_INPUT_HANDLE);
-					fileHandle = _open_osfhandle ((intptr_t) handle, _O_TEXT);
-					f = _fdopen (fileHandle, "r");
-					*stdin = *f;
-					setvbuf (stdin, NULL, _IONBF, 0);
-				}
-			#endif
 			console = CreateFileW (L"CONOUT$", GENERIC_WRITE, FILE_SHARE_WRITE, nullptr, OPEN_EXISTING, 0, 0);
 		}
 		if (Melder_consoleIsAnsi) {
