@@ -105,6 +105,7 @@ const char * espeakdata_get_voicedata (const char *data, long ndata, char *buf, 
 	while (i < nbuf && *index < ndata && ((buf[i] = data[i]) != '\n')) {
 		i++; (*index)++;
 	}
+	(*index)++;   // ppgb 20151020 fix
 	long idata = i + 1;
 	buf[i] = '\0';
 	while (--i >= 0 && ESPEAK_ISSPACE (buf[i])) {

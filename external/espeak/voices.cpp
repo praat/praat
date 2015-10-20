@@ -672,7 +672,7 @@ voice_t *LoadVoice(const char *vname, int control)
 #ifdef DATA_FROM_SOURCECODE_FILES
 	long index = 0;
 	const char *start = data;
-	while (start = espeakdata_get_voicedata (start, numberOfBytes, buf, sizeof(buf), &index)) {
+	while (!! (start = espeakdata_get_voicedata (start, numberOfBytes, buf, sizeof(buf), &index))) {
 #else
 	while((f_voice != NULL) && (fgets_strip(buf,sizeof(buf),f_voice) != NULL)) {
 #endif
