@@ -1,7 +1,7 @@
 # test_OnewayAnova.praat
 # djmw 20120625
 
-printline One-way Anova test
+printline test_OnewayAnova.praat
 
 # unequal groups hayes pg 371
 
@@ -14,7 +14,6 @@ total = extractNumber (report$, "Total")
 assert abs (between-22.57) < 0.01
 assert abs (within - 878.93) < 0.01
 assert abs (total - 901.5) < 0.1
+removeObject: table
 
-printline One-way Anova test OK
-
-
+printline test_OnewayAnova.praat OK

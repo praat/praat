@@ -27,7 +27,7 @@ oo_CLASS_CREATE (AffineTransform, Daata);
 
 void AffineTransform_init (AffineTransform me, long n);
 
-AffineTransform AffineTransform_create (long n);
+autoAffineTransform AffineTransform_create (long n);
 
 Any AffineTransform_invert (AffineTransform me);
 /*
@@ -35,8 +35,8 @@ Any AffineTransform_invert (AffineTransform me);
 		x = A^(-1)y - A^(-1) t
 */
 
-TableOfReal AffineTransform_extractMatrix (AffineTransform me);
+autoTableOfReal AffineTransform_extractMatrix (AffineTransform me);
 
-TableOfReal AffineTransform_extractTranslationVector (AffineTransform me);
+autoTableOfReal AffineTransform_extractTranslationVector (AffineTransform me);
 
 #endif /* _AffineTransform_h_ */

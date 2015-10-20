@@ -213,7 +213,7 @@ Categories KNN_classifyToCategories
     long istart = 1;
     long istop = chunksize;
 
-    Categories output = Categories_create();
+    Categories output = Categories_create().peek();
     KNN_input_ToCategories_t ** input = (KNN_input_ToCategories_t **) malloc(nthreads * sizeof(KNN_input_ToCategories_t *));
 
     if (!input)
@@ -393,7 +393,7 @@ TableOfReal KNN_classifyToTableOfReal
 {
     int nthreads = KNN_getNumberOfCPUs();
     long chunksize =  ps->ny / nthreads;
-    Categories uniqueCategories = Categories_selectUniqueItems(my output, 1);
+    Categories uniqueCategories = Categories_selectUniqueItems(my output, 1).peek();
     long ncategories = Categories_getSize(uniqueCategories);
    
     Melder_assert(nthreads > 0);
@@ -633,7 +633,7 @@ Categories KNN_classifyFold
         outputindices [noutputindices++] = freqindices [KNN_max (freqs.peek(), ncategories)];
     }
 
-    Categories output = Categories_create ();
+    Categories output = Categories_create ().peek();
 	for (long o = 0; o < noutputindices; o ++) {
 		Collection_addItem (output, Data_copy ((SimpleString) my output -> item [outputindices [o]]));
 	}

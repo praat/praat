@@ -2,7 +2,7 @@
 #define _Discriminant_h_
 /* Discriminant.h
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 #include "Discriminant_def.h"
 oo_CLASS_CREATE (Discriminant, Eigen);
 
-Discriminant Discriminant_create (long numberOfGroups, long numberOfEigenvalues, long dimension);
+autoDiscriminant Discriminant_create (long numberOfGroups, long numberOfEigenvalues, long dimension);
 
 long Discriminant_groupLabelToIndex (Discriminant me, const char32 *label);
 
@@ -49,6 +49,7 @@ double Discriminant_getConcentrationEllipseArea (Discriminant me, long group,
 	double scale, int confidence, int discriminantDirections, long d1, long d2);
 
 double Discriminant_getLnDeterminant_group (Discriminant me, long group);
+
 double Discriminant_getLnDeterminant_total (Discriminant me);
 
 void Discriminant_drawTerritorialMap (Discriminant me, Graphics g, int discriminantDirections,
@@ -60,35 +61,35 @@ void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g,
 	long d1, long d2, double xmin, double xmax, double ymin, double ymax,
 	int fontSize, int garnish);
 
-TableOfReal Discriminant_extractCoefficients (Discriminant me, int choice);
+autoTableOfReal Discriminant_extractCoefficients (Discriminant me, int choice);
 
-TableOfReal Discriminant_extractGroupCentroids (Discriminant me);
-TableOfReal Discriminant_extractGroupStandardDeviations (Discriminant me);
+autoTableOfReal Discriminant_extractGroupCentroids (Discriminant me);
 
-SSCP Discriminant_extractPooledWithinGroupsSSCP (Discriminant me);
-SSCP Discriminant_extractWithinGroupSSCP (Discriminant me, long index);
-SSCP Discriminant_extractBetweenGroupsSSCP (Discriminant me);
-Strings Discriminant_extractGroupLabels (Discriminant me);
+autoTableOfReal Discriminant_extractGroupStandardDeviations (Discriminant me);
+
+autoSSCP Discriminant_extractPooledWithinGroupsSSCP (Discriminant me);
+
+autoSSCP Discriminant_extractWithinGroupSSCP (Discriminant me, long index);
+
+autoSSCP Discriminant_extractBetweenGroupsSSCP (Discriminant me);
+
+autoStrings Discriminant_extractGroupLabels (Discriminant me);
+
 void Discriminant_setGroupLabels (Discriminant me, Strings thee);
 
-Configuration Discriminant_and_TableOfReal_to_Configuration
-	(Discriminant me, TableOfReal thee, long numberOfDimensions);
+autoConfiguration Discriminant_and_TableOfReal_to_Configuration	(Discriminant me, TableOfReal thee, long numberOfDimensions);
 
-ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable
-	(Discriminant me, TableOfReal thee, int poolCovarianceMatrices,
-	int useAprioriProbabilities);
+autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable
+	(Discriminant me, TableOfReal thee, int poolCovarianceMatrices,	int useAprioriProbabilities);
 
-ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw
-	(Discriminant me, TableOfReal thee, int poolCovarianceMatrices,
-	int useAprioriProbabilities, double alpha, double minProb,
-	TableOfReal *displacements);
+autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw
+	(Discriminant me, TableOfReal thee, int poolCovarianceMatrices,	int useAprioriProbabilities, double alpha, double minProb, autoTableOfReal *displacements);
 
-TableOfReal Discriminant_and_TableOfReal_mahalanobis (Discriminant me, TableOfReal thee, long group, bool poolCovarianceMatrices);
+autoTableOfReal Discriminant_and_TableOfReal_mahalanobis (Discriminant me, TableOfReal thee, long group, bool poolCovarianceMatrices);
 /* Mahalanobis distance with respect to group mean */
 
-Discriminant TableOfReal_to_Discriminant (TableOfReal me);
+autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me);
 
-Configuration TableOfReal_to_Configuration_lda (TableOfReal me,
-	long numberOfDimensions);
+autoConfiguration TableOfReal_to_Configuration_lda (TableOfReal me, long numberOfDimensions);
 
 #endif /* _Discriminant_h_ */

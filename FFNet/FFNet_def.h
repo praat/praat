@@ -36,8 +36,8 @@ oo_DEFINE_CLASS (FFNet, Daata)
 	oo_INT (nonLinearityType)
 
 	oo_INT (costFunctionType)
-
-	oo_COLLECTION (Categories, outputCategories, SimpleString, 0)
+	oo_AUTO_OBJECT (Categories, 0, outputCategories)
+	//oo_COLLECTION (Categories, outputCategories, SimpleString, 0)
 
 	oo_LONG (nWeights)	/* number of weights */
 

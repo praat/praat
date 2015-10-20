@@ -214,15 +214,14 @@ void structFFNet :: v_info () {
 	MelderInfo_writeLine (U"Number of nodes: ", nNodes);
 }
 
-void FFNet_init (FFNet me, long numberOfInputs, long nodesInLayer1, long nodesInLayer2,
-                 long numberOfOutputs, int outputsAreLinear) {
+void FFNet_init (FFNet me, long numberOfInputs, long nodesInLayer1, long nodesInLayer2, long numberOfOutputs, int outputsAreLinear) {
 	long numberOfLayers = 3;
 
 	if (numberOfInputs < 1) {
-		Melder_throw (U"Number of inputs must be a natrural number.");
+		Melder_throw (U"Number of inputs must be a natural number.");
 	}
 	if (numberOfOutputs < 1) {
-		Melder_throw (U"Number of outputs must be a natrural number.");
+		Melder_throw (U"Number of outputs must be a natural number.");
 	}
 	if (nodesInLayer1 < 1) {
 		numberOfLayers--;
@@ -254,7 +253,6 @@ void FFNet_init (FFNet me, long numberOfInputs, long nodesInLayer1, long nodesIn
 void FFNet_setOutputCategories (FFNet me, Categories thee) {
 	autoCategories uniq = Categories_selectUniqueItems (thee, 1);
 	if (uniq -> size == thy size) {
-		forget (my outputCategories);
 		my outputCategories = uniq.transfer();
 	}
 }
@@ -334,10 +332,11 @@ double FFNet_getWeight (FFNet me, long layer, long unit, long unit_from) {
 }
 
 void FFNet_reset (FFNet me, double wrange) {
-	for (long i = 1; i <= my nWeights; i++)
+	for (long i = 1; i <= my nWeights; i++) {
 		if (my wSelected[i]) {
 			my w[i] = NUMrandomUniform (-wrange, wrange);
 		}
+	}
 	for (long i = 1; i <= my nNodes; i++) {
 		my activity[i] = (my isbias[i] ? 1.0 : 0.0);
 	}
@@ -629,7 +628,7 @@ void FFNet_drawTopology (FFNet me, Graphics g) {
 			for (long j = 1; j <= my nOutputs; j++) {
 				Graphics_arrow (g, x2WC, y2WC + radius, x2WC, y2WC + radius + dy / 4.0);
 				if (my outputCategories) {
-					Categories_drawItem (my outputCategories, g, j, x2WC, y2WC + radius + dy / 4.0);
+					Categories_drawItem (my outputCategories.peek(), g, j, x2WC, y2WC + radius + dy / 4.0);
 				}
 				x2WC += dx2;
 			}

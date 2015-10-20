@@ -214,14 +214,16 @@ END
 DIRECT (AffineTransform_extractMatrix)
 	LOOP {
 		iam (AffineTransform);
-		praat_new (AffineTransform_extractMatrix (me), my name);
+		autoTableOfReal thee = AffineTransform_extractMatrix (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
 DIRECT (AffineTransform_extractTranslationVector)
 	LOOP {
 		iam (AffineTransform);
-		praat_new (AffineTransform_extractTranslationVector (me), my name);
+		autoTableOfReal thee = AffineTransform_extractTranslationVector (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -405,8 +407,9 @@ FORM (Configuration_varimax, U"Configuration: To Configuration (varimax)", U"Con
 DO
 	LOOP {
 		iam (Configuration);
-		praat_new (Configuration_varimax (me, GET_INTEGER (U"Normalize rows"), GET_INTEGER (U"Quartimax"),
-			GET_INTEGER (U"Maximum number of iterations"), GET_REAL (U"Tolerance")), my name, U"_varimax");
+		autoConfiguration thee = Configuration_varimax (me, GET_INTEGER (U"Normalize rows"), 
+			GET_INTEGER (U"Quartimax"), GET_INTEGER (U"Maximum number of iterations"), GET_REAL (U"Tolerance"));
+		praat_new (thee.transfer(), my name, U"_varimax");
 	}
 END
 
@@ -500,7 +503,8 @@ END
 DIRECT (Confusion_to_ContingencyTable)
 	LOOP {
 		iam (Confusion);
-		praat_new (Confusion_to_ContingencyTable (me), my name);
+		autoContingencyTable thee = Confusion_to_ContingencyTable (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -1563,14 +1567,16 @@ END
 DIRECT (TableOfReal_to_Configuration)
 	LOOP {
 		iam (TableOfReal);
-		praat_new (TableOfReal_to_Configuration (me), my name);
+		autoConfiguration thee = TableOfReal_to_Configuration (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
 DIRECT (TableOfReal_to_ContingencyTable)
 	LOOP {
 		iam (TableOfReal);
-		praat_new (TableOfReal_to_ContingencyTable (me), my name);
+		autoContingencyTable thee = TableOfReal_to_ContingencyTable (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -1651,7 +1657,8 @@ END
 DIRECT (TableOfReal_to_Confusion)
 	LOOP {
 		iam (TableOfReal);
-		praat_new (TableOfReal_to_Confusion (me), my name);
+		autoConfusion thee = TableOfReal_to_Confusion (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 

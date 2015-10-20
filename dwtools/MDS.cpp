@@ -2157,7 +2157,7 @@ static double func (Daata object, const double p[]) {
 
 	// Calculate interpoint distances from the configuration
 
-	autoDistance dist = Configuration_to_Distance (my configuration);
+	autoDistance dist = Configuration_to_Distance (my configuration.peek());
 
 	// Monotone regression
 
@@ -2203,7 +2203,7 @@ static double func (Daata object, const double p[]) {
 /* Precondition: configuration was not changed since previous call to func */
 static void dfunc (Daata object, const double * /* p */, double dp[]) {
 	Kruskal me = (Kruskal) object;
-	Configuration thee = my configuration;
+	Configuration thee = my configuration.peek();
 
 	long k = 1;
 	for (long i = 1; i <= thy numberOfRows; i++) {
@@ -2217,7 +2217,6 @@ Thing_implement (Kruskal, Thing, 0);
 
 void structKruskal :: v_destroy () {
 	NUMmatrix_free<double> (dx, 1, 1);
-	forget (configuration);
 	forget (proximities);
 	forget (vec);
 	forget (minimizer);
@@ -2360,7 +2359,7 @@ Configuration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configurati
 		}
 
 		autoKruskal thee = Kruskal_create (my numberOfRows, his numberOfColumns);
-		TableOfReal_copyLabels (me, thy configuration, 1, 0);
+		TableOfReal_copyLabels (me, thy configuration.peek(), 1, 0);
 		autoDissimilarity dissimilarity = Data_copy (me);
 		Collection_addItem (thy proximities, dissimilarity.transfer());
 		thy vec = Dissimilarity_to_MDSVec (me);
@@ -2371,7 +2370,7 @@ Configuration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configurati
 
 		thy stress_formula = stress_formula;
 		thy process = tiesProcessing;
-		Configuration_setMetric (thy configuration, his metric);
+		Configuration_setMetric (thy configuration.peek(), his metric);
 
 		Minimizer_minimizeManyTimes (thy minimizer, numberOfRepetitions, numberOfIterations, tolerance);
 
@@ -2379,7 +2378,7 @@ Configuration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configurati
 
 		(void) func ((Daata) thee.peek(), ((Minimizer) (thy minimizer)) -> p);
 
-		autoConfiguration result = Data_copy (thy configuration);
+		autoConfiguration result = Data_copy (thy configuration.peek());
 		return result.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, U": no Configuration created.");

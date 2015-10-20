@@ -249,7 +249,7 @@ Thing_define (Kruskal, Thing) {
 		int process;
 		int measurementLevel;
 		int conditionality;
-		Configuration configuration;
+		autoConfiguration configuration;
 		Proximities proximities;
 		int stress_formula;
 		MDSVec vec;

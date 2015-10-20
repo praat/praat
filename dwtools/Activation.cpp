@@ -40,37 +40,34 @@ int _Activation_checkElements (Activation me) {
 }
 
 void Activation_init (Activation me, long ny, long nx) {
-	double xmin = 1, xmax = nx, dx = 1, x1 = 1, ymin = 1, ymax = ny;
-	double dy = 1, y1 = 1;
-	my ny = ny; my nx = nx;
-	Matrix_init (me, xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1);
+	Matrix_init (me, 1.0, nx, nx, 1.0, 1.0, 1.0, ny, ny, 1.0, 1.0);
 }
 
-Activation Activation_create (long ny, long nx) {
+autoActivation Activation_create (long ny, long nx) {
 	try {
 		autoActivation me = Thing_new (Activation);
 		Activation_init (me.peek(), ny, nx);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Activation not created.");
 	}
 }
 
-Activation Matrix_to_Activation (Matrix me) {
+autoActivation Matrix_to_Activation (Matrix me) {
 	try {
 		autoActivation thee = Activation_create (my ny, my nx);
 		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Activation.");
 	}
 }
 
-Matrix Activation_to_Matrix (Activation me) {
+autoMatrix Activation_to_Matrix (Activation me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
 		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
 	}

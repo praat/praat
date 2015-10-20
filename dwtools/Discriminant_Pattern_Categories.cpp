@@ -1,6 +1,6 @@
 /* Discriminant_Pattern_Categories.cpp
  *
- * Copyright (C) 2004-2011 David Weenink
+ * Copyright (C) 2004-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,24 +25,22 @@
 #include "TableOfReal.h"
 #include "Matrix_Categories.h"
 
-Discriminant Pattern_and_Categories_to_Discriminant (Pattern me, Categories thee) {
+autoDiscriminant Pattern_and_Categories_to_Discriminant (Pattern me, Categories thee) {
 	try {
 		autoTableOfReal t = Matrix_and_Categories_to_TableOfReal (me, thee);
 		autoDiscriminant him = TableOfReal_to_Discriminant (t.peek());
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"Discriminant not created from Pattern & Categories.");
 	}
 }
 
-Categories Discriminant_and_Pattern_to_Categories (Discriminant me, Pattern thee,
-        int poolCovarianceMatrices, int useAprioriProbabilities) {
+autoCategories Discriminant_and_Pattern_to_Categories (Discriminant me, Pattern thee, int poolCovarianceMatrices, int useAprioriProbabilities) {
 	try {
 		autoTableOfReal t = Matrix_to_TableOfReal (thee);
-		autoClassificationTable ct = Discriminant_and_TableOfReal_to_ClassificationTable (me, t.peek(),
-		                             poolCovarianceMatrices, useAprioriProbabilities);
+		autoClassificationTable ct = Discriminant_and_TableOfReal_to_ClassificationTable (me, t.peek(), poolCovarianceMatrices, useAprioriProbabilities);
 		autoCategories him =  ClassificationTable_to_Categories_maximumProbability (ct.peek());
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"Categories not created from Pattern & Discriminant.");
 	}

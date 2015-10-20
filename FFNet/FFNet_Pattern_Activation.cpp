@@ -136,15 +136,15 @@ void FFNet_Pattern_Activation_learnSD (FFNet me, Pattern p, Activation a, long m
 
 void FFNet_Pattern_Activation_learnSM (FFNet me, Pattern p, Activation a, long maxNumOfEpochs, double tolerance, Any parameters, int costFunctionType) {
 	int resetMinimizer = 0;
-	/*
-		Did we choose another minimizer
-	*/
-	if (my minimizer != nullptr && ! Thing_isa (my minimizer, classVDSmagtMinimizer)) {
+
+	// Did we choose another minimizer
+
+	if (my minimizer && ! Thing_isa (my minimizer, classVDSmagtMinimizer)) {
 		forget (my minimizer);
 		resetMinimizer = 1;
 	}
-	/* create the minimizer if it doesn't exist */
-	if (my minimizer == nullptr) {
+	// create the minimizer if it doesn't exist
+	if (! my minimizer) {
 		resetMinimizer = 1;
 		my minimizer = (Minimizer) VDSmagtMinimizer_create (my dimension, me, func, dfunc_optimized);
 	}

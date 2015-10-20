@@ -1,6 +1,6 @@
 /* DTW.cpp
  *
- * Copyright (C) 1993-2013 David Weenink
+ * Copyright (C) 1993-2013, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,10 +86,9 @@ void structDTW :: v_info () {
 static void DTW_drawWarpX_raw (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double tx, int garnish, int inset);
 static void DTW_paintDistances_raw (DTW me, Graphics g, double xmin, double xmax, double ymin,
                                     double ymax, double minimum, double maximum, int garnish, int inset);
-static void DTW_drawPath_raw (DTW me, Graphics g, double xmin, double xmax, double ymin,
-                              double ymax, int garnish, int inset);
+static void DTW_drawPath_raw (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, int garnish, int inset);
 static double _DTW_and_Sounds_getPartY (Graphics g, double dtw_part_x);
-static void DTW_findPath_special (DTW me, int matchStart, int matchEnd, int slope, Matrix *cummulativeDists);
+static void DTW_findPath_special (DTW me, int matchStart, int matchEnd, int slope, autoMatrix *cummulativeDists);
 /*
 	Two 'slope lines, lh and ll, start in the lower left corner, the upper/lower has the maximum/minimum allowed slope.
 	Two other lines, ru and rl, end in the upper-right corner. The upper/lower line have minimum/maximum slope.
@@ -397,15 +396,14 @@ void DTW_pathRemoveRedundantNodes (DTW me) {
 
 /* Prototype must be on y-axis and test on x-axis */
 
-DTW DTW_create (double tminp, double tmaxp, long ntp, double dtp, double t1p,
-                double tminc, double tmaxc, long ntc, double dtc, double t1c) {
+autoDTW DTW_create (double tminp, double tmaxp, long ntp, double dtp, double t1p, double tminc, double tmaxc, long ntc, double dtc, double t1c) {
 	try {
 		autoDTW me = Thing_new (DTW);
 		Matrix_init (me.peek(), tminc, tmaxc, ntc, dtc, t1c, tminp, tmaxp, ntp, dtp, t1p);
 		my path = NUMvector<structDTW_Path> (1, ntc + ntp - 1);
 		DTW_Path_Query_init (& my pathQuery, ntp, ntc);
 		my wx = 1; my wy = 1; my wd = 2;
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"DTW not created.");
 	}
@@ -415,7 +413,7 @@ void DTW_setWeights (DTW me, double wx, double wy, double wd) {
 	my wx = wx; my wy = wy; my wd = wd;
 }
 
-DTW DTW_swapAxes (DTW me) {
+autoDTW DTW_swapAxes (DTW me) {
 	try {
 		autoDTW thee = DTW_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
 
@@ -429,7 +427,7 @@ DTW DTW_swapAxes (DTW me) {
 			thy path[i].x = my path[i].y;
 			thy path[i].y = my path[i].x;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": axes not swapped.");
 	}
@@ -657,8 +655,7 @@ static void DTW_drawPath_raw (DTW me, Graphics g, double xmin, double xmax, doub
 	}
 }
 
-void DTW_drawPath (DTW me, Graphics g, double xmin, double xmax, double ymin,
-                   double ymax, int garnish) {
+void DTW_drawPath (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, int garnish) {
 	DTW_drawPath_raw (me, g, xmin, xmax, ymin, ymax, garnish, 1);
 }
 
@@ -833,11 +830,11 @@ void DTW_and_Sounds_drawWarpX (DTW me, Sound yy, Sound xx, Graphics g, double xm
 	}
 }
 
-Matrix DTW_to_Matrix_distances (DTW me) {
+autoMatrix DTW_to_Matrix_distances (DTW me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
 		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": distances not converted to Matrix.");
 	}
@@ -898,10 +895,8 @@ void DTW_drawDistancesAlongPath (DTW me, Graphics g, double xmin, double xmax, d
 /*
 	metric = 1...n (sum (a_i^n))^(1/n)
 */
-DTW Matrices_to_DTW (I, thou, int matchStart, int matchEnd, int slope, double metric) {
+autoDTW Matrices_to_DTW (Matrix me, Matrix thee, int matchStart, int matchEnd, int slope, double metric) {
 	try {
-		iam (Matrix); thouart (Matrix);
-
 		if (thy ny != my ny) {
 			Melder_throw (U"Columns must have the same dimensions.");
 		}
@@ -936,13 +931,13 @@ DTW Matrices_to_DTW (I, thou, int matchStart, int matchEnd, int slope, double me
 			}
 		}
 		DTW_findPath (him.peek(), matchStart, matchEnd, slope);
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"DTW not created from matrices.");
 	}
 }
 
-DTW Spectrograms_to_DTW (Spectrogram me, Spectrogram thee, int matchStart, int matchEnd, int slope, double metric) {
+autoDTW Spectrograms_to_DTW (Spectrogram me, Spectrogram thee, int matchStart, int matchEnd, int slope, double metric) {
 	try {
 		if (my xmin != thy xmin || my ymax != thy ymax || my ny != thy ny) {
 			Melder_throw (U"The number of frequencies and/or frequency ranges do not match.");
@@ -965,7 +960,7 @@ DTW Spectrograms_to_DTW (Spectrogram me, Spectrogram thee, int matchStart, int m
 		}
 
 		autoDTW him = Matrices_to_DTW (m1.peek(), m2.peek(), matchStart, matchEnd, slope, metric);
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"DTW not created from Spectrograms.");
 	}
@@ -986,8 +981,8 @@ static int Pitch_findFirstAndLastVoicedFrame (Pitch me, long *first, long *last)
 	return *first <= my nx && *last >= 1;
 }
 
-DTW Pitches_to_DTW_sgc (Pitch me, Pitch thee, double vuv_costs, double time_weight, int matchStart, int matchEnd, int slope);
-DTW Pitches_to_DTW_sgc (Pitch me, Pitch thee, double vuv_costs, double time_weight, int matchStart, int matchEnd, int slope) { // vuv_costs=24, time_weight=10 ?
+autoDTW Pitches_to_DTW_sgc (Pitch me, Pitch thee, double vuv_costs, double time_weight, int matchStart, int matchEnd, int slope);
+autoDTW Pitches_to_DTW_sgc (Pitch me, Pitch thee, double vuv_costs, double time_weight, int matchStart, int matchEnd, int slope) { // vuv_costs=24, time_weight=10 ?
 	try {
 		if (vuv_costs < 0) {
 			Melder_throw (U"Voiced-unvoiced costs may not be negative.");
@@ -998,7 +993,7 @@ DTW Pitches_to_DTW_sgc (Pitch me, Pitch thee, double vuv_costs, double time_weig
 
 		long myfirst, mylast, thyfirst, thylast;
 		if (! Pitch_findFirstAndLastVoicedFrame (me, &myfirst, &mylast) ||
-		        ! Pitch_findFirstAndLastVoicedFrame (thee, &thyfirst, &thylast)) {
+			! Pitch_findFirstAndLastVoicedFrame (thee, &thyfirst, &thylast)) {
 			Melder_throw (U"No voiced frames.");
 		}
 		/*
@@ -1034,14 +1029,13 @@ DTW Pitches_to_DTW_sgc (Pitch me, Pitch thee, double vuv_costs, double time_weig
 			}
 		}
 		DTW_findPath (him.peek(), matchStart, matchEnd, slope);
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"DTW not created from Pitches.");
 	}
 }
 
-DTW Pitches_to_DTW (Pitch me, Pitch thee, double vuv_costs, double time_weight, int matchStart,
-                    int matchEnd, int slope) { // vuv_costs=24, time_weight=10 ?
+autoDTW Pitches_to_DTW (Pitch me, Pitch thee, double vuv_costs, double time_weight, int matchStart, int matchEnd, int slope) { // vuv_costs=24, time_weight=10 ?
 	try {
 		if (vuv_costs < 0) {
 			Melder_throw (U"Voiced-unvoiced costs must not be negative.");
@@ -1078,13 +1072,13 @@ DTW Pitches_to_DTW (Pitch me, Pitch thee, double vuv_costs, double time_weight, 
 		}
 
 		DTW_findPath (him.peek(), matchStart, matchEnd, slope);
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"DTW not created from Pitches.");
 	}
 }
 
-DurationTier DTW_to_DurationTier (DTW me) {
+autoDurationTier DTW_to_DurationTier (DTW me) {
 	(void) me;
 	DurationTier thee = nullptr;
 	return thee;
@@ -1112,12 +1106,12 @@ void DTW_and_Matrix_replace (DTW me, Matrix thee) {
 /****************** new implementation ********/
 
 void DTW_findPath (DTW me, int matchStart, int matchEnd, int slope) {
-    DTW_findPath_special (me, matchStart, matchEnd, slope, 0);
+    DTW_findPath_special (me, matchStart, matchEnd, slope, nullptr);
 }
 
-Matrix DTW_to_Matrix_cummulativeDistances (DTW me, double sakoeChibaBand, int slope) {
+autoMatrix DTW_to_Matrix_cummulativeDistances (DTW me, double sakoeChibaBand, int slope) {
     try {
-        Matrix cummulativeDistances;
+        autoMatrix cummulativeDistances;
         DTW_findPath_bandAndSlope (me, sakoeChibaBand, slope, &cummulativeDistances);
         return cummulativeDistances;
     } catch (MelderError) {
@@ -1195,7 +1189,7 @@ static void DTW_and_Polygon_setUnreachableParts (DTW me, Polygon thee, long **ps
 }
 
 #define DTW_ISREACHABLE(y,x) ((psi[y][x] != DTW_UNREACHABLE) && (psi[y][x] != DTW_FORBIDDEN))
-static void DTW_findPath_special (DTW me, int matchStart, int matchEnd, int slope, Matrix *cummulativeDists) {
+static void DTW_findPath_special (DTW me, int matchStart, int matchEnd, int slope, autoMatrix *cummulativeDists) {
     (void) matchStart;
     (void) matchEnd;
 	try {
@@ -1213,7 +1207,7 @@ static void getIntersectionPoint (double x1, double y1, double x2, double y2, do
     *y3 = a * *x3 + y1 - a * x1;
 }
 
-Polygon DTW_to_Polygon (DTW me, double band, int slope) {
+autoPolygon DTW_to_Polygon (DTW me, double band, int slope) {
     try {
         DTW_checkSlopeConstraints (me, band, slope);
         double slopes[5] = { DTW_BIG, DTW_BIG, 3, 2, 1.5 } ;
@@ -1224,7 +1218,7 @@ Polygon DTW_to_Polygon (DTW me, double band, int slope) {
                 thy x[2] = my xmin; thy y[2] = my ymax;
                 thy x[3] = my xmax; thy y[3] = my ymax;
                 thy x[4] = my xmax; thy y[4] = my ymin;
-                return thee.transfer();
+                return thee;
             } else {
                 autoPolygon thee = Polygon_create (4);
                 thy x[1] = my xmin; thy y[1] = my ymin;
@@ -1244,7 +1238,7 @@ Polygon DTW_to_Polygon (DTW me, double band, int slope) {
                 if (y > my ymax) y = my ymax;
                 thy x[4] = x;
                 thy y[4] = y;
-                return thee.transfer();
+                return thee;
             }
         } else {
             if (slope == 1) {
@@ -1255,7 +1249,7 @@ Polygon DTW_to_Polygon (DTW me, double band, int slope) {
                 thy x[4] = my xmax; thy y[4] = my ymax;
                 thy x[5] = my xmax; thy y[5] = my ymax - band;
                 thy x[6] = my xmin + band; thy y[6] = my ymin;
-                return thee.transfer();
+                return thee;
             } else {
                 autoPolygon thee = Polygon_create (8);
                 double x, y;
@@ -1279,7 +1273,7 @@ Polygon DTW_to_Polygon (DTW me, double band, int slope) {
                 thy x[7] = x;
                 thy y[7] = y;
                 thy x[8] = my xmin + band; thy y[8] = my ymin;
-                return thee.transfer();
+                return thee;
             }
         }
     } catch (MelderError) {
@@ -1287,9 +1281,9 @@ Polygon DTW_to_Polygon (DTW me, double band, int slope) {
     }
 }
 
-Matrix DTW_and_Polygon_to_Matrix_cummulativeDistances (DTW me, Polygon thee, int localSlope) {
+autoMatrix DTW_and_Polygon_to_Matrix_cummulativeDistances (DTW me, Polygon thee, int localSlope) {
     try {
-        Matrix cummulativeDistances;
+        autoMatrix cummulativeDistances;
         DTW_and_Polygon_findPathInside (me, thee, localSlope, &cummulativeDistances);
         return cummulativeDistances;
     } catch (MelderError) {
@@ -1297,7 +1291,7 @@ Matrix DTW_and_Polygon_to_Matrix_cummulativeDistances (DTW me, Polygon thee, int
     }
 }
 
-void DTW_findPath_bandAndSlope (DTW me, double sakoeChibaBand, int localSlope, Matrix *cummulativeDists) {
+void DTW_findPath_bandAndSlope (DTW me, double sakoeChibaBand, int localSlope, autoMatrix *cummulativeDists) {
     try {
         autoPolygon thee = DTW_to_Polygon (me, sakoeChibaBand, localSlope);
         DTW_and_Polygon_findPathInside (me, thee.peek(), localSlope, cummulativeDists);
@@ -1306,7 +1300,7 @@ void DTW_findPath_bandAndSlope (DTW me, double sakoeChibaBand, int localSlope, M
     }
 }
 
-void DTW_and_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, Matrix *cummulativeDists) {
+void DTW_and_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, autoMatrix *cummulativeDists) {
     try {
         double slopes[5] = { DTW_BIG, DTW_BIG, 3, 2, 1.5 };
         long pathIndex = my nx + my ny - 1; /* Maximum path length */
@@ -1509,7 +1503,7 @@ void DTW_and_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, Matri
         }
 
         DTW_Path_recode (me);
-        if (cummulativeDists != 0) {
+        if (cummulativeDists) {
             autoMatrix him = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
                 my ymin, my ymax, my ny, my dy, my y1);
             for (long i = 1; i <= my ny; i++) {
@@ -1517,7 +1511,7 @@ void DTW_and_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, Matri
                     his z[i][j] = delta[i][j];
                 }
             }
-            *cummulativeDists = him.transfer();
+            *cummulativeDists = him.move();
         }
     } catch (MelderError) {
         Melder_throw (me, U": cannot find path.");

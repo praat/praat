@@ -2,7 +2,7 @@
 #define _Distance_h_
 /* Distance.h
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 Thing_define (Distance, Proximity) {
 };
 
-Distance Distance_create (long numberOfPoints);
+autoDistance Distance_create (long numberOfPoints);
 
 void Distance_drawDendogram (Distance me, Graphics g, int method);
 

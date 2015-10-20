@@ -79,12 +79,13 @@ void Minimizer_init (I, long nParameters, Daata object) {
 	my object = object;
 	my minimum = 1.0e30;
 	my after = classMinimizer_after;
-	Minimizer_reset (me, 0); /* added 27/11/97 */
+	Minimizer_reset (me, nullptr); /* added 27/11/97 */
 }
 
 void Minimizer_setParameters (Minimizer me, Any parameters) {
 	my v_setParameters (parameters);
 }
+
 static void monitor_off (Minimizer me) {
 	Melder_monitor (1.1);
 	if (my gmonitor) {
@@ -102,12 +103,11 @@ void Minimizer_minimize (Minimizer me, long maxNumOfIterations, double tolerance
 		}
 
 		if (my iteration + maxNumOfIterations > my maxNumOfIterations) {
-			double *history;
 			my maxNumOfIterations += maxNumOfIterations;
 			if (my history) {
 				my history++;    /* arrays start at 1 !! */
 			}
-			history = (double *) Melder_realloc (my history, my maxNumOfIterations * (int64) sizeof (double));
+			double *history = (double *) Melder_realloc (my history, my maxNumOfIterations * (int64) sizeof (double));
 			my history = --history; /* arrays start at 1 !! */
 		}
 		if (monitor) {
@@ -145,12 +145,12 @@ void Minimizer_minimizeManyTimes (Minimizer me, long numberOfTimes, long maxIter
 			NUMvector_copyElements (my p, popt.peek(), 1, my nParameters);
 			fopt = my minimum;
 		}
-		Minimizer_reset (me, 0);
+		Minimizer_reset (me, nullptr);
 		if (! monitorSingle) {
 			try {
-				Melder_progress ( (double) i / numberOfTimes, i, U" from ", numberOfTimes);
+				Melder_progress ((double) i / numberOfTimes, i, U" from ", numberOfTimes);
 			} catch (MelderError) {
-				Melder_clearError ();   // interrurpt, no error
+				Melder_clearError ();   // interrurpted, no error
 				break;
 			}
 		}
