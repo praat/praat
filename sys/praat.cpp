@@ -37,6 +37,11 @@
 #if defined (UNIX)
 	#include <unistd.h>
 #endif
+#if defined (_WIN32)
+	#include <windows.h>
+	#include <fcntl.h>
+	#include <io.h>
+#endif
 
 #include "praatP.h"
 #include "praat_script.h"
@@ -1014,6 +1019,35 @@ char** theArgv;
 unsigned int theArgumentNumber;
 
 void praat_init (const char32 *title, unsigned int argc, char **argv) {
+	#if defined (_WIN32) && ! defined (CONSOLE_APPLICATION)
+		if (AttachConsole (ATTACH_PARENT_PROCESS)) {
+			/*
+			 * Redirect stdout to the console (note: no UTF-8!).
+			 */
+			HANDLE handle = GetStdHandle (STD_OUTPUT_HANDLE);
+			int fileHandle = _open_osfhandle ((intptr_t) handle, _O_TEXT);
+			FILE* f = _fdopen (fileHandle, "w");
+			*stdout = *f;
+			setvbuf (stdout, NULL, _IONBF, 0);
+			printf ("attached to console\n");
+			/*
+			 * Redirect stderr to the console (note: no UTF-8!).
+			 */
+			handle = GetStdHandle (STD_ERROR_HANDLE);
+			fileHandle = _open_osfhandle ((intptr_t) handle, _O_TEXT);
+			f = _fdopen (fileHandle, "w");
+			*stderr = *f;
+			setvbuf (stderr, NULL, _IONBF, 0);
+			/*
+			 * Redirect stdin from the console (note: no UTF-8!).
+			 */
+			handle = GetStdHandle (STD_INPUT_HANDLE);
+			fileHandle = _open_osfhandle ((intptr_t) handle, _O_TEXT);
+			f = _fdopen (fileHandle, "r");
+			*stdin = *f;
+			setvbuf (stdin, NULL, _IONBF, 0);
+		}
+	#endif
 	theArgc = argc;
 	theArgv = argv;
 	theArgumentNumber = 0;
@@ -1607,6 +1641,7 @@ void praat_run (void) {
 		praat_sortMenuCommands ();
 		praat_sortActions ();
 
+		#ifndef macintosh
 		/*
 		 * If there are command line arguments left, then Praat may have been called from the command line like
 		 *    praat.exe hello.wav goodbye.TextGrid
@@ -1622,6 +1657,7 @@ void praat_run (void) {
 				Melder_flushError ();
 			}
 		}
+		#endif
 
 		praatP.phase = praat_HANDLING_EVENTS;
 

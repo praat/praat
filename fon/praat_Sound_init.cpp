@@ -2040,7 +2040,7 @@ FORM (SoundOutputPrefs, U"Sound playing preferences", 0) {
 	REAL (U"Silence after (s)", U"" xstr (kMelderAudio_outputSilenceAfter_DEFAULT))
 #ifdef USE_PULSEAUDIO
 	// Either pulse audio or portaudio
-	BOOLEAN (U"Use pulse audio", 0)
+	BOOLEAN (U"Use PulseAudio", false)
 #endif
 	OK2
 SET_ENUM (U"Maximum asynchronicity", kMelder_asynchronicityLevel, MelderAudio_getOutputMaximumAsynchronicity ())
@@ -2048,7 +2048,7 @@ SET_REAL (U"Silence before", MelderAudio_getOutputSilenceBefore ())
 SET_REAL (U"Silence after", MelderAudio_getOutputSilenceAfter ())
 #ifdef USE_PULSEAUDIO
 	bool outputUsesPortAudio = MelderAudio_getOutputUsesPortAudio ();
-SET_INTEGER (U"Use pulse audio", ! outputUsesPortAudio)
+SET_INTEGER (U"Use PulseAudio", ! outputUsesPortAudio)
 #endif
 DO
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
@@ -2056,7 +2056,7 @@ DO
 	MelderAudio_setOutputSilenceBefore (GET_REAL (U"Silence before"));
 	MelderAudio_setOutputSilenceAfter (GET_REAL (U"Silence after"));
 #ifdef USE_PULSEAUDIO
-	bool outputUsesPulseAudio = GET_INTEGER (U"Use pulse audio");
+	bool outputUsesPulseAudio = GET_INTEGER (U"Use PulseAudio");
 	MelderAudio_setOutputUsesPortAudio (! outputUsesPulseAudio);
 #endif
 END2 }

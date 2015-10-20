@@ -228,7 +228,7 @@ LIST_ITEM (U"4. Those action commands that match the currently selected objects 
 NORMAL (U"To execute any of these blue commands, just click on it.")
 MAN_END
 
-MAN_BEGIN (U"buttons file", U"ppgb", 20071204)
+MAN_BEGIN (U"buttons file", U"ppgb", 20151020)
 NORMAL (U"The file into which changes in the availability and visibility of commands in the fixed "
 	"and dynamic menus are recorded.")
 NORMAL (U"The buttons file is written to disk when you quit Praat, "
@@ -243,12 +243,12 @@ NORMAL (U"To hide a built-in command from a fixed or dynamic menu, or to make a 
 	"you typically use the @ButtonEditor.")
 ENTRY (U"Where is the buttons file?")
 NORMAL (U"The buttons file is in your Praat @@preferences directory@.")
-NORMAL (U"On Unix the file is called #buttons5, "
-	"for instance ##/people/miep/.praat-dir/buttons5#.")
-NORMAL (U"On Macintosh it is called #Buttons5, "
+NORMAL (U"On Windows the file is called ##Buttons5.ini#, "
+	"for instance ##C:\\bsUsers\\bsMiep\\bsPraat\\bsButtons5.ini#.")
+NORMAL (U"On MacOS it is called #Buttons5, "
 	"for instance ##/Users/miep/Library/Preferences/Praat Prefs/Buttons5#.")
-NORMAL (U"On Windows it is called ##Buttons5.ini#, "
-	"for instance ##C:\\bsDocuments and Settings\\bsMiep\\bsPraat\\bsButtons5.ini#.")
+NORMAL (U"On Linux it is called #buttons5, "
+	"for instance ##/home/miep/.praat-dir/buttons5#.")
 MAN_END
 
 MAN_BEGIN (U"Calculator", U"ppgb", 20021201)
@@ -1190,32 +1190,23 @@ NORMAL (U"This macro mechanism is much more flexible than the usual opaque macro
 	"See the @Scripting tutorial for all the things that you can do in scripts.")
 MAN_END
 
-MAN_BEGIN (U"initialization script", U"ppgb", 20150607)
+MAN_BEGIN (U"initialization script", U"ppgb", 20151020)
 INTRO (U"Your initialization script is a normal @@Praat script@ that is run as soon as you start Praat.")
-#if defined (UNIX) || defined (macintosh)
 NORMAL (U"On Unix or MacOS X, you create an initialization script by creating a file named \"praat-startUp\" "
 	"in the directory /usr/local, "
 	"or putting a file \".praat-user-startUp\" or \"praat-user-startUp\" in your home directory "
 	"(if you rename the Praat executable, these names have to change as well).")
 NORMAL (U"If you have more than one of these files, they are run in the above order.")
-#elif defined (_WIN32)
-NORMAL (U"On Windows NT or XP, you create an initialization script by creating a file named "
+NORMAL (U"On Windows, you create an initialization script by creating a file named "
 	"\"praat-user-startUp\" in your home directory, "
-	"which on my Windows XP computer is C:\\bsDocuments and Settings\\bsPaul.")
+	"which could be C:\\bsUsers\\bsMiep if you are Miep.")
 NORMAL (U"If you have both of these files, they are run in the above order.")
-#endif
 ENTRY (U"Example")
 NORMAL (U"If you like to be greeted by your husband when Praat starts up, "
 	"you could put the following lines in your initialization script:")
-#if defined (UNIX)
-	CODE (U"Read from file: \"/u/miep/helloMiep.wav\"")
-#elif defined (macintosh)
-	CODE (U"Read from file: \"/Users/miep/helloMiep.wav\"")
-#elif defined (_WIN32)
-	CODE (U"Read from file: \"C:\\bsUsers\\bsMiep\\bshelloMiep.wav\"")
-#else
-	#error Some audio file reading example should go here
-#endif
+CODE (U"Read from file: \"C:\\bsUsers\\bsMiep\\bshelloMiep.wav\"   ! Windows")
+CODE (U"Read from file: \"/Users/miep/helloMiep.wav\"   ! Mac")
+CODE (U"Read from file: \"/home/miep/helloMiep.wav\"   ! Linux")
 CODE (U"Play")
 CODE (U"Remove")
 ENTRY (U"What not to use an initialization script for")
@@ -1270,7 +1261,7 @@ FORMULA (U"(1 / (0.463\\.c0.072)) (10^^(0.072/10)(10log(%I/%I__0_))^ \\-- 1) "
 	"= 30 \\.c (1.0167^^SL^ \\-- 1)")
 MAN_END
 
-MAN_BEGIN (U"plug-ins", U"ppgb", 20140212)
+MAN_BEGIN (U"plug-ins", U"ppgb", 20151020)
 INTRO (U"Experienced Praat script writers can distribute their product as a plug-in to Praat.")
 ENTRY (U"The Praat plug-in mechanism")
 NORMAL (U"When Praat starts up, it will execute all Praat scripts called ##setup.praat# "
@@ -1292,9 +1283,9 @@ NORMAL (U"(If you ran this script, Praat would install those two commands in the
 	"but you are now going to install them in a different way.)")
 NORMAL (U"You now put the three scripts in a new directory called ##plugin_Queak#, "
 	"and put this directory in your Praat preferences directory. If you are on Windows, "
-	"you will now have a directory called something like ##C:\\bsDocuments and Settings\\bsYour Name\\bsPraat\\bsplugin_Queak#.")
+	"you will now have a directory called something like ##C:\\bsUsers\\bsYour Name\\bsPraat\\bsplugin_Queak#.")
 NORMAL (U"If you now start up Praat, Praat will automatically execute the script "
-	"##C:\\bsDocuments and Settings\\bsYour Name\\bsPraat\\bsplugin_Queak\\bssetup.praat# "
+	"##C:\\bsUsers\\bsYour Name\\bsPraat\\bsplugin_Queak\\bssetup.praat# "
 	"and thereby install the two buttons. The two buttons will %not be remembered in the buttons file, "
 	"but they will be installed at every Praat start-up. De-installation involves removing (or renaming) the ##plugin_Queak# directory.")
 NORMAL (U"To distribute the Queak plug-in among your colleague guinea pig researchers, you can use any installer program to put "
@@ -1336,19 +1327,19 @@ INTRO (U"An executable text that consists of menu commands and action commands."
 NORMAL (U"See the @Scripting tutorial.")
 MAN_END
 
-MAN_BEGIN (U"preferences directory", U"ppgb", 20101204)
+MAN_BEGIN (U"preferences directory", U"ppgb", 20151020)
 INTRO (U"The Praat preferences directory is the directory where Praat saves the @@preferences file@ and the @@buttons file@, "
 	"and where you can install @@plug-ins@ and save the preferences of your scripts (in your subdirectory of the #apps subdirectory). "
 	"If the preferences directory does not exist, it will automatically be created when you start Praat.")
-ENTRY (U"Unix")
-NORMAL (U"If your home directory is ##/people/miep/#, your Praat preferences directory will be ##/people/miep/.praat-dir/#.")
+ENTRY (U"Windows")
+NORMAL (U"If you are user #Miep, your Praat preferences directory will be ##C:\\bsUsers\\bsMiep\\bsPraat\\bs#.")
 ENTRY (U"Macintosh")
 NORMAL (U"If you are user #miep, your Praat preferences directory will be ##/Users/miep/Library/Preferences/Praat Prefs/#.")
-ENTRY (U"Windows")
-NORMAL (U"If you are user #Miep, your Praat preferences directory will be ##C:\\bsDocuments and Settings\\bsMiep\\bsPraat\\bs#.")
+ENTRY (U"Linux")
+NORMAL (U"If your home directory is ##/home/miep/#, your Praat preferences directory will be ##/home/miep/.praat-dir/#.")
 MAN_END
 
-MAN_BEGIN (U"preferences file", U"ppgb", 20071205)
+MAN_BEGIN (U"preferences file", U"ppgb", 20151020)
 NORMAL (U"The file into which some of your preferences are saved across your sessions with Praat. "
 	"For instance, if you change the font used by the Picture window to Palatino and quit Praat, "
 	"the Picture-window font will still be Palatino when you start Praat again.")
@@ -1357,12 +1348,12 @@ NORMAL (U"The preferences file is written to disk when you quit Praat, "
 	"(but should not edit) with any text editor.")
 ENTRY (U"Where is the preferences file?")
 NORMAL (U"The preferences file is in your Praat @@preferences directory@.")
-NORMAL (U"On Unix the file is called #prefs5, "
-	"for instance ##/people/miep/.praat-dir/prefs5#.")
+NORMAL (U"On Windows it is called ##Preferences5.ini#, "
+	"for instance ##C:\\bsUsers\\bsMiep\\bsPraat\\bsPreferences5.ini#.")
 NORMAL (U"On Macintosh it is called #Prefs5, "
 	"for instance ##/Users/miep/Library/Preferences/Praat Prefs/Prefs5#.")
-NORMAL (U"On Windows it is called ##Preferences5.ini#, "
-	"for instance ##C:\\bsDocuments and Settings\\bsMiep\\bsPraat\\bsPreferences5.ini#.")
+NORMAL (U"On Linux the file is called #prefs5, "
+	"for instance ##/home/miep/.praat-dir/prefs5#.")
 MAN_END
 
 MAN_BEGIN (U"Scripting", U"ppgb", 20141012)
@@ -2975,7 +2966,7 @@ NORMAL (U"Most system commands are different on different platforms. "
 CODE (U"#runSystem: \"del \", directory\\$ , \"\\bs*.wav\"")
 NORMAL (U"on Windows, but")
 CODE (U"#runSystem: \"rm \", directory\\$ , \"/*.wav\"")
-NORMAL (U"on Macintosh and Unix.")
+NORMAL (U"on Macintosh and Linux.")
 NORMAL (U"The script will stop running if a system command returns an error. For instance,")
 CODE (U"#runSystem: \"rm \", directory\\$ , \"/*.wav\"")
 NORMAL (U"will stop the script if there are no WAV files in the directory. "
@@ -3143,11 +3134,11 @@ NORMAL (U"In this example, the default button is 2 (i.e. #OK), and the cancel bu
 	"and the variables $$learning_rate$, $directions and $$directions\\$ $ will not be changed (i.e. they might remain undefined).")
 MAN_END
 
-MAN_BEGIN (U"Scripting 6.7. Sending a message to another program", U"ppgb", 20140107)
+MAN_BEGIN (U"Scripting 6.7. Sending a message to another program", U"ppgb", 20151020)
 NORMAL (U"To send messages to running programs that use the Praat shell, "
 	"use $sendpraat (see @@Scripting 8. Controlling Praat from another program@).")
 NORMAL (U"To send a message to another running program that listens to a socket, "
-	"you can use the $sendsocket directive. This works on Unix and Windows only.")
+	"you can use the $sendsocket directive. This works on Linux and Windows only.")
 ENTRY (U"Example")
 NORMAL (U"Suppose we are in the Praat-shell program #Praat, which is a system for doing phonetics by computer. "
 	"From this program, we can send a message to the %%non%-Praat-shell program #MovieEdit, "
@@ -3193,17 +3184,21 @@ CODE (U"nocheck Remove")
 NORMAL (U"This would cause the script to continue even if there is nothing to remove.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 6.9. Calling from the command line", U"ppgb", 20151012)
+MAN_BEGIN (U"Scripting 6.9. Calling from the command line", U"ppgb", 20151020)
 INTRO (U"Previous sections of this tutorial have shown you how to run a Praat script from the Script window. "
 	"However, you can also call a Praat script from the command line (text console) instead. "
 	"Information that would normally show up in the Info window, then goes to %stdout, "
 	"and error messages go to %stderr. "
-	"You cannot use commands that create windows, such as ##View & Edit#.")
+	"You cannot use commands in your script that create windows, such as ##View & Edit#. "
+	"Before describing how to achieve this (from section 4 below on), we first describe "
+	"how the normal Praat, with its usual Objects and Picture (and perhaps Info) window, "
+	"can be started from the command line.")
 
 ENTRY (U"1. Starting Praat from the command line")
-NORMAL (U"You should first know that calling Praat from the command line just starts up Praat, "
-	"with its two windows. For instance, on Windows you can start the Command Prompt window (the \"Console\"), "
-	"and type")
+NORMAL (U"Before seeing how a Praat script can be called from the command line, "
+	"you should first know that just calling Praat from the command line just starts up Praat "
+	"with its usual GUI (Graphical User Interface), i.e. with its two windows. "
+	"For instance, on Windows you can start the Command Prompt window (the \"Console\"), and type")
 CODE (U"\"C:\\bsProgram Files\\bsPraat.exe\"")
 NORMAL (U"(including the quotes) if Praat.exe is indeed in the folder $$C:\\bsProgram Files$.")
 NORMAL (U"On the Mac, the executable is hidden inside the $$app$ file, so you open a Terminal window "
@@ -3241,9 +3236,11 @@ NORMAL (U"Note that on all three platforms, you have to supply quotes around the
 	"the Console or Terminal use spaces for separating commands and arguments.")
 
 ENTRY (U"4. Calling Praat to run a script")
+NORMAL (U"Now we are ready to discuss how to run Praat without a GUI.")
 NORMAL (U"On Windows, when you type")
 CODE (U"\"C:\\bsProgram Files\\bsPraat.exe\" --run \"my script.praat\"")
-NORMAL (U"Praat will execute the script $$my script.praat$$ without showing Praat's usual two windows. "
+NORMAL (U"Praat will execute the script $$my script.praat$$ without showing Praat's GUI, "
+	"i.e. without showing its usual two windows. "
 	"In fact, any output that would normally go to the Info window, "
 	"will now go directly to the Console window in which you typed te command. "
 	"If Praat was already running when you typed the command, "
@@ -3302,7 +3299,11 @@ NORMAL (U"A disadvantage of the $$os.system$ method is that you have to use quot
 CODE (U"import subprocess")
 CODE (U"subprocess.call(['C:\\bs\\bsProgram Files\\bs\\bsPraat.exe', '--run', 'testCommandLineCalls.praat', 'I love you', '0.4', 'Me too'])")
 NORMAL (U"This way you specify the arguments directly, with quotes only because they are all strings, "
-	"but without having to worry about spaces.")
+	"but without having to worry about spaces. And perhaps even more importantly, this syntax "
+	"makes it easy to use variables as arguments, as in:")
+CODE (U"first_line = 'I love you'")
+CODE (U"second_line = 'me too'")
+CODE (U"subprocess.call(['C:\\bs\\bsProgram Files\\bs\\bsPraat.exe', '--run', 'testCommandLineCalls.praat', first_line, '0.4', second_line])")
 
 ENTRY (U"7. Running Praat interactively from the command line")
 NORMAL (U"On the Mac and Linux, you have the possibility of running the program interactively from the command line:")
@@ -3315,10 +3316,11 @@ ENTRY (U"8. Calling Praat from a web server")
 NORMAL (U"If you call Praat from a web server, you typically do not want to read and write its preferences and buttons files. "
 	"To achieve this, you use the ##--no-pref-files# command line option before the script name:")
 CODE (U"> /users/apache/praat --run --no-pref-files /user/apache/scripts/computeAnalysis.praat 1234 blibla")
-ENTRY (U"Command line options")
-TAG (U"##-a#, ##--ansi#")
-DEFINITION (U"On Windows: use ISO Latin-1 encoding instead of the Console's native UTF-16 Little Endian encoding. "
-	"This is not recommended, but might be necessary if you want to use Praat in a pipe or redirection.")
+
+ENTRY (U"9. All command line options")
+TAG (U"##--run")
+DEFINITION (U"Instead of as files to be opened in the GUI, the arguments are interpreted as a script file name "
+	"and the arguments of that script. Praat will run the script without a GUI and then quit.")
 TAG (U"##--no-pref-files#")
 DEFINITION (U"Ignore the preferences file and the buttons file at start-up, and don't write them when quitting (see above).")
 TAG (U"##--no-plugins#")
@@ -3326,6 +3328,10 @@ DEFINITION (U"Don't activate the plugins at start-up.")
 TAG (U"##--pref-dir=#/var/www/praat_plugins")
 DEFINITION (U"Set the preferences directory to /var/www/praat_plugins (for instance). "
 	"This can come in handy if you require access to preference files and/or plugins that are not in your home directory.")
+TAG (U"##-a#, ##--ansi#")
+DEFINITION (U"On Windows: use ISO Latin-1 encoding instead of the Console's native UTF-16 Little Endian encoding. "
+	"This is not recommended, but might be necessary if you want to use Praat in a pipe "
+	"or with redirection to a file.")
 MAN_END
 
 MAN_BEGIN (U"Scripting 7. Scripting the editors", U"ppgb", 20040222)
@@ -3451,9 +3457,9 @@ LIST_ITEM (U"@@Scripting 8.2. The sendpraat program")
 LIST_ITEM (U"@@Scripting 8.3. The sendpraat directive")
 MAN_END
 
-MAN_BEGIN (U"Scripting 8.1. The sendpraat subroutine", U"ppgb", 20140212)
+MAN_BEGIN (U"Scripting 8.1. The sendpraat subroutine", U"ppgb", 20151020)
 INTRO (U"A subroutine for sending messages to a %running Praat. "
-	"Also a Unix, MacOS, or DOS console program with the same purpose.")
+	"Also a Windows console, MacOS, or Linux console program with the same purpose.")
 ENTRY (U"Syntax")
 LIST_ITEM (U"##sendpraat (void *#%display##, const char *#%program##, long #%timeOut##, char *#%text##);")
 ENTRY (U"Arguments")
@@ -3463,9 +3469,9 @@ DEFINITION (U"the display pointer if the subroutine is called from a running X p
 	"this argument is ignored.")
 TAG (U"%program")
 DEFINITION (U"the name of a running program that uses the Praat shell, e.g. \"Praat\" or \"ALS\". "
-	"The first letter may be specified as lower or upper case; it will be converted to lower case for Unix "
-	"and to upper case for Macintosh and Windows.")
-TAG (U"%timeOut (Unix and Macintosh only)")
+	"The first letter may be specified as lower or upper case; it will be converted "
+	"to upper case for Windows or MacOS and to lower case for Linux.")
+TAG (U"%timeOut (MacOS and Linux only)")
 DEFINITION (U"the number of seconds that sendpraat will wait for an answer "
 	"before writing an error message. A %timeOut of 0 means that "
 	"the message will be sent asynchronously, i.e., that sendpraat "
@@ -3479,7 +3485,7 @@ CODE (U"errorMessage = #sendpraat (NULL, \"praat\", 0, message);")
 CODE (U"if (errorMessage != NULL) fprintf (stderr, \"\\% s\", errorMessage);")
 NORMAL (U"This causes the program #Praat to quit (gracefully), because #Quit is a fixed "
 	"command in one of the menus of that program. "
-	"On Unix and Macintosh, sendpraat returns immediately; on Windows, the %timeOut argument is ignored. "
+	"On MacOS and Linux, sendpraat returns immediately; on Windows, the %timeOut argument is ignored. "
 	"The return value %errorMessage is a statically allocated string internal to sendpraat, "
 	"and is overwritten by the next call to sendpraat.")
 ENTRY (U"Example 2: playing a sound file in reverse")
@@ -3491,7 +3497,7 @@ CODE (U"sprintf (message, \"Read from file... \\% s\\bsnPlay reverse\\bsnRemove\
 CODE (U"errorMessage = #sendpraat (NULL, \"praat\", 1000, message);")
 NORMAL (U"This will work because ##Play reverse# is an action command "
 	"that becomes available in the dynamic menu when a Sound is selected. "
-	"On Unix, sendpraat will allow #Praat at most 1000 seconds to perform this.")
+	"On Linux, sendpraat will allow #Praat at most 1000 seconds to perform this.")
 ENTRY (U"Example 3: executing a large script file")
 NORMAL (U"Sometimes, it may be unpractical to send a large script directly to #sendpraat. "
 	"Fortunately, the receiving program knows #runScript:")
@@ -3515,8 +3521,8 @@ NORMAL (U"To start a program from the command line instead and sending it a mess
 	"See @@Scripting 6.9. Calling from the command line@.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 8.2. The sendpraat program", U"ppgb", 20140212)
-INTRO (U"A Unix or DOS console program for sending messages to a %running Praat program.")
+MAN_BEGIN (U"Scripting 8.2. The sendpraat program", U"ppgb", 20151020)
+INTRO (U"A Windows console or Unix (MacOS, Linux) terminal program for sending messages to a %running Praat program.")
 ENTRY (U"Syntax")
 CODE (U"#sendpraat [%timeOut] %program %message...")
 NORMAL (U"For the meaning of the arguments, see @@Scripting 8.1. The sendpraat subroutine|the sendpraat subroutine@.")
