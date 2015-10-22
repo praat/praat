@@ -48,32 +48,29 @@
 Thing_implement (Minimizer, Thing, 0);
 
 void structMinimizer :: v_destroy () {
-	NUMvector_free (p, 1);
-	NUMvector_free (history, 1);
+	NUMvector_free<double> (p, 1);
+	NUMvector_free<double> (history, 1);
 	Minimizer_Parent :: v_destroy ();
 }
 
-static void classMinimizer_after (I, Any aclosure) {
-	iam (Minimizer);
-	(void) aclosure;
+static void classMinimizer_after (Minimizer me, Any /* aclosure */) {
 
 	if (my success || ! my gmonitor) {
 		return;
 	}
 
 	if (my start == 1) {
-		Minimizer_drawHistory (me, my gmonitor, 0, my maxNumOfIterations, 0, 1.1 * my history[1], 1);
+		Minimizer_drawHistory (me, my gmonitor, 0, my maxNumOfIterations, 0.0, 1.1 * my history[1], 1);
 		Graphics_textTop (my gmonitor, false, Melder_cat (U"Dimension of search space: ", my nParameters));
 	}
 	Graphics_setInner (my gmonitor);
 	Graphics_line (my gmonitor, my iteration, my history[my iteration], my iteration, my history[my iteration]);
 	Graphics_unsetInner (my gmonitor);
-	Melder_monitor ( (double) (my iteration) / my maxNumOfIterations, U"Iterations: ", my iteration, 
+	Melder_monitor ((double) (my iteration) / my maxNumOfIterations, U"Iterations: ", my iteration, 
 		U", Function calls: ", my funcCalls, U", Cost: ", my minimum);
 }
 
-void Minimizer_init (I, long nParameters, Daata object) {
-	iam (Minimizer);
+void Minimizer_init (Minimizer me, long nParameters, Daata object) {
 	my nParameters = nParameters;
 	my p = NUMvector<double> (1, nParameters);
 	my object = object;
@@ -104,11 +101,11 @@ void Minimizer_minimize (Minimizer me, long maxNumOfIterations, double tolerance
 
 		if (my iteration + maxNumOfIterations > my maxNumOfIterations) {
 			my maxNumOfIterations += maxNumOfIterations;
-			if (my history) {
-				my history++;    /* arrays start at 1 !! */
+			if (my history) { // clumsy because vector must have been allocated  before one can append
+				NUMvector_append<double> (& my history, 1, & my maxNumOfIterations);
+			} else {
+				my history = NUMvector<double> (1, my maxNumOfIterations);
 			}
-			double *history = (double *) Melder_realloc (my history, my maxNumOfIterations * (int64) sizeof (double));
-			my history = --history; /* arrays start at 1 !! */
 		}
 		if (monitor) {
 			my gmonitor = (Graphics) Melder_monitor (0.0, U"Starting...");
@@ -161,7 +158,7 @@ void Minimizer_minimizeManyTimes (Minimizer me, long numberOfTimes, long maxIter
 	Minimizer_reset (me, popt.peek());
 }
 
-static void Minimizer_setAfterEachIteration (Minimizer me, void (*after) (I, Any aclosure), Any aclosure) {
+void Minimizer_setAfterEachIteration (Minimizer me, void (*after) (Minimizer me, Any aclosure), Any aclosure) {
 	my after = after;
 	my aclosure = aclosure;
 }
@@ -176,13 +173,8 @@ void Minimizer_reset (Minimizer me, const double guess[]) {
 			my p[i] = NUMrandomUniform (-1, 1);
 		}
 	}
-	/*
-		Don't use NUMdvector_free: realloc in Minimizer_minimize
-	*/
-	if (my history) {
-		my history++;
-		Melder_free (my history);
-	}
+
+	NUMvector_free<double> (my history, 1);
 	my maxNumOfIterations = my success = my funcCalls = my iteration = 0;
 	my minimum = 1.0e38;
 	my v_reset ();
@@ -191,10 +183,6 @@ void Minimizer_reset (Minimizer me, const double guess[]) {
 void Minimizer_drawHistory (Minimizer me, Graphics g, long iFrom, long iTo, double hmin, double hmax, int garnish) {
 	if (! my history) {
 		return;
-	}
-	autoNUMvector<double> history (1, my iteration);  // TODO why copy
-	for (long i = 1; i <= my iteration; i++) {
-		history[i] = my history[i];
 	}
 	if (iTo <= iFrom) {
 		iFrom = 1; iTo = my iteration;
@@ -207,7 +195,7 @@ void Minimizer_drawHistory (Minimizer me, Graphics g, long iFrom, long iTo, doub
 		itmax = my iteration;
 	}
 	if (hmax <= hmin) {
-		NUMvector_extrema (history.peek(), itmin, itmax, & hmin, & hmax);
+		NUMvector_extrema (my history, itmin, itmax, & hmin, & hmax);
 	}
 	if (hmax <= hmin) {
 		hmin -= 0.5 * fabs (hmin);
@@ -215,7 +203,7 @@ void Minimizer_drawHistory (Minimizer me, Graphics g, long iFrom, long iTo, doub
 	}
 	Graphics_setInner (g);
 	Graphics_setWindow (g, iFrom, iTo, hmin, hmax);
-	Graphics_function (g, history.peek(), itmin, itmax, itmin, itmax);
+	Graphics_function (g, my history, itmin, itmax, itmin, itmax);
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
@@ -322,7 +310,7 @@ void structVDSmagtMinimizer :: v_minimize () {
 		}
 		if (flag & 2) {
 			restart = 2; /* flag & 1 ??? */
-		} else if (fabs ( (double) gcg0) > 0.2 * gopt_sq) {
+		} else if (fabs ((double) gcg0) > 0.2 * gopt_sq) {
 			restart = 1;
 		}
 		if (restart == 0) {
@@ -419,11 +407,10 @@ void structVDSmagtMinimizer :: v_minimize () {
 				fch = fc - minimum;
 				gr2s = (grc - gropt) / dalpha;
 				temp = (fch + fch) / dalpha - grc - gropt;
-				if ( (fc < minimum) ||
-				        ( (fc == minimum) && (grc / gropt > -1))) {
+				if ((fc < minimum) || ((fc == minimum) && (grc / gropt > -1))) {
 					double *tmp;
 					gopt_sq = gsq;
-					history [this ->iteration] = minimum = fc;
+					history [this -> iteration] = minimum = fc;
 					tmp = p; p = pc; pc = tmp;
 					tmp = dp; dp = gc; gc = tmp;
 					if (grc *gropt <= 0) {
@@ -451,8 +438,7 @@ void structVDSmagtMinimizer :: v_minimize () {
 				} else {
 					alplim = alpha;
 				}
-			} while (lineSearch_iteration
-			         <= lineSearchMaxNumOfIterations);
+			} while (lineSearch_iteration <= lineSearchMaxNumOfIterations);
 
 			fc = history [this -> iteration] = minimum;
 			rtemp = 0.0;
@@ -488,13 +474,13 @@ void structVDSmagtMinimizer :: v_minimize () {
 }
 
 void structVDSmagtMinimizer :: v_destroy () {
-	NUMvector_free (dp, 1);
-	NUMvector_free (pc, 1);
-	NUMvector_free (gc, 1);
-	NUMvector_free (g0, 1);
-	NUMvector_free (s, 1);
-	NUMvector_free (srst, 1);
-	NUMvector_free (grst, 1);
+	NUMvector_free<double> (dp, 1);
+	NUMvector_free<double> (pc, 1);
+	NUMvector_free<double> (gc, 1);
+	NUMvector_free<double> (g0, 1);
+	NUMvector_free<double> (s, 1);
+	NUMvector_free<double> (srst, 1);
+	NUMvector_free<double> (grst, 1);
 	VDSmagtMinimizer_Parent :: v_destroy ();
 }
 
@@ -510,8 +496,7 @@ void structVDSmagtMinimizer :: v_setParameters (Any parameters) {
 	}
 }
 
-VDSmagtMinimizer VDSmagtMinimizer_create (long nParameters, Daata object, double (*func) (Daata object, const double x[]),
-        void (*dfunc) (Daata object, const double x[], double dx[])) {
+VDSmagtMinimizer VDSmagtMinimizer_create (long nParameters, Daata object, double (*func) (Daata object, const double x[]), void (*dfunc) (Daata object, const double x[], double dx[])) {
 	try {
 		autoVDSmagtMinimizer me = Thing_new (VDSmagtMinimizer);
 		Minimizer_init (me.peek(), nParameters, object);
