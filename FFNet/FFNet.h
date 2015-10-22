@@ -123,7 +123,7 @@ void FFNet_init (FFNet me, long numberOfInputs, long nodesInLayer1, long nodesIn
 autoFFNet FFNet_create (long numberOfInputs, long numberInLayer1, long numberInLayer2,
 	long numberOfOutputs, int outputsAreLinear	);
 
-char32 * FFNet_createNameFromTopology (FFNet me);
+autostring32 FFNet_createNameFromTopology (FFNet me);
 /* Create names as <inputs>-<outputs>, <inputs>-<hidden>-<outputs>,
 	<inputs>-<hidden1>-<hidden2>-<outputs> for 1, 2 or 3 layer networks.
 */

@@ -87,25 +87,24 @@ static void FFNet_checkLayerNumber (FFNet me, long layer) {
 	}
 }
 
-char32 *FFNet_createNameFromTopology (FFNet me) {
+autostring32 FFNet_createNameFromTopology (FFNet me) {
 	autoMelderString name;
 	MelderString_copy (&name, my nUnitsInLayer[0]);
 	for (long i = 1; i <= my nLayers; i++) {
 		MelderString_appendCharacter (&name, U'-');
 		MelderString_append (&name, my nUnitsInLayer[i]);
 	}
-	return Melder_dup (name.string);
+	autostring32 naam = Melder_dup (name.string);
+	return naam.transfer();
 }
 
 /****** non-linearities ****************************************************/
 
-static double sigmoid (I, double x, double *deriv) {
+static double sigmoid (FFNet /*me*/, double x, double *deriv) {
 	double act = NUMsigmoid (x);
-	(void) void_me;
 	*deriv = act * (1.0 - act);
 	return act;
 }
-
 
 /* ******************* cost functions ****************************************/
 
@@ -115,8 +114,7 @@ static double sigmoid (I, double x, double *deriv) {
 		if target < activity ==> error < 0
 */
 
-static double minimumSquaredError (I, const double target[]) {
-	iam (FFNet);
+static double minimumSquaredError (FFNet me, const double target[]) {
 	long k = my nNodes - my nOutputs + 1;
 	double cost = 0.0;
 	for (long i = 1; i <= my nOutputs; i++, k++) {
@@ -129,8 +127,7 @@ static double minimumSquaredError (I, const double target[]) {
 /* E = - sum (i=1; i=nPatterns; sum (k=1;k=nOutputs; t[k]*ln (o[k]) + (1-t[k])ln (1-o[k]))) */
 /* dE/do[k] = -(1-t[k])/ (1-o[k]) + t[k]/o[k] */
 /* werkt niet bij (grote?) netten */
-static double minimumCrossEntropy (I, const double target[]) {
-	iam (FFNet);
+static double minimumCrossEntropy (FFNet me, const double target[]) {
 	long k = my nNodes - my nOutputs + 1;
 	double cost = 0.0;
 
@@ -706,8 +703,9 @@ void FFNet_drawWeights (FFNet me, Graphics g, long layer, int garnish) {
 }
 
 void FFNet_drawCostHistory (FFNet me, Graphics g, long iFrom, long iTo, double costMin, double costMax, int garnish) {
-	if (my minimizer) Minimizer_drawHistory (my minimizer, g, iFrom, iTo,
-		        costMin, costMax, 0);
+	if (my minimizer) {
+		Minimizer_drawHistory (my minimizer, g, iFrom, iTo, costMin, costMax, 0);
+	}
 	if (garnish) {
 		Graphics_drawInnerBox (g);
 		Graphics_textLeft (g, true, my costFunctionType == FFNet_COST_MSE ?

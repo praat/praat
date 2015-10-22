@@ -122,12 +122,12 @@ static void _FFNet_Pattern_Activation_learn (FFNet me, Pattern pattern, Activati
 void FFNet_Pattern_Activation_learnSD (FFNet me, Pattern p, Activation a, long maxNumOfEpochs, double tolerance, Any parameters, int costFunctionType) {
 	int resetMinimizer = 0;
 	/* Did we choose another minimizer */
-	if (my minimizer != 0 && ! Thing_isa (my minimizer, classSteepestDescentMinimizer)) {
+	if (my minimizer && ! Thing_isa (my minimizer, classSteepestDescentMinimizer)) {
 		forget (my minimizer);
 		resetMinimizer = 1;
 	}
 	/* create the minimizer if it doesn't exist */
-	if (my minimizer == nullptr) {
+	if (! my minimizer) {
 		resetMinimizer = 1;
 		my minimizer = (Minimizer) SteepestDescentMinimizer_create (my dimension, me, func, dfunc_optimized);
 	}
