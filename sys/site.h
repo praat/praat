@@ -19,10 +19,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-char32 *Site_getPrintCommand (void);
+char32 *Site_getPrintCommand ();
 void Site_setPrintCommand (const char32 *text);
 
-void Site_prefs (void);
+void Site_prefs ();
 
 /* End of file site.h */
 #endif

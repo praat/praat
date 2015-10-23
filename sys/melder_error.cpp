@@ -44,9 +44,9 @@ bool Melder_hasError () { return errors [0] != U'\0'; }
 
 bool Melder_hasError (const char32 *partialError) { return !! str32str (errors, partialError); }
 
-void Melder_clearError (void) { errors [0] = U'\0'; }
+void Melder_clearError () { errors [0] = U'\0'; }
 
-char32 * Melder_getError (void) { return & errors [0]; }
+char32 * Melder_getError () { return & errors [0]; }
 
 void Melder_appendError (Melder_1_ARG) {
 	appendError (arg1. _arg);

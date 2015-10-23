@@ -28,7 +28,7 @@
 
 #include "OTGrammar.h"
 
-OTGrammar OTGrammar_create_NPA_grammar (void) {
+OTGrammar OTGrammar_create_NPA_grammar () {
 	try {
 		OTGrammarCandidate candidate;
 		OTGrammarTableau tableau;
@@ -78,7 +78,7 @@ OTGrammar OTGrammar_create_NPA_grammar (void) {
 	}
 }
 
-PairDistribution OTGrammar_create_NPA_distribution (void) {
+PairDistribution OTGrammar_create_NPA_distribution () {
 	try {
 		autoPairDistribution me = PairDistribution_create ();
 		PairDistribution_add (me.peek(), U"at+ma", U"atma", 100);

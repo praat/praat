@@ -25,7 +25,7 @@
 static long theNumberOfCommands = 0;
 static struct structPraat_Command *theCommands;
 
-void praat_menuCommands_init (void) {
+void praat_menuCommands_init () {
 	theCommands = Melder_calloc_f (struct structPraat_Command, praat_MAXNUM_FIXED_COMMANDS + 1);
 }
 
@@ -46,7 +46,7 @@ static int compareMenuCommands (const void *void_me, const void *void_thee) {
 	return 1;
 }
 
-void praat_sortMenuCommands (void) {
+void praat_sortMenuCommands () {
 	for (long i = 1; i <= theNumberOfCommands; i ++)
 		theCommands [i]. sortingTail = i;
 	qsort (& theCommands [1], theNumberOfCommands, sizeof (struct structPraat_Command), compareMenuCommands);
@@ -436,7 +436,7 @@ int praat_doMenuCommand (const char32 *command, int narg, Stackel args, Interpre
 	return 1;
 }
 
-long praat_getNumberOfMenuCommands (void) { return theNumberOfCommands; }
+long praat_getNumberOfMenuCommands () { return theNumberOfCommands; }
 
 praat_Command praat_getMenuCommand (long i)
 	{ return i < 1 || i > theNumberOfCommands ? NULL : & theCommands [i]; }

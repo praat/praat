@@ -45,7 +45,7 @@
 
 Thing_implement (Art, Daata, 0);
 
-Art Art_create (void) {
+Art Art_create () {
 	return Thing_new (Art);
 }
 

@@ -848,8 +848,8 @@ END2 }
 // Setting callbacks                                                                   //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void praat_contrib_Ola_KNN_init (void);
-void praat_contrib_Ola_KNN_init (void)
+void praat_contrib_Ola_KNN_init ();
+void praat_contrib_Ola_KNN_init ()
 {
     Thing_recognizeClassesByName (classKNN, NULL);
     Thing_recognizeClassesByName (classFeatureWeights, NULL);

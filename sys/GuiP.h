@@ -292,7 +292,7 @@ class GuiControlBlockValueChangedCallbacks {
 		void _GuiText_handleFocusReception (GuiObject widget);
 		void _GuiText_handleFocusLoss (GuiObject widget);
 		#if mac
-		void _GuiMac_clearTheTextFocus (void);
+		void _GuiMac_clearTheTextFocus ();
 		#endif
 		void _GuiText_setTheTextFocus (GuiObject widget);
 		void _GuiText_handleValueChanged (GuiObject widget);
@@ -306,10 +306,10 @@ class GuiControlBlockValueChangedCallbacks {
 			int _GuiMacText_tryToHandleReturnKey (EventHandlerCallRef eventHandlerCallRef, EventRef eventRef, GuiObject widget, EventRecord *event);
 			int _GuiMacText_tryToHandleClipboardShortcut (EventHandlerCallRef eventHandlerCallRef, EventRef eventRef, GuiObject widget, unsigned char charCode, EventRecord *event);
 			void _GuiMacText_handleClick (GuiObject widget, EventRecord *event);
-			void _GuiMac_makeTextCaretBlink (void);
+			void _GuiMac_makeTextCaretBlink ();
 		#endif
-		void _GuiText_init (void);
-		void _GuiText_exit (void);
+		void _GuiText_init ();
+		void _GuiText_exit ();
 
 	#endif
 #endif

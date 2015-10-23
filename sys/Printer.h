@@ -39,14 +39,14 @@ extern struct Printer thePrinter;
 	int Printer_postScript_printf (void *stream, const char *format, ... );
 #endif
 #ifdef _WIN32
-	HDC Printer_getDC (void);
+	HDC Printer_getDC ();
 #endif
-int Printer_pageSetup (void);
-int Printer_postScriptSettings (void);
+int Printer_pageSetup ();
+int Printer_postScriptSettings ();
 int Printer_print (void (*draw) (I, Graphics g), I);
-void Printer_nextPage (void);
+void Printer_nextPage ();
 
-void Printer_prefs (void);
+void Printer_prefs ();
 
 /* End of file Printer.h */
 #endif

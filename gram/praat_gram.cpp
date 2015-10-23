@@ -1641,8 +1641,8 @@ END2 }
 
 /***** buttons *****/
 
-void praat_uvafon_gram_init (void);
-void praat_uvafon_gram_init (void) {
+void praat_uvafon_gram_init ();
+void praat_uvafon_gram_init () {
 	Thing_recognizeClassesByName (classNetwork, classOTGrammar, classOTHistory, classOTMulti, NULL);
 	Thing_recognizeClassByOtherName (classOTGrammar, U"OTCase");
 

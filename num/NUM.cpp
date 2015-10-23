@@ -58,7 +58,7 @@ void NUMscale (double *x, double xminfrom, double xmaxfrom, double xminto, doubl
 	else *x = xminto + (xmaxto - xminto) * ((*x - xminfrom) / (xmaxfrom - xminfrom));
 }
 
-void NUMinit (void) {
+void NUMinit () {
 	gsl_set_error_handler_off ();
 	NUMrandom_init ();
 }

@@ -796,8 +796,8 @@ static Any bdfFileRecognizer (int nread, const char *header, MelderFile file) {
 
 void praat_TimeTier_query_init (ClassInfo klas);   // Query buttons for time-based subclasses of AnyTier.
 
-void praat_EEG_init (void);
-void praat_EEG_init (void) {
+void praat_EEG_init ();
+void praat_EEG_init () {
 
 	Thing_recognizeClassesByName (classEEG, classERPTier, classERP, NULL);
 

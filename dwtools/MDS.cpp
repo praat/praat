@@ -1757,7 +1757,9 @@ double Distance_Weight_stress (Distance fit, Distance conf, Weight weight, int t
 	return stress;
 }
 
-void Distance_Weight_rawStressComponents (Distance fit, Distance conf, Weight weight, double *p_etafit, double *p_etaconf, double *p_rho) {
+void Distance_Weight_rawStressComponents (Distance fit, Distance conf, Weight weight,
+	double *p_etafit, double *p_etaconf, double *p_rho)
+{
 	long nPoints = conf -> numberOfRows;
 
 	double etafit = 0.0, etaconf = 0.0, rho = 0.0;

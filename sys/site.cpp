@@ -32,11 +32,11 @@
 
 static char32 printCommand [Preferences_STRING_BUFFER_SIZE];
 
-char32 * Site_getPrintCommand (void) { return printCommand; }
+char32 * Site_getPrintCommand () { return printCommand; }
 
 void Site_setPrintCommand (const char32 *text) { str32cpy (printCommand, text); }
 
-void Site_prefs (void) {
+void Site_prefs () {
 	Preferences_addString (U"Site.printCommand", printCommand, U"lp -c %s");
 }
 

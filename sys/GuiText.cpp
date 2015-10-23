@@ -145,7 +145,7 @@ void _GuiText_handleFocusLoss (GuiObject widget) {
 }
 
 #if mac
-void _GuiMac_clearTheTextFocus (void) {
+void _GuiMac_clearTheTextFocus () {
 	if (theGui.textFocus) {
 		GuiText textFocus = (GuiText) theGui.textFocus -> userData;
 		_GuiMac_clipOnParent (theGui.textFocus);
@@ -501,7 +501,7 @@ static int NativeText_getSelectionRange (GuiObject widget, long *out_left, long 
  * PACKAGE
  */
 
-void _GuiText_init (void) {
+void _GuiText_init () {
 	#if mac
 		//short font;
 		TXNMacOSPreferredFontDescription defaults = { 0 };
@@ -514,7 +514,7 @@ void _GuiText_init (void) {
 	#endif
 }
 
-void _GuiText_exit (void) {
+void _GuiText_exit () {
 	#if mac
 		TXNTerminateTextension (); 
 	#endif

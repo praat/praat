@@ -28,7 +28,7 @@ oo_CLASS_CREATE (PairProbability, Daata);
 oo_CLASS_CREATE (PairDistribution, Daata);
 
 PairProbability PairProbability_create (const char32 *string1, const char32 *string2, double weight);
-PairDistribution PairDistribution_create (void);
+PairDistribution PairDistribution_create ();
 
 const char32 * PairDistribution_getString1 (PairDistribution me, long pairNumber);
 const char32 * PairDistribution_getString2 (PairDistribution me, long pairNumber);

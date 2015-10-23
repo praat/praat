@@ -32,7 +32,7 @@ long Regression_getFactorIndexFromFactorName_e (Regression me, const char32 *fac
 Thing_define (LinearRegression, Regression) {
 };
 
-LinearRegression LinearRegression_create (void);
+LinearRegression LinearRegression_create ();
 
 LinearRegression Table_to_LinearRegression (Table me);
 

@@ -1918,7 +1918,7 @@ static ATSFontRef findFont (CFStringRef name) {
 	return fontRef;		
 }
 #endif
-bool _GraphicsMac_tryToInitializeFonts (void) {
+bool _GraphicsMac_tryToInitializeFonts () {
 #if useCarbon
 	if (theTimesAtsuiFont != 0) return true;   // once
 	theTimesAtsuiFont = findFont (CFSTR ("Times"));

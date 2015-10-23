@@ -225,7 +225,7 @@ void UiOutfile_do (I, const char32 *defaultName);
 
 MelderFile UiFile_getFile (I);
 
-void UiFile_hide (void);
+void UiFile_hide ();
 /*
 	Hides the visible UiFile that was opened most recently.
 	Normally, file selectors stay open until their okCallback has completed.
@@ -239,8 +239,8 @@ void UiFile_hide (void);
 void UiHistory_write (const char32 *string);
 void UiHistory_write_expandQuotes (const char32 *string);
 void UiHistory_write_colonize (const char32 *string);
-char32 *UiHistory_get (void);
-void UiHistory_clear (void);
+char32 *UiHistory_get ();
+void UiHistory_clear ();
 
 void Ui_setAllowExecutionHook (bool (*allowExecutionHook) (void *closure), void *allowExecutionClosure);
 

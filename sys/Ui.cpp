@@ -371,8 +371,8 @@ void UiHistory_write_colonize (const char32 *string) {
 		}
 	}
 }
-char32 *UiHistory_get (void) { return theHistory.string; }
-void UiHistory_clear (void) { MelderString_empty (& theHistory); }
+char32 *UiHistory_get () { return theHistory.string; }
+void UiHistory_clear () { MelderString_empty (& theHistory); }
 
 /***** class UiForm: dialog windows *****/
 
@@ -718,7 +718,7 @@ Any UiForm_addChannel (UiForm me, const char32 *label, const char32 *defaultValu
 
 static MelderString theFinishBuffer = { 0 };
 
-static void appendColon (void) {
+static void appendColon () {
 	long length = theFinishBuffer.length;
 	if (length < 1) return;
 	char32 lastCharacter = theFinishBuffer.string [length - 1];

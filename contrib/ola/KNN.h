@@ -84,7 +84,7 @@ oo_CLASS_CREATE (KNN, Daata);
 /////////////////////////////////////////////////////
 
 // a near-dummy function
-KNN KNN_create(void);
+KNN KNN_create ();
 
 // Learning
 int KNN_learn

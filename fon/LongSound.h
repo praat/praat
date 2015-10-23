@@ -80,8 +80,8 @@ void LongSound_readAudioToShort (LongSound me, short *buffer, long firstSample, 
 void LongSound_concatenate (Collection collection, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint);
 /* Concatenate a collection of Sound and LongSound objects. */
 
-void LongSound_preferences (void);
-long LongSound_getBufferSizePref_seconds (void);
+void LongSound_preferences ();
+long LongSound_getBufferSizePref_seconds ();
 void LongSound_setBufferSizePref_seconds (long size);
 
 /* End of file LongSound.h */

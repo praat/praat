@@ -530,8 +530,8 @@ void praat_TableOfReal_init3 (ClassInfo klas) {
 	praat_addAction1 (klas, 2, U"To TableOfReal (cross-correlations)...", 0, 0, DO_TableOfReal_and_TableOfReal_crossCorrelations);
 }
 
-void praat_BSS_init (void);
-void praat_BSS_init (void) {
+void praat_BSS_init ();
+void praat_BSS_init () {
 	Thing_recognizeClassesByName (classDiagonalizer, classMixingMatrix, classCrossCorrelationTable, classCrossCorrelationTables, nullptr);
 
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple CrossCorrelationTable...", U"Create simple Covariance...", praat_HIDDEN + praat_DEPTH_1, DO_CrossCorrelationTable_createSimple);

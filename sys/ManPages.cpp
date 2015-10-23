@@ -241,7 +241,7 @@ void structManPages :: v_readText (MelderReadText text, int /*formatVersion*/) {
 	readOnePage (this, text);
 }
 
-ManPages ManPages_create (void) {
+ManPages ManPages_create () {
 	ManPages me = Thing_new (ManPages);
 	my pages = Ordered_create ();
 	return me;

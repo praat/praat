@@ -212,7 +212,7 @@ bool NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2
 	The matrices need not have been created by NUM...matrix.
 */
 
-long NUM_getTotalNumberOfArrays (void);   /* For debugging. */
+long NUM_getTotalNumberOfArrays ();   // for debugging
 
 /********** Special functions (NUM.cpp) **********/
 

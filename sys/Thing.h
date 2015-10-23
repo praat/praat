@@ -213,7 +213,7 @@ void Thing_recognizeClassesByName (ClassInfo readableClass, ...);
 		Calls to this routine should preferably be put in the beginning of main ().
 */
 void Thing_recognizeClassByOtherName (ClassInfo readableClass, const char32 *otherName);
-long Thing_listReadableClasses (void);
+long Thing_listReadableClasses ();
 
 Thing Thing_newFromClassName (const char32 *className, int *p_formatVersion);
 /*
@@ -278,7 +278,7 @@ void * _Thing_check (Thing me, ClassInfo table, const char *fileName, int line);
 
 /* For debugging. */
 
-long Thing_getTotalNumberOfThings (void);
+long Thing_getTotalNumberOfThings ();
 /* This number is 0 initially, increments at every successful `new', and decrements at every `forget'. */
 
 template <class T>

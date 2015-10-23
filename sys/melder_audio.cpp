@@ -77,7 +77,7 @@
 #include "../external/portaudio/portaudio.h"
 
 #ifdef USE_PULSEAUDIO
-	void pulseAudio_cleanup (void);
+	void pulseAudio_cleanup ();
 	void stream_drain_complete_cb (pa_stream *stream, int success, void *userdata);
 	void context_state_cb (pa_context *context, void *userdata);
 	void context_drain_complete_cb (pa_context *context, void *userdata);
@@ -86,53 +86,61 @@
 
 static struct {
 	enum kMelder_asynchronicityLevel maximumAsynchronicity;
-	bool useInternalSpeaker, inputUsesPortAudio, outputUsesPortAudio;
+	enum kMelder_inputSoundSystem inputSoundSystem;
+	enum kMelder_outputSoundSystem outputSoundSystem;
+	bool useInternalSpeaker;
 	double silenceBefore, silenceAfter;
 } preferences;
 
-void Melder_audio_prefs (void) {
+void Melder_audio_prefs () {
 	Preferences_addEnum (U"Audio.maximumAsynchronicity", & preferences. maximumAsynchronicity, kMelder_asynchronicityLevel, kMelder_asynchronicityLevel_DEFAULT);
+	Preferences_addEnum (U"Audio.inputSoundSystem", & preferences. inputSoundSystem, kMelder_inputSoundSystem, kMelder_inputSoundSystem_DEFAULT);
+	Preferences_addEnum (U"Audio.inputSoundSystem", & preferences. outputSoundSystem, kMelder_outputSoundSystem, kMelder_outputSoundSystem_DEFAULT);
 	Preferences_addBool (U"Audio.useInternalSpeaker", & preferences. useInternalSpeaker, true);
-	Preferences_addBool (U"Audio.outputUsesPortAudio", & preferences. outputUsesPortAudio, kMelderAudio_outputUsesPortAudio_DEFAULT);
-	Preferences_addDouble (U"Audio.silenceBefore", & preferences. silenceBefore, kMelderAudio_outputSilenceBefore_DEFAULT);
-	Preferences_addDouble (U"Audio.silenceAfter", & preferences. silenceAfter, kMelderAudio_outputSilenceAfter_DEFAULT);
-	Preferences_addBool (U"Audio.inputUsesPortAudio", & preferences. inputUsesPortAudio, kMelderAudio_inputUsesPortAudio_DEFAULT);
+	Preferences_addDouble (U"Audio.silenceBefore2", & preferences. silenceBefore, kMelderAudio_outputSilenceBefore_DEFAULT);
+	Preferences_addDouble (U"Audio.silenceAfter2", & preferences. silenceAfter, kMelderAudio_outputSilenceAfter_DEFAULT);
 }
 
 void MelderAudio_setOutputMaximumAsynchronicity (enum kMelder_asynchronicityLevel maximumAsynchronicity) {
 	//MelderAudio_stopPlaying (MelderAudio_IMPLICIT);   // BUG
 	preferences. maximumAsynchronicity = maximumAsynchronicity;
 }
-enum kMelder_asynchronicityLevel MelderAudio_getOutputMaximumAsynchronicity (void) { return preferences. maximumAsynchronicity; }
-
-void MelderAudio_setInputUsesPortAudio (bool inputUsesPortAudio) {
-	preferences. inputUsesPortAudio = inputUsesPortAudio;
+enum kMelder_asynchronicityLevel MelderAudio_getOutputMaximumAsynchronicity () {
+	return preferences. maximumAsynchronicity;
 }
-bool MelderAudio_getInputUsesPortAudio (void) { return preferences. inputUsesPortAudio; }
 
-void MelderAudio_setOutputUsesPortAudio (bool outputUsesPortAudio) {
+void MelderAudio_setInputSoundSystem (enum kMelder_inputSoundSystem inputSoundSystem) {
+	preferences. inputSoundSystem = inputSoundSystem;
+}
+enum kMelder_inputSoundSystem MelderAudio_getInputSoundSystem () {
+	return preferences. inputSoundSystem;
+}
+
+void MelderAudio_setOutputSoundSystem (enum kMelder_outputSoundSystem outputSoundSystem) {
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
-	preferences. outputUsesPortAudio = outputUsesPortAudio;
+	preferences. outputSoundSystem = outputSoundSystem;
 }
-bool MelderAudio_getOutputUsesPortAudio (void) { return preferences. outputUsesPortAudio; }
+enum kMelder_outputSoundSystem MelderAudio_getOutputSoundSystem () {
+	return preferences. outputSoundSystem;
+}
 
 void MelderAudio_setUseInternalSpeaker (bool useInternalSpeaker) {
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	preferences. useInternalSpeaker = useInternalSpeaker;
 }
-bool MelderAudio_getUseInternalSpeaker (void) { return preferences. useInternalSpeaker; }
+bool MelderAudio_getUseInternalSpeaker () { return preferences. useInternalSpeaker; }
 
 void MelderAudio_setOutputSilenceBefore (double silenceBefore) {
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	preferences. silenceBefore = silenceBefore;
 }
-double MelderAudio_getOutputSilenceBefore (void) { return preferences. silenceBefore; }
+double MelderAudio_getOutputSilenceBefore () { return preferences. silenceBefore; }
 
 void MelderAudio_setOutputSilenceAfter (double silenceAfter) {
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	preferences. silenceAfter = silenceAfter;
 }
-double MelderAudio_getOutputSilenceAfter (void) { return preferences. silenceAfter; }
+double MelderAudio_getOutputSilenceAfter () { return preferences. silenceAfter; }
 
 long MelderAudio_getOutputBestSampleRate (long fsamp) {
 	#if defined (macintosh)
@@ -212,11 +220,11 @@ static struct MelderPlay {
 	#endif
 } thePlay;
 
-long MelderAudio_getSamplesPlayed (void) {
+long MelderAudio_getSamplesPlayed () {
 	return thePlay. samplesPlayed;
 }
 
-bool MelderAudio_stopWasExplicit (void) {
+bool MelderAudio_stopWasExplicit () {
 	return thePlay. explicitStop;
 }
 
@@ -227,7 +235,7 @@ bool MelderAudio_stopWasExplicit (void) {
  * 3. After asynchronous play, by the workProc.
  * 4. After interruption of asynchronicity 3 by MelderAudio_stopPlaying ().
  */
-static bool flush (void) {
+static bool flush () {
 	struct MelderPlay *me = & thePlay;
 	if (my usePortAudio) {
 		if (my stream) {
@@ -590,7 +598,7 @@ static int thePaStreamCallback (const void *input, void *output,
 }
 
 #ifdef USE_PULSEAUDIO
-void pulseAudio_initialize (void) {
+void pulseAudio_initialize () {
 	struct MelderPlay *me = & thePlay;
 	if (! my pulseAudio.pulseAudioInitialized) {
 		my pulseAudio.mainloop = pa_threaded_mainloop_new ();
@@ -610,7 +618,7 @@ void pulseAudio_initialize (void) {
 	}
 }
 
-void pulseAudio_cleanup (void) {
+void pulseAudio_cleanup () {
 	struct MelderPlay *me = & thePlay;
 
 	pa_threaded_mainloop_lock (my pulseAudio.mainloop);
@@ -670,7 +678,7 @@ void pulseAudio_server_info_cb (pa_context *context, const pa_server_info *info,
 	pa_threaded_mainloop_signal (my pulseAudio.mainloop, 0);
 }
 
-void pulseAudio_serverReport (void) {
+void pulseAudio_serverReport () {
 	// TODO: initiaize context
 	struct MelderPlay *me = & thePlay;
 	if (my pulseAudio.mainloop) {
@@ -1022,7 +1030,14 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 	if (my asynchronicity > preferences. maximumAsynchronicity)
 		my asynchronicity = preferences. maximumAsynchronicity;
 	trace (U"asynchronicity ", my asynchronicity);
-	my usePortAudio = preferences. outputUsesPortAudio;
+	my usePortAudio =
+		#if defined (_WIN32)
+			preferences. outputSoundSystem == kMelder_outputSoundSystem_MME_VIA_PORTAUDIO;
+		#elif defined (macintosh)
+			preferences. outputSoundSystem == kMelder_outputSoundSystem_COREAUDIO_VIA_PORTAUDIO;
+		#else
+			preferences. outputSoundSystem == kMelder_outputSoundSystem_ALSA_VIA_PORTAUDIO;
+		#endif
 	my usePulseAudio = ! my usePortAudio;
 
 	my explicitStop = MelderAudio_IMPLICIT;
@@ -1200,20 +1215,11 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 			trace (U"before cleanup");
 			pulseAudio_cleanup ();
 		} else {
-			#if cocoa
-				CFRunLoopTimerContext context = { 0, nullptr, nullptr, nullptr, nullptr };
-				my cocoaTimer = CFRunLoopTimerCreate (nullptr, CFAbsoluteTimeGetCurrent () + 0.02,
-					0.02, 0, 0, workProc_cocoa, & context);
-				CFRunLoopAddTimer (CFRunLoopGetCurrent (), my cocoaTimer, kCFRunLoopCommonModes);
-			#elif motif
-				my workProcId_motif = GuiAddWorkProc (workProc_motif, nullptr);
-			#elif gtk
-				// my workProcId_gtk = g_timeout_add (ms, workProc_gtk, nullptr);
-				// without a timer, on my computer the workproc would be called almost once in every sampling period.
-				// Such frequent updates are not necessary, some 50 updates a second is fast enough for displayong a runnning cursor
-				// the timeout will be automatically stopped if workProc_gtk returns false.
-				my workProcId_gtk = g_timeout_add (20, workProc_gtk, nullptr);
-			#endif
+			// my workProcId_gtk = g_timeout_add (ms, workProc_gtk, nullptr);
+			// without a timer, on my computer the workproc would be called almost once in every sampling period.
+			// Such frequent updates are not necessary, some 50 updates a second is fast enough for displayong a runnning cursor
+			// the timeout will be automatically stopped if workProc_gtk returns false.
+			my workProcId_gtk = g_timeout_add (20, workProc_gtk, nullptr);
 		}
 	#endif
 	} else {

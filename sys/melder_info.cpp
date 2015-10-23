@@ -32,7 +32,7 @@ void Melder_setInformationProc (void (*information) (const char32 *)) {
 
 static MelderString theForegroundBuffer = { 0 }, *theInfos = & theForegroundBuffer;
 
-void MelderInfo_open (void) {
+void MelderInfo_open () {
 	MelderString_empty (theInfos);
 }
 
@@ -432,7 +432,7 @@ void MelderInfo_writeLine (Melder_19_ARGS) {
 	}
 }
 
-void MelderInfo_close (void) {
+void MelderInfo_close () {
 	if (theInfos == & theForegroundBuffer) {
 		/*
 			When writing to the Info window or the console, we must add a newline symbol,
@@ -452,7 +452,7 @@ void MelderInfo_close (void) {
 	}
 }
 
-void MelderInfo_drain (void) {
+void MelderInfo_drain () {
 	if (theInfos == & theForegroundBuffer) {
 		if (theInformation != defaultInformation) {
 			theInformation (theInfos -> string ? theInfos -> string : U"");
@@ -475,7 +475,7 @@ void Melder_divertInfo (MelderString *buffer) {
 	theInfos = ( buffer ? buffer : & theForegroundBuffer );
 }
 
-void Melder_clearInfo (void) {
+void Melder_clearInfo () {
 	if (theInfos == & theForegroundBuffer) {
 		MelderString_empty (theInfos);
 		if (theInformation != defaultInformation) {
@@ -484,7 +484,7 @@ void Melder_clearInfo (void) {
 	}
 }
 
-const char32 * Melder_getInfo (void) {
+const char32 * Melder_getInfo () {
 	return theInfos -> string ? theInfos -> string : U"";
 }
 

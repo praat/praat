@@ -26,7 +26,7 @@ Thing_implement (ScriptEditor, TextEditor, 0);
 
 static Collection theScriptEditors;
 
-bool ScriptEditors_dirty (void) {
+bool ScriptEditors_dirty () {
 	if (! theScriptEditors) return false;
 	for (long i = 1; i <= theScriptEditors -> size; i ++) {
 		ScriptEditor me = (ScriptEditor) theScriptEditors -> item [i];

@@ -2580,7 +2580,7 @@ static const char *data [] = {
 "74??83??;9??=9??<1??6;??>5?>>2?>",
 "57??58??0:??19??5=??3<??=4?>" };
 
-Sound manual_exampleSound (void) {
+Sound manual_exampleSound () {
 	static autoSound me;
 	if (! me) {
 		long istring = 0, ichar = 24;
@@ -2597,7 +2597,7 @@ Sound manual_exampleSound (void) {
 	return me.get();   // reference
 }
 
-Pitch manual_examplePitch (void) {
+Pitch manual_examplePitch () {
 	static autoPitch me;
 	if (! me) {
 		Melder_progressOff ();

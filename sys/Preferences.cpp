@@ -98,12 +98,12 @@ void Preferences_read (MelderFile file) {
 		autoMelderReadText text = MelderReadText_createFromFile (file);
 		for (;;) {
 			char32 *line = MelderReadText_readLine (text.peek());
-			if (line == NULL)
+			if (! line)
 				return;   // OK: we have read past the last line
 			char32 *value = str32str (line, U": ");
-			if (value == NULL)
+			if (! value)
 				return;   // OK: we have read past the last key-value pair
-			*value = '\0', value += 2;
+			*value = U'\0', value += 2;
 			long ipref = SortedSetOfString_lookUp (thePreferences, line);
 			if (! ipref) {
 				/*

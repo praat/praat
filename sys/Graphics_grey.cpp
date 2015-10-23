@@ -260,7 +260,7 @@ static void makeClosedContour (int row0, int col0, int ori0) {
 	}
 }
 
-static void smallGrey (void) {
+static void smallGrey () {
 	int row, col, i;
 	numberOfEdgeContours = 0;
 	numberOfClosedContours = 0;

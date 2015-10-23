@@ -67,7 +67,7 @@ static void defaultHelp (const char32 *query) {
 	Melder_flushError (U"Don't know how to find help on \"", query, U"\".");
 }
 
-static void defaultSearch (void) {
+static void defaultSearch () {
 	Melder_flushError (U"Do not know how to search.");
 }
 
@@ -98,11 +98,11 @@ static int defaultRecordFromFile (MelderFile file) {
 	return 0;   // nothing recorded
 }
 
-static void defaultPlay (void) {}
+static void defaultPlay () {}
 
-static void defaultPlayReverse (void) {}
+static void defaultPlayReverse () {}
 
-static int defaultPublishPlayed (void) {
+static int defaultPublishPlayed () {
 	return 0;   /* Nothing published. */
 }
 
@@ -110,15 +110,15 @@ static int defaultPublishPlayed (void) {
 
 static struct {
 	void (*help) (const char32 *query);
-	void (*search) (void);
+	void (*search) ();
 	void (*warning) (const char32 *message);
 	void (*fatal) (const char32 *message);
 	int (*publish) (void *anything);
 	int (*record) (double duration);
 	int (*recordFromFile) (MelderFile file);
-	void (*play) (void);
-	void (*playReverse) (void);
-	int (*publishPlayed) (void);
+	void (*play) ();
+	void (*playReverse) ();
+	int (*publishPlayed) ();
 }
 	theMelder = {
 		defaultHelp, defaultSearch,
@@ -131,8 +131,8 @@ static struct {
 
 static int theProgressDepth = 0;
 static bool theProgressCancelled = false;
-void Melder_progressOff (void) { theProgressDepth --; }
-void Melder_progressOn (void) { theProgressDepth ++; }
+void Melder_progressOff () { theProgressDepth --; }
+void Melder_progressOn () { theProgressDepth ++; }
 
 #ifndef CONSOLE_APPLICATION
 static bool waitWhileProgress (double progress, const char32 *message, GuiDialog dia, GuiProgressBar scale, GuiLabel label1, GuiLabel label2, GuiButton cancelButton) {
@@ -540,15 +540,15 @@ void Melder_help (const char32 *query) {
 	theMelder. help (query);
 }
 
-void Melder_search (void) {
+void Melder_search () {
 	theMelder. search ();
 }
 
 /********** WARNING **********/
 
 static int theWarningDepth = 0;
-void Melder_warningOff (void) { theWarningDepth --; }
-void Melder_warningOn (void) { theWarningDepth ++; }
+void Melder_warningOff () { theWarningDepth --; }
+void Melder_warningOn () { theWarningDepth ++; }
 
 static MelderString theWarningBuffer = { 0 };
 
@@ -623,7 +623,7 @@ void Melder_warning (Melder_19_ARGS) {
 	theMelder. warning (theWarningBuffer.string);
 }
 
-void Melder_beep (void) {
+void Melder_beep () {
 	#ifdef macintosh
 		#if useCarbon
 			SysBeep (0);
@@ -1213,15 +1213,15 @@ int Melder_recordFromFile (MelderFile file) {
 	return theMelder. recordFromFile (file);
 }
 
-void Melder_play (void) {
+void Melder_play () {
 	theMelder. play ();
 }
 
-void Melder_playReverse (void) {
+void Melder_playReverse () {
 	theMelder. playReverse ();
 }
 
-int Melder_publishPlayed (void) {
+int Melder_publishPlayed () {
 	return theMelder. publishPlayed ();
 }
 
@@ -1248,13 +1248,13 @@ void Melder_setRecordProc (int (*record) (double))
 void Melder_setRecordFromFileProc (int (*recordFromFile) (MelderFile))
 	{ theMelder. recordFromFile = recordFromFile ? recordFromFile : defaultRecordFromFile; }
 
-void Melder_setPlayProc (void (*play) (void))
+void Melder_setPlayProc (void (*play) ())
 	{ theMelder. play = play ? play : defaultPlay; }
 
-void Melder_setPlayReverseProc (void (*playReverse) (void))
+void Melder_setPlayReverseProc (void (*playReverse) ())
 	{ theMelder. playReverse = playReverse ? playReverse : defaultPlayReverse; }
 
-void Melder_setPublishPlayedProc (int (*publishPlayed) (void))
+void Melder_setPublishPlayedProc (int (*publishPlayed) ())
 	{ theMelder. publishPlayed = publishPlayed ? publishPlayed : defaultPublishPlayed; }
 
 /* End of file melder.cpp */

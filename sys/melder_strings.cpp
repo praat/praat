@@ -753,19 +753,19 @@ void MelderString_get (MelderString *me, char32 *destination) {
 	}
 }
 
-int64 MelderString_allocationCount (void) {
+int64 MelderString_allocationCount () {
 	return totalNumberOfAllocations;
 }
 
-int64 MelderString_deallocationCount (void) {
+int64 MelderString_deallocationCount () {
 	return totalNumberOfDeallocations;
 }
 
-int64 MelderString_allocationSize (void) {
+int64 MelderString_allocationSize () {
 	return totalAllocationSize;
 }
 
-int64 MelderString_deallocationSize (void) {
+int64 MelderString_deallocationSize () {
 	return totalDeallocationSize;
 }
 

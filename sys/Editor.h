@@ -242,7 +242,7 @@ void Editor_doMenuCommand (Editor me, const char32 *command, int narg, Stackel a
  * They allow editors to draw into the Picture window.
  */
 Graphics praat_picture_editor_open (bool eraseFirst);
-void praat_picture_editor_close (void);
+void praat_picture_editor_close ();
 void Editor_openPraatPicture (Editor me);
 void Editor_closePraatPicture (Editor me);
 

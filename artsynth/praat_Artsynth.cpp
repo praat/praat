@@ -349,8 +349,8 @@ END2 }
 
 void manual_Artsynth_init (ManPages me);
 
-void praat_uvafon_Artsynth_init (void);
-void praat_uvafon_Artsynth_init (void) {
+void praat_uvafon_Artsynth_init ();
+void praat_uvafon_Artsynth_init () {
 	Thing_recognizeClassesByName (classArt, classArtword, classSpeaker, NULL);
 
 	praat_addMenuCommand (U"Objects", U"New", U"Articulatory synthesis", 0, 0, 0);

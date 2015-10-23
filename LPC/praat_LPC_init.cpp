@@ -1227,8 +1227,8 @@ END
 
 extern void praat_TimeTier_query_init (ClassInfo klas);
 extern void praat_TimeTier_modify_init (ClassInfo klas);
-void praat_uvafon_LPC_init (void);
-void praat_uvafon_LPC_init (void) {
+void praat_uvafon_LPC_init ();
+void praat_uvafon_LPC_init () {
 	Thing_recognizeClassesByName (classCepstrumc, classPowerCepstrum, classCepstrogram, classPowerCepstrogram, classLPC, classLFCC, classMFCC, classVocalTractTier, NULL);
 
 	praat_addAction1 (classPowerCepstrum, 0, U"PowerCepstrum help", 0, 0, DO_PowerCepstrum_help);

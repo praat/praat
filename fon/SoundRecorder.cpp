@@ -1014,7 +1014,14 @@ void structSoundRecorder :: v_createHelpMenuItems (EditorMenu menu) {
 SoundRecorder SoundRecorder_create (int numberOfChannels) {
 	try {
 		autoSoundRecorder me = Thing_new (SoundRecorder);
-		my inputUsesPortAudio = MelderAudio_getInputUsesPortAudio ();
+		my inputUsesPortAudio =
+			#if defined (_WIN32)
+				MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem_MME_VIA_PORTAUDIO;
+			#elif defined (macintosh)
+				MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem_COREAUDIO_VIA_PORTAUDIO;
+			#else
+				MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem_ALSA_VIA_PORTAUDIO;
+			#endif
 
 		if (my inputUsesPortAudio) {
 		} else {

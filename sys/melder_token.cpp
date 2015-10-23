@@ -50,7 +50,7 @@ char32 *Melder_firstToken (const char32 *string) {
 	return Melder_tok (theMelderToken, U" \t\n\r");
 }
 
-char32 *Melder_nextToken (void) {
+char32 *Melder_nextToken () {
 	return Melder_tok (nullptr, U" \t\n\r");
 }
 
