@@ -1982,7 +1982,7 @@ Configuration Dissimilarity_Configuration_Weight_Transformator_multiSmacof (Diss
 			autoConfiguration cresult = Dissimilarity_Configuration_Weight_Transformator_smacof (me, cstart.peek(), w, t, tolerance, numberOfIterations, showSingle, &stress);
 			if (stress < stressmax) {
 				stressmax = stress;
-				cbest.reset (cresult.transfer());
+				cbest = cresult.move();
 			}
 			Configuration_randomize (cstart.peek());
 			TableOfReal_centreColumns (cstart.peek());
@@ -2729,8 +2729,8 @@ void Dissimilarities_indscal (Dissimilarities me, long numberOfDimensions, int t
 				normalizeScalarProducts, tolerance, numberOfIterations, showSingle, &cresult, &wresult, &vaf);
 			if (vaf > vafmin) {
 				vafmin = vaf;
-				cbest.reset (cresult.transfer());
-				wbest.reset (wresult.transfer());
+				cbest = cresult.move();
+				wbest = wresult.move();
 			}
 			Configuration_randomize (cstart.peek());
 			Configuration_normalize (cstart.peek(), 1.0, 1);
@@ -2777,8 +2777,8 @@ void Distances_indscal (Distances distances, long numberOfDimensions, int normal
 			Distances_Configuration_Salience_indscal (distances, cstart.peek(), wstart.peek(), normalizeScalarProducts,  tolerance, numberOfIterations, showSingle, &cresult, &wresult, &vaf);
 			if (vaf > vafmin) {
 				vafmin = vaf;
-				cbest.reset (cresult.transfer());
-				wbest.reset (wresult.transfer());
+				cbest = cresult.move();
+				wbest = wresult.move();
 			}
 			Configuration_randomize (cstart.peek());
 			Configuration_normalize (cstart.peek(), 1.0, 1);

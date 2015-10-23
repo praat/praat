@@ -37,7 +37,6 @@ oo_DEFINE_CLASS (FFNet, Daata)
 
 	oo_INT (costFunctionType)
 	oo_AUTO_OBJECT (Categories, 0, outputCategories)
-	//oo_COLLECTION (Categories, outputCategories, SimpleString, 0)
 
 	oo_LONG (nWeights)	/* number of weights */
 
@@ -50,9 +49,9 @@ oo_DEFINE_CLASS (FFNet, Daata)
 		oo_LONG (dimension)
 
 		#if oo_DECLARING
-			double (*nonLinearity) (I, double /* x */, double * /* deriv */);
+			double (*nonLinearity) (FFNet /* me */, double /* x */, double * /* deriv */);
     		void *nlClosure;
-    		double (*costFunction) (I, const double * /* target */);
+    		double (*costFunction) (FFNet /* me */, const double * /* target */);
 			void *cfClosure;
 		#endif
 		

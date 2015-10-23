@@ -42,7 +42,7 @@ Thing_define (Minimizer, Thing) {
 	long start;			/* start iteration series */
 	long maxNumOfIterations; /* the current maximum number of iterations */
 	long iteration;     /* the total number of iterations */
-	void (*after) (I, Any aclosure); /* to be called after each iteration */
+	void (*after) (Minimizer me, Any aclosure); /* to be called after each iteration */
 	Any aclosure;
 	Graphics gmonitor;		/* graphics to monitor the minimization process */
 
@@ -56,7 +56,7 @@ Thing_define (Minimizer, Thing) {
 	virtual void v_setParameters (Any parameters) { (void) parameters; }
 };
 
-void Minimizer_init (I, long nParameters, Daata object);
+void Minimizer_init (Minimizer me, long nParameters, Daata object);
 /*
 	Preconditions:
 		nParameters > 0;
@@ -75,14 +75,12 @@ void Minimizer_reset (Minimizer me, const double guess[]);
  *    reset (me);
  */
 
-void Minimizer_setAfterEachIteration (Minimizer me, int (*after) (I, Any aclosure),
-	Any aclosure);
+void Minimizer_setAfterEachIteration (Minimizer me, int (*after) (Minimizer me, Any aclosure), Any aclosure);
 /* set the procedure that is executed after each iteration. */
 
 void Minimizer_setParameters (Minimizer me, Any parameters); /* for inheritors */
 
-void Minimizer_minimize (Minimizer me, long maxNumOfIterations, double tolerance,
-	int monitor);
+void Minimizer_minimize (Minimizer me, long maxNumOfIterations, double tolerance, int monitor);
 /* Minimizes during maximally maxNumOfIterations. The gmonitor is initialized
  * before minimization and cleared afterwards.
  * Preconditions:
@@ -94,11 +92,9 @@ void Minimizer_minimize (Minimizer me, long maxNumOfIterations, double tolerance
  *    after each iteration: iteration++
  */
 
-void Minimizer_minimizeManyTimes (Minimizer me, long numberOfTimes, long maxIterationsPerTime,
-	double tolerance);
+void Minimizer_minimizeManyTimes (Minimizer me, long numberOfTimes, long maxIterationsPerTime, double tolerance);
 
-void Minimizer_drawHistory (Minimizer me, Graphics g, long itmin, long itmax,
-    double minimum, double maximum, int garnish);
+void Minimizer_drawHistory (Minimizer me, Graphics g, long itmin, long itmax, double minimum, double maximum, int garnish);
 
 double Minimizer_getMinimum (Minimizer me);
 
@@ -118,9 +114,7 @@ Thing_define (LineMinimizer, Minimizer) {
 		//virtual void v_linmin (double p[], double fp, double direction[], double *fret);	 // David, is dit correct? ja
 };
 
-void LineMinimizer_init (I, long nParameters, Daata object, double (*func)
-	(Daata object, const double p[]));
-
+void LineMinimizer_init (I, long nParameters, Daata object, double (*func) (Daata object, const double p[]));
 
 /******************  class SteepestDescentMinimizer**************************/
 
@@ -140,9 +134,7 @@ Thing_define (SteepestDescentMinimizer, Minimizer) {
 		virtual void v_setParameters (Any parameters);
 };
 
-SteepestDescentMinimizer SteepestDescentMinimizer_create (long nParameters, Daata object, double (*func)
-	(Daata object, const double p[]), void (*dfunc) (Daata object, const double p[],
-	double dp[]));
+SteepestDescentMinimizer SteepestDescentMinimizer_create (long nParameters, Daata object, double (*func) (Daata object, const double p[]), void (*dfunc) (Daata object, const double p[], double dp[]));
 
 
 /**********  class VDSmagtMinimizer ********************************/
@@ -178,8 +170,6 @@ Thing_define (VDSmagtMinimizer, Minimizer) {
 		virtual void v_setParameters (Any parameters);
 };
 
-VDSmagtMinimizer VDSmagtMinimizer_create (long dimension, Daata object, double (*func)
-	(Daata object, const double p[]), void (*dfunc) (Daata object, const double p[],
-	double dp[]));
+VDSmagtMinimizer VDSmagtMinimizer_create (long dimension, Daata object, double (*func) (Daata object, const double p[]), void (*dfunc) (Daata object, const double p[], double dp[]));
 
 #endif /* _Minimizer_h_ */

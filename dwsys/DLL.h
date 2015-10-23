@@ -30,7 +30,7 @@ Thing_define (DLLNode, Daata) {
 	// overridden methods:
 	protected:
 		virtual void v_destroy ();
-		virtual void v_copy (Any data_to);
+		virtual void v_copy (DLLNode data_to);
 };
 
 Thing_define (DLL, Thing) {

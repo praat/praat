@@ -26,8 +26,7 @@ void structDLLNode :: v_destroy () {
 	DLLNode_Parent :: v_destroy ();
 }
 
-void structDLLNode :: v_copy (thou) {
-	thouart (DLLNode);
+void structDLLNode :: v_copy (DLLNode thee) {
 	thy data = Data_copy (data);
 }
 
@@ -43,16 +42,14 @@ void structDLL :: v_destroy () {
 	DLL_Parent :: v_destroy ();
 }
 
-int structDLL :: s_compare (Any node1, Any node2) {
-	(void) node1;
-	(void) node2;
+int structDLL :: s_compare (Any /* node1 */, Any /* node2 */) {
 	return 0;
 }
 
 DLLNode DLLNode_create (Daata data) {
-	DLLNode me = Thing_new (DLLNode);
+	autoDLLNode me = Thing_new (DLLNode);
 	my data = data;
-	return me;
+	return me.transfer();
 }
 
 void DLL_init (DLL) {
