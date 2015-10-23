@@ -65,7 +65,7 @@
 	NULL
 };
 
-void Printer_prefs (void) {
+void Printer_prefs () {
 	Preferences_addEnum (U"Printer.spots", & thePrinter. spots, kGraphicsPostscript_spots, kGraphicsPostscript_spots_DEFAULT);
 	Preferences_addEnum (U"Printer.paperSize", & thePrinter. paperSize, kGraphicsPostscript_paperSize, kGraphicsPostscript_paperSize_DEFAULT);
 	Preferences_addBool (U"Printer.allowDirectPostScript", & thePrinter. allowDirectPostScript, true);
@@ -128,7 +128,7 @@ void Printer_prefs (void) {
 #endif
 
 #if defined (_WIN32)
-	static void initPostScriptPage (void) {
+	static void initPostScriptPage () {
 		/*
 		 * Save the driver's state.
 		 */
@@ -149,17 +149,17 @@ void Printer_prefs (void) {
 Printer_postScript_printf (NULL, "8 8 scale initclip\n");
 		#endif
 	}
-	static void exitPostScriptPage (void) {
+	static void exitPostScriptPage () {
 		Printer_postScript_printf (NULL, "PraatPictureSaveObject restore\n");
 	}
 #endif
 
 #if cocoa
 #elif defined (_WIN32)
-	static void initPrinter (void) {
+	static void initPrinter () {
 	}
 #elif defined (macintosh)
-	static void initPrinter (void) {
+	static void initPrinter () {
 		Boolean result;
 		PMResolution res300 = { 300, 300 }, res600 = { 600, 600 };
 		if (theMacPrintSettings == NULL) {   /* Once. */
@@ -182,7 +182,7 @@ Printer_postScript_printf (NULL, "8 8 scale initclip\n");
 	}
 #endif
 
-void Printer_nextPage (void) {
+void Printer_nextPage () {
 	#if cocoa
 		[theMacView endPage];
 		[theMacView beginPageInRect: [theMacView bounds] atPlacement: NSMakePoint (0, 0)];
@@ -210,7 +210,7 @@ void Printer_nextPage (void) {
 	#endif
 }
 
-int Printer_pageSetup (void) {
+int Printer_pageSetup () {
 	#if cocoa
 		NSPageLayout *cocoaPageSetupDialog = [NSPageLayout pageLayout];
 		[cocoaPageSetupDialog runModal];
@@ -250,7 +250,7 @@ static void DO_Printer_postScriptSettings (UiForm dia, int /* narg */, Stackel /
 	thePrinter. fontChoiceStrategy = GET_ENUM (kGraphicsPostscript_fontChoiceStrategy, U"Font choice strategy");
 }
 
-int Printer_postScriptSettings (void) {
+int Printer_postScriptSettings () {
 	static UiForm dia;
 	if (dia == NULL) {
 		Any radio;
@@ -299,7 +299,7 @@ int Printer_postScriptSettings (void) {
 		}
 		return true;
 	}
-	HDC Printer_getDC (void) {
+	HDC Printer_getDC () {
 		if (! theWinPrint. hDevMode) {
 			memset (& theWinPrint, 0, sizeof (PRINTDLG));
 			theWinPrint. lStructSize = sizeof (PRINTDLG);

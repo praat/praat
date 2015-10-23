@@ -53,12 +53,12 @@ static struct {
 } preferences;
 
 void Melder_setInputEncoding (enum kMelder_textInputEncoding encoding) { preferences. inputEncoding = encoding; }
-int Melder_getInputEncoding (void) { return preferences. inputEncoding; }
+int Melder_getInputEncoding () { return preferences. inputEncoding; }
 
 void Melder_setOutputEncoding (enum kMelder_textOutputEncoding encoding) { preferences. outputEncoding = encoding; }
-enum kMelder_textOutputEncoding Melder_getOutputEncoding (void) { return preferences. outputEncoding; }
+enum kMelder_textOutputEncoding Melder_getOutputEncoding () { return preferences. outputEncoding; }
 
-void Melder_textEncoding_prefs (void) {
+void Melder_textEncoding_prefs () {
 	Preferences_addEnum (U"TextEncoding.inputEncoding", & preferences. inputEncoding, kMelder_textInputEncoding, kMelder_textInputEncoding_DEFAULT);
 	Preferences_addEnum (U"TextEncoding.outputEncoding", & preferences. outputEncoding, kMelder_textOutputEncoding, kMelder_textOutputEncoding_DEFAULT);
 }

@@ -57,7 +57,7 @@ static int64 totalNumberOfAllocations = 0, totalNumberOfDeallocations = 0, total
 #define theRainyDayFund_SIZE  3000000
 static char *theRainyDayFund = nullptr;
 
-void Melder_alloc_init (void) {
+void Melder_alloc_init () {
 	theRainyDayFund = (char *) malloc (theRainyDayFund_SIZE);   // called at application initialization, so cannot fail
 	assert (theRainyDayFund);
 }
@@ -269,23 +269,23 @@ char32 * Melder_dup_f (const char32 *string /* cattable */) {
 	return result;
 }
 
-int64 Melder_allocationCount (void) {
+int64 Melder_allocationCount () {
 	return totalNumberOfAllocations;
 }
 
-int64 Melder_deallocationCount (void) {
+int64 Melder_deallocationCount () {
 	return totalNumberOfDeallocations;
 }
 
-int64 Melder_allocationSize (void) {
+int64 Melder_allocationSize () {
 	return totalAllocationSize;
 }
 
-int64 Melder_reallocationsInSituCount (void) {
+int64 Melder_reallocationsInSituCount () {
 	return totalNumberOfReallocsInSitu;
 }
 
-int64 Melder_movingReallocationsCount (void) {
+int64 Melder_movingReallocationsCount () {
 	return totalNumberOfMovingReallocs;
 }
 

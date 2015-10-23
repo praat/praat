@@ -20,11 +20,11 @@
  */
 
 void Machine_initLookAndFeel (unsigned int argc, char **argv);
-int Machine_getMenuBarHeight (void);
-int Machine_getMainWindowMenuBarHeight (void);
-int Machine_getTitleBarHeight (void);
-int Machine_getScrollBarWidth (void);
-int Machine_getTextHeight (void);
+int Machine_getMenuBarHeight ();
+int Machine_getMainWindowMenuBarHeight ();
+int Machine_getTitleBarHeight ();
+int Machine_getScrollBarWidth ();
+int Machine_getTextHeight ();
 
 /* End of file machine.h */
 #endif

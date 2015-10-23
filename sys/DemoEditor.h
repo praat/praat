@@ -51,25 +51,25 @@ Thing_define (DemoEditor, Editor) {
 void DemoEditor_init (DemoEditor me);
 DemoEditor DemoEditor_create ();
 
-void Demo_open (void);
-void Demo_close (void);
+void Demo_open ();
+void Demo_close ();
 struct autoDemoOpen {
 	autoDemoOpen () { Demo_open (); }
 	~autoDemoOpen () { Demo_close (); }
 };
 
 int Demo_windowTitle (const char32 *title);
-int Demo_show (void);
+int Demo_show ();
 void Demo_waitForInput (Interpreter interpreter);
-bool Demo_clicked (void);
-double Demo_x (void);
-double Demo_y (void);
-bool Demo_keyPressed (void);
-char32 Demo_key (void);
-bool Demo_shiftKeyPressed (void);
-bool Demo_commandKeyPressed (void);
-bool Demo_optionKeyPressed (void);
-bool Demo_extraControlKeyPressed (void);
+bool Demo_clicked ();
+double Demo_x ();
+double Demo_y ();
+bool Demo_keyPressed ();
+char32 Demo_key ();
+bool Demo_shiftKeyPressed ();
+bool Demo_commandKeyPressed ();
+bool Demo_optionKeyPressed ();
+bool Demo_extraControlKeyPressed ();
 /* Shortcuts: */
 bool Demo_input (const char32 *keys);
 bool Demo_clickedIn (double left, double right, double bottom, double top);

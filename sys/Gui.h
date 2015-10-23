@@ -209,7 +209,7 @@
 	void XtVaGetValues (GuiObject w, ...);
 	void XtVaSetValues (GuiObject w, ...);
 	Window XtWindow (GuiObject w);
-	long Gui_getNumberOfMotifWidgets (void);
+	long Gui_getNumberOfMotifWidgets ();
 
 	/*
 	 * Xm widget classes.
@@ -294,14 +294,14 @@
 	void XmUpdateDisplay (GuiObject dummy);
 
 	#if defined (macintosh)
-		void motif_mac_defaultFont (void);
+		void motif_mac_defaultFont ();
 		void GuiMac_clipOn (GuiObject widget);   /* Clip to the inner area of a drawingArea (for drawing);
 			used by graphics drivers for Macintosh (clipping is automatic for Xwindows). */
 		int GuiMac_clipOn_graphicsContext (GuiObject me, void *graphicsContext);
-		void GuiMac_clipOff (void);
+		void GuiMac_clipOff ();
 		void motif_mac_setUserMessageCallback (int (*userMessageCallback) (char32 *message));
 	#elif defined (_WIN32)
-		int motif_win_mouseStillDown (void);
+		bool motif_win_mouseStillDown ();
 		void motif_win_setUserMessageCallback (int (*userMessageCallback) (void));
 	#endif
 #else

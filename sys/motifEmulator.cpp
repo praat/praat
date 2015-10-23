@@ -59,7 +59,7 @@
 #include "machine.h"
 
 static void (*theOpenDocumentCallback) (MelderFile file);
-static int (*theQuitApplicationCallback) (void);
+static int (*theQuitApplicationCallback) ();
 
 #if defined (macintosh) && useCarbon || defined (_WIN32)
 
@@ -91,7 +91,7 @@ static int (*theQuitApplicationCallback) (void);
 #define _motif_OPTION_MASK  4
 
 #if mac
-	void motif_mac_defaultFont (void) {
+	void motif_mac_defaultFont () {
 		TextFont (systemFont);
 		TextSize (13);
 		TextFace (0);
@@ -212,8 +212,8 @@ void _Gui_callCallbacks (GuiObject w, XtCallbackList *callbacks, XtPointer call)
 static GuiObject theMenus [1+MAXIMUM_NUMBER_OF_MENUS];   // we can freely use and reuse these menu ids
 #if win
 	static char32 theApplicationName [100], theWindowClassName [100], theDrawingAreaClassName [100], theApplicationClassName [100];
-	char32 * _GuiWin_getDrawingAreaClassName (void) { return theDrawingAreaClassName; }
-	static int (*theUserMessageCallback) (void);
+	char32 * _GuiWin_getDrawingAreaClassName () { return theDrawingAreaClassName; }
+	static int (*theUserMessageCallback) ();
 	#define MINIMUM_MENU_ITEM_ID  (MAXIMUM_NUMBER_OF_MENUS + 1)
 	#define MAXIMUM_MENU_ITEM_ID  32767
 	static short theMenuItems [1+MAXIMUM_MENU_ITEM_ID];   // we can freely use and reuse the item ids 4001..32767
@@ -229,7 +229,7 @@ static GuiObject theShells [MAXIMUM_NUMBER_OF_SHELLS];   // for XmUpdateDisplay 
 static int theBackground = False;   // set by suspend and resume events; used by Motif-style activation methods
 static int theDialogHint = False;   // should the shell that is currently being created, have dialog or document looks?
 long numberOfWidgets = 0;
-long Gui_getNumberOfMotifWidgets (void) { return numberOfWidgets; }
+long Gui_getNumberOfMotifWidgets () { return numberOfWidgets; }
 
 static void _motif_addShell (GuiObject me) {
 	int i;
@@ -565,7 +565,7 @@ GuiObject _Gui_initializeWidget (int widgetClass, GuiObject parent, const char32
 		_motif_clipRect = clipRect;
 	}
 
-	void GuiMac_clipOff (void) { ClipRect (& _motif_wideRect); }
+	void GuiMac_clipOff () { ClipRect (& _motif_wideRect); }
 
 	void _GuiMac_clipOffValid (GuiObject me) {
 		Rect clipRect = _motif_clipRect;
@@ -4222,7 +4222,7 @@ void XtNextEvent (XEvent *xevent) {
 	#endif
 }
 
-static void processWorkProcsAndTimeOuts (void) {
+static void processWorkProcsAndTimeOuts () {
 	long i;
 	if (theNumberOfWorkProcs) for (i = 9; i >= 1; i --)
 		if (theWorkProcs [i])
@@ -4775,17 +4775,17 @@ void GuiMainLoop () {
 			default: return DefWindowProc (window, message, wParam, lParam);
 		}
 	}
-	int motif_win_mouseStillDown (void) {
+	bool motif_win_mouseStillDown () {
 		XEvent event;
 		if (! GetCapture ()) SetCapture (theApplicationShell -> window);
 		if (PeekMessage (& event, 0, 0, 0, PM_REMOVE)) {
 			if (event. message == WM_LBUTTONUP) {
 				DispatchMessage (& event);
 				ReleaseCapture ();
-				return False;
+				return false;
 			}
 		}
-		return True;
+		return true;
 	}
 	void motif_win_setUserMessageCallback (int (*userMessageCallback) (void)) {
 		theUserMessageCallback = userMessageCallback;

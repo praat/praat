@@ -41,7 +41,7 @@
 	#include <gdiplus.h>
 	//#include "winport_off.h"
 	//using namespace Gdiplus;
-	static bool _GraphicsWindows_tryToInitializeGdiPlus (void) {
+	static bool _GraphicsWindows_tryToInitializeGdiPlus () {
 		Gdiplus::GdiplusStartupInput gdiplusStartupInput;
 		ULONG_PTR gdiplusToken;
 		GdiplusStartup (& gdiplusToken, & gdiplusStartupInput, nullptr);
@@ -50,7 +50,7 @@
 #elif mac
 	#include "macport_on.h"
 	static RGBColor theBlackColour = { 0, 0, 0 };
-	static bool _GraphicsMacintosh_tryToInitializeQuartz (void) {
+	static bool _GraphicsMacintosh_tryToInitializeQuartz () {
 		return _GraphicsMac_tryToInitializeFonts ();
 	}
 #endif

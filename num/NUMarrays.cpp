@@ -32,7 +32,7 @@
 
 static long theTotalNumberOfArrays;
 
-long NUM_getTotalNumberOfArrays (void) { return theTotalNumberOfArrays; }
+long NUM_getTotalNumberOfArrays () { return theTotalNumberOfArrays; }
 
 /*** Generic memory routines for vectors. ***/
 

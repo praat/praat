@@ -87,7 +87,7 @@ uint64_t GetPIDTimeInNanoseconds(void)
 }
 */
 
-double Melder_clock (void) {
+double Melder_clock () {
 	#if defined (macintosh) || defined (UNIX)
 		/*
 		 * The clock counts the number of seconds elapsed since 1969.
@@ -117,7 +117,7 @@ double Melder_clock (void) {
 	#endif
 }
 
-double Melder_stopwatch (void) {
+double Melder_stopwatch () {
 	static double lastTime;
 	double now = Melder_clock ();
 	double timeElapsed = lastTime == 0 ? -1.0 : now - lastTime;

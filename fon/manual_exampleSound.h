@@ -22,8 +22,8 @@
 #include "Sound.h"
 #include "Pitch.h"
 
-Sound manual_exampleSound (void);
-Pitch manual_examplePitch (void);
+Sound manual_exampleSound ();
+Pitch manual_examplePitch ();
 
 /* End of file manual_exampleSound.h */
 #endif

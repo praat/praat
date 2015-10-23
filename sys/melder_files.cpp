@@ -81,12 +81,12 @@ extern "C" void FLAC__stream_encoder_delete (FLAC__StreamEncoder *);
 #endif
 
 static char32 theShellDirectory [kMelder_MAXPATH+1];
-void Melder_rememberShellDirectory (void) {
+void Melder_rememberShellDirectory () {
 	structMelderDir shellDir = { { 0 } };
 	Melder_getDefaultDir (& shellDir);
 	str32cpy (theShellDirectory, Melder_dirToPath (& shellDir));
 }
-char32 * Melder_getShellDirectory (void) {
+char32 * Melder_getShellDirectory () {
 	return & theShellDirectory [0];
 }
 
@@ -679,7 +679,7 @@ void Melder_fclose (MelderFile file, FILE *f) {
 		Melder_throw (U"Error closing file ", file, U".");
 }
 
-void Melder_files_cleanUp (void) {
+void Melder_files_cleanUp () {
 	#if defined (CURLPRESENT)
 		if (curl_initialized) {
 			curl_global_cleanup ();

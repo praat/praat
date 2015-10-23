@@ -146,7 +146,7 @@ int mp3_recognize (int nread, const char *data)
 		((bytes [1] & 0xFE) == 0xE2);   /* MPEG ADTS, layer III, v2.5 */
 }
 
-MP3_FILE mp3f_new (void)
+MP3_FILE mp3f_new ()
 {
 	try {
 		return Melder_calloc (struct _MP3_FILE, 1);

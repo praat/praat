@@ -54,11 +54,11 @@ Thing_implement (LongSound, Sampled, 0);
 
 static long prefs_bufferLength;
 
-void LongSound_preferences (void) {
+void LongSound_preferences () {
 	Preferences_addLong (U"LongSound.bufferLength", & prefs_bufferLength, 60);   // seconds
 }
 
-long LongSound_getBufferSizePref_seconds (void) { return prefs_bufferLength; }
+long LongSound_getBufferSizePref_seconds () { return prefs_bufferLength; }
 void LongSound_setBufferSizePref_seconds (long size) { prefs_bufferLength = size < 10 ? 10 : size > 10000 ? 10000: size; }
 
 void structLongSound :: v_destroy () {

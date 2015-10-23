@@ -46,10 +46,10 @@ enums_begin (kMelder_textInputEncoding, 1)
 	enums_add (kMelder_textInputEncoding, 5, WINDOWS_LATIN1, U"Windows Latin-1")
 	enums_add (kMelder_textInputEncoding, 6, UTF8_THEN_MACROMAN, U"try UTF-8, then MacRoman")
 	enums_add (kMelder_textInputEncoding, 7, MACROMAN, U"MacRoman")
-#if defined (macintosh)
-enums_end (kMelder_textInputEncoding, 7, UTF8_THEN_MACROMAN)
-#elif defined (_WIN32)
+#if defined (_WIN32)
 enums_end (kMelder_textInputEncoding, 7, UTF8_THEN_WINDOWS_LATIN1)
+#elif defined (macintosh)
+enums_end (kMelder_textInputEncoding, 7, UTF8_THEN_MACROMAN)
 #else
 enums_end (kMelder_textInputEncoding, 7, UTF8_THEN_ISO_LATIN1)
 #endif
@@ -67,5 +67,45 @@ enums_begin (kMelder_asynchronicityLevel, 0)
 	enums_add (kMelder_asynchronicityLevel, 2, INTERRUPTABLE, U"interruptable (Escape key stops playing)")
 	enums_add (kMelder_asynchronicityLevel, 3, ASYNCHRONOUS, U"asynchronous (anything)")
 enums_end (kMelder_asynchronicityLevel, 3, ASYNCHRONOUS)
+
+#if defined (_WIN32)
+
+	enums_begin (kMelder_inputSoundSystem, 1)
+		enums_add (kMelder_inputSoundSystem, 1, MME_VIA_PORTAUDIO, U"MME via PortAudio")
+	enums_end (kMelder_inputSoundSystem, 1, MME_VIA_PORTAUDIO)
+			// in order to allow recording for over 64 megabytes (paMME)
+
+	enums_begin (kMelder_outputSoundSystem, 1)
+		enums_add (kMelder_outputSoundSystem, 1, MME, U"MME")
+		enums_add (kMelder_outputSoundSystem, 2, MME_VIA_PORTAUDIO, U"MME via PortAudio")
+	enums_end (kMelder_outputSoundSystem, 2, MME)
+			// in order to reduce the long latencies of paMME and to avoid the incomplete implementation of paDirectSound
+
+#elif defined (macintosh)
+
+	enums_begin (kMelder_inputSoundSystem, 1)
+		enums_add (kMelder_inputSoundSystem, 1, COREAUDIO_VIA_PORTAUDIO, U"CoreAudio via PortAudio")
+	enums_end (kMelder_inputSoundSystem, 1, COREAUDIO_VIA_PORTAUDIO)
+			// in order to have CoreAudio
+
+	enums_begin (kMelder_outputSoundSystem, 1)
+		enums_add (kMelder_outputSoundSystem, 1, COREAUDIO_VIA_PORTAUDIO, U"CoreAudio via PortAudio")
+	enums_end (kMelder_outputSoundSystem, 1, COREAUDIO_VIA_PORTAUDIO)
+			// in order to have CoreAudio
+
+#else
+
+	enums_begin (kMelder_inputSoundSystem, 1)
+		enums_add (kMelder_inputSoundSystem, 1, ALSA_VIA_PORTAUDIO, U"ALSA via PortAudio")
+	enums_end (kMelder_inputSoundSystem, 1, ALSA_VIA_PORTAUDIO)
+			// in order to use ALSA and therefore be compatible with Ubuntu 10.10 and later
+
+	enums_begin (kMelder_outputSoundSystem, 1)
+		enums_add (kMelder_outputSoundSystem, 1, PULSEAUDIO, U"PulseAudio")
+		enums_add (kMelder_outputSoundSystem, 2, ALSA_VIA_PORTAUDIO, U"ALSA via PortAudio")
+	enums_end (kMelder_outputSoundSystem, 2, PULSEAUDIO)
+			// because we prefer to try PulseAudio directly
+
+#endif
 
 /* End of file melder_enums.h */

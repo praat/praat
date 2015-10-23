@@ -44,7 +44,7 @@ typedef void (*MP3F_CALLBACK) (
 		long num_samples,
 		void *context);
 
-MP3_FILE mp3f_new (void);
+MP3_FILE mp3f_new ();
 void mp3f_delete (MP3_FILE mp3f);
 
 void mp3f_set_file (MP3_FILE mp3f, FILE *f);

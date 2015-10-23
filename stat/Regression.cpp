@@ -92,7 +92,7 @@ long Regression_getFactorIndexFromFactorName_e (Regression me, const char32 *fac
 
 Thing_implement (LinearRegression, Regression, 0);
 
-LinearRegression LinearRegression_create (void) {
+LinearRegression LinearRegression_create () {
 	try {
 		autoLinearRegression me = Thing_new (LinearRegression);
 		Regression_init (me.peek());

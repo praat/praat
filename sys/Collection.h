@@ -188,7 +188,7 @@ void _Collection_insertItem (Collection me, Thing item, long position);
 Thing_define (Ordered, Collection) {
 };
 
-Ordered Ordered_create (void);
+Ordered Ordered_create ();
 void Ordered_init (Ordered me, ClassInfo itemClass, long initialCapacity);
 
 /* Behaviour:
@@ -269,7 +269,7 @@ Thing_define (SortedSetOfInt, SortedSet) {
 };
 
 void SortedSetOfInt_init (SortedSetOfInt me);
-SortedSetOfInt SortedSetOfInt_create (void);
+SortedSetOfInt SortedSetOfInt_create ();
 
 /********** class SortedSetOfLong **********/
 
@@ -280,7 +280,7 @@ Thing_define (SortedSetOfLong, SortedSet) {
 };
 
 void SortedSetOfLong_init (SortedSetOfLong me);
-SortedSetOfLong SortedSetOfLong_create (void);
+SortedSetOfLong SortedSetOfLong_create ();
 
 /********** class SortedSetOfDouble **********/
 
@@ -291,7 +291,7 @@ Thing_define (SortedSetOfDouble, SortedSet) {
 };
 
 void SortedSetOfDouble_init (SortedSetOfDouble me);
-SortedSetOfDouble SortedSetOfDouble_create (void);
+SortedSetOfDouble SortedSetOfDouble_create ();
 
 /********** class SortedSetOfString **********/
 
@@ -302,7 +302,7 @@ Thing_define (SortedSetOfString, SortedSet) {
 };
 
 void SortedSetOfString_init (SortedSetOfString me);
-SortedSetOfString SortedSetOfString_create (void);
+SortedSetOfString SortedSetOfString_create ();
 void SortedSetOfString_addString (SortedSetOfString me, const char32 *string);
 long SortedSetOfString_lookUp (SortedSetOfString me, const char32 *string);
 

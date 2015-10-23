@@ -537,7 +537,7 @@ END2 }
 
 /********** Menu descriptions. **********/
 
-void praat_show (void) {
+void praat_show () {
 	/*
 	 * (De)sensitivize the fixed buttons as appropriate for the current selection.
 	 */
@@ -561,7 +561,7 @@ void praat_addFixedButtons (GuiWindow window) {
 	praat_addFixedButtonCommand (window, U"Remove", DO_Remove, 8, 10);
 }
 
-static void searchProc (void) {
+static void searchProc () {
 	DO_SearchManual (NULL, 0, NULL, NULL, NULL, NULL, false, NULL);
 }
 
@@ -701,7 +701,7 @@ void praat_addMenus (GuiWindow window) {
 	praat_addAction1 (classManPages, 1, U"View", 0, 0, DO_ManPages_view);
 }
 
-void praat_addMenus2 (void) {
+void praat_addMenus2 () {
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"-- manual --", 0, 0, 0);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Go to manual page...", 0, 0, DO_GoToManualPage);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Write manual to HTML directory...", 0, praat_HIDDEN, DO_WriteManualToHtmlDirectory);

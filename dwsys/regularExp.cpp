@@ -520,7 +520,7 @@ static char32 *piece (int *flag_param, len_range *range_param);
 static void tail (char32 *search_from, char32 *point_t);
 static char32 *shortcut_escape (char32 c, int *flag_param, int emit);
 
-static int             init_ansi_classes (void);
+static int             init_ansi_classes ();
 
 /*----------------------------------------------------------------------*
  * CompileRE
@@ -2952,7 +2952,7 @@ SINGLE_RETURN: if (Brace) {
  *
  *--------------------------------------------------------------------*/
 
-static int init_ansi_classes (void) {
+static int init_ansi_classes () {
 
 	static int initialized = 0;
 	static int underscore = (int) '_';

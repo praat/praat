@@ -77,7 +77,7 @@ void Thing_recognizeClassesByName (ClassInfo readableClass, ...) {
 	va_end (arg);
 }
 
-long Thing_listReadableClasses (void) {
+long Thing_listReadableClasses () {
 	Melder_clearInfo ();
 	MelderInfo_open ();
 	for (long iclass = 1; iclass <= theNumberOfReadableClasses; iclass ++) {
@@ -239,7 +239,7 @@ void Thing_setName (Thing me, const char32 *name /* cattable */) {
 	my v_nameChanged ();
 }
 
-long Thing_getTotalNumberOfThings (void) { return theTotalNumberOfThings; }
+long Thing_getTotalNumberOfThings () { return theTotalNumberOfThings; }
 
 void Thing_swap (Thing me, Thing thee) {
 	Melder_assert (my classInfo == thy classInfo);

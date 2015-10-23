@@ -617,7 +617,7 @@ static short inited = 0;
 #define UNICODE_TOP_GENERICIZABLE  65000
 static struct { char first, second; } genericDigraph [1+UNICODE_TOP_GENERICIZABLE];
 
-static void init (void) {
+static void init () {
 	Longchar_Info data;
 	int i;
 	for (i = 0, data = & Longchar_database [0]; data -> first != '\0'; i ++, data ++) {

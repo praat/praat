@@ -244,7 +244,7 @@ Graphics Graphics_create_epsfile (MelderFile file, int resolution, enum kGraphic
 }
 
 #ifndef UNIX
-Graphics Graphics_create_postscriptprinter (void) {
+Graphics Graphics_create_postscriptprinter () {
 	GraphicsPostscript me = Thing_new (GraphicsPostscript);
 	my postScript = true, my languageLevel = 2;
 	my job = false, my eps = false, my printer = true;

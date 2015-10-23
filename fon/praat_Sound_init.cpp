@@ -2020,13 +2020,16 @@ DIRECT2 (Sound_to_TextTier) {
 END2 }
 
 FORM (SoundInputPrefs, U"Sound recording preferences", U"SoundRecorder") {
-	NATURAL (U"Buffer size (MB)", U"20")
+	NATURAL (U"Buffer size (MB)", U"60")
+	OPTIONMENU_ENUM (U"Input sound system", kMelder_inputSoundSystem, DEFAULT)
 	OK2
 SET_INTEGER (U"Buffer size", SoundRecorder_getBufferSizePref_MB ())
+SET_ENUM (U"Input sound system", kMelder_inputSoundSystem, MelderAudio_getInputSoundSystem())
 DO
 	long size = GET_INTEGER (U"Buffer size");
 	if (size > 1000) Melder_throw (U"Buffer size cannot exceed 1000 megabytes.");
 	SoundRecorder_setBufferSizePref_MB (size);
+	MelderAudio_setInputSoundSystem (GET_ENUM (kMelder_inputSoundSystem, U"Input sound system"));
 END2 }
 
 FORM (SoundOutputPrefs, U"Sound playing preferences", 0) {
@@ -2038,31 +2041,22 @@ FORM (SoundOutputPrefs, U"Sound playing preferences", 0) {
 	#define str(s) #s
 	REAL (U"Silence before (s)", U"" xstr (kMelderAudio_outputSilenceBefore_DEFAULT))
 	REAL (U"Silence after (s)", U"" xstr (kMelderAudio_outputSilenceAfter_DEFAULT))
-#ifdef USE_PULSEAUDIO
-	// Either pulse audio or portaudio
-	BOOLEAN (U"Use PulseAudio", false)
-#endif
+	OPTIONMENU_ENUM (U"Output sound system", kMelder_outputSoundSystem, DEFAULT)
 	OK2
 SET_ENUM (U"Maximum asynchronicity", kMelder_asynchronicityLevel, MelderAudio_getOutputMaximumAsynchronicity ())
 SET_REAL (U"Silence before", MelderAudio_getOutputSilenceBefore ())
 SET_REAL (U"Silence after", MelderAudio_getOutputSilenceAfter ())
-#ifdef USE_PULSEAUDIO
-	bool outputUsesPortAudio = MelderAudio_getOutputUsesPortAudio ();
-SET_INTEGER (U"Use PulseAudio", ! outputUsesPortAudio)
-#endif
+SET_ENUM (U"Output sound system", kMelder_outputSoundSystem, MelderAudio_getOutputSoundSystem())
 DO
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	MelderAudio_setOutputMaximumAsynchronicity (GET_ENUM (kMelder_asynchronicityLevel, U"Maximum asynchronicity"));
 	MelderAudio_setOutputSilenceBefore (GET_REAL (U"Silence before"));
 	MelderAudio_setOutputSilenceAfter (GET_REAL (U"Silence after"));
-#ifdef USE_PULSEAUDIO
-	bool outputUsesPulseAudio = GET_INTEGER (U"Use PulseAudio");
-	MelderAudio_setOutputUsesPortAudio (! outputUsesPulseAudio);
-#endif
+	MelderAudio_setOutputSoundSystem (GET_ENUM (kMelder_outputSoundSystem, U"Output sound system"));
 END2 }
 
 #ifdef USE_PULSEAUDIO
-void pulseAudio_serverReport (void);
+void pulseAudio_serverReport ();
 DIRECT (Praat_reportSoundServerProperties)
 	pulseAudio_serverReport ();
 END
@@ -2304,24 +2298,24 @@ static int recordFromFileProc (MelderFile file) {
 	Sound_play (melderSoundFromFile, NULL, NULL);
 	return 1;
 }
-static void playProc (void) {
+static void playProc () {
 	if (melderSound) {
 		Sound_play (melderSound, NULL, NULL);
 		last = melderSound;
 	}
 }
-static void playReverseProc (void) {
+static void playReverseProc () {
 	/*if (melderSound) Sound_playReverse (melderSound);*/
 }
-static int publishPlayedProc (void) {
+static int publishPlayedProc () {
 	if (! last) return 0;
 	return Melder_publish (Data_copy (last));
 }
 
 /***** buttons *****/
 
-void praat_uvafon_Sound_init (void);
-void praat_uvafon_Sound_init (void) {
+void praat_uvafon_Sound_init ();
+void praat_uvafon_Sound_init () {
 
 	Data_recognizeFileType (macSoundOrEmptyFileRecognizer);
 	Data_recognizeFileType (soundFileRecognizer);

@@ -57,7 +57,7 @@ String-readable classes are known by Thing_newFromClassName () and can therefore
 be read by Data_readFromTextFile () and Data_readFromBinaryFile ().
 */
 void praat_init (const char32 *title, unsigned int argc, char **argv);
-void praat_run (void);
+void praat_run ();
 void praat_setStandAloneScriptText (const char32 *text);   // call before praat_init if you want to create a stand-alone application without Objects and Picture window
 
 void praat_addAction (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
@@ -166,7 +166,7 @@ Daata praat_onlyObject (ClassInfo klas);
 	/* Returns a selected Daata of class 'klas'. */
 Daata praat_onlyObject_generic (ClassInfo klas);
 	/* Returns a selected Daata of class 'klas' or a subclass. */
-praat_Object praat_onlyScreenObject (void);
+praat_Object praat_onlyScreenObject ();
 char32 *praat_name (int iobject);
 void praat_write_do (UiForm dia, const char32 *extension);
 void praat_new (Daata me);
@@ -505,7 +505,7 @@ void praat_picture_close ();
 /* For main.cpp */
 
 #define INCLUDE_LIBRARY(praat_xxx_init) \
-   { extern void praat_xxx_init (void); praat_xxx_init (); }
+   { extern void praat_xxx_init (); praat_xxx_init (); }
 #define INCLUDE_MANPAGES(manual_xxx_init) \
    { extern void manual_xxx_init (ManPages me); manual_xxx_init (theCurrentPraatApplication -> manPages); }
 
@@ -526,7 +526,7 @@ void praat_setLogo (double width_mm, double height_mm, void (*draw) (Graphics g)
 	praat_show ();   // Needed because the selection has changed.
 */
 void praat_removeObject (int i);   // i = 1..praat.n
-void praat_show (void);   // forces an update of the dynamic menu
+void praat_show ();   // forces an update of the dynamic menu
 void praat_updateSelection ();
 	/* If you require the correct selection immediately after calling praat_new. */
 

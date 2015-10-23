@@ -178,7 +178,7 @@ void praat_deselect (int IOBJECT) {
 	}
 }
 
-void praat_deselectAll (void) { int IOBJECT; WHERE (1) praat_deselect (IOBJECT); }
+void praat_deselectAll () { int IOBJECT; WHERE (1) praat_deselect (IOBJECT); }
 
 void praat_select (int IOBJECT) {
 	if (SELECTED) return;
@@ -194,13 +194,13 @@ void praat_select (int IOBJECT) {
 	}
 }
 
-void praat_selectAll (void) { int IOBJECT; WHERE (1) praat_select (IOBJECT); }
+void praat_selectAll () { int IOBJECT; WHERE (1) praat_select (IOBJECT); }
 
-void praat_list_background (void) {
+void praat_list_background () {
 	int IOBJECT;
 	WHERE (SELECTED) GuiList_deselectItem (praatList_objects, IOBJECT);
 }
-void praat_list_foreground (void) {
+void praat_list_foreground () {
 	int IOBJECT;
 	WHERE (SELECTED) {
 		GuiList_selectItem (praatList_objects, IOBJECT);
@@ -237,7 +237,7 @@ Daata praat_firstObject_generic (ClassInfo klas) {
 	return NULL;   // this is often OK
 }
 
-praat_Object praat_onlyScreenObject (void) {
+praat_Object praat_onlyScreenObject () {
 	int IOBJECT, result = 0, found = 0;
 	WHERE (SELECTED) { result = IOBJECT; found += 1; }
 	if (found != 1) Melder_fatal (U"praat_onlyScreenObject: found ", found, U" objects instead of 1.");
@@ -252,7 +252,7 @@ Daata praat_firstObject_any () {
 	return NULL;   // this is often OK
 }
 
-Collection praat_getSelectedObjects (void) {
+Collection praat_getSelectedObjects () {
 	autoCollection thee = Collection_create (NULL, 10);
 	Collection_dontOwnItems (thee.peek());
 	int IOBJECT;
@@ -449,7 +449,7 @@ void praat_new (Daata me, Melder_9_ARGS) {
 	praat_new (me, thePraatNewName.string);
 }
 
-void praat_updateSelection (void) {
+void praat_updateSelection () {
 	if (theCurrentPraatObjects -> totalBeingCreated) {
 		int IOBJECT;
 		praat_deselectAll ();
@@ -849,7 +849,7 @@ static void gui_cb_quit (void *) {
 	DO_Quit (NULL, 0, NULL, NULL, NULL, NULL, false, NULL);
 }
 
-void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = true; }
+void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 
 /********** INITIALIZATION OF THE PRAAT SHELL **********/
 
@@ -903,7 +903,7 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = true; }
 		}
 	#endif
 #elif defined (_WIN32)
-	static int cb_userMessage (void) {
+	static int cb_userMessage () {
 		autoPraatBackground background;
 		try {
 			praat_executeScriptFromFile (& messageFile, NULL);
@@ -988,7 +988,7 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = true; }
 		}
 		return 0;
 	}
-	static int cb_quitApplication (void) {
+	static int cb_quitApplication () {
 		DO_Quit (nullptr, 0, nullptr, nullptr, nullptr, nullptr, false, nullptr);
 		return 0;
 	}
@@ -1002,7 +1002,7 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = true; }
 		}
 		return 0;
 	}
-	static int cb_quitApplication (void) {
+	static int cb_quitApplication () {
 		DO_Quit (nullptr, 0, nullptr, nullptr, nullptr, nullptr, false, nullptr);
 		return 0;
 	}
@@ -1466,7 +1466,7 @@ static void executeStartUpFile (MelderDir startUpDirectory, const char32 *fileNa
 	#endif
 #endif
 
-void praat_run (void) {
+void praat_run () {
 	trace (U"adding menus, second round");
 	praat_addMenus2 ();
 	trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));

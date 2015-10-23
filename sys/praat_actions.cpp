@@ -176,7 +176,7 @@ void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, Class
 	}
 }
 
-static void deleteDynamicMenu (void) {
+static void deleteDynamicMenu () {
 	if (praatP.phase != praat_HANDLING_EVENTS) return;
 	if (actionsInvisible) return;
 	static long numberOfDeletions;
@@ -221,7 +221,7 @@ static void deleteDynamicMenu (void) {
 	actionsInvisible = true;
 }
 
-static void updateDynamicMenu (void) {
+static void updateDynamicMenu () {
 	if (praatP.phase != praat_HANDLING_EVENTS) return;
 	praat_sortActions ();
 	deleteDynamicMenu ();
@@ -464,7 +464,7 @@ static int compareActions (const void *void_me, const void *void_thee) {
 	return 1;
 }
 
-void praat_sortActions (void) {
+void praat_sortActions () {
 	for (long i = 1; i <= theNumberOfActions; i ++)
 		theActions [i]. sortingTail = i;
 	qsort (& theActions [1], theNumberOfActions, sizeof (struct structPraat_Command), compareActions);
@@ -565,7 +565,7 @@ static void gui_button_cb_menu (I, GuiButtonEvent event) {
 	do_menu (void_me, event -> shiftKeyPressed | event -> commandKeyPressed | event -> optionKeyPressed | event -> extraControlKeyPressed);
 }
 
-void praat_actions_show (void) {
+void praat_actions_show () {
 	#if defined (macintosh)
 		const int BUTTON_VSPACING = 8;
 	#else
@@ -700,7 +700,7 @@ void praat_actions_createWriteMenu (GuiWindow window) {
 	#endif
 }
 
-void praat_actions_init (void) {
+void praat_actions_init () {
 	theActions = Melder_calloc_f (struct structPraat_Command, 1 + praat_MAXNUM_LOOSE_COMMANDS);
 }
 
@@ -756,12 +756,12 @@ int praat_doAction (const char32 *command, int narg, Stackel args, Interpreter i
 	return 1;
 }
 
-long praat_getNumberOfActions (void) { return theNumberOfActions; }
+long praat_getNumberOfActions () { return theNumberOfActions; }
 
 praat_Command praat_getAction (long i)
 	{ return i < 0 || i > theNumberOfActions ? nullptr : & theActions [i]; }
 
-void praat_background (void) {
+void praat_background () {
 	if (Melder_batch) return;
 	if (Melder_backgrounding) return;
 	deleteDynamicMenu ();
@@ -770,7 +770,7 @@ void praat_background (void) {
 	if (! praatP.dontUsePictureWindow) praat_picture_background ();
 }
 
-void praat_foreground (void) {
+void praat_foreground () {
 	if (Melder_batch) return;
 	if (! Melder_backgrounding) return;
 	Melder_backgrounding = false;

@@ -5406,7 +5406,7 @@ DIRECT (Praat_ReportFloatingPointProperties)
 END
 /*
 #ifdef USE_PULSEAUDIO
-void pulseAudioServer_report (void);
+void pulseAudioServer_report ();
 DIRECT (Praat_ReportSoundServerProperties)
 	pulseAudioServer_report ();
 END

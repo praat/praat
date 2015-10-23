@@ -37,7 +37,7 @@ enum KNN_thread_status
 };
 
 // Query the number of available CPUs
-int KNN_getNumberOfCPUs(void);
+int KNN_getNumberOfCPUs ();
 
 // Distribute the work specified by 
 // (*function) and input over nthreads 
@@ -50,7 +50,7 @@ void * KNN_threadDistribution
 );
 
 // Test threading
-void KNN_threadTest(void);
+void KNN_threadTest ();
 
 // Test threading aux
 void * KNN_threadTestAux

@@ -19,7 +19,7 @@
 
 #include "OTGrammar.h"
 
-OTGrammar OTGrammar_create_NoCoda_grammar (void) {
+OTGrammar OTGrammar_create_NoCoda_grammar () {
 	try {
 		OTGrammarCandidate candidate;
 		OTGrammarTableau tableau;

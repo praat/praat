@@ -291,8 +291,8 @@ void Melder_writeToConsole (const char32 *message, bool useStderr);
 /* the f versions open up a rainy day fund or crash Praat. */
 /* These routines also maintain a count of the total number of blocks allocated. */
 
-void Melder_alloc_init (void);   // to be called around program start-up
-void Melder_message_init (void);   // to be called around program start-up
+void Melder_alloc_init ();   // to be called around program start-up
+void Melder_message_init ();   // to be called around program start-up
 void * _Melder_malloc (int64 size);
 #define Melder_malloc(type,numberOfElements)  (type *) _Melder_malloc ((numberOfElements) * (int64) sizeof (type))
 void * _Melder_malloc_f (int64 size);
@@ -313,11 +313,11 @@ char32 * Melder_tok (char32 *string, const char32 *delimiter);
 /**
  * Text encodings.
  */
-void Melder_textEncoding_prefs (void);
+void Melder_textEncoding_prefs ();
 void Melder_setInputEncoding (enum kMelder_textInputEncoding encoding);
-int Melder_getInputEncoding (void);
+int Melder_getInputEncoding ();
 void Melder_setOutputEncoding (enum kMelder_textOutputEncoding encoding);
-enum kMelder_textOutputEncoding Melder_getOutputEncoding (void);
+enum kMelder_textOutputEncoding Melder_getOutputEncoding ();
 
 /*
  * Some other encodings. Although not used in the above set/get functions,
@@ -433,8 +433,8 @@ void MelderFile_getParentDir (MelderFile file, MelderDir parent);
 void MelderDir_getParentDir (MelderDir file, MelderDir parent);
 bool MelderDir_isDesktop (MelderDir dir);
 void MelderDir_getSubdir (MelderDir parent, const char32 *subdirName, MelderDir subdir);
-void Melder_rememberShellDirectory (void);
-char32 * Melder_getShellDirectory (void);
+void Melder_rememberShellDirectory ();
+char32 * Melder_getShellDirectory ();
 void Melder_getHomeDir (MelderDir homeDir);
 void Melder_getPrefDir (MelderDir prefDir);
 void Melder_getTempDir (MelderDir tempDir);
@@ -447,7 +447,7 @@ void MelderFile_delete (MelderFile file);
 /* The following two should be combined with each other and with Windows extension setting: */
 FILE * Melder_fopen (MelderFile file, const char *type);
 void Melder_fclose (MelderFile file, FILE *stream);
-void Melder_files_cleanUp (void);
+void Melder_files_cleanUp ();
 
 /* Use the following functions to pass unchanged text or file names to Melder_* functions. */
 /* Backslashes are replaced by "\bs". */
@@ -664,28 +664,28 @@ void _Melder_free (void **pointer);
 		*pointer == nullptr;
 */
 
-int64 Melder_allocationCount (void);
+int64 Melder_allocationCount ();
 /*
 	Returns the total number of successful calls to
 	Melder_malloc, Melder_realloc (if 'ptr' is null), Melder_calloc, and Melder_strdup,
 	since the start of the process. Mainly for debugging purposes.
 */
 
-int64 Melder_deallocationCount (void);
+int64 Melder_deallocationCount ();
 /*
 	Returns the total number of successful calls to Melder_free,
 	since the start of the process. Mainly for debugging purposes.
 */
 
-int64 Melder_allocationSize (void);
+int64 Melder_allocationSize ();
 /*
 	Returns the total number of bytes allocated in calls to
 	Melder_malloc, Melder_realloc (if moved), Melder_calloc, and Melder_strdup,
 	since the start of the process. Mainly for debugging purposes.
 */
 
-int64 Melder_reallocationsInSituCount (void);
-int64 Melder_movingReallocationsCount (void);
+int64 Melder_reallocationsInSituCount ();
+int64 Melder_movingReallocationsCount ();
 
 /********** STRINGS **********/
 
@@ -746,10 +746,10 @@ void MelderString_append (MelderString *me, Melder_16_TO_19_ARGS);
 void MelderString16_appendCharacter (MelderString16 *me, char32 character);
 void MelderString_appendCharacter (MelderString *me, char32 character);
 void MelderString_get (MelderString *me, char32 *destination);   // performs no boundary checking
-int64 MelderString_allocationCount (void);
-int64 MelderString_deallocationCount (void);
-int64 MelderString_allocationSize (void);
-int64 MelderString_deallocationSize (void);
+int64 MelderString_allocationCount ();
+int64 MelderString_deallocationCount ();
+int64 MelderString_allocationSize ();
+int64 MelderString_deallocationSize ();
 
 struct structMelderReadText {
 	char32 *string32, *readPointer32;
@@ -818,7 +818,7 @@ bool Melder_stringMatchesCriterion (const char32 *value, int which_kMelder_strin
 
 long Melder_countTokens (const char32 *string);
 char32 *Melder_firstToken (const char32 *string);
-char32 *Melder_nextToken (void);
+char32 *Melder_nextToken ();
 char32 ** Melder_getTokens (const char32 *string, long *n);
 void Melder_freeTokens (char32 ***tokens);
 long Melder_searchToken (const char32 *string, char32 **tokens, long n);
@@ -849,7 +849,7 @@ void Melder_casual (Melder_16_TO_19_ARGS);
 /**
 	Give information to stdout (batch), or to an "Info" window (interactive), or to a diverted string.
 */
-void MelderInfo_open (void);   // clear the Info window in the background
+void MelderInfo_open ();   // clear the Info window in the background
 
 void MelderInfo_write (Melder_1_ARG);
 void MelderInfo_write (Melder_2_ARGS);
@@ -881,8 +881,8 @@ void MelderInfo_writeLine (Melder_12_OR_13_ARGS);
 void MelderInfo_writeLine (Melder_14_OR_15_ARGS);
 void MelderInfo_writeLine (Melder_16_TO_19_ARGS);
 
-void MelderInfo_close (void);   // drain the background info to the Info window, making sure there is a line break
-void MelderInfo_drain (void);   // drain the background info to the Info window, without adding any extra line break
+void MelderInfo_close ();   // drain the background info to the Info window, making sure there is a line break
+void MelderInfo_drain ();   // drain the background info to the Info window, without adding any extra line break
 
 void Melder_information (Melder_1_ARG);
 void Melder_information (Melder_2_ARGS);
@@ -909,13 +909,13 @@ class autoMelderDivertInfo {
 		~autoMelderDivertInfo () { Melder_divertInfo (nullptr); }
 };
 
-void Melder_clearInfo (void);   // clear the Info window
-const char32 * Melder_getInfo (void);
+void Melder_clearInfo ();   // clear the Info window
+const char32 * Melder_getInfo ();
 void Melder_help (const char32 *query);
 
-void Melder_search (void);
+void Melder_search ();
 	
-void Melder_beep (void);
+void Melder_beep ();
 
 extern int Melder_debug;
 
@@ -966,10 +966,10 @@ bool Melder_hasError ();
 bool Melder_hasError (const char32 *partialError);
 	/* Returns 1 if there is an error message in store, otherwise 0. */
 
-void Melder_clearError (void);
+void Melder_clearError ();
 	/* Cancel all stored error messages. */
 
-char32 * Melder_getError (void);
+char32 * Melder_getError ();
 	/* Returns the error string. Mainly used with str32str. */
 
 /********** WARNING: give warning to stderr (batch) or to a "Warning" dialog **********/
@@ -989,8 +989,8 @@ void Melder_warning (Melder_12_OR_13_ARGS);
 void Melder_warning (Melder_14_OR_15_ARGS);
 void Melder_warning (Melder_16_TO_19_ARGS);
 
-void Melder_warningOff (void);
-void Melder_warningOn (void);
+void Melder_warningOff ();
+void Melder_warningOn ();
 
 class autoMelderWarningOff {
 public:
@@ -1037,8 +1037,8 @@ void Melder_progress (double progress, Melder_12_OR_13_ARGS);
 void Melder_progress (double progress, Melder_14_OR_15_ARGS);
 void Melder_progress (double progress, Melder_16_TO_19_ARGS);
 
-void Melder_progressOff (void);
-void Melder_progressOn (void);
+void Melder_progressOff ();
+void Melder_progressOn ();
 /*
 	Function:
 		Show the progress of a time-consuming process.
@@ -1156,9 +1156,9 @@ int Melder_publish (void *anything);
 
 int Melder_record (double duration);
 int Melder_recordFromFile (MelderFile file);
-void Melder_play (void);
-void Melder_playReverse (void);
-int Melder_publishPlayed (void);
+void Melder_play ();
+void Melder_playReverse ();
+int Melder_publishPlayed ();
 
 /********** SYSTEM VERSION **********/
 
@@ -1196,61 +1196,53 @@ void Melder_setProgressProc (int (*progressProc) (double progress, const char32 
 void Melder_setMonitorProc (void * (*monitorProc) (double progress, const char32 *message));
 void Melder_setInformationProc (void (*informationProc) (const char32 *message));
 void Melder_setHelpProc (void (*help) (const char32 *query));
-void Melder_setSearchProc (void (*search) (void));
+void Melder_setSearchProc (void (*search) ());
 void Melder_setWarningProc (void (*warningProc) (const char32 *message));
 void Melder_setErrorProc (void (*errorProc) (const char32 *message));
 void Melder_setFatalProc (void (*fatalProc) (const char32 *message));
 void Melder_setPublishProc (int (*publish) (void *));
 void Melder_setRecordProc (int (*record) (double));
 void Melder_setRecordFromFileProc (int (*recordFromFile) (MelderFile));
-void Melder_setPlayProc (void (*play) (void));
-void Melder_setPlayReverseProc (void (*playReverse) (void));
-void Melder_setPublishPlayedProc (int (*publishPlayed) (void));
+void Melder_setPlayProc (void (*play) ());
+void Melder_setPlayReverseProc (void (*playReverse) ());
+void Melder_setPublishPlayedProc (int (*publishPlayed) ());
 
-double Melder_stopwatch (void);
+double Melder_stopwatch ();
 
 /********** AUDIO **********/
 
-#if defined (macintosh) || defined (_WIN32) || defined (linux)
-	#define kMelderAudio_inputUsesPortAudio_DEFAULT  true
-		// Mac: in order to have CoreAudio
-		// Win: in order to allow recording for over 64 megabytes (paMME)
-		// Linux: in order to use ALSA and therefore be compatible with Ubuntu 10.10 and later
-#else
-	#define kMelderAudio_inputUsesPortAudio_DEFAULT  false
-#endif
-void MelderAudio_setInputUsesPortAudio (bool inputUsesPortAudio);
-bool MelderAudio_getInputUsesPortAudio (void);
-#if defined (macintosh) || defined (linux)
-	#define kMelderAudio_outputUsesPortAudio_DEFAULT  true
-		// Mac: in order to have CoreAudio
-		// Linux: in order to use ALSA and therefore be compatible with Ubuntu 10.10 and later
-#else
-	#define kMelderAudio_outputUsesPortAudio_DEFAULT  false
-		// Win: in order to reduce the long latencies of paMME and to avoid the incomplete implementation of paDirectSound
-#endif
-void MelderAudio_setOutputUsesPortAudio (bool outputUsesPortAudio);
-bool MelderAudio_getOutputUsesPortAudio (void);
-#if 1
+void MelderAudio_setInputSoundSystem (enum kMelder_inputSoundSystem inputSoundSystem);
+enum kMelder_inputSoundSystem MelderAudio_getInputSoundSystem ();
+
+void MelderAudio_setOutputSoundSystem (enum kMelder_outputSoundSystem outputSoundSystem);
+enum kMelder_outputSoundSystem MelderAudio_getOutputSoundSystem ();
+
+#if defined (_WIN32)
 	#define kMelderAudio_outputSilenceBefore_DEFAULT  0.0
-		// Mac: in order to switch off the BOING caused by the automatic gain control
+	#define kMelderAudio_outputSilenceAfter_DEFAULT  0.1
+		// in order to get rid of the click on some cards
+#elif defined (macintosh)
+	#define kMelderAudio_outputSilenceBefore_DEFAULT  0.0
+		// in order to switch off the BOING caused by the automatic gain control
+	#define kMelderAudio_outputSilenceAfter_DEFAULT  0.0
+		// in order to reduce the BOING caused by the automatic gain control when the user replays immediately after a sound has finished
+#elif defined (linux)
+	#define kMelderAudio_outputSilenceBefore_DEFAULT  0.0
+	#define kMelderAudio_outputSilenceAfter_DEFAULT  0.1
+		// in order to get rid of double playing of a sounding buffer (?)
+#else
+	#define kMelderAudio_outputSilenceBefore_DEFAULT  0.0
+	#define kMelderAudio_outputSilenceAfter_DEFAULT  0.0
 #endif
 void MelderAudio_setOutputSilenceBefore (double silenceBefore);
-double MelderAudio_getOutputSilenceBefore (void);
-#if defined (macintosh)
-	#define kMelderAudio_outputSilenceAfter_DEFAULT  0.0
-		// Mac: in order to reduce the BOING caused by the automatic gain control when the user replays immediately after a sound has finished
-#else
-	#define kMelderAudio_outputSilenceAfter_DEFAULT  0.5
-		// Win: in order to get rid of the click on some cards
-		// Linux: in order to get rid of double playing of a sounding buffer
-#endif
+double MelderAudio_getOutputSilenceBefore ();
 void MelderAudio_setOutputSilenceAfter (double silenceAfter);
-double MelderAudio_getOutputSilenceAfter (void);
+double MelderAudio_getOutputSilenceAfter ();
+
 void MelderAudio_setUseInternalSpeaker (bool useInternalSpeaker);   // for HP-UX and Sun
-bool MelderAudio_getUseInternalSpeaker (void);
+bool MelderAudio_getUseInternalSpeaker ();
 void MelderAudio_setOutputMaximumAsynchronicity (enum kMelder_asynchronicityLevel maximumAsynchronicity);
-enum kMelder_asynchronicityLevel MelderAudio_getOutputMaximumAsynchronicity (void);
+enum kMelder_asynchronicityLevel MelderAudio_getOutputMaximumAsynchronicity ();
 long MelderAudio_getOutputBestSampleRate (long fsamp);
 
 extern bool MelderAudio_isPlaying;
@@ -1260,10 +1252,10 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 bool MelderAudio_stopPlaying (bool isExplicit);   // returns true if sound was playing
 #define MelderAudio_IMPLICIT  false
 #define MelderAudio_EXPLICIT  true
-long MelderAudio_getSamplesPlayed (void);
-bool MelderAudio_stopWasExplicit (void);
+long MelderAudio_getSamplesPlayed ();
+bool MelderAudio_stopWasExplicit ();
 
-void Melder_audio_prefs (void);   // in init file
+void Melder_audio_prefs ();   // in init file
 
 /********** AUDIO FILES **********/
 
@@ -1337,7 +1329,7 @@ const char32 * MelderQuantity_getShortUnitText (int quantity);   // e.g. "s"
 
 char32 * Melder_getenv (const char32 *variableName);
 void Melder_system (const char32 *command);   // spawn a system command
-double Melder_clock (void);   // seconds since 1969
+double Melder_clock ();   // seconds since 1969
 
 struct autoMelderProgressOff {
 	autoMelderProgressOff () { Melder_progressOff (); }

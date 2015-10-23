@@ -55,7 +55,7 @@
 // KNN_getNumberOfCPUs                             //
 /////////////////////////////////////////////////////
 
-int KNN_getNumberOfCPUs(void)
+int KNN_getNumberOfCPUs ()
 {
     return(1);
     
@@ -195,7 +195,7 @@ void * KNN_threadDistribution
 // KNN_threadTest                                  //
 /////////////////////////////////////////////////////
 
-void KNN_threadTest(void)
+void KNN_threadTest ()
 {
     void * dummy[KNN_getNumberOfCPUs()];
     KNN_threadDistribution(KNN_threadTestAux, (void **) &dummy, KNN_getNumberOfCPUs());
@@ -207,7 +207,7 @@ void KNN_threadTest(void)
 // KNN_threadTestAux                               //
 /////////////////////////////////////////////////////
 
-void * KNN_threadTestAux(void * dummy)
+void * KNN_threadTestAux (void * dummy)
 {
     dummy = nullptr; // dummy assignment to avoid compiler warnings;
 

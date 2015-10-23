@@ -346,7 +346,7 @@ void Ordered_init (Ordered me, ClassInfo itemClass, long initialMaximumLength) {
 	Collection_init (me, itemClass, initialMaximumLength);
 }
 
-Ordered Ordered_create (void) {
+Ordered Ordered_create () {
 	autoOrdered me = Thing_new (Ordered);
 	Ordered_init (me.peek(), nullptr, 10);
 	return me.transfer();
@@ -439,7 +439,7 @@ void SortedSetOfInt_init (SortedSetOfInt me) {
 	SortedSet_init (me, classSimpleInt, 10);
 }
 
-SortedSetOfInt SortedSetOfInt_create (void) {
+SortedSetOfInt SortedSetOfInt_create () {
 	autoSortedSetOfInt me = Thing_new (SortedSetOfInt);
 	SortedSetOfInt_init (me.peek());
 	return me.transfer();
@@ -460,7 +460,7 @@ void SortedSetOfLong_init (SortedSetOfLong me) {
 	SortedSet_init (me, classSimpleLong, 10);
 }
 
-SortedSetOfLong SortedSetOfLong_create (void) {
+SortedSetOfLong SortedSetOfLong_create () {
 	autoSortedSetOfLong me = Thing_new (SortedSetOfLong);
 	SortedSetOfLong_init (me.peek());
 	return me.transfer();
@@ -481,7 +481,7 @@ void SortedSetOfDouble_init (SortedSetOfDouble me) {
 	SortedSet_init (me, classSimpleDouble, 10);
 }
 
-SortedSetOfDouble SortedSetOfDouble_create (void) {
+SortedSetOfDouble SortedSetOfDouble_create () {
 	autoSortedSetOfDouble me = Thing_new (SortedSetOfDouble);
 	SortedSetOfDouble_init (me.peek());
 	return me.transfer();
@@ -500,7 +500,7 @@ void SortedSetOfString_init (SortedSetOfString me) {
 	SortedSet_init (me, classSimpleString, 10);
 }
 
-SortedSetOfString SortedSetOfString_create (void) {
+SortedSetOfString SortedSetOfString_create () {
 	autoSortedSetOfString me = Thing_new (SortedSetOfString);
 	SortedSetOfString_init (me.peek());
 	return me.transfer();

@@ -27,7 +27,7 @@
 
 static bool praat_mouseSelectsInnerViewport;
 
-void praat_picture_prefs (void) {
+void praat_picture_prefs () {
 	Preferences_addEnum (U"Picture.font", & theCurrentPraatPicture -> font, kGraphics_font, kGraphics_font_DEFAULT);
 	Preferences_addInt (U"Picture.fontSize", & theCurrentPraatPicture -> fontSize, 10);
 	Preferences_addBool (U"Picture.mouseSelectsInnerViewport", & praat_mouseSelectsInnerViewport, false);
@@ -43,7 +43,7 @@ static Picture praat_picture;
 
 static GuiMenuItem praatButton_fonts [1 + kGraphics_font_MAX];
 
-static void updateFontMenu (void) {
+static void updateFontMenu () {
 	if (! theCurrentPraatApplication -> batch) {
 		if (theCurrentPraatPicture -> font < kGraphics_font_MIN) theCurrentPraatPicture -> font = kGraphics_font_MIN;
 		if (theCurrentPraatPicture -> font > kGraphics_font_MAX) theCurrentPraatPicture -> font = kGraphics_font_MAX;   // we no longer have New Century Schoolbook
@@ -70,7 +70,7 @@ DIRECT (Courier)   { setFont (kGraphics_font_COURIER);   } END
 /***** "Font" MENU: size part *****/
 
 static GuiMenuItem praatButton_10, praatButton_12, praatButton_14, praatButton_18, praatButton_24;
-static void updateSizeMenu (void) {
+static void updateSizeMenu () {
 	if (! theCurrentPraatApplication -> batch) {
 		GuiMenuItem_check (praatButton_10, theCurrentPraatPicture -> fontSize == 10);
 		GuiMenuItem_check (praatButton_12, theCurrentPraatPicture -> fontSize == 12);
@@ -130,7 +130,7 @@ END2 }
 /***** "Select" MENU *****/
 
 static GuiMenuItem praatButton_innerViewport, praatButton_outerViewport;
-static void updateViewportMenu (void) {
+static void updateViewportMenu () {
 	if (! theCurrentPraatApplication -> batch) {
 		GuiMenuItem_check (praatButton_innerViewport, praat_mouseSelectsInnerViewport ? 1 : 0);
 		GuiMenuItem_check (praatButton_outerViewport, praat_mouseSelectsInnerViewport ? 0 : 1);
@@ -312,7 +312,7 @@ static GuiMenuItem praatButton_black, praatButton_white, praatButton_red, praatB
 	praatButton_teal, praatButton_purple, praatButton_olive, praatButton_pink, praatButton_silver, praatButton_grey;
 
 
-static void updatePenMenu (void) {
+static void updatePenMenu () {
 	if (! theCurrentPraatApplication -> batch) {
 		for (int i = Graphics_DRAWN; i <= Graphics_DASHED; i ++) {
 			GuiMenuItem_check (praatButton_lines [i], theCurrentPraatPicture -> lineType == i);
@@ -1499,11 +1499,11 @@ GuiMenu praat_picture_resolveMenu (const char32 *menu) {
 		editMenu;   // default
 }
 
-void praat_picture_exit (void) {
+void praat_picture_exit () {
 	Picture_remove (& praat_picture);
 }
 
-void praat_picture_open (void) {
+void praat_picture_open () {
 	Graphics_markGroup (GRAPHICS);   // we start a group of graphics output here
 	if (theCurrentPraatPicture == & theForegroundPraatPicture && ! theCurrentPraatApplication -> batch) {
 		#if gtk
@@ -1537,7 +1537,7 @@ void praat_picture_open (void) {
 	Graphics_setWindow (GRAPHICS, x1WC, x2WC, y1WC, y2WC);
 }
 
-void praat_picture_close (void) {
+void praat_picture_close () {
 	if (theCurrentPraatPicture != & theForegroundPraatPicture) return;
 	if (! theCurrentPraatApplication -> batch) {
 		Picture_highlight (praat_picture);
@@ -1553,7 +1553,7 @@ Graphics praat_picture_editor_open (bool eraseFirst) {
 	return GRAPHICS;
 }
 
-void praat_picture_editor_close (void) {
+void praat_picture_editor_close () {
 	praat_picture_close ();
 }
 
@@ -1566,7 +1566,7 @@ static Any pictureRecognizer (int nread, const char *header, MelderFile file) {
 	return NULL;
 }
 
-void praat_picture_init (void) {
+void praat_picture_init () {
 	GuiScrolledWindow scrollWindow;
 	GuiDrawingArea drawingArea = NULL;
 	int margin, width, height, resolution, x, y;
@@ -1811,7 +1811,7 @@ void praat_picture_init (void) {
 	updateViewportMenu ();
 }
 
-void praat_picture_prefsChanged (void) {
+void praat_picture_prefsChanged () {
 	updateFontMenu ();
 	updateSizeMenu ();
 	updateViewportMenu ();
@@ -1819,7 +1819,7 @@ void praat_picture_prefsChanged (void) {
 	Picture_setMouseSelectsInnerViewport (praat_picture, praat_mouseSelectsInnerViewport);
 }
 
-void praat_picture_background (void) {
+void praat_picture_background () {
 	if (theCurrentPraatPicture != & theForegroundPraatPicture) return;   // Demo window and pictures ignore this
 	if (! theCurrentPraatApplication -> batch) {
 		//Picture_unhighlight (praat_picture);
@@ -1829,7 +1829,7 @@ void praat_picture_background (void) {
 	}
 }
 
-void praat_picture_foreground (void) {
+void praat_picture_foreground () {
 	if (theCurrentPraatPicture != & theForegroundPraatPicture) return;   // Demo window and pictures ignore this
 	if (! theCurrentPraatApplication -> batch) {
 		#if cocoa

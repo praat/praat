@@ -124,9 +124,9 @@ double OTGrammar_Distributions_getFractionCorrect (OTGrammar me, Distributions t
 
 void OTGrammar_checkIndex (OTGrammar me);
 
-OTGrammar OTGrammar_create_NoCoda_grammar (void);
-OTGrammar OTGrammar_create_NPA_grammar (void);
-PairDistribution OTGrammar_create_NPA_distribution (void);
+OTGrammar OTGrammar_create_NoCoda_grammar ();
+OTGrammar OTGrammar_create_NPA_grammar ();
+PairDistribution OTGrammar_create_NPA_distribution ();
 OTGrammar OTGrammar_create_tongueRoot_grammar (int small_large, int equal_random_infant_Wolof);
 OTGrammar OTGrammar_create_metrics (int equal_footForm_wsp,
 	int trochaicityConstraint, int includeFootBimoraic, int includeFootBisyllabic,

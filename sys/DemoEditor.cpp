@@ -139,7 +139,7 @@ DemoEditor DemoEditor_create () {
 	}
 }
 
-void Demo_open (void) {
+void Demo_open () {
 	#ifndef CONSOLE_APPLICATION
 		if (Melder_batch) {
 			/*
@@ -173,7 +173,7 @@ void Demo_open (void) {
 	#endif
 }
 
-void Demo_close (void) {
+void Demo_close () {
 	theCurrentPraatPicture = & theForegroundPraatPicture;
 }
 
@@ -183,7 +183,7 @@ int Demo_windowTitle (const char32 *title) {
 	return 1;
 }
 
-int Demo_show (void) {
+int Demo_show () {
 	if (! theDemoEditor) return 0;
 	autoDemoOpen demo;
 	GuiThing_show (theDemoEditor -> d_windowForm);
@@ -253,7 +253,7 @@ void Demo_waitForInput (Interpreter interpreter) {
 	}
 }
 
-bool Demo_clicked (void) {
+bool Demo_clicked () {
 	if (! theDemoEditor) return false;
 	if (theDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
@@ -262,7 +262,7 @@ bool Demo_clicked (void) {
 	return theDemoEditor -> clicked;
 }
 
-double Demo_x (void) {
+double Demo_x () {
 	if (! theDemoEditor) return NUMundefined;
 	if (theDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
@@ -279,7 +279,7 @@ double Demo_x (void) {
 	return xWC;
 }
 
-double Demo_y (void) {
+double Demo_y () {
 	if (! theDemoEditor) return NUMundefined;
 	if (theDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
@@ -292,7 +292,7 @@ double Demo_y (void) {
 	return yWC;
 }
 
-bool Demo_keyPressed (void) {
+bool Demo_keyPressed () {
 	if (! theDemoEditor) return false;
 	if (theDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
@@ -301,7 +301,7 @@ bool Demo_keyPressed (void) {
 	return theDemoEditor -> keyPressed;
 }
 
-char32 Demo_key (void) {
+char32 Demo_key () {
 	if (! theDemoEditor) return 0;
 	if (theDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
@@ -310,7 +310,7 @@ char32 Demo_key (void) {
 	return theDemoEditor -> key;
 }
 
-bool Demo_shiftKeyPressed (void) {
+bool Demo_shiftKeyPressed () {
 	if (! theDemoEditor) return false;
 	if (theDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
@@ -319,7 +319,7 @@ bool Demo_shiftKeyPressed (void) {
 	return theDemoEditor -> shiftKeyPressed;
 }
 
-bool Demo_commandKeyPressed (void) {
+bool Demo_commandKeyPressed () {
 	if (! theDemoEditor) return false;
 	if (theDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
@@ -328,7 +328,7 @@ bool Demo_commandKeyPressed (void) {
 	return theDemoEditor -> commandKeyPressed;
 }
 
-bool Demo_optionKeyPressed (void) {
+bool Demo_optionKeyPressed () {
 	if (! theDemoEditor) return false;
 	if (theDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
@@ -337,7 +337,7 @@ bool Demo_optionKeyPressed (void) {
 	return theDemoEditor -> optionKeyPressed;
 }
 
-bool Demo_extraControlKeyPressed (void) {
+bool Demo_extraControlKeyPressed () {
 	if (! theDemoEditor) return false;
 	if (theDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "

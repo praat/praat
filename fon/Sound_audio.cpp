@@ -144,7 +144,14 @@ static int portaudioStreamCallback (
 }
 
 Sound Sound_recordFixedTime (int inputSource, double gain, double balance, double sampleRate, double duration) {
-	bool inputUsesPortAudio = MelderAudio_getInputUsesPortAudio ();
+	bool inputUsesPortAudio =
+		#if defined (_WIN32)
+			MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem_MME_VIA_PORTAUDIO;
+		#elif defined (macintosh)
+			MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem_COREAUDIO_VIA_PORTAUDIO;
+		#else
+			MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem_ALSA_VIA_PORTAUDIO;
+		#endif
 	PaStream *portaudioStream = NULL;
 	#if defined (macintosh)
 	#elif defined (_WIN32)

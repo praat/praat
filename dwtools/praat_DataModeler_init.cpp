@@ -1392,8 +1392,8 @@ DO
 	}
 END
 
-void praat_DataModeler_init (void);
-void praat_DataModeler_init (void) {
+void praat_DataModeler_init ();
+void praat_DataModeler_init () {
 	Thing_recognizeClassesByName (classDataModeler, classFormantModeler, classOptimalCeilingTier, classOptimalCeilingTierEditor, classPitchModeler, nullptr);
 
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple DataModeler...", U"Create ISpline...", praat_HIDDEN + praat_DEPTH_1, DO_DataModeler_createSimple);

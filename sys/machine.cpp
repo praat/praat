@@ -40,7 +40,7 @@
 
 static int lookAndFeel;
 
-int Machine_getMenuBarHeight (void) {
+int Machine_getMenuBarHeight () {
 	static int heights [] = {
 		26,   /* Motif */
 		24,   /* SGI */
@@ -56,7 +56,7 @@ int Machine_getMenuBarHeight (void) {
 	return heights [lookAndFeel];
 }
 
-int Machine_getMainWindowMenuBarHeight (void) {
+int Machine_getMainWindowMenuBarHeight () {
 	#ifdef macintoshXXX
 		return 0;
 	#else
@@ -64,7 +64,7 @@ int Machine_getMainWindowMenuBarHeight (void) {
 	#endif
 }
 
-int Machine_getTitleBarHeight (void) {
+int Machine_getTitleBarHeight () {
 	static int heights [] = {   /* Mostly copied from menu-bar height. */
 		26,   /* Motif */
 		24,   /* SGI */
@@ -80,7 +80,7 @@ int Machine_getTitleBarHeight (void) {
 	return heights [lookAndFeel];
 }
 
-int Machine_getScrollBarWidth (void) {
+int Machine_getScrollBarWidth () {
 	static int widths [] = {
 		22,   /* Motif */
 		22,   /* SGI */
@@ -96,7 +96,7 @@ int Machine_getScrollBarWidth (void) {
 	return widths [lookAndFeel];
 }
 
-int Machine_getTextHeight (void) {
+int Machine_getTextHeight () {
 	static int heights [] = {
 		29,   /* Motif */
 		29,   /* SGI */

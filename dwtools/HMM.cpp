@@ -1168,9 +1168,7 @@ void HMM_and_HMM_BaumWelch_getXi (HMM me, HMM_BaumWelch thee, long *obs) {
 }
 
 void HMM_and_HMM_BaumWelch_addEstimate (HMM me, HMM_BaumWelch thee, long *obs) {
-	long is;
-
-	for (is = 1; is <= my numberOfStates; is++) {
+	for (long is = 1; is <= my numberOfStates; is++) {
 		// only for valid start states with p > 0
 		if (my transitionProbs[0][is] > 0.0) {
 			thy aij_num[0][is] += thy gamma[is][1];
@@ -1178,7 +1176,7 @@ void HMM_and_HMM_BaumWelch_addEstimate (HMM me, HMM_BaumWelch thee, long *obs) {
 		}
 	}
 
-	for (is = 1; is <= my numberOfStates; is++) {
+	for (long is = 1; is <= my numberOfStates; is++) {
 		double gammasum = 0.0;
 		for (long it = 1; it <= thy numberOfTimes - 1; it++) {
 			gammasum += thy gamma[is][it];

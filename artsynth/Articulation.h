@@ -30,7 +30,7 @@
 #include "Articulation_def.h"
 oo_CLASS_CREATE (Art, Daata);
 
-Art Art_create (void);
+Art Art_create ();
 /*
 	Return value:
 		an array of double, with indices from enum Art.
