@@ -647,7 +647,7 @@ void Pitch_difference (Pitch me, Pitch thee) {
 	MelderInfo_close ();
 }
 
-Pitch Pitch_killOctaveJumps (Pitch me) {
+autoPitch Pitch_killOctaveJumps (Pitch me) {
 	try {
 		autoPitch thee = Pitch_create (my xmin, my xmax, my nx, my dx, my x1, my ceiling, 2);
 		long nVoiced = 0, nUp = 0;
@@ -665,7 +665,7 @@ Pitch Pitch_killOctaveJumps (Pitch me) {
 				lastFrequency = thy frame [i]. candidate [1]. frequency = f;
 			}
 		}
-		thy ceiling *= 2;   /* Make room for some octave jumps. */
+		thy ceiling *= 2.0;   // make room for some octave jumps
 		while (nUp > nVoiced / 2) {
 			for (long i = 1; i <= thy nx; i ++)
 				thy frame [i]. candidate [1]. frequency *= 0.5;
@@ -676,13 +676,13 @@ Pitch Pitch_killOctaveJumps (Pitch me) {
 				thy frame [i]. candidate [1]. frequency *= 2.0;
 			nUp += nVoiced;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": octave jumps not killed.");
 	}
 }
 
-Pitch Pitch_interpolate (Pitch me) {
+autoPitch Pitch_interpolate (Pitch me) {
 	try {
 		autoPitch thee = Pitch_create (my xmin, my xmax, my nx, my dx, my x1, my ceiling, 2);
 		for (long i = 1; i <= my nx; i ++) {
@@ -706,13 +706,13 @@ Pitch Pitch_interpolate (Pitch me) {
 						((i - left) * fright + (right - i) * fleft) / (right - left);
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not interpolated.");
 	}
 }
 
-Pitch Pitch_subtractLinearFit (Pitch me, int unit) {
+autoPitch Pitch_subtractLinearFit (Pitch me, int unit) {
 	try {
 		autoPitch thee = Pitch_interpolate (me);
 		/*
@@ -758,13 +758,13 @@ Pitch Pitch_subtractLinearFit (Pitch me, int unit) {
 			else
 				FREQUENCY (thyFrame) = Function_convertSpecialToStandardUnit (me, f, Pitch_LEVEL_FREQUENCY, unit);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": linear fit not subtracted.");
 	}
 }
 
-Pitch Pitch_smooth (Pitch me, double bandWidth) {
+autoPitch Pitch_smooth (Pitch me, double bandWidth) {
 	try {
 		autoPitch interp = Pitch_interpolate (me);
 		autoMatrix matrix1 = Pitch_to_Matrix (interp.peek());
@@ -808,7 +808,7 @@ Pitch Pitch_smooth (Pitch me, double bandWidth) {
 		}
 		autoPitch thee = Matrix_to_Pitch (matrix2.peek());
 		thy ceiling = my ceiling;
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not smoothed.");
 	}

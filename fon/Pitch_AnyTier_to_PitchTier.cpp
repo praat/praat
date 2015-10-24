@@ -26,7 +26,7 @@
 #include "Pitch_AnyTier_to_PitchTier.h"
 #include "Pitch_to_PitchTier.h"
 
-PitchTier PitchTier_AnyTier_to_PitchTier (PitchTier pitch, AnyTier tier) {
+autoPitchTier PitchTier_AnyTier_to_PitchTier (PitchTier pitch, AnyTier tier) {
 	try {
 		SortedSetOfDouble points = tier -> points;
 		if (pitch -> points -> size == 0) Melder_throw (U"No pitch points.");
@@ -48,13 +48,13 @@ PitchTier PitchTier_AnyTier_to_PitchTier (PitchTier pitch, AnyTier tier) {
 			RealTier_addPoint (thee.peek(), time, frequency);
 		}
 
-		return thee.peek();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (pitch, U" & ", tier, U": not converted to PitchTier.");
 	}
 }
 
-PitchTier Pitch_AnyTier_to_PitchTier (Pitch pitch, AnyTier tier, int checkMethod) {
+autoPitchTier Pitch_AnyTier_to_PitchTier (Pitch pitch, AnyTier tier, int checkMethod) {
 	try {
 		SortedSetOfDouble points = tier -> points;
 		if (checkMethod == 2) {
@@ -82,7 +82,7 @@ PitchTier Pitch_AnyTier_to_PitchTier (Pitch pitch, AnyTier tier, int checkMethod
 			RealTier_addPoint (thee.peek(), time, frequency);
 		}
 
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (pitch, U" & ", tier, U": not converted to PitchTier.");
 	}

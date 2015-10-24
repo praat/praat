@@ -2,7 +2,7 @@
 #define _ParamCurve_h_
 /* ParamCurve.h
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ oo_CLASS_CREATE (ParamCurve, Function);
 
 void ParamCurve_init (ParamCurve me, Sound x, Sound y);
 
-ParamCurve ParamCurve_create (Sound x, Sound y);
+autoParamCurve ParamCurve_create (Sound x, Sound y);
 /*
 	Return value:
 		a newly created ParamCurve object.
