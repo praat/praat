@@ -27,20 +27,20 @@
 
 #include "Matrix_and_Pitch.h"
 
-Matrix Pitch_to_Matrix (Pitch me) {
+autoMatrix Pitch_to_Matrix (Pitch me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, 1, 1, 1, 1);
 		for (long i = 1; i <= my nx; i ++) {
 			double value = my frame [i]. candidate [1]. frequency;
 			thy z [1] [i] = value > 0.0 && value < my ceiling ? my frame [i]. candidate [1]. frequency : 0.0;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
 	}
 }
 
-Pitch Matrix_to_Pitch (Matrix me) {
+autoPitch Matrix_to_Pitch (Matrix me) {
 	try {
 		autoPitch thee = Pitch_create (my xmin, my xmax, my nx, my dx, my x1, 5000, 2);
 		for (long i = 1; i <= my nx; i ++) {
@@ -58,7 +58,7 @@ Pitch Matrix_to_Pitch (Matrix me) {
 				frame->candidate[2].strength = 0.4;
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Pitch.");
 	}

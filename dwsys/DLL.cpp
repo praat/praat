@@ -26,15 +26,16 @@ void structDLLNode :: v_destroy () {
 	DLLNode_Parent :: v_destroy ();
 }
 
-void structDLLNode :: v_copy (DLLNode thee) {
-	thy data = Data_copy (data);
+void structDLLNode :: v_copy (thou) {
+	thouart (DLLNode);
+	thy data = Data_copy (our data);
 }
 
 Thing_implement (DLL, Thing, 0);
 
 void structDLL :: v_destroy () {
 	DLLNode v = front;
-	while (v != nullptr) {
+	while (v) {
 		DLLNode cur = v;
 		v = v -> next;
 		forget (cur);
@@ -67,22 +68,22 @@ DLL DLL_create() {
 }
 
 void DLL_addFront (DLL me, DLLNode n) {
-	if (my front == nullptr) { // empty list
+	if (my front) {
+		DLL_addBefore (me, my front, n);
+	} else {   // empty list
 		my front = n;
 		my back = n;
 		n -> next = nullptr;
 		n -> prev = nullptr;
 		my numberOfNodes++;
-	} else {
-		DLL_addBefore (me, my front, n);
 	}
 }
 
 void DLL_addBack (DLL me, DLLNode n) {
-	if (my back == nullptr) {
-		DLL_addFront (me, n);    // empty list
-	} else {
+	if (my back) {
 		DLL_addAfter (me, my back, n);
+	} else {
+		DLL_addFront (me, n);    // empty list
 	}
 }
 
@@ -134,7 +135,7 @@ void DLL_remove (DLL me, DLLNode n) {
 void DLL_sortPart (DLL me, DLLNode from, DLLNode to) {
 	// Save data
 	if (from == to) {
-		return;    // nothing to do
+		return;   // nothing to do
 	}
 	DLLNode from_prev = from -> prev;
 	DLLNode to_next = to -> next;
@@ -173,7 +174,7 @@ void DLL_sort (DLL me) {
 
 		long numberOfMerges = 0;
 
-		while (n1 != nullptr) {
+		while (n1) {
 			DLLNode n2 = n1, n;
 			long n1size = 0;
 			numberOfMerges++;

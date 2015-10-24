@@ -128,11 +128,11 @@ static void menu_cb_DrawSelectedSound (EDITOR_ARGS) {
 }
 
 static void do_ExtractSelectedSound (TimeSoundEditor me, bool preserveTimes) {
-	autoSound extract = NULL;
+	autoSound extract;
 	if (my d_endSelection <= my d_startSelection)
 		Melder_throw (U"No selection.");
 	if (my d_longSound.data) {
-		extract.reset (LongSound_extractPart (my d_longSound.data, my d_startSelection, my d_endSelection, preserveTimes));
+		extract = LongSound_extractPart (my d_longSound.data, my d_startSelection, my d_endSelection, preserveTimes);
 	} else if (my d_sound.data) {
 		extract.reset (Sound_extractPart (my d_sound.data, my d_startSelection, my d_endSelection, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes));
 	}

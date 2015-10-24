@@ -42,13 +42,13 @@ Thing_define (Intensity, Vector) {
 		override;
 };
 
-Intensity Intensity_create (double tmin, double tmax, long nt, double dt, double t1);
+autoIntensity Intensity_create (double tmin, double tmax, long nt, double dt, double t1);
 
 void Intensity_init (Intensity me, double tmin, double tmax, long nt, double dt, double t1);
 
-Matrix Intensity_to_Matrix (Intensity me);
+autoMatrix Intensity_to_Matrix (Intensity me);
 
-Intensity Matrix_to_Intensity (Matrix me);
+autoIntensity Matrix_to_Intensity (Matrix me);
 
 void Intensity_drawInside (Intensity me, Graphics g, double tmin, double tmax,
 	double minimum, double maximum);

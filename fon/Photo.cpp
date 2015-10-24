@@ -1,6 +1,6 @@
 /* Photo.cpp
  *
- * Copyright (C) 2013,2014 Paul Boersma
+ * Copyright (C) 2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -422,27 +422,19 @@ void Photo_saveAsWindowsIconFile (Photo me, MelderFile file) {
 }
 
 void Photo_replaceRed (Photo me, Matrix red) {
-	autoMatrix copy = Data_copy (red);
-	forget (my d_red);
-	my d_red = copy.transfer();
+	my d_red = Data_copy (red);
 }
 
 void Photo_replaceGreen (Photo me, Matrix green) {
-	autoMatrix copy = Data_copy (green);
-	forget (my d_green);
-	my d_green = copy.transfer();
+	my d_green = Data_copy (green);
 }
 
 void Photo_replaceBlue (Photo me, Matrix blue) {
-	autoMatrix copy = Data_copy (blue);
-	forget (my d_blue);
-	my d_blue = copy.transfer();
+	my d_blue = Data_copy (blue);
 }
 
 void Photo_replaceTransparency (Photo me, Matrix transparency) {
-	autoMatrix copy = Data_copy (transparency);
-	forget (my d_transparency);
-	my d_transparency = copy.transfer();
+	my d_transparency = Data_copy (transparency);
 }
 
 static void _Photo_cellArrayOrImage (Photo me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool interpolate) {

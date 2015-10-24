@@ -57,31 +57,31 @@ void Intensity_init (Intensity me, double tmin, double tmax, long nt, double dt,
 	Matrix_init (me, tmin, tmax, nt, dt, t1, 1.0, 1.0, 1, 1.0, 1.0);
 }
 
-Intensity Intensity_create (double tmin, double tmax, long nt, double dt, double t1) {
+autoIntensity Intensity_create (double tmin, double tmax, long nt, double dt, double t1) {
 	try {
 		autoIntensity me = Thing_new (Intensity);
 		Intensity_init (me.peek(), tmin, tmax, nt, dt, t1);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Intensity not created.");
 	}
 }
 
-Matrix Intensity_to_Matrix (Intensity me) {
+autoMatrix Intensity_to_Matrix (Intensity me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
 		my structMatrix :: v_copy (thee.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Intensity.");
 	}
 }
 
-Intensity Matrix_to_Intensity (Matrix me) {
+autoIntensity Matrix_to_Intensity (Matrix me) {
 	try {
 		autoIntensity thee = Thing_new (Intensity);
 		my structMatrix :: v_copy (thee.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
 	}

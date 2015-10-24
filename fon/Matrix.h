@@ -32,7 +32,7 @@ void Matrix_init
 	(Matrix me, double xmin, double xmax, long nx, double dx, double x1,
 	            double ymin, double ymax, long ny, double dy, double y1);
 
-Matrix Matrix_create
+autoMatrix Matrix_create
 	(double xmin, double xmax, long nx, double dx, double x1,
 	 double ymin, double ymax, long ny, double dy, double y1);
 /*
@@ -56,7 +56,7 @@ Matrix Matrix_create
 		result -> z [1..ny] [1..nx] == 0.0;
 */
 
-Matrix Matrix_createSimple (long numberOfRows, long numberOfColumns);
+autoMatrix Matrix_createSimple (long numberOfRows, long numberOfColumns);
 /*
 	Function:
 		return a new empty Matrix.
@@ -248,21 +248,21 @@ void Matrix_paintSurface (Matrix me, Graphics g, double xmin, double xmax, doubl
 
 void Matrix_movie (Matrix me, Graphics g);
 
-Matrix Matrix_readFromRawTextFile (MelderFile file);
-Matrix Matrix_readAP (MelderFile file);
-Matrix Matrix_appendRows (Matrix me, Matrix thee, ClassInfo klas);
+autoMatrix Matrix_readFromRawTextFile (MelderFile file);
+autoMatrix Matrix_readAP (MelderFile file);
+autoMatrix Matrix_appendRows (Matrix me, Matrix thee, ClassInfo klas);
 
 void Matrix_eigen (Matrix me, Matrix *eigenvectors, Matrix *eigenvalues);
-Matrix Matrix_power (Matrix me, long power);
+autoMatrix Matrix_power (Matrix me, long power);
 
 void Matrix_scaleAbsoluteExtremum (Matrix me, double scale);
 
-Matrix Table_to_Matrix (Table me);
+autoMatrix Table_to_Matrix (Table me);
 void Matrix_writeToMatrixTextFile (Matrix me, MelderFile file);
 void Matrix_writeToHeaderlessSpreadsheetFile (Matrix me, MelderFile file);
 
-Matrix TableOfReal_to_Matrix (TableOfReal me);
-TableOfReal Matrix_to_TableOfReal (Matrix me);
+autoMatrix TableOfReal_to_Matrix (TableOfReal me);
+autoTableOfReal Matrix_to_TableOfReal (Matrix me);
 
 /* End of file Matrix.h */
 #endif

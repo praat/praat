@@ -755,7 +755,7 @@ FORM (Categories_create, U"Create Categories", 0) {
 	WORD (U"Name", U"empty")
 	OK2
 DO
-	praat_new (Categories_create ().peek(), GET_STRING (U"Name"));
+	praat_new (Categories_create ().transfer(), GET_STRING (U"Name"));
 END2 }
 
 FORM (FeatureWeights_create, U"Create FeatureWeights", 0) {

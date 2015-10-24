@@ -2,7 +2,7 @@
 #define _FujisakiPitch_h_
 /* FujisakiPitch.h
  *
- * Copyright (C) 2002-2011 Paul Boersma
+ * Copyright (C) 2002-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,13 +26,13 @@
 oo_CLASS_CREATE (FujisakiCommand, Function);
 oo_CLASS_CREATE (FujisakiPitch, Function);
 
-FujisakiCommand FujisakiCommand_create (double tmin, double tmax, double amplitude);
+autoFujisakiCommand FujisakiCommand_create (double tmin, double tmax, double amplitude);
 
-FujisakiPitch FujisakiPitch_create (double tmin, double tmax,
+autoFujisakiPitch FujisakiPitch_create (double tmin, double tmax,
 	double baseFrequency, double alpha, double beta, double gamma);
 
-FujisakiPitch Pitch_to_FujisakiPitch (Pitch me, double gamma, double timeResolution,
-	FujisakiPitch *intermediate1, FujisakiPitch *intermediate2, FujisakiPitch *intermediate3);
+autoFujisakiPitch Pitch_to_FujisakiPitch (Pitch me, double gamma, double timeResolution,
+	autoFujisakiPitch *intermediate1, autoFujisakiPitch *intermediate2, autoFujisakiPitch *intermediate3);
 
 /* End of file FujisakiPitch.h */
 #endif

@@ -29,20 +29,20 @@ Thing_define (IntensityTier, RealTier) {
 		override { return MelderQuantity_TIME_SECONDS; }
 };
 
-IntensityTier IntensityTier_create (double tmin, double tmax);
+autoIntensityTier IntensityTier_create (double tmin, double tmax);
 
 void IntensityTier_draw (IntensityTier me, Graphics g, double tmin, double tmax,
 	double ymin, double ymax, const char32 *method, int garnish);
 
-IntensityTier PointProcess_upto_IntensityTier (PointProcess me, double intensity);
-IntensityTier Intensity_downto_IntensityTier (Intensity me);
-IntensityTier Intensity_to_IntensityTier_peaks (Intensity me);
-IntensityTier Intensity_to_IntensityTier_valleys (Intensity me);
-IntensityTier Intensity_PointProcess_to_IntensityTier (Intensity me, PointProcess pp);
-IntensityTier IntensityTier_PointProcess_to_IntensityTier (IntensityTier me, PointProcess pp);
-TableOfReal IntensityTier_downto_TableOfReal (IntensityTier me);
+autoIntensityTier PointProcess_upto_IntensityTier (PointProcess me, double intensity);
+autoIntensityTier Intensity_downto_IntensityTier (Intensity me);
+autoIntensityTier Intensity_to_IntensityTier_peaks (Intensity me);
+autoIntensityTier Intensity_to_IntensityTier_valleys (Intensity me);
+autoIntensityTier Intensity_PointProcess_to_IntensityTier (Intensity me, PointProcess pp);
+autoIntensityTier IntensityTier_PointProcess_to_IntensityTier (IntensityTier me, PointProcess pp);
+autoTableOfReal IntensityTier_downto_TableOfReal (IntensityTier me);
 void Sound_IntensityTier_multiply_inline (Sound me, IntensityTier intensity);
-Sound Sound_IntensityTier_multiply (Sound me, IntensityTier intensity, int scale);
+autoSound Sound_IntensityTier_multiply (Sound me, IntensityTier intensity, int scale);
 
 /* End of file IntensityTier.h */
 #endif

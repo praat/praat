@@ -1,6 +1,6 @@
 /* Ltas_to_SpectrumTier.h
  *
- * Copyright (C) 2007-2011 Paul Boersma
+ * Copyright (C) 2007-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,6 @@
 #include "Ltas.h"
 #include "SpectrumTier.h"
 
-SpectrumTier Ltas_to_SpectrumTier_peaks (Ltas me);
+autoSpectrumTier Ltas_to_SpectrumTier_peaks (Ltas me);
 
 /* End of file Ltas_to_SpectrumTier.h */

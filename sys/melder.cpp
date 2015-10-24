@@ -31,20 +31,20 @@
 	//#include <Sound.h>
 	#include "macport_off.h"
 #endif
-#ifndef CONSOLE_APPLICATION
-	#include "Graphics.h"
-	#include "machine.h"
-	#ifdef macintosh
-		#include "macport_on.h"
-        #if useCarbon
-            #include <Carbon/Carbon.h>
-        #else
-            #include <AudioToolbox/AudioToolbox.h>
-        #endif
-		#include "macport_off.h"
+
+#include "Graphics.h"
+#include "machine.h"
+#ifdef macintosh
+	#include "macport_on.h"
+	#if useCarbon
+		#include <Carbon/Carbon.h>
+	#else
+		#include <AudioToolbox/AudioToolbox.h>
 	#endif
-	#include "Gui.h"
+	#include "macport_off.h"
 #endif
+#include "Gui.h"
+
 #include "MelderThread.h"
 
 #include "enums_getText.h"
@@ -59,9 +59,7 @@ bool Melder_backgrounding;   // are we running a script?- Set and unset dynamica
 bool Melder_asynchronous;
 int32 Melder_systemVersion;
 
-#ifndef CONSOLE_APPLICATION
-	GuiWindow Melder_topShell;
-#endif
+GuiWindow Melder_topShell;
 
 static void defaultHelp (const char32 *query) {
 	Melder_flushError (U"Don't know how to find help on \"", query, U"\".");
@@ -134,7 +132,6 @@ static bool theProgressCancelled = false;
 void Melder_progressOff () { theProgressDepth --; }
 void Melder_progressOn () { theProgressDepth ++; }
 
-#ifndef CONSOLE_APPLICATION
 static bool waitWhileProgress (double progress, const char32 *message, GuiDialog dia, GuiProgressBar scale, GuiLabel label1, GuiLabel label2, GuiButton cancelButton) {
 	#if gtk
 		// Wait for all pending events to be processed. If anybody knows how to inspect GTK's
@@ -311,11 +308,8 @@ static void _Melder_dia_init (GuiDialog *dia, GuiProgressBar *scale, GuiLabel *l
 		0);
 	trace (U"end");
 }
-#endif
 
 static void _Melder_progress (double progress, const char32 *message) {
-	(void) progress;
-	#ifndef CONSOLE_APPLICATION
 	if (! Melder_batch && theProgressDepth >= 0 && Melder_debug != 14) {
 		static clock_t lastTime;
 		static GuiDialog dia = nullptr;
@@ -333,7 +327,6 @@ static void _Melder_progress (double progress, const char32 *message) {
 			lastTime = now;
 		}
 	}
-	#endif
 }
 
 static MelderString theProgressBuffer = { 0 };
@@ -399,7 +392,6 @@ void Melder_progress (double progress, Melder_19_ARGS) {
 }
 
 static void * _Melder_monitor (double progress, const char32 *message) {
-	#ifndef CONSOLE_APPLICATION
 	if (! Melder_batch && theProgressDepth >= 0) {
 		static clock_t lastTime;
 		static GuiDialog dia = nullptr;
@@ -425,7 +417,6 @@ static void * _Melder_monitor (double progress, const char32 *message) {
 				return graphics;
 		}
 	}
-	#endif
 	return progress <= 0.0 ? nullptr /* no Graphics */ : (void *) -1 /* any non-null pointer */;
 }
 
@@ -1027,8 +1018,6 @@ void Melder_assert_ (const char *fileName, int lineNumber, const char *condition
 	abort ();
 }
 
-#ifndef CONSOLE_APPLICATION
-
 #if defined (macintosh)
 static void mac_message (NSAlertStyle macAlertType, const char32 *message32) {
 	static unichar messageU [4000];
@@ -1199,7 +1188,6 @@ void MelderGui_create (void *parent) {
 	Melder_setErrorProc (gui_error);
 	Melder_setWarningProc (gui_warning);
 }
-#endif
 
 int Melder_publish (void *anything) {
 	return theMelder. publish (anything);

@@ -1,6 +1,6 @@
 /* Matrix_and_Pitch.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 #include "Matrix.h"
 #include "Pitch.h"
 
-Matrix Pitch_to_Matrix (Pitch me);
+autoMatrix Pitch_to_Matrix (Pitch me);
 
-Pitch Matrix_to_Pitch (Matrix me);
+autoPitch Matrix_to_Pitch (Matrix me);
 
 /* End of file Matrix_and_Pitch.h */

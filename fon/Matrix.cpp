@@ -125,25 +125,25 @@ void Matrix_init
 	my z = NUMmatrix <double> (1, my ny, 1, my nx);
 }
 
-Matrix Matrix_create
+autoMatrix Matrix_create
 	(double xmin, double xmax, long nx, double dx, double x1,
 	 double ymin, double ymax, long ny, double dy, double y1)
 {
 	try {
 		autoMatrix me = Thing_new (Matrix);
 		Matrix_init (me.peek(), xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Matrix object not created.");
 	}
 }
 
-Matrix Matrix_createSimple (long numberOfRows, long numberOfColumns) {
+autoMatrix Matrix_createSimple (long numberOfRows, long numberOfColumns) {
 	try {
 		autoMatrix me = Thing_new (Matrix);
 		Matrix_init (me.peek(), 0.5, numberOfColumns + 0.5, numberOfColumns, 1, 1,
 			0.5, numberOfRows + 0.5, numberOfRows, 1, 1);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Matrix object not created.");
 	}
@@ -433,7 +433,7 @@ void Matrix_movie (Matrix me, Graphics g) {
 	}
 }
 
-Matrix Matrix_readAP (MelderFile file) {
+autoMatrix Matrix_readAP (MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "rb");
 		int16_t header [256];
@@ -462,13 +462,13 @@ Matrix Matrix_readAP (MelderFile file) {
 				my z [1] [i] = - samplingFrequency / my z [1] [i];
 
 		f.close (file);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Matrix object not read from AP file ", file);
 	}
 }
 
-Matrix Matrix_appendRows (Matrix me, Matrix thee, ClassInfo klas) {
+autoMatrix Matrix_appendRows (Matrix me, Matrix thee, ClassInfo klas) {
 	try {
 		autoMatrix him = static_cast <Matrix> (Thing_newFromClass (klas));
 		Matrix_init (him.peek(), my xmin < thy xmin ? my xmin : thy xmin,
@@ -481,13 +481,13 @@ Matrix Matrix_appendRows (Matrix me, Matrix thee, ClassInfo klas) {
 		for (long irow = 1; irow <= thy ny; irow ++)
 			for (long icol = 1; icol <= thy nx; icol ++)
 				his z [irow + my ny] [icol] = thy z [irow] [icol];
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U": rows not appended.");
 	}
 }
 
-Matrix Matrix_readFromRawTextFile (MelderFile file) {   // BUG: not Unicode-compatible
+autoMatrix Matrix_readFromRawTextFile (MelderFile file) {   // BUG: not Unicode-compatible
 	try {
 		autofile f = Melder_fopen (file, "rb");
 
@@ -540,7 +540,7 @@ Matrix Matrix_readFromRawTextFile (MelderFile file) {   // BUG: not Unicode-comp
 				fscanf (f, "%lf", & my z [irow] [icol]);
 
 		f.close (file);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Matrix object not read from raw text file ", file, U".");
 	}
@@ -569,7 +569,7 @@ void Matrix_eigen (Matrix me, Matrix *out_eigenvectors, Matrix *out_eigenvalues)
 	}
 }
 
-Matrix Matrix_power (Matrix me, long power) {
+autoMatrix Matrix_power (Matrix me, long power) {
 	try {
 		if (my nx != my ny)
 			Melder_throw (U"Matrix not square.");
@@ -586,7 +586,7 @@ Matrix Matrix_power (Matrix me, long power) {
 				}
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": power not computed.");
 	}
@@ -684,31 +684,31 @@ void Matrix_scaleAbsoluteExtremum (Matrix me, double scale) {
 	}
 }
 
-Matrix TableOfReal_to_Matrix (TableOfReal me) {
+autoMatrix TableOfReal_to_Matrix (TableOfReal me) {
 	try {
 		autoMatrix thee = Matrix_createSimple (my numberOfRows, my numberOfColumns);
 		for (long i = 1; i <= my numberOfRows; i ++)
 			for (long j = 1; j <= my numberOfColumns; j ++)
 				thy z [i] [j] = my data [i] [j];
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
 	}
 }
 
-TableOfReal Matrix_to_TableOfReal (Matrix me) {
+autoTableOfReal Matrix_to_TableOfReal (Matrix me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my ny, my nx);
 		for (long i = 1; i <= my ny; i ++)
 			for (long j = 1; j <= my nx; j ++)
 				thy data [i] [j] = my z [i] [j];
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to TableOfReal.");
 	}
 }
 
-Matrix Table_to_Matrix (Table me) {
+autoMatrix Table_to_Matrix (Table me) {
 	try {
 		autoMatrix thee = Matrix_createSimple (my rows -> size, my numberOfColumns);
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
@@ -720,7 +720,7 @@ Matrix Table_to_Matrix (Table me) {
 				thy z [irow] [icol] = row -> cells [icol]. number;
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
 	}

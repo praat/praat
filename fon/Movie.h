@@ -2,7 +2,7 @@
 #define _Movie_h_
 /* Movie.h
  *
- * Copyright (C) 2011,2014 Paul Boersma
+ * Copyright (C) 2011,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 #include "Movie_def.h"
 oo_CLASS_CREATE (Movie, Sampled);
 
-Movie Movie_openFromSoundFile (MelderFile file);
+autoMovie Movie_openFromSoundFile (MelderFile file);
 
 void Movie_init (Movie me, Sound sound, const char32 *folderName, Strings fileNames);
 

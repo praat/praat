@@ -42,7 +42,7 @@ Thing_define (Harmonicity, Vector) {
 			// -200 means silence.
 */
 
-Harmonicity Harmonicity_create (double tmin, double tmax, long nt, double dt, double t1);
+autoHarmonicity Harmonicity_create (double tmin, double tmax, long nt, double dt, double t1);
 
 void Harmonicity_draw (Harmonicity me, double tmin, double tmax, double min, double max);
 /*
@@ -55,8 +55,8 @@ double Harmonicity_getMean (Harmonicity me, double tmin, double tmax);
 double Harmonicity_getStandardDeviation (Harmonicity me, double tmin, double tmax);
 double Harmonicity_getQuantile (Harmonicity me, double quantile);
 
-Matrix Harmonicity_to_Matrix (Harmonicity me);
-Harmonicity Matrix_to_Harmonicity (Matrix me);
+autoMatrix Harmonicity_to_Matrix (Harmonicity me);
+autoHarmonicity Matrix_to_Harmonicity (Matrix me);
 
 /* End of file Harmonicity.h */
 #endif

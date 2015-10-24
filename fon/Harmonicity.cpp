@@ -119,31 +119,31 @@ void structHarmonicity :: v_info () {
 	}
 }
 
-Harmonicity Harmonicity_create (double tmin, double tmax, long nt, double dt, double t1) {
+autoHarmonicity Harmonicity_create (double tmin, double tmax, long nt, double dt, double t1) {
 	try {
 		autoHarmonicity me = Thing_new (Harmonicity);
 		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, 1, 1, 1, 1, 1);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Harmonicity not created.");
 	}
 }
 
-Matrix Harmonicity_to_Matrix (Harmonicity me) {
+autoMatrix Harmonicity_to_Matrix (Harmonicity me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
 		NUMvector_copyElements (my z [1], thy z [1], 1, my nx);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U"not converted to Matrix.");
 	}
 }
 
-Harmonicity Matrix_to_Harmonicity (Matrix me) {
+autoHarmonicity Matrix_to_Harmonicity (Matrix me) {
 	try {
 		autoHarmonicity thee = Harmonicity_create (my xmin, my xmax, my nx, my dx, my x1);
 		NUMvector_copyElements (my z [1], thy z [1], 1, my nx);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U"not converted to Harmonicity.");
 	}

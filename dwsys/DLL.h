@@ -2,7 +2,7 @@
 #define _DLL_h_
 /* DLL.h
  *
- * Copyright (C) 2011 David Weenink
+ * Copyright (C) 2011 David Weenink, 2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,28 +23,24 @@
 #include "Data.h"
 
 Thing_define (DLLNode, Daata) {
-	// new data:
-	public:
-		DLLNode next, prev;
-		Daata data;
-	// overridden methods:
-	protected:
-		virtual void v_destroy ();
-		virtual void v_copy (DLLNode data_to);
+	DLLNode next, prev;
+	Daata data;
+
+	void v_destroy ()
+		override;
+	void v_copy (Any data_to)
+		override;
 };
 
 Thing_define (DLL, Thing) {
-	// new data:
-	public:
-		long numberOfNodes;
-		DLLNode front, back;
-	// overridden methods:
-	protected:
-		virtual void v_destroy ();
-	// new methods:
-	public:
-		static int s_compare (Any data1, Any data2);
-		virtual Data_CompareFunction v_getCompareFunction () { return s_compare; }
+	long numberOfNodes;
+	DLLNode front, back;
+
+	void v_destroy ()
+		override;
+
+	static int s_compare (Any data1, Any data2);
+	virtual Data_CompareFunction v_getCompareFunction () { return s_compare; }
 };
 
 DLLNode DLLNode_create (Daata data); // DLLNode owns the data

@@ -545,7 +545,7 @@ struct autoPraatPicture {
 	~autoPraatPicture () { praat_picture_close (); }
 };
 
-#if defined (_WIN32) && ! defined (CONSOLE_APPLICATION)
+#if defined (_WIN32)
 	#define main wingwmain
 #endif
 

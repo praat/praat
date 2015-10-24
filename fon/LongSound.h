@@ -57,9 +57,9 @@ Thing_define (LongSound, Sampled) {
 		override { return MelderQuantity_TIME_SECONDS; }
 };
 
-LongSound LongSound_open (MelderFile fs);
+autoLongSound LongSound_open (MelderFile file);
 
-Sound LongSound_extractPart (LongSound me, double tmin, double tmax, int preserveTimes);
+autoSound LongSound_extractPart (LongSound me, double tmin, double tmax, int preserveTimes);
 
 bool LongSound_haveWindow (LongSound me, double tmin, double tmax);
 /*

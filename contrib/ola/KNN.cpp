@@ -130,7 +130,7 @@ int KNN_learn
 				/*
 				 * Create without change.
 				 */
-                autoPattern tinput = (Pattern) Matrix_appendRows (my input, p, classPattern);
+                autoPattern tinput = (Pattern) Matrix_appendRows (my input, p, classPattern).transfer();
                 autoCategories toutput = (Categories) Collections_merge (my output, c);
 
 				/*
@@ -213,7 +213,7 @@ Categories KNN_classifyToCategories
     long istart = 1;
     long istop = chunksize;
 
-    Categories output = Categories_create().peek();
+    autoCategories output = Categories_create ();
     KNN_input_ToCategories_t ** input = (KNN_input_ToCategories_t **) malloc(nthreads * sizeof(KNN_input_ToCategories_t *));
 
     if (!input)
@@ -270,10 +270,10 @@ Categories KNN_classifyToCategories
     if (output)
     {
         for (long i = 1; i <= ps->ny; ++i)
-            Collection_addItem (output, Data_copy ((SimpleString) my output -> item [outputindices [i]]));
+            Collection_addItem (output.get(), Data_copy ((SimpleString) my output -> item [outputindices [i]]));
     }
 	NUMvector_free (outputindices, 0);
-    return output;
+    return output.transfer();
 }
 
 void * KNN_classifyToCategoriesAux
@@ -393,14 +393,14 @@ TableOfReal KNN_classifyToTableOfReal
 {
     int nthreads = KNN_getNumberOfCPUs();
     long chunksize =  ps->ny / nthreads;
-    Categories uniqueCategories = Categories_selectUniqueItems(my output, 1).peek();
-    long ncategories = Categories_getSize(uniqueCategories);
+    autoCategories uniqueCategories = Categories_selectUniqueItems (my output, 1);
+    long ncategories = Categories_getSize (uniqueCategories.get());
    
-    Melder_assert(nthreads > 0);
-    Melder_assert(ncategories > 0);
-    Melder_assert(k > 0 && k <= my nInstances);
+    Melder_assert (nthreads > 0);
+    Melder_assert (ncategories > 0);
+    Melder_assert (k > 0 && k <= my nInstances);
  
-    if(!ncategories)
+    if (! ncategories)
         return nullptr;
 
     if(chunksize < 1)
@@ -440,7 +440,7 @@ TableOfReal KNN_classifyToTableOfReal
         input[i]->me = me;
         input[i]->ps = ps;
         input[i]->output = output;
-        input[i]->uniqueCategories = uniqueCategories;
+        input[i]->uniqueCategories = uniqueCategories.transfer();
         input[i]->fws = fws;
         input[i]->k = k;
         input[i]->dist = dist;
@@ -633,11 +633,11 @@ Categories KNN_classifyFold
         outputindices [noutputindices++] = freqindices [KNN_max (freqs.peek(), ncategories)];
     }
 
-    Categories output = Categories_create ().peek();
+	autoCategories output = Categories_create ();
 	for (long o = 0; o < noutputindices; o ++) {
-		Collection_addItem (output, Data_copy ((SimpleString) my output -> item [outputindices [o]]));
+		Collection_addItem (output.get(), Data_copy ((SimpleString) my output -> item [outputindices [o]]));
 	}
-	return output;
+	return output.transfer();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////

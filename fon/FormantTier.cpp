@@ -51,11 +51,11 @@
 
 Thing_implement (FormantPoint, Daata, 0);
 
-FormantPoint FormantPoint_create (double time) {
+autoFormantPoint FormantPoint_create (double time) {
 	try {
 		autoFormantPoint me = Thing_new (FormantPoint);
 		my time = time;
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Formant point not created.");
 	}
@@ -63,13 +63,13 @@ FormantPoint FormantPoint_create (double time) {
 
 Thing_implement (FormantTier, Function, 0);
 
-FormantTier FormantTier_create (double tmin, double tmax) {
+autoFormantTier FormantTier_create (double tmin, double tmax) {
 	try {
 		autoFormantTier me = Thing_new (FormantTier);
 		my points = SortedSetOfDouble_create ();
 		my xmin = tmin;
 		my xmax = tmax;
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FormantTier not created.");
 	}
@@ -157,7 +157,7 @@ void FormantTier_speckle (FormantTier me, Graphics g, double tmin, double tmax, 
 	}
 }
 
-FormantTier Formant_downto_FormantTier (Formant me) {
+autoFormantTier Formant_downto_FormantTier (Formant me) {
 	try {
 		autoFormantTier thee = FormantTier_create (my xmin, my xmax);
 		for (long i = 1; i <= my nx; i ++) {
@@ -171,13 +171,13 @@ FormantTier Formant_downto_FormantTier (Formant me) {
 			}
 			Collection_addItem (thy points, point.transfer());
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to FormantTier.");
 	}
 }
 
-FormantTier Formant_PointProcess_to_FormantTier (Formant me, PointProcess pp) {
+autoFormantTier Formant_PointProcess_to_FormantTier (Formant me, PointProcess pp) {
 	try {
 		autoFormantTier temp = Formant_downto_FormantTier (me);
 		autoFormantTier thee = FormantTier_create (pp -> xmin, pp -> xmax);
@@ -196,7 +196,7 @@ FormantTier Formant_PointProcess_to_FormantTier (Formant me, PointProcess pp) {
 			point -> numberOfFormants = iformant - 1;
 			Collection_addItem (thy points, point.transfer());
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", pp, U": not converted to FormantTier.");
 	}
@@ -222,7 +222,7 @@ int FormantTier_getMaxNumFormants (FormantTier me) {
 	return maxNumFormants;
 }
 	
-TableOfReal FormantTier_downto_TableOfReal (FormantTier me, int includeFormants, int includeBandwidths) {
+autoTableOfReal FormantTier_downto_TableOfReal (FormantTier me, int includeFormants, int includeBandwidths) {
 	try {
 		int maximumNumberOfFormants = FormantTier_getMaxNumFormants (me);
 		autoTableOfReal thee = TableOfReal_create (my points -> size, 1 +
@@ -248,7 +248,7 @@ TableOfReal FormantTier_downto_TableOfReal (FormantTier me, int includeFormants,
 				if (includeBandwidths) thy data [ipoint] [++ icol] = point -> bandwidth [iformant-1];
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to TableOfReal.");
 	}
@@ -288,22 +288,22 @@ void Sound_FormantTier_filter_inline (Sound me, FormantTier formantTier) {
 	}
 }
 
-Sound Sound_FormantTier_filter (Sound me, FormantTier formantTier) {
+autoSound Sound_FormantTier_filter (Sound me, FormantTier formantTier) {
 	try {
 		autoSound thee = Data_copy (me);
 		Sound_FormantTier_filter_inline (thee.peek(), formantTier);
 		Vector_scale (thee.peek(), 0.99);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered with ", formantTier, U".");
 	}
 }
 
-Sound Sound_FormantTier_filter_noscale (Sound me, FormantTier formantTier) {
+autoSound Sound_FormantTier_filter_noscale (Sound me, FormantTier formantTier) {
 	try {
 		autoSound thee = Data_copy (me);
 		Sound_FormantTier_filter_inline (thee.peek(), formantTier);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered with ", formantTier, U".");
 	}

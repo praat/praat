@@ -25,26 +25,26 @@
 
 #include "Matrix_and_PointProcess.h"
 
-Matrix PointProcess_to_Matrix (PointProcess me) {
+autoMatrix PointProcess_to_Matrix (PointProcess me) {
 	try {
 		if (my nt == 0)
 			Melder_throw (U"No times in PointProcess.");
 		autoMatrix thee = Matrix_create (1, my nt, my nt, 1, 1, 1, 1, 1, 1, 1);
 		for (long i = 1; i <= my nt; i ++)
 			thy z [1] [i] = my t [i];
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
 	}
 }
 
-PointProcess Matrix_to_PointProcess (Matrix me) {
+autoPointProcess Matrix_to_PointProcess (Matrix me) {
 	try {
 		autoPointProcess thee = PointProcess_create (my z [1] [1], my z [1] [my nx], my nx);
 		for (long i = 1; i <= my nx; i ++) {
 			PointProcess_addPoint (thee.peek(), my z [1] [i]);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to PointProcess.");
 	}
