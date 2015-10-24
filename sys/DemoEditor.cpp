@@ -140,37 +140,35 @@ DemoEditor DemoEditor_create () {
 }
 
 void Demo_open () {
-	#ifndef CONSOLE_APPLICATION
-		if (Melder_batch) {
-			/*
-			 * Batch scripts have to be able to run demos.
-			 */
-			//Melder_batch = false;
-		}
-		if (theDemoEditor == nullptr) {
-			theDemoEditor = DemoEditor_create ();
-			Melder_assert (theDemoEditor != NULL);
-			//GuiObject_show (theDemoEditor -> d_windowForm);
-			theDemoEditor -> praatPicture = Melder_calloc_f (structPraatPicture, 1);
-			theCurrentPraatPicture = (PraatPicture) theDemoEditor -> praatPicture;
-			theCurrentPraatPicture -> graphics = theDemoEditor -> graphics;
-			theCurrentPraatPicture -> font = kGraphics_font_HELVETICA;
-			theCurrentPraatPicture -> fontSize = 10;
-			theCurrentPraatPicture -> lineType = Graphics_DRAWN;
-			theCurrentPraatPicture -> colour = Graphics_BLACK;
-			theCurrentPraatPicture -> lineWidth = 1.0;
-			theCurrentPraatPicture -> arrowSize = 1.0;
-			theCurrentPraatPicture -> speckleSize = 1.0;
-			theCurrentPraatPicture -> x1NDC = 0;
-			theCurrentPraatPicture -> x2NDC = 100;
-			theCurrentPraatPicture -> y1NDC = 0;
-			theCurrentPraatPicture -> y2NDC = 100;
-		}
-		if (theDemoEditor -> waitingForInput)
-			Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
-				U"Please click or type into the Demo window or close it.");
+	if (Melder_batch) {
+		/*
+		 * Batch scripts have to be able to run demos.
+		 */
+		//Melder_batch = false;
+	}
+	if (theDemoEditor == nullptr) {
+		theDemoEditor = DemoEditor_create ();
+		Melder_assert (theDemoEditor != NULL);
+		//GuiObject_show (theDemoEditor -> d_windowForm);
+		theDemoEditor -> praatPicture = Melder_calloc_f (structPraatPicture, 1);
 		theCurrentPraatPicture = (PraatPicture) theDemoEditor -> praatPicture;
-	#endif
+		theCurrentPraatPicture -> graphics = theDemoEditor -> graphics;
+		theCurrentPraatPicture -> font = kGraphics_font_HELVETICA;
+		theCurrentPraatPicture -> fontSize = 10;
+		theCurrentPraatPicture -> lineType = Graphics_DRAWN;
+		theCurrentPraatPicture -> colour = Graphics_BLACK;
+		theCurrentPraatPicture -> lineWidth = 1.0;
+		theCurrentPraatPicture -> arrowSize = 1.0;
+		theCurrentPraatPicture -> speckleSize = 1.0;
+		theCurrentPraatPicture -> x1NDC = 0;
+		theCurrentPraatPicture -> x2NDC = 100;
+		theCurrentPraatPicture -> y1NDC = 0;
+		theCurrentPraatPicture -> y2NDC = 100;
+	}
+	if (theDemoEditor -> waitingForInput)
+		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
+			U"Please click or type into the Demo window or close it.");
+	theCurrentPraatPicture = (PraatPicture) theDemoEditor -> praatPicture;
 }
 
 void Demo_close () {
@@ -201,7 +199,6 @@ void Demo_waitForInput (Interpreter interpreter) {
 	theDemoEditor -> clicked = false;
 	theDemoEditor -> keyPressed = false;
 	theDemoEditor -> waitingForInput = true;
-	#if ! defined (CONSOLE_APPLICATION)
 	{// scope
 		autoMelderSaveDefaultDir saveDir;
 		bool wasBackgrounding = Melder_backgrounding;
@@ -244,7 +241,6 @@ void Demo_waitForInput (Interpreter interpreter) {
 		}
 		if (wasBackgrounding) praat_background ();
 	}
-	#endif
 	theDemoEditor -> waitingForInput = false;
 	if (theDemoEditor -> userWantsToClose) {
 		Interpreter_stop (interpreter);

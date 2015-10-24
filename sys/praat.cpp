@@ -1019,7 +1019,7 @@ char** theArgv;
 unsigned int theArgumentNumber;
 
 void praat_init (const char32 *title, unsigned int argc, char **argv) {
-	#if defined (_WIN32) && ! defined (CONSOLE_APPLICATION)
+	#if defined (_WIN32)
 		if (AttachConsole (ATTACH_PARENT_PROCESS)) {
 			/*
 			 * Redirect stdout to the console (note: no UTF-8!).

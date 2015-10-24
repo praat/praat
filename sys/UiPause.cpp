@@ -152,57 +152,55 @@ int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int can
 	/*
 	 * Wait for the user to click Stop or Continue.
 	 */
-	#ifndef CONSOLE_APPLICATION
-		{// scope
-			autoMelderSaveDefaultDir saveDir;
-			thePauseForm_clicked = 0;
-			Melder_assert (theEventLoopDepth == 0);
-			theEventLoopDepth ++;
-			try {
-				#if gtk
-					do {
-						gtk_main_iteration ();
-					} while (! thePauseForm_clicked);
-				#elif cocoa
-					do {
-						NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-						//[theDemoEditor -> d_windowForm -> d_cocoaWindow   flushWindow];
-						NSEvent *nsEvent = [NSApp
-							nextEventMatchingMask: NSAnyEventMask
-							untilDate: [NSDate distantFuture]   // wait
-							inMode: NSDefaultRunLoopMode
-							dequeue: YES
-						];
-						Melder_assert (nsEvent != NULL);
-						[NSApp  sendEvent: nsEvent];
-						[NSApp  updateWindows];   // called automatically?
-						[pool release];
-					} while (! thePauseForm_clicked);
-				#elif motif
-					do {
-						XEvent event;
-						GuiNextEvent (& event);
-						XtDispatchEvent (& event);
-					} while (! thePauseForm_clicked);
-				#endif
-			} catch (MelderError) {
-				Melder_flushError (U"An error made it to the outer level in a pause window; should not occur! Please write to paul.boersma@uva.nl");
-			}
-			theEventLoopDepth --;
+	{// scope
+		autoMelderSaveDefaultDir saveDir;
+		thePauseForm_clicked = 0;
+		Melder_assert (theEventLoopDepth == 0);
+		theEventLoopDepth ++;
+		try {
+			#if gtk
+				do {
+					gtk_main_iteration ();
+				} while (! thePauseForm_clicked);
+			#elif cocoa
+				do {
+					NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+					//[theDemoEditor -> d_windowForm -> d_cocoaWindow   flushWindow];
+					NSEvent *nsEvent = [NSApp
+						nextEventMatchingMask: NSAnyEventMask
+						untilDate: [NSDate distantFuture]   // wait
+						inMode: NSDefaultRunLoopMode
+						dequeue: YES
+					];
+					Melder_assert (nsEvent != NULL);
+					[NSApp  sendEvent: nsEvent];
+					[NSApp  updateWindows];   // called automatically?
+					[pool release];
+				} while (! thePauseForm_clicked);
+			#elif motif
+				do {
+					XEvent event;
+					GuiNextEvent (& event);
+					XtDispatchEvent (& event);
+				} while (! thePauseForm_clicked);
+			#endif
+		} catch (MelderError) {
+			Melder_flushError (U"An error made it to the outer level in a pause window; should not occur! Please write to paul.boersma@uva.nl");
 		}
-		if (wasBackgrounding) praat_background ();
-		/* BUG: should also restore praatP. editor. */
-		thePauseForm = NULL;   // undangle
-		thePauseFormRadio = NULL;   // undangle
-		if (thePauseForm_clicked == -1) {
-			Interpreter_stop (interpreter);
-			Melder_throw (U"You interrupted the script.");
-			//Melder_flushError ();
-			//Melder_clearError ();
-		} else {
-			//Melder_casual (U"Clicked ", thePauseForm_clicked);
-		}
-	#endif
+		theEventLoopDepth --;
+	}
+	if (wasBackgrounding) praat_background ();
+	/* BUG: should also restore praatP. editor. */
+	thePauseForm = NULL;   // undangle
+	thePauseFormRadio = NULL;   // undangle
+	if (thePauseForm_clicked == -1) {
+		Interpreter_stop (interpreter);
+		Melder_throw (U"You interrupted the script.");
+		//Melder_flushError ();
+		//Melder_clearError ();
+	} else {
+		//Melder_casual (U"Clicked ", thePauseForm_clicked);
+	}
 	return thePauseForm_clicked;
 }
 
