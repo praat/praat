@@ -147,7 +147,7 @@ void Minimizer_minimizeManyTimes (Minimizer me, long numberOfTimes, long maxIter
 			try {
 				Melder_progress ((double) i / numberOfTimes, i, U" from ", numberOfTimes);
 			} catch (MelderError) {
-				Melder_clearError ();   // interrurpted, no error
+				Melder_clearError ();   // interrupted, no error
 				break;
 			}
 		}
@@ -170,11 +170,12 @@ void Minimizer_reset (Minimizer me, const double guess[]) {
 		}
 	} else {
 		for (long i = 1; i <= my nParameters; i++) {
-			my p[i] = NUMrandomUniform (-1, 1);
+			my p[i] = NUMrandomUniform (-1.0, 1.0);
 		}
 	}
 
 	NUMvector_free<double> (my history, 1);
+	my history = nullptr;
 	my maxNumOfIterations = my success = my funcCalls = my iteration = 0;
 	my minimum = 1.0e38;
 	my v_reset ();
