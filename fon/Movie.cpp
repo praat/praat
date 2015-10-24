@@ -1,6 +1,6 @@
 /* Movie.cpp
  *
- * Copyright (C) 2011-2012 Paul Boersma
+ * Copyright (C) 2011-2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ void Movie_init (Movie me, Sound sound, const char32 *folderName, Strings fileNa
 	my d_fileNames = fileNames;
 }
 
-Movie Movie_openFromSoundFile (MelderFile file)
+autoMovie Movie_openFromSoundFile (MelderFile file)
 {
 	try {
 		autoMovie me = Thing_new (Movie);
@@ -77,7 +77,7 @@ Movie Movie_openFromSoundFile (MelderFile file)
 		struct structMelderDir folder;
 		MelderFile_getParentDir (file, & folder);
 		Movie_init (me.peek(), sound.transfer(), Melder_dirToPath (& folder), strings.transfer());
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Movie object not read from file ", file, U".");
 	}

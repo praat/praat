@@ -2,7 +2,7 @@
 #define _FormantTier_h_
 /* FormantTier.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,20 +28,20 @@
 oo_CLASS_CREATE (FormantPoint, Daata);
 oo_CLASS_CREATE (FormantTier, Function);
 
-FormantPoint FormantPoint_create (double time);
-FormantTier FormantTier_create (double tmin, double tmax);
+autoFormantPoint FormantPoint_create (double time);
+autoFormantTier FormantTier_create (double tmin, double tmax);
 double FormantTier_getValueAtTime (FormantTier me, int iformant, double t);
 double FormantTier_getBandwidthAtTime (FormantTier me, int iformant, double t);
 int FormantTier_getMinNumFormants (FormantTier me);
 int FormantTier_getMaxNumFormants (FormantTier me);
 void FormantTier_speckle (FormantTier me, Graphics g, double tmin, double tmax, double fmax, int garnish);
-FormantTier Formant_downto_FormantTier (Formant me);
-FormantTier Formant_PointProcess_to_FormantTier (Formant me, PointProcess pp);
-TableOfReal FormantTier_downto_TableOfReal (FormantTier me, int includeFormants, int includeBandwidths);
+autoFormantTier Formant_downto_FormantTier (Formant me);
+autoFormantTier Formant_PointProcess_to_FormantTier (Formant me, PointProcess pp);
+autoTableOfReal FormantTier_downto_TableOfReal (FormantTier me, int includeFormants, int includeBandwidths);
 
 void Sound_FormantTier_filter_inline (Sound me, FormantTier formantTier);
-Sound Sound_FormantTier_filter (Sound me, FormantTier formantTier);
-Sound Sound_FormantTier_filter_noscale (Sound me, FormantTier formantTier);
+autoSound Sound_FormantTier_filter (Sound me, FormantTier formantTier);
+autoSound Sound_FormantTier_filter_noscale (Sound me, FormantTier formantTier);
 
 /* End of file FormantTier.h */
 #endif

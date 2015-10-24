@@ -241,11 +241,14 @@ static void menu_cb_DrawVisibleSoundAndTextGrid (EDITOR_ARGS) {
 		my v_do_pictureSelection (cmd);
 		my pref_picture_garnish () = GET_INTEGER (U"Garnish");
 		Editor_openPraatPicture (me);
-		Sound publish = my d_longSound.data ?
-			LongSound_extractPart (my d_longSound.data, my d_startWindow, my d_endWindow, true) :
-			Sound_extractPart (my d_sound.data, my d_startWindow, my d_endWindow, kSound_windowShape_RECTANGULAR, 1.0, true);
-		TextGrid_Sound_draw ((TextGrid) my data, publish, my pictureGraphics, my d_startWindow, my d_endWindow, true, my p_useTextStyles, my pref_picture_garnish ());
-		forget (publish);
+		{// scope
+			autoSound sound = my d_longSound.data ?
+				LongSound_extractPart (my d_longSound.data, my d_startWindow, my d_endWindow, true) :
+				Sound_extractPart (my d_sound.data, my d_startWindow, my d_endWindow,
+					kSound_windowShape_RECTANGULAR, 1.0, true);
+			TextGrid_Sound_draw ((TextGrid) my data, sound.get(), my pictureGraphics,
+				my d_startWindow, my d_endWindow, true, my p_useTextStyles, my pref_picture_garnish ());
+		}
 		FunctionEditor_garnish (me);
 		Editor_closePraatPicture (me);
 	EDITOR_END

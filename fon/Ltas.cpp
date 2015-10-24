@@ -63,11 +63,11 @@ double structLtas :: v_convertSpecialToStandardUnit (double value, long ilevel, 
 		value;   // value = dB
 }
 
-Ltas Ltas_create (long nx, double dx) {
+autoLtas Ltas_create (long nx, double dx) {
 	try {
 		autoLtas me = Thing_new (Ltas);
 		Matrix_init (me.peek(), 0.0, nx * dx, nx, dx, 0.5 * dx, 1.0, 1.0, 1, 1.0, 1.0);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Ltas not created.");
 	}
@@ -100,27 +100,27 @@ double Ltas_getLocalPeakHeight (Ltas me, double environmentMin, double environme
 		Function_convertSpecialToStandardUnit (me, peak / (0.5 * (environmentLow + environmentHigh)), 0, averagingUnits);
 }
 
-Matrix Ltas_to_Matrix (Ltas me) {
+autoMatrix Ltas_to_Matrix (Ltas me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
 		my structMatrix :: v_copy (thee.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
 	}
 }
 
-Ltas Matrix_to_Ltas (Matrix me) {
+autoLtas Matrix_to_Ltas (Matrix me) {
 	try {
 		autoLtas thee = Thing_new (Ltas);
 		my structMatrix :: v_copy (thee.peek());   // because copying a descendant of Matrix with additional members should not crash
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Ltas.");
 	}
 }
 
-Ltas Ltases_merge (Collection ltases) {
+autoLtas Ltases_merge (Collection ltases) {
 	try {
 		if (ltases -> size < 1)
 			Melder_throw (U"Cannot merge zero Ltas objects.");
@@ -153,26 +153,26 @@ Ltas Ltases_merge (Collection ltases) {
 		for (long iband = 1; iband <= thy nx; iband ++) {
 			thy z [1] [iband] = 10.0 * log10 (thy z [1] [iband]);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Ltas objects not merged.");
 	}
 }
 
-Ltas Ltases_average (Collection ltases) {
+autoLtas Ltases_average (Collection ltases) {
 	try {
 		double factor = -10.0 * log10 (ltases -> size);
 		autoLtas thee = Ltases_merge (ltases);
 		for (long iband = 1; iband <= thy nx; iband ++) {
 			thy z [1] [iband] += factor;
 		}	
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Ltas objects not averaged.");
 	}
 }
 
-Ltas Ltas_computeTrendLine (Ltas me, double fmin, double fmax) {
+autoLtas Ltas_computeTrendLine (Ltas me, double fmin, double fmax) {
 	try {
 		/*
 		 * Find the first and last bin.
@@ -206,13 +206,13 @@ Ltas Ltas_computeTrendLine (Ltas me, double fmin, double fmax) {
 			double df = thy x1 + (i - 1) * thy dx - fmean;
 			thy z [1] [i] = amean + slope * df;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": trend line not computed.");
 	}
 }
 
-Ltas Ltas_subtractTrendLine (Ltas me, double fmin, double fmax) {
+autoLtas Ltas_subtractTrendLine (Ltas me, double fmin, double fmax) {
 	try {
 		/*
 		 * Find the first and last bin.
@@ -252,13 +252,13 @@ Ltas Ltas_subtractTrendLine (Ltas me, double fmin, double fmax) {
 		for (long i = imax + 1; i <= thy nx; i ++) {
 			thy z [1] [i] = 0.0;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": trend line not subtracted.");
 	}
 }
 
-Ltas Spectrum_to_Ltas (Spectrum me, double bandWidth) {
+autoLtas Spectrum_to_Ltas (Spectrum me, double bandWidth) {
 	try {
 		long numberOfBands = ceil ((my xmax - my xmin) / bandWidth);
 		if (bandWidth <= my dx)
@@ -271,26 +271,26 @@ Ltas Spectrum_to_Ltas (Spectrum me, double bandWidth) {
 			double meanPowerDensity = meanEnergyDensity * my dx;   // as an approximation for a division by the original duration
 			thy z [1] [iband] = meanPowerDensity == 0.0 ? -300.0 : 10.0 * log10 (meanPowerDensity / 4.0e-10);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Ltas.");
 	}
 }
 
-Ltas Spectrum_to_Ltas_1to1 (Spectrum me) {
+autoLtas Spectrum_to_Ltas_1to1 (Spectrum me) {
 	try {
 		autoLtas thee = Thing_new (Ltas);
 		Matrix_init (thee.peek(), my xmin, my xmax, my nx, my dx, my x1, 1.0, 1.0, 1, 1.0, 1.0);
 		for (long iband = 1; iband <= my nx; iband ++) {
 			thy z [1] [iband] = Sampled_getValueAtSample (me, iband, 0, 2);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Ltas.");
 	}
 }
 
-Ltas Sound_to_Ltas (Sound me, double bandwidth) {
+autoLtas Sound_to_Ltas (Sound me, double bandwidth) {
 	try {
 		autoSpectrum thee = Sound_to_Spectrum (me, true);
 		autoLtas him = Spectrum_to_Ltas (thee.peek(), bandwidth);
@@ -298,13 +298,13 @@ Ltas Sound_to_Ltas (Sound me, double bandwidth) {
 		for (long iband = 1; iband <= his nx; iband ++) {
 			his z [1] [iband] += correction;
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": LTAS analysis not performed.");
 	}
 }
 
-Ltas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
+autoLtas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 	double maximumFrequency, double bandWidth,
 	double shortestPeriod, double longestPeriod, double maximumPeriodFactor)
 {
@@ -397,13 +397,13 @@ Ltas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 				}
 			}
 		}
-		return ltas.transfer();
+		return ltas;
 	} catch (MelderError) {
 		Melder_throw (sound, U" & ", pulses, U": LTAS analysis not performed.");
 	}
 }
 
-Ltas Sound_to_Ltas_pitchCorrected (Sound sound, double minimumPitch, double maximumPitch,
+autoLtas Sound_to_Ltas_pitchCorrected (Sound sound, double minimumPitch, double maximumPitch,
 	double maximumFrequency, double bandWidth,
 	double shortestPeriod, double longestPeriod, double maximumPeriodFactor)
 {
@@ -411,13 +411,13 @@ Ltas Sound_to_Ltas_pitchCorrected (Sound sound, double minimumPitch, double maxi
 		autoPointProcess pulses = Sound_to_PointProcess_periodic_cc (sound, minimumPitch, maximumPitch);
 		autoLtas ltas = PointProcess_Sound_to_Ltas (pulses.peek(), sound, maximumFrequency, bandWidth,
 			shortestPeriod, longestPeriod, maximumPeriodFactor);
-		return ltas.transfer();
+		return ltas;
 	} catch (MelderError) {
 		Melder_throw (sound, U": pitch-corrected LTAS analysis not performed.");
 	}
 }
 
-Ltas PointProcess_Sound_to_Ltas_harmonics (PointProcess pulses, Sound sound,
+autoLtas PointProcess_Sound_to_Ltas_harmonics (PointProcess pulses, Sound sound,
 	long maximumHarmonic,
 	double shortestPeriod, double longestPeriod, double maximumPeriodFactor)
 {
@@ -467,7 +467,7 @@ Ltas PointProcess_Sound_to_Ltas_harmonics (PointProcess pulses, Sound sound,
 				ltas -> z [1] [iharm] = 10.0 * log10 (powerInThisBand / 4.0e-10);
 			}
 		}
-		return ltas.transfer();
+		return ltas;
 	} catch (MelderError) {
 		Melder_throw (sound, U" & ", pulses, U": LTAS analysis (harmonics) not performed.");
 	}

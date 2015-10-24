@@ -279,13 +279,13 @@ Matrix Spectrum_unwrap (Spectrum me) {
 
 void Spectrum_drawPhases (Spectrum me, Graphics g, double fmin, double fmax,
                           double phase_min, double phase_max, int unwrap, int garnish) {
-	autoMatrix thee = 0;
+	autoMatrix thee;
 	int reverse_sign = my z[1][1] < 0;
 
 	if (unwrap) {
-		thee.reset (Spectrum_unwrap (me));
+		thee = Spectrum_unwrap (me);
 	} else {
-		thee.reset (Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, 2, 2, 1, 1));
+		thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1.0, 2.0, 2, 1.0, 1.0);
 		for (long i = 1; i <= my nx; i ++) {
 			thy z[2][i] = PPVPHA (my z[1][i], my z[2][i], reverse_sign);
 		}

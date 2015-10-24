@@ -46,12 +46,12 @@
 
 Thing_implement (FujisakiCommand, Function, 0);
 
-FujisakiCommand FujisakiCommand_create (double tmin, double tmax, double amplitude) {
+autoFujisakiCommand FujisakiCommand_create (double tmin, double tmax, double amplitude) {
 	try {
 		autoFujisakiCommand me = Thing_new (FujisakiCommand);
 		Function_init (me.peek(), tmin, tmax);
 		my amplitude = amplitude;
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Fujisaki command not created.");
 	}
@@ -59,7 +59,7 @@ FujisakiCommand FujisakiCommand_create (double tmin, double tmax, double amplitu
 
 Thing_implement (FujisakiPitch, Function, 0);
 
-FujisakiPitch FujisakiPitch_create (double tmin, double tmax,
+autoFujisakiPitch FujisakiPitch_create (double tmin, double tmax,
 	double baseFrequency, double alpha, double beta, double gamma)
 {
 	try {
@@ -71,14 +71,14 @@ FujisakiPitch FujisakiPitch_create (double tmin, double tmax,
 		my gamma = gamma;
 		my phraseCommands = SortedSetOfDouble_create ();
 		my accentCommands = SortedSetOfDouble_create ();
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FujisakiPitch not created.");
 	}
 }
 
-FujisakiPitch Pitch_to_FujisakiPitch (Pitch me, double gamma, double timeResolution,
-	FujisakiPitch *intermediate1, FujisakiPitch *intermediate2, FujisakiPitch *intermediate3)
+autoFujisakiPitch Pitch_to_FujisakiPitch (Pitch me, double gamma, double timeResolution,
+	autoFujisakiPitch *intermediate1, autoFujisakiPitch *intermediate2, autoFujisakiPitch *intermediate3)
 {
 	(void) timeResolution;
 	try {
@@ -122,7 +122,7 @@ FujisakiPitch Pitch_to_FujisakiPitch (Pitch me, double gamma, double timeResolut
 			FujisakiCommand accentCommand = (FujisakiCommand) thy accentCommands -> item [i];
 			/* ... */
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to FujisakiPitch.");
 	}

@@ -20,7 +20,7 @@
 #include "Matrix.h"
 #include "PointProcess.h"
 
-Matrix PointProcess_to_Matrix (PointProcess me);
+autoMatrix PointProcess_to_Matrix (PointProcess me);
 /*
 	Function:
 		create a Matrix from a PointProcess.
@@ -34,7 +34,7 @@ Matrix PointProcess_to_Matrix (PointProcess me);
 		for (ievent in 1..my numberOfEvents) thy z [1] [ievent] == my event [ievent];
 */
 
-PointProcess Matrix_to_PointProcess (Matrix me);
+autoPointProcess Matrix_to_PointProcess (Matrix me);
 /*
 	Function:
 		create a PointProcess from a Matrix.

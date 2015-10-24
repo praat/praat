@@ -548,8 +548,8 @@ static void menu_cb_moveFrequencyCursorTo (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static Sound extractSound (TimeSoundAnalysisEditor me, double tmin, double tmax) {
-	Sound sound = NULL;
+static autoSound extractSound (TimeSoundAnalysisEditor me, double tmin, double tmax) {
+	autoSound sound;
 	if (my d_longSound.data) {
 		if (tmin < my d_longSound.data -> xmin) tmin = my d_longSound.data -> xmin;
 		if (tmax > my d_longSound.data -> xmax) tmax = my d_longSound.data -> xmax;

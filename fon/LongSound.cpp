@@ -252,11 +252,11 @@ void structLongSound :: v_copy (thou) {
 	LongSound_init (thee, & file);
 }
 
-LongSound LongSound_open (MelderFile file) {
+autoLongSound LongSound_open (MelderFile file) {
 	try {
 		autoLongSound me = Thing_new (LongSound);
 		LongSound_init (me.peek(), file);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"LongSound not created.");
 	}
@@ -329,7 +329,7 @@ void LongSound_readAudioToShort (LongSound me, short *buffer, long firstSample, 
 	}
 }
 
-Sound LongSound_extractPart (LongSound me, double tmin, double tmax, int preserveTimes) {
+autoSound LongSound_extractPart (LongSound me, double tmin, double tmax, int preserveTimes) {
 	try {
 		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 		if (tmin < my xmin) tmin = my xmin;
@@ -340,7 +340,7 @@ Sound LongSound_extractPart (LongSound me, double tmin, double tmax, int preserv
 		autoSound thee = Sound_create (my numberOfChannels, tmin, tmax, n, my dx, my x1 + (imin - 1) * my dx);
 		if (! preserveTimes) thy xmin = 0.0, thy xmax -= tmin, thy x1 -= tmin;
 		LongSound_readAudioToFloat (me, thy z, imin, n);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": Sound not extracted.");
 	}

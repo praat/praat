@@ -49,7 +49,7 @@ struct structVowelEditor_F1F2Grid {
 Thing_define (VowelEditor, Editor) {
 	int soundFollowsMouse, shiftKeyPressed;
 	double f1min, f1max, f2min, f2max;   // domain of graphics F1-F2 area
-	Matrix f3, b3, f4, b4;
+	autoMatrix f3, b3, f4, b4;
 	int frequencyScale;   // 0: lin, 1: log, 2: bark, 3: mel
 	int axisOrientation;  // 0: origin topright + f1 down + f2 to left, 0: origin lb + f1 right +f2 up
 	int marksDataset, speakerType;   // 1 = male, 2 = female, 3 = child

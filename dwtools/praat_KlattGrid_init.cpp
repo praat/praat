@@ -86,7 +86,7 @@ static void KlattGrid_PhonationGridPlayOptions_addCommonFields (UiForm dia) {
 }
 
 static void KlattGrid_PhonationGridPlayOptions_getCommonFields (UiForm dia, KlattGrid thee) {
-	PhonationGridPlayOptions pp = thy phonation -> options;
+	PhonationGridPlayOptions pp = thy phonation -> options.get();
 	pp -> voicing = GET_INTEGER (U"Voicing");
 	pp -> flutter = GET_INTEGER (U"Flutter");
 	pp -> doublePulsing = GET_INTEGER (U"Double pulsing");
@@ -132,7 +132,7 @@ static void KlattGrid_PlayOptions_addCommonFields (UiForm dia, int sound) {
 
 static void KlattGrid_PlayOptions_getCommonFields (UiForm dia, int sound, KlattGrid thee) {
 	KlattGrid_setDefaultPlayOptions (thee);
-	KlattGridPlayOptions pk = thy options;
+	KlattGridPlayOptions pk = thy options.get();
 	pk -> scalePeak = GET_INTEGER (U"Scale peak");
 	pk -> xmin = GET_REAL (U"left Time range");
 	pk -> xmax = GET_REAL (U"right Time range");
@@ -141,7 +141,7 @@ static void KlattGrid_PlayOptions_getCommonFields (UiForm dia, int sound, KlattG
 	}
 	pk -> scalePeak = GET_INTEGER (U"Scale peak");
 	KlattGrid_PhonationGridPlayOptions_getCommonFields (dia, thee);
-	VocalTractGridPlayOptions pv = thy vocalTract -> options;
+	VocalTractGridPlayOptions pv = thy vocalTract -> options.get();
 	pv -> filterModel = GET_INTEGER (U"Filter options") == 1 ? KlattGrid_FILTER_CASCADE : KlattGrid_FILTER_PARALLEL;
 	pv -> startOralFormant = GET_INTEGER (U"left Oral formant range");
 	pv -> endOralFormant  = GET_INTEGER (U"right Oral formant range");
@@ -149,7 +149,7 @@ static void KlattGrid_PlayOptions_getCommonFields (UiForm dia, int sound, KlattG
 	pv -> endNasalFormant = GET_INTEGER (U"right Nasal formant range");
 	pv -> startNasalAntiFormant = GET_INTEGER (U"left Nasal antiformant range");
 	pv -> endNasalAntiFormant = GET_INTEGER (U"right Nasal antiformant range");
-	CouplingGridPlayOptions pc = thy coupling -> options;
+	CouplingGridPlayOptions pc = thy coupling -> options.get();
 	pc -> startTrachealFormant = GET_INTEGER (U"left Tracheal formant range");
 	pc -> endTrachealFormant = GET_INTEGER (U"right Tracheal formant range");
 	pc -> startTrachealAntiFormant = GET_INTEGER (U"left Tracheal antiformant range");
@@ -158,14 +158,14 @@ static void KlattGrid_PlayOptions_getCommonFields (UiForm dia, int sound, KlattG
 	pc -> endDeltaFormant = GET_INTEGER (U"right Delta formant range");
 	pc -> startDeltaBandwidth = GET_INTEGER (U"left Delta bandwidth range");
 	pc -> endDeltaFormant = GET_INTEGER (U"right Delta bandwidth range");
-	FricationGridPlayOptions pf = thy frication -> options;
+	FricationGridPlayOptions pf = thy frication -> options.get();
 	pf -> startFricationFormant = GET_INTEGER (U"left Frication formant range");
 	pf -> endFricationFormant = GET_INTEGER (U"right Frication formant range");
 	pf -> bypass = GET_INTEGER (U"Frication bypass");
 }
 
 DIRECT (KlattGrid_createExample)
-praat_new (KlattGrid_createExample(), U"example");
+	praat_new (KlattGrid_createExample().transfer(), U"example");
 END
 
 FORM (KlattGrid_create, U"Create KlattGrid", U"Create KlattGrid...")
@@ -199,35 +199,35 @@ DO
 	praat_new (KlattGrid_create (tmin, tmax, numberOfOralFormants,
 		numberOfNasalFormants, numberOfNasalAntiFormants,
 		numberOfTrachealFormants, numberOfTrachealAntiFormants,
-		numberOfFricationFormants, numberOfDeltaFormants),
+		numberOfFricationFormants, numberOfDeltaFormants).transfer(),
 		GET_STRING (U"Name"));
 END
 
 
-#define KlattGrid_INSTALL_TIER_EDITOR(Name,name) \
+#define KlattGrid_INSTALL_TIER_EDITOR(Name) \
 DIRECT (KlattGrid_edit##Name##Tier) \
 	if (theCurrentPraatApplication -> batch) { Melder_throw (U"Cannot edit a KlattGrid from batch."); } \
 	LOOP {\
 		iam (KlattGrid); \
-		auto##KlattGrid_##name##TierEditor editor = KlattGrid_##name##TierEditor_create (ID_AND_FULL_NAME, me); \
+		auto##KlattGrid_##Name##TierEditor editor = KlattGrid_##Name##TierEditor_create (ID_AND_FULL_NAME, me); \
 		praat_installEditor (editor.transfer(), IOBJECT); \
 	}\
 END
 
-KlattGrid_INSTALL_TIER_EDITOR (Pitch, pitch)
-KlattGrid_INSTALL_TIER_EDITOR (VoicingAmplitude, voicingAmplitude)
-KlattGrid_INSTALL_TIER_EDITOR (Flutter, flutter)
-KlattGrid_INSTALL_TIER_EDITOR (Power1, power1)
-KlattGrid_INSTALL_TIER_EDITOR (Power2, power2)
-KlattGrid_INSTALL_TIER_EDITOR (OpenPhase, openPhase)
-KlattGrid_INSTALL_TIER_EDITOR (CollisionPhase, collisionPhase)
-KlattGrid_INSTALL_TIER_EDITOR (DoublePulsing, doublePulsing)
-KlattGrid_INSTALL_TIER_EDITOR (AspirationAmplitude, aspirationAmplitude)
-KlattGrid_INSTALL_TIER_EDITOR (BreathinessAmplitude, breathinessAmplitude)
-KlattGrid_INSTALL_TIER_EDITOR (SpectralTilt, spectralTilt)
+KlattGrid_INSTALL_TIER_EDITOR (Pitch)
+KlattGrid_INSTALL_TIER_EDITOR (VoicingAmplitude)
+KlattGrid_INSTALL_TIER_EDITOR (Flutter)
+KlattGrid_INSTALL_TIER_EDITOR (Power1)
+KlattGrid_INSTALL_TIER_EDITOR (Power2)
+KlattGrid_INSTALL_TIER_EDITOR (OpenPhase)
+KlattGrid_INSTALL_TIER_EDITOR (CollisionPhase)
+KlattGrid_INSTALL_TIER_EDITOR (DoublePulsing)
+KlattGrid_INSTALL_TIER_EDITOR (AspirationAmplitude)
+KlattGrid_INSTALL_TIER_EDITOR (BreathinessAmplitude)
+KlattGrid_INSTALL_TIER_EDITOR (SpectralTilt)
 
-KlattGrid_INSTALL_TIER_EDITOR (FricationBypass, fricationBypass)
-KlattGrid_INSTALL_TIER_EDITOR (FricationAmplitude, fricationAmplitude)
+KlattGrid_INSTALL_TIER_EDITOR (FricationBypass)
+KlattGrid_INSTALL_TIER_EDITOR (FricationAmplitude)
 
 #undef KlattGrid_INSTALL_TIER_EDITOR
 
@@ -237,7 +237,7 @@ DIRECT (KlattGrid_edit##Name##FormantGrid) \
 	LOOP {\
 		iam (KlattGrid); \
 		const char32 *id_and_name = Melder_cat (ID, U". ", formant_names[formantType], U"formant grid"); \
-		autoKlattGrid_formantGridEditor editor = KlattGrid_formantGridEditor_create (id_and_name, me, formantType); \
+		autoKlattGrid_FormantGridEditor editor = KlattGrid_FormantGridEditor_create (id_and_name, me, formantType); \
 		praat_installEditor (editor.transfer(), IOBJECT); \
 	} \
 END
@@ -265,7 +265,7 @@ DO \
 		if (! amp) Melder_throw (U"Unknown formant type"); \
 		if (formantNumber > (*amp) -> size) Melder_throw (U"Formant number does not exist."); \
 		const char32 *id_and_name = Melder_cat (ID, U". ", formant_names[formantType], U"formant amplitude tier"); \
-		autoKlattGrid_decibelTierEditor editor = KlattGrid_decibelTierEditor_create (id_and_name, me, (RealTier) (*amp)->item[formantNumber]); \
+		autoKlattGrid_DecibelTierEditor editor = KlattGrid_DecibelTierEditor_create (id_and_name, me, (RealTier) (*amp)->item[formantNumber]); \
 		praat_installEditor (editor.transfer(), IOBJECT); \
 	} \
 END
@@ -310,7 +310,7 @@ DO \
 END \
 DIRECT (KlattGrid_extract##Name##Tier) \
 	LOOP { iam (KlattGrid); \
-		praat_new (KlattGrid_extract##Name##Tier (me), newname); \
+		praat_new (KlattGrid_extract##Name##Tier (me).transfer(), newname); \
 	} \
 END \
 DIRECT (KlattGrid_replace##Name##Tier) \
@@ -518,7 +518,7 @@ KlattGrid_FORMULA_ADD_REMOVE_FBA (Frication, frication f, KlattGrid_FRICATION_FO
 DIRECT (KlattGrid_extractPointProcess_glottalClosures)
 LOOP {
 	iam (KlattGrid);
-	praat_new (KlattGrid_extractPointProcess_glottalClosures (me), my name);
+	praat_new (KlattGrid_extractPointProcess_glottalClosures (me).transfer(), my name);
 }
 END
 
@@ -594,7 +594,7 @@ KlattGrid_FORMANT_GET_A_VALUE (Frication, frication, KlattGrid_FRICATION_FORMANT
 #define KlattGrid_EXTRACT_FORMANT_GRID(Name,gridType) \
 DIRECT (KlattGrid_extract##Name##FormantGrid) \
 	LOOP { iam (KlattGrid); \
-		praat_new (KlattGrid_extractFormantGrid (me, gridType), formant_names[gridType]); \
+		praat_new (KlattGrid_extractFormantGrid (me, gridType).transfer(), formant_names[gridType]); \
 	} \
 END
 
@@ -604,10 +604,9 @@ FORM (KlattGrid_extract##Name##FormantAmplitudeTier, U"KlattGrid: Extract " #nam
 	OK \
 DO \
 	LOOP { iam (KlattGrid); \
-		praat_new (KlattGrid_extractAmplitudeTier (me, formantType, GET_INTEGER (U"Formant number")), formant_names[formantType]); \
+		praat_new (KlattGrid_extractAmplitudeTier (me, formantType, GET_INTEGER (U"Formant number")).transfer(), formant_names[formantType]); \
 	} \
 END
-
 
 KlattGrid_EXTRACT_FORMANT_GRID (Oral, KlattGrid_ORAL_FORMANTS)
 KlattGrid_EXTRACT_FORMANT_AMPLITUDE (Oral, oral, KlattGrid_ORAL_FORMANTS)
@@ -756,7 +755,7 @@ DO
 	long gridType = GET_INTEGER (U"Formant type");
 	LOOP {
 		iam (KlattGrid);
-		praat_new (KlattGrid_extractFormantGrid (me, gridType), formant_names[gridType]);
+		praat_new (KlattGrid_extractFormantGrid (me, gridType).transfer(), formant_names[gridType]);
 	}
 END
 
@@ -822,7 +821,7 @@ DO
 	int formantType = GET_INTEGER (U"Formant type");
 	LOOP {
 		iam (KlattGrid);
-		praat_new (KlattGrid_extractAmplitudeTier (me, formantType, GET_INTEGER (U"Formant number")), formant_names[formantType]);
+		praat_new (KlattGrid_extractAmplitudeTier (me, formantType, GET_INTEGER (U"Formant number")).transfer(), formant_names[formantType]);
 	}
 END
 
@@ -846,7 +845,7 @@ DO
 		iam (KlattGrid);
 		KlattGrid_setDefaultPlayOptions (me);
 		KlattGrid_PlayOptions_getCommonFields (dia, 1, me);
-		praat_new (KlattGrid_to_Sound (me), my name);
+		praat_new (KlattGrid_to_Sound (me).transfer(), my name);
 	}
 END
 
@@ -854,7 +853,7 @@ DIRECT (KlattGrid_to_Sound)
 	LOOP {
 		iam (KlattGrid);
 		KlattGrid_setDefaultPlayOptions (me);
-		praat_new (KlattGrid_to_Sound (me), my name);
+		praat_new (KlattGrid_to_Sound (me).transfer(), my name);
 	}
 END
 
@@ -879,7 +878,7 @@ DO
 		iam (KlattGrid);
 		KlattGrid_PhonationGridPlayOptions_getCommonFields (dia, me);
 		my options -> samplingFrequency = GET_REAL (U"Sampling frequency");
-		praat_new (KlattGrid_to_Sound_phonation (me), my name, U"_phonation");
+		praat_new (KlattGrid_to_Sound_phonation (me).transfer(), my name, U"_phonation");
 	}
 END
 
@@ -923,7 +922,7 @@ DIRECT (KlattGrid_drawPhonation)
 	autoPraatPicture picture;
 	LOOP {
 		iam (KlattGrid);
-		PhonationGrid_draw (my phonation, GRAPHICS);
+		PhonationGrid_draw (my phonation.get(), GRAPHICS);
 	}
 END
 
@@ -931,7 +930,7 @@ DIRECT (KlattGrid_drawFrication)
 	autoPraatPicture picture;
 	LOOP {
 		iam (KlattGrid);
-		FricationGrid_draw (my frication, GRAPHICS);
+		FricationGrid_draw (my frication.get(), GRAPHICS);
 	}
 END
 
@@ -943,7 +942,7 @@ DO
 	REQUIRE (fadeFraction < 0.5, U"Fade fraction has to be smaller than 0.5.")
 	LOOP {
 		iam (KlattGrid);
-		praat_new (KlattGrid_to_oralFormantGrid_openPhases (me, fadeFraction), U"corrected");
+		praat_new (KlattGrid_to_oralFormantGrid_openPhases (me, fadeFraction).transfer(), U"corrected");
 	}
 END
 
@@ -956,7 +955,7 @@ DO
 	Sound me = FIRST (Sound);
 	KlattGrid thee = FIRST (KlattGrid);
 	int filterModel = GET_INTEGER (U"Vocal tract filter model") - 1;
-	praat_new (Sound_KlattGrid_filterByVocalTract (me, thee, filterModel), my name, U"_", thy name);
+	praat_new (Sound_KlattGrid_filterByVocalTract (me, thee, filterModel).transfer(), my name, U"_", thy name);
 END
 
 void praat_KlattGrid_init ();

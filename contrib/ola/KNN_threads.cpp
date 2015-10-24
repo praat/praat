@@ -1,4 +1,4 @@
-/* KNN_threads.c
+/* KNN_threads.cpp
  *
  * Copyright (C) 2009 Ola Söder
  *

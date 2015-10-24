@@ -20,7 +20,7 @@
 #include "Matrix.h"
 #include "Polygon.h"
 
-Polygon Matrix_to_Polygon (Matrix me);
+autoPolygon Matrix_to_Polygon (Matrix me);
 /*
 	Function:
 		create a Polygon from a Matrix.
@@ -38,7 +38,7 @@ Polygon Matrix_to_Polygon (Matrix me);
 		}
 */
 
-Matrix Polygon_to_Matrix (Polygon me);
+autoMatrix Polygon_to_Matrix (Polygon me);
 /*
 	Function:
 		create a Matrix from a Polygon.

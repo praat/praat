@@ -219,7 +219,7 @@ static autoVowel Vowel_create_twoFormantSchwa (double duration) {
 		fp -> bandwidth[1] = 150.0;
 		fp -> numberOfFormants = 2;
 		Collection_addItem (my ft -> points, fp.transfer());
-		RealTier_addPoint (my pt, 0.0, 140.0);
+		RealTier_addPoint (my pt.get(), 0.0, 140.0);
 
 		fp = FormantPoint_create (duration);
 		fp -> formant [0] = 500.0;
@@ -228,7 +228,7 @@ static autoVowel Vowel_create_twoFormantSchwa (double duration) {
 		fp -> bandwidth[1] = 150.0;
 		fp -> numberOfFormants = 2;
 		Collection_addItem (my ft -> points, fp.transfer());
-		RealTier_addPoint (my pt, duration, 140.0);
+		RealTier_addPoint (my pt.get(), duration, 140.0);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Schwa Vowel not created");
@@ -237,9 +237,9 @@ static autoVowel Vowel_create_twoFormantSchwa (double duration) {
 
 static autoSound Vowel_to_Sound_pulses (Vowel me, double samplingFrequency, double adaptFactor, double adaptTime, long interpolationDepth) {
 	try {
-		autoPointProcess pp = PitchTier_to_PointProcess (my pt);
+		autoPointProcess pp = PitchTier_to_PointProcess (my pt.get());
 		autoSound thee = PointProcess_to_Sound_pulseTrain (pp.peek(), samplingFrequency, adaptFactor, adaptTime, interpolationDepth);
-		Sound_FormantTier_filter_inline (thee.peek(), my ft);
+		Sound_FormantTier_filter_inline (thee.peek(), my ft.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": Sound with pulses not created.");
@@ -382,7 +382,7 @@ static double getF0 (structVowelEditor_F0 *f0p, double time) {
 }
 
 static void VowelEditor_Vowel_reverseFormantTier (VowelEditor me) {
-	FormantTier ft = (FormantTier) my vowel -> ft;
+	FormantTier ft = my vowel -> ft.get();
 	double duration = ft -> xmax;
 	long np = ft -> points -> size, np_2 = np / 2;
 
@@ -402,7 +402,7 @@ static void VowelEditor_Vowel_reverseFormantTier (VowelEditor me) {
 }
 
 static void VowelEditor_shiftF1F2 (VowelEditor me, double f1_st, double f2_st) {
-	FormantTier ft = my vowel -> ft;
+	FormantTier ft = my vowel -> ft.get();
 	for (long i = 1; i <= ft -> points -> size; i++) {
 		FormantPoint fp = (FormantPoint) ft -> points -> item[i];
 		double f1 = fp -> formant[0], f2 = fp -> formant[1];
@@ -438,10 +438,10 @@ static void VowelEditor_shiftF1F2 (VowelEditor me, double f1_st, double f2_st) {
 static void Vowel_newDuration (Vowel me, structVowelEditor_F0 *f0p, double newDuration) {
 	if (newDuration != my xmax) {
 		double multiplier = newDuration / my xmax;
-		FormantTier_newDuration (my ft, newDuration);
+		FormantTier_newDuration (my ft.get(), newDuration);
 		my xmax *= multiplier;
 	}
-	PitchTier_newDuration (my pt, f0p, newDuration); // always update
+	PitchTier_newDuration (my pt.get(), f0p, newDuration); // always update
 
 }
 
@@ -751,10 +751,10 @@ static double Matrix_getValue (Matrix me, double x, double y) {
 }
 
 static void VowelEditor_getF3F4 (VowelEditor me, double f1, double f2, double *f3, double *b3, double *f4, double *b4) {
-	*f3 = Matrix_getValue (my f3, f2, f1);
-	*b3 = Matrix_getValue (my b3, f2, f1);
-	*f4 = Matrix_getValue (my f4, f2, f1);
-	*b4 = Matrix_getValue (my b4, f2, f1);
+	*f3 = Matrix_getValue (my f3.get(), f2, f1);
+	*b3 = Matrix_getValue (my b3.get(), f2, f1);
+	*f4 = Matrix_getValue (my f4.get(), f2, f1);
+	*b4 = Matrix_getValue (my b4.get(), f2, f1);
 }
 
 static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
@@ -924,17 +924,17 @@ static void menu_cb_publishSound (EDITOR_ARGS) {
 static void menu_cb_extract_FormantGrid (EDITOR_ARGS) {
 	EDITOR_IAM (VowelEditor);
 	VowelEditor_updateVowel (me);
-	autoFormantGrid publish = FormantTier_to_FormantGrid (my vowel -> ft);
+	autoFormantGrid publish = FormantTier_to_FormantGrid (my vowel -> ft.get());
 	Editor_broadcastPublication (me, publish.transfer());
 }
 
 static void menu_cb_extract_KlattGrid (EDITOR_ARGS) {
 	EDITOR_IAM (VowelEditor);
 	VowelEditor_updateVowel (me);
-	autoFormantGrid fg = FormantTier_to_FormantGrid (my vowel -> ft);
+	autoFormantGrid fg = FormantTier_to_FormantGrid (my vowel -> ft.get());
 	autoKlattGrid publish = KlattGrid_create (fg -> xmin, fg -> xmax, fg -> formants -> size, 0, 0, 0, 0, 0, 0);
 	KlattGrid_addVoicingAmplitudePoint (publish.peek(), fg -> xmin, 90.0);
-	KlattGrid_replacePitchTier (publish.peek(), my vowel -> pt);
+	KlattGrid_replacePitchTier (publish.peek(), my vowel -> pt.get());
 	KlattGrid_replaceFormantGrid (publish.peek(), KlattGrid_ORAL_FORMANTS, fg.peek());
 	Editor_broadcastPublication (me, publish.transfer());
 }
@@ -942,7 +942,7 @@ static void menu_cb_extract_KlattGrid (EDITOR_ARGS) {
 static void menu_cb_extract_PitchTier (EDITOR_ARGS) {
 	EDITOR_IAM (VowelEditor);
 	VowelEditor_updateVowel (me);
-	autoPitchTier publish = Data_copy (my vowel -> pt);
+	autoPitchTier publish = Data_copy (my vowel -> pt.get());
 	Editor_broadcastPublication (me, publish.transfer());
 }
 
@@ -960,7 +960,7 @@ static void menu_cb_drawTrajectory (EDITOR_ARGS) {
 		if (garnish) {
 			VowelEditor_drawBackground (me, my pictureGraphics);
 		}
-		FormantTier_drawF1F2Trajectory (my vowel -> ft, my pictureGraphics, my f1min, my f1max, my f2min, my f2max, my markTraceEvery, my width);
+		FormantTier_drawF1F2Trajectory (my vowel -> ft.get(), my pictureGraphics, my f1min, my f1max, my f2min, my f2max, my markTraceEvery, my width);
 		Editor_closePraatPicture (me);
 	EDITOR_END
 }
@@ -1082,7 +1082,7 @@ static void VowelEditor_Vowel_addData (VowelEditor me, Vowel thee, double time, 
 	fp -> numberOfFormants = 4;
 
 	Collection_addItem (thy ft -> points, fp.transfer());
-	RealTier_addPoint (thy pt, time, f0);
+	RealTier_addPoint (thy pt.get(), time, f0);
 }
 
 static void checkF1F2 (VowelEditor me, double *f1, double *f2) {
@@ -1246,7 +1246,7 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent /*event*/) {
 	Melder_assert (me);
 	Melder_assert (my vowel);
 	double ts = my vowel -> xmin, te = my vowel -> xmax;
-	FormantTier ft = my vowel -> ft;
+	FormantTier ft = my vowel -> ft.get();
 	Melder_assert (ft);
 	static MelderString statusInfo { 0 };
 	if (! my g) {
@@ -1277,7 +1277,7 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent /*event*/) {
 	Melder_assert (me);
 	Melder_assert (my vowel);
 	Melder_assert (my vowel -> ft);
-	FormantTier_drawF1F2Trajectory (my vowel -> ft, my g, my f1min, my f1max, my f2min, my f2max, my markTraceEvery, my width);
+	FormantTier_drawF1F2Trajectory (my vowel -> ft.get(), my g, my f1min, my f1max, my f2min, my f2max, my markTraceEvery, my width);
 }
 
 static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
@@ -1322,7 +1322,7 @@ static void VowelEditor_Vowel_updateTiers (VowelEditor me, Vowel thee, double ti
 	point -> bandwidth[3] = b4;
 	point -> numberOfFormants = 4;
 	Collection_addItem (thy ft -> points, point.transfer());
-	RealTier_addPoint (thy pt, time, f0);
+	RealTier_addPoint (thy pt.get(), time, f0);
 }
 
 // shift key always extends what already is.
@@ -1427,8 +1427,6 @@ static void updateWidgets (I) {
 
 void structVowelEditor :: v_destroy () {
 	forget (g);
-	forget (f3); forget (b3);
-	forget (f4); forget (b4);
 	VowelEditor_Parent :: v_destroy ();
 }
 

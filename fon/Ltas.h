@@ -46,7 +46,7 @@ Thing_define (Ltas, Vector) {
 		z [1] [1..nx]		// The intensity per band, in db/Hz.
 */
 
-Ltas Ltas_create (long nx, double dx);
+autoLtas Ltas_create (long nx, double dx);
 /*
 	Function:
 		create an Ltas.
@@ -65,30 +65,30 @@ Ltas Ltas_create (long nx, double dx);
 void Ltas_draw (Ltas me, Graphics g, double fmin, double fmax,
 	double minimum, double maximum, int garnish, const char32 *method);
 
-Matrix Ltas_to_Matrix (Ltas me);
-Ltas Matrix_to_Ltas (Matrix me);
+autoMatrix Ltas_to_Matrix (Ltas me);
+autoLtas Matrix_to_Ltas (Matrix me);
 
-Ltas Ltases_merge (Collection ltases);
-Ltas Ltases_average (Collection ltases);
+autoLtas Ltases_merge (Collection ltases);
+autoLtas Ltases_average (Collection ltases);
 
-Ltas Ltas_computeTrendLine (Ltas me, double fmin, double fmax);
-Ltas Ltas_subtractTrendLine (Ltas me, double fmin, double fmax);
+autoLtas Ltas_computeTrendLine (Ltas me, double fmin, double fmax);
+autoLtas Ltas_subtractTrendLine (Ltas me, double fmin, double fmax);
 
 /* Direct computations. */
 
-Ltas Spectrum_to_Ltas (Spectrum me, double bandwidth);
-Ltas Spectrum_to_Ltas_1to1 (Spectrum me);
-Ltas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
+autoLtas Spectrum_to_Ltas (Spectrum me, double bandwidth);
+autoLtas Spectrum_to_Ltas_1to1 (Spectrum me);
+autoLtas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 	double maximumFrequency, double bandWidth,
 	double shortestPeriod, double longestPeriod, double maximumPeriodFactor);
-Ltas PointProcess_Sound_to_Ltas_harmonics (PointProcess pulses, Sound sound,
+autoLtas PointProcess_Sound_to_Ltas_harmonics (PointProcess pulses, Sound sound,
 	long maximumHarmonic,
 	double shortestPeriod, double longestPeriod, double maximumPeriodFactor);
 
 /* Shortcuts. */
 
-Ltas Sound_to_Ltas (Sound me, double bandwidth);
-Ltas Sound_to_Ltas_pitchCorrected (Sound sound, double minimumPitch, double maximumPitch,
+autoLtas Sound_to_Ltas (Sound me, double bandwidth);
+autoLtas Sound_to_Ltas_pitchCorrected (Sound sound, double minimumPitch, double maximumPitch,
 	double maximumFrequency, double bandWidth,
 	double shortestPeriod, double longestPeriod, double maximumPeriodFactor);
 

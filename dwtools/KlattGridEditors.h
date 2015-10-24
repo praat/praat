@@ -26,7 +26,7 @@
 #include "FormantGridEditor.h"
 
 
-Thing_define (KlattGrid_realTierEditor, RealTierEditor) {
+Thing_define (KlattGrid_RealTierEditor, RealTierEditor) {
 	KlattGrid klattgrid;
 
 	void v_createHelpMenuItems (EditorMenu menu)
@@ -35,10 +35,10 @@ Thing_define (KlattGrid_realTierEditor, RealTierEditor) {
 		override;
 };
 
-void KlattGrid_realTierEditor_init (KlattGrid_realTierEditor me, const char32 *title, KlattGrid klattgrid, RealTier data);
+void KlattGrid_RealTierEditor_init (KlattGrid_RealTierEditor me, const char32 *title, KlattGrid klattgrid, RealTier data);
 
 
-Thing_define (KlattGrid_openPhaseTierEditor, KlattGrid_realTierEditor) {
+Thing_define (KlattGrid_OpenPhaseTierEditor, KlattGrid_RealTierEditor) {
 	double v_minimumLegalValue ()
 		override { return 0.0; }
 	double v_maximumLegalValue ()
@@ -69,10 +69,10 @@ Thing_define (KlattGrid_openPhaseTierEditor, KlattGrid_realTierEditor) {
 		override { return U"Maximum"; }
 };
 
-KlattGrid_openPhaseTierEditor KlattGrid_openPhaseTierEditor_create (const char32 *title, KlattGrid klattgrid);
+autoKlattGrid_OpenPhaseTierEditor KlattGrid_OpenPhaseTierEditor_create (const char32 *title, KlattGrid klattgrid);
 
 
-Thing_define (KlattGrid_collisionPhaseTierEditor, KlattGrid_realTierEditor) {
+Thing_define (KlattGrid_CollisionPhaseTierEditor, KlattGrid_RealTierEditor) {
 	double v_minimumLegalValue ()
 		override { return 0.0; }
 	double v_maximumLegalValue ()
@@ -103,10 +103,10 @@ Thing_define (KlattGrid_collisionPhaseTierEditor, KlattGrid_realTierEditor) {
 		override { return U"Maximum"; }
 };
 
-KlattGrid_collisionPhaseTierEditor KlattGrid_collisionPhaseTierEditor_create (const char32 *title, KlattGrid klattgrid);
+autoKlattGrid_CollisionPhaseTierEditor KlattGrid_CollisionPhaseTierEditor_create (const char32 *title, KlattGrid klattgrid);
 
 
-Thing_define (KlattGrid_power1TierEditor, KlattGrid_realTierEditor) {
+Thing_define (KlattGrid_Power1TierEditor, KlattGrid_RealTierEditor) {
 	double v_minimumLegalValue ()
 		override { return 0.0; }
 	const char32 * v_quantityText ()
@@ -135,10 +135,10 @@ Thing_define (KlattGrid_power1TierEditor, KlattGrid_realTierEditor) {
 		override { return U"Maximum"; }
 };
 
-KlattGrid_power1TierEditor KlattGrid_power1TierEditor_create (const char32 *title, KlattGrid klattgrid);
+autoKlattGrid_Power1TierEditor KlattGrid_Power1TierEditor_create (const char32 *title, KlattGrid klattgrid);
 
 
-Thing_define (KlattGrid_power2TierEditor, KlattGrid_realTierEditor) {
+Thing_define (KlattGrid_Power2TierEditor, KlattGrid_RealTierEditor) {
 	double v_minimumLegalValue ()
 		override { return 0.0; }
 	const char32 * v_quantityText ()
@@ -167,10 +167,10 @@ Thing_define (KlattGrid_power2TierEditor, KlattGrid_realTierEditor) {
 		override { return U"Maximum"; }
 };
 
-KlattGrid_power2TierEditor KlattGrid_power2TierEditor_create (const char32 *title, KlattGrid klattgrid);
+autoKlattGrid_Power2TierEditor KlattGrid_Power2TierEditor_create (const char32 *title, KlattGrid klattgrid);
 
 
-Thing_define (KlattGrid_doublePulsingTierEditor, KlattGrid_realTierEditor) {
+Thing_define (KlattGrid_DoublePulsingTierEditor, KlattGrid_RealTierEditor) {
 	double v_minimumLegalValue ()
 		override { return 0.0; }
 	double v_maximumLegalValue ()
@@ -201,10 +201,10 @@ Thing_define (KlattGrid_doublePulsingTierEditor, KlattGrid_realTierEditor) {
 		override { return U"Maximum"; }
 };
 
-KlattGrid_doublePulsingTierEditor KlattGrid_doublePulsingTierEditor_create (const char32 *title, KlattGrid klattgrid);
+autoKlattGrid_DoublePulsingTierEditor KlattGrid_DoublePulsingTierEditor_create (const char32 *title, KlattGrid klattgrid);
 
 
-Thing_define (KlattGrid_pitchTierEditor, KlattGrid_realTierEditor) {
+Thing_define (KlattGrid_PitchTierEditor, KlattGrid_RealTierEditor) {
 	void v_createHelpMenuItems (EditorMenu menu)
 		override;
 	double v_minimumLegalValue ()
@@ -235,10 +235,10 @@ Thing_define (KlattGrid_pitchTierEditor, KlattGrid_realTierEditor) {
 		override { return U"Maximum frequency"; }
 };
 
-KlattGrid_pitchTierEditor KlattGrid_pitchTierEditor_create (const char32 *title, KlattGrid klattgrid);
+autoKlattGrid_PitchTierEditor KlattGrid_PitchTierEditor_create (const char32 *title, KlattGrid klattgrid);
 
 
-Thing_define (KlattGrid_flutterTierEditor, KlattGrid_realTierEditor) {
+Thing_define (KlattGrid_FlutterTierEditor, KlattGrid_RealTierEditor) {
 	double v_minimumLegalValue ()
 		override { return 0.0; }
 	double v_maximumLegalValue ()
@@ -269,10 +269,10 @@ Thing_define (KlattGrid_flutterTierEditor, KlattGrid_realTierEditor) {
 		override { return U"Maximum"; }
 };
 
-KlattGrid_flutterTierEditor KlattGrid_flutterTierEditor_create (const char32 *title, KlattGrid klattgrid);
+autoKlattGrid_FlutterTierEditor KlattGrid_FlutterTierEditor_create (const char32 *title, KlattGrid klattgrid);
 
 
-Thing_define (KlattGrid_intensityTierEditor, KlattGrid_realTierEditor) {
+Thing_define (KlattGrid_IntensityTierEditor, KlattGrid_RealTierEditor) {
 	void v_createHelpMenuItems (EditorMenu menu)
 		override;
 	const char32 * v_quantityText ()
@@ -301,10 +301,10 @@ Thing_define (KlattGrid_intensityTierEditor, KlattGrid_realTierEditor) {
 		override { return U"Maximum intensity"; }
 };
 
-void KlattGrid_intensityTierEditor_init (KlattGrid_intensityTierEditor me, const char32 *title, KlattGrid klattgrid, RealTier tier);
+void KlattGrid_IntensityTierEditor_init (KlattGrid_IntensityTierEditor me, const char32 *title, KlattGrid klattgrid, RealTier tier);
 
 
-Thing_define (KlattGrid_decibelTierEditor, KlattGrid_intensityTierEditor) {
+Thing_define (KlattGrid_DecibelTierEditor, KlattGrid_IntensityTierEditor) {
 	const char32 * v_quantityText ()
 		override { return U"Amplitude (dB)"; }
 	const char32 * v_quantityKey ()
@@ -331,28 +331,28 @@ Thing_define (KlattGrid_decibelTierEditor, KlattGrid_intensityTierEditor) {
 		override { return U"Maximum amplitude"; }
 };
 
-KlattGrid_decibelTierEditor KlattGrid_decibelTierEditor_create (const char32 *title, KlattGrid klattgrid, RealTier data);
+autoKlattGrid_DecibelTierEditor KlattGrid_DecibelTierEditor_create (const char32 *title, KlattGrid klattgrid, RealTier data);
 
 
-Thing_define (KlattGrid_voicingAmplitudeTierEditor, KlattGrid_intensityTierEditor) {
+Thing_define (KlattGrid_VoicingAmplitudeTierEditor, KlattGrid_IntensityTierEditor) {
 };
 
-KlattGrid_voicingAmplitudeTierEditor KlattGrid_voicingAmplitudeTierEditor_create (const char32 *title, KlattGrid klattgrid);
+autoKlattGrid_VoicingAmplitudeTierEditor KlattGrid_VoicingAmplitudeTierEditor_create (const char32 *title, KlattGrid klattgrid);
 
 
-Thing_define (KlattGrid_aspirationAmplitudeTierEditor, KlattGrid_intensityTierEditor) {
+Thing_define (KlattGrid_AspirationAmplitudeTierEditor, KlattGrid_IntensityTierEditor) {
 };
 
-KlattGrid_aspirationAmplitudeTierEditor KlattGrid_aspirationAmplitudeTierEditor_create (const char32 *title, KlattGrid klattgrid);
+autoKlattGrid_AspirationAmplitudeTierEditor KlattGrid_AspirationAmplitudeTierEditor_create (const char32 *title, KlattGrid klattgrid);
 
 
-Thing_define (KlattGrid_breathinessAmplitudeTierEditor, KlattGrid_intensityTierEditor) {
+Thing_define (KlattGrid_BreathinessAmplitudeTierEditor, KlattGrid_IntensityTierEditor) {
 };
 
-KlattGrid_breathinessAmplitudeTierEditor KlattGrid_breathinessAmplitudeTierEditor_create (const char32 *title, KlattGrid klattgrid);
+autoKlattGrid_BreathinessAmplitudeTierEditor KlattGrid_BreathinessAmplitudeTierEditor_create (const char32 *title, KlattGrid klattgrid);
 
 
-Thing_define (KlattGrid_spectralTiltTierEditor, KlattGrid_intensityTierEditor) {
+Thing_define (KlattGrid_SpectralTiltTierEditor, KlattGrid_IntensityTierEditor) {
 	double v_defaultYmin ()
 		override { return -50.0; }
 	double v_defaultYmax ()
@@ -363,10 +363,10 @@ Thing_define (KlattGrid_spectralTiltTierEditor, KlattGrid_intensityTierEditor) {
 		override { return U"10.0"; }
 };
 
-KlattGrid_spectralTiltTierEditor KlattGrid_spectralTiltTierEditor_create (const char32 *title, KlattGrid klattgrid);
+autoKlattGrid_SpectralTiltTierEditor KlattGrid_SpectralTiltTierEditor_create (const char32 *title, KlattGrid klattgrid);
 
 
-Thing_define (KlattGrid_fricationBypassTierEditor, KlattGrid_intensityTierEditor) {
+Thing_define (KlattGrid_FricationBypassTierEditor, KlattGrid_IntensityTierEditor) {
 	double v_defaultYmin ()
 		override { return -50.0; }
 	double v_defaultYmax ()
@@ -377,16 +377,16 @@ Thing_define (KlattGrid_fricationBypassTierEditor, KlattGrid_intensityTierEditor
 		override { return U"10.0"; }
 };
 
-KlattGrid_fricationBypassTierEditor KlattGrid_fricationBypassTierEditor_create (const char32 *title, KlattGrid klattgrid);
+autoKlattGrid_FricationBypassTierEditor KlattGrid_FricationBypassTierEditor_create (const char32 *title, KlattGrid klattgrid);
 
 
-Thing_define (KlattGrid_fricationAmplitudeTierEditor, KlattGrid_intensityTierEditor) {
+Thing_define (KlattGrid_FricationAmplitudeTierEditor, KlattGrid_IntensityTierEditor) {
 };
 
-KlattGrid_fricationAmplitudeTierEditor KlattGrid_fricationAmplitudeTierEditor_create (const char32 *title, KlattGrid klattgrid);
+autoKlattGrid_FricationAmplitudeTierEditor KlattGrid_FricationAmplitudeTierEditor_create (const char32 *title, KlattGrid klattgrid);
 
 
-Thing_define (KlattGrid_formantGridEditor, FormantGridEditor) {
+Thing_define (KlattGrid_FormantGridEditor, FormantGridEditor) {
 	KlattGrid klattgrid;
 
 	void v_play (double tmin, double tmax)
@@ -395,7 +395,7 @@ Thing_define (KlattGrid_formantGridEditor, FormantGridEditor) {
 		override { return false; }
 };
 
-KlattGrid_formantGridEditor KlattGrid_formantGridEditor_create (const char32 *title, KlattGrid data, int formantType);
+autoKlattGrid_FormantGridEditor KlattGrid_FormantGridEditor_create (const char32 *title, KlattGrid data, int formantType);
 
-
-#endif // _KlattGridEditors_h_
+/* End of file KlattGridEditors.h */
+#endif

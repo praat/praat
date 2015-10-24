@@ -26,7 +26,7 @@
 
 #include "Matrix_and_Polygon.h"
 
-Polygon Matrix_to_Polygon (Matrix me) {
+autoPolygon Matrix_to_Polygon (Matrix me) {
 	try {
 		if (my nx != 2 && my ny != 2)
 			Melder_throw (U"Matrix must have exactly 2 rows or columns.");
@@ -42,18 +42,18 @@ Polygon Matrix_to_Polygon (Matrix me) {
 				thy y [i] = my z [i] [2];
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Polygon.");
 	}
 }
 
-Matrix Polygon_to_Matrix (Polygon me) {
+autoMatrix Polygon_to_Matrix (Polygon me) {
 	try {
 		autoMatrix thee = Matrix_create (1, my numberOfPoints, my numberOfPoints, 1, 1, 1, 2, 2, 1, 1);
 		NUMvector_copyElements (my x, thy z [1], 1, my numberOfPoints);
 		NUMvector_copyElements (my y, thy z [2], 1, my numberOfPoints);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
 	}

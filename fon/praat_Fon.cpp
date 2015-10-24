@@ -3114,9 +3114,9 @@ DO
 	autoPhoto me = Photo_create (
 		xmin, xmax, GET_INTEGER (U"Number of columns"), GET_REAL (U"dx"), GET_REAL (U"x1"),
 		ymin, ymax, GET_INTEGER (U"Number of rows"), GET_REAL (U"dy"), GET_REAL (U"y1"));
-	Matrix_formula (my d_red,   GET_STRING (U"redFormula"),   interpreter, NULL);
-	Matrix_formula (my d_green, GET_STRING (U"greenFormula"), interpreter, NULL);
-	Matrix_formula (my d_blue,  GET_STRING (U"blueFormula"),  interpreter, NULL);
+	Matrix_formula (my d_red  .get(), GET_STRING (U"redFormula"),   interpreter, NULL);
+	Matrix_formula (my d_green.get(), GET_STRING (U"greenFormula"), interpreter, NULL);
+	Matrix_formula (my d_blue .get(), GET_STRING (U"blueFormula"),  interpreter, NULL);
 	praat_new (me.transfer(), GET_STRING (U"Name"));
 END2 }
 
@@ -3133,16 +3133,16 @@ FORM (Photo_createSimple, U"Create simple Photo", U"Create simple Photo...") {
 	OK2
 DO
 	autoPhoto me = Photo_createSimple (GET_INTEGER (U"Number of rows"), GET_INTEGER (U"Number of columns"));
-	Matrix_formula (my d_red,   GET_STRING (U"redFormula"),   interpreter, NULL);
-	Matrix_formula (my d_green, GET_STRING (U"greenFormula"), interpreter, NULL);
-	Matrix_formula (my d_blue,  GET_STRING (U"blueFormula"),  interpreter, NULL);
+	Matrix_formula (my d_red.get(),   GET_STRING (U"redFormula"),   interpreter, NULL);
+	Matrix_formula (my d_green.get(), GET_STRING (U"greenFormula"), interpreter, NULL);
+	Matrix_formula (my d_blue.get(),  GET_STRING (U"blueFormula"),  interpreter, NULL);
 	praat_new (me.transfer(), GET_STRING (U"Name"));
 END2 }
 
 DIRECT2 (Photo_extractBlue) {
 	LOOP {
 		iam (Photo);
-		autoMatrix thee = Data_copy (my d_blue);
+		autoMatrix thee = Data_copy (my d_blue.get());
 		praat_new (thee.transfer(), my name, U"_blue");
 	}
 END2 }
@@ -3150,7 +3150,7 @@ END2 }
 DIRECT2 (Photo_extractGreen) {
 	LOOP {
 		iam (Photo);
-		autoMatrix thee = Data_copy (my d_green);
+		autoMatrix thee = Data_copy (my d_green.get());
 		praat_new (thee.transfer(), my name, U"_green");
 	}
 END2 }
@@ -3158,7 +3158,7 @@ END2 }
 DIRECT2 (Photo_extractRed) {
 	LOOP {
 		iam (Photo);
-		autoMatrix thee = Data_copy (my d_red);
+		autoMatrix thee = Data_copy (my d_red.get());
 		praat_new (thee.transfer(), my name, U"_red");
 	}
 END2 }
@@ -3166,7 +3166,7 @@ END2 }
 DIRECT2 (Photo_extractTransparency) {
 	LOOP {
 		iam (Photo);
-		autoMatrix thee = Data_copy (my d_transparency);
+		autoMatrix thee = Data_copy (my d_transparency.get());
 		praat_new (thee.transfer(), my name, U"_transparency");
 	}
 END2 }
@@ -3180,7 +3180,7 @@ DO
 	LOOP {
 		iam (Photo);
 		try {
-			Matrix_formula (my d_red, GET_STRING (U"formula"), interpreter, NULL);
+			Matrix_formula (my d_red.get(), GET_STRING (U"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Photo may have partially changed
@@ -3198,7 +3198,7 @@ DO
 	LOOP {
 		iam (Photo);
 		try {
-			Matrix_formula (my d_green, GET_STRING (U"formula"), interpreter, NULL);
+			Matrix_formula (my d_green.get(), GET_STRING (U"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Photo may have partially changed
@@ -3216,7 +3216,7 @@ DO
 	LOOP {
 		iam (Photo);
 		try {
-			Matrix_formula (my d_blue, GET_STRING (U"formula"), interpreter, NULL);
+			Matrix_formula (my d_blue.get(), GET_STRING (U"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Photo may have partially changed
@@ -3234,7 +3234,7 @@ DO
 	LOOP {
 		iam (Photo);
 		try {
-			Matrix_formula (my d_transparency, GET_STRING (U"formula"), interpreter, NULL);
+			Matrix_formula (my d_transparency.get(), GET_STRING (U"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Photo may have partially changed

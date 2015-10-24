@@ -32,7 +32,7 @@ Thing_define (Autosegment, Function) {
 		override { return s_description; }
 };
 
-Autosegment Autosegment_create (double tmin, double tmax, const char32 *label);
+autoAutosegment Autosegment_create (double tmin, double tmax, const char32 *label);
 /*
 	Function:
 		create a new instance of Autosegment.
@@ -56,9 +56,9 @@ Thing_define (Tier, Sorted) {
 		override { return compare; }
 };
 
-void Tier_init (I, long initialCapacity);
+void Tier_init (Tier me, long initialCapacity);
 
-Tier Tier_create (long initialCapacity);
+autoTier Tier_create (long initialCapacity);
 /*
 	Function:
 		create a new Tier containing one Autosegment from -1e30 to 1e30.
@@ -80,14 +80,12 @@ long Tier_timeToIndex (Tier me, double t);
 		result == 0 || my item [i] -> xmin <= result < my item [i] -> xmax;
 */
 
-void Tier_init (I, long initialCapacity);
-
 Thing_define (Label, Ordered) {
 };
 
-Label Label_create (long initialNumberOfTiers);
+autoLabel Label_create (long initialNumberOfTiers);
 
-void Label_init (I, long initialNumberOfTiers);
+void Label_init (Label me, long initialNumberOfTiers);
 
 void Label_addTier (Label me);
 

@@ -41,14 +41,14 @@ static struct structData_Description theAutosegment_description [] = {
 	{ 0 } };
 Data_Description structAutosegment :: s_description = & theAutosegment_description [0];
 
-Autosegment Autosegment_create (double tmin, double tmax, const char32 *label) {
+autoAutosegment Autosegment_create (double tmin, double tmax, const char32 *label) {
 	try {
 		autoAutosegment me = Thing_new (Autosegment);
 		Function_init (me.peek(), tmin, tmax);
 		if (label) {
 			Thing_setName (me.peek(), label);
 		}
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Autosegment not created.");
 	}
@@ -65,53 +65,51 @@ int structTier :: compare (I, thou) {
 
 Thing_implement (Tier, Sorted, 0);
 
-void Tier_init (I, long initialCapacity) {
-	iam (Tier);
+void Tier_init (Tier me, long initialCapacity) {
 	Sorted_init (me, classAutosegment, initialCapacity);
-	Collection_addItem (me, Autosegment_create (-1e30, 1e30, nullptr));
+	Collection_addItem (me, Autosegment_create (-1e30, 1e30, nullptr).transfer());
 }
 
-Tier Tier_create (long initialCapacity) {
+autoTier Tier_create (long initialCapacity) {
 	try {
 		autoTier me = Thing_new (Tier);
 		Tier_init (me.peek(), initialCapacity);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Tier not created.");
 	}
 }
 
-long Tier_timeToIndex (Tier me, double t) {
+long Tier_timeToIndex (Tier me, double time) {
 	for (long i = 1; i <= my size; i ++) {
 		Autosegment interval = (Autosegment) my item [i];
-		if (t >= interval -> xmin && t < interval -> xmax)
+		if (time >= interval -> xmin && time < interval -> xmax)
 			return i;
 	}
-	return 0;   /* Empty tier or very large t. */
+	return 0;   // empty tier or very large time
 }
 
 Thing_implement (Label, Ordered, 0);
 
-void Label_init (I, long initialNumberOfTiers) {
-	iam (Label);
+void Label_init (Label me, long initialNumberOfTiers) {
 	Ordered_init (me, classTier, initialNumberOfTiers);
 	for (long i = 1; i <= initialNumberOfTiers; i ++) {
-		Collection_addItem (me, Tier_create (10));
+		Collection_addItem (me, Tier_create (10).transfer());
 	}
 }
 
-Label Label_create (long initialNumberOfTiers) {
+autoLabel Label_create (long initialNumberOfTiers) {
 	try {
 		autoLabel me = Thing_new (Label);
 		Label_init (me.peek(), initialNumberOfTiers);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Label not created.");
 	}
 }
 
 void Label_addTier (Label me) {
-	Collection_addItem (me, Tier_create (10));
+	Collection_addItem (me, Tier_create (10).transfer());
 }
 
 void Label_suggestDomain (Label me, double *tmin, double *tmax) {

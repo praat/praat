@@ -1,6 +1,6 @@
 /* Vowel_def.h
  * 
- * Copyright (C) 2011 David Weenink & Paul Boersma
+ * Copyright (C) 2011,2015 David Weenink & Paul Boersma
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 
 #define ooSTRUCT Vowel
 oo_DEFINE_CLASS (Vowel, Function)
-	oo_OBJECT (PitchTier, 0, pt)
-	oo_OBJECT (FormantTier, 0, ft)
+	oo_AUTO_OBJECT (PitchTier, 0, pt)
+	oo_AUTO_OBJECT (FormantTier, 0, ft)
 oo_END_CLASS (Vowel)
 #undef ooSTRUCT
 

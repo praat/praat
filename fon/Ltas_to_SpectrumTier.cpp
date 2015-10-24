@@ -1,6 +1,6 @@
 /* Ltas_to_SpectrumTier.cpp
  *
- * Copyright (C) 2007-2011 Paul Boersma
+ * Copyright (C) 2007-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 #include "Ltas_to_SpectrumTier.h"
 
-SpectrumTier Ltas_to_SpectrumTier_peaks (Ltas me) {
+autoSpectrumTier Ltas_to_SpectrumTier_peaks (Ltas me) {
 	try {
 		return (SpectrumTier) Vector_to_RealTier_peaks (me, 1, classSpectrumTier);
 	} catch (MelderError) {

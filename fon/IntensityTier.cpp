@@ -21,11 +21,11 @@
 
 Thing_implement (IntensityTier, RealTier, 0);
 
-IntensityTier IntensityTier_create (double tmin, double tmax) {
+autoIntensityTier IntensityTier_create (double tmin, double tmax) {
 	try {
 		autoIntensityTier me = Thing_new (IntensityTier);
 		RealTier_init (me.peek(), tmin, tmax);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"IntensityTier not created.");
 	}
@@ -37,7 +37,7 @@ void IntensityTier_draw (IntensityTier me, Graphics g, double tmin, double tmax,
 	RealTier_draw (me, g, tmin, tmax, ymin, ymax, garnish, method, U"Intensity (dB)");
 }
 
-IntensityTier PointProcess_upto_IntensityTier (PointProcess me, double intensity) {
+autoIntensityTier PointProcess_upto_IntensityTier (PointProcess me, double intensity) {
 	try {
 		return (IntensityTier) PointProcess_upto_RealTier (me, intensity, classIntensityTier);
 	} catch (MelderError) {
@@ -45,7 +45,7 @@ IntensityTier PointProcess_upto_IntensityTier (PointProcess me, double intensity
 	}
 }
 
-IntensityTier Intensity_downto_IntensityTier (Intensity me) {
+autoIntensityTier Intensity_downto_IntensityTier (Intensity me) {
 	try {
 		return (IntensityTier) Vector_to_RealTier (me, 1, classIntensityTier);
 	} catch (MelderError) {
@@ -53,7 +53,7 @@ IntensityTier Intensity_downto_IntensityTier (Intensity me) {
 	}
 }
 
-IntensityTier Intensity_to_IntensityTier_peaks (Intensity me) {
+autoIntensityTier Intensity_to_IntensityTier_peaks (Intensity me) {
 	try {
 		return (IntensityTier) Vector_to_RealTier_peaks (me, 1, classIntensityTier);
 	} catch (MelderError) {
@@ -61,7 +61,7 @@ IntensityTier Intensity_to_IntensityTier_peaks (Intensity me) {
 	}
 }
 
-IntensityTier Intensity_to_IntensityTier_valleys (Intensity me) {
+autoIntensityTier Intensity_to_IntensityTier_valleys (Intensity me) {
 	try {
 		return (IntensityTier) Vector_to_RealTier_valleys (me, 1, classIntensityTier);
 	} catch (MelderError) {
@@ -69,17 +69,17 @@ IntensityTier Intensity_to_IntensityTier_valleys (Intensity me) {
 	}
 }
 
-IntensityTier Intensity_PointProcess_to_IntensityTier (Intensity me, PointProcess pp) {
+autoIntensityTier Intensity_PointProcess_to_IntensityTier (Intensity me, PointProcess pp) {
 	try {
 		autoIntensityTier temp = Intensity_downto_IntensityTier (me);
 		autoIntensityTier thee = IntensityTier_PointProcess_to_IntensityTier (temp.peek(), pp);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", pp, U": not converted to IntensityTier.");
 	}
 }
 
-IntensityTier IntensityTier_PointProcess_to_IntensityTier (IntensityTier me, PointProcess pp) {
+autoIntensityTier IntensityTier_PointProcess_to_IntensityTier (IntensityTier me, PointProcess pp) {
 	try {
 		if (my points -> size == 0) Melder_throw (U"No intensity points.");
 		autoIntensityTier thee = IntensityTier_create (pp -> xmin, pp -> xmax);
@@ -88,13 +88,13 @@ IntensityTier IntensityTier_PointProcess_to_IntensityTier (IntensityTier me, Poi
 			double value = RealTier_getValueAtTime (me, time);
 			RealTier_addPoint (thee.peek(), time, value);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", pp, U": not converted to IntensityTier.");
 	}
 }
 
-TableOfReal IntensityTier_downto_TableOfReal (IntensityTier me) {
+autoTableOfReal IntensityTier_downto_TableOfReal (IntensityTier me) {
 	return RealTier_downto_TableOfReal (me, U"Time (s)", U"Intensity (dB)");
 }
 
@@ -109,12 +109,12 @@ void Sound_IntensityTier_multiply_inline (Sound me, IntensityTier intensity) {
 	}
 }
 
-Sound Sound_IntensityTier_multiply (Sound me, IntensityTier intensity, int scale) {
+autoSound Sound_IntensityTier_multiply (Sound me, IntensityTier intensity, int scale) {
 	try {
 		autoSound thee = Data_copy (me);
 		Sound_IntensityTier_multiply_inline (thee.peek(), intensity);
 		if (scale) Vector_scale (thee.peek(), 0.9);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not multiplied with ", intensity, U".");
 	}

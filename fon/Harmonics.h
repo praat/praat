@@ -25,23 +25,23 @@
 #include "Harmonics_def.h"
 oo_CLASS_CREATE (Harmonics, Daata);
 
-Harmonics Harmonics_create (long numberOfHarmonics);
+autoHarmonics Harmonics_create (long numberOfHarmonics);
 
 void Harmonics_draw (Harmonics me, Graphics g, double fmin, double fmax,
 	double minimum, double maximum, int garnish, const char32 *method);
 
-Matrix Harmonics_to_Matrix (Harmonics me);
-Harmonics Matrix_to_Harmonics (Matrix me);
+autoMatrix Harmonics_to_Matrix (Harmonics me);
+autoHarmonics Matrix_to_Harmonics (Matrix me);
 
 /* Direct computation. */
 
-Harmonics PointProcess_Sound_to_Harmonics (PointProcess pulses, Sound sound,
+autoHarmonics PointProcess_Sound_to_Harmonics (PointProcess pulses, Sound sound,
 	long maximumHarmonic,
 	double shortestPeriod, double longestPeriod, double maximumPeriodFactor);
 
 /* Shortcut. */
 
-Harmonics Sound_to_Harmonics (Sound me, double bandwidth);
+autoHarmonics Sound_to_Harmonics (Sound me, double bandwidth);
 
 /* End of file Harmonics.h */
 #endif

@@ -3560,7 +3560,7 @@ FORM (KlattTable_to_KlattGrid, U"KlattTable: To KlattGrid", 0)
 DO
 	LOOP {
 		iam (KlattTable);
-		praat_new (KlattTable_to_KlattGrid (me, GET_REAL (U"Frame duration")), my name);
+		praat_new (KlattTable_to_KlattGrid (me, GET_REAL (U"Frame duration")).transfer(), my name);
 	}
 END
 
@@ -5978,10 +5978,10 @@ DO
 	LOOP {
 		iam (Sound);
 		praat_new (Sound_to_KlattGrid_simple (me, GET_REAL (U"Time step"),
-		GET_INTEGER (U"Max. number of formants"), GET_REAL (U"Maximum formant"),
-		GET_REAL (U"Window length"), GET_REAL (U"Pre-emphasis from"),
-		GET_REAL (U"Pitch floor"), GET_REAL (U"Pitch ceiling"),
-		GET_REAL (U"Minimum pitch"), GET_INTEGER (U"Subtract mean")), my name);
+			GET_INTEGER (U"Max. number of formants"), GET_REAL (U"Maximum formant"),
+			GET_REAL (U"Window length"), GET_REAL (U"Pre-emphasis from"),
+			GET_REAL (U"Pitch floor"), GET_REAL (U"Pitch ceiling"),
+			GET_REAL (U"Minimum pitch"), GET_INTEGER (U"Subtract mean")).transfer(), my name);
 	}
 END
 
@@ -6004,8 +6004,8 @@ DO
 	LOOP {
 		iam (Sound);
 		praat_new (Sound_to_Pitch_SPINET (me, GET_REAL (U"Time step"), GET_REAL (U"Window length"),
-		fmin, fmax, GET_INTEGER (U"Number of filters"),
-		GET_REAL (U"Ceiling"), GET_INTEGER (U"Max. number of candidates")), my name);
+			fmin, fmax, GET_INTEGER (U"Number of filters"),
+			GET_REAL (U"Ceiling"), GET_INTEGER (U"Max. number of candidates")), my name);
 	}
 END
 
