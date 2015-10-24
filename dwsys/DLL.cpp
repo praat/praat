@@ -26,15 +26,16 @@ void structDLLNode :: v_destroy () {
 	DLLNode_Parent :: v_destroy ();
 }
 
-void structDLLNode :: v_copy (DLLNode thee) {
-	thy data = Data_copy (data);
+void structDLLNode :: v_copy (thou) {
+	thouart (DLLNode);
+	thy data = Data_copy (our data);
 }
 
 Thing_implement (DLL, Thing, 0);
 
 void structDLL :: v_destroy () {
 	DLLNode v = front;
-	while (v != nullptr) {
+	while (v) {
 		DLLNode cur = v;
 		v = v -> next;
 		forget (cur);
