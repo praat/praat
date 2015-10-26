@@ -45,6 +45,7 @@
 
 #include "praatP.h"
 #include "praat_script.h"
+#include "praat_version.h"
 #include "site.h"
 #include "machine.h"
 #include "Printer.h"
@@ -1014,13 +1015,15 @@ void praat_setStandAloneScriptText (const char32 *text) {
 	thePraatStandAloneScriptText = text;
 }
 
-unsigned int theArgc;
-char** theArgv;
-unsigned int theArgumentNumber;
-
 void praat_init (const char32 *title, unsigned int argc, char **argv) {
+	praatP.argc = argc;
+	praatP.argv = argv;
+	praatP.argumentNumber = 0;
+
+	bool weFoundEvidenceForAConsole = false;
 	#if defined (_WIN32)
 		if (AttachConsole (ATTACH_PARENT_PROCESS)) {
+			weFoundEvidenceForAConsole = true;
 			/*
 			 * Redirect stdout to the console (note: no UTF-8!).
 			 */
@@ -1029,7 +1032,6 @@ void praat_init (const char32 *title, unsigned int argc, char **argv) {
 			FILE* f = _fdopen (fileHandle, "w");
 			*stdout = *f;
 			setvbuf (stdout, NULL, _IONBF, 0);
-			printf ("attached to console\n");
 			/*
 			 * Redirect stderr to the console (note: no UTF-8!).
 			 */
@@ -1046,16 +1048,26 @@ void praat_init (const char32 *title, unsigned int argc, char **argv) {
 			f = _fdopen (fileHandle, "r");
 			*stdin = *f;
 			setvbuf (stdin, NULL, _IONBF, 0);
+		} else {
+			DWORD err = GetLastError ();
+			if (err == ERROR_ACCESS_DENIED) {
+				Melder_fatal (U"Apparently Praat has been called as a console application.\n"
+					"Did you compile it without the -mwindows flag?");
+			} else if (err == ERROR_INVALID_HANDLE) {
+				(void) 0;   // probably the normal case: the parent process is Windows Explorer or so, which doesn't have a console
+			} else if (err == ERROR_GEN_FAILURE) {
+				Melder_fatal (U"Apparently Praat was started without a parent process?");
+			} else {
+				Melder_fatal (U"AttachConsole() returned unknown error ", err);
+			}
 		}
+	#elif defined (linux)
+		weFoundEvidenceForAConsole = isatty (fileno (stdout));
 	#endif
-	theArgc = argc;
-	theArgv = argv;
-	theArgumentNumber = 0;
 
 	for (unsigned int iarg = 0; iarg < argc; iarg ++) {
 		//Melder_casual (U"arg ", iarg, U": <<", Melder_peek8to32 (argv [iarg]), U">>");
 	}
-	static char32 truncatedTitle [300];   // static because praatP.title will point into it
 	#if defined (UNIX)
 		setlocale (LC_ALL, "C");
 		setenv ("PULSE_LATENCY_MSEC", "1", 0);   // Rafael Laboissiere, August 2014
@@ -1097,56 +1109,82 @@ void praat_init (const char32 *title, unsigned int argc, char **argv) {
 	Printer_prefs ();   // paper size, printer command...
 	structTextEditor :: f_preferences ();   // font size...
 
-	theArgumentNumber = 1;
+	praatP.argumentNumber = 1;
 	const char32 *unknownCommandLineOption = nullptr;
 
 	/*
 	 * Running Praat from the command line.
 	 */
-	while (theArgumentNumber < argc && argv [theArgumentNumber] [0] == '-') {
-		if (strequ (argv [theArgumentNumber], "-")) {
+	while (praatP.argumentNumber < argc && argv [praatP.argumentNumber] [0] == '-') {
+		if (strequ (argv [praatP.argumentNumber], "-")) {
 			praatP.hasCommandLineInput = true;
-		} else if (strequ (argv [theArgumentNumber], "--run")) {
-			Melder_batch = true;
-			theArgumentNumber += 1;
-		} else if (strequ (argv [theArgumentNumber], "-a") || strequ (argv [theArgumentNumber], "--ansi")) {
-			Melder_consoleIsAnsi = true;
-			theArgumentNumber += 1;
-		} else if (strequ (argv [theArgumentNumber], "--no-pref-files")) {
+		} else if (strequ (argv [praatP.argumentNumber], "--open")) {
+			praatP.userWantsToOpen = true;
+			praatP.argumentNumber += 1;
+		} else if (strequ (argv [praatP.argumentNumber], "--no-pref-files")) {
 			praatP.ignorePreferenceFiles = true;
-			theArgumentNumber += 1;
-		} else if (strequ (argv [theArgumentNumber], "--no-plugins")) {
+			praatP.argumentNumber += 1;
+		} else if (strequ (argv [praatP.argumentNumber], "--no-plugins")) {
 			praatP.ignorePlugins = true;
-			theArgumentNumber += 1;
-		} else if (strnequ (argv [theArgumentNumber], "--pref-dir=", 11)) {
-			Melder_pathToDir (Melder_peek8to32 (argv [theArgumentNumber] + 11), & praatDir);
-			theArgumentNumber += 1;
+			praatP.argumentNumber += 1;
+		} else if (strnequ (argv [praatP.argumentNumber], "--pref-dir=", 11)) {
+			Melder_pathToDir (Melder_peek8to32 (argv [praatP.argumentNumber] + 11), & praatDir);
+			praatP.argumentNumber += 1;
+		} else if (strequ (argv [praatP.argumentNumber], "--version")) {
+			#define xstr(s) str(s)
+			#define str(s) #s
+			printf ("%s %s (%s %d, %d)\n", Melder_peek32to8 (title), xstr (PRAAT_VERSION_STR), xstr (PRAAT_MONTH), PRAAT_DAY, PRAAT_YEAR);
+			exit (0);
+		} else if (strequ (argv [praatP.argumentNumber], "--help")) {
+			printf ("Usage: praat [options] scriptfile [script arguments]\n");
+			printf ("Options:\n");
+			printf ("  --open           interpret the command line arguments as files to be opened in the GUI,\n");
+			printf ("                   instead of as a script file name and its arguments\n");
+			printf ("  --no-pref-files  don't read or write the preferences file and the buttons file\n");
+			printf ("  --no-plugins     don't activate the plugins\n");
+			printf ("  --pref-dir=DIR   set the preferences directory to DIR\n");
+			printf ("  --version        print the Praat version\n");
+			printf ("  --help           print this list of command line options\n");
+			printf ("  -a, --ansi       on Windows: use ISO Latin-1 encoding instead of UTF-16LE (not recommended)\n");
+			exit (0);
+		} else if (strequ (argv [praatP.argumentNumber], "-a") || strequ (argv [praatP.argumentNumber], "--ansi")) {
+			Melder_consoleIsAnsi = true;
+			praatP.argumentNumber += 1;
 		#if defined (macintosh)
-		} else if (strequ (argv [theArgumentNumber], "-NSDocumentRevisionsDebugMode")) {
+		} else if (strequ (argv [praatP.argumentNumber], "-NSDocumentRevisionsDebugMode")) {
 			(void) 0;   // ignore this option, which was added by Xcode
-			theArgumentNumber += 2;   // jump over the argument, which is usually "YES" (this jump works correctly even if this argument is missing)
-		} else if (strnequ (argv [theArgumentNumber], "-psn_", 5)) {
+			praatP.argumentNumber += 2;   // jump over the argument, which is usually "YES" (this jump works correctly even if this argument is missing)
+		} else if (strnequ (argv [praatP.argumentNumber], "-psn_", 5)) {
 			(void) 0;   // ignore this option, which was added by the Finder, perhaps when dragging a file on Praat (Process Serial Number)
-			theArgumentNumber += 1;
+			praatP.argumentNumber += 1;
 		#endif
 		} else {
-			unknownCommandLineOption = Melder_8to32 (argv [theArgumentNumber]);
-			theArgumentNumber = UINT32_MAX;   // ignore all other command line options
+			unknownCommandLineOption = Melder_8to32 (argv [praatP.argumentNumber]);
+			praatP.argumentNumber = UINT32_MAX;   // ignore all other command line options
 			break;
 		}
 	}
 
+	const bool thereIsAFileNameOnTheCommandLine = ( praatP.argumentNumber < argc );
+	const bool onThisPlatformDragAndDropLeadsToFileNamesOnTheCommandLine =
+		#if defined (_WIN32)
+			true;
+		#elif defined (macintosh)
+			false;
+		#else
+			true;
+		#endif
+	Melder_batch = thereIsAFileNameOnTheCommandLine && ! praatP.userWantsToOpen &&
+		(! onThisPlatformDragAndDropLeadsToFileNamesOnTheCommandLine || weFoundEvidenceForAConsole);
+	praatP.userWantsToOpen |= thereIsAFileNameOnTheCommandLine && ! Melder_batch;
+
 	if (Melder_batch) {
-		if (theArgumentNumber >= argc) {
-			Melder_casual (U"Command line option --run was given, but no script file name was specified.");
-			exit (-1);
-		}
+		Melder_assert (praatP.argumentNumber < argc);
 		/*
-		 * We now get the script file name, if there is any.
-		 * If there is a script file name, it is next on the command line
+		 * We now get the script file name. It is next on the command line
 		 * (not necessarily *last* on the line, because there may be script arguments after it).
 		 */
-		MelderString_copy (& theCurrentPraatApplication -> batchName, Melder_peek8to32 (argv [theArgumentNumber ++]));
+		MelderString_copy (& theCurrentPraatApplication -> batchName, Melder_peek8to32 (argv [praatP.argumentNumber ++]));
 		if (praatP.hasCommandLineInput)
 			Melder_throw (U"Cannot have both command line input and a script file.");
 	} else {
@@ -1291,9 +1329,9 @@ void praat_init (const char32 *title, unsigned int argc, char **argv) {
 	GuiWindow raam = NULL;
 	if (Melder_batch) {
 		MelderString_empty (& theCurrentPraatApplication -> batchName);
-		for (unsigned int i = theArgumentNumber - 1; i < argc; i ++) {
-			if (i >= theArgumentNumber) MelderString_append (& theCurrentPraatApplication -> batchName, U" ");
-			bool needsQuoting = !! strchr (argv [i], ' ') && (i == theArgumentNumber - 1 || i < argc - 1);
+		for (unsigned int i = praatP.argumentNumber - 1; i < argc; i ++) {
+			if (i >= praatP.argumentNumber) MelderString_append (& theCurrentPraatApplication -> batchName, U" ");
+			bool needsQuoting = !! strchr (argv [i], ' ') && (i == praatP.argumentNumber - 1 || i < argc - 1);
 			if (needsQuoting) MelderString_append (& theCurrentPraatApplication -> batchName, U"\"");
 			MelderString_append (& theCurrentPraatApplication -> batchName, Melder_peek8to32 (argv [i]));
 			if (needsQuoting) MelderString_append (& theCurrentPraatApplication -> batchName, U"\"");
@@ -1305,9 +1343,9 @@ void praat_init (const char32 *title, unsigned int argc, char **argv) {
 		 * Start the application.
 		 */
 		#if gtk
-			trace (U"locale ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
+			trace (U"locale ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 			g_set_application_name (Melder_peek32to8 (title));
-			trace (U"locale ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
+			trace (U"locale ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 		#elif cocoa
 			//[NSApplication sharedApplication];
 			[GuiCocoaApplication sharedApplication];
@@ -1323,27 +1361,27 @@ void praat_init (const char32 *title, unsigned int argc, char **argv) {
 		char32 objectWindowTitle [100];
 		Melder_sprint (objectWindowTitle,100, praatP.title, U" Objects");
 		double x, y;
-		trace (U"locale ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
-		Gui_getWindowPositioningBounds (& x, & y, NULL, NULL);
-		trace (U"locale ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
+		trace (U"locale ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
+		Gui_getWindowPositioningBounds (& x, & y, nullptr, nullptr);
+		trace (U"locale ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 		theCurrentPraatApplication -> topShell = raam =
 			GuiWindow_create (x + 10, y, WINDOW_WIDTH, WINDOW_HEIGHT, 450, 250,
-				objectWindowTitle, gui_cb_quit, NULL, 0);
-		trace (U"locale ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
+				objectWindowTitle, gui_cb_quit, nullptr, 0);
+		trace (U"locale ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 		#if motif
 			GuiApp_setApplicationShell (theCurrentPraatApplication -> topShell -> d_xmShell);
 		#endif
-		trace (U"before objects window shows locale ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
+		trace (U"before objects window shows locale ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 		GuiThing_show (raam);
-		trace (U"after objects window shows locale ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
+		trace (U"after objects window shows locale ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 	}
-	Thing_recognizeClassesByName (classCollection, classStrings, classManPages, classSortedSetOfString, NULL);
+	Thing_recognizeClassesByName (classCollection, classStrings, classManPages, classSortedSetOfString, nullptr);
 	if (Melder_batch) {
 		Melder_backgrounding = true;
 		trace (U"adding menus without GUI");
-		praat_addMenus (NULL);
+		praat_addMenus (nullptr);
 		trace (U"adding fixed buttons without GUI");
-		praat_addFixedButtons (NULL);
+		praat_addFixedButtons (nullptr);
 	} else {
 
 		#ifdef macintosh
@@ -1351,7 +1389,7 @@ void praat_init (const char32 *title, unsigned int argc, char **argv) {
 				AEInstallEventHandler (758934755, 0, (AEEventHandlerProcPtr) (mac_processSignal8), 0, false);   // for receiving sendpraat
 				AEInstallEventHandler (758934756, 0, (AEEventHandlerProcPtr) (mac_processSignal16), 0, false);   // for receiving sendpraatW
 			#endif
-			MelderGui_create (raam);   /* BUG: default Melder_assert would call printf recursively!!! */
+			MelderGui_create (raam);   // BUG: default Melder_assert would call printf recursively!!!
 		#endif
 		#if defined (macintosh) && useCarbon
 			trace (U"creating the menu bar along the top of the screen (Mac only)");
@@ -1469,14 +1507,14 @@ static void executeStartUpFile (MelderDir startUpDirectory, const char32 *fileNa
 void praat_run () {
 	trace (U"adding menus, second round");
 	praat_addMenus2 ();
-	trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
+	trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 
 	trace (U"adding the Quit command");
 	#if defined (macintosh) && useCarbon
-		praat_addMenuCommand (U"Objects", U"Praat", U"Quit", 0, praat_HIDDEN, DO_Quit);   // the Quit command is needed for scripts, not for the GUI
+		praat_addMenuCommand (U"Objects", U"Praat", U"Quit", nullptr, praat_HIDDEN, DO_Quit);   // the Quit command is needed for scripts, not for the GUI
 	#else
-		praat_addMenuCommand (U"Objects", U"Praat", U"-- quit --", 0, 0, 0);
-		praat_addMenuCommand (U"Objects", U"Praat", U"Quit", 0, praat_UNHIDABLE + 'Q', DO_Quit);
+		praat_addMenuCommand (U"Objects", U"Praat", U"-- quit --", nullptr, 0, nullptr);
+		praat_addMenuCommand (U"Objects", U"Praat", U"Quit", nullptr, praat_UNHIDABLE + 'Q', DO_Quit);
 	#endif
 
 	trace (U"read the preferences file, and notify those who want to be notified of this");
@@ -1510,7 +1548,7 @@ void praat_run () {
 
 	if (! MelderDir_isNull (& praatDir) && ! praatP.ignorePlugins) {
 		trace (U"install plug-ins");
-		trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
+		trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 		/* The Praat phase should remain praat_STARTING_UP,
 		 * because any added commands must not be included in the buttons file.
 		 */
@@ -1527,7 +1565,7 @@ void praat_run () {
 					if (MelderFile_readable (& plugin)) {
 						Melder_backgrounding = true;
 						try {
-							praat_executeScriptFromFile (& plugin, NULL);
+							praat_executeScriptFromFile (& plugin, nullptr);
 						} catch (MelderError) {
 							Melder_flushError (praatP.title, U": plugin ", & plugin, U" contains an error.");
 						}
@@ -1571,8 +1609,8 @@ void praat_run () {
 		Melder_assert (str32len (U"hello") == 5);
 		Melder_assert (str32ncmp (U"hellogoodbye", U"hellogee", 6) == 0);
 		Melder_assert (str32ncmp (U"hellogoodbye", U"hellogee", 7) > 0);
-		Melder_assert (str32str (U"hellogoodbye", U"ogo") != NULL);
-		Melder_assert (str32str (U"hellogoodbye", U"oygo") == NULL);
+		Melder_assert (str32str (U"hellogoodbye", U"ogo"));
+		Melder_assert (! str32str (U"hellogoodbye", U"oygo"));
 	}
 
 	if (sizeof (off_t) < 8)
@@ -1625,11 +1663,11 @@ void praat_run () {
 						char32 *newline = str32chr (line, U'\n');
 						if (newline) *newline = U'\0';
 						try {
-							praat_executeCommand (NULL, line);
+							praat_executeCommand (nullptr, line);
 						} catch (MelderError) {
 							Melder_clearError ();   // ignore this line, but not necessarily the next
 						}
-						if (newline == NULL) break;
+						if (! newline) break;
 						line = newline + 1;
 					}
 				}
@@ -1637,43 +1675,41 @@ void praat_run () {
 		}
 
 		trace (U"sorting the commands");
-		trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
+		trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 		praat_sortMenuCommands ();
 		praat_sortActions ();
 
-		#ifndef macintosh
-		/*
-		 * If there are command line arguments left, then Praat may have been called from the command line like
-		 *    praat.exe hello.wav goodbye.TextGrid
-		 * or the user may have dropped one or more files on the Praat icon, while Praat was not running yet
-		 * (this second possibility goes for Windows and Linux).
-		 */
-		for (unsigned int iarg = theArgumentNumber; iarg < theArgc; iarg ++) {
-			//Melder_casual (U"File to open <<", Melder_peek8to32 (theArgv [iarg]), U">>");
-			autostring32 text = Melder_dup (Melder_cat (U"Read from file... ", Melder_peek8to32 (theArgv [iarg])));
-			try {
-				praat_executeScriptFromText (text.peek());
-			} catch (MelderError) {
-				Melder_flushError ();
+		//#ifndef macintosh
+		if (praatP.userWantsToOpen) {
+			for (; praatP.argumentNumber < praatP.argc; praatP.argumentNumber ++) {
+				//Melder_casual (U"File to open <<", Melder_peek8to32 (theArgv [iarg]), U">>");
+				autostring32 text = Melder_dup (Melder_cat (U"Read from file... ",
+															Melder_peek8to32 (praatP.argv [praatP.argumentNumber])));
+				try {
+					praat_executeScriptFromText (text.peek());
+				} catch (MelderError) {
+					Melder_flushError ();
+				}
 			}
 		}
-		#endif
+		//#endif
 
 		praatP.phase = praat_HANDLING_EVENTS;
 
 		#if gtk
 			//gtk_widget_add_events (G_OBJECT (theCurrentPraatApplication -> topShell), GDK_ALL_EVENTS_MASK);
 			trace (U"install GTK key snooper");
-			trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
+			trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 			#if ALLOW_GDK_DRAWING
-				g_signal_connect (G_OBJECT (theCurrentPraatApplication -> topShell -> d_gtkWindow), "client-event", G_CALLBACK (cb_userMessage), NULL);
+				g_signal_connect (G_OBJECT (theCurrentPraatApplication -> topShell -> d_gtkWindow), "client-event",
+					G_CALLBACK (cb_userMessage), nullptr);
 			#endif
 			signal (SIGUSR1, cb_sigusr1);
 			#if ALLOW_GDK_DRAWING
 				gtk_key_snooper_install (theKeySnooper, 0);
 			#endif
 			trace (U"start the GTK event loop");
-			trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
+			trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 			gtk_main ();
 		#elif cocoa
 			[NSApp run];
