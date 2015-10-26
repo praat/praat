@@ -40,7 +40,7 @@ Consult the manual page on [Programming](http://www.fon.hum.uva.nl/praat/manual/
 ### 1.5. The programming language
 
 Most of the source code is written in C++, but some parts are written in C.
-The code requires that your compiler supports C99 and C++11 (for e.g. `char32_t`).
+The code requires that your compiler supports C99 and C++11 (for e.g. `char32_t` and rvalue references).
 
 ### 1.6. Compiling for Windows
 
