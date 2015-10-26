@@ -1,6 +1,6 @@
 /* Pitch_to_Sound.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 /* then this PointProcess into a Sound (pulse train), */
 /* and then optionally filter this with 6 formants. */
 
-Sound Pitch_to_Sound (Pitch me, double tmin, double tmax, int hum);
+autoSound Pitch_to_Sound (Pitch me, double tmin, double tmax, int hum);
 void Pitch_play (Pitch me, double tmin, double tmax);
 void Pitch_hum (Pitch me, double tmin, double tmax);
 
@@ -32,7 +32,7 @@ void Pitch_hum (Pitch me, double tmin, double tmax);
 /* then this PitchTier into a Sound (sine wave), */
 /* and then cuts away the unvoiced stretches. */
 
-Sound Pitch_to_Sound_sine (Pitch me, double tmin, double tmax, double samplingFrequency,
+autoSound Pitch_to_Sound_sine (Pitch me, double tmin, double tmax, double samplingFrequency,
 	int roundToNearestZeroCrossings);
 
 /* End of file Pitch_to_Sound.h */

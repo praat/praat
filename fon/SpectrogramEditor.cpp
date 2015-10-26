@@ -77,12 +77,12 @@ int structSpectrogramEditor :: v_click (double xWC, double yWC, bool shiftKeyPre
 	return our SpectrogramEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 }
 
-SpectrogramEditor SpectrogramEditor_create (const char32 *title, Spectrogram data) {
+autoSpectrogramEditor SpectrogramEditor_create (const char32 *title, Spectrogram data) {
 	try {
 		autoSpectrogramEditor me = Thing_new (SpectrogramEditor);
 		FunctionEditor_init (me.peek(), title, data);
 		my maximum = 10000.0;
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Spectrogram window not created.");
 	}

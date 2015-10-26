@@ -54,7 +54,7 @@ Thing_define (IntensityTierEditor, RealTierEditor) {
 		override { return U"Maximum intensity"; }
 };
 
-IntensityTierEditor IntensityTierEditor_create (const char32 *title,
+autoIntensityTierEditor IntensityTierEditor_create (const char32 *title,
 	IntensityTier intensity, Sound sound, bool ownSound);
 /*
 	'sound' may be null.

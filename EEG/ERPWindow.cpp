@@ -402,12 +402,12 @@ void structERPWindow :: v_prefs_getValues (EditorCommand cmd) {
 	FunctionEditor_redraw (this);
 }
 
-ERPWindow ERPWindow_create (const char32 *title, ERP data) {
-	Melder_assert (data != nullptr);
+autoERPWindow ERPWindow_create (const char32 *title, ERP data) {
+	Melder_assert (data);
 	try {
 		autoERPWindow me = Thing_new (ERPWindow);
 		SoundEditor_init (me.peek(), title, data);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ERP window not created.");
 	}

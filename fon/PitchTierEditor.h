@@ -56,7 +56,7 @@ Thing_define (PitchTierEditor, RealTierEditor) {
 		override { return U"Maximum frequency"; }
 };
 
-PitchTierEditor PitchTierEditor_create (const char32 *title,
+autoPitchTierEditor PitchTierEditor_create (const char32 *title,
 	PitchTier pitch,
 	Sound sound,   // may be NULL
 	bool ownSound);

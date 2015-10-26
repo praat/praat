@@ -33,11 +33,11 @@ void structPitchTier :: v_info () {
 	MelderInfo_writeLine (U"Maximum pitch value: ", RealTier_getMaximumValue (this), U" Hz");
 }
 
-PitchTier PitchTier_create (double tmin, double tmax) {
+autoPitchTier PitchTier_create (double tmin, double tmax) {
 	try {
 		autoPitchTier me = Thing_new (PitchTier);
 		RealTier_init (me.peek(), tmin, tmax);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PitchTier not created.");
 	}
@@ -49,7 +49,7 @@ void PitchTier_draw (PitchTier me, Graphics g, double tmin, double tmax,
 	RealTier_draw (me, g, tmin, tmax, fmin, fmax, garnish, method, U"Frequency (Hz)");
 }
 
-PitchTier PointProcess_upto_PitchTier (PointProcess me, double frequency) {
+autoPitchTier PointProcess_upto_PitchTier (PointProcess me, double frequency) {
 	try {
 		return (PitchTier) PointProcess_upto_RealTier (me, frequency, classPitchTier);
 	} catch (MelderError) {

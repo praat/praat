@@ -127,11 +127,11 @@ void MovieWindow_init (MovieWindow me, const char32 *title, Movie movie) {
 	TimeSoundAnalysisEditor_init (me, title, movie, movie -> d_sound, false);
 }
 
-MovieWindow MovieWindow_create (const char32 *title, Movie movie) {
+autoMovieWindow MovieWindow_create (const char32 *title, Movie movie) {
 	try {
 		autoMovieWindow me = Thing_new (MovieWindow);
 		MovieWindow_init (me.peek(), title, movie);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Movie window not created.");
 	}

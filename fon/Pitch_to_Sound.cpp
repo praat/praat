@@ -31,7 +31,7 @@
 #include "PitchTier_to_Sound.h"
 #include "Pitch_to_PitchTier.h"
 
-Sound Pitch_to_Sound (Pitch me, double tmin, double tmax, int hum) {
+autoSound Pitch_to_Sound (Pitch me, double tmin, double tmax, int hum) {
 	static double formant [1 + 6] = { 0, 600, 1400, 2400, 3400, 4500, 5500 };
 	static double bandwidth [1 + 6] = { 0, 50, 100, 200, 300, 400, 500 };
 	try {
@@ -40,7 +40,7 @@ Sound Pitch_to_Sound (Pitch me, double tmin, double tmax, int hum) {
 		if (hum) {
 			Sound_filterWithFormants (sound.peek(), tmin, tmax, 6, formant, bandwidth);
 		}
-		return sound.transfer();
+		return sound;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound.");
 	}
@@ -66,7 +66,7 @@ void Pitch_hum (Pitch me, double tmin, double tmax) {
 	}
 }
 
-Sound Pitch_to_Sound_sine (Pitch me, double tmin, double tmax, double samplingFrequency, int roundToNearestZeroCrossings) {
+autoSound Pitch_to_Sound_sine (Pitch me, double tmin, double tmax, double samplingFrequency, int roundToNearestZeroCrossings) {
 	try {
 		autoPitchTier tier = Pitch_to_PitchTier (me);
 		autoSound sound = PitchTier_to_Sound_sine (tier.peek(), tmin, tmax, samplingFrequency);
@@ -92,7 +92,7 @@ Sound Pitch_to_Sound_sine (Pitch me, double tmin, double tmax, double samplingFr
 		if (unvoicedMax > unvoicedMin) {
 			Sound_setZero (sound.peek(), unvoicedMin, unvoicedMax, roundToNearestZeroCrossings);
 		}
-		return sound.transfer();
+		return sound;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound (sine).");
 	}

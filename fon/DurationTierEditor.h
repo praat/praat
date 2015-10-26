@@ -56,7 +56,7 @@ Thing_define (DurationTierEditor, RealTierEditor) {
 		override { return U"Maximum duration"; }
 };
 
-DurationTierEditor DurationTierEditor_create (const char32 *title,
+autoDurationTierEditor DurationTierEditor_create (const char32 *title,
 	DurationTier duration, Sound sound, bool ownSound);
 /*
 	'sound' may be null.

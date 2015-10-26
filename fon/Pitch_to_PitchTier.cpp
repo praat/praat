@@ -26,7 +26,7 @@
 
 #include "Pitch_to_PitchTier.h"
 
-PitchTier Pitch_to_PitchTier (Pitch me) {
+autoPitchTier Pitch_to_PitchTier (Pitch me) {
 	try {
 		autoPitchTier thee = PitchTier_create (my xmin, my xmax);
 		for (long i = 1; i <= my nx; i ++) {
@@ -40,7 +40,7 @@ PitchTier Pitch_to_PitchTier (Pitch me) {
 				RealTier_addPoint (thee.peek(), time, frequency);
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to PitchTier.");
 	}
@@ -123,7 +123,7 @@ void PitchTier_Pitch_draw (PitchTier me, Pitch uv, Graphics g,
 	}
 }
 
-Pitch Pitch_PitchTier_to_Pitch (Pitch me, PitchTier tier) {
+autoPitch Pitch_PitchTier_to_Pitch (Pitch me, PitchTier tier) {
 	try {
 		if (tier -> points -> size == 0) Melder_throw (U"No pitch points.");
 		autoPitch thee = Data_copy (me);
@@ -135,7 +135,7 @@ Pitch Pitch_PitchTier_to_Pitch (Pitch me, PitchTier tier) {
 			cand -> strength = 0.9;
 			frame -> nCandidates = 1;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", tier, U": not converted to Pitch.");
 	}

@@ -38,7 +38,7 @@ Thing_define (ArtwordEditor, Editor) {
 		override;
 };
 
-ArtwordEditor ArtwordEditor_create (const char32 *title, Artword data);
+autoArtwordEditor ArtwordEditor_create (const char32 *title, Artword data);
 
 /* End of file ArtwordEditor.h */
 #endif

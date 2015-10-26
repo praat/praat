@@ -184,13 +184,13 @@ void structSpectrumEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"Spectrum help", 0, menu_cb_help_Spectrum);
 }
 
-SpectrumEditor SpectrumEditor_create (const char32 *title, Spectrum data) {
+autoSpectrumEditor SpectrumEditor_create (const char32 *title, Spectrum data) {
 	try {
 		autoSpectrumEditor me = Thing_new (SpectrumEditor);
 		FunctionEditor_init (me.peek(), title, data);
 		my cursorHeight = -1000;
 		updateRange (me.peek());
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Spectrum window not created.");
 	}

@@ -445,7 +445,7 @@ void structRunnerMFC :: v_createChildren () {
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
 }
 
-RunnerMFC RunnerMFC_create (const char32 *title, Ordered experiments) {
+autoRunnerMFC RunnerMFC_create (const char32 *title, Ordered experiments) {
 	try {
 		autoRunnerMFC me = Thing_new (RunnerMFC);
 		Editor_init (me.peek(), 0, 0, 2000, 2000, title, NULL);
@@ -459,7 +459,7 @@ gui_drawingarea_cb_resize (me.peek(), & event);
 
 		my iexperiment = 1;
 		RunnerMFC_startExperiment (me.peek());
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Experiment window not created.");
 	}

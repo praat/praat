@@ -26,7 +26,7 @@
 #include "PitchTier_to_PointProcess.h"
 #include "Pitch_to_PitchTier.h"
 
-PointProcess PitchTier_to_PointProcess (PitchTier me) {
+autoPointProcess PitchTier_to_PointProcess (PitchTier me) {
 	try {
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, 1000);
 		double area = 0.5;   // imagine an event half a period before the beginning
@@ -50,13 +50,13 @@ PointProcess PitchTier_to_PointProcess (PitchTier me) {
 				PointProcess_addPoint (thee.peek(), t2 - 2.0 * area / (f2 + sqrt (discriminant)));
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to PointProcess.");
 	}
 }
 
-PointProcess PitchTier_Pitch_to_PointProcess (PitchTier me, Pitch vuv) {
+autoPointProcess PitchTier_Pitch_to_PointProcess (PitchTier me, Pitch vuv) {
 	try {
 		autoPointProcess fullPoint = PitchTier_to_PointProcess (me);
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, fullPoint -> maxnt);
@@ -69,7 +69,7 @@ PointProcess PitchTier_Pitch_to_PointProcess (PitchTier me, Pitch vuv) {
 				PointProcess_addPoint (thee.peek(), t);
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", vuv, U": not converted to PointProcess.");
 	}
@@ -87,7 +87,7 @@ static int PointProcess_isVoiced_t (PointProcess me, double t, double maxT) {
 	return 0;
 }
 
-PointProcess PitchTier_Point_to_PointProcess (PitchTier me, PointProcess vuv, double maxT) {
+autoPointProcess PitchTier_Point_to_PointProcess (PitchTier me, PointProcess vuv, double maxT) {
 	try {
 		autoPointProcess fullPoint = PitchTier_to_PointProcess (me);
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, fullPoint -> maxnt);
@@ -100,13 +100,13 @@ PointProcess PitchTier_Point_to_PointProcess (PitchTier me, PointProcess vuv, do
 				PointProcess_addPoint (thee.peek(), t);
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", vuv, U": not converted to PointProcess.");
 	}
 }
 
-PitchTier PointProcess_to_PitchTier (PointProcess me, double maximumInterval) {
+autoPitchTier PointProcess_to_PitchTier (PointProcess me, double maximumInterval) {
 	try {
 		autoPitchTier thee = PitchTier_create (my xmin, my xmax);
 		for (long i = 1; i < my nt; i ++) {
@@ -115,23 +115,23 @@ PitchTier PointProcess_to_PitchTier (PointProcess me, double maximumInterval) {
 				RealTier_addPoint (thee.peek(), my t [i] + 0.5 * interval, 1.0 / interval);
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to PitchTier.");
 	}
 }
 
-PitchTier Pitch_PointProcess_to_PitchTier (Pitch me, PointProcess pp) {
+autoPitchTier Pitch_PointProcess_to_PitchTier (Pitch me, PointProcess pp) {
 	try {
 		autoPitchTier temp = Pitch_to_PitchTier (me);
 		autoPitchTier thee = PitchTier_PointProcess_to_PitchTier (temp.peek(), pp);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", pp, U": not converted to PitchTier.");
 	}
 }
 
-PitchTier PitchTier_PointProcess_to_PitchTier (PitchTier me, PointProcess pp) {
+autoPitchTier PitchTier_PointProcess_to_PitchTier (PitchTier me, PointProcess pp) {
 	try {
 		if (my points -> size == 0) Melder_throw (U"No pitch points.");
 		autoPitchTier thee = PitchTier_create (pp -> xmin, pp -> xmax);
@@ -140,19 +140,19 @@ PitchTier PitchTier_PointProcess_to_PitchTier (PitchTier me, PointProcess pp) {
 			double value = RealTier_getValueAtTime (me, time);
 			RealTier_addPoint (thee.peek(), time, value);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", pp, U": not converted to PitchTier.");
 	}
 }
 
-TableOfReal PitchTier_downto_TableOfReal (PitchTier me, int useSemitones) {
+autoTableOfReal PitchTier_downto_TableOfReal (PitchTier me, int useSemitones) {
 	try {
 		autoTableOfReal thee = RealTier_downto_TableOfReal (me, U"Time", U"F0");
 		if (useSemitones)
 			for (long i = 1; i <= thy numberOfRows; i ++)
 				thy data [i] [2] = NUMhertzToSemitones (thy data [i] [2]);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to TableOfReal.");
 	}

@@ -1,6 +1,6 @@
 /* PitchTier_to_PointProcess.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,20 +21,20 @@
 #include "PointProcess.h"
 #include "Pitch.h"
 
-PointProcess PitchTier_to_PointProcess (PitchTier me);
+autoPointProcess PitchTier_to_PointProcess (PitchTier me);
 
-PointProcess PitchTier_Pitch_to_PointProcess (PitchTier me, Pitch vuv);
+autoPointProcess PitchTier_Pitch_to_PointProcess (PitchTier me, Pitch vuv);
 /* Keeps only the parts that are voiced according to 'vuv'. */
 /* Voiced means: inside voiced frame of 'pitch'. */
 
-PointProcess PitchTier_Point_to_PointProcess (PitchTier me, PointProcess vuv, double maxT);
+autoPointProcess PitchTier_Point_to_PointProcess (PitchTier me, PointProcess vuv, double maxT);
 /* Keeps only the parts that are voiced according to 'vuv'. */
 /* Voiced means: within an interval no longer than 'maxT', */
 /* or within half an adjacent short-enough interval from any pulse. */
 
-PitchTier PointProcess_to_PitchTier (PointProcess me, double maximumInterval);
-PitchTier Pitch_PointProcess_to_PitchTier (Pitch me, PointProcess pp);
-PitchTier PitchTier_PointProcess_to_PitchTier (PitchTier me, PointProcess pp);
-TableOfReal PitchTier_downto_TableOfReal (PitchTier me, int useSemitones);
+autoPitchTier PointProcess_to_PitchTier (PointProcess me, double maximumInterval);
+autoPitchTier Pitch_PointProcess_to_PitchTier (Pitch me, PointProcess pp);
+autoPitchTier PitchTier_PointProcess_to_PitchTier (PitchTier me, PointProcess pp);
+autoTableOfReal PitchTier_downto_TableOfReal (PitchTier me, int useSemitones);
 
 /* End of file PitchTier_to_PointProcess.h */

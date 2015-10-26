@@ -175,7 +175,7 @@ static double Sound_findMaximumCorrelation (Sound me, double t1, double windowLe
 	return maximumCorrelation;
 }
 
-PointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch) {
+autoPointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch) {
 	try {
 		autoPointProcess point = PointProcess_create (sound -> xmin, sound -> xmax, 10);
 		double t = pitch -> xmin;
@@ -250,14 +250,14 @@ PointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch) {
 			}
 			t = tright;
 		}
-		return point.transfer();
+		return point;
 	} catch (MelderError) {
 		Melder_throw (sound, U" & ", pitch, U": not converted to PointProcess (cc).");
 	}
 }
 	
 
-PointProcess Sound_Pitch_to_PointProcess_peaks (Sound sound, Pitch pitch, int includeMaxima, int includeMinima) {
+autoPointProcess Sound_Pitch_to_PointProcess_peaks (Sound sound, Pitch pitch, int includeMaxima, int includeMinima) {
 	try {
 		autoPointProcess point = PointProcess_create (sound -> xmin, sound -> xmax, 10);
 		double t = pitch -> xmin;
@@ -315,7 +315,7 @@ PointProcess Sound_Pitch_to_PointProcess_peaks (Sound sound, Pitch pitch, int in
 			}
 			t = tright;
 		}
-		return point.transfer();
+		return point;
 	} catch (MelderError) {
 		Melder_throw (sound, U" & ", pitch, U": not converted to PointProcess (peaks).");
 	}

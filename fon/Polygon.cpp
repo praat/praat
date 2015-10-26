@@ -62,13 +62,13 @@ void structPolygon :: v_readText (MelderReadText text, int /*formatVersion*/) {
 	}
 }
 
-Polygon Polygon_create (long numberOfPoints) {
+autoPolygon Polygon_create (long numberOfPoints) {
 	try {
 		autoPolygon me = Thing_new (Polygon);
 		my numberOfPoints = numberOfPoints;
 		my x = NUMvector <double> (1, numberOfPoints);
 		my y = NUMvector <double> (1, numberOfPoints);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Polygon not created.");
 	}

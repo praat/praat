@@ -1011,7 +1011,7 @@ void structSoundRecorder :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"SoundRecorder help", '?', menu_cb_SoundRecorder_help);
 }
 
-SoundRecorder SoundRecorder_create (int numberOfChannels) {
+autoSoundRecorder SoundRecorder_create (int numberOfChannels) {
 	try {
 		autoSoundRecorder me = Thing_new (SoundRecorder);
 		my inputUsesPortAudio =
@@ -1206,7 +1206,7 @@ gui_drawingarea_cb_resize (me.peek(), & event);
 			my workProcId = GuiAddWorkProc (workProc, me.peek());
 		#endif
 		updateMenus (me.peek());
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SoundRecorder not created.");
 	}

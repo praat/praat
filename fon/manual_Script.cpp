@@ -3184,7 +3184,7 @@ CODE (U"nocheck Remove")
 NORMAL (U"This would cause the script to continue even if there is nothing to remove.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 6.9. Calling from the command line", U"ppgb", 20151020)
+MAN_BEGIN (U"Scripting 6.9. Calling from the command line", U"ppgb", 20151026)
 INTRO (U"Previous sections of this tutorial have shown you how to run a Praat script from the Script window. "
 	"However, you can also call a Praat script from the command line (text console) instead. "
 	"Information that would normally show up in the Info window, then goes to %stdout, "
@@ -3209,27 +3209,29 @@ CODE (U"/usr/bin/praat")
 
 ENTRY (U"2. Calling Praat to open data files")
 NORMAL (U"On Windows, you can open Praat with a sound file and a TextGrid file by typing")
-CODE (U"\"C:\\bsProgram Files\\bsPraat.exe\" data\\bshello.wav data\\bshello.TextGrid")
+CODE (U"\"C:\\bsProgram Files\\bsPraat.exe\" --open data\\bshello.wav data\\bshello.TextGrid")
+NORMAL (U"or")
+CODE (U"\"C:\\bsProgram Files\\bsPraat.exe\" --open data/hello.wav data/hello.TextGrid")
 NORMAL (U"at least if your current directory (see the Console's $$cd$ and $$dir$ commands) "
 	"contains the folder $$data$ and that folder contains those two files. "
 	"Praat will start up, and shows the two files as a Sound and a TextGrid object in the list. "
 	"If Praat was already running when you typed the command, "
 	"the two files are added as objects to the existing list in Praat.")
 NORMAL (U"On the Mac, you do")
-CODE (U"/Applications/Praat.app/Contents/MacOS/Praat data/hello.wav data/hello.TextGrid")
+CODE (U"/Applications/Praat.app/Contents/MacOS/Praat --open data/hello.wav data/hello.TextGrid")
 NORMAL (U"and on Linux")
-CODE (U"/usr/bin/praat data/hello.wav data/hello.TextGrid")
+CODE (U"/usr/bin/praat --open data/hello.wav data/hello.TextGrid")
 
 ENTRY (U"3. Calling Praat to open a script")
 NORMAL (U"On Windows, when you type")
-CODE (U"\"C:\\bsProgram Files\\bsPraat.exe\" \"my script.praat\"")
+CODE (U"\"C:\\bsProgram Files\\bsPraat.exe\" --open \"my script.praat\"")
 NORMAL (U"Praat will start up, opening the script $$my script.praat$$ in a script window. "
 	"If Praat was already running when you typed the command, "
 	"the script window will appear within the already running instantiation of Praat.")
 NORMAL (U"On the Mac, you do")
-CODE (U"/Applications/Praat.app/Contents/MacOS/Praat \"my script.praat\"")
+CODE (U"/Applications/Praat.app/Contents/MacOS/Praat --open \"my script.praat\"")
 NORMAL (U"and on Linux")
-CODE (U"/usr/bin/praat data/hello.wav \"my script.praat\"")
+CODE (U"/usr/bin/praat data/hello.wav --open \"my script.praat\"")
 NORMAL (U"Note that on all three platforms, you have to supply quotes around the file name "
 	"if that file name contains one or more spaces, as here between $$my$ and $$script$ "
 	"or above between $$Program$ and $$Files$. This because the script languages of "
@@ -3238,7 +3240,7 @@ NORMAL (U"Note that on all three platforms, you have to supply quotes around the
 ENTRY (U"4. Calling Praat to run a script")
 NORMAL (U"Now we are ready to discuss how to run Praat without a GUI.")
 NORMAL (U"On Windows, when you type")
-CODE (U"\"C:\\bsProgram Files\\bsPraat.exe\" --run \"my script.praat\"")
+CODE (U"\"C:\\bsProgram Files\\bsPraat.exe\" \"my script.praat\"")
 NORMAL (U"Praat will execute the script $$my script.praat$$ without showing Praat's GUI, "
 	"i.e. without showing its usual two windows. "
 	"In fact, any output that would normally go to the Info window, "
@@ -3248,11 +3250,11 @@ NORMAL (U"Praat will execute the script $$my script.praat$$ without showing Praa
 	"can run simultaneously without them noticing each other's existence; "
 	"moreover, multiple Console-instantiations of Praat can run simultaneously, each in their own Console.")
 NORMAL (U"On the Mac, you type")
-CODE (U"/Applications/Praat.app/Contents/MacOS/Praat --run \"my script.praat\"")
+CODE (U"/Applications/Praat.app/Contents/MacOS/Praat \"my script.praat\"")
 NORMAL (U"and on Linux")
-CODE (U"/usr/bin/praat data/hello.wav --run \"my script.praat\"")
+CODE (U"/usr/bin/praat data/hello.wav \"my script.praat\"")
 NORMAL (U"What happens on all platforms is that the Console or Terminal starts up Praat, "
-	"then Praat executes the scripts, and then Praat closes itself.")
+	"then Praat executes the script, and then Praat closes itself.")
 
 ENTRY (U"5. Calling Praat to run a script with arguments")
 NORMAL (U"Consider the following script:")
@@ -3276,11 +3278,11 @@ CODE (U"Play text: second_text\\$ ")
 NORMAL (U"When you run this script from within Praat, it writes two lines to the Info window "
 	"and plays first a female voice speaking the first sentence, then a beep, and then a male voice "
 	"speaking the second sentence. To make this happen from the Windows command line instead, you type")
-CODE (U"\"C:\\bsProgram Files\\bsPraat.exe\" --run testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"")
+CODE (U"\"C:\\bsProgram Files\\bsPraat.exe\" testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"")
 NORMAL (U"In the Mac terminal, you type")
-CODE (U"/Applications/Praat.app/Contents/MacOS/Praat --run testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"")
+CODE (U"/Applications/Praat.app/Contents/MacOS/Praat testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"")
 NORMAL (U"and in the Linux terminal, you do")
-CODE (U"/usr/bin/praat data/hello.wav --run testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"")
+CODE (U"/usr/bin/praat data/hello.wav testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"")
 NORMAL (U"Note that each argument that contains one or more spaces has to be put within quotes, "
 	"on all three platforms. As with #runScript, Praat will not present a form window, "
 	"but simply run the script with the arguments given on the command line "
@@ -3292,18 +3294,18 @@ ENTRY (U"6. Calling Praat from Python")
 NORMAL (U"You can run the above script from several programming languages, not just from a Console or Terminal. "
 	"In Python, for instance, you can do it using the same syntax as you would use in the Console or Terminal:")
 CODE (U"import os")
-CODE (U"os.system ('\"C:\\bs\\bsProgram Files\\bs\\bsPraat.exe\" --run testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"')")
+CODE (U"os.system ('\"C:\\bs\\bsProgram Files\\bs\\bsPraat.exe\" testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"')")
 NORMAL (U"Note that you have to double the backslashes!")
 NORMAL (U"A disadvantage of the $$os.system$ method is that you have to use quotes within quotes. "
 	"A somewhat cleaner approach is:")
 CODE (U"import subprocess")
-CODE (U"subprocess.call(['C:\\bs\\bsProgram Files\\bs\\bsPraat.exe', '--run', 'testCommandLineCalls.praat', 'I love you', '0.4', 'Me too'])")
+CODE (U"subprocess.call(['C:\\bs\\bsProgram Files\\bs\\bsPraat.exe', 'testCommandLineCalls.praat', 'I love you', '0.4', 'Me too'])")
 NORMAL (U"This way you specify the arguments directly, with quotes only because they are all strings, "
 	"but without having to worry about spaces. And perhaps even more importantly, this syntax "
 	"makes it easy to use variables as arguments, as in:")
 CODE (U"first_line = 'I love you'")
 CODE (U"second_line = 'me too'")
-CODE (U"subprocess.call(['C:\\bs\\bsProgram Files\\bs\\bsPraat.exe', '--run', 'testCommandLineCalls.praat', first_line, '0.4', second_line])")
+CODE (U"subprocess.call(['C:\\bs\\bsProgram Files\\bs\\bsPraat.exe', 'testCommandLineCalls.praat', first_line, '0.4', second_line])")
 
 ENTRY (U"7. Running Praat interactively from the command line")
 NORMAL (U"On the Mac and Linux, you have the possibility of running the program interactively from the command line:")
@@ -3315,12 +3317,12 @@ CODE (U"> echo \"Statistics...\" | /usr/bin/praat -")
 ENTRY (U"8. Calling Praat from a web server")
 NORMAL (U"If you call Praat from a web server, you typically do not want to read and write its preferences and buttons files. "
 	"To achieve this, you use the ##--no-pref-files# command line option before the script name:")
-CODE (U"> /users/apache/praat --run --no-pref-files /user/apache/scripts/computeAnalysis.praat 1234 blibla")
+CODE (U"> /users/apache/praat --no-pref-files /user/apache/scripts/computeAnalysis.praat 1234 blibla")
 
 ENTRY (U"9. All command line options")
-TAG (U"##--run")
-DEFINITION (U"Instead of as files to be opened in the GUI, the arguments are interpreted as a script file name "
-	"and the arguments of that script. Praat will run the script without a GUI and then quit.")
+TAG (U"##--open")
+DEFINITION (U"Interpret the command line arguments as files to be opened in the GUI "
+	"(instead of as a script file name and its arguments).")
 TAG (U"##--no-pref-files#")
 DEFINITION (U"Ignore the preferences file and the buttons file at start-up, and don't write them when quitting (see above).")
 TAG (U"##--no-plugins#")
@@ -3328,6 +3330,10 @@ DEFINITION (U"Don't activate the plugins at start-up.")
 TAG (U"##--pref-dir=#/var/www/praat_plugins")
 DEFINITION (U"Set the preferences directory to /var/www/praat_plugins (for instance). "
 	"This can come in handy if you require access to preference files and/or plugins that are not in your home directory.")
+TAG (U"##--version")
+DEFINITION (U"Print the Praat version.")
+TAG (U"##--help")
+DEFINITION (U"Print this list of command line options.")
 TAG (U"##-a#, ##--ansi#")
 DEFINITION (U"On Windows: use ISO Latin-1 encoding instead of the Console's native UTF-16 Little Endian encoding. "
 	"This is not recommended, but might be necessary if you want to use Praat in a pipe "

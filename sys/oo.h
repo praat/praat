@@ -215,7 +215,6 @@
 /*** Class declaration in header file. ***/
 
 #define oo_CLASS_CREATE(klas,parent) \
-	typedef _Thing_auto <struct##klas> auto##klas; \
 	extern struct structClassInfo theClassInfo_##klas; \
 	extern ClassInfo class##klas
 
@@ -275,6 +274,7 @@
 
 #define oo_DEFINE_CLASS(klas,parent) \
 	typedef struct struct##klas *klas; \
+	typedef _Thing_auto <struct##klas> auto##klas; \
 	typedef struct##parent klas##_Parent; \
 	struct struct##klas : public struct##parent {
 

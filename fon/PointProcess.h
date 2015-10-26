@@ -25,8 +25,8 @@
 #include "PointProcess_def.h"
 oo_CLASS_CREATE (PointProcess, Function);
 
-PointProcess PointProcess_create (double startingTime, double finishingTime, long initialMaxnt);
-PointProcess PointProcess_createPoissonProcess (double startingTime, double finishingTime, double density);
+autoPointProcess PointProcess_create (double startingTime, double finishingTime, long initialMaxnt);
+autoPointProcess PointProcess_createPoissonProcess (double startingTime, double finishingTime, double density);
 void PointProcess_init (PointProcess me, double startingTime, double finishingTime, long initialMaxnt);
 long PointProcess_getLowIndex (PointProcess me, double t);
 long PointProcess_getHighIndex (PointProcess me, double t);
@@ -40,9 +40,9 @@ void PointProcess_removePoints (PointProcess me, long first, long last);
 void PointProcess_removePointsBetween (PointProcess me, double fromTime, double toTime);
 void PointProcess_draw (PointProcess me, Graphics g, double fromTime, double toTime, int garnish);
 double PointProcess_getInterval (PointProcess me, double t);
-PointProcess PointProcesses_union (PointProcess me, PointProcess thee);
-PointProcess PointProcesses_intersection (PointProcess me, PointProcess thee);
-PointProcess PointProcesses_difference (PointProcess me, PointProcess thee);
+autoPointProcess PointProcesses_union (PointProcess me, PointProcess thee);
+autoPointProcess PointProcesses_intersection (PointProcess me, PointProcess thee);
+autoPointProcess PointProcesses_difference (PointProcess me, PointProcess thee);
 void PointProcess_fill (PointProcess me, double tmin, double tmax, double period);
 void PointProcess_voice (PointProcess me, double period, double maxT);
 

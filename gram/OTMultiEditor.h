@@ -42,7 +42,7 @@ Thing_define (OTMultiEditor, HyperPage) {
 		override;
 };
 
-OTMultiEditor OTMultiEditor_create (const char32 *title, OTMulti grammar);
+autoOTMultiEditor OTMultiEditor_create (const char32 *title, OTMulti grammar);
 
 /* End of file OTMultiEditor.h */
 #endif

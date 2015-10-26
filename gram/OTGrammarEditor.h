@@ -38,7 +38,7 @@ Thing_define (OTGrammarEditor, HyperPage) {
 		override;
 };
 
-OTGrammarEditor OTGrammarEditor_create (const char32 *title, OTGrammar ot);
+autoOTGrammarEditor OTGrammarEditor_create (const char32 *title, OTGrammar ot);
 
 /* End of file OTGrammarEditor.h */
 #endif

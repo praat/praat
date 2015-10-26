@@ -23,8 +23,8 @@
 
 autoPointProcess Pitch_to_PointProcess (Pitch pitch);
 
-PointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch);
+autoPointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch);
 
-PointProcess Sound_Pitch_to_PointProcess_peaks (Sound sound, Pitch pitch, int includeMaxima, int includeMinima);
+autoPointProcess Sound_Pitch_to_PointProcess_peaks (Sound sound, Pitch pitch, int includeMaxima, int includeMinima);
 
 /* End of file Pitch_to_PointProcess.h */
