@@ -60,7 +60,7 @@ Thing_define (SpectrumEditor, FunctionEditor) {
 	#include "SpectrumEditor_prefs.h"
 };
 
-SpectrumEditor SpectrumEditor_create (const char32 *title, Spectrum data);
+autoSpectrumEditor SpectrumEditor_create (const char32 *title, Spectrum data);
 
 /* End of file SpectrumEditor.h */
 #endif

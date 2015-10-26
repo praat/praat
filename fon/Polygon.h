@@ -2,7 +2,7 @@
 #define _Polygon_h_
 /* Polygon.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 #include "Polygon_def.h"
 oo_CLASS_CREATE (Polygon, Daata);
 
-Polygon Polygon_create (long numberOfPoints);
+autoPolygon Polygon_create (long numberOfPoints);
 /*
 	Function:
 		create a new instance of Polygon.

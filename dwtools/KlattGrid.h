@@ -34,17 +34,6 @@
 #include "Interpreter_decl.h"
 
 
-Thing_declare (PhonationTier);
-Thing_declare (PhonationGridPlayOptions);
-Thing_declare (PhonationGrid);
-Thing_declare (VocalTractGridPlayOptions);
-Thing_declare (VocalTractGrid);
-Thing_declare (CouplingGridPlayOptions);
-Thing_declare (CouplingGrid);
-Thing_declare (FricationGridPlayOptions);
-Thing_declare (FricationGrid);
-Thing_declare (KlattGridPlayOptions);
-
 #include "KlattGrid_def.h"
 oo_CLASS_CREATE (PhonationPoint, Daata);
 oo_CLASS_CREATE (PhonationTier, Function);

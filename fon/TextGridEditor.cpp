@@ -2223,11 +2223,11 @@ void TextGridEditor_init (TextGridEditor me, const char32 *title, TextGrid grid,
 			U"to shift the starting time of the TextGrid to zero.");
 }
 
-TextGridEditor TextGridEditor_create (const char32 *title, TextGrid grid, Sampled sound, bool ownSound, SpellingChecker spellingChecker, const char *callbackSocket) {
+autoTextGridEditor TextGridEditor_create (const char32 *title, TextGrid grid, Sampled sound, bool ownSound, SpellingChecker spellingChecker, const char *callbackSocket) {
 	try {
 		autoTextGridEditor me = Thing_new (TextGridEditor);
 		TextGridEditor_init (me.peek(), title, grid, sound, ownSound, spellingChecker, callbackSocket);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"TextGrid window not created.");
 	}

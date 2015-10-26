@@ -18,16 +18,16 @@ Play text: second_text$
 
 exit
 
-Praat.exe --run c:\Users\pboersma\Desktop\testCommandLineCalls.praat "I love you" 0.4 Me too
+Praat.exe c:\Users\pboersma\Desktop\testCommandLineCalls.praat "I love you" 0.4 Me too
 
-Praat.exe --run c:\Users\pboersma\Desktop\testCommandLineCalls.praat "I love you" 0.4 "Me too"
+Praat.exe c:\Users\pboersma\Desktop\testCommandLineCalls.praat "I love you" 0.4 "Me too"
 
 import os
-os.system('Praat.exe --run c:\\Users\\pboersma\\Desktop\\testCommandLineCalls.praat "I love you" 0.4 Me too')
+os.system('Praat.exe c:\\Users\\pboersma\\Desktop\\testCommandLineCalls.praat "I love you" 0.4 Me too')
 
 import subprocess
-subprocess.call('Praat.exe --run c:\\Users\\pboersma\\Desktop\\testCommandLineCalls.praat "I love you" 0.4 Me too')
+subprocess.call('Praat.exe c:\\Users\\pboersma\\Desktop\\testCommandLineCalls.praat "I love you" 0.4 Me too')
 
-subprocess.call(['Praat.exe', '--run', 'c:\\Users\\pboersma\\Desktop\\testCommandLineCalls.praat', 'I love you', '0.4', 'Me too'])
+subprocess.call(['Praat.exe', 'c:\\Users\\pboersma\\Desktop\\testCommandLineCalls.praat', 'I love you', '0.4', 'Me too'])
 
-subprocess.call(['Praat.exe', '--run', 'c:\\Users\\pboersma\\Desktop\\testCommandLineCalls.praat', 'I love you', '0.4', 'Me', 'too'])exit
+subprocess.call(['Praat.exe', 'c:\\Users\\pboersma\\Desktop\\testCommandLineCalls.praat', 'I love you', '0.4', 'Me', 'too'])exit

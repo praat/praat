@@ -100,17 +100,17 @@ void PointProcess_init (PointProcess me, double tmin, double tmax, long initialM
 	my t = NUMvector <double> (1, my maxnt);
 }
 
-PointProcess PointProcess_create (double tmin, double tmax, long initialMaxnt) {
+autoPointProcess PointProcess_create (double tmin, double tmax, long initialMaxnt) {
 	try {
 		autoPointProcess me = Thing_new (PointProcess);
 		PointProcess_init (me.peek(), tmin, tmax, initialMaxnt);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PointProcess not created.");
 	}
 }
 
-PointProcess PointProcess_createPoissonProcess (double startingTime, double finishingTime, double density) {
+autoPointProcess PointProcess_createPoissonProcess (double startingTime, double finishingTime, double density) {
 	try {
 		long nt = NUMrandomPoisson ((finishingTime - startingTime) * density);
 		autoPointProcess me = PointProcess_create (startingTime, finishingTime, nt);
@@ -118,7 +118,7 @@ PointProcess PointProcess_createPoissonProcess (double startingTime, double fini
 		for (long i = 1; i <= nt; i ++)
 			my t [i] = NUMrandomUniform (startingTime, finishingTime);
 		NUMsort_d (my nt, my t);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PointProcess (Poisson process) not created.");
 	}
@@ -258,7 +258,7 @@ double PointProcess_getInterval (PointProcess me, double t) {
 	return my t [ileft + 1] - my t [ileft];
 }
 
-PointProcess PointProcesses_union (PointProcess me, PointProcess thee) {
+autoPointProcess PointProcesses_union (PointProcess me, PointProcess thee) {
 	try {
 		autoPointProcess him = Data_copy (me);
 		if (thy xmin < my xmin) his xmin = thy xmin;
@@ -266,7 +266,7 @@ PointProcess PointProcesses_union (PointProcess me, PointProcess thee) {
 		for (long i = 1; i <= thy nt; i ++) {
 			PointProcess_addPoint (him.peek(), thy t [i]);
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U": union not computed.");
 	}
@@ -289,7 +289,7 @@ long PointProcess_findPoint (PointProcess me, double t) {
 	return 0;
 }
 
-PointProcess PointProcesses_intersection (PointProcess me, PointProcess thee) {
+autoPointProcess PointProcesses_intersection (PointProcess me, PointProcess thee) {
 	try {
 		autoPointProcess him = Data_copy (me);
 		if (thy xmin > my xmin) his xmin = thy xmin;
@@ -297,19 +297,19 @@ PointProcess PointProcesses_intersection (PointProcess me, PointProcess thee) {
 		for (long i = my nt; i >= 1; i --)
 			if (! PointProcess_findPoint (thee, my t [i]))
 				PointProcess_removePoint (him.peek(), i);
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U": intersection not computed.");
 	}
 }
 
-PointProcess PointProcesses_difference (PointProcess me, PointProcess thee) {
+autoPointProcess PointProcesses_difference (PointProcess me, PointProcess thee) {
 	try {
 		autoPointProcess him = Data_copy (me);
 		for (long i = my nt; i >= 1; i --)
 			if (PointProcess_findPoint (thee, my t [i]))
 				PointProcess_removePoint (him.peek(), i);
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U": difference not computed.");
 	}

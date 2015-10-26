@@ -32,7 +32,7 @@ Thing_define (PitchTier, RealTier) {
 		override { return MelderQuantity_TIME_SECONDS; }
 };
 
-PitchTier PitchTier_create (double tmin, double tmax);
+autoPitchTier PitchTier_create (double tmin, double tmax);
 /*
 	Postconditions:
 		result -> xmin == tmin;
@@ -46,7 +46,7 @@ void PitchTier_multiplyFrequencies (PitchTier me, double tmin, double tmax, doub
 void PitchTier_draw (PitchTier me, Graphics g, double tmin, double tmax,
 	double fmin, double fmax, int garnish, const char32 *method);
 
-PitchTier PointProcess_upto_PitchTier (PointProcess me, double frequency);
+autoPitchTier PointProcess_upto_PitchTier (PointProcess me, double frequency);
 void PitchTier_stylize (PitchTier me, double frequencyResolution, int useSemitones);
 
 void PitchTier_writeToPitchTierSpreadsheetFile (PitchTier me, MelderFile file);

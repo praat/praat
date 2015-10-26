@@ -153,14 +153,14 @@ void structArtwordEditor :: v_createChildren () {
 	GuiRadioButton_set (button [feature]);
 }
 
-ArtwordEditor ArtwordEditor_create (const char32 *title, Artword data) {
+autoArtwordEditor ArtwordEditor_create (const char32 *title, Artword data) {
 	try {
 		autoArtwordEditor me = Thing_new (ArtwordEditor);
 		Editor_init (me.peek(), 20, 40, 650, 600, title, data);
 		//XtUnmanageChild (my menuBar);
 		my graphics = Graphics_create_xmdrawingarea (my drawingArea);
 		updateList (me.peek());
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Artword window not created.");
 	}

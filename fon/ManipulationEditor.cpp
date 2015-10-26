@@ -1242,7 +1242,7 @@ void structManipulationEditor :: v_play (double a_tmin, double a_tmax) {
 	}
 }
 
-ManipulationEditor ManipulationEditor_create (const char32 *title, Manipulation ana) {
+autoManipulationEditor ManipulationEditor_create (const char32 *title, Manipulation ana) {
 	try {
 		autoManipulationEditor me = Thing_new (ManipulationEditor);
 		FunctionEditor_init (me.peek(), title, ana);
@@ -1287,7 +1287,7 @@ ManipulationEditor ManipulationEditor_create (const char32 *title, Manipulation 
 			Matrix_getWindowExtrema (ana -> sound.get(), 0, 0, 0, 0, & my soundmin, & my soundmax);
 		if (my soundmin == my soundmax) my soundmin = -1.0, my soundmax = +1.0;
 		updateMenus (me.peek());
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Manipulation window not created.");
 	}

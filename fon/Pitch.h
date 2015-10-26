@@ -154,7 +154,7 @@ long Pitch_getMeanAbsSlope_noOctave (Pitch me, double *slope);
    'minimum', 'maximum', 'mean', and 'variance' may be NULL.
 */
 
-Pitch Pitch_killOctaveJumps (Pitch me);
+autoPitch Pitch_killOctaveJumps (Pitch me);
 /* Add octave jumps so that every pitch step,
    including those across unvoiced frames,
    does not exceed 1/2 octave.
@@ -162,13 +162,13 @@ Pitch Pitch_killOctaveJumps (Pitch me);
       result -> ceiling = my ceiling * 2;
 */
 
-Pitch Pitch_interpolate (Pitch me);
+autoPitch Pitch_interpolate (Pitch me);
 /* Interpolate the pitch values of unvoiced frames. */
 /* No extrapolation beyond first and last voiced frames. */
 
-Pitch Pitch_subtractLinearFit (Pitch me, int unit);
+autoPitch Pitch_subtractLinearFit (Pitch me, int unit);
 
-Pitch Pitch_smooth (Pitch me, double bandWidth);
+autoPitch Pitch_smooth (Pitch me, double bandWidth);
 /* Smoothing by convolution with Gaussian curve.
    Time domain: exp (- (pi t bandWidth) ^ 2)
       down to 8.5 % for t = +- 0.5/bandWidth

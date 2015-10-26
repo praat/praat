@@ -21,8 +21,8 @@
 #define ooSTRUCT ParamCurve
 oo_DEFINE_CLASS (ParamCurve, Function)
 
-	oo_OBJECT (Sound, 2, x)
-	oo_OBJECT (Sound, 2, y)
+	oo_AUTO_OBJECT (Sound, 2, x)
+	oo_AUTO_OBJECT (Sound, 2, y)
 
 	#if oo_DECLARING
 		void v_info ()

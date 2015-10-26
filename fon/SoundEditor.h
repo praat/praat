@@ -50,7 +50,7 @@ void SoundEditor_init (SoundEditor me,
 	Sampled data
 );
 
-SoundEditor SoundEditor_create (
+autoSoundEditor SoundEditor_create (
 	const char32 *title,
 	Sampled data   // either a Sound or a LongSound
 );

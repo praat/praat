@@ -237,14 +237,14 @@ int structOTMultiEditor :: v_goToPage (const char32 *title) {
 	return 1;
 }
 
-OTMultiEditor OTMultiEditor_create (const char32 *title, OTMulti grammar) {
+autoOTMultiEditor OTMultiEditor_create (const char32 *title, OTMulti grammar) {
 	try {
 		autoOTMultiEditor me = Thing_new (OTMultiEditor);
 		my data = grammar;
 		my form1 = Melder_dup (U"");
 		my form2 = Melder_dup (U"");
 		HyperPage_init (me.peek(), title, grammar);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"OTMulti window not created.");
 	}

@@ -20,7 +20,7 @@
 #include "Pitch.h"
 #include "PitchTier.h"
 
-PitchTier Pitch_to_PitchTier (Pitch me);
+autoPitchTier Pitch_to_PitchTier (Pitch me);
 /*
 	Creates a PitchTier from an existing Pitch contour.
 	The best candidate in each frame becomes a target in the result.
@@ -31,6 +31,6 @@ void PitchTier_Pitch_draw (PitchTier me, Pitch uv, Graphics g,
 	double tmin, double tmax, double fmin, double fmax,
 	int nonPeriodicLineType, int garnish, const char32 *method);
 
-Pitch Pitch_PitchTier_to_Pitch (Pitch me, PitchTier tier);
+autoPitch Pitch_PitchTier_to_Pitch (Pitch me, PitchTier tier);
 
 /* End of file Pitch_to_PitchTier.h */

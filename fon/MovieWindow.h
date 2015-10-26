@@ -41,7 +41,7 @@ Thing_define (MovieWindow, TimeSoundAnalysisEditor) {
 
 void MovieWindow_init (MovieWindow me, const char32 *title, Movie movie);
 
-MovieWindow MovieWindow_create (const char32 *title, Movie movie);
+autoMovieWindow MovieWindow_create (const char32 *title, Movie movie);
 
 /* End of file MovieWindow.h */
 #endif

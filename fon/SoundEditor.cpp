@@ -446,12 +446,12 @@ void SoundEditor_init (SoundEditor me, const char32 *title, Sampled data) {
 	}
 }
 
-SoundEditor SoundEditor_create (const char32 *title, Sampled data) {
-	Melder_assert (data != NULL);
+autoSoundEditor SoundEditor_create (const char32 *title, Sampled data) {
+	Melder_assert (data);
 	try {
 		autoSoundEditor me = Thing_new (SoundEditor);
 		SoundEditor_init (me.peek(), title, data);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sound window not created.");
 	}

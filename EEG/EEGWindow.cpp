@@ -78,11 +78,11 @@ void EEGWindow_init (EEGWindow me, const char32 *title, EEG eeg) {
 	TextGridEditor_init (me, title, eeg -> textgrid, eeg -> sound, false, nullptr, nullptr);
 }
 
-EEGWindow EEGWindow_create (const char32 *title, EEG eeg) {
+autoEEGWindow EEGWindow_create (const char32 *title, EEG eeg) {
 	try {
 		autoEEGWindow me = Thing_new (EEGWindow);
 		EEGWindow_init (me.peek(), title, eeg);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"EEG window not created.");
 	}

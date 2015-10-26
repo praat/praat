@@ -255,12 +255,12 @@ int structOTGrammarEditor :: v_goToPage (const char32 *title) {
 	return 1;
 }
 
-OTGrammarEditor OTGrammarEditor_create (const char32 *title, OTGrammar ot) {
+autoOTGrammarEditor OTGrammarEditor_create (const char32 *title, OTGrammar ot) {
 	try {
 		autoOTGrammarEditor me = Thing_new (OTGrammarEditor);
 		my data = ot;
 		HyperPage_init (me.peek(), title, ot);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"OTGrammar window not created.");
 	}

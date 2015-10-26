@@ -130,7 +130,7 @@ Thing_define (SoundRecorder, Editor) {
 	#include "SoundRecorder_prefs.h"
 };
 
-SoundRecorder SoundRecorder_create (int numberOfChannels);
+autoSoundRecorder SoundRecorder_create (int numberOfChannels);
 /*
 	Function:
 		create a SoundRecorder, which is an interactive window

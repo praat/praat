@@ -22,7 +22,7 @@
 #include "TextGridEditor.h"
 #include "EEG.h"
 
-Thing_define (EEGWindow, TextGridEditor) { public:
+Thing_define (EEGWindow, TextGridEditor) {
 	EEG eeg;
 	GuiMenuItem extractSelectedEEGPreserveTimesButton, extractSelectedEEGTimeFromZeroButton;
 
@@ -50,7 +50,7 @@ Thing_define (EEGWindow, TextGridEditor) { public:
 
 void EEGWindow_init (EEGWindow me, const char32 *title, EEG eeg);
 
-EEGWindow EEGWindow_create (const char32 *title, EEG eeg);
+autoEEGWindow EEGWindow_create (const char32 *title, EEG eeg);
 
 /* End of file EEGWindow.h */
 #endif

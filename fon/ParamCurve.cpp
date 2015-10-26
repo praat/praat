@@ -34,13 +34,13 @@ Thing_implement (ParamCurve, Function, 2);
 
 void structParamCurve :: v_info () {
 	double xmin = 1e308, xmax = -1e308, ymin = 1e308, ymax = -1e308;
-	for (long i = 1; i <= x -> nx; i ++) {
-		double value = x -> z [1] [i];
+	for (long i = 1; i <= our x -> nx; i ++) {
+		double value = our x -> z [1] [i];
 		if (value < xmin) xmin = value;
 		if (value > xmax) xmax = value;
 	}
 	for (long i = 1; i <= y -> nx; i ++) {
-		double value = y -> z [1] [i];
+		double value = our y -> z [1] [i];
 		if (value < ymin) ymin = value;
 		if (value > ymax) ymax = value;
 	}
@@ -49,47 +49,47 @@ void structParamCurve :: v_info () {
 	MelderInfo_writeLine (U"   tmin: ", xmin);
 	MelderInfo_writeLine (U"   tmax: ", xmax);
 	MelderInfo_writeLine (U"x sampling:");
-	MelderInfo_writeLine (U"   Number of values of t in x: ", x -> nx);
-	MelderInfo_writeLine (U"   t step in x: ", x -> dx, U" (sampling rate ", 1.0 / x -> dx, U")");
-	MelderInfo_writeLine (U"   First t in x: ", x -> x1);
+	MelderInfo_writeLine (U"   Number of values of t in x: ", our x -> nx);
+	MelderInfo_writeLine (U"   t step in x: ", our x -> dx, U" (sampling rate ", 1.0 / our x -> dx, U")");
+	MelderInfo_writeLine (U"   First t in x: ", our x -> x1);
 	MelderInfo_writeLine (U"x values:");
 	MelderInfo_writeLine (U"   Minimum x: ", xmin);
 	MelderInfo_writeLine (U"   Maximum x: ", xmax);
 	MelderInfo_writeLine (U"y sampling:");
-	MelderInfo_writeLine (U"   Number of values of t in y: ", y -> nx);
-	MelderInfo_writeLine (U"   t step in y: ", y -> dx, U" (sampling rate ", 1.0 / y -> dx, U")");
-	MelderInfo_writeLine (U"   First t in y: ", y -> x1);
+	MelderInfo_writeLine (U"   Number of values of t in y: ", our y -> nx);
+	MelderInfo_writeLine (U"   t step in y: ", our y -> dx, U" (sampling rate ", 1.0 / our y -> dx, U")");
+	MelderInfo_writeLine (U"   First t in y: ", our y -> x1);
 	MelderInfo_writeLine (U"y values:");
 	MelderInfo_writeLine (U"   Minimum y: ", ymin);
 	MelderInfo_writeLine (U"   Maximum y: ", ymax);
 }
 
 void structParamCurve :: v_writeText (MelderFile file) {
-	Data_writeText (x, file);
-	Data_writeText (y, file);
+	Data_writeText (our x.get(), file);
+	Data_writeText (our y.get(), file);
 }
 
 void structParamCurve :: v_readText (MelderReadText text, int formatVersion) {
-	x = Thing_new (Sound);
-	y = Thing_new (Sound);
-	Data_readText (x, text, formatVersion);
-	Data_readText (y, text, formatVersion);
-	xmin = x -> xmin > y -> xmin ? x -> xmin : y -> xmin;
-	xmax = x -> xmax < y -> xmax ? x -> xmax : y -> xmax;
+	our x = Thing_new (Sound);
+	our y = Thing_new (Sound);
+	Data_readText (our x.get(), text, formatVersion);
+	Data_readText (our y.get(), text, formatVersion);
+	our xmin = our x -> xmin > our y -> xmin ? our x -> xmin : our y -> xmin;
+	our xmax = our x -> xmax < our y -> xmax ? our x -> xmax : our y -> xmax;
 }
 
 void structParamCurve :: v_writeBinary (FILE *f) {
-	Data_writeBinary (x, f);
-	Data_writeBinary (y, f);
+	Data_writeBinary (x.get(), f);
+	Data_writeBinary (y.get(), f);
 }
 
 void structParamCurve :: v_readBinary (FILE *f, int /*formatVersion*/) {
-	x = Thing_new (Sound);
-	y = Thing_new (Sound);
-	Data_readBinary (x, f, 2);
-	Data_readBinary (y, f, 2);
-	xmin = x -> xmin > y -> xmin ? x -> xmin : y -> xmin;
-	xmax = x -> xmax < y -> xmax ? x -> xmax : y -> xmax;
+	our x = Thing_new (Sound);
+	our y = Thing_new (Sound);
+	Data_readBinary (our x.get(), f, 2);
+	Data_readBinary (our y.get(), f, 2);
+	our xmin = our x -> xmin > our y -> xmin ? our x -> xmin : our y -> xmin;
+	our xmax = our x -> xmax < our y -> xmax ? our x -> xmax : our y -> xmax;
 }
 
 void ParamCurve_init (ParamCurve me, Sound x, Sound y) {
@@ -101,11 +101,11 @@ void ParamCurve_init (ParamCurve me, Sound x, Sound y) {
 	my xmax = x -> xmax < y -> xmax ? x -> xmax : y -> xmax;
 }
 
-ParamCurve ParamCurve_create (Sound x, Sound y) {
+autoParamCurve ParamCurve_create (Sound x, Sound y) {
 	try {
 		autoParamCurve me = Thing_new (ParamCurve);
 		ParamCurve_init (me.peek(), x, y);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ParamCurve not created.");
 	}
@@ -122,9 +122,9 @@ void ParamCurve_draw (ParamCurve me, Graphics g, double t1, double t2, double dt
 		t1 = tx1 > ty1 ? tx1 : ty1;
 		t2 = tx2 < ty2 ? tx2 : ty2;
 	}
-	if (x2 <= x1) Matrix_getWindowExtrema (my x, 0, 0, 1, 1, & x1, & x2);
+	if (x2 <= x1) Matrix_getWindowExtrema (my x.get(), 0, 0, 1, 1, & x1, & x2);
 	if (x1 == x2) { x1 -= 1.0; x2 += 1.0; }
-	if (y2 <= y1) Matrix_getWindowExtrema (my y, 0, 0, 1, 1, & y1, & y2);
+	if (y2 <= y1) Matrix_getWindowExtrema (my y.get(), 0, 0, 1, 1, & y1, & y2);
 	if (y1 == y2) { y1 -= 1.0; y2 += 1.0; }
 	if (dt <= 0.0)
 		dt = my x -> dx < my y -> dx ? my x -> dx : my y -> dx;
@@ -134,9 +134,9 @@ void ParamCurve_draw (ParamCurve me, Graphics g, double t1, double t2, double dt
 		autoNUMvector <double> y (1, numberOfPoints);
 		for (long i = 1; i <= numberOfPoints; i ++) {
 			double t = i == numberOfPoints ? t2 : t1 + (i - 1) * dt;
-			double index = Sampled_xToIndex (my x, t);
+			double index = Sampled_xToIndex (my x.get(), t);
 			x [i] = NUM_interpolate_sinc (my x -> z [1], my x -> nx, index, 50);
-			index = Sampled_xToIndex (my y, t);
+			index = Sampled_xToIndex (my y.get(), t);
 			y [i] = NUM_interpolate_sinc (my y -> z [1], my y -> nx, index, 50);
 		}
 		Graphics_setWindow (g, x1, x2, y1, y2);
@@ -152,9 +152,9 @@ void ParamCurve_draw (ParamCurve me, Graphics g, double t1, double t2, double dt
 }
 
 void ParamCurve_swapXY (ParamCurve me) {
-	Sound help = my x;
-	my x = my y;
-	my y = help;
+	autoSound help = my x.move();
+	my x = my y.move();
+	my y = help.move();
 }
 
 /* End of file ParamCurve.cpp */

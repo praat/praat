@@ -37,11 +37,11 @@ void structIntensityTierEditor :: v_play (double a_tmin, double a_tmax) {
 	}
 }
 
-IntensityTierEditor IntensityTierEditor_create (const char32 *title, IntensityTier intensity, Sound sound, bool ownSound) {
+autoIntensityTierEditor IntensityTierEditor_create (const char32 *title, IntensityTier intensity, Sound sound, bool ownSound) {
 	try {
 		autoIntensityTierEditor me = Thing_new (IntensityTierEditor);
 		RealTierEditor_init (me.peek(), title, (RealTier) intensity, sound, ownSound);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"IntensityTier window not created.");
 	}

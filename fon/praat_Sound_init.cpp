@@ -55,10 +55,10 @@ DIRECT2 (LongSound_concatenate) {
 		"The result will be a sound file that contains\nthe concatenation of the selected sounds.");
 END2 }
 
-FORM (LongSound_extractPart, U"LongSound: Extract part", 0) {
+FORM (LongSound_extractPart, U"LongSound: Extract part", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"1.0")
-	BOOLEAN (U"Preserve times", 1)
+	BOOLEAN (U"Preserve times", true)
 	OK2
 DO
 	LOOP {
@@ -112,12 +112,12 @@ END2 }
 
 DIRECT2 (LongSound_help) { Melder_help (U"LongSound"); END2 }
 
-FORM_READ2 (LongSound_open, U"Open long sound file", 0, true) {
+FORM_READ2 (LongSound_open, U"Open long sound file", nullptr, true) {
 	autoLongSound me = LongSound_open (file);
 	praat_new (me.transfer(), MelderFile_name (file));
 END2 }
 
-FORM (LongSound_playPart, U"LongSound: Play part", 0) {
+FORM (LongSound_playPart, U"LongSound: Play part", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"10.0")
 	OK2
@@ -562,7 +562,7 @@ FORM (Sound_createAsPureTone, U"Create Sound as pure tone", U"Create Sound as pu
 	CHANNEL (U"Number of channels", U"1 (= mono)")
 	REAL (U"Start time (s)", U"0.0")
 	REAL (U"End time (s)", U"0.4")
-	POSITIVE (U"Sampling frequency (Hz)", U"44100")
+	POSITIVE (U"Sampling frequency (Hz)", U"44100.0")
 	POSITIVE (U"Tone frequency (Hz)", U"440.0")
 	POSITIVE (U"Amplitude (Pa)", U"0.2")
 	POSITIVE (U"Fade-in duration (s)", U"0.01")
@@ -579,7 +579,7 @@ FORM (Sound_createFromToneComplex, U"Create Sound from tone complex", U"Create S
 	WORD (U"Name", U"toneComplex")
 	REAL (U"Start time (s)", U"0.0")
 	REAL (U"End time (s)", U"1.0")
-	POSITIVE (U"Sampling frequency (Hz)", U"44100")
+	POSITIVE (U"Sampling frequency (Hz)", U"44100.0")
 	RADIO (U"Phase", 2)
 		RADIOBUTTON (U"Sine")
 		RADIOBUTTON (U"Cosine")
@@ -657,7 +657,7 @@ DO
 	}
 END2 }
 
-FORM (old_Sound_draw, U"Sound: Draw", 0) {
+FORM (old_Sound_draw, U"Sound: Draw", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range", U"0.0 (= all)")
 	REAL (U"left Vertical range", U"0.0")
@@ -673,7 +673,7 @@ DO
 	}
 END2 }
 
-FORM (Sound_draw, U"Sound: Draw", 0) {
+FORM (Sound_draw, U"Sound: Draw", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range", U"0.0 (= all)")
 	REAL (U"left Vertical range", U"0.0")
@@ -736,7 +736,7 @@ DIRECT2 (Sound_extractAllChannels) {
 	}
 END2 }
 
-FORM (Sound_extractChannel, U"Sound: Extract channel", 0) {
+FORM (Sound_extractChannel, U"Sound: Extract channel", nullptr) {
 	CHANNEL (U"Channel (number, Left, or Right)", U"1")
 	OK2
 DO
@@ -756,8 +756,8 @@ DIRECT2 (Sound_extractLeftChannel) {
 	}
 END2 }
 
-FORM (Sound_extractPart, U"Sound: Extract part", 0) {
-	REAL (U"left Time range (s)", U"0")
+FORM (Sound_extractPart, U"Sound: Extract part", nullptr) {
+	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.1")
 	OPTIONMENU_ENUM (U"Window shape", kSound_windowShape, DEFAULT)
 	POSITIVE (U"Relative width", U"1.0")
@@ -774,8 +774,8 @@ DO
 	}
 END2 }
 
-FORM (Sound_extractPartForOverlap, U"Sound: Extract part for overlap", 0) {
-	REAL (U"left Time range (s)", U"0")
+FORM (Sound_extractPartForOverlap, U"Sound: Extract part for overlap", nullptr) {
+	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.1")
 	POSITIVE (U"Overlap (s)", U"0.01")
 	OK2
@@ -821,8 +821,8 @@ DO
 END2 }
 
 FORM (Sound_filter_oneFormant, U"Sound: Filter (one formant)", U"Sound: Filter (one formant)...") {
-	REAL (U"Frequency (Hz)", U"1000")
-	POSITIVE (U"Bandwidth (Hz)", U"100")
+	REAL (U"Frequency (Hz)", U"1000.0")
+	POSITIVE (U"Bandwidth (Hz)", U"100.0")
 	OK2
 DO
 	LOOP {
@@ -833,8 +833,8 @@ DO
 END2 }
 
 FORM (Sound_filterWithOneFormantInline, U"Sound: Filter with one formant (in-line)", U"Sound: Filter with one formant (in-line)...") {
-	REAL (U"Frequency (Hz)", U"1000")
-	POSITIVE (U"Bandwidth (Hz)", U"100")
+	REAL (U"Frequency (Hz)", U"1000.0")
+	POSITIVE (U"Bandwidth (Hz)", U"100.0")
 	OK2
 DO
 	LOOP {
@@ -845,9 +845,9 @@ DO
 END2 }
 
 FORM (Sound_filter_passHannBand, U"Sound: Filter (pass Hann band)", U"Sound: Filter (pass Hann band)...") {
-	REAL (U"From frequency (Hz)", U"500")
-	REAL (U"To frequency (Hz)", U"1000")
-	POSITIVE (U"Smoothing (Hz)", U"100")
+	REAL (U"From frequency (Hz)", U"500.0")
+	REAL (U"To frequency (Hz)", U"1000.0")
+	POSITIVE (U"Smoothing (Hz)", U"100.0")
 	OK2
 DO
 	LOOP {
@@ -870,9 +870,9 @@ DO
 END2 }
 
 FORM (Sound_filter_stopHannBand, U"Sound: Filter (stop Hann band)", U"Sound: Filter (stop Hann band)...") {
-	REAL (U"From frequency (Hz)", U"500")
-	REAL (U"To frequency (Hz)", U"1000")
-	POSITIVE (U"Smoothing (Hz)", U"100")
+	REAL (U"From frequency (Hz)", U"500.0")
+	REAL (U"To frequency (Hz)", U"1000.0")
+	POSITIVE (U"Smoothing (Hz)", U"100.0")
 	OK2
 DO
 	LOOP {
@@ -1337,13 +1337,13 @@ DIRECT2 (Sound_play) {
 	if (n == 1 || MelderAudio_getOutputMaximumAsynchronicity () < kMelder_asynchronicityLevel_ASYNCHRONOUS) {
 		LOOP {
 			iam (Sound);
-			Sound_play (me, NULL, NULL);
+			Sound_play (me, nullptr, nullptr);
 		}
 	} else {
 		MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_INTERRUPTABLE);
 		LOOP {
 			iam (Sound);
-			Sound_play (me, NULL, NULL);   // BUG: exception-safe?
+			Sound_play (me, nullptr, nullptr);   // BUG: exception-safe?
 		}
 		MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_ASYNCHRONOUS);
 	}
@@ -1380,16 +1380,12 @@ FORM_READ2 (Sound_readFromRawAlawFile, U"Read Sound from raw Alaw file", 0, true
 	praat_new (me.transfer(), MelderFile_name (file));
 END2 }
 
-static SoundRecorder theSoundRecorder;   // only one at a time can exist
+static autoSoundRecorder theSoundRecorder;   // only one at a time can exist
 static int thePreviousNumberOfChannels;
-static void cb_SoundRecorder_destruction (Editor editor, void *closure) {
-	(void) editor;
-	(void) closure;
-	theSoundRecorder = NULL;
+static void cb_SoundRecorder_destruction (Editor /*editor*/, void* /*closure*/) {
+	theSoundRecorder = nullptr;
 }
-static void cb_SoundRecorder_publication (Editor editor, void *closure, Daata publication) {
-	(void) editor;
-	(void) closure;
+static void cb_SoundRecorder_publication (Editor /*editor*/, void* /*closure*/, Daata publication) {
 	try {
 		praat_new (publication);
 	} catch (MelderError) {
@@ -1402,15 +1398,15 @@ static void do_Sound_record (int numberOfChannels) {
 		Melder_throw (U"Cannot record a Sound from batch.");
 	if (theSoundRecorder) {
 		if (numberOfChannels == thePreviousNumberOfChannels) {
-			Editor_raise (theSoundRecorder);
+			Editor_raise (theSoundRecorder.get());
 		} else {
-			forget (theSoundRecorder);
+			theSoundRecorder.reset();
 		}
 	}
 	if (! theSoundRecorder) {
 		theSoundRecorder = SoundRecorder_create (numberOfChannels);
-		Editor_setDestructionCallback (theSoundRecorder, cb_SoundRecorder_destruction, NULL);
-		Editor_setPublicationCallback (theSoundRecorder, cb_SoundRecorder_publication, NULL);
+		Editor_setDestructionCallback (theSoundRecorder.get(), cb_SoundRecorder_destruction, nullptr);
+		Editor_setPublicationCallback (theSoundRecorder.get(), cb_SoundRecorder_publication, nullptr);
 	}
 	thePreviousNumberOfChannels = numberOfChannels;
 }
@@ -1471,7 +1467,7 @@ END2 }
 DIRECT2 (Sound_reverse) {
 	LOOP {
 		iam (Sound);
-		Sound_reverse (me, 0, 0);
+		Sound_reverse (me, 0.0, 0.0);
 		praat_dataChanged (me);
 	}
 END2 }
@@ -1604,11 +1600,11 @@ END2 }
 FORM (Sound_to_Cochleagram_edb, U"Sound: To Cochleagram (De Boer, Meddis & Hewitt)", 0) {
 	POSITIVE (U"Time step (s)", U"0.01")
 	POSITIVE (U"Frequency resolution (Bark)", U"0.1")
-	BOOLEAN (U"Has synapse", 1)
+	BOOLEAN (U"Has synapse", true)
 	LABEL (U"", U"Meddis synapse properties")
 	POSITIVE (U"   replenishment rate (/sec)", U"5.05")
-	POSITIVE (U"   loss rate (/sec)", U"2500")
-	POSITIVE (U"   return rate (/sec)", U"6580")
+	POSITIVE (U"   loss rate (/sec)", U"2500.0")
+	POSITIVE (U"   return rate (/sec)", U"6580.0")
 	POSITIVE (U"   reprocessing rate (/sec)", U"66.31")
 	OK2
 DO
@@ -1624,10 +1620,10 @@ END2 }
 
 FORM (Sound_to_Formant_burg, U"Sound: To Formant (Burg method)", U"Sound: To Formant (burg)...") {
 	REAL (U"Time step (s)", U"0.0 (= auto)")
-	POSITIVE (U"Max. number of formants", U"5")
-	REAL (U"Maximum formant (Hz)", U"5500 (= adult female)")
+	POSITIVE (U"Max. number of formants", U"5.0")
+	REAL (U"Maximum formant (Hz)", U"5500.0 (= adult female)")
 	POSITIVE (U"Window length (s)", U"0.025")
-	POSITIVE (U"Pre-emphasis from (Hz)", U"50")
+	POSITIVE (U"Pre-emphasis from (Hz)", U"50.0")
 	OK2
 DO
 	LOOP {
@@ -1641,10 +1637,10 @@ END2 }
 
 FORM (Sound_to_Formant_keepAll, U"Sound: To Formant (keep all)", U"Sound: To Formant (keep all)...") {
 	REAL (U"Time step (s)", U"0.0 (= auto)")
-	POSITIVE (U"Max. number of formants", U"5")
-	REAL (U"Maximum formant (Hz)", U"5500 (= adult female)")
+	POSITIVE (U"Max. number of formants", U"5.0")
+	REAL (U"Maximum formant (Hz)", U"5500.0 (= adult female)")
 	POSITIVE (U"Window length (s)", U"0.025")
-	POSITIVE (U"Pre-emphasis from (Hz)", U"50")
+	POSITIVE (U"Pre-emphasis from (Hz)", U"50.0")
 	OK2
 DO
 	LOOP {
@@ -1658,10 +1654,10 @@ END2 }
 
 FORM (Sound_to_Formant_willems, U"Sound: To Formant (split Levinson (Willems))", U"Sound: To Formant (sl)...") {
 	REAL (U"Time step (s)", U"0.0 (= auto)")
-	POSITIVE (U"Number of formants", U"5")
-	REAL (U"Maximum formant (Hz)", U"5500 (= adult female)")
+	POSITIVE (U"Number of formants", U"5.0")
+	REAL (U"Maximum formant (Hz)", U"5500.0 (= adult female)")
 	POSITIVE (U"Window length (s)", U"0.025")
-	POSITIVE (U"Pre-emphasis from (Hz)", U"50")
+	POSITIVE (U"Pre-emphasis from (Hz)", U"50.0")
 	OK2
 DO
 	LOOP {
@@ -1675,7 +1671,7 @@ END2 }
 
 FORM (Sound_to_Harmonicity_ac, U"Sound: To Harmonicity (ac)", U"Sound: To Harmonicity (ac)...") {
 	POSITIVE (U"Time step (s)", U"0.01")
-	POSITIVE (U"Minimum pitch (Hz)", U"75")
+	POSITIVE (U"Minimum pitch (Hz)", U"75.0")
 	REAL (U"Silence threshold", U"0.1")
 	POSITIVE (U"Periods per window", U"4.5")
 	OK2
@@ -1692,7 +1688,7 @@ END2 }
 
 FORM (Sound_to_Harmonicity_cc, U"Sound: To Harmonicity (cc)", U"Sound: To Harmonicity (cc)...") {
 	POSITIVE (U"Time step (s)", U"0.01")
-	POSITIVE (U"Minimum pitch (Hz)", U"75")
+	POSITIVE (U"Minimum pitch (Hz)", U"75.0")
 	REAL (U"Silence threshold", U"0.1")
 	POSITIVE (U"Periods per window", U"1.0")
 	OK2
@@ -1707,10 +1703,10 @@ DO
 END2 }
 
 FORM (Sound_to_Harmonicity_gne, U"Sound: To Harmonicity (gne)", 0) {
-	POSITIVE (U"Minimum frequency (Hz)", U"500")
-	POSITIVE (U"Maximum frequency (Hz)", U"4500")
-	POSITIVE (U"Bandwidth (Hz)", U"1000")
-	POSITIVE (U"Step (Hz)", U"80")
+	POSITIVE (U"Minimum frequency (Hz)", U"500.0")
+	POSITIVE (U"Maximum frequency (Hz)", U"4500.0")
+	POSITIVE (U"Bandwidth (Hz)", U"1000.0")
+	POSITIVE (U"Step (Hz)", U"80.0")
 	OK2
 DO
 	LOOP {
@@ -1723,7 +1719,7 @@ DO
 END2 }
 
 FORM (old_Sound_to_Intensity, U"Sound: To Intensity", U"Sound: To Intensity...") {
-	POSITIVE (U"Minimum pitch (Hz)", U"100")
+	POSITIVE (U"Minimum pitch (Hz)", U"100.0")
 	REAL (U"Time step (s)", U"0.0 (= auto)")
 	OK2
 DO
@@ -1736,9 +1732,9 @@ DO
 END2 }
 
 FORM (Sound_to_Intensity, U"Sound: To Intensity", U"Sound: To Intensity...") {
-	POSITIVE (U"Minimum pitch (Hz)", U"100")
+	POSITIVE (U"Minimum pitch (Hz)", U"100.0")
 	REAL (U"Time step (s)", U"0.0 (= auto)")
-	BOOLEAN (U"Subtract mean", 1)
+	BOOLEAN (U"Subtract mean", true)
 	OK2
 DO_ALTERNATIVE (old_Sound_to_Intensity)
 	LOOP {
@@ -1750,9 +1746,9 @@ DO_ALTERNATIVE (old_Sound_to_Intensity)
 END2 }
 
 FORM (Sound_to_IntensityTier, U"Sound: To IntensityTier", NULL) {
-	POSITIVE (U"Minimum pitch (Hz)", U"100")
+	POSITIVE (U"Minimum pitch (Hz)", U"100.0")
 	REAL (U"Time step (s)", U"0.0 (= auto)")
-	BOOLEAN (U"Subtract mean", 1)
+	BOOLEAN (U"Subtract mean", true)
 	OK2
 DO
 	LOOP {
@@ -1783,10 +1779,10 @@ DO
 END2 }
 
 FORM (Sound_to_Ltas_pitchCorrected, U"Sound: To Ltas (pitch-corrected)", U"Sound: To Ltas (pitch-corrected)...") {
-	POSITIVE (U"Minimum pitch (Hz)", U"75")
-	POSITIVE (U"Maximum pitch (Hz)", U"600")
-	POSITIVE (U"Maximum frequency (Hz)", U"5000")
-	POSITIVE (U"Bandwidth (Hz)", U"100")
+	POSITIVE (U"Minimum pitch (Hz)", U"75.0")
+	POSITIVE (U"Maximum pitch (Hz)", U"600.0")
+	POSITIVE (U"Maximum frequency (Hz)", U"5000.0")
+	POSITIVE (U"Bandwidth (Hz)", U"100.0")
 	REAL (U"Shortest period (s)", U"0.0001")
 	REAL (U"Longest period (s)", U"0.02")
 	POSITIVE (U"Maximum period factor", U"1.3")
@@ -1839,7 +1835,7 @@ FORM (Sound_to_Pitch_ac, U"Sound: To Pitch (ac)", U"Sound: To Pitch (ac)...") {
 	REAL (U"Time step (s)", U"0.0 (= auto)")
 	POSITIVE (U"Pitch floor (Hz)", U"75.0")
 	NATURAL (U"Max. number of candidates", U"15")
-	BOOLEAN (U"Very accurate", 0)
+	BOOLEAN (U"Very accurate", false)
 	LABEL (U"", U"Finding a path")
 	REAL (U"Silence threshold", U"0.03")
 	REAL (U"Voicing threshold", U"0.45")
@@ -1865,9 +1861,9 @@ END2 }
 FORM (Sound_to_Pitch_cc, U"Sound: To Pitch (cc)", U"Sound: To Pitch (cc)...") {
 	LABEL (U"", U"Finding the candidates")
 	REAL (U"Time step (s)", U"0.0 (= auto)")
-	POSITIVE (U"Pitch floor (Hz)", U"75")
+	POSITIVE (U"Pitch floor (Hz)", U"75.0")
 	NATURAL (U"Max. number of candidates", U"15")
-	BOOLEAN (U"Very accurate", 0)
+	BOOLEAN (U"Very accurate", false)
 	LABEL (U"", U"Finding a path")
 	REAL (U"Silence threshold", U"0.03")
 	REAL (U"Voicing threshold", U"0.45")
@@ -1890,10 +1886,10 @@ DO
 	}
 END2 }
 
-FORM (Sound_to_PointProcess_extrema, U"Sound: To PointProcess (extrema)", 0) {
+FORM (Sound_to_PointProcess_extrema, U"Sound: To PointProcess (extrema)", nullptr) {
 	CHANNEL (U"Channel (number, Left, or Right)", U"1")
-	BOOLEAN (U"Include maxima", 1)
-	BOOLEAN (U"Include minima", 0)
+	BOOLEAN (U"Include maxima", true)
+	BOOLEAN (U"Include minima", false)
 	RADIO (U"Interpolation", 4)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
@@ -1928,8 +1924,8 @@ END2 }
 FORM (Sound_to_PointProcess_periodic_peaks, U"Sound: To PointProcess (periodic, peaks)", U"Sound: To PointProcess (periodic, peaks)...") {
 	POSITIVE (U"Minimum pitch (Hz)", U"75")
 	POSITIVE (U"Maximum pitch (Hz)", U"600")
-	BOOLEAN (U"Include maxima", 1)
-	BOOLEAN (U"Include minima", 0)
+	BOOLEAN (U"Include maxima", true)
+	BOOLEAN (U"Include minima", false)
 	OK2
 DO
 	double fmin = GET_REAL (U"Minimum pitch"), fmax = GET_REAL (U"Maximum pitch");
@@ -1941,10 +1937,10 @@ DO
 	}
 END2 }
 
-FORM (Sound_to_PointProcess_zeroes, U"Get zeroes", 0) {
+FORM (Sound_to_PointProcess_zeroes, U"Get zeroes", nullptr) {
 	CHANNEL (U"Channel (number, Left, or Right)", U"1")
-	BOOLEAN (U"Include raisers", 1)
-	BOOLEAN (U"Include fallers", 0)
+	BOOLEAN (U"Include raisers", true)
+	BOOLEAN (U"Include fallers", false)
 	OK2
 DO
 	long channel = GET_INTEGER (U"Channel");
@@ -1957,9 +1953,9 @@ END2 }
 
 FORM (Sound_to_Spectrogram, U"Sound: To Spectrogram", U"Sound: To Spectrogram...") {
 	POSITIVE (U"Window length (s)", U"0.005")
-	POSITIVE (U"Maximum frequency (Hz)", U"5000")
+	POSITIVE (U"Maximum frequency (Hz)", U"5000.0")
 	POSITIVE (U"Time step (s)", U"0.002")
-	POSITIVE (U"Frequency step (Hz)", U"20")
+	POSITIVE (U"Frequency step (Hz)", U"20.0")
 	RADIO_ENUM (U"Window shape", kSound_to_Spectrogram_windowShape, DEFAULT)
 	OK2
 DO

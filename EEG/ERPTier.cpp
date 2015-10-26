@@ -131,7 +131,7 @@ ERPTier EEG_to_ERPTier_bit (EEG me, double fromTime, double toTime, int markerBi
 	}
 }
 
-static PointProcess TextGrid_getStartingPoints_multiNumeric (TextGrid me, uint16_t number) {
+static autoPointProcess TextGrid_getStartingPoints_multiNumeric (TextGrid me, uint16_t number) {
 	try {
 		autoPointProcess thee;
 		int numberOfBits = my numberOfTiers();
@@ -139,26 +139,24 @@ static PointProcess TextGrid_getStartingPoints_multiNumeric (TextGrid me, uint16
 			(void) TextGrid_checkSpecifiedTierIsIntervalTier (me, ibit + 1);
 			if (number & (1 << ibit)) {
 				autoPointProcess bitEvents = TextGrid_getStartingPoints (me, ibit + 1, kMelder_string_EQUAL_TO, U"1");
-				if (thee.peek()) {
-					autoPointProcess intersection = PointProcesses_intersection (thee.peek(), bitEvents.peek());
-					thee.reset (intersection.transfer());
+				if (thee) {
+					thee = PointProcesses_intersection (thee.peek(), bitEvents.peek());
 				} else {
-					thee.reset (bitEvents.transfer());
+					thee = bitEvents.move();
 				}
 			}
 		}
 		for (int ibit = 0; ibit < numberOfBits; ibit ++) {
 			autoPointProcess bitEvents = TextGrid_getStartingPoints (me, ibit + 1, kMelder_string_EQUAL_TO, U"1");
 			if (! (number & (1 << ibit))) {
-				if (thee.peek()) {
-					autoPointProcess difference = PointProcesses_difference (thee.peek(), bitEvents.peek());
-					thee.reset (difference.transfer());
+				if (thee) {
+					thee = PointProcesses_difference (thee.peek(), bitEvents.peek());
 				} else {
-					thee.reset (PointProcess_create (my xmin, my xmax, 10));
+					thee = PointProcess_create (my xmin, my xmax, 10);
 				}
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": starting points not converted to PointProcess.");
 	}

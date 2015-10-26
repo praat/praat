@@ -30,45 +30,45 @@
 #include "PitchTier_to_PointProcess.h"
 #include "PointProcess_and_Sound.h"
 
-Sound PitchTier_to_Sound_pulseTrain (PitchTier me, double samplingFrequency,
-	 double adaptFactor, double adaptTime, long interpolationDepth, int hum)
+autoSound PitchTier_to_Sound_pulseTrain (PitchTier me, double samplingFrequency,
+	 double adaptFactor, double adaptTime, long interpolationDepth, bool hum)
 {
-	static double formant [1 + 6] = { 0, 600, 1400, 2400, 3400, 4500, 5500 };
-	static double bandwidth [1 + 6] = { 0, 50, 100, 200, 300, 400, 500 };
+	static double formant [1 + 6] = { 0.0, 600.0, 1400.0, 2400.0, 3400.0, 4500.0, 5500.0 };
+	static double bandwidth [1 + 6] = { 0.0, 50.0, 100.0, 200.0, 300.0, 400.0, 500.0 };
 	try {
 		autoPointProcess point = PitchTier_to_PointProcess (me);
 		autoSound sound = PointProcess_to_Sound_pulseTrain (point.peek(), samplingFrequency, adaptFactor, adaptTime, interpolationDepth);
 		if (hum) {
-			Sound_filterWithFormants (sound.peek(), 0, 0, 6, formant, bandwidth);
+			Sound_filterWithFormants (sound.peek(), 0.0, 0.0, 6, formant, bandwidth);
 		}
-		return sound.transfer();
+		return sound;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound (pulse train).");
 	}
 }
 
-Sound PitchTier_to_Sound_phonation (PitchTier me, double samplingFrequency,
-	 double adaptFactor, double maximumPeriod, double openPhase, double collisionPhase, double power1, double power2, int hum)
+autoSound PitchTier_to_Sound_phonation (PitchTier me, double samplingFrequency,
+	 double adaptFactor, double maximumPeriod, double openPhase, double collisionPhase, double power1, double power2, bool hum)
 {
-	static double formant [1 + 6] = { 0, 600, 1400, 2400, 3400, 4500, 5500 };
-	static double bandwidth [1 + 6] = { 0, 50, 100, 200, 300, 400, 500 };
+	static double formant [1 + 6] = { 0.0, 600.0, 1400.0, 2400.0, 3400.0, 4500.0, 5500.0 };
+	static double bandwidth [1 + 6] = { 0.0, 50.0, 100.0, 200.0, 300.0, 400.0, 500.0 };
 	try {
 		autoPointProcess point = PitchTier_to_PointProcess (me);
 		autoSound sound = PointProcess_to_Sound_phonation (point.peek(), samplingFrequency, adaptFactor,
 			maximumPeriod, openPhase, collisionPhase, power1, power2);
 		if (hum) {
-			Sound_filterWithFormants (sound.peek(), 0, 0, 6, formant, bandwidth);
+			Sound_filterWithFormants (sound.peek(), 0.0, 0.0, 6, formant, bandwidth);
 		}
-		return sound.transfer();
+		return sound;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound (phonation).");
 	}
 }
 
-void PitchTier_playPart (PitchTier me, double tmin, double tmax, int hum) {
+void PitchTier_playPart (PitchTier me, double tmin, double tmax, bool hum) {
 	try {
 		autoSound sound = PitchTier_to_Sound_pulseTrain (me, 44100.0, 0.7, 0.05, 30, hum);
-		Sound_playPart (sound.peek(), tmin, tmax, NULL, NULL);
+		Sound_playPart (sound.peek(), tmin, tmax, nullptr, nullptr);
 	} catch (MelderError) {
 		Melder_throw (me, U": not played.");
 	}
@@ -82,12 +82,12 @@ void PitchTier_hum (PitchTier me) {
 	PitchTier_playPart (me, my xmin, my xmax, true);
 }
 
-Sound PitchTier_to_Sound_sine (PitchTier me, double tmin, double tmax, double samplingFrequency) {
+autoSound PitchTier_to_Sound_sine (PitchTier me, double tmin, double tmax, double samplingFrequency) {
 	try {
 		if (tmax <= tmin) tmin = my xmin, tmax = my xmax;
 		long numberOfSamples = 1 + (long) floor ((my xmax - my xmin) * samplingFrequency);   // >= 1
 		double samplingPeriod = 1.0 / samplingFrequency;
-		double tmid = (tmin + tmax) / 2;
+		double tmid = (tmin + tmax) / 2.0;
 		double t1 = tmid - 0.5 * (numberOfSamples - 1) * samplingPeriod;
 		autoSound thee = Sound_create (1, tmin, tmax, numberOfSamples, samplingPeriod, t1);
 		double phase = 0.0;
@@ -97,7 +97,7 @@ Sound PitchTier_to_Sound_sine (PitchTier me, double tmin, double tmax, double sa
 			phase += fleft * thy dx;
 			thy z [1] [isamp] = 0.5 * sin (2.0 * NUMpi * phase);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound (sine).");
 	}
@@ -107,7 +107,7 @@ void PitchTier_playPart_sine (PitchTier me, double tmin, double tmax) {
 	try {
 		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   // autowindowing
 		autoSound sound = PitchTier_to_Sound_sine (me, tmin, tmax, 44100.0);
-		Sound_playPart (sound.peek(), tmin, tmax, NULL, NULL);
+		Sound_playPart (sound.peek(), tmin, tmax, nullptr, nullptr);
 	} catch (MelderError) {
 		Melder_throw (me, U": not played.");
 	}

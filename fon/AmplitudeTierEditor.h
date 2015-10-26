@@ -54,7 +54,7 @@ Thing_define (AmplitudeTierEditor, RealTierEditor) {
 		override { return U"Maximum amplitude"; }
 };
 
-AmplitudeTierEditor AmplitudeTierEditor_create (const char32 *title,
+autoAmplitudeTierEditor AmplitudeTierEditor_create (const char32 *title,
 	AmplitudeTier amplitude,
 	Sound sound,   // may be null
 	bool ownSound);
