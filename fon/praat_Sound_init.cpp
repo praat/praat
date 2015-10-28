@@ -2051,7 +2051,7 @@ DO
 	MelderAudio_setOutputSoundSystem (GET_ENUM (kMelder_outputSoundSystem, U"Output sound system"));
 END2 }
 
-#ifdef USE_PULSEAUDIO
+#ifdef HAVE_PULSEAUDIO
 void pulseAudio_serverReport ();
 DIRECT (Praat_reportSoundServerProperties)
 	pulseAudio_serverReport ();
@@ -2356,7 +2356,7 @@ void praat_uvafon_Sound_init () {
 	praat_addMenuCommand (U"Objects", U"Preferences", U"Sound recording preferences...", 0, 0, DO_SoundInputPrefs);
 	praat_addMenuCommand (U"Objects", U"Preferences", U"Sound playing preferences...", 0, 0, DO_SoundOutputPrefs);
 	praat_addMenuCommand (U"Objects", U"Preferences", U"LongSound preferences...", 0, 0, DO_LongSoundPrefs);
-#ifdef USE_PULSEAUDIO
+#ifdef HAVE_PULSEAUDIO
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report sound server properties", U"Report system properties", 0, DO_Praat_reportSoundServerProperties);
 #endif
 

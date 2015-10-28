@@ -57,7 +57,7 @@
 	#include <sys/ioctl.h>
 	#include <fcntl.h>
 	#include <unistd.h>
-	#if defined USE_PULSEAUDIO
+	#if defined HAVE_PULSEAUDIO
 		#include <pulse/pulseaudio.h>
 	#endif
 	#if defined (__OpenBSD__) || defined (__NetBSD__)
@@ -76,7 +76,7 @@
 
 #include "../external/portaudio/portaudio.h"
 
-#ifdef USE_PULSEAUDIO
+#ifdef HAVE_PULSEAUDIO
 	void pulseAudio_cleanup ();
 	void stream_drain_complete_cb (pa_stream *stream, int success, void *userdata);
 	void context_state_cb (pa_context *context, void *userdata);
@@ -164,7 +164,7 @@ static double theStartingTime = 0.0;
 #define PA_WRITING 4
 #define PA_WRITING_DONE 8
 
-#ifdef USE_PULSEAUDIO
+#ifdef HAVE_PULSEAUDIO
 typedef struct pulseAudio {
 	pa_sample_spec sample_spec;
 	pa_threaded_mainloop *mainloop = nullptr;
@@ -215,7 +215,7 @@ static struct MelderPlay {
 		WAVEHDR waveHeader;
 		MMRESULT status;
 	#endif
-	#ifdef USE_PULSEAUDIO
+	#ifdef HAVE_PULSEAUDIO
 		pulseAudioStruct pulseAudio;
 	#endif
 } thePlay;
@@ -331,7 +331,7 @@ static bool flush () {
 			Pa_CloseStream (my stream);
 			my stream = nullptr;
 		}
-	#ifdef USE_PULSEAUDIO
+	#ifdef HAVE_PULSEAUDIO
 	} else if (my usePulseAudio) {
 		if (my pulseAudio.mainloop) {
 			pa_threaded_mainloop_lock (my pulseAudio.mainloop);
@@ -471,7 +471,7 @@ static bool workProc (void *closure) {
 			}
 			Pa_Sleep (10);
 		#endif
-	#ifdef USE_PULSEAUDIO
+	#ifdef HAVE_PULSEAUDIO
 	} else if (my usePulseAudio) {
 		if (my pulseAudio.mainloop) {
 			pa_threaded_mainloop_lock (my pulseAudio.mainloop);
@@ -597,7 +597,7 @@ static int thePaStreamCallback (const void *input, void *output,
 	return paContinue;
 }
 
-#ifdef USE_PULSEAUDIO
+#ifdef HAVE_PULSEAUDIO
 void pulseAudio_initialize () {
 	struct MelderPlay *me = & thePlay;
 	if (! my pulseAudio.pulseAudioInitialized) {
@@ -1012,7 +1012,7 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 		bool wasPlaying = MelderAudio_isPlaying;
 	#endif
 	if (MelderAudio_isPlaying) MelderAudio_stopPlaying (MelderAudio_IMPLICIT);   // otherwise, keep "explicitStop" tag
-	#ifdef USE_PULSEAUDIO
+	#ifdef HAVE_PULSEAUDIO
 		if (my usePulseAudio && my pulseAudio.mainloop) {
 			pulseAudio_cleanup ();
 		}
@@ -1192,7 +1192,7 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 		}
 		flush ();
 		return;
-	#ifdef USE_PULSEAUDIO
+	#ifdef HAVE_PULSEAUDIO
 	} if (my usePulseAudio) {
 		my pulseAudio.occupation |= PA_WRITING;
 		pulseAudio_initialize ();
