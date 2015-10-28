@@ -22,7 +22,7 @@
 void manual_programming_init (ManPages me);
 void manual_programming_init (ManPages me) {
 
-MAN_BEGIN (U"Programming with Praat", U"ppgb", 20151026)
+MAN_BEGIN (U"Programming with Praat", U"ppgb", 20151028)
 INTRO (U"You can extend the functionality of the Praat program "
 	"by adding modules written in C or C++ to it. All of Praat's source code "
 	"is available under the General Public Licence.")
@@ -37,12 +37,12 @@ NORMAL (U"You obtain the Praat source code from GitHub (https://github.com/praat
 	"##praat5423_sources.zip# or ##praat5423_sources.tar.gz# (depending on the Praat version), and unpack this by double-clicking. "
 	"The result will be a set of directories "
 	"called #kar, #num, #external (with #GSL, #glpk, #FLAC, #mp3, #portaudio and #espeak in it), "
-	"#sys, #dwsys, #stat, #fon, #dwtools, #LPC, #FFNet, #gram, #artsynth, #EEG, #contrib, #main, #makefiles, and #test, "
+	"#sys, #dwsys, #stat, #fon, #dwtools, #LPC, #FFNet, #gram, #artsynth, #EEG, #contrib, #main, #makefiles, #test, and #dwtest, "
 	"plus a makefile and an Xcode project for Macintosh.")
 ENTRY (U"3. Building Praat")
-NORMAL (U"Consult the READ_ME file on GitHub for directions to compile and link Praat for your platform.")
+NORMAL (U"Consult the README file on GitHub for directions to compile and link Praat for your platform.")
 ENTRY (U"4. Extending Praat")
-NORMAL (U"You can edit ##main/main_Praat.cpp#. "
+NORMAL (U"To start extending Praat’s functionality, you can edit ##main/main_Praat.cpp#. "
 	"This example shows you how to create a very simple program with all the functionality "
 	"of the Praat program, and a single bit more (namely an additional command in the New menu):")
 CODE (U"\\# include \"praat.h\"")
