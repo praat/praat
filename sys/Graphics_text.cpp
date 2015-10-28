@@ -745,7 +745,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 				#endif
 				[my d_macView   unlockFocus];
 			}
-        
+			return;
 		#elif win
 			int font = lc -> font.integer;
 		#elif mac

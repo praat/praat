@@ -146,7 +146,8 @@
 #define oo_DIR(x)
 
 #define oo_DEFINE_STRUCT(Type)  \
-	void struct##Type :: readBinary (FILE *f, int formatVersion) {
+	void struct##Type :: readBinary (FILE *f, int formatVersion) { \
+		(void) formatVersion;
 
 #define oo_END_STRUCT(Type)  \
 	}

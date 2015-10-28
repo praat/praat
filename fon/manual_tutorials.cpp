@@ -23,7 +23,7 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20151021)
+MAN_BEGIN (U"What's new?", U"ppgb", 20151028)
 INTRO (U"Latest changes in Praat.")
 /*LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")*/
 NORMAL (U"##6.0# (28 October 2015)")
@@ -34,6 +34,8 @@ LIST_ITEM (U"• The API change that requires raising the major Praat version to
 	"no longer any need for Praatcon.exe, because Praat itself can now run a script from the command line on all platforms.")
 LIST_ITEM (U"• See @@Scripting 6.9. Calling from the command line@ for all command line options.")
 LIST_ITEM (U"• SpeechSynthesizer: corrected a potentially crashing bug.")
+LIST_ITEM (U"• Mac Retina graphics: made function drawing (e.g. in the TextGrid window) twice as fast.")
+LIST_ITEM (U"• LongSound: corrected playing of more than 2 channels.")
 NORMAL (U"##5.4.22# (8 October 2015)")
 LIST_ITEM (U"• Sound files: added support for MP3 files with ID3 version 2 headers.")
 LIST_ITEM (U"• Table: Line graph where: removed a bug that caused nothing to be drawn if the number of columns was larger than the number of rows and "
