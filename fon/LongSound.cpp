@@ -594,7 +594,7 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 					double index = (t - t1) * my sampleRate;   /* From 0. */
 					long flore = index;   /* DANGEROUS: Implicitly rounding down... */
 					double fraction = index - flore;
-					resampledBuffer [i + silenceBefore] = (1 - fraction) * from [flore] + fraction * from [flore + 1];
+					resampledBuffer [i + silenceBefore] = (1.0 - fraction) * from [flore] + fraction * from [flore + 1];
 				}
 			} else if (my numberOfChannels == 2) {
 				for (i = 0; i < newN; i ++) {
@@ -603,8 +603,8 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 					long flore = index;
 					double fraction = index - flore;
 					long ii = i + silenceBefore;
-					resampledBuffer [ii + ii] = (1 - fraction) * from [flore + flore] + fraction * from [flore + flore + 2];
-					resampledBuffer [ii + ii + 1] = (1 - fraction) * from [flore + flore + 1] + fraction * from [flore + flore + 3];
+					resampledBuffer [ii + ii] = (1.0 - fraction) * from [flore + flore] + fraction * from [flore + flore + 2];
+					resampledBuffer [ii + ii + 1] = (1.0 - fraction) * from [flore + flore + 1] + fraction * from [flore + flore + 3];
 				}
 			} else {
 				for (i = 0; i < newN; i ++) {
@@ -614,7 +614,9 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 					double fraction = index - flore;
 					long ii = (i + silenceBefore) * my numberOfChannels;
 					for (long chan = 0; chan < my numberOfChannels; chan ++) {
-						resampledBuffer [ii + chan] = (1 - fraction) * from [flore + flore + chan] + fraction * from [flore + flore + chan + my numberOfChannels];
+						resampledBuffer [ii + chan] =
+							(1.0 - fraction) * from [flore * my numberOfChannels + chan] +
+							fraction * from [(flore + 1) * my numberOfChannels + chan];
 					}
 				}
 			}
