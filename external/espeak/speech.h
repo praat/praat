@@ -43,9 +43,7 @@
 #undef PLATFORM_WINDOWS
 
 #define PATHSEP  '/'
-// USE_PORTAUDIO or USE_PULSEAUDIO are now defined in the makefile
-//#define USE_PORTAUDIO
-//#define USE_PULSEAUDIO
+
 /* ppgb, 23 December 2011 */
 #undef USE_NANOSLEEP
 //#define ESPEAK_API  extern "C"

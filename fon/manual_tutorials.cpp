@@ -31,7 +31,7 @@ LIST_ITEM (U"• Linux: use PulseAudio as the server for playing sound.")
 LIST_ITEM (U"• Windows: removed Praatcon.exe, because Praat.exe can now be used from the command line.")
 LIST_ITEM (U"• Praat can now open files from the command line on all platforms.")
 LIST_ITEM (U"• The API change that requires raising the major Praat version to 6: "
-	"no longr any need for Praatcon.exe, because Praat itself can now run a script from the command line on all platforms.")
+	"no longer any need for Praatcon.exe, because Praat itself can now run a script from the command line on all platforms.")
 LIST_ITEM (U"• See @@Scripting 6.9. Calling from the command line@ for all command line options.")
 LIST_ITEM (U"• SpeechSynthesizer: corrected a potentially crashing bug.")
 NORMAL (U"##5.4.22# (8 October 2015)")

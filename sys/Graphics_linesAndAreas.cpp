@@ -115,7 +115,7 @@ static void psRevertLine (GraphicsPostscript me) {
 	}
 #elif mac
 	static void quartzPrepareLine (GraphicsScreen me) {
-		CGContextSetLineJoin (my d_macGraphicsContext, kCGLineJoinRound);
+		CGContextSetLineJoin (my d_macGraphicsContext, kCGLineJoinBevel);   // much faster than kCGLineJoinRound
 		if (my duringXor) {
 			CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeDifference);
 			CGContextSetAllowsAntialiasing (my d_macGraphicsContext, false);
@@ -125,6 +125,7 @@ static void psRevertLine (GraphicsPostscript me) {
 		}
 		double lineWidth_pixels = LINE_WIDTH_IN_PIXELS (me);
 		CGContextSetLineWidth (my d_macGraphicsContext, lineWidth_pixels);
+
 		CGFloat lengths [4];
 		if (my lineType == Graphics_DOTTED)
 			lengths [0] = my resolution > 192 ? my resolution / 100.0 : 2,
