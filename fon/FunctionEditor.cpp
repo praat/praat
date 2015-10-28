@@ -502,8 +502,7 @@ static void do_showAll (FunctionEditor me) {
 	}
 }
 
-static void gui_button_cb_showAll (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_showAll (I, GuiButtonEvent /*event*/) {
 	iam (FunctionEditor);
 	do_showAll (me);
 }
@@ -520,8 +519,7 @@ static void do_zoomIn (FunctionEditor me) {
 	}
 }
 
-static void gui_button_cb_zoomIn (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_zoomIn (I, GuiButtonEvent /*event*/) {
 	iam (FunctionEditor);
 	do_zoomIn (me);
 }
@@ -543,8 +541,7 @@ static void do_zoomOut (FunctionEditor me) {
 	}
 }
 
-static void gui_button_cb_zoomOut (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_zoomOut (I, GuiButtonEvent /*event*/) {
 	iam (FunctionEditor);
 	do_zoomOut (me);
 }
@@ -569,8 +566,7 @@ static void do_zoomToSelection (FunctionEditor me) {
 	}
 }
 
-static void gui_button_cb_zoomToSelection (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_zoomToSelection (I, GuiButtonEvent /*event*/) {
 	iam (FunctionEditor);
 	do_zoomToSelection (me);
 }
@@ -588,8 +584,7 @@ static void do_zoomBack (FunctionEditor me) {
 	}
 }
 
-static void gui_button_cb_zoomBack (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_zoomBack (I, GuiButtonEvent /*event*/) {
 	iam (FunctionEditor);
 	do_zoomBack (me);
 }
@@ -1566,7 +1561,8 @@ void FunctionEditor_updateText (FunctionEditor me) {
 }
 
 void FunctionEditor_redraw (FunctionEditor me) {
-	/*Graphics_updateWs (my d_graphics);*/ drawNow (me);
+	//Graphics_updateWs (my d_graphics);
+	drawNow (me);
 }
 
 void FunctionEditor_enableUpdates (FunctionEditor me, bool enable) {
