@@ -1058,7 +1058,7 @@ static bool tryToAttachToTheCommandLine ()
 			} else if (err == ERROR_INVALID_HANDLE) {
 				(void) 0;   // a normal case: the parent process is Windows Explorer or so, which doesn't have a console (Windows XP, 10?)
 			} else if (err == ERROR_GEN_FAILURE) {
-				(void) 0;   // another normal case: there is no parent process (Windows 7)?
+				(void) 0;   // another normal case: there is no parent process (Windows 7?)
 			} else {
 				printf ("AttachConsole() returned unknown error %d\n", (int) err);
 				Melder_fatal (U"AttachConsole() returned unknown error ", err);
@@ -1081,7 +1081,7 @@ void praat_init (const char32 *title, unsigned int argc, char **argv)
 	}
 	#if defined (UNIX)
 		setlocale (LC_ALL, "C");
-		setenv ("PULSE_LATENCY_MSEC", "1", 0);   // Rafael Laboissiere, August 2014
+		//setenv ("PULSE_LATENCY_MSEC", "1", 0);   // Rafael Laboissiere, August 2014
 	#elif defined (_WIN32)
 		setlocale (LC_ALL, "C");   // said to be superfluous
 	#elif defined (macintosh)
