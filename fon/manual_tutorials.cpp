@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20151028)
+MAN_BEGIN (U"What's new?", U"ppgb", 20151029)
 INTRO (U"Latest changes in Praat.")
 /*LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (U"##6.0.01# (29 October 2015)")
+LIST_ITEM (U"• Windows: fixed a bug that caused Praat to crash at start-up in some Windows versions.")
 NORMAL (U"##6.0# (28 October 2015)")
 LIST_ITEM (U"• Linux: use PulseAudio as the server for playing sound.")
 LIST_ITEM (U"• Windows: removed Praatcon.exe, because Praat.exe can now be used from the command line.")
