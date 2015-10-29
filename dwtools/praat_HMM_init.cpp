@@ -186,9 +186,10 @@ FORM (GaussianMixture_and_PCA_to_Matrix_density, U"GaussianMixture & PCA: To Mat
 DO
 	GaussianMixture me = FIRST (GaussianMixture);
 	PCA pca = FIRST (PCA);
-	praat_new (GaussianMixture_and_PCA_to_Matrix_density (me, pca, GET_INTEGER (U"X-dimension"),
+	autoMatrix thee = GaussianMixture_and_PCA_to_Matrix_density (me, pca, GET_INTEGER (U"X-dimension"),
 		GET_INTEGER (U"Y-dimension"), GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
-		GET_INTEGER (U"Number of columns"), GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"), GET_INTEGER (U"Number of rows")), my name, U"_", pca->name);
+		GET_INTEGER (U"Number of columns"), GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"), GET_INTEGER (U"Number of rows"));
+	praat_new (thee.transfer(), my name, U"_", pca->name);
 END
 
 FORM (GaussianMixture_extractComponent, U"GaussianMixture: Extract component", 0)
@@ -198,29 +199,32 @@ DO
 	long component = GET_INTEGER (U"Component");
 	LOOP {
 		iam (GaussianMixture);
-		Covariance cov = GaussianMixture_extractComponent (me, component);
-		praat_new (cov, my name, U"_", cov->name);
+		autoCovariance thee = GaussianMixture_extractComponent (me, component);
+		praat_new (thee.transfer(), my name, U"_", thy name);
 	}
 END
 
 DIRECT (GaussianMixture_extractCentroids)
 	LOOP {
 		iam (GaussianMixture);
-		praat_new (GaussianMixture_extractCentroids (me), my name);
+		autoTableOfReal thee = GaussianMixture_extractCentroids (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
 DIRECT (GaussianMixture_extractMixingProbabilities)
 	LOOP {
 		iam (GaussianMixture);
-		praat_new (GaussianMixture_extractMixingProbabilities (me), my name);
+		autoTableOfReal thee = GaussianMixture_extractMixingProbabilities (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
 DIRECT (GaussianMixture_to_PCA)
 	LOOP {
 		iam (GaussianMixture);
-		praat_new (GaussianMixture_to_PCA (me), my name);
+		autoPCA thee = GaussianMixture_to_PCA (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -231,28 +235,32 @@ DO
 	long numberOfpoints = GET_INTEGER (U"Number of data points");
 	LOOP {
 		iam (GaussianMixture);
-		praat_new (GaussianMixture_to_TableOfReal_randomSampling (me, numberOfpoints), my name);
+		autoTableOfReal thee = GaussianMixture_to_TableOfReal_randomSampling (me, numberOfpoints);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
 DIRECT (GaussianMixture_to_Covariance_between)
 	LOOP {
 		iam (GaussianMixture);
-		praat_new (GaussianMixture_to_Covariance_between (me), my name, U"_b");
+		autoCovariance thee = GaussianMixture_to_Covariance_between (me);
+		praat_new (thee.transfer(), my name, U"_b");
 	}
 END
 
 DIRECT (GaussianMixture_to_Covariance_within)
 	LOOP {
 		iam (GaussianMixture);
-		praat_new (GaussianMixture_to_Covariance_within (me), my name, U"_w");
+		autoCovariance thee = GaussianMixture_to_Covariance_within (me);
+		praat_new (thee.transfer(), my name, U"_w");
 	}
 END
 
 DIRECT (GaussianMixture_to_Covariance_total)
 	LOOP {
 		iam (GaussianMixture);
-		praat_new (GaussianMixture_to_Covariance_total (me), my name, U"_t");
+		autoCovariance thee = GaussianMixture_to_Covariance_total (me);
+		praat_new (thee.transfer(), my name, U"_t");
 	}
 END
 
@@ -318,7 +326,7 @@ DO
 	praat_new (thee.transfer(), GET_STRING (U"Name"));
 END
 
-FORM (HMM_ObservationSequence_to_HMM, U"HMM_ObservationSequence: To HMM", 0)
+FORM (HMMObservationSequence_to_HMM, U"HMMObservationSequence: To HMM", 0)
 	LABEL (U"", U"(0 states gives a non-hidden model) ")
 	INTEGER (U"Number of states", U"2")
 	BOOLEAN (U"Left to right model", 0)
@@ -326,8 +334,8 @@ FORM (HMM_ObservationSequence_to_HMM, U"HMM_ObservationSequence: To HMM", 0)
 DO
 	long numberOfStates = GET_INTEGER (U"Number of states");
 	LOOP {
-		iam (HMM_ObservationSequence);
-		autoHMM thee = HMM_createFromHMM_ObservationSequence (me, numberOfStates, GET_INTEGER (U"Left to right model"));
+		iam (HMMObservationSequence);
+		autoHMM thee = HMM_createFromHMMObservationSequence (me, numberOfStates, GET_INTEGER (U"Left to right model"));
 		praat_new (thee.transfer(), my name, U"_", numberOfStates);
 	}
 END
@@ -343,15 +351,15 @@ DO
 	}
 END
 
-FORM (HMM_and_HMM_StateSequence_drawTrellis, U"HMM & Strings: Draw trellis", 0)
+FORM (HMM_and_HMMStateSequence_drawTrellis, U"HMM & Strings: Draw trellis", 0)
 	BOOLEAN (U"Connect", 1);
 	BOOLEAN (U"Garnish", 1);
 	OK
 DO
 	autoPraatPicture picture;
 	HMM me = FIRST (HMM);
-	HMM_StateSequence hmm_ss = FIRST (HMM_StateSequence);
-	HMM_and_HMM_StateSequence_drawTrellis (me, hmm_ss, GRAPHICS, GET_INTEGER (U"Connect"), GET_INTEGER (U"Garnish"));
+	HMMStateSequence hmm_ss = FIRST (HMMStateSequence);
+	HMM_and_HMMStateSequence_drawTrellis (me, hmm_ss, GRAPHICS, GET_INTEGER (U"Connect"), GET_INTEGER (U"Garnish"));
 END
 
 DIRECT (HMM_drawForwardProbabilitiesIllustration)
@@ -473,7 +481,7 @@ DO
 	LOOP {
 		iam (HMM);
 		REQUIRE (is <= my numberOfObservationSymbols, U"Symbol number too high.")
-		HMM_Observation s = (HMM_Observation) my observationSymbols -> item[is];
+		HMMObservation s = (HMMObservation) my observationSymbols -> item[is];
 		Melder_information (s -> label);
 	}
 END
@@ -486,7 +494,7 @@ DO
 	LOOP {
 		iam (HMM);
 		REQUIRE (is <= my numberOfStates, U"State number too high.")
-		HMM_State s = (HMM_State) my states -> item[is];
+		HMMState s = (HMMState) my states -> item[is];
 		Melder_information (s -> label);
 	}
 END
@@ -509,81 +517,82 @@ DO
 		U" cross-entropy between models for observation length = ", n, U")");
 END
 
-DIRECT (HMM_and_HMM_and_HMM_ObservationSequence_getCrossEntropy)
-	HMM m1 = 0, m2 = 0; HMM_ObservationSequence hmm_os = 0;
+DIRECT (HMM_and_HMM_and_HMMObservationSequence_getCrossEntropy)
+	HMM m1 = 0, m2 = 0; HMMObservationSequence hmm_os = 0;
 	LOOP {
-		if (CLASS == classHMM_ObservationSequence) {
-			hmm_os = (HMM_ObservationSequence) OBJECT;
+		if (CLASS == classHMMObservationSequence) {
+			hmm_os = (HMMObservationSequence) OBJECT;
 		} else { (m1 ? m2 : m1) = (HMM) OBJECT; }
 	}
 	Melder_assert (m1 && m2 && hmm_os);
-	double ce = HMM_and_HMM_and_HMM_ObservationSequence_getCrossEntropy (m1, m2, hmm_os);
+	double ce = HMM_and_HMM_and_HMMObservationSequence_getCrossEntropy (m1, m2, hmm_os);
 	Melder_information (ce, U" (=symmetric cross-entropy between models)");
 END
 
-FORM (HMM_to_HMM_ObservationSequence, U"HMM: To HMM_ObservationSequence (generate observations)", U"HMM: To HMM_ObservationSequence...")
+FORM (HMM_to_HMMObservationSequence, U"HMM: To HMMObservationSequence (generate observations)", U"HMM: To HMMObservationSequence...")
 	INTEGER (U"Start state", U"0")
 	NATURAL (U"Number of observations", U"20")
 	OK
 DO
 	LOOP {
 		iam (HMM);
-		autoHMM_ObservationSequence thee = HMM_to_HMM_ObservationSequence (me, GET_INTEGER (U"Start state"), GET_INTEGER (U"Number of observations"));
+		autoHMMObservationSequence thee = HMM_to_HMMObservationSequence (me, GET_INTEGER (U"Start state"), GET_INTEGER (U"Number of observations"));
 		praat_new (thee.transfer(), my name);
 	}
 END
 
-DIRECT (HMM_and_HMM_StateSequence_getProbability)
+DIRECT (HMM_and_HMMStateSequence_getProbability)
 	HMM me = FIRST (HMM);
-	HMM_StateSequence hmm_ss = FIRST (HMM_StateSequence);
-	double lnp = HMM_and_HMM_StateSequence_getProbability (me, hmm_ss);
+	HMMStateSequence hmm_ss = FIRST (HMMStateSequence);
+	double lnp = HMM_and_HMMStateSequence_getProbability (me, hmm_ss);
 	Melder_information (lnp, U" (=ln(p), p = ", Melder_naturalLogarithm (lnp), U")");
 END
 
-DIRECT (HMM_and_HMM_ObservationSequence_getProbability)
+DIRECT (HMM_and_HMMObservationSequence_getProbability)
 	HMM me = FIRST (HMM);
-	HMM_ObservationSequence hmm_os = FIRST (HMM_ObservationSequence);
-	double lnp = HMM_and_HMM_ObservationSequence_getProbability (me, hmm_os);
+	HMMObservationSequence hmm_os = FIRST (HMMObservationSequence);
+	double lnp = HMM_and_HMMObservationSequence_getProbability (me, hmm_os);
 	Melder_information (lnp, U" (=ln(p), p = ", Melder_naturalLogarithm (lnp), U")");
 END
 
-DIRECT (HMM_and_HMM_ObservationSequence_getCrossEntropy)
+DIRECT (HMM_and_HMMObservationSequence_getCrossEntropy)
 	HMM me = FIRST (HMM);
-	HMM_ObservationSequence hmm_os = FIRST (HMM_ObservationSequence);
-	double ce = HMM_and_HMM_ObservationSequence_getCrossEntropy (me, hmm_os);
+	HMMObservationSequence hmm_os = FIRST (HMMObservationSequence);
+	double ce = HMM_and_HMMObservationSequence_getCrossEntropy (me, hmm_os);
 	Melder_information (ce, U" (= cross-entropy)");
 END
 
-DIRECT (HMM_and_HMM_ObservationSequence_getPerplexity)
+DIRECT (HMM_and_HMMObservationSequence_getPerplexity)
 	HMM me = FIRST (HMM);
-	HMM_ObservationSequence hmm_os = FIRST (HMM_ObservationSequence);
-	double py = HMM_and_HMM_ObservationSequence_getPerplexity (me, hmm_os);
+	HMMObservationSequence hmm_os = FIRST (HMMObservationSequence);
+	double py = HMM_and_HMMObservationSequence_getPerplexity (me, hmm_os);
 	Melder_information (py, U" (= perplexity)");
 END
 
-DIRECT (HMM_and_HMM_ObservationSequence_to_HMM_StateSequence)
+DIRECT (HMM_and_HMMObservationSequence_to_HMMStateSequence)
 	HMM me = FIRST (HMM);
-	HMM_ObservationSequence thee = FIRST (HMM_ObservationSequence);
-	autoHMM_StateSequence him = HMM_and_HMM_ObservationSequence_to_HMM_StateSequence (me, thee);
+	HMMObservationSequence thee = FIRST (HMMObservationSequence);
+	autoHMMStateSequence him = HMM_and_HMMObservationSequence_to_HMMStateSequence (me, thee);
 	praat_new (him.transfer(), my name, U"_", thy name, U"_states");
 END
 
-FORM (HMM_and_HMM_ObservationSequence_learn, U"HMM & HMM_ObservationSequence: Learn", U"HMM & HMM_ObservationSequences: Learn...")
+FORM (HMM_and_HMMObservationSequence_learn, U"HMM & HMMObservationSequence: Learn", U"HMM & HMMObservationSequences: Learn...")
 	POSITIVE (U"Relative precision in log(p)", U"0.001")
 	REAL (U"Minimum probability", U"0.00000000001")
+	BOOLEAN (U"Learning history in Info window", 0)
 	OK
 DO
 	double minProb = GET_REAL (U"Minimum probability");
 	REQUIRE (minProb >= 0 && minProb < 1, U"A probabilty must be >= 0 and < 1!")
-	autoHMM_ObservationSequences hmm_oss = HMM_ObservationSequences_create (); HMM hmm = 0;
+	autoHMMObservationSequences hmm_oss = HMMObservationSequences_create (); HMM hmm = 0;
 	Collection_dontOwnItems (hmm_oss.peek());
 	LOOP {
 		iam (Daata);
-		if (CLASS == classHMM_ObservationSequence) {
+		if (CLASS == classHMMObservationSequence) {
 			Collection_addItem (hmm_oss.peek(), me);
 		} else { hmm = (HMM) me; }
 	}
-	HMM_and_HMM_ObservationSequences_learn (hmm, hmm_oss.peek(), GET_REAL (U"Relative precision in log"), minProb);
+	HMM_and_HMMObservationSequences_learn (hmm, hmm_oss.peek(), GET_REAL (U"Relative precision in log"), minProb, GET_INTEGER (U"Learning history in Info window"));
 END
 
 FORM (HMM_setTransitionProbabilities, U"HMM: Set transition probabilities", U"HMM: Set transition probabilities...")
@@ -634,69 +643,69 @@ DIRECT (HMM_extractEmissionProbabilities)
 	}
 END
 
-FORM (HMM_ObservationSequence_to_TableOfReal, U"HMM_ObservationSequence: To TableOfReal ",
-      U"HMM_ObservationSequence: To TableOfReal (bigrams)...")
+FORM (HMMObservationSequence_to_TableOfReal, U"HMMObservationSequence: To TableOfReal ",
+      U"HMMObservationSequence: To TableOfReal (bigrams)...")
 	BOOLEAN (U"As probabilities", 1)
 	OK
 DO
 	LOOP {
-		iam (HMM_ObservationSequence);
-		autoTableOfReal thee = HMM_ObservationSequence_to_TableOfReal_transitions (me, GET_INTEGER (U"As probabilities"));
+		iam (HMMObservationSequence);
+		autoTableOfReal thee = HMMObservationSequence_to_TableOfReal_transitions (me, GET_INTEGER (U"As probabilities"));
 		praat_new (thee.transfer(), my name);
 	}
 END
 
-FORM (HMM_and_HMM_ObservationSequence_to_TableOfReal, U"HMM & HMM_ObservationSequence: To TableOfReal", U"HMM & HMM_ObservationSequence: To TableOfReal (bigrams)...")
+FORM (HMM_and_HMMObservationSequence_to_TableOfReal, U"HMM & HMMObservationSequence: To TableOfReal", U"HMM & HMMObservationSequence: To TableOfReal (bigrams)...")
 	BOOLEAN (U"As probabilities", 1)
 	OK
 DO
 	HMM me = FIRST (HMM);
-	HMM_ObservationSequence hmm_os = FIRST (HMM_ObservationSequence);
-	autoTableOfReal thee = HMM_and_HMM_ObservationSequence_to_TableOfReal_transitions (me, hmm_os,GET_INTEGER (U"As probabilities"));
+	HMMObservationSequence hmm_os = FIRST (HMMObservationSequence);
+	autoTableOfReal thee = HMM_and_HMMObservationSequence_to_TableOfReal_transitions (me, hmm_os,GET_INTEGER (U"As probabilities"));
 	praat_new (thee.transfer(), hmm_os -> name, U"_m");
 END
 
-FORM (HMM_and_HMM_StateSequence_to_TableOfReal, U"HMM & HMM_StateSequence: To TableOfReal", 0)
+FORM (HMM_and_HMMStateSequence_to_TableOfReal, U"HMM & HMMStateSequence: To TableOfReal", 0)
 	BOOLEAN (U"As probabilities", 1)
 	OK
 DO
 	HMM me = FIRST (HMM);
-	HMM_StateSequence hmm_ss = FIRST (HMM_StateSequence);
-	autoTableOfReal thee = HMM_and_HMM_StateSequence_to_TableOfReal_transitions (me, hmm_ss, GET_INTEGER (U"As probabilities"));
+	HMMStateSequence hmm_ss = FIRST (HMMStateSequence);
+	autoTableOfReal thee = HMM_and_HMMStateSequence_to_TableOfReal_transitions (me, hmm_ss, GET_INTEGER (U"As probabilities"));
 	praat_new (thee.transfer(), Thing_getName (hmm_ss), U"_m");
 END
 
-FORM (HMM_StateSequence_to_TableOfReal, U"HMM_StateSequence: To TableOfReal", 0)
+FORM (HMMStateSequence_to_TableOfReal, U"HMMStateSequence: To TableOfReal", 0)
 	BOOLEAN (U"As probabilities", 1)
 	OK
 DO
 	LOOP {
-		iam (HMM_StateSequence);
+		iam (HMMStateSequence);
 		autoTableOfReal thee = Strings_to_TableOfReal_transitions (me, GET_INTEGER (U"As probabilities"));
 		praat_new (thee.transfer(), my name);
 	}
 END
 
-DIRECT (HMM_ObservationSequence_to_Strings)
+DIRECT (HMMObservationSequence_to_Strings)
 	LOOP {
-		iam (HMM_ObservationSequence);
-		autoStrings thee = HMM_ObservationSequence_to_Strings (me);
+		iam (HMMObservationSequence);
+		autoStrings thee = HMMObservationSequence_to_Strings (me);
 		praat_new (thee.transfer(), my name);
 	}
 END
 
-DIRECT (Strings_to_HMM_ObservationSequence)
+DIRECT (Strings_to_HMMObservationSequence)
 	LOOP {
 		iam (Strings);
-		autoHMM_ObservationSequence thee = Strings_to_HMM_ObservationSequence (me);
+		autoHMMObservationSequence thee = Strings_to_HMMObservationSequence (me);
 		praat_new (thee.transfer(), my name);
 	}
 END
 
-DIRECT (HMM_StateSequence_to_Strings)
+DIRECT (HMMStateSequence_to_Strings)
 	LOOP {
-		iam (HMM_StateSequence);
-		autoStrings thee = HMM_StateSequence_to_Strings (me);
+		iam (HMMStateSequence);
+		autoStrings thee = HMMStateSequence_to_Strings (me);
 		praat_new (thee.transfer(), my name);
 	}
 END
@@ -773,23 +782,24 @@ DO
 	REQUIRE (lambda >= 0 && lambda < 1, U"Lambda must be in interval [0,1).")
 	REQUIRE (thy numberOfColumns == my dimension, U"The number of columns and the dimension of the model do not agree.");
 	REQUIRE (my numberOfComponents < thy numberOfRows / 2, U"Not enough data points.")
-	praat_new (GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM (me, thee,
+	autoGaussianMixture him = GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM (me, thee,
 		GET_INTEGER (U"Minimum number of components"), GET_REAL (U"Tolerance of minimizer"),
-		GET_INTEGER (U"Maximum number of iterations"), lambda, criterion), my name);
+		GET_INTEGER (U"Maximum number of iterations"), lambda, criterion);
+	praat_new (him.transfer(), my name);
 END
 
 DIRECT (GaussianMixture_and_TableOfReal_to_ClassificationTable)
 	GaussianMixture me = FIRST (GaussianMixture);
 	TableOfReal thee = FIRST (TableOfReal);
-	praat_new (GaussianMixture_and_TableOfReal_to_ClassificationTable (me, thee),
-		my name, U"_", thy name);
+	autoClassificationTable him = GaussianMixture_and_TableOfReal_to_ClassificationTable (me, thee);
+	praat_new (him.transfer(), my name, U"_", thy name);
 END
 
 DIRECT (GaussianMixture_and_TableOfReal_to_Correlation)
 	GaussianMixture me = FIRST (GaussianMixture);
 	TableOfReal thee = FIRST (TableOfReal);
-	praat_new (GaussianMixture_and_TableOfReal_to_Correlation (me, thee),
-		my name, U"_", thy name);
+	autoCorrelation him = GaussianMixture_and_TableOfReal_to_Correlation (me, thee);
+	praat_new (him.transfer(), my name, U"_", thy name);
 END
 
 FORM (GaussianMixture_and_TableOfReal_to_TableOfReal_BHEPNormalityTests, U"GaussianMixture & TableOfReal: To TableOfReal BHEP normality tests", U"GaussianMixture & TableOfReal: To TableOfReal (BHEP normality tests)...")
@@ -799,13 +809,13 @@ DO
 	GaussianMixture me = FIRST (GaussianMixture);
 	TableOfReal thee = FIRST (TableOfReal);
 	double h = GET_REAL (U"Smoothing parameter");
-	praat_new (GaussianMixture_and_TableOfReal_to_TableOfReal_BHEPNormalityTests (me, thee, h),
-		my name, U"_", thy name);
+	autoTableOfReal him = GaussianMixture_and_TableOfReal_to_TableOfReal_BHEPNormalityTests (me, thee, h);
+	praat_new (him.transfer(), my name, U"_", thy name);
 END
 
 void praat_HMM_init ();
 void praat_HMM_init () {
-	Thing_recognizeClassesByName (classHMM, classHMM_State, classHMM_Observation, classHMM_ObservationSequence, classHMM_StateSequence, classGaussianMixture, nullptr);
+	Thing_recognizeClassesByName (classHMM, classHMMState, classHMMObservation, classHMMObservationSequence, classHMMStateSequence, classGaussianMixture, nullptr);
 
 	praat_addMenuCommand (U"Objects", U"New", U"Markov models", 0, praat_HIDDEN, 0);
 	praat_addMenuCommand (U"Objects", U"New", U"Create HMM...", 0, praat_HIDDEN + praat_DEPTH_1, DO_HMM_create);
@@ -872,28 +882,28 @@ void praat_HMM_init () {
 	praat_addAction1 (classHMM, 0, U"Extract transition probabilities", 0, 1, DO_HMM_extractTransitionProbabilities);
 	praat_addAction1 (classHMM, 0, U"Extract emission probabilities", 0, 1, DO_HMM_extractEmissionProbabilities);
 
-	praat_addAction1 (classHMM, 0, U"To HMM_ObservationSequence...", 0, 0, DO_HMM_to_HMM_ObservationSequence);
-	praat_addAction2 (classHMM, 1, classHMM_StateSequence, 1, U"Draw trellis...", 0, 0, DO_HMM_and_HMM_StateSequence_drawTrellis);
-	praat_addAction2 (classHMM, 1, classHMM_StateSequence, 1, U"Get probability", 0, 0, DO_HMM_and_HMM_StateSequence_getProbability);
-	praat_addAction2 (classHMM, 1, classHMM_StateSequence, 1, U"To TableOfReal (bigrams)...", 0, 0, DO_HMM_and_HMM_StateSequence_to_TableOfReal);
-	praat_addAction2 (classHMM, 1, classHMM_ObservationSequence, 1, U"Get probability", 0, 0, DO_HMM_and_HMM_ObservationSequence_getProbability);
-	praat_addAction2 (classHMM, 1, classHMM_ObservationSequence, 1, U"Get cross-entropy", 0, 0, DO_HMM_and_HMM_ObservationSequence_getCrossEntropy);
-	praat_addAction2 (classHMM, 1, classHMM_ObservationSequence, 1, U"Get perplexity", 0, 0, DO_HMM_and_HMM_ObservationSequence_getPerplexity);
+	praat_addAction1 (classHMM, 0, U"To HMMObservationSequence...", 0, 0, DO_HMM_to_HMMObservationSequence);
+	praat_addAction2 (classHMM, 1, classHMMStateSequence, 1, U"Draw trellis...", 0, 0, DO_HMM_and_HMMStateSequence_drawTrellis);
+	praat_addAction2 (classHMM, 1, classHMMStateSequence, 1, U"Get probability", 0, 0, DO_HMM_and_HMMStateSequence_getProbability);
+	praat_addAction2 (classHMM, 1, classHMMStateSequence, 1, U"To TableOfReal (bigrams)...", 0, 0, DO_HMM_and_HMMStateSequence_to_TableOfReal);
+	praat_addAction2 (classHMM, 1, classHMMObservationSequence, 1, U"Get probability", 0, 0, DO_HMM_and_HMMObservationSequence_getProbability);
+	praat_addAction2 (classHMM, 1, classHMMObservationSequence, 1, U"Get cross-entropy", 0, 0, DO_HMM_and_HMMObservationSequence_getCrossEntropy);
+	praat_addAction2 (classHMM, 1, classHMMObservationSequence, 1, U"Get perplexity", 0, 0, DO_HMM_and_HMMObservationSequence_getPerplexity);
 
 
-	praat_addAction2 (classHMM, 1, classHMM_ObservationSequence, 1, U"To HMM_StateSequence", 0, 0, DO_HMM_and_HMM_ObservationSequence_to_HMM_StateSequence);
-	praat_addAction2 (classHMM, 2, classHMM_ObservationSequence, 1, U"Get cross-entropy", 0, 0, DO_HMM_and_HMM_and_HMM_ObservationSequence_getCrossEntropy);
-	praat_addAction2 (classHMM, 1, classHMM_ObservationSequence, 1, U"To TableOfReal (bigrams)...", 0, 0, DO_HMM_and_HMM_ObservationSequence_to_TableOfReal);
-	praat_addAction2 (classHMM, 1, classHMM_ObservationSequence, 0, U"Learn...", 0, 0, DO_HMM_and_HMM_ObservationSequence_learn);
+	praat_addAction2 (classHMM, 1, classHMMObservationSequence, 1, U"To HMMStateSequence", 0, 0, DO_HMM_and_HMMObservationSequence_to_HMMStateSequence);
+	praat_addAction2 (classHMM, 2, classHMMObservationSequence, 1, U"Get cross-entropy", 0, 0, DO_HMM_and_HMM_and_HMMObservationSequence_getCrossEntropy);
+	praat_addAction2 (classHMM, 1, classHMMObservationSequence, 1, U"To TableOfReal (bigrams)...", 0, 0, DO_HMM_and_HMMObservationSequence_to_TableOfReal);
+	praat_addAction2 (classHMM, 1, classHMMObservationSequence, 0, U"Learn...", 0, 0, DO_HMM_and_HMMObservationSequence_learn);
 
-	praat_addAction1 (classHMM_ObservationSequence, 0, U"To TableOfReal (bigrams)...", 0, 0, DO_HMM_ObservationSequence_to_TableOfReal);
-	praat_addAction1 (classHMM_ObservationSequence, 0, U"To Strings", 0, 0, DO_HMM_ObservationSequence_to_Strings);
-	praat_addAction1 (classHMM_StateSequence, 0, U"To TableOfReal (bigrams)...", 0, 0, DO_HMM_StateSequence_to_TableOfReal);
-	praat_addAction1 (classHMM_StateSequence, 0, U"To Strings", 0, 0, DO_HMM_StateSequence_to_Strings);
+	praat_addAction1 (classHMMObservationSequence, 0, U"To TableOfReal (bigrams)...", 0, 0, DO_HMMObservationSequence_to_TableOfReal);
+	praat_addAction1 (classHMMObservationSequence, 0, U"To Strings", 0, 0, DO_HMMObservationSequence_to_Strings);
+	praat_addAction1 (classHMMStateSequence, 0, U"To TableOfReal (bigrams)...", 0, 0, DO_HMMStateSequence_to_TableOfReal);
+	praat_addAction1 (classHMMStateSequence, 0, U"To Strings", 0, 0, DO_HMMStateSequence_to_Strings);
 
-	praat_addAction1 (classHMM_ObservationSequence, 0, U"To HMM...", 0, 1, DO_HMM_ObservationSequence_to_HMM);
+	praat_addAction1 (classHMMObservationSequence, 0, U"To HMM...", 0, 1, DO_HMMObservationSequence_to_HMM);
 
-	praat_addAction1 (classStrings, 0, U"To HMM_ObservationSequence", 0, praat_HIDDEN, DO_Strings_to_HMM_ObservationSequence);
+	praat_addAction1 (classStrings, 0, U"To HMMObservationSequence", 0, praat_HIDDEN, DO_Strings_to_HMMObservationSequence);
 	praat_addAction1 (classTableOfReal, 0, U"To GaussianMixture (row labels)...", U"To Covariance", praat_HIDDEN + praat_DEPTH_1, DO_TableOfReal_to_GaussianMixture_fromRowlabels);
 	praat_addAction1 (classTableOfReal, 0, U"To GaussianMixture...", U"To Covariance", praat_HIDDEN + praat_DEPTH_1, DO_TableOfReal_to_GaussianMixture);
 

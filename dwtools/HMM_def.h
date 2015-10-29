@@ -1,6 +1,6 @@
 /* HMM_def.h
  *
- * Copyright (C) 2010-2011 David Weenink
+ * Copyright (C) 2010-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,22 +23,22 @@
  */
 
 
-#define ooSTRUCT HMM_State
-oo_DEFINE_CLASS (HMM_State, Daata)
+#define ooSTRUCT HMMState
+oo_DEFINE_CLASS (HMMState, Daata)
 
 	oo_STRING(label)
 
-oo_END_CLASS(HMM_State)
+oo_END_CLASS(HMMState)
 #undef ooSTRUCT
 
 
-#define ooSTRUCT HMM_Observation
-oo_DEFINE_CLASS (HMM_Observation, Daata)
+#define ooSTRUCT HMMObservation
+oo_DEFINE_CLASS (HMMObservation, Daata)
 
 	oo_STRING(label)
-	oo_OBJECT (GaussianMixture, 1, gm)
+	oo_AUTO_OBJECT (GaussianMixture, 1, gm)
 
-oo_END_CLASS(HMM_Observation)
+oo_END_CLASS(HMMObservation)
 #undef ooSTRUCT
 
 
@@ -66,15 +66,15 @@ oo_END_CLASS(HMM)
 #undef ooSTRUCT
 
 
-#define ooSTRUCT HMM_Viterbi
-oo_DEFINE_CLASS (HMM_Viterbi, Daata)
+#define ooSTRUCT HMMViterbi
+oo_DEFINE_CLASS (HMMViterbi, Daata)
 	oo_LONG (numberOfTimes)
 	oo_LONG (numberOfStates)
 	oo_DOUBLE (prob)
 	oo_DOUBLE_MATRIX (viterbi, numberOfStates, numberOfTimes)
 	oo_LONG_MATRIX (bp, numberOfStates, numberOfTimes)
 	oo_LONG_VECTOR (path, numberOfTimes)
-oo_END_CLASS(HMM_Viterbi)
+oo_END_CLASS(HMMViterbi)
 #undef ooSTRUCT
 
 
