@@ -1051,13 +1051,16 @@ static bool tryToAttachToTheCommandLine ()
 		} else {   // Praat was called from Windows Explorer, typically by double-clicking or dropping a file
 			DWORD err = GetLastError ();
 			if (err == ERROR_ACCESS_DENIED) {
+				printf ("Apparently Praat has been called as a console application.\n"
+					"Did you compile it without the -mwindows flag?\n");
 				Melder_fatal (U"Apparently Praat has been called as a console application.\n"
 					"Did you compile it without the -mwindows flag?");
 			} else if (err == ERROR_INVALID_HANDLE) {
-				(void) 0;   // probably the normal case: the parent process is Windows Explorer or so, which doesn't have a console
+				(void) 0;   // a normal case: the parent process is Windows Explorer or so, which doesn't have a console (Windows XP, 10?)
 			} else if (err == ERROR_GEN_FAILURE) {
-				Melder_fatal (U"Apparently Praat was started without a parent process?");
+				(void) 0;   // another normal case: there is no parent process (Windows 7)?
 			} else {
+				printf ("AttachConsole() returned unknown error %d\n", (int) err);
 				Melder_fatal (U"AttachConsole() returned unknown error ", err);
 			}
 		}
