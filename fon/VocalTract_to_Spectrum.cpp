@@ -115,7 +115,7 @@ static void TUBE_transfer (double area [], int numberOfSections, double sectionL
 	}
 }
 
-Spectrum VocalTract_to_Spectrum
+autoSpectrum VocalTract_to_Spectrum
 	(VocalTract me, long numberOfFrequencies, double maximumFrequency,
 	 double glottalDamping, int hasRadiationDamping, int hasInternalDamping)
 {
@@ -129,7 +129,7 @@ Spectrum VocalTract_to_Spectrum
 			thy z [1] [ifreq] *= 0.02;
 			thy z [2] [ifreq] *= 0.02;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Spectrum.");
 	}

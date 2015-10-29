@@ -52,18 +52,18 @@
 
 Thing_implement (SpellingChecker, Daata, 0);
 
-SpellingChecker WordList_upto_SpellingChecker (WordList me) {
+autoSpellingChecker WordList_upto_SpellingChecker (WordList me) {
 	try {
 		autoSpellingChecker thee = Thing_new (SpellingChecker);
 		thy wordList = Data_copy (me);
 		thy separatingCharacters = Melder_dup (U".,;:()\"");
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to SpellingChecker.");
 	}
 }
 
-WordList SpellingChecker_extractWordList (SpellingChecker me) {
+autoWordList SpellingChecker_extractWordList (SpellingChecker me) {
 	return Data_copy (my wordList);
 }
 
@@ -83,7 +83,7 @@ void SpellingChecker_replaceWordList (SpellingChecker me, WordList list) {
 	}
 }
 
-SortedSetOfString SpellingChecker_extractUserDictionary (SpellingChecker me) {
+autoSortedSetOfString SpellingChecker_extractUserDictionary (SpellingChecker me) {
 	try {
 		if (! my userDictionary)
 			Melder_throw (U"This spelling checker does not contain a user dictionary.");

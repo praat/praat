@@ -98,26 +98,26 @@ autoSound Sound_createSimple (long numberOfChannels, double duration, double sam
 		thy z [i] [1..nx] == 0.0;
 */
 
-Sound Sound_convertToMono (Sound me);
-Sound Sound_convertToStereo (Sound me);
-Sound Sound_extractChannel (Sound me, long ichannel);
-Sound Sounds_combineToStereo (Collection me);
+autoSound Sound_convertToMono (Sound me);
+autoSound Sound_convertToStereo (Sound me);
+autoSound Sound_extractChannel (Sound me, long ichannel);
+autoSound Sounds_combineToStereo (Collection me);
 
 /* Levels for Sampled_getValueAtSample (me, index, level, unit) */
 #define Sound_LEVEL_MONO  0
 #define Sound_LEVEL_LEFT  1
 #define Sound_LEVEL_RIGHT  2
 
-Sound Sound_upsample (Sound me);   /* By a factor 2. */
+autoSound Sound_upsample (Sound me);   /* By a factor 2. */
 
-Sound Sound_resample (Sound me, double samplingFrequency, long precision);
+autoSound Sound_resample (Sound me, double samplingFrequency, long precision);
 /*
 	Method:
 		precision <= 1: linear interpolation.
 		precision >= 2: sinx/x interpolation with maximum depth equal to 'precision'.
 */
 
-Sound Sounds_append (Sound me, double silenceDuration, Sound thee);
+autoSound Sounds_append (Sound me, double silenceDuration, Sound thee);
 /*
 	Function:
 		append two Sounds.
@@ -135,7 +135,7 @@ Sound Sounds_append (Sound me, double silenceDuration, Sound thee);
 		result -> z [1] [i + my nx + round (silenceDuration / my dx)] == thy z [1] [i]
 */
  
-Sound Sounds_convolve (Sound me, Sound thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
+autoSound Sounds_convolve (Sound me, Sound thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
 /*
 	Function:
 		convolve two Sounds.
@@ -151,9 +151,9 @@ Sound Sounds_convolve (Sound me, Sound thee, enum kSounds_convolve_scaling scali
 			result -> z [1] [i] == result -> dx *
 				sum (j = 1..i, my z [1] [j] * thy z [1] [i - j + 1])
 */
-Sound Sounds_crossCorrelate (Sound me, Sound thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
-Sound Sounds_crossCorrelate_short (Sound me, Sound thee, double tmin, double tmax, int normalize);
-Sound Sound_autoCorrelate (Sound me, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
+autoSound Sounds_crossCorrelate (Sound me, Sound thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
+autoSound Sounds_crossCorrelate_short (Sound me, Sound thee, double tmin, double tmax, int normalize);
+autoSound Sound_autoCorrelate (Sound me, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
 
 double Sound_getRootMeanSquare (Sound me, double xmin, double xmax);
 double Sound_getEnergy (Sound me, double xmin, double xmax);
@@ -165,27 +165,27 @@ double Sound_getIntensity_dB (Sound me);
 double Sound_getNearestZeroCrossing (Sound me, double position, long ichannel);
 void Sound_setZero (Sound me, double tmin, double tmax, int roundTimesToNearestZeroCrossing);
 
-Sound Sound_createAsPureTone (long numberOfChannels, double startingTime, double endTime,
+autoSound Sound_createAsPureTone (long numberOfChannels, double startingTime, double endTime,
 	double sampleRate, double frequency, double amplitude, double fadeInDuration, double fadeOutDuration);
-Sound Sound_createFromToneComplex (double startingTime, double endTime,
+autoSound Sound_createFromToneComplex (double startingTime, double endTime,
 	double sampleRate, int phase, double frequencyStep,
 	double firstFrequency, double ceiling, long numberOfComponents);
 /* Values for `phase' parameter: */
 #define Sound_TONE_COMPLEX_SINE  0
 #define Sound_TONE_COMPLEX_COSINE  1
 
-Sound Sounds_concatenate_e (Collection me, double overlapTime);
+autoSound Sounds_concatenate_e (Collection me, double overlapTime);
 void Sound_multiplyByWindow (Sound me, enum kSound_windowShape windowShape);
 void Sound_scaleIntensity (Sound me, double newAverageIntensity);
 void Sound_overrideSamplingFrequency (Sound me, double newSamplingFrequency);
-Sound Sound_extractPart (Sound me, double t1, double t2, enum kSound_windowShape windowShape, double relativeWidth, bool preserveTimes);
-Sound Sound_extractPartForOverlap (Sound me, double t1, double t2, double overlap);
+autoSound Sound_extractPart (Sound me, double t1, double t2, enum kSound_windowShape windowShape, double relativeWidth, bool preserveTimes);
+autoSound Sound_extractPartForOverlap (Sound me, double t1, double t2, double overlap);
 void Sound_filterWithFormants (Sound me, double tmin, double tmax,
 	int numberOfFormants, double formant [], double bandwidth []);
-Sound Sound_filter_oneFormant (Sound me, double frequency, double bandwidth);
+autoSound Sound_filter_oneFormant (Sound me, double frequency, double bandwidth);
 void Sound_filterWithOneFormantInline (Sound me, double frequency, double bandwidth);
-Sound Sound_filter_preemphasis (Sound me, double frequency);
-Sound Sound_filter_deemphasis (Sound me, double frequency);
+autoSound Sound_filter_preemphasis (Sound me, double frequency);
+autoSound Sound_filter_deemphasis (Sound me, double frequency);
 
 void Sound_reverse (Sound me, double tmin, double tmax);
 
@@ -193,15 +193,15 @@ void Sound_draw (Sound me, Graphics g,
 	double tmin, double tmax, double minimum, double maximum, bool garnish, const char32 *method);
 /* For method, see Vector_draw. */
 
-Matrix Sound_to_Matrix (Sound me);
+autoMatrix Sound_to_Matrix (Sound me);
 /*
 	Create a Matrix from a Sound,
 	with deep copy of all its Matrix attributes, except class information and methods.
 */
 
-Sound Matrix_to_Sound (Matrix me);
+autoSound Matrix_to_Sound (Matrix me);
 
-Sound Matrix_to_Sound_mono (Matrix me, long row);
+autoSound Matrix_to_Sound_mono (Matrix me, long row);
 /*
 	Function:
 		create a Sound from one row of a Matrix.
@@ -222,7 +222,7 @@ extern Sound Sound_clipboard;
 
 /********** Sound_audio.cpp **********/
 
-Sound Sound_recordFixedTime (int inputSource,
+autoSound Sound_recordFixedTime (int inputSource,
 	double gain, double balance, double samplingFrequency, double duration);
 	/*
 		Function:
@@ -303,17 +303,17 @@ void Sound_play (Sound me,
 /* To avoid clipping, keep the absolute amplitude below 1.000. */
 /* All are mono or stereo PCM. */
 void Sound_writeToAudioFile (Sound me, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint);
-void Sound_writeToKayFile (Sound me, MelderFile file);   /* 16 bit */
-void Sound_writeToSesamFile (Sound me, MelderFile file);   /* 12-bit SESAM/LVS */
+void Sound_writeToKayFile (Sound me, MelderFile file);   // 16-bit
+void Sound_writeToSesamFile (Sound me, MelderFile file);   // 12-bit SESAM/LVS
 
-Sound Sound_readFromSoundFile (MelderFile file);   /* AIFF, WAV, NeXT/Sun, or NIST */
-Sound Sound_readFromKayFile (MelderFile file);   /* 16 bit */
-Sound Sound_readFromSesamFile (MelderFile file);   /* 12 bit SESAM/LVS */
-Sound Sound_readFromBellLabsFile (MelderFile file);   /* 16 bit */
-Sound Sound_readFromRawAlawFile (MelderFile file);
-Sound Sound_readFromMovieFile (MelderFile file);
+autoSound Sound_readFromSoundFile (MelderFile file);   // AIFF, WAV, NeXT/Sun, or NIST
+autoSound Sound_readFromKayFile (MelderFile file);   // 16-bit
+autoSound Sound_readFromSesamFile (MelderFile file);   // 12-bit SESAM/LVS
+autoSound Sound_readFromBellLabsFile (MelderFile file);   // 16-bit
+autoSound Sound_readFromRawAlawFile (MelderFile file);
+autoSound Sound_readFromMovieFile (MelderFile file);
 
-Sound Sound_readFromRawSoundFile (MelderFile file, int encoding, int numberOfChannels, double sampleRate);
+autoSound Sound_readFromRawSoundFile (MelderFile file, int encoding, int numberOfChannels, double sampleRate);
 /*
 	'encoding' is any of the following:
 		Melder_LINEAR_8_SIGNED
@@ -337,8 +337,8 @@ void Sound_writeToRawSoundFile (Sound me, MelderFile file, int encoding);
 
 /********** Sound_enhance.cpp **********/
 
-Sound Sound_lengthen_overlapAdd (Sound me, double fmin, double fmax, double factor);
-Sound Sound_deepenBandModulation (Sound me, double enhancement_dB,
+autoSound Sound_lengthen_overlapAdd (Sound me, double fmin, double fmax, double factor);
+autoSound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 	double flow, double fhigh, double slowModulation, double fastModulation, double bandSmoothing);
 
 /* End of file Sound.h */

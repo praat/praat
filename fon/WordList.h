@@ -24,8 +24,8 @@
 #include "WordList_def.h"
 oo_CLASS_CREATE (WordList, Daata);
 
-WordList Strings_to_WordList (Strings me);
-Strings WordList_to_Strings (WordList me);
+autoWordList Strings_to_WordList (Strings me);
+autoStrings WordList_to_Strings (WordList me);
 
 bool WordList_hasWord (WordList me, const char32 *word);
 

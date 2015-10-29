@@ -26,16 +26,16 @@
 oo_CLASS_CREATE (Transition, Daata);
 
 void Transition_init (Transition me, long numberOfStates);
-Transition Transition_create (long numberOfStates);
+autoTransition Transition_create (long numberOfStates);
 
 void Transition_formula (Transition me, const char32 *formula);
 void Transition_drawAsNumbers (Transition me, Graphics g, int iformat, int precision);
 
 void Transition_eigen (Transition me, Matrix *eigenvectors, Matrix *eigenvalues);
-Transition Transition_power (Transition me, long power);
+autoTransition Transition_power (Transition me, long power);
 
-Matrix Transition_to_Matrix (Transition me);
-Transition Matrix_to_Transition (Matrix me);
+autoMatrix Transition_to_Matrix (Transition me);
+autoTransition Matrix_to_Transition (Matrix me);
 
 /* End of file Transition.h */
 #endif

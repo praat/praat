@@ -21,7 +21,7 @@
 #include "Intensity.h"
 #include "IntensityTier.h"
 
-Intensity Sound_to_Intensity (Sound me, double minimumPitch, double timeStep, int subtractMean);
+autoIntensity Sound_to_Intensity (Sound me, double minimumPitch, double timeStep, int subtractMean);
 /*
 	Function:
 		smooth away the periodic part of a signal,

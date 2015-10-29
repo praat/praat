@@ -24,7 +24,7 @@
 
 #include "Sound_PointProcess.h"
 
-Sound Sound_PointProcess_to_SoundEnsemble_correlate (Sound me, PointProcess thee, double fromLag, double toLag) {
+autoSound Sound_PointProcess_to_SoundEnsemble_correlate (Sound me, PointProcess thee, double fromLag, double toLag) {
 	try {
 		if (my ny > 1)
 			Melder_throw (U"Sound has to be mono.");
@@ -48,7 +48,7 @@ Sound Sound_PointProcess_to_SoundEnsemble_correlate (Sound me, PointProcess thee
 				his z [ipoint] [isample] = jsample < 1 || jsample > my nx ? 0.0 : my z [1] [jsample];
 			}
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U": Sound ensemble not created.");
 	}

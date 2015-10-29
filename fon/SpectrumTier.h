@@ -34,7 +34,7 @@ Thing_define (SpectrumTier, RealTier) {
 		override { return U"Frequency (Hz)"; }
 };
 
-SpectrumTier SpectrumTier_create (double fmin, double fmax);
+autoSpectrumTier SpectrumTier_create (double fmin, double fmax);
 /*
 	Postconditions:
 		result -> xmin == fmin;
@@ -47,9 +47,9 @@ void SpectrumTier_draw (SpectrumTier me, Graphics g, double fmin, double fmax,
 
 void SpectrumTier_list (SpectrumTier me, bool includeIndexes, bool includeFrequency, bool includePowerDensity);
 
-Table SpectrumTier_downto_Table (SpectrumTier me, bool includeIndexes, bool includeFrequency, bool includePowerDensity);
+autoTable SpectrumTier_downto_Table (SpectrumTier me, bool includeIndexes, bool includeFrequency, bool includePowerDensity);
 
-SpectrumTier Spectrum_to_SpectrumTier_peaks (Spectrum me);
+autoSpectrumTier Spectrum_to_SpectrumTier_peaks (Spectrum me);
 
 /* End of file SpectrumTier.h */
 #endif

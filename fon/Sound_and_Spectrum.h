@@ -21,15 +21,15 @@
 #include "Spectrum.h"
 #include "Interpreter_decl.h"
 
-Spectrum Sound_to_Spectrum_at (Sound me, double tim, double windowDuration, int windowType);
+autoSpectrum Sound_to_Spectrum_at (Sound me, double tim, double windowDuration, int windowType);
 
-Spectrum Sound_to_Spectrum (Sound me, int fast);
-Sound Spectrum_to_Sound (Spectrum me);
+autoSpectrum Sound_to_Spectrum (Sound me, int fast);
+autoSound Spectrum_to_Sound (Spectrum me);
 
-Spectrum Spectrum_lpcSmoothing (Spectrum me, int numberOfPeaks, double preemphasisFrequency);
+autoSpectrum Spectrum_lpcSmoothing (Spectrum me, int numberOfPeaks, double preemphasisFrequency);
 
-Sound Sound_filter_passHannBand (Sound me, double fmin, double fmax, double smooth);
-Sound Sound_filter_stopHannBand (Sound me, double fmin, double fmax, double smooth);
-Sound Sound_filter_formula (Sound me, const char32 *formula, Interpreter interpreter);
+autoSound Sound_filter_passHannBand (Sound me, double fmin, double fmax, double smooth);
+autoSound Sound_filter_stopHannBand (Sound me, double fmin, double fmax, double smooth);
+autoSound Sound_filter_formula (Sound me, const char32 *formula, Interpreter interpreter);
 
 /* End of file Sound_and_Spectrum.h */

@@ -66,7 +66,7 @@ static void Sound_alawDecode (Sound me) {
 #include <time.h>
 #include "Sound.h"
 
-Sound Sound_readFromSoundFile (MelderFile file) {
+autoSound Sound_readFromSoundFile (MelderFile file) {
 	try {
 		autoMelderFile mfile = MelderFile_open (file);
 		int numberOfChannels, encoding;
@@ -85,13 +85,13 @@ Sound Sound_readFromSoundFile (MelderFile file) {
 			Melder_throw (U"Cannot unshorten. Write to paul.boersma@uva.nl for more information.");
 		Melder_readAudioToFloat (file -> filePointer, numberOfChannels, encoding, my z, numberOfSamples);
 		mfile.close ();
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not read from sound file ", file, U".");
 	}
 }
 
-Sound Sound_readFromSesamFile (MelderFile file) {
+autoSound Sound_readFromSesamFile (MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "rb");
 		int32_t header [1 + 128];
@@ -116,13 +116,13 @@ Sound Sound_readFromSesamFile (MelderFile file) {
 			my z [1] [i] = (double) bingeti2LE (f) * (1.0 / 2048);   // 12 bits
 		}
 		f.close (file);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not read from Sesam file ", file, U".");
 	}
 }
 
-Sound Sound_readFromBellLabsFile (MelderFile file) {
+autoSound Sound_readFromBellLabsFile (MelderFile file) {
 	try {
 		/*
 		 * Check existence and permissions of file.
@@ -181,7 +181,7 @@ Sound Sound_readFromBellLabsFile (MelderFile file) {
 			my z [1] [i] = (double) bingeti2 (f) * (1.0 / 32768);   // 16-bits big-endian
 
 		f.close (file);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not read from Bell Labs sound file ", file, U".");
 	}
@@ -191,7 +191,7 @@ static void readError () {
 	Melder_throw (U"Error reading bytes from file.");
 }
 
-Sound Sound_readFromKayFile (MelderFile file) {
+autoSound Sound_readFromKayFile (MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "rb");
 
@@ -244,13 +244,13 @@ Sound Sound_readFromKayFile (MelderFile file) {
 			}
 		}
 		f.close (file);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not read from Kay file ", file, U".");
 	}
 }
 
-Sound Sound_readFromRawAlawFile (MelderFile file) {
+autoSound Sound_readFromRawAlawFile (MelderFile file) {
 	try {
 		double sampleRate = 8000.0;
 		autofile f = Melder_fopen (file, "rb");
@@ -260,7 +260,7 @@ Sound Sound_readFromRawAlawFile (MelderFile file) {
 		autoSound me = Sound_createSimple (1, numberOfSamples / sampleRate, sampleRate); 
 		Melder_readAudioToFloat (f, 1, Melder_ALAW, my z, numberOfSamples);
 		f.close (file);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not read from raw A-law file ", file, U".");
 	}

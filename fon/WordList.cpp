@@ -133,7 +133,7 @@ void structWordList :: v_writeBinary (FILE *f) {
 	}
 }
 
-WordList Strings_to_WordList (Strings me) {
+autoWordList Strings_to_WordList (Strings me) {
 	try {
 		long totalLength = 0;
 		/*
@@ -165,13 +165,13 @@ WordList Strings_to_WordList (Strings me) {
 		}
 		*q = U'\0';
 		Melder_assert (q - thy string == thy length);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to WordList.");
 	}
 }
 
-Strings WordList_to_Strings (WordList me) {
+autoStrings WordList_to_Strings (WordList me) {
 	try {
 		unsigned char *word = (unsigned char *) my string;   // BUG: explain this
 		autoStrings thee = Thing_new (Strings);
@@ -188,7 +188,7 @@ Strings WordList_to_Strings (WordList me) {
 			thy strings [i] [length] = U'\0';
 			word += length + 1;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Strings.");
 	}

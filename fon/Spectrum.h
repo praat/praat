@@ -2,7 +2,7 @@
 #define _Spectrum_h_
 /* Spectrum.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ oo_CLASS_CREATE (Spectrum, Matrix);
 	dy = 1; y1 = 1  // y is row number
 */
 
-Spectrum Spectrum_create (double fmax, long nf);
+autoSpectrum Spectrum_create (double fmax, long nf);
 /* Preconditions:
 		fmax > 0.0;
 		nf >= 2;
@@ -89,16 +89,16 @@ void Spectrum_draw (Spectrum me, Graphics g, double fmin, double fmax, double mi
 */
 void Spectrum_drawLogFreq (Spectrum me, Graphics g, double fmin, double fmax, double minimum, double maximum, int garnish);
 
-Table Spectrum_downto_Table (Spectrum me, bool includeBinNumbers, bool includeFrequency,
+autoTable Spectrum_downto_Table (Spectrum me, bool includeBinNumbers, bool includeFrequency,
 	bool includeRealPart, bool includeImaginaryPart, bool includeEnergyDensity, bool includePowerDensity);
 void Spectrum_list (Spectrum me, bool includeBinNumbers, bool includeFrequency,
 	bool includeRealPart, bool includeImaginaryPart, bool includeEnergyDensity, bool includePowerDensity);
 
-Spectrum Matrix_to_Spectrum (Matrix me);
+autoSpectrum Matrix_to_Spectrum (Matrix me);
 
-Matrix Spectrum_to_Matrix (Spectrum me);
+autoMatrix Spectrum_to_Matrix (Spectrum me);
 
-Spectrum Spectrum_cepstralSmoothing (Spectrum me, double bandWidth);
+autoSpectrum Spectrum_cepstralSmoothing (Spectrum me, double bandWidth);
 
 void Spectrum_passHannBand (Spectrum me, double fmin, double fmax, double smooth);
 void Spectrum_stopHannBand (Spectrum me, double fmin, double fmax, double smooth);

@@ -53,7 +53,7 @@ static void bandFilter (Spectrum me, double fmid, double bandwidth) {
 	}
 }
 
-Matrix Sound_to_Harmonicity_GNE (Sound me,
+autoMatrix Sound_to_Harmonicity_GNE (Sound me,
 	double fmin,   /* 500 Hz */
 	double fmax,   /* 4500 Hz */
 	double bandwidth,  /* 1000 Hz */
@@ -161,7 +161,7 @@ Matrix Sound_to_Harmonicity_GNE (Sound me,
 			}
 		}
 
-		return cc.transfer();
+		return cc;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Harmonicity (GNE).");
 	}

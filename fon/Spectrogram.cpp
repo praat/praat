@@ -41,13 +41,13 @@ void structSpectrogram :: v_info () {
 	MelderInfo_writeLine (U"   First frequency band around (bin centre at): ", y1, U" Hz");
 }
 
-Spectrogram Spectrogram_create (double tmin, double tmax, long nt, double dt, double t1,
+autoSpectrogram Spectrogram_create (double tmin, double tmax, long nt, double dt, double t1,
 	double fmin, double fmax, long nf, double df, double f1)
 {
 	try {
 		autoSpectrogram me = Thing_new (Spectrogram);
 		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Spectrogram not created.");
 	}
@@ -120,21 +120,21 @@ void Spectrogram_paint (Spectrogram me, Graphics g,
 	}
 }
 
-Spectrogram Matrix_to_Spectrogram (Matrix me) {
+autoSpectrogram Matrix_to_Spectrogram (Matrix me) {
 	try {
 		autoSpectrogram thee = Spectrogram_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
 		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Spectrogram.");
 	}
 }
 
-Matrix Spectrogram_to_Matrix (Spectrogram me) {
+autoMatrix Spectrogram_to_Matrix (Spectrogram me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
 		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
 	}
