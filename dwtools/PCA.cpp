@@ -214,8 +214,7 @@ Configuration PCA_and_TableOfReal_to_Configuration (PCA me, thou, long numberOfD
 		}
 
 		autoConfiguration him = Configuration_create (thy numberOfRows, numberOfDimensions);
-		Configuration thim = him.peek();
-		Eigen_and_TableOfReal_project_into (me, thee, 1, thy numberOfColumns, & thim, 1, numberOfDimensions);
+		Eigen_and_TableOfReal_project_into (me, thee, 1, thy numberOfColumns, him.peek(), 1, numberOfDimensions);
 		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows);
 		TableOfReal_setSequentialColumnLabels (him.peek(), 0, 0, U"pc", 1, 1);
 		return him.transfer();

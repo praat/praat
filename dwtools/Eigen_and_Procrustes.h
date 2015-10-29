@@ -2,7 +2,7 @@
 #define _Eigen_and_Procrustes_h_
 
 /* Eigen_and_Procrustes.h
- * Copyright (C) 2004-2011 David Weenink
+ * Copyright (C) 2004-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,6 @@
 #include "Eigen.h"
 #include "Procrustes.h"
 
-Procrustes Eigens_to_Procrustes (I, thou, long evec_from, long evec_to);
+autoProcrustes Eigens_to_Procrustes (Eigen me, Eigen thee, long evec_from, long evec_to);
 
 #endif /* _Eigen_and_Procrustes_h_ */

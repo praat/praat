@@ -1,6 +1,6 @@
 /* Eigen_and_Matrix.cpp
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,42 +24,40 @@
 
 #include "Eigen_and_Matrix.h"
 
-Matrix Eigen_and_Matrix_project (Eigen me, Matrix thee, long numberOfComponents) {
+autoMatrix Eigen_and_Matrix_project (Eigen me, Matrix thee, long numberOfComponents) {
 	try {
 		if (numberOfComponents == 0) {
 			numberOfComponents = my numberOfEigenvalues;
 		}
-
-		autoMatrix him = Matrix_create (thy xmin, thy xmax, thy nx, thy dx, thy x1, 0.5, 0.5 +
-		                                numberOfComponents, numberOfComponents, 1, 1);
-		Matrix thim = him.peek();
-		Eigen_and_Matrix_project_into (me, thee, &thim);
-		return him.transfer();
+		autoMatrix him = Matrix_create (thy xmin, thy xmax, thy nx, thy dx, thy x1, 0.5, 0.5 + numberOfComponents, numberOfComponents, 1, 1);
+		Eigen_and_Matrix_project_into (me, thee, & him);
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"Projection Matrix not created.");
 	}
 }
 
-void Eigen_and_Matrix_project_into (Eigen me, Matrix thee, Matrix *pointer_to_him) {
-	Matrix him = *pointer_to_him;
+void Eigen_and_Matrix_project_into (Eigen me, Matrix thee, autoMatrix *him) {
 
-	if (my dimension != thy ny) Melder_throw
-		(U"The number of rows in the 'from' Matrix must equal the dimension of the eigenvector.");
-	if (his nx != thy nx) {
+	if (my dimension != thy ny) {
+		Melder_throw (U"The number of rows in the 'from' Matrix must equal the dimension of the eigenvector.");
+	}
+	if ((*him)-> nx != thy nx) {
 		Melder_throw (U"The number of columns in the Matrixes must be equal.");
 	}
-	if (his ny > my numberOfEigenvalues) Melder_throw
-		(U"The number of rows in the 'to' Matrix cannot exceed the number of eigenvectors.");
+	if ((*him) ->  ny > my numberOfEigenvalues) {
+		Melder_throw (U"The number of rows in the 'to' Matrix cannot exceed the number of eigenvectors.");
+	}
 
 	for (long i = 1; i <= thy nx; i++) {
-		for (long j = 1; j <= his ny; j++) {
+		for (long j = 1; j <= (*him) -> ny; j++) {
 			double r = 0;
 			for (long k = 1; k <= my dimension; k++) {
 				// eigenvector in row, data in column
 
 				r += my eigenvectors[j][k] * thy z[k][i];
 			}
-			his z[j][i] = r;
+			(*him) -> z[j][i] = r;
 		}
 	}
 }

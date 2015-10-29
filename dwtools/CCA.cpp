@@ -230,10 +230,9 @@ TableOfReal CCA_and_TableOfReal_scores (CCA me, TableOfReal thee, long numberOfF
 			Melder_throw (U"The number of factors must be in interval [1, ", my numberOfCoefficients, U"].");
 		}
 		autoTableOfReal him = TableOfReal_create (n, 2 * numberOfFactors);
-		TableOfReal phim = him.peek();
 		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows);
-		Eigen_and_TableOfReal_project_into (my y, thee, 1, ny, &phim, 1, numberOfFactors);
-		Eigen_and_TableOfReal_project_into (my x, thee, ny + 1, thy numberOfColumns, &phim, numberOfFactors + 1, his numberOfColumns);
+		Eigen_and_TableOfReal_project_into (my y, thee, 1, ny, him.peek(), 1, numberOfFactors);
+		Eigen_and_TableOfReal_project_into (my x, thee, ny + 1, thy numberOfColumns, him.peek(), numberOfFactors + 1, his numberOfColumns);
 		TableOfReal_setSequentialColumnLabels (him.peek(), 1, numberOfFactors, U"y_", 1, 1);
 		TableOfReal_setSequentialColumnLabels (him.peek(), numberOfFactors + 1, his numberOfColumns, U"x_", 1, 1);
 		return him.transfer();

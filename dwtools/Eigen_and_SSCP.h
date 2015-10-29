@@ -2,7 +2,7 @@
 #define _Eigen_and_SSCP_h_
 /* Eigen_and_SSCP.h
  *
- * Copyright (C) 1993-2004 David Weenink
+ * Copyright (C) 1993-2004, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +27,9 @@
 #include "Eigen.h"
 #include "SSCP.h"
 
-SSCP Eigen_and_SSCP_project (I, SSCP thee);
-Covariance Eigen_and_Covariance_project (I, Covariance thee);
+autoSSCP Eigen_and_SSCP_project (Eigen me, SSCP thee);
+
+autoCovariance Eigen_and_Covariance_project (Eigen me, Covariance thee);
 /*
 	Purpose: project the SSCP (thee) on the eigenspace (me): S' = E' S E
 	Returns SSCP-object with square matrix dimension 'my numberOfEigenvalues'

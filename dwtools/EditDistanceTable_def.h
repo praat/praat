@@ -51,9 +51,9 @@ oo_END_CLASS (EditCostsTable)
 
 #define ooSTRUCT EditDistanceTable
 oo_DEFINE_CLASS (EditDistanceTable, TableOfReal)
-	oo_OBJECT (WarpingPath, 0, warpingPath)
+	oo_AUTO_OBJECT (WarpingPath, 0, warpingPath)
 	#if oo_DECLARING
-		oo_OBJECT (EditCostsTable, 0, editCostsTable)
+		oo_AUTO_OBJECT (EditCostsTable, 0, editCostsTable)
 
 		void v_info ()
 			override;
