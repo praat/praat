@@ -557,7 +557,7 @@ static void insertBoundaryOrPoint (TextGridEditor me, int itier, double t1, doub
 	Melder_assert (t1 <= t2);
 
 	if (intervalTier) {
-		TextInterval rightNewInterval = NULL, midNewInterval = NULL;
+		autoTextInterval rightNewInterval, midNewInterval;
 		bool t1IsABoundary = IntervalTier_hasTime (intervalTier, t1);
 		bool t2IsABoundary = IntervalTier_hasTime (intervalTier, t2);
 		if (t1 == t2 && t1IsABoundary)
@@ -609,7 +609,6 @@ static void insertBoundaryOrPoint (TextGridEditor me, int itier, double t1, doub
 				Melder_fatal (U"Boundary unequal: ", interval -> xmin, U" versus ", t1, U".");
 			interval -> xmax = t2;
 			TextInterval_setText (interval, Melder_cat (interval -> text, midNewInterval -> text));
-			forget (midNewInterval);
 		} else if (t2IsABoundary) {
 			/*
 			 * Merge mid and right interval.
@@ -620,13 +619,12 @@ static void insertBoundaryOrPoint (TextGridEditor me, int itier, double t1, doub
 			Melder_assert (rightNewInterval -> xmin == t2);
 			Melder_assert (rightNewInterval -> xmax == t2);
 			rightNewInterval -> xmin = t1;
-			TextInterval_setText (rightNewInterval, Melder_cat (midNewInterval -> text, rightNewInterval -> text));
-			forget (midNewInterval);
+			TextInterval_setText (rightNewInterval.get(), Melder_cat (midNewInterval -> text, rightNewInterval -> text));
 		} else {
 			interval -> xmax = t1;
-			if (t1 != t2) Collection_addItem (intervalTier -> intervals, midNewInterval);
+			if (t1 != t2) Collection_addItem (intervalTier -> intervals, midNewInterval.transfer());
 		}
-		Collection_addItem (intervalTier -> intervals, rightNewInterval);
+		Collection_addItem (intervalTier -> intervals, rightNewInterval.transfer());
 		if (insertSecond && ntiers >= 2 && t1 == t2) {
 			/*
 			 * Find the last time before t on another tier.
@@ -639,20 +637,19 @@ static void insertBoundaryOrPoint (TextGridEditor me, int itier, double t1, doub
 				}
 			}
 			if (tlast > interval -> xmin && tlast < t1) {
-				TextInterval newInterval = TextInterval_create (tlast, t1, U"");
+				autoTextInterval newInterval = TextInterval_create (tlast, t1, U"");
 				interval -> xmax = tlast;
-				Collection_addItem (intervalTier -> intervals, newInterval);
+				Collection_addItem (intervalTier -> intervals, newInterval.transfer());
 			}
 		}
 	} else {
-		TextPoint newPoint;
 		if (AnyTier_hasPoint (textTier, t1))
 			Melder_throw (U"Cannot add a point at ", Melder_fixed (t1, 6), U" seconds, because there is already a point there.");
 
 		Editor_save (me, U"Add point");
 
-		newPoint = TextPoint_create (t1, U"");
-		Collection_addItem (textTier -> points, newPoint);
+		autoTextPoint newPoint = TextPoint_create (t1, U"");
+		Collection_addItem (textTier -> points, newPoint.transfer());
 	}
 	my d_startSelection = my d_endSelection = t1;
 }

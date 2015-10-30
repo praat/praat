@@ -51,7 +51,8 @@ void PitchTier_draw (PitchTier me, Graphics g, double tmin, double tmax,
 
 autoPitchTier PointProcess_upto_PitchTier (PointProcess me, double frequency) {
 	try {
-		return (PitchTier) PointProcess_upto_RealTier (me, frequency, classPitchTier);
+		autoPitchTier thee = PointProcess_upto_RealTier (me, frequency, classPitchTier).static_cast_move<structPitchTier>();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to PitchTier.");
 	}

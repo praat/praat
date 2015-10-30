@@ -42,7 +42,7 @@ Thing_define (Spectrogram, Matrix) {
 	z [iy] [ix]		// Power spectrum density.
 */
 
-Spectrogram Spectrogram_create (double tmin, double tmax, long nt, double dt, double t1,
+autoSpectrogram Spectrogram_create (double tmin, double tmax, long nt, double dt, double t1,
 					double fmin, double fmax, long nf, double df, double f1);
 /*
 	Function:
@@ -83,13 +83,13 @@ void Spectrogram_paint (Spectrogram me, Graphics g,
 			a boolean that determines if a box, ticks, numbers, and text are written in the margins.
 */
 
-Spectrogram Matrix_to_Spectrogram (Matrix me);
+autoSpectrogram Matrix_to_Spectrogram (Matrix me);
 /*
 	Create a Spectrogram from a Matrix,
 	with deep copy of all its attributes, except class information and methods.
 */
 
-Matrix Spectrogram_to_Matrix (Spectrogram me);
+autoMatrix Spectrogram_to_Matrix (Spectrogram me);
 /*
 	Create a Matrix from a Spectrogram,
 	with deep copy of all its attributes, except class information and methods.

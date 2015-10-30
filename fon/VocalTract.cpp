@@ -28,11 +28,11 @@ void structVocalTract :: v_info () {
 	MelderInfo_writeLine (U"Section length: ", Melder_single (dx), U" metres");
 }
 
-VocalTract VocalTract_create (long nx, double dx) {
+autoVocalTract VocalTract_create (long nx, double dx) {
 	try {
 		autoVocalTract me = Thing_new (VocalTract);
 		Matrix_init (me.peek(), 0, nx * dx, nx, dx, 0.5 * dx, 1, 1, 1, 1, 1);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"VocalTract not created.");
 	}
@@ -117,7 +117,7 @@ static struct { const char32 *phone; int numberOfSections; double area [40]; }
 	10.9, 12.9, 13.15, 13, 12.5, 9.9, 3.9, 1.8, 0.32, 0.4, 0.6 } },
 { NULL, 0, { 0 } } };
 
-VocalTract VocalTract_createFromPhone (const char32 *phone) {
+autoVocalTract VocalTract_createFromPhone (const char32 *phone) {
 	try {
 		int i = 0;
 		for (;; i ++) {
@@ -129,7 +129,7 @@ VocalTract VocalTract_createFromPhone (const char32 *phone) {
 		autoVocalTract me = VocalTract_create (data [i]. numberOfSections, 0.005);
 		for (int isection = 1; isection <= my nx; isection ++)
 			my z [1] [isection] = data [i]. area [isection - 1] * 0.0001;
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"VocalTract not created from phone.");
 	}
@@ -139,21 +139,21 @@ void VocalTract_draw (VocalTract me, Graphics g) {
 	Matrix_drawRows (me, g, 0, 0, 0, 0, 0, 0);
 }
 
-Matrix VocalTract_to_Matrix (VocalTract me) {
+autoMatrix VocalTract_to_Matrix (VocalTract me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
 		NUMvector_copyElements (my z [1], thy z [1], 1, my nx);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
 	}
 }
 
-VocalTract Matrix_to_VocalTract (Matrix me) {
+autoVocalTract Matrix_to_VocalTract (Matrix me) {
 	try {
 		autoVocalTract thee = VocalTract_create (my nx, my dx);
 		NUMvector_copyElements (my z [1], thy z [1], 1, my nx);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to VocalTract.");
 	}

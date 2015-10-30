@@ -40,6 +40,7 @@ void OptimalCeilingTier_draw (OptimalCeilingTier me, Graphics g, double tmin, do
 autoTableOfReal OptimalCeilingTier_downto_TableOfReal (OptimalCeilingTier me) {
 	autoTableOfReal thee = RealTier_downto_TableOfReal (me, U"Time (s)", U"Frequency (Hz)");
 	return thee;
+
 }
 
 /* End of file OptimalCeilingTier.cpp */

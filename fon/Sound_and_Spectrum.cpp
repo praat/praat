@@ -34,7 +34,7 @@
 #include "Sound_and_Spectrum.h"
 #include "NUM2.h"
 
-Spectrum Sound_to_Spectrum (Sound me, int fast) {
+autoSpectrum Sound_to_Spectrum (Sound me, int fast) {
 	try {
 		long numberOfSamples = my nx;
 		if (fast) {
@@ -69,13 +69,13 @@ Spectrum Sound_to_Spectrum (Sound me, int fast) {
 			re [numberOfFrequencies] = data [numberOfSamples] * scaling;
 			im [numberOfFrequencies] = 0.0;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Spectrum.");
 	}
 }
 
-Sound Spectrum_to_Sound (Spectrum me) {
+autoSound Spectrum_to_Sound (Spectrum me) {
 	try {
 		double *re = my z [1], *im = my z [2];
 		double lastFrequency = my x1 + (my nx - 1) * my dx;
@@ -98,13 +98,13 @@ Sound Spectrum_to_Sound (Spectrum me) {
 			amp [2] = re [my nx] * scaling;
 		}
 		NUMrealft (amp, numberOfSamples, -1);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound.");
 	}
 }
 
-Spectrum Spectrum_lpcSmoothing (Spectrum me, int numberOfPeaks, double preemphasisFrequency) {
+autoSpectrum Spectrum_lpcSmoothing (Spectrum me, int numberOfPeaks, double preemphasisFrequency) {
 	try {
 		double gain, a [100];
 		long numberOfCoefficients = 2 * numberOfPeaks;
@@ -136,13 +136,13 @@ Spectrum Spectrum_lpcSmoothing (Spectrum me, int numberOfPeaks, double preemphas
 		}
 		re [halfnfft + 1] = scale / data [2] / (1 + thy dx * halfnfft / preemphasisFrequency);
 		im [halfnfft + 1] = 0.0;
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not smoothed.");
 	}
 }
 
-Sound Sound_filter_formula (Sound me, const char32 *formula, Interpreter interpreter) {
+autoSound Sound_filter_formula (Sound me, const char32 *formula, Interpreter interpreter) {
 	try {
 		autoSound thee = Data_copy (me);
 		if (my ny == 1) {
@@ -159,13 +159,13 @@ Sound Sound_filter_formula (Sound me, const char32 *formula, Interpreter interpr
 				NUMvector_copyElements (his z [1], thy z [ichan], 1, thy nx);
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered (with formula).");
 	}
 }
 
-Sound Sound_filter_passHannBand (Sound me, double fmin, double fmax, double smooth) {
+autoSound Sound_filter_passHannBand (Sound me, double fmin, double fmax, double smooth) {
 	try {
 		autoSound thee = Data_copy (me);
 		if (my ny == 1) {
@@ -182,13 +182,13 @@ Sound Sound_filter_passHannBand (Sound me, double fmin, double fmax, double smoo
 				NUMvector_copyElements (his z [1], thy z [ichan], 1, thy nx);
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered (pass Hann band).");
 	}
 }
 
-Sound Sound_filter_stopHannBand (Sound me, double fmin, double fmax, double smooth) {
+autoSound Sound_filter_stopHannBand (Sound me, double fmin, double fmax, double smooth) {
 	try {
 		autoSound thee = Data_copy (me);
 		if (my ny == 1) {
@@ -205,7 +205,7 @@ Sound Sound_filter_stopHannBand (Sound me, double fmin, double fmax, double smoo
 				NUMvector_copyElements (his z [1], thy z [ichan], 1, thy nx);
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered (stop Hann band).");
 	}

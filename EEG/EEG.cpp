@@ -233,7 +233,7 @@ EEG EEG_readFromBdfFile (MelderFile file) {
 		}
 		autoTextGrid thee;
 		if (hasLetters) {
-			thee.reset (TextGrid_create (0, duration, U"Mark Trigger", U"Mark Trigger"));
+			thee = TextGrid_create (0, duration, U"Mark Trigger", U"Mark Trigger");
 			autoMelderString letters;
 			double time = NUMundefined;
 			for (long i = 1; i <= my nx; i ++) {
@@ -284,8 +284,8 @@ EEG EEG_readFromBdfFile (MelderFile file) {
 				time = NUMundefined;   // defensive
 			}
 		} else {
-			thee.reset (TextGrid_create (0, duration,
-				numberOfStatusBits == 8 ? U"S1 S2 S3 S4 S5 S6 S7 S8" : U"S1 S2 S3 S4 S5 S6 S7 S8 S9 S10 S11 S12 S13 S14 S15 S16", U""));
+			thee = TextGrid_create (0, duration,
+				numberOfStatusBits == 8 ? U"S1 S2 S3 S4 S5 S6 S7 S8" : U"S1 S2 S3 S4 S5 S6 S7 S8 S9 S10 S11 S12 S13 S14 S15 S16", U"");
 			for (int bit = 1; bit <= numberOfStatusBits; bit ++) {
 				unsigned long bitValue = 1 << (bit - 1);
 				IntervalTier tier = (IntervalTier) thy tiers -> item [bit];
@@ -553,7 +553,7 @@ EEG EEG_extractChannel (EEG me, long channelNumber) {
 		thy numberOfChannels = 1;
 		thy channelNames = NUMvector <char32 *> (1, 1);
 		thy channelNames [1] = Melder_dup (my channelNames [1]);
-		thy sound = Sound_extractChannel (my sound, channelNumber);
+		thy sound = Sound_extractChannel (my sound, channelNumber).transfer();
 		thy textgrid = Data_copy (my textgrid);
 		return thee.transfer();
 	} catch (MelderError) {
@@ -603,8 +603,8 @@ EEG EEGs_concatenate (Collection me) {
 		for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
 			thy channelNames [ichan] = Melder_dup (channelNames [ichan]);
 		}
-		thy sound = Sounds_concatenate_e (soundCollection.peek(), 0.0);
-		thy textgrid = TextGrids_concatenate (textgridCollection.peek());
+		thy sound = Sounds_concatenate_e (soundCollection.peek(), 0.0).transfer();
+		thy textgrid = TextGrids_concatenate (textgridCollection.peek()).transfer();
 		thy xmin = thy textgrid -> xmin;
 		thy xmax = thy textgrid -> xmax;
 		return thee.transfer();
@@ -621,8 +621,8 @@ EEG EEG_extractPart (EEG me, double tmin, double tmax, bool preserveTimes) {
 		for (long ichan = 1; ichan <= my numberOfChannels; ichan ++) {
 			thy channelNames [ichan] = Melder_dup (my channelNames [ichan]);
 		}
-		thy sound = Sound_extractPart (my sound, tmin, tmax, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes);
-		thy textgrid = TextGrid_extractPart (my textgrid, tmin, tmax, preserveTimes);
+		thy sound = Sound_extractPart (my sound, tmin, tmax, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes).transfer();
+		thy textgrid = TextGrid_extractPart (my textgrid, tmin, tmax, preserveTimes).transfer();
 		thy xmin = thy textgrid -> xmin;
 		thy xmax = thy textgrid -> xmax;
 		return thee.transfer();

@@ -71,11 +71,11 @@ void Transition_init (Transition me, long numberOfStates) {
 	my data = NUMmatrix <double> (1, my numberOfStates, 1, my numberOfStates);
 }
 
-Transition Transition_create (long numberOfStates) {
+autoTransition Transition_create (long numberOfStates) {
 	try {
 		autoTransition me = Thing_new (Transition);
 		Transition_init (me.peek(), numberOfStates);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Transition not created.");
 	}
@@ -182,7 +182,7 @@ void Transition_eigen (Transition me, Matrix *out_eigenvectors, Matrix *out_eige
 	}
 }
 
-Transition Transition_power (Transition me, long power) {
+autoTransition Transition_power (Transition me, long power) {
 	try {
 		autoTransition thee = Data_copy (me);
 		autoTransition him = Data_copy (me);
@@ -197,25 +197,25 @@ Transition Transition_power (Transition me, long power) {
 				}
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": power not computed.");
 	}
 }
 
-Matrix Transition_to_Matrix (Transition me) {
+autoMatrix Transition_to_Matrix (Transition me) {
 	try {
 		autoMatrix thee = Matrix_createSimple (my numberOfStates, my numberOfStates);
 		for (long i = 1; i <= my numberOfStates; i ++)
 			for (long j = 1; j <= my numberOfStates; j ++)
 				thy z [i] [j] = my data [i] [j];
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
 	}
 }
 
-Transition Matrix_to_Transition (Matrix me) {
+autoTransition Matrix_to_Transition (Matrix me) {
 	try {
 		if (my nx != my ny)
 			Melder_throw (U"Matrix should be square.");
@@ -223,7 +223,7 @@ Transition Matrix_to_Transition (Matrix me) {
 		for (long i = 1; i <= my nx; i ++)
 			for (long j = 1; j <= my nx; j ++)
 				thy data [i] [j] = my z [i] [j];
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Transition.");
 	}

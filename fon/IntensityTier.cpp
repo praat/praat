@@ -39,7 +39,8 @@ void IntensityTier_draw (IntensityTier me, Graphics g, double tmin, double tmax,
 
 autoIntensityTier PointProcess_upto_IntensityTier (PointProcess me, double intensity) {
 	try {
-		return (IntensityTier) PointProcess_upto_RealTier (me, intensity, classIntensityTier);
+		autoIntensityTier thee = PointProcess_upto_RealTier (me, intensity, classIntensityTier).static_cast_move<structIntensityTier>();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to IntensityTier.");
 	}
@@ -47,7 +48,8 @@ autoIntensityTier PointProcess_upto_IntensityTier (PointProcess me, double inten
 
 autoIntensityTier Intensity_downto_IntensityTier (Intensity me) {
 	try {
-		return (IntensityTier) Vector_to_RealTier (me, 1, classIntensityTier);
+		autoIntensityTier thee = Vector_to_RealTier (me, 1, classIntensityTier).static_cast_move<structIntensityTier>();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to IntensityTier.");
 	}
@@ -55,7 +57,8 @@ autoIntensityTier Intensity_downto_IntensityTier (Intensity me) {
 
 autoIntensityTier Intensity_to_IntensityTier_peaks (Intensity me) {
 	try {
-		return (IntensityTier) Vector_to_RealTier_peaks (me, 1, classIntensityTier);
+		autoIntensityTier thee = Vector_to_RealTier_peaks (me, 1, classIntensityTier).static_cast_move<structIntensityTier>();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": peaks not converted to IntensityTier.");
 	}
@@ -63,7 +66,8 @@ autoIntensityTier Intensity_to_IntensityTier_peaks (Intensity me) {
 
 autoIntensityTier Intensity_to_IntensityTier_valleys (Intensity me) {
 	try {
-		return (IntensityTier) Vector_to_RealTier_valleys (me, 1, classIntensityTier);
+		autoIntensityTier thee = Vector_to_RealTier_valleys (me, 1, classIntensityTier).static_cast_move<structIntensityTier>();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": valleys not converted to IntensityTier.");
 	}

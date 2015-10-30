@@ -1302,7 +1302,7 @@ autoSound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him, double formantMult
 		// Resample to the original sampling frequency
 
 		if (formantMultiplier != 1) {
-			thee.reset (Sound_resample (thee.peek(), samplingFrequency_old, 10));
+			thee = Sound_resample (thee.peek(), samplingFrequency_old, 10);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -1403,7 +1403,8 @@ autoSound Sound_and_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier t
     }
 }
 
-autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAndEnd, double minPitch, double timeStep, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, TextGrid *tg, const char32 *trimLabel) {
+
+autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAndEnd, double minPitch, double timeStep, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, autoTextGrid *p_tg, const char32 *trimLabel) {
     try {
         if (my ny > 1) {
             Melder_throw (U"The sound must be a mono sound.");
@@ -1442,9 +1443,9 @@ autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAnd
             }
         }
         autoSound thee = Sound_and_IntervalTier_cutPartsMatchingLabel (me, itg.peek(), trimLabel);
-        if (tg) {
+        if (p_tg) {
 			TextGrid_addTier_copy (dbs.peek(), itg.peek());
-            *tg = dbs.transfer();
+            *p_tg = dbs.move();
         }
         return thee;
     } catch (MelderError) {
@@ -1455,9 +1456,8 @@ autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAnd
 autoSound Sound_trimSilencesAtStartAndEnd (Sound me, double trimDuration, double minPitch, double timeStep,
 	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *t1, double *t2) {
 	try {
-		TextGrid tg;
+		autoTextGrid tg;
 		autoSound thee = Sound_trimSilences (me, trimDuration, true, minPitch, timeStep, silenceThreshold, minSilenceDuration, minSoundingDuration, &tg, U"trimmed");
-		autoTextGrid atg = tg;
 		IntervalTier trim = (IntervalTier) tg -> tiers -> item[2];
 		TextInterval ti1 = (TextInterval) trim -> intervals -> item[1];
 		*t1 = my xmin;
@@ -1560,7 +1560,7 @@ autoSound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantR
 		// Resample to the original sampling frequency
 
 		if (formantRatio != 1) {
-			thee.reset (Sound_resample (thee.peek(), samplingFrequency_old, 10));
+			thee = Sound_resample (thee.peek(), samplingFrequency_old, 10);
 		}
 		return thee;
 	} catch (MelderError) {

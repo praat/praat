@@ -33,7 +33,7 @@
 #include "Sound_and_Spectrum.h"
 #include "Spectrum_to_Excitation.h"
 
-Cochleagram Sound_to_Cochleagram (Sound me, double dt, double df, double dt_window, double forwardMaskingTime) {
+autoCochleagram Sound_to_Cochleagram (Sound me, double dt, double df, double dt_window, double forwardMaskingTime) {
 	try {
 		double duration = my nx * my dx;
 		long nFrames = 1 + (long) floor ((duration - dt_window) / dt);
@@ -78,13 +78,13 @@ Cochleagram Sound_to_Cochleagram (Sound me, double dt, double df, double dt_wind
 		for (long iframe = 1; iframe <= nFrames; iframe ++)
 			for (long ifreq = 1; ifreq <= nf; ifreq ++)
 				thy z [ifreq] [iframe] *= integrationCorrection;
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Cochleagram.");
 	}
 }
 
-static Sound createGammatone (double midFrequency_Hertz, double samplingFrequency) {
+static autoSound createGammatone (double midFrequency_Hertz, double samplingFrequency) {
 	double lengthOfGammatone_seconds = 50.0 / midFrequency_Hertz;   // 50 periods
 	long lengthOfGammatone_samples;
 	/* EdB's alfa1: */
@@ -102,10 +102,10 @@ static Sound createGammatone (double midFrequency_Hertz, double samplingFrequenc
 		if (time_seconds > latency) gammatone -> z [1] [itime] =
 			x * x * x * exp (- x) * cos (midFrequency_radPerSecond * timeAfterLatency);
 	}
-	return gammatone.transfer();
+	return gammatone;
 }
 
-Cochleagram Sound_to_Cochleagram_edb
+autoCochleagram Sound_to_Cochleagram_edb
 	(Sound me, double dtime, double dfreq, int hasSynapse, double replenishmentRate,
 	 double lossRate, double returnRate, double reprocessingRate)
 {
@@ -202,7 +202,7 @@ Cochleagram Sound_to_Cochleagram_edb
 				}
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Cochleagram (edb).");
 	}

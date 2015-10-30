@@ -59,7 +59,7 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 	autoSpectrogram d_spectrogram;
 	double d_spectrogram_cursor;
 	autoPitch d_pitch;
-	Intensity d_intensity;
+	autoIntensity d_intensity;
 	autoFormant d_formant;
 	autoPointProcess d_pulses;
 	GuiMenuItem spectrogramToggle, pitchToggle, intensityToggle, formantToggle, pulsesToggle;
@@ -86,7 +86,7 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 	virtual bool v_hasIntensity   () { return true; }
 	virtual bool v_hasFormants    () { return true; }
 	virtual bool v_hasPulses      () { return true; }
-	virtual void v_destroy_analysis ();
+	virtual void v_reset_analysis ();
 	virtual void v_createMenuItems_spectrum_picture (EditorMenu menu);
 	virtual void v_createMenuItems_pitch_picture (EditorMenu menu);
 	virtual void v_createMenuItems_intensity_picture (EditorMenu menu);

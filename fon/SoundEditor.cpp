@@ -31,7 +31,7 @@ void structSoundEditor :: v_dataChanged () {
 	Sound sound = (Sound) data;
 	Melder_assert (sound != NULL);   // LongSound objects should not get v_dataChanged messages
 	Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & d_sound.minimum, & d_sound.maximum);   // BUG unreadable
-	v_destroy_analysis ();
+	v_reset_analysis ();
 	SoundEditor_Parent :: v_dataChanged ();
 }
 
@@ -145,7 +145,7 @@ static void menu_cb_Cut (EDITOR_ARGS) {
 			/* Force FunctionEditor to show changes. */
 
 			Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my d_sound.minimum, & my d_sound.maximum);
-			my v_destroy_analysis ();
+			my v_reset_analysis ();
 			FunctionEditor_ungroup (me);
 			FunctionEditor_marksChanged (me, false);
 			Editor_broadcastDataChanged (me);
@@ -215,7 +215,7 @@ static void menu_cb_Paste (EDITOR_ARGS) {
 	/* Force FunctionEditor to show changes. */
 
 	Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my d_sound.minimum, & my d_sound.maximum);
-	my v_destroy_analysis ();
+	my v_reset_analysis ();
 	FunctionEditor_ungroup (me);
 	FunctionEditor_marksChanged (me, false);
 	Editor_broadcastDataChanged (me);
@@ -232,7 +232,7 @@ static void menu_cb_SetSelectionToZero (EDITOR_ARGS) {
 			sound -> z [channel] [i] = 0.0;
 		}
 	}
-	my v_destroy_analysis ();
+	my v_reset_analysis ();
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
@@ -241,7 +241,7 @@ static void menu_cb_ReverseSelection (EDITOR_ARGS) {
 	EDITOR_IAM (SoundEditor);
 	Editor_save (me, U"Reverse selection");
 	Sound_reverse ((Sound) my data, my d_startSelection, my d_endSelection);
-	my v_destroy_analysis ();
+	my v_reset_analysis ();
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }

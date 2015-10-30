@@ -25,7 +25,7 @@
 
 #include "Spectrum_to_Formant.h"
 
-Formant Spectrum_to_Formant (Spectrum me, int maxnFormants) {
+autoFormant Spectrum_to_Formant (Spectrum me, int maxnFormants) {
 	try {
 		long nfreq = my nx, nform = 0;
 		autoNUMvector <double> p (1, nfreq);   // power
@@ -54,7 +54,7 @@ Formant Spectrum_to_Formant (Spectrum me, int maxnFormants) {
 				if (nform == maxnFormants) break;
 			}
 		thy d_frames [1]. nFormants = nform;
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Formant.");
 	}

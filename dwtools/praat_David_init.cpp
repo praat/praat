@@ -5797,12 +5797,11 @@ DO
     const char32 *trimlabel = GET_STRING (U"Trim label");
 	LOOP {
 		iam (Sound);
-        TextGrid tg = nullptr;
+        autoTextGrid tg;
 		autoSound thee = Sound_trimSilences (me, trimDuration, onlyAtStartAndEnd, minPitch, timeStep, silenceThreshold,
-			minSilenceDuration, minSoundingDuration, (saveTextGrid ? &tg : 0), trimlabel);
-        autoTextGrid atg = tg;
+			minSilenceDuration, minSoundingDuration, ( saveTextGrid ? &tg : nullptr ), trimlabel);
         if (saveTextGrid) {
-            praat_new (atg.transfer(), my name, U"_trimmed");
+            praat_new (tg.transfer(), my name, U"_trimmed");
         }
 		praat_new (thee.transfer(), my name, U"_trimmed");
 	}
@@ -6428,15 +6427,15 @@ DO
 	bool createTextGrid = GET_INTEGER (U"Create TextGrid with annotations");
 	LOOP {
 		iam (SpeechSynthesizer);
-		TextGrid tg = 0; Table t = 0;
+		autoTextGrid tg;
+		autoTable t;
 		autoSound thee = SpeechSynthesizer_to_Sound (me, text, (createTextGrid ? &tg : nullptr), (Melder_debug == -2 ? &t : nullptr));
-		autoTextGrid atg = tg; autoTable atr = t;
 		praat_new (thee.transfer(), my name);
 		if (createTextGrid) {
-			praat_new (atg.transfer(), my name);
+			praat_new (tg.transfer(), my name);
 		}
 		if (Melder_debug == -2) {
-			praat_new (atr.transfer(), my name);
+			praat_new (t.transfer(), my name);
 		}
 	}
 END
@@ -6511,15 +6510,15 @@ FORM (SpeechSynthesizer_and_TextGrid_to_Sound, U"SpeechSynthesizer & TextGrid: T
 	BOOLEAN (U"Create TextGrid with annotations", 0);
 	OK
 DO
-	bool createTextGrid = GET_INTEGER (U"Create TextGrid with annotations");
+	bool createAnnotations = GET_INTEGER (U"Create TextGrid with annotations");
 	SpeechSynthesizer me = FIRST (SpeechSynthesizer);
-	TextGrid thee = FIRST (TextGrid), tg = 0;
+	TextGrid thee = FIRST (TextGrid);
+	autoTextGrid annotations;
 	autoSound him = SpeechSynthesizer_and_TextGrid_to_Sound (me, thee, GET_INTEGER (U"Tier number"),
-		GET_INTEGER (U"Interval number"), (createTextGrid ? &tg : nullptr));
-	autoTextGrid atg = tg;
+		GET_INTEGER (U"Interval number"), ( createAnnotations ? & annotations : nullptr ));
 	praat_new (him.transfer(), my name);
-	if (createTextGrid) {
-		praat_new (atg.transfer(), my name);
+	if (createAnnotations) {
+		praat_new (annotations.transfer(), my name);
 	}
 END
 

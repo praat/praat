@@ -161,8 +161,8 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 		autoTextGrid analysis = NULL;
 		if (! Melder_equ (interval -> text, U"")) {
 			try {
-				analysis.reset (SpeechSynthesizer_and_Sound_and_TextInterval_align
-					(synthesizer.peek(), part.peek(), interval, silenceThreshold, minSilenceDuration, minSoundingDuration));
+				analysis = SpeechSynthesizer_and_Sound_and_TextInterval_align
+					(synthesizer.peek(), part.peek(), interval, silenceThreshold, minSilenceDuration, minSoundingDuration);
 			} catch (MelderError) {
 				Melder_clearError ();   // ignore all error messages from DTW and the like
 			}
@@ -423,7 +423,7 @@ void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, dou
 	}
 }
 
-Collection TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, long tierNumber, int preserveTimes) {
+autoCollection TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, long tierNumber, int preserveTimes) {
 	try {
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
 		autoCollection collection = Collection_create (NULL, tier -> numberOfIntervals ());
@@ -433,13 +433,13 @@ Collection TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, long ti
 			Thing_setName (interval.peek(), segment -> text ? segment -> text : U"untitled");
 			Collection_addItem (collection.peek(), interval.transfer()); 
 		}
-		return collection.transfer();
+		return collection;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", sound, U": intervals not extracted.");
 	}
 }
 
-Collection TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound, long tierNumber, int preserveTimes) {
+autoCollection TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound, long tierNumber, int preserveTimes) {
 	try {
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
 		autoCollection collection = Collection_create (NULL, tier -> numberOfIntervals ());
@@ -452,13 +452,13 @@ Collection TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound, lo
 			}
 		}
 		if (collection -> size == 0) Melder_warning (U"No non-empty intervals were found.");
-		return collection.transfer();
+		return collection;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", sound, U": non-empty intervals not extracted.");
 	}
 }
 
-Collection TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound, long tierNumber,
+autoCollection TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound, long tierNumber,
 	int comparison_Melder_STRING, const char32 *text, int preserveTimes)
 {
 	try {
@@ -475,7 +475,7 @@ Collection TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound, long 
 		}
 		if (collection -> size == 0)
 			Melder_warning (U"No label that ", kMelder_string_getText (comparison_Melder_STRING), U" the text \"", text, U"\" was found.");
-		return collection.transfer();
+		return collection;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", sound, U": intervals not extracted.");
 	}

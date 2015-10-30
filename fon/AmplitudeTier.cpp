@@ -39,7 +39,8 @@ void AmplitudeTier_draw (AmplitudeTier me, Graphics g, double tmin, double tmax,
 
 autoAmplitudeTier PointProcess_upto_AmplitudeTier (PointProcess me, double soundPressure) {
 	try {
-		return (AmplitudeTier) PointProcess_upto_RealTier (me, soundPressure, classAmplitudeTier);
+		autoAmplitudeTier thee = PointProcess_upto_RealTier (me, soundPressure, classAmplitudeTier).static_cast_move<structAmplitudeTier>();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to AmplitudeTier.");
 	}

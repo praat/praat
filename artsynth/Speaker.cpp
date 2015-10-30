@@ -40,8 +40,8 @@
 
 Thing_implement (Speaker, Daata, 0);
 
-Speaker Speaker_create (char32 *kindOfSpeaker, int numberOfVocalCordMasses) {
-	Speaker me = Thing_new (Speaker);
+autoSpeaker Speaker_create (char32 *kindOfSpeaker, int numberOfVocalCordMasses) {
+	autoSpeaker me = Thing_new (Speaker);
 
 	/* Supralaryngeal dimensions are taken from P. Mermelstein (1973):		*/
 	/*    "Articulatory model for the study of speech production",		*/
@@ -49,7 +49,6 @@ Speaker Speaker_create (char32 *kindOfSpeaker, int numberOfVocalCordMasses) {
 	/* That was a male speaker, so we need scaling for other speakers:		*/
 
 	double scaling;
-	if (! me) return NULL;
 	if (str32equ (kindOfSpeaker, U"Male")) my relativeSize = 1.1;
 	else if (str32equ (kindOfSpeaker, U"Child")) my relativeSize = 0.7;
 	else my relativeSize = 1.0;

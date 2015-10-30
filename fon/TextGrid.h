@@ -28,25 +28,25 @@
 #include "TextGrid_def.h"
 
 oo_CLASS_CREATE (TextPoint, AnyPoint);
-TextPoint TextPoint_create (double time, const char32 *mark);
+autoTextPoint TextPoint_create (double time, const char32 *mark);
 
 void TextPoint_setText (TextPoint me, const char32 *text);
 
 oo_CLASS_CREATE (TextInterval, Function);
-TextInterval TextInterval_create (double tmin, double tmax, const char32 *text);
+autoTextInterval TextInterval_create (double tmin, double tmax, const char32 *text);
 
 void TextInterval_setText (TextInterval me, const char32 *text);
 
 oo_CLASS_CREATE (TextTier, Function);
-TextTier TextTier_create (double tmin, double tmax);
+autoTextTier TextTier_create (double tmin, double tmax);
 
 void TextTier_addPoint (TextTier me, double time, const char32 *mark);
-TextTier TextTier_readFromXwaves (MelderFile file);
-PointProcess TextTier_getPoints (TextTier me, const char32 *text);
+autoTextTier TextTier_readFromXwaves (MelderFile file);
+autoPointProcess TextTier_getPoints (TextTier me, const char32 *text);
 
 oo_CLASS_CREATE (IntervalTier, Function);
-IntervalTier IntervalTier_create (double tmin, double tmax);
-IntervalTier IntervalTier_readFromXwaves (MelderFile file);
+autoIntervalTier IntervalTier_create (double tmin, double tmax);
+autoIntervalTier IntervalTier_readFromXwaves (MelderFile file);
 void IntervalTier_writeToXwaves (IntervalTier me, MelderFile file);
 
 long IntervalTier_timeToLowIndex (IntervalTier me, double t);
@@ -54,30 +54,30 @@ long IntervalTier_timeToIndex (IntervalTier me, double t);   // obsolete
 long IntervalTier_timeToHighIndex (IntervalTier me, double t);
 long IntervalTier_hasTime (IntervalTier me, double t);
 long IntervalTier_hasBoundary (IntervalTier me, double t);
-PointProcess IntervalTier_getStartingPoints (IntervalTier me, const char32 *text);
-PointProcess IntervalTier_getEndPoints (IntervalTier me, const char32 *text);
-PointProcess IntervalTier_getCentrePoints (IntervalTier me, const char32 *text);
-PointProcess IntervalTier_PointProcess_startToCentre (IntervalTier tier, PointProcess point, double phase);
-PointProcess IntervalTier_PointProcess_endToCentre (IntervalTier tier, PointProcess point, double phase);
+autoPointProcess IntervalTier_getStartingPoints (IntervalTier me, const char32 *text);
+autoPointProcess IntervalTier_getEndPoints (IntervalTier me, const char32 *text);
+autoPointProcess IntervalTier_getCentrePoints (IntervalTier me, const char32 *text);
+autoPointProcess IntervalTier_PointProcess_startToCentre (IntervalTier tier, PointProcess point, double phase);
+autoPointProcess IntervalTier_PointProcess_endToCentre (IntervalTier tier, PointProcess point, double phase);
 void IntervalTier_removeLeftBoundary (IntervalTier me, long iinterval);
 
 void TextTier_removePoint (TextTier me, long ipoint);
 
 oo_CLASS_CREATE (TextGrid, Function);
-TextGrid TextGrid_createWithoutTiers (double tmin, double tmax);
-TextGrid TextGrid_create (double tmin, double tmax, const char32 *tierNames, const char32 *pointTiers);
+autoTextGrid TextGrid_createWithoutTiers (double tmin, double tmax);
+autoTextGrid TextGrid_create (double tmin, double tmax, const char32 *tierNames, const char32 *pointTiers);
 
 long TextGrid_countLabels (TextGrid me, long itier, const char32 *text);
 long TextGrid_countIntervalsWhere (TextGrid me, long tierNumber, int which_Melder_STRING, const char32 *criterion);
 long TextGrid_countPointsWhere (TextGrid me, long tierNumber, int which_Melder_STRING, const char32 *criterion);
-PointProcess TextGrid_getStartingPoints (TextGrid me, long itier, int which_Melder_STRING, const char32 *criterion);
-PointProcess TextGrid_getEndPoints (TextGrid me, long itier, int which_Melder_STRING, const char32 *criterion);
-PointProcess TextGrid_getCentrePoints (TextGrid me, long itier, int which_Melder_STRING, const char32 *criterion);
-PointProcess TextGrid_getPoints (TextGrid me, long itier, int which_Melder_STRING, const char32 *criterion);
-PointProcess TextGrid_getPoints_preceded (TextGrid me, long tierNumber,
+autoPointProcess TextGrid_getStartingPoints (TextGrid me, long itier, int which_Melder_STRING, const char32 *criterion);
+autoPointProcess TextGrid_getEndPoints (TextGrid me, long itier, int which_Melder_STRING, const char32 *criterion);
+autoPointProcess TextGrid_getCentrePoints (TextGrid me, long itier, int which_Melder_STRING, const char32 *criterion);
+autoPointProcess TextGrid_getPoints (TextGrid me, long itier, int which_Melder_STRING, const char32 *criterion);
+autoPointProcess TextGrid_getPoints_preceded (TextGrid me, long tierNumber,
 	int which_Melder_STRING, const char32 *criterion,
 	int which_Melder_STRING_precededBy, const char32 *criterion_precededBy);
-PointProcess TextGrid_getPoints_followed (TextGrid me, long tierNumber,
+autoPointProcess TextGrid_getPoints_followed (TextGrid me, long tierNumber,
 	int which_Melder_STRING, const char32 *criterion,
 	int which_Melder_STRING_followedBy, const char32 *criterion_followedBy);
 
@@ -86,19 +86,19 @@ IntervalTier TextGrid_checkSpecifiedTierIsIntervalTier (TextGrid me, long tierNu
 TextTier TextGrid_checkSpecifiedTierIsPointTier (TextGrid me, long tierNumber);
 
 void TextGrid_addTier_copy (TextGrid me, Function tier);
-TextGrid TextGrid_merge (Collection textGrids);
-TextGrid TextGrid_extractPart (TextGrid me, double tmin, double tmax, int preserveTimes);
+autoTextGrid TextGrid_merge (Collection textGrids);
+autoTextGrid TextGrid_extractPart (TextGrid me, double tmin, double tmax, int preserveTimes);
 
-TextGrid Label_to_TextGrid (Label me, double duration);
-TextGrid Label_Function_to_TextGrid (Label me, Any function);
+autoTextGrid Label_to_TextGrid (Label me, double duration);
+autoTextGrid Label_Function_to_TextGrid (Label me, Any function);
 
-TextTier PointProcess_upto_TextTier (PointProcess me, const char32 *text);
-TableOfReal IntervalTier_downto_TableOfReal (IntervalTier me, const char32 *label);
-TableOfReal IntervalTier_downto_TableOfReal_any (IntervalTier me);
-TableOfReal TextTier_downto_TableOfReal (TextTier me, const char32 *label);
-TableOfReal TextTier_downto_TableOfReal_any (TextTier me);
+autoTextTier PointProcess_upto_TextTier (PointProcess me, const char32 *text);
+autoTableOfReal IntervalTier_downto_TableOfReal (IntervalTier me, const char32 *label);
+autoTableOfReal IntervalTier_downto_TableOfReal_any (IntervalTier me);
+autoTableOfReal TextTier_downto_TableOfReal (TextTier me, const char32 *label);
+autoTableOfReal TextTier_downto_TableOfReal_any (TextTier me);
 
-TextGrid PointProcess_to_TextGrid_vuv (PointProcess me, double maxT, double meanT);
+autoTextGrid PointProcess_to_TextGrid_vuv (PointProcess me, double maxT, double meanT);
 
 long TextInterval_labelLength (TextInterval me);
 long TextPoint_labelLength (TextPoint me);
@@ -123,14 +123,14 @@ void TextGrid_insertPoint (TextGrid me, int itier, double t, const char32 *mark)
 void TextGrid_setPointText (TextGrid me, int itier, long ipoint, const char32 *text);
 
 void TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file);
-TextGrid TextGrid_readFromChronologicalTextFile (MelderFile file);
-TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file);
+autoTextGrid TextGrid_readFromChronologicalTextFile (MelderFile file);
+autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file);
 
-Table TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeDecimals, bool includeTierNames, bool includeEmptyIntervals);
+autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeDecimals, bool includeTierNames, bool includeEmptyIntervals);
 void TextGrid_list (TextGrid me, bool includeLineNumbers, int timeDecimals, bool includeTierNames, bool includeEmptyIntervals);
 
 void TextGrid_correctRoundingErrors (TextGrid me);
-TextGrid TextGrids_concatenate (Collection me);
+autoTextGrid TextGrids_concatenate (Collection me);
 
 /* End of file TextGrid.h */
 #endif

@@ -206,7 +206,7 @@ autoSound Sound_trimSilencesAtStartAndEnd (Sound me, double trimDuration, double
 	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *t1, double *t2);
 
 autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAndEnd, double minPitch, double timeStep,
-    double silenceThreshold, double minSilenceDuration, double minSoundingDuration, TextGrid *tg, const char32 *trimLabel);
+    double silenceThreshold, double minSilenceDuration, double minSoundingDuration, autoTextGrid *p_tg, const char32 *trimLabel);
 
 autoSound Sound_copyChannelRanges (Sound me, const char32 *ranges);
 

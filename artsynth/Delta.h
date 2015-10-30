@@ -63,7 +63,7 @@ Thing_define (Delta, Thing) {
 
 void Delta_init (Delta me, int numberOfTubes);
 
-Delta Delta_create (int numberOfTubes);
+autoDelta Delta_create (int numberOfTubes);
 /*
 	Function:
 		return a new Delta.

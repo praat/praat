@@ -26,7 +26,7 @@
 #include "Sound_to_Pitch.h"
 #include "Sound_to_Harmonicity.h"
 
-Harmonicity Sound_to_Harmonicity_ac (Sound me, double dt, double minimumPitch,
+autoHarmonicity Sound_to_Harmonicity_ac (Sound me, double dt, double minimumPitch,
 	double silenceThreshold, double periodsPerWindow)
 {
 	try {
@@ -42,13 +42,13 @@ Harmonicity Sound_to_Harmonicity_ac (Sound me, double dt, double minimumPitch,
 				thy z [1] [i] = r <= 1e-15 ? -150 : r > 1 - 1e-15 ? 150 : 10 * log10 (r / (1 - r));
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": harmonicity analysis (ac) not performed.");
 	}
 }
 
-Harmonicity Sound_to_Harmonicity_cc (Sound me, double dt, double minimumPitch,
+autoHarmonicity Sound_to_Harmonicity_cc (Sound me, double dt, double minimumPitch,
 	double silenceThreshold, double periodsPerWindow)
 {
 	try {
@@ -64,7 +64,7 @@ Harmonicity Sound_to_Harmonicity_cc (Sound me, double dt, double minimumPitch,
 				thy z [1] [i] = r <= 1e-15 ? -150 : r > 1 - 1e-15 ? 150 : 10 * log10 (r / (1 - r));
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": harmonicity analysis (cc) not performed.");
 	}

@@ -22,7 +22,7 @@
 #include "Art_Speaker_Delta.h"
 #include "Art_Speaker_to_VocalTract.h"
 
-VocalTract Art_Speaker_to_VocalTract (Art art, Speaker speaker) {
+autoVocalTract Art_Speaker_to_VocalTract (Art art, Speaker speaker) {
 	autoDelta delta = Speaker_to_Delta (speaker);
 	Art_Speaker_intoDelta (art, speaker, delta.get());
 	double area [300];
@@ -38,7 +38,7 @@ VocalTract Art_Speaker_to_VocalTract (Art art, Speaker speaker) {
 	autoVocalTract thee = VocalTract_create (numberOfSections, sectionLength);
 	for (long isection = 1; isection <= numberOfSections; isection ++)
 		thy z [1] [isection] = area [isection];
-	return thee.transfer();
+	return thee;
 }
 
 /* End of file Art_Speaker_to_VocalTract.cpp */

@@ -134,7 +134,7 @@ static void do_ExtractSelectedSound (TimeSoundEditor me, bool preserveTimes) {
 	if (my d_longSound.data) {
 		extract = LongSound_extractPart (my d_longSound.data, my d_startSelection, my d_endSelection, preserveTimes);
 	} else if (my d_sound.data) {
-		extract.reset (Sound_extractPart (my d_sound.data, my d_startSelection, my d_endSelection, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes));
+		extract = Sound_extractPart (my d_sound.data, my d_startSelection, my d_endSelection, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes);
 	}
 	Editor_broadcastPublication (me, extract.transfer());
 }

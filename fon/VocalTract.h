@@ -40,7 +40,7 @@ Thing_define (VocalTract, Vector) {
 		z [1] [1..nx]		// The area, in square metres.
 */
 
-VocalTract VocalTract_create (long nx, double dx);
+autoVocalTract VocalTract_create (long nx, double dx);
 /*
 	Function:
 		create a VocalTract.
@@ -56,18 +56,18 @@ VocalTract VocalTract_create (long nx, double dx);
 		my z [1] [1..nx] == 1e-4; // straight tube, area 1 cm2.
  */
 
-VocalTract VocalTract_createFromPhone (const char32 *phone);
+autoVocalTract VocalTract_createFromPhone (const char32 *phone);
 /* 'phone' is one of the following: a e i o u y1 y2 y3 jery p t k x pa ta ka pi ti ki pu tu ku */
 
 void VocalTract_draw (VocalTract me, Graphics g);   /* Draw a VocalTract into a Graphics. */
 
-Matrix VocalTract_to_Matrix (VocalTract me);
+autoMatrix VocalTract_to_Matrix (VocalTract me);
 /*
 	Create a Matrix from a VocalTract,
 	with deep copy of all of its Matrix attributes, except class information and methods.
 */
 
-VocalTract Matrix_to_VocalTract (Matrix me);
+autoVocalTract Matrix_to_VocalTract (Matrix me);
 /*
 	Function:
 		create a VocalTract from a Matrix.

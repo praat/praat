@@ -143,7 +143,7 @@ autoSound Sound_createSimple (long numberOfChannels, double duration, double sam
 		1.0 / samplingFrequency, 0.5 / samplingFrequency);
 }
 
-Sound Sound_convertToMono (Sound me) {
+autoSound Sound_convertToMono (Sound me) {
 	if (my ny == 1) return Data_copy (me);   // optimization
 	try {
 		autoSound thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
@@ -160,13 +160,13 @@ Sound Sound_convertToMono (Sound me) {
 				thy z [1] [i] = sum / my ny;
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to mono.");
 	}
 }
 
-Sound Sound_convertToStereo (Sound me) {
+autoSound Sound_convertToStereo (Sound me) {
 	if (my ny == 2) return Data_copy (me);
 	try {
 		if (my ny > 2) {
@@ -177,13 +177,13 @@ Sound Sound_convertToStereo (Sound me) {
 		for (long i = 1; i <= my nx; i ++) {
 			thy z [1] [i] = thy z [2] [i] = my z [1] [i];
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to stereo.");
 	}
 }
 
-Sound Sounds_combineToStereo (Collection me) {
+autoSound Sounds_combineToStereo (Collection me) {
 	try {
 		long totalNumberOfChannels = 0;
 		double sharedSamplingPeriod = 0.0;
@@ -233,13 +233,13 @@ Sound Sounds_combineToStereo (Collection me) {
 				}
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Sounds not combined to stereo.");
 	}
 }
 
-Sound Sound_extractChannel (Sound me, long ichan) {
+autoSound Sound_extractChannel (Sound me, long ichan) {
 	try {
 		if (ichan <= 0 || ichan > my ny)
 			Melder_throw (U"There is no channel ", ichan, U".");
@@ -247,7 +247,7 @@ Sound Sound_extractChannel (Sound me, long ichan) {
 		for (long isamp = 1; isamp <= my nx; isamp ++) {
 			thy z [1] [isamp] = my z [ichan] [isamp];
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": channel ", ichan, U" not extracted.");
 	}
@@ -305,40 +305,40 @@ double Sound_getPowerInAir (Sound me) {
 	return NUMdefined (sum2) ? sum2 / (n * my ny) / 400 : NUMundefined;
 }
 
-Sound Matrix_to_Sound_mono (Matrix me, long row) {
+autoSound Matrix_to_Sound_mono (Matrix me, long row) {
 	try {
 		autoSound thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
 		if (row < 0) row = my ny + 1 + row;
 		if (row < 1) row = 1;
 		if (row > my ny) row = my ny;
 		NUMvector_copyElements (my z [row], thy z [1], 1, my nx);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound.");
 	}
 }
 
-Sound Matrix_to_Sound (Matrix me) {
+autoSound Matrix_to_Sound (Matrix me) {
 	try {
 		autoSound thee = Thing_new (Sound);
 		my structMatrix :: v_copy (thee.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound.");
 	}
 }
 
-Matrix Sound_to_Matrix (Sound me) {
+autoMatrix Sound_to_Matrix (Sound me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
 		my structMatrix :: v_copy (thee.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
 	}
 }
 
-Sound Sound_upsample (Sound me) {
+autoSound Sound_upsample (Sound me) {
 	try {
 		long nfft = 1;
 		while (nfft < my nx + 2000) nfft *= 2;
@@ -358,13 +358,13 @@ Sound Sound_upsample (Sound me) {
 				thy z [channel] [i] = data [i + 2000] * factor;
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not upsampled.");
 	}
 }
 
-Sound Sound_resample (Sound me, double samplingFrequency, long precision) {
+autoSound Sound_resample (Sound me, double samplingFrequency, long precision) {
 	double upfactor = samplingFrequency * my dx;
 	if (fabs (upfactor - 2) < 1e-6) return Sound_upsample (me);
 	if (fabs (upfactor - 1) < 1e-6) return Data_copy (me);
@@ -419,13 +419,13 @@ Sound Sound_resample (Sound me, double samplingFrequency, long precision) {
 				}
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not resampled.");
 	}
 }
 
-Sound Sounds_append (Sound me, double silenceDuration, Sound thee) {
+autoSound Sounds_append (Sound me, double silenceDuration, Sound thee) {
 	try {
 		long nx_silence = lround (silenceDuration / my dx), nx = my nx + nx_silence + thy nx;
 		if (my ny != thy ny)
@@ -437,13 +437,13 @@ Sound Sounds_append (Sound me, double silenceDuration, Sound thee) {
 			NUMvector_copyElements (my z [channel], his z [channel], 1, my nx);
 			NUMvector_copyElements (thy z [channel], his z [channel] + my nx + nx_silence, 1, thy nx);
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U": not appended.");
 	}
 }
 
-Sound Sounds_concatenate_e (Collection me, double overlapTime) {
+autoSound Sounds_concatenate_e (Collection me, double overlapTime) {
 	try {
 		long numberOfChannels = 0, nx = 0, numberOfSmoothingSamples;
 		double dx = 0.0;
@@ -504,13 +504,13 @@ Sound Sounds_concatenate_e (Collection me, double overlapTime) {
 		thy nx -= numberOfSmoothingSamples * (my size - 1);
 		Melder_assert (thy nx == nx);
 		thy xmax = thy nx * dx;
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Sounds not concatenated.");
 	}
 }
 
-Sound Sounds_convolve (Sound me, Sound thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain) {
+autoSound Sounds_convolve (Sound me, Sound thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain) {
 	try {
 		if (my ny > 1 && thy ny > 1 && my ny != thy ny)
 			Melder_throw (U"The numbers of channels of the two sounds have to be equal or 1.");
@@ -583,13 +583,13 @@ Sound Sounds_convolve (Sound me, Sound thee, enum kSounds_convolve_scaling scali
 			} break;
 			default: Melder_fatal (U"Sounds_convolve: unimplemented scaling ", scaling);
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U": not convolved.");
 	}
 }
 
-Sound Sounds_crossCorrelate (Sound me, Sound thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain) {
+autoSound Sounds_crossCorrelate (Sound me, Sound thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain) {
 	try {
 		if (my ny > 1 && thy ny > 1 && my ny != thy ny)
 			Melder_throw (U"The numbers of channels of the two sounds have to be equal or 1.");
@@ -666,13 +666,13 @@ Sound Sounds_crossCorrelate (Sound me, Sound thee, enum kSounds_convolve_scaling
 			} break;
 			default: Melder_fatal (U"Sounds_crossCorrelate: unimplemented scaling ", scaling);
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U": not cross-correlated.");
 	}
 }
 
-Sound Sound_autoCorrelate (Sound me, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain) {
+autoSound Sound_autoCorrelate (Sound me, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain) {
 	try {
 		long numberOfChannels = my ny, n1 = my nx, n2 = n1 + n1 - 1, nfft = 1;
 		while (nfft < n2) nfft *= 2;
@@ -737,7 +737,7 @@ Sound Sound_autoCorrelate (Sound me, enum kSounds_convolve_scaling scaling, enum
 			} break;
 			default: Melder_fatal (U"Sounds_autoCorrelate: unimplemented scaling ", scaling);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": autocorrelation not computed.");
 	}
@@ -892,7 +892,7 @@ void Sound_setZero (Sound me, double tmin_in, double tmax_in, int roundTimesToNe
 	}
 }
 
-Sound Sound_createAsPureTone (long numberOfChannels, double startingTime, double endTime,
+autoSound Sound_createAsPureTone (long numberOfChannels, double startingTime, double endTime,
 	double sampleRate, double frequency, double amplitude, double fadeInDuration, double fadeOutDuration)
 {
 	try {
@@ -914,13 +914,13 @@ Sound Sound_createAsPureTone (long numberOfChannels, double startingTime, double
 				my z [ichan] [isamp] = value;
 			}
 		}
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not created from tone complex.");
 	}
 }
 
-Sound Sound_createFromToneComplex (double startingTime, double endTime, double sampleRate,
+autoSound Sound_createFromToneComplex (double startingTime, double endTime, double sampleRate,
 	int phase, double frequencyStep, double firstFrequency, double ceiling, long numberOfComponents)
 {
 	try {
@@ -962,7 +962,7 @@ Sound Sound_createFromToneComplex (double startingTime, double endTime, double s
 					value += cos (firstOmegaT + (icomp - 1) * omegaStepT);
 			amplitude [isamp] = value * factor;
 		}
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not created from tone complex.");
 	}
@@ -1055,7 +1055,7 @@ void Sound_overrideSamplingFrequency (Sound me, double rate) {
 	my xmax = my xmin + my nx * my dx;
 }
 
-Sound Sound_extractPart (Sound me, double t1, double t2, enum kSound_windowShape windowShape, double relativeWidth, bool preserveTimes) {
+autoSound Sound_extractPart (Sound me, double t1, double t2, enum kSound_windowShape windowShape, double relativeWidth, bool preserveTimes) {
 	try {
 		/*
 		 * We do not clip to the Sound's time domain.
@@ -1097,13 +1097,13 @@ Sound Sound_extractPart (Sound me, double t1, double t2, enum kSound_windowShape
 		 * Multiply by a window that extends throughout the target domain.
 		 */
 		Sound_multiplyByWindow (thee.peek(), windowShape);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": part not extracted.");
 	}
 }
 
-Sound Sound_extractPartForOverlap (Sound me, double t1, double t2, double overlap) {
+autoSound Sound_extractPartForOverlap (Sound me, double t1, double t2, double overlap) {
 	try {
 		if (t1 == t2) { t1 = my xmin; t2 = my xmax; };   // autowindow
 		if (overlap > 0.0) {
@@ -1134,7 +1134,7 @@ Sound Sound_extractPartForOverlap (Sound me, double t1, double t2, double overla
 			NUMvector_copyElements (my z [channel], thy z [channel] + 1 - ix1,
 					( ix1 < 1 ? 1 : ix1 ), ( ix2 > my nx ? my nx : ix2 ));
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": part not extracted.");
 	}
@@ -1162,11 +1162,11 @@ void Sound_filterWithFormants (Sound me, double tmin, double tmax,
 	}
 }
 
-Sound Sound_filter_oneFormant (Sound me, double frequency, double bandwidth) {
+autoSound Sound_filter_oneFormant (Sound me, double frequency, double bandwidth) {
 	try {
 		autoSound thee = Data_copy (me);
 		Sound_filterWithOneFormantInline (thee.peek(), frequency, bandwidth);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered (one formant).");
 	}
@@ -1179,23 +1179,23 @@ void Sound_filterWithOneFormantInline (Sound me, double frequency, double bandwi
 	Matrix_scaleAbsoluteExtremum (me, 0.99);
 }
 
-Sound Sound_filter_preemphasis (Sound me, double frequency) {
+autoSound Sound_filter_preemphasis (Sound me, double frequency) {
 	try {
 		autoSound thee = Data_copy (me);
 		Sound_preEmphasis (thee.peek(), frequency);
 		Matrix_scaleAbsoluteExtremum (thee.peek(), 0.99);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered (pre-emphasis).");
 	}
 }
 
-Sound Sound_filter_deemphasis (Sound me, double frequency) {
+autoSound Sound_filter_deemphasis (Sound me, double frequency) {
 	try {
 		autoSound thee = Data_copy (me);
 		Sound_deEmphasis (thee.peek(), frequency);
 		Matrix_scaleAbsoluteExtremum (thee.peek(), 0.99);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered (de-emphasis).");
 	}
@@ -1215,7 +1215,7 @@ void Sound_reverse (Sound me, double tmin, double tmax) {
 	}
 }
 
-Sound Sounds_crossCorrelate_short (Sound me, Sound thee, double tmin, double tmax, int normalize) {
+autoSound Sounds_crossCorrelate_short (Sound me, Sound thee, double tmin, double tmax, int normalize) {
 	try {
 		if (my dx != thy dx)
 			Melder_throw (U"Sampling frequencies are not equal.");
@@ -1265,7 +1265,7 @@ Sound Sounds_crossCorrelate_short (Sound me, Sound thee, double tmin, double tma
 				his z [1] [i] *= factor;
 			}
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": not cross-correlated.");
 	}
