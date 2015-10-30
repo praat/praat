@@ -86,11 +86,11 @@ double structSpectrum :: v_getValueAtSample (long isamp, long which, int units) 
 	return NUMundefined;
 }
 
-Spectrum Spectrum_create (double fmax, long nf) {
+autoSpectrum Spectrum_create (double fmax, long nf) {
 	try {
 		autoSpectrum me = Thing_new (Spectrum);
 		Matrix_init (me.peek(), 0.0, fmax, nf, fmax / (nf - 1), 0.0, 1.0, 2.0, 2, 1.0, 1.0);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Spectrum not created.");
 	}
@@ -196,7 +196,7 @@ if(ifmin==1)ifmin=2;  /* BUG */
 	}
 }
 
-Table Spectrum_downto_Table (Spectrum me, bool includeBinNumbers, bool includeFrequency,
+autoTable Spectrum_downto_Table (Spectrum me, bool includeBinNumbers, bool includeFrequency,
 	bool includeRealPart, bool includeImaginaryPart, bool includeEnergyDensity, bool includePowerDensity)
 {
 	try {
@@ -218,7 +218,7 @@ Table Spectrum_downto_Table (Spectrum me, bool includeBinNumbers, bool includeFr
 			if (includeEnergyDensity) Table_setNumericValue (thee.peek(), ibin, ++ icol, Sampled_getValueAtSample (me, ibin, 0, 1));
 			if (includePowerDensity) Table_setNumericValue (thee.peek(), ibin, ++ icol, Sampled_getValueAtSample (me, ibin, 0, 2));
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Table.");
 	}
@@ -236,29 +236,29 @@ void Spectrum_list (Spectrum me, bool includeBinNumbers, bool includeFrequency,
 	}
 }
 
-Spectrum Matrix_to_Spectrum (Matrix me) {
+autoSpectrum Matrix_to_Spectrum (Matrix me) {
 	try {
 		if (my ny != 2)
 			Melder_throw (U"Matrix must have exactly 2 rows.");
 		autoSpectrum thee = Thing_new (Spectrum);
 		my structMatrix :: v_copy (thee.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Spectrum.");
 	}
 }
 
-Matrix Spectrum_to_Matrix (Spectrum me) {
+autoMatrix Spectrum_to_Matrix (Spectrum me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
 		my structMatrix :: v_copy (thee.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
 	}
 }
 
-Spectrum Spectrum_cepstralSmoothing (Spectrum me, double bandWidth) {
+autoSpectrum Spectrum_cepstralSmoothing (Spectrum me, double bandWidth) {
 	try {
 		/*
 		 * dB-spectrum is log (power).
@@ -297,7 +297,7 @@ Spectrum Spectrum_cepstralSmoothing (Spectrum me, double bandWidth) {
 			re [i] = exp (0.5 * re [i]);   // i.e., sqrt (exp (re [i]))
 			im [i] = 0.0;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": cepstral smoothing not computed.");
 	}

@@ -25,7 +25,7 @@
 
 #include "Spectrum_to_Excitation.h"
 
-Excitation Spectrum_to_Excitation (Spectrum me, double dbark) {
+autoExcitation Spectrum_to_Excitation (Spectrum me, double dbark) {
 	try {
 		long nbark = (int) floor (25.6 / dbark + 0.5);
 		double *re = my z [1], *im = my z [2]; 
@@ -68,7 +68,7 @@ Excitation Spectrum_to_Excitation (Spectrum me, double dbark) {
 		for (long i = 1; i <= nbark; i ++)
 			thy z [1] [i] = Excitation_soundPressureToPhon (sqrt (outSig [i + nbark/2]), Sampled_indexToX (thee.peek(), i));
 
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Excitation.");
 	}

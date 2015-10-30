@@ -80,10 +80,10 @@ void FormantGrid_init (FormantGrid me, double tmin, double tmax, long numberOfFo
 	my formants = Ordered_create ();
 	my bandwidths = Ordered_create ();
 	for (long iformant = 1; iformant <= numberOfFormants; iformant ++) {
-		RealTier formant = RealTier_create (tmin, tmax);
-		Collection_addItem (my formants, formant);
-		RealTier bandwidth = RealTier_create (tmin, tmax);
-		Collection_addItem (my bandwidths, bandwidth);
+		autoRealTier formant = RealTier_create (tmin, tmax);
+		Collection_addItem (my formants, formant.transfer());
+		autoRealTier bandwidth = RealTier_create (tmin, tmax);
+		Collection_addItem (my bandwidths, bandwidth.transfer());
 	}
 	my xmin = tmin;
 	my xmax = tmax;

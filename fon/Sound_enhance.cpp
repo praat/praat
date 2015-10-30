@@ -32,7 +32,7 @@
 #include "Pitch_to_PointProcess.h"
 #include "Sound_and_Spectrum.h"
 
-Sound Sound_lengthen_overlapAdd (Sound me, double fmin, double fmax, double factor) {
+autoSound Sound_lengthen_overlapAdd (Sound me, double fmin, double fmax, double factor) {
 	try {
 		if (my ny > 1)
 			Melder_throw (U"Overlap-add works only on mono sounds.");
@@ -44,13 +44,13 @@ Sound Sound_lengthen_overlapAdd (Sound me, double fmin, double fmax, double fact
 		autoDurationTier duration = DurationTier_create (my xmin, my xmax);
 		RealTier_addPoint (duration.peek(), 0.5 * (my xmin + my xmax), factor);
 		autoSound thee = Sound_Point_Pitch_Duration_to_Sound (sound.peek(), pulses.peek(), pitchTier.peek(), duration.peek(), 1.5 / fmin);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not lengthened.");
 	}
 }
 
-Sound Sound_deepenBandModulation (Sound me, double enhancement_dB,
+autoSound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 	double flow, double fhigh, double slowModulation, double fastModulation, double bandSmoothing)
 {
 	try {
@@ -101,7 +101,7 @@ Sound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 					intensityFilter -> z [1] [i] *= factor;
 					intensityFilter -> z [2] [i] *= factor;
 				}
-				intensity.reset (Spectrum_to_Sound (intensityFilter.peek()));
+				intensity = Spectrum_to_Sound (intensityFilter.peek());
 				n = intensity -> nx;
 				amp = intensity -> z [1];
 				for (long i = 1; i <= n; i ++) amp [i] = pow (10, amp [i] / 2);
@@ -124,7 +124,7 @@ Sound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 		thy xmax = my xmax;
 		thy nx = my nx;
 		thy x1 = my x1;
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": band modulation not deepened.");
 	}

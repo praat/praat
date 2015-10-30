@@ -30,12 +30,12 @@ Thing_define (OptimalCeilingTier, RealTier) {
 		override { return MelderQuantity_TIME_SECONDS; }
 };
 
-OptimalCeilingTier OptimalCeilingTier_create (double tmin, double tmax);
+autoOptimalCeilingTier OptimalCeilingTier_create (double tmin, double tmax);
 
 void OptimalCeilingTier_draw (OptimalCeilingTier me, Graphics g, double tmin, double tmax,
 	double ymin, double ymax, const char32 *method, int garnish);
 
-TableOfReal OptimalCeilingTier_downto_TableOfReal (OptimalCeilingTier me);
+autoTableOfReal OptimalCeilingTier_downto_TableOfReal (OptimalCeilingTier me);
 
 /* End of file OptimalCeilingTier.h */
 #endif

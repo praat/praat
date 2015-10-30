@@ -1,6 +1,6 @@
 /* Sound_to_Harmonicity.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +20,13 @@
 #include "Sound.h"
 #include "Harmonicity.h"
 
-Harmonicity Sound_to_Harmonicity_ac (Sound me, double dt, double minimumPitch,
+autoHarmonicity Sound_to_Harmonicity_ac (Sound me, double dt, double minimumPitch,
 	double silenceThreshold, double periodsPerWindow);
 
-Harmonicity Sound_to_Harmonicity_cc (Sound me, double dt, double minimumPitch,
+autoHarmonicity Sound_to_Harmonicity_cc (Sound me, double dt, double minimumPitch,
 	double silenceThreshold, double periodsPerWindow);
 
-Matrix Sound_to_Harmonicity_GNE (Sound me,
+autoMatrix Sound_to_Harmonicity_GNE (Sound me,
 	double fmin,   /* 500 Hz */
 	double fmax,   /* 4500 Hz */
 	double bandwidth,  /* 1000 Hz */

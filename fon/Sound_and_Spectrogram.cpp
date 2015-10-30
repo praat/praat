@@ -41,7 +41,7 @@
 #include "enums_getValue.h"
 #include "Sound_and_Spectrogram_enums.h"
 
-Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, double fmax,
+autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, double fmax,
 	double minimumTimeStep1, double minimumFreqStep1, enum kSound_to_Spectrogram_windowShape windowType,
 	double maximumTimeOversampling, double maximumFreqOversampling)
 {
@@ -176,13 +176,13 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 				thy z [iband] [iframe] = power * oneByBinWidth;
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": spectrogram analysis not performed.");
 	}
 }
 
-Sound Spectrogram_to_Sound (Spectrogram me, double fsamp) {
+autoSound Spectrogram_to_Sound (Spectrogram me, double fsamp) {
 	try {
 		double dt = 1 / fsamp;
 		long n = (long) floor ((my xmax - my xmin) / dt);
@@ -201,7 +201,7 @@ Sound Spectrogram_to_Sound (Spectrogram me, double fsamp) {
 			}
 			thy z [1] [i] = value;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound.");
 	}

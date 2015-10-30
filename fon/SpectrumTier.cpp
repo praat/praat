@@ -32,11 +32,11 @@ void structSpectrumTier :: v_info () {
 	MelderInfo_writeLine (U"Maximum power value: ", RealTier_getMaximumValue (this), U" dB/Hz");
 }
 
-SpectrumTier SpectrumTier_create (double fmin, double fmax) {
+autoSpectrumTier SpectrumTier_create (double fmin, double fmax) {
 	try {
 		autoSpectrumTier me = Thing_new (SpectrumTier);
 		RealTier_init (me.peek(), fmin, fmax);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SpectrumTier not created.");
 	}
@@ -57,18 +57,18 @@ void SpectrumTier_list (SpectrumTier me, bool includeIndexes, bool includeFreque
 	}
 }
 
-Table SpectrumTier_downto_Table (SpectrumTier me, bool includeIndexes, bool includeFrequency, bool includePowerDensity) {
+autoTable SpectrumTier_downto_Table (SpectrumTier me, bool includeIndexes, bool includeFrequency, bool includePowerDensity) {
 	return RealTier_downto_Table (me,
 		includeIndexes ? U"index" : NULL,
 		includeFrequency ? U"freq(Hz)" : NULL,
 		includePowerDensity ? U"pow(dB/Hz)" : NULL);
 }
 
-SpectrumTier Spectrum_to_SpectrumTier_peaks (Spectrum me) {
+autoSpectrumTier Spectrum_to_SpectrumTier_peaks (Spectrum me) {
 	try {
 		autoLtas ltas = Spectrum_to_Ltas_1to1 (me);
 		autoSpectrumTier thee = Ltas_to_SpectrumTier_peaks (ltas.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": peaks not converted to SpectrumTier.");
 	}

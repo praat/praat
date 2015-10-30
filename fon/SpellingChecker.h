@@ -25,10 +25,10 @@
 #include "SpellingChecker_def.h"
 oo_CLASS_CREATE (SpellingChecker, Daata);
 
-SpellingChecker WordList_upto_SpellingChecker (WordList me);
-WordList SpellingChecker_extractWordList (SpellingChecker me);
+autoSpellingChecker WordList_upto_SpellingChecker (WordList me);
+autoWordList SpellingChecker_extractWordList (SpellingChecker me);
 void SpellingChecker_replaceWordList (SpellingChecker me, WordList list);
-SortedSetOfString SpellingChecker_extractUserDictionary (SpellingChecker me);
+autoSortedSetOfString SpellingChecker_extractUserDictionary (SpellingChecker me);
 void SpellingChecker_replaceUserDictionary (SpellingChecker me, SortedSetOfString userDictionary);
 
 bool SpellingChecker_isWordAllowed (SpellingChecker me, const char32 *word);

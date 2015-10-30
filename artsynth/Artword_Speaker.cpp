@@ -22,24 +22,23 @@
 
 void Artword_Speaker_draw (Artword artword, Speaker speaker, Graphics g, int numberOfSteps) {
 	double oldLineWidth = Graphics_inqLineWidth (g);
-	Art art = Art_create ();
+	autoArt art = Art_create ();
 	for (int i = 0; i <= numberOfSteps; i ++) {
-		Artword_intoArt (artword, art, i * artword -> totalTime / numberOfSteps);
+		Artword_intoArt (artword, art.get(), i * artword -> totalTime / numberOfSteps);
 		Graphics_setLineWidth (g, 2 + i + i);
-		Art_Speaker_draw (art, speaker, g);
+		Art_Speaker_draw (art.get(), speaker, g);
 	}
-	forget (art);
 	Graphics_setLineWidth (g, oldLineWidth);
 }
 
 void Artword_Speaker_movie (Artword artword, Speaker speaker, Graphics g) {
 	double timeStep = 0.00001;
-	Art art = Art_create ();
+	autoArt art = Art_create ();
 	for (double tim = 0.0; tim < artword -> totalTime; tim += timeStep) {
-		Artword_intoArt (artword, art, tim);
+		Artword_intoArt (artword, art.get(), tim);
 		Graphics_setViewport (g, 0, 1, 0, 1);
 		Graphics_clearWs (g);
-		Art_Speaker_draw (art, speaker, g);
+		Art_Speaker_draw (art.get(), speaker, g);
 		Graphics_flushWs (g);
 		// TODO: we should pause here a bit
 	}

@@ -251,11 +251,11 @@ Formant Sound_to_Formant_robust (Sound me, double dt_in, double numberOfFormants
 	double nyquist = 0.5 / my dx;
 	int predictionOrder = (long) floor (2 * numberOfFormants);
 	try {
-		autoSound sound = NULL;
+		autoSound sound;
 		if (maximumFrequency <= 0.0 || fabs (maximumFrequency / nyquist - 1.0) < 1.0e-12) {
-			sound.reset (Data_copy (me));   // will be modified
+			sound = Data_copy (me);   // will be modified
 		} else {
-			sound.reset (Sound_resample (me, maximumFrequency * 2.0, 50));
+			sound = Sound_resample (me, maximumFrequency * 2.0, 50);
 		}
 
 		autoLPC lpc = Sound_to_LPC_auto (sound.peek(), predictionOrder, halfdt_window, dt, preEmphasisFrequency);

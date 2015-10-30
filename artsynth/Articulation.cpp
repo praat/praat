@@ -45,7 +45,7 @@
 
 Thing_implement (Art, Daata, 0);
 
-Art Art_create () {
+autoArt Art_create () {
 	return Thing_new (Art);
 }
 

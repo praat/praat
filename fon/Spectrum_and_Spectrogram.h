@@ -1,6 +1,6 @@
 /* Spectrum_and_Spectrogram.h
  *
- * Copyright (C) 1992-2011 David Weenink & Paul Boersma
+ * Copyright (C) 1992-2011,2015 David Weenink & Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #include "Spectrum.h"
 #include "Spectrogram.h"
 
-Spectrum Spectrogram_to_Spectrum (I, double time);
+autoSpectrum Spectrogram_to_Spectrum (Spectrogram me, double time);
 /*
 	Function:
 		Create a time slice from the Spectrogram at the time nearest to 'time'.
@@ -37,7 +37,7 @@ Spectrum Spectrogram_to_Spectrum (I, double time);
 		}
 */
  
-Spectrogram Spectrum_to_Spectrogram (I);
+autoSpectrogram Spectrum_to_Spectrogram (Spectrum me);
 /*
 	Function:
 		Create a Spectrogram with one time slice from the Spectrum.

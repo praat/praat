@@ -25,8 +25,7 @@
 
 #include "Spectrum_and_Spectrogram.h"
 
-Spectrum Spectrogram_to_Spectrum (I, double tim) {
-	iam (Spectrogram);
+autoSpectrum Spectrogram_to_Spectrum (Spectrogram me, double tim) {
 	try {
 		autoSpectrum thee = Spectrum_create (my ymax, my ny);
 		/* Override stupid Spectrum values. */
@@ -44,19 +43,18 @@ Spectrum Spectrogram_to_Spectrum (I, double tim) {
 			thy z [1] [ifreq] = sqrt (value);
 			thy z [2] [ifreq] = 0.0;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": spectral slice not extracted.");
 	}
 }
 
-Spectrogram Spectrum_to_Spectrogram (I) {
-	iam (Spectrum);
+autoSpectrogram Spectrum_to_Spectrogram (Spectrum me) {
 	try {
 		autoSpectrogram thee = Spectrogram_create (0, 1, 1, 1, 0.5, my xmin, my xmax, my nx, my dx, my x1);
 		for (long i = 1; i <= my nx; i ++)
 			thy z [i] [1] = my z [1] [i] * my z [1] [i] + my z [2] [i] * my z [2] [i];
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Spectrogram.");
 	}

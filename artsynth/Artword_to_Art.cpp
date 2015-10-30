@@ -19,11 +19,11 @@
 
 #include "Artword_to_Art.h"
 
-Art Artword_to_Art (Artword me, double tim) {
+autoArt Artword_to_Art (Artword me, double tim) {
 	try {
 		autoArt thee = Art_create ();
 		Artword_intoArt (me, thee.peek(), tim);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Articulation.");
 	}

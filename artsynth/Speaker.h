@@ -24,7 +24,7 @@
 #include "Speaker_def.h"
 oo_CLASS_CREATE (Speaker, Daata);
 
-Speaker Speaker_create (char32 *kindOfSpeaker, int numberOfVocalCordMasses);
+autoSpeaker Speaker_create (char32 *kindOfSpeaker, int numberOfVocalCordMasses);
 	/* Preconditions:								*/
 	/*    1 <= numberOfVocalCordMasses <= 2;					*/
 	/* Failures:									*/

@@ -38,7 +38,8 @@ FORM (Art_create, U"Create a default Articulation", U"Articulatory synthesis") {
 	WORD (U"Name", U"articulation")
 	OK2
 DO
-	praat_new (Art_create (), GET_STRING (U"Name"));
+	autoArt me = Art_create ();
+	praat_new (me.transfer(), GET_STRING (U"Name"));
 END2 }
 
 FORM (Art_edit, U"View & Edit Articulation", 0) {

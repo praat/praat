@@ -1,6 +1,6 @@
 /* Spectrum_to_Formant.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,6 @@
 #include "Spectrum.h"
 #include "Formant.h"
 
-Formant Spectrum_to_Formant (Spectrum me, int maxnFormants);
+autoFormant Spectrum_to_Formant (Spectrum me, int maxnFormants);
 
 /* End of file Spectrum_to_Formant.h */

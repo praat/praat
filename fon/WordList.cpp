@@ -133,7 +133,7 @@ void structWordList :: v_writeBinary (FILE *f) {
 	}
 }
 
-WordList Strings_to_WordList (Strings me) {
+autoWordList Strings_to_WordList (Strings me) {
 	try {
 		long totalLength = 0;
 		/*
@@ -165,13 +165,13 @@ WordList Strings_to_WordList (Strings me) {
 		}
 		*q = U'\0';
 		Melder_assert (q - thy string == thy length);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to WordList.");
 	}
 }
 
-Strings WordList_to_Strings (WordList me) {
+autoStrings WordList_to_Strings (WordList me) {
 	try {
 		unsigned char *word = (unsigned char *) my string;   // BUG: explain this
 		autoStrings thee = Thing_new (Strings);
@@ -188,7 +188,7 @@ Strings WordList_to_Strings (WordList me) {
 			thy strings [i] [length] = U'\0';
 			word += length + 1;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Strings.");
 	}
@@ -233,21 +233,19 @@ static int compare (const char32 *word, const char32 *p) {
 static char32 buffer [3333+1];
 
 bool WordList_hasWord (WordList me, const char32 *word) {
-	long p, d;
-	int cf;
 	if (str32len (word) > 3333) return false;
 	Longchar_genericize32 (word, buffer);
 	if (! my length) my length = str32len (my string);
-	p = my length / 2, d = p / 2;
+	long p = my length / 2, d = p / 2;
 	while (d > 20) {
 		p = gotoStart (me, p);
-		cf = compare (buffer, my string + p);
+		int cf = compare (buffer, my string + p);
 		if (cf == 0) return true;
 		if (cf < 0) p -= d; else p += d;
 		d /= 2;
 	}
 	p = gotoStart (me, p);
-	cf = compare (buffer, my string + p);
+	int cf = compare (buffer, my string + p);
 	if (cf == 0) return true;
 	if (cf > 0) {
 		for (;;) {

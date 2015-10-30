@@ -265,7 +265,7 @@ void Formant_sort (Formant me) {
 	}
 }
 
-static Formant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOfPoles,
+static autoFormant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOfPoles,
 	double halfdt_window, int which, double preemphasisFrequency, double safetyMargin)
 {
 	double dt = dt_in > 0.0 ? dt_in : halfdt_window / 4.0;
@@ -337,24 +337,23 @@ static Formant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOf
 		Melder_progress ((double) iframe / (double) nFrames, U"Formant analysis: frame ", iframe);
 	}
 	Formant_sort (thee.peek());
-	return thee.transfer();
+	return thee;
 }
 
-Formant Sound_to_Formant_any (Sound me, double dt, int numberOfPoles, double maximumFrequency,
+autoFormant Sound_to_Formant_any (Sound me, double dt, int numberOfPoles, double maximumFrequency,
 	double halfdt_window, int which, double preemphasisFrequency, double safetyMargin)
 {
 	double nyquist = 0.5 / my dx;
-	autoSound sound = NULL;
+	autoSound sound;
 	if (maximumFrequency <= 0.0 || fabs (maximumFrequency / nyquist - 1) < 1.0e-12) {
-		sound.reset (Data_copy (me));   // will be modified
+		sound = Data_copy (me);   // will be modified
 	} else {
-		sound.reset (Sound_resample (me, maximumFrequency * 2, 50));
+		sound = Sound_resample (me, maximumFrequency * 2, 50);
 	}
-	autoFormant thee = Sound_to_Formant_any_inline (sound.peek(), dt, numberOfPoles, halfdt_window, which, preemphasisFrequency, safetyMargin);
-	return thee.transfer();
+	return Sound_to_Formant_any_inline (sound.peek(), dt, numberOfPoles, halfdt_window, which, preemphasisFrequency, safetyMargin);
 }
 
-Formant Sound_to_Formant_burg (Sound me, double dt, double nFormants, double maximumFrequency, double halfdt_window, double preemphasisFrequency) {
+autoFormant Sound_to_Formant_burg (Sound me, double dt, double nFormants, double maximumFrequency, double halfdt_window, double preemphasisFrequency) {
 	try {
 		return Sound_to_Formant_any (me, dt, (int) (2 * nFormants), maximumFrequency, halfdt_window, 1, preemphasisFrequency, 50.0);
 	} catch (MelderError) {
@@ -362,7 +361,7 @@ Formant Sound_to_Formant_burg (Sound me, double dt, double nFormants, double max
 	}
 }
 
-Formant Sound_to_Formant_keepAll (Sound me, double dt, double nFormants, double maximumFrequency, double halfdt_window, double preemphasisFrequency) {
+autoFormant Sound_to_Formant_keepAll (Sound me, double dt, double nFormants, double maximumFrequency, double halfdt_window, double preemphasisFrequency) {
 	try {
 		return Sound_to_Formant_any (me, dt, (int) (2 * nFormants), maximumFrequency, halfdt_window, 1, preemphasisFrequency, 0.0);
 	} catch (MelderError) {
@@ -370,7 +369,7 @@ Formant Sound_to_Formant_keepAll (Sound me, double dt, double nFormants, double 
 	}
 }
 
-Formant Sound_to_Formant_willems (Sound me, double dt, double nFormants, double maximumFrequency, double halfdt_window, double preemphasisFrequency) {
+autoFormant Sound_to_Formant_willems (Sound me, double dt, double nFormants, double maximumFrequency, double halfdt_window, double preemphasisFrequency) {
 	try {
 		return Sound_to_Formant_any (me, dt, (int) (2 * nFormants), maximumFrequency, halfdt_window, 2, preemphasisFrequency, 50.0);
 	} catch (MelderError) {

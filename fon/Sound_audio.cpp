@@ -143,7 +143,7 @@ static int portaudioStreamCallback (
 	return paContinue;
 }
 
-Sound Sound_recordFixedTime (int inputSource, double gain, double balance, double sampleRate, double duration) {
+autoSound Sound_recordFixedTime (int inputSource, double gain, double balance, double sampleRate, double duration) {
 	bool inputUsesPortAudio =
 		#if defined (_WIN32)
 			MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem_MME_VIA_PORTAUDIO;
@@ -480,7 +480,7 @@ for (i = 1; i <= numberOfSamples; i ++) trace (U"Recorded ", buffer [i]);
 
 		/* Hand the resulting sound to the caller. */
 
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		if (inputUsesPortAudio) {
 			if (portaudioStream) Pa_StopStream (portaudioStream);
