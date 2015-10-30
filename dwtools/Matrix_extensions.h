@@ -2,7 +2,7 @@
 #define _Matrix_extensions_h_
 /* Matrix_extensions.h
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ void Matrix_scale (Matrix me, int choice);
 /* choice = 2 :rows, divide each row elmnt by the maximum (abs) of that row	*/
 /* choice = 3 :columns, divide each col elmnt by the maximum of that col	*/
 
-Matrix Matrix_transpose (Matrix me);
+autoMatrix Matrix_transpose (Matrix me);
 
 void Matrix_drawDistribution (Matrix me, Graphics g, double xmin, double xmax,
 	double ymin, double ymax, double minimum, double maximum, long nBins,
@@ -56,9 +56,10 @@ void Matrix_drawSliceY (Matrix me, Graphics g, double x, double ymin, double yma
 
 int Matrix_fitPolynomial (Matrix me, long maxDegree);
 
-Matrix Matrix_solveEquation (Matrix me, double tolerance);
+autoMatrix Matrix_solveEquation (Matrix me, double tolerance);
 
 double Matrix_getMean (Matrix me, double xmin, double xmax, double ymin, double ymax);
+
 double Matrix_getStandardDeviation (Matrix me, double xmin, double xmax, double ymin, double ymax);
 
 

@@ -2,7 +2,7 @@
 #define _Resonator_h_
 /* Resonator.h
  *
- * Copyright (C) 2008-2011 David Weenink
+ * Copyright (C) 2008-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,11 +66,11 @@ Thing_define (ConstantGainResonator, Filter) {
 #define Resonator_NORMALISATION_HMAX 1
 
 
-Resonator Resonator_create (double dT, int normalisation);
+autoResonator Resonator_create (double dT, int normalisation);
 
-ConstantGainResonator ConstantGainResonator_create (double dT);
+autoConstantGainResonator ConstantGainResonator_create (double dT);
 
-AntiResonator AntiResonator_create (double dT);
+autoAntiResonator AntiResonator_create (double dT);
 
 /*
 	Set a,b,c

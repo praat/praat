@@ -2,7 +2,7 @@
  *
  * Principal Component Analysis
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,13 +69,13 @@ void structPCA :: v_info () {
 	MelderInfo_writeLine (U"Number of observations: ", numberOfObservations);
 }
 
-PCA PCA_create (long numberOfComponents, long dimension) {
+autoPCA PCA_create (long numberOfComponents, long dimension) {
 	try {
 		autoPCA me = Thing_new (PCA);
 		Eigen_init (me.peek(), numberOfComponents, dimension);
 		my labels = NUMvector<char32 *> (1, dimension);
 		my centroid = NUMvector<double> (1, dimension);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PCA not created");
 	}
@@ -96,7 +96,7 @@ void PCA_getEqualityOfEigenvalues (PCA me, long from, long to, int conservative,
 	*ndf = 0;
 	*chisq = 0;
 
-	if ( (from > 0 && to == from) || to > my numberOfEigenvalues) {
+	if ((from > 0 && to == from) || to > my numberOfEigenvalues) {
 		return;
 	}
 
@@ -126,7 +126,7 @@ void PCA_getEqualityOfEigenvalues (PCA me, long from, long to, int conservative,
 	*probability = NUMchiSquareQ (*chisq, *ndf);
 }
 
-PCA TableOfReal_to_PCA (I) {
+autoPCA TableOfReal_to_PCA (I) {
 	iam (TableOfReal);
 	try {
 		long m = my numberOfRows, n = my numberOfColumns;
@@ -134,13 +134,12 @@ PCA TableOfReal_to_PCA (I) {
 		if (! TableOfReal_areAllCellsDefined (me, 0, 0, 0, 0)) {
 			Melder_throw (U"Undefined cells.");
 		}
-
-		if (m < 2) Melder_throw (U"There is not enough data to perform a PCA.\n"
-			                         "Your table has less than 2 rows.");
-
-		if (m < n) Melder_warning (U"The number of rows in your table is less than the\n"
-			                           "number of columns. ");
-
+		if (m < 2) {
+			Melder_throw (U"There is not enough data to perform a PCA.\nYour table has less than 2 rows.");
+		}
+		if (m < n) {
+			Melder_warning (U"The number of rows in your table is less than the \nnumber of columns. ");
+		}
 		if (NUMfrobeniusnorm (m, n, my data) == 0) {
 			Melder_throw (U"All values in your table are zero.");
 		}
@@ -175,13 +174,13 @@ PCA TableOfReal_to_PCA (I) {
 		for (long i = 1; i <= thy numberOfEigenvalues; i++) {
 			thy eigenvalues[i] /= (m - 1);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": PCA not created.");
 	}
 }
 
-TableOfReal PCA_and_TableOfReal_to_TableOfReal_zscores (PCA me, TableOfReal thee, long numberOfDimensions) {
+autoTableOfReal PCA_and_TableOfReal_to_TableOfReal_zscores (PCA me, TableOfReal thee, long numberOfDimensions) {
 	try {
 		if (numberOfDimensions == 0 || numberOfDimensions > my numberOfEigenvalues) {
 			numberOfDimensions = my numberOfEigenvalues;
@@ -199,14 +198,13 @@ TableOfReal PCA_and_TableOfReal_to_TableOfReal_zscores (PCA me, TableOfReal thee
 		}
 		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows);
 		TableOfReal_setSequentialColumnLabels (him.peek(), 0, 0, U"pc", 1, 1);
-		return him.transfer();
-
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal (zscores) not created from PCA & TableOfReal.");
 	}
 }
 
-Configuration PCA_and_TableOfReal_to_Configuration (PCA me, thou, long numberOfDimensions) {
+autoConfiguration PCA_and_TableOfReal_to_Configuration (PCA me, thou, long numberOfDimensions) {
 	try {
 		thouart (TableOfReal);
 		if (numberOfDimensions == 0 || numberOfDimensions > my numberOfEigenvalues) {
@@ -217,13 +215,13 @@ Configuration PCA_and_TableOfReal_to_Configuration (PCA me, thou, long numberOfD
 		Eigen_and_TableOfReal_project_into (me, thee, 1, thy numberOfColumns, him.peek(), 1, numberOfDimensions);
 		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows);
 		TableOfReal_setSequentialColumnLabels (him.peek(), 0, 0, U"pc", 1, 1);
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"Configuration not created from PCA & TableOfReal.");
 	}
 }
 
-TableOfReal PCA_and_Configuration_to_TableOfReal_reconstruct (PCA me, thou) {
+autoTableOfReal PCA_and_Configuration_to_TableOfReal_reconstruct (PCA me, thou) {
 	try {
 		thouart (Configuration);
 		long npc = thy numberOfColumns;
@@ -249,7 +247,7 @@ TableOfReal PCA_and_Configuration_to_TableOfReal_reconstruct (PCA me, thou) {
 				}
 			}
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal not reconstructed.");
 	}
@@ -273,7 +271,7 @@ double PCA_and_TableOfReal_getFractionVariance (PCA me, thou, long from, long to
 	}
 }
 
-TableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, char32 *numstring) {
+autoTableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, char32 *numstring) {
 	try {
 		long npc;
 		autoNUMvector<double> pc (NUMstring_to_numbers (numstring, & npc), 1);
@@ -283,11 +281,10 @@ TableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, char32 *numstring) {
 			c -> data [1][j] = pc[j];
 		}
 		autoTableOfReal him = PCA_and_Configuration_to_TableOfReal_reconstruct (me, c.peek());
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U" not reconstructed.");
 	}
 }
-
 
 /* End of file PCA.cpp */

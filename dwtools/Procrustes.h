@@ -2,7 +2,7 @@
 #define _Procrustes_h_
 /* Procrustes.h
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,6 @@
 #include "Procrustes_def.h"
 oo_CLASS_CREATE (Procrustes, AffineTransform);
 
-Procrustes Procrustes_create (long n);
+autoProcrustes Procrustes_create (long n);
 
 #endif /* _Procrustes_h_ */

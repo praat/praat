@@ -21,11 +21,11 @@
 
 Thing_implement (OptimalCeilingTier, RealTier, 0);
 
-OptimalCeilingTier OptimalCeilingTier_create (double tmin, double tmax) {
+autoOptimalCeilingTier OptimalCeilingTier_create (double tmin, double tmax) {
 	try {
 		autoOptimalCeilingTier me = Thing_new (OptimalCeilingTier);
 		RealTier_init (me.peek(), tmin, tmax);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"OptimalCeilingTier not created.");
 	}
@@ -37,8 +37,9 @@ void OptimalCeilingTier_draw (OptimalCeilingTier me, Graphics g, double tmin, do
 	RealTier_draw (me, g, tmin, tmax, ymin, ymax, garnish, method, U"Sound pressure (Pa)");
 }
 
-TableOfReal OptimalCeilingTier_downto_TableOfReal (OptimalCeilingTier me) {
-	return RealTier_downto_TableOfReal (me, U"Time (s)", U"Frequency (Hz)");
+autoTableOfReal OptimalCeilingTier_downto_TableOfReal (OptimalCeilingTier me) {
+	autoTableOfReal thee = RealTier_downto_TableOfReal (me, U"Time (s)", U"Frequency (Hz)");
+	return thee;
 }
 
 /* End of file OptimalCeilingTier.cpp */

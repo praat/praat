@@ -46,8 +46,7 @@ static void IntervalTier_addBoundaryUnsorted (IntervalTier me, long iinterval, d
 	Sorted_addItem_unsorted (my intervals, ti_new.transfer());
 }
 
-TextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThreshold_dB,
-		double minSilenceDuration, double minSoundingDuration, const char32 *silenceLabel, const char32 *soundingLabel) {
+autoTextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThreshold_dB, double minSilenceDuration, double minSoundingDuration, const char32 *silenceLabel, const char32 *soundingLabel) {
 	try {
 		double duration = my xmax - my xmin, time;
 
@@ -59,7 +58,7 @@ TextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThres
 		IntervalTier it = (IntervalTier) thy tiers -> item[1];
 		TextInterval_setText ( (TextInterval) it -> intervals -> item[1], soundingLabel);
 		if (minSilenceDuration > duration) {
-			return thee.transfer();
+			return thee;
 		}
 
 		double intensity_max_db, intensity_min_db, xOfMaximum, xOfMinimum;
@@ -67,13 +66,13 @@ TextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThres
 		Vector_getMinimumAndX (me, 0, 0, 1, NUM_PEAK_INTERPOLATE_PARABOLIC, &intensity_min_db, &xOfMinimum);
 		double intensity_dbRange = intensity_max_db - intensity_min_db;
 
-		if (intensity_dbRange < 10) Melder_warning (U"The loudest and softest part in your sound only differ by ",
-			        intensity_dbRange, U" dB.");
-
+		if (intensity_dbRange < 10) {
+			Melder_warning (U"The loudest and softest part in your sound only differ by ", intensity_dbRange, U" dB.");
+		}
 		double intensityThreshold = intensity_max_db - fabs (silenceThreshold_dB);
 
 		if (minSilenceDuration > duration || intensityThreshold < intensity_min_db) {
-			return thee.transfer();
+			return thee;
 		}
 
 		int inSilenceInterval = my z[1][1] < intensityThreshold;
@@ -118,13 +117,13 @@ TextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThres
 		IntervalTier_cutIntervals_minimumDuration (it, silenceLabel, minSilenceDuration);
 		IntervalTier_cutIntervalsOnLabelMatch (it, soundingLabel);
 
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": TextGrid not created.");
 	}
 }
 
-Intensity IntensityTier_to_Intensity (IntensityTier me, double dt) {
+autoIntensity IntensityTier_to_Intensity (IntensityTier me, double dt) {
 	try {
 		long nt = (long) floor ((my xmax - my xmin) / dt);
 		double t1 = 0.5 * dt;
@@ -133,18 +132,18 @@ Intensity IntensityTier_to_Intensity (IntensityTier me, double dt) {
 			double time = t1 + (i - 1) * dt;
 			thy z[1][i] = RealTier_getValueAtTime (me, time);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U" no Intensity created.");
 	}
 }
 
-TextGrid IntensityTier_to_TextGrid_detectSilences (IntensityTier me, double dt, double silenceThreshold_dB, double minSilenceDuration,
+autoTextGrid IntensityTier_to_TextGrid_detectSilences (IntensityTier me, double dt, double silenceThreshold_dB, double minSilenceDuration,
 	double minSoundingDuration, const char32 *silenceLabel, const char32 *soundingLabel) {
 	try {
 		autoIntensity intensity = IntensityTier_to_Intensity (me, dt);
 		autoTextGrid thee = Intensity_to_TextGrid_detectSilences (intensity.peek(), silenceThreshold_dB, minSilenceDuration, minSoundingDuration, silenceLabel, soundingLabel);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U" no TextGrid created.");
 	}

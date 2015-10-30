@@ -2,7 +2,7 @@
 #define _Sound_extensions_h_
 /* Sound_extensions.h
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,12 +50,11 @@ Sound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsCodin
  *	skipNBytes	: start reading after this number of bytes (skipNBytes >= 0 )
  */
 
-Sound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate);
+autoSound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate);
 /*
 */
 
-void Sound_writeToRawFile (Sound me, MelderFile file, const char *format, int littleEndian,
-	int nBitsCoding, int unSigned);
+void Sound_writeToRawFile (Sound me, MelderFile file, const char *format, int littleEndian, int nBitsCoding, int unSigned);
 
 void Sound_into_Sound (Sound me, Sound to, double startTime);
 /* precondition: my dx == to->dx (equal sampling times */
@@ -73,38 +72,39 @@ void Sound_preEmphasis (Sound me, double preEmphasisFrequency);
 void Sound_deEmphasis (Sound me, double preEmphasisFrequency);
 /*	for (i=2; i <= my nx; i++ ) my z[1][i] += deEmphasis * my z[1][i-1]; */
 
-Sound Sound_createGaussian (double windowDuration, double samplingFrequency);
-Sound Sound_createHamming (double windowDuration, double samplingFrequency);
+autoSound Sound_createGaussian (double windowDuration, double samplingFrequency);
 
-Sound Sound_createSimpleToneComplex (double minimumTime, double maximumTime, double samplingFrequency,
+autoSound Sound_createHamming (double windowDuration, double samplingFrequency);
+
+autoSound Sound_createSimpleToneComplex (double minimumTime, double maximumTime, double samplingFrequency,
 	double firstFrequency, long numberOfComponents, double frequencyDistance,
 	int scaleAmplitudes);
 
-Sound Sound_createMistunedHarmonicComplex (double minimumTime, double maximumTime, double samplingFrequency,
+autoSound Sound_createMistunedHarmonicComplex (double minimumTime, double maximumTime, double samplingFrequency,
 	double firstFrequency, long numberOfComponents, long mistunedComponent,
 	double mistuningFraction, int scaleAmplitudes);
 
-Sound Sound_createGammaTone (double minimumTime, double maximumTime, double samplingFrequency,
+autoSound Sound_createGammaTone (double minimumTime, double maximumTime, double samplingFrequency,
 	long gamma, double frequency, double bandwidth, double initialPhase, double addition,
 	int scaleAmplitudes);
 
-Sound Sound_createShepardTone (double minimumTime, double maximumTime, double samplingFrequency,
+autoSound Sound_createShepardTone (double minimumTime, double maximumTime, double samplingFrequency,
 	double lowestFrequency, long numberOfComponents, double frequencyChange, double amplitudeRange);
 
-Sound Sound_createShepardToneComplex (double minimumTime, double maximumTime,
+autoSound Sound_createShepardToneComplex (double minimumTime, double maximumTime,
 	double samplingFrequency, double lowestFrequency, long numberOfComponents,
 	double frequencyChange_st, double amplitudeRange, double octaveShiftFraction);
 
-Sound Sound_createPattersonWightmanTone (double minimumTime, double maximumTime, double samplingFrequency,
+autoSound Sound_createPattersonWightmanTone (double minimumTime, double maximumTime, double samplingFrequency,
 	double baseFrequency, double frequencyShiftRatio, long numberOfComponents);
 
-Sound Sound_createPlompTone (double minimumTime, double maximumTime, double samplingFrequency,
+autoSound Sound_createPlompTone (double minimumTime, double maximumTime, double samplingFrequency,
 	double baseFrequency, double frequencyFraction, long m);
 
-Sound Sound_createFromWindowFunction (double effectiveTime, double samplingFrequency, int windowType);
+autoSound Sound_createFromWindowFunction (double effectiveTime, double samplingFrequency, int windowType);
 /* 1; rect 2:hamming 3: bartlet 4: welch 5: hanning 6:gaussian */
 
-Sound Sound_filterByGammaToneFilter4 (Sound me, double centre_frequency, double bandwidth);
+autoSound Sound_filterByGammaToneFilter4 (Sound me, double centre_frequency, double bandwidth);
 
 void Sounds_multiply (Sound me, Sound thee);
 /* precondition: my nx = thy nx */
@@ -117,7 +117,7 @@ double Sound_correlateParts (Sound me, double t1, double t2, double duration);
 void Sound_localMean (Sound me, double fromTime, double toTime, double *mean);
 void Sound_localPeak (Sound me, double fromTime, double toTime, double ref, double *peak);
 
-Sound Sound_localAverage (Sound me, double averaginginterval, int windowType);
+autoSound Sound_localAverage (Sound me, double averaginginterval, int windowType);
 /* y[n] = sum(i=-n, i=n, x[n+i])/(2*n+1) */
 
 double Sound_power (Sound me);
@@ -148,23 +148,24 @@ void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double ami
 void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double minimum, double maximum,
 	bool garnish, const char32 *method, long numberOfBisections, const char32 *formula, Interpreter interpreter);
 
-void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin, double tmax,
-	double minimum, double maximum, double level, bool garnish, long numberOfBisections, const char32 *formula, Interpreter interpreter);
+void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin, double tmax, double minimum, double maximum, double level, bool garnish, long numberOfBisections, const char32 *formula, Interpreter interpreter);
+
 void Sounds_paintEnclosed (Sound me, Sound thee, Graphics g, Graphics_Colour colour, double tmin, double tmax,
 	double minimum, double maximum, bool garnish);
 
-Sound Sound_changeGender (Sound me, double pitchMin, double pitchMax, double pitchRatio,
-	double formantFrequenciesRatio, double durationRatio);
-Sound Sound_and_Pitch_changeGender (Sound me, Pitch him, double pitchRatio,
+autoSound Sound_changeGender (Sound me, double pitchMin, double pitchMax, double pitchRatio,
 	double formantFrequenciesRatio, double durationRatio);
 
-Sound Sound_changeGender_old (Sound me, double fmin, double fmax, double formantRatio,
+autoSound Sound_and_Pitch_changeGender (Sound me, Pitch him, double pitchRatio,
+	double formantFrequenciesRatio, double durationRatio);
+
+autoSound Sound_changeGender_old (Sound me, double fmin, double fmax, double formantRatio,
 	double new_pitch, double pitchRangeFactor, double durationFactor);
 
-Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio,
+autoSound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio,
 	double new_pitch, double pitchRangeFactor, double durationFactor);
 
-PointProcess Sound_to_PointProcess_getJumps (Sound me, double minimumJump, double dt);
+autoPointProcess Sound_to_PointProcess_getJumps (Sound me, double minimumJump, double dt);
 /*
 	Marks jumps in the signal where the amplitude changes more than 'minimumJump'
 	within time dt
@@ -172,42 +173,44 @@ PointProcess Sound_to_PointProcess_getJumps (Sound me, double minimumJump, doubl
 
 void Sound_filter_part_formula (Sound me, double t1, double t2, const char32 *formula, Interpreter interpreter);
 
-Sound Sound_changeSpeaker (Sound me, double pitchMin, double pitchMax,
+autoSound Sound_changeSpeaker (Sound me, double pitchMin, double pitchMax,
 	double formantMultiplier, // > 0
 	double pitchMultiplier, // > 0
 	double pitchRangeMultiplier, // any number
 	double durationMultiplier); // > 0
 
-Sound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him,
+autoSound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him,
 	double formantMultiplier, // > 0
 	double pitchMultiplier, // > 0
 	double pitchRangeMultiplier, // any number
 	double durationMultiplier); // > 0
 
 /* Outphased */
-Sound Sound_changeGender_old (Sound me, double fmin, double fmax, double formantRatio,
+autoSound Sound_changeGender_old (Sound me, double fmin, double fmax, double formantRatio,
 	double new_pitch, double pitchRangeFactor, double durationFactor);
 
-TextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double timeStep,
+autoTextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double timeStep,
 	double silenceThreshold, double minSilenceDuration, double minSoundingDuration,
 	const char32 *silentLabel, const char32 *soundingLabel);
+
 void Sound_getStartAndEndTimesOfSounding (Sound me, double minPitch, double timeStep,
 	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *t1, double *t2);
 
-Sound Sound_and_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee, const char32 *match);
+autoSound Sound_and_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee, const char32 *match);
 /* Cut intervals that match the label from the sound. The starting time of the new sound is
  * (1) my xmin if the first interval is not matching
  * (2) the end time of the first interval if matching
  */
 
-Sound Sound_trimSilencesAtStartAndEnd (Sound me, double trimDuration, double minPitch, double timeStep,
+autoSound Sound_trimSilencesAtStartAndEnd (Sound me, double trimDuration, double minPitch, double timeStep,
 	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *t1, double *t2);
-Sound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAndEnd, double minPitch, double timeStep,
+
+autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAndEnd, double minPitch, double timeStep,
     double silenceThreshold, double minSilenceDuration, double minSoundingDuration, TextGrid *tg, const char32 *trimLabel);
 
-Sound Sound_copyChannelRanges (Sound me, const char32 *ranges);
+autoSound Sound_copyChannelRanges (Sound me, const char32 *ranges);
 
-Sound Sound_removeNoise (Sound me, double noiseStart, double noiseEnd, double windowLength, double minBandFilterFrequency, double maxBandFilterFrequency, double smoothing, int method);
+autoSound Sound_removeNoise (Sound me, double noiseStart, double noiseEnd, double windowLength, double minBandFilterFrequency, double maxBandFilterFrequency, double smoothing, int method);
 
 void Sound_playAsFrequencyShifted (Sound me, double shiftBy, double newSamplingFrequency, long precision);
 

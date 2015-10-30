@@ -1,6 +1,6 @@
 /* Resonator.cpp
  *
- * Copyright (C) 2008-2011 David Weenink
+ * Copyright (C) 2008-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,13 +55,13 @@ void structResonator :: v_setFB (double f, double bw) {
 	a = normalisation == Resonator_NORMALISATION_H0 ? (1.0 - b - c) : (1 + c) * sin (2.0 * NUMpi * f * dT);
 }
 
-Resonator Resonator_create (double dT, int normalisation) {
+autoResonator Resonator_create (double dT, int normalisation) {
 	try {
 		autoResonator me = Thing_new (Resonator);
 		my a = 1; // all-pass
 		my dT = dT;
 		my normalisation = normalisation;
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Resonator not created.");
 	}
@@ -110,23 +110,23 @@ double structConstantGainResonator :: v_getOutput (double input) {
 	return output;
 }
 
-ConstantGainResonator ConstantGainResonator_create (double dT) {
+autoConstantGainResonator ConstantGainResonator_create (double dT) {
 	try {
 		autoConstantGainResonator me = Thing_new (ConstantGainResonator);
 		my a = 1; // all-pass
 		my dT = dT;
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ConstantGainResonator not created.");
 	}
 }
 
-AntiResonator AntiResonator_create (double dT) {
+autoAntiResonator AntiResonator_create (double dT) {
 	try {
 		autoAntiResonator me = Thing_new (AntiResonator);
 		my a = 1; // all-pass
 		my dT = dT;
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"AntiResonator not created.");
 	}
