@@ -2,7 +2,7 @@
 #define _Excitations_h_
 /* Excitations.h
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,14 +34,14 @@ Thing_define (Excitations, Ordered) {
 
 /* Excitations is a collection of objects of the same class Excitation */
 
-Excitations Excitations_create (long initialCapacity);
+autoExcitations Excitations_create (long initialCapacity);
 
-Pattern Excitations_to_Pattern (Excitations me, long join);
+autoPattern Excitations_to_Pattern (Excitations me, long join);
 /* Precondition: my size >= 1, all items have same dimension */
 
-TableOfReal Excitations_to_TableOfReal (Excitations me);
+autoTableOfReal Excitations_to_TableOfReal (Excitations me);
 /* Precondition: my size >= 1, all items have same dimension */
 
-Excitation Excitations_getItem (Excitations m, long item);
+autoExcitation Excitations_getItem (Excitations m, long item);
 
 #endif /* _Excitations_h_ */

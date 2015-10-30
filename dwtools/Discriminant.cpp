@@ -483,9 +483,8 @@ autoConfiguration Discriminant_and_TableOfReal_to_Configuration (Discriminant me
 			numberOfDimensions = Discriminant_getNumberOfFunctions (me);
 		}
 		autoConfiguration him = Configuration_create (thy numberOfRows, numberOfDimensions);
-		Configuration thim = him.peek();
-		Eigen_and_TableOfReal_project_into (me, thee, 1, thy numberOfColumns, & thim, 1, numberOfDimensions);
-		TableOfReal_copyLabels (thee, thim, 1, 0);
+		Eigen_and_TableOfReal_project_into (me, thee, 1, thy numberOfColumns, him.peek(), 1, numberOfDimensions);
+		TableOfReal_copyLabels (thee, him.peek(), 1, 0);
 		TableOfReal_setSequentialColumnLabels (him.peek(), 0, 0, U"Eigenvector ", 1, 1);
 		return him;
 	} catch (MelderError) {
@@ -498,8 +497,7 @@ autoConfiguration Discriminant_and_TableOfReal_to_Configuration (Discriminant me
 	Input matrix (li) is the inverse L^-1 of the Cholesky decomposition
 	S = L.L'.
 */
-static double mahalanobisDistanceSq (double **li, long n, double *v, double *m,
-                                     double *buf) {
+static double mahalanobisDistanceSq (double **li, long n, double *v, double *m, double *buf) {
 	for (long i = 1; i <= n; i++) {
 		buf[i] = v[i] - m[i];
 	}

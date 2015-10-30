@@ -1,6 +1,6 @@
 /* Eigen_and_TableOfReal.cpp
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,16 +28,14 @@
 #include "Eigen_and_TableOfReal.h"
 #include "NUM2.h"
 
-TableOfReal Eigen_and_TableOfReal_project (Eigen me, TableOfReal thee, long from,
-        long numberOfComponents) {
+autoTableOfReal Eigen_and_TableOfReal_project (Eigen me, TableOfReal thee, long from, long numberOfComponents) {
 	try {
 		if (numberOfComponents == 0) {
 			numberOfComponents = my numberOfEigenvalues;
 		}
 
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, numberOfComponents);
-		TableOfReal thim = him.peek();
-		Eigen_and_TableOfReal_project_into (me, thee, from, thy numberOfColumns, &thim, 1, numberOfComponents);
+		Eigen_and_TableOfReal_project_into (me, thee, from, thy numberOfColumns, him.peek(), 1, numberOfComponents);
 		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows);
 		return him.transfer();
 	} catch (MelderError) {
@@ -45,9 +43,7 @@ TableOfReal Eigen_and_TableOfReal_project (Eigen me, TableOfReal thee, long from
 	}
 }
 
-void Eigen_and_TableOfReal_project_into (Eigen me, TableOfReal thee, long thee_from, long thee_to,
-        Any void_pointer_to_him, long his_from, long his_to) {
-	TableOfReal him = * ( (TableOfReal *) void_pointer_to_him);
+void Eigen_and_TableOfReal_project_into (Eigen me, TableOfReal thee, long thee_from, long thee_to, TableOfReal him, long his_from, long his_to) {
 	long thee_ncols = thee_to - thee_from + 1;
 	long his_ncols = his_to - his_from + 1;
 
@@ -75,14 +71,14 @@ void Eigen_and_TableOfReal_project_into (Eigen me, TableOfReal thee, long thee_f
 	}
 }
 
-Eigen TablesOfReal_to_Eigen_gsvd (TableOfReal me, TableOfReal thee) {
+autoEigen TablesOfReal_to_Eigen_gsvd (TableOfReal me, TableOfReal thee) {
 	try {
 		if (my numberOfColumns != thy numberOfColumns) {
 			Melder_throw (U"TablesOfReal_to_Eigen: Number of columns must be equal.");
 		}
 		autoEigen him = Thing_new (Eigen);
 		Eigen_initFromSquareRootPair (him.peek(), my data, my numberOfRows, my numberOfColumns, thy data, thy numberOfRows);
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": Eigen not created.");
 	}

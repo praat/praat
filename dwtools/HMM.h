@@ -27,12 +27,12 @@
 #include "Index.h"
 
 #include "HMM_def.h"
-oo_CLASS_CREATE (HMM_State, Daata);
-oo_CLASS_CREATE (HMM_Observation, Daata);
-oo_CLASS_CREATE (HMM_Viterbi, Daata);
+oo_CLASS_CREATE (HMMState, Daata);
+oo_CLASS_CREATE (HMMObservation, Daata);
+oo_CLASS_CREATE (HMMViterbi, Daata);
 oo_CLASS_CREATE (HMM, Daata);
 
-Thing_define (HMM_BaumWelch, Daata) {
+Thing_define (HMMBaumWelch, Daata) {
 	// new data:
 	public:
 		long capacity;
@@ -53,47 +53,47 @@ Thing_define (HMM_BaumWelch, Daata) {
 		virtual void v_destroy ();
 };
 
-Thing_define (HMM_StateSequence, Strings) {
+Thing_define (HMMStateSequence, Strings) {
 };
 
-Thing_define (HMM_ObservationSequence, Table) {
+Thing_define (HMMObservationSequence, Table) {
 };
 // First column is always a symbol, if only 1 column then symbols only
 
-Thing_define (HMM_ObservationSequences, Collection) {
+Thing_define (HMMObservationSequences, Collection) {
 };
 
-autoHMM_ObservationSequence HMM_ObservationSequence_create (long numberOfItems, long dataLength);
+autoHMMObservationSequence HMMObservationSequence_create (long numberOfItems, long dataLength);
 
-void HMM_ObservationSequence_removeObservation (HMM_ObservationSequence me, long index);
+void HMMObservationSequence_removeObservation (HMMObservationSequence me, long index);
 
-autoStrings HMM_ObservationSequence_to_Strings (HMM_ObservationSequence me);
+autoStrings HMMObservationSequence_to_Strings (HMMObservationSequence me);
 
-autoHMM_ObservationSequence Strings_to_HMM_ObservationSequence (Strings me);
+autoHMMObservationSequence Strings_to_HMMObservationSequence (Strings me);
 
-autoStringsIndex HMM_ObservationSequence_to_StringsIndex (HMM_ObservationSequence me);
+autoStringsIndex HMMObservationSequence_to_StringsIndex (HMMObservationSequence me);
 
-autoStringsIndex HMM_and_HMM_ObservationSequence_to_StringsIndex (HMM me, HMM_ObservationSequence thee);
+autoStringsIndex HMM_and_HMMObservationSequence_to_StringsIndex (HMM me, HMMObservationSequence thee);
 
-autoTableOfReal HMM_ObservationSequence_to_TableOfReal_transitions (HMM_ObservationSequence me, int probabilities);
+autoTableOfReal HMMObservationSequence_to_TableOfReal_transitions (HMMObservationSequence me, int probabilities);
 
-autoTableOfReal HMM_and_HMM_ObservationSequence_to_TableOfReal_transitions (HMM me, HMM_ObservationSequence thee, int probabilities);
+autoTableOfReal HMM_and_HMMObservationSequence_to_TableOfReal_transitions (HMM me, HMMObservationSequence thee, int probabilities);
 
-autoHMM_ObservationSequences HMM_ObservationSequences_create ();
+autoHMMObservationSequences HMMObservationSequences_create ();
 
-long HMM_ObservationSequence_getNumberOfObservations (HMM_ObservationSequence me);
+long HMMObservationSequence_getNumberOfObservations (HMMObservationSequence me);
 
-long HMM_ObservationSequences_getLongestSequence (HMM_ObservationSequences me);
+long HMMObservationSequences_getLongestSequence (HMMObservationSequences me);
 
-autoTableOfReal HMM_StateSequence_to_TableOfReal_transitions (HMM_StateSequence me);
+autoTableOfReal HMMStateSequence_to_TableOfReal_transitions (HMMStateSequence me);
 
-autoTableOfReal HMM_and_HMM_StateSequence_to_TableOfReal_transitions (HMM me, HMM_StateSequence thee, int probabilities);
+autoTableOfReal HMM_and_HMMStateSequence_to_TableOfReal_transitions (HMM me, HMMStateSequence thee, int probabilities);
 
-autoHMM_StateSequence HMM_StateSequence_create (long numberOfItems);
+autoHMMStateSequence HMMStateSequence_create (long numberOfItems);
 
-autoStrings HMM_StateSequence_to_Strings (HMM_StateSequence me);
+autoStrings HMMStateSequence_to_Strings (HMMStateSequence me);
 
-void HMM_State_setLabel (HMM_State me, char32 *label);
+void HMMState_setLabel (HMMState me, char32 *label);
 
 
 autoHMM HMM_create (int leftToRight, long numberOfStates, long numberOfObservationSymbols);
@@ -106,7 +106,7 @@ autoHMM HMM_createContinuousModel (int leftToRight, long numberOfStates, long nu
 autoHMM HMM_createFullContinuousModel (int leftToRight, long numberOfStates, long numberOfObservationSymbols,
 	long numberOfFeatureStreams, long *dimensionOfStream, long *numberOfGaussiansforStream);
 
-autoHMM HMM_createFromHMM_ObservationSequence (HMM_ObservationSequence me, long numberOfStates, int leftToRight);
+autoHMM HMM_createFromHMMObservationSequence (HMMObservationSequence me, long numberOfStates, int leftToRight);
 
 void HMM_draw (HMM me, Graphics g, int garnish);
 
@@ -157,29 +157,29 @@ double HMM_getProbabilityOfStayingInState (HMM me, long istate, long numberOfTim
 
 double HMM_and_HMM_getCrossEntropy (HMM me, HMM thee, long observationLength, int symmetric);
 
-double HMM_and_HMM_and_HMM_ObservationSequence_getCrossEntropy (HMM me, HMM thee, HMM_ObservationSequence him);
+double HMM_and_HMM_and_HMMObservationSequence_getCrossEntropy (HMM me, HMM thee, HMMObservationSequence him);
 
 autoTableOfReal HMM_extractTransitionProbabilities (HMM me);
 
 autoTableOfReal HMM_extractEmissionProbabilities (HMM me);
 
-/* HMM & HMM_ObservationSequence ****/
+/* HMM & HMMObservationSequence ****/
 
-autoHMM_ObservationSequence HMM_to_HMM_ObservationSequence (HMM me, long initialState, long numberOfItems);
+autoHMMObservationSequence HMM_to_HMMObservationSequence (HMM me, long initialState, long numberOfItems);
 
-autoHMM_StateSequence HMM_and_HMM_ObservationSequence_to_HMM_StateSequence (HMM me, HMM_ObservationSequence thee);
+autoHMMStateSequence HMM_and_HMMObservationSequence_to_HMMStateSequence (HMM me, HMMObservationSequence thee);
 
-double HMM_and_HMM_StateSequence_getProbability (HMM me, HMM_StateSequence thee);
+double HMM_and_HMMStateSequence_getProbability (HMM me, HMMStateSequence thee);
 
-void HMM_and_HMM_ObservationSequences_learn (HMM me, HMM_ObservationSequences thee, double delta_lnp, double minProb);
+void HMM_and_HMMObservationSequences_learn (HMM me, HMMObservationSequences thee, double delta_lnp, double minProb, int info);
 
-void HMM_and_HMM_StateSequence_drawTrellis (HMM me, HMM_StateSequence thee, Graphics g, int connect, int garnish);
+void HMM_and_HMMStateSequence_drawTrellis (HMM me, HMMStateSequence thee, Graphics g, int connect, int garnish);
 
-double HMM_and_HMM_ObservationSequence_getProbability (HMM me, HMM_ObservationSequence thee);
+double HMM_and_HMMObservationSequence_getProbability (HMM me, HMMObservationSequence thee);
 
-double HMM_and_HMM_ObservationSequence_getCrossEntropy (HMM me, HMM_ObservationSequence thee);
+double HMM_and_HMMObservationSequence_getCrossEntropy (HMM me, HMMObservationSequence thee);
 
-double HMM_and_HMM_ObservationSequence_getPerplexity (HMM me, HMM_ObservationSequence thee);
+double HMM_and_HMMObservationSequence_getPerplexity (HMM me, HMMObservationSequence thee);
 
 // somewhere else
 void MelderInfo_lnp (double logp);

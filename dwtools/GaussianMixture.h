@@ -2,7 +2,7 @@
 #define _GaussianMixture_h_
 /* GaussianMixture.h
  *
- * Copyright (C) 2010-2011 David Weenink
+ * Copyright (C) 2010-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,21 +36,26 @@ oo_CLASS_CREATE (GaussianMixture, Daata);
 	Constraints for a Gaussian mixture:
 	 all covariances have the same 'dimension' parameter
 */
-GaussianMixture GaussianMixture_create (long numberOfComponents, long dimension, long storage);
+autoGaussianMixture GaussianMixture_create (long numberOfComponents, long dimension, long storage);
 /* Start each function with expand and end with unExpand */
+
 void GaussianMixture_expandPCA (GaussianMixture me);
+
 void GaussianMixture_unExpandPCA (GaussianMixture me);
 
 void GaussianMixture_drawConcentrationEllipses (GaussianMixture me, Graphics g,
 	double scale, int confidence, char32 *label, int pcaDirections, long d1, long d2,
 	double xmin, double xmax, double ymin, double ymax, int fontSize, int garnish);
+
 void GaussianMixture_and_PCA_drawConcentrationEllipses (GaussianMixture me, PCA him, Graphics g,
 	double scale, int confidence, char32 *label, long d1, long d2,
 	double xmin, double xmax, double ymin, double ymax, int fontSize, int garnish);
+
 void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, long d, double xmin, double xmax, double ymin, double ymax, long npoints, long nbins, int garnish);
+
 void GaussianMixture_and_PCA_drawMarginalPdf (GaussianMixture me, PCA him, Graphics g, long d, double xmin, double xmax, double ymin, double ymax, long npoints, long nbins, int garnish);
 
-GaussianMixture TableOfReal_to_GaussianMixture_fromRowLabels (TableOfReal me, long storage);
+autoGaussianMixture TableOfReal_to_GaussianMixture_fromRowLabels (TableOfReal me, long storage);
 
 void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double nSigmas, double ru_range);
 /*
@@ -72,45 +77,57 @@ void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double 
 
 const char32 *GaussianMixture_criterionText (int criterion);
 
-GaussianMixture TableOfReal_to_GaussianMixture (TableOfReal me, long numberOfComponents, double delta_lnp, long maxNumberOfIterations, double lambda, int storage, int criterion);
+autoGaussianMixture TableOfReal_to_GaussianMixture (TableOfReal me, long numberOfComponents, double delta_lnp, long maxNumberOfIterations, double lambda, int storage, int criterion);
 
-void GaussianMixture_and_TableOfReal_improveLikelihood (GaussianMixture me, thou, double delta_lnp,
-	long maxNumberOfIterations, double lambda, int criterion);
+void GaussianMixture_and_TableOfReal_improveLikelihood (GaussianMixture me, TableOfReal thee, double delta_lnp, long maxNumberOfIterations, double lambda, int criterion);
 
-GaussianMixture GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM (GaussianMixture me, TableOfReal thee, long minNumberOfComponents, double delta_l, long maxNumberOfIterations, double lambda, int criterion);
+autoGaussianMixture GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM (GaussianMixture me, TableOfReal thee, long minNumberOfComponents, double delta_l, long maxNumberOfIterations, double lambda, int criterion);
+
 void GaussianMixture_splitComponent (GaussianMixture me, long component);
 
-ClassificationTable GaussianMixture_and_TableOfReal_to_ClassificationTable (GaussianMixture me, TableOfReal thee);
-TableOfReal GaussianMixture_and_TableOfReal_to_TableOfReal_BHEPNormalityTests (GaussianMixture me, TableOfReal thee, double h);
+autoClassificationTable GaussianMixture_and_TableOfReal_to_ClassificationTable (GaussianMixture me, TableOfReal thee);
+
+autoTableOfReal GaussianMixture_and_TableOfReal_to_TableOfReal_BHEPNormalityTests (GaussianMixture me, TableOfReal thee, double h);
 
 double GaussianMixture_and_TableOfReal_getLikelihoodValue (GaussianMixture me, TableOfReal thee, int criterion);
 
 double GaussianMixture_getProbabilityAtPosition (GaussianMixture me, double *vector);
+
 double GaussianMixture_getProbabilityAtPosition_string (GaussianMixture me, const char32 *vector);
+
 double GaussianMixture_getMarginalProbabilityAtPosition (GaussianMixture me, double *vector, double x);
 
-Correlation GaussianMixture_and_TableOfReal_to_Correlation (GaussianMixture me, thou);
+autoCorrelation GaussianMixture_and_TableOfReal_to_Correlation (GaussianMixture me, thou);
 /* Correlation between components based on the data in the table */
 
-Covariance GaussianMixture_to_Covariance_total (GaussianMixture me);
-Covariance GaussianMixture_to_Covariance_between (GaussianMixture me);
-Covariance GaussianMixture_to_Covariance_within (GaussianMixture me);
+autoCovariance GaussianMixture_to_Covariance_total (GaussianMixture me);
+
+autoCovariance GaussianMixture_to_Covariance_between (GaussianMixture me);
+
+autoCovariance GaussianMixture_to_Covariance_within (GaussianMixture me);
 
 
-Covariance GaussianMixture_extractComponent(GaussianMixture me, long component);
-TableOfReal GaussianMixture_extractCentroids (GaussianMixture me);
-TableOfReal GaussianMixture_extractMixingProbabilities (GaussianMixture me);
+autoCovariance GaussianMixture_extractComponent(GaussianMixture me, long component);
 
-PCA GaussianMixture_to_PCA (GaussianMixture me);
+autoTableOfReal GaussianMixture_extractCentroids (GaussianMixture me);
 
-Matrix GaussianMixture_and_PCA_to_Matrix_density (GaussianMixture me, PCA pca, long d1, long d2, double xmin, double xmax, long nx, double ymin, double ymax, long ny);
+autoTableOfReal GaussianMixture_extractMixingProbabilities (GaussianMixture me);
+
+autoPCA GaussianMixture_to_PCA (GaussianMixture me);
+
+autoMatrix GaussianMixture_and_PCA_to_Matrix_density (GaussianMixture me, PCA pca, long d1, long d2, double xmin, double xmax, long nx, double ymin, double ymax, long ny);
+
 void GaussianMixture_and_PCA_getIntervalsAlongDirections (GaussianMixture me, PCA thee, long d1, long d2, double nsigmas, double *xmin, double *xmax, double *ymin, double *ymax);
+
 void GaussianMixture_and_PCA_getIntervalAlongDirection (GaussianMixture me, PCA thee, long d, double nsigmas, double *xmin, double *xmax);
+
 void GaussianMixture_getIntervalAlongDirection (GaussianMixture me, long d, double nsigmas, double *xmin, double *xmax);
+
 void GaussianMixture_getIntervalsAlongDirections (GaussianMixture me, long d1, long d2, double nsigmas, double *xmin, double *xmax, double *ymin, double *ymax);
 
 /* with on demand expand of pca ! */
 int GaussianMixture_generateOneVector (GaussianMixture me, double *c, char32 **covname, double *buf);
-TableOfReal GaussianMixture_to_TableOfReal_randomSampling (GaussianMixture me, long numberOfPoints);
+
+autoTableOfReal GaussianMixture_to_TableOfReal_randomSampling (GaussianMixture me, long numberOfPoints);
 
 #endif /* _GaussianMixture_h_ */

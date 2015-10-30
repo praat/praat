@@ -1,6 +1,6 @@
 /* EditDistanceTable.c
  *
- * Copyright (C) 2012, 2014 David Weenink
+ * Copyright (C) 2012, 2014, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@
 #include "EditDistanceTable_def.h"
 
 // prototypes
-EditCostsTable EditCostsTable_createDefault ();
+autoEditCostsTable EditCostsTable_createDefault ();
 
 /* The insertion, deletion and substitution costs are specified in a TableOfReal
  * 1..n-2 target symbols/alphabet
@@ -57,12 +57,12 @@ EditCostsTable EditCostsTable_createDefault ();
 
 Thing_implement (WarpingPath, Daata, 0);
 
-WarpingPath WarpingPath_create (long length) {
+autoWarpingPath WarpingPath_create (long length) {
 	try {
 		autoWarpingPath me = Thing_new (WarpingPath);
 		my path = NUMvector<structPairOfInteger> (1, length);
 		my _capacity = my pathLength = length;
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"WarpPath not created.");
 	}
@@ -162,24 +162,24 @@ bool structEditCostsTable :: v_matchTargetWithSourceSymbol (const char32 *target
 	return Melder_equ (targetSymbol, sourceSymbol);
 }
 
-EditCostsTable EditCostsTable_create (long targetAlphabetSize, long sourceAlphabetSize) {
+autoEditCostsTable EditCostsTable_create (long targetAlphabetSize, long sourceAlphabetSize) {
 	try{
 		autoEditCostsTable me = Thing_new (EditCostsTable);
 		TableOfReal_init (me.peek(), targetAlphabetSize + 2, sourceAlphabetSize + 2);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"EditCostsTable not created.");
 	}
 }
 
-EditCostsTable EditCostsTable_createDefault () {
+autoEditCostsTable EditCostsTable_createDefault () {
 	try {
 		autoEditCostsTable me = EditCostsTable_create (0, 0);
 		my data[1][1] = 0; // default substitution cost (nomatch == nomatch)
 		my data[2][2] = 2; // default substitution cost (nomatch != nomatch)
 		my data[2][1] = 1; // default insertion cost
 		my data[1][2] = 1; // default deletion cost
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Default EditCostsTable not created.");
 	}
@@ -304,7 +304,7 @@ double EditCostsTable_getSubstitutionCost (EditCostsTable me, const char32 *symb
 	return my data[irow][icol];
 }
 
-TableOfReal EditCostsTable_to_TableOfReal (EditCostsTable me) {
+autoTableOfReal EditCostsTable_to_TableOfReal (EditCostsTable me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
 		for (long j = 1; j <= my numberOfColumns; j++) {
@@ -314,7 +314,7 @@ TableOfReal EditCostsTable_to_TableOfReal (EditCostsTable me) {
 			thy rowLabels[i] = Melder_dup (my rowLabels[i]);
 		}
 		NUMmatrix_copyElements<double> (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
-		return thee.transfer();
+		return thee;
 
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to TableOfReal.");
@@ -329,7 +329,7 @@ void structEditDistanceTable :: v_info () {
 	MelderInfo_writeLine (U"Source:", numberOfColumns, U" symbols.");
 }
 
-EditDistanceTable EditDistanceTable_create (Strings target, Strings source) {
+autoEditDistanceTable EditDistanceTable_create (Strings target, Strings source) {
 	try {
 		autoEditDistanceTable me = Thing_new (EditDistanceTable);
 		long numberOfSourceSymbols = source -> numberOfStrings, numberOfTargetSymbols = target -> numberOfStrings;
@@ -345,7 +345,7 @@ EditDistanceTable EditDistanceTable_create (Strings target, Strings source) {
 		my warpingPath = WarpingPath_create (numberOfTargetSymbols + numberOfSourceSymbols + 1);
 		my editCostsTable = EditCostsTable_createDefault ();
 		EditDistanceTable_findPath (me.peek(), 0);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"EditDistanceTable not created.");
 	}
@@ -353,20 +353,18 @@ EditDistanceTable EditDistanceTable_create (Strings target, Strings source) {
 
 void EditDistanceTable_setEditCosts (EditDistanceTable me, EditCostsTable thee) {
 	try {
-		forget (my editCostsTable);
-		autoEditCostsTable ect = (EditCostsTable) Data_copy (thee);
-		my editCostsTable = ect.transfer();
+		my editCostsTable = Data_copy (thee);
 	} catch (MelderError) {
 		Melder_throw (me, U": edit costs not set.");
 	}
 }
 
-EditDistanceTable EditDistanceTable_createFromCharacterStrings (const char32 *chars1, const char32 *chars2) {
+autoEditDistanceTable EditDistanceTable_createFromCharacterStrings (const char32 *chars1, const char32 *chars2) {
 	try {
 		autoStrings s1 = Strings_createAsCharacters (chars1);
 		autoStrings s2 = Strings_createAsCharacters (chars2);
 		autoEditDistanceTable me = EditDistanceTable_create (s1.peek(), s2.peek());
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"EditDistanceTable not created from character strings.");
 	}
@@ -510,17 +508,17 @@ void EditDistanceTable_drawEditOperations (EditDistanceTable me, Graphics graphi
 }
 
 void EditDistanceTable_setDefaultCosts (EditDistanceTable me, double insertionCosts, double deletionCosts, double substitutionCosts) {
-	EditCostsTable_setDefaultCosts (my editCostsTable, insertionCosts, deletionCosts, substitutionCosts);
+	EditCostsTable_setDefaultCosts (my editCostsTable.peek(), insertionCosts, deletionCosts, substitutionCosts);
 	EditDistanceTable_findPath (me, 0);
 }
 
-TableOfReal EditDistanceTable_to_TableOfReal_directions (EditDistanceTable me) {
-		TableOfReal tor;
+autoTableOfReal EditDistanceTable_to_TableOfReal_directions (EditDistanceTable me) {
+		autoTableOfReal tor;
 		EditDistanceTable_findPath (me, &tor);
 		return tor;
 }
 
-void EditDistanceTable_findPath (EditDistanceTable me, TableOfReal *directions) {
+void EditDistanceTable_findPath (EditDistanceTable me, autoTableOfReal *directions) {
 	try {
 		/* What do we have to do to source to get target?
 		 * Origin [0][0] is at bottom-left corner
@@ -532,19 +530,19 @@ void EditDistanceTable_findPath (EditDistanceTable me, TableOfReal *directions) 
 		autoNUMmatrix<double> delta (0, numberOfTargets, 0, numberOfSources);
 
 		for (long j = 1; j <= numberOfSources; j++) {
-			delta[0][j] = delta[0][j - 1] + EditCostsTable_getDeletionCost (my editCostsTable, my columnLabels[j+1]);
+			delta[0][j] = delta[0][j - 1] + EditCostsTable_getDeletionCost (my editCostsTable.peek(), my columnLabels[j+1]);
 			psi[0][j] = WARPING_fromLeft;
 		}
 		for (long i = 1; i <= numberOfTargets; i++) {
-			delta[i][0] = delta[i - 1][0] + EditCostsTable_getInsertionCost (my editCostsTable, my rowLabels[i+1]);
+			delta[i][0] = delta[i - 1][0] + EditCostsTable_getInsertionCost (my editCostsTable.peek(), my rowLabels[i+1]);
 			psi[i][0] = WARPING_fromBelow;
 		}
 		for (long j = 1; j <= numberOfSources; j++) {
 			for (long i = 1; i <= numberOfTargets; i++) {
 				// the substitution, deletion and insertion costs.
-				double left = delta[i][j - 1] + EditCostsTable_getInsertionCost (my editCostsTable, my rowLabels[i+1]);
-				double bottom = delta[i - 1][j] + EditCostsTable_getDeletionCost (my editCostsTable, my columnLabels[j+1]);
-				double mindist = delta[i - 1][j - 1] + EditCostsTable_getSubstitutionCost (my editCostsTable, my rowLabels[i+1], my columnLabels[j+1]); // diag
+				double left = delta[i][j - 1] + EditCostsTable_getInsertionCost (my editCostsTable.peek(), my rowLabels[i+1]);
+				double bottom = delta[i - 1][j] + EditCostsTable_getDeletionCost (my editCostsTable.peek(), my columnLabels[j+1]);
+				double mindist = delta[i - 1][j - 1] + EditCostsTable_getSubstitutionCost (my editCostsTable.peek(), my rowLabels[i+1], my columnLabels[j+1]); // diag
 				psi[i][j] = WARPING_fromDiag;
 				if (bottom < mindist) {
 					mindist = bottom;
@@ -560,11 +558,11 @@ void EditDistanceTable_findPath (EditDistanceTable me, TableOfReal *directions) 
 		// find minimum distance in last column
 		long iy = numberOfTargets, ix = numberOfSources;
 
-		WarpingPath_reset (my warpingPath);
+		WarpingPath_reset (my warpingPath.peek());
 
-		WarpingPath_getPath (my warpingPath, psi.peek(), iy, ix);
+		WarpingPath_getPath (my warpingPath.peek(), psi.peek(), iy, ix);
 
-		WarpingPath_shiftPathByOne (my warpingPath);
+		WarpingPath_shiftPathByOne (my warpingPath.peek());
 
 		for (long i = 0; i <= numberOfTargets; i++) {
 			for (long j = 0; j <= numberOfSources; j++) {
@@ -578,14 +576,14 @@ void EditDistanceTable_findPath (EditDistanceTable me, TableOfReal *directions) 
 					his data[i+1][j+1] = psi[i][j];
 				}
 			}
-			*directions = him.transfer();
+			*directions = him.move();
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": minimum path not found.");
 	}
 }
 
-TableOfReal EditDistanceTable_to_TableOfReal (EditDistanceTable me) {
+autoTableOfReal EditDistanceTable_to_TableOfReal (EditDistanceTable me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
 		for (long j = 1; j <= my numberOfColumns; j++) {
@@ -595,7 +593,7 @@ TableOfReal EditDistanceTable_to_TableOfReal (EditDistanceTable me) {
 			thy rowLabels[i] = Melder_dup (my rowLabels[i]);
 		}
 		NUMmatrix_copyElements<double> (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no TableOfReal created.");
 	}

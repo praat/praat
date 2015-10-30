@@ -1,6 +1,6 @@
 /* Eigen_and_SSCP.c
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,11 +25,7 @@
 
 #include "Eigen_and_SSCP.h"
 
-static void Eigen_and_SSCP_project_ (I, thou, Any sscp) {
-	iam (Eigen);
-	thouart (SSCP);
-	SSCP him = (SSCP) sscp;
-
+static void Eigen_and_SSCP_project_ (Eigen me, SSCP thee, SSCP him) {
 	for (long i = 1; i <= my numberOfEigenvalues; i++) {
 		for (long j = i; j <= my numberOfEigenvalues; j++) {
 			double tmp = 0;
@@ -51,29 +47,27 @@ static void Eigen_and_SSCP_project_ (I, thou, Any sscp) {
 }
 
 
-SSCP Eigen_and_SSCP_project (I, SSCP thee) {
+autoSSCP Eigen_and_SSCP_project (Eigen me, SSCP thee) {
 	try {
-		iam (Eigen);
 		if (thy numberOfRows != my dimension) {
 			Melder_throw (U"SSCP_and_Eigen_project: dimensions don't agree.");
 		}
 		autoSSCP him = SSCP_create (my numberOfEigenvalues);
 		Eigen_and_SSCP_project_ (me, thee, him.peek());
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"SSCP not projected.");
 	}
 }
 
-Covariance Eigen_and_Covariance_project (I, Covariance thee) {
+autoCovariance Eigen_and_Covariance_project (Eigen me, Covariance thee) {
 	try {
-		iam (Eigen);
 		if (thy numberOfRows != my dimension) {
 			Melder_throw (U"Covariance_and_Eigen_project: dimensions don't agree.");
 		}
 		autoCovariance him = Covariance_create (my numberOfEigenvalues);
 		Eigen_and_SSCP_project_ (me, thee, him.peek());
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"Covariance not projected.");
 	}

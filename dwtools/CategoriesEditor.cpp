@@ -114,7 +114,7 @@ static void Collection_replaceItemPos (I, Any item, long pos) {
 	if (pos < 1 || pos > my size) {
 		return;
 	}
-	forget ( ( (SimpleString *) my item) [pos]);
+	forget (((SimpleString *) my item) [pos]);
 	my item[pos] = item;
 }
 
@@ -161,10 +161,8 @@ void structCategoriesEditorCommand :: v_destroy () {
 	CategoriesEditorCommand_Parent :: v_destroy ();
 }
 
-static void CategoriesEditorCommand_init (I, const char32 *name,  Any data,
-        int (*execute) (Any), int (*undo) (Any), int nCategories, int nSelected) {
-	iam (CategoriesEditorCommand);
-	(void) nCategories;
+static void CategoriesEditorCommand_init (CategoriesEditorCommand me, const char32 *name,  Any data,
+        int (*execute) (Any), int (*undo) (Any), int /*nCategories*/, int nSelected) {
 
 	my nSelected = nSelected;
 	Command_init (me, name, data, execute, undo);
@@ -585,8 +583,7 @@ static void update (I, long from, long to, const long *select, long nSelect) {
 	}
 }
 
-static void gui_button_cb_remove (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_remove (I, GuiButtonEvent /* event */) {
 	iam (CategoriesEditor);
 	long posCount;
 	autoNUMvector<long> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
@@ -616,22 +613,19 @@ static void insert (I, int position) {
 	}
 }
 
-static void gui_button_cb_insert (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_insert (I, GuiButtonEvent /* event */) {
 	iam (CategoriesEditor);
 	insert (me, my position);
 }
 
-static void gui_button_cb_insertAtEnd (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_insertAtEnd (I, GuiButtonEvent /* event */) {
 	iam (CategoriesEditor);
 	Categories categories = (Categories) my data;
 	insert (me, categories -> size + 1);
 	my position = categories -> size;
 }
 
-static void gui_button_cb_replace (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_replace (I, GuiButtonEvent /* event */) {
 	iam (CategoriesEditor);
 	long posCount;
 	autoNUMvector<long> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
@@ -651,8 +645,7 @@ static void gui_button_cb_replace (I, GuiButtonEvent event) {
 }
 
 /* Precondition: contiguous selection */
-static void gui_button_cb_moveUp (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_moveUp (I, GuiButtonEvent /* event */) {
 	iam (CategoriesEditor);
 	long posCount;
 	autoNUMvector<long> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
@@ -668,8 +661,7 @@ static void gui_button_cb_moveUp (I, GuiButtonEvent event) {
 }
 
 /* Precondition: contiguous selection */
-static void gui_button_cb_moveDown (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_moveDown (I, GuiButtonEvent /* event */) {
 	iam (CategoriesEditor);
 	long posCount;
 	autoNUMvector<long> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
@@ -690,21 +682,18 @@ static void gui_cb_scroll (GUI_ARGS) {
 	notifyOutOfView (me);
 }
 
-static void gui_list_cb_double_click (void *void_me, GuiListEvent event) {
-	(void) event;
+static void gui_list_cb_double_click (void *void_me, GuiListEvent /* event */) {
 	iam (CategoriesEditor);
 	const char32 *catg = OrderedOfString_itemAtIndex_c ((OrderedOfString) my data, my position);
 	GuiText_setString (my text, catg);
 }
 
-static void gui_list_cb_extended (void *void_me, GuiListEvent event) {
-	(void) event;
+static void gui_list_cb_extended (void *void_me, GuiListEvent /* event */) {
 	iam (CategoriesEditor);
 	updateWidgets (me);
 }
 
-static void gui_button_cb_undo (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_undo (I, GuiButtonEvent /* event */) {
 	iam (CategoriesEditor);
 	if (CommandHistory_offleft (my history)) {
 		return;
@@ -714,8 +703,7 @@ static void gui_button_cb_undo (I, GuiButtonEvent event) {
 	updateWidgets (me);
 }
 
-static void gui_button_cb_redo (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_redo (I, GuiButtonEvent /* event */) {
 	iam (CategoriesEditor);
 	CommandHistory_forth (my history);
 	if (CommandHistory_offright (my history)) {

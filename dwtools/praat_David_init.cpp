@@ -2167,7 +2167,8 @@ END
 DIRECT (EditDistanceTable_to_TableOfReal_directions)
 	LOOP {
 		iam (EditDistanceTable);
-		praat_new (EditDistanceTable_to_TableOfReal_directions (me), my name);
+		autoTableOfReal thee = EditDistanceTable_to_TableOfReal_directions (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -2369,7 +2370,8 @@ END
 DIRECT (EditCostsTable_to_TableOfReal)
 	LOOP {
 		iam (EditCostsTable);
-		praat_new (EditCostsTable_to_TableOfReal (me), my name);
+		autoTableOfReal thee = EditCostsTable_to_TableOfReal (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -2383,7 +2385,8 @@ DO
 	numberOfTargetSymbols = numberOfTargetSymbols < 0 ? 0 : numberOfTargetSymbols;
 	long numberOfSourceSymbols = GET_INTEGER (U"Number of source symbols");
 	numberOfSourceSymbols = numberOfSourceSymbols < 0 ? 0 : numberOfSourceSymbols;
-	praat_new (EditCostsTable_create (numberOfTargetSymbols, numberOfSourceSymbols), GET_STRING (U"Name"));
+	autoEditCostsTable thee = EditCostsTable_create (numberOfTargetSymbols, numberOfSourceSymbols);
+	praat_new (thee.transfer(), GET_STRING (U"Name"));
 END
 
 /******************** Eigen ********************************************/
@@ -2502,19 +2505,22 @@ FORM (Eigen_and_Matrix_project, U"Eigen & Matrix: Project", U"Eigen & Matrix: Pr
 DO
 	Eigen me = FIRST_GENERIC (Eigen);
 	Matrix thee = FIRST_GENERIC (Matrix);
-	praat_new (Eigen_and_Matrix_project (me, thee, GET_INTEGER (U"Number of dimensions")), my name, U"_", thy name);
+	autoMatrix him = Eigen_and_Matrix_project (me, thee, GET_INTEGER (U"Number of dimensions"));
+	praat_new (him.transfer(), my name, U"_", thy name);
 END
 
 DIRECT (Eigen_and_SSCP_project)
 	Eigen me = FIRST_GENERIC (Eigen);
 	SSCP cp = FIRST (SSCP);
-	praat_new (Eigen_and_SSCP_project (me, cp), my name, U"_", cp->name);
+	autoSSCP thee = Eigen_and_SSCP_project (me, cp);
+	praat_new (thee.transfer(), my name, U"_", cp->name);
 END
 
 DIRECT (Eigen_and_Covariance_project)
 	Eigen me = FIRST_GENERIC (Eigen);
 	Covariance cv = FIRST (Covariance);
-	praat_new (Eigen_and_Covariance_project (me, cv), my name, U"_", cv->name);
+	autoCovariance thee = Eigen_and_Covariance_project (me, cv);
+	praat_new (thee.transfer(), my name, U"_", cv->name);
 END
 
 /******************** Index ********************************************/
@@ -2660,7 +2666,8 @@ FORM (Excitations_getItem, U"Excitations: Get item", 0)
 DO
 	LOOP {
 		iam (Excitations);
-		praat_new (Excitations_getItem (me, GET_INTEGER (U"Item number")), my name, U"_item");
+		autoExcitation thee = Excitations_getItem (me, GET_INTEGER (U"Item number"));
+		praat_new (thee.transfer(), my name, U"_item");
 	}
 END
 
@@ -2680,14 +2687,16 @@ FORM (Excitations_to_Pattern, U"Excitations: To Pattern", 0)
 DO
 	LOOP {
 		iam (Excitations);
-		praat_new (Excitations_to_Pattern (me, GET_INTEGER (U"Join")), my name);
+		autoPattern thee = Excitations_to_Pattern (me, GET_INTEGER (U"Join"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
 DIRECT (Excitations_to_TableOfReal)
 	LOOP {
 		iam (Excitations);
-		praat_new (Excitations_to_TableOfReal (me), my name);
+		autoTableOfReal thee = Excitations_to_TableOfReal (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -4704,7 +4713,8 @@ DO
 		(p1 ? p2 : p1) = me;
 	}
 	Melder_assert (p1 && p2);
-	praat_new (Eigens_to_Procrustes (p1, p2, from, to), Thing_getName (p1), U"_", Thing_getName (p2));
+	autoProcrustes thee = Eigens_to_Procrustes (p1, p2, from, to);
+	praat_new (thee.transfer(), Thing_getName (p1), U"_", Thing_getName (p2));
 END
 
 
@@ -7830,7 +7840,8 @@ DIRECT (TablesOfReal_to_Eigen_gsvd)
 		(t1 ? t2 : t1) = me;
 	}
 	Melder_assert (t1 && t2);
-	praat_new (TablesOfReal_to_Eigen_gsvd (t1, t2), U"");
+	autoEigen thee = TablesOfReal_to_Eigen_gsvd (t1, t2);
+	praat_new (thee.transfer(), U"");
 END
 
 FORM (TableOfReal_and_TableOfReal_crossCorrelations, U"TableOfReal & TableOfReal: Cross-correlations", 0)

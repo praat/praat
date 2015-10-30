@@ -1,6 +1,6 @@
 /* Excitations.cpp
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,17 +45,17 @@ static int readBinary (I, FILE *f)
 
 Thing_implement (Excitations, Ordered, 0);
 
-Excitations Excitations_create (long initialCapacity) {
+autoExcitations Excitations_create (long initialCapacity) {
 	try {
 		autoExcitations me = Thing_new (Excitations);
 		Ordered_init (me.peek(), classExcitation, initialCapacity);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Excitations not created.");
 	}
 }
 
-Pattern Excitations_to_Pattern (Excitations me, long join) {
+autoPattern Excitations_to_Pattern (Excitations me, long join) {
 	try {
 		Melder_assert (my size > 0);
 		Matrix m = (Matrix) my item[1];
@@ -77,13 +77,13 @@ Pattern Excitations_to_Pattern (Excitations me, long join) {
 				thy z[r][c++] = z[j];
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Pattern created.");
 	}
 }
 
-TableOfReal Excitations_to_TableOfReal (Excitations me) {
+autoTableOfReal Excitations_to_TableOfReal (Excitations me) {
 	try {
 		Melder_assert (my size > 0);
 		Matrix m = (Matrix) my item[1];
@@ -94,20 +94,20 @@ TableOfReal Excitations_to_TableOfReal (Excitations me) {
 				thy data[i][j] = z[j];
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no TableOfReal created.");
 	}
 }
 
-Excitation Excitations_getItem (Excitations me, long item) {
+autoExcitation Excitations_getItem (Excitations me, long item) {
 	try {
 		if (item < 1 || item > my size) {
 			Melder_throw (U"Not a valid element number.");
 		}
 		autoExcitation thee = Data_copy ( (Excitation) my item[item]);
 		Thing_setName (thee.peek(), Thing_getName ( (Thing) my item[item]));
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Excitation created.");
 	}
