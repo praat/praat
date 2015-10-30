@@ -1,6 +1,6 @@
 /* manual_BSS.cpp
  *
- * Copyright (C) 2010-2014 David Weenink
+ * Copyright (C) 2010-2014, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,7 +101,7 @@ INTRO (U"Detemines the @@Covariance|covariances@ between the channels of a selec
 NORMAL (U"The covariance of a sound is determined by calculating the @@CrossCorrelationTable@ of a multichannel sound for a lag time equal to zero.")
 MAN_END
 
-MAN_BEGIN (U"Sound: To Sound (blind source separation)...", U"djmw", 20140224)
+MAN_BEGIN (U"Sound: To Sound (blind source separation)...", U"djmw", 20151030)
 INTRO (U"Analyze the selected multi-channel sound into its independent components by an iterative method.")
 NORMAL (U"The @@blind source separation@ method to find the independent components tries to simultaneously diagonalize a number of "
 	"@@CrossCorrelationTable@s that are calculated from the multi-channel sound at different lag times.")
@@ -171,7 +171,7 @@ CODE(U"s1 = To Sound: \"This is some text\", \"no\"")
 NORMAL (U"The first speech sound was created from the text \"This is some text\" at a speed of 175 words per minute.")
 CODE(U"selectObject: synth")
 CODE(U"Set speech output settings: 44100, 0.01, 80, 50, 145, \"no\", \"IPA\"")
-CODE(U"s2 = To Sound.: \"Abracadabra, abra\", 0.01, 80, 50, 145, \"yes\", \"no\", \"no\", \"yes\"")
+CODE(U"s2 = To Sound.: \"Abracadabra, abra\", \"no\"")
 NORMAL (U"The second sound \"Abracadabra, abra\" was synthesized at 145 words per minute with a somewhat larger pitch excursion (80) than the previous sound (50).")
 CODE(U"plusObject: s1")
 CODE(U"stereo = Combine to stereo")
@@ -215,6 +215,28 @@ NORMAL (U"The first two panels will not change between different sessions of pra
     "the result of the blind source separation, i.e. unmixing, will not always be the same because of two things. In the first place the unmixing always starts with an initialisation with random values of the parameters that "
     "we have to determine for the blind source separation. Therefore the iteration sequence will never be the same and the final outcomes might differ. In the second place, as was explained in the @@blind source separation@ manual, the unmixing is only "
     "unique up to a scale factor and a permutation. Therefore the channels in the unmixed sound do not necessarily correspond to the corresponding channel in our \"original\" stereo sound.")
+NORMAL (U"The complete script:")
+CODE (U"syn = Create SpeechSynthesizer: \"English\", \"default\"")
+CODE (U"s1 = To Sound: \"This is some text\", \"no\"")
+CODE (U"selectObject: syn")
+CODE (U"Set speech output settings: 44100, 0.01, 80, 50, 145, \"no\", \"IPA\"")
+CODE (U"s2 = To Sound: \"abracadabra, abra\", \"no\"")
+CODE (U"plusObject: s1")
+CODE (U"stereo = Combine to stereo")
+CODE (U"Select inner viewport: 1, 6, 0.1, 1.9")
+CODE (U"Draw: 0, 0, 0, 0, \"no\", \"Curve\"")
+CODE (U"Draw inner box")
+CODE (U"mm = Create simple MixingMatrix: \"mm\", 2, 2, \"1.0 2.0 2.0 1.0\"")
+CODE (U"plusObject: stereo")
+CODE (U"mixed = Mix")
+CODE (U"Select inner viewport: 1, 6, 2.1, 3.9")
+CODE (U"Draw: 0, 0, 0, 0, \"no\", \"Curve\"")
+CODE (U"Draw inner box")
+CODE (U"unmixed = To Sound (bss): 0.1, 1, 20, 0.00021, 100, 0.001, \"ffdiag\"")
+CODE (U"Select inner viewport: 1, 6, 4.1, 5.9")
+CODE (U"Draw: 0, 0, 0, 0, \"no\", \"Curve\"")
+CODE (U"Draw inner box")
+CODE (U"removeObject: unmixed, syn, stereo, s1, s2, mixed, mm")
 MAN_END
 
 MAN_BEGIN (U"Sound: To Sound (whiten channels)...", U"djmw", 20120303)
