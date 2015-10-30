@@ -2226,14 +2226,14 @@ static Any macSoundOrEmptyFileRecognizer (int nread, const char *header, MelderF
 
 static Any soundFileRecognizer (int nread, const char *header, MelderFile file) {
 	if (nread < 16) return NULL;
-	if (strnequ (header, "FORM", 4) && strnequ (header + 8, "AIF", 3)) return Sound_readFromSoundFile (file);
-	if (strnequ (header, "RIFF", 4) && (strnequ (header + 8, "WAVE", 4) || strnequ (header + 8, "CDDA", 4))) return Sound_readFromSoundFile (file);
-	if (strnequ (header, ".snd", 4)) return Sound_readFromSoundFile (file);
-	if (strnequ (header, "NIST_1A", 7)) return Sound_readFromSoundFile (file);
-	if (strnequ (header, "fLaC", 4)) return Sound_readFromSoundFile (file);   // Erez Volk, March 2007
+	if (strnequ (header, "FORM", 4) && strnequ (header + 8, "AIF", 3)) return Sound_readFromSoundFile (file).transfer();
+	if (strnequ (header, "RIFF", 4) && (strnequ (header + 8, "WAVE", 4) || strnequ (header + 8, "CDDA", 4))) return Sound_readFromSoundFile (file).transfer();
+	if (strnequ (header, ".snd", 4)) return Sound_readFromSoundFile (file).transfer();
+	if (strnequ (header, "NIST_1A", 7)) return Sound_readFromSoundFile (file).transfer();
+	if (strnequ (header, "fLaC", 4)) return Sound_readFromSoundFile (file).transfer();   // Erez Volk, March 2007
 	if ((Melder_stringMatchesCriterion (MelderFile_name (file), kMelder_string_ENDS_WITH, U".mp3") ||
 	     Melder_stringMatchesCriterion (MelderFile_name (file), kMelder_string_ENDS_WITH, U".MP3"))
-		&& mp3_recognize (nread, header)) return Sound_readFromSoundFile (file);   // Erez Volk, May 2007
+		&& mp3_recognize (nread, header)) return Sound_readFromSoundFile (file).transfer();   // Erez Volk, May 2007
 	return NULL;
 }
 
@@ -2257,17 +2257,17 @@ static Any sesamFileRecognizer (int nread, const char *header, MelderFile file) 
 	(void) header;
 	if (nread < 512 || (! Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".sdf") &&
 	                    ! Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".SDF"))) return NULL;
-	return Sound_readFromSesamFile (file);
+	return Sound_readFromSesamFile (file).transfer();
 }
 
 static Any bellLabsFileRecognizer (int nread, const char *header, MelderFile file) {
 	if (nread < 16 || ! strnequ (& header [0], "SIG\n", 4)) return NULL;
-	return Sound_readFromBellLabsFile (file);
+	return Sound_readFromBellLabsFile (file).transfer();
 }
 
 static Any kayFileRecognizer (int nread, const char *header, MelderFile file) {
 	if (nread <= 12 || ! strnequ (& header [0], "FORMDS16", 8)) return NULL;
-	return Sound_readFromKayFile (file);
+	return Sound_readFromKayFile (file).transfer();
 }
 
 /***** override play and record buttons in manuals *****/
@@ -2277,7 +2277,7 @@ static int recordProc (double duration) {
 	if (last == melderSound) last = NULL;
 	forget (melderSound);
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
-	melderSound = Sound_recordFixedTime (1, 1.0, 0.5, 44100, duration);
+	melderSound = Sound_recordFixedTime (1, 1.0, 0.5, 44100, duration).transfer();
 	if (! melderSound) return 0;
 	last = melderSound;
 	return 1;

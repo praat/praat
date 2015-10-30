@@ -376,9 +376,9 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double min
 		autoSound thee;
 		if (samplingFrequency > 30000) {
 			samplingFrequency = samplingFrequency / 2.0;
-			thee.reset (Sound_resample (me, samplingFrequency, 1));
+			thee = Sound_resample (me, samplingFrequency, 1);
 		} else {
-			thee.reset (Data_copy (me));
+			thee = Data_copy (me);
 		}
 		// pre-emphasis with fixed coefficient 0.9
 		for (long i = thy nx; i > 1; i--) {

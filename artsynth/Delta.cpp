@@ -36,10 +36,10 @@ void Delta_init (Delta me, int numberOfTubes) {
 	}
 }
 
-Delta Delta_create (int numberOfTubes) {
+autoDelta Delta_create (int numberOfTubes) {
 	autoDelta me = Thing_new (Delta);
 	Delta_init (me.peek(), numberOfTubes);
-	return me.transfer();
+	return me;
 }
 
 /* End of file Delta.cpp */

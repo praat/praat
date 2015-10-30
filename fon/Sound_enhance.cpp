@@ -101,7 +101,7 @@ autoSound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 					intensityFilter -> z [1] [i] *= factor;
 					intensityFilter -> z [2] [i] *= factor;
 				}
-				intensity.reset (Spectrum_to_Sound (intensityFilter.peek()));
+				intensity = Spectrum_to_Sound (intensityFilter.peek());
 				n = intensity -> nx;
 				amp = intensity -> z [1];
 				for (long i = 1; i <= n; i ++) amp [i] = pow (10, amp [i] / 2);

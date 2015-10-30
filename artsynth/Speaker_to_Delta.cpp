@@ -22,7 +22,7 @@
 #define SMOOTH_LUNGS  true
 #define FIRST_TUBE  7
 
-Delta Speaker_to_Delta (Speaker me) {
+autoDelta Speaker_to_Delta (Speaker me) {
 	double f = my relativeSize * 1e-3;   /* We shall use millimetres and grams. */
 	double xe [30], ye [30], xi [30], yi [30], xmm [30], ymm [30], dx, dy;
 	int closed [40];
@@ -358,7 +358,7 @@ Delta Speaker_to_Delta (Speaker me) {
 		Melder_assert (! t->right1 || t->right1->left1 == t || t->right1->left2 == t);
 		Melder_assert (! t->right2 || t->right2->left1 == t);
 	}
-	return thee.transfer();
+	return thee;
 }
 
 /* End of file Speaker_to_Delta.cpp */

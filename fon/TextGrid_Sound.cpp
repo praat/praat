@@ -161,8 +161,8 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 		autoTextGrid analysis = NULL;
 		if (! Melder_equ (interval -> text, U"")) {
 			try {
-				analysis.reset (SpeechSynthesizer_and_Sound_and_TextInterval_align
-					(synthesizer.peek(), part.peek(), interval, silenceThreshold, minSilenceDuration, minSoundingDuration));
+				analysis = SpeechSynthesizer_and_Sound_and_TextInterval_align
+					(synthesizer.peek(), part.peek(), interval, silenceThreshold, minSilenceDuration, minSoundingDuration);
 			} catch (MelderError) {
 				Melder_clearError ();   // ignore all error messages from DTW and the like
 			}

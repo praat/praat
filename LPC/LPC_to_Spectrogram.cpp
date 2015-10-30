@@ -36,8 +36,8 @@ autoSpectrogram LPC_to_Spectrogram (LPC me, double dfMin, double bandwidthReduct
 		}
 		double freqStep = samplingFrequency / nfft;
 
-		autoSpectrogram thee = (Spectrogram) Spectrogram_create (my xmin, my xmax, my nx, my dx, my x1,
-		                       0, samplingFrequency / 2, nfft / 2 + 1, freqStep, 0);
+		autoSpectrogram thee = Spectrogram_create (my xmin, my xmax, my nx, my dx, my x1,
+		                                           0.0, samplingFrequency / 2.0, nfft / 2 + 1, freqStep, 0.0);
 
 		for (long i = 1; i <= my nx; i++) {
 			double t = Sampled_indexToX (me, i);

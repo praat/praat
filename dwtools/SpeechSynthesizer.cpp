@@ -482,7 +482,7 @@ static void espeakdata_SetVoiceByName (const char *name, const char *variantName
 	}
 }
 
-Sound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, TextGrid *tg, Table *events) {
+autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, autoTextGrid *tg, autoTable *events) {
 	try {
 		int fsamp = espeak_Initialize (AUDIO_OUTPUT_SYNCHRONOUS, 0, nullptr, // 5000ms
 			espeakINITIALIZE_PHONEME_EVENTS|espeakINITIALIZE_PHONEME_IPA);
@@ -522,7 +522,7 @@ Sound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, Text
 		autoSound thee = buffer_to_Sound (my d_wav, my d_numberOfSamples, my d_internalSamplingFrequency);
 
 		if (my d_samplingFrequency != my d_internalSamplingFrequency) {
-			thee.reset (Sound_resample (thee.peek(), my d_samplingFrequency, 50));
+			thee = Sound_resample (thee.peek(), my d_samplingFrequency, 50);
 		}
 		my d_numberOfSamples = 0; // re-use the wav-buffer
 		if (tg) {
@@ -530,9 +530,8 @@ Sound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, Text
 			if (xmin > thy xmin) xmin = thy xmin;
 			double xmax = Table_getNumericValue_Assert (my d_events, my d_events -> rows -> size, 1);
 			if (xmax < thy xmax) xmax = thy xmax;
-			autoTextGrid atg1 = Table_to_TextGrid (my d_events, text, xmin, xmax);
-			autoTextGrid atg2 =  TextGrid_extractPart (atg1.peek(), thy xmin, thy xmax, 0);
-			*tg = atg2.transfer();
+			autoTextGrid tg1 = Table_to_TextGrid (my d_events, text, xmin, xmax);
+			*tg = TextGrid_extractPart (tg1.peek(), thy xmin, thy xmax, 0);
 		}
 		if (events) {
 			Table_setEventTypeString (my d_events);
@@ -540,7 +539,7 @@ Sound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, Text
 			my d_events = nullptr;
 		}
 		forget (my d_events);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		espeak_Terminate ();
 		Melder_throw (U"Text not played.");

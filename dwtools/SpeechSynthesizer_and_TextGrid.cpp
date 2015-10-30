@@ -34,23 +34,22 @@
 static void IntervalTier_splitInterval (IntervalTier me, double time, const char32 *leftLabel, long interval, double precision);
 static IntervalTier IntervalTier_and_IntervalTier_cutPartsMatchingLabel (IntervalTier me, IntervalTier thee, const char32 *label, double precision);
 static IntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier thee, const char32 *patchLabel, double precision);
-static TextGrid SpeechSynthesizer_and_Sound_and_IntervalTier_align2 (SpeechSynthesizer me, Sound thee, IntervalTier him, long istart, long iend, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double trimDuration);
 static Table IntervalTiers_to_Table_textAlignmentment (IntervalTier target, IntervalTier source, EditCostsTable costs);
 
-Sound SpeechSynthesizer_and_TextInterval_to_Sound (SpeechSynthesizer me, TextInterval thee, TextGrid *tg)
+autoSound SpeechSynthesizer_and_TextInterval_to_Sound (SpeechSynthesizer me, TextInterval thee, autoTextGrid *p_tg)
 {
 	try {
 		if (! thy text || thy text[0] == '\0') {
 			Melder_throw (U"No text in TextInterval.");
 		}
-		autoSound him = SpeechSynthesizer_to_Sound (me, thy text, tg, nullptr);
-		return him.transfer();
+		autoSound him = SpeechSynthesizer_to_Sound (me, thy text, p_tg, nullptr);
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not created from TextInterval.");
 	}
 }
 
-Sound SpeechSynthesizer_and_TextGrid_to_Sound (SpeechSynthesizer me, TextGrid thee, long tierNumber, long iinterval, TextGrid *tg) {
+autoSound SpeechSynthesizer_and_TextGrid_to_Sound (SpeechSynthesizer me, TextGrid thee, long tierNumber, long iinterval, autoTextGrid *p_tg) {
 	try {
 		TextGrid_checkSpecifiedTierNumberWithinRange (thee, tierNumber);
 		IntervalTier intervalTier = (IntervalTier) thy tiers -> item [tierNumber];
@@ -60,7 +59,7 @@ Sound SpeechSynthesizer_and_TextGrid_to_Sound (SpeechSynthesizer me, TextGrid th
 		if (iinterval < 1 || iinterval > intervalTier -> intervals -> size) {
 			Melder_throw (U"Interval ", iinterval, U" does not exist on tier ", tierNumber, U".");
 		}
-		return SpeechSynthesizer_and_TextInterval_to_Sound (me, (TextInterval) intervalTier -> intervals -> item[iinterval], tg);
+		return SpeechSynthesizer_and_TextInterval_to_Sound (me, (TextInterval) intervalTier -> intervals -> item[iinterval], p_tg);
 	} catch (MelderError) {
 		Melder_throw (U"Sound not created from textGrid.");
 	}
@@ -461,7 +460,7 @@ TextGrid TextGrid_and_IntervalTier_patch (TextGrid me, IntervalTier thee, const 
 
 // We assume that the Sound and the SpeechSynthesizer have the same samplingFrequency
 // schakel waarschuwingen over stiltedetectie uit
-TextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align (SpeechSynthesizer me, Sound thee, TextInterval him, double silenceThreshold, double minSilenceDuration, double minSoundingDuration) {
+autoTextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align (SpeechSynthesizer me, Sound thee, TextInterval him, double silenceThreshold, double minSilenceDuration, double minSoundingDuration) {
 	try {
 		if (thy xmin != his xmin || thy xmax != his xmax) {
 			Melder_throw (U"Domains of Sound and TextGrid must be equal.");
@@ -488,9 +487,9 @@ TextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align (SpeechSynthesizer m
 			double wordsPerMinute_rawText = 60.0 * (str32len (his text) / 5.0) / s_thee_duration;
 			my d_wordsPerMinute =  (long) floor (0.5 * (wordsPerMinute_rawTokens + wordsPerMinute_rawText));
 		}
-		TextGrid tg2 = 0;
+		autoTextGrid tg2 = 0;
 		autoSound s2 = SpeechSynthesizer_and_TextInterval_to_Sound (me, him, &tg2);
-		autoTextGrid atg2 = tg2, s_atg2;
+		autoTextGrid silentTextGrid;
 		/*
 		 * For the synthesizer the silence threshold has to be < -30 dB, otherwise fricatives will not
 		 * be found as sounding! This is ok since silences are almost at zero amplitudes
@@ -505,7 +504,7 @@ TextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align (SpeechSynthesizer m
 		double s_s2_duration = s_s2 -> xmax - s_s2 -> xmin;
 		bool hasSilence_s2 = fabs (t1_s2 - s2 -> xmin) > precision || fabs (t2_s2 - s2 -> xmax) > precision;
 		if (hasSilence_s2) {
-			s_atg2.reset (TextGrid_extractPart (atg2.peek(), t1_s2, t2_s2, true));
+			silentTextGrid = TextGrid_extractPart (tg2.peek(), t1_s2, t2_s2, true);
 		}
 		double analysisWidth = 0.02, dt = 0.005, band = 0.0;
 		// compare the durations of the two sounds to get an indication of the slope constraint of the DTW
@@ -521,7 +520,7 @@ TextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align (SpeechSynthesizer m
 		//autoDTW dtw = CCs_to_DTW (m1.peek(), m2.peek(), wc, wle, wr, wer, dtr, matchStart, matchEnd, constraint);
         autoDTW dtw = Sounds_to_DTW ((hasSilence_thee ? s_thee.peek() : thee), (hasSilence_s2 ? s_s2.peek() : s2.peek()), analysisWidth, dt, band, constraint);
 		autoTextGrid result = DTW_and_TextGrid_to_TextGrid (dtw.peek(),
-			(hasSilence_s2 ? s_atg2.peek() : atg2.peek()), precision);
+			(hasSilence_s2 ? silentTextGrid.peek() : tg2.peek()), precision);
 		if (hasSilence_thee) {
 			if (t1_thee > thy xmin) {
 				TextGrid_setEarlierStartTime (result.peek(), thy xmin, U"", U"");
@@ -530,7 +529,7 @@ TextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align (SpeechSynthesizer m
 				TextGrid_setLaterEndTime (result.peek(), thy xmax, U"", U"");
 			}
 		}
-		return result.transfer();
+		return result;
 	} catch (MelderError) {
 		Melder_throw (U"Sound and TextInterval not aligned.");
 	}
@@ -550,8 +549,7 @@ typedef struct structAlignmentOfSoundAndTextStruct {
 	double wordgap; // synthesizer
 } *SpeechSynthesizer_alignmentStruct;*/
 
-TextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align2 (SpeechSynthesizer me, Sound thee, TextInterval him, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double trimDuration);
-TextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align2 (SpeechSynthesizer me, Sound thee, TextInterval him, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double trimDuration) {
+static autoTextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align2 (SpeechSynthesizer me, Sound thee, TextInterval him, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double trimDuration) {
     try {
         if (thy xmin != his xmin || thy xmax != his xmax) {
             Melder_throw (U"Domains of Sound and TextGrid must be equal.");
@@ -568,15 +566,14 @@ TextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align2 (SpeechSynthesizer 
          * the final plosive "t" from the word "text"
          *
          */
-        TextGrid tg_tmp = 0;
         double minPitch = 200, timeStep = 0.005, precision = thy dx;
-        autoSound thee_trimmed = Sound_trimSilences (thee, trimDuration, false, minPitch, timeStep, silenceThreshold,  minSilenceDuration, minSoundingDuration, &tg_tmp, trimLabel);
-        autoTextGrid thee_trimmer = tg_tmp;
+        autoTextGrid thee_trimmer;
+        autoSound thee_trimmed = Sound_trimSilences (thee, trimDuration, false, minPitch, timeStep, silenceThreshold,  minSilenceDuration, minSoundingDuration, &thee_trimmer, trimLabel);
 
         // 2. synthesize the sound from the TextInterval
 
-        autoSound synth = SpeechSynthesizer_and_TextInterval_to_Sound (me, him, &tg_tmp);
-        autoTextGrid tg_syn = tg_tmp;
+        autoTextGrid tg_syn;
+        autoSound synth = SpeechSynthesizer_and_TextInterval_to_Sound (me, him, &tg_syn);
 
         // 3. There should be no silences in the synthesized sound except at the start and finish.
 		//    Set the wordwap parameter to a small value like 0.001 s.
@@ -594,13 +591,13 @@ TextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align2 (SpeechSynthesizer 
         // 7. Patch the trimmed intervals back into the warped TextGrid
         autoTextGrid result = TextGrid_and_IntervalTier_patch (warp.peek(), (IntervalTier) thee_trimmer -> tiers ->item[1], U"trim", 2 * thy dx);
 
-        return result.transfer();
+        return result;
     } catch (MelderError) {
         Melder_throw (thee, U": sound and TextInterval not aligned.");
     }
 }
 
-TextGrid SpeechSynthesizer_and_Sound_and_IntervalTier_align (SpeechSynthesizer me, Sound thee, IntervalTier him, long istart, long iend, double silenceThreshold, double minSilenceDuration, double minSoundingDuration) {
+autoTextGrid SpeechSynthesizer_and_Sound_and_IntervalTier_align (SpeechSynthesizer me, Sound thee, IntervalTier him, long istart, long iend, double silenceThreshold, double minSilenceDuration, double minSoundingDuration) {
     try {
         if (istart < 1 || iend < istart || iend > his intervals -> size) {
             Melder_throw (U"Not avalid interval range.");
@@ -613,21 +610,21 @@ TextGrid SpeechSynthesizer_and_Sound_and_IntervalTier_align (SpeechSynthesizer m
             TextInterval ti = (TextInterval) his intervals -> item[iint];
             if (ti -> text && str32len (ti -> text) > 0) {
                 autoSound sound = Sound_extractPart (thee, ti -> xmin, ti -> xmax,  kSound_windowShape_RECTANGULAR, 1, true);
-                autoTextGrid atg = SpeechSynthesizer_and_Sound_and_TextInterval_align (me, sound.peek(), ti, silenceThreshold, minSilenceDuration, minSoundingDuration);
-                Collection_addItem (textgrids.peek(), atg.transfer());
+                autoTextGrid grid = SpeechSynthesizer_and_Sound_and_TextInterval_align (me, sound.peek(), ti, silenceThreshold, minSilenceDuration, minSoundingDuration);
+                Collection_addItem (textgrids.peek(), grid.transfer());
             }
         }
         if (textgrids -> size == 0) {
             Melder_throw (U"Nothing could be aligned. Was your IntervalTier empty?");
         }
         autoTextGrid aligned = TextGrids_to_TextGrid_appendContinuous (textgrids.peek(), true);
-        return aligned.transfer();
+        return aligned;
     } catch (MelderError) {
         Melder_throw (U"No aligned TextGrid created.");
     }
 }
 
-TextGrid SpeechSynthesizer_and_Sound_and_IntervalTier_align2 (SpeechSynthesizer me, Sound thee, IntervalTier him, long istart, long iend, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double trimDuration) {
+static autoTextGrid SpeechSynthesizer_and_Sound_and_IntervalTier_align2 (SpeechSynthesizer me, Sound thee, IntervalTier him, long istart, long iend, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double trimDuration) {
     try {
         if (istart < 1 || iend < istart || iend > his intervals -> size) {
             Melder_throw (U"Not avalid interval range.");
@@ -640,36 +637,36 @@ TextGrid SpeechSynthesizer_and_Sound_and_IntervalTier_align2 (SpeechSynthesizer 
             TextInterval ti = (TextInterval) his intervals -> item[iint];
             if (ti -> text && str32len (ti -> text) > 0) {
                 autoSound sound = Sound_extractPart (thee, ti -> xmin, ti -> xmax,  kSound_windowShape_RECTANGULAR, 1, true);
-                autoTextGrid atg = SpeechSynthesizer_and_Sound_and_TextInterval_align2 (me, sound.peek(), ti, silenceThreshold, minSilenceDuration, minSoundingDuration, trimDuration);
-                Collection_addItem (textgrids.peek(), atg.transfer());
+                autoTextGrid grid = SpeechSynthesizer_and_Sound_and_TextInterval_align2 (me, sound.peek(), ti, silenceThreshold, minSilenceDuration, minSoundingDuration, trimDuration);
+                Collection_addItem (textgrids.peek(), grid.transfer());
             }
         }
         if (textgrids -> size == 0) {
             Melder_throw (U"Nothing could be aligned. Was your IntervalTier empty?");
         }
         autoTextGrid aligned = TextGrids_to_TextGrid_appendContinuous (textgrids.peek(), true);
-        return aligned.transfer();
+        return aligned;
     } catch (MelderError) {
         Melder_throw (U"No aligned TextGrid created.");
     }
 }
 
-TextGrid SpeechSynthesizer_and_Sound_and_TextGrid_align (SpeechSynthesizer me, Sound thee, TextGrid him, long tierNumber, long istart, long iend, double silenceThreshold, double minSilenceDuration, double minSoundingDuration) {
+autoTextGrid SpeechSynthesizer_and_Sound_and_TextGrid_align (SpeechSynthesizer me, Sound thee, TextGrid him, long tierNumber, long istart, long iend, double silenceThreshold, double minSilenceDuration, double minSoundingDuration) {
 	try {//TODO: check not empty tier
-		IntervalTier iTier = TextGrid_checkSpecifiedTierIsIntervalTier (him, tierNumber);
-		autoTextGrid tg = SpeechSynthesizer_and_Sound_and_IntervalTier_align (me, thee, iTier, istart, iend, silenceThreshold, minSilenceDuration, minSoundingDuration);
-		return tg.transfer();
+		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (him, tierNumber);
+		autoTextGrid grid = SpeechSynthesizer_and_Sound_and_IntervalTier_align (me, thee, tier, istart, iend, silenceThreshold, minSilenceDuration, minSoundingDuration);
+		return grid;
 	} catch (MelderError) {
 		Melder_throw (U"");
 	}
 }
 
 
-TextGrid SpeechSynthesizer_and_Sound_and_TextGrid_align2 (SpeechSynthesizer me, Sound thee, TextGrid him, long tierNumber, long istart, long iend, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double trimDuration) {
+autoTextGrid SpeechSynthesizer_and_Sound_and_TextGrid_align2 (SpeechSynthesizer me, Sound thee, TextGrid him, long tierNumber, long istart, long iend, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double trimDuration) {
     try {//TODO: check not empty tier
-    	IntervalTier iTier = TextGrid_checkSpecifiedTierIsIntervalTier (him, tierNumber);
-        autoTextGrid tg = SpeechSynthesizer_and_Sound_and_IntervalTier_align2 (me, thee, iTier, istart, iend, silenceThreshold, minSilenceDuration, minSoundingDuration, trimDuration);
-        return tg.transfer();
+    	IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (him, tierNumber);
+        autoTextGrid grid = SpeechSynthesizer_and_Sound_and_IntervalTier_align2 (me, thee, tier, istart, iend, silenceThreshold, minSilenceDuration, minSoundingDuration, trimDuration);
+        return grid;
     } catch (MelderError) {
         Melder_throw (U"");
     }

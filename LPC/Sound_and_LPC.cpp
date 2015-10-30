@@ -507,7 +507,7 @@ autoSound LPC_and_Sound_filter (LPC me, Sound thee, int useGain) {
 		// resample sound if samplings don't match
 		autoSound source = nullptr;
 		if (my samplingPeriod != thy dx) {
-			source.reset (Sound_resample (thee, 1.0 / my samplingPeriod, 50));
+			source = Sound_resample (thee, 1.0 / my samplingPeriod, 50);
 			thee = source.peek();   // reference copy; remove at end
 		}
 

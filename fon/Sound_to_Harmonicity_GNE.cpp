@@ -118,7 +118,7 @@ autoMatrix Sound_to_Harmonicity_GNE (Sound me,
 			}*/
 			Melder_monitor (ienvelope / (nenvelopes + 1.0), U"Computing Hilbert envelope ", ienvelope, U"...");
 			autoSound hilbertBand = Spectrum_to_Sound (hilbertBandSpectrum.peek());
-			envelope [ienvelope].reset (Sound_extractPart (band.peek(), 0, duration, kSound_windowShape_RECTANGULAR, 1.0, true));
+			envelope [ienvelope] = Sound_extractPart (band.peek(), 0, duration, kSound_windowShape_RECTANGULAR, 1.0, true);
 			/*
 			 * 3c: Compute the Hilbert envelope of the band-passed flat signal.
 			 */

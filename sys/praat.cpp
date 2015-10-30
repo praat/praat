@@ -359,8 +359,6 @@ void praat_newWithFile (autoDaata me, MelderFile file, const char32 *myName) {
 
 	if (my classInfo == classCollection) {
 		praat_new_unpackCollection (me.static_cast_move<structCollection>(), myName);
-		//praat_new_unpackCollection (static_cast<Collection> (me.transfer()), myName);
-			// yuck; this should be done with move(), but how do we cast an autoDaata to autoCollection?
 		return;
 	}
 

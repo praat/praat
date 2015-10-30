@@ -29,11 +29,11 @@ struct playInfo {
 
 static int playCallback (void *playClosure, int /* phase */, double /* tmin */, double /* tmax */, double t) {
 	struct playInfo *me = (struct playInfo *) playClosure;
-	static Art art;
+	static autoArt art;
 	if (! art) art = Art_create ();
-	Artword_intoArt (my artword, art, t);
+	Artword_intoArt (my artword, art.get(), t);
 	Graphics_clearWs (my graphics);
-	Art_Speaker_draw (art, my speaker, my graphics);
+	Art_Speaker_draw (art.get(), my speaker, my graphics);
 	return 1;
 }
 

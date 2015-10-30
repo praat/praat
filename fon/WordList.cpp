@@ -233,21 +233,19 @@ static int compare (const char32 *word, const char32 *p) {
 static char32 buffer [3333+1];
 
 bool WordList_hasWord (WordList me, const char32 *word) {
-	long p, d;
-	int cf;
 	if (str32len (word) > 3333) return false;
 	Longchar_genericize32 (word, buffer);
 	if (! my length) my length = str32len (my string);
-	p = my length / 2, d = p / 2;
+	long p = my length / 2, d = p / 2;
 	while (d > 20) {
 		p = gotoStart (me, p);
-		cf = compare (buffer, my string + p);
+		int cf = compare (buffer, my string + p);
 		if (cf == 0) return true;
 		if (cf < 0) p -= d; else p += d;
 		d /= 2;
 	}
 	p = gotoStart (me, p);
-	cf = compare (buffer, my string + p);
+	int cf = compare (buffer, my string + p);
 	if (cf == 0) return true;
 	if (cf > 0) {
 		for (;;) {

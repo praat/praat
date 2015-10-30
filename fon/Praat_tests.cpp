@@ -264,6 +264,8 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 				fprintf (stderr, "7\n");
 				//data = ordered;   // disabled l-value copy assignment from subclass
 				data = ordered.move();
+				//ordered = data;   // disabled l-value copy assignment from superclass
+				//ordered = data.move();   // assignment from superclass to subclass is rightfully refused by compiler
 				fprintf (stderr, "8\n");
 				data2 = newAutoData ();
 				fprintf (stderr, "8a\n");

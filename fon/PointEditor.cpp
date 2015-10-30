@@ -216,7 +216,7 @@ autoPointEditor PointEditor_create (const char32 *title, PointProcess point, Sou
 	try {
 		autoPointEditor me = Thing_new (PointEditor);
 		if (sound) {
-			my monoSound = Sound_convertToMono (sound);
+			my monoSound = Sound_convertToMono (sound).transfer();
 		}
 		TimeSoundEditor_init (me.peek(), title, point, my monoSound, false);
 		return me;
