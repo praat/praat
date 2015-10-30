@@ -1,6 +1,6 @@
 /* Matrix_Categories.cpp
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 #include "Matrix_Categories.h"
 #include "TableOfReal_extensions.h"
 
-TableOfReal Matrix_and_Categories_to_TableOfReal (Matrix me, Categories thee) {
+autoTableOfReal Matrix_and_Categories_to_TableOfReal (Matrix me, Categories thee) {
 	try {
 		if (thy size != my ny) {
 			Melder_throw (U"Number of rows and number of categories must be equal.");
@@ -41,7 +41,7 @@ TableOfReal Matrix_and_Categories_to_TableOfReal (Matrix me, Categories thee) {
 				his data[i][j] = my z[i][j];
 			}
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal not created from Matrix & Categories.");
 	}

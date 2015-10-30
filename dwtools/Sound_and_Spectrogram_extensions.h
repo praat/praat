@@ -2,7 +2,7 @@
 #define _Sound_and_Spectrogram_extensions_h_
 /* Sound_and_Spectrogram_extensions.h
  *
- * Copyright (C) 2014 David Weenink
+ * Copyright (C) 2014-2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 #include "Pitch.h"
 #include "Sound.h"
 
-BarkSpectrogram Sound_to_BarkSpectrogram (Sound me, double analysisWidth, double dt,
+autoBarkSpectrogram Sound_to_BarkSpectrogram (Sound me, double analysisWidth, double dt,
 	double f1_bark, double fmax_bark, double df_bark);
 /*
 	Filtering with filters on a Bark scale as defined by
@@ -38,19 +38,20 @@ BarkSpectrogram Sound_to_BarkSpectrogram (Sound me, double analysisWidth, double
 	10 log F(z) = 15.8 + 7.5(z + 0.5) - 17.5 * sqrt(1 + (z + 0.5)^2)
 */
 
-MelSpectrogram Sound_to_MelSpectrogram (Sound me, double analysisWidth, double dt,
+autoMelSpectrogram Sound_to_MelSpectrogram (Sound me, double analysisWidth, double dt,
 	double f1_mel, double fmax_mel, double df_mel);
 
-Spectrogram Sound_to_Spectrogram_pitchDependent (Sound me, double analysisWidth,
+autoSpectrogram Sound_to_Spectrogram_pitchDependent (Sound me, double analysisWidth,
 	double dt, double f1_hz, double fmax_hz, double df_hz, double relative_bw,
 	double minimumPitch, double maximumPitch);
 
-Spectrogram Sound_and_Pitch_to_Spectrogram (Sound me, Pitch thee,
+autoSpectrogram Sound_and_Pitch_to_Spectrogram (Sound me, Pitch thee,
 	double analysisWidth, double dt, double f1_hz, double fmax_hz,
 	double df_hz, double relative_bw);
 
-Sound BandFilterSpectrograms_crossCorrelate (BandFilterSpectrogram me, BandFilterSpectrogram thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
-Sound BandFilterSpectrograms_convolve (BandFilterSpectrogram me, BandFilterSpectrogram thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
+autoSound BandFilterSpectrograms_crossCorrelate (BandFilterSpectrogram me, BandFilterSpectrogram thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
+
+autoSound BandFilterSpectrograms_convolve (BandFilterSpectrogram me, BandFilterSpectrogram thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
 
 
 #endif /* _Sound_and_Spectrogram_extensions_h_ */

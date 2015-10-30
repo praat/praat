@@ -2149,13 +2149,15 @@ END
 DIRECT (DTW_and_TextGrid_to_TextGrid)
 	DTW me = FIRST (DTW);
 	TextGrid tg = FIRST (TextGrid);
-	praat_new (DTW_and_TextGrid_to_TextGrid (me, tg, 0), 0);
+	autoTextGrid thee = DTW_and_TextGrid_to_TextGrid (me, tg, 0);
+	praat_new (thee.transfer(), tg -> name, U"_", my name);
 END
 
 DIRECT (DTW_and_IntervalTier_to_Table)
 	DTW me = FIRST (DTW);
 	IntervalTier ti = FIRST (IntervalTier);
-	praat_new (DTW_and_IntervalTier_to_Table (me, ti, 1.0/44100), my name);
+	autoTable thee = DTW_and_IntervalTier_to_Table (me, ti, 1.0/44100);
+	praat_new (thee.transfer(), my name);
 END
 
 /******************** EditDistanceTable & EditCostsTable ********************************************/
@@ -3146,9 +3148,9 @@ DO
 		(f1 ? f2 : f1) = me;
 	}
 	Melder_assert (f1 != 0 && f2 != 0);
-	praat_new (BandFilterSpectrograms_crossCorrelate (f1, f2, GET_ENUM (kSounds_convolve_scaling, U"Amplitude scaling"),
-		GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, U"Signal outside time domain is...")),
-		f1 -> name, U"_", f2 -> name);
+	autoSound thee = BandFilterSpectrograms_crossCorrelate (f1, f2, GET_ENUM (kSounds_convolve_scaling, U"Amplitude scaling"),
+		GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, U"Signal outside time domain is..."));
+	praat_new (thee.transfer(), f1 -> name, U"_", f2 -> name);
 END
 
 FORM (FilterBanks_convolve, U"FilterBanks: Convolve", 0)
@@ -3175,9 +3177,9 @@ DO
 		(f1 ? f2 : f1) = me;
 	}
 	Melder_assert (f1 != 0 && f2 != 0);
-	praat_new (BandFilterSpectrograms_convolve (f1, f2, GET_ENUM (kSounds_convolve_scaling, U"Amplitude scaling"),
-		GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, U"Signal outside time domain is...")),
-		f1 -> name, U"_", f2 -> name);
+	autoSound thee = BandFilterSpectrograms_convolve (f1, f2, GET_ENUM (kSounds_convolve_scaling, U"Amplitude scaling"),
+		GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, U"Signal outside time domain is..."));
+	praat_new (thee.transfer(), f1 -> name, U"_", f2 -> name);
 END
 
 DIRECT (FilterBank_to_Intensity)
@@ -3458,9 +3460,10 @@ FORM (Intensity_to_TextGrid_detectSilences, U"Intensity: To TextGrid (silences)"
 DO
 	LOOP {
 		iam (Intensity);
-		praat_new (Intensity_to_TextGrid_detectSilences (me, GET_REAL (U"Silence threshold"),
+		autoTextGrid thee = Intensity_to_TextGrid_detectSilences (me, GET_REAL (U"Silence threshold"),
 			GET_REAL (U"Minimum silent interval duration"), GET_REAL (U"Minimum sounding interval duration"),
-			GET_STRING (U"Silent interval label"), GET_STRING (U"Sounding interval label")), my name);
+			GET_STRING (U"Silent interval label"), GET_STRING (U"Sounding interval label"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -3477,9 +3480,10 @@ FORM (IntensityTier_to_TextGrid_detectSilences, U"IntensityTier: To TextGrid (si
 DO
 	LOOP {
 		iam (IntensityTier);
-		praat_new (IntensityTier_to_TextGrid_detectSilences (me, GET_REAL (U"Time step"), GET_REAL (U"Silence threshold"),
+		autoTextGrid thee = IntensityTier_to_TextGrid_detectSilences (me, GET_REAL (U"Time step"), GET_REAL (U"Silence threshold"),
 			GET_REAL (U"Minimum silent interval duration"), GET_REAL (U"Minimum sounding interval duration"),
-			GET_STRING (U"Silent interval label"), GET_STRING (U"Sounding interval label")), my name);
+			GET_STRING (U"Silent interval label"), GET_STRING (U"Sounding interval label"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -3525,7 +3529,8 @@ END
 DIRECT (KlattTable_help) Melder_help (U"KlattTable"); END
 
 DIRECT (KlattTable_createExample)
-	praat_new (KlattTable_createExample (), U"example");
+	autoKlattTable thee = KlattTable_createExample ();
+	praat_new (thee.transfer(), U"example");
 END
 
 FORM (KlattTable_to_Sound, U"KlattTable: To Sound", U"KlattTable: To Sound...")
@@ -3557,9 +3562,10 @@ DO
 	}
 	LOOP {
 		iam (KlattTable);
-		praat_new (KlattTable_to_Sound (me, GET_REAL (U"Sampling frequency"), GET_INTEGER (U"Synthesis model"),
+		autoSound thee = KlattTable_to_Sound (me, GET_REAL (U"Sampling frequency"), GET_INTEGER (U"Synthesis model"),
 			GET_INTEGER (U"Number of formants"), GET_REAL (U"Frame duration"), GET_INTEGER (U"Voicing source"),
-			GET_REAL (U"Flutter percentage"), outputType), my name);
+			GET_REAL (U"Flutter percentage"), outputType);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -3576,14 +3582,16 @@ END
 DIRECT (KlattTable_to_Table)
 	LOOP {
 		iam (KlattTable);
-		praat_new (KlattTable_to_Table (me), my name);
+		autoTable thee = KlattTable_to_Table (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
 DIRECT (Table_to_KlattTable)
 	LOOP {
 		iam (Table);
-		praat_new (Table_to_KlattTable (me), my name);
+		autoKlattTable thee = Table_to_KlattTable (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -3930,7 +3938,8 @@ END
 DIRECT (Matrix_transpose)
 	LOOP {
 		iam (Matrix);
-		praat_new (Matrix_transpose (me), my name, U"_transposed");
+		autoMatrix thee = Matrix_transpose (me);
+		praat_new (thee.transfer(), my name, U"_transposed");
 	}
 END
 
@@ -3940,14 +3949,16 @@ FORM (Matrix_solveEquation, U"Matrix: Solve equation", U"Matrix: Solve equation.
 DO
 	LOOP {
 		iam (Matrix);
-		praat_new (Matrix_solveEquation (me, GET_REAL (U"Tolerance")), Thing_getName (me), U"_solution");
+		autoMatrix thee = Matrix_solveEquation (me, GET_REAL (U"Tolerance"));
+		praat_new (thee.transfer(), Thing_getName (me), U"_solution");
 	}
 END
 
 DIRECT (Matrix_Categories_to_TableOfReal)
 	Matrix me = FIRST (Matrix);
 	Categories cat = FIRST (Categories);
-	praat_new (Matrix_and_Categories_to_TableOfReal (me, cat), my name, U"_", cat->name);
+	autoTableOfReal thee = Matrix_and_Categories_to_TableOfReal (me, cat);
+	praat_new (thee.transfer(), my name, U"_", cat->name);
 END
 
 FORM (Matrix_scatterPlot, U"Matrix: Scatter plot", 0)
@@ -4587,7 +4598,8 @@ END
 DIRECT (PCA_and_Configuration_to_TableOfReal_reconstruct)
 	PCA me = FIRST (PCA);
 	Configuration conf = FIRST (Configuration);
-	praat_new (PCA_and_Configuration_to_TableOfReal_reconstruct (me, conf), my name, U"_", conf->name);
+	autoTableOfReal thee = PCA_and_Configuration_to_TableOfReal_reconstruct (me, conf);
+	praat_new (thee.transfer(), my name, U"_", conf->name);
 END
 
 FORM (PCA_and_TableOfReal_to_Configuration, U"PCA & TableOfReal: To Configuration", U"PCA & TableOfReal: To Configuration...")
@@ -4600,7 +4612,8 @@ DO
 	}
 	PCA me = FIRST (PCA);
 	TableOfReal tab = FIRST_GENERIC (TableOfReal);
-	praat_new (PCA_and_TableOfReal_to_Configuration (me, tab, dimension), my name, U"_", tab->name);
+	autoConfiguration thee = PCA_and_TableOfReal_to_Configuration (me, tab, dimension);
+	praat_new (thee.transfer(), my name, U"_", tab->name);
 END
 
 FORM (PCA_and_TableOfReal_to_TableOfReal_zscores, U"PCA & TableOfReal: To TableOfReal (z-scores)", U"PCA & TableOfReal: To TableOfReal (z-scores)...")
@@ -4613,7 +4626,8 @@ DO
 	}
 	PCA me = FIRST (PCA);
 	TableOfReal thee = FIRST_GENERIC (TableOfReal);
-	praat_new (PCA_and_TableOfReal_to_TableOfReal_zscores (me, thee, dimension), my name, U"_", thy name, U"_zscores");
+	autoTableOfReal him = PCA_and_TableOfReal_to_TableOfReal_zscores (me, thee, dimension);
+	praat_new (him.transfer(), my name, U"_", thy name, U"_zscores");
 END
 
 FORM (PCA_getCentroidElement, U"PCA: Get centroid element...", 0)
@@ -4696,7 +4710,8 @@ FORM (PCA_to_TableOfReal_reconstruct1, U"PCA: To TableOfReal (reconstruct)", U"P
 DO
 	LOOP {
 		iam (PCA);
-		praat_new (PCA_to_TableOfReal_reconstruct1 (me, GET_STRING (U"Coefficients")), my name, U"_reconstructed");
+		autoTableOfReal thee = PCA_to_TableOfReal_reconstruct1 (me, GET_STRING (U"Coefficients"));
+		praat_new (thee.transfer(), my name, U"_reconstructed");
 	}
 END
 
@@ -4964,8 +4979,9 @@ FORM (PitchTier_to_Pitch, U"PitchTier: To Pitch", U"PitchTier: To Pitch...")
 DO
 	LOOP {
 		iam (PitchTier);
-		praat_new (PitchTier_to_Pitch (me, GET_REAL (U"Step size"),
-		GET_REAL (U"Pitch floor"), GET_REAL (U"Pitch ceiling")), my name);
+		autoPitch thee = PitchTier_to_Pitch (me, GET_REAL (U"Step size"),
+		GET_REAL (U"Pitch floor"), GET_REAL (U"Pitch ceiling"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -4976,7 +4992,8 @@ FORM (Polygon_createSimple, U"Create simple Polygon", U"Create simple Polygon...
 	SENTENCE (U"Vertices as X-Y pairs", U"0.0 0.0  0.0 1.0  1.0 0.0")
 	OK
 DO
-	praat_new (Polygon_createSimple (GET_STRING (U"Vertices as X-Y pairs")), GET_STRING (U"Name"));
+	autoPolygon thee = Polygon_createSimple (GET_STRING (U"Vertices as X-Y pairs"));
+	praat_new (thee.transfer(), GET_STRING (U"Name"));
 END
 
 FORM (Polygon_createFromRandomVertices, U"", 0)
@@ -4988,9 +5005,10 @@ FORM (Polygon_createFromRandomVertices, U"", 0)
 	REAL (U"right Y range", U"1.0")
 	OK
 DO
-	praat_new (Polygon_createFromRandomVertices (GET_INTEGER (U"Number of vertices"),
+	autoPolygon thee = Polygon_createFromRandomVertices (GET_INTEGER (U"Number of vertices"),
 		GET_REAL (U"left X range"), GET_REAL (U"right X range"),
-		GET_REAL (U"left Y range"), GET_REAL (U"right Y range")), GET_STRING (U"Name"));
+		GET_REAL (U"left Y range"), GET_REAL (U"right Y range"));
+	praat_new (thee.transfer(), GET_STRING (U"Name"));
 END
 
 DIRECT (Polygon_getNumberOfPoints)
@@ -5059,21 +5077,24 @@ DO
 	long shift = GET_INTEGER (U"Shift");
 	LOOP {
 		iam (Polygon);
-		praat_new (Polygon_circularPermutation (me, shift), my name, U"_", shift);
+		autoPolygon thee = Polygon_circularPermutation (me, shift);
+		praat_new (thee.transfer(), my name, U"_", shift);
 	}
 END
 
 DIRECT (Polygon_simplify)
 	LOOP {
 		iam (Polygon);
-		praat_new (Polygon_simplify (me), my name, U"_s");
+		autoPolygon thee = Polygon_simplify (me);
+		praat_new (thee.transfer(), my name, U"_s");
 	}
 END
 
 DIRECT (Polygon_convexHull)
 	LOOP {
 		iam (Polygon);
-		praat_new (Polygon_convexHull (me), my name, U"_hull");
+		autoPolygon thee = Polygon_convexHull (me);
+		praat_new (thee.transfer(), my name, U"_hull");
 	}
 END
 
@@ -5083,8 +5104,9 @@ FORM (Polygon_translate, U"Polygon: Translate", U"Polygon: Translate...")
 	OK
 DO
 	LOOP {
-		iam (Polygon);
+		iam (Polygon); 
 		Polygon_translate (me, GET_REAL (U"X"), GET_REAL (U"Y"));
+		praat_dataChanged (me);
 	}
 END
 
@@ -5529,10 +5551,11 @@ FORM (Sound_and_Pitch_to_Spectrogram, U"Sound & Pitch: To Spectrogram", U"Sound 
 DO
 	Sound me = FIRST (Sound);
 	Pitch thee = FIRST (Pitch);
-	praat_new (Sound_and_Pitch_to_Spectrogram (me, thee, GET_REAL (U"Analysis window duration"),
+	autoSpectrogram him = Sound_and_Pitch_to_Spectrogram (me, thee, GET_REAL (U"Analysis window duration"),
 		GET_REAL (U"Time step"), GET_REAL (U"Position of first filter"),
 		GET_REAL (U"Maximum frequency"), GET_REAL (U"Distance between filters"),
-		GET_REAL (U"Relative bandwidth")), my name, U"_", thy name);
+		GET_REAL (U"Relative bandwidth"));
+	praat_new (him.transfer(), my name, U"_", thy name);
 END
 
 FORM (Sound_and_Pitch_changeGender, U"Sound & Pitch: Change gender", U"Sound & Pitch: Change gender...")
@@ -5544,9 +5567,9 @@ FORM (Sound_and_Pitch_changeGender, U"Sound & Pitch: Change gender", U"Sound & P
 DO
 	Sound me = FIRST (Sound);
 	Pitch p = FIRST (Pitch);
-	praat_new (Sound_and_Pitch_changeGender_old (me, p, GET_REAL (U"Formant shift ratio"),
-			GET_REAL (U"New pitch median"), GET_REAL (U"Pitch range factor"), GET_REAL (U"Duration factor")),
-			my name, U"_", p->name);
+	autoSound thee = Sound_and_Pitch_changeGender_old (me, p, GET_REAL (U"Formant shift ratio"),
+		GET_REAL (U"New pitch median"), GET_REAL (U"Pitch range factor"), GET_REAL (U"Duration factor"));
+	praat_new (thee.transfer(), my name, U"_", p->name);
 END
 
 FORM (Sound_and_Pitch_changeSpeaker, U"Sound & Pitch: Change speaker", U"Sound & Pitch: Change speaker...")
@@ -5558,8 +5581,9 @@ FORM (Sound_and_Pitch_changeSpeaker, U"Sound & Pitch: Change speaker", U"Sound &
 DO
 	Sound me = FIRST (Sound);
 	Pitch p = FIRST (Pitch);
-	praat_new (Sound_and_Pitch_changeSpeaker (me, p, GET_REAL (U"Multiply formants by"),
-		GET_REAL (U"Multiply pitch by"), GET_REAL (U"Multiply pitch range by"), GET_REAL (U"Multiply duration")), my name, U"_", p->name);
+	autoSound thee = Sound_and_Pitch_changeSpeaker (me, p, GET_REAL (U"Multiply formants by"),
+		GET_REAL (U"Multiply pitch by"), GET_REAL (U"Multiply pitch range by"), GET_REAL (U"Multiply duration"));
+	praat_new (thee.transfer(), my name, U"_", p -> name);
 END
 
 FORM (Sound_and_IntervalTier_cutPartsMatchingLabel, U"Sound & IntervalTier: Cut parts matching label", 0)
@@ -5569,7 +5593,8 @@ DO
 	const char32 *label = GET_STRING (U"Label");
 	Sound me = FIRST (Sound);
 	IntervalTier thee = FIRST (IntervalTier);
-	praat_new (Sound_and_IntervalTier_cutPartsMatchingLabel (me, thee, label), my name, U"_cut");
+	autoSound him = Sound_and_IntervalTier_cutPartsMatchingLabel (me, thee, label);
+	praat_new (him.transfer(), my name, U"_cut");
 END
 
 FORM (Sound_createFromGammaTone, U"Create a gammatone", U"Create Sound from gammatone...")
@@ -5598,7 +5623,7 @@ DO
 		Melder_throw (U"Bandwidth cannot be negative.\nPlease use a positive or zero bandwidth.");
 	}
 	autoSound sound = Sound_createGammaTone (startingTime, finishingTime, samplingFrequency, gamma, f, bandwidth,
-					GET_REAL (U"Initial phase"), GET_REAL (U"Addition factor"), GET_INTEGER (U"Scale amplitudes"));
+		GET_REAL (U"Initial phase"), GET_REAL (U"Addition factor"), GET_INTEGER (U"Scale amplitudes"));
 	//Sound_create_check (sound.peek(), startingTime, finishingTime, samplingFrequency);//TODO
 	praat_new (sound.transfer(), GET_STRING (U"Name"));
 END
@@ -5621,8 +5646,8 @@ DO
 		Melder_throw (U"Amplitude range cannot be negative.\nPlease use a positive or zero amplitude range.");
 	}
 	autoSound sound = Sound_createShepardToneComplex (startingTime, finishingTime, samplingFrequency,
-					GET_REAL (U"Lowest frequency"), GET_INTEGER (U"Number of components"),
-					GET_REAL (U"Frequency change"), GET_REAL (U"Amplitude range"), octaveShiftFraction);
+		GET_REAL (U"Lowest frequency"), GET_INTEGER (U"Number of components"),
+		GET_REAL (U"Frequency change"), GET_REAL (U"Amplitude range"), octaveShiftFraction);
 	// Sound_create_check (sound, startingTime, finishingTime, samplingFrequency); //TODO
 	praat_new (sound.transfer(), GET_STRING (U"Name"));
 END
@@ -5723,10 +5748,11 @@ FORM (Sound_to_TextGrid_detectSilences, U"Sound: To TextGrid (silences)", U"Soun
 DO
 	LOOP {
 		iam (Sound);
-		praat_new (Sound_to_TextGrid_detectSilences (me, GET_REAL (U"Minimum pitch"), GET_REAL (U"Time step"),
-		GET_REAL (U"Silence threshold"), GET_REAL (U"Minimum silent interval duration"),
-		GET_REAL (U"Minimum sounding interval duration"), GET_STRING (U"Silent interval label"),
-		GET_STRING (U"Sounding interval label")), my name);
+		autoTextGrid thee = Sound_to_TextGrid_detectSilences (me, GET_REAL (U"Minimum pitch"), GET_REAL (U"Time step"),
+			GET_REAL (U"Silence threshold"), GET_REAL (U"Minimum silent interval duration"),
+			GET_REAL (U"Minimum sounding interval duration"), GET_STRING (U"Silent interval label"),
+			GET_STRING (U"Sounding interval label"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -5810,9 +5836,10 @@ FORM (Sound_to_BarkSpectrogram, U"Sound: To BarkSpectrogram", U"Sound: To BarkSp
 DO
 	LOOP {
 		iam (Sound);
-		praat_new (Sound_to_BarkSpectrogram (me, GET_REAL (U"Window length"),
+		autoBarkSpectrogram thee = Sound_to_BarkSpectrogram (me, GET_REAL (U"Window length"),
 			GET_REAL (U"Time step"), GET_REAL (U"Position of first filter"),
-			GET_REAL (U"Maximum frequency"), GET_REAL (U"Distance between filters")), my name);
+			GET_REAL (U"Maximum frequency"), GET_REAL (U"Distance between filters"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -5855,11 +5882,10 @@ FORM (Sound_to_Spectrogram_pitchDependent, U"Sound: To Spectrogram (pitch-depend
 DO
 	LOOP {
 		iam (Sound);
-		praat_new (Sound_to_Spectrogram_pitchDependent (me, GET_REAL (U"Window length"),
-		GET_REAL (U"Time step"), GET_REAL (U"Position of first filter"),
-		GET_REAL (U"Maximum frequency"), GET_REAL (U"Distance between filters"),
-		GET_REAL (U"Relative bandwidth"), GET_REAL (U"Minimum pitch"),
-		GET_REAL (U"Maximum pitch")), my name);
+		autoSpectrogram thee = Sound_to_Spectrogram_pitchDependent (me, GET_REAL (U"Window length"), GET_REAL (U"Time step"), 
+			GET_REAL (U"Position of first filter"), GET_REAL (U"Maximum frequency"), GET_REAL (U"Distance between filters"),
+			GET_REAL (U"Relative bandwidth"), GET_REAL (U"Minimum pitch"), GET_REAL (U"Maximum pitch"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -5875,9 +5901,9 @@ FORM (Sound_to_MelFilter, U"Sound: To MelFilter", U"Sound: To MelFilter...")
 DO
 	LOOP {
 		iam (Sound);
-		praat_new (Sound_to_MelFilter (me, GET_REAL (U"Window length"),
-		GET_REAL (U"Time step"), GET_REAL (U"Position of first filter"),
-		GET_REAL (U"Maximum frequency"), GET_REAL (U"Distance between filters")), my name);
+		autoMelFilter thee = Sound_to_MelFilter (me, GET_REAL (U"Window length"), GET_REAL (U"Time step"), 
+			GET_REAL (U"Position of first filter"), GET_REAL (U"Maximum frequency"), GET_REAL (U"Distance between filters"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -5892,9 +5918,9 @@ FORM (Sound_to_MelSpectrogram, U"Sound: To MelSpectrogram", U"Sound: To MelSpect
 DO
 	LOOP {
 		iam (Sound);
-		praat_new (Sound_to_MelSpectrogram (me, GET_REAL (U"Window length"),
-		GET_REAL (U"Time step"), GET_REAL (U"Position of first filter"),
-		GET_REAL (U"Maximum frequency"), GET_REAL (U"Distance between filters")), my name);
+		autoMelSpectrogram thee = Sound_to_MelSpectrogram (me, GET_REAL (U"Window length"), GET_REAL (U"Time step"), 
+			GET_REAL (U"Position of first filter"), GET_REAL (U"Maximum frequency"), GET_REAL (U"Distance between filters"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -6033,8 +6059,9 @@ DO
 		if (channel > my ny) {
 			channel = 1;
 		}
-		praat_new (Sound_to_Polygon (me, channel, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
-		GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"), GET_REAL (U"Connection y-value")), my name);
+		autoPolygon thee = Sound_to_Polygon (me, channel, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+		GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"), GET_REAL (U"Connection y-value"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -6049,14 +6076,15 @@ FORM (Sounds_to_Polygon_enclosed, U"Sounds: To Polygon (enclosed)", U"Sounds: To
 	OK
 DO
 	long channel = GET_INTEGER (U"Channel");
-	Sound s1 = 0, s2 = 0;
+	Sound s1 = nullptr, s2 = nullptr;
 	LOOP {
 		iam (Sound);
 		(s1 ? s2 : s1) = me;
 	}
 	Melder_assert (s1 && s2);
-	praat_new (Sounds_to_Polygon_enclosed (s1, s2, channel, GET_REAL (U"left Time range"),
-		GET_REAL (U"right Time range"), GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range")), s1->name, U"_", s2->name);
+	autoPolygon thee = Sounds_to_Polygon_enclosed (s1, s2, channel, GET_REAL (U"left Time range"),
+		GET_REAL (U"right Time range"), GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"));
+	praat_new (thee.transfer(), s1->name, U"_", s2->name);
 END
 
 FORM (Sound_filterByGammaToneFilter4, U"Sound: Filter (gammatone)", U"Sound: Filter (gammatone)...")
@@ -6066,7 +6094,8 @@ FORM (Sound_filterByGammaToneFilter4, U"Sound: Filter (gammatone)", U"Sound: Fil
 DO
 	LOOP {
 		iam (Sound);
-		praat_new (Sound_filterByGammaToneFilter4 (me, GET_REAL (U"Centre frequency"), GET_REAL (U"Bandwidth")), my name, U"_filtered");
+		autoSound thee = Sound_filterByGammaToneFilter4 (me, GET_REAL (U"Centre frequency"), GET_REAL (U"Bandwidth"));
+		praat_new (thee.transfer(), my name, U"_filtered");
 	}
 END
 
@@ -6109,9 +6138,9 @@ DO
 	}
 	LOOP {
 		iam (Sound);
-		praat_new (Sound_changeSpeaker (me, minimumPitch, maximumPitch,
-		GET_REAL (U"Multiply formants by"), GET_REAL (U"Multiply pitch by"),
-		GET_REAL (U"Multiply pitch range by"), GET_REAL (U"Multiply duration by")), my name, U"_changeSpeaker");
+		autoSound thee = Sound_changeSpeaker (me, minimumPitch, maximumPitch, GET_REAL (U"Multiply formants by"), 
+			GET_REAL (U"Multiply pitch by"), GET_REAL (U"Multiply pitch range by"), GET_REAL (U"Multiply duration by"));
+		praat_new (thee.transfer(), my name, U"_changeSpeaker");
 	}
 END
 
@@ -6137,9 +6166,9 @@ DO
 	}
 	LOOP {
 		iam (Sound);
-		praat_new (Sound_changeGender_old (me, minimumPitch, maximumPitch,
-		GET_REAL (U"Formant shift ratio"), GET_REAL (U"New pitch median"),
-		pitchrf, GET_REAL (U"Duration factor")), my name, U"_changeGender");
+		autoSound thee = Sound_changeGender_old (me, minimumPitch, maximumPitch, GET_REAL (U"Formant shift ratio"), 
+			GET_REAL (U"New pitch median"), pitchrf, GET_REAL (U"Duration factor"));
+		praat_new (thee.transfer(), my name, U"_changeGender");
 	}
 END
 
@@ -6188,15 +6217,18 @@ DO
 END
 
 FORM_READ2 (Sound_readFromRawFileLE, U"Read Sound from raw Little Endian file", 0, true) {
-	praat_new (Sound_readFromRawFile (file, nullptr, 16, 1, 0, 0, 16000), MelderFile_name (file));
+	autoSound thee = Sound_readFromRawFile (file, nullptr, 16, 1, 0, 0, 16000);
+	praat_new (thee.transfer(), MelderFile_name (file));
 END2 }
 
 FORM_READ2 (Sound_readFromRawFileBE, U"Read Sound from raw 16-bit Little Endian file", 0, true) {
-	praat_new (Sound_readFromRawFile (file, nullptr, 16, 0, 0, 0, 16000), MelderFile_name (file));
+	autoSound thee = Sound_readFromRawFile (file, nullptr, 16, 0, 0, 0, 16000);
+	praat_new (thee.transfer(), MelderFile_name (file));
 END2 }
 
 FORM_READ2 (KlattTable_readFromRawTextFile, U"KlattTable_readFromRawTextFile", 0, true) {
-	praat_new (KlattTable_readFromRawTextFile (file), MelderFile_name (file));
+	autoKlattTable thee = KlattTable_readFromRawTextFile (file);
+	praat_new (thee.transfer(), MelderFile_name (file));
 END2 }
 
 /************ Spectrograms *********************************************/
@@ -7778,7 +7810,8 @@ END
 DIRECT (TableOfReal_to_PCA)
 	LOOP {
 		iam (TableOfReal);
-		praat_new (TableOfReal_to_PCA (me), my name);
+		autoPCA thee = TableOfReal_to_PCA (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 

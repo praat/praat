@@ -2,7 +2,7 @@
 #define _Polygon_extensions_h_
 /* Polygon_extensions.h
  *
- * Copyright (C) 1993-2012, 2014 David Weenink
+ * Copyright (C) 1993-2012, 2014, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,27 +37,34 @@
 #define Polygon_VERTEX 5
 
 void Polygon_getExtrema (Polygon me, double *xmin, double *xmax, double *ymin, double *ymax);
-Polygon Polygon_createSimple (char32 *xystring);
-Polygon Polygon_createFromRandomVertices (long numberOfVertices, double xmin, double xmax, double ymin, double ymax);
-Polygon Polygon_simplify (Polygon me);
+
+autoPolygon Polygon_createSimple (char32 *xystring);
+
+autoPolygon Polygon_createFromRandomVertices (long numberOfVertices, double xmin, double xmax, double ymin, double ymax);
+
+autoPolygon Polygon_simplify (Polygon me);
+
 void Polygon_translate (Polygon me, double xt, double yt);
+
 void Polygon_rotate (Polygon me, double alpha, double xc, double yc);
+
 void Polygon_scale (Polygon me, double xs, double ys);
+
 void Polygon_reverseX (Polygon me);
+
 void Polygon_reverseY (Polygon me);
-Polygon Polygon_circularPermutation (Polygon me, long nshift);
+
+autoPolygon Polygon_circularPermutation (Polygon me, long nshift);
 
 // Is point (x,y) Inside, Outside, Boundary (Edge or Vertex) ?
 int Polygon_getLocationOfPoint (Polygon me, double x0, double y0, double eps);
 
-void Polygon_Categories_draw (Polygon me, Any categories, Graphics graphics, double xmin, double xmax,
-	double ymin, double ymax, int garnish);
+void Polygon_Categories_draw (Polygon me, Categories thee, Graphics graphics, double xmin, double xmax, double ymin, double ymax, int garnish);
 /* reverse axis when min > max */
 
-void Polygon_drawMarks (Polygon me, Graphics g, double xmin, double xmax,
-	double ymin, double ymax, double size_mm, const char32 *mark);
+void Polygon_drawMarks (Polygon me, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark);
 
-Polygon Sound_to_Polygon (Sound me, int channel, double tmin, double tmax, double ymin, double ymax, double level);
+autoPolygon Sound_to_Polygon (Sound me, int channel, double tmin, double tmax, double ymin, double ymax, double level);
 /*
 	Post-conditions:
 
@@ -83,14 +90,15 @@ Polygon Sound_to_Polygon (Sound me, int channel, double tmin, double tmax, doubl
 	where clip(y) = y < ymin ? ymin : y > ymax ? ymax ; y;
 */
 
-Polygon Sounds_to_Polygon_enclosed (Sound me, Sound thee, int channel, double tmin, double tmax, double ymin, double ymax);
+autoPolygon Sounds_to_Polygon_enclosed (Sound me, Sound thee, int channel, double tmin, double tmax, double ymin, double ymax);
 /* Area enclosed by the sounds */
 
-Polygon Polygons_union (Polygon me, Polygon thee);
+autoPolygon Polygons_union (Polygon me, Polygon thee);
 
-Collection Polygons_clip (Polygon me, Polygon thee);
+autoCollection Polygons_clip (Polygon me, Polygon thee);
 
-Polygon Polygon_convexHull (Polygon me);
+autoPolygon Polygon_convexHull (Polygon me);
+
 double Polygon_getAreaOfConvexHull (Polygon me);
 
 #endif /* _Polygon_extensions_h_ */

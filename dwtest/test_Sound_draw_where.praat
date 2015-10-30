@@ -75,5 +75,6 @@ Marks bottom every... 1 0.0005 n y y
 Marks bottom every... 1 0.001 y y y
 Draw inner box
 Text top... n Random amplitudes: parts > 0.5 blue only in the first half of every 0.001 s
+Remove
 printline Draw where... End tests
 

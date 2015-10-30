@@ -30,9 +30,7 @@
 #include "Eigen.h"
 #include "NUM2.h"
 
-void Matrix_scatterPlot (Matrix me, Graphics g, long icx, long icy, double xmin, double xmax, double ymin, double ymax,
-	double size_mm, const char32 *mark, int garnish)
-{
+void Matrix_scatterPlot (Matrix me, Graphics g, long icx, long icy, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, int garnish) {
 	long ix = labs (icx), iy = labs (icy);
 
 	if (ix < 1 || ix > my nx || iy < 1 || iy > my nx) {
@@ -63,8 +61,7 @@ void Matrix_scatterPlot (Matrix me, Graphics g, long icx, long icy, double xmin,
 	}
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	for (long i = 1; i <= my ny; i++) {
-		if (my z[i][ix] >= xmin && my z[i][ix] <= xmax &&
-		        my z[i][iy] >= ymin && my z[i][iy] <= ymax) {
+		if (my z[i][ix] >= xmin && my z[i][ix] <= xmax && my z[i][iy] >= ymin && my z[i][iy] <= ymax) {
 			Graphics_mark (g, my z[i][ix], my z[i][iy], size_mm, mark);
 		}
 	}
@@ -179,24 +176,21 @@ void Matrix_scale (Matrix me, int choice) {
 	}
 }
 
-Matrix Matrix_transpose (Matrix me) {
+autoMatrix Matrix_transpose (Matrix me) {
 	try {
-		autoMatrix thee = Matrix_create (my ymin, my ymax, my ny, my dy, my y1,
-		                                 my xmin, my xmax, my nx, my dx, my x1);
+		autoMatrix thee = Matrix_create (my ymin, my ymax, my ny, my dy, my y1, my xmin, my xmax, my nx, my dx, my x1);
 		for (long i = 1; i <= my ny; i++) {
 			for (long j = 1; j <= my nx; j++) {
 				thy z[j][i] = my z[i][j];
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not transposed.");
 	}
 }
 
-void Matrix_drawDistribution (Matrix me, Graphics g, double xmin, double xmax,
-                              double ymin, double ymax, double minimum, double maximum, long nBins,
-                              double freqMin, double freqMax, int cumulative, int garnish) {
+void Matrix_drawDistribution (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax, double minimum, double maximum, long nBins, double freqMin, double freqMax, int cumulative, int garnish) {
 	if (nBins <= 0) {
 		return;
 	}
@@ -207,19 +201,18 @@ void Matrix_drawDistribution (Matrix me, Graphics g, double xmin, double xmax,
 		ymin = my ymin; ymax = my ymax;
 	}
 	long ixmin, ixmax, iymin, iymax;
-	if (Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax) == 0 ||
-	        Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax) == 0) {
+	if ((Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax) == 0) || 
+		(Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax) == 0)) {
 		return;
 	}
-	if (maximum <= minimum) Matrix_getWindowExtrema (me, ixmin, ixmax, iymin,
-		        iymax, & minimum, & maximum);
+	if (maximum <= minimum) {
+		Matrix_getWindowExtrema (me, ixmin, ixmax, iymin, iymax, & minimum, & maximum);
+	}
 	if (maximum <= minimum) {
 		minimum -= 1.0; maximum += 1.0;
 	}
 
-	/*
-		Count the numbers per bin and the total
-	*/
+	// Count the numbers per bin and the total
 
 	if (nBins < 1) {
 		nBins = 10;
@@ -258,8 +251,9 @@ void Matrix_drawDistribution (Matrix me, Graphics g, double xmin, double xmax,
 		if (ftmp > freqMax) {
 			ftmp = freqMax;
 		}
-		if (ftmp > freqMin) Graphics_rectangle (g, minimum + (i - 1) *
-			                                        binWidth, minimum + i * binWidth, freqMin, ftmp);
+		if (ftmp > freqMin) {
+			Graphics_rectangle (g, minimum + (i - 1) * binWidth, minimum + i * binWidth, freqMin, ftmp);
+		}
 	}
 	Graphics_unsetInner (g);
 	if (garnish) {
@@ -272,8 +266,7 @@ void Matrix_drawDistribution (Matrix me, Graphics g, double xmin, double xmax,
 	}
 }
 
-void Matrix_drawSliceY (Matrix me, Graphics g, double x, double ymin, double ymax,
-                        double min, double max) {
+void Matrix_drawSliceY (Matrix me, Graphics g, double x, double ymin, double ymax, double min, double max) {
 
 	if (x < my xmin || x > my xmax) {
 		return;
@@ -305,12 +298,11 @@ void Matrix_drawSliceY (Matrix me, Graphics g, double x, double ymin, double yma
 	for (long i = iymin; i <= iymax; i++) {
 		y[i] = my z[i][ix];
 	}
-	Graphics_function (g, y.peek(), iymin, iymax, Matrix_rowToY (me, iymin),
-	                   Matrix_rowToY (me, iymax));
+	Graphics_function (g, y.peek(), iymin, iymax, Matrix_rowToY (me, iymin), Matrix_rowToY (me, iymax));
 	Graphics_unsetInner (g);
 }
 
-Matrix Matrix_solveEquation (Matrix me, double tolerance) {
+autoMatrix Matrix_solveEquation (Matrix me, double tolerance) {
 	try {
 		long nr = my ny, nc = my nx - 1;
 
@@ -351,8 +343,8 @@ double Matrix_getMean (Matrix me, double xmin, double xmax, double ymin, double 
 		ymin = my ymin; ymax = my ymax;
 	}
 	long ixmin, ixmax, iymin, iymax;
-	if (Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax) == 0 ||
-	        Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax) == 0) {
+	if ((Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax) == 0) ||
+		(Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax) == 0)) {
 		return NUMundefined;
 	}
 	double sum = 0.0;
@@ -372,8 +364,8 @@ double Matrix_getStandardDeviation (Matrix me, double xmin, double xmax, double 
 		ymin = my ymin; ymax = my ymax;
 	}
 	long ixmin, ixmax, iymin, iymax;
-	if (Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax) == 0 ||
-	        Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax) == 0) {
+	if ((Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax) == 0) ||
+		(Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax) == 0)) {
 		return NUMundefined;
 	}
 	long nx = ixmax - ixmin + 1, ny = iymax - iymin + 1;

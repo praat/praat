@@ -2,7 +2,7 @@
  *
  *	Linear Frequency Cepstral Coefficients class.
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,12 +29,11 @@
 
 Thing_implement (LFCC, CC, 1);
 
-LFCC LFCC_create (double tmin, double tmax, long nt, double dt, double t1,
-                  long maximumNumberOfCoefficients, double fmin, double fmax) {
+autoLFCC LFCC_create (double tmin, double tmax, long nt, double dt, double t1, long maximumNumberOfCoefficients, double fmin, double fmax) {
 	try {
 		autoLFCC me = Thing_new (LFCC);
 		CC_init (me.peek(), tmin, tmax, nt, dt, t1, maximumNumberOfCoefficients, fmin, fmax);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"LFCC not created.");
 	}

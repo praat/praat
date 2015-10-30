@@ -34,18 +34,18 @@ static void checkChannelsWithinRange (long *channels, long n, long min, long max
 	}
 }
 
-PCA Sound_to_PCA_channels (Sound me, double startTime, double endTime) {
+autoPCA Sound_to_PCA_channels (Sound me, double startTime, double endTime) {
 	try {
 		// covariance is cross-correlation with lag time 0
 		autoCrossCorrelationTable thee = Sound_to_CrossCorrelationTable (me, startTime, endTime, 0);
 		autoPCA him = SSCP_to_PCA (thee.peek());
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": no PCA created.");
 	}
 }
 
-Sound Sound_and_PCA_to_Sound_pc_selectedChannels (Sound me, PCA thee, long numberOfComponents, long *channels, long numberOfChannels) {
+autoSound Sound_and_PCA_to_Sound_pc_selectedChannels (Sound me, PCA thee, long numberOfComponents, long *channels, long numberOfChannels) {
 	try {
 		bool channelSelection = channels != 0 && numberOfChannels > 0;
 		if (numberOfComponents <= 0 || numberOfComponents > thy numberOfEigenvalues) {
@@ -55,7 +55,7 @@ Sound Sound_and_PCA_to_Sound_pc_selectedChannels (Sound me, PCA thee, long numbe
 		if (channelSelection) {
 			checkChannelsWithinRange (channels, numberOfChannels, 1, my ny);
 		}
-		autoSound him = (Sound) Data_copy (me);
+		autoSound him = Data_copy (me);
 		// R['i',j] = E(i,k]*S['k',j]
 		// use kij-variant for faster inner loop
 		for (long k = 1; k <= thy dimension; k++) {
@@ -68,17 +68,17 @@ Sound Sound_and_PCA_to_Sound_pc_selectedChannels (Sound me, PCA thee, long numbe
 				}
 			}
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": no principal components calculated with ", thee);
 	}
 }
 
-Sound Sound_and_PCA_principalComponents (Sound me, PCA thee, long numberOfComponents) {
+autoSound Sound_and_PCA_principalComponents (Sound me, PCA thee, long numberOfComponents) {
 	return Sound_and_PCA_to_Sound_pc_selectedChannels (me, thee, numberOfComponents, nullptr, 0);
 }
 
-Sound Sound_and_PCA_whitenSelectedChannels (Sound me, PCA thee, long numberOfComponents, long *channels, long numberOfChannels) {
+autoSound Sound_and_PCA_whitenSelectedChannels (Sound me, PCA thee, long numberOfComponents, long *channels, long numberOfChannels) {
 	try {
 		bool channelSelection = channels != 0 && numberOfChannels > 0;
 		if (numberOfComponents <= 0 || numberOfComponents > thy numberOfEigenvalues) {
@@ -109,13 +109,13 @@ Sound Sound_and_PCA_whitenSelectedChannels (Sound me, PCA thee, long numberOfCom
                 }
             }
         }
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not created.");
 	}
 }
 
-Sound Sound_and_PCA_whitenChannels (Sound me, PCA thee, long numberOfComponents) {
+autoSound Sound_and_PCA_whitenChannels (Sound me, PCA thee, long numberOfComponents) {
 	return Sound_and_PCA_whitenSelectedChannels (me, thee, numberOfComponents, nullptr, 0);
 }
 

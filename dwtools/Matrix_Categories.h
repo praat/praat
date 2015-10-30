@@ -2,7 +2,7 @@
 #define _Matrix_Categories_h_
 /* Matrix_Categories.h
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,6 @@
 #include "Categories.h"
 #include "TableOfReal.h"
 
-TableOfReal Matrix_and_Categories_to_TableOfReal (Matrix me, Categories thee);
+autoTableOfReal Matrix_and_Categories_to_TableOfReal (Matrix me, Categories thee);
 
 #endif /* _Matrix_Categories_h_ */

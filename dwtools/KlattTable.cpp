@@ -1,6 +1,6 @@
 /* KlattTable.cpp
  *
- * Copyright (C) 2008-2011 David Weenink
+ * Copyright (C) 2008-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -452,11 +452,11 @@ typedef struct structKlattGlobal {
 	short *natural_samples; /* pointer to an array of glottal samples */
 	long F0hz10; /* Voicing fund freq in units of 0.1 Hz */
 	long original_f0; /* original value of f0 not modified by flutter (kanweg) */
-	Resonator rp[7], rc[9], rnpp, rnpc, rgl, rlp, rout;
-	AntiResonator rnz;
+	autoResonator rp[7], rc[9], rnpp, rnpc, rgl, rlp, rout;
+	autoAntiResonator rnz;
 } *KlattGlobal;
 
-KlattTable KlattTable_readFromRawTextFile (MelderFile fs) {
+autoKlattTable KlattTable_readFromRawTextFile (MelderFile fs) {
 	try {
 		autoMatrix thee = Matrix_readFromRawTextFile (fs);
 
@@ -475,25 +475,13 @@ KlattTable KlattTable_readFromRawTextFile (MelderFile fs) {
 				Table_setNumericValue ( (Table) me.peek(), irow, jcol, val);
 			}
 		}
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"KlattTable not read from file.");
 	}
 }
 
 static void KlattGlobal_free (KlattGlobal me) {
-	for (long i = 1; i <= 8; i++) {
-		Melder_free (my rc[i]);
-		if (i <= 6) {
-			Melder_free (my rp[i]);
-		}
-	}
-	Melder_free (my rnpp);
-	Melder_free (my rnpc);
-	Melder_free (my rnz);
-	Melder_free (my rgl);
-	Melder_free (my rlp);
-	Melder_free (my rout);
 	Melder_free (me);
 }
 
@@ -548,7 +536,7 @@ static void KlattGlobal_init (KlattGlobal me, int synthesisModel, int numberOfFo
 
 	my FLPhz = (long) floor (0.0950 * my samrate); // depends on samplingFrequency ????
 	my BLPhz = (long) floor (0.0630 * my samrate);
-	Filter_setFB (my rlp, my FLPhz, my BLPhz);
+	Filter_setFB (my rlp.peek(), my FLPhz, my BLPhz);
 }
 
 static KlattFrame KlattFrame_create () {
@@ -559,12 +547,12 @@ static void KlattFrame_free (KlattFrame me) {
 	Melder_free (me);
 }
 
-KlattTable KlattTable_create (double frameDuration, double totalDuration) {
+autoKlattTable KlattTable_create (double frameDuration, double totalDuration) {
 	try {
 		autoKlattTable me = (KlattTable) Thing_new (KlattTable);
 		long nrows = (long) floor (totalDuration / frameDuration) + 1;
 		Table_initWithColumnNames (me.peek(), nrows, columnNames);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"KlattTable not created.");
 	}
@@ -601,28 +589,28 @@ static void KlattGlobal_getFrame (KlattGlobal me, KlattFrame thee) {
 
 	for (long i = 8; i > 0; i--) {
 		if (my nfcascade >= i) {
-			Filter_setFB (my rc[i], thy Fhz[i], thy Bhz[i]);
+			Filter_setFB (my rc[i].peek(), thy Fhz[i], thy Bhz[i]);
 		}
 	}
 
 	/* Set coefficients of nasal resonator and zero antiresonator */
 
-	Filter_setFB (my rnpc, thy FNPhz, thy BNPhz);
-	Filter_setFB (my rnz, thy FNZhz, thy BNZhz);
+	Filter_setFB (my rnpc.peek(), thy FNPhz, thy BNPhz);
+	Filter_setFB (my rnz.peek(), thy FNZhz, thy BNZhz);
 
 	/* Set coefficients of parallel resonators, and amplitude of outputs */
 
 	for (long i = 1; i <= 6; i++) {
-		Filter_setFB (my rp[i], thy Fhz[i], thy Bphz[i]);
+		Filter_setFB (my rp[i].peek(), thy Fhz[i], thy Bphz[i]);
 		my rp[i] -> a *= amp_parF[i] * DBtoLIN (thy A[i]);
 	}
 
-	Filter_setFB (my rnpp, thy FNPhz, thy BNPhz);
+	Filter_setFB (my rnpp.peek(), thy FNPhz, thy BNPhz);
 	my rnpp -> a *= amp_parFNP;
 
 	/* output low-pass filter */
 
-	Filter_setFB (my rout, 0, (long) (my samrate / 2));
+	Filter_setFB (my rout.peek(), 0, (long) (my samrate / 2));
 }
 
 /*
@@ -675,7 +663,7 @@ static double KlattGlobal_impulsive_source (KlattGlobal me) {   // ppgb: dit was
 
 	vwave = my nper < 3 ? doublet[my nper] : 0;
 
-	return Filter_getOutput (my rgl, vwave);
+	return Filter_getOutput (my rgl.peek(), vwave);
 }
 
 /*
@@ -839,7 +827,7 @@ static void KlattGlobal_pitch_synch_par_reset (KlattGlobal me) {
 
 		long temp = my samrate / my nopen;
 
-		Filter_setFB (my rgl, 0, temp); // Only used for impulsive source.
+		Filter_setFB (my rgl.peek(), 0, temp); // Only used for impulsive source.
 
 		/* Make gain at F1 about constant */
 
@@ -942,7 +930,7 @@ static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output) {
 				to samrate samples/sec.  Resonator f=.09*samrate, bw=.06*samrate
 			*/
 
-			voice = Filter_getOutput (my rlp, voice);
+			voice = Filter_getOutput (my rlp.peek(), voice);
 
 			/* Increment counter that keeps track of 4*samrate samples per sec */
 
@@ -986,12 +974,12 @@ static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output) {
 		*/
 
 		if (my synthesis_model != ALL_PARALLEL) {
-			out = Filter_getOutput (my rnz, glotout); /* anti resonator */
-			out = Filter_getOutput (my rnpc, out);
+			out = Filter_getOutput (my rnz.peek(), glotout); /* anti resonator */
+			out = Filter_getOutput (my rnpc.peek(), out);
 
 			for (long i = 8; i > 0; i--) {
 				if (my nfcascade >= i) {
-					out = Filter_getOutput (my rc[i], out);
+					out = Filter_getOutput (my rc[i].peek(), out);
 				}
 			}
 		} else {
@@ -1020,16 +1008,16 @@ static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output) {
 		Problem: The source signal is already v'[n], and we are differentiating here again ???
 		*/
 
-		out += Filter_getOutput (my rp[1], sourc);
+		out += Filter_getOutput (my rp[1].peek(), sourc);
 
 		sourc = frics + par_glotout - glotlast; // diff
 		glotlast = par_glotout;
 
-		out += Filter_getOutput (my rnpp, sourc);
+		out += Filter_getOutput (my rnpp.peek(), sourc);
 
 		for (long i = 6; i >= 2; i--) {
 			if (my nfcascade >= i) {
-				out = Filter_getOutput (my rp[i], sourc) - out;
+				out = Filter_getOutput (my rp[i].peek(), sourc) - out;
 			}
 		}
 
@@ -1063,7 +1051,7 @@ static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output) {
 			}
 		}
 
-		out = Filter_getOutput (my rout, out);
+		out = Filter_getOutput (my rout.peek(), out);
 
 		double temp = out * my amp_gain0;  /* Convert back to integer */
 
@@ -1080,21 +1068,21 @@ static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output) {
 static int KlattTable_checkLimits (KlattTable me) {
 	long nviolations_upper[KlattTable_NPAR + 1] = { 0 }, nviolations_lower[KlattTable_NPAR + 1] = { 0 };
 	long lower[KlattTable_NPAR + 1] = { 0, // dummy
-	                                    10, 0,  // f0, av
-	                                    200, 40, 550, 40, 1200, 40, 1200, 40, 1200, 40, 1200, 40, // f1,b1 -- f6,b6
-	                                    248, 40, 248, 40, // fnz, bnz, fnp, bnp
-	                                    0, 0, 0, 0, 0, 0, // ah, kopen, aturb, tilt, af, skew
-	                                    0, 40, 0, 40, 0, 40, 0, 40, 0, 40, 0, 40, // a1,b1p -- a6,b6p
-	                                    0, 0, 0, 0 // anp, ab, avp, gain
-	                                  };
+		10, 0,  // f0, av
+		200, 40, 550, 40, 1200, 40, 1200, 40, 1200, 40, 1200, 40, // f1,b1 -- f6,b6
+		248, 40, 248, 40, // fnz, bnz, fnp, bnp
+		0, 0, 0, 0, 0, 0, // ah, kopen, aturb, tilt, af, skew
+		0, 40, 0, 40, 0, 40, 0, 40, 0, 40, 0, 40, // a1,b1p -- a6,b6p
+		0, 0, 0, 0 // anp, ab, avp, gain
+	};
 	long upper[KlattTable_NPAR + 1] = { 0, // dummy
-	                                    10000, 70,   // f0, av
-	                                    1300, 1000, 3000, 1000, 4999, 1000, 4999, 1000, 6999, 1000, 7000, 1000,  // f1,b1 -- f6,b6
-	                                    528, 1000, 528, 1000, // fnz, bnz, fnp, bnp
-	                                    70, 60, 80, 24, 80, 40,  // ah, kopen, aturb, tilt, af, skew
-	                                    80, 1000, 80, 1000, 80, 1000, 80, 1000, 80, 1000, 80, 1000, // a1,b1p -- a6,b6p
-	                                    80, 80, 70, 80  // anp, ab, avp, gain
-	                                  };
+		10000, 70,   // f0, av
+		1300, 1000, 3000, 1000, 4999, 1000, 4999, 1000, 6999, 1000, 7000, 1000,  // f1,b1 -- f6,b6
+		528, 1000, 528, 1000, // fnz, bnz, fnp, bnp
+		70, 60, 80, 24, 80, 40,  // ah, kopen, aturb, tilt, af, skew
+		80, 1000, 80, 1000, 80, 1000, 80, 1000, 80, 1000, 80, 1000, // a1,b1p -- a6,b6p
+		80, 80, 70, 80  // anp, ab, avp, gain
+	};
 
 	long nv = 0;
 	for (long irow = 1; irow <= my rows -> size; irow++) {
@@ -1114,16 +1102,13 @@ static int KlattTable_checkLimits (KlattTable me) {
 		for (long j = 1; j <= KlattTable_NPAR; j++) {
 			if (nviolations_lower[j] > 0) {
 				if (nviolations_upper[j] > 0) {
-					MelderInfo_writeLine (columnNamesA[j], U": ",
-					                       nviolations_lower[j], U" frame(s) < min = ", nviolations_lower[j], U"; ",
-					                       nviolations_upper[j], U" frame(s) > max = ", upper[j]);
+					MelderInfo_writeLine (columnNamesA[j], U": ", nviolations_lower[j], U" frame(s) < min = ", nviolations_lower[j], U"; ",
+						nviolations_upper[j], U" frame(s) > max = ", upper[j]);
 				} else {
-					MelderInfo_writeLine (columnNamesA[j], U": ",
-					                       nviolations_lower[j], U" frame(s) < min = ", lower[j]);
+					MelderInfo_writeLine (columnNamesA[j], U": ", nviolations_lower[j], U" frame(s) < min = ", lower[j]);
 				}
 			} else if (nviolations_upper[j] > 0) {
-				MelderInfo_writeLine (columnNamesA[j], U": ",
-				                       nviolations_upper[j], U" frame(s) > max = ", upper[j]);
+				MelderInfo_writeLine (columnNamesA[j], U": ", nviolations_upper[j], U" frame(s) > max = ", upper[j]);
 			}
 		}
 		MelderInfo_close ();
@@ -1132,7 +1117,7 @@ static int KlattTable_checkLimits (KlattTable me) {
 	return 1;
 }
 
-Sound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synthesisModel, int numberOfFormants, double frameDuration, int glottalSource, double flutter, int outputType) {
+autoSound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synthesisModel, int numberOfFormants, double frameDuration, int glottalSource, double flutter, int outputType) {
 	KlattGlobal thee = 0;
 	KlattFrame frame = 0;
 	try {
@@ -1187,7 +1172,7 @@ Sound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synthesi
 			}
 		}
 		KlattGlobal_free (thee); KlattFrame_free (frame);
-		return him.transfer ();
+		return him;
 	} catch (MelderError) {
 		KlattGlobal_free (thee);
 		KlattFrame_free (frame);
@@ -1196,7 +1181,7 @@ Sound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synthesi
 }
 
 
-KlattTable KlattTable_createExample () {
+autoKlattTable KlattTable_createExample () {
 	long nrows = 1376;
 	struct klatt_params {
 		short p[40];
@@ -2590,30 +2575,30 @@ KlattTable KlattTable_createExample () {
 				Table_setNumericValue ( (Table) me.peek(), irow, jcol, val);
 			}
 		}
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U" KlattTable example not created.");
 	}
 }
 
-KlattTable Table_to_KlattTable (Table me) {
+autoKlattTable Table_to_KlattTable (Table me) {
 	try {
 		if (my numberOfColumns != KlattTable_NPAR) {
 			Melder_throw (U"A KlattTable needs ", KlattTable_NPAR, U" columns.");
 		}
 		autoKlattTable thee = Thing_new (KlattTable);
 		my structTable :: v_copy (thee.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"KlattTable not created from Table.");
 	}
 }
 
-Table KlattTable_to_Table (KlattTable me) {
+autoTable KlattTable_to_Table (KlattTable me) {
 	try {
 		autoTable thee = Thing_new (Table);
 		my structTable :: v_copy (thee.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Table not created from KlattTable.");
 	}

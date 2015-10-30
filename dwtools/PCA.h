@@ -4,7 +4,7 @@
  *
  * Principal Component Analysis
  * 
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,20 +34,22 @@
 #include "PCA_def.h"
 oo_CLASS_CREATE (PCA, Eigen);
 
-PCA PCA_create (long numberOfComponents, long dimension);
+autoPCA PCA_create (long numberOfComponents, long dimension);
 
 void PCA_setNumberOfObservations (PCA me, long numberOfObservations);
+
 long PCA_getNumberOfObservations (PCA me);
 
-PCA TableOfReal_to_PCA (I);
+autoPCA TableOfReal_to_PCA (I);
 /* Calculate PCA of M'M */
 
 void PCA_getEqualityOfEigenvalues (PCA me, long from, long to, int conservative,
 	double *probability, double *chisq, long *ndf);
 /* Morrison, Multivariate statistical methods, page 336 */
 
-Configuration PCA_and_TableOfReal_to_Configuration (PCA me, thou, long numberOfDimensions);
-TableOfReal PCA_and_TableOfReal_to_TableOfReal_zscores (PCA me, TableOfReal thee, long numberOfDimensions);
+autoConfiguration PCA_and_TableOfReal_to_Configuration (PCA me, thou, long numberOfDimensions);
+
+autoTableOfReal PCA_and_TableOfReal_to_TableOfReal_zscores (PCA me, TableOfReal thee, long numberOfDimensions);
 
 double PCA_and_TableOfReal_getFractionVariance (PCA me, thou, long from, long to);
 /*	Get fraction variance of the table projected in the pca-space.
@@ -55,10 +57,10 @@ double PCA_and_TableOfReal_getFractionVariance (PCA me, thou, long from, long to
 	and quering the projected Covariance for 'fraction variance'.
 */
 
-TableOfReal PCA_and_Configuration_to_TableOfReal_reconstruct (PCA me, thou);
+autoTableOfReal PCA_and_Configuration_to_TableOfReal_reconstruct (PCA me, thou);
 /* Reconstruct the original TableOfReal from the PCA and the Configuration */
 
-TableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, char32 *numstring);
+autoTableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, char32 *numstring);
 
 #endif /* _PCA_h_ */
 

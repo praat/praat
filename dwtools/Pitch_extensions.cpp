@@ -1,6 +1,6 @@
 /* Pitch_extensions.cpp
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,17 +32,18 @@ void Pitch_Frame_addPitch (Pitch_Frame me, double f, double strength, int maxnCa
 	if (my nCandidates < maxnCandidates) {
 		pos = ++ my nCandidates;
 	} else {
-		/* Find weakest candidate so far (skip the unvoiced one) */
-		for (long i = 1; i <= maxnCandidates; i++) if (my candidate[i].strength < weakest &&
-			        my candidate[i].frequency > 0) {
+		// Find weakest candidate so far (skip the unvoiced one)
+		for (long i = 1; i <= maxnCandidates; i++) {
+			if (my candidate[i].strength < weakest && my candidate[i].frequency > 0) {
 				weakest = my candidate[i].strength;
 				pos = i;
 			}
+		}
 		if (strength < weakest) {
 			pos = 0;
 		}
 	}
-	if (pos) {
+	if (pos > 0) {
 		my candidate[pos].frequency = f;
 		my candidate[pos].strength = strength;
 	}
@@ -51,16 +52,16 @@ void Pitch_Frame_addPitch (Pitch_Frame me, double f, double strength, int maxnCa
 void Pitch_Frame_getPitch (Pitch_Frame me, double *f, double *strength) {
 	long pos = 1;
 	*strength = -1;
-	for (long i = 1; i <= my nCandidates; i++) if (my candidate[i].strength > *strength &&
-		        my candidate[i].frequency > 0) {
+	for (long i = 1; i <= my nCandidates; i++) {
+		if (my candidate[i].strength > *strength && my candidate[i].frequency > 0) {
 			*strength = my candidate[i].strength;
 			pos = i;
 		}
+	}
 	*f = my candidate[pos].frequency;
 }
 
-void Pitch_Frame_resizeStrengths (Pitch_Frame me, double maxStrength,
-                                  double unvoicedCriterium) {
+void Pitch_Frame_resizeStrengths (Pitch_Frame me, double maxStrength, double unvoicedCriterium) {
 	int pos = 1;
 	double strongest = my candidate[1].strength;
 	for (long i = 2; i <= my nCandidates; i++) {
@@ -75,11 +76,12 @@ void Pitch_Frame_resizeStrengths (Pitch_Frame me, double maxStrength,
 		}
 	}
 	if (maxStrength < unvoicedCriterium) {
-		for (long i = 1; i <= my nCandidates; i++)
+		for (long i = 1; i <= my nCandidates; i++) {
 			if (my candidate[i].frequency == 0) {
 				pos = i;
 				break;
 			}
+		}
 	}
 	if (pos != 1) {
 		double tmp = my candidate[1].frequency;
@@ -91,7 +93,7 @@ void Pitch_Frame_resizeStrengths (Pitch_Frame me, double maxStrength,
 	}
 }
 
-Pitch Pitch_scaleTime (Pitch me, double scaleFactor) {
+autoPitch Pitch_scaleTime (Pitch me, double scaleFactor) {
 	try {
 		double dx = my dx, x1 = my x1, xmax = my xmax;
 		if (scaleFactor != 1) {
@@ -108,7 +110,7 @@ Pitch Pitch_scaleTime (Pitch me, double scaleFactor) {
 				thy frame[i].candidate[1].frequency = f;
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not scaled.");
 	}
@@ -116,33 +118,30 @@ Pitch Pitch_scaleTime (Pitch me, double scaleFactor) {
 
 static double HertzToSpecial (double value, int pitchUnit) {
 	return	pitchUnit == kPitch_unit_HERTZ ? value :
-	        pitchUnit == kPitch_unit_HERTZ_LOGARITHMIC ? value <= 0.0 ? NUMundefined : log10 (value) :
-		        pitchUnit == kPitch_unit_MEL ? NUMhertzToMel (value) :
-		        pitchUnit == kPitch_unit_LOG_HERTZ ? value <= 0.0 ? NUMundefined : log10 (value) :
-		        pitchUnit == kPitch_unit_SEMITONES_1 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 1.0) / NUMln2 :
-		        pitchUnit == kPitch_unit_SEMITONES_100 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 100.0) / NUMln2 :
-		        pitchUnit == kPitch_unit_SEMITONES_200 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 200.0) / NUMln2 :
-		        pitchUnit == kPitch_unit_SEMITONES_440 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 440.0) / NUMln2 :
-		        pitchUnit == kPitch_unit_ERB ? NUMhertzToErb (value) :
-		        NUMundefined;
+		pitchUnit == kPitch_unit_HERTZ_LOGARITHMIC ? value <= 0.0 ? NUMundefined : log10 (value) :
+		pitchUnit == kPitch_unit_MEL ? NUMhertzToMel (value) :
+		pitchUnit == kPitch_unit_LOG_HERTZ ? value <= 0.0 ? NUMundefined : log10 (value) :
+		pitchUnit == kPitch_unit_SEMITONES_1 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 1.0) / NUMln2 :
+		pitchUnit == kPitch_unit_SEMITONES_100 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 100.0) / NUMln2 :
+		pitchUnit == kPitch_unit_SEMITONES_200 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 200.0) / NUMln2 :
+		pitchUnit == kPitch_unit_SEMITONES_440 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 440.0) / NUMln2 :
+		pitchUnit == kPitch_unit_ERB ? NUMhertzToErb (value) : NUMundefined;
 }
 
 static double SpecialToHertz (double value, int pitchUnit) {
 	return	pitchUnit == kPitch_unit_HERTZ ? value :
-	        pitchUnit == kPitch_unit_HERTZ_LOGARITHMIC ? pow (10.0, value) :
-	        pitchUnit == kPitch_unit_MEL ? NUMmelToHertz (value) :
-	        pitchUnit == kPitch_unit_LOG_HERTZ ? pow (10.0, value) :
-	        pitchUnit == kPitch_unit_SEMITONES_1 ? 1.0 * exp (value * (NUMln2 / 12.0)) :
-	        pitchUnit == kPitch_unit_SEMITONES_100 ? 100.0 * exp (value * (NUMln2 / 12.0)) :
-	        pitchUnit == kPitch_unit_SEMITONES_200 ? 200.0 * exp (value * (NUMln2 / 12.0)) :
-	        pitchUnit == kPitch_unit_SEMITONES_440 ? 440.0 * exp (value * (NUMln2 / 12.0)) :
-	        pitchUnit == kPitch_unit_ERB ? NUMerbToHertz (value) : NUMundefined;
+		pitchUnit == kPitch_unit_HERTZ_LOGARITHMIC ? pow (10.0, value) :
+		pitchUnit == kPitch_unit_MEL ? NUMmelToHertz (value) :
+		pitchUnit == kPitch_unit_LOG_HERTZ ? pow (10.0, value) :
+		pitchUnit == kPitch_unit_SEMITONES_1 ? 1.0 * exp (value * (NUMln2 / 12.0)) :
+		pitchUnit == kPitch_unit_SEMITONES_100 ? 100.0 * exp (value * (NUMln2 / 12.0)) :
+		pitchUnit == kPitch_unit_SEMITONES_200 ? 200.0 * exp (value * (NUMln2 / 12.0)) :
+		pitchUnit == kPitch_unit_SEMITONES_440 ? 440.0 * exp (value * (NUMln2 / 12.0)) :
+		pitchUnit == kPitch_unit_ERB ? NUMerbToHertz (value) : NUMundefined;
 }
 
-PitchTier PitchTier_normalizePitchRange (PitchTier me, double pitchMin_ref_Hz, double pitchMax_ref_Hz,
-        double pitchMin_Hz, double pitchMax_Hz, int pitchUnit);
-PitchTier PitchTier_normalizePitchRange (PitchTier me, double pitchMin_ref_Hz, double pitchMax_ref_Hz,
-        double pitchMin_Hz, double pitchMax_Hz, int pitchUnit) {
+autoPitchTier PitchTier_normalizePitchRange (PitchTier me, double pitchMin_ref_Hz, double pitchMax_ref_Hz, double pitchMin_Hz, double pitchMax_Hz, int pitchUnit);
+autoPitchTier PitchTier_normalizePitchRange (PitchTier me, double pitchMin_ref_Hz, double pitchMax_ref_Hz, double pitchMin_Hz, double pitchMax_Hz, int pitchUnit) {
 	try {
 		double fminr = HertzToSpecial (pitchMin_ref_Hz, pitchUnit);
 		double fmaxr = HertzToSpecial (pitchMax_ref_Hz, pitchUnit);
@@ -166,13 +165,13 @@ PitchTier PitchTier_normalizePitchRange (PitchTier me, double pitchMin_ref_Hz, d
 			f = SpecialToHertz (f, pitchUnit);
 			point -> value = f;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no PitchTier created.");
 	}
 }
 
-Pitch PitchTier_to_Pitch (PitchTier me, double dt, double pitchFloor, double pitchCeiling) {
+autoPitch PitchTier_to_Pitch (PitchTier me, double dt, double pitchFloor, double pitchCeiling) {
 	try {
 		if (my points -> size < 1) {
 			Melder_throw (U"The PitchTier is empty.");
@@ -181,7 +180,7 @@ Pitch PitchTier_to_Pitch (PitchTier me, double dt, double pitchFloor, double pit
 			Melder_throw (U"The time step should be a positive number.");
 		}
 		if (pitchFloor >= pitchCeiling) {
-			Melder_throw (U"The pitch ceiling must be a higher number than the pitch floor.");
+			Melder_throw (U"The pitch ceiling must be larger than the pitch floor.");
 		}
 		double tmin = my xmin, tmax = my xmax, t1 = my xmin + dt / 2;
 		long nt = (long) floor ((tmax - tmin - t1) / dt);
@@ -202,7 +201,7 @@ Pitch PitchTier_to_Pitch (PitchTier me, double dt, double pitchFloor, double pit
 			}
 			candidate -> frequency = f;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Pitch created.");
 	}
