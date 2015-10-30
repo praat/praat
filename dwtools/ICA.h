@@ -2,7 +2,7 @@
 #define _ICA_h_
 /* ICA.h
  *
- * Copyright (C) 2010-2014 David Weenink
+ * Copyright (C) 2010-2014, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ Thing_define (CrossCorrelationTables, Ordered) {
 };
 
 /*
-	Cell [i,j] of a CrossCorrelationTable contains the cross-correlation between signal i and signal j.
+	Cell [i,j] of a CrossCorrelationTable contains the cross-correlation between signal i and signal j (for one particular lag time).
 	For example, the CrossCorrelation of an n-channel sound is a nxn table where cell [i,j] contains the
 	cross-correlation of channel i with channel j for a particlular lag time tau.
 	In the statistical literature sometimes the cross-correlation between signals is also called "covariance".
@@ -55,20 +55,27 @@ Thing_define (CrossCorrelationTables, Ordered) {
 	2. The elements c[i][j] in a Covariance always satisfy |c[i][j]/sqrt(c[i][i]*c[j][j])| <= 1, this is
 	  in general not the case for cross-correlations.
 */
-CrossCorrelationTable CrossCorrelationTable_create (long dimension);
-CrossCorrelationTable CrossCorrelationTable_createSimple (char32 *covars, char32 *centroid, long numberOfSamples);
+
+autoCrossCorrelationTable CrossCorrelationTable_create (long dimension);
+
+autoCrossCorrelationTable CrossCorrelationTable_createSimple (char32 *covars, char32 *centroid, long numberOfSamples);
 
 /* (sum(i,j=1..dimension, i!=j; C[i][j]^2))/(dimension*(dimension-1)) */
 double CrossCorrelationTable_getDiagonalityMeasure (CrossCorrelationTable me);
-CrossCorrelationTable CrossCorrelationTable_and_Diagonalizer_diagonalize (CrossCorrelationTable me, Diagonalizer thee);
 
-CrossCorrelationTables CrossCorrelationTables_create ();
+autoCrossCorrelationTable CrossCorrelationTable_and_Diagonalizer_diagonalize (CrossCorrelationTable me, Diagonalizer thee);
+
+autoCrossCorrelationTables CrossCorrelationTables_create ();
+
 double CrossCorrelationTables_getDiagonalityMeasure (CrossCorrelationTables me, double *w, long start, long end);
-double CrossCorrelationTables_and_Diagonalizer_getDiagonalityMeasure (CrossCorrelationTables me, Diagonalizer thee, double *w, long start, long end);
-CrossCorrelationTables CrossCorrelationTables_createTestSet (long dimension, long n, int firstPositiveDefinite, double sigma);
 
-MixingMatrix MixingMatrix_create (long numberOfChannels, long numberOfComponents);
-MixingMatrix MixingMatrix_createSimple (long numberOfChannels, long numberOfComponents, char32 *elements);
+double CrossCorrelationTables_and_Diagonalizer_getDiagonalityMeasure (CrossCorrelationTables me, Diagonalizer thee, double *w, long start, long end);
+
+autoCrossCorrelationTables CrossCorrelationTables_createTestSet (long dimension, long n, int firstPositiveDefinite, double sigma);
+
+autoMixingMatrix MixingMatrix_create (long numberOfChannels, long numberOfComponents);
+
+autoMixingMatrix MixingMatrix_createSimple (long numberOfChannels, long numberOfComponents, char32 *elements);
 void MixingMatrix_initializeRandom (MixingMatrix me);
 
 Diagonalizer Diagonalizer_create (long dimension);
@@ -76,7 +83,7 @@ Diagonalizer Diagonalizer_create (long dimension);
 Sound Sound_and_MixingMatrix_mix (Sound me, MixingMatrix thee);
 Sound Sound_and_MixingMatrix_unmix (Sound me, MixingMatrix thee);
 
-MixingMatrix Sound_to_MixingMatrix (Sound me, double startTime, double endTime, long ncovars, double lagStep, long maxNumberOfIterations, double delta_w, int method);
+autoMixingMatrix Sound_to_MixingMatrix (Sound me, double startTime, double endTime, long ncovars, double lagStep, long maxNumberOfIterations, double delta_w, int method);
 
 Sound Sound_to_Sound_BSS (Sound me, double startTime, double endTime, long ncovars, double lagStep, long maxNumberOfIterations, double delta_w, int method);
 
@@ -88,33 +95,36 @@ void MixingMatrix_and_CrossCorrelationTables_improveUnmixing (MixingMatrix me, C
 /*
 	Determine the matrix that diagonalizes a series of CrossCorrelationTables as well as possible.
 */
-Diagonalizer CrossCorrelationTables_to_Diagonalizer (CrossCorrelationTables me, long maxNumberOfIterations, double tol, int method);
+autoDiagonalizer CrossCorrelationTables_to_Diagonalizer (CrossCorrelationTables me, long maxNumberOfIterations, double tol, int method);
+
 void Diagonalizer_and_CrossCorrelationTables_improveDiagonality (Diagonalizer me, CrossCorrelationTables thee, long maxNumberOfIterations, double tol, int method);
 
 /*
 	Determine V*C[k]*V' for k=1..n, where V is the diagonalizer matrix and C[k} the k-th CrossCorrelationTable.
 */
-CrossCorrelationTables CrossCorrelationTables_and_Diagonalizer_diagonalize (CrossCorrelationTables me, Diagonalizer thee);
+autoCrossCorrelationTables CrossCorrelationTables_and_Diagonalizer_diagonalize (CrossCorrelationTables me, Diagonalizer thee);
 
 
-Diagonalizer MixingMatrix_to_Diagonalizer (MixingMatrix me);
-MixingMatrix Diagonalizer_to_MixingMatrix (Diagonalizer me);
+autoDiagonalizer MixingMatrix_to_Diagonalizer (MixingMatrix me);
+
+autoMixingMatrix Diagonalizer_to_MixingMatrix (Diagonalizer me);
 
 /*
 	For multi-channel "sounds" like EEG signals.
 	The cross-correlation between channel i and channel j is defined as
 		sum(k=1..nsamples; (z[i][k] - mean[i])(z[j][k + lag] - mean[j])) / (nsamples - 1).
 */
-CrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me, double startTime, double endTime, double lagStep);
-CrossCorrelationTable Sounds_to_CrossCorrelationTable_combined (Sound me, Sound thee, double relativeStartTime, double relativeEndTime, double lagStep);
+autoCrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me, double startTime, double endTime, double lagStep);
+
+autoCrossCorrelationTable Sounds_to_CrossCorrelationTable_combined (Sound me, Sound thee, double relativeStartTime, double relativeEndTime, double lagStep);
 
 // The covariance is the cross-correlation with lag 0.
-Covariance Sound_to_Covariance_channels (Sound me, double startTime, double endTime);
+autoCovariance Sound_to_Covariance_channels (Sound me, double startTime, double endTime);
 /*
 	Determine a CrossCorrelationTable for lags (k-1)*lagStep, where k = 1...n.
 */
-CrossCorrelationTables Sound_to_CrossCorrelationTables (Sound me, double startTime, double endTime, double lagStep, long n);
+autoCrossCorrelationTables Sound_to_CrossCorrelationTables (Sound me, double startTime, double endTime, double lagStep, long n);
 
-MixingMatrix TableOfReal_to_MixingMatrix (TableOfReal me);
+autoMixingMatrix TableOfReal_to_MixingMatrix (TableOfReal me);
 
 #endif /*_ICA_h_ */

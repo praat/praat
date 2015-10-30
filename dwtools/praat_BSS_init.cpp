@@ -201,8 +201,9 @@ FORM (CrossCorrelationTables_createTestSet, U"CrossCorrelationTables: Create tes
 	REAL (U"Sigma", U"0.02")
 	OK
 DO
-	praat_new (CrossCorrelationTables_createTestSet (GET_INTEGER (U"Matrix dimension"),
-		GET_INTEGER (U"Number of matrices"), GET_INTEGER (U"First is positive definite"), GET_REAL (U"Sigma")), GET_STRING (U"Name"));
+	autoCrossCorrelationTables thee = CrossCorrelationTables_createTestSet (GET_INTEGER (U"Matrix dimension"),
+		GET_INTEGER (U"Number of matrices"), GET_INTEGER (U"First is positive definite"), GET_REAL (U"Sigma"));
+	praat_new (thee.transfer(), GET_STRING (U"Name"));
 END
 
 FORM (CrossCorrelationTable_createSimple, U"Create simple CrossCorrelationTable", 0)
@@ -212,8 +213,9 @@ FORM (CrossCorrelationTable_createSimple, U"Create simple CrossCorrelationTable"
 	NATURAL (U"Number of samples", U"100")
 	OK
 DO
-	praat_new (CrossCorrelationTable_createSimple (GET_STRING (U"Cross correlations"), GET_STRING (U"Centroid"),
-		GET_INTEGER (U"Number of samples")), GET_STRING (U"Name"));
+	autoCrossCorrelationTable thee = CrossCorrelationTable_createSimple (GET_STRING (U"Cross correlations"), GET_STRING (U"Centroid"),
+		GET_INTEGER (U"Number of samples"));
+	praat_new (thee.transfer(), GET_STRING (U"Name"));
 END
 
 FORM (MixingMatrix_createSimple, U"Create simple MixingMatrix", 0)
@@ -223,8 +225,9 @@ FORM (MixingMatrix_createSimple, U"Create simple MixingMatrix", 0)
 	SENTENCE (U"Mixing coefficients", U"1.0 1.0 1.0 1.0")
 	OK
 DO
-	praat_new (MixingMatrix_createSimple (GET_INTEGER (U"Number of channels"), GET_INTEGER (U"Number of components"),
-		GET_STRING (U"Mixing coefficients")), GET_STRING (U"Name"));
+	autoMixingMatrix thee = MixingMatrix_createSimple (GET_INTEGER (U"Number of channels"), GET_INTEGER (U"Number of components"),
+		GET_STRING (U"Mixing coefficients"));
+	praat_new (thee.transfer(), GET_STRING (U"Name"));
 END
 
 DIRECT (CrossCorrelationTable_help)
@@ -274,7 +277,8 @@ FORM (Sound_to_Covariance_channels, U"Sound: To Covariance (channels)", U"Sound:
 DO
 	LOOP {
 		iam (Sound);
-		praat_new (Sound_to_Covariance_channels (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range")), my name);
+		autoCovariance thee = Sound_to_Covariance_channels (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -287,8 +291,9 @@ DO
 	double lagTime = fabs (GET_REAL (U"Lag step"));
     LOOP {
         iam (Sound);
-        praat_new (Sound_to_CrossCorrelationTable (me, GET_REAL (U"left Time range"),
-        GET_REAL (U"right Time range"), lagTime), my name);
+		autoCrossCorrelationTable thee = Sound_to_CrossCorrelationTable (me, GET_REAL (U"left Time range"),
+        GET_REAL (U"right Time range"), lagTime);
+        praat_new (thee.transfer(), my name);
     }
 END
 
@@ -351,8 +356,9 @@ FORM (CrossCorrelationTables_to_Diagonalizer, U"CrossCorrelationTables: To Diago
 DO
 	LOOP {
 		iam (CrossCorrelationTables);
-		praat_new (CrossCorrelationTables_to_Diagonalizer (me, GET_INTEGER (U"Maximum number of iterations"),
-		GET_REAL (U"Tolerance"), GET_INTEGER (U"Diagonalization method")), my name);
+		autoDiagonalizer thee = CrossCorrelationTables_to_Diagonalizer (me, GET_INTEGER (U"Maximum number of iterations"),
+		GET_REAL (U"Tolerance"), GET_INTEGER (U"Diagonalization method"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -385,13 +391,15 @@ END
 DIRECT (CrossCorrelationTable_and_Diagonalizer_diagonalize)
 	CrossCorrelationTable cct = FIRST (CrossCorrelationTable);
 	Diagonalizer d = FIRST (Diagonalizer);
-	praat_new (CrossCorrelationTable_and_Diagonalizer_diagonalize (cct, d), cct->name, U"_", d->name);
+	autoCrossCorrelationTable thee = CrossCorrelationTable_and_Diagonalizer_diagonalize (cct, d);
+	praat_new (thee.transfer(), cct -> name, U"_", d -> name);
 END
 
 DIRECT (CrossCorrelationTables_and_Diagonalizer_diagonalize)
 	CrossCorrelationTables ccts = FIRST (CrossCorrelationTables);
 	Diagonalizer d = FIRST (Diagonalizer);
-	praat_new (CrossCorrelationTables_and_Diagonalizer_diagonalize (ccts, d), ccts->name, U"_", d->name);
+	autoCrossCorrelationTables thee = CrossCorrelationTables_and_Diagonalizer_diagonalize (ccts, d);
+	praat_new (thee.transfer(), ccts->name, U"_", d->name);
 END
 
 FORM (CrossCorrelationTables_and_MixingMatrix_improveUnmixing, U"", 0)
@@ -412,7 +420,8 @@ END
 DIRECT (Diagonalizer_to_MixingMatrix)
 	LOOP {
 		iam (Diagonalizer);
-		praat_new (Diagonalizer_to_MixingMatrix (me), my name);
+		autoMixingMatrix thee = Diagonalizer_to_MixingMatrix (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -431,10 +440,10 @@ FORM (Sound_to_MixingMatrix, U"Sound: To MixingMatrix", 0)
 DO
 	LOOP {
 		iam (Sound);
-		praat_new (Sound_to_MixingMatrix (me,
-			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Number of cross-correlations"),
-			GET_REAL (U"Lag step"), GET_INTEGER (U"Maximum number of iterations"), GET_REAL (U"Tolerance"),
-			GET_INTEGER (U"Diagonalization method")), my name);
+		autoMixingMatrix thee = Sound_to_MixingMatrix (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), 
+			GET_INTEGER (U"Number of cross-correlations"), GET_REAL (U"Lag step"), GET_INTEGER (U"Maximum number of iterations"),
+			GET_REAL (U"Tolerance"), GET_INTEGER (U"Diagonalization method"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -447,7 +456,8 @@ FORM (Sound_to_CrossCorrelationTables, U"Sound: To CrossCorrelationTables", 0)
 DO
 	LOOP {
 		iam (Sound);
-		praat_new (Sound_to_CrossCorrelationTables (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_REAL (U"Lag step"), GET_INTEGER (U"Number of cross-correlations")), my name);
+		autoCrossCorrelationTables thee = Sound_to_CrossCorrelationTables (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_REAL (U"Lag step"), GET_INTEGER (U"Number of cross-correlations"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -501,7 +511,8 @@ END
 DIRECT (TableOfReal_to_MixingMatrix)
 	LOOP {
 		iam (TableOfReal);
-		praat_new (TableOfReal_to_MixingMatrix (me), my name);
+		autoMixingMatrix thee = TableOfReal_to_MixingMatrix (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
