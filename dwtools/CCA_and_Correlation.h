@@ -2,7 +2,7 @@
 #define _CCA_and_Correlation_h_
 /* CCA_and_Correlation.h
  * 
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 #include "CCA.h"
 #include "SSCP.h"
 
-TableOfReal CCA_and_Correlation_factorLoadings (CCA me, Correlation thee);
+autoTableOfReal CCA_and_Correlation_factorLoadings (CCA me, Correlation thee);
 /*
 	Get the canonical factor loadings (also structure correlation coefficients),
 	the correlation of a canonical variable with an original variable.

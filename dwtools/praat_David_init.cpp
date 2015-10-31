@@ -617,7 +617,8 @@ END
 DIRECT (CCA_and_Correlation_factorLoadings)
 	CCA cca = FIRST (CCA);
 	Correlation c = FIRST (Correlation);
-	praat_new (CCA_and_Correlation_factorLoadings (cca, c), Thing_getName (cca), U"_loadings");
+	autoTableOfReal thee = CCA_and_Correlation_factorLoadings (cca, c);
+	praat_new (thee.transfer(), Thing_getName (cca), U"_loadings");
 END
 
 FORM (CCA_and_Correlation_getVarianceFraction, U"CCA & Correlation: Get variance fraction", U"CCA & Correlation: Get variance fraction...")
@@ -664,7 +665,8 @@ END
 DIRECT (CCA_and_TableOfReal_factorLoadings)
 	CCA cca = FIRST (CCA);
 	TableOfReal tr = FIRST (TableOfReal);
-	praat_new (CCA_and_TableOfReal_factorLoadings (cca, tr), Thing_getName (cca), U"_loadings");
+	autoTableOfReal thee = CCA_and_TableOfReal_factorLoadings (cca, tr);
+	praat_new (thee.transfer(), Thing_getName (cca), U"_loadings");
 END
 
 FORM (CCA_and_TableOfReal_scores, U"CCA & TableOfReal: To TableOfReal (scores)", U"CCA & TableOfReal: To TableOfReal (scores)...")
@@ -673,8 +675,8 @@ FORM (CCA_and_TableOfReal_scores, U"CCA & TableOfReal: To TableOfReal (scores)",
 DO
 	CCA cca = FIRST (CCA);
 	TableOfReal tr = FIRST (TableOfReal);
-	praat_new (CCA_and_TableOfReal_scores (cca, tr, GET_INTEGER (U"Number of canonical correlations")),
-		Thing_getName (cca), U"_scores");
+	autoTableOfReal thee = CCA_and_TableOfReal_scores (cca, tr, GET_INTEGER (U"Number of canonical correlations"));
+	praat_new (thee.transfer(), Thing_getName (cca), U"_scores");
 END
 
 FORM (CCA_and_TableOfReal_predict, U"CCA & TableOfReal: Predict", U"CCA & TableOfReal: Predict...")
@@ -684,7 +686,8 @@ FORM (CCA_and_TableOfReal_predict, U"CCA & TableOfReal: Predict", U"CCA & TableO
 DO
 	CCA cca = FIRST (CCA);
 	TableOfReal tr = FIRST (TableOfReal);
-	praat_new (CCA_and_TableOfReal_predict (cca, tr, GET_INTEGER (U"Column number")), tr->name, U"_", cca->name);
+	autoTableOfReal thee = CCA_and_TableOfReal_predict (cca, tr, GET_INTEGER (U"Column number"));
+	praat_new (thee.transfer(), tr->name, U"_", cca->name);
 END
 
 /***************** ChebyshevSeries ****************************************/
@@ -747,7 +750,8 @@ END
 DIRECT (ClassificationTable_to_Confusion_old)
 	LOOP {
 		iam (ClassificationTable);
-		praat_new (ClassificationTable_to_Confusion (me, 0), my name);
+		autoConfusion thee = ClassificationTable_to_Confusion (me, 0);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -757,21 +761,24 @@ FORM (ClassificationTable_to_Confusion, U"ClassificationTable: To Confusion", U"
 DO
 	LOOP {
 		iam (ClassificationTable);
-		praat_new (ClassificationTable_to_Confusion (me, GET_INTEGER (U"Only class labels")), my name);
+		autoConfusion thee = ClassificationTable_to_Confusion (me, GET_INTEGER (U"Only class labels"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
 DIRECT (ClassificationTable_to_Correlation_columns)
 	LOOP {
 		iam (ClassificationTable);
-		praat_new (ClassificationTable_to_Correlation_columns (me), my name, U"_col");
+		autoCorrelation thee = ClassificationTable_to_Correlation_columns (me);
+		praat_new (thee.transfer(), my name, U"_col");
 	}
 END
 
 DIRECT (ClassificationTable_to_Strings_maximumProbability)
 	LOOP {
 		iam (ClassificationTable);
-		praat_new (ClassificationTable_to_Strings_maximumProbability (me), my name);
+		autoStrings thee = ClassificationTable_to_Strings_maximumProbability (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -2614,14 +2621,16 @@ FORM (Index_to_Permutation, U"Index: To Permutation", U"Index: To Permutation...
 DO
 	LOOP {
 		iam (Index);
-		praat_new (Index_to_Permutation_permuteRandomly (me, GET_INTEGER (U"Permute within classes")), my name);
+		autoPermutation thee = Index_to_Permutation_permuteRandomly (me, GET_INTEGER (U"Permute within classes"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
 DIRECT (StringsIndex_to_Strings)
 	LOOP {
 		iam (StringsIndex);
-		praat_new (StringsIndex_to_Strings (me), my name);
+		autoStrings thee = StringsIndex_to_Strings (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -6802,25 +6811,29 @@ FORM (Strings_createAsCharacters, U"Strings: Create as characters", 0)
 	SENTENCE (U"Text", U"intention")
 	OK
 DO
-	praat_new (Strings_createAsCharacters (GET_STRING (U"Text")), U"");
+	autoStrings thee = Strings_createAsCharacters (GET_STRING (U"Text"));
+	praat_new (thee.transfer(), U"");
 END
 
 FORM (Strings_createAsTokens, U"Strings: Create as tokens", 0)
 	SENTENCE (U"Text", U"There are seven tokens in this text")
 	OK
 DO
-	praat_new (Strings_createAsTokens (GET_STRING (U"Text")), U"");
+	autoStrings thee = Strings_createAsTokens (GET_STRING (U"Text"));
+	praat_new (thee.transfer(), U"");
 END
 
 DIRECT (Strings_append)
 	autoCollection set = praat_getSelectedObjects ();
-	praat_new (Strings_append (set.transfer()), U"appended");
+	autoStrings thee = Strings_append (set.transfer());
+	praat_new (thee.transfer(), U"appended");
 END
 
 DIRECT (Strings_to_Categories)
 	LOOP {
 		iam (Strings);
-		praat_new (Strings_to_Categories (me), U"");
+		autoCategories thee = Strings_to_Categories (me);
+		praat_new (thee.transfer(), U"");
 	}
 END
 
@@ -6836,8 +6849,9 @@ DO
 	long nmatches, nstringmatches;
 	LOOP {
 		iam (Strings);
-		praat_new (Strings_change (me, GET_STRING (U"Search"), GET_STRING (U"Replace"),
-		GET_INTEGER (U"Replace limit"), &nmatches, &nstringmatches, GET_INTEGER (U"Search and replace are") - 1), 0);
+		autoStrings thee = Strings_change (me, GET_STRING (U"Search"), GET_STRING (U"Replace"),
+		GET_INTEGER (U"Replace limit"), &nmatches, &nstringmatches, GET_INTEGER (U"Search and replace are") - 1);
+		praat_new (thee.transfer(), 0);
 	}
 END
 
@@ -6848,7 +6862,8 @@ FORM (Strings_extractPart, U"Strings: Extract part", U"")
 DO
 	LOOP {
 		iam (Strings);
-		praat_new (Strings_extractPart (me, GET_INTEGER (U"From index"), GET_INTEGER (U"To index")), my name, U"_part");
+		autoStrings thee = Strings_extractPart (me, GET_INTEGER (U"From index"), GET_INTEGER (U"To index"));
+		praat_new (thee.transfer(), my name, U"_part");
 	}
 END
 
@@ -6869,14 +6884,16 @@ FORM (Strings_to_Permutation, U"Strings: To Permutation", U"Strings: To Permutat
 DO
 	LOOP {
 		iam (Strings);
-		praat_new (Strings_to_Permutation (me, GET_INTEGER (U"Sort")), my name);
+		autoPermutation thee = Strings_to_Permutation (me, GET_INTEGER (U"Sort"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
 DIRECT (Strings_and_Permutation_permuteStrings)
 	Strings me = FIRST (Strings);
 	Permutation p = FIRST (Permutation);
-	praat_new (Strings_and_Permutation_permuteStrings (me, p), my name, U"_", p->name);
+	autoStrings thee = Strings_and_Permutation_permuteStrings (me, p);
+	praat_new (thee.transfer(), my name, U"_", p->name);
 END
 
 FORM (SVD_to_TableOfReal, U"SVD: To TableOfReal", U"SVD: To TableOfReal...")
@@ -6886,28 +6903,32 @@ FORM (SVD_to_TableOfReal, U"SVD: To TableOfReal", U"SVD: To TableOfReal...")
 DO
 	LOOP {
 		iam (SVD);
-		praat_new (SVD_to_TableOfReal (me, GET_INTEGER (U"First component"), GET_INTEGER (U"Last component")), my name);
+		autoTableOfReal thee = SVD_to_TableOfReal (me, GET_INTEGER (U"First component"), GET_INTEGER (U"Last component"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
 DIRECT (SVD_extractLeftSingularVectors)
 	LOOP {
 		iam (SVD);
-		praat_new (SVD_extractLeftSingularVectors (me), Thing_getName (me), U"_lsv");
+		autoTableOfReal thee = SVD_extractLeftSingularVectors (me);
+		praat_new (thee.transfer(), my name, U"_lsv");
 	}
 END
 
 DIRECT (SVD_extractRightSingularVectors)
 	LOOP {
 		iam (SVD);
-		praat_new (SVD_extractRightSingularVectors (me), Thing_getName (me), U"_rsv");
+		autoTableOfReal thee = SVD_extractRightSingularVectors (me);
+		praat_new (thee.transfer(), my name, U"_rsv");
 	}
 END
 
 DIRECT (SVD_extractSingularValues)
 	LOOP {
 		iam (SVD);
-		praat_new (SVD_extractSingularValues (me), Thing_getName (me), U"_sv");
+		autoTableOfReal thee = SVD_extractSingularValues (me);
+		praat_new (thee.transfer(), my name, U"_sv");
 	}
 END
 
@@ -7790,7 +7811,8 @@ FORM (TableOfReal_to_CCA, U"TableOfReal: To CCA", U"TableOfReal: To CCA...")
 DO
 	LOOP {
 		iam (TableOfReal);
-		praat_new (TableOfReal_to_CCA (me, GET_INTEGER (U"Dimension of dependent variate")), my name);
+		autoCCA thee = TableOfReal_to_CCA (me, GET_INTEGER (U"Dimension of dependent variate"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 

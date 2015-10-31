@@ -1,6 +1,6 @@
 /* CCA_def.h
  * 
- * Copyright (C) 1993-2008 David Weenink
+ * Copyright (C) 1993-2008, 2015 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +30,10 @@ oo_DEFINE_CLASS (CCA, Daata)
 
 	oo_LONG (numberOfCoefficients)
 	oo_LONG (numberOfObservations)
-	oo_OBJECT (Strings, 0, yLabels)
-	oo_OBJECT (Strings, 0, xLabels)
-	oo_OBJECT(Eigen, 0, y)
-	oo_OBJECT(Eigen, 0, x)
+	oo_AUTO_OBJECT (Strings, 0, yLabels)
+	oo_AUTO_OBJECT (Strings, 0, xLabels)
+	oo_AUTO_OBJECT(Eigen, 0, y)
+	oo_AUTO_OBJECT(Eigen, 0, x)
 
 	#if oo_DECLARING
 		void v_info ()

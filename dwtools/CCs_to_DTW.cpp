@@ -55,7 +55,7 @@ static void regression (CC me, long frame, double r[], long nr) {
 	}
 }
 
-DTW CCs_to_DTW (CC me, CC thee, double wc, double wle, double wr, double wer, double dtr) {
+autoDTW CCs_to_DTW (CC me, CC thee, double wc, double wle, double wr, double wer, double dtr) {
 	try {
 		if (my maximumNumberOfCoefficients != thy maximumNumberOfCoefficients) {
 			Melder_throw (U"CC orders must be equal.");
@@ -134,7 +134,7 @@ DTW CCs_to_DTW (CC me, CC thee, double wc, double wle, double wr, double wer, do
 				Melder_progress (0.999 * i / my nx, U"Calculate distances: frame ", i, U" from ", my nx, U".");
 			}
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"DTW not created from CCs.");
 	}

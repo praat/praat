@@ -2,7 +2,7 @@
 #define _Strings_extensions_h_
 /* Strings_extensions.h
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,38 +35,42 @@
 #include "Table.h"
 
 
-Strings Strings_createFixedLength (long numberOfStrings);
-Strings Strings_createAsCharacters (const char32 *string);
-Strings Strings_createAsTokens (const char32 *string);
+autoStrings Strings_createFixedLength (long numberOfStrings);
+
+autoStrings Strings_createAsCharacters (const char32 *string);
+
+autoStrings Strings_createAsTokens (const char32 *string);
 
 long Strings_findString (Strings me, const char32 *string);
-Strings Strings_append (Collection me);
 
-Strings Strings_change (Strings me, const char32 *search, const char32 *replace,
-	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches,
-	int use_regexp);
+autoStrings Strings_append (Collection me);
 
-Strings strings_to_Strings (char32 **strings, long from, long to);
+autoStrings Strings_change (Strings me, const char32 *search, const char32 *replace,
+	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, int use_regexp);
+
+autoStrings strings_to_Strings (char32 **strings, long from, long to);
 
 // If the Strings is only an intermediate object to achieve other goals, use the following two routines to avoid copying.
-Strings strings_to_Strings_link (char32** strings, long n);
+autoStrings strings_to_Strings_link (char32** strings, long n);
 // for (i=1; i<= n; i++) my strings[i] = strings[i];
+
 void Strings_unlink (Strings me);
 // for (i=1; i<= my numberOfStrings; i++) my strings[i] = NULL;
 
-Strings Strings_extractPart (Strings me, long start, long end);
+autoStrings Strings_extractPart (Strings me, long start, long end);
 
 
-StringsIndex Strings_to_StringsIndex (Strings me);
-StringsIndex Stringses_to_StringsIndex (Strings me, Strings classes);
+autoStringsIndex Strings_to_StringsIndex (Strings me);
+
+autoStringsIndex Stringses_to_StringsIndex (Strings me, Strings classes);
 /* Construct the index with strings in classes, index[i]=0 when my strings[i] doesn't occur in classes */
 
-StringsIndex Table_to_StringsIndex_column (Table me, long column);
+autoStringsIndex Table_to_StringsIndex_column (Table me, long column);
 
-Strings StringsIndex_to_Strings (StringsIndex me);
+autoStrings StringsIndex_to_Strings (StringsIndex me);
 
-Permutation Strings_to_Permutation (Strings me, int sort);
+autoPermutation Strings_to_Permutation (Strings me, int sort);
 
-Strings Strings_and_Permutation_permuteStrings (Strings me, Permutation thee);
+autoStrings Strings_and_Permutation_permuteStrings (Strings me, Permutation thee);
 
 #endif /* _Strings_extensions_h_ */

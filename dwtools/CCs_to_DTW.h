@@ -4,7 +4,7 @@
  *
  *	Dynamic Time Warp of two CCs.
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 #include "DTW.h"
 
 
-DTW CCs_to_DTW (CC me, CC thee, double wc, double wle, double wr, double wer, double dtr);
+autoDTW CCs_to_DTW (CC me, CC thee, double wc, double wle, double wr, double wer, double dtr);
 /*
 	1. Calculate distances between CCs:
 		Distance between frame i (from me) and j (from thee) is

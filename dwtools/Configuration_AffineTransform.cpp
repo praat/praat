@@ -178,7 +178,7 @@ static void NUMmaximizeCongruence (double **b, double **a, long nr, long nc, dou
 	} while (fabs (f_old - f) / f_old > tolerance && numberOfIterations < maximumNumberOfIterations);
 }
 
-AffineTransform Configurations_to_AffineTransform_congruence (Configuration me, Configuration thee, long maximumNumberOfIterations, double tolerance) {
+autoAffineTransform Configurations_to_AffineTransform_congruence (Configuration me, Configuration thee, long maximumNumberOfIterations, double tolerance) {
 	try {
 		// Use Procrustes transform to obtain starting configuration.
 		// (We only need the transformation matrix T.)
@@ -187,13 +187,13 @@ AffineTransform Configurations_to_AffineTransform_congruence (Configuration me, 
 
 		autoAffineTransform at = AffineTransform_create (p -> n);
 		NUMmatrix_copyElements (p -> r, at -> r, 1, p -> n, 1, p -> n);
-		return at.transfer();
+		return at;
 	} catch (MelderError) {
 		Melder_throw (me, U": no congruence transformation created.");
 	}
 }
 
-Configuration Configuration_and_AffineTransform_to_Configuration (Configuration me, AffineTransform thee) {
+autoConfiguration Configuration_and_AffineTransform_to_Configuration (Configuration me, AffineTransform thee) {
 	try {
 		if (my numberOfColumns != thy n) {
 			Melder_throw (U"Dimensions do not agree.");
@@ -203,7 +203,7 @@ Configuration Configuration_and_AffineTransform_to_Configuration (Configuration 
 		// Apply transformation YT
 
 		thy v_transform (my data, my numberOfRows, his data);
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"Configuration not created.");
 	}
