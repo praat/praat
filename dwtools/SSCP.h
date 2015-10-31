@@ -44,7 +44,7 @@ void SSCP_init (SSCP me, long dimension, long storage);
 SSCP SSCP_create (long dimension);
 
 void SSCP_drawTwoDimensionalEllipse_inside  (SSCP me, Graphics g, double scale, char32 * label, int fontSize);
-double SSCP_getEllipseScalefactor (SSCP me, double scale, int confidence);
+double SSCP_getEllipseScalefactor (SSCP me, double scale, bool confidence);
 void SSCP_drawConcentrationEllipse (SSCP me, Graphics g, double scale, int confidence,
 	long d1, long d2, double xmin, double xmax, double ymin, double ymax, int garnish);
 
@@ -57,7 +57,7 @@ double SSCP_getDegreesOfFreedom (SSCP me);
 double SSCP_getTotalVariance (SSCP me);
 double SSCP_getCumulativeContributionOfComponents (SSCP me, long from, long to);
 double SSCP_getLnDeterminant (SSCP me);
-double SSCP_getConcentrationEllipseArea(SSCP me, double scale, int confidence, long d1, long d2);
+double SSCP_getConcentrationEllipseArea(SSCP me, double scale, bool confidence, long d1, long d2);
 double SSCP_getFractionVariation (SSCP me, long from, long to);
 
 SSCP TableOfReal_to_SSCP (TableOfReal me, long rowb, long rowe, long colb, long cole);

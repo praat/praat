@@ -104,7 +104,7 @@ void structSSCP :: v_info () {
 	Calculate scale factor by which sqrt(eigenvalue) has to
 	be multiplied to obtain the length of an ellipse axis.
 */
-double SSCP_getEllipseScalefactor (SSCP me, double scale, int confidence) {
+double SSCP_getEllipseScalefactor (SSCP me, double scale, bool confidence) {
 	long n = (long) floor (SSCP_getNumberOfObservations (me));
 
 	if (confidence) {
@@ -341,7 +341,7 @@ SSCP SSCP_create (long dimension) {
 	}
 }
 
-double SSCP_getConcentrationEllipseArea (SSCP me, double scale, int confidence, long d1, long d2) {
+double SSCP_getConcentrationEllipseArea (SSCP me, double scale, bool confidence, long d1, long d2) {
 	long p = my numberOfRows;
 
 	if (d1 < 1 || d1 > p || d2 < 1 || d2 > p || d1 == d2) {
@@ -1001,13 +1001,14 @@ void SSCPs_getHomegeneityOfCovariances_box (SSCPs me, double *probability, doubl
 	double ln_determinant, inv = 0.0, sum = 0.0, g = my size;
 	for (long i = 1; i <= g; i++) {
 		SSCP t = (SSCP) my item[i];
-		double ni = t -> numberOfObservations - 1;
+		double ni = t -> numberOfObservations - 1.0;
 		NUMdeterminant_cholesky (t -> data, p, &ln_determinant);
 
 		// Box-test is for covariance matrices -> scale determinant.
 
 		ln_determinant -= p * log (ni);
-		sum += ni; inv += 1.0 / ni;
+		sum += ni;
+		inv += 1.0 / ni;
 		*chisq -= ni * ln_determinant;
 	}
 
@@ -1017,7 +1018,7 @@ void SSCPs_getHomegeneityOfCovariances_box (SSCPs me, double *probability, doubl
 
 	*chisq *= 1.0 - (inv - 1.0 / sum) * (2.0 * p * p + 3.0 * p - 1.0) / (6.0 * (p + 1) * (g - 1.0));
 	*ndf = (long) floor ((g - 1.0) * p * (p + 1) / 2.0);
-	*probability =  NUMchiSquareQ (*chisq, *ndf);
+	*probability = NUMchiSquareQ (*chisq, *ndf);
 }
 
 

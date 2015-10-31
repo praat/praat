@@ -45,7 +45,7 @@ FORM (KNN_create, U"Create kNN Classifier", U"kNN classifiers 1. What is a kNN c
 	OK2
 DO
 	autoKNN knn = KNN_create ();
-	praat_new (knn.transfer(), GET_STRING (U"Name"));
+	praat_new (knn.move(), GET_STRING (U"Name"));
 END2 }
 
 FORM (KNN_Pattern_Categories_to_KNN, U"Create kNN classifier", U"kNN classifiers 1. What is a kNN classifier?") {
@@ -73,7 +73,7 @@ DO
 		case kOla_DIMENSIONALITY_MISMATCH:
 			Melder_throw (U"The dimensionality of Pattern should be equal to that of the instance base.");
 		default:
-			praat_new (knn.transfer(), GET_STRING(U"Name"));
+			praat_new (knn.move(), GET_STRING(U"Name"));
 	}
 END2 }
 
@@ -220,20 +220,18 @@ END2 }
 
 DIRECT2 (KNN_extractInputPatterns) {
 	iam_ONLY (KNN);
-	if (my nInstances > 0) {
-		praat_new (Data_copy (my input), U"Input Patterns");
-	} else {
+	if (my nInstances <= 0)
 		Melder_throw (U"Instance base is empty.");
-	}
+	autoPattern input = Data_copy (my input);
+	praat_new (input.move(), U"Input Patterns");
 END2 }
 
 DIRECT2 (KNN_extractOutputCategories) {
 	iam_ONLY (KNN);
-	if (my nInstances > 0) {
-		praat_new (Data_copy (my output), U"Output Categories");
-	} else {
+	if (my nInstances <= 0)
 		Melder_throw (U"Instance base is empty.");
-	}
+	autoCategories output = Data_copy (my output);
+	praat_new (output.move(), U"Output Categories");
 END2 }
 
 FORM (KNN_reset, U"Reset", U"KNN: Reset...") {
@@ -249,10 +247,9 @@ END2 }
 
 DIRECT2 (KNN_shuffle) {
 	iam_ONLY (KNN);
-	if (my nInstances > 0)  
-		KNN_shuffleInstances (me);
-	else
+	if (my nInstances <= 0)
 		Melder_throw (U"Instance base is empty.");
+	KNN_shuffleInstances (me);
 END2 }
 
 FORM (KNN_prune, U"Pruning", U"KNN: Prune...") {
@@ -262,7 +259,7 @@ FORM (KNN_prune, U"Pruning", U"KNN: Prune...") {
 	OK2
 DO
 	iam_ONLY (KNN);
-	if (my nInstances < 1)
+	if (my nInstances <= 0)
 		Melder_throw (U"Instance base is empty.");
 	long oldn = my nInstances;   // save before it changes!
 	long k = GET_INTEGER (U"k neighbours");
@@ -331,7 +328,7 @@ FORM (KNN_evaluateWithTestSet, U"Evaluation", U"KNN & Pattern & Categories: Eval
 	OK2
 DO
 	iam_ONLY (KNN);
-	if (my nInstances < 1)
+	if (my nInstances <= 0)
 		Melder_throw (U"Instance base is empty");
 	thouart_ONLY (Pattern);
 	heis_ONLY (Categories);
@@ -368,7 +365,7 @@ FORM (KNN_evaluateWithTestSetAndFeatureWeights, U"Evaluation", U"KNN & Pattern &
 	OK2
 DO
 	iam_ONLY (KNN);
-	if (my nInstances < 1)
+	if (my nInstances <= 0)
 		Melder_throw (U"Instance base is empty");
 	Pattern p = (Pattern) ONLY (classPattern);
 	Categories c = (Categories) ONLY (classCategories);
@@ -411,7 +408,7 @@ FORM (KNN_toCategories, U"Classification", U"KNN & Pattern: To Categories...") {
 	OK2
 DO
 	iam_ONLY (KNN);
-	if (my nInstances < 1)
+	if (my nInstances <= 0)
 		Melder_throw (U"Instance base is empty.");
 	thouart_ONLY (Pattern);
 	long k = GET_INTEGER (U"k neighbours");
@@ -432,7 +429,8 @@ DO
 	if (thy nx != my input -> nx)
 		Melder_throw (U"The dimensionality of Pattern should match that of the instance base.");
 	autoFeatureWeights fws = FeatureWeights_create (thy nx);
-	praat_new (KNN_classifyToCategories (me, thee, fws.peek(), k, vt), U"Output");
+	autoCategories result = KNN_classifyToCategories (me, thee, fws.peek(), k, vt);
+	praat_new (result.move(), U"Output");
 END2 }
 
 FORM (KNN_toTableOfReal, U"Classification", U"KNN & Pattern: To TabelOfReal...") {
@@ -444,7 +442,7 @@ FORM (KNN_toTableOfReal, U"Classification", U"KNN & Pattern: To TabelOfReal...")
 	OK2
 DO
 	iam_ONLY (KNN);
-	if (my nInstances < 1)
+	if (my nInstances <= 0)
 		Melder_throw (U"Instance base is empty.");
 	thouart_ONLY (Pattern);
 	long k = GET_INTEGER (U"k neighbours");
@@ -465,7 +463,8 @@ DO
 	}
 	if (thy nx != my input -> nx)
 		Melder_throw (U"The dimensionality of Pattern should match that of the instance base.");
-	praat_new (KNN_classifyToTableOfReal (me, thee, fws.peek(), k, vt), U"Output");
+	autoTableOfReal result = KNN_classifyToTableOfReal (me, thee, fws.peek(), k, vt);
+	praat_new (result.move(), U"Output");
 END2 }
 
 FORM (KNN_toCategoriesWithFeatureWeights, U"Classification", U"KNN & Pattern & FeatureWeights: To Categories...") {
@@ -477,7 +476,7 @@ FORM (KNN_toCategoriesWithFeatureWeights, U"Classification", U"KNN & Pattern & F
 	OK2
 DO
 	iam_ONLY (KNN);
-	if (my nInstances < 1)
+	if (my nInstances <= 0)
 		Melder_throw (U"Instance base is empty.");
 	thouart_ONLY (Pattern);
 	heis_ONLY (FeatureWeights);
@@ -500,7 +499,8 @@ DO
 		Melder_throw (U"The dimensionality of Pattern should be equal to that of the instance base.");
 	if (thy nx != his fweights -> numberOfColumns)
 		Melder_throw (U"The number of feature weights should be equal to the dimensionality of the Pattern.");
-	praat_new (KNN_classifyToCategories (me, thee, him, k, vt), U"Output");
+	autoCategories result = KNN_classifyToCategories (me, thee, him, k, vt);
+	praat_new (result.move(), U"Output");
 END2 }
 
 FORM (KNN_toTableOfRealWithFeatureWeights, U"Classification", U"KNN & Pattern & FeatureWeights: To TableOfReal...") {
@@ -512,7 +512,7 @@ FORM (KNN_toTableOfRealWithFeatureWeights, U"Classification", U"KNN & Pattern & 
 	OK2
 DO
 	iam_ONLY (KNN);
-	if (my nInstances < 1)
+	if (my nInstances <= 0)
 		Melder_throw (U"Instance base is empty.");
 	thouart_ONLY (Pattern);
 	heis_ONLY (FeatureWeights);
@@ -533,7 +533,8 @@ DO
 			vt = kOla_FLAT_VOTING;
 			break;
 	}
-	praat_new (KNN_classifyToTableOfReal (me, thee, him, k, vt), U"Output");
+	autoTableOfReal result = KNN_classifyToTableOfReal (me, thee, him, k, vt);
+	praat_new (result.move(), U"Output");
 END2 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -558,7 +559,8 @@ DO
 		if (rc > 1 || rc <= 0)
 			Melder_throw (U"Please select a value of the cluster size ratio constraint c such that 0 < c <= 1.");
 		autoFeatureWeights fws = FeatureWeights_create (my nx);
-		praat_new (Pattern_to_Categories_cluster (me, fws.peek(), k, rc, rs), U"Output");
+		autoCategories result = Pattern_to_Categories_cluster (me, fws.peek(), k, rc, rs);
+		praat_new (result.move(), U"Output");
 	} else {
 		Melder_throw (U"Pattern is empty.");
 	}
@@ -584,7 +586,8 @@ DO
 		double rc =  GET_REAL(U"Cluster size ratio constraint");
 		if (rc > 1 || rc <= 0)
 			Melder_throw (U"Please select a value of the cluster size ratio constraint c such that 0 < c <= 1.");
-		praat_new (Pattern_to_Categories_cluster (me, thee, k, rc, rs), U"Output");
+		autoCategories result = Pattern_to_Categories_cluster (me, thee, k, rc, rs);
+		praat_new (result.move(), U"Output");
 	} else {
 		Melder_throw (U"Pattern is empty.");
 	}
@@ -597,7 +600,8 @@ END2 }
 DIRECT2 (KNN_patternToDissimilarity) {
 	iam_ONLY (Pattern);
 	autoFeatureWeights fws = FeatureWeights_create (my nx);
-	praat_new (KNN_patternToDissimilarity (me, fws.peek()), U"Output");
+	autoDissimilarity result = KNN_patternToDissimilarity (me, fws.peek());
+	praat_new (result.move(), U"Output");
 END2 }
 
 DIRECT2 (KNN_patternToDissimilarityWithFeatureWeights) {
@@ -605,7 +609,8 @@ DIRECT2 (KNN_patternToDissimilarityWithFeatureWeights) {
 	thouart_ONLY (FeatureWeights);  
 	if (my nx != thy fweights -> numberOfColumns)
 		Melder_throw (U"The number of features and the number of feature weights should be equal.");
-	praat_new (KNN_patternToDissimilarity (me, thee), U"Output");
+	autoDissimilarity result = KNN_patternToDissimilarity (me, thee);
+	praat_new (result.move(), U"Output");
 END2 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -630,7 +635,8 @@ DO
 	double temp_start = GET_REAL (U"Initial temperature");
 	double temp_damp = GET_REAL (U"Damping factor");
 	double temp_stop = GET_REAL (U"Final temperature");
-	praat_new (KNN_SA_ToPermutation (me, tries, iterations, step_size, bolzmann_c, temp_start, temp_damp, temp_stop), U"Output");
+	autoPermutation result = KNN_SA_ToPermutation (me, tries, iterations, step_size, bolzmann_c, temp_start, temp_damp, temp_stop);
+	praat_new (result.move(), U"Output");
 END2 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -647,7 +653,8 @@ DO
 		Melder_throw (U"The Pattern object should contain at least 2 rows.");
 	if (my ny != thy size)
 		Melder_throw (U"The number of rows in the Pattern object should equal the number of categories in the Categories object.");
-	praat_new (FeatureWeights_compute (me, thee, GET_INTEGER (U"Number of neighbours")), U"Output");
+	autoFeatureWeights result = FeatureWeights_compute (me, thee, GET_INTEGER (U"Number of neighbours"));
+	praat_new (result.move(), U"Output");
 END2 }
 
 FORM (FeatureWeights_computeWrapperExt, U"Feature weights", U"KNN & Pattern & Categories: To FeatureWeights..") {
@@ -665,7 +672,7 @@ FORM (FeatureWeights_computeWrapperExt, U"Feature weights", U"KNN & Pattern & Ca
 	OK2
 DO
 	iam_ONLY (KNN);
-	if (my nInstances < 1)
+	if (my nInstances <= 0)
 		Melder_throw (U"Instance base is empty");
 	thouart_ONLY (Pattern);
 	heis_ONLY (Categories);
@@ -686,8 +693,9 @@ DO
 		Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U".");
 	if (thy nx != my input -> nx)
 		Melder_throw (U"The dimensionality of Pattern should be equal to that of the instance base.");
-	praat_new (FeatureWeights_computeWrapperExt (me, thee, him, k, mode, GET_INTEGER (U"Number of seeds"),
-		GET_REAL (U"Learning rate"), GET_REAL (U"Stop at"), (int) GET_INTEGER (U"Optimization")), U"Output");
+	autoFeatureWeights result = FeatureWeights_computeWrapperExt (me, thee, him, k, mode, GET_INTEGER (U"Number of seeds"),
+		GET_REAL (U"Learning rate"), GET_REAL (U"Stop at"), (int) GET_INTEGER (U"Optimization"));
+	praat_new (result.move(), U"Output");
 END2 }
 
 FORM (FeatureWeights_computeWrapperInt, U"Feature weights", U"KNN: To FeatureWeights...") {
@@ -734,8 +742,9 @@ DO
 	long k = GET_INTEGER (U"k neighbours");
 	if (k < 1 || k > my nInstances)
 		Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U".");
-	praat_new (FeatureWeights_computeWrapperInt (me, k, mode, GET_INTEGER (U"Number of seeds"), GET_REAL (U"Learning rate"),
-		GET_REAL (U"Stop at"), (int) GET_INTEGER (U"Optimization"), emode), U"Output");
+	autoFeatureWeights result = FeatureWeights_computeWrapperInt (me, k, mode, GET_INTEGER (U"Number of seeds"), GET_REAL (U"Learning rate"),
+		GET_REAL (U"Stop at"), (int) GET_INTEGER (U"Optimization"), emode);
+	praat_new (result.move(), U"Output");
 END2 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -748,14 +757,16 @@ FORM (Pattern_create, U"Create Pattern", 0) {
 	NATURAL (U"Number of patterns", U"1")
 	OK2
 DO
-	praat_new (Pattern_create (GET_INTEGER (U"Number of patterns"), GET_INTEGER (U"Dimension of a pattern")), GET_STRING (U"Name"));
+	autoPattern result = Pattern_create (GET_INTEGER (U"Number of patterns"), GET_INTEGER (U"Dimension of a pattern"));
+	praat_new (result.move(), GET_STRING (U"Name"));
 END2 }
 
 FORM (Categories_create, U"Create Categories", 0) {
 	WORD (U"Name", U"empty")
 	OK2
 DO
-	praat_new (Categories_create ().transfer(), GET_STRING (U"Name"));
+	autoCategories result = Categories_create ();
+	praat_new (result.move(), GET_STRING (U"Name"));
 END2 }
 
 FORM (FeatureWeights_create, U"Create FeatureWeights", 0) {
@@ -763,7 +774,8 @@ FORM (FeatureWeights_create, U"Create FeatureWeights", 0) {
 	NATURAL (U"Number of weights", U"1")
 	OK2
 DO
-	praat_new (FeatureWeights_create (GET_INTEGER (U"Number of weights")), GET_STRING (U"Name"));
+	autoFeatureWeights result = FeatureWeights_create (GET_INTEGER (U"Number of weights"));
+	praat_new (result.move(), GET_STRING (U"Name"));
 END2 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -776,7 +788,7 @@ END2 }
 
 DIRECT (KNN_debug_KNN_SA_partition)
     Pattern p = ONLY (classPattern);
-    Pattern output = Pattern_create (p->ny, p->nx);
+    autoPattern output = Pattern_create (p->ny, p->nx);
     autoNUMvector <long> result (0, p->ny);
     KNN_SA_partition (p, 1, p->ny, result);
 
@@ -789,7 +801,7 @@ DIRECT (KNN_debug_KNN_SA_partition)
                 ++k;
             }
 
-    praat_new (output, U"Output");
+    praat_new (output.move(), U"Output");
 
 END
 

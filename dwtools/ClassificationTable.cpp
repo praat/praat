@@ -44,13 +44,13 @@ ClassificationTable ClassificationTable_create (long numberOfRows, long numberOf
 	}
 }
 
-Confusion ClassificationTable_to_Confusion (ClassificationTable me, int onlyClassLabels) {
+Confusion ClassificationTable_to_Confusion (ClassificationTable me, bool onlyClassLabels) {
 	try {
 		autoStrings responses = TableOfReal_extractColumnLabelsAsStrings (me);
 		autoStrings s2 = TableOfReal_extractRowLabelsAsStrings (me);
 		autoDistributions d2 = Strings_to_Distributions (s2.peek());
 		autoStrings stimuli = TableOfReal_extractRowLabelsAsStrings (d2.peek());
-		autoConfusion thee = Confusion_createFromStringses ((onlyClassLabels ? responses.peek() : stimuli.peek()), responses.peek());
+		autoConfusion thee = Confusion_createFromStringses (( onlyClassLabels ? responses.peek() : stimuli.peek() ), responses.peek());
 		Confusion_and_ClassificationTable_increase (thee.peek(), me);
 		return thee.transfer();
 	} catch (MelderError) {
