@@ -28,6 +28,7 @@ INTRO (U"Latest changes in Praat.")
 /*LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")*/
 NORMAL (U"##6.0.03# (31 October 2015)")
 LIST_ITEM (U"• Corrected a bug that caused Praat to crash when the Soundrecorder window was closed.")
+LIST_ITEM (U"• Scripting: when calling Praat from the command line, added the $$--run$ option to force script execution.")
 NORMAL (U"##6.0.02# (30 October 2015)")
 LIST_ITEM (U"• Corrected the redrawing of analyses in the Sound window after a change in the sound.")
 NORMAL (U"##6.0.01# (29 October 2015)")

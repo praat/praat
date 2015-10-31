@@ -3184,7 +3184,7 @@ CODE (U"nocheck Remove")
 NORMAL (U"This would cause the script to continue even if there is nothing to remove.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 6.9. Calling from the command line", U"ppgb", 20151026)
+MAN_BEGIN (U"Scripting 6.9. Calling from the command line", U"ppgb", 20151031)
 INTRO (U"Previous sections of this tutorial have shown you how to run a Praat script from the Script window. "
 	"However, you can also call a Praat script from the command line (text console) instead. "
 	"Information that would normally show up in the Info window, then goes to %stdout, "
@@ -3307,22 +3307,41 @@ CODE (U"first_line = 'I love you'")
 CODE (U"second_line = 'me too'")
 CODE (U"subprocess.call(['C:\\bs\\bsProgram Files\\bs\\bsPraat.exe', 'testCommandLineCalls.praat', first_line, '0.4', second_line])")
 
-ENTRY (U"7. Running Praat interactively from the command line")
+ENTRY (U"7. Calling Praat from other programs than Python")
+NORMAL (U"Many other programs beside Python have a $$system$-like command, so that you can run a command like")
+CODE (U"system ('\"C:\\bs\\bsProgram Files\\bs\\bsPraat.exe\" testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"')")
+NORMAL (U"However, the implementation of such commands varies strongly between programs, and some programs "
+	"can make Praat think that it was started by dragging a file onto the Praat icon. In those cases, "
+	"the above $$system$ command will start up the Praat GUI and open the file rather than run it. "
+	"In such cases you could trick the $$system$ command into using a command shell, which would go like this in Windows:")
+CODE (U"system ('cmd /c \"C:\\bs\\bsProgram Files\\bs\\bsPraat.exe\" testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"')")
+NORMAL (U"or like this on the Mac or on Linux:")
+CODE (U"system ('bash \"C:\\bs\\bsProgram Files\\bs\\bsPraat.exe\" testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"')")
+NORMAL (U"It may be easier, though, to use Praat’s explicit $$--run$ option, which has been designed especially for this case:")
+CODE (U"system ('\"C:\\bs\\bsProgram Files\\bs\\bsPraat.exe\" --run testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"')")
+NORMAL (U"If you are using Praat in an automated workflow, our advice would be to always include the $$--run$ option, "
+	"even if your workflow runs correctly today without the $$--run$ option, "
+	"because the implementation of $$system$-like commands in other programs might change.")
+
+ENTRY (U"8. Running Praat interactively from the command line")
 NORMAL (U"On the Mac and Linux, you have the possibility of running the program interactively from the command line:")
 CODE (U"> /usr/bin/praat -")
 NORMAL (U"You can then type in any of the fixed and dynamic commands, and commands that handle object selection, "
 	"such as #selectObject. This method also works in pipes:")
 CODE (U"> echo \"Statistics...\" | /usr/bin/praat -")
 
-ENTRY (U"8. Calling Praat from a web server")
+ENTRY (U"9. Calling Praat from a web server")
 NORMAL (U"If you call Praat from a web server, you typically do not want to read and write its preferences and buttons files. "
 	"To achieve this, you use the ##--no-pref-files# command line option before the script name:")
-CODE (U"> /users/apache/praat --no-pref-files /user/apache/scripts/computeAnalysis.praat 1234 blibla")
+CODE (U"system ('/users/apache/praat --run --no-pref-files /user/apache/scripts/computeAnalysis.praat 1234 blibla')")
+NORMAL (U"Please note the recommended use of $$--run$ in this case.")
 
-ENTRY (U"9. All command line options")
+ENTRY (U"10. All command line options")
 TAG (U"##--open")
-DEFINITION (U"Interpret the command line arguments as files to be opened in the GUI "
-	"(instead of as a script file name and its arguments).")
+DEFINITION (U"Interpret the command line arguments as files to be opened in the GUI.")
+TAG (U"##--run")
+DEFINITION (U"Interpret the command line arguments as a script file name and its arguments "
+	"($$--run$ is superfluous when you use a Console or Terminal window).")
 TAG (U"##--no-pref-files#")
 DEFINITION (U"Ignore the preferences file and the buttons file at start-up, and don't write them when quitting (see above).")
 TAG (U"##--no-plugins#")
