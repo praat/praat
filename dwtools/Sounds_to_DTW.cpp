@@ -1,6 +1,6 @@
 /* Sounds_to_DTW.cpp
  *
- * Copyright (C) 2012 David Weenink
+ * Copyright (C) 2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 #include "Sounds_to_DTW.h"
 #include "CCs_to_DTW.h"
 
-DTW Sounds_to_DTW (Sound me, Sound thee, double analysisWidth, double dt, double band, int slope) {
+autoDTW Sounds_to_DTW (Sound me, Sound thee, double analysisWidth, double dt, double band, int slope) {
 	try {
         long numberOfCoefficients = 12;
         double fmin_mel = 100, df_mel = 100, fmax_mel = 0.0;
@@ -35,7 +35,7 @@ DTW Sounds_to_DTW (Sound me, Sound thee, double analysisWidth, double dt, double
         autoDTW him = CCs_to_DTW (mfcc_me.peek(), mfcc_thee.peek(), wc, wle, wr, wer, dtr);
         autoPolygon p = DTW_to_Polygon (him.peek(), band, slope);
         DTW_and_Polygon_findPathInside (him.peek(), p.peek(), slope, 0);
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": no DTW created.");
 	}

@@ -63,20 +63,19 @@ void structSPINET :: v_info () {
 	MelderInfo_writeLine (U"Maximum powerrectified: ", maxs);
 }
 
-SPINET SPINET_create (double tmin, double tmax, long nt, double dt, double t1, double minimumFrequency, double maximumFrequency, long nFilters, double excitationErbProportion, double inhibitionErbProportion) {
+autoSPINET SPINET_create (double tmin, double tmax, long nt, double dt, double t1, double minimumFrequency, double maximumFrequency, long nFilters, double excitationErbProportion, double inhibitionErbProportion) {
 	try {
 		autoSPINET me = Thing_new (SPINET);
 		double minErb = NUMhertzToErb (minimumFrequency);
 		double maxErb = NUMhertzToErb (maximumFrequency);
 		double dErb = (maxErb - minErb) / nFilters;
-		Sampled2_init (me.peek(), tmin, tmax, nt, dt, t1,
-		               minErb - dErb / 2.0, maxErb + dErb / 2.0, nFilters, dErb, minErb);
+		Sampled2_init (me.peek(), tmin, tmax, nt, dt, t1, minErb - dErb / 2.0, maxErb + dErb / 2.0, nFilters, dErb, minErb);
 		my y = NUMmatrix<double> (1, nFilters, 1, nt);
 		my s = NUMmatrix<double> (1, nFilters, 1, nt);
 		my gamma = 4;
 		my excitationErbProportion = excitationErbProportion;
 		my inhibitionErbProportion = inhibitionErbProportion;
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SPINET not created.");
 	}

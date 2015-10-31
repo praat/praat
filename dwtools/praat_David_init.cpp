@@ -3120,7 +3120,8 @@ FORM (BandFilterSpectrogram_to_Matrix, U"(BandFilterSpectrogram: To Matrix", 0)
 DO
 	LOOP {
 		iam (BandFilterSpectrogram);
-		praat_new (BandFilterSpectrogram_to_Matrix (me, GET_INTEGER (U"Convert to dB values")), my name);
+		autoMatrix thee = BandFilterSpectrogram_to_Matrix (me, GET_INTEGER (U"Convert to dB values"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -3192,7 +3193,8 @@ END
 DIRECT (BandFilterSpectrogram_to_Intensity)
 	LOOP {
 		iam (BandFilterSpectrogram);
-		praat_new (BandFilterSpectrogram_to_Intensity (me), my name);
+		autoIntensity thee = BandFilterSpectrogram_to_Intensity (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -4348,7 +4350,8 @@ FORM (MelSpectrogram_to_MFCC, U"MelSpectrogram: To MFCC", U"MelSpectrogram: To M
 DO
 	LOOP {
 		iam (MelSpectrogram);
-		praat_new (MelSpectrogram_to_MFCC (me, GET_INTEGER (U"Number of coefficients")), my name);
+		autoMFCC thee = MelSpectrogram_to_MFCC (me, GET_INTEGER (U"Number of coefficients"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -4406,8 +4409,9 @@ FORM (MFCC_to_MelSpectrogram, U"MFCC: MelSpectrogram", U"MFCC: To MelSpectrogram
 DO
 	LOOP {
 		iam (MFCC);
-		praat_new (MFCC_to_MelSpectrogram (me, GET_INTEGER (U"From coefficient"), GET_INTEGER (U"To coefficient"),
-			GET_INTEGER (U"Include constant term")), my name);
+		autoMelSpectrogram thee = MFCC_to_MelSpectrogram (me, GET_INTEGER (U"From coefficient"), GET_INTEGER (U"To coefficient"),
+			GET_INTEGER (U"Include constant term"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -5731,7 +5735,8 @@ DO
         (s1 ? s2 : s1) = me;
     }
     Melder_assert (s1 && s2);
-    praat_new (Sounds_to_DTW (s1, s2, analysisWidth, dt, band, slope), s1 -> name, U"_", s2 -> name);
+	autoDTW thee = Sounds_to_DTW (s1, s2, analysisWidth, dt, band, slope);
+    praat_new (thee.transfer(), s1 -> name, U"_", s2 -> name);
 END
 
 FORM (Sound_to_TextGrid_detectSilences, U"Sound: To TextGrid (silences)", U"Sound: To TextGrid (silences)...")
@@ -5959,9 +5964,10 @@ DO
 	}
 	LOOP {
 		iam (Sound);
-		praat_new (Sound_to_Pitch_shs (me, GET_REAL (U"Time step"), minimumPitch, fmax, ceiling,
+		autoPitch thee = Sound_to_Pitch_shs (me, GET_REAL (U"Time step"), minimumPitch, fmax, ceiling,
 		GET_INTEGER (U"Max. number of subharmonics"), GET_INTEGER (U"Max. number of candidates"),
-		GET_REAL (U"Compression factor"), GET_INTEGER (U"Number of points per octave")), my name);
+		GET_REAL (U"Compression factor"), GET_INTEGER (U"Number of points per octave"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -6038,9 +6044,9 @@ DO
 	}
 	LOOP {
 		iam (Sound);
-		praat_new (Sound_to_Pitch_SPINET (me, GET_REAL (U"Time step"), GET_REAL (U"Window length"),
-			fmin, fmax, GET_INTEGER (U"Number of filters"),
-			GET_REAL (U"Ceiling"), GET_INTEGER (U"Max. number of candidates")), my name);
+		autoPitch thee = Sound_to_Pitch_SPINET (me, GET_REAL (U"Time step"), GET_REAL (U"Window length"), fmin, fmax, 
+			GET_INTEGER (U"Number of filters"), GET_REAL (U"Ceiling"), GET_INTEGER (U"Max. number of candidates"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
