@@ -1126,12 +1126,15 @@ void praat_init (const char32 *title, unsigned int argc, char **argv)
 	/*
 	 * Running Praat from the command line.
 	 */
-	bool foundTheOpenOption = false;
+	bool foundTheOpenOption = false, foundTheRunOption = false;
 	while (praatP.argumentNumber < argc && argv [praatP.argumentNumber] [0] == '-') {
 		if (strequ (argv [praatP.argumentNumber], "-")) {
 			praatP.hasCommandLineInput = true;
 		} else if (strequ (argv [praatP.argumentNumber], "--open")) {
 			foundTheOpenOption = true;
+			praatP.argumentNumber += 1;
+		} else if (strequ (argv [praatP.argumentNumber], "--run")) {
+			foundTheRunOption = true;
 			praatP.argumentNumber += 1;
 		} else if (strequ (argv [praatP.argumentNumber], "--no-pref-files")) {
 			praatP.ignorePreferenceFiles = true;
@@ -1150,8 +1153,9 @@ void praat_init (const char32 *title, unsigned int argc, char **argv)
 		} else if (strequ (argv [praatP.argumentNumber], "--help")) {
 			printf ("Usage: praat [options] script-file-name [script-arguments]\n");
 			printf ("Options:\n");
-			printf ("  --open           interpret the command line arguments as files to be opened in the GUI,\n");
-			printf ("                   instead of as a script file name and its arguments\n");
+			printf ("  --open           interpret the command line arguments as files to be opened in the GUI\n");
+			printf ("  --run            interpret the command line arguments as a script file name and its arguments\n");
+			printf ("                   (--run is superfluous when you use a Console or Terminal window)\n");
 			printf ("  --no-pref-files  don't read or write the preferences file and the buttons file\n");
 			printf ("  --no-plugins     don't activate the plugins\n");
 			printf ("  --pref-dir=DIR   set the preferences directory to DIR\n");
@@ -1176,6 +1180,7 @@ void praat_init (const char32 *title, unsigned int argc, char **argv)
 			break;
 		}
 	}
+	weWereStartedFromTheCommandLine |= foundTheRunOption;   // some external system()-like commands don't make isatty return true, so we have to help
 
 	const bool thereIsAFileNameInTheArgumentList = ( praatP.argumentNumber < argc );
 	Melder_batch = weWereStartedFromTheCommandLine && thereIsAFileNameInTheArgumentList && ! foundTheOpenOption;
