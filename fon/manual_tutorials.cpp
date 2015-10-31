@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20151030)
+MAN_BEGIN (U"What's new?", U"ppgb", 20151031)
 INTRO (U"Latest changes in Praat.")
 /*LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (U"##6.0.03# (31 October 2015)")
+LIST_ITEM (U"• Corrected a bug that caused Praat to crash when the Soundrecorder window was closed.")
 NORMAL (U"##6.0.02# (30 October 2015)")
 LIST_ITEM (U"• Corrected the redrawing of analyses in the Sound window after a change in the sound.")
 NORMAL (U"##6.0.01# (29 October 2015)")

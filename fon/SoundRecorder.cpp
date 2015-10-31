@@ -360,13 +360,17 @@ static long getMyNsamp (SoundRecorder me) {
 }
 
 #if cocoa
-static void workProc (CFRunLoopTimerRef timer, void *void_me) {
-	(void) timer;
+	#define WORKPROC_RETURN  void
+	#define WORKPROC_ARGS  CFRunLoopTimerRef /*timer*/, void *void_me
 #elif gtk
-static gboolean workProc (void *void_me) {
+	#define WORKPROC_RETURN  gboolean
+	#define WORKPROC_ARGS  void *void_me
 #else
-static bool workProc (void *void_me) {
+	#define WORKPROC_RETURN  bool
+	#define WORKPROC_ARGS  void *void_me
 #endif
+
+static WORKPROC_RETURN workProc (WORKPROC_ARGS) {
 	iam (SoundRecorder);
 	try {
 		short buffertje [step*2];
@@ -527,8 +531,7 @@ static int portaudioStreamCallback (
 	return paContinue;
 }
 
-static void gui_button_cb_record (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_record (I, GuiButtonEvent /* event */) {
 	iam (SoundRecorder);
 	try {
 		if (my recording) return;
@@ -588,14 +591,12 @@ static void gui_button_cb_record (I, GuiButtonEvent event) {
 	}
 }
 
-static void gui_button_cb_stop (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_stop (I, GuiButtonEvent /* event */) {
 	iam (SoundRecorder);
 	stopRecording (me);
 }
 
-static void gui_button_cb_play (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_play (I, GuiButtonEvent /* event */) {
 	iam (SoundRecorder);
 	if (my recording || my nsamp == 0) return;
 	MelderAudio_play16 (my buffer, theControlPanel. sampleRate, my fakeMono ? my nsamp / 2 : my nsamp, my fakeMono ? 2 : my numberOfChannels, NULL, NULL);
@@ -632,22 +633,19 @@ static void publish (SoundRecorder me) {
 	Editor_broadcastPublication (me, sound.transfer());
 }
 
-static void gui_button_cb_cancel (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_cancel (I, GuiButtonEvent /* event */) {
 	iam (SoundRecorder);
 	stopRecording (me);
 	forget (me);
 }
 
-static void gui_button_cb_apply (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_apply (I, GuiButtonEvent /* event */) {
 	iam (SoundRecorder);
 	stopRecording (me);
 	publish (me);
 }
 
-static void gui_button_cb_ok (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_ok (I, GuiButtonEvent /* event */) {
 	iam (SoundRecorder);
 	stopRecording (me);
 	publish (me);
