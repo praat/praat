@@ -2,7 +2,7 @@
 #define _Sound_to_Pitch2_h_
 /* Sound_to_Pitch2.h
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,11 +28,11 @@
 #include "Sound_extensions.h"
 #include "Pitch.h"
 
-Pitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch,
+autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch,
 	double maximumFrequency, double ceiling, long maxnSubharmonics, long maxnCandidates,
 	double compressionFactor, long nDivisionsPerOctave);
 
-Pitch Sound_to_Pitch_SPINET (Sound me, double timeStep, double windowDuration,
+autoPitch Sound_to_Pitch_SPINET (Sound me, double timeStep, double windowDuration,
 	double minimumFrequencyHz, double maximumFrequencyHz, long nFilters,
 	double ceiling, int maxnCandidates);
 

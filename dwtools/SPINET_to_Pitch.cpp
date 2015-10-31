@@ -31,7 +31,7 @@
 	from Erb-scale to log2-scale
 */
 
-Pitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceiling, int maxnCandidates) {
+autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceiling, int maxnCandidates) {
 	try {
 		long nPointsPerOctave = 48;
 		double fmin = NUMerbToHertz (Sampled2_rowToY (me, 1));
@@ -135,7 +135,7 @@ Pitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceiling, i
 			Pitch_Frame_getPitch (&thy frame[j], &f0, &localStrength);
 			Pitch_Frame_resizeStrengths (&thy frame[j], localStrength / maxStrength, unvoicedCriterium);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Pitch created.");
 	}

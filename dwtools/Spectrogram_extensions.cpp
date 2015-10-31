@@ -1,6 +1,6 @@
 /* Spectrogram_extensions.cpp
  *
- * Copyright (C) 2014 David Weenink
+ * Copyright (C) 2014-2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@ Thing_implement (BarkSpectrogram, BandFilterSpectrogram, 1);
 
 // dbs = scaleFactor * log10 (value/reference);
 // if (dbs < floor_db) { dbs = floor_dB }
-Matrix Spectrogram_to_Matrix_dB (Spectrogram me, double reference, double scaleFactor, double floor_dB) {
+autoMatrix Spectrogram_to_Matrix_dB (Spectrogram me, double reference, double scaleFactor, double floor_dB) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
 		for (long i = 1; i <= my ny; i++) {
@@ -96,7 +96,7 @@ Matrix Spectrogram_to_Matrix_dB (Spectrogram me, double reference, double scaleF
 				thy z[i][j] = val;
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Matrix with dB values not created.");
 	}
@@ -183,7 +183,7 @@ void CC_into_BandFilterSpectrogram (CC me, BandFilterSpectrogram thee, long firs
 	}
 }
 
-MelSpectrogram MFCC_to_MelSpectrogram (MFCC me, long first, long last, bool c0) {
+autoMelSpectrogram MFCC_to_MelSpectrogram (MFCC me, long first, long last, bool c0) {
 	try {
 		if (first == 0 && last == 0) { // defaults
 			first = 1; last = my maximumNumberOfCoefficients;
@@ -200,13 +200,13 @@ MelSpectrogram MFCC_to_MelSpectrogram (MFCC me, long first, long last, bool c0) 
 		double df = (my fmax - my fmin) / (my maximumNumberOfCoefficients + 1 + 1);
 		autoMelSpectrogram thee = MelSpectrogram_create (my xmin, my xmax, my nx, my dx, my x1, my fmin, my fmax, my maximumNumberOfCoefficients + 1, df, df);
 		CC_into_BandFilterSpectrogram (me, thee.peek(), first, last, c0);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U"MelSpectrogram not created.");
 	}
 }
 
-MFCC MelSpectrogram_to_MFCC (MelSpectrogram me, long numberOfCoefficients) {
+autoMFCC MelSpectrogram_to_MFCC (MelSpectrogram me, long numberOfCoefficients) {
 	try {
 		if (numberOfCoefficients <= 0) {
 			numberOfCoefficients = my ny - 1;
@@ -215,17 +215,17 @@ MFCC MelSpectrogram_to_MFCC (MelSpectrogram me, long numberOfCoefficients) {
 		// 20130220 new interpretation of maximumNumberOfCoefficients necessary for inverse transform 
 		autoMFCC thee = MFCC_create (my xmin, my xmax, my nx, my dx, my x1, my ny - 1, my ymin, my ymax);
 		BandFilterSpectrogram_into_CC (me, thee.peek(), numberOfCoefficients);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": MFCC not created.");
 	}
 }
 
-BarkSpectrogram BarkSpectrogram_create (double tmin, double tmax, long nt, double dt, double t1, double fmin, double fmax, long nf, double df, double f1) {
+autoBarkSpectrogram BarkSpectrogram_create (double tmin, double tmax, long nt, double dt, double t1, double fmin, double fmax, long nf, double df, double f1) {
 	try {
 		autoBarkSpectrogram me = Thing_new (BarkSpectrogram);
 		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"BarkSpectrogram not created.");
 	}
@@ -439,18 +439,17 @@ void BarkSpectrogram_drawSekeyHansonFilterFunctions (BarkSpectrogram me, Graphic
 
 Thing_implement (MelSpectrogram, BandFilterSpectrogram, 2);
 
-MelSpectrogram MelSpectrogram_create (double tmin, double tmax, long nt, double dt, double t1, double fmin, double fmax, long nf, double df, double f1) {
+autoMelSpectrogram MelSpectrogram_create (double tmin, double tmax, long nt, double dt, double t1, double fmin, double fmax, long nf, double df, double f1) {
 	try {
 		autoMelSpectrogram me = Thing_new (MelSpectrogram);
 		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"MelSpectrogram not created.");
 	}
 }
 
-void BandFilterSpectrogram_drawTimeSlice (I, Graphics g, double t, double fmin,
-                               double fmax, double min, double max, const char32 *xlabel, int garnish) {
+void BandFilterSpectrogram_drawTimeSlice (I, Graphics g, double t, double fmin, double fmax, double min, double max, const char32 *xlabel, int garnish) {
 	iam (Matrix);
 	Matrix_drawSliceY (me, g, t, fmin, fmax, min, max);
 	if (garnish) {
@@ -542,7 +541,7 @@ void MelSpectrogram_drawTriangularFilterFunctions (MelSpectrogram me, Graphics g
 	}
 }
 
-Matrix BandFilterSpectrogram_to_Matrix (BandFilterSpectrogram me, int to_dB) {
+autoMatrix BandFilterSpectrogram_to_Matrix (BandFilterSpectrogram me, int to_dB) {
 	try {
 		int units = to_dB ? 1 : 0;
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
@@ -551,34 +550,34 @@ Matrix BandFilterSpectrogram_to_Matrix (BandFilterSpectrogram me, int to_dB) {
 				thy z[i][j] = my v_getValueAtSample (j, i, units);
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
 	}
 }
 
-BarkSpectrogram Matrix_to_BarkSpectrogram (Matrix me) {
+autoBarkSpectrogram Matrix_to_BarkSpectrogram (Matrix me) {
 	try {
 		autoBarkSpectrogram thee = BarkSpectrogram_create (my xmin, my xmax, my nx, my dx, my x1,
 			my ymin, my ymax, my ny, my dy, my y1);
 		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to BarkSpectrogram.");
 	}
 }
 
-MelSpectrogram Matrix_to_MelSpectrogram (Matrix me) {
+autoMelSpectrogram Matrix_to_MelSpectrogram (Matrix me) {
 	try {
 		autoMelSpectrogram thee = MelSpectrogram_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
 		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to MelSpectrogram.");
 	}
 }
 
-Intensity BandFilterSpectrogram_to_Intensity (BandFilterSpectrogram me) {
+autoIntensity BandFilterSpectrogram_to_Intensity (BandFilterSpectrogram me) {
 	try {
 		autoIntensity thee = Intensity_create (my xmin, my xmax, my nx, my dx, my x1);
 		for (long j = 1; j <= my nx; j++) {
@@ -588,7 +587,7 @@ Intensity BandFilterSpectrogram_to_Intensity (BandFilterSpectrogram me) {
 			}
 			thy z[1][j] = BandFilterSpectrogram_DBFAC * log10 (p / BandFilterSpectrogram_DBREF);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": Intensity not created.");
 	}
@@ -608,8 +607,7 @@ void BandFilterSpectrogram_equalizeIntensities (BandFilterSpectrogram me, double
 	}
 }
 
-void BandFilterSpectrogram_and_PCA_drawComponent (BandFilterSpectrogram me, PCA thee, Graphics g, long component, double dblevel,
-                                       double frequencyOffset, double scale, double tmin, double tmax, double fmin, double fmax) {
+void BandFilterSpectrogram_and_PCA_drawComponent (BandFilterSpectrogram me, PCA thee, Graphics g, long component, double dblevel, double frequencyOffset, double scale, double tmin, double tmax, double fmin, double fmax) {
 	if (component < 1 || component > thy numberOfEigenvalues) {
 		Melder_throw (U"Component too large.");
 	}

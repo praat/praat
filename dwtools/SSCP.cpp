@@ -783,7 +783,7 @@ void SSCP_setCentroid (SSCP me, long component, double value) {
 	my centroid[component] = value;
 }
 
-CCA SSCP_to_CCA (SSCP me, long ny) {
+autoCCA SSCP_to_CCA (SSCP me, long ny) {
 	try {
 		char upper = 'L', diag = 'N';
 		long info;
@@ -904,7 +904,7 @@ CCA SSCP_to_CCA (SSCP me, long ny) {
 				for (long k = 1; k <= j; k++) {
 					t += gsvd -> q[i][k] * ri[k][j];
 				}
-				thy y ->eigenvectors[j][i] = t;
+				thy y -> eigenvectors[j][i] = t;
 			}
 		}
 
@@ -934,10 +934,10 @@ CCA SSCP_to_CCA (SSCP me, long ny) {
 		NUMnormalizeRows (thy x -> eigenvectors, thy x -> numberOfEigenvalues, nx, 1);
 
 		if (ny < nx) {
-			Eigen t = thy x;
-			thy x = thy y; thy y = t;
+			autoEigen t = thy x.move();
+			thy x = thy y.move(); thy y = t.move();
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": CCA not created.");
 	}

@@ -2,7 +2,7 @@
 #define _Sounds_to_DTW_h_
 /* Sounds_to_DTW.h
  *
- * Copyright (C) 2012, 2014 David Weenink
+ * Copyright (C) 2012, 2014, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,6 @@
 #include "Sound.h"
 
 
-DTW Sounds_to_DTW (Sound me, Sound thee, double analysisWidth, double dt, double band, int slope);
+autoDTW Sounds_to_DTW (Sound me, Sound thee, double analysisWidth, double dt, double band, int slope);
 
 #endif /* _Sounds_to_DTW_h_ */

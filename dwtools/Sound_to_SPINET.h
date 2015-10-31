@@ -2,7 +2,7 @@
 #define _Sound_to_SPINET_h_
 /* Sound_to_SPINET.h
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 #include "SPINET.h"
 #include "Sound_extensions.h"
 
-SPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration,
+autoSPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration,
 	double minimumFrequencyHz, double maximumFrequencyHz, long nFilters,
 	double excitationErbProportion, double inhibitionErbProportion);
 
