@@ -1777,7 +1777,7 @@ void _Sound_FormantGrid_filterWithOneFormant_inline (Sound me, thou, long iforma
 	}
 
 	double nyquist = 0.5 / my dx;
-	autoFilter r =  antiformant != 0 ? (Filter) AntiResonator_create (my dx) : (Filter) Resonator_create (my dx, Resonator_NORMALISATION_H0);
+	autoFilter r =  antiformant != 0 ? (autoFilter) AntiResonator_create (my dx) : (autoFilter) Resonator_create (my dx, Resonator_NORMALISATION_H0);
 
 	for (long is = 1; is <= my nx; is++) {
 		double t = my x1 + (is - 1) * my dx;

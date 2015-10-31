@@ -2,7 +2,7 @@
 #define _Intensity_extensions_h_
 /* Intensity_extensions.h
  *
- * Copyright (C) 2006-2011 David Weenink
+ * Copyright (C) 2006-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 #include "IntensityTier.h"
 #include "TextGrid.h"
 
-TextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThreshold_dB, double minSilenceDuration,
+autoTextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThreshold_dB, double minSilenceDuration,
 	double minSoundingDuration, const char32 *silenceLabel, const char32 *soundingLabel);
 /*
 	Marks "silence" intervals in a sound as intervals in a TextGrid.
@@ -42,9 +42,9 @@ TextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThres
 	as silences in the IntervalTier.
 */
 
-Intensity IntensityTier_to_Intensity (IntensityTier me, double dt);
+autoIntensity IntensityTier_to_Intensity (IntensityTier me, double dt);
 
-TextGrid IntensityTier_to_TextGrid_detectSilences (IntensityTier me, double dt, double silenceThreshold_dB, double minSilenceDuration,
+autoTextGrid IntensityTier_to_TextGrid_detectSilences (IntensityTier me, double dt, double silenceThreshold_dB, double minSilenceDuration,
 	double minSoundingDuration, const char32 *silenceLabel, const char32 *soundingLabel);
 
 #endif /* _Intensity_extensions_h_ */

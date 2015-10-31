@@ -1,6 +1,6 @@
 /* Polygon_extensions.c
  *
- * Copyright (C) 1993-2012, 2014 David Weenink
+ * Copyright (C) 1993-2012, 2014, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +58,8 @@ void Polygon_getExtrema (Polygon me, double *xmin, double *xmax, double *ymin, d
         }
     }
 }
-Polygon Polygon_createSimple (char32 *xystring) {
+
+autoPolygon Polygon_createSimple (char32 *xystring) {
 	try {
 		long numberOfPoints;
 		autoNUMvector<double> xys (NUMstring_to_numbers (xystring, &numberOfPoints), 1);
@@ -77,20 +78,20 @@ Polygon Polygon_createSimple (char32 *xystring) {
 				Melder_warning (U"Two successives vertices are equal.");
 			}
 		}
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Polygon not created.");
 	}
 }
 
-Polygon Polygon_createFromRandomVertices (long numberOfVertices, double xmin, double xmax, double ymin, double ymax) {
+autoPolygon Polygon_createFromRandomVertices (long numberOfVertices, double xmin, double xmax, double ymin, double ymax) {
 	try {
 		autoPolygon me = Polygon_create (numberOfVertices);
 		for (long i = 1; i <= numberOfVertices; i++) {
 			my x[i] = NUMrandomUniform (xmin, xmax);
 			my y[i] = NUMrandomUniform (ymin, ymax);
 		}
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Polygon not created.");
 	}
@@ -127,19 +128,15 @@ void Polygon_reverseX (Polygon me) {
 	for (long i = 1; i <= my numberOfPoints; i++) {
 		my x[i] = -my x[i];
 	}
-
 }
 
 void Polygon_reverseY (Polygon me) {
 	for (long i = 1; i <= my numberOfPoints; i++) {
 		my y[i] = -my y[i];
 	}
-
 }
 
-void Polygon_Categories_draw (Polygon me, thou, Graphics graphics, double xmin, double xmax,
-                              double ymin, double ymax, int garnish) {
-	thouart (Categories);
+void Polygon_Categories_draw (Polygon me, Categories thee, Graphics graphics, double xmin, double xmax, double ymin, double ymax, int garnish) {
 	double min, max, tmp;
 
 	if (my numberOfPoints != thy size) {
@@ -179,8 +176,7 @@ void Polygon_Categories_draw (Polygon me, thou, Graphics graphics, double xmin, 
 	}
 }
 
-static void setWindow (Polygon me, Graphics graphics,
-                       double xmin, double xmax, double ymin, double ymax) {
+static void setWindow (Polygon me, Graphics graphics, double xmin, double xmax, double ymin, double ymax) {
 	Melder_assert (me);
 
 	if (xmax <= xmin) { /* Autoscaling along x axis. */
@@ -216,8 +212,7 @@ static void setWindow (Polygon me, Graphics graphics,
 	Graphics_setWindow (graphics, xmin, xmax, ymin, ymax);
 }
 
-void Polygon_drawMarks (Polygon me, Graphics g, double xmin, double xmax,
-                        double ymin, double ymax, double size_mm, const char32 *mark) {
+void Polygon_drawMarks (Polygon me, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark) {
 	Graphics_setInner (g);
 	setWindow (me, g, xmin, xmax, ymin, ymax);
 	for (long i = 1; i <= my numberOfPoints; i++) {
@@ -228,7 +223,7 @@ void Polygon_drawMarks (Polygon me, Graphics g, double xmin, double xmax,
 
 #define CLIP_Y(y,ymin,ymax) (clip ? ((y) > (ymax) ? (ymax) : (y) < (ymin) ? (ymin) : (y)) : y)
 
-Polygon Sound_to_Polygon (Sound me, int channel, double tmin, double tmax, double ymin, double ymax, double level) {
+autoPolygon Sound_to_Polygon (Sound me, int channel, double tmin, double tmax, double ymin, double ymax, double level) {
 	try {
 		bool clip = ymin < ymax;
 		if (channel < 1 || channel > my ny) {
@@ -282,7 +277,7 @@ Polygon Sound_to_Polygon (Sound me, int channel, double tmin, double tmax, doubl
 		his y[k++] = CLIP_Y (y, ymin, ymax);
 		his x[k] = tmax;
 		his y[k++] = CLIP_Y (level, ymin, ymax);
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U":no Polygon created.");
 	}
@@ -290,7 +285,7 @@ Polygon Sound_to_Polygon (Sound me, int channel, double tmin, double tmax, doubl
 
 /* Area inbetween */
 
-Polygon Sounds_to_Polygon_enclosed (Sound me, Sound thee, int channel, double tmin, double tmax, double ymin, double ymax) {
+autoPolygon Sounds_to_Polygon_enclosed (Sound me, Sound thee, int channel, double tmin, double tmax, double ymin, double ymax) {
 	try {
 		bool clip = ymin < ymax;
 		if (my ny > 1 && thy ny > 1 && my ny != thy ny) {
@@ -377,7 +372,7 @@ Polygon Sounds_to_Polygon_enclosed (Sound me, Sound thee, int channel, double tm
 		his y[k] = y;
 
 		Melder_assert (k == numberOfPoints);
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": no enclosed Polygon created.");
 	}
@@ -643,8 +638,8 @@ static bool pointsInsideInterval (double *x, long n, long istart, long iend, lon
 	return *jstart == istart and * jend == iend;
 }
 
-Polygon Polygon_circularPermutation (Polygon me, long nshift);
-Polygon Polygon_circularPermutation (Polygon me, long nshift) {
+autoPolygon Polygon_circularPermutation (Polygon me, long nshift);
+autoPolygon Polygon_circularPermutation (Polygon me, long nshift) {
 	try {
 		autoPolygon thee = Data_copy (me);
 		if (nshift != 0) {
@@ -654,7 +649,7 @@ Polygon Polygon_circularPermutation (Polygon me, long nshift) {
 				thy y[inew] = my y[i];
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not circularly permuted.");
 	}
@@ -682,8 +677,8 @@ void _Polygons_copyNonCollinearities (Polygon me, Polygon thee, long collstart, 
 }
 
 #define AREA(x1,y1,x2,y2,x3,y3) (x1*(y2 - y3)+x2*(y3-y1)+x3*(y1-y2))
-Polygon Polygon_simplify (Polygon me);
-Polygon Polygon_simplify (Polygon me) {
+autoPolygon Polygon_simplify (Polygon me);
+autoPolygon Polygon_simplify (Polygon me) {
 	try {
 		autoPolygon p1 = Data_copy (me);
 
@@ -764,7 +759,7 @@ Polygon Polygon_simplify (Polygon me) {
 		}
 
 		autoPolygon thee = Data_copy (p.peek()); //
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not simplified.");
 	}
@@ -1064,8 +1059,8 @@ static Vertices Verticeses_connectClippingPaths (Vertices me, bool /* use_myinte
 }
 
 //
-Polygon Vertices_to_Polygon (Vertices me, DLLNode *ni);
-Polygon Vertices_to_Polygon (Vertices /* me */, DLLNode *ni) {
+autoPolygon Vertices_to_Polygon (Vertices me, DLLNode *ni);
+autoPolygon Vertices_to_Polygon (Vertices /* me */, DLLNode *ni) {
 	DLLNode n = *ni;
 	try {
 		long i = 1, nPoints = VERTEX (n) -> poly_npoints;
@@ -1078,14 +1073,14 @@ Polygon Vertices_to_Polygon (Vertices /* me */, DLLNode *ni) {
 			i++; thy x[i] = VERTEX (n) -> x; thy y[i] = VERTEX (n) -> y;
 		}
 		*ni =  n;
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Polygon not created.");
 	}
 }
 
-Collection Vertices_to_Polygons (Vertices me);
-Collection Vertices_to_Polygons (Vertices me) {
+autoCollection Vertices_to_Polygons (Vertices me);
+autoCollection Vertices_to_Polygons (Vertices me) {
 	try {
 		autoCollection thee = Collection_create (classPolygon, 10);
 		DLLNode ni = my front;
@@ -1093,14 +1088,14 @@ Collection Vertices_to_Polygons (Vertices me) {
 			autoPolygon p = Vertices_to_Polygon (me, & ni);
 			Collection_addItem (thee.peek(), p.transfer());
 		} while (ni != 0);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no polygon collection created.");
 	}
 }
 
-Collection Polygons_findClippings (Polygon me, bool use_myinterior, Polygon thee, bool use_thyinterior);
-Collection Polygons_findClippings (Polygon me, bool use_myinterior, Polygon thee, bool use_thyinterior) {
+autoCollection Polygons_findClippings (Polygon me, bool use_myinterior, Polygon thee, bool use_thyinterior);
+autoCollection Polygons_findClippings (Polygon me, bool use_myinterior, Polygon thee, bool use_thyinterior) {
 	try {
 		autoVertices s = Polygon_to_Vertices (me, true); // subject
 		long ns = s -> numberOfNodes;
@@ -1122,7 +1117,7 @@ Collection Polygons_findClippings (Polygon me, bool use_myinterior, Polygon thee
 				autoPolygon ap = Data_copy (me);
 				Collection_addItem (apc.peek(), ap.transfer());
 			}
-			return apc.transfer();
+			return apc;
 		}
 
 		// phase 2: Determine intersections as entry / exit points
@@ -1142,37 +1137,37 @@ Collection Polygons_findClippings (Polygon me, bool use_myinterior, Polygon thee
 		//  false        false      union
 		//  true         true       clip
 		//  false        true       diff thee - me
-		autoVertices pgs = 0;
+		autoVertices pgs;
 		if (not use_myinterior and not use_thyinterior) {
-			pgs.reset (Verticeses_connectClippingPathsUnion (s.peek(), c.peek()));
+			pgs = Verticeses_connectClippingPathsUnion (s.peek(), c.peek());
 		} else {
-			pgs.reset (Verticeses_connectClippingPaths (s.peek(), use_myinterior, c.peek(), use_thyinterior));
+			pgs = Verticeses_connectClippingPaths (s.peek(), use_myinterior, c.peek(), use_thyinterior);
 		}
 		// phase 4: to Polygons
 
 		autoCollection pols = Vertices_to_Polygons (pgs.peek());
-		return pols.transfer();
+		return pols;
 	} catch (MelderError) {
 		Melder_throw (me, U": no union Polygon created.");
 	}
 }
 
-Collection Polygons_clip (Polygon subject, Polygon clipper) {
+autoCollection Polygons_clip (Polygon subject, Polygon clipper) {
 	try {
 		autoCollection him = Polygons_findClippings (subject, true, clipper, true);
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (subject, U": no union created.");
 	}
 }
 
-Polygon Polygons_union (Polygon me, Polygon thee);
-Polygon Polygons_union (Polygon me, Polygon thee) {
+autoPolygon Polygons_union (Polygon me, Polygon thee);
+autoPolygon Polygons_union (Polygon me, Polygon thee) {
 	try {
 		autoCollection him = Polygons_findClippings (me, false, thee, false);
 		//Melder_assert (his size == 1);
 		autoPolygon p = (Polygon) Collection_subtractItem (him.peek(), 1);
-		return p.transfer();
+		return p;
 	} catch (MelderError) {
 		Melder_throw (me, U": no union created.");
 	}
@@ -1223,7 +1218,7 @@ static inline double cross (double x1, double y1, double x2, double y2, double x
 }
 
 // Code adapted from http://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain#C
-Polygon Polygon_convexHull (Polygon me) {
+autoPolygon Polygon_convexHull (Polygon me) {
 	try {
 		if (my numberOfPoints <= 3) {
 			return (Polygon) Data_copy (me);
@@ -1256,7 +1251,7 @@ Polygon Polygon_convexHull (Polygon me) {
 			thy x[i] = x[hull[i]];
 			thy y[i] = y[hull[i]];
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no convex hull polygon created.");
 	}

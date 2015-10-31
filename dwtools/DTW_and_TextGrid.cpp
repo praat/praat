@@ -1,6 +1,6 @@
 /* DTW_and_TextGrid.cpp
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,13 +26,13 @@
 #include "DTW_and_TextGrid.h"
 
 // begin old prototypes for compatibility reasons with the past
-TextGrid DTW_and_TextGrid_to_TextGrid_old (DTW me, TextGrid thee);
-IntervalTier DTW_and_IntervalTier_to_IntervalTier_old (DTW me, IntervalTier thee);
-TextTier DTW_and_TextTier_to_TextTier_old (DTW me, TextTier thee);
+autoTextGrid DTW_and_TextGrid_to_TextGrid_old (DTW me, TextGrid thee);
+autoIntervalTier DTW_and_IntervalTier_to_IntervalTier_old (DTW me, IntervalTier thee);
+autoTextTier DTW_and_TextTier_to_TextTier_old (DTW me, TextTier thee);
 // end old
 
 /* Get times from TextGrid and substitute new time form the y-times of the DTW. */
-TextTier DTW_and_TextTier_to_TextTier (DTW me, TextTier thee, double precision) {
+autoTextTier DTW_and_TextTier_to_TextTier (DTW me, TextTier thee, double precision) {
 	try {
 		if (fabs (my ymin - thy xmin) <= precision && fabs (my ymax - thy xmax) <= precision) { // map from Y to X
 			autoTextTier him = Data_copy (thee);
@@ -43,7 +43,7 @@ TextTier DTW_and_TextTier_to_TextTier (DTW me, TextTier thee, double precision) 
 				double time = DTW_getXTimeFromYTime (me, textpoint -> number);
 				textpoint -> number = time;
 			}
-			return him.transfer();
+			return him;
 		} else if (fabs (my xmin - thy xmin) <= precision && fabs (my xmax - thy xmax) <= precision) { // map from X to Y
 			autoTextTier him = Data_copy (thee);
 			his xmin = my ymin;
@@ -53,7 +53,7 @@ TextTier DTW_and_TextTier_to_TextTier (DTW me, TextTier thee, double precision) 
 				double time = DTW_getYTimeFromXTime (me, textpoint -> number);
 				textpoint -> number = time;
 			}
-			return him.transfer();
+			return him;
 		} else {
 			Melder_throw (U"The domain of the TextTier and one of the domains of the DTW must be equal.");
 		}
@@ -62,7 +62,7 @@ TextTier DTW_and_TextTier_to_TextTier (DTW me, TextTier thee, double precision) 
 	}
 }
 
-IntervalTier DTW_and_IntervalTier_to_IntervalTier (DTW me, IntervalTier thee, double precision) {
+autoIntervalTier DTW_and_IntervalTier_to_IntervalTier (DTW me, IntervalTier thee, double precision) {
 	try {
 		if (fabs (my ymin - thy xmin) <= precision && fabs (my ymax - thy xmax) <= precision) { // map from Y to X
 			autoIntervalTier him = Data_copy (thee);
@@ -75,7 +75,7 @@ IntervalTier DTW_and_IntervalTier_to_IntervalTier (DTW me, IntervalTier thee, do
 				double xmax = DTW_getXTimeFromYTime (me, textinterval -> xmax);
 				textinterval -> xmax = xmax;
 			}
-			return him.transfer();
+			return him;
 		} else if (fabs (my xmin - thy xmin) <= precision && fabs (my xmax - thy xmax) <= precision) { // map from X to Y
 			autoIntervalTier him = Data_copy (thee);
 			his xmin = my ymin;
@@ -87,7 +87,7 @@ IntervalTier DTW_and_IntervalTier_to_IntervalTier (DTW me, IntervalTier thee, do
 				double xmax = DTW_getYTimeFromXTime (me, textinterval -> xmax);
 				textinterval -> xmax = xmax;
 			}
-			return him.transfer();
+			return him;
 		} else {
 			Melder_throw (U"The domain of the IntervalTier and one of the domains of the DTW must be equal.");
 		}
@@ -96,7 +96,7 @@ IntervalTier DTW_and_IntervalTier_to_IntervalTier (DTW me, IntervalTier thee, do
 	}
 }
 
-TextGrid DTW_and_TextGrid_to_TextGrid (DTW me, TextGrid thee, double precision) {
+autoTextGrid DTW_and_TextGrid_to_TextGrid (DTW me, TextGrid thee, double precision) {
 	try {
 		double tmin, tmax;
 		if (fabs (my ymin - thy xmin) <= precision && fabs (my ymax - thy xmax) <= precision) {
@@ -124,13 +124,13 @@ TextGrid DTW_and_TextGrid_to_TextGrid (DTW me, TextGrid thee, double precision) 
 				Melder_throw (U"Unknown tier.");
 			}
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TextGrid not created from DTW & TextGrid.");
 	}
 }
 
-Table DTW_and_IntervalTier_to_Table (DTW me, IntervalTier thee, double precision) {
+autoTable DTW_and_IntervalTier_to_Table (DTW me, IntervalTier thee, double precision) {
 	try {
 		long numberOfIntervals = thy intervals -> size;
 		autoTable him = Table_createWithColumnNames (numberOfIntervals, U"tmin tmax label dist");
@@ -173,7 +173,7 @@ Table DTW_and_IntervalTier_to_Table (DTW me, IntervalTier thee, double precision
 		} else {
 			Melder_throw (U"The domain of the IntervalTier and one of the domains of the DTW must be equal.");
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Table with distances created.");
 	}
@@ -182,7 +182,7 @@ Table DTW_and_IntervalTier_to_Table (DTW me, IntervalTier thee, double precision
 }
 
 /* Get times from TextGrid and substitute new time form the y-times of the DTW. */
-TextTier DTW_and_TextTier_to_TextTier_old (DTW me, TextTier thee) {
+autoTextTier DTW_and_TextTier_to_TextTier_old (DTW me, TextTier thee) {
 	try {
 		if (my xmin != thy xmin || my xmax != thy xmax) {
 			Melder_throw (U"The domain of the TextTier and the DTW must be equal.");
@@ -196,13 +196,13 @@ TextTier DTW_and_TextTier_to_TextTier_old (DTW me, TextTier thee) {
 			double time = DTW_getPathY (me, textpoint -> number);
 			textpoint -> number = time;
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TextTier not created.");
 	}
 }
 
-IntervalTier DTW_and_IntervalTier_to_IntervalTier_old (DTW me, IntervalTier thee) {
+autoIntervalTier DTW_and_IntervalTier_to_IntervalTier_old (DTW me, IntervalTier thee) {
 	try {
 		if ( (my xmin != thy xmin) || my xmax != thy xmax) Melder_throw
 			(U"The domain of the IntervalTier and the DTW must be equal.");
@@ -219,13 +219,13 @@ IntervalTier DTW_and_IntervalTier_to_IntervalTier_old (DTW me, IntervalTier thee
 			double xmax = DTW_getPathY (me, textinterval -> xmax);
 			textinterval -> xmax = xmax;
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"IntervalTier not created.");
 	}
 }
 
-TextGrid DTW_and_TextGrid_to_TextGrid_old (DTW me, TextGrid thee) {
+autoTextGrid DTW_and_TextGrid_to_TextGrid_old (DTW me, TextGrid thee) {
 	try {
 		autoTextGrid him = Thing_new (TextGrid);
 		if (my xmin != thy xmin || my xmax != thy xmax) {
@@ -250,7 +250,7 @@ TextGrid DTW_and_TextGrid_to_TextGrid_old (DTW me, TextGrid thee) {
 				Melder_throw (U"Unknown tier.");
 			}
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TextGrid not created.");
 	}

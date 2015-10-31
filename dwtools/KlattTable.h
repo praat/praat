@@ -2,7 +2,7 @@
 #define _KlattTable_h_
 /* KlattTable.h
  *
- * Copyright (C) 2008-2011 David Weenink
+ * Copyright (C) 2008-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
 Thing_define (KlattTable, Table) {
 };
 
-KlattTable KlattTable_create (double frameDuration, double totalDuration);
+autoKlattTable KlattTable_create (double frameDuration, double totalDuration);
 /*
 f0  (08)	This is the fundamental frequency (pitch) of the utterance.
 		In this case it is specified in steps of 0.1 Hz, hence 100Hz
@@ -94,16 +94,16 @@ gain  	Overall gain in dB range 0-80.
 
 */
 
-Sound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synthesisModel, int numberOfFormants, double frameDuration, int voicing,
-double flutter, int outputType);
+autoSound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synthesisModel, int numberOfFormants, double frameDuration, int voicing, double flutter, int outputType);
 
-Sound KlattTable_and_Sound_to_Sound (KlattTable me, Sound thee);
+autoSound KlattTable_and_Sound_to_Sound (KlattTable me, Sound thee);
 
-KlattTable KlattTable_createExample ();
+autoKlattTable KlattTable_createExample ();
 
-KlattTable Table_to_KlattTable (Table me);
-Table KlattTable_to_Table (KlattTable me);
+autoKlattTable Table_to_KlattTable (Table me);
 
-KlattTable KlattTable_readFromRawTextFile (MelderFile fs);
+autoTable KlattTable_to_Table (KlattTable me);
+
+autoKlattTable KlattTable_readFromRawTextFile (MelderFile fs);
 
 #endif /* _KlattTable_h_ */

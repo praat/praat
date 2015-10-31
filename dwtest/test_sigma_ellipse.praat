@@ -30,3 +30,5 @@ procedure get_p .nsigma
   Draw confidence ellipse... psigma 1 2  -6 6 -12 12 no
   Black
 endproc
+
+removeObject: tor, sscp

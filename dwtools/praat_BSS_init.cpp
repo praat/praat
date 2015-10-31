@@ -240,7 +240,8 @@ FORM (Sound_and_PCA_principalComponents, U"Sound & PCA: To Sound (principal comp
 DO
 	Sound me = FIRST (Sound);
 	PCA thee = FIRST (PCA);
-	praat_new (Sound_and_PCA_principalComponents (me, thee, GET_INTEGER (U"Number of components")), Thing_getName (me), U"_pc");
+	autoSound him = Sound_and_PCA_principalComponents (me, thee, GET_INTEGER (U"Number of components"));
+	praat_new (him.transfer(), my name, U"_pc");
 END
 
 FORM (Sound_and_PCA_whitenChannels, U"Sound & PCA: To Sound (white channels)", 0)
@@ -249,7 +250,8 @@ FORM (Sound_and_PCA_whitenChannels, U"Sound & PCA: To Sound (white channels)", 0
 DO
 	Sound me = FIRST (Sound);
 	PCA thee = FIRST (PCA);
-	praat_new (Sound_and_PCA_whitenChannels (me, thee, GET_INTEGER (U"Number of components")), Thing_getName (me), U"_white");
+	autoSound him = Sound_and_PCA_whitenChannels (me, thee, GET_INTEGER (U"Number of components"));
+	praat_new (him.transfer(), my name, U"_white");
 END
 
 DIRECT (CrossCorrelationTable_to_CrossCorrelationTables)

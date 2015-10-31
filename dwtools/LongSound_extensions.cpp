@@ -1,6 +1,6 @@
 /* LongSound_extensions.c
  *
- * Copyright (C) 1993-2013 David Weenink
+ * Copyright (C) 1993-2013, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -153,8 +153,9 @@ static void MelderFile_truncate (MelderFile me, long size) {
 #elif defined(linux) || defined(macintosh)
 
 	MelderFile_close (me);
-	if (truncate (Melder_peek32to8 (my path), size) == -1) Melder_throw (U"Truncating failed for file ",
-		        MelderFile_messageName (me), U" (", Melder_peek8to32 (strerror (errno)), U").");
+	if (truncate (Melder_peek32to8 (my path), size) == -1) {
+		Melder_throw (U"Truncating failed for file ", MelderFile_messageName (me), U" (", Melder_peek8to32 (strerror (errno)), U").");
+	}
 #else
 	Melder_throw (U"Don't know what to do.");
 #endif
