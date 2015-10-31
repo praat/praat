@@ -3252,7 +3252,7 @@ NORMAL (U"Praat will execute the script $$my script.praat$$ without showing Praa
 NORMAL (U"On the Mac, you type")
 CODE (U"/Applications/Praat.app/Contents/MacOS/Praat \"my script.praat\"")
 NORMAL (U"and on Linux")
-CODE (U"/usr/bin/praat data/hello.wav \"my script.praat\"")
+CODE (U"/usr/bin/praat \"my script.praat\"")
 NORMAL (U"What happens on all platforms is that the Console or Terminal starts up Praat, "
 	"then Praat executes the script, and then Praat closes itself.")
 
