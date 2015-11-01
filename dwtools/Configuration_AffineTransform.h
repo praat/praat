@@ -27,8 +27,8 @@
 #include "Configuration.h"
 #include "AffineTransform.h"
 
-AffineTransform Configurations_to_AffineTransform_congruence (Configuration me,	Configuration thee, long maximumNumberOfIterations, double tolerance);
+autoAffineTransform Configurations_to_AffineTransform_congruence (Configuration me,	Configuration thee, long maximumNumberOfIterations, double tolerance);
 
-Configuration Configuration_and_AffineTransform_to_Configuration (Configuration me, AffineTransform thee);
+autoConfiguration Configuration_and_AffineTransform_to_Configuration (Configuration me, AffineTransform thee);
 
 #endif /* _Configuration_AffineTransform_h_ */

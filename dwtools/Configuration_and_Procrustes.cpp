@@ -1,6 +1,6 @@
 /* Configuration_and_Procrustes.c
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 #include "Configuration_and_Procrustes.h"
 #include "NUM2.h"
 
-Procrustes Configurations_to_Procrustes (Configuration me, Configuration thee, int orthogonal) {
+autoProcrustes Configurations_to_Procrustes (Configuration me, Configuration thee, int orthogonal) {
 	try {
 		if (my numberOfRows != thy numberOfRows || my numberOfColumns != thy numberOfColumns) {
 			Melder_throw (U"Configurations must have the same number of points and the same dimension.");
@@ -39,7 +39,7 @@ Procrustes Configurations_to_Procrustes (Configuration me, Configuration thee, i
 			scale = & (p -> s);
 		}
 		NUMProcrustes (my data, thy data, my numberOfRows, my numberOfColumns, p -> r, translation, scale);
-		return p.transfer();
+		return p;
 	} catch (MelderError) {
 		Melder_throw (U"Procrustes from two Configurations not created.");
 	}

@@ -1,6 +1,6 @@
 /* Sound_to_SPINET.cpp
  *
- * Copyright (C) 1993-2013 David Weenink
+ * Copyright (C) 1993-2013, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,9 +38,7 @@ static double fgamma (double x, long n) {
 	0 < minimumFrequencyHz < maximumFrequencyHz
 */
 
-SPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration,
-                        double minimumFrequencyHz, double maximumFrequencyHz, long nFilters,
-                        double excitationErbProportion, double inhibitionErbProportion) {
+autoSPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration, double minimumFrequencyHz, double maximumFrequencyHz, long nFilters, double excitationErbProportion, double inhibitionErbProportion) {
 	try {
 		double firstTime, b = 1.02, samplingFrequency = 1 / my dx;
 
@@ -53,8 +51,7 @@ SPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration,
 
 		long numberOfFrames;
 		Sampled_shortTermAnalysis (me, windowDuration, timeStep, &numberOfFrames, &firstTime);
-		autoSPINET thee = SPINET_create (my xmin, my xmax, numberOfFrames, timeStep, firstTime,
-		                                 minimumFrequencyHz, maximumFrequencyHz, nFilters, excitationErbProportion, inhibitionErbProportion);
+		autoSPINET thee = SPINET_create (my xmin, my xmax, numberOfFrames, timeStep, firstTime, minimumFrequencyHz, maximumFrequencyHz, nFilters, excitationErbProportion, inhibitionErbProportion);
 		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
 		autoSound frame = Sound_createSimple (1, windowDuration, samplingFrequency);
 		autoNUMvector<double> f (1, nFilters);
@@ -77,8 +74,7 @@ SPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration,
 			double gammaMaxAmplitude = pow ( (thy gamma - 1) / (NUMe * bw[i]), (thy gamma - 1)); // tgammaMax
 			double timeCorrection = tgammaMax - windowDuration / 2;
 
-			autoSound gammaTone = Sound_createGammaTone (0, 0.1, samplingFrequency,
-			                      thy gamma, b, f[i], 0, 0, 0);
+			autoSound gammaTone = Sound_createGammaTone (0, 0.1, samplingFrequency, thy gamma, b, f[i], 0, 0, 0);
 			autoSound filtered = Sounds_convolve (me, gammaTone.peek(), kSounds_convolve_scaling_SUM, kSounds_convolve_signalOutsideTimeDomain_ZERO);
 
 			// To energy measure: weigh with broad-band transfer function
@@ -114,7 +110,7 @@ SPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration,
 				}
 				thy s[i][j] = a > 0 ? a : 0;
 			}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U":  no SPINET created.");
 	}

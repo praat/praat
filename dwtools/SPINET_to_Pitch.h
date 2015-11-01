@@ -2,7 +2,7 @@
 #define _SPINET_to_Pitch_h_
 /* SPINET_to_Pitch.h
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@
 #include "SPINET.h"
 #include "Pitch.h"
 
-Pitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceiling,
-	int maxnCandidates);
+autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceiling, int maxnCandidates);
 
 #endif /* _SPINET_to_Pitch_h_ */

@@ -70,7 +70,7 @@ static void spec_smoooth_SHS (double a[], long n) {
 	}
 }
 
-Pitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch,
+autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch,
                           double maximumFrequency, double ceiling, long maxnSubharmonics, long maxnCandidates,
                           double compressionFactor, long nPointsPerOctave) {
 	try {
@@ -101,8 +101,7 @@ Pitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch,
 		Sampled_shortTermAnalysis (sound.peek(), windowDuration, timeStep, &numberOfFrames, &firstTime);
 		autoSound frame = Sound_createSimple (1, frameDuration, newSamplingFrequency);
 		autoSound hamming = Sound_createHamming (nx / newSamplingFrequency, newSamplingFrequency);
-		autoPitch thee = Pitch_create (my xmin, my xmax, numberOfFrames, timeStep, firstTime,
-		                               ceiling, maxnCandidates);
+		autoPitch thee = Pitch_create (my xmin, my xmax, numberOfFrames, timeStep, firstTime, ceiling, maxnCandidates);
 		autoNUMvector<double> cc (1, numberOfFrames);
 		autoNUMvector<double> specAmp (1, nfft2);
 		autoNUMvector<double> fl2 (1, nfft2);
@@ -127,7 +126,7 @@ Pitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch,
 		*/
 
 		for (long i = 2; i <= nfft2; i++) {
-			fl2[i] = NUMlog2 ( (i - 1) * df);
+			fl2[i] = NUMlog2 ((i - 1) * df);
 		}
 		fl2[1] = 2 * fl2[2] - fl2[3];
 
@@ -135,7 +134,7 @@ Pitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch,
 		// the frequency weighting function.
 
 		for (long i = 1; i <= nFrequencyPoints; i++) {
-			arctg[i] = 0.5 + atan (3 * (i - atans) / nPointsPerOctave) / NUMpi;
+			arctg[i] = 0.5 + atan (3.0 * (i - atans) / nPointsPerOctave) / NUMpi;
 		}
 
 		// Perform the analysis on all frames.
@@ -147,7 +146,6 @@ Pitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch,
 			long nx_tmp = frame -> nx;
 
 			// Copy a frame from the sound, apply a hamming window. Get local 'intensity'
-
 
 			frame -> nx = nx; /*begin vies */
 			Sound_into_Sound (sound.peek(), frame.peek(), tmid - halfWindow);
@@ -256,20 +254,18 @@ Pitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch,
 		for (long i = 1; i <= numberOfFrames; i++) {
 			Pitch_Frame_resizeStrengths (& thy frame[i], cc[i], vuvCriterium);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Pitch (shs) created.");
 	}
 }
 
-Pitch Sound_to_Pitch_SPINET (Sound me, double timeStep, double windowDuration,
-                             double minimumFrequencyHz, double maximumFrequencyHz, long nFilters,
-                             double ceiling, int maxnCandidates) {
+autoPitch Sound_to_Pitch_SPINET (Sound me, double timeStep, double windowDuration, double minimumFrequencyHz, double maximumFrequencyHz, long nFilters, double ceiling, int maxnCandidates) {
 	try {
 		autoSPINET him = Sound_to_SPINET (me, timeStep, windowDuration, minimumFrequencyHz,
 		                                  maximumFrequencyHz, nFilters, 0.4, 0.6);
 		autoPitch thee = SPINET_to_Pitch (him.peek(), 0.15, ceiling, maxnCandidates);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Pitch (SPINET) created.");
 	}

@@ -2,7 +2,7 @@
 #define _ClassificationTable_h_
 /* ClassificationTable.h
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,15 +29,14 @@
 Thing_define (ClassificationTable, TableOfReal) {
 };
 
-ClassificationTable ClassificationTable_create (long numberOfRows, long numberOfColumns);
+autoClassificationTable ClassificationTable_create (long numberOfRows, long numberOfColumns);
 
-Categories ClassificationTable_to_Categories_maximumProbability (ClassificationTable me);
-Strings ClassificationTable_to_Strings_maximumProbability (ClassificationTable me);
+autoCategories ClassificationTable_to_Categories_maximumProbability (ClassificationTable me);
 
 Confusion ClassificationTable_to_Confusion (ClassificationTable me, bool onlyClassLabels);
 
 /* Correlations between the classes (columns) */
-Correlation ClassificationTable_to_Correlation_columns (ClassificationTable me);
+autoCorrelation ClassificationTable_to_Correlation_columns (ClassificationTable me);
 
 void Confusion_and_ClassificationTable_increase (Confusion me, ClassificationTable thee);
 

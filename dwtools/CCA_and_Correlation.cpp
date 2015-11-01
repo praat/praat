@@ -27,7 +27,7 @@
 #include "CCA_and_Correlation.h"
 #include "NUM2.h"
 
-TableOfReal CCA_and_Correlation_factorLoadings (CCA me, Correlation thee) {
+autoTableOfReal CCA_and_Correlation_factorLoadings (CCA me, Correlation thee) {
 	try {
 		long ny = my y -> dimension, nx = my x -> dimension;
 
@@ -57,7 +57,7 @@ TableOfReal CCA_and_Correlation_factorLoadings (CCA me, Correlation thee) {
 				his data[my numberOfCoefficients + j][i] = t;
 			}
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal not created from CCA & Correlation.");
 	}

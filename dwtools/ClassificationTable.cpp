@@ -34,11 +34,11 @@
 
 Thing_implement (ClassificationTable, TableOfReal, 0);
 
-ClassificationTable ClassificationTable_create (long numberOfRows, long numberOfClasses) {
+autoClassificationTable ClassificationTable_create (long numberOfRows, long numberOfClasses) {
 	try {
 		autoClassificationTable me = Thing_new (ClassificationTable);
 		TableOfReal_init (me.peek(), numberOfRows, numberOfClasses );
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ClassificationTable not created.");
 	}
@@ -52,7 +52,7 @@ Confusion ClassificationTable_to_Confusion (ClassificationTable me, bool onlyCla
 		autoStrings stimuli = TableOfReal_extractRowLabelsAsStrings (d2.peek());
 		autoConfusion thee = Confusion_createFromStringses (( onlyClassLabels ? responses.peek() : stimuli.peek() ), responses.peek());
 		Confusion_and_ClassificationTable_increase (thee.peek(), me);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": confusions cannot be calculated.");
 	}
@@ -68,7 +68,7 @@ void Confusion_and_ClassificationTable_increase (Confusion me, ClassificationTab
 	}
 }
 
-Strings ClassificationTable_to_Strings_maximumProbability (ClassificationTable me) {
+autoStrings ClassificationTable_to_Strings_maximumProbability (ClassificationTable me) {
 	try {
 		autoStrings thee = Strings_createFixedLength (my numberOfRows);
 
@@ -84,13 +84,13 @@ Strings ClassificationTable_to_Strings_maximumProbability (ClassificationTable m
 				Strings_replace (thee.peek(), i, my columnLabels[col]);
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": strings cannot be created.");
 	}
 }
 
-Categories ClassificationTable_to_Categories_maximumProbability (ClassificationTable me) {
+autoCategories ClassificationTable_to_Categories_maximumProbability (ClassificationTable me) {
 	try {
 		autoCategories thee = Categories_create ();
 		for (long i = 1; i <= my numberOfRows; i++) {
@@ -103,13 +103,13 @@ Categories ClassificationTable_to_Categories_maximumProbability (ClassificationT
 			}
 			OrderedOfString_append (thee.peek(), my columnLabels[col]);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Categories created.");
 	}
 }
 
-Correlation ClassificationTable_to_Correlation_columns (ClassificationTable me) {
+autoCorrelation ClassificationTable_to_Correlation_columns (ClassificationTable me) {
 	try {
 		autoCorrelation thee = Correlation_create (my numberOfColumns);
 		for (long icol = 1; icol <= thy numberOfColumns; icol++) {
@@ -134,7 +134,7 @@ Correlation ClassificationTable_to_Correlation_columns (ClassificationTable me) 
 			}
 		}
 		thy numberOfObservations = my numberOfRows;
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no correlation created.");
 	}

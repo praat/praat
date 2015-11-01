@@ -3141,7 +3141,8 @@ FORM (BandFilterSpectrogram_to_Matrix, U"(BandFilterSpectrogram: To Matrix", 0)
 DO
 	LOOP {
 		iam (BandFilterSpectrogram);
-		praat_new (BandFilterSpectrogram_to_Matrix (me, GET_INTEGER (U"Convert to dB values")), my name);
+		autoMatrix thee = BandFilterSpectrogram_to_Matrix (me, GET_INTEGER (U"Convert to dB values"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -3213,7 +3214,8 @@ END
 DIRECT (BandFilterSpectrogram_to_Intensity)
 	LOOP {
 		iam (BandFilterSpectrogram);
-		praat_new (BandFilterSpectrogram_to_Intensity (me), my name);
+		autoIntensity thee = BandFilterSpectrogram_to_Intensity (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -4369,7 +4371,8 @@ FORM (MelSpectrogram_to_MFCC, U"MelSpectrogram: To MFCC", U"MelSpectrogram: To M
 DO
 	LOOP {
 		iam (MelSpectrogram);
-		praat_new (MelSpectrogram_to_MFCC (me, GET_INTEGER (U"Number of coefficients")), my name);
+		autoMFCC thee = MelSpectrogram_to_MFCC (me, GET_INTEGER (U"Number of coefficients"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -4427,8 +4430,9 @@ FORM (MFCC_to_MelSpectrogram, U"MFCC: MelSpectrogram", U"MFCC: To MelSpectrogram
 DO
 	LOOP {
 		iam (MFCC);
-		praat_new (MFCC_to_MelSpectrogram (me, GET_INTEGER (U"From coefficient"), GET_INTEGER (U"To coefficient"),
-			GET_INTEGER (U"Include constant term")), my name);
+		autoMelSpectrogram thee = MFCC_to_MelSpectrogram (me, GET_INTEGER (U"From coefficient"), GET_INTEGER (U"To coefficient"),
+			GET_INTEGER (U"Include constant term"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -5752,7 +5756,8 @@ DO
         (s1 ? s2 : s1) = me;
     }
     Melder_assert (s1 && s2);
-    praat_new (Sounds_to_DTW (s1, s2, analysisWidth, dt, band, slope), s1 -> name, U"_", s2 -> name);
+	autoDTW thee = Sounds_to_DTW (s1, s2, analysisWidth, dt, band, slope);
+    praat_new (thee.transfer(), s1 -> name, U"_", s2 -> name);
 END
 
 FORM (Sound_to_TextGrid_detectSilences, U"Sound: To TextGrid (silences)", U"Sound: To TextGrid (silences)...")
@@ -5980,9 +5985,10 @@ DO
 	}
 	LOOP {
 		iam (Sound);
-		praat_new (Sound_to_Pitch_shs (me, GET_REAL (U"Time step"), minimumPitch, fmax, ceiling,
+		autoPitch thee = Sound_to_Pitch_shs (me, GET_REAL (U"Time step"), minimumPitch, fmax, ceiling,
 		GET_INTEGER (U"Max. number of subharmonics"), GET_INTEGER (U"Max. number of candidates"),
-		GET_REAL (U"Compression factor"), GET_INTEGER (U"Number of points per octave")), my name);
+		GET_REAL (U"Compression factor"), GET_INTEGER (U"Number of points per octave"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -6059,9 +6065,9 @@ DO
 	}
 	LOOP {
 		iam (Sound);
-		praat_new (Sound_to_Pitch_SPINET (me, GET_REAL (U"Time step"), GET_REAL (U"Window length"),
-			fmin, fmax, GET_INTEGER (U"Number of filters"),
-			GET_REAL (U"Ceiling"), GET_INTEGER (U"Max. number of candidates")), my name);
+		autoPitch thee = Sound_to_Pitch_SPINET (me, GET_REAL (U"Time step"), GET_REAL (U"Window length"), fmin, fmax, 
+			GET_INTEGER (U"Number of filters"), GET_REAL (U"Ceiling"), GET_INTEGER (U"Max. number of candidates"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -6817,25 +6823,29 @@ FORM (Strings_createAsCharacters, U"Strings: Create as characters", 0)
 	SENTENCE (U"Text", U"intention")
 	OK
 DO
-	praat_new (Strings_createAsCharacters (GET_STRING (U"Text")), U"");
+	autoStrings thee = Strings_createAsCharacters (GET_STRING (U"Text"));
+	praat_new (thee.transfer(), U"");
 END
 
 FORM (Strings_createAsTokens, U"Strings: Create as tokens", 0)
 	SENTENCE (U"Text", U"There are seven tokens in this text")
 	OK
 DO
-	praat_new (Strings_createAsTokens (GET_STRING (U"Text")), U"");
+	autoStrings thee = Strings_createAsTokens (GET_STRING (U"Text"));
+	praat_new (thee.transfer(), U"");
 END
 
 DIRECT (Strings_append)
 	autoCollection set = praat_getSelectedObjects ();
-	praat_new (Strings_append (set.transfer()), U"appended");
+	autoStrings thee = Strings_append (set.transfer());
+	praat_new (thee.transfer(), U"appended");
 END
 
 DIRECT (Strings_to_Categories)
 	LOOP {
 		iam (Strings);
-		praat_new (Strings_to_Categories (me), U"");
+		autoCategories thee = Strings_to_Categories (me);
+		praat_new (thee.transfer(), U"");
 	}
 END
 
@@ -6851,8 +6861,9 @@ DO
 	long nmatches, nstringmatches;
 	LOOP {
 		iam (Strings);
-		praat_new (Strings_change (me, GET_STRING (U"Search"), GET_STRING (U"Replace"),
-		GET_INTEGER (U"Replace limit"), &nmatches, &nstringmatches, GET_INTEGER (U"Search and replace are") - 1), 0);
+		autoStrings thee = Strings_change (me, GET_STRING (U"Search"), GET_STRING (U"Replace"),
+		GET_INTEGER (U"Replace limit"), &nmatches, &nstringmatches, GET_INTEGER (U"Search and replace are") - 1);
+		praat_new (thee.transfer(), 0);
 	}
 END
 
@@ -6863,7 +6874,8 @@ FORM (Strings_extractPart, U"Strings: Extract part", U"")
 DO
 	LOOP {
 		iam (Strings);
-		praat_new (Strings_extractPart (me, GET_INTEGER (U"From index"), GET_INTEGER (U"To index")), my name, U"_part");
+		autoStrings thee = Strings_extractPart (me, GET_INTEGER (U"From index"), GET_INTEGER (U"To index"));
+		praat_new (thee.transfer(), my name, U"_part");
 	}
 END
 
@@ -6884,14 +6896,16 @@ FORM (Strings_to_Permutation, U"Strings: To Permutation", U"Strings: To Permutat
 DO
 	LOOP {
 		iam (Strings);
-		praat_new (Strings_to_Permutation (me, GET_INTEGER (U"Sort")), my name);
+		autoPermutation thee = Strings_to_Permutation (me, GET_INTEGER (U"Sort"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
 DIRECT (Strings_and_Permutation_permuteStrings)
 	Strings me = FIRST (Strings);
 	Permutation p = FIRST (Permutation);
-	praat_new (Strings_and_Permutation_permuteStrings (me, p), my name, U"_", p->name);
+	autoStrings thee = Strings_and_Permutation_permuteStrings (me, p);
+	praat_new (thee.transfer(), my name, U"_", p->name);
 END
 
 FORM (SVD_to_TableOfReal, U"SVD: To TableOfReal", U"SVD: To TableOfReal...")
@@ -6901,28 +6915,32 @@ FORM (SVD_to_TableOfReal, U"SVD: To TableOfReal", U"SVD: To TableOfReal...")
 DO
 	LOOP {
 		iam (SVD);
-		praat_new (SVD_to_TableOfReal (me, GET_INTEGER (U"First component"), GET_INTEGER (U"Last component")), my name);
+		autoTableOfReal thee = SVD_to_TableOfReal (me, GET_INTEGER (U"First component"), GET_INTEGER (U"Last component"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 
 DIRECT (SVD_extractLeftSingularVectors)
 	LOOP {
 		iam (SVD);
-		praat_new (SVD_extractLeftSingularVectors (me), Thing_getName (me), U"_lsv");
+		autoTableOfReal thee = SVD_extractLeftSingularVectors (me);
+		praat_new (thee.transfer(), my name, U"_lsv");
 	}
 END
 
 DIRECT (SVD_extractRightSingularVectors)
 	LOOP {
 		iam (SVD);
-		praat_new (SVD_extractRightSingularVectors (me), Thing_getName (me), U"_rsv");
+		autoTableOfReal thee = SVD_extractRightSingularVectors (me);
+		praat_new (thee.transfer(), my name, U"_rsv");
 	}
 END
 
 DIRECT (SVD_extractSingularValues)
 	LOOP {
 		iam (SVD);
-		praat_new (SVD_extractSingularValues (me), Thing_getName (me), U"_sv");
+		autoTableOfReal thee = SVD_extractSingularValues (me);
+		praat_new (thee.transfer(), my name, U"_sv");
 	}
 END
 
@@ -7805,7 +7823,8 @@ FORM (TableOfReal_to_CCA, U"TableOfReal: To CCA", U"TableOfReal: To CCA...")
 DO
 	LOOP {
 		iam (TableOfReal);
-		praat_new (TableOfReal_to_CCA (me, GET_INTEGER (U"Dimension of dependent variate")), my name);
+		autoCCA thee = TableOfReal_to_CCA (me, GET_INTEGER (U"Dimension of dependent variate"));
+		praat_new (thee.transfer(), my name);
 	}
 END
 

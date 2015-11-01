@@ -428,8 +428,8 @@ DO
 		(c1 ? c2 : c1) = me;
 	}
 	Melder_assert (c1 && c2);
-	praat_new (Configurations_to_Procrustes (c1, c2, GET_INTEGER (U"Orthogonal transform")),
-		Thing_getName (c2), U"_to_", Thing_getName (c1));
+	autoProcrustes thee = Configurations_to_Procrustes (c1, c2, GET_INTEGER (U"Orthogonal transform"));
+	praat_new (thee.transfer(), Thing_getName (c2), U"_to_", Thing_getName (c1));
 END
 
 FORM (Configurations_to_AffineTransform_congruence, U"Configurations: To AffineTransform (congruence)", U"Configurations: To AffineTransform (congruence)...")
@@ -443,8 +443,9 @@ DO
 		(c1 ? c2 : c1) = me;
 	}
 	Melder_assert (c1 && c2);
-	praat_new (Configurations_to_AffineTransform_congruence (c1, c2, GET_INTEGER (U"Maximum number of iterations"),
-		GET_REAL (U"Tolerance")), c1 -> name, U"_", c2 -> name);
+	autoAffineTransform thee = Configurations_to_AffineTransform_congruence (c1, c2, GET_INTEGER (U"Maximum number of iterations"),
+		GET_REAL (U"Tolerance"));
+	praat_new (thee.transfer(), c1 -> name, U"_", c2 -> name);
 END
 
 DIRECT (Configuration_Weight_to_Similarity_cc)
@@ -466,7 +467,8 @@ END
 DIRECT (Configuration_and_AffineTransform_to_Configuration)
 	Configuration me = FIRST (Configuration);
 	AffineTransform at = FIRST_GENERIC (AffineTransform);
-	praat_new (Configuration_and_AffineTransform_to_Configuration (me, at), my name, U"_", at -> name);
+	autoConfiguration thee = Configuration_and_AffineTransform_to_Configuration (me, at);
+	praat_new (thee.transfer(), my name, U"_", at -> name);
 END
 
 /*************** Confusion *********************************/

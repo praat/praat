@@ -5897,8 +5897,9 @@ DO
 	long numberOfMatches, numberOfStringMatches;
 	LOOP {
 		iam (Strings);
-		praat_new (Strings_change (me, GET_STRING (U"Find"), GET_STRING (U"Replace with"),
-			GET_INTEGER (U"Replace limit per string"), & numberOfMatches, & numberOfStringMatches, GET_INTEGER (U"Find and replace strings are") - 1), 0);
+		autoStrings thee = Strings_change (me, GET_STRING (U"Find"), GET_STRING (U"Replace with"),
+			GET_INTEGER (U"Replace limit per string"), & numberOfMatches, & numberOfStringMatches, GET_INTEGER (U"Find and replace strings are") - 1);
+		praat_new (thee.transfer(), 0);
 	}
 END2 }
 
