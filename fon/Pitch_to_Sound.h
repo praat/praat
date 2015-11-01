@@ -24,7 +24,7 @@
 /* then this PointProcess into a Sound (pulse train), */
 /* and then optionally filter this with 6 formants. */
 
-autoSound Pitch_to_Sound (Pitch me, double tmin, double tmax, int hum);
+autoSound Pitch_to_Sound (Pitch me, double tmin, double tmax, bool hum);
 void Pitch_play (Pitch me, double tmin, double tmax);
 void Pitch_hum (Pitch me, double tmin, double tmax);
 
@@ -33,6 +33,6 @@ void Pitch_hum (Pitch me, double tmin, double tmax);
 /* and then cuts away the unvoiced stretches. */
 
 autoSound Pitch_to_Sound_sine (Pitch me, double tmin, double tmax, double samplingFrequency,
-	int roundToNearestZeroCrossings);
+	bool roundToNearestZeroCrossings);
 
 /* End of file Pitch_to_Sound.h */

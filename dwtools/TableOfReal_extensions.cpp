@@ -1424,7 +1424,7 @@ TableOfReal TableOfReal_meansByRowLabels (TableOfReal me, int expand, int stats)
 		} else {
 			indexr++;
 			TableOfReal_copyOneRowWithLabel (sorted.peek(), sorted.peek(), indexi, indexr);
-			thee.reset (TableOfReal_create (indexr, my numberOfColumns));
+			thee = TableOfReal_create (indexr, my numberOfColumns);
 			for (long i = 1; i <= indexr; i++) {
 				TableOfReal_copyOneRowWithLabel (sorted.peek(), thee.peek(), i, i);
 			}

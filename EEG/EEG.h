@@ -26,11 +26,11 @@
 #include "EEG_def.h"
 oo_CLASS_CREATE (EEG, Function);
 
-EEG EEG_create (double tmin, double tmax);
+autoEEG EEG_create (double tmin, double tmax);
 
-EEG EEG_readFromBdfFile (MelderFile file);
+autoEEG EEG_readFromBdfFile (MelderFile file);
 
-EEG EEGs_concatenate (Collection me);
+autoEEG EEGs_concatenate (Collection me);
 
 void EEG_init (EEG me, double tmin, double tmax);
 long EEG_getChannelNumber (EEG me, const char32 *channelName);
@@ -53,13 +53,13 @@ void EEG_subtractMeanChannel (EEG me, long fromChannel, long toChannel);
 void EEG_setChannelToZero (EEG me, long channelNumber);
 void EEG_setChannelToZero (EEG me, const char32 *channelName);
 void EEG_removeTriggers (EEG me, int which_Melder_STRING, const char32 *criterion);
-EEG EEG_extractChannel (EEG me, long channelNumber);
-EEG EEG_extractChannel (EEG me, const char32 *channelName);
-static inline Sound EEG_extractSound (EEG me) { return Data_copy (my sound); }
-static inline TextGrid EEG_extractTextGrid (EEG me) { return Data_copy (my textgrid); }
-EEG EEG_extractPart (EEG me, double tmin, double tmax, bool preserveTimes);
+autoEEG EEG_extractChannel (EEG me, long channelNumber);
+autoEEG EEG_extractChannel (EEG me, const char32 *channelName);
+static inline autoSound EEG_extractSound (EEG me) { return Data_copy (my sound.get()); }
+static inline autoTextGrid EEG_extractTextGrid (EEG me) { return Data_copy (my textgrid.get()); }
+autoEEG EEG_extractPart (EEG me, double tmin, double tmax, bool preserveTimes);
 void EEG_replaceTextGrid (EEG me, TextGrid textgrid);
-MixingMatrix EEG_to_MixingMatrix (EEG me, long maxNumberOfIterations, double tol, int method);
+autoMixingMatrix EEG_to_MixingMatrix (EEG me, long maxNumberOfIterations, double tol, int method);
 
 /* End of file EEG.h */
 #endif

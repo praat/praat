@@ -23,8 +23,8 @@ oo_DEFINE_CLASS (EEG, Function)
 
 	oo_LONG (numberOfChannels)
 	oo_STRING_VECTOR (channelNames, numberOfChannels)
-	oo_OBJECT (Sound, 2, sound)
-	oo_OBJECT (TextGrid, 0, textgrid)
+	oo_AUTO_OBJECT (Sound, 2, sound)
+	oo_AUTO_OBJECT (TextGrid, 0, textgrid)
 
 	#if oo_DECLARING
 		void v_info ()

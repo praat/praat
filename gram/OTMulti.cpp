@@ -886,7 +886,7 @@ static int OTMulti_updateHistory (OTMulti me, Table thee, long storeHistoryEvery
 
 void OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee, double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, int direction,
 	double initialPlasticity, long replicationsPerPlasticity, double plasticityDecrement,
-	long numberOfPlasticities, double relativePlasticityNoise, long storeHistoryEvery, Table *history_out)
+	long numberOfPlasticities, double relativePlasticityNoise, long storeHistoryEvery, autoTable *history_out)
 {
 	long idatum = 0, numberOfData = numberOfPlasticities * replicationsPerPlasticity;
 	try {
@@ -946,7 +946,7 @@ void OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee, double e
 			plasticity *= plasticityDecrement;
 		}
 		if (history_out)
-			*history_out = history.transfer();
+			*history_out = history.move();
 	} catch (MelderError) {
 		if (idatum > 1)
 			Melder_appendError (U"Only ", idatum - 1, U" input-output pairs out of ", numberOfData, U" were processed.");
@@ -1397,7 +1397,7 @@ void OTMulti_generateOptimalForm (OTMulti me, const char32 *form1, const char32 
 	}
 }
 
-Strings OTMulti_Strings_generateOptimalForms (OTMulti me, Strings thee, double evaluationNoise) {
+autoStrings OTMulti_Strings_generateOptimalForms (OTMulti me, Strings thee, double evaluationNoise) {
 	try {
 		autoStrings outputs = Thing_new (Strings);
 		long n = thy numberOfStrings;
@@ -1408,13 +1408,13 @@ Strings OTMulti_Strings_generateOptimalForms (OTMulti me, Strings thee, double e
 			OTMulti_generateOptimalForm (me, thy strings [i], U"", output, evaluationNoise);
 			outputs -> strings [i] = Melder_dup (output);
 		}
-		return outputs.transfer();
+		return outputs;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U": optimal forms not generated.");
 	}
 }
 
-Strings OTMulti_generateOptimalForms (OTMulti me, const char32 *form1, const char32 *form2, long numberOfTrials, double evaluationNoise) {
+autoStrings OTMulti_generateOptimalForms (OTMulti me, const char32 *form1, const char32 *form2, long numberOfTrials, double evaluationNoise) {
 	try {
 		autoStrings outputs = Thing_new (Strings);
 		outputs -> numberOfStrings = numberOfTrials;
@@ -1424,13 +1424,13 @@ Strings OTMulti_generateOptimalForms (OTMulti me, const char32 *form1, const cha
 			OTMulti_generateOptimalForm (me, form1, form2, output, evaluationNoise);
 			outputs -> strings [i] = Melder_dup (output);
 		}
-		return outputs.transfer();
+		return outputs;
 	} catch (MelderError) {
 		Melder_throw (me, U": optimal forms not generated.");
 	}
 }
 
-Distributions OTMulti_to_Distribution (OTMulti me, const char32 *form1, const char32 *form2,
+autoDistributions OTMulti_to_Distribution (OTMulti me, const char32 *form1, const char32 *form2,
 	long numberOfTrials, double evaluationNoise)
 {
 	try {
@@ -1466,7 +1466,7 @@ Distributions OTMulti_to_Distribution (OTMulti me, const char32 *form1, const ch
 			long iwinner = OTMulti_getWinner (me, form1, form2);
 			thy data [index [iwinner]] [1] += 1;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": distribution not computed.");
 	}

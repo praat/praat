@@ -873,7 +873,7 @@ double Sound_getNearestZeroCrossing (Sound me, double position, long channel) {
 		position - leftZero < rightZero - position ? leftZero : rightZero;
 }
 
-void Sound_setZero (Sound me, double tmin_in, double tmax_in, int roundTimesToNearestZeroCrossing) {
+void Sound_setZero (Sound me, double tmin_in, double tmax_in, bool roundTimesToNearestZeroCrossing) {
 	Function_unidirectionalAutowindow (me, & tmin_in, & tmax_in);
 	Function_intersectRangeWithDomain (me, & tmin_in, & tmax_in);
 	for (long channel = 1; channel <= my ny; channel ++) {

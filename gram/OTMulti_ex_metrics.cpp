@@ -420,7 +420,7 @@ static void replaceOutput (OTCandidate me) {
 	my string = Melder_dup (newString);
 }
 
-OTMulti OTMulti_create_metrics (int equal_footForm_wsp, int trochaicityConstraint, int includeFootBimoraic, int includeFootBisyllabic,
+autoOTMulti OTMulti_create_metrics (int equal_footForm_wsp, int trochaicityConstraint, int includeFootBimoraic, int includeFootBisyllabic,
 	int includePeripheral, int nonfinalityConstraint, int overtFormsHaveSecondaryStress,
 	int includeClashAndLapse, int includeCodas)
 {
@@ -508,7 +508,7 @@ OTMulti OTMulti_create_metrics (int equal_footForm_wsp, int trochaicityConstrain
 				replaceOutput (& my candidates [icand]);
 			}
 		}
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Metrics grammar not created.");
 	}

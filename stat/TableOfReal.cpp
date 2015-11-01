@@ -123,11 +123,11 @@ void TableOfReal_init (TableOfReal me, long numberOfRows, long numberOfColumns) 
 	my data = NUMmatrix <double> (1, my numberOfRows, 1, my numberOfColumns);
 }
 
-TableOfReal TableOfReal_create (long numberOfRows, long numberOfColumns) {
+autoTableOfReal TableOfReal_create (long numberOfRows, long numberOfColumns) {
 	try {
 		autoTableOfReal me = Thing_new (TableOfReal);
 		TableOfReal_init (me.peek(), numberOfRows, numberOfColumns);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal not created.");
 	}
@@ -359,7 +359,7 @@ static void copyColumn (TableOfReal me, long myCol, TableOfReal thee, long thyCo
 	}
 }
 
-TableOfReal TableOfReal_extractRowsWhereColumn (TableOfReal me, long column, int which_Melder_NUMBER, double criterion) {
+autoTableOfReal TableOfReal_extractRowsWhereColumn (TableOfReal me, long column, int which_Melder_NUMBER, double criterion) {
 	try {
 		if (column < 1 || column > my numberOfColumns)
 			Melder_throw (U"No such column: ", column, U".");
@@ -376,13 +376,13 @@ TableOfReal TableOfReal_extractRowsWhereColumn (TableOfReal me, long column, int
 		for (long irow = 1; irow <= my numberOfRows; irow ++)
 			if (Melder_numberMatchesCriterion (my data [irow] [column], which_Melder_NUMBER, criterion))
 				copyRow (me, irow, thee.peek(), ++ n);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": rows not extracted.");
 	}
 }
 
-TableOfReal TableOfReal_extractRowsWhereLabel (TableOfReal me, int which_Melder_STRING, const char32 *criterion) {
+autoTableOfReal TableOfReal_extractRowsWhereLabel (TableOfReal me, int which_Melder_STRING, const char32 *criterion) {
 	try {
 		long n = 0;
 		for (long irow = 1; irow <= my numberOfRows; irow ++) {
@@ -398,13 +398,13 @@ TableOfReal TableOfReal_extractRowsWhereLabel (TableOfReal me, int which_Melder_
 		for (long irow = 1; irow <= my numberOfRows; irow ++)
 			if (Melder_stringMatchesCriterion (my rowLabels [irow], which_Melder_STRING, criterion))
 				copyRow (me, irow, thee.peek(), ++ n);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": rows not extracted.");
 	}
 }
 
-TableOfReal TableOfReal_extractColumnsWhereRow (TableOfReal me, long row, int which_Melder_NUMBER, double criterion) {
+autoTableOfReal TableOfReal_extractColumnsWhereRow (TableOfReal me, long row, int which_Melder_NUMBER, double criterion) {
 	try {
 		if (row < 1 || row > my numberOfRows)
 			Melder_throw (U"No such row: ", row, U".");
@@ -422,13 +422,13 @@ TableOfReal TableOfReal_extractColumnsWhereRow (TableOfReal me, long row, int wh
 		for (long icol = 1; icol <= my numberOfColumns; icol ++)
 			if (Melder_numberMatchesCriterion (my data [row] [icol], which_Melder_NUMBER, criterion))
 				copyColumn (me, icol, thee.peek(), ++ n);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": columns not extracted.");
 	}
 }
 
-TableOfReal TableOfReal_extractColumnsWhereLabel (TableOfReal me, int which_Melder_STRING, const char32 *criterion) {
+autoTableOfReal TableOfReal_extractColumnsWhereLabel (TableOfReal me, int which_Melder_STRING, const char32 *criterion) {
 	try {
 		long n = 0;
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
@@ -446,7 +446,7 @@ TableOfReal TableOfReal_extractColumnsWhereLabel (TableOfReal me, int which_Meld
 				copyColumn (me, icol, thee.peek(), ++ n);
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": columns not extracted.");
 	}
@@ -537,7 +537,7 @@ static long *getElementsOfRanges (const char32 *ranges, long maximumElement, lon
 	return elements.transfer();
 }
 
-TableOfReal TableOfReal_extractRowRanges (TableOfReal me, const char32 *ranges) {
+autoTableOfReal TableOfReal_extractRowRanges (TableOfReal me, const char32 *ranges) {
 	try {
 		long numberOfElements;
 		autoNUMvector <long> elements (getElementsOfRanges (ranges, my numberOfRows, & numberOfElements, U"row"), 1);
@@ -545,13 +545,13 @@ TableOfReal TableOfReal_extractRowRanges (TableOfReal me, const char32 *ranges) 
 		copyColumnLabels (me, thee.peek());
 		for (long ielement = 1; ielement <= numberOfElements; ielement ++)
 			copyRow (me, elements [ielement], thee.peek(), ielement);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": row ranges not extracted.");
 	}
 }
 
-TableOfReal TableOfReal_extractColumnRanges (TableOfReal me, const char32 *ranges) {
+autoTableOfReal TableOfReal_extractColumnRanges (TableOfReal me, const char32 *ranges) {
 	try {
 		long numberOfElements;
 		autoNUMvector <long> elements (getElementsOfRanges (ranges, my numberOfColumns, & numberOfElements, U"column"), 1);
@@ -559,13 +559,13 @@ TableOfReal TableOfReal_extractColumnRanges (TableOfReal me, const char32 *range
 		copyRowLabels (me, thee.peek());
 		for (long ielement = 1; ielement <= numberOfElements; ielement ++)
 			copyColumn (me, elements [ielement], thee.peek(), ielement);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": column ranges not extracted.");
 	}
 }
 
-TableOfReal TableOfReal_extractRowsWhere (TableOfReal me, const char32 *condition, Interpreter interpreter) {
+autoTableOfReal TableOfReal_extractRowsWhere (TableOfReal me, const char32 *condition, Interpreter interpreter) {
 	try {
 		Formula_compile (interpreter, me, condition, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 		/*
@@ -603,13 +603,13 @@ TableOfReal TableOfReal_extractRowsWhere (TableOfReal me, const char32 *conditio
 				}
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": rows not extracted.");
 	}
 }
 
-TableOfReal TableOfReal_extractColumnsWhere (TableOfReal me, const char32 *condition, Interpreter interpreter) {
+autoTableOfReal TableOfReal_extractColumnsWhere (TableOfReal me, const char32 *condition, Interpreter interpreter) {
 	try {
 		Formula_compile (interpreter, me, condition, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 		/*
@@ -647,7 +647,7 @@ TableOfReal TableOfReal_extractColumnsWhere (TableOfReal me, const char32 *condi
 				}
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": columns not extracted.");
 	}
@@ -655,7 +655,7 @@ TableOfReal TableOfReal_extractColumnsWhere (TableOfReal me, const char32 *condi
 
 /***** EXTRACT *****/
 
-Strings TableOfReal_extractRowLabelsAsStrings (TableOfReal me) {
+autoStrings TableOfReal_extractRowLabelsAsStrings (TableOfReal me) {
 	try {
 		autoStrings thee = Thing_new (Strings);
 		thy strings = NUMvector <char32 *> (1, my numberOfRows);
@@ -663,13 +663,13 @@ Strings TableOfReal_extractRowLabelsAsStrings (TableOfReal me) {
 		for (long irow = 1; irow <= my numberOfRows; irow ++) {
 			thy strings [irow] = Melder_dup (my rowLabels [irow] ? my rowLabels [irow] : U"");
 		}
-		return thee.transfer();	
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": row labels not extracted.");
 	}
 }
 
-Strings TableOfReal_extractColumnLabelsAsStrings (TableOfReal me) {
+autoStrings TableOfReal_extractColumnLabelsAsStrings (TableOfReal me) {
 	try {
 		autoStrings thee = Thing_new (Strings);
 		thy strings = NUMvector <char32 *> (1, my numberOfColumns);
@@ -677,7 +677,7 @@ Strings TableOfReal_extractColumnLabelsAsStrings (TableOfReal me) {
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 			thy strings [icol] = Melder_dup (my columnLabels [icol] ? my columnLabels [icol] : U"");
 		}
-		return thee.transfer();	
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": column labels not extracted.");
 	}
@@ -1050,7 +1050,7 @@ void TableOfReal_sortByColumn (TableOfReal me, long column1, long column2) {
 	TableOfReal_sort (me, false, column1, column2);
 }
 
-TableOfReal Table_to_TableOfReal (Table me, long labelColumn) {
+autoTableOfReal Table_to_TableOfReal (Table me, long labelColumn) {
 	try {
 		if (labelColumn < 1 || labelColumn > my numberOfColumns) labelColumn = 0;
 		autoTableOfReal thee = TableOfReal_create (my rows -> size, labelColumn ? my numberOfColumns - 1 : my numberOfColumns);
@@ -1089,13 +1089,13 @@ TableOfReal Table_to_TableOfReal (Table me, long labelColumn) {
 				}
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to TableOfReal.");
 	}
 }
 
-Table TableOfReal_to_Table (TableOfReal me, const char32 *labelOfFirstColumn) {
+autoTable TableOfReal_to_Table (TableOfReal me, const char32 *labelOfFirstColumn) {
 	try {
 		autoTable thee = Table_createWithoutColumnNames (my numberOfRows, my numberOfColumns + 1);
 		Table_setColumnLabel (thee.peek(), 1, labelOfFirstColumn);
@@ -1112,7 +1112,7 @@ Table TableOfReal_to_Table (TableOfReal me, const char32 *labelOfFirstColumn) {
 				row -> cells [icol + 1]. string = Melder_dup (Melder_double (numericValue));
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Table.");
 	}
@@ -1144,7 +1144,7 @@ void TableOfReal_writeToHeaderlessSpreadsheetFile (TableOfReal me, MelderFile fi
 	}
 }
 
-TableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file) {
+autoTableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file) {
 	try {
 		autostring32 string = MelderFile_readText (file);
 		long nrow, ncol, nelements;
@@ -1225,7 +1225,7 @@ TableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file) {
 				my data [irow] [icol] = Melder_atof (buffer.string);   // if cell contains a string, this will be 0
 			}
 		}
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal: tab-separated file ", file, U" not read.");
 	}

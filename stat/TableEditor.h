@@ -47,7 +47,7 @@ Thing_define (TableEditor, Editor) {
 	virtual int v_click (double xWC, double yWC, bool shiftKeyPressed);
 };
 
-TableEditor TableEditor_create (const char32 *title, Table table);
+autoTableEditor TableEditor_create (const char32 *title, Table table);
 
 /* End of file TableEditor.h */
 #endif

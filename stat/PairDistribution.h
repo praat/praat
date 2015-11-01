@@ -27,8 +27,8 @@
 oo_CLASS_CREATE (PairProbability, Daata);
 oo_CLASS_CREATE (PairDistribution, Daata);
 
-PairProbability PairProbability_create (const char32 *string1, const char32 *string2, double weight);
-PairDistribution PairDistribution_create ();
+autoPairProbability PairProbability_create (const char32 *string1, const char32 *string2, double weight);
+autoPairDistribution PairDistribution_create ();
 
 const char32 * PairDistribution_getString1 (PairDistribution me, long pairNumber);
 const char32 * PairDistribution_getString2 (PairDistribution me, long pairNumber);
@@ -36,7 +36,7 @@ double PairDistribution_getWeight (PairDistribution me, long pairNumber);
 
 void PairDistribution_add (PairDistribution me, const char32 *string1, const char32 *string2, double weight);
 void PairDistribution_removeZeroWeights (PairDistribution me);
-void PairDistribution_to_Stringses (PairDistribution me, long nout, Strings *strings1, Strings *strings2);
+void PairDistribution_to_Stringses (PairDistribution me, long nout, autoStrings *strings1, autoStrings *strings2);
 void PairDistribution_peekPair (PairDistribution me, char32 **string1, char32 **string2);
 
 void PairDistribution_swapInputsAndOutputs (PairDistribution me);
@@ -45,7 +45,7 @@ double PairDistribution_getFractionCorrect_maximumLikelihood (PairDistribution m
 double PairDistribution_getFractionCorrect_probabilityMatching (PairDistribution me);
 double PairDistribution_Distributions_getFractionCorrect (PairDistribution me, Distributions thee, long column);
 
-Table PairDistribution_to_Table (PairDistribution me);
+autoTable PairDistribution_to_Table (PairDistribution me);
 
 /* End of file PairDistribution.h */
 #endif

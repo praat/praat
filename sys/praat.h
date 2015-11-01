@@ -375,7 +375,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				int IOBJECT = 0; \
 				structMelderFile file2 = { 0 }; \
 				(void) IOBJECT; \
-				if (args == NULL && sendingString == NULL) { \
+				if (! args && ! sendingString) { \
 					file = UiFile_getFile (dia); \
 				} else { \
 					Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); \
@@ -395,7 +395,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				int IOBJECT = 0; \
 				structMelderFile file2 = { 0 }; \
 				(void) IOBJECT; \
-				if (args == NULL && sendingString == NULL) { \
+				if (! args && ! sendingString) { \
 					file = UiFile_getFile (dia); \
 				} else { \
 					Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); \
@@ -416,7 +416,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				int IOBJECT = 0; \
 				structMelderFile file2 = { 0 }; \
 				(void) IOBJECT; \
-				if (args == NULL && sendingString == NULL) { \
+				if (! args && ! sendingString) { \
 					file = UiFile_getFile (dia); \
 				} else { \
 					Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); \

@@ -252,7 +252,7 @@ autoMatrix Matrix_readFromRawTextFile (MelderFile file);
 autoMatrix Matrix_readAP (MelderFile file);
 autoMatrix Matrix_appendRows (Matrix me, Matrix thee, ClassInfo klas);
 
-void Matrix_eigen (Matrix me, Matrix *eigenvectors, Matrix *eigenvalues);
+void Matrix_eigen (Matrix me, autoMatrix *eigenvectors, autoMatrix *eigenvalues);
 autoMatrix Matrix_power (Matrix me, long power);
 
 void Matrix_scaleAbsoluteExtremum (Matrix me, double scale);

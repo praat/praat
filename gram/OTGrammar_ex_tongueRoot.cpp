@@ -56,7 +56,7 @@ static void OTGrammarCandidate_init (OTGrammarCandidate me, int ncons, int v1, i
 	if (isatr (v1) != isatr (v2)) my marks [5] ++;
 }
 
-OTGrammar OTGrammar_create_tongueRoot_grammar (int small_large, int equal_random_infant_Wolof) {
+autoOTGrammar OTGrammar_create_tongueRoot_grammar (int small_large, int equal_random_infant_Wolof) {
 	try {
 		int ncons = small_large == 1 ? 5 : 9, itab, v1, v2;
 		autoOTGrammar me = Thing_new (OTGrammar);
@@ -143,7 +143,7 @@ OTGrammar OTGrammar_create_tongueRoot_grammar (int small_large, int equal_random
 		OTGrammar_newDisharmonies (me.peek(), 0.0);
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++)
 			my constraints [icons]. plasticity = 1.0;
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Tongue root grammar not created.");
 	}

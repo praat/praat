@@ -156,9 +156,7 @@ static void Transition_transpose (Transition me) {
 	}
 }
 
-void Transition_eigen (Transition me, Matrix *out_eigenvectors, Matrix *out_eigenvalues) {
-	*out_eigenvectors = NULL;
-	*out_eigenvalues = NULL;
+void Transition_eigen (Transition me, autoMatrix *out_eigenvectors, autoMatrix *out_eigenvalues) {
 	bool transposed = false;
 	try {
 		autoEigen eigen = Thing_new (Eigen);
@@ -173,8 +171,8 @@ void Transition_eigen (Transition me, Matrix *out_eigenvectors, Matrix *out_eige
 			for (long j = 1; j <= my numberOfStates; j ++)
 				eigenvectors -> z [i] [j] = eigen -> eigenvectors [j] [i];
 		}
-		*out_eigenvectors = eigenvectors.transfer();
-		*out_eigenvalues = eigenvalues.transfer();
+		*out_eigenvectors = eigenvectors.move();
+		*out_eigenvalues = eigenvalues.move();
 	} catch (MelderError) {
 		if (transposed)
 			Transition_transpose (me);

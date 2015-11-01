@@ -30,7 +30,7 @@ oo_END_CLASS (ERPPoint)
 #define ooSTRUCT ERPTier
 oo_DEFINE_CLASS (ERPTier, Function)
 
-	oo_COLLECTION (SortedSetOfDouble, events, ERPPoint, 0)
+	oo_AUTO_COLLECTION (SortedSetOfDouble, events, ERPPoint, 0)
 
 	oo_LONG (numberOfChannels)
 	oo_STRING_VECTOR (channelNames, numberOfChannels)

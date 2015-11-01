@@ -1,6 +1,6 @@
 /* Distributions_and_Strings.h
  *
- * Copyright (C) 1997-2011 Paul Boersma
+ * Copyright (C) 1997-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 #include "Distributions.h"
 #include "Strings_.h"
 
-Strings Distributions_to_Strings (Distributions me, long column, long numberOfStrings);
-Strings Distributions_to_Strings_exact (Distributions me, long column);
-Distributions Strings_to_Distributions (Strings me);
+autoStrings Distributions_to_Strings (Distributions me, long column, long numberOfStrings);
+autoStrings Distributions_to_Strings_exact (Distributions me, long column);
+autoDistributions Strings_to_Distributions (Strings me);
 
 /* End of file Distributions_and_Strings.h */

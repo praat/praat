@@ -44,21 +44,21 @@ static const char32 * Table_messageColumn (Table me, long column) {
 DIRECT2 (Distributionses_add) {
 	autoCollection me = praat_getSelectedObjects ();
 	autoDistributions thee = Distributions_addMany (me.peek());
-	praat_new (thee.transfer(), U"added");
+	praat_new (thee.move(), U"added");
 END2 }
 
-FORM (Distributionses_getMeanAbsoluteDifference, U"Get mean difference", 0) {
+FORM (Distributionses_getMeanAbsoluteDifference, U"Get mean difference", nullptr) {
 	NATURAL (U"Column number", U"1")
 	OK2
 DO
-	Distributions me = NULL, thee = NULL;
+	Distributions me = nullptr, thee = nullptr;
 	LOOP {
 		(me ? thee : me) = (Distributions) OBJECT;
 	}
 	Melder_informationReal (Distributionses_getMeanAbsoluteDifference (me, thee, GET_INTEGER (U"Column number")), NULL);
 END2 }
 
-FORM (Distributions_getProbability, U"Get probability", 0) {
+FORM (Distributions_getProbability, U"Get probability", nullptr) {
 	NATURAL (U"Column number", U"1")
 	SENTENCE (U"String", U"")
 	OK2
@@ -66,7 +66,7 @@ DO
 	LOOP {
 		iam (Distributions);
 		double probability = Distributions_getProbability (me, GET_STRING (U"String"), GET_INTEGER (U"Column number"));
-		Melder_informationReal (probability, NULL);
+		Melder_informationReal (probability, nullptr);
 	}
 END2 }
 
@@ -74,7 +74,7 @@ DIRECT2 (Distributions_help) {
 	Melder_help (U"Distributions");
 END2 }
 
-FORM (Distributions_to_Strings, U"To Strings", 0) {
+FORM (Distributions_to_Strings, U"To Strings", nullptr) {
 	NATURAL (U"Column number", U"1")
 	NATURAL (U"Number of strings", U"1000")
 	OK2
@@ -82,18 +82,18 @@ DO
 	LOOP {
 		iam (Distributions);
 		autoStrings thee = Distributions_to_Strings (me, GET_INTEGER (U"Column number"), GET_INTEGER (U"Number of strings"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
-FORM (Distributions_to_Strings_exact, U"To Strings (exact)", 0) {
+FORM (Distributions_to_Strings_exact, U"To Strings (exact)", nullptr) {
 	NATURAL (U"Column number", U"1")
 	OK2
 DO
 	LOOP {
 		iam (Distributions);
 		autoStrings thee = Distributions_to_Strings_exact (me, GET_INTEGER (U"Column number"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -101,14 +101,14 @@ END2 }
 #pragma mark -
 #pragma mark LOGISTICREGRESSION
 
-FORM (LogisticRegression_drawBoundary, U"LogisticRegression: Draw boundary", 0) {
+FORM (LogisticRegression_drawBoundary, U"LogisticRegression: Draw boundary", nullptr) {
 	WORD (U"Horizontal factor", U"")
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0 (= auto)")
 	WORD (U"Vertical factor", U"")
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0 (= auto)")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	autoPraatPicture picture;
@@ -131,7 +131,7 @@ DIRECT2 (PairDistribution_getFractionCorrect_maximumLikelihood) {
 	LOOP {
 		iam (PairDistribution);
 		double fractionCorrect = PairDistribution_getFractionCorrect_maximumLikelihood (me);
-		Melder_informationReal (fractionCorrect, NULL);
+		Melder_informationReal (fractionCorrect, nullptr);
 	}
 END2 }
 
@@ -139,7 +139,7 @@ DIRECT2 (PairDistribution_getFractionCorrect_probabilityMatching) {
 	LOOP {
 		iam (PairDistribution);
 		double fractionCorrect = PairDistribution_getFractionCorrect_probabilityMatching (me);
-		Melder_informationReal (fractionCorrect, NULL);
+		Melder_informationReal (fractionCorrect, nullptr);
 	}
 END2 }
 
@@ -150,7 +150,7 @@ DIRECT2 (PairDistribution_getNumberOfPairs) {
 	}
 END2 }
 
-FORM (PairDistribution_getString1, U"Get string1", 0) {
+FORM (PairDistribution_getString1, U"Get string1", nullptr) {
 	NATURAL (U"Pair number", U"1")
 	OK2
 DO
@@ -161,7 +161,7 @@ DO
 	}
 END2 }
 
-FORM (PairDistribution_getString2, U"Get string2", 0) {
+FORM (PairDistribution_getString2, U"Get string2", nullptr) {
 	NATURAL (U"Pair number", U"1")
 	OK2
 DO
@@ -172,7 +172,7 @@ DO
 	}
 END2 }
 
-FORM (PairDistribution_getWeight, U"Get weight", 0) {
+FORM (PairDistribution_getWeight, U"Get weight", nullptr) {
 	NATURAL (U"Pair number", U"1")
 	OK2
 DO
@@ -203,7 +203,7 @@ DIRECT2 (PairDistribution_swapInputsAndOutputs) {
 	}
 END2 }
 
-FORM (PairDistribution_to_Stringses, U"Generate two Strings objects", 0) {
+FORM (PairDistribution_to_Stringses, U"Generate two Strings objects", nullptr) {
 	NATURAL (U"Number", U"1000")
 	SENTENCE (U"Name of first Strings", U"input")
 	SENTENCE (U"Name of second Strings", U"output")
@@ -211,11 +211,10 @@ FORM (PairDistribution_to_Stringses, U"Generate two Strings objects", 0) {
 DO
 	LOOP {
 		iam (PairDistribution);
-		Strings strings1_, strings2_;
-		PairDistribution_to_Stringses (me, GET_INTEGER (U"Number"), & strings1_, & strings2_);
-		autoStrings strings1 = strings1_, strings2 = strings2_;   // UGLY
-		praat_new (strings1.transfer(), GET_STRING (U"Name of first Strings"));
-		praat_new (strings2.transfer(), GET_STRING (U"Name of second Strings"));
+		autoStrings strings1, strings2;
+		PairDistribution_to_Stringses (me, GET_INTEGER (U"Number"), & strings1, & strings2);
+		praat_new (strings1.move(), GET_STRING (U"Name of first Strings"));
+		praat_new (strings2.move(), GET_STRING (U"Name of second Strings"));
 	}
 END2 }
 
@@ -223,7 +222,7 @@ DIRECT2 (PairDistribution_to_Table) {
 	LOOP {
 		iam (PairDistribution);
 		autoTable thee = PairDistribution_to_Table (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -231,7 +230,7 @@ END2 }
 #pragma mark -
 #pragma mark PAIRDISTRIBUTION & DISTRIBUTIONS
 
-FORM (PairDistribution_Distributions_getFractionCorrect, U"PairDistribution & Distributions: Get fraction correct", 0) {
+FORM (PairDistribution_Distributions_getFractionCorrect, U"PairDistribution & Distributions: Get fraction correct", nullptr) {
 	NATURAL (U"Column", U"1")
 	OK2
 DO
@@ -257,10 +256,10 @@ DIRECT2 (Tables_append) {
 		Collection_addItem (collection.peek(), me);
 	}
 	autoTable thee = Tables_append (collection.peek());
-	praat_new (thee.transfer(), U"appended");
+	praat_new (thee.move(), U"appended");
 END2 }
 
-FORM (Table_appendColumn, U"Table: Append column", 0) {
+FORM (Table_appendColumn, U"Table: Append column", nullptr) {
 	WORD (U"Label", U"newcolumn")
 	OK2
 DO
@@ -271,7 +270,7 @@ DO
 	}
 END2 }
 
-FORM (Table_appendDifferenceColumn, U"Table: Append difference column", 0) {
+FORM (Table_appendDifferenceColumn, U"Table: Append difference column", nullptr) {
 	WORD (U"left Columns", U"")
 	WORD (U"right Columns", U"")
 	WORD (U"Label", U"diff")
@@ -286,7 +285,7 @@ DO
 	}
 END2 }
 
-FORM (Table_appendProductColumn, U"Table: Append product column", 0) {
+FORM (Table_appendProductColumn, U"Table: Append product column", nullptr) {
 	WORD (U"left Columns", U"")
 	WORD (U"right Columns", U"")
 	WORD (U"Label", U"diff")
@@ -301,7 +300,7 @@ DO
 	}
 END2 }
 
-FORM (Table_appendQuotientColumn, U"Table: Append quotient column", 0) {
+FORM (Table_appendQuotientColumn, U"Table: Append quotient column", nullptr) {
 	WORD (U"left Columns", U"")
 	WORD (U"right Columns", U"")
 	WORD (U"Label", U"diff")
@@ -316,7 +315,7 @@ DO
 	}
 END2 }
 
-FORM (Table_appendSumColumn, U"Table: Append sum column", 0) {
+FORM (Table_appendSumColumn, U"Table: Append sum column", nullptr) {
 	WORD (U"left Columns", U"")
 	WORD (U"right Columns", U"")
 	WORD (U"Label", U"diff")
@@ -339,7 +338,7 @@ DIRECT2 (Table_appendRow) {
 	}
 END2 }
 
-FORM (Table_collapseRows, U"Table: Collapse rows", 0) {
+FORM (Table_collapseRows, U"Table: Collapse rows", nullptr) {
 	LABEL (U"", U"Columns with factors (independent variables):")
 	TEXTFIELD (U"factors", U"speaker dialect age vowel")
 	LABEL (U"", U"Columns to sum:")
@@ -361,11 +360,11 @@ DO
 			GET_STRING (U"factors"), GET_STRING (U"columnsToSum"),
 			GET_STRING (U"columnsToAverage"), GET_STRING (U"columnsToMedianize"),
 			GET_STRING (U"columnsToAverageLogarithmically"), GET_STRING (U"columnsToMedianizeLogarithmically"));
-		praat_new (thee.transfer(), my name, U"_pooled");
+		praat_new (thee.move(), my name, U"_pooled");
 	}
 END2 }
 
-FORM (Table_createWithColumnNames, U"Create Table with column names", 0) {
+FORM (Table_createWithColumnNames, U"Create Table with column names", nullptr) {
 	WORD (U"Name", U"table")
 	INTEGER (U"Number of rows", U"10")
 	LABEL (U"", U"Column names:")
@@ -373,20 +372,20 @@ FORM (Table_createWithColumnNames, U"Create Table with column names", 0) {
 	OK2
 DO
 	autoTable me = Table_createWithColumnNames (GET_INTEGER (U"Number of rows"), GET_STRING (U"columnNames"));
-	praat_new (me.transfer(), GET_STRING (U"Name"));
+	praat_new (me.move(), GET_STRING (U"Name"));
 END2 }
 
-FORM (Table_createWithoutColumnNames, U"Create Table without column names", 0) {
+FORM (Table_createWithoutColumnNames, U"Create Table without column names", nullptr) {
 	WORD (U"Name", U"table")
 	INTEGER (U"Number of rows", U"10")
 	NATURAL (U"Number of columns", U"3")
 	OK2
 DO
 	autoTable me = Table_createWithoutColumnNames (GET_INTEGER (U"Number of rows"), GET_INTEGER (U"Number of columns"));
-	praat_new (me.transfer(), GET_STRING (U"Name"));
+	praat_new (me.move(), GET_STRING (U"Name"));
 END2 }
 
-FORM (Table_drawEllipse, U"Draw ellipse (standard deviation)", 0) {
+FORM (Table_drawEllipse, U"Draw ellipse (standard deviation)", nullptr) {
 	WORD (U"Horizontal column", U"")
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0 (= auto)")
@@ -409,7 +408,7 @@ DO
 	}
 END2 }
 
-FORM (Table_drawRowFromDistribution, U"Table: Draw row from distribution", 0) {
+FORM (Table_drawRowFromDistribution, U"Table: Draw row from distribution", nullptr) {
 	WORD (U"Column with distribution", U"")
 	OK2
 DO
@@ -430,7 +429,7 @@ DIRECT2 (Table_edit) {
 	}
 END2 }
 
-FORM (Table_extractRowsWhereColumn_number, U"Table: Extract rows where column (number)", 0) {
+FORM (Table_extractRowsWhereColumn_number, U"Table: Extract rows where column (number)", nullptr) {
 	WORD (U"Extract all rows where column...", U"")
 	RADIO_ENUM (U"...is...", kMelder_number, DEFAULT)
 	REAL (U"...the number", U"0.0")
@@ -441,12 +440,12 @@ DO
 		iam (Table);
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Extract all rows where column..."));
 		autoTable thee = Table_extractRowsWhereColumn_number (me, icol, GET_ENUM (kMelder_number, U"...is..."), value);
-		praat_new (thee.transfer(), my name, U"_", Table_messageColumn (static_cast <Table> OBJECT, icol), U"_", NUMdefined (value) ? Melder_integer (lround (value)) : U"undefined");
+		praat_new (thee.move(), my name, U"_", Table_messageColumn (static_cast <Table> OBJECT, icol), U"_", NUMdefined (value) ? Melder_integer (lround (value)) : U"undefined");
 		praat_dataChanged (me);   // WHY?
 	}
 END2 }
 
-FORM (Table_extractRowsWhereColumn_text, U"Table: Extract rows where column (text)", 0) {
+FORM (Table_extractRowsWhereColumn_text, U"Table: Extract rows where column (text)", nullptr) {
 	WORD (U"Extract all rows where column...", U"")
 	OPTIONMENU_ENUM (U"...", kMelder_string, DEFAULT)
 	SENTENCE (U"...the text", U"hi")
@@ -457,7 +456,7 @@ DO
 		iam (Table);
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Extract all rows where column..."));
 		autoTable thee = Table_extractRowsWhereColumn_string (me, icol, GET_ENUM (kMelder_string, U"..."), value);
-		praat_new (thee.transfer(), my name, U"_", value);
+		praat_new (thee.move(), my name, U"_", value);
 		praat_dataChanged (me);   // WHY?
 	}
 END2 }
@@ -500,7 +499,7 @@ DO
 	}
 END2 }
 
-FORM (Table_getColumnIndex, U"Table: Get column index", 0) {
+FORM (Table_getColumnIndex, U"Table: Get column index", nullptr) {
 	SENTENCE (U"Column label", U"")
 	OK2
 DO
@@ -510,7 +509,7 @@ DO
 	}
 END2 }
 
-FORM (Table_getColumnLabel, U"Table: Get column label", 0) {
+FORM (Table_getColumnLabel, U"Table: Get column label", nullptr) {
 	NATURAL (U"Column number", U"1")
 	OK2
 DO
@@ -522,7 +521,7 @@ DO
 	}
 END2 }
 
-FORM (Table_getGroupMean, U"Table: Get group mean", 0) {
+FORM (Table_getGroupMean, U"Table: Get group mean", nullptr) {
 	WORD (U"Column label", U"salary")
 	WORD (U"Group column", U"gender")
 	SENTENCE (U"Group", U"F")
@@ -536,7 +535,7 @@ DO
 	}
 END2 }
 
-FORM (Table_getMaximum, U"Table: Get maximum", 0) {
+FORM (Table_getMaximum, U"Table: Get maximum", nullptr) {
 	SENTENCE (U"Column label", U"")
 	OK2
 DO
@@ -548,7 +547,7 @@ DO
 	}
 END2 }
 
-FORM (Table_getMean, U"Table: Get mean", 0) {
+FORM (Table_getMean, U"Table: Get mean", nullptr) {
 	SENTENCE (U"Column label", U"")
 	OK2
 DO
@@ -560,7 +559,7 @@ DO
 	}
 END2 }
 
-FORM (Table_getMinimum, U"Table: Get minimum", 0) {
+FORM (Table_getMinimum, U"Table: Get minimum", nullptr) {
 	SENTENCE (U"Column label", U"")
 	OK2
 DO
@@ -572,7 +571,7 @@ DO
 	}
 END2 }
 
-FORM (Table_getQuantile, U"Table: Get quantile", 0) {
+FORM (Table_getQuantile, U"Table: Get quantile", nullptr) {
 	SENTENCE (U"Column label", U"")
 	POSITIVE (U"Quantile", U"0.50 (= median)")
 	OK2
@@ -585,7 +584,7 @@ DO
 	}
 END2 }
 
-FORM (Table_getStandardDeviation, U"Table: Get standard deviation", 0) {
+FORM (Table_getStandardDeviation, U"Table: Get standard deviation", nullptr) {
 	SENTENCE (U"Column label", U"")
 	OK2
 DO
@@ -611,7 +610,7 @@ DIRECT2 (Table_getNumberOfRows) {
 	}
 END2 }
 
-FORM (Table_getValue, U"Table: Get value", 0) {
+FORM (Table_getValue, U"Table: Get value", nullptr) {
 	NATURAL (U"Row number", U"1")
 	WORD (U"Column label", U"")
 	OK2
@@ -629,7 +628,7 @@ DIRECT2 (Table_help) {
 	Melder_help (U"Table");
 END2 }
 
-FORM (Table_insertColumn, U"Table: Insert column", 0) {
+FORM (Table_insertColumn, U"Table: Insert column", nullptr) {
 	NATURAL (U"Position", U"1")
 	WORD (U"Label", U"newcolumn")
 	OK2
@@ -641,7 +640,7 @@ DO
 	}
 END2 }
 
-FORM (Table_insertRow, U"Table: Insert row", 0) {
+FORM (Table_insertRow, U"Table: Insert row", nullptr) {
 	NATURAL (U"Position", U"1")
 	OK2
 DO
@@ -652,7 +651,7 @@ DO
 	}
 END2 }
 
-FORM (Table_list, U"Table: List", 0) {
+FORM (Table_list, U"Table: List", nullptr) {
 	BOOLEAN (U"Include row numbers", true)
 	OK2
 DO
@@ -662,19 +661,22 @@ DO
 	}
 END2 }
 
-FORM_READ2 (Table_readFromTableFile, U"Read Table from table file", 0, true) {
-	praat_newWithFile (Table_readFromTableFile (file), file, MelderFile_name (file));
+FORM_READ2 (Table_readFromTableFile, U"Read Table from table file", nullptr, true) {
+	autoTable me = Table_readFromTableFile (file);
+	praat_newWithFile (me.move(), file, MelderFile_name (file));
 END2 }
 
-FORM_READ2 (Table_readFromCommaSeparatedFile, U"Read Table from comma-separated file", 0, true) {
-	praat_newWithFile (Table_readFromCharacterSeparatedTextFile (file, ','), file, MelderFile_name (file));
+FORM_READ2 (Table_readFromCommaSeparatedFile, U"Read Table from comma-separated file", nullptr, true) {
+	autoTable me = Table_readFromCharacterSeparatedTextFile (file, U',');
+	praat_newWithFile (me.move(), file, MelderFile_name (file));
 END2 }
 
-FORM_READ2 (Table_readFromTabSeparatedFile, U"Read Table from tab-separated file", 0, true) {
-	praat_newWithFile (Table_readFromCharacterSeparatedTextFile (file, '\t'), file, MelderFile_name (file));
+FORM_READ2 (Table_readFromTabSeparatedFile, U"Read Table from tab-separated file", nullptr, true) {
+	autoTable me = Table_readFromCharacterSeparatedTextFile (file, U'\t');
+	praat_newWithFile (me.move(), file, MelderFile_name (file));
 END2 }
 
-FORM (Table_removeColumn, U"Table: Remove column", 0) {
+FORM (Table_removeColumn, U"Table: Remove column", nullptr) {
 	WORD (U"Column label", U"")
 	OK2
 DO
@@ -686,7 +688,7 @@ DO
 	}
 END2 }
 
-FORM (Table_removeRow, U"Table: Remove row", 0) {
+FORM (Table_removeRow, U"Table: Remove row", nullptr) {
 	NATURAL (U"Row number", U"1")
 	OK2
 DO
@@ -916,11 +918,11 @@ DO
 		iam (Table);
 		long icol = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		autoTable thee = Table_rowsToColumns (me, GET_STRING (U"factors"), icol, GET_STRING (U"columnsToExpand"));
-		praat_new (thee.transfer(), NAME, U"_nested");
+		praat_new (thee.move(), NAME, U"_nested");
 	}
 END2 }
 
-FORM (Table_scatterPlot, U"Scatter plot", 0) {
+FORM (Table_scatterPlot, U"Scatter plot", nullptr) {
 	WORD (U"Horizontal column", U"")
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0 (= auto)")
@@ -929,7 +931,7 @@ FORM (Table_scatterPlot, U"Scatter plot", 0) {
 	REAL (U"right Vertical range", U"0.0 (= auto)")
 	WORD (U"Column with marks", U"")
 	NATURAL (U"Font size", U"12")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	autoPraatPicture picture;
@@ -945,7 +947,7 @@ DO
 	}
 END2 }
 
-FORM (Table_scatterPlot_mark, U"Scatter plot (marks)", 0) {
+FORM (Table_scatterPlot_mark, U"Scatter plot (marks)", nullptr) {
 	WORD (U"Horizontal column", U"")
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0 (= auto)")
@@ -953,7 +955,7 @@ FORM (Table_scatterPlot_mark, U"Scatter plot (marks)", 0) {
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0 (= auto)")
 	POSITIVE (U"Mark size (mm)", U"1.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	SENTENCE (U"Mark string (+xo.)", U"+")
 	OK2
 DO
@@ -969,7 +971,7 @@ DO
 	}
 END2 }
 
-FORM (Table_searchColumn, U"Table: Search column", 0) {
+FORM (Table_searchColumn, U"Table: Search column", nullptr) {
 	WORD (U"Column label", U"")
 	WORD (U"Value", U"")
 	OK2
@@ -981,7 +983,7 @@ DO
 	}
 END2 }
 	
-FORM (Table_setColumnLabel_index, U"Set column label", 0) {
+FORM (Table_setColumnLabel_index, U"Set column label", nullptr) {
 	NATURAL (U"Column number", U"1")
 	SENTENCE (U"Label", U"")
 	OK2
@@ -993,7 +995,7 @@ DO
 	}
 END2 }
 
-FORM (Table_setColumnLabel_label, U"Set column label", 0) {
+FORM (Table_setColumnLabel_label, U"Set column label", nullptr) {
 	SENTENCE (U"Old label", U"")
 	SENTENCE (U"New label", U"")
 	OK2
@@ -1005,7 +1007,7 @@ DO
 	}
 END2 }
 
-FORM (Table_setNumericValue, U"Table: Set numeric value", 0) {
+FORM (Table_setNumericValue, U"Table: Set numeric value", nullptr) {
 	NATURAL (U"Row number", U"1")
 	WORD (U"Column label", U"")
 	REAL_OR_UNDEFINED (U"Numeric value", U"1.5")
@@ -1019,7 +1021,7 @@ DO
 	}
 END2 }
 
-FORM (Table_setStringValue, U"Table: Set string value", 0) {
+FORM (Table_setStringValue, U"Table: Set string value", nullptr) {
 	NATURAL (U"Row number", U"1")
 	WORD (U"Column label", U"")
 	SENTENCE (U"String value", U"xx")
@@ -1049,7 +1051,7 @@ DIRECT2 (Table_reflectRows) {
 	}
 END2 }
 
-FORM (Table_sortRows, U"Table: Sort rows", 0) {
+FORM (Table_sortRows, U"Table: Sort rows", nullptr) {
 	LABEL (U"", U"One or more column labels for sorting:")
 	TEXTFIELD (U"columnLabels", U"dialect gender name")
 	OK2
@@ -1065,11 +1067,11 @@ DIRECT2 (Table_to_LinearRegression) {
 	LOOP {
 		iam (Table);
 		autoLinearRegression thee = Table_to_LinearRegression (me);
-		praat_new (thee.transfer(), NAME);
+		praat_new (thee.move(), NAME);
 	}
 END2 }
 
-FORM (Table_to_LogisticRegression, U"Table: To LogisticRegression", 0) {
+FORM (Table_to_LogisticRegression, U"Table: To LogisticRegression", nullptr) {
 	LABEL (U"", U"Factors (column names):")
 	TEXTFIELD (U"factors", U"F0 F1 duration")
 	WORD (U"Dependent 1 (column name)", U"e")
@@ -1079,11 +1081,11 @@ DO
 	LOOP {
 		iam (Table);
 		autoLogisticRegression thee = Table_to_LogisticRegression (me, GET_STRING (U"factors"), GET_STRING (U"Dependent 1"), GET_STRING (U"Dependent 2"));
-		praat_new (thee.transfer(), NAME);
+		praat_new (thee.move(), NAME);
 	}
 END2 }
 
-FORM (Table_to_TableOfReal, U"Table: Down to TableOfReal", 0) {
+FORM (Table_to_TableOfReal, U"Table: Down to TableOfReal", nullptr) {
 	WORD (U"Column for row labels", U"")
 	OK2
 DO
@@ -1091,7 +1093,7 @@ DO
 		iam (Table);
 		long icol = Table_findColumnIndexFromColumnLabel (me, GET_STRING (U"Column for row labels"));
 		autoTableOfReal thee = Table_to_TableOfReal (me, icol);
-		praat_new (thee.transfer(), NAME);
+		praat_new (thee.move(), NAME);
 	}
 END2 }
 
@@ -1099,7 +1101,7 @@ DIRECT2 (Table_transpose) {
 	LOOP {
 		iam (Table);
 		autoTable thee = Table_transpose (me);
-		praat_new (thee.transfer(), NAME, U"_transposed");
+		praat_new (thee.move(), NAME, U"_transposed");
 	}
 END2 }
 
@@ -1129,20 +1131,20 @@ DIRECT2 (TablesOfReal_append) {
 		Collection_addItem (tables.peek(), me);
 	}
 	autoTableOfReal thee = static_cast <TableOfReal> (TablesOfReal_appendMany (tables.peek()));
-	praat_new (thee.transfer(), U"appended");
+	praat_new (thee.move(), U"appended");
 END2 }
 
-FORM (TableOfReal_create, U"Create TableOfReal", 0) {
+FORM (TableOfReal_create, U"Create TableOfReal", nullptr) {
 	WORD (U"Name", U"table")
 	NATURAL (U"Number of rows", U"10")
 	NATURAL (U"Number of columns", U"3")
 	OK2
 DO
 	autoTableOfReal me = TableOfReal_create (GET_INTEGER (U"Number of rows"), GET_INTEGER (U"Number of columns"));
-	praat_new (me.transfer(), GET_STRING (U"Name"));
+	praat_new (me.move(), GET_STRING (U"Name"));
 END2 }
 
-FORM (TableOfReal_drawAsNumbers, U"Draw as numbers", 0) {
+FORM (TableOfReal_drawAsNumbers, U"Draw as numbers", nullptr) {
 	NATURAL (U"From row", U"1")
 	INTEGER (U"To row", U"0 (= all)")
 	RADIO (U"Format", 3)
@@ -1162,7 +1164,7 @@ DO
 	}
 END2 }
 
-FORM (TableOfReal_drawAsNumbers_if, U"Draw as numbers if...", 0) {
+FORM (TableOfReal_drawAsNumbers_if, U"Draw as numbers if...", nullptr) {
 	NATURAL (U"From row", U"1")
 	INTEGER (U"To row", U"0 (= all)")
 	RADIO (U"Format", 3)
@@ -1184,7 +1186,7 @@ DO
 	}
 END2 }
 
-FORM (TableOfReal_drawAsSquares, U"Draw table as squares", 0) {
+FORM (TableOfReal_drawAsSquares, U"Draw table as squares", nullptr) {
 	INTEGER (U"From row", U"1")
 	INTEGER (U"To row", U"0")
 	INTEGER (U"From column", U"1")
@@ -1202,7 +1204,7 @@ DO
 	}
 END2 }
 
-FORM (TableOfReal_drawHorizontalLines, U"Draw horizontal lines", 0) {
+FORM (TableOfReal_drawHorizontalLines, U"Draw horizontal lines", nullptr) {
 	NATURAL (U"From row", U"1")
 	INTEGER (U"To row", U"0 (= all)")
 	OK2
@@ -1214,7 +1216,7 @@ DO
 	}
 END2 }
 
-FORM (TableOfReal_drawLeftAndRightLines, U"Draw left and right lines", 0) {
+FORM (TableOfReal_drawLeftAndRightLines, U"Draw left and right lines", nullptr) {
 	NATURAL (U"From row", U"1")
 	INTEGER (U"To row", U"0 (= all)")
 	OK2
@@ -1226,7 +1228,7 @@ DO
 	}
 END2 }
 
-FORM (TableOfReal_drawTopAndBottomLines, U"Draw top and bottom lines", 0) {
+FORM (TableOfReal_drawTopAndBottomLines, U"Draw top and bottom lines", nullptr) {
 	NATURAL (U"From row", U"1")
 	INTEGER (U"To row", U"0 (= all)")
 	OK2
@@ -1238,7 +1240,7 @@ DO
 	}
 END2 }
 
-FORM (TableOfReal_drawVerticalLines, U"Draw vertical lines", 0) {
+FORM (TableOfReal_drawVerticalLines, U"Draw vertical lines", nullptr) {
 	NATURAL (U"From row", U"1")
 	INTEGER (U"To row", U"0 (= all)")
 	OK2
@@ -1254,11 +1256,11 @@ DIRECT2 (TableOfReal_extractColumnLabelsAsStrings) {
 	LOOP {
 		iam (TableOfReal);
 		autoStrings thee = TableOfReal_extractColumnLabelsAsStrings (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
-FORM (TableOfReal_extractColumnRanges, U"Extract column ranges", 0) {
+FORM (TableOfReal_extractColumnRanges, U"Extract column ranges", nullptr) {
 	LABEL (U"", U"Create a new TableOfReal from the following columns:")
 	TEXTFIELD (U"ranges", U"1 2")
 	LABEL (U"", U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
@@ -1267,11 +1269,11 @@ DO
 	LOOP {
 		iam (TableOfReal);
 		autoTableOfReal thee = TableOfReal_extractColumnRanges (me, GET_STRING (U"ranges"));
-		praat_new (thee.transfer(), my name, U"_cols");
+		praat_new (thee.move(), my name, U"_cols");
 	}
 END2 }
 
-FORM (TableOfReal_extractColumnsWhere, U"Extract columns where", 0) {
+FORM (TableOfReal_extractColumnsWhere, U"Extract columns where", nullptr) {
 	LABEL (U"", U"Extract all columns with at least one cell where:")
 	TEXTFIELD (U"condition", U"col mod 3 = 0 ; this example extracts every third column")
 	OK2
@@ -1279,11 +1281,11 @@ DO
 	LOOP {
 		iam (TableOfReal);
 		autoTableOfReal thee = TableOfReal_extractColumnsWhere (me, GET_STRING (U"condition"), interpreter);
-		praat_new (thee.transfer(), my name, U"_cols");
+		praat_new (thee.move(), my name, U"_cols");
 	}
 END2 }
 
-FORM (TableOfReal_extractColumnsWhereLabel, U"Extract column where label", 0) {
+FORM (TableOfReal_extractColumnsWhereLabel, U"Extract column where label", nullptr) {
 	OPTIONMENU_ENUM (U"Extract all columns whose label...", kMelder_string, DEFAULT)
 	SENTENCE (U"...the text", U"a")
 	OK2
@@ -1292,11 +1294,11 @@ DO
 	LOOP {
 		iam (TableOfReal);
 		autoTableOfReal thee = TableOfReal_extractColumnsWhereLabel (me, GET_ENUM (kMelder_string, U"Extract all columns whose label..."), text);
-		praat_new (thee.transfer(), my name, U"_", text);
+		praat_new (thee.move(), my name, U"_", text);
 	}
 END2 }
 
-FORM (TableOfReal_extractColumnsWhereRow, U"Extract columns where row", 0) {
+FORM (TableOfReal_extractColumnsWhereRow, U"Extract columns where row", nullptr) {
 	NATURAL (U"Extract all columns where row...", U"1")
 	OPTIONMENU_ENUM (U"...is...", kMelder_number, DEFAULT)
 	REAL (U"...the value", U"0.0")
@@ -1307,7 +1309,7 @@ DO
 	LOOP {
 		iam (TableOfReal);
 		autoTableOfReal thee = TableOfReal_extractColumnsWhereRow (me, row, GET_ENUM (kMelder_number, U"...is..."), value);
-		praat_new (thee.transfer(), my name, U"_", row, U"_", lround (value));
+		praat_new (thee.move(), my name, U"_", row, U"_", lround (value));
 	}
 END2 }
 
@@ -1315,11 +1317,11 @@ DIRECT2 (TableOfReal_extractRowLabelsAsStrings) {
 	LOOP {
 		iam (TableOfReal);
 		autoStrings thee = TableOfReal_extractRowLabelsAsStrings (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
-FORM (TableOfReal_extractRowRanges, U"Extract row ranges", 0) {
+FORM (TableOfReal_extractRowRanges, U"Extract row ranges", nullptr) {
 	LABEL (U"", U"Create a new TableOfReal from the following rows:")
 	TEXTFIELD (U"ranges", U"1 2")
 	LABEL (U"", U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
@@ -1328,11 +1330,11 @@ DO
 	LOOP {
 		iam (TableOfReal);
 		autoTableOfReal thee = TableOfReal_extractRowRanges (me, GET_STRING (U"ranges"));
-		praat_new (thee.transfer(), my name, U"_rows");
+		praat_new (thee.move(), my name, U"_rows");
 	}
 END2 }
 
-FORM (TableOfReal_extractRowsWhere, U"Extract rows where", 0) {
+FORM (TableOfReal_extractRowsWhere, U"Extract rows where", nullptr) {
 	LABEL (U"", U"Extract all rows with at least one cell where:")
 	TEXTFIELD (U"condition", U"row mod 3 = 0 ; this example extracts every third row")
 	OK2
@@ -1340,11 +1342,11 @@ DO
 	LOOP {
 		iam (TableOfReal);
 		autoTableOfReal thee = TableOfReal_extractRowsWhere (me, GET_STRING (U"condition"), interpreter);
-		praat_new (thee.transfer(), my name, U"_rows");
+		praat_new (thee.move(), my name, U"_rows");
 	}
 END2 }
 
-FORM (TableOfReal_extractRowsWhereColumn, U"Extract rows where column", 0) {
+FORM (TableOfReal_extractRowsWhereColumn, U"Extract rows where column", nullptr) {
 	NATURAL (U"Extract all rows where column...", U"1")
 	OPTIONMENU_ENUM (U"...is...", kMelder_number, DEFAULT)
 	REAL (U"...the value", U"0.0")
@@ -1356,11 +1358,11 @@ DO
 		iam (TableOfReal);
 		autoTableOfReal thee = TableOfReal_extractRowsWhereColumn (me,
 			column, GET_ENUM (kMelder_number, U"...is..."), value);
-		praat_new (thee.transfer(), my name, U"_", column, U"_", lround (value));
+		praat_new (thee.move(), my name, U"_", column, U"_", lround (value));
 	}
 END2 }
 
-FORM (TableOfReal_extractRowsWhereLabel, U"Extract rows where label", 0) {
+FORM (TableOfReal_extractRowsWhereLabel, U"Extract rows where label", nullptr) {
 	OPTIONMENU_ENUM (U"Extract all rows whose label...", kMelder_string, DEFAULT)
 	SENTENCE (U"...the text", U"a")
 	OK2
@@ -1369,7 +1371,7 @@ DO
 	LOOP {
 		iam (TableOfReal);
 		autoTableOfReal thee = TableOfReal_extractRowsWhereLabel (me, GET_ENUM (kMelder_string, U"Extract all rows whose label..."), text);
-		praat_new (thee.transfer(), my name, U"_", text);
+		praat_new (thee.move(), my name, U"_", text);
 	}
 END2 }
 
@@ -1381,7 +1383,7 @@ DO
 	LOOP {
 		iam (TableOfReal);
 		try {
-			TableOfReal_formula (me, GET_STRING (U"formula"), interpreter, NULL);
+			TableOfReal_formula (me, GET_STRING (U"formula"), interpreter, nullptr);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);
@@ -1390,7 +1392,7 @@ DO
 	}
 END2 }
 
-FORM (TableOfReal_getColumnIndex, U"Get column index", 0) {
+FORM (TableOfReal_getColumnIndex, U"Get column index", nullptr) {
 	SENTENCE (U"Column label", U"")
 	OK2
 DO
@@ -1401,7 +1403,7 @@ DO
 	}
 END2 }
 	
-FORM (TableOfReal_getColumnLabel, U"Get column label", 0) {
+FORM (TableOfReal_getColumnLabel, U"Get column label", nullptr) {
 	NATURAL (U"Column number", U"1")
 	OK2
 DO
@@ -1413,7 +1415,7 @@ DO
 	}
 END2 }
 	
-FORM (TableOfReal_getColumnMean_index, U"Get column mean", 0) {
+FORM (TableOfReal_getColumnMean_index, U"Get column mean", nullptr) {
 	NATURAL (U"Column number", U"1")
 	OK2
 DO
@@ -1426,7 +1428,7 @@ DO
 	}
 END2 }
 	
-FORM (TableOfReal_getColumnMean_label, U"Get column mean", 0) {
+FORM (TableOfReal_getColumnMean_label, U"Get column mean", nullptr) {
 	SENTENCE (U"Column label", U"")
 	OK2
 DO
@@ -1439,7 +1441,7 @@ DO
 	}
 END2 }
 	
-FORM (TableOfReal_getColumnStdev_index, U"Get column standard deviation", 0) {
+FORM (TableOfReal_getColumnStdev_index, U"Get column standard deviation", nullptr) {
 	NATURAL (U"Column number", U"1")
 	OK2
 DO
@@ -1448,11 +1450,11 @@ DO
 		long columnNumber = GET_INTEGER (U"Column number");
 		if (columnNumber > my numberOfColumns) Melder_throw (me, U": column number must not be greater than number of columns.");
 		double stdev = TableOfReal_getColumnStdev (me, columnNumber);
-		Melder_informationReal (stdev, NULL);
+		Melder_informationReal (stdev, nullptr);
 	}
 END2 }
 	
-FORM (TableOfReal_getColumnStdev_label, U"Get column standard deviation", 0) {
+FORM (TableOfReal_getColumnStdev_label, U"Get column standard deviation", nullptr) {
 	SENTENCE (U"Column label", U"1")
 	OK2
 DO
@@ -1461,7 +1463,7 @@ DO
 		long columnNumber = TableOfReal_columnLabelToIndex (me, GET_STRING (U"Column label"));
 		if (columnNumber == 0) Melder_throw (me, U": column label does not exist.");
 		double stdev = TableOfReal_getColumnStdev (me, columnNumber);
-		Melder_informationReal (stdev, NULL);
+		Melder_informationReal (stdev, nullptr);
 	}
 END2 }
 
@@ -1479,7 +1481,7 @@ DIRECT2 (TableOfReal_getNumberOfRows) {
 	}
 END2 }
 
-FORM (TableOfReal_getRowIndex, U"Get row index", 0) {
+FORM (TableOfReal_getRowIndex, U"Get row index", nullptr) {
 	SENTENCE (U"Row label", U"")
 	OK2
 DO
@@ -1490,7 +1492,7 @@ DO
 	}
 END2 }
 	
-FORM (TableOfReal_getRowLabel, U"Get row label", 0) {
+FORM (TableOfReal_getRowLabel, U"Get row label", nullptr) {
 	NATURAL (U"Row number", U"1")
 	OK2
 DO
@@ -1498,11 +1500,11 @@ DO
 		iam (TableOfReal);
 		long rowNumber = GET_INTEGER (U"Row number");
 		if (rowNumber > my numberOfRows) Melder_throw (me, U": row number must not be greater than number of rows.");
-		Melder_information (my rowLabels == NULL ? U"" : my rowLabels [rowNumber]);
+		Melder_information (my rowLabels ? my rowLabels [rowNumber] : U"");
 	}
 END2 }
 
-FORM (TableOfReal_getValue, U"Get value", 0) {
+FORM (TableOfReal_getValue, U"Get value", nullptr) {
 	NATURAL (U"Row number", U"1")
 	NATURAL (U"Column number", U"1")
 	OK2
@@ -1512,7 +1514,7 @@ DO
 		long rowNumber = GET_INTEGER (U"Row number"), columnNumber = GET_INTEGER (U"Column number");
 		if (rowNumber > my numberOfRows) Melder_throw (me, U": row number must not exceed number of rows.");
 		if (columnNumber > my numberOfColumns) Melder_throw (me, U": column number must not exceed number of columns.");
-		Melder_informationReal (my data [rowNumber] [columnNumber], NULL);
+		Melder_informationReal (my data [rowNumber] [columnNumber], nullptr);
 	}
 END2 }
 
@@ -1520,7 +1522,7 @@ DIRECT2 (TableOfReal_help) {
 	Melder_help (U"TableOfReal");
 END2 }
 
-FORM (TableOfReal_insertColumn, U"Insert column", 0) {
+FORM (TableOfReal_insertColumn, U"Insert column", nullptr) {
 	NATURAL (U"Column number", U"1")
 	OK2
 DO
@@ -1531,7 +1533,7 @@ DO
 	}
 END2 }
 
-FORM (TableOfReal_insertRow, U"Insert row", 0) {
+FORM (TableOfReal_insertRow, U"Insert row", nullptr) {
 	NATURAL (U"Row number", U"1")
 	OK2
 DO
@@ -1542,11 +1544,12 @@ DO
 	}
 END2 }
 
-FORM_READ2 (TableOfReal_readFromHeaderlessSpreadsheetFile, U"Read TableOfReal from headerless spreadsheet file", 0, true) {
-	praat_newWithFile (TableOfReal_readFromHeaderlessSpreadsheetFile (file), file, MelderFile_name (file));
+FORM_READ2 (TableOfReal_readFromHeaderlessSpreadsheetFile, U"Read TableOfReal from headerless spreadsheet file", nullptr, true) {
+	autoTableOfReal me = TableOfReal_readFromHeaderlessSpreadsheetFile (file);
+	praat_newWithFile (me.move(), file, MelderFile_name (file));
 END2 }
 
-FORM (TableOfReal_removeColumn, U"Remove column", 0) {
+FORM (TableOfReal_removeColumn, U"Remove column", nullptr) {
 	NATURAL (U"Column number", U"1")
 	OK2
 DO
@@ -1557,7 +1560,7 @@ DO
 	}
 END2 }
 
-FORM (TableOfReal_removeRow, U"Remove row", 0) {
+FORM (TableOfReal_removeRow, U"Remove row", nullptr) {
 	NATURAL (U"Row number", U"1")
 	OK2
 DO
@@ -1568,7 +1571,7 @@ DO
 	}
 END2 }
 
-FORM (TableOfReal_setColumnLabel_index, U"Set column label", 0) {
+FORM (TableOfReal_setColumnLabel_index, U"Set column label", nullptr) {
 	NATURAL (U"Column number", U"1")
 	SENTENCE (U"Label", U"")
 	OK2
@@ -1580,7 +1583,7 @@ DO
 	}
 END2 }
 
-FORM (TableOfReal_setColumnLabel_label, U"Set column label", 0) {
+FORM (TableOfReal_setColumnLabel_label, U"Set column label", nullptr) {
 	SENTENCE (U"Old label", U"")
 	SENTENCE (U"New label", U"")
 	OK2
@@ -1593,7 +1596,7 @@ DO
 	}
 END2 }
 
-FORM (TableOfReal_setRowLabel_index, U"Set row label", 0) {
+FORM (TableOfReal_setRowLabel_index, U"Set row label", nullptr) {
 	NATURAL (U"Row number", U"1")
 	SENTENCE (U"Label", U"")
 	OK2
@@ -1621,7 +1624,7 @@ DO
 	}
 END2 }
 
-FORM (TableOfReal_setRowLabel_label, U"Set row label", 0) {
+FORM (TableOfReal_setRowLabel_label, U"Set row label", nullptr) {
 	SENTENCE (U"Old label", U"")
 	SENTENCE (U"New label", U"")
 	OK2
@@ -1634,7 +1637,7 @@ DO
 	}
 END2 }
 
-FORM (TableOfReal_sortByColumn, U"Sort rows by column", 0) {
+FORM (TableOfReal_sortByColumn, U"Sort rows by column", nullptr) {
 	INTEGER (U"Column", U"1")
 	INTEGER (U"Secondary column", U"0")
 	OK2
@@ -1646,7 +1649,7 @@ DO
 	}
 END2 }
 
-FORM (TableOfReal_sortByLabel, U"Sort rows by label", 0) {
+FORM (TableOfReal_sortByLabel, U"Sort rows by label", nullptr) {
 	LABEL (U"", U"Secondary sorting keys:")
 	INTEGER (U"Column1", U"1")
 	INTEGER (U"Column2", U"0")
@@ -1663,18 +1666,18 @@ DIRECT2 (TableOfReal_to_Matrix) {
 	LOOP {
 		iam (TableOfReal);
 		autoMatrix thee = TableOfReal_to_Matrix (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
-FORM (TableOfReal_to_Table, U"TableOfReal: To Table", 0) {
+FORM (TableOfReal_to_Table, U"TableOfReal: To Table", nullptr) {
 	SENTENCE (U"Label of first column", U"rowLabel")
 	OK2
 DO
 	LOOP {
 		iam (TableOfReal);
 		autoTable thee = TableOfReal_to_Table (me, GET_STRING (U"Label of first column"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1724,8 +1727,8 @@ static Any tabSeparatedFileRecognizer (int nread, const char *header, MelderFile
 		uheader [0] == 0xef && uheader [1] == 0xff ? isTabSeparated_utf16be (nread, header) :
 		uheader [0] == 0xff && uheader [1] == 0xef ? isTabSeparated_utf16le (nread, header) :
 		isTabSeparated_8bit (nread, header);
-	if (! isTabSeparated) return NULL;
-	return Table_readFromCharacterSeparatedTextFile (file, '\t');
+	if (! isTabSeparated) return nullptr;
+	return Table_readFromCharacterSeparatedTextFile (file, '\t').transfer();
 }
 
 void praat_TableOfReal_init (ClassInfo klas);   /* Buttons for TableOfReal and for its subclasses. */

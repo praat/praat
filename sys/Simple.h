@@ -27,10 +27,10 @@ oo_CLASS_CREATE (SimpleLong, Daata);
 oo_CLASS_CREATE (SimpleDouble, Daata);
 oo_CLASS_CREATE (SimpleString, Daata);
 
-SimpleInt SimpleInt_create (int number);
-SimpleLong SimpleLong_create (long number);
-SimpleDouble SimpleDouble_create (double number);
-SimpleString SimpleString_create (const char32 *string);
+autoSimpleInt SimpleInt_create (int number);
+autoSimpleLong SimpleLong_create (long number);
+autoSimpleDouble SimpleDouble_create (double number);
+autoSimpleString SimpleString_create (const char32 *string);
 
 /* End of file Simple.h */
 #endif
