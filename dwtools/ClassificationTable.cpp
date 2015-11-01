@@ -44,7 +44,7 @@ autoClassificationTable ClassificationTable_create (long numberOfRows, long numb
 	}
 }
 
-Confusion ClassificationTable_to_Confusion (ClassificationTable me, bool onlyClassLabels) {
+autoConfusion ClassificationTable_to_Confusion (ClassificationTable me, bool onlyClassLabels) {
 	try {
 		autoStrings responses = TableOfReal_extractColumnLabelsAsStrings (me);
 		autoStrings s2 = TableOfReal_extractRowLabelsAsStrings (me);

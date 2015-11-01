@@ -33,7 +33,9 @@ autoClassificationTable ClassificationTable_create (long numberOfRows, long numb
 
 autoCategories ClassificationTable_to_Categories_maximumProbability (ClassificationTable me);
 
-Confusion ClassificationTable_to_Confusion (ClassificationTable me, bool onlyClassLabels);
+autoStrings ClassificationTable_to_Strings_maximumProbability (ClassificationTable me);
+
+autoConfusion ClassificationTable_to_Confusion (ClassificationTable me, bool onlyClassLabels);
 
 /* Correlations between the classes (columns) */
 autoCorrelation ClassificationTable_to_Correlation_columns (ClassificationTable me);
