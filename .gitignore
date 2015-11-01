@@ -18,3 +18,8 @@ DerivedData
 *kanweg*
 
 makefile.defs
+
+# Executables
+praat
+Praat
+Praat.exe

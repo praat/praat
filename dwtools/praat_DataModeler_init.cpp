@@ -46,7 +46,7 @@ DO
 	autoDataModeler thee = DataModeler_createSimple (GET_REAL (U"left X range"), GET_REAL (U"right X range"),
 		GET_INTEGER (U"Number of data points"), GET_STRING (U"Parameters"), GET_REAL (U"Gaussian noise stdev"),
 		GET_INTEGER (U"Basis functions") - 1);
-	praat_new (thee.transfer(), GET_STRING (U"Name"));
+	praat_new (thee.move(), GET_STRING (U"Name"));
 END
 
 FORM (DataModeler_speckle, U"DataModeler: Speckle", 0)
@@ -382,7 +382,7 @@ DIRECT (DataModeler_to_Covariance_parameters)
 	LOOP {
 		iam (DataModeler);
 		autoCovariance thee = DataModeler_to_Covariance_parameters (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -393,7 +393,7 @@ DO
 	LOOP {
 		iam (DataModeler);
 		autoTable thee = DataModeler_to_Table_zscores (me, GET_INTEGER (U"Use sigmas on y-values"));
-		praat_new (thee.transfer(), my name, U"_z");
+		praat_new (thee.move(), my name, U"_z");
 	}
 END
 
@@ -416,7 +416,7 @@ DO
 		iam (Formant);
 		autoFormantModeler thee = Formant_to_FormantModeler (me, GET_REAL (U"left Start time"), 
 			GET_REAL (U"right End time"), GET_INTEGER (U"Number of formants"), order + 1, GET_INTEGER (U"Weigh data") - 1);
-		praat_new (thee.transfer(), my name, U"_o", order);
+		praat_new (thee.move(), my name, U"_o", order);
 	}
 END
 
@@ -451,7 +451,7 @@ DO
 	}
 	Melder_assert (him);
 	autoFormant thee = Formant_extractPart (him, tmin, tmax);
-	praat_new (thee.transfer(), his name, U"_part");
+	praat_new (thee.move(), his name, U"_part");
 END
 
 
@@ -493,7 +493,7 @@ DO
 	}
 	Melder_assert (him);
 	autoFormant thee = Formant_extractPart (him, tmin, tmax);
-	praat_new (thee.transfer(), his name, U"_part");
+	praat_new (thee.move(), his name, U"_part");
 END
 
 /********************** FormantModeler ******************************/
@@ -1098,7 +1098,7 @@ DO
 	LOOP {
 		iam (FormantModeler);
 		autoCovariance thee = FormantModeler_to_Covariance_parameters (me, iformant);
-		praat_new (thee.transfer(), my name, U"_", iformant);
+		praat_new (thee.move(), my name, U"_", iformant);
 	}
 END
 
@@ -1110,7 +1110,7 @@ DO
 	LOOP {
 		iam (FormantModeler);
 		autoDataModeler thee = FormantModeler_extractDataModeler (me, iformant);
-		praat_new (thee.transfer(), my name, U"_", iformant);
+		praat_new (thee.move(), my name, U"_", iformant);
 	}
 END
 
@@ -1121,7 +1121,7 @@ DO
 	LOOP {
 		iam (FormantModeler);
 		autoTable thee = FormantModeler_to_Table_zscores (me, GET_INTEGER (U"Bandwidths as standard deviation"));
-		praat_new (thee.transfer(), my name, U"_z");
+		praat_new (thee.move(), my name, U"_z");
 	}
 END
 
@@ -1133,7 +1133,7 @@ DO
 	LOOP {
 		iam (FormantModeler);
 		autoFormantModeler thee = FormantModeler_processOutliers (me, GET_REAL (U"Number of sigmas"), GET_INTEGER (U"Bandwidths as standard deviation"));
-		praat_new (thee.transfer(), my name, U"_outliers");
+		praat_new (thee.move(), my name, U"_outliers");
 	}
 END
 
@@ -1166,7 +1166,7 @@ DO
 		iam (Pitch);
 		autoPitchModeler thee = Pitch_to_PitchModeler (me, GET_REAL (U"left Start time"), GET_REAL (U"right End time"), 
 			GET_INTEGER (U"Order of polynomials") + 1);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -1252,7 +1252,7 @@ DO
 			GET_INTEGER (U"Number of formant tracks in model"), GET_INTEGER (U"Order of polynomials") + 1,
 			GET_INTEGER (U"Weigh data") - 1, GET_REAL (U"Number of sigmas"), GET_REAL (U"Parameter variance power"),
 			0, 1, 1, 1, 1, 1, &ceiling);
-		praat_new (formant.transfer(), my name, U"_", Melder_fixed (ceiling, 0));
+		praat_new (formant.move(), my name, U"_", Melder_fixed (ceiling, 0));
 	}
 END
 
@@ -1294,7 +1294,7 @@ DO
 			GET_REAL (U"Parameter variance power"), 1,
 			GET_REAL (U"Minimum F1"), GET_REAL (U"Maximum F1"), GET_REAL (U"Minimum F2"), 
 			GET_REAL (U"Maximum F2"), GET_REAL (U"Minimum F3"), &ceiling);
-		praat_new (formant.transfer(), my name, U"_", Melder_fixed (ceiling, 0));
+		praat_new (formant.move(), my name, U"_", Melder_fixed (ceiling, 0));
 	}
 END
 
@@ -1336,7 +1336,7 @@ DO
 			GET_REAL (U"Parameter variance power"), 1,
 			GET_REAL (U"Minimum F1"), GET_REAL (U"Maximum F1"), GET_REAL (U"Minimum F2"), 
 			GET_REAL (U"Maximum F2"), GET_REAL (U"Minimum F3"), &ceiling);
-		praat_new (formant.transfer(), my name, U"_", Melder_fixed (ceiling, 0));
+		praat_new (formant.move(), my name, U"_", Melder_fixed (ceiling, 0));
 	}
 END
 
@@ -1366,7 +1366,7 @@ DO
 			GET_REAL (U"left Maximum frequency range"), GET_REAL (U"right Maximum frequency range"), GET_INTEGER (U"Number of frequency steps"),
 			GET_REAL (U"Pre-emphasis from"), GET_REAL (U"Formant smoothing window"), GET_INTEGER (U"Number of formant tracks in model"),
 			GET_INTEGER (U"Order of polynomials") + 1, GET_INTEGER (U"Weigh data") - 1, GET_REAL (U"Number of sigmas"), GET_REAL (U"Parameter variance power"));
-		praat_new (octier.transfer(), my name);
+		praat_new (octier.move(), my name);
 	}
 END
 
@@ -1388,7 +1388,7 @@ DO
 		long scolumn = Table_findColumnIndexFromColumnLabel (me, GET_STRING (U"Column with sigmas"));
 		autoDataModeler thee = Table_to_DataModeler (me, GET_REAL (U"left X range"), GET_REAL (U"right X range"),
 			xcolumn, ycolumn, scolumn, GET_INTEGER (U"Maximum order") + 1, GET_INTEGER (U"Model functions"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 

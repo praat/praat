@@ -30,10 +30,10 @@ oo_DEFINE_CLASS (CCA, Daata)
 
 	oo_LONG (numberOfCoefficients)
 	oo_LONG (numberOfObservations)
-	oo_AUTO_OBJECT (Strings, 0, yLabels)
-	oo_AUTO_OBJECT (Strings, 0, xLabels)
-	oo_AUTO_OBJECT(Eigen, 0, y)
-	oo_AUTO_OBJECT(Eigen, 0, x)
+	oo_OBJECT (Strings, 0, yLabels)
+	oo_OBJECT (Strings, 0, xLabels)
+	oo_OBJECT(Eigen, 0, y)
+	oo_OBJECT(Eigen, 0, x)
 
 	#if oo_DECLARING
 		void v_info ()

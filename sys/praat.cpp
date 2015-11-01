@@ -349,7 +349,7 @@ static void praat_new_unpackCollection (autoCollection me, const char32* myName)
 		my item [idata] = nullptr;   // disown; once the elements are autoThings, the move will handle this
 		const char32 *name = object -> name ? object -> name : myName;
 		Melder_assert (name);
-		praat_new (object.transfer(), name);   // recurse
+		praat_new (object.move(), name);   // recurse
 	}
 }
 
@@ -408,43 +408,43 @@ void praat_newWithFile (autoDaata me, MelderFile file, const char32 *myName) {
 }
 
 static MelderString thePraatNewName { 0 };
-void praat_new (Daata me) {
-	praat_newWithFile (me, nullptr, U"");
+void praat_new (autoDaata me) {
+	praat_newWithFile (me.move(), nullptr, U"");
 }
-void praat_new (Daata me, Melder_1_ARG) {
-	praat_newWithFile (me, nullptr, Melder_1_ARG_CALL);
+void praat_new (autoDaata me, Melder_1_ARG) {
+	praat_newWithFile (me.move(), nullptr, Melder_1_ARG_CALL);
 }
-void praat_new (Daata me, Melder_2_ARGS) {
+void praat_new (autoDaata me, Melder_2_ARGS) {
 	MelderString_copy (& thePraatNewName, Melder_2_ARGS_CALL);
-	praat_new (me, thePraatNewName.string);
+	praat_new (me.move(), thePraatNewName.string);
 }
-void praat_new (Daata me, Melder_3_ARGS) {
+void praat_new (autoDaata me, Melder_3_ARGS) {
 	MelderString_copy (& thePraatNewName, Melder_3_ARGS_CALL);
-	praat_new (me, thePraatNewName.string);
+	praat_new (me.move(), thePraatNewName.string);
 }
-void praat_new (Daata me, Melder_4_ARGS) {
+void praat_new (autoDaata me, Melder_4_ARGS) {
 	MelderString_copy (& thePraatNewName, Melder_4_ARGS_CALL);
-	praat_new (me, thePraatNewName.string);
+	praat_new (me.move(), thePraatNewName.string);
 }
-void praat_new (Daata me, Melder_5_ARGS) {
+void praat_new (autoDaata me, Melder_5_ARGS) {
 	MelderString_copy (& thePraatNewName, Melder_5_ARGS_CALL);
-	praat_new (me, thePraatNewName.string);
+	praat_new (me.move(), thePraatNewName.string);
 }
-void praat_new (Daata me, Melder_6_ARGS) {
+void praat_new (autoDaata me, Melder_6_ARGS) {
 	MelderString_copy (& thePraatNewName, Melder_6_ARGS_CALL);
-	praat_new (me, thePraatNewName.string);
+	praat_new (me.move(), thePraatNewName.string);
 }
-void praat_new (Daata me, Melder_7_ARGS) {
+void praat_new (autoDaata me, Melder_7_ARGS) {
 	MelderString_copy (& thePraatNewName, Melder_7_ARGS_CALL);
-	praat_new (me, thePraatNewName.string);
+	praat_new (me.move(), thePraatNewName.string);
 }
-void praat_new (Daata me, Melder_8_ARGS) {
+void praat_new (autoDaata me, Melder_8_ARGS) {
 	MelderString_copy (& thePraatNewName, Melder_8_ARGS_CALL);
-	praat_new (me, thePraatNewName.string);
+	praat_new (me.move(), thePraatNewName.string);
 }
-void praat_new (Daata me, Melder_9_ARGS) {
+void praat_new (autoDaata me, Melder_9_ARGS) {
 	MelderString_copy (& thePraatNewName, Melder_9_ARGS_CALL);
-	praat_new (me, thePraatNewName.string);
+	praat_new (me.move(), thePraatNewName.string);
 }
 
 void praat_updateSelection () {

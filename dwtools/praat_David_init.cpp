@@ -170,7 +170,7 @@ DIRECT (Activation_to_Matrix)
 	LOOP {
 		iam (Activation);
 		autoMatrix thee = Activation_to_Matrix (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -346,7 +346,7 @@ DIRECT (Categories_getNumberOfCategories)
 END
 
 DIRECT (Categories_getNumberOfDifferences)
-	Categories c1 = 0, c2 = 0;
+	Categories c1 = nullptr, c2 = nullptr;
 	LOOP {
 		iam (Categories);
 		(c1 ? c2 : c1) = me;
@@ -362,7 +362,7 @@ DIRECT (Categories_getNumberOfDifferences)
 END
 
 DIRECT (Categories_getFractionDifferent)
-	Categories c1 = 0, c2 = 0;
+	Categories c1 = nullptr, c2 = nullptr;
 	LOOP {
 		iam (Categories);
 		(c1 ? c2 : c1) = me;
@@ -372,13 +372,14 @@ DIRECT (Categories_getFractionDifferent)
 END
 
 DIRECT (Categories_difference)
-	Categories c1 = 0, c2 = 0;
+	Categories c1 = nullptr, c2 = nullptr;
 	LOOP {
 		iam (Categories);
 		(c1 ? c2 : c1) = me;
 	}
 	Melder_assert (c1 && c2);
-	double fraction; long n;
+	long n;
+	double fraction;
 	OrderedOfString_difference (c1, c2, &n, &fraction);
 	Melder_information (n, U" differences");
 END
@@ -387,30 +388,31 @@ DIRECT (Categories_selectUniqueItems)
 	LOOP {
 		iam (Categories);
 		autoCategories thee = Categories_selectUniqueItems (me, 1);
-		praat_new (thee.transfer(), my name, U"_uniq");
+		praat_new (thee.move(), my name, U"_uniq");
 	}
 END
 
 DIRECT (Categories_to_Confusion)
-	Categories c1 = 0, c2 = 0;
+	Categories c1 = nullptr, c2 = nullptr;
 	LOOP {
 		iam (Categories);
 		(c1 ? c2 : c1) = me;
 	}
 	Melder_assert (c1 && c2);
 	autoConfusion thee = Categories_to_Confusion (c1, c2);
-	praat_new (thee.transfer(), Thing_getName (c1), U"_", Thing_getName (c2));
+	praat_new (thee.move(), Thing_getName (c1), U"_", Thing_getName (c2));
 END
 
 DIRECT (Categories_to_Strings)
 	LOOP {
 		iam (Categories);
-		praat_new (Categories_to_Strings (me), my name);
+		autoStrings thee = Categories_to_Strings (me);
+		praat_new (thee.move(), my name);
 	}
 END
 
 DIRECT (Categories_join)
-	Categories c1 = 0, c2 = 0;
+	Categories c1 = nullptr, c2 = nullptr;
 	LOOP {
 		iam (Categories);
 		(c1 ? c2 : c1) = me;
@@ -518,7 +520,7 @@ FORM (CCs_to_DTW, U"CC: To DTW", U"CC: To DTW...")
 	DTW_constraints_addCommonFields (dia);
 	OK
 DO
-	CC c1 = 0, c2 = 0;
+	CC c1 = nullptr, c2 = nullptr;
 	LOOP {
 		iam (CC);
 		(c1 ? c2 : c1) = me;
@@ -529,14 +531,15 @@ DO
     autoDTW thee = CCs_to_DTW (c1, c2, GET_REAL (U"Cepstral weight"), GET_REAL (U"Log energy weight"),
         GET_REAL (U"Regression weight"), GET_REAL (U"Regression weight log energy"),
         GET_REAL (U"Regression coefficients window"));
-    DTW_findPath (thee.peek(), begin, end, slope);
-	praat_new (thee.transfer(), U"");
+    DTW_findPath (thee.get(), begin, end, slope);
+	praat_new (thee.move(), U"");
 END
 
 DIRECT (CC_to_Matrix)
 	LOOP {
 		iam (CC);
-		praat_new (CC_to_Matrix (me), my name);
+		autoMatrix thee = CC_to_Matrix (me);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -599,7 +602,7 @@ DO
 	LOOP {
 		iam (CCA);
 		Melder_information (CCA_getEigenvectorElement (me, GET_INTEGER (U"X or Y"),
-		GET_INTEGER (U"Eigenvector number"), GET_INTEGER (U"Element number")));
+			GET_INTEGER (U"Eigenvector number"), GET_INTEGER (U"Element number")));
 	}
 END
 
@@ -612,15 +615,15 @@ DO
 		double p, chisq; long ndf;
 		CCA_getZeroCorrelationProbability (me, GET_INTEGER (U"Coefficient number"), &chisq, &ndf, &p);
 		Melder_information (p, U" (=probability for chisq = ", chisq,
-		U" and ndf = ", ndf, U")");
+			U" and ndf = ", ndf, U")");
 	}
 END
 
 DIRECT (CCA_and_Correlation_factorLoadings)
-	CCA cca = FIRST (CCA);
-	Correlation c = FIRST (Correlation);
-	autoTableOfReal thee = CCA_and_Correlation_factorLoadings (cca, c);
-	praat_new (thee.transfer(), Thing_getName (cca), U"_loadings");
+	CCA me = FIRST (CCA);
+	Correlation thee = FIRST (Correlation);
+	autoTableOfReal result = CCA_and_Correlation_factorLoadings (me, thee);
+	praat_new (result.move(), Thing_getName (me), U"_loadings");
 END
 
 FORM (CCA_and_Correlation_getVarianceFraction, U"CCA & Correlation: Get variance fraction", U"CCA & Correlation: Get variance fraction...")
@@ -633,12 +636,12 @@ FORM (CCA_and_Correlation_getVarianceFraction, U"CCA & Correlation: Get variance
 	NATURAL (U"right Canonical variate range", U"1")
 	OK
 DO
-	CCA cca = FIRST (CCA);
-	Correlation c = FIRST (Correlation);
+	CCA me = FIRST (CCA);
+	Correlation thee = FIRST (Correlation);
 	int x_or_y = GET_INTEGER (U"X or Y");
 	int cv_from = GET_INTEGER (U"left Canonical variate range");
 	int cv_to = GET_INTEGER (U"right Canonical variate range");
-	Melder_information (CCA_and_Correlation_getVarianceFraction (cca, c, x_or_y, cv_from, cv_to),
+	Melder_information (CCA_and_Correlation_getVarianceFraction (me, thee, x_or_y, cv_from, cv_to),
 		U" (fraction variance from ", (x_or_y == 1 ? U"y" : U"x"), U", extracted by canonical variates ",
 		cv_from, U" to ", cv_to, U")");
 END
@@ -654,31 +657,31 @@ FORM (CCA_and_Correlation_getRedundancy_sl, U"CCA & Correlation: Get Stewart-Lov
 	LABEL (U"", U"...given the availability of the data in the other set.")
 	OK
 DO
-	CCA cca = FIRST (CCA);
-	Correlation c = FIRST (Correlation);
+	CCA me = FIRST (CCA);
+	Correlation thee = FIRST (Correlation);
 	int x_or_y = GET_INTEGER (U"X or Y");
 	int cv_from = GET_INTEGER (U"left Canonical variate range");
 	int cv_to = GET_INTEGER (U"right Canonical variate range");
-	Melder_information (CCA_and_Correlation_getRedundancy_sl (cca, c, x_or_y, cv_from, cv_to),
+	Melder_information (CCA_and_Correlation_getRedundancy_sl (me, thee, x_or_y, cv_from, cv_to),
 		U" (redundancy from ", (x_or_y == 1 ? U"y" : U"x"), U" extracted by canonical variates ",
 		cv_from, U" to ", cv_to, U")");
 END
 
 DIRECT (CCA_and_TableOfReal_factorLoadings)
-	CCA cca = FIRST (CCA);
-	TableOfReal tr = FIRST (TableOfReal);
-	autoTableOfReal thee = CCA_and_TableOfReal_factorLoadings (cca, tr);
-	praat_new (thee.transfer(), Thing_getName (cca), U"_loadings");
+	CCA me = FIRST (CCA);
+	TableOfReal thee = FIRST (TableOfReal);
+	autoTableOfReal result = CCA_and_TableOfReal_factorLoadings (me, thee);
+	praat_new (result.move(), Thing_getName (me), U"_loadings");
 END
 
 FORM (CCA_and_TableOfReal_scores, U"CCA & TableOfReal: To TableOfReal (scores)", U"CCA & TableOfReal: To TableOfReal (scores)...")
 	INTEGER (U"Number of canonical correlations", U"0 (=all)")
 	OK
 DO
-	CCA cca = FIRST (CCA);
-	TableOfReal tr = FIRST (TableOfReal);
-	autoTableOfReal thee = CCA_and_TableOfReal_scores (cca, tr, GET_INTEGER (U"Number of canonical correlations"));
-	praat_new (thee.transfer(), Thing_getName (cca), U"_scores");
+	CCA me = FIRST (CCA);
+	TableOfReal thee = FIRST (TableOfReal);
+	autoTableOfReal result = CCA_and_TableOfReal_scores (me, thee, GET_INTEGER (U"Number of canonical correlations"));
+	praat_new (result.move(), Thing_getName (me), U"_scores");
 END
 
 FORM (CCA_and_TableOfReal_predict, U"CCA & TableOfReal: Predict", U"CCA & TableOfReal: Predict...")
@@ -686,10 +689,10 @@ FORM (CCA_and_TableOfReal_predict, U"CCA & TableOfReal: Predict", U"CCA & TableO
 	INTEGER (U"Column number", U"1")
 	OK
 DO
-	CCA cca = FIRST (CCA);
-	TableOfReal tr = FIRST (TableOfReal);
-	autoTableOfReal thee = CCA_and_TableOfReal_predict (cca, tr, GET_INTEGER (U"Column number"));
-	praat_new (thee.transfer(), tr->name, U"_", cca->name);
+	CCA me = FIRST (CCA);
+	TableOfReal thee = FIRST (TableOfReal);
+	autoTableOfReal result = CCA_and_TableOfReal_predict (me, thee, GET_INTEGER (U"Column number"));
+	praat_new (result.move(), thy name, U"_", my name);
 END
 
 /***************** ChebyshevSeries ****************************************/
@@ -710,13 +713,15 @@ FORM (ChebyshevSeries_create, U"Create ChebyshevSeries", U"Create ChebyshevSerie
 DO
 	double xmin = GET_REAL (U"Xmin"), xmax = GET_REAL (U"Xmax");
 	REQUIRE (xmin < xmax, U"Xmin must be smaller than Xmax.")
-	praat_new (ChebyshevSeries_createFromString (xmin, xmax, GET_STRING (U"Coefficients")), GET_STRING (U"Name"));
+	autoChebyshevSeries me = ChebyshevSeries_createFromString (xmin, xmax, GET_STRING (U"Coefficients"));
+	praat_new (me.move(), GET_STRING (U"Name"));
 END
 
 DIRECT (ChebyshevSeries_to_Polynomial)
 	LOOP {
 		iam (ChebyshevSeries);
-		praat_new (ChebyshevSeries_to_Polynomial (me), my name);
+		autoPolynomial thee = ChebyshevSeries_to_Polynomial (me);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -752,19 +757,19 @@ END
 DIRECT (ClassificationTable_to_Confusion_old)
 	LOOP {
 		iam (ClassificationTable);
-		autoConfusion thee = ClassificationTable_to_Confusion (me, 0);
-		praat_new (thee.transfer(), my name);
+		autoConfusion thee = ClassificationTable_to_Confusion (me, false);
+		praat_new (thee.move(), my name);
 	}
 END
 
 FORM (ClassificationTable_to_Confusion, U"ClassificationTable: To Confusion", U"ClassificationTable: To Confusion...")
-	BOOLEAN (U"Only class labels", 1)
+	BOOLEAN (U"Only class labels", true)
 	OK
 DO
 	LOOP {
 		iam (ClassificationTable);
 		autoConfusion thee = ClassificationTable_to_Confusion (me, GET_INTEGER (U"Only class labels"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -772,7 +777,7 @@ DIRECT (ClassificationTable_to_Correlation_columns)
 	LOOP {
 		iam (ClassificationTable);
 		autoCorrelation thee = ClassificationTable_to_Correlation_columns (me);
-		praat_new (thee.transfer(), my name, U"_col");
+		praat_new (thee.move(), my name, U"_col");
 	}
 END
 
@@ -780,7 +785,7 @@ DIRECT (ClassificationTable_to_Strings_maximumProbability)
 	LOOP {
 		iam (ClassificationTable);
 		autoStrings thee = ClassificationTable_to_Strings_maximumProbability (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -796,7 +801,7 @@ FORM (Confusion_createSimple, U"Create simple Confusion", U"Create simple Confus
 	OK
 DO
 	autoConfusion thee = Confusion_createSimple (GET_STRING (U"Labels"));
-	praat_new (thee.transfer(), GET_STRING (U"Name"));
+	praat_new (thee.move(), GET_STRING (U"Name"));
 END
 
 FORM (Confusion_increase, U"Confusion: Increase", U"Confusion: Increase...")
@@ -849,7 +854,7 @@ DIRECT (Confusion_to_TableOfReal_marginals)
 	LOOP {
 		iam (Confusion);
 		autoTableOfReal thee = Confusion_to_TableOfReal_marginals (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -861,7 +866,7 @@ DIRECT (Confusion_difference)
 	}
 	Melder_assert (c1 && c2);
 	autoMatrix thee = Confusion_difference (c1, c2);
-	praat_new (thee.transfer(), U"diffs");
+	praat_new (thee.move(), U"diffs");
 END
 
 FORM (Confusion_condense, U"Confusion: Condense", U"Confusion: Condense...")
@@ -876,8 +881,8 @@ DO
 	LOOP {
 		iam (Confusion);
 		autoConfusion thee = Confusion_condense (me, GET_STRING (U"Search"), GET_STRING (U"Replace"),
-		GET_INTEGER (U"Replace limit"), GET_INTEGER (U"Search and replace are") - 1);
-		praat_new (thee.transfer(), my name, U"_cnd");
+			GET_INTEGER (U"Replace limit"), GET_INTEGER (U"Search and replace are") - 1);
+		praat_new (thee.move(), my name, U"_cnd");
 	}
 END
 
@@ -891,8 +896,8 @@ DO
 	LOOP {
 		iam (Confusion);
 		autoConfusion thee = Confusion_group (me, GET_STRING (U"Stimuli & Responses"), newlabel,
-		GET_INTEGER (U"New label position"));
-		praat_new (thee.transfer(), my name, U"_sr", newlabel);
+			GET_INTEGER (U"New label position"));
+		praat_new (thee.move(), my name, U"_sr", newlabel);
 	}
 END
 
@@ -906,8 +911,8 @@ DO
 	LOOP {
 		iam (Confusion);
 		autoConfusion thee = Confusion_groupStimuli (me, GET_STRING (U"Stimuli"), newlabel,
-		GET_INTEGER (U"New label position"));
-		praat_new (thee.transfer(), my name, U"_s", newlabel);
+			GET_INTEGER (U"New label position"));
+		praat_new (thee.move(), my name, U"_s", newlabel);
 	}
 END
 
@@ -921,8 +926,8 @@ DO
 	LOOP {
 		iam (Confusion);
 		autoConfusion thee = Confusion_groupResponses (me, GET_STRING (U"Responses"), newlabel,
-		GET_INTEGER (U"New label position"));
-		praat_new (thee.transfer(), my name, U"_s", newlabel);
+			GET_INTEGER (U"New label position"));
+		praat_new (thee.move(), my name, U"_s", newlabel);
 	}
 END
 
@@ -940,14 +945,15 @@ DO
 	LOOP {
 		iam (Confusion);
 		Confusion_drawAsNumbers (me, GRAPHICS, GET_INTEGER (U"Draw marginals"),
-		GET_INTEGER (U"Format"), GET_INTEGER (U"Precision"));
+			GET_INTEGER (U"Format"), GET_INTEGER (U"Precision"));
 	}
 END
 
 DIRECT (Confusion_getFractionCorrect)
 	LOOP {
 		iam (Confusion);
-		double f; long n;
+		double f;
+		long n;
 		Confusion_getFractionCorrect (me, &f, &n);
 		Melder_information (f, U" (fraction correct)");
 	}
@@ -993,7 +999,7 @@ DO
 	LOOP {
 		iam (ComplexSpectrogram);
 		autoSound thee = ComplexSpectrogram_to_Sound (me, GET_REAL (U"Duration factor"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -1001,7 +1007,7 @@ DIRECT (ComplexSpectrogram_to_Spectrogram)
 	LOOP {
 		iam (ComplexSpectrogram);
 		autoSpectrogram thee = ComplexSpectrogram_to_Spectrogram (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -1012,7 +1018,7 @@ DO
 	LOOP {
 		iam (ComplexSpectrogram);
 		autoSpectrum thee = ComplexSpectrogram_to_Spectrum (me, GET_REAL (U"Time"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -1026,15 +1032,16 @@ FORM (Correlation_confidenceIntervals, U"Correlation: Confidence intervals...", 
 	POSITIVE (U"Confidence level (0-1)", U"0.95")
 	INTEGER (U"Number of tests (Bonferroni correction)", U"0")
 	RADIO (U"Approximation", 1)
-	RADIOBUTTON (U"Ruben")
-	RADIOBUTTON (U"Fisher")
+		RADIOBUTTON (U"Ruben")
+		RADIOBUTTON (U"Fisher")
 	OK
 DO
 	double cl = GET_REAL (U"Confidence level");
 	long numberOfTests = GET_INTEGER (U"Number of tests");
 	LOOP {
 		iam (Correlation);
-		praat_new (Correlation_confidenceIntervals (me, cl, numberOfTests, GET_INTEGER (U"Approximation")), U"conf_intervals");
+		autoTableOfReal thee = Correlation_confidenceIntervals (me, cl, numberOfTests, GET_INTEGER (U"Approximation"));
+		praat_new (thee.move(), U"conf_intervals");
 	}
 END
 
@@ -1042,20 +1049,21 @@ FORM (Correlation_testDiagonality_bartlett, U"Correlation: Get diagonality (bart
 	NATURAL (U"Number of contraints", U"1")
 	OK
 DO
-	double chisq, p;
 	long nc = GET_INTEGER (U"Number of contraints");
 	LOOP {
 		iam (Correlation);
+		double chisq, p;
 		Correlation_testDiagonality_bartlett (me, nc, &chisq, &p);
 		Melder_information (p, U" (=probability, based on chisq = ",
-			chisq, U"and ndf = ", my numberOfRows * (my numberOfRows - 1) / 2);
+			chisq, U"and ndf = ", my numberOfRows * (my numberOfRows - 1) / 2, U")");
 	}
 END
 
 DIRECT (Correlation_to_PCA)
 	LOOP {
 		iam (Correlation);
-		praat_new (SSCP_to_PCA (me), my name);
+		autoPCA thee = SSCP_to_PCA (me);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -1072,8 +1080,9 @@ FORM (Covariance_createSimple, U"Create simple Covariance", U"Create simple Cova
 	NATURAL (U"Number of observations", U"100")
 	OK
 DO
-	praat_new (Covariance_createSimple (GET_STRING (U"Covariances"), GET_STRING (U"Centroid"),
-		GET_INTEGER (U"Number of observations")), GET_STRING (U"Name"));
+	autoCovariance me = Covariance_createSimple (GET_STRING (U"Covariances"), GET_STRING (U"Centroid"),
+		GET_INTEGER (U"Number of observations"));
+	praat_new (me.move(), GET_STRING (U"Name"));
 END
 
 FORM (Covariance_getProbabilityAtPosition, U"Covariance: Get probability at position", 0)
@@ -1098,8 +1107,8 @@ FORM (Covariance_getSignificanceOfOneMean, U"Covariance: Get significance of one
 DO
 	LOOP {
 		iam (Covariance);
-		double t, p; double ndf;
-		Covariance_getSignificanceOfOneMean (me, GET_INTEGER (U"Index"), GET_REAL (U"Value"), &p, &t , &ndf);
+		double p, t, ndf;
+		Covariance_getSignificanceOfOneMean (me, GET_INTEGER (U"Index"), GET_REAL (U"Value"), &p, &t, &ndf);
 		Melder_information (p, U" (=probability, based on t = ", t, U" and ndf = ", ndf);
 	}
 END
@@ -1118,9 +1127,9 @@ FORM (Covariance_getSignificanceOfMeansDifference, U"Covariance: Get significanc
 DO
 	LOOP {
 		iam (Covariance);
-		double t, p; double ndf;
+		double p, t, ndf;
 		Covariance_getSignificanceOfMeansDifference (me, GET_INTEGER (U"Index1"), GET_INTEGER (U"Index2"),
-		GET_REAL (U"Value"), GET_INTEGER (U"Paired"), GET_INTEGER (U"Equal variances"), &p, &t , &ndf);
+			GET_REAL (U"Value"), GET_INTEGER (U"Paired"), GET_INTEGER (U"Equal variances"), &p, &t, &ndf);
 		Melder_information (p, U" (=probability, based on t = ",
 			t, U"and ndf = ", ndf, U")");
 	}
@@ -1136,7 +1145,7 @@ FORM (Covariance_getSignificanceOfOneVariance, U"Covariance: Get significance of
 DO
 	LOOP {
 		iam (Covariance);
-		double chisq, p; long ndf;
+		double p, chisq; long ndf;
 		Covariance_getSignificanceOfOneVariance (me, GET_INTEGER (U"Index"), GET_REAL (U"Value"), &p, &chisq , &ndf);
 		Melder_information (p, U" (=probability, based on chisq = ", chisq, U"and ndf = ", ndf);
 	}
@@ -1150,9 +1159,9 @@ FORM (Covariance_getSignificanceOfVariancesRatio, U"Covariance: Get significance
 DO
 	LOOP {
 		iam (Covariance);
-		double f, p; long ndf;
+		double p, f; long ndf;
 		Covariance_getSignificanceOfVariancesRatio (me, GET_INTEGER (U"Index1"), GET_INTEGER (U"Index2"),
-		GET_REAL (U"Hypothesized ratio"), &p, &f , &ndf);
+			GET_REAL (U"Hypothesized ratio"), &p, &f , &ndf);
 		Melder_information (p, U" (=probability, based on F = ", f,
 		U"and ndf1 = ", ndf, U" and ndf2 = ", ndf);
 	}
@@ -1171,17 +1180,17 @@ END
 
 FORM (Covariances_reportMultivariateMeanDifference, U"Covariances: Report multivariate mean difference",
       U"Covariances: Report multivariate mean difference...")
-	BOOLEAN (U"Covariances are equal", 1)
+	BOOLEAN (U"Covariances are equal", true)
 	OK
 DO
-	Covariance c1 = 0, c2 = 0;
+	Covariance c1 = nullptr, c2 = nullptr;
 	LOOP {
 		iam (Covariance);
 		(c1 ? c2 : c1) = me;
 	}
 	Melder_assert (c1 && c2);
 	double prob, fisher, df1, df2, difference;
-	int equalCovariances = GET_INTEGER (U"Covariances are equal");
+	bool equalCovariances = GET_INTEGER (U"Covariances are equal");
 	MelderInfo_open ();
 	difference = Covariances_getMultivariateCentroidDifference (c1, c2, equalCovariances, &prob, &fisher, &df1, &df2);
 	MelderInfo_writeLine (U"Under the assumption that the two covariances are", (equalCovariances ? U" " : U" not "), U"equal:");
@@ -1189,8 +1198,7 @@ DO
 	MelderInfo_writeLine (U"Fisher's F = ", fisher);
 	MelderInfo_writeLine (U"Significance from zero = ", prob);
 	MelderInfo_writeLine (U"Degrees of freedom = ", df1, U", ", df2);
-	MelderInfo_writeLine (U"(Number of observations = ", c1->numberOfObservations, U", ",
-		c2->numberOfObservations);
+	MelderInfo_writeLine (U"(Number of observations = ", c1->numberOfObservations, U", ", c2->numberOfObservations);
 	MelderInfo_writeLine (U"Dimension of covariance matrices = ", c1-> numberOfRows, U")");
 	MelderInfo_close ();
 END
@@ -1201,39 +1209,40 @@ FORM (Covariance_to_TableOfReal_randomSampling, U"Covariance: To TableOfReal (ra
 DO
 	LOOP {
 		iam (Covariance);
-		praat_new (Covariance_to_TableOfReal_randomSampling (me, GET_INTEGER (U"Number of data points")), my name);
+		autoTableOfReal thee = Covariance_to_TableOfReal_randomSampling (me, GET_INTEGER (U"Number of data points"));
+		praat_new (thee.move(), my name);
 	}
 END
 
 DIRECT (Covariances_reportEquality)
 	autoCollection set = praat_getSelectedObjects ();
 	MelderInfo_open ();
-	{
-		double chisq, p, df;
-		Covariances_equality (set.peek(), 1, &p, &chisq, &df);
-		MelderInfo_writeLine (U"Difference between covariance matrices:");
-		MelderInfo_writeLine (U"Significance of difference (bartlett) = ", p);
-		MelderInfo_writeLine (U"Chi-squared = ", chisq);
-		MelderInfo_writeLine (U"Degrees of freedom = ", df);
-		Covariances_equality (set.peek(), 2, &p, &chisq, &df);
-		MelderInfo_writeLine (U"Significance of difference (wald) = ", p);
-		MelderInfo_writeLine (U"Chi-squared = ", chisq);
-		MelderInfo_writeLine (U"Degrees of freedom = ", df);
-	}
+	double p, chisq, df;
+	Covariances_equality (set.peek(), 1, &p, &chisq, &df);
+	MelderInfo_writeLine (U"Difference between covariance matrices:");
+	MelderInfo_writeLine (U"Significance of difference (bartlett) = ", p);
+	MelderInfo_writeLine (U"Chi-squared = ", chisq);
+	MelderInfo_writeLine (U"Degrees of freedom = ", df);
+	Covariances_equality (set.peek(), 2, &p, &chisq, &df);
+	MelderInfo_writeLine (U"Significance of difference (wald) = ", p);
+	MelderInfo_writeLine (U"Chi-squared = ", chisq);
+	MelderInfo_writeLine (U"Degrees of freedom = ", df);
 	MelderInfo_close ();
 END
 
 DIRECT (Covariance_to_Correlation)
 	LOOP {
 		iam (Covariance);
-		praat_new (SSCP_to_Correlation (me), my name);
+		autoCorrelation thee = SSCP_to_Correlation (me);
+		praat_new (thee.move(), my name);
 	}
 END
 
 DIRECT (Covariance_to_PCA)
 	LOOP {
 		iam (Covariance);
-		praat_new (SSCP_to_PCA (me), my name);
+		autoPCA thee = SSCP_to_PCA (me);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -1241,9 +1250,9 @@ FORM (Covariance_and_TableOfReal_mahalanobis, U"Covariance & TableOfReal: To Tab
 	BOOLEAN (U"Centroid from table", 0)
 	OK
 DO
-	Covariance cov = FIRST (Covariance);
-	TableOfReal tr = FIRST (TableOfReal);
-	praat_new (Covariance_and_TableOfReal_mahalanobis (cov, tr, GET_INTEGER (U"Centroid from table")), U"mahalanobis");
+	Covariance me = FIRST (Covariance);
+	TableOfReal thee = FIRST (TableOfReal);
+	praat_new (Covariance_and_TableOfReal_mahalanobis (me, thee, GET_INTEGER (U"Centroid from table")), U"mahalanobis");
 END
 
 /********************** Discriminant **********************************/
@@ -1267,7 +1276,7 @@ DO
 	Discriminant me = FIRST (Discriminant);
 	Pattern pat = FIRST (Pattern);
 	autoCategories thee = Discriminant_and_Pattern_to_Categories (me, pat, GET_INTEGER (U"Pool covariance matrices"), GET_INTEGER (U"Use apriori probabilities"));
-	praat_new (thee.transfer(), my name, U"_", pat->name);
+	praat_new (thee.move(), my name, U"_", pat->name);
 END
 
 FORM (Discriminant_and_TableOfReal_to_Configuration, U"Discriminant & TableOfReal: To Configuration", U"Discriminant & TableOfReal: To Configuration...")
@@ -1279,7 +1288,7 @@ DO
 	Discriminant me = FIRST (Discriminant);
 	TableOfReal tr = FIRST_GENERIC (TableOfReal);
 	autoConfiguration thee = Discriminant_and_TableOfReal_to_Configuration (me, tr, dimension);
-	praat_new (thee.transfer(), my name, U"_", tr->name);
+	praat_new (thee.move(), my name, U"_", tr->name);
 END
 
 DIRECT (hint_Discriminant_and_TableOfReal_to_ClassificationTable)
@@ -1295,7 +1304,7 @@ DO
 	TableOfReal tr = FIRST_GENERIC (TableOfReal);
 	autoClassificationTable thee = Discriminant_and_TableOfReal_to_ClassificationTable (me, tr,
 		GET_INTEGER (U"Pool covariance matrices"), GET_INTEGER (U"Use apriori probabilities"));
-	praat_new (thee.transfer(), my name, U"_", tr->name);
+	praat_new (thee.move(), my name, U"_", tr->name);
 END
 
 FORM (Discriminant_and_TableOfReal_mahalanobis, U"Discriminant & TableOfReal: To TableOfReal (mahalanobis)", U"Discriminant & TableOfReal: To TableOfReal (mahalanobis)...")
@@ -1308,7 +1317,7 @@ DO
 	long group = Discriminant_groupLabelToIndex (me, GET_STRING (U"Group label"));
 	REQUIRE (group > 0, U"Group label does not exist.")
 	autoTableOfReal thee = Discriminant_and_TableOfReal_mahalanobis (me, tr, group, GET_INTEGER (U"Pool covariance matrices"));
-	praat_new (thee.transfer(), U"mahalanobis");
+	praat_new (thee.move(), U"mahalanobis");
 END
 
 FORM (Discriminant_getWilksLambda, U"Discriminant: Get Wilks' lambda", U"Discriminant: Get Wilks' lambda...")
@@ -1332,7 +1341,7 @@ DO
 	LOOP {
 		iam (Discriminant);
 		Melder_information (Eigen_getCumulativeContributionOfComponents (me,
-		GET_INTEGER (U"From component"), GET_INTEGER (U"To component")));
+			GET_INTEGER (U"From component"), GET_INTEGER (U"To component")));
 	}
 END
 
@@ -1341,13 +1350,13 @@ FORM (Discriminant_getPartialDiscriminationProbability, U"Discriminant: Get part
 	INTEGER (U"Number of dimensions", U"1")
 	OK
 DO
-	long ndf, n = GET_INTEGER (U"Number of dimensions");
-	double chisq, p;
+	long n = GET_INTEGER (U"Number of dimensions");
 	REQUIRE (n >= 0, U"Number of dimensions must be greater than or equal to zero.")
 	LOOP {
 		iam (Discriminant);
+		double p, chisq; long ndf;
 		Discriminant_getPartialDiscriminationProbability (me, n, &p, &chisq, &ndf);
-		Melder_information (p, U" (=probability, based on chisq = ", chisq, U"and ndf = ", ndf);
+		Melder_information (p, U" (=probability, based on chisq = ", chisq, U"and ndf = ", ndf, U")");
 	}
 END
 
@@ -1357,7 +1366,7 @@ DIRECT (Discriminant_getHomegeneityOfCovariances_box)
 		double chisq, p; long ndf;
 		SSCPs_getHomegeneityOfCovariances_box ( (SSCPs) my groups, &p, &chisq, &ndf);
 		Melder_information (p, U" (=probability, based on chisq = ",
-		chisq, U"and ndf = ", ndf);
+			chisq, U"and ndf = ", ndf, U")");
 	}
 END
 
@@ -1548,7 +1557,7 @@ DIRECT (Discriminant_extractBetweenGroupsSSCP)
 	LOOP {
 		iam (Discriminant);
 		autoSSCP thee = Discriminant_extractBetweenGroupsSSCP (me);
-		praat_new (thee.transfer());
+		praat_new (thee.move());
 	}
 END
 
@@ -1556,7 +1565,7 @@ DIRECT (Discriminant_extractGroupCentroids)
 	LOOP {
 		iam (Discriminant);
 		autoTableOfReal thee = Discriminant_extractGroupCentroids (me);
-		praat_new (thee.transfer(), U"centroids");
+		praat_new (thee.move(), U"centroids");
 	}
 END
 
@@ -1564,7 +1573,7 @@ DIRECT (Discriminant_extractGroupStandardDeviations)
 	LOOP {
 		iam (Discriminant);
 		autoTableOfReal thee = Discriminant_extractGroupStandardDeviations (me);
-		praat_new (thee.transfer(), U"group_stddevs");
+		praat_new (thee.move(), U"group_stddevs");
 	}
 END
 
@@ -1572,7 +1581,7 @@ DIRECT (Discriminant_extractGroupLabels)
 	LOOP {
 		iam (Discriminant);
 		autoStrings thee = Discriminant_extractGroupLabels (me);
-		praat_new (thee.transfer(), U"group_labels");
+		praat_new (thee.move(), U"group_labels");
 	}
 END
 
@@ -1580,7 +1589,7 @@ DIRECT (Discriminant_extractPooledWithinGroupsSSCP)
 	LOOP {
 		iam (Discriminant);
 		autoSSCP thee = Discriminant_extractPooledWithinGroupsSSCP (me);
-		praat_new (thee.transfer(), U"pooled_within");
+		praat_new (thee.move(), U"pooled_within");
 	}
 END
 
@@ -1592,7 +1601,7 @@ DO
 	LOOP {
 		iam (Discriminant);
 		autoSSCP thee = Discriminant_extractWithinGroupSSCP (me, index);
-		praat_new (thee.transfer(), my name, U"_g", index);
+		praat_new (thee.move(), my name, U"_g", index);
 	}
 END
 
@@ -1657,7 +1666,7 @@ DO
     DTW me = FIRST (DTW);
     Polygon thee = FIRST (Polygon);
     autoMatrix him = DTW_and_Polygon_to_Matrix_cummulativeDistances (me, thee, localSlope);
-    praat_new (him.transfer(), my name, U"_", localSlope);
+    praat_new (him.move(), my name, U"_", localSlope);
 END
 
 FORM (DTW_and_Sounds_draw, U"DTW & Sounds: Draw", U"DTW & Sounds: Draw...")
@@ -1668,7 +1677,7 @@ FORM (DTW_and_Sounds_draw, U"DTW & Sounds: Draw", U"DTW & Sounds: Draw...")
 	BOOLEAN (U"Garnish", 1)
 	OK
 DO
-	Sound s1 = 0, s2 = 0; DTW dtw = 0;
+	Sound s1 = nullptr, s2 = nullptr; DTW dtw = nullptr;
 	LOOP {
 		iam (Daata);
 		if (CLASS == classSound) {
@@ -1693,7 +1702,7 @@ FORM (DTW_and_Sounds_drawWarpX, U"DTW & Sounds: Draw warp (x)", U"DTW & Sounds: 
 	BOOLEAN (U"Garnish", 1)
 	OK
 DO
-	Sound s1 = 0, s2 = 0;
+	Sound s1 = nullptr, s2 = nullptr;
 	LOOP {
 		iam (Sound);
 		(s1 ? s2 : s1) = me;
@@ -1713,10 +1722,10 @@ void DTW_constraints_addCommonFields (UiForm dia) {
 	BOOLEAN (U"Match begin positions", 0)
 	BOOLEAN (U"Match end positions", 0)
 	RADIO (U"Slope constraint", 1)
-	RADIOBUTTON (U"no restriction")
-	RADIOBUTTON (U"1/3 < slope < 3")
-	RADIOBUTTON (U"1/2 < slope < 2")
-	RADIOBUTTON (U"2/3 < slope < 3/2")
+		RADIOBUTTON (U"no restriction")
+		RADIOBUTTON (U"1/3 < slope < 3")
+		RADIOBUTTON (U"1/2 < slope < 2")
+		RADIOBUTTON (U"2/3 < slope < 3/2")
 }
 
 void DTW_constraints_getCommonFields (UiForm dia, int *begin, int *end, int *slope) {
@@ -2110,7 +2119,7 @@ DO
     LOOP {
         iam (DTW);
         autoMatrix thee = DTW_to_Matrix_cummulativeDistances (me, band, slope);
-        praat_new (thee.transfer(), my name, U"_cd");
+        praat_new (thee.move(), my name, U"_cd");
     }
 END
 
@@ -2128,7 +2137,7 @@ DO
     LOOP {
         iam (DTW);
         autoPolygon thee = DTW_to_Polygon (me, band, slope);
-        praat_new (thee.transfer(), my name);
+        praat_new (thee.move(), my name);
     }
 END
 
@@ -2136,7 +2145,7 @@ DIRECT (DTW_to_Matrix_distances)
 	LOOP {
 		iam (DTW);
 		autoMatrix thee = DTW_to_Matrix_distances (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -2144,7 +2153,7 @@ DIRECT (DTW_swapAxes)
 	LOOP {
 		iam (DTW);
 		autoDTW thee = DTW_swapAxes (me);
-		praat_new (thee.transfer(), my name, U"_axesSwapped");
+		praat_new (thee.move(), my name, U"_axesSwapped");
 	}
 END
 
@@ -2159,14 +2168,14 @@ DIRECT (DTW_and_TextGrid_to_TextGrid)
 	DTW me = FIRST (DTW);
 	TextGrid tg = FIRST (TextGrid);
 	autoTextGrid thee = DTW_and_TextGrid_to_TextGrid (me, tg, 0);
-	praat_new (thee.transfer(), tg -> name, U"_", my name);
+	praat_new (thee.move(), tg -> name, U"_", my name);
 END
 
 DIRECT (DTW_and_IntervalTier_to_Table)
 	DTW me = FIRST (DTW);
 	IntervalTier ti = FIRST (IntervalTier);
 	autoTable thee = DTW_and_IntervalTier_to_Table (me, ti, 1.0/44100);
-	praat_new (thee.transfer(), my name);
+	praat_new (thee.move(), my name);
 END
 
 /******************** EditDistanceTable & EditCostsTable ********************************************/
@@ -2179,7 +2188,7 @@ DIRECT (EditDistanceTable_to_TableOfReal_directions)
 	LOOP {
 		iam (EditDistanceTable);
 		autoTableOfReal thee = EditDistanceTable_to_TableOfReal_directions (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -2382,7 +2391,7 @@ DIRECT (EditCostsTable_to_TableOfReal)
 	LOOP {
 		iam (EditCostsTable);
 		autoTableOfReal thee = EditCostsTable_to_TableOfReal (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -2397,7 +2406,7 @@ DO
 	long numberOfSourceSymbols = GET_INTEGER (U"Number of source symbols");
 	numberOfSourceSymbols = numberOfSourceSymbols < 0 ? 0 : numberOfSourceSymbols;
 	autoEditCostsTable thee = EditCostsTable_create (numberOfTargetSymbols, numberOfSourceSymbols);
-	praat_new (thee.transfer(), GET_STRING (U"Name"));
+	praat_new (thee.move(), GET_STRING (U"Name"));
 END
 
 /******************** Eigen ********************************************/
@@ -2517,21 +2526,21 @@ DO
 	Eigen me = FIRST_GENERIC (Eigen);
 	Matrix thee = FIRST_GENERIC (Matrix);
 	autoMatrix him = Eigen_and_Matrix_project (me, thee, GET_INTEGER (U"Number of dimensions"));
-	praat_new (him.transfer(), my name, U"_", thy name);
+	praat_new (him.move(), my name, U"_", thy name);
 END
 
 DIRECT (Eigen_and_SSCP_project)
 	Eigen me = FIRST_GENERIC (Eigen);
 	SSCP cp = FIRST (SSCP);
 	autoSSCP thee = Eigen_and_SSCP_project (me, cp);
-	praat_new (thee.transfer(), my name, U"_", cp->name);
+	praat_new (thee.move(), my name, U"_", cp->name);
 END
 
 DIRECT (Eigen_and_Covariance_project)
 	Eigen me = FIRST_GENERIC (Eigen);
 	Covariance cv = FIRST (Covariance);
 	autoCovariance thee = Eigen_and_Covariance_project (me, cv);
-	praat_new (thee.transfer(), my name, U"_", cv->name);
+	praat_new (thee.move(), my name, U"_", cv->name);
 END
 
 /******************** Index ********************************************/
@@ -2612,8 +2621,8 @@ FORM (Index_extractPart, U"Index: Extract part", U"Index: Extract part...")
 DO
 	LOOP {
 		iam (Index);
-		praat_new (Index_extractPart (me, GET_INTEGER (U"left Range"), GET_INTEGER (U"right Range")),
-		Thing_getName (me), U"_part");
+		autoIndex thee = Index_extractPart (me, GET_INTEGER (U"left Range"), GET_INTEGER (U"right Range"));
+		praat_new (thee.move(), Thing_getName (me), U"_part");
 	}
 END
 
@@ -2624,7 +2633,7 @@ DO
 	LOOP {
 		iam (Index);
 		autoPermutation thee = Index_to_Permutation_permuteRandomly (me, GET_INTEGER (U"Permute within classes"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -2632,7 +2641,7 @@ DIRECT (StringsIndex_to_Strings)
 	LOOP {
 		iam (StringsIndex);
 		autoStrings thee = StringsIndex_to_Strings (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -2645,7 +2654,7 @@ DIRECT (Excitation_to_Excitations)
 		autoExcitation thee = Data_copy (me);
 		Collection_addItem (e.peek(), thee.transfer());
 	}
-	praat_new (e.transfer(), U"appended");
+	praat_new (e.move(), U"appended");
 END
 
 /******************** Excitations ********************************************/
@@ -2680,7 +2689,7 @@ DO
 	LOOP {
 		iam (Excitations);
 		autoExcitation thee = Excitations_getItem (me, GET_INTEGER (U"Item number"));
-		praat_new (thee.transfer(), my name, U"_item");
+		praat_new (thee.move(), my name, U"_item");
 	}
 END
 
@@ -2691,7 +2700,8 @@ DIRECT (Excitations_append)
 		(e1 ? e2 : e1) = me;
 	}
 	Melder_assert (e1 && e2);
-	praat_new ( (Excitations) Collections_merge (e1, e2), U"appended");
+	autoCollection result = Collections_merge (e1, e2);
+	praat_new (result.move(), U"appended");
 END
 
 FORM (Excitations_to_Pattern, U"Excitations: To Pattern", 0)
@@ -2701,7 +2711,7 @@ DO
 	LOOP {
 		iam (Excitations);
 		autoPattern thee = Excitations_to_Pattern (me, GET_INTEGER (U"Join"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -2709,7 +2719,7 @@ DIRECT (Excitations_to_TableOfReal)
 	LOOP {
 		iam (Excitations);
 		autoTableOfReal thee = Excitations_to_TableOfReal (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -2719,7 +2729,7 @@ END
 
 FORM_READ2 (FileInMemory_create, U"Create file in memory", 0, true) {
 	autoFileInMemory me = FileInMemory_create (file);
-	praat_new (me.transfer(), MelderFile_name (file));
+	praat_new (me.move(), MelderFile_name (file));
 END2 }
 
 FORM (FileInMemory_setId, U"FileInMemory: Set id", 0)
@@ -2757,7 +2767,7 @@ FORM (FilesInMemory_createFromDirectoryContents, U"Create files in memory from d
 	OK
 DO
 	autoFilesInMemory me = FilesInMemory_createFromDirectoryContents (GET_STRING (U"Directory"), GET_STRING (U"Only files that match pattern"));
-	praat_new (me.transfer(), GET_STRING (U"Name"));
+	praat_new (me.move(), GET_STRING (U"Name"));
 END
 
 FORM (FilesInMemory_createCopyFromFilesInMemory, U"", 0)
@@ -2773,27 +2783,27 @@ DO
 	long choice = GET_INTEGER (U"Espeakdata");
 	if (choice == 1) {
 		autoFilesInMemory f = (FilesInMemory) Data_copy (espeakdata_phons);
-		praat_new (f.transfer(), U"espeakdata_phons");
+		praat_new (f.move(), U"espeakdata_phons");
 	}
 	else if (choice == 2) {
 		autoFilesInMemory f = (FilesInMemory) Data_copy (espeakdata_dicts);
-		praat_new (f.transfer(), U"espeakdata_dicts");
+		praat_new (f.move(), U"espeakdata_dicts");
 	}
 	else if (choice == 3) {
 		autoFilesInMemory f = (FilesInMemory) Data_copy (espeakdata_voices);
-		praat_new (f.transfer(), U"espeakdata_voices");
+		praat_new (f.move(), U"espeakdata_voices");
 	}
 	else if (choice == 4) {
 		autoFilesInMemory f = (FilesInMemory) Data_copy (espeakdata_variants);
-		praat_new (f.transfer(), U"espeakdata_variants");
+		praat_new (f.move(), U"espeakdata_variants");
 	}
 	else if (choice == 5) {
 		autoStrings s = (Strings) Data_copy (espeakdata_voices_names);
-		praat_new (s.transfer(), U"espeakdata_voices_names");
+		praat_new (s.move(), U"espeakdata_voices_names");
 	}
 	else if (choice == 6) {
 		autoStrings s = (Strings) Data_copy (espeakdata_variants_names);
-		praat_new (s.transfer(), U"espeakdata_variants_names");
+		praat_new (s.move(), U"espeakdata_variants_names");
 	}
 END
 
@@ -2831,7 +2841,7 @@ DIRECT (FileInMemory_to_FilesInMemory)
 		FileInMemory him = Data_copy (me);
 		Collection_addItem (thee.peek(), him);
 	}
-	praat_new (thee.transfer(), U"files");
+	praat_new (thee.move(), U"files");
 END
 
 DIRECT (FilesInMemory_addItems)
@@ -2850,7 +2860,7 @@ DIRECT (FilesInMemory_merge)
 	LOOP { iam (FilesInMemory); (f1 ? f2 : f1) = me; }
 	Melder_assert (f1 != 0 && f2 != 0);
 	autoFilesInMemory fim = (FilesInMemory) Collections_merge (f1, f2);
-	praat_new (fim.transfer(), f1 -> name, U"_", f2 -> name);
+	praat_new (fim.move(), f1 -> name, U"_", f2 -> name);
 END
 
 DIRECT (FilesInMemory_to_Strings_id)

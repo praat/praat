@@ -46,7 +46,7 @@ void Discriminant_getPartialDiscriminationProbability (Discriminant me,
 	long numberOfDimensions, double *probability, double *chisq, long *ndf);
 
 double Discriminant_getConcentrationEllipseArea (Discriminant me, long group,
-	double scale, int confidence, int discriminantDirections, long d1, long d2);
+	double scale, bool confidence, int discriminantDirections, long d1, long d2);
 
 double Discriminant_getLnDeterminant_group (Discriminant me, long group);
 
