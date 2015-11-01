@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20151031)
+MAN_BEGIN (U"What's new?", U"ppgb", 20151101)
 INTRO (U"Latest changes in Praat.")
 /*LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (U"##6.0.04# (1 November 2015)")
+LIST_ITEM (U"• Corrected a bug that caused an incorrect number in FFNet files; "
+	"unreadable FFNet files can be sent to the Praat authors for repair.")
 NORMAL (U"##6.0.03# (31 October 2015)")
 LIST_ITEM (U"• Corrected a bug that caused Praat to crash when the Soundrecorder window was closed.")
 LIST_ITEM (U"• Scripting: when calling Praat from the command line, added the $$--run$ option to force script execution.")

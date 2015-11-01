@@ -368,15 +368,17 @@ Data_Description Data_Description_findNumberUse (Data_Description structDescript
 
 int64 Data_Description_integer (void *address, Data_Description description) {
 	switch (description -> type) {
-		case bytewa:       return * (signed char *)    ((char *) address + description -> offset);
-		case intwa:        return * (int *)            ((char *) address + description -> offset);
-		case longwa:       return * (long *)           ((char *) address + description -> offset);
-		case ubytewa:      return * (unsigned char *)  ((char *) address + description -> offset);
-		case uintwa:       return * (unsigned int *)   ((char *) address + description -> offset);
-		case ulongwa:      return * (unsigned long *)  ((char *) address + description -> offset);
-		case boolwa:       return * (bool *)           ((char *) address + description -> offset);
-		case objectwa:     return (* (Collection *)    ((char *) address + description -> offset)) -> size;
-		case collectionwa: return (* (Collection *)    ((char *) address + description -> offset)) -> size;
+		case bytewa:           return * (signed char *)    ((char *) address + description -> offset);
+		case intwa:            return * (int *)            ((char *) address + description -> offset);
+		case longwa:           return * (long *)           ((char *) address + description -> offset);
+		case ubytewa:          return * (unsigned char *)  ((char *) address + description -> offset);
+		case uintwa:           return * (unsigned int *)   ((char *) address + description -> offset);
+		case ulongwa:          return * (unsigned long *)  ((char *) address + description -> offset);
+		case boolwa:           return * (bool *)           ((char *) address + description -> offset);
+		case objectwa:         return (* (Collection *)    ((char *) address + description -> offset)) -> size;
+		case autoobjectwa:     return (* (Collection *)    ((char *) address + description -> offset)) -> size;   // FIXME: alignment not guaranteed
+		case collectionwa:     return (* (Collection *)    ((char *) address + description -> offset)) -> size;
+		case autocollectionwa: return (* (Collection *)    ((char *) address + description -> offset)) -> size;   // FIXME: alignment not guaranteed
 		default: return 0;
 	}
 }
