@@ -63,7 +63,7 @@ DO
 		GET_REAL (U"Learning rate"), GET_REAL (U"left Weight range"), GET_REAL (U"right Weight range"), GET_REAL (U"Weight leak"),
 		GET_REAL (U"left x range"), GET_REAL (U"right x range"), GET_REAL (U"left y range"), GET_REAL (U"right y range"),
 		0, 0);
-	praat_new (me.transfer(), GET_STRING (U"Name"));
+	praat_new (me.move(), GET_STRING (U"Name"));
 END2 }
 
 FORM (Create_rectangular_Network, U"Create rectangular Network", 0) {
@@ -83,7 +83,7 @@ DO
 		GET_INTEGER (U"Number of rows"), GET_INTEGER (U"Number of columns"),
 		GET_INTEGER (U"Bottom row clamped"),
 		GET_REAL (U"left Initial weight range"), GET_REAL (U"right Initial weight range"));
-	praat_new (me.transfer(),
+	praat_new (me.move(),
 			U"rectangle_", GET_INTEGER (U"Number of rows"),
 			U"_", GET_INTEGER (U"Number of columns"));
 END2 }
@@ -105,7 +105,7 @@ DO
 		GET_INTEGER (U"Number of rows"), GET_INTEGER (U"Number of columns"),
 		GET_INTEGER (U"Bottom row clamped"),
 		GET_REAL (U"left Initial weight range"), GET_REAL (U"right Initial weight range"));
-	praat_new (me.transfer(),
+	praat_new (me.move(),
 			U"rectangle_", GET_INTEGER (U"Number of rows"),
 			U"_", GET_INTEGER (U"Number of columns"));
 END2 }
@@ -168,7 +168,7 @@ DO
 			GET_INTEGER (U"Include x"), GET_INTEGER (U"Include y"), GET_INTEGER (U"Position decimals"),
 			GET_INTEGER (U"Include clamped"),
 			GET_INTEGER (U"Include activity"), GET_INTEGER (U"Include excitation"), GET_INTEGER (U"Activity decimals"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -394,17 +394,17 @@ END2 }
 
 DIRECT2 (Create_NoCoda_grammar) {
 	autoOTGrammar me = OTGrammar_create_NoCoda_grammar ();
-	praat_new (me.transfer(), U"NoCoda");
+	praat_new (me.move(), U"NoCoda");
 END2 }
 
 DIRECT2 (Create_NPA_grammar) {
 	autoOTGrammar me = OTGrammar_create_NPA_grammar ();
-	praat_new (me.transfer(), U"assimilation");
+	praat_new (me.move(), U"assimilation");
 END2 }
 
 DIRECT2 (Create_NPA_distribution) {
 	autoPairDistribution me = OTGrammar_create_NPA_distribution ();
-	praat_new (me.transfer(), U"assimilation");
+	praat_new (me.move(), U"assimilation");
 END2 }
 
 FORM (Create_tongue_root_grammar, U"Create tongue-root grammar", U"Create tongue-root grammar...") {
@@ -419,7 +419,7 @@ FORM (Create_tongue_root_grammar, U"Create tongue-root grammar", U"Create tongue
 	OK2
 DO
 	autoOTGrammar me = OTGrammar_create_tongueRoot_grammar (GET_INTEGER (U"Constraint set"), GET_INTEGER (U"Ranking"));
-	praat_new (me.transfer(), GET_STRING (U"Ranking"));
+	praat_new (me.move(), GET_STRING (U"Ranking"));
 END2 }
 
 FORM (Create_metrics_grammar, U"Create metrics grammar", 0) {
@@ -442,11 +442,11 @@ FORM (Create_metrics_grammar, U"Create metrics grammar", 0) {
 	BOOLEAN (U"Include codas", 0)
 	OK2
 DO
-	praat_new (OTGrammar_create_metrics (GET_INTEGER (U"Initial ranking"), GET_INTEGER (U"Trochaicity constraint"),
+	autoOTGrammar me = OTGrammar_create_metrics (GET_INTEGER (U"Initial ranking"), GET_INTEGER (U"Trochaicity constraint"),
 		GET_INTEGER (U"Include FootBimoraic"), GET_INTEGER (U"Include FootBisyllabic"),
 		GET_INTEGER (U"Include Peripheral"), GET_INTEGER (U"Nonfinality constraint"),
-		GET_INTEGER (U"Overt forms have secondary stress"), GET_INTEGER (U"Include *Clash and *Lapse"), GET_INTEGER (U"Include codas")),
-		GET_STRING (U"Initial ranking"));
+		GET_INTEGER (U"Overt forms have secondary stress"), GET_INTEGER (U"Include *Clash and *Lapse"), GET_INTEGER (U"Include codas"));
+	praat_new (me.move(), GET_STRING (U"Initial ranking"));
 END2 }
 
 #pragma mark Save
@@ -707,7 +707,7 @@ DO
 	LOOP {
 		iam (OTGrammar);
 		autoStrings thee = OTGrammar_generateInputs (me, GET_INTEGER (U"Number of trials"));
-		praat_new (thee.transfer(), my name, U"_in");
+		praat_new (thee.move(), my name, U"_in");
 	}
 END2 }
 
@@ -715,7 +715,7 @@ DIRECT2 (OTGrammar_getInputs) {
 	LOOP {
 		iam (OTGrammar);
 		autoStrings thee = OTGrammar_getInputs (me);
-		praat_new (thee.transfer(), my name, U"_in");
+		praat_new (thee.move(), my name, U"_in");
 	}
 END2 }
 
@@ -723,7 +723,7 @@ DIRECT2 (OTGrammar_measureTypology) {
 	LOOP try {
 		iam (OTGrammar);
 		autoDistributions thee = OTGrammar_measureTypology (me);
-		praat_new (thee.transfer(), my name, U"_out");
+		praat_new (thee.move(), my name, U"_out");
 		praat_dataChanged (me);
 	} catch (MelderError) {
 		praat_dataChanged (OBJECT);
@@ -764,7 +764,7 @@ FORM (OTGrammar_inputToOutputs, U"OTGrammar: Input to outputs", U"OTGrammar: Inp
 DO
 	iam_ONLY (OTGrammar);
 	autoStrings thee = OTGrammar_inputToOutputs (me, GET_STRING (U"Input form"), GET_INTEGER (U"Trials"), GET_REAL (U"Evaluation noise"));
-	praat_new (thee.transfer(), my name, U"_out");
+	praat_new (thee.move(), my name, U"_out");
 	praat_dataChanged (me);
 END2 }
 
@@ -777,7 +777,7 @@ DO
 		iam (OTGrammar);
 		try {
 			autoDistributions thee = OTGrammar_to_Distribution (me, GET_INTEGER (U"Trials per input"), GET_REAL (U"Evaluation noise"));
-			praat_new (thee.transfer(), my name, U"_out");
+			praat_new (thee.move(), my name, U"_out");
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);
@@ -794,7 +794,7 @@ DO
 	LOOP try {
 		iam (OTGrammar);
 		autoPairDistribution thee = OTGrammar_to_PairDistribution (me, GET_INTEGER (U"Trials per input"), GET_REAL (U"Evaluation noise"));
-		praat_new (thee.transfer(), my name, U"_out");
+		praat_new (thee.move(), my name, U"_out");
 		praat_dataChanged (me);
 	} catch (MelderError) {
 		praat_dataChanged (OBJECT);
@@ -970,7 +970,7 @@ DO
 	iam_ONLY (OTGrammar);
 	thouart_ONLY (Strings);
 	autoStrings him = OTGrammar_inputsToOutputs (me, thee, GET_REAL (U"Evaluation noise"));
-	praat_new (him.transfer(), my name, U"_out");
+	praat_new (him.move(), my name, U"_out");
 	praat_dataChanged (me);
 END2 }
 
@@ -1023,7 +1023,7 @@ FORM (OTGrammar_Strings_learnFromPartialOutputs, U"OTGrammar: Learn from partial
 DO
 	iam_ONLY (OTGrammar);
 	thouart_ONLY (Strings);
-	OTHistory history = NULL;
+	autoOTHistory history;
 	try {
 		OTGrammar_learnFromPartialOutputs (me, thee,
 			GET_REAL (U"Evaluation noise"),
@@ -1037,7 +1037,7 @@ DO
 		Melder_flushError ();
 		// trickle down to save history
 	}
-	if (history) praat_new (history, my name);
+	if (history) praat_new (history.move(), my name);
 END2 }
 
 #pragma mark OTGRAMMAR & DISTRIBUTIONS
@@ -1072,7 +1072,7 @@ FORM (OTGrammar_Distributions_learnFromPartialOutputs, U"OTGrammar & Distributio
 DO
 	iam_ONLY (OTGrammar);
 	thouart_ONLY (Distributions);
-	OTHistory history = NULL;
+	autoOTHistory history;
 	try {
 		OTGrammar_Distributions_learnFromPartialOutputs (me, thee, GET_INTEGER (U"Column number"),
 			GET_REAL (U"Evaluation noise"),
@@ -1087,7 +1087,7 @@ DO
 		praat_dataChanged (me);
 		Melder_flushError ();
 	}
-	if (history) praat_new (history, my name);
+	if (history) praat_new (history.move(), my name);
 END2 }
 
 FORM (OTGrammar_Distributions_learnFromPartialOutputs_rrip, U"OTGrammar & Distributions: Learn from partial outputs (rrip)", U"OT learning 6. Shortcut to grammar learning") {
@@ -1106,7 +1106,7 @@ FORM (OTGrammar_Distributions_learnFromPartialOutputs_rrip, U"OTGrammar & Distri
 DO
 	iam_ONLY (OTGrammar);
 	thouart_ONLY (Distributions);
-	OTHistory history = NULL;
+	autoOTHistory history;
 	try {
 		OTGrammar_Distributions_learnFromPartialOutputs (me, thee, GET_INTEGER (U"Column number"),
 			GET_REAL (U"Evaluation noise"),
@@ -1121,7 +1121,7 @@ DO
 		praat_dataChanged (me);
 		Melder_flushError ();
 	}
-	if (history) praat_new (history, my name);
+	if (history) praat_new (history.move(), my name);
 END2 }
 
 FORM (OTGrammar_Distributions_learnFromPartialOutputs_eip, U"OTGrammar & Distributions: Learn from partial outputs (eip)", U"OT learning 6. Shortcut to grammar learning") {
@@ -1140,7 +1140,7 @@ FORM (OTGrammar_Distributions_learnFromPartialOutputs_eip, U"OTGrammar & Distrib
 DO
 	iam_ONLY (OTGrammar);
 	thouart_ONLY (Distributions);
-	OTHistory history = NULL;
+	autoOTHistory history;
 	try {
 		OTGrammar_Distributions_learnFromPartialOutputs (me, thee, GET_INTEGER (U"Column number"),
 			GET_REAL (U"Evaluation noise"),
@@ -1155,7 +1155,7 @@ DO
 		praat_dataChanged (me);
 		Melder_flushError ();
 	}
-	if (history) praat_new (history, my name);
+	if (history) praat_new (history.move(), my name);
 END2 }
 
 FORM (OTGrammar_Distributions_learnFromPartialOutputs_wrip, U"OTGrammar & Distributions: Learn from partial outputs (wrip)", U"OT learning 6. Shortcut to grammar learning") {
@@ -1174,7 +1174,7 @@ FORM (OTGrammar_Distributions_learnFromPartialOutputs_wrip, U"OTGrammar & Distri
 DO
 	iam_ONLY (OTGrammar);
 	thouart_ONLY (Distributions);
-	OTHistory history = NULL;
+	autoOTHistory history;
 	try {
 		OTGrammar_Distributions_learnFromPartialOutputs (me, thee, GET_INTEGER (U"Column number"),
 			GET_REAL (U"Evaluation noise"),
@@ -1189,7 +1189,7 @@ DO
 		praat_dataChanged (me);
 		Melder_flushError ();
 	}
-	if (history) praat_new (history, my name);
+	if (history) praat_new (history.move(), my name);
 END2 }
 
 FORM (OTGrammar_Distributions_listObligatoryRankings, U"OTGrammar & Distributions: Get fraction correct...", 0) {
@@ -1309,11 +1309,11 @@ FORM (Create_multi_level_metrics_grammar, U"Create multi-level metrics grammar",
 	BOOLEAN (U"Include codas", 0)
 	OK2
 DO
-	praat_new (OTMulti_create_metrics (GET_INTEGER (U"Initial ranking"), GET_INTEGER (U"Trochaicity constraint"),
+	autoOTMulti me = OTMulti_create_metrics (GET_INTEGER (U"Initial ranking"), GET_INTEGER (U"Trochaicity constraint"),
 		GET_INTEGER (U"Include FootBimoraic"), GET_INTEGER (U"Include FootBisyllabic"),
 		GET_INTEGER (U"Include Peripheral"), GET_INTEGER (U"Nonfinality constraint"),
-		GET_INTEGER (U"Overt forms have secondary stress"), GET_INTEGER (U"Include *Clash and *Lapse"), GET_INTEGER (U"Include codas")),
-		GET_STRING (U"Initial ranking"));
+		GET_INTEGER (U"Overt forms have secondary stress"), GET_INTEGER (U"Include *Clash and *Lapse"), GET_INTEGER (U"Include codas"));
+	praat_new (me.move(), GET_STRING (U"Initial ranking"));
 END2 }
 
 FORM (OTMulti_drawTableau, U"Draw tableau", U"OT learning") {
@@ -1372,7 +1372,7 @@ DO
 	iam_ONLY (OTMulti);
 	autoStrings thee = OTMulti_generateOptimalForms (me, GET_STRING (U"Partial form 1"), GET_STRING (U"Partial form 2"),
 		GET_INTEGER (U"Number of trials"), GET_REAL (U"Evaluation noise"));
-	praat_new (thee.transfer(), my name, U"_out");
+	praat_new (thee.move(), my name, U"_out");
 	praat_dataChanged (me);
 END2 }
 
@@ -1583,7 +1583,7 @@ DO
 		try {
 			autoDistributions thee = OTMulti_to_Distribution (me, GET_STRING (U"Partial form 1"), GET_STRING (U"Partial form 2"),
 				GET_INTEGER (U"Number of trials"), GET_REAL (U"Evaluation noise"));
-			praat_new (thee.transfer(), my name, U"_out");
+			praat_new (thee.move(), my name, U"_out");
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);
@@ -1609,7 +1609,7 @@ FORM (OTMulti_PairDistribution_learn, U"OTMulti & PairDistribution: Learn", 0) {
 DO
 	iam_ONLY (OTMulti);
 	thouart_ONLY (PairDistribution);
-	Table history = NULL;
+	autoTable history;
 	try {
 		OTMulti_PairDistribution_learn (me, thee,
 			GET_REAL (U"Evaluation noise"),
@@ -1625,7 +1625,7 @@ DO
 		Melder_flushError ();
 		// trickle down to save history
 	}
-	if (history) praat_new (history, my name);
+	if (history) praat_new (history.move(), my name);
 END2 }
 
 FORM (OTMulti_Strings_generateOptimalForms, U"OTGrammar: Inputs to outputs", U"OTGrammar: Inputs to outputs...") {
@@ -1635,7 +1635,7 @@ DO
 	iam_ONLY (OTMulti);
 	thouart_ONLY (Strings);
 	autoStrings him = OTMulti_Strings_generateOptimalForms (me, thee, GET_REAL (U"Evaluation noise"));
-	praat_new (him.transfer(), my name, U"_out");
+	praat_new (him.move(), my name, U"_out");
 	praat_dataChanged (me);
 END2 }
 

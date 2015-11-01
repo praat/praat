@@ -435,7 +435,7 @@ static void replaceOutput (OTGrammarCandidate me) {
 	my output = Melder_dup (newOutput);
 }
 
-OTGrammar OTGrammar_create_metrics (int equal_footForm_wsp, int trochaicityConstraint, int includeFootBimoraic, int includeFootBisyllabic,
+autoOTGrammar OTGrammar_create_metrics (int equal_footForm_wsp, int trochaicityConstraint, int includeFootBimoraic, int includeFootBisyllabic,
 	int includePeripheral, int nonfinalityConstraint, int overtFormsHaveSecondaryStress,
 	int includeClashAndLapse, int includeCodas)
 {
@@ -523,7 +523,7 @@ OTGrammar OTGrammar_create_metrics (int equal_footForm_wsp, int trochaicityConst
 				}
 			}
 		}
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Metrics grammar not created.");
 	}

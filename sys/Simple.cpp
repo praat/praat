@@ -40,34 +40,34 @@
 
 Thing_implement (SimpleInt, Daata, 0);
 
-SimpleInt SimpleInt_create (int number) {
+autoSimpleInt SimpleInt_create (int number) {
 	autoSimpleInt me = Thing_new (SimpleInt);
 	my number = number;
-	return me.transfer();
+	return me;
 }
 
 Thing_implement (SimpleLong, Daata, 0);
 
-SimpleLong SimpleLong_create (long number) {
+autoSimpleLong SimpleLong_create (long number) {
 	autoSimpleLong me = Thing_new (SimpleLong);
 	my number = number;
-	return me.transfer();
+	return me;
 }
 
 Thing_implement (SimpleDouble, Daata, 0);
 
-SimpleDouble SimpleDouble_create (double number) {
+autoSimpleDouble SimpleDouble_create (double number) {
 	autoSimpleDouble me = Thing_new (SimpleDouble);
 	my number = number;
-	return me.transfer();
+	return me;
 }
 
 Thing_implement (SimpleString, Daata, 0);
 
-SimpleString SimpleString_create (const char32 *string) {
+autoSimpleString SimpleString_create (const char32 *string) {
 	autoSimpleString me = Thing_new (SimpleString);
 	my string = Melder_dup (string);
-	return me.transfer();
+	return me;
 }
 
 /* End of file Simple.cpp */

@@ -163,7 +163,7 @@ double Sound_getPowerInAir (Sound me);
 double Sound_getIntensity_dB (Sound me);
 
 double Sound_getNearestZeroCrossing (Sound me, double position, long ichannel);
-void Sound_setZero (Sound me, double tmin, double tmax, int roundTimesToNearestZeroCrossing);
+void Sound_setZero (Sound me, double tmin, double tmax, bool roundTimesToNearestZeroCrossing);
 
 autoSound Sound_createAsPureTone (long numberOfChannels, double startingTime, double endTime,
 	double sampleRate, double frequency, double amplitude, double fadeInDuration, double fadeOutDuration);

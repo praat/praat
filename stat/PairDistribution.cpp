@@ -47,19 +47,19 @@ void structPairDistribution :: v_info () {
 	MelderInfo_writeLine (U"Number of pairs: ", pairs -> size);
 }
 
-PairProbability PairProbability_create (const char32 *string1, const char32 *string2, double weight) {
+autoPairProbability PairProbability_create (const char32 *string1, const char32 *string2, double weight) {
 	autoPairProbability me = Thing_new (PairProbability);
 	my string1 = Melder_dup (string1);
 	my string2 = Melder_dup (string2);
 	my weight = weight;
-	return me.transfer();
+	return me;
 }
 
-PairDistribution PairDistribution_create () {
+autoPairDistribution PairDistribution_create () {
 	try {
 		autoPairDistribution me = Thing_new (PairDistribution);
 		my pairs = Ordered_create ();
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PairDistribution not created.");
 	}
@@ -103,8 +103,8 @@ double PairDistribution_getWeight (PairDistribution me, long pairNumber) {
 }
 
 void PairDistribution_add (PairDistribution me, const char32 *string1, const char32 *string2, double weight) {
-	PairProbability pair = PairProbability_create (string1, string2, weight);
-	Collection_addItem (my pairs, pair);
+	autoPairProbability pair = PairProbability_create (string1, string2, weight);
+	Collection_addItem (my pairs, pair.transfer());
 }
 
 void PairDistribution_removeZeroWeights (PairDistribution me) {
@@ -137,9 +137,8 @@ static double PairDistributions_getTotalWeight_checkPositive (PairDistribution m
 	return totalWeight;
 }
 
-void PairDistribution_to_Stringses (PairDistribution me, long nout, Strings *strings1_out, Strings *strings2_out) {
+void PairDistribution_to_Stringses (PairDistribution me, long nout, autoStrings *strings1_out, autoStrings *strings2_out) {
 	try {
-		*strings1_out = *strings2_out = nullptr;
 		long nin = my pairs -> size, iin;
 		if (nin < 1)
 			Melder_throw (U"No candidates.");
@@ -167,8 +166,8 @@ void PairDistribution_to_Stringses (PairDistribution me, long nout, Strings *str
 			strings1 -> strings [iout] = Melder_dup (prob -> string1);
 			strings2 -> strings [iout] = Melder_dup (prob -> string2);
 		}
-		*strings1_out = strings1.transfer();
-		*strings2_out = strings2.transfer();
+		*strings1_out = strings1.move();
+		*strings2_out = strings2.move();
 	} catch (MelderError) {
 		Melder_throw (me, U": generation of Stringses not performed.");
 	}
@@ -307,7 +306,7 @@ double PairDistribution_Distributions_getFractionCorrect (PairDistribution me, D
 	}
 }
 
-Table PairDistribution_to_Table (PairDistribution me) {
+autoTable PairDistribution_to_Table (PairDistribution me) {
 	try {
 		autoTable thee = Table_createWithColumnNames (my pairs -> size, U"string1 string2 weight");
 		for (long ipair = 1; ipair <= my pairs -> size; ipair ++) {
@@ -316,7 +315,7 @@ Table PairDistribution_to_Table (PairDistribution me) {
 			Table_setStringValue (thee.peek(), ipair, 2, prob -> string2);
 			Table_setNumericValue (thee.peek(), ipair, 3, prob -> weight);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Table.");
 	}

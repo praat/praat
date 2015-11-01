@@ -21,84 +21,72 @@
 #include "OTGrammar.h"
 
 static void draw_NoCoda_pat (Graphics g) {
-	OTGrammar ot = OTGrammar_create_NoCoda_grammar ();
-	OTGrammar_drawTableau (ot, g, false, U"pat");
-	forget (ot);
+	autoOTGrammar ot = OTGrammar_create_NoCoda_grammar ();
+	OTGrammar_drawTableau (ot.get(), g, false, U"pat");
 }
 static void draw_NoCoda_pa (Graphics g) {
-	OTGrammar ot = OTGrammar_create_NoCoda_grammar ();
-	OTGrammar_drawTableau (ot, g, false, U"pa");
-	forget (ot);
+	autoOTGrammar ot = OTGrammar_create_NoCoda_grammar ();
+	OTGrammar_drawTableau (ot.get(), g, false, U"pa");
 }
 static void draw_NoCoda_reverse (Graphics g) {
-	OTGrammar ot = OTGrammar_create_NoCoda_grammar ();
+	autoOTGrammar ot = OTGrammar_create_NoCoda_grammar ();
 	ot -> index [1] = 2;
 	ot -> index [2] = 1;
-	OTGrammar_drawTableau (ot, g, false, U"pat");
-	forget (ot);
+	OTGrammar_drawTableau (ot.get(), g, false, U"pat");
 }
 static void draw_NPA_assimilate_anpa (Graphics g) {
-	OTGrammar ot = OTGrammar_create_NPA_grammar ();
+	autoOTGrammar ot = OTGrammar_create_NPA_grammar ();
 	ot -> index [1] = 3;
 	ot -> index [2] = 1;
 	ot -> index [3] = 2;
-	OTGrammar_drawTableau (ot, g, false, U"an+pa");
-	forget (ot);
+	OTGrammar_drawTableau (ot.get(), g, false, U"an+pa");
 }
 static void draw_NPA_assimilate_atma (Graphics g) {
-	OTGrammar ot = OTGrammar_create_NPA_grammar ();
+	autoOTGrammar ot = OTGrammar_create_NPA_grammar ();
 	ot -> index [1] = 3;
 	ot -> index [2] = 1;
 	ot -> index [3] = 2;
-	OTGrammar_drawTableau (ot, g, false, U"at+ma");
-	forget (ot);
+	OTGrammar_drawTableau (ot.get(), g, false, U"at+ma");
 }
 static void draw_NPA_faithful_anpa (Graphics g) {
-	OTGrammar ot = OTGrammar_create_NPA_grammar ();
+	autoOTGrammar ot = OTGrammar_create_NPA_grammar ();
 	ot -> index [1] = 3;
 	ot -> index [2] = 2;
 	ot -> index [3] = 1;
-	OTGrammar_drawTableau (ot, g, false, U"an+pa");
-	forget (ot);
+	OTGrammar_drawTableau (ot.get(), g, false, U"an+pa");
 }
 static void draw_NPA_faithful_atma (Graphics g) {
-	OTGrammar ot = OTGrammar_create_NPA_grammar ();
+	autoOTGrammar ot = OTGrammar_create_NPA_grammar ();
 	ot -> index [1] = 3;
 	ot -> index [2] = 2;
 	ot -> index [3] = 1;
-	OTGrammar_drawTableau (ot, g, false, U"at+ma");
-	forget (ot);
+	OTGrammar_drawTableau (ot.get(), g, false, U"at+ma");
 }
 static void draw_Wolof_ItI (Graphics g) {
-	OTGrammar ot = OTGrammar_create_tongueRoot_grammar (1, 4);
-	OTGrammar_drawTableau (ot, g, false, U"\\ict\\ic");
-	forget (ot);
+	autoOTGrammar ot = OTGrammar_create_tongueRoot_grammar (1, 4);
+	OTGrammar_drawTableau (ot.get(), g, false, U"\\ict\\ic");
 }
 static void draw_Wolof_itE (Graphics g) {
-	OTGrammar ot = OTGrammar_create_tongueRoot_grammar (1, 4);
-	OTGrammar_drawTableau (ot, g, false, U"it\\ef");
-	forget (ot);
+	autoOTGrammar ot = OTGrammar_create_tongueRoot_grammar (1, 4);
+	OTGrammar_drawTableau (ot.get(), g, false, U"it\\ef");
 }
 static void draw_Wolof_etE (Graphics g) {
-	OTGrammar ot = OTGrammar_create_tongueRoot_grammar (1, 4);
-	OTGrammar_drawTableau (ot, g, false, U"et\\ef");
-	forget (ot);
+	autoOTGrammar ot = OTGrammar_create_tongueRoot_grammar (1, 4);
+	OTGrammar_drawTableau (ot.get(), g, false, U"et\\ef");
 }
 static void draw_Wolof_schwatschwa (Graphics g) {
-	OTGrammar ot = OTGrammar_create_tongueRoot_grammar (1, 4);
-	OTGrammar_drawTableau (ot, g, false, U"\\swt\\sw");
-	forget (ot);
+	autoOTGrammar ot = OTGrammar_create_tongueRoot_grammar (1, 4);
+	OTGrammar_drawTableau (ot.get(), g, false, U"\\swt\\sw");
 }
 static void draw_Infant_swtI (Graphics g) {
-	OTGrammar ot = OTGrammar_create_tongueRoot_grammar (1, 3);
+	autoOTGrammar ot = OTGrammar_create_tongueRoot_grammar (1, 3);
 	ot -> constraints [1]. disharmony = 3;
 	ot -> constraints [2]. disharmony = 4;
 	ot -> constraints [3]. disharmony = 2;
 	ot -> constraints [4]. disharmony = 1;
 	ot -> constraints [5]. disharmony = 5;
-	OTGrammar_sort (ot);
-	OTGrammar_drawTableau (ot, g, false, U"\\swt\\ic");
-	forget (ot);
+	OTGrammar_sort (ot.get());
+	OTGrammar_drawTableau (ot.get(), g, false, U"\\swt\\ic");
 }
 
 void manual_gram_init (ManPages me);

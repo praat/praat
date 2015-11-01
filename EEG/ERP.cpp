@@ -103,7 +103,7 @@ void ERP_drawChannel_name (ERP me, Graphics graphics, const char32 *channelName,
 	ERP_drawChannel_number (me, graphics, ERP_getChannelNumber (me, channelName), tmin, tmax, vmin, vmax, garnish);
 }
 
-Table ERP_tabulate (ERP me, bool includeSampleNumbers, bool includeTime, int timeDecimals, int voltageDecimals, int units) {
+autoTable ERP_tabulate (ERP me, bool includeSampleNumbers, bool includeTime, int timeDecimals, int voltageDecimals, int units) {
 	double voltageScaling = 1.0;
 	const char32 *unitText = U"(V)";
 	if (units == 2) {
@@ -127,17 +127,17 @@ Table ERP_tabulate (ERP me, bool includeSampleNumbers, bool includeTime, int tim
 				Table_setStringValue (thee.peek(), isamp, ++ icol, Melder_fixed (voltageScaling * my z [ichan] [isamp], voltageDecimals));
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Table.");
 	}
 }
 
-Sound ERP_downto_Sound (ERP me) {
+autoSound ERP_downto_Sound (ERP me) {
 	try {
 		autoSound thee = Thing_new (Sound);
 		my structSound :: v_copy (thee.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound.");
 	}

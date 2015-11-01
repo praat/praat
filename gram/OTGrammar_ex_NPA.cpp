@@ -28,7 +28,7 @@
 
 #include "OTGrammar.h"
 
-OTGrammar OTGrammar_create_NPA_grammar () {
+autoOTGrammar OTGrammar_create_NPA_grammar () {
 	try {
 		OTGrammarCandidate candidate;
 		OTGrammarTableau tableau;
@@ -72,20 +72,20 @@ OTGrammar OTGrammar_create_NPA_grammar () {
 				candidate -> marks [3] = 1;
 		OTGrammar_checkIndex (me.peek());
 		OTGrammar_newDisharmonies (me.peek(), 0.0);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Nasal place assimilation grammar not created.");
 	}
 }
 
-PairDistribution OTGrammar_create_NPA_distribution () {
+autoPairDistribution OTGrammar_create_NPA_distribution () {
 	try {
 		autoPairDistribution me = PairDistribution_create ();
 		PairDistribution_add (me.peek(), U"at+ma", U"atma", 100);
 		PairDistribution_add (me.peek(), U"at+ma", U"apma",   0);
 		PairDistribution_add (me.peek(), U"an+pa", U"anpa",  20);
 		PairDistribution_add (me.peek(), U"an+pa", U"ampa",  80);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Nasal place assimilation distribution not created.");
 	}

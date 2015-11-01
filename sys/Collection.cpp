@@ -532,13 +532,13 @@ long SortedSetOfString_lookUp (SortedSetOfString me, const char32 *string) {
 }
 
 void SortedSetOfString_addString (SortedSetOfString me, const char32 *string) {
-	static SimpleString simp;
+	static autoSimpleString simp;
 	if (! simp) {
 		simp = SimpleString_create (U"");
 		Melder_free (simp -> string);
 	}
 	simp -> string = (char32 *) string;   // reference copy
-	long index = my v_position (simp);
+	long index = my v_position (simp.get());
 	if (index == 0) return;   // OK: already there: do not add
 	autoSimpleString newSimp = SimpleString_create (string);
 	_Collection_insertItem (me, newSimp.transfer(), index);

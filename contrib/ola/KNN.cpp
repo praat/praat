@@ -417,10 +417,10 @@ TableOfReal KNN_classifyToTableOfReal
     if(!input)
         return nullptr;
 
-    TableOfReal output = TableOfReal_create(ps->ny, ncategories);
+    autoTableOfReal output = TableOfReal_create(ps->ny, ncategories);
 
     for (long i = 1; i <= ncategories; ++i)
-        TableOfReal_setColumnLabel (output, i,  SimpleString_c ((SimpleString) uniqueCategories->item[i]));
+        TableOfReal_setColumnLabel (output.get(), i,  SimpleString_c ((SimpleString) uniqueCategories->item[i]));
 
     for(int i = 0; i < nthreads; ++i)
     {
@@ -439,7 +439,7 @@ TableOfReal KNN_classifyToTableOfReal
     {  
         input[i]->me = me;
         input[i]->ps = ps;
-        input[i]->output = output;
+        input[i]->output = output.get();   // YUCK: reference copy
         input[i]->uniqueCategories = uniqueCategories.transfer();
         input[i]->fws = fws;
         input[i]->k = k;
@@ -469,7 +469,7 @@ TableOfReal KNN_classifyToTableOfReal
         free(error);
         return nullptr;
     }
-    return(output);
+    return output.transfer();
 }
 
 

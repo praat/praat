@@ -27,11 +27,11 @@ void structDistributions :: v_info () {
 	MelderInfo_writeLine (U"Number of values: ", numberOfRows);
 }
 
-Distributions Distributions_create (long numberOfRows, long numberOfColumns) {
+autoDistributions Distributions_create (long numberOfRows, long numberOfColumns) {
 	try {
 		autoDistributions me = Thing_new (Distributions);
 		TableOfReal_init (me.peek(), numberOfRows, numberOfColumns);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Distributions not created.");
 	}
@@ -130,23 +130,23 @@ static void unicize (Distributions me) {
 	my numberOfRows = nrow;
 }
 
-Distributions Distributions_addTwo (Distributions me, Distributions thee) {
+autoDistributions Distributions_addTwo (Distributions me, Distributions thee) {
 	try {
 		autoDistributions him = static_cast<Distributions> (TablesOfReal_append (me, thee));
 		TableOfReal_sortByLabel (him.peek(), 0, 0);
 		unicize (him.peek());
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U": not added.");
 	}
 }
 
-Distributions Distributions_addMany (Collection me) {
+autoDistributions Distributions_addMany (Collection me) {
 	try {
 		autoDistributions thee = static_cast<Distributions> (TablesOfReal_appendMany (me));
 		TableOfReal_sortByLabel (thee.peek(), 0, 0);
 		unicize (thee.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Distributions objects not added.");
 	}

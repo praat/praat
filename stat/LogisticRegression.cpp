@@ -73,19 +73,19 @@ void structLogisticRegression :: v_info () {
 	}
 }
 
-LogisticRegression LogisticRegression_create (const char32 *dependent1, const char32 *dependent2) {
+autoLogisticRegression LogisticRegression_create (const char32 *dependent1, const char32 *dependent2) {
 	try {
 		autoLogisticRegression me = Thing_new (LogisticRegression);
 		Regression_init (me.peek());
 		my dependent1 = Melder_dup (dependent1);
 		my dependent2 = Melder_dup (dependent2);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"LogisticRegression not created.");
 	}
 }
 
-static LogisticRegression _Table_to_LogisticRegression (Table me, long *factors, long numberOfFactors, long dependent1, long dependent2) {
+static autoLogisticRegression _Table_to_LogisticRegression (Table me, long *factors, long numberOfFactors, long dependent1, long dependent2) {
 	long numberOfParameters = numberOfFactors + 1;
 	long numberOfCells = my rows -> size, numberOfY0 = 0, numberOfY1 = 0, numberOfData = 0;
 	double logLikelihood = 1e308, previousLogLikelihood = 2e308;
@@ -269,10 +269,10 @@ static LogisticRegression _Table_to_LogisticRegression (Table me, long *factors,
 		parm -> value /= stdevX [ivar];
 		thy intercept -= parm -> value * meanX [ivar];
 	}
-	return thee.transfer();
+	return thee;
 }
 
-LogisticRegression Table_to_LogisticRegression (Table me, const char32 *factors_columnLabelString,
+autoLogisticRegression Table_to_LogisticRegression (Table me, const char32 *factors_columnLabelString,
 	const char32 *dependent1_columnLabel, const char32 *dependent2_columnLabel)
 {
 	try {
@@ -281,7 +281,7 @@ LogisticRegression Table_to_LogisticRegression (Table me, const char32 *factors_
 		long dependent1_columnIndex = Table_getColumnIndexFromColumnLabel (me, dependent1_columnLabel);
 		long dependent2_columnIndex = Table_getColumnIndexFromColumnLabel (me, dependent2_columnLabel);
 		autoLogisticRegression thee = _Table_to_LogisticRegression (me, factors_columnIndices.peek(), numberOfFactors, dependent1_columnIndex, dependent2_columnIndex);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": logistic regression not performed.");
 	}
@@ -352,7 +352,7 @@ void LogisticRegression_drawBoundary (LogisticRegression me, Graphics graphics, 
 }
 
 /*
-Table Table_LogisticRegression_addProbabilities (Table me, LogisticRegression thee) {
+autoTable Table_LogisticRegression_addProbabilities (Table me, LogisticRegression thee) {
 	for (icell = 1; icell <= numberOfCells; icell ++) {
 		double fittedLogit = parameters [0], fittedP, fittedQ, fittedLogP, fittedLogQ;
 		for (ivar = 1; ivar <= numberOfIndependentVariables; ivar ++) {

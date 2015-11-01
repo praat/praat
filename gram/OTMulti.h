@@ -52,11 +52,11 @@ int OTMulti_learnOne (OTMulti me, const char32 *form1, const char32 *form2,
 void OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee,
 	double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, int direction,
 	double initialPlasticity, long replicationsPerPlasticity, double plasticityDecrement,
-	long numberOfPlasticities, double relativePlasticityNoise, long storeHistoryEvery, Table *history_out);
+	long numberOfPlasticities, double relativePlasticityNoise, long storeHistoryEvery, autoTable *history_out);
 
 void OTMulti_drawTableau (OTMulti me, Graphics g, const char32 *form1, const char32 *form2, bool vertical, bool showDisharmonies);
 
-OTMulti OTMulti_create_metrics (int equal_footForm_wsp, int trochaicityConstraint, int includeFootBimoraic, int includeFootBisyllabic,
+autoOTMulti OTMulti_create_metrics (int equal_footForm_wsp, int trochaicityConstraint, int includeFootBimoraic, int includeFootBisyllabic,
 	int includePeripheral, int nonfinalityConstraint, int overtFormsHaveSecondaryStress,
 	int includeClashAndLapse, int includeCodas);
 
@@ -66,9 +66,9 @@ void OTMulti_setConstraintPlasticity (OTMulti me, long constraint, double plasti
 void OTMulti_removeConstraint (OTMulti me, const char32 *constraintName);
 
 void OTMulti_generateOptimalForm (OTMulti me, const char32 *form1, const char32 *form2, char32 *optimalForm, double evaluationNoise);
-Strings OTMulti_generateOptimalForms (OTMulti me, const char32 *form1, const char32 *form2, long numberOfTrials, double evaluationNoise);
-Distributions OTMulti_to_Distribution (OTMulti me, const char32 *form1, const char32 *form2, long numberOfTrials, double evaluationNoise);
-Strings OTMulti_Strings_generateOptimalForms (OTMulti me, Strings forms, double evaluationNoise);
+autoStrings OTMulti_generateOptimalForms (OTMulti me, const char32 *form1, const char32 *form2, long numberOfTrials, double evaluationNoise);
+autoDistributions OTMulti_to_Distribution (OTMulti me, const char32 *form1, const char32 *form2, long numberOfTrials, double evaluationNoise);
+autoStrings OTMulti_Strings_generateOptimalForms (OTMulti me, Strings forms, double evaluationNoise);
 
 /* End of file OTMulti.h */
 #endif

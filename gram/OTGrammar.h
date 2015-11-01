@@ -82,14 +82,14 @@ bool OTGrammar_areAllPartialOutputsSinglyGrammatical (OTGrammar me, Strings thee
 
 void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, const char32 *input);
 
-Strings OTGrammar_generateInputs (OTGrammar me, long numberOfTrials);
-Strings OTGrammar_getInputs (OTGrammar me);
+autoStrings OTGrammar_generateInputs (OTGrammar me, long numberOfTrials);
+autoStrings OTGrammar_getInputs (OTGrammar me);
 void OTGrammar_inputToOutput (OTGrammar me, const char32 *input, char32 *output, double evaluationNoise);
-Strings OTGrammar_inputsToOutputs (OTGrammar me, Strings inputs, double evaluationNoise);
-Strings OTGrammar_inputToOutputs (OTGrammar me, const char32 *input, long n, double evaluationNoise);
-Distributions OTGrammar_to_Distribution (OTGrammar me, long trialsPerInput, double evaluationNoise);
-PairDistribution OTGrammar_to_PairDistribution (OTGrammar me, long trialsPerInput, double evaluationNoise);
-Distributions OTGrammar_measureTypology (OTGrammar me);
+autoStrings OTGrammar_inputsToOutputs (OTGrammar me, Strings inputs, double evaluationNoise);
+autoStrings OTGrammar_inputToOutputs (OTGrammar me, const char32 *input, long n, double evaluationNoise);
+autoDistributions OTGrammar_to_Distribution (OTGrammar me, long trialsPerInput, double evaluationNoise);
+autoPairDistribution OTGrammar_to_PairDistribution (OTGrammar me, long trialsPerInput, double evaluationNoise);
+autoDistributions OTGrammar_measureTypology (OTGrammar me);
 
 void OTGrammar_learnOne (OTGrammar me, const char32 *input, const char32 *adultOutput,
 	double rankingSpreading, enum kOTGrammar_rerankingStrategy updateRule, bool honourLocalRankings,
@@ -108,12 +108,12 @@ void OTGrammar_learnOneFromPartialOutput (OTGrammar me, const char32 *partialAdu
 	double demotionMean, double relativeDemotionSpreading, long numberOfChews, bool warnIfStalled);
 void OTGrammar_learnFromPartialOutputs (OTGrammar me, Strings partialOutputs,
 	double rankingSpreading, enum kOTGrammar_rerankingStrategy updateRule, bool honourLocalRankings,
-	double demotionMean, double relativeDemotionSpreading, long numberOfChews, long storeHistoryEvery, OTHistory *history);
+	double demotionMean, double relativeDemotionSpreading, long numberOfChews, long storeHistoryEvery, autoOTHistory *history);
 void OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distributions thee, long columnNumber,
 	double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, bool honourLocalRankings,
 	double initialPlasticity, long replicationsPerPlasticity, double plasticityDecrement,
 	long numberOfPlasticities, double relativePlasticityNoise, long numberOfChews,
-	long storeHistoryEvery, OTHistory *history_out,
+	long storeHistoryEvery, autoOTHistory *history_out,
 	bool resampleForVirtualProduction, bool compareOnlyPartialOutput, long resampleForCorrectForm);
 double OTGrammar_PairDistribution_getFractionCorrect (OTGrammar me, PairDistribution thee,
 	double evaluationNoise, long numberOfInputs);
@@ -124,11 +124,11 @@ double OTGrammar_Distributions_getFractionCorrect (OTGrammar me, Distributions t
 
 void OTGrammar_checkIndex (OTGrammar me);
 
-OTGrammar OTGrammar_create_NoCoda_grammar ();
-OTGrammar OTGrammar_create_NPA_grammar ();
-PairDistribution OTGrammar_create_NPA_distribution ();
-OTGrammar OTGrammar_create_tongueRoot_grammar (int small_large, int equal_random_infant_Wolof);
-OTGrammar OTGrammar_create_metrics (int equal_footForm_wsp,
+autoOTGrammar OTGrammar_create_NoCoda_grammar ();
+autoOTGrammar OTGrammar_create_NPA_grammar ();
+autoPairDistribution OTGrammar_create_NPA_distribution ();
+autoOTGrammar OTGrammar_create_tongueRoot_grammar (int small_large, int equal_random_infant_Wolof);
+autoOTGrammar OTGrammar_create_metrics (int equal_footForm_wsp,
 	int trochaicityConstraint, int includeFootBimoraic, int includeFootBisyllabic,
 	int includePeripheral, int nonfinalityConstraint, int overtFormsHaveSecondaryStress, int includeClashAndLapse, int includeCodas);
 	/* T&S: 1, false, false, false, 1, true, false, false */

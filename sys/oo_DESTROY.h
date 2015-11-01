@@ -93,6 +93,8 @@
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
 	forget (our x);
 
+#define oo_AUTO_COLLECTION(Class,x,ItemClass,version)
+
 #define oo_FILE(x)
 
 #define oo_DIR(x)

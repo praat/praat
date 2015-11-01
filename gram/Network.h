@@ -32,18 +32,18 @@ void Network_init (Network me,
 	double learningRate, double minimumWeight, double maximumWeight, double weightLeak,
 	double xmin, double xmax, double ymin, double ymax, long numberOfNodes, long numberOfConnections);
 
-Network Network_create (double spreadingRate, enum kNetwork_activityClippingRule activityClippingRule,
+autoNetwork Network_create (double spreadingRate, enum kNetwork_activityClippingRule activityClippingRule,
 	double minimumActivity, double maximumActivity, double activityLeak,
 	double learningRate, double minimumWeight, double maximumWeight, double weightLeak,
 	double xmin, double xmax, double ymin, double ymax, long numberOfNodes, long numberOfConnections);
 
-Network Network_create_rectangle (double spreadingRate, enum kNetwork_activityClippingRule activityClippingRule,
+autoNetwork Network_create_rectangle (double spreadingRate, enum kNetwork_activityClippingRule activityClippingRule,
 	double minimumActivity, double maximumActivity, double activityLeak,
 	double learningRate, double minimumWeight, double maximumWeight, double weightLeak,
 	long numberOfRows, long numberOfColumns, bool bottomRowClamped,
 	double initialMinimumWeight, double initialMaximumWeight);
 
-Network Network_create_rectangle_vertical (double spreadingRate, enum kNetwork_activityClippingRule activityClippingRule,
+autoNetwork Network_create_rectangle_vertical (double spreadingRate, enum kNetwork_activityClippingRule activityClippingRule,
 	double minimumActivity, double maximumActivity, double activityLeak,
 	double learningRate, double minimumWeight, double maximumWeight, double weightLeak,
 	long numberOfRows, long numberOfColumns, bool bottomRowClamped,
@@ -68,7 +68,7 @@ void Network_setWeightLeak (Network me, double weightLeak);
 void Network_setActivityLeak (Network me, double activityLeak);
 void Network_setShunting (Network me, double shunting);
 void Network_setActivityClippingRule (Network me, enum kNetwork_activityClippingRule activityClippingRule);
-Table Network_nodes_downto_Table (Network me, long fromNodeNumber, long toNodeNumber,
+autoTable Network_nodes_downto_Table (Network me, long fromNodeNumber, long toNodeNumber,
 	bool includeNodeNumbers,
 	bool includeX, bool includeY, int positionDecimals,
 	bool includeClamped,

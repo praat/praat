@@ -27,15 +27,15 @@ Thing_define (Distributions, TableOfReal) {
 		override;
 };
 
-Distributions Distributions_create (long numberOfRows, long numberOfColumns);
+autoDistributions Distributions_create (long numberOfRows, long numberOfColumns);
 
 void Distributions_peek (Distributions me, long column, char32 **string, long *row);
 
 double Distributions_getProbability (Distributions me, const char32 *string, long column);
 double Distributionses_getMeanAbsoluteDifference (Distributions me, Distributions thee, long column);
 
-Distributions Distributions_addTwo (Distributions me, Distributions thee);
-Distributions Distributions_addMany (Collection me);
+autoDistributions Distributions_addTwo (Distributions me, Distributions thee);
+autoDistributions Distributions_addMany (Collection me);
 
 void Distributions_checkSpecifiedColumnNumberWithinRange (Distributions me, long columnNumber);
 

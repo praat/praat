@@ -98,7 +98,7 @@ void Network_init (Network me, double spreadingRate, enum kNetwork_activityClipp
 	my connections = NUMvector <structNetworkConnection> (1, numberOfConnections);
 }
 
-Network Network_create (double spreadingRate, enum kNetwork_activityClippingRule activityClippingRule,
+autoNetwork Network_create (double spreadingRate, enum kNetwork_activityClippingRule activityClippingRule,
 	double minimumActivity, double maximumActivity, double activityLeak,
 	double learningRate, double minimumWeight, double maximumWeight, double weightLeak,
 	double xmin, double xmax, double ymin, double ymax, long numberOfNodes, long numberOfConnections)
@@ -108,7 +108,7 @@ Network Network_create (double spreadingRate, enum kNetwork_activityClippingRule
 		Network_init (me.peek(), spreadingRate, activityClippingRule, minimumActivity, maximumActivity, activityLeak,
 			learningRate, minimumWeight, maximumWeight, weightLeak,
 			xmin, xmax, ymin, ymax, numberOfNodes, numberOfConnections);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Network not created.");
 	}
@@ -277,7 +277,7 @@ void Network_normalizeWeights (Network me, long nodeMin, long nodeMax, long node
 	}
 }
 
-Network Network_create_rectangle (double spreadingRate, enum kNetwork_activityClippingRule activityClippingRule,
+autoNetwork Network_create_rectangle (double spreadingRate, enum kNetwork_activityClippingRule activityClippingRule,
 	double minimumActivity, double maximumActivity, double activityLeak,
 	double learningRate, double minimumWeight, double maximumWeight, double weightLeak,
 	long numberOfRows, long numberOfColumns, bool bottomRowClamped,
@@ -321,13 +321,13 @@ Network Network_create_rectangle (double spreadingRate, enum kNetwork_activityCl
 			}
 		}
 		Melder_assert (iconn == my numberOfConnections);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Rectangular network not created.");
 	}
 }
 
-Network Network_create_rectangle_vertical (double spreadingRate, enum kNetwork_activityClippingRule activityClippingRule,
+autoNetwork Network_create_rectangle_vertical (double spreadingRate, enum kNetwork_activityClippingRule activityClippingRule,
 	double minimumActivity, double maximumActivity, double activityLeak,
 	double learningRate, double minimumWeight, double maximumWeight, double weightLeak,
 	long numberOfRows, long numberOfColumns, bool bottomRowClamped,
@@ -364,7 +364,7 @@ Network Network_create_rectangle_vertical (double spreadingRate, enum kNetwork_a
 			}
 		}
 		Melder_assert (iconn == my numberOfConnections);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Vertical rectangular network not created.");
 	}
@@ -482,7 +482,7 @@ void Network_setActivityClippingRule (Network me, enum kNetwork_activityClipping
 	Network_zeroActivities (me, 0, 0);
 }
 
-Table Network_nodes_downto_Table (Network me, long fromNodeNumber, long toNodeNumber,
+autoTable Network_nodes_downto_Table (Network me, long fromNodeNumber, long toNodeNumber,
 	bool includeNodeNumbers,
 	bool includeX, bool includeY, int positionDecimals,
 	bool includeClamped,
@@ -514,7 +514,7 @@ Table Network_nodes_downto_Table (Network me, long fromNodeNumber, long toNodeNu
 			if (includeActivity)    Table_setStringValue  (thee.peek(), inode, ++ icol, Melder_fixed (node -> activity,   activityDecimals));
 			if (includeExcitation)  Table_setStringValue  (thee.peek(), inode, ++ icol, Melder_fixed (node -> excitation, activityDecimals));
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Table.");
 	}

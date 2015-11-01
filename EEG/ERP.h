@@ -42,12 +42,12 @@ void ERP_drawScalp_garnish (Graphics graphics, double vmin, double vmax, enum kG
 void ERP_drawChannel_number (ERP me, Graphics graphics, long channelNumber, double tmin, double tmax, double vmin, double vmax, bool garnish);
 void ERP_drawChannel_name (ERP me, Graphics graphics, const char32 *channelName, double tmin, double tmax, double vmin, double vmax, bool garnish);
 
-Table ERP_tabulate (ERP me, bool includeSampleNumbers, bool includeTime, int timeDecimals, int voltageDecimals, int units);
+autoTable ERP_tabulate (ERP me, bool includeSampleNumbers, bool includeTime, int timeDecimals, int voltageDecimals, int units);
 
 /**
 	Extract the Sound part from the ERP. The channel names are lost.
 */
-Sound ERP_downto_Sound (ERP me);
+autoSound ERP_downto_Sound (ERP me);
 
 /* End of file ERP.h */
 #endif

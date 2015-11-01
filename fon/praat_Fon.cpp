@@ -192,14 +192,14 @@ DO
 	double startTime = GET_REAL (U"Start time"), endTime = GET_REAL (U"End time");
 	if (endTime <= startTime) Melder_throw (U"End time must be greater than start time.");
 	autoAmplitudeTier thee = AmplitudeTier_create (startTime, endTime);
-	praat_new (thee.transfer(), GET_STRING (U"Name"));
+	praat_new (thee.move(), GET_STRING (U"Name"));
 END2 }
 
 DIRECT2 (AmplitudeTier_downto_PointProcess) {
 	LOOP {
 		iam (AmplitudeTier);
 		autoPointProcess thee = AnyTier_downto_PointProcess (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -207,7 +207,7 @@ DIRECT2 (AmplitudeTier_downto_TableOfReal) {
 	LOOP {
 		iam (AmplitudeTier);
 		autoTableOfReal thee = AmplitudeTier_downto_TableOfReal (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -349,7 +349,7 @@ DO
 	LOOP {
 		iam (AmplitudeTier);
 		autoIntensityTier thee = AmplitudeTier_to_IntensityTier (me, GET_REAL (U"Threshold"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -361,7 +361,7 @@ DO
 	LOOP {
 		iam (AmplitudeTier);
 		autoSound thee = AmplitudeTier_to_Sound (me, GET_REAL (U"Sampling frequency"), GET_INTEGER (U"Interpolation depth"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -380,7 +380,7 @@ DIRECT2 (Sound_AmplitudeTier_multiply) {
 		if (CLASS == classAmplitudeTier) tier = (AmplitudeTier) OBJECT;
 	}
 	autoSound thee = Sound_AmplitudeTier_multiply (sound, tier);
-	praat_new (thee.transfer(), sound -> name, U"_amp");
+	praat_new (thee.move(), sound -> name, U"_amp");
 END2 }
 
 /***** COCHLEAGRAM *****/
@@ -445,7 +445,7 @@ DO
 	LOOP {
 		iam (Cochleagram);
 		autoExcitation thee = Cochleagram_to_Excitation (me, GET_REAL (U"Time"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -453,7 +453,7 @@ DIRECT2 (Cochleagram_to_Matrix) {
 	LOOP {
 		iam (Cochleagram);
 		autoMatrix thee = Cochleagram_to_Matrix (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -488,7 +488,7 @@ DO
 	LOOP {
 		iam (Distributions);
 		autoTransition thee = Distributions_to_Transition (me, NULL, GET_INTEGER (U"Environment"), NULL, GET_INTEGER (U"Greedy"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -504,7 +504,7 @@ DO
 		if (CLASS == classTransition) trans = (Transition) OBJECT;
 	}
 	autoTransition thee = Distributions_to_Transition (dist, NULL, GET_INTEGER (U"Environment"), trans, GET_INTEGER (U"Greedy"));
-	praat_new (thee.transfer());
+	praat_new (thee.move());
 END2 }
 
 FORM (Distributions_to_Transition_noise, U"To Transition (noise)", 0) {
@@ -515,7 +515,7 @@ DO
 	Distributions underlying = NULL, surface = NULL;
 	LOOP (underlying ? surface : underlying) = (Distributions) OBJECT;
 	autoTransition thee = Distributions_to_Transition (underlying, surface, GET_INTEGER (U"Environment"), NULL, GET_INTEGER (U"Greedy"));
-	praat_new (thee.transfer());
+	praat_new (thee.move());
 END2 }
 
 FORM (Distributions_to_Transition_noise_adj, U"To Transition (noise)", 0) {
@@ -530,7 +530,7 @@ DO
 		if (CLASS == classTransition) trans = (Transition) OBJECT;
 	}
 	autoTransition thee = Distributions_to_Transition (underlying, surface, GET_INTEGER (U"Environment"), trans, GET_INTEGER (U"Greedy"));
-	praat_new (thee.transfer());
+	praat_new (thee.move());
 END2 }
 
 /***** DISTRIBUTIONS & TRANSITION *****/
@@ -543,7 +543,7 @@ DIRECT2 (Distributions_Transition_map) {
 		if (CLASS == classTransition) trans = (Transition) OBJECT;
 	}
 	autoDistributions thee = Distributions_Transition_map (dist, trans);
-	praat_new (thee.transfer(), U"surface");
+	praat_new (thee.move(), U"surface");
 END2 }
 
 /***** DURATIONTIER *****/
@@ -569,14 +569,14 @@ DO
 	double startTime = GET_REAL (U"Start time"), endTime = GET_REAL (U"End time");
 	if (endTime <= startTime) Melder_throw (U"End time must be greater than start time.");
 	autoDurationTier thee = DurationTier_create (startTime, endTime);
-	praat_new (thee.transfer(), GET_STRING (U"Name"));
+	praat_new (thee.move(), GET_STRING (U"Name"));
 END2 }
 
 DIRECT2 (DurationTier_downto_PointProcess) {
 	LOOP {
 		iam (DurationTier);
 		autoPointProcess thee = AnyTier_downto_PointProcess (OBJECT);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -714,7 +714,7 @@ DO
 	LOOP {
 		iam (Excitation);
 		autoFormant thee = Excitation_to_Formant (me, GET_INTEGER (U"Maximum number of formants"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -722,7 +722,7 @@ DIRECT2 (Excitation_to_Matrix) {
 	LOOP {
 		iam (Excitation);
 		autoMatrix thee = Excitation_to_Matrix (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -732,7 +732,7 @@ DIRECT2 (Formant_downto_FormantGrid) {
 	LOOP {
 		iam (Formant);
 		autoFormantGrid thee = Formant_downto_FormantGrid (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -740,7 +740,7 @@ DIRECT2 (Formant_downto_FormantTier) {
 	LOOP {
 		iam (Formant);
 		autoFormantTier thee = Formant_downto_FormantTier (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1051,7 +1051,7 @@ DO
 			GET_INTEGER (U"Include intensity"), GET_INTEGER (U"Intensity decimals"),
 			GET_INTEGER (U"Include number of formants"), GET_INTEGER (U"Frequency decimals"),
 			GET_INTEGER (U"Include bandwidths"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1118,7 +1118,7 @@ DO
 	LOOP {
 		iam (Formant);
 		autoMatrix thee = Formant_to_Matrix (me, GET_INTEGER (U"Formant"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1143,48 +1143,48 @@ DO
 			GET_REAL (U"Reference F3"), GET_REAL (U"Reference F4"),
 			GET_REAL (U"Reference F5"), GET_REAL (U"Frequency cost"),
 			GET_REAL (U"Bandwidth cost"), GET_REAL (U"Transition cost"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
 /***** FORMANT & POINTPROCESS *****/
 
 DIRECT2 (Formant_PointProcess_to_FormantTier) {
-	Formant formant = NULL;
-	PointProcess point = NULL;
+	Formant formant = nullptr;
+	PointProcess point = nullptr;
 	LOOP {
 		if (CLASS == classFormant) formant = (Formant) OBJECT;
 		if (CLASS == classPointProcess) point = (PointProcess) OBJECT;
 		if (formant && point) break;
 	}
 	autoFormantTier thee = Formant_PointProcess_to_FormantTier (formant, point);
-	praat_new (thee.transfer(), formant -> name, U"_", point -> name);
+	praat_new (thee.move(), formant -> name, U"_", point -> name);
 END2 }
 
 /***** FORMANT & SOUND *****/
 
 DIRECT2 (Sound_Formant_filter) {
-	Sound sound = NULL;
-	Formant formant = NULL;
+	Sound sound = nullptr;
+	Formant formant = nullptr;
 	LOOP {
 		if (CLASS == classSound) sound = (Sound) OBJECT;
 		if (CLASS == classFormant) formant = (Formant) OBJECT;
 		if (sound && formant) break;
 	}
 	autoSound thee = Sound_Formant_filter (sound, formant);
-	praat_new (thee.transfer(), sound -> name, U"_filt");
+	praat_new (thee.move(), sound -> name, U"_filt");
 END2 }
 
 DIRECT2 (Sound_Formant_filter_noscale) {
-	Sound sound = NULL;
-	Formant formant = NULL;
+	Sound sound = nullptr;
+	Formant formant = nullptr;
 	LOOP {
 		if (CLASS == classSound) sound = (Sound) OBJECT;
 		if (CLASS == classFormant) formant = (Formant) OBJECT;
 		if (sound && formant) break;
 	}
 	autoSound thee = Sound_Formant_filter_noscale (sound, formant);
-	praat_new (thee.transfer(), sound -> name, U"_filt");
+	praat_new (thee.move(), sound -> name, U"_filt");
 END2 }
 
 /***** FORMANTGRID *****/
@@ -1231,7 +1231,7 @@ DO
 	autoFormantGrid thee = FormantGrid_create (startTime, endTime, GET_INTEGER (U"Number of formants"),
 		GET_REAL (U"Initial first formant"), GET_REAL (U"Initial formant spacing"),
 		GET_REAL (U"Initial first bandwidth"), GET_REAL (U"Initial bandwidth spacing"));
-	praat_new (thee.transfer(), GET_STRING (U"Name"));
+	praat_new (thee.move(), GET_STRING (U"Name"));
 END2 }
 
 static void cb_FormantGridEditor_publish (Editor me, void *closure, Daata publish) {
@@ -1332,7 +1332,7 @@ DO
 	LOOP {
 		iam (FormantGrid);
 		autoFormant thee = FormantGrid_to_Formant (me, GET_REAL (U"Time step"), intensity);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1347,7 +1347,7 @@ DIRECT2 (Sound_FormantGrid_filter) {
 		if (me && grid) break;   // OPTIMIZE
 	}
 	autoSound thee = Sound_FormantGrid_filter (me, grid);
-	praat_new (thee.transfer(), my name, U"_filt");
+	praat_new (thee.move(), my name, U"_filt");
 END2 }
 
 DIRECT2 (Sound_FormantGrid_filter_noscale) {
@@ -1359,7 +1359,7 @@ DIRECT2 (Sound_FormantGrid_filter_noscale) {
 		if (me && grid) break;   // OPTIMIZE
 	}
 	autoSound thee = Sound_FormantGrid_filter_noscale (me, grid);
-	praat_new (thee.transfer(), my name, U"_filt");
+	praat_new (thee.move(), my name, U"_filt");
 END2 }
 
 /***** FORMANTTIER *****/
@@ -1395,7 +1395,7 @@ DO
 	double startTime = GET_REAL (U"Start time"), endTime = GET_REAL (U"End time");
 	if (endTime <= startTime) Melder_throw (U"End time must be greater than start time.");
 	autoFormantTier thee = FormantTier_create (startTime, endTime);
-	praat_new (thee.transfer(), GET_STRING (U"Name"));
+	praat_new (thee.move(), GET_STRING (U"Name"));
 END2 }
 
 FORM (FormantTier_downto_TableOfReal, U"Down to TableOfReal", 0) {
@@ -1406,7 +1406,7 @@ DO
 	LOOP {
 		iam (FormantTier);
 		autoTableOfReal thee = FormantTier_downto_TableOfReal (me, GET_INTEGER (U"Include formants"), GET_INTEGER (U"Include bandwidths"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1462,7 +1462,7 @@ DIRECT2 (Sound_FormantTier_filter) {
 		if (me && tier) break;   // OPTIMIZE
 	}
 	autoSound thee = Sound_FormantTier_filter (me, tier);
-	praat_new (thee.transfer(), my name, U"_filt");
+	praat_new (thee.move(), my name, U"_filt");
 END2 }
 
 DIRECT2 (Sound_FormantTier_filter_noscale) {
@@ -1474,7 +1474,7 @@ DIRECT2 (Sound_FormantTier_filter_noscale) {
 		if (me && tier) break;   // OPTIMIZE
 	}
 	autoSound thee = Sound_FormantTier_filter_noscale (me, tier);
-	praat_new (thee.transfer(), my name, U"_filt");
+	praat_new (thee.move(), my name, U"_filt");
 END2 }
 
 /***** HARMONICITY *****/
@@ -1613,7 +1613,7 @@ DIRECT2 (Harmonicity_to_Matrix) {
 	LOOP {
 		iam (Harmonicity);
 		autoMatrix thee = Harmonicity_to_Matrix (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1638,7 +1638,7 @@ DIRECT2 (Intensity_downto_IntensityTier) {
 	LOOP {
 		iam (Intensity);
 		autoIntensityTier thee = Intensity_downto_IntensityTier (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1646,7 +1646,7 @@ DIRECT2 (Intensity_downto_Matrix) {
 	LOOP {
 		iam (Intensity);
 		autoMatrix thee = Intensity_to_Matrix (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1800,7 +1800,7 @@ DIRECT2 (Intensity_to_IntensityTier_peaks) {
 	LOOP {
 		iam (Intensity);
 		autoIntensityTier thee = Intensity_to_IntensityTier_peaks (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1808,7 +1808,7 @@ DIRECT2 (Intensity_to_IntensityTier_valleys) {
 	LOOP {
 		iam (Intensity);
 		autoIntensityTier thee = Intensity_to_IntensityTier_valleys (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1826,8 +1826,8 @@ FORM (Pitch_Intensity_draw, U"Plot intensity by pitch", 0) {
 		RADIOBUTTON (U"Speckles and curve")
 	OK2
 DO
-	Pitch pitch = NULL;
-	Intensity intensity = NULL;
+	Pitch pitch = nullptr;
+	Intensity intensity = nullptr;
 	LOOP {
 		if (CLASS == classPitch) pitch = (Pitch) OBJECT;
 		if (CLASS == classIntensity) intensity = (Intensity) OBJECT;
@@ -1847,8 +1847,8 @@ FORM (Pitch_Intensity_speckle, U"Plot intensity by pitch", 0) {
 	BOOLEAN (U"Garnish", 1)
 	OK2
 DO
-	Pitch pitch = NULL;
-	Intensity intensity = NULL;
+	Pitch pitch = nullptr;
+	Intensity intensity = nullptr;
 	LOOP {
 		if (CLASS == classPitch) pitch = (Pitch) OBJECT;
 		if (CLASS == classIntensity) intensity = (Intensity) OBJECT;
@@ -1863,15 +1863,15 @@ END2 }
 /***** INTENSITY & POINTPROCESS *****/
 
 DIRECT2 (Intensity_PointProcess_to_IntensityTier) {
-	Intensity intensity = NULL;
-	PointProcess point = NULL;
+	Intensity intensity = nullptr;
+	PointProcess point = nullptr;
 	LOOP {
 		if (CLASS == classIntensity) intensity = (Intensity) OBJECT;
 		if (CLASS == classPointProcess) point = (PointProcess) OBJECT;
 		if (intensity && point) break;   // OPTIMIZE
 	}
 	autoIntensityTier thee = Intensity_PointProcess_to_IntensityTier (intensity, point);
-	praat_new (thee.transfer(), intensity -> name);
+	praat_new (thee.move(), intensity -> name);
 END2 }
 
 /***** INTENSITYTIER *****/
@@ -1897,14 +1897,14 @@ DO
 	double startTime = GET_REAL (U"Start time"), endTime = GET_REAL (U"End time");
 	if (endTime <= startTime) Melder_throw (U"End time must be greater than start time.");
 	autoIntensityTier thee = IntensityTier_create (startTime, endTime);
-	praat_new (thee.transfer(), GET_STRING (U"Name"));
+	praat_new (thee.move(), GET_STRING (U"Name"));
 END2 }
 
 DIRECT2 (IntensityTier_downto_PointProcess) {
 	LOOP {
 		iam (IntensityTier);
 		autoPointProcess thee = AnyTier_downto_PointProcess (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1912,7 +1912,7 @@ DIRECT2 (IntensityTier_downto_TableOfReal) {
 	LOOP {
 		iam (IntensityTier);
 		autoTableOfReal thee = IntensityTier_downto_TableOfReal (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1982,7 +1982,7 @@ DIRECT2 (IntensityTier_to_AmplitudeTier) {
 	LOOP {
 		iam (IntensityTier);
 		autoAmplitudeTier thee = IntensityTier_to_AmplitudeTier (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1994,51 +1994,51 @@ END2 }
 /***** INTENSITYTIER & POINTPROCESS *****/
 
 DIRECT2 (IntensityTier_PointProcess_to_IntensityTier) {
-	IntensityTier intensity = NULL;
-	PointProcess point = NULL;
+	IntensityTier intensity = nullptr;
+	PointProcess point = nullptr;
 	LOOP {
 		if (CLASS == classIntensityTier) intensity = (IntensityTier) OBJECT;
 		if (CLASS == classPointProcess) point = (PointProcess) OBJECT;
 		if (intensity && point) break;   // OPTIMIZE
 	}
 	autoIntensityTier thee = IntensityTier_PointProcess_to_IntensityTier (intensity, point);
-	praat_new (thee.transfer(), intensity -> name);
+	praat_new (thee.move(), intensity -> name);
 END2 }
 
 /***** INTENSITYTIER & SOUND *****/
 
 DIRECT2 (Sound_IntensityTier_multiply_old) {
-	Sound sound = NULL;
-	IntensityTier intensity = NULL;
+	Sound sound = nullptr;
+	IntensityTier intensity = nullptr;
 	LOOP {
 		if (CLASS == classSound) sound = (Sound) OBJECT;
 		if (CLASS == classIntensityTier) intensity = (IntensityTier) OBJECT;
 		if (sound && intensity) break;   // OPTIMIZE
 	}
 	autoSound thee = Sound_IntensityTier_multiply (sound, intensity, true);
-	praat_new (thee.transfer(), sound -> name, U"_int");
+	praat_new (thee.move(), sound -> name, U"_int");
 END2 }
 
 FORM (Sound_IntensityTier_multiply, U"Sound & IntervalTier: Multiply", 0) {
 	BOOLEAN (U"Scale to 0.9", 1)
 	OK2
 DO
-	Sound sound = NULL;
-	IntensityTier intensity = NULL;
+	Sound sound = nullptr;
+	IntensityTier intensity = nullptr;
 	LOOP {
 		if (CLASS == classSound) sound = (Sound) OBJECT;
 		if (CLASS == classIntensityTier) intensity = (IntensityTier) OBJECT;
 		if (sound && intensity) break;   // OPTIMIZE
 	}
 	autoSound thee = Sound_IntensityTier_multiply (sound, intensity, GET_INTEGER (U"Scale to 0.9"));
-	praat_new (thee.transfer(), sound -> name, U"_int");
+	praat_new (thee.move(), sound -> name, U"_int");
 END2 }
 
 /***** INTERVALTIER, rest in praat_TextGrid_init.cpp *****/
 
 FORM_READ2 (IntervalTier_readFromXwaves, U"Read IntervalTier from Xwaves", 0, true) {
 	autoIntervalTier me = IntervalTier_readFromXwaves (file);
-	praat_newWithFile (me.transfer(), file, MelderFile_name (file));
+	praat_newWithFile (me.move(), file, MelderFile_name (file));
 END2 }
 
 /***** LTAS *****/
@@ -2046,7 +2046,7 @@ END2 }
 DIRECT2 (Ltases_average) {
 	autoCollection ltases = praat_getSelectedObjects ();
 	autoLtas thee = Ltases_average (ltases.peek());
-	praat_new (thee.transfer(), U"averaged");
+	praat_new (thee.move(), U"averaged");
 END2 }
 
 FORM (Ltas_computeTrendLine, U"Ltas: Compute trend line", U"Ltas: Compute trend line...") {
@@ -2057,7 +2057,7 @@ DO
 	LOOP {
 		iam (Ltas);
 		autoLtas thee = Ltas_computeTrendLine (me, GET_REAL (U"left Frequency range"), GET_REAL (U"right Frequency range"));
-		praat_new (thee.transfer(), my name, U"_trend");
+		praat_new (thee.move(), my name, U"_trend");
 	}
 END2 }
 
@@ -2325,7 +2325,7 @@ END2 }
 DIRECT2 (Ltases_merge) {
 	autoCollection ltases = praat_getSelectedObjects ();
 	autoLtas thee = Ltases_merge (ltases.peek());
-	praat_new (thee.transfer(), U"merged");
+	praat_new (thee.move(), U"merged");
 END2 }
 
 FORM (Ltas_subtractTrendLine, U"Ltas: Subtract trend line", U"Ltas: Subtract trend line...") {
@@ -2336,7 +2336,7 @@ DO
 	LOOP {
 		iam (Ltas);
 		autoLtas thee = Ltas_subtractTrendLine (me, GET_REAL (U"left Frequency range"), GET_REAL (U"right Frequency range"));
-		praat_new (thee.transfer(), my name, U"_fit");
+		praat_new (thee.move(), my name, U"_fit");
 	}
 END2 }
 
@@ -2352,15 +2352,13 @@ DIRECT2 (Ltas_to_SpectrumTier_peaks) {
 	LOOP {
 		iam (Ltas);
 		autoSpectrumTier thee = Ltas_to_SpectrumTier_peaks (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
 /***** MANIPULATION *****/
 
-static void cb_ManipulationEditor_publication (Editor editor, void *closure, Daata publication) {
-	(void) editor;
-	(void) closure;
+static void cb_ManipulationEditor_publication (Editor /* editor */, void * /* closure */, Daata publication) {
 	try {
 		praat_new (publication, U"fromManipulationEditor");
 		praat_updateSelection ();
@@ -2383,7 +2381,7 @@ DIRECT2 (Manipulation_extractDurationTier) {
 		iam (Manipulation);
 		if (! my duration) Melder_throw (me, U": I don't contain a DurationTier.");
 		autoDurationTier thee = Data_copy (my duration.get());
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -2392,7 +2390,7 @@ DIRECT2 (Manipulation_extractOriginalSound) {
 		iam (Manipulation);
 		if (! my sound) Melder_throw (me, U": I don't contain a Sound.");
 		autoSound thee = Data_copy (my sound.get());
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -2401,7 +2399,7 @@ DIRECT2 (Manipulation_extractPitchTier) {
 		iam (Manipulation);
 		if (! my pitch) Melder_throw (me, U": I don't contain a PitchTier.");
 		autoPitchTier thee = Data_copy (my pitch.get());
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -2410,7 +2408,7 @@ DIRECT2 (Manipulation_extractPulses) {
 		iam (Manipulation);
 		if (! my pulses) Melder_throw (me, U": I don't contain a PointProcess.");
 		autoPointProcess thee = Data_copy (my pulses.get());
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -2418,7 +2416,7 @@ DIRECT2 (Manipulation_getResynthesis_lpc) {
 	LOOP {
 		iam (Manipulation);
 		autoSound thee = Manipulation_to_Sound (me, Manipulation_PITCH_LPC);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -2426,7 +2424,7 @@ DIRECT2 (Manipulation_getResynthesis_overlapAdd) {
 	LOOP {
 		iam (Manipulation);
 		autoSound thee = Manipulation_to_Sound (me, Manipulation_OVERLAPADD);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -2528,16 +2526,16 @@ DIRECT2 (Manipulation_TextTier_to_Manipulation) {
 	Manipulation me = FIRST (Manipulation);
 	TextTier thee = FIRST (TextTier);
 	autoManipulation him = Manipulation_AnyTier_to_Manipulation (me, reinterpret_cast <AnyTier> (thee));
-	praat_new (him.transfer(), my name);	
+	praat_new (him.move(), my name);
 END2 }
 
 /***** MATRIX *****/
 
 DIRECT2 (Matrix_appendRows) {
-	Matrix m1 = NULL, m2 = NULL;
+	Matrix m1 = nullptr, m2 = nullptr;
 	LOOP (m1 ? m2 : m1) = (Matrix) OBJECT;
 	autoMatrix thee = Matrix_appendRows (m1, m2, classMatrix);
-	praat_new (thee.transfer(), m1 -> name, U"_", m2 -> name);
+	praat_new (thee.move(), m1 -> name, U"_", m2 -> name);
 END2 }
 
 FORM (Matrix_create, U"Create Matrix", U"Create Matrix...") {
@@ -2564,7 +2562,7 @@ DO
 		xmin, xmax, GET_INTEGER (U"Number of columns"), GET_REAL (U"dx"), GET_REAL (U"x1"),
 		ymin, ymax, GET_INTEGER (U"Number of rows"), GET_REAL (U"dy"), GET_REAL (U"y1"));
 	Matrix_formula (me.peek(), GET_STRING (U"formula"), interpreter, NULL);
-	praat_new (me.transfer(), GET_STRING (U"Name"));
+	praat_new (me.move(), GET_STRING (U"Name"));
 END2 }
 
 FORM (Matrix_createSimple, U"Create simple Matrix", U"Create simple Matrix...") {
@@ -2577,7 +2575,7 @@ FORM (Matrix_createSimple, U"Create simple Matrix", U"Create simple Matrix...") 
 DO
 	autoMatrix me = Matrix_createSimple (GET_INTEGER (U"Number of rows"), GET_INTEGER (U"Number of columns"));
 	Matrix_formula (me.peek(), GET_STRING (U"formula"), interpreter, NULL);
-	praat_new (me.transfer(), GET_STRING (U"Name"));
+	praat_new (me.move(), GET_STRING (U"Name"));
 END2 }
 
 FORM (Matrix_drawOneContour, U"Draw one altitude contour", 0) {
@@ -2637,12 +2635,10 @@ END2 }
 DIRECT2 (Matrix_eigen) {
 	LOOP {
 		iam (Matrix);
-		Matrix vec_ = NULL, val_ = NULL;
-		Matrix_eigen (me, & vec_, & val_);
-		autoMatrix vec = vec_;
-		autoMatrix val = val_;
-		praat_new (vec.transfer(), U"eigenvectors");
-		praat_new (val.transfer(), U"eigenvalues");
+		autoMatrix vectors, values;
+		Matrix_eigen (me, & vectors, & values);
+		praat_new (vectors.move(), U"eigenvectors");
+		praat_new (values.move(), U"eigenvalues");
 	}
 END2 }
 
@@ -2856,18 +2852,18 @@ DO
 	LOOP {
 		iam (Matrix);
 		autoMatrix thee = Matrix_power (me, GET_INTEGER (U"Power"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
 FORM_READ2 (Matrix_readFromRawTextFile, U"Read Matrix from raw text file", 0, true) {
 	autoMatrix me = Matrix_readFromRawTextFile (file);
-	praat_new (me.transfer(), MelderFile_name (file));
+	praat_new (me.move(), MelderFile_name (file));
 END2 }
 
 FORM_READ2 (Matrix_readAP, U"Read Matrix from LVS AP file", 0, true) {
 	autoMatrix me = Matrix_readAP (file);
-	praat_new (me.transfer(), MelderFile_name (file));
+	praat_new (me.move(), MelderFile_name (file));
 END2 }
 
 FORM (Matrix_setValue, U"Matrix: Set value", U"Matrix: Set value...") {
@@ -2890,7 +2886,7 @@ DIRECT2 (Matrix_to_Cochleagram) {
 	LOOP {
 		iam (Matrix);
 		autoCochleagram thee = Matrix_to_Cochleagram (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -2898,7 +2894,7 @@ DIRECT2 (Matrix_to_Excitation) {
 	LOOP {
 		iam (Matrix);
 		autoExcitation thee = Matrix_to_Excitation (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -2906,7 +2902,7 @@ DIRECT2 (Matrix_to_Harmonicity) {
 	LOOP {
 		iam (Matrix);
 		autoHarmonicity thee = Matrix_to_Harmonicity (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -2914,7 +2910,7 @@ DIRECT2 (Matrix_to_Intensity) {
 	LOOP {
 		iam (Matrix);
 		autoIntensity thee = Matrix_to_Intensity (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -2922,7 +2918,7 @@ DIRECT2 (Matrix_to_Pitch) {
 	LOOP {
 		iam (Matrix);
 		autoPitch thee = Matrix_to_Pitch (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -2930,7 +2926,7 @@ DIRECT2 (Matrix_to_Spectrogram) {
 	LOOP {
 		iam (Matrix);
 		autoSpectrogram thee = Matrix_to_Spectrogram (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -2938,7 +2934,7 @@ DIRECT2 (Matrix_to_Spectrum) {
 	LOOP {
 		iam (Matrix);
 		autoSpectrum thee = Matrix_to_Spectrum (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -2946,23 +2942,23 @@ DIRECT2 (Matrix_to_Ltas) {
 	LOOP {
 		iam (Matrix);
 		autoLtas thee = Matrix_to_Ltas (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
 DIRECT2 (Matrix_to_ParamCurve) {
-	Matrix m1 = NULL, m2 = NULL;
+	Matrix m1 = nullptr, m2 = nullptr;
 	LOOP (m1 ? m2 : m1) = (Matrix) OBJECT;
 	autoSound sound1 = Matrix_to_Sound (m1), sound2 = Matrix_to_Sound (m2);
 	autoParamCurve thee = ParamCurve_create (sound1.peek(), sound2.peek());
-	praat_new (thee.transfer(), m1 -> name, U"_", m2 -> name);
+	praat_new (thee.move(), m1 -> name, U"_", m2 -> name);
 END2 }
 
 DIRECT2 (Matrix_to_PointProcess) {
 	LOOP {
 		iam (Matrix);
 		autoPointProcess thee = Matrix_to_PointProcess (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -2970,7 +2966,7 @@ DIRECT2 (Matrix_to_Polygon) {
 	LOOP {
 		iam (Matrix);
 		autoPolygon thee = Matrix_to_Polygon (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -2978,7 +2974,7 @@ DIRECT2 (Matrix_to_Sound) {
 	LOOP {
 		iam (Matrix);
 		autoSound thee = Matrix_to_Sound (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -2990,7 +2986,7 @@ DO
 	LOOP {
 		iam (Matrix);
 		autoSound thee = Matrix_to_Sound_mono (me, GET_INTEGER (U"Row"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -2998,7 +2994,7 @@ DIRECT2 (Matrix_to_TableOfReal) {
 	LOOP {
 		iam (Matrix);
 		autoTableOfReal thee = Matrix_to_TableOfReal (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -3006,7 +3002,7 @@ DIRECT2 (Matrix_to_Transition) {
 	LOOP {
 		iam (Matrix);
 		autoTransition thee = Matrix_to_Transition (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -3014,7 +3010,7 @@ DIRECT2 (Matrix_to_VocalTract) {
 	LOOP {
 		iam (Matrix);
 		autoVocalTract thee = Matrix_to_VocalTract (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -3032,7 +3028,7 @@ END
 
 FORM_READ2 (Movie_openFromSoundFile, U"Open movie file", 0, true) {
 	autoMovie me = Movie_openFromSoundFile (file);
-	praat_new (me.transfer(), MelderFile_name (file));
+	praat_new (me.move(), MelderFile_name (file));
 END2 }
 
 FORM (Movie_paintOneImage, U"Movie: Paint one image", 0) {
@@ -3117,7 +3113,7 @@ DO
 	Matrix_formula (my d_red  .get(), GET_STRING (U"redFormula"),   interpreter, NULL);
 	Matrix_formula (my d_green.get(), GET_STRING (U"greenFormula"), interpreter, NULL);
 	Matrix_formula (my d_blue .get(), GET_STRING (U"blueFormula"),  interpreter, NULL);
-	praat_new (me.transfer(), GET_STRING (U"Name"));
+	praat_new (me.move(), GET_STRING (U"Name"));
 END2 }
 
 FORM (Photo_createSimple, U"Create simple Photo", U"Create simple Photo...") {
@@ -3136,14 +3132,14 @@ DO
 	Matrix_formula (my d_red.get(),   GET_STRING (U"redFormula"),   interpreter, NULL);
 	Matrix_formula (my d_green.get(), GET_STRING (U"greenFormula"), interpreter, NULL);
 	Matrix_formula (my d_blue.get(),  GET_STRING (U"blueFormula"),  interpreter, NULL);
-	praat_new (me.transfer(), GET_STRING (U"Name"));
+	praat_new (me.move(), GET_STRING (U"Name"));
 END2 }
 
 DIRECT2 (Photo_extractBlue) {
 	LOOP {
 		iam (Photo);
 		autoMatrix thee = Data_copy (my d_blue.get());
-		praat_new (thee.transfer(), my name, U"_blue");
+		praat_new (thee.move(), my name, U"_blue");
 	}
 END2 }
 
@@ -3151,7 +3147,7 @@ DIRECT2 (Photo_extractGreen) {
 	LOOP {
 		iam (Photo);
 		autoMatrix thee = Data_copy (my d_green.get());
-		praat_new (thee.transfer(), my name, U"_green");
+		praat_new (thee.move(), my name, U"_green");
 	}
 END2 }
 
@@ -3159,7 +3155,7 @@ DIRECT2 (Photo_extractRed) {
 	LOOP {
 		iam (Photo);
 		autoMatrix thee = Data_copy (my d_red.get());
-		praat_new (thee.transfer(), my name, U"_red");
+		praat_new (thee.move(), my name, U"_red");
 	}
 END2 }
 
@@ -3167,7 +3163,7 @@ DIRECT2 (Photo_extractTransparency) {
 	LOOP {
 		iam (Photo);
 		autoMatrix thee = Data_copy (my d_transparency.get());
-		praat_new (thee.transfer(), my name, U"_transparency");
+		praat_new (thee.move(), my name, U"_transparency");
 	}
 END2 }
 
@@ -3703,7 +3699,7 @@ DIRECT2 (Pitch_interpolate) {
 	LOOP {
 		iam (Pitch);
 		autoPitch thee = Pitch_interpolate (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -3711,7 +3707,7 @@ DIRECT2 (Pitch_killOctaveJumps) {
 	LOOP {
 		iam (Pitch);
 		autoPitch thee = Pitch_killOctaveJumps (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -3729,7 +3725,7 @@ DO
 	LOOP {
 		iam (Pitch);
 		autoPitch thee = Pitch_smooth (me, GET_REAL (U"Bandwidth"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -3860,7 +3856,7 @@ DO
 	LOOP {
 		iam (Pitch);
 		autoPitch thee = Pitch_subtractLinearFit (me, GET_INTEGER (U"Unit") - 1);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -3868,7 +3864,7 @@ DIRECT2 (Pitch_to_IntervalTier) {
 	LOOP {
 		iam (Pitch);
 		autoIntervalTier thee = IntervalTier_create (my xmin, my xmax);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -3876,7 +3872,7 @@ DIRECT2 (Pitch_to_Matrix) {
 	LOOP {
 		iam (Pitch);
 		autoMatrix thee = Pitch_to_Matrix (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -3884,7 +3880,7 @@ DIRECT2 (Pitch_to_PitchTier) {
 	LOOP {
 		iam (Pitch);
 		autoPitchTier thee = Pitch_to_PitchTier (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -3892,28 +3888,28 @@ DIRECT2 (Pitch_to_PointProcess) {
 	LOOP {
 		iam (Pitch);
 		autoPointProcess thee = Pitch_to_PointProcess (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
 DIRECT2 (Pitch_to_Sound_pulses) {
 	LOOP {
 		iam (Pitch);
-		autoSound thee = Pitch_to_Sound (me, 0, 0, false);
-		praat_new (thee.transfer(), my name);
+		autoSound thee = Pitch_to_Sound (me, 0.0, 0.0, false);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
 DIRECT2 (Pitch_to_Sound_hum) {
 	LOOP {
 		iam (Pitch);
-		autoSound thee = Pitch_to_Sound (me, 0, 0, true);
-		praat_new (thee.transfer(), my name);
+		autoSound thee = Pitch_to_Sound (me, 0.0, 0.0, true);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
-FORM (Pitch_to_Sound_sine, U"Pitch: To Sound (sine)", 0) {
-	POSITIVE (U"Sampling frequency (Hz)", U"44100")
+FORM (Pitch_to_Sound_sine, U"Pitch: To Sound (sine)", nullptr) {
+	POSITIVE (U"Sampling frequency (Hz)", U"44100.0")
 	RADIO (U"Cut voiceless stretches", 2)
 		OPTION (U"exactly")
 		OPTION (U"at nearest zero crossings")
@@ -3921,8 +3917,8 @@ FORM (Pitch_to_Sound_sine, U"Pitch: To Sound (sine)", 0) {
 DO
 	LOOP {
 		iam (Pitch);
-		autoSound thee = Pitch_to_Sound_sine (me, 0, 0, GET_REAL (U"Sampling frequency"), GET_INTEGER (U"Cut voiceless stretches") - 1);
-		praat_new (thee.transfer(), my name);
+		autoSound thee = Pitch_to_Sound_sine (me, 0.0, 0.0, GET_REAL (U"Sampling frequency"), GET_INTEGER (U"Cut voiceless stretches") - 1);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -3934,7 +3930,7 @@ DO
 	LOOP {
 		iam (Pitch);
 		autoTextGrid thee = TextGrid_create (my xmin, my xmax, GET_STRING (U"Tier names"), GET_STRING (U"Point tiers"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -3942,13 +3938,13 @@ DIRECT2 (Pitch_to_TextTier) {
 	LOOP {
 		iam (Pitch);
 		autoTextTier thee = TextTier_create (my xmin, my xmax);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
 /***** PITCH & PITCHTIER *****/
 
-FORM (old_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", 0) {
+FORM (old_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
 	praat_dia_timeRange (dia);
 	REAL (U"From frequency (Hz)", U"0.0")
 	REAL (U"To frequency (Hz)", U"500.0")
@@ -3969,7 +3965,7 @@ DO
 		GET_INTEGER (U"Garnish"), U"lines and speckles");
 END2 }
 
-FORM (PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", 0) {
+FORM (PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
 	praat_dia_timeRange (dia);
 	REAL (U"From frequency (Hz)", U"0.0")
 	REAL (U"To frequency (Hz)", U"500.0")
@@ -3999,7 +3995,7 @@ DIRECT2 (Pitch_PitchTier_to_Pitch) {
 	Pitch pitch = FIRST (Pitch);
 	PitchTier tier = FIRST (PitchTier);
 	autoPitch thee = Pitch_PitchTier_to_Pitch (pitch, tier);
-	praat_new (thee.transfer(), pitch -> name, U"_stylized");
+	praat_new (thee.move(), pitch -> name, U"_stylized");
 END2 }
 
 /***** PITCH & POINTPROCESS *****/
@@ -4008,7 +4004,7 @@ DIRECT2 (Pitch_PointProcess_to_PitchTier) {
 	Pitch pitch = FIRST (Pitch);
 	PointProcess point = FIRST (PointProcess);
 	autoPitchTier thee = Pitch_PointProcess_to_PitchTier (pitch, point);
-	praat_new (thee.transfer(), pitch -> name);
+	praat_new (thee.move(), pitch -> name);
 END2 }
 
 /***** PITCH & SOUND *****/
@@ -4017,14 +4013,14 @@ DIRECT2 (Sound_Pitch_to_Manipulation) {
 	Pitch pitch = FIRST (Pitch);
 	Sound sound = FIRST (Sound);
 	autoManipulation thee = Sound_Pitch_to_Manipulation (sound, pitch);
-	praat_new (thee.transfer(), pitch -> name);
+	praat_new (thee.move(), pitch -> name);
 END2 }
 
 DIRECT2 (Sound_Pitch_to_PointProcess_cc) {
 	Sound sound = FIRST (Sound);
 	Pitch pitch = FIRST (Pitch);
 	autoPointProcess thee = Sound_Pitch_to_PointProcess_cc (sound, pitch);
-	praat_new (thee.transfer(), sound -> name, U"_", pitch -> name);
+	praat_new (thee.move(), sound -> name, U"_", pitch -> name);
 END2 }
 
 FORM (Sound_Pitch_to_PointProcess_peaks, U"Sound & Pitch: To PointProcess (peaks)", 0) {
@@ -4035,7 +4031,7 @@ DO
 	Sound sound = FIRST (Sound);
 	Pitch pitch = FIRST (Pitch);
 	autoPointProcess thee = Sound_Pitch_to_PointProcess_peaks (sound, pitch, GET_INTEGER (U"Include maxima"), GET_INTEGER (U"Include minima"));
-	praat_new (thee.transfer(), sound -> name, U"_", pitch -> name);
+	praat_new (thee.move(), sound -> name, U"_", pitch -> name);
 END2 }
 
 /***** PITCHTIER *****/
@@ -4061,14 +4057,14 @@ DO
 	double startTime = GET_REAL (U"Start time"), endTime = GET_REAL (U"End time");
 	if (endTime <= startTime) Melder_throw (U"End time must be greater than start time.");
 	autoPitchTier me = PitchTier_create (startTime, endTime);
-	praat_new (me.transfer(), GET_STRING (U"Name"));
+	praat_new (me.move(), GET_STRING (U"Name"));
 END2 }
 
 DIRECT2 (PitchTier_downto_PointProcess) {
 	LOOP {
 		iam (PitchTier);
 		autoPointProcess thee = AnyTier_downto_PointProcess (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -4081,7 +4077,7 @@ DO
 	LOOP {
 		iam (PitchTier);
 		autoTableOfReal thee = PitchTier_downto_TableOfReal (me, GET_INTEGER (U"Unit") - 1);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -4303,7 +4299,7 @@ DIRECT2 (PitchTier_to_PointProcess) {
 	LOOP {
 		iam (PitchTier);
 		autoPointProcess thee = PitchTier_to_PointProcess (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -4323,7 +4319,7 @@ DO
 		autoSound thee = PitchTier_to_Sound_phonation (me, GET_REAL (U"Sampling frequency"),
 			GET_REAL (U"Adaptation factor"), GET_REAL (U"Maximum period"),
 			GET_REAL (U"Open phase"), GET_REAL (U"Collision phase"), GET_REAL (U"Power 1"), GET_REAL (U"Power 2"), GET_INTEGER (U"Hum"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -4340,7 +4336,7 @@ DO
 		autoSound thee = PitchTier_to_Sound_pulseTrain (me, GET_REAL (U"Sampling frequency"),
 			GET_REAL (U"Adaptation factor"), GET_REAL (U"Adaptation time"),
 			GET_INTEGER (U"Interpolation depth"), GET_INTEGER (U"Hum"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -4351,7 +4347,7 @@ DO
 	LOOP {
 		iam (PitchTier);
 		autoSound thee = PitchTier_to_Sound_sine (me, 0.0, 0.0, GET_REAL (U"Sampling frequency"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -4380,7 +4376,7 @@ DIRECT2 (PitchTier_PointProcess_to_PitchTier) {
 	PitchTier pitch = FIRST (PitchTier);
 	PointProcess point = FIRST (PointProcess);
 	autoPitchTier thee = PitchTier_PointProcess_to_PitchTier (pitch, point);
-	praat_new (thee.transfer(), pitch -> name);
+	praat_new (thee.move(), pitch -> name);
 END2 }
 
 /***** POINTPROCESS *****/
@@ -4405,7 +4401,7 @@ DO
 	double tmin = GET_REAL (U"Start time"), tmax = GET_REAL (U"End time");
 	if (tmax < tmin) Melder_throw (U"End time (", tmax, U") should not be less than start time (", tmin, U").");
 	autoPointProcess me = PointProcess_create (tmin, tmax, 0);
-	praat_new (me.transfer(), GET_STRING (U"Name"));
+	praat_new (me.move(), GET_STRING (U"Name"));
 END2 }
 
 FORM (PointProcess_createPoissonProcess, U"Create Poisson process", U"Create Poisson process...") {
@@ -4419,17 +4415,17 @@ DO
 	if (tmax < tmin)
 		Melder_throw (U"End time (", tmax, U") should not be less than start time (", tmin, U").");
 	autoPointProcess me = PointProcess_createPoissonProcess (tmin, tmax, GET_REAL (U"Density"));
-	praat_new (me.transfer(), GET_STRING (U"Name"));
+	praat_new (me.move(), GET_STRING (U"Name"));
 END2 }
 
 DIRECT2 (PointProcess_difference) {
-	PointProcess point1 = NULL, point2 = NULL;
+	PointProcess point1 = nullptr, point2 = nullptr;
 	LOOP (point1 ? point2 : point1) = (PointProcess) OBJECT;
 	autoPointProcess thee = PointProcesses_difference (point1, point2);
-	praat_new (thee.transfer(), U"difference");
+	praat_new (thee.move(), U"difference");
 END2 }
 
-FORM (PointProcess_draw, U"PointProcess: Draw", 0) {
+FORM (PointProcess_draw, U"PointProcess: Draw", nullptr) {
 	praat_dia_timeRange (dia);
 	BOOLEAN (U"Garnish", 1)
 	OK2
@@ -4452,7 +4448,7 @@ DIRECT2 (PointProcess_edit) {
 	}
 END2 }
 
-FORM (PointProcess_fill, U"PointProcess: Fill", 0) {
+FORM (PointProcess_fill, U"PointProcess: Fill", nullptr) {
 	praat_dia_timeRange (dia);
 	POSITIVE (U"Period (s)", U"0.01")
 	OK2
@@ -4489,7 +4485,7 @@ FORM (PointProcess_getJitter_local, U"PointProcess: Get jitter (local)", U"Point
 DO
 	Melder_informationReal (PointProcess_getJitter_local (FIRST_ANY (PointProcess),
 		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
-		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")), NULL);
+		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")), nullptr);
 END2 }
 
 FORM (PointProcess_getJitter_local_absolute, U"PointProcess: Get jitter (local, absolute)", U"PointProcess: Get jitter (local, absolute)...") {
@@ -4507,7 +4503,7 @@ FORM (PointProcess_getJitter_rap, U"PointProcess: Get jitter (rap)", U"PointProc
 DO
 	Melder_informationReal (PointProcess_getJitter_rap (FIRST_ANY (PointProcess),
 		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
-		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")), NULL);
+		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")), nullptr);
 END2 }
 
 FORM (PointProcess_getJitter_ppq5, U"PointProcess: Get jitter (ppq5)", U"PointProcess: Get jitter (ppq5)...") {
@@ -4516,7 +4512,7 @@ FORM (PointProcess_getJitter_ppq5, U"PointProcess: Get jitter (ppq5)", U"PointPr
 DO
 	Melder_informationReal (PointProcess_getJitter_ppq5 (FIRST_ANY (PointProcess),
 		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
-		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")), NULL);
+		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")), nullptr);
 END2 }
 
 FORM (PointProcess_getJitter_ddp, U"PointProcess: Get jitter (ddp)", U"PointProcess: Get jitter (ddp)...") {
@@ -4525,7 +4521,7 @@ FORM (PointProcess_getJitter_ddp, U"PointProcess: Get jitter (ddp)", U"PointProc
 DO
 	Melder_informationReal (PointProcess_getJitter_ddp (FIRST_ANY (PointProcess),
 		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
-		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")), NULL);
+		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")), nullptr);
 END2 }
 
 FORM (PointProcess_getMeanPeriod, U"PointProcess: Get mean period", U"PointProcess: Get mean period...") {
@@ -4606,7 +4602,7 @@ DIRECT2 (PointProcess_intersection) {
 	PointProcess point1 = NULL, point2 = NULL;
 	LOOP (point1 ? point2 : point1) = (PointProcess) OBJECT;
 	autoPointProcess thee = PointProcesses_intersection (point1, point2);
-	praat_new (thee.transfer(), U"intersection");
+	praat_new (thee.move(), U"intersection");
 END2 }
 
 DIRECT2 (PointProcess_play) {
@@ -4666,7 +4662,7 @@ DIRECT2 (PointProcess_to_IntervalTier) {
 	LOOP {
 		iam (PointProcess);
 		autoIntervalTier thee = IntervalTier_create (my xmin, my xmax);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -4674,7 +4670,7 @@ DIRECT2 (PointProcess_to_Matrix) {
 	LOOP {
 		iam (PointProcess);
 		autoMatrix thee = PointProcess_to_Matrix (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -4685,7 +4681,7 @@ DO
 	LOOP {
 		iam (PointProcess);
 		autoPitchTier thee = PointProcess_to_PitchTier (me, GET_REAL (U"Maximum interval"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -4697,7 +4693,7 @@ DO
 	LOOP {
 		iam (PointProcess);
 		autoTextGrid thee = TextGrid_create (my xmin, my xmax, GET_STRING (U"Tier names"), GET_STRING (U"Point tiers"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -4709,7 +4705,7 @@ DO
 	LOOP {
 		iam (PointProcess);
 		autoTextGrid thee = PointProcess_to_TextGrid_vuv (me, GET_REAL (U"Maximum period"), GET_REAL (U"Mean period"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -4717,7 +4713,7 @@ DIRECT2 (PointProcess_to_TextTier) {
 	LOOP {
 		iam (PointProcess);
 		autoTextTier thee = TextTier_create (my xmin, my xmax);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -4736,7 +4732,7 @@ DO
 		autoSound thee = PointProcess_to_Sound_phonation (me, GET_REAL (U"Sampling frequency"),
 			GET_REAL (U"Adaptation factor"), GET_REAL (U"Maximum period"),
 			GET_REAL (U"Open phase"), GET_REAL (U"Collision phase"), GET_REAL (U"Power 1"), GET_REAL (U"Power 2"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -4752,7 +4748,7 @@ DO
 		autoSound thee = PointProcess_to_Sound_pulseTrain (me, GET_REAL (U"Sampling frequency"),
 			GET_REAL (U"Adaptation factor"), GET_REAL (U"Adaptation time"),
 			GET_INTEGER (U"Interpolation depth"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -4760,7 +4756,7 @@ DIRECT2 (PointProcess_to_Sound_hum) {
 	LOOP {
 		iam (PointProcess);
 		autoSound thee = PointProcess_to_Sound_hum (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -4768,7 +4764,7 @@ DIRECT2 (PointProcess_union) {
 	PointProcess point1 = NULL, point2 = NULL;
 	LOOP (point1 ? point2 : point1) = (PointProcess) OBJECT;
 	autoPointProcess thee = PointProcesses_union (point1, point2);
-	praat_new (thee.transfer(), U"union");
+	praat_new (thee.move(), U"union");
 END2 }
 
 FORM (PointProcess_upto_IntensityTier, U"PointProcess: Up to IntensityTier", U"PointProcess: Up to IntensityTier...") {
@@ -4778,7 +4774,7 @@ DO
 	LOOP {
 		iam (PointProcess);
 		autoIntensityTier thee = PointProcess_upto_IntensityTier (me, GET_REAL (U"Intensity"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -4789,7 +4785,7 @@ DO
 	LOOP {
 		iam (PointProcess);
 		autoPitchTier thee = PointProcess_upto_PitchTier (me, GET_REAL (U"Frequency"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -4800,7 +4796,7 @@ DO
 	LOOP {
 		iam (PointProcess);
 		autoTextTier thee = PointProcess_upto_TextTier (me, GET_STRING (U"Text"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -4827,12 +4823,6 @@ DIRECT2 (info_PointProcess_Sound_edit) {
 END2 }
 
 /***** POINTPROCESS & SOUND *****/
-
-/*DIRECT (Sound_PointProcess_to_Manipulation)
-	Sound sound = ONLY (classSound);
-	PointProcess point = ONLY (classPointProcess);
-	if (! praat_new1 (Sound_PointProcess_to_Manipulation (sound, point), point -> name)) return 0;
-END*/
 
 DIRECT2 (Point_Sound_transplantDomain) {
 	PointProcess point = FIRST (PointProcess);
@@ -4935,14 +4925,14 @@ DO
 	autoAmplitudeTier thee = PointProcess_Sound_to_AmplitudeTier_period (point, sound,
 		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
 		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor"));
-	praat_new (thee.transfer(), sound -> name, U"_", point -> name);
+	praat_new (thee.move(), sound -> name, U"_", point -> name);
 END2 }
 
 DIRECT2 (PointProcess_Sound_to_AmplitudeTier_point) {
 	PointProcess point = FIRST (PointProcess);
 	Sound sound = FIRST (Sound);
 	autoAmplitudeTier thee = PointProcess_Sound_to_AmplitudeTier_point (point, sound);
-	praat_new (thee.transfer(), sound -> name, U"_", point -> name);
+	praat_new (thee.move(), sound -> name, U"_", point -> name);
 END2 }
 
 FORM (PointProcess_Sound_to_Ltas, U"PointProcess & Sound: To Ltas", 0) {
@@ -4958,7 +4948,7 @@ DO
 	autoLtas thee = PointProcess_Sound_to_Ltas (point, sound,
 		GET_REAL (U"Maximum frequency"), GET_REAL (U"Band width"),
 		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor"));
-	praat_new (thee.transfer(), sound -> name);
+	praat_new (thee.move(), sound -> name);
 END2 }
 
 FORM (PointProcess_Sound_to_Ltas_harmonics, U"PointProcess & Sound: To Ltas (harmonics", 0) {
@@ -4973,7 +4963,7 @@ DO
 	autoLtas thee = PointProcess_Sound_to_Ltas_harmonics (point, sound,
 		GET_INTEGER (U"Maximum harmonic"),
 		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor"));
-	praat_new (thee.transfer(), sound -> name);
+	praat_new (thee.move(), sound -> name);
 END2 }
 
 FORM (Sound_PointProcess_to_SoundEnsemble_correlate, U"Sound & PointProcess: To SoundEnsemble (correlate)", 0) {
@@ -4984,7 +4974,7 @@ DO
 	PointProcess point = FIRST (PointProcess);
 	Sound sound = FIRST (Sound);
 	autoSound thee = Sound_PointProcess_to_SoundEnsemble_correlate (sound, point, GET_REAL (U"From time"), GET_REAL (U"To time"));
-	praat_new (thee.transfer(), point -> name);
+	praat_new (thee.move(), point -> name);
 END2 }
 
 /***** POLYGON *****/
@@ -5109,7 +5099,7 @@ DIRECT2 (Polygon_to_Matrix) {
 	LOOP {
 		iam (Polygon);
 		autoMatrix thee = Polygon_to_Matrix (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -5142,7 +5132,7 @@ FORM (Sound_Point_Pitch_Duration_to_Sound, U"To Sound", 0) {
 DO
 	autoSound thee = Sound_Point_Pitch_Duration_to_Sound (FIRST (Sound), FIRST (PointProcess),
 		FIRST (PitchTier), FIRST (DurationTier), GET_REAL (U"Longest period"));
-	praat_new (thee.transfer(), U"manip");
+	praat_new (thee.move(), U"manip");
 END2 }
 
 /***** SPECTROGRAM *****/
@@ -5220,7 +5210,7 @@ DIRECT2 (Spectrogram_to_Matrix) {
 	LOOP {
 		iam (Spectrogram);
 		autoMatrix thee = Spectrogram_to_Matrix (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -5231,7 +5221,7 @@ DO
 	LOOP {
 		iam (Spectrogram);
 		autoSound thee = Spectrogram_to_Sound (me, GET_REAL (U"Sampling frequency"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -5242,7 +5232,7 @@ DO
 	LOOP {
 		iam (Spectrogram);
 		autoSpectrum thee = Spectrogram_to_Spectrum (me, GET_REAL (U"Time"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -5264,7 +5254,7 @@ DO
 	LOOP {
 		iam (Spectrum);
 		autoSpectrum thee = Spectrum_cepstralSmoothing (me, GET_REAL (U"Bandwidth"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -5546,7 +5536,7 @@ DO
 	LOOP {
 		iam (Spectrum);
 		autoSpectrum thee = Spectrum_lpcSmoothing (me, GET_INTEGER (U"Number of peaks"), GET_REAL (U"Pre-emphasis from"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -5583,7 +5573,7 @@ DO
 	LOOP {
 		iam (Spectrum);
 		autoExcitation thee = Spectrum_to_Excitation (me, GET_REAL (U"Frequency resolution"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -5595,7 +5585,7 @@ DO
 	LOOP {
 		iam (Spectrum);
 		autoFormant thee = Spectrum_to_Formant (me, GET_INTEGER (U"Maximum number of formants"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -5606,7 +5596,7 @@ DO
 	LOOP {
 		iam (Spectrum);
 		autoLtas thee = Spectrum_to_Ltas (me, GET_REAL (U"Bandwidth"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -5614,7 +5604,7 @@ DIRECT2 (Spectrum_to_Ltas_1to1) {
 	LOOP {
 		iam (Spectrum);
 		autoLtas thee = Spectrum_to_Ltas_1to1 (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -5622,7 +5612,7 @@ DIRECT2 (Spectrum_to_Matrix) {
 	LOOP {
 		iam (Spectrum);
 		autoMatrix thee = Spectrum_to_Matrix (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -5630,7 +5620,7 @@ DIRECT2 (Spectrum_to_Sound) {
 	LOOP {
 		iam (Spectrum);
 		autoSound thee = Spectrum_to_Sound (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -5638,7 +5628,7 @@ DIRECT2 (Spectrum_to_Spectrogram) {
 	LOOP {
 		iam (Spectrum);
 		autoSpectrogram thee = Spectrum_to_Spectrogram (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -5646,7 +5636,7 @@ DIRECT2 (Spectrum_to_SpectrumTier_peaks) {
 	LOOP {
 		iam (Spectrum);
 		autoSpectrumTier thee = Spectrum_to_SpectrumTier_peaks (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -5656,7 +5646,7 @@ DIRECT2 (SpectrumTier_downto_Table) {
 	LOOP {
 		iam (SpectrumTier);
 		autoTable thee = SpectrumTier_downto_Table (me, true, true, true);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -5752,7 +5742,7 @@ if (! inited) {
 }
 DO
 	autoStrings me = Strings_createAsFileList (GET_STRING (U"path"));
-	praat_new (me.transfer(), GET_STRING (U"Name"));
+	praat_new (me.move(), GET_STRING (U"Name"));
 END2 }
 
 FORM (Strings_createAsDirectoryList, U"Create Strings as directory list", U"Create Strings as directory list...") {
@@ -5781,7 +5771,7 @@ if (! inited) {
 }
 DO
 	autoStrings me = Strings_createAsDirectoryList (GET_STRING (U"path"));
-	praat_new (me.transfer(), GET_STRING (U"Name"));
+	praat_new (me.move(), GET_STRING (U"Name"));
 END2 }
 
 DIRECT2 (Strings_edit) {
@@ -5871,7 +5861,7 @@ END2 }
 
 FORM_READ2 (Strings_readFromRawTextFile, U"Read Strings from raw text file", 0, true) {
 	autoStrings me = Strings_readFromRawTextFile (file);
-	praat_new (me.transfer(), MelderFile_name (file));
+	praat_new (me.move(), MelderFile_name (file));
 END2 }
 
 FORM (Strings_removeString, U"Strings: Remove string", 0) {
@@ -5899,7 +5889,7 @@ DO
 		iam (Strings);
 		autoStrings thee = Strings_change (me, GET_STRING (U"Find"), GET_STRING (U"Replace with"),
 			GET_INTEGER (U"Replace limit per string"), & numberOfMatches, & numberOfStringMatches, GET_INTEGER (U"Find and replace strings are") - 1);
-		praat_new (thee.transfer(), 0);
+		praat_new (thee.move());
 	}
 END2 }
 
@@ -5928,7 +5918,7 @@ DIRECT2 (Strings_to_Distributions) {
 	LOOP {
 		iam (Strings);
 		autoDistributions thee = Strings_to_Distributions (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -5936,7 +5926,7 @@ DIRECT2 (Strings_to_WordList) {
 	LOOP {
 		iam (Strings);
 		autoWordList thee = Strings_to_WordList (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -5953,7 +5943,7 @@ DIRECT2 (Table_to_Matrix) {
 	LOOP {
 		iam (Table);
 		autoMatrix thee = Table_to_Matrix (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -5971,14 +5961,14 @@ DO
 	double tmin = GET_REAL (U"Start time"), tmax = GET_REAL (U"End time");
 	if (tmax <= tmin) Melder_throw (U"End time should be greater than start time");
 	autoTextGrid thee = TextGrid_create (tmin, tmax, GET_STRING (U"All tier names"), GET_STRING (U"Which of these are point tiers?"));
-	praat_new (thee.transfer(), GET_STRING (U"All tier names"));
+	praat_new (thee.move(), GET_STRING (U"All tier names"));
 END2 }
 
 /***** TEXTTIER, rest in praat_TextGrid_init.cpp *****/
 
 FORM_READ2 (TextTier_readFromXwaves, U"Read TextTier from Xwaves", 0, true) {
 	autoTextTier me = TextTier_readFromXwaves (file);
-	praat_new (me.transfer(), MelderFile_name (file));
+	praat_new (me.move(), MelderFile_name (file));
 END2 }
 
 /***** TIMEFRAMESAMPLED *****/
@@ -6198,7 +6188,7 @@ DIRECT2 (Transition_conflate) {
 	LOOP {
 		iam (Transition);
 		autoDistributions thee = Transition_to_Distributions_conflate (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -6221,12 +6211,10 @@ END2 }
 DIRECT2 (Transition_eigen) {
 	LOOP {
 		iam (Transition);
-		Matrix vec_, val_;
-		Transition_eigen (me, & vec_, & val_);
-		autoMatrix vec = vec_;
-		autoMatrix val = val_;
-		praat_new (vec.transfer(), U"eigenvectors");
-		praat_new (val.transfer(), U"eigenvalues");
+		autoMatrix vectors, values;
+		Transition_eigen (me, & vectors, & values);
+		praat_new (vectors.move(), U"eigenvectors");
+		praat_new (values.move(), U"eigenvalues");
 	}
 END2 }
 
@@ -6241,7 +6229,7 @@ DO
 	LOOP {
 		iam (Transition);
 		autoTransition thee = Transition_power (me, GET_INTEGER (U"Power"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -6249,7 +6237,7 @@ DIRECT2 (Transition_to_Matrix) {
 	LOOP {
 		iam (Transition);
 		autoMatrix thee = Transition_to_Matrix (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 

@@ -36,10 +36,10 @@ void praat_statistics_prefs () {
 
 void praat_statistics_prefsChanged () {
 	if (! statistics.dateOfFirstSession [0]) {
-		time_t today = time (NULL);
+		time_t today = time (nullptr);
 		char32 *newLine;
 		str32cpy (statistics.dateOfFirstSession, Melder_peek8to32 (ctime (& today)));
-		newLine = str32chr (statistics.dateOfFirstSession, '\n');
+		newLine = str32chr (statistics.dateOfFirstSession, U'\n');
 		if (newLine) *newLine = '\0';
 	}
 	if (theCurrentPraatApplication -> batch)
@@ -68,7 +68,7 @@ void praat_reportIntegerProperties () {
 void praat_reportTextProperties () {
 	MelderInfo_open ();
 	MelderInfo_writeLine (U"Text properties of this edition of Praat on this computer:\n");
-	MelderInfo_writeLine (U"Locale: ", Melder_peek8to32 (setlocale (LC_ALL, NULL)));
+	MelderInfo_writeLine (U"Locale: ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 	MelderInfo_writeLine (U"A \"char\" is ",                                      8, U" bits.");
 	MelderInfo_writeLine (U"A \"char16_t\" is ",           sizeof (char16_t)    * 8, U" bits.");
 	MelderInfo_writeLine (U"A \"wchar_t\" is ",            sizeof (wchar_t)     * 8, U" bits.");
@@ -143,19 +143,17 @@ void praat_reportMemoryUse () {
 	MelderInfo_writeLine (U"   Things: ", Thing_getTotalNumberOfThings (),
 		U" (objects in list: ", theCurrentPraatObjects -> n, U")");
 	long numberOfMotifWidgets =
-		#if motif && (defined (_WIN32) || defined (macintosh))
-			Gui_getNumberOfMotifWidgets ();
-		#else
-			0;
-		#endif
-	if (numberOfMotifWidgets > 0) {
+	#if motif
+		Gui_getNumberOfMotifWidgets ();
 		MelderInfo_writeLine (U"   Motif widgets: ", numberOfMotifWidgets);
-	}
+	#else
+		0;
+	#endif
 	MelderInfo_writeLine (U"   Other: ",
-		Melder_bigInteger (Melder_allocationCount () - Melder_deallocationCount ()
-			- Thing_getTotalNumberOfThings () - NUM_getTotalNumberOfArrays ()
-			- (MelderString_allocationCount () - MelderString_deallocationCount ())
-			- numberOfMotifWidgets));
+		Melder_allocationCount () - Melder_deallocationCount ()
+		- Thing_getTotalNumberOfThings () - NUM_getTotalNumberOfArrays ()
+		- (MelderString_allocationCount () - MelderString_deallocationCount ())
+		- numberOfMotifWidgets);
 	MelderInfo_writeLine (
 		U"\nMemory history of this session:\n"
 		U"   Total created: ", Melder_bigInteger (Melder_allocationCount ()), U" (", Melder_bigInteger (Melder_allocationSize ()), U" bytes)");

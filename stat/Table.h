@@ -28,12 +28,12 @@ oo_CLASS_CREATE (TableRow, Daata);
 oo_CLASS_CREATE (Table, Daata);
 
 void Table_initWithColumnNames (Table me, long numberOfRows, const char32 *columnNames);
-Table Table_createWithColumnNames (long numberOfRows, const char32 *columnNames);
+autoTable Table_createWithColumnNames (long numberOfRows, const char32 *columnNames);
 void Table_initWithoutColumnNames (Table me, long numberOfRows, long numberOfColumns);
-Table Table_createWithoutColumnNames (long numberOfRows, long numberOfColumns);
+autoTable Table_createWithoutColumnNames (long numberOfRows, long numberOfColumns);
 #define Table_create Table_createWithoutColumnNames
 
-Table Tables_append (Collection me);
+autoTable Tables_append (Collection me);
 void Table_appendRow (Table me);
 void Table_appendColumn (Table me, const char32 *label);
 void Table_appendSumColumn (Table me, long column1, long column2, const char32 *label);
@@ -110,16 +110,16 @@ void Table_drawEllipse_e (Table me, Graphics g, long xcolumn, long ycolumn,
 void Table_list (Table me, bool includeRowNumbers);
 void Table_writeToTabSeparatedFile (Table me, MelderFile file);
 void Table_writeToCommaSeparatedFile (Table me, MelderFile file);
-Table Table_readFromTableFile (MelderFile file);
-Table Table_readFromCharacterSeparatedTextFile (MelderFile file, char32 separator);
+autoTable Table_readFromTableFile (MelderFile file);
+autoTable Table_readFromCharacterSeparatedTextFile (MelderFile file, char32 separator);
 
-Table Table_extractRowsWhereColumn_number (Table me, long column, int which_Melder_NUMBER, double criterion);
-Table Table_extractRowsWhereColumn_string (Table me, long column, int which_Melder_STRING, const char32 *criterion);
-Table Table_collapseRows (Table me, const char32 *factors_string, const char32 *columnsToSum_string,
+autoTable Table_extractRowsWhereColumn_number (Table me, long column, int which_Melder_NUMBER, double criterion);
+autoTable Table_extractRowsWhereColumn_string (Table me, long column, int which_Melder_STRING, const char32 *criterion);
+autoTable Table_collapseRows (Table me, const char32 *factors_string, const char32 *columnsToSum_string,
 	const char32 *columnsToAverage_string, const char32 *columnsToMedianize_string,
 	const char32 *columnsToAverageLogarithmically_string, const char32 *columnsToMedianizeLogarithmically_string);
-Table Table_rowsToColumns (Table me, const char32 *factors_string, long columnToTranspose, const char32 *columnsToExpand_string);
-Table Table_transpose (Table me);
+autoTable Table_rowsToColumns (Table me, const char32 *factors_string, long columnToTranspose, const char32 *columnsToExpand_string);
+autoTable Table_transpose (Table me);
 
 void Table_checkSpecifiedRowNumberWithinRange (Table me, long rowNumber);
 void Table_checkSpecifiedColumnNumberWithinRange (Table me, long columnNumber);

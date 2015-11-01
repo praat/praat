@@ -32,7 +32,7 @@
 DIRECT2 (EEGs_concatenate) {
 	autoCollection eegs = praat_getSelectedObjects ();
 	autoEEG thee = EEGs_concatenate (eegs.peek());
-	praat_new (thee.transfer(), U"chain");
+	praat_new (thee.move(), U"chain");
 END2 }
 
 DIRECT2 (EEG_detrend) {
@@ -88,7 +88,7 @@ DO
 		iam (EEG);
 		const char32 *channelName = GET_STRING (U"Channel name");
 		autoEEG thee = EEG_extractChannel (me, channelName);
-		praat_new (thee.transfer(), my name, U"_", channelName);
+		praat_new (thee.move(), my name, U"_", channelName);
 	}
 END2 }
 
@@ -101,7 +101,7 @@ DO
 	LOOP {
 		iam (EEG);
 		autoEEG thee = EEG_extractPart (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Preserve times"));
-		praat_new (thee.transfer(), my name, U"_part");
+		praat_new (thee.move(), my name, U"_part");
 	}
 END2 }
 
@@ -110,7 +110,7 @@ DIRECT2 (EEG_extractSound) {
 		iam (EEG);
 		if (! my sound) Melder_throw (me, U": I don't contain a waveform.");
 		autoSound thee = EEG_extractSound (me);
-		praat_new (thee.transfer());
+		praat_new (thee.move());
 	}
 END2 }
 
@@ -119,7 +119,7 @@ DIRECT2 (EEG_extractTextGrid) {
 		iam (EEG);
 		if (! my textgrid) Melder_throw (me, U": I don't contain marks.");
 		autoTextGrid thee = EEG_extractTextGrid (me);
-		praat_new (thee.transfer());
+		praat_new (thee.move());
 	}
 END2 }
 
@@ -231,7 +231,7 @@ DO
 		iam (EEG);
 		int markerBit = GET_INTEGER (U"Marker bit");
 		autoERPTier thee = EEG_to_ERPTier_bit (me, GET_REAL (U"From time"), GET_REAL (U"To time"), markerBit);
-		praat_new (thee.transfer(), my name, U"_bit", markerBit);
+		praat_new (thee.move(), my name, U"_bit", markerBit);
 	}
 END2 }
 
@@ -245,7 +245,7 @@ DO
 		iam (EEG);
 		uint16 markerNumber = GET_INTEGER (U"Marker number");
 		autoERPTier thee = EEG_to_ERPTier_marker (me, GET_REAL (U"From time"), GET_REAL (U"To time"), markerNumber);
-		praat_new (thee.transfer(), my name, U"_", markerNumber);
+		praat_new (thee.move(), my name, U"_", markerNumber);
 	}
 END2 }
 
@@ -260,7 +260,7 @@ DO
 		iam (EEG);
 		autoERPTier thee = EEG_to_ERPTier_triggers (me, GET_REAL (U"From time"), GET_REAL (U"To time"),
 			GET_ENUM (kMelder_string, U"Get every event with a trigger that"), GET_STRING (U"...the text"));
-		praat_new (thee.transfer(), my name, U"_trigger", GET_STRING (U"...the text"));
+		praat_new (thee.move(), my name, U"_trigger", GET_STRING (U"...the text"));
 	}
 END2 }
 
@@ -278,7 +278,7 @@ DO
 		autoERPTier thee = EEG_to_ERPTier_triggers_preceded (me, GET_REAL (U"From time"), GET_REAL (U"To time"),
 			GET_ENUM (kMelder_string, U"Get every event with a trigger that"), GET_STRING (U"...the text"),
 			GET_ENUM (kMelder_string, U"and is preceded by a trigger that"), GET_STRING (U" ...the text"));
-		praat_new (thee.transfer(), my name, U"_trigger", GET_STRING (U" ...the text"));
+		praat_new (thee.move(), my name, U"_trigger", GET_STRING (U" ...the text"));
 	}
 END2 }
 
@@ -295,7 +295,7 @@ DO
 		autoMixingMatrix thee = EEG_to_MixingMatrix (me,
 			GET_INTEGER (U"Maximum number of iterations"), GET_REAL (U"Tolerance"),
 			GET_INTEGER (U"Diagonalization method"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -344,7 +344,7 @@ DIRECT2 (ERP_downto_Sound) {
 	LOOP {
 		iam (ERP);
 		autoSound thee = ERP_downto_Sound (me);
-		praat_new (thee.transfer());
+		praat_new (thee.move());
 	}
 END2 }
 
@@ -362,7 +362,7 @@ DO
 		iam (ERP);
 		autoTable thee = ERP_tabulate (me, GET_INTEGER (U"Include sample number"),
 			GET_INTEGER (U"Include time"), GET_INTEGER (U"Time decimals"), GET_INTEGER (U"Voltage decimals"), GET_INTEGER (U"Voltage units"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -437,7 +437,7 @@ DO
 		long channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, U": no channel named \"", channelName, U"\".");
 		autoSound thee = Sound_extractChannel (me, channelNumber);
-		praat_new (thee.transfer(), my name, U"_", channelName);
+		praat_new (thee.move(), my name, U"_", channelName);
 	}
 END2 }
 
@@ -729,7 +729,7 @@ DO
 	LOOP {
 		iam (ERPTier);
 		autoERP thee = ERPTier_extractERP (me, GET_INTEGER (U"Event number"));
-		praat_new (thee.transfer(), my name, U"_mean");
+		praat_new (thee.move(), my name, U"_mean");
 	}
 END2 }
 
@@ -737,7 +737,7 @@ DIRECT2 (ERPTier_to_ERP_mean) {
 	LOOP {
 		iam (ERPTier);
 		autoERP thee = ERPTier_to_ERP_mean (me);
-		praat_new (thee.transfer(), my name, U"_mean");
+		praat_new (thee.move(), my name, U"_mean");
 	}
 END2 }
 
@@ -753,7 +753,7 @@ DO
 	Table table = FIRST (Table);
 	long columnNumber = Table_getColumnIndexFromColumnLabel (table, GET_STRING (U"Extract all events where column..."));
 	autoERPTier thee = ERPTier_extractEventsWhereColumn_number (erpTier, table, columnNumber, GET_ENUM (kMelder_number, U"...is..."), GET_REAL (U"...the number"));
-	praat_new (thee.transfer(), erpTier -> name);
+	praat_new (thee.move(), erpTier -> name);
 END2 }
 
 FORM (ERPTier_Table_extractEventsWhereColumn_text, U"Extract events where column (text)", 0) {
@@ -766,7 +766,7 @@ DO
 	Table table = FIRST (Table);
 	long columnNumber = Table_getColumnIndexFromColumnLabel (table, GET_STRING (U"Extract all events where column..."));
 	autoERPTier thee = ERPTier_extractEventsWhereColumn_string (erpTier, table, columnNumber, GET_ENUM (kMelder_string, U"..."), GET_STRING (U"...the text"));
-	praat_new (thee.transfer(), erpTier -> name);
+	praat_new (thee.move(), erpTier -> name);
 END2 }
 
 /***** Help menus *****/
@@ -789,7 +789,7 @@ static Any bdfFileRecognizer (int nread, const char *header, MelderFile file) {
 	bool isEdfFile = Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".edf") ||
 	                 Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".EDF");
 	if (nread < 512 || (! isBdfFile && ! isEdfFile)) return NULL;
-	return EEG_readFromBdfFile (file);
+	return EEG_readFromBdfFile (file).transfer();
 }
 
 /***** buttons *****/

@@ -96,7 +96,7 @@ const char32 * structStrings :: v_getVectorStr (long icol) {
 
 #define Strings_createAsFileOrDirectoryList_TYPE_FILE  0
 #define Strings_createAsFileOrDirectoryList_TYPE_DIRECTORY  1
-static Strings Strings_createAsFileOrDirectoryList (const char32 *path /* cattable */, int type) {
+static autoStrings Strings_createAsFileOrDirectoryList (const char32 *path /* cattable */, int type) {
 	#if USE_STAT
 		/*
 		 * Initialize.
@@ -165,7 +165,7 @@ static Strings Strings_createAsFileOrDirectoryList (const char32 *path /* cattab
 			}
 			closedir (d);
 			Strings_sort (me.peek());
-			return me.transfer();
+			return me;
 		} catch (MelderError) {
 			if (d) closedir (d);   // "finally"
 			throw;
@@ -195,14 +195,14 @@ static Strings Strings_createAsFileOrDirectoryList (const char32 *path /* cattab
 				FindClose (searchHandle);
 			}
 			Strings_sort (me.peek());
-			return me.transfer();
+			return me;
 		} catch (MelderError) {
 			throw;
 		}
 	#endif
 }
 
-Strings Strings_createAsFileList (const char32 *path /* cattable */) {
+autoStrings Strings_createAsFileList (const char32 *path /* cattable */) {
 	try {
 		return Strings_createAsFileOrDirectoryList (path, Strings_createAsFileOrDirectoryList_TYPE_FILE);
 	} catch (MelderError) {
@@ -210,7 +210,7 @@ Strings Strings_createAsFileList (const char32 *path /* cattable */) {
 	}
 }
 
-Strings Strings_createAsDirectoryList (const char32 *path /* cattable */) {
+autoStrings Strings_createAsDirectoryList (const char32 *path /* cattable */) {
 	try {
 		return Strings_createAsFileOrDirectoryList (path, Strings_createAsFileOrDirectoryList_TYPE_DIRECTORY);
 	} catch (MelderError) {
@@ -218,7 +218,7 @@ Strings Strings_createAsDirectoryList (const char32 *path /* cattable */) {
 	}
 }
 
-Strings Strings_readFromRawTextFile (MelderFile file) {
+autoStrings Strings_readFromRawTextFile (MelderFile file) {
 	try {
 		autoMelderReadText text = MelderReadText_createFromFile (file);
 
@@ -241,7 +241,7 @@ Strings Strings_readFromRawTextFile (MelderFile file) {
 			char32 *line = MelderReadText_readLine (text.peek());
 			my strings [i] = Melder_dup (line);
 		}
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Strings not read from raw text file ", file, U".");
 	}

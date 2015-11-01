@@ -61,8 +61,8 @@ void structEEG :: v_info () {
 
 void structEEG :: v_shiftX (double xfrom, double xto) {
 	EEG_Parent :: v_shiftX (xfrom, xto);
-	if (our sound   )  Function_shiftXTo (our sound,    xfrom, xto);
-	if (our textgrid)  Function_shiftXTo (our textgrid, xfrom, xto);
+	if (our sound   )  Function_shiftXTo (our sound.get(),    xfrom, xto);
+	if (our textgrid)  Function_shiftXTo (our textgrid.get(), xfrom, xto);
 }
 
 void structEEG :: v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
@@ -76,11 +76,11 @@ void EEG_init (EEG me, double tmin, double tmax) {
 	my xmax = tmax;
 }
 
-EEG EEG_create (double tmin, double tmax) {
+autoEEG EEG_create (double tmin, double tmax) {
 	try {
 		autoEEG me = Thing_new (EEG);
 		EEG_init (me.peek(), tmin, tmax);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"EEG object not created.");
 	}
@@ -95,7 +95,7 @@ long EEG_getChannelNumber (EEG me, const char32 *channelName) {
 	return 0;
 }
 
-EEG EEG_readFromBdfFile (MelderFile file) {
+autoEEG EEG_readFromBdfFile (MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "rb");
 		char buffer [81];
@@ -405,7 +405,7 @@ EEG EEG_readFromBdfFile (MelderFile file) {
 			EEG_setChannelName (him.peek(), 63, U"PO4");
 			EEG_setChannelName (him.peek(), 64, U"O2");
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"BDF file not read.");
 	}
@@ -435,14 +435,14 @@ void EEG_filter (EEG me, double lowFrequency, double lowWidth, double highFreque
 	NUMfft_Table_init (& fftTable, nsampFFT);
 */
 		for (long ichan = 1; ichan <= my numberOfChannels - EEG_getNumberOfExtraSensors (me); ichan ++) {
-			autoSound channel = Sound_extractChannel (my sound, ichan);
-			autoSpectrum spec = Sound_to_Spectrum (channel.peek(), true);
-			Spectrum_passHannBand (spec.peek(), lowFrequency, 0.0, lowWidth);
-			Spectrum_passHannBand (spec.peek(), 0.0, highFrequency, highWidth);
+			autoSound channel = Sound_extractChannel (my sound.get(), ichan);
+			autoSpectrum spec = Sound_to_Spectrum (channel.get(), true);
+			Spectrum_passHannBand (spec.get(), lowFrequency, 0.0, lowWidth);
+			Spectrum_passHannBand (spec.get(), 0.0, highFrequency, highWidth);
 			if (doNotch50Hz) {
-				Spectrum_stopHannBand (spec.peek(), 48.0, 52.0, 1.0);
+				Spectrum_stopHannBand (spec.get(), 48.0, 52.0, 1.0);
 			}
-			autoSound him = Spectrum_to_Sound (spec.peek());
+			autoSound him = Spectrum_to_Sound (spec.get());
 			NUMvector_copyElements (his z [1], my sound -> z [ichan], 1, my sound -> nx);
 		}
 	} catch (MelderError) {
@@ -539,13 +539,13 @@ void EEG_removeTriggers (EEG me, int which_Melder_STRING, const char32 *criterio
 	try {
 		if (my textgrid -> numberOfTiers () < 2 || ! Melder_equ (my textgrid -> tier (2) -> name, U"Trigger"))
 			Melder_throw (me, U" does not have a Trigger channel.");
-		TextGrid_removePoints (my textgrid, 2, which_Melder_STRING, criterion);
+		TextGrid_removePoints (my textgrid.get(), 2, which_Melder_STRING, criterion);
 	} catch (MelderError) {
 		Melder_throw (me, U": triggers not removed.");
 	}
 }
 
-EEG EEG_extractChannel (EEG me, long channelNumber) {
+autoEEG EEG_extractChannel (EEG me, long channelNumber) {
 	try {
 		if (channelNumber < 1 || channelNumber > my numberOfChannels)
 			Melder_throw (U"No channel ", channelNumber, U".");
@@ -553,15 +553,15 @@ EEG EEG_extractChannel (EEG me, long channelNumber) {
 		thy numberOfChannels = 1;
 		thy channelNames = NUMvector <char32 *> (1, 1);
 		thy channelNames [1] = Melder_dup (my channelNames [1]);
-		thy sound = Sound_extractChannel (my sound, channelNumber).transfer();
-		thy textgrid = Data_copy (my textgrid);
-		return thee.transfer();
+		thy sound = Sound_extractChannel (my sound.get(), channelNumber);
+		thy textgrid = Data_copy (my textgrid.get());
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": channel ", channelNumber, U" not extracted.");
 	}
 }
 
-EEG EEG_extractChannel (EEG me, const char32 *channelName) {
+autoEEG EEG_extractChannel (EEG me, const char32 *channelName) {
 	try {
 		long channelNumber = EEG_getChannelNumber (me, channelName);
 		if (channelNumber == 0)
@@ -572,7 +572,7 @@ EEG EEG_extractChannel (EEG me, const char32 *channelName) {
 	}
 }
 
-EEG EEGs_concatenate (Collection me) {
+autoEEG EEGs_concatenate (Collection me) {
 	try {
 		if (my size < 1)
 			Melder_throw (U"Cannot concatenate zero EEG objects.");
@@ -594,8 +594,8 @@ EEG EEGs_concatenate (Collection me) {
 		Collection_dontOwnItems (textgridCollection.peek());
 		for (long ieeg = 1; ieeg <= my size; ieeg ++) {
 			EEG eeg = (EEG) my item [ieeg];
-			Collection_addItem (soundCollection.peek(), eeg -> sound);
-			Collection_addItem (textgridCollection.peek(), eeg -> textgrid);
+			Collection_addItem (soundCollection.peek(), eeg -> sound.get());   // YUCK
+			Collection_addItem (textgridCollection.peek(), eeg -> textgrid.get());   // YUCK
 		}
 		autoEEG thee = Thing_new (EEG);
 		thy numberOfChannels = numberOfChannels;
@@ -603,17 +603,17 @@ EEG EEGs_concatenate (Collection me) {
 		for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
 			thy channelNames [ichan] = Melder_dup (channelNames [ichan]);
 		}
-		thy sound = Sounds_concatenate_e (soundCollection.peek(), 0.0).transfer();
-		thy textgrid = TextGrids_concatenate (textgridCollection.peek()).transfer();
+		thy sound = Sounds_concatenate_e (soundCollection.peek(), 0.0);
+		thy textgrid = TextGrids_concatenate (textgridCollection.peek());
 		thy xmin = thy textgrid -> xmin;
 		thy xmax = thy textgrid -> xmax;
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"TextGrids not concatenated.");
 	}
 }
 
-EEG EEG_extractPart (EEG me, double tmin, double tmax, bool preserveTimes) {
+autoEEG EEG_extractPart (EEG me, double tmin, double tmax, bool preserveTimes) {
 	try {
 		autoEEG thee = Thing_new (EEG);
 		thy numberOfChannels = my numberOfChannels;
@@ -621,11 +621,11 @@ EEG EEG_extractPart (EEG me, double tmin, double tmax, bool preserveTimes) {
 		for (long ichan = 1; ichan <= my numberOfChannels; ichan ++) {
 			thy channelNames [ichan] = Melder_dup (my channelNames [ichan]);
 		}
-		thy sound = Sound_extractPart (my sound, tmin, tmax, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes).transfer();
-		thy textgrid = TextGrid_extractPart (my textgrid, tmin, tmax, preserveTimes).transfer();
+		thy sound = Sound_extractPart (my sound.get(), tmin, tmax, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes);
+		thy textgrid = TextGrid_extractPart (my textgrid.get(), tmin, tmax, preserveTimes);
 		thy xmin = thy textgrid -> xmin;
 		thy xmax = thy textgrid -> xmax;
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": part not extracted.");
 	}
@@ -633,24 +633,22 @@ EEG EEG_extractPart (EEG me, double tmin, double tmax, bool preserveTimes) {
 
 void EEG_replaceTextGrid (EEG me, TextGrid textgrid) {
 	try {
-		autoTextGrid textgrid2 = Data_copy (textgrid);
-		forget (my textgrid);
-		my textgrid = textgrid2.transfer();
+		my textgrid = Data_copy (textgrid);
 	} catch (MelderError) {
 		Melder_throw (me, U": TextGrid not replaced with ", textgrid, U".");
 	}
 }
 
-MixingMatrix EEG_to_MixingMatrix (EEG me, long maxNumberOfIterations, double tol, int method) {
+autoMixingMatrix EEG_to_MixingMatrix (EEG me, long maxNumberOfIterations, double tol, int method) {
 	try {
-		autoCrossCorrelationTables tables = Sound_to_CrossCorrelationTables (my sound, 0.0, 0.0, 0.002, 1);
+		autoCrossCorrelationTables tables = Sound_to_CrossCorrelationTables (my sound.get(), 0.0, 0.0, 0.002, 1);
 		autoMixingMatrix thee = MixingMatrix_create (my sound -> ny, my sound -> ny);
 		for (long ichan = 1; ichan <= my numberOfChannels; ichan ++) {
 			TableOfReal_setRowLabel (thee.peek(), ichan, my channelNames [ichan]);
 			TableOfReal_setColumnLabel (thee.peek(), ichan, Melder_cat (U"ic", ichan));
 		}
 		MixingMatrix_and_CrossCorrelationTables_improveUnmixing (thee.peek(), tables.peek(), maxNumberOfIterations, tol, method);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no MixingMatrix created.");
 	}

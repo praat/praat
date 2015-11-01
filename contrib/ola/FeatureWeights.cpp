@@ -70,7 +70,7 @@ FeatureWeights FeatureWeights_create
 {
 	try {
 		autoFeatureWeights me = Thing_new (FeatureWeights);
-		my fweights = TableOfReal_create (1, nweights);
+		my fweights = TableOfReal_create (1, nweights).transfer();
 		for (long i = 1; i <= nweights; i ++) {
 			my fweights -> data [1] [i] = 1;
 		}

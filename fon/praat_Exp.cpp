@@ -64,7 +64,7 @@ DIRECT2 (ExperimentMFC_extractResults) {
 	WHERE (SELECTED) {
 		iam_LOOP (ExperimentMFC);
 		autoResultsMFC thee = ExperimentMFC_extractResults (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -75,7 +75,7 @@ DIRECT2 (ResultsMFC_getNumberOfTrials) {
 	Melder_information (my numberOfTrials);
 END2 }
 
-FORM (ResultsMFC_getResponse, U"ResultsMFC: Get response", 0) {
+FORM (ResultsMFC_getResponse, U"ResultsMFC: Get response", nullptr) {
 	NATURAL (U"Trial", U"1")
 	OK2
 DO
@@ -86,7 +86,7 @@ DO
 	Melder_information (my result [trial]. response);
 END2 }
 
-FORM (ResultsMFC_getStimulus, U"ResultsMFC: Get stimulus", 0) {
+FORM (ResultsMFC_getStimulus, U"ResultsMFC: Get stimulus", nullptr) {
 	NATURAL (U"Trial", U"1")
 	OK2
 DO
@@ -98,17 +98,18 @@ DO
 END2 }
 
 DIRECT2 (ResultsMFC_removeUnsharedStimuli) {
-	ResultsMFC res1 = NULL, res2 = NULL;
+	ResultsMFC res1 = nullptr, res2 = nullptr;
 	WHERE (SELECTED) { if (res1) res2 = (ResultsMFC) OBJECT; else res1 = (ResultsMFC) OBJECT; }
 	Melder_assert (res1 && res2);
-	praat_new (ResultsMFC_removeUnsharedStimuli (res1, res2), res2 -> name, U"_shared");
+	autoResultsMFC result = ResultsMFC_removeUnsharedStimuli (res1, res2);
+	praat_new (result.move(), res2 -> name, U"_shared");
 END2 }
 
 DIRECT2 (ResultsMFC_to_Categories_stimuli) {
 	WHERE (SELECTED) {
 		iam_LOOP (ResultsMFC);
 		autoCategories thee = ResultsMFC_to_Categories_stimuli (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -116,7 +117,7 @@ DIRECT2 (ResultsMFC_to_Categories_responses) {
 	WHERE (SELECTED) {
 		iam_LOOP (ResultsMFC);
 		autoCategories thee = ResultsMFC_to_Categories_responses (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -128,14 +129,14 @@ DIRECT2 (ResultsMFCs_to_Table) {
 		Collection_addItem (collection.peek(), me);
 	}
 	autoTable thee = ResultsMFCs_to_Table (collection.peek());
-	praat_new (thee.transfer(), U"allResults");
+	praat_new (thee.move(), U"allResults");
 END2 }
 
 /***** buttons *****/
 
 void praat_uvafon_Exp_init ();
 void praat_uvafon_Exp_init () {
-	Thing_recognizeClassesByName (classExperimentMFC, classResultsMFC, NULL);
+	Thing_recognizeClassesByName (classExperimentMFC, classResultsMFC, nullptr);
 
 	praat_addAction1 (classCategories, 0, U"Sort", 0, 0, DO_Categories_sort);
 	praat_addAction1 (classCategories, 1, U"Get entropy", 0, 0, DO_Categories_getEntropy);

@@ -38,16 +38,16 @@ double ERPTier_getMean (ERPTier me, long pointNumber, long channelNumber, double
 double ERPTier_getMean (ERPTier me, long pointNumber, const char32 *channelName, double tmin, double tmax);
 void ERPTier_subtractBaseline (ERPTier me, double tmin, double tmax);
 void ERPTier_rejectArtefacts (ERPTier me, double threshold);
-ERP ERPTier_extractERP (ERPTier me, long pointNumber);
-ERP ERPTier_to_ERP_mean (ERPTier me);
-ERPTier ERPTier_extractEventsWhereColumn_number (ERPTier me, Table table, long columnNumber, int which_Melder_NUMBER, double criterion);
-ERPTier ERPTier_extractEventsWhereColumn_string (ERPTier me, Table table, long columnNumber, int which_Melder_STRING, const char32 *criterion);
+autoERP ERPTier_extractERP (ERPTier me, long pointNumber);
+autoERP ERPTier_to_ERP_mean (ERPTier me);
+autoERPTier ERPTier_extractEventsWhereColumn_number (ERPTier me, Table table, long columnNumber, int which_Melder_NUMBER, double criterion);
+autoERPTier ERPTier_extractEventsWhereColumn_string (ERPTier me, Table table, long columnNumber, int which_Melder_STRING, const char32 *criterion);
 
-ERPTier EEG_to_ERPTier_bit (EEG me, double fromTime, double toTime, int markerBit);
-ERPTier EEG_to_ERPTier_marker (EEG me, double fromTime, double toTime, uint16 marker);
-ERPTier EEG_to_ERPTier_triggers (EEG me, double fromTime, double toTime,
+autoERPTier EEG_to_ERPTier_bit (EEG me, double fromTime, double toTime, int markerBit);
+autoERPTier EEG_to_ERPTier_marker (EEG me, double fromTime, double toTime, uint16 marker);
+autoERPTier EEG_to_ERPTier_triggers (EEG me, double fromTime, double toTime,
 	int which_Melder_STRING, const char32 *criterion);
-ERPTier EEG_to_ERPTier_triggers_preceded (EEG me, double fromTime, double toTime,
+autoERPTier EEG_to_ERPTier_triggers_preceded (EEG me, double fromTime, double toTime,
 	int which_Melder_STRING, const char32 *criterion,
 	int which_Melder_STRING_precededBy, const char32 *criterion_precededBy);
 

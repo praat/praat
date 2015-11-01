@@ -243,8 +243,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define FORM(proc,name,helpTitle) \
 	static void DO_##proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *buttonClosure) { \
 		static UiForm dia; \
-		if (dia == NULL) { \
-			Any radio = 0; \
+		if (! dia) { \
+			Any radio = nullptr; \
 			(void) radio; \
 			dia = UiForm_create (theCurrentPraatApplication -> topShell, name, DO_##proc, buttonClosure, invokingButtonTitle, helpTitle);
 #define REAL(label,def)		UiForm_addReal (dia, label, def);
@@ -285,7 +285,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
 #define DO \
 			UiForm_do (dia, modified); \
-		} else if (sendingForm == NULL) { \
+		} else if (! sendingForm) { \
 			trace (U"args ", Melder_pointer (args)); \
 			if (args) { \
 				UiForm_call (dia, narg, args, interpreter); \
@@ -300,7 +300,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
 #define DO_ALTERNATIVE(alternative) \
 			UiForm_do (dia, modified); \
-		} else if (sendingForm == NULL) { \
+		} else if (! sendingForm) { \
 			trace (U"alternative args ", Melder_pointer (args)); \
 			try { \
 				if (args) { \
@@ -375,7 +375,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				int IOBJECT = 0; \
 				structMelderFile file2 = { 0 }; \
 				(void) IOBJECT; \
-				if (args == NULL && sendingString == NULL) { \
+				if (! args && ! sendingString) { \
 					file = UiFile_getFile (dia); \
 				} else { \
 					Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); \
@@ -385,9 +385,9 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define FORM_WRITE(proc,title,help,ext) \
 	static void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
 		static UiForm dia; \
-		if (dia == NULL) \
+		if (! dia) \
 			dia = UiOutfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, okClosure, invokingButtonTitle, help); \
-		if (sendingForm == NULL && args == NULL && sendingString == NULL) { \
+		if (! sendingForm && ! args && ! sendingString) { \
 			praat_write_do (dia, ext); \
 		} else { \
 			try { \
@@ -395,7 +395,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				int IOBJECT = 0; \
 				structMelderFile file2 = { 0 }; \
 				(void) IOBJECT; \
-				if (args == NULL && sendingString == NULL) { \
+				if (! args && ! sendingString) { \
 					file = UiFile_getFile (dia); \
 				} else { \
 					Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); \
@@ -406,9 +406,9 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define FORM_WRITE2(proc,title,help,ext) \
 	static void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
 		static UiForm dia; \
-		if (dia == NULL) \
+		if (! dia) \
 			dia = UiOutfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, okClosure, invokingButtonTitle, help); \
-		if (sendingForm == NULL && args == NULL && sendingString == NULL) { \
+		if (! sendingForm && ! args && ! sendingString) { \
 			praat_write_do (dia, ext); \
 		} else { \
 			try { \
@@ -416,7 +416,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				int IOBJECT = 0; \
 				structMelderFile file2 = { 0 }; \
 				(void) IOBJECT; \
-				if (args == NULL && sendingString == NULL) { \
+				if (! args && ! sendingString) { \
 					file = UiFile_getFile (dia); \
 				} else { \
 					Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); \
