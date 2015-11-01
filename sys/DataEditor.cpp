@@ -271,7 +271,10 @@ static void gui_button_cb_open (I, GuiButtonEvent event) {
 		MelderString_append (& name, fieldData -> history, U". ", strip_d (fieldData -> description -> name));
 		StructEditor_create (my d_root, name.string, fieldData -> address,
 			* (Data_Description *) fieldData -> description -> tagType);
-	} else if (fieldData -> description -> type == objectwa || fieldData -> description -> type == autoobjectwa || fieldData -> description -> type == collectionwa) {
+	} else if (fieldData -> description -> type == objectwa ||
+	           fieldData -> description -> type == autoobjectwa ||
+			   fieldData -> description -> type == collectionwa ||
+			   fieldData -> description -> type == autocollectionwa) {
 		MelderString_append (& name, fieldData -> history, U". ", strip_d (fieldData -> description -> name));
 		ClassEditor_create (my d_root, name.string, fieldData -> address,
 			Class_getDescription ((ClassInfo) fieldData -> description -> tagType));
@@ -474,9 +477,9 @@ static void showStructMember (
 		fieldData -> rank = 0;
 		Melder_free (fieldData -> history); fieldData -> history = Melder_dup_f (history);
 		GuiThing_show (fieldData -> button);
-	} else if (type == objectwa || type == autoobjectwa || type == collectionwa) {
-		fieldData -> address = * (Daata *) memberAddress;   /* Indirect. */
-		if (! fieldData -> address) return;   /* No button if no object. */
+	} else if (type == objectwa || type == autoobjectwa || type == collectionwa || type == autocollectionwa) {
+		fieldData -> address = * (Daata *) memberAddress;   // indirect
+		if (! fieldData -> address) return;   // no button if no object
 		fieldData -> description = memberDescription;
 		fieldData -> rank = 0;
 		Melder_free (fieldData -> history); fieldData -> history = Melder_dup_f (history);

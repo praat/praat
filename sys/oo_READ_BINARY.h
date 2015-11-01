@@ -141,6 +141,17 @@
 		} \
 	}
 
+#define oo_AUTO_COLLECTION(Class,x,ItemClass,formatVersion)  \
+	{ \
+		int32_t n = bingeti4 (f); \
+		our x = Class##_create (); \
+		for (int32_t i = 1; i <= n; i ++) { \
+			auto##ItemClass item = (ItemClass) Thing_new (ItemClass); \
+			item.peek() -> v_readBinary (f, formatVersion); \
+			Collection_addItem (our x.get(), item.transfer()); \
+		} \
+	}
+
 #define oo_FILE(x)
 
 #define oo_DIR(x)

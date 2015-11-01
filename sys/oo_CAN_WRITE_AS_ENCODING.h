@@ -100,6 +100,9 @@
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
 	if (our x && ! Data_canWriteAsEncoding (our x, encoding)) return false;
 
+#define oo_AUTO_COLLECTION(Class,x,ItemClass,version)  \
+	if (our x && ! Data_canWriteAsEncoding (our x.get(), encoding)) return false;
+
 #define oo_FILE(x)  \
 	if (! Melder_isEncodable (our x. path, encoding)) return false;
 

@@ -101,6 +101,9 @@
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
 	if (our x) thy x = Data_copy (our x);
 
+#define oo_AUTO_COLLECTION(Class,x,ItemClass,version)  \
+	if (our x) thy x = Data_copy (our x.get());
+
 #define oo_FILE(x)  \
 	MelderFile_copy (& our x, & thy x);
 

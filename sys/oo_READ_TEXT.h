@@ -162,6 +162,17 @@
 		} \
 	}
 
+#define oo_AUTO_COLLECTION(Class,x,ItemClass,formatVersion)  \
+	{ \
+		long n = texgeti4 (a_text); \
+		our x = Class##_create (); \
+		for (long i = 1; i <= n; i ++) { \
+			auto##ItemClass item = (ItemClass) Thing_new (ItemClass); \
+			item.peek() -> v_readText (a_text, formatVersion); \
+			Collection_addItem (our x.get(), item.transfer()); \
+		} \
+	}
+
 #define oo_FILE(x)
 
 #define oo_DIR(x)

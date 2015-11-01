@@ -251,6 +251,7 @@
 #define oo_OBJECT(Class,version,x)  Class x;
 #define oo_AUTO_OBJECT(Class,version,x)  auto##Class x;
 #define oo_COLLECTION(Class,x,ItemClass,version)  Class x;
+#define oo_AUTO_COLLECTION(Class,x,ItemClass,version)  auto##Class x;
 #define oo_FILE(x)  structMelderFile x;
 #define oo_DIR(x)  structMelderDir x;
 

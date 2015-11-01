@@ -2856,7 +2856,7 @@ DIRECT (FilesInMemory_addItems)
 END
 
 DIRECT (FilesInMemory_merge)
-	FilesInMemory f1 = 0, f2 = 0;
+	FilesInMemory f1 = nullptr, f2 = nullptr;
 	LOOP { iam (FilesInMemory); (f1 ? f2 : f1) = me; }
 	Melder_assert (f1 != 0 && f2 != 0);
 	autoFilesInMemory fim = (FilesInMemory) Collections_merge (f1, f2);
@@ -2866,7 +2866,8 @@ END
 DIRECT (FilesInMemory_to_Strings_id)
 	LOOP {
 		iam (FilesInMemory);
-		praat_new (FilesInMemory_to_Strings_id (me), my name);
+		autoStrings thee = FilesInMemory_to_Strings_id (me);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -3106,7 +3107,7 @@ DO
 	}
 END
 
-FORM (FilterBank_equalizeIntensities, U"FilterBank: Equalize intensities", U"")
+FORM (FilterBank_equalizeIntensities, U"FilterBank: Equalize intensities", nullptr)
 	REAL (U"Intensity (dB)", U"80.0")
 	OK
 DO
@@ -3117,7 +3118,7 @@ DO
 	}
 END
 
-FORM (BandFilterSpectrogram_equalizeIntensities, U"BandFilterSpectrogram: Equalize intensities", U"")
+FORM (BandFilterSpectrogram_equalizeIntensities, U"BandFilterSpectrogram: Equalize intensities", nullptr)
 	REAL (U"Intensity (dB)", U"80.0")
 	OK
 DO
@@ -3131,83 +3132,85 @@ END
 DIRECT (FilterBank_to_Matrix)
 	LOOP {
 		iam (FilterBank);
-		praat_new (FilterBank_to_Matrix (me), my name);
+		autoMatrix thee = FilterBank_to_Matrix (me);
+		praat_new (thee.move(), my name);
 	}
 END
 
-FORM (BandFilterSpectrogram_to_Matrix, U"(BandFilterSpectrogram: To Matrix", 0)
+FORM (BandFilterSpectrogram_to_Matrix, U"BandFilterSpectrogram: To Matrix", nullptr)
 	BOOLEAN (U"Convert to dB values", 1)
 	OK
 DO
 	LOOP {
 		iam (BandFilterSpectrogram);
 		autoMatrix thee = BandFilterSpectrogram_to_Matrix (me, GET_INTEGER (U"Convert to dB values"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
-FORM (FilterBanks_crossCorrelate, U"FilterBanks: Cross-correlate", 0)
+FORM (FilterBanks_crossCorrelate, U"FilterBanks: Cross-correlate", nullptr)
 	RADIO_ENUM (U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
 	RADIO_ENUM (U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
 	OK
 DO
-	FilterBank f1 = 0, f2 = 0;
+	FilterBank f1 = nullptr, f2 = nullptr;
 	LOOP { iam (FilterBank); (f1 ? f2 : f1) = me; }
-	Melder_assert (f1 != 0 && f2 != 0);
-	praat_new (FilterBanks_crossCorrelate (f1, f2, GET_ENUM (kSounds_convolve_scaling, U"Amplitude scaling"),
-		GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, U"Signal outside time domain is...")),
-		f1 -> name, U"_", f2 -> name);
+	Melder_assert (f1 && f2);
+	autoSound result = FilterBanks_crossCorrelate (f1, f2, GET_ENUM (kSounds_convolve_scaling, U"Amplitude scaling"),
+		GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, U"Signal outside time domain is..."));
+	praat_new (result.move(), f1 -> name, U"_", f2 -> name);
 END
 
-FORM (BandFilterSpectrograms_crossCorrelate, U"BandFilterSpectrograms: Cross-correlate", 0)
+FORM (BandFilterSpectrograms_crossCorrelate, U"BandFilterSpectrograms: Cross-correlate", nullptr)
 	RADIO_ENUM (U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
 	RADIO_ENUM (U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
 	OK
 DO
-	BandFilterSpectrogram f1 = 0, f2 = 0;
+	BandFilterSpectrogram f1 = nullptr, f2 = nullptr;
 	LOOP {
 		iam (BandFilterSpectrogram); 
 		(f1 ? f2 : f1) = me;
 	}
-	Melder_assert (f1 != 0 && f2 != 0);
-	autoSound thee = BandFilterSpectrograms_crossCorrelate (f1, f2, GET_ENUM (kSounds_convolve_scaling, U"Amplitude scaling"),
+	Melder_assert (f1 && f2);
+	autoSound result = BandFilterSpectrograms_crossCorrelate (f1, f2, GET_ENUM (kSounds_convolve_scaling, U"Amplitude scaling"),
 		GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, U"Signal outside time domain is..."));
-	praat_new (thee.transfer(), f1 -> name, U"_", f2 -> name);
+	praat_new (result.move(), f1 -> name, U"_", f2 -> name);
 END
 
-FORM (FilterBanks_convolve, U"FilterBanks: Convolve", 0)
+FORM (FilterBanks_convolve, U"FilterBanks: Convolve", nullptr)
 	RADIO_ENUM (U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
 	RADIO_ENUM (U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
 	OK
 DO
-	FilterBank f1 = 0, f2 = 0;
+	FilterBank f1 = nullptr, f2 = nullptr;
 	LOOP { iam (FilterBank); (f1 ? f2 : f1) = me; }
-	Melder_assert (f1 != 0 && f2 != 0);
-	praat_new (FilterBanks_convolve (f1, f2, GET_ENUM (kSounds_convolve_scaling, U"Amplitude scaling"),
-		GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, U"Signal outside time domain is...")),
-		f1 -> name, U"_", f2 -> name);
+	Melder_assert (f1 && f2);
+	autoSound result = FilterBanks_convolve (f1, f2, GET_ENUM (kSounds_convolve_scaling, U"Amplitude scaling"),
+		GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, U"Signal outside time domain is..."));
+	praat_new (result.move(), f1 -> name, U"_", f2 -> name);
 END
 
-FORM (BandFilterSpectrograms_convolve, U"BandFilterSpectrograms: Convolve", 0)
+FORM (BandFilterSpectrograms_convolve, U"BandFilterSpectrograms: Convolve", nullptr)
 	RADIO_ENUM (U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
 	RADIO_ENUM (U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
 	OK
 DO
-	BandFilterSpectrogram f1 = 0, f2 = 0;
+	BandFilterSpectrogram f1 = nullptr, f2 = nullptr;
 	LOOP {
 		iam (BandFilterSpectrogram);
 		(f1 ? f2 : f1) = me;
 	}
-	Melder_assert (f1 != 0 && f2 != 0);
-	autoSound thee = BandFilterSpectrograms_convolve (f1, f2, GET_ENUM (kSounds_convolve_scaling, U"Amplitude scaling"),
+	Melder_assert (f1 && f2);
+	autoSound result = BandFilterSpectrograms_convolve (f1, f2, GET_ENUM (kSounds_convolve_scaling, U"Amplitude scaling"),
 		GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, U"Signal outside time domain is..."));
-	praat_new (thee.transfer(), f1 -> name, U"_", f2 -> name);
+	praat_new (result.move(), f1 -> name, U"_", f2 -> name);
 END
 
 DIRECT (FilterBank_to_Intensity)
 	LOOP {
 		iam (FilterBank);
-		praat_new (FilterBank_to_Intensity (me), my name);
+		autoIntensity thee = FilterBank_to_Intensity (me);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -3215,7 +3218,7 @@ DIRECT (BandFilterSpectrogram_to_Intensity)
 	LOOP {
 		iam (BandFilterSpectrogram);
 		autoIntensity thee = BandFilterSpectrogram_to_Intensity (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -3486,7 +3489,7 @@ DO
 		autoTextGrid thee = Intensity_to_TextGrid_detectSilences (me, GET_REAL (U"Silence threshold"),
 			GET_REAL (U"Minimum silent interval duration"), GET_REAL (U"Minimum sounding interval duration"),
 			GET_STRING (U"Silent interval label"), GET_STRING (U"Sounding interval label"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -3506,7 +3509,7 @@ DO
 		autoTextGrid thee = IntensityTier_to_TextGrid_detectSilences (me, GET_REAL (U"Time step"), GET_REAL (U"Silence threshold"),
 			GET_REAL (U"Minimum silent interval duration"), GET_REAL (U"Minimum sounding interval duration"),
 			GET_STRING (U"Silent interval label"), GET_STRING (U"Sounding interval label"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -3517,7 +3520,7 @@ DO
 	LOOP {
 		iam (IntensityTier);
 		autoIntensity thee = IntensityTier_to_Intensity (me, GET_REAL (U"Time step"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -3543,8 +3546,9 @@ DO
 	if (xmax <= xmin) {
 		Melder_throw (U"Xmin should be smaller than Xmax.");
 	}
-	praat_new (ISpline_createFromStrings (xmin, xmax, degree,
-		GET_STRING (U"Coefficients"), GET_STRING (U"Interior knots")), GET_STRING (U"Name"));
+	autoISpline me = ISpline_createFromStrings (xmin, xmax, degree,
+		GET_STRING (U"Coefficients"), GET_STRING (U"Interior knots"));
+	praat_new (me.move(), GET_STRING (U"Name"));
 END
 
 /******************* KlattTable  *********************************/
@@ -3580,7 +3584,7 @@ FORM (KlattTable_to_Sound, U"KlattTable: To Sound", U"KlattTable: To Sound...")
 DO
 	double flutter = GET_REAL (U"Flutter percentage");
 	int outputType = GET_INTEGER (U"Output type") - 1;
-	if (flutter < 0 || flutter > 100) {
+	if (flutter < 0.0 || flutter > 100.0) {
 		Melder_throw (U"Flutter should be between 0 and 100%.");
 	}
 	LOOP {

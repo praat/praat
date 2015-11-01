@@ -345,7 +345,8 @@ extern structMelderDir Data_directoryBeingRead;
 #define objectwa  20
 #define autoobjectwa  21
 #define collectionwa  22
-#define inheritwa  23
+#define autocollectionwa  23
+#define inheritwa  24
 
 /* Recursive routines for working with struct members. */
 
