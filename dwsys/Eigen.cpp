@@ -151,8 +151,7 @@ void Eigen_initFromSquareRoot (I, double **a, long numberOfRows, long numberOfCo
 	Eigen_sort (me);
 }
 
-void Eigen_initFromSquareRootPair (I, double **a, long numberOfRows,
-                                   long numberOfColumns, double **b, long numberOfRows_b) {
+void Eigen_initFromSquareRootPair (I, double **a, long numberOfRows, long numberOfColumns, double **b, long numberOfRows_b) {
 	iam (Eigen);
 	double *u = nullptr, *v = nullptr, maxsv2 = -10.0;
 	char jobu = 'N', jobv = 'N', jobq = 'Q';
@@ -277,11 +276,11 @@ void Eigen_initFromSymmetricMatrix (I, double **a, long n) {
 	}
 }
 
-Eigen Eigen_create (long numberOfEigenvalues, long dimension) {
+autoEigen Eigen_create (long numberOfEigenvalues, long dimension) {
 	try {
 		autoEigen me = Thing_new (Eigen);
 		Eigen_init (me.peek(), numberOfEigenvalues, dimension);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Eigen not created.");
 	}

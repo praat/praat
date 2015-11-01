@@ -332,8 +332,8 @@ DIRECT (Categories_edit)
 	} else {
 		LOOP {
 			iam (Categories);
-			praat_installEditor (CategoriesEditor_create (
-				my name, me), IOBJECT);
+			autoCategoriesEditor thee = CategoriesEditor_create (my name, me);
+			praat_installEditor (thee.transfer(), IOBJECT);
 		}
 	}
 END
@@ -416,13 +416,15 @@ DIRECT (Categories_join)
 		(c1 ? c2 : c1) = me;
 	}
 	Melder_assert (c1 && c2);
-	praat_new (OrderedOfString_joinItems (c1, c2), 0);
+	autoOrderedOfString thee = OrderedOfString_joinItems (c1, c2);
+	praat_new (thee.transfer(), c1 -> name, U"_", c2 -> name);
 END
 
 DIRECT (Categories_permuteItems)
 	LOOP {
 		iam (Collection);
-		praat_new (Collection_permuteItems (me), my name, U"_perm");
+		autoCollection thee = Collection_permuteItems (me);
+		praat_new (thee.transfer(), my name, U"_perm");
 	}
 END
 
@@ -2837,8 +2839,8 @@ DIRECT (FilesInMemory_addItems)
 	LOOP {
 		iam (Daata);
 		if (CLASS == classFileInMemory) {
-			FileInMemory t1 = (FileInMemory) Data_copy (me);
-			Collection_addItem (thee, t1);
+			autoFileInMemory t1 = (FileInMemory) Data_copy (me);
+			Collection_addItem (thee, t1.transfer());
 		}
 	}
 END
@@ -2854,7 +2856,8 @@ END
 DIRECT (FilesInMemory_to_Strings_id)
 	LOOP {
 		iam (FilesInMemory);
-		praat_new (FilesInMemory_to_Strings_id (me), my name);
+		autoStrings thee = FilesInMemory_to_Strings_id (me);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
