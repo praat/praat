@@ -263,7 +263,8 @@ static long Discriminant_getDegreesOfFreedom (Discriminant me) {
 }
 
 void Discriminant_getPartialDiscriminationProbability (Discriminant me,
-        long numberOfDimensions, double *probability, double *chisq, long *ndf) {
+        long numberOfDimensions, double *probability, double *chisq, long *ndf)
+{
 	long g = my numberOfGroups;
 	long p = my dimension, k = numberOfDimensions;
 	long numberOfFunctions = Discriminant_getNumberOfFunctions (me);
@@ -288,7 +289,8 @@ void Discriminant_getPartialDiscriminationProbability (Discriminant me,
 }
 
 double Discriminant_getConcentrationEllipseArea (Discriminant me, long group,
-        double scale, int confidence, int discriminantDirections, long d1, long d2) {
+        double scale, bool confidence, int discriminantDirections, long d1, long d2)
+{
 	SSCPs groups = my groups;
 	double area = NUMundefined;
 

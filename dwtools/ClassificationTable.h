@@ -35,7 +35,7 @@ autoCategories ClassificationTable_to_Categories_maximumProbability (Classificat
 
 autoStrings ClassificationTable_to_Strings_maximumProbability (ClassificationTable me);
 
-autoConfusion ClassificationTable_to_Confusion (ClassificationTable me, int onlyClassLabels);
+autoConfusion ClassificationTable_to_Confusion (ClassificationTable me, bool onlyClassLabels);
 
 /* Correlations between the classes (columns) */
 autoCorrelation ClassificationTable_to_Correlation_columns (ClassificationTable me);

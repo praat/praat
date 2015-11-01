@@ -162,10 +162,10 @@ void Collection_shrinkToFit (Collection me);
 		my _capacity == max (my size, 1);
 */
 
-Any Collections_merge (Collection me, Collection thee);
+Collection Collections_merge (Collection me, Collection thee);
 /*
 	Function:
-		merge two Collections into a new one.
+		merge two Collections into a new one. The class is the same as the type of `me`.
 	Postconditions:
 		result -> size >= my size;
 		result -> size >= thy size;

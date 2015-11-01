@@ -315,7 +315,7 @@ void Collection_shrinkToFit (Collection me) {
 	my item = (Any *) Melder_realloc (my item + 1, my _capacity * (int64) sizeof (Any)) - 1;
 }
 
-Any Collections_merge (Collection me, Collection thee) {
+Collection Collections_merge (Collection me, Collection thee) {
 	try {
 		if (my classInfo != thy classInfo)
 			Melder_throw (U"Objects are of different class.");

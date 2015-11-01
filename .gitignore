@@ -19,5 +19,7 @@ DerivedData
 
 makefile.defs
 
-# Praat executable
+# Executables
 praat
+Praat
+Praat.exe

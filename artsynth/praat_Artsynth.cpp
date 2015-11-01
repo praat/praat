@@ -39,7 +39,7 @@ FORM (Art_create, U"Create a default Articulation", U"Articulatory synthesis") {
 	OK2
 DO
 	autoArt me = Art_create ();
-	praat_new (me.transfer(), GET_STRING (U"Name"));
+	praat_new (me.move(), GET_STRING (U"Name"));
 END2 }
 
 FORM (Art_edit, U"View & Edit Articulation", 0) {
@@ -135,7 +135,7 @@ DO
 	LOOP {
 		iam (Artword);
 		autoArt thee = Artword_to_Art (me, GET_REAL (U"Time"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -166,7 +166,7 @@ DIRECT2 (Art_Speaker_to_VocalTract) {
 	iam_ONLY (Art);
 	thouart_ONLY (Speaker);
 	autoVocalTract him = Art_Speaker_to_VocalTract (me, thee);
-	praat_new (him.transfer(), my name, U"_", thy name);
+	praat_new (him.move(), my name, U"_", thy name);
 END2 }
 
 /***** ARTWORD & SPEAKER *****/
@@ -212,16 +212,16 @@ DO
 			& w1, iw1, & w2, iw2, & w3, iw3,
 			& p1, ip1, & p2, ip2, & p3, ip3,
 			& v1, iv1, & v2, iv2, & v3, iv3);
-	praat_new (him.transfer(), my name, U"_", thy name);
-	if (iw1) praat_new (w1.transfer(), U"width", iw1);
-	if (iw2) praat_new (w2.transfer(), U"width", iw2);
-	if (iw3) praat_new (w3.transfer(), U"width", iw3);
-	if (ip1) praat_new (p1.transfer(), U"pressure", ip1);
-	if (ip2) praat_new (p2.transfer(), U"pressure", ip2);
-	if (ip3) praat_new (p3.transfer(), U"pressure", ip3);
-	if (iv1) praat_new (v1.transfer(), U"velocity", iv1);
-	if (iv2) praat_new (v2.transfer(), U"velocity", iv2);
-	if (iv3) praat_new (v3.transfer(), U"velocity", iv3);
+	praat_new (him.move(), my name, U"_", thy name);
+	if (iw1) praat_new (w1.move(), U"width", iw1);
+	if (iw2) praat_new (w2.move(), U"width", iw2);
+	if (iw3) praat_new (w3.move(), U"width", iw3);
+	if (ip1) praat_new (p1.move(), U"pressure", ip1);
+	if (ip2) praat_new (p2.move(), U"pressure", ip2);
+	if (ip3) praat_new (p3.move(), U"pressure", ip3);
+	if (iv1) praat_new (v1.move(), U"velocity", iv1);
+	if (iv2) praat_new (v2.move(), U"velocity", iv2);
+	if (iv3) praat_new (v3.move(), U"velocity", iv3);
 END2 }
 
 /***** ARTWORD & SPEAKER [ & SOUND ] *****/
@@ -249,7 +249,7 @@ FORM (Speaker_create, U"Create a Speaker", U"Create Speaker...") {
 	OK2
 DO
 	autoSpeaker me = Speaker_create (GET_STRING (U"Kind of speaker"), Melder_atoi (GET_STRING (U"Number of tubes in glottis")));
-	praat_new (me.transfer(), GET_STRING (U"Name"));
+	praat_new (me.move(), GET_STRING (U"Name"));
 END2 }
 
 DIRECT2 (Speaker_help) {
@@ -285,7 +285,7 @@ FORM (VocalTract_createFromPhone, U"Create Vocal Tract from phone", U"Create Voc
 	OK2
 DO
 	autoVocalTract me = VocalTract_createFromPhone (GET_STRING (U"Phone"));
-	praat_new (me.transfer(), GET_STRING (U"Phone"));
+	praat_new (me.move(), GET_STRING (U"Phone"));
 END2 }
 
 DIRECT2 (VocalTract_draw) {
@@ -322,7 +322,7 @@ DIRECT2 (VocalTract_to_Matrix) {
 	WHERE (SELECTED) {
 		iam_LOOP (VocalTract);
 		autoMatrix thee = VocalTract_to_Matrix (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -340,7 +340,7 @@ DO
 		autoSpectrum thee = VocalTract_to_Spectrum (me, GET_INTEGER (U"Number of frequencies"),
 			GET_REAL (U"Maximum frequency"), GET_REAL (U"Glottal damping"),
 			GET_INTEGER (U"Radiation damping"), GET_INTEGER (U"Internal damping"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
