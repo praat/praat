@@ -509,7 +509,7 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, 
 
 		espeak_SetSynthCallback (synthCallback);
 
-		my d_events = Table_createWithColumnNames (0, U"time type type-t t-pos length a-pos sample id uniq");
+		my d_events = Table_createWithColumnNames (0, U"time type type-t t-pos length a-pos sample id uniq").transfer();
 		
 		#ifdef _WIN32
                 wchar_t *textW = Melder_peek32toW (text);

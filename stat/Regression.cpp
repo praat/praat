@@ -92,17 +92,17 @@ long Regression_getFactorIndexFromFactorName_e (Regression me, const char32 *fac
 
 Thing_implement (LinearRegression, Regression, 0);
 
-LinearRegression LinearRegression_create () {
+autoLinearRegression LinearRegression_create () {
 	try {
 		autoLinearRegression me = Thing_new (LinearRegression);
 		Regression_init (me.peek());
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"LinearRegression not created.");
 	}
 }
 
-LinearRegression Table_to_LinearRegression (Table me) {
+autoLinearRegression Table_to_LinearRegression (Table me) {
 	try {
 		long numberOfIndependentVariables = my numberOfColumns - 1, numberOfParameters = my numberOfColumns;
 		long numberOfCells = my rows -> size, icell, ivar;
@@ -133,7 +133,7 @@ LinearRegression Table_to_LinearRegression (Table me) {
 			RegressionParameter parm = static_cast<RegressionParameter> (thy parameters -> item [ivar]);
 			parm -> value = x [ivar];
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": linear regression not performed.");
 	}

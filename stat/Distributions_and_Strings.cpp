@@ -26,7 +26,7 @@
 
 #include "Distributions_and_Strings.h"
 
-Strings Distributions_to_Strings (Distributions me, long column, long numberOfStrings) {
+autoStrings Distributions_to_Strings (Distributions me, long column, long numberOfStrings) {
 	try {
 		autoStrings thee = Thing_new (Strings);
 		thy numberOfStrings = numberOfStrings;
@@ -36,13 +36,13 @@ Strings Distributions_to_Strings (Distributions me, long column, long numberOfSt
 			Distributions_peek (me, column, & string, nullptr);
 			thy strings [istring] = Melder_dup (string);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": Strings not generated.");
 	}
 }
 
-Strings Distributions_to_Strings_exact (Distributions me, long column) {
+autoStrings Distributions_to_Strings_exact (Distributions me, long column) {
 	try {
 		long total = 0;
 		long istring = 0;
@@ -73,13 +73,13 @@ Strings Distributions_to_Strings_exact (Distributions me, long column) {
 			}
 		}
 		Strings_randomize (thee.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": Strings not generated.");
 	}
 }
 
-Distributions Strings_to_Distributions (Strings me) {
+autoDistributions Strings_to_Distributions (Strings me) {
 	try {
 		autoDistributions thee = Distributions_create (my numberOfStrings, 1);
 		long idist = 0;
@@ -99,7 +99,7 @@ Distributions Strings_to_Distributions (Strings me) {
 		}
 		thy numberOfRows = idist;
 		TableOfReal_sortByLabel (thee.peek(), 1, 0);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": distribution not computed.");
 	}

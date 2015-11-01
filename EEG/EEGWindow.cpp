@@ -75,7 +75,7 @@ void structEEGWindow :: v_updateMenuItems_file () {
 
 void EEGWindow_init (EEGWindow me, const char32 *title, EEG eeg) {
 	my eeg = eeg;   // before initing, because initing will already draw!
-	TextGridEditor_init (me, title, eeg -> textgrid, eeg -> sound, false, nullptr, nullptr);
+	TextGridEditor_init (me, title, eeg -> textgrid.get(), eeg -> sound.get(), false, nullptr, nullptr);
 }
 
 autoEEGWindow EEGWindow_create (const char32 *title, EEG eeg) {

@@ -31,12 +31,12 @@
 #include "PitchTier_to_Sound.h"
 #include "Pitch_to_PitchTier.h"
 
-autoSound Pitch_to_Sound (Pitch me, double tmin, double tmax, int hum) {
-	static double formant [1 + 6] = { 0, 600, 1400, 2400, 3400, 4500, 5500 };
-	static double bandwidth [1 + 6] = { 0, 50, 100, 200, 300, 400, 500 };
+autoSound Pitch_to_Sound (Pitch me, double tmin, double tmax, bool hum) {
+	static double formant [1 + 6] { 0.0, 600.0, 1400.0, 2400.0, 3400.0, 4500.0, 5500.0 };
+	static double bandwidth [1 + 6] { 0.0, 50.0, 100.0, 200.0, 300.0, 400.0, 500.0 };
 	try {
 		autoPointProcess point = Pitch_to_PointProcess (me);
-		autoSound sound = PointProcess_to_Sound_pulseTrain (point.peek(), 44100, 0.7, 0.05, 30);
+		autoSound sound = PointProcess_to_Sound_pulseTrain (point.peek(), 44100.0, 0.7, 0.05, 30);
 		if (hum) {
 			Sound_filterWithFormants (sound.peek(), tmin, tmax, 6, formant, bandwidth);
 		}
@@ -66,7 +66,7 @@ void Pitch_hum (Pitch me, double tmin, double tmax) {
 	}
 }
 
-autoSound Pitch_to_Sound_sine (Pitch me, double tmin, double tmax, double samplingFrequency, int roundToNearestZeroCrossings) {
+autoSound Pitch_to_Sound_sine (Pitch me, double tmin, double tmax, double samplingFrequency, bool roundToNearestZeroCrossings) {
 	try {
 		autoPitchTier tier = Pitch_to_PitchTier (me);
 		autoSound sound = PitchTier_to_Sound_sine (tier.peek(), tmin, tmax, samplingFrequency);

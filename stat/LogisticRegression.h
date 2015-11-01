@@ -24,9 +24,9 @@
 #include "LogisticRegression_def.h"
 oo_CLASS_CREATE (LogisticRegression, Regression);
 
-LogisticRegression LogisticRegression_create (const char32 *dependent1, const char32 *dependent2);
+autoLogisticRegression LogisticRegression_create (const char32 *dependent1, const char32 *dependent2);
 
-LogisticRegression Table_to_LogisticRegression (Table me, const char32 *columnsWithFactors_string,
+autoLogisticRegression Table_to_LogisticRegression (Table me, const char32 *columnsWithFactors_string,
 	const char32 *columnWithDependent1_string, const char32 *columnWithDependent2_string);
 
 void LogisticRegression_drawBoundary (LogisticRegression me, Graphics graphics, long colx, double xmin, double xmax,

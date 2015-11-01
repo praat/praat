@@ -985,7 +985,7 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, const char3
 	}
 }
 
-Strings OTGrammar_generateInputs (OTGrammar me, long numberOfTrials) {
+autoStrings OTGrammar_generateInputs (OTGrammar me, long numberOfTrials) {
 	try {
 		autoStrings thee = Thing_new (Strings);
 		thy strings = NUMvector <char32 *> (1, thy numberOfStrings = numberOfTrials);
@@ -993,20 +993,20 @@ Strings OTGrammar_generateInputs (OTGrammar me, long numberOfTrials) {
 			long itab = NUMrandomInteger (1, my numberOfTableaus);
 			thy strings [i] = Melder_dup (my tableaus [itab]. input);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": inputs not generated.");
 	}
 }
 
-Strings OTGrammar_getInputs (OTGrammar me) {
+autoStrings OTGrammar_getInputs (OTGrammar me) {
 	try {
 		autoStrings thee = Thing_new (Strings);
 		thy strings = NUMvector <char32 *> (1, thy numberOfStrings = my numberOfTableaus);
 		for (long i = 1; i <= my numberOfTableaus; i ++) {
 			thy strings [i] = Melder_dup (my tableaus [i]. input);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": inputs not gotten.");
 	}
@@ -1025,7 +1025,7 @@ void OTGrammar_inputToOutput (OTGrammar me, const char32 *input, char32 *output,
 	}
 }
 
-Strings OTGrammar_inputsToOutputs (OTGrammar me, Strings inputs, double evaluationNoise) {
+autoStrings OTGrammar_inputsToOutputs (OTGrammar me, Strings inputs, double evaluationNoise) {
 	try {
 		autoStrings him = Thing_new (Strings);
 		long n = inputs -> numberOfStrings;
@@ -1036,13 +1036,13 @@ Strings OTGrammar_inputsToOutputs (OTGrammar me, Strings inputs, double evaluati
 			OTGrammar_inputToOutput (me, inputs -> strings [i], output, evaluationNoise);
 			his strings [i] = Melder_dup (output);
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": outputs not computed.");
 	}
 }
 
-Strings OTGrammar_inputToOutputs (OTGrammar me, const char32 *input, long n, double evaluationNoise) {
+autoStrings OTGrammar_inputToOutputs (OTGrammar me, const char32 *input, long n, double evaluationNoise) {
 	try {
 		autoStrings thee = Thing_new (Strings);
 		thy numberOfStrings = n;
@@ -1052,13 +1052,13 @@ Strings OTGrammar_inputToOutputs (OTGrammar me, const char32 *input, long n, dou
 			OTGrammar_inputToOutput (me, input, output, evaluationNoise);
 			thy strings [i] = Melder_dup (output);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": output not computed.");
 	}
 }
 
-Distributions OTGrammar_to_Distribution (OTGrammar me, long trialsPerInput, double noise) {
+autoDistributions OTGrammar_to_Distribution (OTGrammar me, long trialsPerInput, double noise) {
 	try {
 		long totalNumberOfOutputs = 0, nout = 0;
 		/*
@@ -1096,13 +1096,13 @@ Distributions OTGrammar_to_Distribution (OTGrammar me, long trialsPerInput, doub
 			 */
 			nout += tableau -> numberOfCandidates;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": output distribution not computed.");
 	}
 }
 
-PairDistribution OTGrammar_to_PairDistribution (OTGrammar me, long trialsPerInput, double noise) {
+autoPairDistribution OTGrammar_to_PairDistribution (OTGrammar me, long trialsPerInput, double noise) {
 	try {
 		long totalNumberOfOutputs = 0, nout = 0;
 		/*
@@ -1141,7 +1141,7 @@ PairDistribution OTGrammar_to_PairDistribution (OTGrammar me, long trialsPerInpu
 			 */
 			nout += tableau -> numberOfCandidates;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": output distribution not computed.");
 	}
@@ -1158,7 +1158,7 @@ static bool honoursFixedRankings (OTGrammar me) {
 	return true;
 }
 
-Distributions OTGrammar_measureTypology (OTGrammar me) {
+autoDistributions OTGrammar_measureTypology (OTGrammar me) {
 	try {
 		long totalNumberOfOutputs = 0, nout = 0, ncons = my numberOfConstraints, nperm, factorial [1+12];
 		if (ncons > 12)
@@ -1219,7 +1219,7 @@ Distributions OTGrammar_measureTypology (OTGrammar me) {
 			 */
 			nout += tableau -> numberOfCandidates;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": typology not measured.");
 	}
@@ -2076,7 +2076,7 @@ static void OTGrammar_learnOneFromPartialOutput_opt (OTGrammar me, const char32 
 	}
 }
 
-static OTHistory OTGrammar_createHistory (OTGrammar me, long storeHistoryEvery, long numberOfData) {
+static autoOTHistory OTGrammar_createHistory (OTGrammar me, long storeHistoryEvery, long numberOfData) {
 	try {
 		long numberOfSamplingPoints = numberOfData / storeHistoryEvery, icons;   // e.g. 0, 20, 40, ...
 		autoOTHistory thee = Thing_new (OTHistory);
@@ -2090,7 +2090,7 @@ static OTHistory OTGrammar_createHistory (OTGrammar me, long storeHistoryEvery, 
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 			thy data [1] [icons + 1] = my constraints [icons]. ranking;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": history not created.");
 	}
@@ -2128,12 +2128,12 @@ static void OTGrammar_finalizeHistory (OTGrammar me, OTHistory thee, long idatum
 void OTGrammar_learnFromPartialOutputs (OTGrammar me, Strings partialOutputs,
 	double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, bool honourLocalRankings,
 	double plasticity, double relativePlasticityNoise, long numberOfChews,
-	long storeHistoryEvery, OTHistory *history_out)
+	long storeHistoryEvery, autoOTHistory *history_out)
 {
 	try {
 		autoOTHistory history;
 		if (storeHistoryEvery) {
-			history.reset (OTGrammar_createHistory (me, storeHistoryEvery, partialOutputs -> numberOfStrings));
+			history = OTGrammar_createHistory (me, storeHistoryEvery, partialOutputs -> numberOfStrings);
 		}
 		try {
 			for (long idatum = 1; idatum <= partialOutputs -> numberOfStrings; idatum ++) {
@@ -2154,9 +2154,9 @@ void OTGrammar_learnFromPartialOutputs (OTGrammar me, Strings partialOutputs,
 			if (history.peek()) {
 				OTGrammar_finalizeHistory (me, history.peek(), partialOutputs -> numberOfStrings);
 			}
-			*history_out = history.transfer();
+			*history_out = history.move();
 		} catch (MelderError) {
-			*history_out = history.transfer();   // so that we can inspect
+			*history_out = history.move();   // so that we can inspect
 			throw;
 		}
 	} catch (MelderError) {
@@ -2218,7 +2218,7 @@ void OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distribution
 	double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, bool honourLocalRankings,
 	double initialPlasticity, long replicationsPerPlasticity, double plasticityDecrement,
 	long numberOfPlasticities, double relativePlasticityNoise, long numberOfChews,
-	long storeHistoryEvery, OTHistory *history_out,
+	long storeHistoryEvery, autoOTHistory *history_out,
 	bool resampleForVirtualProduction, bool compareOnlyPartialOutput, long resampleForCorrectForm)
 {
 	long idatum = 0;
@@ -2231,7 +2231,7 @@ void OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distribution
 			Graphics_clearWs (monitor.graphics());
 		}
 		if (storeHistoryEvery) {
-			history.reset (OTGrammar_createHistory (me, storeHistoryEvery, numberOfData));
+			history = OTGrammar_createHistory (me, storeHistoryEvery, numberOfData);
 		}
 		try {
 			double plasticity = initialPlasticity;
@@ -2275,11 +2275,11 @@ void OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distribution
 			}
 			OTGrammar_opt_deleteOutputMatching (me);
 			if (history_out)
-				*history_out = history.transfer();
+				*history_out = history.move();
 		} catch (MelderError) {
 			OTGrammar_opt_deleteOutputMatching (me);
 			if (history_out)
-				*history_out = history.transfer();   // so that we can inspect
+				*history_out = history.move();   // so that we can inspect
 			throw;
 		}
 	} catch (MelderError) {

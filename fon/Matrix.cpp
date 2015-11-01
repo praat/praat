@@ -546,9 +546,7 @@ autoMatrix Matrix_readFromRawTextFile (MelderFile file) {   // BUG: not Unicode-
 	}
 }
 
-void Matrix_eigen (Matrix me, Matrix *out_eigenvectors, Matrix *out_eigenvalues) {
-	*out_eigenvectors = nullptr;
-	*out_eigenvalues = nullptr;
+void Matrix_eigen (Matrix me, autoMatrix *out_eigenvectors, autoMatrix *out_eigenvalues) {
 	try {
 		if (my nx != my ny)
 			Melder_throw (U"(Matrix not square.");
@@ -556,14 +554,14 @@ void Matrix_eigen (Matrix me, Matrix *out_eigenvectors, Matrix *out_eigenvalues)
 		autoEigen eigen = Thing_new (Eigen);
 		Eigen_initFromSymmetricMatrix (eigen.peek(), my z, my nx);
 		autoMatrix eigenvectors = Data_copy (me);
-		autoMatrix eigenvalues = Matrix_create (1, 1, 1, 1, 1, my ymin, my ymax, my ny, my dy, my y1);
+		autoMatrix eigenvalues = Matrix_create (1.0, 1.0, 1, 1.0, 1.0, my ymin, my ymax, my ny, my dy, my y1);
 		for (long i = 1; i <= my nx; i ++) {
 			eigenvalues -> z [i] [1] = eigen -> eigenvalues [i];
 			for (long j = 1; j <= my nx; j ++)
 				eigenvectors -> z [i] [j] = eigen -> eigenvectors [j] [i];
 		}
-		*out_eigenvectors = eigenvectors.transfer();
-		*out_eigenvalues = eigenvalues.transfer();
+		*out_eigenvectors = eigenvectors.move();
+		*out_eigenvalues = eigenvalues.move();
 	} catch (MelderError) {
 		Melder_throw (me, U": eigenstructure not computed.");
 	}

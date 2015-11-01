@@ -64,7 +64,7 @@ DO
 	LOOP {
 		iam (LongSound);
 		autoSound thee = LongSound_extractPart (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Preserve times"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -75,7 +75,7 @@ DO
 	LOOP {
 		iam (LongSound);
 		double index = Sampled_xToIndex (me, GET_REAL (U"Time"));
-		Melder_informationReal (index, NULL);
+		Melder_informationReal (index, nullptr);
 	}
 END2 }
 
@@ -114,7 +114,7 @@ DIRECT2 (LongSound_help) { Melder_help (U"LongSound"); END2 }
 
 FORM_READ2 (LongSound_open, U"Open long sound file", nullptr, true) {
 	autoLongSound me = LongSound_open (file);
-	praat_new (me.transfer(), MelderFile_name (file));
+	praat_new (me.move(), MelderFile_name (file));
 END2 }
 
 FORM (LongSound_playPart, U"LongSound: Play part", nullptr) {
@@ -167,7 +167,7 @@ DO
 	LOOP {
 		iam (LongSound);
 		autoTextGrid thee = TextGrid_create (my xmin, my xmax, GET_STRING (U"Tier names"), GET_STRING (U"Point tiers"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -364,7 +364,7 @@ DO
 		autoSound thee = Sound_autoCorrelate (me,
 			GET_ENUM (kSounds_convolve_scaling, U"Amplitude scaling"),
 			GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, U"Signal outside time domain is..."));
-		praat_new (thee.transfer(), U"ac_", my name);
+		praat_new (thee.move(), U"ac_", my name);
 	}
 END2 }
 
@@ -372,13 +372,13 @@ DIRECT2 (Sounds_combineToStereo) {
 	autoCollection set = praat_getSelectedObjects ();
 	autoSound result = Sounds_combineToStereo (set.peek());
 	long numberOfChannels = result -> ny;   // dereference before transferring
-	praat_new (result.transfer(), U"combined_", numberOfChannels);
+	praat_new (result.move(), U"combined_", numberOfChannels);
 END2 }
 
 DIRECT2 (Sounds_concatenate) {
 	autoCollection set = praat_getSelectedObjects ();
 	autoSound result = Sounds_concatenate_e (set.peek(), 0.0);
-	praat_new (result.transfer(), U"chain");
+	praat_new (result.move(), U"chain");
 END2 }
 
 FORM (Sounds_concatenateWithOverlap, U"Sounds: Concatenate with overlap", U"Sounds: Concatenate with overlap...") {
@@ -387,7 +387,7 @@ FORM (Sounds_concatenateWithOverlap, U"Sounds: Concatenate with overlap", U"Soun
 DO
 	autoCollection set = praat_getSelectedObjects ();
 	autoSound result = Sounds_concatenate_e (set.peek(), GET_REAL (U"Overlap"));
-	praat_new (result.transfer(), U"chain");
+	praat_new (result.move(), U"chain");
 END2 }
 
 DIRECT2 (Sounds_concatenateRecoverably) {
@@ -425,15 +425,15 @@ DIRECT2 (Sounds_concatenateRecoverably) {
 		nx += my nx;
 		tmin = tmax;
 	}
-	praat_new (thee.transfer(), U"chain");
-	praat_new (him.transfer(), U"chain");
+	praat_new (thee.move(), U"chain");
+	praat_new (him.move(), U"chain");
 END2 }
 
 DIRECT2 (Sound_convertToMono) {
 	LOOP {
 		iam (Sound);
 		autoSound thee = Sound_convertToMono (me);
-		praat_new (thee.transfer(), my name, U"_mono");
+		praat_new (thee.move(), my name, U"_mono");
 	}
 END2 }
 
@@ -441,19 +441,19 @@ DIRECT2 (Sound_convertToStereo) {
 	LOOP {
 		iam (Sound);
 		autoSound thee = Sound_convertToStereo (me);
-		praat_new (thee.transfer(), my name, U"_stereo");
+		praat_new (thee.move(), my name, U"_stereo");
 	}
 END2 }
 
 DIRECT2 (Sounds_convolve_old) {
-	Sound s1 = NULL, s2 = NULL;
+	Sound s1 = nullptr, s2 = nullptr;
 	LOOP {
 		iam (Sound);
 		( s1 ? s2 : s1 ) = me;
 	}
-	Melder_assert (s1 != NULL && s2 != NULL);
+	Melder_assert (s1 && s2);
 	autoSound thee = Sounds_convolve (s1, s2, kSounds_convolve_scaling_SUM, kSounds_convolve_signalOutsideTimeDomain_ZERO);
-	praat_new (thee.transfer(), s1 -> name, U"_", s2 -> name);
+	praat_new (thee.move(), s1 -> name, U"_", s2 -> name);
 END2 }
 
 FORM (Sounds_convolve, U"Sounds: Convolve", U"Sounds: Convolve...") {
@@ -461,16 +461,16 @@ FORM (Sounds_convolve, U"Sounds: Convolve", U"Sounds: Convolve...") {
 	RADIO_ENUM (U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
 	OK2
 DO
-	Sound s1 = NULL, s2 = NULL;
+	Sound s1 = nullptr, s2 = nullptr;
 	LOOP {
 		iam (Sound);
 		( s1 ? s2 : s1 ) = me;
 	}
-	Melder_assert (s1 != NULL && s2 != NULL);
+	Melder_assert (s1 && s2);
 	autoSound thee = Sounds_convolve (s1, s2,
 		GET_ENUM (kSounds_convolve_scaling, U"Amplitude scaling"),
 		GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, U"Signal outside time domain is..."));
-	praat_new (thee.transfer(), s1 -> name, U"_", s2 -> name);
+	praat_new (thee.move(), s1 -> name, U"_", s2 -> name);
 END2 }
 
 static void common_Sound_create (UiForm dia, Interpreter interpreter, bool allowMultipleChannels) {
@@ -528,7 +528,7 @@ static void common_Sound_create (UiForm dia, Interpreter interpreter, bool allow
 		}
 	}
 	Matrix_formula ((Matrix) sound.peek(), GET_STRING (U"formula"), interpreter, NULL);
-	praat_new (sound.transfer(), GET_STRING (U"Name"));
+	praat_new (sound.move(), GET_STRING (U"Name"));
 	//praat_updateSelection ();
 }
 
@@ -572,7 +572,7 @@ DO
 	autoSound me = Sound_createAsPureTone (GET_INTEGER (U"Number of channels"), GET_REAL (U"Start time"), GET_REAL (U"End time"),
 		GET_REAL (U"Sampling frequency"), GET_REAL (U"Tone frequency"), GET_REAL (U"Amplitude"),
 		GET_REAL (U"Fade-in duration"), GET_REAL (U"Fade-out duration"));
-	praat_new (me.transfer(), GET_STRING (U"Name"));
+	praat_new (me.move(), GET_STRING (U"Name"));
 END2 }
 
 FORM (Sound_createFromToneComplex, U"Create Sound from tone complex", U"Create Sound from tone complex...") {
@@ -592,22 +592,22 @@ DO
 	autoSound me = Sound_createFromToneComplex (GET_REAL (U"Start time"), GET_REAL (U"End time"),
 		GET_REAL (U"Sampling frequency"), GET_INTEGER (U"Phase") - 1, GET_REAL (U"Frequency step"),
 		GET_REAL (U"First frequency"), GET_REAL (U"Ceiling"), GET_INTEGER (U"Number of components"));
-	praat_new (me.transfer(), GET_STRING (U"Name"));
+	praat_new (me.move(), GET_STRING (U"Name"));
 END2 }
 
-FORM (old_Sounds_crossCorrelate, U"Cross-correlate (short)", 0) {
+FORM (old_Sounds_crossCorrelate, U"Cross-correlate (short)", nullptr) {
 	REAL (U"From lag (s)", U"-0.1")
 	REAL (U"To lag (s)", U"0.1")
 	BOOLEAN (U"Normalize", 1)
 	OK2
 DO
-	Sound s1 = NULL, s2 = NULL;
+	Sound s1 = nullptr, s2 = nullptr;
 	LOOP {
 		iam (Sound);
 		( s1 ? s2 : s1 ) = me;
 	}
 	autoSound thee = Sounds_crossCorrelate_short (s1, s2, GET_REAL (U"From lag"), GET_REAL (U"To lag"), GET_INTEGER (U"Normalize"));
-	praat_new (thee.transfer(), U"cc_", s1 -> name, U"_", s2 -> name);
+	praat_new (thee.move(), U"cc_", s1 -> name, U"_", s2 -> name);
 END2 }
 
 FORM (Sounds_crossCorrelate, U"Sounds: Cross-correlate", U"Sounds: Cross-correlate...") {
@@ -615,16 +615,16 @@ FORM (Sounds_crossCorrelate, U"Sounds: Cross-correlate", U"Sounds: Cross-correla
 	RADIO_ENUM (U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
 	OK2
 DO_ALTERNATIVE (old_Sounds_crossCorrelate)
-	Sound s1 = NULL, s2 = NULL;
+	Sound s1 = nullptr, s2 = nullptr;
 	LOOP {
 		iam (Sound);
 		( s1 ? s2 : s1 ) = me;
 	}
-	Melder_assert (s1 != NULL && s2 != NULL);
+	Melder_assert (s1 && s2);
 	autoSound thee = Sounds_crossCorrelate (s1, s2,
 		GET_ENUM (kSounds_convolve_scaling, U"Amplitude scaling"),
 		GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, U"Signal outside time domain is..."));
-	praat_new (thee.transfer(), s1 -> name, U"_", s2 -> name);
+	praat_new (thee.move(), s1 -> name, U"_", s2 -> name);
 END2 }
 
 FORM (Sound_deemphasizeInline, U"Sound: De-emphasize (in-line)", U"Sound: De-emphasize (in-line)...") {
@@ -653,7 +653,7 @@ DO
 		autoSound thee = Sound_deepenBandModulation (me, GET_REAL (U"Enhancement"),
 			GET_REAL (U"From frequency"), GET_REAL (U"To frequency"),
 			GET_REAL (U"Slow modulation"), GET_REAL (U"Fast modulation"), GET_REAL (U"Band smoothing"));
-		praat_new (thee.transfer(), my name, U"_", (long) (GET_REAL (U"Enhancement")));   // truncate number toward zero for visual effect
+		praat_new (thee.move(), my name, U"_", (long) (GET_REAL (U"Enhancement")));   // truncate number toward zero for visual effect
 	}
 END2 }
 
@@ -731,7 +731,7 @@ DIRECT2 (Sound_extractAllChannels) {
 		iam (Sound);
 		for (long channel = 1; channel <= my ny; channel ++) {
 			autoSound thee = Sound_extractChannel (me, channel);
-			praat_new (thee.transfer(), my name, U"_ch", channel);
+			praat_new (thee.move(), my name, U"_ch", channel);
 		}
 	}
 END2 }
@@ -744,7 +744,7 @@ DO
 	LOOP {
 		iam (Sound);
 		autoSound thee = Sound_extractChannel (me, channel);
-		praat_new (thee.transfer(), my name, U"_ch", channel);
+		praat_new (thee.move(), my name, U"_ch", channel);
 	}
 END2 }
 
@@ -752,7 +752,7 @@ DIRECT2 (Sound_extractLeftChannel) {
 	LOOP {
 		iam (Sound);
 		autoSound thee = Sound_extractChannel (me, 1);
-		praat_new (thee.transfer(), my name, U"_left");
+		praat_new (thee.move(), my name, U"_left");
 	}
 END2 }
 
@@ -770,7 +770,7 @@ DO
 			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
 			GET_ENUM (kSound_windowShape, U"Window shape"), GET_REAL (U"Relative width"),
 			GET_INTEGER (U"Preserve times"));
-		praat_new (thee.transfer(), my name, U"_part");
+		praat_new (thee.move(), my name, U"_part");
 	}
 END2 }
 
@@ -785,7 +785,7 @@ DO
 		autoSound thee = Sound_extractPartForOverlap (me,
 			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
 			GET_REAL (U"Overlap"));
-		praat_new (thee.transfer(), my name, U"_part");
+		praat_new (thee.move(), my name, U"_part");
 	}
 END2 }
 
@@ -793,7 +793,7 @@ DIRECT2 (Sound_extractRightChannel) {
 	LOOP {
 		iam (Sound);
 		autoSound thee = Sound_extractChannel (me, 2);
-		praat_new (thee.transfer(), my name, U"_right");
+		praat_new (thee.move(), my name, U"_right");
 	}
 END2 }
 
@@ -804,7 +804,7 @@ DO
 	LOOP {
 		iam (Sound);
 		autoSound thee = Sound_filter_deemphasis (me, GET_REAL (U"From frequency"));
-		praat_new (thee.transfer(), my name, U"_deemp");
+		praat_new (thee.move(), my name, U"_deemp");
 	}
 END2 }
 
@@ -816,7 +816,7 @@ DO
 	LOOP {
 		iam (Sound);
 		autoSound thee = Sound_filter_formula (me, GET_STRING (U"formula"), interpreter);
-		praat_new (thee.transfer(), my name, U"_filt");
+		praat_new (thee.move(), my name, U"_filt");
 	}
 END2 }
 
@@ -828,7 +828,7 @@ DO
 	LOOP {
 		iam (Sound);
 		autoSound thee = Sound_filter_oneFormant (me, GET_REAL (U"Frequency"), GET_REAL (U"Bandwidth"));
-		praat_new (thee.transfer(), my name, U"_filt");
+		praat_new (thee.move(), my name, U"_filt");
 	}
 END2 }
 
@@ -854,7 +854,7 @@ DO
 		iam (Sound);
 		autoSound thee = Sound_filter_passHannBand (me,
 			GET_REAL (U"From frequency"), GET_REAL (U"To frequency"), GET_REAL (U"Smoothing"));
-		praat_new (thee.transfer(), my name, U"_band");
+		praat_new (thee.move(), my name, U"_band");
 	}
 END2 }
 
@@ -865,7 +865,7 @@ DO
 	LOOP {
 		iam (Sound);
 		autoSound thee = Sound_filter_preemphasis (me, GET_REAL (U"From frequency"));
-		praat_new (thee.transfer(), my name, U"_preemp");
+		praat_new (thee.move(), my name, U"_preemp");
 	}
 END2 }
 
@@ -878,7 +878,7 @@ DO
 	LOOP {
 		iam (Sound);
 		autoSound thee = Sound_filter_stopHannBand (me, GET_REAL (U"From frequency"), GET_REAL (U"To frequency"), GET_REAL (U"Smoothing"));
-		praat_new (thee.transfer(), my name, U"_band");
+		praat_new (thee.move(), my name, U"_band");
 	}
 END2 }
 
@@ -895,7 +895,7 @@ DO
 	LOOP {
 		iam (Sound);
 		try {
-			Matrix_formula ((Matrix) me, GET_STRING (U"formula"), interpreter, NULL);
+			Matrix_formula (me, GET_STRING (U"formula"), interpreter, nullptr);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Sound may have partially changed
@@ -915,7 +915,7 @@ DO
 	LOOP {
 		iam (Sound);
 		try {
-			Matrix_formula_part ((Matrix) me,
+			Matrix_formula_part (me,
 				GET_REAL (U"From time"), GET_REAL (U"To time"),
 				GET_INTEGER (U"From channel") - 0.5, GET_INTEGER (U"To channel") + 0.5,
 				GET_STRING (U"formula"), interpreter, NULL);
@@ -1292,7 +1292,7 @@ DO
 	LOOP {
 		iam (Sound);
 		autoSound thee = Sound_lengthen_overlapAdd (me, minimumPitch, maximumPitch, factor);
-		praat_new (thee.transfer(), my name, U"_", Melder_fixed (factor, 2));
+		praat_new (thee.move(), my name, U"_", Melder_fixed (factor, 2));
 	}
 END2 }
 
@@ -1371,13 +1371,13 @@ FORM_READ2 (Sound_readSeparateChannelsFromSoundFile, U"Read separate channels fr
 	}
 	for (long ichan = 1; ichan <= sound -> ny; ichan ++) {
 		autoSound thee = Sound_extractChannel (sound.peek(), ichan);
-		praat_new (thee.transfer(), name, U"_ch", ichan);
+		praat_new (thee.move(), name, U"_ch", ichan);
 	}
 END2 }
 
 FORM_READ2 (Sound_readFromRawAlawFile, U"Read Sound from raw Alaw file", 0, true) {
 	autoSound me = Sound_readFromRawAlawFile (file);
-	praat_new (me.transfer(), MelderFile_name (file));
+	praat_new (me.move(), MelderFile_name (file));
 END2 }
 
 static SoundRecorder theSoundRecorder;   // only one at a time can exist
@@ -1449,7 +1449,7 @@ DO
 	autoSound me = Sound_recordFixedTime (GET_INTEGER (U"Input source"),
 		GET_REAL (U"Gain"), GET_REAL (U"Balance"),
 		Melder_atof (GET_STRING (U"Sampling frequency")), GET_REAL (U"Duration"));
-	praat_new (me.transfer(), U"untitled");
+	praat_new (me.move(), U"untitled");
 END2 }
 
 FORM (Sound_resample, U"Sound: Resample", U"Sound: Resample...") {
@@ -1461,7 +1461,7 @@ DO
 	LOOP {
 		iam (Sound);
 		autoSound thee = Sound_resample (me, samplingFrequency, GET_INTEGER (U"Precision"));
-		praat_new (thee.transfer(), my name, U"_", (long) round (samplingFrequency));
+		praat_new (thee.move(), my name, U"_", (long) round (samplingFrequency));
 	}
 END2 }
 
@@ -1579,7 +1579,7 @@ DO
 	LOOP {
 		iam (Sound);
 		autoManipulation thee = Sound_to_Manipulation (me, GET_REAL (U"Time step"), fmin, fmax);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1594,7 +1594,7 @@ DO
 		iam (Sound);
 		autoCochleagram thee = Sound_to_Cochleagram (me, GET_REAL (U"Time step"),
 			GET_REAL (U"Frequency resolution"), GET_REAL (U"Window length"), GET_REAL (U"Forward-masking time"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1615,7 +1615,7 @@ DO
 			GET_REAL (U"Frequency resolution"), GET_INTEGER (U"Has synapse"),
 			GET_REAL (U"   replenishment rate"), GET_REAL (U"   loss rate"),
 			GET_REAL (U"   return rate"), GET_REAL (U"   reprocessing rate"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1632,7 +1632,7 @@ DO
 		autoFormant thee = Sound_to_Formant_burg (me, GET_REAL (U"Time step"),
 			GET_REAL (U"Max. number of formants"), GET_REAL (U"Maximum formant"),
 			GET_REAL (U"Window length"), GET_REAL (U"Pre-emphasis from"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1649,7 +1649,7 @@ DO
 		autoFormant thee = Sound_to_Formant_keepAll (me, GET_REAL (U"Time step"),
 			GET_REAL (U"Max. number of formants"), GET_REAL (U"Maximum formant"),
 			GET_REAL (U"Window length"), GET_REAL (U"Pre-emphasis from"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1666,7 +1666,7 @@ DO
 		autoFormant thee = Sound_to_Formant_willems (me, GET_REAL (U"Time step"),
 			GET_REAL (U"Number of formants"), GET_REAL (U"Maximum formant"),
 			GET_REAL (U"Window length"), GET_REAL (U"Pre-emphasis from"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1683,7 +1683,7 @@ DO
 		iam (Sound);
 		autoHarmonicity thee = Sound_to_Harmonicity_ac (me, GET_REAL (U"Time step"),
 			GET_REAL (U"Minimum pitch"), GET_REAL (U"Silence threshold"), periodsPerWindow);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1699,7 +1699,7 @@ DO
 		autoHarmonicity thee = Sound_to_Harmonicity_cc (me, GET_REAL (U"Time step"),
 			GET_REAL (U"Minimum pitch"), GET_REAL (U"Silence threshold"),
 			GET_REAL (U"Periods per window"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1715,7 +1715,7 @@ DO
 		autoMatrix thee = Sound_to_Harmonicity_GNE (me, GET_REAL (U"Minimum frequency"),
 			GET_REAL (U"Maximum frequency"), GET_REAL (U"Bandwidth"),
 			GET_REAL (U"Step"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1728,7 +1728,7 @@ DO
 		iam (Sound);
 		autoIntensity thee = Sound_to_Intensity (me,
 			GET_REAL (U"Minimum pitch"), GET_REAL (U"Time step"), false);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1742,7 +1742,7 @@ DO_ALTERNATIVE (old_Sound_to_Intensity)
 		iam (Sound);
 		autoIntensity thee = Sound_to_Intensity (me,
 			GET_REAL (U"Minimum pitch"), GET_REAL (U"Time step"), GET_INTEGER (U"Subtract mean"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1756,7 +1756,7 @@ DO
 		iam (Sound);
 		autoIntensityTier thee = Sound_to_IntensityTier (me,
 			GET_REAL (U"Minimum pitch"), GET_REAL (U"Time step"), GET_INTEGER (U"Subtract mean"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1764,7 +1764,7 @@ DIRECT2 (Sound_to_IntervalTier) {
 	LOOP {
 		iam (Sound);
 		autoIntervalTier thee = IntervalTier_create (my xmin, my xmax);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1775,7 +1775,7 @@ DO
 	LOOP {
 		iam (Sound);
 		autoLtas thee = Sound_to_Ltas (me, GET_REAL (U"Bandwidth"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1796,7 +1796,7 @@ DO
 		autoLtas thee = Sound_to_Ltas_pitchCorrected (me, fmin, fmax,
 			GET_REAL (U"Maximum frequency"), GET_REAL (U"Bandwidth"),
 			GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1804,18 +1804,18 @@ DIRECT2 (Sound_to_Matrix) {
 	LOOP {
 		iam (Sound);
 		autoMatrix thee = Sound_to_Matrix (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
 DIRECT2 (Sounds_to_ParamCurve) {
-	Sound s1 = NULL, s2 = NULL;
+	Sound s1 = nullptr, s2 = nullptr;
 	LOOP {
 		iam (Sound);
 		( s1 ? s2 : s1 ) = me;
 	}
 	autoParamCurve thee = ParamCurve_create (s1, s2);
-	praat_new (thee.transfer(), s1 -> name, U"_", s2 -> name);
+	praat_new (thee.move(), s1 -> name, U"_", s2 -> name);
 END2 }
 
 FORM (Sound_to_Pitch, U"Sound: To Pitch", U"Sound: To Pitch...") {
@@ -1827,7 +1827,7 @@ DO
 	LOOP {
 		iam (Sound);
 		autoPitch thee = Sound_to_Pitch (me, GET_REAL (U"Time step"), GET_REAL (U"Pitch floor"), GET_REAL (U"Pitch ceiling"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1855,7 +1855,7 @@ DO
 			GET_REAL (U"Silence threshold"), GET_REAL (U"Voicing threshold"),
 			GET_REAL (U"Octave cost"), GET_REAL (U"Octave-jump cost"),
 			GET_REAL (U"Voiced / unvoiced cost"), GET_REAL (U"Pitch ceiling"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1883,7 +1883,7 @@ DO
 			GET_REAL (U"Silence threshold"), GET_REAL (U"Voicing threshold"),
 			GET_REAL (U"Octave cost"), GET_REAL (U"Octave-jump cost"),
 			GET_REAL (U"Voiced / unvoiced cost"), GET_REAL (U"Pitch ceiling"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1904,7 +1904,7 @@ DO
 		iam (Sound);
 		autoPointProcess thee = Sound_to_PointProcess_extrema (me, channel > my ny ? 1 : channel, GET_INTEGER (U"Interpolation") - 1,
 			GET_INTEGER (U"Include maxima"), GET_INTEGER (U"Include minima"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1918,7 +1918,7 @@ DO
 	LOOP {
 		iam (Sound);
 		autoPointProcess thee = Sound_to_PointProcess_periodic_cc (me, fmin, fmax);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1934,7 +1934,7 @@ DO
 	LOOP {
 		iam (Sound);
 		autoPointProcess thee = Sound_to_PointProcess_periodic_peaks (me, fmin, fmax, GET_INTEGER (U"Include maxima"), GET_INTEGER (U"Include minima"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1948,7 +1948,7 @@ DO
 	LOOP {
 		iam (Sound);
 		autoPointProcess thee = Sound_to_PointProcess_zeroes (me, channel > my ny ? 1 : channel, GET_INTEGER (U"Include raisers"), GET_INTEGER (U"Include fallers"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1965,7 +1965,7 @@ DO
 		autoSpectrogram thee = Sound_to_Spectrogram (me, GET_REAL (U"Window length"),
 			GET_REAL (U"Maximum frequency"), GET_REAL (U"Time step"),
 			GET_REAL (U"Frequency step"), GET_ENUM (kSound_to_Spectrogram_windowShape, U"Window shape"), 8.0, 8.0);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1976,7 +1976,7 @@ DO
 	LOOP {
 		iam (Sound);
 		autoSpectrum thee = Sound_to_Spectrum (me, GET_INTEGER (U"Fast"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1984,7 +1984,7 @@ DIRECT2 (Sound_to_Spectrum_dft) {
 	LOOP {
 		iam (Sound);
 		autoSpectrum thee = Sound_to_Spectrum (me, false);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -1992,7 +1992,7 @@ DIRECT2 (Sound_to_Spectrum_fft) {
 	LOOP {
 		iam (Sound);
 		autoSpectrum thee = Sound_to_Spectrum (me, true);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -2004,7 +2004,7 @@ DO
 	LOOP {
 		iam (Sound);
 		autoTextGrid thee = TextGrid_create (my xmin, my xmax, GET_STRING (U"All tier names"), GET_STRING (U"Which of these are point tiers?"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
@@ -2012,7 +2012,7 @@ DIRECT2 (Sound_to_TextTier) {
 	LOOP {
 		iam (Sound);
 		autoTextTier thee = TextTier_create (my xmin, my xmax);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 

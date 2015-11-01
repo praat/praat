@@ -24,9 +24,9 @@
 #include "Strings_def.h"
 oo_CLASS_CREATE (Strings, Daata);
 
-Strings Strings_createAsFileList (const char32 *path /* cattable */);
-Strings Strings_createAsDirectoryList (const char32 *path /* cattable */);
-Strings Strings_readFromRawTextFile (MelderFile file);
+autoStrings Strings_createAsFileList (const char32 *path /* cattable */);
+autoStrings Strings_createAsDirectoryList (const char32 *path /* cattable */);
+autoStrings Strings_readFromRawTextFile (MelderFile file);
 void Strings_writeToRawTextFile (Strings me, MelderFile file);
 
 void Strings_randomize (Strings me);

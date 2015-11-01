@@ -78,7 +78,7 @@ double ERPTier_getMean (ERPTier me, long pointNumber, const char32 *channelName,
 	return ERPTier_getMean (me, pointNumber, ERPTier_getChannelNumber (me, channelName), tmin, tmax);
 }
 
-static ERPTier EEG_PointProcess_to_ERPTier (EEG me, PointProcess events, double fromTime, double toTime) {
+static autoERPTier EEG_PointProcess_to_ERPTier (EEG me, PointProcess events, double fromTime, double toTime) {
 	try {
 		autoERPTier thee = Thing_new (ERPTier);
 		Function_init (thee.peek(), fromTime, toTime);
@@ -113,19 +113,19 @@ static ERPTier EEG_PointProcess_to_ERPTier (EEG me, PointProcess events, double 
 					event -> erp -> z [ichannel] [isample] = jsample < 1 || jsample > my sound -> nx ? 0.0 : my sound -> z [ichannel] [jsample];
 				}
 			}
-			Collection_addItem (thy events, event.transfer());
+			Collection_addItem (thy events.get(), event.transfer());
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": ERP analysis not performed.");
 	}
 }
 
-ERPTier EEG_to_ERPTier_bit (EEG me, double fromTime, double toTime, int markerBit) {
+autoERPTier EEG_to_ERPTier_bit (EEG me, double fromTime, double toTime, int markerBit) {
 	try {
-		autoPointProcess events = TextGrid_getStartingPoints (my textgrid, markerBit, kMelder_string_EQUAL_TO, U"1");
+		autoPointProcess events = TextGrid_getStartingPoints (my textgrid.get(), markerBit, kMelder_string_EQUAL_TO, U"1");
 		autoERPTier thee = EEG_PointProcess_to_ERPTier (me, events.peek(), fromTime, toTime);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": ERPTier not created.");
 	}
@@ -162,38 +162,38 @@ static autoPointProcess TextGrid_getStartingPoints_multiNumeric (TextGrid me, ui
 	}
 }
 
-ERPTier EEG_to_ERPTier_marker (EEG me, double fromTime, double toTime, uint16_t marker) {
+autoERPTier EEG_to_ERPTier_marker (EEG me, double fromTime, double toTime, uint16_t marker) {
 	try {
-		autoPointProcess events = TextGrid_getStartingPoints_multiNumeric (my textgrid, marker);
+		autoPointProcess events = TextGrid_getStartingPoints_multiNumeric (my textgrid.get(), marker);
 		autoERPTier thee = EEG_PointProcess_to_ERPTier (me, events.peek(), fromTime, toTime);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": ERPTier not created.");
 	}
 }
 
-ERPTier EEG_to_ERPTier_triggers (EEG me, double fromTime, double toTime,
+autoERPTier EEG_to_ERPTier_triggers (EEG me, double fromTime, double toTime,
 	int which_Melder_STRING, const char32 *criterion)
 {
 	try {
-		autoPointProcess events = TextGrid_getPoints (my textgrid, 2, which_Melder_STRING, criterion);
+		autoPointProcess events = TextGrid_getPoints (my textgrid.get(), 2, which_Melder_STRING, criterion);
 		autoERPTier thee = EEG_PointProcess_to_ERPTier (me, events.peek(), fromTime, toTime);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": ERPTier not created.");
 	}
 }
 
-ERPTier EEG_to_ERPTier_triggers_preceded (EEG me, double fromTime, double toTime,
+autoERPTier EEG_to_ERPTier_triggers_preceded (EEG me, double fromTime, double toTime,
 	int which_Melder_STRING, const char32 *criterion,
 	int which_Melder_STRING_precededBy, const char32 *criterion_precededBy)
 {
 	try {
-		autoPointProcess events = TextGrid_getPoints_preceded (my textgrid, 2,
+		autoPointProcess events = TextGrid_getPoints_preceded (my textgrid.get(), 2,
 			which_Melder_STRING, criterion,
 			which_Melder_STRING_precededBy, criterion_precededBy);
 		autoERPTier thee = EEG_PointProcess_to_ERPTier (me, events.peek(), fromTime, toTime);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": ERPTier not created.");
 	}
@@ -240,12 +240,12 @@ void ERPTier_rejectArtefacts (ERPTier me, double threshold) {
 			}
 		}
 		if (minimum < - threshold || maximum > threshold) {
-			Collection_removeItem (my events, ievent);
+			Collection_removeItem (my events.get(), ievent);
 		}
 	}
 }
 
-ERP ERPTier_extractERP (ERPTier me, long eventNumber) {
+autoERP ERPTier_extractERP (ERPTier me, long eventNumber) {
 	try {
 		long numberOfEvents = my events -> size;
 		if (numberOfEvents < 1)
@@ -267,13 +267,13 @@ ERP ERPTier_extractERP (ERPTier me, long eventNumber) {
 		for (long ichan = 1; ichan <= thy ny; ichan ++) {
 			thy channelNames [ichan] = Melder_dup (my channelNames [ichan]);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": ERP not extracted.");
 	}
 }
 
-ERP ERPTier_to_ERP_mean (ERPTier me) {
+autoERP ERPTier_to_ERP_mean (ERPTier me) {
 	try {
 		long numberOfEvents = my events -> size;
 		if (numberOfEvents < 1)
@@ -304,13 +304,13 @@ ERP ERPTier_to_ERP_mean (ERPTier me) {
 		for (long ichan = 1; ichan <= mean -> ny; ichan ++) {
 			mean -> channelNames [ichan] = Melder_dup (my channelNames [ichan]);
 		}
-		return mean.transfer();
+		return mean;
 	} catch (MelderError) {
 		Melder_throw (me, U": mean not computed.");
 	}
 }
 
-ERPTier ERPTier_extractEventsWhereColumn_number (ERPTier me, Table table, long columnNumber, int which_Melder_NUMBER, double criterion) {
+autoERPTier ERPTier_extractEventsWhereColumn_number (ERPTier me, Table table, long columnNumber, int which_Melder_NUMBER, double criterion) {
 	try {
 		Table_checkSpecifiedColumnNumberWithinRange (table, columnNumber);
 		Table_numericize_Assert (table, columnNumber);   // extraction should work even if cells are not defined
@@ -330,19 +330,19 @@ ERPTier ERPTier_extractEventsWhereColumn_number (ERPTier me, Table table, long c
 			TableRow row = table -> row (ievent);
 			if (Melder_numberMatchesCriterion (row -> cells [columnNumber]. number, which_Melder_NUMBER, criterion)) {
 				autoERPPoint newEvent = Data_copy (oldEvent);
-				Collection_addItem (thy events, newEvent.transfer());
+				Collection_addItem (thy events.get(), newEvent.transfer());
 			}
 		}
 		if (thy events -> size == 0) {
 			Melder_warning (U"No event matches criterion.");
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": events not extracted.");
 	}
 }
 
-ERPTier ERPTier_extractEventsWhereColumn_string (ERPTier me, Table table,
+autoERPTier ERPTier_extractEventsWhereColumn_string (ERPTier me, Table table,
 	long columnNumber, int which_Melder_STRING, const char32 *criterion)
 {
 	try {
@@ -363,13 +363,13 @@ ERPTier ERPTier_extractEventsWhereColumn_string (ERPTier me, Table table,
 			TableRow row = table -> row (ievent);
 			if (Melder_stringMatchesCriterion (row -> cells [columnNumber]. string, which_Melder_STRING, criterion)) {
 				autoERPPoint newEvent = Data_copy (oldEvent);
-				Collection_addItem (thy events, newEvent.transfer());
+				Collection_addItem (thy events.get(), newEvent.transfer());
 			}
 		}
 		if (thy events -> size == 0) {
 			Melder_warning (U"No event matches criterion.");
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": events not extracted.");
 	}

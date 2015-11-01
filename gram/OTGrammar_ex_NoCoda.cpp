@@ -19,7 +19,7 @@
 
 #include "OTGrammar.h"
 
-OTGrammar OTGrammar_create_NoCoda_grammar () {
+autoOTGrammar OTGrammar_create_NoCoda_grammar () {
 	try {
 		OTGrammarCandidate candidate;
 		OTGrammarTableau tableau;
@@ -54,7 +54,7 @@ OTGrammar OTGrammar_create_NoCoda_grammar () {
 				candidate -> marks = NUMvector <int> (1, candidate -> numberOfConstraints = 2);
 		OTGrammar_checkIndex (me.peek());
 		OTGrammar_newDisharmonies (me.peek(), 0.0);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"NoCoda grammar not created.");
 	}

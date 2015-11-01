@@ -270,7 +270,7 @@ void structTableEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"TableEditor help", U'?', menu_cb_TableEditorHelp);
 }
 
-TableEditor TableEditor_create (const char32 *title, Table table) {
+autoTableEditor TableEditor_create (const char32 *title, Table table) {
 	try {
 		autoTableEditor me = Thing_new (TableEditor);
 		Editor_init (me.peek(), 0, 0, 700, 500, title, table);
@@ -290,7 +290,7 @@ TableEditor TableEditor_create (const char32 *title, Table table) {
 		Graphics_setFontSize (my graphics, 12);
 		Graphics_setUnderscoreIsSubscript (my graphics, false);
 		Graphics_setAtSignIsLink (my graphics, true);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"TableEditor not created.");
 	}

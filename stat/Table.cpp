@@ -132,11 +132,11 @@ void Table_initWithoutColumnNames (Table me, long numberOfRows, long numberOfCol
 	}
 }
 
-Table Table_createWithoutColumnNames (long numberOfRows, long numberOfColumns) {
+autoTable Table_createWithoutColumnNames (long numberOfRows, long numberOfColumns) {
 	try {
 		autoTable me = Thing_new (Table);
 		Table_initWithoutColumnNames (me.peek(), numberOfRows, numberOfColumns);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Table not created.");
 	}
@@ -151,11 +151,11 @@ void Table_initWithColumnNames (Table me, long numberOfRows, const char32 *colum
 	}
 }
 
-Table Table_createWithColumnNames (long numberOfRows, const char32 *columnNames) {
+autoTable Table_createWithColumnNames (long numberOfRows, const char32 *columnNames) {
 	try {
 		autoTable me = Thing_new (Table);
 		Table_initWithColumnNames (me.peek(), numberOfRows, columnNames);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Table not created.");
 	}
@@ -668,7 +668,7 @@ long Table_drawRowFromDistribution (Table me, long columnNumber) {
 	}
 }
 
-Table Table_extractRowsWhereColumn_number (Table me, long columnNumber, int which_Melder_NUMBER, double criterion) {
+autoTable Table_extractRowsWhereColumn_number (Table me, long columnNumber, int which_Melder_NUMBER, double criterion) {
 	try {
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
 		Table_numericize_Assert (me, columnNumber);   // extraction should work even if cells are not defined
@@ -686,13 +686,13 @@ Table Table_extractRowsWhereColumn_number (Table me, long columnNumber, int whic
 		if (thy rows -> size == 0) {
 			Melder_warning (U"No row matches criterion.");
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": rows not extracted.");
 	}
 }
 
-Table Table_extractRowsWhereColumn_string (Table me, long columnNumber, int which_Melder_STRING, const char32 *criterion) {
+autoTable Table_extractRowsWhereColumn_string (Table me, long columnNumber, int which_Melder_STRING, const char32 *criterion) {
 	try {
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
 		autoTable thee = Table_create (0, my numberOfColumns);
@@ -710,7 +710,7 @@ Table Table_extractRowsWhereColumn_string (Table me, long columnNumber, int whic
 		if (thy rows -> size == 0) {
 			Melder_warning (U"No row matches criterion.");
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": rows not extracted.");
 	}
@@ -732,7 +732,7 @@ static void Table_columns_checkCrossSectionEmpty (char32 **factors, long nfactor
 	}
 }
 
-Table Table_collapseRows (Table me, const char32 *factors_string, const char32 *columnsToSum_string,
+autoTable Table_collapseRows (Table me, const char32 *factors_string, const char32 *columnsToSum_string,
 	const char32 *columnsToAverage_string, const char32 *columnsToMedianize_string,
 	const char32 *columnsToAverageLogarithmically_string, const char32 *columnsToMedianizeLogarithmically_string)
 {
@@ -934,11 +934,10 @@ Table Table_collapseRows (Table me, const char32 *factors_string, const char32 *
 			irow = rowmax;
 		}
 		if (originalChanged) sortRowsByIndex_NoError (me);   // unsort the original table
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		if (originalChanged) sortRowsByIndex_NoError (me);   // unsort the original table   // UGLY
 		throw;
-		return NULL;
 	}
 }
 
@@ -970,14 +969,13 @@ static char32 ** _Table_getLevels (Table me, long column, long *numberOfLevels) 
 	} catch (MelderError) {
 		sortRowsByIndex_NoError (me);   // unsort the original table   // UGLY
 		throw;
-		return NULL;
 	}
 }
 
-Table Table_rowsToColumns (Table me, const char32 *factors_string, long columnToTranspose, const char32 *columnsToExpand_string) {
+autoTable Table_rowsToColumns (Table me, const char32 *factors_string, long columnToTranspose, const char32 *columnsToExpand_string) {
 	bool originalChanged = false;
 	try {
-		Melder_assert (factors_string != NULL);
+		Melder_assert (factors_string);
 
 		long numberOfFactors = 0, numberToExpand = 0, numberOfLevels = 0;
 		bool warned = false;
@@ -1097,15 +1095,14 @@ Table Table_rowsToColumns (Table me, const char32 *factors_string, long columnTo
 			irow = rowmax;
 		}
 		if (originalChanged) sortRowsByIndex_NoError (me);   // unsort the original table
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		if (originalChanged) sortRowsByIndex_NoError (me);   // unsort the original table   // UGLY
 		throw;
-		return NULL;
 	}
 }
 
-Table Table_transpose (Table me) {
+autoTable Table_transpose (Table me) {
 	try {
 		autoTable thee = Table_createWithoutColumnNames (my numberOfColumns, 1 + my rows -> size);
 			for (long icol = 1; icol <= my numberOfColumns; icol ++) {
@@ -1116,7 +1113,7 @@ Table Table_transpose (Table me) {
 				Table_setStringValue (thee.peek(), icol, 1 + irow, Table_getStringValue_Assert (me, irow, icol));
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not transposed.");
 	}
@@ -1178,7 +1175,7 @@ void Table_reflectRows (Table me) {
 	}
 }
 
-Table Tables_append (Collection me) {
+autoTable Tables_append (Collection me) {
 	try {
 		if (my size == 0) Melder_throw (U"Cannot add zero tables.");
 		Table thee = static_cast <Table> (my item [1]);
@@ -1211,7 +1208,7 @@ Table Tables_append (Collection me) {
 				}
 			}
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"Table objects not appended.");
 	}
@@ -1689,24 +1686,24 @@ double Table_getGroupDifference_wilcoxonRankSum (Table me, long column, long gro
 	}
 	long n = n1 + n2;
 	if (n1 < 1 || n2 < 1 || n < 3) return NUMundefined;
-	Table ranks = Table_createWithoutColumnNames (n, 3);   // column 1 = group, 2 = value, 3 = rank
+	autoTable ranks = Table_createWithoutColumnNames (n, 3);   // column 1 = group, 2 = value, 3 = rank
 	for (long irow = 1, jrow = 0; irow <= my rows -> size; irow ++) {
 		TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 		if (row -> cells [groupColumn]. string != NULL) {
 			if (str32equ (row -> cells [groupColumn]. string, group1)) {
-				Table_setNumericValue (ranks, ++ jrow, 1, 1.0);
-				Table_setNumericValue (ranks, jrow, 2, row -> cells [column]. number);
+				Table_setNumericValue (ranks.get(), ++ jrow, 1, 1.0);
+				Table_setNumericValue (ranks.get(), jrow, 2, row -> cells [column]. number);
 			} else if (str32equ (row -> cells [groupColumn]. string, group2)) {
-				Table_setNumericValue (ranks, ++ jrow, 1, 2.0);
-				Table_setNumericValue (ranks, jrow, 2, row -> cells [column]. number);
+				Table_setNumericValue (ranks.get(), ++ jrow, 1, 2.0);
+				Table_setNumericValue (ranks.get(), jrow, 2, row -> cells [column]. number);
 			}
 		}
 	}
-	Table_numericize_Assert (ranks, 1);
-	Table_numericize_Assert (ranks, 2);
-	Table_numericize_Assert (ranks, 3);
+	Table_numericize_Assert (ranks.get(), 1);
+	Table_numericize_Assert (ranks.get(), 2);
+	Table_numericize_Assert (ranks.get(), 3);
 	long columns [1+1] = { 0, 2 };   // we're gonna sort by column 2
-	Table_sortRows_Assert (ranks, columns, 1);   // we sort by one column only
+	Table_sortRows_Assert (ranks.get(), columns, 1);   // we sort by one column only
 	double totalNumberOfTies3 = 0.0;
 	for (long irow = 1; irow <= ranks -> rows -> size; irow ++) {
 		TableRow row = static_cast <TableRow> (ranks -> rows -> item [irow]);
@@ -1720,12 +1717,12 @@ double Table_getGroupDifference_wilcoxonRankSum (Table me, long column, long gro
 		rowOfLastTie --;
 		double averageRank = 0.5 * ((double) irow + (double) rowOfLastTie);
 		for (long jrow = irow; jrow <= rowOfLastTie; jrow ++) {
-			Table_setNumericValue (ranks, jrow, 3, averageRank);
+			Table_setNumericValue (ranks.get(), jrow, 3, averageRank);
 		}
 		long numberOfTies = rowOfLastTie - irow + 1;
 		totalNumberOfTies3 += (double) (numberOfTies - 1) * (double) numberOfTies * (double) (numberOfTies + 1);
 	}
-	Table_numericize_Assert (ranks, 3);
+	Table_numericize_Assert (ranks.get(), 3);
 	double maximumRankSum = (double) n1 * (double) n2, rankSum = 0.0;
 	for (long irow = 1; irow <= ranks -> rows -> size; irow ++) {
 		TableRow row = static_cast <TableRow> (ranks -> rows -> item [irow]);
@@ -1735,7 +1732,6 @@ double Table_getGroupDifference_wilcoxonRankSum (Table me, long column, long gro
 	double stdev = sqrt (maximumRankSum * ((double) n + 1.0 - totalNumberOfTies3 / n / (n - 1)) / 12.0);
 	if (out_rankSum) *out_rankSum = rankSum;
 	if (out_significanceFromZero) *out_significanceFromZero = NUMgaussQ (fabs (rankSum - 0.5 * maximumRankSum) / stdev);
-	forget (ranks);
 	return rankSum / maximumRankSum;
 }
 
@@ -1928,8 +1924,7 @@ void Table_writeToCommaSeparatedFile (Table me, MelderFile file) {
 	}
 }
 
-Table Table_readFromTableFile (MelderFile file) {
-	Table me = NULL;
+autoTable Table_readFromTableFile (MelderFile file) {
 	try {
 		autostring32 string = MelderFile_readText (file);
 		long nrow, ncol, nelements;
@@ -1972,7 +1967,7 @@ Table Table_readFromTableFile (MelderFile file) {
 		 * Create empty table.
 		 */
 		nrow = nelements / ncol - 1;
-		me = Table_create (nrow, ncol);
+		autoTable me = Table_create (nrow, ncol);
 
 		/*
 		 * Read elements.
@@ -1983,7 +1978,7 @@ Table Table_readFromTableFile (MelderFile file) {
 			static MelderString buffer { 0 };
 			MelderString_empty (& buffer);
 			while (*p != U' ' && *p != U'\t' && *p != U'\n') { MelderString_appendCharacter (& buffer, *p); p ++; }
-			Table_setColumnLabel (me, icol, buffer.string);
+			Table_setColumnLabel (me.get(), icol, buffer.string);
 			MelderString_empty (& buffer);
 		}
 		for (long irow = 1; irow <= nrow; irow ++) {
@@ -1999,12 +1994,11 @@ Table Table_readFromTableFile (MelderFile file) {
 		}
 		return me;
 	} catch (MelderError) {
-		forget (me);
 		Melder_throw (U"Table object not read from space-separated text file ", file, U".");
 	}
 }
 
-Table Table_readFromCharacterSeparatedTextFile (MelderFile file, char32 separator) {
+autoTable Table_readFromCharacterSeparatedTextFile (MelderFile file, char32 separator) {
 	try {
 		autostring32 string = MelderFile_readText (file);
 
@@ -2080,7 +2074,7 @@ Table Table_readFromCharacterSeparatedTextFile (MelderFile file, char32 separato
 				row -> cells [icol]. string = Melder_dup (buffer.string);   // BUG? could be NULL
 			}
 		}
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Table object not read from character-separated text file ", file, U".");
 	}
