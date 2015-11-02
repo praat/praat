@@ -599,16 +599,16 @@ autoPhonationGrid PhonationGrid_create (double tmin, double tmax) {
 		autoPhonationGrid me = Thing_new (PhonationGrid);
 		Function_init (me.peek(), tmin, tmax);
 		my pitch = PitchTier_create (tmin, tmax);
-		my voicingAmplitude = IntensityTier_create (tmin, tmax).transfer();
+		my voicingAmplitude = IntensityTier_create (tmin, tmax);
 		my openPhase = RealTier_create (tmin, tmax);
 		my collisionPhase = RealTier_create (tmin, tmax);
 		my power1 = RealTier_create (tmin, tmax);
 		my power2 = RealTier_create (tmin, tmax);
 		my flutter = RealTier_create (tmin, tmax);
 		my doublePulsing = RealTier_create (tmin, tmax);
-		my spectralTilt = IntensityTier_create (tmin, tmax).transfer();
-		my aspirationAmplitude = IntensityTier_create (tmin, tmax).transfer();
-		my breathinessAmplitude = IntensityTier_create (tmin, tmax).transfer();
+		my spectralTilt = IntensityTier_create (tmin, tmax);
+		my aspirationAmplitude = IntensityTier_create (tmin, tmax);
+		my breathinessAmplitude = IntensityTier_create (tmin, tmax);
 		my options = PhonationGridPlayOptions_create ();
 		PhonationGrid_setNames (me.peek());
 		return me.transfer();
@@ -1234,9 +1234,9 @@ autoVocalTractGrid VocalTractGrid_create (double tmin, double tmax, long numberO
 	try {
 		autoVocalTractGrid me = Thing_new (VocalTractGrid);
 		Function_init (me.peek(), tmin, tmax);
-		my oral_formants = FormantGrid_createEmpty (tmin, tmax, numberOfFormants).transfer();
-		my nasal_formants = FormantGrid_createEmpty (tmin, tmax, numberOfNasalFormants).transfer();
-		my nasal_antiformants = FormantGrid_createEmpty (tmin, tmax, numberOfNasalAntiFormants).transfer();
+		my oral_formants = FormantGrid_createEmpty (tmin, tmax, numberOfFormants);
+		my nasal_formants = FormantGrid_createEmpty (tmin, tmax, numberOfNasalFormants);
+		my nasal_antiformants = FormantGrid_createEmpty (tmin, tmax, numberOfNasalAntiFormants);
 		my oral_formants_amplitudes = formantsAmplitudes_create (tmin, tmax, numberOfFormants);
 		my nasal_formants_amplitudes = formantsAmplitudes_create (tmin, tmax, numberOfNasalFormants);
 		my options = VocalTractGridPlayOptions_create ();
@@ -1711,10 +1711,10 @@ autoCouplingGrid CouplingGrid_create (double tmin, double tmax, long numberOfTra
 	try {
 		autoCouplingGrid me = Thing_new (CouplingGrid);
 		Function_init (me.peek(), tmin, tmax);
-		my tracheal_formants = FormantGrid_createEmpty (tmin, tmax, numberOfTrachealFormants).transfer();
-		my tracheal_antiformants = FormantGrid_createEmpty (tmin, tmax, numberOfTrachealAntiFormants).transfer();
+		my tracheal_formants = FormantGrid_createEmpty (tmin, tmax, numberOfTrachealFormants);
+		my tracheal_antiformants = FormantGrid_createEmpty (tmin, tmax, numberOfTrachealAntiFormants);
 		my tracheal_formants_amplitudes = formantsAmplitudes_create (tmin, tmax, numberOfTrachealFormants);
-		my delta_formants = FormantGrid_createEmpty (tmin, tmax, numberOfDeltaFormants).transfer();
+		my delta_formants = FormantGrid_createEmpty (tmin, tmax, numberOfDeltaFormants);
 		my glottis = PhonationTier_create (tmin, tmax);
 		my options = CouplingGridPlayOptions_create ();
 		CouplingGrid_setNames (me.peek());
@@ -1919,7 +1919,7 @@ autoFricationGrid FricationGrid_create (double tmin, double tmax, long numberOfF
 		autoFricationGrid me = Thing_new (FricationGrid);
 		Function_init (me.peek(), tmin, tmax);
 		my fricationAmplitude = IntensityTier_create (tmin, tmax);
-		my frication_formants = FormantGrid_createEmpty (tmin, tmax, numberOfFormants).transfer();
+		my frication_formants = FormantGrid_createEmpty (tmin, tmax, numberOfFormants);
 		my bypass = IntensityTier_create (tmin, tmax);
 		my frication_formants_amplitudes = formantsAmplitudes_create (tmin, tmax, numberOfFormants);
 		my options = FricationGridPlayOptions_create ();
