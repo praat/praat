@@ -1,6 +1,6 @@
 /* KNN_def.h
  *
- * Copyright (C) 2007-2009 Ola Söder, 2011 Paul Boersma
+ * Copyright (C) 2007-2009 Ola Söder, 2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +27,8 @@ oo_DEFINE_CLASS (KNN, Daata)
 	oo_OBJECT (Categories, 0, output)
 
 	#if oo_DECLARING
-		// overridden methods:
-			virtual void v_info ();
+		void v_info ()
+			override;
 	#endif
 
 oo_END_CLASS (KNN)

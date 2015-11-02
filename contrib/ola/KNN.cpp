@@ -110,8 +110,8 @@ int KNN_learn
                 forget (my output);
             }
 
-            my input = (Pattern) Data_copy (p);   // LEAK
-            my output = (Categories) Data_copy (c);
+            my input = Data_copy (p);   // LEAK
+            my output = Data_copy (c);
             my nInstances = c->size;
 
             break;
@@ -130,8 +130,10 @@ int KNN_learn
 				/*
 				 * Create without change.
 				 */
-                autoPattern tinput = (Pattern) Matrix_appendRows (my input, p, classPattern).transfer();
-                autoCategories toutput = (Categories) Collections_merge (my output, c);
+				autoMatrix matrix = Matrix_appendRows (my input, p, classPattern);
+                autoPattern tinput = matrix. static_cast_move <structPattern>();
+				autoCollection collection = Collections_merge (my output, c);
+                autoCategories toutput = collection. static_cast_move <structCategories>();
 
 				/*
 				 * Change without error.
@@ -219,10 +221,10 @@ Categories KNN_classifyToCategories
     if (!input)
         return nullptr;
 
-    for(int i = 0; i < nthreads; ++i)
+    for (int i = 0; i < nthreads; ++i)
     {
         input[i] = (KNN_input_ToCategories_t *) malloc(sizeof(KNN_input_ToCategories_t));
-        if(!input[i])
+        if (! input[i])
         {
             while(input[i--])
                 free(input[i]);
@@ -232,7 +234,7 @@ Categories KNN_classifyToCategories
         }
     }
 
-    for(int i = 0; i < nthreads; ++i)
+    for (int i = 0; i < nthreads; ++i)
     {  
         input[i]->me = me;
         input[i]->ps = ps;
@@ -242,7 +244,7 @@ Categories KNN_classifyToCategories
         input[i]->dist = dist;
         input[i]->istart = istart;
 
-        if(istop + chunksize > ps->ny)
+        if (istop + chunksize > ps->ny)
         {  
             input[i]->istop = ps->ny; 
             break;
@@ -485,15 +487,15 @@ void * KNN_classifyToTableOfRealAux
 
 {
     long ncategories = Categories_getSize (((KNN_input_ToTableOfReal_t *) input)->uniqueCategories);
-    long *indices = NUMvector <long> (0, ((KNN_input_ToTableOfReal_t *) input)->k);
-    double *distances = NUMvector <double> (0, ((KNN_input_ToTableOfReal_t *) input)->k);
+    autoNUMvector <long> indices (0L, ((KNN_input_ToTableOfReal_t *) input)->k);
+    autoNUMvector <double> distances (0L, ((KNN_input_ToTableOfReal_t *) input)->k);
 
     for (long y = ((KNN_input_ToTableOfReal_t *) input)->istart; y <= ((KNN_input_ToTableOfReal_t *) input)->istop; ++y)
     {
         KNN_kNeighbours(((KNN_input_ToTableOfReal_t *) input)->ps, 
                         ((KNN_input_ToTableOfReal_t *) input)->me->input, 
                         ((KNN_input_ToTableOfReal_t *) input)->fws, y, 
-                        ((KNN_input_ToTableOfReal_t *) input)->k, indices, distances);
+                        ((KNN_input_ToTableOfReal_t *) input)->k, indices.peek(), distances.peek());
 
         for(long i = 0; i < ((KNN_input_ToTableOfReal_t *) input)->k; ++i)
         {
@@ -548,8 +550,6 @@ void * KNN_classifyToTableOfRealAux
             }
 
     }
-	NUMvector_free (indices, 0);
-	NUMvector_free (distances, 0);
     return nullptr;
 }
 
@@ -621,12 +621,12 @@ Categories KNN_classifyFold
         {
             case kOla_DISTANCE_WEIGHTED_VOTING:
                 for (long c = 0; c < ncategories; c ++)
-                    freqs [c] *= 1 / OlaMAX (distances [c], kOla_MINFLOAT);
+                    freqs [c] *= 1.0 / OlaMAX (distances [c], kOla_MINFLOAT);
                 break;
 
             case kOla_SQUARED_DISTANCE_WEIGHTED_VOTING:
                 for (long c = 0; c < ncategories; c ++)
-                    freqs [c] *= 1 / OlaMAX (OlaSQUARE (distances [c]), kOla_MINFLOAT);
+                    freqs [c] *= 1.0 / OlaMAX (OlaSQUARE (distances [c]), kOla_MINFLOAT);
         }
 
         KNN_normalizeFloatArray (freqs.peek(), ncategories);
@@ -663,7 +663,7 @@ double KNN_evaluate
 )
 
 {
-    double correct = 0;
+    double correct = 0.0;
     long adder;
 
     switch(mode)
@@ -683,7 +683,7 @@ double KNN_evaluate
             adder = 0;
     }
     
-    if (adder ==  0)
+    if (adder == 0)
         return -1;
 
     for (long begin = 1; begin <= my nInstances; begin += adder)
@@ -691,13 +691,11 @@ double KNN_evaluate
         autoCategories c = KNN_classifyFold (me, my input, fws, k, dist, begin, OlaMIN (begin + adder - 1, my nInstances));
         for (long y = 1; y <= c -> size; y ++)
             if (FeatureWeights_areFriends ((SimpleString) c -> item [y], (SimpleString) my output -> item [begin + y - 1])) 
-                ++ correct;
+                correct += 1.0;
     }
 
     correct /= (double) my nInstances;
-
     return correct;
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -725,20 +723,11 @@ double KNN_evaluateWithTestSet
 )
 
 {
-    double correct = 0;
-    Categories t = KNN_classifyToCategories(me, p, fws, k, dist);
-
-    if (t)
-    {
-        for (long y = 1; y <= t->size; y++)
-            if (FeatureWeights_areFriends ((SimpleString) t->item[y], (SimpleString) c->item[y])) correct++;
-        forget(t);
-        return(correct / c->size);
-    }
-    else
-    {
-        return(0);
-    }
+    double correct = 0.0;
+    autoCategories t = KNN_classifyToCategories (me, p, fws, k, dist);
+	for (long y = 1; y <= t->size; y++)
+		if (FeatureWeights_areFriends ((SimpleString) t->item[y], (SimpleString) c->item[y])) correct += 1.0;
+	return correct / c->size;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -784,11 +773,11 @@ double KNN_modelSearch
 		};
 
 		long max = *k;
-		double range = (double) max / 2;
+		double range = (double) max / 2.0;
 		double pivot = range;
 
-		double dpivot = 1;
-		double drange = 1;
+		double dpivot = 1.0;
+		double drange = 1.0;
 		double drate = rate / range;
 
 		soil best = {0, lround(dpivot), lround(dpivot)};
@@ -798,9 +787,9 @@ double KNN_modelSearch
 		{
 			for (long n = 0; n < nseeds; n++)
 			{
-				field[n].k = lround(NUMrandomUniform(OlaMAX(pivot - range, 1), OlaMIN(pivot + range, max)));
-				field[n].dist = lround(NUMrandomUniform(OlaMAX(dpivot - drange, 0), OlaMIN(dpivot + drange, 2)));
-				field[n].performance = KNN_evaluate(me, fws, field[n].k, dists[field[n].dist], mode);
+				field[n].k = lround (NUMrandomUniform (OlaMAX (pivot - range, 1), OlaMIN (pivot + range, max)));
+				field[n].dist = lround (NUMrandomUniform (OlaMAX (dpivot - drange, 0), OlaMIN (dpivot + drange, 2)));
+				field[n].performance = KNN_evaluate (me, fws, field[n].k, dists[field[n].dist], mode);
 			}
 
 			long maxindex = 0;
@@ -848,11 +837,10 @@ double KNN_distanceEuclidean
 )
 
 {
-    double distance = 0;
+    double distance = 0.0;
     for (long x = 1; x <= ps->nx; ++x)
-        distance += OlaSQUARE((ps->z[rows][x] - pt->z[rowt][x]) * fws->fweights->data[1][x]);
-
-    return(sqrt(distance));
+        distance += OlaSQUARE ((ps->z[rows][x] - pt->z[rowt][x]) * fws->fweights->data[1][x]);
+    return sqrt (distance);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -872,11 +860,10 @@ double KNN_distanceManhattan
 )
 
 {
-    double distance = 0;
+    double distance = 0.0;
     for (long x = 1; x <= ps->nx; ++x)
-        distance += fabs(ps->z[rows][x] - pt->z[rowt][x]);
-
-    return(distance);
+        distance += fabs (ps->z[rows][x] - pt->z[rowt][x]);
+    return distance;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -893,12 +880,10 @@ long KNN_max
 
 {
     long maxndx = 0;
-
-    for(long maxc = 1; maxc < ndistances; ++maxc)
+    for (long maxc = 1; maxc < ndistances; ++maxc)
         if (distances[maxc] > distances[maxndx]) 
             maxndx = maxc;
-
-    return(maxndx);
+    return maxndx;
 }
 
 
@@ -936,9 +921,9 @@ long KNN_kNeighboursSkip
 
     autoNUMvector <double> distances (0L, k - 1);
 
-    Melder_assert(jy > 0 && jy <= j->ny);
-    Melder_assert(k > 0 && k <= p->ny);
-    Melder_assert(skipper <= p->ny);
+    Melder_assert (jy > 0 && jy <= j->ny);
+    Melder_assert (k > 0 && k <= p->ny);
+    Melder_assert (skipper <= p->ny);
 
     while (dc < k && py <= p -> ny)
     {
@@ -1020,18 +1005,18 @@ long KNN_kNeighboursSkipRange
                                     //
     long py = 0;                    //
 
-    Melder_assert(jy > 0 && jy <= j->ny);
-    Melder_assert(k > 0 && k <= p->ny);
-    Melder_assert(end > 0 && end <= j->ny);
-    Melder_assert(begin > 0 && begin <= j->ny);
+    Melder_assert (jy > 0 && jy <= j->ny);
+    Melder_assert (k > 0 && k <= p->ny);
+    Melder_assert (end > 0 && end <= j->ny);
+    Melder_assert (begin > 0 && begin <= j->ny);
 
     while (dc < k && (end + py) % p->ny + 1 != begin)   // the first k neighbours are the nearest found
     {                                                   // sofar
 
         if ((end + py) % p->ny + 1 != jy)               // no instance is its own neighbour
         {
-            distances[dc] = KNN_distanceEuclidean(j, p, fws, jy, (end + py) % p->ny + 1);
-            indices[dc] = (end + py) % p->ny + 1;
+            distances [dc] = KNN_distanceEuclidean (j, p, fws, jy, (end + py) % p->ny + 1);
+            indices [dc] = (end + py) % p->ny + 1;
             ++dc;
         }
         ++py;
@@ -1045,15 +1030,15 @@ long KNN_kNeighboursSkipRange
             double d = KNN_distanceEuclidean(j, p, fws, jy, (end + py) % p->ny + 1);
             if (d < distances[maxi])
             {
-                distances[maxi] = d;
-                indices[maxi] = (end + py) % p->ny + 1;
-                maxi = KNN_max(distances, k);
+                distances [maxi] = d;
+                indices [maxi] = (end + py) % p->ny + 1;
+                maxi = KNN_max (distances, k);
             }
         }
         ++py;
     }
 
-    return(OlaMIN(k, dc)); // return the number of found neighbours
+    return OlaMIN (k, dc); // return the number of found neighbours
 
 }
 
@@ -1091,16 +1076,16 @@ long KNN_kNeighbours
     long dc = 0;
     long py = 1;
 
-    Melder_assert(jy > 0 && jy <= j->ny);
-    Melder_assert(k > 0 && k <= p->ny);
-    Melder_assert(indices);
-    Melder_assert(distances);
+    Melder_assert (jy > 0 && jy <= j->ny);
+    Melder_assert (k > 0 && k <= p->ny);
+    Melder_assert (indices);
+    Melder_assert (distances);
 
     while (dc < k && py <= p->ny)
     {
         if (py != jy)
         {
-            distances[dc] = KNN_distanceEuclidean(j, p, fws, jy, py);
+            distances[dc] = KNN_distanceEuclidean (j, p, fws, jy, py);
             indices[dc] = py;
             ++dc;
         }
@@ -1112,25 +1097,25 @@ long KNN_kNeighbours
     {
         if (py != jy)
         {
-            double d = KNN_distanceEuclidean(j, p, fws, jy, py);
-            if (d < distances[maxi])
+            double d = KNN_distanceEuclidean (j, p, fws, jy, py);
+            if (d < distances [maxi])
             {
-                distances[maxi] = d;
-                indices[maxi] = py;
-                maxi = KNN_max(distances, k);
+                distances [maxi] = d;
+                indices [maxi] = py;
+                maxi = KNN_max (distances, k);
             }
         }
         ++py;
     }
 
-    long ret = OlaMIN(k, dc);
+    long ret = OlaMIN (k, dc);
     if (ret < 1)
     {
-        indices[0] = jy;
-        return(0);
+        indices [0] = jy;
+        return 0;
     }
     else
-        return(ret);
+        return ret;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -1162,40 +1147,39 @@ long KNN_kFriends
     long maxi;
     long dc = 0;
     long py = 1;
-    double *distances = NUMvector <double> (0, k - 1);
+    autoNUMvector <double> distances (0L, k - 1);
 
-    Melder_assert(jy <= j->ny  && k <= p->ny && k > 0);
-    Melder_assert(indices);
+    Melder_assert (jy <= j->ny  && k <= p->ny && k > 0);
+    Melder_assert (indices);
 
     while (dc < k && py < p->ny)
     {
         if (jy != py && FeatureWeights_areFriends ((SimpleString) c->item[jy], (SimpleString) c->item[py]))
         {
-            distances[dc] = KNN_distanceManhattan(j, p, jy, py);
+            distances[dc] = KNN_distanceManhattan (j, p, jy, py);
             indices[dc] = py;
             dc++;
         }
         ++py;
     }
 
-    maxi = KNN_max(distances, k);
+    maxi = KNN_max (distances.peek(), k);
     while (py <= p->ny)
     {
         if (jy != py && FeatureWeights_areFriends ((SimpleString) c->item[jy],(SimpleString) c->item[py]))
         {
-            double d = KNN_distanceManhattan(j, p, jy, py);
-            if (d < distances[maxi])
+            double d = KNN_distanceManhattan (j, p, jy, py);
+            if (d < distances [maxi])
             {
-                distances[maxi] = d;
-                indices[maxi] = py;
-                maxi = KNN_max(distances, k);
+                distances [maxi] = d;
+                indices [maxi] = py;
+                maxi = KNN_max (distances.peek(), k);
             }
         }
         ++py;
     }
 
-	NUMvector_free (distances, 0);
-    return(OlaMIN(k,dc));
+    return OlaMIN (k, dc);
 
 }
 
@@ -1231,8 +1215,7 @@ double KNN_nearestEnemy
             if (newdist > distance) distance = newdist;
         }
     }
-
-    return(distance);
+    return distance;
 
 }
 
@@ -1272,7 +1255,7 @@ long KNN_friendsAmongkNeighbours
     while (ncollected--)
         if (FeatureWeights_areFriends ((SimpleString) c->item[jy], (SimpleString) c->item[indices[ncollected]])) friends++;
     
-    return friends ;
+    return friends;
 
 }
 
@@ -1353,7 +1336,7 @@ long KNN_kUniqueEnemies
         ++py;
     }
 	NUMvector_free (distances, 0);
-    return(OlaMIN(k,dc));
+    return OlaMIN (k, dc);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////

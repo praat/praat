@@ -539,6 +539,7 @@ void SortedSetOfString_addString (SortedSetOfString me, const char32 *string) {
 	}
 	simp -> string = (char32 *) string;   // reference copy
 	long index = my v_position (simp.get());
+	simp -> string = nullptr;   // otherwise Praat will crash at shutdown
 	if (index == 0) return;   // OK: already there: do not add
 	autoSimpleString newSimp = SimpleString_create (string);
 	_Collection_insertItem (me, newSimp.transfer(), index);
