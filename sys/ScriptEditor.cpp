@@ -24,7 +24,7 @@
 
 Thing_implement (ScriptEditor, TextEditor, 0);
 
-static Collection theScriptEditors;
+static Collection theScriptEditors;   // cannot be an autoCollection until Collection_undangleItem() isn't called in v_destroy()
 
 bool ScriptEditors_dirty () {
 	if (! theScriptEditors) return false;
@@ -38,7 +38,6 @@ bool ScriptEditors_dirty () {
 void structScriptEditor :: v_destroy () {
 	Melder_free (environmentName);
 	forget (interpreter);
-	forget (argsDialog);
 	if (theScriptEditors) Collection_undangleItem (theScriptEditors, this);
 	ScriptEditor_Parent :: v_destroy ();
 }
@@ -64,14 +63,10 @@ void structScriptEditor :: v_goAway () {
 	}
 }
 
-static void args_ok (UiForm sendingForm, int narg_dummy, Stackel args_dummy, const char32 *sendingString_dummy, Interpreter interpreter_dummy, const char32 *invokingButtonTitle, bool modified_dummy, I) {
+static void args_ok (UiForm sendingForm, int /* narg */, Stackel /* args */, const char32 * /* sendingString */,
+	Interpreter /* interpreter */, const char32 * /* invokingButtonTitle */, bool /* modified */, I)
+{
 	iam (ScriptEditor);
-	(void) narg_dummy;
-	(void) args_dummy;
-	(void) sendingString_dummy;
-	(void) interpreter_dummy;
-	(void) invokingButtonTitle;
-	(void) modified_dummy;
 	autostring32 text = GuiText_getString (my textWidget);
 	structMelderFile file = { 0 };
 	if (my name [0]) {
@@ -87,14 +82,10 @@ static void args_ok (UiForm sendingForm, int narg_dummy, Stackel args_dummy, con
 	Interpreter_run (my interpreter, text.peek());
 }
 
-static void args_ok_selectionOnly (UiForm sendingForm, int narg_dummy, Stackel args_dummy, const char32 *sendingString_dummy, Interpreter interpreter_dummy, const char32 *invokingButtonTitle, bool modified_dummy, I) {
+static void args_ok_selectionOnly (UiForm sendingForm, int /* narg */, Stackel /* args */, const char32 * /* sendingString */,
+	Interpreter /* interpreter */, const char32 * /* invokingButtonTitle */, bool /* modified */, I)
+{
 	iam (ScriptEditor);
-	(void) narg_dummy;
-	(void) args_dummy;
-	(void) sendingString_dummy;
-	(void) interpreter_dummy;
-	(void) invokingButtonTitle;
-	(void) modified_dummy;
 	autostring32 text = GuiText_getSelection (my textWidget);
 	if (text.peek() == NULL)
 		Melder_throw (U"No text is selected any longer.\nPlease reselect or click Cancel.");
@@ -129,9 +120,8 @@ static void menu_cb_run (EDITOR_ARGS) {
 		/*
 		 * Pop up a dialog box for querying the arguments.
 		 */
-		forget (my argsDialog);
-		my argsDialog = Interpreter_createForm (my interpreter, my d_windowForm, NULL, args_ok, me, false);
-		UiForm_do (my argsDialog, false);
+		my argsDialog = Interpreter_createForm (my interpreter, my d_windowForm, nullptr, args_ok, me, false);
+		UiForm_do (my argsDialog.get(), false);
 	} else {
 		autoPraatBackground background;
 		if (my name [0]) MelderFile_setDefaultDir (& file);
@@ -158,9 +148,8 @@ static void menu_cb_runSelection (EDITOR_ARGS) {
 		/*
 		 * Pop up a dialog box for querying the arguments.
 		 */
-		forget (my argsDialog);
-		my argsDialog = Interpreter_createForm (my interpreter, my d_windowForm, NULL, args_ok_selectionOnly, me, true);
-		UiForm_do (my argsDialog, false);
+		my argsDialog = Interpreter_createForm (my interpreter, my d_windowForm, nullptr, args_ok_selectionOnly, me, true);
+		UiForm_do (my argsDialog.get(), false);
 	} else {
 		autoPraatBackground background;
 		if (my name [0]) MelderFile_setDefaultDir (& file);
@@ -332,14 +321,14 @@ void structScriptEditor :: v_createHelpMenuItems (EditorMenu menu) {
 }
 
 void ScriptEditor_init (ScriptEditor me, Editor environment, const char32 *initialText) {
-	if (environment != NULL) {
+	if (environment) {
 		my environmentName = Melder_dup (environment -> name);
 		my editorClass = environment -> classInfo;
 	}
 	TextEditor_init (me, initialText);
 	my interpreter = Interpreter_createFromEnvironment (environment);
-	if (theScriptEditors == NULL) {
-		theScriptEditors = Collection_create (NULL, 10);
+	if (! theScriptEditors) {
+		theScriptEditors = Collection_create (nullptr, 10);
 		Collection_dontOwnItems (theScriptEditors);
 	}
 	Collection_addItem (theScriptEditors, me);

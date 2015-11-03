@@ -32,7 +32,7 @@ Thing_define (Cochleagram, Matrix) {
 	nx;				// Number of time slices.
 	dx;				// Time step (seconds).
 	x1;				// Centre of first time sample (seconds).
-	ymin = 0;			// Minimum frequency (Bark).
+	ymin = 0.0;			// Minimum frequency (Bark).
 	ymax = 25.6;		// Maximum frequency (Bark).
 	ny;				// Number of frequencies.
 	dy = 25.6 / ny;		// Frequency step (Bark).

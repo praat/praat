@@ -39,9 +39,12 @@ autoMatrix Matrix_create
 	Function:
 		return a new empty Matrix.
 	Preconditions:
-		xmin <= xmax;   ymin <= ymax;
-		nx >= 1;  ny >= 1;
-		dx > 0.0;   dy > 0.0;
+		xmin <= xmax;
+		ymin <= ymax;
+		nx >= 1;
+		ny >= 1;
+		dx > 0.0;
+		dy > 0.0;
 	Postconditions:
 		result -> xmin == xmin;
 		result -> xmax == xmax;
@@ -61,7 +64,8 @@ autoMatrix Matrix_createSimple (long numberOfRows, long numberOfColumns);
 	Function:
 		return a new empty Matrix.
 	Preconditions:
-		numberOfRows >= 1;  numberOfColumns >= 1;
+		numberOfRows >= 1;
+		numberOfColumns >= 1;
 	Postconditions:
 		result -> xmin == 0.5;
 		result -> xmax == numberOfColumns + 0.5;
@@ -69,18 +73,18 @@ autoMatrix Matrix_createSimple (long numberOfRows, long numberOfColumns);
 		result -> ymax == numberOfRows + 0.5;
 		result -> nx == numberOfColumns;
 		result -> ny == numberOfRows;
-		result -> dx == 1;
-		result -> dy == 1;
-		result -> x1 == 1;
-		result -> y1 == 1;
+		result -> dx == 1.0;
+		result -> dy == 1.0;
+		result -> x1 == 1.0;
+		result -> y1 == 1.0;
 		result -> z [1..ny] [1..nx] == 0.0;
 */
 
-/* Implemented methods
+/* An implemented method
 
-	int Matrix::writeText (I, FILE *f);
-		writes a Matrix as text to the stream f.
-		A sample of the format follows (see example 3 above):
+	void structMatrix :: v_writeText (MelderFile file);
+		writes a Matrix as text to `file`.
+		A sample of the format follows:
 			0 5000 1 2   ! xmin xmax ymin ymax
 			8193 2   ! nx ny
 			0.61035156 1   ! dx dy
@@ -95,27 +99,6 @@ autoMatrix Matrix_createSimple (long numberOfRows, long numberOfColumns);
 			The data lines (all lines after the fourth) contain: my z [iy, ix], x, y.
 			things written after the "!" are mere comments:
 			you cannot use them to change the meaning or order of the data.
-
-	int Matrix::readText (I, FILE *f)
-		reads a Matrix as text from the stream f.
-		The requested format is the same as the format produced by
-		Matrix::writeText, though any comments may be left out.
-		Failures:
-			Wrong text input: this line should start with xmin, xmax, ymin, and ymax.
-			Wrong text input: this line should start with nx >= 1 and ny >= 1.
-			Wrong text input: this line should start with dx > 0.0 and dy > 0.0.
-			Wrong text input: this line should start with x1 and y1.
-			Out of text input: there should be 'nx * ny' lines with z values.
-
-	int Matrix::writeBinary (I, FILE *f)
-		writes a Matrix to the stream f, in IEEE floating-point format.
-
-	int Matrix::readBinary (I, FILE *f)
-		reads a Matrix from the stream f, in IEEE floating-point format.
-		Failures:
-			Wrong binary input.
-			Not enough memory to read this Matrix.
-			Out of input.
 */
 
 long Matrix_getWindowSamplesX (Matrix me, double xmin, double xmax, long *ixmin, long *ixmax);
@@ -141,25 +124,25 @@ double Matrix_getValueAtXY (Matrix me, double x, double y);
 double Matrix_getSum (Matrix me);
 double Matrix_getNorm (Matrix me);
 
-double Matrix_columnToX (Matrix me, double column);   /* Return my x1 + (column - 1) * my dx.	 */
+double Matrix_columnToX (Matrix me, double column);   // return my x1 + (column - 1) * my dx
 
-double Matrix_rowToY (Matrix me, double row);   /* Return my y1 + (row - 1) * my dy. */
+double Matrix_rowToY (Matrix me, double row);   // return my y1 + (row - 1) * my dy
 
-double Matrix_xToColumn (Matrix me, double x);   /* Return (x - xmin) / my dx + 1. */
+double Matrix_xToColumn (Matrix me, double x);   // return (x - xmin) / my dx + 1
 
-long Matrix_xToLowColumn (Matrix me, double x);   /* Return floor (Matrix_xToColumn (me, x)). */
+long Matrix_xToLowColumn (Matrix me, double x);   // return floor (Matrix_xToColumn (me, x))
 
-long Matrix_xToHighColumn (Matrix me, double x);   /* Return ceil (Matrix_xToColumn (me, x)). */
+long Matrix_xToHighColumn (Matrix me, double x);   // return ceil (Matrix_xToColumn (me, x))
 
-long Matrix_xToNearestColumn (Matrix me, double x);   /* Return floor (Matrix_xToColumn (me, x) + 0.5). */
+long Matrix_xToNearestColumn (Matrix me, double x);   // return floor (Matrix_xToColumn (me, x) + 0.5)
 
-double Matrix_yToRow (Matrix me, double y);   /* Return (y - ymin) / my dy + 1. */
+double Matrix_yToRow (Matrix me, double y);   // return (y - ymin) / my dy + 1
 
-long Matrix_yToLowRow (Matrix me, double y);   /* Return floor (Matrix_yToRow (me, y)). */
+long Matrix_yToLowRow (Matrix me, double y);   // return floor (Matrix_yToRow (me, y))
 
-long Matrix_yToHighRow (Matrix me, double x);   /* Return ceil (Matrix_yToRow (me, y)). */
+long Matrix_yToHighRow (Matrix me, double x);   // return ceil (Matrix_yToRow (me, y))
 
-long Matrix_yToNearestRow (Matrix me, double y);   /* Return floor (Matrix_yToRow (me, y) + 0.5). */
+long Matrix_yToNearestRow (Matrix me, double y);   // return floor (Matrix_yToRow (me, y) + 0.5)
 
 long Matrix_getWindowSamplesY (Matrix me, double ymin, double ymax, long *iymin, long *iymax);
 

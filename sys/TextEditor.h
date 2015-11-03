@@ -24,7 +24,7 @@
 Thing_define (TextEditor, Editor) {
 	structMelderFile file;
 	GuiText textWidget;
-	UiForm openDialog, saveDialog, printDialog, findDialog;
+	autoUiForm openDialog, saveDialog;
 	bool dirty;
 	GuiDialog dirtyNewDialog, dirtyOpenDialog, dirtyCloseDialog;
 	GuiMenuItem fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24;
@@ -52,7 +52,7 @@ void TextEditor_init (TextEditor me,
 	const char32 *initialText
 );
 TextEditor TextEditor_create (
-	const char32 *initialText   // may be NULL
+	const char32 *initialText   // may be null
 );
 
 void TextEditor_showOpen (TextEditor me);

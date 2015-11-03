@@ -27,7 +27,7 @@ Thing_define (ScriptEditor, TextEditor) {
 	char32 *environmentName;
 	ClassInfo editorClass;
 	Interpreter interpreter;
-	UiForm argsDialog;
+	autoUiForm argsDialog;
 
 	void v_destroy ()
 		override;
