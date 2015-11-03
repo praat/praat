@@ -42,7 +42,8 @@ Thing_define (Ltas, Vector) {
 		nx >= 1			// Number of bands.
 		dx > 0.0			// Band width (Hz).
 		x1				// Centre of first band (Hz).
-		ymin, ymax, ny, dy, y1 = 1
+		ymin, ymax, dy, y1 = 1.0
+		ny = 1
 		z [1] [1..nx]		// The intensity per band, in db/Hz.
 */
 
@@ -54,7 +55,7 @@ autoLtas Ltas_create (long nx, double dx);
 		nx >= 1;
 		dx > 0.0;
 	Postconditions:
-		my xmin == 0;              my ymin == 1;
+		my xmin == 0.0;              my ymin == 1;
 		my xmax == nx * dx;        my ymax == 1;
 		my nx == nx;               my ny == 1;
 		my dx == dx;               my dy == 1;

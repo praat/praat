@@ -1380,10 +1380,10 @@ FORM_READ2 (Sound_readFromRawAlawFile, U"Read Sound from raw Alaw file", 0, true
 	praat_new (me.move(), MelderFile_name (file));
 END2 }
 
-static SoundRecorder theSoundRecorder;   // only one at a time can exist
+static autoSoundRecorder theSoundRecorder;   // only one at a time can exist
 static int thePreviousNumberOfChannels;
-static void cb_SoundRecorder_destruction (Editor /* editor */, void* /* closure */) {
-	theSoundRecorder = nullptr;
+static void cb_SoundRecorder_pleaseReset (Editor /* editor */, void* /* closure */) {
+	theSoundRecorder. reset();
 }
 static void cb_SoundRecorder_publication (Editor /* editor */, void* /* closure */, Daata publication) {
 	try {
@@ -1396,20 +1396,14 @@ static void cb_SoundRecorder_publication (Editor /* editor */, void* /* closure 
 static void do_Sound_record (int numberOfChannels) {
 	if (theCurrentPraatApplication -> batch)
 		Melder_throw (U"Cannot record a Sound from batch.");
-	if (theSoundRecorder) {
-		if (numberOfChannels == thePreviousNumberOfChannels) {
-			Editor_raise (theSoundRecorder);
-		} else {
-			forget (theSoundRecorder);
-		}
+	if (theSoundRecorder && numberOfChannels == thePreviousNumberOfChannels) {
+		Editor_raise (theSoundRecorder.get());
+	} else {
+		theSoundRecorder = SoundRecorder_create (numberOfChannels);
+		Editor_setPleaseResetCallback (theSoundRecorder.get(), cb_SoundRecorder_pleaseReset, nullptr);
+		Editor_setPublicationCallback (theSoundRecorder.get(), cb_SoundRecorder_publication, nullptr);
+		thePreviousNumberOfChannels = numberOfChannels;
 	}
-	if (! theSoundRecorder) {
-		autoSoundRecorder soundRecorder = SoundRecorder_create (numberOfChannels);
-		theSoundRecorder = soundRecorder.transfer();   // YUCK; to a naked pointer, because it will be its own boss
-		Editor_setDestructionCallback (theSoundRecorder, cb_SoundRecorder_destruction, nullptr);
-		Editor_setPublicationCallback (theSoundRecorder, cb_SoundRecorder_publication, nullptr);
-	}
-	thePreviousNumberOfChannels = numberOfChannels;
 }
 DIRECT2 (Sound_record_mono) {
 	do_Sound_record (1);

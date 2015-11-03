@@ -61,6 +61,7 @@ Thing_define (Editor, Thing) {
 	char32 undoText [100];
 	Graphics pictureGraphics;
 	void (*d_dataChangedCallback) (Editor me, void *closure);                    void *d_dataChangedClosure;
+	void (*d_pleaseResetCallback) (Editor me, void *closure);                    void *d_pleaseResetClosure;
 	void (*d_destructionCallback) (Editor me, void *closure);                    void *d_destructionClosure;
 	void (*d_publicationCallback) (Editor me, void *closure, Daata publication); void *d_publicationClosure;
 	const char *callbackSocket;
@@ -152,6 +153,28 @@ inline static void Editor_broadcastDataChanged (Editor me)
 	{
 		if (my d_dataChangedCallback)
 			my d_dataChangedCallback (me, my d_dataChangedClosure);
+	}
+inline static void Editor_setPleaseResetCallback (Editor me, void (*pleaseResetCallback) (Editor me, void *closure), void *pleaseResetClosure)
+	/*
+	 * Message from boss: "notify me by calling this pleaseResetCallback when you agree to be closed."
+	 *
+	 * In Praat, "please reset" is what an editor tells her boss when the user tries to close the editor window
+	 * or when an object that is being viewed in an editor window is "Remove"d.
+	 * Typically, the boss will (in the pleaseResetCallback it installed) reset (i.e. delete) the autoEditor.
+	 */
+	{
+		my d_pleaseResetCallback = pleaseResetCallback;
+		my d_pleaseResetClosure = pleaseResetClosure;
+	}
+inline static void Editor_sendPleaseReset (Editor me)
+	/*
+	 * Message to boss: "please reset (delete) me."
+	 *
+	 * The editor typically calls this in Editor::v_goAway().
+	 */
+	{
+		if (my d_pleaseResetCallback)
+			my d_pleaseResetCallback (me, my d_pleaseResetClosure);
 	}
 inline static void Editor_setDestructionCallback (Editor me, void (*destructionCallback) (Editor me, void *closure), void *destructionClosure)
 	/*

@@ -34,7 +34,8 @@ Thing_define (Harmonicity, Vector) {
 		nx >= 1			// Number of time slices.
 		dx > 0.0			// Time step (seconds).
 		x1				// Centre of first time slice (seconds).
-		ymin, ymax, ny, dy, y1 = 1
+		ymin, ymax, dy, y1 = 1.0
+		ny = 1
 		z [1] [1..nt]
 			// The harmonic strength, a real number between -150 dB and +150 dB:
 			// -150 dB means not periodic at all, +150 dB means perfectly periodic.

@@ -34,10 +34,10 @@ oo_CLASS_CREATE (Spectrum, Matrix);
 	nx              // number of frequencies
 	dx              // frequency step (Hz)
 	x1              // first frequency (Hz)
-	ymin = 1        // first row: real part
-	ymax = 2        // second row: imaginary part
+	ymin = 1.0      // first row: real part
+	ymax = 2.0      // second row: imaginary part
 	ny = 2          // two rows
-	dy = 1; y1 = 1  // y is row number
+	dy = y1 = 1.0   // y is row number
 */
 
 autoSpectrum Spectrum_create (double fmax, long nf);
@@ -58,9 +58,9 @@ autoSpectrum Spectrum_create (double fmax, long nf);
 		my z [1..ny] [1..nx] == 0.0;
 */
 		
-int Spectrum_getPowerDensityRange (Spectrum me, double *minimum, double *maximum);   /* Return 0 if all zeroes. */
-double Spectrum_getBandDensity (Spectrum me, double fmin, double fmax);   /* Pa2 / Hz2 */
-double Spectrum_getBandEnergy (Spectrum me, double fmin, double fmax);   /* Pa2 sec */
+int Spectrum_getPowerDensityRange (Spectrum me, double *minimum, double *maximum);   // return 0 if all zeroes
+double Spectrum_getBandDensity (Spectrum me, double fmin, double fmax);   // Pa2 / Hz2
+double Spectrum_getBandEnergy (Spectrum me, double fmin, double fmax);   // Pa2 sec
 double Spectrum_getBandDensityDifference (Spectrum me,
 	double lowBandMin, double lowBandMax, double highBandMin, double HighBandMax);
 double Spectrum_getBandEnergyDifference (Spectrum me,
