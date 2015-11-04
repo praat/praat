@@ -1488,7 +1488,7 @@ DO
 	}
 END2 }
 
-FORM (Sound_scaleIntensity, U"Sound: Scale intensity", U"Sound: Scale intensity") {
+FORM (Sound_scaleIntensity, U"Sound: Scale intensity", U"Sound: Scale intensity...") {
 	POSITIVE (U"New average intensity (dB SPL)", U"70.0")
 	OK2
 DO
