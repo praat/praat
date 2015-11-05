@@ -32,15 +32,11 @@ Thing_implement (TextEditor, Editor, 0);
 #include "prefs_copyToInstance.h"
 #include "TextEditor_prefs.h"
 
-static Collection theOpenTextEditors = NULL;
+static Collection theOpenTextEditors;   // cannot be an autoCollection until Collection_undangleItem() isn't called in v_destroy()
 
 /***** TextEditor methods *****/
 
 void structTextEditor :: v_destroy () {
-	forget (our openDialog);
-	forget (our saveDialog);
-	forget (our printDialog);
-	forget (our findDialog);
 	if (theOpenTextEditors) {
 		Collection_undangleItem (theOpenTextEditors, this);
 	}
@@ -121,8 +117,8 @@ static void cb_open_ok (UiForm sendingForm, int /* narg */, Stackel /* args */, 
 static void cb_showOpen (EditorCommand cmd, UiForm /* sendingForm */, const char32 * /* sendingString */, Interpreter /* interpreter */) {
 	TextEditor me = (TextEditor) cmd -> d_editor;
 	if (! my openDialog)
-		my openDialog = UiInfile_create (my d_windowForm, U"Open", cb_open_ok, me, NULL, NULL, false);
-	UiInfile_do (my openDialog);
+		my openDialog = UiInfile_create (my d_windowForm, U"Open", cb_open_ok, me, nullptr, nullptr, false);
+	UiInfile_do (my openDialog.get());
 }
 
 static void cb_saveAs_ok (UiForm sendingForm, int /* narg */, Stackel /* args */, const char32 * /* sendingString */,
@@ -136,14 +132,13 @@ static void cb_saveAs_ok (UiForm sendingForm, int /* narg */, Stackel /* args */
 static void menu_cb_saveAs (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	if (! my saveDialog)
-		my saveDialog = UiOutfile_create (my d_windowForm, U"Save", cb_saveAs_ok, me, NULL, NULL);
+		my saveDialog = UiOutfile_create (my d_windowForm, U"Save", cb_saveAs_ok, me, nullptr, nullptr);
 	char32 defaultName [300];
 	Melder_sprint (defaultName,300, ! my v_fileBased () ? U"info.txt" : my name [0] ? MelderFile_name (& my file) : U"");
-	UiOutfile_do (my saveDialog, defaultName);
+	UiOutfile_do (my saveDialog.get(), defaultName);
 }
 
-static void gui_button_cb_saveAndOpen (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_saveAndOpen (I, GuiButtonEvent /* event */) {
 	EditorCommand cmd = (EditorCommand) void_me;
 	TextEditor me = (TextEditor) cmd -> d_editor;
 	GuiThing_hide (my dirtyOpenDialog);
@@ -154,37 +149,35 @@ static void gui_button_cb_saveAndOpen (I, GuiButtonEvent event) {
 			Melder_flushError ();
 			return;
 		}
-		cb_showOpen (cmd, NULL, NULL, NULL);
+		cb_showOpen (cmd, nullptr, nullptr, nullptr);
 	} else {
-		menu_cb_saveAs (me, cmd, NULL, 0, NULL, NULL, NULL);
+		menu_cb_saveAs (me, cmd, nullptr, 0, nullptr, nullptr, nullptr);
 	}
 }
 
-static void gui_button_cb_cancelOpen (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_cancelOpen (I, GuiButtonEvent /* event */) {
 	EditorCommand cmd = (EditorCommand) void_me;
 	TextEditor me = (TextEditor) cmd -> d_editor;
 	GuiThing_hide (my dirtyOpenDialog);
 }
 
-static void gui_button_cb_discardAndOpen (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_discardAndOpen (I, GuiButtonEvent /* event */) {
 	EditorCommand cmd = (EditorCommand) void_me;
 	TextEditor me = (TextEditor) cmd -> d_editor;
 	GuiThing_hide (my dirtyOpenDialog);
-	cb_showOpen (cmd, NULL, NULL, NULL);
+	cb_showOpen (cmd, nullptr, nullptr, nullptr);
 }
 
 static void menu_cb_open (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	if (my dirty) {
-		if (my dirtyOpenDialog == NULL) {
+		if (! my dirtyOpenDialog) {
 			int buttonWidth = 120, buttonSpacing = 20;
 			my dirtyOpenDialog = GuiDialog_create (my d_windowForm,
 				150, 70,
 				Gui_LEFT_DIALOG_SPACING + 3 * buttonWidth + 2 * buttonSpacing + Gui_RIGHT_DIALOG_SPACING,
 				Gui_TOP_DIALOG_SPACING + Gui_TEXTFIELD_HEIGHT + Gui_VERTICAL_DIALOG_SPACING_SAME + 2 * Gui_BOTTOM_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT,
-				U"Text changed", NULL, NULL, GuiDialog_MODAL);
+				U"Text changed", nullptr, nullptr, GuiDialog_MODAL);
 			GuiLabel_createShown (my dirtyOpenDialog,
 				Gui_LEFT_DIALOG_SPACING, - Gui_RIGHT_DIALOG_SPACING,
 				Gui_TOP_DIALOG_SPACING, Gui_TOP_DIALOG_SPACING + Gui_LABEL_HEIGHT,
@@ -208,8 +201,7 @@ static void menu_cb_open (EDITOR_ARGS) {
 	}
 }
 
-static void gui_button_cb_saveAndNew (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_saveAndNew (I, GuiButtonEvent /* event */) {
 	EditorCommand cmd = (EditorCommand) void_me;
 	TextEditor me = (TextEditor) cmd -> d_editor;
 	GuiThing_hide (my dirtyNewDialog);
@@ -222,19 +214,17 @@ static void gui_button_cb_saveAndNew (I, GuiButtonEvent event) {
 		}
 		newDocument (me);
 	} else {
-		menu_cb_saveAs (me, cmd, NULL, 0, NULL, NULL, NULL);
+		menu_cb_saveAs (me, cmd, nullptr, 0, nullptr, nullptr, nullptr);
 	}
 }
 
-static void gui_button_cb_cancelNew (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_cancelNew (I, GuiButtonEvent /* event */) {
 	EditorCommand cmd = (EditorCommand) void_me;
 	TextEditor me = (TextEditor) cmd -> d_editor;
 	GuiThing_hide (my dirtyNewDialog);
 }
 
-static void gui_button_cb_discardAndNew (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_discardAndNew (I, GuiButtonEvent /* event */) {
 	EditorCommand cmd = (EditorCommand) void_me;
 	TextEditor me = (TextEditor) cmd -> d_editor;
 	GuiThing_hide (my dirtyNewDialog);
@@ -249,7 +239,7 @@ static void menu_cb_new (EDITOR_ARGS) {
 			my dirtyNewDialog = GuiDialog_create (my d_windowForm,
 				150, 70, Gui_LEFT_DIALOG_SPACING + 3 * buttonWidth + 2 * buttonSpacing + Gui_RIGHT_DIALOG_SPACING,
 					Gui_TOP_DIALOG_SPACING + Gui_TEXTFIELD_HEIGHT + Gui_VERTICAL_DIALOG_SPACING_SAME + 2 * Gui_BOTTOM_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT,
-				U"Text changed", NULL, NULL, GuiDialog_MODAL);
+				U"Text changed", nullptr, nullptr, GuiDialog_MODAL);
 			GuiLabel_createShown (my dirtyNewDialog,
 				Gui_LEFT_DIALOG_SPACING, - Gui_RIGHT_DIALOG_SPACING,
 				Gui_TOP_DIALOG_SPACING, Gui_TOP_DIALOG_SPACING + Gui_LABEL_HEIGHT,
@@ -288,7 +278,7 @@ static void menu_cb_save (EDITOR_ARGS) {
 			return;
 		}
 	} else {
-		menu_cb_saveAs (me, cmd, NULL, 0, NULL, NULL, NULL);
+		menu_cb_saveAs (me, cmd, nullptr, 0, nullptr, nullptr, nullptr);
 	}
 }
 
@@ -306,8 +296,7 @@ static void menu_cb_reopen (EDITOR_ARGS) {
 	}
 }
 
-static void gui_button_cb_saveAndClose (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_saveAndClose (I, GuiButtonEvent /* event */) {
 	iam (TextEditor);
 	GuiThing_hide (my dirtyCloseDialog);
 	if (my name [0]) {
@@ -319,18 +308,16 @@ static void gui_button_cb_saveAndClose (I, GuiButtonEvent event) {
 		}
 		closeDocument (me);
 	} else {
-		menu_cb_saveAs (me, Editor_getMenuCommand (me, U"File", U"Save as..."), NULL, 0, NULL, NULL, NULL);
+		menu_cb_saveAs (me, Editor_getMenuCommand (me, U"File", U"Save as..."), nullptr, 0, nullptr, nullptr, nullptr);
 	}
 }
 
-static void gui_button_cb_cancelClose (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_cancelClose (I, GuiButtonEvent /* event */) {
 	iam (TextEditor);
 	GuiThing_hide (my dirtyCloseDialog);
 }
 
-static void gui_button_cb_discardAndClose (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_discardAndClose (I, GuiButtonEvent /* event */) {
 	iam (TextEditor);
 	GuiThing_hide (my dirtyCloseDialog);
 	closeDocument (me);
@@ -343,7 +330,7 @@ void structTextEditor :: v_goAway () {
 			dirtyCloseDialog = GuiDialog_create (d_windowForm,
 				150, 70, Gui_LEFT_DIALOG_SPACING + 3 * buttonWidth + 2 * buttonSpacing + Gui_RIGHT_DIALOG_SPACING,
 					Gui_TOP_DIALOG_SPACING + Gui_TEXTFIELD_HEIGHT + Gui_VERTICAL_DIALOG_SPACING_SAME + 2 * Gui_BOTTOM_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT,
-				U"Text changed", NULL, NULL, GuiDialog_MODAL);
+				U"Text changed", nullptr, nullptr, GuiDialog_MODAL);
 			GuiLabel_createShown (dirtyCloseDialog,
 				Gui_LEFT_DIALOG_SPACING, - Gui_RIGHT_DIALOG_SPACING,
 				Gui_TOP_DIALOG_SPACING, Gui_TOP_DIALOG_SPACING + Gui_LABEL_HEIGHT,
@@ -425,13 +412,13 @@ static bool getSelectedLines (TextEditor me, long *firstLine, long *lastLine) {
 	return true;
 }
 
-static char32 *theFindString = NULL, *theReplaceString = NULL;
+static char32 *theFindString = nullptr, *theReplaceString = nullptr;
 static void do_find (TextEditor me) {
-	if (theFindString == NULL) return;   // e.g. when the user does "Find again" before having done any "Find"
+	if (! theFindString) return;   // e.g. when the user does "Find again" before having done any "Find"
 	long left, right;
 	autostring32 text = GuiText_getStringAndSelectionPosition (my textWidget, & left, & right);
 	char32 *location = str32str (& text [right], theFindString);
-	if (location != NULL) {
+	if (location) {
 		long index = location - text.peek();
 		GuiText_setSelection (my textWidget, index, index + str32len (theFindString));
 		GuiText_scrollToSelection (my textWidget);
@@ -441,7 +428,7 @@ static void do_find (TextEditor me) {
 	} else {
 		/* Try from the start of the document. */
 		location = str32str (text.peek(), theFindString);
-		if (location != NULL) {
+		if (location) {
 			long index = location - text.peek();
 			GuiText_setSelection (my textWidget, index, index + str32len (theFindString));
 			GuiText_scrollToSelection (my textWidget);
@@ -455,7 +442,7 @@ static void do_find (TextEditor me) {
 }
 
 static void do_replace (TextEditor me) {
-	if (theReplaceString == NULL) return;   // e.g. when the user does "Replace again" before having done any "Replace"
+	if (! theReplaceString) return;   // e.g. when the user does "Replace again" before having done any "Replace"
 	autostring32 selection = GuiText_getSelection (my textWidget);
 	if (! Melder_equ (selection.peek(), theFindString)) {
 		do_find (me);
@@ -477,7 +464,7 @@ static void menu_cb_find (EDITOR_ARGS) {
 		LABEL (U"", U"Find:")
 		TEXTFIELD (U"findString", U"")
 	EDITOR_OK
-		if (theFindString != NULL) SET_STRING (U"findString", theFindString);
+		if (theFindString) SET_STRING (U"findString", theFindString);
 	EDITOR_DO
 		Melder_free (theFindString);
 		theFindString = Melder_dup_f (GET_STRING (U"findString"));
@@ -631,8 +618,7 @@ static void menu_cb_fontSize (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void gui_text_cb_change (I, GuiTextEvent event) {
-	(void) event;
+static void gui_text_cb_change (I, GuiTextEvent /* event */) {
 	iam (TextEditor);
 	if (! my dirty) {
 		my dirty = true;
@@ -647,6 +633,7 @@ void structTextEditor :: v_createChildren () {
 
 void structTextEditor :: v_createMenus () {
 	TextEditor_Parent :: v_createMenus ();
+
 	if (v_fileBased ()) {
 		Editor_addCommand (this, U"File", U"New", 'N', menu_cb_new);
 		Editor_addCommand (this, U"File", U"Open...", 'O', menu_cb_open);
@@ -669,6 +656,7 @@ void structTextEditor :: v_createMenus () {
 	Editor_addCommand (this, U"Edit", U"Copy", 'C', menu_cb_copy);
 	Editor_addCommand (this, U"Edit", U"Paste", 'V', menu_cb_paste);
 	Editor_addCommand (this, U"Edit", U"Erase", 0, menu_cb_erase);
+
 	Editor_addMenu (this, U"Search", 0);
 	Editor_addCommand (this, U"Search", U"Find...", 'F', menu_cb_find);
 	Editor_addCommand (this, U"Search", U"Find again", 'G', menu_cb_findAgain);
@@ -677,32 +665,32 @@ void structTextEditor :: v_createMenus () {
 	Editor_addCommand (this, U"Search", U"-- line --", 0, NULL);
 	Editor_addCommand (this, U"Search", U"Where am I?", 0, menu_cb_whereAmI);
 	Editor_addCommand (this, U"Search", U"Go to line...", 'L', menu_cb_goToLine);
+
 	Editor_addMenu (this, U"Convert", 0);
 	Editor_addCommand (this, U"Convert", U"Convert to C string", 0, menu_cb_convertToCString);
-	#if defined (macintosh) || defined (UNIX) || defined (_WIN32)
-		Editor_addMenu (this, U"Font", 0);
-		Editor_addCommand (this, U"Font", U"Font size...", 0, menu_cb_fontSize);
-		fontSizeButton_10 = Editor_addCommand (this, U"Font", U"10", GuiMenu_CHECKBUTTON, menu_cb_10);
-		fontSizeButton_12 = Editor_addCommand (this, U"Font", U"12", GuiMenu_CHECKBUTTON, menu_cb_12);
-		fontSizeButton_14 = Editor_addCommand (this, U"Font", U"14", GuiMenu_CHECKBUTTON, menu_cb_14);
-		fontSizeButton_18 = Editor_addCommand (this, U"Font", U"18", GuiMenu_CHECKBUTTON, menu_cb_18);
-		fontSizeButton_24 = Editor_addCommand (this, U"Font", U"24", GuiMenu_CHECKBUTTON, menu_cb_24);
-	#endif
+
+	Editor_addMenu (this, U"Font", 0);
+	Editor_addCommand (this, U"Font", U"Font size...", 0, menu_cb_fontSize);
+	fontSizeButton_10 = Editor_addCommand (this, U"Font", U"10", GuiMenu_CHECKBUTTON, menu_cb_10);
+	fontSizeButton_12 = Editor_addCommand (this, U"Font", U"12", GuiMenu_CHECKBUTTON, menu_cb_12);
+	fontSizeButton_14 = Editor_addCommand (this, U"Font", U"14", GuiMenu_CHECKBUTTON, menu_cb_14);
+	fontSizeButton_18 = Editor_addCommand (this, U"Font", U"18", GuiMenu_CHECKBUTTON, menu_cb_18);
+	fontSizeButton_24 = Editor_addCommand (this, U"Font", U"24", GuiMenu_CHECKBUTTON, menu_cb_24);
 }
 
 void TextEditor_init (TextEditor me, const char32 *initialText) {
-	Editor_init (me, 0, 0, 600, 400, U"", NULL);
+	Editor_init (me, 0, 0, 600, 400, U"", nullptr);
 	setFontSize (me, my p_fontSize);
 	if (initialText) {
 		GuiText_setString (my textWidget, initialText);
 		my dirty = false;   // was set to true in valueChanged callback
 		Thing_setName (me, U"");
 	}
-	if (theOpenTextEditors == NULL) {
+	if (! theOpenTextEditors) {
 		theOpenTextEditors = Collection_create (classTextEditor, 100);
 		Collection_dontOwnItems (theOpenTextEditors);
 	}
-	if (theOpenTextEditors != NULL) {
+	if (theOpenTextEditors) {
 		Collection_addItem (theOpenTextEditors, me);
 	}
 }
@@ -718,7 +706,7 @@ TextEditor TextEditor_create (const char32 *initialText) {
 }
 
 void TextEditor_showOpen (TextEditor me) {
-	cb_showOpen (Editor_getMenuCommand (me, U"File", U"Open..."), NULL, NULL, NULL);
+	cb_showOpen (Editor_getMenuCommand (me, U"File", U"Open..."), nullptr, nullptr, nullptr);
 }
 
 /* End of file TextEditor.cpp */

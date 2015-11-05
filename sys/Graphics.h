@@ -115,15 +115,15 @@ Thing_define (Graphics, Thing) {
 	void v_destroy ()
 		override;
 
-	virtual void v_polyline (long numberOfPoints, double *xyDC, bool close) { (void) numberOfPoints; (void) xyDC; (void) close; }
-	virtual void v_fillArea (long numberOfPoints, double *xyDC) { (void) numberOfPoints; (void) xyDC; }
-	virtual void v_rectangle (double x1DC, double x2DC, double y1DC, double y2DC) { (void) x1DC; (void) x2DC; (void) y1DC; (void) y2DC; }
-	virtual void v_fillRectangle (double a_x1DC, double a_x2DC, double a_y1DC, double a_y2DC) { (void) a_x1DC; (void) a_x2DC; (void) a_y1DC; (void) a_y2DC; }
-	virtual void v_circle (double xDC, double yDC, double rDC) { (void) xDC; (void) yDC; (void) rDC; }
-	virtual void v_ellipse (double a_x1DC, double a_x2DC, double a_y1DC, double a_y2DC) { (void) a_x1DC; (void) a_x2DC; (void) a_y1DC; (void) a_y2DC; }
-	virtual void v_arc (double xDC, double yDC, double rDC, double fromAngle, double toAngle) { (void) xDC; (void) yDC; (void) rDC; (void) fromAngle; (void) toAngle; }
-	virtual void v_fillCircle (double xDC, double yDC, double rDC) { (void) xDC; (void) yDC; (void) rDC; }
-	virtual void v_fillEllipse (double a_x1DC, double a_x2DC, double a_y1DC, double a_y2DC) { (void) a_x1DC; (void) a_x2DC; (void) a_y1DC; (void) a_y2DC; }
+	virtual void v_polyline (long /* numberOfPoints */, double * /* xyDC */, bool /* close */) { }
+	virtual void v_fillArea (long /* numberOfPoints */, double * /* xyDC */) { }
+	virtual void v_rectangle (double /* x1DC */, double /* x2DC */, double /* y1DC */, double /* y2DC */) { }
+	virtual void v_fillRectangle (double /* x1DC */, double /* x2DC */, double /* y1DC */, double /* y2DC */) { }
+	virtual void v_circle (double /* xDC */, double /* yDC */, double /* rDC */) { }
+	virtual void v_ellipse (double /* x1DC */, double /* x2DC */, double /* y1DC */, double /* y2DC */) { }
+	virtual void v_arc (double /* xDC */, double /* yDC */, double /* rDC */, double /* fromAngle */, double /* toAngle */) { }
+	virtual void v_fillCircle (double /* xDC */, double /* yDC */, double /* rDC */) { }
+	virtual void v_fillEllipse (double /* x1DC */, double /* x2DC */, double /* y1DC */, double /* y2DC */) { }
 	virtual void v_button (double a_x1DC, double a_x2DC, double a_y1DC, double a_y2DC)
 		{
 			v_rectangle (a_x1DC, a_x2DC, a_y1DC, a_y2DC);   // the simplest implementation
