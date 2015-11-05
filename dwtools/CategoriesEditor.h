@@ -2,7 +2,7 @@
 #define _CategoriesEditor_h_
 /* CategoriesEditor.h
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 Thing_define (CategoriesEditor, Editor) {
 	// new data:
 	public:
-		CommandHistory history;
+		autoCommandHistory history;
 		int position;
 		GuiList list;
 		GuiText text;
@@ -40,6 +40,6 @@ Thing_define (CategoriesEditor, Editor) {
 		void v_dataChanged ();
 };
 
-CategoriesEditor CategoriesEditor_create (const char32 *title, Categories data);
+autoCategoriesEditor CategoriesEditor_create (const char32 *title, Categories data);
 
 #endif /* _CategoriesEditor_h_ */

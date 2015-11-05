@@ -2,7 +2,7 @@
 #define _Command_h_
 /* Command.h
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ Thing_define (CommandHistory, Ordered) {
 /* Invariants: */
 /*	0 <= current <= size + 1; */
 
-CommandHistory CommandHistory_create (long maximumCapacity);
+autoCommandHistory CommandHistory_create (long maximumCapacity);
 
 void CommandHistory_forth (I);
 /* Precondition: ! offright */

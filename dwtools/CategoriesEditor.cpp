@@ -428,7 +428,7 @@ static void update_dos (I) {
 	// undo
 
 	const char32 *name;
-	if (! (name = CommandHistory_commandName (my history, 0))) {
+	if (! (name = CommandHistory_commandName (my history.peek(), 0))) {
 		name = U"nothing"; undoSense = false;
 	}
 
@@ -437,7 +437,7 @@ static void update_dos (I) {
 
 	// redo
 
-	if (! (name = CommandHistory_commandName (my history, 1))) {
+	if (! (name = CommandHistory_commandName (my history.peek(), 1))) {
 		name = U"nothing"; redoSense = false;
 	}
 	GuiButton_setText (my redo, Melder_cat (U"Redo ", U"\"", name, U"\""));
@@ -593,7 +593,7 @@ static void gui_button_cb_remove (I, GuiButtonEvent /* event */) {
 			return;
 		}
 		if (my history) {
-			CommandHistory_insertItem (my history, command.transfer());
+			CommandHistory_insertItem (my history.peek(), command.transfer());
 		}
 		updateWidgets (me);
 	}
@@ -607,7 +607,7 @@ static void insert (I, int position) {
 		autoCategoriesEditorInsert command = CategoriesEditorInsert_create (me, str.transfer(), position);
 		Command_do (command.peek());
 		if (my history) {
-			CommandHistory_insertItem (my history, command.transfer());
+			CommandHistory_insertItem (my history.peek(), command.transfer());
 		}
 		updateWidgets (me);
 	}
@@ -637,7 +637,7 @@ static void gui_button_cb_replace (I, GuiButtonEvent /* event */) {
 			                                      posList.peek(), posCount);
 			Command_do (command.peek());
 			if (my history) {
-				CommandHistory_insertItem (my history, command.transfer());
+				CommandHistory_insertItem (my history.peek(), command.transfer());
 			}
 			updateWidgets (me);
 		}
@@ -654,7 +654,7 @@ static void gui_button_cb_moveUp (I, GuiButtonEvent /* event */) {
 		                                     (me, posList.peek(), posCount, posList[1] - 1);
 		Command_do (command.peek());
 		if (my history) {
-			CommandHistory_insertItem (my history, command.transfer());
+			CommandHistory_insertItem (my history.peek(), command.transfer());
 		}
 		updateWidgets (me);
 	}
@@ -670,7 +670,7 @@ static void gui_button_cb_moveDown (I, GuiButtonEvent /* event */) {
 		                                       (me, posList.peek(), posCount, posList[posCount] + 1);
 		Command_do (command.peek());
 		if (my history) {
-			CommandHistory_insertItem (my history, command.transfer());
+			CommandHistory_insertItem (my history.peek(), command.transfer());
 		}
 		updateWidgets (me);
 	}
@@ -695,26 +695,25 @@ static void gui_list_cb_extended (void *void_me, GuiListEvent /* event */) {
 
 static void gui_button_cb_undo (I, GuiButtonEvent /* event */) {
 	iam (CategoriesEditor);
-	if (CommandHistory_offleft (my history)) {
+	if (CommandHistory_offleft (my history.peek())) {
 		return;
 	}
-	Command_undo (CommandHistory_getItem (my history));
-	CommandHistory_back (my history);
+	Command_undo (CommandHistory_getItem (my history.peek()));
+	CommandHistory_back (my history.peek());
 	updateWidgets (me);
 }
 
 static void gui_button_cb_redo (I, GuiButtonEvent /* event */) {
 	iam (CategoriesEditor);
-	CommandHistory_forth (my history);
-	if (CommandHistory_offright (my history)) {
+	CommandHistory_forth (my history.peek());
+	if (CommandHistory_offright (my history.peek())) {
 		return;
 	}
-	Command_do (CommandHistory_getItem (my history));
+	Command_do (CommandHistory_getItem (my history.peek()));
 	updateWidgets (me);
 }
 
 void structCategoriesEditor :: v_destroy () {
-	forget (history); /* !! Editor */
 	CategoriesEditor_Parent :: v_destroy ();
 }
 
@@ -773,14 +772,14 @@ void structCategoriesEditor :: v_dataChanged () {
 	updateWidgets (this);
 }
 
-CategoriesEditor CategoriesEditor_create (const char32 *title, Categories data) {
+autoCategoriesEditor CategoriesEditor_create (const char32 *title, Categories data) {
 	try {
 		autoCategoriesEditor me = Thing_new (CategoriesEditor);
 		Editor_init (me.peek(), 20, 40, 600, 600, title, data);
 		my history = CommandHistory_create (100);
 		update (me.peek(), 0, 0, 0, 0);
 		updateWidgets (me.peek());
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Categories window not created.");
 	}

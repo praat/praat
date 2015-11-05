@@ -2,7 +2,7 @@
 #define _FileInMemory_h_
 /* FileInMemory.h
  *
- * Copyright (C) 2011-2012 David Weenink
+ * Copyright (C) 2011-2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,9 +43,11 @@ Thing_define (FileInMemory, Daata) {
 };
 
 FileInMemory FileInMemory_create (MelderFile file);
+
 FileInMemory FileInMemory_createWithData (long numberOfBytes, const char *data, const char32 *path, const char32 *id);
 
 void FileInMemory_dontOwnData (FileInMemory me);
+
 void FileInMemory_setId (FileInMemory me, const char32 *newId);
 
 void FileInMemory_showAsCode (FileInMemory me, const char32 *name, long numberOfBytesPerLine);
@@ -60,14 +62,19 @@ Thing_define (FilesInMemory, SortedSet) {
 };
 
 FilesInMemory FilesInMemory_create ();
+
 FilesInMemory FilesInMemory_createFromDirectoryContents (const char32 *dirpath, const char32 *file);
 
 void FilesInMemory_showAsCode (FilesInMemory me, const char32 *name, long numberOfBytesPerLine);
+
 void FilesInMemory_showOneFileAsCode (FilesInMemory me, long index, const char32 *name, long numberOfBytesPerLine);
 
 long FilesInMemory_getIndexFromId (FilesInMemory me, const char32 *id);
+
 Strings FilesInMemory_to_Strings_id (FilesInMemory me);
+
 char * FilesInMemory_getCopyOfData (FilesInMemory me, const char32 *id, long *numberOfBytes);
+
 const char * FilesInMemory_getData (FilesInMemory me, const char32 *id, long *numberOfBytes);
 
 #endif // _FileInMemory_h_

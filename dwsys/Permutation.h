@@ -2,7 +2,7 @@
 #define _Permutation_h_
 /* Permutation.h
  *
- * Copyright (C) 2005-2011 David Weenink
+ * Copyright (C) 2005-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ oo_CLASS_CREATE (Permutation, Daata);
 
 void Permutation_init (Permutation me, long numberOfElements);
 
-Permutation Permutation_create (long numberOfElements);
+autoPermutation Permutation_create (long numberOfElements);
 /*
 	Create the Permutation data structure and fill
 		with the identical permutation (1,2,..n)
@@ -46,10 +46,10 @@ void Permutation_sort (Permutation me);
 
 void Permutation_permuteRandomly_inline (Permutation me, long from, long to);
 
-Permutation Permutation_permuteRandomly (Permutation me, long from, long to);
+autoPermutation Permutation_permuteRandomly (Permutation me, long from, long to);
 /* Generate a new sequence by permuting the elements from..to */
 
-Permutation Permutation_rotate (Permutation me, long from, long to, long step);
+autoPermutation Permutation_rotate (Permutation me, long from, long to, long step);
 
 void Permutation_swapOneFromRange (Permutation me, long from, long to, long pos, int forbidsame);
 /* Swap item at pos with one randomly chosen in interval [from,to]. If pos in [from,to]
@@ -59,11 +59,12 @@ void Permutation_swapBlocks (Permutation me, long from, long to, long blocksize)
 /* Swap two blocks */
 
 void Permutation_swapPositions (Permutation me, long i1, long i2);
-void Permutation_swapNumbers (Permutation me, long i1, long i2);
-Permutation Permutation_interleave (Permutation me, long from, long to, long blocksize, long offset);
 
-Permutation Permutation_permuteBlocksRandomly (Permutation me, long from, long to, long blocksize,
-	int permuteWithinBlocks, int noDoublets);
+void Permutation_swapNumbers (Permutation me, long i1, long i2);
+
+autoPermutation Permutation_interleave (Permutation me, long from, long to, long blocksize, long offset);
+
+autoPermutation Permutation_permuteBlocksRandomly (Permutation me, long from, long to, long blocksize, int permuteWithinBlocks, int noDoublets);
 /* Permute blocks of size blocksize randomly. If permuteWithinBlocks=true and noDoublets=true forbid that the last
 	number in a block and the first number in the following block are 'equal modulo blocksize'. */
 
@@ -73,16 +74,18 @@ long Permutation_getValueAtIndex (Permutation me, long i);
 long Permutation_getIndexAtValue (Permutation me, long value);
 /* Find i for which p[i] = value */
 
-Permutation Permutation_invert (Permutation me);
+autoPermutation Permutation_invert (Permutation me);
 /*  */
 
-Permutation Permutation_reverse (Permutation me, long from, long to);
+autoPermutation Permutation_reverse (Permutation me, long from, long to);
 /* (n1,n2,...nn) to (nn,...n2,n1) */
 
 void Permutation_next_inline (Permutation me);
+
 void Permutation_previous_inline (Permutation me);
 
-Permutation Permutations_multiply2 (Permutation me, Permutation thee);
-Permutation Permutations_multiply (Collection me);
+autoPermutation Permutations_multiply2 (Permutation me, Permutation thee);
+
+autoPermutation Permutations_multiply (Collection me);
 
 #endif /* _Permutation_h_ */
