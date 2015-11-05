@@ -56,8 +56,7 @@ void structIndex :: v_info () {
 	MelderInfo_writeLine (U"Number of elements: ", numberOfElements);
 }
 
-void Index_init (I, long numberOfElements) {
-	iam (Index);
+void Index_init (Index me, long numberOfElements) {
 	if (numberOfElements < 1) {
 		Melder_throw (U"Cannot create index without elements.");
 	}
@@ -66,8 +65,7 @@ void Index_init (I, long numberOfElements) {
 	my classIndex = NUMvector<long> (1, numberOfElements);
 }
 
-Index Index_extractPart (I, long from, long to) {
-	iam (Index);
+autoIndex Index_extractPart (Index me, long from, long to) {
 	try {
 		if (from == 0) {
 			from = 1;
@@ -84,7 +82,7 @@ Index Index_extractPart (I, long from, long to) {
 		for (long i = 1; i <= thy numberOfElements; i++) {
 			thy classIndex[i] = my classIndex[from + i - 1];
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": part not extracted.");
 	}
@@ -92,11 +90,11 @@ Index Index_extractPart (I, long from, long to) {
 
 Thing_implement (StringsIndex, Index, 0);
 
-StringsIndex StringsIndex_create (long numberOfElements) {
+autoStringsIndex StringsIndex_create (long numberOfElements) {
 	try {
 		autoStringsIndex me = (StringsIndex) Thing_new (StringsIndex);
 		Index_init (me.peek(), numberOfElements);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"StringsIndex not created.");
 	}
@@ -114,9 +112,11 @@ int StringsIndex_getClass (StringsIndex me, char32 *klasLabel) {
 
 long StringsIndex_countItems (StringsIndex me, int iclass) {
 	long sum = 0;
-	for (long i = 1; i <= my numberOfElements; i++) if (my classIndex[i] == iclass) {
+	for (long i = 1; i <= my numberOfElements; i++) {
+		if (my classIndex[i] == iclass) {
 			sum++;
 		}
+	}
 	return sum;
 }
 

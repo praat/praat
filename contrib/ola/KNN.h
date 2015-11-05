@@ -345,7 +345,7 @@ void KNN_shuffleInstances
 );
 
 // Experimental code
-Permutation KNN_SA_ToPermutation
+autoPermutation KNN_SA_ToPermutation
 (
     KNN me,             // the classifier being used
     long tries,         //

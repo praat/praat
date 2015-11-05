@@ -2867,11 +2867,7 @@ DIRECT (FilesInMemory_to_Strings_id)
 	LOOP {
 		iam (FilesInMemory);
 		autoStrings thee = FilesInMemory_to_Strings_id (me);
-<<<<<<< HEAD
-		praat_new (thee.transfer(), my name);
-=======
 		praat_new (thee.move(), my name);
->>>>>>> d10eb5f1ffecbfecce39de031745420d494c26e5
 	}
 END
 
@@ -4789,12 +4785,12 @@ FORM (Permutation_create, U"Create Permutation", U"Create Permutation...")
 	BOOLEAN (U"Identity Permutation", 1)
 	OK
 DO
-	Permutation p = Permutation_create (GET_INTEGER (U"Number of elements"));
+	autoPermutation p = Permutation_create (GET_INTEGER (U"Number of elements"));
 	int identity = GET_INTEGER (U"Identity Permutation");
 	if (! identity) {
-		Permutation_permuteRandomly_inline (p, 0, 0);
+		Permutation_permuteRandomly_inline (p.peek(), 0, 0);
 	}
-	praat_new (p, GET_STRING (U"Name"));
+	praat_new (p.transfer(), GET_STRING (U"Name"));
 END
 
 DIRECT (Permutation_getNumberOfElements)

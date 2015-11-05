@@ -203,7 +203,7 @@ autoStringsIndex Stringses_to_StringsIndex (Strings me, Strings classes) {
 		for (long i = 1; i <= numberOfClasses; i++) {
 			SimpleString t = (SimpleString) tmp -> classes -> item[i];
 			autoSimpleString t2 = Data_copy (t);
-			Collection_addItem (his classes, t2.transfer());
+			Collection_addItem (his classes.peek(), t2.transfer());
 		}
 		for (long j = 1; j <= my numberOfStrings; j++) {
 			long index = 0;
@@ -235,7 +235,7 @@ autoStringsIndex Strings_to_StringsIndex (Strings me) {
 			if (i == 1 || Melder_cmp (strings, stringsi) != 0) {
 				numberOfClasses++;
 				autoSimpleString him = SimpleString_create (stringsi);
-				Collection_addItem (thy classes, him.transfer());
+				Collection_addItem (thy classes.peek(), him.transfer());
 				strings = stringsi;
 			}
 			thy classIndex[index] = numberOfClasses;
