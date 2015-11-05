@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20151101)
+MAN_BEGIN (U"What's new?", U"ppgb", 20151104)
 INTRO (U"Latest changes in Praat.")
 /*LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (U"##6.0.05# (4 November 2015)")
+LIST_ITEM (U"• 32-bit Linux: correct use of PulseAudio (note: 6.0.04 on Debian already had this correct).")
 NORMAL (U"##6.0.04# (1 November 2015)")
 LIST_ITEM (U"• Corrected a bug that caused an incorrect number in FFNet files; "
 	"unreadable FFNet files can be sent to the Praat authors for repair.")
