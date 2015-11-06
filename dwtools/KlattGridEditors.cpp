@@ -314,10 +314,10 @@ autoKlattGrid_FormantGridEditor KlattGrid_FormantGridEditor_create (const char32
 	try {
 		Melder_assert (data);
 		autoFormantGrid* fg = KlattGrid_getAddressOfFormantGrid (data, formantType);
-		if (fg) {
+		if (! fg) {
 			Melder_throw (U"Formant type unknown.");
 		}
-		if (FormantGrid_isEmpty (fg->get())) {
+		if (FormantGrid_isEmpty (fg -> get())) {
 			Melder_throw (U"Cannot edit an empty formant grid.");
 		}
 		autoKlattGrid_FormantGridEditor me = Thing_new (KlattGrid_FormantGridEditor);
