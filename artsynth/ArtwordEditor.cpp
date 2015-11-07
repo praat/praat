@@ -39,8 +39,7 @@ static void updateList (ArtwordEditor me) {
 	Graphics_updateWs (my graphics);
 }
 
-static void gui_button_cb_removeTarget (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_removeTarget (I, GuiButtonEvent /* event */) {
 	iam (ArtwordEditor);
 	Artword artword = (Artword) my data;
 	long numberOfSelectedPositions;
@@ -54,8 +53,7 @@ static void gui_button_cb_removeTarget (I, GuiButtonEvent event) {
 	Editor_broadcastDataChanged (me);
 }
 
-static void gui_button_cb_addTarget (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_addTarget (I, GuiButtonEvent /* event */) {
 	iam (ArtwordEditor);
 	Artword artword = (Artword) my data;
 	char32 *timeText = GuiText_getString (my time);
