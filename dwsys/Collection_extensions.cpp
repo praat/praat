@@ -30,7 +30,7 @@
 #include "Simple_extensions.h"
 #include "NUM2.h"
 
-Collection Collection_and_Permutation_permuteItems (Collection me, Permutation him) {
+autoCollection Collection_and_Permutation_permuteItems (Collection me, Permutation him) {
 	try {
 		if (my size != his numberOfElements) {
 			Melder_throw (me, U"The number of elements are not equal.");
@@ -58,18 +58,18 @@ Collection Collection_and_Permutation_permuteItems (Collection me, Permutation h
 			pos[where] = ti;
 			pos[which] = which <= i ? i : ti;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not permuted.");
 	}
 }
 
-Collection Collection_permuteItems (Collection me) {
+autoCollection Collection_permuteItems (Collection me) {
 	try {
 		autoPermutation p = Permutation_create (my size);
 		Permutation_permuteRandomly_inline (p.peek(), 0, 0);
 		autoCollection thee = Collection_and_Permutation_permuteItems (me, p.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": items not permuted.");
 	}
@@ -91,11 +91,11 @@ int OrderedOfString_init (OrderedOfString me, long initialCapacity) {
 	return 1;
 }
 
-OrderedOfString OrderedOfString_create () {
+autoOrderedOfString OrderedOfString_create () {
 	try {
 		autoOrderedOfString me = Thing_new (OrderedOfString);
 		OrderedOfString_init (me.peek(), 10);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"OrderedOfString not created.");
 	}
@@ -114,7 +114,7 @@ int OrderedOfString_append (OrderedOfString me, char32 *append) {
 	}
 }
 
-OrderedOfString OrderedOfString_joinItems (OrderedOfString me, OrderedOfString thee) {
+autoOrderedOfString OrderedOfString_joinItems (OrderedOfString me, OrderedOfString thee) {
 	try {
 		if (my size != thy size) {
 			Melder_throw (U"sizes must be equal.");
@@ -124,14 +124,14 @@ OrderedOfString OrderedOfString_joinItems (OrderedOfString me, OrderedOfString t
 		for (long i = 1; i <= my size; i++) {
 			SimpleString_append ( (SimpleString) his item[i], (SimpleString) thy item[i]);
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"Items not joinmed.");
 	}
 }
 
 
-OrderedOfString OrderedOfString_selectUniqueItems (OrderedOfString me, int sort) {
+autoOrderedOfString OrderedOfString_selectUniqueItems (OrderedOfString me, int sort) {
 	try {
 		if (! sort) {
 			autoOrderedOfString him = OrderedOfString_create ();
@@ -143,7 +143,7 @@ OrderedOfString OrderedOfString_selectUniqueItems (OrderedOfString me, int sort)
 				}
 			}
 			Collection_shrinkToFit (him.peek());
-			return him.transfer();
+			return him;
 		}
 		autoSortedSetOfString thee = SortedSetOfString_create ();
 		/* Collection_to_SortedSet (I, int (*compare)(I, thou)) */
@@ -158,7 +158,7 @@ OrderedOfString OrderedOfString_selectUniqueItems (OrderedOfString me, int sort)
 			autoSimpleString item = Data_copy ( (SimpleString) thy item[i]);
 			Collection_addItem (him.peek(), item.transfer());
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": unique items not selected.");
 	}

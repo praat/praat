@@ -1543,7 +1543,7 @@ void KNN_shuffleInstances
 /////////////////////////////////////////////////////////////////////////////////////////////
 // KNN to Permutation (experimental)                                                       //
 /////////////////////////////////////////////////////////////////////////////////////////////
-Permutation KNN_SA_ToPermutation
+autoPermutation KNN_SA_ToPermutation
 (
     ///////////////////////////////
     // Parameters                //
@@ -1572,7 +1572,7 @@ Permutation KNN_SA_ToPermutation
     const gsl_rng_type * T;
 
     KNN_SA_t * istruct = KNN_SA_t_create(my input); 
-    Permutation result = Permutation_create(my nInstances);
+    autoPermutation result = Permutation_create(my nInstances);
 
     gsl_siman_params_t params = { (int) tries, (int) iterations, step_size, boltzmann_c, temp_start, damping_f, temp_stop};
 
@@ -1597,7 +1597,7 @@ Permutation KNN_SA_ToPermutation
 
     KNN_SA_t_destroy(istruct);
 
-    return(result);
+    return result;
 }
 
 

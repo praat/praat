@@ -2,7 +2,7 @@
 #define _Collection_extensions_h_
 /* Collection_extensions.h
  *
- * Copyright (C) 1994-2002 David Weenink
+ * Copyright (C) 1994-2002, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,8 +28,9 @@
 #include "Graphics.h"
 #include "Permutation.h"
 
-Collection Collection_and_Permutation_permuteItems (Collection me, Permutation him);
-Collection Collection_permuteItems (Collection me);
+autoCollection Collection_and_Permutation_permuteItems (Collection me, Permutation him);
+
+autoCollection Collection_permuteItems (Collection me);
 /* permute the order of my items */
 
 /****************** class OrderedOfString ******************/
@@ -39,14 +40,16 @@ Thing_define (OrderedOfString, Ordered) {
 		override;
 };
 
-OrderedOfString OrderedOfString_create ();
+autoOrderedOfString OrderedOfString_create ();
+
 int OrderedOfString_init (OrderedOfString me, long initialCapacity);
 
 int OrderedOfString_append (OrderedOfString me, char32 *append);
-OrderedOfString OrderedOfString_joinItems (OrderedOfString me, OrderedOfString thee);
+
+autoOrderedOfString OrderedOfString_joinItems (OrderedOfString me, OrderedOfString thee);
 /* Join each item */
 
-OrderedOfString OrderedOfString_selectUniqueItems (OrderedOfString me, int sort);
+autoOrderedOfString OrderedOfString_selectUniqueItems (OrderedOfString me, int sort);
 /* Postcondition: thy size <= my size */
 
 void OrderedOfString_frequency (OrderedOfString me, OrderedOfString thee, long *count);

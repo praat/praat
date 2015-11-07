@@ -1,6 +1,6 @@
 /* Index_def.h
  *
- * Copyright (C) 2005-2006 David Weenink
+ * Copyright (C) 2005-2006, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 
 #define ooSTRUCT Index
 oo_DEFINE_CLASS (Index, Daata)
-	oo_OBJECT (Ordered, 0, classes)
+	oo_AUTO_OBJECT (Ordered, 0, classes)
 	oo_LONG (numberOfElements)
 	oo_LONG_VECTOR (classIndex, numberOfElements)
 

@@ -23,23 +23,38 @@
 #include "Table.h"
 
 extern FilesInMemory espeakdata_phons;
+
 extern FilesInMemory espeakdata_dicts;
+
 extern FilesInMemory espeakdata_voices;
+
 extern FilesInMemory espeakdata_variants;
+
 FilesInMemory create_espeakdata_phons ();
+
 FilesInMemory create_espeakdata_dicts ();
+
 FilesInMemory create_espeakdata_voices ();
+
 FilesInMemory create_espeakdata_variants ();
+
 extern Strings espeakdata_voices_names;
+
 extern Strings espeakdata_variants_names;
 
 void espeakdata_praat_init ();
+
 const char * espeakdata_get_voicedata (const char *data, long ndata, char *buf, long nbuf, long *index);
+
 Table espeakdata_voices_to_Table (FilesInMemory me);
+
 Strings espeakdata_voices_getNames (Table me, long column);
+
 // mask the char / char32
 char * espeakdata_get_dict_data (const char *name, unsigned int *size);
+
 const char * espeakdata_get_voice (const char *vname, long *numberOfBytes);
+
 const char * espeakdata_get_voiceVariant (const char *vname, long *numberOfBytes);
 
 #endif

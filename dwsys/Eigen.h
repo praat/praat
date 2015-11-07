@@ -2,7 +2,7 @@
 #define _Eigen_h_
 /* Eigen.h
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,15 +32,15 @@
 #include "Eigen_def.h"
 oo_CLASS_CREATE (Eigen, Daata);
 
-Eigen Eigen_create (long numberOfEigenvalues, long dimension);
+autoEigen Eigen_create (long numberOfEigenvalues, long dimension);
 
 void Eigen_init (I, long numberOfEigenvalues, long dimension);
 
 void Eigen_initFromSymmetricMatrix_f (I, float **a, long n);
+
 void Eigen_initFromSymmetricMatrix (I, double **a, long n);
 
-void Eigen_initFromSquareRoot (I, double **a, long numberOfRows,
-	long numberOfColumns);
+void Eigen_initFromSquareRoot (I, double **a, long numberOfRows, long numberOfColumns);
 /*
 	Calculate eigenstructure for symmetric matrix A'A (e.g. covariance matrix),
 	when only A is given.
@@ -48,8 +48,7 @@ void Eigen_initFromSquareRoot (I, double **a, long numberOfRows,
 	Method: SVD.
 */
 
-void Eigen_initFromSquareRootPair (I, double **a, long numberOfRows,
-	long numberOfColumns, double **b, long numberOfRows_b);
+void Eigen_initFromSquareRootPair (I, double **a, long numberOfRows, long numberOfColumns, double **b, long numberOfRows_b);
 /*
 	Calculate eigenstructure for A'Ax - lambda B'Bx = 0
 	Preconditions: numberOfRows >= numberOfColumns &&
@@ -80,9 +79,8 @@ void Eigen_invertEigenvector (I, long ivec);
 void Eigen_drawEigenvalues (I, Graphics g, long first, long last, double ymin, double ymax,
 	int fractionOfTotal, int cumulative, double size_mm, const char32 *mark, int garnish);
 
-void Eigen_drawEigenvector (I, Graphics g, long ivec, long first, long last,
-	double minimum, double maximum, int weigh, double size_mm, const char32 *mark,
-	int connect, char32 **rowLabels, int garnish);
+void Eigen_drawEigenvector (I, Graphics g, long ivec, long first, long last, double minimum, double maximum, int weigh, 
+	double size_mm, const char32 *mark, int connect, char32 **rowLabels, int garnish);
 /*
 	Draw eigenvector. When rowLabels != nullptr, draw row text labels on bottom axis.
 */

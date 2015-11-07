@@ -25,11 +25,11 @@
 oo_CLASS_CREATE (Index, Daata);
 oo_CLASS_CREATE (StringsIndex, Index);
 
-void Index_init (I, long numberOfElements);
+void Index_init (Index me, long numberOfElements);
 
-Index Index_extractPart (I, long from, long to);
+autoIndex Index_extractPart (Index me, long from, long to);
 
-StringsIndex StringsIndex_create (long numberOfElements);
+autoStringsIndex StringsIndex_create (long numberOfElements);
 
 int StringsIndex_getClass (StringsIndex me, char32 *classLabel);
 

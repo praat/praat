@@ -80,7 +80,7 @@ FileInMemory FileInMemory_createWithData (long numberOfBytes, const char *data, 
 		my d_id = Melder_dup (id);
 		my d_numberOfBytes = numberOfBytes;
 		my d_data = const_cast<char *> (data); // copy pointer to data only
-		return me.transfer ();
+		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw (U"FileInMemory not create from data.");
 	}

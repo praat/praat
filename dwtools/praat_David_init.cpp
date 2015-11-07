@@ -332,8 +332,8 @@ DIRECT (Categories_edit)
 	} else {
 		LOOP {
 			iam (Categories);
-			praat_installEditor (CategoriesEditor_create (
-				my name, me), IOBJECT);
+			autoCategoriesEditor thee = CategoriesEditor_create (my name, me);
+			praat_installEditor (thee.transfer(), IOBJECT);
 		}
 	}
 END
@@ -419,14 +419,14 @@ DIRECT (Categories_join)
 	}
 	Melder_assert (c1 && c2);
 	autoOrderedOfString thee = OrderedOfString_joinItems (c1, c2);
-	praat_new (thee.move());
+	praat_new (thee.transfer(), c1 -> name, U"_", c2 -> name);
 END
 
 DIRECT (Categories_permuteItems)
 	LOOP {
 		iam (Collection);
-		autoCollection thee = Collection_permuteItems (me);   // thee will be of class Categories!
-		praat_new (thee.move(), my name, U"_perm");
+		autoCollection thee = Collection_permuteItems (me);
+		praat_new (thee.transfer(), my name, U"_perm");
 	}
 END
 
@@ -2849,8 +2849,8 @@ DIRECT (FilesInMemory_addItems)
 	LOOP {
 		iam (Daata);
 		if (CLASS == classFileInMemory) {
-			FileInMemory t1 = (FileInMemory) Data_copy (me);
-			Collection_addItem (thee, t1);
+			autoFileInMemory t1 = (FileInMemory) Data_copy (me);
+			Collection_addItem (thee, t1.transfer());
 		}
 	}
 END
@@ -4785,12 +4785,12 @@ FORM (Permutation_create, U"Create Permutation", U"Create Permutation...")
 	BOOLEAN (U"Identity Permutation", 1)
 	OK
 DO
-	Permutation p = Permutation_create (GET_INTEGER (U"Number of elements"));
+	autoPermutation p = Permutation_create (GET_INTEGER (U"Number of elements"));
 	int identity = GET_INTEGER (U"Identity Permutation");
 	if (! identity) {
-		Permutation_permuteRandomly_inline (p, 0, 0);
+		Permutation_permuteRandomly_inline (p.peek(), 0, 0);
 	}
-	praat_new (p, GET_STRING (U"Name"));
+	praat_new (p.transfer(), GET_STRING (U"Name"));
 END
 
 DIRECT (Permutation_getNumberOfElements)
