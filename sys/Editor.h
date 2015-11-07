@@ -46,7 +46,7 @@ Thing_define (EditorCommand, Thing) {
 	GuiMenuItem itemWidget;
 	void (*commandCallback) (Editor editor_me, EditorCommand cmd, UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter);
 	const char32 *script;
-	UiForm d_uiform;
+	autoUiForm d_uiform;
 
 	void v_destroy ()
 		override;

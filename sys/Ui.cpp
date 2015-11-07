@@ -597,7 +597,7 @@ static void commonOkCallback (UiForm /* dia */, int /* narg */, Stackel /* args 
 	Interpreter interpreter, const char32 * /* invokingButtonTitle */, bool /* modified */, void *closure)
 {
 	EditorCommand cmd = (EditorCommand) closure;
-	cmd -> commandCallback (cmd -> d_editor, cmd, cmd -> d_uiform, 0, NULL, NULL, interpreter);
+	cmd -> commandCallback (cmd -> d_editor, cmd, cmd -> d_uiform.get(), 0, nullptr, nullptr, interpreter);
 }
 
 UiForm UiForm_createE (EditorCommand cmd, const char32 *title, const char32 *invokingButtonTitle, const char32 *helpTitle) {
@@ -1136,9 +1136,9 @@ void UiForm_parseString (UiForm me, const char32 *arguments, Interpreter interpr
 
 void UiForm_parseStringE (EditorCommand cmd, int narg, Stackel args, const char32 *arguments, Interpreter interpreter) {
 	if (args)
-		UiForm_call(cmd -> d_uiform, narg, args, interpreter);
+		UiForm_call (cmd -> d_uiform.get(), narg, args, interpreter);
 	else
-		UiForm_parseString (cmd -> d_uiform, arguments, interpreter);
+		UiForm_parseString (cmd -> d_uiform.get(), arguments, interpreter);
 }
 
 static UiField findField (UiForm me, const char32 *fieldName) {
