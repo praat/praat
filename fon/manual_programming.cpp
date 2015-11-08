@@ -379,6 +379,12 @@ NORMAL (U"There are several hundreds of such trigraphs, and a few more might be 
 	"When you create a TextGrid file parser and want to interpret the trigraphs in the correct way, "
 	"it is advisable to have Praat do the conversion for you: read the TextGrid file into Praat, "
 	"call the menu command ##Convert to Unicode#, and save the TextGrid as a new text file.")
+ENTRY (U"9. The binary TextGrid file format")
+NORMAL (U"Besides the TextGrid text file format described above, TextGrid objects can also be saved as binary files "
+	"with @@Save as binary file...@. If you need a description of this format, we can add it here on request. "
+	"When you want to create only a TextGrid %text file parser, and still want to support binary TextGrid files, "
+	"you can have Praat do the conversion for you: read the binary TextGrid file into Praat with @@Read from file...@ "
+	"and save the resulting TextGrid object as a text file with @@Save as text file...@.")
 MAN_END
 
 MAN_BEGIN (U"Programming with Praat", U"ppgb", 20151028)
