@@ -124,7 +124,6 @@ static void PitchTier_newDuration (PitchTier me, structVowelEditor_F0 *f0p, doub
 static void FormantTier_newDuration (FormantTier me, double newDuration);
 static void FormantTier_drawF1F2Trajectory (FormantTier me, Graphics g, double f1min, double f1max, double f2min, double f2max, double markTraceEvery, double width);
 static autoFormantGrid FormantTier_to_FormantGrid (FormantTier me);
-static autoPitchTier VowelEditor_to_PitchTier (VowelEditor me, double duration);
 static void VowelEditor_updateF0Info (VowelEditor me);
 static void VowelEditor_updateExtendDuration (VowelEditor me);
 static double VowelEditor_updateDurationInfo (VowelEditor me);
@@ -260,7 +259,7 @@ static autoFormantGrid FormantTier_to_FormantGrid (FormantTier me) {
 		}
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (me, U": no FormantGrod created.");
+		Melder_throw (me, U": no FormantGrid created.");
 	}
 }
 

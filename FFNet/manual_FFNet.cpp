@@ -95,34 +95,34 @@ NORMAL (U"The FFNet uses a %supervised learning algorithm: besides the input pat
 	"is a little bit higher than it is now and that, at the same time, the output values of all the other incorrect outputs are a "
 	"little bit lower than they are now. (The differences between the actual outputs and the idealized outputs "
 	"are propagated back from the top layer to lower layers to be used at these layers to modify connection weights. "
-	"This is why the term %%backpropagation network% is also often used to describe this type of neural network.")
+	"This is why the term %%backpropagation network% is also often used to describe this type of neural network.)")
 NORMAL (U"If you perform the procedure above once for every pattern and category pair in your data "
-	"set you have have performed 1 @epoch of learning.")
+	"set you have performed one @epoch of learning.")
 NORMAL (U"The hope is that eventually, probably after many epochs, "
-	"the neural net will remember these pattern-category pairs. "
-	"You even hope that the neural net when the learning phase has terminated, will be able to %generalize "
+	"the neural net will come to remember these pattern-category pairs. "
+	"You even hope that the neural net, when the learning phase has terminated, will be able to %generalize "
 	"and has learned to "
 	"@@FFNet & Pattern: To Categories...|classify@ correctly any unknown pattern presented to it. ")
-NORMAL (U"Because real-life data many times contains noise as well as partly contradictory information "
-	"these hopes can only be partly fulfilled. ")
+NORMAL (U"Because real-life data often contains noise as well as partly contradictory information, "
+	"these hopes can be fulfilled only partly. ")
 NORMAL (U"For @@FFNet & Pattern & Categories: Learn...|learning@ you "
-	"need to select 3 different objects together: a FFNet (the %classifier), "
+	"need to select three different objects together: a FFNet (the %classifier), "
 	"a Pattern (the %inputs) and a Categories (the %%correct outputs%).")
 ENTRY (U"How long will the learning phase take?")
-NORMAL (U"In general this question is hard to answer. It depends on the size of the neural network, "
+NORMAL (U"In general, this question is hard to answer. It depends on the size of the neural network, "
 	"the number of patterns to be learned, the number of epochs, the tolerance of the minimizer "
 	"and the speed of your computer, how much computing time the learning phase may take. ")
 NORMAL (U"If computing time becomes excessive in your interactive environment then consider using the "
-	"powerful @@Scripting|scripting@ facilities in P\\s{RAAT} to process your learning job as a batch job. ")
+	"powerful @@Scripting|scripting@ facilities in Praat to process your learning job as a batch job. ")
 MAN_END
 
 MAN_BEGIN (U"Feedforward neural networks 1.2. The classification phase", U"djmw", 20040428)
-INTRO (U"In the classification phase the weights of the network are fixed. ")
+INTRO (U"In the classification phase, the weights of the network are fixed. ")
 NORMAL (U"A pattern, presented at the inputs, will be transformed from layer to layer until it reaches the output layer. "
 	"Now classification can occur by selecting the category associated with the output unit that has "
 	"the largest output value.  "
 	"For classification we only need to select an FFNet and a Pattern together and "
-	"choose  @@FFNet & Pattern: To Categories...|To Categories...@. ")
+	"choose @@FFNet & Pattern: To Categories...|To Categories...@. ")
 NORMAL (U"In contrast to the @@Feedforward neural networks 1.1. The learning phase|learning phase@ classification is very fast.")
 MAN_END
 
@@ -131,42 +131,41 @@ INTRO (U"You may create the iris example set with the @@Create iris example...@ 
 	"that you will find under the ##Neural nets# option in the #New menu. "
 	"Three new objects will appear in the @@List of Objects@: a @FFNet, a @Categories and "
 	"a @Pattern.")
-NORMAL (U"The #Pattern contains the @@iris data set@ in a 150 rows by 4 columns matrix. "
-	"To  guarantee that every cell in the Pattern is in the [0,1] interval, all measurement "
+NORMAL (U"The #Pattern contains the @@iris data set@ in a matrix of 150 rows by 4 columns. "
+	"To guarantee that every cell in the Pattern is in the [0,1] interval, all measurement "
 	"values were divided by 10. In the #Categories the three iris species %setosa, "
 	"%versicolor, and %virginica were categorized with the numbers #1, #2 and #3, respectively. "
 	"Because there are 4 data columns in the Pattern and 3 different iris species in the Categories, "
 	"the newly created #FFNet has 4 inputs and 3 outputs. "
-	"If you have entered a positive number in one of the fields in the form, the FFNet will have "
+	"If you enter a positive number in one of the fields in the form, the FFNet will have "
 	"this number of units in a %%hidden layer%. The name of the newly created FFNet "
-	"will reflect its topology. If you did opt for the default, 0 hidden units, the FFNet will be named 4-3.")
+	"will reflect its topology. If you opt for the standard setting, which is 0 hidden units, the FFNet will be named 4-3.")
 ENTRY (U"Learning the iris data")
 NORMAL (U"The first thing you probably might want to do is to let the #FFNet learn the association in "
-	"each pattern-category pair.  To do this select all three objects together and choose "
+	"each pattern-category pair. To do this select all three objects together and choose "
 	"@@FFNet & Pattern & Categories: Learn...|Learn...@. "
 	"A form will appear, asking you to supply some settings for "
-	"the learning algorithm. Learning starts after you have clicked the OK-button. "
-	"Since the example network does not have too many weights that need to be adjusted and "
-	"the learning data set is very small and computers nowadays are very fast, this will only take a "
-	"very short time.")
-ENTRY (U"Classify")
+	"the learning algorithm. Learning starts after you have clicked the OK button. "
+	"As the example network has only a small number of weights that need to be adjusted, "
+	"and the learning data set is very small, this will only take a very short time.")
+ENTRY (U"Classification")
 NORMAL (U"Now, if you are curious how well the FFNet has learned the iris data, you may select the "
 	"#FFNet and the #Pattern together and choose @@FFNet & Pattern: To Categories...|To Categories...@. "
-	"A new #Categories appears in the ##List of Objects# with the name %4-3_iris (if %%4-3% was the name of the FFNet and %iris% the name of the Pattern). "
+	"A new #Categories appears in the ##List of Objects# with the name %%4-3_iris% (if %%4-3% was the name of the FFNet and %iris% the name of the Pattern). "
 	"We have two different Categories in the list of objects, the topmost one has the original categories, the other "
 	"the categories as were assigned by the FFNet classifier. The obvious thing to do now is to compare the "
 	"original categories with the assigned categories by making a @@Confusion|confusion table@. "
 	"Select the two #Categories and choose @@Categories: To Confusion|To Confusion@ and a newly "
 	"created @Confusion appears. Pressing the @Info button will show you an info window with, "
 	"among others, the fraction correct. ")
-NORMAL (U"You might also want to "
+NORMAL (U"You may also want to "
 	"@@Feedforward neural networks 3. FFNet versus discriminant classifier|compare the FFNet classifier with a discriminant classifier@.")
 ENTRY (U"Create other neural net topologies")
 NORMAL (U"With a #Pattern and a #Categories selected together, you can for example create a new #FFNet of a different topology.")
 MAN_END
 
 MAN_BEGIN (U"Feedforward neural networks 3. FFNet versus discriminant classifier", U"djmw", 20040426)
-NORMAL (U"You might want to compare the FFNet classifier with a discriminant classifier. "
+NORMAL (U"You may want to compare the FFNet classifier with a discriminant classifier. "
 	"Unlike the FFNet, a @@Discriminant|discriminant@ classifier does not need any iterative procedure in the "
 	"learning phase and can be used immediately after creation for classification. "
 	"The following three simple steps will give you the confusion matrix based on discriminant analysis:")
@@ -271,7 +270,6 @@ INTRO (U"Queries the selected @FFNet for the number of inputs. ")
 NORMAL (U"For a network with only one layer, the inputs are connected directly to the output layer. "
 	"In a two-layer network the inputs are connected to a hidden layer.")
 MAN_END
-
 
 MAN_BEGIN (U"FFNet: Get number of hidden units...", U"djmw", 20040420)
 INTRO (U"Queries the selected @FFNet for the number of units in a hidden layer.")
