@@ -695,11 +695,11 @@ void TextEditor_init (TextEditor me, const char32 *initialText) {
 	}
 }
 
-TextEditor TextEditor_create (const char32 *initialText) {
+autoTextEditor TextEditor_create (const char32 *initialText) {
 	try {
 		autoTextEditor me = Thing_new (TextEditor);
 		TextEditor_init (me.peek(), initialText);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Text window not created.");
 	}

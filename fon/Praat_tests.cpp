@@ -16,6 +16,7 @@
 #include "enums_getValue.h"
 #include "Praat_tests_enums.h"
 #include <string>
+#include <functional>
 
 static void testAutoData (autoDaata data) {
 	fprintf (stderr, "testAutoData: %p %p\n", data.get(), data -> name);
@@ -301,6 +302,24 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			}
 			int numberOfThingsAfter = Thing_getTotalNumberOfThings ();
 			fprintf (stderr, "Number of things: before %d, after %d\n", numberOfThingsBefore, numberOfThingsAfter);
+			#if 0
+				Collection_FileTypeRecognizerFunction collFunc;
+				Data_FileTypeRecognizerFunction dataFunc;
+				//collFunc = (Collection_FileTypeRecognizerFunction) dataFunc;
+				dataFunc = collFunc;
+				typedef std::function <void (Daata)> MyDataFunc;
+				typedef std::function <void (Ordered)> MyOrderedFunc;
+				MyDataFunc myDataFunc;
+				MyOrderedFunc myOrderedFunc;
+				//myDataFunc = myOrderedFunc;   // this direction would be needed for callbacks
+				myOrderedFunc = myDataFunc;
+				typedef void (*DataFunc) (Daata);
+				typedef void (*OrderedFunc) (Ordered);
+				DataFunc dataFun;
+				OrderedFunc orderedFun;
+				dataFun = (DataFunc) orderedFun;
+				orderedFun = (OrderedFunc) dataFun;
+			#endif
 		} break;
 	}
 	MelderInfo_writeLine (Melder_single (t / n * 1e9), U" nanoseconds");

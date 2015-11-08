@@ -155,17 +155,18 @@ Any TextGrid_TIMITLabelFileRecognizer (int nread, const char *header, MelderFile
 	        it[1] < 0 || it[2] <= it[1] ||
 	        sscanf (&header[length], "%ld%ld%s\n", &it[3], &it[4], label2) != 3 ||
 	        // 20120512 djmw removed the extra "it[3] < it[2]" check, because otherwise train/dr7/mdlm0/si1864.wrd cannot be read
-	        it[4] <= it[3]) {
-		return 0;
+	        it[4] <= it[3])
+	{
+		return nullptr;
 	}
 	if (! strcmp (label1, hkruis)) {
 		if (isTimitPhoneticLabel (label2)) {
 			phnFile = 1;
 		} else if (! isTimitWord (label2)) {
-			return 0;
+			return nullptr;
 		}
 	} else if (! isTimitWord (label1) || ! isTimitWord (label2)) {
-		return 0;
+		return nullptr;
 	}
 	return TextGrid_readFromTIMITLabelFile (file, phnFile);
 }

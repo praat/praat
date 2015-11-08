@@ -508,6 +508,8 @@ public:
 	}
 };
 
+typedef _Thing_auto<structThing> autoThing;
+
 template <class T>
 class autoThingVector {
 	T* d_ptr;

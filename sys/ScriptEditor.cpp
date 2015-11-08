@@ -355,7 +355,7 @@ ScriptEditor ScriptEditor_createFromScript (Editor environment, Script script) {
 					if (editor -> dirty)
 						Melder_appendError (U"Choose \"Reopen from disk\" if you want to revert to the old version.");
 					Melder_flushError ();
-					return NULL;   // safe NULL
+					return nullptr;   // safe null
 				}
 			}
 		}

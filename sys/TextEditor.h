@@ -51,7 +51,7 @@ Thing_define (TextEditor, Editor) {
 void TextEditor_init (TextEditor me,
 	const char32 *initialText
 );
-TextEditor TextEditor_create (
+autoTextEditor TextEditor_create (
 	const char32 *initialText   // may be null
 );
 
