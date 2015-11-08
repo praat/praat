@@ -35,13 +35,13 @@ autoFormantGrid FormantGrid_create (double tmin, double tmax, long numberOfForma
 	double initialFirstFormant, double initialFormantSpacing,
 	double initialFirstBandwidth, double initialBandwidthSpacing);
 
-double FormantGrid_getFormantAtTime (FormantGrid me, long iformant, double t);
-double FormantGrid_getBandwidthAtTime (FormantGrid me, long iformant, double t);
+double FormantGrid_getFormantAtTime (FormantGrid me, long formantNumber, double time);
+double FormantGrid_getBandwidthAtTime (FormantGrid me, long formantNumber, double time);
 
-void FormantGrid_addFormantPoint (FormantGrid me, long iformant, double t, double value);
-void FormantGrid_addBandwidthPoint (FormantGrid me, long iformant, double t, double value);
-void FormantGrid_removeFormantPointsBetween (FormantGrid me, long iformant, double tmin, double tmax);
-void FormantGrid_removeBandwidthPointsBetween (FormantGrid me, long iformant, double tmin, double tmax);
+void FormantGrid_addFormantPoint (FormantGrid me, long formantNumber, double time, double value);
+void FormantGrid_addBandwidthPoint (FormantGrid me, long formantNumber, double time, double value);
+void FormantGrid_removeFormantPointsBetween (FormantGrid me, long formantNumber, double tmin, double tmax);
+void FormantGrid_removeBandwidthPointsBetween (FormantGrid me, long formantNumber, double tmin, double tmax);
 
 void Sound_FormantGrid_filter_inline (Sound me, FormantGrid formantGrid);
 autoSound Sound_FormantGrid_filter (Sound me, FormantGrid formantGrid);

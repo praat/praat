@@ -331,7 +331,7 @@ NORMAL (U"The format of the original sound files may be 16-bit linear "
 	"(with big-endian or little-endian byte order), 8-bit linear (signed or unsigned), "
 	"8-bit μ-law, or 8-bit A-law. The format of the resulting sound file is always "
 	"16-bit linear, with an appropriate default byte order. The following commands "
-	"are available in the @@Save menu@ of you select any combination of @LongSound "
+	"are available in the @@Save menu@ if you select any combination of @LongSound "
 	"and/or @Sound objects:")
 LIST_ITEM (U"• @@Save as WAV file...@ (little-endian)")
 LIST_ITEM (U"• @@Save as AIFF file...@ (big-endian)")

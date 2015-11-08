@@ -561,7 +561,7 @@ static void KlattFrame_free (KlattFrame me) {
 
 autoKlattTable KlattTable_create (double frameDuration, double totalDuration) {
 	try {
-		autoKlattTable me = (KlattTable) Thing_new (KlattTable);
+		autoKlattTable me = Thing_new (KlattTable);
 		long nrows = (long) floor (totalDuration / frameDuration) + 1;
 		Table_initWithColumnNames (me.peek(), nrows, columnNames);
 		return me;
@@ -2576,7 +2576,7 @@ autoKlattTable KlattTable_createExample () {
 		{{ 830, 0, 920, 0, 1445, 0, 2804, 0, 3915, 0, 5969, 0, 6256, 0, 0, 0, 200, 30, 0, 60, 0, 0, 0, 0, 0, 87, 0, 62, 0, 103, 0, 105, 0, 80, 0, 80, 0, 0, 0, 60 }}
 	};
 	try {
-		autoKlattTable me = (KlattTable) Thing_new (KlattTable);
+		autoKlattTable me = Thing_new (KlattTable);
 		Table_initWithColumnNames (me.peek(), nrows, columnNames);
 		for (long irow = 1; irow <= nrows; irow++) {
 			for (long jcol = 1; jcol <= KlattTable_NPAR; jcol++) {

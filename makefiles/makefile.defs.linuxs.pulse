@@ -1,0 +1,23 @@
+# File: makefile.defs.linuxs.pulse
+
+# System: Linux
+# Paul Boersma, 4 November 2015
+
+CC = gcc -std=gnu99
+
+CXX = g++ -std=c++11
+
+CFLAGS = -DNO_GRAPHICS -DUNIX -Dlinux -DALSA -DHAVE_PULSEAUDIO -D_FILE_OFFSET_BITS=64 -Werror=missing-prototypes -Werror=implicit -Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O1 -g1 -pthread
+
+CXXFLAGS = $(CFLAGS) -Wshadow
+
+LINK = g++
+
+EXECUTABLE = praat
+
+LIBS = -lm -lasound -lpthread
+
+AR = ar
+RANLIB = ls
+ICON =
+MAIN_ICON =

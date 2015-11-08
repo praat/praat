@@ -45,7 +45,6 @@ Thing_implement (EditorCommand, Thing, 0);
 void structEditorCommand :: v_destroy () {
 	Melder_free (our itemTitle);
 	Melder_free (our script);
-	forget (our d_uiform);
 	EditorCommand_Parent :: v_destroy ();
 }
 

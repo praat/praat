@@ -382,8 +382,10 @@ typedef struct structGuiButtonEvent {
 	bool shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed;
 } *GuiButtonEvent;
 
+typedef void (*GuiButton_ActivateCallback) (void *boss, GuiButtonEvent event);
+
 Thing_define (GuiButton, GuiControl) {
-	void (*d_activateCallback) (void *boss, GuiButtonEvent event);
+	GuiButton_ActivateCallback d_activateCallback;
 	void *d_activateBoss;
 	GuiMenu d_menu;   // for cascade buttons
 };
@@ -396,12 +398,12 @@ Thing_define (GuiButton, GuiControl) {
 GuiButton GuiButton_create      (GuiForm parent,
 	int left, int right, int top, int bottom,
 	const char32 *text,
-	void (*activateCallback) (void *boss, GuiButtonEvent event), void *boss,
+	GuiButton_ActivateCallback activateCallback, void *boss,
 	uint32 flags);
 GuiButton GuiButton_createShown (GuiForm parent,
 	int left, int right, int top, int bottom,
 	const char32 *text,
-	void (*activateCallback) (void *boss, GuiButtonEvent event), void *boss,
+	GuiButton_ActivateCallback activateCallback, void *boss,
 	uint32 flags);
 
 void GuiButton_setText (GuiButton me, const char32 *text /* cattable */);

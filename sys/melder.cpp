@@ -300,8 +300,10 @@ static void _Melder_dia_init (GuiDialog *dia, GuiProgressBar *scale, GuiLabel *l
 	trace (U"creating the cancel button");
 	*cancelButton = GuiButton_createShown (*dia, 0, 400, 170, 170 + Gui_PUSHBUTTON_HEIGHT,
 		U"Interrupt",
-		#if gtk || macintosh
+		#if gtk
 			progress_cancel_btn_press, cancelButton,
+		#elif macintosh
+			progress_cancel_btn_press, nullptr,
 		#else
 			nullptr, nullptr,
 		#endif
