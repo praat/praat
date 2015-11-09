@@ -32,24 +32,6 @@ static autoDaata newAutoData () {
 	return data;
 }
 
-#if defined (macintosh) && useCarbon
-	#define Thing_IF_CLASS_IS_DERIVED_FROM(A,B)   /* not typesafe */
-#else
-	#define Thing_IF_CLASS_IS_DERIVED_FROM(A,B)  , class = typename std::enable_if<std::is_base_of<B,A>::value>::type
-#endif
-
-#if 1
-template <class T> class Func {
-	typedef void (*Function) (Daata);
-	Function func;
-public:
-	Func (void (*funcT) (T*)) : func ((Function) funcT) { }
-	template <class Y  Thing_IF_CLASS_IS_DERIVED_FROM(Y,T)>
-		Func (void (*funcY) (Y*)) : func ((Function) funcY) { };
-	void operator () (Daata data) { return func (data); }
-};
-#endif
-
 int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *arg4) {
 	int64 n = Melder_atoi (arg1);
 	double t = 0.0;
@@ -321,15 +303,16 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			int numberOfThingsAfter = Thing_getTotalNumberOfThings ();
 			fprintf (stderr, "Number of things: before %d, after %d\n", numberOfThingsBefore, numberOfThingsAfter);
 			#if 1
+				MelderCallback<void,structDaata>::FunctionType f;
 				typedef void (*DataFunc) (Daata);
 				typedef void (*OrderedFunc) (Ordered);
 				DataFunc dataFun;
 				OrderedFunc orderedFun;
-				Func<structDaata> dataFun2 (dataFun);
-				Func<structOrdered> orderedFun2 (orderedFun);
-				Func<structDaata> dataFun3 (orderedFun);
-				//Func<structOrdered> orderedFun3 (dataFun);   // rightfully refused by compiler
-				autoDaata data;
+				MelderCallback<void,structDaata> dataFun2 (dataFun);
+				MelderCallback<void,structOrdered> orderedFun2 (orderedFun);
+				MelderCallback<void,structDaata> dataFun3 (orderedFun);
+				//MelderCallback<void,structOrdered> orderedFun3 (dataFun);   // rightfully refused by compiler
+				autoDaata data = Thing_new (Daata);
 				dataFun3 (data.get());
 			#endif
 		} break;

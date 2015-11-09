@@ -26,7 +26,7 @@
 	#include "GraphicsP.h"
 #endif
 
-struct structPicture {
+struct structPicture : structThing {
 	GuiDrawingArea drawingArea;
 	Graphics graphics, selectionGraphics;
 	bool sensitive;
@@ -114,9 +114,7 @@ static void drawSelection (Picture me, int high) {
 
 //static double test = 0.0;
 
-static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
-	iam (Picture);
-	(void) event;
+static void gui_drawingarea_cb_expose (Picture me, GuiDrawingArea_ExposeEvent event) {
 	#if gtk
 		/*
 		 * The size of the viewable part of the drawing area may have changed.
@@ -126,6 +124,8 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 			gdk_cairo_reset_clip ((cairo_t *) Graphics_x_getCR (my graphics),          GDK_DRAWABLE (GTK_WIDGET (event -> widget -> d_widget) -> window));
 			gdk_cairo_reset_clip ((cairo_t *) Graphics_x_getCR (my selectionGraphics), GDK_DRAWABLE (GTK_WIDGET (event -> widget -> d_widget) -> window));
 		#endif
+	#else
+		(void) event;
 	#endif
 	drawMarkers (me);
 	Graphics_play ((Graphics) my graphics, (Graphics) my graphics);
@@ -144,8 +144,7 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 // (Paul:) No, running this through the normal event loop with mouse-down-drag-up events and generating exposes
 // redrew the entire picture window on every change of the selection during dragging. Much too slow!
 
-static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
-	iam (Picture);
+static void gui_drawingarea_cb_click (Picture me, GuiDrawingArea_ClickEvent event) {
 	int xstart = event -> x;
 	int ystart = event -> y;
 	double xWC, yWC;

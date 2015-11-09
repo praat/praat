@@ -379,8 +379,7 @@ void structFunctionEditor :: v_info () {
 
 /********** FILE MENU **********/
 
-static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
-	iam (FunctionEditor);
+static void gui_drawingarea_cb_resize (FunctionEditor me, GuiDrawingArea_ResizeEvent event) {
 	if (! my d_graphics) return;   // could be the case in the very beginning
 	Graphics_setWsViewport (my d_graphics, 0, event -> width, 0, event -> height);
 	int width = event -> width + 21;
@@ -421,7 +420,7 @@ static void menu_cb_preferences (EDITOR_ARGS) {
 		my pref_showSelectionViewer () = my p_showSelectionViewer = GET_INTEGER (U"Show selection viewer");
 		my pref_arrowScrollStep () = my p_arrowScrollStep = GET_REAL (U"Arrow scroll step");
 		if (my p_showSelectionViewer != oldShowSelectionViewer) {
-			struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };
+			struct structGuiDrawingArea_ResizeEvent event { my drawingArea, 0 };
 			event. width  = GuiControl_getWidth  (my drawingArea);
 			event. height = GuiControl_getHeight (my drawingArea);
 			gui_drawingarea_cb_resize (me, & event);
@@ -1057,15 +1056,13 @@ void structFunctionEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"Intro", 0, menu_cb_intro);
 }
 
-static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent /* event */) {
-	iam (FunctionEditor);
+static void gui_drawingarea_cb_expose (FunctionEditor me, GuiDrawingArea_ExposeEvent /* event */) {
 	if (! my d_graphics) return;   // could be the case in the very beginning
 	if (my enableUpdates)
 		drawNow (me);
 }
 
-static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
-	iam (FunctionEditor);
+static void gui_drawingarea_cb_click (FunctionEditor me, GuiDrawingArea_ClickEvent event) {
 	if (! my d_graphics) return;   // could be the case in the very beginning
 	my shiftKeyPressed = event -> shiftKeyPressed;
 	Graphics_setWindow (my d_graphics, my functionViewerLeft, my functionViewerRight, 0, my height);
@@ -1537,7 +1534,7 @@ void FunctionEditor_init (FunctionEditor me, const char32 *title, Function data)
 	Graphics_setFontSize (my d_graphics, 12);
 
 // This exdents because it's a hack:
-struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };
+struct structGuiDrawingArea_ResizeEvent event { my drawingArea, 0 };
 event. width  = GuiControl_getWidth  (my drawingArea);
 event. height = GuiControl_getHeight (my drawingArea);
 gui_drawingarea_cb_resize (me, & event);

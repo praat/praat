@@ -104,13 +104,6 @@ Thing_implement (VowelEditor, Editor, 0);
 // maximum number of marks
 #define VowelEditor_MAXIMUM_MARKERS 30
 
-// prototypes: button callbacks
-static void gui_button_cb_publish (I, GuiButtonEvent event);
-static void gui_button_cb_play (I, GuiButtonEvent event);
-static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event);
-static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event);
-static void gui_button_cb_reverse (I, GuiButtonEvent event);
-static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event);
 //  prototypes: helpers
 static double getRealFromTextWidget (GuiText me);
 static double getCoordinate (double fmin, double fmax, double f);
@@ -1217,31 +1210,27 @@ static void menu_cb_showTrajectoryTimeMarksEvery (EDITOR_ARGS) {
 
 /********** BUTTON METHODS **********/
 
-static void gui_button_cb_play (I, GuiButtonEvent /*event*/) {
+static void gui_button_cb_play (I, GuiButtonEvent /* event */) {
 	iam (VowelEditor);
 	autoSound thee = VowelEditor_createTarget (me);
 	Sound_play (thee.peek(), nullptr, nullptr);
 	Graphics_updateWs (my g);
 }
 
-static void gui_button_cb_publish (I, GuiButtonEvent /*event*/) {
+static void gui_button_cb_publish (I, GuiButtonEvent /* event */) {
 	iam (VowelEditor);
 	autoSound publish = VowelEditor_createTarget (me);
 	Editor_broadcastPublication (me, publish.transfer());
 }
 
-static void gui_button_cb_reverse (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_reverse (I, GuiButtonEvent /* event */) {
 	iam (VowelEditor);
-
 	VowelEditor_Vowel_reverseFormantTier (me);
-	struct structGuiButtonEvent play_event = { 0 };
-	gui_button_cb_play (me, &play_event);
+	struct structGuiButtonEvent play_event { 0 };
+	gui_button_cb_play (me, & play_event);
 }
 
-/* Main drawing routine: it's been called after every call to Graphics_updateWs (g) */
-static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent /*event*/) {
-	iam (VowelEditor);
+static void gui_drawingarea_cb_expose (VowelEditor me, GuiDrawingArea_ExposeEvent /* event */) {
 	Melder_assert (me);
 	Melder_assert (my vowel);
 	double ts = my vowel -> xmin, te = my vowel -> xmax;
@@ -1279,8 +1268,7 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent /*event*/) {
 	FormantTier_drawF1F2Trajectory (my vowel -> ft.get(), my g, my f1min, my f1max, my f2min, my f2max, my markTraceEvery, my width);
 }
 
-static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
-	iam (VowelEditor);
+static void gui_drawingarea_cb_resize (VowelEditor me, GuiDrawingArea_ResizeEvent event) {
 	Melder_assert (me);
 	if (! my g) {
 		return;   // could be the case in the very beginning
@@ -1326,8 +1314,7 @@ static void VowelEditor_Vowel_updateTiers (VowelEditor me, Vowel thee, double ti
 
 // shift key always extends what already is.
 // Special case : !soundFollowsMouse. The first click just defines the vowel's first f1f2-position,
-static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
-	iam (VowelEditor);
+static void gui_drawingarea_cb_click (VowelEditor me, GuiDrawingArea_ClickEvent event) {
 	Vowel thee = nullptr; autoVowel athee;
 	double x, y, xb, yb, tb, t, dt = 0.0;
 	double t0 = Melder_clock ();
@@ -1404,10 +1391,7 @@ end:
 	gui_button_cb_play (me, & gb_event);
 }
 
-static void gui_drawingarea_cb_key (I, GuiDrawingAreaKeyEvent event) {
-	iam (VowelEditor);
-	(void) me;
-	(void) event;
+static void gui_drawingarea_cb_key (VowelEditor /* me */, GuiDrawingArea_KeyEvent /* event */) {
 }
 
 static void cb_publish (Editor /*editor*/, void* /*closure*/, Daata publish) {
@@ -1581,12 +1565,12 @@ autoVowelEditor VowelEditor_create (const char32 *title, Daata data) {
 		my grid = griddefault;
 {
 	// This exdents because it's a hack:
-	struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };
+	struct structGuiDrawingArea_ResizeEvent event { my drawingArea, 0 };
 	event. width  = GuiControl_getWidth  (my drawingArea);
 	event. height = GuiControl_getHeight (my drawingArea);
 	gui_drawingarea_cb_resize (me.peek(), & event);
 }
-		//struct structGuiDrawingAreaResizeEvent event = { 0 };
+		//struct structGuiDrawingArea_ResizeEvent event { 0 };
 		//event.widget = my drawingArea;
 		//gui_drawingarea_cb_resize (me, & event);
 		updateWidgets (me.peek());

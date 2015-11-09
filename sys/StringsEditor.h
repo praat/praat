@@ -36,7 +36,7 @@ Thing_define (StringsEditor, Editor) {
 		override;
 };
 
-StringsEditor StringsEditor_create (const char32 *title, Strings data);
+autoStringsEditor StringsEditor_create (const char32 *title, Strings data);
 
 /* End of file StringsEditor.h */
 #endif

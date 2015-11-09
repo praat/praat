@@ -62,7 +62,7 @@ static int _GuiRadioButton_getPosition (GuiRadioButton me) {
 		if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget))) {
 			trace (U"on");
 			if (my d_valueChangedCallback && ! my d_blockValueChangedCallbacks) {
-				struct structGuiRadioButtonEvent event = { me };
+				struct structGuiRadioButtonEvent event { me };
 				event. position = _GuiRadioButton_getPosition (me);
 				my d_valueChangedCallback (my d_valueChangedBoss, & event);
 			}
@@ -100,7 +100,7 @@ static int _GuiRadioButton_getPosition (GuiRadioButton me) {
 		}
 		if (my d_valueChangedCallback) {
 			Melder_assert (! my d_blockValueChangedCallbacks);
-			struct structGuiRadioButtonEvent event = { me };
+			struct structGuiRadioButtonEvent event { me };
 			event. position = _GuiRadioButton_getPosition (me);
 			my d_valueChangedCallback (my d_valueChangedBoss, & event);
 		}
@@ -125,7 +125,7 @@ static int _GuiRadioButton_getPosition (GuiRadioButton me) {
 			Button_SetCheck (sibling -> d_widget -> window, BST_UNCHECKED);
 		}
 		if (my d_valueChangedCallback) {
-			struct structGuiRadioButtonEvent event = { me };
+			struct structGuiRadioButtonEvent event { me };
 			event. position = _GuiRadioButton_getPosition (me);
 			my d_valueChangedCallback (my d_valueChangedBoss, & event);
 		}
@@ -152,7 +152,7 @@ static int _GuiRadioButton_getPosition (GuiRadioButton me) {
 				SetControlValue (sibling -> d_widget -> nat.control.handle, 0);
 			}
 			if (my d_valueChangedCallback != nullptr) {
-				struct structGuiRadioButtonEvent event = { me };
+				struct structGuiRadioButtonEvent event { me };
 				event. position = _GuiRadioButton_getPosition (me);
 				my d_valueChangedCallback (my d_valueChangedBoss, & event);
 			}

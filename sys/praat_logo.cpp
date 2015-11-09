@@ -61,8 +61,8 @@ void praat_setLogo (double width_mm, double height_mm, void (*draw) (Graphics g)
 	theLogo.draw = draw;
 }
 
-static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
-	if (theLogo.graphics == NULL)
+static void gui_drawingarea_cb_expose (Thing /* me */, GuiDrawingArea_ExposeEvent event) {
+	if (! theLogo.graphics)
 		theLogo.graphics = Graphics_create_xmdrawingarea (theLogo.drawingArea);
 	#if gtk
 		#if ALLOW_GDK_DRAWING
@@ -75,17 +75,14 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 		theLogo.draw (theLogo.graphics);
 		cairo_destroy ((cairo_t *) Graphics_x_getCR (theLogo.graphics));
 	#elif motif || cocoa
-		(void) void_me;
 		(void) event;
-		if (theLogo.graphics == NULL)
+		if (! theLogo.graphics)
 			theLogo.graphics = Graphics_create_xmdrawingarea (theLogo.drawingArea);
 		theLogo.draw (theLogo.graphics);
 	#endif
 }
 
-static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
-	(void) void_me;
-	(void) event;
+static void gui_drawingarea_cb_click (Thing /* me */, GuiDrawingArea_ClickEvent /* event */) {
  	GuiThing_hide (theLogo.form);
 }
 
