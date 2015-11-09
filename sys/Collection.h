@@ -97,6 +97,8 @@ void Collection_dontOwnItems (Collection me);
 */
 
 void Collection_addItem (Collection me, Thing item);
+void Collection_addItem_ref (Collection me, Thing item);
+void Collection_addItem_move (Collection me, autoThing item);
 /*
 	Function:
 		add the 'item' to the collection.

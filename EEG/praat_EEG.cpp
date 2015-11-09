@@ -781,14 +781,13 @@ END2 }
 
 /***** file recognizers *****/
 
-static Any bdfFileRecognizer (int nread, const char *header, MelderFile file) {
-	(void) header;
+static Any bdfFileRecognizer (int nread, const char * /* header */, MelderFile file) {
 	const char32 *fileName = MelderFile_name (file);
 	bool isBdfFile = Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".bdf") ||
 	                 Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".BDF");
 	bool isEdfFile = Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".edf") ||
 	                 Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".EDF");
-	if (nread < 512 || (! isBdfFile && ! isEdfFile)) return NULL;
+	if (nread < 512 || (! isBdfFile && ! isEdfFile)) return nullptr;
 	return EEG_readFromBdfFile (file).transfer();
 }
 
@@ -799,7 +798,7 @@ void praat_TimeTier_query_init (ClassInfo klas);   // Query buttons for time-bas
 void praat_EEG_init ();
 void praat_EEG_init () {
 
-	Thing_recognizeClassesByName (classEEG, classERPTier, classERP, NULL);
+	Thing_recognizeClassesByName (classEEG, classERPTier, classERP, nullptr);
 
 	Data_recognizeFileType (bdfFileRecognizer);
 

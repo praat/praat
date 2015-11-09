@@ -34,6 +34,7 @@
 	#include <sys/types.h>   // for off_t
 #endif
 #include <stdbool.h>
+#include <functional>
 /*
  * The following two lines are for obsolete (i.e. C99) versions of stdint.h
  */
@@ -1539,6 +1540,37 @@ public:
 struct autoMelderAsynchronous {
 	autoMelderAsynchronous () { Melder_asynchronous = true; }
 	~autoMelderAsynchronous () { Melder_asynchronous = false; }
+};
+
+#if defined (macintosh) && useCarbon
+	#define Melder_ENABLE_IF_ISA(A,B)
+#else
+	#define Melder_ENABLE_IF_ISA(A,B)  , class = typename std::enable_if<std::is_base_of<B,A>::value>::type
+#endif
+
+template <typename Ret, typename T, typename... Args>
+class MelderCallback {
+	public:
+		typedef Ret* (*FunctionType) (T*, Args...);
+		MelderCallback (FunctionType f = nullptr) : _f (f) { }
+		template <typename T2  Melder_ENABLE_IF_ISA(T2,T), typename Ret2  Melder_ENABLE_IF_ISA(Ret2,Ret)>
+			MelderCallback (Ret2* (*f) (T2*, Args...)) : _f (reinterpret_cast<FunctionType> (f)) { };
+		Ret* operator () (T* data, Args ... args) { _f (data, args...); }
+		explicit operator bool () const { return !! _f; }
+	private:
+		FunctionType _f;
+};
+template <typename T, typename... Args>
+class MelderCallback <void, T, Args...> {   // specialization
+	public:
+		typedef void (*FunctionType) (T*, Args...);
+		MelderCallback (FunctionType f = nullptr) : _f (f) { }
+		template <typename T2  Melder_ENABLE_IF_ISA(T2,T)>
+			MelderCallback (void (*f) (T2*, Args...)) : _f (reinterpret_cast<FunctionType> (f)) { };
+		void operator () (T* data, Args ... args) { _f (data, args...); }
+		explicit operator bool () const { return !! _f; }
+	private:
+		FunctionType _f;
 };
 
 /* End of file melder.h */

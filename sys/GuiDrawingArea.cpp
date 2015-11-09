@@ -51,7 +51,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		// first place?? Additionally this causes even more flickering
 		//gdk_window_clear_area ((GTK_WIDGET (widget)) -> window, expose->area.x, expose->area.y, expose->area.width, expose->area.height);
 		if (my d_exposeCallback) {
-			struct structGuiDrawingAreaExposeEvent event = { me, 0 };
+			struct structGuiDrawingArea_ExposeEvent event { me, 0 };
 			event. x = expose -> area. x;
 			event. y = expose -> area. y;
 			event. width = expose -> area. width;
@@ -80,7 +80,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		iam (GuiDrawingArea);
 		if (e -> type != GDK_BUTTON_PRESS) return false;
 		if (my d_clickCallback) {
-			struct structGuiDrawingAreaClickEvent event = { me, 0 };
+			struct structGuiDrawingArea_ClickEvent event { me, 0 };
 			event. button = ((GdkEventButton *) e) -> button;
 			event. x = ((GdkEventButton *) e) -> x;
 			event. y = ((GdkEventButton *) e) -> y;
@@ -98,7 +98,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		iam (GuiDrawingArea);
 		trace (U"begin");
 		if (my d_keyCallback && gevent -> type == GDK_KEY_PRESS) {
-			struct structGuiDrawingAreaKeyEvent event = { me, 0 };
+			struct structGuiDrawingArea_KeyEvent event { me, 0 };
 			GdkEventKey *gkeyEvent = (GdkEventKey *) gevent;
 			event. key = gkeyEvent -> keyval;
 			/*
@@ -128,7 +128,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	static gboolean _GuiGtkDrawingArea_resizeCallback (GuiObject widget, GtkAllocation *allocation, gpointer void_me) {
 		iam (GuiDrawingArea);
 		if (my d_resizeCallback) {
-			struct structGuiDrawingAreaResizeEvent event = { me, 0 };
+			struct structGuiDrawingArea_ResizeEvent event { me, 0 };
 			trace (U"drawingArea resized to ", allocation -> width, U" x ", allocation -> height, U".");
 			event. width = allocation -> width;
 			event. height = allocation -> height;
@@ -179,7 +179,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	- (void) resizeCallback: (NSRect) rect {
 		GuiDrawingArea me = (GuiDrawingArea) d_userData;
 		if (me && my d_resizeCallback) {
-			struct structGuiDrawingAreaResizeEvent event = { me, 0 };
+			struct structGuiDrawingArea_ResizeEvent event { me, 0 };
 			event. width = rect. size. width;
 			event. height = rect. size. height;
 			try {
@@ -198,7 +198,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			_inited = YES;
 		}
 		if (my d_exposeCallback) {
-			struct structGuiDrawingAreaExposeEvent event = { me };
+			struct structGuiDrawingArea_ExposeEvent event { me };
 			try {
 				my d_exposeCallback (my d_exposeBoss, & event);
 			} catch (MelderError) {
@@ -223,7 +223,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		 * the key focus from the Search field, a situation that cannot hurt).
 		 */
 		GuiDrawingArea me = (GuiDrawingArea) d_userData;
-		return my d_keyCallback != nullptr;
+		return !! my d_keyCallback;
 	}
 	- (void) mouseEntered: (NSEvent *) nsEvent {
 		(void) nsEvent;
@@ -237,7 +237,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	 //   [self becomeFirstResponder];
 		GuiDrawingArea me = (GuiDrawingArea) d_userData;
 		if (my d_clickCallback) {
-			struct structGuiDrawingAreaClickEvent event = { me, 0 };
+			struct structGuiDrawingArea_ClickEvent event { me, 0 };
 			NSPoint local_point = [self   convertPoint: [nsEvent locationInWindow]   fromView: nil];
 			event. x = local_point. x;
 			//event. y = [self frame]. size. height - local_point. y;
@@ -289,7 +289,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	- (void) keyDown: (NSEvent *) nsEvent {
 		GuiDrawingArea me = (GuiDrawingArea) d_userData;
 		if (my d_keyCallback) {
-			struct structGuiDrawingAreaKeyEvent event = { me, 0 };
+			struct structGuiDrawingArea_KeyEvent event { me, 0 };
 			event. key = [[nsEvent charactersIgnoringModifiers]   characterAtIndex: 0];
 			if (event. key == NSLeftArrowFunctionKey)  event. key = 0x2190;
 			if (event. key == NSRightArrowFunctionKey) event. key = 0x2192;
@@ -319,7 +319,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		PAINTSTRUCT paintStruct;
 		BeginPaint (widget -> window, & paintStruct);
 		if (my d_exposeCallback) {
-			struct structGuiDrawingAreaExposeEvent event = { me };
+			struct structGuiDrawingArea_ExposeEvent event { me };
 			try {
 				my d_exposeCallback (my d_exposeBoss, & event);
 			} catch (MelderError) {
@@ -331,7 +331,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	void _GuiWinDrawingArea_handleClick (GuiObject widget, int x, int y) {
 		iam_drawingarea;
 		if (my d_clickCallback) {
-			struct structGuiDrawingAreaClickEvent event = { me, 0 };
+			struct structGuiDrawingArea_ClickEvent event { me, 0 };
 			event. x = x;
 			event. y = y;
 			event. shiftKeyPressed = GetKeyState (VK_SHIFT) < 0;
@@ -347,7 +347,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	void _GuiWinDrawingArea_handleKey (GuiObject widget, TCHAR kar) {   // TODO: event?
 		iam_drawingarea;
 		if (my d_keyCallback) {
-			struct structGuiDrawingAreaKeyEvent event = { me, 0 };
+			struct structGuiDrawingArea_KeyEvent event { me, 0 };
 			event. key = kar;
 			if (event. key == VK_RETURN) event. key = 10;
 			if (event. key == VK_LEFT)  event. key = 0x2190;
@@ -367,7 +367,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	void _GuiWinDrawingArea_shellResize (GuiObject widget) {
 		iam_drawingarea;
 		if (my d_resizeCallback) {
-			struct structGuiDrawingAreaResizeEvent event = { me };
+			struct structGuiDrawingArea_ResizeEvent event { me };
 			event. width = widget -> width;
 			event. height = widget -> height;
 			try {
@@ -385,7 +385,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	void _GuiMacDrawingArea_update (GuiObject widget) {
 		iam_drawingarea;
 		if (my d_exposeCallback) {
-			struct structGuiDrawingAreaExposeEvent event = { me };
+			struct structGuiDrawingArea_ExposeEvent event { me };
 			_GuiMac_clipOnParent (widget);
 			try {
 				my d_exposeCallback (my d_exposeBoss, & event);
@@ -398,7 +398,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	void _GuiMacDrawingArea_handleClick (GuiObject widget, EventRecord *macEvent) {
 		iam_drawingarea;
 		if (my d_clickCallback) {
-			struct structGuiDrawingAreaClickEvent event = { me, 0 };
+			struct structGuiDrawingArea_ClickEvent event { me, 0 };
 			event. x = macEvent -> where. h;
 			event. y = macEvent -> where. v;
 			event. shiftKeyPressed = (macEvent -> modifiers & shiftKey) != 0;
@@ -415,7 +415,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	bool _GuiMacDrawingArea_tryToHandleKey (GuiObject widget, EventRecord *macEvent) {
 		iam_drawingarea;
 		if (my d_keyCallback) {
-			struct structGuiDrawingAreaKeyEvent event = { me, 0 };
+			struct structGuiDrawingArea_KeyEvent event { me, 0 };
 			event. key = macEvent -> message & charCodeMask;
 			//if (event. key == 9) event. key = 0x2324;   // tab
 			if (event. key == 13) event. key = 10;   // return -> newline
@@ -488,10 +488,10 @@ static gboolean _guiGtkDrawingArea_swipeCallback (GuiObject w, GdkEventScroll *e
 #endif
 
 GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int top, int bottom,
-	void (*exposeCallback) (void *boss, GuiDrawingAreaExposeEvent event),
-	void (*clickCallback)  (void *boss, GuiDrawingAreaClickEvent  event),
-	void (*keyCallback)    (void *boss, GuiDrawingAreaKeyEvent    event),
-	void (*resizeCallback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss,
+	GuiDrawingArea_ExposeCallback exposeCallback,
+	GuiDrawingArea_ClickCallback clickCallback,
+	GuiDrawingArea_KeyCallback keyCallback,
+	GuiDrawingArea_ResizeCallback resizeCallback, Thing boss,
 	uint32 /* flags */)
 {
 	GuiDrawingArea me = Thing_new (GuiDrawingArea);
@@ -553,10 +553,10 @@ GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int t
 }
 
 GuiDrawingArea GuiDrawingArea_createShown (GuiForm parent, int left, int right, int top, int bottom,
-	void (*exposeCallback) (void *boss, GuiDrawingAreaExposeEvent event),
-	void (*clickCallback) (void *boss, GuiDrawingAreaClickEvent event),
-	void (*keyCallback) (void *boss, GuiDrawingAreaKeyEvent event),
-	void (*resizeCallback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss,
+	GuiDrawingArea_ExposeCallback exposeCallback,
+	GuiDrawingArea_ClickCallback clickCallback,
+	GuiDrawingArea_KeyCallback keyCallback,
+	GuiDrawingArea_ResizeCallback resizeCallback, Thing boss,
 	uint32 flags)
 {
 	GuiDrawingArea me = GuiDrawingArea_create (parent, left, right, top, bottom, exposeCallback, clickCallback, keyCallback, resizeCallback, boss, flags);
@@ -565,10 +565,10 @@ GuiDrawingArea GuiDrawingArea_createShown (GuiForm parent, int left, int right, 
 }
 
 GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int height,
-	void (*exposeCallback) (void *boss, GuiDrawingAreaExposeEvent event),
-	void (*clickCallback) (void *boss, GuiDrawingAreaClickEvent event),
-	void (*keyCallback) (void *boss, GuiDrawingAreaKeyEvent event),
-	void (*resizeCallback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss,
+	GuiDrawingArea_ExposeCallback exposeCallback,
+	GuiDrawingArea_ClickCallback clickCallback,
+	GuiDrawingArea_KeyCallback keyCallback,
+	GuiDrawingArea_ResizeCallback resizeCallback, Thing boss,
 	uint32 /* flags */)
 {
 	GuiDrawingArea me = Thing_new (GuiDrawingArea);
@@ -625,10 +625,10 @@ GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int h
 }
 
 GuiDrawingArea GuiDrawingArea_createShown (GuiScrolledWindow parent, int width, int height,
-	void (*exposeCallback) (void *boss, GuiDrawingAreaExposeEvent event),
-	void (*clickCallback) (void *boss, GuiDrawingAreaClickEvent event),
-	void (*keyCallback) (void *boss, GuiDrawingAreaKeyEvent event),
-	void (*resizeCallback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss,
+	GuiDrawingArea_ExposeCallback exposeCallback,
+	GuiDrawingArea_ClickCallback clickCallback,
+	GuiDrawingArea_KeyCallback keyCallback,
+	GuiDrawingArea_ResizeCallback resizeCallback, Thing boss,
 	uint32 flags)
 {
 	GuiDrawingArea me = GuiDrawingArea_create (parent, width, height, exposeCallback, clickCallback, keyCallback, resizeCallback, boss, flags);
@@ -644,17 +644,17 @@ void GuiDrawingArea_setSwipable (GuiDrawingArea me, GuiScrollBar horizontalScrol
 	#endif
 }
 
-void GuiDrawingArea_setExposeCallback (GuiDrawingArea me, void (*callback) (void *boss, GuiDrawingAreaExposeEvent event), void *boss) {
+void GuiDrawingArea_setExposeCallback (GuiDrawingArea me, GuiDrawingArea_ExposeCallback callback, Thing boss) {
 	my d_exposeCallback = callback;
 	my d_exposeBoss = boss;
 }
 
-void GuiDrawingArea_setClickCallback (GuiDrawingArea me, void (*callback) (void *boss, GuiDrawingAreaClickEvent event), void *boss) {
+void GuiDrawingArea_setClickCallback (GuiDrawingArea me, GuiDrawingArea_ClickCallback callback, Thing boss) {
 	my d_clickCallback = callback;
 	my d_clickBoss = boss;
 }
 
-void GuiDrawingArea_setResizeCallback (GuiDrawingArea me, void (*callback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss) {
+void GuiDrawingArea_setResizeCallback (GuiDrawingArea me, GuiDrawingArea_ResizeCallback callback, Thing boss) {
 	my d_resizeCallback = callback;
 	my d_resizeBoss = boss;
 }

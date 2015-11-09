@@ -411,7 +411,7 @@ END2 }
 
 static void readFromFile (MelderFile file) {
 	autoDaata object = (Daata) Data_readFromFile (file);
-	if (object.peek() == NULL) return;
+	if (! object.peek()) return;
 	if (Thing_isa (object.peek(), classManPages) && ! Melder_batch) {
 		ManPages pages = (ManPages) object.peek();
 		ManPage firstPage = static_cast<ManPage> (pages -> pages -> item [1]);
@@ -422,7 +422,7 @@ static void readFromFile (MelderFile file) {
 		return;
 	}
 	if (Thing_isa (object.peek(), classScript) && ! Melder_batch) {
-		ScriptEditor_createFromScript (NULL, (Script) object.peek());
+		ScriptEditor_createFromScript (nullptr, (Script) object.peek());
 		return;
 	}
 	praat_newWithFile (object.transfer(), file, MelderFile_name (file));

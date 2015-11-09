@@ -180,24 +180,20 @@ static void gui_text_cb_change (I, GuiTextEvent event) {
 	Editor_broadcastDataChanged (me);
 }
 
-static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
-	iam (TableEditor);
-	(void) event;
-	if (my graphics == NULL) return;
+static void gui_drawingarea_cb_expose (TableEditor me, GuiDrawingArea_ExposeEvent /* event */) {
+	if (! my graphics) return;
 	my v_draw ();
 }
 
-static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
-	iam (TableEditor);
-	if (my graphics == NULL) return;
+static void gui_drawingarea_cb_click (TableEditor me, GuiDrawingArea_ClickEvent event) {
+	if (! my graphics) return;
 	double xWC, yWC;
 	Graphics_DCtoWC (my graphics, event -> x, event -> y, & xWC, & yWC);
 	// TODO: implement selection
 }
 
-static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
-	iam (TableEditor);
-	if (my graphics == NULL) return;
+static void gui_drawingarea_cb_resize (TableEditor me, GuiDrawingArea_ResizeEvent /* event */) {
+	if (! my graphics) return;
 	Graphics_updateWs (my graphics);
 }
 

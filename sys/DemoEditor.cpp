@@ -54,9 +54,7 @@ void structDemoEditor :: v_createMenus () {
 	DemoEditor_Parent :: v_createMenus ();
 }
 
-static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
-	iam (DemoEditor);
-	(void) event;
+static void gui_drawingarea_cb_expose (DemoEditor me, GuiDrawingArea_ExposeEvent /* event */) {
 	if (! my graphics) return;   // could be the case in the very beginning
 	/*
 	 * Erase the background. Don't record this erasure!
@@ -70,8 +68,7 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 	Graphics_play (my graphics, my graphics);
 }
 
-static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
-	iam (DemoEditor);
+static void gui_drawingarea_cb_click (DemoEditor me, GuiDrawingArea_ClickEvent event) {
 	if (! my graphics) return;   // could be the case in the very beginning
 	my clicked = true;
 	my keyPressed = false;
@@ -84,8 +81,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	my extraControlKeyPressed = event -> extraControlKeyPressed;
 }
 
-static void gui_drawingarea_cb_key (I, GuiDrawingAreaKeyEvent event) {
-	iam (DemoEditor);
+static void gui_drawingarea_cb_key (DemoEditor me, GuiDrawingArea_KeyEvent event) {
 	if (! my graphics) return;   // could be the case in the very beginning
 	my clicked = false;
 	my keyPressed = true;
@@ -99,8 +95,7 @@ static void gui_drawingarea_cb_key (I, GuiDrawingAreaKeyEvent event) {
 	my extraControlKeyPressed = event -> extraControlKeyPressed;
 }
 
-static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
-	iam (DemoEditor);
+static void gui_drawingarea_cb_resize (DemoEditor me, GuiDrawingArea_ResizeEvent event) {
 	if (! my graphics) return;   // could be the case in the very beginning
 	trace (event -> width, U" ", event -> height);
 	Graphics_setWsViewport (my graphics, 0, event -> width, 0, event -> height);

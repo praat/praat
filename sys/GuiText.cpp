@@ -189,7 +189,7 @@ void _GuiText_setTheTextFocus (GuiObject widget) {
 void _GuiText_handleValueChanged (GuiObject widget) {
 	iam_text;
 	if (my d_changeCallback) {
-		struct structGuiTextEvent event = { me };
+		struct structGuiTextEvent event { me };
 		my d_changeCallback (my d_changeBoss, & event);
 	}
 }
@@ -786,7 +786,7 @@ void _GuiText_exit () {
 		trace (U"begin");
 		Melder_assert (me);
 		if (my d_changeCallback) {
-			struct structGuiTextEvent event = { me };
+			struct structGuiTextEvent event { me };
 			my d_changeCallback (my d_changeBoss, & event);
 		}
 	}
@@ -832,7 +832,7 @@ void _GuiText_exit () {
 		(void) notification;
 		GuiText me = d_userData;
 		if (me && my d_changeCallback) {
-			struct structGuiTextEvent event = { me };
+			struct structGuiTextEvent event { me };
 			my d_changeCallback (my d_changeBoss, & event);
 		}
 	}
@@ -865,7 +865,7 @@ void _GuiText_exit () {
 		trace (U"changing text to: ", Melder_peek8to32 ([replacementString UTF8String]));
 		GuiText me = d_userData;
 		if (me && my d_changeCallback) {
-			struct structGuiTextEvent event = { me };
+			struct structGuiTextEvent event { me };
 			my d_changeCallback (my d_changeBoss, & event);
 		}
 		return YES;
