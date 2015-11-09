@@ -86,8 +86,7 @@ static void gui_drawingarea_cb_click (Thing /* me */, GuiDrawingArea_ClickEvent 
  	GuiThing_hide (theLogo.form);
 }
 
-static void gui_cb_goAway (I) {
-	(void) void_me;
+static void gui_cb_goAway (Thing /* boss */) {
  	GuiThing_hide (theLogo.form);
 }
 
@@ -103,26 +102,26 @@ void praat_showLogo (bool autoPopDown) {
 		gtk_about_dialog_set_license (GTK_ABOUT_DIALOG (dialog), "GPL");
 		gtk_about_dialog_set_website (GTK_ABOUT_DIALOG (dialog), "http://www.praat.org");
 		//gtk_about_dialog_set_authors (GTK_ABOUT_DIALOG (dialog), authors);
-		g_signal_connect (GTK_DIALOG (dialog), "response", G_CALLBACK (gtk_widget_destroy), NULL);
+		g_signal_connect (GTK_DIALOG (dialog), "response", G_CALLBACK (gtk_widget_destroy), nullptr);
 
 		gtk_dialog_run (GTK_DIALOG (dialog));
 
 	#else
 		if (theCurrentPraatApplication -> batch || ! theLogo.draw) return;
 		if (! theLogo.dia) {
-			int width  = theLogo.width_mm  / 25.4 * Gui_getResolution (NULL);
-			int height = theLogo.height_mm / 25.4 * Gui_getResolution (NULL);
+			int width  = theLogo.width_mm  / 25.4 * Gui_getResolution (nullptr);
+			int height = theLogo.height_mm / 25.4 * Gui_getResolution (nullptr);
 			theLogo.dia = GuiDialog_create (theCurrentPraatApplication -> topShell, 100, 100, width, height,
-				U"About", gui_cb_goAway, NULL, 0);
+				U"About", gui_cb_goAway, nullptr, 0);
 			theLogo.form = theLogo.dia;
 			theLogo.drawingArea = GuiDrawingArea_createShown (theLogo.form, 0, width, 0, height,
-				gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, NULL, NULL, 0);
+				gui_drawingarea_cb_expose, gui_drawingarea_cb_click, nullptr, nullptr, nullptr, 0);
 		}
 		GuiThing_show (theLogo.form);
 		GuiThing_show (theLogo.dia);
 		#if motif
 			if (autoPopDown)
-				GuiAddTimeOut (2000, logo_timeOut, (XtPointer) NULL);
+				GuiAddTimeOut (2000, logo_timeOut, (XtPointer) nullptr);
 		#endif
 	#endif
 }

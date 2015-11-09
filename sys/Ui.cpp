@@ -404,8 +404,7 @@ static void gui_button_cb_revert (I, GuiButtonEvent /* event */) {
 		UiField_setDefault (my field [ifield]);
 }
 
-static void gui_dialog_cb_close (I) {
-	iam (UiForm);
+static void gui_dialog_cb_close (UiForm me) {
 	if (my cancelCallback) my cancelCallback (me, my buttonClosure);
 	GuiThing_hide (my d_dialogForm);
 	if (my destroyWhenUnmanaged) forget (me);

@@ -260,22 +260,19 @@ static bool waitWhileProgress (double progress, const char32 *message, GuiDialog
 	return true;
 }
 
+static GuiButton theProgressCancelButton = nullptr;
+
 #if gtk || macintosh
-static void progress_dia_close (void *cancelButton) {
+static void progress_dia_close (Thing /* boss */) {
 	theProgressCancelled = true;
 	#if gtk
-		g_object_set_data (G_OBJECT ((* (GuiButton *) cancelButton) -> d_widget), "pressed", (gpointer) 1);
-	#else
-		(void) cancelButton;
+		g_object_set_data (G_OBJECT (theProgressCancelButton -> d_widget), "pressed", (gpointer) 1);
 	#endif
 }
-static void progress_cancel_btn_press (void *cancelButton, GuiButtonEvent event) {
-	(void) event;
+static void progress_cancel_btn_press (void*, GuiButtonEvent /* event */) {
 	theProgressCancelled = true;
 	#if gtk
-		g_object_set_data (G_OBJECT ((* (GuiButton *) cancelButton) -> d_widget), "pressed", (gpointer) 1);
-	#else
-		(void) cancelButton;
+		g_object_set_data (G_OBJECT (theProgressCancelButton -> d_widget), "pressed", (gpointer) 1);
 	#endif
 }
 #endif
@@ -284,7 +281,7 @@ static void _Melder_dia_init (GuiDialog *dia, GuiProgressBar *scale, GuiLabel *l
 	trace (U"creating the dialog");
 	*dia = GuiDialog_create (Melder_topShell, 200, 100, 400, hasMonitor ? 430 : 200, U"Work in progress",
 		#if gtk || macintosh
-			progress_dia_close, cancelButton,
+			progress_dia_close, nullptr,
 		#else
 			nullptr, nullptr,
 		#endif
@@ -301,7 +298,7 @@ static void _Melder_dia_init (GuiDialog *dia, GuiProgressBar *scale, GuiLabel *l
 	*cancelButton = GuiButton_createShown (*dia, 0, 400, 170, 170 + Gui_PUSHBUTTON_HEIGHT,
 		U"Interrupt",
 		#if gtk
-			progress_cancel_btn_press, cancelButton,
+			progress_cancel_btn_press, nullptr,
 		#elif macintosh
 			progress_cancel_btn_press, nullptr,
 		#else
@@ -316,15 +313,14 @@ static void _Melder_progress (double progress, const char32 *message) {
 		static clock_t lastTime;
 		static GuiDialog dia = nullptr;
 		static GuiProgressBar scale = nullptr;
-		static GuiButton cancelButton = nullptr;
 		static GuiLabel label1 = nullptr, label2 = nullptr;
 		clock_t now = clock ();
 		if (progress <= 0.0 || progress >= 1.0 ||
 			now - lastTime > CLOCKS_PER_SEC / 4)   // this time step must be much longer than the null-event waiting time
 		{
 			if (! dia)
-				_Melder_dia_init (& dia, & scale, & label1, & label2, & cancelButton, false);
-			if (! waitWhileProgress (progress, message, dia, scale, label1, label2, cancelButton))
+				_Melder_dia_init (& dia, & scale, & label1, & label2, & theProgressCancelButton, false);
+			if (! waitWhileProgress (progress, message, dia, scale, label1, label2, theProgressCancelButton))
 				Melder_throw (U"Interrupted!");
 			lastTime = now;
 		}

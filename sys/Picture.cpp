@@ -26,15 +26,7 @@
 	#include "GraphicsP.h"
 #endif
 
-struct structPicture : structThing {
-	GuiDrawingArea drawingArea;
-	Graphics graphics, selectionGraphics;
-	bool sensitive;
-	double selx1, selx2, sely1, sely2;   // selection in NDC co-ordinates
-	void (*selectionChangedCallback) (struct structPicture *, void *, double, double, double, double);
-	void *selectionChangedClosure;
-	bool backgrounding, mouseSelectsInnerViewport;
-};
+Thing_implement (Picture, Thing, 0);
 
 static void drawMarkers (Picture me)
 /*
@@ -50,8 +42,6 @@ static void drawMarkers (Picture me)
  */
 #define YELLOW_GRID 3
 {
-	int i;
-
 	/* Fill the entire canvas with GC's background. */
 
 	Graphics_setColour (my selectionGraphics, Graphics_WHITE);
@@ -60,7 +50,7 @@ static void drawMarkers (Picture me)
 	/* Draw yellow grid lines for coarse navigation. */
 
 	Graphics_setColour (my selectionGraphics, Graphics_YELLOW);
-	for (i = YELLOW_GRID; i < SIDE; i += YELLOW_GRID) {
+	for (int i = YELLOW_GRID; i < SIDE; i += YELLOW_GRID) {
 		Graphics_line (my selectionGraphics, 0, i, SIDE, i);
 		Graphics_line (my selectionGraphics, i, 0, i, SIDE);
 	}
@@ -68,26 +58,26 @@ static void drawMarkers (Picture me)
 	/* Draw red ticks and numbers for feedback on viewport measurement. */
 
 	Graphics_setColour (my selectionGraphics, Graphics_RED);
-	for (i = 1; i < SIDE; i ++) {
+	for (int i = 1; i < SIDE; i ++) {
 		double x = i;
 		Graphics_setTextAlignment (my selectionGraphics, Graphics_CENTRE, Graphics_TOP);
 		Graphics_text (my selectionGraphics, x, SIDE, i);
 		Graphics_setTextAlignment (my selectionGraphics, Graphics_CENTRE, Graphics_BOTTOM);
 		Graphics_text (my selectionGraphics, x, 0, i);
 	}
-	for (i = 1; i < SQUARES ; i ++) {   /* Vertical ticks. */
+	for (int i = 1; i < SQUARES ; i ++) {   /* Vertical ticks. */
 		double x = 0.5 * i;
 		Graphics_line (my selectionGraphics, x, SIDE - 0.04, x, SIDE);
 		Graphics_line (my selectionGraphics, x, 0, x, 0.04);
 	}
-	for (i = 1; i < SIDE; i ++) {
+	for (int i = 1; i < SIDE; i ++) {
 		double y = SIDE - i;
 		Graphics_setTextAlignment (my selectionGraphics, Graphics_LEFT, Graphics_HALF);
 		Graphics_text (my selectionGraphics, 0.04, y, i);
 		Graphics_setTextAlignment (my selectionGraphics, Graphics_RIGHT, Graphics_HALF);
 		Graphics_text (my selectionGraphics, SIDE - 0.03, y, i);
 	}
-	for (i = 1; i < SQUARES; i ++) {   /* Horizontal ticks. */
+	for (int i = 1; i < SQUARES; i ++) {   /* Horizontal ticks. */
 		double y = SIDE - 0.5 * i;
 		Graphics_line (my selectionGraphics, SIDE - 0.04, y, SIDE, y);
 		Graphics_line (my selectionGraphics, 0, y, 0.04, y);
@@ -97,10 +87,9 @@ static void drawMarkers (Picture me)
 }
 
 static void drawSelection (Picture me, int high) {
-	double dx, dy;
 	if (my backgrounding) return;
-	dy = 2.8 * Graphics_inqFontSize (my graphics) / 72.0;
-	dx = 1.5 * dy;
+	double dy = 2.8 * Graphics_inqFontSize (my graphics) / 72.0;
+	double dx = 1.5 * dy;
 	if (dy > 0.4 * (my sely2 - my sely1)) dy = 0.4 * (my sely2 - my sely1);
 	if (dx > 0.4 * (my selx2 - my selx1)) dx = 0.4 * (my selx2 - my selx1);
 	if (high) {
@@ -198,10 +187,9 @@ static void gui_drawingarea_cb_click (Picture me, GuiDrawingArea_ClickEvent even
 	}
 }
 
-Picture Picture_create (GuiDrawingArea drawingArea, bool sensitive) {
-	Picture me = nullptr;
+autoPicture Picture_create (GuiDrawingArea drawingArea, bool sensitive) {
 	try {
-		me = Melder_calloc (struct structPicture, 1);
+		autoPicture me = Thing_new (Picture);
 		my drawingArea = drawingArea;
 		/*
 		 * The initial viewport is a rectangle 6 inches wide and 4 inches high.
@@ -214,7 +202,7 @@ Picture Picture_create (GuiDrawingArea drawingArea, bool sensitive) {
 		if (drawingArea) {
 			/* The drawing area must have been realized; see manual at XtWindow. */
 			my graphics = Graphics_create_xmdrawingarea (my drawingArea);
-			GuiDrawingArea_setExposeCallback (my drawingArea, gui_drawingarea_cb_expose, me);
+			GuiDrawingArea_setExposeCallback (my drawingArea, gui_drawingarea_cb_expose, me.get());
 		} else {
 			/*
 			 * Create a dummy Graphics.
@@ -226,12 +214,11 @@ Picture Picture_create (GuiDrawingArea drawingArea, bool sensitive) {
 		if (my sensitive) {
 			my selectionGraphics = Graphics_create_xmdrawingarea (my drawingArea);
 			Graphics_setWindow (my selectionGraphics, 0, 12, 0, 12);
-			GuiDrawingArea_setClickCallback (my drawingArea, gui_drawingarea_cb_click, me);
+			GuiDrawingArea_setClickCallback (my drawingArea, gui_drawingarea_cb_click, me.get());
 		}
 		Graphics_startRecording (my graphics);
 		return me;
 	} catch (MelderError) {
-		if (me) Melder_free (me);
 		Melder_throw (U"Picture not created.");
 	}
 }
@@ -248,14 +235,11 @@ void Picture_setMouseSelectsInnerViewport (Picture me, int mouseSelectsInnerView
 	my mouseSelectsInnerViewport = mouseSelectsInnerViewport;
 }
 
-void Picture_remove (Picture *pme) {
-	Picture me = *pme;
-	if (! me) return;
-	Picture_erase (me);
-	forget (my graphics);
-	if (my sensitive) forget (my selectionGraphics);
-	Melder_free (me);
-	*pme = nullptr;
+void structPicture :: v_destroy () {
+	Picture_erase (this);
+	forget (our graphics);
+	if (our sensitive) forget (our selectionGraphics);
+	Picture_Parent :: v_destroy ();
 }
 
 Graphics Picture_getGraphics (Picture me) { return my graphics; }
@@ -394,7 +378,7 @@ static HENHMETAFILE copyToMetafile (Picture me) {
 	autoGraphics pictGraphics = Graphics_create_screen ((void *) dc, nullptr, resolution);
 	Graphics_setWsViewport (pictGraphics.peek(), 0, WIN_WIDTH * resolution, 0, WIN_HEIGHT * resolution);
 	Graphics_setWsWindow (pictGraphics.peek(), 0.0, WIN_WIDTH, 12.0 - WIN_HEIGHT, 12.0);
-	Graphics_play ((Graphics) my graphics, pictGraphics.peek());
+	Graphics_play (my graphics, pictGraphics.peek());
 	HENHMETAFILE metafile = CloseEnhMetaFile (dc);
 	return metafile;
 }
@@ -433,7 +417,7 @@ void Picture_writeToEpsFile (Picture me, MelderFile file, bool includeFonts, boo
 		{// scope
 			autoGraphics ps = Graphics_create_epsfile (file, 600, thePrinter. spots,
 				my selx1, my selx2, my sely1, my sely2, includeFonts, useSilipaPS);
-			Graphics_play ((Graphics) my graphics, ps.peek());
+			Graphics_play (my graphics, ps.peek());
 		}
 	} catch (MelderError) {
 		Melder_throw (U"Picture not written to EPS file ", file);
@@ -443,7 +427,7 @@ void Picture_writeToEpsFile (Picture me, MelderFile file, bool includeFonts, boo
 void Picture_writeToPdfFile (Picture me, MelderFile file) {
 	try {
 		autoGraphics graphics = Graphics_create_pdffile (file, 300, my selx1, my selx2, my sely1, my sely2);
-		Graphics_play ((Graphics) my graphics, graphics.peek());
+		Graphics_play (my graphics, graphics.peek());
 	} catch (MelderError) {
 		Melder_throw (U"Picture not written to PDF file ", file, U".");
 	}
@@ -452,7 +436,7 @@ void Picture_writeToPdfFile (Picture me, MelderFile file) {
 void Picture_writeToPngFile_300 (Picture me, MelderFile file) {
 	try {
 		autoGraphics graphics = Graphics_create_pngfile (file, 300, my selx1, my selx2, my sely1, my sely2);
-		Graphics_play ((Graphics) my graphics, graphics.peek());
+		Graphics_play (my graphics, graphics.peek());
 	} catch (MelderError) {
 		Melder_throw (U"Picture not written to PNG file ", file, U".");
 	}
@@ -461,7 +445,7 @@ void Picture_writeToPngFile_300 (Picture me, MelderFile file) {
 void Picture_writeToPngFile_600 (Picture me, MelderFile file) {
 	try {
 		autoGraphics graphics = Graphics_create_pngfile (file, 600, my selx1, my selx2, my sely1, my sely2);
-		Graphics_play ((Graphics) my graphics, graphics.peek());
+		Graphics_play (my graphics, graphics.peek());
 	} catch (MelderError) {
 		Melder_throw (U"Picture not written to PNG file ", file, U".");
 	}
@@ -469,7 +453,7 @@ void Picture_writeToPngFile_600 (Picture me, MelderFile file) {
 
 static void print (I, Graphics printer) {
 	iam (Picture);
-	Graphics_play ((Graphics) my graphics, printer);
+	Graphics_play (my graphics, printer);
 }
 
 void Picture_print (Picture me) {

@@ -107,7 +107,7 @@ static void gui_button_cb_menu (I, GuiButtonEvent event) {
 	do_menu (void_me, event -> shiftKeyPressed | event -> commandKeyPressed | event -> optionKeyPressed | event -> extraControlKeyPressed);
 }
 
-static void gui_cb_menu (GUI_ARGS) {
+static void gui_cb_menu (I, GuiMenuItemEvent event) {
 	bool modified = event -> shiftKeyPressed || event -> commandKeyPressed || event -> optionKeyPressed || event -> extraControlKeyPressed;
 	do_menu (void_me, modified);
 }
@@ -423,7 +423,7 @@ int praat_doMenuCommand (const char32 *command, const char32 *arguments, Interpr
 	while (i <= theNumberOfCommands && (! theCommands [i]. executable || ! str32equ (theCommands [i]. title, command) ||
 		(! str32equ (theCommands [i]. window, U"Objects") && ! str32equ (theCommands [i]. window, U"Picture")))) i ++;
 	if (i > theNumberOfCommands) return 0;
-	theCommands [i]. callback (NULL, 0, NULL, arguments, interpreter, command, false, NULL);
+	theCommands [i]. callback (nullptr, 0, nullptr, arguments, interpreter, command, false, nullptr);
 	return 1;
 }
 
@@ -432,7 +432,7 @@ int praat_doMenuCommand (const char32 *command, int narg, Stackel args, Interpre
 	while (i <= theNumberOfCommands && (! theCommands [i]. executable || ! str32equ (theCommands [i]. title, command) ||
 		(! str32equ (theCommands [i]. window, U"Objects") && ! str32equ (theCommands [i]. window, U"Picture")))) i ++;
 	if (i > theNumberOfCommands) return 0;
-	theCommands [i]. callback (NULL, narg, args, NULL, interpreter, command, false, NULL);
+	theCommands [i]. callback (nullptr, narg, args, nullptr, interpreter, command, false, nullptr);
 	return 1;
 }
 
