@@ -352,6 +352,8 @@ void GuiControl_setSize (GuiControl me, int width, int height);
 Thing_define (GuiForm, GuiControl) {
 };
 
+typedef MelderCallback <void, structThing> GuiShell_GoAwayCallback;
+
 Thing_define (GuiShell, GuiForm) {
 	int d_width, d_height;
 	#if gtk
@@ -361,8 +363,8 @@ Thing_define (GuiShell, GuiForm) {
 	#elif motif
 		GuiObject d_xmShell;
 	#endif
-	void (*d_goAwayCallback) (void *boss);
-	void *d_goAwayBoss;
+	GuiShell_GoAwayCallback d_goAwayCallback;
+	Thing d_goAwayBoss;
 
 	void v_destroy ()
 		override;
@@ -448,7 +450,7 @@ Thing_define (GuiDialog, GuiShell) {
 GuiDialog GuiDialog_create (GuiWindow parent,
 	int x, int y, int width, int height,
 	const char32 *title,
-	void (*goAwayCallback) (void *goAwayBoss), void *goAwayBoss,
+	GuiShell_GoAwayCallback goAwayCallback, Thing goAwayBoss,
 	uint32 flags);
 
 /********** GuiDrawingArea **********/
@@ -637,9 +639,12 @@ typedef struct structGuiMenuItemEvent {
 	bool shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed;
 } *GuiMenuItemEvent;
 
+//typedef MelderCallback <void, void * /* boss */, GuiMenuItemEvent> GuiMenuItemCallback;
+typedef void (*GuiMenuItemCallback) (void * boss, GuiMenuItemEvent event);
+
 Thing_define (GuiMenuItem, GuiThing) {
 	GuiMenu d_menu;
-	void (*d_commandCallback) (void *boss, GuiMenuItemEvent event);
+	GuiMenuItemCallback d_callback;
 	void *d_boss;
 	#if gtk
 		bool d_callbackBlocked;
@@ -690,7 +695,7 @@ Thing_define (GuiMenuItem, GuiThing) {
 // or any ASCII character (preferably a letter or digit) between 32 and 126
 
 GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, uint32 flags,
-	void (*commandCallback) (void *boss, GuiMenuItemEvent event), void *boss);
+	GuiMenuItemCallback callback, void* boss);
 /* Flags is a combination of the above defines. */
 GuiMenuItem GuiMenu_addSeparator (GuiMenu menu);
 
@@ -912,7 +917,7 @@ Thing_define (GuiWindow, GuiShell) { public:
 /* GuiWindow creation flags: */
 #define GuiWindow_FULLSCREEN  1
 GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidth, int minimumHeight,
-	const char32 *title /* cattable */, void (*goAwayCallback) (void *goAwayBoss), void *goAwayBoss, uint32 flags);
+	const char32 *title /* cattable */, GuiShell_GoAwayCallback goAwayCallback, Thing goAwayBoss, uint32 flags);
 	// returns a Form widget that has a new Shell parent.
 
 void GuiWindow_addMenuBar (GuiWindow me);

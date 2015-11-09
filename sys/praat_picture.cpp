@@ -35,7 +35,7 @@ void praat_picture_prefs () {
 
 /***** static variable *****/
 
-static Picture praat_picture;
+static autoPicture praat_picture;
 
 /********** CALLBACKS OF THE PICTURE MENUS **********/
 
@@ -142,7 +142,7 @@ DIRECT (MouseSelectsInnerViewport) {
 		Melder_throw (U"Mouse commands are not available inside pictures.");
 	{// scope
 		autoPraatPicture picture;
-		Picture_setMouseSelectsInnerViewport (praat_picture, praat_mouseSelectsInnerViewport = true);
+		Picture_setMouseSelectsInnerViewport (praat_picture.get(), praat_mouseSelectsInnerViewport = true);
 	}
 	updateViewportMenu ();
 } END
@@ -152,7 +152,7 @@ DIRECT (MouseSelectsOuterViewport) {
 		Melder_throw (U"Mouse commands are not available inside pictures.");
 	{// scope
 		autoPraatPicture picture;
-		Picture_setMouseSelectsInnerViewport (praat_picture, praat_mouseSelectsInnerViewport = false);
+		Picture_setMouseSelectsInnerViewport (praat_picture.get(), praat_mouseSelectsInnerViewport = false);
 	}
 	updateViewportMenu ();
 } END
@@ -208,7 +208,7 @@ DO
 		if (top > bottom) { double temp; temp = top; top = bottom; bottom = temp; }
 		theCurrentPraatPicture -> y1NDC = 12-bottom - ymargin;
 		theCurrentPraatPicture -> y2NDC = 12-top + ymargin;
-		Picture_setSelection (praat_picture, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC, false);
+		Picture_setSelection (praat_picture.get(), theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC, false);
 		Graphics_updateWs (GRAPHICS);
 	} else if (theCurrentPraatObjects != & theForegroundPraatObjects) {   // in manual?
 		if (top > bottom) { double temp; temp = top; top = bottom; bottom = temp; }
@@ -261,7 +261,7 @@ DO
 		if (top > bottom) { double temp; temp = top; top = bottom; bottom = temp; }
 		theCurrentPraatPicture -> y1NDC = 12-bottom;
 		theCurrentPraatPicture -> y2NDC = 12-top;
-		Picture_setSelection (praat_picture, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC, false);
+		Picture_setSelection (praat_picture.get(), theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC, false);
 		Graphics_updateWs (GRAPHICS);   // BUG: needed on Cocoa, but why?
 	} else if (theCurrentPraatObjects != & theForegroundPraatObjects) {   // in manual?
 		if (top > bottom) { double temp; temp = top; top = bottom; bottom = temp; }
@@ -438,7 +438,7 @@ END2 }
 /***** "File" MENU *****/
 
 FORM_READ2 (Picture_readFromPraatPictureFile, U"Read picture from praat picture file", 0, false) {
-	Picture_readFromPraatPictureFile (praat_picture, file);
+	Picture_readFromPraatPictureFile (praat_picture.get(), file);
 END2 }
 
 static void DO_Picture_writeToEpsFile (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *dummy) {
@@ -454,7 +454,7 @@ static void DO_Picture_writeToEpsFile (UiForm sendingForm, int narg, Stackel arg
 	} else { MelderFile file; structMelderFile file2 = { 0 };
 		if (args == NULL && sendingString == NULL) file = UiFile_getFile (dia);
 		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
-		Picture_writeToEpsFile (praat_picture, file, true, false);
+		Picture_writeToEpsFile (praat_picture.get(), file, true, false);
 	}
 }
 /*FORM_WRITE (Picture_writeToEpsFile, U"Save picture as Encapsulated PostScript file", 0, U"praat.eps")
@@ -474,7 +474,7 @@ static void DO_Picture_writeToFontlessEpsFile_xipa (UiForm sendingForm, int narg
 	} else { MelderFile file; structMelderFile file2 = { 0 };
 		if (args == NULL && sendingString == NULL) file = UiFile_getFile (dia);
 		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
-		Picture_writeToEpsFile (praat_picture, file, false, false);
+		Picture_writeToEpsFile (praat_picture.get(), file, false, false);
 	}
 }
 
@@ -491,7 +491,7 @@ static void DO_Picture_writeToFontlessEpsFile_silipa (UiForm sendingForm, int na
 	} else { MelderFile file; structMelderFile file2 = { 0 };
 		if (args == NULL && sendingString == NULL) file = UiFile_getFile (dia);
 		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
-		Picture_writeToEpsFile (praat_picture, file, false, true);
+		Picture_writeToEpsFile (praat_picture.get(), file, false, true);
 	}
 }
 
@@ -509,7 +509,7 @@ static void DO_Picture_writeToPdfFile (UiForm sendingForm, int narg, Stackel arg
 		if (args == NULL && sendingString == NULL) file = UiFile_getFile (dia);
 		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
 		if (theCurrentPraatPicture == & theForegroundPraatPicture) {
-			Picture_writeToPdfFile (praat_picture, file);
+			Picture_writeToPdfFile (praat_picture.get(), file);
 		} else {
 			try {
 				//autoPraatPicture picture;
@@ -536,7 +536,7 @@ static void DO_Picture_writeToPngFile_300 (UiForm sendingForm, int narg, Stackel
 		if (args == NULL && sendingString == NULL) file = UiFile_getFile (dia);
 		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
 		if (theCurrentPraatPicture == & theForegroundPraatPicture) {
-			Picture_writeToPngFile_300 (praat_picture, file);
+			Picture_writeToPngFile_300 (praat_picture.get(), file);
 		} else {
 			try {
 				autoGraphics graphics = Graphics_create_pngfile (file, 300, 0.0, 10.24, 0.0, 7.68);
@@ -562,7 +562,7 @@ static void DO_Picture_writeToPngFile_600 (UiForm sendingForm, int narg, Stackel
 		if (args == NULL && sendingString == NULL) file = UiFile_getFile (dia);
 		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
 		if (theCurrentPraatPicture == & theForegroundPraatPicture) {
-			Picture_writeToPngFile_600 (praat_picture, file);
+			Picture_writeToPngFile_600 (praat_picture.get(), file);
 		} else {
 			try {
 				autoGraphics graphics = Graphics_create_pngfile (file, 600, 0.0, 10.24, 0.0, 7.68);
@@ -587,7 +587,7 @@ static void DO_Picture_writeToPraatPictureFile (UiForm sendingForm, int narg, St
 	} else { MelderFile file; structMelderFile file2 = { 0 };
 		if (args == NULL && sendingString == NULL) file = UiFile_getFile (dia);
 		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
-		Picture_writeToPraatPictureFile (praat_picture, file);
+		Picture_writeToPraatPictureFile (praat_picture.get(), file);
 	}
 }
 
@@ -602,7 +602,7 @@ DIRECT (PostScript_settings) {
 } END
 
 DIRECT (Print) {
-	Picture_print (praat_picture);
+	Picture_print (praat_picture.get());
 } END
 
 #ifdef _WIN32
@@ -626,7 +626,7 @@ DIRECT (Print) {
 
 #if defined (_WIN32) || defined (macintosh)
 	DIRECT (Copy_picture_to_clipboard) {
-		Picture_copyToClipboard (praat_picture);
+		Picture_copyToClipboard (praat_picture.get());
 	} END
 #endif
 
@@ -642,7 +642,7 @@ DIRECT (Undo) {
 
 DIRECT (Erase_all) {
 	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
-		Picture_erase (praat_picture);   /* This kills the recording. */
+		Picture_erase (praat_picture.get());   // this kills the recording
 	} else {
 		Graphics_clearRecording (GRAPHICS);
 		Graphics_clearWs (GRAPHICS);
@@ -1445,12 +1445,11 @@ DIRECT (Picture_settings_report) {
 
 /**********   **********/
 
-static void cb_selectionChanged (Picture p, void *closure,
+static void cb_selectionChanged (Picture p, void * /* closure */,
 	double selx1, double selx2, double sely1, double sely2)
 	/* The user selected a new viewport in the picture window. */
 {
-	(void) closure;
-	Melder_assert (p == praat_picture);
+	Melder_assert (p == praat_picture.get());
 	theCurrentPraatPicture -> x1NDC = selx1;
 	theCurrentPraatPicture -> x2NDC = selx2;
 	theCurrentPraatPicture -> y1NDC = sely1;
@@ -1500,7 +1499,7 @@ GuiMenu praat_picture_resolveMenu (const char32 *menu) {
 }
 
 void praat_picture_exit () {
-	Picture_remove (& praat_picture);
+	praat_picture.reset();
 }
 
 void praat_picture_open () {
@@ -1514,7 +1513,7 @@ void praat_picture_open () {
 			XtMapWidget (dialog -> d_xmShell);
 			XMapRaised (XtDisplay (dialog -> d_xmShell), XtWindow (dialog -> d_xmShell));
 		#endif
-		Picture_unhighlight (praat_picture);
+		Picture_unhighlight (praat_picture.get());
 	}
 	/* Foregoing drawing routines may have changed some of the output attributes */
 	/* that can be set by the user. */
@@ -1540,7 +1539,7 @@ void praat_picture_open () {
 void praat_picture_close () {
 	if (theCurrentPraatPicture != & theForegroundPraatPicture) return;
 	if (! theCurrentPraatApplication -> batch) {
-		Picture_highlight (praat_picture);
+		Picture_highlight (praat_picture.get());
 		#ifdef macintosh
 			//dialog -> f_drain ();
 		#endif
@@ -1548,7 +1547,7 @@ void praat_picture_close () {
 }
 
 Graphics praat_picture_editor_open (bool eraseFirst) {
-	if (eraseFirst) Picture_erase (praat_picture);
+	if (eraseFirst) Picture_erase (praat_picture.get());
 	praat_picture_open ();
 	return GRAPHICS;
 }
@@ -1561,7 +1560,7 @@ static Any pictureRecognizer (int nread, const char *header, MelderFile file) {
 	if (nread < 2) return NULL;
 	if (strnequ (header, "PraatPictureFile", 16))
 	{
-		Picture_readFromPraatPictureFile (praat_picture, file); return (Any) 1;
+		Picture_readFromPraatPictureFile (praat_picture.get(), file); return (Any) 1;   // FIXME
 	}
 	return NULL;
 }
@@ -1585,7 +1584,7 @@ void praat_picture_init () {
 	if (! theCurrentPraatApplication -> batch) {
 		double screenX, screenY, screenWidth, screenHeight;
 		Gui_getWindowPositioningBounds (& screenX, & screenY, & screenWidth, & screenHeight);
-		resolution = Gui_getResolution (NULL);
+		resolution = Gui_getResolution (nullptr);
 		#if defined (macintosh)
 			margin = 2, width = 6 * resolution + 20;
 			height = 9 * resolution + Machine_getMenuBarHeight () + 24;
@@ -1604,7 +1603,7 @@ void praat_picture_init () {
 			y = screenY + 0;
 			width += margin * 2;
 		#endif
-		dialog = GuiWindow_create (x, y, width, height, 400, 200, Melder_cat (praatP.title, U" Picture"), NULL, NULL, 0);
+		dialog = GuiWindow_create (x, y, width, height, 400, 200, Melder_cat (praatP.title, U" Picture"), nullptr, nullptr, 0);
 		GuiWindow_addMenuBar (dialog);
 	}
 	if (! theCurrentPraatApplication -> batch) {
@@ -1795,15 +1794,15 @@ void praat_picture_init () {
 	if (! theCurrentPraatApplication -> batch) {
 		width = height = resolution * 12;
 		scrollWindow = GuiScrolledWindow_createShown (dialog, margin, 0, Machine_getMenuBarHeight () + margin, 0, 1, 1, 0);
-		drawingArea = GuiDrawingArea_createShown (scrollWindow, width, height, NULL, NULL, NULL, NULL, NULL, 0);
+		drawingArea = GuiDrawingArea_createShown (scrollWindow, width, height, nullptr, nullptr, nullptr, nullptr, nullptr, 0);
 		GuiThing_show (dialog);
 	}
 
 	// TODO: Paul: deze moet VOOR de update functies anders krijgen die void_me 0x0
 	praat_picture = Picture_create (drawingArea, ! theCurrentPraatApplication -> batch);	
 	// READ THIS!
-	Picture_setSelectionChangedCallback (praat_picture, cb_selectionChanged, NULL);
-	theCurrentPraatPicture -> graphics = static_cast<Graphics> (Picture_getGraphics (praat_picture));
+	Picture_setSelectionChangedCallback (praat_picture.get(), cb_selectionChanged, nullptr);
+	theCurrentPraatPicture -> graphics = static_cast<Graphics> (Picture_getGraphics (praat_picture.get()));
 
 	updatePenMenu ();
 	updateFontMenu ();
@@ -1816,15 +1815,15 @@ void praat_picture_prefsChanged () {
 	updateSizeMenu ();
 	updateViewportMenu ();
 	Graphics_setFontSize (theCurrentPraatPicture -> graphics, theCurrentPraatPicture -> fontSize);   // so that the thickness of the selection rectangle is correct
-	Picture_setMouseSelectsInnerViewport (praat_picture, praat_mouseSelectsInnerViewport);
+	Picture_setMouseSelectsInnerViewport (praat_picture.get(), praat_mouseSelectsInnerViewport);
 }
 
 void praat_picture_background () {
 	if (theCurrentPraatPicture != & theForegroundPraatPicture) return;   // Demo window and pictures ignore this
 	if (! theCurrentPraatApplication -> batch) {
-		//Picture_unhighlight (praat_picture);
+		//Picture_unhighlight (praat_picture.get());
 		#if cocoa
-			Picture_background (praat_picture);   // prevent Cocoa's very slow highlighting until woken up by Picture_foreground()
+			Picture_background (praat_picture.get());   // prevent Cocoa's very slow highlighting until woken up by Picture_foreground()
 		#endif
 	}
 }
@@ -1833,9 +1832,9 @@ void praat_picture_foreground () {
 	if (theCurrentPraatPicture != & theForegroundPraatPicture) return;   // Demo window and pictures ignore this
 	if (! theCurrentPraatApplication -> batch) {
 		#if cocoa
-			Picture_foreground (praat_picture);   // wake up from the highlighting sleep caused by Picture_background()
+			Picture_foreground (praat_picture.get());   // wake up from the highlighting sleep caused by Picture_background()
 		#endif
-		//Picture_highlight (praat_picture);
+		//Picture_highlight (praat_picture.get());
 	}
 }
 

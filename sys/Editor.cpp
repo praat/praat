@@ -60,8 +60,8 @@ void structEditorMenu :: v_destroy () {
 
 /********** functions **********/
 
-static void commonCallback (GUI_ARGS) {
-	GUI_IAM (EditorCommand);
+static void commonCallback (I, GuiMenuItemEvent /* event */) {
+	iam (EditorCommand);
 	if (my d_editor && my d_editor -> v_scriptable () && ! str32str (my itemTitle, U"...")) {
 		UiHistory_write (U"\n");
 		UiHistory_write_colonize (my itemTitle);
@@ -394,8 +394,7 @@ void structEditor :: v_do_pictureMargins (EditorCommand cmd) {
 	pref_picture_writeNameAtTop () = GET_ENUM (kEditor_writeNameAtTop, U"Write name at top");
 }
 
-static void gui_window_cb_goAway (I) {
-	iam (Editor);
+static void gui_window_cb_goAway (Editor me) {
 	Melder_assert (me);
 	Melder_assert (Thing_isa (me, classEditor));
 	my v_goAway ();
