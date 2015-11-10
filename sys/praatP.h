@@ -53,7 +53,7 @@ void praat_sortMenuCommands ();
 #define praat_MAXNUM_MENUS 20   /* Maximum number of added New, Open, Save, or Help menus. */
 #define praat_MAXNUM_FILE_TYPE_RECOGNIZERS 50   /* File types recognizable by 'Read from file...'. */
 
-typedef struct structPraat_Command {
+Thing_define (Praat_Command, Thing) {
 	ClassInfo class1, class2, class3, class4;   // selected classes
 	int32 n1, n2, n3, n4;   // number of selected objects of each class; 0 means "any number"
 	const char32 *title;   // button text = command text
@@ -81,7 +81,7 @@ typedef struct structPraat_Command {
 	const char32 *after;   // title of previous command, often NULL
 	int32 uniqueID;   // for sorting the added commands
 	int32 sortingTail;
-} *praat_Command;
+};
 
 #define praat_STARTING_UP  1
 #define praat_READING_BUTTONS  2
@@ -129,7 +129,7 @@ void praat_menuCommands_exit ();
 int praat_doMenuCommand (const char32 *command, const char32 *arguments, Interpreter interpreter);   // 0 = not found
 int praat_doMenuCommand (const char32 *command, int narg, Stackel args, Interpreter interpreter);   // 0 = not found
 long praat_getNumberOfMenuCommands ();
-praat_Command praat_getMenuCommand (long i);
+Praat_Command praat_getMenuCommand (long i);
 
 /* Communication with praat_actions.cpp: */
 void praat_actions_show ();
@@ -140,7 +140,7 @@ void praat_saveAddedActions (MelderString *buffer);
 int praat_doAction (const char32 *command, const char32 *arguments, Interpreter interpreter);   // 0 = not found
 int praat_doAction (const char32 *command, int narg, Stackel args, Interpreter interpreter);   // 0 = not found
 long praat_getNumberOfActions ();   // for ButtonEditor
-praat_Command praat_getAction (long i);   // for ButtonEditor
+Praat_Command praat_getAction (long i);   // for ButtonEditor
 
 /* Communication with praat_statistics.cpp: */
 void praat_statistics_prefs ();   // at init time
