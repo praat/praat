@@ -37,10 +37,10 @@ static bool actionsInvisible = false;
 static void fixSelectionSpecification (ClassInfo *class1, int *n1, ClassInfo *class2, int *n2, ClassInfo *class3, int *n3) {
 /*
  * Function:
- *	sort the specification pairs *class(i), *n(i) according to class name, with NULL classes at the end.
+ *	sort the specification pairs *class(i), *n(i) according to class name, with null classes at the end.
  * Postconditions:
- *	if (*class2 != NULL) *class1 != NULL;
- *	if (*class3 != NULL) *class2 != NULL;
+ *	if (*class2) !! *class1;
+ *	if (*class3) !! *class2;
  *	(*class1) -> className <= (*class2) -> className <= (*class3) -> className;
  * Usage:
  *	Called by praat_addAction () and praat_removeAction ().
@@ -48,9 +48,9 @@ static void fixSelectionSpecification (ClassInfo *class1, int *n1, ClassInfo *cl
 
 	/* Fix unusual input bubblewise. */
 
-	if (*class1 == NULL && *class2 != NULL) { *class1 = *class2; *n1 = *n2; *class2 = NULL; *n2 = 0; }
-	if (*class2 == NULL && *class3 != NULL) { *class2 = *class3; *n2 = *n3; *class3 = NULL; *n3 = 0;
-		if (*class1 == NULL && *class2 != NULL) { *class1 = *class2; *n1 = *n2; *class2 = NULL; *n2 = 0; } }
+	if (! *class1 && *class2) { *class1 = *class2; *n1 = *n2; *class2 = nullptr; *n2 = 0; }
+	if (! *class2 && *class3) { *class2 = *class3; *n2 = *n3; *class3 = nullptr; *n3 = 0;
+		if (! *class1 && *class2) { *class1 = *class2; *n1 = *n2; *class2 = nullptr; *n2 = 0; } }
 
 	/* Now: if *class3, then *class2, and if *class2, then *class1.
 	 * Bubble-sort the input by class name.
@@ -84,19 +84,19 @@ static long lookUpMatchingAction (ClassInfo class1, ClassInfo class2, ClassInfo 
 
 void praat_addAction (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
 	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback)
-{ praat_addAction4 (class1, n1, class2, n2, class3, n3, NULL, 0, title, after, flags, callback); }
+{ praat_addAction4 (class1, n1, class2, n2, class3, n3, nullptr, 0, title, after, flags, callback); }
 
 void praat_addAction1 (ClassInfo class1, int n1,
 	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback)
-{ praat_addAction4 (class1, n1, NULL, 0, NULL, 0, NULL, 0, title, after, flags, callback); }
+{ praat_addAction4 (class1, n1, nullptr, 0, nullptr, 0, nullptr, 0, title, after, flags, callback); }
 
 void praat_addAction2 (ClassInfo class1, int n1, ClassInfo class2, int n2,
 	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback)
-{ praat_addAction4 (class1, n1, class2, n2, NULL, 0, NULL, 0, title, after, flags, callback); }
+{ praat_addAction4 (class1, n1, class2, n2, nullptr, 0, nullptr, 0, title, after, flags, callback); }
 
 void praat_addAction3 (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
 	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback)
-{ praat_addAction4 (class1, n1, class2, n2, class3, n3, NULL, 0, title, after, flags, callback); }
+{ praat_addAction4 (class1, n1, class2, n2, class3, n3, nullptr, 0, title, after, flags, callback); }
 
 void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3, ClassInfo class4, int n4,
 	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback)
@@ -165,7 +165,7 @@ void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, Class
 		theActions [position]. n4 = n4;
 		theActions [position]. title = Melder_dup_f (title);
 		theActions [position]. depth = depth;
-		theActions [position]. callback = callback;   // NULL for a separator
+		theActions [position]. callback = callback;   // null for a separator
 		theActions [position]. button = nullptr;
 		theActions [position]. script = nullptr;
 		theActions [position]. hidden = hidden;
@@ -232,16 +232,16 @@ void praat_addActionScript (const char32 *className1, int n1, const char32 *clas
 	const char32 *title, const char32 *after, int depth, const char32 *script)
 {
 	try {
-		ClassInfo class1 = NULL, class2 = NULL, class3 = NULL;
+		ClassInfo class1 = nullptr, class2 = nullptr, class3 = nullptr;
 		Melder_assert (className1 && className2 && className3 && title && after && script);
 		if (str32len (className1)) {
-			class1 = Thing_classFromClassName (className1, NULL);
+			class1 = Thing_classFromClassName (className1, nullptr);
 		}
 		if (str32len (className2)) {
-			class2 = Thing_classFromClassName (className2, NULL);
+			class2 = Thing_classFromClassName (className2, nullptr);
 		}
 		if (str32len (className3)) {
-			class3 = Thing_classFromClassName (className3, NULL);
+			class3 = Thing_classFromClassName (className3, nullptr);
 		}
 		fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
 
@@ -254,7 +254,7 @@ void praat_addActionScript (const char32 *className1, int n1, const char32 *clas
 		/*
 		 * If the button already exists, remove it.
 		 */
-		long found = lookUpMatchingAction (class1, class2, class3, NULL, title);
+		long found = lookUpMatchingAction (class1, class2, class3, nullptr, title);
 		if (found) {
 			theNumberOfActions --;
 			for (long i = found; i <= theNumberOfActions; i ++) theActions [i] = theActions [i + 1];
@@ -265,7 +265,7 @@ void praat_addActionScript (const char32 *className1, int n1, const char32 *clas
 		 */
 		long position;
 		if (str32len (after)) {   /* Search for existing command with same selection. */
-			long found = lookUpMatchingAction (class1, class2, class3, NULL, after);
+			long found = lookUpMatchingAction (class1, class2, class3, nullptr, after);
 			if (found) {
 				position = found + 1;   // after 'after'
 			} else {
@@ -299,7 +299,7 @@ void praat_addActionScript (const char32 *className1, int n1, const char32 *clas
 		theActions [position]. n3 = n3;
 		theActions [position]. title = str32len (title) ? Melder_dup_f (title) : nullptr;   // allow old-fashioned untitled separators
 		theActions [position]. depth = depth;
-		theActions [position]. callback = str32len (script) ? DO_RunTheScriptFromAnyAddedMenuCommand : nullptr;   // NULL for a separator
+		theActions [position]. callback = str32len (script) ? DO_RunTheScriptFromAnyAddedMenuCommand : nullptr;   // null for a separator
 		theActions [position]. button = NULL;
 		if (str32len (script) == 0) {
 			theActions [position]. script = NULL;
@@ -368,8 +368,8 @@ void praat_hideAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, con
 		long found = lookUpMatchingAction (class1, class2, class3, nullptr, title);
 		if (! found) {
 			Melder_throw (U"Praat: action command \"", class1 ? class1 -> className : nullptr,
-				class2 ? U" & ": NULL, class2 ? class2 -> className : nullptr,
-				class3 ? U" & ": NULL, class3 ? class3 -> className : nullptr,
+				class2 ? U" & ": nullptr, class2 ? class2 -> className : nullptr,
+				class3 ? U" & ": nullptr, class3 ? class3 -> className : nullptr,
 				U": ", title, U"\" not found.");
 		}
 		if (! theActions [found]. hidden) {
@@ -407,11 +407,11 @@ void praat_showAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, con
 	try {
 		int n1, n2, n3;
 		fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
-		long found = lookUpMatchingAction (class1, class2, class3, NULL, title);
+		long found = lookUpMatchingAction (class1, class2, class3, nullptr, title);
 		if (! found) {
 			Melder_throw (U"Action command \"", class1 ? class1 -> className : nullptr,
-				class2 ? U" & ": NULL, class2 ? class2 -> className : nullptr,
-				class3 ? U" & ": NULL, class3 ? class3 -> className : nullptr,
+				class2 ? U" & ": nullptr, class2 ? class2 -> className : nullptr,
+				class3 ? U" & ": nullptr, class3 ? class3 -> className : nullptr,
 				U": ", title, U"\" not found.");
 		}
 		if (theActions [found]. hidden) {
@@ -534,7 +534,7 @@ static void do_menu (I, bool modified) {
 			} catch (MelderError) {
 				Melder_flushError (U"Command \"", my title, U"\" not executed.");
 			}
-			Ui_setAllowExecutionHook (NULL, NULL);
+			Ui_setAllowExecutionHook (nullptr, nullptr);
 			praat_updateSelection (); return;
 		}
 		if (my callback == DO_RunTheScriptFromAnyAddedMenuCommand && my script == (void *) void_me) {

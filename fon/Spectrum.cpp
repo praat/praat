@@ -239,7 +239,7 @@ void Spectrum_list (Spectrum me, bool includeBinNumbers, bool includeFrequency,
 autoSpectrum Matrix_to_Spectrum (Matrix me) {
 	try {
 		if (my ny != 2)
-			Melder_throw (U"Matrix must have exactly 2 rows.");
+			Melder_throw (U"The Matrix should have exactly 2 rows.");
 		autoSpectrum thee = Thing_new (Spectrum);
 		my structMatrix :: v_copy (thee.peek());
 		return thee;

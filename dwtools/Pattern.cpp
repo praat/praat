@@ -114,7 +114,7 @@ Pattern Matrix_to_Pattern (Matrix me, int join) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, U": no Pattern created.");
+		Melder_throw (me, U": not converted to Pattern.");
 	}
 }
 
