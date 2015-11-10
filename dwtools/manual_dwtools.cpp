@@ -671,7 +671,7 @@ FORMULA (U"%numberOfSigmas = \\Vr(-2 ln(1-%p/100)).")
 NORMAL (U"For covering 95\\% of the data we calculate %numberOfSigmas = 2.45.")
 MAN_END
 
-MAN_BEGIN (U"confidence interval", U"djmw", 20011105)
+MAN_BEGIN (U"confidence interval", U"djmw", 20151109)
 INTRO (U"The confidence interval gives an estimated range of values which "
 	"is likely to include an unknown population parameter. "
 	"The estimated range is calculated from a given set of observations.")
@@ -687,10 +687,8 @@ NORMAL (U"If the standard deviation is %not known, we have to estimate its value
 FORMULA (U"%%mean% - %t__%%\\al/2;N%_ %s / \\Vr%N \\<_ \\mu \\<_ "
 	"%%mean% + %t__%%\\al/2;N%_ %s / \\Vr%N,")
 NORMAL (U"where %t__%%\\al/2;N%_ = invStudentQ (%\\al/2, %N-1).")
-NORMAL (U"For %\\al=0.05 and %N=20 we get %z__0.025_=1.96 and %t__0.025;20_=2.039. "
-	"This shows that when we have to estimate the standard deviation from the data, "
-	"the confidence interval is wider than when the standard deviation is known "
-	"beforehand.")
+NORMAL (U"For %\\al=0.05 and %N=20 we get %z__0.025_=1.96 and %t__0.025;20_=2.093. "
+	"This shows that for a fixed value of the standard deviation the confidence interval will always be wider if we had to estimate the standard deviation's value from the data instead of its value being known beforehand.")
 MAN_END
 
 MAN_BEGIN (U"confidence level", U"djmw", 20011105)
