@@ -73,5 +73,6 @@ double PowerCepstrogram_getCPPS_hillenbrand (PowerCepstrogram me, bool subtractT
 double PowerCepstrogram_getCPPS (PowerCepstrogram me, bool subtractTiltBeforeSmoothing, double timeAveragingWindow, double quefrencyAveragingWindow, double pitchFloor, double pitchCeiling, double deltaF0, int interpolation, double qstartFit, double qendFit, int lineType, int fitMethod);
 
 autoMatrix PowerCepstrogram_to_Matrix (PowerCepstrogram me);
-autoPowerCepstrogram Matrix_to_Cepstrogram (Matrix me);
+autoPowerCepstrogram Matrix_to_PowerCepstrogram (Matrix me);
+
 #endif /* _Cepstrogram_h_ */

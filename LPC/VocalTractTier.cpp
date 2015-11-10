@@ -69,7 +69,7 @@ autoVocalTractPoint VocalTract_to_VocalTractPoint (VocalTract me, double time) {
 	try {
 		autoVocalTractPoint thee = Thing_new (VocalTractPoint);
 		thy number = time;
-		thy d_vocalTract = (VocalTract) Data_copy (me);
+		thy d_vocalTract = Data_copy (me);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to VocalTractPoint.");
@@ -94,21 +94,21 @@ autoVocalTractTier VocalTractTier_create (double fromTime, double toTime) {
 autoVocalTractTier VocalTract_to_VocalTractTier (VocalTract me, double startTime, double endTime, double time) {
 	try {
 		autoVocalTractTier thee = VocalTractTier_create (startTime, endTime);
-		VocalTractTier_addVocalTract (thee.peek(), time, me);
+		VocalTractTier_addVocalTract_copy (thee.peek(), time, me);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to VocalTractTier");
 	}
 }
 
-void VocalTractTier_addVocalTract (VocalTractTier me, double time, VocalTract vocaltract) {
+void VocalTractTier_addVocalTract_copy (VocalTractTier me, double time, VocalTract vocaltract) {
 	try {
-		autoVocalTractPoint thee =  VocalTract_to_VocalTractPoint (vocaltract, time);
-		if (my d_vocalTracts -> size > 1) {
+		autoVocalTractPoint thee = VocalTract_to_VocalTractPoint (vocaltract, time);
+		if (my d_vocalTracts -> size > 0) {
 			VocalTractPoint vtp = (VocalTractPoint) my d_vocalTracts -> item[1];
 			long numberOfSections = vtp -> d_vocalTract -> nx;
 			if (numberOfSections != vocaltract -> nx) {
-				forget (vocaltract);
+				//forget (vocaltract);   // FIXME: this cannot be right (ppgb)
 				Melder_throw (U"The number of sections must be equal to ", numberOfSections, U".");
 			}
 		}

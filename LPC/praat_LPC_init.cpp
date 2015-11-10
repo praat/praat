@@ -1154,7 +1154,7 @@ FORM (VocalTractTier_addVocalTract, U"VocalTractTier: Add VocalTract", 0)
 DO
 	VocalTractTier me = FIRST (VocalTractTier);
 	VocalTract thee = FIRST (VocalTract);
-	VocalTractTier_addVocalTract (me, GET_REAL (U"Time"), thee);
+	VocalTractTier_addVocalTract_copy (me, GET_REAL (U"Time"), thee);
 	praat_dataChanged (me);
 END
 

@@ -73,7 +73,7 @@ autoMatrix Intensity_to_Matrix (Intensity me) {
 		my structMatrix :: v_copy (thee.peek());
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (me, U": not converted to Intensity.");
+		Melder_throw (me, U": not converted to Matrix.");
 	}
 }
 
@@ -83,7 +83,7 @@ autoIntensity Matrix_to_Intensity (Matrix me) {
 		my structMatrix :: v_copy (thee.peek());
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (me, U": not converted to Matrix.");
+		Melder_throw (me, U": not converted to Intensity.");
 	}
 }
 

@@ -35,7 +35,7 @@ autoVocalTractTier VocalTractTier_create (double fromTime, double toTime);
 
 autoVocalTractTier VocalTract_to_VocalTractTier (VocalTract me, double startTime, double endTime, double time);
 
-void VocalTractTier_addVocalTract (VocalTractTier me, double time, VocalTract thee);
+void VocalTractTier_addVocalTract_copy (VocalTractTier me, double time, VocalTract thee);
 
 autoLPC VocalTractTier_to_LPC (VocalTractTier me, double timeStep);
 

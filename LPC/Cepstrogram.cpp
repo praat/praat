@@ -240,7 +240,7 @@ autoMatrix PowerCepstrogram_to_Matrix (PowerCepstrogram me) {
 		my structMatrix :: v_copy (thee.peek());
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (me, U": no Matrix created.");
+		Melder_throw (me, U": not converted to Matrix.");
 	}
 }
 
@@ -258,14 +258,13 @@ autoPowerCepstrum PowerCepstrogram_to_PowerCepstrum_slice (PowerCepstrogram me, 
 	}
 }
 
-autoPowerCepstrogram Matrix_to_PowerCepstrogram (Matrix me);
 autoPowerCepstrogram Matrix_to_PowerCepstrogram (Matrix me) {
 	try {
 		autoPowerCepstrogram thee = Thing_new (PowerCepstrogram);
 		my structMatrix :: v_copy (thee.peek());
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (me, U": no PowerCepstrogram created.");
+		Melder_throw (me, U": not converted to PowerCepstrogram.");
 	}
 }
 
@@ -364,7 +363,6 @@ static void complexfftoutput_to_power (double *fft, long nfft, double *dbs, bool
 	}
 }
 
-
 autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double minimumPitch, double dt) {
 	try {
 		// minimum analysis window has 3 periods of lowest pitch
@@ -372,7 +370,7 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double min
 		if (analysisWidth > my dx * my nx) {
 			analysisWidth = my dx * my nx;
 		}
-		double t1, samplingFrequency = 1.0 / my dx;
+		double samplingFrequency = 1.0 / my dx;
 		autoSound thee;
 		if (samplingFrequency > 30000) {
 			samplingFrequency = samplingFrequency / 2.0;
@@ -388,6 +386,7 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double min
 		if (nosInWindow < 8) {
 			Melder_throw (U"Analysis window too short.");
 		}
+		double t1;
 		Sampled_shortTermAnalysis (thee.peek(), analysisWidth, dt, & nFrames, & t1);
 		autoNUMvector<double> hamming (1, nosInWindow);
 		for (long i = 1; i <= nosInWindow; i++) {
@@ -434,7 +433,7 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double min
 			 * Here we diverge from Hillenbrand as he takes the fft of half of the spectral values.
 			 * H. forgets that the actual spectrum has nfft/2+1 values. Thefore, we take the inverse
 			 * transform because this keeps the number of samples a power of 2.
-			 * At the same time this results in twice as much numbers in the quefrency domain, i.e. we end with nfft/2+1
+			 * At the same time this results in twice as many numbers in the quefrency domain, i.e. we end up with nfft/2+1
 			 * numbers while H. has only nfft/4!
 			 */
 			fftbuf[1] = spectrum[1];
@@ -460,11 +459,11 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double min
 
 double PowerCepstrogram_getCPPS (PowerCepstrogram me, bool subtractTiltBeforeSmoothing, double timeAveragingWindow, double quefrencyAveragingWindow, double pitchFloor, double pitchCeiling, double deltaF0, int interpolation, double qstartFit, double qendFit, int lineType, int fitMethod) {
 	try {
-		autoPowerCepstrogram him;
+		autoPowerCepstrogram flattened;
 		if (subtractTiltBeforeSmoothing) {
-			him = PowerCepstrogram_subtractTilt (me, qstartFit, qendFit, lineType, fitMethod);
+			flattened = PowerCepstrogram_subtractTilt (me, qstartFit, qendFit, lineType, fitMethod);
 		}
-		autoPowerCepstrogram smooth = PowerCepstrogram_smooth (subtractTiltBeforeSmoothing ? him.peek() : me, timeAveragingWindow, quefrencyAveragingWindow);
+		autoPowerCepstrogram smooth = PowerCepstrogram_smooth (flattened ? flattened.peek() : me, timeAveragingWindow, quefrencyAveragingWindow);
 		autoTable table = PowerCepstrogram_to_Table_cpp (smooth.peek(), pitchFloor, pitchCeiling, deltaF0, interpolation, qstartFit, qendFit, lineType, fitMethod);
 		double cpps = Table_getMean (table.peek(), 3);
 		return cpps;
