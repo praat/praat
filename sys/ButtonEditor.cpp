@@ -33,7 +33,7 @@ Thing_implement (ButtonEditor, HyperPage, 0);
 	#define BUTTON_WIDTH  96
 #endif
 
-static void drawMenuCommand (ButtonEditor me, praat_Command cmd, long i) {
+static void drawMenuCommand (ButtonEditor me, Praat_Command cmd, long i) {
 	static MelderString text { 0 };
 	bool isAdded = cmd -> uniqueID != 0 || cmd -> script != nullptr;
 	bool isHidden = cmd -> hidden;
@@ -69,7 +69,7 @@ static void drawMenuCommand (ButtonEditor me, praat_Command cmd, long i) {
 		cmd -> depth * 0.3, 0.4, 0.0, 0.0, 0);
 }
 
-static void drawAction (ButtonEditor me, praat_Command cmd, long i) {
+static void drawAction (ButtonEditor me, Praat_Command cmd, long i) {
 	static MelderString text { 0 };
 	bool isAdded = cmd -> uniqueID != 0 || cmd -> script != nullptr;
 	bool isHidden = cmd -> hidden, isToggled = cmd -> toggled;
@@ -132,28 +132,28 @@ void structButtonEditor :: v_draw () {
 	switch (show) {
 		case 1:
 			for (long i = 1, n = praat_getNumberOfMenuCommands (); i <= n; i ++) {
-				praat_Command cmd = praat_getMenuCommand (i);
+				Praat_Command cmd = praat_getMenuCommand (i);
 				if (str32equ (cmd -> window, U"Objects"))
 					drawMenuCommand (this, praat_getMenuCommand (i), i);
 			}
 			break;
 		case 2:
 			for (long i = 1, n = praat_getNumberOfMenuCommands (); i <= n; i ++) {
-				praat_Command cmd = praat_getMenuCommand (i);
+				Praat_Command cmd = praat_getMenuCommand (i);
 				if (str32equ (cmd -> window, U"Picture"))
 					drawMenuCommand (this, praat_getMenuCommand (i), i);
 			}
 			break;
 		case 3:
 			for (long i = 1, n = praat_getNumberOfMenuCommands (); i <= n; i ++) {
-				praat_Command cmd = praat_getMenuCommand (i);
+				Praat_Command cmd = praat_getMenuCommand (i);
 				if (! str32equ (cmd -> window, U"Objects") && ! str32equ (cmd -> window, U"Picture"))
 					drawMenuCommand (this, praat_getMenuCommand (i), i);
 			}
 			break;
 		case 4:
 			for (long i = 1, n = praat_getNumberOfActions (); i <= n; i ++) {
-				praat_Command cmd = praat_getAction (i);
+				Praat_Command cmd = praat_getAction (i);
 				const char32 *klas = cmd -> class1 -> className;
 				if (str32cmp (klas, U"N") < 0)
 					drawAction (this, praat_getAction (i), i);
@@ -161,7 +161,7 @@ void structButtonEditor :: v_draw () {
 			break;
 		case 5:
 			for (long i = 1, n = praat_getNumberOfActions (); i <= n; i ++) {
-				praat_Command cmd = praat_getAction (i);
+				Praat_Command cmd = praat_getAction (i);
 				const char32 *klas = cmd -> class1 -> className;
 				if (str32cmp (klas, U"N") >= 0)
 					drawAction (this, praat_getAction (i), i);
@@ -176,7 +176,7 @@ int structButtonEditor :: v_goToPage (const char32 *title) {
 	switch (title [0]) {
 		case 'a': {   // toggle visibility of action
 			long i = Melder_atoi (& title [1]);
-			praat_Command action = praat_getAction (i);
+			Praat_Command action = praat_getAction (i);
 			if (! action) return 0;
 			if (action -> hidden)
 				praat_showAction (action -> class1, action -> class2, action -> class3, action -> title);
@@ -185,7 +185,7 @@ int structButtonEditor :: v_goToPage (const char32 *title) {
 		} break;
 		case 'm': {   // toggle visibility of menu command
 			long i = Melder_atoi (& title [1]);
-			praat_Command menuCommand = praat_getMenuCommand (i);
+			Praat_Command menuCommand = praat_getMenuCommand (i);
 			if (! menuCommand) return 0;
 			if (menuCommand -> hidden)
 				praat_showMenuCommand (menuCommand -> window, menuCommand -> menu, menuCommand -> title);
@@ -194,7 +194,7 @@ int structButtonEditor :: v_goToPage (const char32 *title) {
 		} break;
 		case 'e': {   // execute action
 			long i = Melder_atoi (& title [1]);
-			praat_Command action = praat_getAction (i);
+			Praat_Command action = praat_getAction (i);
 			if (! action || ! action -> callback) return 0;
 			if (action -> title) {
 				UiHistory_write (U"\n");
@@ -217,7 +217,7 @@ int structButtonEditor :: v_goToPage (const char32 *title) {
 		} break;
 		case 'p': {   // perform menu command
 			long i = Melder_atoi (& title [1]);
-			praat_Command menuCommand = praat_getMenuCommand (i);
+			Praat_Command menuCommand = praat_getMenuCommand (i);
 			if (! menuCommand || ! menuCommand -> callback) return 0;
 			if (menuCommand -> title) {
 				UiHistory_write (U"\n");

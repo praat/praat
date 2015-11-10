@@ -16,7 +16,6 @@
 #include "enums_getValue.h"
 #include "Praat_tests_enums.h"
 #include <string>
-#include <functional>
 
 static void testAutoData (autoDaata data) {
 	fprintf (stderr, "testAutoData: %p %p\n", data.get(), data -> name);

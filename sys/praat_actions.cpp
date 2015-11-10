@@ -26,9 +26,7 @@
 #define BUTTON_LEFT  -240
 #define BUTTON_RIGHT -5
 
-#define praat_MAXNUM_LOOSE_COMMANDS  10000
-static long theNumberOfActions = 0;
-static struct structPraat_Command *theActions;
+static Ordered theActions;
 static GuiMenu praat_writeMenu;
 static GuiMenuItem praat_writeMenuSeparator;
 static GuiForm praat_form;
@@ -75,11 +73,13 @@ static long lookUpMatchingAction (ClassInfo class1, ClassInfo class2, ClassInfo 
  * Precondition:
  *	class1, class2, and class3 must be in sorted order.
  */
-	for (long i = 1; i <= theNumberOfActions; i ++)
-		if (class1 == theActions [i]. class1 && class2 == theActions [i]. class2 &&
-		    class3 == theActions [i]. class3 && class4 == theActions [i]. class4 &&
-		    title && theActions [i]. title && str32equ (theActions [i]. title, title)) return i;
-	return 0;   /* Not found. */
+	for (long i = 1; i <= theActions -> size; i ++) {
+		Praat_Command action = (Praat_Command) theActions -> item [i];
+		if (class1 == action -> class1 && class2 == action -> class2 &&
+		    class3 == action -> class3 && class4 == action -> class4 &&
+		    title && action -> title && str32equ (action -> title, title)) return i;
+	}
+	return 0;   // not found
 }
 
 void praat_addAction (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
@@ -136,41 +136,34 @@ void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, Class
 					U"because the latter command does not exist.");
 			position = found + 1;   // after 'after'
 		} else {
-			position = theNumberOfActions + 1;   // at end
+			position = theActions -> size + 1;   // at end
 		}
 
 		/*
-		 * Increment the command area.
+		 * Make new command.
 		 */
-		if (theNumberOfActions >= praat_MAXNUM_LOOSE_COMMANDS)
-			Melder_throw (U"Too many action commands (maximum ", praat_MAXNUM_LOOSE_COMMANDS, U").");
-		theNumberOfActions += 1;
-
-		/*
-		 * Make room for insertion.
-		 */
-		for (long i = theNumberOfActions; i > position; i --) theActions [i] = theActions [i - 1];
-		memset (& theActions [position], 0, sizeof (struct structPraat_Command));
+		autoPraat_Command action = Thing_new (Praat_Command);
+		action -> class1 = class1;
+		action -> n1 = n1;
+		action -> class2 = class2;
+		action -> n2 = n2;
+		action -> class3 = class3;
+		action -> n3 = n3;
+		action -> class4 = class4;
+		action -> n4 = n4;
+		action -> title = Melder_dup_f (title);
+		action -> depth = depth;
+		action -> callback = callback;   // null for a separator
+		action -> button = nullptr;
+		action -> script = nullptr;
+		action -> hidden = hidden;
+		action -> unhidable = unhidable;
+		action -> attractive = attractive;
 
 		/*
 		 * Insert new command.
 		 */
-		theActions [position]. class1 = class1;
-		theActions [position]. n1 = n1;
-		theActions [position]. class2 = class2;
-		theActions [position]. n2 = n2;
-		theActions [position]. class3 = class3;
-		theActions [position]. n3 = n3;
-		theActions [position]. class4 = class4;
-		theActions [position]. n4 = n4;
-		theActions [position]. title = Melder_dup_f (title);
-		theActions [position]. depth = depth;
-		theActions [position]. callback = callback;   // null for a separator
-		theActions [position]. button = nullptr;
-		theActions [position]. script = nullptr;
-		theActions [position]. hidden = hidden;
-		theActions [position]. unhidable = unhidable;
-		theActions [position]. attractive = attractive;
+		Ordered_addItemPos (theActions, action.transfer(), position);
 	} catch (MelderError) {
 		Melder_flushError ();
 	}
@@ -181,27 +174,28 @@ static void deleteDynamicMenu () {
 	if (actionsInvisible) return;
 	static long numberOfDeletions;
 	trace (U"deletion #", ++ numberOfDeletions);
-	for (int i = 1; i <= theNumberOfActions; i ++) {
-		if (theActions [i]. button) {
-			trace (U"trying to destroy action ", i, U" of ", theNumberOfActions, U": ", theActions [i]. title);
+	for (int i = 1; i <= theActions -> size; i ++) {
+		Praat_Command action = (Praat_Command) theActions -> item [i];
+		if (action -> button) {
+			trace (U"trying to destroy action ", i, U" of ", theActions -> size, U": ", action -> title);
 			#if gtk || cocoa
-				if (theActions [i]. button -> d_parent == praat_form) {
+				if (action -> button -> d_parent == praat_form) {
 					trace (U"destroy a label or a push button or a cascade button");
-					GuiObject_destroy (theActions [i]. button -> d_widget);
-				} else if (praat_writeMenu && theActions [i]. button -> d_parent == praat_writeMenu) {
+					GuiObject_destroy (action -> button -> d_widget);
+				} else if (praat_writeMenu && action -> button -> d_parent == praat_writeMenu) {
 					trace (U"destroying Save menu item");
-					GuiObject_destroy (theActions [i]. button -> d_widget);
+					GuiObject_destroy (action -> button -> d_widget);
 				}
 			#elif motif
-				if (theActions [i]. button -> classInfo == classGuiButton && theActions [i]. button -> d_widget -> subMenuId) {   // a cascade button (not a direct child of the form)?
+				if (action -> button -> classInfo == classGuiButton && action -> button -> d_widget -> subMenuId) {   // a cascade button (not a direct child of the form)?
 					trace (U"destroy the xm menu bar; this also destroys the xm button and the xm menu");
-					GuiObject_destroy (theActions [i]. button -> d_widget -> parent);   // the Motif parent, i.e. not d_parent -> d_widget !
-				} else if (theActions [i]. button -> d_parent == praat_form) {
+					GuiObject_destroy (action -> button -> d_widget -> parent);   // the Motif parent, i.e. not d_parent -> d_widget !
+				} else if (action -> button -> d_parent == praat_form) {
 					trace (U"destroy a label or a push button");
-					GuiObject_destroy (theActions [i]. button -> d_widget);
+					GuiObject_destroy (action -> button -> d_widget);
 				}
 			#endif
-			theActions [i]. button = NULL;
+			action -> button = nullptr;   // undangle
 		}
 	}
 	if (praat_writeMenu) {
@@ -216,7 +210,7 @@ static void deleteDynamicMenu () {
 			GuiObject_destroy (praat_writeMenu -> d_widget);
 			praat_writeMenu = GuiMenu_createInWindow (praatP.menuBar, U"Save", 0);
 		#endif
-		praat_writeMenuSeparator = NULL;
+		praat_writeMenuSeparator = nullptr;   // undangle
 	}
 	actionsInvisible = true;
 }
@@ -256,64 +250,56 @@ void praat_addActionScript (const char32 *className1, int n1, const char32 *clas
 		 */
 		long found = lookUpMatchingAction (class1, class2, class3, nullptr, title);
 		if (found) {
-			theNumberOfActions --;
-			for (long i = found; i <= theNumberOfActions; i ++) theActions [i] = theActions [i + 1];
+			Collection_removeItem (theActions, found);
 		}
 
 		/*
 		 * Determine the position of the new command.
 		 */
 		long position;
-		if (str32len (after)) {   /* Search for existing command with same selection. */
+		if (str32len (after)) {   // search for existing command with same selection
 			long found = lookUpMatchingAction (class1, class2, class3, nullptr, after);
 			if (found) {
 				position = found + 1;   // after 'after'
 			} else {
-				position = theNumberOfActions + 1;   // at end
+				position = theActions -> size + 1;   // at end
 			}
 		} else {
-			position = theNumberOfActions + 1;   // at end
+			position = theActions -> size + 1;   // at end
 		}
 
 		/*
-		 * Increment the command area.
+		 * Create new command.
 		 */
-		if (theNumberOfActions >= praat_MAXNUM_LOOSE_COMMANDS)
-			Melder_throw (U"Too many actions (maximum is ", praat_MAXNUM_LOOSE_COMMANDS, U").");
-		theNumberOfActions += 1;
-
-		/*
-		 * Make room for insertion.
-		 */
-		for (long i = theNumberOfActions; i > position; i --) theActions [i] = theActions [i - 1];
-		memset (& theActions [position], 0, sizeof (struct structPraat_Command));
+		autoPraat_Command action = Thing_new (Praat_Command);
+		action -> class1 = class1;
+		action -> n1 = n1;
+		action -> class2 = class2;
+		action -> n2 = n2;
+		action -> class3 = class3;
+		action -> n3 = n3;
+		action -> title = str32len (title) ? Melder_dup_f (title) : nullptr;   // allow old-fashioned untitled separators
+		action -> depth = depth;
+		action -> callback = str32len (script) ? DO_RunTheScriptFromAnyAddedMenuCommand : nullptr;   // null for a separator
+		action -> button = NULL;
+		if (str32len (script) == 0) {
+			action -> script = NULL;
+		} else {
+			structMelderFile file = { 0 };
+			Melder_relativePathToFile (script, & file);
+			action -> script = Melder_dup_f (Melder_fileToPath (& file));
+		}
+		action -> after = str32len (after) ? Melder_dup_f (after) : nullptr;
+		action -> phase = praatP.phase;
+		if (praatP.phase >= praat_READING_BUTTONS) {
+			static long uniqueID = 0;
+			action -> uniqueID = ++ uniqueID;
+		}
 
 		/*
 		 * Insert new command.
 		 */
-		theActions [position]. class1 = class1;
-		theActions [position]. n1 = n1;
-		theActions [position]. class2 = class2;
-		theActions [position]. n2 = n2;
-		theActions [position]. class3 = class3;
-		theActions [position]. n3 = n3;
-		theActions [position]. title = str32len (title) ? Melder_dup_f (title) : nullptr;   // allow old-fashioned untitled separators
-		theActions [position]. depth = depth;
-		theActions [position]. callback = str32len (script) ? DO_RunTheScriptFromAnyAddedMenuCommand : nullptr;   // null for a separator
-		theActions [position]. button = NULL;
-		if (str32len (script) == 0) {
-			theActions [position]. script = NULL;
-		} else {
-			structMelderFile file = { 0 };
-			Melder_relativePathToFile (script, & file);
-			theActions [position]. script = Melder_dup_f (Melder_fileToPath (& file));
-		}
-		theActions [position]. after = str32len (after) ? Melder_dup_f (after) : nullptr;
-		theActions [position]. phase = praatP.phase;
-		if (praatP.phase >= praat_READING_BUTTONS) {
-			static long uniqueID = 0;
-			theActions [position]. uniqueID = ++ uniqueID;
-		}
+		Ordered_addItemPos(theActions, action.transfer(), position);
 		updateDynamicMenu ();
 	} catch (MelderError) {
 		Melder_throw (U"Praat: script action not added.");
@@ -331,9 +317,7 @@ void praat_removeAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, c
 				class3 ? U" & ": U"", class3 -> className,
 				U": ", title, U"\" not found.");
 		}
-		Melder_free (theActions [found]. title);
-		theNumberOfActions --;
-		for (long i = found; i <= theNumberOfActions; i ++) theActions [i] = theActions [i + 1];
+		Collection_removeItem (theActions, found);
 	} catch (MelderError) {
 		Melder_throw (U"Praat: action not removed.");
 	}
@@ -372,9 +356,10 @@ void praat_hideAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, con
 				class3 ? U" & ": nullptr, class3 ? class3 -> className : nullptr,
 				U": ", title, U"\" not found.");
 		}
-		if (! theActions [found]. hidden) {
-			theActions [found]. hidden = true;
-			if (praatP.phase >= praat_READING_BUTTONS) theActions [found]. toggled = ! theActions [found]. toggled;
+		Praat_Command action = (Praat_Command) theActions -> item [found];
+		if (! action -> hidden) {
+			action -> hidden = true;
+			if (praatP.phase >= praat_READING_BUTTONS) action -> toggled = ! action -> toggled;
 			updateDynamicMenu ();
 		}
 	} catch (MelderError) {
@@ -414,9 +399,10 @@ void praat_showAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, con
 				class3 ? U" & ": nullptr, class3 ? class3 -> className : nullptr,
 				U": ", title, U"\" not found.");
 		}
-		if (theActions [found]. hidden) {
-			theActions [found]. hidden = false;
-			if (praatP.phase >= praat_READING_BUTTONS) theActions [found]. toggled = ! theActions [found]. toggled;
+		Praat_Command action = (Praat_Command) theActions -> item [found];
+		if (action -> hidden) {
+			action -> hidden = false;
+			if (praatP.phase >= praat_READING_BUTTONS) action -> toggled = ! action -> toggled;
 			updateDynamicMenu ();
 		}
 	} catch (MelderError) {
@@ -446,7 +432,7 @@ void praat_showAction_classNames (const char32 *className1, const char32 *classN
 }
 
 static int compareActions (const void *void_me, const void *void_thee) {
-	praat_Command me = (praat_Command) void_me, thee = (praat_Command) void_thee;
+	Praat_Command me = * (Praat_Command *) void_me, thee = * (Praat_Command *) void_thee;
 	int compare;
 	compare = str32cmp (my class1 -> className, thy class1 -> className);
 	if (compare) return my class1 == classDaata ? -1 : thy class1 == classDaata ? 1 : compare;
@@ -465,9 +451,11 @@ static int compareActions (const void *void_me, const void *void_thee) {
 }
 
 void praat_sortActions () {
-	for (long i = 1; i <= theNumberOfActions; i ++)
-		theActions [i]. sortingTail = i;
-	qsort (& theActions [1], theNumberOfActions, sizeof (struct structPraat_Command), compareActions);
+	for (long i = 1; i <= theActions -> size; i ++) {
+		Praat_Command action = (Praat_Command) theActions -> item [i];
+		action -> sortingTail = i;
+	}
+	qsort (& theActions -> item [1], theActions -> size, sizeof (Praat_Command), compareActions);
 }
 
 static const char32 *numberString (int number) {
@@ -483,8 +471,8 @@ static bool allowExecutionHook (void *closure) {
 	UiCallback callback = (UiCallback) closure;
 	Melder_assert (sizeof (callback) == sizeof (void *));
 	long numberOfMatchingCallbacks = 0, firstMatchingCallback = 0;
-	for (long i = 1; i <= theNumberOfActions; i ++) {
-		praat_Command me = & theActions [i];
+	for (long i = 1; i <= theActions -> size; i ++) {
+		Praat_Command me = (Praat_Command) theActions -> item [i];
 		if (my callback == callback) {
 			int sel1, sel2 = 0, sel3 = 0, sel4 = 0;
 			if (! my class1) Melder_throw (U"No class1???");
@@ -501,7 +489,7 @@ static bool allowExecutionHook (void *closure) {
 		}
 	}
 	if (numberOfMatchingCallbacks == 1) {
-		praat_Command me = & theActions [firstMatchingCallback];
+		Praat_Command me = (Praat_Command) theActions -> item [firstMatchingCallback];
 		Melder_appendError (U"Selection changed! It should be:");
 		if (my class1) Melder_appendError (U"   ", numberString (my n1), U" ", classString (my class1), U" ", objectString (my n1));
 		if (my class2) Melder_appendError (U"   ", numberString (my n2), U" ", classString (my class2), U" ", objectString (my n2));
@@ -521,8 +509,8 @@ static void do_menu (I, bool modified) {
  *	Catch the error queue for menu commands without dots (...).
  */
 	UiCallback callback = (UiCallback) void_me;
-	for (long i = 1; i <= theNumberOfActions; i ++) {
-		praat_Command me = & theActions [i];
+	for (long i = 1; i <= theActions -> size; i ++) {
+		Praat_Command me = (Praat_Command) theActions -> item [i];
 		if (my callback == callback) {
 			if (my title && ! str32str (my title, U"...")) {
 				UiHistory_write (U"\n");
@@ -587,31 +575,32 @@ void praat_actions_show () {
 		if (theCurrentPraatObjects -> totalSelection != 0 && ! Melder_backgrounding)
 			GuiThing_setSensitive (praat_writeMenu, true);
 	}
-	for (long i = 1; i <= theNumberOfActions; i ++) {
+	for (long i = 1; i <= theActions -> size; i ++) {
+		Praat_Command action = (Praat_Command) theActions -> item [i];
 		int sel1 = 0, sel2 = 0, sel3 = 0, sel4 = 0;
-		int n1 = theActions [i]. n1, n2 = theActions [i]. n2, n3 = theActions [i]. n3, n4 = theActions [i]. n4;
+		int n1 = action -> n1, n2 = action -> n2, n3 = action -> n3, n4 = action -> n4;
 
 		/* Clean up from previous selection. */
 
-		theActions [i]. visible = false;
-		theActions [i]. executable = false;
+		action -> visible = false;
+		action -> executable = false;
 
 		/* Match the actually selected classes with the selection required for this visibility. */
 
-		if (! theActions [i]. class1) continue;   // at least one class selected
-		sel1 = theActions [i]. class1 == classDaata ? theCurrentPraatObjects -> totalSelection : praat_numberOfSelected (theActions [i]. class1);
+		if (! action -> class1) continue;   // at least one class selected
+		sel1 = action -> class1 == classDaata ? theCurrentPraatObjects -> totalSelection : praat_numberOfSelected (action -> class1);
 		if (sel1 == 0) continue;
-		if (theActions [i]. class2 && (sel2 = praat_numberOfSelected (theActions [i]. class2)) == 0) continue;
-		if (theActions [i]. class3 && (sel3 = praat_numberOfSelected (theActions [i]. class3)) == 0) continue;
-		if (theActions [i]. class4 && (sel4 = praat_numberOfSelected (theActions [i]. class4)) == 0) continue;
+		if (action -> class2 && (sel2 = praat_numberOfSelected (action -> class2)) == 0) continue;
+		if (action -> class3 && (sel3 = praat_numberOfSelected (action -> class3)) == 0) continue;
+		if (action -> class4 && (sel4 = praat_numberOfSelected (action -> class4)) == 0) continue;
 		if (sel1 + sel2 + sel3 + sel4 != theCurrentPraatObjects -> totalSelection) continue;   // other classes selected? Do not show
-		theActions [i]. visible = ! theActions [i]. hidden;
+		action -> visible = ! action -> hidden;
 
 		/* Match the actually selected objects with the selection required for this action. */
 
-		if (! theActions [i]. callback) continue;   // separators are not executable
+		if (! action -> callback) continue;   // separators are not executable
 		if ((n1 && sel1 != n1) || (n2 && sel2 != n2) || (n3 && sel3 != n3) || (n4 && sel4 != n4)) continue;
-		theActions [i]. executable = true;
+		action -> executable = true;
 	}
 
 	/* Create a new column of buttons in the dynamic menu. */
@@ -620,8 +609,8 @@ void praat_actions_show () {
 		GuiMenu currentSubmenu1 = NULL, currentSubmenu2 = nullptr;
 		bool writeMenuGoingToSeparate = false;
 		int y = Machine_getMenuBarHeight () + 10;
-		for (long i = 1; i <= theNumberOfActions; i ++) {   // add buttons or make existing buttons sensitive (executable)
-			praat_Command me = & theActions [i];
+		for (long i = 1; i <= theActions -> size; i ++) {   // add buttons or make existing buttons sensitive (executable)
+			Praat_Command me = (Praat_Command) theActions -> item [i];
 			if (my depth == 0) currentSubmenu1 = nullptr, currentSubmenu2 = nullptr;   // prevent attachment of later deep actions to earlier submenus after removal of label
 			if (my depth == 1) currentSubmenu2 = nullptr;   // prevent attachment of later deep actions to earlier submenus after removal of label
 			if (! my visible) continue;
@@ -658,13 +647,13 @@ void praat_actions_show () {
 						gtk_button_set_alignment (GTK_BUTTON (my button -> d_widget), 0.0f, 0.5f);
 					#endif
 				}
-			} else if (i == theNumberOfActions || theActions [i + 1]. depth == 0) {
+			} else if (i == theActions -> size || ((Praat_Command) theActions -> item [i + 1]) -> depth == 0) {
 				/*
 				 * Apparently a labelled separator.
 				 */
 				my button = GuiLabel_createShown (praat_form, BUTTON_LEFT, BUTTON_RIGHT, y, y + Gui_LABEL_HEIGHT, my title, 0);
 				y += Gui_LABEL_HEIGHT + BUTTON_VSPACING;
-			} else if (my title == NULL || my title [0] == '-') {
+			} else if (! my title || my title [0] == U'-') {
 				/*
 				 * Apparently a separator in a submenu.
 				 */
@@ -701,7 +690,7 @@ void praat_actions_createWriteMenu (GuiWindow window) {
 }
 
 void praat_actions_init () {
-	theActions = Melder_calloc_f (struct structPraat_Command, 1 + praat_MAXNUM_LOOSE_COMMANDS);
+	theActions = Ordered_create ();
 }
 
 void praat_actions_createDynamicMenu (GuiWindow window) {
@@ -711,13 +700,14 @@ void praat_actions_createDynamicMenu (GuiWindow window) {
 
 void praat_saveAddedActions (MelderString *buffer) {
 	long maxID = 0;
-	for (long iaction = 1; iaction <= theNumberOfActions; iaction ++) {
-		if (theActions [iaction]. uniqueID > maxID)
-			maxID = theActions [iaction]. uniqueID;
+	for (long iaction = 1; iaction <= theActions -> size; iaction ++) {
+		Praat_Command action = (Praat_Command) theActions -> item [iaction];
+		if (action -> uniqueID > maxID)
+			maxID = action -> uniqueID;
 	}
 	for (long ident = 1; ident <= maxID; ident ++)
-		for (long iaction = 1; iaction <= theNumberOfActions; iaction ++) {
-			praat_Command me = & theActions [iaction];
+		for (long iaction = 1; iaction <= theActions -> size; iaction ++) {
+			Praat_Command me = (Praat_Command) theActions -> item [iaction];
 			if (my uniqueID == ident && ! my hidden && my title) {
 				MelderString_append (buffer, U"Add action command...",
 					U" ", my class1 -> className, U" ", my n1,
@@ -728,8 +718,8 @@ void praat_saveAddedActions (MelderString *buffer) {
 				break;
 			}
 		}
-	for (long iaction = 1; iaction <= theNumberOfActions; iaction ++) {
-		praat_Command me = & theActions [iaction];
+	for (long iaction = 1; iaction <= theActions -> size; iaction ++) {
+		Praat_Command me = (Praat_Command) theActions -> item [iaction];
 		if (my toggled && my title && ! my uniqueID && ! my script) {
 			MelderString_append (buffer, ( my hidden ? U"Hide" : U"Show" ), U" action command...",
 				U" ", my class1 -> className,
@@ -742,24 +732,24 @@ void praat_saveAddedActions (MelderString *buffer) {
 
 int praat_doAction (const char32 *command, const char32 *arguments, Interpreter interpreter) {
 	long i = 1;
-	while (i <= theNumberOfActions && (! theActions [i]. executable || str32cmp (theActions [i]. title, command))) i ++;
-	if (i > theNumberOfActions) return 0;   // not found
-	theActions [i]. callback (nullptr, 0, nullptr, arguments, interpreter, command, false, nullptr);
+	while (i <= theActions -> size && (! ((Praat_Command) theActions -> item [i]) -> executable || str32cmp (((Praat_Command) theActions -> item [i]) -> title, command))) i ++;
+	if (i > theActions -> size) return 0;   // not found
+	((Praat_Command) theActions -> item [i]) -> callback (nullptr, 0, nullptr, arguments, interpreter, command, false, nullptr);
 	return 1;
 }
 
 int praat_doAction (const char32 *command, int narg, Stackel args, Interpreter interpreter) {
 	long i = 1;
-	while (i <= theNumberOfActions && (! theActions [i]. executable || str32cmp (theActions [i]. title, command))) i ++;
-	if (i > theNumberOfActions) return 0;   // not found
-	theActions [i]. callback (nullptr, narg, args, nullptr, interpreter, command, false, nullptr);
+	while (i <= theActions -> size && (! ((Praat_Command) theActions -> item [i]) -> executable || str32cmp (((Praat_Command) theActions -> item [i]) -> title, command))) i ++;
+	if (i > theActions -> size) return 0;   // not found
+	((Praat_Command) theActions -> item [i]) -> callback (nullptr, narg, args, nullptr, interpreter, command, false, nullptr);
 	return 1;
 }
 
-long praat_getNumberOfActions () { return theNumberOfActions; }
+long praat_getNumberOfActions () { return theActions -> size; }
 
-praat_Command praat_getAction (long i)
-	{ return i < 0 || i > theNumberOfActions ? nullptr : & theActions [i]; }
+Praat_Command praat_getAction (long i)
+	{ return i < 0 || i > theActions -> size ? nullptr : (Praat_Command) theActions -> item [i]; }
 
 void praat_background () {
 	if (Melder_batch) return;

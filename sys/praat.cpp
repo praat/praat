@@ -56,6 +56,8 @@
 	#include <gdk/gdkx.h>
 #endif
 
+Thing_implement (Praat_Command, Thing, 0);
+
 #define EDITOR  theCurrentPraatObjects -> list [IOBJECT]. editors
 
 #define WINDOW_WIDTH 520
