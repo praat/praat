@@ -90,6 +90,9 @@
 #define DIALOG  cmd -> d_uiform
 
 #define EDITOR_ARGS  Editor void_me, EditorCommand cmd, UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter
+#define EDITOR_ARGS_FORM  EditorCommand cmd, UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter
+#define EDITOR_ARGS_CMD  EditorCommand cmd, UiForm, int, Stackel, const char32 *, Interpreter
+#define EDITOR_ARGS_DIRECT  EditorCommand, UiForm, int, Stackel, const char32 *, Interpreter
 #define EDITOR_IAM(klas)  iam (klas); (void) me; (void) cmd; (void) sendingForm; (void) narg; (void) args; (void) sendingString; (void) interpreter
 #define EDITOR_FORM(title,helpTitle)  if (! cmd -> d_uiform) { Any radio = 0; (void) radio; \
 	cmd -> d_uiform = UiForm_createE (cmd, title, cmd -> itemTitle, helpTitle);

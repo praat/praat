@@ -164,7 +164,7 @@ Thing_implement (GuiWindow, GuiShell, 0);
 #endif
 
 GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidth, int minimumHeight,
-	const char32 *title /* cattable */, void (*goAwayCallback) (void *goAwayBoss), void *goAwayBoss, uint32 flags)
+	const char32 *title /* cattable */, GuiShell_GoAwayCallback goAwayCallback, Thing goAwayBoss, uint32 flags)
 {
 	GuiWindow me = Thing_new (GuiWindow);
 	my d_parent = nullptr;

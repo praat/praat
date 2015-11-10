@@ -260,6 +260,8 @@ Daata Data_readFromBinaryFile (MelderFile file);
 		(plus those from Data_readBinary)
 */
 
+typedef Daata (*Data_FileTypeRecognizer) (int numberOfBytesRead, const char *header, MelderFile file);
+
 void Data_recognizeFileType (Any (*recognizer) (int nread, const char *header, MelderFile file));
 /*
 Purpose:

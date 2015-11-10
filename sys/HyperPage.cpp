@@ -608,9 +608,7 @@ void structHyperPage :: v_destroy () {
 	our HyperPage_Parent :: v_destroy ();
 }
 
-static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
-	iam (HyperPage);
-	(void) event;
+static void gui_drawingarea_cb_expose (HyperPage me, GuiDrawingArea_ExposeEvent /* event */) {
 	if (! my g) return;   // could be the case in the very beginning
 	Graphics_clearWs (my g);
 	initScreen (me);
@@ -627,8 +625,7 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 	}
 }
 
-static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
-	iam (HyperPage);
+static void gui_drawingarea_cb_click (HyperPage me, GuiDrawingArea_ClickEvent event) {
 	if (! my g) return;   // could be the case in the very beginning
 	if (! my links) return;
 	for (long ilink = 1; ilink <= my links -> size; ilink ++) {
@@ -899,8 +896,7 @@ void structHyperPage :: v_createMenus () {
 
 /********** **********/
 
-static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
-	iam (HyperPage);
+static void gui_drawingarea_cb_resize (HyperPage me, GuiDrawingArea_ResizeEvent event) {
 	if (! my g) return;
 	Graphics_setWsViewport (my g, 0, event -> width, 0, event -> height);
 	Graphics_setWsWindow (my g, 0.0, my rightMargin = event -> width / resolution,
@@ -909,15 +905,13 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 	updateVerticalScrollBar (me);
 }
 
-static void gui_button_cb_previousPage (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_previousPage (I, GuiButtonEvent /* event */) {
 	iam (HyperPage);
 	HyperPage_goToPage_i (me, my v_getCurrentPageNumber () > 1 ?
 		my v_getCurrentPageNumber () - 1 : my v_getNumberOfPages ());
 }
 
-static void gui_button_cb_nextPage (I, GuiButtonEvent event) {
-	(void) event;
+static void gui_button_cb_nextPage (I, GuiButtonEvent /* event */) {
 	iam (HyperPage);
 	long currentPageNumber = my v_getCurrentPageNumber ();
 	HyperPage_goToPage_i (me, currentPageNumber < my v_getNumberOfPages () ? currentPageNumber + 1 : 1);
@@ -969,7 +963,7 @@ void HyperPage_init (HyperPage me, const char32 *title, Daata data) {
 		my pref_font () = my p_font = kGraphics_font_TIMES;   // ensure Unicode compatibility
 	setFontSize (me, my p_fontSize);
 
-struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };
+struct structGuiDrawingArea_ResizeEvent event { my drawingArea, 0 };
 event. width  = GuiControl_getWidth  (my drawingArea);
 event. height = GuiControl_getHeight (my drawingArea);
 gui_drawingarea_cb_resize (me, & event);

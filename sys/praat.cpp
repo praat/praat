@@ -840,7 +840,7 @@ DO
 	praat_exit (0);
 END
 
-static void gui_cb_quit (void *) {
+static void gui_cb_quit (Thing /* me */) {
 	DO_Quit (nullptr, 0, nullptr, nullptr, nullptr, nullptr, false, nullptr);
 }
 

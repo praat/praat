@@ -66,8 +66,7 @@ static void drawControlButton (RunnerMFC me, double left, double right, double b
 	Graphics_text (my graphics, 0.5 * (left + right), 0.5 * (bottom + top), visibleText);
 }
 
-static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
-	iam (RunnerMFC);
+static void gui_drawingarea_cb_expose (RunnerMFC me, GuiDrawingArea_ExposeEvent event) {
 	Melder_assert (event -> widget == my d_drawingArea);
 	if (my graphics == NULL) return;   // Could be the case in the very beginning.
 	ExperimentMFC experiment = (ExperimentMFC) my data;
@@ -181,9 +180,8 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 	}
 }
 
-static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
-	iam (RunnerMFC);
-	if (my graphics == NULL) return;
+static void gui_drawingarea_cb_resize (RunnerMFC me, GuiDrawingArea_ResizeEvent event) {
+	if (! my graphics) return;
 	Graphics_setWsViewport (my graphics, 0, event -> width, 0, event -> height);
 	Graphics_setWsWindow (my graphics, 0, event -> width, 0, event -> height);
 	Graphics_setViewport (my graphics, 0, event -> width, 0, event -> height);
@@ -269,9 +267,8 @@ static void do_replay (RunnerMFC me) {
 	}
 }
 
-static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
-	iam (RunnerMFC);
-	if (my graphics == NULL) return;   // could be the case in the very beginning
+static void gui_drawingarea_cb_click (RunnerMFC me, GuiDrawingArea_ClickEvent event) {
+	if (! my graphics) return;   // could be the case in the very beginning
 	ExperimentMFC experiment = (ExperimentMFC) my data;
 	if (my data == NULL) return;
 	double reactionTime = Melder_clock () - experiment -> startingTime;
@@ -394,9 +391,8 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	}
 }
 
-static void gui_drawingarea_cb_key (I, GuiDrawingAreaKeyEvent event) {
-	iam (RunnerMFC);
-	if (my graphics == NULL) return;   // Could be the case in the very beginning.
+static void gui_drawingarea_cb_key (RunnerMFC me, GuiDrawingArea_KeyEvent event) {
+	if (! my graphics) return;   // could be the case in the very beginning
 	ExperimentMFC experiment = (ExperimentMFC) my data;
 	if (my data == NULL) return;
 	double reactionTime = Melder_clock () - experiment -> startingTime;
@@ -452,7 +448,7 @@ autoRunnerMFC RunnerMFC_create (const char32 *title, Ordered experiments) {
 		my experiments = experiments;
 		my graphics = Graphics_create_xmdrawingarea (my d_drawingArea);
 
-struct structGuiDrawingAreaResizeEvent event = { my d_drawingArea, 0 };
+struct structGuiDrawingArea_ResizeEvent event { my d_drawingArea, 0 };
 event. width  = GuiControl_getWidth  (my d_drawingArea);
 event. height = GuiControl_getHeight (my d_drawingArea);
 gui_drawingarea_cb_resize (me.peek(), & event);

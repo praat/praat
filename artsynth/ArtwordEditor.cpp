@@ -92,16 +92,14 @@ static void gui_radiobutton_cb_toggle (I, GuiRadioButtonEvent event) {
 	updateList (me);
 }
 
-static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent /* event */) {
-	iam (ArtwordEditor);
+static void gui_drawingarea_cb_expose (ArtwordEditor me, GuiDrawingArea_ExposeEvent /* event */) {
 	if (! my graphics) return;
 	Artword artword = (Artword) my data;
 	Graphics_clearWs (my graphics);
 	Artword_draw (artword, my graphics, my feature, true);
 }
 
-static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
-	iam (ArtwordEditor);
+static void gui_drawingarea_cb_click (ArtwordEditor me, GuiDrawingArea_ClickEvent event) {
 	if (! my graphics) return;
 	Artword artword = (Artword) my data;
 	Graphics_setWindow (my graphics, 0, artword -> totalTime, -1.0, 1.0);

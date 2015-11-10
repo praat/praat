@@ -39,12 +39,14 @@ Thing_define (EditorMenu, Thing) {
 		override;
 };
 
+typedef MelderCallback <void, structEditor, EditorCommand, UiForm, int /*narg*/, Stackel /*args*/, const char32 *, Interpreter> EditorCommandCallback;
+
 Thing_define (EditorCommand, Thing) {
 	Editor d_editor;
 	EditorMenu menu;
 	const char32 *itemTitle;
 	GuiMenuItem itemWidget;
-	void (*commandCallback) (Editor editor_me, EditorCommand cmd, UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter);
+	EditorCommandCallback commandCallback;
 	const char32 *script;
 	autoUiForm d_uiform;
 
@@ -99,16 +101,14 @@ Thing_define (Editor, Thing) {
 	#include "Editor_prefs.h"
 };
 
-GuiMenuItem EditorMenu_addCommand (EditorMenu me, const char32 *itemTitle /* cattable */, long flags,
-	void (*commandCallback) (Editor me, EditorCommand, UiForm, int, Stackel, const char32 *, Interpreter));
+GuiMenuItem EditorMenu_addCommand (EditorMenu me, const char32 *itemTitle /* cattable */, long flags, EditorCommandCallback commandCallback);
 GuiMenuItem EditorCommand_getItemWidget (EditorCommand me);
 
 EditorMenu Editor_addMenu (Editor me, const char32 *menuTitle, long flags);
 GuiObject EditorMenu_getMenuWidget (EditorMenu me);
 
 #define Editor_HIDDEN  (1 << 14)
-GuiMenuItem Editor_addCommand (Editor me, const char32 *menuTitle, const char32 *itemTitle, long flags,
-	void (*commandCallback) (Editor me, EditorCommand cmd, UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter));
+GuiMenuItem Editor_addCommand (Editor me, const char32 *menuTitle, const char32 *itemTitle, long flags, EditorCommandCallback commandCallback);
 GuiMenuItem Editor_addCommandScript (Editor me, const char32 *menuTitle, const char32 *itemTitle, long flags,
 	const char32 *script);
 void Editor_setMenuSensitive (Editor me, const char32 *menu, int sensitive);

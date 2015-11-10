@@ -44,7 +44,7 @@ Thing_implement (GuiScrollBar, GuiControl, 0);
 		if (my d_blockValueChangedCallbacks) {
 			my d_blockValueChangedCallbacks = false;
 		} else if (my d_valueChangedCallback) {
-			struct structGuiScrollBarEvent event = { me };
+			struct structGuiScrollBarEvent event { me };
 			try {
 				my d_valueChangedCallback (my d_valueChangedBoss, & event);
 			} catch (MelderError) {
@@ -101,7 +101,7 @@ Thing_implement (GuiScrollBar, GuiControl, 0);
 	GuiScrollBar me = (GuiScrollBar) d_userData;
 	[self setMinimum: _m_minimum maximum: _m_maximum value: _m_value sliderSize: _m_sliderSize increment: _m_increment pageIncrement: _m_pageIncrement];
     if (my d_valueChangedCallback) {
-        struct structGuiScrollBarEvent event = { me };
+        struct structGuiScrollBarEvent event { me };
         try {
             my d_valueChangedCallback (my d_valueChangedBoss, & event);
         } catch (MelderError) {
@@ -172,7 +172,7 @@ Thing_implement (GuiScrollBar, GuiControl, 0);
 		} break;
     }
     if (my d_valueChangedCallback) {
-        struct structGuiScrollBarEvent event = { me };
+        struct structGuiScrollBarEvent event { me };
         try {
             my d_valueChangedCallback (my d_valueChangedBoss, & event);
         } catch (MelderError) {
@@ -198,7 +198,7 @@ Thing_implement (GuiScrollBar, GuiControl, 0);
 	static void _GuiMotifScrollBar_valueChangedCallback (GuiObject widget, XtPointer void_me, XtPointer call) {
 		iam (GuiScrollBar);
 		if (my d_valueChangedCallback) {
-			struct structGuiScrollBarEvent event = { me };
+			struct structGuiScrollBarEvent event { me };
 			try {
 				my d_valueChangedCallback (my d_valueChangedBoss, & event);
 			} catch (MelderError) {

@@ -60,8 +60,8 @@ void structEditorMenu :: v_destroy () {
 
 /********** functions **********/
 
-static void commonCallback (GUI_ARGS) {
-	GUI_IAM (EditorCommand);
+static void commonCallback (I, GuiMenuItemEvent /* event */) {
+	iam (EditorCommand);
 	if (my d_editor && my d_editor -> v_scriptable () && ! str32str (my itemTitle, U"...")) {
 		UiHistory_write (U"\n");
 		UiHistory_write_colonize (my itemTitle);
@@ -76,15 +76,14 @@ static void commonCallback (GUI_ARGS) {
 	}
 }
 
-GuiMenuItem EditorMenu_addCommand (EditorMenu me, const char32 *itemTitle /* cattable */, long flags,
-	void (*commandCallback) (Editor me, EditorCommand cmd, UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter))
+GuiMenuItem EditorMenu_addCommand (EditorMenu me, const char32 *itemTitle /* cattable */, long flags, EditorCommandCallback commandCallback)
 {
 	autoEditorCommand thee = Thing_new (EditorCommand);
 	thy d_editor = my d_editor;
 	thy menu = me;
 	thy itemTitle = Melder_dup (itemTitle);
 	thy itemWidget =
-		commandCallback == nullptr ? GuiMenu_addSeparator (my menuWidget) :
+		! commandCallback ? GuiMenu_addSeparator (my menuWidget) :
 		flags & Editor_HIDDEN ? nullptr :
 		GuiMenu_addItem (my menuWidget, itemTitle, flags, commonCallback, thee.peek());   // DANGLE BUG: me can be killed by Collection_addItem(), but EditorCommand::destroy doesn't remove the item
 	thy commandCallback = commandCallback;
@@ -108,8 +107,7 @@ EditorMenu Editor_addMenu (Editor me, const char32 *menuTitle, long flags) {
 
 /*GuiObject EditorMenu_getMenuWidget (EditorMenu me) { return my menuWidget; }*/
 
-GuiMenuItem Editor_addCommand (Editor me, const char32 *menuTitle, const char32 *itemTitle, long flags,
-	void (*commandCallback) (Editor me, EditorCommand cmd, UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter))
+GuiMenuItem Editor_addCommand (Editor me, const char32 *menuTitle, const char32 *itemTitle, long flags, EditorCommandCallback commandCallback)
 {
 	try {
 		long numberOfMenus = my menus -> size;
@@ -396,8 +394,7 @@ void structEditor :: v_do_pictureMargins (EditorCommand cmd) {
 	pref_picture_writeNameAtTop () = GET_ENUM (kEditor_writeNameAtTop, U"Write name at top");
 }
 
-static void gui_window_cb_goAway (I) {
-	iam (Editor);
+static void gui_window_cb_goAway (Editor me) {
 	Melder_assert (me);
 	Melder_assert (Thing_isa (me, classEditor));
 	my v_goAway ();

@@ -46,15 +46,22 @@
 		Picture_remove (& p);
 */
 
-#ifdef macintosh
-#define Picture PictureNotMac
-#endif
+#include "Gui.h"
 
-#include "Graphics.h"
+Thing_define (Picture, Thing) {
+	GuiDrawingArea drawingArea;
+	Graphics graphics, selectionGraphics;
+	bool sensitive;
+	double selx1, selx2, sely1, sely2;   // selection in NDC co-ordinates
+	void (*selectionChangedCallback) (Picture, void *, double, double, double, double);
+	void *selectionChangedClosure;
+	bool backgrounding, mouseSelectsInnerViewport;
 
-typedef struct structPicture *Picture;
+	void v_destroy ()
+		override;
+};
 
-Picture Picture_create (GuiDrawingArea drawingArea, bool sensitive);
+autoPicture Picture_create (GuiDrawingArea drawingArea, bool sensitive);
 /*
 	Function:
 		create an empty self-recording picture inside 'drawingArea'.
@@ -98,17 +105,7 @@ void Picture_setSelectionChangedCallback (Picture me,
 
 void Picture_setMouseSelectsInnerViewport (Picture me, int mouseSelectsInnerViewport);
 
-void Picture_remove (Picture *me);
-/*
-	Function:
-		remove a Picture from memory.
-	Preconditions:
-		none
-	Postconditions:
-		*me == NULL;
-*/
-
-void Picture_erase (Picture me);   /* Clears the screen. */
+void Picture_erase (Picture me);   // clears the screen
 
 void Picture_writeToPraatPictureFile (Picture me, MelderFile file);
 void Picture_readFromPraatPictureFile (Picture me, MelderFile file);

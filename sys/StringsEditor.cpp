@@ -145,12 +145,12 @@ void structStringsEditor :: v_dataChanged () {
 	updateList (this);
 }
 
-StringsEditor StringsEditor_create (const char32 *title, Strings data) {
+autoStringsEditor StringsEditor_create (const char32 *title, Strings data) {
 	try {
 		autoStringsEditor me = Thing_new (StringsEditor);
 		Editor_init (me.peek(), 20, 40, 600, 600, title, data);
 		updateList (me.peek());
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Strings window not created.");
 	}

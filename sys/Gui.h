@@ -352,6 +352,8 @@ void GuiControl_setSize (GuiControl me, int width, int height);
 Thing_define (GuiForm, GuiControl) {
 };
 
+typedef MelderCallback <void, structThing> GuiShell_GoAwayCallback;
+
 Thing_define (GuiShell, GuiForm) {
 	int d_width, d_height;
 	#if gtk
@@ -361,8 +363,8 @@ Thing_define (GuiShell, GuiForm) {
 	#elif motif
 		GuiObject d_xmShell;
 	#endif
-	void (*d_goAwayCallback) (void *boss);
-	void *d_goAwayBoss;
+	GuiShell_GoAwayCallback d_goAwayCallback;
+	Thing d_goAwayBoss;
 
 	void v_destroy ()
 		override;
@@ -448,7 +450,7 @@ Thing_define (GuiDialog, GuiShell) {
 GuiDialog GuiDialog_create (GuiWindow parent,
 	int x, int y, int width, int height,
 	const char32 *title,
-	void (*goAwayCallback) (void *goAwayBoss), void *goAwayBoss,
+	GuiShell_GoAwayCallback goAwayCallback, Thing goAwayBoss,
 	uint32 flags);
 
 /********** GuiDrawingArea **********/
@@ -456,69 +458,74 @@ GuiDialog GuiDialog_create (GuiWindow parent,
 Thing_declare (GuiDrawingArea);
 Thing_declare (GuiScrollBar);
 
-typedef struct structGuiDrawingAreaExposeEvent {
+typedef struct structGuiDrawingArea_ExposeEvent {
 	GuiDrawingArea widget;
 	int x, y, width, height;
-} *GuiDrawingAreaExposeEvent;
-typedef struct structGuiDrawingAreaClickEvent {
+} *GuiDrawingArea_ExposeEvent;
+typedef struct structGuiDrawingArea_ClickEvent {
 	GuiDrawingArea widget;
 	int x, y;
 	bool shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed;
 	int button;
-} *GuiDrawingAreaClickEvent;
-typedef struct structGuiDrawingAreaKeyEvent {
+} *GuiDrawingArea_ClickEvent;
+typedef struct structGuiDrawingArea_KeyEvent {
 	GuiDrawingArea widget;
 	char32 key;
 	bool shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed;
-} *GuiDrawingAreaKeyEvent;
-typedef struct structGuiDrawingAreaResizeEvent {
+} *GuiDrawingArea_KeyEvent;
+typedef struct structGuiDrawingArea_ResizeEvent {
 	GuiDrawingArea widget;
 	int width, height;
-} *GuiDrawingAreaResizeEvent;
+} *GuiDrawingArea_ResizeEvent;
+
+typedef MelderCallback <void, structThing, GuiDrawingArea_ExposeEvent> GuiDrawingArea_ExposeCallback;
+typedef MelderCallback <void, structThing, GuiDrawingArea_ClickEvent > GuiDrawingArea_ClickCallback;
+typedef MelderCallback <void, structThing, GuiDrawingArea_KeyEvent   > GuiDrawingArea_KeyCallback;
+typedef MelderCallback <void, structThing, GuiDrawingArea_ResizeEvent> GuiDrawingArea_ResizeCallback;
 
 Thing_define (GuiDrawingArea, GuiControl) {
 	GuiScrollBar d_horizontalScrollBar, d_verticalScrollBar;   // for swiping
-	void (*d_exposeCallback) (void *boss, GuiDrawingAreaExposeEvent event);
-	void *d_exposeBoss;
-	void (*d_clickCallback) (void *boss, GuiDrawingAreaClickEvent event);
-	void *d_clickBoss;
-	void (*d_keyCallback) (void *boss, GuiDrawingAreaKeyEvent event);
-	void *d_keyBoss;
-	void (*d_resizeCallback) (void *boss, GuiDrawingAreaResizeEvent event);
-	void *d_resizeBoss;
+	GuiDrawingArea_ExposeCallback d_exposeCallback;
+	Thing d_exposeBoss;
+	GuiDrawingArea_ClickCallback d_clickCallback;
+	Thing d_clickBoss;
+	GuiDrawingArea_KeyCallback d_keyCallback;
+	Thing d_keyBoss;
+	GuiDrawingArea_ResizeCallback d_resizeCallback;
+	Thing d_resizeBoss;
 };
 
 /* GuiDrawingArea creation flags: */
 #define GuiDrawingArea_BORDER  1
 GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int top, int bottom,
-	void (*exposeCallback) (void *boss, GuiDrawingAreaExposeEvent event),
-	void (*clickCallback) (void *boss, GuiDrawingAreaClickEvent event),
-	void (*keyCallback) (void *boss, GuiDrawingAreaKeyEvent event),
-	void (*resizeCallback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss,
+	GuiDrawingArea_ExposeCallback exposeCallback,
+	GuiDrawingArea_ClickCallback clickCallback,
+	GuiDrawingArea_KeyCallback keyCallback,
+	GuiDrawingArea_ResizeCallback resizeCallback, Thing boss,
 	uint32 flags);
 GuiDrawingArea GuiDrawingArea_createShown (GuiForm parent, int left, int right, int top, int bottom,
-	void (*exposeCallback) (void *boss, GuiDrawingAreaExposeEvent event),
-	void (*clickCallback) (void *boss, GuiDrawingAreaClickEvent event),
-	void (*keyCallback) (void *boss, GuiDrawingAreaKeyEvent event),
-	void (*resizeCallback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss,
+	GuiDrawingArea_ExposeCallback exposeCallback,
+	GuiDrawingArea_ClickCallback clickCallback,
+	GuiDrawingArea_KeyCallback keyCallback,
+	GuiDrawingArea_ResizeCallback resizeCallback, Thing boss,
 	uint32 flags);
 GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int height,
-	void (*exposeCallback) (void *boss, GuiDrawingAreaExposeEvent event),
-	void (*clickCallback) (void *boss, GuiDrawingAreaClickEvent event),
-	void (*keyCallback) (void *boss, GuiDrawingAreaKeyEvent event),
-	void (*resizeCallback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss,
+	GuiDrawingArea_ExposeCallback exposeCallback,
+	GuiDrawingArea_ClickCallback clickCallback,
+	GuiDrawingArea_KeyCallback keyCallback,
+	GuiDrawingArea_ResizeCallback resizeCallback, Thing boss,
 	uint32 flags);
 GuiDrawingArea GuiDrawingArea_createShown (GuiScrolledWindow parent, int width, int height,
-	void (*exposeCallback) (void *boss, GuiDrawingAreaExposeEvent event),
-	void (*clickCallback) (void *boss, GuiDrawingAreaClickEvent event),
-	void (*keyCallback) (void *boss, GuiDrawingAreaKeyEvent event),
-	void (*resizeCallback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss,
+	GuiDrawingArea_ExposeCallback exposeCallback,
+	GuiDrawingArea_ClickCallback clickCallback,
+	GuiDrawingArea_KeyCallback keyCallback,
+	GuiDrawingArea_ResizeCallback resizeCallback, Thing boss,
 	uint32 flags);
 
 void GuiDrawingArea_setSwipable (GuiDrawingArea me, GuiScrollBar horizontalScrollBar, GuiScrollBar verticalScrollBar);
-void GuiDrawingArea_setExposeCallback (GuiDrawingArea me, void (*callback) (void *boss, GuiDrawingAreaExposeEvent event), void *boss);
-void GuiDrawingArea_setClickCallback  (GuiDrawingArea me, void (*callback) (void *boss, GuiDrawingAreaClickEvent  event), void *boss);
-void GuiDrawingArea_setResizeCallback (GuiDrawingArea me, void (*callback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss);
+void GuiDrawingArea_setExposeCallback (GuiDrawingArea me, GuiDrawingArea_ExposeCallback callback, Thing boss);
+void GuiDrawingArea_setClickCallback  (GuiDrawingArea me, GuiDrawingArea_ClickCallback  callback, Thing boss);
+void GuiDrawingArea_setResizeCallback (GuiDrawingArea me, GuiDrawingArea_ResizeCallback callback, Thing boss);
 
 /********** GuiFileSelect **********/
 
@@ -632,9 +639,12 @@ typedef struct structGuiMenuItemEvent {
 	bool shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed;
 } *GuiMenuItemEvent;
 
+//typedef MelderCallback <void, void * /* boss */, GuiMenuItemEvent> GuiMenuItemCallback;
+typedef void (*GuiMenuItemCallback) (void * boss, GuiMenuItemEvent event);
+
 Thing_define (GuiMenuItem, GuiThing) {
 	GuiMenu d_menu;
-	void (*d_commandCallback) (void *boss, GuiMenuItemEvent event);
+	GuiMenuItemCallback d_callback;
 	void *d_boss;
 	#if gtk
 		bool d_callbackBlocked;
@@ -685,7 +695,7 @@ Thing_define (GuiMenuItem, GuiThing) {
 // or any ASCII character (preferably a letter or digit) between 32 and 126
 
 GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, uint32 flags,
-	void (*commandCallback) (void *boss, GuiMenuItemEvent event), void *boss);
+	GuiMenuItemCallback callback, void* boss);
 /* Flags is a combination of the above defines. */
 GuiMenuItem GuiMenu_addSeparator (GuiMenu menu);
 
@@ -907,7 +917,7 @@ Thing_define (GuiWindow, GuiShell) { public:
 /* GuiWindow creation flags: */
 #define GuiWindow_FULLSCREEN  1
 GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidth, int minimumHeight,
-	const char32 *title /* cattable */, void (*goAwayCallback) (void *goAwayBoss), void *goAwayBoss, uint32 flags);
+	const char32 *title /* cattable */, GuiShell_GoAwayCallback goAwayCallback, Thing goAwayBoss, uint32 flags);
 	// returns a Form widget that has a new Shell parent.
 
 void GuiWindow_addMenuBar (GuiWindow me);

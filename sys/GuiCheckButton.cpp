@@ -41,7 +41,7 @@ Thing_implement (GuiCheckButton, GuiControl, 0);
 	static void _GuiGtkCheckButton_valueChangedCallback (GuiObject widget, gpointer void_me) {
 		iam (GuiCheckButton);
 		if (my d_valueChangedCallback && ! my d_blockValueChangedCallbacks) {
-			struct structGuiCheckButtonEvent event = { me };
+			struct structGuiCheckButtonEvent event { me };
 			my d_valueChangedCallback (my d_valueChangedBoss, & event);
 		}
 	}
@@ -67,7 +67,7 @@ Thing_implement (GuiCheckButton, GuiControl, 0);
 		GuiCheckButton me = d_userData;
 		if (my d_valueChangedCallback) {
 			Melder_assert (! my d_blockValueChangedCallbacks);
-			struct structGuiCheckButtonEvent event = { me };
+			struct structGuiCheckButtonEvent event { me };
 			my d_valueChangedCallback (my d_valueChangedBoss, & event);
 		}
 	}
@@ -82,7 +82,7 @@ Thing_implement (GuiCheckButton, GuiControl, 0);
 	void _GuiWinCheckButton_handleClick (GuiObject widget) {
 		iam_checkbutton;
 		if (my d_valueChangedCallback) {
-			struct structGuiCheckButtonEvent event = { me };
+			struct structGuiCheckButtonEvent event { me };
 			my d_valueChangedCallback (my d_valueChangedBoss, & event);
 		}
 	}
@@ -99,7 +99,7 @@ Thing_implement (GuiCheckButton, GuiControl, 0);
 		GuiMac_clipOff ();
 		if (clicked) {
 			if (my d_valueChangedCallback) {
-				struct structGuiCheckButtonEvent event = { me };
+				struct structGuiCheckButtonEvent event { me };
 				my d_valueChangedCallback (my d_valueChangedBoss, & event);
 			}
 		}

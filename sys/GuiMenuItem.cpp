@@ -106,10 +106,10 @@ static void NativeMenuItem_setText (GuiObject me) {
 		iam (GuiMenuItem);
 		if (my d_callbackBlocked) return;
 		if (G_OBJECT_TYPE (widget) == GTK_TYPE_RADIO_MENU_ITEM && ! gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (widget))) return;
-		struct structGuiMenuItemEvent event = { me, 0 };
-		if (my d_commandCallback) {
+		struct structGuiMenuItemEvent event { me, false, false, false, false };
+		if (my d_callback) {
 			try {
-				my d_commandCallback (my d_boss, & event);
+				my d_callback (my d_boss, & event);
 			} catch (MelderError) {
 				Melder_flushError (U"Your choice of menu item \"", Melder_peek8to32 (GTK_WIDGET (widget) -> name), U"\" was not completely handled.");
 			}
@@ -135,10 +135,10 @@ static void NativeMenuItem_setText (GuiObject me) {
 	- (void) _guiCocoaMenuItem_activateCallback: (id) widget {
 		Melder_assert (self == widget);   // sender (widget) and receiver (self) happen to be the same object
 		GuiMenuItem me = self -> d_userData;
-		if (my d_commandCallback) {
-			struct structGuiMenuItemEvent event = { me, 0 };
+		if (my d_callback) {
+			struct structGuiMenuItemEvent event { me, false, false, false, false };
 			try {
-				my d_commandCallback (my d_boss, & event);
+				my d_callback (my d_boss, & event);
 			} catch (MelderError) {
 				Melder_flushError (U"Your choice of menu item \"", U"xx", U"\" was not completely handled.");
 			}
@@ -153,10 +153,10 @@ static void NativeMenuItem_setText (GuiObject me) {
 	}
 	static void _guiMotifMenuItem_activateCallback (GuiObject widget, XtPointer void_me, XtPointer call) {
 		iam (GuiMenuItem);
-		if (my d_commandCallback) {
-			struct structGuiMenuItemEvent event = { me, 0 };
+		if (my d_callback) {
+			struct structGuiMenuItemEvent event { me, false, false, false, false };
 			try {
-				my d_commandCallback (my d_boss, & event);
+				my d_callback (my d_boss, & event);
 			} catch (MelderError) {
 				Melder_flushError (U"Your choice of menu item \"", widget -> name, U"\" was not completely handled.");
 			}
@@ -339,7 +339,7 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, uint32 flags,
 	#endif
 
 	trace (U"install the command callback");
-	my d_commandCallback = commandCallback;
+	my d_callback = commandCallback;
 	my d_boss = boss;
 	#if gtk
 		if (commandCallback) {

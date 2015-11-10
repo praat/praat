@@ -524,7 +524,7 @@ static void do_menu (I, bool modified) {
 	for (long i = 1; i <= theNumberOfActions; i ++) {
 		praat_Command me = & theActions [i];
 		if (my callback == callback) {
-			if (my title != NULL && ! str32str (my title, U"...")) {
+			if (my title && ! str32str (my title, U"...")) {
 				UiHistory_write (U"\n");
 				UiHistory_write_colonize (my title);
 			}
@@ -538,7 +538,7 @@ static void do_menu (I, bool modified) {
 			praat_updateSelection (); return;
 		}
 		if (my callback == DO_RunTheScriptFromAnyAddedMenuCommand && my script == (void *) void_me) {
-			if (my title != NULL && ! str32str (my title, U"...")) {
+			if (my title && ! str32str (my title, U"...")) {
 				UiHistory_write (U"\nexecute ");
 				UiHistory_write (my script);
 			} else {
@@ -556,7 +556,7 @@ static void do_menu (I, bool modified) {
 	}
 }
 
-static void cb_menu (GUI_ARGS) {
+static void cb_menu (I, GuiMenuItemEvent event) {
 	bool modified = event -> shiftKeyPressed || event -> commandKeyPressed || event -> optionKeyPressed || event -> extraControlKeyPressed;
 	do_menu (void_me, modified);
 }

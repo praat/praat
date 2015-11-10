@@ -40,7 +40,7 @@ Thing_implement (GuiButton, GuiControl, 0);
 	}
 	static void _GuiGtkButton_activateCallback (GuiObject widget, gpointer void_me) {
 		iam (GuiButton);
-		struct structGuiButtonEvent event = { me, 0 };
+		struct structGuiButtonEvent event { me, false, false, false, false };
 		if (my d_activateCallback) {
 			try {
 				my d_activateCallback (my d_activateBoss, & event);
@@ -70,7 +70,7 @@ Thing_implement (GuiButton, GuiControl, 0);
 		Melder_assert (self == widget);   // sender (widget) and receiver (self) happen to be the same object
 		GuiButton me = d_userData;
 		if (my d_activateCallback) {
-			struct structGuiButtonEvent event = { me, 0 };
+			struct structGuiButtonEvent event { me, false, false, false, false };
 			try {
 				my d_activateCallback (my d_activateBoss, & event);
 			} catch (MelderError) {
@@ -92,7 +92,7 @@ Thing_implement (GuiButton, GuiControl, 0);
 	void _GuiWinButton_handleClick (GuiObject widget) {
 		iam_button;
 		if (my d_activateCallback) {
-			struct structGuiButtonEvent event = { me, 0 };
+			struct structGuiButtonEvent event { me, false, false, false, false };
 			try {
 				my d_activateCallback (my d_activateBoss, & event);
 			} catch (MelderError) {
@@ -103,7 +103,7 @@ Thing_implement (GuiButton, GuiControl, 0);
 	bool _GuiWinButton_tryToHandleShortcutKey (GuiObject widget) {
 		iam_button;
 		if (my d_activateCallback) {
-			struct structGuiButtonEvent event = { me, 0 };
+			struct structGuiButtonEvent event { me, false, false, false, false };
 			try {
 				my d_activateCallback (my d_activateBoss, & event);
 			} catch (MelderError) {
@@ -129,7 +129,7 @@ Thing_implement (GuiButton, GuiControl, 0);
 		bool pushed = HandleControlClick (widget -> nat.control.handle, macEvent -> where, macEvent -> modifiers, nullptr);
 		GuiMac_clipOff ();
 		if (pushed && my d_activateCallback) {
-			struct structGuiButtonEvent event = { me, 0 };
+			struct structGuiButtonEvent event { me, false, false, false, false };
 			//enum { cmdKey = 256, shiftKey = 512, optionKey = 2048, controlKey = 4096 };
 			Melder_assert (macEvent -> what == mouseDown);
 			event. shiftKeyPressed = (macEvent -> modifiers & shiftKey) != 0;
@@ -146,7 +146,7 @@ Thing_implement (GuiButton, GuiControl, 0);
 	bool _GuiMacButton_tryToHandleShortcutKey (GuiObject widget, EventRecord *macEvent) {
 		iam_button;
 		if (my d_activateCallback) {
-			struct structGuiButtonEvent event = { me, 0 };
+			struct structGuiButtonEvent event { me, false, false, false, false };
 			// ignore modifier keys for Enter
 			try {
 				my d_activateCallback (my d_activateBoss, & event);

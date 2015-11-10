@@ -801,9 +801,8 @@ static void gui_radiobutton_cb_fsamp (I, GuiRadioButtonEvent event) {
 	}
 }
 
-static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
-	iam (SoundRecorder);
-	if (my graphics == NULL) return;   // Could be the case in the very beginning.
+static void gui_drawingarea_cb_resize (SoundRecorder me, GuiDrawingArea_ResizeEvent event) {
+	if (! my graphics) return;   // could be the case in the very beginning
 	Graphics_setWsViewport (my graphics, 0, event -> width, 0, event -> height);
 	Graphics_setWsWindow (my graphics, 0, event -> width, 0, event -> height);
 	Graphics_setViewport (my graphics, 0, event -> width, 0, event -> height);
@@ -1192,7 +1191,7 @@ autoSoundRecorder SoundRecorder_create (int numberOfChannels) {
 		Graphics_setColour (my graphics, Graphics_WHITE);
 		Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 1.0);
 
-struct structGuiDrawingAreaResizeEvent event = { my meter, 0 };
+struct structGuiDrawingArea_ResizeEvent event { my meter, 0 };
 event. width  = GuiControl_getWidth  (my meter);
 event. height = GuiControl_getHeight (my meter);
 gui_drawingarea_cb_resize (me.peek(), & event);
