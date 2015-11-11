@@ -1957,7 +1957,7 @@ void structTimeSoundAnalysisEditor :: v_draw_analysis_pulses () {
 	}
 }
 
-int structTimeSoundAnalysisEditor :: v_click (double xbegin, double ybegin, bool shiftKeyPressed) {
+bool structTimeSoundAnalysisEditor :: v_click (double xbegin, double ybegin, bool shiftKeyPressed) {
 	if (our p_pitch_show) {
 		//Melder_warning (xbegin, U" ", ybegin);
 		if (xbegin >= our d_endWindow && ybegin > 0.48 && ybegin <= 0.50) {
@@ -1965,14 +1965,14 @@ int structTimeSoundAnalysisEditor :: v_click (double xbegin, double ybegin, bool
 			our d_pitch. reset();
 			our d_intensity.reset();
 			our d_pulses. reset();
-			return 1;
+			return FunctionEditor_UPDATE_NEEDED;
 		}
 		if (xbegin >= our d_endWindow && ybegin > 0.46 && ybegin <= 0.48) {
 			our pref_pitch_ceiling () = our p_pitch_ceiling = our p_pitch_ceiling / 1.26;
 			our d_pitch. reset();
 			our d_intensity. reset();
 			our d_pulses. reset();
-			return 1;
+			return FunctionEditor_UPDATE_NEEDED;
 		}
 	}
 	return TimeSoundAnalysisEditor_Parent :: v_click (xbegin, ybegin, shiftKeyPressed);

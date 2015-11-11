@@ -527,9 +527,9 @@ static void do_menu (Praat_Command me, bool modified) {
 	}
 }
 
-static void cb_menu (I, GuiMenuItemEvent event) {
+static void cb_menu (Praat_Command me, GuiMenuItemEvent event) {
 	bool modified = event -> shiftKeyPressed || event -> commandKeyPressed || event -> optionKeyPressed || event -> extraControlKeyPressed;
-	do_menu ((Praat_Command) void_me, modified);
+	do_menu (me, modified);
 }
 
 static void gui_button_cb_menu (Praat_Command me, GuiButtonEvent event) {

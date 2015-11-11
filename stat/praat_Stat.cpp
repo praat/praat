@@ -699,7 +699,7 @@ DO
 	}
 END2 }
 
-FORM (Table_reportCorrelation_kendallTau, U"Report correlation (Kendall tau)", 0) {
+FORM (Table_reportCorrelation_kendallTau, U"Report correlation (Kendall tau)", nullptr) {
 	WORD (U"left Columns", U"")
 	WORD (U"right Columns", U"")
 	POSITIVE (U"One-tailed unconfidence", U"0.025")
@@ -718,7 +718,7 @@ DO
 			U" and column ", Table_messageColumn (me, column2), U":");
 		MelderInfo_writeLine (U"Correlation = ", correlation, U" (Kendall's tau-b)");
 		MelderInfo_writeLine (U"Significance from zero = ", significance, U" (one-tailed)");
-		MelderInfo_writeLine (U"Confidence interval (", 100 * (1.0 - 2.0 * unconfidence), U"%):");
+		MelderInfo_writeLine (U"Confidence interval (", 100.0 * (1.0 - 2.0 * unconfidence), U"%):");
 		MelderInfo_writeLine (U"   Lower limit = ", lowerLimit,
 			U" (lowest tau that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", unconfidence, U")");
 		MelderInfo_writeLine (U"   Upper limit = ", upperLimit,
@@ -727,7 +727,7 @@ DO
 	}
 END2 }
 
-FORM (Table_reportCorrelation_pearsonR, U"Report correlation (Pearson r)", 0) {
+FORM (Table_reportCorrelation_pearsonR, U"Report correlation (Pearson r)", nullptr) {
 	WORD (U"left Columns", U"")
 	WORD (U"right Columns", U"")
 	POSITIVE (U"One-tailed unconfidence", U"0.025")
@@ -747,7 +747,7 @@ DO
 		MelderInfo_writeLine (U"Correlation = ", correlation, U" (Pearson's r)");
 		MelderInfo_writeLine (U"Number of degrees of freedom = ", my rows -> size - 2);
 		MelderInfo_writeLine (U"Significance from zero = ", significance, U" (one-tailed)");
-		MelderInfo_writeLine (U"Confidence interval (", 100 * (1.0 - 2.0 * unconfidence), U"%):");
+		MelderInfo_writeLine (U"Confidence interval (", 100.0 * (1.0 - 2.0 * unconfidence), U"%):");
 		MelderInfo_writeLine (U"   Lower limit = ", lowerLimit,
 			U" (lowest r that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", unconfidence, U")");
 		MelderInfo_writeLine (U"   Upper limit = ", upperLimit,
@@ -756,7 +756,7 @@ DO
 	}
 END2 }
 	
-FORM (Table_reportDifference_studentT, U"Report difference (Student t)", 0) {
+FORM (Table_reportDifference_studentT, U"Report difference (Student t)", nullptr) {
 	WORD (U"left Columns", U"")
 	WORD (U"right Columns", U"")
 	POSITIVE (U"One-tailed unconfidence", U"0.025")
@@ -777,7 +777,7 @@ DO
 		MelderInfo_writeLine (U"Student's t = ", t);
 		MelderInfo_writeLine (U"Number of degrees of freedom = ", numberOfDegreesOfFreedom);
 		MelderInfo_writeLine (U"Significance from zero = ", significance, U" (one-tailed)");
-		MelderInfo_writeLine (U"Confidence interval (", 100 * (1.0 - 2.0 * unconfidence), U"%):");
+		MelderInfo_writeLine (U"Confidence interval (", 100.0 * (1.0 - 2.0 * unconfidence), U"%):");
 		MelderInfo_writeLine (U"   Lower limit = ", lowerLimit,
 			U" (lowest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", unconfidence, U")");
 		MelderInfo_writeLine (U"   Upper limit = ", upperLimit,
@@ -786,7 +786,7 @@ DO
 	}
 END2 }
 	
-FORM (Table_reportGroupDifference_studentT, U"Report group difference (Student t)", 0) {
+FORM (Table_reportGroupDifference_studentT, U"Report group difference (Student t)", nullptr) {
 	WORD (U"Column", U"salary")
 	WORD (U"Group column", U"gender")
 	SENTENCE (U"Group 1", U"F")
@@ -810,7 +810,7 @@ DO
 		MelderInfo_writeLine (U"Student's t = ", tFromZero);
 		MelderInfo_writeLine (U"Number of degrees of freedom = ", numberOfDegreesOfFreedom);
 		MelderInfo_writeLine (U"Significance from zero = ", significanceFromZero, U" (one-tailed)");
-		MelderInfo_writeLine (U"Confidence interval (", 100 * (1.0 - 2.0 * unconfidence), U"%):");
+		MelderInfo_writeLine (U"Confidence interval (", 100.0 * (1.0 - 2.0 * unconfidence), U"%):");
 		MelderInfo_writeLine (U"   Lower limit = ", lowerLimit,
 			U" (lowest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", unconfidence, U")");
 		MelderInfo_writeLine (U"   Upper limit = ", upperLimit,
@@ -819,7 +819,7 @@ DO
 	}
 END2 }
 
-FORM (Table_reportGroupDifference_wilcoxonRankSum, U"Report group difference (Wilcoxon rank sum)", 0) {
+FORM (Table_reportGroupDifference_wilcoxonRankSum, U"Report group difference (Wilcoxon rank sum)", nullptr) {
 	WORD (U"Column", U"salary")
 	WORD (U"Group column", U"gender")
 	SENTENCE (U"Group 1", U"F")
@@ -845,7 +845,7 @@ DO
 	}
 END2 }
 
-FORM (Table_reportGroupMean_studentT, U"Report group mean (Student t)", 0) {
+FORM (Table_reportGroupMean_studentT, U"Report group mean (Student t)", nullptr) {
 	WORD (U"Column", U"salary")
 	WORD (U"Group column", U"gender")
 	SENTENCE (U"Group", U"F")
@@ -868,7 +868,7 @@ DO
 		MelderInfo_writeLine (U"Student's t from zero = ", tFromZero);
 		MelderInfo_writeLine (U"Number of degrees of freedom = ", numberOfDegreesOfFreedom);
 		MelderInfo_writeLine (U"Significance from zero = ", significanceFromZero, U" (one-tailed)");
-		MelderInfo_writeLine (U"Confidence interval (", 100 * (1.0 - 2.0 * unconfidence), U"%):");
+		MelderInfo_writeLine (U"Confidence interval (", 100.0 * (1.0 - 2.0 * unconfidence), U"%):");
 		MelderInfo_writeLine (U"   Lower limit = ", lowerLimit,
 			U" (lowest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", unconfidence, U")");
 		MelderInfo_writeLine (U"   Upper limit = ", upperLimit,
@@ -877,7 +877,7 @@ DO
 	}
 END2 }
 
-FORM (Table_reportMean_studentT, U"Report mean (Student t)", 0) {
+FORM (Table_reportMean_studentT, U"Report mean (Student t)", nullptr) {
 	WORD (U"Column", U"")
 	POSITIVE (U"One-tailed unconfidence", U"0.025")
 	OK2
@@ -895,7 +895,7 @@ DO
 		MelderInfo_writeLine (U"Student's t from zero = ", tFromZero);
 		MelderInfo_writeLine (U"Number of degrees of freedom = ", numberOfDegreesOfFreedom);
 		MelderInfo_writeLine (U"Significance from zero = ", significanceFromZero, U" (one-tailed)");
-		MelderInfo_writeLine (U"Confidence interval (", 100 * (1.0 - 2.0 * unconfidence), U"%):");
+		MelderInfo_writeLine (U"Confidence interval (", 100.0 * (1.0 - 2.0 * unconfidence), U"%):");
 		MelderInfo_writeLine (U"   Lower limit = ", lowerLimit,
 			U" (lowest value that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", unconfidence, U")");
 		MelderInfo_writeLine (U"   Upper limit = ", upperLimit,
@@ -904,7 +904,7 @@ DO
 	}
 END2 }
 
-FORM (Table_rowsToColumns, U"Table: Rows to columns", 0) {
+FORM (Table_rowsToColumns, U"Table: Rows to columns", nullptr) {
 	LABEL (U"", U"Columns with factors (independent variables):")
 	TEXTFIELD (U"factors", U"dialect gender speaker")
 	WORD (U"Column to transpose", U"vowel")
@@ -1733,197 +1733,197 @@ static autoDaata tabSeparatedFileRecognizer (int nread, const char *header, Meld
 
 void praat_TableOfReal_init (ClassInfo klas);   // buttons for TableOfReal and for its subclasses
 void praat_TableOfReal_init (ClassInfo klas) {
-	praat_addAction1 (klas, 1, U"Save as headerless spreadsheet file...", 0, 0, DO_TableOfReal_writeToHeaderlessSpreadsheetFile);
-	praat_addAction1 (klas, 1, U"Write to headerless spreadsheet file...", 0, praat_HIDDEN, DO_TableOfReal_writeToHeaderlessSpreadsheetFile);
-	praat_addAction1 (klas, 0, U"Draw -", 0, 0, 0);
-		praat_addAction1 (klas, 0, U"Draw as numbers...", 0, 1, DO_TableOfReal_drawAsNumbers);
-		praat_addAction1 (klas, 0, U"Draw as numbers if...", 0, 1, DO_TableOfReal_drawAsNumbers_if);
-		praat_addAction1 (klas, 0, U"Draw as squares...", 0, 1, DO_TableOfReal_drawAsSquares);	
-		praat_addAction1 (klas, 0, U"-- draw lines --", 0, 1, 0);
-		praat_addAction1 (klas, 0, U"Draw vertical lines...", 0, 1, DO_TableOfReal_drawVerticalLines);
-		praat_addAction1 (klas, 0, U"Draw horizontal lines...", 0, 1, DO_TableOfReal_drawHorizontalLines);
-		praat_addAction1 (klas, 0, U"Draw left and right lines...", 0, 1, DO_TableOfReal_drawLeftAndRightLines);
-		praat_addAction1 (klas, 0, U"Draw top and bottom lines...", 0, 1, DO_TableOfReal_drawTopAndBottomLines);
-	praat_addAction1 (klas, 0, U"Query -", 0, 0, 0);
-		praat_addAction1 (klas, 1, U"Get number of rows", 0, 1, DO_TableOfReal_getNumberOfRows);
-		praat_addAction1 (klas, 1, U"Get number of columns", 0, 1, DO_TableOfReal_getNumberOfColumns);
-		praat_addAction1 (klas, 1, U"Get row label...", 0, 1, DO_TableOfReal_getRowLabel);
-		praat_addAction1 (klas, 1, U"Get column label...", 0, 1, DO_TableOfReal_getColumnLabel);
-		praat_addAction1 (klas, 1, U"Get row index...", 0, 1, DO_TableOfReal_getRowIndex);
-		praat_addAction1 (klas, 1, U"Get column index...", 0, 1, DO_TableOfReal_getColumnIndex);
-		praat_addAction1 (klas, 1, U"-- get value --", 0, 1, 0);
-		praat_addAction1 (klas, 1, U"Get value...", 0, 1, DO_TableOfReal_getValue);
+	praat_addAction1 (klas, 1, U"Save as headerless spreadsheet file...", nullptr, 0, DO_TableOfReal_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (klas, 1, U"Write to headerless spreadsheet file...", nullptr, praat_HIDDEN, DO_TableOfReal_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (klas, 0, U"Draw -", nullptr, 0, nullptr);
+		praat_addAction1 (klas, 0, U"Draw as numbers...", nullptr, 1, DO_TableOfReal_drawAsNumbers);
+		praat_addAction1 (klas, 0, U"Draw as numbers if...", nullptr, 1, DO_TableOfReal_drawAsNumbers_if);
+		praat_addAction1 (klas, 0, U"Draw as squares...", nullptr, 1, DO_TableOfReal_drawAsSquares);
+		praat_addAction1 (klas, 0, U"-- draw lines --", nullptr, 1, 0);
+		praat_addAction1 (klas, 0, U"Draw vertical lines...", nullptr, 1, DO_TableOfReal_drawVerticalLines);
+		praat_addAction1 (klas, 0, U"Draw horizontal lines...", nullptr, 1, DO_TableOfReal_drawHorizontalLines);
+		praat_addAction1 (klas, 0, U"Draw left and right lines...", nullptr, 1, DO_TableOfReal_drawLeftAndRightLines);
+		praat_addAction1 (klas, 0, U"Draw top and bottom lines...", nullptr, 1, DO_TableOfReal_drawTopAndBottomLines);
+	praat_addAction1 (klas, 0, U"Query -", nullptr, 0, nullptr);
+		praat_addAction1 (klas, 1, U"Get number of rows", nullptr, 1, DO_TableOfReal_getNumberOfRows);
+		praat_addAction1 (klas, 1, U"Get number of columns", nullptr, 1, DO_TableOfReal_getNumberOfColumns);
+		praat_addAction1 (klas, 1, U"Get row label...", nullptr, 1, DO_TableOfReal_getRowLabel);
+		praat_addAction1 (klas, 1, U"Get column label...", nullptr, 1, DO_TableOfReal_getColumnLabel);
+		praat_addAction1 (klas, 1, U"Get row index...", nullptr, 1, DO_TableOfReal_getRowIndex);
+		praat_addAction1 (klas, 1, U"Get column index...", nullptr, 1, DO_TableOfReal_getColumnIndex);
+		praat_addAction1 (klas, 1, U"-- get value --", nullptr, 1, nullptr);
+		praat_addAction1 (klas, 1, U"Get value...", nullptr, 1, DO_TableOfReal_getValue);
 		if (klas == classTableOfReal) {
-			praat_addAction1 (klas, 1, U"-- get statistics --", 0, 1, 0);
-			praat_addAction1 (klas, 1, U"Get column mean (index)...", 0, 1, DO_TableOfReal_getColumnMean_index);
-			praat_addAction1 (klas, 1, U"Get column mean (label)...", 0, 1, DO_TableOfReal_getColumnMean_label);
-			praat_addAction1 (klas, 1, U"Get column stdev (index)...", 0, 1, DO_TableOfReal_getColumnStdev_index);
-			praat_addAction1 (klas, 1, U"Get column stdev (label)...", 0, 1, DO_TableOfReal_getColumnStdev_label);
+			praat_addAction1 (klas, 1, U"-- get statistics --", nullptr, 1, nullptr);
+			praat_addAction1 (klas, 1, U"Get column mean (index)...", nullptr, 1, DO_TableOfReal_getColumnMean_index);
+			praat_addAction1 (klas, 1, U"Get column mean (label)...", nullptr, 1, DO_TableOfReal_getColumnMean_label);
+			praat_addAction1 (klas, 1, U"Get column stdev (index)...", nullptr, 1, DO_TableOfReal_getColumnStdev_index);
+			praat_addAction1 (klas, 1, U"Get column stdev (label)...", nullptr, 1, DO_TableOfReal_getColumnStdev_label);
 		}
-	praat_addAction1 (klas, 0, U"Modify -", 0, 0, 0);
-		praat_addAction1 (klas, 0, U"Formula...", 0, 1, DO_TableOfReal_formula);
-		praat_addAction1 (klas, 0, U"Set value...", 0, 1, DO_TableOfReal_setValue);
-		praat_addAction1 (klas, 0, U"Sort by label...", 0, 1, DO_TableOfReal_sortByLabel);
-		praat_addAction1 (klas, 0, U"Sort by column...", 0, 1, DO_TableOfReal_sortByColumn);
-		praat_addAction1 (klas, 0, U"-- structure --", 0, 1, 0);
-		praat_addAction1 (klas, 0, U"Remove row (index)...", 0, 1, DO_TableOfReal_removeRow);
-		praat_addAction1 (klas, 0, U"Remove column (index)...", 0, 1, DO_TableOfReal_removeColumn);
-		praat_addAction1 (klas, 0, U"Insert row (index)...", 0, 1, DO_TableOfReal_insertRow);
-		praat_addAction1 (klas, 0, U"Insert column (index)...", 0, 1, DO_TableOfReal_insertColumn);
-		praat_addAction1 (klas, 0, U"-- set --", 0, 1, 0);
-		praat_addAction1 (klas, 0, U"Set row label (index)...", 0, 1, DO_TableOfReal_setRowLabel_index);
-		praat_addAction1 (klas, 0, U"Set row label (label)...", 0, 1, DO_TableOfReal_setRowLabel_label);
-		praat_addAction1 (klas, 0, U"Set column label (index)...", 0, 1, DO_TableOfReal_setColumnLabel_index);
-		praat_addAction1 (klas, 0, U"Set column label (label)...", 0, 1, DO_TableOfReal_setColumnLabel_label);
-	praat_addAction1 (klas, 0, U"Synthesize -", 0, 0, 0);
-		praat_addAction1 (klas, 0, U"Append", 0, 1, DO_TablesOfReal_append);
-	praat_addAction1 (klas, 0, U"Extract part -", 0, 0, 0);
-		praat_addAction1 (klas, 0, U"Extract row ranges...", 0, 1, DO_TableOfReal_extractRowRanges);
-		praat_addAction1 (klas, 0, U"Extract rows where column...", 0, 1, DO_TableOfReal_extractRowsWhereColumn);
-		praat_addAction1 (klas, 0, U"Extract rows where label...", 0, 1, DO_TableOfReal_extractRowsWhereLabel);
-		praat_addAction1 (klas, 0, U"Extract rows where...", 0, 1, DO_TableOfReal_extractRowsWhere);
-		praat_addAction1 (klas, 0, U"Extract column ranges...", 0, 1, DO_TableOfReal_extractColumnRanges);
-		praat_addAction1 (klas, 0, U"Extract columns where row...", 0, 1, DO_TableOfReal_extractColumnsWhereRow);
-		praat_addAction1 (klas, 0, U"Extract columns where label...", 0, 1, DO_TableOfReal_extractColumnsWhereLabel);
-		praat_addAction1 (klas, 0, U"Extract columns where...", 0, 1, DO_TableOfReal_extractColumnsWhere);
-	praat_addAction1 (klas, 0, U"Extract -", 0, 0, 0);
-		praat_addAction1 (klas, 0, U"Extract row labels as Strings", 0, 1, DO_TableOfReal_extractRowLabelsAsStrings);
-		praat_addAction1 (klas, 0, U"Extract column labels as Strings", 0, 1, DO_TableOfReal_extractColumnLabelsAsStrings);
-	praat_addAction1 (klas, 0, U"Convert -", 0, 0, 0);
-		praat_addAction1 (klas, 0, U"To Table...", 0, 1, DO_TableOfReal_to_Table);
-		praat_addAction1 (klas, 0, U"To Matrix", 0, 1, DO_TableOfReal_to_Matrix);
+	praat_addAction1 (klas, 0, U"Modify -", nullptr, 0, nullptr);
+		praat_addAction1 (klas, 0, U"Formula...", nullptr, 1, DO_TableOfReal_formula);
+		praat_addAction1 (klas, 0, U"Set value...", nullptr, 1, DO_TableOfReal_setValue);
+		praat_addAction1 (klas, 0, U"Sort by label...", nullptr, 1, DO_TableOfReal_sortByLabel);
+		praat_addAction1 (klas, 0, U"Sort by column...", nullptr, 1, DO_TableOfReal_sortByColumn);
+		praat_addAction1 (klas, 0, U"-- structure --", nullptr, 1, nullptr);
+		praat_addAction1 (klas, 0, U"Remove row (index)...", nullptr, 1, DO_TableOfReal_removeRow);
+		praat_addAction1 (klas, 0, U"Remove column (index)...", nullptr, 1, DO_TableOfReal_removeColumn);
+		praat_addAction1 (klas, 0, U"Insert row (index)...", nullptr, 1, DO_TableOfReal_insertRow);
+		praat_addAction1 (klas, 0, U"Insert column (index)...", nullptr, 1, DO_TableOfReal_insertColumn);
+		praat_addAction1 (klas, 0, U"-- set --", nullptr, 1, nullptr);
+		praat_addAction1 (klas, 0, U"Set row label (index)...", nullptr, 1, DO_TableOfReal_setRowLabel_index);
+		praat_addAction1 (klas, 0, U"Set row label (label)...", nullptr, 1, DO_TableOfReal_setRowLabel_label);
+		praat_addAction1 (klas, 0, U"Set column label (index)...", nullptr, 1, DO_TableOfReal_setColumnLabel_index);
+		praat_addAction1 (klas, 0, U"Set column label (label)...", nullptr, 1, DO_TableOfReal_setColumnLabel_label);
+	praat_addAction1 (klas, 0, U"Synthesize -", nullptr, 0, nullptr);
+		praat_addAction1 (klas, 0, U"Append", nullptr, 1, DO_TablesOfReal_append);
+	praat_addAction1 (klas, 0, U"Extract part -", nullptr, 0, nullptr);
+		praat_addAction1 (klas, 0, U"Extract row ranges...", nullptr, 1, DO_TableOfReal_extractRowRanges);
+		praat_addAction1 (klas, 0, U"Extract rows where column...", nullptr, 1, DO_TableOfReal_extractRowsWhereColumn);
+		praat_addAction1 (klas, 0, U"Extract rows where label...", nullptr, 1, DO_TableOfReal_extractRowsWhereLabel);
+		praat_addAction1 (klas, 0, U"Extract rows where...", nullptr, 1, DO_TableOfReal_extractRowsWhere);
+		praat_addAction1 (klas, 0, U"Extract column ranges...", nullptr, 1, DO_TableOfReal_extractColumnRanges);
+		praat_addAction1 (klas, 0, U"Extract columns where row...", nullptr, 1, DO_TableOfReal_extractColumnsWhereRow);
+		praat_addAction1 (klas, 0, U"Extract columns where label...", nullptr, 1, DO_TableOfReal_extractColumnsWhereLabel);
+		praat_addAction1 (klas, 0, U"Extract columns where...", nullptr, 1, DO_TableOfReal_extractColumnsWhere);
+	praat_addAction1 (klas, 0, U"Extract -", nullptr, 0, nullptr);
+		praat_addAction1 (klas, 0, U"Extract row labels as Strings", nullptr, 1, DO_TableOfReal_extractRowLabelsAsStrings);
+		praat_addAction1 (klas, 0, U"Extract column labels as Strings", nullptr, 1, DO_TableOfReal_extractColumnLabelsAsStrings);
+	praat_addAction1 (klas, 0, U"Convert -", nullptr, 0, nullptr);
+		praat_addAction1 (klas, 0, U"To Table...", nullptr, 1, DO_TableOfReal_to_Table);
+		praat_addAction1 (klas, 0, U"To Matrix", nullptr, 1, DO_TableOfReal_to_Matrix);
 }
 
 void praat_uvafon_stat_init ();
 void praat_uvafon_stat_init () {
 
 	Thing_recognizeClassesByName (classTableOfReal, classDistributions, classPairDistribution,
-		classTable, classLinearRegression, classLogisticRegression, NULL);
+		classTable, classLinearRegression, classLogisticRegression, nullptr);
 
 	Data_recognizeFileType (tabSeparatedFileRecognizer);
 
-	praat_addMenuCommand (U"Objects", U"New", U"Tables", 0, 0, 0);
-		praat_addMenuCommand (U"Objects", U"New", U"Create Table with column names...", 0, 1, DO_Table_createWithColumnNames);
-		praat_addMenuCommand (U"Objects", U"New", U"Create Table without column names...", 0, 1, DO_Table_createWithoutColumnNames);
-		praat_addMenuCommand (U"Objects", U"New", U"Create Table...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_Table_createWithoutColumnNames);
-		praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal...", 0, 1, DO_TableOfReal_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Tables", nullptr, 0, nullptr);
+		praat_addMenuCommand (U"Objects", U"New", U"Create Table with column names...", nullptr, 1, DO_Table_createWithColumnNames);
+		praat_addMenuCommand (U"Objects", U"New", U"Create Table without column names...", nullptr, 1, DO_Table_createWithoutColumnNames);
+		praat_addMenuCommand (U"Objects", U"New", U"Create Table...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_Table_createWithoutColumnNames);
+		praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal...", nullptr, 1, DO_TableOfReal_create);
 
-	praat_addMenuCommand (U"Objects", U"Open", U"Read TableOfReal from headerless spreadsheet file...", 0, 0, DO_TableOfReal_readFromHeaderlessSpreadsheetFile);
-	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from tab-separated file...", 0, 0, DO_Table_readFromTabSeparatedFile);
-	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from comma-separated file...", 0, 0, DO_Table_readFromCommaSeparatedFile);
-	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from whitespace-separated file...", 0, 0, DO_Table_readFromTableFile);
-	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from table file...", 0, praat_HIDDEN, DO_Table_readFromTableFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read TableOfReal from headerless spreadsheet file...", nullptr, 0, DO_TableOfReal_readFromHeaderlessSpreadsheetFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from tab-separated file...", nullptr, 0, DO_Table_readFromTabSeparatedFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from comma-separated file...", nullptr, 0, DO_Table_readFromCommaSeparatedFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from whitespace-separated file...", nullptr, 0, DO_Table_readFromTableFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from table file...", nullptr, praat_HIDDEN, DO_Table_readFromTableFile);
 
-	praat_addAction1 (classDistributions, 0, U"Distributions help", 0, 0, DO_Distributions_help);
+	praat_addAction1 (classDistributions, 0, U"Distributions help", nullptr, 0, DO_Distributions_help);
 	praat_TableOfReal_init (classDistributions);
 	praat_addAction1 (classDistributions, 1, U"Get probability (label)...", U"Get value...", 1, DO_Distributions_getProbability);
-	praat_addAction1 (classDistributions, 0, U"-- get from two --", U"Get probability (label)...", 1, 0);
+	praat_addAction1 (classDistributions, 0, U"-- get from two --", U"Get probability (label)...", 1, nullptr);
 	praat_addAction1 (classDistributions, 2, U"Get mean absolute difference...", U"-- get from two --", 1, DO_Distributionses_getMeanAbsoluteDifference);
-	praat_addAction1 (classDistributions, 0, U"-- add --", U"Append", 1, 0);
+	praat_addAction1 (classDistributions, 0, U"-- add --", U"Append", 1, nullptr);
 	praat_addAction1 (classDistributions, 0, U"Add", U"-- add --", 1, DO_Distributionses_add);
-	praat_addAction1 (classDistributions, 0, U"Generate", 0, 0, 0);
-		praat_addAction1 (classDistributions, 0, U"To Strings...", 0, 0, DO_Distributions_to_Strings);
-		praat_addAction1 (classDistributions, 0, U"To Strings (exact)...", 0, 0, DO_Distributions_to_Strings_exact);
+	praat_addAction1 (classDistributions, 0, U"Generate", nullptr, 0, nullptr);   // FIXME no hyphen?
+		praat_addAction1 (classDistributions, 0, U"To Strings...", nullptr, 0, DO_Distributions_to_Strings);
+		praat_addAction1 (classDistributions, 0, U"To Strings (exact)...", nullptr, 0, DO_Distributions_to_Strings_exact);
 
-	praat_addAction1 (classLogisticRegression, 0, U"Draw boundary...", 0, 0, DO_LogisticRegression_drawBoundary);
+	praat_addAction1 (classLogisticRegression, 0, U"Draw boundary...", nullptr, 0, DO_LogisticRegression_drawBoundary);
 
-	praat_addAction1 (classPairDistribution, 0, U"PairDistribution help", 0, 0, DO_PairDistribution_help);
-	praat_addAction1 (classPairDistribution, 0, U"To Table", 0, 0, DO_PairDistribution_to_Table);
-	praat_addAction1 (classPairDistribution, 1, U"To Stringses...", 0, 0, DO_PairDistribution_to_Stringses);
-	praat_addAction1 (classPairDistribution, 0, U"Query -", 0, 0, 0);
-		praat_addAction1 (classPairDistribution, 1, U"Get number of pairs", 0, 1, DO_PairDistribution_getNumberOfPairs);
-		praat_addAction1 (classPairDistribution, 1, U"Get string1...", 0, 1, DO_PairDistribution_getString1);
-		praat_addAction1 (classPairDistribution, 1, U"Get string2...", 0, 1, DO_PairDistribution_getString2);
-		praat_addAction1 (classPairDistribution, 1, U"Get weight...", 0, 1, DO_PairDistribution_getWeight);
-		praat_addAction1 (classPairDistribution, 1, U"-- get fraction correct --", 0, 1, 0);
-		praat_addAction1 (classPairDistribution, 1, U"Get fraction correct (maximum likelihood)", 0, 1, DO_PairDistribution_getFractionCorrect_maximumLikelihood);
-		praat_addAction1 (classPairDistribution, 1, U"Get fraction correct (probability matching)", 0, 1, DO_PairDistribution_getFractionCorrect_probabilityMatching);
-	praat_addAction1 (classPairDistribution, 0, U"Modify -", 0, 0, 0);
-	praat_addAction1 (classPairDistribution, 0, U"Remove zero weights", 0, 1, DO_PairDistribution_removeZeroWeights);
-	praat_addAction1 (classPairDistribution, 0, U"Swap inputs and outputs", 0, 1, DO_PairDistribution_swapInputsAndOutputs);
+	praat_addAction1 (classPairDistribution, 0, U"PairDistribution help", nullptr, 0, DO_PairDistribution_help);
+	praat_addAction1 (classPairDistribution, 0, U"To Table", nullptr, 0, DO_PairDistribution_to_Table);
+	praat_addAction1 (classPairDistribution, 1, U"To Stringses...", nullptr, 0, DO_PairDistribution_to_Stringses);
+	praat_addAction1 (classPairDistribution, 0, U"Query -", nullptr, 0, nullptr);
+		praat_addAction1 (classPairDistribution, 1, U"Get number of pairs", nullptr, 1, DO_PairDistribution_getNumberOfPairs);
+		praat_addAction1 (classPairDistribution, 1, U"Get string1...", nullptr, 1, DO_PairDistribution_getString1);
+		praat_addAction1 (classPairDistribution, 1, U"Get string2...", nullptr, 1, DO_PairDistribution_getString2);
+		praat_addAction1 (classPairDistribution, 1, U"Get weight...", nullptr, 1, DO_PairDistribution_getWeight);
+		praat_addAction1 (classPairDistribution, 1, U"-- get fraction correct --", nullptr, 1, nullptr);
+		praat_addAction1 (classPairDistribution, 1, U"Get fraction correct (maximum likelihood)", nullptr, 1, DO_PairDistribution_getFractionCorrect_maximumLikelihood);
+		praat_addAction1 (classPairDistribution, 1, U"Get fraction correct (probability matching)", nullptr, 1, DO_PairDistribution_getFractionCorrect_probabilityMatching);
+	praat_addAction1 (classPairDistribution, 0, U"Modify -", nullptr, 0, nullptr);
+	praat_addAction1 (classPairDistribution, 0, U"Remove zero weights", nullptr, 1, DO_PairDistribution_removeZeroWeights);
+	praat_addAction1 (classPairDistribution, 0, U"Swap inputs and outputs", nullptr, 1, DO_PairDistribution_swapInputsAndOutputs);
 
-	praat_addAction1 (classTable, 0, U"Table help", 0, 0, DO_Table_help);
-	praat_addAction1 (classTable, 1, U"Save as tab-separated file...", 0, 0, DO_Table_writeToTabSeparatedFile);
-	praat_addAction1 (classTable, 1, U"Save as comma-separated file...", 0, 0, DO_Table_writeToCommaSeparatedFile);
-	praat_addAction1 (classTable, 1, U"Save as table file...", 0, praat_HIDDEN, DO_Table_writeToTabSeparatedFile);
-	praat_addAction1 (classTable, 1, U"Write to table file...", 0, praat_HIDDEN, DO_Table_writeToTabSeparatedFile);
-	praat_addAction1 (classTable, 1, U"View & Edit", 0, praat_ATTRACTIVE, DO_Table_edit);
-	praat_addAction1 (classTable, 1, U"Edit", 0, praat_HIDDEN, DO_Table_edit);
-	praat_addAction1 (classTable, 0, U"Draw -", 0, 0, 0);
-		praat_addAction1 (classTable, 0, U"Scatter plot...", 0, 1, DO_Table_scatterPlot);
-		praat_addAction1 (classTable, 0, U"Scatter plot (mark)...", 0, 1, DO_Table_scatterPlot_mark);
-		praat_addAction1 (classTable, 0, U"Draw ellipse (standard deviation)...", 0, 1, DO_Table_drawEllipse);
-	praat_addAction1 (classTable, 0, U"Query -", 0, 0, 0);
-		praat_addAction1 (classTable, 1, U"List...", 0, 1, DO_Table_list);
-		praat_addAction1 (classTable, 1, U"-- get structure --", 0, 1, 0);
-		praat_addAction1 (classTable, 1, U"Get number of rows", 0, 1, DO_Table_getNumberOfRows);
-		praat_addAction1 (classTable, 1, U"Get number of columns", 0, 1, DO_Table_getNumberOfColumns);
-		praat_addAction1 (classTable, 1, U"Get column label...", 0, 1, DO_Table_getColumnLabel);
-		praat_addAction1 (classTable, 1, U"Get column index...", 0, 1, DO_Table_getColumnIndex);
-		praat_addAction1 (classTable, 1, U"-- get value --", 0, 1, 0);
-		praat_addAction1 (classTable, 1, U"Get value...", 0, 1, DO_Table_getValue);
-		praat_addAction1 (classTable, 1, U"Search column...", 0, 1, DO_Table_searchColumn);
-		praat_addAction1 (classTable, 1, U"-- statistics --", 0, 1, 0);
-		praat_addAction1 (classTable, 1, U"Statistics tutorial", 0, 1, DO_StatisticsTutorial);
-		praat_addAction1 (classTable, 1, U"-- get stats --", 0, 1, 0);
-		praat_addAction1 (classTable, 1, U"Get quantile...", 0, 1, DO_Table_getQuantile);
-		praat_addAction1 (classTable, 1, U"Get minimum...", 0, 1, DO_Table_getMinimum);
-		praat_addAction1 (classTable, 1, U"Get maximum...", 0, 1, DO_Table_getMaximum);
-		praat_addAction1 (classTable, 1, U"Get mean...", 0, 1, DO_Table_getMean);
-		praat_addAction1 (classTable, 1, U"Get group mean...", 0, 1, DO_Table_getGroupMean);
-		praat_addAction1 (classTable, 1, U"Get standard deviation...", 0, 1, DO_Table_getStandardDeviation);
-		praat_addAction1 (classTable, 1, U"-- report stats --", 0, 1, 0);
-		praat_addAction1 (classTable, 1, U"Report mean (Student t)...", 0, 1, DO_Table_reportMean_studentT);
-		/*praat_addAction1 (classTable, 1, U"Report standard deviation...", 0, 1, DO_Table_reportStandardDeviation);*/
-		praat_addAction1 (classTable, 1, U"Report difference (Student t)...", 0, 1, DO_Table_reportDifference_studentT);
-		praat_addAction1 (classTable, 1, U"Report group mean (Student t)...", 0, 1, DO_Table_reportGroupMean_studentT);
-		praat_addAction1 (classTable, 1, U"Report group difference (Student t)...", 0, 1, DO_Table_reportGroupDifference_studentT);
-		praat_addAction1 (classTable, 1, U"Report group difference (Wilcoxon rank sum)...", 0, 1, DO_Table_reportGroupDifference_wilcoxonRankSum);
-		praat_addAction1 (classTable, 1, U"Report correlation (Pearson r)...", 0, 1, DO_Table_reportCorrelation_pearsonR);
-		praat_addAction1 (classTable, 1, U"Report correlation (Kendall tau)...", 0, 1, DO_Table_reportCorrelation_kendallTau);
-	praat_addAction1 (classTable, 0, U"Modify -", 0, 0, 0);
-		praat_addAction1 (classTable, 0, U"Set string value...", 0, 1, DO_Table_setStringValue);
-		praat_addAction1 (classTable, 0, U"Set numeric value...", 0, 1, DO_Table_setNumericValue);
-		praat_addAction1 (classTable, 0, U"Formula...", 0, 1, DO_Table_formula);
-		praat_addAction1 (classTable, 0, U"Formula (column range)...", 0, 1, DO_Table_formula_columnRange);
-		praat_addAction1 (classTable, 0, U"Sort rows...", 0, 1, DO_Table_sortRows);
-		praat_addAction1 (classTable, 0, U"Randomize rows", 0, 1, DO_Table_randomizeRows);
-		praat_addAction1 (classTable, 0, U"Reflect rows", 0, 1, DO_Table_reflectRows);
-		praat_addAction1 (classTable, 0, U"-- structure --", 0, 1, 0);
-		praat_addAction1 (classTable, 0, U"Append row", 0, 1, DO_Table_appendRow);
-		praat_addAction1 (classTable, 0, U"Append column...", 0, 1, DO_Table_appendColumn);
-		praat_addAction1 (classTable, 0, U"Append sum column...", 0, 1, DO_Table_appendSumColumn);
-		praat_addAction1 (classTable, 0, U"Append difference column...", 0, 1, DO_Table_appendDifferenceColumn);
-		praat_addAction1 (classTable, 0, U"Append product column...", 0, 1, DO_Table_appendProductColumn);
-		praat_addAction1 (classTable, 0, U"Append quotient column...", 0, 1, DO_Table_appendQuotientColumn);
-		praat_addAction1 (classTable, 0, U"Remove row...", 0, 1, DO_Table_removeRow);
-		praat_addAction1 (classTable, 0, U"Remove column...", 0, 1, DO_Table_removeColumn);
-		praat_addAction1 (classTable, 0, U"Insert row...", 0, 1, DO_Table_insertRow);
-		praat_addAction1 (classTable, 0, U"Insert column...", 0, 1, DO_Table_insertColumn);
-		praat_addAction1 (classTable, 0, U"-- set --", 0, 1, 0);
-		praat_addAction1 (classTable, 0, U"Set column label (index)...", 0, 1, DO_Table_setColumnLabel_index);
-		praat_addAction1 (classTable, 0, U"Set column label (label)...", 0, 1, DO_Table_setColumnLabel_label);
-	praat_addAction1 (classTable, 0, U"Analyse -", 0, 0, 0);
-		praat_addAction1 (classTable, 0, U"To linear regression", 0, 1, DO_Table_to_LinearRegression);
-		praat_addAction1 (classTable, 0, U"To logistic regression...", 0, 1, DO_Table_to_LogisticRegression);
-	praat_addAction1 (classTable, 0, U"Synthesize -", 0, 0, 0);
-		praat_addAction1 (classTable, 0, U"Append", 0, 1, DO_Tables_append);
-	praat_addAction1 (classTable, 0, U"Generate -", 0, 0, 0);
-		praat_addAction1 (classTable, 1, U"Draw row from distribution...", 0, 1, DO_Table_drawRowFromDistribution);
-	praat_addAction1 (classTable, 0, U"Extract -", 0, 0, 0);
-		praat_addAction1 (classTable, 0, U"Extract rows where column (number)...", 0, 1, DO_Table_extractRowsWhereColumn_number);
-		praat_addAction1 (classTable, 0, U"Extract rows where column...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_Table_extractRowsWhereColumn_number);
-		praat_addAction1 (classTable, 0, U"Select rows where column...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_Table_extractRowsWhereColumn_number);
-		praat_addAction1 (classTable, 0, U"Extract rows where column (text)...", 0, 1, DO_Table_extractRowsWhereColumn_text);
-		praat_addAction1 (classTable, 0, U"Transpose", 0, 1, DO_Table_transpose);
-		praat_addAction1 (classTable, 0, U"Collapse rows...", 0, 1, DO_Table_collapseRows);
-		praat_addAction1 (classTable, 0, U"Rows to columns...", 0, 1, DO_Table_rowsToColumns);
-	praat_addAction1 (classTable, 0, U"Down to TableOfReal...", 0, 0, DO_Table_to_TableOfReal);
+	praat_addAction1 (classTable, 0, U"Table help", nullptr, 0, DO_Table_help);
+	praat_addAction1 (classTable, 1, U"Save as tab-separated file...", nullptr, 0, DO_Table_writeToTabSeparatedFile);
+	praat_addAction1 (classTable, 1, U"Save as comma-separated file...", nullptr, 0, DO_Table_writeToCommaSeparatedFile);
+	praat_addAction1 (classTable, 1, U"Save as table file...", nullptr, praat_HIDDEN, DO_Table_writeToTabSeparatedFile);
+	praat_addAction1 (classTable, 1, U"Write to table file...", nullptr, praat_HIDDEN, DO_Table_writeToTabSeparatedFile);
+	praat_addAction1 (classTable, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, DO_Table_edit);
+	praat_addAction1 (classTable, 1, U"Edit", nullptr, praat_HIDDEN, DO_Table_edit);
+	praat_addAction1 (classTable, 0, U"Draw -", nullptr, 0, nullptr);
+		praat_addAction1 (classTable, 0, U"Scatter plot...", nullptr, 1, DO_Table_scatterPlot);
+		praat_addAction1 (classTable, 0, U"Scatter plot (mark)...", nullptr, 1, DO_Table_scatterPlot_mark);
+		praat_addAction1 (classTable, 0, U"Draw ellipse (standard deviation)...", nullptr, 1, DO_Table_drawEllipse);
+	praat_addAction1 (classTable, 0, U"Query -", nullptr, 0, nullptr);
+		praat_addAction1 (classTable, 1, U"List...", nullptr, 1, DO_Table_list);
+		praat_addAction1 (classTable, 1, U"-- get structure --", nullptr, 1, nullptr);
+		praat_addAction1 (classTable, 1, U"Get number of rows", nullptr, 1, DO_Table_getNumberOfRows);
+		praat_addAction1 (classTable, 1, U"Get number of columns", nullptr, 1, DO_Table_getNumberOfColumns);
+		praat_addAction1 (classTable, 1, U"Get column label...", nullptr, 1, DO_Table_getColumnLabel);
+		praat_addAction1 (classTable, 1, U"Get column index...", nullptr, 1, DO_Table_getColumnIndex);
+		praat_addAction1 (classTable, 1, U"-- get value --", nullptr, 1, nullptr);
+		praat_addAction1 (classTable, 1, U"Get value...", nullptr, 1, DO_Table_getValue);
+		praat_addAction1 (classTable, 1, U"Search column...", nullptr, 1, DO_Table_searchColumn);
+		praat_addAction1 (classTable, 1, U"-- statistics --", nullptr, 1, nullptr);
+		praat_addAction1 (classTable, 1, U"Statistics tutorial", nullptr, 1, DO_StatisticsTutorial);
+		praat_addAction1 (classTable, 1, U"-- get stats --", nullptr, 1, nullptr);
+		praat_addAction1 (classTable, 1, U"Get quantile...", nullptr, 1, DO_Table_getQuantile);
+		praat_addAction1 (classTable, 1, U"Get minimum...", nullptr, 1, DO_Table_getMinimum);
+		praat_addAction1 (classTable, 1, U"Get maximum...", nullptr, 1, DO_Table_getMaximum);
+		praat_addAction1 (classTable, 1, U"Get mean...", nullptr, 1, DO_Table_getMean);
+		praat_addAction1 (classTable, 1, U"Get group mean...", nullptr, 1, DO_Table_getGroupMean);
+		praat_addAction1 (classTable, 1, U"Get standard deviation...", nullptr, 1, DO_Table_getStandardDeviation);
+		praat_addAction1 (classTable, 1, U"-- report stats --", nullptr, 1, nullptr);
+		praat_addAction1 (classTable, 1, U"Report mean (Student t)...", nullptr, 1, DO_Table_reportMean_studentT);
+		/*praat_addAction1 (classTable, 1, U"Report standard deviation...", nullptr, 1, DO_Table_reportStandardDeviation);*/
+		praat_addAction1 (classTable, 1, U"Report difference (Student t)...", nullptr, 1, DO_Table_reportDifference_studentT);
+		praat_addAction1 (classTable, 1, U"Report group mean (Student t)...", nullptr, 1, DO_Table_reportGroupMean_studentT);
+		praat_addAction1 (classTable, 1, U"Report group difference (Student t)...", nullptr, 1, DO_Table_reportGroupDifference_studentT);
+		praat_addAction1 (classTable, 1, U"Report group difference (Wilcoxon rank sum)...", nullptr, 1, DO_Table_reportGroupDifference_wilcoxonRankSum);
+		praat_addAction1 (classTable, 1, U"Report correlation (Pearson r)...", nullptr, 1, DO_Table_reportCorrelation_pearsonR);
+		praat_addAction1 (classTable, 1, U"Report correlation (Kendall tau)...", nullptr, 1, DO_Table_reportCorrelation_kendallTau);
+	praat_addAction1 (classTable, 0, U"Modify -", nullptr, 0, nullptr);
+		praat_addAction1 (classTable, 0, U"Set string value...", nullptr, 1, DO_Table_setStringValue);
+		praat_addAction1 (classTable, 0, U"Set numeric value...", nullptr, 1, DO_Table_setNumericValue);
+		praat_addAction1 (classTable, 0, U"Formula...", nullptr, 1, DO_Table_formula);
+		praat_addAction1 (classTable, 0, U"Formula (column range)...", nullptr, 1, DO_Table_formula_columnRange);
+		praat_addAction1 (classTable, 0, U"Sort rows...", nullptr, 1, DO_Table_sortRows);
+		praat_addAction1 (classTable, 0, U"Randomize rows", nullptr, 1, DO_Table_randomizeRows);
+		praat_addAction1 (classTable, 0, U"Reflect rows", nullptr, 1, DO_Table_reflectRows);
+		praat_addAction1 (classTable, 0, U"-- structure --", nullptr, 1, nullptr);
+		praat_addAction1 (classTable, 0, U"Append row", nullptr, 1, DO_Table_appendRow);
+		praat_addAction1 (classTable, 0, U"Append column...", nullptr, 1, DO_Table_appendColumn);
+		praat_addAction1 (classTable, 0, U"Append sum column...", nullptr, 1, DO_Table_appendSumColumn);
+		praat_addAction1 (classTable, 0, U"Append difference column...", nullptr, 1, DO_Table_appendDifferenceColumn);
+		praat_addAction1 (classTable, 0, U"Append product column...", nullptr, 1, DO_Table_appendProductColumn);
+		praat_addAction1 (classTable, 0, U"Append quotient column...", nullptr, 1, DO_Table_appendQuotientColumn);
+		praat_addAction1 (classTable, 0, U"Remove row...", nullptr, 1, DO_Table_removeRow);
+		praat_addAction1 (classTable, 0, U"Remove column...", nullptr, 1, DO_Table_removeColumn);
+		praat_addAction1 (classTable, 0, U"Insert row...", nullptr, 1, DO_Table_insertRow);
+		praat_addAction1 (classTable, 0, U"Insert column...", nullptr, 1, DO_Table_insertColumn);
+		praat_addAction1 (classTable, 0, U"-- set --", nullptr, 1, nullptr);
+		praat_addAction1 (classTable, 0, U"Set column label (index)...", nullptr, 1, DO_Table_setColumnLabel_index);
+		praat_addAction1 (classTable, 0, U"Set column label (label)...", nullptr, 1, DO_Table_setColumnLabel_label);
+	praat_addAction1 (classTable, 0, U"Analyse -", nullptr, 0, nullptr);
+		praat_addAction1 (classTable, 0, U"To linear regression", nullptr, 1, DO_Table_to_LinearRegression);
+		praat_addAction1 (classTable, 0, U"To logistic regression...", nullptr, 1, DO_Table_to_LogisticRegression);
+	praat_addAction1 (classTable, 0, U"Synthesize -", nullptr, 0, nullptr);
+		praat_addAction1 (classTable, 0, U"Append", nullptr, 1, DO_Tables_append);
+	praat_addAction1 (classTable, 0, U"Generate -", nullptr, 0, nullptr);
+		praat_addAction1 (classTable, 1, U"Draw row from distribution...", nullptr, 1, DO_Table_drawRowFromDistribution);
+	praat_addAction1 (classTable, 0, U"Extract -", nullptr, 0, nullptr);
+		praat_addAction1 (classTable, 0, U"Extract rows where column (number)...", nullptr, 1, DO_Table_extractRowsWhereColumn_number);
+		praat_addAction1 (classTable, 0, U"Extract rows where column...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_Table_extractRowsWhereColumn_number);
+		praat_addAction1 (classTable, 0, U"Select rows where column...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_Table_extractRowsWhereColumn_number);
+		praat_addAction1 (classTable, 0, U"Extract rows where column (text)...", nullptr, 1, DO_Table_extractRowsWhereColumn_text);
+		praat_addAction1 (classTable, 0, U"Transpose", nullptr, 1, DO_Table_transpose);
+		praat_addAction1 (classTable, 0, U"Collapse rows...", nullptr, 1, DO_Table_collapseRows);
+		praat_addAction1 (classTable, 0, U"Rows to columns...", nullptr, 1, DO_Table_rowsToColumns);
+	praat_addAction1 (classTable, 0, U"Down to TableOfReal...", nullptr, 0, DO_Table_to_TableOfReal);
 
-	praat_addAction1 (classTableOfReal, 0, U"TableOfReal help", 0, 0, DO_TableOfReal_help);
+	praat_addAction1 (classTableOfReal, 0, U"TableOfReal help", nullptr, 0, DO_TableOfReal_help);
 	praat_TableOfReal_init (classTableOfReal);
 
-	praat_addAction2 (classPairDistribution, 1, classDistributions, 1, U"Get fraction correct...", 0, 0, DO_PairDistribution_Distributions_getFractionCorrect);
+	praat_addAction2 (classPairDistribution, 1, classDistributions, 1, U"Get fraction correct...", nullptr, 0, DO_PairDistribution_Distributions_getFractionCorrect);
 }
 
 /* End of file praat_Stat.cpp */

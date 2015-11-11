@@ -168,9 +168,9 @@ void structTableEditor :: v_draw () {
 	}
 }
 
-int structTableEditor :: v_click (double xclick, double yWC, bool shiftKeyPressed) {
+bool structTableEditor :: v_click (double xclick, double yWC, bool shiftKeyPressed) {
 	Table table = static_cast<Table> (data);
-	return 1;
+	return true;
 }
 
 static void gui_text_cb_change (I, GuiTextEvent event) {

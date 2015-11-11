@@ -31,7 +31,7 @@ Thing_define (RealTierEditor, TimeSoundEditor) {
 		override;
 	void v_draw ()
 		override;
-	int v_click (double xWC, double yWC, bool shiftKeyPressed)
+	bool v_click (double xWC, double yWC, bool shiftKeyPressed)
 		override;
 	void v_play (double tmin, double tmax)
 		override;

@@ -53,7 +53,7 @@ Thing_define (Minimizer, Thing) {
 
 	virtual void v_minimize () { }  /* does the work */
 	virtual void v_reset () { } /* reset the minimizer */
-	virtual void v_setParameters (Any parameters) { (void) parameters; }
+	virtual void v_setParameters (Any /* parameters */) { }
 };
 
 void Minimizer_init (Minimizer me, long nParameters, Daata object);

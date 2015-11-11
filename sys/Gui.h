@@ -639,13 +639,12 @@ typedef struct structGuiMenuItemEvent {
 	bool shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed;
 } *GuiMenuItemEvent;
 
-//typedef MelderCallback <void, void * /* boss */, GuiMenuItemEvent> GuiMenuItemCallback;
-typedef void (*GuiMenuItemCallback) (void * boss, GuiMenuItemEvent event);
+typedef MelderCallback <void, structThing /* boss */, GuiMenuItemEvent> GuiMenuItemCallback;
 
 Thing_define (GuiMenuItem, GuiThing) {
 	GuiMenu d_menu;
 	GuiMenuItemCallback d_callback;
-	void *d_boss;
+	Thing d_boss;
 	#if gtk
 		bool d_callbackBlocked;
 	#endif
@@ -695,7 +694,7 @@ Thing_define (GuiMenuItem, GuiThing) {
 // or any ASCII character (preferably a letter or digit) between 32 and 126
 
 GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, uint32 flags,
-	GuiMenuItemCallback callback, void* boss);
+	GuiMenuItemCallback callback, Thing boss);
 /* Flags is a combination of the above defines. */
 GuiMenuItem GuiMenu_addSeparator (GuiMenu menu);
 
@@ -903,12 +902,12 @@ Thing_define (GuiWindow, GuiShell) { public:
 		GtkMenuBar *d_gtkMenuBar;
 	#elif cocoa
 		int d_menuBarWidth;
-		void (*d_tabCallback) (void *boss, GuiMenuItemEvent event);
-		void *d_tabBoss;
-		void (*d_shiftTabCallback) (void *boss, GuiMenuItemEvent event);
-		void *d_shiftTabBoss;
-		void (*d_optionBackspaceCallback) (void *boss, GuiMenuItemEvent event);
-		void *d_optionBackspaceBoss;
+		GuiMenuItemCallback d_tabCallback;
+		Thing d_tabBoss;
+		GuiMenuItemCallback d_shiftTabCallback;
+		Thing d_shiftTabBoss;
+		GuiMenuItemCallback d_optionBackspaceCallback;
+		Thing d_optionBackspaceBoss;
 	#elif motif
 		GuiObject d_xmMenuBar;
 	#endif

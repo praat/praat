@@ -55,11 +55,11 @@ Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 		override;
 	bool v_hasText ()
 		override { return true; }
-	int v_click (double xWC, double yWC, bool shiftKeyPressed)
+	bool v_click (double xWC, double yWC, bool shiftKeyPressed)
 		override;
-	int v_clickB (double xWC, double yWC)
+	bool v_clickB (double xWC, double yWC)
 		override;
-	int v_clickE (double xWC, double yWC)
+	bool v_clickE (double xWC, double yWC)
 		override;
 	void v_play (double tmin, double tmax)
 		override;

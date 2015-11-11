@@ -31,7 +31,7 @@ Thing_define (PitchEditor, FunctionEditor) {
 		override;
 	void v_play (double tmin, double tmax)
 		override;
-	int v_click (double xWC, double yWC, bool shiftKeyPressed)
+	bool v_click (double xWC, double yWC, bool shiftKeyPressed)
 		override;
 };
 

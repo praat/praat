@@ -94,9 +94,9 @@ static void gui_button_cb_menu (Praat_Command me, GuiButtonEvent event) {
 	do_menu (me, event -> shiftKeyPressed | event -> commandKeyPressed | event -> optionKeyPressed | event -> extraControlKeyPressed);
 }
 
-static void gui_cb_menu (I, GuiMenuItemEvent event) {
+static void gui_cb_menu (Praat_Command me, GuiMenuItemEvent event) {
 	bool modified = event -> shiftKeyPressed || event -> commandKeyPressed || event -> optionKeyPressed || event -> extraControlKeyPressed;
-	do_menu ((Praat_Command) void_me, modified);
+	do_menu (me, modified);
 }
 
 static GuiMenu windowMenuToWidget (const char32 *window, const char32 *menu) {
@@ -211,7 +211,7 @@ GuiMenuItem praat_addMenuCommand (const char32 *window, const char32 *menu, cons
 			Melder_assert (command -> button);
 		} else {
 			trace (U"insert the command as a normal menu item");
-			command -> button = GuiMenu_addItem (parentMenu, title, guiFlags, gui_cb_menu, (void *) command.get());
+			command -> button = GuiMenu_addItem (parentMenu, title, guiFlags, gui_cb_menu, command.get());
 			Melder_assert (command -> button);
 		}
 		if (hidden) GuiThing_hide (command -> button);
@@ -303,7 +303,7 @@ void praat_addMenuCommandScript (const char32 *window, const char32 *menu, const
 				} else if (script [0] == '\0') {
 					command -> button = GuiMenu_createInMenu (parentMenu, title, 0) -> d_menuItem;
 				} else {
-					command -> button = GuiMenu_addItem (parentMenu, title, 0, gui_cb_menu, (void *) command.get() /*-> script*/);   // not just "script"!!
+					command -> button = GuiMenu_addItem (parentMenu, title, 0, gui_cb_menu, command.get());
 				}
 			}
 		}

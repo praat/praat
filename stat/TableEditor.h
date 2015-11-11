@@ -44,7 +44,7 @@ Thing_define (TableEditor, Editor) {
 		override;
 
 	virtual void v_draw ();
-	virtual int v_click (double xWC, double yWC, bool shiftKeyPressed);
+	virtual bool v_click (double xWC, double yWC, bool shiftKeyPressed);
 };
 
 autoTableEditor TableEditor_create (const char32 *title, Table table);

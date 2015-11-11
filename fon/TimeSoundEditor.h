@@ -54,7 +54,7 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 		override;
 	void v_createMenuItems_view (EditorMenu menu)
 		override;
-	int v_click (double xbegin, double ybegin, bool shiftKeyPressed)
+	bool v_click (double xbegin, double ybegin, bool shiftKeyPressed)
 		override;   // catch channel scrolling
 
 	virtual void v_createMenuItems_view_sound (EditorMenu menu);

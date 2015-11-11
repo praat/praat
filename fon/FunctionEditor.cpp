@@ -925,9 +925,8 @@ static void gui_cb_scroll (I, GuiScrollBarEvent event) {
 	}
 }
 
-static void gui_checkbutton_cb_group (I, GuiCheckButtonEvent event) {
+static void gui_checkbutton_cb_group (I, GuiCheckButtonEvent /* event */) {
 	iam (FunctionEditor);
-	(void) event;
 	int i;
 	my group = ! my group;
 	if (my group) {
@@ -1104,7 +1103,7 @@ static void gui_drawingarea_cb_click (FunctionEditor me, GuiDrawingArea_ClickEve
 		}
 		if (needsUpdate) updateGroup (me);
 	}
-	else   /* Clicked outside signal region? Let us hear it. */
+	else   // clicked outside signal region? Let us hear it
 	{
 		try {
 			for (int i = 0; i < 8; i ++) {
@@ -1228,7 +1227,7 @@ static void drawWhileDragging (FunctionEditor me, double x1, double x2) {
 	Graphics_xorOff (my d_graphics);
 }
 
-int structFunctionEditor :: v_click (double xbegin, double ybegin, bool a_shiftKeyPressed) {
+bool structFunctionEditor :: v_click (double xbegin, double ybegin, bool a_shiftKeyPressed) {
 	bool drag = false;
 	double x = xbegin, y = ybegin;
 
@@ -1416,26 +1415,24 @@ int structFunctionEditor :: v_click (double xbegin, double ybegin, bool a_shiftK
 	return FunctionEditor_UPDATE_NEEDED;
 }
 
-int structFunctionEditor :: v_clickB (double xWC, double yWC) {
-	(void) yWC;
+bool structFunctionEditor :: v_clickB (double xWC, double /* yWC */) {
 	d_startSelection = xWC;
 	if (d_startSelection > d_endSelection) {
 		double dummy = d_startSelection;
 		d_startSelection = d_endSelection;
 		d_endSelection = dummy;
 	}
-	return 1;
+	return FunctionEditor_UPDATE_NEEDED;
 }
 
-int structFunctionEditor :: v_clickE (double xWC, double yWC) {
+bool structFunctionEditor :: v_clickE (double xWC, double /* yWC */) {
 	d_endSelection = xWC;
-	(void) yWC;
 	if (d_startSelection > d_endSelection) {
 		double dummy = d_startSelection;
 		d_startSelection = d_endSelection;
 		d_endSelection = dummy;
 	}
-	return 1;
+	return FunctionEditor_UPDATE_NEEDED;
 }
 
 void FunctionEditor_insetViewport (FunctionEditor me) {
@@ -1462,7 +1459,7 @@ int structFunctionEditor :: v_playCallback (int phase, double a_tmin, double a_t
 	 */
 	if (phase != 1 && playCursor >= d_startWindow && playCursor <= d_endWindow) {
 		Graphics_setLineWidth (d_graphics, 3.0);
-		Graphics_line (d_graphics, playCursor, 0, playCursor, 1);
+		Graphics_line (d_graphics, playCursor, 0.0, playCursor, 1.0);
 		Graphics_setLineWidth (d_graphics, 1.0);
 	}
 	/*
@@ -1470,7 +1467,7 @@ int structFunctionEditor :: v_playCallback (int phase, double a_tmin, double a_t
 	 */
 	if (phase != 3 && t >= d_startWindow && t <= d_endWindow) {
 		Graphics_setLineWidth (d_graphics, 3.0);
-		Graphics_line (d_graphics, t, 0, t, 1);
+		Graphics_line (d_graphics, t, 0.0, t, 1.0);
 		Graphics_setLineWidth (d_graphics, 1.0);
 	}
 	Graphics_xorOff (d_graphics);
