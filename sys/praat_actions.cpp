@@ -514,7 +514,7 @@ static void do_menu (I, bool modified) {
 		if (my callback == callback) {
 			if (my title && ! str32str (my title, U"...")) {
 				UiHistory_write (U"\n");
-				UiHistory_write_colonize (my title);
+				UiHistory_write (my title);
 			}
 			Ui_setAllowExecutionHook (allowExecutionHook, (void *) callback);   // BUG: one shouldn't assign a function pointer to a void pointer
 			try {
@@ -526,14 +526,7 @@ static void do_menu (I, bool modified) {
 			praat_updateSelection (); return;
 		}
 		if (my callback == DO_RunTheScriptFromAnyAddedMenuCommand && my script == (void *) void_me) {
-			if (my title && ! str32str (my title, U"...")) {
-				UiHistory_write (U"\nexecute ");
-				UiHistory_write (my script);
-			} else {
-				UiHistory_write (U"\nexecute \"");
-				UiHistory_write (my script);
-				UiHistory_write (U"\"");
-			}
+			UiHistory_write (U"\nrunScript: ");
 			try {
 				DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, my script, nullptr, nullptr, false, nullptr);
 			} catch (MelderError) {

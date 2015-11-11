@@ -585,7 +585,7 @@ void praat_executeScriptFromFileNameWithArguments (const char32 *nameAndArgument
 
 void praat_executeScriptFromText (const char32 *text) {
 	try {
-		autoInterpreter interpreter = Interpreter_create (NULL, NULL);
+		autoInterpreter interpreter = Interpreter_create (nullptr, nullptr);
 		autostring32 string = Melder_dup (text);   // copy, because Interpreter will change it (UGLY)
 		Interpreter_run (interpreter.peek(), string.peek());
 	} catch (MelderError) {
@@ -630,7 +630,7 @@ static void firstPassThroughScript (MelderFile file) {
 			UiForm_do (form, false);
 		} else {
 			autoPraatBackground background;
-			praat_executeScriptFromFile (file, NULL);
+			praat_executeScriptFromFile (file, nullptr);
 		}
 	} catch (MelderError) {
 		Melder_throw (U"Script ", file, U" not completed.");
@@ -655,8 +655,8 @@ void DO_RunTheScriptFromAnyAddedMenuCommand (UiForm /* sendingForm_dummy */, int
 
 void DO_RunTheScriptFromAnyAddedEditorCommand (Editor editor, const char32 *script) {
 	praatP.editor = editor;
-	DO_RunTheScriptFromAnyAddedMenuCommand (NULL, 0, NULL, script, NULL, NULL, false, NULL);
-	/*praatP.editor = NULL;*/
+	DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, script, nullptr, nullptr, false, nullptr);
+	/*praatP.editor = nullptr;*/
 }
 
 /* End of file praat_script.cpp */

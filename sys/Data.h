@@ -207,7 +207,7 @@ void Data_readText (Daata me, MelderReadText text, int formatVersion);
 		but is preferably the same as the format produced by the 'writeText' method.
 */
 
-Daata Data_readFromTextFile (MelderFile file);
+autoDaata Data_readFromTextFile (MelderFile file);
 /*
 	Message:
 		"try to read a Data as text from a file".
@@ -244,7 +244,7 @@ void Data_readBinary (Daata me, FILE *f, int formatVersion);
 		but is preferably the same as the format produced by the 'writeBinary' method.
 */
 
-Daata Data_readFromBinaryFile (MelderFile file);
+autoDaata Data_readFromBinaryFile (MelderFile file);
 /*
 	Message:
 		"try to read a Data as binary data from a file".
@@ -260,9 +260,9 @@ Daata Data_readFromBinaryFile (MelderFile file);
 		(plus those from Data_readBinary)
 */
 
-typedef Daata (*Data_FileTypeRecognizer) (int numberOfBytesRead, const char *header, MelderFile file);
+typedef autoDaata (*Data_FileTypeRecognizer) (int numberOfBytesRead, const char *header, MelderFile file);
 
-void Data_recognizeFileType (Any (*recognizer) (int nread, const char *header, MelderFile file));
+void Data_recognizeFileType (Data_FileTypeRecognizer recognizer);
 /*
 Purpose:
 	to make sure that a file can be read by Data_readFromFile.
@@ -304,7 +304,7 @@ Registering a file-type recognizer:
 	After this, Data_readFromFile is able to read Sun audio files.
 */
 
-Daata Data_readFromFile (MelderFile file);
+autoDaata Data_readFromFile (MelderFile file);
 /*
 Purpose:
 	to read a file with data of any kind.

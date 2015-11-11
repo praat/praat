@@ -1717,7 +1717,7 @@ static bool isTabSeparated_utf16le (int nread, const char *header) {
 	return false;
 }
 
-static Any tabSeparatedFileRecognizer (int nread, const char *header, MelderFile file) {
+static autoDaata tabSeparatedFileRecognizer (int nread, const char *header, MelderFile file) {
 	/*
 	 * A table is recognized if it has at least one tab symbol,
 	 * which must be before the first newline symbol (if any).
@@ -1727,11 +1727,11 @@ static Any tabSeparatedFileRecognizer (int nread, const char *header, MelderFile
 		uheader [0] == 0xef && uheader [1] == 0xff ? isTabSeparated_utf16be (nread, header) :
 		uheader [0] == 0xff && uheader [1] == 0xef ? isTabSeparated_utf16le (nread, header) :
 		isTabSeparated_8bit (nread, header);
-	if (! isTabSeparated) return nullptr;
-	return Table_readFromCharacterSeparatedTextFile (file, '\t').transfer();
+	if (! isTabSeparated) return autoDaata ();
+	return Table_readFromCharacterSeparatedTextFile (file, '\t');
 }
 
-void praat_TableOfReal_init (ClassInfo klas);   /* Buttons for TableOfReal and for its subclasses. */
+void praat_TableOfReal_init (ClassInfo klas);   // buttons for TableOfReal and for its subclasses
 void praat_TableOfReal_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1, U"Save as headerless spreadsheet file...", 0, 0, DO_TableOfReal_writeToHeaderlessSpreadsheetFile);
 	praat_addAction1 (klas, 1, U"Write to headerless spreadsheet file...", 0, praat_HIDDEN, DO_TableOfReal_writeToHeaderlessSpreadsheetFile);

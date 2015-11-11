@@ -282,8 +282,8 @@ FORM (praat_calculator, U"Calculator", U"Calculator") {
 	OK2
 DO
 	struct Formula_Result result;
-	if (interpreter == NULL) {
-		interpreter = Interpreter_create (NULL, NULL);
+	if (! interpreter) {
+		interpreter = Interpreter_create (nullptr, nullptr);
 		try {
 			Interpreter_anyExpression (interpreter, GET_STRING (U"expression"), & result);
 			forget (interpreter);
@@ -410,7 +410,7 @@ END2 }
 /********** Callbacks of the Open menu. **********/
 
 static void readFromFile (MelderFile file) {
-	autoDaata object = (Daata) Data_readFromFile (file);
+	autoDaata object = Data_readFromFile (file);
 	if (! object.peek()) return;
 	if (Thing_isa (object.peek(), classManPages) && ! Melder_batch) {
 		ManPages pages = (ManPages) object.peek();
@@ -471,11 +471,11 @@ FORM_WRITE2 (Data_writeToBinaryFile, U"Save Object(s) as one binary file", 0, 0)
 	}
 END2 }
 
-FORM (ManPages_saveToHtmlDirectory, U"Save all pages as HTML files", 0) {
+FORM (ManPages_saveToHtmlDirectory, U"Save all pages as HTML files", nullptr) {
 	LABEL (U"", U"Type a directory name:")
 	TEXTFIELD (U"directory", U"")
 	OK2
-structMelderDir currentDirectory = { { 0 } };
+structMelderDir currentDirectory { { 0 } };
 Melder_getDefaultDir (& currentDirectory);
 SET_STRING (U"directory", Melder_dirToPath (& currentDirectory))
 DO
@@ -511,7 +511,7 @@ DO
 	Manual_search (manPage, GET_STRING (U"query"));
 END2 }
 
-FORM (GoToManualPage, U"Go to manual page", 0) {
+FORM (GoToManualPage, U"Go to manual page", nullptr) {
 	{long numberOfPages;
 	const char32 **pages = ManPages_getTitles (theCurrentPraatApplication -> manPages, & numberOfPages);
 	LIST (U"Page", numberOfPages, pages, 1)}
@@ -523,11 +523,11 @@ DO
 	HyperPage_goToPage_i (manPage, GET_INTEGER (U"Page"));
 END2 }
 
-FORM (WriteManualToHtmlDirectory, U"Save all pages as HTML files", 0) {
+FORM (WriteManualToHtmlDirectory, U"Save all pages as HTML files", nullptr) {
 	LABEL (U"", U"Type a directory name:")
 	TEXTFIELD (U"directory", U"")
 	OK2
-structMelderDir currentDirectory = { { 0 } };
+structMelderDir currentDirectory { { 0 } };
 Melder_getDefaultDir (& currentDirectory);
 SET_STRING (U"directory", Melder_dirToPath (& currentDirectory))
 DO
@@ -562,20 +562,20 @@ void praat_addFixedButtons (GuiWindow window) {
 }
 
 static void searchProc () {
-	DO_SearchManual (NULL, 0, NULL, NULL, NULL, NULL, false, NULL);
+	DO_SearchManual (nullptr, 0, nullptr, nullptr, nullptr, nullptr, false, nullptr);
 }
 
 static MelderString itemTitle_about { 0 };
 
-static Any scriptRecognizer (int nread, const char *header, MelderFile file) {
+static autoDaata scriptRecognizer (int nread, const char *header, MelderFile file) {
 	const char32 *name = MelderFile_name (file);
-	if (nread < 2) return NULL;
+	if (nread < 2) return autoDaata ();
 	if ((header [0] == '#' && header [1] == '!') || str32str (name, U".praat") == name + str32len (name) - 6
 	    || str32str (name, U".html") == name + str32len (name) - 5)
 	{
 		return Script_createFromFile (file);
 	}
-	return NULL;
+	return autoDaata ();
 }
 
 static void cb_openDocument (MelderFile file) {

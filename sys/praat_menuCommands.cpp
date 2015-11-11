@@ -69,13 +69,13 @@ static long lookUpMatchingMenuCommand (const char32 *window, const char32 *menu,
 
 static void do_menu (I, unsigned long modified) {
 	UiCallback callback = (UiCallback) void_me;
-	Melder_assert (callback != NULL);
+	Melder_assert (callback);
 	for (long i = 1; i <= theCommands -> size; i ++) {
 		Praat_Command me = (Praat_Command) theCommands -> item [i];
 		if (my callback == callback) {
 			if (my title && ! str32str (my title, U"...")) {
 				UiHistory_write (U"\n");
-				UiHistory_write_expandQuotes (my title);
+				UiHistory_write (my title);
 			}
 			try {
 				callback (nullptr, 0, nullptr, nullptr, nullptr, my title, modified, nullptr);
@@ -85,14 +85,7 @@ static void do_menu (I, unsigned long modified) {
 			praat_updateSelection (); return;
 		}
 		if (my callback == DO_RunTheScriptFromAnyAddedMenuCommand && my script == (void *) void_me) {
-			if (my title && ! str32str (my title, U"...")) {
-				UiHistory_write (U"\nexecute ");
-				UiHistory_write (my script);
-			} else {
-				UiHistory_write (U"\nexecute \"");
-				UiHistory_write (my script);
-				UiHistory_write (U"\"");
-			}
+			UiHistory_write (U"\nrunScript: ");
 			try {
 				DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, my script, nullptr, nullptr, false, nullptr);
 			} catch (MelderError) {
@@ -115,7 +108,7 @@ static void gui_cb_menu (I, GuiMenuItemEvent event) {
 static GuiMenu windowMenuToWidget (const char32 *window, const char32 *menu) {
 	return
 		str32equ (window, U"Picture") ? praat_picture_resolveMenu (menu) :
-		str32equ (window, U"Objects") ? praat_objects_resolveMenu (menu) : NULL;
+		str32equ (window, U"Objects") ? praat_objects_resolveMenu (menu) : nullptr;
 }
 
 GuiMenuItem praat_addMenuCommand (const char32 *window, const char32 *menu, const char32 *title /* cattable */,

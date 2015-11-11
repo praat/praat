@@ -41,7 +41,7 @@ TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile);
 	frequency of 16000 Hz is assumed.
 */
 
-Any TextGrid_TIMITLabelFileRecognizer (int nread, const char *header, MelderFile file);
+autoDaata TextGrid_TIMITLabelFileRecognizer (int nread, const char *header, MelderFile file);
 /*
 	There are two types of TIMIT label files. One with phonetic labels, these
 	files have '.phn' as file extension. The other contains word labels and has

@@ -6273,18 +6273,18 @@ DIRECT (SearchManual) Melder_search (); END
 
 /***** file recognizers *****/
 
-static Any cgnSyntaxFileRecognizer (int nread, const char *header, MelderFile file) {
-	if (nread < 57) return NULL;
+static autoDaata cgnSyntaxFileRecognizer (int nread, const char *header, MelderFile file) {
+	if (nread < 57) return autoDaata ();
 	if (! strnequ (& header [0], "<?xml version=\"1.0\"?>", 21) ||
 	    (! strnequ (& header [22], "<!DOCTYPE ttext SYSTEM \"ttext.dtd\">", 35) &&
-	     ! strnequ (& header [23], "<!DOCTYPE ttext SYSTEM \"ttext.dtd\">", 35))) return nullptr;
-	return TextGrid_readFromCgnSyntaxFile (file).transfer();
+	     ! strnequ (& header [23], "<!DOCTYPE ttext SYSTEM \"ttext.dtd\">", 35))) return autoDaata ();
+	return TextGrid_readFromCgnSyntaxFile (file);
 }
 
-static Any chronologicalTextGridTextFileRecognizer (int nread, const char *header, MelderFile file) {
-	if (nread < 100) return NULL;
+static autoDaata chronologicalTextGridTextFileRecognizer (int nread, const char *header, MelderFile file) {
+	if (nread < 100) return autoDaata ();
 	if (strnequ (& header [0], "\"Praat chronological TextGrid text file\"", 40))
-		return TextGrid_readFromChronologicalTextFile (file).transfer();
+		return TextGrid_readFromChronologicalTextFile (file);
 	char headerCopy [101];
 	memcpy (headerCopy, header, 100);
 	headerCopy [100] = '\0';
@@ -6295,12 +6295,12 @@ static Any chronologicalTextGridTextFileRecognizer (int nread, const char *heade
 	if (strstr (headerCopy, "\"\001P\001r\001a\001a\001t\001 \001c\001h\001r\001o\001n\001o\001l\001o\001g\001i\001c\001a\001l\001"
 		" \001T\001e\001x\001t\001G\001r\001i\001d\001 \001t\001e\001x\001t\001 \001f\001i\001l\001e\001\""))
 	{
-		return TextGrid_readFromChronologicalTextFile (file).transfer();
+		return TextGrid_readFromChronologicalTextFile (file);
 	}
-	return nullptr;
+	return autoDaata ();
 }
 
-static Any imageFileRecognizer (int /* nread */, const char * /* header */, MelderFile file) {
+static autoDaata imageFileRecognizer (int /* nread */, const char * /* header */, MelderFile file) {
 	const char32 *fileName = MelderFile_name (file);
 	if (Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".jpg") ||
 	    Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".JPG") ||
@@ -6315,7 +6315,7 @@ static Any imageFileRecognizer (int /* nread */, const char * /* header */, Meld
 	{
 		return Photo_readFromImageFile (file);
 	}
-	return NULL;
+	return autoDaata ();
 }
 
 /***** buttons *****/

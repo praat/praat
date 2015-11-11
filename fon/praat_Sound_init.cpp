@@ -2212,29 +2212,27 @@ END2 }
 
 /***** file recognizers *****/
 
-static Any macSoundOrEmptyFileRecognizer (int nread, const char *header, MelderFile file) {
+static autoDaata macSoundOrEmptyFileRecognizer (int nread, const char * /* header */, MelderFile file) {
 	/***** No data in file? This may be a Macintosh sound file with only a resource fork. *****/
-	(void) header;
-	if (nread > 0) return NULL;
+	if (nread > 0) return autoDaata ();
 	Melder_throw (U"File ", file, U" contains no audio data.");   // !!!
 }
 
-static Any soundFileRecognizer (int nread, const char *header, MelderFile file) {
-	if (nread < 16) return NULL;
-	if (strnequ (header, "FORM", 4) && strnequ (header + 8, "AIF", 3)) return Sound_readFromSoundFile (file).transfer();
-	if (strnequ (header, "RIFF", 4) && (strnequ (header + 8, "WAVE", 4) || strnequ (header + 8, "CDDA", 4))) return Sound_readFromSoundFile (file).transfer();
-	if (strnequ (header, ".snd", 4)) return Sound_readFromSoundFile (file).transfer();
-	if (strnequ (header, "NIST_1A", 7)) return Sound_readFromSoundFile (file).transfer();
-	if (strnequ (header, "fLaC", 4)) return Sound_readFromSoundFile (file).transfer();   // Erez Volk, March 2007
+static autoDaata soundFileRecognizer (int nread, const char *header, MelderFile file) {
+	if (nread < 16) return autoDaata ();
+	if (strnequ (header, "FORM", 4) && strnequ (header + 8, "AIF", 3)) return Sound_readFromSoundFile (file);
+	if (strnequ (header, "RIFF", 4) && (strnequ (header + 8, "WAVE", 4) || strnequ (header + 8, "CDDA", 4))) return Sound_readFromSoundFile (file);
+	if (strnequ (header, ".snd", 4)) return Sound_readFromSoundFile (file);
+	if (strnequ (header, "NIST_1A", 7)) return Sound_readFromSoundFile (file);
+	if (strnequ (header, "fLaC", 4)) return Sound_readFromSoundFile (file);   // Erez Volk, March 2007
 	if ((Melder_stringMatchesCriterion (MelderFile_name (file), kMelder_string_ENDS_WITH, U".mp3") ||
 	     Melder_stringMatchesCriterion (MelderFile_name (file), kMelder_string_ENDS_WITH, U".MP3"))
-		&& mp3_recognize (nread, header)) return Sound_readFromSoundFile (file).transfer();   // Erez Volk, May 2007
-	return NULL;
+		&& mp3_recognize (nread, header)) return Sound_readFromSoundFile (file);   // Erez Volk, May 2007
+	return autoDaata ();
 }
 
-static Any movieFileRecognizer (int nread, const char *header, MelderFile file) {
+static autoDaata movieFileRecognizer (int nread, const char * /* header */, MelderFile file) {
 	const char32 *fileName = MelderFile_name (file);
-	(void) header;
 	/*Melder_casual ("%d %d %d %d %d %d %d %d %d %d", header [0],
 		header [1], header [2], header [3],
 		header [4], header [5], header [6],
@@ -2242,34 +2240,33 @@ static Any movieFileRecognizer (int nread, const char *header, MelderFile file) 
 	if (nread < 512 || (! Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".mov") &&
 	                    ! Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".MOV") &&
 	                    ! Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".avi") &&
-	                    ! Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".AVI"))) return NULL;
+	                    ! Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".AVI"))) return autoDaata ();
 	Melder_throw (U"This Praat version cannot open movie files.");
-	return NULL;
+	return autoDaata ();
 }
 
-static Any sesamFileRecognizer (int nread, const char *header, MelderFile file) {
+static autoDaata sesamFileRecognizer (int nread, const char * /* header */, MelderFile file) {
 	const char32 *fileName = MelderFile_name (file);
-	(void) header;
 	if (nread < 512 || (! Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".sdf") &&
-	                    ! Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".SDF"))) return NULL;
-	return Sound_readFromSesamFile (file).transfer();
+	                    ! Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".SDF"))) return autoDaata ();
+	return Sound_readFromSesamFile (file);
 }
 
-static Any bellLabsFileRecognizer (int nread, const char *header, MelderFile file) {
-	if (nread < 16 || ! strnequ (& header [0], "SIG\n", 4)) return NULL;
-	return Sound_readFromBellLabsFile (file).transfer();
+static autoDaata bellLabsFileRecognizer (int nread, const char *header, MelderFile file) {
+	if (nread < 16 || ! strnequ (& header [0], "SIG\n", 4)) return autoDaata ();
+	return Sound_readFromBellLabsFile (file);
 }
 
-static Any kayFileRecognizer (int nread, const char *header, MelderFile file) {
-	if (nread <= 12 || ! strnequ (& header [0], "FORMDS16", 8)) return NULL;
-	return Sound_readFromKayFile (file).transfer();
+static autoDaata kayFileRecognizer (int nread, const char *header, MelderFile file) {
+	if (nread <= 12 || ! strnequ (& header [0], "FORMDS16", 8)) return autoDaata ();
+	return Sound_readFromKayFile (file);
 }
 
 /***** override play and record buttons in manuals *****/
 
 static Sound melderSound, melderSoundFromFile, last;
 static int recordProc (double duration) {
-	if (last == melderSound) last = NULL;
+	if (last == melderSound) last = nullptr;
 	forget (melderSound);
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	melderSound = Sound_recordFixedTime (1, 1.0, 0.5, 44100, duration).transfer();
@@ -2278,20 +2275,20 @@ static int recordProc (double duration) {
 	return 1;
 }
 static int recordFromFileProc (MelderFile file) {
-	if (last == melderSoundFromFile) last = NULL;
+	if (last == melderSoundFromFile) last = nullptr;
 	forget (melderSoundFromFile);
-	Melder_warningOff ();   /* Like "misssing samples". */
-	melderSoundFromFile = (Sound) Data_readFromFile (file);
+	Melder_warningOff ();   // like "misssing samples"
+	melderSoundFromFile = Data_readFromFile (file). static_cast_move<structSound>(). transfer();
 	Melder_warningOn ();
 	if (! melderSoundFromFile) return 0;
 	if (! Thing_isa (melderSoundFromFile, classSound)) { forget (melderSoundFromFile); return 0; }
 	last = melderSoundFromFile;
-	Sound_play (melderSoundFromFile, NULL, NULL);
+	Sound_play (melderSoundFromFile, nullptr, nullptr);
 	return 1;
 }
 static void playProc () {
 	if (melderSound) {
-		Sound_play (melderSound, NULL, NULL);
+		Sound_play (melderSound, nullptr, nullptr);
 		last = melderSound;
 	}
 }
