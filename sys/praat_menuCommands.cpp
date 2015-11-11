@@ -67,42 +67,36 @@ static long lookUpMatchingMenuCommand (const char32 *window, const char32 *menu,
 	return 0;   // not found
 }
 
-static void do_menu (I, unsigned long modified) {
-	UiCallback callback = (UiCallback) void_me;
-	Melder_assert (callback);
-	for (long i = 1; i <= theCommands -> size; i ++) {
-		Praat_Command me = (Praat_Command) theCommands -> item [i];
-		if (my callback == callback) {
-			if (my title && ! str32str (my title, U"...")) {
-				UiHistory_write (U"\n");
-				UiHistory_write (my title);
-			}
-			try {
-				callback (nullptr, 0, nullptr, nullptr, nullptr, my title, modified, nullptr);
-			} catch (MelderError) {
-				Melder_flushError (U"Command \"", my title, U"\" not executed.");
-			}
-			praat_updateSelection (); return;
+static void do_menu (Praat_Command me, unsigned long modified) {
+	if (my callback == DO_RunTheScriptFromAnyAddedMenuCommand) {
+		UiHistory_write (U"\nrunScript: ");
+		try {
+			DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, my script, nullptr, nullptr, false, nullptr);
+		} catch (MelderError) {
+			Melder_flushError (U"Command \"", my title, U"\" not executed.");
 		}
-		if (my callback == DO_RunTheScriptFromAnyAddedMenuCommand && my script == (void *) void_me) {
-			UiHistory_write (U"\nrunScript: ");
-			try {
-				DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, my script, nullptr, nullptr, false, nullptr);
-			} catch (MelderError) {
-				Melder_flushError (U"Command \"", my title, U"\" not executed.");
-			}
-			praat_updateSelection (); return;
+		praat_updateSelection (); return;
+	} else {
+		if (my title && ! str32str (my title, U"...")) {
+			UiHistory_write (U"\n");
+			UiHistory_write (my title);
 		}
+		try {
+			my callback (nullptr, 0, nullptr, nullptr, nullptr, my title, modified, nullptr);
+		} catch (MelderError) {
+			Melder_flushError (U"Command \"", my title, U"\" not executed.");
+		}
+		praat_updateSelection (); return;
 	}
 }
 
-static void gui_button_cb_menu (I, GuiButtonEvent event) {
-	do_menu (void_me, event -> shiftKeyPressed | event -> commandKeyPressed | event -> optionKeyPressed | event -> extraControlKeyPressed);
+static void gui_button_cb_menu (Praat_Command me, GuiButtonEvent event) {
+	do_menu (me, event -> shiftKeyPressed | event -> commandKeyPressed | event -> optionKeyPressed | event -> extraControlKeyPressed);
 }
 
 static void gui_cb_menu (I, GuiMenuItemEvent event) {
 	bool modified = event -> shiftKeyPressed || event -> commandKeyPressed || event -> optionKeyPressed || event -> extraControlKeyPressed;
-	do_menu (void_me, modified);
+	do_menu ((Praat_Command) void_me, modified);
 }
 
 static GuiMenu windowMenuToWidget (const char32 *window, const char32 *menu) {
@@ -217,7 +211,7 @@ GuiMenuItem praat_addMenuCommand (const char32 *window, const char32 *menu, cons
 			Melder_assert (command -> button);
 		} else {
 			trace (U"insert the command as a normal menu item");
-			command -> button = GuiMenu_addItem (parentMenu, title, guiFlags, gui_cb_menu, (void *) callback);
+			command -> button = GuiMenu_addItem (parentMenu, title, guiFlags, gui_cb_menu, (void *) command.get());
 			Melder_assert (command -> button);
 		}
 		if (hidden) GuiThing_hide (command -> button);
@@ -309,7 +303,7 @@ void praat_addMenuCommandScript (const char32 *window, const char32 *menu, const
 				} else if (script [0] == '\0') {
 					command -> button = GuiMenu_createInMenu (parentMenu, title, 0) -> d_menuItem;
 				} else {
-					command -> button = GuiMenu_addItem (parentMenu, title, 0, gui_cb_menu, (void *) command -> script);   // not just "script"!!
+					command -> button = GuiMenu_addItem (parentMenu, title, 0, gui_cb_menu, (void *) command.get() /*-> script*/);   // not just "script"!!
 				}
 			}
 		}
@@ -381,7 +375,7 @@ void praat_addFixedButtonCommand (GuiForm parent, const char32 *title, UiCallbac
 		my button = nullptr;
 	} else {
 		GuiThing button = my button = GuiButton_create (parent, x, x + 82, -y - Gui_PUSHBUTTON_HEIGHT, -y,
-			title, gui_button_cb_menu, (void *) callback, 0);   // BUG: shouldn't convert a function pointer to a void pointer
+			title, gui_button_cb_menu, me.get(), 0);
 		GuiThing_setSensitive (button, false);
 		GuiThing_show (button);
 	}

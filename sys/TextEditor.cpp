@@ -137,8 +137,7 @@ static void menu_cb_saveAs (TextEditor me, EDITOR_ARGS_DIRECT) {
 	UiOutfile_do (my saveDialog.get(), defaultName);
 }
 
-static void gui_button_cb_saveAndOpen (I, GuiButtonEvent /* event */) {
-	EditorCommand cmd = (EditorCommand) void_me;
+static void gui_button_cb_saveAndOpen (EditorCommand cmd, GuiButtonEvent /* event */) {
 	TextEditor me = (TextEditor) cmd -> d_editor;
 	GuiThing_hide (my dirtyOpenDialog);
 	if (my name [0]) {
@@ -154,14 +153,12 @@ static void gui_button_cb_saveAndOpen (I, GuiButtonEvent /* event */) {
 	}
 }
 
-static void gui_button_cb_cancelOpen (I, GuiButtonEvent /* event */) {
-	EditorCommand cmd = (EditorCommand) void_me;
+static void gui_button_cb_cancelOpen (EditorCommand cmd, GuiButtonEvent /* event */) {
 	TextEditor me = (TextEditor) cmd -> d_editor;
 	GuiThing_hide (my dirtyOpenDialog);
 }
 
-static void gui_button_cb_discardAndOpen (I, GuiButtonEvent /* event */) {
-	EditorCommand cmd = (EditorCommand) void_me;
+static void gui_button_cb_discardAndOpen (EditorCommand cmd, GuiButtonEvent /* event */) {
 	TextEditor me = (TextEditor) cmd -> d_editor;
 	GuiThing_hide (my dirtyOpenDialog);
 	cb_showOpen (cmd);
@@ -199,8 +196,7 @@ static void menu_cb_open (TextEditor me, EDITOR_ARGS_CMD) {
 	}
 }
 
-static void gui_button_cb_saveAndNew (I, GuiButtonEvent /* event */) {
-	EditorCommand cmd = (EditorCommand) void_me;
+static void gui_button_cb_saveAndNew (EditorCommand cmd, GuiButtonEvent /* event */) {
 	TextEditor me = (TextEditor) cmd -> d_editor;
 	GuiThing_hide (my dirtyNewDialog);
 	if (my name [0]) {
@@ -216,14 +212,12 @@ static void gui_button_cb_saveAndNew (I, GuiButtonEvent /* event */) {
 	}
 }
 
-static void gui_button_cb_cancelNew (I, GuiButtonEvent /* event */) {
-	EditorCommand cmd = (EditorCommand) void_me;
+static void gui_button_cb_cancelNew (EditorCommand cmd, GuiButtonEvent /* event */) {
 	TextEditor me = (TextEditor) cmd -> d_editor;
 	GuiThing_hide (my dirtyNewDialog);
 }
 
-static void gui_button_cb_discardAndNew (I, GuiButtonEvent /* event */) {
-	EditorCommand cmd = (EditorCommand) void_me;
+static void gui_button_cb_discardAndNew (EditorCommand cmd, GuiButtonEvent /* event */) {
 	TextEditor me = (TextEditor) cmd -> d_editor;
 	GuiThing_hide (my dirtyNewDialog);
 	newDocument (me);
@@ -290,8 +284,7 @@ static void menu_cb_reopen (TextEditor me, EDITOR_ARGS_DIRECT) {
 	}
 }
 
-static void gui_button_cb_saveAndClose (I, GuiButtonEvent /* event */) {
-	iam (TextEditor);
+static void gui_button_cb_saveAndClose (TextEditor me, GuiButtonEvent /* event */) {
 	GuiThing_hide (my dirtyCloseDialog);
 	if (my name [0]) {
 		try {
@@ -306,13 +299,11 @@ static void gui_button_cb_saveAndClose (I, GuiButtonEvent /* event */) {
 	}
 }
 
-static void gui_button_cb_cancelClose (I, GuiButtonEvent /* event */) {
-	iam (TextEditor);
+static void gui_button_cb_cancelClose (TextEditor me, GuiButtonEvent /* event */) {
 	GuiThing_hide (my dirtyCloseDialog);
 }
 
-static void gui_button_cb_discardAndClose (I, GuiButtonEvent /* event */) {
-	iam (TextEditor);
+static void gui_button_cb_discardAndClose (TextEditor me, GuiButtonEvent /* event */) {
 	GuiThing_hide (my dirtyCloseDialog);
 	closeDocument (me);
 }

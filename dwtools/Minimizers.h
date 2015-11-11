@@ -101,17 +101,16 @@ double Minimizer_getMinimum (Minimizer me);
 /********** deferred class LineMinimizer ************************************/
 
 Thing_define (LineMinimizer, Minimizer) {
-	// new data:
-	public:
-		/* the function to be minimized */
-		double (*func) (Daata object, const double p[]);
-		double maxLineStep;	/*maximum step in line search direction */
-		double *direction;	/* search direction vector */
-		double *ptry;		/* point in search direction */
-	// overridden methods:
-		virtual void v_destroy ();
-	// new methods:
-		//virtual void v_linmin (double p[], double fp, double direction[], double *fret);	 // David, is dit correct? ja
+	/* the function to be minimized */
+	double (*func) (Daata object, const double p[]);
+	double maxLineStep;	/*maximum step in line search direction */
+	double *direction;	/* search direction vector */
+	double *ptry;		/* point in search direction */
+
+	void v_destroy ()
+		override;
+
+	//virtual void v_linmin (double p[], double fp, double direction[], double *fret);	 // David, is dit correct? ja
 };
 
 void LineMinimizer_init (I, long nParameters, Daata object, double (*func) (Daata object, const double p[]));
@@ -123,15 +122,15 @@ typedef struct structSteepestDescentMinimizer_parameters {
 } *SteepestDescentMinimizer_parameters;
 
 Thing_define (SteepestDescentMinimizer, Minimizer) {
-	// new data:
-	public:
-		double eta, momentum;
-		double (*func) (Daata object, const double p[]);
-		void  (*dfunc) (Daata object, const double p[], double dp[]);
-		/* calculates gradient at position p */
-	// overridden methods:
-		virtual void v_minimize ();
-		virtual void v_setParameters (Any parameters);
+	double eta, momentum;
+	double (*func) (Daata object, const double p[]);
+	void  (*dfunc) (Daata object, const double p[], double dp[]);
+	/* calculates gradient at position p */
+
+	void v_minimize ()
+		override;
+	void v_setParameters (Any parameters)
+		override;
 };
 
 SteepestDescentMinimizer SteepestDescentMinimizer_create (long nParameters, Daata object, double (*func) (Daata object, const double p[]), void (*dfunc) (Daata object, const double p[], double dp[]));
@@ -145,29 +144,31 @@ typedef struct structVDSmagtMinimizer_parameters {
 } *VDSmagtMinimizer_parameters;
 
 Thing_define (VDSmagtMinimizer, Minimizer) {
-	// new data:
-	public:
-		double (*func) (Daata object, const double p[]);
-		void  (*dfunc) (Daata object, const double p[], double dp[]);
-		double *dp;
-		double lineSearchGradient;
-		long lineSearchMaxNumOfIterations;
-		double gr0, gropt, df, alplim, alpha, dalpha, alphamin;
-		double *pc;	/* position of current point */
-		double *gc;	/* gradient of current point */
-		double *g0;	/* gradient at beginning of line search */
-		double *s;	/* search direction for line search */
-		double *srst;/* search direction for first iteration after restart */
-		double *grst; /* gradient for first iteration after restart */
-		double fc, grc, fch, gr2s, temp, grs, beta, gcg0;
-		double gamma, gamma_in, f0, gsq, gopt_sq;
-		long lineSearch_iteration, flag, again, one_up, restart;
-		long restart_flag;
-	// overridden methods:
-		virtual void v_destroy ();
-		virtual void v_minimize ();
-		virtual void v_reset ();
-		virtual void v_setParameters (Any parameters);
+	double (*func) (Daata object, const double p[]);
+	void  (*dfunc) (Daata object, const double p[], double dp[]);
+	double *dp;
+	double lineSearchGradient;
+	long lineSearchMaxNumOfIterations;
+	double gr0, gropt, df, alplim, alpha, dalpha, alphamin;
+	double *pc;	/* position of current point */
+	double *gc;	/* gradient of current point */
+	double *g0;	/* gradient at beginning of line search */
+	double *s;	/* search direction for line search */
+	double *srst;/* search direction for first iteration after restart */
+	double *grst; /* gradient for first iteration after restart */
+	double fc, grc, fch, gr2s, temp, grs, beta, gcg0;
+	double gamma, gamma_in, f0, gsq, gopt_sq;
+	long lineSearch_iteration, flag, again, one_up, restart;
+	long restart_flag;
+
+	void v_destroy ()
+		override;
+	void v_minimize ()
+		override;
+	void v_reset ()
+		override;
+	void v_setParameters (Any parameters)
+		override;
 };
 
 VDSmagtMinimizer VDSmagtMinimizer_create (long dimension, Daata object, double (*func) (Daata object, const double p[]), void (*dfunc) (Daata object, const double p[], double dp[]));

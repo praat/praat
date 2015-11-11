@@ -150,9 +150,7 @@ static void do_limit (OTMultiEditor me) {
 	Graphics_updateWs (my g);
 }
 
-static void gui_button_cb_limit (I, GuiButtonEvent event) {
-	(void) event;
-	iam (OTMultiEditor);
+static void gui_button_cb_limit (OTMultiEditor me, GuiButtonEvent /* event */) {
 	do_limit (me);
 }
 

@@ -161,7 +161,7 @@ void structCategoriesEditorCommand :: v_destroy () {
 	CategoriesEditorCommand_Parent :: v_destroy ();
 }
 
-static void CategoriesEditorCommand_init (CategoriesEditorCommand me, const char32 *name,  Any data,
+static void CategoriesEditorCommand_init (CategoriesEditorCommand me, const char32 *name, Any data,
         int (*execute) (Any), int (*undo) (Any), int /*nCategories*/, int nSelected) {
 
 	my nSelected = nSelected;
@@ -583,8 +583,7 @@ static void update (I, long from, long to, const long *select, long nSelect) {
 	}
 }
 
-static void gui_button_cb_remove (I, GuiButtonEvent /* event */) {
-	iam (CategoriesEditor);
+static void gui_button_cb_remove (CategoriesEditor me, GuiButtonEvent /* event */) {
 	long posCount;
 	autoNUMvector<long> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
 	if (posList.peek() != 0) {
@@ -599,8 +598,7 @@ static void gui_button_cb_remove (I, GuiButtonEvent /* event */) {
 	}
 }
 
-static void insert (I, int position) {
-	iam (CategoriesEditor);
+static void insert (CategoriesEditor me, int position) {
 	autostring32 text = GuiText_getString (my text);
 	if (str32len (text.peek()) != 0) {
 		autoSimpleString str = SimpleString_create (text.peek());
@@ -613,20 +611,17 @@ static void insert (I, int position) {
 	}
 }
 
-static void gui_button_cb_insert (I, GuiButtonEvent /* event */) {
-	iam (CategoriesEditor);
+static void gui_button_cb_insert (CategoriesEditor me, GuiButtonEvent /* event */) {
 	insert (me, my position);
 }
 
-static void gui_button_cb_insertAtEnd (I, GuiButtonEvent /* event */) {
-	iam (CategoriesEditor);
+static void gui_button_cb_insertAtEnd (CategoriesEditor me, GuiButtonEvent /* event */) {
 	Categories categories = (Categories) my data;
 	insert (me, categories -> size + 1);
 	my position = categories -> size;
 }
 
-static void gui_button_cb_replace (I, GuiButtonEvent /* event */) {
-	iam (CategoriesEditor);
+static void gui_button_cb_replace (CategoriesEditor me, GuiButtonEvent /* event */) {
 	long posCount;
 	autoNUMvector<long> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
 	if (posCount > 0) {
@@ -645,8 +640,7 @@ static void gui_button_cb_replace (I, GuiButtonEvent /* event */) {
 }
 
 /* Precondition: contiguous selection */
-static void gui_button_cb_moveUp (I, GuiButtonEvent /* event */) {
-	iam (CategoriesEditor);
+static void gui_button_cb_moveUp (CategoriesEditor me, GuiButtonEvent /* event */) {
 	long posCount;
 	autoNUMvector<long> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
 	if (posCount > 0) {
@@ -661,8 +655,7 @@ static void gui_button_cb_moveUp (I, GuiButtonEvent /* event */) {
 }
 
 /* Precondition: contiguous selection */
-static void gui_button_cb_moveDown (I, GuiButtonEvent /* event */) {
-	iam (CategoriesEditor);
+static void gui_button_cb_moveDown (CategoriesEditor me, GuiButtonEvent /* event */) {
 	long posCount;
 	autoNUMvector<long> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
 	if (posCount > 0) {
@@ -693,8 +686,7 @@ static void gui_list_cb_extended (void *void_me, GuiListEvent /* event */) {
 	updateWidgets (me);
 }
 
-static void gui_button_cb_undo (I, GuiButtonEvent /* event */) {
-	iam (CategoriesEditor);
+static void gui_button_cb_undo (CategoriesEditor me, GuiButtonEvent /* event */) {
 	if (CommandHistory_offleft (my history.peek())) {
 		return;
 	}
@@ -703,8 +695,7 @@ static void gui_button_cb_undo (I, GuiButtonEvent /* event */) {
 	updateWidgets (me);
 }
 
-static void gui_button_cb_redo (I, GuiButtonEvent /* event */) {
-	iam (CategoriesEditor);
+static void gui_button_cb_redo (CategoriesEditor me, GuiButtonEvent /* event */) {
 	CommandHistory_forth (my history.peek());
 	if (CommandHistory_offright (my history.peek())) {
 		return;

@@ -835,9 +835,7 @@ static void menu_cb_back (EDITOR_ARGS) {
 	do_back (me);
 }
 
-static void gui_button_cb_back (I, GuiButtonEvent event) {
-	(void) event;
-	iam (HyperPage);
+static void gui_button_cb_back (HyperPage me, GuiButtonEvent /* event */) {
 	do_back (me);
 }
 
@@ -857,9 +855,7 @@ static void menu_cb_forth (EDITOR_ARGS) {
 	do_forth (me);
 }
 
-static void gui_button_cb_forth (I, GuiButtonEvent event) {
-	(void) event;
-	iam (HyperPage);
+static void gui_button_cb_forth (HyperPage me, GuiButtonEvent /* event */) {
 	do_forth (me);
 }
 
@@ -905,14 +901,12 @@ static void gui_drawingarea_cb_resize (HyperPage me, GuiDrawingArea_ResizeEvent 
 	updateVerticalScrollBar (me);
 }
 
-static void gui_button_cb_previousPage (I, GuiButtonEvent /* event */) {
-	iam (HyperPage);
+static void gui_button_cb_previousPage (HyperPage me, GuiButtonEvent /* event */) {
 	HyperPage_goToPage_i (me, my v_getCurrentPageNumber () > 1 ?
 		my v_getCurrentPageNumber () - 1 : my v_getNumberOfPages ());
 }
 
-static void gui_button_cb_nextPage (I, GuiButtonEvent /* event */) {
-	iam (HyperPage);
+static void gui_button_cb_nextPage (HyperPage me, GuiButtonEvent /* event */) {
 	long currentPageNumber = my v_getCurrentPageNumber ();
 	HyperPage_goToPage_i (me, currentPageNumber < my v_getNumberOfPages () ? currentPageNumber + 1 : 1);
 }

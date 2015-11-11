@@ -501,8 +501,7 @@ static void do_showAll (FunctionEditor me) {
 	}
 }
 
-static void gui_button_cb_showAll (I, GuiButtonEvent /*event*/) {
-	iam (FunctionEditor);
+static void gui_button_cb_showAll (FunctionEditor me, GuiButtonEvent /* event */) {
 	do_showAll (me);
 }
 
@@ -518,14 +517,13 @@ static void do_zoomIn (FunctionEditor me) {
 	}
 }
 
-static void gui_button_cb_zoomIn (I, GuiButtonEvent /*event*/) {
-	iam (FunctionEditor);
+static void gui_button_cb_zoomIn (FunctionEditor me, GuiButtonEvent /* event */) {
 	do_zoomIn (me);
 }
 
 static void do_zoomOut (FunctionEditor me) {
 	double shift = (my d_endWindow - my d_startWindow) / 2;
-	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);   /* Quickly, before window changes. */
+	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);   // quickly, before window changes
 	my d_startWindow -= shift;
 	if (my d_startWindow < my tmin + 1e-12)
 		my d_startWindow = my tmin;
@@ -540,8 +538,7 @@ static void do_zoomOut (FunctionEditor me) {
 	}
 }
 
-static void gui_button_cb_zoomOut (I, GuiButtonEvent /*event*/) {
-	iam (FunctionEditor);
+static void gui_button_cb_zoomOut (FunctionEditor me, GuiButtonEvent /*event*/) {
 	do_zoomOut (me);
 }
 
@@ -565,8 +562,7 @@ static void do_zoomToSelection (FunctionEditor me) {
 	}
 }
 
-static void gui_button_cb_zoomToSelection (I, GuiButtonEvent /*event*/) {
-	iam (FunctionEditor);
+static void gui_button_cb_zoomToSelection (FunctionEditor me, GuiButtonEvent /* event */) {
 	do_zoomToSelection (me);
 }
 
@@ -583,8 +579,7 @@ static void do_zoomBack (FunctionEditor me) {
 	}
 }
 
-static void gui_button_cb_zoomBack (I, GuiButtonEvent /*event*/) {
-	iam (FunctionEditor);
+static void gui_button_cb_zoomBack (FunctionEditor me, GuiButtonEvent /* event */) {
 	do_zoomBack (me);
 }
 

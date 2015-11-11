@@ -352,7 +352,7 @@ void GuiControl_setSize (GuiControl me, int width, int height);
 Thing_define (GuiForm, GuiControl) {
 };
 
-typedef MelderCallback <void, structThing> GuiShell_GoAwayCallback;
+typedef MelderCallback <void, structThing /* boss */> GuiShell_GoAwayCallback;
 
 Thing_define (GuiShell, GuiForm) {
 	int d_width, d_height;
@@ -384,11 +384,11 @@ typedef struct structGuiButtonEvent {
 	bool shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed;
 } *GuiButtonEvent;
 
-typedef void (*GuiButton_ActivateCallback) (void *boss, GuiButtonEvent event);
+typedef MelderCallback <void, structThing /* boss */, GuiButtonEvent> GuiButton_ActivateCallback;
 
 Thing_define (GuiButton, GuiControl) {
 	GuiButton_ActivateCallback d_activateCallback;
-	void *d_activateBoss;
+	Thing d_activateBoss;
 	GuiMenu d_menu;   // for cascade buttons
 };
 
@@ -400,12 +400,12 @@ Thing_define (GuiButton, GuiControl) {
 GuiButton GuiButton_create      (GuiForm parent,
 	int left, int right, int top, int bottom,
 	const char32 *text,
-	GuiButton_ActivateCallback activateCallback, void *boss,
+	GuiButton_ActivateCallback activateCallback, Thing boss,
 	uint32 flags);
 GuiButton GuiButton_createShown (GuiForm parent,
 	int left, int right, int top, int bottom,
 	const char32 *text,
-	GuiButton_ActivateCallback activateCallback, void *boss,
+	GuiButton_ActivateCallback activateCallback, Thing boss,
 	uint32 flags);
 
 void GuiButton_setText (GuiButton me, const char32 *text /* cattable */);
@@ -478,10 +478,10 @@ typedef struct structGuiDrawingArea_ResizeEvent {
 	int width, height;
 } *GuiDrawingArea_ResizeEvent;
 
-typedef MelderCallback <void, structThing, GuiDrawingArea_ExposeEvent> GuiDrawingArea_ExposeCallback;
-typedef MelderCallback <void, structThing, GuiDrawingArea_ClickEvent > GuiDrawingArea_ClickCallback;
-typedef MelderCallback <void, structThing, GuiDrawingArea_KeyEvent   > GuiDrawingArea_KeyCallback;
-typedef MelderCallback <void, structThing, GuiDrawingArea_ResizeEvent> GuiDrawingArea_ResizeCallback;
+typedef MelderCallback <void, structThing /* boss */, GuiDrawingArea_ExposeEvent> GuiDrawingArea_ExposeCallback;
+typedef MelderCallback <void, structThing /* boss */, GuiDrawingArea_ClickEvent > GuiDrawingArea_ClickCallback;
+typedef MelderCallback <void, structThing /* boss */, GuiDrawingArea_KeyEvent   > GuiDrawingArea_KeyCallback;
+typedef MelderCallback <void, structThing /* boss */, GuiDrawingArea_ResizeEvent> GuiDrawingArea_ResizeCallback;
 
 Thing_define (GuiDrawingArea, GuiControl) {
 	GuiScrollBar d_horizontalScrollBar, d_verticalScrollBar;   // for swiping

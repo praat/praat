@@ -398,8 +398,7 @@ void structUiForm :: v_destroy () {
 	UiForm_Parent :: v_destroy ();
 }
 
-static void gui_button_cb_revert (I, GuiButtonEvent /* event */) {
-	iam (UiForm);
+static void gui_button_cb_revert (UiForm me, GuiButtonEvent /* event */) {
 	for (int ifield = 1; ifield <= my numberOfFields; ifield ++)
 		UiField_setDefault (my field [ifield]);
 }
@@ -409,8 +408,7 @@ static void gui_dialog_cb_close (UiForm me) {
 	GuiThing_hide (my d_dialogForm);
 	if (my destroyWhenUnmanaged) forget (me);
 }
-static void gui_button_cb_cancel (I, GuiButtonEvent /* event */) {
-	iam (UiForm);
+static void gui_button_cb_cancel (UiForm me, GuiButtonEvent /* event */) {
 	if (my cancelCallback) my cancelCallback (me, my buttonClosure);
 	GuiThing_hide (my d_dialogForm);
 	if (my destroyWhenUnmanaged) forget (me);
@@ -538,18 +536,15 @@ static void UiForm_okOrApply (UiForm me, GuiButton button, int hide) {
 	if (my helpButton)   GuiThing_setSensitive (my helpButton,   true);
 }
 
-static void gui_button_cb_ok (I, GuiButtonEvent event) {
-	iam (UiForm);
+static void gui_button_cb_ok (UiForm me, GuiButtonEvent event) {
 	UiForm_okOrApply (me, event -> button, true);
 }
 
-static void gui_button_cb_apply (I, GuiButtonEvent event) {
-	iam (UiForm);
+static void gui_button_cb_apply (UiForm me, GuiButtonEvent event) {
 	UiForm_okOrApply (me, event -> button, false);
 }
 
-static void gui_button_cb_help (I, GuiButtonEvent /* event */) {
-	iam (UiForm);
+static void gui_button_cb_help (UiForm me, GuiButtonEvent /* event */) {
 	Melder_help (my helpTitle);
 }
 
