@@ -2,7 +2,7 @@
 #define _SSCP_h_
 /* SSCP.h
  *
- * Copyright (C) 1993-2014 David Weenink
+ * Copyright (C) 1993-2014, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,52 +41,63 @@ Thing_define (SSCPs, Ordered) {
 
 void SSCP_init (SSCP me, long dimension, long storage);
 
-SSCP SSCP_create (long dimension);
+autoSSCP SSCP_create (long dimension);
 
 void SSCP_drawTwoDimensionalEllipse_inside  (SSCP me, Graphics g, double scale, char32 * label, int fontSize);
+
 double SSCP_getEllipseScalefactor (SSCP me, double scale, bool confidence);
+
 void SSCP_drawConcentrationEllipse (SSCP me, Graphics g, double scale, int confidence,
 	long d1, long d2, double xmin, double xmax, double ymin, double ymax, int garnish);
 
 void SSCP_setNumberOfObservations (SSCP me, double numberOfObservations);
+
 void SSCP_setCentroid (SSCP me, long component, double value); // only SSCP & Covariance
+
 void SSCP_setValue (SSCP me, long row, long col, double value); // only SSCP & Covariance
 
 double SSCP_getNumberOfObservations (SSCP me);
+
 double SSCP_getDegreesOfFreedom (SSCP me);
+
 double SSCP_getTotalVariance (SSCP me);
+
 double SSCP_getCumulativeContributionOfComponents (SSCP me, long from, long to);
+
 double SSCP_getLnDeterminant (SSCP me);
+
 double SSCP_getConcentrationEllipseArea(SSCP me, double scale, bool confidence, long d1, long d2);
+
 double SSCP_getFractionVariation (SSCP me, long from, long to);
 
-SSCP TableOfReal_to_SSCP (TableOfReal me, long rowb, long rowe, long colb, long cole);
+autoSSCP TableOfReal_to_SSCP (TableOfReal me, long rowb, long rowe, long colb, long cole);
 
-TableOfReal SSCP_and_TableOfReal_extractDistanceQuantileRange (SSCP me, TableOfReal thee,
-	double qlow, double qhigh);
-TableOfReal Covariance_and_TableOfReal_extractDistanceQuantileRange (Covariance me, TableOfReal thee,
-	double qlow, double qhigh);
+autoTableOfReal SSCP_and_TableOfReal_extractDistanceQuantileRange (SSCP me, TableOfReal thee, double qlow, double qhigh);
+
+autoTableOfReal Covariance_and_TableOfReal_extractDistanceQuantileRange (Covariance me, TableOfReal thee, double qlow, double qhigh);
 /*
 	Select from a TableOfReal the rows whose Mahalanobis distance to the centroid
 	(from the SSCP) is in the quantile [qlow, qhigh].
 */
 
-TableOfReal Covariance_and_TableOfReal_mahalanobis (Covariance me, thou, bool useTableCentroid);
+autoTableOfReal Covariance_and_TableOfReal_mahalanobis (Covariance me, thou, bool useTableCentroid);
 /*
 	Calculate the Mahalanobis distance: sqrt ((x-m)'S**-1 (x-m))
 	use the m-vector (centroid) from the covariance unless useTableColumnMeans is true.
 */
 
 
-Covariance TableOfReal_to_Covariance (TableOfReal me);
+autoCovariance TableOfReal_to_Covariance (TableOfReal me);
 
-Correlation TableOfReal_to_Correlation (TableOfReal me);
-Correlation TableOfReal_to_Correlation_rank (TableOfReal me);
+autoCorrelation TableOfReal_to_Correlation (TableOfReal me);
 
-TableOfReal SSCP_to_TableOfReal (SSCP me);
-TableOfReal SSCP_extractCentroid (SSCP me);
+autoCorrelation TableOfReal_to_Correlation_rank (TableOfReal me);
 
-TableOfReal Covariance_to_TableOfReal_randomSampling (Covariance me, long numberOfData);
+autoTableOfReal SSCP_to_TableOfReal (SSCP me);
+
+autoTableOfReal SSCP_extractCentroid (SSCP me);
+
+autoTableOfReal Covariance_to_TableOfReal_randomSampling (Covariance me, long numberOfData);
 /* Generate a table with data based on the covariance matrix */
 
 void Covariance_and_PCA_generateOneVector (Covariance me, PCA thee, double *vec, double *buf);
@@ -102,18 +113,21 @@ void Covariance_and_PCA_generateOneVector (Covariance me, PCA thee, double *vec,
 		4. buf, a vector of length my numberOfColumns, is needed so the routine cannot fail
 */
 
-SSCPs TableOfReal_to_SSCPs_byLabel (TableOfReal me);
+autoSSCPs TableOfReal_to_SSCPs_byLabel (TableOfReal me);
 
-PCA SSCP_to_PCA (SSCP me);
+autoPCA SSCP_to_PCA (SSCP me);
 
 void SSCP_expandPCA (SSCP me);
+
 void SSCP_unExpandPCA (SSCP me);
 
 autoCCA SSCP_to_CCA (SSCP me, long ny);
 
-Covariance Covariance_create (long dimension);
-Covariance Covariance_createSimple (char32 *covars, char32 *centroid, long numberOfObservations);
-Covariance Covariance_create_reduceStorage (long dimension, long storage);
+autoCovariance Covariance_create (long dimension);
+
+autoCovariance Covariance_createSimple (char32 *covars, char32 *centroid, long numberOfObservations);
+
+autoCovariance Covariance_create_reduceStorage (long dimension, long storage);
 /*
 	storage 0 or >= dimension: complete matrix
 	storage 1: only diagonal
@@ -124,10 +138,9 @@ Covariance Covariance_create_reduceStorage (long dimension, long storage);
     See also SSCP_expand () for usage.
 */
 
-Correlation Correlation_create (long dimension);
+autoCorrelation Correlation_create (long dimension);
 
-TableOfReal Correlation_confidenceIntervals (Correlation me,
-	double confidenceLevel, long numberOfTests, int method);
+autoTableOfReal Correlation_confidenceIntervals (Correlation me, double confidenceLevel, long numberOfTests, int method);
 /*
 	if (method == 1)
 		Confidence intervals by Ruben's approximation
@@ -142,44 +155,36 @@ TableOfReal Correlation_confidenceIntervals (Correlation me,
 
 /* Precondition ||vector|| = 1 */
 void Covariance_getMarginalDensityParameters (Covariance me, double *vector, double *mu, double *stdev);
+
 double Covariance_getMarginalProbabilityAtPosition (Covariance me, double *vector, double x);
 
 double Covariance_getProbabilityAtPosition_string (Covariance me, char32 *xpos);
+
 double Covariance_getProbabilityAtPosition (Covariance me, double *x);
 /* evaluate the pdf(x,mu,Sigma) at x */
 
-Covariance SSCP_to_Covariance (SSCP me, long numberOfConstraints);
+autoCovariance SSCP_to_Covariance (SSCP me, long numberOfConstraints);
 
-SSCP Covariance_to_SSCP (Covariance me);
+autoSSCP Covariance_to_SSCP (Covariance me);
 
-void SSCP_testDiagonality_bartlett (SSCP me, long numberOfContraints,
-	double *chisq, double *probability);
-void Correlation_testDiagonality_bartlett (Correlation me,
-	long numberOfContraints, double *chisq, double *probability);
+void SSCP_testDiagonality_bartlett (SSCP me, long numberOfContraints, double *chisq, double *probability);
+
+void Correlation_testDiagonality_bartlett (Correlation me, long numberOfContraints, double *chisq, double *probability);
 /* Test whether matrices are diagonal matrices, Morrison, page 118 */
 
-Correlation SSCP_to_Correlation (SSCP me);
-
-Configuration SSCP_to_Configuration (SSCP me, long numberOfDimensions);
-
-Configuration Covariance_to_Configuration (Covariance me, long numberOfDimensions);
-
-Configuration Correlation_to_Configuration (Correlation me, long numberOfDimensions);
+autoCorrelation SSCP_to_Correlation (SSCP me);
 
 void Covariance_difference (Covariance me, Covariance thee, double *prob, double *chisq, long *ndf);
 
 void Covariance_getSignificanceOfOneMean (Covariance me, long index, double mu,
 	double *probability, double *t, double *ndf);
 
-void Covariance_getSignificanceOfMeansDifference (Covariance me,
-	long index1, long index2, double mu, int paired, int equalVariances,
+void Covariance_getSignificanceOfMeansDifference (Covariance me, long index1, long index2, double mu, int paired, int equalVariances,
 	double *probability, double *t, double *ndf);
 
-void Covariance_getSignificanceOfOneVariance (Covariance me, long index,
-	double sigmasq, double *probability, double *chisq, long *ndf);
+void Covariance_getSignificanceOfOneVariance (Covariance me, long index, double sigmasq, double *probability, double *chisq, long *ndf);
 
-void Covariance_getSignificanceOfVariancesRatio (Covariance me,
-	long index1, long index2, double ratio, double *probability,
+void Covariance_getSignificanceOfVariancesRatio (Covariance me, long index1, long index2, double ratio, double *probability,
 	double *f, long *ndf);
 
 double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance thee, int equalCovariances, double *prob, double *fisher, double *df1, double *df2);
@@ -198,21 +203,22 @@ void Covariances_equality (Collection me, int method, double *prob, double *chis
 	method = 2 : Wald (Schott, 2001)
 */
 
-SSCPs SSCPs_create ();
+autoSSCPs SSCPs_create ();
 
-SSCPs TableOfReal_to_SSCPs_byLabel (TableOfReal me);
+autoSSCPs TableOfReal_to_SSCPs_byLabel (TableOfReal me);
 
-SSCP SSCPs_to_SSCP_sum (SSCPs me);
+autoSSCP SSCPs_to_SSCP_sum (SSCPs me);
 /* Sum the sscp's and weigh each means with it's numberOfObservations. */
 
-SSCP SSCPs_to_SSCP_pool (SSCPs me);
+autoSSCP SSCPs_to_SSCP_pool (SSCPs me);
 
-void SSCPs_getHomegeneityOfCovariances_box (SSCPs me, double *probability,
-	double *chisq, long *ndf);
+void SSCPs_getHomegeneityOfCovariances_box (SSCPs me, double *probability, double *chisq, long *ndf);
 
-SSCP SSCP_toTwoDimensions (SSCP me, double *v1, double *v2);
-SSCPs SSCPs_toTwoDimensions (SSCPs me, double *v1, double *v2);
-SSCPs SSCPs_extractTwoDimensions (SSCPs me, long d1, long d2);
+autoSSCP SSCP_toTwoDimensions (SSCP me, double *v1, double *v2);
+
+autoSSCPs SSCPs_toTwoDimensions (SSCPs me, double *v1, double *v2);
+
+autoSSCPs SSCPs_extractTwoDimensions (SSCPs me, long d1, long d2);
 
 /* For inheritors */
 
@@ -240,6 +246,7 @@ void SSCP_unExpand (SSCP me);
 /* Use only if the memory is really needed! */
 
 void SSCP_expandLowerCholesky (SSCP me); // create lower square root of covariance matrix
+
 void SSCP_unExpandLowerCholesky (SSCP me);
 
 #endif /* _SSCP_h_ */

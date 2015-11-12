@@ -212,7 +212,7 @@ autoGaussianMixture GaussianMixture_create (long numberOfComponents, long dimens
 		my covariances = Ordered_create ();
 		for (long im = 1; im <= numberOfComponents; im++) {
 			autoCovariance cov = Covariance_create_reduceStorage (dimension, storage);
-			Ordered_addItemPos (my covariances, cov.transfer(), im);
+			Ordered_addItemPos (my covariances.peek(), cov.transfer(), im);
 		}
 		for (long im = 1; im <= numberOfComponents; im++) {
 			my mixingProbabilities[im] = 1.0 / numberOfComponents;
@@ -239,7 +239,7 @@ int GaussianMixture_generateOneVector (GaussianMixture me, double *c, char32 **c
 			if (thy pca == 0) {
 				SSCP_expandPCA (thee);    // on demand expanding
 			}
-			Covariance_and_PCA_generateOneVector (thee, thy pca, c, buf);
+			Covariance_and_PCA_generateOneVector (thee, thy pca.peek(), c, buf);
 		}
 		return 1;
 	} catch (MelderError) {
@@ -440,7 +440,7 @@ void GaussianMixture_getIntervalsAlongDirections (GaussianMixture me, long d1, l
 	if (d1 < 1 || d1 > my dimension || d2 < 1 || d2 > my dimension) {
 		Melder_throw (U"Incorrect directions.");
 	}
-	autoSSCPs sscps = SSCPs_extractTwoDimensions ((SSCPs) my covariances, d1, d2);
+	autoSSCPs sscps = SSCPs_extractTwoDimensions ((SSCPs) my covariances.peek(), d1, d2);
 	SSCPs_getEllipsesBoundingBoxCoordinates (sscps.peek(), -nsigmas, 0, xmin, xmax, ymin, ymax);
 }
 
@@ -454,7 +454,7 @@ void GaussianMixture_and_PCA_getIntervalsAlongDirections (GaussianMixture me, PC
 	if (my dimension != thy dimension || d1 < 1 || d1 > my dimension || d2 < 1 || d2 > my dimension) {
 		Melder_throw (U"Incorrect directions.");
 	}
-	autoSSCPs sscps = SSCPs_toTwoDimensions ( (SSCPs) my covariances, thy eigenvectors[d1], thy eigenvectors[d2]);
+	autoSSCPs sscps = SSCPs_toTwoDimensions ((SSCPs) my covariances.peek(), thy eigenvectors[d1], thy eigenvectors[d2]);
 	SSCPs_getEllipsesBoundingBoxCoordinates (sscps.peek(), -nsigmas, 0, xmin, xmax, ymin, ymax);
 }
 
@@ -573,7 +573,7 @@ void GaussianMixture_and_PCA_drawConcentrationEllipses (GaussianMixture me, PCA 
 		d2_inverted = 1;
 	}
 
-	autoSSCPs thee = SSCPs_toTwoDimensions ( (SSCPs) my covariances, his eigenvectors[d1], his eigenvectors[d2]);
+	autoSSCPs thee = SSCPs_toTwoDimensions ((SSCPs) my covariances.peek(), his eigenvectors[d1], his eigenvectors[d2]);
 
 	if (d1_inverted) {
 		Eigen_invertEigenvector (him, d1);
@@ -607,7 +607,7 @@ void GaussianMixture_drawConcentrationEllipses (GaussianMixture me, Graphics g, 
 	}
 
 	if (! pcaDirections) {
-		SSCPs_drawConcentrationEllipses ( (SSCPs) my covariances, g, -scale, confidence, label,
+		SSCPs_drawConcentrationEllipses ((SSCPs) my covariances.peek(), g, -scale, confidence, label,
 		                                  labs (d1), labs (d2), xmin, xmax, ymin, ymax, fontSize, garnish);
 		return;
 	}
@@ -843,7 +843,7 @@ void GaussianMixture_splitComponent (GaussianMixture me, long component) {
 		// Replace cov1 at component + add cov2. If something goes wrong we must be able to restore original!
 		try {
 			Thing_setName (cov2.peek(), Melder_cat (Thing_getName (cov2.peek()), U"-", my numberOfComponents + 1));
-			Collection_addItem (my covariances, cov2.transfer());
+			Collection_addItem (my covariances.peek(), cov2.transfer());
 		} catch (MelderError) {
 			Melder_throw (me, U" cannot add new component.");
 		}
@@ -1193,7 +1193,7 @@ void GaussianMixture_removeComponent (GaussianMixture me, long component) {
 		return;
 	}
 
-	Collection_removeItem (my covariances, component);
+	Collection_removeItem (my covariances.peek(), component);
 	my numberOfComponents --;
 
 	for (long ic = component; ic <= my numberOfComponents; ic++) {

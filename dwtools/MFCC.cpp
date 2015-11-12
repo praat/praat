@@ -2,7 +2,7 @@
  *
  * Mel Frequency Cepstral Coefficients class.
  *
- * Copyright (C) 1993-2014 David Weenink
+ * Copyright (C) 1993-2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,12 +31,11 @@
 
 Thing_implement (MFCC, CC, 1);
 
-MFCC MFCC_create (double tmin, double tmax, long nt, double dt, double t1,
-	  long maximumNumberOfCoefficients, double fmin_mel, double fmax_mel) {
+autoMFCC MFCC_create (double tmin, double tmax, long nt, double dt, double t1, long maximumNumberOfCoefficients, double fmin_mel, double fmax_mel) {
 	try {
 		autoMFCC me = Thing_new (MFCC);
 		CC_init (me.peek(), tmin, tmax, nt, dt, t1, maximumNumberOfCoefficients, fmin_mel, fmax_mel);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"MFCC not created.");
 	}
@@ -61,7 +60,7 @@ void MFCC_lifter (MFCC me, long lifter) {
 	}
 }
 
-TableOfReal MFCC_to_TableOfReal (MFCC me, bool includeC0) {
+autoTableOfReal MFCC_to_TableOfReal (MFCC me, bool includeC0) {
 	try {
 		long numberOfColumns = my maximumNumberOfCoefficients + (includeC0 ? 1 : 0);
 		autoTableOfReal thee = TableOfReal_create (my nx, numberOfColumns);
@@ -78,14 +77,14 @@ TableOfReal MFCC_to_TableOfReal (MFCC me, bool includeC0) {
 				thy data[iframe][1] = cf -> c0;
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to TabelOfReal.");
 	}
 }
 
 // as_Sound not to_Sound
-Sound MFCC_to_Sound (MFCC me) {
+autoSound MFCC_to_Sound (MFCC me) {
 	try {
 		autoSound thee = Sound_create (my maximumNumberOfCoefficients, my xmin, my xmax, my nx, my dx, my x1);
 		for (long iframe = 1; iframe <= my nx; iframe++) {
@@ -94,13 +93,13 @@ Sound MFCC_to_Sound (MFCC me) {
 				thy z[j][iframe] = cf -> c[j];
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not represented as Sound.");
 	}
 }
 
-Sound MFCCs_crossCorrelate (MFCC me, MFCC thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain) {
+autoSound MFCCs_crossCorrelate (MFCC me, MFCC thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain) {
 	try {
 		if (my dx != thy dx) {
 			Melder_throw (U"The samplings of the two MFCC's have to be equal.");
@@ -111,13 +110,13 @@ Sound MFCCs_crossCorrelate (MFCC me, MFCC thee, enum kSounds_convolve_scaling sc
 		autoSound target = MFCC_to_Sound (me);
 		autoSound source = MFCC_to_Sound (thee);
 		autoSound cc = Sounds_crossCorrelate (target.peek(), source.peek(), scaling, signalOutsideTimeDomain);
-		return cc.transfer();
+		return cc;
 	} catch (MelderError) {
 		Melder_throw (U"No cross-correlation between ", me, U" and ", thee, U" calculated.");
 	}
 }
 
-Sound MFCCs_convolve (MFCC me, MFCC thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain) {
+autoSound MFCCs_convolve (MFCC me, MFCC thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain) {
 	try {
 		if (my dx != thy dx) {
 			Melder_throw (U"The samplings of the two MFCC's have to be equal.");
@@ -128,7 +127,7 @@ Sound MFCCs_convolve (MFCC me, MFCC thee, enum kSounds_convolve_scaling scaling,
 		autoSound target = MFCC_to_Sound (me);
 		autoSound source = MFCC_to_Sound (thee);
 		autoSound cc = Sounds_convolve (target.peek(), source.peek(), scaling, signalOutsideTimeDomain);
-		return cc.transfer();
+		return cc;
 	} catch (MelderError) {
 		Melder_throw (me, U" and ", thee, U" not convolved.");
 	}
@@ -152,7 +151,7 @@ static double CC_Frames_distance (CC_Frame me, CC_Frame thee, bool includeEnergy
  * 3: spectral center of gravity (gs)
  * 4: stable internal duration
  */
-Matrix MFCC_to_Matrix_features (MFCC me, double windowLength, bool includeEnergy) {
+autoMatrix MFCC_to_Matrix_features (MFCC me, double windowLength, bool includeEnergy) {
 	try {
 		long nw = (long) floor (windowLength / my dx / 2);
 		autoMelSpectrogram him = MFCC_to_MelSpectrogram (me, 0, 0, 1);
@@ -209,7 +208,7 @@ Matrix MFCC_to_Matrix_features (MFCC me, double windowLength, bool includeEnergy
 			
 			// 4: stable internal duration
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no features calculated.");
 	}

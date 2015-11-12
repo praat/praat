@@ -22,8 +22,8 @@
 oo_DEFINE_CLASS (Discriminant, Eigen)
 	
 	oo_LONG (numberOfGroups)
-	oo_OBJECT (SSCPs, 0, groups)
-	oo_OBJECT (SSCP, 0, total)
+	oo_AUTO_OBJECT (SSCPs, 0, groups)
+	oo_AUTO_OBJECT (SSCP, 0, total)
 	oo_DOUBLE_VECTOR (aprioriProbabilities, numberOfGroups)
 	oo_DOUBLE_MATRIX (costs, numberOfGroups, numberOfGroups)
 

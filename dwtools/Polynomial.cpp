@@ -1347,9 +1347,9 @@ void FunctionTerms_and_RealTier_fit (I, thou, int *freeze, double tol, int ic, C
 		autoNUMvector<double> terms (1, my numberOfCoefficients);
 		autoNUMvector<double> p (1, numberOfParameters);
 		autoNUMvector<double> y_residual (1, numberOfData);
-		autoCovariance ac = 0;
+		autoCovariance ac;
 		if (ic) {
-			ac.reset (Covariance_create (numberOfParameters));
+			ac = (Covariance_create (numberOfParameters));
 		}
 
 		long k = 1;
