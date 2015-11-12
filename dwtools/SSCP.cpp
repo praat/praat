@@ -160,7 +160,7 @@ void SSCPs_getEllipsesBoundingBoxCoordinates (SSCPs me, double scale, int confid
 	}
 }
 
-static SSCP _SSCP_extractTwoDimensions (SSCP me, long d1, long d2) {
+static autoSSCP _SSCP_extractTwoDimensions (SSCP me, long d1, long d2) {
 	autoSSCP thee = SSCP_create (2);
 	if (my numberOfRows == 1) { // diagonal
 		thy data [1][1] = my data [1][d1];
@@ -178,10 +178,10 @@ static SSCP _SSCP_extractTwoDimensions (SSCP me, long d1, long d2) {
 	TableOfReal_setColumnLabel (thee.peek(), 2, my columnLabels[d2]);
 	TableOfReal_setRowLabel (thee.peek(), 1, my columnLabels[d1]);
 	TableOfReal_setRowLabel (thee.peek(), 2, my columnLabels[d2]);
-	return thee.transfer();
+	return thee;
 }
 
-SSCPs SSCPs_extractTwoDimensions (SSCPs me, long d1, long d2) {
+autoSSCPs SSCPs_extractTwoDimensions (SSCPs me, long d1, long d2) {
 	try {
 		autoSSCPs thee = SSCPs_create ();
 		for (long i = 1; i <= my size; i++) {
@@ -189,7 +189,7 @@ SSCPs SSCPs_extractTwoDimensions (SSCPs me, long d1, long d2) {
 			Thing_setName (t.peek(), Thing_getName ( (Thing) my item[i]));
 			Collection_addItem (thee.peek(), t.transfer());
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot extract two dimensions.");
 	}
@@ -273,7 +273,7 @@ static void _SSCP_drawTwoDimensionalEllipse (SSCP me, Graphics g, double scale, 
 	}
 }
 
-SSCP SSCP_toTwoDimensions (SSCP me, double *v1, double *v2) {
+autoSSCP SSCP_toTwoDimensions (SSCP me, double *v1, double *v2) {
 	try {
 		double *vec[3];
 		autoSSCP thee = SSCP_create (2);
@@ -320,7 +320,7 @@ SSCP SSCP_toTwoDimensions (SSCP me, double *v1, double *v2) {
 
 		thy numberOfObservations = SSCP_getNumberOfObservations (me);
 
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot extract two dimensions.");
 	}
@@ -331,11 +331,11 @@ void SSCP_init (SSCP me, long dimension, long storage) {
 	my centroid = NUMvector<double> (1, dimension);
 }
 
-SSCP SSCP_create (long dimension) {
+autoSSCP SSCP_create (long dimension) {
 	try {
 		autoSSCP me = Thing_new (SSCP);
 		SSCP_init (me.peek(), dimension, dimension);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SSCP not created.");
 	}
@@ -479,7 +479,7 @@ void Covariance_and_PCA_generateOneVector (Covariance me, PCA thee, double *vec,
 	}
 }
 
-TableOfReal Covariance_to_TableOfReal_randomSampling (Covariance me, long numberOfData) {
+autoTableOfReal Covariance_to_TableOfReal_randomSampling (Covariance me, long numberOfData) {
 	try {
 		if (numberOfData <= 0) {
 			numberOfData = (long) floor (my numberOfObservations);
@@ -493,13 +493,13 @@ TableOfReal Covariance_to_TableOfReal_randomSampling (Covariance me, long number
 		}
 
 		NUMstrings_copyElements (my columnLabels, thy columnLabels, 1, my numberOfColumns);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not random sampled.");
 	}
 }
 
-SSCP TableOfReal_to_SSCP (TableOfReal me, long rowb, long rowe, long colb, long cole) {
+autoSSCP TableOfReal_to_SSCP (TableOfReal me, long rowb, long rowe, long colb, long cole) {
 	try {
 		TableOfReal_areAllCellsDefined (me, rowb, rowe, colb, cole);
 
@@ -553,23 +553,23 @@ SSCP TableOfReal_to_SSCP (TableOfReal me, long rowb, long rowe, long colb, long 
 			TableOfReal_setColumnLabel (thee.peek(), j, label);
 			TableOfReal_setRowLabel (thee.peek(), j, label);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": SSCP not created.");
 	}
 }
 
-TableOfReal SSCP_and_TableOfReal_extractDistanceQuantileRange (SSCP me, TableOfReal thee, double qlow, double qhigh) {
+autoTableOfReal SSCP_and_TableOfReal_extractDistanceQuantileRange (SSCP me, TableOfReal thee, double qlow, double qhigh) {
 	try {
 		autoCovariance cov = SSCP_to_Covariance (me, 1);
 		autoTableOfReal him = Covariance_and_TableOfReal_extractDistanceQuantileRange (cov.peek(), thee, qlow, qhigh);
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": no distance quantile ranges created.");
 	}
 }
 
-TableOfReal Covariance_and_TableOfReal_mahalanobis (Covariance me, thou, bool useTableCentroid) {
+autoTableOfReal Covariance_and_TableOfReal_mahalanobis (Covariance me, thou, bool useTableCentroid) {
 	try {
 		thouart (TableOfReal);
 
@@ -602,14 +602,14 @@ TableOfReal Covariance_and_TableOfReal_mahalanobis (Covariance me, thou, bool us
 			}
 		}
 		TableOfReal_setColumnLabel (him.peek(), 1, U"d");
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U"no Mahalanobis distances created.");
 	}
 }
 
 
-TableOfReal Covariance_and_TableOfReal_extractDistanceQuantileRange (Covariance me, TableOfReal thee, double qlow, double qhigh) {
+autoTableOfReal Covariance_and_TableOfReal_extractDistanceQuantileRange (Covariance me, TableOfReal thee, double qlow, double qhigh) {
 	try {
 		autoTableOfReal him = Covariance_and_TableOfReal_mahalanobis (me, thee, false);
 
@@ -641,44 +641,44 @@ TableOfReal Covariance_and_TableOfReal_extractDistanceQuantileRange (Covariance 
 				TableOfReal_copyOneRowWithLabel (thee, r.peek(), i, k);
 			}
 		}
-		return r.transfer();
+		return r;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal with distancequantile range not created.");
 	}
 }
 
 
-Covariance TableOfReal_to_Covariance (TableOfReal me) {
+autoCovariance TableOfReal_to_Covariance (TableOfReal me) {
 	try {
 		autoSSCP sscp = TableOfReal_to_SSCP (me, 0, 0, 0, 0);
 		autoCovariance thee = SSCP_to_Covariance (sscp.peek(), 1);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": covariances not created.");
 	}
 }
 
-Correlation TableOfReal_to_Correlation (TableOfReal me) {
+autoCorrelation TableOfReal_to_Correlation (TableOfReal me) {
 	try {
 		autoSSCP sscp = TableOfReal_to_SSCP (me, 0, 0, 0, 0);
 		autoCorrelation thee = SSCP_to_Correlation (sscp.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": correlations not created.");
 	}
 }
 
-Correlation TableOfReal_to_Correlation_rank (TableOfReal me) {
+autoCorrelation TableOfReal_to_Correlation_rank (TableOfReal me) {
 	try {
 		autoTableOfReal t = TableOfReal_rankColumns (me);
 		autoCorrelation thee = TableOfReal_to_Correlation (t.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": rank correlations not created.");
 	}
 }
 
-SSCPs TableOfReal_to_SSCPs_byLabel (TableOfReal me) {
+autoSSCPs TableOfReal_to_SSCPs_byLabel (TableOfReal me) {
 	try {
 		autoSSCPs thee = SSCPs_create ();
 		autoTableOfReal mew = TableOfReal_sortOnlyByRowLabels (me);
@@ -722,15 +722,15 @@ SSCPs TableOfReal_to_SSCPs_byLabel (TableOfReal me) {
 		if (nsingular > 0 || thy size != ngroups) {
 			long notIncluded = ngroups - thy size;
 			Melder_warning (ngroups, U" different groups detected: ", nsingular + notIncluded,
-			                U" group(s) with less rows than columns (of which ", notIncluded, U" with only one row).");
+				U" group(s) with less rows than columns (of which ", notIncluded, U" with only one row).");
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": SSCP not created from labels.");
 	}
 }
 
-PCA SSCP_to_PCA (SSCP me) {
+autoPCA SSCP_to_PCA (SSCP me) {
 	try {
 		double **data = my data;
 		autoNUMmatrix<double> adata;
@@ -748,7 +748,7 @@ PCA SSCP_to_PCA (SSCP me) {
 		Eigen_initFromSymmetricMatrix (thee.peek(), data, my numberOfColumns);
 		NUMvector_copyElements (my centroid, thy centroid, 1, my numberOfColumns);
 		PCA_setNumberOfObservations (thee.peek(), (long) floor (my numberOfObservations));
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": PCA not created.");
 	}
@@ -947,17 +947,17 @@ autoCCA SSCP_to_CCA (SSCP me, long ny) {
 
 Thing_implement (SSCPs, Ordered, 0);
 
-SSCPs SSCPs_create () {
+autoSSCPs SSCPs_create () {
 	try {
 		autoSSCPs me = Thing_new (SSCPs);
 		Ordered_init (me.peek(), classSSCP, 10);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SSCPs not created.");
 	}
 }
 
-SSCP SSCPs_to_SSCP_pool (SSCPs me) {
+autoSSCP SSCPs_to_SSCP_pool (SSCPs me) {
 	try {
 		autoSSCP thee = Data_copy ( (SSCP) my item[1]);
 
@@ -987,7 +987,7 @@ SSCP SSCPs_to_SSCP_pool (SSCPs me) {
 			thy centroid[i] /= thy numberOfObservations;
 		}
 
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not pooled.");
 	}
@@ -1022,15 +1022,15 @@ void SSCPs_getHomegeneityOfCovariances_box (SSCPs me, double *probability, doubl
 }
 
 
-SSCPs SSCPs_toTwoDimensions (SSCPs me, double *v1, double *v2) {
+autoSSCPs SSCPs_toTwoDimensions (SSCPs me, double *v1, double *v2) {
 	try {
 		autoSSCPs thee = SSCPs_create ();
 		for (long i = 1; i <= my size; i++) {
-			autoSSCP t = (SSCP) SSCP_toTwoDimensions ((SSCP) my item[i], v1, v2);
+			autoSSCP t = SSCP_toTwoDimensions ((SSCP) my item[i], v1, v2);
 			Thing_setName (t.peek(), Thing_getName ( (Thing) my item[i]));
 			Collection_addItem (thee.peek(), t.transfer());
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not reduced to two dimensions.");
 	}
@@ -1083,24 +1083,24 @@ void SSCPs_drawConcentrationEllipses (SSCPs me, Graphics g, double scale, int co
 	}
 }
 
-TableOfReal SSCP_to_TableOfReal (SSCP me) {
+autoTableOfReal SSCP_to_TableOfReal (SSCP me) {
 	try {
 		autoTableOfReal thee = Thing_new (TableOfReal);
 		my structTableOfReal :: v_copy (thee.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not copied.");
 	}
 }
 
-TableOfReal SSCP_extractCentroid (SSCP me) {
+autoTableOfReal SSCP_extractCentroid (SSCP me) {
 	try {
 		long n = my numberOfColumns;
 
 		autoTableOfReal thee = TableOfReal_create (1, n);
 		NUMvector_copyElements (my centroid, thy data[1], 1, n);
 		thy columnLabels = NUMstrings_copy (my columnLabels, 1, n);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": centroid not extracted.");
 	}
@@ -1110,30 +1110,30 @@ Thing_implement (Covariance, SSCP, 0);
 
 Thing_implement (Correlation, SSCP, 0);
 
-Covariance Covariance_create (long dimension) {
+autoCovariance Covariance_create (long dimension) {
 	try {
 		autoCovariance me = Thing_new (Covariance);
 		SSCP_init (me.peek(), dimension, dimension);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Covariance not created.");
 	}
 }
 
-Covariance Covariance_create_reduceStorage (long dimension, long storage) {
+autoCovariance Covariance_create_reduceStorage (long dimension, long storage) {
 	try {
 		autoCovariance me = Thing_new (Covariance);
 		if (storage <= 0 || storage >= dimension) {
 			storage = dimension;
 		}
 		SSCP_init (me.peek(), dimension, storage);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Reduced storage covariance not created.");
 	}
 }
 
-Covariance Covariance_createSimple (char32 *covariances, char32 *centroid, long numberOfObservations) {
+autoCovariance Covariance_createSimple (char32 *covariances, char32 *centroid, long numberOfObservations) {
 	try {
 		long dimension, ncovars;
 		autoNUMvector<double> centroids (NUMstring_to_numbers (centroid, &dimension), 1);
@@ -1178,23 +1178,23 @@ Covariance Covariance_createSimple (char32 *covariances, char32 *centroid, long 
 			my centroid[inum] = centroids[inum];
 		}
 		my numberOfObservations = numberOfObservations;
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Simple Covariance not created.");
 	}
 }
 
-Correlation Correlation_create (long dimension) {
+autoCorrelation Correlation_create (long dimension) {
 	try {
 		autoCorrelation me = Thing_new (Correlation);
 		SSCP_init (me.peek(), dimension, dimension);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Correlation not created.");
 	}
 }
 
-Covariance SSCP_to_Covariance (SSCP me, long numberOfConstraints) {
+autoCovariance SSCP_to_Covariance (SSCP me, long numberOfConstraints) {
 	try {
 		Melder_assert (numberOfConstraints >= 0);
 		autoCovariance thee = Thing_new (Covariance);
@@ -1205,13 +1205,13 @@ Covariance SSCP_to_Covariance (SSCP me, long numberOfConstraints) {
 				thy data[j][i] = thy data[i][j] /= (my numberOfObservations - numberOfConstraints);
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U"; Covariance not created.");
 	}
 }
 
-SSCP Covariance_to_SSCP (Covariance me) {
+autoSSCP Covariance_to_SSCP (Covariance me) {
 	try {
 		autoSSCP thee = Thing_new (SSCP);
 		my structSSCP :: v_copy (thee.peek());
@@ -1220,13 +1220,13 @@ SSCP Covariance_to_SSCP (Covariance me) {
 				thy data[j][i] = thy data[i][j] *= (my numberOfObservations - 1);
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": SSCP not created.");
 	}
 }
 
-Correlation SSCP_to_Correlation (SSCP me) {
+autoCorrelation SSCP_to_Correlation (SSCP me) {
 	try {
 		autoCorrelation thee = Thing_new (Correlation);
 		my structSSCP :: v_copy (thee.peek());
@@ -1235,7 +1235,7 @@ Correlation SSCP_to_Correlation (SSCP me) {
 				thy data[j][i] = thy data[i][j] /= sqrt (my data[i][i] * my data[j][j]);
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": Correlation not created.");
 	}
@@ -1251,7 +1251,7 @@ double SSCP_getLnDeterminant (SSCP me) {
 	}
 }
 
-static Covariance Covariances_pool (Covariance me, Covariance thee) {
+static autoCovariance Covariances_pool (Covariance me, Covariance thee) {
 	try {
 		if (my numberOfRows != thy numberOfRows || my numberOfColumns != thy numberOfColumns)  Melder_throw
 			(U"Matrices must have equal dimensions.");
@@ -1262,7 +1262,7 @@ static Covariance Covariances_pool (Covariance me, Covariance thee) {
 		Collection_addItem (sscps.peek(), sscp2.transfer());
 		autoSSCP pool = SSCPs_to_SSCP_pool (sscps.peek());
 		autoCovariance him = SSCP_to_Covariance (pool.peek(), 2);
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U"not pooled.");
 	}
@@ -1572,8 +1572,7 @@ static void checkTwoIndices (TableOfReal me, long index1, long index2) {
 	}
 }
 
-void Covariance_getSignificanceOfOneMean (Covariance me, long index, double mu,
-        double *probability, double *t, double *ndf) {
+void Covariance_getSignificanceOfOneMean (Covariance me, long index, double mu, double *probability, double *t, double *ndf) {
 	double var;
 	*probability = *t = NUMundefined;
 	*ndf = my numberOfObservations - 1;
@@ -1588,9 +1587,7 @@ void Covariance_getSignificanceOfOneMean (Covariance me, long index, double mu,
 	*probability = 2.0 * NUMstudentQ (fabs (*t), *ndf);
 }
 
-void Covariance_getSignificanceOfMeansDifference (Covariance me,
-        long index1, long index2, double mu, int paired, int equalVariances,
-        double *probability, double *t, double *ndf) {
+void Covariance_getSignificanceOfMeansDifference (Covariance me, long index1, long index2, double mu, int paired, int equalVariances, double *probability, double *t, double *ndf) {
 	long n = (long) floor (my numberOfObservations);
 	double df, var1, var2, var_pooled;
 
@@ -1676,7 +1673,7 @@ void Covariance_getSignificanceOfVariancesRatio (Covariance me, long index1, lon
 	}
 }
 
-TableOfReal Correlation_confidenceIntervals (Correlation me, double confidenceLevel, long numberOfTests, int method) {
+autoTableOfReal Correlation_confidenceIntervals (Correlation me, double confidenceLevel, long numberOfTests, int method) {
 	try {
 		long m_bonferroni = my numberOfRows * (my numberOfRows - 1) / 2;
 
@@ -1753,7 +1750,7 @@ TableOfReal Correlation_confidenceIntervals (Correlation me, double confidenceLe
 			}
 			thy data[i][i] = 1;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": confidence intervals not created.");
 	}
@@ -1865,13 +1862,13 @@ void SSCP_unExpandLowerCholesky (SSCP me) {
 
 void SSCP_expandPCA (SSCP me) {
 	if (my pca) {
-		forget (my pca);
+		my pca.reset(nullptr);
 	}
 	my pca = SSCP_to_PCA (me);
 }
 
 void SSCP_unExpandPCA (SSCP me) {
-	forget (my pca);
+	my pca.reset (nullptr);
 }
 
 

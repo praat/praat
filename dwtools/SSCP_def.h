@@ -34,7 +34,7 @@ oo_DEFINE_CLASS (SSCP, TableOfReal)
 		oo_DOUBLE_MATRIX (expansion, expansionNumberOfRows, numberOfColumns)
 		oo_DOUBLE (lnd)
 		oo_DOUBLE_MATRIX (lowerCholesky, numberOfColumns, numberOfColumns)
-		oo_OBJECT (PCA, 0, pca)
+		oo_AUTO_OBJECT (PCA, 0, pca)
 	#endif
 	#if oo_DECLARING
 		void v_info ()
