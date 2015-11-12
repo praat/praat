@@ -139,3 +139,20 @@ The meaning of the names of binary files uploaded on GitHub is as follows:
 - `praatXXXX_linux_motif64.tar.gz`: gzipped tarred executable for 64-bit Linux (Motif)
 - `praatXXXX_linux_motif32.tar.gz`: gzipped tarred executable for 32-bit Linux (Motif)
 - `praatXXXX_solaris.tar.gz`: gzipped tarred executable for Solaris
+
+## 3. Linux distributions
+
+### 3.1 Debian
+
+Praat is [included](https://packages.debian.org/source/sid/praat) in
+the Debian distribution.  For installing it, just do:
+
+    aptitude install praat
+
+The Debian package (since version 5.3.56-1) includes a `praat-open-files`
+command that allows opening files from the command line inside a Praat
+process that is running already in the system.
+
+Recent upstream versions of the `praat` package backported to the stable
+and testing distributions of Debian are available in an
+[APT repository](http://praat.cefala.org).
