@@ -619,7 +619,7 @@ DIRECT (Print) {
 		} else { MelderFile file; structMelderFile file2 = { 0 };
 			if (args == NULL && sendingString == NULL) file = UiFile_getFile (dia);
 			else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
-			Picture_writeToWindowsMetafile (praat_picture, file);
+			Picture_writeToWindowsMetafile (praat_picture.get(), file);
 		}
 	}
 #endif
