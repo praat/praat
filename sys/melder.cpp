@@ -269,7 +269,7 @@ static void progress_dia_close (Thing /* boss */) {
 		g_object_set_data (G_OBJECT (theProgressCancelButton -> d_widget), "pressed", (gpointer) 1);
 	#endif
 }
-static void progress_cancel_btn_press (void*, GuiButtonEvent /* event */) {
+static void progress_cancel_btn_press (Thing /* boss */, GuiButtonEvent /* event */) {
 	theProgressCancelled = true;
 	#if gtk
 		g_object_set_data (G_OBJECT (theProgressCancelButton -> d_widget), "pressed", (gpointer) 1);

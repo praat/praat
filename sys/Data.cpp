@@ -185,7 +185,7 @@ void Data_readText (Daata me, MelderReadText text, int formatVersion) {
 	}
 }
 
-Daata Data_readFromTextFile (MelderFile file) {
+autoDaata Data_readFromTextFile (MelderFile file) {
 	try {
 		autoMelderReadText text = MelderReadText_createFromFile (file);
 		char32 *line = MelderReadText_readLine (text.peek());
@@ -196,19 +196,19 @@ Daata Data_readFromTextFile (MelderFile file) {
 		int formatVersion;
 		if (end) {
 			autostring32 klas = texgetw2 (text.peek());
-			me.reset (static_cast <Daata> (Thing_newFromClassName (klas.peek(), & formatVersion)));
+			me = static_cast <Daata> (Thing_newFromClassName (klas.peek(), & formatVersion));
 		} else {
 			end = str32str (line, U"TextFile");
 			if (! end)
 				Melder_throw (U"Not an old-type text file; should not occur.");
 			*end = U'\0';
-			me.reset (static_cast <Daata> (Thing_newFromClassName (line, nullptr)));
+			me = static_cast <Daata> (Thing_newFromClassName (line, nullptr));
 			formatVersion = -1;   // old version
 		}
 		MelderFile_getParentDir (file, & Data_directoryBeingRead);
 		Data_readText (me.peek(), text.peek(), formatVersion);
 		file -> format = structMelderFile :: Format :: text;
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Data not read from text file ", file, U".");
 	}
@@ -231,7 +231,7 @@ void Data_readBinary (Daata me, FILE *f, int formatVersion) {
 	}
 }
 
-Daata Data_readFromBinaryFile (MelderFile file) {
+autoDaata Data_readFromBinaryFile (MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "rb");
 		char line [200];
@@ -242,14 +242,14 @@ Daata Data_readFromBinaryFile (MelderFile file) {
 		if (end) {
 			fseek (f, strlen ("ooBinaryFile"), 0);
 			autostring8 klas = bingets1 (f);
-			me.reset (static_cast <Daata> (Thing_newFromClassName (Melder_peek8to32 (klas.peek()), & formatVersion)));
+			me = static_cast <Daata> (Thing_newFromClassName (Melder_peek8to32 (klas.peek()), & formatVersion));
 		} else {
 			end = strstr (line, "BinaryFile");
 			if (! end) {
 				Melder_throw (U"File ", file, U" is not a Data binary file.");
 			}
 			*end = '\0';
-			me.reset (static_cast <Daata> (Thing_newFromClassName (Melder_peek8to32 (line), nullptr)));
+			me = static_cast <Daata> (Thing_newFromClassName (Melder_peek8to32 (line), nullptr));
 			formatVersion = -1;   // old version: override version number, which was set to 0 by newFromClassName
 			rewind (f);
 			fread (line, 1, end - line + strlen ("BinaryFile"), f);
@@ -258,7 +258,7 @@ Daata Data_readFromBinaryFile (MelderFile file) {
 		Data_readBinary (me.peek(), f, formatVersion);
 		file -> format = structMelderFile :: Format :: binary;
 		f.close (file);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Data not read from binary file ", file, U".");
 	}
@@ -267,13 +267,13 @@ Daata Data_readFromBinaryFile (MelderFile file) {
 /* Generic reading. */
 
 static int numFileTypeRecognizers = 0;
-static Any (*fileTypeRecognizers [100]) (int nread, const char *header, MelderFile file);
-void Data_recognizeFileType (Any (*recognizer) (int nread, const char *header, MelderFile file)) {
+static Data_FileTypeRecognizer fileTypeRecognizers [100];
+void Data_recognizeFileType (Data_FileTypeRecognizer recognizer) {
 	Melder_assert (numFileTypeRecognizers < 100);
 	fileTypeRecognizers [++ numFileTypeRecognizers] = recognizer;
 }
 
-Daata Data_readFromFile (MelderFile file) {
+autoDaata Data_readFromFile (MelderFile file) {
 	int nread, i;
 	char header [513];
 	autofile f = Melder_fopen (file, "rb");
@@ -311,9 +311,12 @@ Daata Data_readFromFile (MelderFile file) {
 
 	MelderFile_getParentDir (file, & Data_directoryBeingRead);
 	for (i = 1; i <= numFileTypeRecognizers; i ++) {
-		Daata object = (Daata) fileTypeRecognizers [i] (nread, header, file);
-		if (object == (Daata) 1) return nullptr;
-		if (object) return object;
+		autoDaata object = fileTypeRecognizers [i] (nread, header, file);
+		if (object) {
+			if (object -> classInfo == classDaata)   // dummy object? the recognizer could have had a side effect, such as drawing a picture
+				return autoDaata ();
+			return object;
+		}
 	}
 
 	/***** 4. Is this a common text file? *****/

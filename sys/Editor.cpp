@@ -60,8 +60,7 @@ void structEditorMenu :: v_destroy () {
 
 /********** functions **********/
 
-static void commonCallback (I, GuiMenuItemEvent /* event */) {
-	iam (EditorCommand);
+static void commonCallback (EditorCommand me, GuiMenuItemEvent /* event */) {
 	if (my d_editor && my d_editor -> v_scriptable () && ! str32str (my itemTitle, U"...")) {
 		UiHistory_write (U"\n");
 		UiHistory_write_colonize (my itemTitle);

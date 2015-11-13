@@ -160,7 +160,7 @@ Thing_implement (GuiButton, GuiControl, 0);
 #endif
 
 GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bottom,
-	const char32 *buttonText, GuiButton_ActivateCallback activateCallback, void *activateBoss, uint32 flags)
+	const char32 *buttonText, GuiButton_ActivateCallback activateCallback, Thing activateBoss, uint32 flags)
 {
 	GuiButton me = Thing_new (GuiButton);
 	my d_shell = parent -> d_shell;
@@ -259,9 +259,9 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 }
 
 GuiButton GuiButton_createShown (GuiForm parent, int left, int right, int top, int bottom,
-	const char32 *buttonText, GuiButton_ActivateCallback clickedCallback, void *clickedBoss, uint32 flags)
+	const char32 *buttonText, GuiButton_ActivateCallback activateCallback, Thing activateBoss, uint32 flags)
 {
-	GuiButton me = GuiButton_create (parent, left, right, top, bottom, buttonText, clickedCallback, clickedBoss, flags);
+	GuiButton me = GuiButton_create (parent, left, right, top, bottom, buttonText, activateCallback, activateBoss, flags);
 	GuiThing_show (me);
 	return me;
 }

@@ -107,9 +107,7 @@ static Data_Description DataSubEditor_findNumberUse (DataSubEditor me, const cha
 	return nullptr;
 }
 
-static void gui_button_cb_change (I, GuiButtonEvent event) {
-	(void) event;
-	iam (DataSubEditor);
+static void gui_button_cb_change (DataSubEditor me, GuiButtonEvent /* event */) {
 	int irow = 1;
 	for (; irow <= kDataSubEditor_MAXNUM_ROWS; irow ++) {
 		#if motif
@@ -224,20 +222,16 @@ error:
 	Melder_flushError (U"Edit field \"", strip_d (my d_fieldData [irow]. description -> name), U"\" or click \"Cancel\".");
 }
 
-static void gui_button_cb_cancel (I, GuiButtonEvent event) {
-	(void) event;
-	iam (DataSubEditor);
+static void gui_button_cb_cancel (DataSubEditor me, GuiButtonEvent /* event */) {
 	update (me);
 }
 
-static void gui_cb_scroll (I, GuiScrollBarEvent event) {
-	iam (DataSubEditor);
+static void gui_cb_scroll (DataSubEditor me, GuiScrollBarEvent event) {
 	my d_topField = GuiScrollBar_getValue (event -> scrollBar) + 1;
 	update (me);
 }
 
-static void gui_button_cb_open (I, GuiButtonEvent event) {
-	iam (DataSubEditor);
+static void gui_button_cb_open (DataSubEditor me, GuiButtonEvent event) {
 	int ifield = 0;
 	static MelderString name { 0 };
 	MelderString_empty (& name);

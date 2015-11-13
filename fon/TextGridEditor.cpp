@@ -1867,7 +1867,7 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 	Editor_broadcastDataChanged (me);
 }
 
-int structTextGridEditor :: v_click (double xclick, double yWC, bool shiftKeyPressed) {
+bool structTextGridEditor :: v_click (double xclick, double yWC, bool shiftKeyPressed) {
 	TextGrid grid = (TextGrid) our data;
 	double tmin, tmax, x, y;
 	long ntiers = grid -> tiers -> size, iClickedTier, iClickedInterval, iClickedPoint;
@@ -1875,8 +1875,8 @@ int structTextGridEditor :: v_click (double xclick, double yWC, bool shiftKeyPre
 	bool nearBoundaryOrPoint, nearCursorCircle, drag = false;
 	IntervalTier intervalTier;
 	TextTier textTier;
-	TextInterval interval = NULL;
-	TextPoint point = NULL;
+	TextInterval interval = nullptr;
+	TextPoint point = nullptr;
 	double soundY = _TextGridEditor_computeSoundY (this);
 	double tnear;
 
@@ -2017,7 +2017,7 @@ int structTextGridEditor :: v_click (double xclick, double yWC, bool shiftKeyPre
 	return FunctionEditor_UPDATE_NEEDED;
 }
 
-int structTextGridEditor :: v_clickB (double t, double yWC) {
+bool structTextGridEditor :: v_clickB (double t, double yWC) {
 	double soundY = _TextGridEditor_computeSoundY (this);
 
 	if (yWC > soundY) {   // clicked in sound part?
@@ -2041,7 +2041,7 @@ int structTextGridEditor :: v_clickB (double t, double yWC) {
 	return FunctionEditor_UPDATE_NEEDED;
 }
 
-int structTextGridEditor :: v_clickE (double t, double yWC) {
+bool structTextGridEditor :: v_clickE (double t, double yWC) {
 	double soundY = _TextGridEditor_computeSoundY (this);
 
 	if (yWC > soundY) {   // clicked in sound part?

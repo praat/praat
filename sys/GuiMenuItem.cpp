@@ -165,7 +165,7 @@ static void NativeMenuItem_setText (GuiObject me) {
 #endif
 
 GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, uint32 flags,
-	void (*commandCallback) (void *boss, GuiMenuItemEvent event), void *boss)
+	GuiMenuItemCallback commandCallback, Thing boss)
 {
 	GuiMenuItem me = Thing_new (GuiMenuItem);
 	my d_shell = menu -> d_shell;

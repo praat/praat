@@ -1556,13 +1556,13 @@ void praat_picture_editor_close () {
 	praat_picture_close ();
 }
 
-static Any pictureRecognizer (int nread, const char *header, MelderFile file) {
-	if (nread < 2) return NULL;
-	if (strnequ (header, "PraatPictureFile", 16))
-	{
-		Picture_readFromPraatPictureFile (praat_picture.get(), file); return (Any) 1;   // FIXME
+static autoDaata pictureRecognizer (int nread, const char *header, MelderFile file) {
+	if (nread < 2) return autoDaata ();
+	if (strnequ (header, "PraatPictureFile", 16)) {
+		Picture_readFromPraatPictureFile (praat_picture.get(), file);
+		return Thing_new (Daata);   // a dummy
 	}
-	return NULL;
+	return autoDaata ();
 }
 
 void praat_picture_init () {

@@ -298,7 +298,7 @@ void structPitchEditor :: v_play (double a_tmin, double a_tmax) {
 	Pitch_hum ((Pitch) our data, a_tmin, a_tmax);
 }
 
-int structPitchEditor :: v_click (double xWC, double yWC, bool dummy) {
+bool structPitchEditor :: v_click (double xWC, double yWC, bool dummy) {
 	Pitch pitch = (Pitch) our data;
 	double dyUnv = Graphics_dyMMtoWC (d_graphics, HEIGHT_UNV);
 	double dyIntens = Graphics_dyMMtoWC (d_graphics, HEIGHT_INTENS);
@@ -336,7 +336,7 @@ int structPitchEditor :: v_click (double xWC, double yWC, bool dummy) {
 			FunctionEditor_redraw (this);
 			Editor_broadcastDataChanged (this);
 			our d_startSelection = our d_endSelection = tmid;   // cursor will snap to candidate
-			return 1;
+			return FunctionEditor_UPDATE_NEEDED;
 		} else {
 			return PitchEditor_Parent :: v_click (xWC, yWC, dummy);   // move cursor or drag selection
 		}

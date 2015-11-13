@@ -58,7 +58,7 @@ Thing_implement (GuiList, GuiControl, 0);
 		iam (GuiList);
 		if (my d_selectionChangedCallback && ! my d_blockValueChangedCallbacks) {
 			trace (U"Selection changed.");
-			struct structGuiListEvent event { me };
+			struct structGuiList_SelectionChangedEvent event { me };
 			my d_selectionChangedCallback (my d_selectionChangedBoss, & event);
 		}
 	}
@@ -74,7 +74,7 @@ Thing_implement (GuiList, GuiControl, 0);
 		[_contents release];
 		GuiThing me = d_userData;
 		forget (me);
-		Melder_casual (U"deleting a list");
+		//Melder_casual (U"deleting a list");
 		[super dealloc];
 	}
 
@@ -139,7 +139,7 @@ Thing_implement (GuiList, GuiControl, 0);
 		trace (U"enter");
 		GuiList me = d_userData;
 		if (me && my d_selectionChangedCallback) {
-			struct structGuiListEvent event { me };
+			//struct structGuiList_SelectionChangedEvent event { me };
 			//my d_selectionChangedCallback (my d_selectionChangedBoss, & event);
 		}
 	}
@@ -168,7 +168,7 @@ Thing_implement (GuiList, GuiControl, 0);
 		trace (U"enter");
 		GuiList me = d_userData;
 		if (me && my d_selectionChangedCallback && ! my d_blockValueChangedCallbacks) {
-			struct structGuiListEvent event { me };
+			struct structGuiList_SelectionChangedEvent event { me };
 			my d_selectionChangedCallback (my d_selectionChangedBoss, & event);
 		}
 	}
@@ -186,7 +186,7 @@ Thing_implement (GuiList, GuiControl, 0);
 	void _GuiWinList_handleClick (GuiObject widget) {
 		iam_list;
 		if (my d_selectionChangedCallback) {
-			struct structGuiListEvent event { me };
+			struct structGuiList_SelectionChangedEvent event { me };
 			my d_selectionChangedCallback (my d_selectionChangedBoss, & event);
 		}
 	}
@@ -228,7 +228,7 @@ Thing_implement (GuiList, GuiControl, 0);
 		bool pushed = HandleControlClick (widget -> nat.control.handle, macEvent -> where, macEvent -> modifiers, nullptr);
 		GuiMac_clipOff ();
 		if (pushed && my d_selectionChangedCallback) {
-			struct structGuiListEvent event { me };
+			struct structGuiList_SelectionChangedEvent event { me };
 			my d_selectionChangedCallback (my d_selectionChangedBoss, & event);
 		}
 	}
@@ -238,11 +238,11 @@ Thing_implement (GuiList, GuiControl, 0);
 		bool doubleClick = LClick (macEvent -> where, macEvent -> modifiers, my d_macListHandle);
 		GuiMac_clipOff ();
 		if (my d_selectionChangedCallback) {
-			struct structGuiListEvent event { me };
+			struct structGuiList_SelectionChangedEvent event { me };
 			my d_selectionChangedCallback (my d_selectionChangedBoss, & event);
 		}
 		if (doubleClick && my d_doubleClickCallback) {
-			struct structGuiListEvent event { me };
+			struct structGuiList_DoubleClickEvent event { me };
 			my d_doubleClickCallback (my d_doubleClickBoss, & event);
 		}
 	}
@@ -845,14 +845,19 @@ void GuiList_selectItem (GuiList me, long position) {
 	#endif
 }
 
-void GuiList_setDoubleClickCallback (GuiList me, void (*callback) (void *boss, GuiListEvent event), void *boss) {
+void GuiList_setSelectionChangedCallback (GuiList me, GuiList_SelectionChangedCallback callback, Thing boss) {
+	my d_selectionChangedCallback = callback;
+	my d_selectionChangedBoss = boss;
+}
+
+void GuiList_setDoubleClickCallback (GuiList me, GuiList_DoubleClickCallback callback, Thing boss) {
 	my d_doubleClickCallback = callback;
 	my d_doubleClickBoss = boss;
 }
 
-void GuiList_setSelectionChangedCallback (GuiList me, void (*callback) (void *boss, GuiListEvent event), void *boss) {
-	my d_selectionChangedCallback = callback;
-	my d_selectionChangedBoss = boss;
+void GuiList_setScrollCallback (GuiList me, GuiList_ScrollCallback callback, Thing boss) {
+	my d_scrollCallback = callback;
+	my d_scrollBoss = boss;
 }
 
 void GuiList_setTopPosition (GuiList me, long topPosition) {

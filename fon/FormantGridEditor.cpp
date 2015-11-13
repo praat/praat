@@ -324,7 +324,7 @@ static void drawWhileDragging (FormantGridEditor me, double xWC, double yWC, lon
 	}
 }
 
-int structFormantGridEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
+bool structFormantGridEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
 	FormantGrid grid = (FormantGrid) our data;
 	Ordered tiers = editingBandwidths ? grid -> bandwidths : grid -> formants;
 	RealTier tier = (RealTier) tiers -> item [selectedFormant];
@@ -402,7 +402,7 @@ int structFormantGridEditor :: v_click (double xWC, double yWC, bool shiftKeyPre
 	newTime = points [ilastSelected] -> number + dt;
 	if (newTime > our tmax) return 1;   // outside domain
 	if (ilastSelected < tier -> points -> size && newTime >= points [ilastSelected + 1] -> number)
-		return 1;   // past right neighbour
+		return FunctionEditor_UPDATE_NEEDED;   // past right neighbour
 
 	/*
 	 * Drop.
@@ -434,7 +434,7 @@ int structFormantGridEditor :: v_click (double xWC, double yWC, bool shiftKeyPre
 	}
 
 	Editor_broadcastDataChanged (this);
-	return 1;   // update needed
+	return FunctionEditor_UPDATE_NEEDED;
 }
 
 void structFormantGridEditor :: v_play (double tmin, double tmax) {

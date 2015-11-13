@@ -37,7 +37,7 @@ Thing_define (SoundEditor, TimeSoundAnalysisEditor) {
 		override;
 	void v_play (double tmin, double tmax)
 		override;
-	int v_click (double xWC, double yWC, bool shiftKeyPressed)
+	bool v_click (double xWC, double yWC, bool shiftKeyPressed)
 		override;
 	void v_highlightSelection (double left, double right, double bottom, double top)
 		override;

@@ -502,55 +502,38 @@ static bool allowExecutionHook (void *closure) {
 	return false;
 }
 
-static void do_menu (I, bool modified) {
-/*
- *	Convert a Gui callback into a Ui callback, and catch modifier keys and special mouse buttons.
- *	Call that callback!
- *	Catch the error queue for menu commands without dots (...).
- */
-	UiCallback callback = (UiCallback) void_me;
-	for (long i = 1; i <= theActions -> size; i ++) {
-		Praat_Command me = (Praat_Command) theActions -> item [i];
-		if (my callback == callback) {
-			if (my title && ! str32str (my title, U"...")) {
-				UiHistory_write (U"\n");
-				UiHistory_write_colonize (my title);
-			}
-			Ui_setAllowExecutionHook (allowExecutionHook, (void *) callback);   // BUG: one shouldn't assign a function pointer to a void pointer
-			try {
-				callback (nullptr, 0, nullptr, nullptr, nullptr, my title, modified, nullptr);
-			} catch (MelderError) {
-				Melder_flushError (U"Command \"", my title, U"\" not executed.");
-			}
-			Ui_setAllowExecutionHook (nullptr, nullptr);
-			praat_updateSelection (); return;
+static void do_menu (Praat_Command me, bool modified) {
+	if (my callback == DO_RunTheScriptFromAnyAddedMenuCommand) {
+		UiHistory_write (U"\nrunScript: ");
+		try {
+			DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, my script, nullptr, nullptr, false, nullptr);
+		} catch (MelderError) {
+			Melder_flushError (U"Command \"", my title, U"\" not executed.");
 		}
-		if (my callback == DO_RunTheScriptFromAnyAddedMenuCommand && my script == (void *) void_me) {
-			if (my title && ! str32str (my title, U"...")) {
-				UiHistory_write (U"\nexecute ");
-				UiHistory_write (my script);
-			} else {
-				UiHistory_write (U"\nexecute \"");
-				UiHistory_write (my script);
-				UiHistory_write (U"\"");
-			}
-			try {
-				DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, my script, nullptr, nullptr, false, nullptr);
-			} catch (MelderError) {
-				Melder_flushError (U"Command \"", my title, U"\" not executed.");
-			}
-			praat_updateSelection (); return;
+		praat_updateSelection (); return;
+	} else {
+		if (my title && ! str32str (my title, U"...")) {
+			UiHistory_write (U"\n");
+			UiHistory_write (my title);
 		}
+		Ui_setAllowExecutionHook (allowExecutionHook, (void *) my callback);   // BUG: one shouldn't assign a function pointer to a void pointer
+		try {
+			my callback (nullptr, 0, nullptr, nullptr, nullptr, my title, modified, nullptr);
+		} catch (MelderError) {
+			Melder_flushError (U"Command \"", my title, U"\" not executed.");
+		}
+		Ui_setAllowExecutionHook (nullptr, nullptr);
+		praat_updateSelection (); return;
 	}
 }
 
-static void cb_menu (I, GuiMenuItemEvent event) {
+static void cb_menu (Praat_Command me, GuiMenuItemEvent event) {
 	bool modified = event -> shiftKeyPressed || event -> commandKeyPressed || event -> optionKeyPressed || event -> extraControlKeyPressed;
-	do_menu (void_me, modified);
+	do_menu (me, modified);
 }
 
-static void gui_button_cb_menu (I, GuiButtonEvent event) {
-	do_menu (void_me, event -> shiftKeyPressed | event -> commandKeyPressed | event -> optionKeyPressed | event -> extraControlKeyPressed);
+static void gui_button_cb_menu (Praat_Command me, GuiButtonEvent event) {
+	do_menu (me, event -> shiftKeyPressed | event -> commandKeyPressed | event -> optionKeyPressed | event -> extraControlKeyPressed);
 }
 
 void praat_actions_show () {
@@ -633,13 +616,12 @@ void praat_actions_show () {
 				if (parentMenu) {
 					my button = GuiMenu_addItem (parentMenu, my title,
 						( my executable ? 0 : GuiMenu_INSENSITIVE ),
-						cb_menu,
-						my callback == DO_RunTheScriptFromAnyAddedMenuCommand ? (void *) my script : (void *) my callback);
+						cb_menu, me);
 				} else {
 					my button = GuiButton_createShown (praat_form,
 						BUTTON_LEFT, BUTTON_RIGHT, y, y + Gui_PUSHBUTTON_HEIGHT,
 						my title, gui_button_cb_menu,
-						my callback == DO_RunTheScriptFromAnyAddedMenuCommand ? (void *) my script : (void *) my callback,
+						me,
 							( my executable ? 0 : GuiButton_INSENSITIVE ) | ( my attractive ? GuiButton_ATTRACTIVE : 0 ));
 					y += Gui_PUSHBUTTON_HEIGHT + BUTTON_VSPACING;
 					#if gtk

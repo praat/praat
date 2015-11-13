@@ -70,7 +70,7 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 		override;
 	void v_createMenuItems_query (EditorMenu menu)
 		override;
-	int v_click (double xWC, double yWC, bool shiftKeyPressed)
+	bool v_click (double xWC, double yWC, bool shiftKeyPressed)
 		override;
 	void v_createMenuItems_view_sound (EditorMenu menu)
 		override;

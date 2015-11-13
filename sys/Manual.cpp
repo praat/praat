@@ -366,17 +366,13 @@ void Manual_search (Manual me, const char32 *query) {
 	search (me, query);
 }
 
-static void gui_button_cb_home (I, GuiButtonEvent event) {
-	(void) event;
-	iam (Manual);
+static void gui_button_cb_home (Manual me, GuiButtonEvent /* event */) {
 	ManPages pages = (ManPages) my data;
 	long iHome = ManPages_lookUp (pages, U"Intro");
 	HyperPage_goToPage_i (me, iHome ? iHome : 1);
 }
  
-static void gui_button_cb_record (I, GuiButtonEvent event) {
-	(void) event;
-	iam (Manual);
+static void gui_button_cb_record (Manual me, GuiButtonEvent /* event */) {
 	ManPages manPages = (ManPages) my data;
 	ManPage manPage = (ManPage) (my path < 1 ? nullptr : manPages -> pages -> item [my path]);
 	GuiThing_setSensitive (my recordButton,  false);
@@ -391,9 +387,7 @@ static void gui_button_cb_record (I, GuiButtonEvent event) {
 	GuiThing_setSensitive (my publishButton, true);
 }
 
-static void gui_button_cb_play (I, GuiButtonEvent event) {
-	(void) event;
-	iam (Manual);
+static void gui_button_cb_play (Manual me, GuiButtonEvent /* event */) {
 	GuiThing_setSensitive (my recordButton,  false);
 	GuiThing_setSensitive (my playButton,    false);
 	GuiThing_setSensitive (my publishButton, false);
@@ -406,10 +400,7 @@ static void gui_button_cb_play (I, GuiButtonEvent event) {
 	GuiThing_setSensitive (my publishButton, true);
 }
 
-static void gui_button_cb_publish (I, GuiButtonEvent event) {
-	(void) event;
-	iam (Manual);
-	(void) me;
+static void gui_button_cb_publish (Manual /* me */, GuiButtonEvent /* event */) {
 	Melder_publishPlayed ();
 }
 
@@ -419,9 +410,7 @@ static void do_search (Manual me) {
 	Melder_free (query);
 }
 
-static void gui_button_cb_search (I, GuiButtonEvent event) {
-	(void) event;
-	iam (Manual);
+static void gui_button_cb_search (Manual me, GuiButtonEvent /* event */) {
 	do_search (me);
 }
 

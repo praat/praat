@@ -947,7 +947,7 @@ static void drawWhileDragging (ManipulationEditor me, double xWC, double yWC, lo
 	}
 }
 
-static int clickPitch (ManipulationEditor me, double xWC, double yWC, bool shiftKeyPressed) {
+static bool clickPitch (ManipulationEditor me, double xWC, double yWC, bool shiftKeyPressed) {
 	Manipulation ana = (Manipulation) my data;
 	PitchTier pitch = ana -> pitch.get();
 	long inearestPoint, ifirstSelected, ilastSelected, i;
@@ -1034,7 +1034,7 @@ static int clickPitch (ManipulationEditor me, double xWC, double yWC, bool shift
 		newTime = points [ilastSelected] -> number + dt;
 		if (newTime > my tmax) return 1;   // outside domain
 		if (ilastSelected < pitch -> points -> size && newTime >= points [ilastSelected + 1] -> number)
-			return 1;   // past right neighbour
+			return FunctionEditor_UPDATE_NEEDED;   // past right neighbour
 	}
 
 	/*
@@ -1060,7 +1060,7 @@ static int clickPitch (ManipulationEditor me, double xWC, double yWC, bool shift
 	}
 
 	Editor_broadcastDataChanged (me);
-	return 1;   /* Update needed. */
+	return FunctionEditor_UPDATE_NEEDED;
 }
 
 static void drawDurationWhileDragging (ManipulationEditor me, double xWC, double yWC, long first, long last, double dt, double df) {
@@ -1096,10 +1096,10 @@ static void drawDurationWhileDragging (ManipulationEditor me, double xWC, double
 	}
 }
 
-static int clickDuration (ManipulationEditor me, double xWC, double yWC, int shiftKeyPressed) {
+static bool clickDuration (ManipulationEditor me, double xWC, double yWC, int shiftKeyPressed) {
 	Manipulation ana = (Manipulation) my data;
 	DurationTier duration = ana -> duration.get();
-	long inearestPoint, ifirstSelected, ilastSelected, i;
+	long inearestPoint, ifirstSelected, ilastSelected;
 	RealPoint nearestPoint;
 	double dt = 0, df = 0;
 	int draggingSelection;
@@ -1188,7 +1188,7 @@ static int clickDuration (ManipulationEditor me, double xWC, double yWC, int shi
 	/*
 	 * Drop.
 	 */
-	for (i = ifirstSelected; i <= ilastSelected; i ++) {
+	for (long i = ifirstSelected; i <= ilastSelected; i ++) {
 		RealPoint point = (RealPoint) duration -> points -> item [i];
 		point -> number += dt;
 		point -> value += df;
@@ -1208,10 +1208,10 @@ static int clickDuration (ManipulationEditor me, double xWC, double yWC, int shi
 	}
 
 	Editor_broadcastDataChanged (me);
-	return 1;   /* Update needed. */
+	return FunctionEditor_UPDATE_NEEDED;
 }
 
-int structManipulationEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
+bool structManipulationEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
 	double ypitchmin, ypitchmax, ydurationmin, ydurationmax;
 	int hasPitchArea = getPitchArea (this, & ypitchmin, & ypitchmax);
 	int hasDurationArea = getDurationArea (this, & ydurationmin, & ydurationmax);

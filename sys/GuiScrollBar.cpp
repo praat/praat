@@ -210,7 +210,7 @@ Thing_implement (GuiScrollBar, GuiControl, 0);
 
 GuiScrollBar GuiScrollBar_create (GuiForm parent, int left, int right, int top, int bottom,
 	double minimum, double maximum, double value, double sliderSize, double increment, double pageIncrement,
-	void (*valueChangedCallback) (void *boss, GuiScrollBarEvent event), void *valueChangedBoss, uint32 flags)
+	GuiScrollBarCallback valueChangedCallback, Thing valueChangedBoss, uint32 flags)
 {
 	GuiScrollBar me = Thing_new (GuiScrollBar);
 	my d_shell = parent -> d_shell;
@@ -270,7 +270,7 @@ GuiScrollBar GuiScrollBar_create (GuiForm parent, int left, int right, int top, 
 
 GuiScrollBar GuiScrollBar_createShown (GuiForm parent, int left, int right, int top, int bottom,
 	double minimum, double maximum, double value, double sliderSize, double increment, double pageIncrement,
-	void (*valueChangedCallback) (void *boss, GuiScrollBarEvent event), void *valueChangedBoss, uint32 flags)
+	GuiScrollBarCallback valueChangedCallback, Thing valueChangedBoss, uint32 flags)
 {
 	GuiScrollBar me = GuiScrollBar_create (parent, left, right, top, bottom,
 		minimum, maximum, value, sliderSize, increment, pageIncrement,

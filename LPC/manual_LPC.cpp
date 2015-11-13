@@ -1,4 +1,4 @@
-/* manual_LPC.c
+/* manual_LPC.cpp
  *
  * Copyright (C) 1994-2014 David Weenink
  *
@@ -690,4 +690,4 @@ MAN_END
  19980322 djmw Sound_into_LPC_Frame_auto did not return (nCoefficients == 0) when (r[1] == 0).
 */
 
-/* End of file manual_LPC.c */
+/* End of file manual_LPC.cpp */
