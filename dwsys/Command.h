@@ -33,12 +33,12 @@ Thing_declare (Command);
 typedef MelderCallback<int, structCommand> Command_Callback;
 
 Thing_define (Command, Thing) {
-	Any data;
+	Thing boss;
 	Command_Callback execute;
 	Command_Callback undo;
 };
 
-void Command_init (Command me, const char32 *name, Any data, Command_Callback execute, Command_Callback undo);
+void Command_init (Command me, const char32 *name, Thing boss, Command_Callback execute, Command_Callback undo);
 	
 int Command_do (Command me);
 
@@ -63,10 +63,10 @@ void CommandHistory_back (CommandHistory me);
 /* Precondition: ! offleft */
 /* my current--; */
 
-Any CommandHistory_getItem (CommandHistory me);
+Command CommandHistory_getItem (CommandHistory me);
 /* return (pointer to) my item[my current]; */
 
-void CommandHistory_insertItem (CommandHistory me, Any item);
+void CommandHistory_insertItem (CommandHistory me, Command command);
 /* 1. forget about item[ current+1..size ] */
 /* 2. insert item after current. */
 /* 3. current = size */

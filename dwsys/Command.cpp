@@ -28,10 +28,10 @@
 
 Thing_implement (Command, Thing, 0);
 
-void Command_init (Command me, const char32 *name, Any data, Command_Callback execute, Command_Callback undo) {
+void Command_init (Command me, const char32 *name, Thing boss, Command_Callback execute, Command_Callback undo) {
 	Melder_assert (execute && undo);
 	Thing_setName (me, name);
-	my data = data;
+	my boss = boss;
 	my execute = execute;
 	my undo = undo;
 }
@@ -64,14 +64,14 @@ void CommandHistory_back (CommandHistory me) {
 	my current--;
 }
 
-Any CommandHistory_getItem (CommandHistory me) {
+Command CommandHistory_getItem (CommandHistory me) {
 	Melder_assert (my current > 0 && my current <= my size);
-	return my item[my current];
+	return static_cast<Command> (my item [my current]);
 }
 
-void CommandHistory_insertItem (CommandHistory me, Any data)
+void CommandHistory_insertItem (CommandHistory me, Command command)
 {
-	Melder_assert (data && (Thing_isa ( (Thing) data, my itemClass) || my itemClass == nullptr));
+	Melder_assert (command && (Thing_isa (command, my itemClass) || my itemClass == nullptr));
 	if (my current < my size) {
 		for (long i = my current + 1; i <= my size; i++) {
 			forget ( ( (Command *) my item) [i]);
@@ -81,7 +81,7 @@ void CommandHistory_insertItem (CommandHistory me, Any data)
 	if (my size >= my _capacity) {
 		Collection_removeItem (me, 1);
 	}
-	my item[++my size] = data;
+	my item[++my size] = command;
 	my current = my size;
 }
 
