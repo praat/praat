@@ -91,7 +91,7 @@ void structStrings :: v_info () {
 const char32 * structStrings :: v_getVectorStr (long icol) {
 	if (icol < 1 || icol > our numberOfStrings) return U"";
 	char32 *stringValue = strings [icol];
-	return stringValue == NULL ? U"" : stringValue;
+	return stringValue ? stringValue : U"";
 }
 
 #define Strings_createAsFileOrDirectoryList_TYPE_FILE  0
@@ -112,11 +112,11 @@ static autoStrings Strings_createAsFileOrDirectoryList (const char32 *path /* ca
 			 */
 			MelderString_copy (& searchDirectory, path);
 			char32 *asterisk = str32rchr (searchDirectory. string, '*');
-			if (asterisk != NULL) {
+			if (asterisk) {
 				*asterisk = '\0';
 				searchDirectory. length = asterisk - searchDirectory. string;   // probably superfluous, but correct
 				char32 *lastSlash = str32rchr (searchDirectory. string, Melder_DIRECTORY_SEPARATOR);
-				if (lastSlash != NULL) {
+				if (lastSlash) {
 					*lastSlash = '\0';   // This fixes searchDirectory.
 					searchDirectory. length = lastSlash - searchDirectory. string;   // probably superfluous, but correct
 					MelderString_copy (& left, lastSlash + 1);
@@ -129,13 +129,13 @@ static autoStrings Strings_createAsFileOrDirectoryList (const char32 *path /* ca
 			char buffer8 [1+kMelder_MAXPATH];
 			Melder_str32To8bitFileRepresentation_inline (searchDirectory. string, buffer8);
 			d = opendir (buffer8 [0] ? buffer8 : ".");
-			if (d == NULL)
+			if (! d)
 				Melder_throw (U"Cannot open directory ", searchDirectory. string, U".");
 			//Melder_casual (U"opened");
 			autoStrings me = Thing_new (Strings);
 			my strings = NUMvector <char32 *> (1, 1000000);
 			struct dirent *entry;
-			while ((entry = readdir (d)) != NULL) {
+			while (!! (entry = readdir (d))) {
 				MelderString_copy (& filePath, searchDirectory. string [0] ? searchDirectory. string : U".");
 				MelderString_appendCharacter (& filePath, Melder_DIRECTORY_SEPARATOR);
 				char32 buffer32 [1+kMelder_MAXPATH];
@@ -173,7 +173,8 @@ static autoStrings Strings_createAsFileOrDirectoryList (const char32 *path /* ca
 	#elif defined (_WIN32)
 		try {
 			char32 searchPath [1+kMelder_MAXPATH];
-			int len = str32len (path), hasAsterisk = str32chr (path, U'*') != NULL;
+			int len = str32len (path);
+			bool hasAsterisk = !! str32chr (path, U'*');
 			bool endsInSeparator = ( len != 0 && path [len - 1] == U'\\' );
 			autoStrings me = Thing_new (Strings);
 			my strings = NUMvector <char32 *> (1, 1000000);

@@ -466,8 +466,8 @@ static void menu_cb_replace (TextEditor me, EDITOR_ARGS_FORM) {
 		LABEL (U"", U"Replace with:")
 		TEXTFIELD (U"replaceString", U"")
 	EDITOR_OK
-		if (theFindString != NULL) SET_STRING (U"findString", theFindString);
-		if (theReplaceString != NULL) SET_STRING (U"replaceString", theReplaceString);
+		if (theFindString) SET_STRING (U"findString", theFindString);
+		if (theReplaceString) SET_STRING (U"replaceString", theReplaceString);
 	EDITOR_DO
 		Melder_free (theFindString);
 		theFindString = Melder_dup (GET_STRING (U"findString"));

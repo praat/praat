@@ -36,12 +36,12 @@ void structThing :: v_info ()
  */
 struct structClassInfo theClassInfo_Thing = {
 	U"Thing",
-	NULL,      // no parent class
+	nullptr,   // no parent class
 	sizeof (class structThing),
-	NULL,      // no _new function (not needed, because Thing is never instantiated)
+	nullptr,   // no _new function (not needed, because Thing is never instantiated)
 	0,         // version
 	0,         // sequentialUniqueIdOfReadableClass
-	NULL       // dummyObject
+	nullptr    // dummyObject
 };
 ClassInfo classThing = & theClassInfo_Thing;
 
@@ -52,7 +52,7 @@ Thing Thing_newFromClass (ClassInfo classInfo) {
 	trace (U"created ", classInfo -> className);
 	theTotalNumberOfThings += 1;
 	my classInfo = classInfo;
-	Melder_assert (my name == NULL);   // confirm that _new called calloc
+	Melder_assert (my name == nullptr);   // confirm that _new called calloc, so that we see null pointers
 	if (Melder_debug == 40) Melder_casual (U"created ", classInfo -> className, U" (", Melder_pointer (classInfo), U", ", me, U")");
 	return me;
 }
@@ -67,11 +67,11 @@ static void _Thing_addOneReadableClass (ClassInfo readableClass) {
 }
 void Thing_recognizeClassesByName (ClassInfo readableClass, ...) {
 	va_list arg;
-	if (readableClass == NULL) return;
+	if (! readableClass) return;
 	va_start (arg, readableClass);
 	_Thing_addOneReadableClass (readableClass);
 	ClassInfo klas;
-	while ((klas = va_arg (arg, ClassInfo)) != NULL) {
+	while ((klas = va_arg (arg, ClassInfo)) != nullptr) {
 		_Thing_addOneReadableClass (klas);
 	}
 	va_end (arg);
@@ -143,10 +143,10 @@ Thing Thing_newFromClassName (const char32 *className, int *p_formatVersion) {
 }
 
 Thing _Thing_dummyObject (ClassInfo classInfo) {
-	if (classInfo -> dummyObject == NULL) {
+	if (! classInfo -> dummyObject) {
 		classInfo -> dummyObject = classInfo -> _new ();
 	}
-	Melder_assert (classInfo -> dummyObject != NULL);
+	Melder_assert (classInfo -> dummyObject);
 	return classInfo -> dummyObject;
 }
 
@@ -168,8 +168,8 @@ void _Thing_forget (Thing me) {
 }
 
 bool Thing_isSubclass (ClassInfo klas, ClassInfo ancestor) {
-	while (klas != ancestor && klas != NULL) klas = klas -> parent;
-	return klas != NULL;
+	while (klas != ancestor && klas) klas = klas -> parent;
+	return !! klas;
 }
 
 bool Thing_isa (Thing me, ClassInfo klas) {
@@ -186,7 +186,7 @@ void * _Thing_check (Thing me, ClassInfo klas, const char *fileName, int line) {
 			U"."
 		);
 	ClassInfo classInfo = my classInfo;
-	while (classInfo != klas && classInfo != NULL) classInfo = classInfo -> parent;
+	while (classInfo != klas && classInfo) classInfo = classInfo -> parent;
 	if (! classInfo)
 		Melder_fatal (U"(_Thing_check:)"
 			U" Object of wrong class (", my classInfo -> className,

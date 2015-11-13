@@ -36,15 +36,15 @@ struct structNUMlinprog {
 };
 
 void NUMlinprog_delete (NUMlinprog me) {
-	if (me == NULL) return;
-	if (my linearProgram != NULL) glp_delete_prob (my linearProgram);
+	if (! me) return;
+	if (my linearProgram) glp_delete_prob (my linearProgram);
 	NUMvector_free <int> (my ind, 1);
 	NUMvector_free <double> (my val, 1);
 	Melder_free (me);
 }
 
 NUMlinprog NUMlinprog_new (bool maximize) {
-	NUMlinprog me = NULL;
+	NUMlinprog me = nullptr;
 	try {
 		me = Melder_calloc (structNUMlinprog, 1);
 		my linearProgram = glp_create_prob ();   // TODO: check

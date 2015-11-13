@@ -31,7 +31,7 @@ void structVocalTract :: v_info () {
 autoVocalTract VocalTract_create (long nx, double dx) {
 	try {
 		autoVocalTract me = Thing_new (VocalTract);
-		Matrix_init (me.peek(), 0, nx * dx, nx, dx, 0.5 * dx, 1, 1, 1, 1, 1);
+		Matrix_init (me.peek(), 0.0, nx * dx, nx, dx, 0.5 * dx, 1.0, 1.0, 1, 1.0, 1.0);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"VocalTract not created.");
@@ -121,7 +121,7 @@ autoVocalTract VocalTract_createFromPhone (const char32 *phone) {
 	try {
 		int i = 0;
 		for (;; i ++) {
-			if (data [i]. phone == NULL)
+			if (! data [i]. phone)
 				Melder_throw (U"Unknown phone ", phone);
 			if (Melder_equ (data [i]. phone, phone))
 				break;
@@ -136,7 +136,7 @@ autoVocalTract VocalTract_createFromPhone (const char32 *phone) {
 }
 
 void VocalTract_draw (VocalTract me, Graphics g) {
-	Matrix_drawRows (me, g, 0, 0, 0, 0, 0, 0);
+	Matrix_drawRows (me, g, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 }
 
 autoMatrix VocalTract_to_Matrix (VocalTract me) {

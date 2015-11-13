@@ -445,7 +445,7 @@ autoCollection TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound
 		autoCollection collection = Collection_create (NULL, tier -> numberOfIntervals ());
 		for (long iseg = 1; iseg <= tier -> numberOfIntervals (); iseg ++) {
 			TextInterval segment = tier -> interval (iseg);
-			if (segment -> text != NULL && segment -> text [0] != '\0') {
+			if (segment -> text && segment -> text [0] != '\0') {
 				autoSound interval = Sound_extractPart (sound, segment -> xmin, segment -> xmax, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes);
 				Thing_setName (interval.peek(), segment -> text ? segment -> text : U"untitled");
 				Collection_addItem (collection.peek(), interval.transfer());

@@ -358,7 +358,7 @@ autoTextGrid TextGrid_create (double tmin, double tmax, const char32 *tierNames,
 		 */
 		if (tierNames && tierNames [0]) {
 			str32cpy (nameBuffer, tierNames);
-			for (char32 *tierName = Melder_tok (nameBuffer, U" "); tierName != NULL; tierName = Melder_tok (NULL, U" ")) {
+			for (char32 *tierName = Melder_tok (nameBuffer, U" "); tierName; tierName = Melder_tok (nullptr, U" ")) {
 				autoIntervalTier tier = IntervalTier_create (tmin, tmax);
 				Thing_setName (tier.peek(), tierName);
 				Collection_addItem (my tiers, tier.transfer());
@@ -370,7 +370,7 @@ autoTextGrid TextGrid_create (double tmin, double tmax, const char32 *tierNames,
 		 */
 		if (pointTiers && pointTiers [0]) {
 			str32cpy (nameBuffer, pointTiers);
-			for (char32 *tierName = Melder_tok (nameBuffer, U" "); tierName != NULL; tierName = Melder_tok (NULL, U" ")) {
+			for (char32 *tierName = Melder_tok (nameBuffer, U" "); tierName; tierName = Melder_tok (nullptr, U" ")) {
 				for (long itier = 1; itier <= my numberOfTiers(); itier ++) {
 					if (str32equ (tierName, Thing_getName (my tier (itier)))) {
 						autoTextTier tier = TextTier_create (tmin, tmax);
@@ -401,7 +401,7 @@ autoTextTier TextTier_readFromXwaves (MelderFile file) {
 		 */
 		for (;;) {
 			line = MelderFile_readLine (file);
-			if (line == NULL)
+			if (! line)
 				Melder_throw (U"Missing '#' line.");
 			if (line [0] == '#') break;
 		}
@@ -411,7 +411,7 @@ autoTextTier TextTier_readFromXwaves (MelderFile file) {
 		 */
 		for (;;) {
 			line = MelderFile_readLine (file);
-			if (line == NULL) break;   // normal end-of-file
+			if (! line) break;   // normal end-of-file
 			double time;
 			long colour;
 			char mark [300];
@@ -867,7 +867,7 @@ autoTableOfReal IntervalTier_downto_TableOfReal (IntervalTier me, const char32 *
 		n = 0;
 		for (long i = 1; i <= my numberOfIntervals(); i ++) {
 			TextInterval interval = my interval (i);
-			if (label == NULL || (label [0] == U'\0' && ! interval -> text) || (interval -> text && str32equ (interval -> text, label))) {
+			if (! label || (label [0] == U'\0' && ! interval -> text) || (interval -> text && str32equ (interval -> text, label))) {
 				n ++;
 				TableOfReal_setRowLabel (thee.peek(), n, interval -> text ? interval -> text : U"");
 				thy data [n] [1] = interval -> xmin;
@@ -890,7 +890,7 @@ autoTableOfReal TextTier_downto_TableOfReal (TextTier me, const char32 *label) {
 		long n = 0;
 		for (long i = 1; i <= my numberOfPoints(); i ++) {
 			TextPoint point = my point (i);
-			if (label == NULL || (label [0] == U'\0' && ! point -> mark) || (point -> mark && str32equ (point -> mark, label)))
+			if (! label || (label [0] == U'\0' && ! point -> mark) || (point -> mark && str32equ (point -> mark, label)))
 				n ++;
 		}
 		autoTableOfReal thee = TableOfReal_create (n, 1);
@@ -898,7 +898,7 @@ autoTableOfReal TextTier_downto_TableOfReal (TextTier me, const char32 *label) {
 		n = 0;
 		for (long i = 1; i <= my numberOfPoints(); i ++) {
 			TextPoint point = my point (i);
-			if (label == NULL || (label [0] == U'\0' && ! point -> mark) || (point -> mark && str32equ (point -> mark, label))) {
+			if (! label || (label [0] == U'\0' && ! point -> mark) || (point -> mark && str32equ (point -> mark, label))) {
 				n ++;
 				TableOfReal_setRowLabel (thee.peek(), n, point -> mark ? point -> mark : U"");
 				thy data [n] [1] = point -> number;
@@ -927,7 +927,7 @@ autoIntervalTier IntervalTier_readFromXwaves (MelderFile file) {
 		 */
 		for (;;) {
 			line = MelderFile_readLine (file);
-			if (line == NULL)
+			if (! line)
 				Melder_throw (U"Missing '#' line.");
 			if (line [0] == '#') break;
 		}
@@ -941,7 +941,7 @@ autoIntervalTier IntervalTier_readFromXwaves (MelderFile file) {
 			char mark [300];
 
 			line = MelderFile_readLine (file);
-			if (line == NULL) break;   // normal end-of-file
+			if (! line) break;   // normal end-of-file
 			numberOfElements = sscanf (line, "%lf%ld%s", & time, & colour, mark);
 			if (numberOfElements == 0) {
 				break;   // an empty line, hopefully at the end
@@ -1193,9 +1193,9 @@ void IntervalTier_removeLeftBoundary (IntervalTier me, long intervalNumber) {
 		 * Move the text to the left of the boundary.
 		 */
 		left -> xmax = right -> xmax;   // collapse left and right intervals into left interval
-		if (right -> text == NULL) {
+		if (! right -> text) {
 			;
-		} else if (left -> text == NULL) {
+		} else if (! left -> text) {
 			TextInterval_setText (left, right -> text);
 		} else {
 			TextInterval_setText (left, Melder_cat (left -> text, right -> text));
@@ -1315,14 +1315,14 @@ static void sgmlToPraat (char *text) {
 			}
 			if (i >= 200) Melder_throw (U"Unfinished SGML code.");
 			sgmlCode [i] = '\0';
-			for (i = 0; translations [i]. sgml != NULL; i ++) {
+			for (i = 0; translations [i]. sgml; i ++) {
 				if (strequ (sgmlCode, translations [i]. sgml)) {
 					memcpy (praat, translations [i]. praat, strlen (translations [i]. praat));
 					praat += strlen (translations [i]. praat);
 					break;
 				}
 			}
-			if (translations [i]. sgml == NULL) Melder_throw (U"Unknown SGML code &", Melder_peek8to32 (sgmlCode), U";.");
+			if (! translations [i]. sgml) Melder_throw (U"Unknown SGML code &", Melder_peek8to32 (sgmlCode), U";.");
 		} else {
 			* praat ++ = * sgml ++;
 		}
@@ -1689,7 +1689,7 @@ autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeD
 			} else {
 				for (long iinterval = 1; iinterval <= tier -> numberOfIntervals(); iinterval ++) {
 					TextInterval interval = tier -> interval (iinterval);
-					if (interval -> text != NULL && interval -> text [0] != U'\0') {
+					if (interval -> text && interval -> text [0] != U'\0') {
 						numberOfRows ++;
 					}
 				}
@@ -1715,7 +1715,7 @@ autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeD
 			IntervalTier tier = static_cast <IntervalTier> (anyTier);
 			for (long iinterval = 1; iinterval <= tier -> numberOfIntervals(); iinterval ++) {
 				TextInterval interval = tier -> interval (iinterval);
-				if (includeEmptyIntervals || (interval -> text != NULL && interval -> text [0] != U'\0')) {
+				if (includeEmptyIntervals || (interval -> text && interval -> text [0] != U'\0')) {
 					++ irow;
 					icol = 0;
 					if (includeLineNumbers)

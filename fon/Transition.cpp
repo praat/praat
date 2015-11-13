@@ -52,7 +52,7 @@ void structTransition :: v_writeText (MelderFile file) {
 	MelderFile_write (file, U"\n");
 	for (long i = 1; i <= numberOfStates; i ++) {
 		MelderFile_write (file, U"\"");
-		if (stateLabels [i] != NULL) MelderFile_write (file, stateLabels [i]);
+		if (stateLabels [i]) MelderFile_write (file, stateLabels [i]);
 		MelderFile_write (file, U"\"\t");
 	}
 	for (long i = 1; i <= numberOfStates; i ++) {

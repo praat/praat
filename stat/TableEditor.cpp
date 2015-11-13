@@ -124,12 +124,12 @@ void structTableEditor :: v_draw () {
 	for (long icol = colmin; icol <= colmax; icol ++) {
 		const char32 *columnLabel = table -> columnHeaders [icol]. label;
 		columnWidth = Graphics_textWidth (graphics, Melder_integer (icol));
-		if (columnLabel == NULL) columnLabel = U"";
+		if (! columnLabel) columnLabel = U"";
 		cellWidth = Graphics_textWidth (graphics, columnLabel);
 		if (cellWidth > columnWidth) columnWidth = cellWidth;
 		for (long irow = rowmin; irow <= rowmax; irow ++) {
 			const char32 *cell = Table_getStringValue_Assert (table, irow, icol);
-			Melder_assert (cell != NULL);
+			Melder_assert (cell);
 			if (cell [0] == U'\0') cell = U"?";
 			cellWidth = Graphics_textWidth (graphics, cell);
 			if (cellWidth > columnWidth) columnWidth = cellWidth;
@@ -150,7 +150,7 @@ void structTableEditor :: v_draw () {
 	for (long icol = colmin; icol <= colmax; icol ++) {
 		double mid = (columnLeft [icol - colmin] + columnRight [icol - colmin]) / 2;
 		const char32 *columnLabel = table -> columnHeaders [icol]. label;
-		if (columnLabel == NULL || columnLabel [0] == U'\0') columnLabel = U"?";
+		if (! columnLabel || columnLabel [0] == U'\0') columnLabel = U"?";
 		Graphics_text (graphics, mid, rowmin - 2, icol);
 		Graphics_text (graphics, mid, rowmin - 1, columnLabel);
 	}
@@ -161,7 +161,7 @@ void structTableEditor :: v_draw () {
 		for (long icol = colmin; icol <= colmax; icol ++) {
 			double mid = (columnLeft [icol - colmin] + columnRight [icol - colmin]) / 2;
 			const char32 *cell = Table_getStringValue_Assert (table, irow, icol);
-			Melder_assert (cell != NULL);
+			Melder_assert (cell);
 			if (cell [0] == U'\0') cell = U"?";
 			Graphics_text (graphics, mid, irow, cell);
 		}

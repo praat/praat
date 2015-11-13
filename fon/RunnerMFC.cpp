@@ -68,10 +68,10 @@ static void drawControlButton (RunnerMFC me, double left, double right, double b
 
 static void gui_drawingarea_cb_expose (RunnerMFC me, GuiDrawingArea_ExposeEvent event) {
 	Melder_assert (event -> widget == my d_drawingArea);
-	if (my graphics == NULL) return;   // Could be the case in the very beginning.
+	if (! my graphics) return;   // could be the case in the very beginning
 	ExperimentMFC experiment = (ExperimentMFC) my data;
 	long iresponse;
-	if (my data == NULL) return;
+	if (! my data) return;
 	Graphics_setGrey (my graphics, 0.8);
 	Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
 	Graphics_setGrey (my graphics, 0.0);
@@ -270,7 +270,7 @@ static void do_replay (RunnerMFC me) {
 static void gui_drawingarea_cb_click (RunnerMFC me, GuiDrawingArea_ClickEvent event) {
 	if (! my graphics) return;   // could be the case in the very beginning
 	ExperimentMFC experiment = (ExperimentMFC) my data;
-	if (my data == NULL) return;
+	if (! my data) return;
 	double reactionTime = Melder_clock () - experiment -> startingTime;
 	if (! experiment -> blankWhilePlaying)
 		reactionTime -= experiment -> stimulusInitialSilenceDuration;
@@ -394,7 +394,7 @@ static void gui_drawingarea_cb_click (RunnerMFC me, GuiDrawingArea_ClickEvent ev
 static void gui_drawingarea_cb_key (RunnerMFC me, GuiDrawingArea_KeyEvent event) {
 	if (! my graphics) return;   // could be the case in the very beginning
 	ExperimentMFC experiment = (ExperimentMFC) my data;
-	if (my data == NULL) return;
+	if (! my data) return;
 	double reactionTime = Melder_clock () - experiment -> startingTime;
 	if (! experiment -> blankWhilePlaying)
 		reactionTime -= experiment -> stimulusInitialSilenceDuration;
@@ -402,23 +402,23 @@ static void gui_drawingarea_cb_key (RunnerMFC me, GuiDrawingArea_KeyEvent event)
 	} else if (experiment -> pausing) {
 	} else if (experiment -> trial <= experiment -> numberOfTrials) {
 		long iresponse;
-		if (experiment -> ok_key != NULL && experiment -> ok_key [0] == event -> key &&
+		if (experiment -> ok_key && experiment -> ok_key [0] == event -> key &&
 			experiment -> responses [experiment -> trial] != 0 &&
 			(experiment -> numberOfGoodnessCategories == 0 || experiment -> goodnesses [experiment -> trial] != 0))
 		{
 			do_ok (me);
-		} else if (experiment -> replay_key != NULL && experiment -> replay_key [0] == event -> key &&
+		} else if (experiment -> replay_key && experiment -> replay_key [0] == event -> key &&
 			my numberOfReplays < experiment -> maximumNumberOfReplays)
 		{
 			do_replay (me);
-		} else if (experiment -> oops_key != NULL && experiment -> oops_key [0] == event -> key) {
+		} else if (experiment -> oops_key && experiment -> oops_key [0] == event -> key) {
 			if (experiment -> trial > 1) {
 				do_oops (me);
 			}
 		} else if (experiment -> responses [experiment -> trial] == 0) {
 			for (iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
 				ResponseMFC response = & experiment -> response [iresponse];
-				if (response -> key != NULL && response -> key [0] == event -> key) {
+				if (response -> key && response -> key [0] == event -> key) {
 					experiment -> responses [experiment -> trial] = iresponse;
 					experiment -> reactionTimes [experiment -> trial] = reactionTime;
 					if (experiment -> responsesAreSounds) {

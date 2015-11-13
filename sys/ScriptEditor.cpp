@@ -87,7 +87,7 @@ static void args_ok_selectionOnly (UiForm sendingForm, int /* narg */, Stackel /
 {
 	iam (ScriptEditor);
 	autostring32 text = GuiText_getSelection (my textWidget);
-	if (text.peek() == NULL)
+	if (! text.peek())
 		Melder_throw (U"No text is selected any longer.\nPlease reselect or click Cancel.");
 	structMelderFile file = { 0 };
 	if (my name [0]) {
@@ -135,7 +135,7 @@ static void menu_cb_runSelection (EDITOR_ARGS) {
 	if (my interpreter -> running)
 		Melder_throw (U"The script is already running (paused). Please close or continue the pause or demo window.");
 	autostring32 text = GuiText_getSelection (my textWidget);
-	if (text.peek() == NULL)
+	if (! text.peek())
 		Melder_throw (U"No text selected.");
 	structMelderFile file = { 0 };
 	if (my name [0]) {
@@ -242,7 +242,7 @@ static void menu_cb_clearHistory (EDITOR_ARGS) {
 static void menu_cb_pasteHistory (EDITOR_ARGS) {
 	EDITOR_IAM (ScriptEditor);
 	char32 *history = UiHistory_get ();
-	if (history == NULL || history [0] == U'\0')
+	if (! history || history [0] == U'\0')
 		Melder_throw (U"No history.");
 	long length = str32len (history);
 	if (history [length - 1] != U'\n') {

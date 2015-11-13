@@ -50,7 +50,7 @@ void Polygon_salesperson (Polygon me, long numberOfIterations);
 	Function:
 		change the order of the points in such a way that it defines the shortest closed path.
 	Preconditions:
-		me != NULL;
+		!! me;
 		numberOfIterations >= 1;
 	Postconditions:
 		my numberOfPoints == my old numberOfPoints;

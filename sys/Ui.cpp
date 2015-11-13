@@ -68,7 +68,7 @@ static UiField UiField_create (int type, const char32 *name) {
 	/*
 	 * Strip parentheses and colon off parameter name.
 	 */
-	if ((p = (char32 *) str32chr (shortName, U'(')) != NULL) {
+	if (!! (p = (char32 *) str32chr (shortName, U'('))) {
 		*p = U'\0';
 		if (p - shortName > 0 && p [-1] == U' ') p [-1] = U'\0';
 	}
@@ -95,7 +95,7 @@ static UiOption UiOption_create (const char32 *label) {
 
 Any UiRadio_addButton (I, const char32 *label) {
 	iam (UiField);
-	if (me == NULL) return NULL;
+	if (! me) return nullptr;
 	Melder_assert (my type == UI_RADIO || my type == UI_OPTIONMENU);
 	UiOption thee = UiOption_create (label);
 	Collection_addItem (my options, thee);
@@ -104,7 +104,7 @@ Any UiRadio_addButton (I, const char32 *label) {
 
 Any UiOptionMenu_addButton (I, const char32 *label) {
 	iam (UiField);
-	if (me == NULL) return NULL;
+	if (! me) return nullptr;
 	Melder_assert (my type == UI_RADIO || my type == UI_OPTIONMENU);
 	UiOption thee = UiOption_create (label);
 	Collection_addItem (my options, thee);
@@ -144,10 +144,10 @@ static int colourToValue (UiField me, char32 *string) {
 	if (first == U'{') {
 		my colourValue. red = Melder_atof (++ p);
 		p = str32chr (p, U',');
-		if (p == NULL) return 0;
+		if (! p) return 0;
 		my colourValue. green = Melder_atof (++ p);
 		p = str32chr (p, U',');
-		if (p == NULL) return 0;
+		if (! p) return 0;
 		my colourValue. blue = Melder_atof (++ p);
 	} else {
 		*p = (char32) tolower ((int) *p);
@@ -246,7 +246,7 @@ static void UiField_widgetToValue (UiField me) {
 				Melder_throw (U"No option chosen for " U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U".");
 		} break; case UI_LIST: {
 			long numberOfSelected, *selected = GuiList_getSelectedPositions (my list, & numberOfSelected);   // BUG memory
-			if (selected == NULL) {
+			if (! selected) {
 				Melder_warning (U"No items selected.");
 				my integerValue = 1;
 			} else {
@@ -355,13 +355,13 @@ static void UiField_stringToValue (UiField me, const char32 *string, Interpreter
 static MelderString theHistory = { 0 };
 void UiHistory_write (const char32 *string) { MelderString_append (& theHistory, string); }
 void UiHistory_write_expandQuotes (const char32 *string) {
-	if (string == NULL) return;
+	if (! string) return;
 	for (const char32 *p = & string [0]; *p != U'\0'; p ++) {
 		if (*p == U'\"') MelderString_append (& theHistory, U"\"\""); else MelderString_appendCharacter (& theHistory, *p);
 	}
 }
 void UiHistory_write_colonize (const char32 *string) {
-	if (string == NULL) return;
+	if (! string) return;
 	for (const char32 *p = & string [0]; *p != U'\0'; p ++) {
 		if (*p == U'.' && p [1] == U'.' && p [2] == U'.') {
 			MelderString_append (& theHistory, U":");
@@ -1147,7 +1147,7 @@ static void fatalField (UiForm dia) {
 
 void UiForm_setReal (UiForm me, const char32 *fieldName, double value) {
 	UiField field = findField (me, fieldName);
-	if (field == NULL) Melder_fatal (U"(UiForm_setReal:) No field \"", fieldName, U"\" in command window \"", my name, U"\".");
+	if (! field) Melder_fatal (U"(UiForm_setReal:) No field \"", fieldName, U"\" in command window \"", my name, U"\".");
 	switch (field -> type) {
 		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
 			if (value == Melder_atof (field -> stringDefaultValue)) {
@@ -1175,7 +1175,7 @@ void UiForm_setReal (UiForm me, const char32 *fieldName, double value) {
 
 void UiForm_setInteger (UiForm me, const char32 *fieldName, long value) {
 	UiField field = findField (me, fieldName);
-	if (field == NULL) Melder_fatal (U"(UiForm_setInteger:) No field \"", fieldName, U"\" in command window \"", my name, U"\".");
+	if (! field) Melder_fatal (U"(UiForm_setInteger:) No field \"", fieldName, U"\" in command window \"", my name, U"\".");
 	switch (field -> type) {
 		case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: {
 			if (value == Melder_atoi (field -> stringDefaultValue)) {
@@ -1207,8 +1207,8 @@ void UiForm_setInteger (UiForm me, const char32 *fieldName, long value) {
 
 void UiForm_setString (UiForm me, const char32 *fieldName, const char32 *value /* cattable */) {
 	UiField field = findField (me, fieldName);
-	if (field == NULL) Melder_fatal (U"(UiForm_setString:) No field \"", fieldName, U"\" in command window \"", my name, U"\".");
-	if (value == NULL) value = U"";   /* Accept NULL strings. */
+	if (! field) Melder_fatal (U"(UiForm_setString:) No field \"", fieldName, U"\" in command window \"", my name, U"\".");
+	if (! value) value = U"";   /* Accept NULL strings. */
 	switch (field -> type) {
 		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: case UI_INTEGER: case UI_NATURAL:
 			case UI_WORD: case UI_SENTENCE: case UI_COLOUR: case UI_CHANNEL: case UI_TEXT:
@@ -1249,7 +1249,7 @@ void UiForm_setString (UiForm me, const char32 *fieldName, const char32 *value /
 
 static UiField findField_check (UiForm me, const char32 *fieldName) {
 	UiField result = findField (me, fieldName);
-	if (result == NULL) {
+	if (! result) {
 		Melder_throw (U"Cannot find field \"", fieldName, U"\" in form.\n"
 			U"The script may have changed while the form was open.\n"
 			U"Please click Cancel in the form and try again.");
@@ -1259,7 +1259,7 @@ static UiField findField_check (UiForm me, const char32 *fieldName) {
 
 double UiForm_getReal (UiForm me, const char32 *fieldName) {
 	UiField field = findField (me, fieldName);
-	if (field == NULL) Melder_fatal (U"(UiForm_getReal:) No field \"", fieldName, U"\" in command window \"", my name, U"\".");
+	if (! field) Melder_fatal (U"(UiForm_getReal:) No field \"", fieldName, U"\" in command window \"", my name, U"\".");
 	switch (field -> type) {
 		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
 			return field -> realValue;
@@ -1286,7 +1286,7 @@ double UiForm_getReal_check (UiForm me, const char32 *fieldName) {
 
 long UiForm_getInteger (UiForm me, const char32 *fieldName) {
 	UiField field = findField (me, fieldName);
-	if (field == NULL) Melder_fatal (U"(UiForm_getInteger:) No field \"", fieldName, U"\" in command window \"", my name, U"\".");
+	if (! field) Melder_fatal (U"(UiForm_getInteger:) No field \"", fieldName, U"\" in command window \"", my name, U"\".");
 	switch (field -> type) {
 		case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: case UI_BOOLEAN: case UI_RADIO:
 			case UI_OPTIONMENU: case UI_LIST:
@@ -1317,7 +1317,7 @@ long UiForm_getInteger_check (UiForm me, const char32 *fieldName) {
 
 char32 * UiForm_getString (UiForm me, const char32 *fieldName) {
 	UiField field = findField (me, fieldName);
-	if (field == NULL) Melder_fatal (U"(UiForm_getString:) No field \"", fieldName, U"\" in command window \"", my name, U"\".");
+	if (! field) Melder_fatal (U"(UiForm_getString:) No field \"", fieldName, U"\" in command window \"", my name, U"\".");
 	switch (field -> type) {
 		case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
 			return field -> stringValue;
@@ -1354,7 +1354,7 @@ char32 * UiForm_getString_check (UiForm me, const char32 *fieldName) {
 
 Graphics_Colour UiForm_getColour (UiForm me, const char32 *fieldName) {
 	UiField field = findField (me, fieldName);
-	if (field == NULL) Melder_fatal (U"(UiForm_getColour:) No field \"", fieldName, U"\" in command window \"", my name, U"\".");
+	if (! field) Melder_fatal (U"(UiForm_getColour:) No field \"", fieldName, U"\" in command window \"", my name, U"\".");
 	switch (field -> type) {
 		case UI_COLOUR: {
 			return field -> colourValue;

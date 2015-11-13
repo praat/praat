@@ -27,9 +27,7 @@ void structStringsEditor :: v_destroy () {
 	StringsEditor_Parent :: v_destroy ();
 }
 
-static void menu_cb_help (EDITOR_ARGS) {
-	EDITOR_IAM (StringsEditor);
-	(void) me;
+static void menu_cb_help (StringsEditor /* me */, EDITOR_ARGS_DIRECT) {
 	Melder_help (U"StringsEditor");
 }
 
@@ -51,7 +49,7 @@ static void gui_button_cb_insert (StringsEditor me, GuiButtonEvent /* event */) 
 	 * Find the first selected item.
 	 */
 	long numberOfSelected, *selected = GuiList_getSelectedPositions (my list, & numberOfSelected);
-	long position = selected == NULL ? strings -> numberOfStrings + 1 : selected [1];
+	long position = selected ? selected [1] : strings -> numberOfStrings + 1;
 	NUMvector_free (selected, 1);
 	char32 *text = GuiText_getString (my text);
 	/*
@@ -113,17 +111,15 @@ static void gui_button_cb_replace (StringsEditor me, GuiButtonEvent /* event */)
 	Editor_broadcastDataChanged (me);
 }
 
-static void gui_list_cb_doubleClick (GuiObject widget, void *void_me, long item) {
-	(void) widget;
-	iam (StringsEditor);
+static void gui_list_cb_doubleClick (StringsEditor me, GuiList_DoubleClickEvent /* event */) {
 	Strings strings = (Strings) my data;
-	if (item <= strings -> numberOfStrings)
-		GuiText_setString (my text, strings -> strings [item]);
+	//if (event -> position <= strings -> numberOfStrings)   // FIXME
+	//	GuiText_setString (my text, strings -> strings [event -> position]);
 }
 
 void structStringsEditor :: v_createChildren () {
-	list = GuiList_create (d_windowForm, 1, 0, Machine_getMenuBarHeight (), -70, true, NULL);
-	//GuiList_setDoubleClickCallback (list, gui_list_cb_doubleClick, this);
+	list = GuiList_create (d_windowForm, 1, 0, Machine_getMenuBarHeight (), -70, true, nullptr);
+	GuiList_setDoubleClickCallback (list, gui_list_cb_doubleClick, this);
 	GuiThing_show (list);
 
 	text = GuiText_createShown (d_windowForm, 0, 0, -40 - Gui_TEXTFIELD_HEIGHT, -40, 0);

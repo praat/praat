@@ -285,7 +285,7 @@ static void showMaximum (SoundRecorder me, int channel, double maximum) {
 }
 
 static void showMeter (SoundRecorder me, short *buffer, long nsamp) {
-	Melder_assert (my graphics != NULL);
+	Melder_assert (my graphics);
 	if (nsamp < 1) {
 		Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
 		#if defined (macintosh)
@@ -1064,7 +1064,7 @@ autoSoundRecorder SoundRecorder_create (int numberOfChannels) {
 		 */
 		if (preferences.bufferSizeInMegabytes < 1) preferences.bufferSizeInMegabytes = 1;   // validate preferences
 		if (preferences.bufferSizeInMegabytes > 1000) preferences.bufferSizeInMegabytes = 1000;
-		if (my buffer == NULL) {
+		if (! my buffer) {
 			long nmax_bytes_pref = preferences.bufferSizeInMegabytes * 1000000;
 			long nmax_bytes = my inputUsesPortAudio ? nmax_bytes_pref :
 				#if defined (_WIN32)
@@ -1087,7 +1087,7 @@ autoSoundRecorder SoundRecorder_create (int numberOfChannels) {
 				}
 			}
 		}
-		Melder_assert (my buffer != NULL);
+		Melder_assert (my buffer);
 
 		/*
 		 * Count the number of input devices and sources.

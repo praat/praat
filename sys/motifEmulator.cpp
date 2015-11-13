@@ -268,7 +268,7 @@ static void cb_scroll (GuiObject scrollBar, XtPointer closure, XtPointer call) {
 	int horizontal = scrolledWindow -> motiff.scrolledWindow.horizontalBar == scrollBar;
 	(void) call;
 	if (! workWindow) return;
-	Melder_assert (scrolledWindow -> motiff.scrolledWindow.clipWindow != NULL);
+	Melder_assert (scrolledWindow -> motiff.scrolledWindow.clipWindow);
 	#if win
 		previousShift = horizontal ?
 			scrolledWindow -> motiff.scrolledWindow.clipWindow -> x - workWindow -> x :
@@ -521,7 +521,7 @@ GuiObject _Gui_initializeWidget (int widgetClass, GuiObject parent, const char32
 
 	if (my parent && MEMBER (my parent, ScrolledWindow) &&
 		! MEMBER (me, ScrollBar) &&   // 'me' is one of the two scroll bars, or a new one
-		my parent -> motiff.scrolledWindow.clipWindow != NULL)   // 'me' is probably the clip window now
+		my parent -> motiff.scrolledWindow.clipWindow)   // 'me' is probably the clip window now
 			my parent -> motiff.scrolledWindow.workWindow = me;   // install
 	return me;
 }
@@ -598,7 +598,7 @@ GuiObject _Gui_initializeWidget (int widgetClass, GuiObject parent, const char32
 				if (MEMBER (me, ScrollBar)) {
 					parentRect = & my rect;
 				} else {
-					Melder_assert (parent -> motiff.scrolledWindow.clipWindow != NULL);
+					Melder_assert (parent -> motiff.scrolledWindow.clipWindow);
 					parentRect = & parent -> motiff.scrolledWindow.clipWindow -> rect;
 				}
 			}
@@ -619,7 +619,7 @@ GuiObject _Gui_initializeWidget (int widgetClass, GuiObject parent, const char32
 				if (MEMBER (me, ScrollBar)) {
 					parentRect = & my rect;
 				} else {
-					Melder_assert (parent -> motiff.scrolledWindow.clipWindow != NULL);
+					Melder_assert (parent -> motiff.scrolledWindow.clipWindow);
 					parentRect = & parent -> motiff.scrolledWindow.clipWindow -> rect;
 				}
 			}
@@ -1065,7 +1065,7 @@ static void _GuiNativizeWidget (GuiObject me) {
 					/*
 					 * Insert the menu before the Help menu, if that exists; otherwise, at the end.
 					 */
-					for (menu = my parent -> firstChild; menu != NULL; menu = menu -> nextSibling) {
+					for (menu = my parent -> firstChild; menu; menu = menu -> nextSibling) {
 						if (MEMBER (menu, PulldownMenu) && str32equ (menu -> name, U"Help") && menu != me) {
 							beforeID = (UINT) menu -> nat.menu./*handle*/id;
 							break;
@@ -1142,7 +1142,7 @@ static void _GuiNativizeWidget (GuiObject me) {
 						my nat.control.isBevel = true;
 						CreateBevelButtonControl (my macWindow, & my rect, NULL, kControlBevelButtonSmallBevel,
 							kControlBehaviorPushbutton, NULL, 1, kControlBehaviorCommandMenu, 0, & my nat.control.handle);
-						Melder_assert (my nat.control.handle != NULL);
+						Melder_assert (my nat.control.handle);
 						SetControlReference (my nat.control.handle, (long) me);
 						my isControl = true;
 						_GuiNativeControl_setFont (me, 0, 13);
@@ -1152,7 +1152,7 @@ static void _GuiNativizeWidget (GuiObject me) {
 						//Melder_casual("my macWindow %ld, %d-%d x %d-%d", my macWindow, my rect.left, my rect.right, my rect.top, my rect.bottom);
 						CreatePopupButtonControl (my macWindow, & my rect, NULL, -12345, false,
 							0, teFlushLeft, 0, & my nat.control.handle);
-						Melder_assert (my nat.control.handle != NULL);
+						Melder_assert (my nat.control.handle);
 						SetControlReference (my nat.control.handle, (long) me);
 						my isControl = true;
 						_GuiNativeControl_setFont (me, 0, 13);
@@ -1315,7 +1315,7 @@ static void Native_move (GuiObject me, int dx, int dy) {
 			MoveWindow (my window, my x, my y,
 				my width + 2 * GetSystemMetrics (SM_CXSIZEFRAME),
 				my height + 2 * GetSystemMetrics (SM_CYSIZEFRAME) + GetSystemMetrics (SM_CYCAPTION) +
-				( my nat.shell.menuBar != NULL ? GetSystemMetrics (SM_CYMENU) : 0 ), true);
+				( my nat.shell.menuBar ? GetSystemMetrics (SM_CYMENU) : 0 ), true);
 	} else
 		MoveWindow (my window, my x, my y, my width, my height, True);
 #elif mac
@@ -1898,8 +1898,8 @@ static void _motif_setValues (GuiObject me, va_list arg) {
 
 #if mac
 static GuiObject _motif_findSubwidget (GuiObject me, int x, int y) {
-	if (! my managed) return NULL;
-	if (my firstChild == NULL && my parent != NULL) {
+	if (! my managed) return nullptr;
+	if (! my firstChild && my parent) {
 		Rect *rect;
 		if (MEMBER (my parent, MenuBar)) return NULL;
 		rect = ! MEMBER (me, ScrollBar) && my parent && MEMBER (my parent, ScrolledWindow) ?
@@ -1907,7 +1907,7 @@ static GuiObject _motif_findSubwidget (GuiObject me, int x, int y) {
 		if (x >= rect -> left && x <= rect -> right && y >= rect -> top && y <= rect -> bottom)
 			return me;
 		else
-			return NULL;
+			return nullptr;
 	} else {
 		GuiObject child = my firstChild;
 		for (child = my firstChild; child != NULL; child = child -> nextSibling) {
