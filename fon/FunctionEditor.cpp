@@ -846,8 +846,7 @@ static void menu_cb_moveEright (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 
 /********** GUI CALLBACKS **********/
 
-static void gui_cb_scroll (I, GuiScrollBarEvent event) {
-	iam (FunctionEditor);
+static void gui_cb_scroll (FunctionEditor me, GuiScrollBarEvent event) {
 	if (! my d_graphics) return;   // ignore events during creation
 	double value = GuiScrollBar_getValue (event -> scrollBar);
 	double shift = my tmin + (value - 1) * (my tmax - my tmin) / maximumScrollBarValue - my d_startWindow;
@@ -894,8 +893,7 @@ static void gui_cb_scroll (I, GuiScrollBarEvent event) {
 	}
 }
 
-static void gui_checkbutton_cb_group (I, GuiCheckButtonEvent /* event */) {
-	iam (FunctionEditor);
+static void gui_checkbutton_cb_group (FunctionEditor me, GuiCheckButtonEvent /* event */) {
 	int i;
 	my group = ! my group;
 	if (my group) {

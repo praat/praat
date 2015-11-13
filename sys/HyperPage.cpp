@@ -644,21 +644,18 @@ static void gui_drawingarea_cb_click (HyperPage me, GuiDrawingArea_ClickEvent ev
 	}
 }
 
-static void menu_cb_postScriptSettings (EDITOR_ARGS) {
-	EDITOR_IAM (HyperPage);
+static void menu_cb_postScriptSettings (HyperPage me, EDITOR_ARGS_DIRECT) {
 	Printer_postScriptSettings ();
 }
 
 #ifdef macintosh
-static void menu_cb_pageSetup (EDITOR_ARGS) {
-	EDITOR_IAM (HyperPage);
+static void menu_cb_pageSetup (HyperPage me, EDITOR_ARGS_DIRECT) {
 	Printer_pageSetup ();
 }
 #endif
 
-static void menu_cb_print (EDITOR_ARGS) {
-	EDITOR_IAM (HyperPage);
-	EDITOR_FORM (U"Print", 0)
+static void menu_cb_print (HyperPage me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Print", nullptr)
 		SENTENCE (U"Left or inside header", U"")
 		SENTENCE (U"Middle header", U"")
 		LABEL (U"", U"Right or outside header:")
@@ -684,9 +681,8 @@ static void menu_cb_print (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_font (EDITOR_ARGS) {
-	EDITOR_IAM (HyperPage);
-	EDITOR_FORM (U"Font", 0)
+static void menu_cb_font (HyperPage me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Font", nullptr)
 		RADIO (U"Font", 1)
 			RADIOBUTTON (U"Times")
 			RADIOBUTTON (U"Helvetica")
@@ -713,14 +709,13 @@ static void setFontSize (HyperPage me, int fontSize) {
 	updateSizeMenu (me);
 }
 
-static void menu_cb_10 (EDITOR_ARGS) { EDITOR_IAM (HyperPage); setFontSize (me, 10); }
-static void menu_cb_12 (EDITOR_ARGS) { EDITOR_IAM (HyperPage); setFontSize (me, 12); }
-static void menu_cb_14 (EDITOR_ARGS) { EDITOR_IAM (HyperPage); setFontSize (me, 14); }
-static void menu_cb_18 (EDITOR_ARGS) { EDITOR_IAM (HyperPage); setFontSize (me, 18); }
-static void menu_cb_24 (EDITOR_ARGS) { EDITOR_IAM (HyperPage); setFontSize (me, 24); }
+static void menu_cb_10 (HyperPage me, EDITOR_ARGS_DIRECT) { setFontSize (me, 10); }
+static void menu_cb_12 (HyperPage me, EDITOR_ARGS_DIRECT) { setFontSize (me, 12); }
+static void menu_cb_14 (HyperPage me, EDITOR_ARGS_DIRECT) { setFontSize (me, 14); }
+static void menu_cb_18 (HyperPage me, EDITOR_ARGS_DIRECT) { setFontSize (me, 18); }
+static void menu_cb_24 (HyperPage me, EDITOR_ARGS_DIRECT) { setFontSize (me, 24); }
 
-static void menu_cb_fontSize (EDITOR_ARGS) {
-	EDITOR_IAM (HyperPage);
+static void menu_cb_fontSize (HyperPage me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Font size", 0)
 		NATURAL (U"Font size (points)", my default_fontSize ())
 	EDITOR_OK
@@ -730,8 +725,7 @@ static void menu_cb_fontSize (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_searchForPage (EDITOR_ARGS) {
-	EDITOR_IAM (HyperPage);
+static void menu_cb_searchForPage (HyperPage me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Search for page", 0)
 		TEXTFIELD (U"Page", U"a")
 	EDITOR_OK
@@ -754,8 +748,7 @@ static void menu_cb_searchForPage (EDITOR_ARGS) {
  * The 'pageIncrement' is sliderSize - 1.
  */
 
-static void gui_cb_verticalScroll (I, GuiScrollBarEvent	event) {
-	iam (HyperPage);
+static void gui_cb_verticalScroll (HyperPage me, GuiScrollBarEvent	event) {
 	double value = GuiScrollBar_getValue (event -> scrollBar);
 	if (value != my top) {
 		trace (U"scroll from ", my top, U" to ", value);
@@ -789,8 +782,7 @@ static void updateVerticalScrollBar (HyperPage me)
 	my history [my historyPointer]. top = 0/*my top*/;
 }
 
-static void menu_cb_pageUp (EDITOR_ARGS) {
-	EDITOR_IAM (HyperPage);
+static void menu_cb_pageUp (HyperPage me, EDITOR_ARGS_DIRECT) {
 	if (! my verticalScrollBar) return;
 	int value = GuiScrollBar_getValue (my verticalScrollBar) - 24;
 	if (value < 0) value = 0;
@@ -803,8 +795,7 @@ static void menu_cb_pageUp (EDITOR_ARGS) {
 	}
 }
 
-static void menu_cb_pageDown (EDITOR_ARGS) {
-	EDITOR_IAM (HyperPage);
+static void menu_cb_pageDown (HyperPage me, EDITOR_ARGS_DIRECT) {
 	if (! my verticalScrollBar) return;
 	int value = GuiScrollBar_getValue (my verticalScrollBar) + 24;
 	if (value > (int) (PAGE_HEIGHT * 5) - 25) value = (int) (PAGE_HEIGHT * 5) - 25;
@@ -830,8 +821,7 @@ static void do_back (HyperPage me) {
 	}
 }
 
-static void menu_cb_back (EDITOR_ARGS) {
-	EDITOR_IAM (HyperPage);
+static void menu_cb_back (HyperPage me, EDITOR_ARGS_DIRECT) {
 	do_back (me);
 }
 
@@ -850,8 +840,7 @@ static void do_forth (HyperPage me) {
 	}
 }
 
-static void menu_cb_forth (EDITOR_ARGS) {
-	EDITOR_IAM (HyperPage);
+static void menu_cb_forth (HyperPage me, EDITOR_ARGS_DIRECT) {
 	do_forth (me);
 }
 

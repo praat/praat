@@ -1,6 +1,7 @@
 # Praat: doing phonetics by computer
 
-Most information on how the program works is in its manual and on http://www.praat.org.
+Most information on how the program works is in its manual and on http://www.praat.org,
+which is also where you can download the latest binary executables from.
 
 ## 1. Compiling the source code
 
@@ -16,33 +17,28 @@ and with writing Praat scripts. The Praat program can be downloaded from http://
 
 ### 1.1. License
 
-All of the code is available under the
+All of the code is available on GitHub under the
 [GNU General Public License](http://www.fon.hum.uva.nl/praat/GNU_General_Public_License.txt).
 Of course, any improvements are welcomed by the authors.
 
 ### 1.2. Downloading the archive
 
-To download the latest source code of Praat,
-click on one of the *zip* or *tar.gz* archives at the latest release or at any later change.
+To download the latest source code of Praat from GitHub,
+click on the *zip* or *tar.gz* archive at the latest release,
+or clone ("fork") the praat/praat repository at any later change.
 
-### 1.3. Unpacking the archive
-
-On most computers you can unpack the *zip* file by double-clicking. If you prefer to try the *tar.gz* file instead,
-drop it on *StuffIt Expander* (on Windows), double-click it (on Macintosh),
-or use `gunzip` and `tar xvf` (on Unix).
-
-### 1.4. Steps to take if you want to extend Praat
+### 1.3. Steps to take if you want to extend Praat
 
 First make sure that the source code can be compiled as is.
 Then add your own buttons by editing `main/main_Praat.cpp` or `fon/praat_Fon.cpp`.
 Consult the manual page on [Programming](http://www.fon.hum.uva.nl/praat/manual/Programming_with_Praat.html).
 
-### 1.5. The programming language
+### 1.4. The programming language
 
 Most of the source code is written in C++, but some parts are written in C.
 The code requires that your compiler supports C99 and C++11 (for e.g. `char32_t` and rvalue references).
 
-### 1.6. Compiling for Windows
+### 1.5. Compiling for Windows
 
 Install Cygwin (on a 64-bit computer),
 and under Cygwin install the Devel packages i686-w64-mingw32 (for 32-bit targets)
@@ -68,7 +64,7 @@ Then copy the file `makefiles/makefile.defs.darmin32` or `makefiles/makefile.def
 to the sources directory and rename it to `makefile.defs`.
 Then type `make`.
 
-### 1.7. Compiling for Macintosh
+### 1.6. Compiling for Macintosh
 
 Extract the *xcodeproj64.zip* or *xcodeproj32.zip* file from the latest release
 (depending on whether you want to compile the 64-bit or the 32-bit edition) into the directory that contains
@@ -84,7 +80,7 @@ If you get lots of errors saying “Expected unqualified-id” or “Unknown typ
 then you may have to switch the Type of some .cpp file from “C++ Source” to “Objective-C++ Source”
 (under “Identity and Type” in the righthand sidebar).
 
-### 1.8. Compiling on Linux and other Unixes
+### 1.7. Compiling on Linux and other Unixes
 
 Install `libgtk2.0-dev` (and its dependencies) and `libasound2-dev`. Then go to the sources directory and type
 
@@ -109,7 +105,10 @@ gmodule-2.0, gthread-2.0, rt, glib-2.0).
 
 ## 2. Binary executables
 
-The meaning of the names of binary files uploaded on GitHub is as follows:
+While the [Praat website](http://www.praat.org) contains the latest executable for all platforms that we support
+(or used to support), the releases on GitHub contain many older executables as well.
+
+The meaning of the names of binary files available on GitHub is as follows:
 
 ### 2.1. Windows binaries
 - `praatXXXX_win64.zip`: zipped executable for 64-bit Windows (XP and higher)

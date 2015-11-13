@@ -226,8 +226,7 @@ static void gui_button_cb_cancel (DataSubEditor me, GuiButtonEvent /* event */) 
 	update (me);
 }
 
-static void gui_cb_scroll (I, GuiScrollBarEvent event) {
-	iam (DataSubEditor);
+static void gui_cb_scroll (DataSubEditor me, GuiScrollBarEvent event) {
 	my d_topField = GuiScrollBar_getValue (event -> scrollBar) + 1;
 	update (me);
 }
