@@ -336,7 +336,7 @@ void structCategoriesEditorCommand :: v_destroy () {
 }
 
 static void CategoriesEditorCommand_init (CategoriesEditorCommand me, const char32 *name, Any data,
-        int (*execute) (Any), int (*undo) (Any), int /*nCategories*/, int nSelected) {
+        Command_Callback execute, Command_Callback undo, int /*nCategories*/, int nSelected) {
 
 	my nSelected = nSelected;
 	Command_init (me, name, data, execute, undo);
@@ -351,8 +351,7 @@ Thing_define (CategoriesEditorInsert, CategoriesEditorCommand) {
 
 Thing_implement (CategoriesEditorInsert, CategoriesEditorCommand, 0);
 
-static int CategoriesEditorInsert_execute (I) {
-	iam (CategoriesEditorInsert);
+static int CategoriesEditorInsert_execute (CategoriesEditorInsert me) {
 	CategoriesEditor editor = static_cast<CategoriesEditor> (my data);
 	Categories categories = static_cast<Categories> (editor -> data);
 
@@ -362,8 +361,7 @@ static int CategoriesEditorInsert_execute (I) {
 	return 1;
 }
 
-static int CategoriesEditorInsert_undo (I) {
-	iam (CategoriesEditorInsert);
+static int CategoriesEditorInsert_undo (CategoriesEditorInsert me) {
 	CategoriesEditor editor = static_cast<CategoriesEditor> (my data);
 	Categories categories = static_cast<Categories> (editor -> data);
 
@@ -391,8 +389,7 @@ Thing_define (CategoriesEditorRemove, CategoriesEditorCommand) {
 
 Thing_implement (CategoriesEditorRemove, CategoriesEditorCommand, 0);
 
-static int CategoriesEditorRemove_execute (I) {
-	iam (CategoriesEditorRemove);
+static int CategoriesEditorRemove_execute (CategoriesEditorRemove me) {
 	CategoriesEditor editor = static_cast<CategoriesEditor> (my data);
 	Categories categories = static_cast<Categories> (editor -> data);
 
@@ -405,8 +402,7 @@ static int CategoriesEditorRemove_execute (I) {
 	return 1;
 }
 
-static int CategoriesEditorRemove_undo (I) {
-	iam (CategoriesEditorRemove);
+static int CategoriesEditorRemove_undo (CategoriesEditorRemove me) {
 	CategoriesEditor editor = (CategoriesEditor) my data;
 	Categories categories = (Categories) editor -> data;
 
@@ -439,8 +435,7 @@ Thing_define (CategoriesEditorReplace, CategoriesEditorCommand) {
 
 Thing_implement (CategoriesEditorReplace, CategoriesEditorCommand, 0);
 
-static int CategoriesEditorReplace_execute (I) {
-	iam (CategoriesEditorReplace);
+static int CategoriesEditorReplace_execute (CategoriesEditorReplace me) {
 	CategoriesEditor editor = static_cast<CategoriesEditor> (my data);
 	Categories categories = static_cast<Categories> (editor -> data);
 
@@ -453,8 +448,7 @@ static int CategoriesEditorReplace_execute (I) {
 	return 1;
 }
 
-static int CategoriesEditorReplace_undo (I) {
-	iam (CategoriesEditorReplace);
+static int CategoriesEditorReplace_undo (CategoriesEditorReplace me) {
 	CategoriesEditor editor = static_cast<CategoriesEditor> (my data);
 	Categories categories = static_cast<Categories> (editor -> data);
 
@@ -488,8 +482,7 @@ Thing_define (CategoriesEditorMoveUp, CategoriesEditorCommand) {
 
 Thing_implement (CategoriesEditorMoveUp, CategoriesEditorCommand, 0);
 
-static int CategoriesEditorMoveUp_execute (I) {
-	iam (CategoriesEditorMoveUp);
+static int CategoriesEditorMoveUp_execute (CategoriesEditorMoveUp me) {
 	CategoriesEditor editor = static_cast<CategoriesEditor> (my data);
 	Categories categories = static_cast<Categories> (editor -> data);
 
@@ -502,8 +495,7 @@ static int CategoriesEditorMoveUp_execute (I) {
 	return 1;
 }
 
-static int CategoriesEditorMoveUp_undo (I) {
-	iam (CategoriesEditorMoveUp);
+static int CategoriesEditorMoveUp_undo (CategoriesEditorMoveUp me) {
 	CategoriesEditor editor = static_cast<CategoriesEditor> (my data);
 	Categories categories = static_cast<Categories> (editor -> data);
 
@@ -537,8 +529,7 @@ Thing_define (CategoriesEditorMoveDown, CategoriesEditorCommand) {
 
 Thing_implement (CategoriesEditorMoveDown, CategoriesEditorCommand, 0);
 
-static int CategoriesEditorMoveDown_execute (I) {
-	iam (CategoriesEditorMoveDown);
+static int CategoriesEditorMoveDown_execute (CategoriesEditorMoveDown me) {
 	CategoriesEditor editor = static_cast<CategoriesEditor> (my data);
 	Categories categories = static_cast<Categories> (editor -> data);
 
@@ -551,8 +542,7 @@ static int CategoriesEditorMoveDown_execute (I) {
 	return 1;
 }
 
-static int CategoriesEditorMoveDown_undo (I) {
-	iam (CategoriesEditorMoveDown);
+static int CategoriesEditorMoveDown_undo (CategoriesEditorMoveDown me) {
 	CategoriesEditor editor = static_cast<CategoriesEditor> (my data);
 	Categories categories = static_cast<Categories> (editor -> data);
 
@@ -697,7 +687,8 @@ static void gui_button_cb_undo (CategoriesEditor me, GuiButtonEvent /* event */)
 	if (CommandHistory_offleft (my history.peek())) {
 		return;
 	}
-	Command_undo (CommandHistory_getItem (my history.peek()));
+	Command command = (Command) CommandHistory_getItem (my history.peek());
+	Command_undo (command);
 	CommandHistory_back (my history.peek());
 	updateWidgets (me);
 }
@@ -707,7 +698,8 @@ static void gui_button_cb_redo (CategoriesEditor me, GuiButtonEvent /* event */)
 	if (CommandHistory_offright (my history.peek())) {
 		return;
 	}
-	Command_do (CommandHistory_getItem (my history.peek()));
+	Command command = (Command) CommandHistory_getItem (my history.peek());
+	Command_do (command);
 	updateWidgets (me);
 }
 
@@ -780,7 +772,7 @@ autoCategoriesEditor CategoriesEditor_create (const char32 *title, Categories da
 		autoCategoriesEditor me = Thing_new (CategoriesEditor);
 		Editor_init (me.peek(), 20, 40, 600, 600, title, data);
 		my history = CommandHistory_create (100);
-		update (me.peek(), 0, 0, 0, 0);
+		update (me.peek(), 0, 0, nullptr, 0);
 		updateWidgets (me.peek());
 		return me;
 	} catch (MelderError) {

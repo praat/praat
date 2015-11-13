@@ -28,24 +28,24 @@
 #include "Thing.h"
 #include "Collection.h"
 
+Thing_declare (Command);
+
+typedef MelderCallback<int, structCommand> Command_Callback;
+
 Thing_define (Command, Thing) {
-	// new data:
-	public:
-		Any data;
-		int (*execute) (I);
-		int (*undo) (I);
+	Any data;
+	Command_Callback execute;
+	Command_Callback undo;
 };
 
-void Command_init (I, const char32 *name, Any data, int (*execute)(Any), int (*undo)(Any));
+void Command_init (Command me, const char32 *name, Any data, Command_Callback execute, Command_Callback undo);
 	
-int Command_do (I);
+int Command_do (Command me);
 
-int Command_undo (I);
+int Command_undo (Command me);
 
 Thing_define (CommandHistory, Ordered) {
-	// new data:
-	public:
-		long current;
+	long current;
 };
 
 /* Active data structure. 'current' is position of the cursor in the list */
@@ -55,32 +55,32 @@ Thing_define (CommandHistory, Ordered) {
 
 autoCommandHistory CommandHistory_create (long maximumCapacity);
 
-void CommandHistory_forth (I);
+void CommandHistory_forth (CommandHistory me);
 /* Precondition: ! offright */
 /* my current++; */
 
-void CommandHistory_back (I);
+void CommandHistory_back (CommandHistory me);
 /* Precondition: ! offleft */
 /* my current--; */
 
-Any CommandHistory_getItem (I);
+Any CommandHistory_getItem (CommandHistory me);
 /* return (pointer to) my item[my current]; */
 
-void CommandHistory_insertItem (I, Any item);
+void CommandHistory_insertItem (CommandHistory me, Any item);
 /* 1. forget about item[ current+1..size ] */
 /* 2. insert item after current. */
 /* 3. current = size */
 
-int CommandHistory_empty (I);
+int CommandHistory_empty (CommandHistory me);
 /*	return my size == 0; */
 
-int CommandHistory_offleft (I);
+int CommandHistory_offleft (CommandHistory me);
 /*	return my current == 0; */
 
-int CommandHistory_offright (I);
+int CommandHistory_offright (CommandHistory me);
 /*	return my size == 0 || my current == my size + 1; */
 
-char32 *CommandHistory_commandName (I, long offsetFromCurrent);
+char32 *CommandHistory_commandName (CommandHistory me, long offsetFromCurrent);
 /* offsetFromCurrent may be zero, positive or negative. */
 /* References outside the list will return nullptr. */
 

@@ -28,8 +28,7 @@
 
 Thing_implement (Command, Thing, 0);
 
-void Command_init (I, const char32 *name, Any data, int (*execute) (Any), int (*undo) (Any)) {
-	iam (Command);
+void Command_init (Command me, const char32 *name, Any data, Command_Callback execute, Command_Callback undo) {
 	Melder_assert (execute && undo);
 	Thing_setName (me, name);
 	my data = data;
@@ -37,13 +36,11 @@ void Command_init (I, const char32 *name, Any data, int (*execute) (Any), int (*
 	my undo = undo;
 }
 
-int Command_do (I) {
-	iam (Command);
+int Command_do (Command me) {
 	return my execute (me);
 }
 
-int Command_undo (I) {
-	iam (Command);
+int Command_undo (Command me) {
 	return my undo (me);
 }
 
@@ -59,25 +56,21 @@ autoCommandHistory CommandHistory_create (long maximumCapacity) {
 	}
 }
 
-void CommandHistory_forth (I) {
-	iam (CommandHistory);
+void CommandHistory_forth (CommandHistory me) {
 	my current++;
 }
 
-void CommandHistory_back (I) {
-	iam (CommandHistory);
+void CommandHistory_back (CommandHistory me) {
 	my current--;
 }
 
-Any CommandHistory_getItem (I) {
-	iam (CommandHistory);
+Any CommandHistory_getItem (CommandHistory me) {
 	Melder_assert (my current > 0 && my current <= my size);
 	return my item[my current];
 }
 
-void CommandHistory_insertItem (I, Any data) {
-	iam (CommandHistory);
-
+void CommandHistory_insertItem (CommandHistory me, Any data)
+{
 	Melder_assert (data && (Thing_isa ( (Thing) data, my itemClass) || my itemClass == nullptr));
 	if (my current < my size) {
 		for (long i = my current + 1; i <= my size; i++) {
@@ -92,25 +85,20 @@ void CommandHistory_insertItem (I, Any data) {
 	my current = my size;
 }
 
-int CommandHistory_empty (I) {
-	iam (CommandHistory);
+int CommandHistory_empty (CommandHistory me) {
 	return my size == 0;
 }
 
-int CommandHistory_offleft (I) {
-	iam (CommandHistory);
+int CommandHistory_offleft (CommandHistory me) {
 	return my current == 0;
 }
 
-int CommandHistory_offright (I) {
-	iam (CommandHistory);
+int CommandHistory_offright (CommandHistory me) {
 	return my size == 0 || my current == my size + 1;
 }
 
-char32 *CommandHistory_commandName (I, long offsetFromCurrent) {
-	iam (CommandHistory);
+char32 *CommandHistory_commandName (CommandHistory me, long offsetFromCurrent) {
 	long pos = my current + offsetFromCurrent;
-
 	return pos >= 1 && pos <= my size ? Thing_getName ( (Thing) my item[pos]) : nullptr;
 }
 
