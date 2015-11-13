@@ -4,7 +4,7 @@
  *
  * Mel Frequency Cepstral Coefficients class.
  *
- * Copyright (C) 1993-2013 David Weenink
+ * Copyright (C) 1993-2013, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,8 +54,7 @@ Thing_define (MFCC, CC) {
 	c0 represents the sum of the dB filter outputs.
 */
 
-MFCC MFCC_create (double tmin, double tmax, long nt, double dt, double t1,
-	long maximumNumberOfCoefficients, double fmin_mel, double fmax_mel);
+autoMFCC MFCC_create (double tmin, double tmax, long nt, double dt, double t1, long maximumNumberOfCoefficients, double fmin_mel, double fmax_mel);
 
 void MFCC_lifter (MFCC me, long lifter);
 /*
@@ -63,12 +62,14 @@ void MFCC_lifter (MFCC me, long lifter);
 	c[i] *= (1 + lifter / 2 * sin (NUMpi * i / lifter))
 */
 
-TableOfReal MFCC_to_TableOfReal (MFCC me, bool includeC0);
+autoTableOfReal MFCC_to_TableOfReal (MFCC me, bool includeC0);
 
-Sound MFCC_to_Sound (MFCC me);
-Sound MFCCs_crossCorrelate (MFCC me, MFCC thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
-Sound MFCCs_convolve (MFCC me, MFCC thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
+autoSound MFCC_to_Sound (MFCC me);
 
-Matrix MFCC_to_Matrix_features (MFCC me, double windowLength, bool includeEnergy);
+autoSound MFCCs_crossCorrelate (MFCC me, MFCC thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
+
+autoSound MFCCs_convolve (MFCC me, MFCC thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
+
+autoMatrix MFCC_to_Matrix_features (MFCC me, double windowLength, bool includeEnergy);
 
 #endif /* _MFCC_h_ */

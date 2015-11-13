@@ -1364,7 +1364,7 @@ DIRECT (Discriminant_getHomegeneityOfCovariances_box)
 	LOOP {
 		iam (Discriminant);
 		double chisq, p; long ndf;
-		SSCPs_getHomegeneityOfCovariances_box ( (SSCPs) my groups, &p, &chisq, &ndf);
+		SSCPs_getHomegeneityOfCovariances_box (my groups.peek(), &p, &chisq, &ndf);
 		Melder_information (p, U" (=probability, based on chisq = ",
 			chisq, U"and ndf = ", ndf, U")");
 	}
@@ -1375,7 +1375,7 @@ DIRECT (Discriminant_reportEqualityOfCovariances_wald)
 	LOOP {
 		iam (Discriminant);
 		double chisq, prob, df;
-		Covariances_equality ( (Collection) my groups, 2, &prob, &chisq, &df);
+		Covariances_equality (my groups.peek(), 2, &prob, &chisq, &df);
 		MelderInfo_writeLine (U"Wald test for equality of covariance matrices:");
 		MelderInfo_writeLine (U"Chi squared: ", chisq);
 		MelderInfo_writeLine (U"Significance: ", prob);

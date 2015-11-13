@@ -827,7 +827,7 @@ void DataModeler_fit (DataModeler me)
 		SVD_solve (thee.peek(), b.peek(), parameter.peek()); // re-use parameter
 
 		// Put the calculated parameters at the correct position in 'my p'
-		Covariance cov = my parameterCovariances;
+		Covariance cov = my parameterCovariances.peek();
 		long ipar = 0;
 		for (long j = 1; j <= my numberOfParameters; j++) {
 			if (my parameterStatus[j] != DataModeler_PARAMETER_FIXED) {
@@ -876,7 +876,7 @@ void DataModeler_setDataWeighing (DataModeler me, int useSigmaY) {
 
 autoCovariance DataModeler_to_Covariance_parameters (DataModeler me) {
 	try {
-		autoCovariance cov = (Covariance) Data_copy (my parameterCovariances);
+		autoCovariance cov = Data_copy (my parameterCovariances.peek());
 		return cov;
 	} catch (MelderError) {
 		Melder_throw (U"Covariance not created.");
@@ -1528,7 +1528,7 @@ autoCovariance FormantModeler_to_Covariance_parameters (FormantModeler me, long 
 			Melder_throw (U"The formant should be greater than zero and smaller than or equal to ", my trackmodelers -> size);
 		}
 		DataModeler thee = (DataModeler) my trackmodelers -> item[iformant];
-		autoCovariance cov = (Covariance) Data_copy (thy parameterCovariances);
+		autoCovariance cov = Data_copy (thy parameterCovariances.peek());
 		return cov;
 	} catch (MelderError) {
 		Melder_throw (U"Covariance not created.");

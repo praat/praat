@@ -15,7 +15,7 @@ oo_DEFINE_CLASS (DataModeler, Function)
 	oo_DOUBLE (tolerance)
 	oo_INT (useSigmaY)
 	oo_AUTO_OBJECT (Strings, 0, parameterNames)
-	oo_OBJECT (Covariance, 0, parameterCovariances)
+	oo_AUTO_OBJECT (Covariance, 0, parameterCovariances)
 	#if oo_DECLARING
 		double (*f_evaluate) (DataModeler me, double x, double p[]);
 		void (*f_evaluateBasisFunctions) (DataModeler me, double x, double term[]);
