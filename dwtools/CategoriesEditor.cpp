@@ -398,7 +398,7 @@ static int CategoriesEditorRemove_execute (CategoriesEditorRemove me) {
 		categories -> item[my selection[i]] = nullptr;
 		Collection_removeItem (categories, my selection[i]);
 	}
-	update (editor, my selection[1], 0, 0, 0);
+	update (editor, my selection[1], 0, nullptr, 0);
 	return 1;
 }
 
