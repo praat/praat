@@ -24,20 +24,22 @@
 #include "Categories.h"
 
 Thing_define (CategoriesEditor, Editor) {
-	// new data:
-	public:
-		autoCommandHistory history;
-		int position;
-		GuiList list;
-		GuiText text;
-		GuiButton undo, redo;
-		GuiLabel outOfView;
-		GuiButton remove, insert, insertAtEnd, replace, moveUp, moveDown;
-	// overridden methods:
-		void v_destroy ();
-		void v_createChildren ();
-		void v_createHelpMenuItems (EditorMenu menu);
-		void v_dataChanged ();
+	autoCommandHistory history;
+	int position;
+	GuiList list;
+	GuiText text;
+	GuiButton undo, redo;
+	GuiLabel outOfView;
+	GuiButton remove, insert, insertAtEnd, replace, moveUp, moveDown;
+
+	void v_destroy ()
+		override;
+	void v_createChildren ()
+		override;
+	void v_createHelpMenuItems (EditorMenu menu)
+		override;
+	void v_dataChanged ()
+		override;
 };
 
 autoCategoriesEditor CategoriesEditor_create (const char32 *title, Categories data);
