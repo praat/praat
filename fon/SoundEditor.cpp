@@ -410,10 +410,10 @@ void structSoundEditor :: v_play (double a_tmin, double a_tmax) {
 		Sound_playPart ((Sound) data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
 }
 
-int structSoundEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
+bool structSoundEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
 	if ((p_spectrogram_show || p_formant_show) && yWC < 0.5 && xWC > d_startWindow && xWC < d_endWindow) {
 		d_spectrogram_cursor = p_spectrogram_viewFrom +
-			2 * yWC * (p_spectrogram_viewTo - p_spectrogram_viewFrom);
+			2.0 * yWC * (p_spectrogram_viewTo - p_spectrogram_viewFrom);
 	}
 	return SoundEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);   // drag & update
 }

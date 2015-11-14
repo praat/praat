@@ -124,7 +124,7 @@ static void readSound (ExperimentMFC me, const char32 *fileNameHead, const char3
 		/*
 		 * Read the substimulus.
 		 */
-		autoSound substimulus = (Sound) Data_readFromFile (& file);   // Sound_readFromSoundFile (& file);
+		autoSound substimulus = Data_readFromFile (& file). static_cast_move<structSound>();
 		if (substimulus -> classInfo != classSound)
 			Melder_throw (U"File ", & file, U" contains a ", Thing_className (substimulus.peek()), U" instead of a sound.");
 		/*

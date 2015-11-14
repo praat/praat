@@ -8136,9 +8136,9 @@ DIRECT (VowelEditor_create)
 	vowelEditor.transfer(); // user becomes the owner
 END
 
-static Any cmuAudioFileRecognizer (int nread, const char *header, MelderFile fs) {
+static autoDaata cmuAudioFileRecognizer (int nread, const char *header, MelderFile file) {
 	return nread < 12 || header [0] != 6 || header [1] != 0 ?
-	       nullptr : Sound_readFromCmuAudioFile (fs);
+	       autoDaata () : Sound_readFromCmuAudioFile (file);
 }
 
 void praat_CC_init (ClassInfo klas) {

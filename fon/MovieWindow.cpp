@@ -113,7 +113,7 @@ void structMovieWindow :: v_unhighlightSelection (double left, double right, dou
 		Graphics_highlight (our d_graphics, left, right, 0.7 * bottom + 0.3 * top, top);
 }
 
-int structMovieWindow :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
+bool structMovieWindow :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
 	return our MovieWindow_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 }
 

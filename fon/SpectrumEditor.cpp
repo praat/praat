@@ -66,7 +66,7 @@ void structSpectrumEditor :: v_draw () {
 	GuiThing_setSensitive (our publishSoundButton, selectedSamples != 0);
 }
 
-int structSpectrumEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
+bool structSpectrumEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
 	our cursorHeight = our minimum + yWC * (our maximum - our minimum);
 	return our SpectrumEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);   // move cursor or drag selection
 }

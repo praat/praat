@@ -535,8 +535,7 @@ static int portaudioStreamCallback (
 	return paContinue;
 }
 
-static void gui_button_cb_record (I, GuiButtonEvent /* event */) {
-	iam (SoundRecorder);
+static void gui_button_cb_record (SoundRecorder me, GuiButtonEvent /* event */) {
 	try {
 		if (my recording) return;
 		my nsamp = 0;
@@ -595,13 +594,11 @@ static void gui_button_cb_record (I, GuiButtonEvent /* event */) {
 	}
 }
 
-static void gui_button_cb_stop (I, GuiButtonEvent /* event */) {
-	iam (SoundRecorder);
+static void gui_button_cb_stop (SoundRecorder me, GuiButtonEvent /* event */) {
 	stopRecording (me);
 }
 
-static void gui_button_cb_play (I, GuiButtonEvent /* event */) {
-	iam (SoundRecorder);
+static void gui_button_cb_play (SoundRecorder me, GuiButtonEvent /* event */) {
 	if (my recording || my nsamp == 0) return;
 	MelderAudio_play16 (my buffer, theControlPanel. sampleRate, my fakeMono ? my nsamp / 2 : my nsamp, my fakeMono ? 2 : my numberOfChannels, NULL, NULL);
 }
@@ -637,20 +634,17 @@ static void publish (SoundRecorder me) {
 	Editor_broadcastPublication (me, sound.transfer());
 }
 
-static void gui_button_cb_cancel (I, GuiButtonEvent /* event */) {
-	iam (SoundRecorder);
+static void gui_button_cb_cancel (SoundRecorder me, GuiButtonEvent /* event */) {
 	stopRecording (me);
 	Editor_sendPleaseReset (me);
 }
 
-static void gui_button_cb_apply (I, GuiButtonEvent /* event */) {
-	iam (SoundRecorder);
+static void gui_button_cb_apply (SoundRecorder me, GuiButtonEvent /* event */) {
 	stopRecording (me);
 	publish (me);
 }
 
-static void gui_button_cb_ok (I, GuiButtonEvent /* event */) {
-	iam (SoundRecorder);
+static void gui_button_cb_ok (SoundRecorder me, GuiButtonEvent /* event */) {
 	stopRecording (me);
 	publish (me);
 	Editor_sendPleaseReset (me);

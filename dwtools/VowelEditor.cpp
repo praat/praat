@@ -1210,21 +1210,18 @@ static void menu_cb_showTrajectoryTimeMarksEvery (EDITOR_ARGS) {
 
 /********** BUTTON METHODS **********/
 
-static void gui_button_cb_play (I, GuiButtonEvent /* event */) {
-	iam (VowelEditor);
+static void gui_button_cb_play (VowelEditor me, GuiButtonEvent /* event */) {
 	autoSound thee = VowelEditor_createTarget (me);
 	Sound_play (thee.peek(), nullptr, nullptr);
 	Graphics_updateWs (my g);
 }
 
-static void gui_button_cb_publish (I, GuiButtonEvent /* event */) {
-	iam (VowelEditor);
+static void gui_button_cb_publish (VowelEditor me, GuiButtonEvent /* event */) {
 	autoSound publish = VowelEditor_createTarget (me);
 	Editor_broadcastPublication (me, publish.transfer());
 }
 
-static void gui_button_cb_reverse (I, GuiButtonEvent /* event */) {
-	iam (VowelEditor);
+static void gui_button_cb_reverse (VowelEditor me, GuiButtonEvent /* event */) {
 	VowelEditor_Vowel_reverseFormantTier (me);
 	struct structGuiButtonEvent play_event { 0 };
 	gui_button_cb_play (me, & play_event);

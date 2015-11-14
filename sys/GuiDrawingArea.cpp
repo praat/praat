@@ -440,7 +440,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	void _GuiMacDrawingArea_shellResize (GuiObject widget) {
 		iam_drawingarea;
 		if (my d_resizeCallback) {
-			struct structGuiDrawingAreaResizeEvent event = { me, 0 };
+			struct structGuiDrawingArea_ResizeEvent event = { me, 0 };
 			event. width = widget -> width;
 			event. height = widget -> height;
 			try {

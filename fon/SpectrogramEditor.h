@@ -27,7 +27,7 @@ Thing_define (SpectrogramEditor, FunctionEditor) {
 
 	void v_draw ()
 		override;
-	int v_click (double xWC, double yWC, bool shiftKeyPressed)
+	bool v_click (double xWC, double yWC, bool shiftKeyPressed)
 		override;
 };
 

@@ -168,9 +168,9 @@ void structTableEditor :: v_draw () {
 	}
 }
 
-int structTableEditor :: v_click (double xclick, double yWC, bool shiftKeyPressed) {
+bool structTableEditor :: v_click (double xclick, double yWC, bool shiftKeyPressed) {
 	Table table = static_cast<Table> (data);
-	return 1;
+	return true;
 }
 
 static void gui_text_cb_change (I, GuiTextEvent event) {
@@ -197,8 +197,7 @@ static void gui_drawingarea_cb_resize (TableEditor me, GuiDrawingArea_ResizeEven
 	Graphics_updateWs (my graphics);
 }
 
-static void gui_cb_scrollHorizontal (I, GuiScrollBarEvent event) {
-	iam (TableEditor);
+static void gui_cb_scrollHorizontal (TableEditor me, GuiScrollBarEvent event) {
 	int value = GuiScrollBar_getValue (event -> scrollBar);
 	if (value != my leftColumn) {
 		my leftColumn = value;
@@ -211,8 +210,7 @@ static void gui_cb_scrollHorizontal (I, GuiScrollBarEvent event) {
 	}
 }
 
-static void gui_cb_scrollVertical (I, GuiScrollBarEvent event) {
-	iam (TableEditor);
+static void gui_cb_scrollVertical (TableEditor me, GuiScrollBarEvent event) {
 	int value = GuiScrollBar_getValue (event -> scrollBar);
 	if (value != my topRow) {
 		my topRow = value;

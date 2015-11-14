@@ -65,7 +65,7 @@ void structSpectrogramEditor :: v_draw () {
 	Graphics_setColour (our d_graphics, Graphics_BLACK);
 }
 
-int structSpectrogramEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
+bool structSpectrogramEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
 	Spectrogram spectrogram = (Spectrogram) our data;
 	/*double frequency = yWC * our maximum;*/
 	long bestFrame;

@@ -146,23 +146,23 @@ static int isTimitWord (const char label[]) {
 	return 1;
 }
 
-Any TextGrid_TIMITLabelFileRecognizer (int nread, const char *header, MelderFile file) {
+autoDaata TextGrid_TIMITLabelFileRecognizer (int nread, const char *header, MelderFile file) {
 	char hkruis[3] = "h#", label1[512], label2[512];
 	int length, phnFile = 0;
 	long it[5]; 
 	if (nread < 12 || sscanf (header, "%ld%ld%s%n\n", &it[1], &it[2], label1, &length) != 3 ||
 		it[1] < 0 || it[2] <= it[1] || sscanf (&header[length], "%ld%ld%s\n", &it[3], &it[4], label2) != 3 || it[4] <= it[3]) {
 		// 20120512 djmw removed the extra "it[3] < it[2]" check, because otherwise train/dr7/mdlm0/si1864.wrd cannot be read
-		return nullptr;
+		return autoDaata ();
 	}
 	if (! strcmp (label1, hkruis)) {
 		if (isTimitPhoneticLabel (label2)) {
 			phnFile = 1;
 		} else if (! isTimitWord (label2)) {
-			return nullptr;
+			return autoDaata ();
 		}
 	} else if (! isTimitWord (label1) || ! isTimitWord (label2)) {
-		return nullptr;
+		return autoDaata ();
 	}
 	autoTextGrid thee = TextGrid_readFromTIMITLabelFile (file, phnFile);
 	return thee.transfer();

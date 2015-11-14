@@ -619,7 +619,7 @@ DIRECT (Print) {
 		} else { MelderFile file; structMelderFile file2 = { 0 };
 			if (args == NULL && sendingString == NULL) file = UiFile_getFile (dia);
 			else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
-			Picture_writeToWindowsMetafile (praat_picture, file);
+			Picture_writeToWindowsMetafile (praat_picture.get(), file);
 		}
 	}
 #endif
@@ -1556,13 +1556,13 @@ void praat_picture_editor_close () {
 	praat_picture_close ();
 }
 
-static Any pictureRecognizer (int nread, const char *header, MelderFile file) {
-	if (nread < 2) return NULL;
-	if (strnequ (header, "PraatPictureFile", 16))
-	{
-		Picture_readFromPraatPictureFile (praat_picture.get(), file); return (Any) 1;   // FIXME
+static autoDaata pictureRecognizer (int nread, const char *header, MelderFile file) {
+	if (nread < 2) return autoDaata ();
+	if (strnequ (header, "PraatPictureFile", 16)) {
+		Picture_readFromPraatPictureFile (praat_picture.get(), file);
+		return Thing_new (Daata);   // a dummy
 	}
-	return NULL;
+	return autoDaata ();
 }
 
 void praat_picture_init () {

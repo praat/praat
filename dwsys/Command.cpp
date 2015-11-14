@@ -28,10 +28,10 @@
 
 Thing_implement (Command, Thing, 0);
 
-void Command_init (Command me, const char32 *name, Any data, int (*execute) (Any), int (*undo) (Any)) {
+void Command_init (Command me, const char32 *name, Thing boss, Command_Callback execute, Command_Callback undo) {
 	Melder_assert (execute && undo);
 	Thing_setName (me, name);
-	my data = data;
+	my boss = boss;
 	my execute = execute;
 	my undo = undo;
 }
@@ -66,10 +66,11 @@ void CommandHistory_back (CommandHistory me) {
 
 Command CommandHistory_getItem (CommandHistory me) {
 	Melder_assert (my current > 0 && my current <= my size);
-	return (Command) my item[my current];
+	return static_cast<Command> (my item [my current]);
 }
 
-void CommandHistory_insertItem (CommandHistory me, Command command) {
+void CommandHistory_insertItem (CommandHistory me, Command command)
+{
 	if (my current < my size) {
 		for (long i = my current + 1; i <= my size; i++) {
 			forget (((Command *) my item) [i]);
@@ -97,7 +98,6 @@ int CommandHistory_offright (CommandHistory me) {
 
 char32 *CommandHistory_commandName (CommandHistory me, long offsetFromCurrent) {
 	long pos = my current + offsetFromCurrent;
-
 	return pos >= 1 && pos <= my size ? Thing_getName ((Thing) my item[pos]) : nullptr;
 }
 

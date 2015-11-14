@@ -61,15 +61,14 @@ static int group_equalDomain (double tmin, double tmax) {
 
 static void updateScrollBar (FunctionEditor me) {
 /* We cannot call this immediately after creation. */
-	double slider_size = (my d_endWindow - my d_startWindow) / (my tmax - my tmin) * maximumScrollBarValue - 1;
-	double increment, page_increment;
-	double value = (my d_startWindow - my tmin) / (my tmax - my tmin) * maximumScrollBarValue + 1;
-	if (slider_size < 1) slider_size = 1;
+	double slider_size = (my d_endWindow - my d_startWindow) / (my tmax - my tmin) * maximumScrollBarValue - 1.0;
+	double value = (my d_startWindow - my tmin) / (my tmax - my tmin) * maximumScrollBarValue + 1.0;
+	if (slider_size < 1.0) slider_size = 1.0;
 	if (value > maximumScrollBarValue - slider_size)
 		value = maximumScrollBarValue - slider_size;
-	if (value < 1) value = 1;
-	increment = slider_size / SCROLL_INCREMENT_FRACTION + 1;
-	page_increment = RELATIVE_PAGE_INCREMENT * slider_size + 1;
+	if (value < 1.0) value = 1.0;
+	double increment = slider_size / SCROLL_INCREMENT_FRACTION + 1.0;
+	double page_increment = RELATIVE_PAGE_INCREMENT * slider_size + 1.0;
 	GuiScrollBar_set (my scrollBar, NUMundefined, maximumScrollBarValue, value, slider_size, increment, page_increment);
 }
 
@@ -186,34 +185,34 @@ static void drawNow (FunctionEditor me) {
 	/*
 	 * Be responsive: update the markers now.
 	 */
-	Graphics_setViewport (my d_graphics, my functionViewerLeft, my functionViewerRight, 0, my height);
-	Graphics_setWindow (my d_graphics, my functionViewerLeft, my functionViewerRight, 0, my height);
+	Graphics_setViewport (my d_graphics, my functionViewerLeft, my functionViewerRight, 0.0, my height);
+	Graphics_setWindow (my d_graphics, my functionViewerLeft, my functionViewerRight, 0.0, my height);
 	Graphics_setColour (my d_graphics, Graphics_WINDOW_BACKGROUND_COLOUR);
 	Graphics_fillRectangle (my d_graphics, my functionViewerLeft + MARGIN, my selectionViewerRight - MARGIN, my height - (TOP_MARGIN + space), my height);
 	Graphics_fillRectangle (my d_graphics, my functionViewerLeft, my functionViewerLeft + MARGIN, BOTTOM_MARGIN + ( leftFromWindow ? space * 2 : 0 ), my height);
 	Graphics_fillRectangle (my d_graphics, my functionViewerRight - MARGIN, my functionViewerRight, BOTTOM_MARGIN + ( rightFromWindow ? space * 2 : 0 ), my height);
 	if (my p_showSelectionViewer) {
-		Graphics_setViewport (my d_graphics, my selectionViewerLeft, my selectionViewerRight, 0, my height);
-		Graphics_setWindow (my d_graphics, my selectionViewerLeft, my selectionViewerRight, 0, my height);
+		Graphics_setViewport (my d_graphics, my selectionViewerLeft, my selectionViewerRight, 0.0, my height);
+		Graphics_setWindow (my d_graphics, my selectionViewerLeft, my selectionViewerRight, 0.0, my height);
 		Graphics_fillRectangle (my d_graphics, my selectionViewerLeft, my selectionViewerLeft + MARGIN, BOTTOM_MARGIN, my height);
 		Graphics_fillRectangle (my d_graphics, my selectionViewerRight - MARGIN, my selectionViewerRight, BOTTOM_MARGIN, my height);
 		Graphics_fillRectangle (my d_graphics, my selectionViewerLeft + MARGIN, my selectionViewerRight - MARGIN, 0, BOTTOM_MARGIN + space * 3);
 	}
 	Graphics_setGrey (my d_graphics, 0.0);
 	#if defined (macintosh)
-		Graphics_line (my d_graphics, my functionViewerLeft, 2, my selectionViewerRight, 2);
-		Graphics_line (my d_graphics, my functionViewerLeft, my height - 2, my selectionViewerRight, my height - 2);
+		Graphics_line (my d_graphics, my functionViewerLeft, 2.0, my selectionViewerRight, 2.0);
+		Graphics_line (my d_graphics, my functionViewerLeft, my height - 2.0, my selectionViewerRight, my height - 2.0);
 	#endif
 
-	Graphics_setViewport (my d_graphics, my functionViewerLeft, my functionViewerRight, 0, my height);
-	Graphics_setWindow (my d_graphics, my functionViewerLeft, my functionViewerRight, 0, my height);
+	Graphics_setViewport (my d_graphics, my functionViewerLeft, my functionViewerRight, 0.0, my height);
+	Graphics_setWindow (my d_graphics, my functionViewerLeft, my functionViewerRight, 0.0, my height);
 	Graphics_setTextAlignment (my d_graphics, Graphics_CENTRE, Graphics_HALF);
 	for (int i = 0; i < 8; i ++) {
 		double left = my rect [i]. left, right = my rect [i]. right;
 		if (left < right)
 			Graphics_button (my d_graphics, left, right, my rect [i]. bottom, my rect [i]. top);
 	}
-	verticalCorrection = my height / (my height - 111 + 11.0);
+	verticalCorrection = my height / (my height - 111.0 + 11.0);
 	#ifdef _WIN32
 		verticalCorrection *= 1.5;
 	#endif
@@ -242,7 +241,7 @@ static void drawNow (FunctionEditor me) {
 				case 4: value = my marker [1] - my d_startWindow; break;
 				case 5: value = my marker [2] - my marker [1]; break;
 				case 6: value = my marker [3] - my marker [2]; break;
-				case 7: format = my v_format_selection (), value = my d_endSelection - my d_startSelection, inverseValue = 1 / value; break;
+				case 7: format = my v_format_selection (), value = my d_endSelection - my d_startSelection, inverseValue = 1.0 / value; break;
 			}
 			char text8 [100];
 			snprintf (text8, 100, format, value, inverseValue);
@@ -269,8 +268,8 @@ static void drawNow (FunctionEditor me) {
 		}
 	}
 
-	Graphics_setViewport (my d_graphics, my functionViewerLeft + MARGIN, my functionViewerRight - MARGIN, 0, my height);
-	Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, 0, my height);
+	Graphics_setViewport (my d_graphics, my functionViewerLeft + MARGIN, my functionViewerRight - MARGIN, 0.0, my height);
+	Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, 0.0, my height);
 	/*Graphics_setColour (my d_graphics, Graphics_WHITE);
 	Graphics_fillRectangle (my d_graphics, my d_startWindow, my d_endWindow, BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));*/
 	Graphics_setColour (my d_graphics, Graphics_BLACK);
@@ -345,7 +344,7 @@ static void drawNow (FunctionEditor me) {
 	 * End of inner drawing.
 	 */
 	Graphics_flushWs (my d_graphics);
-	Graphics_setViewport (my d_graphics, my functionViewerLeft, my selectionViewerRight, 0, my height);
+	Graphics_setViewport (my d_graphics, my functionViewerLeft, my selectionViewerRight, 0.0, my height);
 }
 
 /********** METHODS **********/
@@ -387,12 +386,12 @@ static void gui_drawingarea_cb_resize (FunctionEditor me, GuiDrawingArea_ResizeE
 	 * Put the function viewer at the left and the selection viewer at the right.
 	 */
 	my functionViewerLeft = 0;
-	my functionViewerRight = my p_showSelectionViewer ? (short) floor (width * (2.0/3)) : width;
+	my functionViewerRight = my p_showSelectionViewer ? (short) floor (width * (2.0/3.0)) : width;
 	my selectionViewerLeft = my functionViewerRight;
 	my selectionViewerRight = width;
 	my height = event -> height + 111;
-	Graphics_setWsWindow (my d_graphics, 0, width, 0, my height);
-	Graphics_setViewport (my d_graphics, 0, width, 0, my height);
+	Graphics_setWsWindow (my d_graphics, 0.0, width, 0.0, my height);
+	Graphics_setViewport (my d_graphics, 0.0, width, 0.0, my height);
 	Graphics_updateWs (my d_graphics);
 
 	/* Save the current shell size as the user's preference for a new FunctionEditor. */
@@ -401,9 +400,8 @@ static void gui_drawingarea_cb_resize (FunctionEditor me, GuiDrawingArea_ResizeE
 	my pref_shellHeight () = GuiShell_getShellHeight (my d_windowForm);
 }
 
-static void menu_cb_preferences (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
-	EDITOR_FORM (U"Preferences", 0)
+static void menu_cb_preferences (FunctionEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Preferences", nullptr)
 		BOOLEAN (U"Synchronize zoom and scroll", my default_synchronizedZoomAndScroll ())
 		BOOLEAN (U"Show selection viewer", my default_showSelectionViewer ())
 		POSITIVE (Melder_cat (U"Arrow scroll step (", my v_format_units (), U")"), my default_arrowScrollStep ())
@@ -433,8 +431,8 @@ static void menu_cb_preferences (EDITOR_ARGS) {
 }
 
 void structFunctionEditor :: v_form_pictureSelection (EditorCommand cmd) {
-	BOOLEAN (U"Draw selection times", 1);
-	BOOLEAN (U"Draw selection hairs", 1);
+	BOOLEAN (U"Draw selection times", true);
+	BOOLEAN (U"Draw selection hairs", true);
 }
 void structFunctionEditor :: v_ok_pictureSelection (EditorCommand cmd) {
 	FunctionEditor me = (FunctionEditor) cmd -> d_editor;
@@ -449,28 +447,23 @@ void structFunctionEditor :: v_do_pictureSelection (EditorCommand cmd) {
 
 /********** QUERY MENU **********/
 
-static void menu_cb_getB (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
+static void menu_cb_getB (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	Melder_informationReal (my d_startSelection, my v_format_units ());
 }
-static void menu_cb_getCursor (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
+static void menu_cb_getCursor (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	Melder_informationReal (0.5 * (my d_startSelection + my d_endSelection), my v_format_units ());
 }
-static void menu_cb_getE (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
+static void menu_cb_getE (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	Melder_informationReal (my d_endSelection, my v_format_units ());
 }
-static void menu_cb_getSelectionDuration (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
+static void menu_cb_getSelectionDuration (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	Melder_informationReal (my d_endSelection - my d_startSelection, my v_format_units ());
 }
 
 /********** VIEW MENU **********/
 
-static void menu_cb_zoom (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
-	EDITOR_FORM (U"Zoom", 0)
+static void menu_cb_zoom (FunctionEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Zoom", nullptr)
 		REAL (U"From", U"0.0")
 		REAL (U"To", U"1.0")
 	EDITOR_OK
@@ -501,8 +494,7 @@ static void do_showAll (FunctionEditor me) {
 	}
 }
 
-static void gui_button_cb_showAll (I, GuiButtonEvent /*event*/) {
-	iam (FunctionEditor);
+static void gui_button_cb_showAll (FunctionEditor me, GuiButtonEvent /* event */) {
 	do_showAll (me);
 }
 
@@ -518,14 +510,13 @@ static void do_zoomIn (FunctionEditor me) {
 	}
 }
 
-static void gui_button_cb_zoomIn (I, GuiButtonEvent /*event*/) {
-	iam (FunctionEditor);
+static void gui_button_cb_zoomIn (FunctionEditor me, GuiButtonEvent /* event */) {
 	do_zoomIn (me);
 }
 
 static void do_zoomOut (FunctionEditor me) {
 	double shift = (my d_endWindow - my d_startWindow) / 2;
-	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);   /* Quickly, before window changes. */
+	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);   // quickly, before window changes
 	my d_startWindow -= shift;
 	if (my d_startWindow < my tmin + 1e-12)
 		my d_startWindow = my tmin;
@@ -540,8 +531,7 @@ static void do_zoomOut (FunctionEditor me) {
 	}
 }
 
-static void gui_button_cb_zoomOut (I, GuiButtonEvent /*event*/) {
-	iam (FunctionEditor);
+static void gui_button_cb_zoomOut (FunctionEditor me, GuiButtonEvent /*event*/) {
 	do_zoomOut (me);
 }
 
@@ -565,8 +555,7 @@ static void do_zoomToSelection (FunctionEditor me) {
 	}
 }
 
-static void gui_button_cb_zoomToSelection (I, GuiButtonEvent /*event*/) {
-	iam (FunctionEditor);
+static void gui_button_cb_zoomToSelection (FunctionEditor me, GuiButtonEvent /* event */) {
 	do_zoomToSelection (me);
 }
 
@@ -583,39 +572,32 @@ static void do_zoomBack (FunctionEditor me) {
 	}
 }
 
-static void gui_button_cb_zoomBack (I, GuiButtonEvent /*event*/) {
-	iam (FunctionEditor);
+static void gui_button_cb_zoomBack (FunctionEditor me, GuiButtonEvent /* event */) {
 	do_zoomBack (me);
 }
 
-static void menu_cb_showAll (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
+static void menu_cb_showAll (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	do_showAll (me);
 }
 
-static void menu_cb_zoomIn (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
+static void menu_cb_zoomIn (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	do_zoomIn (me);
 }
 
-static void menu_cb_zoomOut (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
+static void menu_cb_zoomOut (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	do_zoomOut (me);
 }
 
-static void menu_cb_zoomToSelection (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
+static void menu_cb_zoomToSelection (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	do_zoomToSelection (me);
 }
 
-static void menu_cb_zoomBack (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
+static void menu_cb_zoomBack (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	do_zoomBack (me);
 }
 
-static void menu_cb_play (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
-	EDITOR_FORM (U"Play", 0)
+static void menu_cb_play (FunctionEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Play", nullptr)
 		REAL (U"From", U"0.0")
 		REAL (U"To", U"1.0")
 	EDITOR_OK
@@ -627,8 +609,7 @@ static void menu_cb_play (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_playOrStop (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
+static void menu_cb_playOrStop (FunctionEditor me, EDITOR_ARGS_FORM) {
 	if (MelderAudio_isPlaying) {
 		MelderAudio_stopPlaying (MelderAudio_EXPLICIT);
 	} else if (my d_startSelection < my d_endSelection) {
@@ -643,23 +624,20 @@ static void menu_cb_playOrStop (EDITOR_ARGS) {
 	}
 }
 
-static void menu_cb_playWindow (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
+static void menu_cb_playWindow (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	my playingCursor = true;
 	my v_play (my d_startWindow, my d_endWindow);
 }
 
-static void menu_cb_interruptPlaying (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
+static void menu_cb_interruptPlaying (FunctionEditor /* me */, EDITOR_ARGS_DIRECT) {
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 }
 
 /********** SELECT MENU **********/
 
-static void menu_cb_select (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
-	EDITOR_FORM (U"Select", 0)
+static void menu_cb_select (FunctionEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Select", nullptr)
 		REAL (U"Start of selection", U"0.0")
 		REAL (U"End of selection", U"1.0")
 	EDITOR_OK
@@ -683,25 +661,22 @@ static void menu_cb_select (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_moveCursorToB (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
+static void menu_cb_moveCursorToB (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	my d_endSelection = my d_startSelection;
 	my v_updateText ();
 	/*Graphics_updateWs (my d_graphics);*/ drawNow (me);
 	updateGroup (me);
 }
 
-static void menu_cb_moveCursorToE (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
+static void menu_cb_moveCursorToE (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	my d_startSelection = my d_endSelection;
 	my v_updateText ();
 	/*Graphics_updateWs (my d_graphics);*/ drawNow (me);
 	updateGroup (me);
 }
 
-static void menu_cb_moveCursorTo (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
-	EDITOR_FORM (U"Move cursor to", 0)
+static void menu_cb_moveCursorTo (FunctionEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Move cursor to", nullptr)
 		REAL (U"Position", U"0.0")
 	EDITOR_OK
 		SET_REAL (U"Position", 0.5 * (my d_startSelection + my d_endSelection))
@@ -716,9 +691,8 @@ static void menu_cb_moveCursorTo (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_moveCursorBy (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
-	EDITOR_FORM (U"Move cursor by", 0)
+static void menu_cb_moveCursorBy (FunctionEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Move cursor by", nullptr)
 		REAL (U"Distance", U"0.05")
 	EDITOR_OK
 	EDITOR_DO
@@ -732,9 +706,8 @@ static void menu_cb_moveCursorBy (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_moveBby (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
-	EDITOR_FORM (U"Move start of selection by", 0)
+static void menu_cb_moveBby (FunctionEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Move start of selection by", nullptr)
 		REAL (U"Distance", U"0.05")
 	EDITOR_OK
 	EDITOR_DO
@@ -753,9 +726,8 @@ static void menu_cb_moveBby (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_moveEby (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
-	EDITOR_FORM (U"Move end of selection by", 0)
+static void menu_cb_moveEby (FunctionEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Move end of selection by", nullptr)
 		REAL (U"Distance", U"0.05")
 	EDITOR_OK
 	EDITOR_DO
@@ -796,13 +768,11 @@ void FunctionEditor_shift (FunctionEditor me, double shift, bool needsUpdateGrou
 	FunctionEditor_marksChanged (me, needsUpdateGroup);
 }
 
-static void menu_cb_pageUp (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
+static void menu_cb_pageUp (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	FunctionEditor_shift (me, -RELATIVE_PAGE_INCREMENT * (my d_endWindow - my d_startWindow), true);
 }
 
-static void menu_cb_pageDown (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
+static void menu_cb_pageDown (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	FunctionEditor_shift (me, +RELATIVE_PAGE_INCREMENT * (my d_endWindow - my d_startWindow), true);
 }
 
@@ -816,8 +786,7 @@ static void scrollToView (FunctionEditor me, double t) {
 	}
 }
 
-static void menu_cb_selectEarlier (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
+static void menu_cb_selectEarlier (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	my d_startSelection -= my p_arrowScrollStep;
 	if (my d_startSelection < my tmin + 1e-12)
 		my d_startSelection = my tmin;
@@ -827,8 +796,7 @@ static void menu_cb_selectEarlier (EDITOR_ARGS) {
 	scrollToView (me, 0.5 * (my d_startSelection + my d_endSelection));
 }
 
-static void menu_cb_selectLater (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
+static void menu_cb_selectLater (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	my d_startSelection += my p_arrowScrollStep;
 	if (my d_startSelection > my tmax - 1e-12)
 		my d_startSelection = my tmax;
@@ -838,16 +806,14 @@ static void menu_cb_selectLater (EDITOR_ARGS) {
 	scrollToView (me, 0.5 * (my d_startSelection + my d_endSelection));
 }
 
-static void menu_cb_moveBleft (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
+static void menu_cb_moveBleft (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	my d_startSelection -= my p_arrowScrollStep;
 	if (my d_startSelection < my tmin + 1e-12)
 		my d_startSelection = my tmin;
 	scrollToView (me, 0.5 * (my d_startSelection + my d_endSelection));
 }
 
-static void menu_cb_moveBright (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
+static void menu_cb_moveBright (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	my d_startSelection += my p_arrowScrollStep;
 	if (my d_startSelection > my tmax - 1e-12)
 		my d_startSelection = my tmax;
@@ -859,8 +825,7 @@ static void menu_cb_moveBright (EDITOR_ARGS) {
 	scrollToView (me, 0.5 * (my d_startSelection + my d_endSelection));
 }
 
-static void menu_cb_moveEleft (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
+static void menu_cb_moveEleft (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	my d_endSelection -= my p_arrowScrollStep;
 	if (my d_endSelection < my tmin + 1e-12)
 		my d_endSelection = my tmin;
@@ -872,8 +837,7 @@ static void menu_cb_moveEleft (EDITOR_ARGS) {
 	scrollToView (me, 0.5 * (my d_startSelection + my d_endSelection));
 }
 
-static void menu_cb_moveEright (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
+static void menu_cb_moveEright (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	my d_endSelection += my p_arrowScrollStep;
 	if (my d_endSelection > my tmax - 1e-12)
 		my d_endSelection = my tmax;
@@ -882,13 +846,12 @@ static void menu_cb_moveEright (EDITOR_ARGS) {
 
 /********** GUI CALLBACKS **********/
 
-static void gui_cb_scroll (I, GuiScrollBarEvent event) {
-	iam (FunctionEditor);
+static void gui_cb_scroll (FunctionEditor me, GuiScrollBarEvent event) {
 	if (! my d_graphics) return;   // ignore events during creation
 	double value = GuiScrollBar_getValue (event -> scrollBar);
 	double shift = my tmin + (value - 1) * (my tmax - my tmin) / maximumScrollBarValue - my d_startWindow;
 	bool shifted = shift != 0.0;
-	double oldSliderSize = (my d_endWindow - my d_startWindow) / (my tmax - my tmin) * maximumScrollBarValue - 1;
+	double oldSliderSize = (my d_endWindow - my d_startWindow) / (my tmax - my tmin) * maximumScrollBarValue - 1.0;
 	double newSliderSize = GuiScrollBar_getSliderSize (event -> scrollBar);
 	bool zoomed = newSliderSize != oldSliderSize;
 	#if ! cocoa
@@ -912,7 +875,7 @@ static void gui_cb_scroll (I, GuiScrollBarEvent event) {
 			Graphics_updateWs (my d_graphics);
 		#else
 			/*Graphics_clearWs (my d_graphics);*/
-			drawNow (me);   /* Do not wait for expose event. */
+			drawNow (me);   // do not wait for expose event
 		#endif
 		if (! my group || ! my pref_synchronizedZoomAndScroll ()) return;
 		for (int i = 1; i <= maxGroup; i ++) if (theGroup [i] && theGroup [i] != me) {
@@ -930,16 +893,14 @@ static void gui_cb_scroll (I, GuiScrollBarEvent event) {
 	}
 }
 
-static void gui_checkbutton_cb_group (I, GuiCheckButtonEvent event) {
-	iam (FunctionEditor);
-	(void) event;
+static void gui_checkbutton_cb_group (FunctionEditor me, GuiCheckButtonEvent /* event */) {
 	int i;
 	my group = ! my group;
 	if (my group) {
 		FunctionEditor thee;
 		i = 1; while (theGroup [i]) i ++; theGroup [i] = me;
 		if (++ nGroup == 1) { Graphics_updateWs (my d_graphics); return; }
-		i = 1; while (theGroup [i] == nullptr || theGroup [i] == me) i ++; thee = theGroup [i];
+		i = 1; while (! theGroup [i] || theGroup [i] == me) i ++; thee = theGroup [i];
 		if (my pref_synchronizedZoomAndScroll ()) {
 			my d_startWindow = thy d_startWindow;
 			my d_endWindow = thy d_endWindow;
@@ -976,15 +937,14 @@ static void gui_checkbutton_cb_group (I, GuiCheckButtonEvent event) {
 	if (my group) updateGroup (me);
 }
 
-static void menu_cb_intro (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
+static void menu_cb_intro (FunctionEditor /* me */, EDITOR_ARGS_DIRECT) {
 	Melder_help (U"Intro");
 }
 
 void structFunctionEditor :: v_createMenuItems_file (EditorMenu menu) {
 	FunctionEditor_Parent :: v_createMenuItems_file (menu);
 	EditorMenu_addCommand (menu, U"Preferences...", 0, menu_cb_preferences);
-	EditorMenu_addCommand (menu, U"-- after preferences --", 0, 0);
+	EditorMenu_addCommand (menu, U"-- after preferences --", 0, nullptr);
 }
 
 void structFunctionEditor :: v_createMenuItems_view_timeDomain (EditorMenu menu) {
@@ -1000,7 +960,7 @@ void structFunctionEditor :: v_createMenuItems_view_timeDomain (EditorMenu menu)
 }
 
 void structFunctionEditor :: v_createMenuItems_view_audio (EditorMenu menu) {
-	EditorMenu_addCommand (menu, U"-- play --", 0, 0);
+	EditorMenu_addCommand (menu, U"-- play --", 0, nullptr);
 	EditorMenu_addCommand (menu, U"Audio:", GuiMenu_INSENSITIVE, menu_cb_play /* dummy */);
 	EditorMenu_addCommand (menu, U"Play...", 0, menu_cb_play);
 	EditorMenu_addCommand (menu, U"Play or stop", GuiMenu_TAB, menu_cb_playOrStop);
@@ -1015,7 +975,7 @@ void structFunctionEditor :: v_createMenuItems_view (EditorMenu menu) {
 
 void structFunctionEditor :: v_createMenuItems_query (EditorMenu menu) {
 	FunctionEditor_Parent :: v_createMenuItems_query (menu);
-	EditorMenu_addCommand (menu, U"-- query selection --", 0, 0);
+	EditorMenu_addCommand (menu, U"-- query selection --", 0, nullptr);
 	EditorMenu_addCommand (menu, U"Get start of selection", 0, menu_cb_getB);
 	EditorMenu_addCommand (menu, U"Get begin of selection", Editor_HIDDEN, menu_cb_getB);
 	EditorMenu_addCommand (menu, U"Get cursor", GuiMenu_F6, menu_cb_getCursor);
@@ -1065,7 +1025,7 @@ static void gui_drawingarea_cb_expose (FunctionEditor me, GuiDrawingArea_ExposeE
 static void gui_drawingarea_cb_click (FunctionEditor me, GuiDrawingArea_ClickEvent event) {
 	if (! my d_graphics) return;   // could be the case in the very beginning
 	my shiftKeyPressed = event -> shiftKeyPressed;
-	Graphics_setWindow (my d_graphics, my functionViewerLeft, my functionViewerRight, 0, my height);
+	Graphics_setWindow (my d_graphics, my functionViewerLeft, my functionViewerRight, 0.0, my height);
 	double xWC, yWC;
 	Graphics_DCtoWC (my d_graphics, event -> x, event -> y, & xWC, & yWC);
 
@@ -1109,7 +1069,7 @@ static void gui_drawingarea_cb_click (FunctionEditor me, GuiDrawingArea_ClickEve
 		}
 		if (needsUpdate) updateGroup (me);
 	}
-	else   /* Clicked outside signal region? Let us hear it. */
+	else   // clicked outside signal region? Let us hear it
 	{
 		try {
 			for (int i = 0; i < 8; i ++) {
@@ -1233,7 +1193,7 @@ static void drawWhileDragging (FunctionEditor me, double x1, double x2) {
 	Graphics_xorOff (my d_graphics);
 }
 
-int structFunctionEditor :: v_click (double xbegin, double ybegin, bool a_shiftKeyPressed) {
+bool structFunctionEditor :: v_click (double xbegin, double ybegin, bool a_shiftKeyPressed) {
 	bool drag = false;
 	double x = xbegin, y = ybegin;
 
@@ -1245,7 +1205,7 @@ int structFunctionEditor :: v_click (double xbegin, double ybegin, bool a_shiftK
 	 * Another example: if she shift-clicks near E, B will become (and stay) the anchor.
 	 */
 
-	Graphics_setWindow (d_graphics, d_startWindow, d_endWindow, 0, 1);
+	Graphics_setWindow (our d_graphics, our d_startWindow, our d_endWindow, 0, 1);
 
 	double anchorForDragging = xbegin;   // the default (for if the shift key isn't pressed)
 	if (a_shiftKeyPressed) {
@@ -1254,18 +1214,18 @@ int structFunctionEditor :: v_click (double xbegin, double ybegin, bool a_shiftK
 		 * We should always end up with a real selection (B < E),
 		 * even if we start with the reversed temporal order (E < B).
 		 */
-		bool reversed = d_startSelection > d_endSelection;
-		double firstMark = reversed ? d_endSelection : d_startSelection;
-		double secondMark = reversed ? d_startSelection : d_endSelection;
+		bool reversed = our d_startSelection > our d_endSelection;
+		double firstMark = reversed ? our d_endSelection : our d_startSelection;
+		double secondMark = reversed ? our d_startSelection : our d_endSelection;
 		/*
 		 * Undraw the old selection.
 		 */
-		if (d_endSelection > d_startSelection) {
+		if (our d_endSelection > our d_startSelection) {
 			/*
 			 * Determine the visible part of the old selection.
 			 */
-			double startVisible = d_startSelection > d_startWindow ? d_startSelection : d_startWindow;
-			double endVisible = d_endSelection < d_endWindow ? d_endSelection : d_endWindow;
+			double startVisible = our d_startSelection > our d_startWindow ? our d_startSelection : our d_startWindow;
+			double endVisible = our d_endSelection < our d_endWindow ? our d_endSelection : our d_endWindow;
 			/*
 			 * Undraw the visible part of the old selection.
 			 */
@@ -1278,14 +1238,14 @@ int structFunctionEditor :: v_click (double xbegin, double ybegin, bool a_shiftK
 		 	/*
 			 * She clicked right from the second mark (usually E). We move E.
 			 */
-			d_endSelection = xbegin;
-			anchorForDragging = d_startSelection;
+			our d_endSelection = xbegin;
+			anchorForDragging = our d_startSelection;
 		} else if (xbegin <= firstMark) {
 		 	/*
 			 * She clicked left from the first mark (usually B). We move B.
 			 */
-			d_startSelection = xbegin;
-			anchorForDragging = d_endSelection;
+			our d_startSelection = xbegin;
+			anchorForDragging = our d_endSelection;
 		} else {
 			/*
 			 * She clicked in between the two marks. We move the nearest mark.
@@ -1299,45 +1259,45 @@ int structFunctionEditor :: v_click (double xbegin, double ybegin, bool a_shiftK
 				/*
 				 * Swap B and E.
 				 */
-				d_startSelection = firstMark;
-				d_endSelection = secondMark;
+				our d_startSelection = firstMark;
+				our d_endSelection = secondMark;
 			}
 			/*
 			 * Move the nearest mark.
 			 */
 			if (distanceOfClickToFirstMark < distanceOfClickToSecondMark) {
-				d_startSelection = xbegin;
-				anchorForDragging = d_endSelection;
+				our d_startSelection = xbegin;
+				anchorForDragging = our d_endSelection;
 			} else {
-				d_endSelection = xbegin;
-				anchorForDragging = d_startSelection;
+				our d_endSelection = xbegin;
+				anchorForDragging = our d_startSelection;
 			}
 		}
 		/*
 		 * Draw the new selection.
 		 */
-		if (d_endSelection > d_startSelection) {
+		if (our d_endSelection > our d_startSelection) {
 			/*
 			 * Determine the visible part of the new selection.
 			 */
-			double startVisible = d_startSelection > d_startWindow ? d_startSelection : d_startWindow;
-			double endVisible = d_endSelection < d_endWindow ? d_endSelection : d_endWindow;
+			double startVisible = our d_startSelection > our d_startWindow ? our d_startSelection : our d_startWindow;
+			double endVisible = our d_endSelection < our d_endWindow ? our d_endSelection : our d_endWindow;
 			/*
 			 * Draw the visible part of the new selection.
 			 */
 			if (endVisible > startVisible)
-				v_highlightSelection (startVisible, endVisible, 0, 1);
+				v_highlightSelection (startVisible, endVisible, 0.0, 1.0);
 		}
 	}
 	/*
 	 * Find out whether this is a click or a drag.
 	 */
     
-	while (Graphics_mouseStillDown (d_graphics)) {
-		Graphics_getMouseLocation (d_graphics, & x, & y);
-		if (x < d_startWindow) x = d_startWindow;
-		if (x > d_endWindow) x = d_endWindow;
-		if (fabs (Graphics_dxWCtoMM (d_graphics, x - xbegin)) > 1.5) {
+	while (Graphics_mouseStillDown (our d_graphics)) {
+		Graphics_getMouseLocation (our d_graphics, & x, & y);
+		if (x < our d_startWindow) x = our d_startWindow;
+		if (x > our d_endWindow) x = our d_endWindow;
+		if (fabs (Graphics_dxWCtoMM (our d_graphics, x - xbegin)) > 1.5) {
 			drag = true;
 			break;
 		}
@@ -1347,22 +1307,22 @@ int structFunctionEditor :: v_click (double xbegin, double ybegin, bool a_shiftK
 		/*
 		 * First undraw the old selection.
 		 */
-		if (d_endSelection > d_startSelection) {
+		if (our d_endSelection > our d_startSelection) {
 			/*
 			 * Determine the visible part of the old selection.
 			 */
-			double startVisible = d_startSelection > d_startWindow ? d_startSelection : d_startWindow;
-			double endVisible = d_endSelection < d_endWindow ? d_endSelection : d_endWindow;
+			double startVisible = our d_startSelection > our d_startWindow ? our d_startSelection : our d_startWindow;
+			double endVisible = our d_endSelection < our d_endWindow ? our d_endSelection : our d_endWindow;
 			/*
 			 * Undraw the visible part of the old selection.
 			 */
 			if (endVisible > startVisible)
-				v_unhighlightSelection (startVisible, endVisible, 0, 1);
+				v_unhighlightSelection (startVisible, endVisible, 0.0, 1.0);
 		}
 		/*
 		 * Draw the text at least once.
 		 */
-		/*if (x < d_startWindow) x = d_startWindow; else if (x > d_endWindow) x = d_endWindow;*/
+		/*if (x < our d_startWindow) x = our d_startWindow; else if (x > our d_endWindow) x = our d_endWindow;*/
         drawWhileDragging (this, anchorForDragging, x);
 		/*
 		 * Draw the dragged selection at least once.
@@ -1370,7 +1330,7 @@ int structFunctionEditor :: v_click (double xbegin, double ybegin, bool a_shiftK
 		{
 			double x1, x2;
 			if (x > anchorForDragging) x1 = anchorForDragging, x2 = x; else x1 = x, x2 = anchorForDragging;
-			v_highlightSelection (x1, x2, 0, 1);
+			v_highlightSelection (x1, x2, 0.0, 1.0);
 		}
 		/*
 		 * Drag for the new selection.
@@ -1379,11 +1339,11 @@ int structFunctionEditor :: v_click (double xbegin, double ybegin, bool a_shiftK
 		while (Graphics_mouseStillDown (d_graphics))
 		{
 			double xold = x, x1, x2;
-			Graphics_getMouseLocation (d_graphics, & x, & y);
+			Graphics_getMouseLocation (our d_graphics, & x, & y);
 			/*
 			 * Clip to the visible window. Ideally, we should perform autoscrolling instead, though...
 			 */
-			if (x < d_startWindow) x = d_startWindow; else if (x > d_endWindow) x = d_endWindow;
+			if (x < our d_startWindow) x = our d_startWindow; else if (x > our d_endWindow) x = our d_endWindow;
             
 			if (x == xold)
 				continue;
@@ -1392,7 +1352,7 @@ int structFunctionEditor :: v_click (double xbegin, double ybegin, bool a_shiftK
 			 * Undraw previous dragged selection.
 			 */
 			if (xold > anchorForDragging) x1 = anchorForDragging, x2 = xold; else x1 = xold, x2 = anchorForDragging;
-			if (x1 != x2) v_unhighlightSelection (x1, x2, 0, 1);
+			if (x1 != x2) v_unhighlightSelection (x1, x2, 0.0, 1.0);
 			/*
 			 * Undraw the text.
 			 */
@@ -1405,51 +1365,49 @@ int structFunctionEditor :: v_click (double xbegin, double ybegin, bool a_shiftK
 			 * Draw new dragged selection.
 			 */
 			if (x > anchorForDragging) x1 = anchorForDragging, x2 = x; else x1 = x, x2 = anchorForDragging;
-			if (x1 != x2) v_highlightSelection (x1, x2, 0, 1);
+			if (x1 != x2) v_highlightSelection (x1, x2, 0.0, 1.0);
         } ;
 		/*
 		 * Set the new selection.
 		 */
-		if (x > anchorForDragging) d_startSelection = anchorForDragging, d_endSelection = x;
-		else d_startSelection = x, d_endSelection = anchorForDragging;
+		if (x > anchorForDragging) our d_startSelection = anchorForDragging, our d_endSelection = x;
+		else our d_startSelection = x, our d_endSelection = anchorForDragging;
 	} else if (! a_shiftKeyPressed) {
 		/*
 		 * Move the cursor to the clicked position.
 		 */
-		d_startSelection = d_endSelection = xbegin;
+		our d_startSelection = our d_endSelection = xbegin;
 	}
 	return FunctionEditor_UPDATE_NEEDED;
 }
 
-int structFunctionEditor :: v_clickB (double xWC, double yWC) {
-	(void) yWC;
-	d_startSelection = xWC;
-	if (d_startSelection > d_endSelection) {
-		double dummy = d_startSelection;
-		d_startSelection = d_endSelection;
-		d_endSelection = dummy;
+bool structFunctionEditor :: v_clickB (double xWC, double /* yWC */) {
+	our d_startSelection = xWC;
+	if (our d_startSelection > our d_endSelection) {
+		double dummy = our d_startSelection;
+		our d_startSelection = our d_endSelection;
+		our d_endSelection = dummy;
 	}
-	return 1;
+	return FunctionEditor_UPDATE_NEEDED;
 }
 
-int structFunctionEditor :: v_clickE (double xWC, double yWC) {
-	d_endSelection = xWC;
-	(void) yWC;
-	if (d_startSelection > d_endSelection) {
-		double dummy = d_startSelection;
-		d_startSelection = d_endSelection;
-		d_endSelection = dummy;
+bool structFunctionEditor :: v_clickE (double xWC, double /* yWC */) {
+	our d_endSelection = xWC;
+	if (our d_startSelection > our d_endSelection) {
+		double dummy = our d_startSelection;
+		our d_startSelection = our d_endSelection;
+		our d_endSelection = dummy;
 	}
-	return 1;
+	return FunctionEditor_UPDATE_NEEDED;
 }
 
 void FunctionEditor_insetViewport (FunctionEditor me) {
 	Graphics_setViewport (my d_graphics, my functionViewerLeft + MARGIN, my functionViewerRight - MARGIN,
 		BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
-	Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, 0, 1);
+	Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, 0.0, 1.0);
 }
 
-int structFunctionEditor :: v_playCallback (int phase, double a_tmin, double a_tmax, double t) {
+int structFunctionEditor :: v_playCallback (int phase, double /* a_tmin */, double a_tmax, double t) {
 	/*
 	 * This callback will often be called by the Melder workproc during playback.
 	 * However, it will sometimes be called by Melder_stopPlaying with phase=3.
@@ -1457,28 +1415,27 @@ int structFunctionEditor :: v_playCallback (int phase, double a_tmin, double a_t
 	 * So we had better make no assumptions about the current viewport.
 	 */
 	double x1NDC, x2NDC, y1NDC, y2NDC;
-	(void) a_tmin;
-	Graphics_inqViewport (d_graphics, & x1NDC, & x2NDC, & y1NDC, & y2NDC);
+	Graphics_inqViewport (our d_graphics, & x1NDC, & x2NDC, & y1NDC, & y2NDC);
 	FunctionEditor_insetViewport (this);
-	Graphics_xorOn (d_graphics, Graphics_MAROON);
+	Graphics_xorOn (our d_graphics, Graphics_MAROON);
 	/*
 	 * Undraw the play cursor at its old location.
 	 * BUG: during scrolling, zooming, and exposure, an ugly line may remain.
 	 */
-	if (phase != 1 && playCursor >= d_startWindow && playCursor <= d_endWindow) {
-		Graphics_setLineWidth (d_graphics, 3.0);
-		Graphics_line (d_graphics, playCursor, 0, playCursor, 1);
-		Graphics_setLineWidth (d_graphics, 1.0);
+	if (phase != 1 && playCursor >= our d_startWindow && playCursor <= our d_endWindow) {
+		Graphics_setLineWidth (our d_graphics, 3.0);
+		Graphics_line (our d_graphics, playCursor, 0.0, playCursor, 1.0);
+		Graphics_setLineWidth (our d_graphics, 1.0);
 	}
 	/*
 	 * Draw the play cursor at its new location.
 	 */
-	if (phase != 3 && t >= d_startWindow && t <= d_endWindow) {
-		Graphics_setLineWidth (d_graphics, 3.0);
-		Graphics_line (d_graphics, t, 0, t, 1);
-		Graphics_setLineWidth (d_graphics, 1.0);
+	if (phase != 3 && t >= our d_startWindow && t <= our d_endWindow) {
+		Graphics_setLineWidth (our d_graphics, 3.0);
+		Graphics_line (our d_graphics, t, 0.0, t, 1.0);
+		Graphics_setLineWidth (our d_graphics, 1.0);
 	}
-	Graphics_xorOff (d_graphics);
+	Graphics_xorOff (our d_graphics);
 	/*
 	 * Usually, there will be an event test after each invocation of this callback,
 	 * because the asynchronicity is kMelder_asynchronicityLevel_INTERRUPTABLE or kMelder_asynchronicityLevel_ASYNCHRONOUS.
@@ -1487,15 +1444,15 @@ int structFunctionEditor :: v_playCallback (int phase, double a_tmin, double a_t
 	 * Which means: no automatic flushing of graphics output.
 	 * So: we force the flushing ourselves, lest we see too few moving cursors.
 	 */
-	Graphics_flushWs (d_graphics);
-	Graphics_setViewport (d_graphics, x1NDC, x2NDC, y1NDC, y2NDC);
+	Graphics_flushWs (our d_graphics);
+	Graphics_setViewport (our d_graphics, x1NDC, x2NDC, y1NDC, y2NDC);
 	playCursor = t;
 	if (phase == 3) {
 		if (t < a_tmax && MelderAudio_stopWasExplicit ()) {
-			if (t > d_startSelection && t < d_endSelection)
-				d_startSelection = t;
+			if (t > our d_startSelection && t < our d_endSelection)
+				our d_startSelection = t;
 			else
-				d_startSelection = d_endSelection = t;
+				our d_startSelection = our d_endSelection = t;
 			v_updateText ();
 			/*Graphics_updateWs (d_graphics);*/ drawNow (this);
 			updateGroup (this);

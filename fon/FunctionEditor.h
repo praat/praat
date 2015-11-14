@@ -95,7 +95,7 @@ Thing_define (FunctionEditor, Editor) {
 		/*
 		 * Message: "the user clicked in one of the rectangles above or below the data window."
 		 */
-	virtual int v_click (double xWC, double yWC, bool shiftKeyPressed);
+	virtual bool v_click (double xWC, double yWC, bool shiftKeyPressed);
 		/*
 		 * Message: "the user clicked in data window with the left mouse button."
 		 * 'xWC' is the time;
@@ -111,8 +111,8 @@ Thing_define (FunctionEditor, Editor) {
 		 * Behaviour of FunctionEditor::click ():
 		 *    moves the cursor to 'xWC', drags to create a selection, or extends the selection.
 		 */
-	virtual int v_clickB (double xWC, double yWC);
-	virtual int v_clickE (double xWC, double yWC);
+	virtual bool v_clickB (double xWC, double yWC);
+	virtual bool v_clickE (double xWC, double yWC);
 	virtual int v_playCallback (int phase, double tmin, double tmax, double t);
 	virtual void v_updateText () { }
 	virtual void v_prefs_addFields (EditorCommand) { }
@@ -161,8 +161,8 @@ int theFunctionEditor_playCallback (void *void_me, int phase, double tmin, doubl
 */
 
 
-#define FunctionEditor_UPDATE_NEEDED  1
-#define FunctionEditor_NO_UPDATE_NEEDED  0
+#define FunctionEditor_UPDATE_NEEDED  true
+#define FunctionEditor_NO_UPDATE_NEEDED  false
 
 void FunctionEditor_init (FunctionEditor me, const char32 *title, Function data);
 /*

@@ -28,24 +28,25 @@
 #include "Thing.h"
 #include "Collection.h"
 
+Thing_declare (Command);
+
+typedef MelderCallback<int, structCommand> Command_Callback;
+
 Thing_define (Command, Thing) {
-	// new data:
-	public:
-		Any data;
-		int (*execute) (I);
-		int (*undo) (I);
+	Thing boss;
+	Command_Callback execute;
+	Command_Callback undo;
 };
 
-void Command_init (Command me, const char32 *name, Any data, int (*execute)(Any), int (*undo)(Any));
+void Command_init (Command me, const char32 *name, Thing boss, Command_Callback execute, Command_Callback undo);
+
 	
 int Command_do (Command me);
 
 int Command_undo (Command me);
 
 Thing_define (CommandHistory, Ordered) {
-	// new data:
-	public:
-		long current;
+	long current;
 };
 
 /* Active data structure. 'current' is position of the cursor in the list */
