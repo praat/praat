@@ -478,7 +478,7 @@ void Distances_to_Configuration_ytl (Distances me, int numberOfDimensions, int n
 	F.W. Young, Y. Takane & R. Lewyckyj (1978), Three notes on ALSCAL,
 	Psychometrika 43, 433-435.
 
-	 w: numberOfSources x numberOfDimensions or NULL
+	 w: numberOfSources x numberOfDimensions or null
 */
 
 autoDistances Configurations_to_Distances (Configurations me);

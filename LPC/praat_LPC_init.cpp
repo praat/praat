@@ -551,7 +551,7 @@ DO
 	LOOP {
 		iam (PowerCepstrogram);
 		try {
-			Matrix_formula ((Matrix) me, GET_STRING (U"formula"), interpreter, NULL);
+			Matrix_formula ((Matrix) me, GET_STRING (U"formula"), interpreter, nullptr);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the PowerCepstrogram may have partially changed
@@ -1229,7 +1229,7 @@ extern void praat_TimeTier_query_init (ClassInfo klas);
 extern void praat_TimeTier_modify_init (ClassInfo klas);
 void praat_uvafon_LPC_init ();
 void praat_uvafon_LPC_init () {
-	Thing_recognizeClassesByName (classCepstrumc, classPowerCepstrum, classCepstrogram, classPowerCepstrogram, classLPC, classLFCC, classMFCC, classVocalTractTier, NULL);
+	Thing_recognizeClassesByName (classCepstrumc, classPowerCepstrum, classCepstrogram, classPowerCepstrogram, classLPC, classLFCC, classMFCC, classVocalTractTier, nullptr);
 
 	praat_addAction1 (classPowerCepstrum, 0, U"PowerCepstrum help", 0, 0, DO_PowerCepstrum_help);
 	praat_addAction1 (classPowerCepstrum, 0, U"Draw...", 0, 0, DO_PowerCepstrum_draw);

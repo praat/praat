@@ -62,7 +62,7 @@
 	true, kGraphicsPostscript_fontChoiceStrategy_DEFAULT,
 	600, 5100, 6600,
 	1.0,
-	NULL
+	nullptr
 };
 
 void Printer_prefs () {
@@ -109,7 +109,7 @@ void Printer_prefs () {
 				theLine.chars [length + 3] = '\0';
 				length ++;
 			}
-			Escape (theWinDC, POSTSCRIPT_PASSTHROUGH, length + 2, theLine.chars, NULL);
+			Escape (theWinDC, POSTSCRIPT_PASSTHROUGH, length + 2, theLine.chars, nullptr);
 		#elif defined (macintosh)
 			if (! theLine) {
 				theLine = NewHandle (3000);
@@ -132,7 +132,7 @@ void Printer_prefs () {
 		/*
 		 * Save the driver's state.
 		 */
-		Printer_postScript_printf (NULL, "/PraatPictureSaveObject save def\n");
+		Printer_postScript_printf (nullptr, "/PraatPictureSaveObject save def\n");
 		/*
 		 * The LaserWriter driver puts the coordinates upside down.
 		 * According to the PostScript Reference Manual,
@@ -144,13 +144,13 @@ void Printer_prefs () {
 		 or whatever it is.
 		 */
 		#if 1
-		Printer_postScript_printf (NULL, "initmatrix initclip\n");
+		Printer_postScript_printf (nullptr, "initmatrix initclip\n");
 		#else
-Printer_postScript_printf (NULL, "8 8 scale initclip\n");
+Printer_postScript_printf (nullptr, "8 8 scale initclip\n");
 		#endif
 	}
 	static void exitPostScriptPage () {
-		Printer_postScript_printf (NULL, "PraatPictureSaveObject restore\n");
+		Printer_postScript_printf (nullptr, "PraatPictureSaveObject restore\n");
 	}
 #endif
 
@@ -203,7 +203,7 @@ void Printer_nextPage () {
 		}
 	#elif defined (macintosh)
 		PMSessionEndPage (theMacPrintSession);
-		PMSessionBeginPage (theMacPrintSession, theMacPageFormat, NULL);
+		PMSessionBeginPage (theMacPrintSession, theMacPageFormat, nullptr);
 		PMSessionGetGraphicsContext (theMacPrintSession, kPMGraphicsContextQuickdraw, (void **) & theMacPort);
 		SetPort (theMacPort);
 		SetOrigin (- paperSize. left, - paperSize. top);
@@ -254,7 +254,7 @@ int Printer_postScriptSettings () {
 	static UiForm dia;
 	if (! dia) {
 		Any radio;
-		dia = UiForm_create (theCurrentPraatApplication -> topShell, U"PostScript settings", DO_Printer_postScriptSettings, NULL, U"PostScript settings...", U"PostScript settings...");
+		dia = UiForm_create (theCurrentPraatApplication -> topShell, U"PostScript settings", DO_Printer_postScriptSettings, nullptr, U"PostScript settings...", U"PostScript settings...");
 		#if defined (_WIN32)
 			BOOLEAN (U"Allow direct PostScript", true);
 		#endif
@@ -320,7 +320,7 @@ int Printer_postScriptSettings () {
 	- (void) drawRect: (NSRect) dirtyRect {
 		trace (U"printing ", dirtyRect. origin. x, U" ", dirtyRect. origin. y, U" ", dirtyRect. size. width, U" ", dirtyRect. size. height);
 		int currentPage = [[NSPrintOperation currentOperation] currentPage];
-		thePrinter. graphics = Graphics_create_screenPrinter (NULL, self);
+		thePrinter. graphics = Graphics_create_screenPrinter (nullptr, self);
 		theDraw (theBoss, thePrinter. graphics);
 		forget (thePrinter. graphics);
 	}
@@ -398,7 +398,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 						runOperationModalForWindow: [pictureView window]
 						delegate: cocoaPrintingArea
 						didRunSelector: @selector(printOperationDidRun:success:contextInfo:)
-						contextInfo: NULL
+						contextInfo: nil
 					];
 				}
 			#endif
@@ -425,7 +425,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 			}
 			theWinDC = theWinPrint. hDC;
 			thePrinter. postScript = thePrinter. allowDirectPostScript &&
-				Escape (theWinDC, QUERYESCSUPPORT, sizeof (int), (LPSTR) & postScriptCode, NULL);
+				Escape (theWinDC, QUERYESCSUPPORT, sizeof (int), (LPSTR) & postScriptCode, nullptr);
 			/*
 			 * The HP colour inkjet printer returns in dmFields:
 			 * 0, 1, 8, 9, 10, 11, 12, 13, 14, 15, 23, 24, 25, 26 = DM_ORIENTATION |
@@ -465,7 +465,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 			memset (& docInfo, 0, sizeof (DOCINFO));
 			docInfo. cbSize = sizeof (DOCINFO);
 			docInfo. lpszDocName = L"Praatjes";
-			docInfo. lpszOutput = NULL;
+			docInfo. lpszOutput = nullptr;
 			if (thePrinter. postScript) {
 				StartDoc (theWinDC, & docInfo);
 				StartPage (theWinDC);
@@ -479,7 +479,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 			} else {
 				StartDoc (theWinDC, & docInfo);
 				StartPage (theWinDC);
-				thePrinter. graphics = Graphics_create_screenPrinter (NULL, theWinDC);
+				thePrinter. graphics = Graphics_create_screenPrinter (nullptr, theWinDC);
 				draw (boss, thePrinter. graphics);
 				forget (thePrinter. graphics);
 				if (EndPage (theWinDC) < 0) {
@@ -489,7 +489,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 				}
 			}
 			EnableWindow ((HWND) XtWindow (theCurrentPraatApplication -> topShell -> d_xmShell), true);
-			DeleteDC (theWinDC), theWinDC = NULL;
+			DeleteDC (theWinDC), theWinDC = nullptr;
 		#elif defined (macintosh)
 			Boolean result;
 			initPrinter ();
@@ -515,7 +515,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 			thePrinter. orientation = orientation == kPMLandscape ||
 				orientation == kPMReverseLandscape ? kGraphicsPostscript_orientation_LANDSCAPE : kGraphicsPostscript_orientation_PORTRAIT;
 			PMSessionBeginDocument (theMacPrintSession, theMacPrintSettings, theMacPageFormat);
-			PMSessionBeginPage (theMacPrintSession, theMacPageFormat, NULL);
+			PMSessionBeginPage (theMacPrintSession, theMacPageFormat, nullptr);
 			PMSessionGetGraphicsContext (theMacPrintSession, kPMGraphicsContextQuickdraw, (void **) & theMacPort);
 			/*
 			 * On PostScript, the point (0, 0) is the bottom left corner of the paper, which is fine.
@@ -530,13 +530,13 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 			 */
 			SetPort (theMacPort);
 			SetOrigin (- paperSize. left, - paperSize. top);
-			thePrinter. graphics = Graphics_create_screenPrinter (NULL, theMacPort);
+			thePrinter. graphics = Graphics_create_screenPrinter (nullptr, theMacPort);
 			draw (boss, thePrinter. graphics);
 			forget (thePrinter. graphics);
 			if (theMacPort) {
 				PMSessionEndPage (theMacPrintSession);
 				PMSessionEndDocument (theMacPrintSession);
-				theMacPort = NULL;
+				theMacPort = nullptr;
 			}
 		#endif
 		return 1;
@@ -546,7 +546,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 			if (theMacPort) {
 				PMSessionEndPage (theMacPrintSession);
 				PMSessionEndDocument (theMacPrintSession);
-				theMacPort = NULL;
+				theMacPort = nullptr;
 			}
 		#endif
 		Melder_throw (U"Not printed.");

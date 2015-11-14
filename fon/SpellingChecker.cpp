@@ -226,12 +226,12 @@ char32 * SpellingChecker_nextNotAllowedWord (SpellingChecker me, const char32 *s
 	const char32 *p = sentence + *start;
 	for (;;) {
 		if (*p == U'\0') {
-			return NULL;   // all words allowed
+			return nullptr;   // all words allowed
 		} else if (*p == U'(' && my allowAllParenthesized) {
 			p ++;
 			for (;;) {
 				if (*p == U'\0') {
-					return NULL;   // everything is parenthesized...
+					return nullptr;   // everything is parenthesized...
 				} else if (*p == U')') {
 					p ++;
 					break;
@@ -260,7 +260,7 @@ char32 * SpellingChecker_nextNotAllowedWord (SpellingChecker me, const char32 *s
 			}
 		}
 	}
-	return NULL;   // all words allowed
+	return nullptr;   // all words allowed
 }
 
 /* End of file SpellingChecker.cpp */

@@ -243,7 +243,7 @@ static void do_log (TimeSoundAnalysisEditor me, int which) {
 		char32 *q = p + 1, varName [300], *r, *s, *colon;
 		int precision = -1;
 		double value = NUMundefined;
-		const char32 *stringValue = NULL;
+		const char32 *stringValue = nullptr;
 		while (*q != U'\0' && *q != U'\'') q ++;
 		if (*q == U'\0') break;   /* No matching right quote: done with this line. */
 		if (q - p == 1) continue;   /* Ignore empty variable names. */
@@ -826,7 +826,7 @@ static void menu_cb_moveCursorToMinimumPitch (EDITOR_ARGS) {
 	} else {
 		double time;
 		Pitch_getMinimumAndTime (my d_pitch.get(), my d_startSelection, my d_endSelection,
-			my p_pitch_unit, 1, NULL, & time);
+			my p_pitch_unit, 1, nullptr, & time);
 		if (! NUMdefined (time))
 			Melder_throw (U"Selection is voiceless.");
 		my d_startSelection = my d_endSelection = time;
@@ -847,7 +847,7 @@ static void menu_cb_moveCursorToMaximumPitch (EDITOR_ARGS) {
 	} else {
 		double time;
 		Pitch_getMaximumAndTime (my d_pitch.get(), my d_startSelection, my d_endSelection,
-			my p_pitch_unit, 1, NULL, & time);
+			my p_pitch_unit, 1, nullptr, & time);
 		if (! NUMdefined (time))
 			Melder_throw (U"Selection is voiceless.");
 		my d_startSelection = my d_endSelection = time;
@@ -1343,7 +1343,7 @@ static void menu_cb_drawVisiblePulses (EDITOR_ARGS) {
 
 static void menu_cb_voiceReport (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
-	time_t today = time (NULL);
+	time_t today = time (nullptr);
 	double tmin, tmax;
 	int part = makeQueriable (me, false, & tmin, & tmax);
 	if (! my p_pulses_show)
@@ -1399,7 +1399,7 @@ static void cb_getJitter_xx (TimeSoundAnalysisEditor me, double (*PointProcess_g
 		Melder_throw (U"Make a selection first.");
 	makeQueriable
 	Melder_informationReal (PointProcess_getJitter_xx (my d_pulses, my startSelection, my endSelection,
-		minimumPeriod, maximumPeriod, my p_pulses_maximumPeriodFactor), NULL);
+		minimumPeriod, maximumPeriod, my p_pulses_maximumPeriodFactor), nullptr);
 }
 DIRECT (TimeSoundAnalysisEditor, cb_getJitter_local) cb_getJitter_xx (me, PointProcess_getJitter_local); END
 DIRECT (TimeSoundAnalysisEditor, cb_getJitter_local_absolute) cb_getJitter_xx (me, PointProcess_getJitter_local_absolute); END
@@ -1420,7 +1420,7 @@ static void cb_getShimmer_xx (TimeSoundAnalysisEditor me, double (*PointProcess_
 	makeQueriable
 	autoSound sound = extractSound (me, my startSelection, my endSelection);
 	Melder_informationReal (PointProcess_Sound_getShimmer_xx (my d_pulses, sound, my startSelection, my endSelection,
-		minimumPeriod, maximumPeriod, my p_pulses_maximumAmplitudeFactor), NULL);
+		minimumPeriod, maximumPeriod, my p_pulses_maximumAmplitudeFactor), nullptr);
 }
 DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_local) cb_getShimmer_xx (me, PointProcess_Sound_getShimmer_local); END
 DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_local_dB) cb_getShimmer_xx (me, PointProcess_Sound_getShimmer_local_dB); END
@@ -1450,7 +1450,7 @@ void structTimeSoundAnalysisEditor :: v_createMenuItems_query (EditorMenu menu) 
 }
 
 void structTimeSoundAnalysisEditor :: v_createMenuItems_query_log (EditorMenu menu) {
-	EditorMenu_addCommand (menu, U"-- query log --", 0, NULL);
+	EditorMenu_addCommand (menu, U"-- query log --", 0, nullptr);
 	EditorMenu_addCommand (menu, U"Log settings...", 0, menu_cb_logSettings);
 	EditorMenu_addCommand (menu, U"Delete log file 1", 0, menu_cb_deleteLogFile1);
 	EditorMenu_addCommand (menu, U"Delete log file 2", 0, menu_cb_deleteLogFile2);
@@ -1469,15 +1469,15 @@ void structTimeSoundAnalysisEditor :: v_createMenus_analysis () {
 			GuiMenu_CHECKBUTTON | (pref_spectrogram_show () ? GuiMenu_TOGGLE_ON : 0), menu_cb_showSpectrogram);
 		EditorMenu_addCommand (menu, U"Spectrogram settings...", 0, menu_cb_spectrogramSettings);
 		EditorMenu_addCommand (menu, U"Advanced spectrogram settings...", 0, menu_cb_advancedSpectrogramSettings);
-		EditorMenu_addCommand (menu, U"-- spectrum query --", 0, NULL);
+		EditorMenu_addCommand (menu, U"-- spectrum query --", 0, nullptr);
 		EditorMenu_addCommand (menu, U"Query:", GuiMenu_INSENSITIVE, menu_cb_getFrequency /* dummy */);
 		EditorMenu_addCommand (menu, U"Get frequency at frequency cursor", 0, menu_cb_getFrequency);
 		EditorMenu_addCommand (menu, U"Get spectral power at cursor cross", GuiMenu_F7, menu_cb_getSpectralPowerAtCursorCross);
-		EditorMenu_addCommand (menu, U"-- spectrum select --", 0, NULL);
+		EditorMenu_addCommand (menu, U"-- spectrum select --", 0, nullptr);
 		EditorMenu_addCommand (menu, U"Select:", GuiMenu_INSENSITIVE, menu_cb_moveFrequencyCursorTo/* dummy */);
 		EditorMenu_addCommand (menu, U"Move frequency cursor to...", 0, menu_cb_moveFrequencyCursorTo);
 		v_createMenuItems_spectrum_picture (menu);
-		EditorMenu_addCommand (menu, U"-- spectrum extract --", 0, NULL);
+		EditorMenu_addCommand (menu, U"-- spectrum extract --", 0, nullptr);
 		EditorMenu_addCommand (menu, U"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisibleSpectrogram /* dummy */);
 		EditorMenu_addCommand (menu, U"Extract visible spectrogram", 0, menu_cb_extractVisibleSpectrogram);
 		EditorMenu_addCommand (menu, U"View spectral slice", 'L', menu_cb_viewSpectralSlice);
@@ -1489,18 +1489,18 @@ void structTimeSoundAnalysisEditor :: v_createMenus_analysis () {
 			GuiMenu_CHECKBUTTON | (pref_pitch_show () ? GuiMenu_TOGGLE_ON : 0), menu_cb_showPitch);
 		EditorMenu_addCommand (menu, U"Pitch settings...", 0, menu_cb_pitchSettings);
 		EditorMenu_addCommand (menu, U"Advanced pitch settings...", 0, menu_cb_advancedPitchSettings);
-		EditorMenu_addCommand (menu, U"-- pitch query --", 0, NULL);
+		EditorMenu_addCommand (menu, U"-- pitch query --", 0, nullptr);
 		EditorMenu_addCommand (menu, U"Query:", GuiMenu_INSENSITIVE, menu_cb_getFrequency /* dummy */);
 		EditorMenu_addCommand (menu, U"Pitch listing", 0, menu_cb_pitchListing);
 		EditorMenu_addCommand (menu, U"Get pitch", GuiMenu_F5, menu_cb_getPitch);
 		EditorMenu_addCommand (menu, U"Get minimum pitch", GuiMenu_F5 + GuiMenu_COMMAND, menu_cb_getMinimumPitch);
 		EditorMenu_addCommand (menu, U"Get maximum pitch", GuiMenu_F5 + GuiMenu_SHIFT, menu_cb_getMaximumPitch);
-		EditorMenu_addCommand (menu, U"-- pitch select --", 0, NULL);
+		EditorMenu_addCommand (menu, U"-- pitch select --", 0, nullptr);
 		EditorMenu_addCommand (menu, U"Select:", GuiMenu_INSENSITIVE, menu_cb_moveCursorToMinimumPitch /* dummy */);
 		EditorMenu_addCommand (menu, U"Move cursor to minimum pitch", GuiMenu_COMMAND + GuiMenu_SHIFT + 'L', menu_cb_moveCursorToMinimumPitch);
 		EditorMenu_addCommand (menu, U"Move cursor to maximum pitch", GuiMenu_COMMAND + GuiMenu_SHIFT + 'H', menu_cb_moveCursorToMaximumPitch);
 		v_createMenuItems_pitch_picture (menu);
-		EditorMenu_addCommand (menu, U"-- pitch extract --", 0, NULL);
+		EditorMenu_addCommand (menu, U"-- pitch extract --", 0, nullptr);
 		EditorMenu_addCommand (menu, U"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisiblePitchContour /* dummy */);
 		EditorMenu_addCommand (menu, U"Extract visible pitch contour", 0, menu_cb_extractVisiblePitchContour);
 	}
@@ -1510,14 +1510,14 @@ void structTimeSoundAnalysisEditor :: v_createMenus_analysis () {
 		intensityToggle = EditorMenu_addCommand (menu, U"Show intensity",
 			GuiMenu_CHECKBUTTON | (pref_intensity_show () ? GuiMenu_TOGGLE_ON : 0), menu_cb_showIntensity);
 		EditorMenu_addCommand (menu, U"Intensity settings...", 0, menu_cb_intensitySettings);
-		EditorMenu_addCommand (menu, U"-- intensity query --", 0, NULL);
+		EditorMenu_addCommand (menu, U"-- intensity query --", 0, nullptr);
 		EditorMenu_addCommand (menu, U"Query:", GuiMenu_INSENSITIVE, menu_cb_getFrequency /* dummy */);
 		EditorMenu_addCommand (menu, U"Intensity listing", 0, menu_cb_intensityListing);
 		EditorMenu_addCommand (menu, U"Get intensity", GuiMenu_F8, menu_cb_getIntensity);
 		EditorMenu_addCommand (menu, U"Get minimum intensity", GuiMenu_F8 + GuiMenu_COMMAND, menu_cb_getMinimumIntensity);
 		EditorMenu_addCommand (menu, U"Get maximum intensity", GuiMenu_F8 + GuiMenu_SHIFT, menu_cb_getMaximumIntensity);
 		v_createMenuItems_intensity_picture (menu);
-		EditorMenu_addCommand (menu, U"-- intensity extract --", 0, NULL);
+		EditorMenu_addCommand (menu, U"-- intensity extract --", 0, nullptr);
 		EditorMenu_addCommand (menu, U"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisibleIntensityContour /* dummy */);
 		EditorMenu_addCommand (menu, U"Extract visible intensity contour", 0, menu_cb_extractVisibleIntensityContour);
 	}
@@ -1528,7 +1528,7 @@ void structTimeSoundAnalysisEditor :: v_createMenus_analysis () {
 			GuiMenu_CHECKBUTTON | (pref_formant_show () ? GuiMenu_TOGGLE_ON : 0), menu_cb_showFormants);
 		EditorMenu_addCommand (menu, U"Formant settings...", 0, menu_cb_formantSettings);
 		EditorMenu_addCommand (menu, U"Advanced formant settings...", 0, menu_cb_advancedFormantSettings);
-		EditorMenu_addCommand (menu, U"-- formant query --", 0, NULL);
+		EditorMenu_addCommand (menu, U"-- formant query --", 0, nullptr);
 		EditorMenu_addCommand (menu, U"Query:", GuiMenu_INSENSITIVE, menu_cb_getFrequency /* dummy */);
 		EditorMenu_addCommand (menu, U"Formant listing", 0, menu_cb_formantListing);
 		EditorMenu_addCommand (menu, U"Get first formant", GuiMenu_F1, menu_cb_getFirstFormant);
@@ -1542,7 +1542,7 @@ void structTimeSoundAnalysisEditor :: v_createMenus_analysis () {
 		EditorMenu_addCommand (menu, U"Get formant...", 0, menu_cb_getFormant);
 		EditorMenu_addCommand (menu, U"Get bandwidth...", 0, menu_cb_getBandwidth);
 		v_createMenuItems_formant_picture (menu);
-		EditorMenu_addCommand (menu, U"-- formant extract --", 0, NULL);
+		EditorMenu_addCommand (menu, U"-- formant extract --", 0, nullptr);
 		EditorMenu_addCommand (menu, U"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisibleFormantContour /* dummy */);
 		EditorMenu_addCommand (menu, U"Extract visible formant contour", 0, menu_cb_extractVisibleFormantContour);
 	}
@@ -1552,7 +1552,7 @@ void structTimeSoundAnalysisEditor :: v_createMenus_analysis () {
 		pulsesToggle = EditorMenu_addCommand (menu, U"Show pulses",
 			GuiMenu_CHECKBUTTON | (pref_pulses_show () ? GuiMenu_TOGGLE_ON : 0), menu_cb_showPulses);
 		EditorMenu_addCommand (menu, U"Advanced pulses settings...", 0, menu_cb_advancedPulsesSettings);
-		EditorMenu_addCommand (menu, U"-- pulses query --", 0, NULL);
+		EditorMenu_addCommand (menu, U"-- pulses query --", 0, nullptr);
 		EditorMenu_addCommand (menu, U"Query:", GuiMenu_INSENSITIVE, menu_cb_getFrequency /* dummy */);
 		EditorMenu_addCommand (menu, U"Voice report", 0, menu_cb_voiceReport);
 		EditorMenu_addCommand (menu, U"Pulse listing", 0, menu_cb_pulseListing);
@@ -1570,38 +1570,38 @@ void structTimeSoundAnalysisEditor :: v_createMenus_analysis () {
 		EditorMenu_addCommand (menu, U"Get shimmer (dda)", 0, cb_getShimmer_dda);
 		*/
 		v_createMenuItems_pulses_picture (menu);
-		EditorMenu_addCommand (menu, U"-- pulses extract --", 0, NULL);
+		EditorMenu_addCommand (menu, U"-- pulses extract --", 0, nullptr);
 		EditorMenu_addCommand (menu, U"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisiblePulses /* dummy */);
 		EditorMenu_addCommand (menu, U"Extract visible pulses", 0, menu_cb_extractVisiblePulses);
 	}
 }
 
 void structTimeSoundAnalysisEditor :: v_createMenuItems_spectrum_picture (EditorMenu menu) {
-	EditorMenu_addCommand (menu, U"-- spectrum draw --", 0, NULL);
+	EditorMenu_addCommand (menu, U"-- spectrum draw --", 0, nullptr);
 	EditorMenu_addCommand (menu, U"Draw to picture window:", GuiMenu_INSENSITIVE, menu_cb_paintVisibleSpectrogram /* dummy */);
 	EditorMenu_addCommand (menu, U"Paint visible spectrogram...", 0, menu_cb_paintVisibleSpectrogram);
 }
 
 void structTimeSoundAnalysisEditor :: v_createMenuItems_pitch_picture (EditorMenu menu) {
-	EditorMenu_addCommand (menu, U"-- pitch draw --", 0, NULL);
+	EditorMenu_addCommand (menu, U"-- pitch draw --", 0, nullptr);
 	EditorMenu_addCommand (menu, U"Draw to picture window:", GuiMenu_INSENSITIVE, menu_cb_drawVisiblePitchContour /* dummy */);
 	EditorMenu_addCommand (menu, U"Draw visible pitch contour...", 0, menu_cb_drawVisiblePitchContour);
 }
 
 void structTimeSoundAnalysisEditor :: v_createMenuItems_intensity_picture (EditorMenu menu) {
-	EditorMenu_addCommand (menu, U"-- intensity draw --", 0, NULL);
+	EditorMenu_addCommand (menu, U"-- intensity draw --", 0, nullptr);
 	EditorMenu_addCommand (menu, U"Draw to picture window:", GuiMenu_INSENSITIVE, menu_cb_drawVisibleIntensityContour /* dummy */);
 	EditorMenu_addCommand (menu, U"Draw visible intensity contour...", 0, menu_cb_drawVisibleIntensityContour);
 }
 
 void structTimeSoundAnalysisEditor :: v_createMenuItems_formant_picture (EditorMenu menu) {
-	EditorMenu_addCommand (menu, U"-- formant draw --", 0, NULL);
+	EditorMenu_addCommand (menu, U"-- formant draw --", 0, nullptr);
 	EditorMenu_addCommand (menu, U"Draw to picture window:", GuiMenu_INSENSITIVE, menu_cb_drawVisibleFormantContour /* dummy */);
 	EditorMenu_addCommand (menu, U"Draw visible formant contour...", 0, menu_cb_drawVisibleFormantContour);
 }
 
 void structTimeSoundAnalysisEditor :: v_createMenuItems_pulses_picture (EditorMenu menu) {
-	EditorMenu_addCommand (menu, U"-- pulses draw --", 0, NULL);
+	EditorMenu_addCommand (menu, U"-- pulses draw --", 0, nullptr);
 	EditorMenu_addCommand (menu, U"Draw to picture window:", GuiMenu_INSENSITIVE, menu_cb_drawVisiblePulses /* dummy */);
 	EditorMenu_addCommand (menu, U"Draw visible pulses...", 0, menu_cb_drawVisiblePulses);
 }

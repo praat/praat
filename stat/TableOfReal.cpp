@@ -92,11 +92,11 @@ void structTableOfReal :: v_info () {
 }
 
 const char32 * structTableOfReal :: v_getRowStr (long irow) {
-	if (irow < 1 || irow > numberOfRows) return NULL;
+	if (irow < 1 || irow > numberOfRows) return nullptr;
 	return rowLabels [irow] ? rowLabels [irow] : U"";
 }
 const char32 * structTableOfReal :: v_getColStr (long icol) {
-	if (icol < 1 || icol > numberOfColumns) return NULL;
+	if (icol < 1 || icol > numberOfColumns) return nullptr;
 	return columnLabels [icol] ? columnLabels [icol] : U"";
 }
 double structTableOfReal :: v_getMatrix (long irow, long icol) {
@@ -1016,7 +1016,7 @@ static void TableOfReal_sort (TableOfReal me, bool useLabels, long column1, long
 			} else if (my rowLabels [jrow]) continue;
 		}
 		/*
-		 * If we arrive here, the two labels are equal or both NULL (or useLabels is `false`).
+		 * If we arrive here, the two labels are equal or both null (or useLabels is `false`).
 		 */
 		if (column1 > 0 && column1 <= my numberOfColumns) {
 			if (my data [irow] [column1] < my data [jrow] [column1]) continue;

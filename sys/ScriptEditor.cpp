@@ -293,11 +293,11 @@ void structScriptEditor :: v_createMenus () {
 		Editor_addCommand (this, U"File", U"Add to fixed menu...", 0, menu_cb_addToFixedMenu);
 		Editor_addCommand (this, U"File", U"Add to dynamic menu...", 0, menu_cb_addToDynamicMenu);
 	}
-	Editor_addCommand (this, U"File", U"-- close --", 0, NULL);
-	Editor_addCommand (this, U"Edit", U"-- history --", 0, 0);
+	Editor_addCommand (this, U"File", U"-- close --", 0, nullptr);
+	Editor_addCommand (this, U"Edit", U"-- history --", 0, nullptr);
 	Editor_addCommand (this, U"Edit", U"Clear history", 0, menu_cb_clearHistory);
 	Editor_addCommand (this, U"Edit", U"Paste history", 'H', menu_cb_pasteHistory);
-	Editor_addCommand (this, U"Convert", U"-- expand --", 0, 0);
+	Editor_addCommand (this, U"Convert", U"-- expand --", 0, nullptr);
 	Editor_addCommand (this, U"Convert", U"Expand include files", 0, menu_cb_expandIncludeFiles);
 	Editor_addMenu (this, U"Run", 0);
 	Editor_addCommand (this, U"Run", U"Run", 'R', menu_cb_run);
@@ -312,10 +312,10 @@ void structScriptEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"Praat script", 0, menu_cb_PraatScript);
 	EditorMenu_addCommand (menu, U"Formulas tutorial", 0, menu_cb_FormulasTutorial);
 	EditorMenu_addCommand (menu, U"Demo window", 0, menu_cb_DemoWindow);
-	EditorMenu_addCommand (menu, U"-- help history --", 0, NULL);
+	EditorMenu_addCommand (menu, U"-- help history --", 0, nullptr);
 	EditorMenu_addCommand (menu, U"The History mechanism", 0, menu_cb_TheHistoryMechanism);
 	EditorMenu_addCommand (menu, U"Initialization scripts", 0, menu_cb_InitializationScripts);
-	EditorMenu_addCommand (menu, U"-- help add --", 0, NULL);
+	EditorMenu_addCommand (menu, U"-- help add --", 0, nullptr);
 	EditorMenu_addCommand (menu, U"Adding to a fixed menu", 0, menu_cb_AddingToAFixedMenu);
 	EditorMenu_addCommand (menu, U"Adding to a dynamic menu", 0, menu_cb_AddingToADynamicMenu);
 }

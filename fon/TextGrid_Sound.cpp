@@ -158,7 +158,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 				Sound_extractPart (static_cast <Sound> (anySound), interval -> xmin, interval -> xmax, kSound_windowShape_RECTANGULAR, 1.0, true);
 		autoSpeechSynthesizer synthesizer = SpeechSynthesizer_create (languageName, U"default");
 		double silenceThreshold = -35, minSilenceDuration = 0.1, minSoundingDuration = 0.1;
-		autoTextGrid analysis = NULL;
+		autoTextGrid analysis;
 		if (! Melder_equ (interval -> text, U"")) {
 			try {
 				analysis = SpeechSynthesizer_and_Sound_and_TextInterval_align
@@ -177,7 +177,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 			Thing_cast (IntervalTier, analysisWordTier, analysis -> tier (3));
 			if (! IntervalTier_check (analysisWordTier))
 				Melder_throw (U"Analysis word tier out of order.");
-			IntervalTier_removeEmptyIntervals (analysisWordTier, NULL);
+			IntervalTier_removeEmptyIntervals (analysisWordTier, nullptr);
 			Melder_assert (analysisWordTier -> xmax == analysis -> xmax);
 			Melder_assert (analysisWordTier -> numberOfIntervals () >= 1);
 			TextInterval firstInterval = analysisWordTier -> interval (1);
@@ -203,7 +203,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 				Melder_throw (U"Analysis phoneme tier out of order (2).");
 		}
 		long wordTierNumber = 0, phonemeTierNumber = 0;
-		IntervalTier wordTier = NULL, phonemeTier = NULL;
+		IntervalTier wordTier = nullptr, phonemeTier = nullptr;
 		/*
 		 * Include a word tier.
 		 */
@@ -247,7 +247,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 					Melder_throw (U"Word tier out of order (3).");
 				for (long ianalysisInterval = 1; ianalysisInterval <= analysisWordTier -> numberOfIntervals (); ianalysisInterval ++) {
 					TextInterval analysisInterval = analysisWordTier -> interval (ianalysisInterval);
-					TextInterval wordInterval = NULL;
+					TextInterval wordInterval = nullptr;
 					double tmin = analysisInterval -> xmin, tmax = analysisInterval -> xmax;
 					if (tmax == analysis -> xmax) {
 						wordInterval = wordTier -> interval (wordIntervalNumber);
@@ -305,7 +305,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 				Thing_cast (IntervalTier, analysisPhonemeTier, analysis -> tiers -> item [4]);
 				for (long ianalysisInterval = 1; ianalysisInterval <= analysisPhonemeTier -> numberOfIntervals (); ianalysisInterval ++) {
 					TextInterval analysisInterval = analysisPhonemeTier -> interval (ianalysisInterval);
-					TextInterval phonemeInterval = NULL;
+					TextInterval phonemeInterval = nullptr;
 					double tmin = analysisInterval -> xmin, tmax = analysisInterval -> xmax;
 					if (tmax == analysis -> xmax) {
 						phonemeInterval = phonemeTier -> interval (phonemeIntervalNumber);
@@ -426,7 +426,7 @@ void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, dou
 autoCollection TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, long tierNumber, int preserveTimes) {
 	try {
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
-		autoCollection collection = Collection_create (NULL, tier -> numberOfIntervals ());
+		autoCollection collection = Collection_create (nullptr, tier -> numberOfIntervals ());
 		for (long iseg = 1; iseg <= tier -> numberOfIntervals (); iseg ++) {
 			TextInterval segment = tier -> interval (iseg);
 			autoSound interval = Sound_extractPart (sound, segment -> xmin, segment -> xmax, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes);
@@ -442,7 +442,7 @@ autoCollection TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, lon
 autoCollection TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound, long tierNumber, int preserveTimes) {
 	try {
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
-		autoCollection collection = Collection_create (NULL, tier -> numberOfIntervals ());
+		autoCollection collection = Collection_create (nullptr, tier -> numberOfIntervals ());
 		for (long iseg = 1; iseg <= tier -> numberOfIntervals (); iseg ++) {
 			TextInterval segment = tier -> interval (iseg);
 			if (segment -> text && segment -> text [0] != '\0') {
@@ -463,7 +463,7 @@ autoCollection TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound, l
 {
 	try {
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
-		autoCollection collection = Collection_create (NULL, tier -> numberOfIntervals ());
+		autoCollection collection = Collection_create (nullptr, tier -> numberOfIntervals ());
 		long count = 0;
 		for (long iseg = 1; iseg <= tier -> numberOfIntervals (); iseg ++) {
 			TextInterval segment = tier -> interval (iseg);
@@ -575,7 +575,7 @@ void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, doub
 		Pitch_draw (pitch, g, tmin, tmax, pow (10.0, fmin - 0.25 * (fmax - fmin) * ntier), pow (10.0, fmax), false, speckle, unit);
 	else
 		Pitch_draw (pitch, g, tmin, tmax, fmin - 0.25 * (fmax - fmin) * ntier, fmax, false, speckle, unit);
-	TextGrid_Sound_draw (grid, NULL, g, tmin, tmax, showBoundaries, useTextStyles, false);
+	TextGrid_Sound_draw (grid, nullptr, g, tmin, tmax, showBoundaries, useTextStyles, false);
 	/*
 	 * Restore window for the sake of margin drawing.
 	 */

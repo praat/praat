@@ -594,7 +594,7 @@ DO
 	Pattern thee = FIRST (Pattern);
 	Activation him = FIRST (Activation);
 	return FFNet_Pattern_Activation_learnSM (me, thee, him, GET_INTEGER (U"Maximum number of epochs"),
-		GET_REAL (U"Tolerance of minimizer"), NULL,
+		GET_REAL (U"Tolerance of minimizer"), nullptr,
 		GET_INTEGER (U"Cost function"));
 END
 
@@ -665,7 +665,7 @@ DO
 	Pattern thee = FIRST (Pattern);
 	Categories him = FIRST (Categories);
 	FFNet_Pattern_Categories_learnSM (me, thee, him, GET_INTEGER (U"Maximum number of epochs"),
-		GET_REAL (U"Tolerance of minimizer"), NULL, GET_INTEGER (U"Cost function"));
+		GET_REAL (U"Tolerance of minimizer"), nullptr, GET_INTEGER (U"Cost function"));
 END
 
 FORM (FFNet_Pattern_Categories_learnSD, U"FFNet & Pattern & Categories: Learn slow", U"FFNet & Pattern & Categories: Learn slow...")

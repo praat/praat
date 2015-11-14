@@ -43,7 +43,7 @@ autoCochleagram Sound_to_Cochleagram (Sound me, double dt, double df, double dt_
 		double integrationCorrection = 1.0 - dampingFactor;
 
 		nsamp_window = halfnsamp_window * 2;
-		if (nFrames < 2) return NULL;
+		if (nFrames < 2) return autoCochleagram ();
 		double t1 = my x1 + 0.5 * (duration - my dx - (nFrames - 1) * dt);   // centre of first frame
 		autoCochleagram thee = Cochleagram_create (my xmin, my xmax, nFrames, dt, t1, df, nf);
 		autoSound window = Sound_createSimple (1, nsamp_window * my dx, 1.0 / my dx);
@@ -113,7 +113,7 @@ autoCochleagram Sound_to_Cochleagram_edb
 		double duration_seconds = my xmax;
 		if (dtime < my dx) dtime = my dx;
 		long ntime = lround (duration_seconds / dtime);
-		if (ntime < 2) return NULL;
+		if (ntime < 2) return autoCochleagram ();
 		long nfreq = lround (25.6 / dfreq);   // 25.6 Bark = highest frequency
 
 		autoCochleagram thee = Cochleagram_create (my xmin, my xmax, ntime, dtime, 0.5 * dtime, dfreq, nfreq);

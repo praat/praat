@@ -59,7 +59,7 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 
 	virtual void v_createMenuItems_view_sound (EditorMenu menu);
 	virtual void v_updateMenuItems_file ();
-	virtual const char32 * v_getChannelName (long channelNumber) { (void) channelNumber; return NULL; }
+	virtual const char32 * v_getChannelName (long /* channelNumber */) { return nullptr; }
 
 	#include "TimeSoundEditor_prefs.h"
 };

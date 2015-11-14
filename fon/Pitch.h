@@ -151,7 +151,7 @@ long Pitch_getMeanAbsSlope_noOctave (Pitch me, double *slope);
    'value', 'minimum', 'maximum', and 'mean' are valid if nVoiced >= 1;
    'variance' and 'slope' are valid if nVoiced >= 2.
    Invalid variables are always set to 0.0.
-   'minimum', 'maximum', 'mean', and 'variance' may be NULL.
+   'minimum', 'maximum', 'mean', and 'variance' may be null.
 */
 
 autoPitch Pitch_killOctaveJumps (Pitch me);

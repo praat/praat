@@ -444,7 +444,7 @@ void structRunnerMFC :: v_createChildren () {
 autoRunnerMFC RunnerMFC_create (const char32 *title, Ordered experiments) {
 	try {
 		autoRunnerMFC me = Thing_new (RunnerMFC);
-		Editor_init (me.peek(), 0, 0, 2000, 2000, title, NULL);
+		Editor_init (me.peek(), 0, 0, 2000, 2000, title, nullptr);
 		my experiments = experiments;
 		my graphics = Graphics_create_xmdrawingarea (my d_drawingArea);
 

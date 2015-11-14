@@ -432,7 +432,7 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 				CGContextRef bitmaptest = CGBitmapContextCreate (imageData, 100, 100,
 					8, 800, colourSpace, 0);
 				Melder_assert (bitmaptest != nullptr);
-				CGContextRef bitmap = CGBitmapContextCreate (NULL/*imageData*/, clipx2 - clipx1, numberOfRows,
+				CGContextRef bitmap = CGBitmapContextCreate (nullptr /* imageData */, clipx2 - clipx1, numberOfRows,
 					8, bytesPerRow, colourSpace, kCGImageAlphaLast);
 				Melder_assert (bitmap != nullptr);
 				image = CGBitmapContextCreateImage (bitmap);

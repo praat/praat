@@ -40,7 +40,7 @@ Thing_define (PointEditor, TimeSoundEditor) {
 
 autoPointEditor PointEditor_create (const char32 *title,
 	PointProcess point,
-	Sound sound   // may be NULL
+	Sound sound   // may be null
 );
 
 /* End of file PointEditor.h */

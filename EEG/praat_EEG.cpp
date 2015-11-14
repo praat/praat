@@ -325,7 +325,7 @@ DIRECT2 (EEG_viewAndEdit) {
 	LOOP {
 		iam (EEG);
 		autoEEGWindow editor = EEGWindow_create (ID_AND_FULL_NAME, me);
-		Editor_setPublicationCallback (editor.peek(), cb_EEGWindow_publication, NULL);
+		Editor_setPublicationCallback (editor.peek(), cb_EEGWindow_publication, nullptr);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END2 }
@@ -454,7 +454,7 @@ DO
 	LOOP {
 		iam (ERP);
 		try {
-			Matrix_formula (me, GET_STRING (U"formula"), interpreter, NULL);
+			Matrix_formula (me, GET_STRING (U"formula"), interpreter, nullptr);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the ERP may have partially changed
@@ -477,7 +477,7 @@ DO
 			Matrix_formula_part (me,
 				GET_REAL (U"From time"), GET_REAL (U"To time"),
 				GET_INTEGER (U"From channel") - 0.5, GET_INTEGER (U"To channel") + 0.5,
-				GET_STRING (U"formula"), interpreter, NULL);
+				GET_STRING (U"formula"), interpreter, nullptr);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the ERP may have partially changed
@@ -527,7 +527,7 @@ DO
 		long channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, U": no channel named \"", channelName, U"\".");
 		double maximum;
-		Vector_getMaximumAndX (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), channelNumber, GET_INTEGER (U"Interpolation") - 1, & maximum, NULL);
+		Vector_getMaximumAndX (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), channelNumber, GET_INTEGER (U"Interpolation") - 1, & maximum, nullptr);
 		Melder_informationReal (maximum, U"Volt");
 	}
 END2 }
@@ -566,7 +566,7 @@ DO
 		long channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, U": no channel named \"", channelName, U"\".");
 		double minimum;
-		Vector_getMinimumAndX (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), channelNumber, GET_INTEGER (U"Interpolation") - 1, & minimum, NULL);
+		Vector_getMinimumAndX (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), channelNumber, GET_INTEGER (U"Interpolation") - 1, & minimum, nullptr);
 		Melder_informationReal (minimum, U"Volt");
 	}
 END2 }
@@ -589,7 +589,7 @@ DO
 		long channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, U": no channel named \"", channelName, U"\".");
 		double timeOfMaximum;
-		Vector_getMaximumAndX (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), channelNumber, GET_INTEGER (U"Interpolation") - 1, NULL, & timeOfMaximum);
+		Vector_getMaximumAndX (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), channelNumber, GET_INTEGER (U"Interpolation") - 1, nullptr, & timeOfMaximum);
 		Melder_informationReal (timeOfMaximum, U"seconds");
 	}
 END2 }
@@ -612,7 +612,7 @@ DO
 		long channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, U": no channel named \"", channelName, U"\".");
 		double timeOfMinimum;
-		Vector_getMinimumAndX (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), channelNumber, GET_INTEGER (U"Interpolation") - 1, NULL, & timeOfMinimum);
+		Vector_getMinimumAndX (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), channelNumber, GET_INTEGER (U"Interpolation") - 1, nullptr, & timeOfMinimum);
 		Melder_informationReal (timeOfMinimum, U"seconds");
 	}
 END2 }
@@ -643,7 +643,7 @@ DIRECT2 (ERP_viewAndEdit) {
 	LOOP {
 		iam (ERP);
 		autoERPWindow editor = ERPWindow_create (ID_AND_FULL_NAME, me);
-		Editor_setPublicationCallback (editor.peek(), cb_ERPWindow_publication, NULL);
+		Editor_setPublicationCallback (editor.peek(), cb_ERPWindow_publication, nullptr);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END2 }

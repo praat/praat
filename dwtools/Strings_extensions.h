@@ -55,7 +55,7 @@ autoStrings strings_to_Strings_link (char32** strings, long n);
 // for (i=1; i<= n; i++) my strings[i] = strings[i];
 
 void Strings_unlink (Strings me);
-// for (i=1; i<= my numberOfStrings; i++) my strings[i] = NULL;
+// for (i=1; i<= my numberOfStrings; i++) my strings[i] = nullptr;
 
 autoStrings Strings_extractPart (Strings me, long start, long end);
 

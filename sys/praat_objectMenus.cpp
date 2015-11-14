@@ -145,22 +145,20 @@ DIRECT2 (About) {
 END2 }
 
 DIRECT2 (praat_newScript) {
-	autoScriptEditor editor = ScriptEditor_createFromText (NULL, NULL);
+	autoScriptEditor editor = ScriptEditor_createFromText (nullptr, nullptr);
 	editor.transfer();   // the user becomes the owner
 END2 }
 
 DIRECT2 (praat_openScript) {
-	autoScriptEditor editor = ScriptEditor_createFromText (NULL, NULL);
+	autoScriptEditor editor = ScriptEditor_createFromText (nullptr, nullptr);
 	TextEditor_showOpen (editor.peek());
 	editor.transfer();   // the user becomes the owner
 END2 }
 
 static ButtonEditor theButtonEditor;
 
-static void cb_ButtonEditor_destruction (Editor editor, void *closure) {
-	(void) editor;
-	(void) closure;
-	theButtonEditor = NULL;
+static void cb_ButtonEditor_destruction (Editor /* editor */, void * /* closure */) {
+	theButtonEditor = nullptr;
 }
 
 DIRECT2 (praat_editButtons) {
@@ -168,7 +166,7 @@ DIRECT2 (praat_editButtons) {
 		Editor_raise (theButtonEditor);
 	} else {
 		theButtonEditor = ButtonEditor_create ();
-		Editor_setDestructionCallback (theButtonEditor, cb_ButtonEditor_destruction, NULL);
+		Editor_setDestructionCallback (theButtonEditor, cb_ButtonEditor_destruction, nullptr);
 	}
 END2 }
 
@@ -617,10 +615,10 @@ void praat_addMenus (GuiWindow window) {
 	 */
 	if (! theCurrentPraatApplication -> batch) {
 		#ifdef macintosh
-			praatMenu = GuiMenu_createInWindow (NULL, U"\024", 0);
+			praatMenu = GuiMenu_createInWindow (nullptr, U"\024", 0);
 			#if cocoa
-				editMenu = GuiMenu_createInWindow (NULL, U"Edit", 0);
-				windowMenu = GuiMenu_createInWindow (NULL, U"Window", 0);
+				editMenu = GuiMenu_createInWindow (nullptr, U"Edit", 0);
+				windowMenu = GuiMenu_createInWindow (nullptr, U"Window", 0);
 			#endif
 		#else
 			praatMenu = GuiMenu_createInWindow (window, U"Praat", 0);
@@ -629,7 +627,7 @@ void praat_addMenus (GuiWindow window) {
 		readMenu = GuiMenu_createInWindow (window, U"Open", 0);
 		praat_actions_createWriteMenu (window);
 		#ifdef macintosh
-			applicationHelpMenu = GuiMenu_createInWindow (NULL, U"Help", 0);
+			applicationHelpMenu = GuiMenu_createInWindow (nullptr, U"Help", 0);
 		#endif
 		helpMenu = GuiMenu_createInWindow (window, U"Help", 0);
 	}
@@ -666,12 +664,12 @@ void praat_addMenus (GuiWindow window) {
 	praat_addMenuCommand (U"Objects", U"Praat", U"Show action command...", 0, praat_HIDDEN, DO_praat_showAction);
 
 	GuiMenuItem menuItem = praat_addMenuCommand (U"Objects", U"Praat", U"Goodies", 0, praat_UNHIDABLE, 0);
-	goodiesMenu = menuItem ? menuItem -> d_menu : NULL;
+	goodiesMenu = menuItem ? menuItem -> d_menu : nullptr;
 	praat_addMenuCommand (U"Objects", U"Goodies", U"Calculator...", 0, 'U', DO_praat_calculator);
 	praat_addMenuCommand (U"Objects", U"Goodies", U"Report difference of two proportions...", 0, 0, DO_praat_reportDifferenceOfTwoProportions);
 
 	menuItem = praat_addMenuCommand (U"Objects", U"Praat", U"Preferences", 0, praat_UNHIDABLE, 0);
-	preferencesMenu = menuItem ? menuItem -> d_menu : NULL;
+	preferencesMenu = menuItem ? menuItem -> d_menu : nullptr;
 	praat_addMenuCommand (U"Objects", U"Preferences", U"Buttons...", 0, praat_UNHIDABLE, DO_praat_editButtons);   /* Cannot be hidden. */
 	praat_addMenuCommand (U"Objects", U"Preferences", U"-- encoding prefs --", 0, 0, 0);
 	praat_addMenuCommand (U"Objects", U"Preferences", U"Text reading preferences...", 0, 0, DO_TextInputEncodingSettings);
@@ -679,7 +677,7 @@ void praat_addMenus (GuiWindow window) {
 	praat_addMenuCommand (U"Objects", U"Preferences", U"CJK font style preferences...", 0, 0, DO_GraphicsCjkFontStyleSettings);
 
 	menuItem = praat_addMenuCommand (U"Objects", U"Praat", U"Technical", 0, praat_UNHIDABLE, 0);
-	technicalMenu = menuItem ? menuItem -> d_menu : NULL;
+	technicalMenu = menuItem ? menuItem -> d_menu : nullptr;
 	praat_addMenuCommand (U"Objects", U"Technical", U"List readable types of objects", 0, 0, DO_praat_listReadableTypesOfObjects);
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report memory use", 0, 0, DO_praat_reportMemoryUse);
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report integer properties", 0, 0, DO_praat_reportIntegerProperties);

@@ -91,8 +91,8 @@ void IntervalTier_cutIntervals_minimumDuration (IntervalTier me, const char32 *l
 void TextGrid_changeLabels (TextGrid me, int tier, long from, long to, const char32 *search, const char32 *replace, int use_regexp, long *nmatches, long *nstringmatches);
 
 /* Set the start/end time to a smaller/larger value.
- * If mark is NULL, only times are changed
- * If mark != NULL mark the previous start/end time
+ * If mark is null, only times are changed
+ * If mark != null, mark the previous start/end time
  *    For a TextTier this involves adding a point with the marker
  *    For an IntervalTier this involves adding a new interval
  */

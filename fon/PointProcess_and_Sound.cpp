@@ -81,7 +81,7 @@ autoSound PointProcess_to_Sound_phonation
 	try {
 		long sound_nt = 1 + (long) floor ((my xmax - my xmin) * samplingFrequency);   // >= 1
 		double dt = 1.0 / samplingFrequency;
-		double tmid = (my xmin + my xmax) / 2;
+		double tmid = (my xmin + my xmax) / 2.0;
 		double t1 = tmid - 0.5 * (sound_nt - 1) * dt;
 		double a = (power1 + power2 + 1.0) / (power2 - power1);
 		double re = openPhase - collisionPhase;
@@ -194,8 +194,8 @@ autoSound PointProcess_to_Sound_phonation
 
 void PointProcess_playPart (PointProcess me, double tmin, double tmax) {
 	try {
-		autoSound sound = PointProcess_to_Sound_pulseTrain (me, 44100, 0.7, 0.05, 30);
-		Sound_playPart (sound.peek(), tmin, tmax, NULL, NULL);
+		autoSound sound = PointProcess_to_Sound_pulseTrain (me, 44100.0, 0.7, 0.05, 30);
+		Sound_playPart (sound.peek(), tmin, tmax, nullptr, nullptr);
 	} catch (MelderError) {
 		Melder_throw (me, U": not played.");
 	}
@@ -206,18 +206,18 @@ void PointProcess_play (PointProcess me) {
 }
 
 void PointProcess_hum (PointProcess me, double tmin, double tmax) {
-	static double formant [1 + 6] = { 0, 600, 1400, 2400, 3400, 4500, 5500 };
-	static double bandwidth [1 + 6] = { 0, 50, 100, 200, 300, 400, 500 };
+	static double formant [1 + 6] = { 0, 600.0, 1400.0, 2400.0, 3400.0, 4500.0, 5500.0 };
+	static double bandwidth [1 + 6] = { 0, 50.0, 100.0, 200.0, 300.0, 400.0, 500.0 };
 	autoSound sound = PointProcess_to_Sound_pulseTrain (me, 44100, 0.7, 0.05, 30);
 	Sound_filterWithFormants (sound.peek(), tmin, tmax, 6, formant, bandwidth);
-	Sound_playPart (sound.peek(), tmin, tmax, NULL, NULL);
+	Sound_playPart (sound.peek(), tmin, tmax, nullptr, nullptr);
 }
 
 autoSound PointProcess_to_Sound_hum (PointProcess me) {
-	static double formant [1 + 6] = { 0, 600, 1400, 2400, 3400, 4500, 5500 };
-	static double bandwidth [1 + 6] = { 0, 50, 100, 200, 300, 400, 500 };
+	static double formant [1 + 6] = { 0, 600.0, 1400.0, 2400.0, 3400.0, 4500.0, 5500.0 };
+	static double bandwidth [1 + 6] = { 0, 50.0, 100.0, 200.0, 300.0, 400.0, 500.0 };
 	try {
-		autoSound sound = PointProcess_to_Sound_pulseTrain (me, 44100, 0.7, 0.05, 30);
+		autoSound sound = PointProcess_to_Sound_pulseTrain (me, 44100.0, 0.7, 0.05, 30);
 		Sound_filterWithFormants (sound.peek(), my xmin, my xmax, 6, formant, bandwidth);
 		return sound;
 	} catch (MelderError) {

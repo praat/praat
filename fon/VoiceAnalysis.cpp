@@ -280,7 +280,7 @@ void Sound_Pitch_PointProcess_voiceReport (Sound sound, Pitch pitch, PointProces
 		 */
 		double pmin = 0.8 / ceiling, pmax = 1.25 / floor;
 		MelderInfo_writeLine (U"Pulses:");
-		MelderInfo_writeLine (U"   Number of pulses: ", PointProcess_getWindowPoints (pulses, tmin, tmax, NULL, NULL));
+		MelderInfo_writeLine (U"   Number of pulses: ", PointProcess_getWindowPoints (pulses, tmin, tmax, nullptr, nullptr));
 		MelderInfo_writeLine (U"   Number of periods: ", PointProcess_getNumberOfPeriods (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor));
 		MelderInfo_writeLine (U"   Mean period: ", Melder_fixedExponent (PointProcess_getMeanPeriod (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor), -3, 6), U" seconds");
 		MelderInfo_writeLine (U"   Standard deviation of period: ", Melder_fixedExponent (PointProcess_getStdevPeriod (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor), -3, 6), U" seconds");

@@ -92,7 +92,7 @@ void structTable :: v_info () {
 }
 
 const char32 * structTable :: v_getColStr (long columnNumber) {
-	if (columnNumber < 1 || columnNumber > numberOfColumns) return NULL;
+	if (columnNumber < 1 || columnNumber > numberOfColumns) return nullptr;
 	return columnHeaders [columnNumber]. label ? columnHeaders [columnNumber]. label : U"";
 }
 
@@ -1643,7 +1643,7 @@ double Table_getGroupDifference_studentT (Table me, long column, long groupColum
 		double sumOfSquares = 0.0;
 		for (long irow = 1; irow <= my rows -> size; irow ++) {
 			TableRow row = static_cast <TableRow> (my rows -> item [irow]);
-			if (row -> cells [groupColumn]. string != NULL) {
+			if (row -> cells [groupColumn]. string) {
 				if (str32equ (row -> cells [groupColumn]. string, group1)) {
 					double diff = row -> cells [column]. number - mean1;
 					sumOfSquares += diff * diff;
@@ -2071,7 +2071,7 @@ autoTable Table_readFromCharacterSeparatedTextFile (MelderFile file, char32 sepa
 					Melder_assert (*p == separator);
 					p ++;
 				}
-				row -> cells [icol]. string = Melder_dup (buffer.string);   // BUG? could be NULL
+				row -> cells [icol]. string = Melder_dup (buffer.string);   // BUG? could be null
 			}
 		}
 		return me;

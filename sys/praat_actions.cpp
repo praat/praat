@@ -281,9 +281,9 @@ void praat_addActionScript (const char32 *className1, int n1, const char32 *clas
 		action -> title = str32len (title) ? Melder_dup_f (title) : nullptr;   // allow old-fashioned untitled separators
 		action -> depth = depth;
 		action -> callback = str32len (script) ? DO_RunTheScriptFromAnyAddedMenuCommand : nullptr;   // null for a separator
-		action -> button = NULL;
+		action -> button = nullptr;
 		if (str32len (script) == 0) {
-			action -> script = NULL;
+			action -> script = nullptr;
 		} else {
 			structMelderFile file = { 0 };
 			Melder_relativePathToFile (script, & file);
@@ -589,7 +589,7 @@ void praat_actions_show () {
 	/* Create a new column of buttons in the dynamic menu. */
 	if (! theCurrentPraatApplication -> batch && ! Melder_backgrounding) {
 		actionsInvisible = false;
-		GuiMenu currentSubmenu1 = NULL, currentSubmenu2 = nullptr;
+		GuiMenu currentSubmenu1 = nullptr, currentSubmenu2 = nullptr;
 		bool writeMenuGoingToSeparate = false;
 		int y = Machine_getMenuBarHeight () + 10;
 		for (long i = 1; i <= theActions -> size; i ++) {   // add buttons or make existing buttons sensitive (executable)
@@ -602,7 +602,7 @@ void praat_actions_show () {
 				 * If it is a subcommand (depth > 0), put it in the current submenu,
 				 * but only if this exists (umbrella against stray submenu specifications).
 				 */
-				GuiMenu parentMenu = my depth > 1 && currentSubmenu2 ? currentSubmenu2 : my depth > 0 && currentSubmenu1 ? currentSubmenu1 : NULL;
+				GuiMenu parentMenu = my depth > 1 && currentSubmenu2 ? currentSubmenu2 : my depth > 0 && currentSubmenu1 ? currentSubmenu1 : nullptr;
 
 				if (str32nequ (my title, U"Save ", 5) || str32nequ (my title, U"Write ", 6) || str32nequ (my title, U"Append to ", 10)) {
 					parentMenu = praat_writeMenu;

@@ -127,13 +127,13 @@ DO
 	if (n == 1 || MelderAudio_getOutputMaximumAsynchronicity () < kMelder_asynchronicityLevel_ASYNCHRONOUS) {
 		LOOP {
 			iam (LongSound);
-			LongSound_playPart (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), NULL, NULL);
+			LongSound_playPart (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), nullptr, nullptr);
 		}
 	} else {
 		MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_INTERRUPTABLE);
 		LOOP {
 			iam (LongSound);
-			LongSound_playPart (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), NULL, NULL);
+			LongSound_playPart (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), nullptr, nullptr);
 		}
 		MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_ASYNCHRONOUS);
 	}
@@ -527,7 +527,7 @@ static void common_Sound_create (UiForm dia, Interpreter interpreter, bool allow
 			throw;   // unexpected error; wait for generic message
 		}
 	}
-	Matrix_formula ((Matrix) sound.peek(), GET_STRING (U"formula"), interpreter, NULL);
+	Matrix_formula ((Matrix) sound.peek(), GET_STRING (U"formula"), interpreter, nullptr);
 	praat_new (sound.move(), GET_STRING (U"Name"));
 	//praat_updateSelection ();
 }
@@ -721,7 +721,7 @@ DIRECT2 (Sound_edit) {
 	LOOP {
 		iam (Sound);
 		autoSoundEditor editor = SoundEditor_create (ID_AND_FULL_NAME, me);
-		Editor_setPublicationCallback (editor.peek(), cb_SoundEditor_publication, NULL);
+		Editor_setPublicationCallback (editor.peek(), cb_SoundEditor_publication, nullptr);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END2 }
@@ -918,7 +918,7 @@ DO
 			Matrix_formula_part (me,
 				GET_REAL (U"From time"), GET_REAL (U"To time"),
 				GET_INTEGER (U"From channel") - 0.5, GET_INTEGER (U"To channel") + 0.5,
-				GET_STRING (U"formula"), interpreter, NULL);
+				GET_STRING (U"formula"), interpreter, nullptr);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Sound may have partially changed
@@ -973,7 +973,7 @@ DO
 	LOOP {
 		iam (Sound);
 		double realIndex = Sampled_xToIndex (me, GET_REAL (U"Time"));
-		Melder_informationReal (realIndex, NULL);
+		Melder_informationReal (realIndex, nullptr);
 	}
 END2 }
 
@@ -1366,8 +1366,8 @@ FORM_READ2 (Sound_readSeparateChannelsFromSoundFile, U"Read separate channels fr
 	char32 name [300];
 	Melder_sprint (name,300, MelderFile_name (file));
 	char32 *lastPeriod = str32rchr (name, U'.');
-	if (lastPeriod != NULL) {
-		*lastPeriod = '\0';
+	if (lastPeriod) {
+		*lastPeriod = U'\0';
 	}
 	for (long ichan = 1; ichan <= sound -> ny; ichan ++) {
 		autoSound thee = Sound_extractChannel (sound.peek(), ichan);
@@ -1740,7 +1740,7 @@ DO_ALTERNATIVE (old_Sound_to_Intensity)
 	}
 END2 }
 
-FORM (Sound_to_IntensityTier, U"Sound: To IntensityTier", NULL) {
+FORM (Sound_to_IntensityTier, U"Sound: To IntensityTier", nullptr) {
 	POSITIVE (U"Minimum pitch (Hz)", U"100.0")
 	REAL (U"Time step (s)", U"0.0 (= auto)")
 	BOOLEAN (U"Subtract mean", true)
@@ -1762,7 +1762,7 @@ DIRECT2 (Sound_to_IntervalTier) {
 	}
 END2 }
 
-FORM (Sound_to_Ltas, U"Sound: To long-term average spectrum", 0) {
+FORM (Sound_to_Ltas, U"Sound: To long-term average spectrum", nullptr) {
 	POSITIVE (U"Bandwidth (Hz)", U"100")
 	OK2
 DO

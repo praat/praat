@@ -92,7 +92,7 @@ static void gui_cb_goAway (Thing /* boss */) {
 
 void praat_showLogo (bool autoPopDown) {
 	#if gtk
-		static const gchar *authors [3] = { "Paul Boersma", "David Weenink", NULL };
+		static const gchar *authors [3] = { "Paul Boersma", "David Weenink", nullptr };
 
 		GuiObject dialog = gtk_about_dialog_new ();
 		#define xstr(s) str(s)

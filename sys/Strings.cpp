@@ -101,7 +101,7 @@ static autoStrings Strings_createAsFileOrDirectoryList (const char32 *path /* ca
 		/*
 		 * Initialize.
 		 */
-		DIR *d = NULL;
+		DIR *d = nullptr;
 		try {
 			autoMelderString filePath, searchDirectory, left, right;
 			/*

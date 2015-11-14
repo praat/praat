@@ -55,7 +55,7 @@ DO
 	LOOP {
 		(me ? thee : me) = (Distributions) OBJECT;
 	}
-	Melder_informationReal (Distributionses_getMeanAbsoluteDifference (me, thee, GET_INTEGER (U"Column number")), NULL);
+	Melder_informationReal (Distributionses_getMeanAbsoluteDifference (me, thee, GET_INTEGER (U"Column number")), nullptr);
 END2 }
 
 FORM (Distributions_getProbability, U"Get probability", nullptr) {
@@ -234,14 +234,14 @@ FORM (PairDistribution_Distributions_getFractionCorrect, U"PairDistribution & Di
 	NATURAL (U"Column", U"1")
 	OK2
 DO
-	PairDistribution me = NULL;
-	Distributions thee = NULL;
+	PairDistribution me = nullptr;
+	Distributions thee = nullptr;
 	LOOP {
 		if (CLASS == classPairDistribution) me = (PairDistribution) OBJECT;
 		if (CLASS == classDistributions) thee = (Distributions) OBJECT;
 	}
 	double fractionCorrect = PairDistribution_Distributions_getFractionCorrect (me, thee, GET_INTEGER (U"Column"));
-	Melder_informationReal (fractionCorrect, NULL);
+	Melder_informationReal (fractionCorrect, nullptr);
 END2 }
 
 /***** TABLE *****/

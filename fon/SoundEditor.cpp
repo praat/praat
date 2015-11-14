@@ -435,7 +435,7 @@ void structSoundEditor :: v_unhighlightSelection (double left, double right, dou
 void SoundEditor_init (SoundEditor me, const char32 *title, Sampled data) {
 	/*
 	 * my longSound.data or my sound.data have to be set before we call FunctionEditor_init,
-	 * because createMenus expects that one of them is not NULL.
+	 * because createMenus expects that one of them is not null.
 	 */
 	TimeSoundAnalysisEditor_init (me, title, data, data, false);
 	if (my d_longSound.data && my d_endWindow - my d_startWindow > 30.0) {

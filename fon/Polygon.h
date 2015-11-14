@@ -30,7 +30,7 @@ autoPolygon Polygon_create (long numberOfPoints);
 	Function:
 		create a new instance of Polygon.
 	Return value:
-		a pointer to the newly created object, or NULL in case of failure.
+		the newly created object.
 	Precondition:
 		numberOfPoints >= 1;
 	Failure:

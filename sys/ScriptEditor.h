@@ -48,8 +48,8 @@ void ScriptEditor_init (ScriptEditor me,
 	const char32 *initialText
 );
 ScriptEditor ScriptEditor_createFromText (
-	Editor editor,   // the scripting environment; if NULL, the scripting environment consists of the global windows
-	const char32 *initialText   // may be NULL
+	Editor editor,   // the scripting environment; if null, the scripting environment consists of the global windows
+	const char32 *initialText   // may be null
 );
 
 ScriptEditor ScriptEditor_createFromScript (

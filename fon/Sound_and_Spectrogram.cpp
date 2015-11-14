@@ -78,7 +78,7 @@ autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, d
 		 */
 		if (fmax <= 0.0 || fmax > nyquist) fmax = nyquist;
 		long numberOfFreqs = (long) floor (fmax / freqStep);
-		if (numberOfFreqs < 1) return NULL;
+		if (numberOfFreqs < 1) return autoSpectrogram ();
 		long nsampFFT = 1;
 		while (nsampFFT < nsamp_window || nsampFFT < 2 * numberOfFreqs * (nyquist / fmax))
 			nsampFFT *= 2;
@@ -92,7 +92,7 @@ autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, d
 		double binWidth_hertz = 1.0 / (my dx * nsampFFT);
 		freqStep = binWidth_samples * binWidth_hertz;
 		numberOfFreqs = (long) floor (fmax / freqStep);
-		if (numberOfFreqs < 1) return NULL;
+		if (numberOfFreqs < 1) return autoSpectrogram ();
 
 		autoSpectrogram thee = Spectrogram_create (my xmin, my xmax, numberOfTimes, timeStep, t1,
 				0.0, fmax, numberOfFreqs, freqStep, 0.5 * (freqStep - binWidth_hertz));
@@ -186,7 +186,7 @@ autoSound Spectrogram_to_Sound (Spectrogram me, double fsamp) {
 	try {
 		double dt = 1 / fsamp;
 		long n = (long) floor ((my xmax - my xmin) / dt);
-		if (n < 0) return NULL;
+		if (n < 0) return autoSound ();
 		autoSound thee = Sound_create (1, my xmin, my xmax, n, dt, 0.5 * dt);
 		for (long i = 1; i <= n; i ++) {
 			double t = Sampled_indexToX (thee.peek(), i);

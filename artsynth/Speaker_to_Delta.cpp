@@ -1,6 +1,6 @@
 /* Speaker_to_Delta.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 #define FIRST_TUBE  7
 
 autoDelta Speaker_to_Delta (Speaker me) {
-	double f = my relativeSize * 1e-3;   /* We shall use millimetres and grams. */
+	double f = my relativeSize * 1e-3;   // we shall use millimetres and grams
 	double xe [30], ye [30], xi [30], yi [30], xmm [30], ymm [30], dx, dy;
 	int closed [40];
 	int itube;
@@ -37,8 +37,8 @@ autoDelta Speaker_to_Delta (Speaker me) {
 		t -> Dx = t -> Dxeq = 10 * f;
 		t -> Dy = t -> Dyeq = 100 * f;
 		t -> Dz = t -> Dzeq = 230 * f;
-		t -> mass = 10 * my relativeSize * t -> Dx * t -> Dz;   /* 80 * f; 35 * Dx * Dz */
-		t -> k1 = 200;   /* 90000 * Dx * Dz; Newtons per metre */
+		t -> mass = 10 * my relativeSize * t -> Dx * t -> Dz;   // 80 * f; 35 * Dx * Dz
+		t -> k1 = 200;   // 90000 * Dx * Dz; Newtons per metre
 		t -> k3 = 0.0;
 		t -> Brel = 0.8;
 		t -> parallel = 1000;
@@ -52,7 +52,7 @@ autoDelta Speaker_to_Delta (Speaker me) {
 		t -> Dy = t -> Dyeq = 15 * f;
 		t -> Dz = t -> Dzeq = 30 * f;
 		t -> mass = 10 * f;
-		t -> k1 = 40;   /* 125000 * Dx * Dz; Newtons per metre */
+		t -> k1 = 40;   // 125000 * Dx * Dz; Newtons per metre
 		t -> k3 = 0.0;
 		t -> Brel = 0.8;
 	}
@@ -65,7 +65,7 @@ autoDelta Speaker_to_Delta (Speaker me) {
 		t -> Dy = t -> Dyeq = 15 * f;
 		t -> Dz = t -> Dzeq = 16 * f;
 		t -> mass = 5 * f;
-		t -> k1 = 160;   /* 100000 * Dx * Dz; Newtons per metre */
+		t -> k1 = 160;   // 100000 * Dx * Dz; Newtons per metre
 		t -> k3 = 0.0;
 		t -> Brel = 0.8;
 	}
@@ -95,16 +95,16 @@ autoDelta Speaker_to_Delta (Speaker me) {
 		for (itube = FIRST_TUBE; itube <= 18; itube ++) {
 			Delta_Tube t = thy tube + itube;
 			t -> Dx = t -> Dxeq = 10 * f;
-			t -> mass = 10 * my relativeSize * t -> Dx * t -> Dz;   /* 10 mm */
-			t -> k1 = 1e5 * t -> Dx * t -> Dz;   /* elastic tissue: 1 mbar/mm */
+			t -> mass = 10 * my relativeSize * t -> Dx * t -> Dz;   // 10 mm
+			t -> k1 = 1e5 * t -> Dx * t -> Dz;   // elastic tissue: 1 mbar/mm
 			t -> k3 = 0.0;
 			t -> Brel = 1;
 		}
 		for (itube = 19; itube <= 35; itube ++) {
 			Delta_Tube t = thy tube + itube;
 			t -> Dx = t -> Dxeq = 10 * f;
-			t -> mass = 3 * my relativeSize * t -> Dx * t -> Dz;   /* 3 mm */
-			t -> k1 = 10e5 * t -> Dx * t -> Dz;   /* cartilage: 10 mbar/mm */
+			t -> mass = 3 * my relativeSize * t -> Dx * t -> Dz;   // 3 mm
+			t -> k1 = 10e5 * t -> Dx * t -> Dz;   // cartilage: 10 mbar/mm
 			t -> k3 = 0.0;
 			t -> Brel = 1;
 		}
@@ -195,7 +195,7 @@ autoDelta Speaker_to_Delta (Speaker me) {
 			t -> k1left1 = t -> k1right1 = 1.0;
 		}
 		thy tube [79]. k1left1 = 0.0;
-		thy tube [36]. k1left1 = 1.0;   /* The essence: couple spring with lower vocal cords. */
+		thy tube [36]. k1left1 = 1.0;   // the essence: couple spring with lower vocal cords
 	}
 
 	/*
@@ -207,10 +207,10 @@ autoDelta Speaker_to_Delta (Speaker me) {
 			t -> Dx = t -> Dxeq = my shunt.Dx;
 			t -> Dy = t -> Dyeq = my shunt.Dy;
 			t -> Dz = t -> Dzeq = my shunt.Dz;
-			t -> mass = 3 * my upperCord.mass;   /* Heavy... */
-			t -> k1 = 3 * my upperCord.k1;   /* ...and stiff... */
+			t -> mass = 3 * my upperCord.mass;   // heavy...
+			t -> k1 = 3 * my upperCord.k1;   // ...and stiff...
 			t -> k3 = t -> k1 * (20 / t -> Dz) * (20 / t -> Dz);
-			t -> Brel = 3.0;   /* ...and inelastic, so that the walls will not vibrate. */
+			t -> Brel = 3.0;   // ...and inelastic, so that the walls will not vibrate
 		}
 	}
 
@@ -249,7 +249,7 @@ autoDelta Speaker_to_Delta (Speaker me) {
 		t -> k3 = 0.0;
 		t -> Brel = 1.0;
 	}
-	thy tube [65]. Dy = thy tube [65]. Dyeq = 0.0;   /* Override: nasopharyngeal port closed. */
+	thy tube [65]. Dy = thy tube [65]. Dyeq = 0.0;   // override: nasopharyngeal port closed
 
 	/* The default structure:
 	 * every tube is connected on the left to the previous tube (index one lower).
@@ -260,8 +260,8 @@ autoDelta Speaker_to_Delta (Speaker me) {
 		t -> s1 = 5e6 * t -> Dx * t -> Dz;
 		t -> s3 = t -> s1 / (0.9e-3 * 0.9e-3);
 		t -> dy = 1e-5;
-		t -> left1 = t - 1;   /* Connect to the previous tube on the left. */
-		t -> right1 = t + 1;   /* Connect to the next tube on the right. */
+		t -> left1 = t - 1;   // connect to the previous tube on the left
+		t -> right1 = t + 1;   // connect to the next tube on the right
 	}
 
 	/***** Connections: boundaries and interfaces. *****/
@@ -269,7 +269,7 @@ autoDelta Speaker_to_Delta (Speaker me) {
 	/* The leftmost boundary: the diaphragm (tube 1).
 	 * Disconnect on the left.
 	 */
-	thy tube [SMOOTH_LUNGS ? FIRST_TUBE : 1]. left1 = NULL;   /* Closed at diaphragm. */
+	thy tube [SMOOTH_LUNGS ? FIRST_TUBE : 1]. left1 = nullptr;   // closed at diaphragm
 
 	/* Optional one-mass model of the vocal cords.
 	 * Short-circuit over tube 37 (upper glottis).
@@ -281,7 +281,7 @@ autoDelta Speaker_to_Delta (Speaker me) {
 		thy tube [38]. left1 = thy tube + 36;
 
 		/* Disconnect tube 37 on both sides. */
-		thy tube [37]. left1 = thy tube [37]. right1 = NULL;
+		thy tube [37]. left1 = thy tube [37]. right1 = nullptr;
 	}
 
 	/* Optionally couple vocal cords with conus elasticus.
@@ -298,15 +298,15 @@ autoDelta Speaker_to_Delta (Speaker me) {
 		thy tube [36]. left1 = thy tube + 86;
 
 		/* Disconnect tubes 32..35 on both sides. */
-		thy tube [32]. left1 = thy tube [32]. right1 = NULL;
-		thy tube [33]. left1 = thy tube [33]. right1 = NULL;
-		thy tube [34]. left1 = thy tube [34]. right1 = NULL;
-		thy tube [35]. left1 = thy tube [35]. right1 = NULL;
+		thy tube [32]. left1 = thy tube [32]. right1 = nullptr;
+		thy tube [33]. left1 = thy tube [33]. right1 = nullptr;
+		thy tube [34]. left1 = thy tube [34]. right1 = nullptr;
+		thy tube [35]. left1 = thy tube [35]. right1 = nullptr;
 	} else {
 
 		/* Disconnect tubes 79..86 on both sides. */
 		for (itube = 79; itube <= 86; itube ++)
-			thy tube [itube]. left1 = thy tube [itube]. right1 = NULL;
+			thy tube [itube]. left1 = thy tube [itube]. right1 = nullptr;
 	}
 
 	/* Optionally add a shunt parallel to the glottis.
@@ -318,38 +318,38 @@ autoDelta Speaker_to_Delta (Speaker me) {
 		/* Create a three-way interface below the shunt.
 		 * Connect lowest shunt tube (87) with top of trachea (34/35 or 85/86).
 		 */
-		thy tube [topOfTrachea - 1]. right2 = thy tube + 87;   /* Trachea to shunt. */
-		thy tube [87]. left1 = thy tube + topOfTrachea - 1;   /* Shunt to trachea. */
-		thy tube [87]. Dxeq = thy tube [topOfTrachea - 1]. Dxeq = thy tube [topOfTrachea]. Dxeq;   /* Equal length. */
+		thy tube [topOfTrachea - 1]. right2 = thy tube + 87;   // trachea to shunt
+		thy tube [87]. left1 = thy tube + topOfTrachea - 1;   // shunt to trachea
+		thy tube [87]. Dxeq = thy tube [topOfTrachea - 1]. Dxeq = thy tube [topOfTrachea]. Dxeq;   // equal length
 		thy tube [87]. Dx = thy tube [topOfTrachea - 1]. Dx = thy tube [topOfTrachea]. Dx;
 
 		/* Create a three-way interface above the shunt.
 		 * Connect highest shunt tube (89) with bottom of pharynx (38/39).
 		 */
-		thy tube [89]. right1 = thy tube + 39;   /* Shunt to pharynx. */
-		thy tube [39]. left2 = thy tube + 89;   /* Pharynx to shunt. */
-		thy tube [89]. Dxeq = thy tube [39]. Dxeq = thy tube [38]. Dxeq;   /* All three of equal length. */
+		thy tube [89]. right1 = thy tube + 39;   // shunt to pharynx
+		thy tube [39]. left2 = thy tube + 89;   // pharynx to shunt
+		thy tube [89]. Dxeq = thy tube [39]. Dxeq = thy tube [38]. Dxeq;   // all three of equal length
 		thy tube [89]. Dx = thy tube [39]. Dx = thy tube [38]. Dx;
 	} else {
 
 		/* Disconnect tubes 87..89 on both sides. */
 		for (itube = 87; itube <= 89; itube ++)
-			thy tube [itube]. left1 = thy tube [itube]. right1 = NULL;
+			thy tube [itube]. left1 = thy tube [itube]. right1 = nullptr;
 	}
 
 	/* Create a three-way interface at the nasopharyngeal port.
 	 * Connect tubes 50 (pharynx), 51 (mouth), and 65 (nose).
 	 */
-	thy tube [50]. right2 = thy tube + 65;   /* Pharynx to nose. */
-	thy tube [65]. left1 = thy tube + 50;   /* Nose to pharynx. */
-	thy tube [65]. Dxeq = thy tube [51]. Dxeq = thy tube [50]. Dxeq;   /* All three must be of equal length. */
+	thy tube [50]. right2 = thy tube + 65;   // pharynx to nose
+	thy tube [65]. left1 = thy tube + 50;   // nose to pharynx
+	thy tube [65]. Dxeq = thy tube [51]. Dxeq = thy tube [50]. Dxeq;   // all three must be of equal length
 	thy tube [65]. Dx = thy tube [51]. Dx = thy tube [50]. Dx;
 
 	/* The rightmost boundaries: the lips (tube 64) and the nostrils (tube 78).
 	 * Disconnect on the right.
 	 */
-	thy tube [64]. right1 = NULL;   /* Radiation at the lips. */
-	thy tube [78]. right1 = NULL;   /* Radiation at the nostrils. */
+	thy tube [64]. right1 = nullptr;   // radiation at the lips
+	thy tube [78]. right1 = nullptr;   // radiation at the nostrils
 
 	for (itube = 1; itube <= thy numberOfTubes; itube ++) {
 		Delta_Tube t = thy tube + itube;

@@ -810,7 +810,7 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (TextGrid);
-		TextGrid_Sound_draw (me, NULL, GRAPHICS,
+		TextGrid_Sound_draw (me, nullptr, GRAPHICS,
 			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Show boundaries"),
 			GET_INTEGER (U"Use text styles"), GET_INTEGER (U"Garnish"));
 	}
@@ -875,7 +875,7 @@ DO
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a TextGrid from batch.");
 	Sound sound = nullptr;
 	LOOP {
-		if (CLASS == classSound) sound = (Sound) OBJECT;   // may stay NULL
+		if (CLASS == classSound) sound = (Sound) OBJECT;   // may stay null
 	}
 	LOOP if (CLASS == classTextGrid) {
 		iam (TextGrid);
@@ -903,12 +903,12 @@ END2 }
 
 DIRECT2 (TextGrid_SpellingChecker_edit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a TextGrid from batch.");
-	SpellingChecker spellingChecker = NULL;
+	SpellingChecker spellingChecker = nullptr;
 	int ispellingChecker = 0;
-	Sound sound = NULL;
+	Sound sound = nullptr;
 	LOOP {
 		if (CLASS == classSpellingChecker) spellingChecker = (SpellingChecker) OBJECT, ispellingChecker = IOBJECT;
-		if (CLASS == classSound) sound = (Sound) OBJECT;   // may stay NULL
+		if (CLASS == classSound) sound = (Sound) OBJECT;   // may stay null
 	}
 	Melder_assert (ispellingChecker != 0);
 	LOOP if (CLASS == classTextGrid) {
@@ -920,7 +920,7 @@ END2 }
 
 DIRECT2 (TextGrid_LongSound_SpellingChecker_edit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a TextGrid from batch.");
-	LongSound longSound = NULL;
+	LongSound longSound = nullptr;
 	SpellingChecker spellingChecker = nullptr;
 	int ilongSound = 0, ispellingChecker = 0;
 	LOOP {
@@ -957,7 +957,7 @@ static Function pr_TextGrid_peekTier (UiForm dia) {
 			Melder_throw (U"Tier number (", tierNumber, U") should not be larger than number of tiers (", my tiers -> size, U").");
 		return (Function) my tiers -> item [tierNumber];
 	}
-	return NULL;   // should not occur
+	return nullptr;   // should not occur
 }
 
 static IntervalTier pr_TextGrid_peekIntervalTier (UiForm dia) {
@@ -968,7 +968,7 @@ static IntervalTier pr_TextGrid_peekIntervalTier (UiForm dia) {
 
 static TextTier pr_TextGrid_peekTextTier (UiForm dia) {
 	Function tier = pr_TextGrid_peekTier (dia);
-	if (! tier) return NULL;
+	if (! tier) return nullptr;
 	if (tier -> classInfo != classTextTier) Melder_throw (U"Tier should be point tier (TextTier).");
 	return (TextTier) tier;
 }

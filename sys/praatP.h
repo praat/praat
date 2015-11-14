@@ -21,10 +21,10 @@
 
 void praat_addActionScript (const char32 *className1, int n1, const char32 *className2, int n2, const char32 *className3, int n3,
 	const char32 *title, const char32 *after, int depth, const char32 *script);
-/* No strings may be NULL; unspecify them by giving an empty string. 'title' and 'script' are deep-copied. */
+/* No strings may be null; unspecify them by giving an empty string. 'title' and 'script' are deep-copied. */
 void praat_removeAction_classNames (const char32 *className1, const char32 *className2,
 	const char32 *className3, const char32 *title);
-/* No arguments may be NULL; unspecify them by giving an empty string. */
+/* No arguments may be null; unspecify them by giving an empty string. */
 /* 'title' is deep-copied. */
 void praat_hideAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, const char32 *title);
 void praat_hideAction_classNames (const char32 *className1, const char32 *className2,
@@ -36,7 +36,7 @@ void praat_sortActions ();
 
 void praat_addMenuCommandScript (const char32 *window, const char32 *menu, const char32 *title,
 	const char32 *after, int depth, const char32 *script);
-/* All strings are deep-copied and may not be NULL; unspecify them by giving an empty string. */
+/* All strings are deep-copied and may not be null; unspecify them by giving an empty string. */
 /*
 	For the Praat objects window:
 	'window' is "Objects", 'menu' is "Praat", "New", "Open", "Help", "Preferences", "Goodies", or "Technical".
@@ -58,7 +58,7 @@ Thing_define (Praat_Command, Thing) {
 	int32 n1, n2, n3, n4;   // number of selected objects of each class; 0 means "any number"
 	const char32 *title;   // button text = command text
 	UiCallback callback;   // multi-purpose
-		/* If both UiCallback::sendingForm and sendingString are NULL, this routine is an activate callback;
+		/* If both UiCallback::sendingForm and sendingString are null, this routine is an activate callback;
 			you should directly execute the command, or call UiForm_do(dialog) if you need arguments;
 			UiForm_do will call this routine again with sendingForm = dialog. */
 		/* If sendingForm exists, this routine is an ok callback,
@@ -78,7 +78,7 @@ Thing_define (Praat_Command, Thing) {
 	GuiThing button;
 	const char32 *window, *menu;
 	const char32 *script;   // if 'callback' equals DO_RunTheScriptFromAnyAddedMenuCommand
-	const char32 *after;   // title of previous command, often NULL
+	const char32 *after;   // title of previous command, often null
 	int32 uniqueID;   // for sorting the added commands
 	int32 sortingTail;
 };

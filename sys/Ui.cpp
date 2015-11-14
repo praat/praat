@@ -178,7 +178,7 @@ static void UiField_widgetToValue (UiField me) {
 	switch (my type) {
 		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
 			autostring32 dirty = GuiText_getString (my text);   // the text as typed by the user
-			Interpreter_numericExpression (NULL, dirty.peek(), & my realValue);
+			Interpreter_numericExpression (nullptr, dirty.peek(), & my realValue);
 			/*
 			 * Put a clean version of the new value in the form.
 			 * If the value is equal to the default value, make sure that any default comments are included.
@@ -210,7 +210,7 @@ static void UiField_widgetToValue (UiField me) {
 				my integerValue = 2;
 			} else {
 				double realValue;
-				Interpreter_numericExpression (NULL, dirty.peek(), & realValue);
+				Interpreter_numericExpression (nullptr, dirty.peek(), & realValue);
 				my integerValue = lround (realValue);
 			}
 			if (my integerValue == Melder_atoi (my stringDefaultValue)) {
@@ -259,7 +259,7 @@ static void UiField_widgetToValue (UiField me) {
 			if (colourToValue (me, string.peek())) {
 				// do nothing
 			} else {
-				Interpreter_numericExpression (NULL, string.peek(), & my colourValue. red);
+				Interpreter_numericExpression (nullptr, string.peek(), & my colourValue. red);
 				my colourValue. green = my colourValue. blue = my colourValue. red;
 			}
 		}
@@ -1138,7 +1138,7 @@ void UiForm_parseStringE (EditorCommand cmd, int narg, Stackel args, const char3
 static UiField findField (UiForm me, const char32 *fieldName) {
 	for (int ifield = 1; ifield <= my numberOfFields; ifield ++)
 		if (str32equ (fieldName, my field [ifield] -> name)) return my field [ifield];
-	return NULL;
+	return nullptr;
 }
 
 static void fatalField (UiForm dia) {
@@ -1330,7 +1330,7 @@ char32 * UiForm_getString (UiForm me, const char32 *fieldName) {
 			fatalField (me);
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 char32 * UiForm_getString_check (UiForm me, const char32 *fieldName) {
@@ -1349,7 +1349,7 @@ char32 * UiForm_getString_check (UiForm me, const char32 *fieldName) {
 				U"Please click Cancel in the form and try again.");
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 Graphics_Colour UiForm_getColour (UiForm me, const char32 *fieldName) {
