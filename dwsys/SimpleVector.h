@@ -2,7 +2,7 @@
 #define _SimpleVector_h_
 /* SimpleVector.h
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,10 +25,12 @@
 oo_CLASS_CREATE (DoubleVector, Daata);
 oo_CLASS_CREATE (ComplexVector, Daata);
 
-void DoubleVector_init (I, long min, long max);
-DoubleVector DoubleVector_create (long min, long max);
+void DoubleVector_init (DoubleVector me, long min, long max);
 
-void ComplexVector_init (I, long min, long max);
-ComplexVector ComplexVector_create (long min, long max);
+autoDoubleVector DoubleVector_create (long min, long max);
+
+void ComplexVector_init (ComplexVector me, long min, long max);
+
+autoComplexVector ComplexVector_create (long min, long max);
 
 #endif /* _SimpleVector_h_ */

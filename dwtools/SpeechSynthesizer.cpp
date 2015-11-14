@@ -52,7 +52,7 @@ extern int option_phoneme_events;
 
 Thing_implement (SpeechSynthesizerVoice, Daata, 0);
 
-SpeechSynthesizerVoice SpeechSynthesizerVoice_create (long numberOfFormants) {
+autoSpeechSynthesizerVoice SpeechSynthesizerVoice_create (long numberOfFormants) {
 	try {
 		autoSpeechSynthesizerVoice me = Thing_new (SpeechSynthesizerVoice);
 		my d_numberOfFormants = numberOfFormants;
@@ -69,7 +69,7 @@ SpeechSynthesizerVoice SpeechSynthesizerVoice_create (long numberOfFormants) {
 		my d_breath = NUMvector<int> (0, my d_numberOfFormants);	// amount of breath for each formant. breath[0] indicates whether any are set.
 		my d_breathw = NUMvector<int> (0, my d_numberOfFormants);	// width of each breath formant
 		SpeechSynthesizerVoice_setDefaults (me.peek());
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SpeechSynthesizerVoice not created.");
 	}
@@ -176,9 +176,11 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 {
 	char phoneme_name[9];
 	if (wav == 0) return 1;
+	
 	// It is essential that the SpeechSynthesizer is identified here by the user_data,
 	// because the espeakEVENT_LIST_TERMINATED event may still be accompanied by
 	// a piece of audio data!!
+	
 	SpeechSynthesizer me = (SpeechSynthesizer) (events -> user_data);
 	while(events -> type != espeakEVENT_LIST_TERMINATED) {
 		if (events -> type == espeakEVENT_SAMPLERATE) {
@@ -186,25 +188,25 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 		} else {
 			//my events = Table "time type type-t t-pos length a-pos sample id uniq";
 			//                    1    2     3      4     5     6     7      8   9
-			Table_appendRow (my d_events);
+			Table_appendRow (my d_events.peek());
 			long irow = my d_events -> rows -> size;
 			double time = events -> audio_position * 0.001;
-			Table_setNumericValue (my d_events, irow, 1, time);
-			Table_setNumericValue (my d_events, irow, 2, events -> type);
+			Table_setNumericValue (my d_events.peek(), irow, 1, time);
+			Table_setNumericValue (my d_events.peek(), irow, 2, events -> type);
 			// Column 3 will be filled afterwards
-			Table_setNumericValue (my d_events, irow, 4, events -> text_position);
-			Table_setNumericValue (my d_events, irow, 5, events -> length);
-			Table_setNumericValue (my d_events, irow, 6, events -> audio_position);
-			Table_setNumericValue (my d_events, irow, 7, events -> sample);
+			Table_setNumericValue (my d_events.peek(), irow, 4, events -> text_position);
+			Table_setNumericValue (my d_events.peek(), irow, 5, events -> length);
+			Table_setNumericValue (my d_events.peek(), irow, 6, events -> audio_position);
+			Table_setNumericValue (my d_events.peek(), irow, 7, events -> sample);
 			if (events -> type == espeakEVENT_MARK || events -> type == espeakEVENT_PLAY) {
-				Table_setStringValue (my d_events, irow, 8, Melder_peek8to32 (events -> id.name));
+				Table_setStringValue (my d_events.peek(), irow, 8, Melder_peek8to32 (events -> id.name));
 			} else {
 				// Ugly hack because id.string is not 0-terminated if 8 chars long!
 				memcpy (phoneme_name, events -> id.string, 8);
 				phoneme_name[8] = 0;
-				Table_setStringValue (my d_events, irow, 8, Melder_peek8to32 (phoneme_name));
+				Table_setStringValue (my d_events.peek(), irow, 8, Melder_peek8to32 (phoneme_name));
 			}
-			Table_setNumericValue (my d_events, irow, 9, events -> unique_identifier);
+			Table_setNumericValue (my d_events.peek(), irow, 9, events -> unique_identifier);
 		}
 		events++;
 	}
@@ -218,9 +220,8 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 	return 0;
 }
 
-const char32 *SpeechSynthesizer_getVoiceLanguageCodeFromName (SpeechSynthesizer me, const char32 *voiceLanguageName) {
+const char32 *SpeechSynthesizer_getVoiceLanguageCodeFromName (SpeechSynthesizer /* me */, const char32 *voiceLanguageName) {
 	try {
-		(void) me;
 		long voiceLanguageNameIndex = Strings_findString (espeakdata_voices_names, voiceLanguageName);
 		if (voiceLanguageNameIndex == 0) {
 			Melder_throw (U"Cannot find language \"", voiceLanguageName, U"\".");
@@ -232,9 +233,8 @@ const char32 *SpeechSynthesizer_getVoiceLanguageCodeFromName (SpeechSynthesizer 
 	}
 }
 
-const char32 *SpeechSynthesizer_getVoiceVariantCodeFromName (SpeechSynthesizer me, const char32 *voiceVariantName) {
+const char32 *SpeechSynthesizer_getVoiceVariantCodeFromName (SpeechSynthesizer /* me */, const char32 *voiceVariantName) {
 	try {
-		(void) me;
 		static const char32 * defaultVariantCode = U"default";
 		// Strings espeakdata_variants_names is one longer than the actual list of variants
 		long voiceVariantIndex = Strings_findString (espeakdata_variants_names, voiceVariantName);
@@ -263,7 +263,7 @@ void SpeechSynthesizer_initSoundBuffer (SpeechSynthesizer me) {
 	}
 }
 
-SpeechSynthesizer SpeechSynthesizer_create (const char32 *voiceLanguageName, const char32 *voiceVariantName) {
+autoSpeechSynthesizer SpeechSynthesizer_create (const char32 *voiceLanguageName, const char32 *voiceVariantName) {
 	try {
 		autoSpeechSynthesizer me = Thing_new (SpeechSynthesizer);
 		// check the languange and voice variant
@@ -274,7 +274,7 @@ SpeechSynthesizer SpeechSynthesizer_create (const char32 *voiceLanguageName, con
 		SpeechSynthesizer_setTextInputSettings (me.peek(), SpeechSynthesizer_INPUT_TEXTONLY, SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM);
 		SpeechSynthesizer_setSpeechOutputSettings (me.peek(), 44100, 0.01, 50, 50, 175, true, SpeechSynthesizer_PHONEMECODINGS_IPA);
 		SpeechSynthesizer_initSoundBuffer (me.peek());
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SpeechSynthesizer not created.");
 	}
@@ -372,7 +372,7 @@ static void MelderString_trimWhiteSpaceAtEnd (MelderString *me) {
 	}
 }
 
-static TextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin, double xmax) {
+static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin, double xmax) {
 	//Table_createWithColumnNames (0, L"time type type-t t-pos length a-pos sample id uniq");
 	try {
 		long length, textLength = str32len (text);
@@ -432,7 +432,9 @@ static TextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin, do
 					wordEnd = false;
 				}
 			} else if (type == espeakEVENT_WORD) {
-				if (pos < p1w) continue;
+				if (pos < p1w) {
+					continue;
+				}
 				if (time > xmin and time < xmax) {
 					length = pos - p1w;
 					if (pos == textLength) length++;
@@ -461,7 +463,7 @@ static TextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin, do
 		Sorted_sort (itc -> intervals);
 		Sorted_sort (itw -> intervals);
 		Sorted_sort (itp -> intervals);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"TextGrid not created from Table with events.");
 	}
@@ -474,8 +476,7 @@ static void espeakdata_SetVoiceByName (const char *name, const char *variantName
 	memset(&voice_selector, 0, sizeof(voice_selector));
 	voice_selector.name = Melder_peek32to8 (Melder_cat (Melder_peek8to32 (name), U"+", Melder_peek8to32 (variantName)));  // include variant name in voice stack ??
 
-	if (LoadVoice (name,1))
-	{
+	if (LoadVoice (name, 1)) {
 		LoadVoice(variantName, 2);
 		DoVoiceChange(voice);
 		SetVoiceStack (&voice_selector, variantName);
@@ -486,10 +487,16 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, 
 	try {
 		int fsamp = espeak_Initialize (AUDIO_OUTPUT_SYNCHRONOUS, 0, nullptr, // 5000ms
 			espeakINITIALIZE_PHONEME_EVENTS|espeakINITIALIZE_PHONEME_IPA);
-		if (fsamp == -1) Melder_throw (U"Internal espeak error.");
+		if (fsamp == -1) {
+			Melder_throw (U"Internal espeak error.");
+		}
 		int synth_flags = espeakCHARS_WCHAR;
-		if (my d_inputTextFormat == SpeechSynthesizer_INPUT_TAGGEDTEXT) synth_flags |= espeakSSML;
-		if (my d_inputTextFormat != SpeechSynthesizer_INPUT_TEXTONLY) synth_flags |= espeakPHONEMES;
+		if (my d_inputTextFormat == SpeechSynthesizer_INPUT_TAGGEDTEXT) {
+			synth_flags |= espeakSSML;
+		}
+		if (my d_inputTextFormat != SpeechSynthesizer_INPUT_TEXTONLY) {
+			synth_flags |= espeakPHONEMES;
+		}
 		option_phoneme_events = espeakINITIALIZE_PHONEME_EVENTS; // extern int option_phoneme_events;
 		if (my d_outputPhonemeCoding == SpeechSynthesizer_PHONEMECODINGS_IPA) {
 			option_phoneme_events |= espeakINITIALIZE_PHONEME_IPA;
@@ -526,19 +533,22 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, 
 		}
 		my d_numberOfSamples = 0; // re-use the wav-buffer
 		if (tg) {
-			double xmin = Table_getNumericValue_Assert (my d_events, 1, 1);
-			if (xmin > thy xmin) xmin = thy xmin;
-			double xmax = Table_getNumericValue_Assert (my d_events, my d_events -> rows -> size, 1);
-			if (xmax < thy xmax) xmax = thy xmax;
-			autoTextGrid tg1 = Table_to_TextGrid (my d_events, text, xmin, xmax);
+			double xmin = Table_getNumericValue_Assert (my d_events.peek(), 1, 1);
+			if (xmin > thy xmin) {
+				xmin = thy xmin;
+			}
+			double xmax = Table_getNumericValue_Assert (my d_events.peek(), my d_events -> rows -> size, 1);
+			if (xmax < thy xmax) {
+				xmax = thy xmax;
+			}
+			autoTextGrid tg1 = Table_to_TextGrid (my d_events.peek(), text, xmin, xmax);
 			*tg = TextGrid_extractPart (tg1.peek(), thy xmin, thy xmax, 0);
 		}
 		if (events) {
-			Table_setEventTypeString (my d_events);
-			*events = my d_events;
-			my d_events = nullptr;
+			Table_setEventTypeString (my d_events.peek());
+			*events = my d_events.move();
 		}
-		forget (my d_events);
+		my d_events.reset(nullptr);
 		return thee;
 	} catch (MelderError) {
 		espeak_Terminate ();

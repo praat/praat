@@ -89,10 +89,9 @@ Phoneme Number, Phoneme Label, F0, F1, F2 and F3. The speaker types
 are type 1 (men), type 2 (women) and type 3 (children)."
 */
 
-Table Table_createFromPetersonBarneyData () {
+autoTable Table_createFromPetersonBarneyData () {
 	long nrows = 1520, ncols = 9;
-	const char32 *columnLabels[9] =
-	{U"Type", U"Sex", U"Speaker", U"Vowel", U"IPA", U"F0", U"F1", U"F2", U"F3"};
+	const char32 *columnLabels[9] = {U"Type", U"Sex", U"Speaker", U"Vowel", U"IPA", U"F0", U"F1", U"F2", U"F3"};
 	const char32 *type[3] = {U"m", U"w", U"c"};
 	// Wrong order before 20080125
 	//	char32 *vowel[10] = {U"iy", U"ih", U"eh", U"ae", U"aa", U"ao", U"uh", U"uw", U"ah", U"er"};
@@ -1665,19 +1664,16 @@ Table Table_createFromPetersonBarneyData () {
 			Table_setColumnLabel (me.peek(), j, columnLabels[j - 1]);
 			my columnHeaders [j]. numericized = false;
 		}
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Table not created from Peterson & Barney data.");
 	}
 }
 
-Table Table_createFromPolsVanNieropData () {
+autoTable Table_createFromPolsVanNieropData () {
 	long nrows = 900, ncols = 10;
-	const char32 *columnLabels[10] =
-	{U"Sex", U"Speaker", U"Vowel", U"IPA", U"F1", U"F2", U"F3", U"L1", U"L2", U"L3"};
-	const char32 *vowel[12] = {U"oe", U"aa", U"oo", U"a", U"eu", U"ie", U"uu", U"ee", U"u",
-	                            U"e", U"o", U"i"
-	                           };
+	const char32 *columnLabels[10] = {U"Sex", U"Speaker", U"Vowel", U"IPA", U"F1", U"F2", U"F3", U"L1", U"L2", U"L3"};
+	const char32 *vowel[12] = {U"oe", U"aa", U"oo", U"a", U"eu", U"ie", U"uu", U"ee", U"u", U"e", U"o", U"i"};
 	const char32 *ipa[12] = {U"u", U"a", U"o", U"\\as", U"\\o/", U"i", U"y", U"e", U"\\yc", U"\\ep", U"\\ct", U"\\ic"};
 	const char32 *sex[2] = {U"m", U"f"};
 	struct polsdatum {
@@ -2684,16 +2680,15 @@ Table Table_createFromPolsVanNieropData () {
 			Table_setColumnLabel (me.peek(), j, columnLabels[j - 1]);
 			my columnHeaders [j]. numericized = false;
 		}
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Table not created from Pols & van Nierop data.");
 	}
 }
 
-Table Table_createFromWeeninkData () {
+autoTable Table_createFromWeeninkData () {
 	long nrows = 360, ncols = 9;
-	const char32 *columnLabels[9] =
-	{U"Type", U"Sex", U"Speaker", U"Vowel", U"IPA", U"F0", U"F1", U"F2", U"F3"};
+	const char32 *columnLabels[9] = {U"Type", U"Sex", U"Speaker", U"Vowel", U"IPA", U"F0", U"F1", U"F2", U"F3"};
 	const char32 *type[3] = {U"m", U"w", U"c"};
 	/* Our order: "oe", "o", "oo", "a", "aa", "u", "eu", "uu", "ie", "i", "ee", "e"
 		to Pols & van Nierop order */
@@ -3128,42 +3123,74 @@ Table Table_createFromWeeninkData () {
 			Table_setColumnLabel (me.peek(), j, columnLabels[j - 1]);
 			my columnHeaders [j]. numericized = false;
 		}
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Table not created from Weenink data.");
 	}
 }
 
 // Keating&Esposito (2006), 
-Table Table_createFromEspositoData () {
+autoTable Table_createFromEspositoData () {
 	try {
 		autoTable me = Table_createWithColumnNames (10, U"Language Modal Breathy");
-		Table_setStringValue (me.peek(), 1, 1, U"Chong");Table_setNumericValue (me.peek(), 1, 2, -1.5);Table_setNumericValue (me.peek(), 1, 3, 5);
-		Table_setStringValue (me.peek(), 2, 1, U"Fuzhou");Table_setNumericValue (me.peek(), 2, 2, -1.5);Table_setNumericValue (me.peek(), 2, 3, 5);
-		Table_setStringValue (me.peek(), 3, 1, U"Green Hmong");Table_setNumericValue (me.peek(), 3, 2, 3);Table_setNumericValue (me.peek(), 3, 3, 12);
-		Table_setStringValue (me.peek(), 4, 1, U"White Hmong");Table_setNumericValue (me.peek(), 4, 2, 2);Table_setNumericValue (me.peek(), 4, 3, 11);
-		Table_setStringValue (me.peek(), 5, 1, U"Mon");Table_setNumericValue (me.peek(), 5, 2, -1.5);Table_setNumericValue (me.peek(), 5, 3, 0);
-		Table_setStringValue (me.peek(), 6, 1, U"SADV Zapotec");Table_setNumericValue (me.peek(), 6, 2, -6);Table_setNumericValue (me.peek(), 6, 3, -4);
-		Table_setStringValue (me.peek(), 7, 1, U"SLQ Zapotec");Table_setNumericValue (me.peek(), 7, 2, 3.5);Table_setNumericValue (me.peek(), 7, 3, 14);
-		Table_setStringValue (me.peek(), 8, 1, U"Tlacolula Zapotec");Table_setNumericValue (me.peek(), 8, 2, 3);Table_setNumericValue (me.peek(), 8, 3, 13);
-		Table_setStringValue (me.peek(), 9, 1, U"Tamang");Table_setNumericValue (me.peek(), 9, 2, 1);Table_setNumericValue (me.peek(), 9, 3, 1);
-		Table_setStringValue (me.peek(), 10, 1, U"!Xoo");Table_setNumericValue (me.peek(), 10, 2, 1);Table_setNumericValue (me.peek(), 10, 3, 14);
-		return me.transfer();
+		Table_setStringValue (me.peek(), 1, 1, U"Chong");
+		Table_setNumericValue (me.peek(), 1, 2, -1.5);
+		Table_setNumericValue (me.peek(), 1, 3, 5);
+		Table_setStringValue (me.peek(), 2, 1, U"Fuzhou");
+		Table_setNumericValue (me.peek(), 2, 2, -1.5);
+		Table_setNumericValue (me.peek(), 2, 3, 5);
+		Table_setStringValue (me.peek(), 3, 1, U"Green Hmong");
+		Table_setNumericValue (me.peek(), 3, 2, 3);
+		Table_setNumericValue (me.peek(), 3, 3, 12);
+		Table_setStringValue (me.peek(), 4, 1, U"White Hmong");
+		Table_setNumericValue (me.peek(), 4, 2, 2);
+		Table_setNumericValue (me.peek(), 4, 3, 11);
+		Table_setStringValue (me.peek(), 5, 1, U"Mon");
+		Table_setNumericValue (me.peek(), 5, 2, -1.5);
+		Table_setNumericValue (me.peek(), 5, 3, 0);
+		Table_setStringValue (me.peek(), 6, 1, U"SADV Zapotec");
+		Table_setNumericValue (me.peek(), 6, 2, -6);
+		Table_setNumericValue (me.peek(), 6, 3, -4);
+		Table_setStringValue (me.peek(), 7, 1, U"SLQ Zapotec");
+		Table_setNumericValue (me.peek(), 7, 2, 3.5);
+		Table_setNumericValue (me.peek(), 7, 3, 14);
+		Table_setStringValue (me.peek(), 8, 1, U"Tlacolula Zapotec");
+		Table_setNumericValue (me.peek(), 8, 2, 3);
+		Table_setNumericValue (me.peek(), 8, 3, 13);
+		Table_setStringValue (me.peek(), 9, 1, U"Tamang");
+		Table_setNumericValue (me.peek(), 9, 2, 1);
+		Table_setNumericValue (me.peek(), 9, 3, 1);
+		Table_setStringValue (me.peek(), 10, 1, U"!Xoo");
+		Table_setNumericValue (me.peek(), 10, 2, 1);
+		Table_setNumericValue (me.peek(), 10, 3, 14);
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Keating-Esposito table not created.");
 	}
 }
 
-Table Table_createFromGanongData () {
+autoTable Table_createFromGanongData () {
 	try {
 		autoTable me = Table_createWithColumnNames (6, U"VOT dash-tash dask-task");
-		Table_setNumericValue (me.peek(), 1, 1, -17.5);Table_setNumericValue (me.peek(), 1, 2, 0.98);Table_setNumericValue (me.peek(), 1, 3, 0.92);
-		Table_setNumericValue (me.peek(), 2, 1, -7.5);Table_setNumericValue (me.peek(), 2, 2, 0.95);Table_setNumericValue (me.peek(), 2, 3, 0.83);
-		Table_setNumericValue (me.peek(), 3, 1, -2.5);Table_setNumericValue (me.peek(), 3, 2, 0.71);Table_setNumericValue (me.peek(), 3, 3, 0.33);
-		Table_setNumericValue (me.peek(), 4, 1, 2.5);Table_setNumericValue (me.peek(), 4, 2, 0.29);Table_setNumericValue (me.peek(), 4, 3, 0.10);
-		Table_setNumericValue (me.peek(), 5, 1, 7.5);Table_setNumericValue (me.peek(), 5, 2, 0.12);Table_setNumericValue (me.peek(), 5, 3, 0.02);
-		Table_setNumericValue (me.peek(), 6, 1, 17.5);Table_setNumericValue (me.peek(), 6, 2, 0.10);Table_setNumericValue (me.peek(), 6, 3, 0.02);
-		return me.transfer();
+		Table_setNumericValue (me.peek(), 1, 1, -17.5);
+		Table_setNumericValue (me.peek(), 1, 2, 0.98);
+		Table_setNumericValue (me.peek(), 1, 3, 0.92);
+		Table_setNumericValue (me.peek(), 2, 1, -7.5);
+		Table_setNumericValue (me.peek(), 2, 2, 0.95);
+		Table_setNumericValue (me.peek(), 2, 3, 0.83);
+		Table_setNumericValue (me.peek(), 3, 1, -2.5);
+		Table_setNumericValue (me.peek(), 3, 2, 0.71);
+		Table_setNumericValue (me.peek(), 3, 3, 0.33);
+		Table_setNumericValue (me.peek(), 4, 1, 2.5);
+		Table_setNumericValue (me.peek(), 4, 2, 0.29);
+		Table_setNumericValue (me.peek(), 4, 3, 0.10);
+		Table_setNumericValue (me.peek(), 5, 1, 7.5);
+		Table_setNumericValue (me.peek(), 5, 2, 0.12);
+		Table_setNumericValue (me.peek(), 5, 3, 0.02);
+		Table_setNumericValue (me.peek(), 6, 1, 17.5);
+		Table_setNumericValue (me.peek(), 6, 2, 0.10);
+		Table_setNumericValue (me.peek(), 6, 3, 0.02);
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Ganong table not created.");
 	}
@@ -3348,7 +3375,7 @@ double Table_getMedianAbsoluteDeviation (Table me, long columnNumber)
 		Melder_throw (me, U": cannot compute median absolute deviation of column ", columnNumber, U".");
 	}
 
-Table Table_getOneWayKruskalWallis (Table me, long column, long factorColumn, double *degreesOfFreedom, double *kruskalWallis, double *probability) {
+autoTable Table_getOneWayKruskalWallis (Table me, long column, long factorColumn, double *degreesOfFreedom, double *kruskalWallis, double *probability) {
 	try {
 		if (column < 1 || column > my numberOfColumns) {
 			Melder_throw (U"Invalid column number.");
@@ -3424,7 +3451,7 @@ Table Table_getOneWayKruskalWallis (Table me, long column, long factorColumn, do
 		}
 		Table_numericize_Assert (him.peek(), 2);
 		Table_numericize_Assert (him.peek(), 3);
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": no one-way Kruskal-Wallis performed.");
 	}
@@ -3633,7 +3660,7 @@ autoTable Table_getOneWayAnalysisOfVarianceF (Table me, long column, long factor
 	}
 }
 
-Table Table_getTwoWayAnalysisOfVarianceF (Table me, long column, long factorColumnA, long factorColumnB, Table *means, Table *levelSizes) {
+autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, long column, long factorColumnA, long factorColumnB, Table *means, Table *levelSizes) {
 	try {
 		if (column < 1 || column > my numberOfColumns) {
 			Melder_throw (U"Invalid column number.");
@@ -3869,7 +3896,7 @@ Table Table_getTwoWayAnalysisOfVarianceF (Table me, long column, long factorColu
 		if (means) {
 			*means = ameans.transfer();
 		}
-		return anova.transfer();
+		return anova;
 	} catch (MelderError) {
 		Melder_throw (me, U": two-way anova not created.");
 	}
@@ -4143,7 +4170,7 @@ void Table_distributionPlotWhere (Table me, Graphics g, long dataColumn, double 
 	}
 }
 
-static Strings itemizeColourString (const char32 *colourString) {
+static autoStrings itemizeColourString (const char32 *colourString) {
 	// remove all spaces within { } so each {1,2,3} can be itemized
 	long nmatches_sub = 0;
 	const char32 *searchRE = U"\\{\\s*([0-9.]+)\\s*,\\s*([0-9.]+)\\s*,\\s*([0-9.]+)\\s*\\}";
@@ -4151,7 +4178,7 @@ static Strings itemizeColourString (const char32 *colourString) {
 	autoMelderString colour;
 	MelderString_append (&colour, str_replace_regexp (colourString, compiledRE, U"{\\1,\\2,\\3}", 0, &nmatches_sub));
 	autoStrings thee = Strings_createAsTokens (colour.string);
-	return thee.transfer();
+	return thee;
 }
 
 static Graphics_Colour Strings_colourToValue  (Strings me, long index) {
@@ -4469,7 +4496,7 @@ void Table_lagPlotWhere (Table me, Graphics g, long column, long lag, double xmi
 	}
 }
 
-Table Table_extractRowsWhere (Table me, const char32 *formula, Interpreter interpreter) {
+autoTable Table_extractRowsWhere (Table me, const char32 *formula, Interpreter interpreter) {
 	try {
 		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_UNKNOWN, true);
 		autoTable thee = Table_create (0, my numberOfColumns);
@@ -4489,13 +4516,13 @@ Table Table_extractRowsWhere (Table me, const char32 *formula, Interpreter inter
 		if (thy rows -> size == 0) {
 			Melder_warning (U"No row matches criterion.");
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Table could be extracted.");
 	}
 }
 
-static TableOfReal Table_to_TableOfRealWhere (Table me, const char32 *columnLabels, const char32 *factorColumn, const char32 *formula, Interpreter interpreter) {
+static autoTableOfReal Table_to_TableOfRealWhere (Table me, const char32 *columnLabels, const char32 *factorColumn, const char32 *formula, Interpreter interpreter) {
 	try {
 		long numberOfColumns, numberOfSelectedRows = 0;
 		long factorColIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn);
@@ -4515,17 +4542,17 @@ static TableOfReal Table_to_TableOfRealWhere (Table me, const char32 *columnLabe
 		for (long icol = 1; icol <= numberOfColumns; icol++) {
 			TableOfReal_setColumnLabel (thee.peek(), icol, my columnHeaders [columnIndex[icol]].label);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U"No TableOfReal created from Table.");
 	}
 }
 
-static SSCPs Table_to_SSCPsWhere (Table me, const char32 *columnLabels, const char32 *factorColumn, const char32 *formula, Interpreter interpreter) {
+static autoSSCPs Table_to_SSCPsWhere (Table me, const char32 *columnLabels, const char32 *factorColumn, const char32 *formula, Interpreter interpreter) {
 	try {
 		autoTableOfReal thee = Table_to_TableOfRealWhere (me, columnLabels, factorColumn, formula, interpreter);
 		autoSSCPs him = TableOfReal_to_SSCPs_byLabel (thee.peek());
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U"No Discriminant created from Table.");
 	}
@@ -4540,7 +4567,7 @@ static long SSCPs_findIndexOfGroupLabel (SSCPs me, const char32 *label) {
 	return 0;
 }
 
-static Table Table_and_SSCPs_extractMahalanobisWhere (Table me, SSCPs thee, double numberOfSigmas, int which_Melder_NUMBER, const char32 *factorColumn, const char32 *formula, Interpreter interpreter) {
+static autoTable Table_and_SSCPs_extractMahalanobisWhere (Table me, SSCPs thee, double numberOfSigmas, int which_Melder_NUMBER, const char32 *factorColumn, const char32 *formula, Interpreter interpreter) {
 	try {
 		SSCP sscp = (SSCP) thy item[1];
 		long numberOfColumns = sscp -> numberOfColumns, numberOfSelectedRows = 0;
@@ -4584,17 +4611,17 @@ static Table Table_and_SSCPs_extractMahalanobisWhere (Table me, SSCPs thee, doub
 				Collection_addItem (his rows, newRow.transfer());
 			}
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U"Table (mahalanobis) not extracted.");
 	}
 }
 
-Table Table_extractMahalanobisWhere(Table me, const char32 *columnLabels, const char32 *factorColumn, double numberOfSigmas, int which_Melder_NUMBER, const char32 *formula, Interpreter interpreter) {
+autoTable Table_extractMahalanobisWhere(Table me, const char32 *columnLabels, const char32 *factorColumn, double numberOfSigmas, int which_Melder_NUMBER, const char32 *formula, Interpreter interpreter) {
 	try {
 		autoSSCPs thee = Table_to_SSCPsWhere (me, columnLabels, factorColumn, formula, interpreter);
 		autoTable him = Table_and_SSCPs_extractMahalanobisWhere (me, thee.peek(), numberOfSigmas, which_Melder_NUMBER, factorColumn, formula, interpreter);
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U"Table not extracted.");
 	}
@@ -4644,7 +4671,7 @@ void Table_drawEllipsesWhere (Table me, Graphics g, long xcolumn, long ycolumn, 
 	}
 }
 
-Table Table_extractColumnRanges (Table me, char32 *ranges) {
+autoTable Table_extractColumnRanges (Table me, char32 *ranges) {
 	try {
 		long numberOfSelectedColumns, numberOfRows = my rows -> size;
 		autoNUMvector<long> columnRanges (NUMstring_getElementsOfRanges (ranges, my numberOfColumns, & numberOfSelectedColumns, nullptr, U"columnn number", true), 1);
@@ -4659,7 +4686,7 @@ Table Table_extractColumnRanges (Table me, char32 *ranges) {
 				Table_setStringValue (thee.peek(), irow, icol, value);
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no column range extracted.");
 	}

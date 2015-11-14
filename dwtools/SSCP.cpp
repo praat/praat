@@ -1807,7 +1807,7 @@ void SSCP_expand (SSCP me) {
 	// Now make 'my data' point to 'my expansion'
 	double **tmp = my data; my data = my expansion; my expansion = tmp;
 	my expansionNumberOfRows = my numberOfRows;
-	my numberOfRows = my numberOfColumns; // Now forget(me) is save
+	my numberOfRows = my numberOfColumns;
 	my dataChanged = 0;
 }
 

@@ -30,7 +30,7 @@
 
 static double func (Daata object, const double p[]) {
 	FFNet me = (FFNet) object;
-	Minimizer thee = my minimizer;
+	Minimizer thee = my minimizer.peek();
 	double fp = 0.0;
 
 	for (long j = 1, k = 1; k <= my nWeights; k++) {
@@ -84,7 +84,7 @@ static void _FFNet_Pattern_Activation_checkDimensions (FFNet me, Pattern p, Acti
 static void _FFNet_Pattern_Activation_learn (FFNet me, Pattern pattern, Activation activation, long maxNumOfEpochs, double tolerance, Any parameters, int costFunctionType, int reset) {
 	try {
 		_FFNet_Pattern_Activation_checkDimensions (me, pattern, activation);
-		Minimizer_setParameters (my minimizer, parameters);
+		Minimizer_setParameters (my minimizer.peek(), parameters);
 
 		// Link the things to be learned
 
@@ -101,10 +101,10 @@ static void _FFNet_Pattern_Activation_learn (FFNet me, Pattern pattern, Activati
 					wbuf[k++] = my w[i];
 				}
 			}
-			Minimizer_reset (my minimizer, wbuf.peek());
+			Minimizer_reset (my minimizer.peek(), wbuf.peek());
 		}
 
-		Minimizer_minimize (my minimizer, maxNumOfEpochs, tolerance, 1);
+		Minimizer_minimize (my minimizer.peek(), maxNumOfEpochs, tolerance, 1);
 
 		// Unlink
 
@@ -122,14 +122,14 @@ static void _FFNet_Pattern_Activation_learn (FFNet me, Pattern pattern, Activati
 void FFNet_Pattern_Activation_learnSD (FFNet me, Pattern p, Activation a, long maxNumOfEpochs, double tolerance, Any parameters, int costFunctionType) {
 	int resetMinimizer = 0;
 	/* Did we choose another minimizer */
-	if (my minimizer && ! Thing_isa (my minimizer, classSteepestDescentMinimizer)) {
-		forget (my minimizer);
+	if (my minimizer && ! Thing_isa (my minimizer.peek(), classSteepestDescentMinimizer)) {
+		my minimizer.reset(nullptr);
 		resetMinimizer = 1;
 	}
 	/* create the minimizer if it doesn't exist */
 	if (! my minimizer) {
 		resetMinimizer = 1;
-		my minimizer = (Minimizer) SteepestDescentMinimizer_create (my dimension, me, func, dfunc_optimized);
+		my minimizer = SteepestDescentMinimizer_create (my dimension, me, func, dfunc_optimized);
 	}
 	_FFNet_Pattern_Activation_learn (me, p, a, maxNumOfEpochs,tolerance, parameters, costFunctionType, resetMinimizer);
 }
@@ -139,14 +139,14 @@ void FFNet_Pattern_Activation_learnSM (FFNet me, Pattern p, Activation a, long m
 
 	// Did we choose another minimizer
 
-	if (my minimizer && ! Thing_isa (my minimizer, classVDSmagtMinimizer)) {
-		forget (my minimizer);
+	if (my minimizer.peek() && ! Thing_isa (my minimizer.peek(), classVDSmagtMinimizer)) {
+		my minimizer.reset(nullptr);
 		resetMinimizer = 1;
 	}
 	// create the minimizer if it doesn't exist
-	if (! my minimizer) {
+	if (! my minimizer.peek()) {
 		resetMinimizer = 1;
-		my minimizer = (Minimizer) VDSmagtMinimizer_create (my dimension, me, func, dfunc_optimized);
+		my minimizer = VDSmagtMinimizer_create (my dimension, me, func, dfunc_optimized);
 	}
 	_FFNet_Pattern_Activation_learn (me, p, a, maxNumOfEpochs, tolerance, parameters, costFunctionType, resetMinimizer);
 }

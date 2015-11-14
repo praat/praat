@@ -32,9 +32,9 @@
 
 // prototypes
 static void IntervalTier_splitInterval (IntervalTier me, double time, const char32 *leftLabel, long interval, double precision);
-static IntervalTier IntervalTier_and_IntervalTier_cutPartsMatchingLabel (IntervalTier me, IntervalTier thee, const char32 *label, double precision);
-static IntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier thee, const char32 *patchLabel, double precision);
-static Table IntervalTiers_to_Table_textAlignmentment (IntervalTier target, IntervalTier source, EditCostsTable costs);
+static autoIntervalTier IntervalTier_and_IntervalTier_cutPartsMatchingLabel (IntervalTier me, IntervalTier thee, const char32 *label, double precision);
+static autoIntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier thee, const char32 *patchLabel, double precision);
+static autoTable IntervalTiers_to_Table_textAlignmentment (IntervalTier target, IntervalTier source, EditCostsTable costs);
 
 autoSound SpeechSynthesizer_and_TextInterval_to_Sound (SpeechSynthesizer me, TextInterval thee, autoTextGrid *p_tg)
 {
@@ -69,7 +69,7 @@ static double TextGrid_getStartTimeOfFirstOccurence (TextGrid thee, long tierNum
 	TextGrid_checkSpecifiedTierNumberWithinRange (thee, tierNumber);
 	IntervalTier intervalTier = (IntervalTier) thy tiers -> item [tierNumber];
 	if (intervalTier -> classInfo != classIntervalTier) {
-			Melder_throw (U"Tier ", tierNumber, U" is not an interval tier.");
+		Melder_throw (U"Tier ", tierNumber, U" is not an interval tier.");
 	}
 	double start = NUMundefined;
 	for (long iint = 1; iint <= intervalTier -> intervals -> size; iint++) {
@@ -86,7 +86,7 @@ static double TextGrid_getEndTimeOfLastOccurence (TextGrid thee, long tierNumber
 	TextGrid_checkSpecifiedTierNumberWithinRange (thee, tierNumber);
 	IntervalTier intervalTier = (IntervalTier) thy tiers -> item [tierNumber];
 	if (intervalTier -> classInfo != classIntervalTier) {
-			Melder_throw (U"Tier ", tierNumber, U" is not an interval tier.");
+		Melder_throw (U"Tier ", tierNumber, U" is not an interval tier.");
 	}
 	double end = NUMundefined;
 	for (long iint = intervalTier -> intervals -> size; iint > 0; iint--) {
@@ -136,7 +136,7 @@ void IntervalTier_splitInterval (IntervalTier me, double time, const char32 *lef
 
 }
 
-static TextTier TextTier_and_IntervalTier_cutPartsMatchingLabel (TextTier me, IntervalTier thee, const char32 *label, double precision) {
+static autoTextTier TextTier_and_IntervalTier_cutPartsMatchingLabel (TextTier me, IntervalTier thee, const char32 *label, double precision) {
     try {
         if (my xmin != thy xmin || my xmax != thy xmax) {
             Melder_throw (U"Domains must be equal.");
@@ -165,7 +165,7 @@ static TextTier TextTier_and_IntervalTier_cutPartsMatchingLabel (TextTier me, In
             }
         }
         his xmax -= timeCut;
-        return him.transfer();
+        return him;
     } catch (MelderError) {
         Melder_throw (me, U": parts not cut.");
     }
@@ -173,7 +173,7 @@ static TextTier TextTier_and_IntervalTier_cutPartsMatchingLabel (TextTier me, In
 
 
 // Cut parts from me marked by labels in thee
-IntervalTier IntervalTier_and_IntervalTier_cutPartsMatchingLabel (IntervalTier me, IntervalTier thee, const char32 *label, double precision) {
+autoIntervalTier IntervalTier_and_IntervalTier_cutPartsMatchingLabel (IntervalTier me, IntervalTier thee, const char32 *label, double precision) {
     try {
         if (my xmin != thy xmin || my xmax != thy xmax) {
             Melder_throw (U"Domains must be equal.");
@@ -235,13 +235,13 @@ IntervalTier IntervalTier_and_IntervalTier_cutPartsMatchingLabel (IntervalTier m
                 TextInterval_setText (histi, ti -> text);
             }
         }
-        return him.transfer();
+        return him;
     } catch (MelderError) {
         Melder_throw (me, U": parts not cut.");
     }
 }
 
-TextGrid TextGrid_and_IntervalTier_cutPartsMatchingLabel (TextGrid me, IntervalTier thee, const char32 *label, double precision) {
+autoTextGrid TextGrid_and_IntervalTier_cutPartsMatchingLabel (TextGrid me, IntervalTier thee, const char32 *label, double precision) {
     try {
         if (my xmin != thy xmin || my xmax != thy xmax) {
             Melder_throw (U"Domains must be equal.");
@@ -267,7 +267,7 @@ TextGrid TextGrid_and_IntervalTier_cutPartsMatchingLabel (TextGrid me, IntervalT
                 Collection_addItem (his tiers, att.transfer());
             }
         }
-        return him.transfer();
+        return him;
     } catch (MelderError) {
         Melder_throw (me, U": no parts cut.");
     }
@@ -275,7 +275,7 @@ TextGrid TextGrid_and_IntervalTier_cutPartsMatchingLabel (TextGrid me, IntervalT
 
 // Patch thy intervals that match patchLabel into my intervals
 // The resulting IntervalTier has thy xmin as starting time and thy xmax as end time
-IntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier thee, const char32 *patchLabel, double precision) {
+autoIntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier thee, const char32 *patchLabel, double precision) {
     try {
 		autoNUMvector<double> durations (0L, my intervals -> size + 1);
 		for (long i = 1; i <= my intervals -> size; i++) {
@@ -332,13 +332,13 @@ IntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier the
 			time += durations[my intervals -> size + 1];
 			IntervalTier_splitInterval (him.peek(), time , U"", hisInterval, precision);
 		}
-        return him.transfer();
+        return him;
     } catch (MelderError) {
         Melder_throw (me, U": not patched.");
     }
 }
 
-static IntervalTier IntervalTiers_patch (IntervalTier me, IntervalTier thee, const char32 *patchLabel, double precision) {
+static autoIntervalTier IntervalTiers_patch (IntervalTier me, IntervalTier thee, const char32 *patchLabel, double precision) {
     try {
         autoIntervalTier him = IntervalTier_create (thy xmin, thy xmax);
         long myInterval = 1, hisInterval = 1;
@@ -386,13 +386,13 @@ static IntervalTier IntervalTiers_patch (IntervalTier me, IntervalTier thee, con
                 }
             }
         }
-        return him.transfer();
+        return him;
     } catch (MelderError) {
         Melder_throw (me, U": not patched.");
     }
 }
 
-static TextTier TextTier_and_IntervalTier_patch (TextTier me, IntervalTier thee, const char32 *patchLabel, double precision) {
+static autoTextTier TextTier_and_IntervalTier_patch (TextTier me, IntervalTier thee, const char32 *patchLabel, double precision) {
     try {
         long myIndex = 1;
         autoTextTier him = TextTier_create (thy xmin, thy xmax);
@@ -426,13 +426,13 @@ static TextTier TextTier_and_IntervalTier_patch (TextTier me, IntervalTier thee,
                 }
             }
         }
-        return him.transfer();
+        return him;
     } catch (MelderError) {
         Melder_throw (me, U": cannot patch TextTier.");
     }
 }
 
-TextGrid TextGrid_and_IntervalTier_patch (TextGrid me, IntervalTier thee, const char32 *patchLabel, double precision) {
+autoTextGrid TextGrid_and_IntervalTier_patch (TextGrid me, IntervalTier thee, const char32 *patchLabel, double precision) {
     try {
         double patchDurations;
         long numberOfPatches;
@@ -452,7 +452,7 @@ TextGrid TextGrid_and_IntervalTier_patch (TextGrid me, IntervalTier thee, const 
                 Collection_addItem (his tiers, att.transfer());
             }
         }
-        return him.transfer();
+        return him;
     } catch (MelderError) {
         Melder_throw (me, U": not patched.");
     }
@@ -576,19 +576,21 @@ static autoTextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align2 (SpeechS
         autoSound synth = SpeechSynthesizer_and_TextInterval_to_Sound (me, him, &tg_syn);
 
         // 3. There should be no silences in the synthesized sound except at the start and finish.
-		//    Set the wordwap parameter to a small value like 0.001 s.
+		//    Set the wordwarp parameter to a small value like 0.001 s.
 
         // 4. Get DTW from the two sounds
+		
         double analysisWidth = 0.02, dt = 0.005, band = 0.0;
         int constraint = 4;
         autoDTW dtw = Sounds_to_DTW (thee_trimmed.peek(), synth.peek(), analysisWidth, dt, band, constraint);
 
         // 6. Warp the synthesis TextGrid
-        // first make domain equal, otherwsise the warper protests
+        // first make domains equal, otherwsise the warper protests
 
         autoTextGrid warp = DTW_and_TextGrid_to_TextGrid (dtw.peek(), tg_syn.peek(), precision);
 
         // 7. Patch the trimmed intervals back into the warped TextGrid
+		
         autoTextGrid result = TextGrid_and_IntervalTier_patch (warp.peek(), (IntervalTier) thee_trimmer -> tiers ->item[1], U"trim", 2 * thy dx);
 
         return result;
@@ -672,7 +674,7 @@ autoTextGrid SpeechSynthesizer_and_Sound_and_TextGrid_align2 (SpeechSynthesizer 
     }
 }
 
-static Strings IntervalTier_to_Strings_withOriginData (IntervalTier me, long *from) {
+static autoStrings IntervalTier_to_Strings_withOriginData (IntervalTier me, long *from) {
 	try {
 		autoStrings thee = Thing_new (Strings);
 		thy strings = NUMvector<char32 *> (1, my intervals -> size);
@@ -680,16 +682,18 @@ static Strings IntervalTier_to_Strings_withOriginData (IntervalTier me, long *fr
 			TextInterval ti = (TextInterval) my intervals -> item[i];
 			if (ti -> text != 0 && ti -> text[0] != '\0') {
 				thy strings [++(thy numberOfStrings)] = Melder_dup (ti -> text);
-				from[thy numberOfStrings] = i;
+				if (from) {
+					from[thy numberOfStrings] = i;
+				}
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Strings created.");
 	}
 }
 
-Table IntervalTiers_to_Table_textAlignmentment (IntervalTier target, IntervalTier source, EditCostsTable costs) {
+autoTable IntervalTiers_to_Table_textAlignmentment (IntervalTier target, IntervalTier source, EditCostsTable costs) {
 	try {
 		long numberOfTargetIntervals = target -> intervals -> size;
 		long numberOfSourceIntervals = source -> intervals -> size;
@@ -757,13 +761,13 @@ Table IntervalTiers_to_Table_textAlignmentment (IntervalTier target, IntervalTie
 				Table_setStringValue  (thee.peek(), irow, 9, Melder_equ (targetText, sourceText) ? U" " : U"s");
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (target, U" and ", source, U" not aligned.");
 	}
 }
 
-Table TextGrids_to_Table_textAlignmentment (TextGrid target, long ttier, TextGrid source, long stier, EditCostsTable costs) {
+autoTable TextGrids_to_Table_textAlignmentment (TextGrid target, long ttier, TextGrid source, long stier, EditCostsTable costs) {
 	try {
 		IntervalTier targetTier = TextGrid_checkSpecifiedTierIsIntervalTier (target, ttier);
 		IntervalTier sourceTier = TextGrid_checkSpecifiedTierIsIntervalTier (source, stier);

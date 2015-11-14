@@ -2,7 +2,7 @@
 #define _EEG_extensions_h_
 /* EEG_extensions.h
  *
- * Copyright (C) 2012 David Weenink
+ * Copyright (C) 2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,21 +27,22 @@
 #include "ICA.h"
 #include "EEG.h"
 
-CrossCorrelationTable EEG_to_CrossCorrelationTable (EEG me, double startTime, double endTime, double lagTime, const char32 *channelRanges);
+autoCrossCorrelationTable EEG_to_CrossCorrelationTable (EEG me, double startTime, double endTime, double lagTime, const char32 *channelRanges);
 
-Covariance EEG_to_Covariance (EEG me, double startTime, double endTime, const char32 *channelRanges);
+autoCovariance EEG_to_Covariance (EEG me, double startTime, double endTime, const char32 *channelRanges);
 
-CrossCorrelationTables EEG_to_CrossCorrelationTables (EEG me, double startTime, double endTime, double lagTime, long ncovars, const char32 *channelRanges);
+autoCrossCorrelationTables EEG_to_CrossCorrelationTables (EEG me, double startTime, double endTime, double lagTime, long ncovars, const char32 *channelRanges);
 
-PCA EEG_to_PCA (EEG me, double startTime, double endTime, const char32 *channelRanges, int fromCorrelation);
+autoPCA EEG_to_PCA (EEG me, double startTime, double endTime, const char32 *channelRanges, int fromCorrelation);
 
-EEG EEG_and_PCA_to_EEG_whiten (EEG me, PCA thee, long numberOfComponents);
+autoEEG EEG_and_PCA_to_EEG_whiten (EEG me, PCA thee, long numberOfComponents);
 
-EEG EEG_and_PCA_to_EEG_principalComponents (EEG me, PCA thee, long numberOfComponents);
+autoEEG EEG_and_PCA_to_EEG_principalComponents (EEG me, PCA thee, long numberOfComponents);
 
-EEG EEG_to_EEG_bss (EEG me, double startTime, double endTime, long ncovars, double lagTime, const char32 *channelRanges, int whiteningMethod, int diagonalizerMethod, long maxNumberOfIterations, double tol);
+autoEEG EEG_to_EEG_bss (EEG me, double startTime, double endTime, long ncovars, double lagTime, const char32 *channelRanges, int whiteningMethod, int diagonalizerMethod, long maxNumberOfIterations, double tol);
 
-Sound EEG_to_Sound_frequencyShifted (EEG me, long channel, double frequencyShift, double samplingFrequency, double maxAmp);
-Sound EEG_to_Sound_modulated (EEG me, double baseFrequency, double channelBandWidth, const char32 *channelRanges);
+autoSound EEG_to_Sound_frequencyShifted (EEG me, long channel, double frequencyShift, double samplingFrequency, double maxAmp);
+
+autoSound EEG_to_Sound_modulated (EEG me, double baseFrequency, double channelBandWidth, const char32 *channelRanges);
 
 #endif /* _EEG_extensions_h_ */

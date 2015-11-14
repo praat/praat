@@ -39,7 +39,7 @@ Thing_define (Pattern, Matrix) {
 
 void Pattern_init (Pattern me, long ny, long nx);
 
-Pattern Pattern_create (long ny, long nx);
+autoPattern Pattern_create (long ny, long nx);
 
 void Pattern_normalize (Pattern me, int choice, double pmin, double pmax);
 /* choice == 1: z[i][j] = (z[i][j]-pmin) / (pmax-pmin);
@@ -49,8 +49,9 @@ void Pattern_normalize (Pattern me, int choice, double pmin, double pmax);
 void Pattern_draw (Pattern me, Graphics g, long pattern, double xmin, double xmax,
 	double ymin, double ymax, int garnish);
 
-Pattern Matrix_to_Pattern (Matrix me, int join);
-Matrix Pattern_to_Matrix (Pattern me);
+autoPattern Matrix_to_Pattern (Matrix me, int join);
+
+autoMatrix Pattern_to_Matrix (Pattern me);
 
 int _Pattern_checkElements (Pattern me);
 /* Return 1 if all elements are in interval [0,1] else 0. */

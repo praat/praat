@@ -2,7 +2,7 @@
 #define _Categories_and_Strings_h_
 /* Categories_and_Strings.h
  *
- * Copyright (C) 2001-2012 David Weenink
+ * Copyright (C) 2001-2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +27,8 @@
 #include "Categories.h"
 #include "Strings_.h"
 
-Strings Categories_to_Strings (Categories me);
+autoStrings Categories_to_Strings (Categories me);
 
-Categories Strings_to_Categories (Strings me);
+autoCategories Strings_to_Categories (Strings me);
 
 #endif /* _Categories_and_Strings_h_ */

@@ -43,17 +43,24 @@ Thing_define (DLL, Thing) {
 	virtual Data_CompareFunction v_getCompareFunction () { return s_compare; }
 };
 
-DLLNode DLLNode_create (Daata data); // DLLNode owns the data
+autoDLLNode DLLNode_create (Daata data); // DLLNode owns the data
 
 void DLL_init (DLL me);
-DLL DLL_create ();
+
+autoDLL DLL_create ();
 
 void DLL_addFront (DLL me, DLLNode n);
+
 void DLL_addBack (DLL me, DLLNode n);
+
 void DLL_addBefore (DLL me, DLLNode pos, DLLNode n);
+
 void DLL_addAfter (DLL me, DLLNode pos, DLLNode n);
+
 void DLL_remove (DLL me, DLLNode n);
+
 void DLL_sort (DLL me);
+
 void DLL_sortPart (DLL me, DLLNode from, DLLNode to);
 
 #endif // _DLL_h_

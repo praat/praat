@@ -50,16 +50,16 @@ void SimpleString_append_c (SimpleString me, const char32 *str) {
 	str32cpy (& my string[myLength], str);
 }
 
-SimpleString SimpleString_concat (SimpleString me, SimpleString thee) {
+autoSimpleString SimpleString_concat (SimpleString me, SimpleString thee) {
 	autoSimpleString him = Data_copy (me);
 	SimpleString_append_c (him.peek(), thy string);
-	return him.transfer();
+	return him;
 }
 
-SimpleString SimpleString_concat_c (SimpleString me, const char32 *str) {
+autoSimpleString SimpleString_concat_c (SimpleString me, const char32 *str) {
 	autoSimpleString him = Data_copy (me);
 	SimpleString_append_c (him.peek(), str);
-	return him.transfer();
+	return him;
 }
 
 void SimpleString_replace_c (SimpleString me, const char32 *str) {

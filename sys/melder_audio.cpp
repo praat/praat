@@ -159,10 +159,12 @@ bool MelderAudio_isPlaying;
 
 static double theStartingTime = 0.0;
 
-#define PA_INFO_GETTING 1
-#define PA_INFO_FOUND 2
+#define PA_GETTINGINFO 1
+#define PA_GETTINGINFO_DONE 2
 #define PA_WRITING 4
 #define PA_WRITING_DONE 8
+#define PA_RECORDING 16
+#define PA_RECORDING_DONE 32
 
 #ifdef HAVE_PULSEAUDIO
 typedef struct pulseAudio {
@@ -673,7 +675,7 @@ void pulseAudio_server_info_cb (pa_context *context, const pa_server_info *info,
 	}
 	MelderInfo_close ();
 	trace (U"before signal");
-	my pulseAudio.occupation |= PA_INFO_FOUND;
+	my pulseAudio.occupation |= PA_GETTINGINFO_DONE;
 	 // We are done, signal it to pulseAudio_serverReport
 	pa_threaded_mainloop_signal (my pulseAudio.mainloop, 0);
 }
@@ -683,24 +685,24 @@ void pulseAudio_serverReport () {
 	struct MelderPlay *me = & thePlay;
 	if (my pulseAudio.mainloop) {
 		pa_threaded_mainloop_lock (my pulseAudio.mainloop);
-		my pulseAudio.occupation |= PA_INFO_GETTING;
+		my pulseAudio.occupation |= PA_GETTINGINFO;
 		if (my pulseAudio.context) {
 			pa_operation *operation = pa_context_get_server_info (my pulseAudio.context, pulseAudio_server_info_cb, me);
 			trace (U"operation started");
 			if (! operation) {
 				Melder_throw (U"pulseAudioServer report: ", Melder_peek8to32 (pa_strerror (pa_context_errno (my pulseAudio.context))));
 			}
-			while ((my pulseAudio.occupation & PA_INFO_FOUND) != PA_INFO_FOUND) {
+			while ((my pulseAudio.occupation & PA_GETTINGINFO_DONE) != PA_GETTINGINFO_DONE) {
 				pa_threaded_mainloop_wait (my pulseAudio.mainloop);
 			}
 			// Now it is save to unref because the server info operation has completed
 			pa_operation_unref (operation);
-			my pulseAudio.occupation ^= ~PA_INFO_FOUND;
+			my pulseAudio.occupation ^= ~PA_GETTINGINFO_DONE;
 		}
-		my pulseAudio.occupation ^= ~PA_INFO_GETTING;
+		my pulseAudio.occupation ^= ~PA_GETTINGINFO;
 		pa_threaded_mainloop_unlock (my pulseAudio.mainloop);
 	} else {
-		my pulseAudio.occupation |= PA_INFO_GETTING;
+		my pulseAudio.occupation |= PA_GETTINGINFO;
 		pulseAudio_initialize ();
 		/*
 		 * First acquire a lock because the operation to get server info (in context_state_cb) may not have started yet.
@@ -708,14 +710,14 @@ void pulseAudio_serverReport () {
 		 */
 		pa_threaded_mainloop_lock (my pulseAudio.mainloop);
 
-		while ((my pulseAudio.occupation & PA_INFO_FOUND) != PA_INFO_FOUND) {
+		while ((my pulseAudio.occupation & PA_GETTINGINFO_DONE) != PA_GETTINGINFO_DONE) {
 			pa_threaded_mainloop_wait (my pulseAudio.mainloop);
 		}
 		// Now we know that the operation to get server info has succeeded!
 		pa_operation_unref (my pulseAudio.operation_info);
 		my pulseAudio.operation_info = nullptr;
-		my pulseAudio.occupation ^= ~PA_INFO_GETTING;
-		my pulseAudio.occupation ^= ~PA_INFO_FOUND;
+		my pulseAudio.occupation ^= ~PA_GETTINGINFO;
+		my pulseAudio.occupation ^= ~PA_GETTINGINFO_DONE;
 		pa_threaded_mainloop_unlock (my pulseAudio.mainloop);
 		if (! MelderAudio_isPlaying) {
 			my pulseAudio.occupation = 0;
@@ -948,7 +950,7 @@ void context_state_cb (pa_context *context, void *userdata) {
 			break;
 		case PA_CONTEXT_READY: {
 			trace (U"PA_CONTEXT_READY");
-			if ((my pulseAudio.occupation & PA_INFO_GETTING) == PA_INFO_GETTING) {
+			if ((my pulseAudio.occupation & PA_GETTINGINFO) == PA_GETTINGINFO) {
 				my pulseAudio.operation_info = pa_context_get_server_info (my pulseAudio.context, pulseAudio_server_info_cb, me);
 				trace (U"operation started");
 				if (! my pulseAudio.operation_info) {
@@ -994,6 +996,8 @@ void context_state_cb (pa_context *context, void *userdata) {
 					Melder_throw (U"pa_stream_connect_playback() failed: ", Melder_peek8to32 (pa_strerror (pa_context_errno (my pulseAudio.context))));
 				}
 				trace (U"tlength = ", my pulseAudio.buffer_attr.tlength, U", channels = ", my numberOfChannels);
+			} else if ((my pulseAudio.occupation & PA_RECORDING) == PA_RECORDING) {
+				
 			}
 			break;
 		}

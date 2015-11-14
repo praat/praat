@@ -24,3 +24,4 @@ procedure check_memory: .report_before$, .preprint$
 		appendInfoLine: .preprint$, .m$[.i], .nb, " ", .na, .post$
 	endfor
 endproc
+removeObject: tests

@@ -5326,21 +5326,15 @@ Polynomial p1 = nullptr, p2 = nullptr, pq, pr;
 	if (! wantq && ! wantr) {
 		Melder_throw (U"Either \'Want quotient\' or \'Want remainder\' should be chosen");
 	}
-	Polynomial p1 = 0, p2 = 0;
+	Polynomial p1 = nullptr, p2 = nullptr;
 	LOOP {
 		iam (Polynomial);
 		(p1 ? p2 : p1) = me;
 	}
 	Melder_assert (p1 && p2);
-	Polynomial q, r;
-	if (! wantq) {
-		q = 0;
-	}
-	if (! wantr) {
-		r = 0;
-	}
-	Polynomials_divide (p1, p2, &q, &r);
-	autoPolynomial aq = q, ar = r;
+	autoPolynomial aq, ar;
+	Polynomials_divide (p1, p2, wantq ? & aq : nullptr, wantr ? & ar : nullptr);
+//	autoPolynomial aq = q, ar = r;
 	if (wantq) {
 		praat_new (aq.transfer(), Thing_getName (p1), U"_q");
 	}
@@ -7969,11 +7963,11 @@ FORM (TableOfReal_to_Pattern_and_Categories, U"TableOfReal: To Pattern and Categ
 	DO
 	LOOP {
 		iam (TableOfReal);
-		Pattern p = 0; Categories c = 0;
+		autoPattern ap; 
+		autoCategories ac;
 		TableOfReal_to_Pattern_and_Categories (me, GET_INTEGER (U"left Row range"),
 		GET_INTEGER (U"right Row range"), GET_INTEGER (U"left Column range"),
-		GET_INTEGER (U"right Column range"), &p, &c);
-		autoPattern ap = p; autoCategories ac = c;
+		GET_INTEGER (U"right Column range"), & ap, & ac);
 		praat_new (ap.transfer(), Thing_getName (me));
 		praat_new (ac.transfer(), Thing_getName (me));
 	}

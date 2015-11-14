@@ -2,7 +2,7 @@
 #define _Simple_extensions_h_
 /* Simple_extensions.h
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,8 +40,8 @@ void SimpleString_append (SimpleString me, SimpleString thee);
 void SimpleString_append_c (SimpleString me, const char32 *str);
 /* append string to me */
 
-SimpleString SimpleString_concat (SimpleString me, SimpleString thee);
-SimpleString SimpleString_concat_c (SimpleString me, const char32 *str);
+autoSimpleString SimpleString_concat (SimpleString me, SimpleString thee);
+autoSimpleString SimpleString_concat_c (SimpleString me, const char32 *str);
 /* concatenate two strings */
 
 void SimpleString_replace_c (SimpleString me, const char32 *replacement);

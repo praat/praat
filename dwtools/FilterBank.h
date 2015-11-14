@@ -77,28 +77,27 @@ Interpretation:
     ny the number of filters.
  */
 
-double FilterBank_getFrequencyInHertz (I, double f, int scale_from);
-double FilterBank_getFrequencyInBark (I, double f, int scale_from);
-double FilterBank_getFrequencyInMel (I, double f, int scale_from);
+double FilterBank_getFrequencyInHertz (FilterBank me, double f, int scale_from);
+double FilterBank_getFrequencyInBark (FilterBank me, double f, int scale_from);
+double FilterBank_getFrequencyInMel (FilterBank me, double f, int scale_from);
 
-int FilterBank_getFrequencyScale (I);
+int FilterBank_getFrequencyScale (FilterBank me);
 
-void FilterBank_drawFrequencyScales (I, Graphics g, int horizontalScale, double xmin,
+void FilterBank_drawFrequencyScales (FilterBank me, Graphics g, int horizontalScale, double xmin,
 	double xmax, int verticalScale, double ymin, double ymax, int garnish);
 
 void BarkFilter_drawSekeyHansonFilterFunctions (BarkFilter me, Graphics g,
 	int freqScale,	int fromFilter, int toFilter, double zmin, double zmax,
 	int dbScale, double ymin, double ymax, int garnish);
 
-void FilterBank_drawTimeSlice (I, Graphics g, double t, double fmin, double fmax,
+void FilterBank_drawTimeSlice (FilterBank me, Graphics g, double t, double fmin, double fmax,
 	double min, double max, const char32 *xlabel, int garnish);
 
 void FilterBank_paint (FilterBank me, Graphics g, double xmin, double xmax, double ymin, double ymax, double minimum, double maximum, int garnish);
 
-BarkFilter BarkFilter_create (double tmin, double tmax, long nt, double dt,
-	double t1, double fmin, double fmax, long nf, double df, double f1);
+autoBarkFilter BarkFilter_create (double tmin, double tmax, long nt, double dt, double t1, double fmin, double fmax, long nf, double df, double f1);
 
-BarkFilter Matrix_to_BarkFilter (I);
+autoBarkFilter Matrix_to_BarkFilter (Matrix me);
 
 Thing_define (MelFilter, FilterBank) {
 	int v_getFrequencyScale ()
@@ -116,23 +115,23 @@ Interpretation:
     ny the number of filters.
  */
 
-MelFilter MelFilter_create (double tmin, double tmax, long nt, double dt,
+autoMelFilter MelFilter_create (double tmin, double tmax, long nt, double dt,
 	double t1, double fmin, double fmax, long nf, double df, double f1);
 
-MelFilter Matrix_to_MelFilter (I);
+autoMelFilter Matrix_to_MelFilter (Matrix);
 
 void MelFilter_drawFilterFunctions (MelFilter me, Graphics g,
 	int freqScale, int fromFilter, int toFilter, double zmin, double zmax,
 	int dbScale, double ymin, double ymax, int garnish);
 
-MFCC MelFilter_to_MFCC (MelFilter me, long numberOfCoefficients);
+autoMFCC MelFilter_to_MFCC (MelFilter me, long numberOfCoefficients);
 
 Thing_define (FormantFilter, FilterBank) {
 	const char32 *v_getFrequencyUnit ()
 		override { return U"Hz"; }
 };
 
-FormantFilter FormantFilter_create (double tmin, double tmax, long nt,
+autoFormantFilter FormantFilter_create (double tmin, double tmax, long nt,
 	double dt, double t1, double fmin, double fmax, long nf, double df,
 	double f1);
 
@@ -140,14 +139,14 @@ void FormantFilter_drawFilterFunctions (FormantFilter me, Graphics g, double ban
 	int freqScale, int fromFilter, int toFilter, double zmin, double zmax,
 	int dbScale, double ymin, double ymax, int garnish);
 
-FormantFilter Matrix_to_FormantFilter (I);
+autoFormantFilter Matrix_to_FormantFilter (Matrix me);
 
-void FilterBank_equalizeIntensities (I, double intensity_db);
+void FilterBank_equalizeIntensities (FilterBank me, double intensity_db);
 
-Matrix FilterBank_to_Matrix (I);
+autoMatrix FilterBank_to_Matrix (FilterBank me);
 /* Generieke ...Filters_to_Matrix */
 
-Spectrum FormantFilter_to_Spectrum_slice (FormantFilter me, double t);
+autoSpectrum FormantFilter_to_Spectrum_slice (FormantFilter me, double t);
 /*
 	Calculate amplitude spectrum at time t.
 	power[i] = ref * 10 ^ (my z[i][t] / 10)
@@ -155,29 +154,31 @@ Spectrum FormantFilter_to_Spectrum_slice (FormantFilter me, double t);
 	spec->z[2][i] = 0
 */
 
-Intensity FilterBank_to_Intensity (I);
+autoIntensity FilterBank_to_Intensity (FilterBank me);
 
-void FilterBank_and_PCA_drawComponent (I, PCA thee, Graphics g, long component, double dblevel,
+void FilterBank_and_PCA_drawComponent (FilterBank me, PCA thee, Graphics g, long component, double dblevel,
 	double frequencyOffset, double scale, double tmin, double tmax, double fmin, double fmax);
 
 // Convert old types to new types
 
-MelSpectrogram MelFilter_to_MelSpectrogram (MelFilter me);
-BarkSpectrogram BarkFilter_to_BarkSpectrogram (BarkFilter me);
-Spectrogram FormantFilter_to_Spectrogram (FormantFilter me);
+autoMelSpectrogram MelFilter_to_MelSpectrogram (MelFilter me);
+
+autoBarkSpectrogram BarkFilter_to_BarkSpectrogram (BarkFilter me);
+
+autoSpectrogram FormantFilter_to_Spectrogram (FormantFilter me);
 
 
-MFCC MelFilter_to_MFCC (MelFilter me, long numberOfCoefficients);
+autoMFCC MelFilter_to_MFCC (MelFilter me, long numberOfCoefficients);
 /*
 Calculates the Cosine Transform of the filterbank values.
 */
 
-MelFilter MFCC_to_MelFilter (MFCC me, long firstCoefficient, long lastCoefficient);
+autoMelFilter MFCC_to_MelFilter (MFCC me, long firstCoefficient, long lastCoefficient);
 /*
 Calculates the Inverse CT of cepstral coefficients.
 */
 
-BarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt,
+autoBarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt,
 	double f1_bark, double fmax_bark, double df_bark);
 /*
 	Filtering with filters on a Bark scale as defined by
@@ -188,19 +189,20 @@ BarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt,
 	10 log F(z) = 15.8 + 7.5(z + 0.5) - 17.5 * sqrt(1 + (z + 0.5)^2)
 */
 
-MelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt,
+autoMelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt,
 	double f1_mel, double fmax_mel, double df_mel);
 
-FormantFilter Sound_to_FormantFilter (Sound me, double analysisWidth,
+autoFormantFilter Sound_to_FormantFilter (Sound me, double analysisWidth,
 	double dt, double f1_hz, double fmax_hz, double df_hz, double relative_bw,
 	double minimumPitch, double maximumPitch);
 
-FormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee,
+autoFormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee,
 	double analysisWidth, double dt, double f1_hz, double fmax_hz,
 	double df_hz, double relative_bw);
 
-Sound FilterBanks_crossCorrelate (FilterBank me, FilterBank thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
-Sound FilterBanks_convolve (FilterBank me, FilterBank thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
+autoSound FilterBanks_crossCorrelate (FilterBank me, FilterBank thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
+
+autoSound FilterBanks_convolve (FilterBank me, FilterBank thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
 
 
 #endif /* _FilterBank_h_ */
