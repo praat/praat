@@ -63,7 +63,7 @@ oo_DEFINE_CLASS (FFNet, Daata)
 			double **inputPattern, **targetActivation;
 		#endif
 		#if oo_DECLARING || oo_DESTROYING
-			oo_OBJECT (Minimizer, 0, minimizer)
+			oo_AUTO_OBJECT (Minimizer, 0, minimizer)
 		#endif
 
 		oo_DOUBLE_VECTOR (activity, nNodes)

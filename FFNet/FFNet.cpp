@@ -338,7 +338,7 @@ void FFNet_reset (FFNet me, double wrange) {
 		my activity[i] = (my isbias[i] ? 1.0 : 0.0);
 	}
 	my accumulatedCost = 0.0;
-	forget (my minimizer);
+	my minimizer.reset(nullptr);
 }
 
 
@@ -555,7 +555,7 @@ long FFNet_getNumberOfUnitsInLayer (FFNet me, int layer) {
 }
 
 double FFNet_getMinimum (FFNet me) {
-	return my minimizer ? Minimizer_getMinimum (my minimizer) : NUMundefined;
+	return my minimizer ? Minimizer_getMinimum (my minimizer.peek()) : NUMundefined;
 }
 
 void FFNet_drawTopology (FFNet me, Graphics g) {
@@ -704,7 +704,7 @@ void FFNet_drawWeights (FFNet me, Graphics g, long layer, int garnish) {
 
 void FFNet_drawCostHistory (FFNet me, Graphics g, long iFrom, long iTo, double costMin, double costMax, int garnish) {
 	if (my minimizer) {
-		Minimizer_drawHistory (my minimizer, g, iFrom, iTo, costMin, costMax, 0);
+		Minimizer_drawHistory (my minimizer.peek(), g, iFrom, iTo, costMin, costMax, 0);
 	}
 	if (garnish) {
 		Graphics_drawInnerBox (g);
@@ -735,10 +735,9 @@ autoCollection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidde
 			}
 		}
 
-		Pattern thee = nullptr;
-		Categories him = nullptr;
-		TableOfReal_to_Pattern_and_Categories (iris.peek(), 0, 0, 0, 0, &thee, &him);
-		autoPattern ap = thee; autoCategories ac = him;
+		autoPattern ap;
+		autoCategories ac;
+		TableOfReal_to_Pattern_and_Categories (iris.peek(), 0, 0, 0, 0, & ap, & ac);
 		Thing_setName (ap.peek(), U"iris");
 		Thing_setName (ac.peek(), U"iris");
 		Collection_addItem (c.peek(), ap.transfer());

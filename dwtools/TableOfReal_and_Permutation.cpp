@@ -1,6 +1,6 @@
 /* TableOfReal_and_Permutation.cpp
  *
- * Copyright (C) 2005-2014 David Weenink
+ * Copyright (C) 2005-2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 #include "TableOfReal_extensions.h"
 #include "NUM2.h"
 
-TableOfReal TableOfReal_and_Permutation_permuteRows (TableOfReal me, Permutation thee) {
+autoTableOfReal TableOfReal_and_Permutation_permuteRows (TableOfReal me, Permutation thee) {
 	try {
 		if (my numberOfRows != thy numberOfElements) {
 			Melder_throw (U"The number of rows in the table and the number of elements in the Permutation must be equal.");
@@ -38,17 +38,17 @@ TableOfReal TableOfReal_and_Permutation_permuteRows (TableOfReal me, Permutation
 		for (long j = 1; j <= my numberOfColumns; j++) {
 			TableOfReal_setColumnLabel (him.peek(), j, my columnLabels[j]);
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": not permuted.");
 	}
 }
 
-Permutation TableOfReal_to_Permutation_sortRowLabels (TableOfReal me) {
+autoPermutation TableOfReal_to_Permutation_sortRowLabels (TableOfReal me) {
 	try {
 		autoPermutation thee = Permutation_create (my numberOfRows);
 		NUMindexx_s (my rowLabels, my numberOfRows, thy p);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Permutation created.");
 	}

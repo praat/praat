@@ -71,8 +71,8 @@
 #define Graphics_TWOWAYARROW 2
 #define Graphics_LINE 3
 
-static TableOfReal TableOfReal_and_TableOfReal_columnCorrelations (TableOfReal me, TableOfReal thee, int center, int normalize);
-static TableOfReal TableOfReal_and_TableOfReal_rowCorrelations (TableOfReal me, TableOfReal thee, int center, int normalize);
+static autoTableOfReal TableOfReal_and_TableOfReal_columnCorrelations (TableOfReal me, TableOfReal thee, int center, int normalize);
+static autoTableOfReal TableOfReal_and_TableOfReal_rowCorrelations (TableOfReal me, TableOfReal thee, int center, int normalize);
 
 long TableOfReal_getColumnIndexAtMaximumInRow (TableOfReal me, long rowNumber) {
 	long columnNumber = 0;
@@ -174,7 +174,7 @@ int TableOfReal_hasColumnLabels (TableOfReal me) {
 	return 1;
 }
 
-TableOfReal TableOfReal_createIrisDataset () {
+autoTableOfReal TableOfReal_createIrisDataset () {
 	double iris[150][4] = {
 		{5.1, 3.5, 1.4, 0.2}, {4.9, 3.0, 1.4, 0.2}, {4.7, 3.2, 1.3, 0.2}, {4.6, 3.1, 1.5, 0.2}, {5.0, 3.6, 1.4, 0.2},
 		{5.4, 3.9, 1.7, 0.4}, {4.6, 3.4, 1.4, 0.3}, {5.0, 3.4, 1.5, 0.2}, {4.4, 2.9, 1.4, 0.2}, {4.9, 3.1, 1.5, 0.1},
@@ -224,13 +224,13 @@ TableOfReal TableOfReal_createIrisDataset () {
 			TableOfReal_setRowLabel (me.peek(), i, label);
 		}
 		Thing_setName (me.peek(), U"iris");
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal from iris data not created.");
 	}
 }
 
-Strings TableOfReal_extractRowLabels (TableOfReal me) {
+autoStrings TableOfReal_extractRowLabels (TableOfReal me) {
 	try {
 		autoStrings thee = Thing_new (Strings);
 
@@ -244,13 +244,13 @@ Strings TableOfReal_extractRowLabels (TableOfReal me) {
 				thy strings[i] = Melder_dup (label);
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": row labels not extracted.");
 	}
 }
 
-Strings TableOfReal_extractColumnLabels (TableOfReal me) {
+autoStrings TableOfReal_extractColumnLabels (TableOfReal me) {
 	try {
 		autoStrings thee = Thing_new (Strings);
 
@@ -263,13 +263,13 @@ Strings TableOfReal_extractColumnLabels (TableOfReal me) {
 				thy strings[i] = Melder_dup (label);
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": column labels not extracted.");
 	}
 }
 
-TableOfReal TableOfReal_transpose (TableOfReal me) {
+autoTableOfReal TableOfReal_transpose (TableOfReal me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfColumns, my numberOfRows);
 
@@ -280,14 +280,13 @@ TableOfReal TableOfReal_transpose (TableOfReal me) {
 		}
 		NUMstrings_copyElements (my rowLabels, thy columnLabels, 1, my numberOfRows);
 		NUMstrings_copyElements (my columnLabels, thy rowLabels, 1, my numberOfColumns);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not transposed.");
 	}
 }
 
-int TableOfReal_to_Pattern_and_Categories (TableOfReal me, long fromrow, long torow, long fromcol, long tocol, Pattern *p, Categories *c) {
-	*p = nullptr; *c = nullptr;
+void TableOfReal_to_Pattern_and_Categories (TableOfReal me, long fromrow, long torow, long fromcol, long tocol, autoPattern *p, autoCategories *c) {
 	try {
 		long ncol = my numberOfColumns, nrow = my numberOfRows;
 
@@ -321,9 +320,8 @@ int TableOfReal_to_Pattern_and_Categories (TableOfReal me, long fromrow, long to
 				ap -> z[row][col] = my data[i][j];
 			}
 		}
-		*p = ap.transfer();
-		*c = ac.transfer();
-		return 1;
+		*p = ap.move();
+		*c = ac.move();
 	} catch (MelderError) {
 		Melder_throw (U"Pattern and Categories not created from TableOfReal.");
 	}
@@ -971,17 +969,17 @@ void TablesOfReal_init (TablesOfReal me, ClassInfo klas) {
 	Ordered_init (me, klas, 10);
 }
 
-TablesOfReal TablesOfReal_create () {
+autoTablesOfReal TablesOfReal_create () {
 	try {
 		autoTablesOfReal me = Thing_new (TablesOfReal);
 		TablesOfReal_init (me.peek(), classTableOfReal);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"TablesOfReal not created.");
 	}
 }
 
-TableOfReal TablesOfReal_sum (TablesOfReal me) {
+autoTableOfReal TablesOfReal_sum (TablesOfReal me) {
 	try {
 		if (my size <= 0) {
 			return nullptr;
@@ -999,7 +997,7 @@ TableOfReal TablesOfReal_sum (TablesOfReal me) {
 				}
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": sum not created.");
 	}
@@ -1039,7 +1037,7 @@ double TableOfReal_getColumnQuantile (TableOfReal me, long col, double quantile)
 	}
 }
 
-static TableOfReal TableOfReal_createPolsVanNieropData (int choice, int include_levels) {
+static autoTableOfReal TableOfReal_createPolsVanNieropData (int choice, int include_levels) {
 	try {
 		autoTable table = Table_createFromPolsVanNieropData ();
 
@@ -1074,21 +1072,21 @@ static TableOfReal TableOfReal_createPolsVanNieropData (int choice, int include_
 				TableOfReal_setColumnLabel (thee.peek(), 3 + j, label);
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal from Pols & Van Nierop data not created.");
 	}
 }
 
-TableOfReal TableOfReal_createFromPolsData_50males (int include_levels) {
+autoTableOfReal TableOfReal_createFromPolsData_50males (int include_levels) {
 	return TableOfReal_createPolsVanNieropData (1, include_levels);
 }
 
-TableOfReal TableOfReal_createFromVanNieropData_25females (int include_levels) {
+autoTableOfReal TableOfReal_createFromVanNieropData_25females (int include_levels) {
 	return TableOfReal_createPolsVanNieropData (2, include_levels);
 }
 
-TableOfReal TableOfReal_createFromWeeninkData (int option) {
+autoTableOfReal TableOfReal_createFromWeeninkData (int option) {
 	try {
 		long nvowels = 12, ncols = 3, nrows = 10 * nvowels;
 
@@ -1110,24 +1108,24 @@ TableOfReal TableOfReal_createFromWeeninkData (int option) {
 			const char32 *label = table -> columnHeaders[6 + j].label;
 			TableOfReal_setColumnLabel (thee.peek(), j, label);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal from Weenink data not created.");
 	}
 }
 
-TableOfReal TableOfReal_randomizeRows (TableOfReal me) {
+autoTableOfReal TableOfReal_randomizeRows (TableOfReal me) {
 	try {
 		autoPermutation p = Permutation_create (my numberOfRows);
 		Permutation_permuteRandomly_inline (p.peek(), 0, 0);
 		autoTableOfReal thee = TableOfReal_and_Permutation_permuteRows (me, p.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": randomized rows not created");
 	}
 }
 
-TableOfReal TableOfReal_bootstrap (TableOfReal me) {
+autoTableOfReal TableOfReal_bootstrap (TableOfReal me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
 
@@ -1152,7 +1150,7 @@ TableOfReal TableOfReal_bootstrap (TableOfReal me) {
 				TableOfReal_setRowLabel (thee.peek(), i, my rowLabels[p]);
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": bootstrapped data not created.");
 	}
@@ -1304,7 +1302,7 @@ void TableOfReal_drawColumnAsDistribution (TableOfReal me, Graphics g, int colum
 	}
 }
 
-TableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, long *index, int reverse) {
+autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, long *index, int reverse) {
 	try {
 		if (my rowLabels == 0) {
 			Melder_throw (U"No labels to sort");
@@ -1354,11 +1352,11 @@ long *TableOfReal_getSortedIndexFromRowLabels (TableOfReal me) {
 	}
 }
 
-TableOfReal TableOfReal_sortOnlyByRowLabels (TableOfReal me) {
+autoTableOfReal TableOfReal_sortOnlyByRowLabels (TableOfReal me) {
 	try {
 		autoPermutation index = TableOfReal_to_Permutation_sortRowLabels (me);
 		autoTableOfReal thee = TableOfReal_and_Permutation_permuteRows (me, index.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not sorted by row labels.");
 	}
@@ -1392,7 +1390,7 @@ static void NUMstatsColumns (double **a, long rb, long re, long cb, long ce, int
 	}
 }
 
-TableOfReal TableOfReal_meansByRowLabels (TableOfReal me, int expand, int stats) {
+autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, int expand, int stats) {
 	try {
 		autoTableOfReal thee;
 		autoNUMvector<long> index (TableOfReal_getSortedIndexFromRowLabels (me), 1);
@@ -1419,7 +1417,7 @@ TableOfReal TableOfReal_meansByRowLabels (TableOfReal me, int expand, int stats)
 			// Now invert the table.
 
 			char32 **tmp = sorted -> rowLabels; sorted -> rowLabels = my rowLabels;
-			thee.reset (TableOfReal_sortRowsByIndex (sorted.peek(), index.peek(), 1));
+			thee = TableOfReal_sortRowsByIndex (sorted.peek(), index.peek(), 1);
 			sorted -> rowLabels = tmp;
 		} else {
 			indexr++;
@@ -1430,17 +1428,17 @@ TableOfReal TableOfReal_meansByRowLabels (TableOfReal me, int expand, int stats)
 			}
 			NUMstrings_copyElements (sorted -> columnLabels, thy columnLabels, 1, my numberOfColumns);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": means by row labels not created.");
 	}
 }
 
-TableOfReal TableOfReal_rankColumns (TableOfReal me) {
+autoTableOfReal TableOfReal_rankColumns (TableOfReal me) {
 	try {
 		autoTableOfReal thee = Data_copy (me);
 		NUMrankColumns (thy data, 1, thy numberOfRows, 1, thy numberOfColumns);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": column ranks not created.");
 	}
@@ -1473,18 +1471,18 @@ void TableOfReal_setSequentialRowLabels (TableOfReal me, long from, long to, con
 }
 
 /* For the inheritors */
-TableOfReal TableOfReal_to_TableOfReal (TableOfReal me) {
+autoTableOfReal TableOfReal_to_TableOfReal (TableOfReal me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
 		NUMmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
 		TableOfReal_copyLabels (me, thee.peek(), 1, 1);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not copied.");
 	}
 }
 
-TableOfReal TableOfReal_choleskyDecomposition (TableOfReal me, int upper, int inverse) {
+autoTableOfReal TableOfReal_choleskyDecomposition (TableOfReal me, int upper, int inverse) {
 	try {
 		char diag = 'N';
 		long n = my numberOfColumns, lda = my numberOfRows, info;
@@ -1515,13 +1513,13 @@ TableOfReal TableOfReal_choleskyDecomposition (TableOfReal me, int upper, int in
 				Melder_throw (U"dtrtri fails");
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": Cholesky decomposition not performed.");
 	}
 }
 
-TableOfReal TableOfReal_appendColumns (TableOfReal me, TableOfReal thee) {
+autoTableOfReal TableOfReal_appendColumns (TableOfReal me, TableOfReal thee) {
 	try {
 		long ncols = my numberOfColumns + thy numberOfColumns;
 		long labeldiffs = 0;
@@ -1550,13 +1548,13 @@ TableOfReal TableOfReal_appendColumns (TableOfReal me, TableOfReal thee) {
 		if (labeldiffs > 0) {
 			Melder_warning (labeldiffs, U" row labels differed.");
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal with appended columns not created.");
 	}
 }
 
-TableOfReal TableOfReal_appendColumnsMany (Collection me) {
+autoTableOfReal TableOfReal_appendColumnsMany (Collection me) {
 	try {
 		if (my size == 0) {
 			Melder_throw (U"No tables selected.");
@@ -1588,7 +1586,7 @@ TableOfReal TableOfReal_appendColumnsMany (Collection me) {
 			}
 		}
 		Melder_assert (ncol == his numberOfColumns);
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal with appended columns not created.");
 	}
@@ -1640,8 +1638,8 @@ double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *tnb, d
 		}
 		double mu = 1.0 - pow (gamma, -p2) * (1.0 + p * beta2 / gamma + p * (p + 2) * beta4 / (2.0 * gamma2));
 		double var = 2.0 * pow (1 + 4 * beta2, -p2)
-		             + 2.0 * pow (gamma,  -p) * (1.0 + 2 * p * beta4 / gamma2  + 3 * p * (p + 2) * beta8 / (4.0 * gamma4))
-		             - 4.0 * pow (delta, -p2) * (1.0 + 3 * p * beta4 / (2 * delta) + p * (p + 2) * beta8 / (2.0 * delta2));
+			+ 2.0 * pow (gamma,  -p) * (1.0 + 2 * p * beta4 / gamma2  + 3 * p * (p + 2) * beta8 / (4.0 * gamma4))
+			- 4.0 * pow (delta, -p2) * (1.0 + 3 * p * beta4 / (2 * delta) + p * (p + 2) * beta8 / (2.0 * delta2));
 		double mu2 = mu * mu;
 		*lnmu = 0.5 * log (mu2 * mu2 / (mu2 + var)); //log (sqrt (mu2 * mu2 /(mu2 + var)));
 		*lnvar = sqrt (log ( (mu2 + var) / mu2));
@@ -1652,12 +1650,12 @@ double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *tnb, d
 	}
 }
 
-TableOfReal TableOfReal_and_TableOfReal_crossCorrelations (TableOfReal me, TableOfReal thee, int by_columns, int center, int normalize) {
+autoTableOfReal TableOfReal_and_TableOfReal_crossCorrelations (TableOfReal me, TableOfReal thee, int by_columns, int center, int normalize) {
 	return by_columns ? TableOfReal_and_TableOfReal_columnCorrelations (me, thee, center, normalize) :
 	       TableOfReal_and_TableOfReal_rowCorrelations (me, thee, center, normalize);
 }
 
-TableOfReal TableOfReal_and_TableOfReal_rowCorrelations (TableOfReal me, TableOfReal thee, int center, int normalize) {
+autoTableOfReal TableOfReal_and_TableOfReal_rowCorrelations (TableOfReal me, TableOfReal thee, int center, int normalize) {
 	try {
 		if (my numberOfColumns != thy numberOfColumns) {
 			Melder_throw (U"Both tables must have the same number of columns.");
@@ -1685,13 +1683,13 @@ TableOfReal TableOfReal_and_TableOfReal_rowCorrelations (TableOfReal me, TableOf
 				his data[i][k] = ctmp;
 			}
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal with row correlations not created.");
 	}
 }
 
-TableOfReal TableOfReal_and_TableOfReal_columnCorrelations (TableOfReal me, TableOfReal thee, int center, int normalize) {
+autoTableOfReal TableOfReal_and_TableOfReal_columnCorrelations (TableOfReal me, TableOfReal thee, int center, int normalize) {
 	try {
 		if (my numberOfRows != thy numberOfRows) {
 			Melder_throw (U"Both tables must have the same number of rows.");
@@ -1720,7 +1718,7 @@ TableOfReal TableOfReal_and_TableOfReal_columnCorrelations (TableOfReal me, Tabl
 				his data[j][k] = ctmp;
 			}
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal with column correlations not created.");
 	}

@@ -71,10 +71,9 @@ Command CommandHistory_getItem (CommandHistory me) {
 
 void CommandHistory_insertItem (CommandHistory me, Command command)
 {
-	Melder_assert (command && (Thing_isa (command, my itemClass) || my itemClass == nullptr));
 	if (my current < my size) {
 		for (long i = my current + 1; i <= my size; i++) {
-			forget ( ( (Command *) my item) [i]);
+			forget (((Command *) my item) [i]);
 		}
 		my size = my current;
 	}
@@ -99,7 +98,7 @@ int CommandHistory_offright (CommandHistory me) {
 
 char32 *CommandHistory_commandName (CommandHistory me, long offsetFromCurrent) {
 	long pos = my current + offsetFromCurrent;
-	return pos >= 1 && pos <= my size ? Thing_getName ( (Thing) my item[pos]) : nullptr;
+	return pos >= 1 && pos <= my size ? Thing_getName ((Thing) my item[pos]) : nullptr;
 }
 
 /* End of file Command.cpp */

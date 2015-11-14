@@ -2,7 +2,7 @@
 #define _Spectrum_extensions_h_
 /* Spectrum_extensions.h
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,13 +29,14 @@
 #include "Sound.h"
 #include "Graphics.h"
 
-Spectrum Spectrum_resample (Spectrum me, long numberOfFrequencies);
+autoSpectrum Spectrum_resample (Spectrum me, long numberOfFrequencies);
 
-Spectrum Spectrum_compressFrequencyDomain (Spectrum me, double fmax, long interpolationDepth, int freqscale, int method);
-Spectrum Spectrum_shiftFrequencies (Spectrum me, double shiftBy, double newMaximumFrequency, long interpolationDepth);
+autoSpectrum Spectrum_compressFrequencyDomain (Spectrum me, double fmax, long interpolationDepth, int freqscale, int method);
+
+autoSpectrum Spectrum_shiftFrequencies (Spectrum me, double shiftBy, double newMaximumFrequency, long interpolationDepth);
 // Shift will be plusminus dx/2
 
-Matrix Spectrum_unwrap (Spectrum me);
+autoMatrix Spectrum_unwrap (Spectrum me);
 /*
 	Unwrap the phases of the spectrum according to an algorithm by
 	Tribolet as published in:
@@ -52,7 +53,8 @@ Matrix Spectrum_unwrap (Spectrum me);
 void Spectrum_drawPhases (Spectrum me, Graphics g, double fmin, double fmax,
 	double phase_min, double phase_max, int unwrap, int garnish);
 
-Spectrum Spectra_multiply (Spectrum me, Spectrum thee);
+autoSpectrum Spectra_multiply (Spectrum me, Spectrum thee);
+
 void Spectrum_conjugate (Spectrum me);
 
 #endif /* _Spectrum_extensions_h_ */

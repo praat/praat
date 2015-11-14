@@ -2,7 +2,7 @@
 #define _Minimizers_h_
 /* Minimizers.h
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -133,7 +133,7 @@ Thing_define (SteepestDescentMinimizer, Minimizer) {
 		override;
 };
 
-SteepestDescentMinimizer SteepestDescentMinimizer_create (long nParameters, Daata object, double (*func) (Daata object, const double p[]), void (*dfunc) (Daata object, const double p[], double dp[]));
+autoSteepestDescentMinimizer SteepestDescentMinimizer_create (long nParameters, Daata object, double (*func) (Daata object, const double p[]), void (*dfunc) (Daata object, const double p[], double dp[]));
 
 
 /**********  class VDSmagtMinimizer ********************************/
@@ -171,6 +171,6 @@ Thing_define (VDSmagtMinimizer, Minimizer) {
 		override;
 };
 
-VDSmagtMinimizer VDSmagtMinimizer_create (long dimension, Daata object, double (*func) (Daata object, const double p[]), void (*dfunc) (Daata object, const double p[], double dp[]));
+autoVDSmagtMinimizer VDSmagtMinimizer_create (long dimension, Daata object, double (*func) (Daata object, const double p[]), void (*dfunc) (Daata object, const double p[], double dp[]));
 
 #endif /* _Minimizer_h_ */

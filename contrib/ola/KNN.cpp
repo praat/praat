@@ -1479,9 +1479,9 @@ void KNN_removeInstance
     if (y > my nInstances || y < 1) 
         return;                         // safety belt
 
-    Pattern newPattern = (Pattern) Pattern_create(my nInstances - 1, (my input)->nx);
+    autoPattern newPattern = Pattern_create(my nInstances - 1, (my input)->nx);
     Melder_assert(newPattern);
-    if (newPattern)
+   // if (newPattern)
     {
         long yt = 1;
         for (long cy = 1; cy <= my nInstances; ++cy)
@@ -1493,7 +1493,7 @@ void KNN_removeInstance
             }
 
         forget(my input);
-        my input = newPattern;
+        my input = newPattern.transfer();
         Collection_removeItem(my output, y);
         my nInstances--;
     }

@@ -2,7 +2,7 @@
 #define _TextGrid_extensions_h_
 /* TextGrid_extensions.h
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 
 #include "TextGrid.h"
 
-TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile);
+autoTextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile);
 /*
 	Read TIMIT label file with the following structure:
 		samplenumber1 samplenumber2 label1
@@ -61,7 +61,7 @@ autoDaata TextGrid_TIMITLabelFileRecognizer (int nread, const char *header, Meld
 		A valid word is a string with contains the lowercase characters [a-z] and ['].
 */
 
-TextGrid TextGrids_merge (TextGrid grid1, TextGrid grid2);
+autoTextGrid TextGrids_merge (TextGrid grid1, TextGrid grid2);
 /*
 	Merge two textGrids.
 	The new domain will be:
@@ -81,11 +81,12 @@ void TextGrid_setTierName (TextGrid me, long itier, const char32 *newName);
 
 void TextTier_changeLabels (I, long from, long to, const char32 *search, const char32 *replace, int use_regexp, long *nmatches, long *nstringmatches);
 
-void IntervalTier_changeLabels (I, long from, long to, const char32 *search, const char32 *replace, int use_regexp, long *nmatches, long *nstringmatches);
+void IntervalTier_changeLabels (IntervalTier me, long from, long to, const char32 *search, const char32 *replace, int use_regexp, long *nmatches, long *nstringmatches);
 
 void IntervalTier_removeBoundariesBetweenIdenticallyLabeledIntervals (IntervalTier me, const char32 *label);
 
 void IntervalTier_cutIntervalsOnLabelMatch (IntervalTier me, const char32 *label);
+
 void IntervalTier_cutIntervals_minimumDuration (IntervalTier me, const char32 *label, double minimumDuration);
 
 void TextGrid_changeLabels (TextGrid me, int tier, long from, long to, const char32 *search, const char32 *replace, int use_regexp, long *nmatches, long *nstringmatches);
@@ -97,22 +98,29 @@ void TextGrid_changeLabels (TextGrid me, int tier, long from, long to, const cha
  *    For an IntervalTier this involves adding a new interval
  */
 void IntervalTier_setLaterEndTime (IntervalTier me, double xmax, const char32 *mark);
+
 void IntervalTier_setEarlierStartTime (IntervalTier me, double xmin, const char32 *mark);
 
 void IntervalTier_moveBoundary (IntervalTier me, long interval, bool atStart, double newTime);
+
 void TextTier_setLaterEndTime (TextTier me, double xmax, const char32 *mark);
+
 void TextTier_setEarlierStartTime (TextTier me, double xmin, const char32 *mark);
+
 void TextGrid_setEarlierStartTime (TextGrid me, double xmin, const char32 *imark, const char32 *pmark);
+
 void TextGrid_setLaterEndTime (TextGrid me, double xmax, const char32 *imark, const char32 *pmark);
 
 
 // Precondition: if (preserveTimes) { my xmax <= thy xmin }
 // Postcondition: my xmin preserved
 void IntervalTiers_append_inline (IntervalTier me, IntervalTier thee, bool preserveTimes);
+
 void TextTiers_append_inline (TextTier me, TextTier thee, bool preserveTimes);
+
 void TextGrids_append_inline (TextGrid me, TextGrid thee, bool preserveTimes);
 
 // Postcondition:
-TextGrid TextGrids_to_TextGrid_appendContinuous (Collection me, bool preserveTimes);
+autoTextGrid TextGrids_to_TextGrid_appendContinuous (Collection me, bool preserveTimes);
 
 #endif /* _TextGrid_extensions_h_ */

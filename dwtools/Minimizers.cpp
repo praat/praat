@@ -260,13 +260,13 @@ void structSteepestDescentMinimizer :: v_setParameters (Any parameters) {
 	}
 }
 
-SteepestDescentMinimizer SteepestDescentMinimizer_create (long nParameters, Daata object, double (*func) (Daata object, const double p[]), void (*dfunc) (Daata object, const double p[], double dp[])) {
+autoSteepestDescentMinimizer SteepestDescentMinimizer_create (long nParameters, Daata object, double (*func) (Daata object, const double p[]), void (*dfunc) (Daata object, const double p[], double dp[])) {
 	try {
 		autoSteepestDescentMinimizer me = Thing_new (SteepestDescentMinimizer);
 		Minimizer_init (me.peek(), nParameters, object);
 		my func = func;
 		my dfunc = dfunc;
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SteepestDescentMinimizer not created.");
 	}
@@ -497,7 +497,7 @@ void structVDSmagtMinimizer :: v_setParameters (Any parameters) {
 	}
 }
 
-VDSmagtMinimizer VDSmagtMinimizer_create (long nParameters, Daata object, double (*func) (Daata object, const double x[]), void (*dfunc) (Daata object, const double x[], double dx[])) {
+autoVDSmagtMinimizer VDSmagtMinimizer_create (long nParameters, Daata object, double (*func) (Daata object, const double x[]), void (*dfunc) (Daata object, const double x[], double dx[])) {
 	try {
 		autoVDSmagtMinimizer me = Thing_new (VDSmagtMinimizer);
 		Minimizer_init (me.peek(), nParameters, object);
@@ -512,7 +512,7 @@ VDSmagtMinimizer VDSmagtMinimizer_create (long nParameters, Daata object, double
 		my dfunc = dfunc;
 		my lineSearchGradient = 0.9;
 		my lineSearchMaxNumOfIterations = 5;
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"VDSmagtMinimizer not created.");
 	}

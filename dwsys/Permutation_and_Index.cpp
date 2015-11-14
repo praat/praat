@@ -1,6 +1,6 @@
 /* Permutation_and_Index.cpp
  *
- * Copyright (C) 2005-2011 David Weenink
+ * Copyright (C) 2005-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 
 #include "Permutation_and_Index.h"
 
-Permutation Index_to_Permutation_permuteRandomly (Index me, int permuteWithinClasses) {
+autoPermutation Index_to_Permutation_permuteRandomly (Index me, int permuteWithinClasses) {
 	try {
 		long numberOfClasses = my classes -> size;
 
@@ -61,7 +61,7 @@ Permutation Index_to_Permutation_permuteRandomly (Index me, int permuteWithinCla
 				}
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": Permutation not created.");
 	}

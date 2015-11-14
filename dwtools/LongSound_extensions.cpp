@@ -49,8 +49,7 @@
 /*
   Precondition: size (my buffer) >= nbuf
 */
-static void _LongSound_to_multichannel_buffer (LongSound me, short *buffer, long nbuf,
-        int nchannels, int ichannel, long ibuf) {
+static void _LongSound_to_multichannel_buffer (LongSound me, short *buffer, long nbuf, int nchannels, int ichannel, long ibuf) {
 	long numberOfReads = (my nx - 1) / nbuf + 1;
 	long n_to_read = 0;
 
@@ -130,8 +129,7 @@ static void MelderFile_truncate (MelderFile me, long size) {
 
 	MelderFile_close (me);
 
-	hFile = CreateFileW (Melder_peek32toW (my path), fdwAccess, fdwShareMode, lpsa, fdwCreate,
-	                     FILE_ATTRIBUTE_NORMAL, nullptr);
+	hFile = CreateFileW (Melder_peek32toW (my path), fdwAccess, fdwShareMode, lpsa, fdwCreate, FILE_ATTRIBUTE_NORMAL, nullptr);
 	if (hFile == INVALID_HANDLE_VALUE) {
 		Melder_throw (U"Can't open file ", me, U".");
 	}
@@ -170,13 +168,12 @@ static void writePartToOpenFile16 (LongSound me, int audioFileType, long imin, l
 			long numberOfSamplesToCopy = ibuffer < numberOfBuffers ? my nmax : numberOfSamplesInLastBuffer;
 			LongSound_readAudioToShort (me, my buffer, offset, numberOfSamplesToCopy);
 			offset += numberOfSamplesToCopy;
-			MelderFile_writeShortToAudio (file, my numberOfChannels,
-			    Melder_defaultAudioFileEncoding (audioFileType, numberOfBitsPerSamplePoint), my buffer, numberOfSamplesToCopy);
+			MelderFile_writeShortToAudio (file, my numberOfChannels, Melder_defaultAudioFileEncoding (audioFileType, numberOfBitsPerSamplePoint), my buffer, numberOfSamplesToCopy);
 		}
 	}
-	/*
-	 * We "have" no samples any longer.
-	 */
+
+	//  We "have" no samples any longer.
+	
 	my imin = 1;
 	my imax = 0;
 }
@@ -204,8 +201,7 @@ void LongSounds_appendToExistingSoundFile (Collection me, MelderFile file) {
 		long startOfData;
 		int32 numberOfSamples;
 		int numberOfChannels, encoding;
-		int audioFileType = MelderFile_checkSoundFile (file, &numberOfChannels,
-		                    &encoding, &sampleRate_d, &startOfData, &numberOfSamples);
+		int audioFileType = MelderFile_checkSoundFile (file, &numberOfChannels, &encoding, &sampleRate_d, &startOfData, &numberOfSamples);
 
 		if (audioFileType == 0) {
 			Melder_throw (U"Not a sound file.");

@@ -1,6 +1,6 @@
 /* SVD.h
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,21 +33,23 @@ oo_CLASS_CREATE (SVD, Daata);
 #define GSVD__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (GSVD, Daata);
 
-void SVD_init (I, long numberOfRows, long numberOfColumns);
+void SVD_init (SVD me, long numberOfRows, long numberOfColumns);
 
-SVD SVD_create (long numberOfRows, long numberOfColumns);
+autoSVD SVD_create (long numberOfRows, long numberOfColumns);
 /*
 	my tolerance = eps * MAX (numberOfRows, numberOfColumns)
 	where eps is the floating point precision, approximately 2.2e-16
 */
 
-SVD SVD_create_d (double **m, long numberOfRows, long numberOfColumns);
-SVD SVD_create_f (float **m, long numberOfRows, long numberOfColumns);
+autoSVD SVD_create_d (double **m, long numberOfRows, long numberOfColumns);
+
+autoSVD SVD_create_f (float **m, long numberOfRows, long numberOfColumns);
 /*
 	Copy matrix into svd->u and calculate U D V'
 */
 
 void SVD_svd_d (SVD me, double **m);
+
 void SVD_svd_f (SVD me, float **m);
 /*
 	Perform SVD analysis on matrix M, i.e., decompose M as M = UDV'.
@@ -65,6 +67,7 @@ void SVD_sort (SVD me);
 */
 
 void SVD_setTolerance (SVD me, double tolerance);
+
 double SVD_getTolerance (SVD me);
 
 long SVD_zeroSmallSingularValues (SVD me, double tolerance);
@@ -88,10 +91,9 @@ void SVD_getSquared (SVD me, double **m, bool inverse);
 
 long SVD_getRank (SVD me);
 
-GSVD GSVD_create (long numberOfColumns);
+autoGSVD GSVD_create (long numberOfColumns);
 
-GSVD GSVD_create_d (double **m1, long numberOfRows1, long numberOfColumns,
-	double **m2, long numberOfRows2);
+autoGSVD GSVD_create_d (double **m1, long numberOfRows1, long numberOfColumns, double **m2, long numberOfRows2);
 
 void GSVD_setTolerance (GSVD me, double tolerance);
 
