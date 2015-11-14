@@ -782,7 +782,7 @@ autoPointProcess TextGrid_getPoints_preceded (TextGrid me, long tierNumber,
 		for (long ipoint = 1; ipoint <= tier -> numberOfPoints(); ipoint ++) {
 			TextPoint point = tier -> point (ipoint);
 			if (Melder_stringMatchesCriterion (point -> mark, which_Melder_STRING, criterion)) {
-				TextPoint preceding = ipoint <= 1 ? NULL : tier -> point (ipoint - 1);
+				TextPoint preceding = ipoint <= 1 ? nullptr : tier -> point (ipoint - 1);
 				if (Melder_stringMatchesCriterion (preceding -> mark, which_Melder_STRING_precededBy, criterion_precededBy)) {
 					PointProcess_addPoint (thee.peek(), point -> number);
 				}
@@ -804,7 +804,7 @@ autoPointProcess TextGrid_getPoints_followed (TextGrid me, long tierNumber,
 		for (long ipoint = 1; ipoint <= tier -> numberOfPoints(); ipoint ++) {
 			TextPoint point = tier -> point (ipoint);
 			if (Melder_stringMatchesCriterion (point -> mark, which_Melder_STRING, criterion)) {
-				TextPoint following = ipoint >= tier -> numberOfPoints() ? NULL : tier -> point (ipoint + 1);
+				TextPoint following = ipoint >= tier -> numberOfPoints() ? nullptr : tier -> point (ipoint + 1);
 				if (Melder_stringMatchesCriterion (following -> mark, which_Melder_STRING_followedBy, criterion_followedBy)) {
 					PointProcess_addPoint (thee.peek(), point -> number);
 				}
@@ -991,7 +991,7 @@ void IntervalTier_writeToXwaves (IntervalTier me, MelderFile file) {
 
 autoTextGrid PointProcess_to_TextGrid_vuv (PointProcess me, double maxT, double meanT) {
 	try {
-		autoTextGrid thee = TextGrid_create (my xmin, my xmax, U"vuv", NULL);
+		autoTextGrid thee = TextGrid_create (my xmin, my xmax, U"vuv", nullptr);
 		IntervalTier tier = static_cast <IntervalTier> (thy tier (1));
 		Collection_removeItem (tier -> intervals, 1);
 		long ipointright;
@@ -1300,7 +1300,7 @@ static void sgmlToPraat (char *text) {
 				{ "ocirc", "\\o^" }, { "ocirc", "\\o^" },
 				{ "Acirc", "\\A^" }, { "Ecirc", "\\E^" }, { "Icirc", "\\I^" },
 				{ "Ocirc", "\\O^" }, { "Ucirc", "\\U^" },
-				{ NULL, NULL } };
+				{ nullptr, nullptr } };
 			char sgmlCode [201];
 			int i = 0;
 			++ sgml;
@@ -1491,8 +1491,8 @@ autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 		autoTextGrid me = Thing_new (TextGrid);
 		long sentenceNumber = 0;
 		double phraseBegin = 0.0, phraseEnd = 0.0;
-		IntervalTier sentenceTier = NULL, phraseTier = NULL;
-		TextInterval lastInterval = NULL;
+		IntervalTier sentenceTier = nullptr, phraseTier = nullptr;
+		TextInterval lastInterval = nullptr;
 		static char phrase [1000];
 		my tiers = Ordered_create ();
 		autoMelderFile mfile = MelderFile_open (file);

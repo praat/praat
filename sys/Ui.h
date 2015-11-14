@@ -35,9 +35,9 @@ Thing_declare (EditorCommand);
 		  (topShell,   // The parent GuiWindow of the dialog window.
 			U"Create a new person",   // The window title.
 			DO_Person_create,   // The routine to call when the user clicks OK.
-			NULL,   // The last argument to the OK routine (also for the other buttons). Could be a ScriptEditor, or an EditorCommand, or an Interpreter, or NULL.
+			nullptr,   // The last argument to the OK routine (also for the other buttons). Could be a ScriptEditor, or an EditorCommand, or an Interpreter, or null.
 			U"Create person...",   // The invoking button title.
-			U"Create person...");   // The help string; may be NULL.
+			U"Create person...");   // The help string; may be null.
 		UiForm_addNatural (dia, U"Age (years)", U"18");
 		UiForm_addPositive (dia, U"Length (metres)", U"1.68 (average)");
 		UiForm_addBoolean (dia, U"Beard", false);

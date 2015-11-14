@@ -62,7 +62,7 @@ void RealTierEditor_updateScaling (RealTierEditor me);
 
 void RealTierEditor_init (RealTierEditor me, const char32 *title, RealTier data, Sound sound, bool ownSound);
 /*
-	`Sound` may be NULL;
+	`sound` may be null;
 	if `ownSound` is `true`, the editor will contain a deep copy of the Sound,
 	which the editor will destroy when the editor is destroyed.
 */

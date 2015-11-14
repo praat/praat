@@ -62,7 +62,7 @@ void praat_setStandAloneScriptText (const char32 *text);   // call before praat_
 
 void praat_addAction (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
 	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback);
-/* 'class2', 'class3', 'title', 'after', and 'callback' may be NULL; 'title' is reference-copied. */
+/* 'class2', 'class3', 'title', 'after', and 'callback' may be null; 'title' is reference-copied. */
 void praat_addAction1 (ClassInfo class1, int n1,
 	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback);
 void praat_addAction2 (ClassInfo class1, int n1, ClassInfo class2, int n2,
@@ -79,7 +79,7 @@ void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, Class
 		this function should throw an exception if the command failed,
 		and return 1 if the command was executed successfully;
 		this function will be called by 'praat' when the user clicks a menu command,
-		in which case 'sendingForm', 'args' and 'sendingString' and 'closure' will be NULL;
+		in which case 'sendingForm', 'args' and 'sendingString' and 'closure' will be null;
 		it is also called by scripts,
 		in which case 'args[1..n]' or 'sendingString' is the argument list (after the dots).
 		When called by Ui (after UiForm_create), 'sendingForm' is the UiForm, and 'closure'
@@ -113,12 +113,12 @@ void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, Class
 #define praat_DEPTH_7  0x00070000
 #define praat_CTRL  0x00200000
 void praat_removeAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, const char32 *title);
-	/* 'class2' and 'class3' may be NULL. */
-	/* 'title' may be NULL; reference-copied. */
+	/* 'class2' and 'class3' may be null. */
+	/* 'title' may be null; reference-copied. */
 
 GuiMenuItem praat_addMenuCommand (const char32 *window, const char32 *menu, const char32 *title /* cattable */,
 	const char32 *after, unsigned long flags, UiCallback callback);
-/* All strings are reference-copied; 'title', 'after', and 'callback' may be NULL. */
+/* All strings are reference-copied; 'title', 'after', and 'callback' may be null. */
 
 #define praat_MAXNUM_EDITORS 5
 #include "Ui.h"
@@ -148,7 +148,7 @@ typedef struct {   /* Readonly */
 	int totalBeingCreated;
 	long uniqueId;
 } structPraatObjects, *PraatObjects;
-typedef struct {   /* Readonly */
+typedef struct {   // readonly
 	Graphics graphics;   /* The Graphics associated with the Picture window or HyperPage window or Demo window. */
 	int font, fontSize, lineType;
 	Graphics_Colour colour;
@@ -188,7 +188,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	FORM (proc, title, helpString)
 		'proc' is the 'cb' argument of the corresponding VERB macro.
 		'title' is the title of the standard dialog, shown in its title bar.
-		'helpString' may be NULL.
+		'helpString' may be null.
 	INTEGER (name, initialString)
 	NATURAL (name, initialString)
 	REAL (name, initialString)
@@ -276,8 +276,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define FILE_OUT(label,def)	UiForm_addFileOut (dia, label, def);
 #define COLOUR(label,def)	UiForm_addColour (dia, label, def);
 #define CHANNEL(label,def)	UiForm_addChannel (dia, label, def);
-#define OK UiForm_finish (dia); } if (sendingForm == NULL && args == NULL && sendingString == NULL) {
-#define OK2 } UiForm_finish (dia); } if (sendingForm == NULL && args == NULL && sendingString == NULL) {
+#define OK UiForm_finish (dia); } if (! sendingForm && ! args && ! sendingString) {
+#define OK2 } UiForm_finish (dia); } if (! sendingForm && ! args && ! sendingString) {
 #define SET_REAL(name,value)	UiForm_setReal (dia, name, value);
 #define SET_INTEGER(name,value)	UiForm_setInteger (dia, name, value);
 #define SET_STRING(name,value)	UiForm_setString (dia, name, value);
@@ -312,7 +312,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				char32 *parkedError = Melder_dup_f (Melder_getError ()); \
 				Melder_clearError (); \
 				try { \
-					DO_##alternative (NULL, narg, args, sendingString, interpreter, invokingButtonTitle, modified, buttonClosure); \
+					DO_##alternative (nullptr, narg, args, sendingString, interpreter, invokingButtonTitle, modified, buttonClosure); \
 				} catch (MelderError) { \
 					Melder_clearError (); \
 					Melder_appendError (parkedError); \
@@ -365,15 +365,15 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define FORM_READ2(proc,title,help,allowMult) \
 	static void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
 		static UiForm dia; \
-		if (dia == NULL) \
+		if (! dia) \
 			dia = UiInfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, okClosure, invokingButtonTitle, help, allowMult); \
-		if (sendingForm == NULL && args == NULL && sendingString == NULL) { \
+		if (! sendingForm && ! args && ! sendingString) { \
 			UiInfile_do (dia); \
 		} else { \
 			try { \
 				MelderFile file; \
 				int IOBJECT = 0; \
-				structMelderFile file2 = { 0 }; \
+				structMelderFile file2 { 0 }; \
 				(void) IOBJECT; \
 				if (! args && ! sendingString) { \
 					file = UiFile_getFile (dia); \
@@ -393,7 +393,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 			try { \
 				MelderFile file; \
 				int IOBJECT = 0; \
-				structMelderFile file2 = { 0 }; \
+				structMelderFile file2 { 0 }; \
 				(void) IOBJECT; \
 				if (! args && ! sendingString) { \
 					file = UiFile_getFile (dia); \
@@ -414,7 +414,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 			try { \
 				MelderFile file; \
 				int IOBJECT = 0; \
-				structMelderFile file2 = { 0 }; \
+				structMelderFile file2 { 0 }; \
 				(void) IOBJECT; \
 				if (! args && ! sendingString) { \
 					file = UiFile_getFile (dia); \
@@ -471,14 +471,14 @@ Daata praat_firstObject_any ();
 
 /* Used by praat_Sybil.cpp, if you put an Editor on the screen: */
 int praat_installEditor (Editor editor, int iobject);
-/* This routine adds a reference to a new editor (unless it is NULL) to the screen object
+/* This routine adds a reference to a new editor (unless it is null) to the screen object
    which is in the list at position 'iobject'.
    It sets the destroyCallback and dataChangedCallback as appropriate for Praat:
-   the destroyCallback will set the now dangling reference to NULL,
+   the destroyCallback will set the now dangling reference to nullptr,
    so that a subsequent click on the "Edit" button will create a new editor;
    the dataChangedCallback will notify an open DataEditor with the same data,
    after that data will have changed.
-      Return value: normally 1, but 0 if 'editor' is NULL.
+      Return value: normally 1, but 0 if 'editor' is null.
    A typical calling sequence is:
 	DIRECT (Spectrogram_edit)
 		if (praat.batch) Melder_throw (U"Cannot edit a Spectrogram from batch.");

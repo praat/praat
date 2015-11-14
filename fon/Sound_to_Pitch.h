@@ -57,7 +57,7 @@ autoPitch Sound_to_Pitch_any (Sound me,
 		minimumPitch > 0.0;
 		maxnCandidates >= 2;
 	Return value:
-		the resulting pitch contour, or NULL in case of failure.
+		the resulting pitch contour.
 	Failures:
 		Out of memory.
 		Minimum frequency too low.

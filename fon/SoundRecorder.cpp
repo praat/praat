@@ -101,7 +101,7 @@ static void win_fillHeader (SoundRecorder me, int which) {
 	my waveHeader [which]. lpData = which == 0 ? (char *) my buffer : which == 1 ? (char *) my buffertje1: (char *) my buffertje2;
 	my waveHeader [which]. dwBufferLength = which == 0 ? my nmax * my waveFormat. nChannels * 2 : 1000 * my waveFormat. nChannels * 2;
 	my waveHeader [which]. dwLoops = 0;
-	my waveHeader [which]. lpNext = NULL;
+	my waveHeader [which]. lpNext = nullptr;
 	my waveHeader [which]. reserved = 0;
 }
 static void win_waveInCheck (SoundRecorder me) {
@@ -191,7 +191,7 @@ static void stopRecording (SoundRecorder me) {
 			if (my inputUsesPortAudio) {
 				Pa_StopStream (my portaudioStream);
 				Pa_CloseStream (my portaudioStream);
-				my portaudioStream = NULL;
+				my portaudioStream = nullptr;
 			} else {
 				#if defined (_WIN32)
 					/*
@@ -484,7 +484,7 @@ static WORKPROC_RETURN workProc (WORKPROC_ARGS) {
 				showMeter (me, my buffer + firstSample * my numberOfChannels, lastSample - firstSample);
 				GuiScale_setValue (my progressScale, 1000.0 * ((double) lastSample / (double) my nmax));
 			} else {
-				showMeter (me, NULL, 0);
+				showMeter (me, nullptr, 0);
 			}
 		}
 	} catch (MelderError) {
@@ -559,7 +559,7 @@ static void gui_button_cb_record (SoundRecorder me, GuiButtonEvent /* event */) 
 				#endif
 				if (Melder_debug == 20)
 					Melder_casual (U"Before Pa_OpenStream");
-				PaError err = Pa_OpenStream (& my portaudioStream, & streamParameters, NULL,
+				PaError err = Pa_OpenStream (& my portaudioStream, & streamParameters, nullptr,
 					theControlPanel. sampleRate, 0, paNoFlag, portaudioStreamCallback, (void *) me);
 				if (Melder_debug == 20)
 					Melder_casual (U"Pa_OpenStream returns ", (int) err);
@@ -600,7 +600,7 @@ static void gui_button_cb_stop (SoundRecorder me, GuiButtonEvent /* event */) {
 
 static void gui_button_cb_play (SoundRecorder me, GuiButtonEvent /* event */) {
 	if (my recording || my nsamp == 0) return;
-	MelderAudio_play16 (my buffer, theControlPanel. sampleRate, my fakeMono ? my nsamp / 2 : my nsamp, my fakeMono ? 2 : my numberOfChannels, NULL, NULL);
+	MelderAudio_play16 (my buffer, theControlPanel. sampleRate, my fakeMono ? my nsamp / 2 : my nsamp, my fakeMono ? 2 : my numberOfChannels, nullptr, nullptr);
 }
 
 static void publish (SoundRecorder me) {
@@ -687,7 +687,7 @@ static void initialize (SoundRecorder me) {
 						Melder_throw (U"Cannot open audio device.\n"
 							U"Please switch on PortAudio in the Sound Recording Preferences.");
 				}
-				ioctl (my fd, SNDCTL_DSP_RESET, NULL);
+				ioctl (my fd, SNDCTL_DSP_RESET, nullptr);
 				ioctl (my fd, SNDCTL_DSP_SPEED, & sampleRate);
 				ioctl (my fd, SNDCTL_DSP_SAMPLESIZE, & sampleSize);
 				ioctl (my fd, SNDCTL_DSP_CHANNELS, (val = channels, & val));
@@ -811,10 +811,10 @@ void structSoundRecorder :: v_createChildren ()
 	GuiRadioGroup_begin ();
 	y += Gui_RADIOBUTTON_HEIGHT + Gui_RADIOBUTTON_SPACING;
 	monoButton = GuiRadioButton_createShown (d_windowForm, 20, 170, y, y + Gui_RADIOBUTTON_HEIGHT,
-		U"Mono", NULL, NULL, 0);
+		U"Mono", nullptr, nullptr, 0);
 	y += Gui_RADIOBUTTON_HEIGHT + Gui_RADIOBUTTON_SPACING;
 	stereoButton = GuiRadioButton_createShown (d_windowForm, 20, 170, y, y + Gui_RADIOBUTTON_HEIGHT,
-		U"Stereo", NULL, NULL, 0);
+		U"Stereo", nullptr, nullptr, 0);
 	GuiRadioGroup_end ();
 
 	/* Input source */
@@ -843,7 +843,7 @@ void structSoundRecorder :: v_createChildren ()
 	GuiLabel_createShown (d_windowForm, 170, -170, y, y + Gui_LABEL_HEIGHT, U"Meter", GuiLabel_CENTRE);
 	y += Gui_LABEL_HEIGHT;
 	meter = GuiDrawingArea_createShown (d_windowForm, 170, -170, y, -150,
-		NULL, NULL, NULL, gui_drawingarea_cb_resize, this, GuiDrawingArea_BORDER);
+		nullptr, nullptr, nullptr, gui_drawingarea_cb_resize, this, GuiDrawingArea_BORDER);
 
 	/* Sampling frequency */
 
@@ -1176,7 +1176,7 @@ autoSoundRecorder SoundRecorder_create (int numberOfChannels) {
 		 */
 		initialize (me.peek());
 
-		Editor_init (me.peek(), 100, 100, 600, 500, U"SoundRecorder", NULL);
+		Editor_init (me.peek(), 100, 100, 600, 500, U"SoundRecorder", nullptr);
 		my graphics = Graphics_create_xmdrawingarea (my meter);
 		Melder_assert (my graphics);
 		Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
@@ -1189,8 +1189,8 @@ event. height = GuiControl_getHeight (my meter);
 gui_drawingarea_cb_resize (me.peek(), & event);
 
 		#if cocoa
-			CFRunLoopTimerContext context = { 0, me.peek(), NULL, NULL, NULL };
-			my d_cocoaTimer = CFRunLoopTimerCreate (NULL, CFAbsoluteTimeGetCurrent () + 0.02,
+			CFRunLoopTimerContext context = { 0, me.peek(), nullptr, nullptr, nullptr };
+			my d_cocoaTimer = CFRunLoopTimerCreate (nullptr, CFAbsoluteTimeGetCurrent () + 0.02,
 				0.02, 0, 0, workProc, & context);
 			CFRunLoopAddTimer (CFRunLoopGetCurrent (), my d_cocoaTimer, kCFRunLoopCommonModes);
 		#elif gtk

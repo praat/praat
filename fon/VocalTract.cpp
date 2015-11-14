@@ -115,7 +115,7 @@ static struct { const char32 *phone; int numberOfSections; double area [40]; }
 { U"ku", 40, { 2.5, 2.5, 2.5, 2.4, 5, 8.1, 8.9, 8.9, 8.4, 7.5, 5.8, 3.9, 2.3, 1.6, 1.2,
 	1.05, 1.1, 1.4, 1.2, 0.3, MinimumWidth, 0.3, 2.2, 2.3, 2.8, 3.7, 5, 6.2, 7.9,
 	10.9, 12.9, 13.15, 13, 12.5, 9.9, 3.9, 1.8, 0.32, 0.4, 0.6 } },
-{ NULL, 0, { 0 } } };
+{ nullptr, 0, { 0 } } };
 
 autoVocalTract VocalTract_createFromPhone (const char32 *phone) {
 	try {

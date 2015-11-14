@@ -232,14 +232,12 @@ long numberOfWidgets = 0;
 long Gui_getNumberOfMotifWidgets () { return numberOfWidgets; }
 
 static void _motif_addShell (GuiObject me) {
-	int i;
-	for (i = 0; i < MAXIMUM_NUMBER_OF_SHELLS; i ++)
-		if (theShells [i] == NULL) { theShells [i] = me; break; }
+	for (int i = 0; i < MAXIMUM_NUMBER_OF_SHELLS; i ++)
+		if (! theShells [i]) { theShells [i] = me; break; }
 }
 static void _motif_removeShell (GuiObject me) {
-	int i;
-	for (i = 0; i < MAXIMUM_NUMBER_OF_SHELLS; i ++)
-		if (theShells [i] == me) { theShells [i] = NULL; break; }
+	for (int i = 0; i < MAXIMUM_NUMBER_OF_SHELLS; i ++)
+		if (theShells [i] == me) { theShells [i] = nullptr; break; }
 }
 
 /* AppContext level */
@@ -284,7 +282,7 @@ static void cb_scroll (GuiObject scrollBar, XtPointer closure, XtPointer call) {
 		{ workWindow -> x += distance; Native_move (workWindow, distance, 0); }
 	else
 		{ workWindow -> y += distance; Native_move (workWindow, 0, distance); }
-	XmUpdateDisplay (NULL);   // if dragging
+	XmUpdateDisplay (nullptr);   // if dragging
 }
 
 /* These are like the toolkit's query_geometry methods: */
@@ -343,9 +341,9 @@ GuiObject _Gui_initializeWidget (int widgetClass, GuiObject parent, const char32
 	/*
 	 * Install me into my parent's list of children.
 	 */
-	if (parent == NULL) {
+	if (! parent) {
 		;
-	} else if (parent -> firstChild == NULL) {
+	} else if (! parent -> firstChild) {
 		parent -> firstChild = me;
 	} else {
 		GuiObject lastChild = parent -> firstChild;
@@ -365,12 +363,12 @@ GuiObject _Gui_initializeWidget (int widgetClass, GuiObject parent, const char32
 	if (MEMBER (me, Shell)) {
 		my shell = me;
 	} else {
-		my shell = parent ? parent -> shell : NULL;
+		my shell = parent ? parent -> shell : nullptr;
 		#if mac
 			/*
 			 * I am in the same shell as my parent, so I'll inherit my parent's Macintosh WindowRef.
 			 */
-			my macWindow = parent ? parent -> macWindow : NULL;
+			my macWindow = parent ? parent -> macWindow : nullptr;
 		#endif
 	}
 

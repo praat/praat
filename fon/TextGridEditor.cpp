@@ -61,9 +61,9 @@ static double _TextGridEditor_computeSoundY (TextGridEditor me) {
 static void _AnyTier_identifyClass (Function anyTier, IntervalTier *intervalTier, TextTier *textTier) {
 	if (anyTier -> classInfo == classIntervalTier) {
 		*intervalTier = (IntervalTier) anyTier;
-		*textTier = NULL;
+		*textTier = nullptr;
 	} else {
-		*intervalTier = NULL;
+		*intervalTier = nullptr;
 		*textTier = (TextTier) anyTier;
 	}
 }
@@ -216,7 +216,7 @@ static void menu_cb_DrawVisibleTextGrid (EDITOR_ARGS) {
 		my v_do_pictureSelection (cmd);
 		my pref_picture_garnish () = GET_INTEGER (U"Garnish");
 		Editor_openPraatPicture (me);
-		TextGrid_Sound_draw ((TextGrid) my data, NULL, my pictureGraphics, my d_startWindow, my d_endWindow, true, my p_useTextStyles,
+		TextGrid_Sound_draw ((TextGrid) my data, nullptr, my pictureGraphics, my d_startWindow, my d_endWindow, true, my p_useTextStyles,
 			my pref_picture_garnish ());
 		FunctionEditor_garnish (me);
 		Editor_closePraatPicture (me);
@@ -1189,7 +1189,7 @@ void structTextGridEditor :: v_createMenus () {
 	EditorMenu menu;
 
 	#ifndef macintosh
-		Editor_addCommand (this, U"Edit", U"-- cut copy paste --", 0, NULL);
+		Editor_addCommand (this, U"Edit", U"-- cut copy paste --", 0, nullptr);
 		Editor_addCommand (this, U"Edit", U"Cut text", 'X', menu_cb_Cut);
 		Editor_addCommand (this, U"Edit", U"Cut", Editor_HIDDEN, menu_cb_Cut);
 		Editor_addCommand (this, U"Edit", U"Copy text", 'C', menu_cb_Copy);
@@ -1199,14 +1199,14 @@ void structTextGridEditor :: v_createMenus () {
 		Editor_addCommand (this, U"Edit", U"Erase text", 0, menu_cb_Erase);
 		Editor_addCommand (this, U"Edit", U"Erase", Editor_HIDDEN, menu_cb_Erase);
 	#endif
-	Editor_addCommand (this, U"Edit", U"-- encoding --", 0, NULL);
+	Editor_addCommand (this, U"Edit", U"-- encoding --", 0, nullptr);
 	Editor_addCommand (this, U"Edit", U"Convert entire TextGrid to backslash trigraphs", 0, menu_cb_Genericize);
 	Editor_addCommand (this, U"Edit", U"Genericize entire TextGrid", Editor_HIDDEN, menu_cb_Genericize);
 	Editor_addCommand (this, U"Edit", U"Genericize", Editor_HIDDEN, menu_cb_Genericize);
 	Editor_addCommand (this, U"Edit", U"Convert entire TextGrid to Unicode", 0, menu_cb_Nativize);
 	Editor_addCommand (this, U"Edit", U"Nativize entire TextGrid", Editor_HIDDEN, menu_cb_Nativize);
 	Editor_addCommand (this, U"Edit", U"Nativize", Editor_HIDDEN, menu_cb_Nativize);
-	Editor_addCommand (this, U"Edit", U"-- search --", 0, NULL);
+	Editor_addCommand (this, U"Edit", U"-- search --", 0, nullptr);
 	Editor_addCommand (this, U"Edit", U"Find...", 'F', menu_cb_Find);
 	Editor_addCommand (this, U"Edit", U"Find again", 'G', menu_cb_FindAgain);
 
@@ -1218,7 +1218,7 @@ void structTextGridEditor :: v_createMenus () {
 		Editor_addCommand (this, U"Select", U"Move end of selection to nearest zero crossing", '.', menu_cb_MoveEtoZero);
 	}
 
-	Editor_addCommand (this, U"Query", U"-- query interval --", 0, NULL);
+	Editor_addCommand (this, U"Query", U"-- query interval --", 0, nullptr);
 	Editor_addCommand (this, U"Query", U"Get starting point of interval", 0, menu_cb_GetStartingPointOfInterval);
 	Editor_addCommand (this, U"Query", U"Get end point of interval", 0, menu_cb_GetEndPointOfInterval);
 	Editor_addCommand (this, U"Query", U"Get label of interval", 0, menu_cb_GetLabelOfInterval);
@@ -1227,7 +1227,7 @@ void structTextGridEditor :: v_createMenus () {
 	if (d_sound.data || d_longSound.data) {
 		EditorMenu_addCommand (menu, U"Align interval", 'D', menu_cb_AlignInterval);
 		EditorMenu_addCommand (menu, U"Alignment settings...", 0, menu_cb_AlignmentSettings);
-		EditorMenu_addCommand (menu, U"-- add interval --", 0, NULL);
+		EditorMenu_addCommand (menu, U"-- add interval --", 0, nullptr);
 	}
 	EditorMenu_addCommand (menu, U"Add interval on tier 1", GuiMenu_COMMAND | '1', menu_cb_InsertIntervalOnTier1);
 	EditorMenu_addCommand (menu, U"Add interval on tier 2", GuiMenu_COMMAND | '2', menu_cb_InsertIntervalOnTier2);
@@ -1243,7 +1243,7 @@ void structTextGridEditor :: v_createMenus () {
 	EditorMenu_addCommand (menu, U"Move to E", 0, menu_cb_MoveToE);*/
 	if (d_sound.data) {
 		EditorMenu_addCommand (menu, U"Move to nearest zero crossing", 0, menu_cb_MoveToZero);
-		EditorMenu_addCommand (menu, U"-- insert boundary --", 0, NULL);
+		EditorMenu_addCommand (menu, U"-- insert boundary --", 0, nullptr);
 	}
 	EditorMenu_addCommand (menu, U"Add on selected tier", GuiMenu_ENTER, menu_cb_InsertOnSelectedTier);
 	EditorMenu_addCommand (menu, U"Add on tier 1", GuiMenu_COMMAND | GuiMenu_F1, menu_cb_InsertOnTier1);
@@ -1255,7 +1255,7 @@ void structTextGridEditor :: v_createMenus () {
 	EditorMenu_addCommand (menu, U"Add on tier 7", GuiMenu_COMMAND | GuiMenu_F7, menu_cb_InsertOnTier7);
 	EditorMenu_addCommand (menu, U"Add on tier 8", GuiMenu_COMMAND | GuiMenu_F8, menu_cb_InsertOnTier8);
 	EditorMenu_addCommand (menu, U"Add on all tiers", GuiMenu_COMMAND | GuiMenu_F9, menu_cb_InsertOnAllTiers);
-	EditorMenu_addCommand (menu, U"-- remove mark --", 0, NULL);
+	EditorMenu_addCommand (menu, U"-- remove mark --", 0, nullptr);
 	EditorMenu_addCommand (menu, U"Remove", GuiMenu_OPTION | GuiMenu_BACKSPACE, menu_cb_RemovePointOrBoundary);
 
 	menu = Editor_addMenu (this, U"Tier", 0);
@@ -1263,10 +1263,10 @@ void structTextGridEditor :: v_createMenus () {
 	EditorMenu_addCommand (menu, U"Add point tier...", 0, menu_cb_AddPointTier);
 	EditorMenu_addCommand (menu, U"Duplicate tier...", 0, menu_cb_DuplicateTier);
 	EditorMenu_addCommand (menu, U"Rename tier...", 0, menu_cb_RenameTier);
-	EditorMenu_addCommand (menu, U"-- remove tier --", 0, NULL);
+	EditorMenu_addCommand (menu, U"-- remove tier --", 0, nullptr);
 	EditorMenu_addCommand (menu, U"Remove all text from tier", 0, menu_cb_RemoveAllTextFromTier);
 	EditorMenu_addCommand (menu, U"Remove entire tier", 0, menu_cb_RemoveTier);
-	EditorMenu_addCommand (menu, U"-- extract tier --", 0, NULL);
+	EditorMenu_addCommand (menu, U"-- extract tier --", 0, nullptr);
 	EditorMenu_addCommand (menu, U"Extract to list of objects:", GuiMenu_INSENSITIVE, menu_cb_PublishTier /* dummy */);
 	EditorMenu_addCommand (menu, U"Extract entire selected tier", 0, menu_cb_PublishTier);
 
@@ -1274,7 +1274,7 @@ void structTextGridEditor :: v_createMenus () {
 		menu = Editor_addMenu (this, U"Spell", 0);
 		EditorMenu_addCommand (menu, U"Check spelling in tier", GuiMenu_COMMAND | GuiMenu_OPTION | 'L', menu_cb_CheckSpelling);
 		EditorMenu_addCommand (menu, U"Check spelling in interval", 0, menu_cb_CheckSpellingInInterval);
-		EditorMenu_addCommand (menu, U"-- edit lexicon --", 0, NULL);
+		EditorMenu_addCommand (menu, U"-- edit lexicon --", 0, nullptr);
 		EditorMenu_addCommand (menu, U"Add selected word to user dictionary", 0, menu_cb_AddToUserDictionary);
 	}
 

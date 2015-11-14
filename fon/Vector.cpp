@@ -194,19 +194,19 @@ void Vector_getMinimumAndXAndChannel (Vector me, double xmin, double xmax, int i
 
 double Vector_getMinimum (Vector me, double xmin, double xmax, int interpolation) {
 	double minimum;
-	Vector_getMinimumAndXAndChannel (me, xmin, xmax, interpolation, & minimum, NULL, NULL);
+	Vector_getMinimumAndXAndChannel (me, xmin, xmax, interpolation, & minimum, nullptr, nullptr);
 	return minimum;
 }
 
 double Vector_getXOfMinimum (Vector me, double xmin, double xmax, int interpolation) {
 	double xOfMinimum;
-	Vector_getMinimumAndXAndChannel (me, xmin, xmax, interpolation, NULL, & xOfMinimum, NULL);
+	Vector_getMinimumAndXAndChannel (me, xmin, xmax, interpolation, nullptr, & xOfMinimum, nullptr);
 	return xOfMinimum;
 }
 
 long Vector_getChannelOfMinimum (Vector me, double xmin, double xmax, int interpolation) {
 	long channelOfMinimum;
-	Vector_getMinimumAndXAndChannel (me, xmin, xmax, interpolation, NULL, NULL, & channelOfMinimum);
+	Vector_getMinimumAndXAndChannel (me, xmin, xmax, interpolation, nullptr, nullptr, & channelOfMinimum);
 	return channelOfMinimum;
 }
 
@@ -269,19 +269,19 @@ void Vector_getMaximumAndXAndChannel (Vector me, double xmin, double xmax, int i
 
 double Vector_getMaximum (Vector me, double xmin, double xmax, int interpolation) {
 	double maximum;
-	Vector_getMaximumAndXAndChannel (me, xmin, xmax, interpolation, & maximum, NULL, NULL);
+	Vector_getMaximumAndXAndChannel (me, xmin, xmax, interpolation, & maximum, nullptr, nullptr);
 	return maximum;
 }
 
 double Vector_getXOfMaximum (Vector me, double xmin, double xmax, int interpolation) {
 	double xOfMaximum;
-	Vector_getMaximumAndXAndChannel (me, xmin, xmax, interpolation, NULL, & xOfMaximum, NULL);
+	Vector_getMaximumAndXAndChannel (me, xmin, xmax, interpolation, nullptr, & xOfMaximum, nullptr);
 	return xOfMaximum;
 }
 
 long Vector_getChannelOfMaximum (Vector me, double xmin, double xmax, int interpolation) {
 	long channelOfMaximum;
-	Vector_getMaximumAndXAndChannel (me, xmin, xmax, interpolation, NULL, NULL, & channelOfMaximum);
+	Vector_getMaximumAndXAndChannel (me, xmin, xmax, interpolation, nullptr, nullptr, & channelOfMaximum);
 	return channelOfMaximum;
 }
 

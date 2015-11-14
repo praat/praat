@@ -152,7 +152,7 @@ autoSound Sound_recordFixedTime (int inputSource, double gain, double balance, d
 		#else
 			MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem_ALSA_VIA_PORTAUDIO;
 		#endif
-	PaStream *portaudioStream = NULL;
+	PaStream *portaudioStream = nullptr;
 	#if defined (macintosh)
 	#elif defined (_WIN32)
 		HWAVEIN hWaveIn = 0;
@@ -249,7 +249,7 @@ autoSound Sound_recordFixedTime (int inputSource, double gain, double balance, d
 				/* The device immediately started recording into its buffer, but probably at the wrong rate etc. */
 				/* Pause and flush this rubbish. */
 				#if defined (linux)
-					ioctl (fd, SNDCTL_DSP_RESET, NULL);
+					ioctl (fd, SNDCTL_DSP_RESET, nullptr);
 				#endif
 			#endif
 		}
@@ -381,7 +381,7 @@ autoSound Sound_recordFixedTime (int inputSource, double gain, double balance, d
 			info. numberOfSamples = numberOfSamples;
 			info. numberOfSamplesRead = 0;
 			info. buffer = buffer.peek();
-			PaError err = Pa_OpenStream (& portaudioStream, & streamParameters, NULL,
+			PaError err = Pa_OpenStream (& portaudioStream, & streamParameters, nullptr,
 				sampleRate, 0, paNoFlag, portaudioStreamCallback, (void *) & info);
 			if (err)
 				Melder_throw (U"open ", Melder_peek8to32 (Pa_GetErrorText (err)));
@@ -415,7 +415,7 @@ for (i = 1; i <= numberOfSamples; i ++) trace (U"Recorded ", buffer [i]);
 				waveHeader. lpData = (char *) & buffer [1];
 				waveHeader. dwBufferLength = numberOfSamples * 2;
 				waveHeader. dwLoops = 0;
-				waveHeader. lpNext = NULL;
+				waveHeader. lpNext = nullptr;
 				waveHeader. reserved = 0;
 				err = waveInPrepareHeader (hWaveIn, & waveHeader, sizeof (WAVEHDR));
 				if (err != MMSYSERR_NOERROR)
@@ -515,7 +515,7 @@ static bool melderPlayCallback (void *closure, long samplesPlayed) {
 		samplesPlayed >= my silenceBefore + my numberOfSamples ? my tmax :
 		my t1 + (my i1 - 1.5 + samplesPlayed - my silenceBefore) * my dt;
 	if (! MelderAudio_isPlaying) {
-		NUMvector_free (my buffer, 1), my buffer = NULL;
+		NUMvector_free (my buffer, 1), my buffer = nullptr;
 		phase = 3;
 	}
 	if (my callback)
@@ -530,7 +530,7 @@ void Sound_playPart (Sound me, double tmin, double tmax,
 		long ifsamp = lround (1.0 / my dx), bestSampleRate = MelderAudio_getOutputBestSampleRate (ifsamp);
 		if (ifsamp == bestSampleRate) {
 			struct SoundPlay *thee = (struct SoundPlay *) & thePlayingSound;
-			double *fromLeft = my z [1], *fromRight = my ny > 1 ? my z [2] : NULL;
+			double *fromLeft = my z [1], *fromRight = my ny > 1 ? my z [2] : nullptr;
 			MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 			long i1, i2;
 			if ((thy numberOfSamples = Matrix_getWindowSamplesX (me, tmin, tmax, & i1, & i2)) < 1) return;

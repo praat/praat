@@ -24,7 +24,6 @@ autoSpectrum Spectrogram_to_Spectrum (Spectrogram me, double time);
 /*
 	Function:
 		Create a time slice from the Spectrogram at the time nearest to 'time'.
-		Return NULL in case of failure (no memory).
 	Postconditions:
 		result -> xmin == my ymin;   // Lowest frequency; often 0.
 		result -> xmax == my ymax;   // Highest frequency.
@@ -41,7 +40,6 @@ autoSpectrogram Spectrum_to_Spectrogram (Spectrum me);
 /*
 	Function:
 		Create a Spectrogram with one time slice from the Spectrum.
-		Return NULL in case of failure (no memory).
 	Postconditions:
 		thy xmin = 0.0;			thy ymin == my xmin;
 		thy xmax = 1.0;		thy ymax == my xmax;

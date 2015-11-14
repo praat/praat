@@ -59,9 +59,9 @@ void SpectrumTier_list (SpectrumTier me, bool includeIndexes, bool includeFreque
 
 autoTable SpectrumTier_downto_Table (SpectrumTier me, bool includeIndexes, bool includeFrequency, bool includePowerDensity) {
 	return RealTier_downto_Table (me,
-		includeIndexes ? U"index" : NULL,
-		includeFrequency ? U"freq(Hz)" : NULL,
-		includePowerDensity ? U"pow(dB/Hz)" : NULL);
+		includeIndexes ? U"index" : nullptr,
+		includeFrequency ? U"freq(Hz)" : nullptr,
+		includePowerDensity ? U"pow(dB/Hz)" : nullptr);
 }
 
 autoSpectrumTier Spectrum_to_SpectrumTier_peaks (Spectrum me) {

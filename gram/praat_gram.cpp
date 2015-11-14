@@ -996,7 +996,7 @@ FORM (OTGrammar_Stringses_learn, U"OTGrammar: Learn", U"OTGrammar & 2 Strings: L
 	OK2
 DO
 	iam_ONLY (OTGrammar);
-	Strings inputs = NULL, outputs = NULL;
+	Strings inputs = nullptr, outputs = nullptr;
 	WHERE (SELECTED && CLASS == classStrings) { if (! inputs) inputs = (Strings) OBJECT; else outputs = (Strings) OBJECT; }
 	try {
 		OTGrammar_learn (me, inputs, outputs,
@@ -1053,7 +1053,7 @@ DO
 	double result = OTGrammar_Distributions_getFractionCorrect (me, thee, GET_INTEGER (U"Column number"),
 		GET_REAL (U"Evaluation noise"), GET_INTEGER (U"Replications"));
 	praat_dataChanged (me);
-	Melder_informationReal (result, NULL);
+	Melder_informationReal (result, nullptr);
 END2 }
 
 FORM (OTGrammar_Distributions_learnFromPartialOutputs, U"OTGrammar & Distributions: Learn from partial outputs", U"OT learning 6. Shortcut to grammar learning") {
@@ -1231,7 +1231,7 @@ DO
 		praat_dataChanged (me);
 		throw;
 	}
-	Melder_informationReal (result, NULL);
+	Melder_informationReal (result, nullptr);
 END2 }
 
 FORM (OTGrammar_PairDistribution_getMinimumNumberCorrect, U"OTGrammar & PairDistribution: Get minimum number correct...", 0) {
@@ -1643,7 +1643,7 @@ END2 }
 
 void praat_uvafon_gram_init ();
 void praat_uvafon_gram_init () {
-	Thing_recognizeClassesByName (classNetwork, classOTGrammar, classOTHistory, classOTMulti, NULL);
+	Thing_recognizeClassesByName (classNetwork, classOTGrammar, classOTHistory, classOTMulti, nullptr);
 	Thing_recognizeClassByOtherName (classOTGrammar, U"OTCase");
 
 	praat_addMenuCommand (U"Objects", U"New", U"Constraint grammars", 0, 0, 0);

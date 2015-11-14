@@ -3483,7 +3483,7 @@ LIST_ITEM (U"##sendpraat (void *#%display##, const char *#%program##, long #%tim
 ENTRY (U"Arguments")
 TAG (U"%display")
 DEFINITION (U"the display pointer if the subroutine is called from a running X program; "
-	"if NULL, sendpraat will open the display by itself. On Windows and Macintosh, "
+	"if null, sendpraat will open the display by itself. On Windows and Macintosh, "
 	"this argument is ignored.")
 TAG (U"%program")
 DEFINITION (U"the name of a running program that uses the Praat shell, e.g. \"Praat\" or \"ALS\". "

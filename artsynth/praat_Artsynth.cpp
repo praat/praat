@@ -69,7 +69,7 @@ DO
 	praat_new (Artword_create (GET_REAL (U"Duration")).transfer(), GET_STRING (U"Name"));
 END2 }
 
-FORM (Artword_draw, U"Draw one Artword tier", NULL) {
+FORM (Artword_draw, U"Draw one Artword tier", nullptr) {
 	OPTIONMENU (U"Muscle", kArt_muscle_LUNGS)
 	for (int ienum = 1; ienum <= kArt_muscle_MAX; ienum ++)
 		OPTION (kArt_muscle_getText (ienum))
@@ -305,7 +305,7 @@ DO
 	LOOP {
 		iam (VocalTract);
 		try {
-			Matrix_formula (me, GET_STRING (U"formula"), interpreter, NULL);
+			Matrix_formula (me, GET_STRING (U"formula"), interpreter, nullptr);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);
@@ -352,7 +352,7 @@ void manual_Artsynth_init (ManPages me);
 
 void praat_uvafon_Artsynth_init ();
 void praat_uvafon_Artsynth_init () {
-	Thing_recognizeClassesByName (classArt, classArtword, classSpeaker, NULL);
+	Thing_recognizeClassesByName (classArt, classArtword, classSpeaker, nullptr);
 
 	praat_addMenuCommand (U"Objects", U"New", U"Articulatory synthesis", 0, 0, 0);
 	praat_addMenuCommand (U"Objects", U"New", U"Articulatory synthesis tutorial", 0, 1, DO_ArticulatorySynthesisTutorial);

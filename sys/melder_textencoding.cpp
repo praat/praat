@@ -560,7 +560,7 @@ const void * Melder_peek32toCfstring (const char32 *text) {
 	static int icfString = 0;
 	if (++ icfString == 11) icfString = 0;
 	if (cfString [icfString]) CFRelease (cfString [icfString]);
-	cfString [icfString] = CFStringCreateWithCString (NULL, (const char *) Melder_peek32to8 (text), kCFStringEncodingUTF8);
+	cfString [icfString] = CFStringCreateWithCString (nullptr, (const char *) Melder_peek32to8 (text), kCFStringEncodingUTF8);
 	return cfString [icfString];
 }
 #endif

@@ -146,12 +146,12 @@ void structPitchEditor :: v_createMenus () {
 	Editor_addCommand (this, U"Edit", U"Change ceiling...", 0, menu_cb_setCeiling);
 	Editor_addCommand (this, U"Edit", U"Path finder...", 0, menu_cb_pathFinder);
 
-	Editor_addCommand (this, U"Query", U"-- pitch --", 0, NULL);
+	Editor_addCommand (this, U"Query", U"-- pitch --", 0, nullptr);
 	Editor_addCommand (this, U"Query", U"Get pitch", GuiMenu_F5, menu_cb_getPitch);
 
 	Editor_addMenu (this, U"Selection", 0);
 	Editor_addCommand (this, U"Selection", U"Unvoice", 0, menu_cb_voiceless);
-	Editor_addCommand (this, U"Selection", U"-- up and down --", 0, NULL);
+	Editor_addCommand (this, U"Selection", U"-- up and down --", 0, nullptr);
 	Editor_addCommand (this, U"Selection", U"Octave up", 0, menu_cb_octaveUp);
 	Editor_addCommand (this, U"Selection", U"Fifth up", 0, menu_cb_fifthUp);
 	Editor_addCommand (this, U"Selection", U"Fifth down", 0, menu_cb_fifthDown);

@@ -627,13 +627,13 @@ end:
 
 double Sampled_getMaximum (Sampled me, double xmin, double xmax, long ilevel, int unit, bool interpolate) {
 	double maximum;
-	Sampled_getMaximumAndX (me, xmin, xmax, ilevel, unit, interpolate, & maximum, NULL);
+	Sampled_getMaximumAndX (me, xmin, xmax, ilevel, unit, interpolate, & maximum, nullptr);
 	return maximum;
 }
 
 double Sampled_getXOfMaximum (Sampled me, double xmin, double xmax, long ilevel, int unit, bool interpolate) {
 	double time;
-	Sampled_getMaximumAndX (me, xmin, xmax, ilevel, unit, interpolate, NULL, & time);
+	Sampled_getMaximumAndX (me, xmin, xmax, ilevel, unit, interpolate, nullptr, & time);
 	return time;
 }
 

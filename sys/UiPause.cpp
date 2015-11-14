@@ -29,8 +29,8 @@
 #include "UiPause.h"
 #include "praatP.h"
 
-static UiForm thePauseForm = NULL;
-static Any thePauseFormRadio = NULL;
+static UiForm thePauseForm = nullptr;
+static Any thePauseFormRadio = nullptr;
 static int thePauseForm_clicked = 0;
 static int theCancelContinueButton = 0;
 static int theEventLoopDepth = 0;
@@ -61,7 +61,7 @@ void UiPause_begin (GuiWindow topShell, const char32 *title, Interpreter interpr
 	forget (thePauseForm);   // in case an earlier build-up of another pause window was interrupted
 	thePauseForm = UiForm_create (topShell, Melder_cat (U"Pause: ", title),
 		thePauseFormOkCallback, interpreter,   // pass interpreter as closure!
-		NULL, NULL);
+		nullptr, nullptr);
 }
 void UiPause_real (const char32 *label, const char32 *defaultValue) {
 	if (! thePauseForm)
@@ -191,8 +191,8 @@ int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int can
 	}
 	if (wasBackgrounding) praat_background ();
 	/* BUG: should also restore praatP. editor. */
-	thePauseForm = NULL;   // undangle
-	thePauseFormRadio = NULL;   // undangle
+	thePauseForm = nullptr;   // undangle
+	thePauseFormRadio = nullptr;   // undangle
 	if (thePauseForm_clicked == -1) {
 		Interpreter_stop (interpreter);
 		Melder_throw (U"You interrupted the script.");

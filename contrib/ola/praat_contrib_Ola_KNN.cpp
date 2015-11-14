@@ -863,66 +863,65 @@ END2 }
 void praat_contrib_Ola_KNN_init ();
 void praat_contrib_Ola_KNN_init ()
 {
-    Thing_recognizeClassesByName (classKNN, NULL);
-    Thing_recognizeClassesByName (classFeatureWeights, NULL);
+    Thing_recognizeClassesByName (classKNN, classFeatureWeights, nullptr);
 
 //////////
 // Menu //
 //////////
 
-    praat_addMenuCommand (U"Objects", U"New", U"kNN classifiers", 0, 0, 0);
+    praat_addMenuCommand (U"Objects", U"New", U"kNN classifiers", nullptr, 0, nullptr);
 
-    praat_addMenuCommand (U"Objects", U"New", U"kNN classifiers", 0, 1, DO_KNN_help);
-    praat_addMenuCommand (U"Objects", U"New", U"-- KNN --", 0, 1, 0);
+    praat_addMenuCommand (U"Objects", U"New", U"kNN classifiers", nullptr, 1, DO_KNN_help);
+    praat_addMenuCommand (U"Objects", U"New", U"-- KNN --", nullptr, 1, nullptr);
 
-    praat_addMenuCommand (U"Objects", U"New", U"Create kNN classifier...", 0, 1, DO_KNN_create);
+    praat_addMenuCommand (U"Objects", U"New", U"Create kNN classifier...", nullptr, 1, DO_KNN_create);
 
-    praat_addMenuCommand (U"Objects", U"New", U"Advanced", 0, 1, 0);
-    praat_addMenuCommand (U"Objects", U"New", U"Create Pattern...", 0, 2, DO_Pattern_create);
-    praat_addMenuCommand (U"Objects", U"New", U"Create Categories...", 0, 2, DO_Categories_create);
-    praat_addMenuCommand (U"Objects", U"New", U"Create FeatureWeights...", 0, 2, DO_FeatureWeights_create);
+    praat_addMenuCommand (U"Objects", U"New", U"Advanced", nullptr, 1, nullptr);
+    praat_addMenuCommand (U"Objects", U"New", U"Create Pattern...", nullptr, 2, DO_Pattern_create);
+    praat_addMenuCommand (U"Objects", U"New", U"Create Categories...", nullptr, 2, DO_Categories_create);
+    praat_addMenuCommand (U"Objects", U"New", U"Create FeatureWeights...", nullptr, 2, DO_FeatureWeights_create);
 
 /////////////
 // Actions //
 /////////////
 
-    praat_addAction1 (classKNN, 0, U"kNN help", 0, 0, DO_KNN_help);
-    praat_addAction1 (classKNN, 0, QUERY_BUTTON, 0, 0, 0);
-    praat_addAction1 (classKNN, 1, U"Get optimized parameters...", 0, 2, DO_KNN_getOptimumModel);
-    praat_addAction1 (classKNN, 1, U"Get accuracy estimate...", 0, 2, DO_KNN_evaluate);
-    praat_addAction1 (classKNN, 1, U"Get size of instancebase", 0, 2, DO_KNN_getNumberOfInstances);
+    praat_addAction1 (classKNN, 0, U"kNN help", nullptr, 0, DO_KNN_help);
+    praat_addAction1 (classKNN, 0, QUERY_BUTTON, nullptr, 0, nullptr);
+    praat_addAction1 (classKNN, 1, U"Get optimized parameters...", nullptr, 2, DO_KNN_getOptimumModel);
+    praat_addAction1 (classKNN, 1, U"Get accuracy estimate...", nullptr, 2, DO_KNN_evaluate);
+    praat_addAction1 (classKNN, 1, U"Get size of instancebase", nullptr, 2, DO_KNN_getNumberOfInstances);
 
-    praat_addAction1 (classKNN, 0, MODIFY_BUTTON, 0, 0, 0);
-    praat_addAction1 (classKNN, 1, U"Shuffle", 0, 1, DO_KNN_shuffle);
-    praat_addAction1 (classKNN, 1, U"Prune...", 0, 1, DO_KNN_prune);
-    praat_addAction1 (classKNN, 1, U"Reset...", 0, 1, DO_KNN_reset);
-    praat_addAction1 (classKNN, 0, EXTRACT_BUTTON, 0, 0, 0);
-    praat_addAction1 (classKNN, 0, U"Extract input Patterns", 0, 1, DO_KNN_extractInputPatterns);
-    praat_addAction1 (classKNN, 0, U"Extract output Categories", 0, 1, DO_KNN_extractOutputCategories);
+    praat_addAction1 (classKNN, 0, MODIFY_BUTTON, nullptr, 0, nullptr);
+    praat_addAction1 (classKNN, 1, U"Shuffle", nullptr, 1, DO_KNN_shuffle);
+    praat_addAction1 (classKNN, 1, U"Prune...", nullptr, 1, DO_KNN_prune);
+    praat_addAction1 (classKNN, 1, U"Reset...", nullptr, 1, DO_KNN_reset);
+    praat_addAction1 (classKNN, 0, EXTRACT_BUTTON, nullptr, 0, nullptr);
+    praat_addAction1 (classKNN, 0, U"Extract input Patterns", nullptr, 1, DO_KNN_extractInputPatterns);
+    praat_addAction1 (classKNN, 0, U"Extract output Categories", nullptr, 1, DO_KNN_extractOutputCategories);
 
-    praat_addAction1 (classKNN, 0, U"To FeatureWeights...", 0, 0, DO_FeatureWeights_computeWrapperInt);
+    praat_addAction1 (classKNN, 0, U"To FeatureWeights...", nullptr, 0, DO_FeatureWeights_computeWrapperInt);
 
- // praat_addAction1 (classKNN, 0, U"To Permutation...", 0, 0, DO_KNN_SA_computePermutation);
- // praat_addAction2 (classKNN, 1, classFeatureWeights, 1, U"To Permutation...", 0, 0, DO_KNN_evaluateWithFeatureWeights);
+ // praat_addAction1 (classKNN, 0, U"To Permutation...", nullptr, 0, DO_KNN_SA_computePermutation);
+ // praat_addAction2 (classKNN, 1, classFeatureWeights, 1, U"To Permutation...", nullptr, 0, DO_KNN_evaluateWithFeatureWeights);
 
-    praat_addAction (classKNN, 1, classPattern, 1, classCategories, 1, U"Learn...", 0, 0, DO_KNN_learn);
-    praat_addAction2 (classKNN, 1, classFeatureWeights, 1, U"Evaluate...", 0, 0, DO_KNN_evaluateWithFeatureWeights);
-    praat_addAction (classKNN, 1, classPattern, 1, classCategories, 1, U"Evaluate...", 0, 0, DO_KNN_evaluateWithTestSet);
-    praat_addAction4 (classKNN, 1, classPattern, 1, classCategories, 1, classFeatureWeights, 1, U"Evaluate...", 0, 0, DO_KNN_evaluateWithTestSetAndFeatureWeights);
-    praat_addAction (classKNN, 1, classPattern, 1, classCategories, 1, U"To FeatureWeights...", 0, 0, DO_FeatureWeights_computeWrapperExt);
-    praat_addAction2 (classKNN, 1, classPattern, 1, U"To Categories...", 0, 0, DO_KNN_toCategories);
-    praat_addAction2 (classKNN, 1, classPattern, 1, U"To TableOfReal...", 0, 0, DO_KNN_toTableOfReal);
+    praat_addAction (classKNN, 1, classPattern, 1, classCategories, 1, U"Learn...", nullptr, 0, DO_KNN_learn);
+    praat_addAction2 (classKNN, 1, classFeatureWeights, 1, U"Evaluate...", nullptr, 0, DO_KNN_evaluateWithFeatureWeights);
+    praat_addAction (classKNN, 1, classPattern, 1, classCategories, 1, U"Evaluate...", nullptr, 0, DO_KNN_evaluateWithTestSet);
+    praat_addAction4 (classKNN, 1, classPattern, 1, classCategories, 1, classFeatureWeights, 1, U"Evaluate...", nullptr, 0, DO_KNN_evaluateWithTestSetAndFeatureWeights);
+    praat_addAction (classKNN, 1, classPattern, 1, classCategories, 1, U"To FeatureWeights...", nullptr, 0, DO_FeatureWeights_computeWrapperExt);
+    praat_addAction2 (classKNN, 1, classPattern, 1, U"To Categories...", nullptr, 0, DO_KNN_toCategories);
+    praat_addAction2 (classKNN, 1, classPattern, 1, U"To TableOfReal...", nullptr, 0, DO_KNN_toTableOfReal);
 
-    praat_addAction (classKNN, 1, classPattern, 1, classFeatureWeights, 1, U"To Categories...", 0, 0, DO_KNN_toCategoriesWithFeatureWeights);
-    praat_addAction (classKNN, 1, classPattern, 1, classFeatureWeights, 1, U"To TableOfReal...", 0, 0, DO_KNN_toTableOfRealWithFeatureWeights);
+    praat_addAction (classKNN, 1, classPattern, 1, classFeatureWeights, 1, U"To Categories...", nullptr, 0, DO_KNN_toCategoriesWithFeatureWeights);
+    praat_addAction (classKNN, 1, classPattern, 1, classFeatureWeights, 1, U"To TableOfReal...", nullptr, 0, DO_KNN_toTableOfRealWithFeatureWeights);
 
-    praat_addAction1 (classPattern, 1, U"To Dissimilarity", 0, 1, DO_KNN_patternToDissimilarity);
-    praat_addAction1 (classPattern, 1, U"To Categories...", 0, 1, DO_Pattern_to_Categories_cluster);
-    praat_addAction2 (classPattern, 1, classFeatureWeights, 1, U"To Dissimilarity", 0, 0, DO_KNN_patternToDissimilarityWithFeatureWeights);
-    praat_addAction2 (classPattern, 1, classFeatureWeights, 1, U"To Categories...", 0, 0, DO_Pattern_to_Categories_clusterWithFeatureWeights);
+    praat_addAction1 (classPattern, 1, U"To Dissimilarity", nullptr, 1, DO_KNN_patternToDissimilarity);
+    praat_addAction1 (classPattern, 1, U"To Categories...", nullptr, 1, DO_Pattern_to_Categories_cluster);
+    praat_addAction2 (classPattern, 1, classFeatureWeights, 1, U"To Dissimilarity", nullptr, 0, DO_KNN_patternToDissimilarityWithFeatureWeights);
+    praat_addAction2 (classPattern, 1, classFeatureWeights, 1, U"To Categories...", nullptr, 0, DO_Pattern_to_Categories_clusterWithFeatureWeights);
 
-    praat_addAction2 (classPattern, 1, classCategories, 1, U"To FeatureWeights...", 0, 0, DO_FeatureWeights_computeRELIEF);
-    praat_addAction2 (classPattern, 1, classCategories, 1, U"To KNN Classifier...", 0, 0, DO_KNN_Pattern_Categories_to_KNN);
+    praat_addAction2 (classPattern, 1, classCategories, 1, U"To FeatureWeights...", nullptr, 0, DO_FeatureWeights_computeRELIEF);
+    praat_addAction2 (classPattern, 1, classCategories, 1, U"To KNN Classifier...", nullptr, 0, DO_KNN_Pattern_Categories_to_KNN);
 
 ///////////
 // DEBUG //
@@ -942,16 +941,16 @@ void praat_contrib_Ola_KNN_init ()
 // Hints //
 ///////////
 
-    praat_addAction1 (classPattern, 0, U"& FeatureWeights: To Categories?", 0, 0, DO_hint_Pattern_and_FeatureWeights_to_Categories);
-    praat_addAction1 (classPattern, 0, U"& FeatureWeights: To Dissimilarity?", 0, 0, DO_hint_Pattern_and_FeatureWeights_to_Dissimilarity);
+    praat_addAction1 (classPattern, 0, U"& FeatureWeights: To Categories?", nullptr, 0, DO_hint_Pattern_and_FeatureWeights_to_Categories);
+    praat_addAction1 (classPattern, 0, U"& FeatureWeights: To Dissimilarity?", nullptr, 0, DO_hint_Pattern_and_FeatureWeights_to_Dissimilarity);
 
-    praat_addAction1 (classKNN, 0, U"& FeatureWeights: Evaluate?", 0, 0, DO_hint_KNN_and_FeatureWeights_evaluate);
-//  praat_addAction1 (classKNN, 0, U"& FeatureWeights: To Permutation?", 0, 0, DO_hint_Pattern_and_FeatureWeights_to_Dissimilarity);
-    praat_addAction1 (classKNN, 0, U"& Pattern: Classify?", 0, 0, DO_hint_KNN_and_Pattern_classify);
-    praat_addAction1 (classKNN, 0, U"& Pattern & FeatureWeights: Classify?", 0, 0, DO_hint_KNN_and_Pattern_and_FeatureWeights_classify);
-    praat_addAction1 (classKNN, 0, U"& Pattern & Categories: Learn?", 0, 0, DO_hint_KNN_and_Pattern_and_Categories_learn);
-    praat_addAction1 (classKNN, 0, U"& Pattern & Categories: Evaluate?", 0, 0, DO_hint_KNN_and_Pattern_and_Categories_evaluate);
-    praat_addAction1 (classKNN, 0, U"& Pattern & Categories & FeatureWeights: Evaluate?", 0, 0, DO_hint_KNN_and_Pattern_and_Categories_and_FeatureWeights_evaluate);
+    praat_addAction1 (classKNN, 0, U"& FeatureWeights: Evaluate?", nullptr, 0, DO_hint_KNN_and_FeatureWeights_evaluate);
+//  praat_addAction1 (classKNN, 0, U"& FeatureWeights: To Permutation?", nullptr, 0, DO_hint_Pattern_and_FeatureWeights_to_Dissimilarity);
+    praat_addAction1 (classKNN, 0, U"& Pattern: Classify?", nullptr, 0, DO_hint_KNN_and_Pattern_classify);
+    praat_addAction1 (classKNN, 0, U"& Pattern & FeatureWeights: Classify?", nullptr, 0, DO_hint_KNN_and_Pattern_and_FeatureWeights_classify);
+    praat_addAction1 (classKNN, 0, U"& Pattern & Categories: Learn?", nullptr, 0, DO_hint_KNN_and_Pattern_and_Categories_learn);
+    praat_addAction1 (classKNN, 0, U"& Pattern & Categories: Evaluate?", nullptr, 0, DO_hint_KNN_and_Pattern_and_Categories_evaluate);
+    praat_addAction1 (classKNN, 0, U"& Pattern & Categories & FeatureWeights: Evaluate?", nullptr, 0, DO_hint_KNN_and_Pattern_and_Categories_and_FeatureWeights_evaluate);
 
     INCLUDE_MANPAGES (manual_KNN_init)
 }

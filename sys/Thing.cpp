@@ -27,7 +27,7 @@ void structThing :: v_info ()
 {
 	MelderInfo_writeLine (U"Object type: ", Thing_className (this));
 	MelderInfo_writeLine (U"Object name: ", this -> name ? this -> name : U"<no name>");
-	time_t today = time (NULL);
+	time_t today = time (nullptr);
 	MelderInfo_writeLine (U"Date: ", Melder_peek8to32 (ctime (& today)));   // includes a newline
 }
 
@@ -173,14 +173,14 @@ bool Thing_isSubclass (ClassInfo klas, ClassInfo ancestor) {
 }
 
 bool Thing_isa (Thing me, ClassInfo klas) {
-	if (! me) Melder_fatal (U"(Thing_isa:) Found NULL object.");
+	if (! me) Melder_fatal (U"(Thing_isa:) Found null object.");
 	return Thing_isSubclass (my classInfo, klas);
 }
 
 void * _Thing_check (Thing me, ClassInfo klas, const char *fileName, int line) {
 	if (! me)
 		Melder_fatal (U"(_Thing_check:)"
-			U" NULL object passed to a function\n"
+			U" null object passed to a function\n"
 			U"in file ", Melder_peek8to32 (fileName),
 			U" at line ", line,
 			U"."
@@ -199,7 +199,7 @@ void * _Thing_check (Thing me, ClassInfo klas, const char *fileName, int line) {
 }
 
 void Thing_infoWithIdAndFile (Thing me, unsigned long id, MelderFile file) {
-	//Melder_assert (me != NULL);
+	//Melder_assert (me);
 	Melder_clearInfo ();
 	MelderInfo_open ();
 	if (id != 0) MelderInfo_writeLine (U"Object id: ", id);
@@ -209,7 +209,7 @@ void Thing_infoWithIdAndFile (Thing me, unsigned long id, MelderFile file) {
 }
 
 void Thing_info (Thing me) {
-	Thing_infoWithIdAndFile (me, 0, NULL);
+	Thing_infoWithIdAndFile (me, 0, nullptr);
 }
 
 char32 * Thing_getName (Thing me) { return my name; }

@@ -318,7 +318,7 @@ void Sound_writeToKayFile (Sound me, MelderFile file) {
 		binputi4LE (32, file -> filePointer);
 
 		char date [100];
-		time_t today = time (NULL);
+		time_t today = time (nullptr);
 		strcpy (date, ctime (& today));	
 		fwrite (date+4, 1, 20, file -> filePointer);   // skip weekday
 

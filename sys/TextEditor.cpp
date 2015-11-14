@@ -612,17 +612,17 @@ void structTextEditor :: v_createMenus () {
 	} else {
 		Editor_addCommand (this, U"File", U"Clear", 'N', menu_cb_clear);
 	}
-	Editor_addCommand (this, U"File", U"-- save --", 0, NULL);
+	Editor_addCommand (this, U"File", U"-- save --", 0, nullptr);
 	if (v_fileBased ()) {
 		Editor_addCommand (this, U"File", U"Save", 'S', menu_cb_save);
 		Editor_addCommand (this, U"File", U"Save as...", 0, menu_cb_saveAs);
 	} else {
 		Editor_addCommand (this, U"File", U"Save as...", 'S', menu_cb_saveAs);
 	}
-	Editor_addCommand (this, U"File", U"-- close --", 0, NULL);
+	Editor_addCommand (this, U"File", U"-- close --", 0, nullptr);
 	GuiText_setUndoItem (textWidget, Editor_addCommand (this, U"Edit", U"Undo", 'Z', menu_cb_undo));
 	GuiText_setRedoItem (textWidget, Editor_addCommand (this, U"Edit", U"Redo", 'Y', menu_cb_redo));
-	Editor_addCommand (this, U"Edit", U"-- cut copy paste --", 0, NULL);
+	Editor_addCommand (this, U"Edit", U"-- cut copy paste --", 0, nullptr);
 	Editor_addCommand (this, U"Edit", U"Cut", 'X', menu_cb_cut);
 	Editor_addCommand (this, U"Edit", U"Copy", 'C', menu_cb_copy);
 	Editor_addCommand (this, U"Edit", U"Paste", 'V', menu_cb_paste);
@@ -633,7 +633,7 @@ void structTextEditor :: v_createMenus () {
 	Editor_addCommand (this, U"Search", U"Find again", 'G', menu_cb_findAgain);
 	Editor_addCommand (this, U"Search", U"Replace...", GuiMenu_SHIFT + 'F', menu_cb_replace);
 	Editor_addCommand (this, U"Search", U"Replace again", GuiMenu_SHIFT + 'G', menu_cb_replaceAgain);
-	Editor_addCommand (this, U"Search", U"-- line --", 0, NULL);
+	Editor_addCommand (this, U"Search", U"-- line --", 0, nullptr);
 	Editor_addCommand (this, U"Search", U"Where am I?", 0, menu_cb_whereAmI);
 	Editor_addCommand (this, U"Search", U"Go to line...", 'L', menu_cb_goToLine);
 

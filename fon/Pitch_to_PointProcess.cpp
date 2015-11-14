@@ -73,7 +73,7 @@ static int Pitch_getVoicedIntervalAfter (Pitch me, double after, double *tleft, 
 }
 
 static double findExtremum_3 (double *channel1_base, double *channel2_base, long d, long n, int includeMaxima, int includeMinima) {
-	double *channel1 = channel1_base + d, *channel2 = channel2_base ? channel2_base + d : NULL;
+	double *channel1 = channel1_base + d, *channel2 = channel2_base ? channel2_base + d : nullptr;
 	int includeAll = includeMaxima == includeMinima;
 	long imin = 1, imax = 1, i, iextr;
 	double minimum, maximum;
@@ -116,7 +116,7 @@ static double Sound_findExtremum (Sound me, double tmin, double tmax, int includ
 	Melder_assert (NUMdefined (tmax));
 	if (imin < 1) imin = 1;
 	if (imax > my nx) imax = my nx;
-	double iextremum = findExtremum_3 (my z [1], my ny > 1 ? my z [2] : NULL, imin - 1, imax - imin + 1, includeMaxima, includeMinima);
+	double iextremum = findExtremum_3 (my z [1], my ny > 1 ? my z [2] : nullptr, imin - 1, imax - imin + 1, includeMaxima, includeMinima);
 	if (iextremum != 0.0)
 		return my x1 + (imin - 1 + iextremum - 1) * my dx;
 	else

@@ -88,7 +88,7 @@ static Sound Spectrum_to_Sound_part (Spectrum me, double fmin, double fmax) {
 
 void structSpectrumEditor :: v_play (double fmin, double fmax) {
 	autoSound sound = Spectrum_to_Sound_part ((Spectrum) our data, fmin, fmax);
-	Sound_play (sound.peek(), NULL, NULL);
+	Sound_play (sound.peek(), nullptr, nullptr);
 }
 
 static void menu_cb_publishBand (EDITOR_ARGS) {
@@ -164,11 +164,11 @@ void structSpectrumEditor :: v_createMenus () {
 	SpectrumEditor_Parent :: v_createMenus ();
 	our publishBandButton = Editor_addCommand (this, U"File", U"Publish band", 0, menu_cb_publishBand);
 	our publishSoundButton = Editor_addCommand (this, U"File", U"Publish band-filtered sound", 0, menu_cb_publishSound);
-	Editor_addCommand (this, U"File", U"-- close --", 0, NULL);
-	Editor_addCommand (this, U"Edit", U"-- edit band --", 0, NULL);
+	Editor_addCommand (this, U"File", U"-- close --", 0, nullptr);
+	Editor_addCommand (this, U"Edit", U"-- edit band --", 0, nullptr);
 	Editor_addCommand (this, U"Edit", U"Pass band...", 0, menu_cb_passBand);
 	Editor_addCommand (this, U"Edit", U"Stop band...", 0, menu_cb_stopBand);
-	Editor_addCommand (this, U"Select", U"-- move to peak --", 0, 0);
+	Editor_addCommand (this, U"Select", U"-- move to peak --", 0, nullptr);
 	Editor_addCommand (this, U"Select", U"Move cursor to nearest peak", 'K', menu_cb_moveCursorToPeak);
 }
 

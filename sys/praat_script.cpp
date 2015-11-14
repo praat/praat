@@ -36,7 +36,7 @@ static int praat_findObjectFromString (Interpreter interpreter, const char32 *st
 			static MelderString buffer { 0 };
 			MelderString_copy (& buffer, string);
 			char32 *space = str32chr (buffer.string, U' ');
-			if (space == NULL)
+			if (! space)
 				Melder_throw (U"Missing space in name.");
 			*space = U'\0';
 			char32 *className = & buffer.string [0], *givenName = space + 1;

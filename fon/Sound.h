@@ -249,7 +249,7 @@ autoSound Sound_recordFixedTime (int inputSource,
 			duration:
 				positive time in seconds.
 		Return value:
-			the resulting Sound; NULL in case of failure.
+			the resulting Sound.
 		Failures:
 			Hardware does not support sampling frequency.
 			Duration must be positive.
@@ -263,7 +263,7 @@ void Sound_playPart (Sound me, double tmin, double tmax,
 	int (*playCallback) (void *playClosure, int phase, double tmin, double tmax, double t), void *playClosure);
 /*
  * Play a sound. The playing can be interrupted with the Escape key (also Command-period on the Mac).
- * If playCallback is not NULL, Sound_play will call it repeatedly, with five parameters:
+ * If playCallback is not null, Sound_play will call it repeatedly, with five parameters:
  *    1. playClosure: the same value as was supplied as the last argument to Sound_playPart.
  *    2. phase: 1 at the start, 2 while playing, 3 at the end.
  *    3. tmin: the same tmin that was supplied as the second argument to Sound_playPart.
