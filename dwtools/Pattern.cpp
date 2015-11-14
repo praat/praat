@@ -1,6 +1,6 @@
 /* Pattern.cpp
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,11 +45,11 @@ void Pattern_init (Pattern me, long ny, long nx) {
 	Matrix_init (me, 1, nx, nx, 1, 1, 1, ny, ny, 1, 1);
 }
 
-Pattern Pattern_create (long ny, long nx) {
+autoPattern Pattern_create (long ny, long nx) {
 	try {
 		autoPattern me = Thing_new (Pattern);
 		Pattern_init (me.peek(), ny, nx);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Pattern not created.");
 	}
@@ -91,7 +91,7 @@ void Pattern_draw (Pattern me, Graphics g, long pattern, double xmin, double xma
 	}
 }
 
-Pattern Matrix_to_Pattern (Matrix me, int join) {
+autoPattern Matrix_to_Pattern (Matrix me, int join) {
 	try {
 		if (join < 1) {
 			join = 1;
@@ -112,17 +112,17 @@ Pattern Matrix_to_Pattern (Matrix me, int join) {
 				thy z[r][c++] = my z[i][j];
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Pattern.");
 	}
 }
 
-Matrix Pattern_to_Matrix (Pattern me) {
+autoMatrix Pattern_to_Matrix (Pattern me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
 		my structMatrix :: v_copy (thee.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
 	}

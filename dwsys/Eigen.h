@@ -34,13 +34,13 @@ oo_CLASS_CREATE (Eigen, Daata);
 
 autoEigen Eigen_create (long numberOfEigenvalues, long dimension);
 
-void Eigen_init (I, long numberOfEigenvalues, long dimension);
+void Eigen_init (Eigen me, long numberOfEigenvalues, long dimension);
 
-void Eigen_initFromSymmetricMatrix_f (I, float **a, long n);
+void Eigen_initFromSymmetricMatrix_f (Eigen me, float **a, long n);
 
-void Eigen_initFromSymmetricMatrix (I, double **a, long n);
+void Eigen_initFromSymmetricMatrix (Eigen me, double **a, long n);
 
-void Eigen_initFromSquareRoot (I, double **a, long numberOfRows, long numberOfColumns);
+void Eigen_initFromSquareRoot (Eigen me, double **a, long numberOfRows, long numberOfColumns);
 /*
 	Calculate eigenstructure for symmetric matrix A'A (e.g. covariance matrix),
 	when only A is given.
@@ -48,7 +48,7 @@ void Eigen_initFromSquareRoot (I, double **a, long numberOfRows, long numberOfCo
 	Method: SVD.
 */
 
-void Eigen_initFromSquareRootPair (I, double **a, long numberOfRows, long numberOfColumns, double **b, long numberOfRows_b);
+void Eigen_initFromSquareRootPair (Eigen me, double **a, long numberOfRows, long numberOfColumns, double **b, long numberOfRows_b);
 /*
 	Calculate eigenstructure for A'Ax - lambda B'Bx = 0
 	Preconditions: numberOfRows >= numberOfColumns &&
@@ -56,30 +56,30 @@ void Eigen_initFromSquareRootPair (I, double **a, long numberOfRows, long number
 	Method: Generalized SVD.
 */
 
-long Eigen_getNumberOfEigenvectors (I);
+long Eigen_getNumberOfEigenvectors (Eigen me);
 
-long Eigen_getDimensionOfComponents (I);
+long Eigen_getDimensionOfComponents (Eigen me);
 
-double Eigen_getCumulativeContributionOfComponents (I, long from, long to);
+double Eigen_getCumulativeContributionOfComponents (Eigen me, long from, long to);
 
-long Eigen_getDimensionOfFraction (I, double fraction);
+long Eigen_getDimensionOfFraction (Eigen me, double fraction);
 
-double Eigen_getEigenvectorElement (I, long ivec, long element);
+double Eigen_getEigenvectorElement (Eigen me, long ivec, long element);
 
-double Eigen_getSumOfEigenvalues (I, long from, long to);
+double Eigen_getSumOfEigenvalues (Eigen me, long from, long to);
 
 
-void Eigen_sort (I);
+void Eigen_sort (Eigen me);
 /*
 	Sort eigenvalues and corresponding eigenvectors in decreasing order.
 */
 
-void Eigen_invertEigenvector (I, long ivec);
+void Eigen_invertEigenvector (Eigen me, long ivec);
 
-void Eigen_drawEigenvalues (I, Graphics g, long first, long last, double ymin, double ymax,
+void Eigen_drawEigenvalues (Eigen me, Graphics g, long first, long last, double ymin, double ymax,
 	int fractionOfTotal, int cumulative, double size_mm, const char32 *mark, int garnish);
 
-void Eigen_drawEigenvector (I, Graphics g, long ivec, long first, long last, double minimum, double maximum, int weigh, 
+void Eigen_drawEigenvector (Eigen me, Graphics g, long ivec, long first, long last, double minimum, double maximum, int weigh, 
 	double size_mm, const char32 *mark, int connect, char32 **rowLabels, int garnish);
 /*
 	Draw eigenvector. When rowLabels != nullptr, draw row text labels on bottom axis.
@@ -91,7 +91,7 @@ void Eigens_alignEigenvectors (Collection me);
 	If r < 0 then mirror the eigenvectors of
 */
 
-double Eigens_getAngleBetweenEigenplanes_degrees (I, thou);
+double Eigens_getAngleBetweenEigenplanes_degrees (Eigen me, Eigen thee);
 /*
 	Get angle between the eigenplanes, spanned by the first two eigenvectors, .
 */

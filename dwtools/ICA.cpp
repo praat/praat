@@ -1,6 +1,6 @@
 /* ICA.c
  *
- * Copyright (C) 2010-2012 David Weenink
+ * Copyright (C) 2010-2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -578,11 +578,11 @@ autoCrossCorrelationTables Sound_to_CrossCorrelationTables (Sound me, double sta
 	}
 }
 
-Sound Sound_to_Sound_BSS (Sound me, double startTime, double endTime, long ncovars, double lagStep, long maxNumberOfIterations, double tol, int method) {
+autoSound Sound_to_Sound_BSS (Sound me, double startTime, double endTime, long ncovars, double lagStep, long maxNumberOfIterations, double tol, int method) {
 	try {
 		autoMixingMatrix him = Sound_to_MixingMatrix (me, startTime, endTime, ncovars, lagStep, maxNumberOfIterations, tol, method);
 		autoSound thee = Sound_and_MixingMatrix_unmix (me, him.peek());
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not separated.");
 	}
@@ -592,14 +592,14 @@ Sound Sound_to_Sound_BSS (Sound me, double startTime, double endTime, long ncova
 
 Thing_implement (Diagonalizer, TableOfReal, 0);
 
-Diagonalizer Diagonalizer_create (long dimension) {
+autoDiagonalizer Diagonalizer_create (long dimension) {
 	try {
 		autoDiagonalizer me = Thing_new (Diagonalizer);
 		TableOfReal_init (me.peek(), dimension, dimension);
 		for (long i = 1; i <= dimension; i++) {
 			my data[i][i] = 1;
 		}
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Diagonalizer not created.");
 	}
@@ -689,7 +689,7 @@ autoMixingMatrix Diagonalizer_to_MixingMatrix (Diagonalizer me) {
 
 /********************* Sound & MixingMatrix ************************************/
 
-Sound Sound_and_MixingMatrix_mix (Sound me, MixingMatrix thee) {
+autoSound Sound_and_MixingMatrix_mix (Sound me, MixingMatrix thee) {
 	try {
 		if (my ny != thy numberOfColumns) {
 			Melder_throw (U"The number of components in the MixingMatrix and the number of channels in the Sound must be equal.");
@@ -704,13 +704,13 @@ Sound Sound_and_MixingMatrix_mix (Sound me, MixingMatrix thee) {
 				his z[i][j] = mix;
 			}
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": not mixed.");
 	}
 }
 
-Sound Sound_and_MixingMatrix_unmix (Sound me, MixingMatrix thee) {
+autoSound Sound_and_MixingMatrix_unmix (Sound me, MixingMatrix thee) {
 	try {
 		if (my ny != thy numberOfRows) {
 			Melder_throw (U"The MixingMatrix and the Sound must have the same number of channels.");
@@ -728,7 +728,7 @@ Sound Sound_and_MixingMatrix_unmix (Sound me, MixingMatrix thee) {
 				his z[i][j] = s;
 			}
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": not unmixed.");
 	}
@@ -925,22 +925,22 @@ void Diagonalizer_and_CrossCorrelationTables_improveDiagonality (Diagonalizer me
 	}
 }
 
-Sound Sound_whitenChannels (Sound me, double varianceFraction) {
+autoSound Sound_whitenChannels (Sound me, double varianceFraction) {
     try {
         autoCovariance cov = Sound_to_Covariance_channels (me, 0.0, 0.0);
         autoSound thee = Sound_and_Covariance_whitenChannels (me, cov.peek(), varianceFraction);
-        return thee.transfer();
+        return thee;
     } catch (MelderError) {
         Melder_throw (me, U": not whitened.");
     }
 }
 
-Sound Sound_and_Covariance_whitenChannels (Sound me, Covariance thee, double varianceFraction) {
+autoSound Sound_and_Covariance_whitenChannels (Sound me, Covariance thee, double varianceFraction) {
     try {
         autoPCA pca = SSCP_to_PCA (thee);
         long numberOfComponents = Eigen_getDimensionOfFraction (pca.peek(), varianceFraction);
         autoSound him = Sound_and_PCA_whitenChannels (me, pca.peek(), numberOfComponents);
-        return him.transfer ();
+        return him;
     } catch (MelderError) {
         Melder_throw (me, U": not whitened from ", thee);
     }
@@ -1010,4 +1010,5 @@ static void Sound_and_MixingMatrix_improveUnmixing_fica (Sound me, MixingMatrix 
 		Melder_throw (me, U" & ", thee, U" .");
 	}
 }
+
 /* End of file ICA.cpp 987*/

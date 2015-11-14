@@ -2,7 +2,7 @@
 #define _TableOfReal_extensions_h_
 /* TableOfReal_extensions.h
  *
- * Copyright (C) 1993-2012, 2014 David Weenink
+ * Copyright (C) 1993-2012, 2014, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,37 +31,39 @@
 #include "Strings_.h"
 #include "SSCP.h"
 
-int TableOfReal_to_Pattern_and_Categories(TableOfReal me, long fromrow, long torow, long fromcol, long tocol,
-	Pattern *p, Categories *c);
+void TableOfReal_to_Pattern_and_Categories(TableOfReal me, long fromrow, long torow, long fromcol, long tocol,
+	autoPattern *p, autoCategories *c);
 
-TableOfReal TableOfReal_transpose (TableOfReal me);
+autoTableOfReal TableOfReal_transpose (TableOfReal me);
 
-Strings TableOfReal_extractRowLabels (TableOfReal me);
+autoStrings TableOfReal_extractRowLabels (TableOfReal me);
 
-Strings TableOfReal_extractColumnLabels (TableOfReal me);
+autoStrings TableOfReal_extractColumnLabels (TableOfReal me);
 
 void TableOfReal_and_Categories_setRowLabels (TableOfReal me, Categories thee);
-/* !!! Set rowlabels from categories
-  Because we need a Table-object with string-columns.
-*/
+// !!! Set rowlabels from categories because we need a Table-object with string-columns.
 
-TableOfReal TableOfReal_sortOnlyByRowLabels (TableOfReal me);
+autoTableOfReal TableOfReal_sortOnlyByRowLabels (TableOfReal me);
 
 long *TableOfReal_getSortedIndexFromRowLabels (TableOfReal me);
 
-TableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, long *index, int reverse);
-/*
-	thy data[reverse ? i : index[i]][j] = my data[reverse ? index[i] : i]
-*/
+autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, long *index, int reverse);
+// thy data[reverse ? i : index[i]][j] = my data[reverse ? index[i] : i]
 
-TableOfReal TableOfReal_createIrisDataset ();
+autoTableOfReal TableOfReal_createIrisDataset ();
+
 int TableOfReal_areAllCellsDefined (TableOfReal me, long rb, long re, long cb, long ce);
-TableOfReal TableOfReal_createFromPolsData_50males (int include_levels);
-TableOfReal TableOfReal_createFromVanNieropData_25females (int include_levels);
-TableOfReal TableOfReal_createFromWeeninkData (int option); /* M W C */
+
+autoTableOfReal TableOfReal_createFromPolsData_50males (int include_levels);
+
+autoTableOfReal TableOfReal_createFromVanNieropData_25females (int include_levels);
+
+autoTableOfReal TableOfReal_createFromWeeninkData (int option); /* M W C */
 
 void TableOfReal_getColumnExtrema (TableOfReal me, long col, double *min, double *max);
+
 long TableOfReal_getColumnIndexAtMaximumInRow (TableOfReal me, long rowNumber);
+
 const char32 *TableOfReal_getColumnLabelAtMaximumInRow (TableOfReal me, long rowNumber);
 
 void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, const char32 *rows, long colb, long cole,
@@ -114,18 +116,19 @@ void TableOfReal_labelsFromCollectionItemNames (TableOfReal me, Collection thee,
 
 void TableOfReal_setSequentialColumnLabels (TableOfReal me, long from, long to,
 	const char32 *precursor, long number, long increment);
+
 void TableOfReal_setSequentialRowLabels (TableOfReal me, long from, long to,
 	const char32 *precursor, long number, long increment);
 
 int TableOfReal_hasRowLabels (TableOfReal me);
+
 int TableOfReal_hasColumnLabels (TableOfReal me);
 
 void TableOfReal_changeRowLabels (TableOfReal me, const char32 *search, const char32 *replace,
-	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches,
-	int use_regexp);
+	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, int use_regexp);
+
 void TableOfReal_changeColumnLabels (TableOfReal me, const char32 *search, const char32 *replace,
-	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches,
-	int use_regexp);
+	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, int use_regexp);
 /*
 	Change all row/column labels. The 'search' and 'replace' string are
 	interpreted as regular expressions when 'use_regexp' != 0.
@@ -138,15 +141,20 @@ void TableOfReal_changeColumnLabels (TableOfReal me, const char32 *search, const
 */
 
 void TableOfReal_centreColumns (TableOfReal me);
+
 void TableOfReal_centreColumns_byRowLabel (TableOfReal me);
 /* PRECONDITION: Table must be sorted by row labels !! */
 
 double TableOfReal_getColumnQuantile (TableOfReal me, long col, double quantile);
 
 double TableOfReal_getRowSumByLabel (TableOfReal me, const char32 *label);
+
 double TableOfReal_getRowSum (TableOfReal me, long index);
+
 double TableOfReal_getColumnSumByLabel (TableOfReal me, const char32 *label);
+
 double TableOfReal_getColumnSum (TableOfReal me, long index);
+
 double TableOfReal_getGrandSum (TableOfReal me);
 
 void TableOfReal_centreRows (TableOfReal me);
@@ -158,15 +166,18 @@ int TableOfReal_checkPositive (TableOfReal me);
 double TableOfReal_getTableNorm (TableOfReal me);
 
 void TableOfReal_normalizeTable (TableOfReal me, double norm);
+
 void TableOfReal_normalizeColumns (TableOfReal me, double norm);
+
 void TableOfReal_normalizeRows (TableOfReal me, double norm);
 
 void TableOfReal_standardizeColumns (TableOfReal me);
+
 void TableOfReal_standardizeRows (TableOfReal me);
 
-TableOfReal TableOfReal_rankColumns (TableOfReal me);
+autoTableOfReal TableOfReal_rankColumns (TableOfReal me);
 
-TableOfReal TableOfReal_meansByRowLabels (TableOfReal me, int expand, int stats);
+autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, int expand, int stats);
 /*
 	stats == 0? averages : medians
 	For a table with n rows and m different labels (m <= n):
@@ -174,25 +185,25 @@ TableOfReal TableOfReal_meansByRowLabels (TableOfReal me, int expand, int stats)
 	else output a table with m rows, the averages for the m labels.
 */
 
-TableOfReal TableOfReal_bootstrap (TableOfReal me);
-/* Produce new table with the same number of entries, but randomly
-selected with replacement. */
-TableOfReal TableOfReal_randomizeRows (TableOfReal me);
+autoTableOfReal TableOfReal_bootstrap (TableOfReal me);
+// Produce new table with the same number of entries, but randomly selected with replacement.
+
+autoTableOfReal TableOfReal_randomizeRows (TableOfReal me);
 /* Produce new table with randomized rows */
 
 /* For the inheritors */
-TableOfReal TableOfReal_to_TableOfReal (TableOfReal me);
+autoTableOfReal TableOfReal_to_TableOfReal (TableOfReal me);
 
-TableOfReal TableOfReal_choleskyDecomposition (TableOfReal me, int upper, int inverse);
+autoTableOfReal TableOfReal_choleskyDecomposition (TableOfReal me, int upper, int inverse);
 
-TableOfReal TableOfReal_appendColumns (TableOfReal me, TableOfReal thee);
-TableOfReal TableOfReal_appendColumnsMany (Collection me);
+autoTableOfReal TableOfReal_appendColumns (TableOfReal me, TableOfReal thee);
+autoTableOfReal TableOfReal_appendColumnsMany (Collection me);
 
 void TableOfReal_copyOneRowWithLabel (TableOfReal me, TableOfReal thee, long myrow, long thyrow);
 
 double TableOfReal_normalityTest_BHEP (TableOfReal me, double *beta, double *tnb, double *lnmu, double *lnvar);
 
-TableOfReal TableOfReal_and_TableOfReal_crossCorrelations (TableOfReal me, TableOfReal thee, int by_columns, int center, int normalize);
+autoTableOfReal TableOfReal_and_TableOfReal_crossCorrelations (TableOfReal me, TableOfReal thee, int by_columns, int center, int normalize);
 
 /********************* class TablesOfReal ******************************/
 
@@ -201,9 +212,9 @@ Thing_define (TablesOfReal, Ordered) {
 
 void TablesOfReal_init (TablesOfReal me, ClassInfo klas);
 
-TablesOfReal TablesOfReal_create ();
+autoTablesOfReal TablesOfReal_create ();
 
-TableOfReal TablesOfReal_sum (TablesOfReal me);
+autoTableOfReal TablesOfReal_sum (TablesOfReal me);
 
 int TablesOfReal_checkDimensions (TablesOfReal me);
 

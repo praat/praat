@@ -39,11 +39,11 @@ autoTextGrid SpeechSynthesizer_and_Sound_and_TextGrid_align (SpeechSynthesizer m
 	long tierNumber, long istart, long iend, double silenceThreshold, double minSilenceDuration, double minSoundingDuration);
 autoTextGrid SpeechSynthesizer_and_Sound_and_TextGrid_align2 (SpeechSynthesizer me, Sound thee, TextGrid him, long tierNumber, long istart, long iend, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double trimDuration);
 
-Table IntervalTiers__to_Table_textAlignmentment (IntervalTier target, IntervalTier source, EditCostsTable costs);
-Table TextGrids_to_Table_textAlignmentment (TextGrid target, long ttier, TextGrid source, long stier, EditCostsTable costs);
+autoTable IntervalTiers__to_Table_textAlignmentment (IntervalTier target, IntervalTier source, EditCostsTable costs);
+autoTable TextGrids_to_Table_textAlignmentment (TextGrid target, long ttier, TextGrid source, long stier, EditCostsTable costs);
 
 /* For testing purposes only */
-TextGrid TextGrid_and_IntervalTier_patch (TextGrid me, IntervalTier thee, const char32 *patchLabel, double precision);
-TextGrid TextGrid_and_IntervalTier_cutPartsMatchingLabel (TextGrid me, IntervalTier thee, const char32 *label, double precision);
+autoTextGrid TextGrid_and_IntervalTier_patch (TextGrid me, IntervalTier thee, const char32 *patchLabel, double precision);
+autoTextGrid TextGrid_and_IntervalTier_cutPartsMatchingLabel (TextGrid me, IntervalTier thee, const char32 *label, double precision);
 
 #endif // _SpeechSynthesizer_and_TextGrid_h_

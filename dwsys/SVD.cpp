@@ -1,6 +1,6 @@
 /* SVD.cpp
  *
- * Copyright (C) 1994-2014 David Weenink
+ * Copyright (C) 1994-2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,8 +87,7 @@ static void SVD_transpose (SVD me) {
 	m >=n, mxn matrix A has svd UDV', where u is mxn, D is n and V is nxn.
 	m < n, mxn matrix A. Consider A' with svd (UDV')'= VDU', where v is mxm, D is m and U' is mxn
 */
-void SVD_init (I, long numberOfRows, long numberOfColumns) {
-	iam (SVD);
+void SVD_init (SVD me, long numberOfRows, long numberOfColumns) {
 	long mn_min = MIN (numberOfRows, numberOfColumns);
 	my numberOfRows = numberOfRows;
 	my numberOfColumns = numberOfColumns;
@@ -101,31 +100,31 @@ void SVD_init (I, long numberOfRows, long numberOfColumns) {
 	my d = NUMvector<double> (1, mn_min);
 }
 
-SVD SVD_create (long numberOfRows, long numberOfColumns) {
+autoSVD SVD_create (long numberOfRows, long numberOfColumns) {
 	try {
 		autoSVD me = Thing_new (SVD);
 		SVD_init (me.peek(), numberOfRows, numberOfColumns);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SVD not created.");
 	}
 }
 
-SVD SVD_create_d (double **m, long numberOfRows, long numberOfColumns) {
+autoSVD SVD_create_d (double **m, long numberOfRows, long numberOfColumns) {
 	try {
 		autoSVD me = SVD_create (numberOfRows, numberOfColumns);
 		SVD_svd_d (me.peek(), m);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SVD not created from vector.");
 	}
 }
 
-SVD SVD_create_f (float **m, long numberOfRows, long numberOfColumns) {
+autoSVD SVD_create_f (float **m, long numberOfRows, long numberOfColumns) {
 	try {
 		autoSVD me = SVD_create (numberOfRows, numberOfColumns);
 		SVD_svd_f (me.peek(), m);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SVD not created from vector.");
 	}
@@ -385,7 +384,7 @@ void structGSVD :: v_info () {
 	MelderInfo_writeLine (U"Number of columns: ", numberOfColumns);
 }
 
-GSVD GSVD_create (long numberOfColumns) {
+autoGSVD GSVD_create (long numberOfColumns) {
 	try {
 		autoGSVD me = Thing_new (GSVD);
 		my numberOfColumns = numberOfColumns;
@@ -394,13 +393,13 @@ GSVD GSVD_create (long numberOfColumns) {
 		my r = NUMmatrix<double> (1, numberOfColumns, 1, numberOfColumns);
 		my d1 = NUMvector<double> (1, numberOfColumns);
 		my d2 = NUMvector<double> (1, numberOfColumns);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"GSVD not created.");
 	}
 }
 
-GSVD GSVD_create_d (double **m1, long numberOfRows1, long numberOfColumns, double **m2, long numberOfRows2) {
+autoGSVD GSVD_create_d (double **m1, long numberOfRows1, long numberOfColumns, double **m2, long numberOfRows2) {
 	try {
 		long m = numberOfRows1, n = numberOfColumns, p = numberOfRows2;
 		long lwork = MAX (MAX (3 * n, m), p) + n;
@@ -451,7 +450,7 @@ GSVD GSVD_create_d (double **m1, long numberOfRows1, long numberOfColumns, doubl
 				my r[i][j] = pr[i - 1 + (n - kl + j - 1) * m]; /* from col-major */
 			}
 		}
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"GSVD not created.");
 	}

@@ -47,85 +47,85 @@ int structDLL :: s_compare (Any /* node1 */, Any /* node2 */) {
 	return 0;
 }
 
-DLLNode DLLNode_create (Daata data) {
+autoDLLNode DLLNode_create (Daata data) {
 	autoDLLNode me = Thing_new (DLLNode);
 	my data = data;
-	return me.transfer();
+	return me;
 }
 
 void DLL_init (DLL) {
 }
 
-DLL DLL_create() {
+autoDLL DLL_create() {
 	try {
 		autoDLL me = Thing_new (DLL);
 		DLL_init (me.peek());
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"DLL not created.");
 	}
 
 }
 
-void DLL_addFront (DLL me, DLLNode n) {
+void DLL_addFront (DLL me, DLLNode node) {
 	if (my front) {
-		DLL_addBefore (me, my front, n);
+		DLL_addBefore (me, my front, node);
 	} else {   // empty list
-		my front = n;
-		my back = n;
-		n -> next = nullptr;
-		n -> prev = nullptr;
+		my front = node;
+		my back = node;
+		node -> next = nullptr;
+		node -> prev = nullptr;
 		my numberOfNodes++;
 	}
 }
 
-void DLL_addBack (DLL me, DLLNode n) {
+void DLL_addBack (DLL me, DLLNode node) {
 	if (my back) {
-		DLL_addAfter (me, my back, n);
+		DLL_addAfter (me, my back, node);
 	} else {
-		DLL_addFront (me, n);    // empty list
+		DLL_addFront (me, node);    // empty list
 	}
 }
 
-void DLL_addBefore (DLL me, DLLNode pos, DLLNode n) {
-	n -> prev = pos -> prev;
-	n -> next = pos;
+void DLL_addBefore (DLL me, DLLNode pos, DLLNode node) {
+	node -> prev = pos -> prev;
+	node -> next = pos;
 	if (pos -> prev == nullptr) {
-		my front = n;
+		my front = node;
 	} else {
-		pos -> prev -> next = n;
+		pos -> prev -> next = node;
 	}
-	pos -> prev = n;
+	pos -> prev = node;
 	my numberOfNodes++;
 }
 
-void DLL_addAfter (DLL me, DLLNode pos, DLLNode n) {
-	n -> prev = pos;
-	n -> next = pos -> next;
+void DLL_addAfter (DLL me, DLLNode pos, DLLNode node) {
+	node -> prev = pos;
+	node -> next = pos -> next;
 	if (pos -> next == nullptr) {
-		my back = n;
+		my back = node;
 	} else {
-		pos -> next -> prev = n;
+		pos -> next -> prev = node;
 	}
-	pos -> next = n;
+	pos -> next = node;
 	my numberOfNodes++;
 }
 
-void DLL_remove (DLL me, DLLNode n) {
+void DLL_remove (DLL me, DLLNode node) {
 	if (my numberOfNodes == 0) {
 		return;
 	}
-	if (n == my front) {
+	if (node == my front) {
 		my front = my front -> next;
 		my front -> prev = nullptr;
-	} else if (n == my back) {
+	} else if (node == my back) {
 		my back = my back -> prev;
 		my back -> next = nullptr;
 	} else {
-		n -> prev -> next = n -> next;
-		n -> next -> prev = n -> prev;
+		node -> prev -> next = node -> next;
+		node -> next -> prev = node -> prev;
 	}
-	forget (n);
+	forget (node);
 	my numberOfNodes++;
 }
 
@@ -168,47 +168,47 @@ void DLL_sort (DLL me) {
 	long increment = 1;
 	DLLNode front = my front, back;
 	for (;;) {
-		DLLNode n1 = front;
+		DLLNode node1 = front;
 		front = nullptr;
 		back = nullptr;
 
 		long numberOfMerges = 0;
 
-		while (n1) {
-			DLLNode n2 = n1, n;
-			long n1size = 0;
+		while (node1) {
+			DLLNode node2 = node1, node;
+			long node1size = 0;
 			numberOfMerges++;
 
 			for (long i = 1; i <= increment; i++) {
-				n1size++;
-				n2 = n2 -> next;
-				if (!n2) {
+				node1size++;
+				node2 = node2 -> next;
+				if (! node2) {
 					break;
 				}
 			}
 
-			long n2size = increment;
+			long node2size = increment;
 
-			while (n1size > 0 || (n2size > 0 && n2)) { // merge n1 and n2
-				if (n1size == 0) {
-					n2size--; n = n2; n2 = n2 -> next;
-				} else if (n2size == 0 || !n2) {
-					n1size--; n = n1; n1 = n1 -> next;
-				} else if (compare (n1, n2) <= 0) {
-					n1size--; n = n1; n1 = n1 -> next;
+			while (node1size > 0 || (node2size > 0 && node2)) { // merge node1 and node2
+				if (node1size == 0) {
+					node2size--; node = node2; node2 = node2 -> next;
+				} else if (node2size == 0 || ! node2) {
+					node1size--; node = node1; node1 = node1 -> next;
+				} else if (compare (node1, node2) <= 0) {
+					node1size--; node = node1; node1 = node1 -> next;
 				} else {
-					n2size--; n = n2; n2 = n2 -> next;
+					node2size--; node = node2; node2 = node2 -> next;
 				}
 
 				if (back) {
-					back -> next = n;
+					back -> next = node;
 				} else {
-					front = n;
+					front = node;
 				}
-				n -> prev = back;
-				back = n;
+				node -> prev = back;
+				back = node;
 			}
-			n1 = n2;
+			node1 = node2;
 		}
 		back -> next = nullptr;
 		if (numberOfMerges <= 1) {

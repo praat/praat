@@ -32,30 +32,27 @@
 #include "CC_def.h"
 oo_CLASS_CREATE (CC, Sampled);
 
-void CC_init (I, double tmin, double tmax, long nt, double dt, double t1,
-	long maximumNumberOfCoefficients, double fmin, double fmax);
+void CC_init (CC me, double tmin, double tmax, long nt, double dt, double t1, long maximumNumberOfCoefficients, double fmin, double fmax);
 
-void CC_getNumberOfCoefficients_extrema (I, long startframe,
-	long endframe, long *min, long *max);
+void CC_getNumberOfCoefficients_extrema (CC me, long startframe, long endframe, long *min, long *max);
 
-long CC_getMinimumNumberOfCoefficients (I, long startframe, long endframe);
+long CC_getMinimumNumberOfCoefficients (CC me, long startframe, long endframe);
 
-long CC_getMaximumNumberOfCoefficients (I, long startframe, long endframe);
+long CC_getMaximumNumberOfCoefficients (CC me, long startframe, long endframe);
 
-long CC_getNumberOfCoefficients (I, long iframe);
+long CC_getNumberOfCoefficients (CC me, long iframe);
 
-double CC_getValueInFrame (I, long iframe, long index);
-double CC_getC0ValueInFrame (I, long iframe);
+double CC_getValueInFrame (CC me, long iframe, long index);
 
-void CC_paint (I, Graphics g, double xmin, double xmax, long cmin,
-	long cmax, double minimum, double maximum, int garnish);
+double CC_getC0ValueInFrame (CC me, long iframe);
 
-void CC_drawC0 (I, Graphics g, double xmin, double xmax, double ymin,
-	double ymax, int garnish);
+void CC_paint (CC me, Graphics g, double xmin, double xmax, long cmin, long cmax, double minimum, double maximum, int garnish);
 
-Matrix CC_to_Matrix (I);
+void CC_drawC0 (CC me, Graphics g, double xmin, double xmax, double ymin, double ymax, int garnish);
 
-double CC_getValue (I, double t, long index);
+autoMatrix CC_to_Matrix (CC me);
+
+double CC_getValue (CC me, double t, long index);
 
 /******************* Frames ************************************************/
 

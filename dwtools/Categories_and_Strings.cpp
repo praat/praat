@@ -1,6 +1,6 @@
 /* Categories_and_Strings.cpp
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 
 #include "Categories_and_Strings.h"
 
-Strings Categories_to_Strings (Categories me) {
+autoStrings Categories_to_Strings (Categories me) {
 	try {
 		if (my size < 1) {
 			Melder_throw (U"No elements.");
@@ -37,13 +37,13 @@ Strings Categories_to_Strings (Categories me) {
 			SimpleString s = (SimpleString) my item[i];
 			thy strings[i] = Melder_dup (s -> string);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Strings.");
 	}
 }
 
-Categories Strings_to_Categories (Strings me) {
+autoCategories Strings_to_Categories (Strings me) {
 	try {
 		if (my numberOfStrings < 1) {
 			Melder_throw (U"Empty strings.");
@@ -55,7 +55,7 @@ Categories Strings_to_Categories (Strings me) {
 			autoSimpleString s = SimpleString_create (my strings[i]);
 			Collection_addItem (thee.peek(), s.transfer());
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted.");
 	}

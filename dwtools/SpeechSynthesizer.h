@@ -41,13 +41,13 @@
 oo_CLASS_CREATE (SpeechSynthesizerVoice, Daata);
 oo_CLASS_CREATE (SpeechSynthesizer, Daata);
 
-SpeechSynthesizerVoice SpeechSynthesizerVoice_create (long numberOfFormants);
+autoSpeechSynthesizerVoice SpeechSynthesizerVoice_create (long numberOfFormants);
 void SpeechSynthesizerVoice_setDefaults (SpeechSynthesizerVoice me);
 void SpeechSynthesizerVoice_initFromEspeakVoice (SpeechSynthesizerVoice me, voice_t *voice);
 
 
 void SpeechSynthesizer_initSoundBuffer (SpeechSynthesizer me);
-SpeechSynthesizer SpeechSynthesizer_create (const char32 *voiceLanguageName, const char32 *voiceVariantName);
+autoSpeechSynthesizer SpeechSynthesizer_create (const char32 *voiceLanguageName, const char32 *voiceVariantName);
 
 const char32 *SpeechSynthesizer_getVoiceLanguageCodeFromName (SpeechSynthesizer me, const char32 *voiceLanguageName);
 const char32 *SpeechSynthesizer_getVoiceVariantCodeFromName (SpeechSynthesizer me, const char32 *voiceVariantName);

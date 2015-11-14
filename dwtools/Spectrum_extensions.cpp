@@ -1,6 +1,6 @@
 /* Spectrum_extensions.cpp
  *
- * Copyright (C) 1993-2013 David Weenink
+ * Copyright (C) 1993-2013, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,8 +59,7 @@ struct tribolet_struct {
 	spectrum of x.
 	Reference: Bonzanigo (1978), IEEE Trans. ASSP, Vol. 26.
 */
-static void getSpectralValues (struct tribolet_struct *tbs, double freq_rad,
-                               double *xr, double *xi, double *nxr, double *nxi) {
+static void getSpectralValues (struct tribolet_struct *tbs, double freq_rad, double *xr, double *xi, double *nxr, double *nxi) {
 	double cosf = cos (freq_rad), sinf = sin (freq_rad);
 	double a = 2 * cosf, b, u1 = 0, u2 = u1, w1 = u1, w2 = u1;
 	double *x = tbs -> x;
@@ -76,9 +75,7 @@ static void getSpectralValues (struct tribolet_struct *tbs, double freq_rad,
 		w1 = w0;
 	}
 
-	/*
-		Bonzanigo's phase correction
-	*/
+	// Bonzanigo's phase correction
 
 	a = freq_rad * (nx - 1);
 	u1 =   cos (a);
@@ -96,10 +93,8 @@ static void getSpectralValues (struct tribolet_struct *tbs, double freq_rad,
 	tbs -> count ++;
 }
 
-/*
-	Find the closest unwrapped phase estimate from the two admissible
-	phase values (a1 & a2).
-*/
+// Find the closest unwrapped phase estimate from the two admissible phase values (a1 & a2).
+
 static int phase_check (double pv, double *phase, double thlcon) {
 	double a0 = (*phase - pv) / NUM2pi;
 	long k = (long) floor (a0);   // ppgb: instead of truncation toward zero
@@ -115,12 +110,9 @@ static int phase_check (double pv, double *phase, double thlcon) {
 	return 1;
 }
 
-/*
-	Phase unwrapping based on Tribolet's adaptive integration method.
-	the unwrapped phase estimate is returned.
-*/
-static double phase_unwrap (struct tribolet_struct *tbs, double pfreq,
-                            double ppv, double pdvt, double *pphase, double *ppdvt) {
+// Phase unwrapping based on Tribolet's adaptive integration method.
+// the unwrapped phase estimate is returned.
+static double phase_unwrap (struct tribolet_struct *tbs, double pfreq, double ppv, double pdvt, double *pphase, double *ppdvt) {
 	double sdvt[25], sppv[25];
 	double freq, phase = 0, phase_inc;
 	double delta, xr, xi, xmsq, nxr, nxi;
@@ -140,7 +132,7 @@ p20:
 		pi in the phase.
 	*/
 
-	if ( (sindex[sp] - pindex) <= 1) {
+	if ((sindex[sp] - pindex) <= 1) {
 		return phase;
 	}
 
@@ -184,9 +176,7 @@ p40:
 		return phase;
 	}
 
-	/*
-		p10: Update previous estimate.
-	*/
+	// p10: Update previous estimate.
 
 	pindex = sindex[sp];
 	*pphase = phase;
@@ -195,7 +185,7 @@ p40:
 	goto p40;
 }
 
-Matrix Spectrum_unwrap (Spectrum me) {
+autoMatrix Spectrum_unwrap (Spectrum me) {
 	try {
 		struct tribolet_struct tbs;
 		int remove_linear_part = 1;
@@ -271,14 +261,13 @@ Matrix Spectrum_unwrap (Spectrum me) {
 		}
 		Melder_information (U"Number of spectral values: ", tbs.count);
 		Melder_information (U" iphase = ", iphase);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not unwrapped.");
 	}
 }
 
-void Spectrum_drawPhases (Spectrum me, Graphics g, double fmin, double fmax,
-                          double phase_min, double phase_max, int unwrap, int garnish) {
+void Spectrum_drawPhases (Spectrum me, Graphics g, double fmin, double fmax, double phase_min, double phase_max, int unwrap, int garnish) {
 	autoMatrix thee;
 	int reverse_sign = my z[1][1] < 0;
 
@@ -297,10 +286,9 @@ void Spectrum_drawPhases (Spectrum me, Graphics g, double fmin, double fmax,
 	}
 }
 
-Spectrum Spectra_multiply (Spectrum me, Spectrum thee) {
+autoSpectrum Spectra_multiply (Spectrum me, Spectrum thee) {
 	try {
-		if (my nx != thy nx || my x1 != thy x1 || my xmax != thy xmax ||
-		        my dx != thy dx) {
+		if (my nx != thy nx || my x1 != thy x1 || my xmax != thy xmax || my dx != thy dx) {
 			Melder_throw (U"Dimensions of both spectra do not conform.");
 		}
 		autoSpectrum him = Data_copy (me);
@@ -309,7 +297,7 @@ Spectrum Spectra_multiply (Spectrum me, Spectrum thee) {
 			his z[1][i] = my z[1][i] * thy z[1][i] - my z[2][i] * thy z[2][i];
 			his z[2][i] = my z[1][i] * thy z[2][i] + my z[2][i] * thy z[1][i];
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": not multiplied.");
 	}
@@ -321,20 +309,20 @@ void Spectrum_conjugate (Spectrum me) {
 	}
 }
 
-Spectrum Spectrum_resample (Spectrum me, long numberOfFrequencies) {
+autoSpectrum Spectrum_resample (Spectrum me, long numberOfFrequencies) {
 	try {
 		double newSamplingFrequency = (1 / my dx) * numberOfFrequencies / my nx;
 		// resample real and imaginary part !
 		autoSound thee = Sound_resample ((Sound) me, newSamplingFrequency, 50);
 		autoSpectrum him = Spectrum_create (my xmax, numberOfFrequencies);
 		NUMmatrix_copyElements<double> (thy z, his z, 1, 2, 1, numberOfFrequencies);
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": not resampled.");
 	}
 }
 
-static Spectrum Spectrum_shiftFrequencies2 (Spectrum me, double shiftBy, bool changeMaximumFrequency) {
+static autoSpectrum Spectrum_shiftFrequencies2 (Spectrum me, double shiftBy, bool changeMaximumFrequency) {
 	try {
 		double xmax = my xmax;
 		long numberOfFrequencies = my nx, interpolationDepth = 50;
@@ -353,13 +341,13 @@ static Spectrum Spectrum_shiftFrequencies2 (Spectrum me, double shiftBy, bool ch
 				thy z[2][i] = NUM_interpolate_sinc (my z[2], my nx, index, interpolationDepth);
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not shifted.");
 	}
 }
 
-Spectrum Spectrum_shiftFrequencies (Spectrum me, double shiftBy, double newMaximumFrequency, long interpolationDepth) {
+autoSpectrum Spectrum_shiftFrequencies (Spectrum me, double shiftBy, double newMaximumFrequency, long interpolationDepth) {
 	try {
 		double xmax = my xmax;
 		long numberOfFrequencies = my nx;
@@ -384,13 +372,13 @@ Spectrum Spectrum_shiftFrequencies (Spectrum me, double shiftBy, double newMaxim
 		thy z[1][1] = amp; thy z[2][1] = 0;
 		amp = sqrt (thy z[1][thy nx] * thy z[1][thy nx] + thy z[2][thy nx] * thy z[2][thy nx]);
 		thy z[1][thy nx] = amp; thy z[2][thy nx] = 0;
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not shifted.");
 	}
 }
 
-Spectrum Spectrum_compressFrequencyDomain (Spectrum me, double fmax, long interpolationDepth, int freqscale, int method) {
+autoSpectrum Spectrum_compressFrequencyDomain (Spectrum me, double fmax, long interpolationDepth, int freqscale, int method) {
 	try {
 		double fdomain = my xmax - my xmin, factor = fdomain / fmax ;
 		//long numberOfFrequencies = 1.0 + fmax / my dx; // keep dx the same, otherwise the "duration" changes
@@ -414,7 +402,7 @@ Spectrum Spectrum_compressFrequencyDomain (Spectrum me, double fmax, long interp
 			}
 			thy z[1][i] = x; thy z[2][i] = y;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not compressed.");
 	}

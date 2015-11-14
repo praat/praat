@@ -65,7 +65,7 @@ Categories Pattern_to_Categories_cluster
 		autoNUMvector <double> sizes (0L, k);
 		autoNUMvector <long> seeds (0L, k);
 
-		autoPattern centroids = (Pattern) Pattern_create (k, p->nx);
+		autoPattern centroids = Pattern_create (k, p->nx);
 		autoNUMvector <double> beta (0L, centroids->nx);
 
 		do

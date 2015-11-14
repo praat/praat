@@ -36,7 +36,7 @@
 #include "NUM2.h"
 
 struct huber_struct {
-	Sound e;
+	autoSound e;
 	double k, tol, tol_svd;
 	long iter, itermax;
 	int wantlocation, wantscale;
@@ -45,11 +45,10 @@ struct huber_struct {
 	double *w, *work;
 	double *a;
 	double **covar, *c;
-	SVD svd;
+	autoSVD svd;
 };
 
-static void huber_struct_init (struct huber_struct *hs, double windowDuration,
-                               long p, double samplingFrequency, double location, int wantlocation) {
+static void huber_struct_init (struct huber_struct *hs, double windowDuration, long p, double samplingFrequency, double location, int wantlocation) {
 	hs -> w = hs -> work = hs -> a = hs -> c = nullptr;
 	hs -> covar = nullptr; hs -> svd = nullptr;
 	hs -> e = Sound_createSimple (1, windowDuration, samplingFrequency).transfer();
@@ -70,8 +69,8 @@ static void huber_struct_init (struct huber_struct *hs, double windowDuration,
 }
 
 static void huber_struct_destroy (struct huber_struct *hs) {
-	forget (hs -> e);
-	forget (hs -> svd);
+	hs -> e.reset(nullptr);
+	hs -> svd.reset(nullptr);
 	NUMvector_free<double> (hs -> w, 1);
 	NUMvector_free<double> (hs -> work, 1);
 	NUMvector_free<double> (hs -> a, 1);
@@ -111,7 +110,7 @@ static void huber_struct_getWeightedCovars (struct huber_struct *hs, double *s) 
 }
 
 static void huber_struct_solvelpc (struct huber_struct *hs) {
-	SVD me = hs -> svd;
+	SVD me = hs -> svd.peek();
 	double **covar = hs -> covar;
 
 	for (long i = 1; i <= my numberOfRows; i++) {
@@ -139,7 +138,7 @@ void LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct
 
 	double s0;
 	do {
-		Sound hse = hs -> e;
+		Sound hse = hs -> e.peek();
 		for (long i = 1; i <= thy nx; i++) {
 			hse -> z[1][i] = thy z[1][i];
 		}
@@ -147,8 +146,7 @@ void LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct
 
 		s0 = hs -> scale;
 
-		NUMstatistics_huber (e, n, & (hs -> location), hs -> wantlocation, & (hs -> scale), hs -> wantscale,
-		                     hs -> k, hs -> tol, hs -> work);
+		NUMstatistics_huber (e, n, & (hs -> location), hs -> wantlocation, & (hs -> scale), hs -> wantscale, hs -> k, hs -> tol, hs -> work);
 
 		huber_struct_getWeights (hs, e);
 		huber_struct_getWeightedCovars (hs, s);
@@ -172,7 +170,7 @@ void LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct
 }
 
 
-LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, double preEmphasisFrequency, double k,
+autoLPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, double preEmphasisFrequency, double k,
 	int itermax, double tol, int wantlocation) {
 	struct huber_struct struct_huber = { 0 };
 	try {
@@ -237,14 +235,14 @@ LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, doubl
 		MelderInfo_writeLine (U"Number of iterations: ", iter,
 			U"\n   Average per frame: ", ((double) iter) / nFrames);
 		huber_struct_destroy (&struct_huber);
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		huber_struct_destroy (&struct_huber);
 		Melder_throw (me, U": no robust LPC created.");
 	}
 }
 
-Formant Sound_to_Formant_robust (Sound me, double dt_in, double numberOfFormants, double maximumFrequency,
+autoFormant Sound_to_Formant_robust (Sound me, double dt_in, double numberOfFormants, double maximumFrequency,
 	double halfdt_window, double preEmphasisFrequency, double safetyMargin, double k, int itermax, double tol, int wantlocation)
 {
 	double dt = dt_in > 0.0 ? dt_in : halfdt_window / 4.0;
@@ -261,7 +259,7 @@ Formant Sound_to_Formant_robust (Sound me, double dt_in, double numberOfFormants
 		autoLPC lpc = Sound_to_LPC_auto (sound.peek(), predictionOrder, halfdt_window, dt, preEmphasisFrequency);
 		autoLPC lpcr = LPC_and_Sound_to_LPC_robust (lpc.peek(), sound.peek(), halfdt_window, preEmphasisFrequency, k, itermax, tol, wantlocation);
 		autoFormant thee = LPC_to_Formant (lpcr.peek(), safetyMargin);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no robust Formant created.");
 	}

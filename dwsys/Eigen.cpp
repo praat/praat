@@ -101,8 +101,7 @@ static void Graphics_ticks (Graphics g, double min, double max, bool hasNumber, 
 	}
 }
 
-void Eigen_init (I, long numberOfEigenvalues, long dimension) {
-	iam (Eigen);
+void Eigen_init (Eigen me, long numberOfEigenvalues, long dimension) {
 	my numberOfEigenvalues = numberOfEigenvalues;
 	my dimension = dimension;
 	my eigenvalues = NUMvector<double> (1, numberOfEigenvalues);
@@ -116,8 +115,7 @@ void Eigen_init (I, long numberOfEigenvalues, long dimension) {
 	Eigenvectors: the columns of the matrix V
 	Eigenvalues: D_i^2
 */
-void Eigen_initFromSquareRoot (I, double **a, long numberOfRows, long numberOfColumns) {
-	iam (Eigen);
+void Eigen_initFromSquareRoot (Eigen me, double **a, long numberOfRows, long numberOfColumns) {
 	long numberOfZeroed, numberOfEigenvalues;
 	long nsv = MIN (numberOfRows, numberOfColumns);
 
@@ -151,8 +149,7 @@ void Eigen_initFromSquareRoot (I, double **a, long numberOfRows, long numberOfCo
 	Eigen_sort (me);
 }
 
-void Eigen_initFromSquareRootPair (I, double **a, long numberOfRows, long numberOfColumns, double **b, long numberOfRows_b) {
-	iam (Eigen);
+void Eigen_initFromSquareRootPair (Eigen me, double **a, long numberOfRows, long numberOfColumns, double **b, long numberOfRows_b) {
 	double *u = nullptr, *v = nullptr, maxsv2 = -10.0;
 	char jobu = 'N', jobv = 'N', jobq = 'Q';
 	long k, ll, m = numberOfRows, n = numberOfColumns, p = numberOfRows_b;
@@ -222,8 +219,7 @@ void Eigen_initFromSquareRootPair (I, double **a, long numberOfRows, long number
 	NUMnormalizeRows (my eigenvectors, my numberOfEigenvalues, numberOfColumns, 1);
 }
 
-void Eigen_initFromSymmetricMatrix_f (I, float **a, long n) {
-	iam (Eigen);
+void Eigen_initFromSymmetricMatrix_f (Eigen me, float **a, long n) {
 
 	autoNUMmatrix<double> m (1, n, 1, n);
 	for (long i = 1; i <= n; i++) {
@@ -234,8 +230,7 @@ void Eigen_initFromSymmetricMatrix_f (I, float **a, long n) {
 	Eigen_initFromSymmetricMatrix (me, m.peek(), n);
 }
 
-void Eigen_initFromSymmetricMatrix (I, double **a, long n) {
-	iam (Eigen);
+void Eigen_initFromSymmetricMatrix (Eigen me, double **a, long n) {
 	double wt[1], temp;
 	char jobz = 'V', uplo = 'U';
 	long lwork = -1, info;
@@ -286,27 +281,22 @@ autoEigen Eigen_create (long numberOfEigenvalues, long dimension) {
 	}
 }
 
-long Eigen_getNumberOfEigenvectors (I) {
-	iam (Eigen);
+long Eigen_getNumberOfEigenvectors (Eigen me) {
 	return my numberOfEigenvalues;
 }
 
-double Eigen_getEigenvectorElement (I, long ivec, long element) {
-	iam (Eigen);
+double Eigen_getEigenvectorElement (Eigen me, long ivec, long element) {
 	if (ivec > my numberOfEigenvalues || element < 1 || element > my dimension) {
 		return NUMundefined;
 	}
 	return my eigenvectors[ivec][element];
 }
 
-long Eigen_getDimensionOfComponents (I) {
-	iam (Eigen);
+long Eigen_getDimensionOfComponents (Eigen me) {
 	return my dimension;
 }
 
-double Eigen_getSumOfEigenvalues (I, long from, long to) {
-	iam (Eigen);
-
+double Eigen_getSumOfEigenvalues (Eigen me, long from, long to) {
 	if (from < 1) {
 		from = 1;
 	}
@@ -323,8 +313,7 @@ double Eigen_getSumOfEigenvalues (I, long from, long to) {
 	return sum;
 }
 
-double Eigen_getCumulativeContributionOfComponents (I, long from, long to) {
-	iam (Eigen);
+double Eigen_getCumulativeContributionOfComponents (Eigen me, long from, long to) {
 	double partial = 0.0, sum = 0.0;
 
 	if (to == 0) {
@@ -342,8 +331,7 @@ double Eigen_getCumulativeContributionOfComponents (I, long from, long to) {
 
 }
 
-long Eigen_getDimensionOfFraction (I, double fraction) {
-	iam (Eigen);
+long Eigen_getDimensionOfFraction (Eigen me, double fraction) {
 	double sum = Eigen_getSumOfEigenvalues (me, 0, 0);
 
 	if (sum == 0.0) {
@@ -358,8 +346,7 @@ long Eigen_getDimensionOfFraction (I, double fraction) {
 	return n;
 }
 
-void Eigen_sort (I) {
-	iam (Eigen);
+void Eigen_sort (Eigen me) {
 	double temp, *e = my eigenvalues, **v = my eigenvectors;
 
 	for (long i = 1; i < my numberOfEigenvalues; i++) {
@@ -382,8 +369,7 @@ void Eigen_sort (I) {
 	}
 }
 
-void Eigen_invertEigenvector (I, long ivec) {
-	iam (Eigen);
+void Eigen_invertEigenvector (Eigen me, long ivec) {
 
 	if (ivec < 1 || ivec > my numberOfEigenvalues) {
 		return;
@@ -394,8 +380,7 @@ void Eigen_invertEigenvector (I, long ivec) {
 	}
 }
 
-void Eigen_drawEigenvalues (I, Graphics g, long first, long last, double ymin, double ymax, int fractionOfTotal, int cumulative, double size_mm, const char32 *mark, int garnish) {
-	iam (Eigen);
+void Eigen_drawEigenvalues (Eigen me, Graphics g, long first, long last, double ymin, double ymax, int fractionOfTotal, int cumulative, double size_mm, const char32 *mark, int garnish) {
 	double xmin = first, xmax = last, scale = 1.0, sumOfEigenvalues = 0.0;
 	long i;
 
@@ -440,8 +425,7 @@ void Eigen_drawEigenvalues (I, Graphics g, long first, long last, double ymin, d
 	}
 }
 
-void Eigen_drawEigenvector (I, Graphics g, long ivec, long first, long last, double ymin, double ymax, int weigh, double size_mm, const char32 *mark, int connect, char32 **rowLabels, int garnish) {
-	iam (Eigen);
+void Eigen_drawEigenvector (Eigen me, Graphics g, long ivec, long first, long last, double ymin, double ymax, int weigh, double size_mm, const char32 *mark, int connect, char32 **rowLabels, int garnish) {
 	double xmin = first, xmax = last;
 
 	if (ivec < 1 || ivec > my numberOfEigenvalues) {
@@ -525,8 +509,7 @@ void Eigens_alignEigenvectors (Collection me) {
 	}
 }
 
-static void Eigens_getAnglesBetweenSubspaces (I, thou, long ivec_from, long ivec_to, double *angles_degrees) {
-	iam (Eigen); thouart (Eigen);
+static void Eigens_getAnglesBetweenSubspaces (Eigen me, Eigen thee, long ivec_from, long ivec_to, double *angles_degrees) {
 	long nvectors = ivec_to - ivec_from + 1;
 	for (long i = 1; i <= nvectors; i++) {
 		angles_degrees[i] = NUMundefined;
@@ -562,8 +545,7 @@ static void Eigens_getAnglesBetweenSubspaces (I, thou, long ivec_from, long ivec
 	}
 }
 
-double Eigens_getAngleBetweenEigenplanes_degrees (I, thou) {
-	iam (Eigen); thouart (Eigen);
+double Eigens_getAngleBetweenEigenplanes_degrees (Eigen me, Eigen thee) {
 	double angles_degrees[3];
 
 	Eigens_getAnglesBetweenSubspaces (me, thee, 1, 2, angles_degrees);

@@ -39,8 +39,7 @@ double ContingencyTable_contingencyCoefficient (ContingencyTable me);
 
 void ContingencyTable_chisq (ContingencyTable me, double *chisq, double *df);
 
-void ContingencyTable_entropies (ContingencyTable me, double *h, double *hx, double *hy,
-								 double *hygx, double *hxgy, double *uygx, double *uxgy, double *uxy);
+void ContingencyTable_entropies (ContingencyTable me, double *h, double *hx, double *hy, double *hygx, double *hxgy, double *uygx, double *uxgy, double *uxy);
 
 autoContingencyTable Confusion_to_ContingencyTable (Confusion me);
 

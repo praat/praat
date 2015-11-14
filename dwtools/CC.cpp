@@ -1,6 +1,6 @@
 /* CC.cpp
  *
- * Copyright (C) 1993-2012, 2014 David Weenink
+ * Copyright (C) 1993-2012, 2014-2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,8 +66,7 @@ void CC_Frame_init (CC_Frame me, long numberOfCoefficients) {
 	my numberOfCoefficients = numberOfCoefficients;
 }
 
-void CC_init (I, double tmin, double tmax, long nt, double dt, double t1, long maximumNumberOfCoefficients, double fmin, double fmax) {
-	iam (CC);
+void CC_init (CC me, double tmin, double tmax, long nt, double dt, double t1, long maximumNumberOfCoefficients, double fmin, double fmax) {
 	my fmin = fmin;
 	my fmax = fmax;
 	my maximumNumberOfCoefficients = maximumNumberOfCoefficients;
@@ -75,8 +74,7 @@ void CC_init (I, double tmin, double tmax, long nt, double dt, double t1, long m
 	my frame = NUMvector<structCC_Frame> (1, nt);
 }
 
-Matrix CC_to_Matrix (I) {
-	iam (CC);
+autoMatrix CC_to_Matrix (CC me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, my maximumNumberOfCoefficients, my maximumNumberOfCoefficients, 1.0, 1.0);
 
@@ -86,15 +84,13 @@ Matrix CC_to_Matrix (I) {
 				thy z[j][i] = cf -> c[j];
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
 	}
 }
 
-void CC_paint (I, Graphics g, double xmin, double xmax, long cmin,
-               long cmax, double minimum, double maximum, int garnish) {
-	iam (CC);
+void CC_paint (CC me, Graphics g, double xmin, double xmax, long cmin, long cmax, double minimum, double maximum, int garnish) {
 	autoMatrix thee = CC_to_Matrix (me);
 
 	Matrix_paintCells (thee.peek(), g, xmin, xmax, cmin, cmax, minimum, maximum);
@@ -107,9 +103,7 @@ void CC_paint (I, Graphics g, double xmin, double xmax, long cmin,
 	}
 }
 
-void CC_drawC0 (I, Graphics g, double xmin, double xmax, double ymin,
-                double ymax, int garnish) {
-	iam (CC);
+void CC_drawC0 (CC me, Graphics g, double xmin, double xmax, double ymin, double ymax, int garnish) {
 	(void) garnish;
 
 	if (xmin >= xmax) {
@@ -138,8 +132,7 @@ void CC_drawC0 (I, Graphics g, double xmin, double xmax, double ymin,
 	Graphics_unsetInner (g);
 }
 
-void CC_getNumberOfCoefficients_extrema (I, long startframe, long endframe, long *min, long *max) {
-	iam (CC);
+void CC_getNumberOfCoefficients_extrema (CC me, long startframe, long endframe, long *min, long *max) {
 
 	Melder_assert (startframe <= endframe);
 
@@ -168,8 +161,7 @@ void CC_getNumberOfCoefficients_extrema (I, long startframe, long endframe, long
 	}
 }
 
-long CC_getMinimumNumberOfCoefficients (I, long startframe, long endframe) {
-	iam (CC);
+long CC_getMinimumNumberOfCoefficients (CC me, long startframe, long endframe) {
 	long min, max;
 
 	CC_getNumberOfCoefficients_extrema (me, startframe, endframe, &min, &max);
@@ -177,8 +169,7 @@ long CC_getMinimumNumberOfCoefficients (I, long startframe, long endframe) {
 	return min;
 }
 
-long CC_getMaximumNumberOfCoefficients (I, long startframe, long endframe) {
-	iam (CC);
+long CC_getMaximumNumberOfCoefficients (CC me, long startframe, long endframe) {
 	long min, max;
 
 	CC_getNumberOfCoefficients_extrema (me, startframe, endframe, &min, &max);
@@ -186,8 +177,7 @@ long CC_getMaximumNumberOfCoefficients (I, long startframe, long endframe) {
 	return max;
 }
 
-long CC_getNumberOfCoefficients (I, long iframe) {
-	iam (CC);
+long CC_getNumberOfCoefficients (CC me, long iframe) {
 	if (iframe < 1 || iframe > my nx) {
 		return 0;
 	}
@@ -196,8 +186,7 @@ long CC_getNumberOfCoefficients (I, long iframe) {
 }
 
 
-double CC_getValueInFrame (I, long iframe, long index) {
-	iam (CC);
+double CC_getValueInFrame (CC me, long iframe, long index) {
 	if (iframe < 1 || iframe > my nx) {
 		return NUMundefined;
 	}
@@ -205,14 +194,12 @@ double CC_getValueInFrame (I, long iframe, long index) {
 	return index > cf -> numberOfCoefficients ? NUMundefined : cf -> c[index];
 }
 
-double CC_getValueAtTime (I, double t, long index) {
-	iam (CC);
+double CC_getValueAtTime (CC me, double t, long index) {
 	long iframe = Sampled_xToNearestIndex (me, t);
 	return CC_getValueInFrame (me, iframe, index);
 }
 
-double CC_getValue (I, double t, long index) {
-	iam (CC);
+double CC_getValue (CC me, double t, long index) {
 	long iframe = Sampled_xToNearestIndex (me, t);
 	if (iframe < 1 || iframe > my nx) {
 		return NUMundefined;
@@ -221,8 +208,7 @@ double CC_getValue (I, double t, long index) {
 	return index > cf -> numberOfCoefficients ? NUMundefined : cf -> c[index];
 }
 
-double CC_getC0ValueInFrame (I, long iframe) {
-	iam (CC);
+double CC_getC0ValueInFrame (CC me, long iframe) {
 	if (iframe < 1 || iframe > my nx) {
 		return NUMundefined;
 	}
@@ -230,8 +216,7 @@ double CC_getC0ValueInFrame (I, long iframe) {
 	return cf -> c0;
 }
 
-double CC_getC0ValueAtTime (I, double t) {
-	iam (CC);
+double CC_getC0ValueAtTime (CC me, double t) {
 	long iframe = Sampled_xToNearestIndex (me, t);
 	return CC_getC0ValueInFrame (me, iframe);
 }

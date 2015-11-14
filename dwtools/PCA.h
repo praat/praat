@@ -43,8 +43,7 @@ long PCA_getNumberOfObservations (PCA me);
 autoPCA TableOfReal_to_PCA (I);
 /* Calculate PCA of M'M */
 
-void PCA_getEqualityOfEigenvalues (PCA me, long from, long to, int conservative,
-	double *probability, double *chisq, long *ndf);
+void PCA_getEqualityOfEigenvalues (PCA me, long from, long to, int conservative, double *probability, double *chisq, long *ndf);
 /* Morrison, Multivariate statistical methods, page 336 */
 
 autoConfiguration PCA_and_TableOfReal_to_Configuration (PCA me, thou, long numberOfDimensions);

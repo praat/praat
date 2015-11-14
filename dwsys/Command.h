@@ -39,6 +39,7 @@ Thing_define (Command, Thing) {
 };
 
 void Command_init (Command me, const char32 *name, Thing boss, Command_Callback execute, Command_Callback undo);
+
 	
 int Command_do (Command me);
 

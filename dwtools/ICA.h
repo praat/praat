@@ -78,17 +78,18 @@ autoMixingMatrix MixingMatrix_create (long numberOfChannels, long numberOfCompon
 autoMixingMatrix MixingMatrix_createSimple (long numberOfChannels, long numberOfComponents, char32 *elements);
 void MixingMatrix_initializeRandom (MixingMatrix me);
 
-Diagonalizer Diagonalizer_create (long dimension);
+autoDiagonalizer Diagonalizer_create (long dimension);
 
-Sound Sound_and_MixingMatrix_mix (Sound me, MixingMatrix thee);
-Sound Sound_and_MixingMatrix_unmix (Sound me, MixingMatrix thee);
+autoSound Sound_and_MixingMatrix_mix (Sound me, MixingMatrix thee);
+
+autoSound Sound_and_MixingMatrix_unmix (Sound me, MixingMatrix thee);
 
 autoMixingMatrix Sound_to_MixingMatrix (Sound me, double startTime, double endTime, long ncovars, double lagStep, long maxNumberOfIterations, double delta_w, int method);
 
-Sound Sound_to_Sound_BSS (Sound me, double startTime, double endTime, long ncovars, double lagStep, long maxNumberOfIterations, double delta_w, int method);
+autoSound Sound_to_Sound_BSS (Sound me, double startTime, double endTime, long ncovars, double lagStep, long maxNumberOfIterations, double delta_w, int method);
 
-Sound Sound_whitenChannels (Sound me, double varianceFraction);
-Sound Sound_and_Covariance_whitenChannels (Sound me, Covariance thee, double varianceFraction);
+autoSound Sound_whitenChannels (Sound me, double varianceFraction);
+autoSound Sound_and_Covariance_whitenChannels (Sound me, Covariance thee, double varianceFraction);
 
 void MixingMatrix_and_CrossCorrelationTables_improveUnmixing (MixingMatrix me, CrossCorrelationTables thee, long maxNumberOfIterations, double tol, int method);
 
