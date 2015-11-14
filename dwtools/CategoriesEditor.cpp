@@ -370,12 +370,12 @@ static int CategoriesEditorInsert_undo (CategoriesEditorInsert me) {
 	return 1;
 }
 
-static CategoriesEditorInsert CategoriesEditorInsert_create (Thing boss, Any str, int position) {
+static CategoriesEditorInsert CategoriesEditorInsert_create (Thing boss, SimpleString str, int position) {
 	try {
 		autoCategoriesEditorInsert me = Thing_new (CategoriesEditorInsert);
 		CategoriesEditorCommand_init (me.peek(), U"Insert", boss, CategoriesEditorInsert_execute, CategoriesEditorInsert_undo, 1, 1);
 		my selection[1] = position;
-		Collection_addItem (my categories.peek(), (SimpleString) str);
+		Collection_addItem (my categories.peek(), str);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw (U"CategoriesEditorInsert not created.");
@@ -460,7 +460,7 @@ static int CategoriesEditorReplace_undo (CategoriesEditorReplace me) {
 	return 1;
 }
 
-static CategoriesEditorReplace CategoriesEditorReplace_create (Thing boss, Any str, long *posList, long posCount) {
+static CategoriesEditorReplace CategoriesEditorReplace_create (Thing boss, SimpleString str, long *posList, long posCount) {
 	try {
 		autoCategoriesEditorReplace me = Thing_new (CategoriesEditorReplace);
 		CategoriesEditorCommand_init (me.peek(), U"Replace", boss, CategoriesEditorReplace_execute,
@@ -468,7 +468,7 @@ static CategoriesEditorReplace CategoriesEditorReplace_create (Thing boss, Any s
 		for (long i = 1; i <= posCount; i++) {
 			my selection[i] = posList[i];
 		}
-		Collection_addItem (my categories.peek(), (SimpleString) str);
+		Collection_addItem (my categories.peek(), str);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw (U"CategoriesEditorReplace not created.");

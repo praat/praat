@@ -1101,7 +1101,7 @@ void * Melder_monitor (double progress, Melder_16_TO_19_ARGS);
 	Arguments:
 		Any of 'arg1' through 'arg19' may be null.
 	Batch behaviour:
-		Does nothing, returns nullptr if 'progress' <= 0.0 and a non-nullptr pointer otherwise.
+		Does nothing, returns null if 'progress' <= 0.0 and a non-null pointer otherwise.
 	Interactive behaviour:
 		Shows the progress of a time-consuming process:
 		- if 'progress' <= 0.0, show a window with text and a Cancel button and
@@ -1130,7 +1130,7 @@ void * Melder_monitor (double progress, Melder_16_TO_19_ARGS);
 		      }
 		- after the process has finished, call with 'progress' = 1.0:
 		      (void) Melder_monitor (1.0, nullptr);
-		- the first and third steps can be automated by autoMelderMonitor:
+		- showing and hiding can be automated by autoMelderMonitor:
 		      autoMelderMonitor monitor ("Starting work...");
 		      if (monitor.graphics()) {   // always check; might be batch
 		          Graphics_clearWs (monitor.graphics());   // only if you redraw all every time

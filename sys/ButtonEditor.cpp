@@ -249,11 +249,11 @@ static void which (ButtonEditor me, int show) {
 	HyperPage_goToPage (me, U"Buttons");
 }
 
-static void gui_radiobutton_cb_objects (I, GuiRadioButtonEvent event) { (void) event; which ((ButtonEditor) void_me, 1); }
-static void gui_radiobutton_cb_picture (I, GuiRadioButtonEvent event) { (void) event; which ((ButtonEditor) void_me, 2); }
-static void gui_radiobutton_cb_editors (I, GuiRadioButtonEvent event) { (void) event; which ((ButtonEditor) void_me, 3); }
-static void gui_radiobutton_cb_actionsAM (I, GuiRadioButtonEvent event) { (void) event; which ((ButtonEditor) void_me, 4); }
-static void gui_radiobutton_cb_actionsNZ (I, GuiRadioButtonEvent event) { (void) event; which ((ButtonEditor) void_me, 5); }
+static void gui_radiobutton_cb_objects (ButtonEditor me, GuiRadioButtonEvent /* event */) { which (me, 1); }
+static void gui_radiobutton_cb_picture (ButtonEditor me, GuiRadioButtonEvent /* event */) { which (me, 2); }
+static void gui_radiobutton_cb_editors (ButtonEditor me, GuiRadioButtonEvent /* event */) { which (me, 3); }
+static void gui_radiobutton_cb_actionsAM (ButtonEditor me, GuiRadioButtonEvent /* event */) { which (me, 4); }
+static void gui_radiobutton_cb_actionsNZ (ButtonEditor me, GuiRadioButtonEvent /* event */) { which (me, 5); }
 
 void structButtonEditor :: v_createChildren () {
 	ButtonEditor_Parent :: v_createChildren ();
@@ -276,7 +276,7 @@ void structButtonEditor :: v_createChildren () {
 	GuiRadioGroup_end ();
 }
 
-static void menu_cb_ButtonEditorHelp (EDITOR_ARGS) { EDITOR_IAM (ButtonEditor); Melder_help (U"ButtonEditor"); }
+static void menu_cb_ButtonEditorHelp (ButtonEditor /* me */, EDITOR_ARGS_DIRECT) { Melder_help (U"ButtonEditor"); }
 
 void structButtonEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	ButtonEditor_Parent :: v_createHelpMenuItems (menu);

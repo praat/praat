@@ -612,9 +612,9 @@ autoTextGrid Label_to_TextGrid (Label me, double duration) {
 	}
 }
 
-autoTextGrid Label_Function_to_TextGrid (Label me, Any function) {
+autoTextGrid Label_Function_to_TextGrid (Label me, Function function) {
 	try {
-		return _Label_to_TextGrid (me, ((Function) function) -> xmin, ((Function) function) -> xmax);
+		return _Label_to_TextGrid (me, function -> xmin, function -> xmax);
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to TextGrid.");
 	}

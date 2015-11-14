@@ -1295,9 +1295,7 @@ void structTextGridEditor :: v_createHelpMenuItems (EditorMenu menu) {
 
 /***** CHILDREN *****/
 
-static void gui_text_cb_change (I, GuiTextEvent event) {
-	iam (TextGridEditor);
-	(void) event;
+static void gui_text_cb_changed (TextGridEditor me, GuiTextEvent /* event */) {
 	TextGrid grid = (TextGrid) my data;
 	//Melder_casual (U"gui_text_cb_change 1 in editor ", Melder_pointer (me));
 	if (my suppressRedraw) return;   /* Prevent infinite loop if 'draw' method or Editor_broadcastChange calls GuiText_setString. */
@@ -1336,7 +1334,7 @@ static void gui_text_cb_change (I, GuiTextEvent event) {
 
 void structTextGridEditor :: v_createChildren () {
 	TextGridEditor_Parent :: v_createChildren ();
-	if (text) GuiText_setChangeCallback (text, gui_text_cb_change, this);
+	if (text) GuiText_setChangedCallback (text, gui_text_cb_changed, this);
 }
 
 void structTextGridEditor :: v_dataChanged () {

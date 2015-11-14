@@ -82,8 +82,7 @@ static void gui_button_cb_addTarget (ArtwordEditor me, GuiButtonEvent /* event *
 	Editor_broadcastDataChanged (me);
 }
 
-static void gui_radiobutton_cb_toggle (I, GuiRadioButtonEvent event) {
-	iam (ArtwordEditor);
+static void gui_radiobutton_cb_toggle (ArtwordEditor me, GuiRadioButtonEvent event) {
 	my feature = event -> position;
 	Melder_assert (my feature > 0);
 	Melder_assert (my feature <= kArt_muscle_MAX);

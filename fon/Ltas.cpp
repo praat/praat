@@ -113,7 +113,7 @@ autoMatrix Ltas_to_Matrix (Ltas me) {
 autoLtas Matrix_to_Ltas (Matrix me) {
 	try {
 		autoLtas thee = Thing_new (Ltas);
-		my structMatrix :: v_copy (thee.peek());   // because copying a descendant of Matrix with additional members should not crash
+		my structMatrix :: v_copy (thee.peek());   // because copying to a descendant of Matrix with additional members should not crash
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Ltas.");

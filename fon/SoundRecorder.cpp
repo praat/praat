@@ -715,8 +715,7 @@ static void initialize (SoundRecorder me) {
 	}
 }
 
-static void gui_radiobutton_cb_input (I, GuiRadioButtonEvent event) {
-	iam (SoundRecorder);
+static void gui_radiobutton_cb_input (SoundRecorder me, GuiRadioButtonEvent event) {
 	Melder_casual (U"SoundRecorder:"
 		U" setting the input source from ", theControlPanel. inputSource,
 		U" to ", event -> position, U".");
@@ -748,8 +747,7 @@ static void gui_radiobutton_cb_input (I, GuiRadioButtonEvent event) {
 	}
 }
 
-static void gui_radiobutton_cb_fsamp (I, GuiRadioButtonEvent event) {
-	iam (SoundRecorder);
+static void gui_radiobutton_cb_fsamp (SoundRecorder me, GuiRadioButtonEvent event) {
 	if (my recording) return;
 	try {
 		double fsamp = NUMundefined;

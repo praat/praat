@@ -590,8 +590,7 @@ static void menu_cb_fontSize (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void gui_text_cb_change (I, GuiTextEvent /* event */) {
-	iam (TextEditor);
+static void gui_text_cb_changed (TextEditor me, GuiTextEvent /* event */) {
 	if (! my dirty) {
 		my dirty = true;
 		my v_nameChanged ();
@@ -600,7 +599,7 @@ static void gui_text_cb_change (I, GuiTextEvent /* event */) {
 
 void structTextEditor :: v_createChildren () {
 	textWidget = GuiText_createShown (d_windowForm, 0, 0, Machine_getMenuBarHeight (), 0, GuiText_SCROLLED);
-	GuiText_setChangeCallback (textWidget, gui_text_cb_change, this);
+	GuiText_setChangedCallback (textWidget, gui_text_cb_changed, this);
 }
 
 void structTextEditor :: v_createMenus () {

@@ -540,15 +540,14 @@ static int LineSegments_getIntersection (double x1, double y1, double x2, double
 // entry marks the entrance of the OTHER polygon
 
 Thing_define (Vertex, Daata) {
-	// new data:
-public:
 	double x, y, alpha;
 	DLLNode neighbour;
 	long poly_npoints, id;
 	int intersect, entry;
 	bool processed;
-	// overridden methods:
-	virtual void v_copy (Any data_to);
+
+	void v_copy (Any data_to)
+		override;
 };
 
 Thing_implement (Vertex, Daata, 0);

@@ -151,7 +151,7 @@ static int _GuiRadioButton_getPosition (GuiRadioButton me) {
 			for (GuiRadioButton sibling = my d_next; sibling != nullptr; sibling = sibling -> d_next) {
 				SetControlValue (sibling -> d_widget -> nat.control.handle, 0);
 			}
-			if (my d_valueChangedCallback != nullptr) {
+			if (my d_valueChangedCallback) {
 				struct structGuiRadioButtonEvent event { me };
 				event. position = _GuiRadioButton_getPosition (me);
 				my d_valueChangedCallback (my d_valueChangedBoss, & event);
@@ -171,7 +171,7 @@ void GuiRadioGroup_end () {
 }
 
 GuiRadioButton GuiRadioButton_create (GuiForm parent, int left, int right, int top, int bottom,
-	const char32 *buttonText, void (*valueChangedCallback) (void *boss, GuiRadioButtonEvent event), void *valueChangedBoss, uint32 flags)
+	const char32 *buttonText, GuiRadioButtonCallback valueChangedCallback, Thing valueChangedBoss, uint32 flags)
 {
 	trace (U"begin: text %", buttonText);
 	GuiRadioButton me = Thing_new (GuiRadioButton);
@@ -282,7 +282,7 @@ GuiRadioButton GuiRadioButton_create (GuiForm parent, int left, int right, int t
 }
 
 GuiRadioButton GuiRadioButton_createShown (GuiForm parent, int left, int right, int top, int bottom,
-	const char32 *buttonText, void (*valueChangedCallback) (void *boss, GuiRadioButtonEvent event), void *valueChangedBoss, uint32 flags)
+	const char32 *buttonText, GuiRadioButtonCallback valueChangedCallback, Thing valueChangedBoss, uint32 flags)
 {
 	GuiRadioButton me = GuiRadioButton_create (parent, left, right, top, bottom, buttonText, valueChangedCallback, valueChangedBoss, flags);
 	GuiThing_show (me);

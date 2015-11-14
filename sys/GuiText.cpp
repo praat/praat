@@ -188,9 +188,9 @@ void _GuiText_setTheTextFocus (GuiObject widget) {
  */
 void _GuiText_handleValueChanged (GuiObject widget) {
 	iam_text;
-	if (my d_changeCallback) {
+	if (my d_changedCallback) {
 		struct structGuiTextEvent event { me };
-		my d_changeCallback (my d_changeBoss, & event);
+		my d_changedCallback (my d_changedBoss, & event);
 	}
 }
 
@@ -204,7 +204,7 @@ void _GuiText_handleValueChanged (GuiObject widget) {
 			widget -> activateCallback (widget, widget -> activateClosure, (XtPointer) event);
 				return 1;
 		}
-		return 0;   /* Not handled. */
+		return 0;   // not handled
 	}
 	int _GuiMacText_tryToHandleClipboardShortcut (EventHandlerCallRef eventHandlerCallRef, EventRef eventRef, GuiObject widget, unsigned char charCode, EventRecord *event) {
 		if (widget) {
@@ -231,7 +231,7 @@ void _GuiText_handleValueChanged (GuiObject widget) {
 				}
 			}
 		}
-		return 0;   /* Not handled. */
+		return 0;   // not handled
 	}
 	int _GuiMacText_tryToHandleKey (EventHandlerCallRef eventHandlerCallRef, EventRef eventRef, GuiObject widget, unsigned char keyCode, unsigned char charCode, EventRecord *event) {
 		(void) keyCode;
@@ -785,9 +785,9 @@ void _GuiText_exit () {
 		iam (GuiText);
 		trace (U"begin");
 		Melder_assert (me);
-		if (my d_changeCallback) {
+		if (my d_changedCallback) {
 			struct structGuiTextEvent event { me };
-			my d_changeCallback (my d_changeBoss, & event);
+			my d_changedCallback (my d_changedBoss, & event);
 		}
 	}
 	
@@ -831,9 +831,9 @@ void _GuiText_exit () {
 	- (void) textDidChange: (NSNotification *) notification {
 		(void) notification;
 		GuiText me = d_userData;
-		if (me && my d_changeCallback) {
+		if (me && my d_changedCallback) {
 			struct structGuiTextEvent event { me };
-			my d_changeCallback (my d_changeBoss, & event);
+			my d_changedCallback (my d_changedBoss, & event);
 		}
 	}
 	@end
@@ -864,9 +864,9 @@ void _GuiText_exit () {
 		(void) replacementString;
 		trace (U"changing text to: ", Melder_peek8to32 ([replacementString UTF8String]));
 		GuiText me = d_userData;
-		if (me && my d_changeCallback) {
+		if (me && my d_changedCallback) {
 			struct structGuiTextEvent event { me };
-			my d_changeCallback (my d_changeBoss, & event);
+			my d_changedCallback (my d_changedBoss, & event);
 		}
 		return YES;
 	}
@@ -1480,9 +1480,9 @@ void GuiText_scrollToSelection (GuiText me) {
 	#endif
 }
 
-void GuiText_setChangeCallback (GuiText me, void (*changeCallback) (void *boss, GuiTextEvent event), void *changeBoss) {
-	my d_changeCallback = changeCallback;
-	my d_changeBoss = changeBoss;
+void GuiText_setChangedCallback (GuiText me, GuiText_ChangedCallback changedCallback, Thing changedBoss) {
+	my d_changedCallback = changedCallback;
+	my d_changedBoss = changedBoss;
 }
 
 void GuiText_setFontSize (GuiText me, int size) {
