@@ -90,7 +90,7 @@ autoTextGrid TextGrid_merge (Collection textGrids);
 autoTextGrid TextGrid_extractPart (TextGrid me, double tmin, double tmax, int preserveTimes);
 
 autoTextGrid Label_to_TextGrid (Label me, double duration);
-autoTextGrid Label_Function_to_TextGrid (Label me, Any function);
+autoTextGrid Label_Function_to_TextGrid (Label me, Function function);
 
 autoTextTier PointProcess_upto_TextTier (PointProcess me, const char32 *text);
 autoTableOfReal IntervalTier_downto_TableOfReal (IntervalTier me, const char32 *label);

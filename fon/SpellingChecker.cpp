@@ -200,7 +200,7 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, const char32 *word) {
 	}
 	if (WordList_hasWord (my wordList, word))
 		return true;
-	if (my userDictionary != NULL) {
+	if (my userDictionary) {
 		if (str32len (word) > 3333) return false;   // superfluous, because WordList_hasWord already checked; but safe
 		static char32 buffer [3*3333+1];
 		Longchar_genericize32 (word, buffer);

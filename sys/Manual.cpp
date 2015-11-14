@@ -414,11 +414,6 @@ static void gui_button_cb_search (Manual me, GuiButtonEvent /* event */) {
 	do_search (me);
 }
 
-static void gui_cb_search (GUI_ARGS) {
-	GUI_IAM (Manual);
-	do_search (me);
-}
-
 void structManual :: v_createChildren () {
 	ManPages pages = (ManPages) our data;   // has been installed here by Editor_init ()
 	our d_hasExtraRowOfTools = pages -> dynamic;

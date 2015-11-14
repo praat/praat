@@ -29,7 +29,7 @@
 #include "Simple.h"
 
 void SimpleString_init (SimpleString me, const char32 *value);
-/* return 0 when value == NULL */
+/* return 0 when value == nullptr */
 
 const char32 *SimpleString_c (SimpleString me);
 /* return pointer to the string */

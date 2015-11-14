@@ -310,7 +310,7 @@ void TableOfReal_setColumnLabel (TableOfReal me, long columnNumber, const char32
 void TableOfReal_formula (TableOfReal me, const char32 *expression, Interpreter interpreter, TableOfReal thee) {
 	try {
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
-		if (thee == NULL) thee = me;
+		if (! thee) thee = me;
 		for (long irow = 1; irow <= my numberOfRows; irow ++) {
 			for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 				struct Formula_Result result;
@@ -1007,13 +1007,13 @@ static void TableOfReal_sort (TableOfReal me, bool useLabels, long column1, long
 	for (long irow = 1; irow < my numberOfRows; irow ++) for (long jrow = irow + 1; jrow <= my numberOfRows; jrow ++) {
 		char32 *tmpString;
 		if (useLabels) {
-			if (my rowLabels [irow] != NULL) {
-				if (my rowLabels [jrow] != NULL) {
+			if (my rowLabels [irow]) {
+				if (my rowLabels [jrow]) {
 					int compare = str32cmp (my rowLabels [irow], my rowLabels [jrow]);
 					if (compare < 0) continue;
 					if (compare > 0) goto swap;
 				} else goto swap;
-			} else if (my rowLabels [jrow] != NULL) continue;
+			} else if (my rowLabels [jrow]) continue;
 		}
 		/*
 		 * If we arrive here, the two labels are equal or both NULL (or useLabels is `false`).
@@ -1125,12 +1125,12 @@ void TableOfReal_writeToHeaderlessSpreadsheetFile (TableOfReal me, MelderFile fi
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 			MelderString_appendCharacter (& buffer, U'\t');
 			char32 *s = my columnLabels [icol];
-			MelderString_append (& buffer, s != NULL && s [0] != U'\0' ? s : U"?");
+			MelderString_append (& buffer, ( s && s [0] != U'\0' ? s : U"?" ));
 		}
 		MelderString_appendCharacter (& buffer, U'\n');
 		for (long irow = 1; irow <= my numberOfRows; irow ++) {
 			char32 *s = my rowLabels [irow];
-			MelderString_append (& buffer, s != NULL && s [0] != U'\0' ? s : U"?");
+			MelderString_append (& buffer, ( s && s [0] != U'\0' ? s : U"?" ));
 			for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 				MelderString_appendCharacter (& buffer, U'\t');
 				double x = my data [irow] [icol];

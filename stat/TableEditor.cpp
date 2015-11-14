@@ -124,12 +124,12 @@ void structTableEditor :: v_draw () {
 	for (long icol = colmin; icol <= colmax; icol ++) {
 		const char32 *columnLabel = table -> columnHeaders [icol]. label;
 		columnWidth = Graphics_textWidth (graphics, Melder_integer (icol));
-		if (columnLabel == NULL) columnLabel = U"";
+		if (! columnLabel) columnLabel = U"";
 		cellWidth = Graphics_textWidth (graphics, columnLabel);
 		if (cellWidth > columnWidth) columnWidth = cellWidth;
 		for (long irow = rowmin; irow <= rowmax; irow ++) {
 			const char32 *cell = Table_getStringValue_Assert (table, irow, icol);
-			Melder_assert (cell != NULL);
+			Melder_assert (cell);
 			if (cell [0] == U'\0') cell = U"?";
 			cellWidth = Graphics_textWidth (graphics, cell);
 			if (cellWidth > columnWidth) columnWidth = cellWidth;
@@ -150,7 +150,7 @@ void structTableEditor :: v_draw () {
 	for (long icol = colmin; icol <= colmax; icol ++) {
 		double mid = (columnLeft [icol - colmin] + columnRight [icol - colmin]) / 2;
 		const char32 *columnLabel = table -> columnHeaders [icol]. label;
-		if (columnLabel == NULL || columnLabel [0] == U'\0') columnLabel = U"?";
+		if (! columnLabel || columnLabel [0] == U'\0') columnLabel = U"?";
 		Graphics_text (graphics, mid, rowmin - 2, icol);
 		Graphics_text (graphics, mid, rowmin - 1, columnLabel);
 	}
@@ -161,7 +161,7 @@ void structTableEditor :: v_draw () {
 		for (long icol = colmin; icol <= colmax; icol ++) {
 			double mid = (columnLeft [icol - colmin] + columnRight [icol - colmin]) / 2;
 			const char32 *cell = Table_getStringValue_Assert (table, irow, icol);
-			Melder_assert (cell != NULL);
+			Melder_assert (cell);
 			if (cell [0] == U'\0') cell = U"?";
 			Graphics_text (graphics, mid, irow, cell);
 		}
@@ -173,10 +173,7 @@ bool structTableEditor :: v_click (double xclick, double yWC, bool shiftKeyPress
 	return true;
 }
 
-static void gui_text_cb_change (I, GuiTextEvent event) {
-	iam (TableEditor);
-	(void) event;
-	Table table = static_cast<Table> (my data);
+static void gui_text_cb_changed (TableEditor me, GuiTextEvent /* event */) {
 	Editor_broadcastDataChanged (me);
 }
 
@@ -228,7 +225,7 @@ void structTableEditor :: v_createChildren () {
 	int y = Machine_getMenuBarHeight () + 4, scrollWidth = Machine_getScrollBarWidth ();
 
 	our text = GuiText_createShown (our d_windowForm, 0, 0, y, y + Machine_getTextHeight (), 0);
-	GuiText_setChangeCallback (our text, gui_text_cb_change, this);
+	GuiText_setChangedCallback (our text, gui_text_cb_changed, this);
 	y += Machine_getTextHeight () + 4;
 
 	our drawingArea = GuiDrawingArea_createShown (our d_windowForm, 0, - scrollWidth, y, - scrollWidth,
@@ -277,9 +274,9 @@ autoTableEditor TableEditor_create (const char32 *title, Table table) {
 		my selectedRow = 1;
 		my graphics = Graphics_create_xmdrawingarea (my drawingArea);
 		double size_pixels = SIZE_INCHES * Graphics_getResolution (my graphics);
-		Graphics_setWsViewport (my graphics, 0, size_pixels, 0, size_pixels);
-		Graphics_setWsWindow (my graphics, 0, size_pixels, 0, size_pixels);
-		Graphics_setViewport (my graphics, 0, size_pixels, 0, size_pixels);
+		Graphics_setWsViewport (my graphics, 0.0, size_pixels, 0.0, size_pixels);
+		Graphics_setWsWindow (my graphics, 0.0, size_pixels, 0.0, size_pixels);
+		Graphics_setViewport (my graphics, 0.0, size_pixels, 0.0, size_pixels);
 		Graphics_setFont (my graphics, kGraphics_font_COURIER);
 		Graphics_setFontSize (my graphics, 12);
 		Graphics_setUnderscoreIsSubscript (my graphics, false);

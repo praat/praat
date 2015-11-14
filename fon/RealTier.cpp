@@ -385,17 +385,17 @@ void RealTier_interpolateQuadratically (RealTier me, long numberOfPointsPerParab
 autoTable RealTier_downto_Table (RealTier me, const char32 *indexText, const char32 *timeText, const char32 *valueText) {
 	try {
 		autoTable thee = Table_createWithoutColumnNames (my numberOfPoints (),
-			(indexText != NULL) + (timeText != NULL) + (valueText != NULL));
+			(!! indexText) + (!! timeText) + (!! valueText));
 		long icol = 0;
-		if (indexText != NULL) Table_setColumnLabel (thee.peek(), ++ icol, indexText);
-		if (timeText  != NULL) Table_setColumnLabel (thee.peek(), ++ icol, timeText);
-		if (valueText != NULL) Table_setColumnLabel (thee.peek(), ++ icol, valueText);
+		if (indexText) Table_setColumnLabel (thee.peek(), ++ icol, indexText);
+		if (timeText ) Table_setColumnLabel (thee.peek(), ++ icol, timeText);
+		if (valueText) Table_setColumnLabel (thee.peek(), ++ icol, valueText);
 		for (long ipoint = 1; ipoint <= my numberOfPoints (); ipoint ++) {
 			RealPoint point = my point (ipoint);
 			icol = 0;
-			if (indexText != NULL) Table_setNumericValue (thee.peek(), ipoint, ++ icol, ipoint);
-			if (timeText != NULL)  Table_setNumericValue (thee.peek(), ipoint, ++ icol, point -> number);
-			if (valueText != NULL) Table_setNumericValue (thee.peek(), ipoint, ++ icol, point -> value);
+			if (indexText) Table_setNumericValue (thee.peek(), ipoint, ++ icol, ipoint);
+			if (timeText)  Table_setNumericValue (thee.peek(), ipoint, ++ icol, point -> number);
+			if (valueText) Table_setNumericValue (thee.peek(), ipoint, ++ icol, point -> value);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -466,7 +466,7 @@ autoRealTier PointProcess_upto_RealTier (PointProcess me, double value, ClassInf
 void RealTier_formula (RealTier me, const char32 *expression, Interpreter interpreter, RealTier thee) {
 	try {
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
-		if (thee == NULL) thee = me;
+		if (! thee) thee = me;
 		for (long icol = 1; icol <= my numberOfPoints (); icol ++) {
 			struct Formula_Result result;
 			Formula_run (0, icol, & result);

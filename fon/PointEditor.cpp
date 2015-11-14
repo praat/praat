@@ -174,7 +174,7 @@ void structPointEditor :: v_draw () {
 	Graphics_setWindow (d_graphics, 0, 1, 0, 1);
 	Graphics_fillRectangle (d_graphics, 0, 1, 0, 1);
 	double minimum = -1.0, maximum = +1.0;
-	if (sound != NULL && (p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_BY_WINDOW || p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_BY_WINDOW_AND_CHANNEL)) {
+	if (sound && (p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_BY_WINDOW || p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_BY_WINDOW_AND_CHANNEL)) {
 		long first, last;
 		if (Sampled_getWindowSamples (sound, d_startWindow, d_endWindow, & first, & last) >= 1) {
 			Matrix_getWindowExtrema (sound, first, last, 1, 1, & minimum, & maximum);
@@ -183,7 +183,7 @@ void structPointEditor :: v_draw () {
 	}
 	Graphics_setWindow (d_graphics, d_startWindow, d_endWindow, minimum, maximum);
 	Graphics_setColour (d_graphics, Graphics_BLACK);
-	if (sound != NULL) {
+	if (sound) {
 		long first, last;
 		if (Sampled_getWindowSamples (sound, d_startWindow, d_endWindow, & first, & last) > 1) {
 			Graphics_setLineType (d_graphics, Graphics_DOTTED);

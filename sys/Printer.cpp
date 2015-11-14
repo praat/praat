@@ -162,8 +162,8 @@ Printer_postScript_printf (NULL, "8 8 scale initclip\n");
 	static void initPrinter () {
 		Boolean result;
 		PMResolution res300 = { 300, 300 }, res600 = { 600, 600 };
-		if (theMacPrintSettings == NULL) {   /* Once. */
-			PMCreateSession (& theMacPrintSession);   /* Initialize the Printing Manager. */
+		if (! theMacPrintSettings) {   // once
+			PMCreateSession (& theMacPrintSession);   // initialize the Printing Manager
 			PMCreatePageFormat (& theMacPageFormat);
 			PMCreatePrintSettings (& theMacPrintSettings);
 			PMSessionDefaultPageFormat (theMacPrintSession, theMacPageFormat);
@@ -177,8 +177,8 @@ Printer_postScript_printf (NULL, "8 8 scale initclip\n");
 		 * we may get the answer that there's only 300 dpi (perhaps PostScript drivers say so?).
 		 * So we don't rely on that and have a buggy assumption instead.
 		 */
-		PMSetResolution (theMacPageFormat, & res300);   /* Perhaps all printers have this... */
-		PMSetResolution (theMacPageFormat, & res600);   /* ... but this is preferred. */
+		PMSetResolution (theMacPageFormat, & res300);   // perhaps all printers have this...
+		PMSetResolution (theMacPageFormat, & res600);   // ... but this is preferred
 	}
 #endif
 
@@ -252,7 +252,7 @@ static void DO_Printer_postScriptSettings (UiForm dia, int /* narg */, Stackel /
 
 int Printer_postScriptSettings () {
 	static UiForm dia;
-	if (dia == NULL) {
+	if (! dia) {
 		Any radio;
 		dia = UiForm_create (theCurrentPraatApplication -> topShell, U"PostScript settings", DO_Printer_postScriptSettings, NULL, U"PostScript settings...", U"PostScript settings...");
 		#if defined (_WIN32)
@@ -415,7 +415,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 			}
 			if (Melder_backgrounding) {
 				theWinPrint. Flags = PD_RETURNDEFAULT | PD_RETURNDC;
-				if (! PrintDlg (& theWinPrint) || theWinPrint. hDC == NULL) {
+				if (! PrintDlg (& theWinPrint) || ! theWinPrint. hDC) {
 					Melder_throw (U"Cannot print from a script on this computer.");
 				}
 			} else {

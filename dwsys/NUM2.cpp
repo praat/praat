@@ -730,7 +730,7 @@ void NUMlowerCholeskyInverse (double **a, long n, double *lnd) {
 
 	// Determinant from diagonal, diagonal is now sqrt (a[i][i]) !
 
-	if (lnd != NULL) {
+	if (lnd) {
 		*lnd = 0.0;
 		for (long i = 1; i <= n; i++) {
 			*lnd += log (a[i][i]);

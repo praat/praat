@@ -77,7 +77,7 @@ static void menu_cb_DrawVisibleSound (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
 		my pref_picture_garnish () = GET_INTEGER (U"Garnish");
-		if (my d_longSound.data == NULL && my d_sound.data == NULL)
+		if (! my d_longSound.data && ! my d_sound.data)
 			Melder_throw (U"There is no sound to draw.");
 		autoSound publish = my d_longSound.data ?
 			LongSound_extractPart (my d_longSound.data, my d_startWindow, my d_endWindow, my pref_picture_preserveTimes ()) :
@@ -113,7 +113,7 @@ static void menu_cb_DrawSelectedSound (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 		my pref_picture_top () = GET_REAL (U"right Vertical range");
 		my v_do_pictureMargins (cmd);
 		my pref_picture_garnish () = GET_INTEGER (U"Garnish");
-		if (my d_longSound.data == NULL && my d_sound.data == NULL)
+		if (! my d_longSound.data && ! my d_sound.data)
 			Melder_throw (U"There is no sound to draw.");
 		autoSound publish = my d_longSound.data ?
 			LongSound_extractPart (my d_longSound.data, my d_startSelection, my d_endSelection, my pref_picture_preserveTimes ()) :
@@ -157,7 +157,7 @@ static void menu_cb_ExtractSelectedSound_windowed (TimeSoundEditor me, EDITOR_AR
 		SET_INTEGER (U"Preserve times", my pref_extract_preserveTimes ())
 	EDITOR_DO
 		Sound sound = my d_sound.data;
-		Melder_assert (sound != NULL);
+		Melder_assert (sound);
 		my pref_extract_windowShape () = GET_ENUM (kSound_windowShape, U"Window shape");
 		my pref_extract_relativeWidth () = GET_REAL (U"Relative width");
 		my pref_extract_preserveTimes () = GET_INTEGER (U"Preserve times");
@@ -176,7 +176,7 @@ static void menu_cb_ExtractSelectedSoundForOverlap (TimeSoundEditor me, EDITOR_A
 		SET_REAL (U"Overlap", my pref_extract_overlap ())
 	EDITOR_DO
 		Sound sound = my d_sound.data;
-		Melder_assert (sound != NULL);
+		Melder_assert (sound);
 		my pref_extract_overlap () = GET_REAL (U"Overlap");
 		autoSound extract = Sound_extractPartForOverlap (sound, my d_startSelection, my d_endSelection,
 			my pref_extract_overlap ());
@@ -404,8 +404,13 @@ void structTimeSoundEditor :: v_createMenuItems_view_sound (EditorMenu menu) {
 }
 
 void structTimeSoundEditor :: v_updateMenuItems_file () {
-	Sampled sound = d_sound.data != NULL ? (Sampled) d_sound.data : (Sampled) d_longSound.data;
-	if (sound == NULL) return;
+	Sampled sound;
+	if (d_sound.data) {
+		sound = d_sound.data;
+	} else {
+		sound = d_longSound.data;
+	}
+	if (! sound) return;
 	long first, last, selectedSamples = Sampled_getWindowSamples (sound, d_startSelection, d_endSelection, & first, & last);
 	if (drawButton) {
 		GuiThing_setSensitive (drawButton, selectedSamples != 0);
@@ -437,7 +442,7 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 	try {
 		fits = sound ? true : LongSound_haveWindow (longSound, my d_startWindow, my d_endWindow);
 	} catch (MelderError) {
-		int outOfMemory = str32str (Melder_getError (), U"memory") != NULL;
+		bool outOfMemory = !! str32str (Melder_getError (), U"memory");
 		if (Melder_debug == 9) Melder_flushError (); else Melder_clearError ();
 		Graphics_setWindow (my d_graphics, 0.0, 1.0, 0.0, 1.0);
 		Graphics_setTextAlignment (my d_graphics, Graphics_CENTRE, Graphics_HALF);
@@ -628,7 +633,7 @@ bool structTimeSoundEditor :: v_click (double xbegin, double ybegin, bool shiftK
 
 void TimeSoundEditor_init (TimeSoundEditor me, const char32 *title, Function data, Sampled sound, bool ownSound) {
 	my d_ownSound = ownSound;
-	if (sound != NULL) {
+	if (sound) {
 		if (ownSound) {
 			Melder_assert (Thing_isa (sound, classSound));
 			my d_sound.data = Data_copy ((Sound) sound);   // deep copy; ownership transferred

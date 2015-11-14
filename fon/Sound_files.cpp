@@ -136,7 +136,7 @@ autoSound Sound_readFromBellLabsFile (MelderFile file) {
 		if (fread (tag, 1, 16, f) < 16 || ! strnequ (tag, "SIG\n", 4))
 			Melder_throw (U"Not a Bell-Labs sound file.");
 		char *endOfTag = strchr (tag + 4, '\n');
-		if (endOfTag == NULL)
+		if (! endOfTag)
 			Melder_throw (U"Second line missing or too long.");
 		unsigned long tagLength = (endOfTag - tag) + 1;   // probably 12
 		unsigned long headerLength = atol (tag + 4);
@@ -152,7 +152,7 @@ autoSound Sound_readFromBellLabsFile (MelderFile file) {
 			Melder_throw (U"Header too short.");
 		unsigned long numberOfSamples = 0;
 		char *psamples = & lines [-1];
-		while ((psamples = strstr (psamples + 1, "samples ")) != NULL)   // take last occurrence
+		while (!! (psamples = strstr (psamples + 1, "samples ")))   // take last occurrence
 			numberOfSamples = atol (psamples + 8);
 		if (numberOfSamples < 1) {
 			/* Use file length. */
@@ -163,7 +163,7 @@ autoSound Sound_readFromBellLabsFile (MelderFile file) {
 			Melder_throw (U"No samples found.");
 		double samplingFrequency = 0.0;
 		char *pfrequency = & lines [-1];
-		while ((pfrequency = strstr (pfrequency + 1, "frequency ")) != NULL)   // take last occurrence
+		while (!! (pfrequency = strstr (pfrequency + 1, "frequency ")))   // take last occurrence
 			samplingFrequency = atof (pfrequency + 10);
 		if (samplingFrequency <= 0.0)
 			samplingFrequency = 16000.0;

@@ -78,7 +78,7 @@ Editor praat_findEditorFromString (const char32 *string) {
 		WHERE_DOWN (1) {
 			for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 				Editor editor = theCurrentPraatObjects -> list [IOBJECT]. editors [ieditor];
-				if (editor != NULL) {
+				if (editor) {
 					const char32 *name = str32chr (editor -> name, U' ') + 1;
 					if (str32equ (name, string)) return editor;
 				}
@@ -427,7 +427,7 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 			colon [0] = colon [1] = colon [2] = U'.';
 			colon [3] = U'\0';
 		}
-		if (theCurrentPraatObjects == & theForegroundPraatObjects && praatP. editor != NULL) {
+		if (theCurrentPraatObjects == & theForegroundPraatObjects && praatP. editor) {
 			if (hasColon) {
 				Editor_doMenuCommand (praatP. editor, command2, narg, args, NULL, interpreter);
 			} else {

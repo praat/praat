@@ -64,66 +64,66 @@ void UiPause_begin (GuiWindow topShell, const char32 *title, Interpreter interpr
 		NULL, NULL);
 }
 void UiPause_real (const char32 *label, const char32 *defaultValue) {
-	if (thePauseForm == NULL)
+	if (! thePauseForm)
 		Melder_throw (U"The function \"real\" has to be between a \"beginPause\" and an \"endPause\".");
 	UiForm_addReal (thePauseForm, label, defaultValue);
 }
 void UiPause_positive (const char32 *label, const char32 *defaultValue) {
-	if (thePauseForm == NULL)
+	if (! thePauseForm)
 		Melder_throw (U"The function \"positive\" has to be between a \"beginPause\" and an \"endPause\".");
 	UiForm_addPositive (thePauseForm, label, defaultValue);
 }
 void UiPause_integer (const char32 *label, const char32 *defaultValue) {
-	if (thePauseForm == NULL)
+	if (! thePauseForm)
 		Melder_throw (U"The function \"integer\" has to be between a \"beginPause\" and an \"endPause\".");
 	UiForm_addInteger (thePauseForm, label, defaultValue);
 }
 void UiPause_natural (const char32 *label, const char32 *defaultValue) {
-	if (thePauseForm == NULL)
+	if (! thePauseForm)
 		Melder_throw (U"The function \"natural\" has to be between a \"beginPause\" and an \"endPause\".");
 	UiForm_addNatural (thePauseForm, label, defaultValue);
 }
 void UiPause_word (const char32 *label, const char32 *defaultValue) {
-	if (thePauseForm == NULL)
+	if (! thePauseForm)
 		Melder_throw (U"The function \"word\" has to be between a \"beginPause\" and an \"endPause\".");
 	UiForm_addWord (thePauseForm, label, defaultValue);
 }
 void UiPause_sentence (const char32 *label, const char32 *defaultValue) {
-	if (thePauseForm == NULL)
+	if (! thePauseForm)
 		Melder_throw (U"The function \"sentence\" has to be between a \"beginPause\" and an \"endPause\".");
 	UiForm_addSentence (thePauseForm, label, defaultValue);
 }
 void UiPause_text (const char32 *label, const char32 *defaultValue) {
-	if (thePauseForm == NULL)
+	if (! thePauseForm)
 		Melder_throw (U"The function \"text\" has to be between a \"beginPause\" and an \"endPause\".");
 	UiForm_addText (thePauseForm, label, defaultValue);
 }
 void UiPause_boolean (const char32 *label, int defaultValue) {
-	if (thePauseForm == NULL)
+	if (! thePauseForm)
 		Melder_throw (U"The function \"boolean\" has to be between a \"beginPause\" and an \"endPause\".");
 	UiForm_addBoolean (thePauseForm, label, defaultValue);
 }
 void UiPause_choice (const char32 *label, int defaultValue) {
-	if (thePauseForm == NULL)
+	if (! thePauseForm)
 		Melder_throw (U"The function \"choice\" has to be between a \"beginPause\" and an \"endPause\".");
 	thePauseFormRadio = UiForm_addRadio (thePauseForm, label, defaultValue);
 }
 void UiPause_optionMenu (const char32 *label, int defaultValue) {
-	if (thePauseForm == NULL)
+	if (! thePauseForm)
 		Melder_throw (U"The function \"optionMenu\" has to be between a \"beginPause\" and an \"endPause\".");
 	thePauseFormRadio = UiForm_addOptionMenu (thePauseForm, label, defaultValue);
 }
 void UiPause_option (const char32 *label) {
-	if (thePauseForm == NULL)
+	if (! thePauseForm)
 		Melder_throw (U"The function \"option\" has to be between a \"beginPause\" and an \"endPause\".");
-	if (thePauseFormRadio == NULL) {
+	if (! thePauseFormRadio) {
 		forget (thePauseForm);
 		Melder_throw (U"Found the function \"option\" without a preceding \"choice\" or \"optionMenu\".");
 	}
 	UiOptionMenu_addButton (thePauseFormRadio, label);
 }
 void UiPause_comment (const char32 *label) {
-	if (thePauseForm == NULL)
+	if (! thePauseForm)
 		Melder_throw (U"The function \"comment\" has to be between a \"beginPause\" and an \"endPause\".");
 	UiForm_addLabel (thePauseForm, U"", label);
 }
@@ -133,7 +133,7 @@ int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int can
 	const char32 *continueText7, const char32 *continueText8, const char32 *continueText9,
 	const char32 *continueText10, Interpreter interpreter)
 {
-	if (thePauseForm == NULL)
+	if (! thePauseForm)
 		Melder_throw (U"Found the function \"endPause\" without a preceding \"beginPause\".");
 	UiForm_setPauseForm (thePauseForm, numberOfContinueButtons, defaultContinueButton, cancelContinueButton,
 		continueText1, continueText2, continueText3, continueText4, continueText5,
@@ -172,7 +172,7 @@ int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int can
 						inMode: NSDefaultRunLoopMode
 						dequeue: YES
 					];
-					Melder_assert (nsEvent != NULL);
+					Melder_assert (nsEvent);
 					[NSApp  sendEvent: nsEvent];
 					[NSApp  updateWindows];   // called automatically?
 					[pool release];

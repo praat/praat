@@ -28,8 +28,8 @@ Thing_declare (EditorCommand);
 
 /* Example of usage:
 {
-	static UiForm dia = NULL;
-	if (dia == NULL) {
+	static UiForm dia = nullptr;
+	if (! dia) {
 		Any radio;
 		dia = UiForm_create
 		  (topShell,   // The parent GuiWindow of the dialog window.

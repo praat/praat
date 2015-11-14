@@ -334,7 +334,7 @@ static void do_log (TimeSoundAnalysisEditor me, int which) {
 			MelderString_append (& buffer, formattedNumber, p + varlen + 2);
 			str32cpy (format, buffer.string);
 			p += arglen - 1;
-		} else if (stringValue != NULL) {
+		} else if (stringValue) {
 			int varlen = (q - p) - 1, headlen = p - format, arglen = str32len (stringValue);
 			static MelderString buffer { 0 };
 			MelderString_ncopy (& buffer, format, headlen);

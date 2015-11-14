@@ -31,7 +31,7 @@
 #define iam iam_LOOP
 
 static const char32 * Table_messageColumn (Table me, long column) {
-	if (my columnHeaders [column]. label != NULL && my columnHeaders [column]. label [0] != U'\0')
+	if (my columnHeaders [column]. label && my columnHeaders [column]. label [0] != U'\0')
 		return Melder_cat (U"\"", my columnHeaders [column]. label, U"\"");
 	else
 		return Melder_integer (column);
@@ -1411,7 +1411,7 @@ DO
 		iam (TableOfReal);
 		long columnNumber = GET_INTEGER (U"Column number");
 		if (columnNumber > my numberOfColumns) Melder_throw (me, U": column number must not be greater than number of columns.");
-		Melder_information (my columnLabels == NULL ? U"" : my columnLabels [columnNumber]);
+		Melder_information (my columnLabels ? my columnLabels [columnNumber] : U"");
 	}
 END2 }
 	
@@ -1424,7 +1424,7 @@ DO
 		long columnNumber = GET_INTEGER (U"Column number");
 		if (columnNumber > my numberOfColumns) Melder_throw (me, U": column number must not be greater than number of columns.");
 		double columnMean = TableOfReal_getColumnMean (me, columnNumber);
-		Melder_informationReal (columnMean, NULL);
+		Melder_informationReal (columnMean, nullptr);
 	}
 END2 }
 	
@@ -1437,7 +1437,7 @@ DO
 		long columnNumber = TableOfReal_columnLabelToIndex (me, GET_STRING (U"Column label"));
 		if (columnNumber == 0) Melder_throw (me, U": column label does not exist.");
 		double columnMean = TableOfReal_getColumnMean (me, columnNumber);
-		Melder_informationReal (columnMean, NULL);
+		Melder_informationReal (columnMean, nullptr);
 	}
 END2 }
 	

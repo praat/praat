@@ -3500,7 +3500,7 @@ ENTRY (U"Example 1: killing a program")
 CODE (U"char message [100], *errorMessage;")
 CODE (U"strcpy (message, \"Quit\");")
 CODE (U"errorMessage = #sendpraat (NULL, \"praat\", 0, message);")
-CODE (U"if (errorMessage != NULL) fprintf (stderr, \"\\% s\", errorMessage);")
+CODE (U"if (errorMessage) fprintf (stderr, \"\\% s\", errorMessage);")
 NORMAL (U"This causes the program #Praat to quit (gracefully), because #Quit is a fixed "
 	"command in one of the menus of that program. "
 	"On MacOS and Linux, sendpraat returns immediately; on Windows, the %timeOut argument is ignored. "

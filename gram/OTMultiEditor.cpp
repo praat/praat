@@ -154,11 +154,6 @@ static void gui_button_cb_limit (OTMultiEditor me, GuiButtonEvent /* event */) {
 	do_limit (me);
 }
 
-static void gui_cb_limit (GUI_ARGS) {
-	GUI_IAM (OTMultiEditor);
-	do_limit (me);
-}
-
 void structOTMultiEditor :: v_createChildren () {
 	OTMultiEditor_Parent :: v_createChildren ();
 	#if defined (macintosh)

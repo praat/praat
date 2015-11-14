@@ -100,14 +100,14 @@ double structTable :: v_getMatrix (long rowNumber, long columnNumber) {
 	if (rowNumber < 1 || rowNumber > rows -> size) return NUMundefined;
 	if (columnNumber < 1 || columnNumber > numberOfColumns) return NUMundefined;
 	char32 *stringValue = ((TableRow) rows -> item [rowNumber]) -> cells [columnNumber]. string;
-	return stringValue == NULL ? NUMundefined : Melder_atof (stringValue);
+	return stringValue ? Melder_atof (stringValue) : NUMundefined;
 }
 
 const char32 * structTable :: v_getMatrixStr (long rowNumber, long columnNumber) {
 	if (rowNumber < 1 || rowNumber > rows -> size) return U"";
 	if (columnNumber < 1 || columnNumber > numberOfColumns) return U"";
 	char32 *stringValue = ((TableRow) rows -> item [rowNumber]) -> cells [columnNumber]. string;
-	return stringValue == NULL ? U"" : stringValue;
+	return stringValue ? stringValue : U"";
 }
 
 double structTable :: v_getColIndex (const char32 *columnLabel) {
@@ -145,7 +145,7 @@ autoTable Table_createWithoutColumnNames (long numberOfRows, long numberOfColumn
 void Table_initWithColumnNames (Table me, long numberOfRows, const char32 *columnNames) {
 	Table_initWithoutColumnNames (me, numberOfRows, Melder_countTokens (columnNames));
 	long icol = 0;
-	for (char32 *columnName = Melder_firstToken (columnNames); columnName != NULL; columnName = Melder_nextToken ()) {
+	for (char32 *columnName = Melder_firstToken (columnNames); columnName; columnName = Melder_nextToken ()) {
 		icol ++;
 		Table_setColumnLabel (me, icol, columnName);
 	}
@@ -271,16 +271,16 @@ void Table_insertColumn (Table me, long columnNumber, const char32 *label /* cat
 		 * Transfer column headers to larger structure.
 		 */
 		for (long icol = 1; icol < columnNumber; icol ++) {
-			Melder_assert (thy columnHeaders [icol]. label == NULL);   // make room...
+			Melder_assert (! thy columnHeaders [icol]. label);   // make room...
 			thy columnHeaders [icol] = my columnHeaders [icol];   // ...fill in and dangle...
-			my columnHeaders [icol]. label = NULL;   // ...undangle
+			my columnHeaders [icol]. label = nullptr;   // ...undangle
 		}
 		thy columnHeaders [columnNumber]. label = newLabel.transfer();
 		thy columnHeaders [columnNumber]. numericized = false;
 		for (long icol = my numberOfColumns + 1; icol > columnNumber; icol --) {
-			Melder_assert (thy columnHeaders [icol]. label == NULL);   // make room...
+			Melder_assert (! thy columnHeaders [icol]. label);   // make room...
 			thy columnHeaders [icol] = my columnHeaders [icol - 1];   // ...fill in and dangle...
-			my columnHeaders [icol - 1]. label = NULL;   // ...undangle
+			my columnHeaders [icol - 1]. label = nullptr;   // ...undangle
 		}
 		/*
 		 * Transfer rows to larger structure.
@@ -288,16 +288,16 @@ void Table_insertColumn (Table me, long columnNumber, const char32 *label /* cat
 		for (long irow = 1; irow <= my rows -> size; irow ++) {
 			TableRow myRow = static_cast <TableRow> (my rows -> item [irow]), thyRow = static_cast <TableRow> (thy rows -> item [irow]);
 			for (long icol = 1; icol < columnNumber; icol ++) {
-				Melder_assert (thyRow -> cells [icol]. string == NULL);   // make room...
+				Melder_assert (! thyRow -> cells [icol]. string);   // make room...
 				thyRow -> cells [icol] = myRow -> cells [icol];   // ...fill in and dangle...
-				myRow -> cells [icol]. string = NULL;   // ...undangle
+				myRow -> cells [icol]. string = nullptr;   // ...undangle
 			}
-			Melder_assert (thyRow -> cells [columnNumber]. string == NULL);
+			Melder_assert (! thyRow -> cells [columnNumber]. string);
 			Melder_assert (thyRow -> cells [columnNumber]. number == 0.0);
 			for (long icol = myRow -> numberOfColumns + 1; icol > columnNumber; icol --) {
-				Melder_assert (thyRow -> cells [icol]. string == NULL);   // make room...
+				Melder_assert (! thyRow -> cells [icol]. string);   // make room...
 				thyRow -> cells [icol] = myRow -> cells [icol - 1];   // ...fill in and dangle...
-				myRow -> cells [icol - 1]. string = NULL;   // ...undangle
+				myRow -> cells [icol - 1]. string = nullptr;   // ...undangle
 			}
 		}
 		/*
@@ -305,13 +305,13 @@ void Table_insertColumn (Table me, long columnNumber, const char32 *label /* cat
 		 */
 		NUMvector_free <structTableColumnHeader> (my columnHeaders, 1);   // make room...
 		my columnHeaders = thy columnHeaders;   // ...fill in and dangle...
-		thy columnHeaders = NULL;   // ...undangle
+		thy columnHeaders = nullptr;   // ...undangle
 		/*
 		 * Transfer larger structure with rows to me.
 		 */
 		forget (my rows);   // make room...
 		my rows = thy rows;   // ...fill in and dangle...
-		thy rows = NULL;   // ...undangle
+		thy rows = nullptr;   // ...undangle
 		/*
 		 * Update my state.
 		 */
@@ -367,7 +367,7 @@ long * Table_getColumnIndicesFromColumnLabelString (Table me, const char32 *stri
 long Table_searchColumn (Table me, long columnNumber, const char32 *value) {
 	for (long irow = 1; irow <= my rows -> size; irow ++) {
 		TableRow row = static_cast <TableRow> (my rows -> item [irow]);
-		if (row -> cells [columnNumber]. string != NULL && str32equ (row -> cells [columnNumber]. string, value))
+		if (row -> cells [columnNumber]. string && str32equ (row -> cells [columnNumber]. string, value))
 			return irow;
 	}
 	return 0;
@@ -418,7 +418,7 @@ bool Table_isCellNumeric_ErrorFalse (Table me, long rowNumber, long columnNumber
 	if (columnNumber < 1 || columnNumber > my numberOfColumns) return false;
 	TableRow row = static_cast <TableRow> (my rows -> item [rowNumber]);
 	const char32 *cell = row -> cells [columnNumber]. string;
-	if (cell == NULL) return true;   // the value --undefined--
+	if (! cell) return true;   // the value --undefined--
 	/*
 	 * Skip leading white space, in order to separately detect "?" and "--undefined--".
 	 */
@@ -477,12 +477,12 @@ void Table_numericize_Assert (Table me, long columnNumber) {
 			TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 			const char32 *string = row -> cells [columnNumber]. string;
 			row -> cells [columnNumber]. number =
-				string == NULL || string [0] == U'\0' || (string [0] == U'?' && string [1] == U'\0') ? NUMundefined :
+				! string || string [0] == U'\0' || (string [0] == U'?' && string [1] == U'\0') ? NUMundefined :
 				Melder_atof (string);
 		}
 	} else {
 		long iunique = 0;
-		const char32 *previousString = NULL;
+		const char32 *previousString = nullptr;
 		for (long irow = 1; irow <= my rows -> size; irow ++) {
 			TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 			row -> sortingIndex = irow;
@@ -491,8 +491,8 @@ void Table_numericize_Assert (Table me, long columnNumber) {
 		for (long irow = 1; irow <= my rows -> size; irow ++) {
 			TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 			const char32 *string = row -> cells [columnNumber]. string;
-			if (string == NULL) string = U"";
-			if (previousString == NULL || ! str32equ (string, previousString)) {
+			if (! string) string = U"";
+			if (! previousString || ! str32equ (string, previousString)) {
 				iunique ++;
 			}
 			row -> cells [columnNumber]. number = iunique;
@@ -738,7 +738,7 @@ autoTable Table_collapseRows (Table me, const char32 *factors_string, const char
 {
 	bool originalChanged = false;
 	try {
-		Melder_assert (factors_string != NULL);
+		Melder_assert (factors_string);
 
 		/*
 		 * Parse the six strings of tokens.
@@ -1084,7 +1084,7 @@ autoTable Table_rowsToColumns (Table me, const char32 *factors_string, long colu
 					double value = myRow -> cells [columnsToExpand [iexpand]]. number;
 					long level = lround (myRow -> cells [columnToTranspose]. number);
 					long thyColumn = numberOfFactors + (iexpand - 1) * numberOfLevels + level;
-					if (thyRow -> cells [thyColumn]. string != NULL && ! warned) {
+					if (thyRow -> cells [thyColumn]. string && ! warned) {
 						Melder_warning (U"Some information from the original table has not been included in the new table. "
 							U"You could perhaps add more factors.");
 						warned = true;
@@ -1240,9 +1240,9 @@ void Table_appendSumColumn (Table me, long column1, long column2, const char32 *
 			TableRow thyRow = static_cast <TableRow> (thy rows -> item [irow]);
 			TableCell myCell = & myRow -> cells [my numberOfColumns];
 			TableCell thyCell = & thyRow -> cells [1];
-			Melder_assert (myCell -> string == NULL);   // make room...
+			Melder_assert (! myCell -> string);   // make room...
 			myCell -> string = thyCell -> string;   // ...fill in and dangle...
-			thyCell -> string = NULL;   // ...undangle
+			thyCell -> string = nullptr;   // ...undangle
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": sum column not appended.");
@@ -1275,9 +1275,9 @@ void Table_appendDifferenceColumn (Table me, long column1, long column2, const c
 			TableRow thyRow = static_cast <TableRow> (thy rows -> item [irow]);
 			TableCell myCell = & myRow -> cells [my numberOfColumns];
 			TableCell thyCell = & thyRow -> cells [1];
-			Melder_assert (myCell -> string == NULL);   // make room...
+			Melder_assert (! myCell -> string);   // make room...
 			myCell -> string = thyCell -> string;   // ...fill in and dangle...
-			thyCell -> string = NULL;   // ...undangle
+			thyCell -> string = nullptr;   // ...undangle
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": difference column not appended.");
@@ -1310,9 +1310,9 @@ void Table_appendProductColumn (Table me, long column1, long column2, const char
 			TableRow thyRow = static_cast <TableRow> (thy rows -> item [irow]);
 			TableCell myCell = & myRow -> cells [my numberOfColumns];
 			TableCell thyCell = & thyRow -> cells [1];
-			Melder_assert (myCell -> string == NULL);   // make room...
+			Melder_assert (! myCell -> string);   // make room...
 			myCell -> string = thyCell -> string;   // ...fill in and dangle...
-			thyCell -> string = NULL;   // ...undangle
+			thyCell -> string = nullptr;   // ...undangle
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": product column not appended.");
@@ -1347,9 +1347,9 @@ void Table_appendQuotientColumn (Table me, long column1, long column2, const cha
 			TableRow thyRow = static_cast <TableRow> (thy rows -> item [irow]);
 			TableCell myCell = & myRow -> cells [my numberOfColumns];
 			TableCell thyCell = & thyRow -> cells [1];
-			Melder_assert (myCell -> string == NULL);   // make room...
+			Melder_assert (! myCell -> string);   // make room...
 			myCell -> string = thyCell -> string;   // ...fill in and dangle...
-			thyCell -> string = NULL;   // ...undangle
+			thyCell -> string = nullptr;   // ...undangle
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": quotient column not appended.");
@@ -1574,7 +1574,7 @@ double Table_getGroupMean_studentT (Table me, long column, long groupColumn, con
 	double sum = 0.0;
 	for (long irow = 1; irow <= my rows -> size; irow ++) {
 		TableRow row = static_cast <TableRow> (my rows -> item [irow]);
-		if (row -> cells [groupColumn]. string != NULL) {
+		if (row -> cells [groupColumn]. string) {
 			if (str32equ (row -> cells [groupColumn]. string, group)) {
 				n += 1;
 				sum += row -> cells [column]. number;
@@ -1589,7 +1589,7 @@ double Table_getGroupMean_studentT (Table me, long column, long groupColumn, con
 		double sumOfSquares = 0.0;
 		for (long irow = 1; irow <= my rows -> size; irow ++) {
 			TableRow row = static_cast <TableRow> (my rows -> item [irow]);
-			if (row -> cells [groupColumn]. string != NULL) {
+			if (row -> cells [groupColumn]. string) {
 				if (str32equ (row -> cells [groupColumn]. string, group)) {
 					double diff = row -> cells [column]. number - mean;
 					sumOfSquares += diff * diff;
@@ -1623,7 +1623,7 @@ double Table_getGroupDifference_studentT (Table me, long column, long groupColum
 	double sum1 = 0.0, sum2 = 0.0;
 	for (long irow = 1; irow <= my rows -> size; irow ++) {
 		TableRow row = static_cast <TableRow> (my rows -> item [irow]);
-		if (row -> cells [groupColumn]. string != NULL) {
+		if (row -> cells [groupColumn]. string) {
 			if (str32equ (row -> cells [groupColumn]. string, group1)) {
 				n1 ++;
 				sum1 += row -> cells [column]. number;
@@ -1676,7 +1676,7 @@ double Table_getGroupDifference_wilcoxonRankSum (Table me, long column, long gro
 	long n1 = 0, n2 = 0;
 	for (long irow = 1; irow <= my rows -> size; irow ++) {
 		TableRow row = static_cast <TableRow> (my rows -> item [irow]);
-		if (row -> cells [groupColumn]. string != NULL) {
+		if (row -> cells [groupColumn]. string) {
 			if (str32equ (row -> cells [groupColumn]. string, group1)) {
 				n1 ++;
 			} else if (str32equ (row -> cells [groupColumn]. string, group2)) {
@@ -1689,7 +1689,7 @@ double Table_getGroupDifference_wilcoxonRankSum (Table me, long column, long gro
 	autoTable ranks = Table_createWithoutColumnNames (n, 3);   // column 1 = group, 2 = value, 3 = rank
 	for (long irow = 1, jrow = 0; irow <= my rows -> size; irow ++) {
 		TableRow row = static_cast <TableRow> (my rows -> item [irow]);
-		if (row -> cells [groupColumn]. string != NULL) {
+		if (row -> cells [groupColumn]. string) {
 			if (str32equ (row -> cells [groupColumn]. string, group1)) {
 				Table_setNumericValue (ranks.get(), ++ jrow, 1, 1.0);
 				Table_setNumericValue (ranks.get(), jrow, 2, row -> cells [column]. number);
@@ -1859,7 +1859,7 @@ void Table_drawEllipse_e (Table me, Graphics g, long xcolumn, long ycolumn,
 }
 
 static const char32 *visibleString (const char32 *s) {
-	return s != NULL && s [0] != U'\0' ? s : U"?";
+	return ( s && s [0] != U'\0' ? s : U"?" );
 }
 
 void Table_list (Table me, bool includeRowNumbers) {
@@ -1893,7 +1893,7 @@ static void _Table_writeToCharacterSeparatedFile (Table me, MelderFile file, cha
 	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 		if (icol != 1) MelderString_appendCharacter (& buffer, kar);
 		char32 *s = my columnHeaders [icol]. label;
-		MelderString_append (& buffer, s != NULL && s [0] != U'\0' ? s : U"?");
+		MelderString_append (& buffer, ( s && s [0] != U'\0' ? s : U"?" ));
 	}
 	MelderString_appendCharacter (& buffer, '\n');
 	for (long irow = 1; irow <= my rows -> size; irow ++) {
@@ -1901,7 +1901,7 @@ static void _Table_writeToCharacterSeparatedFile (Table me, MelderFile file, cha
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 			if (icol != 1) MelderString_appendCharacter (& buffer, kar);
 			char32 *s = row -> cells [icol]. string;
-			MelderString_append (& buffer, s != NULL && s [0] != U'\0' ? s : U"?");
+			MelderString_append (& buffer, ( s && s [0] != U'\0' ? s : U"?" ));
 		}
 		MelderString_appendCharacter (& buffer, U'\n');
 	}

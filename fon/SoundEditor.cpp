@@ -29,7 +29,7 @@ Thing_implement (SoundEditor, TimeSoundAnalysisEditor, 0);
 
 void structSoundEditor :: v_dataChanged () {
 	Sound sound = (Sound) data;
-	Melder_assert (sound != NULL);   // LongSound objects should not get v_dataChanged messages
+	Melder_assert (sound);   // LongSound objects should not get v_dataChanged messages
 	Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & d_sound.minimum, & d_sound.maximum);   // BUG unreadable
 	v_reset_analysis ();
 	SoundEditor_Parent :: v_dataChanged ();
@@ -292,15 +292,15 @@ static void menu_cb_LongSoundEditorHelp (EDITOR_ARGS) { EDITOR_IAM (SoundEditor)
 
 void structSoundEditor :: v_createMenus () {
 	SoundEditor_Parent :: v_createMenus ();
-	Melder_assert (data != NULL);
-	Melder_assert (d_sound.data != NULL || d_longSound.data != NULL);
+	Melder_assert (data);
+	Melder_assert (d_sound.data || d_longSound.data);
 
-	Editor_addCommand (this, U"Edit", U"-- cut copy paste --", 0, NULL);
+	Editor_addCommand (this, U"Edit", U"-- cut copy paste --", 0, nullptr);
 	if (d_sound.data) cutButton = Editor_addCommand (this, U"Edit", U"Cut", 'X', menu_cb_Cut);
 	copyButton = Editor_addCommand (this, U"Edit", U"Copy selection to Sound clipboard", 'C', menu_cb_Copy);
 	if (d_sound.data) pasteButton = Editor_addCommand (this, U"Edit", U"Paste after selection", 'V', menu_cb_Paste);
 	if (d_sound.data) {
-		Editor_addCommand (this, U"Edit", U"-- zero --", 0, NULL);
+		Editor_addCommand (this, U"Edit", U"-- zero --", 0, nullptr);
 		zeroButton = Editor_addCommand (this, U"Edit", U"Set selection to zero", 0, menu_cb_SetSelectionToZero);
 		reverseButton = Editor_addCommand (this, U"Edit", U"Reverse selection", 'R', menu_cb_ReverseSelection);
 	}
@@ -338,8 +338,8 @@ void structSoundEditor :: v_draw () {
 	Sampled data = (Sampled) this -> data;
 	Graphics_Viewport viewport;
 	bool showAnalysis = p_spectrogram_show || p_pitch_show || p_intensity_show || p_formant_show;
-	Melder_assert (data != NULL);
-	Melder_assert (d_sound.data != NULL || d_longSound.data != NULL);
+	Melder_assert (data);
+	Melder_assert (d_sound.data || d_longSound.data);
 
 	/*
 	 * We check beforehand whether the window fits the LongSound buffer.

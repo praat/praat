@@ -143,7 +143,7 @@ void Demo_open () {
 	}
 	if (theDemoEditor == nullptr) {
 		theDemoEditor = DemoEditor_create ();
-		Melder_assert (theDemoEditor != NULL);
+		Melder_assert (theDemoEditor);
 		//GuiObject_show (theDemoEditor -> d_windowForm);
 		theDemoEditor -> praatPicture = Melder_calloc_f (structPraatPicture, 1);
 		theCurrentPraatPicture = (PraatPicture) theDemoEditor -> praatPicture;

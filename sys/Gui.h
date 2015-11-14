@@ -66,10 +66,6 @@
 	#include "winport_off.h"
 #endif
 
-#define GUI_ARGS  void *void_me, GuiMenuItemEvent event
-
-#define GUI_IAM(klas)  (void) void_me; (void) event; iam (klas);
-
 #define Gui_LEFT_DIALOG_SPACING  20
 #define Gui_RIGHT_DIALOG_SPACING  20
 #define Gui_TOP_DIALOG_SPACING  14
@@ -764,10 +760,12 @@ typedef struct structGuiRadioButtonEvent {
 	int position;
 } *GuiRadioButtonEvent;
 
+typedef MelderCallback <void, structThing /* boss */, GuiRadioButtonEvent> GuiRadioButtonCallback;
+
 Thing_define (GuiRadioButton, GuiControl) { public:
 	GuiRadioButton d_previous, d_next;   // there's a linked list of grouped radio buttons
-	void (*d_valueChangedCallback) (void *boss, GuiRadioButtonEvent event);
-	void *d_valueChangedBoss;
+	GuiRadioButtonCallback d_valueChangedCallback;
+	Thing d_valueChangedBoss;
 	#if cocoa
 		GuiCocoaRadioButton *d_cocoaRadioButton;
 	#endif
@@ -777,9 +775,9 @@ Thing_define (GuiRadioButton, GuiControl) { public:
 #define GuiRadioButton_SET  1
 #define GuiRadioButton_INSENSITIVE  2
 GuiRadioButton GuiRadioButton_create      (GuiForm parent, int left, int right, int top, int bottom,
-	const char32 *buttonText, void (*valueChangedCallback) (void *boss, GuiRadioButtonEvent event), void *valueChangedBoss, uint32 flags);
+	const char32 *buttonText, GuiRadioButtonCallback valueChangedCallback, Thing valueChangedBoss, uint32 flags);
 GuiRadioButton GuiRadioButton_createShown (GuiForm parent, int left, int right, int top, int bottom,
-	const char32 *buttonText, void (*valueChangedCallback) (void *boss, GuiRadioButtonEvent event), void *valueChangedBoss, uint32 flags);
+	const char32 *buttonText, GuiRadioButtonCallback valueChangedCallback, Thing valueChangedBoss, uint32 flags);
 
 void GuiRadioGroup_begin ();
 void GuiRadioGroup_end ();
@@ -854,6 +852,8 @@ typedef struct structGuiTextEvent {
 	GuiText text;
 } *GuiTextEvent;
 
+typedef MelderCallback <void, structThing /* boss */, GuiTextEvent> GuiText_ChangedCallback;
+
 #if gtk
 	typedef gchar * history_data;
 #else
@@ -869,8 +869,8 @@ struct _history_entry_s {
 };
 
 Thing_define (GuiText, GuiControl) { public:
-	void (*d_changeCallback) (void *boss, GuiTextEvent event);
-	void *d_changeBoss;
+	GuiText_ChangedCallback d_changedCallback;
+	Thing d_changedBoss;
 	#if cocoa
 		GuiCocoaScrolledWindow *d_cocoaScrollView;
 		GuiCocoaTextView *d_cocoaTextView;
@@ -905,7 +905,7 @@ void GuiText_redo (GuiText me);
 void GuiText_remove (GuiText me);
 void GuiText_replace (GuiText me, long from_pos, long to_pos, const char32 *value);
 void GuiText_scrollToSelection (GuiText me);
-void GuiText_setChangeCallback (GuiText me, void (*changeCallback) (void *boss, GuiTextEvent event), void *changeBoss);
+void GuiText_setChangedCallback (GuiText me, GuiText_ChangedCallback changedCallback, Thing changedBoss);
 void GuiText_setFontSize (GuiText me, int size);
 void GuiText_setRedoItem (GuiText me, GuiMenuItem item);
 void GuiText_setSelection (GuiText me, long first, long last);

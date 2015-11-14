@@ -1398,7 +1398,7 @@ void MelderFile_writeShortToAudio (MelderFile file, int numberOfChannels, int en
 void MelderFile_writeFloatToAudio (MelderFile file, int numberOfChannels, int encoding, double **buffer, long numberOfSamples, int warnIfClipped) {
 	try {
 		FILE *f = file -> filePointer;
-		if (f == NULL) Melder_throw (U"File not open.");
+		if (! f) Melder_throw (U"File not open.");
 		long nclipped = 0;
 		switch (encoding) {
 			case Melder_LINEAR_8_SIGNED:

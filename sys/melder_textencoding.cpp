@@ -207,7 +207,7 @@ size_t str32len_utf16 (const char32 *string, bool nativizeNewlines) {
 }
 
 char32 * Melder_peek8to32 (const char *textA) {
-	if (textA == NULL) return NULL;
+	if (! textA) return nullptr;
 	static MelderString buffers [19] { { 0 } };
 	static int ibuffer = 0;
 	if (++ ibuffer == 11) ibuffer = 0;
@@ -420,21 +420,21 @@ void Melder_8to32_inline (const char *string8, char32 *string32, int inputEncodi
 }
 
 char32 * Melder_8to32 (const char *string, int inputEncoding) {
-	if (string == NULL) return NULL;
+	if (! string) return nullptr;
 	autostring32 result = Melder_malloc (char32, (int64) strlen (string) + 1);
 	Melder_8to32_inline (string, result.peek(), inputEncoding);
 	return result.transfer();
 }
 
 char32 * Melder_8to32 (const char *string) {
-	if (string == NULL) return NULL;
+	if (! string) return nullptr;
 	autostring32 result = Melder_malloc (char32, (int64) strlen (string) + 1);
 	Melder_8to32_inline (string, result.peek(), kMelder_textInputEncoding_UTF8);
 	return result.transfer();
 }
 
 char32 * Melder_peek16to32 (const char16 *text) {
-	if (text == NULL) return nullptr;
+	if (! text) return nullptr;
 	static MelderString buffers [19] { { 0 } };
 	static int ibuffer = 0;
 	if (++ ibuffer == 19) ibuffer = 0;
@@ -493,16 +493,16 @@ void Melder_32to8_inline (const char32 *string, char *utf8) {
 }
 
 char * Melder_32to8 (const char32 *string) {
-	if (string == NULL) return NULL;
+	if (! string) return nullptr;
 	autostring8 result = Melder_malloc (char, (int64) str32len_utf8 (string, true) + 1);
 	Melder_32to8_inline (string, result.peek());
 	return result.transfer();
 }
 
 char * Melder_peek32to8 (const char32 *text) {
-	if (text == NULL) return NULL;
-	static char *buffer [19] = { NULL };
-	static int64 bufferSize [19] = { 0 };
+	if (! text) return nullptr;
+	static char *buffer [19] { nullptr };
+	static int64 bufferSize [19] { 0 };
 	static int ibuffer = 0;
 	if (++ ibuffer == 19) ibuffer = 0;
 	int64 sizeNeeded = str32len (text) * 4 + 1;
@@ -520,8 +520,8 @@ char * Melder_peek32to8 (const char32 *text) {
 }
 
 char16 * Melder_peek32to16 (const char32 *text, bool nativizeNewlines) {
-	if (text == NULL) return NULL;
-	static MelderString16 buffers [19] = { { 0 } };
+	if (! text) return nullptr;
+	static MelderString16 buffers [19] { { 0 } };
 	static int ibuffer = 0;
 	if (++ ibuffer == 19) ibuffer = 0;
 	MelderString16_empty (& buffers [ibuffer]);
@@ -555,11 +555,11 @@ char16 * Melder_32to16 (const char32 *text) {
 
 #if defined (macintosh)
 const void * Melder_peek32toCfstring (const char32 *text) {
-	if (text == NULL) return NULL;
+	if (! text) return nullptr;
 	static CFStringRef cfString [11];
 	static int icfString = 0;
 	if (++ icfString == 11) icfString = 0;
-	if (cfString [icfString] != NULL) CFRelease (cfString [icfString]);
+	if (cfString [icfString]) CFRelease (cfString [icfString]);
 	cfString [icfString] = CFStringCreateWithCString (NULL, (const char *) Melder_peek32to8 (text), kCFStringEncodingUTF8);
 	return cfString [icfString];
 }

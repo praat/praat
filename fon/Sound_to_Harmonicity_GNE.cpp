@@ -63,7 +63,7 @@ autoMatrix Sound_to_Harmonicity_GNE (Sound me,
 		autoSound envelope [1+100];
 		long nenvelopes = (long) floor ((fmax - fmin) / step);
 		for (long ienvelope = 1; ienvelope <= 100; ienvelope ++)
-			Melder_assert (envelope [ienvelope].peek() == NULL);
+			Melder_assert (! envelope [ienvelope].peek());
 
 		/*
 		 * Step 1: down-sampling to 10 kHz,

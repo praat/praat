@@ -53,7 +53,7 @@ static void burg (double sample [], long nsamp_window, double cof [], int nPoles
 	autoRoots roots = Polynomial_to_Roots (polynomial.peek());
 	Roots_fixIntoUnitCircle (roots.peek());
 
-	Melder_assert (frame -> nFormants == 0 && frame -> formant == NULL);
+	Melder_assert (frame -> nFormants == 0 && ! frame -> formant);
 
 	/*
 	 * First pass: count the formants.

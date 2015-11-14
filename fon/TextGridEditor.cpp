@@ -757,7 +757,7 @@ static void menu_cb_RemovePointOrBoundary (EDITOR_ARGS) {
 static void do_movePointOrBoundary (TextGridEditor me, int where) {
 	double position;
 	TextGrid grid = (TextGrid) my data;
-	if (where == 0 && my d_sound.data == NULL) return;
+	if (where == 0 && ! my d_sound.data) return;
 	checkTierSelection (me, U"move a point or boundary");
 	Function anyTier = (Function) grid -> tiers -> item [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
@@ -1295,9 +1295,7 @@ void structTextGridEditor :: v_createHelpMenuItems (EditorMenu menu) {
 
 /***** CHILDREN *****/
 
-static void gui_text_cb_change (I, GuiTextEvent event) {
-	iam (TextGridEditor);
-	(void) event;
+static void gui_text_cb_changed (TextGridEditor me, GuiTextEvent /* event */) {
 	TextGrid grid = (TextGrid) my data;
 	//Melder_casual (U"gui_text_cb_change 1 in editor ", Melder_pointer (me));
 	if (my suppressRedraw) return;   /* Prevent infinite loop if 'draw' method or Editor_broadcastChange calls GuiText_setString. */
@@ -1336,7 +1334,7 @@ static void gui_text_cb_change (I, GuiTextEvent event) {
 
 void structTextGridEditor :: v_createChildren () {
 	TextGridEditor_Parent :: v_createChildren ();
-	if (text) GuiText_setChangeCallback (text, gui_text_cb_change, this);
+	if (text) GuiText_setChangedCallback (text, gui_text_cb_changed, this);
 }
 
 void structTextGridEditor :: v_dataChanged () {
@@ -1617,7 +1615,7 @@ void structTextGridEditor :: v_draw () {
 					long ninterval = tier -> intervals -> size, iinterval;
 					for (iinterval = 1; iinterval <= ninterval; iinterval ++) {
 						TextInterval interval = (TextInterval) tier -> intervals -> item [iinterval];
-						if (interval -> text != NULL && interval -> text [0] != '\0') {
+						if (interval -> text && interval -> text [0] != '\0') {
 							count ++;
 						}
 					}
@@ -1626,7 +1624,7 @@ void structTextGridEditor :: v_draw () {
 					long npoint = tier -> points -> size, ipoint;
 					for (ipoint = 1; ipoint <= npoint; ipoint ++) {
 						TextPoint point = (TextPoint) tier -> points -> item [ipoint];
-						if (point -> mark != NULL && point -> mark [0] != '\0') {
+						if (point -> mark && point -> mark [0] != '\0') {
 							count ++;
 						}
 					}
@@ -2210,7 +2208,7 @@ void TextGridEditor_init (TextGridEditor me, const char32 *title, TextGrid grid,
 			my d_startSelection = my d_endSelection = 0.5 * (my d_startWindow + my d_endWindow);
 		FunctionEditor_marksChanged (me, false);
 	}
-	if (spellingChecker != NULL)
+	if (spellingChecker)
 		GuiText_setSelection (my text, 0, 0);
 	if (sound && sound -> xmin == 0.0 && grid -> xmin != 0.0 && grid -> xmax > sound -> xmax)
 		Melder_warning (U"The time domain of the TextGrid (starting at ",
