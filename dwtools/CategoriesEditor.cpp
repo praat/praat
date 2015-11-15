@@ -156,26 +156,31 @@ static void notifyOutOfView (CategoriesEditor me) {
 	GuiLabel_setText (my outOfView, tmp.string);
 }
 
-static void update_dos (CategoriesEditor me) {
-	bool undoSense = true, redoSense = true;
+static void updateUndoAndRedoMenuItems (CategoriesEditor me)
+{
+	const char32 *commandName;
 
-	// undo
-
-	const char32 *name;
-	if (! (name = CommandHistory_commandName (my history.peek(), 0))) {
-		name = U"nothing"; undoSense = false;
+	/*
+	 * Menu item `Undo`.
+	 */
+	bool undoItemIsSensitive = true;
+	if (commandName = CommandHistory_commandName (my history.peek(), 0), ! commandName) {
+		commandName = U"nothing";
+		undoItemIsSensitive = false;
 	}
+	GuiButton_setText (my undo, Melder_cat (U"Undo ", U"\"", commandName, U"\""));
+	GuiThing_setSensitive (my undo, undoItemIsSensitive);
 
-	GuiButton_setText (my undo, Melder_cat (U"Undo ", U"\"", name, U"\""));
-	GuiThing_setSensitive (my undo, undoSense);
-
-	// redo
-
-	if (! (name = CommandHistory_commandName (my history.peek(), 1))) {
-		name = U"nothing"; redoSense = false;
+	/*
+	 * Menu item `Redo`.
+	 */
+	bool redoItemIsSensitive = true;
+	if (commandName = CommandHistory_commandName (my history.peek(), 1), ! commandName) {
+		commandName = U"nothing";
+		redoItemIsSensitive = false;
 	}
-	GuiButton_setText (my redo, Melder_cat (U"Redo ", U"\"", name, U"\""));
-	GuiThing_setSensitive (my redo, redoSense);
+	GuiButton_setText (my redo, Melder_cat (U"Redo ", U"\"", commandName, U"\""));
+	GuiThing_setSensitive (my redo, redoItemIsSensitive);
 }
 
 static void updateWidgets (CategoriesEditor me) {   // all buttons except undo & redo
@@ -209,7 +214,7 @@ static void updateWidgets (CategoriesEditor me) {   // all buttons except undo &
 	GuiThing_setSensitive (my moveUp,      moveUp);
 	GuiThing_setSensitive (my moveDown,    moveDown);
 	if (my history) {
-		update_dos (me);
+		updateUndoAndRedoMenuItems (me);
 	}
 	notifyOutOfView (me);
 }
