@@ -8468,7 +8468,8 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classBarkSpectrogram, 2, U"Convolve...", 0, 0, DO_BandFilterSpectrograms_convolve);
 	
 	
-	praat_addAction1 (classCategories, 0, U"Edit", 0, 0, DO_Categories_edit);
+	praat_addAction1 (classCategories, 0, U"View & Edit", 0, 0, DO_Categories_edit);
+	praat_addAction1 (classCategories, 0, U"Edit", 0, praat_HIDDEN, DO_Categories_edit); // deprecated 2015
 	praat_addAction1 (classCategories, 0, QUERY_BUTTON, 0, 0, 0);
 	praat_addAction1 (classCategories, 1, U"Get number of categories", QUERY_BUTTON, 1, DO_Categories_getNumberOfCategories);
 	praat_addAction1 (classCategories, 2, U"Get difference", QUERY_BUTTON, praat_HIDDEN | praat_DEPTH_1, DO_Categories_difference);
