@@ -38,10 +38,6 @@
 #include "TextGrid_Sound.h"
 #include "mp3.h"
 
-#ifndef LONG_MAX
-	#define LONG_MAX  2147483647
-#endif
-
 #undef iam
 #define iam iam_LOOP
 
@@ -139,7 +135,7 @@ DO
 	}
 END2 }
 
-FORM (LongSound_writePartToAudioFile, U"LongSound: Save part as audio file", 0) {
+FORM (LongSound_writePartToAudioFile, U"LongSound: Save part as audio file", nullptr) {
 	LABEL (U"", U"Audio file:")
 	TEXTFIELD (U"Audio file", U"")
 	RADIO (U"Type", 3)
@@ -180,100 +176,100 @@ DIRECT2 (LongSound_view) {
 	}
 END2 }
 
-FORM_WRITE2 (LongSound_writeToAifcFile, U"Save as AIFC file", 0, U"aifc") {
+FORM_WRITE2 (LongSound_writeToAifcFile, U"Save as AIFC file", nullptr, U"aifc") {
 	autoCollection set = praat_getSelectedObjects ();
 	LongSound_concatenate (set.peek(), file, Melder_AIFC, 16);
 END2 }
 
-FORM_WRITE2 (LongSound_writeToAiffFile, U"Save as AIFF file", 0, U"aiff") {
+FORM_WRITE2 (LongSound_writeToAiffFile, U"Save as AIFF file", nullptr, U"aiff") {
 	autoCollection set = praat_getSelectedObjects ();
 	LongSound_concatenate (set.peek(), file, Melder_AIFF, 16);
 END2 }
 
-FORM_WRITE2 (LongSound_writeToNextSunFile, U"Save as NeXT/Sun file", 0, U"au") {
+FORM_WRITE2 (LongSound_writeToNextSunFile, U"Save as NeXT/Sun file", nullptr, U"au") {
 	autoCollection set = praat_getSelectedObjects ();
 	LongSound_concatenate (set.peek(), file, Melder_NEXT_SUN, 16);
 END2 }
 
-FORM_WRITE2 (LongSound_writeToNistFile, U"Save as NIST file", 0, U"nist") {
+FORM_WRITE2 (LongSound_writeToNistFile, U"Save as NIST file", nullptr, U"nist") {
 	autoCollection set = praat_getSelectedObjects ();
 	LongSound_concatenate (set.peek(), file, Melder_NIST, 16);
 END2 }
 
-FORM_WRITE2 (LongSound_writeToFlacFile, U"Save as FLAC file", 0, U"flac") {
+FORM_WRITE2 (LongSound_writeToFlacFile, U"Save as FLAC file", nullptr, U"flac") {
 	autoCollection set = praat_getSelectedObjects ();
 	LongSound_concatenate (set.peek(), file, Melder_FLAC, 16);
 END2 }
 
-FORM_WRITE2 (LongSound_writeToWavFile, U"Save as WAV file", 0, U"wav") {
+FORM_WRITE2 (LongSound_writeToWavFile, U"Save as WAV file", nullptr, U"wav") {
 	autoCollection set = praat_getSelectedObjects ();
 	LongSound_concatenate (set.peek(), file, Melder_WAV, 16);
 END2 }
 
-FORM_WRITE2 (LongSound_writeLeftChannelToAifcFile, U"Save left channel as AIFC file", 0, U"aifc") {
+FORM_WRITE2 (LongSound_writeLeftChannelToAifcFile, U"Save left channel as AIFC file", nullptr, U"aifc") {
 	LOOP {
 		iam (LongSound);
 		LongSound_writeChannelToAudioFile (me, Melder_AIFC, 0, file);
 	}
 END2 }
 
-FORM_WRITE2 (LongSound_writeLeftChannelToAiffFile, U"Save left channel as AIFF file", 0, U"aiff") {
+FORM_WRITE2 (LongSound_writeLeftChannelToAiffFile, U"Save left channel as AIFF file", nullptr, U"aiff") {
 	LOOP {
 		iam (LongSound);
 		LongSound_writeChannelToAudioFile (me, Melder_AIFF, 0, file);
 	}
 END2 }
 
-FORM_WRITE2 (LongSound_writeLeftChannelToNextSunFile, U"Save left channel as NeXT/Sun file", 0, U"au") {
+FORM_WRITE2 (LongSound_writeLeftChannelToNextSunFile, U"Save left channel as NeXT/Sun file", nullptr, U"au") {
 	LOOP {
 		iam (LongSound);
 		LongSound_writeChannelToAudioFile (me, Melder_NEXT_SUN, 0, file);
 	}
 END2 }
 
-FORM_WRITE2 (LongSound_writeLeftChannelToNistFile, U"Save left channel as NIST file", 0, U"nist") {
+FORM_WRITE2 (LongSound_writeLeftChannelToNistFile, U"Save left channel as NIST file", nullptr, U"nist") {
 	LOOP {
 		iam (LongSound);
 		LongSound_writeChannelToAudioFile (me, Melder_NIST, 0, file);
 	}
 END2 }
 
-FORM_WRITE2 (LongSound_writeLeftChannelToFlacFile, U"Save left channel as FLAC file", 0, U"flac") {
+FORM_WRITE2 (LongSound_writeLeftChannelToFlacFile, U"Save left channel as FLAC file", nullptr, U"flac") {
 	LOOP {
 		iam (LongSound);
 		LongSound_writeChannelToAudioFile (me, Melder_FLAC, 0, file);
 	}
 END2 }
 
-FORM_WRITE2 (LongSound_writeLeftChannelToWavFile, U"Save left channel as WAV file", 0, U"wav") {
+FORM_WRITE2 (LongSound_writeLeftChannelToWavFile, U"Save left channel as WAV file", nullptr, U"wav") {
 	LOOP {
 		iam (LongSound);
 		LongSound_writeChannelToAudioFile (me, Melder_WAV, 0, file);
 	}
 END2 }
 
-FORM_WRITE2 (LongSound_writeRightChannelToAifcFile, U"Save right channel as AIFC file", 0, U"aifc") {
+FORM_WRITE2 (LongSound_writeRightChannelToAifcFile, U"Save right channel as AIFC file", nullptr, U"aifc") {
 	LOOP {
 		iam (LongSound);
 		LongSound_writeChannelToAudioFile (me, Melder_AIFC, 1, file);
 	}
 END2 }
 
-FORM_WRITE2 (LongSound_writeRightChannelToAiffFile, U"Save right channel as AIFF file", 0, U"aiff") {
+FORM_WRITE2 (LongSound_writeRightChannelToAiffFile, U"Save right channel as AIFF file", nullptr, U"aiff") {
 	LOOP {
 		iam (LongSound);
 		LongSound_writeChannelToAudioFile (me, Melder_AIFF, 1, file);
 	}
 END2 }
 
-FORM_WRITE2 (LongSound_writeRightChannelToNextSunFile, U"Save right channel as NeXT/Sun file", 0, U"au") {
+FORM_WRITE2 (LongSound_writeRightChannelToNextSunFile, U"Save right channel as NeXT/Sun file", nullptr, U"au") {
 	LOOP {
 		iam (LongSound);
 		LongSound_writeChannelToAudioFile (me, Melder_NEXT_SUN, 1, file);
 	}
 END2 }
 
-FORM_WRITE2 (LongSound_writeRightChannelToNistFile, U"Save right channel as NIST file", 0, U"nist") {
+FORM_WRITE2 (LongSound_writeRightChannelToNistFile, U"Save right channel as NIST file", nullptr, U"nist") {
 	LOOP {
 		iam (LongSound);
 		LongSound_writeChannelToAudioFile (me, Melder_NIST, 1, file);
@@ -309,39 +305,39 @@ END2 }
 
 /********** LONGSOUND & SOUND **********/
 
-FORM_WRITE2 (LongSound_Sound_writeToAifcFile, U"Save as AIFC file", 0, U"aifc") {
+FORM_WRITE2 (LongSound_Sound_writeToAifcFile, U"Save as AIFC file", nullptr, U"aifc") {
 	autoCollection set = praat_getSelectedObjects ();
 	LongSound_concatenate (set.peek(), file, Melder_AIFC, 16);
 END2 }
 
-FORM_WRITE2 (LongSound_Sound_writeToAiffFile, U"Save as AIFF file", 0, U"aiff") {
+FORM_WRITE2 (LongSound_Sound_writeToAiffFile, U"Save as AIFF file", nullptr, U"aiff") {
 	autoCollection set = praat_getSelectedObjects ();
 	LongSound_concatenate (set.peek(), file, Melder_AIFF, 16);
 END2 }
 
-FORM_WRITE2 (LongSound_Sound_writeToNextSunFile, U"Save as NeXT/Sun file", 0, U"au") {
+FORM_WRITE2 (LongSound_Sound_writeToNextSunFile, U"Save as NeXT/Sun file", nullptr, U"au") {
 	autoCollection set = praat_getSelectedObjects ();
 	LongSound_concatenate (set.peek(), file, Melder_NEXT_SUN, 16);
 END2 }
 
-FORM_WRITE2 (LongSound_Sound_writeToNistFile, U"Save as NIST file", 0, U"nist") {
+FORM_WRITE2 (LongSound_Sound_writeToNistFile, U"Save as NIST file", nullptr, U"nist") {
 	autoCollection set = praat_getSelectedObjects ();
 	LongSound_concatenate (set.peek(), file, Melder_NIST, 16);
 END2 }
 
-FORM_WRITE2 (LongSound_Sound_writeToFlacFile, U"Save as FLAC file", 0, U"flac") {
+FORM_WRITE2 (LongSound_Sound_writeToFlacFile, U"Save as FLAC file", nullptr, U"flac") {
 	autoCollection set = praat_getSelectedObjects ();
 	LongSound_concatenate (set.peek(), file, Melder_FLAC, 16);
 END2 }
 
-FORM_WRITE2 (LongSound_Sound_writeToWavFile, U"Save as WAV file", 0, U"wav") {
+FORM_WRITE2 (LongSound_Sound_writeToWavFile, U"Save as WAV file", nullptr, U"wav") {
 	autoCollection set = praat_getSelectedObjects ();
 	LongSound_concatenate (set.peek(), file, Melder_WAV, 16);
 END2 }
 
 /********** SOUND **********/
 
-FORM (Sound_add, U"Sound: Add", 0) {
+FORM (Sound_add, U"Sound: Add", nullptr) {
 	LABEL (U"", U"The following number will be added to the amplitudes of ")
 	LABEL (U"", U"all samples of the sound.")
 	REAL (U"Number", U"0.1")
@@ -761,7 +757,7 @@ FORM (Sound_extractPart, U"Sound: Extract part", nullptr) {
 	REAL (U"right Time range (s)", U"0.1")
 	OPTIONMENU_ENUM (U"Window shape", kSound_windowShape, DEFAULT)
 	POSITIVE (U"Relative width", U"1.0")
-	BOOLEAN (U"Preserve times", 0)
+	BOOLEAN (U"Preserve times", false)
 	OK2
 DO
 	LOOP {
@@ -1296,7 +1292,7 @@ DO
 	}
 END2 }
 
-FORM (Sound_multiply, U"Sound: Multiply", 0) {
+FORM (Sound_multiply, U"Sound: Multiply", nullptr) {
 	REAL (U"Multiplication factor", U"1.5")
 	OK2
 DO
@@ -1307,7 +1303,7 @@ DO
 	}
 END2 }
 
-FORM (Sound_multiplyByWindow, U"Sound: Multiply by window", 0) {
+FORM (Sound_multiplyByWindow, U"Sound: Multiply by window", nullptr) {
 	OPTIONMENU_ENUM (U"Window shape", kSound_windowShape, HANNING)
 	OK2
 DO
@@ -1318,7 +1314,7 @@ DO
 	}
 END2 }
 
-FORM (Sound_overrideSamplingFrequency, U"Sound: Override sampling frequency", 0) {
+FORM (Sound_overrideSamplingFrequency, U"Sound: Override sampling frequency", nullptr) {
 	POSITIVE (U"New sampling frequency (Hz)", U"16000.0")
 	OK2
 DO
@@ -1361,7 +1357,7 @@ DO
 	}
 END2 }
 
-FORM_READ2 (Sound_readSeparateChannelsFromSoundFile, U"Read separate channels from sound file", 0, true) {
+FORM_READ2 (Sound_readSeparateChannelsFromSoundFile, U"Read separate channels from sound file", nullptr, true) {
 	autoSound sound = Sound_readFromSoundFile (file);
 	char32 name [300];
 	Melder_sprint (name,300, MelderFile_name (file));
@@ -1375,7 +1371,7 @@ FORM_READ2 (Sound_readSeparateChannelsFromSoundFile, U"Read separate channels fr
 	}
 END2 }
 
-FORM_READ2 (Sound_readFromRawAlawFile, U"Read Sound from raw Alaw file", 0, true) {
+FORM_READ2 (Sound_readFromRawAlawFile, U"Read Sound from raw Alaw file", nullptr, true) {
 	autoSound me = Sound_readFromRawAlawFile (file);
 	praat_new (me.move(), MelderFile_name (file));
 END2 }
@@ -1412,7 +1408,7 @@ DIRECT2 (Sound_record_stereo) {
 	do_Sound_record (2);
 END2 }
 
-FORM (Sound_recordFixedTime, U"Record Sound", 0) {
+FORM (Sound_recordFixedTime, U"Record Sound", nullptr) {
 	RADIO (U"Input source", 1)
 		RADIOBUTTON (U"Microphone")
 		RADIOBUTTON (U"Line")
@@ -1467,12 +1463,12 @@ DIRECT2 (Sound_reverse) {
 	}
 END2 }
 
-FORM_WRITE2 (Sound_saveAs24BitWavFile, U"Save as 24-bit WAV file", 0, U"wav") {
+FORM_WRITE2 (Sound_saveAs24BitWavFile, U"Save as 24-bit WAV file", nullptr, U"wav") {
 	autoCollection set = praat_getSelectedObjects ();
 	LongSound_concatenate (set.peek(), file, Melder_WAV, 24);
 END2 }
 
-FORM_WRITE2 (Sound_saveAs32BitWavFile, U"Save as 32-bit WAV file", 0, U"wav") {
+FORM_WRITE2 (Sound_saveAs32BitWavFile, U"Save as 32-bit WAV file", nullptr, U"wav") {
 	autoCollection set = praat_getSelectedObjects ();
 	LongSound_concatenate (set.peek(), file, Melder_WAV, 32);
 END2 }
@@ -1539,7 +1535,7 @@ DO_ALTERNATIVE (old_Sound_setValueAtIndex)
 	}
 END2 }
 
-FORM (Sound_setPartToZero, U"Sound: Set part to zero", 0) {
+FORM (Sound_setPartToZero, U"Sound: Set part to zero", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0 (= all)")
 	RADIO (U"Cut", 2)
@@ -1577,7 +1573,7 @@ DO
 	}
 END2 }
 
-FORM (Sound_to_Cochleagram, U"Sound: To Cochleagram", 0) {
+FORM (Sound_to_Cochleagram, U"Sound: To Cochleagram", nullptr) {
 	POSITIVE (U"Time step (s)", U"0.01")
 	POSITIVE (U"Frequency resolution (Bark)", U"0.1")
 	POSITIVE (U"Window length (s)", U"0.03")
@@ -1592,7 +1588,7 @@ DO
 	}
 END2 }
 
-FORM (Sound_to_Cochleagram_edb, U"Sound: To Cochleagram (De Boer, Meddis & Hewitt)", 0) {
+FORM (Sound_to_Cochleagram_edb, U"Sound: To Cochleagram (De Boer, Meddis & Hewitt)", nullptr) {
 	POSITIVE (U"Time step (s)", U"0.01")
 	POSITIVE (U"Frequency resolution (Bark)", U"0.1")
 	BOOLEAN (U"Has synapse", true)
@@ -1697,7 +1693,7 @@ DO
 	}
 END2 }
 
-FORM (Sound_to_Harmonicity_gne, U"Sound: To Harmonicity (gne)", 0) {
+FORM (Sound_to_Harmonicity_gne, U"Sound: To Harmonicity (gne)", nullptr) {
 	POSITIVE (U"Minimum frequency (Hz)", U"500.0")
 	POSITIVE (U"Maximum frequency (Hz)", U"4500.0")
 	POSITIVE (U"Bandwidth (Hz)", U"1000.0")
@@ -2023,7 +2019,7 @@ DO
 	MelderAudio_setInputSoundSystem (GET_ENUM (kMelder_inputSoundSystem, U"Input sound system"));
 END2 }
 
-FORM (SoundOutputPrefs, U"Sound playing preferences", 0) {
+FORM (SoundOutputPrefs, U"Sound playing preferences", nullptr) {
 	LABEL (U"", U"The following determines how sounds are played.")
 	LABEL (U"", U"Between parentheses, you find what you can do simultaneously.")
 	LABEL (U"", U"Decrease asynchronicity if sound plays with discontinuities.")
@@ -2053,143 +2049,143 @@ DIRECT (Praat_reportSoundServerProperties)
 END
 #endif
 
-FORM_WRITE2 (Sound_writeToAifcFile, U"Save as AIFC file", 0, U"aifc") {
+FORM_WRITE2 (Sound_writeToAifcFile, U"Save as AIFC file", nullptr, U"aifc") {
 	autoCollection set = praat_getSelectedObjects ();
 	LongSound_concatenate (set.peek(), file, Melder_AIFC, 16);
 END2 }
 
-FORM_WRITE2 (Sound_writeToAiffFile, U"Save as AIFF file", 0, U"aiff") {
+FORM_WRITE2 (Sound_writeToAiffFile, U"Save as AIFF file", nullptr, U"aiff") {
 	autoCollection set = praat_getSelectedObjects ();
 	LongSound_concatenate (set.peek(), file, Melder_AIFF, 16);
 END2 }
 
-FORM_WRITE2 (Sound_writeToFlacFile, U"Save as FLAC file", 0, U"flac") {
+FORM_WRITE2 (Sound_writeToFlacFile, U"Save as FLAC file", nullptr, U"flac") {
 	autoCollection set = praat_getSelectedObjects ();
 	LongSound_concatenate (set.peek(), file, Melder_FLAC, 16);
 END2 }
 
-FORM_WRITE2 (Sound_writeToKayFile, U"Save as Kay sound file", 0, U"kay") {
+FORM_WRITE2 (Sound_writeToKayFile, U"Save as Kay sound file", nullptr, U"kay") {
 	LOOP {
 		iam (Sound);
 		Sound_writeToKayFile (me, file);
 	}
 END2 }
 
-FORM_WRITE2 (Sound_writeToNextSunFile, U"Save as NeXT/Sun file", 0, U"au") {
+FORM_WRITE2 (Sound_writeToNextSunFile, U"Save as NeXT/Sun file", nullptr, U"au") {
 	autoCollection set = praat_getSelectedObjects ();
 	LongSound_concatenate (set.peek(), file, Melder_NEXT_SUN, 16);
 END2 }
 
-FORM_WRITE2 (Sound_writeToNistFile, U"Save as NIST file", 0, U"nist") {
+FORM_WRITE2 (Sound_writeToNistFile, U"Save as NIST file", nullptr, U"nist") {
 	autoCollection set = praat_getSelectedObjects ();
 	LongSound_concatenate (set.peek(), file, Melder_NIST, 16);
 END2 }
 
-FORM_WRITE2 (Sound_saveAsRaw8bitSignedFile, U"Save as raw 8-bit signed sound file", 0, U"8sig") {
+FORM_WRITE2 (Sound_saveAsRaw8bitSignedFile, U"Save as raw 8-bit signed sound file", nullptr, U"8sig") {
 	LOOP {
 		iam (Sound);
 		Sound_writeToRawSoundFile (me, file, Melder_LINEAR_8_SIGNED);
 	}
 END2 }
 
-FORM_WRITE2 (Sound_saveAsRaw8bitUnsignedFile, U"Save as raw 8-bit unsigned sound file", 0, U"8uns") {
+FORM_WRITE2 (Sound_saveAsRaw8bitUnsignedFile, U"Save as raw 8-bit unsigned sound file", nullptr, U"8uns") {
 	LOOP {
 		iam (Sound);
 		Sound_writeToRawSoundFile (me, file, Melder_LINEAR_8_UNSIGNED);
 	}
 END2 }
 
-FORM_WRITE2 (Sound_saveAsRaw16bitBigEndianFile, U"Save as raw 16-bit big-endian sound file", 0, U"16be") {
+FORM_WRITE2 (Sound_saveAsRaw16bitBigEndianFile, U"Save as raw 16-bit big-endian sound file", nullptr, U"16be") {
 	LOOP {
 		iam (Sound);
 		Sound_writeToRawSoundFile (me, file, Melder_LINEAR_16_BIG_ENDIAN);
 	}
 END2 }
 
-FORM_WRITE2 (Sound_saveAsRaw16bitLittleEndianFile, U"Save as raw 16-bit little-endian sound file", 0, U"16le") {
+FORM_WRITE2 (Sound_saveAsRaw16bitLittleEndianFile, U"Save as raw 16-bit little-endian sound file", nullptr, U"16le") {
 	LOOP {
 		iam (Sound);
 		Sound_writeToRawSoundFile (me, file, Melder_LINEAR_16_LITTLE_ENDIAN);
 	}
 END2 }
 
-FORM_WRITE2 (Sound_saveAsRaw24bitBigEndianFile, U"Save as raw 24-bit big-endian sound file", 0, U"24be") {
+FORM_WRITE2 (Sound_saveAsRaw24bitBigEndianFile, U"Save as raw 24-bit big-endian sound file", nullptr, U"24be") {
 	LOOP {
 		iam (Sound);
 		Sound_writeToRawSoundFile (me, file, Melder_LINEAR_24_BIG_ENDIAN);
 	}
 END2 }
 
-FORM_WRITE2 (Sound_saveAsRaw24bitLittleEndianFile, U"Save as raw 24-bit little-endian sound file", 0, U"24le") {
+FORM_WRITE2 (Sound_saveAsRaw24bitLittleEndianFile, U"Save as raw 24-bit little-endian sound file", nullptr, U"24le") {
 	LOOP {
 		iam (Sound);
 		Sound_writeToRawSoundFile (me, file, Melder_LINEAR_24_LITTLE_ENDIAN);
 	}
 END2 }
 
-FORM_WRITE2 (Sound_saveAsRaw32bitBigEndianFile, U"Save as raw 32-bit big-endian sound file", 0, U"32be") {
+FORM_WRITE2 (Sound_saveAsRaw32bitBigEndianFile, U"Save as raw 32-bit big-endian sound file", nullptr, U"32be") {
 	LOOP {
 		iam (Sound);
 		Sound_writeToRawSoundFile (me, file, Melder_LINEAR_32_BIG_ENDIAN);
 	}
 END2 }
 
-FORM_WRITE2 (Sound_saveAsRaw32bitLittleEndianFile, U"Save as raw 32-bit little-endian sound file", 0, U"32le") {
+FORM_WRITE2 (Sound_saveAsRaw32bitLittleEndianFile, U"Save as raw 32-bit little-endian sound file", nullptr, U"32le") {
 	LOOP {
 		iam (Sound);
 		Sound_writeToRawSoundFile (me, file, Melder_LINEAR_32_LITTLE_ENDIAN);
 	}
 END2 }
 
-FORM_WRITE2 (Sound_writeToSesamFile, U"Save as Sesam file", 0, U"sdf") {
+FORM_WRITE2 (Sound_writeToSesamFile, U"Save as Sesam file", nullptr, U"sdf") {
 	LOOP {
 		iam (Sound);
 		Sound_writeToSesamFile (me, file);
 	}
 END2 }
 
-FORM_WRITE2 (Sound_writeToStereoAifcFile, U"Save as stereo AIFC file", 0, U"aifc") {
+FORM_WRITE2 (Sound_writeToStereoAifcFile, U"Save as stereo AIFC file", nullptr, U"aifc") {
 	autoCollection set = praat_getSelectedObjects ();
 	autoSound stereo = Sounds_combineToStereo (set.peek());
 	Sound_writeToAudioFile (stereo.peek(), file, Melder_AIFC, 16);
 END2 }
 
-FORM_WRITE2 (Sound_writeToStereoAiffFile, U"Save as stereo AIFF file", 0, U"aiff") {
+FORM_WRITE2 (Sound_writeToStereoAiffFile, U"Save as stereo AIFF file", nullptr, U"aiff") {
 	autoCollection set = praat_getSelectedObjects ();
 	autoSound stereo = Sounds_combineToStereo (set.peek());
 	Sound_writeToAudioFile (stereo.peek(), file, Melder_AIFF, 16);
 END2 }
 
-FORM_WRITE2 (Sound_writeToStereoNextSunFile, U"Save as stereo NeXT/Sun file", 0, U"au") {
+FORM_WRITE2 (Sound_writeToStereoNextSunFile, U"Save as stereo NeXT/Sun file", nullptr, U"au") {
 	autoCollection set = praat_getSelectedObjects ();
 	autoSound stereo = Sounds_combineToStereo (set.peek());
 	Sound_writeToAudioFile (stereo.peek(), file, Melder_NEXT_SUN, 16);
 END2 }
 
-FORM_WRITE2 (Sound_writeToStereoNistFile, U"Save as stereo NIST file", 0, U"nist") {
+FORM_WRITE2 (Sound_writeToStereoNistFile, U"Save as stereo NIST file", nullptr, U"nist") {
 	autoCollection set = praat_getSelectedObjects ();
 	autoSound stereo = Sounds_combineToStereo (set.peek());
 	Sound_writeToAudioFile (stereo.peek(), file, Melder_NIST, 16);
 END2 }
 
-FORM_WRITE2 (Sound_writeToStereoFlacFile, U"Save as stereo FLAC file", 0, U"flac") {
+FORM_WRITE2 (Sound_writeToStereoFlacFile, U"Save as stereo FLAC file", nullptr, U"flac") {
 	autoCollection set = praat_getSelectedObjects ();
 	autoSound stereo = Sounds_combineToStereo (set.peek());
 	Sound_writeToAudioFile (stereo.peek(), file, Melder_FLAC, 16);
 END2 }
 
-FORM_WRITE2 (Sound_writeToStereoWavFile, U"Save as stereo WAV file", 0, U"wav") {
+FORM_WRITE2 (Sound_writeToStereoWavFile, U"Save as stereo WAV file", nullptr, U"wav") {
 	autoCollection set = praat_getSelectedObjects ();
 	autoSound stereo = Sounds_combineToStereo (set.peek());
 	Sound_writeToAudioFile (stereo.peek(), file, Melder_WAV, 16);
 END2 }
 
-FORM_WRITE2 (Sound_writeToSunAudioFile, U"Save as NeXT/Sun file", 0, U"au") {
+FORM_WRITE2 (Sound_writeToSunAudioFile, U"Save as NeXT/Sun file", nullptr, U"au") {
 	autoCollection set = praat_getSelectedObjects ();
 	LongSound_concatenate (set.peek(), file, Melder_NEXT_SUN, 16);
 END2 }
 
-FORM_WRITE2 (Sound_writeToWavFile, U"Save as WAV file", 0, U"wav") {
+FORM_WRITE2 (Sound_writeToWavFile, U"Save as WAV file", nullptr, U"wav") {
 	autoCollection set = praat_getSelectedObjects ();
 	LongSound_concatenate (set.peek(), file, Melder_WAV, 16);
 END2 }

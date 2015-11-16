@@ -600,7 +600,20 @@ long GuiList_getBottomPosition (GuiList me);
 long GuiList_getNumberOfItems (GuiList me);
 long * GuiList_getSelectedPositions (GuiList me, long *numberOfSelected);
 long GuiList_getTopPosition (GuiList me);
+
+/**
+	Inserts a new item into a GuiList at a given position.
+	@param me
+		The GuiList into which the new item is inserted.
+	@param itemText
+		The text of the new item. Cattable.
+	@param position
+		The position of the new item in the list after insertion.
+		A value of 1 therefore puts the new item at the top of the list.
+		A value of 0 is special: the item is put at the bottom of the list.
+ */
 void GuiList_insertItem  (GuiList me, const char32 *itemText /* cattable */, long position);
+
 void GuiList_replaceItem (GuiList me, const char32 *itemText /* cattable */, long position);
 void GuiList_setTopPosition (GuiList me, long topPosition);
 void GuiList_selectItem (GuiList me, long position);
