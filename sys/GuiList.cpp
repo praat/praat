@@ -556,8 +556,8 @@ void GuiList_deselectItem (GuiList me, long position) {
 	GuiControlBlockValueChangedCallbacks block (me);
 	#if gtk
 		GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (my d_widget));
-/*		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (my d_widget)));
-		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) position);*/
+//		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (my d_widget)));
+//		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) position, -1 /* terminator */);
 		GtkTreeIter iter;
 //		gtk_tree_model_get_iter (GTK_TREE_MODEL (list_store), & iter, path);
 //		gtk_tree_path_free (path);
@@ -731,7 +731,7 @@ void GuiList_insertItem (GuiList me, const char32 *itemText /* cattable */, long
 	 */
 	#if gtk
 		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (my d_widget)));
-		gtk_list_store_insert_with_values (list_store, nullptr, (gint) position - 1, COLUMN_STRING, Melder_peek32to8 (itemText), -1);
+		gtk_list_store_insert_with_values (list_store, nullptr, position == 0 ? 1000000000 : (gint) position - 1, COLUMN_STRING, Melder_peek32to8 (itemText), -1);
 		// TODO: Tekst opsplitsen
 		// does GTK know the '0' trick?
 		// it does know about nullptr, to append in another function
@@ -775,7 +775,7 @@ void GuiList_replaceItem (GuiList me, const char32 *itemText, long position) {
 			gtk_list_store_set (GTK_LIST_STORE (tree_model), & iter, COLUMN_STRING, Melder_peek32to8 (itemText), -1);
 		}
 /*
-		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) position);
+		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) position, -1);   // -1 = terminator
 		GtkTreeIter iter;
 		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (my d_widget)));
 		gtk_tree_model_get_iter (GTK_TREE_MODEL (list_store), & iter, path);
@@ -808,13 +808,13 @@ void GuiList_selectItem (GuiList me, long position) {
 	GuiControlBlockValueChangedCallbacks block (me);
 	#if gtk
 		GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (my d_widget));
-		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) position - 1, -1);
+		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) position - 1, -1 /* terminator */);
 		gtk_tree_selection_select_path (selection, path);
 		gtk_tree_path_free (path);
 
 // TODO: check of het bovenstaande werkt, dan kan dit weg
 //		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (my d_widget)));
-//		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) position);
+//		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) position, -1 /* terminator */);
 //		GtkTreeIter iter;
 //		gtk_tree_model_get_iter (GTK_TREE_MODEL (list_store), & iter, path);
 //		gtk_tree_selection_select_iter (selection, & iter);
@@ -864,7 +864,7 @@ void GuiList_setTopPosition (GuiList me, long topPosition) {
 	trace (U"Set top position ", topPosition);
 	#if gtk
 //		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (my md_widget)));
-		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) topPosition);
+		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) topPosition, -1 /* terminator */);
 		gtk_tree_view_scroll_to_cell (GTK_TREE_VIEW (my d_widget), path, nullptr, false, 0.0, 0.0);
 		gtk_tree_path_free (path);
 	#elif cocoa
