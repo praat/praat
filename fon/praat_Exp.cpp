@@ -138,23 +138,23 @@ void praat_uvafon_Exp_init ();
 void praat_uvafon_Exp_init () {
 	Thing_recognizeClassesByName (classExperimentMFC, classResultsMFC, nullptr);
 
-	praat_addAction1 (classCategories, 0, U"Sort", 0, 0, DO_Categories_sort);
-	praat_addAction1 (classCategories, 1, U"Get entropy", 0, 0, DO_Categories_getEntropy);
+	praat_addAction1 (classCategories, 0, U"Sort", nullptr, 0, DO_Categories_sort);
+	praat_addAction1 (classCategories, 1, U"Get entropy", nullptr, 0, DO_Categories_getEntropy);
 
-	praat_addAction1 (classExperimentMFC, 0, U"Run", 0, 0, DO_ExperimentMFC_run);
-	praat_addAction1 (classExperimentMFC, 0, U"Extract results", 0, 0, DO_ExperimentMFC_extractResults);
+	praat_addAction1 (classExperimentMFC, 0, U"Run", nullptr, 0, DO_ExperimentMFC_run);
+	praat_addAction1 (classExperimentMFC, 0, U"Extract results", nullptr, 0, DO_ExperimentMFC_extractResults);
 
-	praat_addAction1 (classResultsMFC, 0, U"Query -", 0, 0, 0);
-	praat_addAction1 (classResultsMFC, 1, U"Get number of trials", 0, 1, DO_ResultsMFC_getNumberOfTrials);
-	praat_addAction1 (classResultsMFC, 1, U"Get stimulus...", 0, 1, DO_ResultsMFC_getStimulus);
-	praat_addAction1 (classResultsMFC, 1, U"Get response...", 0, 1, DO_ResultsMFC_getResponse);
-	praat_addAction1 (classResultsMFC, 0, U"Modify", 0, 0, 0);
+	praat_addAction1 (classResultsMFC, 0, U"Query -", nullptr, 0, nullptr);
+	praat_addAction1 (classResultsMFC, 1, U"Get number of trials", nullptr, 1, DO_ResultsMFC_getNumberOfTrials);
+	praat_addAction1 (classResultsMFC, 1, U"Get stimulus...", nullptr, 1, DO_ResultsMFC_getStimulus);
+	praat_addAction1 (classResultsMFC, 1, U"Get response...", nullptr, 1, DO_ResultsMFC_getResponse);
+	praat_addAction1 (classResultsMFC, 0, U"Modify", nullptr, 0, nullptr);
 	praat_addAction1 (classResultsMFC, 2, U"Remove unshared stimuli", 0, 0, DO_ResultsMFC_removeUnsharedStimuli);
-	praat_addAction1 (classResultsMFC, 0, U"Convert", 0, 0, 0);
-	praat_addAction1 (classResultsMFC, 0, U"To Categories (stimuli)", 0, 0, DO_ResultsMFC_to_Categories_stimuli);
-	praat_addAction1 (classResultsMFC, 0, U"To Categories (responses)", 0, 0, DO_ResultsMFC_to_Categories_responses);
-	praat_addAction1 (classResultsMFC, 0, U"Collect", 0, 0, 0);
-	praat_addAction1 (classResultsMFC, 0, U"Collect to Table", 0, 0, DO_ResultsMFCs_to_Table);
+	praat_addAction1 (classResultsMFC, 0, U"Convert", nullptr, 0, nullptr);
+	praat_addAction1 (classResultsMFC, 0, U"To Categories (stimuli)", nullptr, 0, DO_ResultsMFC_to_Categories_stimuli);
+	praat_addAction1 (classResultsMFC, 0, U"To Categories (responses)", nullptr, 0, DO_ResultsMFC_to_Categories_responses);
+	praat_addAction1 (classResultsMFC, 0, U"Collect", nullptr, 0, nullptr);
+	praat_addAction1 (classResultsMFC, 0, U"Collect to Table", nullptr, 0, DO_ResultsMFCs_to_Table);
 }
 
 /* End of file praat_Exp.cpp */

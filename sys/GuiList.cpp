@@ -722,42 +722,43 @@ long GuiList_getTopPosition (GuiList me) {
 	#endif
 }
 
-void GuiList_insertItem (GuiList me, const char32 *itemText /* cattable */, long position) {
+void GuiList_insertItem (GuiList me, const char32 *itemText /* cattable */, long position_base1) {
+	bool explicitlyInsertAtEnd = ( position_base1 <= 0 );
 	GuiControlBlockValueChangedCallbacks block (me);
-	/*
-	 * 'position' is the position of the new item in the list after insertion:
-	 * a value of 1 therefore puts the new item at the top of the list;
-	 * a value of 0 is special: the item is put at the bottom of the list.
-	 */
 	#if gtk
 		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (my d_widget)));
-		gtk_list_store_insert_with_values (list_store, nullptr, position == 0 ? 1000000000 : (gint) position - 1, COLUMN_STRING, Melder_peek32to8 (itemText), -1);
+		gtk_list_store_insert_with_values (list_store, nullptr, explicitlyInsertAtEnd ? 1000000000 : (gint) position_base1 - 1, COLUMN_STRING, Melder_peek32to8 (itemText), -1);
 		// TODO: Tekst opsplitsen
 		// does GTK know the '0' trick?
 		// it does know about nullptr, to append in another function
 	#elif cocoa
-		GuiCocoaList *list = (GuiCocoaList *) my d_widget;
-		NSString *nsString = [[NSString alloc] initWithUTF8String: Melder_peek32to8 (itemText)];
-		if (position)
-			[[list contents]   insertObject: nsString   atIndex: position - 1];   // cocoa lists start with item 0
-		else
-			[[list contents]   addObject: nsString];   // insert at end
-		//Melder_assert ([nsString retainCount] == 2);
-		[nsString release];
-		[[list tableView] reloadData];
+		GuiCocoaList *nativeList = (GuiCocoaList *) my d_widget;
+		NSString *nativeItemText = [[NSString alloc] initWithUTF8String: Melder_peek32to8 (itemText)];
+		if (explicitlyInsertAtEnd) {
+			[[nativeList contents]   addObject: nativeItemText];
+		} else {
+			NSUInteger nativePosition_base0 = (unsigned long) position_base1 - 1;
+			[[nativeList contents]   insertObject: nativeItemText   atIndex: nativePosition_base0];
+		}
+		[nativeItemText release];
+		[[nativeList tableView] reloadData];
 	#elif win
-		if (position)
-			ListBox_InsertString (my d_widget -> window, position - 1, Melder_peek32toW (itemText));   // win lists start with item 0
-		else
-			ListBox_AddString (my d_widget -> window, Melder_peek32toW (itemText));   // insert at end
+		HWND nativeList = my d_widget -> window;
+		WCHAR *nativeItemText = Melder_peek32toW (itemText);
+		if (explicitlyInsertAtEnd) {
+			ListBox_AddString (nativeList, nativeItemText);
+		} else {
+			int nativePosition_base0 = position_base1 - 1;
+			ListBox_InsertString (nativeList, nativePosition_base0, nativeItemText);
+		}
 	#elif mac
 		long n = (** my d_macListHandle). dataBounds. bottom;
-		if (position == 0)
-			position = n + 1;   // insert at end
+		if (explicitlyInsertAtEnd)
+			position_base1 = n + 1;
 		Cell cell;
-		cell.h = 0; cell. v = position - 1;   // mac lists start with item 0
+		cell.h = 0; cell. v = position_base1 - 1;   // mac lists start with item 0
 		_GuiMac_clipOnParent (my d_widget);
-		LAddRow (1, position - 1, my d_macListHandle);
+		LAddRow (1, position_base1 - 1, my d_macListHandle);
 		const char *itemText_utf8 = Melder_peek32to8 (itemText);   // although defProc will convert again...
 		LSetCell (itemText_utf8, (short) strlen (itemText_utf8), cell, my d_macListHandle);
 		(** my d_macListHandle). visible. bottom = n + 1;

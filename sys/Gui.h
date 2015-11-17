@@ -130,7 +130,7 @@
 	@interface GuiCocoaTextView : NSTextView <GuiCocoaAny, NSTextViewDelegate> @end
 	@interface GuiCocoaWindow : NSWindow <GuiCocoaAny> @end
 #elif motif
-	typedef class structGuiObject *GuiObject;   // Opaque
+	typedef class structGuiObject *GuiObject;   // opaque
 
 	/*
 	 * Definitions of X11 types.
@@ -600,7 +600,20 @@ long GuiList_getBottomPosition (GuiList me);
 long GuiList_getNumberOfItems (GuiList me);
 long * GuiList_getSelectedPositions (GuiList me, long *numberOfSelected);
 long GuiList_getTopPosition (GuiList me);
+
+/**
+	Inserts a new item into a GuiList at a given position.
+	@param me
+		The GuiList into which the new item is inserted.
+	@param itemText
+		The text of the new item. Cattable.
+	@param position
+		The position of the new item in the list after insertion.
+		A value of 1 therefore puts the new item at the top of the list.
+		A value of 0 is special: the item is put at the bottom of the list.
+ */
 void GuiList_insertItem  (GuiList me, const char32 *itemText /* cattable */, long position);
+
 void GuiList_replaceItem (GuiList me, const char32 *itemText /* cattable */, long position);
 void GuiList_setTopPosition (GuiList me, long topPosition);
 void GuiList_selectItem (GuiList me, long position);
@@ -707,7 +720,7 @@ Thing_define (GuiMenuItem, GuiThing) {
 
 GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, uint32 flags,
 	GuiMenuItemCallback callback, Thing boss);
-/* Flags is a combination of the above defines. */
+/* Flags is a combination of the above defines (both layout and accelerators). */
 GuiMenuItem GuiMenu_addSeparator (GuiMenu menu);
 
 void GuiMenuItem_check (GuiMenuItem me, bool check);
@@ -740,7 +753,7 @@ void GuiOptionMenu_setValue (GuiOptionMenu me, int value);
 
 Thing_declare (GuiProgressBar);
 
-Thing_define (GuiProgressBar, GuiControl) { public:
+Thing_define (GuiProgressBar, GuiControl) {
 	#if cocoa
 		GuiCocoaProgressBar *d_cocoaProgressBar;
 	#endif
@@ -762,7 +775,7 @@ typedef struct structGuiRadioButtonEvent {
 
 typedef MelderCallback <void, structThing /* boss */, GuiRadioButtonEvent> GuiRadioButtonCallback;
 
-Thing_define (GuiRadioButton, GuiControl) { public:
+Thing_define (GuiRadioButton, GuiControl) {
 	GuiRadioButton d_previous, d_next;   // there's a linked list of grouped radio buttons
 	GuiRadioButtonCallback d_valueChangedCallback;
 	Thing d_valueChangedBoss;
@@ -813,7 +826,7 @@ typedef struct structGuiScrollBarEvent {
 
 typedef MelderCallback <void, structThing /* boss */, GuiScrollBarEvent> GuiScrollBarCallback;
 
-Thing_define (GuiScrollBar, GuiControl) { public:
+Thing_define (GuiScrollBar, GuiControl) {
 	GuiScrollBarCallback d_valueChangedCallback;
 	Thing d_valueChangedBoss;
 };
@@ -868,7 +881,7 @@ struct _history_entry_s {
 	bool type_del : 1;
 };
 
-Thing_define (GuiText, GuiControl) { public:
+Thing_define (GuiText, GuiControl) {
 	GuiText_ChangedCallback d_changedCallback;
 	Thing d_changedBoss;
 	#if cocoa
@@ -915,7 +928,7 @@ void GuiText_undo (GuiText me);
 
 /********** GuiWindow **********/
 
-Thing_define (GuiWindow, GuiShell) { public:
+Thing_define (GuiWindow, GuiShell) {
 	#if gtk
 		GtkMenuBar *d_gtkMenuBar;
 	#elif cocoa
