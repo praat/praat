@@ -716,7 +716,7 @@ void structCategoriesEditor :: v_createHelpMenuItems (EditorMenu menu) {
 // origin is at top left.
 void structCategoriesEditor :: v_createChildren () {
 	constexpr int menuBarOffset { 40 };
-	constexpr int button_width { 90 }, button_height { menuBarOffset }, list_width { 260 }, list_height { 200 };
+	constexpr int button_width { 130 }, button_height { menuBarOffset }, list_width { 260 }, list_height { 420 };
 	constexpr int delta_x { 15 }, delta_y { menuBarOffset / 2 }, text_button_height { button_height / 2 };
 	int left, right, top, bottom, buttons_left, buttons_top, list_bottom;
 
