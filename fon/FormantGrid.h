@@ -53,7 +53,7 @@ autoSound FormantGrid_to_Sound (FormantGrid me, double samplingFrequency,
 void FormantGrid_playPart (FormantGrid me, double tmin, double tmax, double samplingFrequency,
 	double tStart, double f0Start, double tMid, double f0Mid, double tEnd, double f0End,
 	double adaptFactor, double maximumPeriod, double openPhase, double collisionPhase, double power1, double power2,
-	int (*playCallback) (void *playClosure, int phase, double tmin, double tmax, double t), void *playClosure);
+	Sound_PlayCallback playCallback, Thing playBoss);
 
 void FormantGrid_formula_frequencies (FormantGrid me, const char32 *expression, Interpreter interpreter, FormantGrid thee);
 void FormantGrid_formula_bandwidths (FormantGrid me, const char32 *expression, Interpreter interpreter, FormantGrid thee);
