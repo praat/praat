@@ -32,7 +32,7 @@
 
 /* Program example:
 // File main_Sybil.cpp: //
-int main (unsigned int argc, char **argv)
+int main (int argc, char **argv)
 {
 	praat_init (U"Praat_Sybil", argc, argv);   // Obligatory.
 	INCLUDE_LIBRARY (praat_Fon_init)   // Optional: inherit phonetic stuff.
@@ -56,7 +56,7 @@ To make any class string-readable, use Thing_recognizeClassesByName ().
 String-readable classes are known by Thing_newFromClassName () and can therefore
 be read by Data_readFromTextFile () and Data_readFromBinaryFile ().
 */
-void praat_init (const char32 *title, unsigned int argc, char **argv);
+void praat_init (const char32 *title, int argc, char **argv);
 void praat_run ();
 void praat_setStandAloneScriptText (const char32 *text);   // call before praat_init if you want to create a stand-alone application without Objects and Picture window
 

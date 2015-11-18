@@ -516,7 +516,7 @@ void _GuiText_init () {
 
 void _GuiText_exit () {
 	#if mac
-		TXNTerminateTextension (); 
+		TXNTerminateTextension ();
 	#endif
 }
 
@@ -656,7 +656,7 @@ void _GuiText_exit () {
 		
 		history_entry *he = history_addAndMerge (me, text_new, first, last, deleted);
 		if (! he) {
-			he = (history_entry *) malloc (sizeof (history_entry));
+			he = (history_entry *) malloc (sizeof *he);
 			he->first = first;
 			he->last = last;
 			he->type_del = deleted;
@@ -713,8 +713,8 @@ void _GuiText_exit () {
 		h1 = my d_prev;
 		while (h1) {
 			h2 = h1->prev;
-			free(h1->text);
-			free(h1);
+			free (h1->text);
+			free (h1);
 			h1 = h2;
 		}
 		my d_prev = nullptr;
@@ -722,8 +722,8 @@ void _GuiText_exit () {
 		h1 = my d_next;
 		while (h1) {
 			h2 = h1->next;
-			free(h1->text);
-			free(h1);
+			free (h1->text);
+			free (h1);
 			h1 = h2;
 		}
 		my d_next = nullptr;

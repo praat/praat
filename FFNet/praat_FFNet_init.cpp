@@ -693,7 +693,7 @@ void praat_uvafon_FFNet_init ();
 void praat_uvafon_FFNet_init () {
 	Thing_recognizeClassesByName (classFFNet, NULL);
 
-	praat_addMenuCommand (U"Objects", U"New", U"Neural nets", 0, 0, 0);
+	praat_addMenuCommand (U"Objects", U"New", U"Feedforward neural networks", 0, 0, 0);
 	praat_addMenuCommand (U"Objects", U"New", U"Feedforward neural networks", 0, 1, DO_FFNet_help);
 	praat_addMenuCommand (U"Objects", U"New", U"-- FFNet --", 0, 1, 0);
 	praat_addMenuCommand (U"Objects", U"New", U"Create iris example...", 0, 1, DO_FFNet_createIrisExample);
