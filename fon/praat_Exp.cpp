@@ -43,11 +43,10 @@ END2 }
 DIRECT2 (ExperimentMFC_run) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot run experiments from the command line.");
 	autoOrdered experiments = Ordered_create ();
-	Collection_dontOwnItems (experiments.peek());
 	WHERE (SELECTED) {
 		iam_LOOP (ExperimentMFC);
 		Melder_assert (my classInfo == classExperimentMFC);
-		Collection_addItem (experiments.peek(), me);   // reference copy of me
+		Collection_addItem_ref (experiments.peek(), me);
 	}
 	Melder_assert (experiments -> size >= 1);
 	Melder_assert (((Daata) experiments -> item [1]) -> classInfo == classExperimentMFC);
@@ -123,10 +122,9 @@ END2 }
 
 DIRECT2 (ResultsMFCs_to_Table) {
 	autoCollection collection = Collection_create (classResultsMFC, 100);
-	Collection_dontOwnItems (collection.peek());
 	WHERE (SELECTED) {
 		iam_LOOP (ResultsMFC);
-		Collection_addItem (collection.peek(), me);
+		Collection_addItem_ref (collection.peek(), me);
 	}
 	autoTable thee = ResultsMFCs_to_Table (collection.peek());
 	praat_new (thee.move(), U"allResults");

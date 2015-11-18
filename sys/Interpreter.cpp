@@ -652,7 +652,7 @@ static void Interpreter_addNumericVariable (Interpreter me, const char32 *key, d
 	#else
 	autoInterpreterVariable variable = InterpreterVariable_create (key);
 	variable -> numericValue = value;
-	Collection_addItem (my variables, variable.transfer());
+	Collection_addItem_move (my variables, variable.move());
 	#endif
 }
 
@@ -664,7 +664,7 @@ static void Interpreter_addStringVariable (Interpreter me, const char32 *key, co
 	#else
 	autoInterpreterVariable variable = InterpreterVariable_create (key);
 	variable -> stringValue = Melder_dup (value);
-	Collection_addItem (my variables, variable.transfer());
+	Collection_addItem_move (my variables, variable.move());
 	#endif
 }
 
@@ -707,7 +707,7 @@ InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const char32 *ke
 	 */
 	autoInterpreterVariable variable = InterpreterVariable_create (variableNameIncludingProcedureName);
 	InterpreterVariable variable_ref = variable.peek();
-	Collection_addItem (my variables, variable.transfer());
+	Collection_addItem_move (my variables, variable.move());
 	return variable_ref;
 	#endif
 }

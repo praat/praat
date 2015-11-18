@@ -1142,26 +1142,20 @@ void Sound_into_Sound (Sound me, Sound to, double startTime) {
 IntervalTier Sound_PointProcess_to_IntervalTier (Sound me, PointProcess thee, double window);
 IntervalTier Sound_PointProcess_to_IntervalTier (Sound me, PointProcess thee, double window)
 {
-	IntervalTier him;
-	TextInterval interval;
-	double t1, t2, t, window2 = window / 2;
-	long i;
-
-	him = IntervalTier_create (my xmin, my xmax);
-	if (!him) return nullptr;
-
-	t1 = thy t[1] - window2;
+	double window2 = window / 2;
+	double t1 = thy t[1] - window2;
 	if (t1 < my xmin) t1 = my xmin;
-	t2 = t1 + window2;
+	double t2 = t1 + window2;
 	if (t2 > my xmax) t2 = my xmax;
-	interval = TextInterval_create (t1, t2, "yes");
-	if (!interval || ! Collection_addItem (his intervals, interval)) goto end;
+	autoIntervalTier him = IntervalTier_create (my xmin, my xmax);
+	autoTextInterval interval = TextInterval_create (t1, t2, "yes");
+	Collection_addItem_move (his intervals, interval.move());
 
-	for (i = 2; i <= thy nt; i++)
+	for (long i = 2; i <= thy nt; i++)
 	{
-		t =  thy t[i];
+		double t =  thy t[i];
 
-		if (t  <= t2)
+		if (t <= t2)
 		{
 			long index = his points -> size;
 			RealPoint point = his points -> item[index];
@@ -1173,12 +1167,9 @@ IntervalTier Sound_PointProcess_to_IntervalTier (Sound me, PointProcess thee, do
 		{
 			t2 = t + window2;
 			if (t2 > my xmax) t2 = my xmax;
-			if (! RealTier_addPoint (him, t, t2)) goto end;
+			RealTier_addPoint (him, t, t2);
 		}
 	}
-
-end:
-	if (Melder_hasError()) forget (him);
 	return him;
 }
 */

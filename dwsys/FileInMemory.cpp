@@ -141,7 +141,7 @@ FilesInMemory FilesInMemory_createFromDirectoryContents (const char32 *dirpath, 
 			structMelderFile file = { 0 };
 			MelderDir_getFile (&parent, thy strings[i], &file);
 			autoFileInMemory fim = FileInMemory_create (&file);
-			Collection_addItem (me.peek(), fim.transfer());
+			Collection_addItem_move (me.peek(), fim.move());
 		}
 		return me.transfer();
 	} catch (MelderError) {

@@ -142,7 +142,7 @@ autoDistances Configurations_to_Distances (Configurations me) {
 			Configuration conf = (Configuration) (my item[i]);
 			autoDistance d = Configuration_to_Distance (conf);
 			Thing_setName (d.peek(), Thing_getName (conf));
-			Collection_addItem (thee.peek(), d.transfer());
+			Collection_addItem_move (thee.peek(), d.move());
 		}
 		return thee;
 	} catch (MelderError) {
@@ -807,7 +807,7 @@ autoMDSVecs Dissimilarities_to_MDSVecs (Dissimilarities me) {
 		for (long i = 1; i <= my size; i++) {
 			autoMDSVec him = Dissimilarity_to_MDSVec ( (Dissimilarity) (my item[i]));
 			Thing_setName (him.peek(), Thing_getName ( (Thing) my item[i]));
-			Collection_addItem (thee.peek(), him.transfer());
+			Collection_addItem_move (thee.peek(), him.move());
 		}
 		return thee;
 	} catch (MelderError) {
@@ -1346,12 +1346,12 @@ autoDistances MDSVecs_Distance_monotoneRegression (MDSVecs me, Distance thee, in
 	try {
 		autoDistances him = Distances_create ();
 		for (long i = 1; i <= my size; i++) {
-			autoMDSVec vec = (MDSVec) my item[i];
+			MDSVec vec = (MDSVec) my item[i];
 			if (vec -> nPoints != thy numberOfRows) {
 				Melder_throw (U"Dimension of MDSVec and Distance must be equal.");
 			}
-			autoDistance fit = MDSVec_Distance_monotoneRegression (vec.peek(), thee, tiesProcessing);
-			Collection_addItem (him.peek(), fit.transfer());
+			autoDistance fit = MDSVec_Distance_monotoneRegression (vec, thee, tiesProcessing);
+			Collection_addItem_move (him.peek(), fit.move());
 		}
 		return him;
 	} catch (MelderError) {
@@ -1466,7 +1466,7 @@ autoScalarProducts Distances_to_ScalarProducts (Distances me, int normalize) {
 		autoScalarProducts thee = ScalarProducts_create ();
 		for (long i = 1; i <= my size; i++) {
 			autoScalarProduct sp = Distance_to_ScalarProduct ((Distance) (my item[i]), normalize);
-			Collection_addItem (thee.peek(), sp.transfer());
+			Collection_addItem_move (thee.peek(), sp.move());
 		}
 		return thee;
 	} catch (MelderError) {
@@ -1635,7 +1635,7 @@ autoDissimilarities Distances_to_Dissimilarities (Distances me) {
 			char32 *name = Thing_getName ( (Thing) my item[i]);
 			autoDissimilarity him = Distance_to_Dissimilarity ( (Distance) (my item[i]));
 			Thing_setName (him.peek(), name ? name : U"untitled");
-			Collection_addItem (thee.peek(), him.transfer());
+			Collection_addItem_move (thee.peek(), him.move());
 		}
 		return thee;
 	} catch (MelderError) {
@@ -1651,7 +1651,7 @@ autoDistances Dissimilarities_to_Distances (Dissimilarities me, int measurementL
 			autoDistance him = Dissimilarity_to_Distance ( (Dissimilarity) my item[i], measurementLevel == MDS_ORDINAL);
 			char32 *name = Thing_getName ( (Thing) my item[i]);
 			Thing_setName (him.peek(), name ? name : U"untitled");
-			Collection_addItem (thee.peek(), him.transfer());
+			Collection_addItem_move (thee.peek(), him.move());
 		}
 		return thee;
 	} catch (MelderError) {
@@ -2263,7 +2263,7 @@ autoDistances Dissimilarities_Configuration_monotoneRegression (Dissimilarities 
 		autoDistance dist = Configuration_to_Distance (configuration);
 		for (long i = 1; i <= my size; i++) {
 			autoDistance d = Dissimilarity_Distance_monotoneRegression ((Dissimilarity) my item[i], dist.peek(), tiesProcessing);
-			Collection_addItem (result.peek(), d.transfer());
+			Collection_addItem_move (result.peek(), d.move());
 		}
 		return result;
 	} catch (MelderError) {
@@ -2355,7 +2355,7 @@ autoConfiguration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configu
 		autoKruskal thee = Kruskal_create (my numberOfRows, his numberOfColumns);
 		TableOfReal_copyLabels (me, thy configuration.peek(), 1, 0);
 		autoDissimilarity dissimilarity = Data_copy (me);
-		Collection_addItem (thy proximities.peek(), dissimilarity.transfer());
+		Collection_addItem_move (thy proximities.peek(), dissimilarity.move());
 		thy vec = Dissimilarity_to_MDSVec (me);
 
 		thy minimizer = VDSmagtMinimizer_create (numberOfCoordinates, (Daata) thee.peek(), func, dfunc);
@@ -2647,7 +2647,7 @@ autoDistances MDSVecs_Configuration_Salience_monotoneRegression (MDSVecs vecs, C
 			NUMvector_copyElements (weights -> data[i], conf -> w, 1, nDimensions);
 			autoDistance dc = Configuration_to_Distance (conf);
 			autoDistance dist = MDSVec_Distance_monotoneRegression ((MDSVec) vecs -> item[i], dc.peek(), tiesProcessing);
-			Collection_addItem (distances.peek(), dist.transfer());
+			Collection_addItem_move (distances.peek(), dist.move());
 		}
 		Configuration_setDefaultWeights (conf);
 		return distances;
@@ -2933,7 +2933,7 @@ autoCollection INDSCAL_createCarrollWishExample (double noiseRange) {
 				}
 			}
 			Thing_setName (dissim.peek(), s -> rowLabels[l]);
-			Collection_addItem (me.peek(), dissim.transfer());
+			Collection_addItem_move (me.peek(), dissim.move());
 		}
 		Thing_setName (me.peek(), U"CarrollWish");
 		return me;

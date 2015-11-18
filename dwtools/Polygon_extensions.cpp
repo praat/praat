@@ -1085,7 +1085,7 @@ autoCollection Vertices_to_Polygons (Vertices me) {
 		DLLNode ni = my front;
 		do {
 			autoPolygon p = Vertices_to_Polygon (me, & ni);
-			Collection_addItem (thee.peek(), p.transfer());
+			Collection_addItem_move (thee.peek(), p.move());
 		} while (ni != 0);
 		return thee;
 	} catch (MelderError) {
@@ -1111,10 +1111,10 @@ autoCollection Polygons_findClippings (Polygon me, bool use_myinterior, Polygon 
 			autoCollection apc;
 			if (not use_myinterior and not use_thyinterior and firstLocation == Polygon_INSIDE) {
 				autoPolygon ap = Data_copy (thee);
-				Collection_addItem (apc.peek(), ap.transfer());
+				Collection_addItem_move (apc.peek(), ap.move());
 			} else {
 				autoPolygon ap = Data_copy (me);
-				Collection_addItem (apc.peek(), ap.transfer());
+				Collection_addItem_move (apc.peek(), ap.move());
 			}
 			return apc;
 		}

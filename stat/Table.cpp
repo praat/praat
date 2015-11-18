@@ -164,7 +164,7 @@ autoTable Table_createWithColumnNames (long numberOfRows, const char32 *columnNa
 void Table_appendRow (Table me) {
 	try {
 		autoTableRow row = TableRow_create (my numberOfColumns);
-		Collection_addItem (my rows, row.transfer());
+		Collection_addItem_move (my rows, row.move());
 	} catch (MelderError) {
 		Melder_throw (me, U": row not appended.");
 	}
@@ -680,7 +680,7 @@ autoTable Table_extractRowsWhereColumn_number (Table me, long columnNumber, int 
 			TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 			if (Melder_numberMatchesCriterion (row -> cells [columnNumber]. number, which_Melder_NUMBER, criterion)) {
 				autoTableRow newRow = Data_copy (row);
-				Collection_addItem (thy rows, newRow.transfer());
+				Collection_addItem_move (thy rows, newRow.move());
 			}
 		}
 		if (thy rows -> size == 0) {
@@ -704,7 +704,7 @@ autoTable Table_extractRowsWhereColumn_string (Table me, long columnNumber, int 
 			TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 			if (Melder_stringMatchesCriterion (row -> cells [columnNumber]. string, which_Melder_STRING, criterion)) {
 				autoTableRow newRow = Data_copy (row);
-				Collection_addItem (thy rows, newRow.transfer());
+				Collection_addItem_move (thy rows, newRow.move());
 			}
 		}
 		if (thy rows -> size == 0) {

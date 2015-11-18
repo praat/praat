@@ -51,7 +51,7 @@ static void Preferences_add (const char32 *string, int type, void *value, int mi
 	my getText = getText;
 	my getValue = getValue;
 	if (! thePreferences) thePreferences = SortedSetOfString_create ();
-	Collection_addItem (thePreferences, me.transfer());
+	Collection_addItem_move (thePreferences, me.move());
 }
 
 void Preferences_addByte (const char32 *string, signed char *value, signed char defaultValue)

@@ -103,11 +103,11 @@ autoOrderedOfString OrderedOfString_create () {
 
 int OrderedOfString_append (OrderedOfString me, char32 *append) {
 	try {
-		if (append == nullptr) {
+		if (! append) {
 			return 1;    // BUG: lege string appenden??
 		}
 		autoSimpleString item = SimpleString_create (append);
-		Collection_addItem (me, item.transfer());
+		Collection_addItem_move (me, item.move());
 		return 1;
 	} catch (MelderError) {
 		Melder_throw (me, U": text not appended.");
@@ -139,7 +139,7 @@ autoOrderedOfString OrderedOfString_selectUniqueItems (OrderedOfString me, int s
 				SimpleString ss = (SimpleString) my item[i];
 				if (! OrderedOfString_indexOfItem_c (him.peek(), ss -> string)) {
 					autoSimpleString item = Data_copy (ss);
-					Collection_addItem (him.peek(), item.transfer());
+					Collection_addItem_move (him.peek(), item.move());
 				}
 			}
 			Collection_shrinkToFit (him.peek());
@@ -149,14 +149,14 @@ autoOrderedOfString OrderedOfString_selectUniqueItems (OrderedOfString me, int s
 		/* Collection_to_SortedSet (I, int (*compare)(I, thou)) */
 		for (long i = 1; i <= my size; i++) {
 			if (! SortedSet_hasItem (thee.peek(), my item[i])) {
-				autoSimpleString item = Data_copy ( (SimpleString) my item[i]);
-				Collection_addItem (thee.peek(), item.transfer());
+				autoSimpleString item = Data_copy ((SimpleString) my item[i]);
+				Collection_addItem_move (thee.peek(), item.move());
 			}
 		}
 		autoOrderedOfString him = OrderedOfString_create ();
 		for (long i = 1; i <= thy size; i++) {
-			autoSimpleString item = Data_copy ( (SimpleString) thy item[i]);
-			Collection_addItem (him.peek(), item.transfer());
+			autoSimpleString item = Data_copy ((SimpleString) thy item[i]);
+			Collection_addItem_move (him.peek(), item.move());
 		}
 		return him;
 	} catch (MelderError) {
@@ -237,7 +237,7 @@ void OrderedOfString_sequentialNumbers (OrderedOfString me, long n) {
 		char32 s[40];
 		Melder_sprint (s,40, i);
 		autoSimpleString str = SimpleString_create (s);
-		Collection_addItem (me, str.transfer());
+		Collection_addItem_move (me, str.move());
 	}
 }
 void OrderedOfString_changeStrings (OrderedOfString me, char32 *search, char32 *replace, int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, int use_regexp) {

@@ -137,7 +137,7 @@
 		for (int32_t i = 1; i <= n; i ++) { \
 			auto##ItemClass item = (ItemClass) Thing_new (ItemClass); \
 			item.peek() -> v_readBinary (f, formatVersion); \
-			Collection_addItem (our x, item.transfer()); \
+			Collection_addItem_move (our x, item.move()); \
 		} \
 	}
 
@@ -148,7 +148,7 @@
 		for (int32_t i = 1; i <= n; i ++) { \
 			auto##ItemClass item = (ItemClass) Thing_new (ItemClass); \
 			item.peek() -> v_readBinary (f, formatVersion); \
-			Collection_addItem (our x.get(), item.transfer()); \
+			Collection_addItem_move (our x.get(), item.move()); \
 		} \
 	}
 

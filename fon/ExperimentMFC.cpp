@@ -453,7 +453,7 @@ Categories ResultsMFC_to_Categories_stimuli (ResultsMFC me) {
 		autoCategories thee = Categories_create ();
 		for (long trial = 1; trial <= my numberOfTrials; trial ++) {
 			autoSimpleString category = SimpleString_create (my result [trial]. stimulus);
-			Collection_addItem (thee.peek(), category.transfer());
+			Collection_addItem_move (thee.peek(), category.move());
 		}
 		return thee.transfer();
 	} catch (MelderError) {
@@ -466,7 +466,7 @@ Categories ResultsMFC_to_Categories_responses (ResultsMFC me) {
 		autoCategories thee = Categories_create ();
 		for (long trial = 1; trial <= my numberOfTrials; trial ++) {
 			autoSimpleString category = SimpleString_create (my result [trial]. response);
-			Collection_addItem (thee.peek(), category.transfer());
+			Collection_addItem_move (thee.peek(), category.move());
 		}
 		return thee.transfer();
 	} catch (MelderError) {
@@ -478,7 +478,7 @@ static int compare (SimpleString me, SimpleString thee) {
 	return str32cmp (my string, thy string);
 }
 void Categories_sort (Categories me) {
-	NUMsort_p (my size, my item, (int (*) (const void *, const void *)) compare);
+	NUMsort_p (my size, (void **) my item, (int (*) (const void *, const void *)) compare);
 }
 
 double Categories_getEntropy (Categories me) {

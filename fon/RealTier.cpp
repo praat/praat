@@ -116,7 +116,7 @@ autoRealTier RealTier_createWithClass (double tmin, double tmax, ClassInfo klas)
 void RealTier_addPoint (RealTier me, double t, double value) {
 	try {
 		autoRealPoint point = RealPoint_create (t, value);
-		Collection_addItem (my points, point.transfer());
+		Collection_addItem_move (my points, point.move());
 	} catch (MelderError) {
 		Melder_throw (me, U": point not added.");
 	}

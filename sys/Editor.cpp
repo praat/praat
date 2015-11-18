@@ -87,7 +87,7 @@ GuiMenuItem EditorMenu_addCommand (EditorMenu me, const char32 *itemTitle /* cat
 		GuiMenu_addItem (my menuWidget, itemTitle, flags, commonCallback, thee.peek());   // DANGLE BUG: me can be killed by Collection_addItem(), but EditorCommand::destroy doesn't remove the item
 	thy commandCallback = commandCallback;
 	GuiMenuItem result = thy itemWidget;
-	Collection_addItem (my commands, thee.transfer());
+	Collection_addItem_move (my commands, thee.move());
 	return result;
 }
 
@@ -100,7 +100,7 @@ EditorMenu Editor_addMenu (Editor me, const char32 *menuTitle, long flags) {
 	thy menuWidget = GuiMenu_createInWindow (my d_windowForm, menuTitle, flags);
 	thy commands = Ordered_create ();
 	EditorMenu result = thee.peek();
-	Collection_addItem (my menus, thee.transfer());
+	Collection_addItem_move (my menus, thee.move());
 	return result;
 }
 
@@ -152,7 +152,7 @@ GuiMenuItem Editor_addCommandScript (Editor me, const char32 *menuTitle, const c
 				cmd -> script = Melder_dup_f (Melder_fileToPath (& file));
 			}
 			GuiMenuItem result = cmd -> itemWidget;
-			Collection_addItem (menu -> commands, cmd.transfer());
+			Collection_addItem_move (menu -> commands, cmd.move());
 			return result;
 		}
 	}

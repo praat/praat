@@ -1340,7 +1340,7 @@ autoFormantModeler FormantModeler_create (double tmin, double tmax, long numberO
 		my trackmodelers = Ordered_create ();
 		for (long itrack = 1; itrack <= numberOfFormants; itrack++) {
 			autoDataModeler ff = DataModeler_create (tmin, tmax, numberOfDataPoints, numberOfParameters,  DataModeler_TYPE_LEGENDRE);
-			Collection_addItem (my trackmodelers, ff.transfer());
+			Collection_addItem_move (my trackmodelers, ff.move());
 		}
 		return me;
 	} catch (MelderError) {
@@ -2064,7 +2064,7 @@ autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTim
 			autoFormant formant = Sound_to_Formant_burg (resampled.peek(), timeStep, 5.0, currentCeiling, windowLength, preemphasisFrequency);
 			autoFormantModeler fm = Formant_to_FormantModeler (formant.peek(), startTime, endTime, numberOfFormantTracks, numberOfParametersPerTrack, weighData);
 			FormantModeler_setParameterValuesToZero (fm.peek(), 1, numberOfFormantTracks, numberOfSigmas);
-			Collection_addItem (formants.peek(), formant.transfer());
+			Collection_addItem_move (formants.peek(), formant.move());
 			double cf = useConstraints ? FormantModeler_getFormantsConstraintsFactor (fm.peek(), minF1, maxF1, minF2, maxF2, minF3) : 1;
 			double chiVar = FormantModeler_getSmoothnessValue (fm.peek(), 1, numberOfFormantTracks, numberOfParametersPerTrack, power);
 			double criterium = chiVar * cf;
@@ -2118,7 +2118,7 @@ autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double
 			autoFormant formant = Sound_to_Formant_robust (resampled.peek(), timeStep, 5.0, currentCeiling, windowLength, preemphasisFrequency, 50.0, 1.5, 3, 0.0000001, 1);
 			autoFormantModeler fm = Formant_to_FormantModeler (formant.peek(), startTime, endTime, numberOfFormantTracks, numberOfParametersPerTrack, weighData);
 			FormantModeler_setParameterValuesToZero (fm.peek(), 1, numberOfFormantTracks, numberOfSigmas);
-			Collection_addItem (formants.peek(), formant.transfer());
+			Collection_addItem_move (formants.peek(), formant.move());
 			double cf = useConstraints ? FormantModeler_getFormantsConstraintsFactor (fm.peek(), minF1, maxF1, minF2, maxF2, minF3) : 1;
 			double chiVar = FormantModeler_getSmoothnessValue (fm.peek(), 1, numberOfFormantTracks, numberOfParametersPerTrack, power);
 			double criterium = chiVar * cf;
@@ -2167,7 +2167,7 @@ autoOptimalCeilingTier Sound_to_OptimalCeilingTier (Sound me, double windowLengt
 		for (long i = 1; i <= numberOfFrequencySteps; i++) {
 			double ceiling = minCeiling + (i - 1) * frequencyStep;
 			autoFormant formant = Sound_to_Formant_burg (me, timeStep, 5, ceiling, windowLength, preemphasisFrequency);
-			Collection_addItem (formants.peek(), formant.transfer());
+			Collection_addItem_move (formants.peek(), formant.move());
 		}
 		long numberOfFrames; double firstTime, modelingTimeStep = timeStep;
 		autoOptimalCeilingTier octier = OptimalCeilingTier_create (my xmin, my xmax);
