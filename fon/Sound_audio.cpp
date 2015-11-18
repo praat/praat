@@ -503,9 +503,9 @@ for (i = 1; i <= numberOfSamples; i ++) trace (U"Recorded ", buffer [i]);
 static struct SoundPlay {
 	long numberOfSamples, i1, i2, silenceBefore, silenceAfter;
 	double tmin, tmax, dt, t1;
-	int (*callback) (void *closure, int phase, double tmin, double tmax, double t);
-	void *closure;
-	short *buffer;
+	Sound_PlayCallback callback;
+	Thing boss;
+	int16 *buffer;
 } thePlayingSound;
 
 static bool melderPlayCallback (void *closure, long samplesPlayed) {
@@ -519,12 +519,11 @@ static bool melderPlayCallback (void *closure, long samplesPlayed) {
 		phase = 3;
 	}
 	if (my callback)
-		return my callback (my closure, phase, my tmin, my tmax, t);
+		return my callback (my boss, phase, my tmin, my tmax, t);
 	return true;
 }
 
-void Sound_playPart (Sound me, double tmin, double tmax,
-	int (*callback) (void *closure, int phase, double tmin, double tmax, double t), void *closure)
+void Sound_playPart (Sound me, double tmin, double tmax, Sound_PlayCallback callback, Thing boss)
 {
 	try {
 		long ifsamp = lround (1.0 / my dx), bestSampleRate = MelderAudio_getOutputBestSampleRate (ifsamp);
@@ -539,7 +538,7 @@ void Sound_playPart (Sound me, double tmin, double tmax,
 			thy dt = my dx;
 			thy t1 = my x1;
 			thy callback = callback;
-			thy closure = closure;
+			thy boss = boss;
 			thy silenceBefore = (long) (ifsamp * MelderAudio_getOutputSilenceBefore ());
 			thy silenceAfter = (long) (ifsamp * MelderAudio_getOutputSilenceAfter ());
 			int numberOfChannels = my ny;
@@ -568,20 +567,19 @@ void Sound_playPart (Sound me, double tmin, double tmax,
 					* ++ to = value < -32768 ? -32768 : value > 32767 ? 32767 : value;
 				}
 			}
-			if (thy callback) thy callback (thy closure, 1, tmin, tmax, tmin);
+			if (thy callback) thy callback (thy boss, 1, tmin, tmax, tmin);
 			MelderAudio_play16 (thy buffer + 1, ifsamp,
 				thy silenceBefore + thy numberOfSamples + thy silenceAfter, numberOfChannels, melderPlayCallback, thee);
 		} else {
 			autoSound resampled = Sound_resample (me, bestSampleRate, 1);
-			Sound_playPart (resampled.peek(), tmin, tmax, callback, closure);   // recursively
+			Sound_playPart (resampled.peek(), tmin, tmax, callback, boss);   // recursively
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": not played.");
 	}
 }
 
-void Sound_play (Sound me,
-	int (*playCallback) (void *playClosure, int phase, double tmin, double tmax, double t), void *playClosure)
+void Sound_play (Sound me, Sound_PlayCallback playCallback, Thing playClosure)
 {
 	Sound_playPart (me, my xmin, my xmax, playCallback, playClosure);
 }

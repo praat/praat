@@ -135,7 +135,7 @@ Thing_define (FunctionEditor, Editor) {
     #include "FunctionEditor_prefs.h"
 };
 
-int theFunctionEditor_playCallback (void *void_me, int phase, double tmin, double tmax, double t);
+int theFunctionEditor_playCallback (FunctionEditor me, int phase, double tmin, double tmax, double t);
 
 /*
 	Attributes:

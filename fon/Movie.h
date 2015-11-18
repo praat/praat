@@ -35,7 +35,7 @@ void Movie_paintOneImageInside (Movie me, Graphics graphics, long frameNumber, d
 
 void Movie_paintOneImage (Movie me, Graphics graphics, long frameNumber, double xmin, double xmax, double ymin, double ymax);
 
-void Movie_play (Movie me, Graphics graphics, double tmin, double tmax, int (*callback) (void *closure, int phase, double tmin, double tmax, double t), void *closure);
+void Movie_play (Movie me, Graphics graphics, double tmin, double tmax, Sound_PlayCallback callback, Thing boss);
 
 /* End of file Movie.h */
 #endif

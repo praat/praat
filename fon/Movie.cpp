@@ -112,10 +112,9 @@ void Movie_paintOneImage (Movie me, Graphics graphics, long frameNumber, double 
 	}
 }
 
-void Movie_play (Movie me, Graphics g, double tmin, double tmax, int (*callback) (void *closure, int phase, double tmin, double tmax, double t), void *closure)
+void Movie_play (Movie me, Graphics /* g */, double tmin, double tmax, Sound_PlayCallback callback, Thing boss)
 {
-	(void) g;
-	Sound_playPart (my d_sound, tmin, tmax, callback, closure);
+	Sound_playPart (my d_sound, tmin, tmax, callback, boss);
 }
 
 /* End of file Movie.cpp */

@@ -238,14 +238,14 @@ autoSound FormantGrid_to_Sound (FormantGrid me, double samplingFrequency,
 void FormantGrid_playPart (FormantGrid me, double tmin, double tmax, double samplingFrequency,
 	double tStart, double f0Start, double tMid, double f0Mid, double tEnd, double f0End,
 	double adaptFactor, double maximumPeriod, double openPhase, double collisionPhase, double power1, double power2,
-	int (*playCallback) (void *playClosure, int phase, double tmin, double tmax, double t), void *playClosure)
+	Sound_PlayCallback playCallback, Thing playBoss)
 {
 	try {
 		autoSound sound = FormantGrid_to_Sound (me, samplingFrequency,
 			tStart, f0Start, tMid, f0Mid, tEnd, f0End,
 			adaptFactor, maximumPeriod, openPhase, collisionPhase, power1, power2);
 		Vector_scale (sound.peek(), 0.99);
-		Sound_playPart (sound.peek(), tmin, tmax, playCallback, playClosure);
+		Sound_playPart (sound.peek(), tmin, tmax, playCallback, playBoss);
 	} catch (MelderError) {
 		Melder_throw (me, U": not played.");
 	}

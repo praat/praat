@@ -1463,8 +1463,7 @@ int structFunctionEditor :: v_playCallback (int phase, double /* a_tmin */, doub
 	return 1;
 }
 
-int theFunctionEditor_playCallback (void *void_me, int phase, double a_tmin, double a_tmax, double t) {
-	iam (FunctionEditor);
+int theFunctionEditor_playCallback (FunctionEditor me, int phase, double a_tmin, double a_tmax, double t) {
 	return my v_playCallback (phase, a_tmin, a_tmax, t);
 }
 
