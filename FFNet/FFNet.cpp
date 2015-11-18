@@ -724,11 +724,12 @@ autoCollection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidde
 		FFNet_setOutputCategories (me.peek(), uniq.peek());
 		autostring32 name = FFNet_createNameFromTopology (me.peek());
 		Thing_setName (me.peek(), name.peek());
-		Collection_addItem (c.peek(), me.transfer());
+		Collection_addItem_move (c.peek(), me.move());
 		autoTableOfReal iris = TableOfReal_createIrisDataset ();
 
-		// Scale data to interval [0-1]
-
+		/*
+		 * Scale data to interval [0-1]
+		 */
 		for (long i = 1; i <= 150; i++) {
 			for (long j = 1; j <= 4; j++) {
 				iris -> data[i][j] /= 10.0;
@@ -740,8 +741,8 @@ autoCollection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidde
 		TableOfReal_to_Pattern_and_Categories (iris.peek(), 0, 0, 0, 0, & ap, & ac);
 		Thing_setName (ap.peek(), U"iris");
 		Thing_setName (ac.peek(), U"iris");
-		Collection_addItem (c.peek(), ap.transfer());
-		Collection_addItem (c.peek(), ac.transfer());
+		Collection_addItem_move (c.peek(), ap.move());
+		Collection_addItem_move (c.peek(), ac.move());
 		return c;
 	} catch (MelderError) {
 		Melder_throw (U"Iris example not created.");

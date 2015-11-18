@@ -100,7 +100,7 @@ autoCategories OrderedOfString_to_Categories (OrderedOfString me) {
 
 		for (long i = 1; i <= my size; i++) {
 			autoSimpleString item = Data_copy ( (SimpleString) my item [i]);
-			Collection_addItem (thee.peek(), item.transfer());
+			Collection_addItem_move (thee.peek(), item.move());
 		}
 		return thee;
 	} catch (MelderError) {
@@ -120,7 +120,7 @@ autoCategories TableOfReal_to_CategoriesRow (TableOfReal me) {
 		for (long i = 1; i <= my numberOfRows; i++) {
 			if (my rowLabels[i]) {
 				autoSimpleString s = SimpleString_create (my rowLabels[i]);
-				Collection_addItem (thee.peek(), s.transfer());
+				Collection_addItem_move (thee.peek(), s.move());
 			}
 		}
 		return thee;
@@ -136,7 +136,7 @@ autoCategories TableOfReal_to_CategoriesColumn (TableOfReal me) {
 		for (long i = 1; i <= my numberOfColumns; i++) {
 			if (my columnLabels[i]) {
 				autoSimpleString s = SimpleString_create (my columnLabels[i]);
-				Collection_addItem (thee.peek(), s.transfer());
+				Collection_addItem_move (thee.peek(), s.move());
 			}
 		}
 		return thee;

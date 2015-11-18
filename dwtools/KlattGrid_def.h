@@ -96,8 +96,8 @@ oo_DEFINE_CLASS (VocalTractGrid, Function)
 	oo_AUTO_OBJECT (FormantGrid, 0, nasal_formants)
 	oo_AUTO_OBJECT (FormantGrid, 0, nasal_antiformants)
 	// for parallel synthesis
-	oo_COLLECTION (Ordered, oral_formants_amplitudes, IntensityTier, 0)
-	oo_COLLECTION (Ordered, nasal_formants_amplitudes, IntensityTier, 0)
+	oo_AUTO_COLLECTION (Ordered, oral_formants_amplitudes, IntensityTier, 0)
+	oo_AUTO_COLLECTION (Ordered, nasal_formants_amplitudes, IntensityTier, 0)
 	#if !oo_READING && !oo_WRITING
 		oo_AUTO_OBJECT (VocalTractGridPlayOptions, 0, options)
 	#endif
@@ -131,7 +131,7 @@ oo_END_CLASS (CouplingGridPlayOptions)
 oo_DEFINE_CLASS (CouplingGrid, Function)
 	oo_AUTO_OBJECT (FormantGrid, 0, tracheal_formants)
 	oo_AUTO_OBJECT (FormantGrid, 0, tracheal_antiformants)
-	oo_COLLECTION (Ordered, tracheal_formants_amplitudes, IntensityTier, 0)
+	oo_AUTO_COLLECTION (Ordered, tracheal_formants_amplitudes, IntensityTier, 0)
 	oo_AUTO_OBJECT (FormantGrid, 0, delta_formants)
 	#if !oo_READING && !oo_WRITING
 		oo_AUTO_OBJECT (PhonationTier, 0, glottis)
@@ -161,7 +161,7 @@ oo_END_CLASS (FricationGridPlayOptions)
 oo_DEFINE_CLASS (FricationGrid, Function)
 	oo_AUTO_OBJECT (IntensityTier, 0, fricationAmplitude) // dB
 	oo_AUTO_OBJECT (FormantGrid, 0, frication_formants)
-	oo_COLLECTION (Ordered, frication_formants_amplitudes, RealTier, 0)
+	oo_AUTO_COLLECTION (Ordered, frication_formants_amplitudes, RealTier, 0)
 	oo_AUTO_OBJECT (IntensityTier, 0, bypass) // dB
 	#if !oo_READING && !oo_WRITING
 		oo_AUTO_OBJECT (FricationGridPlayOptions, 0, options)

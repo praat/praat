@@ -450,12 +450,11 @@ END
 
 DIRECT (Configuration_Weight_to_Similarity_cc)
 	autoConfigurations thee = Configurations_create ();
-	Collection_dontOwnItems (thee.peek());
 	Weight w = 0;
 	LOOP {
 		iam (Daata);
 		if (CLASS == classConfiguration) {
-			Collection_addItem (thee.peek(), me);
+			Collection_addItem_ref (thee.peek(), me);
 		} else if (CLASS == classWeight) {
 			w = (Weight) me;
 		}
@@ -1307,12 +1306,11 @@ FORM (Distance_Configuration_indscal, U"Distance & Configuration: To Configurati
 	OK
 DO
 	autoDistances thee = Distances_create ();
-	Collection_dontOwnItems (thee.peek());
 	Configuration c = 0;
 	LOOP {
 		iam (Daata);
 		if (CLASS == classDistance) {
-			Collection_addItem (thee.peek(), me);
+			Collection_addItem_ref (thee.peek(), me);
 		} else if (CLASS == classConfiguration) {
 			c = (Configuration) me;
 		}
@@ -1331,12 +1329,11 @@ FORM (Distance_Configuration_vaf, U"Distance & Configuration: Get VAF", U"Distan
 	OK
 DO
 	autoDistances thee = Distances_create ();
-	Collection_dontOwnItems (thee.peek());
 	Configuration c = 0;
 	LOOP {
 		iam (Daata);
 		if (CLASS == classDistance) {
-			Collection_addItem (thee.peek(), me);
+			Collection_addItem_ref (thee.peek(), me);
 		} else if (CLASS == classConfiguration) {
 			c = (Configuration) me;
 		}
@@ -1352,12 +1349,11 @@ FORM (Distance_Configuration_Salience_vaf, U"Distance & Configuration & Salience
 	OK
 DO
 	autoDistances thee = Distances_create ();
-	Collection_dontOwnItems (thee.peek());
 	Configuration c = 0; Salience s = 0;
 	LOOP {
 		iam (Daata);
 		if (CLASS == classDistance) {
-			Collection_addItem (thee.peek(), me);
+			Collection_addItem_ref (thee.peek(), me);
 		} else if (CLASS == classConfiguration) {
 			c = (Configuration) me;
 		} else if (CLASS == classSalience) {
@@ -1379,12 +1375,11 @@ FORM (Dissimilarity_Configuration_Salience_vaf, U"Dissimilarity & Configuration 
 	OK
 DO
 	autoDissimilarities thee = Dissimilarities_create ();
-	Collection_dontOwnItems (thee.peek());
 	Configuration c = 0; Salience s = 0;
 	LOOP {
 		iam (Daata);
 		if (CLASS == classDissimilarity) {
-			Collection_addItem (thee.peek(), me);
+			Collection_addItem_ref (thee.peek(), me);
 		} else if (CLASS == classConfiguration) {
 			c = (Configuration) me;
 		} else if (CLASS == classSalience) {
@@ -1408,12 +1403,11 @@ FORM (Distance_Configuration_Salience_indscal,
 	OK
 DO
 	autoDistances thee = Distances_create ();
-	Collection_dontOwnItems (thee.peek());
 	Configuration c = 0; Salience s = 0;
 	LOOP {
 		iam (Daata);
 		if (CLASS == classDistance) {
-			Collection_addItem (thee.peek(), me);
+			Collection_addItem_ref (thee.peek(), me);
 		} else if (CLASS == classConfiguration) {
 			c = (Configuration) me;
 		} else if (CLASS == classSalience) {

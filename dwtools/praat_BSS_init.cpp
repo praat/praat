@@ -267,7 +267,7 @@ DIRECT (CrossCorrelationTable_to_CrossCorrelationTables)
 			Melder_throw (U"Dimensions of table ", IOBJECT, U" differs from the rest.");
 		}
 		autoCrossCorrelationTable myc = Data_copy (me);
-		Collection_addItem (thee.peek(), myc.transfer());
+		Collection_addItem_move (thee.peek(), myc.move());
 	}
 	praat_new (thee.move(), U"ct_", nselected);
 END

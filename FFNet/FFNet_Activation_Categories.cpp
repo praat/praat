@@ -68,7 +68,7 @@ autoCategories FFNet_Activation_to_Categories (FFNet me, Activation activation, 
 		for (long i = 1; i <= activation->ny; i++) {
 			long index = labelingFunction (me, activation -> z[i]);
 			autoSimpleString item = Data_copy ((SimpleString) my outputCategories -> item[index]);
-			Collection_addItem (thee.peek(), item.transfer());
+			Collection_addItem_move (thee.peek(), item.move());
 		}
 		return thee;
 	} catch (MelderError) {

@@ -76,7 +76,7 @@ void Regression_addParameter (Regression me, const char32 *label, double minimum
 		thy minimum = minimum;
 		thy maximum = maximum;
 		thy value = value;
-		Collection_addItem (my parameters, thee.transfer());
+		Collection_addItem_move (my parameters, thee.move());
 	} catch (MelderError) {
 		Melder_throw (me, U": parameter not added.");
 	}

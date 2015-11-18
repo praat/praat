@@ -27,9 +27,9 @@
 
 Thing_define (Collection, Daata) {
 	ClassInfo itemClass;   // the class of which all items must be members (see Thing_isa)
+	bool _ownershipInitialized, _ownItems;
 	long _capacity, size;
-	bool _dontOwnItems;
-	Any *item;   // [1..size]
+	Thing *item;   // [1..size]
 
 	void v_info ()
 		override;
@@ -97,8 +97,8 @@ void Collection_dontOwnItems (Collection me);
 */
 
 void Collection_addItem (Collection me, Thing item);
-void Collection_addItem_ref (Collection me, Thing item);
 void Collection_addItem_move (Collection me, autoThing item);
+void Collection_addItem_ref (Collection me, Thing item);
 /*
 	Function:
 		add the 'item' to the collection.
@@ -134,7 +134,7 @@ void Collection_undangleItem (Collection me, Thing item);
 		often used just before the item is destroyed, hence the name of this procedure.
 */
 
-Any Collection_subtractItem (Collection me, long position);
+Thing Collection_subtractItem (Collection me, long position);
 /*
 	Function:
 		remove the item at 'position' from the collection and transfer ownership to the caller.
@@ -176,6 +176,8 @@ Collection Collections_merge (Collection me, Collection thee);
 /* For the inheritors. */
 
 void _Collection_insertItem (Collection me, Thing item, long position);
+void _Collection_insertItem_move (Collection me, autoThing item, long position);
+void _Collection_insertItem_ref (Collection me, Thing item, long position);
 
 /* Methods:
 

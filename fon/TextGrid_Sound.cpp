@@ -61,7 +61,7 @@ static void IntervalTier_insertIntervalDestructively (IntervalTier me, double tm
 		 */
 		autoTextInterval newInterval = TextInterval_create (tmin, interval -> xmax, U"");
 		interval -> xmax = tmin;
-		Collection_addItem (my intervals, newInterval.transfer());
+		Collection_addItem_move (my intervals, newInterval.move());
 		firstIntervalNumber = IntervalTier_hasTime (me, interval -> xmin);
 	}
 	Melder_assert (firstIntervalNumber >= 1 && firstIntervalNumber <= my intervals -> size);
@@ -76,7 +76,7 @@ static void IntervalTier_insertIntervalDestructively (IntervalTier me, double tm
 		 */
 		autoTextInterval newInterval = TextInterval_create (interval -> xmin, tmax, U"");
 		interval -> xmin = tmax;
-		Collection_addItem (my intervals, newInterval.transfer());
+		Collection_addItem_move (my intervals, newInterval.move());
 		lastIntervalNumber = IntervalTier_hasTime (me, interval -> xmax);
 	}
 	Melder_assert (lastIntervalNumber >= 1 && lastIntervalNumber <= my intervals -> size);
@@ -256,7 +256,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 						wordInterval = wordTier -> interval (wordIntervalNumber);
 						autoTextInterval newInterval = TextInterval_create (tmin, tmax, analysisInterval -> text);
 						wordInterval -> xmin = tmax;
-						Collection_addItem (wordTier -> intervals, newInterval.transfer());
+						Collection_addItem_move (wordTier -> intervals, newInterval.move());
 						wordIntervalNumber ++;
 					}
 				}
@@ -314,7 +314,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 						phonemeInterval = phonemeTier -> interval (phonemeIntervalNumber);
 						autoTextInterval newInterval = TextInterval_create (tmin, tmax, analysisInterval -> text);
 						phonemeInterval -> xmin = tmax;
-						Collection_addItem (phonemeTier -> intervals, newInterval.transfer());
+						Collection_addItem_move (phonemeTier -> intervals, newInterval.move());
 						phonemeIntervalNumber ++;
 					}
 				}
@@ -431,7 +431,7 @@ autoCollection TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, lon
 			TextInterval segment = tier -> interval (iseg);
 			autoSound interval = Sound_extractPart (sound, segment -> xmin, segment -> xmax, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes);
 			Thing_setName (interval.peek(), segment -> text ? segment -> text : U"untitled");
-			Collection_addItem (collection.peek(), interval.transfer()); 
+			Collection_addItem_move (collection.peek(), interval.move());
 		}
 		return collection;
 	} catch (MelderError) {
@@ -448,7 +448,7 @@ autoCollection TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound
 			if (segment -> text && segment -> text [0] != '\0') {
 				autoSound interval = Sound_extractPart (sound, segment -> xmin, segment -> xmax, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes);
 				Thing_setName (interval.peek(), segment -> text ? segment -> text : U"untitled");
-				Collection_addItem (collection.peek(), interval.transfer());
+				Collection_addItem_move (collection.peek(), interval.move());
 			}
 		}
 		if (collection -> size == 0) Melder_warning (U"No non-empty intervals were found.");
@@ -470,7 +470,7 @@ autoCollection TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound, l
 			if (Melder_stringMatchesCriterion (segment -> text, comparison_Melder_STRING, text)) {
 				autoSound interval = Sound_extractPart (sound, segment -> xmin, segment -> xmax, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes);
 				Thing_setName (interval.peek(), Melder_cat (sound -> name ? sound -> name : U"", U"_", text, U"_", ++ count));
-				Collection_addItem (collection.peek(), interval.transfer());
+				Collection_addItem_move (collection.peek(), interval.move());
 			}
 		}
 		if (collection -> size == 0)

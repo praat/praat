@@ -206,7 +206,7 @@ void KlattGrid_replaceFricationBypassTier (KlattGrid me, IntensityTier thee);
 void KlattGrid_setGlottisCoupling (KlattGrid me);
 
 autoFormantGrid * KlattGrid_getAddressOfFormantGrid (KlattGrid me, int formantType);
-Ordered * KlattGrid_getAddressOfAmplitudes (KlattGrid me, int formantType);
+autoOrdered * KlattGrid_getAddressOfAmplitudes (KlattGrid me, int formantType);
 
 // add/remove frequency + bandwidth (+amplitude) tiers
 void KlattGrid_addFormant (KlattGrid me,int formantType, long position);

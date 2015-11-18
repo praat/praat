@@ -178,10 +178,10 @@ if (! my printing) {
 		Graphics_text (my g, my d_x, my d_y, text);
 		numberOfParagraphLinks = Graphics_getLinks (& paragraphLinks);
 		if (my links) for (ilink = 1; ilink <= numberOfParagraphLinks; ilink ++) {
-			HyperLink link = HyperLink_create (paragraphLinks [ilink]. name,
+			autoHyperLink link = HyperLink_create (paragraphLinks [ilink]. name,
 				paragraphLinks [ilink]. x1, paragraphLinks [ilink]. x2,
 				paragraphLinks [ilink]. y1, paragraphLinks [ilink]. y2);
-			Collection_addItem (my links, link);
+			Collection_addItem_move (my links, link.move());
 		}
 		if (method & HyperPage_ADD_BORDER) {
 			Graphics_setLineWidth (my g, 2);
@@ -468,10 +468,10 @@ if (! my printing) {
 			/*Graphics_Link *paragraphLinks;
 			long numberOfParagraphLinks = Graphics_getLinks (& paragraphLinks);
 			if (my links) for (long ilink = 1; ilink <= numberOfParagraphLinks; ilink ++) {
-				HyperLink link = HyperLink_create (paragraphLinks [ilink]. name,
+				autoHyperLink link = HyperLink_create (paragraphLinks [ilink]. name,
 					paragraphLinks [ilink]. x1, paragraphLinks [ilink]. x2,
 					paragraphLinks [ilink]. y1, paragraphLinks [ilink]. y2);
-				Collection_addItem (my links, link);
+				Collection_addItem_move (my links, link.move());
 			}*/
 			theCurrentPraatApplication = & theForegroundPraatApplication;
 			theCurrentPraatObjects = & theForegroundPraatObjects;

@@ -257,11 +257,10 @@ Daata praat_firstObject_any () {
 
 Collection praat_getSelectedObjects () {
 	autoCollection thee = Collection_create (nullptr, 10);
-	Collection_dontOwnItems (thee.peek());
 	int IOBJECT;
 	LOOP {
 		iam_LOOP (Daata);
-		Collection_addItem (thee.peek(), me);
+		Collection_addItem_ref (thee.peek(), me);
 	}
 	return thee.transfer();
 }

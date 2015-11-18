@@ -250,10 +250,9 @@ END2 }
 
 DIRECT2 (Tables_append) {
 	autoCollection collection = Collection_create (classTable, 10);
-	Collection_dontOwnItems (collection.peek());
 	LOOP {
 		iam (Table);
-		Collection_addItem (collection.peek(), me);
+		Collection_addItem_ref (collection.peek(), me);
 	}
 	autoTable thee = Tables_append (collection.peek());
 	praat_new (thee.move(), U"appended");
@@ -1125,10 +1124,9 @@ END2 }
 
 DIRECT2 (TablesOfReal_append) {
 	autoCollection tables = Collection_create (classTableOfReal, 10);
-	Collection_dontOwnItems (tables.peek());
 	LOOP {
 		iam (TableOfReal);
-		Collection_addItem (tables.peek(), me);
+		Collection_addItem_ref (tables.peek(), me);
 	}
 	autoTableOfReal thee = static_cast <TableOfReal> (TablesOfReal_appendMany (tables.peek()));
 	praat_new (thee.move(), U"appended");

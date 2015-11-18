@@ -570,7 +570,7 @@ autoCrossCorrelationTables Sound_to_CrossCorrelationTables (Sound me, double sta
 		for (long i = 1; i <= ncovars; i++) {
 			double lag = (i - 1) * lagStep;
 			autoCrossCorrelationTable ct = Sound_to_CrossCorrelationTable (me, startTime, endTime, lag);
-			Collection_addItem (thee.peek(), ct.transfer());
+			Collection_addItem_move (thee.peek(), ct.move());
 		}
 		return thee;
 	} catch (MelderError) {
@@ -894,7 +894,7 @@ autoCrossCorrelationTables CrossCorrelationTables_and_Diagonalizer_diagonalize (
 		for (long i = 1; i <= my size; i++) {
 			CrossCorrelationTable item = (CrossCorrelationTable) my item[i];
 			autoCrossCorrelationTable ct = CrossCorrelationTable_and_Diagonalizer_diagonalize (item, thee);
-			Collection_addItem (him.peek(), ct.transfer());
+			Collection_addItem_move (him.peek(), ct.move());
 		}
 		return him.transfer();
 	} catch (MelderError) {
@@ -986,7 +986,7 @@ autoCrossCorrelationTables CrossCorrelationTables_createTestSet (long dimension,
 			}
 			// we need V'DV, however our V has eigenvectors row-wise -> VDV'
 			NUMdmatrices_multiply_VCVp (ct -> data, v.peek(), dimension, dimension, d.peek(), 1);
-            Collection_addItem (me.peek(), ct.transfer());
+            Collection_addItem_move (me.peek(), ct.move());
 		}
 		return me;
 	} catch (MelderError) {

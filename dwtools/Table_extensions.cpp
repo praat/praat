@@ -4510,7 +4510,7 @@ autoTable Table_extractRowsWhere (Table me, const char32 *formula, Interpreter i
 			if (result.result.numericResult != 0.0) {
 				TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 				autoTableRow newRow = Data_copy (row);
-				Collection_addItem (thy rows, newRow.transfer());
+				Collection_addItem_move (thy rows, newRow.move());
 			}
 		}
 		if (thy rows -> size == 0) {
@@ -4588,7 +4588,7 @@ static autoTable Table_and_SSCPs_extractMahalanobisWhere (Table me, SSCPs thee, 
 		for (long igroup = 1; igroup <= numberOfGroups; igroup++) {
 			autoCovariance cov = SSCP_to_Covariance ((SSCP) thy item[igroup], 1); 
 			SSCP_expandLowerCholesky (cov.peek());
-			Collection_addItem (covs.peek(), cov.transfer());
+			Collection_addItem_move (covs.peek(), cov.move());
 		}
 		for (long i = 1; i <= numberOfSelectedRows; i++) {
 			long irow = selectedRows[i];
@@ -4608,7 +4608,7 @@ static autoTable Table_and_SSCPs_extractMahalanobisWhere (Table me, SSCPs thee, 
 			if (Melder_numberMatchesCriterion (sqrt (dm2), which_Melder_NUMBER, numberOfSigmas)) {
 				TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 				autoTableRow newRow = Data_copy (row);
-				Collection_addItem (his rows, newRow.transfer());
+				Collection_addItem_move (his rows, newRow.move());
 			}
 		}
 		return him;

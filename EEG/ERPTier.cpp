@@ -113,7 +113,7 @@ static autoERPTier EEG_PointProcess_to_ERPTier (EEG me, PointProcess events, dou
 					event -> erp -> z [ichannel] [isample] = jsample < 1 || jsample > my sound -> nx ? 0.0 : my sound -> z [ichannel] [jsample];
 				}
 			}
-			Collection_addItem (thy events.get(), event.transfer());
+			Collection_addItem_move (thy events.get(), event.move());
 		}
 		return thee;
 	} catch (MelderError) {
@@ -330,7 +330,7 @@ autoERPTier ERPTier_extractEventsWhereColumn_number (ERPTier me, Table table, lo
 			TableRow row = table -> row (ievent);
 			if (Melder_numberMatchesCriterion (row -> cells [columnNumber]. number, which_Melder_NUMBER, criterion)) {
 				autoERPPoint newEvent = Data_copy (oldEvent);
-				Collection_addItem (thy events.get(), newEvent.transfer());
+				Collection_addItem_move (thy events.get(), newEvent.move());
 			}
 		}
 		if (thy events -> size == 0) {
@@ -363,7 +363,7 @@ autoERPTier ERPTier_extractEventsWhereColumn_string (ERPTier me, Table table,
 			TableRow row = table -> row (ievent);
 			if (Melder_stringMatchesCriterion (row -> cells [columnNumber]. string, which_Melder_STRING, criterion)) {
 				autoERPPoint newEvent = Data_copy (oldEvent);
-				Collection_addItem (thy events.get(), newEvent.transfer());
+				Collection_addItem_move (thy events.get(), newEvent.move());
 			}
 		}
 		if (thy events -> size == 0) {

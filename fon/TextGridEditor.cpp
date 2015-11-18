@@ -622,9 +622,9 @@ static void insertBoundaryOrPoint (TextGridEditor me, int itier, double t1, doub
 			TextInterval_setText (rightNewInterval.get(), Melder_cat (midNewInterval -> text, rightNewInterval -> text));
 		} else {
 			interval -> xmax = t1;
-			if (t1 != t2) Collection_addItem (intervalTier -> intervals, midNewInterval.transfer());
+			if (t1 != t2) Collection_addItem_move (intervalTier -> intervals, midNewInterval.move());
 		}
-		Collection_addItem (intervalTier -> intervals, rightNewInterval.transfer());
+		Collection_addItem_move (intervalTier -> intervals, rightNewInterval.move());
 		if (insertSecond && ntiers >= 2 && t1 == t2) {
 			/*
 			 * Find the last time before t on another tier.
@@ -639,7 +639,7 @@ static void insertBoundaryOrPoint (TextGridEditor me, int itier, double t1, doub
 			if (tlast > interval -> xmin && tlast < t1) {
 				autoTextInterval newInterval = TextInterval_create (tlast, t1, U"");
 				interval -> xmax = tlast;
-				Collection_addItem (intervalTier -> intervals, newInterval.transfer());
+				Collection_addItem_move (intervalTier -> intervals, newInterval.move());
 			}
 		}
 	} else {
@@ -649,7 +649,7 @@ static void insertBoundaryOrPoint (TextGridEditor me, int itier, double t1, doub
 		Editor_save (me, U"Add point");
 
 		autoTextPoint newPoint = TextPoint_create (t1, U"");
-		Collection_addItem (textTier -> points, newPoint.transfer());
+		Collection_addItem_move (textTier -> points, newPoint.move());
 	}
 	my d_startSelection = my d_endSelection = t1;
 }
@@ -1821,9 +1821,9 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 		_AnyTier_identifyClass ((Function) grid -> tiers -> item [itier], & intervalTier, & textTier);
 		if (intervalTier) {
 			long ibound, numberOfIntervals = intervalTier -> intervals -> size;
-			Any *intervals = intervalTier -> intervals -> item;
+			TextInterval *intervals = (TextInterval *) (intervalTier -> intervals -> item);
 			for (ibound = 2; ibound <= numberOfIntervals; ibound ++) {
-				TextInterval left = (TextInterval) intervals [ibound - 1], right = (TextInterval) intervals [ibound];
+				TextInterval left = intervals [ibound - 1], right = intervals [ibound];
 				if (left -> xmax == xbegin) {   // boundary dragged?
 					left -> xmax = right -> xmin = xWC;   // move boundary to drop site
 					break;
@@ -1840,10 +1840,10 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 					/*
 					 * Move point to drop site. May have passed another point.
 					 */
-					TextPoint newPoint = Data_copy (point);
+					autoTextPoint newPoint = Data_copy (point);
 					newPoint -> number = xWC;   // move point to drop site
 					Collection_removeItem (textTier -> points, iDraggedPoint);
-					Collection_addItem (textTier -> points, newPoint);
+					Collection_addItem_move (textTier -> points, newPoint.move());
 				}
 			}
 		}

@@ -187,15 +187,15 @@ static void IntervalTier_add (IntervalTier me, double xmin, double xmax, const c
 		}
 		// split interval
 		interval -> xmin = xmax;
-		Collection_addItem (my intervals, newti.transfer());
+		Collection_addItem_move (my intervals, newti.move());
 		return;
 	}
 	interval -> xmax = xmin;
-	Collection_addItem (my intervals, newti.transfer());
+	Collection_addItem_move (my intervals, newti.move());
 	// extra interval when xmax's are not the same
 	if (xmax < xmaxi) {
 		autoTextInterval newti2 = TextInterval_create (xmax, xmaxi, interval -> text);
-		Collection_addItem (my intervals, newti2.transfer());
+		Collection_addItem_move (my intervals, newti2.move());
 	}
 }
 
@@ -265,7 +265,7 @@ autoTextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile) {
 				TextInterval_setText ((TextInterval) ipa -> intervals -> item[i],
 					Melder_peek8to32 (timitLabelToIpaLabel (Melder_peek32to8 (interval -> text))));
 			}
-			Collection_addItem (my tiers, ipa.transfer()); // Then: add to collection
+			Collection_addItem_move (my tiers, ipa.move()); // Then: add to collection
 			Thing_setName (timit, U"phn");  // rename wrd
 		}
 		f.close (file);
@@ -303,7 +303,7 @@ autoTextGrid TextGrids_merge (TextGrid me, TextGrid thee) {
 
 		for (long i = 1; i <= g2 -> tiers -> size; i++) {
 			autoFunction tier = Data_copy ( (Function) g2 -> tiers -> item [i]);
-			Collection_addItem (g1 -> tiers, tier.transfer());
+			Collection_addItem_move (g1 -> tiers, tier.move());
 		}
 		return g1;
 	} catch (MelderError) {
@@ -318,7 +318,7 @@ void IntervalTier_setLaterEndTime (IntervalTier me, double xmax, const char32 *m
 		Melder_assert (xmax > ti -> xmax);
 		if (mark) {
 			autoTextInterval interval = TextInterval_create (ti -> xmax, xmax, mark);
-			Collection_addItem (my intervals, interval.transfer());
+			Collection_addItem_move (my intervals, interval.move());
 		} else {
 			// extend last interval
 			ti -> xmax = xmax;
@@ -338,7 +338,7 @@ void IntervalTier_setEarlierStartTime (IntervalTier me, double xmin, const char3
 		Melder_assert (xmin < ti -> xmin);
 		if (mark) {
 			autoTextInterval interval = TextInterval_create (xmin, ti -> xmin, mark);
-			Collection_addItem (my intervals, interval.transfer());
+			Collection_addItem_move (my intervals, interval.move());
 		} else {
 			// extend first interval
 			ti -> xmin = xmin;
@@ -384,7 +384,7 @@ void TextTier_setLaterEndTime (TextTier me, double xmax, const char32 *mark) {
 		}
 		if (mark) {
 			autoTextPoint textpoint = TextPoint_create (my xmax, mark);
-			Collection_addItem (my points, textpoint.transfer());
+			Collection_addItem_move (my points, textpoint.move());
 		}
 		my xmax = xmax;
 	} catch (MelderError) {
@@ -399,7 +399,7 @@ void TextTier_setEarlierStartTime (TextTier me, double xmin, const char32 *mark)
 		}
 		if (mark) {
 			autoTextPoint textpoint = TextPoint_create (my xmin, mark);
-			Collection_addItem (my points, textpoint.transfer());
+			Collection_addItem_move (my points, textpoint.move());
 		}
 		my xmin = xmin;
 	} catch (MelderError) {
@@ -479,7 +479,7 @@ void TextGrid_extendTime (TextGrid me, double extra_time, int position) {
 			if (anyTier -> classInfo == classIntervalTier) {
 				IntervalTier tier = (IntervalTier) anyTier;
 				autoTextInterval interval = TextInterval_create (tmin, tmax, U"");
-				Collection_addItem (tier -> intervals, interval.transfer());
+				Collection_addItem_move (tier -> intervals, interval.move());
 			}
 		}
 		my xmin = xmin;
@@ -689,12 +689,12 @@ void IntervalTiers_append_inline (IntervalTier me, IntervalTier thee, bool prese
 		if (preserveTimes && my xmax < thy xmin) {
 			autoTextInterval connection = TextInterval_create (my xmax, thy xmin, U"");
             xmax_previous = thy xmin;
-			Collection_addItem (my intervals, connection.transfer());
+			Collection_addItem_move (my intervals, connection.move());
 		}
 		for (long iint = 1; iint <= thy intervals -> size; iint++) {
 			autoTextInterval ti = (TextInterval) Data_copy ((Daata) thy intervals -> item[iint]);
 			if (preserveTimes) {
-				Collection_addItem (my intervals, ti.transfer());
+				Collection_addItem_move (my intervals, ti.move());
 			} else {
 				/* the interval could be so short that if we test ti -> xmin < ti->xmax it might be true
 				 * but after assigning ti->xmin = xmax_previous and ti->xmax += time_shift the test
@@ -706,7 +706,7 @@ void IntervalTiers_append_inline (IntervalTier me, IntervalTier thee, bool prese
 				volatile double xmax = ti -> xmax + time_shift;
 				if (xmin < xmax) {
 					ti -> xmin = xmin; ti -> xmax = xmax;
-					Collection_addItem (my intervals, ti.transfer());
+					Collection_addItem_move (my intervals, ti.move());
 					xmax_previous = xmax;
 				}
 				// else don't include interval
@@ -726,7 +726,7 @@ void TextTiers_append_inline (TextTier me, TextTier thee, bool preserveTimes) {
 			if (not preserveTimes) {
 				tp -> number += my xmax - thy xmin;
 			}
-			Collection_addItem (my points, tp.transfer());
+			Collection_addItem_move (my points, tp.move());
 		}
 		my xmax = preserveTimes ? thy xmax : my xmax + (thy xmax - thy xmin);
 	} catch (MelderError) {

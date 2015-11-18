@@ -41,7 +41,7 @@ FilesInMemory create_espeakdata_phons () {
 		autoFileInMemory espeakdata_phons1 = FileInMemory_createWithData (816, reinterpret_cast<const char *> (&espeakdata_phons1_data), 
 			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/intonations", 
 			U"intonations");
-		Collection_addItem (me.peek(), espeakdata_phons1.transfer());
+		Collection_addItem_move (me.peek(), espeakdata_phons1.move());
 
 		static unsigned char espeakdata_phons2_data[385581] = {
 			36, 70, 1, 0, 74, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -12900,7 +12900,7 @@ FilesInMemory create_espeakdata_phons () {
 		autoFileInMemory espeakdata_phons2 = FileInMemory_createWithData (385580, reinterpret_cast<const char *> (&espeakdata_phons2_data), 
 			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/phondata", 
 			U"phondata");
-		Collection_addItem (me.peek(), espeakdata_phons2.transfer());
+		Collection_addItem_move (me.peek(), espeakdata_phons2.move());
 
 		static unsigned char espeakdata_phons3_data[20427] = {
 			36, 70, 1, 0, 0, 161, 213, 131, 0, 0, 0, 0, 0, 162, 18, 130, 0, 0, 0, 0, 0, 192, 1, 0, 0, 176, 85, 0, 2, 13,
@@ -13587,7 +13587,7 @@ FilesInMemory create_espeakdata_phons () {
 		autoFileInMemory espeakdata_phons3 = FileInMemory_createWithData (20426, reinterpret_cast<const char *> (&espeakdata_phons3_data), 
 			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/phonindex", 
 			U"phonindex");
-		Collection_addItem (me.peek(), espeakdata_phons3.transfer());
+		Collection_addItem_move (me.peek(), espeakdata_phons3.move());
 
 		static unsigned char espeakdata_phons4_data[36149] = {
 			84, 0, 0, 0, 109, 0, 0, 0, 0, 0, 0, 0, 98, 97, 115, 101, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -14798,7 +14798,7 @@ FilesInMemory create_espeakdata_phons () {
 		autoFileInMemory espeakdata_phons4 = FileInMemory_createWithData (36148, reinterpret_cast<const char *> (&espeakdata_phons4_data), 
 			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/phontab", 
 			U"phontab");
-		Collection_addItem (me.peek(), espeakdata_phons4.transfer());
+		Collection_addItem_move (me.peek(), espeakdata_phons4.move());
 
 		return me.transfer();
 	} catch (MelderError) {

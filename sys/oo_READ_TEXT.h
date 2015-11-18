@@ -158,7 +158,7 @@
 		for (long i = 1; i <= n; i ++) { \
 			auto##ItemClass item = (ItemClass) Thing_new (ItemClass); \
 			item.peek() -> v_readText (a_text, formatVersion); \
-			Collection_addItem (our x, item.transfer()); \
+			Collection_addItem_move (our x, item.move()); \
 		} \
 	}
 
@@ -169,7 +169,7 @@
 		for (long i = 1; i <= n; i ++) { \
 			auto##ItemClass item = (ItemClass) Thing_new (ItemClass); \
 			item.peek() -> v_readText (a_text, formatVersion); \
-			Collection_addItem (our x.get(), item.transfer()); \
+			Collection_addItem_move (our x.get(), item.move()); \
 		} \
 	}
 
