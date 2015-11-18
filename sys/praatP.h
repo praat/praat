@@ -162,9 +162,9 @@ void praat_cleanUpName (char32 *name);
 void praat_list_renameAndSelect (int position, const char32 *name);
 
 extern struct PraatP {
-	unsigned int argc;
+	int argc;
 	char **argv;
-	unsigned int argumentNumber;
+	int argumentNumber;
 	bool userWantsToOpen;
 	bool dontUsePictureWindow;   // see praat_dontUsePictureWindow ()
 	bool ignorePreferenceFiles, ignorePlugins;
