@@ -136,22 +136,12 @@ static void Ordered_moveItem (Ordered me, long from, long to) {
 
 #pragma mark - Widget updates
 
-static void notifyOutOfView (CategoriesEditor me) {
+static void notifyNumberOfSelected (CategoriesEditor me) {
 	autoMelderString tmp;
-	MelderString_copy (&tmp, U"");
 	long posCount;
-	autoNUMvector<long> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
-	if (posList.peek()) {
-		long outOfView = 0, top = GuiList_getTopPosition (my list), bottom = GuiList_getBottomPosition (my list);
-
-		for (long i = posCount; i > 0; i--) {
-			if (posList[i] < top || posList[i] > bottom) {
-				outOfView++;
-			}
-		}
-		if (outOfView > 0) {
-			MelderString_append (&tmp, outOfView, U" selection(s) out of view");
-		}
+	autoNUMvector<long> posList (GuiList_getSelectedPositions (my list, & posCount), 1);  // waste
+	if (posCount > 0) {
+		MelderString_append (&tmp, posCount, U" selection", (posCount > 1 ? U"s." : U"."));
 	}
 	GuiLabel_setText (my outOfView, tmp.string);
 }
@@ -216,7 +206,7 @@ static void updateWidgets (CategoriesEditor me) {   // all buttons except undo &
 	if (my history) {
 		updateUndoAndRedoMenuItems (me);
 	}
-	notifyOutOfView (me);
+	notifyNumberOfSelected (me);
 }
 
 static void update (CategoriesEditor me, long from, long to, const long *select, long nSelect) {
@@ -511,12 +501,11 @@ static int CategoriesEditorMoveUp_undo (CategoriesEditorMoveUp me) {
 	return 1;
 }
 
-static autoCategoriesEditorMoveUp CategoriesEditorMoveUp_create (Thing boss, long *posList,
-        long posCount, long newPos) {
+static autoCategoriesEditorMoveUp CategoriesEditorMoveUp_create (Thing boss, long *posList, long posCount, long newPos) {
+
 	try {
 		autoCategoriesEditorMoveUp me = Thing_new (CategoriesEditorMoveUp);
-		CategoriesEditorCommand_init (me.peek(), U"Move up", boss, CategoriesEditorMoveUp_execute,
-		                              CategoriesEditorMoveUp_undo, 0, posCount);
+		CategoriesEditorCommand_init (me.peek(), U"Move up", boss, CategoriesEditorMoveUp_execute, CategoriesEditorMoveUp_undo, 0, posCount);
 		for (long i = 1; i <= posCount; i++) {
 			my selection[i] = posList[i];
 		}
@@ -563,8 +552,7 @@ static autoCategoriesEditorMoveDown CategoriesEditorMoveDown_create (Thing boss,
         long posCount, long newPos) {
 	try {
 		autoCategoriesEditorMoveDown me = Thing_new (CategoriesEditorMoveDown);
-		CategoriesEditorCommand_init (me.peek(), U"Move down", boss, CategoriesEditorMoveDown_execute,
-		                              CategoriesEditorMoveDown_undo, 0, posCount);
+		CategoriesEditorCommand_init (me.peek(), U"Move down", boss, CategoriesEditorMoveDown_execute, CategoriesEditorMoveDown_undo, 0, posCount);
 		for (long i = 1; i <= posCount; i++) {
 			my selection[i] = posList[i];
 		}
@@ -580,7 +568,7 @@ static autoCategoriesEditorMoveDown CategoriesEditorMoveDown_create (Thing boss,
 static void gui_button_cb_remove (CategoriesEditor me, GuiButtonEvent /* event */) {
 	long posCount;
 	autoNUMvector<long> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
-	if (posList.peek() != 0) {
+	if (posList.peek()) {
 		autoCategoriesEditorRemove command = CategoriesEditorRemove_create (me, posList.peek(), posCount);
 		if (! Command_do (command.peek())) {
 			return;
@@ -622,8 +610,7 @@ static void gui_button_cb_replace (CategoriesEditor me, GuiButtonEvent /* event 
 		autostring32 text = GuiText_getString (my text);
 		if (str32len (text.peek()) != 0) {
 			autoSimpleString str = SimpleString_create (text.peek());
-			autoCategoriesEditorReplace command = CategoriesEditorReplace_create (me, str.move(),
-			                                      posList.peek(), posCount);
+			autoCategoriesEditorReplace command = CategoriesEditorReplace_create (me, str.move(), posList.peek(), posCount);
 			Command_do (command.peek());
 			if (my history) {
 				CommandHistory_insertItem (my history.peek(), command.transfer());
@@ -638,8 +625,7 @@ static void gui_button_cb_moveUp (CategoriesEditor me, GuiButtonEvent /* event *
 	long posCount;
 	autoNUMvector<long> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
 	if (posCount > 0) {
-		autoCategoriesEditorMoveUp command = CategoriesEditorMoveUp_create
-		                                     (me, posList.peek(), posCount, posList[1] - 1);
+		autoCategoriesEditorMoveUp command = CategoriesEditorMoveUp_create (me, posList.peek(), posCount, posList[1] - 1);
 		Command_do (command.peek());
 		if (my history) {
 			CommandHistory_insertItem (my history.peek(), command.transfer());
@@ -653,8 +639,7 @@ static void gui_button_cb_moveDown (CategoriesEditor me, GuiButtonEvent /* event
 	long posCount;
 	autoNUMvector<long> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
 	if (posCount > 0) {
-		autoCategoriesEditorMoveDown command = CategoriesEditorMoveDown_create
-		                                       (me, posList.peek(), posCount, posList[posCount] + 1);
+		autoCategoriesEditorMoveDown command = CategoriesEditorMoveDown_create (me, posList.peek(), posCount, posList[posCount] + 1);
 		Command_do (command.peek());
 		if (my history) {
 			CommandHistory_insertItem (my history.peek(), command.transfer());
@@ -669,9 +654,9 @@ static void gui_list_cb_selectionChanged (CategoriesEditor me, GuiList_Selection
 
 static void gui_list_cb_doubleClick (CategoriesEditor me, GuiList_DoubleClickEvent event) {
 	Melder_assert (event -> list == my list);
-	/*
-	 * `my position` should just have been updated by the selectionChanged callback.
-	 */
+
+	//  `my position` should just have been updated by the selectionChanged callback.
+
 	long posCount;
 	autoNUMvector<long> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
 	if (posCount == 1   // often or even usually true when double-clicking?
@@ -685,7 +670,7 @@ static void gui_list_cb_doubleClick (CategoriesEditor me, GuiList_DoubleClickEve
 }
 
 static void gui_list_cb_scroll (CategoriesEditor me, GuiList_ScrollEvent /* event */) {
-	notifyOutOfView (me);
+	notifyNumberOfSelected (me);
 }
 
 static void gui_button_cb_undo (CategoriesEditor me, GuiButtonEvent /* event */) {
@@ -722,7 +707,7 @@ void structCategoriesEditor :: v_createHelpMenuItems (EditorMenu menu) {
 // origin is at top left.
 void structCategoriesEditor :: v_createChildren () {
 	constexpr int menuBarOffset { 40 };
-	constexpr int button_width { 90 }, button_height { menuBarOffset }, list_width { 260 }, list_height { 200 };
+	constexpr int button_width { 130 }, button_height { menuBarOffset }, list_width { 260 }, list_height { 420 };
 	constexpr int delta_x { 15 }, delta_y { menuBarOffset / 2 }, text_button_height { button_height / 2 };
 	int left, right, top, bottom, buttons_left, buttons_top, list_bottom;
 

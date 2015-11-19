@@ -657,8 +657,15 @@ long * GuiList_getSelectedPositions (GuiList me, long *numberOfSelectedPositions
 
 long GuiList_getBottomPosition (GuiList me) {
 	#if gtk
-		// TODO
-		return 1;
+		GtkTreePath *path;
+		long position = 1;
+		if (gtk_tree_view_get_visible_range (GTK_TREE_VIEW (my d_widget), nullptr, & path)) {
+			int *indices = gtk_tree_path_get_indices (path);
+			position = indices ? indices[0] + 1 : 1;
+			gtk_tree_path_free (path); // also frees indices !!
+		}
+		trace (U"bottom: ", position);
+		return position;
 	#elif cocoa
 		return 1;   // TODO
 	#elif win
@@ -700,8 +707,15 @@ long GuiList_getNumberOfItems (GuiList me) {
 
 long GuiList_getTopPosition (GuiList me) {
 	#if gtk
-		// TODO
-		return 1;
+		GtkTreePath *path;
+		long position = 1;
+		if (gtk_tree_view_get_visible_range (GTK_TREE_VIEW (my d_widget), & path, nullptr)) {
+			int *indices = gtk_tree_path_get_indices (path);
+			position = indices ? indices[0] + 1 : 1;
+			gtk_tree_path_free (path); // also frees indices !!
+		}
+		trace (U"top: ", position);
+		return position;
 	#elif cocoa
 		return 1;   // TODO
 	#elif win
