@@ -5,7 +5,7 @@
 #include "FileInMemory.h"
 #include "melder.h"
 
-FilesInMemory create_espeakdata_variants () {
+autoFilesInMemory create_espeakdata_variants () {
 	try {
 		autoFilesInMemory me = FilesInMemory_create ();
 		static unsigned char espeakdata_variants1_data[94] = {
@@ -276,7 +276,7 @@ FilesInMemory create_espeakdata_variants () {
 			U"whisperf");
 		Collection_addItem_move (me.peek(), espeakdata_variants18.move());
 
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FilesInMemory not created.");
 	}

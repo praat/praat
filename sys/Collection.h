@@ -35,9 +35,9 @@ Thing_define (Collection, Daata) {
 		override;
 	void v_destroy ()
 		override;   // destroys all the items
-	void v_copy (Any data_to)
+	void v_copy (Daata data_to)
 		override;   // copies all the items
-	bool v_equal (Any data2)
+	bool v_equal (Daata data2)
 		override;   // compares 'my item [i]' with 'thy item [i]', i = 1..size
 	bool v_canWriteAsEncoding (int outputEncoding)
 		override;
@@ -268,8 +268,7 @@ inline static bool SortedSet_hasItem (SortedSet me, Any a_item) {
 
 Thing_define (SortedSetOfInt, SortedSet) {
 	static int s_compare (Any data1, Any data2);
-	Data_CompareFunction v_getCompareFunction ()
-		override { return s_compare; }
+	Data_CompareFunction v_getCompareFunction () override { return s_compare; }
 };
 
 void SortedSetOfInt_init (SortedSetOfInt me);
@@ -279,8 +278,7 @@ SortedSetOfInt SortedSetOfInt_create ();
 
 Thing_define (SortedSetOfLong, SortedSet) {
 	static int s_compare (Any data1, Any data2);
-	Data_CompareFunction v_getCompareFunction ()
-		override { return s_compare; }
+	Data_CompareFunction v_getCompareFunction () override { return s_compare; }
 };
 
 void SortedSetOfLong_init (SortedSetOfLong me);
@@ -290,8 +288,7 @@ SortedSetOfLong SortedSetOfLong_create ();
 
 Thing_define (SortedSetOfDouble, SortedSet) {
 	static int s_compare (Any data1, Any data2);
-	Data_CompareFunction v_getCompareFunction ()
-		override { return s_compare; }
+	Data_CompareFunction v_getCompareFunction () override { return s_compare; }
 };
 
 void SortedSetOfDouble_init (SortedSetOfDouble me);
@@ -301,8 +298,7 @@ SortedSetOfDouble SortedSetOfDouble_create ();
 
 Thing_define (SortedSetOfString, SortedSet) {
 	static int s_compare (Any data1, Any data2);
-	Data_CompareFunction v_getCompareFunction ()
-		override { return s_compare; }
+	Data_CompareFunction v_getCompareFunction () override { return s_compare; }
 };
 
 void SortedSetOfString_init (SortedSetOfString me);

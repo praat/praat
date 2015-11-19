@@ -26,8 +26,8 @@ void structDLLNode :: v_destroy () {
 	DLLNode_Parent :: v_destroy ();
 }
 
-void structDLLNode :: v_copy (thou) {
-	thouart (DLLNode);
+void structDLLNode :: v_copy (Daata thee_Daata) {
+	DLLNode thee = static_cast <DLLNode> (thee_Daata);
 	thy data = Data_copy (our data);
 }
 

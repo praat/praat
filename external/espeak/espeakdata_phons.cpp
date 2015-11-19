@@ -6,7 +6,7 @@
 #include "FileInMemory.h"
 #include "melder.h"
 
-FilesInMemory create_espeakdata_phons () {
+autoFilesInMemory create_espeakdata_phons () {
 	try {
 		autoFilesInMemory me = FilesInMemory_create ();
 		static unsigned char espeakdata_phons1_data[817] = {
@@ -14800,7 +14800,7 @@ FilesInMemory create_espeakdata_phons () {
 			U"phontab");
 		Collection_addItem_move (me.peek(), espeakdata_phons4.move());
 
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FilesInMemory not created.");
 	}

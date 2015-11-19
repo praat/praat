@@ -41,8 +41,8 @@ typedef struct structData_Description {
  */
 
 Thing_define (Daata, Thing) {
-	virtual void v_copy (Any data_to);
-	virtual bool v_equal (Any otherData);
+	virtual void v_copy (Daata data_to);
+	virtual bool v_equal (Daata otherData);
 	virtual Data_Description v_description () { return nullptr; }
 	virtual bool v_writable () { return true; }
 	virtual bool v_canWriteAsEncoding (int outputEncoding);
@@ -52,31 +52,31 @@ Thing_define (Daata, Thing) {
 	virtual void v_readBinary (FILE *f, int formatVersion);
 	virtual void v_repair () { }   // after reading Praat data files created by others
 	// methods for scripting:
-	virtual bool v_hasGetNrow      () { return false; }   virtual double        v_getNrow      ()                      { return NUMundefined; }
-	virtual bool v_hasGetNcol      () { return false; }   virtual double        v_getNcol      ()                      { return NUMundefined; }
-	virtual bool v_hasGetXmin      () { return false; }   virtual double        v_getXmin      ()                      { return NUMundefined; }
-	virtual bool v_hasGetXmax      () { return false; }   virtual double        v_getXmax      ()                      { return NUMundefined; }
-	virtual bool v_hasGetYmin      () { return false; }   virtual double        v_getYmin      ()                      { return NUMundefined; }
-	virtual bool v_hasGetYmax      () { return false; }   virtual double        v_getYmax      ()                      { return NUMundefined; }
-	virtual bool v_hasGetNx        () { return false; }   virtual double        v_getNx        ()                      { return NUMundefined; }
-	virtual bool v_hasGetNy        () { return false; }   virtual double        v_getNy        ()                      { return NUMundefined; }
-	virtual bool v_hasGetDx        () { return false; }   virtual double        v_getDx        ()                      { return NUMundefined; }
-	virtual bool v_hasGetDy        () { return false; }   virtual double        v_getDy        ()                      { return NUMundefined; }
-	virtual bool v_hasGetX         () { return false; }   virtual double        v_getX         (long ix)               { return NUMundefined; (void) ix;   }
-	virtual bool v_hasGetY         () { return false; }   virtual double        v_getY         (long iy)               { return NUMundefined; (void) iy;   }
-	virtual bool v_hasGetRowStr    () { return false; }   virtual const char32 *v_getRowStr    (long irow)             { return nullptr;      (void) irow; }
-	virtual bool v_hasGetColStr    () { return false; }   virtual const char32 *v_getColStr    (long icol)             { return nullptr;      (void) icol; }
-	virtual bool v_hasGetCell      () { return false; }   virtual double        v_getCell      ()                      { return NUMundefined; }
-	virtual bool v_hasGetCellStr   () { return false; }   virtual const char32 *v_getCellStr   ()                      { return nullptr; }
-	virtual bool v_hasGetVector    () { return false; }   virtual double        v_getVector    (long irow, long icol)  { return NUMundefined; (void) irow; (void) icol; }
-	virtual bool v_hasGetVectorStr () { return false; }   virtual const char32 *v_getVectorStr (long icol)             { return nullptr;      (void) icol; }
-	virtual bool v_hasGetMatrix    () { return false; }   virtual double        v_getMatrix    (long irow, long icol)  { return NUMundefined; (void) irow; (void) icol; }
-	virtual bool v_hasGetMatrixStr () { return false; }   virtual const char32 *v_getMatrixStr (long irow, long icol)  { return nullptr;      (void) irow; (void) icol; }
-	virtual bool v_hasGetFunction0 () { return false; }   virtual double        v_getFunction0 ()                      { return NUMundefined; }
-	virtual bool v_hasGetFunction1 () { return false; }   virtual double        v_getFunction1 (long irow, double x)   { return NUMundefined; (void) irow; (void) x; }
-	virtual bool v_hasGetFunction2 () { return false; }   virtual double        v_getFunction2 (double x, double y)    { return NUMundefined; (void) x; (void) y; }
-	virtual bool v_hasGetRowIndex  () { return false; }   virtual double        v_getRowIndex  (const char32 *rowLabel){ return NUMundefined; (void) rowLabel; }
-	virtual bool v_hasGetColIndex  () { return false; }   virtual double        v_getColIndex  (const char32 *colLabel){ return NUMundefined; (void) colLabel; }
+	virtual bool v_hasGetNrow      () { return false; }   virtual double        v_getNrow      ()                                 { return NUMundefined; }
+	virtual bool v_hasGetNcol      () { return false; }   virtual double        v_getNcol      ()                                 { return NUMundefined; }
+	virtual bool v_hasGetXmin      () { return false; }   virtual double        v_getXmin      ()                                 { return NUMundefined; }
+	virtual bool v_hasGetXmax      () { return false; }   virtual double        v_getXmax      ()                                 { return NUMundefined; }
+	virtual bool v_hasGetYmin      () { return false; }   virtual double        v_getYmin      ()                                 { return NUMundefined; }
+	virtual bool v_hasGetYmax      () { return false; }   virtual double        v_getYmax      ()                                 { return NUMundefined; }
+	virtual bool v_hasGetNx        () { return false; }   virtual double        v_getNx        ()                                 { return NUMundefined; }
+	virtual bool v_hasGetNy        () { return false; }   virtual double        v_getNy        ()                                 { return NUMundefined; }
+	virtual bool v_hasGetDx        () { return false; }   virtual double        v_getDx        ()                                 { return NUMundefined; }
+	virtual bool v_hasGetDy        () { return false; }   virtual double        v_getDy        ()                                 { return NUMundefined; }
+	virtual bool v_hasGetX         () { return false; }   virtual double        v_getX         (long /* ix */)                    { return NUMundefined; }
+	virtual bool v_hasGetY         () { return false; }   virtual double        v_getY         (long /* iy */)                    { return NUMundefined; }
+	virtual bool v_hasGetRowStr    () { return false; }   virtual const char32 *v_getRowStr    (long /* irow */)                  { return nullptr;      }
+	virtual bool v_hasGetColStr    () { return false; }   virtual const char32 *v_getColStr    (long /* icol */)                  { return nullptr;      }
+	virtual bool v_hasGetCell      () { return false; }   virtual double        v_getCell      ()                                 { return NUMundefined; }
+	virtual bool v_hasGetCellStr   () { return false; }   virtual const char32 *v_getCellStr   ()                                 { return nullptr; }
+	virtual bool v_hasGetVector    () { return false; }   virtual double        v_getVector    (long /* irow */, long /* icol */) { return NUMundefined; }
+	virtual bool v_hasGetVectorStr () { return false; }   virtual const char32 *v_getVectorStr (long /* icol */)                  { return nullptr;      }
+	virtual bool v_hasGetMatrix    () { return false; }   virtual double        v_getMatrix    (long /* irow */, long /* icol */) { return NUMundefined; }
+	virtual bool v_hasGetMatrixStr () { return false; }   virtual const char32 *v_getMatrixStr (long /* irow */, long /* icol */) { return nullptr;      }
+	virtual bool v_hasGetFunction0 () { return false; }   virtual double        v_getFunction0 ()                                 { return NUMundefined; }
+	virtual bool v_hasGetFunction1 () { return false; }   virtual double        v_getFunction1 (long /* irow */, double /* x */)  { return NUMundefined; }
+	virtual bool v_hasGetFunction2 () { return false; }   virtual double        v_getFunction2 (double /* x */, double /* y */)   { return NUMundefined; }
+	virtual bool v_hasGetRowIndex  () { return false; }   virtual double        v_getRowIndex  (const char32 * /* rowLabel */)    { return NUMundefined; }
+	virtual bool v_hasGetColIndex  () { return false; }   virtual double        v_getColIndex  (const char32 * /* colLabel */)    { return NUMundefined; }
 };
 
 template <class T> T* Data_copy (T* data) {

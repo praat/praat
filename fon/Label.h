@@ -23,9 +23,9 @@
 #include "Function.h"
 
 Thing_define (Autosegment, Function) {
-	void v_copy (Any data_to)
+	void v_copy (Daata data_to)
 		override;
-	bool v_equal (Any otherData)
+	bool v_equal (Daata otherData)
 		override;
 	static Data_Description s_description;
 	Data_Description v_description ()

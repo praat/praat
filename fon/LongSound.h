@@ -49,7 +49,7 @@ Thing_define (LongSound, Sampled) {
 		override;
 	void v_info ()
 		override;
-	void v_copy (Any data_to)
+	void v_copy (Daata data_to)
 		override;
 	bool v_writable ()
 		override { return false; }
