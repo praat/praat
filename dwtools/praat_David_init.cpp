@@ -2782,27 +2782,27 @@ FORM (FilesInMemory_createCopyFromFilesInMemory, U"", 0)
 DO
 	long choice = GET_INTEGER (U"Espeakdata");
 	if (choice == 1) {
-		autoFilesInMemory f = (FilesInMemory) Data_copy (espeakdata_phons);
+		autoFilesInMemory f = Data_copy (espeakdata_phons.get());
 		praat_new (f.move(), U"espeakdata_phons");
 	}
 	else if (choice == 2) {
-		autoFilesInMemory f = (FilesInMemory) Data_copy (espeakdata_dicts);
+		autoFilesInMemory f = Data_copy (espeakdata_dicts.get());
 		praat_new (f.move(), U"espeakdata_dicts");
 	}
 	else if (choice == 3) {
-		autoFilesInMemory f = (FilesInMemory) Data_copy (espeakdata_voices);
+		autoFilesInMemory f = Data_copy (espeakdata_voices.get());
 		praat_new (f.move(), U"espeakdata_voices");
 	}
 	else if (choice == 4) {
-		autoFilesInMemory f = (FilesInMemory) Data_copy (espeakdata_variants);
+		autoFilesInMemory f = Data_copy (espeakdata_variants.get());
 		praat_new (f.move(), U"espeakdata_variants");
 	}
 	else if (choice == 5) {
-		autoStrings s = (Strings) Data_copy (espeakdata_voices_names);
+		autoStrings s = Data_copy (espeakdata_voices_names.get());
 		praat_new (s.move(), U"espeakdata_voices_names");
 	}
 	else if (choice == 6) {
-		autoStrings s = (Strings) Data_copy (espeakdata_variants_names);
+		autoStrings s = Data_copy (espeakdata_variants_names.get());
 		praat_new (s.move(), U"espeakdata_variants_names");
 	}
 END
@@ -6414,12 +6414,12 @@ DIRECT (SpeechSynthesizer_help)
 END
 
 FORM (SpeechSynthesizer_create, U"Create SpeechSynthesizer", U"Create SpeechSynthesizer...")
-	long prefVoice = Strings_findString (espeakdata_voices_names, U"English");
+	long prefVoice = Strings_findString (espeakdata_voices_names.get(), U"English");
 	if (prefVoice == 0) {
 		prefVoice = 1;
 	}
 	LIST (U"Language", espeakdata_voices_names -> numberOfStrings, (const char32 **) espeakdata_voices_names -> strings, prefVoice)
-	long prefVariant = Strings_findString (espeakdata_variants_names, U"default");
+	long prefVariant = Strings_findString (espeakdata_variants_names.get(), U"default");
 	LIST (U"Voice variant", espeakdata_variants_names -> numberOfStrings,
 		(const char32 **) espeakdata_variants_names -> strings, prefVariant)
 	OK

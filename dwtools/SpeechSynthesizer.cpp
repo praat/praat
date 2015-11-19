@@ -222,7 +222,7 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 
 const char32 *SpeechSynthesizer_getVoiceLanguageCodeFromName (SpeechSynthesizer /* me */, const char32 *voiceLanguageName) {
 	try {
-		long voiceLanguageNameIndex = Strings_findString (espeakdata_voices_names, voiceLanguageName);
+		long voiceLanguageNameIndex = Strings_findString (espeakdata_voices_names.get(), voiceLanguageName);
 		if (voiceLanguageNameIndex == 0) {
 			Melder_throw (U"Cannot find language \"", voiceLanguageName, U"\".");
 		}
@@ -237,7 +237,7 @@ const char32 *SpeechSynthesizer_getVoiceVariantCodeFromName (SpeechSynthesizer /
 	try {
 		static const char32 * defaultVariantCode = U"default";
 		// Strings espeakdata_variants_names is one longer than the actual list of variants
-		long voiceVariantIndex = Strings_findString (espeakdata_variants_names, voiceVariantName);
+		long voiceVariantIndex = Strings_findString (espeakdata_variants_names.get(), voiceVariantName);
 		if (voiceVariantIndex == 0) {
 			Melder_throw (U"Cannot find voice variant \"", voiceVariantName, U"\".");
 		}

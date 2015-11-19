@@ -241,8 +241,8 @@ static void LongSound_init (LongSound me, MelderFile file) {
 	}
 }
 
-void structLongSound :: v_copy (thou) {
-	thouart (LongSound);
+void structLongSound :: v_copy (Daata thee_Daata) {
+	LongSound thee = static_cast <LongSound> (thee_Daata);
 	thy f = nullptr;
 	thy buffer = nullptr;
 	LongSound_init (thee, & file);

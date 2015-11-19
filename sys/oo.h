@@ -281,8 +281,8 @@
 
 #define oo_END_CLASS(Class) \
 		void v_destroy () override; \
-		void v_copy (Any data_to) override; \
-		bool v_equal (Any otherData) override; \
+		void v_copy (Daata data_to) override; \
+		bool v_equal (Daata otherData) override; \
 		static Data_Description s_description; \
 		Data_Description v_description () override { return s_description; } \
 		bool v_canWriteAsEncoding (int outputEncoding) override; \

@@ -28,7 +28,7 @@ Thing_define (DLLNode, Daata) {
 
 	void v_destroy ()
 		override;
-	void v_copy (Any data_to)
+	void v_copy (Daata data_to)
 		override;
 };
 

@@ -33,8 +33,9 @@ Thing_define (FileInMemory, Daata) {
 	char32 *d_id;
 	long d_numberOfBytes;
 	char *d_data;
+	bool ownData;
 
-	void v_copy (Any data_to)
+	void v_copy (Daata data_to)
 		override;
 	void v_destroy ()
 		override;
@@ -42,9 +43,9 @@ Thing_define (FileInMemory, Daata) {
 		override;
 };
 
-FileInMemory FileInMemory_create (MelderFile file);
+autoFileInMemory FileInMemory_create (MelderFile file);
 
-FileInMemory FileInMemory_createWithData (long numberOfBytes, const char *data, const char32 *path, const char32 *id);
+autoFileInMemory FileInMemory_createWithData (long numberOfBytes, const char *data, const char32 *path, const char32 *id);
 
 void FileInMemory_dontOwnData (FileInMemory me);
 
@@ -61,9 +62,9 @@ Thing_define (FilesInMemory, SortedSet) {
 		override { return d_sortKey == 0 ? s_compare_name : s_compare_id; }
 };
 
-FilesInMemory FilesInMemory_create ();
+autoFilesInMemory FilesInMemory_create ();
 
-FilesInMemory FilesInMemory_createFromDirectoryContents (const char32 *dirpath, const char32 *file);
+autoFilesInMemory FilesInMemory_createFromDirectoryContents (const char32 *dirpath, const char32 *file);
 
 void FilesInMemory_showAsCode (FilesInMemory me, const char32 *name, long numberOfBytesPerLine);
 
@@ -71,7 +72,7 @@ void FilesInMemory_showOneFileAsCode (FilesInMemory me, long index, const char32
 
 long FilesInMemory_getIndexFromId (FilesInMemory me, const char32 *id);
 
-Strings FilesInMemory_to_Strings_id (FilesInMemory me);
+autoStrings FilesInMemory_to_Strings_id (FilesInMemory me);
 
 char * FilesInMemory_getCopyOfData (FilesInMemory me, const char32 *id, long *numberOfBytes);
 

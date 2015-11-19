@@ -21,27 +21,23 @@
 
 Thing_implement (Daata, Thing, 0);
 
-structMelderDir Data_directoryBeingRead = { { 0 } };
+structMelderDir Data_directoryBeingRead { { 0 } };
 
-void structDaata :: v_copy (thou) {
-	thouart (Daata);
-	(void) thee;
+void structDaata :: v_copy (Daata /* thee */) {
 }
 
-bool structDaata :: v_equal (thou) {
-	thouart (Daata);
-	(void) thee;
+bool structDaata :: v_equal (Daata /* thee */) {
 	return true;
 }   // names of "identical" objects are allowed to be different
 
-bool structDaata :: v_canWriteAsEncoding (int /*encoding*/) {
+bool structDaata :: v_canWriteAsEncoding (int /* encoding */) {
 	return true;
 }
 
-void structDaata :: v_writeText (MelderFile /*openFile*/) {
+void structDaata :: v_writeText (MelderFile /* openFile */) {
 }
 
-void structDaata :: v_readText (MelderReadText, int /*formatVersion*/) {
+void structDaata :: v_readText (MelderReadText, int /* formatVersion */) {
 }
 
 void structDaata :: v_writeBinary (FILE *) {
@@ -65,7 +61,7 @@ Daata _Data_copy (Daata me) {
 bool Data_equal (Daata me, Daata thee) {
 	if (my classInfo != thy classInfo) return false;   // different class: not equal
 	int offset = sizeof (struct structDaata);   // we already compared the methods, and are going to skip the names
-	if (! memcmp ((char *) me + offset, (char *) thee + offset, my classInfo -> size - offset))
+	if (! memcmp ((char *) me + offset, (char *) thee + offset, my classInfo -> size - offset))   // BUG: not necessarily portable
 		return true;   // no shallow differences
 	return my v_equal (thee);
 }

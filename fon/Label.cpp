@@ -21,14 +21,14 @@
 
 Thing_implement (Autosegment, Function, 0);
 
-void structAutosegment :: v_copy (thou) {
-	thouart (Autosegment);
+void structAutosegment :: v_copy (Daata thee_Daata) {
+	Autosegment thee = static_cast <Autosegment> (thee_Daata);
 	Autosegment_Parent :: v_copy (thee);
 	if (name) Thing_setName (thee, name);
 }
 
-bool structAutosegment :: v_equal (thou) {
-	thouart (Autosegment);
+bool structAutosegment :: v_equal (Daata thee_Daata) {
+	Autosegment thee = static_cast <Autosegment> (thee_Daata);
 	if (! Autosegment_Parent :: v_equal (thee)) return false;
 	if (! our name && ! thy name) return true;   // shortcut: no names
 	if (! our name || ! thy name) return false;

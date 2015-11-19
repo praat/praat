@@ -39,9 +39,9 @@ void structCollection :: v_info () {
 	MelderInfo_writeLine (size, U" items");
 }
 
-void structCollection :: v_copy (thou) {
-	thouart (Collection);
-	thy item = nullptr;   // kill shallow copy of item  // BUG
+void structCollection :: v_copy (Daata thee_Daata) {
+	Collection thee = static_cast <Collection> (thee_Daata);
+	thy item = nullptr;   // set to null in case the inherited v_copy crashes
 	Collection_Parent :: v_copy (thee);
 	thy itemClass = our itemClass;
 	thy _ownershipInitialized = our _ownershipInitialized;
@@ -55,15 +55,15 @@ void structCollection :: v_copy (thou) {
 		if (our _ownItems) {
 			if (! Thing_isa (itempie, classDaata))
 				Melder_throw (U"Cannot copy item of class ", Thing_className (itempie), U".");
-			thy item [i] = Data_copy ((Daata) itempie);
+			thy item [i] = Data_copy (static_cast <Daata> (itempie));
 		} else {
 			thy item [i] = itempie;   // reference copy: if me doesn't own the items, then thee shouldn't either   // NOTE: the items don't have to be Daata
 		}
 	}
 }
 
-bool structCollection :: v_equal (thou) {
-	thouart (Collection);
+bool structCollection :: v_equal (Daata thee_Daata) {
+	Collection thee = static_cast <Collection> (thee_Daata);
 	if (! Collection_Parent :: v_equal (thee)) return false;
 	if (size != thy size) return false;
 	for (long i = 1; i <= size; i ++) {
@@ -73,7 +73,7 @@ bool structCollection :: v_equal (thou) {
 		if (! Thing_isa (thy item [i], classDaata))
 			Melder_throw (U"Collection::equal: "
 				U"cannot compare items of class ", Thing_className (thy item [i]), U".");
-		bool equal = Data_equal ((Daata) item [i], (Daata) thy item [i]);
+		bool equal = Data_equal (static_cast <Daata> (item [i]), static_cast <Daata> (thy item [i]));
 		//Melder_casual (U"classCollection_equal: ", equal,
 		//	U", item ", i,
 		//  U", types ", Thing_className (my item [i]), U" and ", Thing_className (thy item [i]));

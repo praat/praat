@@ -546,23 +546,23 @@ Thing_define (Vertex, Daata) {
 	int intersect, entry;
 	bool processed;
 
-	void v_copy (Any data_to)
+	void v_copy (Daata data_to)
 		override;
 };
 
 Thing_implement (Vertex, Daata, 0);
 
-void structVertex :: v_copy (thou) {
-	thouart (Vertex);
-	thy x = x;
-	thy y = y;
-	thy alpha = alpha;
-	thy neighbour = neighbour;
-	thy poly_npoints = poly_npoints;
-	thy id = id;
-	thy intersect = intersect;
-	thy entry = entry;
-	thy processed = processed;
+void structVertex :: v_copy (Daata thee_Daata) {
+	Vertex thee = static_cast <Vertex> (thee_Daata);
+	thy x = our x;
+	thy y = our y;
+	thy alpha = our alpha;
+	thy neighbour = our neighbour;
+	thy poly_npoints = our poly_npoints;
+	thy id = our id;
+	thy intersect = our intersect;
+	thy entry = our entry;
+	thy processed = our processed;
 }
 
 Vertex Vertex_create ();
@@ -576,12 +576,9 @@ Vertex Vertex_create () {
 }
 
 Thing_define (Vertices, DLL) {
-	// overridden methods:
-protected:
 	static int s_compare (Any data1, Any data2);
-	virtual Data_CompareFunction v_getCompareFunction () {
-		return s_compare;
-	}
+	Data_CompareFunction v_getCompareFunction ()
+		override { return s_compare; }
 };
 Thing_implement (Vertices, DLL, 0);
 
@@ -592,10 +589,9 @@ int structVertices :: s_compare (I, thou) {
 	return VERTEX (me) -> alpha < VERTEX (thee) -> alpha ? -1 : VERTEX (me) -> alpha > VERTEX (thee) -> alpha ? 1 : 0;
 }
 
-Vertices Vertices_create ();
-Vertices Vertices_create () {
+static autoVertices Vertices_create () {
 	try {
-		Vertices me = Thing_new (Vertices);
+		autoVertices me = Thing_new (Vertices);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Vertices not created.");
