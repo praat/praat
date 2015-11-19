@@ -56,11 +56,7 @@ autoArea Area_create (double tmin, double tmax, long nt, double dt, double t1,
 Thing_define (RC, Tube) {
 };
 
-/*
-	Reflection Coefficients as a function of time.
-
-*/
-
+// Reflection Coefficients as a function of time.
 
 void RC_init (RC me, double tmin, double tmax, long nt, double dt, double t1,
 	long maxnCoefficients, double defaultLength);
