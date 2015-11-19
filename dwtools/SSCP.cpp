@@ -187,7 +187,7 @@ autoSSCPs SSCPs_extractTwoDimensions (SSCPs me, long d1, long d2) {
 		for (long i = 1; i <= my size; i++) {
 			autoSSCP t = _SSCP_extractTwoDimensions ( (SSCP) my item[i], d1, d2);
 			Thing_setName (t.peek(), Thing_getName ( (Thing) my item[i]));
-			Collection_addItem (thee.peek(), t.transfer());
+			Collection_addItem_move (thee.peek(), t.move());
 		}
 		return thee;
 	} catch (MelderError) {
@@ -711,7 +711,7 @@ autoSSCPs TableOfReal_to_SSCPs_byLabel (TableOfReal me) {
 					label = U"?";
 				}
 				Thing_setName (t.peek(), label);
-				Collection_addItem (thee.peek(), t.transfer());
+				Collection_addItem_move (thee.peek(), t.move());
 			}
 			label = li; index = i;
 		}
@@ -1028,7 +1028,7 @@ autoSSCPs SSCPs_toTwoDimensions (SSCPs me, double *v1, double *v2) {
 		for (long i = 1; i <= my size; i++) {
 			autoSSCP t = SSCP_toTwoDimensions ((SSCP) my item[i], v1, v2);
 			Thing_setName (t.peek(), Thing_getName ( (Thing) my item[i]));
-			Collection_addItem (thee.peek(), t.transfer());
+			Collection_addItem_move (thee.peek(), t.move());
 		}
 		return thee;
 	} catch (MelderError) {
@@ -1257,9 +1257,9 @@ static autoCovariance Covariances_pool (Covariance me, Covariance thee) {
 			(U"Matrices must have equal dimensions.");
 		autoSSCPs sscps = SSCPs_create ();
 		autoSSCP sscp1 = Covariance_to_SSCP (me);
-		Collection_addItem (sscps.peek(), sscp1.transfer());
+		Collection_addItem_move (sscps.peek(), sscp1.move());
 		autoSSCP sscp2 = Covariance_to_SSCP (thee);
-		Collection_addItem (sscps.peek(), sscp2.transfer());
+		Collection_addItem_move (sscps.peek(), sscp2.move());
 		autoSSCP pool = SSCPs_to_SSCP_pool (sscps.peek());
 		autoCovariance him = SSCP_to_Covariance (pool.peek(), 2);
 		return him;

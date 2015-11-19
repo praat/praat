@@ -1761,7 +1761,7 @@ void praat_uvafon_gram_init () {
 	praat_addAction2 (classOTMulti, 1, classPairDistribution, 1, U"Learn...", nullptr, 0, DO_OTMulti_PairDistribution_learn);
 	praat_addAction2 (classOTMulti, 1, classStrings, 1, U"Get outputs...", nullptr, 0, DO_OTMulti_Strings_generateOptimalForms);
 
-	praat_addMenuCommand (U"Objects", U"New", U"Symmetric networks", nullptr, 0, nullptr);
+	praat_addMenuCommand (U"Objects", U"New", U"Symmetric neural networks", nullptr, 0, nullptr);
 		praat_addMenuCommand (U"Objects", U"New", U"Create empty Network...", nullptr, 1, DO_Create_empty_Network);
 		praat_addMenuCommand (U"Objects", U"New", U"Create rectangular Network...", nullptr, 1, DO_Create_rectangular_Network);
 		praat_addMenuCommand (U"Objects", U"New", U"Create rectangular Network (vertical)...", nullptr, 1, DO_Create_rectangular_Network_vertical);

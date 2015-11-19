@@ -90,7 +90,7 @@ autoCategories FFNet_Pattern_to_Categories (FFNet me, Pattern thee, int labeling
 			FFNet_propagate (me, thy z[k], nullptr);
 			long index = FFNet_getWinningUnit (me, labeling);
 			autoDaata item = Data_copy ((Daata) my outputCategories -> item[index]);
-			Collection_addItem (him.peek(), item.transfer());
+			Collection_addItem_move (him.peek(), item.move());
 		}
 		return him;
 	} catch (MelderError) {

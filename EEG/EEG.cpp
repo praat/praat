@@ -589,13 +589,11 @@ autoEEG EEGs_concatenate (Collection me) {
 			}
 		}
 		autoOrdered soundCollection = Ordered_create ();
-		Collection_dontOwnItems (soundCollection.peek());
 		autoOrdered textgridCollection = Ordered_create ();
-		Collection_dontOwnItems (textgridCollection.peek());
 		for (long ieeg = 1; ieeg <= my size; ieeg ++) {
 			EEG eeg = (EEG) my item [ieeg];
-			Collection_addItem (soundCollection.peek(), eeg -> sound.get());   // YUCK
-			Collection_addItem (textgridCollection.peek(), eeg -> textgrid.get());   // YUCK
+			Collection_addItem_ref (soundCollection.peek(), eeg -> sound.get());
+			Collection_addItem_ref (textgridCollection.peek(), eeg -> textgrid.get());
 		}
 		autoEEG thee = Thing_new (EEG);
 		thy numberOfChannels = numberOfChannels;

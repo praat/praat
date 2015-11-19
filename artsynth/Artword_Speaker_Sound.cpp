@@ -21,14 +21,15 @@
 #include "Artword_Speaker.h"
 #include "Art_Speaker.h"
 
-struct playInfo {
+Thing_define (Artword_Speaker_Sound_PlayInfo, Thing) {
 	Artword artword;
 	Speaker speaker;
 	Graphics graphics;
 };
 
-static int playCallback (void *playClosure, int /* phase */, double /* tmin */, double /* tmax */, double t) {
-	struct playInfo *me = (struct playInfo *) playClosure;
+Thing_implement (Artword_Speaker_Sound_PlayInfo, Thing, 0);
+
+static int playCallback (Artword_Speaker_Sound_PlayInfo me, int /* phase */, double /* tmin */, double /* tmax */, double t) {
 	static autoArt art;
 	if (! art) art = Art_create ();
 	Artword_intoArt (my artword, art.get(), t);
@@ -39,12 +40,12 @@ static int playCallback (void *playClosure, int /* phase */, double /* tmin */, 
 
 void Artword_Speaker_Sound_movie (Artword artword, Speaker speaker, Sound sound, Graphics graphics) {
 	try {
-		static struct playInfo info;   // must be static!!!
-		info. artword = artword;
-		info. speaker = speaker;
-		info. graphics = graphics;
+		static Artword_Speaker_Sound_PlayInfo info = Thing_new (Artword_Speaker_Sound_PlayInfo);   // must be static!!!
+		info -> artword = artword;
+		info -> speaker = speaker;
+		info -> graphics = graphics;
 		autoSound mySound = sound ? nullptr : Sound_createSimple (1, artword -> totalTime, 44100);
-		Sound_play (sound ? sound : mySound.peek(), playCallback, & info);
+		Sound_play (sound ? sound : mySound.peek(), playCallback, info);
 	} catch (MelderError) {
 		Melder_throw (artword, U" & ", speaker, U": movie not played.");
 	}

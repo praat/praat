@@ -314,7 +314,7 @@ void TableOfReal_to_Pattern_and_Categories (TableOfReal me, long fromrow, long t
 		for (long i = fromrow; i <= torow; i++, row++) {
 			char32 const *s = my rowLabels[i] ? my rowLabels[i] : U"?";
 			autoSimpleString item = SimpleString_create (s);
-			Collection_addItem (ac.peek(), item.transfer());
+			Collection_addItem_move (ac.peek(), item.move());
 			long col = 1;
 			for (long j = fromcol; j <= tocol; j++, col++) {
 				ap -> z[row][col] = my data[i][j];

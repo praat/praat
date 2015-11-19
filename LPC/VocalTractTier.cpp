@@ -112,7 +112,7 @@ void VocalTractTier_addVocalTract_copy (VocalTractTier me, double time, VocalTra
 				Melder_throw (U"The number of sections must be equal to ", numberOfSections, U".");
 			}
 		}
-		Collection_addItem (my d_vocalTracts, thee.transfer());
+		Collection_addItem_move (my d_vocalTracts, thee.move());
 	} catch (MelderError) {
 		Melder_throw (me, U": no VocalTract added.");
 	}

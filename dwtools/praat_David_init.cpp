@@ -2652,7 +2652,7 @@ DIRECT (Excitation_to_Excitations)
 	LOOP {
 		iam (Excitation);
 		autoExcitation thee = Data_copy (me);
-		Collection_addItem (e.peek(), thee.transfer());
+		Collection_addItem_move (e.peek(), thee.move());
 	}
 	praat_new (e.move(), U"appended");
 END
@@ -2678,7 +2678,7 @@ DIRECT (Excitations_addItem)
 	WHERE_DOWN (SELECTED && CLASS == classExcitation) {
 		iam (Excitation);
 		autoExcitation thee = Data_copy (me);
-		Collection_addItem (e, thee.transfer());
+		Collection_addItem_move (e, thee.move());
 	}
 END
 
@@ -2838,8 +2838,8 @@ DIRECT (FileInMemory_to_FilesInMemory)
 	autoFilesInMemory thee = FilesInMemory_create ();
 	LOOP {
 		iam (FileInMemory);
-		FileInMemory him = Data_copy (me);
-		Collection_addItem (thee.peek(), him);
+		autoFileInMemory him = Data_copy (me);
+		Collection_addItem_move (thee.peek(), him.move());
 	}
 	praat_new (thee.move(), U"files");
 END
@@ -2849,8 +2849,8 @@ DIRECT (FilesInMemory_addItems)
 	LOOP {
 		iam (Daata);
 		if (CLASS == classFileInMemory) {
-			autoFileInMemory t1 = (FileInMemory) Data_copy (me);
-			Collection_addItem (thee, t1.transfer());
+			autoFileInMemory him = (FileInMemory) Data_copy (me);
+			Collection_addItem_move (thee, him.move());
 		}
 	}
 END

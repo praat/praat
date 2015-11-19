@@ -169,7 +169,7 @@ autoFormantTier Formant_downto_FormantTier (Formant me) {
 				point -> formant [j-1] = pair -> frequency;
 				point -> bandwidth [j-1] = pair -> bandwidth;
 			}
-			Collection_addItem (thy points, point.transfer());
+			Collection_addItem_move (thy points, point.move());
 		}
 		return thee;
 	} catch (MelderError) {
@@ -194,7 +194,7 @@ autoFormantTier Formant_PointProcess_to_FormantTier (Formant me, PointProcess pp
 				point -> bandwidth [iformant-1] = value;
 			}
 			point -> numberOfFormants = iformant - 1;
-			Collection_addItem (thy points, point.transfer());
+			Collection_addItem_move (thy points, point.move());
 		}
 		return thee;
 	} catch (MelderError) {

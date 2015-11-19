@@ -97,18 +97,20 @@ Any UiRadio_addButton (I, const char32 *label) {
 	iam (UiField);
 	if (! me) return nullptr;
 	Melder_assert (my type == UI_RADIO || my type == UI_OPTIONMENU);
-	UiOption thee = UiOption_create (label);
-	Collection_addItem (my options, thee);
-	return thee;
+	autoUiOption thee = UiOption_create (label);
+	UiOption thee_ref = thee.get();
+	Collection_addItem_move (my options, thee.move());
+	return thee_ref;
 }
 
 Any UiOptionMenu_addButton (I, const char32 *label) {
 	iam (UiField);
 	if (! me) return nullptr;
 	Melder_assert (my type == UI_RADIO || my type == UI_OPTIONMENU);
-	UiOption thee = UiOption_create (label);
-	Collection_addItem (my options, thee);
-	return thee;
+	autoUiOption thee = UiOption_create (label);
+	UiOption thee_ref = thee.get();
+	Collection_addItem_move (my options, thee.move());
+	return thee_ref;
 }
 
 /***** Things to do with UiField objects. *****/

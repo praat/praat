@@ -329,9 +329,8 @@ void ScriptEditor_init (ScriptEditor me, Editor environment, const char32 *initi
 	my interpreter = Interpreter_createFromEnvironment (environment);
 	if (! theScriptEditors) {
 		theScriptEditors = Collection_create (nullptr, 10);
-		Collection_dontOwnItems (theScriptEditors);
 	}
-	Collection_addItem (theScriptEditors, me);
+	Collection_addItem_ref (theScriptEditors, me);
 }
 
 ScriptEditor ScriptEditor_createFromText (Editor environment, const char32 *initialText) {

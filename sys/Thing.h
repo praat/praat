@@ -349,14 +349,14 @@ public:
 	 *    Pitch_draw (pitch.peek());
 	 *
 	 * With transfer:
-	 *    return thee.transfer();
+	 *    return thee.move();
 	 * and
-	 *    *out_pitch = pitch.transfer();
-	 *    *out_pulses = pulses.transfer();
+	 *    *out_pitch = pitch.move();
+	 *    *out_pulses = pulses.move();
 	 * and
-	 *    Collection_addItem (me, pitch.transfer());
+	 *    Collection_addItem_move (me, pitch.move());
 	 * and
-	 *    praat_new (pitch.transfer(), my name);
+	 *    praat_new (pitch.move(), my name);
 	 */
 	T* transfer () {
 		T* temp = our ptr;

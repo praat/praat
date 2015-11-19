@@ -47,7 +47,7 @@ autoRealPoint RealPoint_create (double time, double value) {
 	autoRealPoint me = Thing_new (RealPoint);
 	my number = time;
 	my value = value;
-	return me.transfer();
+	return me;
 }
 
 /********** class RealTier **********/
@@ -116,7 +116,7 @@ autoRealTier RealTier_createWithClass (double tmin, double tmax, ClassInfo klas)
 void RealTier_addPoint (RealTier me, double t, double value) {
 	try {
 		autoRealPoint point = RealPoint_create (t, value);
-		Collection_addItem (my points, point.transfer());
+		Collection_addItem_move (my points.get(), point.move());
 	} catch (MelderError) {
 		Melder_throw (me, U": point not added.");
 	}

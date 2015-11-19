@@ -659,10 +659,9 @@ void TextEditor_init (TextEditor me, const char32 *initialText) {
 	}
 	if (! theOpenTextEditors) {
 		theOpenTextEditors = Collection_create (classTextEditor, 100);
-		Collection_dontOwnItems (theOpenTextEditors);
 	}
 	if (theOpenTextEditors) {
-		Collection_addItem (theOpenTextEditors, me);
+		Collection_addItem_ref (theOpenTextEditors, me);
 	}
 }
 

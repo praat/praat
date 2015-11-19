@@ -156,9 +156,9 @@
 		long n = texgeti4 (a_text); \
 		our x = Class##_create (); \
 		for (long i = 1; i <= n; i ++) { \
-			auto##ItemClass item = (ItemClass) Thing_new (ItemClass); \
+			auto##ItemClass item = Thing_new (ItemClass); \
 			item.peek() -> v_readText (a_text, formatVersion); \
-			Collection_addItem (our x, item.transfer()); \
+			Collection_addItem_move (our x, item.move()); \
 		} \
 	}
 
@@ -167,9 +167,9 @@
 		long n = texgeti4 (a_text); \
 		our x = Class##_create (); \
 		for (long i = 1; i <= n; i ++) { \
-			auto##ItemClass item = (ItemClass) Thing_new (ItemClass); \
+			auto##ItemClass item = Thing_new (ItemClass); \
 			item.peek() -> v_readText (a_text, formatVersion); \
-			Collection_addItem (our x.get(), item.transfer()); \
+			Collection_addItem_move (our x.get(), item.move()); \
 		} \
 	}
 

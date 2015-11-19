@@ -68,6 +68,7 @@ procedure do
 		t4 = stopwatch
 		printline 't1:2' 't2:2' 't3:2' 't4:2'
 	endfor
+	Remove
 
 	Create Sound... test 0 1 22050 exp(-x*1000)
 	Write to binary file... kanweg.Sound

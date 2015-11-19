@@ -2681,7 +2681,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 							listElement -> lo1 = icons;
 							listElement -> hi2 = lcons;
 							listElement -> lo2 = kcons;
-							Collection_addItem (list.peek(), listElement.transfer());
+							Collection_addItem_move (list.peek(), listElement.move());
 						}
 					}
 				}

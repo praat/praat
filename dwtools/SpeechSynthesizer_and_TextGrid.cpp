@@ -129,7 +129,7 @@ void IntervalTier_splitInterval (IntervalTier me, double time, const char32 *lef
         autoTextInterval newInterval = TextInterval_create (ti -> xmin, time, leftLabel);
         // Make start of current and begin of new interval equal
         ti -> xmin = time;
-        Collection_addItem (my intervals, newInterval.transfer());
+        Collection_addItem_move (my intervals, newInterval.move());
     } catch (MelderError) {
         Melder_throw (U"Boundary not inserted.");
     }
@@ -260,11 +260,11 @@ autoTextGrid TextGrid_and_IntervalTier_cutPartsMatchingLabel (TextGrid me, Inter
         for (long itier = 1; itier <= my tiers -> size; itier++) {
             Function anyTier = (Function) my tiers -> item[itier];
             if (anyTier -> classInfo == classIntervalTier) {
-                autoIntervalTier ait = IntervalTier_and_IntervalTier_cutPartsMatchingLabel ((IntervalTier) anyTier, thee, label, precision);
-                Collection_addItem (his tiers, ait.transfer());
+                autoIntervalTier newTier = IntervalTier_and_IntervalTier_cutPartsMatchingLabel ((IntervalTier) anyTier, thee, label, precision);
+                Collection_addItem_move (his tiers, newTier.move());
             } else {
-                autoTextTier att = TextTier_and_IntervalTier_cutPartsMatchingLabel ((TextTier) anyTier, thee, label, precision);
-                Collection_addItem (his tiers, att.transfer());
+                autoTextTier newTier = TextTier_and_IntervalTier_cutPartsMatchingLabel ((TextTier) anyTier, thee, label, precision);
+                Collection_addItem_move (his tiers, newTier.move());
             }
         }
         return him;
@@ -405,8 +405,8 @@ static autoTextTier TextTier_and_IntervalTier_patch (TextTier me, IntervalTier t
                         TextPoint tp = (TextPoint) my points -> item[myIndex];
                         double time = tp -> number + xShift;
                         if (time < ti -> xmin + precision) {
-                            autoTextPoint atp = TextPoint_create (time, tp -> mark);
-                            Collection_addItem (his points, atp.transfer());
+                            autoTextPoint newPoint = TextPoint_create (time, tp -> mark);
+                            Collection_addItem_move (his points, newPoint.move());
                         } else {
                             break;
                         }
@@ -419,8 +419,8 @@ static autoTextTier TextTier_and_IntervalTier_patch (TextTier me, IntervalTier t
                     TextPoint tp = (TextPoint) my points -> item[myIndex];
                     double time = tp -> number + xShift;
                     if (time < ti -> xmin + precision) {
-                        autoTextPoint atp = TextPoint_create (time, tp -> mark);
-                        Collection_addItem (his points, atp.transfer());
+                        autoTextPoint newPoint = TextPoint_create (time, tp -> mark);
+                        Collection_addItem_move (his points, newPoint.move());
                     }
                     myIndex++;
                 }
@@ -445,11 +445,11 @@ autoTextGrid TextGrid_and_IntervalTier_patch (TextGrid me, IntervalTier thee, co
             Function anyTier = (Function) my tiers -> item[itier];
             if (anyTier -> classInfo == classIntervalTier) {
 //                autoIntervalTier ait = IntervalTiers_patch ((IntervalTier) anyTier, thee, patchLabel, precision);
-                autoIntervalTier ait = IntervalTiers_patch_noBoundaries ((IntervalTier) anyTier, thee, patchLabel, precision);
-                Collection_addItem (his tiers, ait.transfer());
+                autoIntervalTier newTier = IntervalTiers_patch_noBoundaries ((IntervalTier) anyTier, thee, patchLabel, precision);
+                Collection_addItem_move (his tiers, newTier.move());
             } else {
-                autoTextTier att = TextTier_and_IntervalTier_patch ((TextTier) anyTier, thee, patchLabel, precision);
-                Collection_addItem (his tiers, att.transfer());
+                autoTextTier newTier = TextTier_and_IntervalTier_patch ((TextTier) anyTier, thee, patchLabel, precision);
+                Collection_addItem_move (his tiers, newTier.move());
             }
         }
         return him;
@@ -613,7 +613,7 @@ autoTextGrid SpeechSynthesizer_and_Sound_and_IntervalTier_align (SpeechSynthesiz
             if (ti -> text && str32len (ti -> text) > 0) {
                 autoSound sound = Sound_extractPart (thee, ti -> xmin, ti -> xmax,  kSound_windowShape_RECTANGULAR, 1, true);
                 autoTextGrid grid = SpeechSynthesizer_and_Sound_and_TextInterval_align (me, sound.peek(), ti, silenceThreshold, minSilenceDuration, minSoundingDuration);
-                Collection_addItem (textgrids.peek(), grid.transfer());
+                Collection_addItem_move (textgrids.peek(), grid.move());
             }
         }
         if (textgrids -> size == 0) {
@@ -640,7 +640,7 @@ static autoTextGrid SpeechSynthesizer_and_Sound_and_IntervalTier_align2 (SpeechS
             if (ti -> text && str32len (ti -> text) > 0) {
                 autoSound sound = Sound_extractPart (thee, ti -> xmin, ti -> xmax,  kSound_windowShape_RECTANGULAR, 1, true);
                 autoTextGrid grid = SpeechSynthesizer_and_Sound_and_TextInterval_align2 (me, sound.peek(), ti, silenceThreshold, minSilenceDuration, minSoundingDuration, trimDuration);
-                Collection_addItem (textgrids.peek(), grid.transfer());
+                Collection_addItem_move (textgrids.peek(), grid.move());
             }
         }
         if (textgrids -> size == 0) {

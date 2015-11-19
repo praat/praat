@@ -819,14 +819,14 @@ void GaussianMixture_splitComponent (GaussianMixture me, long component) {
 		mixingProbabilities[component] = gamma * my mixingProbabilities[component];
 		mixingProbabilities[my numberOfComponents + 1] = (1.0 - gamma) * my mixingProbabilities[component];
 		double mp12 =  mixingProbabilities[component] / mixingProbabilities[my numberOfComponents + 1];
-		double factor1 = (eta - eta * lambda * lambda - 1) / gamma + 1;
+		double factor1 = (eta - eta * lambda * lambda - 1.0) / gamma + 1.0;
 		double factor2 = (eta * lambda * lambda - eta - lambda * lambda) / (1.0 - gamma) + 1.0;
 		double *ev = thy pca -> eigenvectors[1];
 		double d2 = thy pca -> eigenvalues[1];
 
 		for (long i = 1; i <= my dimension; i++) {
-			cov1 -> centroid[i] -= (1 / sqrt (mp12)) * sqrt (d2) * mu * ev[i];
-			cov2 -> centroid[i] +=       sqrt (mp12) * sqrt (d2) * mu * ev[i];
+			cov1 -> centroid[i] -= (1.0 / sqrt (mp12)) * sqrt (d2) * mu * ev[i];
+			cov2 -> centroid[i] +=        sqrt (mp12)  * sqrt (d2) * mu * ev[i];
 
 			if (thy numberOfRows == 1) { // diagonal
 				cov1 -> data[1][i] = cov1 -> data [1][i] / mp12 + factor1 * d2;
@@ -838,12 +838,12 @@ void GaussianMixture_splitComponent (GaussianMixture me, long component) {
 				}
 			}
 		}
-		cov1 -> numberOfObservations *= gamma; cov2 -> numberOfObservations *= 1 - gamma;
+		cov1 -> numberOfObservations *= gamma; cov2 -> numberOfObservations *= 1.0 - gamma;
 
 		// Replace cov1 at component + add cov2. If something goes wrong we must be able to restore original!
 		try {
 			Thing_setName (cov2.peek(), Melder_cat (Thing_getName (cov2.peek()), U"-", my numberOfComponents + 1));
-			Collection_addItem (my covariances.peek(), cov2.transfer());
+			Collection_addItem_move (my covariances.peek(), cov2.move());
 		} catch (MelderError) {
 			Melder_throw (me, U" cannot add new component.");
 		}

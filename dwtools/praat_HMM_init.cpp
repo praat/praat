@@ -585,11 +585,10 @@ DO
 	double minProb = GET_REAL (U"Minimum probability");
 	REQUIRE (minProb >= 0 && minProb < 1, U"A probabilty must be >= 0 and < 1!")
 	autoHMMObservationSequences hmm_oss = HMMObservationSequences_create (); HMM hmm = 0;
-	Collection_dontOwnItems (hmm_oss.peek());
 	LOOP {
 		iam (Daata);
 		if (CLASS == classHMMObservationSequence) {
-			Collection_addItem (hmm_oss.peek(), me);
+			Collection_addItem_ref (hmm_oss.peek(), me);
 		} else { hmm = (HMM) me; }
 	}
 	HMM_and_HMMObservationSequences_learn (hmm, hmm_oss.peek(), GET_REAL (U"Relative precision in log"), minProb, GET_INTEGER (U"Learning history in Info window"));

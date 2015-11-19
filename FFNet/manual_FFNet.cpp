@@ -128,7 +128,7 @@ MAN_END
 
 MAN_BEGIN (U"Feedforward neural networks 2. Quick start", U"djmw", 20040426)
 INTRO (U"You may create the iris example set with the @@Create iris example...@ command "
-	"that you will find under the ##Neural nets# option in the #New menu. "
+	"that you will find under the ##Feedforward neural networks# option in the #New menu. "
 	"Three new objects will appear in the @@List of Objects@: a @FFNet, a @Categories and "
 	"a @Pattern.")
 NORMAL (U"The #Pattern contains the @@iris data set@ in a matrix of 150 rows by 4 columns. "

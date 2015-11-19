@@ -33,6 +33,7 @@ endfor
 spectrum = To Spectrum... yes
 slope1 = Get band density difference... 0 1000 2000 4000
 echo 'slope1:6' dB
+removeObject: pitchTier, pulses, sound, spectrum
 
 klatt = Create KlattGrid... a 0 duration numberOfFormants 0 0 0 0 0 0
 Add voicing amplitude point... 0 90.0
@@ -55,4 +56,4 @@ To Sound
 To Spectrum... yes
 slope2 = Get band density difference... 0 1000 2000 4000
 printline 'slope2:6' dB
-
+removeObject: klatt, "Sound a", "Spectrum a"

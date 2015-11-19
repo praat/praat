@@ -88,7 +88,7 @@ autoLogisticRegression LogisticRegression_create (const char32 *dependent1, cons
 static autoLogisticRegression _Table_to_LogisticRegression (Table me, long *factors, long numberOfFactors, long dependent1, long dependent2) {
 	long numberOfParameters = numberOfFactors + 1;
 	long numberOfCells = my rows -> size, numberOfY0 = 0, numberOfY1 = 0, numberOfData = 0;
-	double logLikelihood = 1e308, previousLogLikelihood = 2e308;
+	double logLikelihood = 1e307, previousLogLikelihood = 1e308;
 	if (numberOfParameters < 1)   // includes intercept
 		Melder_throw (U"Not enough columns (has to be more than 1).");
 	/*

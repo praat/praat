@@ -257,11 +257,10 @@ Daata praat_firstObject_any () {
 
 Collection praat_getSelectedObjects () {
 	autoCollection thee = Collection_create (nullptr, 10);
-	Collection_dontOwnItems (thee.peek());
 	int IOBJECT;
 	LOOP {
 		iam_LOOP (Daata);
-		Collection_addItem (thee.peek(), me);
+		Collection_addItem_ref (thee.peek(), me);
 	}
 	return thee.transfer();
 }
@@ -1072,11 +1071,11 @@ static bool tryToAttachToTheCommandLine ()
 	return weHaveSucceeded;
 }
 
-void praat_init (const char32 *title, unsigned int argc, char **argv)
+void praat_init (const char32 *title, int argc, char **argv)
 {
 	bool weWereStartedFromTheCommandLine = tryToAttachToTheCommandLine ();
 
-	for (unsigned int iarg = 0; iarg < argc; iarg ++) {
+	for (int iarg = 0; iarg < argc; iarg ++) {
 		//Melder_casual (U"arg ", iarg, U": <<", Melder_peek8to32 (argv [iarg]), U">>");
 	}
 	#if defined (UNIX)
@@ -1178,7 +1177,7 @@ void praat_init (const char32 *title, unsigned int argc, char **argv)
 		#endif
 		} else {
 			unknownCommandLineOption = Melder_8to32 (argv [praatP.argumentNumber]);
-			praatP.argumentNumber = UINT32_MAX;   // ignore all other command line options
+			praatP.argumentNumber = INT32_MAX;   // ignore all other command line options
 			break;
 		}
 	}

@@ -516,13 +516,13 @@ void _GuiText_init () {
 
 void _GuiText_exit () {
 	#if mac
-		TXNTerminateTextension (); 
+		TXNTerminateTextension ();
 	#endif
 }
 
 #endif
 
-#if !mac
+#if ! mac
 	/*
 	 * Undo/Redo history functions
 	 */
@@ -569,8 +569,7 @@ void _GuiText_exit () {
 	 *  - with the current, if current also is an insert/delete event and the ranges of previous and current event match
 	 *  - with the previous delete and current insert event, in case the ranges of both event-pairs respectively match
 	 */
-	static history_entry * history_addAndMerge (void *void_me, history_data text_new, long first, long last, bool deleted) {
-		iam(GuiText);
+	static history_entry * history_addAndMerge (GuiText me, history_data text_new, long first, long last, bool deleted) {
 		history_entry *he = nullptr;
 		
 		if (! my d_prev)
@@ -605,7 +604,7 @@ void _GuiText_exit () {
 			}
 		} else {
 			// prev->type_del != deleted, no simple expansion possible, check for double expansion
-			if (!deleted && my d_prev->prev && my d_prev->prev->prev) {
+			if (! deleted && my d_prev->prev && my d_prev->prev->prev) {
 				history_entry *del_one = my d_prev;
 				history_entry *ins_mult = del_one->prev;
 				history_entry *del_mult = ins_mult->prev;
@@ -613,7 +612,7 @@ void _GuiText_exit () {
 				long from2 = ins_mult->first, to2 = ins_mult->last;
 				long from3 = del_one->first, to3 = del_one->last;
 				if (from3 == first && to3 == last && from2 == from1 && to2 == to1 && to1 == first &&
-						!ins_mult->type_del && del_mult->type_del) {
+						! ins_mult->type_del && del_mult->type_del) {
 					// most common for overwriting text
 					/* So the layout is as follows:
 					 *
@@ -643,9 +642,8 @@ void _GuiText_exit () {
 	 *   text_new  a newly allocated string that will be freed by a history function
 	 *             (history_add or history_clear)
 	 */
-	static void history_add (void *void_me, history_data text_new, long first, long last, bool deleted) {
-		iam (GuiText);
-		
+	static void history_add (GuiText me, history_data text_new, long first, long last, bool deleted) {
+
 		// delete all newer entries; from here on there is no 'Redo' until the next 'Undo' is performed
 		history_entry *old_hnext = my d_next, *hnext;
 		while (old_hnext) {
@@ -656,9 +654,9 @@ void _GuiText_exit () {
 		}
 		my d_next = nullptr;
 		
-		history_entry *he = history_addAndMerge (void_me, text_new, first, last, deleted);
+		history_entry *he = history_addAndMerge (me, text_new, first, last, deleted);
 		if (! he) {
-			he = (history_entry *) malloc (sizeof (history_entry));
+			he = (history_entry *) malloc (sizeof *he);
 			he->first = first;
 			he->last = last;
 			he->type_del = deleted;
@@ -676,18 +674,15 @@ void _GuiText_exit () {
 		if (my d_redo_item) GuiThing_setSensitive (my d_redo_item, false);
 	}
 
-	static bool history_has_undo (void *void_me) {
-		iam (GuiText);
-		return my d_prev != nullptr;
+	static bool history_has_undo (GuiText me) {
+		return !! my d_prev;
 	}
 
-	static bool history_has_redo (void *void_me) {
-		iam (GuiText);
-		return my d_next != nullptr;
+	static bool history_has_redo (GuiText me) {
+		return !! my d_next;
 	}
 
-	static void history_do (void *void_me, bool undo) {
-		iam (GuiText);
+	static void history_do (GuiText me, bool undo) {
 		history_entry *he = undo ? my d_prev : my d_next;
 		if (! he) // TODO: this function should not be called in that case
 			return;
@@ -712,15 +707,14 @@ void _GuiText_exit () {
 		if (my d_redo_item) GuiThing_setSensitive (my d_redo_item, history_has_redo (me));
 	}
 
-	static void history_clear(void *void_me) {
-		iam(GuiText);
+	static void history_clear (GuiText me) {
 		history_entry *h1, *h2;
 		
 		h1 = my d_prev;
 		while (h1) {
 			h2 = h1->prev;
-			free(h1->text);
-			free(h1);
+			free (h1->text);
+			free (h1);
 			h1 = h2;
 		}
 		my d_prev = nullptr;
@@ -728,8 +722,8 @@ void _GuiText_exit () {
 		h1 = my d_next;
 		while (h1) {
 			h2 = h1->next;
-			free(h1->text);
-			free(h1);
+			free (h1->text);
+			free (h1);
 			h1 = h2;
 		}
 		my d_next = nullptr;

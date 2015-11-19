@@ -36,14 +36,14 @@ Thing_define (LongSound, Sampled) {
 	double sampleRate;
 	long startOfData;
 	double bufferLength;
-	short *buffer;
+	int16 *buffer;   // this is always 16-bit, because will always play sounds in 16-bit, even those from 24-bit files
 	long imin, imax, nmax;
 	struct FLAC__StreamDecoder *flacDecoder;
 	struct _MP3_FILE *mp3f;
 	int compressedMode;
 	long compressedSamplesLeft;
 	double *compressedFloats [2];
-	short *compressedShorts;
+	int16 *compressedShorts;
 
 	void v_destroy ()
 		override;
@@ -69,13 +69,13 @@ bool LongSound_haveWindow (LongSound me, double tmin, double tmax);
 void LongSound_getWindowExtrema (LongSound me, double tmin, double tmax, int channel, double *minimum, double *maximum);
 
 void LongSound_playPart (LongSound me, double tmin, double tmax,
-	int (*callback) (void *closure, int phase, double tmin, double tmax, double t), void *closure);
+	Sound_PlayCallback callback, Thing boss);
 
 void LongSound_writePartToAudioFile (LongSound me, int audioFileType, double tmin, double tmax, MelderFile file, int numberOfBitsPerSamplePoint);
 void LongSound_writeChannelToAudioFile (LongSound me, int audioFileType, int channel, MelderFile file);
 
 void LongSound_readAudioToFloat (LongSound me, double **buffer, long firstSample, long numberOfSamples);
-void LongSound_readAudioToShort (LongSound me, short *buffer, long firstSample, long numberOfSamples);
+void LongSound_readAudioToShort (LongSound me, int16 *buffer, long firstSample, long numberOfSamples);
 
 void LongSound_concatenate (Collection collection, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint);
 /* Concatenate a collection of Sound and LongSound objects. */

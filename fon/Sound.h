@@ -259,12 +259,13 @@ autoSound Sound_recordFixedTime (int inputSource,
 			and wait for broadcastPublication().
 	*/
 
-void Sound_playPart (Sound me, double tmin, double tmax,
-	int (*playCallback) (void *playClosure, int phase, double tmin, double tmax, double t), void *playClosure);
+typedef MelderCallback <int, structThing /* boss */, int /* phase */, double /* tmin */, double /* tmax */, double /* t */> Sound_PlayCallback;
+
+void Sound_playPart (Sound me, double tmin, double tmax, Sound_PlayCallback playCallback, Thing playBoss);
 /*
  * Play a sound. The playing can be interrupted with the Escape key (also Command-period on the Mac).
  * If playCallback is not null, Sound_play will call it repeatedly, with five parameters:
- *    1. playClosure: the same value as was supplied as the last argument to Sound_playPart.
+ *    1. playBoss: the same value as was supplied as the last argument to Sound_playPart.
  *    2. phase: 1 at the start, 2 while playing, 3 at the end.
  *    3. tmin: the same tmin that was supplied as the second argument to Sound_playPart.
  *    4. tmax: the same tmax that was supplied as the second argument to Sound_playPart.
@@ -273,8 +274,7 @@ void Sound_playPart (Sound me, double tmin, double tmax,
  * cursor while we play a sound:
  *    Sound_playPart (my sound, my startSelection, my endSelection, thePlayCallback, me);
  * We gave ourselves as the playClosure, so that the message will arrive with us:
- *    int thePlayCallback (void *playClosure, int phase, double tmin, double tmax, double t) {
- *       SoundEditor me = (SoundEditor) playClosure;
+ *    int thePlayCallback (SoundEditor me, int phase, double tmin, double tmax, double t) {
  *       if (phase == 1) {
  *          Melder_assert (t == tmin);
  *          drawPlayCursor (me, my playCursor = t);
@@ -294,9 +294,8 @@ void Sound_playPart (Sound me, double tmin, double tmax,
  *
  * Sound_playPart () usually runs asynchronously, and kills an already playing sound.
  */
-void Sound_play (Sound me,
-	int (*playCallback) (void *playClosure, int phase, double tmin, double tmax, double t), void *playClosure);
-	/* The same as Sound_playPart (me, my xmin, my xmax, playCallback, playClosure); */
+void Sound_play (Sound me, Sound_PlayCallback playCallback, Thing playBoss);
+	/* The same as Sound_playPart (me, my xmin, my xmax, playCallback, playBoss); */
 
 /********** Sound_files.cpp **********/
 

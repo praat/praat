@@ -53,7 +53,7 @@ autoCategories Strings_to_Categories (Strings me) {
 
 		for (long i = 1; i <= my numberOfStrings; i++) {
 			autoSimpleString s = SimpleString_create (my strings[i]);
-			Collection_addItem (thee.peek(), s.transfer());
+			Collection_addItem_move (thee.peek(), s.move());
 		}
 		return thee;
 	} catch (MelderError) {

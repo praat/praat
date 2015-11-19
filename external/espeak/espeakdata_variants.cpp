@@ -16,7 +16,7 @@ FilesInMemory create_espeakdata_variants () {
 		autoFileInMemory espeakdata_variants1 = FileInMemory_createWithData (93, reinterpret_cast<const char *> (&espeakdata_variants1_data), 
 			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/croak",
 			U"croak");
-		Collection_addItem (me.peek(), espeakdata_variants1.transfer());
+		Collection_addItem_move (me.peek(), espeakdata_variants1.move());
 
 		static unsigned char espeakdata_variants2_data[325] = {
 			108, 97, 110, 103, 117, 97, 103, 101, 32, 118, 97, 114, 105, 97, 110, 116, 10, 110, 97, 109, 101, 32, 102, 101, 109, 97, 108, 101, 49, 10,
@@ -33,7 +33,7 @@ FilesInMemory create_espeakdata_variants () {
 		autoFileInMemory espeakdata_variants2 = FileInMemory_createWithData (324, reinterpret_cast<const char *> (&espeakdata_variants2_data), 
 			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/f1",
 			U"f1");
-		Collection_addItem (me.peek(), espeakdata_variants2.transfer());
+		Collection_addItem_move (me.peek(), espeakdata_variants2.move());
 
 		static unsigned char espeakdata_variants3_data[358] = {
 			108, 97, 110, 103, 117, 97, 103, 101, 32, 118, 97, 114, 105, 97, 110, 116, 10, 110, 97, 109, 101, 32, 102, 101, 109, 97, 108, 101, 50, 10,
@@ -51,7 +51,7 @@ FilesInMemory create_espeakdata_variants () {
 		autoFileInMemory espeakdata_variants3 = FileInMemory_createWithData (357, reinterpret_cast<const char *> (&espeakdata_variants3_data), 
 			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/f2",
 			U"f2");
-		Collection_addItem (me.peek(), espeakdata_variants3.transfer());
+		Collection_addItem_move (me.peek(), espeakdata_variants3.move());
 
 		static unsigned char espeakdata_variants4_data[376] = {
 			108, 97, 110, 103, 117, 97, 103, 101, 32, 118, 97, 114, 105, 97, 110, 116, 10, 110, 97, 109, 101, 32, 102, 101, 109, 97, 108, 101, 51, 10,
@@ -70,7 +70,7 @@ FilesInMemory create_espeakdata_variants () {
 		autoFileInMemory espeakdata_variants4 = FileInMemory_createWithData (375, reinterpret_cast<const char *> (&espeakdata_variants4_data), 
 			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/f3",
 			U"f3");
-		Collection_addItem (me.peek(), espeakdata_variants4.transfer());
+		Collection_addItem_move (me.peek(), espeakdata_variants4.move());
 
 		static unsigned char espeakdata_variants5_data[351] = {
 			108, 97, 110, 103, 117, 97, 103, 101, 32, 118, 97, 114, 105, 97, 110, 116, 10, 110, 97, 109, 101, 32, 102, 101, 109, 97, 108, 101, 52, 10,
@@ -88,7 +88,7 @@ FilesInMemory create_espeakdata_variants () {
 		autoFileInMemory espeakdata_variants5 = FileInMemory_createWithData (350, reinterpret_cast<const char *> (&espeakdata_variants5_data), 
 			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/f4",
 			U"f4");
-		Collection_addItem (me.peek(), espeakdata_variants5.transfer());
+		Collection_addItem_move (me.peek(), espeakdata_variants5.move());
 
 		static unsigned char espeakdata_variants6_data[426] = {
 			108, 97, 110, 103, 117, 97, 103, 101, 32, 118, 97, 114, 105, 97, 110, 116, 32, 10, 110, 97, 109, 101, 32, 102, 101, 109, 97, 108, 101, 53,
@@ -109,7 +109,7 @@ FilesInMemory create_espeakdata_variants () {
 		autoFileInMemory espeakdata_variants6 = FileInMemory_createWithData (425, reinterpret_cast<const char *> (&espeakdata_variants6_data), 
 			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/f5",
 			U"f5");
-		Collection_addItem (me.peek(), espeakdata_variants6.transfer());
+		Collection_addItem_move (me.peek(), espeakdata_variants6.move());
 
 		static unsigned char espeakdata_variants7_data[39] = {
 			108, 97, 110, 103, 117, 97, 103, 101, 32, 118, 97, 114, 105, 97, 110, 116, 10, 110, 97, 109, 101, 32, 107, 108, 97, 116, 116, 10, 107, 108,
@@ -117,7 +117,7 @@ FilesInMemory create_espeakdata_variants () {
 		autoFileInMemory espeakdata_variants7 = FileInMemory_createWithData (38, reinterpret_cast<const char *> (&espeakdata_variants7_data), 
 			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/klatt",
 			U"klatt");
-		Collection_addItem (me.peek(), espeakdata_variants7.transfer());
+		Collection_addItem_move (me.peek(), espeakdata_variants7.move());
 
 		static unsigned char espeakdata_variants8_data[39] = {
 			108, 97, 110, 103, 117, 97, 103, 101, 32, 118, 97, 114, 105, 97, 110, 116, 10, 110, 97, 109, 101, 32, 107, 108, 97, 116, 116, 50, 10, 107,
@@ -125,7 +125,7 @@ FilesInMemory create_espeakdata_variants () {
 		autoFileInMemory espeakdata_variants8 = FileInMemory_createWithData (38, reinterpret_cast<const char *> (&espeakdata_variants8_data), 
 			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/klatt2",
 			U"klatt2");
-		Collection_addItem (me.peek(), espeakdata_variants8.transfer());
+		Collection_addItem_move (me.peek(), espeakdata_variants8.move());
 
 		static unsigned char espeakdata_variants9_data[40] = {
 			108, 97, 110, 103, 117, 97, 103, 101, 32, 118, 97, 114, 105, 97, 110, 116, 10, 110, 97, 109, 101, 32, 107, 108, 97, 116, 116, 51, 10, 107,
@@ -133,7 +133,7 @@ FilesInMemory create_espeakdata_variants () {
 		autoFileInMemory espeakdata_variants9 = FileInMemory_createWithData (39, reinterpret_cast<const char *> (&espeakdata_variants9_data), 
 			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/klatt3",
 			U"klatt3");
-		Collection_addItem (me.peek(), espeakdata_variants9.transfer());
+		Collection_addItem_move (me.peek(), espeakdata_variants9.move());
 
 		static unsigned char espeakdata_variants10_data[336] = {
 			108, 97, 110, 103, 117, 97, 103, 101, 32, 118, 97, 114, 105, 97, 110, 116, 10, 110, 97, 109, 101, 32, 109, 97, 108, 101, 49, 10, 103, 101,
@@ -151,7 +151,7 @@ FilesInMemory create_espeakdata_variants () {
 		autoFileInMemory espeakdata_variants10 = FileInMemory_createWithData (335, reinterpret_cast<const char *> (&espeakdata_variants10_data), 
 			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/m1",
 			U"m1");
-		Collection_addItem (me.peek(), espeakdata_variants10.transfer());
+		Collection_addItem_move (me.peek(), espeakdata_variants10.move());
 
 		static unsigned char espeakdata_variants11_data[265] = {
 			108, 97, 110, 103, 117, 97, 103, 101, 32, 118, 97, 114, 105, 97, 110, 116, 10, 110, 97, 109, 101, 32, 109, 97, 108, 101, 50, 10, 103, 101,
@@ -166,7 +166,7 @@ FilesInMemory create_espeakdata_variants () {
 		autoFileInMemory espeakdata_variants11 = FileInMemory_createWithData (264, reinterpret_cast<const char *> (&espeakdata_variants11_data), 
 			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/m2",
 			U"m2");
-		Collection_addItem (me.peek(), espeakdata_variants11.transfer());
+		Collection_addItem_move (me.peek(), espeakdata_variants11.move());
 
 		static unsigned char espeakdata_variants12_data[286] = {
 			108, 97, 110, 103, 117, 97, 103, 101, 32, 118, 97, 114, 105, 97, 110, 116, 10, 110, 97, 109, 101, 32, 109, 97, 108, 101, 51, 10, 103, 101,
@@ -182,7 +182,7 @@ FilesInMemory create_espeakdata_variants () {
 		autoFileInMemory espeakdata_variants12 = FileInMemory_createWithData (285, reinterpret_cast<const char *> (&espeakdata_variants12_data), 
 			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/m3",
 			U"m3");
-		Collection_addItem (me.peek(), espeakdata_variants12.transfer());
+		Collection_addItem_move (me.peek(), espeakdata_variants12.move());
 
 		static unsigned char espeakdata_variants13_data[291] = {
 			108, 97, 110, 103, 117, 97, 103, 101, 32, 118, 97, 114, 105, 97, 110, 116, 10, 110, 97, 109, 101, 32, 109, 97, 108, 101, 52, 10, 103, 101,
@@ -198,7 +198,7 @@ FilesInMemory create_espeakdata_variants () {
 		autoFileInMemory espeakdata_variants13 = FileInMemory_createWithData (290, reinterpret_cast<const char *> (&espeakdata_variants13_data), 
 			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/m4",
 			U"m4");
-		Collection_addItem (me.peek(), espeakdata_variants13.transfer());
+		Collection_addItem_move (me.peek(), espeakdata_variants13.move());
 
 		static unsigned char espeakdata_variants14_data[263] = {
 			108, 97, 110, 103, 117, 97, 103, 101, 32, 118, 97, 114, 105, 97, 110, 116, 10, 110, 97, 109, 101, 32, 109, 97, 108, 101, 53, 10, 103, 101,
@@ -213,7 +213,7 @@ FilesInMemory create_espeakdata_variants () {
 		autoFileInMemory espeakdata_variants14 = FileInMemory_createWithData (262, reinterpret_cast<const char *> (&espeakdata_variants14_data), 
 			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/m5",
 			U"m5");
-		Collection_addItem (me.peek(), espeakdata_variants14.transfer());
+		Collection_addItem_move (me.peek(), espeakdata_variants14.move());
 
 		static unsigned char espeakdata_variants15_data[189] = {
 			108, 97, 110, 103, 117, 97, 103, 101, 32, 118, 97, 114, 105, 97, 110, 116, 10, 110, 97, 109, 101, 32, 109, 97, 108, 101, 54, 10, 103, 101,
@@ -226,7 +226,7 @@ FilesInMemory create_espeakdata_variants () {
 		autoFileInMemory espeakdata_variants15 = FileInMemory_createWithData (188, reinterpret_cast<const char *> (&espeakdata_variants15_data), 
 			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/m6",
 			U"m6");
-		Collection_addItem (me.peek(), espeakdata_variants15.transfer());
+		Collection_addItem_move (me.peek(), espeakdata_variants15.move());
 
 		static unsigned char espeakdata_variants16_data[255] = {
 			108, 97, 110, 103, 117, 97, 103, 101, 32, 118, 97, 114, 105, 97, 110, 116, 10, 110, 97, 109, 101, 32, 109, 97, 108, 101, 55, 10, 103, 101,
@@ -241,7 +241,7 @@ FilesInMemory create_espeakdata_variants () {
 		autoFileInMemory espeakdata_variants16 = FileInMemory_createWithData (254, reinterpret_cast<const char *> (&espeakdata_variants16_data), 
 			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/m7",
 			U"m7");
-		Collection_addItem (me.peek(), espeakdata_variants16.transfer());
+		Collection_addItem_move (me.peek(), espeakdata_variants16.move());
 
 		static unsigned char espeakdata_variants17_data[187] = {
 			108, 97, 110, 103, 117, 97, 103, 101, 32, 118, 97, 114, 105, 97, 110, 116, 10, 110, 97, 109, 101, 32, 119, 104, 105, 115, 112, 101, 114, 10,
@@ -254,7 +254,7 @@ FilesInMemory create_espeakdata_variants () {
 		autoFileInMemory espeakdata_variants17 = FileInMemory_createWithData (186, reinterpret_cast<const char *> (&espeakdata_variants17_data), 
 			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/whisper",
 			U"whisper");
-		Collection_addItem (me.peek(), espeakdata_variants17.transfer());
+		Collection_addItem_move (me.peek(), espeakdata_variants17.move());
 
 		static unsigned char espeakdata_variants18_data[393] = {
 			108, 97, 110, 103, 117, 97, 103, 101, 32, 118, 97, 114, 105, 97, 110, 116, 10, 110, 97, 109, 101, 32, 102, 101, 109, 97, 108, 101, 95, 119,
@@ -274,7 +274,7 @@ FilesInMemory create_espeakdata_variants () {
 		autoFileInMemory espeakdata_variants18 = FileInMemory_createWithData (392, reinterpret_cast<const char *> (&espeakdata_variants18_data), 
 			U"/home/david/praat/src/espeak-work/espeak-1.46.27/espeak-data/voices/!v/whisperf",
 			U"whisperf");
-		Collection_addItem (me.peek(), espeakdata_variants18.transfer());
+		Collection_addItem_move (me.peek(), espeakdata_variants18.move());
 
 		return me.transfer();
 	} catch (MelderError) {

@@ -116,13 +116,14 @@ static void readOnePage (ManPages me, MelderReadText text) {
 		return;
 	}
 
-	ManPage page = Thing_new (ManPage);
-	page -> title = title;
+	autoManPage autopage = Thing_new (ManPage);
+	autopage -> title = title;
+	ManPage page = autopage.get();
 
 	/*
 	 * Add the page early, so that lookUp can find it.
 	 */
-	Collection_addItem (my pages, page);
+	Collection_addItem_move (my pages, autopage.move());
 
 	try {
 		page -> author = texgetw2 (text);
@@ -255,7 +256,7 @@ void ManPages_addPage (ManPages me, const char32 *title, const char32 *author, l
 	page -> paragraphs = & paragraphs [0];
 	page -> author = author;
 	page -> date = date;
-	Collection_addItem (my pages, page.transfer());
+	Collection_addItem_move (my pages, page.move());
 }
 
 static int pageCompare (const void *first, const void *second) {

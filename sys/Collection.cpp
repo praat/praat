@@ -24,9 +24,9 @@
 
 void structCollection :: v_destroy () {
 	if (our item) {
-		if (! our _dontOwnItems) {
+		if (our _ownItems) {
 			for (long i = 1; i <= our size; i ++) {
-				forget (((Thing *) our item) [i]);
+				forget (our item [i]);
 			}
 		}
 		our item ++;   // base 1
@@ -43,19 +43,21 @@ void structCollection :: v_copy (thou) {
 	thouart (Collection);
 	thy item = nullptr;   // kill shallow copy of item  // BUG
 	Collection_Parent :: v_copy (thee);
-	thy itemClass = itemClass;
-	thy _capacity = _capacity;
-	thy size = size;
-	thy item = Melder_calloc (void *, _capacity);   // filled with null pointers
+	thy itemClass = our itemClass;
+	thy _ownershipInitialized = our _ownershipInitialized;
+	thy _ownItems = our _ownItems;
+	thy _capacity = our _capacity;
+	thy size = our size;
+	thy item = Melder_calloc (Thing, our _capacity);   // filled with null pointers
 	thy item --;   // immediately turn from base-0 into base-1  // BUG use NUMvector
-	for (long i = 1; i <= size; i ++) {
-		Thing itempie = (Thing) item [i];
-		if (_dontOwnItems) {
-			thy item [i] = itempie;   // reference copy: if me doesn't own the items, then thee shouldn't either   // NOTE: the items don't have to be Daata
-		} else {
+	for (long i = 1; i <= our size; i ++) {
+		Thing itempie = our item [i];
+		if (our _ownItems) {
 			if (! Thing_isa (itempie, classDaata))
 				Melder_throw (U"Cannot copy item of class ", Thing_className (itempie), U".");
 			thy item [i] = Data_copy ((Daata) itempie);
+		} else {
+			thy item [i] = itempie;   // reference copy: if me doesn't own the items, then thee shouldn't either   // NOTE: the items don't have to be Daata
 		}
 	}
 }
@@ -65,12 +67,12 @@ bool structCollection :: v_equal (thou) {
 	if (! Collection_Parent :: v_equal (thee)) return false;
 	if (size != thy size) return false;
 	for (long i = 1; i <= size; i ++) {
-		if (! Thing_isa ((Thing) item [i], classDaata))
+		if (! Thing_isa (item [i], classDaata))
 			Melder_throw (U"Collection::equal: "
-				U"cannot compare items of class ", Thing_className ((Thing) item [i]), U".");
-		if (! Thing_isa ((Thing) thy item [i], classDaata))
+				U"cannot compare items of class ", Thing_className (item [i]), U".");
+		if (! Thing_isa (thy item [i], classDaata))
 			Melder_throw (U"Collection::equal: "
-				U"cannot compare items of class ", Thing_className ((Thing) thy item [i]), U".");
+				U"cannot compare items of class ", Thing_className (thy item [i]), U".");
 		bool equal = Data_equal ((Daata) item [i], (Daata) thy item [i]);
 		//Melder_casual (U"classCollection_equal: ", equal,
 		//	U", item ", i,
@@ -93,7 +95,7 @@ void structCollection :: v_writeText (MelderFile file) {
 	texputi4 (file, size, U"size", 0,0,0,0,0);
 	texputintro (file, U"item []: ", size ? nullptr : U"(empty)", 0,0,0,0);
 	for (long i = 1; i <= size; i ++) {
-		Thing thing = (Thing) item [i];
+		Thing thing = item [i];
 		ClassInfo classInfo = thing -> classInfo;
 		texputintro (file, U"item [", Melder_integer (i), U"]:", 0,0,0);
 		if (! Thing_isa (thing, classDaata) || ! Data_canWriteText ((Daata) thing))
@@ -167,7 +169,7 @@ void structCollection :: v_readText (MelderReadText text, int formatVersion) {
 void structCollection :: v_writeBinary (FILE *f) {
 	binputi4 (our size, f);
 	for (long i = 1; i <= our size; i ++) {
-		Thing thing = (Thing) our item [i];
+		Thing thing = our item [i];
 		ClassInfo classInfo = thing -> classInfo;
 		if (! Thing_isa (thing, classDaata) || ! Data_canWriteBinary ((Daata) thing))
 			Melder_throw (U"Objects of class ", classInfo -> className, U" cannot be written.");
@@ -190,13 +192,13 @@ void structCollection :: v_readBinary (FILE *f, int formatVersion) {
 				Melder_throw (U"Cannot read class and name.");
 			our item [i] = Thing_newFromClassName (Melder_peek8to32 (klas), nullptr);
 			our size ++;
-			if (! Thing_isa ((Thing) our item [i], classDaata))
+			if (! Thing_isa (our item [i], classDaata))
 				Melder_throw (U"Cannot read item of class ", Thing_className ((Thing) our item [i]), U".");
 			if (fgetc (f) != ' ')
 				Melder_throw (U"Cannot read space.");
 			Data_readBinary ((Daata) our item [i], f, -1);
 			if (strcmp (name, "?"))
-				Thing_setName ((Thing) our item [i], Melder_peek8to32 (name));
+				Thing_setName (our item [i], Melder_peek8to32 (name));
 		}
 	} else {
 		int32_t l_size = bingeti4 (f);
@@ -210,12 +212,12 @@ void structCollection :: v_readBinary (FILE *f, int formatVersion) {
 			int elementFormatVersion;
 			our item [i] = Thing_newFromClassName (Melder_peek8to32 (klas.peek()), & elementFormatVersion);
 			our size ++;
-			if (! Thing_isa ((Thing) our item [i], classDaata) || ! Data_canReadBinary ((Daata) our item [i]))
+			if (! Thing_isa (our item [i], classDaata) || ! Data_canReadBinary ((Daata) our item [i]))
 				Melder_throw (U"Objects of class ", Thing_className ((Thing) our item [i]), U" cannot be read.");
 			autostring32 name = bingetw2 (f);
 			if (Melder_debug == 44)
 				Melder_casual (U"structCollection :: v_readBinary: Reading object with name ", name.peek());
-			Thing_setName ((Thing) our item [i], name.peek());
+			Thing_setName (our item [i], name.peek());
 			Data_readBinary ((Daata) our item [i], f, elementFormatVersion);
 		}
 	}
@@ -232,9 +234,11 @@ Thing_implement (Collection, Daata, 0);
 
 void Collection_init (Collection me, ClassInfo itemClass_, long initialCapacity) {
 	my itemClass = itemClass_;
+	my _ownershipInitialized = false;
+	my _ownItems = true;
 	my _capacity = initialCapacity >= 1 ? initialCapacity : 1;
 	my size = 0;
-	my item = Melder_calloc (void *, my _capacity);
+	my item = Melder_calloc (Thing, my _capacity);
 	my item --;   // base 1
 }
 
@@ -246,18 +250,47 @@ Collection Collection_create (ClassInfo itemClass, long initialCapacity) {
 
 void Collection_dontOwnItems (Collection me) {
 	Melder_assert (my size == 0);
-	my _dontOwnItems = true;
+	my _ownItems = false;
+	my _ownershipInitialized = true;
+}
+
+static inline void _Collection_initializeOwnership (Collection me, bool ownItems) {
+	if (my _ownershipInitialized) {
+		Melder_assert (my _ownItems == ownItems);
+	} else {
+		my _ownItems = ownItems;
+		my _ownershipInitialized = true;
+	}
 }
 
 void _Collection_insertItem (Collection me, Thing data, long pos) {
+	my _ownershipInitialized = true;
 	if (my size >= my _capacity) {
-		/*
-		 * Check without change.
-		 */
-		Any *dum = (Any *) Melder_realloc (my item + 1, 2 * my _capacity * (int64) sizeof (Any));
-		/*
-		 * From here: change without error.
-		 */
+		Thing *dum = (Thing *) Melder_realloc (my item + 1, 2 * my _capacity * (int64) sizeof (Thing));
+		my item = dum - 1;
+		my _capacity *= 2;
+	}
+	my size ++;
+	for (long i = my size; i > pos; i --) my item [i] = my item [i - 1];
+	my item [pos] = data;
+}
+
+void _Collection_insertItem_move (Collection me, autoThing data, long pos) {
+	_Collection_initializeOwnership (me, true);
+	if (my size >= my _capacity) {
+		Thing *dum = (Thing *) Melder_realloc (my item + 1, 2 * my _capacity * (int64) sizeof (Thing));
+		my item = dum - 1;
+		my _capacity *= 2;
+	}
+	my size ++;
+	for (long i = my size; i > pos; i --) my item [i] = my item [i - 1];
+	my item [pos] = data.transfer();
+}
+
+void _Collection_insertItem_ref (Collection me, Thing data, long pos) {
+	_Collection_initializeOwnership (me, false);
+	if (my size >= my _capacity) {
+		Thing *dum = (Thing *) Melder_realloc (my item + 1, 2 * my _capacity * (int64) sizeof (Thing));
 		my item = dum - 1;
 		my _capacity *= 2;
 	}
@@ -268,13 +301,42 @@ void _Collection_insertItem (Collection me, Thing data, long pos) {
 
 void Collection_addItem (Collection me, Thing data) {
 	try {
-		Melder_assert (data != nullptr);
+		Melder_assert (data);
 		long index = my v_position (data);
 		if (index != 0) {
 			_Collection_insertItem (me, data, index);
 		} else {
-			if (! my _dontOwnItems)
+			if (my _ownItems)
 				forget (data);   // could not insert; I am the owner, so I must dispose of the data
+		}
+	} catch (MelderError) {
+		Melder_throw (me, U": item not added.");
+	}
+}
+
+void Collection_addItem_move (Collection me, autoThing data) {
+	try {
+		Melder_assert (data);
+		long index = my v_position (data.get());
+		if (index != 0) {
+			_Collection_insertItem_move (me, data.move(), index);
+		} else {
+			_Collection_initializeOwnership (me, true);
+			data.reset();   // could not insert; I am the owner, so I must dispose of the data
+		}
+	} catch (MelderError) {
+		Melder_throw (me, U": item not added.");
+	}
+}
+
+void Collection_addItem_ref (Collection me, Thing data) {
+	try {
+		Melder_assert (data);
+		long index = my v_position (data);
+		if (index != 0) {
+			_Collection_insertItem_ref (me, data, index);
+		} else {
+			_Collection_initializeOwnership (me, false);
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": item not added.");
@@ -283,7 +345,7 @@ void Collection_addItem (Collection me, Thing data) {
 
 void Collection_removeItem (Collection me, long pos) {
 	Melder_assert (pos >= 1 && pos <= my size);
-	if (! my _dontOwnItems) forget (((Thing *) my item) [pos]);
+	if (my _ownItems) forget (my item [pos]);
 	for (long i = pos; i < my size; i ++) my item [i] = my item [i + 1];
 	my size --;
 }
@@ -295,41 +357,41 @@ void Collection_undangleItem (Collection me, Thing item) {
 	}
 }
 
-Any Collection_subtractItem (Collection me, long pos) {
+Thing Collection_subtractItem (Collection me, long pos) {
 	Melder_assert (pos >= 1 && pos <= my size);
-	Any result = my item [pos];
+	Thing result = my item [pos];
 	for (long i = pos; i < my size; i ++) my item [i] = my item [i + 1];
 	my size --;
 	return result;
 }
 
 void Collection_removeAllItems (Collection me) {
-	if (! my _dontOwnItems)
+	if (my _ownItems)
 		for (long i = 1; i <= my size; i ++)
-			forget (((Thing *) my item) [i]);
+			forget (my item [i]);
 	my size = 0;
 }
 
 void Collection_shrinkToFit (Collection me) {
 	my _capacity = my size ? my size : 1;
-	my item = (Any *) Melder_realloc (my item + 1, my _capacity * (int64) sizeof (Any)) - 1;
+	my item = (Thing *) Melder_realloc (my item + 1, my _capacity * (int64) sizeof (Thing)) - 1;
 }
 
 Collection Collections_merge (Collection me, Collection thee) {
 	try {
 		if (my classInfo != thy classInfo)
 			Melder_throw (U"Objects are of different class.");
-		if (my _dontOwnItems != thy _dontOwnItems)
+		if (my _ownItems != thy _ownItems)
 			Melder_throw (U"Cannot mix data and references.");
 		autoCollection him = Data_copy (me);
 		for (long i = 1; i <= thy size; i ++) {
-			Thing item = (Thing) thy item [i];
-			if (my _dontOwnItems) {
-				Collection_addItem (him.peek(), item);
-			} else {
+			Thing item = thy item [i];
+			if (my _ownItems) {
 				if (! Thing_isa (item, classDaata))
 					Melder_throw (U"Cannot copy item of class ", Thing_className (item), U".");
 				Collection_addItem (him.peek(), Data_copy ((Daata) item));
+			} else {
+				Collection_addItem (him.peek(), item);
 			}
 		}
 		return him.transfer();
@@ -392,7 +454,7 @@ void Sorted_addItem_unsorted (Sorted me, Thing data) {
 }
 
 void Sorted_sort (Sorted me) {
-	NUMsort_p (my size, my item, (int (*) (const void *, const void *)) my v_getCompareFunction ());
+	NUMsort_p (my size, (void **) my item, (int (*) (const void *, const void *)) my v_getCompareFunction ());
 }
 
 /********** class SortedSet **********/

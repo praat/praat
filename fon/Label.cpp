@@ -67,7 +67,7 @@ Thing_implement (Tier, Sorted, 0);
 
 void Tier_init (Tier me, long initialCapacity) {
 	Sorted_init (me, classAutosegment, initialCapacity);
-	Collection_addItem (me, Autosegment_create (-1e30, 1e30, nullptr).transfer());
+	Collection_addItem_move (me, Autosegment_create (-1e30, 1e30, nullptr));
 }
 
 autoTier Tier_create (long initialCapacity) {
@@ -94,7 +94,7 @@ Thing_implement (Label, Ordered, 0);
 void Label_init (Label me, long initialNumberOfTiers) {
 	Ordered_init (me, classTier, initialNumberOfTiers);
 	for (long i = 1; i <= initialNumberOfTiers; i ++) {
-		Collection_addItem (me, Tier_create (10).transfer());
+		Collection_addItem_move (me, Tier_create (10));
 	}
 }
 
@@ -109,7 +109,7 @@ autoLabel Label_create (long initialNumberOfTiers) {
 }
 
 void Label_addTier (Label me) {
-	Collection_addItem (me, Tier_create (10).transfer());
+	Collection_addItem_move (me, Tier_create (10));
 }
 
 void Label_suggestDomain (Label me, double *tmin, double *tmax) {

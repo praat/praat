@@ -272,7 +272,7 @@ Categories KNN_classifyToCategories
     if (output)
     {
         for (long i = 1; i <= ps->ny; ++i)
-            Collection_addItem (output.get(), Data_copy ((SimpleString) my output -> item [outputindices [i]]));
+            Collection_addItem_move (output.get(), Data_copy ((SimpleString) my output -> item [outputindices [i]]));
     }
 	NUMvector_free (outputindices, 0);
     return output.transfer();
@@ -635,7 +635,7 @@ Categories KNN_classifyFold
 
 	autoCategories output = Categories_create ();
 	for (long o = 0; o < noutputindices; o ++) {
-		Collection_addItem (output.get(), Data_copy ((SimpleString) my output -> item [outputindices [o]]));
+		Collection_addItem_move (output.get(), Data_copy ((SimpleString) my output -> item [outputindices [o]]));
 	}
 	return output.transfer();
 }
@@ -1523,7 +1523,7 @@ void KNN_shuffleInstances
 	while (my nInstances)
 	{
 		long pick = (long) lround (NUMrandomUniform (1, my nInstances));
-		Collection_addItem (new_output.peek(), Data_copy ((SimpleString) my output -> item [pick]));
+		Collection_addItem_move (new_output.peek(), Data_copy ((SimpleString) my output -> item [pick]));
 
 		for (long x = 1;x <= (my input)->nx; ++x)
 			new_input -> z [y] [x] = my input-> z [pick] [x];

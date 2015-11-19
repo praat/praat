@@ -199,7 +199,7 @@ static autoVowel Vowel_create_twoFormantSchwa (double duration) {
 		fp -> formant [1] = 1500.0;
 		fp -> bandwidth[1] = 150.0;
 		fp -> numberOfFormants = 2;
-		Collection_addItem (my ft -> points, fp.transfer());
+		Collection_addItem_move (my ft -> points, fp.move());
 		RealTier_addPoint (my pt.get(), 0.0, 140.0);
 
 		fp = FormantPoint_create (duration);
@@ -208,7 +208,7 @@ static autoVowel Vowel_create_twoFormantSchwa (double duration) {
 		fp -> formant [1] = 1500.0;
 		fp -> bandwidth[1] = 150.0;
 		fp -> numberOfFormants = 2;
-		Collection_addItem (my ft -> points, fp.transfer());
+		Collection_addItem_move (my ft -> points, fp.move());
 		RealTier_addPoint (my pt.get(), duration, 140.0);
 		return me;
 	} catch (MelderError) {
@@ -1052,7 +1052,7 @@ static void VowelEditor_Vowel_addData (VowelEditor me, Vowel thee, double time, 
 	fp -> bandwidth[3] = b4;
 	fp -> numberOfFormants = 4;
 
-	Collection_addItem (thy ft -> points, fp.transfer());
+	Collection_addItem_move (thy ft -> points, fp.move());
 	RealTier_addPoint (thy pt.get(), time, f0);
 }
 
@@ -1239,7 +1239,7 @@ static void VowelEditor_Vowel_updateTiers (VowelEditor me, Vowel thee, double ti
 	point -> formant[3] = f4;
 	point -> bandwidth[3] = b4;
 	point -> numberOfFormants = 4;
-	Collection_addItem (thy ft -> points, point.transfer());
+	Collection_addItem_move (thy ft -> points, point.move());
 	RealTier_addPoint (thy pt.get(), time, f0);
 }
 
