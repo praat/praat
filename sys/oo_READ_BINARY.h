@@ -135,7 +135,7 @@
 		int32_t n = bingeti4 (f); \
 		our x = Class##_create (); \
 		for (int32_t i = 1; i <= n; i ++) { \
-			auto##ItemClass item = (ItemClass) Thing_new (ItemClass); \
+			auto##ItemClass item = Thing_new (ItemClass); \
 			item.peek() -> v_readBinary (f, formatVersion); \
 			Collection_addItem_move (our x, item.move()); \
 		} \
@@ -146,7 +146,7 @@
 		int32_t n = bingeti4 (f); \
 		our x = Class##_create (); \
 		for (int32_t i = 1; i <= n; i ++) { \
-			auto##ItemClass item = (ItemClass) Thing_new (ItemClass); \
+			auto##ItemClass item = Thing_new (ItemClass); \
 			item.peek() -> v_readBinary (f, formatVersion); \
 			Collection_addItem_move (our x.get(), item.move()); \
 		} \

@@ -1,5 +1,5 @@
 # textioSpeed.praat
-# Paul Boersma, 9 November 2008
+# Paul Boersma, 2015-11-18
 
 echo Text I/O speed:
 
@@ -27,5 +27,6 @@ Remove
 select Sound sound30
 mean = Get mean... All 0 0
 assert mean = 30 ;   'mean'
+Remove
 deleteFile ("kanweg.Collection")
 printline OK

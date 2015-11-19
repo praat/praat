@@ -78,7 +78,7 @@ void PitchTier_stylize (PitchTier me, double frequencyResolution, int useSemiton
 			}
 		}
 		if (imin == 0 || dfmin > frequencyResolution) break;
-		Collection_removeItem (my points, imin);
+		Collection_removeItem (my points.get(), imin);
 	}
 }
 
