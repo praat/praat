@@ -43,13 +43,15 @@ void structCollection :: v_copy (thou) {
 	thouart (Collection);
 	thy item = nullptr;   // kill shallow copy of item  // BUG
 	Collection_Parent :: v_copy (thee);
-	thy itemClass = itemClass;
-	thy _capacity = _capacity;
-	thy size = size;
-	thy item = Melder_calloc (Thing, _capacity);   // filled with null pointers
+	thy itemClass = our itemClass;
+	thy _ownershipInitialized = our _ownershipInitialized;
+	thy _ownItems = our _ownItems;
+	thy _capacity = our _capacity;
+	thy size = our size;
+	thy item = Melder_calloc (Thing, our _capacity);   // filled with null pointers
 	thy item --;   // immediately turn from base-0 into base-1  // BUG use NUMvector
-	for (long i = 1; i <= size; i ++) {
-		Thing itempie = item [i];
+	for (long i = 1; i <= our size; i ++) {
+		Thing itempie = our item [i];
 		if (our _ownItems) {
 			if (! Thing_isa (itempie, classDaata))
 				Melder_throw (U"Cannot copy item of class ", Thing_className (itempie), U".");
@@ -264,7 +266,7 @@ static inline void _Collection_initializeOwnership (Collection me, bool ownItems
 void _Collection_insertItem (Collection me, Thing data, long pos) {
 	my _ownershipInitialized = true;
 	if (my size >= my _capacity) {
-		Thing *dum = (Thing *) Melder_realloc (my item + 1, 2 * my _capacity * (int64) sizeof (Any));
+		Thing *dum = (Thing *) Melder_realloc (my item + 1, 2 * my _capacity * (int64) sizeof (Thing));
 		my item = dum - 1;
 		my _capacity *= 2;
 	}
@@ -276,7 +278,7 @@ void _Collection_insertItem (Collection me, Thing data, long pos) {
 void _Collection_insertItem_move (Collection me, autoThing data, long pos) {
 	_Collection_initializeOwnership (me, true);
 	if (my size >= my _capacity) {
-		Thing *dum = (Thing *) Melder_realloc (my item + 1, 2 * my _capacity * (int64) sizeof (Any));
+		Thing *dum = (Thing *) Melder_realloc (my item + 1, 2 * my _capacity * (int64) sizeof (Thing));
 		my item = dum - 1;
 		my _capacity *= 2;
 	}
@@ -288,7 +290,7 @@ void _Collection_insertItem_move (Collection me, autoThing data, long pos) {
 void _Collection_insertItem_ref (Collection me, Thing data, long pos) {
 	_Collection_initializeOwnership (me, false);
 	if (my size >= my _capacity) {
-		Thing *dum = (Thing *) Melder_realloc (my item + 1, 2 * my _capacity * (int64) sizeof (Any));
+		Thing *dum = (Thing *) Melder_realloc (my item + 1, 2 * my _capacity * (int64) sizeof (Thing));
 		my item = dum - 1;
 		my _capacity *= 2;
 	}

@@ -16,3 +16,4 @@ for i to 1000000
 endfor
 t2 = stopwatch
 writeInfoLine: round ((t2 - t1) * 1000), " nanoseconds"
+removeObject: pitch, sound, intens, "IntensityTier tone", "AmplitudeTier tone"

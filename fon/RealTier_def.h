@@ -30,7 +30,7 @@ oo_END_CLASS (RealPoint)
 #define ooSTRUCT RealTier
 oo_DEFINE_CLASS (RealTier, Function)
 
-	oo_COLLECTION (SortedSetOfDouble, points, RealPoint, 0)
+	oo_AUTO_COLLECTION (SortedSetOfDouble, points, RealPoint, 0)
 
 	#if oo_DECLARING
 		long numberOfPoints () // accessor
