@@ -54,8 +54,7 @@ autoAutosegment Autosegment_create (double tmin, double tmax, const char32 *labe
 	}
 }
 
-int structTier :: compare (I, thou) {
-	iam (Function); thouart (Function);
+int structTier :: compareHook (Autosegment me, Autosegment thee) {
 	if (my xmin < thy xmin) return -1;
 	if (my xmin > thy xmin) return 1;
 	if (my xmax < thy xmax) return -1;

@@ -24,7 +24,7 @@
 #endif
 
 SortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const char32 *title, bool allowMultipleFiles) {
-	structMelderDir saveDir = { { 0 } };
+	structMelderDir saveDir { { 0 } };
 	Melder_getDefaultDir (& saveDir);
 	autoSortedSetOfString me = SortedSetOfString_create ();
 	#if gtk

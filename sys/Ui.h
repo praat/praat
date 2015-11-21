@@ -30,7 +30,7 @@ Thing_declare (EditorCommand);
 {
 	static UiForm dia = nullptr;
 	if (! dia) {
-		Any radio;
+		UiField radio;
 		dia = UiForm_create
 		  (topShell,   // The parent GuiWindow of the dialog window.
 			U"Create a new person",   // The window title.
@@ -94,6 +94,11 @@ Thing_define (UiField, Thing) {
 		override;
 };
 
+Thing_define (UiOption, Thing) {
+	GuiRadioButton radioButton;
+	GuiObject menuItem;
+};
+
 typedef void (*UiCallback) (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure);
 
 #define MAXIMUM_NUMBER_OF_FIELDS  50
@@ -104,8 +109,8 @@ Thing_define (UiForm, Thing) {
 	GuiWindow d_dialogParent;
 	GuiDialog d_dialogForm;
 	UiCallback okCallback;
-	void (*applyCallback) (Any dia, void *closure);
-	void (*cancelCallback) (Any dia, void *closure);
+	void (*applyCallback) (UiForm dia, void *closure);
+	void (*cancelCallback) (UiForm dia, void *closure);
 	void *buttonClosure;
 	const char32 *invokingButtonTitle, *helpTitle;
 	int numberOfContinueButtons, defaultContinueButton, cancelContinueButton, clickedContinueButton;
@@ -125,23 +130,23 @@ Thing_define (UiForm, Thing) {
 UiForm UiForm_create (GuiWindow parent, const char32 *title,
 	UiCallback okCallback, void *buttonClosure,
 	const char32 *invokingButtonTitle, const char32 *helpTitle);
-Any UiForm_addReal (UiForm me, const char32 *label, const char32 *defaultValue);
-Any UiForm_addRealOrUndefined (UiForm me, const char32 *label, const char32 *defaultValue);
-Any UiForm_addPositive (UiForm me, const char32 *label, const char32 *defaultValue);
-Any UiForm_addInteger (UiForm me, const char32 *label, const char32 *defaultValue);
-Any UiForm_addNatural (UiForm me, const char32 *label, const char32 *defaultValue);
-Any UiForm_addWord (UiForm me, const char32 *label, const char32 *defaultValue);
-Any UiForm_addSentence (UiForm me, const char32 *label, const char32 *defaultValue);
-Any UiForm_addLabel (UiForm me, const char32 *name, const char32 *label);
-Any UiForm_addBoolean (UiForm me, const char32 *label, int defaultValue);
-Any UiForm_addText (UiForm me, const char32 *name, const char32 *defaultValue);
-Any UiForm_addRadio (UiForm me, const char32 *label, int defaultValue);
-Any UiRadio_addButton (I, const char32 *label);
-Any UiForm_addOptionMenu (UiForm me, const char32 *label, int defaultValue);
-Any UiOptionMenu_addButton (I, const char32 *label);
-Any UiForm_addList (UiForm me, const char32 *label, long numberOfStrings, const char32 **strings, long defaultValue);
-Any UiForm_addColour (UiForm me, const char32 *label, const char32 *defaultValue);
-Any UiForm_addChannel (UiForm me, const char32 *label, const char32 *defaultValue);
+UiField UiForm_addReal (UiForm me, const char32 *label, const char32 *defaultValue);
+UiField UiForm_addRealOrUndefined (UiForm me, const char32 *label, const char32 *defaultValue);
+UiField UiForm_addPositive (UiForm me, const char32 *label, const char32 *defaultValue);
+UiField UiForm_addInteger (UiForm me, const char32 *label, const char32 *defaultValue);
+UiField UiForm_addNatural (UiForm me, const char32 *label, const char32 *defaultValue);
+UiField UiForm_addWord (UiForm me, const char32 *label, const char32 *defaultValue);
+UiField UiForm_addSentence (UiForm me, const char32 *label, const char32 *defaultValue);
+UiField UiForm_addLabel (UiForm me, const char32 *name, const char32 *label);
+UiField UiForm_addBoolean (UiForm me, const char32 *label, int defaultValue);
+UiField UiForm_addText (UiForm me, const char32 *name, const char32 *defaultValue);
+UiField UiForm_addRadio (UiForm me, const char32 *label, int defaultValue);
+UiOption UiRadio_addButton (UiField me, const char32 *label);
+UiField UiForm_addOptionMenu (UiForm me, const char32 *label, int defaultValue);
+UiOption UiOptionMenu_addButton (UiField me, const char32 *label);
+UiField UiForm_addList (UiForm me, const char32 *label, long numberOfStrings, const char32 **strings, long defaultValue);
+UiField UiForm_addColour (UiForm me, const char32 *label, const char32 *defaultValue);
+UiField UiForm_addChannel (UiForm me, const char32 *label, const char32 *defaultValue);
 void UiForm_finish (UiForm me);
 
 void UiForm_destroyWhenUnmanaged (UiForm me);
@@ -151,7 +156,7 @@ void UiForm_setPauseForm (UiForm me,
 	const char32 *continue4, const char32 *continue5, const char32 *continue6,
 	const char32 *continue7, const char32 *continue8, const char32 *continue9,
 	const char32 *continue10,
-	void (*cancelCallback) (Any dia, void *closure));
+	void (*cancelCallback) (UiForm dia, void *closure));
 
 /* The following three routines set values in widgets. */
 /* Do not call from batch. */

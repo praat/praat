@@ -53,7 +53,7 @@ Thing_define (Collection, Daata) {
 	Data_Description v_description ()
 		override { return s_description; }
 
-	virtual long v_position (Any /* data */) { return size + 1; /* at end */ };
+	virtual long v_position (Thing /* data */) { return size + 1; /* at end */ };
 };
 /*
 	An object of type Collection is a collection of items of any class.
@@ -173,19 +173,15 @@ Collection Collections_merge (Collection me, Collection thee);
 		result -> size >= thy size;
 */
 
+typedef MelderCompareHook<structDaata> Collection_ItemCompareHook;
+
+void Collection_sort (Collection me, Collection_ItemCompareHook compareHook);
+
 /* For the inheritors. */
 
 void _Collection_insertItem (Collection me, Thing item, long position);
 void _Collection_insertItem_move (Collection me, autoThing item, long position);
 void _Collection_insertItem_ref (Collection me, Thing item, long position);
-
-/* Methods:
-
-	static long position (I, Any data, long hint);
-		Question asked by Collection_addItem: return a position for the data.
-	Collection::position always returns my size + 1 (add item at the end).
-
-*/
 
 /********** class Ordered **********/
 
@@ -211,11 +207,11 @@ void Ordered_addItemPos (Ordered me, Thing data, long position);
 /* A Sorted is a sorted Collection. */
 
 Thing_define (Sorted, Collection) {
-	long v_position (Any data)
+	long v_position (Thing data)
 		override;
 
-	static int s_compare (Any data1, Any data2);
-	virtual Data_CompareFunction v_getCompareFunction () { return s_compare; }
+	static int s_compareHook (Daata data1, Daata data2) noexcept;
+	virtual Data_CompareHook v_getCompareHook () { return s_compareHook; }
 		// should compare the keys of two items; returns negative if me < thee, 0 if me == thee, and positive if me > thee
 };
 
@@ -249,12 +245,12 @@ void Sorted_sort (Sorted me);
 /********** class SortedSet **********/
 
 Thing_define (SortedSet, Sorted) {   // every item must be unique (by key)
-	virtual long v_position (Any data);   // returns 0 (refusal) if the key of 'data' already occurs
+	long v_position (Thing data) override;   // returns 0 (refusal) if the key of 'data' already occurs
 };
 
 void SortedSet_init (SortedSet me, ClassInfo itemClass, long initialCapacity);
 
-inline static bool SortedSet_hasItem (SortedSet me, Any a_item) {
+inline static bool SortedSet_hasItem (SortedSet me, Thing a_item) {
 	return my v_position (a_item) == 0;
 }
 
@@ -267,8 +263,8 @@ inline static bool SortedSet_hasItem (SortedSet me, Any a_item) {
 /********** class SortedSetOfInt **********/
 
 Thing_define (SortedSetOfInt, SortedSet) {
-	static int s_compare (Any data1, Any data2);
-	Data_CompareFunction v_getCompareFunction () override { return s_compare; }
+	static int s_compareHook (SimpleInt data1, SimpleInt data2) noexcept;
+	Data_CompareHook v_getCompareHook () override { return s_compareHook; }
 };
 
 void SortedSetOfInt_init (SortedSetOfInt me);
@@ -277,8 +273,8 @@ SortedSetOfInt SortedSetOfInt_create ();
 /********** class SortedSetOfLong **********/
 
 Thing_define (SortedSetOfLong, SortedSet) {
-	static int s_compare (Any data1, Any data2);
-	Data_CompareFunction v_getCompareFunction () override { return s_compare; }
+	static int s_compareHook (SimpleLong data1, SimpleLong data2) noexcept;
+	Data_CompareHook v_getCompareHook () override { return s_compareHook; }
 };
 
 void SortedSetOfLong_init (SortedSetOfLong me);
@@ -287,8 +283,8 @@ SortedSetOfLong SortedSetOfLong_create ();
 /********** class SortedSetOfDouble **********/
 
 Thing_define (SortedSetOfDouble, SortedSet) {
-	static int s_compare (Any data1, Any data2);
-	Data_CompareFunction v_getCompareFunction () override { return s_compare; }
+	static int s_compareHook (SimpleDouble data1, SimpleDouble data2) noexcept;
+	Data_CompareHook v_getCompareHook () override { return s_compareHook; }
 };
 
 void SortedSetOfDouble_init (SortedSetOfDouble me);
@@ -297,8 +293,8 @@ SortedSetOfDouble SortedSetOfDouble_create ();
 /********** class SortedSetOfString **********/
 
 Thing_define (SortedSetOfString, SortedSet) {
-	static int s_compare (Any data1, Any data2);
-	Data_CompareFunction v_getCompareFunction () override { return s_compare; }
+	static int s_compareHook (SimpleString me, SimpleString thee) noexcept { return str32cmp (my string, thy string); }
+	Data_CompareHook v_getCompareHook () override { return s_compareHook; }
 };
 
 void SortedSetOfString_init (SortedSetOfString me);
@@ -309,8 +305,8 @@ long SortedSetOfString_lookUp (SortedSetOfString me, const char32 *string);
 /********** class Cyclic **********/
 
 Thing_define (Cyclic, Collection) {   // the cyclic list (a, b, c, d) equals (b, c, d, a) but not (d, c, a, b)
-	static int s_compare (Any data1, Any data2);
-	virtual Data_CompareFunction v_getCompareFunction () { return s_compare; }
+	static int s_compareHook (Daata data1, Daata data2) noexcept;
+	virtual Data_CompareHook v_getCompareHook () { return s_compareHook; }
 };
 
 void Cyclic_init (Cyclic me, ClassInfo itemClass, long initialCapacity);

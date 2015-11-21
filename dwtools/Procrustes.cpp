@@ -52,7 +52,7 @@ Thing_implement (Procrustes, AffineTransform, 0);
 void structProcrustes :: v_transform (double **in, long nrows, double **out) {
 	for (long i = 1; i <= nrows; i++) {
 		for (long j = 1; j <= n; j++) {
-			double tmp = 0;
+			double tmp = 0.0;
 			for (long k = 1; k <= n; k++) {
 				tmp += in[i][k] * r[k][j];
 			}
@@ -61,21 +61,21 @@ void structProcrustes :: v_transform (double **in, long nrows, double **out) {
 	}
 }
 
-Any structProcrustes :: v_invert () {
+autoAffineTransform structProcrustes :: v_invert () {
 	autoProcrustes thee = Data_copy (this);
 	/*
 		R is symmetric rotation matrix -->
 		inverse is transpose!
 	*/
 
-	thy s = s == 0 ? 1 : 1 / s;
+	thy s = s == 0.0 ? 1.0 : 1.0 / s;
 
 	for (long i = 1; i <= n; i++) {
 		for (long j = i + 1; j <= n; j++) {
 			thy r[i][j] = r[j][i];
 			thy r[j][i] = r[i][j];
 		}
-		thy t[i] = 0;
+		thy t[i] = 0.0;
 		/*
 		for (j = 1; j <= thy n; j++)
 		{
@@ -88,16 +88,16 @@ Any structProcrustes :: v_invert () {
 
 		thy t[i] *= thy s;
 	}
-	return thee.transfer();
+	return thee.move();   // explicit move() seems to be needed because of the type difference
 }
 
 static void Procrustes_setDefaults (Procrustes me) {
-	my s = 1;
+	my s = 1.0;
 	for (long i = 1; i <= my n; i++) {
-		my t[i] = 0;
-		my r[i][i] = 1;
+		my t[i] = 0.0;
+		my r[i][i] = 1.0;
 		for (long j = i + 1; j <= my n; j++) {
-			my r[i][j] = my r[j][i] = 0;
+			my r[i][j] = my r[j][i] = 0.0;
 		}
 	}
 }

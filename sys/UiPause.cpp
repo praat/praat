@@ -30,7 +30,7 @@
 #include "praatP.h"
 
 static UiForm thePauseForm = nullptr;
-static Any thePauseFormRadio = nullptr;
+static UiField thePauseFormRadio = nullptr;
 static int thePauseForm_clicked = 0;
 static int theCancelContinueButton = 0;
 static int theEventLoopDepth = 0;
@@ -46,9 +46,7 @@ static void thePauseFormOkCallback (UiForm /* sendingForm */, int /* narg */, St
 	if (thePauseForm_clicked != theCancelContinueButton)
 		UiForm_Interpreter_addVariables (thePauseForm, (Interpreter) closure);   // 'closure', not 'interpreter' or 'theInterpreter'!
 }
-static void thePauseFormCancelCallback (Any dia, void *closure) {
-	(void) dia;
-	(void) closure;
+static void thePauseFormCancelCallback (UiForm /* dia */, void * /* closure */) {
 	if (theCancelContinueButton != 0) {
 		thePauseForm_clicked = theCancelContinueButton;
 	} else {

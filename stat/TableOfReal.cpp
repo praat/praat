@@ -942,7 +942,7 @@ void TableOfReal_drawAsSquares (TableOfReal me, Graphics graphics, long rowmin, 
 	}
 }
 
-Any TablesOfReal_append (TableOfReal me, TableOfReal thee) {
+autoTableOfReal TablesOfReal_append (TableOfReal me, TableOfReal thee) {
 	try {
 		if (thy numberOfColumns != my numberOfColumns)
 			Melder_throw (U"Numbers of columns are ", my numberOfColumns, U" and ", thy numberOfColumns, U" but should be equal.");
@@ -963,13 +963,13 @@ Any TablesOfReal_append (TableOfReal me, TableOfReal thee) {
 			for (long icol = 1; icol <= my numberOfColumns; icol ++)
 				his data [hisRow] [icol] = thy data [irow] [icol];
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal objects not appended.");
 	}
 }
 
-Any TablesOfReal_appendMany (Collection me) {
+autoTableOfReal TablesOfReal_appendMany (Collection me) {
 	try {
 		if (my size == 0) Melder_throw (U"Cannot add zero tables.");
 		TableOfReal thee = static_cast <TableOfReal> (my item [1]);
@@ -997,7 +997,7 @@ Any TablesOfReal_appendMany (Collection me) {
 			}
 		}
 		Melder_assert (totalNumberOfRows == his numberOfRows);
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal objects not appended.");
 	}

@@ -34,8 +34,6 @@ void SimpleString_init (SimpleString me, const char32 *value);
 const char32 *SimpleString_c (SimpleString me);
 /* return pointer to the string */
 
-int SimpleString_compare (SimpleString me, SimpleString thee);
-
 void SimpleString_append (SimpleString me, SimpleString thee);
 void SimpleString_append_c (SimpleString me, const char32 *str);
 /* append string to me */

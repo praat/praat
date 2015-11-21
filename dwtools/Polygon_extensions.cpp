@@ -576,16 +576,15 @@ Vertex Vertex_create () {
 }
 
 Thing_define (Vertices, DLL) {
-	static int s_compare (Any data1, Any data2);
-	Data_CompareFunction v_getCompareFunction ()
-		override { return s_compare; }
+	static int s_compareHook (DLLNode me, DLLNode thee) noexcept;
+	Data_CompareHook v_getCompareHook ()
+		override { return s_compareHook; }
 };
 Thing_implement (Vertices, DLL, 0);
 
 #define VERTEX(n) ((Vertex) ((n) -> data))
 
-int structVertices :: s_compare (I, thou) {
-	iam (DLLNode); thouart (DLLNode);
+int structVertices :: s_compareHook (DLLNode me, DLLNode thee) noexcept {
 	return VERTEX (me) -> alpha < VERTEX (thee) -> alpha ? -1 : VERTEX (me) -> alpha > VERTEX (thee) -> alpha ? 1 : 0;
 }
 

@@ -29,7 +29,7 @@ void AffineTransform_init (AffineTransform me, long n);
 
 autoAffineTransform AffineTransform_create (long n);
 
-Any AffineTransform_invert (AffineTransform me);
+autoAffineTransform AffineTransform_invert (AffineTransform me);
 /*
 	Get inverse transform for y = A x + t:
 		x = A^(-1)y - A^(-1) t

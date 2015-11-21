@@ -382,7 +382,7 @@ void structEditor :: v_do_pictureWindow (EditorCommand cmd) {
 }
 
 void structEditor :: v_form_pictureMargins (EditorCommand cmd) {
-	Any radio = 0;
+	UiField radio;
 	LABEL (U"", U"Margins:")
 	OPTIONMENU_ENUM (U"Write name at top", kEditor_writeNameAtTop, kEditor_writeNameAtTop_DEFAULT);
 }

@@ -28,6 +28,9 @@ oo_CLASS_CREATE (PairProbability, Daata);
 oo_CLASS_CREATE (PairDistribution, Daata);
 
 autoPairProbability PairProbability_create (const char32 *string1, const char32 *string2, double weight);
+
+int PairProbability_compare (PairProbability me, PairProbability thee) noexcept;
+
 autoPairDistribution PairDistribution_create ();
 
 const char32 * PairDistribution_getString1 (PairDistribution me, long pairNumber);

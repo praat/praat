@@ -30,7 +30,7 @@
 		like clearWs, flushWs, closeWs, updateWs, setWsViewport.
 	Example:
 		Picture p = Picture_create (myDrawingArea);
-		Any g = Picture_getGraphics (p);
+		Graphics g = Picture_getGraphics (p);
 		Picture_unhighlight (p);
 		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 		Graphics_text (g, 0.5, 0.7, U"Hello");

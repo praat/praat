@@ -34,7 +34,7 @@
 #pragma mark New
 
 static void UiForm_addNetworkFields (UiForm dia) {
-	Any radio;
+	UiField radio;
 	LABEL (U"", U"Activity spreading settings:")
 	REAL (U"Spreading rate", U"0.01")
 	OPTIONMENU_ENUM (U"Activity clipping rule", kNetwork_activityClippingRule, DEFAULT)

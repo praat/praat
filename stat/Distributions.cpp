@@ -132,7 +132,7 @@ static void unicize (Distributions me) {
 
 autoDistributions Distributions_addTwo (Distributions me, Distributions thee) {
 	try {
-		autoDistributions him = static_cast<Distributions> (TablesOfReal_append (me, thee));
+		autoDistributions him = TablesOfReal_append (me, thee).static_cast_move<structDistributions>();
 		TableOfReal_sortByLabel (him.peek(), 0, 0);
 		unicize (him.peek());
 		return him;
@@ -143,7 +143,7 @@ autoDistributions Distributions_addTwo (Distributions me, Distributions thee) {
 
 autoDistributions Distributions_addMany (Collection me) {
 	try {
-		autoDistributions thee = static_cast<Distributions> (TablesOfReal_appendMany (me));
+		autoDistributions thee = TablesOfReal_appendMany (me).static_cast_move<structDistributions>();
 		TableOfReal_sortByLabel (thee.peek(), 0, 0);
 		unicize (thee.peek());
 		return thee;

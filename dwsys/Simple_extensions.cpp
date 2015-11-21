@@ -29,10 +29,6 @@ void SimpleString_init (SimpleString me, const char32 *string) {
 	my string = Melder_dup (string);
 }
 
-int SimpleString_compare (SimpleString me, SimpleString thee) {
-	return str32cmp (my string, thy string);
-}
-
 const char32 *SimpleString_c (SimpleString me) {
 	return my string;
 }

@@ -56,9 +56,9 @@ void FileInMemory_showAsCode (FileInMemory me, const char32 *name, long numberOf
 Thing_define (FilesInMemory, SortedSet) {
 	int d_sortKey;
 
-	static int s_compare_name (Any data1, Any data2);
-	static int s_compare_id (Any data1, Any data2);
-	Data_CompareFunction v_getCompareFunction ()
+	static int s_compare_name (FileInMemory data1, FileInMemory data2);
+	static int s_compare_id (FileInMemory data1, FileInMemory data2);
+	Data_CompareHook v_getCompareHook ()
 		override { return d_sortKey == 0 ? s_compare_name : s_compare_id; }
 };
 

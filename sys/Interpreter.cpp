@@ -328,7 +328,7 @@ UiForm Interpreter_createForm (Interpreter me, GuiWindow parent, const char32 *p
 	UiForm form = UiForm_create (parent,
 		Melder_cat (selectionOnly ? U"Run script (selection only): " : U"Run script: ", my dialogTitle),
 		okCallback, okClosure, nullptr, nullptr);
-	Any radio = nullptr;
+	UiField radio = nullptr;
 	if (path) UiForm_addText (form, U"$file", path);
 	for (int ipar = 1; ipar <= my numberOfParameters; ipar ++) {
 		/*

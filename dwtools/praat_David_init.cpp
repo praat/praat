@@ -1717,7 +1717,7 @@ DO
 END
 
 void DTW_constraints_addCommonFields (UiForm dia) {
-	Any radio;
+	UiField radio;
 	LABEL (U"", U"Boundary conditions")
 	BOOLEAN (U"Match begin positions", 0)
 	BOOLEAN (U"Match end positions", 0)

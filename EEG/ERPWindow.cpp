@@ -391,7 +391,7 @@ void structERPWindow :: v_drawSelectionViewer () {
 }
 
 void structERPWindow :: v_prefs_addFields (EditorCommand cmd) {
-	Any radio;
+	UiField radio;
 	OPTIONMENU_ENUM (U"Scalp colour space", kGraphics_colourScale, kGraphics_colourScale_BLUE_TO_RED)
 }
 void structERPWindow :: v_prefs_setValues (EditorCommand cmd) {

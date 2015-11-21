@@ -24,27 +24,28 @@ Thing_implement (FileInMemory, Daata, 0);
 
 void structFileInMemory :: v_copy (Daata thee_Daata) {
 	FileInMemory thee = static_cast <FileInMemory> (thee_Daata);
-	FileInMemory_Parent :: v_copy (thee);
-	thy d_path = Melder_dup (d_path);
-	thy d_id = Melder_dup (d_id);
-	thy d_numberOfBytes = d_numberOfBytes;
-	thy d_data = NUMvector<char> (0, d_numberOfBytes);
-	memcpy (thy d_data, d_data, d_numberOfBytes + 1);
+	our FileInMemory_Parent :: v_copy (thee);
+	thy d_path = Melder_dup (our d_path);
+	thy d_id = Melder_dup (our d_id);
+	thy d_numberOfBytes = our d_numberOfBytes;
+	thy ownData = our ownData;
+	thy d_data = NUMvector<char> (0, our d_numberOfBytes);
+	memcpy (thy d_data, our d_data, our d_numberOfBytes + 1);
 }
 
 void structFileInMemory :: v_destroy () {
-	Melder_free (d_path);
-	Melder_free (d_id);
+	Melder_free (our d_path);
+	Melder_free (our d_id);
 	if (our ownData)
-		NUMvector_free <char> (d_data, 0);
-	FileInMemory_Parent :: v_destroy ();
+		NUMvector_free <char> (our d_data, 0);
+	our FileInMemory_Parent :: v_destroy ();
 }
 
 void structFileInMemory :: v_info () {
-	structDaata :: v_info ();
-	MelderInfo_writeLine (U"File name: ", d_path);
-	MelderInfo_writeLine (U"Id: ", d_id);
-	MelderInfo_writeLine (U"Number of bytes: ", d_numberOfBytes);
+	our structDaata :: v_info ();
+	MelderInfo_writeLine (U"File name: ", our d_path);
+	MelderInfo_writeLine (U"Id: ", our d_id);
+	MelderInfo_writeLine (U"Number of bytes: ", our d_numberOfBytes);
 }
 
 autoFileInMemory FileInMemory_create (MelderFile file) {
@@ -61,7 +62,7 @@ autoFileInMemory FileInMemory_create (MelderFile file) {
 		my d_id = Melder_dup (MelderFile_name (file));
 		my d_numberOfBytes = length;
 		my ownData = true;
-		my d_data = NUMvector <char> (0, my d_numberOfBytes);   // one extra for null byte at end of text
+		my d_data = NUMvector <char> (0, my d_numberOfBytes);   // includes room for a final null byte in case the file happens to contain text
 		MelderFile_open (file);
 		for (long i = 0; i < my d_numberOfBytes; i++) {
 			unsigned int number = bingetu1 (file -> filePointer);
@@ -102,7 +103,7 @@ void FileInMemory_showAsCode (FileInMemory me, const char32 *name, long numberOf
 	for (long i = 0; i < my d_numberOfBytes; i++) {
 		unsigned char number = my d_data[i];
 		MelderInfo_write ((i % numberOfBytesPerLine == 0 ? U"\t\t\t" : U""), number, U",",
-			((i % numberOfBytesPerLine  == (numberOfBytesPerLine - 1)) ? U"\n" : U" "));
+			((i % numberOfBytesPerLine == (numberOfBytesPerLine - 1)) ? U"\n" : U" "));
 	}
 	MelderInfo_writeLine ((my d_numberOfBytes - 1) % numberOfBytesPerLine == (numberOfBytesPerLine - 1) ? U"\t\t\t0};" : U"0};");
 	MelderInfo_write (U"\t\tautoFileInMemory ", name, U" = FileInMemory_createWithData (");
@@ -111,13 +112,11 @@ void FileInMemory_showAsCode (FileInMemory me, const char32 *name, long numberOf
 
 Thing_implement (FilesInMemory, SortedSet, 0);
 
-int structFilesInMemory :: s_compare_name (I, thou) {
-	iam (FileInMemory); thouart (FileInMemory);
+int structFilesInMemory :: s_compare_name (FileInMemory me, FileInMemory thee) {
 	return Melder_cmp (my d_path, thy d_path);
 }
 
-int structFilesInMemory :: s_compare_id (I, thou) {
-	iam (FileInMemory); thouart (FileInMemory);
+int structFilesInMemory :: s_compare_id (FileInMemory me, FileInMemory thee) {
 	return Melder_cmp (my d_id, thy d_id);
 }
 
@@ -226,7 +225,7 @@ char * FilesInMemory_getCopyOfData (FilesInMemory me, const char32 *id, long *nu
 	if (index == 0) return 0;
 	FileInMemory fim = (FileInMemory) my item[index];
 	char *data = (char *) _Melder_malloc (fim -> d_numberOfBytes);
-	if (data == 0 || ! memcpy (data, fim -> d_data, fim -> d_numberOfBytes)) {
+	if (! data || ! memcpy (data, fim -> d_data, fim -> d_numberOfBytes)) {
 		//Melder_appendError (U"No memory for dictionary.");
 		return nullptr;
 	}

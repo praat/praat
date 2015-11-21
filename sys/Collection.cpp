@@ -400,6 +400,38 @@ Collection Collections_merge (Collection me, Collection thee) {
 	}
 }
 
+void Collection_sort (Collection me, Collection_ItemCompareHook compareHook) {
+	int (*compare) (Daata, Daata) = compareHook.get();
+	long l, r, j, i;
+	Daata k;
+	Daata *a = (Daata *) my item;
+	long n = my size;
+	if (n < 2) return;
+	l = (n >> 1) + 1;
+	r = n;
+	for (;;) {
+		if (l > 1) {
+			l --;
+			k = a [l];
+		} else { 
+			k = a [r];
+			a [r] = a [1];
+			r --;
+			if (r == 1) { a [1] = k; return; }
+		}
+		j = l;
+		for (;;) {
+			i = j;
+			j = j << 1;
+			if (j > r) break;
+			if (j < r && compare (a [j], a [j + 1]) < 0) j ++;
+			if (compare (k, a [j]) >= 0) break;
+			a [i] = a [j];
+		}
+		a [i] = k;
+	}
+}
+
 /********** class Ordered **********/
 
 Thing_implement (Ordered, Collection, 0);
@@ -425,23 +457,21 @@ void Ordered_addItemPos (Ordered me, Thing data, long position) {
 
 Thing_implement (Sorted, Collection, 0);
 
-long structSorted :: v_position (Any data) {
-	Data_CompareFunction compare = v_getCompareFunction ();
-	if (size == 0 || compare (data, item [size]) >= 0) return size + 1;
-	if (compare (data, item [1]) < 0) return 1;
+long structSorted :: v_position (Thing data) {
+	Data_CompareHook::FunctionType compare = v_getCompareHook ().get();
+	if (size == 0 || compare ((Daata) data, (Daata) item [size]) >= 0) return size + 1;
+	if (compare ((Daata) data, (Daata) item [1]) < 0) return 1;
 	/* Binary search. */
 	long left = 1, right = size;
 	while (left < right - 1) {
 		long mid = (left + right) / 2;
-		if (compare (data, item [mid]) >= 0) left = mid; else right = mid;
+		if (compare ((Daata) data, (Daata) item [mid]) >= 0) left = mid; else right = mid;
 	}
 	Melder_assert (right == left + 1);
 	return right;
 }
 
-int structSorted :: s_compare (Any data1, Any data2) {
-	(void) data1;
-	(void) data2;
+int structSorted :: s_compareHook (Daata /* data1 */, Daata /* data2 */) noexcept {
 	return 0;   // in the base class, all are equal
 }
 
@@ -454,28 +484,28 @@ void Sorted_addItem_unsorted (Sorted me, Thing data) {
 }
 
 void Sorted_sort (Sorted me) {
-	NUMsort_p (my size, (void **) my item, (int (*) (const void *, const void *)) my v_getCompareFunction ());
+	Collection_sort (me, my v_getCompareHook ());
 }
 
 /********** class SortedSet **********/
 
-long structSortedSet :: v_position (Any data) {
-	Data_CompareFunction compare = v_getCompareFunction ();
+long structSortedSet :: v_position (Thing data) {
+	Data_CompareHook::FunctionType compare = v_getCompareHook ().get();
 	if (size == 0) return 1;   // empty set? then 'data' is going to be the first item
-	int where = compare (data, item [size]);   // compare with last item
+	int where = compare ((Daata) data, (Daata) item [size]);   // compare with last item
 	if (where > 0) return size + 1;   // insert at end
 	if (where == 0) return 0;
-	if (compare (data, item [1]) < 0) return 1;   // compare with first item
+	if (compare ((Daata) data, (Daata) item [1]) < 0) return 1;   // compare with first item
 	long left = 1, right =size;
 	while (left < right - 1) {
 		long mid = (left + right) / 2;
-		if (compare (data, item [mid]) >= 0)
+		if (compare ((Daata) data, (Daata) item [mid]) >= 0)
 			left = mid;
 		else
 			right = mid;
 	}
 	Melder_assert (right == left + 1);
-	if (! compare (data, item [left]) || ! compare (data, item [right]))
+	if (! compare ((Daata) data, (Daata) item [left]) || ! compare ((Daata) data, (Daata) item [right]))
 		return 0;
 	return right;
 }
@@ -490,8 +520,7 @@ void SortedSet_init (SortedSet me, ClassInfo itemClass, long initialCapacity) {
 
 Thing_implement (SortedSetOfInt, SortedSet, 0);
 
-int structSortedSetOfInt :: s_compare (I, thou) {
-	iam (SimpleInt); thouart (SimpleInt);
+int structSortedSetOfInt :: s_compareHook (SimpleInt me, SimpleInt thee) noexcept {
 	if (my number < thy number) return -1;
 	if (my number > thy number) return +1;
 	return 0;
@@ -511,8 +540,7 @@ SortedSetOfInt SortedSetOfInt_create () {
 
 Thing_implement (SortedSetOfLong, SortedSet, 0);
 
-int structSortedSetOfLong :: s_compare (I, thou) {
-	iam (SimpleLong); thouart (SimpleLong);
+int structSortedSetOfLong :: s_compareHook (SimpleLong me, SimpleLong thee) noexcept {
 	if (my number < thy number) return -1;
 	if (my number > thy number) return +1;
 	return 0;
@@ -530,8 +558,7 @@ SortedSetOfLong SortedSetOfLong_create () {
 
 /********** class SortedSetOfDouble **********/
 
-int structSortedSetOfDouble :: s_compare (I, thou) {
-	iam (SimpleDouble); thouart (SimpleDouble);
+int structSortedSetOfDouble :: s_compareHook (SimpleDouble me, SimpleDouble thee) noexcept {
 	if (my number < thy number) return -1;
 	if (my number > thy number) return +1;
 	return 0;
@@ -552,11 +579,6 @@ SortedSetOfDouble SortedSetOfDouble_create () {
 /********** class SortedSetOfString **********/
 
 Thing_implement (SortedSetOfString, SortedSet, 0);
-
-int structSortedSetOfString :: s_compare (I, thou) {
-	iam (SimpleString); thouart (SimpleString);
-	return str32cmp (my string, thy string);
-}
 
 void SortedSetOfString_init (SortedSetOfString me) {
 	SortedSet_init (me, classSimpleString, 10);
@@ -611,9 +633,7 @@ void SortedSetOfString_addString (SortedSetOfString me, const char32 *string) {
 
 Thing_implement (Cyclic, Collection, 0);
 
-int structCyclic :: s_compare (I, thou) {
-	(void) void_me;
-	(void) void_thee;
+int structCyclic :: s_compareHook (Daata /* me */, Daata /* thee */) noexcept {
 	Melder_fatal (U"Cyclic::compare: subclass responsibility.");
 	return 0;
 }
@@ -626,11 +646,11 @@ void Cyclic_cycleLeft (Cyclic me) {
 }
 
 void Cyclic_unicize (Cyclic me) {
-	Data_CompareFunction compare = my v_getCompareFunction ();
+	Data_CompareHook compare = my v_getCompareHook ();
 	if (my size <= 1) return;
 	long lowest = 1;
 	for (long i = 1; i <= my size; i ++)
-		if (compare (my item [i], my item [lowest]) < 0) lowest = i;
+		if (compare ((Daata) my item [i], (Daata) my item [lowest]) < 0) lowest = i;
 	for (long i = 1; i < lowest; i ++)
 		Cyclic_cycleLeft (me);
 }

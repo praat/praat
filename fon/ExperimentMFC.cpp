@@ -474,11 +474,8 @@ Categories ResultsMFC_to_Categories_responses (ResultsMFC me) {
 	}
 }
 
-static int compare (SimpleString me, SimpleString thee) {
-	return str32cmp (my string, thy string);
-}
 void Categories_sort (Categories me) {
-	NUMsort_p (my size, (void **) my item, (int (*) (const void *, const void *)) compare);
+	Collection_sort (me, SimpleString_compare);
 }
 
 double Categories_getEntropy (Categories me) {

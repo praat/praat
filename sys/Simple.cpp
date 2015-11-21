@@ -70,4 +70,8 @@ autoSimpleString SimpleString_create (const char32 *string) {
 	return me;
 }
 
+int SimpleString_compare (SimpleString me, SimpleString thee) noexcept {
+	return str32cmp (my string, thy string);
+}
+
 /* End of file Simple.cpp */

@@ -1826,8 +1826,8 @@ static void Formula_print (FormulaInstruction f) {
 	} while (symbol != END_);
 }
 
-void Formula_compile (Any interpreter, Any data, const char32 *expression, int expressionType, bool optimize) {
-	theInterpreter = (Interpreter) interpreter;
+void Formula_compile (Interpreter interpreter, Daata data, const char32 *expression, int expressionType, bool optimize) {
+	theInterpreter = interpreter;
 	if (! theInterpreter) {
 		if (! theLocalInterpreter) {
 			theLocalInterpreter = Interpreter_create (nullptr, nullptr);
@@ -1843,7 +1843,7 @@ void Formula_compile (Any interpreter, Any data, const char32 *expression, int e
 		Collection_removeAllItems (theInterpreter -> variables);
 		#endif
 	}
-	theSource = (Daata) data;
+	theSource = data;
 	theExpression = expression;
 	theExpressionType [theLevel] = expressionType;
 	theOptimize = optimize;

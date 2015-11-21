@@ -1128,7 +1128,7 @@ DIRECT2 (TablesOfReal_append) {
 		iam (TableOfReal);
 		Collection_addItem_ref (tables.peek(), me);
 	}
-	autoTableOfReal thee = static_cast <TableOfReal> (TablesOfReal_appendMany (tables.peek()));
+	autoTableOfReal thee = TablesOfReal_appendMany (tables.peek());
 	praat_new (thee.move(), U"appended");
 END2 }
 

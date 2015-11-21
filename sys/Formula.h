@@ -19,7 +19,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "Thing.h"
+#include "Data.h"
 
 #define kFormula_EXPRESSION_TYPE_NUMERIC  0
 #define kFormula_EXPRESSION_TYPE_STRING  1
@@ -32,7 +32,7 @@ struct Formula_NumericArray {
 	double **data;
 };
 
-typedef struct structInterpreterVariable *InterpreterVariable;
+Thing_declare (InterpreterVariable);
 
 typedef struct structStackel {
 	#define Stackel_NUMBER  0
@@ -59,7 +59,9 @@ struct Formula_Result {
 	} result;
 };
 
-void Formula_compile (Any interpreter, Any data, const char32 *expression, int expressionType, bool optimize);
+Thing_declare (Interpreter);
+
+void Formula_compile (Interpreter interpreter, Daata data, const char32 *expression, int expressionType, bool optimize);
 
 void Formula_run (long row, long col, struct Formula_Result *result);
 

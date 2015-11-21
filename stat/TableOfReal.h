@@ -54,8 +54,8 @@ void TableOfReal_drawHorizontalLines (TableOfReal me, Graphics g, long rowmin, l
 void TableOfReal_drawLeftAndRightLines (TableOfReal me, Graphics g, long rowmin, long rowmax);
 void TableOfReal_drawTopAndBottomLines (TableOfReal me, Graphics g, long rowmin, long rowmax);
 
-Any TablesOfReal_append (TableOfReal me, TableOfReal thee);
-Any TablesOfReal_appendMany (Collection me);
+autoTableOfReal TablesOfReal_append (TableOfReal me, TableOfReal thee);
+autoTableOfReal TablesOfReal_appendMany (Collection me);
 void TableOfReal_sortByLabel (TableOfReal me, long column1, long column2);
 void TableOfReal_sortByColumn (TableOfReal me, long column1, long column2);
 

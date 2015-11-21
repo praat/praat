@@ -44,7 +44,7 @@ autoOrderedOfString OrderedOfString_create ();
 
 int OrderedOfString_init (OrderedOfString me, long initialCapacity);
 
-int OrderedOfString_append (OrderedOfString me, char32 *append);
+int OrderedOfString_append (OrderedOfString me, const char32 *append);
 
 autoOrderedOfString OrderedOfString_joinItems (OrderedOfString me, OrderedOfString thee);
 /* Join each item */

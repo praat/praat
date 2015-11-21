@@ -2109,7 +2109,7 @@ void structTextGridEditor :: v_updateText () {
 }
 
 void structTextGridEditor :: v_prefs_addFields (EditorCommand cmd) {
-	Any radio;
+	UiField radio;
 	NATURAL (U"Font size (points)", default_fontSize ())
 	OPTIONMENU_ENUM (U"Text alignment in intervals", kGraphics_horizontalAlignment, kGraphics_horizontalAlignment_DEFAULT)
 	OPTIONMENU (U"The symbols %#_^ in labels", default_useTextStyles () + 1)
