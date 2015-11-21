@@ -24,7 +24,7 @@
 
 #include "FFNet_Matrix.h"
 
-autoMatrix FFNet_weightsToMatrix (FFNet me, long layer, int deltaWeights) {
+autoMatrix FFNet_weightsToMatrix (FFNet me, long layer, bool deltaWeights) {
 	try {
 		if (layer < 1 || layer > my nLayers) {
 			Melder_throw (U"Layer must be > 0 and < ", my nLayers, U".");

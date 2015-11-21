@@ -31,11 +31,11 @@
 #include "Minimizers.h"
 
 void FFNet_Pattern_Categories_learnSD (FFNet me, Pattern p, Categories c, long maxNumOfEpochs,
-    double tolerance, Any parameters, int costFunctionType);
+    double tolerance, double learningRate, double momentum, int costFunctionType);
 /* Steepest descent */
 
 void FFNet_Pattern_Categories_learnSM (FFNet me, Pattern p, Categories c, long maxNumOfEpochs,
-    double tolerance, Any parameters, int costFunctionType);
+    double tolerance, int costFunctionType);
 /* Conj. Gradient vdSmagt */
 
 double FFNet_Pattern_Categories_getCosts_total (FFNet me, Pattern p, Categories c, int costFunctionType);
