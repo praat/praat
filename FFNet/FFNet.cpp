@@ -677,7 +677,7 @@ void FFNet_drawWeightsToLayer (FFNet me, Graphics g, int layer, int scaling, int
 	if (layer < 1 || layer > my nLayers) {
 		Melder_throw (U"Layer must be in [1,", my nLayers, U"].");
 	}
-	autoMatrix weights = FFNet_weightsToMatrix (me, layer, 0);
+	autoMatrix weights = FFNet_weightsToMatrix (me, layer, false);
 	Matrix_scale (weights.peek(), scaling);
 	Matrix_drawAsSquares (weights.peek(), g, 0.0, 0.0, 0.0, 0.0, 0);
 	if (garnish) {

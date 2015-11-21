@@ -2,7 +2,7 @@
 #define _Minimizers_h_
 /* Minimizers.h
  *
- * Copyright (C) 1993-2011, 2015 David Weenink
+ * Copyright (C) 1993-2011,2015 David Weenink, 2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,6 @@ Thing_define (Minimizer, Thing) {
 
 	virtual void v_minimize () { }  /* does the work */
 	virtual void v_reset () { } /* reset the minimizer */
-	virtual void v_setParameters (Any /* parameters */) { }
 };
 
 void Minimizer_init (Minimizer me, long nParameters, Daata object);
@@ -77,8 +76,6 @@ void Minimizer_reset (Minimizer me, const double guess[]);
 
 void Minimizer_setAfterEachIteration (Minimizer me, int (*after) (Minimizer me, Any aclosure), Any aclosure);
 /* set the procedure that is executed after each iteration. */
-
-void Minimizer_setParameters (Minimizer me, Any parameters); /* for inheritors */
 
 void Minimizer_minimize (Minimizer me, long maxNumOfIterations, double tolerance, int monitor);
 /* Minimizes during maximally maxNumOfIterations. The gmonitor is initialized
@@ -129,8 +126,6 @@ Thing_define (SteepestDescentMinimizer, Minimizer) {
 
 	void v_minimize ()
 		override;
-	void v_setParameters (Any parameters)
-		override;
 };
 
 autoSteepestDescentMinimizer SteepestDescentMinimizer_create (long nParameters, Daata object, double (*func) (Daata object, const double p[]), void (*dfunc) (Daata object, const double p[], double dp[]));
@@ -166,8 +161,6 @@ Thing_define (VDSmagtMinimizer, Minimizer) {
 	void v_minimize ()
 		override;
 	void v_reset ()
-		override;
-	void v_setParameters (Any parameters)
 		override;
 };
 

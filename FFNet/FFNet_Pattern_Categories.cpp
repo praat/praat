@@ -64,12 +64,20 @@ double FFNet_Pattern_Categories_getCosts_average (FFNet me, Pattern p, Categorie
 	return costs == NUMundefined ? NUMundefined : costs / p -> ny;
 }
 
-void FFNet_Pattern_Categories_learnSM (FFNet me, Pattern p, Categories c, long maxNumOfEpochs, double tolerance, Any parameters, int costFunctionType) {
-	_FFNet_Pattern_Categories_learn (me, p, c, maxNumOfEpochs, tolerance, parameters, costFunctionType, FFNet_Pattern_Activation_learnSM);
+void FFNet_Pattern_Categories_learnSD (FFNet me, Pattern p, Categories c, long maxNumOfEpochs, double tolerance, double learningRate, double momentum, int costFunctionType) {
+	_FFNet_Pattern_Categories_checkDimensions (me, p, c);
+	autoActivation activation = FFNet_Categories_to_Activation (me, c);
+	double min, max;
+	Matrix_getWindowExtrema (p, 0, 0, 0, 0, &min, &max);
+	FFNet_Pattern_Activation_learnSD (me, p, activation.peek(), maxNumOfEpochs, tolerance, learningRate, momentum, costFunctionType);
 }
 
-void FFNet_Pattern_Categories_learnSD (FFNet me, Pattern p, Categories c, long maxNumOfEpochs, double tolerance, Any parameters, int costFunctionType) {
-	_FFNet_Pattern_Categories_learn (me, p, c, maxNumOfEpochs, tolerance, parameters, costFunctionType, FFNet_Pattern_Activation_learnSD);
+void FFNet_Pattern_Categories_learnSM (FFNet me, Pattern p, Categories c, long maxNumOfEpochs, double tolerance, int costFunctionType) {
+	_FFNet_Pattern_Categories_checkDimensions (me, p, c);
+	autoActivation activation = FFNet_Categories_to_Activation (me, c);
+	double min, max;
+	Matrix_getWindowExtrema (p, 0, 0, 0, 0, &min, &max);
+	FFNet_Pattern_Activation_learnSM (me, p, activation.peek(), maxNumOfEpochs, tolerance, costFunctionType);
 }
 
 autoCategories FFNet_Pattern_to_Categories (FFNet me, Pattern thee, int labeling) {

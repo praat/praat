@@ -2,7 +2,7 @@
 #define _FFNet_Pattern_Activation_h_
 /* FFNet_Pattern_Activation.h
  *
- * Copyright (C) 1994-2011, 2015 David Weenink
+ * Copyright (C) 1994-2011,2015 David Weenink, 2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,11 +33,11 @@
 #include "Minimizers.h"
 
 void FFNet_Pattern_Activation_learnSD (FFNet me, Pattern p, Activation a, long maxNumOfEpochs,
-    double tolerance, Any parameters, int costFunctionType);
+    double tolerance, double learningRate, double momentum, int costFunctionType);
 /* Steepest Descent minimization */
 
 void FFNet_Pattern_Activation_learnSM (FFNet me, Pattern p, Activation a, long maxNumOfEpochs,
-    double tolerance, Any parameters, int costFunctionType);
+    double tolerance, int costFunctionType);
 
 double FFNet_Pattern_Activation_getCosts_total (FFNet me, Pattern p, Activation a, int costFunctionType);
 double FFNet_Pattern_Activation_getCosts_average (FFNet me, Pattern p, Activation a, int costFunctionType);

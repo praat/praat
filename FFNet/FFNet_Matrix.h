@@ -38,7 +38,7 @@
 /* x1 = y1 = 1																*/
 /*																			*/
 
-autoMatrix FFNet_weightsToMatrix (FFNet me, long layer, int deltaWeights);
+autoMatrix FFNet_weightsToMatrix (FFNet me, long layer, bool deltaWeights);
 /* (delta) weights connected to layer into Matrix */
 
 autoFFNet FFNet_weightsFromMatrix (FFNet me, Matrix matrix, long layer);

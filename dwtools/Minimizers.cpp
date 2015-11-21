@@ -79,10 +79,6 @@ void Minimizer_init (Minimizer me, long nParameters, Daata object) {
 	Minimizer_reset (me, nullptr); /* added 27/11/97 */
 }
 
-void Minimizer_setParameters (Minimizer me, Any parameters) {
-	my v_setParameters (parameters);
-}
-
 static void monitor_off (Minimizer me) {
 	Melder_monitor (1.1);
 	if (my gmonitor) {
@@ -247,16 +243,6 @@ void structSteepestDescentMinimizer :: v_minimize () {
 			break;
 		}
 		fret = minimum;
-	}
-}
-
-void structSteepestDescentMinimizer :: v_setParameters (Any parameters) {
-	if (p) {
-		SteepestDescentMinimizer_parameters thee = (SteepestDescentMinimizer_parameters) parameters;
-		eta = thy eta;
-		momentum = thy momentum;
-	} else {
-		eta = 0.1; momentum = 0.9;
 	}
 }
 
@@ -487,14 +473,6 @@ void structVDSmagtMinimizer :: v_destroy () {
 
 void structVDSmagtMinimizer :: v_reset () {
 	restart_flag = 1;
-}
-
-void structVDSmagtMinimizer :: v_setParameters (Any parameters) {
-	if (parameters) {
-		VDSmagtMinimizer_parameters  vdspars = (VDSmagtMinimizer_parameters) parameters;
-		lineSearchGradient = vdspars -> lineSearchGradient;
-		lineSearchMaxNumOfIterations = vdspars -> lineSearchMaxNumOfIterations;
-	}
 }
 
 autoVDSmagtMinimizer VDSmagtMinimizer_create (long nParameters, Daata object, double (*func) (Daata object, const double x[]), void (*dfunc) (Daata object, const double x[], double dx[])) {
