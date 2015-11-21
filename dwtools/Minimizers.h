@@ -42,8 +42,8 @@ Thing_define (Minimizer, Thing) {
 	long start;			/* start iteration series */
 	long maxNumOfIterations; /* the current maximum number of iterations */
 	long iteration;     /* the total number of iterations */
-	void (*after) (Minimizer me, Any aclosure); /* to be called after each iteration */
-	Any aclosure;
+	void (*afterHook) (Minimizer me, Thing boss); /* to be called after each iteration */
+	Thing afterBoss;
 	Graphics gmonitor;		/* graphics to monitor the minimization process */
 
 	void v_destroy ()

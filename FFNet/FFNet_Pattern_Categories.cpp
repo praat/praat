@@ -41,14 +41,6 @@ static void _FFNet_Pattern_Categories_checkDimensions (FFNet me, Pattern p, Cate
 	}
 }
 
-static void _FFNet_Pattern_Categories_learn (FFNet me, Pattern p, Categories c, long maxNumOfEpochs, double tolerance, Any parameters, int costFunctionType, void (*learn) (FFNet, Pattern, Activation, long, double, Any, int)) {
-	_FFNet_Pattern_Categories_checkDimensions (me, p, c);
-	autoActivation activation = FFNet_Categories_to_Activation (me, c);
-	double min, max;
-	Matrix_getWindowExtrema (p, 0, 0, 0, 0, &min, &max);
-	learn (me, p, activation.peek(), maxNumOfEpochs, tolerance, parameters, costFunctionType);
-}
-
 double FFNet_Pattern_Categories_getCosts_total (FFNet me, Pattern p, Categories c, int costFunctionType) {
 	try {
 		_FFNet_Pattern_Categories_checkDimensions (me, p, c);

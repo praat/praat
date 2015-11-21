@@ -53,7 +53,7 @@ void structMinimizer :: v_destroy () {
 	Minimizer_Parent :: v_destroy ();
 }
 
-static void classMinimizer_after (Minimizer me, Any /* aclosure */) {
+static void classMinimizer_afterHook (Minimizer me, Thing /* boss */) {
 
 	if (my success || ! my gmonitor) {
 		return;
@@ -75,7 +75,7 @@ void Minimizer_init (Minimizer me, long nParameters, Daata object) {
 	my p = NUMvector<double> (1, nParameters);
 	my object = object;
 	my minimum = 1.0e30;
-	my after = classMinimizer_after;
+	my afterHook = classMinimizer_afterHook;
 	Minimizer_reset (me, nullptr); /* added 27/11/97 */
 }
 
@@ -154,9 +154,9 @@ void Minimizer_minimizeManyTimes (Minimizer me, long numberOfTimes, long maxIter
 	Minimizer_reset (me, popt.peek());
 }
 
-void Minimizer_setAfterEachIteration (Minimizer me, void (*after) (Minimizer me, Any aclosure), Any aclosure) {
-	my after = after;
-	my aclosure = aclosure;
+void Minimizer_setAfterEachIteration (Minimizer me, void (*afterHook) (Minimizer me, Thing afterBoss), Thing afterBoss) {
+	my afterHook = afterHook;
+	my afterBoss = afterBoss;
 }
 
 void Minimizer_reset (Minimizer me, const double guess[]) {
@@ -230,9 +230,9 @@ void structSteepestDescentMinimizer :: v_minimize () {
 		}
 		history[++iteration] = minimum = func (object, p);
 		success = 2.0 * fabs (fret - minimum) < tolerance * (fabs (fret) + fabs (minimum));
-		if (after) {
+		if (our afterHook) {
 			try {
-				after (this, aclosure);
+				our afterHook (this, our afterBoss);
 			} catch (MelderError) {
 				Melder_casual (U"Interrupted after ", iteration, U" iterations.");
 				Melder_clearError ();
@@ -407,9 +407,9 @@ void structVDSmagtMinimizer :: v_minimize () {
 					gropt = grc;
 					dalpha = - dalpha;
 					success = gsq < tolerance;
-					if (after) {
+					if (our afterHook) {
 						try {
-							after (this, aclosure);
+							our afterHook (this, our afterBoss);
 						} catch (MelderError) {
 							Melder_casual (U"Interrupted after ", this -> iteration, U" iterations.");
 							Melder_clearError ();
