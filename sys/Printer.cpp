@@ -253,7 +253,7 @@ static void DO_Printer_postScriptSettings (UiForm dia, int /* narg */, Stackel /
 int Printer_postScriptSettings () {
 	static UiForm dia;
 	if (! dia) {
-		Any radio;
+		UiField radio;
 		dia = UiForm_create (theCurrentPraatApplication -> topShell, U"PostScript settings", DO_Printer_postScriptSettings, nullptr, U"PostScript settings...", U"PostScript settings...");
 		#if defined (_WIN32)
 			BOOLEAN (U"Allow direct PostScript", true);

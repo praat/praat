@@ -24,9 +24,10 @@ oo_DEFINE_CLASS (Procrustes, AffineTransform)
 	oo_DOUBLE (s)
 
 	#if oo_DECLARING
-		// overridden methods:
-			virtual void v_transform (double **in, long nrows, double **out);
-			virtual Any v_invert ();
+		void v_transform (double **in, long nrows, double **out)
+			override;
+		autoAffineTransform v_invert ()
+			override;
 	#endif
 			
 oo_END_CLASS (Procrustes)	

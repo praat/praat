@@ -61,7 +61,7 @@ void structAffineTransform :: v_transform (double **in, long nrows, double **out
 	}
 }
 
-Any structAffineTransform :: v_invert () {
+autoAffineTransform structAffineTransform :: v_invert () {
 	autoAffineTransform thee = Data_copy (this);
 	double tolerance = 0.000001;
 
@@ -72,7 +72,7 @@ Any structAffineTransform :: v_invert () {
 			thy t[i] -= thy r[i][j] * t[j];
 		}
 	}
-	return thee.transfer();
+	return thee;
 }
 
 Thing_implement (AffineTransform, Daata, 0);
@@ -96,9 +96,8 @@ autoAffineTransform AffineTransform_create (long n) {
 	}
 }
 
-Any AffineTransform_invert (AffineTransform me) {
-	AffineTransform thee = (AffineTransform) my v_invert ();
-	return thee;
+autoAffineTransform AffineTransform_invert (AffineTransform me) {
+	return my v_invert ();
 }
 
 autoTableOfReal AffineTransform_extractMatrix (AffineTransform me) {

@@ -32,5 +32,7 @@ autoSimpleLong SimpleLong_create (long number);
 autoSimpleDouble SimpleDouble_create (double number);
 autoSimpleString SimpleString_create (const char32 *string);
 
+int SimpleString_compare (SimpleString me, SimpleString thee) noexcept;
+
 /* End of file Simple.h */
 #endif

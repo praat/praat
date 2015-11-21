@@ -80,11 +80,6 @@ static UiField UiField_create (int type, const char32 *name) {
 
 /***** class UiOption: radio buttons and menu options *****/
 
-Thing_define (UiOption, Thing) {
-	GuiRadioButton radioButton;
-	GuiObject menuItem;
-};
-
 Thing_implement (UiOption, Thing, 0);
 
 static UiOption UiOption_create (const char32 *label) {
@@ -93,8 +88,7 @@ static UiOption UiOption_create (const char32 *label) {
 	return me;
 }
 
-Any UiRadio_addButton (I, const char32 *label) {
-	iam (UiField);
+UiOption UiRadio_addButton (UiField me, const char32 *label) {
 	if (! me) return nullptr;
 	Melder_assert (my type == UI_RADIO || my type == UI_OPTIONMENU);
 	autoUiOption thee = UiOption_create (label);
@@ -103,8 +97,7 @@ Any UiRadio_addButton (I, const char32 *label) {
 	return thee_ref;
 }
 
-Any UiOptionMenu_addButton (I, const char32 *label) {
-	iam (UiField);
+UiOption UiOptionMenu_addButton (UiField me, const char32 *label) {
 	if (! me) return nullptr;
 	Melder_assert (my type == UI_RADIO || my type == UI_OPTIONMENU);
 	autoUiOption thee = UiOption_create (label);
@@ -570,7 +563,7 @@ void UiForm_setPauseForm (UiForm me,
 	const char32 *continue4, const char32 *continue5, const char32 *continue6,
 	const char32 *continue7, const char32 *continue8, const char32 *continue9,
 	const char32 *continue10,
-	void (*cancelCallback) (Any dia, void *closure))
+	void (*cancelCallback) (UiForm dia, void *closure))
 {
 	my isPauseForm = true;
 	my numberOfContinueButtons = numberOfContinueButtons;
@@ -609,81 +602,81 @@ static UiField UiForm_addField (UiForm me, int type, const char32 *label) {
 	return my field [++ my numberOfFields] = UiField_create (type, label);
 }
 
-Any UiForm_addReal (UiForm me, const char32 *label, const char32 *defaultValue) {
+UiField UiForm_addReal (UiForm me, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee = UiForm_addField (me, UI_REAL, label);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	return thee.transfer();
 }
 
-Any UiForm_addRealOrUndefined (UiForm me, const char32 *label, const char32 *defaultValue) {
+UiField UiForm_addRealOrUndefined (UiForm me, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee = UiForm_addField (me, UI_REAL_OR_UNDEFINED, label);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	return thee.transfer();
 }
 
-Any UiForm_addPositive (UiForm me, const char32 *label, const char32 *defaultValue) {
+UiField UiForm_addPositive (UiForm me, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee = UiForm_addField (me, UI_POSITIVE, label);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	return thee.transfer();
 }
 
-Any UiForm_addInteger (UiForm me, const char32 *label, const char32 *defaultValue) {
+UiField UiForm_addInteger (UiForm me, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee = UiForm_addField (me, UI_INTEGER, label);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	return thee.transfer();
 }
 
-Any UiForm_addNatural (UiForm me, const char32 *label, const char32 *defaultValue) {
+UiField UiForm_addNatural (UiForm me, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee = UiForm_addField (me, UI_NATURAL, label);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	return thee.transfer();
 }
 
-Any UiForm_addWord (UiForm me, const char32 *label, const char32 *defaultValue) {
+UiField UiForm_addWord (UiForm me, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee = UiForm_addField (me, UI_WORD, label);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	return thee.transfer();
 }
 
-Any UiForm_addSentence (UiForm me, const char32 *label, const char32 *defaultValue) {
+UiField UiForm_addSentence (UiForm me, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee = UiForm_addField (me, UI_SENTENCE, label);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	return thee.transfer();
 }
 
-Any UiForm_addLabel (UiForm me, const char32 *name, const char32 *label) {
+UiField UiForm_addLabel (UiForm me, const char32 *name, const char32 *label) {
 	autoUiField thee = UiForm_addField (me, UI_LABEL, name);
 	thy stringValue = Melder_dup (label);
 	return thee.transfer();
 }
 
-Any UiForm_addBoolean (UiForm me, const char32 *label, int defaultValue) {
+UiField UiForm_addBoolean (UiForm me, const char32 *label, int defaultValue) {
 	autoUiField thee = UiForm_addField (me, UI_BOOLEAN, label);
 	thy integerDefaultValue = defaultValue;
 	return thee.transfer();
 }
 
-Any UiForm_addText (UiForm me, const char32 *name, const char32 *defaultValue) {
+UiField UiForm_addText (UiForm me, const char32 *name, const char32 *defaultValue) {
 	autoUiField thee = UiForm_addField (me, UI_TEXT, name);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	return thee.transfer();
 }
 
-Any UiForm_addRadio (UiForm me, const char32 *label, int defaultValue) {
+UiField UiForm_addRadio (UiForm me, const char32 *label, int defaultValue) {
 	autoUiField thee = UiForm_addField (me, UI_RADIO, label);
 	thy integerDefaultValue = defaultValue;
 	thy options = Ordered_create ();
 	return thee.transfer();
 }
 
-Any UiForm_addOptionMenu (UiForm me, const char32 *label, int defaultValue) {
+UiField UiForm_addOptionMenu (UiForm me, const char32 *label, int defaultValue) {
 	autoUiField thee = UiForm_addField (me, UI_OPTIONMENU, label);
 	thy integerDefaultValue = defaultValue;
 	thy options = Ordered_create ();
 	return thee.transfer();
 }
 
-Any UiForm_addList (UiForm me, const char32 *label, long numberOfStrings, const char32 **strings, long defaultValue) {
+UiField UiForm_addList (UiForm me, const char32 *label, long numberOfStrings, const char32 **strings, long defaultValue) {
 	autoUiField thee = UiForm_addField (me, UI_LIST, label);
 	thy numberOfStrings = numberOfStrings;
 	thy strings = strings;
@@ -691,13 +684,13 @@ Any UiForm_addList (UiForm me, const char32 *label, long numberOfStrings, const 
 	return thee.transfer();
 }
 
-Any UiForm_addColour (UiForm me, const char32 *label, const char32 *defaultValue) {
+UiField UiForm_addColour (UiForm me, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee = UiForm_addField (me, UI_COLOUR, label);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	return thee.transfer();
 }
 
-Any UiForm_addChannel (UiForm me, const char32 *label, const char32 *defaultValue) {
+UiField UiForm_addChannel (UiForm me, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee = UiForm_addField (me, UI_CHANNEL, label);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	return thee.transfer();

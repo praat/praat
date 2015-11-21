@@ -59,8 +59,7 @@ static const char32 *CONFIGURATION_BUTTON = U"To Configuration -";
 	Sort row 1 and move row 2 along and store in rows 4 and 5 respectively
 	Make an index for row 1 and store in row 6
 */
-static void TabelOfReal_testSorting (I, long rowtoindex) {
-	iam (TableOfReal);
+static void TabelOfReal_testSorting (TableOfReal me, long rowtoindex) {
 	try {
 		long  nc = my numberOfColumns;
 
@@ -131,8 +130,8 @@ FORM (Configuration_create, U"Create Configuration", U"Create Configuration...")
 	OK
 DO
 	autoConfiguration me = Configuration_create (GET_INTEGER (U"Number of points"), GET_INTEGER (U"Number of dimensions"));
-	TableOfReal_formula (me.peek(), GET_STRING (U"formula"), interpreter, 0);
-	praat_new (me.transfer(), GET_STRING (U"Name"));
+	TableOfReal_formula (me.peek(), GET_STRING (U"formula"), interpreter, nullptr);
+	praat_new (me.move(), GET_STRING (U"Name"));
 END
 
 FORM (drawSplines, U"Draw splines", U"spline")
@@ -141,11 +140,11 @@ FORM (drawSplines, U"Draw splines", U"spline")
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"20.0")
 	RADIO (U"Spline type", 1)
-	RADIOBUTTON (U"M-spline")
-	RADIOBUTTON (U"I-spline")
+		RADIOBUTTON (U"M-spline")
+		RADIOBUTTON (U"I-spline")
 	INTEGER (U"Order", U"3")
 	SENTENCE (U"Interior knots", U"0.3 0.5 0.6")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	double xmin = GET_REAL (U"left Horizontal range"), xmax = GET_REAL (U"right Horizontal range");
@@ -174,7 +173,7 @@ END
 DIRECT (AffineTransform_invert)
 	LOOP {
 		iam (AffineTransform);
-		praat_new ( (AffineTransform) AffineTransform_invert (me), NAME, U"_inv");
+		praat_new (AffineTransform_invert (me), NAME, U"_inv");
 	}
 END
 
@@ -215,7 +214,7 @@ DIRECT (AffineTransform_extractMatrix)
 	LOOP {
 		iam (AffineTransform);
 		autoTableOfReal thee = AffineTransform_extractMatrix (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -223,7 +222,7 @@ DIRECT (AffineTransform_extractTranslationVector)
 	LOOP {
 		iam (AffineTransform);
 		autoTableOfReal thee = AffineTransform_extractTranslationVector (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -245,9 +244,9 @@ static void Configuration_draw_addCommonFields (UiForm dia) {
 FORM (Configuration_draw, U"Configuration: Draw", U"Configuration: Draw...")
 	Configuration_draw_addCommonFields (dia);
 	NATURAL (U"Label size", U"12")
-	BOOLEAN (U"Use row labels", 0)
+	BOOLEAN (U"Use row labels", false)
 	WORD (U"Label", U"+")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -270,7 +269,7 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (Configuration);
-		Configuration_drawConcentrationEllipses (me, GRAPHICS, GET_REAL (U"Number of sigmas"), 0, 0,
+		Configuration_drawConcentrationEllipses (me, GRAPHICS, GET_REAL (U"Number of sigmas"), 0, nullptr,
 			GET_INTEGER (U"Horizontal dimension"), GET_INTEGER (U"Vertical dimension"),
 			GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
 			GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"),
@@ -283,7 +282,7 @@ FORM (Configuration_drawOneSigmaEllipse, U"Configuration: Draw one sigma ellipse
 	POSITIVE (U"Number of sigmas", U"1.0")
 	Configuration_draw_addCommonFields (dia);
 	INTEGER (U"Label size", U"12")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -298,11 +297,11 @@ DO
 END
 
 
-FORM (Configuration_drawConfidenceEllipses, U"Configuration: Draw confidence ellipses", 0)
+FORM (Configuration_drawConfidenceEllipses, U"Configuration: Draw confidence ellipses", nullptr)
 	POSITIVE (U"Confidence level (0-1)", U"0.95")
 	Configuration_draw_addCommonFields (dia);
 	INTEGER (U"Label size", U"12")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -316,12 +315,12 @@ DO
 	}
 END
 
-FORM (Configuration_drawOneConfidenceEllipse, U"Configuration: Draw one confidence ellipse", 0)
+FORM (Configuration_drawOneConfidenceEllipse, U"Configuration: Draw one confidence ellipse", nullptr)
 	SENTENCE (U"Label", U"")
 	POSITIVE (U"Confidence level (0-1)", U"0.95")
 	Configuration_draw_addCommonFields (dia);
 	INTEGER (U"Label size", U"12")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -346,7 +345,7 @@ END
 FORM (Configuration_normalize, U"Configuration: Normalize", U"Configuration: Normalize...")
 	REAL (U"Sum of squares", U"0.0")
 	LABEL (U"", U"On (INDSCAL), Off (Kruskal)")
-	BOOLEAN (U"Each dimension separately", 1)
+	BOOLEAN (U"Each dimension separately", true)
 	OK
 DO
 	LOOP {
@@ -399,8 +398,8 @@ DIRECT (Configuration_to_Distance)
 END
 
 FORM (Configuration_varimax, U"Configuration: To Configuration (varimax)", U"Configuration: To Configuration (varimax)...")
-	BOOLEAN (U"Normalize rows", 1)
-	BOOLEAN (U"Quartimax", 0)
+	BOOLEAN (U"Normalize rows", true)
+	BOOLEAN (U"Quartimax", false)
 	NATURAL (U"Maximum number of iterations", U"50")
 	POSITIVE (U"Tolerance", U"1e-6")
 	OK
@@ -409,7 +408,7 @@ DO
 		iam (Configuration);
 		autoConfiguration thee = Configuration_varimax (me, GET_INTEGER (U"Normalize rows"), 
 			GET_INTEGER (U"Quartimax"), GET_INTEGER (U"Maximum number of iterations"), GET_REAL (U"Tolerance"));
-		praat_new (thee.transfer(), my name, U"_varimax");
+		praat_new (thee.move(), my name, U"_varimax");
 	}
 END
 
@@ -419,17 +418,17 @@ DIRECT (Configurations_to_Similarity_cc)
 END
 
 FORM (Configurations_to_Procrustes, U"Configuration & Configuration: To Procrustes", U"Configuration & Configuration: To Procrustes...")
-	BOOLEAN (U"Orthogonal transform", 0)
+	BOOLEAN (U"Orthogonal transform", false)
 	OK
 DO
-	Configuration c1 = 0, c2 = 0;
+	Configuration c1 = nullptr, c2 = nullptr;
 	LOOP {
 		iam (Configuration);
 		(c1 ? c2 : c1) = me;
 	}
 	Melder_assert (c1 && c2);
 	autoProcrustes thee = Configurations_to_Procrustes (c1, c2, GET_INTEGER (U"Orthogonal transform"));
-	praat_new (thee.transfer(), Thing_getName (c2), U"_to_", Thing_getName (c1));
+	praat_new (thee.move(), Thing_getName (c2), U"_to_", Thing_getName (c1));
 END
 
 FORM (Configurations_to_AffineTransform_congruence, U"Configurations: To AffineTransform (congruence)", U"Configurations: To AffineTransform (congruence)...")
@@ -445,12 +444,12 @@ DO
 	Melder_assert (c1 && c2);
 	autoAffineTransform thee = Configurations_to_AffineTransform_congruence (c1, c2, GET_INTEGER (U"Maximum number of iterations"),
 		GET_REAL (U"Tolerance"));
-	praat_new (thee.transfer(), c1 -> name, U"_", c2 -> name);
+	praat_new (thee.move(), c1 -> name, U"_", c2 -> name);
 END
 
 DIRECT (Configuration_Weight_to_Similarity_cc)
 	autoConfigurations thee = Configurations_create ();
-	Weight w = 0;
+	Weight w = nullptr;
 	LOOP {
 		iam (Daata);
 		if (CLASS == classConfiguration) {
@@ -467,7 +466,7 @@ DIRECT (Configuration_and_AffineTransform_to_Configuration)
 	Configuration me = FIRST (Configuration);
 	AffineTransform at = FIRST_GENERIC (AffineTransform);
 	autoConfiguration thee = Configuration_and_AffineTransform_to_Configuration (me, at);
-	praat_new (thee.transfer(), my name, U"_", at -> name);
+	praat_new (thee.move(), my name, U"_", at -> name);
 END
 
 /*************** Confusion *********************************/
@@ -483,11 +482,11 @@ DO
 END
 
 FORM (Confusion_to_Similarity, U"Confusion: To Similarity", U"Confusion: To Similarity...")
-	BOOLEAN (U"Normalize", 1)
+	BOOLEAN (U"Normalize", true)
 	RADIO (U"Symmetrization", 1)
-	RADIOBUTTON (U"No symmetrization")
-	RADIOBUTTON (U"Average (s[i][j] = (c[i][j]+c[j][i])/2)")
-	RADIOBUTTON (U"Houtgast (s[i][j]= sum (min(c[i][k],c[j][k])))")
+		RADIOBUTTON (U"No symmetrization")
+		RADIOBUTTON (U"Average (s[i][j] = (c[i][j]+c[j][i])/2)")
+		RADIOBUTTON (U"Houtgast (s[i][j]= sum (min(c[i][k],c[j][k])))")
 	OK
 DO
 	LOOP {
@@ -505,7 +504,7 @@ DIRECT (Confusion_to_ContingencyTable)
 	LOOP {
 		iam (Confusion);
 		autoContingencyTable thee = Confusion_to_ContingencyTable (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -586,12 +585,12 @@ static void Dissimilarity_to_Configuration_addCommonFields (UiForm dia) {
 	NATURAL (U"Number of repetitions", U"1")
 }
 
-static void Dissimilarity_and_Configuration_getStress_addCommonFields (UiForm dia, void *radio) {
+static void Dissimilarity_and_Configuration_getStress_addCommonFields (UiForm dia, UiField radio) {
 	RADIO (U"Stress measure", 1)
-	RADIOBUTTON (U"Normalized")
-	RADIOBUTTON (U"Kruskal's stress-1")
-	RADIOBUTTON (U"Kruskal's stress-2")
-	RADIOBUTTON (U"Raw")
+		RADIOBUTTON (U"Normalized")
+		RADIOBUTTON (U"Kruskal's stress-1")
+		RADIOBUTTON (U"Kruskal's stress-2")
+		RADIOBUTTON (U"Raw")
 }
 
 static void Dissimilarity_Configuration_drawDiagram_addCommonFields (UiForm dia) {
@@ -601,7 +600,7 @@ static void Dissimilarity_Configuration_drawDiagram_addCommonFields (UiForm dia)
 	REAL (U"right Distance range", U"0.0")
 	POSITIVE (U"Mark size (mm)", U"1.0")
 	SENTENCE (U"Mark string (+xo.)", U"+")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 }
 
 DIRECT (Dissimilarity_help)
@@ -618,11 +617,11 @@ END
 
 FORM (Dissimilarity_Configuration_kruskal, U"Dissimilarity & Configuration: To Configuration (kruskal)", U"Dissimilarity & Configuration: To Configuration (kruskal)...")
 	RADIO (U"Handling of ties", 1)
-	RADIOBUTTON (U"Primary approach")
-	RADIOBUTTON (U"Secondary approach")
+		RADIOBUTTON (U"Primary approach")
+		RADIOBUTTON (U"Secondary approach")
 	RADIO (U"Stress calculation", 1)
-	RADIOBUTTON (U"Formula1")
-	RADIOBUTTON (U"Formula2")
+		RADIOBUTTON (U"Formula1")
+		RADIOBUTTON (U"Formula2")
 	Dissimilarity_to_Configuration_addCommonFields (dia);
 	OK
 DO
@@ -1211,8 +1210,8 @@ FORM (Dissimilarity_Weight_monotone_mds, U"Dissimilarity & Weight: To Configurat
 	LABEL (U"", U"Configuration")
 	NATURAL (U"Number of dimensions", U"2")
 	RADIO (U"Handling of ties", 1)
-	RADIOBUTTON (U"Primary approach")
-	RADIOBUTTON (U"Secondary approach")
+		RADIOBUTTON (U"Primary approach")
+		RADIOBUTTON (U"Secondary approach")
 	Dissimilarity_to_Configuration_addCommonFields (dia);
 	OK
 DO
@@ -1225,7 +1224,7 @@ DO
 END
 
 FORM (Dissimilarity_to_Distance, U"Dissimilarity: To Distance", U"Dissimilarity: To Distance...")
-	BOOLEAN (U"Scale (additive constant)", 1)
+	BOOLEAN (U"Scale (additive constant)", true)
 	OK
 DO
 	LOOP {
@@ -1270,12 +1269,13 @@ FORM (Distances_indscal, U"Distance: To Configuration (indscal)", U"Distance: To
 	OK
 DO
 	autoDistances me = (Distances) praat_getSelectedObjects ();
-	autoConfiguration ac; autoSalience as;
+	autoConfiguration ac;
+	autoSalience as;
 	Distances_indscal (me.peek(), GET_INTEGER (U"Number of dimensions"), GET_INTEGER (U"Normalize scalar products"),
 		GET_REAL (U"Tolerance"), GET_INTEGER (U"Maximum number of iterations"), GET_INTEGER (U"Number of repetitions"),
 		1, &ac, &as);
-	praat_new (ac.transfer(), U"indscal");
-	praat_new (as.transfer(), U"indscal");
+	praat_new (ac.move(), U"indscal");
+	praat_new (as.move(), U"indscal");
 END
 
 FORM (Distance_and_Configuration_drawScatterDiagram, U"Distance & Configuration: Draw scatter diagram",
@@ -1306,7 +1306,7 @@ FORM (Distance_Configuration_indscal, U"Distance & Configuration: To Configurati
 	OK
 DO
 	autoDistances thee = Distances_create ();
-	Configuration c = 0;
+	Configuration c = nullptr;
 	LOOP {
 		iam (Daata);
 		if (CLASS == classDistance) {
@@ -1316,12 +1316,13 @@ DO
 		}
 	}
 	Melder_assert (thy size > 0 && c);
-	autoConfiguration ac; autoSalience as;
+	autoConfiguration ac;
+	autoSalience as;
 	Distances_Configuration_indscal (thee.peek(), c,
 		GET_INTEGER (U"Normalize scalar products"), GET_REAL (U"Tolerance"),
 		GET_INTEGER (U"Maximum number of iterations"), 1, &ac, &as);
-	praat_new (ac.transfer(), U"indscal");
-	praat_new (as.transfer(), U"indscal");
+	praat_new (ac.move(), U"indscal");
+	praat_new (as.move(), U"indscal");
 END
 
 FORM (Distance_Configuration_vaf, U"Distance & Configuration: Get VAF", U"Distance & Configuration: Get VAF...")
@@ -1329,7 +1330,7 @@ FORM (Distance_Configuration_vaf, U"Distance & Configuration: Get VAF", U"Distan
 	OK
 DO
 	autoDistances thee = Distances_create ();
-	Configuration c = 0;
+	Configuration c = nullptr;
 	LOOP {
 		iam (Daata);
 		if (CLASS == classDistance) {
@@ -1345,11 +1346,12 @@ DO
 END
 
 FORM (Distance_Configuration_Salience_vaf, U"Distance & Configuration & Salience: Get VAF", U"Distance & Configuration & Salience: Get VAF...")
-	BOOLEAN (U"Normalize scalar products", 1)
+	BOOLEAN (U"Normalize scalar products", true)
 	OK
 DO
 	autoDistances thee = Distances_create ();
-	Configuration c = 0; Salience s = 0;
+	Configuration c = nullptr;
+	Salience s = nullptr;
 	LOOP {
 		iam (Daata);
 		if (CLASS == classDistance) {
@@ -1369,13 +1371,14 @@ END
 FORM (Dissimilarity_Configuration_Salience_vaf, U"Dissimilarity & Configuration & Salience: Get VAF",
       U"Dissimilarity & Configuration & Salience: Get VAF...")
 	RADIO (U"Handling of ties", 1)
-	RADIOBUTTON (U"Primary approach")
-	RADIOBUTTON (U"Secondary approach")
-	BOOLEAN (U"Normalize scalar products", 1)
+		RADIOBUTTON (U"Primary approach")
+		RADIOBUTTON (U"Secondary approach")
+	BOOLEAN (U"Normalize scalar products", true)
 	OK
 DO
 	autoDissimilarities thee = Dissimilarities_create ();
-	Configuration c = 0; Salience s = 0;
+	Configuration c = nullptr;
+	Salience s = nullptr;
 	LOOP {
 		iam (Daata);
 		if (CLASS == classDissimilarity) {
@@ -1396,14 +1399,15 @@ END
 FORM (Distance_Configuration_Salience_indscal,
       U"Distance & Configuration & Salience: To Configuration (indscal)",
       U"Distance & Configuration & Salience: To Configuration (indscal)...")
-	BOOLEAN (U"Normalize scalar products", 1)
+	BOOLEAN (U"Normalize scalar products", true)
 	LABEL (U"", U"Minimization parameters")
 	REAL (U"Tolerance", U"1e-5")
 	NATURAL (U"Maximum number of iterations", U"100")
 	OK
 DO
 	autoDistances thee = Distances_create ();
-	Configuration c = 0; Salience s = 0;
+	Configuration c = nullptr;
+	Salience s = nullptr;
 	LOOP {
 		iam (Daata);
 		if (CLASS == classDistance) {
@@ -1416,34 +1420,36 @@ DO
 	}
 	Melder_assert (thy size > 0 && c && s);
 	double vaf;
-	autoConfiguration ac; autoSalience as;
+	autoConfiguration ac;
+	autoSalience as;
 	Distances_Configuration_Salience_indscal (thee.peek(), c, s,
 		GET_INTEGER (U"Normalize scalar products"), GET_REAL (U"Tolerance"),
 		GET_INTEGER (U"Maximum number of iterations"), 1, &ac, &as, &vaf);
-	praat_new (ac.transfer(), U"indscal");
-	praat_new (as.transfer(), U"indscal");
+	praat_new (ac.move(), U"indscal");
+	praat_new (as.move(), U"indscal");
 END
 
 FORM (Distances_to_Configuration_ytl, U"Distance: To Configuration (ytl)", U"Distance: To Configuration (ytl)...")
 	NATURAL (U"Number of dimensions", U"2")
-	BOOLEAN (U"Normalize scalar products", 1)
-	BOOLEAN (U"Salience object", 0)
+	BOOLEAN (U"Normalize scalar products", true)
+	BOOLEAN (U"Salience object", false)
 	OK
 DO
 	autoDistances me = (Distances) praat_getSelectedObjects ();
-	autoConfiguration ac; autoSalience as;
+	autoConfiguration ac;
+	autoSalience as;
 	Distances_to_Configuration_ytl (me.peek(), GET_INTEGER (U"Number of dimensions"),
 		GET_INTEGER (U"Normalize scalar products"), &ac, &as);
-	praat_new (ac.transfer(), U"ytl");
+	praat_new (ac.move(), U"ytl");
 	if (GET_INTEGER (U"Salience object")) {
-		praat_new (as.transfer(), U"ytl");
+		praat_new (as.move(), U"ytl");
 	}
 END
 
 FORM (Dissimilarity_Distance_monotoneRegression, U"Dissimilarity & Distance: Monotone regression", 0)
 	RADIO (U"Handling of ties", 1)
-	RADIOBUTTON (U"Primary approach")
-	RADIOBUTTON (U"Secondary approach")
+		RADIOBUTTON (U"Primary approach")
+		RADIOBUTTON (U"Secondary approach")
 	OK
 DO
 	Dissimilarity me = FIRST (Dissimilarity);
@@ -1458,7 +1464,7 @@ FORM (Distance_Dissimilarity_drawShepardDiagram, U"Distance & Dissimilarity: Dra
 	REAL (U"right Distance range", U"0.0")
 	POSITIVE (U"Mark size (mm)", U"1.0")
 	SENTENCE (U"Mark string (+xo.)", U"+")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	Dissimilarity me = FIRST (Dissimilarity);
@@ -1478,10 +1484,10 @@ END
 /************************* Salience ***************************************/
 
 
-FORM (Salience_draw, U"Salience: Draw", 0)
+FORM (Salience_draw, U"Salience: Draw", nullptr)
 	NATURAL (U"Horizontal dimension", U"1")
 	NATURAL (U"Vertical dimension", U"2")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	LOOP {
@@ -1493,7 +1499,7 @@ END
 
 /************************* COVARIANCE & CONFIGURATION  ********************/
 
-FORM (Covariance_to_Configuration, U"Covariance: To Configuration", 0)
+FORM (Covariance_to_Configuration, U"Covariance: To Configuration", nullptr)
 	NATURAL (U"Number of dimensions", U"2")
 	OK
 DO
@@ -1564,7 +1570,7 @@ DIRECT (TableOfReal_to_Configuration)
 	LOOP {
 		iam (TableOfReal);
 		autoConfiguration thee = TableOfReal_to_Configuration (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -1572,7 +1578,7 @@ DIRECT (TableOfReal_to_ContingencyTable)
 	LOOP {
 		iam (TableOfReal);
 		autoContingencyTable thee = TableOfReal_to_ContingencyTable (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -1654,7 +1660,7 @@ DIRECT (TableOfReal_to_Confusion)
 	LOOP {
 		iam (TableOfReal);
 		autoConfusion thee = TableOfReal_to_Confusion (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 

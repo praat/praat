@@ -39,8 +39,8 @@ Thing_define (DLL, Thing) {
 	void v_destroy ()
 		override;
 
-	static int s_compare (Any data1, Any data2);
-	virtual Data_CompareFunction v_getCompareFunction () { return s_compare; }
+	static int s_compareHook (Daata /* data1 */, Daata /* data2 */) noexcept;
+	virtual Data_CompareHook v_getCompareHook () { return s_compareHook; }
 };
 
 autoDLLNode DLLNode_create (Daata data); // DLLNode owns the data

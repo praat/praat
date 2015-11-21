@@ -101,7 +101,7 @@ autoOrderedOfString OrderedOfString_create () {
 	}
 }
 
-int OrderedOfString_append (OrderedOfString me, char32 *append) {
+int OrderedOfString_append (OrderedOfString me, const char32 *append) {
 	try {
 		if (! append) {
 			return 1;    // BUG: lege string appenden??
@@ -199,7 +199,7 @@ double OrderedOfString_getFractionDifferent (OrderedOfString me, OrderedOfString
 }
 
 int OrderedOfString_difference (OrderedOfString me, OrderedOfString thee, long *ndif, double *fraction) {
-	*ndif = 0; *fraction = 1;
+	*ndif = 0; *fraction = 1.0;
 	if (my size != thy size) {
 		Melder_flushError (U"OrderedOfString_difference: the number of items differ");
 		return 0;

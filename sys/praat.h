@@ -244,7 +244,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	static void DO_##proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *buttonClosure) { \
 		static UiForm dia; \
 		if (! dia) { \
-			Any radio = nullptr; \
+			UiField radio = nullptr; \
 			(void) radio; \
 			dia = UiForm_create (theCurrentPraatApplication -> topShell, name, DO_##proc, buttonClosure, invokingButtonTitle, helpTitle);
 #define REAL(label,def)		UiForm_addReal (dia, label, def);
@@ -491,7 +491,7 @@ int praat_installEditor2 (Editor editor, int iobject1, int iobject2);
 int praat_installEditor3 (Editor editor, int iobject1, int iobject2, int iobject3);
 int praat_installEditorN (Editor editor, Ordered objects);
 
-void praat_dataChanged (Any object);
+void praat_dataChanged (Daata object);
 /* Call this after changing a screen object. */
 /* Associated editors and data editors will be notified (with Editor_dataChanged). */
 

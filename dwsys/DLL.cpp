@@ -43,7 +43,7 @@ void structDLL :: v_destroy () {
 	DLL_Parent :: v_destroy ();
 }
 
-int structDLL :: s_compare (Any /* node1 */, Any /* node2 */) {
+int structDLL :: s_compareHook (Daata /* node1 */, Daata /* node2 */) noexcept {
 	return 0;
 }
 
@@ -164,7 +164,7 @@ void DLL_sortPart (DLL me, DLLNode from, DLLNode to) {
 }
 
 void DLL_sort (DLL me) {
-	Data_CompareFunction compare = my v_getCompareFunction ();
+	Data_CompareHook::FunctionType compare = my v_getCompareHook ().get();
 	long increment = 1;
 	DLLNode front = my front, back;
 	for (;;) {

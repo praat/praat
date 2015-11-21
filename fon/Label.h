@@ -51,9 +51,8 @@ autoAutosegment Autosegment_create (double tmin, double tmax, const char32 *labe
 */
 
 Thing_define (Tier, Sorted) {
-	static int compare (Any data1, Any data2);
-	int (*v_getCompareFunction ()) (Any data1, Any data2)
-		override { return compare; }
+	static int compareHook (Autosegment data1, Autosegment data2);
+	Data_CompareHook v_getCompareHook () override { return compareHook; }
 };
 
 void Tier_init (Tier me, long initialCapacity);

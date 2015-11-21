@@ -284,7 +284,7 @@ void praat_write_do (UiForm dia, const char32 *extension) {
 	UiOutfile_do (dia, defaultFileName.string);
 }
 
-static void removeAllReferencesToEditor (Any editor) {
+static void removeAllReferencesToEditor (Editor editor) {
 	/*
 	 * Remove all references to this editor.
 	 * It may be editing multiple objects.
@@ -770,7 +770,7 @@ int praat_installEditorN (Editor editor, Ordered objects) {
 	return 1;
 }
 
-void praat_dataChanged (Any object) {
+void praat_dataChanged (Daata object) {
 	/*
 	 * This function can be called at error time, which is weird.
 	 */

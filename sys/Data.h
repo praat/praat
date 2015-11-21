@@ -99,7 +99,7 @@ bool Data_equal (Daata data1, Daata data2);
 		Data_equal (data, Data_copy (data)) should always return 1; the names are not compared.
 */
 
-typedef int (*Data_CompareFunction) (Any data1, Any data2);
+typedef MelderCompareHook<structDaata> Data_CompareHook;
 
 bool Data_canWriteAsEncoding (Daata me, int outputEncoding);
 /*
@@ -288,11 +288,11 @@ Defining a file-type recognizer:
 	You define a file-type recognizer as in the following example,
 	which tries to identify and read a Sun audio file.
 	A Sun audio file should contain at least 24 bytes and start with the string ".snd":
-	Any Sound_sunAudioFileRecognizer (int nread, const char *header, const char *fileName) {
+	autoDaata Sound_sunAudioFileRecognizer (int nread, const char *header, MelderFile file) {
 		if (nread >= 24 && strnequ (& header [0], ".snd", 4))
-			return Sound_readFromSunAudioFile (fileName);
+			return Sound_readFromSunAudioFile (file);
 		else
-			return nullptr;
+			return autoDaata ();
 	}
 	From this example, we see that if the file is recognized, it should be read immediately,
 	and the resulting object (always a descendant of class Data) should be returned.

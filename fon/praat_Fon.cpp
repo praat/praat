@@ -102,7 +102,7 @@ int praat_get_frequencyRange (UiForm dia, double *fmin, double *fmax) {
 	return 1;
 }
 static void dia_Vector_getExtremum (UiForm dia) {
-	Any radio;
+	UiField radio;
 	praat_dia_timeRange (dia);
 	RADIO (U"Interpolation", 2)
 		RADIOBUTTON (U"None")
@@ -112,7 +112,7 @@ static void dia_Vector_getExtremum (UiForm dia) {
 		RADIOBUTTON (U"Sinc700")
 }
 static void dia_Vector_getValue (UiForm dia) {
-	Any radio;
+	UiField radio;
 	REAL (U"Time (s)", U"0.5")
 	RADIO (U"Interpolation", 3)
 		RADIOBUTTON (U"Nearest")

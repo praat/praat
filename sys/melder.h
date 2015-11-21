@@ -1585,5 +1585,19 @@ class MelderCallback <int, T, Args...> {   // specialization
 		FunctionType _f;
 };
 
+template <typename T>
+class MelderCompareHook {
+	public:
+		typedef int (*FunctionType) (T*, T*);
+		MelderCompareHook (FunctionType f = nullptr) : _f (f) { }
+		template <typename T2  Melder_ENABLE_IF_ISA(T2,T)>
+			MelderCompareHook (int (*f) (T2*, T2*)) : _f (reinterpret_cast<FunctionType> (f)) { };
+		int operator () (T* data1, T* data2) noexcept { return _f (data1, data2); }
+		explicit operator bool () const { return !! _f; }
+		FunctionType get () { return _f; }
+	private:
+		FunctionType _f;
+};
+
 /* End of file melder.h */
 #endif

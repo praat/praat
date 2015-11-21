@@ -36,53 +36,53 @@
 static const char32 *formant_names[] = { U"", U"oral ", U"nasal ", U"frication ", U"tracheal ", U"nasal anti", U"tracheal anti", U"delta "};
 
 static void KlattGrid_4formants_addCommonField (UiForm dia) {
-	Any radio;
+	UiField radio;
 	OPTIONMENU (U"Formant type", 1)
-	OPTION (U"Normal formant")
-	OPTION (U"Nasal formant")
-	OPTION (U"Frication formant")
-	OPTION (U"Tracheal formant")
+		OPTION (U"Normal formant")
+		OPTION (U"Nasal formant")
+		OPTION (U"Frication formant")
+		OPTION (U"Tracheal formant")
 }
 
 static void KlattGrid_6formants_addCommonField (UiForm dia) {
-	Any radio;
+	UiField radio;
 	OPTIONMENU (U"Formant type", 1)
-	OPTION (U"Normal formant")
-	OPTION (U"Nasal formant")
-	OPTION (U"Frication formant")
-	OPTION (U"Tracheal formant")
-	OPTION (U"Nasal antiformant")
-	OPTION (U"Tracheal antiformant")
-	//	OPTION (U"Delta formant")
+		OPTION (U"Normal formant")
+		OPTION (U"Nasal formant")
+		OPTION (U"Frication formant")
+		OPTION (U"Tracheal formant")
+		OPTION (U"Nasal antiformant")
+		OPTION (U"Tracheal antiformant")
+		//	OPTION (U"Delta formant")
 }
 
 static void KlattGrid_7formants_addCommonField (UiForm dia) {
-	Any radio;
+	UiField radio;
 	OPTIONMENU (U"Formant type", 1)
-	OPTION (U"Normal formant")
-	OPTION (U"Nasal formant")
-	OPTION (U"Frication formant")
-	OPTION (U"Tracheal formant")
-	OPTION (U"Nasal antiformant")
-	OPTION (U"Tracheal antiformant")
-	OPTION (U"Delta formant")
+		OPTION (U"Normal formant")
+		OPTION (U"Nasal formant")
+		OPTION (U"Frication formant")
+		OPTION (U"Tracheal formant")
+		OPTION (U"Nasal antiformant")
+		OPTION (U"Tracheal antiformant")
+		OPTION (U"Delta formant")
 }
 
 static void KlattGrid_PhonationGridPlayOptions_addCommonFields (UiForm dia) {
-	Any radio;
+	UiField radio;
 	//LABEL (U"", U"Phonation options")
-	BOOLEAN (U"Voicing", 1)
-	BOOLEAN (U"Flutter", 1)
-	BOOLEAN (U"Double pulsing", 1)
-	BOOLEAN (U"Collision phase", 1)
-	BOOLEAN (U"Spectral tilt", 1)
+	BOOLEAN (U"Voicing", true)
+	BOOLEAN (U"Flutter", true)
+	BOOLEAN (U"Double pulsing", true)
+	BOOLEAN (U"Collision phase", true)
+	BOOLEAN (U"Spectral tilt", true)
 	OPTIONMENU (U"Flow function", 1)
-	OPTION (U"Powers in tiers")
-	OPTION (U"t^2-t^3")
-	OPTION (U"t^3-t^4")
-	BOOLEAN (U"Flow derivative", 1)
-	BOOLEAN (U"Aspiration", 1)
-	BOOLEAN (U"Breathiness", 1)
+		OPTION (U"Powers in tiers")
+		OPTION (U"t^2-t^3")
+		OPTION (U"t^3-t^4")
+	BOOLEAN (U"Flow derivative", true)
+	BOOLEAN (U"Aspiration", true)
+	BOOLEAN (U"Breathiness", true)
 }
 
 static void KlattGrid_PhonationGridPlayOptions_getCommonFields (UiForm dia, KlattGrid thee) {
@@ -98,17 +98,17 @@ static void KlattGrid_PhonationGridPlayOptions_getCommonFields (UiForm dia, Klat
 	pp -> breathiness = GET_INTEGER (U"Breathiness");
 }
 
-static void KlattGrid_PlayOptions_addCommonFields (UiForm dia, int sound) {
-	Any radio;
+static void KlattGrid_PlayOptions_addCommonFields (UiForm dia, bool hasSound) {
+	UiField radio;
 	//LABEL (U"", U"Time domain")
 	REAL (U"left Time range (s)", U"0")
 	REAL (U"right Time range (s)", U"0")
-	if (sound) POSITIVE (U"Sampling frequency (Hz)", U"44100")
+	if (hasSound) POSITIVE (U"Sampling frequency (Hz)", U"44100")
 		BOOLEAN (U"Scale peak", 1)
 		KlattGrid_PhonationGridPlayOptions_addCommonFields (dia);
 	OPTIONMENU (U"Filter options", 1)
-	OPTION (U"Cascade")
-	OPTION (U"Parallel")
+		OPTION (U"Cascade")
+		OPTION (U"Parallel")
 	INTEGER (U"left Oral formant range", U"1")
 	INTEGER (U"right Oral formant range", U"5")
 	INTEGER (U"left Nasal formant range", U"1")
@@ -127,16 +127,16 @@ static void KlattGrid_PlayOptions_addCommonFields (UiForm dia, int sound) {
 	//LABEL (U"", U"Frication options")
 	INTEGER (U"left Frication formant range", U"1")
 	INTEGER (U"right Frication formant range", U"6")
-	BOOLEAN (U"Frication bypass", 1)
+	BOOLEAN (U"Frication bypass", true)
 }
 
-static void KlattGrid_PlayOptions_getCommonFields (UiForm dia, int sound, KlattGrid thee) {
+static void KlattGrid_PlayOptions_getCommonFields (UiForm dia, bool hasSound, KlattGrid thee) {
 	KlattGrid_setDefaultPlayOptions (thee);
 	KlattGridPlayOptions pk = thy options.get();
 	pk -> scalePeak = GET_INTEGER (U"Scale peak");
 	pk -> xmin = GET_REAL (U"left Time range");
 	pk -> xmax = GET_REAL (U"right Time range");
-	if (sound) {
+	if (hasSound) {
 		pk -> samplingFrequency = GET_REAL (U"Sampling frequency");
 	}
 	pk -> scalePeak = GET_INTEGER (U"Scale peak");
@@ -286,7 +286,7 @@ DO \
 	Melder_informationReal (KlattGrid_get##Name##AtTime (me, GET_REAL (U"Time")), unit); \
 	}\
 END \
-FORM (KlattGrid_add##Name##Point, U"KlattGrid: Add " #name " point", 0) \
+FORM (KlattGrid_add##Name##Point, U"KlattGrid: Add " #name " point", nullptr) \
 	REAL (U"Time (s)", U"0.5") \
 	REAL (U"Value" unit, default) \
 	OK \
@@ -298,7 +298,7 @@ DO \
 		praat_dataChanged (me); \
 	} \
 END \
-FORM (KlattGrid_remove##Name##Points, U"Remove " #name " points", 0) \
+FORM (KlattGrid_remove##Name##Points, U"Remove " #name " points", nullptr) \
 	REAL (U"From time (s)", U"0.3")\
 	REAL (U"To time (s)", U"0.7") \
 	OK \

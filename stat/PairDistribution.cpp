@@ -65,6 +65,10 @@ autoPairDistribution PairDistribution_create () {
 	}
 }
 
+int PairProbability_compare (PairProbability me, PairProbability thee) noexcept {
+	return str32cmp (my string1, thy string1);
+}
+
 static void PairDistribution_checkSpecifiedPairNumber (PairDistribution me, long pairNumber) {
 	if (pairNumber < 1)
 		Melder_throw (me, U": the specified pair number is ", pairNumber, U", but should be at least 1.");
@@ -201,16 +205,12 @@ void PairDistribution_peekPair (PairDistribution me, char32 **string1, char32 **
 	}
 }
 
-static int compare (PairProbability me, PairProbability thee) throw () {
-	return str32cmp (my string1, thy string1);
-}
-
 static double PairDistribution_getFractionCorrect (PairDistribution me, int which) {
 	try {
 		double correct = 0.0;
 		long pairmin = 1, ipair;
 		autoPairDistribution thee = Data_copy (me);
-		NUMsort_p (thy pairs -> size, (void **) thy pairs -> item, (int (*) (const void *, const void *)) compare);
+		Collection_sort (thy pairs, PairProbability_compare);
 		double total = PairDistributions_getTotalWeight_checkPositive (thee.peek());
 		do {
 			long pairmax = pairmin;
@@ -264,7 +264,7 @@ double PairDistribution_Distributions_getFractionCorrect (PairDistribution me, D
 		char32 string [1000];
 		Distributions_checkSpecifiedColumnNumberWithinRange (dist, column);
 		autoPairDistribution thee = Data_copy (me);
-		NUMsort_p (thy pairs -> size, (void **) thy pairs -> item, (int (*) (const void *, const void *)) compare);
+		Collection_sort (thy pairs, PairProbability_compare);
 		double total = PairDistributions_getTotalWeight_checkPositive (thee.peek());
 		do {
 			long pairmax = pairmin, length, ipair;
