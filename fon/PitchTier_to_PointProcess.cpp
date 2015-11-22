@@ -31,7 +31,7 @@ autoPointProcess PitchTier_to_PointProcess (PitchTier me) {
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, 1000);
 		double area = 0.5;   // imagine an event half a period before the beginning
 		long size = my points -> size;
-		if (size == 0) return thee.transfer();
+		if (size == 0) return thee;
 		for (long interval = 0; interval <= size; interval ++) {
 			double t1 = interval == 0 ? my xmin : ((RealPoint) my points -> item [interval]) -> number;
 			Melder_assert (NUMdefined (t1));

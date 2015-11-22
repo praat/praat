@@ -211,7 +211,7 @@ void structFFNet :: v_info () {
 	MelderInfo_writeLine (U"Number of nodes: ", nNodes);
 }
 
-void FFNet_init (FFNet me, long numberOfInputs, long nodesInLayer1, long nodesInLayer2, long numberOfOutputs, int outputsAreLinear) {
+void FFNet_init (FFNet me, long numberOfInputs, long nodesInLayer1, long nodesInLayer2, long numberOfOutputs, bool outputsAreLinear) {
 	long numberOfLayers = 3;
 
 	if (numberOfInputs < 1) {
@@ -248,13 +248,13 @@ void FFNet_init (FFNet me, long numberOfInputs, long nodesInLayer1, long nodesIn
 }
 
 void FFNet_setOutputCategories (FFNet me, Categories thee) {
-	autoCategories uniq = Categories_selectUniqueItems (thee, 1);
+	autoCategories uniq = Categories_selectUniqueItems (thee, true);
 	if (uniq -> size == thy size) {
-		my outputCategories = uniq.transfer();
+		my outputCategories = uniq.move();
 	}
 }
 
-autoFFNet FFNet_create (long numberOfInputs, long numberInLayer1, long numberInLayer2, long numberOfOutputs, int outputsAreLinear) {
+autoFFNet FFNet_create (long numberOfInputs, long numberInLayer1, long numberInLayer2, long numberOfOutputs, bool outputsAreLinear) {
 	try {
 		autoFFNet me = Thing_new (FFNet);
 		FFNet_init (me.peek(), numberOfInputs, numberInLayer1, numberInLayer2, numberOfOutputs, outputsAreLinear);
@@ -720,7 +720,7 @@ autoCollection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidde
 	try {
 		autoCollection c = Collection_create (classDaata, 3);
 		autoCategories uniq = Categories_sequentialNumbers (3);
-		autoFFNet me = FFNet_create (4, numberOfHidden1, numberOfHidden2, 3, 0);
+		autoFFNet me = FFNet_create (4, numberOfHidden1, numberOfHidden2, 3, false);
 		FFNet_setOutputCategories (me.peek(), uniq.peek());
 		autostring32 name = FFNet_createNameFromTopology (me.peek());
 		Thing_setName (me.peek(), name.peek());

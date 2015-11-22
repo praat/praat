@@ -118,10 +118,10 @@ oo_CLASS_CREATE (FFNet, Daata);
  */
 
 void FFNet_init (FFNet me, long numberOfInputs, long nodesInLayer1, long nodesInLayer2,
-	long numberOfOutputs, int outputsAreLinear);
+	long numberOfOutputs, bool outputsAreLinear);
 
 autoFFNet FFNet_create (long numberOfInputs, long numberInLayer1, long numberInLayer2,
-	long numberOfOutputs, int outputsAreLinear	);
+	long numberOfOutputs, bool outputsAreLinear);
 
 autostring32 FFNet_createNameFromTopology (FFNet me);
 /* Create names as <inputs>-<outputs>, <inputs>-<hidden>-<outputs>,

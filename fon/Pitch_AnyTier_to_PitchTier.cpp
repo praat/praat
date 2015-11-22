@@ -59,8 +59,7 @@ autoPitchTier Pitch_AnyTier_to_PitchTier (Pitch pitch, AnyTier tier, int checkMe
 		SortedSetOfDouble points = tier -> points;
 		if (checkMethod == 2) {
 			autoPitchTier temp = Pitch_to_PitchTier (pitch);
-			autoPitchTier thee = PitchTier_AnyTier_to_PitchTier (temp.peek(), tier);
-			return thee.transfer();
+			return PitchTier_AnyTier_to_PitchTier (temp.peek(), tier);
 		}
 
 		/*

@@ -37,7 +37,7 @@ autoCategories Categories_create ();
 
 autoCategories Categories_sequentialNumbers (long n);
 
-autoCategories Categories_selectUniqueItems (Categories me, int sorted);
+autoCategories Categories_selectUniqueItems (Categories me, bool sorted);
 
 void Categories_drawItem (Categories me, Graphics g, long position, double xWC, double yWC);
 

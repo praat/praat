@@ -329,7 +329,7 @@ autoMatrix Matrix_solveEquation (Matrix me, double tolerance) {
 		for (long j = 1; j <= nc; j++) {
 			thy z[1][j] = x[j];
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Matrix equation not solved.");
 	}

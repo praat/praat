@@ -131,7 +131,7 @@ autoOrderedOfString OrderedOfString_joinItems (OrderedOfString me, OrderedOfStri
 }
 
 
-autoOrderedOfString OrderedOfString_selectUniqueItems (OrderedOfString me, int sort) {
+autoOrderedOfString OrderedOfString_selectUniqueItems (OrderedOfString me, bool sort) {
 	try {
 		if (! sort) {
 			autoOrderedOfString him = OrderedOfString_create ();

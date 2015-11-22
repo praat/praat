@@ -68,7 +68,7 @@ autoSound PointProcess_to_Sound_pulseTrain
 				halfampsinangle = - halfampsinangle;
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": pulse train not synthesized.");
 	}

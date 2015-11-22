@@ -395,7 +395,7 @@ TableOfReal KNN_classifyToTableOfReal
 {
     int nthreads = KNN_getNumberOfCPUs();
     long chunksize =  ps->ny / nthreads;
-    autoCategories uniqueCategories = Categories_selectUniqueItems (my output, 1);
+    autoCategories uniqueCategories = Categories_selectUniqueItems (my output, true);
     long ncategories = Categories_getSize (uniqueCategories.get());
    
     Melder_assert (nthreads > 0);

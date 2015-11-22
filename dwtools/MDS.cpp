@@ -1018,7 +1018,7 @@ autoSimilarity Confusion_to_Similarity (Confusion me, int normalize, int symmetr
 			NUMdmatrix_normalizeRows (thy data, nxy, nxy);
 		}
 		if (symmetrizeMethod == 1) {
-			return thee.transfer();
+			return thee;
 		}
 		if (symmetrizeMethod == 2) { // Average data
 			for (long i = 1; i <= nxy - 1; i++) {
