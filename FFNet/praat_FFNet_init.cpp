@@ -98,7 +98,7 @@ FORM (FFNet_create, U"Create FFNet", U"Create FFNet...")
 DO
 	long numberOfInputs, numberOfOutputs, numberOfHidden1, numberOfHidden2;
 	FFNet_create_checkCommonFields (dia, &numberOfInputs, &numberOfOutputs, &numberOfHidden1, &numberOfHidden2);
-	autoFFNet thee = FFNet_create (numberOfInputs, numberOfHidden1, numberOfHidden2, numberOfOutputs, 0);
+	autoFFNet thee = FFNet_create (numberOfInputs, numberOfHidden1, numberOfHidden2, numberOfOutputs, false);
 	praat_new (thee.move(), GET_STRING (U"Name"));
 END
 
@@ -109,7 +109,7 @@ FORM (FFNet_create_linearOutputs, U"Create FFNet", U"Create FFNet (linear output
 DO
 	long numberOfInputs, numberOfOutputs, numberOfHidden1, numberOfHidden2;
 	FFNet_create_checkCommonFields (dia, &numberOfInputs, &numberOfOutputs, &numberOfHidden1, &numberOfHidden2);
-	autoFFNet thee = FFNet_create (numberOfInputs, numberOfHidden1, numberOfHidden2, numberOfOutputs, 1);
+	autoFFNet thee = FFNet_create (numberOfInputs, numberOfHidden1, numberOfHidden2, numberOfOutputs, true);
 	praat_new (thee.move(), GET_STRING (U"Name"));
 END
 
@@ -638,12 +638,12 @@ DO
 	if (nHidden2 < 1) {
 		nHidden2 = 0;
 	}
-	autoCategories uniq = Categories_selectUniqueItems (thee, 1);
+	autoCategories uniq = Categories_selectUniqueItems (thee, true);
 	long numberOfOutputs = uniq -> size;
 	if (numberOfOutputs < 1) Melder_throw (U"There are not enough categories in the Categories.\n"
 		U"Please try again with more categories in the Categories.");
 
-	autoFFNet ffnet = FFNet_create (my nx, nHidden1, nHidden2, numberOfOutputs, 0);
+	autoFFNet ffnet = FFNet_create (my nx, nHidden1, nHidden2, numberOfOutputs, false);
 	FFNet_setOutputCategories (ffnet.peek(), uniq.peek());
 	autostring32 ffnetName = FFNet_createNameFromTopology (ffnet.peek());
 	praat_new (ffnet.move(), ffnetName.peek());

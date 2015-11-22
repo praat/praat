@@ -55,7 +55,7 @@ void structManipulation :: v_shiftX (double xfrom, double xto) {
 	if (our pulses  )  Function_shiftXTo (our pulses.get(),   xfrom, xto);
 	if (our pitch   )  Function_shiftXTo (our pitch.get(),    xfrom, xto);
 	if (our duration)  Function_shiftXTo (our duration.get(), xfrom, xto);
-	if (our lpc     )  Function_shiftXTo (our lpc,      xfrom, xto);
+	if (our lpc     )  Function_shiftXTo (our lpc.get(),      xfrom, xto);
 }
 
 void structManipulation :: v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
@@ -277,7 +277,7 @@ autoSound Sound_Point_Point_to_Sound (Sound me, PointProcess source, PointProces
 		autoSound thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
 		if (source -> nt < 2 || target -> nt < 2) {   /* Almost completely voiceless? */
 			NUMvector_copyElements (my z [1], thy z [1], 1, my nx);
-			return thee.transfer();
+			return thee;
 		}
 		for (long i = 1; i <= target -> nt; i ++) {
 			double tmid = target -> t [i];
@@ -562,7 +562,7 @@ static Sound synthesize_pulses_formant (Manipulation me, int useIntensity) {
 		if (! my formant) Melder_throw (U"Missing formant information.");
 		autoSound thee = PointProcess_to_Sound (my pulses, 44100, 0.7, 0.05, 30);
 		Sound_Formant_Intensity_filter (thee.peek(), my formant, useIntensity ? my intensity : nullptr);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": formant and pulses manipulation not synthesized.");
 	}
@@ -604,13 +604,13 @@ static autoSound synthesize_pulses_lpc (Manipulation me) {
 		if (! my lpc) {
 			if (! my sound) Melder_throw (U"Missing original sound.");
 			autoSound sound10k = Sound_resample (my sound.get(), 10000.0, 50);
-			my lpc = Sound_to_LPC_burg (sound10k.peek(), 20, 0.025, 0.01, 50.0).transfer();
+			my lpc = Sound_to_LPC_burg (sound10k.peek(), 20, 0.025, 0.01, 50.0);
 		}
 		if (! my pulses) Melder_throw (U"Missing pulses analysis.");
 		autoSound train = PointProcess_to_Sound_pulseTrain (my pulses.get(), 1.0 / my lpc -> samplingPeriod, 0.7, 0.05, 30);
 		train -> dx = my lpc -> samplingPeriod;   // to be exact
 		Sound_PointProcess_fillVoiceless (train.peek(), my pulses.get());
-		autoSound result = LPC_and_Sound_filter (my lpc, train.peek(), true);
+		autoSound result = LPC_and_Sound_filter (my lpc.get(), train.peek(), true);
 		NUMdeemphasize_f (result -> z [1], result -> nx, result -> dx, 50.0);
 		Vector_scale (result.peek(), 0.99);
 		return result;
@@ -624,7 +624,7 @@ static autoSound synthesize_pitch_lpc (Manipulation me) {
 		if (! my lpc) {
 			if (! my sound) Melder_throw (U"Missing original sound.");
 			autoSound sound10k = Sound_resample (my sound.get(), 10000.0, 50);
-			my lpc = Sound_to_LPC_burg (sound10k.peek(), 20, 0.025, 0.01, 50.0).transfer();
+			my lpc = Sound_to_LPC_burg (sound10k.peek(), 20, 0.025, 0.01, 50.0);
 		}
 		if (! my pitch)  Melder_throw (U"Missing pitch manipulation.");
 		if (! my pulses) Melder_throw (U"Missing pulses analysis.");
@@ -632,7 +632,7 @@ static autoSound synthesize_pitch_lpc (Manipulation me) {
 		autoSound train = PointProcess_to_Sound_pulseTrain (pulses.peek(), 1 / my lpc -> samplingPeriod, 0.7, 0.05, 30);
 		train -> dx = my lpc -> samplingPeriod;   // to be exact
 		Sound_PointProcess_fillVoiceless (train.peek(), my pulses.get());
-		autoSound result = LPC_and_Sound_filter (my lpc, train.peek(), true);
+		autoSound result = LPC_and_Sound_filter (my lpc.get(), train.peek(), true);
 		NUMdeemphasize_f (result -> z [1], result -> nx, result -> dx, 50.0);
 		Vector_scale (result.peek(), 0.99);
 		return result;

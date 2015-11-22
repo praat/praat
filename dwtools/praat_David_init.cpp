@@ -387,7 +387,7 @@ END
 DIRECT (Categories_selectUniqueItems)
 	LOOP {
 		iam (Categories);
-		autoCategories thee = Categories_selectUniqueItems (me, 1);
+		autoCategories thee = Categories_selectUniqueItems (me, true);
 		praat_new (thee.move(), my name, U"_uniq");
 	}
 END

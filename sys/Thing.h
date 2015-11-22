@@ -35,10 +35,6 @@
 
 #define _Thing_auto_DEBUG  0
 
-/* Public. */
-
-typedef void *Any;   /* Prevent compile-time type checking. */
-
 /*
 	Use the macros 'I' and 'thou' for objects in the formal parameter lists
 	(if the explicit type cannot be used).
@@ -48,8 +44,8 @@ typedef void *Any;   /* Prevent compile-time type checking. */
 	so that you can use the macros 'my' and 'thy' to refer to members.
 	Example: int Person_getAge (I) { iam (Person); return my age; }
 */
-#define I  Any void_me
-#define thou  Any void_thee
+#define I  void *void_me
+#define thou  void *void_thee
 #define iam(klas)  klas me = (klas) void_me
 #define thouart(klas)  klas thee = (klas) void_thee
 #define my  me ->

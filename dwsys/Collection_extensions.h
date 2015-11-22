@@ -49,7 +49,7 @@ int OrderedOfString_append (OrderedOfString me, const char32 *append);
 autoOrderedOfString OrderedOfString_joinItems (OrderedOfString me, OrderedOfString thee);
 /* Join each item */
 
-autoOrderedOfString OrderedOfString_selectUniqueItems (OrderedOfString me, int sort);
+autoOrderedOfString OrderedOfString_selectUniqueItems (OrderedOfString me, bool sort);
 /* Postcondition: thy size <= my size */
 
 void OrderedOfString_frequency (OrderedOfString me, OrderedOfString thee, long *count);

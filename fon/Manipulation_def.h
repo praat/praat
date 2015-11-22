@@ -75,7 +75,7 @@ oo_DEFINE_CLASS (Manipulation, Function)
 	oo_ENDFROM
 
 	#if !oo_READING && !oo_WRITING
-		oo_OBJECT (LPC, 0, lpc)
+		oo_AUTO_OBJECT (LPC, 0, lpc)
 	#endif
 
 	#if oo_DECLARING

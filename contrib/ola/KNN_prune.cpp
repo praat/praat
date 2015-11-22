@@ -39,7 +39,7 @@ long KNN_prune_prune
     long k      // k(!)
 )
 {
-	autoCategories uniqueCategories = Categories_selectUniqueItems (my output, 1);
+	autoCategories uniqueCategories = Categories_selectUniqueItems (my output, true);
 	if (Categories_getSize (uniqueCategories.peek()) == my nInstances)
 		return 0;
 	long removals = 0;

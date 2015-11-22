@@ -78,7 +78,7 @@ autoCategories FFNet_Activation_to_Categories (FFNet me, Activation activation, 
 
 autoActivation FFNet_Categories_to_Activation (FFNet me, Categories thee) {
 	try {
-		autoCategories uniq = Categories_selectUniqueItems (thee, 1);
+		autoCategories uniq = Categories_selectUniqueItems (thee, true);
 
 		if (! my outputCategories) {
 			Melder_throw (U"The FFNet does not have categories.");

@@ -304,8 +304,8 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 		}
 		f.close (file);
 		his channelNames = channelNames.transfer();
-		his sound = me.transfer();
-		his textgrid = thee.transfer();
+		his sound = me.move();
+		his textgrid = thee.move();
 		if (EEG_getNumberOfCapElectrodes (him.peek()) == 32) {
 			EEG_setChannelName (him.peek(), 1, U"Fp1");
 			EEG_setChannelName (him.peek(), 2, U"AF3");

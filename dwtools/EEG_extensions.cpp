@@ -226,10 +226,10 @@ autoEEG EEG_to_EEG_bss (EEG me, double startTime, double endTime, long ncovars, 
 		autoNUMvector <long> channelNumbers (NUMstring_getElementsOfRanges (channelRanges, my numberOfChannels, & numberOfChannels, nullptr, U"channel", true), 1);
 		autoEEG thee = EEG_extractPart (me, startTime, endTime, true);
 		if (whiteningMethod != 0) {
-			bool fromCorrelation = whiteningMethod == 2;
+			bool fromCorrelation = ( whiteningMethod == 2 );
 			autoPCA pca = EEG_to_PCA (thee.peek(), thy xmin, thy xmax, channelRanges, fromCorrelation);
 			autoEEG white = EEG_and_PCA_to_EEG_whiten (thee.peek(), pca.peek(), 0);
-			thee.reset (white.transfer());
+			thee = white.move();
 		}
 		autoMixingMatrix mm = Sound_to_MixingMatrix (thy sound.get(), startTime, endTime, ncovars, lagStep, maxNumberOfIterations, tol, diagonalizerMethod);
 
@@ -240,7 +240,7 @@ autoEEG EEG_to_EEG_bss (EEG me, double startTime, double endTime, long ncovars, 
 		// Calculate the cross-correlations between eye-channels and the ic's
 
 
-		return him.transfer();
+		return him;
 
 	} catch (MelderError) {
 		Melder_throw (me, U": no independent components determined.");
