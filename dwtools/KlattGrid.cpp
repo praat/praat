@@ -84,18 +84,6 @@
  * 
  */
 
-// Prototypes
-
-autoPointProcess PitchTier_to_PointProcess_flutter (PitchTier pitch, RealTier flutter, double maximumPeriod);
-
-void _Sound_FormantGrid_filterWithOneFormant_inline (Sound me, thou, long iformant, int antiformant);
-
-autoSound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, VocalTractGrid thee, CouplingGrid coupling);
-
-autoSound PhonationGrid_PhonationTier_to_Sound_voiced (PhonationGrid me, PhonationTier thee, double samplingFrequency);
-
-autoSound KlattGrid_to_Sound_aspiration (KlattGrid me, double samplingFrequency);
-
 #undef MIN
 #undef MAX
 #define MIN(x,y) ((x) < (y) ? (x) : (y))
@@ -486,6 +474,117 @@ static void draw_oneSection (Graphics g, double xmin, double xmax, double ymin, 
 // Normal dB's
 #define DB_to_A(x) (pow (10.0, x / 20.0))
 
+/************************ Sound & FormantGrid *********************************************/
+
+static void _Sound_FormantGrid_filterWithOneFormant_inline (Sound me, FormantGrid thee, long iformant, int antiformant) {
+	if (iformant < 1 || iformant > thy formants -> size) {
+		Melder_warning (U"Formant ", iformant, U" does not exist.");
+		return;
+	}
+
+	RealTier ftier = (RealTier) thy formants -> item[iformant];
+	RealTier btier = (RealTier) thy bandwidths -> item[iformant];
+
+	if (ftier -> points -> size == 0 && btier -> points -> size == 0) {
+		return;
+	} else if (ftier -> points -> size == 0 || btier -> points -> size == 0) {
+		Melder_throw (U"Empty tier");
+	}
+
+	double nyquist = 0.5 / my dx;
+	autoFilter r;
+	if (antiformant != 0) {
+		r = AntiResonator_create (my dx);
+	} else {
+		r = Resonator_create (my dx, Resonator_NORMALISATION_H0);
+	}
+
+	for (long is = 1; is <= my nx; is++) {
+		double t = my x1 + (is - 1) * my dx;
+		double f = RealTier_getValueAtTime (ftier, t);
+		double b = RealTier_getValueAtTime (btier, t);
+		if (f <= nyquist && NUMdefined (b)) {
+			Filter_setFB (r.peek(), f, b);
+		}
+		my z[1][is] = Filter_getOutput (r.peek(), my z[1][is]);
+	}
+}
+
+void Sound_FormantGrid_filterWithOneAntiFormant_inline (Sound me, FormantGrid thee, long iformant) {
+	_Sound_FormantGrid_filterWithOneFormant_inline (me, thee, iformant, 1);
+}
+
+void Sound_FormantGrid_filterWithOneFormant_inline (Sound me, FormantGrid thee, long iformant) {
+	_Sound_FormantGrid_filterWithOneFormant_inline (me, thee, iformant, 0);
+}
+
+void Sound_FormantGrid_Intensities_filterWithOneFormant_inline (Sound me, FormantGrid thee, Ordered amplitudes, long iformant) {
+	try {
+		if (iformant < 1 || iformant > thy formants -> size) {
+			Melder_throw (U"Formant ", iformant, U" not defined. \nThis formant will not be used.");
+		}
+		double nyquist = 0.5 / my dx;
+
+		RealTier ftier = (RealTier) thy formants -> item[iformant];
+		RealTier btier = (RealTier) thy bandwidths -> item[iformant];
+		RealTier atier = (RealTier) amplitudes -> item[iformant];
+
+		if (ftier -> points -> size == 0 || btier -> points -> size == 0 || atier -> points -> size == 0) {
+			return;    // nothing to do
+		}
+
+		autoResonator r = Resonator_create (my dx, Resonator_NORMALISATION_HMAX);
+
+		for (long is = 1; is <= my nx; is++) {
+			double t = my x1 + (is - 1) * my dx;
+			double f = RealTier_getValueAtTime (ftier, t);
+			double b = RealTier_getValueAtTime (btier, t);
+			double a;
+			if (f <= nyquist && NUMdefined (b)) {
+				Filter_setFB (r.peek(), f, b);
+				a = RealTier_getValueAtTime (atier, t);
+				if (NUMdefined (a)) {
+					r -> a *= DB_to_A (a);
+				}
+			}
+			my z[1][is] = Filter_getOutput (r.peek(), my z[1][is]);
+		}
+	} catch (MelderError) {
+		Melder_throw (me, U": not filtered with one formant filter.");
+	}
+}
+
+autoSound Sound_FormantGrid_Intensities_filter (Sound me, FormantGrid thee, Ordered amplitudes, long iformantb, long iformante, int alternatingSign) {
+	try {
+		if (iformantb > iformante) {
+			iformantb = 1;
+			iformante = thy formants -> size;
+		}
+		if (iformantb < 1 || iformantb > thy formants -> size ||
+		        iformante < 1 || iformante > thy formants -> size) {
+			Melder_throw (U"No such formant number.");
+		}
+
+		autoSound him = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1);
+
+		for (long iformant = iformantb; iformant <= iformante; iformant++) {
+			if (FormantGrid_Intensities_isFormantDefined (thee, amplitudes, iformant)) {
+				autoSound tmp = Data_copy (me);
+				Sound_FormantGrid_Intensities_filterWithOneFormant_inline (tmp.peek(), thee, amplitudes, iformant);
+				for (long is = 1; is <= my nx; is++) {
+					his z[1][is] += alternatingSign >= 0 ? tmp -> z[1][is] : - tmp -> z[1][is];
+				}
+				if (alternatingSign != 0) {
+					alternatingSign = -alternatingSign;
+				}
+			}
+		}
+		return him;
+	} catch (MelderError) {
+		Melder_throw (me, U": not filtered.");
+	}
+}
+
 /********************* PhonationTier ************************/
 
 Thing_implement (PhonationPoint, Daata, 0);
@@ -719,7 +818,7 @@ double PhonationGrid_getMaximumPeriod (PhonationGrid me) {
 	return 2 / ( (minimumPitch == NUMundefined || minimumPitch == 0) ? (my xmax - my xmin) : minimumPitch);
 }
 
-autoPointProcess PitchTier_to_PointProcess_flutter (PitchTier pitch, RealTier flutter, double maximumPeriod) {
+static autoPointProcess PitchTier_to_PointProcess_flutter (PitchTier pitch, RealTier flutter, double maximumPeriod) {
 	try {
 		autoPointProcess thee = PitchTier_to_PointProcess (pitch);
 		if (flutter == 0) {
@@ -955,7 +1054,7 @@ autoPhonationTier PhonationGrid_to_PhonationTier (PhonationGrid me) {
 	}
 }
 
-autoSound PhonationGrid_PhonationTier_to_Sound_voiced (PhonationGrid me, PhonationTier thee, double samplingFrequency) {
+static autoSound PhonationGrid_PhonationTier_to_Sound_voiced (PhonationGrid me, PhonationTier thee, double samplingFrequency) {
 	try {
 		PhonationGridPlayOptions p = my options.get();
 		double lastVal = NUMundefined;
@@ -1561,7 +1660,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, Voc
 	}
 }
 
-autoSound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, VocalTractGrid thee, CouplingGrid coupling) {
+static autoSound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, VocalTractGrid thee, CouplingGrid coupling) {
 	try {
 		VocalTractGridPlayOptions pv = thy options.get();
 		CouplingGridPlayOptions pc = coupling -> options.get();
@@ -1755,118 +1854,6 @@ void FormantGrid_CouplingGrid_updateOpenPhases (FormantGrid me, CouplingGrid the
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": not updated with open hase information.");
-	}
-}
-
-/************************ Sound & FormantGrid *********************************************/
-
-void _Sound_FormantGrid_filterWithOneFormant_inline (Sound me, thou, long iformant, int antiformant) {
-	thouart (FormantGrid);
-	if (iformant < 1 || iformant > thy formants -> size) {
-		Melder_warning (U"Formant ", iformant, U" does not exist.");
-		return;
-	}
-
-	RealTier ftier = (RealTier) thy formants -> item[iformant];
-	RealTier btier = (RealTier) thy bandwidths -> item[iformant];
-
-	if (ftier -> points -> size == 0 && btier -> points -> size == 0) {
-		return;
-	} else if (ftier -> points -> size == 0 || btier -> points -> size == 0) {
-		Melder_throw (U"Empty tier");
-	}
-
-	double nyquist = 0.5 / my dx;
-	autoFilter r;
-	if (antiformant != 0) {
-		r = AntiResonator_create (my dx);
-	} else {
-		r = Resonator_create (my dx, Resonator_NORMALISATION_H0);
-	}
-
-	for (long is = 1; is <= my nx; is++) {
-		double t = my x1 + (is - 1) * my dx;
-		double f = RealTier_getValueAtTime (ftier, t);
-		double b = RealTier_getValueAtTime (btier, t);
-		if (f <= nyquist && NUMdefined (b)) {
-			Filter_setFB (r.peek(), f, b);
-		}
-		my z[1][is] = Filter_getOutput (r.peek(), my z[1][is]);
-	}
-}
-
-void Sound_FormantGrid_filterWithOneAntiFormant_inline (Sound me, FormantGrid thee, long iformant) {
-	_Sound_FormantGrid_filterWithOneFormant_inline (me, thee, iformant, 1);
-}
-
-void Sound_FormantGrid_filterWithOneFormant_inline (Sound me, FormantGrid thee, long iformant) {
-	_Sound_FormantGrid_filterWithOneFormant_inline (me, thee, iformant, 0);
-}
-
-void Sound_FormantGrid_Intensities_filterWithOneFormant_inline (Sound me, FormantGrid thee, Ordered amplitudes, long iformant) {
-	try {
-		if (iformant < 1 || iformant > thy formants -> size) {
-			Melder_throw (U"Formant ", iformant, U" not defined. \nThis formant will not be used.");
-		}
-		double nyquist = 0.5 / my dx;
-
-		RealTier ftier = (RealTier) thy formants -> item[iformant];
-		RealTier btier = (RealTier) thy bandwidths -> item[iformant];
-		RealTier atier = (RealTier) amplitudes -> item[iformant];
-
-		if (ftier -> points -> size == 0 || btier -> points -> size == 0 || atier -> points -> size == 0) {
-			return;    // nothing to do
-		}
-
-		autoResonator r = Resonator_create (my dx, Resonator_NORMALISATION_HMAX);
-
-		for (long is = 1; is <= my nx; is++) {
-			double t = my x1 + (is - 1) * my dx;
-			double f = RealTier_getValueAtTime (ftier, t);
-			double b = RealTier_getValueAtTime (btier, t);
-			double a;
-			if (f <= nyquist && NUMdefined (b)) {
-				Filter_setFB (r.peek(), f, b);
-				a = RealTier_getValueAtTime (atier, t);
-				if (NUMdefined (a)) {
-					r -> a *= DB_to_A (a);
-				}
-			}
-			my z[1][is] = Filter_getOutput (r.peek(), my z[1][is]);
-		}
-	} catch (MelderError) {
-		Melder_throw (me, U": not filtered with one formant filter.");
-	}
-}
-
-autoSound Sound_FormantGrid_Intensities_filter (Sound me, FormantGrid thee, Ordered amplitudes, long iformantb, long iformante, int alternatingSign) {
-	try {
-		if (iformantb > iformante) {
-			iformantb = 1;
-			iformante = thy formants -> size;
-		}
-		if (iformantb < 1 || iformantb > thy formants -> size ||
-		        iformante < 1 || iformante > thy formants -> size) {
-			Melder_throw (U"No such formant number.");
-		}
-
-		autoSound him = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1);
-
-		for (long iformant = iformantb; iformant <= iformante; iformant++) {
-			if (FormantGrid_Intensities_isFormantDefined (thee, amplitudes, iformant)) {
-				autoSound tmp = Data_copy (me);
-				Sound_FormantGrid_Intensities_filterWithOneFormant_inline (tmp.peek(), thee, amplitudes, iformant);
-				for (long is = 1; is <= my nx; is++) {
-					his z[1][is] += alternatingSign >= 0 ? tmp -> z[1][is] : - tmp -> z[1][is];
-				}
-				if (alternatingSign != 0) {
-					alternatingSign = -alternatingSign;
-				}
-			}
-		}
-		return him;
-	} catch (MelderError) {
-		Melder_throw (me, U": not filtered.");
 	}
 }
 

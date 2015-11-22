@@ -97,7 +97,7 @@ double GaussianMixture_getProbabilityAtPosition_string (GaussianMixture me, cons
 
 double GaussianMixture_getMarginalProbabilityAtPosition (GaussianMixture me, double *vector, double x);
 
-autoCorrelation GaussianMixture_and_TableOfReal_to_Correlation (GaussianMixture me, thou);
+autoCorrelation GaussianMixture_and_TableOfReal_to_Correlation (GaussianMixture me, TableOfReal thee);
 /* Correlation between components based on the data in the table */
 
 autoCovariance GaussianMixture_to_Covariance_total (GaussianMixture me);

@@ -204,9 +204,8 @@ autoTableOfReal PCA_and_TableOfReal_to_TableOfReal_zscores (PCA me, TableOfReal 
 	}
 }
 
-autoConfiguration PCA_and_TableOfReal_to_Configuration (PCA me, thou, long numberOfDimensions) {
+autoConfiguration PCA_and_TableOfReal_to_Configuration (PCA me, TableOfReal thee, long numberOfDimensions) {
 	try {
-		thouart (TableOfReal);
 		if (numberOfDimensions == 0 || numberOfDimensions > my numberOfEigenvalues) {
 			numberOfDimensions = my numberOfEigenvalues;
 		}
@@ -221,9 +220,8 @@ autoConfiguration PCA_and_TableOfReal_to_Configuration (PCA me, thou, long numbe
 	}
 }
 
-autoTableOfReal PCA_and_Configuration_to_TableOfReal_reconstruct (PCA me, thou) {
+autoTableOfReal PCA_and_Configuration_to_TableOfReal_reconstruct (PCA me, Configuration thee) {
 	try {
-		thouart (Configuration);
 		long npc = thy numberOfColumns;
 
 		if (thy numberOfColumns > my dimension) {
@@ -253,9 +251,8 @@ autoTableOfReal PCA_and_Configuration_to_TableOfReal_reconstruct (PCA me, thou) 
 	}
 }
 
-double PCA_and_TableOfReal_getFractionVariance (PCA me, thou, long from, long to) {
+double PCA_and_TableOfReal_getFractionVariance (PCA me, TableOfReal thee, long from, long to) {
 	try {
-		thouart (TableOfReal);
 		double fraction = NUMundefined;
 
 		if (from < 1 || from > to || to > thy numberOfColumns) {

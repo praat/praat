@@ -1223,9 +1223,8 @@ autoGaussianMixture TableOfReal_to_GaussianMixture (TableOfReal me, long numberO
 	}
 }
 
-autoCorrelation GaussianMixture_and_TableOfReal_to_Correlation (GaussianMixture me, thou) {
+autoCorrelation GaussianMixture_and_TableOfReal_to_Correlation (GaussianMixture me, TableOfReal thee) {
 	try {
-		thouart (TableOfReal);
 		if (my dimension != thy numberOfColumns) {
 			Melder_throw (U"Dimensions must be equal.");
 		}

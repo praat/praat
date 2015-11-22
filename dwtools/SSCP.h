@@ -80,12 +80,11 @@ autoTableOfReal Covariance_and_TableOfReal_extractDistanceQuantileRange (Covaria
 	(from the SSCP) is in the quantile [qlow, qhigh].
 */
 
-autoTableOfReal Covariance_and_TableOfReal_mahalanobis (Covariance me, thou, bool useTableCentroid);
+autoTableOfReal Covariance_and_TableOfReal_mahalanobis (Covariance me, TableOfReal thee, bool useTableCentroid);
 /*
 	Calculate the Mahalanobis distance: sqrt ((x-m)'S**-1 (x-m))
 	use the m-vector (centroid) from the covariance unless useTableColumnMeans is true.
 */
-
 
 autoCovariance TableOfReal_to_Covariance (TableOfReal me);
 

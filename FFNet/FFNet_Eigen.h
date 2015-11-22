@@ -34,7 +34,7 @@ void FFNet_Eigen_drawIntersection (FFNet me, Eigen eigen, Graphics g, long pcx, 
 /* pcx (pcy) > 0	: negative values left (bottom), positive right (top) */
 /* pcx (pcy) < 0	: negative values right (top). */
 
-void FFNet_Eigen_drawDecisionPlaneInEigenspace (FFNet me, thou, Graphics g, long unit, 
+void FFNet_Eigen_drawDecisionPlaneInEigenspace (FFNet me, Eigen thee, Graphics g, long unit,
 	long layer,	long pcx, long pcy, double xmin, double xmax, double ymin, double ymax);
 
 #endif /* _FFNet_Eigen_h_ */

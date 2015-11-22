@@ -116,9 +116,9 @@ void HMM_drawForwardProbabilitiesIllustration (Graphics g, bool garnish);
 
 void HMM_drawForwardAndBackwardProbabilitiesIllustration (Graphics g, bool garnish);
 
-void HMM_addObservation (HMM me, thou);
+void HMM_addObservation (HMM me, HMMObservation thee);
 
-void HMM_addState (HMM me, thou);
+void HMM_addState (HMM me, HMMState thee);
 
 void HMM_setDefaultStates (HMM me);
 

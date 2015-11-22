@@ -17,6 +17,16 @@ endif
 writeInfoLine: "Running all tests twice..."
 firstScript = 1
 
+# Warm up.
+strings_before = 0
+arrays_before  = 0
+things_before  = 0
+other_after   = 0
+strings_after = 0
+arrays_after  = 0
+things_after  = 0
+other_before   = 0
+
 procedure runScript (.path$)
 	runScript: .path$
 	Erase all
@@ -28,10 +38,6 @@ procedure runScript (.path$)
 	arrays_before  = extractNumber (memoryReport$, "Arrays:")
 	things_before  = extractNumber (memoryReport$, "Things:")
 	other_before   = extractNumber (memoryReport$, "Other:")
-	strings_after = 0
-	arrays_after  = 0
-	things_after  = 0
-	other_after   = 0
 
 	runScript: .path$
 	Erase all
@@ -44,7 +50,7 @@ procedure runScript (.path$)
 	other_after   = extractNumber (memoryReport$, "Other:")
 
 	if strings_after <> strings_before or arrays_after <> arrays_before or
-	... things_after <> things_before + 4 * firstScript or other_after <> other_before + 4 * firstScript
+	... things_after <> things_before or other_after <> other_before
 		appendInfoLine ()
 		appendInfoLine: "Leaking in ", .path$, ":"
 		appendInfoLine: "   Strings: ", strings_before, " ", strings_after

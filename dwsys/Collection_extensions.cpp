@@ -130,7 +130,6 @@ autoOrderedOfString OrderedOfString_joinItems (OrderedOfString me, OrderedOfStri
 	}
 }
 
-
 autoOrderedOfString OrderedOfString_selectUniqueItems (OrderedOfString me, bool sort) {
 	try {
 		if (! sort) {
@@ -146,7 +145,6 @@ autoOrderedOfString OrderedOfString_selectUniqueItems (OrderedOfString me, bool 
 			return him;
 		}
 		autoSortedSetOfString thee = SortedSetOfString_create ();
-		/* Collection_to_SortedSet (I, int (*compare)(I, thou)) */
 		for (long i = 1; i <= my size; i++) {
 			if (! SortedSet_hasItem (thee.peek(), my item[i])) {
 				autoSimpleString item = Data_copy ((SimpleString) my item[i]);
