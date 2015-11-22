@@ -624,8 +624,7 @@ void HMM_setEmissionProbabilities (HMM me, long state_number, char32 *emission_p
 
 }
 
-void HMM_addObservation (HMM me, thou) {
-	thouart (HMMObservation);
+void HMM_addObservation (HMM me, HMMObservation thee) {
 	long ns = my observationSymbols -> size + 1;
 	if (ns > my numberOfObservationSymbols) {
 		Melder_throw (U"Observation list is full.");
@@ -633,8 +632,7 @@ void HMM_addObservation (HMM me, thou) {
 	Ordered_addItemPos (my observationSymbols, thee, ns);
 }
 
-void HMM_addState (HMM me, thou) {
-	thouart (HMMState);
+void HMM_addState (HMM me, HMMState thee) {
 	long ns = my states -> size + 1;
 	if (ns > my numberOfStates) {
 		Melder_throw (U"States list is full.");

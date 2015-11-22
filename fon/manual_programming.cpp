@@ -310,7 +310,7 @@ NORMAL (U"The lines in the file are typically separated by a newline symbol (Lin
 	"When writing a TextGrid text file, you can use any of these line separators, because most text editors "
 	"on all platforms can meanwhile open and view all these versions correctly.")
 ENTRY (U"8. Interpreting trigraphs")
-NORMAL (U"The example above contains several phonetci sysmbols, and it is not always to type those into a text field. "
+NORMAL (U"The example above contains several phonetic symbols, and it is not always easy to type those into a text field. "
 	"For this reason, Praat provides %trigraphs for most phonetic characters, as well as for many non-ASCII characters "
 	"used in the languages of the world. For instance, the vowel \"ɔ\" (a \"turned c\") can be typed as \"\\bsct\" into "
 	"the TextGrid window as well as anywhere else in Praat where you want to draw graphical text "

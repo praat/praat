@@ -85,9 +85,9 @@ void FFNet_Eigen_drawIntersection (FFNet me, Eigen eigen, Graphics g, long pcx, 
 	Draw the intersection line of the decision hyperplane 'w.e-b' of the weights of unit i
 	from layer j with the plane spanned by eigenvectors pcx and pcy.
 */
-void FFNet_Eigen_drawDecisionPlaneInEigenspace (FFNet me, thou, Graphics g, long unit, long layer, long pcx, long pcy, double xmin, double xmax, double ymin, double ymax) {
-	thouart (Eigen);
-
+void FFNet_Eigen_drawDecisionPlaneInEigenspace (FFNet me, Eigen thee, Graphics g, long unit, long layer,
+	long pcx, long pcy, double xmin, double xmax, double ymin, double ymax)
+{
 	if (layer < 1 || layer > my nLayers) {
 		return;
 	}

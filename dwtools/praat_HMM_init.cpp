@@ -42,8 +42,6 @@
 	OPTION (U"Akaike corrected") \
 	OPTION (U"Complete-data ML")
 
-Correlation GaussianMixture_and_TableOfReal_to_Correlation2 (GaussianMixture me, thou);
-
 DIRECT (GaussianMixture_help)
 	Melder_help (U"GaussianMixture");
 END

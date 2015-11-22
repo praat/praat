@@ -569,10 +569,8 @@ autoTableOfReal SSCP_and_TableOfReal_extractDistanceQuantileRange (SSCP me, Tabl
 	}
 }
 
-autoTableOfReal Covariance_and_TableOfReal_mahalanobis (Covariance me, thou, bool useTableCentroid) {
+autoTableOfReal Covariance_and_TableOfReal_mahalanobis (Covariance me, TableOfReal thee, bool useTableCentroid) {
 	try {
-		thouart (TableOfReal);
-
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, 1);
 		autoNUMvector<double> centroid (NUMvector_copy (my centroid, 1, thy numberOfColumns), 1);
 		autoNUMmatrix<double> covari (NUMmatrix_copy (my data, 1, my numberOfRows, 1, my numberOfRows), 1, 1);
