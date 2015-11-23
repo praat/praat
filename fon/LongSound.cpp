@@ -136,7 +136,7 @@ static void _LongSound_FLAC_convertShorts (LongSound me, const int32 * const sam
 	my compressedShorts += numberOfSamples * my numberOfChannels;
 }
 
-static FLAC__StreamDecoderWriteStatus _LongSound_FLAC_write (const FLAC__StreamDecoder *decoder, const FLAC__Frame *frame, const FLAC__int32 * const buffer[], I) {
+static FLAC__StreamDecoderWriteStatus _LongSound_FLAC_write (const FLAC__StreamDecoder *decoder, const FLAC__Frame *frame, const FLAC__int32 * const buffer[], void *void_me) {
 	iam (LongSound);
 	const FLAC__FrameHeader *header = & frame -> header;
 	long numberOfSamples = header -> blocksize;
@@ -180,7 +180,7 @@ static void _LongSound_MP3_convertShorts (LongSound me, const MP3F_SAMPLE *chann
 	my compressedShorts += numberOfSamples * my numberOfChannels;
 }
 
-static void _LongSound_MP3_convert (const MP3F_SAMPLE *channels [MP3F_MAX_CHANNELS], long numberOfSamples, I) {
+static void _LongSound_MP3_convert (const MP3F_SAMPLE *channels [MP3F_MAX_CHANNELS], long numberOfSamples, void *void_me) {
 	iam (LongSound);
 	if (numberOfSamples > my compressedSamplesLeft)
 		numberOfSamples = my compressedSamplesLeft;

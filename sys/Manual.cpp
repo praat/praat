@@ -198,7 +198,7 @@ void structManual :: v_draw () {
 
 /********** PRINTING **********/
 
-static void print (I, Graphics graphics) {
+static void print (void *void_me, Graphics graphics) {
 	iam (Manual);
 	ManPages manPages = (ManPages) my data;
 	long numberOfPages = manPages -> pages -> size, savePage = my path;

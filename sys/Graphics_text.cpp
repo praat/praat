@@ -169,7 +169,7 @@ static HFONT loadFont (GraphicsScreen me, int font, int size, int style) {
 }
 #endif
 
-static void charSize (I, _Graphics_widechar *lc) {
+static void charSize (void *void_me, _Graphics_widechar *lc) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
@@ -539,7 +539,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 	}
 }
 
-static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
+static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 	const char32 *codes, int nchars, int width)
 {
 	iam (Graphics);
@@ -1020,7 +1020,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 	}
 }
 
-static void initText (I) {
+static void initText (void *void_me) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
@@ -1028,7 +1028,7 @@ static void initText (I) {
 	}
 }
 
-static void exitText (I) {
+static void exitText (void *void_me) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);

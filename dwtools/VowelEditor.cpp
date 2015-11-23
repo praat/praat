@@ -844,7 +844,7 @@ typedef struct {
 */
 
 static int paCallback (const void* /*inputBuffer*/, void* outputBuffer, unsigned long framesPerBuffer,
-                       const PaStreamCallbackTimeInfo* /*timeInfo*/, PaStreamCallbackFlags /*statusFlags*/, I) {
+                       const PaStreamCallbackTimeInfo* /*timeInfo*/, PaStreamCallbackFlags /*statusFlags*/, void *void_me) {
 	iam (paVowelData);
 	float* out = (float*) outputBuffer;
 
@@ -1334,7 +1334,7 @@ static void cb_publish (Editor /*editor*/, void* /*closure*/, Daata publish) {
 	}
 }
 
-static void updateWidgets (I) {
+static void updateWidgets (void *void_me) {
 	iam (VowelEditor);
 	(void) me;
 }

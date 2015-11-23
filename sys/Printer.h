@@ -43,7 +43,7 @@ extern struct Printer thePrinter;
 #endif
 int Printer_pageSetup ();
 int Printer_postScriptSettings ();
-int Printer_print (void (*draw) (I, Graphics g), I);
+int Printer_print (void (*draw) (void *void_me, Graphics g), void *void_me);
 void Printer_nextPage ();
 
 void Printer_prefs ();

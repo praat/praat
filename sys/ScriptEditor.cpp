@@ -64,7 +64,7 @@ void structScriptEditor :: v_goAway () {
 }
 
 static void args_ok (UiForm sendingForm, int /* narg */, Stackel /* args */, const char32 * /* sendingString */,
-	Interpreter /* interpreter */, const char32 * /* invokingButtonTitle */, bool /* modified */, I)
+	Interpreter /* interpreter */, const char32 * /* invokingButtonTitle */, bool /* modified */, void *void_me)
 {
 	iam (ScriptEditor);
 	autostring32 text = GuiText_getString (my textWidget);
@@ -83,7 +83,7 @@ static void args_ok (UiForm sendingForm, int /* narg */, Stackel /* args */, con
 }
 
 static void args_ok_selectionOnly (UiForm sendingForm, int /* narg */, Stackel /* args */, const char32 * /* sendingString */,
-	Interpreter /* interpreter */, const char32 * /* invokingButtonTitle */, bool /* modified */, I)
+	Interpreter /* interpreter */, const char32 * /* invokingButtonTitle */, bool /* modified */, void *void_me)
 {
 	iam (ScriptEditor);
 	autostring32 text = GuiText_getSelection (my textWidget);
