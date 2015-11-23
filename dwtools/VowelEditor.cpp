@@ -675,8 +675,8 @@ static void VowelEditor_createTableFromVowelMarksInPreferences (VowelEditor me)
 		autoTable newMarks = Table_createWithColumnNames (0, U"Vowel F1 F2 Size");
 		long nmarksFound = 0;
 		for (long i = 1; i <= numberOfRows; i++) {
-			long numberOfTokens;
-			autoMelderTokens rowi (prefs.mark[i-1], &numberOfTokens);
+			autoMelderTokens rowi (prefs.mark[i-1]);
+			long numberOfTokens = rowi.count();
 			if (numberOfTokens < 4) { // we are done
 				break;
 			}

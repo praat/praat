@@ -37,7 +37,7 @@ oo_END_CLASS (RegressionParameter)
 oo_DEFINE_CLASS (Regression, Daata)
 
 	oo_DOUBLE (intercept)
-	oo_COLLECTION (Ordered, parameters, RegressionParameter, 0)
+	oo_AUTO_COLLECTION (Ordered, parameters, RegressionParameter, 0)
 
 	#if oo_DECLARING
 		void v_info ()
