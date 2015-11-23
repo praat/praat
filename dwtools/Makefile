@@ -1,6 +1,6 @@
 # Makefile of the library "dwtools"
-# David Weenink, 22 February 2010
-# djmw 20150803 Latest modification
+# David Weenink and Paul Boersma
+# 23 November 2015
 
 include ../makefile.defs
 
@@ -39,7 +39,6 @@ OBJECTS = Activation.o AffineTransform.o \
 	Polygon_extensions.o Procrustes.o \
 	Proximity.o \
 	Resonator.o \
-	Sampled2.o \
 	Sound_and_Spectrogram_extensions.o Sound_and_PCA.o Sound_extensions.o \
 	Sound_to_MFCC.o Sounds_to_DTW.o \
 	Sound_to_Pitch2.o Sound_to_SPINET.o SPINET.o SPINET_to_Pitch.o \
