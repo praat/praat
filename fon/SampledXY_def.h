@@ -30,6 +30,18 @@ oo_DEFINE_CLASS (SampledXY, Sampled)
 	oo_DOUBLE (dy)
 	oo_DOUBLE (y1)
 
+	#if oo_READING
+		if (ymin > ymax) {
+			Melder_throw (U"ymax should be greater than ymin.");
+		}
+		if (ny < 1) {
+			Melder_throw (U"ny should be at least 1.");
+		}
+		if (dy <= 0.0) {
+			Melder_throw (U"dy should be positive.");
+		}
+	#endif
+
 	#if oo_DECLARING
 		bool v_hasGetYmin ()
 			override { return true; }

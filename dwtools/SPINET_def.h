@@ -2,7 +2,7 @@
 /* David Weenink, 6 apr 1997 */
 
 #define ooSTRUCT SPINET
-oo_DEFINE_CLASS (SPINET, Sampled2)
+oo_DEFINE_CLASS (SPINET, SampledXY)
 
 	oo_LONG (gamma)						/* filter order */
 	oo_DOUBLE (excitationErbProportion)	/* excitatory bandwidth proportionality factor*/
