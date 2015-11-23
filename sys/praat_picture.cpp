@@ -595,7 +595,7 @@ DIRECT (Print) {
 	static void DO_Picture_writeToWindowsMetafile (UiForm sendingForm, int /* narg */, Stackel args, const char32 *sendingString,
 		Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
 	{
-		static uiForm dia;
+		static UiForm dia;
 		if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as Windows metafile",
 			DO_Picture_writeToWindowsMetafile, nullptr, invokingButtonTitle, nullptr);
 		if (! sendingForm && ! args && ! sendingString) {

@@ -22,22 +22,21 @@
 Thing_implement (GuiButton, GuiControl, 0);
 
 #if gtk
-	#define iam_button  GuiButton me = (GuiButton) _GuiObject_getUserData (widget)
+	#define iam_button  GuiButton me = (GuiButton) userData
 #elif cocoa
-	#define iam_button  GuiButton me = (GuiButton) [(GuiCocoaButton *) widget userData];
+	#define iam_button  GuiButton me = (GuiButton) self -> d_userData
 #elif motif
 	#define iam_button  GuiButton me = (GuiButton) widget -> userData
 #endif
 
 #if gtk
-	static void _GuiGtkButton_destroyCallback (GuiObject widget, gpointer void_me) {
-		(void) widget;
-		iam (GuiButton);
+	static void _GuiGtkButton_destroyCallback (GuiObject /* widget */, gpointer userData) {
+		GuiButton me = (GuiButton) userData;
 		trace (U"destroying GuiButton ", Melder_pointer (me));
 		forget (me);
 	}
-	static void _GuiGtkButton_activateCallback (GuiObject widget, gpointer void_me) {
-		iam (GuiButton);
+	static void _GuiGtkButton_activateCallback (GuiObject widget, gpointer userData) {
+		GuiButton me = (GuiButton) userData;
 		struct structGuiButtonEvent event { me, false, false, false, false };
 		if (my d_activateCallback) {
 			try {
@@ -57,7 +56,7 @@ Thing_implement (GuiButton, GuiControl, 0);
 		trace (U"deleting a button");
 		[super dealloc];
 	}
-	- (GuiThing) userData {
+	- (GuiThing) getUserData {
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {

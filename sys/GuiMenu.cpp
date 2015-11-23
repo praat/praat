@@ -76,7 +76,7 @@ void structGuiMenu :: v_destroy () {
 			if (character == NSTabCharacter) {
 				NSWindow *cocoaKeyWindow = [NSApp keyWindow];
 				if ([cocoaKeyWindow class] == [GuiCocoaWindow class]) {
-					GuiWindow window = (GuiWindow) [(GuiCocoaWindow *) cocoaKeyWindow userData];
+					GuiWindow window = (GuiWindow) [(GuiCocoaWindow *) cocoaKeyWindow   getUserData];
 					if (window -> d_tabCallback) {
 						try {
 							struct structGuiMenuItemEvent event { nullptr, false, false, false, false };
@@ -97,7 +97,7 @@ void structGuiMenu :: v_destroy () {
 				 */
 				NSWindow *cocoaKeyWindow = [NSApp keyWindow];
 				if ([cocoaKeyWindow class] == [GuiCocoaWindow class]) {
-					GuiWindow window = (GuiWindow) [(GuiCocoaWindow *) cocoaKeyWindow userData];
+					GuiWindow window = (GuiWindow) [(GuiCocoaWindow *) cocoaKeyWindow   getUserData];
 					if ([nsEvent modifierFlags] & NSShiftKeyMask) {
 						/*
 						 * Make sure we got here by Shift-Tab rather than Ctrl-Y.
@@ -125,7 +125,7 @@ void structGuiMenu :: v_destroy () {
 			} else if (character == NSDeleteCharacter) {
 				NSWindow *cocoaKeyWindow = [NSApp keyWindow];
 				if ([cocoaKeyWindow class] == [GuiCocoaWindow class]) {
-					GuiWindow window = (GuiWindow) [(GuiCocoaWindow *) cocoaKeyWindow userData];
+					GuiWindow window = (GuiWindow) [(GuiCocoaWindow *) cocoaKeyWindow   getUserData];
 					if (([nsEvent modifierFlags] & NSAlternateKeyMask) && window -> d_optionBackspaceCallback) {
 						try {
 							struct structGuiMenuItemEvent event { nullptr, false, false, false, false };
@@ -241,34 +241,34 @@ void GuiMenu_empty (GuiMenu me) {
 		GuiMenu d_userData;
 	}
 	- (void) dealloc {   // override
-		GuiMenu me = self -> d_userData;
+		GuiMenu me = d_userData;
 		forget (me);
 		trace (U"deleting a menu button");
 		[super dealloc];
 	}
-	- (GuiThing) userData {
-		return self -> d_userData;
+	- (GuiThing) getUserData {
+		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
 		Melder_assert (userData == nullptr || Thing_isa (userData, classGuiMenu));
-		self -> d_userData = static_cast <GuiMenu> (userData);
+		d_userData = static_cast <GuiMenu> (userData);
 	}
 	@end
 	@implementation GuiCocoaMenu {
 		GuiMenu d_userData;
 	}
 	- (void) dealloc {   // override
-		GuiMenu me = self -> d_userData;
+		GuiMenu me = d_userData;
 		forget (me);
 		trace (U"deleting a menu");
 		[super dealloc];
 	}
-	- (GuiThing) userData {
-		return self -> d_userData;
+	- (GuiThing) getUserData {
+		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
 		Melder_assert (userData == nullptr || Thing_isa (userData, classGuiMenu));
-		self -> d_userData = static_cast <GuiMenu> (userData);
+		d_userData = static_cast <GuiMenu> (userData);
 	}
 	@end
 #endif

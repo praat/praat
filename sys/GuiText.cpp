@@ -813,7 +813,7 @@ void _GuiText_exit () {
 		trace (U"deleting a text field");
 		[super dealloc];
 	}
-	- (GuiThing) userData {
+	- (GuiThing) getUserData {
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
@@ -838,7 +838,7 @@ void _GuiText_exit () {
 		trace (U"deleting a text view");
 		[super dealloc];
 	}
-	- (GuiThing) userData {
+	- (GuiThing) getUserData {
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {

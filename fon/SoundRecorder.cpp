@@ -365,17 +365,17 @@ static long getMyNsamp (SoundRecorder me) {
 
 #if cocoa
 	#define WORKPROC_RETURN  void
-	#define WORKPROC_ARGS  CFRunLoopTimerRef /*timer*/, void *void_me
+	#define WORKPROC_ARGS  CFRunLoopTimerRef /*timer*/, void *void_SoundRecorder
 #elif gtk
 	#define WORKPROC_RETURN  gboolean
-	#define WORKPROC_ARGS  void *void_me
+	#define WORKPROC_ARGS  void *void_SoundRecorder
 #else
 	#define WORKPROC_RETURN  bool
-	#define WORKPROC_ARGS  void *void_me
+	#define WORKPROC_ARGS  void *void_SoundRecorder
 #endif
 
 static WORKPROC_RETURN workProc (WORKPROC_ARGS) {
-	iam (SoundRecorder);
+	SoundRecorder me = static_cast <SoundRecorder> (void_SoundRecorder);
 	try {
 		short buffertje [step*2];
 		int stepje = 0;
@@ -500,11 +500,11 @@ static WORKPROC_RETURN workProc (WORKPROC_ARGS) {
 }
 
 static int portaudioStreamCallback (
-    const void *input, void *output,
+    const void *input, void * /* output */,
     unsigned long frameCount,
-    const PaStreamCallbackTimeInfo* timeInfo,
-    PaStreamCallbackFlags statusFlags,
-    void *void_me)
+    const PaStreamCallbackTimeInfo* /* timeInfo */,
+    PaStreamCallbackFlags /* statusFlags */,
+    void *void_SoundRecorder)
 {
 	/*
 	 * This procedure may be called at interrupt time.
@@ -513,10 +513,7 @@ static int portaudioStreamCallback (
 	 * The only thing it changes is my nsamp;
 	 * the workProc will therefore have to take some care in accessing my nsamp (see there).
 	 */
-	iam (SoundRecorder);
-	(void) output;
-	(void) timeInfo;
-	(void) statusFlags;
+	SoundRecorder me = static_cast <SoundRecorder> (void_SoundRecorder);
 	if (Melder_debug == 20)
 		Melder_casual (U"The PortAudio stream callback receives ", frameCount, U" frames.");
 	Melder_assert (my nsamp <= my nmax);

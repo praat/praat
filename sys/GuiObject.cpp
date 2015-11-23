@@ -22,7 +22,7 @@
 
 #if cocoa
 	@interface GuiCocoaView : NSView
-		- (GuiThing) userData;
+		- (GuiThing) getUserData;
 		- (void) setUserData: (GuiThing) userData;
 	@end
 #endif
@@ -32,7 +32,7 @@ void * _GuiObject_getUserData (GuiObject widget) {
 	#if gtk
 		userData = (void *) g_object_get_data (G_OBJECT (widget), "praat");
 	#elif cocoa
-		userData = [(GuiCocoaView *) widget   userData];
+		userData = [(GuiCocoaView *) widget   getUserData];
 	#elif motif
 		XtVaGetValues (widget, XmNuserData, & userData, nullptr);
 	#endif

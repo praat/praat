@@ -71,7 +71,7 @@ Thing_implement (GuiScrollBar, GuiControl, 0);
     trace (U"deleting a scroll bar");
     [super dealloc];
 }
-- (GuiThing) userData {
+- (GuiThing) getUserData {
     return d_userData;
 }
 - (void) setUserData: (GuiThing) userData {

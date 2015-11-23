@@ -101,7 +101,7 @@
 #elif cocoa
 	Thing_declare (GuiThing);
 	@protocol GuiCocoaAny
-		- (GuiThing) userData;
+		- (GuiThing) getUserData;
 		- (void) setUserData: (GuiThing) userData;
 	@end
 	typedef NSObject <GuiCocoaAny> *GuiObject;
