@@ -44,7 +44,6 @@
 	so that you can use the macro 'my' to refer to members.
 	Example: int Person_getAge (I) { iam (Person); return my age; }
 */
-#define I  void *void_me
 #define iam(klas)  klas me = (klas) void_me
 #define my  me ->
 #define thy  thee ->

@@ -451,7 +451,7 @@ void Picture_writeToPngFile_600 (Picture me, MelderFile file) {
 	}
 }
 
-static void print (I, Graphics printer) {
+static void print (void *void_me, Graphics printer) {
 	iam (Picture);
 	Graphics_play (my graphics, printer);
 }

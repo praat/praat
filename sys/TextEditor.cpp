@@ -107,7 +107,7 @@ static void closeDocument (TextEditor me) {
 }
 
 static void cb_open_ok (UiForm sendingForm, int /* narg */, Stackel /* args */, const char32 * /* sendingString */,
-	Interpreter /* interpreter */, const char32 * /* invokingButtonTitle */, bool /* modified */, I)
+	Interpreter /* interpreter */, const char32 * /* invokingButtonTitle */, bool /* modified */, void *void_me)
 {
 	iam (TextEditor);
 	MelderFile file = UiFile_getFile (sendingForm);
@@ -122,7 +122,7 @@ static void cb_showOpen (EditorCommand cmd) {
 }
 
 static void cb_saveAs_ok (UiForm sendingForm, int /* narg */, Stackel /* args */, const char32 * /* sendingString */,
-	Interpreter /* interpreter */, const char32 * /* invokingButtonTitle */, bool /* modified */, I)
+	Interpreter /* interpreter */, const char32 * /* invokingButtonTitle */, bool /* modified */, void *void_me)
 {
 	iam (TextEditor);
 	MelderFile file = UiFile_getFile (sendingForm);

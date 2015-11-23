@@ -27,22 +27,6 @@
 
 #include "Excitations.h"
 
-/*
-static int readText (I, FILE *f)
-{
-	iam (Excitations);
-	my itemClass =  classExcitation;
-	return inherited (Ordered) readText (me, f);
-}
-
-static int readBinary (I, FILE *f)
-{
-	iam (Excitations);
-	my itemClass =  classExcitation;
-	return inherited (Ordered) readBinary (me, f);
-}
-*/
-
 Thing_implement (Excitations, Ordered, 0);
 
 autoExcitations Excitations_create (long initialCapacity) {

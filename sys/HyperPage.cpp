@@ -577,7 +577,7 @@ if (! my printing) {
 	return 1;
 }
 
-static void print (I, Graphics graphics) {
+static void print (void *void_me, Graphics graphics) {
 	iam (HyperPage);
 	my ps = graphics;
 	Graphics_setDollarSignIsCode (graphics, true);
