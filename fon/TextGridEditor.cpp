@@ -649,7 +649,7 @@ static void insertBoundaryOrPoint (TextGridEditor me, int itier, double t1, doub
 		Editor_save (me, U"Add point");
 
 		autoTextPoint newPoint = TextPoint_create (t1, U"");
-		Collection_addItem_move (textTier -> points, newPoint.move());
+		Collection_addItem_move (textTier -> points.get(), newPoint.move());
 	}
 	my d_startSelection = my d_endSelection = t1;
 }
@@ -747,7 +747,7 @@ static void menu_cb_RemovePointOrBoundary (EDITOR_ARGS) {
 		if (! selectedPoint) Melder_throw (U"To remove a point, first click on it.");
 
 		Editor_save (me, U"Remove point");
-		Collection_removeItem (tier -> points, selectedPoint);
+		Collection_removeItem (tier -> points.get(), selectedPoint);
 	}
 	FunctionEditor_updateText (me);
 	FunctionEditor_redraw (me);
@@ -1842,8 +1842,8 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 					 */
 					autoTextPoint newPoint = Data_copy (point);
 					newPoint -> number = xWC;   // move point to drop site
-					Collection_removeItem (textTier -> points, iDraggedPoint);
-					Collection_addItem_move (textTier -> points, newPoint.move());
+					Collection_removeItem (textTier -> points.get(), iDraggedPoint);
+					Collection_addItem_move (textTier -> points.get(), newPoint.move());
 				}
 			}
 		}

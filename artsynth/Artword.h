@@ -65,14 +65,6 @@ void Artword_removeTarget (Artword me, int feature, int iTarget);
 				self -> data [feature]. targets [i] == old self -> data [feature]. targets [i + 1];	
 */
 
-/*
-	Implemented methods:
-
-		int Artword::writeText (I, FILE *f)
-			writes an Artword as text to the stream f.
-
-*/
-
 void Artword_intoArt (Artword me, Art art, double tim);
 /*
 	Function:

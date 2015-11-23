@@ -117,8 +117,7 @@ static void rel_to_abs (double *w, double *ws, long n, double d) {
 	}
 }
 
-static bool RealTier_valuesInRange (I, double min, double max) {
-	iam (RealTier);
+static bool RealTier_valuesInRange (RealTier me, double min, double max) {
 	for (long i = 1; i <= my points -> size; i++) {
 		RealPoint p = (RealPoint) my points -> item[i];
 		if (NUMdefined (min) && p -> value < min) {
@@ -604,7 +603,7 @@ autoPhonationPoint PhonationPoint_create (double time, double period, double ope
 	}
 }
 
-Thing_implement (PhonationTier, Function, 0);
+Thing_implement (PhonationTier, AnyTier, 0);
 
 autoPhonationTier PhonationTier_create (double tmin, double tmax) {
 	try {
@@ -2420,14 +2419,14 @@ void KlattGrid_formula_amplitudes (KlattGrid me, int formantType, const char32 *
 		autoOrdered* ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
 		Formula_compile (interpreter, ordered->get(), expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 		for (long irow = 1; irow <= (*ordered) -> size; irow++) {
-			RealTier amplitudes = (RealTier) (*ordered) -> item[irow];
+			IntensityTier amplitudes = (IntensityTier) (*ordered) -> item[irow];
 			for (long icol = 1; icol <= amplitudes -> points -> size; icol++) {
 				struct Formula_Result result;
 				Formula_run (irow, icol, & result);
 				if (result. result.numericResult == NUMundefined) {
 					Melder_throw (U"Cannot put an undefined value into the tier.\nFormula not finished.");
 				}
-				( (RealPoint) amplitudes -> points -> item [icol]) -> value = result. result.numericResult;
+				((RealPoint) amplitudes -> points -> item [icol]) -> value = result. result.numericResult;
 			}
 		}
 	} catch (MelderError) {
@@ -2440,7 +2439,7 @@ double KlattGrid_getAmplitudeAtTime (KlattGrid me, int formantType, long iforman
 	if (iformant < 0 || iformant > (*ordered) -> size) {
 		return NUMundefined;
 	}
-	return RealTier_getValueAtTime ( (RealTier) (*ordered) -> item[iformant], t);
+	return RealTier_getValueAtTime ((IntensityTier) (*ordered) -> item[iformant], t);
 }
 
 void KlattGrid_addAmplitudePoint (KlattGrid me, int formantType, long iformant, double t, double value) {
@@ -2448,7 +2447,7 @@ void KlattGrid_addAmplitudePoint (KlattGrid me, int formantType, long iformant, 
 	if (iformant < 0 || iformant > (*ordered) -> size) {
 		Melder_throw (U"Formant amplitude tier ", iformant, U"does not exist.");
 	}
-	RealTier_addPoint ( (RealTier) (*ordered) -> item[iformant], t, value);
+	RealTier_addPoint ((IntensityTier) (*ordered) -> item[iformant], t, value);
 }
 
 void KlattGrid_removeAmplitudePoints (KlattGrid me, int formantType, long iformant, double t1, double t2) {
@@ -2456,7 +2455,7 @@ void KlattGrid_removeAmplitudePoints (KlattGrid me, int formantType, long iforma
 	if (iformant < 0 || iformant > (*ordered) ->size) {
 		return;
 	}
-	AnyTier_removePointsBetween ( (*ordered) -> item[iformant], t1, t2);
+	AnyTier_removePointsBetween ((IntensityTier) (*ordered) -> item[iformant], t1, t2);
 }
 
 autoIntensityTier KlattGrid_extractAmplitudeTier (KlattGrid me, int formantType, long iformant) {
@@ -2465,7 +2464,7 @@ autoIntensityTier KlattGrid_extractAmplitudeTier (KlattGrid me, int formantType,
 		if (iformant < 0 || iformant > (*ordered) ->size) {
 			Melder_throw (U"Formant amplitude tier ", iformant, U" does not exist.");
 		}
-		autoIntensityTier thee = Data_copy ( (IntensityTier) (*ordered) -> item[iformant]);
+		autoIntensityTier thee = Data_copy ((IntensityTier) (*ordered) -> item[iformant]);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no IntensityTier extracted.");

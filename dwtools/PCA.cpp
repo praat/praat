@@ -126,8 +126,7 @@ void PCA_getEqualityOfEigenvalues (PCA me, long from, long to, int conservative,
 	*probability = NUMchiSquareQ (*chisq, *ndf);
 }
 
-autoPCA TableOfReal_to_PCA (I) {
-	iam (TableOfReal);
+autoPCA TableOfReal_to_PCA (TableOfReal me) {
 	try {
 		long m = my numberOfRows, n = my numberOfColumns;
 

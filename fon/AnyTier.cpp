@@ -19,6 +19,7 @@
 
 #include "AnyTier.h"
 
+/*
 #include "oo_DESTROY.h"
 #include "AnyTier_def.h"
 #include "oo_COPY.h"
@@ -37,6 +38,7 @@
 #include "AnyTier_def.h"
 #include "oo_DESCRIPTION.h"
 #include "AnyTier_def.h"
+*/
 
 Thing_implement (AnyPoint, SimpleDouble, 0);
 
@@ -58,8 +60,7 @@ void structAnyTier :: v_scaleX (double xminfrom, double xmaxfrom, double xminto,
 	}
 }
 
-long AnyTier_timeToLowIndex (I, double time) {
-	iam (AnyTier);
+long AnyTier_timeToLowIndex (AnyTier me, double time) {
 	if (my points -> size == 0) return 0;   // undefined
 	long ileft = 1, iright = my points -> size;
 	AnyPoint *points = (AnyPoint *) my points -> item;
@@ -88,8 +89,7 @@ long AnyTier_timeToLowIndex (I, double time) {
 	return ileft;
 }
 
-long AnyTier_timeToHighIndex (I, double time) {
-	iam (AnyTier);
+long AnyTier_timeToHighIndex (AnyTier me, double time) {
 	if (my points -> size == 0) return 0;   // undefined; is this right?
 	long ileft = 1, iright = my points -> size;
 	AnyPoint *points = (AnyPoint *) my points -> item;
@@ -118,8 +118,7 @@ long AnyTier_timeToHighIndex (I, double time) {
 	return iright;
 }
 
-long AnyTier_getWindowPoints (I, double tmin, double tmax, long *imin, long *imax) {
-	iam (AnyTier);
+long AnyTier_getWindowPoints (AnyTier me, double tmin, double tmax, long *imin, long *imax) {
 	if (my points -> size == 0) return 0;
 	*imin = AnyTier_timeToHighIndex (me, tmin);
 	*imax = AnyTier_timeToLowIndex (me, tmax);
@@ -127,8 +126,7 @@ long AnyTier_getWindowPoints (I, double tmin, double tmax, long *imin, long *ima
 	return *imax - *imin + 1;
 }
 	
-long AnyTier_timeToNearestIndex (I, double time) {
-	iam (AnyTier);
+long AnyTier_timeToNearestIndex (AnyTier me, double time) {
 	if (my points -> size == 0) return 0;   // undefined
 	long ileft = 1, iright = my points -> size;
 	AnyPoint *points = (AnyPoint *) my points -> item;
@@ -157,8 +155,7 @@ long AnyTier_timeToNearestIndex (I, double time) {
 	return time - tleft <= tright - time ? ileft : iright;
 }
 
-long AnyTier_hasPoint (I, double t) {
-	iam (AnyTier);
+long AnyTier_hasPoint (AnyTier me, double t) {
 	if (my points -> size == 0) return 0;   // point not found
 	long ileft = 1, iright = my points -> size;
 	AnyPoint *points = (AnyPoint *) my points -> item;
@@ -188,40 +185,35 @@ long AnyTier_hasPoint (I, double t) {
 	Melder_assert (iright <= my points -> size);
 	Melder_assert (t > points [ileft] -> number);
 	Melder_assert (t < points [iright] -> number);
-	return 0;   /* Point not found. */
+	return 0;   // point not found
 }
 
-void AnyTier_addPoint (I, Daata point) {
-	iam (AnyTier);
+void AnyTier_addPoint (AnyTier me, Daata point) {
 	try {
-		Collection_addItem (my points, point);
+		Collection_addItem (my points.get(), point);
 	} catch (MelderError) {
 		Melder_throw (me, U": point not added.");
 	}
 }
 
-void AnyTier_removePoint (I, long i) {
-	iam (AnyTier);
-	if (i >= 1 && i <= my points -> size) Collection_removeItem (my points, i);
+void AnyTier_removePoint (AnyTier me, long i) {
+	if (i >= 1 && i <= my points -> size) Collection_removeItem (my points.get(), i);
 }
 
-void AnyTier_removePointNear (I, double time) {
-	iam (AnyTier);
+void AnyTier_removePointNear (AnyTier me, double time) {
 	long ipoint = AnyTier_timeToNearestIndex (me, time);
-	if (ipoint) Collection_removeItem (my points, ipoint);
+	if (ipoint) Collection_removeItem (my points.get(), ipoint);
 }
 
-void AnyTier_removePointsBetween (I, double tmin, double tmax) {
-	iam (AnyTier);
+void AnyTier_removePointsBetween (AnyTier me, double tmin, double tmax) {
 	if (my points -> size == 0) return;
 	long ileft = AnyTier_timeToHighIndex (me, tmin);
 	long iright = AnyTier_timeToLowIndex (me, tmax);
 	for (long i = iright; i >= ileft; i --)
-		Collection_removeItem (my points, i);
+		Collection_removeItem (my points.get(), i);
 }
 
-PointProcess AnyTier_downto_PointProcess (I) {
-	iam (AnyTier);
+PointProcess AnyTier_downto_PointProcess (AnyTier me) {
 	try {
 		long numberOfPoints = my points -> size;
 		AnyPoint *points = (AnyPoint *) my points -> item;

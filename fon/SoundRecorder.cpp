@@ -923,7 +923,7 @@ static void writeAudioFile (SoundRecorder me, MelderFile file, int audioFileType
 
 static void menu_cb_writeWav (EDITOR_ARGS) {
 	EDITOR_IAM (SoundRecorder);
-	EDITOR_FORM_WRITE (U"Save as WAV file", 0)
+	EDITOR_FORM_WRITE (U"Save as WAV file", nullptr)
 		char32 *name = GuiText_getString (my soundName);
 		Melder_sprint (defaultName,300, name, U".wav");
 		Melder_free (name);
@@ -934,7 +934,7 @@ static void menu_cb_writeWav (EDITOR_ARGS) {
 
 static void menu_cb_writeAifc (EDITOR_ARGS) {
 	EDITOR_IAM (SoundRecorder);
-	EDITOR_FORM_WRITE (U"Save as AIFC file", 0)
+	EDITOR_FORM_WRITE (U"Save as AIFC file", nullptr)
 		char32 *name = GuiText_getString (my soundName);
 		Melder_sprint (defaultName,300, name, U".aifc");
 		Melder_free (name);
@@ -945,7 +945,7 @@ static void menu_cb_writeAifc (EDITOR_ARGS) {
 
 static void menu_cb_writeNextSun (EDITOR_ARGS) {
 	EDITOR_IAM (SoundRecorder);
-	EDITOR_FORM_WRITE (U"Save as NeXT/Sun file", 0)
+	EDITOR_FORM_WRITE (U"Save as NeXT/Sun file", nullptr)
 		char32 *name = GuiText_getString (my soundName);
 		Melder_sprint (defaultName,300, name, U".au");
 		Melder_free (name);
@@ -956,7 +956,7 @@ static void menu_cb_writeNextSun (EDITOR_ARGS) {
 
 static void menu_cb_writeNist (EDITOR_ARGS) {
 	EDITOR_IAM (SoundRecorder);
-	EDITOR_FORM_WRITE (U"Save as NIST file", 0)
+	EDITOR_FORM_WRITE (U"Save as NIST file", nullptr)
 		char32 *name = GuiText_getString (my soundName);
 		Melder_sprint (defaultName,300, name, U".nist");
 		Melder_free (name);

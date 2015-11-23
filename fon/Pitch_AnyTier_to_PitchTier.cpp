@@ -28,7 +28,7 @@
 
 autoPitchTier PitchTier_AnyTier_to_PitchTier (PitchTier pitch, AnyTier tier) {
 	try {
-		SortedSetOfDouble points = tier -> points;
+		SortedSetOfDouble points = tier -> points.get();
 		if (pitch -> points -> size == 0) Melder_throw (U"No pitch points.");
 
 		/*
@@ -56,7 +56,7 @@ autoPitchTier PitchTier_AnyTier_to_PitchTier (PitchTier pitch, AnyTier tier) {
 
 autoPitchTier Pitch_AnyTier_to_PitchTier (Pitch pitch, AnyTier tier, int checkMethod) {
 	try {
-		SortedSetOfDouble points = tier -> points;
+		SortedSetOfDouble points = tier -> points.get();
 		if (checkMethod == 2) {
 			autoPitchTier temp = Pitch_to_PitchTier (pitch);
 			return PitchTier_AnyTier_to_PitchTier (temp.peek(), tier);

@@ -49,8 +49,6 @@
 
 Thing_implement (GuiText, GuiControl, 0);
 
-#undef iam
-#define iam(x)  x me = (x) void_me
 #if win || mac && useCarbon
 	#define iam_text \
 		Melder_assert (widget -> widgetClass == xmTextWidgetClass); \

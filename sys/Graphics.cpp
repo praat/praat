@@ -48,13 +48,12 @@ void structGraphics :: v_destroy () {
  * The following routine computes the conversion. It is called by Graphics_init () and by
  * Graphics_setWsViewport ().
  */
-static void widgetToWindowCoordinates (I) {
+static void widgetToWindowCoordinates (Graphics me) {
 	#if motif && mac
-		iam (Graphics);
 		if (my screen) {
-			iam (GraphicsScreen);
-			if (my d_drawingArea) {
-				GuiObject widget = my d_drawingArea -> d_widget;
+			GraphicsScreen me2 = static_cast <GraphicsScreen> (me);
+			if (me2 -> d_drawingArea) {
+				GuiObject widget = me2 -> d_drawingArea -> d_widget;
 				int shellX = 0, shellY = 0;
 				do {
 					int x = widget -> x, y = widget -> y;
@@ -69,7 +68,7 @@ static void widgetToWindowCoordinates (I) {
 			}
 		}
 	#else
-		(void) void_me;
+		(void) me;
 	#endif
 }
 

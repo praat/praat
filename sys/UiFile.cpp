@@ -20,63 +20,34 @@
 #include "UiP.h"
 #include "Editor.h"
 
-Thing_define (UiFile, Thing) {
-	EditorCommand command;
-	GuiWindow parent;
-	structMelderFile file;
-	const char32 *invokingButtonTitle, *helpTitle;
-	UiCallback okCallback;
-	void *okClosure;
-	int shiftKeyPressed;
-
-	void v_destroy ()
-		override;
-};
-
-void structUiFile :: v_destroy () {
-	Melder_free (invokingButtonTitle);
-	UiFile_Parent :: v_destroy ();
-}
-
-Thing_implement (UiFile, Thing, 0);
-
-static void UiFile_init (I, GuiWindow parent, const char32 *title) {
-	iam (UiFile);
-	my parent = parent;
+static void UiFile_init (UiForm me, GuiWindow parent, const char32 *title) {
+	my d_dialogParent = parent;
 	Thing_setName (me, title);
 }
 
-MelderFile UiFile_getFile (I) {
-	iam (UiFile);
+MelderFile UiFile_getFile (UiForm me) {
 	return & my file;
 }
 
 /********** READING A FILE **********/
 
-Thing_define (UiInfile, UiFile) {
-	bool allowMultipleFiles;
-};
-
-Thing_implement (UiInfile, UiFile, 0);
-
 UiForm UiInfile_create (GuiWindow parent, const char32 *title,
 	UiCallback okCallback, void *okClosure,
 	const char32 *invokingButtonTitle, const char32 *helpTitle, bool allowMultipleFiles)
 {
-	UiInfile me = Thing_new (UiInfile);
+	UiForm me = Thing_new (UiForm);
 	my okCallback = okCallback;
-	my okClosure = okClosure;
+	my buttonClosure = okClosure;
 	my invokingButtonTitle = Melder_dup (invokingButtonTitle);
 	my helpTitle = helpTitle;
 	my allowMultipleFiles = allowMultipleFiles;
 	UiFile_init (me, parent, title);
-	return (UiForm) me;
+	return me;
 }
 
-void UiInfile_do (I) {
-	iam (UiInfile);
+void UiInfile_do (UiForm me) {
 	try {
-		autoSortedSetOfString infileNames = GuiFileSelect_getInfileNames (my parent, my name, my allowMultipleFiles);
+		autoSortedSetOfString infileNames = GuiFileSelect_getInfileNames (my d_dialogParent, my name, my allowMultipleFiles);
 		for (long ifile = 1; ifile <= infileNames -> size; ifile ++) {
 			SimpleString infileName = (SimpleString) infileNames -> item [ifile];
 			Melder_pathToFile (infileName -> string, & my file);
@@ -88,7 +59,7 @@ void UiInfile_do (I) {
 			structMelderFile file;
 			MelderFile_copy (& my file, & file);
 			try {
-				my okCallback ((UiForm) me, 0, nullptr, nullptr, nullptr, my invokingButtonTitle, false, my okClosure);
+				my okCallback (me, 0, nullptr, nullptr, nullptr, my invokingButtonTitle, false, my buttonClosure);
 			} catch (MelderError) {
 				Melder_throw (U"File ", & file, U" not finished.");
 			}
@@ -100,25 +71,18 @@ void UiInfile_do (I) {
 
 /********** WRITING A FILE **********/
 
-Thing_define (UiOutfile, UiFile) {
-	bool (*allowExecutionHook) (void *closure);
-	void *allowExecutionClosure;   // I am owner (see destroy)
-};
-
-Thing_implement (UiOutfile, UiFile, 0);
-
 UiForm UiOutfile_create (GuiWindow parent, const char32 *title,
 	UiCallback okCallback, void *okClosure, const char32 *invokingButtonTitle, const char32 *helpTitle)
 {
-	UiOutfile me = Thing_new (UiOutfile);
+	UiForm me = Thing_new (UiForm);
 	my okCallback = okCallback;
-	my okClosure = okClosure;
+	my buttonClosure = okClosure;
 	my invokingButtonTitle = Melder_dup (invokingButtonTitle);
 	my helpTitle = helpTitle;
 	UiFile_init (me, parent, title);
 	my allowExecutionHook = theAllowExecutionHookHint;
 	my allowExecutionClosure = theAllowExecutionClosureHint;
-	return (UiForm) me;
+	return me;
 }
 
 static void commonOutfileCallback (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure) {
@@ -130,20 +94,19 @@ static void commonOutfileCallback (UiForm sendingForm, int narg, Stackel args, c
 
 UiForm UiOutfile_createE (EditorCommand cmd, const char32 *title, const char32 *invokingButtonTitle, const char32 *helpTitle) {
 	Editor editor = cmd -> d_editor;
-	UiOutfile dia = (UiOutfile) UiOutfile_create (editor -> d_windowForm, title, commonOutfileCallback, cmd, invokingButtonTitle, helpTitle);
+	UiForm dia = UiOutfile_create (editor -> d_windowForm, title, commonOutfileCallback, cmd, invokingButtonTitle, helpTitle);
 	dia -> command = cmd;
-	return (UiForm) dia;   // BUG
+	return dia;
 }
 
 UiForm UiInfile_createE (EditorCommand cmd, const char32 *title, const char32 *invokingButtonTitle, const char32 *helpTitle) {
 	Editor editor = cmd -> d_editor;
-	UiInfile dia = (UiInfile) UiInfile_create (editor -> d_windowForm, title, commonOutfileCallback, cmd, invokingButtonTitle, helpTitle, false);
+	UiForm dia = UiInfile_create (editor -> d_windowForm, title, commonOutfileCallback, cmd, invokingButtonTitle, helpTitle, false);
 	dia -> command = cmd;
-	return (UiForm) dia;   // BUG
+	return dia;
 }
 
-void UiOutfile_do (I, const char32 *defaultName) {
-	iam (UiOutfile);
+void UiOutfile_do (UiForm me, const char32 *defaultName) {
 	char32 *outfileName = GuiFileSelect_getOutfileName (nullptr, my name, defaultName);
 	if (! outfileName) return;   // cancelled
 	if (my allowExecutionHook && ! my allowExecutionHook (my allowExecutionClosure)) {
@@ -156,7 +119,7 @@ void UiOutfile_do (I, const char32 *defaultName) {
 	UiHistory_write (U"\n");
 	UiHistory_write_colonize (my invokingButtonTitle);
 	try {
-		my okCallback ((UiForm) me, 0, nullptr, nullptr, nullptr, my invokingButtonTitle, false, my okClosure);
+		my okCallback (me, 0, nullptr, nullptr, nullptr, my invokingButtonTitle, false, my buttonClosure);
 	} catch (MelderError) {
 		Melder_flushError (U"File ", & file, U" not finished.");
 	}

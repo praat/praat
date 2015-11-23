@@ -99,7 +99,7 @@ autoIntensity BandFilterSpectrogram_to_Intensity (BandFilterSpectrogram me);
 
 void BandFilterSpectrogram_drawFrequencyScale (BandFilterSpectrogram me, Graphics g, double xmin, double xmax, double ymin, double ymax, int garnish);
 
-void BandFilterSpectrogram_drawTimeSlice (I, Graphics g, double t, double fmin, double fmax, double min, double max, const char32 *xlabel, int garnish);
+void BandFilterSpectrogram_drawTimeSlice (BandFilterSpectrogram me, Graphics g, double t, double fmin, double fmax, double min, double max, const char32 *xlabel, int garnish);
 
 void BarkSpectrogram_drawSekeyHansonFilterFunctions (BarkSpectrogram me, Graphics g, bool xIsHertz, int fromFilter, int toFilter, double zmin, double zmax, bool yscale_dB, double ymin, double ymax, int garnish);
 

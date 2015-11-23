@@ -49,9 +49,11 @@ oo_END_CLASS (TextInterval)
 
 
 #define ooSTRUCT TextTier
-oo_DEFINE_CLASS (TextTier, Function)
+oo_DEFINE_CLASS (TextTier, AnyTier)
 
-	oo_COLLECTION (SortedSetOfDouble, points, TextPoint, 0)
+	#if ! oo_DECLARING
+		oo_AUTO_COLLECTION (SortedSetOfDouble, points, TextPoint, 0)
+	#endif
 
 	#if oo_DECLARING
 		long numberOfPoints () // accessor

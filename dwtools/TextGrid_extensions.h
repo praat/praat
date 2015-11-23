@@ -79,7 +79,7 @@ void TextGrid_extendTime (TextGrid me, double delta_time, int position);
 
 void TextGrid_setTierName (TextGrid me, long itier, const char32 *newName);
 
-void TextTier_changeLabels (I, long from, long to, const char32 *search, const char32 *replace, int use_regexp, long *nmatches, long *nstringmatches);
+void TextTier_changeLabels (TextTier me, long from, long to, const char32 *search, const char32 *replace, int use_regexp, long *nmatches, long *nstringmatches);
 
 void IntervalTier_changeLabels (IntervalTier me, long from, long to, const char32 *search, const char32 *replace, int use_regexp, long *nmatches, long *nstringmatches);
 

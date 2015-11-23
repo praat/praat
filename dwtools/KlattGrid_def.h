@@ -31,8 +31,10 @@ oo_END_CLASS (PhonationPoint)
 #undef ooSTRUCT
 
 #define ooSTRUCT PhonationTier
-oo_DEFINE_CLASS (PhonationTier, Function)
-	oo_COLLECTION (SortedSetOfDouble, points, PhonationPoint, 0)
+oo_DEFINE_CLASS (PhonationTier, AnyTier)
+	#if ! oo_DECLARING
+		oo_AUTO_COLLECTION (SortedSetOfDouble, points, PhonationPoint, 0)
+	#endif
 oo_END_CLASS (PhonationTier)
 #undef ooSTRUCT
 

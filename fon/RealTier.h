@@ -39,7 +39,7 @@ autoRealPoint RealPoint_create (double time, double value);
 
 /********** class RealTier **********/
 
-oo_CLASS_CREATE (RealTier, Function);
+oo_CLASS_CREATE (RealTier, AnyTier);
 
 void RealTier_init (RealTier me, double tmin, double tmax);
 autoRealTier RealTier_create (double tmin, double tmax);

@@ -110,7 +110,7 @@ Thing_define (LineMinimizer, Minimizer) {
 	//virtual void v_linmin (double p[], double fp, double direction[], double *fret);	 // David, is dit correct? ja
 };
 
-void LineMinimizer_init (I, long nParameters, Daata object, double (*func) (Daata object, const double p[]));
+void LineMinimizer_init (LineMinimizer me, long nParameters, Daata object, double (*func) (Daata object, const double p[]));
 
 /******************  class SteepestDescentMinimizer**************************/
 

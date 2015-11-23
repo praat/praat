@@ -28,7 +28,7 @@ oo_END_CLASS (AnyPoint)
 #define ooSTRUCT AnyTier
 oo_DEFINE_CLASS (AnyTier, Function)
 
-	oo_COLLECTION (SortedSetOfDouble, points, AnyPoint, 0)
+	oo_AUTO_COLLECTION (SortedSetOfDouble, points, AnyPoint, 0)
 
 	#if oo_DECLARING
 		void v_shiftX (double xfrom, double xto)

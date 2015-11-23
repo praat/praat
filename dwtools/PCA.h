@@ -40,7 +40,7 @@ void PCA_setNumberOfObservations (PCA me, long numberOfObservations);
 
 long PCA_getNumberOfObservations (PCA me);
 
-autoPCA TableOfReal_to_PCA (I);
+autoPCA TableOfReal_to_PCA (TableOfReal me);
 /* Calculate PCA of M'M */
 
 void PCA_getEqualityOfEigenvalues (PCA me, long from, long to, int conservative, double *probability, double *chisq, long *ndf);

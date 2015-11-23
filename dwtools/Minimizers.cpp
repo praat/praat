@@ -506,8 +506,7 @@ void structLineMinimizer :: v_destroy () {
 
 Thing_implement (LineMinimizer, Minimizer, 0);
 
-void LineMinimizer_init (I, long nParameters, Daata object, double (*func) (Daata, const double [])) {
-	iam (LineMinimizer);
+void LineMinimizer_init (LineMinimizer me, long nParameters, Daata object, double (*func) (Daata, const double [])) {
 	Minimizer_init (me, nParameters, object);
 	my direction = NUMvector<double> (1, nParameters);
 	my ptry = NUMvector<double> (1, nParameters);

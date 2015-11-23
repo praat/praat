@@ -21,8 +21,6 @@
 
 Thing_implement (GuiButton, GuiControl, 0);
 
-#undef iam
-#define iam(x)  x me = (x) void_me
 #if gtk
 	#define iam_button  GuiButton me = (GuiButton) _GuiObject_getUserData (widget)
 #elif cocoa

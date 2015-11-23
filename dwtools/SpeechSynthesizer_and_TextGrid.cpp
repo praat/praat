@@ -406,7 +406,7 @@ static autoTextTier TextTier_and_IntervalTier_patch (TextTier me, IntervalTier t
                         double time = tp -> number + xShift;
                         if (time < ti -> xmin + precision) {
                             autoTextPoint newPoint = TextPoint_create (time, tp -> mark);
-                            Collection_addItem_move (his points, newPoint.move());
+                            Collection_addItem_move (his points.get(), newPoint.move());
                         } else {
                             break;
                         }
@@ -420,7 +420,7 @@ static autoTextTier TextTier_and_IntervalTier_patch (TextTier me, IntervalTier t
                     double time = tp -> number + xShift;
                     if (time < ti -> xmin + precision) {
                         autoTextPoint newPoint = TextPoint_create (time, tp -> mark);
-                        Collection_addItem_move (his points, newPoint.move());
+                        Collection_addItem_move (his points.get(), newPoint.move());
                     }
                     myIndex++;
                 }
