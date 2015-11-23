@@ -106,7 +106,7 @@ void TextInterval_setText (TextInterval me, const char32 *text) {
 	}
 }
 
-Thing_implement (TextTier, Function, 0);
+Thing_implement (TextTier, AnyTier, 0);
 
 void structTextTier :: v_shiftX (double xfrom, double xto) {
 	TextTier_Parent :: v_shiftX (xfrom, xto);
@@ -139,7 +139,7 @@ autoTextTier TextTier_create (double tmin, double tmax) {
 void TextTier_addPoint (TextTier me, double time, const char32 *mark) {
 	try {
 		autoTextPoint point = TextPoint_create (time, mark);
-		Collection_addItem_move (my points, point.move());
+		Collection_addItem_move (my points.get(), point.move());
 	} catch (MelderError) {
 		Melder_throw (U"Point tier: point not added.");
 	}
@@ -566,7 +566,7 @@ autoTextGrid TextGrid_extractPart (TextGrid me, double tmin, double tmax, int pr
 				for (long ipoint = textTier -> numberOfPoints(); ipoint >= 1; ipoint --) {
 					TextPoint point = textTier -> point (ipoint);
 					if (point -> number < tmin || point -> number > tmax) {
-						Collection_removeItem (textTier -> points, ipoint);
+						Collection_removeItem (textTier -> points.get(), ipoint);
 					}
 				}
 			}
@@ -1240,7 +1240,7 @@ void TextGrid_insertPoint (TextGrid me, int tierNumber, double t, const char32 *
 		if (AnyTier_hasPoint (textTier, t))
 			Melder_throw (U"There is already a point at ", t, U" seconds.");
 		autoTextPoint newPoint = TextPoint_create (t, mark);
-		Collection_addItem_move (textTier -> points, newPoint.move());
+		Collection_addItem_move (textTier -> points.get(), newPoint.move());
 	} catch (MelderError) {
 		Melder_throw (me, U": point not inserted.");
 	}
@@ -1248,13 +1248,13 @@ void TextGrid_insertPoint (TextGrid me, int tierNumber, double t, const char32 *
 
 void TextTier_removePoint (TextTier me, long ipoint) {
 	Melder_assert (ipoint <= my numberOfPoints());
-	Collection_removeItem (my points, ipoint);
+	Collection_removeItem (my points.get(), ipoint);
 }
 
 void TextTier_removePoints (TextTier me, int which_Melder_STRING, const char32 *criterion) {
 	for (long i = my numberOfPoints (); i > 0; i --)
 		if (Melder_stringMatchesCriterion (my point (i) -> mark, which_Melder_STRING, criterion))
-			Collection_removeItem (my points, i);
+			Collection_removeItem (my points.get(), i);
 }
 
 void TextGrid_removePoints (TextGrid me, long tierNumber, int which_Melder_STRING, const char32 *criterion) {
@@ -1381,7 +1381,7 @@ autoTextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 				TextTier tier = static_cast <TextTier> (anyTier);
 				autoTextPoint point = Thing_new (TextPoint);
 				point -> v_readText (text.peek(), formatVersion);
-				Collection_addItem_move (tier -> points, point.move());   // not earlier: sorting depends on contents of point
+				Collection_addItem_move (tier -> points.get(), point.move());   // not earlier: sorting depends on contents of point
 			}
 		}
 		return me;

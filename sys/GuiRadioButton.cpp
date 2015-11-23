@@ -30,8 +30,6 @@
 
 Thing_implement (GuiRadioButton, GuiControl, 0);
 
-#undef iam
-#define iam(x)  x me = (x) void_me
 #if motif
 	#define iam_radiobutton \
 		Melder_assert (widget -> widgetClass == xmToggleButtonWidgetClass); \

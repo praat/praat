@@ -360,7 +360,7 @@ autoScalarProduct Distance_to_ScalarProduct (Distance me, int normalize);
 /************** DISTANCE & PROXIMITY ********************************/
 
 
-void Proximity_Distance_drawScatterDiagram (I, Distance thee, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, int garnish);
+void Proximity_Distance_drawScatterDiagram (Proximity me, Distance thee, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, int garnish);
 
 
 /********** COVARIANCE & CONFIGURATION ***************************/

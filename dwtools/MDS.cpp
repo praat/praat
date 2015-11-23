@@ -1287,8 +1287,7 @@ autoDistance Configuration_to_Distance (Configuration me) {
 	}
 }
 
-void Proximity_Distance_drawScatterDiagram (I, Distance thee, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, int garnish) {
-	iam (Proximity);
+void Proximity_Distance_drawScatterDiagram (Proximity me, Distance thee, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, int garnish) {
 	long n = my numberOfRows * (my numberOfRows - 1) / 2;
 	double **x = my data, **y = thy data;
 

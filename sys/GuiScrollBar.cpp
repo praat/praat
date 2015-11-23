@@ -21,8 +21,6 @@
 
 Thing_implement (GuiScrollBar, GuiControl, 0);
 
-#undef iam
-#define iam(x)  x me = (x) void_me
 #if win || mac
 	#define iam_scrollbar \
 		Melder_assert (widget -> widgetClass == xmScrollBarWidgetClass); \

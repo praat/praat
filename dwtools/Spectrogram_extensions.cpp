@@ -449,8 +449,7 @@ autoMelSpectrogram MelSpectrogram_create (double tmin, double tmax, long nt, dou
 	}
 }
 
-void BandFilterSpectrogram_drawTimeSlice (I, Graphics g, double t, double fmin, double fmax, double min, double max, const char32 *xlabel, int garnish) {
-	iam (Matrix);
+void BandFilterSpectrogram_drawTimeSlice (BandFilterSpectrogram me, Graphics g, double t, double fmin, double fmax, double min, double max, const char32 *xlabel, int garnish) {
 	Matrix_drawSliceY (me, g, t, fmin, fmax, min, max);
 	if (garnish) {
 		Graphics_drawInnerBox (g);

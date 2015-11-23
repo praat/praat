@@ -57,7 +57,7 @@ static const char32 *month [] =
 
 static void menu_cb_writeOneToHtmlFile (EDITOR_ARGS) {
 	EDITOR_IAM (Manual);
-	EDITOR_FORM_WRITE (U"Save as HTML file", 0)
+	EDITOR_FORM_WRITE (U"Save as HTML file", nullptr)
 		ManPages manPages = (ManPages) my data;
 		autoMelderString buffer;
 		MelderString_copy (& buffer, ((ManPage) manPages -> pages -> item [my path]) -> title);
@@ -72,11 +72,11 @@ static void menu_cb_writeOneToHtmlFile (EDITOR_ARGS) {
 
 static void menu_cb_writeAllToHtmlDir (EDITOR_ARGS) {
 	EDITOR_IAM (Manual);
-	EDITOR_FORM (U"Save all pages as HTML files", 0)
+	EDITOR_FORM (U"Save all pages as HTML files", nullptr)
 		LABEL (U"", U"Type a directory name:")
 		TEXTFIELD (U"directory", U"")
 	EDITOR_OK
-		structMelderDir currentDirectory = { { 0 } };
+		structMelderDir currentDirectory { { 0 } };
 		Melder_getDefaultDir (& currentDirectory);
 		SET_STRING (U"directory", Melder_dirToPath (& currentDirectory))
 	EDITOR_DO
@@ -87,7 +87,7 @@ static void menu_cb_writeAllToHtmlDir (EDITOR_ARGS) {
 
 static void menu_cb_searchForPageList (EDITOR_ARGS) {
 	EDITOR_IAM (Manual);
-	EDITOR_FORM (U"Search for page", 0)
+	EDITOR_FORM (U"Search for page", nullptr)
 		ManPages manPages = (ManPages) my data;
 		long numberOfPages;
 		const char32 **pages = ManPages_getTitles (manPages, & numberOfPages);

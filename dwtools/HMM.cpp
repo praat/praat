@@ -54,13 +54,11 @@
 
 // helpers
 int NUMget_line_intersection_with_circle (double xc, double yc, double r, double a, double b, double *x1, double *y1, double *x2, double *y2);
-void HMMObservation_init (I, const char32 *label, long numberOfComponents, long dimension, long storage);
 autoHMMObservation HMMObservation_create (const char32 *label, long numberOfComponents, long dimension, long storage);
 
 long HMM_and_HMMObservationSequence_getLongestSequence (HMM me, HMMObservationSequence thee, long symbolNumber);
 long StringsIndex_getLongestSequence (StringsIndex me, long index, long *pos);
 long Strings_getLongestSequence (Strings me, char32 *string, long *pos);
-void HMMState_init (I, const char32 *label);
 autoHMMState HMMState_create (const char32 *label);
 
 autoHMMBaumWelch HMMBaumWelch_create (long nstates, long nsymbols, long capacity);

@@ -33,10 +33,9 @@
 #include "KlattTable.h"
 #include "Interpreter_decl.h"
 
-
 #include "KlattGrid_def.h"
 oo_CLASS_CREATE (PhonationPoint, Daata);
-oo_CLASS_CREATE (PhonationTier, Function);
+oo_CLASS_CREATE (PhonationTier, AnyTier);
 oo_CLASS_CREATE (PhonationGridPlayOptions, Daata);
 oo_CLASS_CREATE (PhonationGrid, Function);
 oo_CLASS_CREATE (VocalTractGridPlayOptions, Daata);

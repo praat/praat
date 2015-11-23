@@ -575,7 +575,7 @@ END2 }
 DIRECT2 (DurationTier_downto_PointProcess) {
 	LOOP {
 		iam (DurationTier);
-		autoPointProcess thee = AnyTier_downto_PointProcess (OBJECT);
+		autoPointProcess thee = AnyTier_downto_PointProcess (me);
 		praat_new (thee.move(), my name);
 	}
 END2 }

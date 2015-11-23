@@ -64,11 +64,9 @@ long Sampled2_getWindowSamplesY (I, double ymin, double ymax, long *iymin, long 
 
 /**** a little bit dangerous ******/
 
-long Sampled2_getWindowExtrema_d (I, double **z, long ixmin, long ixmax,
+long Sampled2_getWindowExtrema (I, double **z, long ixmin, long ixmax,
 	long iymin, long iymax, double *minimum, double *maximum);
 	
-long Sampled2_getWindowExtrema_f (I, float **z, long ixmin, long ixmax,
-	long iymin, long iymax, double *minimum, double *maximum);
 /*
 	Function:
 		compute the minimum and maximum values of z over all samples inside [ixmin, ixmax] * [iymin, iymax].

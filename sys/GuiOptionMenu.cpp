@@ -21,8 +21,6 @@
 
 Thing_implement (GuiOptionMenu, GuiControl, 0);
 
-#undef iam
-#define iam(x)  x me = (x) void_me
 #if gtk
 	#define iam_optionmenu  GuiOptionMenu me = (GuiOptionMenu) _GuiObject_getUserData (widget)
 #elif cocoa

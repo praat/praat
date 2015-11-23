@@ -20,7 +20,7 @@
 /*
  djmw 20020813 GPL header
  djmw 20061212 Changed info to Melder_writeLine<x> format.
- djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
+ djmw 20071012 Added: oo_CAN_WRITE_AS_ENCODING.h
  djmw 20080122 float -> double
   djmw 20110304 Thing_new
 */
@@ -53,8 +53,8 @@ Thing_implement (SPINET, Sampled2, 0);
 void structSPINET :: v_info () {
 	structDaata :: v_info ();
 	double miny, maxy, mins, maxs;
-	if (! Sampled2_getWindowExtrema_d (this, y, 1, nx, 1, ny, & miny, & maxy) ||
-	        ! Sampled2_getWindowExtrema_d (this, s, 1, nx, 1, ny, & mins, & maxs)) {
+	if (! Sampled2_getWindowExtrema (this, y, 1, nx, 1, ny, & miny, & maxy) ||
+	        ! Sampled2_getWindowExtrema (this, s, 1, nx, 1, ny, & mins, & maxs)) {
 		return;
 	}
 	MelderInfo_writeLine (U"Minimum power: ", miny);

@@ -107,20 +107,35 @@ typedef void (*UiCallback) (UiForm sendingForm, int narg, Stackel args, const ch
 Thing_define (UiForm, Thing) {
 	EditorCommand command;
 	GuiWindow d_dialogParent;
-	GuiDialog d_dialogForm;
+	const char32 *invokingButtonTitle, *helpTitle;
 	UiCallback okCallback;
+	void *buttonClosure;
+
+	/*
+	 * In case the validity of the form depends on the selected objects.
+	 */
+	bool (*allowExecutionHook) (void *closure);
+	void *allowExecutionClosure;
+
+	/*
+	 * In case the form is built by specifying buttons (rather than a system-built-in file dialog).
+	 */
+	GuiDialog d_dialogForm;
 	void (*applyCallback) (UiForm dia, void *closure);
 	void (*cancelCallback) (UiForm dia, void *closure);
-	void *buttonClosure;
-	const char32 *invokingButtonTitle, *helpTitle;
 	int numberOfContinueButtons, defaultContinueButton, cancelContinueButton, clickedContinueButton;
 	const char32 *continueTexts [1 + MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS];
 	int numberOfFields;
 	UiField field [1 + MAXIMUM_NUMBER_OF_FIELDS];
 	GuiButton okButton, cancelButton, revertButton, helpButton, applyButton, continueButtons [1 + MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS];
 	bool destroyWhenUnmanaged, isPauseForm;
-	bool (*allowExecutionHook) (void *closure);
-	void *allowExecutionClosure;
+
+	/*
+	 * In case the form contains a file.
+	 */
+	structMelderFile file;
+	int shiftKeyPressed;
+	bool allowMultipleFiles;   // for input
 
 	void v_destroy ()
 		override;
@@ -224,11 +239,11 @@ UiForm UiOutfile_create (GuiWindow parent, const char32 *title,
   UiCallback okCallback, void *okClosure,
   const char32 *invokingButtonTitle, const char32 *helpTitle);
 
-void UiInfile_do (I);
+void UiInfile_do (UiForm me);
 
-void UiOutfile_do (I, const char32 *defaultName);
+void UiOutfile_do (UiForm me, const char32 *defaultName);
 
-MelderFile UiFile_getFile (I);
+MelderFile UiFile_getFile (UiForm me);
 
 void UiFile_hide ();
 /*

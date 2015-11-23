@@ -31,9 +31,11 @@ oo_END_CLASS (FormantPoint)
 
 
 #define ooSTRUCT FormantTier
-oo_DEFINE_CLASS (FormantTier, Function)
+oo_DEFINE_CLASS (FormantTier, AnyTier)
 
-	oo_COLLECTION (SortedSetOfDouble, points, FormantPoint, 0)
+	#if ! oo_DECLARING
+		oo_AUTO_COLLECTION (SortedSetOfDouble, points, FormantPoint, 0)
+	#endif
 
 oo_END_CLASS (FormantTier)
 #undef ooSTRUCT

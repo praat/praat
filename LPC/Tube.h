@@ -36,7 +36,7 @@ void Tube_Frame_free (Tube_Frame me);
 
 void Tube_Frames_rc_into_area (Tube_Frame me, Tube_Frame thee);
 
-void Tube_init (I, double tmin, double tmax, long nt, double dt, double t1,
+void Tube_init (Tube me, double tmin, double tmax, long nt, double dt, double t1,
 	long maxnSegments, double defaultLength);
 
 Thing_define (Area, Tube) {

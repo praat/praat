@@ -28,8 +28,6 @@
 
 Thing_implement (GuiMenuItem, GuiThing, 0);
 
-#undef iam
-#define iam(x)  x me = (x) void_me
 #if gtk
 	#define iam_menuitem  GuiMenuItem me = (GuiMenuItem) _GuiObject_getUserData (widget)
 #elif cocoa

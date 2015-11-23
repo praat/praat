@@ -85,7 +85,7 @@ void structRealTier :: v_scaleX (double xminfrom, double xmaxfrom, double xminto
 	}
 }
 
-Thing_implement (RealTier, Function, 0);
+Thing_implement (RealTier, AnyTier, 0);
 
 void RealTier_init (RealTier me, double tmin, double tmax) {
 	my xmin = tmin;

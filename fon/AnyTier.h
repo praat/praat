@@ -22,20 +22,34 @@
 #include "Collection.h"
 #include "PointProcess.h"
 
+/*
 #include "AnyTier_def.h"
 oo_CLASS_CREATE (AnyPoint, SimpleDouble);
 oo_CLASS_CREATE (AnyTier, Function);
+*/
 
-long AnyTier_timeToLowIndex (I, double time);
-long AnyTier_timeToHighIndex (I, double time);
-long AnyTier_getWindowPoints (I, double tmin, double tmax, long *imin, long *imax);
-long AnyTier_timeToNearestIndex (I, double time);
-long AnyTier_hasPoint (I, double t);
-void AnyTier_addPoint (I, Daata point);
-void AnyTier_removePoint (I, long i);
-void AnyTier_removePointNear (I, double time);
-void AnyTier_removePointsBetween (I, double tmin, double tmax);
-PointProcess AnyTier_downto_PointProcess (I);
+Thing_define (AnyPoint, SimpleDouble) {
+};
+
+Thing_define (AnyTier, Function) {
+	autoSortedSetOfDouble points;
+
+	void v_shiftX (double xfrom, double xto)
+		override;
+	void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto)
+		override;
+};
+
+long AnyTier_timeToLowIndex (AnyTier me, double time);
+long AnyTier_timeToHighIndex (AnyTier me, double time);
+long AnyTier_getWindowPoints (AnyTier me, double tmin, double tmax, long *imin, long *imax);
+long AnyTier_timeToNearestIndex (AnyTier me, double time);
+long AnyTier_hasPoint (AnyTier me, double t);
+void AnyTier_addPoint (AnyTier me, Daata point);
+void AnyTier_removePoint (AnyTier me, long i);
+void AnyTier_removePointNear (AnyTier me, double time);
+void AnyTier_removePointsBetween (AnyTier me, double tmin, double tmax);
+PointProcess AnyTier_downto_PointProcess (AnyTier me);
 
 #endif
 /* End of file AnyTier.h */

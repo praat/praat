@@ -384,7 +384,7 @@ void TextTier_setLaterEndTime (TextTier me, double xmax, const char32 *mark) {
 		}
 		if (mark) {
 			autoTextPoint textpoint = TextPoint_create (my xmax, mark);
-			Collection_addItem_move (my points, textpoint.move());
+			Collection_addItem_move (my points.get(), textpoint.move());
 		}
 		my xmax = xmax;
 	} catch (MelderError) {
@@ -399,7 +399,7 @@ void TextTier_setEarlierStartTime (TextTier me, double xmin, const char32 *mark)
 		}
 		if (mark) {
 			autoTextPoint textpoint = TextPoint_create (my xmin, mark);
-			Collection_addItem_move (my points, textpoint.move());
+			Collection_addItem_move (my points.get(), textpoint.move());
 		}
 		my xmin = xmin;
 	} catch (MelderError) {
@@ -612,8 +612,7 @@ void IntervalTier_changeLabels (IntervalTier me, long from, long to, const char3
 	}
 }
 
-void TextTier_changeLabels (I, long from, long to, const char32 *search, const char32 *replace, int use_regexp, long *nmatches, long *nstringmatches) {
-	iam (TextTier);
+void TextTier_changeLabels (TextTier me, long from, long to, const char32 *search, const char32 *replace, int use_regexp, long *nmatches, long *nstringmatches) {
 	try {
 		if (from == 0) {
 			from = 1;
@@ -726,7 +725,7 @@ void TextTiers_append_inline (TextTier me, TextTier thee, bool preserveTimes) {
 			if (not preserveTimes) {
 				tp -> number += my xmax - thy xmin;
 			}
-			Collection_addItem_move (my points, tp.move());
+			Collection_addItem_move (my points.get(), tp.move());
 		}
 		my xmax = preserveTimes ? thy xmax : my xmax + (thy xmax - thy xmin);
 	} catch (MelderError) {
