@@ -2,7 +2,7 @@
 #define _SPINET_h_
 /* SPINET.h
  *
- * Copyright (C) 1993-2011, 2015 David Weenink
+ * Copyright (C) 1993-2011,2015 David Weenink, 2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,14 +22,13 @@
 /*
  djmw 19970408
  djmw 20020813 GPL header
- djmw 20110306 Latest modification.
 */
 
-#include "Sampled2.h"
+#include "SampledXY.h"
 #include "Graphics.h"
 
 #include "SPINET_def.h"
-oo_CLASS_CREATE (SPINET, Sampled2);
+oo_CLASS_CREATE (SPINET, SampledXY);
 
 autoSPINET SPINET_create (double tmin, double tmax, long nt, double dt, double t1,
 	 double minimumFrequency, double maximumFrequency, long nFilters,

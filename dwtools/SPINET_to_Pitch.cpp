@@ -1,6 +1,6 @@
 /* SPINET_to_Pitch.cpp
  *
- * Copyright (C) 1993-2011, 2015 David Weenink
+ * Copyright (C) 1993-2011,2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +34,8 @@
 autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceiling, int maxnCandidates) {
 	try {
 		long nPointsPerOctave = 48;
-		double fmin = NUMerbToHertz (Sampled2_rowToY (me, 1));
-		double fmax = NUMerbToHertz (Sampled2_rowToY (me, my ny));
+		double fmin = NUMerbToHertz (SampledXY_indexToY (me, 1L));
+		double fmax = NUMerbToHertz (SampledXY_indexToY (me, my ny));
 		double fminl2 = NUMlog2 (fmin), fmaxl2 = NUMlog2 (fmax);
 		double points = (fmaxl2 - fminl2) * nPointsPerOctave;
 		double dfl2 = (fmaxl2 - fminl2) / (points - 1);

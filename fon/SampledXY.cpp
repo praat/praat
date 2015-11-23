@@ -40,6 +40,20 @@
 
 Thing_implement (SampledXY, Sampled, 0);
 
+/*
+ * CHECK
+	if (xmin > xmax || ymin > ymax) {
+		Melder_throw (U"xmax should be greater than xmax and ymax should be greater than ymin.");
+	}
+	if (nx < 1 || ny < 1) {
+		Melder_throw (U"nx and ny should be at least 1.");
+	}
+	if (dx <= 0 || dy <= 0) {
+		Melder_throw (U"dx and dy should be positive.");
+	}
+}
+*/
+
 void SampledXY_init (SampledXY me,
 	double xmin, double xmax, long nx, double dx, double x1,
 	double ymin, double ymax, long ny, double dy, double y1)

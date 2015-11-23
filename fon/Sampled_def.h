@@ -25,6 +25,18 @@ oo_DEFINE_CLASS (Sampled, Function)
 	oo_DOUBLE (dx)
 	oo_DOUBLE (x1)
 
+	#if oo_READING
+		if (xmin > xmax) {
+			Melder_throw (U"xmax should be greater than xmin.");
+		}
+		if (nx < 1) {
+			Melder_throw (U"nx should be at least 1.");
+		}
+		if (dx <= 0.0) {
+			Melder_throw (U"dx should be positive.");
+		}
+	#endif
+
 	#if oo_DECLARING
 		bool v_hasGetNx ()
 			override { return true; }
