@@ -353,14 +353,14 @@ long Table_getColumnIndexFromColumnLabel (Table me, const char32 *columnLabel) {
 }
 
 long * Table_getColumnIndicesFromColumnLabelString (Table me, const char32 *string, long *numberOfTokens) {
-	*numberOfTokens = 0;
-	autoMelderTokens tokens (string, numberOfTokens);
-	if (*numberOfTokens < 1)
+	autoMelderTokens tokens (string);
+	if (tokens.count() < 1)
 		Melder_throw (me, U": you specified an empty list of columns.");
-	autoNUMvector <long> columns (1, *numberOfTokens);
-	for (long icol = 1; icol <= *numberOfTokens; icol ++) {
+	autoNUMvector <long> columns (1, tokens.count());
+	for (long icol = 1; icol <= tokens.count(); icol ++) {
 		columns [icol] = Table_getColumnIndexFromColumnLabel (me, tokens [icol]);
 	}
+	*numberOfTokens = tokens.count();
 	return columns.transfer();
 }
 
@@ -743,44 +743,49 @@ autoTable Table_collapseRows (Table me, const char32 *factors_string, const char
 		/*
 		 * Parse the six strings of tokens.
 		 */
-		long numberOfFactors;
-		autoMelderTokens factors (factors_string, & numberOfFactors);
+		autoMelderTokens factors (factors_string);
+		long numberOfFactors = factors.count();
 		if (numberOfFactors < 1)
 			Melder_throw (U"In order to pool table data, you must supply at least one independent variable.");
 		Table_columns_checkExist (me, factors.peek(), numberOfFactors);
 
-		long numberToSum = 0;
 		autoMelderTokens columnsToSum;
+		long numberToSum = 0;
 		if (columnsToSum_string) {
-			columnsToSum.reset (columnsToSum_string, & numberToSum);
+			columnsToSum.reset (columnsToSum_string);
+			numberToSum = columnsToSum.count();
 			Table_columns_checkExist (me, columnsToSum.peek(), numberToSum);
 			Table_columns_checkCrossSectionEmpty (factors.peek(), numberOfFactors, columnsToSum.peek(), numberToSum);
 		}
-		long numberToAverage = 0;
 		autoMelderTokens columnsToAverage;
+		long numberToAverage = 0;
 		if (columnsToAverage_string) {
-			columnsToAverage.reset (columnsToAverage_string, & numberToAverage);
+			columnsToAverage.reset (columnsToAverage_string);
+			numberToAverage = columnsToAverage.count();
 			Table_columns_checkExist (me, columnsToAverage.peek(), numberToAverage);
 			Table_columns_checkCrossSectionEmpty (factors.peek(), numberOfFactors, columnsToAverage.peek(), numberToAverage);
 		}
-		long numberToMedianize = 0;
 		autoMelderTokens columnsToMedianize;
+		long numberToMedianize = 0;
 		if (columnsToMedianize_string) {
-			columnsToMedianize.reset (columnsToMedianize_string, & numberToMedianize);
+			columnsToMedianize.reset (columnsToMedianize_string);
+			numberToMedianize = columnsToMedianize.count();
 			Table_columns_checkExist (me, columnsToMedianize.peek(), numberToMedianize);
 			Table_columns_checkCrossSectionEmpty (factors.peek(), numberOfFactors, columnsToMedianize.peek(), numberToMedianize);
 		}
-		long numberToAverageLogarithmically = 0;
 		autoMelderTokens columnsToAverageLogarithmically;
+		long numberToAverageLogarithmically = 0;
 		if (columnsToAverageLogarithmically_string) {
-			columnsToAverageLogarithmically.reset (columnsToAverageLogarithmically_string, & numberToAverageLogarithmically);
+			columnsToAverageLogarithmically.reset (columnsToAverageLogarithmically_string);
+			numberToAverageLogarithmically = columnsToAverageLogarithmically.count();
 			Table_columns_checkExist (me, columnsToAverageLogarithmically.peek(), numberToAverageLogarithmically);
 			Table_columns_checkCrossSectionEmpty (factors.peek(), numberOfFactors, columnsToAverageLogarithmically.peek(), numberToAverageLogarithmically);
 		}
-		long numberToMedianizeLogarithmically = 0;
 		autoMelderTokens columnsToMedianizeLogarithmically;
+		long numberToMedianizeLogarithmically = 0;
 		if (columnsToMedianizeLogarithmically_string) {
-			columnsToMedianizeLogarithmically.reset (columnsToMedianizeLogarithmically_string, & numberToMedianizeLogarithmically);
+			columnsToMedianizeLogarithmically.reset (columnsToMedianizeLogarithmically_string);
+			numberToMedianizeLogarithmically = columnsToMedianizeLogarithmically.count();
 			Table_columns_checkExist (me, columnsToMedianizeLogarithmically.peek(), numberToMedianizeLogarithmically);
 			Table_columns_checkCrossSectionEmpty (factors.peek(), numberOfFactors, columnsToMedianizeLogarithmically.peek(), numberToMedianizeLogarithmically);
 		}
@@ -977,20 +982,22 @@ autoTable Table_rowsToColumns (Table me, const char32 *factors_string, long colu
 	try {
 		Melder_assert (factors_string);
 
-		long numberOfFactors = 0, numberToExpand = 0, numberOfLevels = 0;
 		bool warned = false;
 		/*
 		 * Parse the two strings of tokens.
 		 */
-		autoMelderTokens factors_names (factors_string, & numberOfFactors);
+		autoMelderTokens factors_names (factors_string);
+		long numberOfFactors = factors_names.count();
 		if (numberOfFactors < 1)
 			Melder_throw (U"In order to nest table data, you must supply at least one independent variable.");
 		Table_columns_checkExist (me, factors_names.peek(), numberOfFactors);
-		autoMelderTokens columnsToExpand_names (columnsToExpand_string, & numberToExpand);
+		autoMelderTokens columnsToExpand_names (columnsToExpand_string);
+		long numberToExpand = columnsToExpand_names.count();
 		if (numberToExpand < 1)
 			Melder_throw (U"In order to nest table data, you must supply at least one dependent variable (to expand).");
 		Table_columns_checkExist (me, columnsToExpand_names.peek(), numberToExpand);
 		Table_columns_checkCrossSectionEmpty (factors_names.peek(), numberOfFactors, columnsToExpand_names.peek(), numberToExpand);
+		long numberOfLevels = 0;
 		char32 ** dummy = _Table_getLevels (me, columnToTranspose, & numberOfLevels);
 		autostring32vector levels_names (dummy, 1, numberOfLevels);
 		/*
@@ -1141,8 +1148,8 @@ void Table_sortRows_Assert (Table me, long *columns, long numberOfColumns) {
 
 void Table_sortRows_string (Table me, const char32 *columns_string) {
 	try {
-		long numberOfColumns;
-		autoMelderTokens columns_tokens (columns_string, & numberOfColumns);
+		autoMelderTokens columns_tokens (columns_string);
+		long numberOfColumns = columns_tokens.count();
 		if (numberOfColumns < 1)
 			Melder_throw (me, U": you specified an empty list of columns.");
 		autoNUMvector <long> columns (1, numberOfColumns);

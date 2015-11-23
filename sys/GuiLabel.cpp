@@ -45,7 +45,7 @@ Thing_implement (GuiLabel, GuiControl, 0);
 		trace (U"deleting a label");
 		[super dealloc];
 	}
-	- (GuiThing) userData {
+	- (GuiThing) getUserData {
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {

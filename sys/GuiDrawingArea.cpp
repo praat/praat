@@ -168,7 +168,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		trace (U"deleting a drawing area");
 		[super dealloc];
 	}
-	- (GuiThing) userData {
+	- (GuiThing) getUserData {
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {

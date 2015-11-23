@@ -76,7 +76,7 @@ void Regression_addParameter (Regression me, const char32 *label, double minimum
 		thy minimum = minimum;
 		thy maximum = maximum;
 		thy value = value;
-		Collection_addItem_move (my parameters, thee.move());
+		Collection_addItem_move (my parameters.get(), thee.move());
 	} catch (MelderError) {
 		Melder_throw (me, U": parameter not added.");
 	}
@@ -106,7 +106,7 @@ autoLinearRegression Table_to_LinearRegression (Table me) {
 	try {
 		long numberOfIndependentVariables = my numberOfColumns - 1, numberOfParameters = my numberOfColumns;
 		long numberOfCells = my rows -> size, icell, ivar;
-		if (numberOfParameters < 1)   /* Includes intercept. */
+		if (numberOfParameters < 1)   // includes intercept
 			Melder_throw (U"Not enough columns (has to be more than 1).");
 		if (numberOfCells < numberOfParameters) {
 			Melder_warning (U"Solution is not unique (more parameters than cases).");
@@ -124,7 +124,7 @@ autoLinearRegression Table_to_LinearRegression (Table me) {
 			for (ivar = 1; ivar < numberOfParameters; ivar ++) {
 				u [icell] [ivar] = Table_getNumericValue_Assert (me, icell, ivar);
 			}
-			u [icell] [numberOfParameters] = 1.0;   /* For the intercept. */
+			u [icell] [numberOfParameters] = 1.0;   // for the intercept
 			b [icell] = Table_getNumericValue_Assert (me, icell, my numberOfColumns);   // the dependent variable
 		}
 		NUMsolveEquation (u.peek(), numberOfCells, numberOfParameters, b.peek(), NUMeps * numberOfCells, x.peek());

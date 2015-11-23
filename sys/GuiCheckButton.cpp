@@ -53,7 +53,7 @@ Thing_implement (GuiCheckButton, GuiControl, 0);
 		trace (U"deleting a check button");
 		[super dealloc];
 	}
-	- (GuiThing) userData {
+	- (GuiThing) getUserData {
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {

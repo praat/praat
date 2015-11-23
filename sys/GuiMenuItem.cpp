@@ -31,7 +31,7 @@ Thing_implement (GuiMenuItem, GuiThing, 0);
 #if gtk
 	#define iam_menuitem  GuiMenuItem me = (GuiMenuItem) _GuiObject_getUserData (widget)
 #elif cocoa
-	#define iam_menuitem  GuiMenuItem me = (GuiMenuItem) [(GuiCocoaMenuItem *) widget userData];
+	#define iam_menuitem  GuiMenuItem me = (GuiMenuItem) [(GuiCocoaMenuItem *) widget getUserData];
 #elif motif
 	#define iam_menuitem  GuiMenuItem me = (GuiMenuItem) widget -> userData
 #endif
@@ -118,21 +118,21 @@ static void NativeMenuItem_setText (GuiObject me) {
 		GuiMenuItem d_userData;
 	}
 	- (void) dealloc {   // override
-		GuiMenuItem me = self -> d_userData;
+		GuiMenuItem me = d_userData;
 		forget (me);
 		trace (U"deleting a menu item");
 		[super dealloc];
 	}
-	- (GuiThing) userData {
-		return self -> d_userData;
+	- (GuiThing) getUserData {
+		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
 		Melder_assert (userData == nullptr || Thing_isa (userData, classGuiMenuItem));
-		self -> d_userData = static_cast <GuiMenuItem> (userData);
+		d_userData = static_cast <GuiMenuItem> (userData);
 	}
 	- (void) _guiCocoaMenuItem_activateCallback: (id) widget {
 		Melder_assert (self == widget);   // sender (widget) and receiver (self) happen to be the same object
-		GuiMenuItem me = self -> d_userData;
+		GuiMenuItem me = d_userData;
 		if (my d_callback) {
 			struct structGuiMenuItemEvent event { me, false, false, false, false };
 			try {
@@ -406,7 +406,7 @@ GuiMenuItem GuiMenu_addSeparator (GuiMenu menu) {
 		trace (U"release the item");
 		//[(NSMenuItem *) my d_widget release];   // ... so we can release the item already
 		trace (U"set user data");
-		[(GuiCocoaMenuItem *) my d_widget setUserData: me];
+		[(GuiCocoaMenuItem *) my d_widget   setUserData: me];
 	#elif motif
 		my d_widget = XtVaCreateManagedWidget ("menuSeparator", xmSeparatorGadgetClass, menu -> d_widget, nullptr);
 	#endif

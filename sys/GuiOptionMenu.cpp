@@ -24,7 +24,7 @@ Thing_implement (GuiOptionMenu, GuiControl, 0);
 #if gtk
 	#define iam_optionmenu  GuiOptionMenu me = (GuiOptionMenu) _GuiObject_getUserData (widget)
 #elif cocoa
-	#define iam_optionmenu  GuiOptionMenu me = (GuiOptionMenu) [(GuiCocoaLabel *) widget userData];
+	#define iam_optionmenu  GuiOptionMenu me = (GuiOptionMenu) [(GuiCocoaLabel *) widget   getUserData];
 #elif motif
 	#define iam_optionmenu  GuiOptionMenu me = (GuiOptionMenu) widget -> userData
 #endif
@@ -50,11 +50,11 @@ Thing_implement (GuiOptionMenu, GuiControl, 0);
 		trace (U"deleting an option menu");
 		[super dealloc];
 	}
-	- (GuiThing) userData {
+	- (GuiThing) getUserData {
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
-		d_userData = (GuiOptionMenu)userData;
+		d_userData = (GuiOptionMenu) userData;
 	}
 	@end
 #elif motif

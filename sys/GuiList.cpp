@@ -117,7 +117,7 @@ Thing_implement (GuiList, GuiControl, 0);
 	/*
 	 * Implement GuiCocoaAny protocol.
 	 */
-	- (GuiThing) userData {
+	- (GuiThing) getUserData {
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {

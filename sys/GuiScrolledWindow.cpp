@@ -46,7 +46,7 @@ Thing_implement (GuiScrolledWindow, GuiControl, 0);
 		trace (U"deleting a scrolled window");
 		[super dealloc];
 	}
-	- (GuiThing) userData {
+	- (GuiThing) getUserData {
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {

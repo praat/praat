@@ -56,7 +56,7 @@ Thing_implement (GuiDialog, GuiShell, 0);
 		trace (U"deleting a dialog");
 		[super dealloc];
 	}
-	- (GuiDialog) userData {
+	- (GuiDialog) getUserData {
 		return d_userData;
 	}
 	- (void) setUserData: (GuiDialog) userData {
@@ -64,7 +64,7 @@ Thing_implement (GuiDialog, GuiShell, 0);
 	}
 	- (BOOL) windowShouldClose: (id) sender {
 		GuiCocoaDialog *widget = (GuiCocoaDialog *) sender;
-		GuiDialog me = [widget userData];
+		GuiDialog me = [widget getUserData];
 		if (my d_goAwayCallback) {
 			trace (U"calling goAwayCallback)");
 			my d_goAwayCallback (my d_goAwayBoss);
@@ -131,7 +131,7 @@ GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int heigh
 		[nsWindow setTitle: (NSString *) Melder_peek32toCfstring (title)];
 		//[nsWindow makeKeyAndOrderFront: nil];
 		my d_widget = (GuiObject) [nsWindow contentView];
-		[(GuiCocoaDialog *) nsWindow setUserData: me];
+		[(GuiCocoaDialog *) nsWindow   setUserData: me];
 		[nsWindow setReleasedWhenClosed: NO];
 	#elif motif
 		my d_xmShell = XmCreateDialogShell (mac ? nullptr : parent -> d_widget, "dialogShell", nullptr, 0);

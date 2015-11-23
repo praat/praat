@@ -1447,15 +1447,20 @@ public:
 
 class autoMelderTokens {
 	char32 **tokens;
+	long numberOfTokens;
 public:
 	autoMelderTokens () {
 		tokens = nullptr;
 	}
-	autoMelderTokens (const char32 *string, long *n) {
-		tokens = Melder_getTokens (string, n);
+	autoMelderTokens (const char32 *string) {
+		tokens = Melder_getTokens (string, & numberOfTokens);
 	}
 	~autoMelderTokens () {
-		if (tokens) Melder_freeTokens (& tokens);
+		if (tokens) {
+			for (long itoken = 1; itoken <= numberOfTokens; itoken ++)
+				Melder_free (tokens [itoken]);
+			Melder_freeTokens (& tokens);
+		}
 	}
 	char32*& operator[] (long i) {
 		return tokens [i];
@@ -1463,9 +1468,16 @@ public:
 	char32 ** peek () const {
 		return tokens;
 	}
-	void reset (const char32 *string, long *n) {
-		if (tokens) Melder_freeTokens (& tokens);
-		tokens = Melder_getTokens (string, n);
+	long count () const {
+		return numberOfTokens;
+	}
+	void reset (const char32 *string) {
+		if (tokens) {
+			for (long itoken = 1; itoken <= numberOfTokens; itoken ++)
+				Melder_free (tokens [itoken]);
+			Melder_freeTokens (& tokens);
+		}
+		tokens = Melder_getTokens (string, & numberOfTokens);
 	}
 };
 

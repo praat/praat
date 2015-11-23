@@ -117,7 +117,7 @@ Thing_implement (GuiWindow, GuiShell, 0);
 		trace (U"deleting a window");
 		[super dealloc];
 	}
-	- (GuiThing) userData {
+	- (GuiThing) getUserData {
 		return d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
@@ -133,7 +133,7 @@ Thing_implement (GuiWindow, GuiShell, 0);
 	//}
 	- (BOOL) windowShouldClose: (id) sender {
 		GuiCocoaWindow *widget = (GuiCocoaWindow *) sender;
-		GuiWindow me = (GuiWindow) [widget userData];
+		GuiWindow me = (GuiWindow) [widget getUserData];
 		if (my d_goAwayCallback) {
 			trace (U"calling goAwayCallback)");
 			my d_goAwayCallback (my d_goAwayBoss);
