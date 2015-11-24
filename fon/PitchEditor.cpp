@@ -29,10 +29,9 @@ Thing_implement (PitchEditor, FunctionEditor, 0);
 
 /********** MENU COMMANDS **********/
 
-static void menu_cb_setCeiling (EDITOR_ARGS) {
-	EDITOR_IAM (PitchEditor);
-	EDITOR_FORM (U"Change ceiling", 0)
-		POSITIVE (U"Ceiling (Hz)", U"600")
+static void menu_cb_setCeiling (PitchEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Change ceiling", nullptr)
+		POSITIVE (U"Ceiling (Hz)", U"600.0")
 	EDITOR_OK
 		Pitch pitch = (Pitch) my data;
 		SET_REAL (U"Ceiling", pitch -> ceiling)
@@ -45,16 +44,15 @@ static void menu_cb_setCeiling (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_pathFinder (EDITOR_ARGS) {
-	EDITOR_IAM (PitchEditor);
-	EDITOR_FORM (U"Path finder", 0)
+static void menu_cb_pathFinder (PitchEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Path finder", nullptr)
 		REAL (U"Silence threshold", U"0.03")
 		REAL (U"Voicing threshold", U"0.45")
 		REAL (U"Octave cost", U"0.01")
 		REAL (U"Octave-jump cost", U"0.35")
 		REAL (U"Voiced/unvoiced cost", U"0.14")
-		POSITIVE (U"Ceiling (Hz)", U"600")
-		BOOLEAN (U"Pull formants", 0)
+		POSITIVE (U"Ceiling (Hz)", U"600.0")
+		BOOLEAN (U"Pull formants", false)
 	EDITOR_OK
 		Pitch pitch = (Pitch) my data;
 		SET_REAL (U"Ceiling", pitch -> ceiling)
@@ -70,8 +68,7 @@ static void menu_cb_pathFinder (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_getPitch (EDITOR_ARGS) {
-	EDITOR_IAM (PitchEditor);
+static void menu_cb_getPitch (PitchEditor me, EDITOR_ARGS_DIRECT) {
 	if (my d_startSelection == my d_endSelection) {
 		Melder_informationReal (Pitch_getValueAtTime ((Pitch) my data, my d_startSelection, kPitch_unit_HERTZ, 1), U"Hz");
 	} else {
@@ -79,8 +76,7 @@ static void menu_cb_getPitch (EDITOR_ARGS) {
 	}
 }
 
-static void menu_cb_octaveUp (EDITOR_ARGS) {
-	EDITOR_IAM (PitchEditor);
+static void menu_cb_octaveUp (PitchEditor me, EDITOR_ARGS_DIRECT) {
 	Pitch pitch = (Pitch) my data;
 	Editor_save (me, U"Octave up");
 	Pitch_step (pitch, 2.0, 0.1, my d_startSelection, my d_endSelection);
@@ -88,8 +84,7 @@ static void menu_cb_octaveUp (EDITOR_ARGS) {
 	Editor_broadcastDataChanged (me);
 }
 
-static void menu_cb_fifthUp (EDITOR_ARGS) {
-	EDITOR_IAM (PitchEditor);
+static void menu_cb_fifthUp (PitchEditor me, EDITOR_ARGS_DIRECT) {
 	Pitch pitch = (Pitch) my data;
 	Editor_save (me, U"Fifth up");
 	Pitch_step (pitch, 1.5, 0.1, my d_startSelection, my d_endSelection);
@@ -97,8 +92,7 @@ static void menu_cb_fifthUp (EDITOR_ARGS) {
 	Editor_broadcastDataChanged (me);
 }
 
-static void menu_cb_fifthDown (EDITOR_ARGS) {
-	EDITOR_IAM (PitchEditor);
+static void menu_cb_fifthDown (PitchEditor me, EDITOR_ARGS_DIRECT) {
 	Pitch pitch = (Pitch) my data;
 	Editor_save (me, U"Fifth down");
 	Pitch_step (pitch, 1 / 1.5, 0.1, my d_startSelection, my d_endSelection);
@@ -106,8 +100,7 @@ static void menu_cb_fifthDown (EDITOR_ARGS) {
 	Editor_broadcastDataChanged (me);
 }
 
-static void menu_cb_octaveDown (EDITOR_ARGS) {
-	EDITOR_IAM (PitchEditor);
+static void menu_cb_octaveDown (PitchEditor me, EDITOR_ARGS_DIRECT) {
 	Pitch pitch = (Pitch) my data;
 	Editor_save (me, U"Octave down");
 	Pitch_step (pitch, 0.5, 0.1, my d_startSelection, my d_endSelection);
@@ -115,8 +108,7 @@ static void menu_cb_octaveDown (EDITOR_ARGS) {
 	Editor_broadcastDataChanged (me);
 }
 
-static void menu_cb_voiceless (EDITOR_ARGS) {
-	EDITOR_IAM (PitchEditor);
+static void menu_cb_voiceless (PitchEditor me, EDITOR_ARGS_DIRECT) {
 	Pitch pitch = (Pitch) my data;
 	long ileft = Sampled_xToHighIndex (pitch, my d_startSelection);
 	long iright = Sampled_xToLowIndex (pitch, my d_endSelection);
@@ -137,8 +129,8 @@ static void menu_cb_voiceless (EDITOR_ARGS) {
 	Editor_broadcastDataChanged (me);
 }
 
-static void menu_cb_PitchEditorHelp (EDITOR_ARGS) { EDITOR_IAM (PitchEditor); Melder_help (U"PitchEditor"); }
-static void menu_cb_PitchHelp (EDITOR_ARGS) { EDITOR_IAM (PitchEditor); Melder_help (U"Pitch"); }
+static void menu_cb_PitchEditorHelp (PitchEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"PitchEditor"); }
+static void menu_cb_PitchHelp (PitchEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Pitch"); }
 
 void structPitchEditor :: v_createMenus () {
 	PitchEditor_Parent :: v_createMenus ();

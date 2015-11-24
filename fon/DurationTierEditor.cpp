@@ -22,7 +22,7 @@
 
 Thing_implement (DurationTierEditor, RealTierEditor, 0);
 
-static void menu_cb_DurationTierHelp (EDITOR_ARGS) { EDITOR_IAM (DurationTierEditor); Melder_help (U"DurationTier"); }
+static void menu_cb_DurationTierHelp (DurationTierEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"DurationTier"); }
 
 void structDurationTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	DurationTierEditor_Parent :: v_createHelpMenuItems (menu);

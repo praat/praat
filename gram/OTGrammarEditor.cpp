@@ -28,9 +28,8 @@
 
 Thing_implement (OTGrammarEditor, HyperPage, 0);
 
-static void menu_cb_evaluate (EDITOR_ARGS) {
-	EDITOR_IAM (OTGrammarEditor);
-	EDITOR_FORM (U"Evaluate", 0)
+static void menu_cb_evaluate (OTGrammarEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Evaluate", nullptr)
 		REAL (U"Noise", U"2.0")
 	EDITOR_OK
 	EDITOR_DO
@@ -41,33 +40,29 @@ static void menu_cb_evaluate (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_evaluate_noise_2_0 (EDITOR_ARGS) {
-	EDITOR_IAM (OTGrammarEditor);
+static void menu_cb_evaluate_noise_2_0 (OTGrammarEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Evaluate (noise 2.0)");
 	OTGrammar_newDisharmonies ((OTGrammar) my data, 2.0);
 	Graphics_updateWs (my g);
 	Editor_broadcastDataChanged (me);
 }
 
-static void menu_cb_evaluate_tinyNoise (EDITOR_ARGS) {
-	EDITOR_IAM (OTGrammarEditor);
+static void menu_cb_evaluate_tinyNoise (OTGrammarEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Evaluate (tiny noise)");
 	OTGrammar_newDisharmonies ((OTGrammar) my data, 1e-9);
 	Graphics_updateWs (my g);
 	Editor_broadcastDataChanged (me);
 }
 
-static void menu_cb_evaluate_zeroNoise (EDITOR_ARGS) {
-	EDITOR_IAM (OTGrammarEditor);
+static void menu_cb_evaluate_zeroNoise (OTGrammarEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Evaluate (zero noise)");
 	OTGrammar_newDisharmonies ((OTGrammar) my data, 0.0);
 	Graphics_updateWs (my g);
 	Editor_broadcastDataChanged (me);
 }
 
-static void menu_cb_editConstraint (EDITOR_ARGS) {
-	EDITOR_IAM (OTGrammarEditor);
-	EDITOR_FORM (U"Edit constraint", 0)
+static void menu_cb_editConstraint (OTGrammarEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Edit constraint", nullptr)
 		LABEL (U"constraint", U"");
 		REAL (U"Ranking value", U"100.0");
 		REAL (U"Disharmony", U"100.0");
@@ -95,8 +90,7 @@ static void menu_cb_editConstraint (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_learnOne (EDITOR_ARGS) {
-	EDITOR_IAM (OTGrammarEditor);
+static void menu_cb_learnOne (OTGrammarEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Learn one", U"OTGrammar: Learn one...")
 		LABEL (U"", U"Underlying form:")
 		SENTENCE (U"Input string", U"")
@@ -119,8 +113,7 @@ static void menu_cb_learnOne (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_learnOneFromPartialOutput (EDITOR_ARGS) {
-	EDITOR_IAM (OTGrammarEditor);
+static void menu_cb_learnOneFromPartialOutput (OTGrammarEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Learn one from partial adult output", 0)
 		LABEL (U"", U"Partial adult surface form (e.g. overt form):")
 		SENTENCE (U"Partial output", U"")
@@ -142,8 +135,7 @@ static void menu_cb_learnOneFromPartialOutput (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_removeConstraint (EDITOR_ARGS) {
-	EDITOR_IAM (OTGrammarEditor);
+static void menu_cb_removeConstraint (OTGrammarEditor me, EDITOR_ARGS_DIRECT) {
 	OTGrammar ot = (OTGrammar) my data;
 	OTGrammarConstraint constraint;
 	if (my selected < 1 || my selected > ot -> numberOfConstraints)
@@ -155,8 +147,7 @@ static void menu_cb_removeConstraint (EDITOR_ARGS) {
 	Editor_broadcastDataChanged (me);
 }
 
-static void menu_cb_resetAllRankings (EDITOR_ARGS) {
-	EDITOR_IAM (OTGrammarEditor);
+static void menu_cb_resetAllRankings (OTGrammarEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Reset all rankings", 0)
 		REAL (U"Ranking", U"100.0")
 	EDITOR_OK
@@ -168,9 +159,9 @@ static void menu_cb_resetAllRankings (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_OTGrammarEditor_help (EDITOR_ARGS) { EDITOR_IAM (OTGrammarEditor); Melder_help (U"OTGrammarEditor"); }
-static void menu_cb_OTGrammar_help (EDITOR_ARGS) { EDITOR_IAM (OTGrammarEditor); Melder_help (U"OTGrammar"); }
-static void menu_cb_OTLearningTutorial (EDITOR_ARGS) { EDITOR_IAM (OTGrammarEditor); Melder_help (U"OT learning"); }
+static void menu_cb_OTGrammarEditor_help (OTGrammarEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"OTGrammarEditor"); }
+static void menu_cb_OTGrammar_help (OTGrammarEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"OTGrammar"); }
+static void menu_cb_OTLearningTutorial (OTGrammarEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"OT learning"); }
 
 void structOTGrammarEditor :: v_createMenus () {
 	OTGrammarEditor_Parent :: v_createMenus ();

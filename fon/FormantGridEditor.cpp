@@ -32,8 +32,7 @@ Thing_implement (FormantGridEditor, FunctionEditor, 0);
 
 /********** MENU COMMANDS **********/
 
-static void menu_cb_removePoints (EDITOR_ARGS) {
-	EDITOR_IAM (FormantGridEditor);
+static void menu_cb_removePoints (FormantGridEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Remove point(s)");
 	FormantGrid grid = (FormantGrid) my data;
 	Ordered tiers = my editingBandwidths ? grid -> bandwidths : grid -> formants;
@@ -46,8 +45,7 @@ static void menu_cb_removePoints (EDITOR_ARGS) {
 	Editor_broadcastDataChanged (me);
 }
 
-static void menu_cb_addPointAtCursor (EDITOR_ARGS) {
-	EDITOR_IAM (FormantGridEditor);
+static void menu_cb_addPointAtCursor (FormantGridEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Add point");
 	FormantGrid grid = (FormantGrid) my data;
 	Ordered tiers = my editingBandwidths ? grid -> bandwidths : grid -> formants;
@@ -57,9 +55,8 @@ static void menu_cb_addPointAtCursor (EDITOR_ARGS) {
 	Editor_broadcastDataChanged (me);
 }
 
-static void menu_cb_addPointAt (EDITOR_ARGS) {
-	EDITOR_IAM (FormantGridEditor);
-	EDITOR_FORM (U"Add point", 0)
+static void menu_cb_addPointAt (FormantGridEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Add point", nullptr)
 		REAL (U"Time (s)", U"0.0")
 		POSITIVE (U"Frequency (Hz)", U"200.0")
 	EDITOR_OK
@@ -76,9 +73,8 @@ static void menu_cb_addPointAt (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_setFormantRange (EDITOR_ARGS) {
-	EDITOR_IAM (FormantGridEditor);
-	EDITOR_FORM (U"Set formant range", 0)
+static void menu_cb_setFormantRange (FormantGridEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Set formant range", nullptr)
 		REAL (U"Minimum formant (Hz)", my default_formantFloor   ())
 		REAL (U"Maximum formant (Hz)", my default_formantCeiling ())
 	EDITOR_OK
@@ -91,9 +87,8 @@ static void menu_cb_setFormantRange (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_setBandwidthRange (EDITOR_ARGS) {
-	EDITOR_IAM (FormantGridEditor);
-	EDITOR_FORM (U"Set bandwidth range", 0)
+static void menu_cb_setBandwidthRange (FormantGridEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Set bandwidth range", nullptr)
 		REAL (U"Minimum bandwidth (Hz)", my default_bandwidthFloor   ())
 		REAL (U"Maximum bandwidth (Hz)", my default_bandwidthCeiling ())
 	EDITOR_OK
@@ -106,8 +101,7 @@ static void menu_cb_setBandwidthRange (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_showBandwidths (EDITOR_ARGS) {
-	EDITOR_IAM (FormantGridEditor);
+static void menu_cb_showBandwidths (FormantGridEditor me, EDITOR_ARGS_DIRECT) {
 	my editingBandwidths = ! my editingBandwidths;
 	GuiMenuItem_check (my d_bandwidthsToggle, my editingBandwidths);
 	FunctionEditor_redraw (me);
@@ -122,18 +116,17 @@ static void selectFormantOrBandwidth (FormantGridEditor me, long iformant) {
 	FunctionEditor_redraw (me);
 }
 
-static void menu_cb_selectFirst   (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 1); }
-static void menu_cb_selectSecond  (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 2); }
-static void menu_cb_selectThird   (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 3); }
-static void menu_cb_selectFourth  (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 4); }
-static void menu_cb_selectFifth   (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 5); }
-static void menu_cb_selectSixth   (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 6); }
-static void menu_cb_selectSeventh (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 7); }
-static void menu_cb_selectEighth  (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 8); }
-static void menu_cb_selectNinth   (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 9); }
-static void menu_cb_selectFormantOrBandwidth (EDITOR_ARGS) {
-	EDITOR_IAM (FormantGridEditor);
-	EDITOR_FORM (U"Select formant or bandwidth", 0)
+static void menu_cb_selectFirst   (FormantGridEditor me, EDITOR_ARGS_DIRECT) { selectFormantOrBandwidth (me, 1); }
+static void menu_cb_selectSecond  (FormantGridEditor me, EDITOR_ARGS_DIRECT) { selectFormantOrBandwidth (me, 2); }
+static void menu_cb_selectThird   (FormantGridEditor me, EDITOR_ARGS_DIRECT) { selectFormantOrBandwidth (me, 3); }
+static void menu_cb_selectFourth  (FormantGridEditor me, EDITOR_ARGS_DIRECT) { selectFormantOrBandwidth (me, 4); }
+static void menu_cb_selectFifth   (FormantGridEditor me, EDITOR_ARGS_DIRECT) { selectFormantOrBandwidth (me, 5); }
+static void menu_cb_selectSixth   (FormantGridEditor me, EDITOR_ARGS_DIRECT) { selectFormantOrBandwidth (me, 6); }
+static void menu_cb_selectSeventh (FormantGridEditor me, EDITOR_ARGS_DIRECT) { selectFormantOrBandwidth (me, 7); }
+static void menu_cb_selectEighth  (FormantGridEditor me, EDITOR_ARGS_DIRECT) { selectFormantOrBandwidth (me, 8); }
+static void menu_cb_selectNinth   (FormantGridEditor me, EDITOR_ARGS_DIRECT) { selectFormantOrBandwidth (me, 9); }
+static void menu_cb_selectFormantOrBandwidth (FormantGridEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Select formant or bandwidth", nullptr)
 		NATURAL (U"Formant number", U"1")
 	EDITOR_OK
 		SET_INTEGER (U"Formant number", my selectedFormant)
@@ -143,9 +136,8 @@ static void menu_cb_selectFormantOrBandwidth (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_pitchSettings (EDITOR_ARGS) {
-	EDITOR_IAM (FormantGridEditor);
-	EDITOR_FORM (U"Source pitch settings", 0)
+static void menu_cb_pitchSettings (FormantGridEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Source pitch settings", nullptr)
 		LABEL (U"", U"These settings apply to the pitch curve")
 		LABEL (U"", U"that you hear when playing the FormantGrid.")
 		REAL     (U"Starting time",       my default_source_pitch_tStart  ())

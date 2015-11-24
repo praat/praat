@@ -338,7 +338,7 @@ void Table_setColumnLabel (Table me, long columnNumber, const char32 *label /* c
 	}
 }
 
-long Table_findColumnIndexFromColumnLabel (Table me, const char32 *label) {
+long Table_findColumnIndexFromColumnLabel (Table me, const char32 *label) noexcept {
 	for (long icol = 1; icol <= my numberOfColumns; icol ++)
 		if (my columnHeaders [icol]. label && str32equ (my columnHeaders [icol]. label, label))
 			return icol;
@@ -352,7 +352,7 @@ long Table_getColumnIndexFromColumnLabel (Table me, const char32 *columnLabel) {
 	return columnNumber;
 }
 
-long * Table_getColumnIndicesFromColumnLabelString (Table me, const char32 *string, long *numberOfTokens) {
+long * Table_getColumnIndicesFromColumnLabelString (Table me, const char32 *string, long *ptr_numberOfTokens) {
 	autoMelderTokens tokens (string);
 	if (tokens.count() < 1)
 		Melder_throw (me, U": you specified an empty list of columns.");
@@ -360,11 +360,11 @@ long * Table_getColumnIndicesFromColumnLabelString (Table me, const char32 *stri
 	for (long icol = 1; icol <= tokens.count(); icol ++) {
 		columns [icol] = Table_getColumnIndexFromColumnLabel (me, tokens [icol]);
 	}
-	*numberOfTokens = tokens.count();
+	*ptr_numberOfTokens = tokens.count();
 	return columns.transfer();
 }
 
-long Table_searchColumn (Table me, long columnNumber, const char32 *value) {
+long Table_searchColumn (Table me, long columnNumber, const char32 *value) noexcept {
 	for (long irow = 1; irow <= my rows -> size; irow ++) {
 		TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 		if (row -> cells [columnNumber]. string && str32equ (row -> cells [columnNumber]. string, value))
@@ -1164,7 +1164,7 @@ void Table_sortRows_string (Table me, const char32 *columns_string) {
 	}
 }
 
-void Table_randomizeRows (Table me) {
+void Table_randomizeRows (Table me) noexcept {
 	for (long irow = 1; irow <= my rows -> size; irow ++) {
 		long jrow = NUMrandomInteger (irow, my rows -> size);
 		TableRow tmp = static_cast <TableRow> (my rows -> item [irow]);
@@ -1173,7 +1173,7 @@ void Table_randomizeRows (Table me) {
 	}
 }
 
-void Table_reflectRows (Table me) {
+void Table_reflectRows (Table me) noexcept {
 	for (long irow = 1; irow <= my rows -> size / 2; irow ++) {
 		long jrow = my rows -> size + 1 - irow;
 		TableRow tmp = static_cast <TableRow> (my rows -> item [irow]);

@@ -38,8 +38,7 @@ static void KlattGrid_Editor_defaultPlay (KlattGrid me, double tmin, double tmax
 
 Thing_implement (KlattGrid_RealTierEditor, RealTierEditor, 0);
 
-static void menu_cb_KlattGridHelp (EDITOR_ARGS) {
-	EDITOR_IAM (KlattGrid_RealTierEditor);
+static void menu_cb_KlattGridHelp (KlattGrid_RealTierEditor, EDITOR_ARGS_DIRECT) {
 	Melder_help (U"KlattGrid");
 }
 
@@ -54,19 +53,19 @@ void structKlattGrid_RealTierEditor :: v_play (double ltmin, double ltmax) {
 
 void KlattGrid_RealTierEditor_init (KlattGrid_RealTierEditor me, const char32 *title, KlattGrid klattgrid, RealTier data) {
 	my klattgrid = klattgrid;
-	RealTierEditor_init (me, title, data, 0, 0);
+	RealTierEditor_init (me, title, data, nullptr, false);
 }
 
 /************************** KlattGrid_PitchTierEditor *********************************/
 
 Thing_implement (KlattGrid_PitchTierEditor, KlattGrid_RealTierEditor, 0);
 
-static void menu_cb_KlattGrid_PitchTierEditorHelp (EDITOR_ARGS) {
-	EDITOR_IAM (KlattGrid_PitchTierEditor); Melder_help (U"PitchTierEditor");
+static void menu_cb_KlattGrid_PitchTierEditorHelp (KlattGrid_PitchTierEditor, EDITOR_ARGS_DIRECT) {
+	Melder_help (U"PitchTierEditor");
 }
 
-static void menu_cb_PitchTierHelp (EDITOR_ARGS) {
-	EDITOR_IAM (KlattGrid_PitchTierEditor); Melder_help (U"PitchTier");
+static void menu_cb_PitchTierHelp (KlattGrid_PitchTierEditor, EDITOR_ARGS_DIRECT) {
+	Melder_help (U"PitchTier");
 }
 
 void structKlattGrid_PitchTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
@@ -89,8 +88,7 @@ autoKlattGrid_PitchTierEditor KlattGrid_PitchTierEditor_create (const char32 *ti
 
 Thing_implement (KlattGrid_IntensityTierEditor, KlattGrid_RealTierEditor, 0);
 
-static void menu_cb_IntensityTierHelp (EDITOR_ARGS) {
-	EDITOR_IAM (KlattGrid_IntensityTierEditor);
+static void menu_cb_IntensityTierHelp (KlattGrid_IntensityTierEditor, EDITOR_ARGS_DIRECT) {
 	Melder_help (U"IntensityTier");
 }
 

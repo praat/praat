@@ -29,7 +29,7 @@ Thing_implement (EEGWindow, TextGridEditor, 0);
 #include "prefs_copyToInstance.h"
 #include "EEGWindow_prefs.h"
 
-static void menu_cb_EEGWindowHelp (EDITOR_ARGS) { EDITOR_IAM (EEGWindow); Melder_help (U"EEG window"); }
+static void menu_cb_EEGWindowHelp (EEGWindow, EDITOR_ARGS_DIRECT) { Melder_help (U"EEG window"); }
 
 void structEEGWindow :: v_createMenus () {
 	EEGWindow_Parent :: v_createMenus ();
@@ -45,15 +45,13 @@ const char32 * structEEGWindow :: v_getChannelName (long channelNumber) {
 	return our eeg -> channelNames [channelNumber];
 }
 
-static void menu_cb_ExtractSelectedEEG_preserveTimes (EDITOR_ARGS) {
-	EDITOR_IAM (EEGWindow);
+static void menu_cb_ExtractSelectedEEG_preserveTimes (EEGWindow me, EDITOR_ARGS_DIRECT) {
 	if (my d_endSelection <= my d_startSelection) Melder_throw (U"No selection.");
 	autoEEG extract = EEG_extractPart (my eeg, my d_startSelection, my d_endSelection, true);
 	Editor_broadcastPublication (me, extract.transfer());
 }
 
-static void menu_cb_ExtractSelectedEEG_timeFromZero (EDITOR_ARGS) {
-	EDITOR_IAM (EEGWindow);
+static void menu_cb_ExtractSelectedEEG_timeFromZero (EEGWindow me, EDITOR_ARGS_DIRECT) {
 	if (my d_endSelection <= my d_startSelection) Melder_throw (U"No selection.");
 	autoEEG extract = EEG_extractPart (my eeg, my d_startSelection, my d_endSelection, false);
 	Editor_broadcastPublication (me, extract.transfer());

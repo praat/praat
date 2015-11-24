@@ -162,15 +162,13 @@ static void scrollToView (TextGridEditor me, double t) {
 
 /***** FILE MENU *****/
 
-static void menu_cb_ExtractSelectedTextGrid_preserveTimes (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_ExtractSelectedTextGrid_preserveTimes (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	if (my d_endSelection <= my d_startSelection) Melder_throw (U"No selection.");
 	autoTextGrid extract = TextGrid_extractPart ((TextGrid) my data, my d_startSelection, my d_endSelection, true);
 	Editor_broadcastPublication (me, extract.transfer());
 }
 
-static void menu_cb_ExtractSelectedTextGrid_timeFromZero (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_ExtractSelectedTextGrid_timeFromZero (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	if (my d_endSelection <= my d_startSelection) Melder_throw (U"No selection.");
 	autoTextGrid extract = TextGrid_extractPart ((TextGrid) my data, my d_startSelection, my d_endSelection, false);
 	Editor_broadcastPublication (me, extract.transfer());
@@ -184,9 +182,8 @@ void structTextGridEditor :: v_createMenuItems_file_extract (EditorMenu menu) {
 		EditorMenu_addCommand (menu, U"Extract selected TextGrid (time from 0)", 0, menu_cb_ExtractSelectedTextGrid_timeFromZero);
 }
 
-static void menu_cb_WriteToTextFile (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM_WRITE (U"Save as TextGrid text file", 0)
+static void menu_cb_WriteToTextFile (TextGridEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM_WRITE (U"Save as TextGrid text file", nullptr)
 		Melder_sprint (defaultName,300, my data -> name, U".TextGrid");
 	EDITOR_DO_WRITE
 		Data_writeToTextFile (my data, file);
@@ -198,9 +195,8 @@ void structTextGridEditor :: v_createMenuItems_file_write (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"Save TextGrid as text file...", 'S', menu_cb_WriteToTextFile);
 }
 
-static void menu_cb_DrawVisibleTextGrid (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM (U"Draw visible TextGrid", 0)
+static void menu_cb_DrawVisibleTextGrid (TextGridEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Draw visible TextGrid", nullptr)
 		my v_form_pictureWindow (cmd);
 		my v_form_pictureMargins (cmd);
 		my v_form_pictureSelection (cmd);
@@ -223,9 +219,8 @@ static void menu_cb_DrawVisibleTextGrid (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_DrawVisibleSoundAndTextGrid (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM (U"Draw visible sound and TextGrid", 0)
+static void menu_cb_DrawVisibleSoundAndTextGrid (TextGridEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Draw visible sound and TextGrid", nullptr)
 		my v_form_pictureWindow (cmd);
 		my v_form_pictureMargins (cmd);
 		my v_form_pictureSelection (cmd);
@@ -264,26 +259,21 @@ void structTextGridEditor :: v_createMenuItems_file_draw (EditorMenu menu) {
 /***** EDIT MENU *****/
 
 #ifndef macintosh
-static void menu_cb_Cut (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_Cut (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	GuiText_cut (my text);
 }
-static void menu_cb_Copy (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_Copy (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	GuiText_copy (my text);
 }
-static void menu_cb_Paste (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_Paste (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	GuiText_paste (my text);
 }
-static void menu_cb_Erase (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_Erase (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	GuiText_remove (my text);
 }
 #endif
 
-static void menu_cb_Genericize (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_Genericize (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Convert to Backslash Trigraphs");
 	TextGrid_genericize ((TextGrid) my data);
 	FunctionEditor_updateText (me);
@@ -291,8 +281,7 @@ static void menu_cb_Genericize (EDITOR_ARGS) {
 	Editor_broadcastDataChanged (me);
 }
 
-static void menu_cb_Nativize (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_Nativize (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Convert to Unicode");
 	TextGrid_nativize ((TextGrid) my data);
 	FunctionEditor_updateText (me);
@@ -302,8 +291,7 @@ static void menu_cb_Nativize (EDITOR_ARGS) {
 
 /***** QUERY MENU *****/
 
-static void menu_cb_GetStartingPointOfInterval (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_GetStartingPointOfInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	TextGrid grid = (TextGrid) my data;
 	checkTierSelection (me, U"query the starting point of an interval");
 	Function anyTier = (Function) grid -> tiers -> item [my selectedTier];
@@ -318,8 +306,7 @@ static void menu_cb_GetStartingPointOfInterval (EDITOR_ARGS) {
 	}
 }
 
-static void menu_cb_GetEndPointOfInterval (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_GetEndPointOfInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	TextGrid grid = (TextGrid) my data;
 	checkTierSelection (me, U"query the end point of an interval");
 	Function anyTier = (Function) grid -> tiers -> item [my selectedTier];
@@ -334,8 +321,7 @@ static void menu_cb_GetEndPointOfInterval (EDITOR_ARGS) {
 	}
 }
 
-static void menu_cb_GetLabelOfInterval (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_GetLabelOfInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	TextGrid grid = (TextGrid) my data;
 	checkTierSelection (me, U"query the label of an interval");
 	Function anyTier = (Function) grid -> tiers -> item [my selectedTier];
@@ -364,13 +350,11 @@ static void do_selectAdjacentTier (TextGridEditor me, bool previous) {
 	}
 }
 
-static void menu_cb_SelectPreviousTier (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_SelectPreviousTier (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	do_selectAdjacentTier (me, true);
 }
 
-static void menu_cb_SelectNextTier (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_SelectNextTier (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	do_selectAdjacentTier (me, false);
 }
 
@@ -439,28 +423,23 @@ static void do_selectAdjacentInterval (TextGridEditor me, bool previous, bool sh
 	}
 }
 
-static void menu_cb_SelectPreviousInterval (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_SelectPreviousInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	do_selectAdjacentInterval (me, true, false);
 }
 
-static void menu_cb_SelectNextInterval (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_SelectNextInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	do_selectAdjacentInterval (me, false, false);
 }
 
-static void menu_cb_ExtendSelectPreviousInterval (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_ExtendSelectPreviousInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	do_selectAdjacentInterval (me, true, true);
 }
 
-static void menu_cb_ExtendSelectNextInterval (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_ExtendSelectNextInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	do_selectAdjacentInterval (me, false, true);
 }
 
-static void menu_cb_MoveBtoZero (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_MoveBtoZero (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	double zero = Sound_getNearestZeroCrossing (my d_sound.data, my d_startSelection, 1);   // STEREO BUG
 	if (NUMdefined (zero)) {
 		my d_startSelection = zero;
@@ -473,8 +452,7 @@ static void menu_cb_MoveBtoZero (EDITOR_ARGS) {
 	}
 }
 
-static void menu_cb_MoveCursorToZero (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_MoveCursorToZero (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	double zero = Sound_getNearestZeroCrossing (my d_sound.data, 0.5 * (my d_startSelection + my d_endSelection), 1);   // STEREO BUG
 	if (NUMdefined (zero)) {
 		my d_startSelection = my d_endSelection = zero;
@@ -482,8 +460,7 @@ static void menu_cb_MoveCursorToZero (EDITOR_ARGS) {
 	}
 }
 
-static void menu_cb_MoveEtoZero (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_MoveEtoZero (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	double zero = Sound_getNearestZeroCrossing (my d_sound.data, my d_endSelection, 1);   // STEREO BUG
 	if (NUMdefined (zero)) {
 		my d_endSelection = zero;
@@ -498,9 +475,8 @@ static void menu_cb_MoveEtoZero (EDITOR_ARGS) {
 
 /***** PITCH MENU *****/
 
-static void menu_cb_DrawTextGridAndPitch (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM (U"Draw TextGrid and Pitch separately", 0)
+static void menu_cb_DrawTextGridAndPitch (TextGridEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Draw TextGrid and Pitch separately", nullptr)
 		my v_form_pictureWindow (cmd);
 		LABEL (U"", U"TextGrid:")
 		BOOLEAN (U"Show boundaries and points", my default_picture_showBoundaries ());
@@ -668,17 +644,16 @@ static void do_insertIntervalOnTier (TextGridEditor me, int itier) {
 	}
 }
 
-static void menu_cb_InsertIntervalOnTier1 (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); do_insertIntervalOnTier (me, 1); }
-static void menu_cb_InsertIntervalOnTier2 (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); do_insertIntervalOnTier (me, 2); }
-static void menu_cb_InsertIntervalOnTier3 (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); do_insertIntervalOnTier (me, 3); }
-static void menu_cb_InsertIntervalOnTier4 (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); do_insertIntervalOnTier (me, 4); }
-static void menu_cb_InsertIntervalOnTier5 (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); do_insertIntervalOnTier (me, 5); }
-static void menu_cb_InsertIntervalOnTier6 (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); do_insertIntervalOnTier (me, 6); }
-static void menu_cb_InsertIntervalOnTier7 (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); do_insertIntervalOnTier (me, 7); }
-static void menu_cb_InsertIntervalOnTier8 (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); do_insertIntervalOnTier (me, 8); }
+static void menu_cb_InsertIntervalOnTier1 (TextGridEditor me, EDITOR_ARGS_DIRECT) { do_insertIntervalOnTier (me, 1); }
+static void menu_cb_InsertIntervalOnTier2 (TextGridEditor me, EDITOR_ARGS_DIRECT) { do_insertIntervalOnTier (me, 2); }
+static void menu_cb_InsertIntervalOnTier3 (TextGridEditor me, EDITOR_ARGS_DIRECT) { do_insertIntervalOnTier (me, 3); }
+static void menu_cb_InsertIntervalOnTier4 (TextGridEditor me, EDITOR_ARGS_DIRECT) { do_insertIntervalOnTier (me, 4); }
+static void menu_cb_InsertIntervalOnTier5 (TextGridEditor me, EDITOR_ARGS_DIRECT) { do_insertIntervalOnTier (me, 5); }
+static void menu_cb_InsertIntervalOnTier6 (TextGridEditor me, EDITOR_ARGS_DIRECT) { do_insertIntervalOnTier (me, 6); }
+static void menu_cb_InsertIntervalOnTier7 (TextGridEditor me, EDITOR_ARGS_DIRECT) { do_insertIntervalOnTier (me, 7); }
+static void menu_cb_InsertIntervalOnTier8 (TextGridEditor me, EDITOR_ARGS_DIRECT) { do_insertIntervalOnTier (me, 8); }
 
-static void menu_cb_AlignInterval (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_AlignInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	TextGrid grid = (TextGrid) my data;
 	checkTierSelection (me, U"align words");
 	AnyTier tier = static_cast <AnyTier> (grid -> tiers -> item [my selectedTier]);
@@ -701,9 +676,8 @@ static void menu_cb_AlignInterval (EDITOR_ARGS) {
 	Editor_broadcastDataChanged (me);
 }
 
-static void menu_cb_AlignmentSettings (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM (U"Alignment settings", 0)
+static void menu_cb_AlignmentSettings (TextGridEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Alignment settings", nullptr)
 		OPTIONMENU (U"Language", Strings_findString (espeakdata_voices_names.get(), U"English"))
 		for (long i = 1; i <= espeakdata_voices_names -> numberOfStrings; i ++) {
 			OPTION ((const char32 *) espeakdata_voices_names -> strings [i]);
@@ -729,8 +703,7 @@ static void menu_cb_AlignmentSettings (EDITOR_ARGS) {
 
 /***** BOUNDARY/POINT MENU *****/
 
-static void menu_cb_RemovePointOrBoundary (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_RemovePointOrBoundary (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	TextGrid grid = (TextGrid) my data;
 	checkTierSelection (me, U"remove a point or boundary");
 	Function anyTier = (Function) grid -> tiers -> item [my selectedTier];
@@ -800,18 +773,15 @@ static void do_movePointOrBoundary (TextGridEditor me, int where) {
 	Editor_broadcastDataChanged (me);
 }
 
-static void menu_cb_MoveToB (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_MoveToB (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	do_movePointOrBoundary (me, 1);
 }
 
-static void menu_cb_MoveToE (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_MoveToE (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	do_movePointOrBoundary (me, 2);
 }
 
-static void menu_cb_MoveToZero (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_MoveToZero (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	do_movePointOrBoundary (me, 0);
 }
 
@@ -829,22 +799,20 @@ static void do_insertOnTier (TextGridEditor me, int itier) {
 	}
 }
 
-static void menu_cb_InsertOnSelectedTier (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_InsertOnSelectedTier (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	do_insertOnTier (me, my selectedTier);
 }
 
-static void menu_cb_InsertOnTier1 (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); do_insertOnTier (me, 1); }
-static void menu_cb_InsertOnTier2 (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); do_insertOnTier (me, 2); }
-static void menu_cb_InsertOnTier3 (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); do_insertOnTier (me, 3); }
-static void menu_cb_InsertOnTier4 (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); do_insertOnTier (me, 4); }
-static void menu_cb_InsertOnTier5 (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); do_insertOnTier (me, 5); }
-static void menu_cb_InsertOnTier6 (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); do_insertOnTier (me, 6); }
-static void menu_cb_InsertOnTier7 (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); do_insertOnTier (me, 7); }
-static void menu_cb_InsertOnTier8 (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); do_insertOnTier (me, 8); }
+static void menu_cb_InsertOnTier1 (TextGridEditor me, EDITOR_ARGS_DIRECT) { do_insertOnTier (me, 1); }
+static void menu_cb_InsertOnTier2 (TextGridEditor me, EDITOR_ARGS_DIRECT) { do_insertOnTier (me, 2); }
+static void menu_cb_InsertOnTier3 (TextGridEditor me, EDITOR_ARGS_DIRECT) { do_insertOnTier (me, 3); }
+static void menu_cb_InsertOnTier4 (TextGridEditor me, EDITOR_ARGS_DIRECT) { do_insertOnTier (me, 4); }
+static void menu_cb_InsertOnTier5 (TextGridEditor me, EDITOR_ARGS_DIRECT) { do_insertOnTier (me, 5); }
+static void menu_cb_InsertOnTier6 (TextGridEditor me, EDITOR_ARGS_DIRECT) { do_insertOnTier (me, 6); }
+static void menu_cb_InsertOnTier7 (TextGridEditor me, EDITOR_ARGS_DIRECT) { do_insertOnTier (me, 7); }
+static void menu_cb_InsertOnTier8 (TextGridEditor me, EDITOR_ARGS_DIRECT) { do_insertOnTier (me, 8); }
 
-static void menu_cb_InsertOnAllTiers (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_InsertOnAllTiers (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	TextGrid grid = (TextGrid) my data;
 	int saveTier = my selectedTier;
 	for (int itier = 1; itier <= grid -> tiers -> size; itier ++) {
@@ -914,9 +882,8 @@ static void do_find (TextGridEditor me) {
 	}
 }
 
-static void menu_cb_Find (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM (U"Find text", 0)
+static void menu_cb_Find (TextGridEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Find text", nullptr)
 		LABEL (U"", U"Text:")
 		TEXTFIELD (U"string", U"")
 	EDITOR_OK
@@ -927,8 +894,7 @@ static void menu_cb_Find (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_FindAgain (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_FindAgain (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	do_find (me);
 }
 
@@ -980,8 +946,7 @@ static void checkSpellingInTier (TextGridEditor me) {
 	}
 }
 
-static void menu_cb_CheckSpelling (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_CheckSpelling (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	if (my spellingChecker) {
 		long left, right;
 		autostring32 label = GuiText_getStringAndSelectionPosition (my text, & left, & right);
@@ -995,8 +960,7 @@ static void menu_cb_CheckSpelling (EDITOR_ARGS) {
 	}
 }
 
-static void menu_cb_CheckSpellingInInterval (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_CheckSpellingInInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	if (my spellingChecker) {
 		long left, right;
 		autostring32 label = GuiText_getStringAndSelectionPosition (my text, & left, & right);
@@ -1008,8 +972,7 @@ static void menu_cb_CheckSpellingInInterval (EDITOR_ARGS) {
 	}
 }
 
-static void menu_cb_AddToUserDictionary (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_AddToUserDictionary (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	if (my spellingChecker) {
 		autostring32 word = GuiText_getSelection (my text);
 		SpellingChecker_addNewWord (my spellingChecker, word.peek());
@@ -1019,9 +982,8 @@ static void menu_cb_AddToUserDictionary (EDITOR_ARGS) {
 
 /***** TIER MENU *****/
 
-static void menu_cb_RenameTier (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM (U"Rename tier", 0)
+static void menu_cb_RenameTier (TextGridEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Rename tier", nullptr)
 		SENTENCE (U"Name", U"");
 	EDITOR_OK
 		TextGrid grid = (TextGrid) my data;
@@ -1043,8 +1005,7 @@ static void menu_cb_RenameTier (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_PublishTier (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_PublishTier (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	TextGrid grid = (TextGrid) my data;
 	checkTierSelection (me, U"publish a tier");
 	Function tier = (Function) grid -> tiers -> item [my selectedTier];
@@ -1054,8 +1015,7 @@ static void menu_cb_PublishTier (EDITOR_ARGS) {
 	Editor_broadcastPublication (me, publish.transfer());
 }
 
-static void menu_cb_RemoveAllTextFromTier (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_RemoveAllTextFromTier (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	TextGrid grid = (TextGrid) my data;
 	checkTierSelection (me, U"remove all text from a tier");
 	IntervalTier intervalTier;
@@ -1074,8 +1034,7 @@ static void menu_cb_RemoveAllTextFromTier (EDITOR_ARGS) {
 	Editor_broadcastDataChanged (me);
 }
 
-static void menu_cb_RemoveTier (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
+static void menu_cb_RemoveTier (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	TextGrid grid = (TextGrid) my data;
 	if (grid -> tiers -> size <= 1) {
 		Melder_throw (U"Sorry, I refuse to remove the last tier.");
@@ -1091,9 +1050,8 @@ static void menu_cb_RemoveTier (EDITOR_ARGS) {
 	Editor_broadcastDataChanged (me);
 }
 
-static void menu_cb_AddIntervalTier (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM (U"Add interval tier", 0)
+static void menu_cb_AddIntervalTier (TextGridEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Add interval tier", nullptr)
 		NATURAL (U"Position", U"1 (= at top)")
 		SENTENCE (U"Name", U"")
 	EDITOR_OK
@@ -1118,9 +1076,8 @@ static void menu_cb_AddIntervalTier (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_AddPointTier (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM (U"Add point tier", 0)
+static void menu_cb_AddPointTier (TextGridEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Add point tier", nullptr)
 		NATURAL (U"Position", U"1 (= at top)")
 		SENTENCE (U"Name", U"");
 	EDITOR_OK
@@ -1145,9 +1102,8 @@ static void menu_cb_AddPointTier (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_DuplicateTier (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM (U"Duplicate tier", 0)
+static void menu_cb_DuplicateTier (TextGridEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Duplicate tier", nullptr)
 		NATURAL (U"Position", U"1 (= at top)")
 		SENTENCE (U"Name", U"")
 	EDITOR_OK
@@ -1179,10 +1135,10 @@ static void menu_cb_DuplicateTier (EDITOR_ARGS) {
 
 /***** HELP MENU *****/
 
-static void menu_cb_TextGridEditorHelp (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); Melder_help (U"TextGridEditor"); }
-static void menu_cb_AboutSpecialSymbols (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); Melder_help (U"Special symbols"); }
-static void menu_cb_PhoneticSymbols (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); Melder_help (U"Phonetic symbols"); }
-static void menu_cb_AboutTextStyles (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); Melder_help (U"Text styles"); }
+static void menu_cb_TextGridEditorHelp (TextGridEditor me, EDITOR_ARGS_DIRECT) { Melder_help (U"TextGridEditor"); }
+static void menu_cb_AboutSpecialSymbols (TextGridEditor me, EDITOR_ARGS_DIRECT) { Melder_help (U"Special symbols"); }
+static void menu_cb_PhoneticSymbols (TextGridEditor me, EDITOR_ARGS_DIRECT) { Melder_help (U"Phonetic symbols"); }
+static void menu_cb_AboutTextStyles (TextGridEditor me, EDITOR_ARGS_DIRECT) { Melder_help (U"Text styles"); }
 
 void structTextGridEditor :: v_createMenus () {
 	TextGridEditor_Parent :: v_createMenus ();

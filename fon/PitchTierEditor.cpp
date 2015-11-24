@@ -23,8 +23,8 @@
 
 Thing_implement (PitchTierEditor, RealTierEditor, 0);
 
-static void menu_cb_PitchTierEditorHelp (EDITOR_ARGS) { EDITOR_IAM (PitchTierEditor); Melder_help (U"PitchTierEditor"); }
-static void menu_cb_PitchTierHelp (EDITOR_ARGS) { EDITOR_IAM (PitchTierEditor); Melder_help (U"PitchTier"); }
+static void menu_cb_PitchTierEditorHelp (PitchTierEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"PitchTierEditor"); }
+static void menu_cb_PitchTierHelp (PitchTierEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"PitchTier"); }
 
 void structPitchTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	PitchTierEditor_Parent :: v_createHelpMenuItems (menu);
