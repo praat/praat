@@ -579,9 +579,9 @@ FORM (Sound_createFromToneComplex, U"Create Sound from tone complex", U"Create S
 	RADIO (U"Phase", 2)
 		RADIOBUTTON (U"Sine")
 		RADIOBUTTON (U"Cosine")
-	POSITIVE (U"Frequency step (Hz)", U"100")
-	REAL (U"First frequency (Hz)", U"0 (= frequency step)")
-	REAL (U"Ceiling (Hz)", U"0 (= Nyquist)")
+	POSITIVE (U"Frequency step (Hz)", U"100.0")
+	REAL (U"First frequency (Hz)", U"0.0 (= frequency step)")
+	REAL (U"Ceiling (Hz)", U"0.0 (= Nyquist)")
 	INTEGER (U"Number of components", U"0 (= maximum)")
 	OK2
 DO
@@ -1443,7 +1443,7 @@ DO
 END2 }
 
 FORM (Sound_resample, U"Sound: Resample", U"Sound: Resample...") {
-	POSITIVE (U"New sampling frequency (Hz)", U"10000")
+	POSITIVE (U"New sampling frequency (Hz)", U"10000.0")
 	NATURAL (U"Precision (samples)", U"50")
 	OK2
 DO

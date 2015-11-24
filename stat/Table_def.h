@@ -60,7 +60,7 @@ oo_DEFINE_CLASS (Table, Daata)
 
 	oo_LONG (numberOfColumns)
 	oo_STRUCT_VECTOR (TableColumnHeader, columnHeaders, numberOfColumns)
-	oo_COLLECTION (Ordered, rows, TableRow, 0)
+	oo_AUTO_COLLECTION (Ordered, rows, TableRow, 0)
 
 	#if oo_DECLARING
 		TableRow row (long i) // accessor

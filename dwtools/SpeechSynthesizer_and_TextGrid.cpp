@@ -129,7 +129,7 @@ void IntervalTier_splitInterval (IntervalTier me, double time, const char32 *lef
         autoTextInterval newInterval = TextInterval_create (ti -> xmin, time, leftLabel);
         // Make start of current and begin of new interval equal
         ti -> xmin = time;
-        Collection_addItem_move (my intervals, newInterval.move());
+        Collection_addItem_move (my intervals.get(), newInterval.move());
     } catch (MelderError) {
         Melder_throw (U"Boundary not inserted.");
     }

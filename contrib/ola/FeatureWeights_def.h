@@ -20,6 +20,7 @@
 
 #define ooSTRUCT FeatureWeights
 oo_DEFINE_CLASS (FeatureWeights, Daata)
+
 	oo_OBJECT (TableOfReal, 0, fweights)
 
 	#if oo_DECLARING

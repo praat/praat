@@ -35,7 +35,7 @@ Thing_implement (FormantGridEditor, FunctionEditor, 0);
 static void menu_cb_removePoints (FormantGridEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Remove point(s)");
 	FormantGrid grid = (FormantGrid) my data;
-	Ordered tiers = my editingBandwidths ? grid -> bandwidths : grid -> formants;
+	Ordered tiers = my editingBandwidths ? grid -> bandwidths.get() : grid -> formants.get();
 	RealTier tier = (RealTier) tiers -> item [my selectedFormant];
 	if (my d_startSelection == my d_endSelection)
 		AnyTier_removePointNear (tier, my d_startSelection);
@@ -48,7 +48,7 @@ static void menu_cb_removePoints (FormantGridEditor me, EDITOR_ARGS_DIRECT) {
 static void menu_cb_addPointAtCursor (FormantGridEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Add point");
 	FormantGrid grid = (FormantGrid) my data;
-	Ordered tiers = my editingBandwidths ? grid -> bandwidths : grid -> formants;
+	Ordered tiers = my editingBandwidths ? grid -> bandwidths.get() : grid -> formants.get();
 	RealTier tier = (RealTier) tiers -> item [my selectedFormant];
 	RealTier_addPoint (tier, 0.5 * (my d_startSelection + my d_endSelection), my ycursor);
 	FunctionEditor_redraw (me);
@@ -65,7 +65,7 @@ static void menu_cb_addPointAt (FormantGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_DO
 		Editor_save (me, U"Add point");
 		FormantGrid grid = (FormantGrid) my data;
-		Ordered tiers = my editingBandwidths ? grid -> bandwidths : grid -> formants;
+		Ordered tiers = my editingBandwidths ? grid -> bandwidths.get() : grid -> formants.get();
 		RealTier tier = (RealTier) tiers -> item [my selectedFormant];
 		RealTier_addPoint (tier, GET_REAL (U"Time"), GET_REAL (U"Frequency"));
 		FunctionEditor_redraw (me);
@@ -196,7 +196,7 @@ void structFormantGridEditor :: v_createMenus () {
 
 void structFormantGridEditor :: v_draw () {
 	FormantGrid grid = (FormantGrid) our data;
-	Ordered tiers = our editingBandwidths ? grid -> bandwidths : grid -> formants;
+	Ordered tiers = our editingBandwidths ? grid -> bandwidths.get() : grid -> formants.get();
 	RealTier selectedTier = (RealTier) tiers -> item [selectedFormant];
 	double ymin = our editingBandwidths ? our p_bandwidthFloor   : our p_formantFloor;
 	double ymax = our editingBandwidths ? our p_bandwidthCeiling : our p_formantCeiling;
@@ -284,7 +284,7 @@ void structFormantGridEditor :: v_draw () {
 
 static void drawWhileDragging (FormantGridEditor me, double xWC, double yWC, long first, long last, double dt, double dy) {
 	FormantGrid grid = (FormantGrid) my data;
-	Ordered tiers = my editingBandwidths ? grid -> bandwidths : grid -> formants;
+	Ordered tiers = my editingBandwidths ? grid -> bandwidths.get() : grid -> formants.get();
 	RealTier tier = (RealTier) tiers -> item [my selectedFormant];
 	double ymin = my editingBandwidths ? my p_bandwidthFloor   : my p_formantFloor;
 	double ymax = my editingBandwidths ? my p_bandwidthCeiling : my p_formantCeiling;
@@ -318,7 +318,7 @@ static void drawWhileDragging (FormantGridEditor me, double xWC, double yWC, lon
 
 bool structFormantGridEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
 	FormantGrid grid = (FormantGrid) our data;
-	Ordered tiers = editingBandwidths ? grid -> bandwidths : grid -> formants;
+	Ordered tiers = editingBandwidths ? grid -> bandwidths.get() : grid -> formants.get();
 	RealTier tier = (RealTier) tiers -> item [selectedFormant];
 	double ymin = our editingBandwidths ? our p_bandwidthFloor   : our p_formantFloor;
 	double ymax = our editingBandwidths ? our p_bandwidthCeiling : our p_formantCeiling;

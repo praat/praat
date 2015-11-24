@@ -108,11 +108,10 @@ void VocalTractTier_addVocalTract_copy (VocalTractTier me, double time, VocalTra
 			VocalTractPoint vtp = (VocalTractPoint) my d_vocalTracts -> item[1];
 			long numberOfSections = vtp -> d_vocalTract -> nx;
 			if (numberOfSections != vocaltract -> nx) {
-				//forget (vocaltract);   // FIXME: this cannot be right (ppgb)
 				Melder_throw (U"The number of sections must be equal to ", numberOfSections, U".");
 			}
 		}
-		Collection_addItem_move (my d_vocalTracts, thee.move());
+		Collection_addItem_move (my d_vocalTracts.get(), thee.move());
 	} catch (MelderError) {
 		Melder_throw (me, U": no VocalTract added.");
 	}

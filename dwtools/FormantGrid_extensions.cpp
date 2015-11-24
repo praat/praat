@@ -25,7 +25,7 @@
 #include "NUM2.h"
 
 void FormantGrid_draw (FormantGrid me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool bandwidths, bool garnish, const char32 *method) {
-	Ordered tiers = bandwidths ? my bandwidths : my formants;
+	Ordered tiers = bandwidths ? my bandwidths.get() : my formants.get();
 
 	if (xmax <= xmin) {
 		xmin = my xmin; xmax = my xmax;
@@ -51,14 +51,14 @@ static void FormantGrid_removeFormantTier (FormantGrid me, int position) {
 	if (position < 1 || position > my formants -> size) {
 		return;
 	}
-	Collection_removeItem (my formants, position);
+	Collection_removeItem (my formants.get(), position);
 }
 
 static void FormantGrid_removeBandwidthTier (FormantGrid me, int position) {
 	if (position < 1 || position > my bandwidths -> size) {
 		return;
 	}
-	Collection_removeItem (my bandwidths, position);
+	Collection_removeItem (my bandwidths.get(), position);
 }
 
 void FormantGrid_removeFormantAndBandwidthTiers (FormantGrid me, int position) {
@@ -71,7 +71,7 @@ static void FormantGrid_addFormantTier (FormantGrid me, int position) {
 		position = my formants -> size + 1;
 	}
 	autoRealTier rt = RealTier_create (my xmin, my xmax);
-	Ordered_addItemPos (my formants, rt.transfer(), position);
+	Ordered_addItemPos (my formants.get(), rt.transfer(), position);
 }
 
 static void FormantGrid_addBandwidthTier (FormantGrid me, int position) {
@@ -79,7 +79,7 @@ static void FormantGrid_addBandwidthTier (FormantGrid me, int position) {
 		position = my bandwidths -> size + 1;
 	}
 	autoRealTier rt = RealTier_create (my xmin, my xmax);
-	Ordered_addItemPos (my bandwidths, rt.transfer(), position);
+	Ordered_addItemPos (my bandwidths.get(), rt.transfer(), position);
 }
 
 void FormantGrid_addFormantAndBandwidthTiers (FormantGrid me, int position) {

@@ -61,7 +61,7 @@ static void IntervalTier_insertIntervalDestructively (IntervalTier me, double tm
 		 */
 		autoTextInterval newInterval = TextInterval_create (tmin, interval -> xmax, U"");
 		interval -> xmax = tmin;
-		Collection_addItem_move (my intervals, newInterval.move());
+		Collection_addItem_move (my intervals.get(), newInterval.move());
 		firstIntervalNumber = IntervalTier_hasTime (me, interval -> xmin);
 	}
 	Melder_assert (firstIntervalNumber >= 1 && firstIntervalNumber <= my intervals -> size);
@@ -76,7 +76,7 @@ static void IntervalTier_insertIntervalDestructively (IntervalTier me, double tm
 		 */
 		autoTextInterval newInterval = TextInterval_create (interval -> xmin, tmax, U"");
 		interval -> xmin = tmax;
-		Collection_addItem_move (my intervals, newInterval.move());
+		Collection_addItem_move (my intervals.get(), newInterval.move());
 		lastIntervalNumber = IntervalTier_hasTime (me, interval -> xmax);
 	}
 	Melder_assert (lastIntervalNumber >= 1 && lastIntervalNumber <= my intervals -> size);
@@ -91,7 +91,7 @@ static void IntervalTier_insertIntervalDestructively (IntervalTier me, double tm
 			TextInterval previous = (TextInterval) my intervals -> item [iinterval - 1];
 			previous -> xmax = tmax;   // collapse left and right intervals into left interval
 			TextInterval_setText (previous, U"");
-			Collection_removeItem (my intervals, iinterval);   // remove right interval
+			Collection_removeItem (my intervals.get(), iinterval);   // remove right interval
 		}
 		if (interval -> xmax == tmax) {
 			TextInterval_setText (interval, U"");
@@ -137,7 +137,7 @@ static void IntervalTier_removeEmptyIntervals (IntervalTier me, IntervalTier bos
 			TextInterval next = my interval (iinterval + 1);
 			previous -> xmax = newBoundaryTime;
 			next -> xmin = newBoundaryTime;
-			Collection_removeItem (my intervals, iinterval);
+			Collection_removeItem (my intervals.get(), iinterval);
 		}
 	}
 }
@@ -256,7 +256,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 						wordInterval = wordTier -> interval (wordIntervalNumber);
 						autoTextInterval newInterval = TextInterval_create (tmin, tmax, analysisInterval -> text);
 						wordInterval -> xmin = tmax;
-						Collection_addItem_move (wordTier -> intervals, newInterval.move());
+						Collection_addItem_move (wordTier -> intervals.get(), newInterval.move());
 						wordIntervalNumber ++;
 					}
 				}
@@ -314,7 +314,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 						phonemeInterval = phonemeTier -> interval (phonemeIntervalNumber);
 						autoTextInterval newInterval = TextInterval_create (tmin, tmax, analysisInterval -> text);
 						phonemeInterval -> xmin = tmax;
-						Collection_addItem_move (phonemeTier -> intervals, newInterval.move());
+						Collection_addItem_move (phonemeTier -> intervals.get(), newInterval.move());
 						phonemeIntervalNumber ++;
 					}
 				}

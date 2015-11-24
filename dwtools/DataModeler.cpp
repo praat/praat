@@ -1340,7 +1340,7 @@ autoFormantModeler FormantModeler_create (double tmin, double tmax, long numberO
 		my trackmodelers = Ordered_create ();
 		for (long itrack = 1; itrack <= numberOfFormants; itrack++) {
 			autoDataModeler ff = DataModeler_create (tmin, tmax, numberOfDataPoints, numberOfParameters,  DataModeler_TYPE_LEGENDRE);
-			Collection_addItem_move (my trackmodelers, ff.move());
+			Collection_addItem_move (my trackmodelers.get(), ff.move());
 		}
 		return me;
 	} catch (MelderError) {
@@ -1582,7 +1582,7 @@ autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tm
 			ffi -> numberOfDataPoints = idata;
 			ffi -> tolerance = 1e-5;
 			if (validData < numberOfParametersPerTrack) { // remove don't throw exception
-				Collection_removeItem (thy trackmodelers, posInCollection);
+				Collection_removeItem (thy trackmodelers.get(), posInCollection);
 				posInCollection--;
 			}
 		}

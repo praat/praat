@@ -20,8 +20,8 @@
 #define ooSTRUCT FormantGrid
 oo_DEFINE_CLASS (FormantGrid, Function)
 
-	oo_COLLECTION (Ordered, formants, RealTier, 0)
-	oo_COLLECTION (Ordered, bandwidths, RealTier, 0)
+	oo_AUTO_COLLECTION (Ordered, formants, RealTier, 0)
+	oo_AUTO_COLLECTION (Ordered, bandwidths, RealTier, 0)
 
 	#if oo_DECLARING
 		bool v_hasGetVector ()

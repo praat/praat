@@ -92,7 +92,7 @@ autoFujisakiPitch Pitch_to_FujisakiPitch (Pitch me, double gamma, double timeRes
 			double offsetTime = /* ... */ 3.0;
 			double amplitude = /* ... */ 1.0;
 			autoFujisakiCommand phraseCommand = FujisakiCommand_create (onsetTime, offsetTime, amplitude);
-			Collection_addItem_move (thy phraseCommands, phraseCommand.move());
+			Collection_addItem_move (thy phraseCommands.get(), phraseCommand.move());
 		}
 		if (intermediate1) *intermediate1 = Data_copy (thee.peek());
 		/*
@@ -103,7 +103,7 @@ autoFujisakiPitch Pitch_to_FujisakiPitch (Pitch me, double gamma, double timeRes
 			double offsetTime = /* ... */ 3.0;
 			double amplitude = /* ... */ 1.0;
 			autoFujisakiCommand accentCommand = FujisakiCommand_create (onsetTime, offsetTime, amplitude);
-			Collection_addItem_move (thy accentCommands, accentCommand.move());
+			Collection_addItem_move (thy accentCommands.get(), accentCommand.move());
 		}
 		if (intermediate2) *intermediate2 = Data_copy (thee.peek());
 		/*

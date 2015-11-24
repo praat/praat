@@ -22,6 +22,7 @@
 
 #define ooSTRUCT KNN
 oo_DEFINE_CLASS (KNN, Daata)
+
 	oo_LONG (nInstances)
 	oo_OBJECT (Pattern, 2, input)
 	oo_OBJECT (Categories, 0, output)

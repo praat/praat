@@ -139,17 +139,6 @@
 	if (our x) \
 		Data_writeText (our x.get(), file);
 
-#define oo_COLLECTION(Class,x,ItemClass,version)  \
-	texputi4 (file, our x ? our x -> size : 0, U"" #x U": size", 0,0,0,0,0); \
-	if (our x) { \
-		for (long i = 1; i <= our x -> size; i ++) { \
-			ItemClass data = (ItemClass) our x -> item [i]; \
-			texputintro (file, U"" #x U" [", Melder_integer (i), U"]:", 0,0,0); \
-			data -> struct##ItemClass :: v_writeText (file); \
-			texexdent (file); \
-		} \
-	}
-
 #define oo_AUTO_COLLECTION(Class,x,ItemClass,version)  \
 	texputi4 (file, our x ? our x -> size : 0, U"" #x U": size", 0,0,0,0,0); \
 	if (our x) { \

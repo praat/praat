@@ -3602,7 +3602,7 @@ FORM (KlattTable_to_KlattGrid, U"KlattTable: To KlattGrid", 0)
 DO
 	LOOP {
 		iam (KlattTable);
-		praat_new (KlattTable_to_KlattGrid (me, GET_REAL (U"Frame duration")).transfer(), my name);
+		praat_new (KlattTable_to_KlattGrid (me, GET_REAL (U"Frame duration")), my name);
 	}
 END
 
@@ -6041,7 +6041,7 @@ DO
 			GET_INTEGER (U"Max. number of formants"), GET_REAL (U"Maximum formant"),
 			GET_REAL (U"Window length"), GET_REAL (U"Pre-emphasis from"),
 			GET_REAL (U"Pitch floor"), GET_REAL (U"Pitch ceiling"),
-			GET_REAL (U"Minimum pitch"), GET_INTEGER (U"Subtract mean")).transfer(), my name);
+			GET_REAL (U"Minimum pitch"), GET_INTEGER (U"Subtract mean")), my name);
 	}
 END
 

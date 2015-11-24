@@ -4510,7 +4510,7 @@ autoTable Table_extractRowsWhere (Table me, const char32 *formula, Interpreter i
 			if (result.result.numericResult != 0.0) {
 				TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 				autoTableRow newRow = Data_copy (row);
-				Collection_addItem_move (thy rows, newRow.move());
+				Collection_addItem_move (thy rows.get(), newRow.move());
 			}
 		}
 		if (thy rows -> size == 0) {
@@ -4608,7 +4608,7 @@ static autoTable Table_and_SSCPs_extractMahalanobisWhere (Table me, SSCPs thee, 
 			if (Melder_numberMatchesCriterion (sqrt (dm2), which_Melder_NUMBER, numberOfSigmas)) {
 				TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 				autoTableRow newRow = Data_copy (row);
-				Collection_addItem_move (his rows, newRow.move());
+				Collection_addItem_move (his rows.get(), newRow.move());
 			}
 		}
 		return him;
