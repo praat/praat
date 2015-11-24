@@ -47,13 +47,13 @@ ClassInfo classThing = & theClassInfo_Thing;
 
 const char32 * Thing_className (Thing me) { return my classInfo -> className; }
 
-Thing Thing_newFromClass (ClassInfo classInfo) {
-	Thing me = classInfo -> _new ();
+autoThing Thing_newFromClass (ClassInfo classInfo) {
+	autoThing me (classInfo -> _new ());
 	trace (U"created ", classInfo -> className);
 	theTotalNumberOfThings += 1;
 	my classInfo = classInfo;
 	Melder_assert (my name == nullptr);   // confirm that _new called calloc, so that we see null pointers
-	if (Melder_debug == 40) Melder_casual (U"created ", classInfo -> className, U" (", Melder_pointer (classInfo), U", ", me, U")");
+	if (Melder_debug == 40) Melder_casual (U"created ", classInfo -> className, U" (", Melder_pointer (classInfo), U", ", me.get(), U")");
 	return me;
 }
 
@@ -133,7 +133,7 @@ ClassInfo Thing_classFromClassName (const char32 *klas, int *p_formatVersion) {
 	Melder_throw (U"Class \"", buffer, U"\" not recognized.");
 }
 
-Thing Thing_newFromClassName (const char32 *className, int *p_formatVersion) {
+autoThing Thing_newFromClassName (const char32 *className, int *p_formatVersion) {
 	try {
 		ClassInfo classInfo = Thing_classFromClassName (className, p_formatVersion);
 		return Thing_newFromClass (classInfo);

@@ -49,7 +49,7 @@ void structDaata :: v_readBinary (FILE *, int /*formatVersion*/) {
 Daata _Data_copy (Daata me) {
 	try {
 		if (! me) return nullptr;
-		autoDaata thee = static_cast <Daata> (Thing_newFromClass (my classInfo));
+		autoDaata thee = Thing_newFromClass (my classInfo).static_cast_move <structDaata> ();
 		my v_copy (thee.peek());
 		Thing_setName (thee.peek(), my name);
 		return thee.transfer();
@@ -192,13 +192,13 @@ autoDaata Data_readFromTextFile (MelderFile file) {
 		int formatVersion;
 		if (end) {
 			autostring32 klas = texgetw2 (text.peek());
-			me = static_cast <Daata> (Thing_newFromClassName (klas.peek(), & formatVersion));
+			me = Thing_newFromClassName (klas.peek(), & formatVersion).static_cast_move <structDaata> ();
 		} else {
 			end = str32str (line, U"TextFile");
 			if (! end)
 				Melder_throw (U"Not an old-type text file; should not occur.");
 			*end = U'\0';
-			me = static_cast <Daata> (Thing_newFromClassName (line, nullptr));
+			me = Thing_newFromClassName (line, nullptr).static_cast_move <structDaata> ();
 			formatVersion = -1;   // old version
 		}
 		MelderFile_getParentDir (file, & Data_directoryBeingRead);
@@ -238,14 +238,14 @@ autoDaata Data_readFromBinaryFile (MelderFile file) {
 		if (end) {
 			fseek (f, strlen ("ooBinaryFile"), 0);
 			autostring8 klas = bingets1 (f);
-			me = static_cast <Daata> (Thing_newFromClassName (Melder_peek8to32 (klas.peek()), & formatVersion));
+			me = Thing_newFromClassName (Melder_peek8to32 (klas.peek()), & formatVersion).static_cast_move <structDaata> ();
 		} else {
 			end = strstr (line, "BinaryFile");
 			if (! end) {
 				Melder_throw (U"File ", file, U" is not a Data binary file.");
 			}
 			*end = '\0';
-			me = static_cast <Daata> (Thing_newFromClassName (Melder_peek8to32 (line), nullptr));
+			me = Thing_newFromClassName (Melder_peek8to32 (line), nullptr).static_cast_move <structDaata> ();
 			formatVersion = -1;   // old version: override version number, which was set to 0 by newFromClassName
 			rewind (f);
 			fread (line, 1, end - line + strlen ("BinaryFile"), f);

@@ -243,9 +243,9 @@ void structManPages :: v_readText (MelderReadText text, int /*formatVersion*/) {
 }
 
 ManPages ManPages_create () {
-	ManPages me = Thing_new (ManPages);
+	autoManPages me = Thing_new (ManPages);
 	my pages = Ordered_create ();
-	return me;
+	return me.transfer();
 }
 
 void ManPages_addPage (ManPages me, const char32 *title, const char32 *author, long date,
@@ -301,7 +301,7 @@ static long lookUp_unsorted (ManPages me, const char32 *title) {
 static long lookUp_sorted (ManPages me, const char32 *title) {
 	static ManPage dummy;
 	ManPage *page;
-	if (! dummy) dummy = Thing_new (ManPage);
+	if (! dummy) dummy = Thing_new (ManPage).transfer();
 	dummy -> title = title;
 	page = (ManPage *) bsearch (& dummy, & my pages -> item [1], my pages -> size, sizeof (ManPage), pageCompare);
 	if (page) return (page - (ManPage *) & my pages -> item [1]) + 1;

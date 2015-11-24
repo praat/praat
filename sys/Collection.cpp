@@ -136,7 +136,7 @@ void structCollection :: v_readText (MelderReadText text, int formatVersion) {
 					U" while expecting ", i, U".");
 			if (stringsRead == 3 && ! strequ (nameTag, "name"))
 				Melder_throw (U"Collection::readText: wrong header at object ", i, U".");
-			our item [i] = Thing_newFromClassName (Melder_peek8to32 (klas), nullptr);
+			our item [i] = Thing_newFromClassName (Melder_peek8to32 (klas), nullptr).transfer();
 			our size ++;
 			if (! Thing_isa ((Thing) our item [i], classDaata) || ! Data_canReadText ((Daata) our item [i]))
 				Melder_throw (U"Cannot read item of class ", Thing_className ((Thing) our item [i]), U" in collection.");
@@ -155,7 +155,7 @@ void structCollection :: v_readText (MelderReadText text, int formatVersion) {
 		for (int32_t i = 1; i <= l_size; i ++) {
 			autostring32 className = texgetw2 (text);
 			int elementFormatVersion;
-			our item [i] = Thing_newFromClassName (className.peek(), & elementFormatVersion);
+			our item [i] = Thing_newFromClassName (className.peek(), & elementFormatVersion).transfer();
 			our size ++;
 			if (! Thing_isa ((Thing) our item [i], classDaata) || ! Data_canReadText ((Daata) our item [i]))
 				Melder_throw (U"Cannot read item of class ", Thing_className ((Thing) our item [i]), U" in collection.");
@@ -190,7 +190,7 @@ void structCollection :: v_readBinary (FILE *f, int formatVersion) {
 			char klas [200], name [2000];
 			if (fscanf (f, "%s%s", klas, name) < 2)   // BUG
 				Melder_throw (U"Cannot read class and name.");
-			our item [i] = Thing_newFromClassName (Melder_peek8to32 (klas), nullptr);
+			our item [i] = Thing_newFromClassName (Melder_peek8to32 (klas), nullptr).transfer();
 			our size ++;
 			if (! Thing_isa (our item [i], classDaata))
 				Melder_throw (U"Cannot read item of class ", Thing_className ((Thing) our item [i]), U".");
@@ -210,7 +210,7 @@ void structCollection :: v_readBinary (FILE *f, int formatVersion) {
 			if (Melder_debug == 44)
 				Melder_casual (U"structCollection :: v_readBinary: Reading object of type ", Melder_peek8to32 (klas.peek()));
 			int elementFormatVersion;
-			our item [i] = Thing_newFromClassName (Melder_peek8to32 (klas.peek()), & elementFormatVersion);
+			our item [i] = Thing_newFromClassName (Melder_peek8to32 (klas.peek()), & elementFormatVersion).transfer();
 			our size ++;
 			if (! Thing_isa (our item [i], classDaata) || ! Data_canReadBinary ((Daata) our item [i]))
 				Melder_throw (U"Objects of class ", Thing_className ((Thing) our item [i]), U" cannot be read.");

@@ -107,26 +107,26 @@ Thing_implement (GuiCheckButton, GuiControl, 0);
 GuiCheckButton GuiCheckButton_create (GuiForm parent, int left, int right, int top, int bottom,
 	const char32 *buttonText, GuiCheckButton_ValueChangedCallback valueChangedCallback, Thing valueChangedBoss, uint32 flags)
 {
-	GuiCheckButton me = Thing_new (GuiCheckButton);
+	autoGuiCheckButton me = Thing_new (GuiCheckButton);
 	my d_shell = parent -> d_shell;
 	my d_parent = parent;
 	my d_valueChangedCallback = valueChangedCallback;
 	my d_valueChangedBoss = valueChangedBoss;
 	#if gtk
 		my d_widget = gtk_check_button_new_with_label (Melder_peek32to8 (buttonText));
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (my d_widget), (flags & GuiCheckButton_SET) != 0);
 		if (flags & GuiCheckButton_INSENSITIVE) {
 			GuiThing_setSensitive (me, false);
 		}
-		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkCheckButton_destroyCallback), me);
-		g_signal_connect (GTK_TOGGLE_BUTTON (my d_widget), "toggled", G_CALLBACK (_GuiGtkCheckButton_valueChangedCallback), me);
+		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkCheckButton_destroyCallback), me.get());
+		g_signal_connect (GTK_TOGGLE_BUTTON (my d_widget), "toggled", G_CALLBACK (_GuiGtkCheckButton_valueChangedCallback), me.get());
 	#elif cocoa
 		GuiCocoaCheckButton *checkButton = [[GuiCocoaCheckButton alloc] init];
 		my d_widget = (GuiObject) checkButton;
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
-		[checkButton setUserData: me];
+		[checkButton setUserData: me.get()];
 		[checkButton setButtonType: NSSwitchButton];
 		[checkButton setTitle: (NSString *) Melder_peek32toCfstring (buttonText)];
 		[checkButton setTarget: checkButton];
@@ -136,7 +136,7 @@ GuiCheckButton GuiCheckButton_create (GuiForm parent, int left, int right, int t
 		}
 	#elif win
 		my d_widget = _Gui_initializeWidget (xmToggleButtonWidgetClass, parent -> d_widget, buttonText);
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 		my d_widget -> isRadioButton = false;
 		my d_widget -> window = CreateWindow (L"button", Melder_peek32toW (_GuiWin_expandAmpersands (buttonText)),
 			WS_CHILD | BS_AUTOCHECKBOX | WS_CLIPSIBLINGS,
@@ -149,11 +149,11 @@ GuiCheckButton GuiCheckButton_create (GuiForm parent, int left, int right, int t
 			Button_SetCheck (my d_widget -> window, BST_CHECKED);
 		}
 		if (flags & GuiCheckButton_INSENSITIVE) {
-			GuiThing_setSensitive (me, false);
+			GuiThing_setSensitive (me.get(), false);
 		}
 	#elif mac
 		my d_widget = _Gui_initializeWidget (xmToggleButtonWidgetClass, parent -> d_widget, buttonText);
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 		my d_widget -> isRadioButton = false;
 		CreateCheckBoxControl (my d_widget -> macWindow, & my d_widget -> rect, nullptr,
 			(flags & GuiCheckButton_SET) != 0, true, & my d_widget -> nat.control.handle);
@@ -164,10 +164,10 @@ GuiCheckButton GuiCheckButton_create (GuiForm parent, int left, int right, int t
 		_GuiNativeControl_setTitle (my d_widget);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		if (flags & GuiCheckButton_INSENSITIVE) {
-			GuiThing_setSensitive (me, false);
+			GuiThing_setSensitive (me.get(), false);
 		}
 	#endif
-	return me;
+	return me.transfer();
 }
 
 GuiCheckButton GuiCheckButton_createShown (GuiForm parent, int left, int right, int top, int bottom,

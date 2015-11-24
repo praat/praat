@@ -145,9 +145,9 @@ void Graphics_init (Graphics me, int resolution) {
 }
 
 Graphics Graphics_create (int resolution) {
-	Graphics me = (Graphics) Thing_new (Graphics);
-	Graphics_init (me, resolution);
-	return me;
+	autoGraphics me = Thing_new (Graphics);
+	Graphics_init (me.get(), resolution);
+	return me.transfer();
 }
 
 int Graphics_getResolution (Graphics me) {

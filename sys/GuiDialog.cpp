@@ -93,7 +93,7 @@ Thing_implement (GuiDialog, GuiShell, 0);
 GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int height,
 	const char32 *title, GuiShell_GoAwayCallback goAwayCallback, Thing goAwayBoss, uint32 flags)
 {
-	GuiDialog me = Thing_new (GuiDialog);
+	autoGuiDialog me = Thing_new (GuiDialog);
 	my d_parent = parent;
 	my d_goAwayCallback = goAwayCallback;
 	my d_goAwayBoss = goAwayBoss;
@@ -108,17 +108,17 @@ GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int heigh
 			}
 		}
 		g_signal_connect (G_OBJECT (my d_gtkWindow), "delete-event",
-			goAwayCallback ? G_CALLBACK (_GuiGtkDialog_goAwayCallback) : G_CALLBACK (gtk_widget_hide_on_delete), me);
+			goAwayCallback ? G_CALLBACK (_GuiGtkDialog_goAwayCallback) : G_CALLBACK (gtk_widget_hide_on_delete), me.get());
 		gtk_window_set_default_size (GTK_WINDOW (my d_gtkWindow), width, height);
 		gtk_window_set_modal (GTK_WINDOW (my d_gtkWindow), flags & GuiDialog_MODAL);
-		GuiShell_setTitle (me, title);
+		GuiShell_setTitle (me.get(), title);
 		GuiObject vbox = GTK_DIALOG (my d_gtkWindow) -> vbox;
 		my d_widget = gtk_fixed_new ();
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 		gtk_widget_set_size_request (GTK_WIDGET (my d_widget), width, height);
 		gtk_container_add (GTK_CONTAINER (vbox /*my d_gtkWindow*/), GTK_WIDGET (my d_widget));
 		gtk_widget_show (GTK_WIDGET (my d_widget));
-		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkDialog_destroyCallback), me);
+		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkDialog_destroyCallback), me.get());
 	#elif cocoa
 		(void) parent;
 		NSRect rect = { { (CGFloat) x, (CGFloat) y }, { (CGFloat) width, (CGFloat) height } };
@@ -131,25 +131,25 @@ GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int heigh
 		[nsWindow setTitle: (NSString *) Melder_peek32toCfstring (title)];
 		//[nsWindow makeKeyAndOrderFront: nil];
 		my d_widget = (GuiObject) [nsWindow contentView];
-		[(GuiCocoaDialog *) nsWindow   setUserData: me];
+		[(GuiCocoaDialog *) nsWindow   setUserData: me.get()];
 		[nsWindow setReleasedWhenClosed: NO];
 	#elif motif
 		my d_xmShell = XmCreateDialogShell (mac ? nullptr : parent -> d_widget, "dialogShell", nullptr, 0);
 		XtVaSetValues (my d_xmShell, XmNdeleteResponse, goAwayCallback ? XmDO_NOTHING : XmUNMAP, XmNx, x, XmNy, y, nullptr);
 		if (goAwayCallback) {
-			XmAddWMProtocolCallback (my d_xmShell, 'delw', _GuiMotifDialog_goAwayCallback, (char *) me);
+			XmAddWMProtocolCallback (my d_xmShell, 'delw', _GuiMotifDialog_goAwayCallback, (char *) me.get());
 		}
 		GuiShell_setTitle (me, title);
 		my d_widget = XmCreateForm (my d_xmShell, "dialog", nullptr, 0);
 		XtVaSetValues (my d_widget, XmNwidth, (Dimension) width, XmNheight, (Dimension) height, nullptr);
-		_GuiObject_setUserData (my d_widget, me);
-		XtAddCallback (my d_widget, XmNdestroyCallback, _GuiMotifDialog_destroyCallback, me);
+		_GuiObject_setUserData (my d_widget, me.get());
+		XtAddCallback (my d_widget, XmNdestroyCallback, _GuiMotifDialog_destroyCallback, me.get());
 		XtVaSetValues (my d_widget, XmNdialogStyle,
 			(flags & GuiDialog_MODAL) ? XmDIALOG_FULL_APPLICATION_MODAL : XmDIALOG_MODELESS,
 			XmNautoUnmanage, False, nullptr);
 	#endif
-	my d_shell = me;
-	return me;
+	my d_shell = me.get();
+	return me.transfer();
 }
 
 /* End of file GuiDialog.cpp */

@@ -492,7 +492,7 @@ GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int t
 	GuiDrawingArea_ResizeCallback resizeCallback, Thing boss,
 	uint32 /* flags */)
 {
-	GuiDrawingArea me = Thing_new (GuiDrawingArea);
+	autoGuiDrawingArea me = Thing_new (GuiDrawingArea);
 	my d_shell = parent -> d_shell;
 	my d_parent = parent;
 	my d_exposeCallback = exposeCallback;
@@ -511,32 +511,32 @@ GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int t
 			| GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK
 			| GDK_POINTER_MOTION_HINT_MASK);                    // receive fewer motion notify events (the cb might take time)
 		gtk_widget_set_events (GTK_WIDGET (my d_widget), mask);
-		g_signal_connect (G_OBJECT (my d_widget), "expose-event",         G_CALLBACK (_GuiGtkDrawingArea_exposeCallback),  me);
-		g_signal_connect (G_OBJECT (my d_widget), "destroy",              G_CALLBACK (_GuiGtkDrawingArea_destroyCallback), me);
-		g_signal_connect (G_OBJECT (my d_widget), "button-press-event",   G_CALLBACK (_GuiGtkDrawingArea_clickCallback),   me);
-		g_signal_connect (G_OBJECT (my d_widget), "button-release-event", G_CALLBACK (_GuiGtkDrawingArea_clickCallback),   me);
-		g_signal_connect (G_OBJECT (my d_widget), "motion-notify-event",  G_CALLBACK (_GuiGtkDrawingArea_clickCallback),   me);
+		g_signal_connect (G_OBJECT (my d_widget), "expose-event",         G_CALLBACK (_GuiGtkDrawingArea_exposeCallback),  me.get());
+		g_signal_connect (G_OBJECT (my d_widget), "destroy",              G_CALLBACK (_GuiGtkDrawingArea_destroyCallback), me.get());
+		g_signal_connect (G_OBJECT (my d_widget), "button-press-event",   G_CALLBACK (_GuiGtkDrawingArea_clickCallback),   me.get());
+		g_signal_connect (G_OBJECT (my d_widget), "button-release-event", G_CALLBACK (_GuiGtkDrawingArea_clickCallback),   me.get());
+		g_signal_connect (G_OBJECT (my d_widget), "motion-notify-event",  G_CALLBACK (_GuiGtkDrawingArea_clickCallback),   me.get());
 		if (parent) {
 			Melder_assert (parent -> d_widget);
 			g_signal_connect (G_OBJECT (gtk_widget_get_toplevel (GTK_WIDGET (parent -> d_widget))), "key-press-event",
-				G_CALLBACK (_GuiGtkDrawingArea_keyCallback), me);
+				G_CALLBACK (_GuiGtkDrawingArea_keyCallback), me.get());
 		}
-		g_signal_connect (G_OBJECT (my d_widget), "size-allocate", G_CALLBACK (_GuiGtkDrawingArea_resizeCallback), me);
+		g_signal_connect (G_OBJECT (my d_widget), "size-allocate", G_CALLBACK (_GuiGtkDrawingArea_resizeCallback), me.get());
 
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		gtk_widget_set_double_buffered (GTK_WIDGET (my d_widget), false);
 	#elif cocoa
 		GuiCocoaDrawingArea *drawingArea = [[GuiCocoaDrawingArea alloc] init];
 		my d_widget = (GuiObject) drawingArea;
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
-		[drawingArea   setUserData: me];
+		[drawingArea   setUserData: me.get()];
 		if (keyCallback) {
 			[[drawingArea window]   makeFirstResponder: drawingArea];   // needed in DemoWindow
 		}
     #elif win
 		my d_widget = _Gui_initializeWidget (xmDrawingAreaWidgetClass, parent -> d_widget, U"drawingArea");
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 		my d_widget -> window = CreateWindowEx (0, Melder_peek32toW (_GuiWin_getDrawingAreaClassName ()), L"drawingArea",
 			WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS,
 			my d_widget -> x, my d_widget -> y, my d_widget -> width, my d_widget -> height, my d_widget -> parent -> window, nullptr, theGui.instance, nullptr);
@@ -544,10 +544,10 @@ GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int t
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 	#elif mac
 		my d_widget = _Gui_initializeWidget (xmDrawingAreaWidgetClass, parent -> d_widget, U"drawingArea");
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 	#endif
-	return me;
+	return me.transfer();
 }
 
 GuiDrawingArea GuiDrawingArea_createShown (GuiForm parent, int left, int right, int top, int bottom,
@@ -569,7 +569,7 @@ GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int h
 	GuiDrawingArea_ResizeCallback resizeCallback, Thing boss,
 	uint32 /* flags */)
 {
-	GuiDrawingArea me = Thing_new (GuiDrawingArea);
+	autoGuiDrawingArea me = Thing_new (GuiDrawingArea);
 	my d_shell = parent -> d_shell;
 	my d_parent = parent;
 	my d_exposeCallback = exposeCallback;
@@ -588,27 +588,27 @@ GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int h
 			| GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK
 			| GDK_POINTER_MOTION_HINT_MASK);                    // receive fewer motion notify events (the cb might take time)
 		gtk_widget_set_events (GTK_WIDGET (my d_widget), mask);
-		g_signal_connect (G_OBJECT (my d_widget), "expose-event",         G_CALLBACK (_GuiGtkDrawingArea_exposeCallback),  me);
-		g_signal_connect (G_OBJECT (my d_widget), "destroy",              G_CALLBACK (_GuiGtkDrawingArea_destroyCallback), me);
-		g_signal_connect (G_OBJECT (my d_widget), "button-press-event",   G_CALLBACK (_GuiGtkDrawingArea_clickCallback),   me);
-		g_signal_connect (G_OBJECT (my d_widget), "button-release-event", G_CALLBACK (_GuiGtkDrawingArea_clickCallback),   me);
-		g_signal_connect (G_OBJECT (my d_widget), "motion-notify-event",  G_CALLBACK (_GuiGtkDrawingArea_clickCallback),   me);
+		g_signal_connect (G_OBJECT (my d_widget), "expose-event",         G_CALLBACK (_GuiGtkDrawingArea_exposeCallback),  me.get());
+		g_signal_connect (G_OBJECT (my d_widget), "destroy",              G_CALLBACK (_GuiGtkDrawingArea_destroyCallback), me.get());
+		g_signal_connect (G_OBJECT (my d_widget), "button-press-event",   G_CALLBACK (_GuiGtkDrawingArea_clickCallback),   me.get());
+		g_signal_connect (G_OBJECT (my d_widget), "button-release-event", G_CALLBACK (_GuiGtkDrawingArea_clickCallback),   me.get());
+		g_signal_connect (G_OBJECT (my d_widget), "motion-notify-event",  G_CALLBACK (_GuiGtkDrawingArea_clickCallback),   me.get());
 		if (parent) {
 			g_signal_connect (G_OBJECT (gtk_widget_get_toplevel (GTK_WIDGET (parent -> d_widget))), "key-press-event",
 				G_CALLBACK (_GuiGtkDrawingArea_keyCallback), me);
 		}
-		g_signal_connect (G_OBJECT (my d_widget), "size-allocate", G_CALLBACK (_GuiGtkDrawingArea_resizeCallback), me);
-		_GuiObject_setUserData (my d_widget, me);
+		g_signal_connect (G_OBJECT (my d_widget), "size-allocate", G_CALLBACK (_GuiGtkDrawingArea_resizeCallback), me.get());
+		_GuiObject_setUserData (my d_widget, me.get());
 		my v_positionInScrolledWindow (my d_widget, width, height, parent);
 		gtk_widget_set_double_buffered (GTK_WIDGET (my d_widget), false);
 	#elif cocoa
 		GuiCocoaDrawingArea *drawingArea = [[GuiCocoaDrawingArea alloc] init];
 		my d_widget = (GuiObject) drawingArea;
 		my v_positionInScrolledWindow (my d_widget, width, height, parent);
-		[drawingArea setUserData: me];
+		[drawingArea setUserData: me.get()];
     #elif win
 		my d_widget = _Gui_initializeWidget (xmDrawingAreaWidgetClass, parent -> d_widget, U"drawingArea");
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 		my d_widget -> window = CreateWindowEx (0, Melder_peek32toW (_GuiWin_getDrawingAreaClassName ()), L"drawingArea",
 			WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS,
 			0, 0, my d_widget -> width, my d_widget -> height, my d_widget -> parent -> window, nullptr, theGui.instance, nullptr);
@@ -616,10 +616,10 @@ GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int h
 		my v_positionInScrolledWindow (my d_widget, width, height, parent);
 	#elif mac
 		my d_widget = _Gui_initializeWidget (xmDrawingAreaWidgetClass, parent -> d_widget, U"drawingArea");
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 		my v_positionInScrolledWindow (my d_widget, width, height, parent);
 	#endif
-	return me;
+	return me.transfer();
 }
 
 GuiDrawingArea GuiDrawingArea_createShown (GuiScrolledWindow parent, int width, int height,

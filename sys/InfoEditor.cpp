@@ -35,7 +35,7 @@ void structInfoEditor :: v_clear () {
 void gui_information (const char32 *message);   // BUG
 void gui_information (const char32 *message) {
 	if (! theInfoEditor) {
-		theInfoEditor = Thing_new (InfoEditor);
+		theInfoEditor = Thing_new (InfoEditor).transfer();
 		TextEditor_init (theInfoEditor, U"");
 		Thing_setName (theInfoEditor, U"Praat Info");
 	}

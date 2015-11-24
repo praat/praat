@@ -470,7 +470,7 @@ autoMatrix Matrix_readAP (MelderFile file) {
 
 autoMatrix Matrix_appendRows (Matrix me, Matrix thee, ClassInfo klas) {
 	try {
-		autoMatrix him = static_cast <Matrix> (Thing_newFromClass (klas));
+		autoMatrix him = Thing_newFromClass (klas).static_cast_move<structMatrix>();
 		Matrix_init (him.peek(), my xmin < thy xmin ? my xmin : thy xmin,
 			my xmax > thy xmax ? my xmax : thy xmax,
 			my nx > thy nx ? my nx : thy nx, my dx, my x1 < thy x1 ? my x1 : thy x1,

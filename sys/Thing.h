@@ -169,24 +169,6 @@ bool Thing_isSubclass (ClassInfo klas, ClassInfo ancestor);
 void Thing_info (Thing me);
 void Thing_infoWithIdAndFile (Thing me, unsigned long id, MelderFile file);
 
-#define Thing_new(Klas)  static_cast<Klas> (Thing_newFromClass (class##Klas))
-/*
-	Function:
-		return a new object of class 'klas'.
-	Postconditions:
-		result -> classInfo == class'klas';
-		other members are 0.
-*/
-
-Thing Thing_newFromClass (ClassInfo klas);
-/*
-	Function:
-		return a new object of class 'klas'.
-	Postconditions:
-		result -> classInfo == 'klas';
-		other members are 0.
-*/
-
 void Thing_recognizeClassesByName (ClassInfo readableClass, ...);
 /*
 	Function:
@@ -207,17 +189,6 @@ void Thing_recognizeClassesByName (ClassInfo readableClass, ...);
 */
 void Thing_recognizeClassByOtherName (ClassInfo readableClass, const char32 *otherName);
 long Thing_listReadableClasses ();
-
-Thing Thing_newFromClassName (const char32 *className, int *p_formatVersion);
-/*
-	Function:
-		return a new object of class 'className', or null if the class name is not recognized.
-	Postconditions:
-		result -> classInfo == class'className';
-		other members are 0.
-	Side effect:
-		see Thing_classFromClassName.
-*/
 
 ClassInfo Thing_classFromClassName (const char32 *className, int *formatVersion);
 /*
@@ -502,6 +473,35 @@ public:
 };
 
 typedef _Thing_auto<structThing> autoThing;
+
+#define Thing_new(Klas)  Thing_newFromClass (class##Klas).static_cast_move<struct##Klas>()
+/*
+	Function:
+		return a new object of class 'klas'.
+	Postconditions:
+		result -> classInfo == class'klas';
+		other members are 0.
+*/
+
+autoThing Thing_newFromClass (ClassInfo klas);
+/*
+	Function:
+		return a new object of class 'klas'.
+	Postconditions:
+		result -> classInfo == 'klas';
+		other members are 0.
+*/
+
+autoThing Thing_newFromClassName (const char32 *className, int *p_formatVersion);
+/*
+	Function:
+		return a new object of class 'className', or null if the class name is not recognized.
+	Postconditions:
+		result -> classInfo == class'className';
+		other members are 0.
+	Side effect:
+		see Thing_classFromClassName.
+*/
 
 template <class T>
 class autoThingVector {

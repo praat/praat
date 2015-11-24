@@ -70,14 +70,14 @@ Thing_implement (GuiLabel, GuiControl, 0);
 GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bottom,
 	const char32 *labelText, uint32 flags)
 {
-	GuiLabel me = Thing_new (GuiLabel);
+	autoGuiLabel me = Thing_new (GuiLabel);
 	my d_shell = parent -> d_shell;
 	my d_parent = parent;
 	#if gtk
 		my d_widget = gtk_label_new (Melder_peek32to8 (labelText));
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
-		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkLabel_destroyCallback), me);
+		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkLabel_destroyCallback), me.get());
 		gtk_misc_set_alignment (GTK_MISC (my d_widget), flags & GuiLabel_RIGHT ? 1.0 : flags & GuiLabel_CENTRE ? 0.5 : 0.0, 0.5);
 	#elif cocoa
 		trace (U"create");
@@ -86,7 +86,7 @@ GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bott
 		trace (U"position");
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		trace (U"set user data");
-		[label setUserData: me];
+		[label setUserData: me.get()];
 		trace (U"set bezel style");
 		[label setBezelStyle: NSTextFieldRoundedBezel];
 		trace (U"set bordered");
@@ -103,7 +103,7 @@ GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bott
 		[label setFont: theLabelFont];
 	#elif win
 		my d_widget = _Gui_initializeWidget (xmLabelWidgetClass, parent -> d_widget, labelText);
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 		my d_widget -> window = CreateWindow (L"static", Melder_peek32toW (_GuiWin_expandAmpersands (my d_widget -> name)),
 			WS_CHILD
 			| ( flags & GuiLabel_RIGHT ? SS_RIGHT : flags & GuiLabel_CENTRE ? SS_CENTER : SS_LEFT )
@@ -115,7 +115,7 @@ GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bott
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 	#elif mac
 		my d_widget = _Gui_initializeWidget (xmLabelWidgetClass, parent -> d_widget, labelText);
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 		ControlFontStyleRec macFontStyleRecord = { 0 };   // BUG: _GuiNativeControl_setFont will reset alignment (should do inheritance)
 		macFontStyleRecord. flags = kControlUseFontMask | kControlUseSizeMask | kControlUseJustMask;
 		macFontStyleRecord. font = systemFont;
@@ -128,7 +128,7 @@ GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bott
 		_GuiNativeControl_setTitle (my d_widget);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 	#endif
-	return me;
+	return me.transfer();
 }
 
 GuiLabel GuiLabel_createShown (GuiForm parent, int left, int right, int top, int bottom,

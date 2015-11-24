@@ -120,7 +120,7 @@
 
 #define oo_OBJECT(Class,formatVersion,x)  \
 	if (bingetex (f)) { \
-		our x = Thing_new (Class); \
+		our x = Thing_new (Class).transfer(); \
 		our x -> v_readBinary (f, formatVersion); \
 	}
 

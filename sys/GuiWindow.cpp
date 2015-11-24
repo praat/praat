@@ -166,27 +166,27 @@ Thing_implement (GuiWindow, GuiShell, 0);
 GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidth, int minimumHeight,
 	const char32 *title /* cattable */, GuiShell_GoAwayCallback goAwayCallback, Thing goAwayBoss, uint32 flags)
 {
-	GuiWindow me = Thing_new (GuiWindow);
+	autoGuiWindow me = Thing_new (GuiWindow);
 	my d_parent = nullptr;
 	my d_goAwayCallback = goAwayCallback;
 	my d_goAwayBoss = goAwayBoss;
 	#if gtk
 		GuiGtk_initialize ();
 		my d_gtkWindow = (GtkWindow *) gtk_window_new (GTK_WINDOW_TOPLEVEL);
-		g_signal_connect (G_OBJECT (my d_gtkWindow), "delete-event", goAwayCallback ? G_CALLBACK (_GuiWindow_goAwayCallback) : G_CALLBACK (gtk_widget_hide), me);
-		g_signal_connect (G_OBJECT (my d_gtkWindow), "destroy-event", G_CALLBACK (_GuiWindow_destroyCallback), me);
+		g_signal_connect (G_OBJECT (my d_gtkWindow), "delete-event", goAwayCallback ? G_CALLBACK (_GuiWindow_goAwayCallback) : G_CALLBACK (gtk_widget_hide), me.get());
+		g_signal_connect (G_OBJECT (my d_gtkWindow), "destroy-event", G_CALLBACK (_GuiWindow_destroyCallback), me.get());
 
 		gtk_window_set_default_size (GTK_WINDOW (my d_gtkWindow), width, height);
 		gtk_window_set_resizable (GTK_WINDOW (my d_gtkWindow), true);
-		GuiShell_setTitle (me, title);
+		GuiShell_setTitle (me.get(), title);
 
 		my d_widget = gtk_fixed_new ();
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 		gtk_widget_set_size_request (GTK_WIDGET (my d_widget), width, height);
 		gtk_container_add (GTK_CONTAINER (my d_gtkWindow), GTK_WIDGET (my d_widget));
 		GdkGeometry geometry = { minimumWidth, minimumHeight, 0, 0, 0, 0, 0, 0, 0, 0, GDK_GRAVITY_NORTH_WEST };
 		gtk_window_set_geometry_hints (my d_gtkWindow, GTK_WIDGET (my d_gtkWindow), & geometry, GDK_HINT_MIN_SIZE);
-		g_signal_connect (G_OBJECT (my d_widget), "size-allocate", G_CALLBACK (_GuiWindow_resizeCallback), me);
+		g_signal_connect (G_OBJECT (my d_widget), "size-allocate", G_CALLBACK (_GuiWindow_resizeCallback), me.get());
 	#elif cocoa
 		NSRect rect = { { static_cast<CGFloat>(x), static_cast<CGFloat>(y) }, { static_cast<CGFloat>(width), static_cast<CGFloat>(height) } };
 		my d_cocoaWindow = [[GuiCocoaWindow alloc]
@@ -196,10 +196,10 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidt
 			defer: false];
 		[my d_cocoaWindow setCollectionBehavior: NSWindowCollectionBehaviorFullScreenPrimary];
         [my d_cocoaWindow setMinSize: NSMakeSize (minimumWidth, minimumHeight)];
-		GuiShell_setTitle (me, title);
+		GuiShell_setTitle (me.get(), title);
 		[my d_cocoaWindow makeKeyAndOrderFront: nil];
 		my d_widget = (GuiObject) [my d_cocoaWindow contentView];   // BUG: this d_widget doesn't have the GuiCocoaAny protocol
-		_GuiObject_setUserData (my d_cocoaWindow, me);
+		_GuiObject_setUserData (my d_cocoaWindow, me.get());
 		//if (! theGuiCocoaWindowDelegate) {
 		//	theGuiCocoaWindowDelegate = [[GuiCocoaWindowDelegate alloc] init];
 		//}
@@ -209,18 +209,18 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidt
 		XtVaSetValues (my d_xmShell, XmNdeleteResponse, goAwayCallback ? XmDO_NOTHING : XmUNMAP, nullptr);
 		XtVaSetValues (my d_xmShell, XmNx, x, XmNy, y, XmNwidth, (Dimension) width, XmNheight, (Dimension) height, nullptr);
 		if (goAwayCallback) {
-			XmAddWMProtocolCallback (my d_xmShell, 'delw', _GuiMotifWindow_goAwayCallback, (char *) me);
+			XmAddWMProtocolCallback (my d_xmShell, 'delw', _GuiMotifWindow_goAwayCallback, (char *) me.get());
 		}
 		GuiShell_setTitle (me, title);
 		my d_widget = XmCreateForm (my d_xmShell, "dialog", nullptr, 0);
-		_GuiObject_setUserData (my d_widget, me);
-		XtAddCallback (my d_widget, XmNdestroyCallback, _GuiMotifWindow_destroyCallback, me);
+		_GuiObject_setUserData (my d_widget, me.get());
+		XtAddCallback (my d_widget, XmNdestroyCallback, _GuiMotifWindow_destroyCallback, me.get());
 		XtVaSetValues (my d_widget, XmNdialogStyle, XmDIALOG_MODELESS, XmNautoUnmanage, False, nullptr);
 	#endif
 	my d_width = width;
 	my d_height = height;
-	my d_shell = me;
-	return me;
+	my d_shell = me.get();
+	return me.transfer();
 }
 
 GuiObject theGuiTopMenuBar;
