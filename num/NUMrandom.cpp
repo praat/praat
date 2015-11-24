@@ -134,19 +134,19 @@ void NUMrandom_State :: init_by_array64 (uint64_t init_key [], unsigned int key_
 	unsigned int k = ( NN > key_length ? NN : key_length );
 	for (; k; k --) {
 		array [i] = (array [i] ^ ((array [i - 1] ^ (array [i - 1] >> 62)) * UINT64_C (3935559000370003845)))
-		  + init_key [j] + (uint64_t) j;   /* non linear */
+		  + init_key [j] + (uint64_t) j;   // non-linear
 		i ++, j ++;
 		if (i >= NN) { array [0] = array [NN - 1]; i = 1; }
 		if (j >= key_length) j = 0;
 	}
 	for (k = NN - 1; k; k --) {
 		array [i] = (array [i] ^ ((array [i - 1] ^ (array [i - 1] >> 62)) * UINT64_C (2862933555777941757)))
-		  - (uint64_t) i;   /* non linear */
+		  - (uint64_t) i;   // non-linear
 		i ++;
 		if (i >= NN) { array [0] = array [NN - 1]; i = 1; }
 	}
 
-	array [0] = UINT64_C (1) << 63; /* MSB is 1; assuring non-zero initial array */
+	array [0] = UINT64_C (1) << 63;   // MSB is 1; assuring non-zero initial array
 }
 
 static bool theInited = false;
@@ -192,7 +192,7 @@ void NUMrandom_init () {
 
 #define ZERO_OR_MAGIC_VERSION  3
 
-#if ZERO_OR_MAGIC_VERSION == 1  // M&N 1999
+#if ZERO_OR_MAGIC_VERSION == 1   // M&N 1999
 	#define ZERO_OR_MAGIC  ( (x & UINT64_C (1)) ? MATRIX_A : UINT64_C (0) )
 #elif ZERO_OR_MAGIC_VERSION == 2
 	#define ZERO_OR_MAGIC  ( (x & UINT64_C (1)) * MATRIX_A )
@@ -205,7 +205,7 @@ double NUMrandomFraction () {
 	NUMrandom_State *me = & states [0];
 	uint64_t x;
 
-	if (my index >= NN) { /* generate NN words at a time */
+	if (my index >= NN) {   // generate NN words at a time
 
 		Melder_assert (theInited);   // if NUMrandom_init() hasn't been called, we'll detect that here, probably in the first call
 
@@ -238,7 +238,7 @@ double NUMrandomFraction_mt (int threadNumber) {
 	NUMrandom_State *me = & states [threadNumber];
 	uint64_t x;
 
-	if (my index >= NN) { /* generate NN words at a time */
+	if (my index >= NN) {   // generate NN words at a time
 
 		Melder_assert (theInited);
 
@@ -288,10 +288,10 @@ double NUMrandomGauss (double mean, double standardDeviation) {
 	} else {
 		double s, x;
 		repeat {
-			x = 2.0 * NUMrandomFraction () - 1.0;   /* Inside the square [-1; 1] x [-1; 1]. */
+			x = 2.0 * NUMrandomFraction () - 1.0;   // inside the square [-1; 1] x [-1; 1]
 			my y = 2.0 * NUMrandomFraction () - 1.0;
 			s = x * x + my y * my y;
-		} until (s < 1.0);   /* Inside the unit circle. */
+		} until (s < 1.0);   // inside the unit circle
 		if (s == 0.0) {
 			x = my y = 0.0;
 		} else {
@@ -314,10 +314,10 @@ double NUMrandomGauss_mt (int threadNumber, double mean, double standardDeviatio
 	} else {
 		double s, x;
 		repeat {
-			x = 2.0 * NUMrandomFraction_mt (threadNumber) - 1.0;   /* Inside the square [-1; 1] x [-1; 1]. */
+			x = 2.0 * NUMrandomFraction_mt (threadNumber) - 1.0;   // inside the square [-1; 1] x [-1; 1]
 			my y = 2.0 * NUMrandomFraction_mt (threadNumber) - 1.0;
 			s = x * x + my y * my y;
-		} until (s < 1.0);   /* Inside the unit circle. */
+		} until (s < 1.0);   // inside the unit circle
 		if (s == 0.0) {
 			x = my y = 0.0;
 		} else {
@@ -360,7 +360,7 @@ double NUMrandomPoisson (double mean) {
 
 			exp ((k - mean) * ln (mean) + lnGamma (mean + 1) - lnGamma (k + 1))
 	*/
-	static double previousMean = -1.0;   /* This routine may well be called repeatedly with the same mean. Optimize. */
+	static double previousMean = -1.0;   // this routine may well be called repeatedly with the same mean; optimize
 	if (mean < 8.0) {
 		static double expMean;
 		double product = 1.0;

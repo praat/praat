@@ -57,20 +57,16 @@ void structTableEditor :: v_dataChanged () {
 /********** EDIT MENU **********/
 
 #ifndef macintosh
-static void menu_cb_Cut (EDITOR_ARGS) {   // BUG: why only on Mac?
-	EDITOR_IAM (TableEditor);
+static void menu_cb_Cut (TableEditor me, EDITOR_ARGS_DIRECT) {   // BUG: why only on Mac?
 	GuiText_cut (my text);
 }
-static void menu_cb_Copy (EDITOR_ARGS) {
-	EDITOR_IAM (TableEditor);
+static void menu_cb_Copy (TableEditor me, EDITOR_ARGS_DIRECT) {
 	GuiText_copy (my text);
 }
-static void menu_cb_Paste (EDITOR_ARGS) {
-	EDITOR_IAM (TableEditor);
+static void menu_cb_Paste (TableEditor me, EDITOR_ARGS_DIRECT) {
 	GuiText_paste (my text);
 }
-static void menu_cb_Erase (EDITOR_ARGS) {
-	EDITOR_IAM (TableEditor);
+static void menu_cb_Erase (TableEditor me, EDITOR_ARGS_DIRECT) {
 	GuiText_remove (my text);
 }
 #endif
@@ -79,8 +75,7 @@ static void menu_cb_Erase (EDITOR_ARGS) {
 
 /********** HELP MENU **********/
 
-static void menu_cb_TableEditorHelp (EDITOR_ARGS) {
-	EDITOR_IAM (TableEditor);
+static void menu_cb_TableEditorHelp (TableEditor, EDITOR_ARGS_DIRECT) {
 	Melder_help (U"TableEditor");
 }
 

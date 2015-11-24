@@ -30,9 +30,8 @@
 
 Thing_implement (OTMultiEditor, HyperPage, 0);
 
-static void menu_cb_evaluate (EDITOR_ARGS) {
-	EDITOR_IAM (OTMultiEditor);
-	EDITOR_FORM (U"Evaluate", 0)
+static void menu_cb_evaluate (OTMultiEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Evaluate", nullptr)
 		REAL (U"Evaluation noise", U"2.0")
 	EDITOR_OK
 	EDITOR_DO
@@ -43,25 +42,22 @@ static void menu_cb_evaluate (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_evaluate_noise_2_0 (EDITOR_ARGS) {
-	EDITOR_IAM (OTMultiEditor);
+static void menu_cb_evaluate_noise_2_0 (OTMultiEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Evaluate (noise 2.0)");
 	OTMulti_newDisharmonies ((OTMulti) my data, 2.0);
 	Graphics_updateWs (my g);
 	Editor_broadcastDataChanged (me);
 }
 
-static void menu_cb_evaluate_tinyNoise (EDITOR_ARGS) {
-	EDITOR_IAM (OTMultiEditor);
+static void menu_cb_evaluate_tinyNoise (OTMultiEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Evaluate (tiny noise)");
 	OTMulti_newDisharmonies ((OTMulti) my data, 1e-9);
 	Graphics_updateWs (my g);
 	Editor_broadcastDataChanged (me);
 }
 
-static void menu_cb_editRanking (EDITOR_ARGS) {
-	EDITOR_IAM (OTMultiEditor);
-	EDITOR_FORM (U"Edit ranking", 0)
+static void menu_cb_editRanking (OTMultiEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Edit ranking", nullptr)
 		LABEL (U"constraint", U"");
 		REAL (U"Ranking value", U"100.0");
 		REAL (U"Disharmony", U"100.0");
@@ -86,8 +82,7 @@ static void menu_cb_editRanking (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_learnOne (EDITOR_ARGS) {
-	EDITOR_IAM (OTMultiEditor);
+static void menu_cb_learnOne (OTMultiEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Learn one", U"OTGrammar: Learn one...")
 		OPTIONMENU_ENUM (U"Update rule", kOTGrammar_rerankingStrategy, kOTGrammar_rerankingStrategy_SYMMETRIC_ALL)
 		OPTIONMENU (U"Direction", 3)
@@ -111,8 +106,7 @@ static void menu_cb_learnOne (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_removeConstraint (EDITOR_ARGS) {
-	EDITOR_IAM (OTMultiEditor);
+static void menu_cb_removeConstraint (OTMultiEditor me, EDITOR_ARGS_DIRECT) {
 	OTMulti grammar = (OTMulti) my data;
 	if (my selectedConstraint < 1 || my selectedConstraint > grammar -> numberOfConstraints)
 		Melder_throw (U"Select a constraint first.");
@@ -123,9 +117,8 @@ static void menu_cb_removeConstraint (EDITOR_ARGS) {
 	Editor_broadcastDataChanged (me);
 }
 
-static void menu_cb_resetAllRankings (EDITOR_ARGS) {
-	EDITOR_IAM (OTMultiEditor);
-	EDITOR_FORM (U"Reset all rankings", 0)
+static void menu_cb_resetAllRankings (OTMultiEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Reset all rankings", nullptr)
 		REAL (U"Ranking", U"100.0")
 	EDITOR_OK
 	EDITOR_DO
@@ -136,9 +129,7 @@ static void menu_cb_resetAllRankings (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_OTLearningTutorial (EDITOR_ARGS) {
-	EDITOR_IAM (OTMultiEditor);
-	(void) me;
+static void menu_cb_OTLearningTutorial (OTMultiEditor, EDITOR_ARGS_DIRECT) {
 	Melder_help (U"OT learning");
 }
 

@@ -22,7 +22,9 @@
 
 Thing_implement (AmplitudeTierEditor, RealTierEditor, 0);
 
-static void menu_cb_AmplitudeTierHelp (EDITOR_ARGS) { EDITOR_IAM (AmplitudeTierEditor); Melder_help (U"AmplitudeTier"); }
+static void menu_cb_AmplitudeTierHelp (AmplitudeTierEditor /* me */, EDITOR_ARGS_DIRECT) {
+	Melder_help (U"AmplitudeTier");
+}
 
 void structAmplitudeTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	AmplitudeTierEditor_Parent :: v_createHelpMenuItems (menu);

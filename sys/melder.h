@@ -1389,23 +1389,23 @@ public:
 };
 
 class autoMelderFile {
-	MelderFile file;
+	MelderFile _file;
 public:
-	autoMelderFile (MelderFile a_file) : file (a_file) {
+	autoMelderFile (MelderFile file) : _file (file) {
 	}
 	~autoMelderFile () {
-		if (file) MelderFile_close_nothrow (file);
+		if (_file) MelderFile_close_nothrow (_file);
 	}
 	void close () {
-		if (file && file -> filePointer) {
-			MelderFile tmp = file;
-			file = nullptr;
+		if (_file && _file -> filePointer) {
+			MelderFile tmp = _file;
+			_file = nullptr;
 			MelderFile_close (tmp);
 		}
 	}
 	MelderFile transfer () {
-		MelderFile tmp = file;
-		file = nullptr;
+		MelderFile tmp = _file;
+		_file = nullptr;
 		return tmp;
 	}
 };

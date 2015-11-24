@@ -55,8 +55,7 @@ static const char32 *month [] =
 	{ U"", U"January", U"February", U"March", U"April", U"May", U"June",
 	  U"July", U"August", U"September", U"October", U"November", U"December" };
 
-static void menu_cb_writeOneToHtmlFile (EDITOR_ARGS) {
-	EDITOR_IAM (Manual);
+static void menu_cb_writeOneToHtmlFile (Manual me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM_WRITE (U"Save as HTML file", nullptr)
 		ManPages manPages = (ManPages) my data;
 		autoMelderString buffer;
@@ -70,8 +69,7 @@ static void menu_cb_writeOneToHtmlFile (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_writeAllToHtmlDir (EDITOR_ARGS) {
-	EDITOR_IAM (Manual);
+static void menu_cb_writeAllToHtmlDir (Manual me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Save all pages as HTML files", nullptr)
 		LABEL (U"", U"Type a directory name:")
 		TEXTFIELD (U"directory", U"")
@@ -85,8 +83,7 @@ static void menu_cb_writeAllToHtmlDir (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_searchForPageList (EDITOR_ARGS) {
-	EDITOR_IAM (Manual);
+static void menu_cb_searchForPageList (Manual me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Search for page", nullptr)
 		ManPages manPages = (ManPages) my data;
 		long numberOfPages;
@@ -229,8 +226,7 @@ static void print (void *void_me, Graphics graphics) {
 	my printPagesStartingWith = nullptr;
 }
 
-static void menu_cb_printRange (EDITOR_ARGS) {
-	EDITOR_IAM (Manual);
+static void menu_cb_printRange (Manual me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Print range", 0)
 		SENTENCE (U"Left or inside header", U"")
 		SENTENCE (U"Middle header", U"")
@@ -439,7 +435,7 @@ void structManual :: v_createChildren () {
 	our searchText = GuiText_createShown (our d_windowForm, 274+69 + STRING_SPACING, 452 + STRING_SPACING - 2, y, y + Gui_TEXTFIELD_HEIGHT, 0);
 }
 
-static void menu_cb_help (EDITOR_ARGS) { EDITOR_IAM (Manual); HyperPage_goToPage (me, U"Manual"); }
+static void menu_cb_help (Manual me, EDITOR_ARGS_DIRECT) { HyperPage_goToPage (me, U"Manual"); }
 
 void structManual :: v_createMenus () {
 	Manual_Parent :: v_createMenus ();

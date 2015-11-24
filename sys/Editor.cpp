@@ -269,8 +269,7 @@ void structEditor :: v_restoreData () {
 		Thing_swap (our data, our previousData);
 }
 
-static void menu_cb_sendBackToCallingProgram (EDITOR_ARGS) {
-	EDITOR_IAM (Editor);
+static void menu_cb_sendBackToCallingProgram (Editor me, EDITOR_ARGS_DIRECT) {
 	if (my data) {
 		extern structMelderDir praatDir;
 		structMelderFile file = { 0 };
@@ -281,13 +280,11 @@ static void menu_cb_sendBackToCallingProgram (EDITOR_ARGS) {
 	my v_goAway ();
 }
 
-static void menu_cb_close (EDITOR_ARGS) {
-	EDITOR_IAM (Editor);
+static void menu_cb_close (Editor me, EDITOR_ARGS_DIRECT) {
 	my v_goAway ();
 }
 
-static void menu_cb_undo (EDITOR_ARGS) {
-	EDITOR_IAM (Editor);
+static void menu_cb_undo (Editor me, EDITOR_ARGS_DIRECT) {
 	my v_restoreData ();
 	if (str32nequ (my undoText, U"Undo", 4)) my undoText [0] = U'R', my undoText [1] = U'e';
 	else if (str32nequ (my undoText, U"Redo", 4)) my undoText [0] = U'U', my undoText [1] = U'n';
@@ -310,18 +307,15 @@ static void menu_cb_undo (EDITOR_ARGS) {
 	Editor_broadcastDataChanged (me);
 }
 
-static void menu_cb_searchManual (EDITOR_ARGS) {
-	EDITOR_IAM (Editor);
+static void menu_cb_searchManual (Editor /* me */, EDITOR_ARGS_DIRECT) {
 	Melder_search ();
 }
 
-static void menu_cb_newScript (EDITOR_ARGS) {
-	EDITOR_IAM (Editor);
+static void menu_cb_newScript (Editor me, EDITOR_ARGS_DIRECT) {
 	(void) ScriptEditor_createFromText (me, nullptr);
 }
 
-static void menu_cb_openScript (EDITOR_ARGS) {
-	EDITOR_IAM (Editor);
+static void menu_cb_openScript (Editor me, EDITOR_ARGS_DIRECT) {
 	autoScriptEditor scriptEditor = ScriptEditor_createFromText (me, nullptr);
 	TextEditor_showOpen (scriptEditor.transfer());
 }
@@ -335,13 +329,11 @@ void structEditor :: v_createMenuItems_edit (EditorMenu menu) {
 		our undoButton = EditorMenu_addCommand (menu, U"Cannot undo", GuiMenu_INSENSITIVE + 'Z', menu_cb_undo);
 }
 
-static void menu_cb_settingsReport (EDITOR_ARGS) {
-	EDITOR_IAM (Editor);
+static void menu_cb_settingsReport (Editor me, EDITOR_ARGS_DIRECT) {
 	Thing_info (me);
 }
 
-static void menu_cb_info (EDITOR_ARGS) {
-	EDITOR_IAM (Editor);
+static void menu_cb_info (Editor me, EDITOR_ARGS_DIRECT) {
 	if (my data) Thing_info (my data);
 }
 

@@ -45,10 +45,10 @@ void Table_removeColumn (Table me, long column);
 void Table_insertRow (Table me, long row);
 void Table_insertColumn (Table me, long column, const char32 *label /* cattable */);
 void Table_setColumnLabel (Table me, long column, const char32 *label /* cattable */);
-long Table_findColumnIndexFromColumnLabel (Table me, const char32 *label);
+long Table_findColumnIndexFromColumnLabel (Table me, const char32 *label) noexcept;
 long Table_getColumnIndexFromColumnLabel (Table me, const char32 *columnLabel);
 long * Table_getColumnIndicesFromColumnLabelString (Table me, const char32 *string, long *numberOfTokens);
-long Table_searchColumn (Table me, long column, const char32 *value);
+long Table_searchColumn (Table me, long column, const char32 *value) noexcept;
 
 /*
  * Procedure for reading strings or numbers from table cells:
@@ -97,8 +97,8 @@ void Table_formula_columnRange (Table me, long column1, long column2, const char
 
 void Table_sortRows_Assert (Table me, long *columns, long numberOfColumns);
 void Table_sortRows_string (Table me, const char32 *columns_string);
-void Table_randomizeRows (Table me);
-void Table_reflectRows (Table me);
+void Table_randomizeRows (Table me) noexcept;
+void Table_reflectRows (Table me) noexcept;
 
 void Table_scatterPlot (Table me, Graphics g, long xcolumn, long ycolumn,
 	double xmin, double xmax, double ymin, double ymax, long markColumn, int fontSize, int garnish);

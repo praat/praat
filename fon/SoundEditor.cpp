@@ -37,8 +37,7 @@ void structSoundEditor :: v_dataChanged () {
 
 /***** EDIT MENU *****/
 
-static void menu_cb_Copy (EDITOR_ARGS) {
-	EDITOR_IAM (SoundEditor);
+static void menu_cb_Copy (SoundEditor me, EDITOR_ARGS_DIRECT) {
 	try {
 		/*
 		 * Create without change.
@@ -55,8 +54,7 @@ static void menu_cb_Copy (EDITOR_ARGS) {
 	}
 }
 
-static void menu_cb_Cut (EDITOR_ARGS) {
-	EDITOR_IAM (SoundEditor);
+static void menu_cb_Cut (SoundEditor me, EDITOR_ARGS_DIRECT) {
 	try {
 		Sound sound = (Sound) my data;
 		long first, last, selectionNumberOfSamples = Sampled_getWindowSamples (sound,
@@ -157,8 +155,7 @@ static void menu_cb_Cut (EDITOR_ARGS) {
 	}
 }
 
-static void menu_cb_Paste (EDITOR_ARGS) {
-	EDITOR_IAM (SoundEditor);
+static void menu_cb_Paste (SoundEditor me, EDITOR_ARGS_DIRECT) {
 	Sound sound = (Sound) my data;
 	long leftSample = Sampled_xToLowIndex (sound, my d_endSelection);
 	long oldNumberOfSamples = sound -> nx, newNumberOfSamples;
@@ -221,8 +218,7 @@ static void menu_cb_Paste (EDITOR_ARGS) {
 	Editor_broadcastDataChanged (me);
 }
 
-static void menu_cb_SetSelectionToZero (EDITOR_ARGS) {
-	EDITOR_IAM (SoundEditor);
+static void menu_cb_SetSelectionToZero (SoundEditor me, EDITOR_ARGS_DIRECT) {
 	Sound sound = (Sound) my data;
 	long first, last;
 	Sampled_getWindowSamples (sound, my d_startSelection, my d_endSelection, & first, & last);
@@ -237,8 +233,7 @@ static void menu_cb_SetSelectionToZero (EDITOR_ARGS) {
 	Editor_broadcastDataChanged (me);
 }
 
-static void menu_cb_ReverseSelection (EDITOR_ARGS) {
-	EDITOR_IAM (SoundEditor);
+static void menu_cb_ReverseSelection (SoundEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Reverse selection");
 	Sound_reverse ((Sound) my data, my d_startSelection, my d_endSelection);
 	my v_reset_analysis ();
@@ -248,8 +243,7 @@ static void menu_cb_ReverseSelection (EDITOR_ARGS) {
 
 /***** SELECT MENU *****/
 
-static void menu_cb_MoveCursorToZero (EDITOR_ARGS) {
-	EDITOR_IAM (SoundEditor);
+static void menu_cb_MoveCursorToZero (SoundEditor me, EDITOR_ARGS_DIRECT) {
 	double zero = Sound_getNearestZeroCrossing ((Sound) my data, 0.5 * (my d_startSelection + my d_endSelection), 1);   // STEREO BUG
 	if (NUMdefined (zero)) {
 		my d_startSelection = my d_endSelection = zero;
@@ -257,8 +251,7 @@ static void menu_cb_MoveCursorToZero (EDITOR_ARGS) {
 	}
 }
 
-static void menu_cb_MoveBtoZero (EDITOR_ARGS) {
-	EDITOR_IAM (SoundEditor);
+static void menu_cb_MoveBtoZero (SoundEditor me, EDITOR_ARGS_DIRECT) {
 	double zero = Sound_getNearestZeroCrossing ((Sound) my data, my d_startSelection, 1);   // STEREO BUG
 	if (NUMdefined (zero)) {
 		my d_startSelection = zero;
@@ -271,8 +264,7 @@ static void menu_cb_MoveBtoZero (EDITOR_ARGS) {
 	}
 }
 
-static void menu_cb_MoveEtoZero (EDITOR_ARGS) {
-	EDITOR_IAM (SoundEditor);
+static void menu_cb_MoveEtoZero (SoundEditor me, EDITOR_ARGS_DIRECT) {
 	double zero = Sound_getNearestZeroCrossing ((Sound) my data, my d_endSelection, 1);   // STEREO BUG
 	if (NUMdefined (zero)) {
 		my d_endSelection = zero;
@@ -287,8 +279,8 @@ static void menu_cb_MoveEtoZero (EDITOR_ARGS) {
 
 /***** HELP MENU *****/
 
-static void menu_cb_SoundEditorHelp (EDITOR_ARGS) { EDITOR_IAM (SoundEditor); Melder_help (U"SoundEditor"); }
-static void menu_cb_LongSoundEditorHelp (EDITOR_ARGS) { EDITOR_IAM (SoundEditor); Melder_help (U"LongSoundEditor"); }
+static void menu_cb_SoundEditorHelp (SoundEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"SoundEditor"); }
+static void menu_cb_LongSoundEditorHelp (SoundEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"LongSoundEditor"); }
 
 void structSoundEditor :: v_createMenus () {
 	SoundEditor_Parent :: v_createMenus ();

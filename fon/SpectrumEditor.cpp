@@ -91,20 +91,17 @@ void structSpectrumEditor :: v_play (double fmin, double fmax) {
 	Sound_play (sound.peek(), nullptr, nullptr);
 }
 
-static void menu_cb_publishBand (EDITOR_ARGS) {
-	EDITOR_IAM (SpectrumEditor);
+static void menu_cb_publishBand (SpectrumEditor me, EDITOR_ARGS_DIRECT) {
 	autoSpectrum publish = Spectrum_band ((Spectrum) my data, my d_startSelection, my d_endSelection);
 	Editor_broadcastPublication (me, publish.transfer());
 }
 
-static void menu_cb_publishSound (EDITOR_ARGS) {
-	EDITOR_IAM (SpectrumEditor);
+static void menu_cb_publishSound (SpectrumEditor me, EDITOR_ARGS_DIRECT) {
 	autoSound publish = Spectrum_to_Sound_part ((Spectrum) my data, my d_startSelection, my d_endSelection);
 	Editor_broadcastPublication (me, publish.transfer());
 }
 
-static void menu_cb_passBand (EDITOR_ARGS) {
-	EDITOR_IAM (SpectrumEditor);
+static void menu_cb_passBand (SpectrumEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Filter (pass Hann band)", U"Spectrum: Filter (pass Hann band)...");
 		REAL (U"Band smoothing (Hz)", my default_bandSmoothing ())
 	EDITOR_OK
@@ -119,9 +116,8 @@ static void menu_cb_passBand (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_stopBand (EDITOR_ARGS) {
-	EDITOR_IAM (SpectrumEditor);
-	EDITOR_FORM (U"Filter (stop Hann band)", 0)
+static void menu_cb_stopBand (SpectrumEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Filter (stop Hann band)", nullptr)
 		REAL (U"Band smoothing (Hz)", my default_bandSmoothing ())
 	EDITOR_OK
 		SET_REAL (U"Band smoothing", my p_bandSmoothing)
@@ -135,8 +131,7 @@ static void menu_cb_stopBand (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_moveCursorToPeak (EDITOR_ARGS) {
-	EDITOR_IAM (SpectrumEditor);
+static void menu_cb_moveCursorToPeak (SpectrumEditor me, EDITOR_ARGS_DIRECT) {
 	double frequencyOfMaximum, heightOfMaximum;
 	Spectrum_getNearestMaximum ((Spectrum) my data, 0.5 * (my d_startSelection + my d_endSelection), & frequencyOfMaximum, & heightOfMaximum);
 	my d_startSelection = my d_endSelection = frequencyOfMaximum;
@@ -144,9 +139,8 @@ static void menu_cb_moveCursorToPeak (EDITOR_ARGS) {
 	FunctionEditor_marksChanged (me, true);
 }
 
-static void menu_cb_setDynamicRange (EDITOR_ARGS) {
-	EDITOR_IAM (SpectrumEditor);
-	EDITOR_FORM (U"Set dynamic range", 0)
+static void menu_cb_setDynamicRange (SpectrumEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Set dynamic range", nullptr)
 		POSITIVE (U"Dynamic range (dB)", my default_dynamicRange ())
 	EDITOR_OK
 		SET_REAL (U"Dynamic range", my p_dynamicRange)
@@ -157,8 +151,8 @@ static void menu_cb_setDynamicRange (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_help_SpectrumEditor (EDITOR_ARGS) { EDITOR_IAM (SpectrumEditor); Melder_help (U"SpectrumEditor"); }
-static void menu_cb_help_Spectrum (EDITOR_ARGS) { EDITOR_IAM (SpectrumEditor); Melder_help (U"Spectrum"); }
+static void menu_cb_help_SpectrumEditor (SpectrumEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"SpectrumEditor"); }
+static void menu_cb_help_Spectrum (SpectrumEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Spectrum"); }
 
 void structSpectrumEditor :: v_createMenus () {
 	SpectrumEditor_Parent :: v_createMenus ();
