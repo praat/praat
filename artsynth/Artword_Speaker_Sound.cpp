@@ -40,7 +40,7 @@ static int playCallback (Artword_Speaker_Sound_PlayInfo me, int /* phase */, dou
 
 void Artword_Speaker_Sound_movie (Artword artword, Speaker speaker, Sound sound, Graphics graphics) {
 	try {
-		static Artword_Speaker_Sound_PlayInfo info = Thing_new (Artword_Speaker_Sound_PlayInfo);   // must be static!!!
+		static Artword_Speaker_Sound_PlayInfo info = Thing_new (Artword_Speaker_Sound_PlayInfo).transfer();   // must be static!!!
 		info -> artword = artword;
 		info -> speaker = speaker;
 		info -> graphics = graphics;

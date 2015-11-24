@@ -75,7 +75,7 @@ Thing_implement (GuiScrolledWindow, GuiControl, 0);
 GuiScrolledWindow GuiScrolledWindow_create (GuiForm parent, int left, int right, int top, int bottom,
 	int horizontalScrollbarPersistence, int verticalScrollbarPersistence, uint32 /* flags */)
 {
-	GuiScrolledWindow me = Thing_new (GuiScrolledWindow);
+	autoGuiScrolledWindow me = Thing_new (GuiScrolledWindow);
 	my d_shell = parent -> d_shell;
 	my d_parent = parent;
 	#if gtk
@@ -83,25 +83,25 @@ GuiScrolledWindow GuiScrolledWindow_create (GuiForm parent, int left, int right,
 		gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (my d_widget),
 			horizontalScrollbarPersistence == 0 ? GTK_POLICY_NEVER : horizontalScrollbarPersistence == 1 ? GTK_POLICY_AUTOMATIC : GTK_POLICY_ALWAYS,
 			verticalScrollbarPersistence   == 0 ? GTK_POLICY_NEVER : verticalScrollbarPersistence   == 1 ? GTK_POLICY_AUTOMATIC : GTK_POLICY_ALWAYS);
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
-		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkScrolledWindow_destroyCallback), me);
+		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkScrolledWindow_destroyCallback), me.get());
 	#elif cocoa
         GuiCocoaScrolledWindow *scrollView = [[GuiCocoaScrolledWindow alloc] init];
         my d_widget = (GuiObject) scrollView;
         my v_positionInForm (my d_widget, left, right, top, bottom, parent);
-        [scrollView setUserData: me];
+        [scrollView setUserData: me.get()];
         [scrollView setHasVerticalScroller:   YES];
         [scrollView setHasHorizontalScroller: YES];
         [scrollView setBackgroundColor: [NSColor lightGrayColor]];
 	#elif motif
 		my d_widget = XmCreateScrolledWindow (parent -> d_widget, "scrolledWindow", nullptr, 0);
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		Melder_assert (my classInfo == classGuiScrolledWindow);
-		trace (U"me = ", Melder_pointer (me), U", user data = ", Melder_pointer (my d_widget -> userData));
+		trace (U"me = ", Melder_pointer (me.get()), U", user data = ", Melder_pointer (my d_widget -> userData));
 	#endif
-	return me;
+	return me.transfer();
 }
 
 

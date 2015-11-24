@@ -946,7 +946,7 @@ autoTableOfReal TablesOfReal_append (TableOfReal me, TableOfReal thee) {
 	try {
 		if (thy numberOfColumns != my numberOfColumns)
 			Melder_throw (U"Numbers of columns are ", my numberOfColumns, U" and ", thy numberOfColumns, U" but should be equal.");
-		autoTableOfReal him = static_cast <TableOfReal> (Thing_newFromClass (my classInfo));
+		autoTableOfReal him = Thing_newFromClass (my classInfo).static_cast_move <structTableOfReal> ();
 		TableOfReal_init (him.peek(), my numberOfRows + thy numberOfRows, my numberOfColumns);
 		/* Unsafe: new attributes not initialized. */
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
@@ -980,7 +980,7 @@ autoTableOfReal TablesOfReal_appendMany (Collection me) {
 			totalNumberOfRows += thy numberOfRows;
 			if (thy numberOfColumns != numberOfColumns) Melder_throw (U"Numbers of columns do not match.");
 		}
-		autoTableOfReal him = static_cast <TableOfReal> (Thing_newFromClass (thy classInfo));
+		autoTableOfReal him = Thing_newFromClass (thy classInfo).static_cast_move <structTableOfReal> ();
 		TableOfReal_init (him.peek(), totalNumberOfRows, numberOfColumns);
 		/* Unsafe: new attributes not initialized. */
 		for (long icol = 1; icol <= numberOfColumns; icol ++) {

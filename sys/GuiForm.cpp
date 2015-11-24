@@ -39,7 +39,7 @@ Thing_implement (GuiForm, GuiControl, 0);
 
 GuiForm GuiForm_createInScrolledWindow (GuiScrolledWindow parent)
 {
-	GuiForm me = Thing_new (GuiForm);
+	autoGuiForm me = Thing_new (GuiForm);
 	my d_shell = parent -> d_shell;
 	my d_parent = parent;
 	#if gtk
@@ -50,16 +50,16 @@ GuiForm GuiForm_createInScrolledWindow (GuiScrolledWindow parent)
 		//my d_widget = XmCreateRowColumn (parent -> d_widget, "menu", nullptr, 0);
 		my d_widget = XmCreateForm (parent -> d_widget, "menu", nullptr, 0);
 	#endif
-	GuiThing_show (me);
+	GuiThing_show (me.get());
 
 	#if gtk
-		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_guiGtkForm_destroyCallback), me);
+		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_guiGtkForm_destroyCallback), me.get());
 	#elif cocoa
 	#elif motif
-		XtAddCallback (my d_widget, XmNdestroyCallback, _guiMotifForm_destroyCallback, me);
+		XtAddCallback (my d_widget, XmNdestroyCallback, _guiMotifForm_destroyCallback, me.get());
 	#endif
 
-	return me;
+	return me.transfer();
 }
 
 /* End of file GuiForm.cpp */

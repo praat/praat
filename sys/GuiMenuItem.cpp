@@ -165,7 +165,7 @@ static void NativeMenuItem_setText (GuiObject me) {
 GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, uint32 flags,
 	GuiMenuItemCallback commandCallback, Thing boss)
 {
-	GuiMenuItem me = Thing_new (GuiMenuItem);
+	autoGuiMenuItem me = Thing_new (GuiMenuItem);
 	my d_shell = menu -> d_shell;
 	my d_parent = menu;
 	my d_menu = menu;
@@ -190,7 +190,7 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, uint32 flags,
 		}
 		Melder_assert (menu -> d_widget);
 		gtk_menu_shell_append (GTK_MENU_SHELL (menu -> d_widget), GTK_WIDGET (my d_widget));
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 	#elif cocoa
 		(void) toggle;   // no difference between toggling and normal menu items on Cocoa
 		NSString *string = (NSString *) Melder_peek32toCfstring (title);
@@ -215,17 +215,17 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, uint32 flags,
 		trace (U"release the item");
 		[menuItem release];   // ... so we can release the item already
 		trace (U"set user data");
-		[menuItem setUserData: me];
+		[menuItem setUserData: me.get()];
 	#elif motif
 		my d_widget = XtVaCreateManagedWidget (Melder_peek32to8 (title),
 			toggle ? xmToggleButtonGadgetClass : xmPushButtonGadgetClass, menu -> d_widget, nullptr);
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 	#endif
 	Melder_assert (my d_widget);
 
 	trace (U"set sensitivity");
 	if (flags & GuiMenu_INSENSITIVE)
-		GuiThing_setSensitive (me, false);
+		GuiThing_setSensitive (me.get(), false);
 
 	trace (U"understand toggle menu items");
 	if (flags & GuiMenu_TOGGLE_ON)
@@ -345,16 +345,16 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, uint32 flags,
 				GtkWidget *shell = gtk_widget_get_toplevel (gtk_menu_get_attach_widget (GTK_MENU (menu -> d_widget)));
 				trace (U"tab set in GTK window ", Melder_pointer (shell));
 				g_object_set_data (G_OBJECT (shell), "tabCallback", (gpointer) _guiGtkMenuItem_activateCallback);
-				g_object_set_data (G_OBJECT (shell), "tabClosure", (gpointer) me);
+				g_object_set_data (G_OBJECT (shell), "tabClosure", (gpointer) me.get());
 			} else if (flags == (GuiMenu_TAB | GuiMenu_SHIFT)) {
 				GtkWidget *shell = gtk_widget_get_toplevel (gtk_menu_get_attach_widget (GTK_MENU (menu -> d_widget)));
 				trace (U"shift-tab set in GTK window ", Melder_pointer (shell));
 				g_object_set_data (G_OBJECT (shell), "shiftTabCallback", (gpointer) _guiGtkMenuItem_activateCallback);
-				g_object_set_data (G_OBJECT (shell), "shiftTabClosure", (gpointer) me);
+				g_object_set_data (G_OBJECT (shell), "shiftTabClosure", (gpointer) me.get());
 			} else {
 				g_signal_connect (G_OBJECT (my d_widget),
 					toggle ? "toggled" : "activate",
-					G_CALLBACK (_guiGtkMenuItem_activateCallback), (gpointer) me);
+					G_CALLBACK (_guiGtkMenuItem_activateCallback), (gpointer) me.get());
 			}
 		} else {
 			gtk_widget_set_sensitive (GTK_WIDGET (my d_widget), false);
@@ -366,22 +366,22 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, uint32 flags,
 	#elif motif
 		XtAddCallback (my d_widget,
 			toggle ? XmNvalueChangedCallback : XmNactivateCallback,
-			_guiMotifMenuItem_activateCallback, (XtPointer) me);
+			_guiMotifMenuItem_activateCallback, (XtPointer) me.get());
 	#endif
 
 	trace (U"make sure that I will be destroyed when my widget is destroyed");
 	#if gtk
-		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_guiGtkMenuItem_destroyCallback), me);
+		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_guiGtkMenuItem_destroyCallback), me.get());
 	#elif cocoa
 	#elif motif
-		XtAddCallback (my d_widget, XmNdestroyCallback, _guiMotifMenuItem_destroyCallback, me);
+		XtAddCallback (my d_widget, XmNdestroyCallback, _guiMotifMenuItem_destroyCallback, me.get());
 	#endif
 
-	return me;
+	return me.transfer();
 }
 
 GuiMenuItem GuiMenu_addSeparator (GuiMenu menu) {
-	GuiMenuItem me = Thing_new (GuiMenuItem);
+	autoGuiMenuItem me = Thing_new (GuiMenuItem);
 	my d_shell = menu -> d_shell;
 	my d_parent = menu;
 	my d_menu = menu;
@@ -406,19 +406,19 @@ GuiMenuItem GuiMenu_addSeparator (GuiMenu menu) {
 		trace (U"release the item");
 		//[(NSMenuItem *) my d_widget release];   // ... so we can release the item already
 		trace (U"set user data");
-		[(GuiCocoaMenuItem *) my d_widget   setUserData: me];
+		[(GuiCocoaMenuItem *) my d_widget   setUserData: me.get()];
 	#elif motif
 		my d_widget = XtVaCreateManagedWidget ("menuSeparator", xmSeparatorGadgetClass, menu -> d_widget, nullptr);
 	#endif
 
 	trace (U"make sure that I will be destroyed when my widget is destroyed");
 	#if gtk
-		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_guiGtkMenuItem_destroyCallback), me);
+		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_guiGtkMenuItem_destroyCallback), me.get());
 	#elif cocoa
 	#elif motif
-		XtAddCallback (my d_widget, XmNdestroyCallback, _guiMotifMenuItem_destroyCallback, me);
+		XtAddCallback (my d_widget, XmNdestroyCallback, _guiMotifMenuItem_destroyCallback, me.get());
 	#endif
-	return me;
+	return me.transfer();
 }
 
 void GuiMenuItem_check (GuiMenuItem me, bool check) {

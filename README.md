@@ -53,7 +53,7 @@ if you want to build Praat's 32-bit edition, or
     cp makefiles/makefile.defs.mingw64 ./makefile.defs
 
 if you want to build Praat's 64-bit edition. Then type `make` to build `Praat.exe`
-(use `make -j4` to speed this up, i.e. to use 4 processors in parallel).
+(use `make -j4` to speed this up, e.g. to use 4 processors in parallel).
 
 Cross-compiling for Windows: use the [MinGW](http://www.mingw.org) compiler, perhaps on a Mac or Linux computer.
 You can find toolchains for 32 and 64 bits

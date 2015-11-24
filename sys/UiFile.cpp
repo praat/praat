@@ -35,14 +35,14 @@ UiForm UiInfile_create (GuiWindow parent, const char32 *title,
 	UiCallback okCallback, void *okClosure,
 	const char32 *invokingButtonTitle, const char32 *helpTitle, bool allowMultipleFiles)
 {
-	UiForm me = Thing_new (UiForm);
+	autoUiForm me = Thing_new (UiForm);
 	my okCallback = okCallback;
 	my buttonClosure = okClosure;
 	my invokingButtonTitle = Melder_dup (invokingButtonTitle);
 	my helpTitle = helpTitle;
 	my allowMultipleFiles = allowMultipleFiles;
-	UiFile_init (me, parent, title);
-	return me;
+	UiFile_init (me.get(), parent, title);
+	return me.transfer();
 }
 
 void UiInfile_do (UiForm me) {
@@ -74,21 +74,21 @@ void UiInfile_do (UiForm me) {
 UiForm UiOutfile_create (GuiWindow parent, const char32 *title,
 	UiCallback okCallback, void *okClosure, const char32 *invokingButtonTitle, const char32 *helpTitle)
 {
-	UiForm me = Thing_new (UiForm);
+	autoUiForm me = Thing_new (UiForm);
 	my okCallback = okCallback;
 	my buttonClosure = okClosure;
 	my invokingButtonTitle = Melder_dup (invokingButtonTitle);
 	my helpTitle = helpTitle;
-	UiFile_init (me, parent, title);
+	UiFile_init (me.get(), parent, title);
 	my allowExecutionHook = theAllowExecutionHookHint;
 	my allowExecutionClosure = theAllowExecutionClosureHint;
-	return me;
+	return me.transfer();
 }
 
-static void commonOutfileCallback (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure) {
+static void commonOutfileCallback (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
+	Interpreter interpreter, const char32 * /* invokingButtonTitle */, bool /* modified */, void *closure)
+{
 	EditorCommand command = (EditorCommand) closure;
-	(void) invokingButtonTitle;
-	(void) modified;
 	command -> commandCallback (command -> d_editor, command, sendingForm, narg, args, sendingString, interpreter);
 }
 

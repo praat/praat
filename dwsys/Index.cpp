@@ -92,7 +92,7 @@ Thing_implement (StringsIndex, Index, 0);
 
 autoStringsIndex StringsIndex_create (long numberOfElements) {
 	try {
-		autoStringsIndex me = (StringsIndex) Thing_new (StringsIndex);
+		autoStringsIndex me = Thing_new (StringsIndex);
 		Index_init (me.peek(), numberOfElements);
 		return me;
 	} catch (MelderError) {

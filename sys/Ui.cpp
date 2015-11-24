@@ -83,9 +83,9 @@ static UiField UiField_create (int type, const char32 *name) {
 Thing_implement (UiOption, Thing, 0);
 
 static UiOption UiOption_create (const char32 *label) {
-	UiOption me = Thing_new (UiOption);
-	Thing_setName (me, label);
-	return me;
+	autoUiOption me = Thing_new (UiOption);
+	Thing_setName (me.get(), label);
+	return me.transfer();
 }
 
 UiOption UiRadio_addButton (UiField me, const char32 *label) {

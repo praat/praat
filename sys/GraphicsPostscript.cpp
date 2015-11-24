@@ -245,11 +245,11 @@ Graphics Graphics_create_epsfile (MelderFile file, int resolution, enum kGraphic
 
 #ifndef UNIX
 Graphics Graphics_create_postscriptprinter () {
-	GraphicsPostscript me = Thing_new (GraphicsPostscript);
+	autoGraphicsPostscript me = Thing_new (GraphicsPostscript);
 	my postScript = true, my languageLevel = 2;
 	my job = false, my eps = false, my printer = true;
 	my d_printf = Printer_postScript_printf;
-	Graphics_init (me, thePrinter. resolution);   // virtual resolution
+	Graphics_init (me.get(), thePrinter. resolution);   // virtual resolution
 	my photocopyable = thePrinter. spots == kGraphicsPostscript_spots_PHOTOCOPYABLE;
 	if (my photocopyable) { my spotsDensity = 85; my spotsAngle = 35; }
 	else { my spotsDensity = 106; my spotsAngle = 46; }
@@ -262,10 +262,10 @@ Graphics Graphics_create_postscriptprinter () {
 	my d_x2DC = my d_x2DCmax = (my paperWidth - 0.5) * my resolution;
 	my d_y1DC = my d_y1DCmin = my resolution / 2;
 	my d_y2DC = my d_y2DCmax = (my paperHeight - 0.5) * my resolution;
-	Graphics_setWsWindow ((Graphics) me, 0, my paperWidth - 1.0, 13.0 - my paperHeight, 12.0);
-	downloadPrologAndSetUp (me);
-	initPage (me);
-	return (Graphics) me;
+	Graphics_setWsWindow (me.get(), 0, my paperWidth - 1.0, 13.0 - my paperHeight, 12.0);
+	downloadPrologAndSetUp (me.get());
+	initPage (me.get());
+	return me.transfer();
 }
 #endif
 

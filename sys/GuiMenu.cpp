@@ -274,7 +274,7 @@ void GuiMenu_empty (GuiMenu me) {
 #endif
 
 GuiMenu GuiMenu_createInWindow (GuiWindow window, const char32 *title, uint32 flags) {
-	GuiMenu me = Thing_new (GuiMenu);
+	autoGuiMenu me = Thing_new (GuiMenu);
 	my d_shell = window;
 	my d_parent = window;
 	#if gtk
@@ -289,7 +289,7 @@ GuiMenu GuiMenu_createInWindow (GuiWindow window, const char32 *title, uint32 fl
 		GtkAccelGroup *ag = (GtkAccelGroup *) g_object_get_data (G_OBJECT (window -> d_gtkMenuBar), "accel-group");
 		gtk_menu_set_accel_group (GTK_MENU (my d_widget), ag);
 		gtk_menu_item_set_submenu (GTK_MENU_ITEM (my d_gtkMenuTitle), GTK_WIDGET (my d_widget));
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 	#elif cocoa
 		if (! theMenuBar) {
 			int numberOfMenus = [[[NSApp mainMenu] itemArray] count];
@@ -301,7 +301,7 @@ GuiMenu GuiMenu_createInWindow (GuiWindow window, const char32 *title, uint32 fl
 		my d_cocoaMenu = [[GuiCocoaMenu alloc]
 			initWithTitle: (NSString *) Melder_peek32toCfstring (title)];
 		my d_widget = my d_cocoaMenu;
-		[my d_cocoaMenu   setUserData: me];
+		[my d_cocoaMenu   setUserData: me.get()];
 		[my d_cocoaMenu   setAutoenablesItems: NO];
 		if (! window) {
 			/*
@@ -387,26 +387,26 @@ GuiMenu GuiMenu_createInWindow (GuiWindow window, const char32 *title, uint32 fl
 			XtVaSetValues (my d_xmMenuTitle, XmNsubMenuId, my d_widget, nullptr);
 			XtManageChild (my d_xmMenuTitle);
 		}
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 	#endif
 
 	#if gtk
-		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_guiGtkMenu_destroyCallback), me);
+		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_guiGtkMenu_destroyCallback), me.get());
 	#elif cocoa
 	#elif motif
-		XtAddCallback (my d_widget, XmNdestroyCallback, _guiMotifMenu_destroyCallback, me);
+		XtAddCallback (my d_widget, XmNdestroyCallback, _guiMotifMenu_destroyCallback, me.get());
 	#endif
-	return me;
+	return me.transfer();
 }
 
 GuiMenu GuiMenu_createInMenu (GuiMenu supermenu, const char32 *title, uint32 flags) {
-	GuiMenu me = Thing_new (GuiMenu);
+	autoGuiMenu me = Thing_new (GuiMenu);
 	my d_shell = supermenu -> d_shell;
 	my d_parent = supermenu;
-	my d_menuItem = Thing_new (GuiMenuItem);
+	my d_menuItem = Thing_new (GuiMenuItem).transfer();
 	my d_menuItem -> d_shell = my d_shell;
 	my d_menuItem -> d_parent = supermenu;
-	my d_menuItem -> d_menu = me;
+	my d_menuItem -> d_menu = me.get();
 	#if gtk
 		my d_menuItem -> d_widget = gtk_menu_item_new_with_label (Melder_peek32to8 (title));
 		my d_widget = gtk_menu_new ();
@@ -418,7 +418,7 @@ GuiMenu GuiMenu_createInMenu (GuiMenu supermenu, const char32 *title, uint32 fla
 		gtk_menu_shell_append (GTK_MENU_SHELL (supermenu -> d_widget), GTK_WIDGET (my d_menuItem -> d_widget));
 		gtk_widget_show (GTK_WIDGET (my d_widget));
 		gtk_widget_show (GTK_WIDGET (my d_menuItem -> d_widget));
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 	#elif cocoa
 		trace (U"creating menu item ", title);
 		NSMenuItem *item = [[NSMenuItem alloc]
@@ -432,9 +432,9 @@ GuiMenu GuiMenu_createInMenu (GuiMenu supermenu, const char32 *title, uint32 fla
 		trace (U"creating menu ", title);
 		my d_cocoaMenu = [[GuiCocoaMenu alloc]
 			initWithTitle: (NSString *) Melder_peek32toCfstring (title)];
-		[my d_cocoaMenu   setUserData: me];
+		[my d_cocoaMenu   setUserData: me.get()];
 		[my d_cocoaMenu   setAutoenablesItems: NO];
-		trace (U"adding the new menu ", Melder_pointer (me), U" to its supermenu ", Melder_pointer (supermenu));
+		trace (U"adding the new menu ", Melder_pointer (me.get()), U" to its supermenu ", Melder_pointer (supermenu));
 		[supermenu -> d_cocoaMenu   setSubmenu: my d_cocoaMenu   forItem: item];   // the supermenu will retain the menu...
 		Melder_assert ([my d_cocoaMenu retainCount] == 2);
 		[my d_cocoaMenu release];   // ... so we can release the menu already, even before returning it
@@ -447,16 +447,16 @@ GuiMenu GuiMenu_createInMenu (GuiMenu supermenu, const char32 *title, uint32 fla
 			XtSetSensitive (my d_menuItem -> d_widget, False);
 		XtVaSetValues (my d_menuItem -> d_widget, XmNsubMenuId, my d_widget, nullptr);
 		XtManageChild (my d_menuItem -> d_widget);
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 	#endif
 
 	#if gtk
-		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_guiGtkMenu_destroyCallback), me);
+		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_guiGtkMenu_destroyCallback), me.get());
 	#elif cocoa
 	#elif motif
-		XtAddCallback (my d_widget, XmNdestroyCallback, _guiMotifMenu_destroyCallback, me);
+		XtAddCallback (my d_widget, XmNdestroyCallback, _guiMotifMenu_destroyCallback, me.get());
 	#endif
-	return me;
+	return me.transfer();
 }
 
 #if gtk
@@ -491,13 +491,13 @@ static gint button_press (GtkWidget *widget, GdkEvent *event)
 #endif
 
 GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bottom, const char32 *title, uint32 flags) {
-	GuiMenu me = Thing_new (GuiMenu);
+	autoGuiMenu me = Thing_new (GuiMenu);
 	my d_shell = form -> d_shell;
 	my d_parent = form;
-	my d_cascadeButton = Thing_new (GuiButton);
+	my d_cascadeButton = Thing_new (GuiButton).transfer();
 	my d_cascadeButton -> d_shell = my d_shell;
 	my d_cascadeButton -> d_parent = form;
-	my d_cascadeButton -> d_menu = me;
+	my d_cascadeButton -> d_menu = me.get();
 	#if gtk
 		my d_cascadeButton -> d_widget = gtk_button_new_with_label (Melder_peek32to8 (title));
 		my d_cascadeButton -> v_positionInForm (my d_cascadeButton -> d_widget, left, right, top, bottom, form);
@@ -512,12 +512,12 @@ GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bo
 		g_object_set_data (G_OBJECT (my d_widget), "button", my d_cascadeButton -> d_widget);
 		gtk_menu_attach_to_widget (GTK_MENU (my d_widget), GTK_WIDGET (my d_cascadeButton -> d_widget), nullptr);
 		gtk_button_set_alignment (GTK_BUTTON (my d_cascadeButton -> d_widget), 0.0f, 0.5f);
-		_GuiObject_setUserData (my d_widget, me);
-		_GuiObject_setUserData (my d_cascadeButton -> d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
+		_GuiObject_setUserData (my d_cascadeButton -> d_widget, me.get());
 	#elif cocoa
 		my d_cascadeButton -> d_widget = my d_cocoaMenuButton = [[GuiCocoaMenuButton alloc] init];
 		my d_cascadeButton -> v_positionInForm (my d_cocoaMenuButton, left, right, top, bottom, form);
-		[my d_cocoaMenuButton   setUserData: me];
+		[my d_cocoaMenuButton   setUserData: me.get()];
 		[my d_cocoaMenuButton   setPullsDown: YES];
 		[my d_cocoaMenuButton   setAutoenablesItems: NO];
 		[my d_cocoaMenuButton   setBezelStyle: NSShadowlessSquareBezelStyle];
@@ -550,17 +550,17 @@ GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bo
 		XtVaSetValues (my d_cascadeButton -> d_widget, XmNsubMenuId, my d_widget, nullptr);
 		XtManageChild (my d_cascadeButton -> d_widget);
 		XtManageChild (my d_xmMenuBar);
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 	#endif
 
 	#if gtk
-		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_guiGtkMenu_destroyCallback), me);
-		g_signal_connect (G_OBJECT (my d_cascadeButton -> d_widget), "destroy", G_CALLBACK (_guiGtkMenuCascadeButton_destroyCallback), me);
+		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_guiGtkMenu_destroyCallback), me.get());
+		g_signal_connect (G_OBJECT (my d_cascadeButton -> d_widget), "destroy", G_CALLBACK (_guiGtkMenuCascadeButton_destroyCallback), me.get());
 	#elif cocoa
 	#elif motif
-		XtAddCallback (my d_widget, XmNdestroyCallback, _guiMotifMenu_destroyCallback, me);
+		XtAddCallback (my d_widget, XmNdestroyCallback, _guiMotifMenu_destroyCallback, me.get());
 	#endif
-	return me;
+	return me.transfer();
 };
 
 /* End of file GuiMenu.cpp */

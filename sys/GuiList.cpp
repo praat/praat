@@ -368,7 +368,7 @@ enum {
 #endif
 
 GuiList GuiList_create (GuiForm parent, int left, int right, int top, int bottom, bool allowMultipleSelection, const char32 *header) {
-	GuiList me = Thing_new (GuiList);
+	autoGuiList me = Thing_new (GuiList);
 	my d_shell = parent -> d_shell;
 	my d_parent = parent;
 	my d_allowMultipleSelection = allowMultipleSelection;
@@ -388,8 +388,8 @@ GuiList GuiList_create (GuiForm parent, int left, int right, int top, int bottom
 		gtk_tree_view_set_rubber_banding (GTK_TREE_VIEW (my d_widget), allowMultipleSelection ? GTK_SELECTION_MULTIPLE : GTK_SELECTION_SINGLE);
 		g_object_unref (liststore);   // Destroys the widget after the list is destroyed
 
-		_GuiObject_setUserData (my d_widget, me);
-		_GuiObject_setUserData (scrolled, me);   // for resizing
+		_GuiObject_setUserData (my d_widget, me.get());
+		_GuiObject_setUserData (scrolled, me.get());   // for resizing
 
 		renderer = gtk_cell_renderer_text_new ();
 		col = gtk_tree_view_column_new ();
@@ -400,7 +400,7 @@ GuiList GuiList_create (GuiForm parent, int left, int right, int top, int bottom
 		}
 		gtk_tree_view_append_column (GTK_TREE_VIEW (my d_widget), col);
 
-		g_object_set_data_full (G_OBJECT (my d_widget), "guiList", me, (GDestroyNotify) _GuiGtkList_destroyCallback); 
+		g_object_set_data_full (G_OBJECT (my d_widget), "guiList", me.get(), (GDestroyNotify) _GuiGtkList_destroyCallback);
 
 /*		GtkCellRenderer *renderer;
 		GtkTreeViewColumn *col;
@@ -436,16 +436,16 @@ GuiList GuiList_create (GuiForm parent, int left, int right, int top, int bottom
 			gtk_tree_selection_set_mode (sel, GTK_SELECTION_SINGLE);
 		}
 		my v_positionInForm (scrolled, left, right, top, bottom, parent);
-		g_signal_connect (sel, "changed", G_CALLBACK (_GuiGtkList_selectionChangedCallback), me);
+		g_signal_connect (sel, "changed", G_CALLBACK (_GuiGtkList_selectionChangedCallback), me.get());
 	#elif cocoa
 		GuiCocoaList *list = [[GuiCocoaList alloc] init];
 		my d_widget = (GuiObject) list;
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		[[list tableView] setAllowsMultipleSelection: allowMultipleSelection];
-		[list setUserData:me];
+		[list setUserData: me.get()];
 	#elif win
 		my d_widget = _Gui_initializeWidget (xmListWidgetClass, parent -> d_widget, U"list");
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 		my d_widget -> window = CreateWindowEx (0, L"listbox", L"list",
 			WS_CHILD | WS_BORDER | WS_VSCROLL | LBS_NOTIFY | WS_CLIPSIBLINGS |
 			( allowMultipleSelection ? LBS_EXTENDEDSEL : 0 ),
@@ -464,9 +464,9 @@ GuiList GuiList_create (GuiForm parent, int left, int right, int top, int bottom
 		my d_xmScrolled = XmCreateScrolledWindow (parent -> d_widget, "scrolled", nullptr, 0);
 		my v_positionInForm (my d_xmScrolled, left, right, top, bottom, parent);
 		my d_xmList = my d_widget = _Gui_initializeWidget (xmListWidgetClass, my d_xmScrolled, U"list");
-		_GuiObject_setUserData (my d_xmScrolled, me);
-		_GuiObject_setUserData (my d_xmList, me);
-		Rect dataBounds = { 0, 0, 0, 1 };
+		_GuiObject_setUserData (my d_xmScrolled, me.get());
+		_GuiObject_setUserData (my d_xmList, me.get());
+		Rect dataBounds { 0, 0, 0, 1 };
 		Point cSize;
 		SetPt (& cSize, my d_xmList -> rect.right - my d_xmList -> rect.left + 1, CELL_HEIGHT);
 		static ListDefSpec listDefSpec;
@@ -481,7 +481,7 @@ GuiList GuiList_create (GuiForm parent, int left, int right, int top, int bottom
 			SetListSelectionFlags (my d_macListHandle, lExtendDrag | lNoRect);
 		XtVaSetValues (my d_xmList, XmNwidth, right > 0 ? right - left + 100 : 530, nullptr);
 	#endif
-	return me;
+	return me.transfer();
 }
 
 GuiList GuiList_createShown (GuiForm parent, int left, int right, int top, int bottom, bool allowMultipleSelection, const char32 *header) {

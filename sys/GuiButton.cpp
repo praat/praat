@@ -159,14 +159,14 @@ Thing_implement (GuiButton, GuiControl, 0);
 GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bottom,
 	const char32 *buttonText, GuiButton_ActivateCallback activateCallback, Thing activateBoss, uint32 flags)
 {
-	GuiButton me = Thing_new (GuiButton);
+	autoGuiButton me = Thing_new (GuiButton);
 	my d_shell = parent -> d_shell;
 	my d_parent = parent;
 	my d_activateCallback = activateCallback;
 	my d_activateBoss = activateBoss;
 	#if gtk
 		my d_widget = gtk_button_new_with_label (Melder_peek32to8 (buttonText));
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		if (flags & GuiButton_DEFAULT || flags & GuiButton_ATTRACTIVE) {
 			GTK_WIDGET_SET_FLAGS (my d_widget, GTK_CAN_DEFAULT);
@@ -177,8 +177,8 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 			gtk_button_set_focus_on_click (GTK_BUTTON (my d_widget), false);
 			GTK_WIDGET_UNSET_FLAGS (my d_widget, GTK_CAN_DEFAULT);
 		}
-		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkButton_destroyCallback), me);
-		g_signal_connect (GTK_BUTTON (my d_widget), "clicked", G_CALLBACK (_GuiGtkButton_activateCallback), me);
+		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkButton_destroyCallback), me.get());
+		g_signal_connect (GTK_BUTTON (my d_widget), "clicked", G_CALLBACK (_GuiGtkButton_activateCallback), me.get());
 //		if (flags & GuiButton_CANCEL) {
 //			parent -> shell -> cancelButton = parent -> cancelButton = my widget;
 //		}
@@ -186,7 +186,7 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 		GuiCocoaButton *button = [[GuiCocoaButton alloc] init];
 		my d_widget = (GuiObject) button;
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
-		[button setUserData: me];
+		[button setUserData: me.get()];
 		[button setButtonType: NSMomentaryPushInButton];
 		[button setBezelStyle: NSRoundedBezelStyle];
 		[button setImagePosition: NSNoImage];
@@ -214,7 +214,7 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 		}
 	#elif win
 		my d_widget = _Gui_initializeWidget (xmPushButtonWidgetClass, parent -> d_widget, buttonText);
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 		my d_widget -> window = CreateWindow (L"button", Melder_peek32toW (_GuiWin_expandAmpersands (my d_widget -> name)),
 			WS_CHILD
 			| ( flags & (GuiButton_DEFAULT | GuiButton_ATTRACTIVE) ? BS_DEFPUSHBUTTON : BS_PUSHBUTTON )
@@ -232,7 +232,7 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 		}
 	#elif mac
 		my d_widget = _Gui_initializeWidget (xmPushButtonWidgetClass, parent -> d_widget, buttonText);
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 		CreatePushButtonControl (my d_widget -> macWindow, & my d_widget -> rect, nullptr, & my d_widget -> nat.control.handle);
 		Melder_assert (my d_widget -> nat.control.handle);
 		SetControlReference (my d_widget -> nat.control.handle, (long) my d_widget);
@@ -250,9 +250,9 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 		}
 	#endif
 	if (flags & GuiButton_INSENSITIVE) {
-		GuiThing_setSensitive (me, false);
+		GuiThing_setSensitive (me.get(), false);
 	}
-	return me;
+	return me.transfer();
 }
 
 GuiButton GuiButton_createShown (GuiForm parent, int left, int right, int top, int bottom,

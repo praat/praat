@@ -81,7 +81,7 @@ Thing_implement (GuiScale, GuiControl, 0);
 GuiScale GuiScale_create (GuiForm parent, int left, int right, int top, int bottom,
 	int minimum, int maximum, int value, uint32 /* flags */)
 {
-	GuiScale me = Thing_new (GuiScale);
+	autoGuiScale me = Thing_new (GuiScale);
 	my d_shell = parent -> d_shell;
 	my d_parent = parent;
 	#if gtk
@@ -90,21 +90,21 @@ GuiScale GuiScale_create (GuiForm parent, int left, int right, int top, int bott
 		GtkAdjustment *adj = gtk_range_get_adjustment (GTK_RANGE (my d_widget));
 		adj -> page_size = 150;
 		gtk_adjustment_changed (adj);
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
-		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkScale_destroyCallback), me);
+		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkScale_destroyCallback), me.get());
 	#elif cocoa
 		my d_cocoaScale = [[GuiCocoaScale alloc] init];
 		my d_widget = my d_cocoaScale;
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
-		[my d_cocoaScale   setUserData: me];
+		[my d_cocoaScale   setUserData: me.get()];
 		[my d_cocoaScale   setIndeterminate: false];
 		[my d_cocoaScale   setMinValue: minimum];
 		[my d_cocoaScale   setMaxValue: maximum];
 		[my d_cocoaScale   setDoubleValue: value];
 	#elif motif
 		my d_widget = XmCreateScale (parent -> d_widget, "scale", nullptr, 0);
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		XtVaSetValues (my d_widget, XmNorientation, XmHORIZONTAL,
 			XmNminimum, minimum, XmNmaximum, maximum, XmNvalue, value, //XmNy, 300,
@@ -113,7 +113,7 @@ GuiScale GuiScale_create (GuiForm parent, int left, int right, int top, int bott
 			#endif
 			nullptr);
 	#endif
-	return me;
+	return me.transfer();
 }
 
 GuiScale GuiScale_createShown (GuiForm parent, int left, int right, int top, int bottom,

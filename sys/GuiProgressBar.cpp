@@ -57,23 +57,23 @@ Thing_implement (GuiProgressBar, GuiControl, 0);
 
 GuiProgressBar GuiProgressBar_create (GuiForm parent, int left, int right, int top, int bottom, uint32 /* flags */)
 {
-	GuiProgressBar me = Thing_new (GuiProgressBar);
+	autoGuiProgressBar me = Thing_new (GuiProgressBar);
 	my d_shell = parent -> d_shell;
 	my d_parent = parent;
 	#if gtk
 		my d_widget = gtk_progress_bar_new ();
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 	#elif cocoa
 		my d_cocoaProgressBar = [[GuiCocoaProgressBar alloc] init];
 		my d_widget = my d_cocoaProgressBar;
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
-		[my d_cocoaProgressBar   setUserData: me];
+		[my d_cocoaProgressBar   setUserData: me.get()];
 		[my d_cocoaProgressBar   setIndeterminate: false];
 		[my d_cocoaProgressBar   setMaxValue: 1.0];
 	#elif motif
 		my d_widget = XmCreateScale (parent -> d_widget, "scale", nullptr, 0);
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		XtVaSetValues (my d_widget, XmNorientation, XmHORIZONTAL,
 			XmNminimum, 0, XmNmaximum, 10000, XmNvalue, 0,
@@ -87,13 +87,13 @@ GuiProgressBar GuiProgressBar_create (GuiForm parent, int left, int right, int t
 	#endif
 
 	#if gtk
-		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_guiGtkProgressBar_destroyCallback), me);
+		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_guiGtkProgressBar_destroyCallback), me.get());
 	#elif cocoa
 	#elif motif
-		XtAddCallback (my d_widget, XmNdestroyCallback, _guiMotifProgressBar_destroyCallback, me);
+		XtAddCallback (my d_widget, XmNdestroyCallback, _guiMotifProgressBar_destroyCallback, me.get());
 	#endif
 
-	return me;
+	return me.transfer();
 }
 
 GuiProgressBar GuiProgressBar_createShown (GuiForm parent, int left, int right, int top, int bottom, uint32 flags)

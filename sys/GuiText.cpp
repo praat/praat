@@ -868,7 +868,7 @@ void _GuiText_exit () {
 #endif
 
 GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom, uint32 flags) {
-	GuiText me = Thing_new (GuiText);
+	autoGuiText me = Thing_new (GuiText);
 	my d_shell = parent -> d_shell;
 	my d_parent = parent;
 	#if gtk
@@ -887,20 +887,20 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 				ww = GTK_WRAP_NONE;
 			gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (my d_widget), ww);
 			GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (my d_widget));
-			g_signal_connect (G_OBJECT (buffer), "delete-range", G_CALLBACK (_GuiGtkTextBuf_history_delete_cb), me);
-			g_signal_connect (G_OBJECT (buffer), "insert-text", G_CALLBACK (_GuiGtkTextBuf_history_insert_cb), me);
-			g_signal_connect (G_OBJECT (buffer), "changed", G_CALLBACK (_GuiGtkText_valueChangedCallback), me);
-			_GuiObject_setUserData (my d_widget, me);
-			_GuiObject_setUserData (scrolled, me);
+			g_signal_connect (G_OBJECT (buffer), "delete-range", G_CALLBACK (_GuiGtkTextBuf_history_delete_cb), me.get());
+			g_signal_connect (G_OBJECT (buffer), "insert-text", G_CALLBACK (_GuiGtkTextBuf_history_insert_cb), me.get());
+			g_signal_connect (G_OBJECT (buffer), "changed", G_CALLBACK (_GuiGtkText_valueChangedCallback), me.get());
+			_GuiObject_setUserData (my d_widget, me.get());
+			_GuiObject_setUserData (scrolled, me.get());
 			my v_positionInForm (scrolled, left, right, top, bottom, parent);
 		} else {
 			my d_widget = gtk_entry_new ();
 			gtk_editable_set_editable (GTK_EDITABLE (my d_widget), (flags & GuiText_NONEDITABLE) == 0);
-			g_signal_connect (G_OBJECT (my d_widget), "delete-text", G_CALLBACK (_GuiGtkEntry_history_delete_cb), me);
-			g_signal_connect (G_OBJECT (my d_widget), "insert-text", G_CALLBACK (_GuiGtkEntry_history_insert_cb), me);
-			g_signal_connect (GTK_EDITABLE (my d_widget), "changed", G_CALLBACK (_GuiGtkText_valueChangedCallback), me);
+			g_signal_connect (G_OBJECT (my d_widget), "delete-text", G_CALLBACK (_GuiGtkEntry_history_delete_cb), me.get());
+			g_signal_connect (G_OBJECT (my d_widget), "insert-text", G_CALLBACK (_GuiGtkEntry_history_insert_cb), me.get());
+			g_signal_connect (GTK_EDITABLE (my d_widget), "changed", G_CALLBACK (_GuiGtkText_valueChangedCallback), me.get());
 			//GTK_WIDGET_UNSET_FLAGS (my d_widget, GTK_CAN_DEFAULT);
-			_GuiObject_setUserData (my d_widget, me);
+			_GuiObject_setUserData (my d_widget, me.get());
 			my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 			gtk_entry_set_activates_default (GTK_ENTRY (my d_widget), true);
 		}
@@ -910,7 +910,7 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 		my d_history_change = 0;
 		my d_undo_item = nullptr;
 		my d_redo_item = nullptr;
-		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkText_destroyCallback), me);
+		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkText_destroyCallback), me.get());
 	#elif cocoa
 		if (flags & GuiText_SCROLLED) {
 			my d_cocoaScrollView = [[GuiCocoaScrolledWindow alloc] init];
@@ -923,7 +923,7 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			[my d_cocoaScrollView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 			NSSize contentSize = [my d_cocoaScrollView contentSize];
 			my d_cocoaTextView = [[GuiCocoaTextView alloc] initWithFrame: NSMakeRect (0, 0, contentSize. width, contentSize. height)];
-			[my d_cocoaTextView setUserData: me];
+			[my d_cocoaTextView setUserData: me.get()];
 			if (Melder_systemVersion < 101100) {
 				[my d_cocoaTextView setMinSize: NSMakeSize (0.0, contentSize.height)];
 			} else {
@@ -954,7 +954,7 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 		} else {
 			my d_widget = [[GuiCocoaTextField alloc] init];
 			my v_positionInForm (my d_widget, left, right, top, bottom, parent);
-			[(GuiCocoaTextField *) my d_widget   setUserData: me];
+			[(GuiCocoaTextField *) my d_widget   setUserData: me.get()];
 			[(NSTextField *) my d_widget   setEditable: YES];
 			static NSFont *theTextFont;
 			if (! theTextFont) {
@@ -964,7 +964,7 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 		}
 	#elif win
 		my d_widget = _Gui_initializeWidget (xmTextWidgetClass, parent -> d_widget, flags & GuiText_SCROLLED ? U"scrolledText" : U"text");
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 		my d_editable = (flags & GuiText_NONEDITABLE) == 0;
 		my d_widget -> window = CreateWindow (L"edit", nullptr, WS_CHILD | WS_BORDER
 			| ( flags & GuiText_WORDWRAP ? ES_AUTOVSCROLL : ES_AUTOHSCROLL )
@@ -992,7 +992,7 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 	#elif mac
 		if (flags & GuiText_SCROLLED) {
 			my d_widget = _Gui_initializeWidget (xmTextWidgetClass, parent -> d_widget, U"scrolledText");
-			_GuiObject_setUserData (my d_widget, me);
+			_GuiObject_setUserData (my d_widget, me.get());
 			my d_editable = (flags & GuiText_NONEDITABLE) == 0;
 			TXNLongRect destRect;
 			TXNMargins margins;
@@ -1002,7 +1002,7 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 				my d_widget -> macWindow, & my d_widget -> rect, kTXNWantHScrollBarMask | kTXNWantVScrollBarMask
 					| kTXNMonostyledTextMask | kTXNDrawGrowIconMask,
 				kTXNTextEditStyleFrameType, kTXNTextensionFile,
-				/*kTXNMacOSEncoding*/ kTXNSystemDefaultEncoding, & my d_macMlteObject, & my d_macMlteFrameId, me);
+				/*kTXNMacOSEncoding*/ kTXNSystemDefaultEncoding, & my d_macMlteObject, & my d_macMlteFrameId, me.get());
 			destRect. left = 0;
 			destRect. top = 0;
 			destRect. right = 10000;
@@ -1017,7 +1017,7 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		} else {
 			my d_widget = _Gui_initializeWidget (xmTextWidgetClass, parent -> d_widget, U"text");
-			_GuiObject_setUserData (my d_widget, me);
+			_GuiObject_setUserData (my d_widget, me.get());
 			my d_editable = (flags & GuiText_NONEDITABLE) == 0;
 			Rect r = my d_widget -> rect;
 			InsetRect (& r, 3, 3);
@@ -1034,7 +1034,7 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 		}
 	#endif
 	
-	return me;
+	return me.transfer();
 }
 
 GuiText GuiText_createShown (GuiForm parent, int left, int right, int top, int bottom, uint32 flags) {
