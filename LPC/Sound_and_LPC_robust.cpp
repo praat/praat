@@ -51,7 +51,7 @@ struct huber_struct {
 static void huber_struct_init (struct huber_struct *hs, double windowDuration, long p, double samplingFrequency, double location, int wantlocation) {
 	hs -> w = hs -> work = hs -> a = hs -> c = nullptr;
 	hs -> covar = nullptr; hs -> svd = nullptr;
-	hs -> e = Sound_createSimple (1, windowDuration, samplingFrequency).transfer();
+	hs -> e = Sound_createSimple (1, windowDuration, samplingFrequency);
 	long n = hs -> e -> nx;
 	hs -> n = n;
 	hs -> p = p;
@@ -69,8 +69,8 @@ static void huber_struct_init (struct huber_struct *hs, double windowDuration, l
 }
 
 static void huber_struct_destroy (struct huber_struct *hs) {
-	hs -> e.reset(nullptr);
-	hs -> svd.reset(nullptr);
+	hs -> e.reset();
+	hs -> svd.reset();
 	NUMvector_free<double> (hs -> w, 1);
 	NUMvector_free<double> (hs -> work, 1);
 	NUMvector_free<double> (hs -> a, 1);

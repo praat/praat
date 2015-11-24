@@ -187,15 +187,15 @@ static void IntervalTier_add (IntervalTier me, double xmin, double xmax, const c
 		}
 		// split interval
 		interval -> xmin = xmax;
-		Collection_addItem_move (my intervals, newti.move());
+		Collection_addItem_move (my intervals.get(), newti.move());
 		return;
 	}
 	interval -> xmax = xmin;
-	Collection_addItem_move (my intervals, newti.move());
+	Collection_addItem_move (my intervals.get(), newti.move());
 	// extra interval when xmax's are not the same
 	if (xmax < xmaxi) {
 		autoTextInterval newti2 = TextInterval_create (xmax, xmaxi, interval -> text);
-		Collection_addItem_move (my intervals, newti2.move());
+		Collection_addItem_move (my intervals.get(), newti2.move());
 	}
 }
 
@@ -251,7 +251,7 @@ autoTextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile) {
 		if (timit -> intervals -> size < 2) {
 			Melder_throw (U"Empty TextGrid");
 		}
-		Collection_removeItem (timit -> intervals, timit -> intervals -> size);
+		Collection_removeItem (timit -> intervals.get(), timit -> intervals -> size);
 		TextInterval interval = (TextInterval) timit -> intervals -> item[timit -> intervals -> size];
 		timit -> xmax = interval -> xmax;
 		my xmax = xmax;
@@ -318,7 +318,7 @@ void IntervalTier_setLaterEndTime (IntervalTier me, double xmax, const char32 *m
 		Melder_assert (xmax > ti -> xmax);
 		if (mark) {
 			autoTextInterval interval = TextInterval_create (ti -> xmax, xmax, mark);
-			Collection_addItem_move (my intervals, interval.move());
+			Collection_addItem_move (my intervals.get(), interval.move());
 		} else {
 			// extend last interval
 			ti -> xmax = xmax;
@@ -338,7 +338,7 @@ void IntervalTier_setEarlierStartTime (IntervalTier me, double xmin, const char3
 		Melder_assert (xmin < ti -> xmin);
 		if (mark) {
 			autoTextInterval interval = TextInterval_create (xmin, ti -> xmin, mark);
-			Collection_addItem_move (my intervals, interval.move());
+			Collection_addItem_move (my intervals.get(), interval.move());
 		} else {
 			// extend first interval
 			ti -> xmin = xmin;
@@ -479,7 +479,7 @@ void TextGrid_extendTime (TextGrid me, double extra_time, int position) {
 			if (anyTier -> classInfo == classIntervalTier) {
 				IntervalTier tier = (IntervalTier) anyTier;
 				autoTextInterval interval = TextInterval_create (tmin, tmax, U"");
-				Collection_addItem_move (tier -> intervals, interval.move());
+				Collection_addItem_move (tier -> intervals.get(), interval.move());
 			}
 		}
 		my xmin = xmin;
@@ -513,7 +513,7 @@ static void IntervalTier_cutInterval (IntervalTier me, long index, int extend_op
 	TextInterval ti = (TextInterval) my intervals -> item[index];
 	double xmin = ti -> xmin;
 	double xmax = ti -> xmax;
-	Collection_removeItem (my intervals, index);
+	Collection_removeItem (my intervals.get(), index);
 	if (index == 1) { 
 		// Change xmin of the new first interval.
 		ti = (TextInterval) my intervals -> item[index];
@@ -688,12 +688,12 @@ void IntervalTiers_append_inline (IntervalTier me, IntervalTier thee, bool prese
 		if (preserveTimes && my xmax < thy xmin) {
 			autoTextInterval connection = TextInterval_create (my xmax, thy xmin, U"");
             xmax_previous = thy xmin;
-			Collection_addItem_move (my intervals, connection.move());
+			Collection_addItem_move (my intervals.get(), connection.move());
 		}
 		for (long iint = 1; iint <= thy intervals -> size; iint++) {
 			autoTextInterval ti = (TextInterval) Data_copy ((Daata) thy intervals -> item[iint]);
 			if (preserveTimes) {
-				Collection_addItem_move (my intervals, ti.move());
+				Collection_addItem_move (my intervals.get(), ti.move());
 			} else {
 				/* the interval could be so short that if we test ti -> xmin < ti->xmax it might be true
 				 * but after assigning ti->xmin = xmax_previous and ti->xmax += time_shift the test
@@ -705,7 +705,7 @@ void IntervalTiers_append_inline (IntervalTier me, IntervalTier thee, bool prese
 				volatile double xmax = ti -> xmax + time_shift;
 				if (xmin < xmax) {
 					ti -> xmin = xmin; ti -> xmax = xmax;
-					Collection_addItem_move (my intervals, ti.move());
+					Collection_addItem_move (my intervals.get(), ti.move());
 					xmax_previous = xmax;
 				}
 				// else don't include interval

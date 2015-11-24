@@ -34,7 +34,7 @@ oo_END_CLASS (DataModeler)
 
 #define ooSTRUCT FormantModeler
 oo_DEFINE_CLASS (FormantModeler, Function)
-	oo_COLLECTION (Ordered, trackmodelers, DataModeler, 0)
+	oo_AUTO_COLLECTION (Ordered, trackmodelers, DataModeler, 0)
 	#if oo_DECLARING
 		void v_info ()
 			override;

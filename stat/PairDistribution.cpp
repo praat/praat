@@ -108,14 +108,14 @@ double PairDistribution_getWeight (PairDistribution me, long pairNumber) {
 
 void PairDistribution_add (PairDistribution me, const char32 *string1, const char32 *string2, double weight) {
 	autoPairProbability pair = PairProbability_create (string1, string2, weight);
-	Collection_addItem_move (my pairs, pair.move());
+	Collection_addItem_move (my pairs.get(), pair.move());
 }
 
 void PairDistribution_removeZeroWeights (PairDistribution me) {
 	for (long ipair = my pairs -> size; ipair > 0; ipair --) {
 		PairProbability prob = static_cast <PairProbability> (my pairs -> item [ipair]);
 		if (prob -> weight <= 0.0) {
-			Collection_removeItem (my pairs, ipair);
+			Collection_removeItem (my pairs.get(), ipair);
 		}
 	}
 }
@@ -210,7 +210,7 @@ static double PairDistribution_getFractionCorrect (PairDistribution me, int whic
 		double correct = 0.0;
 		long pairmin = 1, ipair;
 		autoPairDistribution thee = Data_copy (me);
-		Collection_sort (thy pairs, PairProbability_compare);
+		Collection_sort (thy pairs.get(), PairProbability_compare);
 		double total = PairDistributions_getTotalWeight_checkPositive (thee.peek());
 		do {
 			long pairmax = pairmin;
@@ -264,7 +264,7 @@ double PairDistribution_Distributions_getFractionCorrect (PairDistribution me, D
 		char32 string [1000];
 		Distributions_checkSpecifiedColumnNumberWithinRange (dist, column);
 		autoPairDistribution thee = Data_copy (me);
-		Collection_sort (thy pairs, PairProbability_compare);
+		Collection_sort (thy pairs.get(), PairProbability_compare);
 		double total = PairDistributions_getTotalWeight_checkPositive (thee.peek());
 		do {
 			long pairmax = pairmin, length, ipair;

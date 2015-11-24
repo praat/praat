@@ -39,8 +39,8 @@ oo_DEFINE_CLASS (FujisakiPitch, Function)
 	oo_DOUBLE (alpha)
 	oo_DOUBLE (beta)
 	oo_DOUBLE (gamma)
-	oo_COLLECTION (SortedSetOfDouble, phraseCommands, FujisakiCommand, 0)
-	oo_COLLECTION (SortedSetOfDouble, accentCommands, FujisakiCommand, 0)
+	oo_AUTO_COLLECTION (SortedSetOfDouble, phraseCommands, FujisakiCommand, 0)
+	oo_AUTO_COLLECTION (SortedSetOfDouble, accentCommands, FujisakiCommand, 0)
 
 oo_END_CLASS (FujisakiPitch)
 #undef ooSTRUCT

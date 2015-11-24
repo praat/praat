@@ -335,7 +335,7 @@ static void IntervalTier_addBoundaryUnsorted (IntervalTier me, long iinterval, d
 	if (isNewleftLabel) TextInterval_setText (ti, newLabel);
 
 	autoTextInterval ti_new = TextInterval_create (time, my xmax, (! isNewleftLabel ? newLabel : U""));
-	Sorted_addItem_unsorted (my intervals, ti_new.transfer());
+	Sorted_addItem_unsorted (my intervals.get(), ti_new.transfer());
 }
 
 static void Table_setEventTypeString (Table me) {
@@ -460,9 +460,9 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 				t1p = time;
 			}
 		}
-		Sorted_sort (itc -> intervals);
-		Sorted_sort (itw -> intervals);
-		Sorted_sort (itp -> intervals);
+		Sorted_sort (itc -> intervals.get());
+		Sorted_sort (itw -> intervals.get());
+		Sorted_sort (itp -> intervals.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"TextGrid not created from Table with events.");
@@ -516,7 +516,7 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, 
 
 		espeak_SetSynthCallback (synthCallback);
 
-		my d_events = Table_createWithColumnNames (0, U"time type type-t t-pos length a-pos sample id uniq").transfer();
+		my d_events = Table_createWithColumnNames (0, U"time type type-t t-pos length a-pos sample id uniq");
 		
 		#ifdef _WIN32
                 wchar_t *textW = Melder_peek32toW (text);

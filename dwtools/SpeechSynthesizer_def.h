@@ -84,7 +84,7 @@ oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
 
 	#if !oo_READING && !oo_WRITING
 		// Filled by the call back
-		oo_AUTO_OBJECT(Table, 0, d_events)
+		oo_AUTO_OBJECT (Table, 0, d_events)
 		oo_DOUBLE (d_internalSamplingFrequency)
 		oo_LONG (d_numberOfSamples)
 		oo_LONG (d_wavCapacity)

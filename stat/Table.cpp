@@ -164,7 +164,7 @@ autoTable Table_createWithColumnNames (long numberOfRows, const char32 *columnNa
 void Table_appendRow (Table me) {
 	try {
 		autoTableRow row = TableRow_create (my numberOfColumns);
-		Collection_addItem_move (my rows, row.move());
+		Collection_addItem_move (my rows.get(), row.move());
 	} catch (MelderError) {
 		Melder_throw (me, U": row not appended.");
 	}
@@ -190,7 +190,7 @@ void Table_removeRow (Table me, long rowNumber) {
 		if (my rows -> size == 1)
 			Melder_throw (me, U": cannot remove my only row.");
 		Table_checkSpecifiedRowNumberWithinRange (me, rowNumber);
-		Collection_removeItem (my rows, rowNumber);
+		Collection_removeItem (my rows.get(), rowNumber);
 		for (long icol = 1; icol <= my numberOfColumns; icol ++)
 			my columnHeaders [icol]. numericized = false;
 	} catch (MelderError) {
@@ -242,7 +242,7 @@ void Table_insertRow (Table me, long rowNumber) {
 		/*
 		 * Safe change.
 		 */
-		Ordered_addItemPos (my rows, row.transfer(), rowNumber);
+		Ordered_addItemPos (my rows.get(), row.transfer(), rowNumber);
 		/*
 		 * Changes without error.
 		 */
@@ -309,9 +309,7 @@ void Table_insertColumn (Table me, long columnNumber, const char32 *label /* cat
 		/*
 		 * Transfer larger structure with rows to me.
 		 */
-		forget (my rows);   // make room...
-		my rows = thy rows;   // ...fill in and dangle...
-		thy rows = nullptr;   // ...undangle
+		my rows = thy rows.move();
 		/*
 		 * Update my state.
 		 */
@@ -680,7 +678,7 @@ autoTable Table_extractRowsWhereColumn_number (Table me, long columnNumber, int 
 			TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 			if (Melder_numberMatchesCriterion (row -> cells [columnNumber]. number, which_Melder_NUMBER, criterion)) {
 				autoTableRow newRow = Data_copy (row);
-				Collection_addItem_move (thy rows, newRow.move());
+				Collection_addItem_move (thy rows.get(), newRow.move());
 			}
 		}
 		if (thy rows -> size == 0) {
@@ -704,7 +702,7 @@ autoTable Table_extractRowsWhereColumn_string (Table me, long columnNumber, int 
 			TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 			if (Melder_stringMatchesCriterion (row -> cells [columnNumber]. string, which_Melder_STRING, criterion)) {
 				autoTableRow newRow = Data_copy (row);
-				Collection_addItem_move (thy rows, newRow.move());
+				Collection_addItem_move (thy rows.get(), newRow.move());
 			}
 		}
 		if (thy rows -> size == 0) {

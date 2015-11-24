@@ -268,7 +268,6 @@
 
 #define oo_OBJECT(Type,version,x)  { U"" #x, objectwa, Melder_offsetof (ooSTRUCT, x), sizeof (Type), U"" #Type, & theClassInfo_##Type },
 #define oo_AUTO_OBJECT(Type,version,x)  { U"" #x, autoobjectwa, Melder_offsetof (ooSTRUCT, x), sizeof (Type), U"" #Type, & theClassInfo_##Type },
-#define oo_COLLECTION(Type,x,ItemType,version)  { U"" #x, collectionwa, Melder_offsetof (ooSTRUCT, x), sizeof (class struct##ItemType), U"" #Type, & theClassInfo_##Type, 0, (const char32 *) & theClassInfo_##ItemType },
 #define oo_AUTO_COLLECTION(Type,x,ItemType,version)  { U"" #x, autocollectionwa, Melder_offsetof (ooSTRUCT, x), sizeof (class struct##ItemType), U"" #Type, & theClassInfo_##Type, 0, (const char32 *) & theClassInfo_##ItemType },
 #define oo_FILE(x)
 #define oo_DIR(x)

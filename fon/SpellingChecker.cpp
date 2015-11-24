@@ -64,20 +64,12 @@ autoSpellingChecker WordList_upto_SpellingChecker (WordList me) {
 }
 
 autoWordList SpellingChecker_extractWordList (SpellingChecker me) {
-	return Data_copy (my wordList);
+	return Data_copy (my wordList.get());
 }
 
 void SpellingChecker_replaceWordList (SpellingChecker me, WordList list) {
 	try {
-		/*
-		 * Create without change.
-		 */
-		autoWordList newList = Data_copy (list);
-		/*
-		 * Change without error.
-		 */
-		forget (my wordList);
-		my wordList = newList.transfer();
+		my wordList = Data_copy (list);
 	} catch (MelderError) {
 		Melder_throw (me, U": word list not replaced.");
 	}
@@ -87,7 +79,7 @@ autoSortedSetOfString SpellingChecker_extractUserDictionary (SpellingChecker me)
 	try {
 		if (! my userDictionary)
 			Melder_throw (U"This spelling checker does not contain a user dictionary.");
-		return Data_copy (my userDictionary);
+		return Data_copy (my userDictionary.get());
 	} catch (MelderError) {
 		Melder_throw (me, U": user dictionary not extracted.");
 	}
@@ -95,15 +87,7 @@ autoSortedSetOfString SpellingChecker_extractUserDictionary (SpellingChecker me)
 
 void SpellingChecker_replaceUserDictionary (SpellingChecker me, SortedSetOfString userDictionary) {
 	try {
-		/*
-		 * Create without change.
-		 */
-		autoSortedSetOfString newDict = Data_copy (userDictionary);
-		/*
-		 * Change without error.
-		 */
-		forget (my userDictionary);
-		my userDictionary = newDict.transfer();
+		my userDictionary = Data_copy (userDictionary);
 	} catch (MelderError) {
 		Melder_throw (me, U": user dictionary not replaced.");
 	}
@@ -198,13 +182,13 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, const char32 *word) {
 			}
 		}
 	}
-	if (WordList_hasWord (my wordList, word))
+	if (WordList_hasWord (my wordList.get(), word))
 		return true;
 	if (my userDictionary) {
 		if (str32len (word) > 3333) return false;   // superfluous, because WordList_hasWord already checked; but safe
 		static char32 buffer [3*3333+1];
 		Longchar_genericize32 (word, buffer);
-		if (SortedSetOfString_lookUp (my userDictionary, buffer) != 0)
+		if (SortedSetOfString_lookUp (my userDictionary.get(), buffer) != 0)
 			return true;
 	}
 	return false;
@@ -216,7 +200,7 @@ void SpellingChecker_addNewWord (SpellingChecker me, const char32 *word) {
 			my userDictionary = SortedSetOfString_create ();
 		autostring32 generic = Melder_calloc (char32, 3 * str32len (word) + 1);
 		Longchar_genericize32 (word, generic.peek());
-		SortedSetOfString_addString (my userDictionary, generic.transfer());
+		SortedSetOfString_addString (my userDictionary.get(), generic.transfer());
 	} catch (MelderError) {
 		Melder_throw (me, U": word \"", word, U"\" not added.");
 	}

@@ -598,9 +598,9 @@ static void insertBoundaryOrPoint (TextGridEditor me, int itier, double t1, doub
 			TextInterval_setText (rightNewInterval.get(), Melder_cat (midNewInterval -> text, rightNewInterval -> text));
 		} else {
 			interval -> xmax = t1;
-			if (t1 != t2) Collection_addItem_move (intervalTier -> intervals, midNewInterval.move());
+			if (t1 != t2) Collection_addItem_move (intervalTier -> intervals.get(), midNewInterval.move());
 		}
-		Collection_addItem_move (intervalTier -> intervals, rightNewInterval.move());
+		Collection_addItem_move (intervalTier -> intervals.get(), rightNewInterval.move());
 		if (insertSecond && ntiers >= 2 && t1 == t2) {
 			/*
 			 * Find the last time before t on another tier.
@@ -615,7 +615,7 @@ static void insertBoundaryOrPoint (TextGridEditor me, int itier, double t1, doub
 			if (tlast > interval -> xmin && tlast < t1) {
 				autoTextInterval newInterval = TextInterval_create (tlast, t1, U"");
 				interval -> xmax = tlast;
-				Collection_addItem_move (intervalTier -> intervals, newInterval.move());
+				Collection_addItem_move (intervalTier -> intervals.get(), newInterval.move());
 			}
 		}
 	} else {

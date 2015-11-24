@@ -90,9 +90,6 @@
 
 #define oo_AUTO_OBJECT(Class,version,x)
 
-#define oo_COLLECTION(Class,x,ItemClass,version)  \
-	forget (our x);
-
 #define oo_AUTO_COLLECTION(Class,x,ItemClass,version)
 
 #define oo_FILE(x)

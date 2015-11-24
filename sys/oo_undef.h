@@ -41,7 +41,6 @@
 
 #undef oo_OBJECT
 #undef oo_AUTO_OBJECT
-#undef oo_COLLECTION
 #undef oo_AUTO_COLLECTION
 #undef oo_FILE
 #undef oo_DIR
