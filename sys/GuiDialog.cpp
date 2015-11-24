@@ -139,7 +139,7 @@ GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int heigh
 		if (goAwayCallback) {
 			XmAddWMProtocolCallback (my d_xmShell, 'delw', _GuiMotifDialog_goAwayCallback, (char *) me.get());
 		}
-		GuiShell_setTitle (me, title);
+		GuiShell_setTitle (me.get(), title);
 		my d_widget = XmCreateForm (my d_xmShell, "dialog", nullptr, 0);
 		XtVaSetValues (my d_widget, XmNwidth, (Dimension) width, XmNheight, (Dimension) height, nullptr);
 		_GuiObject_setUserData (my d_widget, me.get());

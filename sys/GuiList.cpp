@@ -400,7 +400,7 @@ GuiList GuiList_create (GuiForm parent, int left, int right, int top, int bottom
 		}
 		gtk_tree_view_append_column (GTK_TREE_VIEW (my d_widget), col);
 
-		g_object_set_data_full (G_OBJECT (my d_widget), "guiList", me, (GDestroyNotify) _GuiGtkList_destroyCallback); 
+		g_object_set_data_full (G_OBJECT (my d_widget), "guiList", me.get(), (GDestroyNotify) _GuiGtkList_destroyCallback);
 
 /*		GtkCellRenderer *renderer;
 		GtkTreeViewColumn *col;

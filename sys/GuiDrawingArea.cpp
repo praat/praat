@@ -595,7 +595,7 @@ GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int h
 		g_signal_connect (G_OBJECT (my d_widget), "motion-notify-event",  G_CALLBACK (_GuiGtkDrawingArea_clickCallback),   me.get());
 		if (parent) {
 			g_signal_connect (G_OBJECT (gtk_widget_get_toplevel (GTK_WIDGET (parent -> d_widget))), "key-press-event",
-				G_CALLBACK (_GuiGtkDrawingArea_keyCallback), me);
+				G_CALLBACK (_GuiGtkDrawingArea_keyCallback), me.get());
 		}
 		g_signal_connect (G_OBJECT (my d_widget), "size-allocate", G_CALLBACK (_GuiGtkDrawingArea_resizeCallback), me.get());
 		_GuiObject_setUserData (my d_widget, me.get());

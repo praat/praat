@@ -211,7 +211,7 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidt
 		if (goAwayCallback) {
 			XmAddWMProtocolCallback (my d_xmShell, 'delw', _GuiMotifWindow_goAwayCallback, (char *) me.get());
 		}
-		GuiShell_setTitle (me, title);
+		GuiShell_setTitle (me.get(), title);
 		my d_widget = XmCreateForm (my d_xmShell, "dialog", nullptr, 0);
 		_GuiObject_setUserData (my d_widget, me.get());
 		XtAddCallback (my d_widget, XmNdestroyCallback, _GuiMotifWindow_destroyCallback, me.get());

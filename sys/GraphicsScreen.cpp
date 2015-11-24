@@ -589,10 +589,10 @@ Graphics Graphics_create_xmdrawingarea (GuiDrawingArea w) {
 	#else
 		#if gtk
 			Graphics_init (me.get(), Gui_getResolution (my d_drawingArea -> d_widget));
-			GraphicsScreen_init (me, GTK_WIDGET (my d_drawingArea -> d_widget), GTK_WIDGET (my d_drawingArea -> d_widget));
+			GraphicsScreen_init (me.get(), GTK_WIDGET (my d_drawingArea -> d_widget), GTK_WIDGET (my d_drawingArea -> d_widget));
 		#elif motif
 			Graphics_init (me.get(), Gui_getResolution (my d_drawingArea -> d_widget));
-			GraphicsScreen_init (me, XtDisplay (my d_drawingArea -> d_widget), XtWindow (my d_drawingArea -> d_widget));
+			GraphicsScreen_init (me.get(), XtDisplay (my d_drawingArea -> d_widget), XtWindow (my d_drawingArea -> d_widget));
 		#endif
 	#endif
 

@@ -31,8 +31,7 @@ Thing_implement (GuiScrollBar, GuiControl, 0);
 #endif
 
 #if gtk
-	static void _GuiGtkScrollBar_destroyCallback (GuiObject widget, gpointer void_me) {
-		(void) widget;
+	static void _GuiGtkScrollBar_destroyCallback (GuiObject /* widget */, gpointer void_me) {
 		iam (GuiScrollBar);
 		forget (me);
 	}
@@ -218,9 +217,9 @@ GuiScrollBar GuiScrollBar_create (GuiForm parent, int left, int right, int top, 
 	#if gtk
 		GtkObject *adj = gtk_adjustment_new (value, minimum, maximum, increment, pageIncrement, sliderSize);
 		my d_widget = flags & GuiScrollBar_HORIZONTAL ? gtk_hscrollbar_new (GTK_ADJUSTMENT (adj)) : gtk_vscrollbar_new (GTK_ADJUSTMENT (adj));
-		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_widget, me.get());
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
-		g_signal_connect (G_OBJECT (my d_widget), "value-changed", G_CALLBACK (_GuiGtkScrollBar_valueChangedCallback), me);
+		g_signal_connect (G_OBJECT (my d_widget), "value-changed", G_CALLBACK (_GuiGtkScrollBar_valueChangedCallback), me.get());
 	#elif cocoa
 		NSRect dummyFrame = flags & GuiScrollBar_HORIZONTAL ? NSMakeRect (20, 20, 100, [NSScroller scrollerWidth]) : NSMakeRect (20, 20, [NSScroller scrollerWidth], 100);
 		GuiCocoaScrollBar *scroller = [[GuiCocoaScrollBar alloc] initWithFrame: dummyFrame];
