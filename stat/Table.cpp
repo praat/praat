@@ -242,7 +242,7 @@ void Table_insertRow (Table me, long rowNumber) {
 		/*
 		 * Safe change.
 		 */
-		Ordered_addItemPos (my rows.get(), row.transfer(), rowNumber);
+		Ordered_addItemAtPosition_move (my rows.get(), row.move(), rowNumber);
 		/*
 		 * Changes without error.
 		 */

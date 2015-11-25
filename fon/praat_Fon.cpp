@@ -2344,7 +2344,7 @@ DIRECT2 (Ltas_to_Matrix) {
 	LOOP {
 		iam (Ltas);
 		autoMatrix thee = Ltas_to_Matrix (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END2 }
 

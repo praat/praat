@@ -217,7 +217,7 @@ GuiMenuItem praat_addMenuCommand (const char32 *window, const char32 *menu, cons
 		if (hidden) GuiThing_hide (command -> button);
 	}
 	Thing_cast (GuiMenuItem, button_as_GuiMenuItem, command -> button);
-	Ordered_addItemPos (theCommands, command.transfer(), position);
+	Ordered_addItemAtPosition_move (theCommands, command.move(), position);
 	return button_as_GuiMenuItem;
 }
 
@@ -307,7 +307,7 @@ void praat_addMenuCommandScript (const char32 *window, const char32 *menu, const
 				}
 			}
 		}
-		Ordered_addItemPos (theCommands, command.transfer(), position);
+		Ordered_addItemAtPosition_move (theCommands, command.move(), position);
 
 		if (praatP.phase >= praat_HANDLING_EVENTS) praat_sortMenuCommands ();
 	} catch (MelderError) {
@@ -380,7 +380,7 @@ void praat_addFixedButtonCommand (GuiForm parent, const char32 *title, UiCallbac
 		GuiThing_show (button);
 	}
 	my executable = false;
-	Ordered_addItemPos (theCommands, me.transfer(), 0);
+	Ordered_addItemAtPosition_move (theCommands, me.move(), 0);
 }
 
 void praat_sensitivizeFixedButtonCommand (const char32 *title, int sensitive) {

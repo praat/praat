@@ -2521,7 +2521,7 @@ void KlattGrid_addFormantAmplitudeTier (KlattGrid me, int formantType, long posi
 			position = noa + 1;
 		}
 		autoIntensityTier it = IntensityTier_create (my xmin, my xmax);
-		Ordered_addItemPos (ordered->get(), it.transfer(), position);
+		Ordered_addItemAtPosition_move (ordered->get(), it.move(), position);
 	} catch (MelderError) {
 		Melder_throw (me, U": no formant amplitude tier added.");
 	}
@@ -2569,7 +2569,7 @@ void KlattGrid_addFormant (KlattGrid me, int formantType, long position) {
 		FormantGrid_addFormantAndBandwidthTiers (fg->get(), position);
 		try {
 			autoIntensityTier it = IntensityTier_create (my xmin, my xmax);
-			Ordered_addItemPos (ordered->get(), it.transfer(), position);
+			Ordered_addItemAtPosition_move (ordered->get(), it.move(), position);
 		} catch (MelderError) { // restore original
 			FormantGrid_removeFormantAndBandwidthTiers (fg->get(), position);
 		}

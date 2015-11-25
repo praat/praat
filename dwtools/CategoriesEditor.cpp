@@ -143,7 +143,7 @@ static void notifyNumberOfSelected (CategoriesEditor me) {
 	if (posCount > 0) {
 		MelderString_append (&tmp, posCount, U" selection", (posCount > 1 ? U"s." : U"."));
 	}
-	GuiLabel_setText (my outOfView, tmp.string);
+	if (tmp.string) GuiLabel_setText (my outOfView, tmp.string);
 }
 
 static void updateUndoAndRedoMenuItems (CategoriesEditor me)
@@ -351,7 +351,7 @@ static int CategoriesEditorInsert_execute (CategoriesEditorInsert me) {
 	Categories categories = static_cast<Categories> (editor -> data);
 
 	autoSimpleString str = Data_copy ((SimpleString) my categories -> item[1]);
-	Ordered_addItemPos (categories, str.transfer(), my selection[1]);
+	Ordered_addItemAtPosition_move (categories, str.move(), my selection[1]);
 	update (editor, my selection[1], 0, my selection, 1);
 	return 1;
 }
@@ -389,8 +389,8 @@ static int CategoriesEditorRemove_execute (CategoriesEditorRemove me) {
 	Categories categories = static_cast<Categories> (editor -> data);
 
 	for (long i = my nSelected; i >= 1; i--) {
-		Ordered_addItemPos (my categories.peek(), (SimpleString) categories -> item[my selection[i]], 1);
-		categories -> item[my selection[i]] = nullptr;
+		autoSimpleString item = Data_copy ((SimpleString) categories -> item[my selection[i]]);
+		Ordered_addItemAtPosition_move (my categories.peek(), item.move(), 1);
 		Collection_removeItem (categories, my selection[i]);
 	}
 	update (editor, my selection[1], 0, nullptr, 0);
@@ -402,8 +402,8 @@ static int CategoriesEditorRemove_undo (CategoriesEditorRemove me) {
 	Categories categories = (Categories) editor -> data;
 
 	for (long i = 1; i <= my nSelected; i++) {
-		autoSimpleString item = Data_copy ( (SimpleString) my categories -> item[i]);
-		Ordered_addItemPos (categories, item.transfer(), my selection[i]);
+		autoSimpleString item = Data_copy ((SimpleString) my categories -> item[i]);
+		Ordered_addItemAtPosition_move (categories, item.move(), my selection[i]);
 	}
 	update (editor, my selection[1], 0, my selection, my nSelected);
 	return 1;
@@ -436,8 +436,8 @@ static int CategoriesEditorReplace_execute (CategoriesEditorReplace me) {
 
 	for (long i = my nSelected; i >= 1; i--) {
 		autoSimpleString str = Data_copy ((SimpleString) my categories -> item[1]);
-		Ordered_addItemPos (my categories.peek(), (SimpleString) categories -> item[my selection[i]], 2);
-		categories -> item[my selection[i]] = str.transfer();
+		Ordered_addItemAtPosition_move (my categories.peek(), (SimpleString) categories -> item[my selection[i]], 2);   // YUCK
+		categories -> item[my selection[i]] = str.transfer();   // YUCK
 	}
 	update (editor, my selection[1], my selection[my nSelected], my selection, my nSelected);
 	return 1;

@@ -452,7 +452,7 @@ autoHMM HMM_create (int leftToRight, long numberOfStates, long numberOfObservati
 void HMM_setDefaultStates (HMM me) {
 	for (long i = 1; i <= my numberOfStates; i++) {
 		autoHMMState hmms = HMMState_create (Melder_cat (U"S", i));
-		HMM_addState (me, hmms.transfer());
+		HMM_addState_move (me, hmms.move());
 	}
 }
 
@@ -475,11 +475,11 @@ autoHMM HMM_createContinuousModel (int leftToRight, long numberOfStates, long nu
 		my componentStorage = componentStorage;
 		for (long i = 1; i <= numberOfStates; i++) {
 			autoHMMState state = HMMState_create (Melder_cat (U"S", i));
-			HMM_addState (me.peek(), state.transfer());
+			HMM_addState_move (me.peek(), state.move());
 		}
 		for (long j = 1; j <= numberOfObservationSymbols; j++) {
 			autoHMMObservation obs = HMMObservation_create (Melder_cat (U"s", j), numberOfMixtureComponentsPerSymbol, componentDimension, componentStorage);
-			HMM_addObservation (me.peek(), obs.transfer());
+			HMM_addObservation_move (me.peek(), obs.move());
 		}
 		HMM_setDefaultTransitionProbs (me.peek());
 		HMM_setDefaultStartProbs (me.peek());
@@ -519,11 +519,11 @@ autoHMM HMM_createSimple (int leftToRight, const char32 *states_string, const ch
 
 		for (char32 *token = Melder_firstToken (states); token != 0; token = Melder_nextToken ()) {
 			autoHMMState state = HMMState_create (token);
-			HMM_addState (me.peek(), state.transfer());
+			HMM_addState_move (me.peek(), state.move());
 		}
 		for (char32 *token = Melder_firstToken (symbols); token != nullptr; token = Melder_nextToken ()) {
 			autoHMMObservation symbol = HMMObservation_create (token, 0, 0, 0);
-			HMM_addObservation (me.peek(), symbol.transfer());
+			HMM_addObservation_move (me.peek(), symbol.move());
 		}
 		HMM_setDefaultTransitionProbs (me.peek());
 		HMM_setDefaultStartProbs (me.peek());
@@ -538,7 +538,7 @@ void HMM_setDefaultObservations (HMM me) {
 	const char32 *def = my notHidden ? U"S" : U"s";
 	for (long i = 1; i <= my numberOfObservationSymbols; i++) {
 		autoHMMObservation hmms = HMMObservation_create (Melder_cat (def, i), 0, 0, 0);
-		HMM_addObservation (me, hmms.transfer());
+		HMM_addObservation_move (me, hmms.move());
 	}
 }
 
@@ -622,20 +622,20 @@ void HMM_setEmissionProbabilities (HMM me, long state_number, char32 *emission_p
 
 }
 
-void HMM_addObservation (HMM me, HMMObservation thee) {
+void HMM_addObservation_move (HMM me, autoHMMObservation thee) {
 	long ns = my observationSymbols -> size + 1;
 	if (ns > my numberOfObservationSymbols) {
 		Melder_throw (U"Observation list is full.");
 	}
-	Ordered_addItemPos (my observationSymbols, thee, ns);
+	Ordered_addItemAtPosition_move (my observationSymbols, thee.move(), ns);
 }
 
-void HMM_addState (HMM me, HMMState thee) {
+void HMM_addState_move (HMM me, autoHMMState thee) {
 	long ns = my states -> size + 1;
 	if (ns > my numberOfStates) {
 		Melder_throw (U"States list is full.");
 	}
-	Ordered_addItemPos (my states, thee, ns);
+	Ordered_addItemAtPosition_move (my states, thee.move(), ns);
 }
 
 autoTableOfReal HMM_extractTransitionProbabilities (HMM me) {
@@ -1540,10 +1540,10 @@ autoHMM HMM_createFromHMMObservationSequence (HMMObservationSequence me, long nu
 		for (long i = 1; i <= numberOfObservationSymbols; i++) {
 			const char32 *label = d -> rowLabels[i];
 			autoHMMObservation hmmo = HMMObservation_create (label, 0, 0, 0);
-			HMM_addObservation (thee.peek(), hmmo.transfer());
+			HMM_addObservation_move (thee.peek(), hmmo.move());
 			if (thy notHidden) {
 				autoHMMState hmms = HMMState_create (label);
-				HMM_addState (thee.peek(), hmms.transfer());
+				HMM_addState_move (thee.peek(), hmms.move());
 			}
 		}
 		if (! thy notHidden) {

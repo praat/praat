@@ -71,7 +71,7 @@ static void FormantGrid_addFormantTier (FormantGrid me, int position) {
 		position = my formants -> size + 1;
 	}
 	autoRealTier rt = RealTier_create (my xmin, my xmax);
-	Ordered_addItemPos (my formants.get(), rt.transfer(), position);
+	Ordered_addItemAtPosition_move (my formants.get(), rt.move(), position);
 }
 
 static void FormantGrid_addBandwidthTier (FormantGrid me, int position) {
@@ -79,7 +79,7 @@ static void FormantGrid_addBandwidthTier (FormantGrid me, int position) {
 		position = my bandwidths -> size + 1;
 	}
 	autoRealTier rt = RealTier_create (my xmin, my xmax);
-	Ordered_addItemPos (my bandwidths.get(), rt.transfer(), position);
+	Ordered_addItemAtPosition_move (my bandwidths.get(), rt.move(), position);
 }
 
 void FormantGrid_addFormantAndBandwidthTiers (FormantGrid me, int position) {
