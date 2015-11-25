@@ -320,8 +320,7 @@ static void menu_cb_openScript (Editor me, EDITOR_ARGS_DIRECT) {
 	TextEditor_showOpen (scriptEditor.transfer());
 }
 
-void structEditor :: v_createMenuItems_file (EditorMenu menu) {
-	(void) menu;
+void structEditor :: v_createMenuItems_file (EditorMenu /* menu */) {
 }
 
 void structEditor :: v_createMenuItems_edit (EditorMenu menu) {
@@ -364,7 +363,7 @@ void structEditor :: v_createMenus () {
 
 void structEditor :: v_form_pictureWindow (EditorCommand cmd) {
 	LABEL (U"", U"Picture window:")
-	BOOLEAN (U"Erase first", 1);
+	BOOLEAN (U"Erase first", true);
 }
 void structEditor :: v_ok_pictureWindow (EditorCommand cmd) {
 	SET_INTEGER (U"Erase first", pref_picture_eraseFirst ());

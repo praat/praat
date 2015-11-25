@@ -413,7 +413,7 @@ DO
 END
 
 DIRECT (Configurations_to_Similarity_cc)
-	autoConfigurations set = (Configurations) praat_getSelectedObjects ();
+	autoConfigurations set = praat_getSelectedObjects ().static_cast_move <structConfigurations> ();
 	praat_new (Configurations_to_Similarity_cc (set.peek(), 0), U"congruence");
 END
 
@@ -496,7 +496,7 @@ DO
 END
 
 DIRECT (Confusions_sum)
-	autoConfusions me = (Confusions) praat_getSelectedObjects ();
+	autoConfusions me = praat_getSelectedObjects ().static_cast_move <structConfusions> ();
 	praat_new (Confusions_sum (me.peek()), U"sum");
 END
 
@@ -1268,7 +1268,7 @@ FORM (Distances_indscal, U"Distance: To Configuration (indscal)", U"Distance: To
 	NATURAL (U"Number of repetitions", U"1")
 	OK
 DO
-	autoDistances me = (Distances) praat_getSelectedObjects ();
+	autoDistances me = praat_getSelectedObjects ().static_cast_move <structDistances> ();
 	autoConfiguration ac;
 	autoSalience as;
 	Distances_indscal (me.peek(), GET_INTEGER (U"Number of dimensions"), GET_INTEGER (U"Normalize scalar products"),
@@ -1435,7 +1435,7 @@ FORM (Distances_to_Configuration_ytl, U"Distance: To Configuration (ytl)", U"Dis
 	BOOLEAN (U"Salience object", false)
 	OK
 DO
-	autoDistances me = (Distances) praat_getSelectedObjects ();
+	autoDistances me = praat_getSelectedObjects ().static_cast_move <structDistances> ();
 	autoConfiguration ac;
 	autoSalience as;
 	Distances_to_Configuration_ytl (me.peek(), GET_INTEGER (U"Number of dimensions"),

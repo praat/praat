@@ -255,14 +255,14 @@ Daata praat_firstObject_any () {
 	return nullptr;   // this is often OK
 }
 
-Collection praat_getSelectedObjects () {
+autoCollection praat_getSelectedObjects () {
 	autoCollection thee = Collection_create (nullptr, 10);
 	int IOBJECT;
 	LOOP {
 		iam_LOOP (Daata);
 		Collection_addItem_ref (thee.peek(), me);
 	}
-	return thee.transfer();
+	return thee;
 }
 
 char32 *praat_name (int IOBJECT) { return str32chr (FULL_NAME, U' ') + 1; }
@@ -284,7 +284,7 @@ void praat_write_do (UiForm dia, const char32 *extension) {
 	UiOutfile_do (dia, defaultFileName.string);
 }
 
-static void removeAllReferencesToEditor (Editor editor) {
+static void removeAllReferencesToMoribundEditor (Editor editor) {
 	/*
 	 * Remove all references to this editor.
 	 * It may be editing multiple objects.
@@ -297,9 +297,11 @@ static void removeAllReferencesToEditor (Editor editor) {
 		praatP. editor = nullptr;
 }
 
+/**
+	Remove the "object" from the list,
+	killing everything that has to do with the selection.
+*/
 static void praat_remove (int iobject, bool removeVisibly) {
-/* Remove the "object" from the list. */
-/* Kill everything to do with selection. */
 
 	Melder_assert (iobject >= 1 && iobject <= theCurrentPraatObjects -> n);
 	if (theCurrentPraatObjects -> list [iobject]. isBeingCreated) {
@@ -318,10 +320,10 @@ static void praat_remove (int iobject, bool removeVisibly) {
 		Editor editor = theCurrentPraatObjects -> list [iobject]. editors [ieditor];   // save this one reference
 		if (editor) {
 			trace (U"remove references to editor ", ieditor);
-			removeAllReferencesToEditor (editor);
+			removeAllReferencesToMoribundEditor (editor);
 			trace (U"forget editor ", ieditor);
 			if (removeVisibly)
-				forget (editor);
+				forget (editor);   // TODO: doesn't this call removeAllReferencesToMoribundEditor() again?
 			trace (U"forgeotten editor ", ieditor);
 		}
 	}
@@ -329,7 +331,7 @@ static void praat_remove (int iobject, bool removeVisibly) {
 	trace (U"free name");
 	Melder_free (theCurrentPraatObjects -> list [iobject]. name);
 	trace (U"forget object");
-	forget (theCurrentPraatObjects -> list [iobject]. object);
+	forget (theCurrentPraatObjects -> list [iobject]. object);   // note: this might save a file-based object to file
 	trace (U"forgotten object");
 }
 
@@ -609,7 +611,7 @@ static void praat_exit (int exit_code) {
 }
 
 static void cb_Editor_destruction (Editor me, void * /*closure*/) {
-	removeAllReferencesToEditor (me);   // remove reference(s) to moribund Editor
+	removeAllReferencesToMoribundEditor (me);
 }
 
 static void cb_Editor_dataChanged (Editor me, void * /*closure*/) {

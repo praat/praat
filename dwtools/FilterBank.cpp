@@ -561,7 +561,7 @@ autoFormantFilter Matrix_to_FormantFilter (Matrix me) {
 		autoFormantFilter thee = FormantFilter_create (my xmin, my xmax, my nx, my dx, my x1,
 		                         my ymin, my ymax, my ny, my dy, my y1);
 		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to FormantFilter.");
 	}

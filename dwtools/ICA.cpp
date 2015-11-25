@@ -896,7 +896,7 @@ autoCrossCorrelationTables CrossCorrelationTables_and_Diagonalizer_diagonalize (
 			autoCrossCorrelationTable ct = CrossCorrelationTable_and_Diagonalizer_diagonalize (item, thee);
 			Collection_addItem_move (him.peek(), ct.move());
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"CrossCorrelationTables not diagonalized.");
 	}
@@ -907,7 +907,7 @@ autoDiagonalizer CrossCorrelationTables_to_Diagonalizer (CrossCorrelationTables 
 		CrossCorrelationTable him = (CrossCorrelationTable) my item[1];
 		autoDiagonalizer thee = Diagonalizer_create (his numberOfColumns);
 		Diagonalizer_and_CrossCorrelationTables_improveDiagonality (thee.peek(), me, maxNumberOfIterations, tol, method);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Diagonalizer not created from CrossCorrelationTables.");
 	};

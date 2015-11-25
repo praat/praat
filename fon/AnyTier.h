@@ -49,7 +49,7 @@ void AnyTier_addPoint (AnyTier me, Daata point);
 void AnyTier_removePoint (AnyTier me, long i);
 void AnyTier_removePointNear (AnyTier me, double time);
 void AnyTier_removePointsBetween (AnyTier me, double tmin, double tmax);
-PointProcess AnyTier_downto_PointProcess (AnyTier me);
+autoPointProcess AnyTier_downto_PointProcess (AnyTier me);
 
 #endif
 /* End of file AnyTier.h */

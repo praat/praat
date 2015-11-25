@@ -163,7 +163,7 @@ void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, Class
 		/*
 		 * Insert new command.
 		 */
-		Ordered_addItemPos (theActions, action.transfer(), position);
+		Ordered_addItemAtPosition_move (theActions, action.move(), position);
 	} catch (MelderError) {
 		Melder_flushError ();
 	}
@@ -299,7 +299,7 @@ void praat_addActionScript (const char32 *className1, int n1, const char32 *clas
 		/*
 		 * Insert new command.
 		 */
-		Ordered_addItemPos(theActions, action.transfer(), position);
+		Ordered_addItemAtPosition_move (theActions, action.move(), position);
 		updateDynamicMenu ();
 	} catch (MelderError) {
 		Melder_throw (U"Praat: script action not added.");

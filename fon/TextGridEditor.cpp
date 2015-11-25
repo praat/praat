@@ -1067,7 +1067,7 @@ static void menu_cb_AddIntervalTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 		Thing_setName (tier.peek(), name);
 
 		Editor_save (me, U"Add interval tier");
-		Ordered_addItemPos (grid -> tiers, tier.transfer(), position);
+		Ordered_addItemAtPosition_move (grid -> tiers, tier.move(), position);
 
 		my selectedTier = position;
 		FunctionEditor_updateText (me);
@@ -1093,7 +1093,7 @@ static void menu_cb_AddPointTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 		Thing_setName (tier.peek(), name);
 
 		Editor_save (me, U"Add point tier");
-		Ordered_addItemPos (grid -> tiers, tier.transfer(), position);
+		Ordered_addItemAtPosition_move (grid -> tiers, tier.move(), position);
 
 		my selectedTier = position;
 		FunctionEditor_updateText (me);
@@ -1124,7 +1124,7 @@ static void menu_cb_DuplicateTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 		Thing_setName (newTier.peek(), name);
 
 		Editor_save (me, U"Duplicate tier");
-		Ordered_addItemPos (grid -> tiers, newTier.transfer(), position);
+		Ordered_addItemAtPosition_move (grid -> tiers, newTier.move(), position);
 
 		my selectedTier = position;
 		FunctionEditor_updateText (me);
@@ -1135,10 +1135,10 @@ static void menu_cb_DuplicateTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 
 /***** HELP MENU *****/
 
-static void menu_cb_TextGridEditorHelp (TextGridEditor me, EDITOR_ARGS_DIRECT) { Melder_help (U"TextGridEditor"); }
-static void menu_cb_AboutSpecialSymbols (TextGridEditor me, EDITOR_ARGS_DIRECT) { Melder_help (U"Special symbols"); }
-static void menu_cb_PhoneticSymbols (TextGridEditor me, EDITOR_ARGS_DIRECT) { Melder_help (U"Phonetic symbols"); }
-static void menu_cb_AboutTextStyles (TextGridEditor me, EDITOR_ARGS_DIRECT) { Melder_help (U"Text styles"); }
+static void menu_cb_TextGridEditorHelp (TextGridEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"TextGridEditor"); }
+static void menu_cb_AboutSpecialSymbols (TextGridEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Special symbols"); }
+static void menu_cb_PhoneticSymbols (TextGridEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Phonetic symbols"); }
+static void menu_cb_AboutTextStyles (TextGridEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Text styles"); }
 
 void structTextGridEditor :: v_createMenus () {
 	TextGridEditor_Parent :: v_createMenus ();

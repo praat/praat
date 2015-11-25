@@ -36,12 +36,12 @@ void structCategories :: v_readText (MelderReadText a_text, int /*formatVersion*
 	for (long i = 1; i <= l_size; i ++) {
 		autoSimpleString itemi = Thing_new (SimpleString);
 		itemi -> v_readText (a_text, 0);
-		Ordered_addItemPos (this, itemi.transfer(), i);
+		Ordered_addItemAtPosition_move (this, itemi.move(), i);
 	}
 }
 
 void structCategories :: v_writeText (MelderFile file) {
-	texputi4 (file, size, U"size", 0, 0, 0, 0, 0);
+	texputi4 (file, size, U"size", nullptr, nullptr, nullptr, nullptr, nullptr);
 	for (long i = 1; i <= size; i++) {
 		SimpleString data = (SimpleString) item [i];
 		texputintro (file, U"item" " [", Melder_integer (i), U"]:", nullptr, nullptr, nullptr);

@@ -187,7 +187,7 @@ DO
 	autoMatrix thee = GaussianMixture_and_PCA_to_Matrix_density (me, pca, GET_INTEGER (U"X-dimension"),
 		GET_INTEGER (U"Y-dimension"), GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
 		GET_INTEGER (U"Number of columns"), GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"), GET_INTEGER (U"Number of rows"));
-	praat_new (thee.transfer(), my name, U"_", pca->name);
+	praat_new (thee.move(), my name, U"_", pca->name);
 END
 
 FORM (GaussianMixture_extractComponent, U"GaussianMixture: Extract component", 0)
@@ -198,7 +198,7 @@ DO
 	LOOP {
 		iam (GaussianMixture);
 		autoCovariance thee = GaussianMixture_extractComponent (me, component);
-		praat_new (thee.transfer(), my name, U"_", thy name);
+		praat_new (thee.move(), my name, U"_", thy name);
 	}
 END
 
@@ -206,7 +206,7 @@ DIRECT (GaussianMixture_extractCentroids)
 	LOOP {
 		iam (GaussianMixture);
 		autoTableOfReal thee = GaussianMixture_extractCentroids (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -214,7 +214,7 @@ DIRECT (GaussianMixture_extractMixingProbabilities)
 	LOOP {
 		iam (GaussianMixture);
 		autoTableOfReal thee = GaussianMixture_extractMixingProbabilities (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -222,7 +222,7 @@ DIRECT (GaussianMixture_to_PCA)
 	LOOP {
 		iam (GaussianMixture);
 		autoPCA thee = GaussianMixture_to_PCA (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -234,7 +234,7 @@ DO
 	LOOP {
 		iam (GaussianMixture);
 		autoTableOfReal thee = GaussianMixture_to_TableOfReal_randomSampling (me, numberOfpoints);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -242,7 +242,7 @@ DIRECT (GaussianMixture_to_Covariance_between)
 	LOOP {
 		iam (GaussianMixture);
 		autoCovariance thee = GaussianMixture_to_Covariance_between (me);
-		praat_new (thee.transfer(), my name, U"_b");
+		praat_new (thee.move(), my name, U"_b");
 	}
 END
 
@@ -250,7 +250,7 @@ DIRECT (GaussianMixture_to_Covariance_within)
 	LOOP {
 		iam (GaussianMixture);
 		autoCovariance thee = GaussianMixture_to_Covariance_within (me);
-		praat_new (thee.transfer(), my name, U"_w");
+		praat_new (thee.move(), my name, U"_w");
 	}
 END
 
@@ -258,7 +258,7 @@ DIRECT (GaussianMixture_to_Covariance_total)
 	LOOP {
 		iam (GaussianMixture);
 		autoCovariance thee = GaussianMixture_to_Covariance_total (me);
-		praat_new (thee.transfer(), my name, U"_t");
+		praat_new (thee.move(), my name, U"_t");
 	}
 END
 
@@ -288,7 +288,7 @@ FORM (HMM_create, U"Create HMM", U"")
 	OK
 DO
 	autoHMM thee = HMM_create (GET_INTEGER (U"Left to right model"), GET_INTEGER (U"Number of states"), GET_INTEGER (U"Number of observations"));
-	praat_new (thee.transfer(), GET_STRING (U"Name"));
+	praat_new (thee.move(), GET_STRING (U"Name"));
 END
 
 FORM (HMM_createSimple, U"HMM: Create simple", U"HMM: Create simple HMM...")
@@ -299,7 +299,7 @@ FORM (HMM_createSimple, U"HMM: Create simple", U"HMM: Create simple HMM...")
 	OK
 DO
 	autoHMM thee = HMM_createSimple (GET_INTEGER (U"Left to right model"), GET_STRING (U"States"), GET_STRING (U"Observations"));
-	praat_new (thee.transfer(), GET_STRING (U"Name"));
+	praat_new (thee.move(), GET_STRING (U"Name"));
 END
 
 FORM (HMM_createContinuousModel, U"HMM: Create continuous model", 0)
@@ -321,7 +321,7 @@ DO
 	autoHMM thee = HMM_createContinuousModel (GET_INTEGER (U"Left to right model"),
 		GET_INTEGER (U"Number of states"), GET_INTEGER (U"Number of symbols"),
 		GET_INTEGER (U"Number of components"), dimension, componentStorage);
-	praat_new (thee.transfer(), GET_STRING (U"Name"));
+	praat_new (thee.move(), GET_STRING (U"Name"));
 END
 
 FORM (HMMObservationSequence_to_HMM, U"HMMObservationSequence: To HMM", 0)
@@ -334,7 +334,7 @@ DO
 	LOOP {
 		iam (HMMObservationSequence);
 		autoHMM thee = HMM_createFromHMMObservationSequence (me, numberOfStates, GET_INTEGER (U"Left to right model"));
-		praat_new (thee.transfer(), my name, U"_", numberOfStates);
+		praat_new (thee.move(), my name, U"_", numberOfStates);
 	}
 END
 
@@ -535,7 +535,7 @@ DO
 	LOOP {
 		iam (HMM);
 		autoHMMObservationSequence thee = HMM_to_HMMObservationSequence (me, GET_INTEGER (U"Start state"), GET_INTEGER (U"Number of observations"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -571,7 +571,7 @@ DIRECT (HMM_and_HMMObservationSequence_to_HMMStateSequence)
 	HMM me = FIRST (HMM);
 	HMMObservationSequence thee = FIRST (HMMObservationSequence);
 	autoHMMStateSequence him = HMM_and_HMMObservationSequence_to_HMMStateSequence (me, thee);
-	praat_new (him.transfer(), my name, U"_", thy name, U"_states");
+	praat_new (him.move(), my name, U"_", thy name, U"_states");
 END
 
 FORM (HMM_and_HMMObservationSequence_learn, U"HMM & HMMObservationSequence: Learn", U"HMM & HMMObservationSequences: Learn...")
@@ -582,12 +582,15 @@ FORM (HMM_and_HMMObservationSequence_learn, U"HMM & HMMObservationSequence: Lear
 DO
 	double minProb = GET_REAL (U"Minimum probability");
 	REQUIRE (minProb >= 0 && minProb < 1, U"A probabilty must be >= 0 and < 1!")
-	autoHMMObservationSequences hmm_oss = HMMObservationSequences_create (); HMM hmm = 0;
+	autoHMMObservationSequences hmm_oss = HMMObservationSequences_create ();
+	HMM hmm = nullptr;
 	LOOP {
 		iam (Daata);
 		if (CLASS == classHMMObservationSequence) {
 			Collection_addItem_ref (hmm_oss.peek(), me);
-		} else { hmm = (HMM) me; }
+		} else {
+			hmm = (HMM) me;
+		}
 	}
 	HMM_and_HMMObservationSequences_learn (hmm, hmm_oss.peek(), GET_REAL (U"Relative precision in log"), minProb, GET_INTEGER (U"Learning history in Info window"));
 END
@@ -628,7 +631,7 @@ DIRECT (HMM_extractTransitionProbabilities)
 	LOOP {
 		iam (HMM);
 		autoTableOfReal thee = HMM_extractTransitionProbabilities (me);
-		praat_new (thee.transfer(), my name, U"_t");
+		praat_new (thee.move(), my name, U"_t");
 	}
 END
 
@@ -636,7 +639,7 @@ DIRECT (HMM_extractEmissionProbabilities)
 	LOOP {
 		iam (HMM);
 		autoTableOfReal thee = HMM_extractEmissionProbabilities (me);
-		praat_new (thee.transfer(), my name, U"_e");
+		praat_new (thee.move(), my name, U"_e");
 	}
 END
 
@@ -648,7 +651,7 @@ DO
 	LOOP {
 		iam (HMMObservationSequence);
 		autoTableOfReal thee = HMMObservationSequence_to_TableOfReal_transitions (me, GET_INTEGER (U"As probabilities"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -659,7 +662,7 @@ DO
 	HMM me = FIRST (HMM);
 	HMMObservationSequence hmm_os = FIRST (HMMObservationSequence);
 	autoTableOfReal thee = HMM_and_HMMObservationSequence_to_TableOfReal_transitions (me, hmm_os,GET_INTEGER (U"As probabilities"));
-	praat_new (thee.transfer(), hmm_os -> name, U"_m");
+	praat_new (thee.move(), hmm_os -> name, U"_m");
 END
 
 FORM (HMM_and_HMMStateSequence_to_TableOfReal, U"HMM & HMMStateSequence: To TableOfReal", 0)
@@ -669,7 +672,7 @@ DO
 	HMM me = FIRST (HMM);
 	HMMStateSequence hmm_ss = FIRST (HMMStateSequence);
 	autoTableOfReal thee = HMM_and_HMMStateSequence_to_TableOfReal_transitions (me, hmm_ss, GET_INTEGER (U"As probabilities"));
-	praat_new (thee.transfer(), Thing_getName (hmm_ss), U"_m");
+	praat_new (thee.move(), Thing_getName (hmm_ss), U"_m");
 END
 
 FORM (HMMStateSequence_to_TableOfReal, U"HMMStateSequence: To TableOfReal", 0)
@@ -679,7 +682,7 @@ DO
 	LOOP {
 		iam (HMMStateSequence);
 		autoTableOfReal thee = Strings_to_TableOfReal_transitions (me, GET_INTEGER (U"As probabilities"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -687,7 +690,7 @@ DIRECT (HMMObservationSequence_to_Strings)
 	LOOP {
 		iam (HMMObservationSequence);
 		autoStrings thee = HMMObservationSequence_to_Strings (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -695,7 +698,7 @@ DIRECT (Strings_to_HMMObservationSequence)
 	LOOP {
 		iam (Strings);
 		autoHMMObservationSequence thee = Strings_to_HMMObservationSequence (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -703,7 +706,7 @@ DIRECT (HMMStateSequence_to_Strings)
 	LOOP {
 		iam (HMMStateSequence);
 		autoStrings thee = HMMStateSequence_to_Strings (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -718,7 +721,7 @@ DO
 	LOOP {
 		iam (TableOfReal);
 		autoGaussianMixture thee = TableOfReal_to_GaussianMixture_fromRowLabels (me, storage);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -742,7 +745,7 @@ DO
 		iam (TableOfReal);
 		autoGaussianMixture thee = TableOfReal_to_GaussianMixture (me, GET_INTEGER (U"Number of components"), 
 			GET_REAL (U"Tolerance of minimizer"), GET_INTEGER (U"Maximum number of iterations"), lambda, storage, criterion);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -782,21 +785,21 @@ DO
 	autoGaussianMixture him = GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM (me, thee,
 		GET_INTEGER (U"Minimum number of components"), GET_REAL (U"Tolerance of minimizer"),
 		GET_INTEGER (U"Maximum number of iterations"), lambda, criterion);
-	praat_new (him.transfer(), my name);
+	praat_new (him.move(), my name);
 END
 
 DIRECT (GaussianMixture_and_TableOfReal_to_ClassificationTable)
 	GaussianMixture me = FIRST (GaussianMixture);
 	TableOfReal thee = FIRST (TableOfReal);
 	autoClassificationTable him = GaussianMixture_and_TableOfReal_to_ClassificationTable (me, thee);
-	praat_new (him.transfer(), my name, U"_", thy name);
+	praat_new (him.move(), my name, U"_", thy name);
 END
 
 DIRECT (GaussianMixture_and_TableOfReal_to_Correlation)
 	GaussianMixture me = FIRST (GaussianMixture);
 	TableOfReal thee = FIRST (TableOfReal);
 	autoCorrelation him = GaussianMixture_and_TableOfReal_to_Correlation (me, thee);
-	praat_new (him.transfer(), my name, U"_", thy name);
+	praat_new (him.move(), my name, U"_", thy name);
 END
 
 FORM (GaussianMixture_and_TableOfReal_to_TableOfReal_BHEPNormalityTests, U"GaussianMixture & TableOfReal: To TableOfReal BHEP normality tests", U"GaussianMixture & TableOfReal: To TableOfReal (BHEP normality tests)...")
@@ -807,7 +810,7 @@ DO
 	TableOfReal thee = FIRST (TableOfReal);
 	double h = GET_REAL (U"Smoothing parameter");
 	autoTableOfReal him = GaussianMixture_and_TableOfReal_to_TableOfReal_BHEPNormalityTests (me, thee, h);
-	praat_new (him.transfer(), my name, U"_", thy name);
+	praat_new (him.move(), my name, U"_", thy name);
 END
 
 void praat_HMM_init ();

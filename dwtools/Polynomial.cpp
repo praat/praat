@@ -1268,7 +1268,7 @@ autoPolynomial ChebyshevSeries_to_Polynomial (ChebyshevSeries me) {
 
 		thy coefficients[1] = my coefficients[1] /* * p[1] */;
 		if (my numberOfCoefficients == 1) {
-			return thee.transfer();
+			return thee;
 		}
 
 		thy coefficients[2] = my coefficients[2];

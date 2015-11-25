@@ -71,7 +71,7 @@ DIRECT (Cepstrum_downto_PowerCepstrum)
 	LOOP {
 		iam (Cepstrum);
 		autoPowerCepstrum thee = Cepstrum_downto_PowerCepstrum (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -320,7 +320,7 @@ DO
 	LOOP {
 		iam (PowerCepstrum);
 		autoPowerCepstrum thee = PowerCepstrum_smooth (me, GET_REAL (U"Quefrency averaging window"), GET_INTEGER (U"Number of iterations"));
-		praat_new (thee.transfer(), my name, U"_smooth");
+		praat_new (thee.move(), my name, U"_smooth");
 	}
 END
 
@@ -339,7 +339,7 @@ DO
 		iam (PowerCepstrum);
 		autoPowerCepstrum thee = PowerCepstrum_subtractTilt (me, GET_REAL (U"left Tilt line quefrency range"), 
 			GET_REAL (U"right Tilt line quefrency range"), GET_INTEGER (U"Line type"), GET_INTEGER (U"Fit method"));
-		praat_new (thee.transfer(), my name, U"minusTilt");
+		praat_new (thee.move(), my name, U"minusTilt");
 	}
 END
 
@@ -347,7 +347,7 @@ DIRECT (Cepstrum_to_Spectrum)
 	LOOP {
 		iam (Cepstrum);
 		autoSpectrum thee = Cepstrum_to_Spectrum (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -355,7 +355,7 @@ DIRECT (PowerCepstrum_to_Matrix)
 	LOOP {
 		iam (PowerCepstrum);
 		autoMatrix thee = PowerCepstrum_to_Matrix (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -415,7 +415,7 @@ DO
 	LOOP {
 		iam (PowerCepstrogram);
 		autoPowerCepstrogram thee = PowerCepstrogram_smooth (me, GET_REAL (U"Time averaging window"), GET_REAL (U"Quefrency averaging window"));
-		praat_new (thee.transfer(), my name, U"_smoothed");
+		praat_new (thee.move(), my name, U"_smoothed");
 	}
 END
 
@@ -462,7 +462,7 @@ DO
 		iam (PowerCepstrogram);
 		autoPowerCepstrogram thee = PowerCepstrogram_subtractTilt (me, GET_REAL (U"left Tilt line quefrency range"), 
 			GET_REAL (U"right Tilt line quefrency range"), GET_INTEGER (U"Line type"), GET_INTEGER (U"Fit method"));
-		praat_new (thee.transfer(), my name, U"_minusTilt");
+		praat_new (thee.move(), my name, U"_minusTilt");
 	}
 END
 
@@ -568,7 +568,7 @@ DO
 		iam (PowerCepstrogram);
 		double time = GET_REAL (U"Time");
 		autoPowerCepstrum thee = PowerCepstrogram_to_PowerCepstrum_slice (me, time);
-		praat_new (thee.transfer(), my name, NUMstring_timeNoDot (time));
+		praat_new (thee.move(), my name, NUMstring_timeNoDot (time));
 	}
 END
 
@@ -598,7 +598,7 @@ DO
 			GET_INTEGER (U"Interpolation") - 1,
 			GET_REAL (U"left Tilt line quefrency range"), GET_REAL (U"right Tilt line quefrency range"),
 			GET_INTEGER (U"Line type"), GET_INTEGER (U"Fit method"));
-		praat_new (thee.transfer(), my name, U"_cpp");
+		praat_new (thee.move(), my name, U"_cpp");
 	}
 END
 
@@ -611,7 +611,7 @@ DO
 		iam (PowerCepstrogram);
 		autoTable thee = PowerCepstrogram_to_Table_hillenbrand (me,
 			GET_REAL (U"left Peak search pitch range"), GET_REAL (U"right Peak search pitch range"));
-		praat_new (thee.transfer(), my name, U"_cpp");
+		praat_new (thee.move(), my name, U"_cpp");
 	}
 END
 
@@ -619,7 +619,7 @@ DIRECT (PowerCepstrogram_to_Matrix)
 	LOOP {
 		iam (PowerCepstrogram);
 		autoMatrix thee = PowerCepstrogram_to_Matrix (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -629,7 +629,7 @@ DIRECT (Cepstrumc_to_LPC)
 	LOOP {
 		iam (Cepstrumc);
 		autoLPC thee = Cepstrumc_to_LPC (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -661,14 +661,14 @@ DO
 		GET_REAL (U"Regression weight log energy"), GET_REAL (U"Window for regression coefficients"),
 		GET_INTEGER (U"Match begin positions"), GET_INTEGER (U"Match end positions"),
 		GET_INTEGER (U"Slope constraints"));
-	praat_new (thee.transfer(), c1 -> name, U"_", c2 -> name);
+	praat_new (thee.move(), c1 -> name, U"_", c2 -> name);
 END
 
 DIRECT (Cepstrumc_to_Matrix)
 	LOOP {
 		iam (Cepstrumc);
 		autoMatrix thee = Cepstrumc_to_Matrix (me);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -681,7 +681,7 @@ DO
 	LOOP {
 		iam (Formant);
 		autoLPC thee = Formant_to_LPC (me, 1.0 / GET_REAL (U"Sampling frequency"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -713,7 +713,7 @@ DO
 	long iformant = GET_INTEGER (U"Formant number");
 	Spectrogram thee = FIRST (Spectrogram);
 	autoIntensityTier him = Formant_and_Spectrogram_to_IntensityTier (me, thee, iformant);
-	praat_new (him.transfer(), my name, U"_", GET_INTEGER (U"Formant number"));
+	praat_new (him.move(), my name, U"_", GET_INTEGER (U"Formant number"));
 END
 
 /********************LFCC ********************************************/
@@ -733,7 +733,7 @@ DO
 	LOOP {
 		iam (LFCC);
 		autoLPC thee = LFCC_to_LPC (me, ncof);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -794,7 +794,7 @@ DIRECT (LPC_to_Formant)
 	LOOP {
 		iam (LPC);
 		autoFormant thee = LPC_to_Formant (me, 50);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -802,7 +802,7 @@ DIRECT (LPC_to_Formant_keep_all)
 	LOOP {
 		iam (LPC);
 		autoFormant thee = LPC_to_Formant (me, 0);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -817,7 +817,7 @@ DO
 	LOOP {
 		iam (LPC);
 		autoLFCC thee = LPC_to_LFCC (me, ncof);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -829,7 +829,7 @@ DO
 	LOOP {
 		iam (LPC);
 		autoPolynomial thee = LPC_to_Polynomial (me, time);
-		praat_new (thee.transfer(), my name, NUMstring_timeNoDot (time));
+		praat_new (thee.move(), my name, NUMstring_timeNoDot (time));
 	}
 END
 
@@ -845,7 +845,7 @@ DO
 		double time = GET_REAL (U"Time");
 		autoSpectrum thee = LPC_to_Spectrum (me, time, GET_REAL (U"Minimum frequency resolution"),
 		GET_REAL (U"Bandwidth reduction"), GET_REAL (U"De-emphasis frequency"));
-		praat_new (thee.transfer(), my name, NUMstring_timeNoDot (time));
+		praat_new (thee.move(), my name, NUMstring_timeNoDot (time));
 	}
 END
 
@@ -876,7 +876,7 @@ DO
 		iam (LPC);
 		double time = GET_REAL (U"Time");
 		autoVocalTract thee = LPC_to_VocalTract (me, time, glottalDamping, radiationDamping, internalDamping);
-		praat_new (thee.transfer(), my name, NUMstring_timeNoDot (time));
+		praat_new (thee.move(), my name, NUMstring_timeNoDot (time));
 	}
 END
 
@@ -889,7 +889,7 @@ DO
 	LOOP {
 		iam (LPC);
 		autoVocalTract thee = LPC_to_VocalTract (me, time, GET_REAL (U"Length"));
-		praat_new (thee.transfer(), my name, NUMstring_timeNoDot (time));
+		praat_new (thee.move(), my name, NUMstring_timeNoDot (time));
 	}
 END
 
@@ -897,7 +897,7 @@ DIRECT (LPC_downto_Matrix_lpc)
 	LOOP {
 		iam (LPC);
 		autoMatrix thee = LPC_downto_Matrix_lpc (me);
-		praat_new (thee.transfer(), my name, U"_lpc");
+		praat_new (thee.move(), my name, U"_lpc");
 	}
 END
 
@@ -905,7 +905,7 @@ DIRECT (LPC_downto_Matrix_rc)
 	LOOP {
 		iam (LPC);
 		autoMatrix thee = LPC_downto_Matrix_rc (me);
-		praat_new (thee.transfer(), my name, U"_rc");
+		praat_new (thee.move(), my name, U"_rc");
 	}
 END
 
@@ -913,7 +913,7 @@ DIRECT (LPC_downto_Matrix_area)
 	LOOP {
 		iam (LPC);
 		autoMatrix thee = LPC_downto_Matrix_area (me);
-		praat_new (thee.transfer(), my name, U"_area");
+		praat_new (thee.move(), my name, U"_area");
 	}
 END
 
@@ -930,7 +930,7 @@ DO
 		iam (Sound);
 		autoPowerCepstrogram thee = Sound_to_PowerCepstrogram (me, GET_REAL (U"Pitch floor"), GET_REAL (U"Time step"), GET_REAL(U"Maximum frequency"),
 			 GET_REAL (U"Pre-emphasis from"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -943,7 +943,7 @@ DO
 	LOOP {
 		iam (Sound);
 		autoPowerCepstrogram thee = Sound_to_PowerCepstrogram_hillenbrand (me, GET_REAL (U"Pitch floor"), GET_REAL (U"Time step"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 	
@@ -999,7 +999,7 @@ DO
 	LOOP {
 		iam (Sound);
 		autoLPC thee = Sound_to_LPC_auto (me, numberOfPoles, analysisWindowDuration, timeStep, preemphasisFrequency);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -1013,7 +1013,7 @@ DO
 	LOOP {
 		iam (Sound);
 		autoLPC thee = Sound_to_LPC_covar (me, numberOfPoles, analysisWindowDuration, timeStep, preemphasisFrequency);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -1027,7 +1027,7 @@ DO
 	LOOP {
 		iam (Sound);
 		autoLPC thee = Sound_to_LPC_burg (me, numberOfPoles, analysisWindowDuration, timeStep, preemphasisFrequency);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -1043,7 +1043,7 @@ DO
 	LOOP {
 		iam (Sound);
 		autoLPC thee = Sound_to_LPC_marple (me, numberOfPoles, analysisWindowDuration, timeStep, preemphasisFrequency, GET_REAL (U"Tolerance 1"), GET_REAL (U"Tolerance 2"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -1117,7 +1117,7 @@ DO
 	LOOP {
 		iam (VocalTract);
 		autoVocalTractTier thee = VocalTract_to_VocalTractTier (me, xmin, xmax, time);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -1132,7 +1132,7 @@ DO
 	LOOP {
 		iam (VocalTractTier);
 		autoLPC thee = VocalTractTier_to_LPC (me, GET_REAL (U"Time step"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -1144,7 +1144,7 @@ DO
 	LOOP {
 		iam (VocalTractTier);
 		autoVocalTract thee = VocalTractTier_to_VocalTract (me, time);
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 
@@ -1167,7 +1167,7 @@ DO
 	LPC me = FIRST (LPC);
 	Sound s = FIRST (Sound);
 	autoSound thee = LPC_and_Sound_filter (me , s, GET_INTEGER (U"Use LPC gain"));
-	praat_new (thee.transfer(), my name);
+	praat_new (thee.move(), my name);
 END
 
 FORM (LPC_and_Sound_filterWithFilterAtTime, U"LPC & Sound: Filter with one filter at time",
@@ -1183,14 +1183,14 @@ DO
 	Sound s = FIRST (Sound);
 	long channel = GET_INTEGER (U"Channel") - 1;
 	autoSound thee = LPC_and_Sound_filterWithFilterAtTime (me , s, channel, GET_REAL (U"Use filter at time"));
-	praat_new (thee.transfer(), my name);
+	praat_new (thee.move(), my name);
 END
 
 DIRECT (LPC_and_Sound_filterInverse)
 	LPC me = FIRST (LPC);
 	Sound s = FIRST (Sound);
 	autoSound thee = LPC_and_Sound_filterInverse (me , s);
-	praat_new (thee.transfer(), my name);
+	praat_new (thee.move(), my name);
 END
 
 FORM (LPC_and_Sound_filterInverseWithFilterAtTime, U"LPC & Sound: Filter (inverse) with filter at time",
@@ -1206,7 +1206,7 @@ DO
 	Sound s = FIRST (Sound);
 	long channel = GET_INTEGER (U"Channel") - 1;
 	autoSound thee = LPC_and_Sound_filterInverseWithFilterAtTime (me , s, channel, GET_REAL (U"Use filter at time"));
-	praat_new (thee.transfer(), my name);
+	praat_new (thee.move(), my name);
 END
 
 FORM (LPC_and_Sound_to_LPC_robust, U"Robust LPC analysis", U"LPC & Sound: To LPC (robust)...")

@@ -195,7 +195,7 @@ void Ordered_init (Ordered me, ClassInfo itemClass, long initialCapacity);
 	Collection_addItem (Ordered) inserts an item at the end.
 */
 
-void Ordered_addItemPos (Ordered me, Thing data, long position);
+void Ordered_addItemAtPosition_move (Ordered me, autoThing data, long position);
 /*
 	Function:
 		insert an item at 'position'.

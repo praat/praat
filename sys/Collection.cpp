@@ -446,11 +446,11 @@ Ordered Ordered_create () {
 	return me.transfer();
 }
 
-void Ordered_addItemPos (Ordered me, Thing data, long position) {
+void Ordered_addItemAtPosition_move (Ordered me, autoThing data, long position) {
 	Melder_assert (data);
 	if (position < 1 || position > my size)
 		position = my size + 1;
-	_Collection_insertItem (me, data, position);
+	_Collection_insertItem_move (me, data.move(), position);
 }
 
 /********** class Sorted **********/
