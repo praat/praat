@@ -830,7 +830,7 @@ DO
 		if (itier > my tiers -> size) itier = my tiers -> size;
 		autoAnyTier newTier = Data_copy ((AnyTier) my tiers -> item [itier]);
 		Thing_setName (newTier.peek(), name);
-		Ordered_addItemAtPosition_move (my tiers, newTier.move(), position);
+		Ordered_addItemAtPosition_move (my tiers.get(), newTier.move(), position);
 		praat_dataChanged (me);
 	}
 END2 }
@@ -1219,7 +1219,7 @@ DO
 		autoIntervalTier tier = IntervalTier_create (my xmin, my xmax);
 		if (position > my tiers -> size) position = my tiers -> size + 1;
 		Thing_setName (tier.peek(), name);
-		Ordered_addItemAtPosition_move (my tiers, tier.move(), position);
+		Ordered_addItemAtPosition_move (my tiers.get(), tier.move(), position);
 		praat_dataChanged (me);
 	}
 END2 }
@@ -1250,7 +1250,7 @@ DO
 		autoTextTier tier = TextTier_create (my xmin, my xmax);
 		if (position > my tiers -> size) position = my tiers -> size + 1;
 		Thing_setName (tier.peek(), name);
-		Ordered_addItemAtPosition_move (my tiers, tier.move(), position);
+		Ordered_addItemAtPosition_move (my tiers.get(), tier.move(), position);
 		praat_dataChanged (me);
 	}
 END2 }
@@ -1511,7 +1511,7 @@ DO
 		if (my tiers -> size <= 1)
 			Melder_throw (U"Sorry, I refuse to remove the last tier.");
 		if (itier > my tiers -> size) itier = my tiers -> size;
-		Collection_removeItem (my tiers, itier);
+		Collection_removeItem (my tiers.get(), itier);
 		praat_dataChanged (me);
 	}
 END2 }

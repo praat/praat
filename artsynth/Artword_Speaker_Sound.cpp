@@ -47,8 +47,12 @@ void Artword_Speaker_Sound_movie (Artword artword, Speaker speaker, Sound sound,
 		info -> artword = artword;
 		info -> speaker = speaker;
 		info -> graphics = graphics;
-		autoSound mySound = sound ? nullptr : Sound_createSimple (1, artword -> totalTime, 44100.0);
-		Sound_play (sound ? sound : mySound.peek(), playCallback, info.get());
+		if (sound) {
+			Sound_play (sound, playCallback, info.get());
+		} else {
+			autoSound silence = Sound_createSimple (1, artword -> totalTime, 44100.0);
+			Sound_play (silence.peek(), playCallback, info.get());
+		}
 	} catch (MelderError) {
 		Melder_throw (artword, U" & ", speaker, U": movie not played.");
 	}

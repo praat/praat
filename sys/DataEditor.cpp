@@ -756,11 +756,14 @@ static void DataEditor_destroyAllChildren (DataEditor me) {
 			each child would remove itself from the array by (1) searching for itself
 			and (2) shifting the remaining children, both of which have a complexity
 			that is linear in the number of children. So we would end up with quadratic complexity,
-			whereas the procedure that we did use has linear complexity.
+			whereas the procedure that we use above has linear complexity.
 			
 			This linear complexity makes this procedure good enough for `v_destroy()`
 			(where obtaining linear complexity would have been easy anyway),
-			en nice enough for `v_dataChanged()`.
+			and nice enough for `v_dataChanged()`.
+			
+			Something to note is that this procedure doesn't care whether the autoCollection
+			`d_children` owns its items or not.
 		*/
 	}
 }

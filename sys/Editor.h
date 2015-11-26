@@ -252,7 +252,7 @@ void Editor_init (Editor me, int x, int y , int width, int height,
 
 void Editor_save (Editor me, const char32 *text);   // for Undo
 
-UiForm UiForm_createE (EditorCommand cmd, const char32 *title, const char32 *invokingButtonTitle, const char32 *helpTitle);
+autoUiForm UiForm_createE (EditorCommand cmd, const char32 *title, const char32 *invokingButtonTitle, const char32 *helpTitle);
 void UiForm_parseStringE (EditorCommand cmd, int narg, Stackel args, const char32 *arguments, Interpreter interpreter);
 UiForm UiOutfile_createE (EditorCommand cmd, const char32 *title, const char32 *invokingButtonTitle, const char32 *helpTitle);
 UiForm UiInfile_createE (EditorCommand cmd, const char32 *title, const char32 *invokingButtonTitle, const char32 *helpTitle);

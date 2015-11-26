@@ -47,25 +47,25 @@ oo_DEFINE_CLASS (Manipulation, Function)
 		 * but allow it to be read (a legacy of writing but not reading the version 3 stuff).
 		 */
 		#if oo_WRITING
-			{ Image save = dummySpectrogram; dummySpectrogram = nullptr;
+			{ autoImage save = dummySpectrogram.move();
 		#endif
-		oo_OBJECT (Image, 0, dummySpectrogram)
+		oo_AUTO_OBJECT (Image, 0, dummySpectrogram)
 		#if oo_WRITING
-			dummySpectrogram = save; }
+			dummySpectrogram = save.move(); }
 		#endif
-		oo_OBJECT (FormantTier, 0, dummyFormantTier)
-		oo_OBJECT (Daata, 0, dummy1)
-		oo_OBJECT (Daata, 0, dummy2)
-		oo_OBJECT (Daata, 0, dummy3)
+		oo_AUTO_OBJECT (FormantTier, 0, dummyFormantTier)
+		oo_AUTO_OBJECT (Daata, 0, dummy1)
+		oo_AUTO_OBJECT (Daata, 0, dummy2)
+		oo_AUTO_OBJECT (Daata, 0, dummy3)
 	oo_ENDFROM
 
 	oo_FROM (4)
 		oo_DOUBLE (dummy10)
-		oo_OBJECT (Pitch, 0, dummyPitchAnalysis)
+		oo_AUTO_OBJECT (Pitch, 0, dummyPitchAnalysis)
 		oo_DOUBLE (dummy11)
 		oo_DOUBLE (dummy12)
-		oo_OBJECT (Intensity, 0, dummyIntensityAnalysis)
-		oo_OBJECT (Formant, 1, dummyFormantAnalysis)
+		oo_AUTO_OBJECT (Intensity, 0, dummyIntensityAnalysis)
+		oo_AUTO_OBJECT (Formant, 1, dummyFormantAnalysis)
 		oo_INT (dummy4)
 		oo_DOUBLE (dummy5)
 		oo_DOUBLE (dummy6)

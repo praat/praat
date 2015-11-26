@@ -3482,7 +3482,7 @@ static void _Table_postHocTukeyHSD (Table me, double sumOfSquaresWithin, double 
 				Table_setNumericValue (meansD.peek(), irow, icol, dif);
 			}
 		}
-		autoTable meansP = (Table) Data_copy (meansD.peek());
+		autoTable meansP = Data_copy (meansD.peek());
 		for (long irow = 1; irow <= numberOfMeans - 1; irow++) {
 			for (long icol = irow + 1; icol <= numberOfMeans; icol++) {
 				// Tukey-Kramer correction for unequal sample sizes
@@ -3828,7 +3828,7 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, long column, long factor
 		}
 
 		if (levelSizes) {
-			autoTable asizes = (Table) Data_copy (ameans.peek());
+			autoTable asizes = Data_copy (ameans.peek());
 			Table_setColumnLabel (asizes.peek(), numberOfLevelsB + 1 + 1, U"Total");
 			Table_setStringValue (asizes.peek(), numberOfLevelsA + 1, 1, U"Total");
 			for (long i = 1; i <= numberOfLevelsA + 1; i++) {

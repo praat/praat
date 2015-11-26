@@ -51,7 +51,7 @@ DIRECT2 (ExperimentMFC_run) {
 	Melder_assert (experiments -> size >= 1);
 	Melder_assert (((Daata) experiments -> item [1]) -> classInfo == classExperimentMFC);
 	Melder_assert (((Daata) experiments -> item [experiments -> size]) -> classInfo == classExperimentMFC);
-	autoOrdered experimentsCopy = experiments.clone();   // we need a copy, because we do a transfer, then a peek
+	autoOrdered experimentsCopy = Data_copy (experiments.get());   // we need a copy, because we do a transfer, then a peek
 	Melder_assert (experimentsCopy -> size == experiments -> size);
 	Melder_assert (experimentsCopy -> item [1] == experiments -> item [1]);
 	Melder_assert (experimentsCopy -> item [experimentsCopy -> size] == experiments -> item [experiments -> size]);

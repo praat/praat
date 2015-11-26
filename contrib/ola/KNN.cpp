@@ -110,8 +110,8 @@ int KNN_learn
                 forget (my output);
             }
 
-            my input = Data_copy (p);   // LEAK
-            my output = Data_copy (c);
+            my input = Data_copy (p).transfer();   // LEAK
+            my output = Data_copy (c).transfer();
             my nInstances = c->size;
 
             break;

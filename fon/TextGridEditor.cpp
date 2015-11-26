@@ -1042,7 +1042,7 @@ static void menu_cb_RemoveTier (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	checkTierSelection (me, U"remove a tier");
 
 	Editor_save (me, U"Remove tier");
-	Collection_removeItem (grid -> tiers, my selectedTier);
+	Collection_removeItem (grid -> tiers.get(), my selectedTier);
 
 	my selectedTier = 1;
 	FunctionEditor_updateText (me);
@@ -1067,7 +1067,7 @@ static void menu_cb_AddIntervalTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 		Thing_setName (tier.peek(), name);
 
 		Editor_save (me, U"Add interval tier");
-		Ordered_addItemAtPosition_move (grid -> tiers, tier.move(), position);
+		Ordered_addItemAtPosition_move (grid -> tiers.get(), tier.move(), position);
 
 		my selectedTier = position;
 		FunctionEditor_updateText (me);
@@ -1093,7 +1093,7 @@ static void menu_cb_AddPointTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 		Thing_setName (tier.peek(), name);
 
 		Editor_save (me, U"Add point tier");
-		Ordered_addItemAtPosition_move (grid -> tiers, tier.move(), position);
+		Ordered_addItemAtPosition_move (grid -> tiers.get(), tier.move(), position);
 
 		my selectedTier = position;
 		FunctionEditor_updateText (me);
@@ -1124,7 +1124,7 @@ static void menu_cb_DuplicateTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 		Thing_setName (newTier.peek(), name);
 
 		Editor_save (me, U"Duplicate tier");
-		Ordered_addItemAtPosition_move (grid -> tiers, newTier.move(), position);
+		Ordered_addItemAtPosition_move (grid -> tiers.get(), newTier.move(), position);
 
 		my selectedTier = position;
 		FunctionEditor_updateText (me);

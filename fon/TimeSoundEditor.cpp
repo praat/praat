@@ -636,7 +636,7 @@ void TimeSoundEditor_init (TimeSoundEditor me, const char32 *title, Function dat
 	if (sound) {
 		if (ownSound) {
 			Melder_assert (Thing_isa (sound, classSound));
-			my d_sound.data = Data_copy ((Sound) sound);   // deep copy; ownership transferred
+			my d_sound.data = Data_copy ((Sound) sound).transfer();   // deep copy; ownership transferred
 			Matrix_getWindowExtrema (my d_sound.data, 1, my d_sound.data -> nx, 1, my d_sound.data -> ny, & my d_sound.minimum, & my d_sound.maximum);
 		} else if (Thing_isa (sound, classSound)) {
 			my d_sound.data = (Sound) sound;   // reference copy; ownership not transferred

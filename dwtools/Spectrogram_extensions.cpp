@@ -613,7 +613,7 @@ void BandFilterSpectrogram_and_PCA_drawComponent (BandFilterSpectrogram me, PCA 
 
 	// Scale Intensity
 
-	autoBandFilterSpectrogram fcopy = (BandFilterSpectrogram) Data_copy (me);
+	autoBandFilterSpectrogram fcopy = Data_copy (me);
 	BandFilterSpectrogram_equalizeIntensities (fcopy.peek(), dblevel);
 	autoMatrix mdb = Spectrogram_to_Matrix_dB ((Spectrogram) fcopy.peek(), BandFilterSpectrogram_DBREF, BandFilterSpectrogram_DBFAC, BandFilterSpectrogram_DBFLOOR);
 	autoMatrix him = Eigen_and_Matrix_project (thee, mdb.peek(), component);

@@ -2296,7 +2296,7 @@ static void playReverseProc () {
 }
 static int publishPlayedProc () {
 	if (! last) return 0;
-	return Melder_publish (Data_copy (last));
+	return Melder_publish (Data_copy (last).transfer());
 }
 
 /***** buttons *****/
