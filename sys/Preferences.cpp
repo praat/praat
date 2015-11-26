@@ -38,7 +38,7 @@ void structPreference :: v_destroy () {
 	Preference_Parent :: v_destroy ();
 }
 
-static SortedSetOfString thePreferences;
+static autoSortedSetOfString thePreferences;
 
 static void Preferences_add (const char32 *string, int type, void *value, int min, int max, const char32 * (*getText) (int value), int (*getValue) (const char32 *text)) {
 	autoPreference me = Thing_new (Preference);
@@ -51,7 +51,7 @@ static void Preferences_add (const char32 *string, int type, void *value, int mi
 	my getText = getText;
 	my getValue = getValue;
 	if (! thePreferences) thePreferences = SortedSetOfString_create ();
-	Collection_addItem_move (thePreferences, me.move());
+	Collection_addItem_move (thePreferences.get(), me.move());
 }
 
 void Preferences_addByte (const char32 *string, signed char *value, signed char defaultValue)
@@ -104,13 +104,13 @@ void Preferences_read (MelderFile file) {
 			if (! value)
 				return;   // OK: we have read past the last key-value pair
 			*value = U'\0', value += 2;
-			long ipref = SortedSetOfString_lookUp (thePreferences, line);
+			long ipref = SortedSetOfString_lookUp (thePreferences.get(), line);
 			if (! ipref) {
 				/*
 				 * Recognize some preference names that went obsolete in February 2013.
 				 */
 				if (Melder_nequ (line, U"FunctionEditor.", 15))
-					ipref = SortedSetOfString_lookUp (thePreferences, Melder_cat (U"TimeSoundAnalysisEditor.", line + 15));
+					ipref = SortedSetOfString_lookUp (thePreferences.get(), Melder_cat (U"TimeSoundAnalysisEditor.", line + 15));
 			}
 			if (! ipref) continue;   // skip unrecognized keys
 			Preference pref = (Preference) thePreferences -> item [ipref];
@@ -175,7 +175,6 @@ void Preferences_write (MelderFile file) {
 	} catch (MelderError) {
 		Melder_clearError ();
 	}
-	forget (thePreferences);	
 }
 
 /* End of file Preferences.cpp */

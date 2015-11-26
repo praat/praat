@@ -220,7 +220,8 @@ DIRECT2 (AmplitudeTier_edit) {
 	LOOP if (CLASS == classAmplitudeTier) {
 		iam (AmplitudeTier);
 		autoAmplitudeTierEditor editor = AmplitudeTierEditor_create (ID_AND_FULL_NAME, me, sound, true);
-		praat_installEditor (editor.transfer(), IOBJECT);
+		praat_installEditor (editor.get(), IOBJECT);
+		editor.releaseToUser();
 	}
 END2 }
 
@@ -474,7 +475,8 @@ DIRECT2 (Corpus_edit) {
 	LOOP {
 		iam (Corpus);
 		autoTableEditor editor = TableEditor_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.transfer(), IOBJECT);
+		praat_installEditor (editor.get(), IOBJECT);
+		editor.releaseToUser();
 	}
 END2 }
 
@@ -589,7 +591,8 @@ DIRECT2 (DurationTier_edit) {
 	LOOP if (CLASS == classDurationTier) {
 		iam (DurationTier);
 		autoDurationTierEditor editor = DurationTierEditor_create (ID_AND_FULL_NAME, me, sound, true);
-		praat_installEditor (editor.transfer(), IOBJECT);
+		praat_installEditor (editor.get(), IOBJECT);
+		editor.releaseToUser();
 	}
 END2 }
 
@@ -1253,7 +1256,8 @@ DIRECT2 (FormantGrid_edit) {
 		iam (FormantGrid);
 		autoFormantGridEditor editor = FormantGridEditor_create (ID_AND_FULL_NAME, me);
 		Editor_setPublicationCallback (editor.peek(), cb_FormantGridEditor_publish, nullptr);
-		praat_installEditor (editor.transfer(), IOBJECT);
+		praat_installEditor (editor.get(), IOBJECT);
+		editor.releaseToUser();
 	}
 END2 }
 
@@ -1381,7 +1385,7 @@ DO
 	LOOP {
 		iam (FormantTier);
 		autoFormantPoint point2 = Data_copy (point.peek());
-		AnyTier_addPoint (me, point2.transfer());
+		AnyTier_addPoint_move (me, point2.move());
 		praat_dataChanged (me);
 	}
 END2 }
@@ -1926,7 +1930,8 @@ DIRECT2 (IntensityTier_edit) {
 	LOOP if (CLASS == classIntensityTier) {
 		iam (IntensityTier);
 		autoIntensityTierEditor editor = IntensityTierEditor_create (ID_AND_FULL_NAME, me, sound, true);
-		praat_installEditor (editor.transfer(), IOBJECT);
+		praat_installEditor (editor.get(), IOBJECT);
+		editor.releaseToUser();
 	}
 END2 }
 
@@ -2372,7 +2377,8 @@ DIRECT2 (Manipulation_edit) {
 		iam (Manipulation);
 		autoManipulationEditor editor = ManipulationEditor_create (ID_AND_FULL_NAME, me);
 		Editor_setPublicationCallback (editor.peek(), cb_ManipulationEditor_publication, nullptr);
-		praat_installEditor (editor.transfer(), IOBJECT);
+		praat_installEditor (editor.get(), IOBJECT);
+		editor.releaseToUser();
 	}
 END2 }
 
@@ -3052,7 +3058,8 @@ DIRECT2 (Movie_viewAndEdit) {
 	LOOP {
 		iam (Movie);
 		autoMovieWindow editor = MovieWindow_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.transfer(), IOBJECT);
+		praat_installEditor (editor.get(), IOBJECT);
+		editor.releaseToUser();
 	}
 END2 }
 
@@ -3494,7 +3501,8 @@ DIRECT2 (Pitch_edit) {
 	LOOP {
 		iam (Pitch);
 		autoPitchEditor editor = PitchEditor_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.transfer(), IOBJECT);
+		praat_installEditor (editor.get(), IOBJECT);
+		editor.releaseToUser();
 	}
 END2 }
 
@@ -4130,7 +4138,8 @@ DIRECT2 (PitchTier_edit) {
 	LOOP if (CLASS == classPitchTier) {
 		iam (PitchTier);
 		autoPitchTierEditor editor = PitchTierEditor_create (ID_AND_FULL_NAME, me, sound, true);
-		praat_installEditor (editor.transfer(), IOBJECT);
+		praat_installEditor (editor.get(), IOBJECT);
+		editor.releaseToUser();
 	}
 END2 }
 
@@ -4444,7 +4453,8 @@ DIRECT2 (PointProcess_edit) {
 	LOOP if (CLASS == classPointProcess) {
 		iam (PointProcess);
 		autoPointEditor editor = PointEditor_create (ID_AND_FULL_NAME, me, sound);
-		praat_installEditor (editor.transfer(), IOBJECT);
+		praat_installEditor (editor.get(), IOBJECT);
+		editor.releaseToUser();
 	}
 END2 }
 
@@ -5241,7 +5251,8 @@ DIRECT2 (Spectrogram_view) {
 	LOOP {
 		iam (Spectrogram);
 		autoSpectrogramEditor editor = SpectrogramEditor_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.transfer(), IOBJECT);
+		praat_installEditor (editor.get(), IOBJECT);
+		editor.releaseToUser();
 	}
 END2 }
 
@@ -5297,7 +5308,8 @@ DIRECT2 (Spectrum_edit) {
 	LOOP {
 		iam (Spectrum);
 		autoSpectrumEditor editor = SpectrumEditor_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.transfer(), IOBJECT);
+		praat_installEditor (editor.get(), IOBJECT);
+		editor.releaseToUser();
 	}
 END2 }
 
@@ -5779,7 +5791,8 @@ DIRECT2 (Strings_edit) {
 	LOOP {
 		iam (Strings);
 		autoStringsEditor editor = StringsEditor_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.transfer(), IOBJECT);
+		praat_installEditor (editor.get(), IOBJECT);
+		editor.releaseToUser();
 	}
 END2 }
 

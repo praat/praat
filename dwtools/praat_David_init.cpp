@@ -332,8 +332,9 @@ DIRECT (Categories_edit)
 	} else {
 		LOOP {
 			iam (Categories);
-			autoCategoriesEditor thee = CategoriesEditor_create (my name, me);
-			praat_installEditor (thee.transfer(), IOBJECT);
+			autoCategoriesEditor editor = CategoriesEditor_create (my name, me);
+			praat_installEditor (editor.get(), IOBJECT);
+			editor.releaseToUser();
 		}
 	}
 END
@@ -2849,7 +2850,7 @@ DIRECT (FilesInMemory_addItems)
 	LOOP {
 		iam (Daata);
 		if (CLASS == classFileInMemory) {
-			autoFileInMemory him = (FileInMemory) Data_copy (me);
+			autoFileInMemory him = Data_copy ((FileInMemory) me);
 			Collection_addItem_move (thee, him.move());
 		}
 	}
@@ -2858,8 +2859,8 @@ END
 DIRECT (FilesInMemory_merge)
 	FilesInMemory f1 = nullptr, f2 = nullptr;
 	LOOP { iam (FilesInMemory); (f1 ? f2 : f1) = me; }
-	Melder_assert (f1 != 0 && f2 != 0);
-	autoFilesInMemory fim = (FilesInMemory) Collections_merge (f1, f2);
+	Melder_assert (f1 && f2);
+	autoFilesInMemory fim = Collections_merge (f1, f2).static_cast_move <structFilesInMemory> ();
 	praat_new (fim.move(), f1 -> name, U"_", f2 -> name);
 END
 
@@ -2873,7 +2874,7 @@ END
 
 /************************* FilterBank ***********************************/
 
-FORM (FilterBank_drawFilters, U"FilterBank: Draw filters", 0)
+FORM (FilterBank_drawFilters, U"FilterBank: Draw filters", nullptr)
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"left Frequency range", U"0.0")
@@ -2891,7 +2892,7 @@ DO
 	}
 END
 
-FORM (FilterBank_drawOneContour, U"FilterBank: Draw one contour", 0)
+FORM (FilterBank_drawOneContour, U"FilterBank: Draw one contour", nullptr)
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"left Frequency range", U"0.0")
@@ -2907,7 +2908,7 @@ DO
 	}
 END
 
-FORM (FilterBank_drawContours, U"FilterBank: Draw contours", 0)
+FORM (FilterBank_drawContours, U"FilterBank: Draw contours", nullptr)
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"left Frequency range", U"0.0")
@@ -2927,15 +2928,15 @@ END
 
 FORM (FilterBank_drawFrequencyScales, U"FilterBank: Draw frequency scales", U"FilterBank: Draw frequency scales...")
 	RADIO (U"Horizontal frequency scale", 1)
-	RADIOBUTTON (U"Hertz")
-	RADIOBUTTON (U"Bark")
-	RADIOBUTTON (U"mel")
+		RADIOBUTTON (U"Hertz")
+		RADIOBUTTON (U"Bark")
+		RADIOBUTTON (U"mel")
 	REAL (U"left Horizontal frequency range", U"0.0")
 	REAL (U"right Horizontal frequency range", U"0.0")
 	RADIO (U"Vertical frequency scale", 1)
-	RADIOBUTTON (U"Hertz")
-	RADIOBUTTON (U"Bark")
-	RADIOBUTTON (U"mel")
+		RADIOBUTTON (U"Hertz")
+		RADIOBUTTON (U"Bark")
+		RADIOBUTTON (U"mel")
 	REAL (U"left Vertical frequency range", U"0.0")
 	REAL (U"right Vertical frequency range", U"0.0")
 	BOOLEAN (U"Garnish", 1)
@@ -2958,7 +2959,7 @@ FORM (MelSpectrogram_paintImage, U"MelSpectrogram: Paint image", U"MelSpectrogra
 	REAL (U"right Frequency range (mel)", U"0.0")
 	REAL (U"left Amplitude range (dB)", U"0.0")
 	REAL (U"right Amplitude range (dB)", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -2977,7 +2978,7 @@ FORM (BarkSpectrogram_paintImage, U"BarkSpectrogram: Paint image", U"BarkSpectro
 	REAL (U"right Frequency range (bark)", U"0.0")
 	REAL (U"left Amplitude range (dB)", U"0.0")
 	REAL (U"right Amplitude range (dB)", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -2989,7 +2990,7 @@ DO
 	}
 END
 
-FORM (FilterBank_paintImage, U"FilterBank: Paint image", 0)
+FORM (FilterBank_paintImage, U"FilterBank: Paint image", nullptr)
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"left Frequency range", U"0.0")
@@ -3007,7 +3008,7 @@ DO
 	}
 END
 
-FORM (FilterBank_paintContours, U"FilterBank: Paint contours", 0)
+FORM (FilterBank_paintContours, U"FilterBank: Paint contours", nullptr)
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"left Frequency range", U"0.0")
@@ -3026,7 +3027,7 @@ DO
 END
 
 
-FORM (FilterBank_paintCells, U"FilterBank: Paint cells", 0)
+FORM (FilterBank_paintCells, U"FilterBank: Paint cells", nullptr)
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"left Frequency range", U"0.0")
@@ -3044,7 +3045,7 @@ DO
 	}
 END
 
-FORM (FilterBank_paintSurface, U"FilterBank: Paint surface", 0)
+FORM (FilterBank_paintSurface, U"FilterBank: Paint surface", nullptr)
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"left Frequency range", U"0.0")

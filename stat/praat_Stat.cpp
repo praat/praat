@@ -424,7 +424,8 @@ DIRECT2 (Table_edit) {
 	LOOP {
 		iam (Table);
 		autoTableEditor editor = TableEditor_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.transfer(), IOBJECT);
+		praat_installEditor (editor.get(), IOBJECT);
+		editor.releaseToUser();
 	}
 END2 }
 

@@ -37,7 +37,7 @@ Thing_define (ButtonEditor, HyperPage) {
 		override;
 };
 
-ButtonEditor ButtonEditor_create ();
+autoButtonEditor ButtonEditor_create ();
 
 /* End of file ButtonEditor.h */
 #endif

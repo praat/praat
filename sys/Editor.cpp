@@ -317,7 +317,8 @@ static void menu_cb_newScript (Editor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_openScript (Editor me, EDITOR_ARGS_DIRECT) {
 	autoScriptEditor scriptEditor = ScriptEditor_createFromText (me, nullptr);
-	TextEditor_showOpen (scriptEditor.transfer());
+	TextEditor_showOpen (scriptEditor.get());
+	scriptEditor.releaseToUser();
 }
 
 void structEditor :: v_createMenuItems_file (EditorMenu /* menu */) {

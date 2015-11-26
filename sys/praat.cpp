@@ -664,7 +664,7 @@ int praat_installEditor (Editor editor, int IOBJECT) {
 			return 1;
 		}
 	}
-	forget (editor);
+	//forget (editor);
 	Melder_throw (U"(praat_installEditor:) Cannot have more than ", praat_MAXNUM_EDITORS, U" editors with one object.");
 }
 
@@ -685,7 +685,7 @@ int praat_installEditor2 (Editor editor, int i1, int i2) {
 		if (! editor -> d_publicationCallback)
 			Editor_setPublicationCallback (editor, cb_Editor_publication, nullptr);
 	} else {
-		forget (editor);
+		//forget (editor);
 		Melder_throw (U"(praat_installEditor2:) Cannot have more than ", praat_MAXNUM_EDITORS, U" editors with one object.");
 	}
 	return 1;
@@ -712,7 +712,7 @@ int praat_installEditor3 (Editor editor, int i1, int i2, int i3) {
 		if (! editor -> d_publicationCallback)
 			Editor_setPublicationCallback (editor, cb_Editor_publication, nullptr);
 	} else {
-		forget (editor);
+		//forget (editor);
 		Melder_throw (U"(praat_installEditor3:) Cannot have more than ", praat_MAXNUM_EDITORS, U" editors with one object.");
 	}
 	return 1;
@@ -736,7 +736,7 @@ int praat_installEditorN (Editor editor, Ordered objects) {
 					}
 				}
 				if (ieditor >= praat_MAXNUM_EDITORS) {
-					forget (editor);
+					//forget (editor);
 					Melder_throw (U"Cannot view the same object in more than ", praat_MAXNUM_EDITORS, U" windows.");
 				}
 				break;

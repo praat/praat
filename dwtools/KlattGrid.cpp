@@ -1045,7 +1045,7 @@ autoPhonationTier PhonationGrid_to_PhonationTier (PhonationGrid me) {
 
 			t += pulseDelay;
 			autoPhonationPoint phonationPoint = PhonationPoint_create (t, period, openPhase, collisionPhase, te, power1, power2, pulseScale);
-			AnyTier_addPoint (thee.peek(), phonationPoint.transfer());
+			AnyTier_addPoint_move (thee.peek(), phonationPoint.move());
 		}
 		return thee;
 	} catch (MelderError) {

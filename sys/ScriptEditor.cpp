@@ -320,7 +320,7 @@ void ScriptEditor_init (ScriptEditor me, Editor environment, const char32 *initi
 	TextEditor_init (me, initialText);
 	my interpreter = Interpreter_createFromEnvironment (environment);
 	if (! theScriptEditors) {
-		theScriptEditors = Collection_create (nullptr, 10);
+		theScriptEditors = Collection_create (nullptr, 10).transfer();
 	}
 	Collection_addItem_ref (theScriptEditors, me);
 }
