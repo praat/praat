@@ -108,7 +108,9 @@ DIRECT2 (Inspect) {
 		Melder_throw (U"Cannot inspect data from batch.");
 	} else {
 		WHERE (SELECTED) {
-			praat_installEditor (DataEditor_create (ID_AND_FULL_NAME, OBJECT), IOBJECT);
+			autoDataEditor editor = DataEditor_create (ID_AND_FULL_NAME, OBJECT);
+			praat_installEditor (editor.get(), IOBJECT);
+			editor.releaseToUser();
 		}
 	}
 END2 }
@@ -155,18 +157,20 @@ DIRECT2 (praat_openScript) {
 	editor.transfer();   // the user becomes the owner
 END2 }
 
-static ButtonEditor theButtonEditor;
+static ButtonEditor theReferenceToTheOnlyButtonEditor;
 
 static void cb_ButtonEditor_destruction (Editor /* editor */, void * /* closure */) {
-	theButtonEditor = nullptr;
+	theReferenceToTheOnlyButtonEditor = nullptr;
 }
 
 DIRECT2 (praat_editButtons) {
-	if (theButtonEditor) {
-		Editor_raise (theButtonEditor);
+	if (theReferenceToTheOnlyButtonEditor) {
+		Editor_raise (theReferenceToTheOnlyButtonEditor);
 	} else {
-		theButtonEditor = ButtonEditor_create ();
-		Editor_setDestructionCallback (theButtonEditor, cb_ButtonEditor_destruction, nullptr);
+		autoButtonEditor editor = ButtonEditor_create ();
+		Editor_setDestructionCallback (editor.get(), cb_ButtonEditor_destruction, nullptr);
+		theReferenceToTheOnlyButtonEditor = editor.get();
+		editor.releaseToUser();
 	}
 END2 }
 
@@ -492,7 +496,8 @@ DIRECT2 (ManPages_view) {
 		if (my executable)
 			Melder_warning (U"These manual pages contain links to executable scripts.\n"
 				"Only navigate these pages if you trust their author!");
-		praat_installEditor (manual.transfer(), IOBJECT);
+		praat_installEditor (manual.get(), IOBJECT);
+		manual.releaseToUser();
 	}
 END2 }
 
@@ -545,8 +550,8 @@ void praat_show () {
 	praat_sensitivizeFixedButtonCommand (U"Info", theCurrentPraatObjects -> totalSelection == 1);
 	praat_sensitivizeFixedButtonCommand (U"Inspect", theCurrentPraatObjects -> totalSelection != 0);
 	praat_actions_show ();
-	if (theCurrentPraatApplication == & theForegroundPraatApplication && theButtonEditor)
-		Editor_dataChanged (theButtonEditor);
+	if (theCurrentPraatApplication == & theForegroundPraatApplication && theReferenceToTheOnlyButtonEditor)
+		Editor_dataChanged (theReferenceToTheOnlyButtonEditor);
 }
 
 /********** Menu descriptions. **********/

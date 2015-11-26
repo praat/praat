@@ -31,7 +31,8 @@ Thing_implement (Artword_Speaker_Sound_PlayInfo, Thing, 0);
 
 static int playCallback (Artword_Speaker_Sound_PlayInfo me, int /* phase */, double /* tmin */, double /* tmax */, double t) {
 	static autoArt art;
-	if (! art) art = Art_create ();
+	if (! art)
+		art = Art_create ();
 	Artword_intoArt (my artword, art.get(), t);
 	Graphics_clearWs (my graphics);
 	Art_Speaker_draw (art.get(), my speaker, my graphics);
@@ -40,12 +41,14 @@ static int playCallback (Artword_Speaker_Sound_PlayInfo me, int /* phase */, dou
 
 void Artword_Speaker_Sound_movie (Artword artword, Speaker speaker, Sound sound, Graphics graphics) {
 	try {
-		static Artword_Speaker_Sound_PlayInfo info = Thing_new (Artword_Speaker_Sound_PlayInfo).transfer();   // must be static!!!
+		static autoArtword_Speaker_Sound_PlayInfo info;
+		if (! info)
+			info = Thing_new (Artword_Speaker_Sound_PlayInfo);
 		info -> artword = artword;
 		info -> speaker = speaker;
 		info -> graphics = graphics;
-		autoSound mySound = sound ? nullptr : Sound_createSimple (1, artword -> totalTime, 44100);
-		Sound_play (sound ? sound : mySound.peek(), playCallback, info);
+		autoSound mySound = sound ? nullptr : Sound_createSimple (1, artword -> totalTime, 44100.0);
+		Sound_play (sound ? sound : mySound.peek(), playCallback, info.get());
 	} catch (MelderError) {
 		Melder_throw (artword, U" & ", speaker, U": movie not played.");
 	}

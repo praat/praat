@@ -89,7 +89,8 @@ DIRECT2 (Artword_edit) {
 	WHERE (SELECTED) {
 		iam_LOOP (Artword);
 		autoArtwordEditor editor = ArtwordEditor_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.transfer(), IOBJECT);
+		praat_installEditor (editor.get(), IOBJECT);
+		editor.releaseToUser();
 	}
 END2 }
 

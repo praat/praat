@@ -1149,7 +1149,8 @@ DIRECT (OptimalCeilingTier_edit)
 	LOOP if (CLASS == classOptimalCeilingTier) {
 		iam (OptimalCeilingTier);
 		autoOptimalCeilingTierEditor editor = OptimalCeilingTierEditor_create (ID_AND_FULL_NAME, me, sound, true);
-		praat_installEditor (editor.transfer(), IOBJECT);
+		praat_installEditor (editor.get(), IOBJECT);
+		editor.releaseToUser();
 	}
 END
 

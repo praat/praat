@@ -98,7 +98,6 @@ static void initScreen (HyperPage me) {
 	my d_y = PAGE_HEIGHT + my top / 5.0;
 	my d_x = 0;
 	my previousBottomSpacing = 0.0;
-	forget (my links);
 	my links = Collection_create (classHyperLink, 100);
 }
 
@@ -181,7 +180,7 @@ if (! my printing) {
 			autoHyperLink link = HyperLink_create (paragraphLinks [ilink]. name,
 				paragraphLinks [ilink]. x1, paragraphLinks [ilink]. x2,
 				paragraphLinks [ilink]. y1, paragraphLinks [ilink]. y2);
-			Collection_addItem_move (my links, link.move());
+			Collection_addItem_move (my links.get(), link.move());
 		}
 		if (method & HyperPage_ADD_BORDER) {
 			Graphics_setLineWidth (my g, 2);
@@ -591,7 +590,6 @@ static void print (void *void_me, Graphics graphics) {
 /********** class HyperPage **********/
 
 void structHyperPage :: v_destroy () {
-	forget (our links);
 	Melder_free (our entryHint);
 	forget (our g);
 	for (int i = 0; i < 20; i ++) Melder_free (our history [i]. page);
@@ -956,7 +954,7 @@ gui_drawingarea_cb_resize (me, & event);
 
 void HyperPage_clear (HyperPage me) {
 	Graphics_updateWs (my g);
-	forget (my links);
+	my links.reset();
 }
 
 void structHyperPage :: v_dataChanged () {

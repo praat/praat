@@ -657,7 +657,7 @@ void TextEditor_init (TextEditor me, const char32 *initialText) {
 		Thing_setName (me, U"");
 	}
 	if (! theOpenTextEditors) {
-		theOpenTextEditors = Collection_create (classTextEditor, 100);
+		theOpenTextEditors = Collection_create (classTextEditor, 100).transfer();
 	}
 	if (theOpenTextEditors) {
 		Collection_addItem_ref (theOpenTextEditors, me);

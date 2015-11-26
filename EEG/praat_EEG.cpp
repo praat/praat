@@ -313,7 +313,8 @@ static void cb_EEGWindow_publication (Editor editor, void *closure, Daata public
 			LOOP {
 				iam (Spectrum);
 				autoSpectrumEditor editor2 = SpectrumEditor_create (ID_AND_FULL_NAME, me);
-				praat_installEditor (editor2.transfer(), IOBJECT);
+				praat_installEditor (editor2.get(), IOBJECT);
+				editor2.releaseToUser();
 			}
 		}
 	} catch (MelderError) {
@@ -326,7 +327,8 @@ DIRECT2 (EEG_viewAndEdit) {
 		iam (EEG);
 		autoEEGWindow editor = EEGWindow_create (ID_AND_FULL_NAME, me);
 		Editor_setPublicationCallback (editor.peek(), cb_EEGWindow_publication, nullptr);
-		praat_installEditor (editor.transfer(), IOBJECT);
+		praat_installEditor (editor.get(), IOBJECT);
+		editor.releaseToUser();
 	}
 END2 }
 
@@ -631,7 +633,8 @@ static void cb_ERPWindow_publication (Editor editor, void *closure, Daata public
 			LOOP {
 				iam (Spectrum);
 				autoSpectrumEditor editor2 = SpectrumEditor_create (ID_AND_FULL_NAME, me);
-				praat_installEditor (editor2.transfer(), IOBJECT);
+				praat_installEditor (editor2.get(), IOBJECT);
+				editor2.releaseToUser();
 			}
 		}
 	} catch (MelderError) {
@@ -644,7 +647,8 @@ DIRECT2 (ERP_viewAndEdit) {
 		iam (ERP);
 		autoERPWindow editor = ERPWindow_create (ID_AND_FULL_NAME, me);
 		Editor_setPublicationCallback (editor.peek(), cb_ERPWindow_publication, nullptr);
-		praat_installEditor (editor.transfer(), IOBJECT);
+		praat_installEditor (editor.get(), IOBJECT);
+		editor.releaseToUser();
 	}
 END2 }
 

@@ -210,7 +210,8 @@ DIRECT (KlattGrid_edit##Name##Tier) \
 	LOOP {\
 		iam (KlattGrid); \
 		auto##KlattGrid_##Name##TierEditor editor = KlattGrid_##Name##TierEditor_create (ID_AND_FULL_NAME, me); \
-		praat_installEditor (editor.transfer(), IOBJECT); \
+		praat_installEditor (editor.get(), IOBJECT); \
+		editor.releaseToUser(); \
 	}\
 END
 
@@ -238,7 +239,8 @@ DIRECT (KlattGrid_edit##Name##FormantGrid) \
 		iam (KlattGrid); \
 		const char32 *id_and_name = Melder_cat (ID, U". ", formant_names[formantType], U"formant grid"); \
 		autoKlattGrid_FormantGridEditor editor = KlattGrid_FormantGridEditor_create (id_and_name, me, formantType); \
-		praat_installEditor (editor.transfer(), IOBJECT); \
+		praat_installEditor (editor.get(), IOBJECT); \
+		editor.releaseToUser(); \
 	} \
 END
 
@@ -266,7 +268,8 @@ DO \
 		if (formantNumber > (*amp) -> size) Melder_throw (U"Formant number does not exist."); \
 		const char32 *id_and_name = Melder_cat (ID, U". ", formant_names[formantType], U"formant amplitude tier"); \
 		autoKlattGrid_DecibelTierEditor editor = KlattGrid_DecibelTierEditor_create (id_and_name, me, (RealTier) (*amp)->item[formantNumber]); \
-		praat_installEditor (editor.transfer(), IOBJECT); \
+		praat_installEditor (editor.get(), IOBJECT); \
+		editor.releaseToUser(); \
 	} \
 END
 

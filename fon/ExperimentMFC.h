@@ -2,7 +2,7 @@
 #define _ExperimentMFC_h_
 /* ExperimentMFC.h
  *
- * Copyright (C) 2001-2011 Paul Boersma
+ * Copyright (C) 2001-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,14 +33,14 @@ void ExperimentMFC_start (ExperimentMFC me);
 void ExperimentMFC_playStimulus (ExperimentMFC me, long istim);
 void ExperimentMFC_playResponse (ExperimentMFC me, long iresp);
 
-ResultsMFC ResultsMFC_create (long numberOfResults);
-ResultsMFC ExperimentMFC_extractResults (ExperimentMFC me);
-ResultsMFC ResultsMFC_removeUnsharedStimuli (ResultsMFC me, ResultsMFC thee);
+autoResultsMFC ResultsMFC_create (long numberOfResults);
+autoResultsMFC ExperimentMFC_extractResults (ExperimentMFC me);
+autoResultsMFC ResultsMFC_removeUnsharedStimuli (ResultsMFC me, ResultsMFC thee);
 
-Table ResultsMFCs_to_Table (Collection me);
+autoTable ResultsMFCs_to_Table (Collection me);
 
-Categories ResultsMFC_to_Categories_stimuli (ResultsMFC me);
-Categories ResultsMFC_to_Categories_responses (ResultsMFC me);
+autoCategories ResultsMFC_to_Categories_stimuli (ResultsMFC me);
+autoCategories ResultsMFC_to_Categories_responses (ResultsMFC me);
 void Categories_sort (Categories me);
 double Categories_getEntropy (Categories me);
 

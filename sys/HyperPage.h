@@ -36,7 +36,7 @@ Thing_define (HyperPage, Editor) {
 	Graphics g, ps;
 	double d_x, d_y, rightMargin, previousBottomSpacing;
 	long d_printingPageNumber;
-	Collection links;
+	autoCollection links;
 	bool printing;
 	int top, mirror;
 	char32 *insideHeader, *middleHeader, *outsideHeader;

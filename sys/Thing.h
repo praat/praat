@@ -327,6 +327,9 @@ public:
 		our ptr = nullptr;   // make the pointer non-automatic again
 		return temp;
 	}
+	void releaseToUser () {
+		our ptr = nullptr;   // make the pointer non-automatic again
+	}
 	#if 0
 		operator T* () {
 			return our ptr;

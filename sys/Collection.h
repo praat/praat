@@ -68,7 +68,7 @@ Thing_define (Collection, Daata) {
 */
 
 void Collection_init (Collection me, ClassInfo itemClass, long initialCapacity);
-Collection Collection_create (ClassInfo itemClass, long initialCapacity);
+autoCollection Collection_create (ClassInfo itemClass, long initialCapacity);
 /*
 	Function:
 		return a new empty Collection.
@@ -80,15 +80,6 @@ Collection Collection_create (ClassInfo itemClass, long initialCapacity);
 		Out of memory.
 */
 
-/**
-	Normally, the Collection is the owner of all the items, which means that
-	the Collection will destroy all its items when the Collection itself is destroyed.
-	By calling `Collection_dontOwnItems()` immediately after creating the Collection,
-	you make sure that the Collection contains *references* to the items instead.
-	The result is that the items will not be destroyed when the Collection is destroyed.
-*/
-void Collection_dontOwnItems (Collection me);
-
 /*
 	Data_copy, Data_equal, Data_writeXXX, Data_readXXX
 	try to copy, compare, write, or read all the items.
@@ -96,18 +87,19 @@ void Collection_dontOwnItems (Collection me);
 	these routines fail with a message.
 */
 
-void Collection_addItem (Collection me, Thing item);
 void Collection_addItem_move (Collection me, autoThing item);
 void Collection_addItem_ref (Collection me, Thing item);
 /*
 	Function:
 		add the 'item' to the collection.
 	Preconditions:
- 		item != nullptr;
-	Postconditions if result == 1:
+ 		!! item;
+	Postconditions:
 		my size >= my old size + 1;
 		if (my size > my old _capacity) my _capacity == 2 * my old _capacity;
-	When calling this function, you transfer ownership of 'item' to the Collection, unless dontOwnItems is on.
+	When calling Collection_addItem_move(), you transfer ownership of 'item' to the Collection;
+	when calling Collection_addItem_ref(), you don't. You cannot call both
+	Collection_addItem_move() and Collection_addItem_ref() on the same Collection.
 	For a SortedSet, this may mean that the Collection immediately disposes of 'item',
 	if that item already occurred in the Collection.
 */
@@ -164,7 +156,7 @@ void Collection_shrinkToFit (Collection me);
 		my _capacity == max (my size, 1);
 */
 
-Collection Collections_merge (Collection me, Collection thee);
+autoCollection Collections_merge (Collection me, Collection thee);
 /*
 	Function:
 		merge two Collections into a new one. The class is the same as the type of `me`.
@@ -268,7 +260,7 @@ Thing_define (SortedSetOfInt, SortedSet) {
 };
 
 void SortedSetOfInt_init (SortedSetOfInt me);
-SortedSetOfInt SortedSetOfInt_create ();
+autoSortedSetOfInt SortedSetOfInt_create ();
 
 /********** class SortedSetOfLong **********/
 
@@ -278,7 +270,7 @@ Thing_define (SortedSetOfLong, SortedSet) {
 };
 
 void SortedSetOfLong_init (SortedSetOfLong me);
-SortedSetOfLong SortedSetOfLong_create ();
+autoSortedSetOfLong SortedSetOfLong_create ();
 
 /********** class SortedSetOfDouble **********/
 
@@ -288,7 +280,7 @@ Thing_define (SortedSetOfDouble, SortedSet) {
 };
 
 void SortedSetOfDouble_init (SortedSetOfDouble me);
-SortedSetOfDouble SortedSetOfDouble_create ();
+autoSortedSetOfDouble SortedSetOfDouble_create ();
 
 /********** class SortedSetOfString **********/
 
@@ -298,7 +290,7 @@ Thing_define (SortedSetOfString, SortedSet) {
 };
 
 void SortedSetOfString_init (SortedSetOfString me);
-SortedSetOfString SortedSetOfString_create ();
+autoSortedSetOfString SortedSetOfString_create ();
 void SortedSetOfString_addString (SortedSetOfString me, const char32 *string);
 long SortedSetOfString_lookUp (SortedSetOfString me, const char32 *string);
 

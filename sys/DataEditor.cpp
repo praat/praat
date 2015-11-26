@@ -46,15 +46,15 @@ static int stringLengths [] = { 0,
 	15, 27, 35, 59,
 	33, 33, 8, 6, 60, 60 };
 
-static VectorEditor VectorEditor_create (DataEditor root, const char32 *title, void *address,
+static void VectorEditor_create (DataEditor root, const char32 *title, void *address,
 	Data_Description description, long minimum, long maximum);
 
-static MatrixEditor MatrixEditor_create (DataEditor root, const char32 *title, void *address,
+static void MatrixEditor_create (DataEditor root, const char32 *title, void *address,
 	Data_Description description, long min1, long max1, long min2, long max2);
 
-static StructEditor StructEditor_create (DataEditor root, const char32 *title, void *address, Data_Description description);
+static void StructEditor_create (DataEditor root, const char32 *title, void *address, Data_Description description);
 
-static ClassEditor ClassEditor_create (DataEditor root, const char32 *title, void *address, Data_Description description);
+static void ClassEditor_create (DataEditor root, const char32 *title, void *address, Data_Description description);
 
 static inline const char32 * strip_d (const char32 *s) {
 	return s && s [0] == U'd' && s [1] == U'_' ? & s [2] : & s [0];
@@ -70,7 +70,7 @@ void structDataSubEditor :: v_destroy () {
 	if (d_root && d_root -> d_children)
 		for (int i = d_root -> d_children -> size; i > 0; i --)
 			if (d_root -> d_children -> item [i] == this)
-				Collection_subtractItem (d_root -> d_children, i);
+				Collection_subtractItem (d_root -> d_children.get(), i);
 	DataSubEditor_Parent :: v_destroy ();
 }
 
@@ -320,7 +320,7 @@ void structDataSubEditor :: v_createHelpMenuItems (EditorMenu menu) {
 static void DataSubEditor_init (DataSubEditor me, DataEditor root, const char32 *title, void *address, Data_Description description) {
 	my d_root = root;
 	if (me != root) {
-		Collection_addItem (root -> d_children, me);
+		Collection_addItem_ref (root -> d_children.get(), me);
 	}
 	my d_address = address;
 	my d_description = description;
@@ -499,11 +499,11 @@ static void StructEditor_init (StructEditor me, DataEditor root, const char32 *t
 	DataSubEditor_init (me, root, title, address, description);
 }
 
-static StructEditor StructEditor_create (DataEditor root, const char32 *title, void *address, Data_Description description) {
+static void StructEditor_create (DataEditor root, const char32 *title, void *address, Data_Description description) {
 	try {
 		autoStructEditor me = Thing_new (StructEditor);
 		StructEditor_init (me.peek(), root, title, address, description);
-		return me.transfer();
+		return me.releaseToUser();
 	} catch (MelderError) {
 		Melder_throw (U"Struct inspector window not created.");
 	}
@@ -602,7 +602,7 @@ void structVectorEditor :: v_showMembers () {
 	}
 }
 
-static VectorEditor VectorEditor_create (DataEditor root, const char32 *title, void *address,
+static void VectorEditor_create (DataEditor root, const char32 *title, void *address,
 	Data_Description description, long minimum, long maximum)
 {
 	try {
@@ -610,7 +610,7 @@ static VectorEditor VectorEditor_create (DataEditor root, const char32 *title, v
 		my d_minimum = minimum;
 		my d_maximum = maximum;
 		DataSubEditor_init (me.peek(), root, title, address, description);
-		return me.transfer();
+		return me.releaseToUser();
 	} catch (MelderError) {
 		Melder_throw (U"Vector inspector window not created.");
 	}
@@ -661,7 +661,7 @@ void structMatrixEditor :: v_showMembers () {
 	}
 }
 
-static MatrixEditor MatrixEditor_create (DataEditor root, const char32 *title, void *address,
+static void MatrixEditor_create (DataEditor root, const char32 *title, void *address,
 	Data_Description description, long min1, long max1, long min2, long max2)
 {
 	try {
@@ -671,7 +671,7 @@ static MatrixEditor MatrixEditor_create (DataEditor root, const char32 *title, v
 		my d_min2 = min2;
 		my d_max2 = max2;
 		DataSubEditor_init (me.peek(), root, title, address, description);
-		return me.transfer();
+		return me.releaseToUser();
 	} catch (MelderError) {
 		Melder_throw (U"Matrix inspector window not created.");
 	}
@@ -705,11 +705,11 @@ static void ClassEditor_init (ClassEditor me, DataEditor root, const char32 *tit
 	StructEditor_init (me, root, title, address, description);
 }
 
-static ClassEditor ClassEditor_create (DataEditor root, const char32 *title, void *address, Data_Description description) {
+static void ClassEditor_create (DataEditor root, const char32 *title, void *address, Data_Description description) {
 	try {
 		autoClassEditor me = Thing_new (ClassEditor);
 		ClassEditor_init (me.peek(), root, title, address, description);
-		return me.transfer();
+		return me.releaseToUser();
 	} catch (MelderError) {
 		Melder_throw (U"Class inspector window not created.");
 	}
@@ -719,37 +719,75 @@ static ClassEditor ClassEditor_create (DataEditor root, const char32 *title, voi
 
 Thing_implement (DataEditor, ClassEditor, 0);
 
-void structDataEditor :: v_destroy () {
+static void DataEditor_destroyAllChildren (DataEditor me) {
+	/*
+		To destroy all children, we travel them from youngest to oldest,
+		because the array of children will change from under us:
+	*/
+	for (int i = my d_children -> size; i >= 1; i --) {
+		/*
+			An optimization coming!
+			
+			Instead of
+				DataSubEditor child = (DataSubEditor) d_children -> item [i];
+				forget (child);
+			we isolate the child from the parent before destroying the child,
+			so that the child won't try to remove the reference
+			that the parent has to her.
+			So first we make the parent forget the moribund child,
+			which prevents a dangling pointer:
+		*/
+		DataSubEditor child = (DataSubEditor) Collection_subtractItem (my d_children.get(), i);
+		/*
+			That was fast, because subtracting the last item involves no shifting
+			of the remaining items.
 
-	/* Tell my children not to notify me when they die. */
-
-	for (int i = 1; i <= d_children -> size; i ++) {
-		DataSubEditor child = (DataSubEditor) d_children -> item [i];
+			Second, we make the child forget the parent,
+			so that the child won't try to remove the reference
+			that the parent has to her:
+		*/
 		child -> d_root = nullptr;
+		/*
+			The child is now fully isolated, so we are ready to destroy her:
+		*/
+		forget (child);
+		/*
+			This procedure was an optimization because if we just destroyed each child,
+			each child would remove itself from the array by (1) searching for itself
+			and (2) shifting the remaining children, both of which have a complexity
+			that is linear in the number of children. So we would end up with quadratic complexity,
+			whereas the procedure that we did use has linear complexity.
+			
+			This linear complexity makes this procedure good enough for `v_destroy()`
+			(where obtaining linear complexity would have been easy anyway),
+			en nice enough for `v_dataChanged()`.
+		*/
 	}
+}
 
-	forget (d_children);
+void structDataEditor :: v_destroy ()
+{
+	DataEditor_destroyAllChildren (this);
 	DataEditor_Parent :: v_destroy ();
 }
 
 void structDataEditor :: v_dataChanged () {
 	/*
-	 * Someone else changed our data.
-	 * We know that the top-level data is still accessible.
-	 */
+		Someone else changed our data.
+		We know that the top-level data is still accessible,
+		so we update the top-level window to show the change:
+	*/
 	update (this);
 	/*
-	 * But all structure may have changed,
-	 * so that we do not know if any of the subeditors contain valid data.
-	 */
-	for (int i = d_children -> size; i >= 1; i --) {
-		DataSubEditor subeditor = (DataSubEditor) d_children -> item [i];
-		Collection_subtractItem (d_children, i);
-		forget (subeditor);
-	}
+		Changing the data may have changed any part of the *structure* of the data,
+		so we do not know if the data visible in any of the subeditors is still valid.
+		We follow the most straightforward solution, which is to simply close all the child windows,
+		which guarantees the removal of all dangling visual representations:
+	*/
+	DataEditor_destroyAllChildren (this);
 }
 
-DataEditor DataEditor_create (const char32 *title, Daata data) {
+autoDataEditor DataEditor_create (const char32 *title, Daata data) {
 	try {
 		ClassInfo klas = data -> classInfo;
 		if (Class_getDescription (klas) == nullptr)
@@ -757,7 +795,7 @@ DataEditor DataEditor_create (const char32 *title, Daata data) {
 		autoDataEditor me = Thing_new (DataEditor);
 		my d_children = Collection_create (classDataSubEditor, 10);
 		ClassEditor_init (me.peek(), me.peek(), title, data, Class_getDescription (klas));
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Inspector window not created.");
 	}

@@ -242,16 +242,10 @@ void Collection_init (Collection me, ClassInfo itemClass_, long initialCapacity)
 	my item --;   // base 1
 }
 
-Collection Collection_create (ClassInfo itemClass, long initialCapacity) {
+autoCollection Collection_create (ClassInfo itemClass, long initialCapacity) {
 	autoCollection me = Thing_new (Collection);
 	Collection_init (me.peek(), itemClass, initialCapacity);
-	return me.transfer();
-}
-
-void Collection_dontOwnItems (Collection me) {
-	Melder_assert (my size == 0);
-	my _ownItems = false;
-	my _ownershipInitialized = true;
+	return me;
 }
 
 static inline void _Collection_initializeOwnership (Collection me, bool ownItems) {
@@ -297,21 +291,6 @@ void _Collection_insertItem_ref (Collection me, Thing data, long pos) {
 	my size ++;
 	for (long i = my size; i > pos; i --) my item [i] = my item [i - 1];
 	my item [pos] = data;
-}
-
-void Collection_addItem (Collection me, Thing data) {
-	try {
-		Melder_assert (data);
-		long index = my v_position (data);
-		if (index != 0) {
-			_Collection_insertItem (me, data, index);
-		} else {
-			if (my _ownItems)
-				forget (data);   // could not insert; I am the owner, so I must dispose of the data
-		}
-	} catch (MelderError) {
-		Melder_throw (me, U": item not added.");
-	}
 }
 
 void Collection_addItem_move (Collection me, autoThing data) {
@@ -377,24 +356,29 @@ void Collection_shrinkToFit (Collection me) {
 	my item = (Thing *) Melder_realloc (my item + 1, my _capacity * (int64) sizeof (Thing)) - 1;
 }
 
-Collection Collections_merge (Collection me, Collection thee) {
+autoCollection Collections_merge (Collection me, Collection thee) {
 	try {
 		if (my classInfo != thy classInfo)
-			Melder_throw (U"Objects are of different class.");
-		if (my _ownItems != thy _ownItems)
+			Melder_throw (U"The two collections are of different classes.");
+		if (my _ownershipInitialized && thy _ownershipInitialized && my _ownItems != thy _ownItems)
 			Melder_throw (U"Cannot mix data and references.");
+		if (! my _ownershipInitialized && ! thy _ownershipInitialized) {
+			Melder_assert (my size == 0 && thy size == 0);
+			return Data_copy (me);
+		}
 		autoCollection him = Data_copy (me);
+		his _ownItems = my _ownershipInitialized ? my _ownItems : thy _ownItems;
 		for (long i = 1; i <= thy size; i ++) {
 			Thing item = thy item [i];
-			if (my _ownItems) {
+			if (his _ownItems) {
 				if (! Thing_isa (item, classDaata))
 					Melder_throw (U"Cannot copy item of class ", Thing_className (item), U".");
-				Collection_addItem (him.peek(), Data_copy ((Daata) item));
+				Collection_addItem_move (him.peek(), Data_copy ((Daata) item));
 			} else {
-				Collection_addItem (him.peek(), item);
+				Collection_addItem_ref (him.peek(), item);
 			}
 		}
-		return him.transfer();
+		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U" and ", thee, U" not merged." );
 	}
@@ -530,7 +514,7 @@ void SortedSetOfInt_init (SortedSetOfInt me) {
 	SortedSet_init (me, classSimpleInt, 10);
 }
 
-SortedSetOfInt SortedSetOfInt_create () {
+autoSortedSetOfInt SortedSetOfInt_create () {
 	autoSortedSetOfInt me = Thing_new (SortedSetOfInt);
 	SortedSetOfInt_init (me.peek());
 	return me.transfer();
@@ -550,10 +534,10 @@ void SortedSetOfLong_init (SortedSetOfLong me) {
 	SortedSet_init (me, classSimpleLong, 10);
 }
 
-SortedSetOfLong SortedSetOfLong_create () {
+autoSortedSetOfLong SortedSetOfLong_create () {
 	autoSortedSetOfLong me = Thing_new (SortedSetOfLong);
 	SortedSetOfLong_init (me.peek());
-	return me.transfer();
+	return me;
 }
 
 /********** class SortedSetOfDouble **********/
@@ -570,10 +554,10 @@ void SortedSetOfDouble_init (SortedSetOfDouble me) {
 	SortedSet_init (me, classSimpleDouble, 10);
 }
 
-SortedSetOfDouble SortedSetOfDouble_create () {
+autoSortedSetOfDouble SortedSetOfDouble_create () {
 	autoSortedSetOfDouble me = Thing_new (SortedSetOfDouble);
 	SortedSetOfDouble_init (me.peek());
-	return me.transfer();
+	return me;
 }
 
 /********** class SortedSetOfString **********/
@@ -584,10 +568,10 @@ void SortedSetOfString_init (SortedSetOfString me) {
 	SortedSet_init (me, classSimpleString, 10);
 }
 
-SortedSetOfString SortedSetOfString_create () {
+autoSortedSetOfString SortedSetOfString_create () {
 	autoSortedSetOfString me = Thing_new (SortedSetOfString);
 	SortedSetOfString_init (me.peek());
-	return me.transfer();
+	return me;
 }
 
 long SortedSetOfString_lookUp (SortedSetOfString me, const char32 *string) {

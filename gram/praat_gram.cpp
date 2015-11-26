@@ -468,7 +468,8 @@ DIRECT2 (OTGrammar_edit) {
 	LOOP {
 		iam (OTGrammar);
 		autoOTGrammarEditor editor = OTGrammarEditor_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.transfer(), IOBJECT);
+		praat_installEditor (editor.get(), IOBJECT);
+		editor.releaseToUser();
 	}
 END2 }
 
@@ -1349,7 +1350,8 @@ DIRECT2 (OTMulti_edit) {
 	LOOP {
 		iam (OTMulti);
 		autoOTMultiEditor editor = OTMultiEditor_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.transfer(), IOBJECT);
+		praat_installEditor (editor.get(), IOBJECT);
+		editor.releaseToUser();
 	}
 END2 }
 

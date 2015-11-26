@@ -283,12 +283,12 @@ void structButtonEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"ButtonEditor help", '?', menu_cb_ButtonEditorHelp);
 }
 
-ButtonEditor ButtonEditor_create () {
+autoButtonEditor ButtonEditor_create () {
 	try {
 		autoButtonEditor me = Thing_new (ButtonEditor);
 		HyperPage_init (me.peek(), U"Buttons", nullptr);
 		which (me.peek(), 1);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Buttons window not created.");
 	}

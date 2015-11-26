@@ -56,7 +56,8 @@ DIRECT2 (ExperimentMFC_run) {
 	Melder_assert (experimentsCopy -> item [1] == experiments -> item [1]);
 	Melder_assert (experimentsCopy -> item [experimentsCopy -> size] == experiments -> item [experiments -> size]);
 	autoRunnerMFC runner = RunnerMFC_create (U"listening experiments", experimentsCopy.transfer());
-	praat_installEditorN (runner.transfer(), experiments.peek());
+	praat_installEditorN (runner.get(), experiments.peek());
+	runner.releaseToUser();
 END2 }
 
 DIRECT2 (ExperimentMFC_extractResults) {

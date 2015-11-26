@@ -21,10 +21,10 @@
 
 Thing_implement (InfoEditor, TextEditor, 0);
 
-static InfoEditor theInfoEditor;
+static InfoEditor theReferenceToTheOnlyInfoEditor;
 
 void structInfoEditor :: v_destroy () {
-	theInfoEditor = nullptr;   // undangle
+	theReferenceToTheOnlyInfoEditor = nullptr;   // undangle
 	InfoEditor_Parent :: v_destroy ();
 }
 
@@ -34,23 +34,25 @@ void structInfoEditor :: v_clear () {
 
 void gui_information (const char32 *message);   // BUG
 void gui_information (const char32 *message) {
-	if (! theInfoEditor) {
-		theInfoEditor = Thing_new (InfoEditor).transfer();
-		TextEditor_init (theInfoEditor, U"");
-		Thing_setName (theInfoEditor, U"Praat Info");
+	if (! theReferenceToTheOnlyInfoEditor) {
+		autoInfoEditor editor = Thing_new (InfoEditor);
+		TextEditor_init (editor.get(), U"");
+		Thing_setName (editor.get(), U"Praat Info");
+		theReferenceToTheOnlyInfoEditor = editor.get();
+		editor.releaseToUser();
 	}
-	GuiText_setString (theInfoEditor -> textWidget, message);
-	GuiThing_show (theInfoEditor -> d_windowForm);
+	GuiText_setString (theReferenceToTheOnlyInfoEditor -> textWidget, message);
+	GuiThing_show (theReferenceToTheOnlyInfoEditor -> d_windowForm);
 	/*
 	 * Try to make sure that the invalidated text widget and the elements of the fronted window are redrawn before the next event.
 	 */
 	#if cocoa
-		//[theInfoEditor -> d_windowForm -> d_cocoaWindow   displayIfNeeded];   // apparently, this does not suffice
-		[theInfoEditor -> d_windowForm -> d_cocoaWindow   display];   // this displays the menu as well as the text
-		//[theInfoEditor -> textWidget -> d_cocoaTextView   displayIfNeeded];   // this displays only the text
-		//[theInfoEditor -> textWidget -> d_cocoaTextView   display];
+		//[theReferenceToTheOnlyInfoEditor -> d_windowForm -> d_cocoaWindow   displayIfNeeded];   // apparently, this does not suffice
+		[theReferenceToTheOnlyInfoEditor -> d_windowForm -> d_cocoaWindow   display];   // this displays the menu as well as the text
+		//[theReferenceToTheOnlyInfoEditor -> textWidget -> d_cocoaTextView   displayIfNeeded];   // this displays only the text
+		//[theReferenceToTheOnlyInfoEditor -> textWidget -> d_cocoaTextView   display];
 	#elif defined (macintosh)
-		GuiShell_drain (theInfoEditor -> d_windowForm);
+		GuiShell_drain (theReferenceToTheOnlyInfoEditor -> d_windowForm);
 	#endif
 }
 

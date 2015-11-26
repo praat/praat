@@ -172,7 +172,8 @@ DIRECT2 (LongSound_view) {
 	LOOP {
 		iam (LongSound);
 		autoSoundEditor editor = SoundEditor_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.transfer(), IOBJECT);
+		praat_installEditor (editor.get(), IOBJECT);
+		editor.releaseToUser();
 	}
 END2 }
 
@@ -705,7 +706,8 @@ static void cb_SoundEditor_publication (Editor editor, void *closure, Daata publ
 			LOOP {
 				iam (Spectrum);
 				autoSpectrumEditor editor2 = SpectrumEditor_create (ID_AND_FULL_NAME, me);
-				praat_installEditor (editor2.transfer(), IOBJECT);
+				praat_installEditor (editor2.get(), IOBJECT);
+				editor2.releaseToUser();
 			}
 		}
 	} catch (MelderError) {
@@ -718,7 +720,8 @@ DIRECT2 (Sound_edit) {
 		iam (Sound);
 		autoSoundEditor editor = SoundEditor_create (ID_AND_FULL_NAME, me);
 		Editor_setPublicationCallback (editor.peek(), cb_SoundEditor_publication, nullptr);
-		praat_installEditor (editor.transfer(), IOBJECT);
+		praat_installEditor (editor.get(), IOBJECT);
+		editor.releaseToUser();
 	}
 END2 }
 

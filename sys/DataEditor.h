@@ -94,7 +94,7 @@ Thing_define (ClassEditor, StructEditor) {
 };
 
 Thing_define (DataEditor, ClassEditor) {
-	Collection d_children;
+	autoCollection d_children;
 
 	void v_destroy ()
 		override;
@@ -102,7 +102,7 @@ Thing_define (DataEditor, ClassEditor) {
 		override;
 };
 
-DataEditor DataEditor_create (const char32 *title, Daata data);
+autoDataEditor DataEditor_create (const char32 *title, Daata data);
 
 /* End of file DataEditor.h */
 #endif
