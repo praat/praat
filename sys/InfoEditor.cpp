@@ -48,9 +48,11 @@ void gui_information (const char32 *message) {
 	 */
 	#if cocoa
 		//[theReferenceToTheOnlyInfoEditor -> d_windowForm -> d_cocoaWindow   displayIfNeeded];   // apparently, this does not suffice
+		//[theReferenceToTheOnlyInfoEditor -> textWidget -> d_cocoaTextView   lockFocus];   // this displays the menu as well as the text
 		[theReferenceToTheOnlyInfoEditor -> d_windowForm -> d_cocoaWindow   display];   // this displays the menu as well as the text
 		//[theReferenceToTheOnlyInfoEditor -> textWidget -> d_cocoaTextView   displayIfNeeded];   // this displays only the text
 		//[theReferenceToTheOnlyInfoEditor -> textWidget -> d_cocoaTextView   display];
+		//[theReferenceToTheOnlyInfoEditor -> textWidget -> d_cocoaTextView   unlockFocus];   // this displays the menu as well as the text
 	#elif defined (macintosh)
 		GuiShell_drain (theReferenceToTheOnlyInfoEditor -> d_windowForm);
 	#endif

@@ -640,7 +640,7 @@ void FilterBank_and_PCA_drawComponent (FilterBank me, PCA thee, Graphics g, long
 
 	// Scale Intensity
 
-	autoFilterBank fcopy = (FilterBank) Data_copy (me);
+	autoFilterBank fcopy = Data_copy (me);
 	FilterBank_equalizeIntensities (fcopy.peek(), dblevel);
 	autoMatrix him = Eigen_and_Matrix_project (thee, fcopy.peek(), component);
 	for (long j = 1; j <= my nx; j++) {

@@ -412,7 +412,7 @@ FeatureWeights FeatureWeights_computeRELIEF
 )
 
 {
-	autoPattern p = (Pattern) Data_copy (pp);
+	autoPattern p = Data_copy (pp);
 	autoFeatureWeights me = FeatureWeights_create (p -> nx);
 
 	/////////////////////////////////

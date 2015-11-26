@@ -472,7 +472,7 @@ void FunctionTerms_drawBasisFunction (FunctionTerms me, Graphics g, long index, 
 	if (index < 1 || index > my numberOfCoefficients) {
 		return;
 	}
-	autoFunctionTerms thee = (FunctionTerms) Data_copy (me);
+	autoFunctionTerms thee = Data_copy (me);
 
 	for (long i = 1; i <= my numberOfCoefficients; i++) {
 		thy coefficients[i] = 0;

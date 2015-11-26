@@ -957,7 +957,7 @@ autoSSCPs SSCPs_create () {
 
 autoSSCP SSCPs_to_SSCP_pool (SSCPs me) {
 	try {
-		autoSSCP thee = Data_copy ( (SSCP) my item[1]);
+		autoSSCP thee = Data_copy ((SSCP) my item[1]);
 
 		for (long k = 2; k <= my size; k++) {
 			SSCP t = (SSCP) my item[k];

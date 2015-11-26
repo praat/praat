@@ -55,7 +55,7 @@ void structCollection :: v_copy (Daata thee_Daata) {
 		if (our _ownItems) {
 			if (! Thing_isa (itempie, classDaata))
 				Melder_throw (U"Cannot copy item of class ", Thing_className (itempie), U".");
-			thy item [i] = Data_copy (static_cast <Daata> (itempie));
+			thy item [i] = Data_copy (static_cast <Daata> (itempie)).transfer();
 		} else {
 			thy item [i] = itempie;   // reference copy: if me doesn't own the items, then thee shouldn't either   // NOTE: the items don't have to be Daata
 		}

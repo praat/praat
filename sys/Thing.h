@@ -267,7 +267,7 @@ public:
 	 *    autoPitch pitch = Pitch_create (...);
 	 * should work.
 	 */
-	_Thing_auto (T *newPtr) : ptr (newPtr) {
+	/*explicit*/ _Thing_auto (T *newPtr) : ptr (newPtr) {
 		#if _Thing_auto_DEBUG
 			if (our ptr)
 				fprintf (stderr, "constructor %p %s\n",
@@ -466,7 +466,7 @@ public:
 	 * returns a moved `thee` in `pitch`. This works because return values from automatic (i.e. non-static) variables are r-values.
 	 *
 	 * In function arguments, transfer of ownership works only explicitly:
-	 *    extern void Collection_addItem_transfer (Collection me, autoDaata item);
+	 *    extern void Collection_addItem_move (Collection me, autoDaata item);
 	 *    autoPitch pitch = Pitch_create (...);
 	 *    Collection_addItem_transfer (collection, pitch.move());   // compiler error if you don't call move()
 	 */

@@ -343,7 +343,7 @@ DO
 		if (index > my size) {
 			Melder_throw (U"Index too large.");
 		}
-		autoCrossCorrelationTable thee = Data_copy ( (CrossCorrelationTable) my item[index]);
+		autoCrossCorrelationTable thee = Data_copy ((CrossCorrelationTable) my item[index]);
 		praat_new (thee.move(), Thing_getName (me), U"_", index);
 	}
 END

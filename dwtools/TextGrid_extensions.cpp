@@ -265,7 +265,7 @@ autoTextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile) {
 				TextInterval_setText ((TextInterval) ipa -> intervals -> item[i],
 					Melder_peek8to32 (timitLabelToIpaLabel (Melder_peek32to8 (interval -> text))));
 			}
-			Collection_addItem_move (my tiers, ipa.move()); // Then: add to collection
+			Collection_addItem_move (my tiers.get(), ipa.move()); // Then: add to collection
 			Thing_setName (timit, U"phn");  // rename wrd
 		}
 		f.close (file);
@@ -303,7 +303,7 @@ autoTextGrid TextGrids_merge (TextGrid me, TextGrid thee) {
 
 		for (long i = 1; i <= g2 -> tiers -> size; i++) {
 			autoFunction tier = Data_copy ( (Function) g2 -> tiers -> item [i]);
-			Collection_addItem_move (g1 -> tiers, tier.move());
+			Collection_addItem_move (g1 -> tiers.get(), tier.move());
 		}
 		return g1;
 	} catch (MelderError) {
@@ -446,7 +446,7 @@ void TextGrid_setLaterEndTime (TextGrid me, double xmax, const char32 *imark, co
 }
 
 void TextGrid_extendTime (TextGrid me, double extra_time, int position) {
-	autoTextGrid thee = 0;
+	autoTextGrid thee;
 	try {
 		double xmax = my xmax, xmin = my xmin;
 		int at_end = position == 0;
@@ -455,7 +455,7 @@ void TextGrid_extendTime (TextGrid me, double extra_time, int position) {
 			return;
 		}
 		extra_time = fabs (extra_time); // Just in case...
-		thee.reset (Data_copy (me));
+		thee = Data_copy (me);
 
 		if (at_end) {
 			xmax += extra_time;
@@ -691,7 +691,7 @@ void IntervalTiers_append_inline (IntervalTier me, IntervalTier thee, bool prese
 			Collection_addItem_move (my intervals.get(), connection.move());
 		}
 		for (long iint = 1; iint <= thy intervals -> size; iint++) {
-			autoTextInterval ti = (TextInterval) Data_copy ((Daata) thy intervals -> item[iint]);
+			autoTextInterval ti = Data_copy ((TextInterval) thy intervals -> item[iint]);
 			if (preserveTimes) {
 				Collection_addItem_move (my intervals.get(), ti.move());
 			} else {
@@ -721,7 +721,7 @@ void IntervalTiers_append_inline (IntervalTier me, IntervalTier thee, bool prese
 void TextTiers_append_inline (TextTier me, TextTier thee, bool preserveTimes) {
 	try {
 		for (long iint = 1; iint <= thy points -> size; iint++) {
-			autoTextPoint tp = (TextPoint) Data_copy ((Daata) thy points -> item[iint]);
+			autoTextPoint tp = Data_copy ((TextPoint) thy points -> item[iint]);
 			if (not preserveTimes) {
 				tp -> number += my xmax - thy xmin;
 			}

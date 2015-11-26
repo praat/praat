@@ -1404,7 +1404,7 @@ autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAnd
         const char32 *copyLabel = U"";
         autoTextGrid dbs = Sound_to_TextGrid_detectSilences (me, minPitch, timeStep, silenceThreshold,
             minSilenceDuration, minSoundingDuration, silentLabel, soundingLabel);
-        autoIntervalTier itg = (IntervalTier) Data_copy ((IntervalTier) dbs -> tiers -> item[1]);
+        autoIntervalTier itg = Data_copy ((IntervalTier) dbs -> tiers -> item[1]);
         IntervalTier itier = (IntervalTier) dbs -> tiers -> item[1];
         for (long iint = 1; iint <= itier -> intervals -> size; iint++) {
             TextInterval ti = (TextInterval) itier -> intervals -> item[iint];
@@ -2142,7 +2142,7 @@ static autoSound Sound_removeNoiseBySpectralSubtraction_mono (Sound me, Sound no
 		autoSound denoised = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
 		autoSound analysisWindow = Sound_createSimple (1, windowLength, samplingFrequency);
 		long windowSamples = analysisWindow -> nx;
-		autoSound noise_copy = (Sound) Data_copy (noise);
+		autoSound noise_copy = Data_copy (noise);
 		Sound_multiplyByWindow (noise_copy.peek(), kSound_windowShape_HANNING);
 		double bandwidth = samplingFrequency / windowSamples;
 		autoLtas noiseLtas = Sound_to_Ltas (noise_copy.peek(), bandwidth);

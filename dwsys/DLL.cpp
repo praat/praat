@@ -28,7 +28,7 @@ void structDLLNode :: v_destroy () {
 
 void structDLLNode :: v_copy (Daata thee_Daata) {
 	DLLNode thee = static_cast <DLLNode> (thee_Daata);
-	thy data = Data_copy (our data);
+	thy data = Data_copy (our data).transfer();
 }
 
 Thing_implement (DLL, Thing, 0);

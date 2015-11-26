@@ -36,7 +36,7 @@ autoCollection Collection_and_Permutation_permuteItems (Collection me, Permutati
 			Melder_throw (me, U"The number of elements are not equal.");
 		}
 		autoNUMvector<long> pos (1, my size);
-		autoCollection thee = static_cast<Collection> (Data_copy (me));
+		autoCollection thee = Data_copy (me);
 
 		for (long i = 1; i <= my size; i++) {
 			pos[i] = i;

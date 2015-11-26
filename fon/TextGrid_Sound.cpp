@@ -226,7 +226,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 			if (! wordTierNumber) {
 				autoIntervalTier newWordTier = IntervalTier_create (my xmin, my xmax);
 				Thing_setName (newWordTier.peek(), newWordTierName.string);
-				Ordered_addItemAtPosition_move (my tiers, newWordTier.move(), wordTierNumber = tierNumber + 1);
+				Ordered_addItemAtPosition_move (my tiers.get(), newWordTier.move(), wordTierNumber = tierNumber + 1);
 			}
 			Melder_assert (wordTierNumber >= 1 && wordTierNumber <= my tiers -> size);
 			wordTier = static_cast <IntervalTier> (my tier (wordTierNumber));
@@ -288,7 +288,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 			if (! phonemeTierNumber) {
 				autoIntervalTier newPhonemeTier = IntervalTier_create (my xmin, my xmax);
 				Thing_setName (newPhonemeTier.peek(), newPhonemeTierName.string);
-				Ordered_addItemAtPosition_move (my tiers, newPhonemeTier.move(), phonemeTierNumber = wordTierNumber ? wordTierNumber + 1 : tierNumber + 1);
+				Ordered_addItemAtPosition_move (my tiers.get(), newPhonemeTier.move(), phonemeTierNumber = wordTierNumber ? wordTierNumber + 1 : tierNumber + 1);
 			}
 			Melder_assert (phonemeTierNumber >= 1 && phonemeTierNumber <= my tiers -> size);
 			phonemeTier = static_cast <IntervalTier> (my tiers -> item [phonemeTierNumber]);

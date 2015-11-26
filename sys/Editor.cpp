@@ -261,7 +261,7 @@ void structEditor :: v_nameChanged () {
 void structEditor :: v_saveData () {
 	if (! our data) return;
 	forget (our previousData);
-	our previousData = Data_copy (our data);
+	our previousData = Data_copy (our data).transfer();
 }
 
 void structEditor :: v_restoreData () {

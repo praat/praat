@@ -328,7 +328,7 @@ autoSSCP Discriminant_extractWithinGroupSSCP (Discriminant me, long index) {
 	try {
 		if (index < 1 || index > my numberOfGroups) Melder_throw
 			(U"Index must be in interval [1,", my numberOfGroups, U"].");
-		autoSSCP thee = Data_copy ( (SSCP) my groups -> item[index]);
+		autoSSCP thee = Data_copy ((SSCP) my groups -> item[index]);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": within group SSCP not created.");

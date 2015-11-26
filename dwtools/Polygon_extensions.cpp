@@ -600,8 +600,8 @@ static autoVertices Vertices_create () {
 void Vertices_addCopyBack (Vertices me, DLLNode n);
 void Vertices_addCopyBack (Vertices me, DLLNode n) {
 	try {
-		autoDLLNode nc = (DLLNode) Data_copy (n);
-		DLL_addBack ( (DLL) me, nc.transfer());
+		autoDLLNode nc = Data_copy (n);
+		DLL_addBack ((DLL) me, nc.transfer());
 	} catch (MelderError) {
 		Melder_throw (me, U": no copy added.");
 	}
@@ -1215,7 +1215,7 @@ static inline double cross (double x1, double y1, double x2, double y2, double x
 autoPolygon Polygon_convexHull (Polygon me) {
 	try {
 		if (my numberOfPoints <= 3) {
-			return (Polygon) Data_copy (me);
+			return Data_copy (me);
 		}
 		autoNUMvector<double> x (1, my numberOfPoints), y (1, my numberOfPoints);
 		autoNUMvector<long> hull (1, my numberOfPoints + 2);

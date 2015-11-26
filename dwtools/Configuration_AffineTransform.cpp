@@ -198,7 +198,7 @@ autoConfiguration Configuration_and_AffineTransform_to_Configuration (Configurat
 		if (my numberOfColumns != thy n) {
 			Melder_throw (U"Dimensions do not agree.");
 		}
-		autoConfiguration him = (Configuration) Data_copy (me);
+		autoConfiguration him = Data_copy (me);
 
 		// Apply transformation YT
 

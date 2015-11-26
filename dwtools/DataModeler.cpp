@@ -1515,7 +1515,7 @@ autoDataModeler FormantModeler_extractDataModeler (FormantModeler me, long iform
 			Melder_throw (U"");
 		}
 		DataModeler ff = (DataModeler) my trackmodelers -> item[iformant];
-		autoDataModeler thee = (DataModeler) Data_copy (ff);
+		autoDataModeler thee = Data_copy (ff);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"DataModeler not created.");
@@ -1774,7 +1774,7 @@ autoFormantModeler FormantModeler_processOutliers (FormantModeler me, double num
 			DataModeler_getZScores (ffi, useSigmaY, z[iformant]);
 		}
 		// 2. Do the manipulation in a copy
-		autoFormantModeler thee = (FormantModeler) Data_copy (me);
+		autoFormantModeler thee = Data_copy (me);
 		for (long i = 1; i <= numberOfDataPoints; i++) {
 			// First the easy one: first formant missing: F1' = F2; F2' = F3
 			if (NUMdefined (z[1][i]) && NUMdefined (z[1][i]) && NUMdefined (z[3][i])) {
@@ -2139,25 +2139,22 @@ autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double
 	}
 }
 
-void FormantModeler_Formant_correctFormantsProbablyIndexedFalsely (FormantModeler me, Formant thee) {
+static void FormantModeler_Formant_correctFormantsProbablyIndexedFalsely (FormantModeler me, Formant /* thee */) {
 	try {
-		(void) thee;
-		autoFormantModeler him = (FormantModeler) Data_copy (me);
+		autoFormantModeler him = Data_copy (me);
 	} catch (MelderError) {
 		Melder_throw (U"Nothing corrected.");
 	}
 }
 
 // If e.g. first formant is obviously "missing" then assign F1 as 
-void FormantModeler_correctFormantsProbablyIndexedFalsely (FormantModeler me) {
-	(void) me;
+static void FormantModeler_correctFormantsProbablyIndexedFalsely (FormantModeler /* me */) {
 	/* if shift down F1 ("correct" F1 missed)
 	 * elsif shift down F2  ("correct" F2 missed)
 	 * else if spurious formant before F1
 	 * else if spurious formant between F1 and F2
 	 * endif
 	 * */
-	
 }
 
 autoOptimalCeilingTier Sound_to_OptimalCeilingTier (Sound me, double windowLength, double timeStep, double minCeiling, double maxCeiling, long numberOfFrequencySteps, double preemphasisFrequency, double smoothingWindow, long numberOfFormantTracks, long numberOfParametersPerTrack, int weighData, double numberOfSigmas, double power) {

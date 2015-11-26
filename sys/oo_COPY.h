@@ -93,7 +93,7 @@
 	}
 
 #define oo_OBJECT(Class,version,x)  \
-	if (our x) thy x = Data_copy (our x);
+	if (our x) thy x = Data_copy (our x).transfer();
 
 #define oo_AUTO_OBJECT(Class,version,x)  \
 	if (our x) thy x = Data_copy (our x.get());

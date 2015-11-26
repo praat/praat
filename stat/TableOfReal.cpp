@@ -791,7 +791,7 @@ void TableOfReal_drawAsNumbers_if (TableOfReal me, Graphics graphics, long rowmi
 {
 	try {
 		autoMatrix original = TableOfReal_to_Matrix (me);
-		autoMatrix conditions = original.clone ();
+		autoMatrix conditions = Data_copy (original.get());
 		fixRows (me, & rowmin, & rowmax);
 		Graphics_setInner (graphics);
 		Graphics_setWindow (graphics, 0.5, my numberOfColumns + 0.5, 0.0, 1.0);

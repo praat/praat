@@ -69,7 +69,7 @@ void PowerCepstrogram_paint (PowerCepstrogram me, Graphics g, double tmin, doubl
 		 ! Matrix_getWindowSamplesY (me, qmin - 0.49999 * my dy, qmax + 0.49999 * my dy, & ifmin, & ifmax)) {
 		return;
 	}
-	autoMatrix thee = (Matrix) Data_copy (me);
+	autoMatrix thee = Data_copy (me);
 	double min = 1e308, max = -min;
 	for (long i = 1; i <= my ny; i++) {
 		for (long j = 1; j <= my nx; j++) {

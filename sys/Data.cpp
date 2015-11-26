@@ -46,13 +46,13 @@ void structDaata :: v_writeBinary (FILE *) {
 void structDaata :: v_readBinary (FILE *, int /*formatVersion*/) {
 }
 
-Daata _Data_copy (Daata me) {
+autoDaata _Data_copy (Daata me) {
 	try {
-		if (! me) return nullptr;
+		if (! me) return autoDaata();
 		autoDaata thee = Thing_newFromClass (my classInfo).static_cast_move <structDaata> ();
 		my v_copy (thee.peek());
 		Thing_setName (thee.peek(), my name);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not copied.");
 	}

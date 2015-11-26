@@ -79,10 +79,10 @@ Thing_define (Daata, Thing) {
 	virtual bool v_hasGetColIndex  () { return false; }   virtual double        v_getColIndex  (const char32 * /* colLabel */)    { return NUMundefined; }
 };
 
-template <class T> T* Data_copy (T* data) {
-	return static_cast <T*> (_Data_copy (data));
+template <class T> _Thing_auto<T> Data_copy (T* data) {
+	return _Data_copy (data).template static_cast_move <T> ();
 }
-Daata _Data_copy (Daata me);
+autoDaata _Data_copy (Daata me);
 /*
 	Message:
 		"return a deep copy of yourself."
