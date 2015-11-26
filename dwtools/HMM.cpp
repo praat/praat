@@ -627,7 +627,7 @@ void HMM_addObservation_move (HMM me, autoHMMObservation thee) {
 	if (ns > my numberOfObservationSymbols) {
 		Melder_throw (U"Observation list is full.");
 	}
-	Ordered_addItemAtPosition_move (my observationSymbols, thee.move(), ns);
+	Ordered_addItemAtPosition_move (my observationSymbols.get(), thee.move(), ns);
 }
 
 void HMM_addState_move (HMM me, autoHMMState thee) {
@@ -635,7 +635,7 @@ void HMM_addState_move (HMM me, autoHMMState thee) {
 	if (ns > my numberOfStates) {
 		Melder_throw (U"States list is full.");
 	}
-	Ordered_addItemAtPosition_move (my states, thee.move(), ns);
+	Ordered_addItemAtPosition_move (my states.get(), thee.move(), ns);
 }
 
 autoTableOfReal HMM_extractTransitionProbabilities (HMM me) {

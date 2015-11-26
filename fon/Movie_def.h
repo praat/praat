@@ -21,9 +21,9 @@
 #define ooSTRUCT Movie
 oo_DEFINE_CLASS (Movie, Sampled)
 
-	oo_OBJECT (Sound, 2, d_sound)
+	oo_AUTO_OBJECT (Sound, 2, d_sound)
 	oo_STRING (d_folderName)
-	oo_OBJECT (Strings, 0, d_fileNames)
+	oo_AUTO_OBJECT (Strings, 0, d_fileNames)
 
 	#if oo_DECLARING
 		void v_info ()

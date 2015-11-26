@@ -222,7 +222,7 @@ DIRECT2 (KNN_extractInputPatterns) {
 	iam_ONLY (KNN);
 	if (my nInstances <= 0)
 		Melder_throw (U"Instance base is empty.");
-	autoPattern input = Data_copy (my input);
+	autoPattern input = Data_copy (my input.get());
 	praat_new (input.move(), U"Input Patterns");
 END2 }
 
@@ -230,7 +230,7 @@ DIRECT2 (KNN_extractOutputCategories) {
 	iam_ONLY (KNN);
 	if (my nInstances <= 0)
 		Melder_throw (U"Instance base is empty.");
-	autoCategories output = Data_copy (my output);
+	autoCategories output = Data_copy (my output.get());
 	praat_new (output.move(), U"Output Categories");
 END2 }
 
@@ -239,8 +239,8 @@ FORM (KNN_reset, U"Reset", U"KNN: Reset...") {
     OK2
 DO
 	iam_ONLY (KNN);
-	forget (my input);
-	forget (my output);
+	my input.reset();
+	my output.reset();
 	my nInstances = 0;
 	praat_dataChanged (me);   // BUG: this should be inserted much more often
 END2 }
