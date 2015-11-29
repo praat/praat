@@ -809,9 +809,9 @@ static void helpProc (const char32 *query) {
 	}
 }
 
-static int publishProc (void *anything) {
+static int publishProc (autoDaata me) {
 	try {
-		praat_new ((Daata) anything, U"");
+		praat_new (me.move(), U"");
 		praat_updateSelection ();
 		return 1;
 	} catch (MelderError) {
@@ -874,9 +874,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 
 #if defined (UNIX)
 	#if ALLOW_GDK_DRAWING && ! defined (NO_GRAPHICS)
-		static gboolean cb_userMessage (GtkWidget widget, GdkEventClient *event, gpointer user_data) {
-			(void) widget;
-			(void) user_data;
+		static gboolean cb_userMessage (GtkWidget /* widget */, GdkEventClient * /* event */, gpointer /* userData */) {
 			//Melder_casual (U"client event called");
 			autofile f;
 			try {
@@ -929,10 +927,8 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 	static void mac_setUserMessageCallback (int (*userMessageCallback) (char32 *message)) {
 		theUserMessageCallback = userMessageCallback;
 	}
-	static pascal OSErr mac_processSignal8 (const AppleEvent *theAppleEvent, AppleEvent *reply, long handlerRefCon) {
+	static pascal OSErr mac_processSignal8 (const AppleEvent *theAppleEvent, AppleEvent * /* reply */, long /* handlerRefCon */) {
 		static bool duringAppleEvent = false;   // FIXME: may have to be atomic?
-		(void) reply;
-		(void) handlerRefCon;
 		if (! duringAppleEvent) {
 			char *buffer;
 			Size actualSize;
@@ -953,10 +949,8 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 		}
 		return noErr;
 	}
-	static pascal OSErr mac_processSignal16 (const AppleEvent *theAppleEvent, AppleEvent *reply, long handlerRefCon) {
+	static pascal OSErr mac_processSignal16 (const AppleEvent *theAppleEvent, AppleEvent * /* reply */, long /* handlerRefCon */) {
 		static bool duringAppleEvent = false;   // FIXME: may have to be atomic?
-		(void) reply;
-		(void) handlerRefCon;
 		if (! duringAppleEvent) {
 			char16 *buffer;
 			Size actualSize;
@@ -1448,7 +1442,7 @@ void praat_init (const char32 *title, int argc, char **argv)
 		#endif
 		Melder_setHelpProc (helpProc);
 	}
-	Melder_setPublishProc (publishProc);
+	Data_setPublishProc (publishProc);
 	theCurrentPraatApplication -> manPages = ManPages_create ();
 
 	trace (U"creating the Picture window");

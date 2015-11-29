@@ -77,9 +77,18 @@ void GuiShell_drain (GuiShell me) {
 		//gdk_window_flush (gtk_widget_get_window (my d_gtkWindow));
 		gdk_flush ();
 	#elif cocoa
+		#if 1
+			NSEvent *nsEvent = [NSApp
+				nextEventMatchingMask: NSAnyEventMask
+				untilDate: [NSDate distantPast]
+				inMode: NSDefaultRunLoopMode
+				dequeue: NO
+				];
+		#else
         //[my d_cocoaWindow   displayIfNeeded];
         [my d_cocoaWindow   flushWindow];
 		//[my d_cocoaWindow   display];
+		#endif
 	#elif win
 	#elif mac
 		Melder_assert (my d_xmShell);

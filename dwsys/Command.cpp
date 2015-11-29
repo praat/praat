@@ -69,7 +69,7 @@ Command CommandHistory_getItem (CommandHistory me) {
 	return static_cast<Command> (my item [my current]);
 }
 
-void CommandHistory_insertItem (CommandHistory me, Command command)
+void CommandHistory_insertItem_move (CommandHistory me, autoCommand command)
 {
 	if (my current < my size) {
 		for (long i = my current + 1; i <= my size; i++) {
@@ -80,7 +80,7 @@ void CommandHistory_insertItem (CommandHistory me, Command command)
 	if (my size >= my _capacity) {
 		Collection_removeItem (me, 1);
 	}
-	my item[++my size] = command;
+	my item[++my size] = command.releaseToAmbiguousOwner();
 	my current = my size;
 }
 

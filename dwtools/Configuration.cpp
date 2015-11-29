@@ -102,7 +102,7 @@ void Configuration_setSqWeights (Configuration me, const double weight[]) {
 	}
 }
 
-void Configuration_normalize (Configuration me, double sumsq, int columns) {
+void Configuration_normalize (Configuration me, double sumsq, bool columns) {
 	TableOfReal_centreColumns (me);
 	if (columns) {
 		sumsq = sumsq <= 0.0 ? 1.0 : sqrt (sumsq);

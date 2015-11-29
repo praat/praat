@@ -67,7 +67,7 @@ void CommandHistory_back (CommandHistory me);
 Command CommandHistory_getItem (CommandHistory me);
 /* return (pointer to) my item[my current]; */
 
-void CommandHistory_insertItem (CommandHistory me, Command command);
+void CommandHistory_insertItem_move (CommandHistory me, autoCommand command);
 /* 1. forget about item[ current+1..size ] */
 /* 2. insert item after current. */
 /* 3. current = size */

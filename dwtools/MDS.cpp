@@ -1596,7 +1596,7 @@ void ScalarProducts_to_Configuration_ytl (ScalarProducts me, int numberOfDimensi
 			}
 		}
 
-		Configuration_normalize (thee.peek(), 0, 1);
+		Configuration_normalize (thee.peek(), 0, true);
 
 		// And finally the weights: W[i] = K' C[i] K   (eq. (5)).
 		// We are only interested in the diagonal of the resulting matrix W[i].
@@ -1869,7 +1869,7 @@ double Distance_Weight_congruenceCoefficient (Distance x, Distance y, Weight w) 
 	return xy / (sqrt (x2) * sqrt (y2));
 }
 
-autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissimilarity me, Configuration conf, Weight weight, Transformator t, double tolerance, long numberOfIterations, int showProgress, double *stress) {
+autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissimilarity me, Configuration conf, Weight weight, Transformator t, double tolerance, long numberOfIterations, bool showProgress, double *stress) {
 	try {
 		long nPoints = conf -> numberOfRows;
 		long nDimensions = conf -> numberOfColumns;
@@ -1960,10 +1960,10 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissi
 	}
 }
 
-autoConfiguration Dissimilarity_Configuration_Weight_Transformator_multiSmacof (Dissimilarity me, Configuration conf,  Weight w, Transformator t, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress) {
+autoConfiguration Dissimilarity_Configuration_Weight_Transformator_multiSmacof (Dissimilarity me, Configuration conf,  Weight w, Transformator t, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress) {
 	int showMulti = showProgress && numberOfRepetitions > 1;
 	try {
-		int showSingle = showProgress && numberOfRepetitions == 1;
+		bool showSingle = ( showProgress && numberOfRepetitions == 1 );
 		double stress, stressmax = 1e308;
 
 		autoConfiguration cstart = Data_copy (conf);
@@ -1998,7 +1998,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_multiSmacof (
 	}
 }
 
-autoConfiguration Dissimilarity_Configuration_Weight_absolute_mds (Dissimilarity me, Configuration cstart, Weight w, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress) {
+autoConfiguration Dissimilarity_Configuration_Weight_absolute_mds (Dissimilarity me, Configuration cstart, Weight w, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress) {
 	try {
 		autoTransformator t = Transformator_create (my numberOfRows);
 		autoConfiguration c = Dissimilarity_Configuration_Weight_Transformator_multiSmacof (me, cstart, w, t.peek(), tolerance, numberOfIterations, numberOfRepetitions, showProgress);
@@ -2008,7 +2008,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_absolute_mds (Dissimilarity
 	}
 }
 
-autoConfiguration Dissimilarity_Configuration_Weight_ratio_mds (Dissimilarity me, Configuration cstart, Weight w, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress) {
+autoConfiguration Dissimilarity_Configuration_Weight_ratio_mds (Dissimilarity me, Configuration cstart, Weight w, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress) {
 	try {
 		autoRatioTransformator t = RatioTransformator_create (my numberOfRows);
 		autoConfiguration c = Dissimilarity_Configuration_Weight_Transformator_multiSmacof (me, cstart, w, t.peek(), tolerance, numberOfIterations, numberOfRepetitions, showProgress);
@@ -2018,7 +2018,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_ratio_mds (Dissimilarity me
 	}
 }
 
-autoConfiguration Dissimilarity_Configuration_Weight_interval_mds (Dissimilarity me, Configuration cstart, Weight w, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress) {
+autoConfiguration Dissimilarity_Configuration_Weight_interval_mds (Dissimilarity me, Configuration cstart, Weight w, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress) {
 	try {
 		autoISplineTransformator t = ISplineTransformator_create (my numberOfRows, 0, 1);
 		autoConfiguration c = Dissimilarity_Configuration_Weight_Transformator_multiSmacof (me, cstart, w, t.peek(), tolerance, numberOfIterations, numberOfRepetitions, showProgress);
@@ -2028,7 +2028,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_interval_mds (Dissimilarity
 	}
 }
 
-autoConfiguration Dissimilarity_Configuration_Weight_monotone_mds (Dissimilarity me, Configuration cstart, Weight w, int tiesProcessing, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress) {
+autoConfiguration Dissimilarity_Configuration_Weight_monotone_mds (Dissimilarity me, Configuration cstart, Weight w, int tiesProcessing, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress) {
 	try {
 		autoMonotoneTransformator t = MonotoneTransformator_create (my numberOfRows);
 		MonotoneTransformator_setTiesProcessing (t.peek(), tiesProcessing);
@@ -2039,7 +2039,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_monotone_mds (Dissimilarity
 	}
 }
 
-autoConfiguration Dissimilarity_Configuration_Weight_ispline_mds (Dissimilarity me, Configuration cstart, Weight w, long numberOfInteriorKnots, long order, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress) {
+autoConfiguration Dissimilarity_Configuration_Weight_ispline_mds (Dissimilarity me, Configuration cstart, Weight w, long numberOfInteriorKnots, long order, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress) {
 	try {
 		autoISplineTransformator t = ISplineTransformator_create (my numberOfRows, numberOfInteriorKnots, order);
 		autoConfiguration c = Dissimilarity_Configuration_Weight_Transformator_multiSmacof (me, cstart, w, t.peek(), tolerance, numberOfIterations, numberOfRepetitions, showProgress);
@@ -2049,7 +2049,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_ispline_mds (Dissimilarity 
 	}
 }
 
-autoConfiguration Dissimilarity_Weight_absolute_mds (Dissimilarity me, Weight w, long numberOfDimensions, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress) {
+autoConfiguration Dissimilarity_Weight_absolute_mds (Dissimilarity me, Weight w, long numberOfDimensions, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress) {
 	try {
 		autoDistance d = Dissimilarity_to_Distance (me, MDS_ABSOLUTE);
 		autoConfiguration cstart = Distance_to_Configuration_torsca (d.peek(), numberOfDimensions);
@@ -2060,7 +2060,7 @@ autoConfiguration Dissimilarity_Weight_absolute_mds (Dissimilarity me, Weight w,
 	}
 }
 
-autoConfiguration Dissimilarity_Weight_interval_mds (Dissimilarity me, Weight w, long numberOfDimensions, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress) {
+autoConfiguration Dissimilarity_Weight_interval_mds (Dissimilarity me, Weight w, long numberOfDimensions, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress) {
 	try {
 		autoDistance d = Dissimilarity_to_Distance (me, MDS_RATIO);
 		autoConfiguration cstart = Distance_to_Configuration_torsca (d.peek(), numberOfDimensions);
@@ -2071,7 +2071,7 @@ autoConfiguration Dissimilarity_Weight_interval_mds (Dissimilarity me, Weight w,
 	}
 }
 
-autoConfiguration Dissimilarity_Weight_monotone_mds (Dissimilarity me, Weight w, long numberOfDimensions, int tiesProcessing, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress) {
+autoConfiguration Dissimilarity_Weight_monotone_mds (Dissimilarity me, Weight w, long numberOfDimensions, int tiesProcessing, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress) {
 	try {
 		autoDistance d = Dissimilarity_to_Distance (me, MDS_ORDINAL);
 		autoConfiguration cstart = Distance_to_Configuration_torsca (d.peek(), numberOfDimensions);
@@ -2082,7 +2082,7 @@ autoConfiguration Dissimilarity_Weight_monotone_mds (Dissimilarity me, Weight w,
 	}
 }
 
-autoConfiguration Dissimilarity_Weight_ratio_mds (Dissimilarity me, Weight w, long numberOfDimensions, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress) {
+autoConfiguration Dissimilarity_Weight_ratio_mds (Dissimilarity me, Weight w, long numberOfDimensions, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress) {
 	try {
 		autoDistance d = Dissimilarity_to_Distance (me, MDS_RATIO);
 		autoConfiguration cstart = Distance_to_Configuration_torsca (d.peek(), numberOfDimensions);
@@ -2094,7 +2094,7 @@ autoConfiguration Dissimilarity_Weight_ratio_mds (Dissimilarity me, Weight w, lo
 	}
 }
 
-autoConfiguration Dissimilarity_Weight_ispline_mds (Dissimilarity me, Weight w, long numberOfDimensions, long numberOfInteriorKnots, long order, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress) {
+autoConfiguration Dissimilarity_Weight_ispline_mds (Dissimilarity me, Weight w, long numberOfDimensions, long numberOfInteriorKnots, long order, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress) {
 	try {
 		autoDistance d = Dissimilarity_to_Distance (me, MDS_ORDINAL);
 		autoConfiguration cstart = Distance_to_Configuration_torsca (d.peek(), numberOfDimensions);
@@ -2233,7 +2233,7 @@ autoConfiguration Dissimilarity_kruskal (Dissimilarity me, long numberOfDimensio
 		int scale = 1;
 		autoDistance d = Dissimilarity_to_Distance (me, scale);
 		autoConfiguration c = Distance_to_Configuration_torsca (d.peek(), numberOfDimensions);
-		Configuration_normalize (c.peek(), 1.0, 0);
+		Configuration_normalize (c.peek(), 1.0, false);
 		autoConfiguration thee = Dissimilarity_Configuration_kruskal (me, c.peek(), tiesProcessing, stress_formula, tolerance, numberOfIterations, numberOfRepetitions);
 		return thee;
 	} catch (MelderError) {
@@ -2479,7 +2479,7 @@ static void indscal_iteration_tenBerge (ScalarProducts zc, Configuration xc, Sal
 }
 
 
-void ScalarProducts_Configuration_Salience_indscal (ScalarProducts sp, Configuration configuration, Salience weights, double tolerance, long numberOfIterations, int showProgress, autoConfiguration *out1, autoSalience *out2, double *varianceAccountedFor) {
+void ScalarProducts_Configuration_Salience_indscal (ScalarProducts sp, Configuration configuration, Salience weights, double tolerance, long numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2, double *varianceAccountedFor) {
 	try {
 		double tol = 1e-6, vafp = 0.0, vaf;
 		long nSources = sp -> size, iter;
@@ -2547,7 +2547,7 @@ void ScalarProducts_Configuration_Salience_indscal (ScalarProducts sp, Configura
 	}
 }
 
-void Distances_Configuration_Salience_indscal (Distances distances, Configuration configuration, Salience weights, int normalizeScalarProducts, double tolerance, long numberOfIterations, int showProgress, autoConfiguration *out1, autoSalience *out2, double *vaf) {
+void Distances_Configuration_Salience_indscal (Distances distances, Configuration configuration, Salience weights, int normalizeScalarProducts, double tolerance, long numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2, double *vaf) {
 	try {
 		autoScalarProducts sp = Distances_to_ScalarProducts (distances, normalizeScalarProducts);
 		ScalarProducts_Configuration_Salience_indscal (sp.peek(), configuration, weights, tolerance, numberOfIterations, showProgress, out1, out2, vaf);
@@ -2556,9 +2556,9 @@ void Distances_Configuration_Salience_indscal (Distances distances, Configuratio
 	}
 }
 
-void Dissimilarities_Configuration_Salience_indscal (Dissimilarities dissims, Configuration configuration, Salience weights, int tiesProcessing, int normalizeScalarProducts, double tolerance, long numberOfIterations, int showProgress, autoConfiguration *out1, autoSalience *out2, double *varianceAccountedFor) {
+void Dissimilarities_Configuration_Salience_indscal (Dissimilarities dissims, Configuration configuration, Salience weights, int tiesProcessing, int normalizeScalarProducts, double tolerance, long numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2, double *varianceAccountedFor) {
 	try {
-		double tol = 1e-6, vafp = 0, vaf;
+		double tol = 1e-6, vafp = 0.0, vaf;
 		long iter, nSources = dissims -> size;;
 		autoConfiguration x = Data_copy (configuration);
 		autoSalience w = Data_copy (weights);
@@ -2627,7 +2627,7 @@ void Dissimilarities_Configuration_Salience_indscal (Dissimilarities dissims, Co
 	}
 }
 
-void Distances_Configuration_indscal (Distances dists, Configuration conf, int normalizeScalarProducts, double tolerance, long numberOfIterations, int showProgress, autoConfiguration *out1, autoSalience *out2) {
+void Distances_Configuration_indscal (Distances dists, Configuration conf, int normalizeScalarProducts, double tolerance, long numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2) {
 	try {
 		autoSalience w = Salience_create (dists -> size, conf -> numberOfColumns);
 		double vaf;
@@ -2686,7 +2686,7 @@ autoSalience Dissimilarities_Configuration_to_Salience (Dissimilarities me, Conf
 	}
 }
 
-void Dissimilarities_Configuration_indscal (Dissimilarities dissims, Configuration conf, int tiesProcessing, int normalizeScalarProducts, double tolerance, long numberOfIterations, int showProgress, autoConfiguration *out1, autoSalience *out2) {
+void Dissimilarities_Configuration_indscal (Dissimilarities dissims, Configuration conf, int tiesProcessing, int normalizeScalarProducts, double tolerance, long numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2) {
 	try {
 		autoDistances distances = Dissimilarities_Configuration_monotoneRegression (dissims, conf, tiesProcessing);
 		autoSalience weights = Distances_Configuration_to_Salience (distances.peek(), conf, normalizeScalarProducts);
@@ -2697,10 +2697,10 @@ void Dissimilarities_Configuration_indscal (Dissimilarities dissims, Configurati
 	}
 }
 
-void Dissimilarities_indscal (Dissimilarities me, long numberOfDimensions, int tiesProcessing, int normalizeScalarProducts, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress, autoConfiguration *out1, autoSalience *out2) {
+void Dissimilarities_indscal (Dissimilarities me, long numberOfDimensions, int tiesProcessing, int normalizeScalarProducts, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress, autoConfiguration *out1, autoSalience *out2) {
 	int showMulti = showProgress && numberOfRepetitions > 1;
 	try {
-		int showSingle = showProgress && numberOfRepetitions == 1;
+		bool showSingle = ( showProgress && numberOfRepetitions == 1 );
 		double vaf, vafmin = 0.0;
 
 		autoDistances distances = Dissimilarities_to_Distances (me, MDS_ORDINAL);
@@ -2724,7 +2724,7 @@ void Dissimilarities_indscal (Dissimilarities me, long numberOfDimensions, int t
 				wbest = wresult.move();
 			}
 			Configuration_randomize (cstart.peek());
-			Configuration_normalize (cstart.peek(), 1.0, 1);
+			Configuration_normalize (cstart.peek(), 1.0, true);
 			Salience_setDefaults (wstart.peek());
 
 			if (showMulti) {
@@ -2746,11 +2746,11 @@ void Dissimilarities_indscal (Dissimilarities me, long numberOfDimensions, int t
 }
 
 
-void Distances_indscal (Distances distances, long numberOfDimensions, int normalizeScalarProducts, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress, autoConfiguration *out1, autoSalience *out2) {
+void Distances_indscal (Distances distances, long numberOfDimensions, int normalizeScalarProducts, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress, autoConfiguration *out1, autoSalience *out2) {
 	int showMulti = showProgress && numberOfRepetitions > 1;
 	try {
-		int showSingle = showProgress && numberOfRepetitions == 1;
-		double vaf, vafmin = 0;
+		bool showSingle = ( showProgress && numberOfRepetitions == 1 );
+		double vaf, vafmin = 0.0;
 
 		autoConfiguration cstart;
 		autoSalience wstart;
@@ -2772,7 +2772,7 @@ void Distances_indscal (Distances distances, long numberOfDimensions, int normal
 				wbest = wresult.move();
 			}
 			Configuration_randomize (cstart.peek());
-			Configuration_normalize (cstart.peek(), 1.0, 1);
+			Configuration_normalize (cstart.peek(), 1.0, true);
 			Salience_setDefaults (wstart.peek());
 
 			if (showMulti) {

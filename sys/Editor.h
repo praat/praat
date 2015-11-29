@@ -58,7 +58,8 @@ Thing_define (Editor, Thing) {
 	GuiWindow d_windowForm;
 	GuiMenuItem undoButton, searchButton;
 	Ordered menus;
-	Daata data, previousData;   // the data that can be displayed and edited
+	Daata data;   // the data that can be displayed and edited
+	autoDaata previousData;   // the data that can be displayed and edited
 	bool d_ownData;
 	char32 undoText [100];
 	Graphics pictureGraphics;
@@ -154,39 +155,17 @@ inline static void Editor_broadcastDataChanged (Editor me)
 		if (my d_dataChangedCallback)
 			my d_dataChangedCallback (me, my d_dataChangedClosure);
 	}
-inline static void Editor_setPleaseResetCallback (Editor me, void (*pleaseResetCallback) (Editor me, void *closure), void *pleaseResetClosure)
+inline static void Editor_setDestructionCallback (Editor me, void (*destructionCallback) (Editor me, void *observer), void *observer)
 	/*
-	 * Message from boss: "notify me by calling this pleaseResetCallback when you agree to be closed."
-	 *
-	 * In Praat, "please reset" is what an editor tells her boss when the user tries to close the editor window
-	 * or when an object that is being viewed in an editor window is "Remove"d.
-	 * Typically, the boss will (in the pleaseResetCallback it installed) reset (i.e. delete) the autoEditor.
-	 */
-	{
-		my d_pleaseResetCallback = pleaseResetCallback;
-		my d_pleaseResetClosure = pleaseResetClosure;
-	}
-inline static void Editor_sendPleaseReset (Editor me)
-	/*
-	 * Message to boss: "please reset (delete) me."
-	 *
-	 * The editor typically calls this in Editor::v_goAway().
-	 */
-	{
-		if (my d_pleaseResetCallback)
-			my d_pleaseResetCallback (me, my d_pleaseResetClosure);
-	}
-inline static void Editor_setDestructionCallback (Editor me, void (*destructionCallback) (Editor me, void *closure), void *destructionClosure)
-	/*
-	 * Message from boss: "notify me by calling this destructionCallback every time you destroy yourself."
+	 * Message from observer: "notify me by calling this destructionCallback every time you destroy yourself."
 	 *
 	 * In Praat, "destroying yourself" typically happens when the user closes the editor window
 	 * or when an object that is being viewed in an editor window is "Remove"d.
-	 * Typically, the boss will (in the destructionCallback it installed) remove all dangling references to this editor.
+	 * Typically, the observer will (in the destructionCallback it installed) remove all dangling references to this editor.
 	 */
 	{
 		my d_destructionCallback = destructionCallback;
-		my d_destructionClosure = destructionClosure;
+		my d_destructionClosure = observer;
 	}
 inline static void Editor_broadcastDestruction (Editor me)
 	/*

@@ -1840,7 +1840,7 @@ void Formula_compile (Interpreter interpreter, Daata data, const char32 *express
 		}
 		theInterpreter -> variablesMap -> clear ();
 		#else
-		Collection_removeAllItems (theInterpreter -> variables);
+		Collection_removeAllItems (theInterpreter -> variables.get());
 		#endif
 	}
 	theSource = data;

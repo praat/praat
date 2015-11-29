@@ -260,6 +260,20 @@ autoDaata Data_readFromBinaryFile (MelderFile file) {
 	}
 }
 
+static int defaultPublish (autoDaata /* me */) {
+	return 0;   // nothing published
+}
+
+static int (*thePublish) (autoDaata) = defaultPublish;
+
+int Data_publish (autoDaata me) {
+	return thePublish (me.move());
+}
+
+void Data_setPublishProc (int (*publish) (autoDaata)) {
+	thePublish = publish ? publish : defaultPublish;
+}
+
 /* Generic reading. */
 
 static int numFileTypeRecognizers = 0;

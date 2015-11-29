@@ -148,13 +148,13 @@ END2 }
 
 DIRECT2 (praat_newScript) {
 	autoScriptEditor editor = ScriptEditor_createFromText (nullptr, nullptr);
-	editor.transfer();   // the user becomes the owner
+	editor.releaseToUser();
 END2 }
 
 DIRECT2 (praat_openScript) {
 	autoScriptEditor editor = ScriptEditor_createFromText (nullptr, nullptr);
 	TextEditor_showOpen (editor.peek());
-	editor.transfer();   // the user becomes the owner
+	editor.releaseToUser();
 END2 }
 
 static ButtonEditor theReferenceToTheOnlyButtonEditor;
@@ -424,7 +424,12 @@ static void readFromFile (MelderFile file) {
 		return;
 	}
 	if (Thing_isa (object.peek(), classScript) && ! Melder_batch) {
-		ScriptEditor_createFromScript (nullptr, (Script) object.peek());
+		autoScriptEditor editor = ScriptEditor_createFromScript_canBeNull (nullptr, (Script) object.peek());
+		if (! editor) {
+			(void) 0;   // the script was already open, and the user has been notified of that
+		} else {
+			editor.releaseToUser();
+		}
 		return;
 	}
 	praat_newWithFile (object.transfer(), file, MelderFile_name (file));

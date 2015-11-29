@@ -49,7 +49,7 @@ Thing_define (DemoEditor, Editor) {
 };
 
 void DemoEditor_init (DemoEditor me);
-DemoEditor DemoEditor_create ();
+autoDemoEditor DemoEditor_create ();
 
 void Demo_open ();
 void Demo_close ();

@@ -582,7 +582,7 @@ Thing_define (Vertices, DLL) {
 };
 Thing_implement (Vertices, DLL, 0);
 
-#define VERTEX(n) ((Vertex) ((n) -> data))
+#define VERTEX(n) ((Vertex) ((n) -> data.get()))
 
 int structVertices :: s_compareHook (DLLNode me, DLLNode thee) noexcept {
 	return VERTEX (me) -> alpha < VERTEX (thee) -> alpha ? -1 : VERTEX (me) -> alpha > VERTEX (thee) -> alpha ? 1 : 0;

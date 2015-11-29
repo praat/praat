@@ -1153,8 +1153,6 @@ public:
 
 /********** RECORD AND PLAY ROUTINES **********/
 
-int Melder_publish (void *anything);
-
 int Melder_record (double duration);
 int Melder_recordFromFile (MelderFile file);
 void Melder_play ();
@@ -1201,7 +1199,6 @@ void Melder_setSearchProc (void (*search) ());
 void Melder_setWarningProc (void (*warningProc) (const char32 *message));
 void Melder_setErrorProc (void (*errorProc) (const char32 *message));
 void Melder_setFatalProc (void (*fatalProc) (const char32 *message));
-void Melder_setPublishProc (int (*publish) (void *));
 void Melder_setRecordProc (int (*record) (double));
 void Melder_setRecordFromFileProc (int (*recordFromFile) (MelderFile));
 void Melder_setPlayProc (void (*play) ());

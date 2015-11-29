@@ -24,12 +24,12 @@
 
 Thing_implement (ScriptEditor, TextEditor, 0);
 
-static Collection theScriptEditors;   // cannot be an autoCollection until Collection_undangleItem() isn't called in v_destroy()
+static autoCollection theReferencesToAllOpenScriptEditors;
 
 bool ScriptEditors_dirty () {
-	if (! theScriptEditors) return false;
-	for (long i = 1; i <= theScriptEditors -> size; i ++) {
-		ScriptEditor me = (ScriptEditor) theScriptEditors -> item [i];
+	if (! theReferencesToAllOpenScriptEditors) return false;
+	for (long i = 1; i <= theReferencesToAllOpenScriptEditors -> size; i ++) {
+		ScriptEditor me = (ScriptEditor) theReferencesToAllOpenScriptEditors -> item [i];
 		if (my dirty) return true;
 	}
 	return false;
@@ -38,7 +38,7 @@ bool ScriptEditors_dirty () {
 void structScriptEditor :: v_destroy () {
 	Melder_free (environmentName);
 	forget (interpreter);
-	if (theScriptEditors) Collection_undangleItem (theScriptEditors, this);
+	if (theReferencesToAllOpenScriptEditors) Collection_undangleItem (theReferencesToAllOpenScriptEditors.get(), this);
 	ScriptEditor_Parent :: v_destroy ();
 }
 
@@ -319,34 +319,34 @@ void ScriptEditor_init (ScriptEditor me, Editor environment, const char32 *initi
 	}
 	TextEditor_init (me, initialText);
 	my interpreter = Interpreter_createFromEnvironment (environment);
-	if (! theScriptEditors) {
-		theScriptEditors = Collection_create (nullptr, 10).transfer();
+	if (! theReferencesToAllOpenScriptEditors) {
+		theReferencesToAllOpenScriptEditors = Collection_create (nullptr, 10);
 	}
-	Collection_addItem_ref (theScriptEditors, me);
+	Collection_addItem_ref (theReferencesToAllOpenScriptEditors.get(), me);
 }
 
-ScriptEditor ScriptEditor_createFromText (Editor environment, const char32 *initialText) {
+autoScriptEditor ScriptEditor_createFromText (Editor environment, const char32 *initialText) {
 	try {
 		autoScriptEditor me = Thing_new (ScriptEditor);
 		ScriptEditor_init (me.peek(), environment, initialText);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Script window not created.");
 	}
 }
 
-ScriptEditor ScriptEditor_createFromScript (Editor environment, Script script) {
+autoScriptEditor ScriptEditor_createFromScript_canBeNull (Editor environment, Script script) {
 	try {
-		if (theScriptEditors) {
-			for (long ieditor = 1; ieditor <= theScriptEditors -> size; ieditor ++) {
-				ScriptEditor editor = (ScriptEditor) theScriptEditors -> item [ieditor];
+		if (theReferencesToAllOpenScriptEditors) {
+			for (long ieditor = 1; ieditor <= theReferencesToAllOpenScriptEditors -> size; ieditor ++) {
+				ScriptEditor editor = (ScriptEditor) theReferencesToAllOpenScriptEditors -> item [ieditor];
 				if (MelderFile_equal (& script -> file, & editor -> file)) {
 					Editor_raise (editor);
 					Melder_appendError (U"The script ", & script -> file, U" is already open and has been moved to the front.");
 					if (editor -> dirty)
 						Melder_appendError (U"Choose \"Reopen from disk\" if you want to revert to the old version.");
 					Melder_flushError ();
-					return nullptr;   // safe null
+					return autoScriptEditor();   // safe null
 				}
 			}
 		}
@@ -354,7 +354,7 @@ ScriptEditor ScriptEditor_createFromScript (Editor environment, Script script) {
 		autoScriptEditor me = ScriptEditor_createFromText (environment, text.peek());
 		MelderFile_copy (& script -> file, & my file);
 		Thing_setName (me.peek(), Melder_fileToPath (& script -> file));
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Script window not created.");
 	}

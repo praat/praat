@@ -23,7 +23,7 @@
 #include "PointProcess.h"
 
 Thing_define (PointEditor, TimeSoundEditor) {
-	Sound monoSound;
+	autoSound monoSound;
 	GuiObject addPointAtDialog;
 
 	void v_destroy ()

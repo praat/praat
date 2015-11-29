@@ -81,11 +81,6 @@ static void defaultFatal (const char32 *message) {
 	Melder_writeToConsole (U"\n", true);
 }
 
-static int defaultPublish (void *anything) {
-	(void) anything;
-	return 0;   // nothing published
-}
-
 static int defaultRecord (double duration) {
 	(void) duration;
 	return 0;   // nothing recorded
@@ -111,7 +106,6 @@ static struct {
 	void (*search) ();
 	void (*warning) (const char32 *message);
 	void (*fatal) (const char32 *message);
-	int (*publish) (void *anything);
 	int (*record) (double duration);
 	int (*recordFromFile) (MelderFile file);
 	void (*play) ();
@@ -121,7 +115,6 @@ static struct {
 	theMelder = {
 		defaultHelp, defaultSearch,
 		defaultWarning, defaultFatal,
-		defaultPublish,
 		defaultRecord, defaultRecordFromFile, defaultPlay, defaultPlayReverse, defaultPublishPlayed
 	};
 
@@ -1187,10 +1180,6 @@ void MelderGui_create (void *parent) {
 	Melder_setWarningProc (gui_warning);
 }
 
-int Melder_publish (void *anything) {
-	return theMelder. publish (anything);
-}
-
 int Melder_record (double duration) {
 	return theMelder. record (duration);
 }
@@ -1224,9 +1213,6 @@ void Melder_setWarningProc (void (*warning) (const char32 *))
 
 void Melder_setFatalProc (void (*fatal) (const char32 *))
 	{ theMelder. fatal = fatal ? fatal : defaultFatal; }
-
-void Melder_setPublishProc (int (*publish) (void *))
-	{ theMelder. publish = publish ? publish : defaultPublish; }
 
 void Melder_setRecordProc (int (*record) (double))
 	{ theMelder. record = record ? record : defaultRecord; }

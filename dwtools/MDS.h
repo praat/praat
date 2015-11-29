@@ -301,38 +301,38 @@ double Dissimilarity_Configuration_Weight_ispline_stress (Dissimilarity d, Confi
 
 void Distance_Weight_smacofNormalize (Distance d, Weight w);
 
-autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissimilarity me, Configuration conf, Weight weight, Transformator t, double tolerance, long numberOfIterations, int showProgress, double *stress);
+autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissimilarity me, Configuration conf, Weight weight, Transformator t, double tolerance, long numberOfIterations, bool showProgress, double *stress);
 
-autoConfiguration Dissimilarity_Configuration_Weight_Transformator_multiSmacof (Dissimilarity me, Configuration conf, Weight w, Transformator t,	double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress);
+autoConfiguration Dissimilarity_Configuration_Weight_Transformator_multiSmacof (Dissimilarity me, Configuration conf, Weight w, Transformator t,	double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress);
 
 
-autoConfiguration Dissimilarity_Configuration_Weight_absolute_mds (Dissimilarity dis, Configuration cstart, Weight w, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress);
+autoConfiguration Dissimilarity_Configuration_Weight_absolute_mds (Dissimilarity dis, Configuration cstart, Weight w, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress);
 
-autoConfiguration Dissimilarity_Configuration_Weight_ratio_mds (Dissimilarity dis, Configuration cstart, Weight w, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress);
+autoConfiguration Dissimilarity_Configuration_Weight_ratio_mds (Dissimilarity dis, Configuration cstart, Weight w, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress);
 
-autoConfiguration Dissimilarity_Configuration_Weight_interval_mds (Dissimilarity dis, Configuration cstart, Weight w, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress);
+autoConfiguration Dissimilarity_Configuration_Weight_interval_mds (Dissimilarity dis, Configuration cstart, Weight w, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress);
 
-autoConfiguration Dissimilarity_Configuration_Weight_monotone_mds (Dissimilarity dis, Configuration cstart, Weight w, int tiesProcessing, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress);
+autoConfiguration Dissimilarity_Configuration_Weight_monotone_mds (Dissimilarity dis, Configuration cstart, Weight w, int tiesProcessing, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress);
 
 autoConfiguration Dissimilarity_Configuration_Weight_ispline_mds (Dissimilarity me, Configuration cstart, Weight w,
 	long numberOfInteriorKnots, long order, double tolerance,
-	long numberOfIterations, long numberOfRepetitions, int showProgress);
+	long numberOfIterations, long numberOfRepetitions, bool showProgress);
 
 autoConfiguration Dissimilarity_Weight_absolute_mds (Dissimilarity me, Weight w, long numberOfDimensions, double tolerance,
-	long numberOfIterations, long numberOfRepetitions, int showProgress);
+	long numberOfIterations, long numberOfRepetitions, bool showProgress);
 
 autoConfiguration Dissimilarity_Weight_ratio_mds (Dissimilarity dis, Weight w, long numberOfDimensions, double tolerance,
-	long numberOfIterations, long numberOfRepetitions, int showProgress);
+	long numberOfIterations, long numberOfRepetitions, bool showProgress);
 
 
 autoConfiguration Dissimilarity_Weight_interval_mds (Dissimilarity dis, Weight w, long numberOfDimensions, double tolerance,
-	long numberOfIterations, long numberOfRepetitions, int showProgress);
+	long numberOfIterations, long numberOfRepetitions, bool showProgress);
 
 autoConfiguration Dissimilarity_Weight_monotone_mds (Dissimilarity me, Weight w, long numberOfDimensions, int tiesProcessing,
-	double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress);
+	double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress);
 
 autoConfiguration Dissimilarity_Weight_ispline_mds (Dissimilarity me, Weight weight, long numberOfDimensions,
-	long numberOfInteriorKnots, long order, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress);
+	long numberOfInteriorKnots, long order, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress);
 
 void Dissimilarity_Configuration_Weight_drawAbsoluteRegression (Dissimilarity d, Configuration c, Weight w, Graphics g, double xmin,
 	double xmax, double ymin, double ymax, double size_mm, const char32 *mark, int garnish);
@@ -502,29 +502,29 @@ autoScalarProducts Distances_to_ScalarProducts (Distances me, int normalize);
 
 void ScalarProducts_to_Configuration_ytl (ScalarProducts me, int numberOfDimensions, autoConfiguration *out1, autoSalience *out2);
 
-void ScalarProducts_Configuration_Salience_indscal (ScalarProducts sp, Configuration conf, Salience weights, double tolerance, long numberOfIterations, int showProgress, autoConfiguration *out1, autoSalience *out2, double *vaf);
+void ScalarProducts_Configuration_Salience_indscal (ScalarProducts sp, Configuration conf, Salience weights, double tolerance, long numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2, double *vaf);
 
 /************** INDSCAL & ....... ***********************************/
 
 
 void Dissimilarities_indscal (Dissimilarities me, long numberOfDimensions, int processTies, int normalizeScalarProducts, double tolerance,
-	long numberOfIterations, long numberOfRepetitions, int showProgress, autoConfiguration *out1, autoSalience *out2);
+	long numberOfIterations, long numberOfRepetitions, bool showProgress, autoConfiguration *out1, autoSalience *out2);
 
 void Distances_indscal (Distances me, long numberOfDimensions, int normalizeScalarProducts, double tolerance, long numberOfIterations,
-	long numberOfRepetitions, int showProgress,	autoConfiguration *out1, autoSalience *out2);
+	long numberOfRepetitions, bool showProgress, autoConfiguration *out1, autoSalience *out2);
 
 void Dissimilarities_Configuration_indscal (Dissimilarities me, Configuration conf, int processTies, int normalizeScalarProducts,
-	double tolerance, long numberOfIterations, int showProgress, autoConfiguration *out1, autoSalience *out2);
+	double tolerance, long numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2);
 
 void Distances_Configuration_indscal (Distances dists, Configuration conf, int normalizeScalarProducts, double tolerance, long numberOfIterations,
-	int showProgress, autoConfiguration *out1, autoSalience *out2);
+	bool showProgress, autoConfiguration *out1, autoSalience *out2);
 
 void Dissimilarities_Configuration_Salience_indscal (Dissimilarities dissims, Configuration conf, Salience w, int processTies,
-	int normalizeScalarProducts, double tolerance, long numberOfIterations, int showProgress, autoConfiguration *out1, autoSalience *out2, double *vaf);
+	int normalizeScalarProducts, double tolerance, long numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2, double *vaf);
 
 autoDistances MDSVecs_Configuration_Salience_monotoneRegression (MDSVecs vecs, Configuration conf, Salience weights, int processTies);
 
-void Distances_Configuration_Salience_indscal (Distances dists, Configuration conf, Salience weights, int normalizeScalarProducts, double tolerance, long numberOfIterations, int showProgress, autoConfiguration *out1, autoSalience *out2, double *vaf);
+void Distances_Configuration_Salience_indscal (Distances dists, Configuration conf, Salience weights, int normalizeScalarProducts, double tolerance, long numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2, double *vaf);
 
 void Distances_Configuration_Salience_vaf (Distances me, Configuration thee, Salience him, int normalizeScalarProducts, double *vaf);
 
