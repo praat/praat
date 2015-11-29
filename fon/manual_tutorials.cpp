@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20151108)
+MAN_BEGIN (U"What's new?", U"ppgb", 20151129)
 INTRO (U"Latest changes in Praat.")
 /*LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (U"##6.0.06# (29 November 2015)")
+LIST_ITEM (U"• Mac: correct early Info window updates and $$demoShow()$ in El Capitan.")
+LIST_ITEM (U"• Manual updates.")
+LIST_ITEM (U"• Corrected some small memory leaks.")
 NORMAL (U"##6.0.05# (8 November 2015)")
 LIST_ITEM (U"• A manual page that describes @@TextGrid file formats@.")
 LIST_ITEM (U"• Corrected a bug that prevented some KlattGrid tiers from being edited.")

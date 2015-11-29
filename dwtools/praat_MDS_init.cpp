@@ -436,7 +436,7 @@ FORM (Configurations_to_AffineTransform_congruence, U"Configurations: To AffineT
 	POSITIVE (U"Tolerance", U"1e-6")
 	OK
 DO
-	Configuration c1 = 0, c2 = 0;
+	Configuration c1 = nullptr, c2 = nullptr;
 	LOOP {
 		iam (Configuration);
 		(c1 ? c2 : c1) = me;
@@ -514,9 +514,9 @@ END
 FORM (ContingencyTable_to_Configuration_ca, U"ContingencyTable: To Configuration (ca)", U"ContingencyTable: To Configuration (ca)...")
 	NATURAL (U"Number of dimensions", U"2")
 	RADIO (U"Scaling of final configuration", 3)
-	RADIOBUTTON (U"Row points in centre of gravity of column points")
-	RADIOBUTTON (U"Column points in centre of gravity of row points")
-	RADIOBUTTON (U"Row points and column points symmetric")
+		RADIOBUTTON (U"Row points in centre of gravity of column points")
+		RADIOBUTTON (U"Column points in centre of gravity of row points")
+		RADIOBUTTON (U"Row points and column points symmetric")
 	OK
 DO
 	LOOP {
@@ -639,7 +639,7 @@ DO
 	Dissimilarity me = FIRST (Dissimilarity);
 	Configuration c = FIRST (Configuration);
 	int showProgress = 1;
-	praat_new (Dissimilarity_Configuration_Weight_absolute_mds (me, c, 0,
+	praat_new (Dissimilarity_Configuration_Weight_absolute_mds (me, c, nullptr,
 		GET_REAL (U"Tolerance"), GET_INTEGER (U"Maximum number of iterations"),
 		GET_INTEGER (U"Number of repetitions"), showProgress), my name, U"_absolute");
 END
@@ -651,7 +651,7 @@ DO
 	Dissimilarity me = FIRST (Dissimilarity);
 	Configuration c = FIRST (Configuration);
 	int showProgress = 1;
-	praat_new (Dissimilarity_Configuration_Weight_ratio_mds (me, c, 0,
+	praat_new (Dissimilarity_Configuration_Weight_ratio_mds (me, c, nullptr,
 		GET_REAL (U"Tolerance"), GET_INTEGER (U"Maximum number of iterations"),
 		GET_INTEGER (U"Number of repetitions"), showProgress), my name, U"_ratio");
 END
@@ -663,7 +663,7 @@ DO
 	Dissimilarity me = FIRST (Dissimilarity);
 	Configuration c = FIRST (Configuration);
 	int showProgress = 1;
-	praat_new (Dissimilarity_Configuration_Weight_interval_mds (me, c, 0,
+	praat_new (Dissimilarity_Configuration_Weight_interval_mds (me, c, nullptr,
 		GET_REAL (U"Tolerance"), GET_INTEGER (U"Maximum number of iterations"),
 		GET_INTEGER (U"Number of repetitions"), showProgress), my name, U"_interval");
 END
@@ -678,7 +678,7 @@ DO
 	Dissimilarity me = FIRST (Dissimilarity);
 	Configuration c = FIRST (Configuration);
 	int showProgress = 1;
-	praat_new (Dissimilarity_Configuration_Weight_monotone_mds (me, c, 0,
+	praat_new (Dissimilarity_Configuration_Weight_monotone_mds (me, c, nullptr,
 		GET_INTEGER (U"Handling of ties"), GET_REAL (U"Tolerance"), GET_INTEGER (U"Maximum number of iterations"),
 		GET_INTEGER (U"Number of repetitions"), showProgress), my name, U"_monotone");
 END
@@ -693,7 +693,7 @@ DO
 	Dissimilarity me = FIRST (Dissimilarity);
 	Configuration c = FIRST (Configuration);
 	int showProgress = 1;
-	praat_new (Dissimilarity_Configuration_Weight_ispline_mds (me, c, 0,
+	praat_new (Dissimilarity_Configuration_Weight_ispline_mds (me, c, nullptr,
 		GET_INTEGER (U"Number of interior knots"), GET_INTEGER (U"Order of I-spline"),
 		GET_REAL (U"Tolerance"), GET_INTEGER (U"Maximum number of iterations"),
 		GET_INTEGER (U"Number of repetitions"), showProgress), my name, U"_ispline");
@@ -800,7 +800,7 @@ FORM (Dissimilarity_Configuration_absolute_stress,
 DO
 	Dissimilarity me = FIRST (Dissimilarity);
 	Configuration c = FIRST (Configuration);
-	Melder_information (Dissimilarity_Configuration_Weight_absolute_stress (me, c, 0,
+	Melder_information (Dissimilarity_Configuration_Weight_absolute_stress (me, c, nullptr,
 		GET_INTEGER (U"Stress measure")));
 END
 
@@ -811,7 +811,7 @@ FORM (Dissimilarity_Configuration_ratio_stress, U"Dissimilarity & Configuration:
 DO
 	Dissimilarity me = FIRST (Dissimilarity);
 	Configuration c = FIRST (Configuration);
-	Melder_information (Dissimilarity_Configuration_Weight_ratio_stress (me, c, 0,
+	Melder_information (Dissimilarity_Configuration_Weight_ratio_stress (me, c, nullptr,
 		GET_INTEGER (U"Stress measure")));
 END
 
@@ -823,7 +823,7 @@ FORM (Dissimilarity_Configuration_interval_stress,
 DO
 	Dissimilarity me = FIRST (Dissimilarity);
 	Configuration c = FIRST (Configuration);
-	Melder_information (Dissimilarity_Configuration_Weight_interval_stress (me, c, 0,
+	Melder_information (Dissimilarity_Configuration_Weight_interval_stress (me, c, nullptr,
 		GET_INTEGER (U"Stress measure")));
 END
 
@@ -838,7 +838,7 @@ FORM (Dissimilarity_Configuration_monotone_stress,
 DO
 	Dissimilarity me = FIRST (Dissimilarity);
 	Configuration c = FIRST (Configuration);
-	Melder_information (Dissimilarity_Configuration_Weight_monotone_stress (me, c, 0,
+	Melder_information (Dissimilarity_Configuration_Weight_monotone_stress (me, c, nullptr,
 		GET_INTEGER (U"Handling of ties"), GET_INTEGER (U"Stress measure")));
 END
 
@@ -852,7 +852,7 @@ FORM (Dissimilarity_Configuration_ispline_stress,
 DO
 	Dissimilarity me = FIRST (Dissimilarity);
 	Configuration c = FIRST (Configuration);
-	Melder_information (Dissimilarity_Configuration_Weight_ispline_stress (me, c, 0,
+	Melder_information (Dissimilarity_Configuration_Weight_ispline_stress (me, c, nullptr,
 		GET_INTEGER (U"Number of interior knots"), GET_INTEGER (U"Order of I-spline"), GET_INTEGER (U"Stress measure")));
 END
 
@@ -1299,7 +1299,7 @@ END
 
 FORM (Distance_Configuration_indscal, U"Distance & Configuration: To Configuration (indscal)",
       U"Distance & Configuration: To Configuration (indscal)...")
-	BOOLEAN (U"Normalize scalar products", 1)
+	BOOLEAN (U"Normalize scalar products", true)
 	LABEL (U"", U"Minimization parameters")
 	REAL (U"Tolerance", U"1e-5")
 	NATURAL (U"Maximum number of iterations", U"100 (= each repetition)")
@@ -1326,7 +1326,7 @@ DO
 END
 
 FORM (Distance_Configuration_vaf, U"Distance & Configuration: Get VAF", U"Distance & Configuration: Get VAF...")
-	BOOLEAN (U"Normalize scalar products", 1)
+	BOOLEAN (U"Normalize scalar products", true)
 	OK
 DO
 	autoDistances thee = Distances_create ();

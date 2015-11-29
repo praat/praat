@@ -54,8 +54,8 @@ oo_DEFINE_CLASS (HMM, Daata)
 	oo_INT (componentStorage)
 	oo_DOUBLE_MATRIX_FROM (transitionProbs, 0, numberOfStates, 1, numberOfStates + 1) // row 0: initial probabilities
 	oo_DOUBLE_MATRIX (emissionProbs, numberOfStates, numberOfObservationSymbols)
-	oo_OBJECT (Ordered, 1, states)
-	oo_OBJECT (Ordered, 1, observationSymbols)
+	oo_AUTO_OBJECT (Ordered, 1, states)
+	oo_AUTO_OBJECT (Ordered, 1, observationSymbols)
 
 	#if oo_DECLARING
 		void v_info ()

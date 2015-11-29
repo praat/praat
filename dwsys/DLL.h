@@ -24,7 +24,7 @@
 
 Thing_define (DLLNode, Daata) {
 	DLLNode next, prev;
-	Daata data;
+	autoDaata data;
 
 	void v_destroy ()
 		override;

@@ -330,6 +330,17 @@ public:
 	void releaseToUser () {
 		our ptr = nullptr;   // make the pointer non-automatic again
 	}
+	/*
+		Sometimes the ownership is determined by a flag such as _ownItems or _ownData or _ownSound.
+		In that case, the autoThing has be released as a raw Thing pointer,
+		and the ambiguous owner may become responsible for destruction the object.
+		In Praat, this happens with Collection items and with some editors.
+	*/
+	T* releaseToAmbiguousOwner () {
+		T* temp = our ptr;
+		our ptr = nullptr;   // make the pointer non-automatic again
+		return temp;
+	}
 	#if 0
 		operator T* () {
 			return our ptr;

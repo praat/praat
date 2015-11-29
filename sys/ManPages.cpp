@@ -299,18 +299,20 @@ static long lookUp_unsorted (ManPages me, const char32 *title) {
 }
 
 static long lookUp_sorted (ManPages me, const char32 *title) {
-	static ManPage dummy;
+	static autoManPage dummy;
 	ManPage *page;
-	if (! dummy) dummy = Thing_new (ManPage).transfer();
+	if (! dummy) dummy = Thing_new (ManPage);
 	dummy -> title = title;
-	page = (ManPage *) bsearch (& dummy, & my pages -> item [1], my pages -> size, sizeof (ManPage), pageCompare);
+	page = (ManPage *) bsearch (& dummy, & my pages -> item [1], my pages -> size, sizeof (ManPage), pageCompare);   // noexcept
+	dummy -> title = nullptr;   // undangle
 	if (page) return (page - (ManPage *) & my pages -> item [1]) + 1;
 	if (islower (title [0]) || isupper (title [0])) {
 		char32 caseSwitchedTitle [300];
 		Melder_sprint (caseSwitchedTitle,300, title);
 		caseSwitchedTitle [0] = islower (title [0]) ? toupper (caseSwitchedTitle [0]) : tolower (caseSwitchedTitle [0]);
 		dummy -> title = caseSwitchedTitle;
-		page = (ManPage *) bsearch (& dummy, & my pages -> item [1], my pages -> size, sizeof (ManPage), pageCompare);
+		page = (ManPage *) bsearch (& dummy, & my pages -> item [1], my pages -> size, sizeof (ManPage), pageCompare);   // noexcept
+		dummy -> title = nullptr;   // undangle
 		if (page) return (page - (ManPage *) & my pages -> item [1]) + 1;
 	}
 	return 0;

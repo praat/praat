@@ -27,7 +27,6 @@ Thing_implement (PointEditor, TimeSoundEditor, 0);
 /********** DESTRUCTION **********/
 
 void structPointEditor :: v_destroy () {
-	forget (monoSound);
 	PointEditor_Parent :: v_destroy ();
 }
 
@@ -202,9 +201,9 @@ autoPointEditor PointEditor_create (const char32 *title, PointProcess point, Sou
 	try {
 		autoPointEditor me = Thing_new (PointEditor);
 		if (sound) {
-			my monoSound = Sound_convertToMono (sound).transfer();
+			my monoSound = Sound_convertToMono (sound);
 		}
-		TimeSoundEditor_init (me.peek(), title, point, my monoSound, false);
+		TimeSoundEditor_init (me.peek(), title, point, my monoSound.get(), false);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PointProcess window not created.");

@@ -55,7 +55,7 @@ void structCollection :: v_copy (Daata thee_Daata) {
 		if (our _ownItems) {
 			if (! Thing_isa (itempie, classDaata))
 				Melder_throw (U"Cannot copy item of class ", Thing_className (itempie), U".");
-			thy item [i] = Data_copy (static_cast <Daata> (itempie)).transfer();
+			thy item [i] = Data_copy (static_cast <Daata> (itempie)).releaseToAmbiguousOwner();
 		} else {
 			thy item [i] = itempie;   // reference copy: if me doesn't own the items, then thee shouldn't either   // NOTE: the items don't have to be Daata
 		}
@@ -65,15 +65,15 @@ void structCollection :: v_copy (Daata thee_Daata) {
 bool structCollection :: v_equal (Daata thee_Daata) {
 	Collection thee = static_cast <Collection> (thee_Daata);
 	if (! Collection_Parent :: v_equal (thee)) return false;
-	if (size != thy size) return false;
-	for (long i = 1; i <= size; i ++) {
-		if (! Thing_isa (item [i], classDaata))
+	if (our size != thy size) return false;
+	for (long i = 1; i <= our size; i ++) {
+		if (! Thing_isa (our item [i], classDaata))
 			Melder_throw (U"Collection::equal: "
-				U"cannot compare items of class ", Thing_className (item [i]), U".");
+				U"cannot compare items of class ", Thing_className (our item [i]), U".");
 		if (! Thing_isa (thy item [i], classDaata))
 			Melder_throw (U"Collection::equal: "
 				U"cannot compare items of class ", Thing_className (thy item [i]), U".");
-		bool equal = Data_equal (static_cast <Daata> (item [i]), static_cast <Daata> (thy item [i]));
+		bool equal = Data_equal (static_cast <Daata> (our item [i]), static_cast <Daata> (thy item [i]));
 		//Melder_casual (U"classCollection_equal: ", equal,
 		//	U", item ", i,
 		//  U", types ", Thing_className (my item [i]), U" and ", Thing_className (thy item [i]));
@@ -136,7 +136,7 @@ void structCollection :: v_readText (MelderReadText text, int formatVersion) {
 					U" while expecting ", i, U".");
 			if (stringsRead == 3 && ! strequ (nameTag, "name"))
 				Melder_throw (U"Collection::readText: wrong header at object ", i, U".");
-			our item [i] = Thing_newFromClassName (Melder_peek8to32 (klas), nullptr).transfer();
+			our item [i] = Thing_newFromClassName (Melder_peek8to32 (klas), nullptr).releaseToAmbiguousOwner();
 			our size ++;
 			if (! Thing_isa ((Thing) our item [i], classDaata) || ! Data_canReadText ((Daata) our item [i]))
 				Melder_throw (U"Cannot read item of class ", Thing_className ((Thing) our item [i]), U" in collection.");
@@ -155,7 +155,7 @@ void structCollection :: v_readText (MelderReadText text, int formatVersion) {
 		for (int32_t i = 1; i <= l_size; i ++) {
 			autostring32 className = texgetw2 (text);
 			int elementFormatVersion;
-			our item [i] = Thing_newFromClassName (className.peek(), & elementFormatVersion).transfer();
+			our item [i] = Thing_newFromClassName (className.peek(), & elementFormatVersion).releaseToAmbiguousOwner();
 			our size ++;
 			if (! Thing_isa ((Thing) our item [i], classDaata) || ! Data_canReadText ((Daata) our item [i]))
 				Melder_throw (U"Cannot read item of class ", Thing_className ((Thing) our item [i]), U" in collection.");
@@ -190,7 +190,7 @@ void structCollection :: v_readBinary (FILE *f, int formatVersion) {
 			char klas [200], name [2000];
 			if (fscanf (f, "%s%s", klas, name) < 2)   // BUG
 				Melder_throw (U"Cannot read class and name.");
-			our item [i] = Thing_newFromClassName (Melder_peek8to32 (klas), nullptr).transfer();
+			our item [i] = Thing_newFromClassName (Melder_peek8to32 (klas), nullptr).releaseToAmbiguousOwner();
 			our size ++;
 			if (! Thing_isa (our item [i], classDaata))
 				Melder_throw (U"Cannot read item of class ", Thing_className ((Thing) our item [i]), U".");
@@ -210,7 +210,7 @@ void structCollection :: v_readBinary (FILE *f, int formatVersion) {
 			if (Melder_debug == 44)
 				Melder_casual (U"structCollection :: v_readBinary: Reading object of type ", Melder_peek8to32 (klas.peek()));
 			int elementFormatVersion;
-			our item [i] = Thing_newFromClassName (Melder_peek8to32 (klas.peek()), & elementFormatVersion).transfer();
+			our item [i] = Thing_newFromClassName (Melder_peek8to32 (klas.peek()), & elementFormatVersion).releaseToAmbiguousOwner();
 			our size ++;
 			if (! Thing_isa (our item [i], classDaata) || ! Data_canReadBinary ((Daata) our item [i]))
 				Melder_throw (U"Objects of class ", Thing_className ((Thing) our item [i]), U" cannot be read.");
@@ -278,7 +278,7 @@ void _Collection_insertItem_move (Collection me, autoThing data, long pos) {
 	}
 	my size ++;
 	for (long i = my size; i > pos; i --) my item [i] = my item [i - 1];
-	my item [pos] = data.transfer();
+	my item [pos] = data.releaseToAmbiguousOwner();
 }
 
 void _Collection_insertItem_ref (Collection me, Thing data, long pos) {

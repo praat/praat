@@ -116,8 +116,6 @@ Thing_define (SoundRecorder, Editor) {
 
 	void v_destroy ()
 		override;
-	void v_goAway ()
-		override;
 	bool v_editable ()
 		override { return false; }
 	bool v_scriptable ()

@@ -39,7 +39,7 @@ long KNN_prune_prune
     long k      // k(!)
 )
 {
-	autoCategories uniqueCategories = Categories_selectUniqueItems (my output, true);
+	autoCategories uniqueCategories = Categories_selectUniqueItems (my output.get(), true);
 	if (Categories_getSize (uniqueCategories.peek()) == my nInstances)
 		return 0;
 	long removals = 0;
@@ -48,7 +48,7 @@ long KNN_prune_prune
 	if (my nInstances <= 1)
 		return 0;
 	for (long y = 1; y <= my nInstances; y ++) {
-		if (KNN_prune_noisy (my input, my output, y, k)) {
+		if (KNN_prune_noisy (my input.get(), my output.get(), y, k)) {
 			if (n == 1 || NUMrandomUniform (0, 1) <= n) {
 				KNN_removeInstance (me, y);
 				++ removals;
@@ -56,13 +56,13 @@ long KNN_prune_prune
 		}
 	}
 	for (long y = 1; y <= my nInstances; ++ y) {
-		if (KNN_prune_superfluous (my input, my output, y, k, 0) && ! KNN_prune_critical (my input, my output, y, k))
+		if (KNN_prune_superfluous (my input.get(), my output.get(), y, k, 0) && ! KNN_prune_critical (my input.get(), my output.get(), y, k))
 			candidates [ncandidates ++] = y;
 	}
-	KNN_prune_sort (my input, my output, k, candidates.peek(), ncandidates);
+	KNN_prune_sort (my input.get(), my output.get(), k, candidates.peek(), ncandidates);
 	for (long y = 0; y < ncandidates; ++ y) {
-		if (KNN_prune_superfluous (my input, my output, candidates [y], k, 0) && ! KNN_prune_critical (my input, my output, candidates [y], k)) {
-			if (r == 1 || NUMrandomUniform (0, 1) <= r) {
+		if (KNN_prune_superfluous (my input.get(), my output.get(), candidates [y], k, 0) && ! KNN_prune_critical (my input.get(), my output.get(), candidates [y], k)) {
+			if (r == 1.0 || NUMrandomUniform (0.0, 1.0) <= r) {
 				KNN_removeInstance (me, candidates[y]);
 				for (long i = y + 1; i < ncandidates; ++ i) {
 					if(candidates[i] > candidates[y])

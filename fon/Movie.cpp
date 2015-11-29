@@ -53,10 +53,10 @@ void structMovie :: v_info ()
 	MelderInfo_writeLine (U"   First frame centred at: ", x1, U" seconds");
 }
 
-void Movie_init (Movie me, Sound sound, const char32 *folderName, Strings fileNames)
+void Movie_init (Movie me, autoSound sound, const char32 *folderName, Strings fileNames)
 {
 	Sampled_init (me, sound -> xmin, sound -> xmax, fileNames ? fileNames -> numberOfStrings : 0, 0.04, 0.0);
-	my d_sound = sound;
+	my d_sound = sound.move();
 	my d_folderName = Melder_dup (folderName);
 	my d_fileNames = fileNames;
 }
@@ -114,7 +114,7 @@ void Movie_paintOneImage (Movie me, Graphics graphics, long frameNumber, double 
 
 void Movie_play (Movie me, Graphics /* g */, double tmin, double tmax, Sound_PlayCallback callback, Thing boss)
 {
-	Sound_playPart (my d_sound, tmin, tmax, callback, boss);
+	Sound_playPart (my d_sound.get(), tmin, tmax, callback, boss);
 }
 
 /* End of file Movie.cpp */

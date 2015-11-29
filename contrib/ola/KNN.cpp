@@ -104,14 +104,8 @@ int KNN_learn
         {
         case kOla_REPLACE:          // in REPLACE mode simply
                                     // dispose of the current
-            if (my nInstances > 0)  // instance base and store
-            {                       // the new one.
-                forget (my input);
-                forget (my output);
-            }
-
-            my input = Data_copy (p).transfer();   // LEAK
-            my output = Data_copy (c).transfer();
+            my input = Data_copy (p);   // LEAK
+            my output = Data_copy (c);
             my nInstances = c->size;
 
             break;
@@ -130,18 +124,16 @@ int KNN_learn
 				/*
 				 * Create without change.
 				 */
-				autoMatrix matrix = Matrix_appendRows (my input, p, classPattern);
-                autoPattern tinput = matrix. static_cast_move <structPattern>();
-				autoCollection collection = Collections_merge (my output, c);
+				autoMatrix matrix = Matrix_appendRows (my input.get(), p, classPattern);
+                autoPattern tinput = matrix.static_cast_move <structPattern>();
+				autoCollection collection = Collections_merge (my output.get(), c);
                 autoCategories toutput = collection. static_cast_move <structCategories>();
 
 				/*
 				 * Change without error.
 				 */
-                forget (my input);
-                forget (my output);
-                my input = tinput.transfer();
-                my output = toutput.transfer();
+                my input = tinput.move();
+                my output = toutput.move();
                 my nInstances += p->ny;
             }
             else                                    // fail
@@ -313,7 +305,7 @@ void * KNN_classifyToCategoriesAux
         ncollected = KNN_kNeighbours
         (
             ((KNN_input_ToCategories_t *) input)->ps, 
-            ((KNN_input_ToCategories_t *) input)->me->input, 
+            ((KNN_input_ToCategories_t *) input)->me->input.get(),
             ((KNN_input_ToCategories_t *) input)->fws, y, 
             ((KNN_input_ToCategories_t *) input)->k, indices, distances
         );
@@ -324,7 +316,7 @@ void * KNN_classifyToCategoriesAux
 
         ncategories = KNN_kIndicesToFrequenciesAndDistances
         (
-            ((KNN_input_ToCategories_t *) input)->me->output, 
+            ((KNN_input_ToCategories_t *) input)->me->output.get(),
             ((KNN_input_ToCategories_t *) input)->k, 
             indices, distances, freqs, freqindices
         );
@@ -395,7 +387,7 @@ TableOfReal KNN_classifyToTableOfReal
 {
     int nthreads = KNN_getNumberOfCPUs();
     long chunksize =  ps->ny / nthreads;
-    autoCategories uniqueCategories = Categories_selectUniqueItems (my output, true);
+    autoCategories uniqueCategories = Categories_selectUniqueItems (my output.get(), true);
     long ncategories = Categories_getSize (uniqueCategories.get());
    
     Melder_assert (nthreads > 0);
@@ -493,7 +485,7 @@ void * KNN_classifyToTableOfRealAux
     for (long y = ((KNN_input_ToTableOfReal_t *) input)->istart; y <= ((KNN_input_ToTableOfReal_t *) input)->istop; ++y)
     {
         KNN_kNeighbours(((KNN_input_ToTableOfReal_t *) input)->ps, 
-                        ((KNN_input_ToTableOfReal_t *) input)->me->input, 
+                        ((KNN_input_ToTableOfReal_t *) input)->me->input.get(),
                         ((KNN_input_ToTableOfReal_t *) input)->fws, y, 
                         ((KNN_input_ToTableOfReal_t *) input)->k, indices.peek(), distances.peek());
 
@@ -605,13 +597,13 @@ Categories KNN_classifyFold
         // Localizing the k nearest neighbours //
         /////////////////////////////////////////
 
-        ncollected = KNN_kNeighboursSkipRange (ps, my input, fws, y, k, indices.peek(), distances.peek(), begin, end);
+        ncollected = KNN_kNeighboursSkipRange (ps, my input.get(), fws, y, k, indices.peek(), distances.peek(), begin, end);
 
         /////////////////////////////////////////////////
         // Computing frequencies and average distances //
         /////////////////////////////////////////////////
 
-        ncategories = KNN_kIndicesToFrequenciesAndDistances (my output, k, indices.peek(), distances.peek(), freqs.peek(), freqindices.peek());
+        ncategories = KNN_kIndicesToFrequenciesAndDistances (my output.get(), k, indices.peek(), distances.peek(), freqs.peek(), freqindices.peek());
 
         ////////////////////////
         // Distance weighting //
@@ -688,7 +680,7 @@ double KNN_evaluate
 
     for (long begin = 1; begin <= my nInstances; begin += adder)
     {
-        autoCategories c = KNN_classifyFold (me, my input, fws, k, dist, begin, OlaMIN (begin + adder - 1, my nInstances));
+        autoCategories c = KNN_classifyFold (me, my input.get(), fws, k, dist, begin, OlaMIN (begin + adder - 1, my nInstances));
         for (long y = 1; y <= c -> size; y ++)
             if (FeatureWeights_areFriends ((SimpleString) c -> item [y], (SimpleString) my output -> item [begin + y - 1])) 
                 correct += 1.0;
@@ -1470,8 +1462,8 @@ void KNN_removeInstance
     if (y == 1 && my nInstances == 1)
     {
         my nInstances = 0;
-        forget(my input);
-        forget(my output);
+        my input.reset();
+        my output.reset();
         return;
     }
 
@@ -1492,9 +1484,8 @@ void KNN_removeInstance
                 ++yt;
             }
 
-        forget(my input);
-        my input = newPattern.transfer();
-        Collection_removeItem(my output, y);
+        my input = newPattern.move();
+        Collection_removeItem (my output.get(), y);
         my nInstances--;
     }
 }
@@ -1532,11 +1523,9 @@ void KNN_shuffleInstances
 		++y;
 	}
 
-	forget (my input);
-	forget (my output);
 	my nInstances = new_output -> size;
-	my input = new_input.transfer();
-	my output = new_output.transfer();
+	my input = new_input.move();
+	my output = new_output.move();
 }
 
 
@@ -1571,8 +1560,8 @@ autoPermutation KNN_SA_ToPermutation
     gsl_rng * r;
     const gsl_rng_type * T;
 
-    KNN_SA_t * istruct = KNN_SA_t_create(my input); 
-    autoPermutation result = Permutation_create(my nInstances);
+    KNN_SA_t * istruct = KNN_SA_t_create (my input.get());
+    autoPermutation result = Permutation_create (my nInstances);
 
     gsl_siman_params_t params = { (int) tries, (int) iterations, step_size, boltzmann_c, temp_start, damping_f, temp_stop};
 

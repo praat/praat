@@ -41,7 +41,7 @@ void Configuration_randomize (Configuration me);
 	new x[i][j] = randomUniform (-1,1)
 */
 
-void Configuration_normalize (Configuration me, double variance, int choice);
+void Configuration_normalize (Configuration me, double variance, bool choice);
 /*
 	1. centre columns
 	2.

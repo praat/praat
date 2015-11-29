@@ -69,7 +69,7 @@ autoVocalTractPoint VocalTract_to_VocalTractPoint (VocalTract me, double time) {
 	try {
 		autoVocalTractPoint thee = Thing_new (VocalTractPoint);
 		thy number = time;
-		thy d_vocalTract = Data_copy (me).transfer();
+		thy d_vocalTract = Data_copy (me);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to VocalTractPoint.");

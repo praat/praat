@@ -236,7 +236,6 @@ void structEditor :: v_destroy () {
 			}
 		#endif
 	}
-	forget (our previousData);
 	if (our d_ownData) forget (our data);
 	Melder_free (our callbackSocket);
 	Editor_Parent :: v_destroy ();
@@ -260,13 +259,12 @@ void structEditor :: v_nameChanged () {
 
 void structEditor :: v_saveData () {
 	if (! our data) return;
-	forget (our previousData);
-	our previousData = Data_copy (our data).transfer();
+	our previousData = Data_copy (our data);
 }
 
 void structEditor :: v_restoreData () {
 	if (our data && our previousData)
-		Thing_swap (our data, our previousData);
+		Thing_swap (our data, our previousData.get());
 }
 
 static void menu_cb_sendBackToCallingProgram (Editor me, EDITOR_ARGS_DIRECT) {
@@ -312,7 +310,8 @@ static void menu_cb_searchManual (Editor /* me */, EDITOR_ARGS_DIRECT) {
 }
 
 static void menu_cb_newScript (Editor me, EDITOR_ARGS_DIRECT) {
-	(void) ScriptEditor_createFromText (me, nullptr);
+	autoScriptEditor scriptEditor = ScriptEditor_createFromText (me, nullptr);
+	scriptEditor.releaseToUser();
 }
 
 static void menu_cb_openScript (Editor me, EDITOR_ARGS_DIRECT) {

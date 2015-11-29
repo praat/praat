@@ -117,8 +117,6 @@ void structInterpreter :: v_destroy () {
 		}
 		delete (our variablesMap);
 	}
-	#else
-	forget (our variables);
 	#endif
 	Interpreter_Parent :: v_destroy ();
 }
@@ -652,7 +650,7 @@ static void Interpreter_addNumericVariable (Interpreter me, const char32 *key, d
 	#else
 	autoInterpreterVariable variable = InterpreterVariable_create (key);
 	variable -> numericValue = value;
-	Collection_addItem_move (my variables, variable.move());
+	Collection_addItem_move (my variables.get(), variable.move());
 	#endif
 }
 
@@ -664,7 +662,7 @@ static void Interpreter_addStringVariable (Interpreter me, const char32 *key, co
 	#else
 	autoInterpreterVariable variable = InterpreterVariable_create (key);
 	variable -> stringValue = Melder_dup (value);
-	Collection_addItem_move (my variables, variable.move());
+	Collection_addItem_move (my variables.get(), variable.move());
 	#endif
 }
 
@@ -678,7 +676,7 @@ InterpreterVariable Interpreter_hasVariable (Interpreter me, const char32 *key) 
 		return nullptr;
 	}
 	#else
-	long variableNumber = SortedSetOfString_lookUp (my variables,
+	long variableNumber = SortedSetOfString_lookUp (my variables.get(),
 		key [0] == U'.' ? Melder_cat (my procedureNames [my callDepth], key) : key);
 	return variableNumber ? (InterpreterVariable) my variables -> item [variableNumber] : nullptr;
 	#endif
@@ -700,14 +698,14 @@ InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const char32 *ke
 	(*my variablesMap) [variableNameIncludingProcedureName] = variable;
 	return variable;
 	#else
-	long variableNumber = SortedSetOfString_lookUp (my variables, variableNameIncludingProcedureName);
+	long variableNumber = SortedSetOfString_lookUp (my variables.get(), variableNameIncludingProcedureName);
 	if (variableNumber) return (InterpreterVariable) my variables -> item [variableNumber];   // already exists
 	/*
 	 * The variable doesn't yet exist: create a new one.
 	 */
 	autoInterpreterVariable variable = InterpreterVariable_create (variableNameIncludingProcedureName);
 	InterpreterVariable variable_ref = variable.peek();
-	Collection_addItem_move (my variables, variable.move());
+	Collection_addItem_move (my variables.get(), variable.move());
 	return variable_ref;
 	#endif
 }
@@ -844,7 +842,6 @@ void Interpreter_run (Interpreter me, char32 *text) {
 		}
 		my variablesMap -> clear ();
 		#else
-		forget (my variables);
 		my variables = SortedSetOfString_create ();
 		#endif
 		for (ipar = 1; ipar <= my numberOfParameters; ipar ++) {

@@ -256,10 +256,6 @@ void structSoundRecorder :: v_destroy () {
 	SoundRecorder_Parent :: v_destroy ();
 }
 
-void structSoundRecorder :: v_goAway () {
-	Editor_sendPleaseReset (this);
-}
-
 static void showMaximum (SoundRecorder me, int channel, double maximum) {
 	maximum /= 32768.0;
 	Graphics_setWindow (my graphics,
@@ -633,7 +629,7 @@ static void publish (SoundRecorder me) {
 
 static void gui_button_cb_cancel (SoundRecorder me, GuiButtonEvent /* event */) {
 	stopRecording (me);
-	Editor_sendPleaseReset (me);
+	forget (me);
 }
 
 static void gui_button_cb_apply (SoundRecorder me, GuiButtonEvent /* event */) {
@@ -644,7 +640,7 @@ static void gui_button_cb_apply (SoundRecorder me, GuiButtonEvent /* event */) {
 static void gui_button_cb_ok (SoundRecorder me, GuiButtonEvent /* event */) {
 	stopRecording (me);
 	publish (me);
-	Editor_sendPleaseReset (me);
+	forget (me);
 }
 
 static void initialize (SoundRecorder me) {

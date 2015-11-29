@@ -240,7 +240,11 @@ void structGraphicsScreen :: v_flushWs () {
 		if (d_drawingArea) {
 			GuiShell shell = d_drawingArea -> d_shell;
 			Melder_assert (shell);
-        	[shell -> d_cocoaWindow   flushWindow];
+			#if 1
+				GuiShell_drain (shell);
+			#else
+				[shell -> d_cocoaWindow   flushWindow];
+			#endif
 		}
 	#elif win
 		/*GdiFlush ();*/
@@ -612,7 +616,7 @@ Graphics Graphics_create_xmdrawingarea (GuiDrawingArea w) {
         Graphics_setWsViewport (me.get(), 0.0, bounds.size.width, 0, bounds.size.height);
 	#endif
 	#if mac && useCarbon
-		XtAddCallback (my d_drawingArea -> d_widget, XmNmoveCallback, cb_move, (XtPointer) me);
+		XtAddCallback (my d_drawingArea -> d_widget, XmNmoveCallback, cb_move, (XtPointer) me.get());
 	#endif
 	return me.transfer();
 }

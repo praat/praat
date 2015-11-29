@@ -322,6 +322,10 @@ Behaviour:
 
 extern structMelderDir Data_directoryBeingRead;
 
+int Data_publish (autoDaata me);
+
+void Data_setPublishProc (int (*publish) (autoDaata));
+
 /* The values of 'type' in struct descriptions. */
 
 #define bytewa  1

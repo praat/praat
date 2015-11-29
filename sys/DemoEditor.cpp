@@ -24,14 +24,14 @@
 
 Thing_implement (DemoEditor, Editor, 0);
 
-static DemoEditor theDemoEditor;
+static DemoEditor theReferenceToTheOnlyDemoEditor;
 
 /***** DemoEditor methods *****/
 
 void structDemoEditor :: v_destroy () {
 	Melder_free (praatPicture);
 	forget (graphics);
-	theDemoEditor = nullptr;
+	theReferenceToTheOnlyDemoEditor = nullptr;
 	DemoEditor_Parent :: v_destroy ();
 }
 
@@ -124,11 +124,11 @@ void DemoEditor_init (DemoEditor me) {
 	Graphics_updateWs (my graphics);
 }
 
-DemoEditor DemoEditor_create () {
+autoDemoEditor DemoEditor_create () {
 	try {
 		autoDemoEditor me = Thing_new (DemoEditor);
 		DemoEditor_init (me.peek());
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Demo window not created.");
 	}
@@ -141,13 +141,13 @@ void Demo_open () {
 		 */
 		//Melder_batch = false;
 	}
-	if (theDemoEditor == nullptr) {
-		theDemoEditor = DemoEditor_create ();
-		Melder_assert (theDemoEditor);
-		//GuiObject_show (theDemoEditor -> d_windowForm);
-		theDemoEditor -> praatPicture = Melder_calloc_f (structPraatPicture, 1);
-		theCurrentPraatPicture = (PraatPicture) theDemoEditor -> praatPicture;
-		theCurrentPraatPicture -> graphics = theDemoEditor -> graphics;
+	if (! theReferenceToTheOnlyDemoEditor) {
+		autoDemoEditor editor = DemoEditor_create ();
+		Melder_assert (editor);
+		//GuiObject_show (editor -> d_windowForm);
+		editor -> praatPicture = Melder_calloc_f (structPraatPicture, 1);
+		theCurrentPraatPicture = (PraatPicture) editor -> praatPicture;
+		theCurrentPraatPicture -> graphics = editor -> graphics;
 		theCurrentPraatPicture -> font = kGraphics_font_HELVETICA;
 		theCurrentPraatPicture -> fontSize = 10;
 		theCurrentPraatPicture -> lineType = Graphics_DRAWN;
@@ -159,11 +159,13 @@ void Demo_open () {
 		theCurrentPraatPicture -> x2NDC = 100;
 		theCurrentPraatPicture -> y1NDC = 0;
 		theCurrentPraatPicture -> y2NDC = 100;
+		theReferenceToTheOnlyDemoEditor = editor.get();
+		editor.releaseToUser();
 	}
-	if (theDemoEditor -> waitingForInput)
+	if (theReferenceToTheOnlyDemoEditor -> waitingForInput)
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
-	theCurrentPraatPicture = (PraatPicture) theDemoEditor -> praatPicture;
+	theCurrentPraatPicture = (PraatPicture) theReferenceToTheOnlyDemoEditor -> praatPicture;
 }
 
 void Demo_close () {
@@ -172,28 +174,28 @@ void Demo_close () {
 
 int Demo_windowTitle (const char32 *title) {
 	autoDemoOpen demo;
-	Thing_setName (theDemoEditor, title);
+	Thing_setName (theReferenceToTheOnlyDemoEditor, title);
 	return 1;
 }
 
 int Demo_show () {
-	if (! theDemoEditor) return 0;
+	if (! theReferenceToTheOnlyDemoEditor) return 0;
 	autoDemoOpen demo;
-	GuiThing_show (theDemoEditor -> d_windowForm);
-	GuiShell_drain (theDemoEditor -> d_windowForm);
+	GuiThing_show (theReferenceToTheOnlyDemoEditor -> d_windowForm);
+	GuiShell_drain (theReferenceToTheOnlyDemoEditor -> d_windowForm);
 	return 1;
 }
 
 void Demo_waitForInput (Interpreter interpreter) {
-	if (! theDemoEditor) return;
-	if (theDemoEditor -> waitingForInput) {
+	if (! theReferenceToTheOnlyDemoEditor) return;
+	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
 	}
-	//GuiObject_show (theDemoEditor -> d_windowForm);
-	theDemoEditor -> clicked = false;
-	theDemoEditor -> keyPressed = false;
-	theDemoEditor -> waitingForInput = true;
+	//GuiObject_show (theReferenceToTheOnlyDemoEditor -> d_windowForm);
+	theReferenceToTheOnlyDemoEditor -> clicked = false;
+	theReferenceToTheOnlyDemoEditor -> keyPressed = false;
+	theReferenceToTheOnlyDemoEditor -> waitingForInput = true;
 	{// scope
 		autoMelderSaveDefaultDir saveDir;
 		bool wasBackgrounding = Melder_backgrounding;
@@ -202,153 +204,161 @@ void Demo_waitForInput (Interpreter interpreter) {
 			#if gtk
 				do {
 					gtk_main_iteration ();
-				} while (! theDemoEditor -> clicked && ! theDemoEditor -> keyPressed && ! theDemoEditor -> userWantsToClose);
+				} while (! theReferenceToTheOnlyDemoEditor -> clicked &&
+				         ! theReferenceToTheOnlyDemoEditor -> keyPressed &&
+						 ! theReferenceToTheOnlyDemoEditor -> userWantsToClose);
 			#elif cocoa
 				do {
 					NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-					[theDemoEditor -> d_windowForm -> d_cocoaWindow   flushWindow];
+					[theReferenceToTheOnlyDemoEditor -> d_windowForm -> d_cocoaWindow   flushWindow];
 					NSEvent *nsEvent = [NSApp
 						nextEventMatchingMask: NSAnyEventMask
 						untilDate: [NSDate distantFuture]   // wait
 						inMode: NSDefaultRunLoopMode
 						dequeue: YES
 					];
-					Melder_assert (nsEvent != nullptr);
+					Melder_assert (nsEvent);
 					[NSApp  sendEvent: nsEvent];
 					[NSApp  updateWindows];   // called automatically?
 					[pool release];
-				} while (! theDemoEditor -> clicked && ! theDemoEditor -> keyPressed && ! theDemoEditor -> userWantsToClose);
+				} while (! theReferenceToTheOnlyDemoEditor -> clicked &&
+				         ! theReferenceToTheOnlyDemoEditor -> keyPressed &&
+						 ! theReferenceToTheOnlyDemoEditor -> userWantsToClose);
 			#elif defined (_WIN32)
 				do {
 					XEvent event;
 					GuiNextEvent (& event);
 					XtDispatchEvent (& event);
-				} while (! theDemoEditor -> clicked && ! theDemoEditor -> keyPressed && ! theDemoEditor -> userWantsToClose);
+				} while (! theReferenceToTheOnlyDemoEditor -> clicked &&
+				         ! theReferenceToTheOnlyDemoEditor -> keyPressed &&
+						 ! theReferenceToTheOnlyDemoEditor -> userWantsToClose);
 			#elif defined (macintosh)
 				do {
 					XEvent event;
 					GuiNextEvent (& event);
 					XtDispatchEvent (& event);
-				} while (! theDemoEditor -> clicked && ! theDemoEditor -> keyPressed && ! theDemoEditor -> userWantsToClose);
+				} while (! theReferenceToTheOnlyDemoEditor -> clicked &&
+				         ! theReferenceToTheOnlyDemoEditor -> keyPressed &&
+						 ! theReferenceToTheOnlyDemoEditor -> userWantsToClose);
 			#endif
 		} catch (MelderError) {
 			Melder_flushError (U"An error made it to the outer level in the Demo window; should not occur! Please write to paul.boersma@uva.nl");
 		}
 		if (wasBackgrounding) praat_background ();
 	}
-	theDemoEditor -> waitingForInput = false;
-	if (theDemoEditor -> userWantsToClose) {
+	theReferenceToTheOnlyDemoEditor -> waitingForInput = false;
+	if (theReferenceToTheOnlyDemoEditor -> userWantsToClose) {
 		Interpreter_stop (interpreter);
-		forget (theDemoEditor);
+		forget (theReferenceToTheOnlyDemoEditor);
 		Melder_throw (U"You interrupted the script.");
 	}
 }
 
 bool Demo_clicked () {
-	if (! theDemoEditor) return false;
-	if (theDemoEditor -> waitingForInput) {
+	if (! theReferenceToTheOnlyDemoEditor) return false;
+	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
 	}
-	return theDemoEditor -> clicked;
+	return theReferenceToTheOnlyDemoEditor -> clicked;
 }
 
 double Demo_x () {
-	if (! theDemoEditor) return NUMundefined;
-	if (theDemoEditor -> waitingForInput) {
+	if (! theReferenceToTheOnlyDemoEditor) return NUMundefined;
+	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
 	}
-	trace (U"NDC before: ", theDemoEditor -> graphics -> d_x1NDC, U" ", theDemoEditor -> graphics -> d_x2NDC);
-	Graphics_setInner (theDemoEditor -> graphics);
-	trace (U"NDC after: ", theDemoEditor -> graphics -> d_x1NDC, U" ", theDemoEditor -> graphics -> d_x2NDC);
+	trace (U"NDC before: ", theReferenceToTheOnlyDemoEditor -> graphics -> d_x1NDC, U" ", theReferenceToTheOnlyDemoEditor -> graphics -> d_x2NDC);
+	Graphics_setInner (theReferenceToTheOnlyDemoEditor -> graphics);
+	trace (U"NDC after: ", theReferenceToTheOnlyDemoEditor -> graphics -> d_x1NDC, U" ", theReferenceToTheOnlyDemoEditor -> graphics -> d_x2NDC);
 	double xWC, yWC;
-	trace (U"DC: x ", theDemoEditor -> x, U", y ", theDemoEditor -> y);
-	Graphics_DCtoWC (theDemoEditor -> graphics, theDemoEditor -> x, theDemoEditor -> y, & xWC, & yWC);
+	trace (U"DC: x ", theReferenceToTheOnlyDemoEditor -> x, U", y ", theReferenceToTheOnlyDemoEditor -> y);
+	Graphics_DCtoWC (theReferenceToTheOnlyDemoEditor -> graphics, theReferenceToTheOnlyDemoEditor -> x, theReferenceToTheOnlyDemoEditor -> y, & xWC, & yWC);
 	trace (U"WC: x ", xWC, U", y ", yWC);
-	Graphics_unsetInner (theDemoEditor -> graphics);
+	Graphics_unsetInner (theReferenceToTheOnlyDemoEditor -> graphics);
 	return xWC;
 }
 
 double Demo_y () {
-	if (! theDemoEditor) return NUMundefined;
-	if (theDemoEditor -> waitingForInput) {
+	if (! theReferenceToTheOnlyDemoEditor) return NUMundefined;
+	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
 	}
-	Graphics_setInner (theDemoEditor -> graphics);
+	Graphics_setInner (theReferenceToTheOnlyDemoEditor -> graphics);
 	double xWC, yWC;
-	Graphics_DCtoWC (theDemoEditor -> graphics, theDemoEditor -> x, theDemoEditor -> y, & xWC, & yWC);
-	Graphics_unsetInner (theDemoEditor -> graphics);
+	Graphics_DCtoWC (theReferenceToTheOnlyDemoEditor -> graphics, theReferenceToTheOnlyDemoEditor -> x, theReferenceToTheOnlyDemoEditor -> y, & xWC, & yWC);
+	Graphics_unsetInner (theReferenceToTheOnlyDemoEditor -> graphics);
 	return yWC;
 }
 
 bool Demo_keyPressed () {
-	if (! theDemoEditor) return false;
-	if (theDemoEditor -> waitingForInput) {
+	if (! theReferenceToTheOnlyDemoEditor) return false;
+	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
 	}
-	return theDemoEditor -> keyPressed;
+	return theReferenceToTheOnlyDemoEditor -> keyPressed;
 }
 
 char32 Demo_key () {
-	if (! theDemoEditor) return 0;
-	if (theDemoEditor -> waitingForInput) {
+	if (! theReferenceToTheOnlyDemoEditor) return U'\0';
+	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
 	}
-	return theDemoEditor -> key;
+	return theReferenceToTheOnlyDemoEditor -> key;
 }
 
 bool Demo_shiftKeyPressed () {
-	if (! theDemoEditor) return false;
-	if (theDemoEditor -> waitingForInput) {
+	if (! theReferenceToTheOnlyDemoEditor) return false;
+	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
 	}
-	return theDemoEditor -> shiftKeyPressed;
+	return theReferenceToTheOnlyDemoEditor -> shiftKeyPressed;
 }
 
 bool Demo_commandKeyPressed () {
-	if (! theDemoEditor) return false;
-	if (theDemoEditor -> waitingForInput) {
+	if (! theReferenceToTheOnlyDemoEditor) return false;
+	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
 	}
-	return theDemoEditor -> commandKeyPressed;
+	return theReferenceToTheOnlyDemoEditor -> commandKeyPressed;
 }
 
 bool Demo_optionKeyPressed () {
-	if (! theDemoEditor) return false;
-	if (theDemoEditor -> waitingForInput) {
+	if (! theReferenceToTheOnlyDemoEditor) return false;
+	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
 	}
-	return theDemoEditor -> optionKeyPressed;
+	return theReferenceToTheOnlyDemoEditor -> optionKeyPressed;
 }
 
 bool Demo_extraControlKeyPressed () {
-	if (! theDemoEditor) return false;
-	if (theDemoEditor -> waitingForInput) {
+	if (! theReferenceToTheOnlyDemoEditor) return false;
+	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
 	}
-	return theDemoEditor -> extraControlKeyPressed;
+	return theReferenceToTheOnlyDemoEditor -> extraControlKeyPressed;
 }
 
 bool Demo_input (const char32 *keys) {
-	if (! theDemoEditor) return false;
-	if (theDemoEditor -> waitingForInput) {
+	if (! theReferenceToTheOnlyDemoEditor) return false;
+	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
 	}
-	return str32chr (keys, theDemoEditor -> key) != nullptr;
+	return str32chr (keys, theReferenceToTheOnlyDemoEditor -> key) != nullptr;
 }
 
 bool Demo_clickedIn (double left, double right, double bottom, double top) {
-	if (! theDemoEditor || ! theDemoEditor -> clicked) return false;
-	if (theDemoEditor -> waitingForInput) {
+	if (! theReferenceToTheOnlyDemoEditor || ! theReferenceToTheOnlyDemoEditor -> clicked) return false;
+	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
 	}
