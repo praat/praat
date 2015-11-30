@@ -556,7 +556,7 @@ static void menu_cb_extractVisibleSpectrogram (TimeSoundAnalysisEditor me, EDITO
 		if (! my d_spectrogram) Melder_throw (theMessage_Cannot_compute_spectrogram);
 	}
 	autoSpectrogram publish = Data_copy (my d_spectrogram.get());
-	Editor_broadcastPublication (me, publish.transfer());
+	Editor_broadcastPublication (me, publish.move());
 }
 
 static void menu_cb_viewSpectralSlice (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
@@ -577,7 +577,7 @@ static void menu_cb_viewSpectralSlice (TimeSoundAnalysisEditor me, EDITOR_ARGS_D
 	autoSpectrum publish = Sound_to_Spectrum (sound.peek(), true);
 	Thing_setName (publish.peek(), Melder_cat (( my data == nullptr ? U"untitled" : ((Daata) my data) -> name ),
 		U"_", Melder_fixed (0.5 * (my d_startSelection + my d_endSelection), 3)));
-	Editor_broadcastPublication (me, publish.transfer());
+	Editor_broadcastPublication (me, publish.move());
 }
 
 static void menu_cb_paintVisibleSpectrogram (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
@@ -838,7 +838,7 @@ static void menu_cb_extractVisiblePitchContour (TimeSoundAnalysisEditor me, EDIT
 		if (! my d_pitch) Melder_throw (theMessage_Cannot_compute_pitch);
 	}
 	autoPitch publish = Data_copy (my d_pitch.get());
-	Editor_broadcastPublication (me, publish.transfer());
+	Editor_broadcastPublication (me, publish.move());
 }
 
 static void menu_cb_drawVisiblePitchContour (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
@@ -925,7 +925,7 @@ static void menu_cb_extractVisibleIntensityContour (TimeSoundAnalysisEditor me, 
 		if (! my d_intensity) Melder_throw (theMessage_Cannot_compute_intensity);
 	}
 	autoIntensity publish = Data_copy (my d_intensity.get());
-	Editor_broadcastPublication (me, publish.transfer());
+	Editor_broadcastPublication (me, publish.move());
 }
 
 static void menu_cb_drawVisibleIntensityContour (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
@@ -1095,7 +1095,7 @@ static void menu_cb_extractVisibleFormantContour (TimeSoundAnalysisEditor me, ED
 		if (! my d_formant) Melder_throw (theMessage_Cannot_compute_formant);
 	}
 	autoFormant publish = Data_copy (my d_formant.peek());
-	Editor_broadcastPublication (me, publish.transfer());
+	Editor_broadcastPublication (me, publish.move());
 }
 
 static void menu_cb_drawVisibleFormantContour (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
@@ -1261,7 +1261,7 @@ static void menu_cb_extractVisiblePulses (TimeSoundAnalysisEditor me, EDITOR_ARG
 		if (! my d_pulses) Melder_throw (theMessage_Cannot_compute_pulses);
 	}
 	autoPointProcess publish = Data_copy (my d_pulses.get());
-	Editor_broadcastPublication (me, publish.transfer());
+	Editor_broadcastPublication (me, publish.move());
 }
 
 static void menu_cb_drawVisiblePulses (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {

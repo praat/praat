@@ -165,13 +165,13 @@ static void scrollToView (TextGridEditor me, double t) {
 static void menu_cb_ExtractSelectedTextGrid_preserveTimes (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	if (my d_endSelection <= my d_startSelection) Melder_throw (U"No selection.");
 	autoTextGrid extract = TextGrid_extractPart ((TextGrid) my data, my d_startSelection, my d_endSelection, true);
-	Editor_broadcastPublication (me, extract.transfer());
+	Editor_broadcastPublication (me, extract.move());
 }
 
 static void menu_cb_ExtractSelectedTextGrid_timeFromZero (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	if (my d_endSelection <= my d_startSelection) Melder_throw (U"No selection.");
 	autoTextGrid extract = TextGrid_extractPart ((TextGrid) my data, my d_startSelection, my d_endSelection, false);
-	Editor_broadcastPublication (me, extract.transfer());
+	Editor_broadcastPublication (me, extract.move());
 }
 
 void structTextGridEditor :: v_createMenuItems_file_extract (EditorMenu menu) {
@@ -1012,7 +1012,7 @@ static void menu_cb_PublishTier (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	autoTextGrid publish = TextGrid_createWithoutTiers (1e30, -1e30);
 	TextGrid_addTier_copy (publish.peek(), tier);
 	Thing_setName (publish.peek(), tier -> name);
-	Editor_broadcastPublication (me, publish.transfer());
+	Editor_broadcastPublication (me, publish.move());
 }
 
 static void menu_cb_RemoveAllTextFromTier (TextGridEditor me, EDITOR_ARGS_DIRECT) {

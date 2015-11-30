@@ -23,7 +23,7 @@
 #include "Collection.h"
 
 Thing_define (ManPages, Daata) {
-	Ordered pages;
+	autoOrdered pages;
 	const char32 **titles;
 	bool ground, dynamic, executable;
 	structMelderDir rootDirectory;

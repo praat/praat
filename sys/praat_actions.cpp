@@ -26,7 +26,7 @@
 #define BUTTON_LEFT  -240
 #define BUTTON_RIGHT -5
 
-static Ordered theActions;
+static autoOrdered theActions;
 static GuiMenu praat_writeMenu;
 static GuiMenuItem praat_writeMenuSeparator;
 static GuiForm praat_form;
@@ -163,7 +163,7 @@ void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, Class
 		/*
 		 * Insert new command.
 		 */
-		Ordered_addItemAtPosition_move (theActions, action.move(), position);
+		Ordered_addItemAtPosition_move (theActions.get(), action.move(), position);
 	} catch (MelderError) {
 		Melder_flushError ();
 	}
@@ -250,7 +250,7 @@ void praat_addActionScript (const char32 *className1, int n1, const char32 *clas
 		 */
 		long found = lookUpMatchingAction (class1, class2, class3, nullptr, title);
 		if (found) {
-			Collection_removeItem (theActions, found);
+			Collection_removeItem (theActions.get(), found);
 		}
 
 		/*
@@ -299,7 +299,7 @@ void praat_addActionScript (const char32 *className1, int n1, const char32 *clas
 		/*
 		 * Insert new command.
 		 */
-		Ordered_addItemAtPosition_move (theActions, action.move(), position);
+		Ordered_addItemAtPosition_move (theActions.get(), action.move(), position);
 		updateDynamicMenu ();
 	} catch (MelderError) {
 		Melder_throw (U"Praat: script action not added.");
@@ -317,7 +317,7 @@ void praat_removeAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, c
 				class3 ? U" & ": U"", class3 -> className,
 				U": ", title, U"\" not found.");
 		}
-		Collection_removeItem (theActions, found);
+		Collection_removeItem (theActions.get(), found);
 	} catch (MelderError) {
 		Melder_throw (U"Praat: action not removed.");
 	}

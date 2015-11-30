@@ -424,10 +424,10 @@ void Ordered_init (Ordered me, ClassInfo itemClass, long initialMaximumLength) {
 	Collection_init (me, itemClass, initialMaximumLength);
 }
 
-Ordered Ordered_create () {
+autoOrdered Ordered_create () {
 	autoOrdered me = Thing_new (Ordered);
 	Ordered_init (me.peek(), nullptr, 10);
-	return me.transfer();
+	return me;
 }
 
 void Ordered_addItemAtPosition_move (Ordered me, autoThing data, long position) {
@@ -517,7 +517,7 @@ void SortedSetOfInt_init (SortedSetOfInt me) {
 autoSortedSetOfInt SortedSetOfInt_create () {
 	autoSortedSetOfInt me = Thing_new (SortedSetOfInt);
 	SortedSetOfInt_init (me.peek());
-	return me.transfer();
+	return me;
 }
 
 /********** class SortedSetOfLong **********/
@@ -599,7 +599,7 @@ long SortedSetOfString_lookUp (SortedSetOfString me, const char32 *string) {
 	return 0;
 }
 
-void SortedSetOfString_addString (SortedSetOfString me, const char32 *string) {
+void SortedSetOfString_addString_copy (SortedSetOfString me, const char32 *string) {
 	static autoSimpleString simp;
 	if (! simp) {
 		simp = SimpleString_create (U"");
@@ -610,7 +610,7 @@ void SortedSetOfString_addString (SortedSetOfString me, const char32 *string) {
 	simp -> string = nullptr;   // otherwise Praat will crash at shutdown
 	if (index == 0) return;   // OK: already there: do not add
 	autoSimpleString newSimp = SimpleString_create (string);
-	_Collection_insertItem (me, newSimp.transfer(), index);
+	_Collection_insertItem_move (me, newSimp.move(), index);
 }
 
 /********** class Cyclic **********/

@@ -93,12 +93,12 @@ void structSpectrumEditor :: v_play (double fmin, double fmax) {
 
 static void menu_cb_publishBand (SpectrumEditor me, EDITOR_ARGS_DIRECT) {
 	autoSpectrum publish = Spectrum_band ((Spectrum) my data, my d_startSelection, my d_endSelection);
-	Editor_broadcastPublication (me, publish.transfer());
+	Editor_broadcastPublication (me, publish.move());
 }
 
 static void menu_cb_publishSound (SpectrumEditor me, EDITOR_ARGS_DIRECT) {
 	autoSound publish = Spectrum_to_Sound_part ((Spectrum) my data, my d_startSelection, my d_endSelection);
-	Editor_broadcastPublication (me, publish.transfer());
+	Editor_broadcastPublication (me, publish.move());
 }
 
 static void menu_cb_passBand (SpectrumEditor me, EDITOR_ARGS_FORM) {

@@ -835,14 +835,15 @@ DO
 	}
 END2 }
 
-static void cb_TextGridEditor_publication (Editor /* editor */, void * /* closure */, Daata publication) {
+static void cb_TextGridEditor_publication (Editor /* editor */, autoDaata publication) {
 	/*
 	 * Keep the gate for error handling.
 	 */
 	try {
-		praat_new (publication);
+		bool isaSpectralSlice = Thing_isa (publication.get(), classSpectrum) && str32equ (Thing_getName (publication.get()), U"slice");
+		praat_new (publication.move());
 		praat_updateSelection ();
-		if (Thing_isa (publication, classSpectrum) && str32equ (Thing_getName (publication), U"slice")) {
+		if (isaSpectralSlice) {
 			int IOBJECT;
 			LOOP {
 				iam (Spectrum);
@@ -864,7 +865,7 @@ DIRECT2 (TextGrid_edit) {
 	LOOP if (CLASS == classTextGrid) {
 		iam (TextGrid);
 		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, sound, true, nullptr, nullptr);
-		Editor_setPublicationCallback (editor.peek(), cb_TextGridEditor_publication, nullptr);
+		Editor_setPublicationCallback (editor.peek(), cb_TextGridEditor_publication);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
 	}
@@ -882,7 +883,7 @@ DO
 	LOOP if (CLASS == classTextGrid) {
 		iam (TextGrid);
 		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, sound, true, nullptr, Melder_peek32to8 (GET_STRING (U"Callback text")));
-		Editor_setPublicationCallback (editor.peek(), cb_TextGridEditor_publication, nullptr);
+		Editor_setPublicationCallback (editor.peek(), cb_TextGridEditor_publication);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
 	}
@@ -899,7 +900,7 @@ DIRECT2 (TextGrid_LongSound_edit) {
 	LOOP if (CLASS == classTextGrid) {
 		iam (TextGrid);
 		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, longSound, false, nullptr, nullptr);
-		Editor_setPublicationCallback (editor.peek(), cb_TextGridEditor_publication, nullptr);
+		Editor_setPublicationCallback (editor.peek(), cb_TextGridEditor_publication);
 		praat_installEditor2 (editor.get(), IOBJECT, ilongSound);
 		editor.releaseToUser();
 	}

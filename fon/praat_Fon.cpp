@@ -1237,14 +1237,12 @@ DO
 	praat_new (thee.move(), GET_STRING (U"Name"));
 END2 }
 
-static void cb_FormantGridEditor_publish (Editor me, void *closure, Daata publish) {
-	(void) me;
-	(void) closure;
+static void cb_FormantGridEditor_publish (Editor /* me */, autoDaata publish) {
 	/*
 	 * Keep the gate for error handling.
 	 */
 	try {
-		praat_new (publish, U"fromFormantGridEditor");
+		praat_new (publish.move(), U"fromFormantGridEditor");
 		praat_updateSelection ();
 	} catch (MelderError) {
 		Melder_flushError ();
@@ -1255,7 +1253,7 @@ DIRECT2 (FormantGrid_edit) {
 	LOOP {
 		iam (FormantGrid);
 		autoFormantGridEditor editor = FormantGridEditor_create (ID_AND_FULL_NAME, me);
-		Editor_setPublicationCallback (editor.peek(), cb_FormantGridEditor_publish, nullptr);
+		Editor_setPublicationCallback (editor.peek(), cb_FormantGridEditor_publish);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
 	}
@@ -2363,9 +2361,9 @@ END2 }
 
 /***** MANIPULATION *****/
 
-static void cb_ManipulationEditor_publication (Editor /* editor */, void * /* closure */, Daata publication) {
+static void cb_ManipulationEditor_publication (Editor /* editor */, autoDaata publication) {
 	try {
-		praat_new (publication, U"fromManipulationEditor");
+		praat_new (publication.move(), U"fromManipulationEditor");
 		praat_updateSelection ();
 	} catch (MelderError) {
 		Melder_flushError ();
@@ -2376,7 +2374,7 @@ DIRECT2 (Manipulation_edit) {
 	LOOP {
 		iam (Manipulation);
 		autoManipulationEditor editor = ManipulationEditor_create (ID_AND_FULL_NAME, me);
-		Editor_setPublicationCallback (editor.peek(), cb_ManipulationEditor_publication, nullptr);
+		Editor_setPublicationCallback (editor.peek(), cb_ManipulationEditor_publication);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
 	}

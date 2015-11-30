@@ -43,7 +43,7 @@ DIRECT2 (EEG_detrend) {
 	}
 END2 }
 
-FORM (EEG_editExternalElectrodeNames, U"Edit external electrode names", 0) {
+FORM (EEG_editExternalElectrodeNames, U"Edit external electrode names", nullptr) {
 	WORD (U"External electrode 1", U"EXG1")
 	WORD (U"External electrode 2", U"EXG2")
 	WORD (U"External electrode 3", U"EXG3")
@@ -80,7 +80,7 @@ DO
 	}
 END2 }
 
-FORM (EEG_extractChannel, U"EEG: Extract channel", 0) {
+FORM (EEG_extractChannel, U"EEG: Extract channel", nullptr) {
 	SENTENCE (U"Channel name", U"Cz")
 	OK2
 DO
@@ -92,10 +92,10 @@ DO
 	}
 END2 }
 
-FORM (EEG_extractPart, U"EEG: Extract part", 0) {
+FORM (EEG_extractPart, U"EEG: Extract part", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"1.0")
-	BOOLEAN (U"Preserve times", 0)
+	BOOLEAN (U"Preserve times", false)
 	OK2
 DO
 	LOOP {
@@ -123,7 +123,7 @@ DIRECT2 (EEG_extractTextGrid) {
 	}
 END2 }
 
-FORM (EEG_filter, U"Filter", 0) {
+FORM (EEG_filter, U"Filter", nullptr) {
 	REAL (U"Low frequency (Hz)", U"1.0")
 	REAL (U"Low width (Hz)", U"0.5")
 	REAL (U"High frequency (Hz)", U"25.0")
@@ -138,7 +138,7 @@ DO
 	}
 END2 }
 
-FORM (EEG_getChannelName, U"Get channel name", 0) {
+FORM (EEG_getChannelName, U"Get channel name", nullptr) {
 	NATURAL (U"Channel number", U"1")
 	OK2
 DO
@@ -151,7 +151,7 @@ DO
 	}
 END2 }
 
-FORM (EEG_getChannelNumber, U"Get channel number", 0) {
+FORM (EEG_getChannelNumber, U"Get channel number", nullptr) {
 	WORD (U"Channel name", U"Cz")
 	OK2
 DO
@@ -161,7 +161,7 @@ DO
 	}
 END2 }
 
-FORM (EEG_removeTriggers, U"Remove triggers", 0) {
+FORM (EEG_removeTriggers, U"Remove triggers", nullptr) {
 	OPTIONMENU_ENUM (U"Remove every trigger that...", kMelder_string, DEFAULT)
 	SENTENCE (U"...the text", U"hi")
 	OK2
@@ -173,7 +173,7 @@ DO
 	}
 END2 }
 
-FORM (EEG_setChannelName, U"Set channel name", 0) {
+FORM (EEG_setChannelName, U"Set channel name", nullptr) {
 	NATURAL (U"Channel number", U"1")
 	WORD (U"New name", U"BLA")
 	OK2
@@ -185,7 +185,7 @@ DO
 	}
 END2 }
 
-FORM (EEG_setChannelToZero, U"Set channel to zero", 0) {
+FORM (EEG_setChannelToZero, U"Set channel to zero", nullptr) {
 	SENTENCE (U"Channel", U"Iz")
 	OK2
 DO
@@ -196,7 +196,7 @@ DO
 	}
 END2 }
 
-FORM (EEG_subtractMeanChannel, U"Subtract mean channel", 0) {
+FORM (EEG_subtractMeanChannel, U"Subtract mean channel", nullptr) {
 	LABEL (U"label", U"Range of reference channels:")
 	NATURAL (U"From channel", U"1")
 	NATURAL (U"To channel", U"32")
@@ -209,7 +209,7 @@ DO
 	}
 END2 }
 
-FORM (EEG_subtractReference, U"Subtract reference", 0) {
+FORM (EEG_subtractReference, U"Subtract reference", nullptr) {
 	WORD (U"Reference channel 1", U"MASL")
 	WORD (U"Reference channel 2 (optional)", U"MASR")
 	OK2
@@ -221,7 +221,7 @@ DO
 	}
 END2 }
 
-FORM (EEG_to_ERPTier_bit, U"To ERPTier (bit)", 0) {
+FORM (EEG_to_ERPTier_bit, U"To ERPTier (bit)", nullptr) {
 	REAL (U"From time (s)", U"-0.11")
 	REAL (U"To time (s)", U"0.39")
 	NATURAL (U"Marker bit", U"8")
@@ -235,7 +235,7 @@ DO
 	}
 END2 }
 
-FORM (EEG_to_ERPTier_marker, U"To ERPTier (marker)", 0) {
+FORM (EEG_to_ERPTier_marker, U"To ERPTier (marker)", nullptr) {
 	REAL (U"From time (s)", U"-0.11")
 	REAL (U"To time (s)", U"0.39")
 	NATURAL (U"Marker number", U"12")
@@ -249,7 +249,7 @@ DO
 	}
 END2 }
 
-FORM (EEG_to_ERPTier_triggers, U"To ERPTier (triggers)", 0) {
+FORM (EEG_to_ERPTier_triggers, U"To ERPTier (triggers)", nullptr) {
 	REAL (U"From time (s)", U"-0.11")
 	REAL (U"To time (s)", U"0.39")
 	OPTIONMENU_ENUM (U"Get every event with a trigger that", kMelder_string, DEFAULT)
@@ -264,7 +264,7 @@ DO
 	}
 END2 }
 
-FORM (EEG_to_ERPTier_triggers_preceded, U"To ERPTier (triggers, preceded)", 0) {
+FORM (EEG_to_ERPTier_triggers_preceded, U"To ERPTier (triggers, preceded)", nullptr) {
 	REAL (U"From time (s)", U"-0.11")
 	REAL (U"To time (s)", U"0.39")
 	OPTIONMENU_ENUM (U"Get every event with a trigger that", kMelder_string, DEFAULT)
@@ -282,7 +282,7 @@ DO
 	}
 END2 }
 
-FORM (EEG_to_MixingMatrix, U"To MixingMatrix", 0) {
+FORM (EEG_to_MixingMatrix, U"To MixingMatrix", nullptr) {
 	NATURAL (U"Maximum number of iterations", U"100")
 	POSITIVE (U"Tolerance", U"0.001")
 	OPTIONMENU (U"Diagonalization method", 2)
@@ -299,16 +299,15 @@ DO
 	}
 END2 }
 
-static void cb_EEGWindow_publication (Editor editor, void *closure, Daata publication) {
-	(void) editor;
-	(void) closure;
+static void cb_EEGWindow_publication (Editor /* editor */, autoDaata publication) {
 	/*
 	 * Keep the gate for error handling.
 	 */
 	try {
-		praat_new (publication);
+		bool isaSpectralSlice = Thing_isa (publication.get(), classSpectrum) && str32equ (Thing_getName (publication.get()), U"slice");
+		praat_new (publication.move());
 		praat_updateSelection ();
-		if (Thing_isa (publication, classSpectrum) && str32equ (Thing_getName (publication), U"slice")) {
+		if (isaSpectralSlice) {
 			int IOBJECT;
 			LOOP {
 				iam (Spectrum);
@@ -326,7 +325,7 @@ DIRECT2 (EEG_viewAndEdit) {
 	LOOP {
 		iam (EEG);
 		autoEEGWindow editor = EEGWindow_create (ID_AND_FULL_NAME, me);
-		Editor_setPublicationCallback (editor.peek(), cb_EEGWindow_publication, nullptr);
+		Editor_setPublicationCallback (editor.peek(), cb_EEGWindow_publication);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
 	}
@@ -350,7 +349,7 @@ DIRECT2 (ERP_downto_Sound) {
 	}
 END2 }
 
-FORM (ERP_downto_Table, U"ERP: Down to Table", 0) {
+FORM (ERP_downto_Table, U"ERP: Down to Table", nullptr) {
 	BOOLEAN (U"Include sample number", false)
 	BOOLEAN (U"Include time", true)
 	NATURAL (U"Time decimals", U"6")
@@ -368,13 +367,13 @@ DO
 	}
 END2 }
 
-FORM (ERP_draw, U"ERP: Draw", 0) {
+FORM (ERP_draw, U"ERP: Draw", nullptr) {
 	SENTENCE (U"Channel name", U"Cz")
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range", U"0.0 (= all)")
 	REAL (U"left Voltage range (V)", U"10e-6")
 	REAL (U"right Voltage range", U"-10e-6")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	autoPraatPicture picture;
@@ -385,12 +384,12 @@ DO
 	}
 END2 }
 
-FORM (ERP_drawScalp, U"ERP: Draw scalp", 0) {
+FORM (ERP_drawScalp, U"ERP: Draw scalp", nullptr) {
 	REAL (U"left Time range (s)", U"0.1")
 	REAL (U"right Time range", U"0.2")
 	REAL (U"left Voltage range (V)", U"10e-6")
 	REAL (U"right Voltage range", U"-10e-6")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	autoPraatPicture picture;
@@ -401,13 +400,13 @@ DO
 	}
 END2 }
 
-FORM (ERP_drawScalp_colour, U"ERP: Draw scalp (colour)", 0) {
+FORM (ERP_drawScalp_colour, U"ERP: Draw scalp (colour)", nullptr) {
 	REAL (U"left Time range (s)", U"0.1")
 	REAL (U"right Time range", U"0.2")
 	REAL (U"left Voltage range (V)", U"10e-6")
 	REAL (U"right Voltage range", U"-10e-6")
 	RADIO_ENUM (U"Colour scale", kGraphics_colourScale, BLUE_TO_RED)
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	autoPraatPicture picture;
@@ -418,7 +417,7 @@ DO
 	}
 END2 }
 
-FORM (ERP_drawScalp_garnish, U"ERP: Draw scalp (garnish)", 0) {
+FORM (ERP_drawScalp_garnish, U"ERP: Draw scalp (garnish)", nullptr) {
 	REAL (U"left Voltage range (V)", U"10e-6")
 	REAL (U"right Voltage range", U"-10e-6")
 	RADIO_ENUM (U"Colour scale", kGraphics_colourScale, BLUE_TO_RED)
@@ -429,7 +428,7 @@ DO
 		GET_REAL (U"left Voltage range"), GET_REAL (U"right Voltage range"), GET_ENUM (kGraphics_colourScale, U"Colour scale"));
 END2 }
 
-FORM (ERP_extractOneChannelAsSound, U"ERP: Extract one channel as Sound", 0) {
+FORM (ERP_extractOneChannelAsSound, U"ERP: Extract one channel as Sound", nullptr) {
 	WORD (U"Channel name", U"Cz")
 	OK2
 DO
@@ -488,7 +487,7 @@ DO
 	}
 END2 }
 
-FORM (ERP_getChannelName, U"Get channel name", 0) {
+FORM (ERP_getChannelName, U"Get channel name", nullptr) {
 	NATURAL (U"Channel number", U"1")
 	OK2
 DO
@@ -501,7 +500,7 @@ DO
 	}
 END2 }
 
-FORM (ERP_getChannelNumber, U"Get channel number", 0) {
+FORM (ERP_getChannelNumber, U"Get channel number", nullptr) {
 	WORD (U"Channel name", U"Cz")
 	OK2
 DO
@@ -619,16 +618,15 @@ DO
 	}
 END2 }
 
-static void cb_ERPWindow_publication (Editor editor, void *closure, Daata publication) {
-	(void) editor;
-	(void) closure;
+static void cb_ERPWindow_publication (Editor /* editor */, autoDaata publication) {
 	/*
 	 * Keep the gate for error handling.
 	 */
 	try {
-		praat_new (publication);
+		bool isaSpectralSlice = Thing_isa (publication.get(), classSpectrum) && str32equ (Thing_getName (publication.get()), U"slice");
+		praat_new (publication.move());
 		praat_updateSelection ();
-		if (Thing_isa (publication, classSpectrum) && str32equ (Thing_getName (publication), U"slice")) {
+		if (isaSpectralSlice) {
 			int IOBJECT;
 			LOOP {
 				iam (Spectrum);
@@ -646,7 +644,7 @@ DIRECT2 (ERP_viewAndEdit) {
 	LOOP {
 		iam (ERP);
 		autoERPWindow editor = ERPWindow_create (ID_AND_FULL_NAME, me);
-		Editor_setPublicationCallback (editor.peek(), cb_ERPWindow_publication, nullptr);
+		Editor_setPublicationCallback (editor.peek(), cb_ERPWindow_publication);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
 	}
@@ -654,7 +652,7 @@ END2 }
 
 /***** ERPTier *****/
 
-FORM (ERPTier_getChannelName, U"Get channel name", 0) {
+FORM (ERPTier_getChannelName, U"Get channel name", nullptr) {
 	NATURAL (U"Channel number", U"1")
 	OK2
 DO
@@ -667,7 +665,7 @@ DO
 	}
 END2 }
 
-FORM (ERPTier_getChannelNumber, U"Get channel number", 0) {
+FORM (ERPTier_getChannelNumber, U"Get channel number", nullptr) {
 	WORD (U"Channel name", U"Cz")
 	OK2
 DO
@@ -691,7 +689,7 @@ DO
 	}
 END2 }
 
-FORM (ERPTier_rejectArtefacts, U"Reject artefacts", 0) {
+FORM (ERPTier_rejectArtefacts, U"Reject artefacts", nullptr) {
 	POSITIVE (U"Threshold (V)", U"75e-6")
 	OK2
 DO
@@ -714,7 +712,7 @@ DO
 	}
 END2 }
 
-FORM (ERPTier_subtractBaseline, U"Subtract baseline", 0) {
+FORM (ERPTier_subtractBaseline, U"Subtract baseline", nullptr) {
 	REAL (U"From time (s)", U"-0.11")
 	REAL (U"To time (s)", U"0.0")
 	OK2
@@ -726,7 +724,7 @@ DO
 	}
 END2 }
 
-FORM (ERPTier_to_ERP, U"ERPTier: To ERP", 0) {
+FORM (ERPTier_to_ERP, U"ERPTier: To ERP", nullptr) {
 	NATURAL (U"Event number", U"1")
 	OK2
 DO
@@ -747,7 +745,7 @@ END2 }
 
 /***** ERPTier & Table *****/
 
-FORM (ERPTier_Table_extractEventsWhereColumn_number, U"Extract events where column (number)", 0) {
+FORM (ERPTier_Table_extractEventsWhereColumn_number, U"Extract events where column (number)", nullptr) {
 	WORD (U"Extract all events where column...", U"")
 	RADIO_ENUM (U"...is...", kMelder_number, DEFAULT)
 	REAL (U"...the number", U"0.0")
