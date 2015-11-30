@@ -8139,7 +8139,7 @@ END
 
 static autoDaata cmuAudioFileRecognizer (int nread, const char *header, MelderFile file) {
 	return nread < 12 || header [0] != 6 || header [1] != 0 ?
-	       autoDaata () : Sound_readFromCmuAudioFile (file);
+	       autoSound () : Sound_readFromCmuAudioFile (file);
 }
 
 void praat_CC_init (ClassInfo klas) {
@@ -8162,41 +8162,41 @@ static void praat_Eigen_Matrix_project (ClassInfo klase, ClassInfo klasm) {
 
 static void praat_Eigen_Spectrogram_project (ClassInfo klase, ClassInfo klasm);
 static void praat_Eigen_Spectrogram_project (ClassInfo klase, ClassInfo klasm) {
-	praat_addAction2 (klase, 1, klasm, 1, U"Project...", 0, 0, DO_Eigen_and_Matrix_project);
+	praat_addAction2 (klase, 1, klasm, 1, U"Project...", nullptr, 0, DO_Eigen_and_Matrix_project);
 }
 
 static void praat_Eigen_query_init (ClassInfo klas) {
-	praat_addAction1 (klas, 1, U"Get eigenvalue...", 0, 1, DO_Eigen_getEigenvalue);
-	praat_addAction1 (klas, 1, U"Get sum of eigenvalues...", 0, 1, DO_Eigen_getSumOfEigenvalues);
-	praat_addAction1 (klas, 1, U"Get number of eigenvectors", 0, 1, DO_Eigen_getNumberOfEigenvalues);
-	praat_addAction1 (klas, 1, U"Get eigenvector dimension", 0, 1, DO_Eigen_getDimension);
-	praat_addAction1 (klas, 1, U"Get eigenvector element...", 0, 1, DO_Eigen_getEigenvectorElement);
+	praat_addAction1 (klas, 1, U"Get eigenvalue...", nullptr, 1, DO_Eigen_getEigenvalue);
+	praat_addAction1 (klas, 1, U"Get sum of eigenvalues...", nullptr, 1, DO_Eigen_getSumOfEigenvalues);
+	praat_addAction1 (klas, 1, U"Get number of eigenvectors", nullptr, 1, DO_Eigen_getNumberOfEigenvalues);
+	praat_addAction1 (klas, 1, U"Get eigenvector dimension", nullptr, 1, DO_Eigen_getDimension);
+	praat_addAction1 (klas, 1, U"Get eigenvector element...", nullptr, 1, DO_Eigen_getEigenvectorElement);
 }
 
 static void praat_Eigen_draw_init (ClassInfo klas) {
-	praat_addAction1 (klas, 0, U"Draw eigenvalues...", 0, 1, DO_Eigen_drawEigenvalues);
-	praat_addAction1 (klas, 0, U"Draw eigenvalues (scree)...", 0, praat_DEPTH_1 | praat_HIDDEN, DO_Eigen_drawEigenvalues_scree);
-	praat_addAction1 (klas, 0, U"Draw eigenvector...", 0, 1, DO_Eigen_drawEigenvector);
+	praat_addAction1 (klas, 0, U"Draw eigenvalues...", nullptr, 1, DO_Eigen_drawEigenvalues);
+	praat_addAction1 (klas, 0, U"Draw eigenvalues (scree)...", nullptr, praat_DEPTH_1 | praat_HIDDEN, DO_Eigen_drawEigenvalues_scree);
+	praat_addAction1 (klas, 0, U"Draw eigenvector...", nullptr, 1, DO_Eigen_drawEigenvector);
 }
 
 static void praat_Index_init (ClassInfo klas) {
-	praat_addAction1 (klas, 1, U"Get number of classes", 0, 0, DO_Index_getNumberOfClasses);
-	praat_addAction1 (klas, 1, U"To Permutation...", 0, 0, DO_Index_to_Permutation);
-	praat_addAction1 (klas, 1, U"Extract part...", 0, 0, DO_Index_extractPart);
+	praat_addAction1 (klas, 1, U"Get number of classes", nullptr, 0, DO_Index_getNumberOfClasses);
+	praat_addAction1 (klas, 1, U"To Permutation...", nullptr, 0, DO_Index_to_Permutation);
+	praat_addAction1 (klas, 1, U"Extract part...", nullptr, 0, DO_Index_extractPart);
 }
 
 static void praat_BandFilterSpectrogram_draw_init (ClassInfo klas);
 static void praat_BandFilterSpectrogram_draw_init (ClassInfo klas) {
-	praat_addAction1 (klas, 0, DRAW_BUTTON, 0, 0, 0);
-//	praat_addAction1 (klas, 0, U"Paint image...", 0, praat_DEPTH_1, DO_BandFilterSpectrogram_paintImage);
-//	praat_addAction1 (klas, 0, U"Draw filters...", 0, 1, DO_FilterBank_drawFilters);
-//	praat_addAction1 (klas, 0, U"Draw one contour...", 0, 1, DO_FilterBank_drawOneContour);
-//	praat_addAction1 (klas, 0, U"Draw contours...", 0, 1, DO_FilterBank_drawContours);
-//	praat_addAction1 (klas, 0, U"Paint contours...", 0, 1, DO_FilterBank_paintContours);
-//	praat_addAction1 (klas, 0, U"Paint cells...", 0, 1, DO_FilterBank_paintCells);
-//	praat_addAction1 (klas, 0, U"Paint surface...", 0, 1, DO_FilterBank_paintSurface);
-	praat_addAction1 (klas, 0, U"-- frequency scales --", 0, 1, 0);
-	praat_addAction1 (klas, 0, U"Draw frequency scale...", 0, 1, DO_BandFilterSpectrogram_drawFrequencyScale);
+	praat_addAction1 (klas, 0, DRAW_BUTTON, nullptr, 0, nullptr);
+//	praat_addAction1 (klas, 0, U"Paint image...", nullptr, praat_DEPTH_1, DO_BandFilterSpectrogram_paintImage);
+//	praat_addAction1 (klas, 0, U"Draw filters...", nullptr, 1, DO_FilterBank_drawFilters);
+//	praat_addAction1 (klas, 0, U"Draw one contour...", nullptr, 1, DO_FilterBank_drawOneContour);
+//	praat_addAction1 (klas, 0, U"Draw contours...", nullptr, 1, DO_FilterBank_drawContours);
+//	praat_addAction1 (klas, 0, U"Paint contours...", nullptr, 1, DO_FilterBank_paintContours);
+//	praat_addAction1 (klas, 0, U"Paint cells...", nullptr, 1, DO_FilterBank_paintCells);
+//	praat_addAction1 (klas, 0, U"Paint surface...", nullptr, 1, DO_FilterBank_paintSurface);
+	praat_addAction1 (klas, 0, U"-- frequency scales --", nullptr, 1, nullptr);
+	praat_addAction1 (klas, 0, U"Draw frequency scale...", nullptr, 1, DO_BandFilterSpectrogram_drawFrequencyScale);
 }
 
 void praat_Matrixft_query_init (ClassInfo klas);

@@ -1381,10 +1381,10 @@ END2 }
 static SoundRecorder theReferenceToTheOnlySoundRecorder;
 static int thePreviousNumberOfChannels;
 
-static void cb_SoundRecorder_destruction (Editor /* editor */, void* /* closure */) {
+static void cb_SoundRecorder_destruction (SoundRecorder /* me */) {
 	theReferenceToTheOnlySoundRecorder = nullptr;
 }
-static void cb_SoundRecorder_publication (Editor /* editor */, autoDaata publication) {
+static void cb_SoundRecorder_publication (Editor /* me */, autoDaata publication) {
 	try {
 		praat_new (publication.move());
 	} catch (MelderError) {
@@ -1400,7 +1400,7 @@ static void do_Sound_record (int numberOfChannels) {
 	} else {
 		forget (theReferenceToTheOnlySoundRecorder);
 		autoSoundRecorder recorder = SoundRecorder_create (numberOfChannels);
-		Editor_setDestructionCallback (recorder.get(), cb_SoundRecorder_destruction, nullptr);
+		Editor_setDestructionCallback (recorder.get(), cb_SoundRecorder_destruction);
 		Editor_setPublicationCallback (recorder.get(), cb_SoundRecorder_publication);
 		theReferenceToTheOnlySoundRecorder = recorder.get();
 		recorder.releaseToUser();

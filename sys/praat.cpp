@@ -610,11 +610,11 @@ static void praat_exit (int exit_code) {
 	exit (exit_code);
 }
 
-static void cb_Editor_destruction (Editor me, void * /*closure*/) {
+static void cb_Editor_destruction (Editor me) {
 	removeAllReferencesToMoribundEditor (me);
 }
 
-static void cb_Editor_dataChanged (Editor me, void * /*closure*/) {
+static void cb_Editor_dataChanged (Editor me) {
 	for (int iobject = 1; iobject <= theCurrentPraatObjects -> n; iobject ++) {
 		bool editingThisObject = false;
 		/*
@@ -657,8 +657,8 @@ int praat_installEditor (Editor editor, int IOBJECT) {
 	for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 		if (! EDITOR [ieditor]) {
 			EDITOR [ieditor] = editor;
-			Editor_setDestructionCallback (editor, cb_Editor_destruction, nullptr);
-			Editor_setDataChangedCallback (editor, cb_Editor_dataChanged, nullptr);
+			Editor_setDestructionCallback (editor, cb_Editor_destruction);
+			Editor_setDataChangedCallback (editor, cb_Editor_dataChanged);
 			if (! editor -> d_publicationCallback)
 				Editor_setPublicationCallback (editor, cb_Editor_publication);
 			return 1;
@@ -680,8 +680,8 @@ int praat_installEditor2 (Editor editor, int i1, int i2) {
 			break;
 	if (ieditor1 < praat_MAXNUM_EDITORS && ieditor2 < praat_MAXNUM_EDITORS) {
 		theCurrentPraatObjects -> list [i1]. editors [ieditor1] = theCurrentPraatObjects -> list [i2]. editors [ieditor2] = editor;
-		Editor_setDestructionCallback (editor, cb_Editor_destruction, nullptr);
-		Editor_setDataChangedCallback (editor, cb_Editor_dataChanged, nullptr);
+		Editor_setDestructionCallback (editor, cb_Editor_destruction);
+		Editor_setDataChangedCallback (editor, cb_Editor_dataChanged);
 		if (! editor -> d_publicationCallback)
 			Editor_setPublicationCallback (editor, cb_Editor_publication);
 	} else {
@@ -707,8 +707,8 @@ int praat_installEditor3 (Editor editor, int i1, int i2, int i3) {
 			break;
 	if (ieditor1 < praat_MAXNUM_EDITORS && ieditor2 < praat_MAXNUM_EDITORS && ieditor3 < praat_MAXNUM_EDITORS) {
 		theCurrentPraatObjects -> list [i1]. editors [ieditor1] = theCurrentPraatObjects -> list [i2]. editors [ieditor2] = theCurrentPraatObjects -> list [i3]. editors [ieditor3] = editor;
-		Editor_setDestructionCallback (editor, cb_Editor_destruction, nullptr);
-		Editor_setDataChangedCallback (editor, cb_Editor_dataChanged, nullptr);
+		Editor_setDestructionCallback (editor, cb_Editor_destruction);
+		Editor_setDataChangedCallback (editor, cb_Editor_dataChanged);
 		if (! editor -> d_publicationCallback)
 			Editor_setPublicationCallback (editor, cb_Editor_publication);
 	} else {
@@ -756,8 +756,8 @@ int praat_installEditorN (Editor editor, Ordered objects) {
 				for (; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 					if (! theCurrentPraatObjects -> list [iPraatObject]. editors [ieditor]) {
 						theCurrentPraatObjects -> list [iPraatObject]. editors [ieditor] = editor;
-						Editor_setDestructionCallback (editor, cb_Editor_destruction, nullptr);
-						Editor_setDataChangedCallback (editor, cb_Editor_dataChanged, nullptr);
+						Editor_setDestructionCallback (editor, cb_Editor_destruction);
+						Editor_setDataChangedCallback (editor, cb_Editor_dataChanged);
 						if (! editor -> d_publicationCallback)
 							Editor_setPublicationCallback (editor, cb_Editor_publication);
 						break;

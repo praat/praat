@@ -304,7 +304,7 @@ void SpeechSynthesizer_playText (SpeechSynthesizer me, const char32 *text) {
 	Sound_playPart (thee.peek(), thy xmin, thy xmax, 0, 0);
 }
 
-static Sound buffer_to_Sound (int *wav, long numberOfSamples, double samplingFrequency)
+static autoSound buffer_to_Sound (int *wav, long numberOfSamples, double samplingFrequency)
 {
 	try {
 		double dx = 1.0 / samplingFrequency;
@@ -313,7 +313,7 @@ static Sound buffer_to_Sound (int *wav, long numberOfSamples, double samplingFre
 		for (long i = 1; i <= numberOfSamples; i++) {
 			thy z[1][i] = wav[i] / 32768.0;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not created from synthesizer data.");
 	}

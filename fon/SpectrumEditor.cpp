@@ -71,19 +71,19 @@ bool structSpectrumEditor :: v_click (double xWC, double yWC, bool shiftKeyPress
 	return our SpectrumEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);   // move cursor or drag selection
 }
 
-static Spectrum Spectrum_band (Spectrum me, double fmin, double fmax) {
+static autoSpectrum Spectrum_band (Spectrum me, double fmin, double fmax) {
 	autoSpectrum band = Data_copy (me);
 	double *re = band -> z [1], *im = band -> z [2];
 	long imin = Sampled_xToLowIndex (band.peek(), fmin), imax = Sampled_xToHighIndex (band.peek(), fmax);
 	for (long i = 1; i <= imin; i ++) re [i] = 0.0, im [i] = 0.0;
 	for (long i = imax; i <= band -> nx; i ++) re [i] = 0.0, im [i] = 0.0;
-	return band.transfer();
+	return band;
 }
 
-static Sound Spectrum_to_Sound_part (Spectrum me, double fmin, double fmax) {
+static autoSound Spectrum_to_Sound_part (Spectrum me, double fmin, double fmax) {
 	autoSpectrum band = Spectrum_band (me, fmin, fmax);
 	autoSound sound = Spectrum_to_Sound (band.peek());
-	return sound.transfer();
+	return sound;
 }
 
 void structSpectrumEditor :: v_play (double fmin, double fmax) {
