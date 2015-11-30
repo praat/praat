@@ -114,11 +114,11 @@ double structTable :: v_getColIndex (const char32 *columnLabel) {
 	return Table_findColumnIndexFromColumnLabel (this, columnLabel);
 }
 
-static TableRow TableRow_create (long numberOfColumns) {
+static autoTableRow TableRow_create (long numberOfColumns) {
 	autoTableRow me = Thing_new (TableRow);
 	my numberOfColumns = numberOfColumns;
 	my cells = NUMvector <structTableCell> (1, numberOfColumns);
-	return me.transfer();
+	return me;
 }
 
 void Table_initWithoutColumnNames (Table me, long numberOfRows, long numberOfColumns) {

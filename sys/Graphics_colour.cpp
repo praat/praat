@@ -215,6 +215,7 @@ static void highlight (Graphics graphics, long x1DC, long x2DC, long y1DC, long 
 						CGContextFillRect (context, rect);
 						CGContextRestoreGState (context);
 						[drawingArea unlockFocus];
+						//GuiShell_drain (nullptr);
 					} else {   // backward
 						//[drawingArea lockFocus];
 						[[nsView window] restoreCachedImage];
@@ -222,6 +223,7 @@ static void highlight (Graphics graphics, long x1DC, long x2DC, long y1DC, long 
 						//[drawingArea unlockFocus];
 						//[[nsView window] flushWindow];
 						//[[nsView window] flushWindowIfNeeded];
+						//GuiShell_drain (nullptr);
 					}
 				} else {
 					[drawingArea lockFocus];

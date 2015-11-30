@@ -729,7 +729,7 @@ void GuiMenuItem_check (GuiMenuItem me, bool check);
 
 Thing_define (GuiOptionMenu, GuiControl) {
 	int d_value;
-	Ordered d_options;   // of SimpleString
+	autoOrdered d_options;   // of SimpleString
 	#if gtk
 		//GtkComboBox *d_gtkCascadeButton;
 	#elif cocoa

@@ -1336,7 +1336,7 @@ autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, long *index, int re
 		// Copy column labels.
 
 		NUMstrings_copyElements (my columnLabels, thy columnLabels, 1, my numberOfColumns);
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not sorted by row index.");
 	}

@@ -33,7 +33,7 @@ Thing_define (EditorMenu, Thing) {
 	Editor d_editor;
 	const char32 *menuTitle;
 	GuiMenu menuWidget;
-	Ordered commands;
+	autoOrdered commands;
 
 	void v_destroy ()
 		override;
@@ -54,19 +54,31 @@ Thing_define (EditorCommand, Thing) {
 		override;
 };
 
+typedef MelderCallback <void, structEditor> Editor_DataChangedCallback;
+typedef MelderCallback <void, structEditor> Editor_DestructionCallback;
+
+/*
+	The following doesn't work yet:
+*/
+//typedef MelderCallback <void, structEditor, autoDaata /* publication */> Editor_PublicationCallback;
+/*
+	because the autoDaata argument tends to be called with .move().
+	Therefore we have the stupider version:
+*/
+typedef void (*Editor_PublicationCallback) (Editor, autoDaata /* publication */);
+
 Thing_define (Editor, Thing) {
 	GuiWindow d_windowForm;
 	GuiMenuItem undoButton, searchButton;
-	Ordered menus;
+	autoOrdered menus;
 	Daata data;   // the data that can be displayed and edited
 	autoDaata previousData;   // the data that can be displayed and edited
 	bool d_ownData;
 	char32 undoText [100];
 	Graphics pictureGraphics;
-	void (*d_dataChangedCallback) (Editor me, void *closure);                    void *d_dataChangedClosure;
-	void (*d_pleaseResetCallback) (Editor me, void *closure);                    void *d_pleaseResetClosure;
-	void (*d_destructionCallback) (Editor me, void *closure);                    void *d_destructionClosure;
-	void (*d_publicationCallback) (Editor me, void *closure, Daata publication); void *d_publicationClosure;
+	Editor_DataChangedCallback d_dataChangedCallback;
+	Editor_DestructionCallback d_destructionCallback;
+	Editor_PublicationCallback d_publicationCallback;
 	const char *callbackSocket;
 
 	void v_destroy ()
@@ -132,7 +144,7 @@ inline static void Editor_dataChanged (Editor me)
 	{
 		my v_dataChanged ();
 	}
-inline static void Editor_setDataChangedCallback (Editor me, void (*dataChangedCallback) (Editor me, void *closure), void *dataChangedClosure)
+inline static void Editor_setDataChangedCallback (Editor me, Editor_DataChangedCallback dataChangedCallback)
 	/*
 	 * Message from boss: "notify me by calling this dataChangedCallback every time your data is changed from *inside* yourself."
 	 *
@@ -143,7 +155,6 @@ inline static void Editor_setDataChangedCallback (Editor me, void (*dataChangedC
 	 */
 	{
 		my d_dataChangedCallback = dataChangedCallback;
-		my d_dataChangedClosure = dataChangedClosure;
 	}
 inline static void Editor_broadcastDataChanged (Editor me)
 	/*
@@ -153,9 +164,9 @@ inline static void Editor_broadcastDataChanged (Editor me)
 	 */
 	{
 		if (my d_dataChangedCallback)
-			my d_dataChangedCallback (me, my d_dataChangedClosure);
+			my d_dataChangedCallback (me);
 	}
-inline static void Editor_setDestructionCallback (Editor me, void (*destructionCallback) (Editor me, void *observer), void *observer)
+inline static void Editor_setDestructionCallback (Editor me, Editor_DestructionCallback destructionCallback)
 	/*
 	 * Message from observer: "notify me by calling this destructionCallback every time you destroy yourself."
 	 *
@@ -165,7 +176,6 @@ inline static void Editor_setDestructionCallback (Editor me, void (*destructionC
 	 */
 	{
 		my d_destructionCallback = destructionCallback;
-		my d_destructionClosure = observer;
 	}
 inline static void Editor_broadcastDestruction (Editor me)
 	/*
@@ -175,9 +185,9 @@ inline static void Editor_broadcastDestruction (Editor me)
 	 */
 	{
 		if (my d_destructionCallback)
-			my d_destructionCallback (me, my d_destructionClosure);
+			my d_destructionCallback (me);
 	}
-inline static void Editor_setPublicationCallback (Editor me, void (*publicationCallback) (Editor me, void *closure, Daata publication), void *publicationClosure)
+inline static void Editor_setPublicationCallback (Editor me, Editor_PublicationCallback publicationCallback)
 	/*
 	 * Message from boss: "notify me by calling this publicationCallback every time you have a piece of data to publish."
 	 *
@@ -188,9 +198,8 @@ inline static void Editor_setPublicationCallback (Editor me, void (*publicationC
 	 */
 	{
 		my d_publicationCallback = publicationCallback;
-		my d_publicationClosure = publicationClosure;
 	}
-inline static void Editor_broadcastPublication (Editor me, Daata publication)
+inline static void Editor_broadcastPublication (Editor me, autoDaata publication)
 	/*
 	 * Message to boss: "I have a piece of data for you to publish."
 	 *
@@ -202,7 +211,7 @@ inline static void Editor_broadcastPublication (Editor me, Daata publication)
 	 */
 	{
 		if (my d_publicationCallback)
-			my d_publicationCallback (me, my d_publicationClosure, publication);
+			my d_publicationCallback (me, publication.move());
 	}
 
 /***** For inheritors. *****/

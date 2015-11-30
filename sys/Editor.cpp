@@ -54,7 +54,6 @@ Thing_implement (EditorMenu, Thing, 0);
 
 void structEditorMenu :: v_destroy () {
 	Melder_free (our menuTitle);
-	forget (our commands);
 	EditorMenu_Parent :: v_destroy ();
 }
 
@@ -87,7 +86,7 @@ GuiMenuItem EditorMenu_addCommand (EditorMenu me, const char32 *itemTitle /* cat
 		GuiMenu_addItem (my menuWidget, itemTitle, flags, commonCallback, thee.peek());   // DANGLE BUG: me can be killed by Collection_addItem(), but EditorCommand::destroy doesn't remove the item
 	thy commandCallback = commandCallback;
 	GuiMenuItem result = thy itemWidget;
-	Collection_addItem_move (my commands, thee.move());
+	Collection_addItem_move (my commands.get(), thee.move());
 	return result;
 }
 
@@ -100,7 +99,7 @@ EditorMenu Editor_addMenu (Editor me, const char32 *menuTitle, long flags) {
 	thy menuWidget = GuiMenu_createInWindow (my d_windowForm, menuTitle, flags);
 	thy commands = Ordered_create ();
 	EditorMenu result = thee.peek();
-	Collection_addItem_move (my menus, thee.move());
+	Collection_addItem_move (my menus.get(), thee.move());
 	return result;
 }
 
@@ -121,12 +120,9 @@ GuiMenuItem Editor_addCommand (Editor me, const char32 *menuTitle, const char32 
 	}
 }
 
-static void Editor_scriptCallback (Editor me, EditorCommand cmd, UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter) {
-	(void) sendingForm;
-	(void) narg;
-	(void) args;
-	(void) sendingString;
-	(void) interpreter;
+static void Editor_scriptCallback (Editor me, EditorCommand cmd, UiForm /* sendingForm */,
+	int /* narg */, Stackel /* args */, const char32 * /* sendingString */, Interpreter /* interpreter */)
+{
 	DO_RunTheScriptFromAnyAddedEditorCommand (me, cmd -> script);
 }
 
@@ -152,7 +148,7 @@ GuiMenuItem Editor_addCommandScript (Editor me, const char32 *menuTitle, const c
 				cmd -> script = Melder_dup_f (Melder_fileToPath (& file));
 			}
 			GuiMenuItem result = cmd -> itemWidget;
-			Collection_addItem_move (menu -> commands, cmd.move());
+			Collection_addItem_move (menu -> commands.get(), cmd.move());
 			return result;
 		}
 	}
@@ -216,7 +212,6 @@ void structEditor :: v_destroy () {
 	 * The following command must be performed before the shell is destroyed.
 	 * Otherwise, we would be forgetting dangling command dialogs here.
 	 */
-	forget (our menus);
 	Editor_broadcastDestruction (this);
 	if (our d_windowForm) {
 		#if gtk

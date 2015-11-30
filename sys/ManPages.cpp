@@ -58,7 +58,6 @@ void structManPages :: v_destroy () {
 		for (long ipage = 1; ipage <= pages -> size; ipage ++) {
 			Melder_free (titles [ipage]);
 		}
-	forget (pages);
 	NUMvector_free <const char32 *> (titles, 1);
 	ManPages_Parent :: v_destroy ();
 }
@@ -123,7 +122,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 	/*
 	 * Add the page early, so that lookUp can find it.
 	 */
-	Collection_addItem_move (my pages, autopage.move());
+	Collection_addItem_move (my pages.get(), autopage.move());
 
 	try {
 		page -> author = texgetw2 (text);
@@ -256,7 +255,7 @@ void ManPages_addPage (ManPages me, const char32 *title, const char32 *author, l
 	page -> paragraphs = & paragraphs [0];
 	page -> author = author;
 	page -> date = date;
-	Collection_addItem_move (my pages, page.move());
+	Collection_addItem_move (my pages.get(), page.move());
 }
 
 static int pageCompare (const void *first, const void *second) {

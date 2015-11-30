@@ -165,7 +165,7 @@ autoDaata TextGrid_TIMITLabelFileRecognizer (int nread, const char *header, Meld
 		return autoDaata ();
 	}
 	autoTextGrid thee = TextGrid_readFromTIMITLabelFile (file, phnFile);
-	return thee.transfer();
+	return thee.move();
 }
 
 static void IntervalTier_add (IntervalTier me, double xmin, double xmax, const char32 *label) {

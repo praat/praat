@@ -285,7 +285,7 @@ static long fileLengthBytes (FILE *f) {
 }
 
 /* Old TIMIT sound-file format */
-Sound Sound_readFromCmuAudioFile (MelderFile file) {
+autoSound Sound_readFromCmuAudioFile (MelderFile file) {
 	try {
 		int littleEndian = 1;
 		autofile f = Melder_fopen (file, "rb");
@@ -310,13 +310,13 @@ Sound Sound_readFromCmuAudioFile (MelderFile file) {
 		autoSound me = Sound_createSimple (1, nSamples / 16000., 16000);
 		i2read (me.peek(), f, littleEndian);
 		f.close (file);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not read from CMU audio file ", MelderFile_messageName (file), U".");
 	}
 }
 
-Sound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsCoding, int littleEndian, int unSigned, long skipNBytes, double samplingFrequency) {
+autoSound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsCoding, int littleEndian, int unSigned, long skipNBytes, double samplingFrequency) {
 	try {
 		autofile f = Melder_fopen (file, "rb");
 		if (! format) {
@@ -357,7 +357,7 @@ Sound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsCodin
 			r4read (me.peek(), f);
 		}
 		f.close (file);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not read from raw audio file ", MelderFile_messageName (file), U".");
 	}
@@ -1480,7 +1480,7 @@ static void PitchTier_modifyRange_old (PitchTier me, double tmin, double tmax, d
 	}
 }
 
-static Pitch Pitch_scaleTime_old (Pitch me, double scaleFactor) {
+static autoPitch Pitch_scaleTime_old (Pitch me, double scaleFactor) {
 	try {
 		double dx = my dx, x1 = my x1, xmax = my xmax;
 		if (scaleFactor != 1) {
@@ -1498,7 +1498,7 @@ static Pitch Pitch_scaleTime_old (Pitch me, double scaleFactor) {
 				thy frame[i].candidate[1].frequency = f;
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Pitch not scaled.");
 	}
@@ -1767,7 +1767,7 @@ autoSound Sound_localAverage (Sound me, double averagingInterval, int windowType
 		long nswindow2 = window -> nx / 2;
 		long nswindow2p = (window -> nx - 1) / 2; // nx is odd: one sample less in the forward direction
 		if (nswindow2 < 1) {
-			return thee.transfer();
+			return thee;
 		}
 		double *w = window -> z[1];
 

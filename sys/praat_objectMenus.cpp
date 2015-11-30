@@ -159,7 +159,7 @@ END2 }
 
 static ButtonEditor theReferenceToTheOnlyButtonEditor;
 
-static void cb_ButtonEditor_destruction (Editor /* editor */, void * /* closure */) {
+static void cb_ButtonEditor_destruction (Editor /* editor */) {
 	theReferenceToTheOnlyButtonEditor = nullptr;
 }
 
@@ -168,7 +168,7 @@ DIRECT2 (praat_editButtons) {
 		Editor_raise (theReferenceToTheOnlyButtonEditor);
 	} else {
 		autoButtonEditor editor = ButtonEditor_create ();
-		Editor_setDestructionCallback (editor.get(), cb_ButtonEditor_destruction, nullptr);
+		Editor_setDestructionCallback (editor.get(), cb_ButtonEditor_destruction);
 		theReferenceToTheOnlyButtonEditor = editor.get();
 		editor.releaseToUser();
 	}

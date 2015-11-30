@@ -22,18 +22,8 @@
 Thing_implement (GuiOptionMenu, GuiControl, 0);
 
 #if gtk
-	#define iam_optionmenu  GuiOptionMenu me = (GuiOptionMenu) _GuiObject_getUserData (widget)
-#elif cocoa
-	#define iam_optionmenu  GuiOptionMenu me = (GuiOptionMenu) [(GuiCocoaLabel *) widget   getUserData];
-#elif motif
-	#define iam_optionmenu  GuiOptionMenu me = (GuiOptionMenu) widget -> userData
-#endif
-
-#if gtk
-	static void _guiGtkOptionMenu_destroyCallback (GuiObject widget, gpointer void_me) {
-		(void) widget;
+	static void _guiGtkOptionMenu_destroyCallback (GuiObject /* widget */, gpointer void_me) {
 		iam (GuiOptionMenu);
-		forget (my d_options);
 		forget (me);
 	}
 #elif cocoa
@@ -45,8 +35,7 @@ Thing_implement (GuiOptionMenu, GuiControl, 0);
         [self removeAllItems];
         [self setMenu:nil];
         
-        forget (my d_options);
-		forget (me);   
+		forget (me);
 		trace (U"deleting an option menu");
 		[super dealloc];
 	}
@@ -58,10 +47,8 @@ Thing_implement (GuiOptionMenu, GuiControl, 0);
 	}
 	@end
 #elif motif
-	static void _guiMotifOptionMenu_destroyCallback (GuiObject widget, XtPointer void_me, XtPointer call) {
-		(void) widget; (void) call;
+	static void _guiMotifOptionMenu_destroyCallback (GuiObject /* widget */, XtPointer void_me, XtPointer /* call */) {
 		iam (GuiOptionMenu);
-		forget (my d_options);
 		forget (me);
 	}
 #endif

@@ -71,7 +71,7 @@ structPraatPicture theForegroundPraatPicture;
 PraatPicture theCurrentPraatPicture = & theForegroundPraatPicture;
 struct PraatP praatP;
 static char32 programName [64];
-static structMelderDir homeDir = { { 0 } };
+static structMelderDir homeDir { { 0 } };
 /*
  * praatDirectory: preferences file, buttons file, message files, tracing file, plugins.
  *    Unix:   /u/miep/.myProg-dir   (without slash)
@@ -80,7 +80,7 @@ static structMelderDir homeDir = { { 0 } };
  *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs
  */
 extern structMelderDir praatDir;
-structMelderDir praatDir = { { 0 } };
+structMelderDir praatDir { { 0 } };
 /*
  * prefsFile: preferences file.
  *    Unix:   /u/miep/.myProg-dir/prefs5
@@ -88,7 +88,7 @@ structMelderDir praatDir = { { 0 } };
  *                       or:   C:\Users\Miep\MyProg\Preferences5.ini
  *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs/Prefs5
  */
-static structMelderFile prefsFile = { 0 };
+static structMelderFile prefsFile { 0 };
 /*
  * buttonsFile: buttons file.
  *    Unix:   /u/miep/.myProg-dir/buttons
@@ -96,12 +96,12 @@ static structMelderFile prefsFile = { 0 };
  *                    or:   C:\Users\Miep\MyProg\Buttons5.ini
  *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs/Buttons5
  */
-static structMelderFile buttonsFile = { 0 };
+static structMelderFile buttonsFile { 0 };
 #if defined (UNIX)
-	static structMelderFile pidFile = { 0 };   // like /u/miep/.myProg-dir/pid
-	static structMelderFile messageFile = { 0 };   // like /u/miep/.myProg-dir/message
+	static structMelderFile pidFile { 0 };   // like /u/miep/.myProg-dir/pid
+	static structMelderFile messageFile { 0 };   // like /u/miep/.myProg-dir/message
 #elif defined (_WIN32)
-	static structMelderFile messageFile = { 0 };   // like C:\Users\Miep\myProg\Message.txt
+	static structMelderFile messageFile { 0 };   // like C:\Users\Miep\myProg\Message.txt
 #endif
 /*
  * tracingFile: tracing file.
@@ -110,7 +110,7 @@ static structMelderFile buttonsFile = { 0 };
  *                    or:   C:\Users\Miep\MyProg\Tracing.txt
  *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs/Tracing.txt
  */
-static structMelderFile tracingFile = { 0 };
+static structMelderFile tracingFile { 0 };
 
 static GuiList praatList_objects;
 
@@ -395,7 +395,7 @@ void praat_newWithFile (autoDaata me, MelderFile file, const char32 *myName) {
 			theCurrentPraatObjects -> n);
 	}
 	CLASS = my classInfo;
-	OBJECT = me.transfer();
+	OBJECT = me.transfer();   // FIXME: should be move()
 	SELECTED = false;
 	for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
 		EDITOR [ieditor] = nullptr;
@@ -610,11 +610,11 @@ static void praat_exit (int exit_code) {
 	exit (exit_code);
 }
 
-static void cb_Editor_destruction (Editor me, void * /*closure*/) {
+static void cb_Editor_destruction (Editor me) {
 	removeAllReferencesToMoribundEditor (me);
 }
 
-static void cb_Editor_dataChanged (Editor me, void * /*closure*/) {
+static void cb_Editor_dataChanged (Editor me) {
 	for (int iobject = 1; iobject <= theCurrentPraatObjects -> n; iobject ++) {
 		bool editingThisObject = false;
 		/*
@@ -639,13 +639,13 @@ static void cb_Editor_dataChanged (Editor me, void * /*closure*/) {
 	}
 }
 
-static void cb_Editor_publication (Editor /*me*/, void * /*closure*/, Daata publication) {
+static void cb_Editor_publication (Editor /* me */, autoDaata publication) {
 /*
    The default publish callback.
    Works nicely if the publisher invents a name.
 */
 	try {
-		praat_new (publication, U"");
+		praat_new (publication.move(), U"");
 	} catch (MelderError) {
 		Melder_flushError ();
 	}
@@ -657,10 +657,10 @@ int praat_installEditor (Editor editor, int IOBJECT) {
 	for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 		if (! EDITOR [ieditor]) {
 			EDITOR [ieditor] = editor;
-			Editor_setDestructionCallback (editor, cb_Editor_destruction, nullptr);
-			Editor_setDataChangedCallback (editor, cb_Editor_dataChanged, nullptr);
+			Editor_setDestructionCallback (editor, cb_Editor_destruction);
+			Editor_setDataChangedCallback (editor, cb_Editor_dataChanged);
 			if (! editor -> d_publicationCallback)
-				Editor_setPublicationCallback (editor, cb_Editor_publication, nullptr);
+				Editor_setPublicationCallback (editor, cb_Editor_publication);
 			return 1;
 		}
 	}
@@ -680,10 +680,10 @@ int praat_installEditor2 (Editor editor, int i1, int i2) {
 			break;
 	if (ieditor1 < praat_MAXNUM_EDITORS && ieditor2 < praat_MAXNUM_EDITORS) {
 		theCurrentPraatObjects -> list [i1]. editors [ieditor1] = theCurrentPraatObjects -> list [i2]. editors [ieditor2] = editor;
-		Editor_setDestructionCallback (editor, cb_Editor_destruction, nullptr);
-		Editor_setDataChangedCallback (editor, cb_Editor_dataChanged, nullptr);
+		Editor_setDestructionCallback (editor, cb_Editor_destruction);
+		Editor_setDataChangedCallback (editor, cb_Editor_dataChanged);
 		if (! editor -> d_publicationCallback)
-			Editor_setPublicationCallback (editor, cb_Editor_publication, nullptr);
+			Editor_setPublicationCallback (editor, cb_Editor_publication);
 	} else {
 		//forget (editor);
 		Melder_throw (U"(praat_installEditor2:) Cannot have more than ", praat_MAXNUM_EDITORS, U" editors with one object.");
@@ -707,10 +707,10 @@ int praat_installEditor3 (Editor editor, int i1, int i2, int i3) {
 			break;
 	if (ieditor1 < praat_MAXNUM_EDITORS && ieditor2 < praat_MAXNUM_EDITORS && ieditor3 < praat_MAXNUM_EDITORS) {
 		theCurrentPraatObjects -> list [i1]. editors [ieditor1] = theCurrentPraatObjects -> list [i2]. editors [ieditor2] = theCurrentPraatObjects -> list [i3]. editors [ieditor3] = editor;
-		Editor_setDestructionCallback (editor, cb_Editor_destruction, nullptr);
-		Editor_setDataChangedCallback (editor, cb_Editor_dataChanged, nullptr);
+		Editor_setDestructionCallback (editor, cb_Editor_destruction);
+		Editor_setDataChangedCallback (editor, cb_Editor_dataChanged);
 		if (! editor -> d_publicationCallback)
-			Editor_setPublicationCallback (editor, cb_Editor_publication, nullptr);
+			Editor_setPublicationCallback (editor, cb_Editor_publication);
 	} else {
 		//forget (editor);
 		Melder_throw (U"(praat_installEditor3:) Cannot have more than ", praat_MAXNUM_EDITORS, U" editors with one object.");
@@ -756,10 +756,10 @@ int praat_installEditorN (Editor editor, Ordered objects) {
 				for (; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 					if (! theCurrentPraatObjects -> list [iPraatObject]. editors [ieditor]) {
 						theCurrentPraatObjects -> list [iPraatObject]. editors [ieditor] = editor;
-						Editor_setDestructionCallback (editor, cb_Editor_destruction, nullptr);
-						Editor_setDataChangedCallback (editor, cb_Editor_dataChanged, nullptr);
+						Editor_setDestructionCallback (editor, cb_Editor_destruction);
+						Editor_setDataChangedCallback (editor, cb_Editor_dataChanged);
 						if (! editor -> d_publicationCallback)
-							Editor_setPublicationCallback (editor, cb_Editor_publication, nullptr);
+							Editor_setPublicationCallback (editor, cb_Editor_publication);
 						break;
 					}
 				}

@@ -79,7 +79,7 @@ Thing_define (UiField, Thing) {
 	char32 *stringValue; const char32 *stringDefaultValue;
 	Graphics_Colour colourValue;
 	char *stringValueA;
-	Ordered options;
+	autoOrdered options;
 	long numberOfStrings;
 	const char32 **strings;
 	GuiLabel label;

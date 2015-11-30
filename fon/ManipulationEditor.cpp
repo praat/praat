@@ -111,34 +111,34 @@ static void menu_cb_extractOriginalSound (ManipulationEditor me, EDITOR_ARGS_DIR
 	Manipulation ana = (Manipulation) my data;
 	if (! ana -> sound) return;
 	autoSound publish = Data_copy (ana -> sound.get());
-	Editor_broadcastPublication (me, publish.transfer());
+	Editor_broadcastPublication (me, publish.move());
 }
 
 static void menu_cb_extractPulses (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
 	Manipulation ana = (Manipulation) my data;
 	if (! ana -> pulses) return;
 	autoPointProcess publish = Data_copy (ana -> pulses.get());
-	Editor_broadcastPublication (me, publish.transfer());
+	Editor_broadcastPublication (me, publish.move());
 }
 
 static void menu_cb_extractPitchTier (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
 	Manipulation ana = (Manipulation) my data;
 	if (! ana -> pitch) return;
 	autoPitchTier publish = Data_copy (ana -> pitch.get());
-	Editor_broadcastPublication (me, publish.transfer());
+	Editor_broadcastPublication (me, publish.move());
 }
 
 static void menu_cb_extractDurationTier (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
 	Manipulation ana = (Manipulation) my data;
 	if (! ana -> duration) return;
 	autoDurationTier publish = Data_copy (ana -> duration.get());
-	Editor_broadcastPublication (me, publish.transfer());
+	Editor_broadcastPublication (me, publish.move());
 }
 
 static void menu_cb_extractManipulatedSound (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
 	Manipulation ana = (Manipulation) my data;
 	autoSound publish = Manipulation_to_Sound (ana, my synthesisMethod);
-	Editor_broadcastPublication (me, publish.transfer());
+	Editor_broadcastPublication (me, publish.move());
 }
 
 /***** EDIT MENU *****/
