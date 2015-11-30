@@ -732,7 +732,7 @@ DIRECT (ClassificationTable_help)
 	Melder_help (U"ClassificationTable");
 END
 
-FORM (ClassificationTable_getClassIndexAtMaximumInRow, U"ClassificationTable: Get class index at maximum in row", 0)
+FORM (ClassificationTable_getClassIndexAtMaximumInRow, U"ClassificationTable: Get class index at maximum in row", nullptr)
 	NATURAL (U"Row number", U"1")
 	OK
 DO
@@ -743,7 +743,7 @@ DO
 	}
 END
 
-FORM (ClassificationTable_getClassLabelAtMaximumInRow, U"ClassificationTable: Get class label at maximum in row", 0)
+FORM (ClassificationTable_getClassLabelAtMaximumInRow, U"ClassificationTable: Get class label at maximum in row", nullptr)
 	NATURAL (U"Row number", U"1")
 	OK
 DO
@@ -817,7 +817,7 @@ DO
 	}
 END
 
-FORM (Confusion_getValue, U"Confusion: Get value", 0)
+FORM (Confusion_getValue, U"Confusion: Get value", nullptr)
 	WORD (U"Stimulus", U"u")
 	WORD (U"Response", U"i")
 	OK
@@ -968,7 +968,7 @@ END
 
 /******************* Confusion & Matrix *************************************/
 
-FORM (Confusion_Matrix_draw, U"Confusion & Matrix: Draw confusions with arrows", 0)
+FORM (Confusion_Matrix_draw, U"Confusion & Matrix: Draw confusions with arrows", nullptr)
 	INTEGER (U"Category position", U"0 (=all)")
 	REAL (U"Lower level (%)", U"0")
 	REAL (U"left Horizontal range", U"0.0")
@@ -993,7 +993,7 @@ DIRECT (ComplexSpectrogram_help)
 	Melder_help (U"ComplexSpectrogram_help");
 END
 
-FORM (ComplexSpectrogram_to_Sound, U"ComplexSpectrogram: To Sound", 0)
+FORM (ComplexSpectrogram_to_Sound, U"ComplexSpectrogram: To Sound", nullptr)
 	POSITIVE (U"Duration factor", U"1.0")
 	OK
 DO
@@ -1012,7 +1012,7 @@ DIRECT (ComplexSpectrogram_to_Spectrogram)
 	}
 END
 
-FORM (ComplexSpectrogram_to_Spectrum, U"ComplexSpectrogram: To Spectrum (slice)", 0)
+FORM (ComplexSpectrogram_to_Spectrum, U"ComplexSpectrogram: To Spectrum (slice)", nullptr)
 	REAL (U"Time (s)", U"0.0")
 	OK
 DO
@@ -1441,7 +1441,7 @@ DIRECT (Discriminant_getLnDeterminant_total)
 	}
 END
 
-FORM (Discriminant_invertEigenvector, U"Discriminant: Invert eigenvector", 0)
+FORM (Discriminant_invertEigenvector, U"Discriminant: Invert eigenvector", nullptr)
 	NATURAL (U"Index of eigenvector", U"1")
 	OK
 DO
@@ -1468,18 +1468,18 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (Discriminant);
-		Discriminant_drawConcentrationEllipses (me, GRAPHICS, GET_REAL (U"Number of sigmas"), 0, 0,
-		GET_INTEGER (U"Discriminant plane"), GET_INTEGER (U"X-dimension"), GET_INTEGER (U"Y-dimension"),
-		GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
-		GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"),
-		GET_INTEGER (U"Label size"), GET_INTEGER (U"Garnish"));
+		Discriminant_drawConcentrationEllipses (me, GRAPHICS, GET_REAL (U"Number of sigmas"), false, nullptr,
+			GET_INTEGER (U"Discriminant plane"), GET_INTEGER (U"X-dimension"), GET_INTEGER (U"Y-dimension"),
+			GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
+			GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"),
+			GET_INTEGER (U"Label size"), GET_INTEGER (U"Garnish"));
 	}
 END
 
 FORM (Discriminant_drawOneSigmaEllipse, U"Discriminant: Draw one sigma ellipse", U"Discriminant: Draw one sigma ellipse...")
 	SENTENCE (U"Label", U"")
 	POSITIVE (U"Number of sigmas", U"1.0")
-	BOOLEAN (U"Discriminant plane", 1)
+	BOOLEAN (U"Discriminant plane", true)
 	INTEGER (U"X-dimension", U"1")
 	INTEGER (U"Y-dimension", U"2")
 	REAL (U"left Horizontal range", U"0.0")
@@ -1487,24 +1487,24 @@ FORM (Discriminant_drawOneSigmaEllipse, U"Discriminant: Draw one sigma ellipse",
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0")
 	INTEGER (U"Label size", U"12")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (Discriminant);
-		Discriminant_drawConcentrationEllipses (me, GRAPHICS, GET_REAL (U"Number of sigmas"), 0,
-		GET_STRING (U"Label"), GET_INTEGER (U"Discriminant plane"),
-		GET_INTEGER (U"X-dimension"), GET_INTEGER (U"Y-dimension"),
-		GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
-		GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"),
-		GET_INTEGER (U"Label size"), GET_INTEGER (U"Garnish"));
+		Discriminant_drawConcentrationEllipses (me, GRAPHICS, GET_REAL (U"Number of sigmas"), false,
+			GET_STRING (U"Label"), GET_INTEGER (U"Discriminant plane"),
+			GET_INTEGER (U"X-dimension"), GET_INTEGER (U"Y-dimension"),
+			GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
+			GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"),
+			GET_INTEGER (U"Label size"), GET_INTEGER (U"Garnish"));
 	}
 END
 
-FORM (Discriminant_drawConfidenceEllipses, U"Discriminant: Draw confidence ellipses", 0)
+FORM (Discriminant_drawConfidenceEllipses, U"Discriminant: Draw confidence ellipses", nullptr)
 	POSITIVE (U"Confidence level (0-1)", U"0.95")
-	BOOLEAN (U"Discriminant plane", 1)
+	BOOLEAN (U"Discriminant plane", true)
 	INTEGER (U"X-dimension", U"1")
 	INTEGER (U"Y-dimension", U"2")
 	REAL (U"left Horizontal range", U"0.0")
@@ -1512,26 +1512,26 @@ FORM (Discriminant_drawConfidenceEllipses, U"Discriminant: Draw confidence ellip
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0")
 	INTEGER (U"Label size", U"12")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (Discriminant);
 		Discriminant_drawConcentrationEllipses (me, GRAPHICS,
-		GET_REAL (U"Confidence level"), 1, nullptr, GET_INTEGER (U"Discriminant plane"),
-		GET_INTEGER (U"X-dimension"), GET_INTEGER (U"Y-dimension"),
-		GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
-		GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"),
-		GET_INTEGER (U"Label size"), GET_INTEGER (U"Garnish"));
+			GET_REAL (U"Confidence level"), true, nullptr, GET_INTEGER (U"Discriminant plane"),
+			GET_INTEGER (U"X-dimension"), GET_INTEGER (U"Y-dimension"),
+			GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
+			GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"),
+			GET_INTEGER (U"Label size"), GET_INTEGER (U"Garnish"));
 	}
 END
 
 
-FORM (Discriminant_drawOneConfidenceEllipse, U"Discriminant: Draw one confidence ellipse", 0)
+FORM (Discriminant_drawOneConfidenceEllipse, U"Discriminant: Draw one confidence ellipse", nullptr)
 	SENTENCE (U"Label", U"")
 	POSITIVE (U"Confidence level (0-1)", U"0.95")
-	BOOLEAN (U"Discriminant plane", 1)
+	BOOLEAN (U"Discriminant plane", true)
 	INTEGER (U"X-dimension", U"1")
 	INTEGER (U"Y-dimension", U"2")
 	REAL (U"left Horizontal range", U"0.0")
@@ -1539,18 +1539,18 @@ FORM (Discriminant_drawOneConfidenceEllipse, U"Discriminant: Draw one confidence
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0")
 	INTEGER (U"Label size", U"12")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (Discriminant);
 		Discriminant_drawConcentrationEllipses (me, GRAPHICS,
-		GET_REAL (U"Confidence level"), 1, GET_STRING (U"Label"), GET_INTEGER (U"Discriminant plane"),
-		GET_INTEGER (U"X-dimension"), GET_INTEGER (U"Y-dimension"),
-		GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
-		GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"),
-		GET_INTEGER (U"Label size"), GET_INTEGER (U"Garnish"));
+			GET_REAL (U"Confidence level"), true, GET_STRING (U"Label"), GET_INTEGER (U"Discriminant plane"),
+			GET_INTEGER (U"X-dimension"), GET_INTEGER (U"Y-dimension"),
+			GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
+			GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"),
+			GET_INTEGER (U"Label size"), GET_INTEGER (U"Garnish"));
 	}
 END
 
@@ -1640,12 +1640,12 @@ END
 
 /********************** DTW *******************************************/
 
-FORM (DTW_and_Polygon_findPathInside, U"DTW & Polygon: Find path inside", 0)
+FORM (DTW_and_Polygon_findPathInside, U"DTW & Polygon: Find path inside", nullptr)
     RADIO (U"Slope constraint", 1)
-    RADIOBUTTON (U"no restriction")
-    RADIOBUTTON (U"1/3 < slope < 3")
-    RADIOBUTTON (U"1/2 < slope < 2")
-    RADIOBUTTON (U"2/3 < slope < 3/2")
+		RADIOBUTTON (U"no restriction")
+		RADIOBUTTON (U"1/3 < slope < 3")
+		RADIOBUTTON (U"1/2 < slope < 2")
+		RADIOBUTTON (U"2/3 < slope < 3/2")
     OK
 DO
     int localSlope = GET_INTEGER (U"Slope constraint");
@@ -1655,12 +1655,12 @@ DO
 
 END
 
-FORM (DTW_and_Polygon_to_Matrix_cummulativeDistances, U"DTW & Polygon: To Matrix (cumm. distances)", 0)
+FORM (DTW_and_Polygon_to_Matrix_cummulativeDistances, U"DTW & Polygon: To Matrix (cumm. distances)", nullptr)
     RADIO (U"Slope constraint", 1)
-    RADIOBUTTON (U"no restriction")
-    RADIOBUTTON (U"1/3 < slope < 3")
-    RADIOBUTTON (U"1/2 < slope < 2")
-    RADIOBUTTON (U"2/3 < slope < 3/2")
+		RADIOBUTTON (U"no restriction")
+		RADIOBUTTON (U"1/3 < slope < 3")
+		RADIOBUTTON (U"1/2 < slope < 2")
+		RADIOBUTTON (U"2/3 < slope < 3/2")
     OK
 DO
     int localSlope = GET_INTEGER (U"Slope constraint");
@@ -1675,7 +1675,7 @@ FORM (DTW_and_Sounds_draw, U"DTW & Sounds: Draw", U"DTW & Sounds: Draw...")
 	REAL (U"right Horizontal range", U"0.0")
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	Sound s1 = nullptr, s2 = nullptr; DTW dtw = nullptr;
@@ -1700,7 +1700,7 @@ FORM (DTW_and_Sounds_drawWarpX, U"DTW & Sounds: Draw warp (x)", U"DTW & Sounds: 
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0")
 	REAL (U"Time (s)", U"0.1")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	Sound s1 = nullptr, s2 = nullptr;
@@ -1720,8 +1720,8 @@ END
 void DTW_constraints_addCommonFields (UiForm dia) {
 	UiField radio;
 	LABEL (U"", U"Boundary conditions")
-	BOOLEAN (U"Match begin positions", 0)
-	BOOLEAN (U"Match end positions", 0)
+	BOOLEAN (U"Match begin positions", false)
+	BOOLEAN (U"Match end positions", false)
 	RADIO (U"Slope constraint", 1)
 		RADIOBUTTON (U"no restriction")
 		RADIOBUTTON (U"1/3 < slope < 3")
@@ -1737,12 +1737,12 @@ void DTW_constraints_getCommonFields (UiForm dia, int *begin, int *end, int *slo
 
 DIRECT (DTW_help) Melder_help (U"DTW"); END
 
-FORM (DTW_drawPath, U"DTW: Draw path", 0)
+FORM (DTW_drawPath, U"DTW: Draw path", nullptr)
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0")
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0")
-	BOOLEAN (U"Garnish", 0);
+	BOOLEAN (U"Garnish", false);
 	OK
 DO
 	autoPraatPicture picture;
@@ -1753,12 +1753,12 @@ DO
 	}
 END
 
-FORM (DTW_drawDistancesAlongPath, U"DTW: Draw distances along path", 0)
+FORM (DTW_drawDistancesAlongPath, U"DTW: Draw distances along path", nullptr)
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0")
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0")
-	BOOLEAN (U"Garnish", 0);
+	BOOLEAN (U"Garnish", false);
 	OK
 DO
 	autoPraatPicture picture;
@@ -1769,14 +1769,14 @@ DO
 	}
 END
 
-FORM (DTW_paintDistances, U"DTW: Paint distances", 0)
+FORM (DTW_paintDistances, U"DTW: Paint distances", nullptr)
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0")
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0")
 	REAL (U"Minimum", U"0.0")
 	REAL (U"Maximum", U"0.0")
-	BOOLEAN (U"Garnish", 0);
+	BOOLEAN (U"Garnish", false);
 	OK
 DO
 	autoPraatPicture picture;
@@ -1794,7 +1794,7 @@ FORM (DTW_drawWarpX, U"DTW: Draw warp (x)", U"DTW: Draw warp (x)...")
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0")
 	REAL (U"Time (s)", U"0.1")
-	BOOLEAN (U"Garnish", 0);
+	BOOLEAN (U"Garnish", false);
 	OK
 DO
 	autoPraatPicture picture;

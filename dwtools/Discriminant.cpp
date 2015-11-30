@@ -358,7 +358,9 @@ void Discriminant_drawTerritorialMap (Discriminant me, Graphics g, int discrimin
 
 }
 
-void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g, double scale, int confidence, char32 *label, int discriminantDirections, long d1, long d2, double xmin, double xmax, double ymin, double ymax, int fontSize, int garnish) {
+void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g, double scale, bool confidence, char32 *label,
+	int discriminantDirections, long d1, long d2, double xmin, double xmax, double ymin, double ymax, int fontSize, int garnish)
+{
 	long numberOfFunctions = Discriminant_getNumberOfFunctions (me);
 
 	if (! discriminantDirections) {
