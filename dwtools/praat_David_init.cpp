@@ -2858,7 +2858,10 @@ END
 
 DIRECT (FilesInMemory_merge)
 	FilesInMemory f1 = nullptr, f2 = nullptr;
-	LOOP { iam (FilesInMemory); (f1 ? f2 : f1) = me; }
+	LOOP { 
+		iam (FilesInMemory); 
+		(f1 ? f2 : f1) = me; 
+	}
 	Melder_assert (f1 && f2);
 	autoFilesInMemory fim = Collections_merge (f1, f2).static_cast_move <structFilesInMemory> ();
 	praat_new (fim.move(), f1 -> name, U"_", f2 -> name);
@@ -8773,7 +8776,7 @@ void praat_uvafon_David_init () {
 
 	praat_addAction1 (classFilesInMemory, 1, U"Show as code...", 0, 0, DO_FilesInMemory_showAsCode);
 	praat_addAction1 (classFilesInMemory, 1, U"Show one file as code...", 0, 0, DO_FilesInMemory_showOneFileAsCode);
-	praat_addAction1 (classFilesInMemory, 0, U"Merge", 0, 0, DO_FilesInMemory_merge);
+	praat_addAction1 (classFilesInMemory, 2, U"Merge", 0, 0, DO_FilesInMemory_merge);
 	praat_addAction1 (classFilesInMemory, 0, U"To Strings (id)", 0, 0, DO_FilesInMemory_to_Strings_id);
 
 	praat_addAction2 (classFilesInMemory, 1, classFileInMemory, 0, U"Add items to Collection", 0, 0, DO_FilesInMemory_addItems);

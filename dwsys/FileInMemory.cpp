@@ -97,7 +97,9 @@ void FileInMemory_setId (FileInMemory me, const char32 *newId) {
 
 void FileInMemory_showAsCode (FileInMemory me, const char32 *name, long numberOfBytesPerLine)
 {
-	if (numberOfBytesPerLine <= 0) numberOfBytesPerLine = 20;
+	if (numberOfBytesPerLine <= 0) {
+		numberOfBytesPerLine = 20;
+	}
 	// autoNUMvector<unsigned char> data (0, my d_numberOfBytes); ????
 	MelderInfo_writeLine (U"\t\tstatic unsigned char ", name, U"_data[", my d_numberOfBytes+1, U"] = {");
 	for (long i = 0; i < my d_numberOfBytes; i++) {
@@ -147,8 +149,7 @@ autoFilesInMemory FilesInMemory_createFromDirectoryContents (const char32 *dirpa
 		}
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"FilesInMemory not created from directory \"", dirpath, U"\" for files that match \"",
-		fileGlobber, U"\".");
+		Melder_throw (U"FilesInMemory not created from directory \"", dirpath, U"\" for files that match \"", fileGlobber, U"\".");
 	}
 }
 
@@ -222,7 +223,9 @@ autoStrings FilesInMemory_to_Strings_id (FilesInMemory me) {
 char * FilesInMemory_getCopyOfData (FilesInMemory me, const char32 *id, long *numberOfBytes) {
 	*numberOfBytes = 0;
 	long index = FilesInMemory_getIndexFromId (me, id);
-	if (index == 0) return 0;
+	if (index == 0) {
+		return nullptr;
+	}
 	FileInMemory fim = (FileInMemory) my item[index];
 	char *data = (char *) _Melder_malloc (fim -> d_numberOfBytes);
 	if (! data || ! memcpy (data, fim -> d_data, fim -> d_numberOfBytes)) {
@@ -236,7 +239,9 @@ char * FilesInMemory_getCopyOfData (FilesInMemory me, const char32 *id, long *nu
 const char * FilesInMemory_getData (FilesInMemory me, const char32 *id, long *numberOfBytes) {
 	*numberOfBytes = 0;
 	long index = FilesInMemory_getIndexFromId (me, id);
-	if (index == 0) return 0;
+	if (index == 0) {
+		return nullptr;
+	}
 	FileInMemory fim = (FileInMemory) my item[index];
 	*numberOfBytes = fim -> d_numberOfBytes;
 	return fim -> d_data;
