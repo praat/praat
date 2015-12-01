@@ -35,7 +35,7 @@ bool structGraphicsScreen :: v_mouseStillDown () {
 		gdk_event_free (gevent);
 		return gdkEventType != GDK_BUTTON_RELEASE;
 	#elif cocoa
-		Graphics_flushWs (this);
+		[[d_macView window]   flushWindow];
 		NSEvent *nsEvent = [[d_macView window]
 			nextEventMatchingMask: NSLeftMouseUpMask | NSLeftMouseDraggedMask | NSKeyDownMask
 			untilDate: [NSDate distantFuture]

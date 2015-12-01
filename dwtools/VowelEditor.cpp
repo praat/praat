@@ -708,7 +708,7 @@ static void VowelEditor_getVowelMarksFromTableFile (VowelEditor me, MelderFile f
 		if (! Thing_isa (data.get(), classTable)) {
 			Melder_throw (U"\"", MelderFile_name (file), U"\" is not a Table file");
 		}
-		autoTable newMarks = (Table) data.transfer();
+		autoTable newMarks = data.static_cast_move <structTable> ();
 		// check if columns Vowel F1 & F2 are present
 		Table_getColumnIndexFromColumnLabel (newMarks.get(), U"Vowel");
 		Table_getColumnIndexFromColumnLabel (newMarks.get(), U"F1");
@@ -899,13 +899,13 @@ static void menu_cb_ranges_f1f2 (VowelEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_publishSound (VowelEditor me, EDITOR_ARGS_DIRECT) {
 	autoSound publish = VowelEditor_createTarget (me);
-	Editor_broadcastPublication (me, publish.transfer());
+	Editor_broadcastPublication (me, publish.move());
 }
 
 static void menu_cb_extract_FormantGrid (VowelEditor me, EDITOR_ARGS_DIRECT) {
 	VowelEditor_updateVowel (me);
 	autoFormantGrid publish = FormantTier_to_FormantGrid (my vowel -> ft.get());
-	Editor_broadcastPublication (me, publish.transfer());
+	Editor_broadcastPublication (me, publish.move());
 }
 
 static void menu_cb_extract_KlattGrid (VowelEditor me, EDITOR_ARGS_DIRECT) {
@@ -915,13 +915,13 @@ static void menu_cb_extract_KlattGrid (VowelEditor me, EDITOR_ARGS_DIRECT) {
 	KlattGrid_addVoicingAmplitudePoint (publish.peek(), fg -> xmin, 90.0);
 	KlattGrid_replacePitchTier (publish.peek(), my vowel -> pt.get());
 	KlattGrid_replaceFormantGrid (publish.peek(), KlattGrid_ORAL_FORMANTS, fg.peek());
-	Editor_broadcastPublication (me, publish.transfer());
+	Editor_broadcastPublication (me, publish.move());
 }
 
 static void menu_cb_extract_PitchTier (VowelEditor me, EDITOR_ARGS_DIRECT) {
 	VowelEditor_updateVowel (me);
 	autoPitchTier publish = Data_copy (my vowel -> pt.get());
-	Editor_broadcastPublication (me, publish.transfer());
+	Editor_broadcastPublication (me, publish.move());
 }
 
 static void menu_cb_drawTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
@@ -1152,7 +1152,7 @@ static void gui_button_cb_play (VowelEditor me, GuiButtonEvent /* event */) {
 
 static void gui_button_cb_publish (VowelEditor me, GuiButtonEvent /* event */) {
 	autoSound publish = VowelEditor_createTarget (me);
-	Editor_broadcastPublication (me, publish.transfer());
+	Editor_broadcastPublication (me, publish.move());
 }
 
 static void gui_button_cb_reverse (VowelEditor me, GuiButtonEvent /* event */) {
@@ -1325,9 +1325,9 @@ end:
 static void gui_drawingarea_cb_key (VowelEditor /* me */, GuiDrawingArea_KeyEvent /* event */) {
 }
 
-static void cb_publish (Editor /*editor*/, void* /*closure*/, Daata publish) {
+static void cb_publish (Editor /*editor*/, autoDaata publish) {
 	try {
-		praat_new (publish, U"");
+		praat_new (publish.move(), U"");
 		praat_updateSelection ();
 	} catch (MelderError) {
 		Melder_flushError ();
@@ -1449,7 +1449,7 @@ autoVowelEditor VowelEditor_create (const char32 *title, Daata data) {
 		my g = Graphics_create_xmdrawingarea (my drawingArea);
 		Melder_assert (my g);
 		Graphics_setFontSize (my g, 12);
-		Editor_setPublicationCallback (me.peek(), cb_publish, nullptr);
+		Editor_setPublicationCallback (me.peek(), cb_publish);
 
 		my f1min = prefs.f1min;
 		my f1max = prefs.f1max;

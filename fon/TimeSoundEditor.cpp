@@ -134,7 +134,7 @@ static void do_ExtractSelectedSound (TimeSoundEditor me, bool preserveTimes) {
 	} else if (my d_sound.data) {
 		extract = Sound_extractPart (my d_sound.data, my d_startSelection, my d_endSelection, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes);
 	}
-	Editor_broadcastPublication (me, extract.transfer());
+	Editor_broadcastPublication (me, extract.move());
 }
 
 static void menu_cb_ExtractSelectedSound_timeFromZero (TimeSoundEditor me, EDITOR_ARGS_DIRECT) {
@@ -164,7 +164,7 @@ static void menu_cb_ExtractSelectedSound_windowed (TimeSoundEditor me, EDITOR_AR
 		autoSound extract = Sound_extractPart (sound, my d_startSelection, my d_endSelection, my pref_extract_windowShape (),
 			my pref_extract_relativeWidth (), my pref_extract_preserveTimes ());
 		Thing_setName (extract.peek(), GET_STRING (U"Name"));
-		Editor_broadcastPublication (me, extract.transfer());
+		Editor_broadcastPublication (me, extract.move());
 	EDITOR_END
 }
 
@@ -181,7 +181,7 @@ static void menu_cb_ExtractSelectedSoundForOverlap (TimeSoundEditor me, EDITOR_A
 		autoSound extract = Sound_extractPartForOverlap (sound, my d_startSelection, my d_endSelection,
 			my pref_extract_overlap ());
 		Thing_setName (extract.peek(), GET_STRING (U"Name"));
-		Editor_broadcastPublication (me, extract.transfer());
+		Editor_broadcastPublication (me, extract.move());
 	EDITOR_END
 }
 

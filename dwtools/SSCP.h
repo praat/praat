@@ -222,10 +222,10 @@ autoSSCPs SSCPs_extractTwoDimensions (SSCPs me, long d1, long d2);
 /* For inheritors */
 
 void SSCPs_drawConcentrationEllipses (SSCPs me, Graphics g, double scale,
-	int confidence, const char32 *label, long d1, long d2, double xmin, double xmax,
+	bool confidence, const char32 *label, long d1, long d2, double xmin, double xmax,
 	double ymin, double ymax, int fontSize, int garnish);
 
-void SSCPs_getEllipsesBoundingBoxCoordinates (SSCPs me, double scale, int confidence,
+void SSCPs_getEllipsesBoundingBoxCoordinates (SSCPs me, double scale, bool confidence,
 	double *xmin, double *xmax, double *ymin, double *ymax);
 
 void SSCP_expand (SSCP me);

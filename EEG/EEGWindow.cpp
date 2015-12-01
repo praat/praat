@@ -48,13 +48,13 @@ const char32 * structEEGWindow :: v_getChannelName (long channelNumber) {
 static void menu_cb_ExtractSelectedEEG_preserveTimes (EEGWindow me, EDITOR_ARGS_DIRECT) {
 	if (my d_endSelection <= my d_startSelection) Melder_throw (U"No selection.");
 	autoEEG extract = EEG_extractPart (my eeg, my d_startSelection, my d_endSelection, true);
-	Editor_broadcastPublication (me, extract.transfer());
+	Editor_broadcastPublication (me, extract.move());
 }
 
 static void menu_cb_ExtractSelectedEEG_timeFromZero (EEGWindow me, EDITOR_ARGS_DIRECT) {
 	if (my d_endSelection <= my d_startSelection) Melder_throw (U"No selection.");
 	autoEEG extract = EEG_extractPart (my eeg, my d_startSelection, my d_endSelection, false);
-	Editor_broadcastPublication (me, extract.transfer());
+	Editor_broadcastPublication (me, extract.move());
 }
 
 void structEEGWindow :: v_createMenuItems_file_extract (EditorMenu menu) {

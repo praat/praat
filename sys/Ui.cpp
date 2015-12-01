@@ -55,7 +55,6 @@ void structUiField :: v_destroy () {
 	Melder_free (stringValue);
 	Melder_free (stringValueA);
 	Melder_free (stringDefaultValue);
-	forget (options);
 	UiField_Parent :: v_destroy ();
 }
 
@@ -93,7 +92,7 @@ UiOption UiRadio_addButton (UiField me, const char32 *label) {
 	Melder_assert (my type == UI_RADIO || my type == UI_OPTIONMENU);
 	autoUiOption thee = UiOption_create (label);
 	UiOption thee_ref = thee.get();
-	Collection_addItem_move (my options, thee.move());
+	Collection_addItem_move (my options.get(), thee.move());
 	return thee_ref;
 }
 
@@ -102,7 +101,7 @@ UiOption UiOptionMenu_addButton (UiField me, const char32 *label) {
 	Melder_assert (my type == UI_RADIO || my type == UI_OPTIONMENU);
 	autoUiOption thee = UiOption_create (label);
 	UiOption thee_ref = thee.get();
-	Collection_addItem_move (my options, thee.move());
+	Collection_addItem_move (my options.get(), thee.move());
 	return thee_ref;
 }
 

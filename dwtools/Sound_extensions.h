@@ -34,10 +34,10 @@
 
 int Sound_writeToNistAudioFile (Sound me, MelderFile file);
 
-Sound Sound_readFromCmuAudioFile (MelderFile file);
+autoSound Sound_readFromCmuAudioFile (MelderFile file);
 
 /* only 16 bit signed has been tested !! */
-Sound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsCoding,
+autoSound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsCoding,
 	int littleEndian, int unSigned, long skipNBytes, double samplingFrequency);
 /* Reads a Sound from a raw file:
  *	fileName	: name of the file

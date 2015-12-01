@@ -200,7 +200,7 @@ void SpellingChecker_addNewWord (SpellingChecker me, const char32 *word) {
 			my userDictionary = SortedSetOfString_create ();
 		autostring32 generic = Melder_calloc (char32, 3 * str32len (word) + 1);
 		Longchar_genericize32 (word, generic.peek());
-		SortedSetOfString_addString (my userDictionary.get(), generic.transfer());
+		SortedSetOfString_addString_copy (my userDictionary.get(), generic.transfer());
 	} catch (MelderError) {
 		Melder_throw (me, U": word \"", word, U"\" not added.");
 	}

@@ -692,16 +692,15 @@ DO_ALTERNATIVE (old_Sound_draw)
 	}
 END2 }
 
-static void cb_SoundEditor_publication (Editor editor, void *closure, Daata publication) {
-	(void) editor;
-	(void) closure;
+static void cb_SoundEditor_publication (Editor /* me */, autoDaata publication) {
 	/*
 	 * Keep the gate for error handling.
 	 */
 	try {
-		praat_new (publication, U"");
+		bool isaSpectrum = Thing_isa (publication.get(), classSpectrum);
+		praat_new (publication.move(), U"");
 		praat_updateSelection ();
-		if (Thing_isa (publication, classSpectrum)) {
+		if (isaSpectrum) {
 			int IOBJECT;
 			LOOP {
 				iam (Spectrum);
@@ -719,7 +718,7 @@ DIRECT2 (Sound_edit) {
 	LOOP {
 		iam (Sound);
 		autoSoundEditor editor = SoundEditor_create (ID_AND_FULL_NAME, me);
-		Editor_setPublicationCallback (editor.peek(), cb_SoundEditor_publication, nullptr);
+		Editor_setPublicationCallback (editor.peek(), cb_SoundEditor_publication);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
 	}
@@ -1382,12 +1381,12 @@ END2 }
 static SoundRecorder theReferenceToTheOnlySoundRecorder;
 static int thePreviousNumberOfChannels;
 
-static void cb_SoundRecorder_destruction (Editor /* editor */, void* /* closure */) {
+static void cb_SoundRecorder_destruction (SoundRecorder /* me */) {
 	theReferenceToTheOnlySoundRecorder = nullptr;
 }
-static void cb_SoundRecorder_publication (Editor /* editor */, void* /* closure */, Daata publication) {
+static void cb_SoundRecorder_publication (Editor /* me */, autoDaata publication) {
 	try {
-		praat_new (publication);
+		praat_new (publication.move());
 	} catch (MelderError) {
 		Melder_flushError ();
 	}
@@ -1401,8 +1400,8 @@ static void do_Sound_record (int numberOfChannels) {
 	} else {
 		forget (theReferenceToTheOnlySoundRecorder);
 		autoSoundRecorder recorder = SoundRecorder_create (numberOfChannels);
-		Editor_setDestructionCallback (recorder.get(), cb_SoundRecorder_destruction, nullptr);
-		Editor_setPublicationCallback (recorder.get(), cb_SoundRecorder_publication, nullptr);
+		Editor_setDestructionCallback (recorder.get(), cb_SoundRecorder_destruction);
+		Editor_setPublicationCallback (recorder.get(), cb_SoundRecorder_publication);
 		theReferenceToTheOnlySoundRecorder = recorder.get();
 		recorder.releaseToUser();
 		thePreviousNumberOfChannels = numberOfChannels;

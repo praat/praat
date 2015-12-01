@@ -240,7 +240,7 @@ void structGraphicsScreen :: v_flushWs () {
 		if (d_drawingArea) {
 			GuiShell shell = d_drawingArea -> d_shell;
 			Melder_assert (shell);
-			#if 1
+			#if 0
 				GuiShell_drain (shell);
 			#else
 				[shell -> d_cocoaWindow   flushWindow];

@@ -624,7 +624,7 @@ static void publish (SoundRecorder me) {
 		autostring32 name = GuiText_getString (my soundName);
 		Thing_setName (sound.peek(), name.peek());
 	}
-	Editor_broadcastPublication (me, sound.transfer());
+	Editor_broadcastPublication (me, sound.move());
 }
 
 static void gui_button_cb_cancel (SoundRecorder me, GuiButtonEvent /* event */) {

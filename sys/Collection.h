@@ -180,7 +180,7 @@ void _Collection_insertItem_ref (Collection me, Thing item, long position);
 Thing_define (Ordered, Collection) {
 };
 
-Ordered Ordered_create ();
+autoOrdered Ordered_create ();
 void Ordered_init (Ordered me, ClassInfo itemClass, long initialCapacity);
 
 /* Behaviour:
@@ -291,7 +291,7 @@ Thing_define (SortedSetOfString, SortedSet) {
 
 void SortedSetOfString_init (SortedSetOfString me);
 autoSortedSetOfString SortedSetOfString_create ();
-void SortedSetOfString_addString (SortedSetOfString me, const char32 *string);
+void SortedSetOfString_addString_copy (SortedSetOfString me, const char32 *string);
 long SortedSetOfString_lookUp (SortedSetOfString me, const char32 *string);
 
 /********** class Cyclic **********/
