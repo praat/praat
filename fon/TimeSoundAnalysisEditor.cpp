@@ -1692,24 +1692,24 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 	double pitchViewFrom_hidden = Function_isUnitLogarithmic (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, my p_pitch_unit) ? log10 (pitchViewFrom_overt) : pitchViewFrom_overt;
 	double pitchViewTo_hidden = Function_isUnitLogarithmic (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, my p_pitch_unit) ? log10 (pitchViewTo_overt) : pitchViewTo_overt;
 
-	Graphics_setWindow (my d_graphics, 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (my d_graphics, Graphics_WHITE);
-	Graphics_fillRectangle (my d_graphics, 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (my d_graphics, Graphics_BLACK);
-	Graphics_rectangle (my d_graphics, 0.0, 1.0, 0.0, 1.0);
+	Graphics_setWindow (my d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (my d_graphics.get(), Graphics_WHITE);
+	Graphics_fillRectangle (my d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (my d_graphics.get(), Graphics_BLACK);
+	Graphics_rectangle (my d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
 
 	if (my d_endWindow - my d_startWindow > my p_longestAnalysis) {
-		Graphics_setFont (my d_graphics, kGraphics_font_HELVETICA);
-		Graphics_setFontSize (my d_graphics, 10);
-		Graphics_setTextAlignment (my d_graphics, Graphics_CENTRE, Graphics_HALF);
-		Graphics_text (my d_graphics, 0.5, 0.67,   U"(To see the analyses, zoom in to at most ", Melder_half (my p_longestAnalysis), U" seconds,");
-		Graphics_text (my d_graphics, 0.5, 0.33, U"or raise the \"longest analysis\" setting with \"Show analyses\" in the View menu.)");
-		Graphics_setFontSize (my d_graphics, 12);
+		Graphics_setFont (my d_graphics.get(), kGraphics_font_HELVETICA);
+		Graphics_setFontSize (my d_graphics.get(), 10);
+		Graphics_setTextAlignment (my d_graphics.get(), Graphics_CENTRE, Graphics_HALF);
+		Graphics_text (my d_graphics.get(), 0.5, 0.67,   U"(To see the analyses, zoom in to at most ", Melder_half (my p_longestAnalysis), U" seconds,");
+		Graphics_text (my d_graphics.get(), 0.5, 0.33, U"or raise the \"longest analysis\" setting with \"Show analyses\" in the View menu.)");
+		Graphics_setFontSize (my d_graphics.get(), 12);
 		return;
 	}
 	TimeSoundAnalysisEditor_computeSpectrogram (me);
 	if (my p_spectrogram_show && my d_spectrogram) {
-		Spectrogram_paintInside (my d_spectrogram.get(), my d_graphics, my d_startWindow, my d_endWindow,
+		Spectrogram_paintInside (my d_spectrogram.get(), my d_graphics.get(), my d_startWindow, my d_endWindow,
 			my p_spectrogram_viewFrom, my p_spectrogram_viewTo, my p_spectrogram_maximum, my p_spectrogram_autoscaling,
 			my p_spectrogram_dynamicRange, my p_spectrogram_preemphasis, my p_spectrogram_dynamicCompression);
 	}
@@ -1724,56 +1724,56 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 			defaultTimeStep;
 		int undersampled = timeStep > greatestNonUndersamplingTimeStep;
 		long numberOfVisiblePitchPoints = (long) ((my d_endWindow - my d_startWindow) / timeStep);
-		Graphics_setColour (my d_graphics, Graphics_CYAN);
-		Graphics_setLineWidth (my d_graphics, 3.0);
+		Graphics_setColour (my d_graphics.get(), Graphics_CYAN);
+		Graphics_setLineWidth (my d_graphics.get(), 3.0);
 		if ((my p_pitch_drawingMethod == kTimeSoundAnalysisEditor_pitch_drawingMethod_AUTOMATIC && (undersampled || numberOfVisiblePitchPoints < 101)) ||
 		    my p_pitch_drawingMethod == kTimeSoundAnalysisEditor_pitch_drawingMethod_SPECKLE)
 		{
-			Pitch_drawInside (my d_pitch.get(), my d_graphics, my d_startWindow, my d_endWindow, pitchViewFrom_overt, pitchViewTo_overt, 2, my p_pitch_unit);
+			Pitch_drawInside (my d_pitch.get(), my d_graphics.get(), my d_startWindow, my d_endWindow, pitchViewFrom_overt, pitchViewTo_overt, 2, my p_pitch_unit);
 		}
 		if ((my p_pitch_drawingMethod == kTimeSoundAnalysisEditor_pitch_drawingMethod_AUTOMATIC && ! undersampled) ||
 		    my p_pitch_drawingMethod == kTimeSoundAnalysisEditor_pitch_drawingMethod_CURVE)
 		{
-			Pitch_drawInside (my d_pitch.get(), my d_graphics, my d_startWindow, my d_endWindow, pitchViewFrom_overt, pitchViewTo_overt, false, my p_pitch_unit);
+			Pitch_drawInside (my d_pitch.get(), my d_graphics.get(), my d_startWindow, my d_endWindow, pitchViewFrom_overt, pitchViewTo_overt, false, my p_pitch_unit);
 		}
-		Graphics_setColour (my d_graphics, Graphics_BLUE);
-		Graphics_setLineWidth (my d_graphics, 1.0);
+		Graphics_setColour (my d_graphics.get(), Graphics_BLUE);
+		Graphics_setLineWidth (my d_graphics.get(), 1.0);
 		if ((my p_pitch_drawingMethod == kTimeSoundAnalysisEditor_pitch_drawingMethod_AUTOMATIC && (undersampled || numberOfVisiblePitchPoints < 101)) ||
 		    my p_pitch_drawingMethod == kTimeSoundAnalysisEditor_pitch_drawingMethod_SPECKLE)
 		{
-			Pitch_drawInside (my d_pitch.get(), my d_graphics, my d_startWindow, my d_endWindow, pitchViewFrom_overt, pitchViewTo_overt, 1, my p_pitch_unit);
+			Pitch_drawInside (my d_pitch.get(), my d_graphics.get(), my d_startWindow, my d_endWindow, pitchViewFrom_overt, pitchViewTo_overt, 1, my p_pitch_unit);
 		}
 		if ((my p_pitch_drawingMethod == kTimeSoundAnalysisEditor_pitch_drawingMethod_AUTOMATIC && ! undersampled) ||
 		    my p_pitch_drawingMethod == kTimeSoundAnalysisEditor_pitch_drawingMethod_CURVE)
 		{
-			Pitch_drawInside (my d_pitch.get(), my d_graphics, my d_startWindow, my d_endWindow, pitchViewFrom_overt, pitchViewTo_overt, false, my p_pitch_unit);
+			Pitch_drawInside (my d_pitch.get(), my d_graphics.get(), my d_startWindow, my d_endWindow, pitchViewFrom_overt, pitchViewTo_overt, false, my p_pitch_unit);
 		}
-		Graphics_setColour (my d_graphics, Graphics_BLACK);
+		Graphics_setColour (my d_graphics.get(), Graphics_BLACK);
 	}
 	TimeSoundAnalysisEditor_computeIntensity (me);
 	if (my p_intensity_show && my d_intensity) {
-		Graphics_setColour (my d_graphics, my p_spectrogram_show ? Graphics_YELLOW : Graphics_LIME);
-		Graphics_setLineWidth (my d_graphics, my p_spectrogram_show ? 1.0 : 3.0);
-		Intensity_drawInside (my d_intensity.get(), my d_graphics, my d_startWindow, my d_endWindow,
+		Graphics_setColour (my d_graphics.get(), my p_spectrogram_show ? Graphics_YELLOW : Graphics_LIME);
+		Graphics_setLineWidth (my d_graphics.get(), my p_spectrogram_show ? 1.0 : 3.0);
+		Intensity_drawInside (my d_intensity.get(), my d_graphics.get(), my d_startWindow, my d_endWindow,
 			my p_intensity_viewFrom, my p_intensity_viewTo);
-		Graphics_setLineWidth (my d_graphics, 1.0);
-		Graphics_setColour (my d_graphics, Graphics_BLACK);
+		Graphics_setLineWidth (my d_graphics.get(), 1.0);
+		Graphics_setColour (my d_graphics.get(), Graphics_BLACK);
 	}
 	TimeSoundAnalysisEditor_computeFormants (me);
 	if (my p_formant_show && my d_formant) {
-		Graphics_setColour (my d_graphics, Graphics_RED);
-		Graphics_setSpeckleSize (my d_graphics, my p_formant_dotSize);
-		Formant_drawSpeckles_inside (my d_formant.get(), my d_graphics, my d_startWindow, my d_endWindow,
+		Graphics_setColour (my d_graphics.get(), Graphics_RED);
+		Graphics_setSpeckleSize (my d_graphics.get(), my p_formant_dotSize);
+		Formant_drawSpeckles_inside (my d_formant.get(), my d_graphics.get(), my d_startWindow, my d_endWindow,
 			my p_spectrogram_viewFrom, my p_spectrogram_viewTo, my p_formant_dynamicRange);
-		Graphics_setColour (my d_graphics, Graphics_BLACK);
+		Graphics_setColour (my d_graphics.get(), Graphics_BLACK);
 	}
 	/*
 	 * Draw vertical scales.
 	 */
 	if (my p_pitch_show) {
 		double pitchCursor_overt = NUMundefined, pitchCursor_hidden = NUMundefined;
-		Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, pitchViewFrom_hidden, pitchViewTo_hidden);
-		Graphics_setColour (my d_graphics, Graphics_BLUE);
+		Graphics_setWindow (my d_graphics.get(), my d_startWindow, my d_endWindow, pitchViewFrom_hidden, pitchViewTo_hidden);
+		Graphics_setColour (my d_graphics.get(), Graphics_BLUE);
 		if (my d_pitch) {
 			if (my d_startSelection == my d_endSelection)
 				pitchCursor_hidden = Pitch_getValueAtTime (my d_pitch.get(), my d_startSelection, my p_pitch_unit, 1);
@@ -1781,31 +1781,31 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 				pitchCursor_hidden = Pitch_getMean (my d_pitch.get(), my d_startSelection, my d_endSelection, my p_pitch_unit);
 			pitchCursor_overt = Function_convertToNonlogarithmic (my d_pitch.get(), pitchCursor_hidden, Pitch_LEVEL_FREQUENCY, my p_pitch_unit);
 			if (NUMdefined (pitchCursor_hidden)) {
-				Graphics_setTextAlignment (my d_graphics, Graphics_LEFT, Graphics_HALF);
-				Graphics_text (my d_graphics, my d_endWindow, pitchCursor_hidden,
+				Graphics_setTextAlignment (my d_graphics.get(), Graphics_LEFT, Graphics_HALF);
+				Graphics_text (my d_graphics.get(), my d_endWindow, pitchCursor_hidden,
 					Melder_float (Melder_half (pitchCursor_overt)), U" ",
 					Function_getUnitText (my d_pitch.get(), Pitch_LEVEL_FREQUENCY, my p_pitch_unit, Function_UNIT_TEXT_SHORT | Function_UNIT_TEXT_GRAPHICAL));
 			}
-			if (! NUMdefined (pitchCursor_hidden) || Graphics_dyWCtoMM (my d_graphics, pitchCursor_hidden - pitchViewFrom_hidden) > 5.0) {
-				Graphics_setTextAlignment (my d_graphics, Graphics_LEFT, Graphics_BOTTOM);
-				Graphics_text (my d_graphics, my d_endWindow, pitchViewFrom_hidden - Graphics_dyMMtoWC (my d_graphics, 0.5),
+			if (! NUMdefined (pitchCursor_hidden) || Graphics_dyWCtoMM (my d_graphics.get(), pitchCursor_hidden - pitchViewFrom_hidden) > 5.0) {
+				Graphics_setTextAlignment (my d_graphics.get(), Graphics_LEFT, Graphics_BOTTOM);
+				Graphics_text (my d_graphics.get(), my d_endWindow, pitchViewFrom_hidden - Graphics_dyMMtoWC (my d_graphics.get(), 0.5),
 					Melder_float (Melder_half (pitchViewFrom_overt)), U" ",
 					Function_getUnitText (my d_pitch.get(), Pitch_LEVEL_FREQUENCY, my p_pitch_unit, Function_UNIT_TEXT_SHORT | Function_UNIT_TEXT_GRAPHICAL));
 			}
-			if (! NUMdefined (pitchCursor_hidden) || Graphics_dyWCtoMM (my d_graphics, pitchViewTo_hidden - pitchCursor_hidden) > 5.0) {
-				Graphics_setTextAlignment (my d_graphics, Graphics_LEFT, Graphics_TOP);
-				Graphics_text (my d_graphics, my d_endWindow, pitchViewTo_hidden,
+			if (! NUMdefined (pitchCursor_hidden) || Graphics_dyWCtoMM (my d_graphics.get(), pitchViewTo_hidden - pitchCursor_hidden) > 5.0) {
+				Graphics_setTextAlignment (my d_graphics.get(), Graphics_LEFT, Graphics_TOP);
+				Graphics_text (my d_graphics.get(), my d_endWindow, pitchViewTo_hidden,
 					Melder_float (Melder_half (pitchViewTo_overt)), U" ",
 					Function_getUnitText (my d_pitch.get(), Pitch_LEVEL_FREQUENCY, my p_pitch_unit, Function_UNIT_TEXT_SHORT | Function_UNIT_TEXT_GRAPHICAL));
 			}
 		} else {
-			Graphics_setTextAlignment (my d_graphics, Graphics_CENTRE, Graphics_HALF);
-			Graphics_setFontSize (my d_graphics, 10);
-			Graphics_text (my d_graphics, 0.5 * (my d_startWindow + my d_endWindow), 0.5 * (pitchViewFrom_hidden + pitchViewTo_hidden),
+			Graphics_setTextAlignment (my d_graphics.get(), Graphics_CENTRE, Graphics_HALF);
+			Graphics_setFontSize (my d_graphics.get(), 10);
+			Graphics_text (my d_graphics.get(), 0.5 * (my d_startWindow + my d_endWindow), 0.5 * (pitchViewFrom_hidden + pitchViewTo_hidden),
 				U"(Cannot show pitch contour. Zoom out or change bottom of pitch range in pitch settings.)");
-			Graphics_setFontSize (my d_graphics, 12);
+			Graphics_setFontSize (my d_graphics.get(), 12);
 		}
-		Graphics_setColour (my d_graphics, Graphics_BLACK);
+		Graphics_setColour (my d_graphics.get(), Graphics_BLACK);
 	}
 	if (my p_intensity_show) {
 		double intensityCursor = NUMundefined;
@@ -1816,7 +1816,7 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 		else if (! my p_spectrogram_show && ! my p_formant_show) textColour = Graphics_GREEN, alignment = Graphics_RIGHT, y = my d_startWindow;
 		else textColour = my p_spectrogram_show ? Graphics_LIME : Graphics_GREEN, alignment = Graphics_RIGHT, y = my d_endWindow;
 		if (my p_intensity_viewTo > my p_intensity_viewFrom) {
-			Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, my p_intensity_viewFrom, my p_intensity_viewTo);
+			Graphics_setWindow (my d_graphics.get(), my d_startWindow, my d_endWindow, my p_intensity_viewFrom, my p_intensity_viewTo);
 			if (my d_intensity) {
 				if (my d_startSelection == my d_endSelection) {
 					intensityCursor = Vector_getValueAtX (my d_intensity.get(), my d_startSelection, Vector_CHANNEL_1, Vector_VALUE_INTERPOLATION_LINEAR);
@@ -1824,57 +1824,57 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 					intensityCursor = Intensity_getAverage (my d_intensity.get(), my d_startSelection, my d_endSelection, my p_intensity_averagingMethod);
 				}
 			}
-			Graphics_setColour (my d_graphics, textColour);
+			Graphics_setColour (my d_graphics.get(), textColour);
 			bool intensityCursorVisible = NUMdefined (intensityCursor) &&
 				intensityCursor > my p_intensity_viewFrom && intensityCursor < my p_intensity_viewTo;
 			if (intensityCursorVisible) {
 				static const char32 *methodString [] = { U" (.5)", U" (μE)", U" (μS)", U" (μ)" };
-				Graphics_setTextAlignment (my d_graphics, alignment, Graphics_HALF);
-				Graphics_text (my d_graphics, y, intensityCursor,
+				Graphics_setTextAlignment (my d_graphics.get(), alignment, Graphics_HALF);
+				Graphics_text (my d_graphics.get(), y, intensityCursor,
 					Melder_float (Melder_half (intensityCursor)), U" dB",
 					my d_startSelection == my d_endSelection ? U"" : methodString [my p_intensity_averagingMethod]);
 			}
-			if (! intensityCursorVisible || Graphics_dyWCtoMM (my d_graphics, intensityCursor - my p_intensity_viewFrom) > 5.0) {
-				Graphics_setTextAlignment (my d_graphics, alignment, Graphics_BOTTOM);
-				Graphics_text (my d_graphics, y, my p_intensity_viewFrom - Graphics_dyMMtoWC (my d_graphics, 0.5),
+			if (! intensityCursorVisible || Graphics_dyWCtoMM (my d_graphics.get(), intensityCursor - my p_intensity_viewFrom) > 5.0) {
+				Graphics_setTextAlignment (my d_graphics.get(), alignment, Graphics_BOTTOM);
+				Graphics_text (my d_graphics.get(), y, my p_intensity_viewFrom - Graphics_dyMMtoWC (my d_graphics.get(), 0.5),
 					Melder_float (Melder_half (my p_intensity_viewFrom)), U" dB");
 			}
-			if (! intensityCursorVisible || Graphics_dyWCtoMM (my d_graphics, my p_intensity_viewTo - intensityCursor) > 5.0) {
-				Graphics_setTextAlignment (my d_graphics, alignment, Graphics_TOP);
-				Graphics_text (my d_graphics, y, my p_intensity_viewTo,
+			if (! intensityCursorVisible || Graphics_dyWCtoMM (my d_graphics.get(), my p_intensity_viewTo - intensityCursor) > 5.0) {
+				Graphics_setTextAlignment (my d_graphics.get(), alignment, Graphics_TOP);
+				Graphics_text (my d_graphics.get(), y, my p_intensity_viewTo,
 					Melder_float (Melder_half (my p_intensity_viewTo)), U" dB");
 			}
-			Graphics_setColour (my d_graphics, Graphics_BLACK);
+			Graphics_setColour (my d_graphics.get(), Graphics_BLACK);
 		}
 	}
 	if (my p_spectrogram_show || my p_formant_show) {
 		bool frequencyCursorVisible = my d_spectrogram_cursor > my p_spectrogram_viewFrom && my d_spectrogram_cursor < my p_spectrogram_viewTo;
-		Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, my p_spectrogram_viewFrom, my p_spectrogram_viewTo);
+		Graphics_setWindow (my d_graphics.get(), my d_startWindow, my d_endWindow, my p_spectrogram_viewFrom, my p_spectrogram_viewTo);
 		/*
 		 * Range marks.
 		 */
-		Graphics_setLineType (my d_graphics, Graphics_DRAWN);
-		Graphics_setColour (my d_graphics, Graphics_BLACK);
-		if (! frequencyCursorVisible || Graphics_dyWCtoMM (my d_graphics, my d_spectrogram_cursor - my p_spectrogram_viewFrom) > 5.0) {
-			Graphics_setTextAlignment (my d_graphics, Graphics_RIGHT, Graphics_BOTTOM);
-			Graphics_text (my d_graphics, my d_startWindow, my p_spectrogram_viewFrom - Graphics_dyMMtoWC (my d_graphics, 0.5),
+		Graphics_setLineType (my d_graphics.get(), Graphics_DRAWN);
+		Graphics_setColour (my d_graphics.get(), Graphics_BLACK);
+		if (! frequencyCursorVisible || Graphics_dyWCtoMM (my d_graphics.get(), my d_spectrogram_cursor - my p_spectrogram_viewFrom) > 5.0) {
+			Graphics_setTextAlignment (my d_graphics.get(), Graphics_RIGHT, Graphics_BOTTOM);
+			Graphics_text (my d_graphics.get(), my d_startWindow, my p_spectrogram_viewFrom - Graphics_dyMMtoWC (my d_graphics.get(), 0.5),
 				Melder_float (Melder_half (my p_spectrogram_viewFrom)), U" Hz");
 		}
-		if (! frequencyCursorVisible || Graphics_dyWCtoMM (my d_graphics, my p_spectrogram_viewTo - my d_spectrogram_cursor) > 5.0) {
-			Graphics_setTextAlignment (my d_graphics, Graphics_RIGHT, Graphics_TOP);
-			Graphics_text (my d_graphics, my d_startWindow, my p_spectrogram_viewTo,
+		if (! frequencyCursorVisible || Graphics_dyWCtoMM (my d_graphics.get(), my p_spectrogram_viewTo - my d_spectrogram_cursor) > 5.0) {
+			Graphics_setTextAlignment (my d_graphics.get(), Graphics_RIGHT, Graphics_TOP);
+			Graphics_text (my d_graphics.get(), my d_startWindow, my p_spectrogram_viewTo,
 				Melder_float (Melder_half (my p_spectrogram_viewTo)), U" Hz");
 		}
 		/*
 		 * Cursor lines.
 		 */
-		Graphics_setLineType (my d_graphics, Graphics_DOTTED);
-		Graphics_setColour (my d_graphics, Graphics_RED);
+		Graphics_setLineType (my d_graphics.get(), Graphics_DOTTED);
+		Graphics_setColour (my d_graphics.get(), Graphics_RED);
 		if (frequencyCursorVisible) {
 			double x = my d_startWindow, y = my d_spectrogram_cursor;
-			Graphics_setTextAlignment (my d_graphics, Graphics_RIGHT, Graphics_HALF);
-			Graphics_text (my d_graphics, x, y,   Melder_float (Melder_half (y)), U" Hz");
-			Graphics_line (my d_graphics, x, y, my d_endWindow, y);
+			Graphics_setTextAlignment (my d_graphics.get(), Graphics_RIGHT, Graphics_HALF);
+			Graphics_text (my d_graphics.get(), x, y,   Melder_float (Melder_half (y)), U" Hz");
+			Graphics_line (my d_graphics.get(), x, y, my d_endWindow, y);
 		}
 		/*
 		if (our startSelection >= our startWindow && our startSelection <= our endWindow)
@@ -1884,9 +1884,9 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 		/*
 		 * Cadre.
 		 */
-		Graphics_setLineType (my d_graphics, Graphics_DRAWN);
-		Graphics_setColour (my d_graphics, Graphics_BLACK);
-		Graphics_rectangle (my d_graphics, my d_startWindow, my d_endWindow, my p_spectrogram_viewFrom, my p_spectrogram_viewTo);
+		Graphics_setLineType (my d_graphics.get(), Graphics_DRAWN);
+		Graphics_setColour (my d_graphics.get(), Graphics_BLACK);
+		Graphics_rectangle (my d_graphics.get(), my d_startWindow, my d_endWindow, my p_spectrogram_viewFrom, my p_spectrogram_viewTo);
 	}
 }
 void structTimeSoundAnalysisEditor :: v_draw_analysis () {
@@ -1897,14 +1897,14 @@ void structTimeSoundAnalysisEditor :: v_draw_analysis_pulses () {
 	TimeSoundAnalysisEditor_computePulses (this);
 	if (our p_pulses_show && our d_endWindow - our d_startWindow <= our p_longestAnalysis && our d_pulses) {
 		PointProcess point = our d_pulses.get();
-		Graphics_setWindow (our d_graphics, our d_startWindow, our d_endWindow, -1.0, 1.0);
-		Graphics_setColour (our d_graphics, Graphics_BLUE);
+		Graphics_setWindow (our d_graphics.get(), our d_startWindow, our d_endWindow, -1.0, 1.0);
+		Graphics_setColour (our d_graphics.get(), Graphics_BLUE);
 		if (point -> nt < 2000) for (long i = 1; i <= point -> nt; i ++) {
 			double t = point -> t [i];
 			if (t >= our d_startWindow && t <= our d_endWindow)
-				Graphics_line (our d_graphics, t, -0.9, t, 0.9);
+				Graphics_line (our d_graphics.get(), t, -0.9, t, 0.9);
 		}
-		Graphics_setColour (our d_graphics, Graphics_BLACK);
+		Graphics_setColour (our d_graphics.get(), Graphics_BLACK);
 	}
 }
 

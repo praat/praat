@@ -1126,8 +1126,8 @@ void praat_init (const char32 *title, int argc, char **argv)
 			MelderInfo_writeLine (U"  --pref-dir=DIR   set the preferences directory to DIR");
 			MelderInfo_writeLine (U"  --version        print the Praat version");
 			MelderInfo_writeLine (U"  --help           print this list of command line options");
-			MelderInfo_writeLine (U"  -a, --ansi       on Windows, you use -a when redirecting to a pipe or file");
-			MelderInfo_writeLine (U"                   (this uses ISO Latin-1 encoding instead of UTF-16LE)");
+			MelderInfo_writeLine (U"  -a, --ansi       Windows only: use ISO Latin-1 encoding instead of UTF-16LE");
+			MelderInfo_writeLine (U"                   (this option is needed when you redirect to a pipe or file");
 			MelderInfo_close ();
 			exit (0);
 		} else if (strequ (argv [praatP.argumentNumber], "-a") || strequ (argv [praatP.argumentNumber], "--ansi")) {

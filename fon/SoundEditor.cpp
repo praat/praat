@@ -337,49 +337,49 @@ void structSoundEditor :: v_draw () {
 	 * We check beforehand whether the window fits the LongSound buffer.
 	 */
 	if (d_longSound.data && d_endWindow - d_startWindow > d_longSound.data -> bufferLength) {
-		Graphics_setColour (d_graphics, Graphics_WHITE);
-		Graphics_setWindow (d_graphics, 0, 1, 0, 1);
-		Graphics_fillRectangle (d_graphics, 0, 1, 0, 1);
-		Graphics_setColour (d_graphics, Graphics_BLACK);
-		Graphics_setTextAlignment (d_graphics, Graphics_CENTRE, Graphics_BOTTOM);
-		Graphics_text (d_graphics, 0.5, 0.5,   U"(window longer than ", Melder_float (Melder_single (d_longSound.data -> bufferLength)), U" seconds)");
-		Graphics_setTextAlignment (d_graphics, Graphics_CENTRE, Graphics_TOP);
-		Graphics_text (d_graphics, 0.5, 0.5, U"(zoom in to see the samples)");
+		Graphics_setColour (d_graphics.get(), Graphics_WHITE);
+		Graphics_setWindow (d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_fillRectangle (d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_setColour (d_graphics.get(), Graphics_BLACK);
+		Graphics_setTextAlignment (d_graphics.get(), Graphics_CENTRE, Graphics_BOTTOM);
+		Graphics_text (d_graphics.get(), 0.5, 0.5,   U"(window longer than ", Melder_float (Melder_single (d_longSound.data -> bufferLength)), U" seconds)");
+		Graphics_setTextAlignment (d_graphics.get(), Graphics_CENTRE, Graphics_TOP);
+		Graphics_text (d_graphics.get(), 0.5, 0.5, U"(zoom in to see the samples)");
 		return;
 	}
 
 	/* Draw sound. */
 
 	if (showAnalysis)
-		viewport = Graphics_insetViewport (d_graphics, 0, 1, 0.5, 1);
-	Graphics_setColour (d_graphics, Graphics_WHITE);
-	Graphics_setWindow (d_graphics, 0, 1, 0, 1);
-	Graphics_fillRectangle (d_graphics, 0, 1, 0, 1);
+		viewport = Graphics_insetViewport (d_graphics.get(), 0.0, 1.0, 0.5, 1.0);
+	Graphics_setColour (d_graphics.get(), Graphics_WHITE);
+	Graphics_setWindow (d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_fillRectangle (d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	TimeSoundEditor_drawSound (this, d_sound.minimum, d_sound.maximum);
-	Graphics_flushWs (d_graphics);
+	Graphics_flushWs (d_graphics.get());
 	if (showAnalysis)
-		Graphics_resetViewport (d_graphics, viewport);
+		Graphics_resetViewport (d_graphics.get(), viewport);
 
 	/* Draw analyses. */
 
 	if (showAnalysis) {
 		/* Draw spectrogram, pitch, formants. */
-		viewport = Graphics_insetViewport (d_graphics, 0, 1, 0, 0.5);
+		viewport = Graphics_insetViewport (d_graphics.get(), 0.0, 1.0, 0.0, 0.5);
 		v_draw_analysis ();
-		Graphics_flushWs (d_graphics);
-		Graphics_resetViewport (d_graphics, viewport);
+		Graphics_flushWs (d_graphics.get());
+		Graphics_resetViewport (d_graphics.get(), viewport);
 	}
 
 	/* Draw pulses. */
 
 	if (p_pulses_show) {
 		if (showAnalysis)
-			viewport = Graphics_insetViewport (d_graphics, 0, 1, 0.5, 1);
+			viewport = Graphics_insetViewport (d_graphics.get(), 0.0, 1.0, 0.5, 1.0);
 		v_draw_analysis_pulses ();
 		TimeSoundEditor_drawSound (this, d_sound.minimum, d_sound.maximum);   // second time, partially across the pulses
-		Graphics_flushWs (d_graphics);
+		Graphics_flushWs (d_graphics.get());
 		if (showAnalysis)
-			Graphics_resetViewport (d_graphics, viewport);
+			Graphics_resetViewport (d_graphics.get(), viewport);
 	}
 
 	/* Update buttons. */
@@ -412,16 +412,16 @@ bool structSoundEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed)
 
 void structSoundEditor :: v_highlightSelection (double left, double right, double bottom, double top) {
 	if (p_spectrogram_show)
-		Graphics_highlight (d_graphics, left, right, 0.5 * (bottom + top), top);
+		Graphics_highlight (d_graphics.get(), left, right, 0.5 * (bottom + top), top);
 	else
-		Graphics_highlight (d_graphics, left, right, bottom, top);
+		Graphics_highlight (d_graphics.get(), left, right, bottom, top);
 }
 
 void structSoundEditor :: v_unhighlightSelection (double left, double right, double bottom, double top) {
 	if (p_spectrogram_show)
-		Graphics_unhighlight (d_graphics, left, right, 0.5 * (bottom + top), top);
+		Graphics_unhighlight (d_graphics.get(), left, right, 0.5 * (bottom + top), top);
 	else
-		Graphics_unhighlight (d_graphics, left, right, bottom, top);
+		Graphics_unhighlight (d_graphics.get(), left, right, bottom, top);
 }
 
 void SoundEditor_init (SoundEditor me, const char32 *title, Sampled data) {

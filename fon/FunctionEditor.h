@@ -39,7 +39,7 @@ Thing_define (FunctionEditor, Editor) {
 		/*    tmin <= startWindow < endWindow <= tmax; */
 		/*    tmin <= (startSelection, endSelection) <= tmax; */
 
-	Graphics d_graphics;   // used in the 'draw' method
+	autoGraphics d_graphics;   // used in the 'draw' method
 	short functionViewerLeft, functionViewerRight;   // size of drawing areas in pixels
 	short selectionViewerLeft, selectionViewerRight;   // size of drawing areas in pixels
 	short height;   // size of drawing areas in pixels

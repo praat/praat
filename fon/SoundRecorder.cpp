@@ -1163,7 +1163,7 @@ autoSoundRecorder SoundRecorder_create (int numberOfChannels) {
 		initialize (me.peek());
 
 		Editor_init (me.peek(), 100, 100, 600, 500, U"SoundRecorder", nullptr);
-		my graphics = Graphics_create_xmdrawingarea (my meter).transfer();
+		my graphics = Graphics_create_xmdrawingarea (my meter);
 		Melder_assert (my graphics);
 		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_setColour (my graphics.get(), Graphics_WHITE);

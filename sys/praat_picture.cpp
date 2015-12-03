@@ -1786,7 +1786,7 @@ void praat_picture_init () {
 	praat_picture = Picture_create (drawingArea, ! theCurrentPraatApplication -> batch);	
 	// READ THIS!
 	Picture_setSelectionChangedCallback (praat_picture.get(), cb_selectionChanged, nullptr);
-	theCurrentPraatPicture -> graphics = static_cast<Graphics> (Picture_getGraphics (praat_picture.get()));
+	theCurrentPraatPicture -> graphics = static_cast<Graphics> (Picture_peekGraphics (praat_picture.get()));
 
 	updatePenMenu ();
 	updateFontMenu ();

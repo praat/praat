@@ -28,7 +28,6 @@ Thing_implement (TableEditor, Editor, 0);
 /********** EDITOR METHODS **********/
 
 void structTableEditor :: v_destroy () {
-	forget (graphics);
 	TableEditor_Parent :: v_destroy ();
 }
 
@@ -43,12 +42,12 @@ static void updateHorizontalScrollBar (TableEditor me) {
 }
 
 void structTableEditor :: v_dataChanged () {
-	Table table = static_cast<Table> (data);
+	Table table = static_cast<Table> (our data);
 	if (topRow > table -> rows -> size) topRow = table -> rows -> size;
 	if (leftColumn > table -> numberOfColumns) leftColumn = table -> numberOfColumns;
 	updateVerticalScrollBar (this);
 	updateHorizontalScrollBar (this);
-	Graphics_updateWs (graphics);
+	Graphics_updateWs (our graphics.get());
 }
 
 /********** FILE MENU **********/
@@ -92,41 +91,41 @@ void structTableEditor :: v_draw () {
 	long colmin = leftColumn, colmax = colmin + (kTableEditor_MAXNUM_VISIBLE_COLUMNS - 1);
 	if (rowmax > table -> rows -> size) rowmax = table -> rows -> size;
 	if (colmax > table -> numberOfColumns) colmax = table -> numberOfColumns;
-	Graphics_clearWs (graphics);
-	Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_HALF);
-	Graphics_setWindow (graphics, 0.0, 1.0, rowmin + 197.5, rowmin - 2.5);
-	Graphics_setColour (graphics, Graphics_SILVER);
-	Graphics_fillRectangle (graphics, 0.0, 1.0, rowmin - 2.5, rowmin - 0.5);
-	Graphics_setColour (graphics, Graphics_BLACK);
-	Graphics_line (graphics, 0.0, rowmin - 0.5, 1.0, rowmin - 0.5);
-	Graphics_setWindow (graphics, 0.0, Graphics_dxWCtoMM (graphics, 1.0), rowmin + 197.5, rowmin - 2.5);
+	Graphics_clearWs (graphics.get());
+	Graphics_setTextAlignment (graphics.get(), Graphics_CENTRE, Graphics_HALF);
+	Graphics_setWindow (graphics.get(), 0.0, 1.0, rowmin + 197.5, rowmin - 2.5);
+	Graphics_setColour (graphics.get(), Graphics_SILVER);
+	Graphics_fillRectangle (graphics.get(), 0.0, 1.0, rowmin - 2.5, rowmin - 0.5);
+	Graphics_setColour (graphics.get(), Graphics_BLACK);
+	Graphics_line (graphics.get(), 0.0, rowmin - 0.5, 1.0, rowmin - 0.5);
+	Graphics_setWindow (graphics.get(), 0.0, Graphics_dxWCtoMM (graphics.get(), 1.0), rowmin + 197.5, rowmin - 2.5);
 	/*
 	 * Determine the width of the column with the row numbers.
 	 */
-	columnWidth = Graphics_textWidth (graphics, U"row");
+	columnWidth = Graphics_textWidth (graphics.get(), U"row");
 	for (long irow = rowmin; irow <= rowmax; irow ++) {
-		cellWidth = Graphics_textWidth (graphics, Melder_integer (irow));
+		cellWidth = Graphics_textWidth (graphics.get(), Melder_integer (irow));
 		if (cellWidth > columnWidth) columnWidth = cellWidth;
 	}
 	columnLeft [0] = columnWidth + 2 * spacing;
-	Graphics_setColour (graphics, Graphics_SILVER);
-	Graphics_fillRectangle (graphics, 0.0, columnLeft [0], rowmin - 0.5, rowmin + 197.5);
-	Graphics_setColour (graphics, Graphics_BLACK);
-	Graphics_line (graphics, columnLeft [0], rowmin - 0.5, columnLeft [0], rowmin + 197.5);
+	Graphics_setColour (graphics.get(), Graphics_SILVER);
+	Graphics_fillRectangle (graphics.get(), 0.0, columnLeft [0], rowmin - 0.5, rowmin + 197.5);
+	Graphics_setColour (graphics.get(), Graphics_BLACK);
+	Graphics_line (graphics.get(), columnLeft [0], rowmin - 0.5, columnLeft [0], rowmin + 197.5);
 	/*
 	 * Determine the width of the columns.
 	 */
 	for (long icol = colmin; icol <= colmax; icol ++) {
 		const char32 *columnLabel = table -> columnHeaders [icol]. label;
-		columnWidth = Graphics_textWidth (graphics, Melder_integer (icol));
+		columnWidth = Graphics_textWidth (graphics.get(), Melder_integer (icol));
 		if (! columnLabel) columnLabel = U"";
-		cellWidth = Graphics_textWidth (graphics, columnLabel);
+		cellWidth = Graphics_textWidth (graphics.get(), columnLabel);
 		if (cellWidth > columnWidth) columnWidth = cellWidth;
 		for (long irow = rowmin; irow <= rowmax; irow ++) {
 			const char32 *cell = Table_getStringValue_Assert (table, irow, icol);
 			Melder_assert (cell);
 			if (cell [0] == U'\0') cell = U"?";
-			cellWidth = Graphics_textWidth (graphics, cell);
+			cellWidth = Graphics_textWidth (graphics.get(), cell);
 			if (cellWidth > columnWidth) columnWidth = cellWidth;
 		}
 		columnRight [icol - colmin] = columnLeft [icol - colmin] + columnWidth + 2 * spacing;
@@ -135,9 +134,9 @@ void structTableEditor :: v_draw () {
 	/*
 	 * Show the row numbers.
 	 */
-	Graphics_text (graphics, columnLeft [0] / 2, rowmin - 1, U"row");
+	Graphics_text (graphics.get(), columnLeft [0] / 2, rowmin - 1, U"row");
 	for (long irow = rowmin; irow <= rowmax; irow ++) {
-		Graphics_text (graphics, columnLeft [0] / 2, irow, irow);
+		Graphics_text (graphics.get(), columnLeft [0] / 2, irow, irow);
 	}
 	/*
 	 * Show the column labels.
@@ -146,8 +145,8 @@ void structTableEditor :: v_draw () {
 		double mid = (columnLeft [icol - colmin] + columnRight [icol - colmin]) / 2;
 		const char32 *columnLabel = table -> columnHeaders [icol]. label;
 		if (! columnLabel || columnLabel [0] == U'\0') columnLabel = U"?";
-		Graphics_text (graphics, mid, rowmin - 2, icol);
-		Graphics_text (graphics, mid, rowmin - 1, columnLabel);
+		Graphics_text (graphics.get(), mid, rowmin - 2, icol);
+		Graphics_text (graphics.get(), mid, rowmin - 1, columnLabel);
 	}
 	/*
 	 * Show the cell contents.
@@ -158,7 +157,7 @@ void structTableEditor :: v_draw () {
 			const char32 *cell = Table_getStringValue_Assert (table, irow, icol);
 			Melder_assert (cell);
 			if (cell [0] == U'\0') cell = U"?";
-			Graphics_text (graphics, mid, irow, cell);
+			Graphics_text (graphics.get(), mid, irow, cell);
 		}
 	}
 }
@@ -180,13 +179,13 @@ static void gui_drawingarea_cb_expose (TableEditor me, GuiDrawingArea_ExposeEven
 static void gui_drawingarea_cb_click (TableEditor me, GuiDrawingArea_ClickEvent event) {
 	if (! my graphics) return;
 	double xWC, yWC;
-	Graphics_DCtoWC (my graphics, event -> x, event -> y, & xWC, & yWC);
+	Graphics_DCtoWC (my graphics.get(), event -> x, event -> y, & xWC, & yWC);
 	// TODO: implement selection
 }
 
 static void gui_drawingarea_cb_resize (TableEditor me, GuiDrawingArea_ResizeEvent /* event */) {
 	if (! my graphics) return;
-	Graphics_updateWs (my graphics);
+	Graphics_updateWs (my graphics.get());
 }
 
 static void gui_cb_scrollHorizontal (TableEditor me, GuiScrollBarEvent event) {
@@ -194,9 +193,9 @@ static void gui_cb_scrollHorizontal (TableEditor me, GuiScrollBarEvent event) {
 	if (value != my leftColumn) {
 		my leftColumn = value;
 		#if cocoa || gtk || win
-			Graphics_updateWs (my graphics);   // wait for expose event
+			Graphics_updateWs (my graphics.get());   // wait for expose event
 		#else
-			Graphics_clearWs (my graphics);
+			Graphics_clearWs (my graphics.get());
 			my v_draw ();   // do not wait for expose event
 		#endif
 	}
@@ -207,9 +206,9 @@ static void gui_cb_scrollVertical (TableEditor me, GuiScrollBarEvent event) {
 	if (value != my topRow) {
 		my topRow = value;
 		#if cocoa || gtk || win
-			Graphics_updateWs (my graphics);   // wait for expose event
+			Graphics_updateWs (my graphics.get());   // wait for expose event
 		#else
-			Graphics_clearWs (my graphics);
+			Graphics_clearWs (my graphics.get());
 			my v_draw ();   // do not wait for expose event
 		#endif
 	}
@@ -239,7 +238,7 @@ void structTableEditor :: v_createMenus () {
 	TableEditor_Parent :: v_createMenus ();
 
 	#ifndef macintosh
-	Editor_addCommand (this, U"Edit", U"-- cut copy paste --", 0, NULL);
+	Editor_addCommand (this, U"Edit", U"-- cut copy paste --", 0, nullptr);
 	Editor_addCommand (this, U"Edit", U"Cut text", 'X', menu_cb_Cut);
 	Editor_addCommand (this, U"Edit", U"Cut", Editor_HIDDEN, menu_cb_Cut);
 	Editor_addCommand (this, U"Edit", U"Copy text", 'C', menu_cb_Copy);
@@ -267,15 +266,15 @@ autoTableEditor TableEditor_create (const char32 *title, Table table) {
 		my leftColumn = 1;
 		my selectedColumn = 1;
 		my selectedRow = 1;
-		my graphics = Graphics_create_xmdrawingarea (my drawingArea).transfer();
-		double size_pixels = SIZE_INCHES * Graphics_getResolution (my graphics);
-		Graphics_setWsViewport (my graphics, 0.0, size_pixels, 0.0, size_pixels);
-		Graphics_setWsWindow (my graphics, 0.0, size_pixels, 0.0, size_pixels);
-		Graphics_setViewport (my graphics, 0.0, size_pixels, 0.0, size_pixels);
-		Graphics_setFont (my graphics, kGraphics_font_COURIER);
-		Graphics_setFontSize (my graphics, 12);
-		Graphics_setUnderscoreIsSubscript (my graphics, false);
-		Graphics_setAtSignIsLink (my graphics, true);
+		my graphics = Graphics_create_xmdrawingarea (my drawingArea);
+		double size_pixels = SIZE_INCHES * Graphics_getResolution (my graphics.get());
+		Graphics_setWsViewport (my graphics.get(), 0.0, size_pixels, 0.0, size_pixels);
+		Graphics_setWsWindow (my graphics.get(), 0.0, size_pixels, 0.0, size_pixels);
+		Graphics_setViewport (my graphics.get(), 0.0, size_pixels, 0.0, size_pixels);
+		Graphics_setFont (my graphics.get(), kGraphics_font_COURIER);
+		Graphics_setFontSize (my graphics.get(), 12);
+		Graphics_setUnderscoreIsSubscript (my graphics.get(), false);
+		Graphics_setAtSignIsLink (my graphics.get(), true);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"TableEditor not created.");

@@ -54,7 +54,7 @@ Thing_define (VowelEditor, Editor) {
 	int axisOrientation;  // 0: origin topright + f1 down + f2 to left, 0: origin lb + f1 right +f2 up
 	int marksDataset, speakerType;   // 1 = male, 2 = female, 3 = child
 	int marksFontSize;
-	Graphics g;   // the drawing
+	autoGraphics graphics;   // the drawing
 	short width, height;  // size of drawing area in pixels
 	autoTable marks;   // Vowel, F1, F2, Colour...
 	autoVowel vowel;

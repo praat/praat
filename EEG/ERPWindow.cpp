@@ -272,10 +272,10 @@ void ERP_drawScalp (ERP me, Graphics graphics, double tmin, double tmax, double 
 
 void structERPWindow :: v_drawSelectionViewer () {
 	ERP erp = (ERP) data;
-	Graphics_setWindow (d_graphics, -1.1, 1.1, -1.01, 1.19);
-	Graphics_setColour (d_graphics, Graphics_WINDOW_BACKGROUND_COLOUR);
-	Graphics_fillRectangle (d_graphics, -1.1, 1.1, -1.01, 1.19);
-	Graphics_setColour (d_graphics, Graphics_BLACK);
+	Graphics_setWindow (d_graphics.get(), -1.1, 1.1, -1.01, 1.19);
+	Graphics_setColour (d_graphics.get(), Graphics_WINDOW_BACKGROUND_COLOUR);
+	Graphics_fillRectangle (d_graphics.get(), -1.1, 1.1, -1.01, 1.19);
+	Graphics_setColour (d_graphics.get(), Graphics_BLACK);
 	long numberOfDrawableChannels =
 			erp -> ny >= 64 && Melder_equ (erp -> channelNames [64], U"O2") ? 64 :
 			erp -> ny >= 32 && Melder_equ (erp -> channelNames [32], U"Cz") ? 32 :
@@ -355,39 +355,39 @@ void structERPWindow :: v_drawSelectionViewer () {
 			}
 		}
 	}
-	Graphics_setColourScale (d_graphics, our p_scalp_colourScale);
-	Graphics_image (d_graphics, image.peek(), 1, n, -1.0-0.5/n, 1.0+0.5/n, 1, n, -1.0-0.5/n, 1.0+0.5/n, minimum, maximum);
-	Graphics_setColourScale (d_graphics, kGraphics_colourScale_GREY);
-	Graphics_setLineWidth (d_graphics, 2.0);
+	Graphics_setColourScale (our d_graphics.get(), our p_scalp_colourScale);
+	Graphics_image (our d_graphics.get(), image.peek(), 1, n, -1.0-0.5/n, 1.0+0.5/n, 1, n, -1.0-0.5/n, 1.0+0.5/n, minimum, maximum);
+	Graphics_setColourScale (our d_graphics.get(), kGraphics_colourScale_GREY);
+	Graphics_setLineWidth (our d_graphics.get(), 2.0);
 	/*
 	 * Nose.
 	 */
-	Graphics_setGrey (d_graphics, our p_scalp_colourScale == kGraphics_colourScale_BLUE_TO_RED ? 1.0 : 0.5);
+	Graphics_setGrey (our d_graphics.get(), our p_scalp_colourScale == kGraphics_colourScale_BLUE_TO_RED ? 1.0 : 0.5);
 	{// scope
 		double x [3] = { -0.08, 0.0, 0.08 }, y [3] = { 0.99, 1.18, 0.99 };
-		Graphics_fillArea (d_graphics, 3, x, y);
+		Graphics_fillArea (our d_graphics.get(), 3, x, y);
 	}
-	Graphics_setColour (d_graphics, Graphics_BLACK);
-	Graphics_line (d_graphics, -0.08, 0.99, 0.0, 1.18);
-	Graphics_line (d_graphics, 0.08, 0.99, 0.0, 1.18);
+	Graphics_setColour (our d_graphics.get(), Graphics_BLACK);
+	Graphics_line (our d_graphics.get(), -0.08, 0.99, 0.0, 1.18);
+	Graphics_line (our d_graphics.get(), 0.08, 0.99, 0.0, 1.18);
 	/*
 	 * Ears.
 	 */
-	Graphics_setGrey (d_graphics, our p_scalp_colourScale == kGraphics_colourScale_BLUE_TO_RED ? 1.0 : 0.5);
-	Graphics_fillRectangle (d_graphics, -1.09, -1.00, -0.08, 0.08);
-	Graphics_fillRectangle (d_graphics, 1.09, 1.00, -0.08, 0.08);
-	Graphics_setColour (d_graphics, Graphics_BLACK);
-	Graphics_line (d_graphics, -0.99, 0.08, -1.09, 0.08);
-	Graphics_line (d_graphics, -1.09, 0.08, -1.09, -0.08);
-	Graphics_line (d_graphics, -1.09, -0.08, -0.99, -0.08);
-	Graphics_line (d_graphics, 0.99, 0.08, 1.09, 0.08);
-	Graphics_line (d_graphics, 1.09, 0.08, 1.09, -0.08);
-	Graphics_line (d_graphics, 1.09, -0.08, 0.99, -0.08);
+	Graphics_setGrey (our d_graphics.get(), our p_scalp_colourScale == kGraphics_colourScale_BLUE_TO_RED ? 1.0 : 0.5);
+	Graphics_fillRectangle (our d_graphics.get(), -1.09, -1.00, -0.08, 0.08);
+	Graphics_fillRectangle (our d_graphics.get(), 1.09, 1.00, -0.08, 0.08);
+	Graphics_setColour (our d_graphics.get(), Graphics_BLACK);
+	Graphics_line (our d_graphics.get(), -0.99, 0.08, -1.09, 0.08);
+	Graphics_line (our d_graphics.get(), -1.09, 0.08, -1.09, -0.08);
+	Graphics_line (our d_graphics.get(), -1.09, -0.08, -0.99, -0.08);
+	Graphics_line (our d_graphics.get(), 0.99, 0.08, 1.09, 0.08);
+	Graphics_line (our d_graphics.get(), 1.09, 0.08, 1.09, -0.08);
+	Graphics_line (our d_graphics.get(), 1.09, -0.08, 0.99, -0.08);
 	/*
 	 * Scalp.
 	 */
-	Graphics_ellipse (d_graphics, -1.0, 1.0, -1.0, 1.0);
-	Graphics_setLineWidth (d_graphics, 1.0);
+	Graphics_ellipse (our d_graphics.get(), -1.0, 1.0, -1.0, 1.0);
+	Graphics_setLineWidth (our d_graphics.get(), 1.0);
 }
 
 void structERPWindow :: v_prefs_addFields (EditorCommand cmd) {

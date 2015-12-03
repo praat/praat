@@ -44,7 +44,7 @@ static struct {
 	GuiDialog dia;
 	GuiForm form;
 	GuiDrawingArea drawingArea;
-	Graphics graphics;
+	autoGraphics graphics;
 } theLogo = { 90, 40, logo_defaultDraw };
 
 #if motif
@@ -63,22 +63,22 @@ void praat_setLogo (double width_mm, double height_mm, void (*draw) (Graphics g)
 
 static void gui_drawingarea_cb_expose (Thing /* me */, GuiDrawingArea_ExposeEvent event) {
 	if (! theLogo.graphics)
-		theLogo.graphics = Graphics_create_xmdrawingarea (theLogo.drawingArea).transfer();
+		theLogo.graphics = Graphics_create_xmdrawingarea (theLogo.drawingArea);
 	#if gtk
 		#if ALLOW_GDK_DRAWING
-			Graphics_x_setCR (theLogo.graphics, gdk_cairo_create (GDK_DRAWABLE (GTK_WIDGET (event -> widget -> d_widget) -> window)));
+			Graphics_x_setCR (theLogo.graphics.get(), gdk_cairo_create (GDK_DRAWABLE (GTK_WIDGET (event -> widget -> d_widget) -> window)));
 		#else
-			Graphics_x_setCR (theLogo.graphics, gdk_cairo_create (gtk_widget_get_window (GTK_WIDGET (event -> widget -> d_widget))));
+			Graphics_x_setCR (theLogo.graphics.get(), gdk_cairo_create (gtk_widget_get_window (GTK_WIDGET (event -> widget -> d_widget))));
 		#endif
-		cairo_rectangle ((cairo_t *) Graphics_x_getCR (theLogo.graphics), (double) event->x, (double) event->y, (double) event->width, (double) event->height);
-		cairo_clip ((cairo_t *) Graphics_x_getCR (theLogo.graphics));
-		theLogo.draw (theLogo.graphics);
-		cairo_destroy ((cairo_t *) Graphics_x_getCR (theLogo.graphics));
+		cairo_rectangle ((cairo_t *) Graphics_x_getCR (theLogo.graphics.get()), (double) event->x, (double) event->y, (double) event->width, (double) event->height);
+		cairo_clip ((cairo_t *) Graphics_x_getCR (theLogo.graphics.get()));
+		theLogo.draw (theLogo.graphics.get());
+		cairo_destroy ((cairo_t *) Graphics_x_getCR (theLogo.graphics.get()));
 	#elif motif || cocoa
 		(void) event;
 		if (! theLogo.graphics)
-			theLogo.graphics = Graphics_create_xmdrawingarea (theLogo.drawingArea).transfer();
-		theLogo.draw (theLogo.graphics);
+			theLogo.graphics = Graphics_create_xmdrawingarea (theLogo.drawingArea);
+		theLogo.draw (theLogo.graphics.get());
 	#endif
 }
 
