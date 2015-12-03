@@ -936,7 +936,7 @@ void HyperPage_init (HyperPage me, const char32 *title, Daata data) {
 	#if motif
 		Melder_assert (XtWindow (my drawingArea -> d_widget));
 	#endif
-	my g = Graphics_create_xmdrawingarea (my drawingArea);
+	my g = Graphics_create_xmdrawingarea (my drawingArea).transfer();
 	Graphics_setAtSignIsLink (my g, true);
 	Graphics_setDollarSignIsCode (my g, true);
 	Graphics_setFont (my g, kGraphics_font_TIMES);

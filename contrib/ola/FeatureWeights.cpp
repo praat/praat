@@ -58,7 +58,7 @@ Thing_implement (FeatureWeights, Daata, 0);
 // Creation...    //
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-FeatureWeights FeatureWeights_create
+autoFeatureWeights FeatureWeights_create
 (
     ///////////////////////////////
     // Parameters                //
@@ -74,7 +74,7 @@ FeatureWeights FeatureWeights_create
 		for (long i = 1; i <= nweights; i ++) {
 			my fweights -> data [1] [i] = 1;
 		}
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FeatureWeights not created.");
 	}
@@ -125,7 +125,7 @@ long FeatureWeights_computePriors
 // Compute feature weights                                                                 //
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-FeatureWeights FeatureWeights_compute           // Obsolete
+autoFeatureWeights FeatureWeights_compute           // Obsolete
 (
     ///////////////////////////////
     // Parameters                //
@@ -139,7 +139,7 @@ FeatureWeights FeatureWeights_compute           // Obsolete
 )
 
 {
-    return(FeatureWeights_computeRELIEF(pp, c, k));
+    return FeatureWeights_computeRELIEF (pp, c, k);
 }
 
 
@@ -147,7 +147,7 @@ FeatureWeights FeatureWeights_compute           // Obsolete
 // Compute feature weights (wrapper), evaluate using folding                               //
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-FeatureWeights FeatureWeights_computeWrapperInt
+autoFeatureWeights FeatureWeights_computeWrapperInt
 (
     ///////////////////////////////
     // Parameters                //
@@ -179,7 +179,7 @@ FeatureWeights FeatureWeights_computeWrapperInt
 		double range = 0.5;
 		autoNUMvector <double> results (0L, nseeds);
 
-		autoThingVector <FeatureWeights> cs (0L, nseeds);
+		autoThingVector <structFeatureWeights> cs (0L, nseeds);
 		for (long y = 0; y <= nseeds; y++) {
 			cs [y] = FeatureWeights_create (my input -> nx);
 		}
@@ -187,7 +187,7 @@ FeatureWeights FeatureWeights_computeWrapperInt
 		for (long x = 1; x <= my input -> nx; x ++)
 			cs [nseeds] -> fweights -> data [1] [x] = pivot;
 
-		results [nseeds] = KNN_evaluate (me, cs [nseeds], k, d, emode);
+		results [nseeds] = KNN_evaluate (me, cs [nseeds].get(), k, d, emode);
 
 		while (range > 0 && results [nseeds] < stop)
 		{
@@ -201,7 +201,7 @@ FeatureWeights FeatureWeights_computeWrapperInt
 					{
 						cs[y]->fweights->data[1][x] = NUMrandomUniform(OlaMAX(0, cs[nseeds]->fweights->data[1][x] - range),
 													  OlaMIN(1, cs[nseeds]->fweights->data[1][x] + range));
-						results[y] = KNN_evaluate(me, cs[y], k, d, emode);
+						results[y] = KNN_evaluate (me, cs [y].get(), k, d, emode);
 					}
 					for (long q = 0; q < nseeds; q++)
 						if (results[q] > results[best]) best = q;
@@ -223,7 +223,7 @@ FeatureWeights FeatureWeights_computeWrapperInt
 						cs[y]->fweights->data[1][x] = NUMrandomUniform(OlaMAX(0, cs[nseeds]->fweights->data[1][x] - range),
 													  OlaMIN(1, cs[nseeds]->fweights->data[1][x] + range));
 					}
-					results[y] = KNN_evaluate (me, cs [y], k, d, emode);
+					results[y] = KNN_evaluate (me, cs [y].get(), k, d, emode);
 				}
 
 				for (long q = 0; q < nseeds; q++)
@@ -239,8 +239,7 @@ FeatureWeights FeatureWeights_computeWrapperInt
 			range -= alfa;
 		}
 
-		FeatureWeights result = cs [nseeds];
-		cs [nseeds] = nullptr;   // prevent destruction
+		autoFeatureWeights result = cs [nseeds].move();
 		return result;
 	} catch (MelderError) {
 		Melder_throw (U"FeatureWeights: wrapper not computed.");
@@ -251,7 +250,7 @@ FeatureWeights FeatureWeights_computeWrapperInt
 // Compute feature weights (wrapper), evaluate using separate test set                     //
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-FeatureWeights FeatureWeights_computeWrapperExt
+autoFeatureWeights FeatureWeights_computeWrapperExt
 (
     ///////////////////////////////
     // Parameters                //
@@ -285,7 +284,7 @@ FeatureWeights FeatureWeights_computeWrapperExt
 		double range = 0.5;
 		autoNUMvector <double> results (0L, nseeds);
 
-		autoThingVector <FeatureWeights> cs (0L, nseeds);
+		autoThingVector <structFeatureWeights> cs (0L, nseeds);
 		for (long y = 0; y <= nseeds; y++) {
 			cs [y] = FeatureWeights_create (pp -> nx);
 		}
@@ -293,7 +292,7 @@ FeatureWeights FeatureWeights_computeWrapperExt
 		for (long x = 1; x <= pp -> nx; x ++)
 			cs [nseeds] -> fweights -> data [1] [x] = pivot;
 
-		results [nseeds] = FeatureWeights_evaluate (cs [nseeds], nn, pp, c, k, d);
+		results [nseeds] = FeatureWeights_evaluate (cs [nseeds].get(), nn, pp, c, k, d);
 
 		while (range > 0 && results [nseeds] < stop)
 		{
@@ -305,16 +304,16 @@ FeatureWeights FeatureWeights_computeWrapperExt
 				{
 					for (long y = 0; y < nseeds; y++)
 					{
-						cs[y]->fweights->data[1][x] = NUMrandomUniform(OlaMAX(0, cs[nseeds]->fweights->data[1][x] - range),
+						cs[y]->fweights->data[1][x] = NUMrandomUniform(OlaMAX(0, (cs[nseeds]->fweights)->data[1][x] - range),
 													  OlaMIN(1, cs[nseeds]->fweights->data[1][x] + range));
-						results[y] = FeatureWeights_evaluate(cs[y], nn, pp, c, k, d);
+						results[y] = FeatureWeights_evaluate (cs[y].get(), nn, pp, c, k, d);
 					}
 					for (long q = 0; q < nseeds; q++)
 						if (results[q] > results[best]) best = q;
 
 					if (results[best] > results[nseeds])
 					{
-						for (long x = 1; x <= pp->nx; x++)
+						for (long x = 1; x <= pp->nx; x++)   // BUG: a loop over x inside a loop over x; just hope mode is never 2
 							cs[nseeds]->fweights->data[1][x] = cs[best]->fweights->data[1][x];
 						results[nseeds] = results[best];
 					}
@@ -329,7 +328,7 @@ FeatureWeights FeatureWeights_computeWrapperExt
 						cs[y]->fweights->data[1][x] = NUMrandomUniform(OlaMAX(0, cs[nseeds]->fweights->data[1][x] - range),
 													  OlaMIN(1, cs[nseeds]->fweights->data[1][x] + range));
 					}
-					results[y] = FeatureWeights_evaluate (cs [y], nn, pp, c, k, d);
+					results[y] = FeatureWeights_evaluate (cs [y].get(), nn, pp, c, k, d);
 				}
 
 				for (long q = 0; q < nseeds; q++)
@@ -345,8 +344,7 @@ FeatureWeights FeatureWeights_computeWrapperExt
 			range -= alfa;
 		}
 
-		FeatureWeights result = cs [nseeds];
-		cs [nseeds] = nullptr;   // prevent destruction
+		autoFeatureWeights result = cs [nseeds].move();
 		return result;
 	} catch (MelderError) {
 		Melder_throw (U"FeatureWeights: wrapper not computed.");
@@ -382,14 +380,13 @@ double FeatureWeights_evaluate      // Obsolete - use *_EvaluateWithTestSet
 {
 	try {
 		autoCategories o = KNN_classifyToCategories (nn, pp, fws, k, d);
-		double hits = 0;
+		double hits = 0.0;
 		for (long y = 1; y <= o->size; y++)
 			if (FeatureWeights_areFriends ((SimpleString) o -> item [y], (SimpleString) c -> item [y])) hits ++;
 		hits /= o -> size;
 		return hits;
 	} catch (MelderError) {
 		throw;
-		return 0;
 	}
 }
 
@@ -397,7 +394,7 @@ double FeatureWeights_evaluate      // Obsolete - use *_EvaluateWithTestSet
 // Compute feature weights according to the RELIEF-F algorithm                             //
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-FeatureWeights FeatureWeights_computeRELIEF
+autoFeatureWeights FeatureWeights_computeRELIEF
 (
     ///////////////////////////////
     // Parameters                //
@@ -448,10 +445,10 @@ FeatureWeights FeatureWeights_computeRELIEF
 
 	for (long y = 1; y <= p->ny; y++) {
 		for (long x = 1; x <= p->nx; x++) {
-			if (alfa [x]) {
+			if (alfa [x] != 0.0) {
 				p->z[y][x] = (p->z[y][x] - min[x]) / alfa[x];
 			} else {
-				p->z[y][x] = 0;
+				p->z[y][x] = 0.0;
 			}
 		}
 	}
@@ -499,7 +496,7 @@ FeatureWeights FeatureWeights_computeRELIEF
 			}
 		}
 	}
-	return me.transfer();
+	return me;
 }
 
 /* End of file FeatureWeights.cpp */

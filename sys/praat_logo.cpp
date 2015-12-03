@@ -63,7 +63,7 @@ void praat_setLogo (double width_mm, double height_mm, void (*draw) (Graphics g)
 
 static void gui_drawingarea_cb_expose (Thing /* me */, GuiDrawingArea_ExposeEvent event) {
 	if (! theLogo.graphics)
-		theLogo.graphics = Graphics_create_xmdrawingarea (theLogo.drawingArea);
+		theLogo.graphics = Graphics_create_xmdrawingarea (theLogo.drawingArea).transfer();
 	#if gtk
 		#if ALLOW_GDK_DRAWING
 			Graphics_x_setCR (theLogo.graphics, gdk_cairo_create (GDK_DRAWABLE (GTK_WIDGET (event -> widget -> d_widget) -> window)));
@@ -77,7 +77,7 @@ static void gui_drawingarea_cb_expose (Thing /* me */, GuiDrawingArea_ExposeEven
 	#elif motif || cocoa
 		(void) event;
 		if (! theLogo.graphics)
-			theLogo.graphics = Graphics_create_xmdrawingarea (theLogo.drawingArea);
+			theLogo.graphics = Graphics_create_xmdrawingarea (theLogo.drawingArea).transfer();
 		theLogo.draw (theLogo.graphics);
 	#endif
 }

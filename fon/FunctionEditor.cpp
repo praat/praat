@@ -1486,7 +1486,7 @@ void FunctionEditor_init (FunctionEditor me, const char32 *title, Function data)
 	#if motif
 		Melder_assert (XtWindow (my drawingArea -> d_widget));
 	#endif
-	my d_graphics = Graphics_create_xmdrawingarea (my drawingArea);
+	my d_graphics = Graphics_create_xmdrawingarea (my drawingArea).transfer();
 	Graphics_setFontSize (my d_graphics, 12);
 
 // This exdents because it's a hack:

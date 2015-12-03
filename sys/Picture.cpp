@@ -201,18 +201,18 @@ autoPicture Picture_create (GuiDrawingArea drawingArea, bool sensitive) {
 		my sensitive = sensitive && drawingArea;
 		if (drawingArea) {
 			/* The drawing area must have been realized; see manual at XtWindow. */
-			my graphics = Graphics_create_xmdrawingarea (my drawingArea);
+			my graphics = Graphics_create_xmdrawingarea (my drawingArea).transfer();
 			GuiDrawingArea_setExposeCallback (my drawingArea, gui_drawingarea_cb_expose, me.get());
 		} else {
 			/*
 			 * Create a dummy Graphics.
 			 */
-			my graphics = Graphics_create (600);
+			my graphics = Graphics_create (600).transfer();
 		}
 		Graphics_setWsWindow (my graphics, 0.0, 12.0, 0.0, 12.0);
 		Graphics_setViewport (my graphics, my selx1, my selx2, my sely1, my sely2);
 		if (my sensitive) {
-			my selectionGraphics = Graphics_create_xmdrawingarea (my drawingArea);
+			my selectionGraphics = Graphics_create_xmdrawingarea (my drawingArea).transfer();
 			Graphics_setWindow (my selectionGraphics, 0, 12, 0, 12);
 			GuiDrawingArea_setClickCallback (my drawingArea, gui_drawingarea_cb_click, me.get());
 		}
@@ -314,9 +314,10 @@ void Picture_copyToClipboard (Picture me) {
 	CGRect rect = CGRectMake (0, 0, (my selx2 - my selx1) * resolution, (my sely1 - my sely2) * resolution);
 	CGContextRef context = CGPDFContextCreate (consumer, & rect, nullptr);
 	//my selx1 * RES, (12 - my sely2) * RES, my selx2 * RES, (12 - my sely1) * RES)
-	Graphics graphics = Graphics_create_pdf (context, resolution, my selx1, my selx2, my sely1, my sely2);
-	Graphics_play ((Graphics) my graphics, graphics);
-	forget (graphics);
+	{// scope
+		autoGraphics graphics = Graphics_create_pdf (context, resolution, my selx1, my selx2, my sely1, my sely2);
+		Graphics_play (my graphics, graphics.get());
+	}
 	PasteboardPutItemFlavor (clipboard, (PasteboardItemID) 1, kUTTypePDF, data, kPasteboardFlavorNoFlags);
 	CFRelease (data);
 	/*

@@ -267,7 +267,7 @@ autoTableEditor TableEditor_create (const char32 *title, Table table) {
 		my leftColumn = 1;
 		my selectedColumn = 1;
 		my selectedRow = 1;
-		my graphics = Graphics_create_xmdrawingarea (my drawingArea);
+		my graphics = Graphics_create_xmdrawingarea (my drawingArea).transfer();
 		double size_pixels = SIZE_INCHES * Graphics_getResolution (my graphics);
 		Graphics_setWsViewport (my graphics, 0.0, size_pixels, 0.0, size_pixels);
 		Graphics_setWsWindow (my graphics, 0.0, size_pixels, 0.0, size_pixels);

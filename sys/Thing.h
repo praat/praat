@@ -433,7 +433,7 @@ public:
 				fprintf (stderr, "move assignment before %p from same class %s\n",
 					our ptr, our ptr ? Melder_peek32to8 (our ptr -> classInfo -> className) : "(class unknown)");
 			#endif
-			_Thing_forget (our ptr);
+			if (our ptr) _Thing_forget (our ptr);
 			our ptr = other. ptr;
 			#if _Thing_auto_DEBUG
 				fprintf (stderr, "move assignment after %p from same class %s\n",
@@ -449,7 +449,7 @@ public:
 				fprintf (stderr, "move assignment before %p from other class %s\n",
 					our ptr, our ptr ? Melder_peek32to8 (our ptr -> classInfo -> className) : "(class unknown)");
 			#endif
-			_Thing_forget (our ptr);
+			if (our ptr) _Thing_forget (our ptr);
 			our ptr = other.peek();
 			#if _Thing_auto_DEBUG
 				fprintf (stderr, "move assignment after %p from other class %s\n",
@@ -519,34 +519,36 @@ autoThing Thing_newFromClassName (const char32 *className, int *p_formatVersion)
 
 template <class T>
 class autoThingVector {
-	T* d_ptr;
+	_Thing_auto<T> *d_ptr;
 	long d_from, d_to;
 public:
 	autoThingVector<T> (long from, long to) : d_from (from), d_to (to) {
-		d_ptr = static_cast <T*> (NUMvector (sizeof (T), from, to));
+		d_ptr = static_cast <_Thing_auto<T>*> (NUMvector (sizeof (_Thing_auto<T>), from, to));
 	}
-	autoThingVector (T *ptr, long from, long to) : d_ptr (ptr), d_from (from), d_to (to) {
+	autoThingVector (_Thing_auto<T> *ptr, long from, long to) : d_ptr (ptr), d_from (from), d_to (to) {
 	}
 	autoThingVector () : d_ptr (nullptr), d_from (1), d_to (0) {
 	}
 	~autoThingVector<T> () {
 		if (d_ptr) {
 			for (long i = d_from; i <= d_to; i ++)
-				forget (d_ptr [i]);
-			NUMvector_free (sizeof (T), d_ptr, d_from);
+				d_ptr [i].reset();
+			NUMvector_free (sizeof (_Thing_auto<T>), d_ptr, d_from);
 		}
 	}
-	T& operator[] (long i) {
+	_Thing_auto<T>& operator[] (long i) {
 		return d_ptr [i];
 	}
-	T* peek () const {
+	_Thing_auto<T>* peek () const {
 		return d_ptr;
 	}
+	/*
 	T* transfer () {
 		T* temp = d_ptr;
 		d_ptr = nullptr;   // make the pointer non-automatic again
 		return temp;
 	}
+
 	void reset (long from, long to) {
 		if (d_ptr) {
 			for (long i = d_from; i <= d_to; i ++)
@@ -558,6 +560,7 @@ public:
 		d_to = to;
 		d_ptr = static_cast <T*> (NUMvector (sizeof (T), from, to));
 	}
+	*/
 };
 
 /* End of file Thing.h */

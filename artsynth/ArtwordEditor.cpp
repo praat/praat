@@ -23,7 +23,6 @@
 Thing_implement (ArtwordEditor, Editor, 0);
 
 void structArtwordEditor :: v_destroy () {
-	forget (graphics);
 	ArtwordEditor_Parent :: v_destroy ();
 }
 
@@ -36,7 +35,7 @@ static void updateList (ArtwordEditor me) {
 			Melder_cat (Melder_single (a -> times [i]), U"  ", Melder_single (a -> targets [i])),
 			i);
 	}
-	Graphics_updateWs (my graphics);
+	Graphics_updateWs (my graphics.get());
 }
 
 static void gui_button_cb_removeTarget (ArtwordEditor me, GuiButtonEvent /* event */) {
@@ -78,7 +77,7 @@ static void gui_button_cb_addTarget (ArtwordEditor me, GuiButtonEvent /* event *
 	} else {
 		GuiList_insertItem (my list, itemText, i);
 	}
-	Graphics_updateWs (my graphics);
+	Graphics_updateWs (my graphics.get());
 	Editor_broadcastDataChanged (me);
 }
 
@@ -92,25 +91,25 @@ static void gui_radiobutton_cb_toggle (ArtwordEditor me, GuiRadioButtonEvent eve
 static void gui_drawingarea_cb_expose (ArtwordEditor me, GuiDrawingArea_ExposeEvent /* event */) {
 	if (! my graphics) return;
 	Artword artword = (Artword) my data;
-	Graphics_clearWs (my graphics);
-	Artword_draw (artword, my graphics, my feature, true);
+	Graphics_clearWs (my graphics.get());
+	Artword_draw (artword, my graphics.get(), my feature, true);
 }
 
 static void gui_drawingarea_cb_click (ArtwordEditor me, GuiDrawingArea_ClickEvent event) {
 	if (! my graphics) return;
 	Artword artword = (Artword) my data;
-	Graphics_setWindow (my graphics, 0, artword -> totalTime, -1.0, 1.0);
-	Graphics_setInner (my graphics);
+	Graphics_setWindow (my graphics.get(), 0, artword -> totalTime, -1.0, 1.0);
+	Graphics_setInner (my graphics.get());
 	double xWC, yWC;
-	Graphics_DCtoWC (my graphics, event -> x, event -> y, & xWC, & yWC);
-	Graphics_unsetInner (my graphics);
+	Graphics_DCtoWC (my graphics.get(), event -> x, event -> y, & xWC, & yWC);
+	Graphics_unsetInner (my graphics.get());
 	GuiText_setString (my time,  Melder_fixed (xWC, 6));
 	GuiText_setString (my value, Melder_fixed (yWC, 6));
 }
 
 void structArtwordEditor :: v_dataChanged () {
 	updateList (this);
-	Graphics_updateWs (graphics);
+	Graphics_updateWs (graphics.get());
 }
 
 void structArtwordEditor :: v_createChildren () {

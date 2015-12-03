@@ -427,7 +427,7 @@ void KNN_SA_partition
 );
 
 // Compute feature weights (wrapper), evaluate using folding
-FeatureWeights FeatureWeights_computeWrapperInt
+autoFeatureWeights FeatureWeights_computeWrapperInt
 (
     KNN me,                 // Classifier
     long k,                 // k(!)
@@ -440,7 +440,7 @@ FeatureWeights FeatureWeights_computeWrapperInt
 );
 
 // Compute feature weights (wrapper), evaluate using separate test set
-FeatureWeights FeatureWeights_computeWrapperExt
+autoFeatureWeights FeatureWeights_computeWrapperExt
 (
     KNN nn,                 // Classifier
     Pattern pp,             // test pattern

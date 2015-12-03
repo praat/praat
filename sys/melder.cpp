@@ -399,7 +399,7 @@ static Graphics _Melder_monitor (double progress, const char32 *message) {
 				_Melder_dia_init (& dia, & scale, & label1, & label2, & cancelButton, true);
 				drawingArea = GuiDrawingArea_createShown (dia, 0, 400, 230, 430, nullptr, nullptr, nullptr, nullptr, nullptr, 0);
 				GuiThing_show (dia);
-				graphics = Graphics_create_xmdrawingarea (drawingArea);
+				graphics = Graphics_create_xmdrawingarea (drawingArea).transfer();
 			}
 			if (! waitWhileProgress (progress, message, dia, scale, label1, label2, cancelButton))
 				Melder_throw (U"Interrupted!");

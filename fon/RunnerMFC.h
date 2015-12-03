@@ -26,7 +26,7 @@ Thing_define (RunnerMFC, Editor) {
 	GuiDrawingArea d_drawingArea;
 	Ordered experiments;
 	long iexperiment;
-	Graphics graphics;
+	autoGraphics graphics;
 	long numberOfReplays;
 
 	void v_destroy ()

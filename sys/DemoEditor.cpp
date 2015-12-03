@@ -111,7 +111,7 @@ void structDemoEditor :: v_createChildren () {
 
 void DemoEditor_init (DemoEditor me) {
 	Editor_init (me, 0, 0, 1024, 768, U"", nullptr);
-	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
+	my graphics = Graphics_create_xmdrawingarea (my drawingArea).transfer();
 	Graphics_setColour (my graphics, Graphics_WHITE);
 	Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
 	Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 1.0);

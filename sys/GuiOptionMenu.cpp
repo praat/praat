@@ -149,7 +149,7 @@ void GuiOptionMenu_addOption (GuiOptionMenu me, const char32 *text) {
 		autoGuiMenuItem menuItem = Thing_new (GuiMenuItem);
 		menuItem -> d_widget = XtVaCreateManagedWidget (Melder_peek32to8 (text), xmToggleButtonWidgetClass, my d_widget, nullptr);
 		XtAddCallback (menuItem -> d_widget, XmNvalueChangedCallback, cb_optionChanged, (XtPointer) me);
-		Collection_addItem_move (my d_options, menuItem.move());
+		Collection_addItem_move (my d_options.get(), menuItem.move());
     #elif cocoa
         GuiCocoaOptionMenu *menu = (GuiCocoaOptionMenu *) my d_widget;
         [menu addItemWithTitle: [NSString stringWithUTF8String: Melder_peek32to8 (text)]];

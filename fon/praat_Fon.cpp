@@ -160,7 +160,7 @@ extern "C" Graphics Movie_create (const char32 *title, int width, int height) {
 		dialog = GuiDialog_create (theCurrentPraatApplication -> topShell, 100, 100, width + 2, height + 2, title, nullptr, nullptr, 0);
 		drawingArea = GuiDrawingArea_createShown (dialog, 0, width, 0, height, nullptr, nullptr, nullptr, nullptr, nullptr, 0);
 		GuiThing_show (dialog);
-		graphics = Graphics_create_xmdrawingarea (drawingArea);
+		graphics = Graphics_create_xmdrawingarea (drawingArea).transfer();
 	}
 	GuiShell_setTitle (dialog, title);
 	GuiControl_setSize (dialog, width + 2, height + 2);
@@ -386,7 +386,7 @@ END2 }
 
 /***** COCHLEAGRAM *****/
 
-FORM (Cochleagram_difference, U"Cochleagram difference", 0) {
+FORM (Cochleagram_difference, U"Cochleagram difference", nullptr) {
 	praat_dia_timeRange (dia);
 	OK2
 DO
@@ -427,9 +427,9 @@ DIRECT2 (Cochleagram_movie) {
 	}
 END2 }
 
-FORM (Cochleagram_paint, U"Paint Cochleagram", 0) {
+FORM (Cochleagram_paint, U"Paint Cochleagram", nullptr) {
 	praat_dia_timeRange (dia);
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	LOOP {
@@ -439,7 +439,7 @@ DO
 	}
 END2 }
 
-FORM (Cochleagram_to_Excitation, U"From Cochleagram to Excitation", 0) {
+FORM (Cochleagram_to_Excitation, U"From Cochleagram to Excitation", nullptr) {
 	REAL (U"Time (s)", U"0.0")
 	OK2
 DO
@@ -482,9 +482,9 @@ END2 }
 
 /***** DISTRIBUTIONS *****/
 
-FORM (Distributions_to_Transition, U"To Transition", 0) {
+FORM (Distributions_to_Transition, U"To Transition", nullptr) {
 	NATURAL (U"Environment", U"1")
-	BOOLEAN (U"Greedy", 1)
+	BOOLEAN (U"Greedy", true)
 	OK2
 DO
 	LOOP {
@@ -494,9 +494,9 @@ DO
 	}
 END2 }
 
-FORM (Distributions_to_Transition_adj, U"To Transition", 0) {
+FORM (Distributions_to_Transition_adj, U"To Transition", nullptr) {
 	NATURAL (U"Environment", U"1")
-	BOOLEAN (U"Greedy", 1)
+	BOOLEAN (U"Greedy", true)
 	OK2
 DO
 	Distributions dist = nullptr;
@@ -919,7 +919,7 @@ DO
 	}
 END2 }
 
-FORM (Formant_getQuantile, U"Formant: Get quantile", 0) {
+FORM (Formant_getQuantile, U"Formant: Get quantile", nullptr) {
 	NATURAL (U"Formant number", U"1")
 	praat_dia_timeRange (dia);
 	RADIO (U"Unit", 1)
@@ -937,7 +937,7 @@ DO
 	}
 END2 }
 
-FORM (Formant_getQuantileOfBandwidth, U"Formant: Get quantile of bandwidth", 0) {
+FORM (Formant_getQuantileOfBandwidth, U"Formant: Get quantile of bandwidth", nullptr) {
 	NATURAL (U"Formant number", U"1")
 	praat_dia_timeRange (dia);
 	RADIO (U"Unit", 1)
@@ -955,7 +955,7 @@ DO
 	}
 END2 }
 
-FORM (Formant_getStandardDeviation, U"Formant: Get standard deviation", 0) {
+FORM (Formant_getStandardDeviation, U"Formant: Get standard deviation", nullptr) {
 	NATURAL (U"Formant number", U"1")
 	praat_dia_timeRange (dia);
 	RADIO (U"Unit", 1)
@@ -1036,7 +1036,7 @@ DIRECT2 (Formant_help) {
 	Melder_help (U"Formant");
 END2 }
 
-FORM (Formant_downto_Table, U"Formant: Down to Table", 0) {
+FORM (Formant_downto_Table, U"Formant: Down to Table", nullptr) {
 	BOOLEAN (U"Include frame number", false)
 	BOOLEAN (U"Include time", true)
 	NATURAL (U"Time decimals", U"6")
@@ -1080,7 +1080,7 @@ DO
 	}
 END2 }
 
-FORM (Formant_scatterPlot, U"Formant: Scatter plot", 0) {
+FORM (Formant_scatterPlot, U"Formant: Scatter plot", nullptr) {
 	praat_dia_timeRange (dia);
 	NATURAL (U"Horizontal formant number", U"2")
 	REAL (U"left Horizontal range (Hz)", U"3000")
@@ -1089,7 +1089,7 @@ FORM (Formant_scatterPlot, U"Formant: Scatter plot", 0) {
 	REAL (U"left Vertical range (Hz)", U"1500")
 	REAL (U"right Vertical range (Hz)", U"100")
 	POSITIVE (U"Mark size (mm)", U"1.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	SENTENCE (U"Mark string (+xo.)", U"+")
 	OK2
 DO
@@ -1114,7 +1114,7 @@ DIRECT2 (Formant_sort) {
 	}
 END2 }
 
-FORM (Formant_to_Matrix, U"From Formant to Matrix", 0) {
+FORM (Formant_to_Matrix, U"From Formant to Matrix", nullptr) {
 	INTEGER (U"Formant", U"1")
 	OK2
 DO
@@ -1195,7 +1195,7 @@ END2 }
 FORM (FormantGrid_addBandwidthPoint, U"FormantGrid: Add bandwidth point", U"FormantGrid: Add bandwidth point...") {
 	NATURAL (U"Formant number", U"1")
 	REAL (U"Time (s)", U"0.5")
-	POSITIVE (U"Bandwidth (Hz)", U"100")
+	POSITIVE (U"Bandwidth (Hz)", U"100.0")
 	OK2
 DO
 	LOOP {
@@ -1208,7 +1208,7 @@ END2 }
 FORM (FormantGrid_addFormantPoint, U"FormantGrid: Add formant point", U"FormantGrid: Add formant point...") {
 	NATURAL (U"Formant number", U"1")
 	REAL (U"Time (s)", U"0.5")
-	POSITIVE (U"Frequency (Hz)", U"550")
+	POSITIVE (U"Frequency (Hz)", U"550.0")
 	OK2
 DO
 	LOOP {
@@ -1223,10 +1223,10 @@ FORM (FormantGrid_create, U"Create FormantGrid", nullptr) {
 	REAL (U"Start time (s)", U"0.0")
 	REAL (U"End time (s)", U"1.0")
 	NATURAL (U"Number of formants", U"10")
-	POSITIVE (U"Initial first formant (Hz)", U"550")
-	POSITIVE (U"Initial formant spacing (Hz)", U"1100")
-	REAL (U"Initial first bandwidth (Hz)", U"60")
-	REAL (U"Initial bandwidth spacing (Hz)", U"50")
+	POSITIVE (U"Initial first formant (Hz)", U"550.0")
+	POSITIVE (U"Initial formant spacing (Hz)", U"1100.0")
+	REAL (U"Initial first bandwidth (Hz)", U"60.0")
+	REAL (U"Initial bandwidth spacing (Hz)", U"50.0")
 	OK2
 DO
 	double startTime = GET_REAL (U"Start time"), endTime = GET_REAL (U"End time");
@@ -1324,7 +1324,7 @@ DO
 	}
 END2 }
 
-FORM (FormantGrid_to_Formant, U"FormantGrid: To Formant", 0) {
+FORM (FormantGrid_to_Formant, U"FormantGrid: To Formant", nullptr) {
 	POSITIVE (U"Time step (s)", U"0.01")
 	REAL (U"Intensity (Pa\u00B2)", U"0.1")
 	OK2
@@ -1401,8 +1401,8 @@ DO
 END2 }
 
 FORM (FormantTier_downto_TableOfReal, U"Down to TableOfReal", nullptr) {
-	BOOLEAN (U"Include formants", 1)
-	BOOLEAN (U"Include bandwidths", 0)
+	BOOLEAN (U"Include formants", true)
+	BOOLEAN (U"Include bandwidths", false)
 	OK2
 DO
 	LOOP {
@@ -1440,7 +1440,7 @@ DIRECT2 (FormantTier_help) {
 	Melder_help (U"FormantTier");
 END2 }
 
-FORM (FormantTier_speckle, U"Draw FormantTier", 0) {
+FORM (FormantTier_speckle, U"Draw FormantTier", nullptr) {
 	praat_dia_timeRange (dia);
 	POSITIVE (U"Maximum frequency (Hz)", U"5500.0")
 	BOOLEAN (U"Garnish", 1)
@@ -1621,11 +1621,11 @@ END2 }
 
 /***** INTENSITY *****/
 
-FORM (Intensity_draw, U"Draw Intensity", 0) {
+FORM (Intensity_draw, U"Draw Intensity", nullptr) {
 	praat_dia_timeRange (dia);
 	REAL (U"Minimum (dB)", U"0.0")
 	REAL (U"Maximum (dB)", U"0.0 (= auto)")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	LOOP {
@@ -1816,12 +1816,12 @@ END2 }
 
 /***** INTENSITY & PITCH *****/
 
-FORM (Pitch_Intensity_draw, U"Plot intensity by pitch", 0) {
+FORM (Pitch_Intensity_draw, U"Plot intensity by pitch", nullptr) {
 	REAL (U"From frequency (Hz)", U"0.0")
 	REAL (U"To frequency (Hz)", U"0.0 (= auto)")
 	REAL (U"From intensity (dB)", U"0.0")
 	REAL (U"To intensity (dB)", U"100.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	RADIO (U"Drawing method", 1)
 		RADIOBUTTON (U"Speckles")
 		RADIOBUTTON (U"Curve")
@@ -1841,12 +1841,12 @@ DO
 		GET_REAL (U"From intensity"), GET_REAL (U"To intensity"), GET_INTEGER (U"Garnish"), GET_INTEGER (U"Drawing method"));
 END2 }
 
-FORM (Pitch_Intensity_speckle, U"Plot intensity by pitch", 0) {
+FORM (Pitch_Intensity_speckle, U"Plot intensity by pitch", nullptr) {
 	REAL (U"From frequency (Hz)", U"0.0")
 	REAL (U"To frequency (Hz)", U"0.0 (= auto)")
 	REAL (U"From intensity (dB)", U"0.0")
 	REAL (U"To intensity (dB)", U"100.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	Pitch pitch = nullptr;
@@ -2022,8 +2022,8 @@ DIRECT2 (Sound_IntensityTier_multiply_old) {
 	praat_new (thee.move(), sound -> name, U"_int");
 END2 }
 
-FORM (Sound_IntensityTier_multiply, U"Sound & IntervalTier: Multiply", 0) {
-	BOOLEAN (U"Scale to 0.9", 1)
+FORM (Sound_IntensityTier_multiply, U"Sound & IntervalTier: Multiply", nullptr) {
+	BOOLEAN (U"Scale to 0.9", true)
 	OK2
 DO
 	Sound sound = nullptr;
@@ -2064,12 +2064,12 @@ DO
 	}
 END2 }
 
-FORM (old_Ltas_draw, U"Ltas: Draw", 0) {
+FORM (old_Ltas_draw, U"Ltas: Draw", nullptr) {
 	REAL (U"left Frequency range (Hz)", U"0.0")
 	REAL (U"right Frequency range (Hz)", U"0.0 (= all)")
 	REAL (U"left Power range (dB/Hz)", U"-20.0")
 	REAL (U"right Power range (dB/Hz)", U"80.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	LOOP {
@@ -2080,12 +2080,12 @@ DO
 	}
 END2 }
 
-FORM (Ltas_draw, U"Ltas: Draw", 0) {
+FORM (Ltas_draw, U"Ltas: Draw", nullptr) {
 	REAL (U"left Frequency range (Hz)", U"0.0")
 	REAL (U"right Frequency range (Hz)", U"0.0 (= all)")
 	REAL (U"left Power range (dB/Hz)", U"-20.0")
 	REAL (U"right Power range (dB/Hz)", U"80.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	LABEL (U"", U"")
 	OPTIONMENU (U"Drawing method", 2)
 		OPTION (U"Curve")
@@ -2102,7 +2102,7 @@ DO_ALTERNATIVE (old_Ltas_draw)
 	}
 END2 }
 
-FORM (Ltas_formula, U"Ltas Formula", 0) {
+FORM (Ltas_formula, U"Ltas Formula", nullptr) {
 	LABEL (U"label", U"`x' is the frequency in hertz, `col' is the bin number")
 	LABEL (U"label", U"x := x1;   for col := 1 to ncol do { self [1, col] := `formula' ; x := x + dx }")
 	TEXTFIELD (U"formula", U"0")
@@ -2121,7 +2121,7 @@ DO
 END2 }
 
 FORM (Ltas_getBinNumberFromFrequency, U"Ltas: Get band from frequency", U"Ltas: Get band from frequency...") {
-	REAL (U"Frequency (Hz)", U"2000")
+	REAL (U"Frequency (Hz)", U"2000.0")
 	OK2
 DO
 	Ltas me = FIRST (Ltas);
@@ -2182,7 +2182,7 @@ DIRECT2 (Ltas_getHighestFrequency) {
 	Melder_informationReal (my xmax, U"Hz");
 END2 }
 
-FORM (Ltas_getLocalPeakHeight, U"Ltas: Get local peak height", 0) {
+FORM (Ltas_getLocalPeakHeight, U"Ltas: Get local peak height", nullptr) {
 	REAL (U"left Environment (Hz)", U"1700.0")
 	REAL (U"right Environment (Hz)", U"4200.0")
 	REAL (U"left Peak (Hz)", U"2400.0")
@@ -2466,11 +2466,11 @@ DIRECT2 (Manipulation_removeOriginalSound) {
 	}
 END2 }
 
-FORM_WRITE (Manipulation_writeToBinaryFileWithoutSound, U"Binary file without Sound", 0, 0)
+FORM_WRITE (Manipulation_writeToBinaryFileWithoutSound, U"Binary file without Sound", nullptr, nullptr)
 	Manipulation_writeToBinaryFileWithoutSound (FIRST_ANY (Manipulation), file);
 END
 
-FORM_WRITE (Manipulation_writeToTextFileWithoutSound, U"Text file without Sound", 0, 0)
+FORM_WRITE (Manipulation_writeToTextFileWithoutSound, U"Text file without Sound", nullptr, nullptr)
 	Manipulation_writeToTextFileWithoutSound (FIRST_ANY (Manipulation), file);
 END
 
@@ -2582,7 +2582,7 @@ DO
 	praat_new (me.move(), GET_STRING (U"Name"));
 END2 }
 
-FORM (Matrix_drawOneContour, U"Draw one altitude contour", 0) {
+FORM (Matrix_drawOneContour, U"Draw one altitude contour", nullptr) {
 	REAL (U"From x =", U"0.0")
 	REAL (U"To x =", U"0.0")
 	REAL (U"From y =", U"0.0")
@@ -2599,7 +2599,7 @@ DO
 	}
 END2 }
 
-FORM (Matrix_drawContours, U"Draw altitude contours", 0) {
+FORM (Matrix_drawContours, U"Draw altitude contours", nullptr) {
 	REAL (U"From x =", U"0.0")
 	REAL (U"To x =", U"0.0")
 	REAL (U"From y =", U"0.0")
@@ -2617,7 +2617,7 @@ DO
 	}
 END2 }
 
-FORM (Matrix_drawRows, U"Draw rows", 0) {
+FORM (Matrix_drawRows, U"Draw rows", nullptr) {
 	REAL (U"From x =", U"0.0")
 	REAL (U"To x =", U"0.0")
 	REAL (U"From y =", U"0.0")
@@ -2724,7 +2724,7 @@ DIRECT2 (Matrix_getMinimum) {
 	Melder_informationReal (minimum, nullptr);
 END2 }
 
-FORM (Matrix_getValueAtXY, U"Matrix: Get value at xy", 0) {
+FORM (Matrix_getValueAtXY, U"Matrix: Get value at xy", nullptr) {
 	REAL (U"X", U"0")
 	REAL (U"Y", U"0")
 	OK2
@@ -2735,7 +2735,7 @@ DO
 	Melder_information (value, U" (at x = ", x, U" and y = ", y, U")");
 END2 }
 
-FORM (Matrix_getValueInCell, U"Matrix: Get value in cell", 0) {
+FORM (Matrix_getValueInCell, U"Matrix: Get value in cell", nullptr) {
 	NATURAL (U"Row number", U"1")
 	NATURAL (U"Column number", U"1")
 	OK2
@@ -2747,7 +2747,7 @@ DO
 	Melder_informationReal (my z [row] [column], nullptr);
 END2 }
 
-FORM (Matrix_getXofColumn, U"Matrix: Get x of column", 0) {
+FORM (Matrix_getXofColumn, U"Matrix: Get x of column", nullptr) {
 	NATURAL (U"Column number", U"1")
 	OK2
 DO
@@ -2756,7 +2756,7 @@ DO
 	Melder_informationReal (x, nullptr);
 END2 }
 
-FORM (Matrix_getYofRow, U"Matrix: Get y of row", 0) {
+FORM (Matrix_getYofRow, U"Matrix: Get y of row", nullptr) {
 	NATURAL (U"Row number", U"1")
 	OK2
 DO
@@ -2795,7 +2795,7 @@ DO
 	}
 END2 }
 
-FORM (Matrix_paintContours, U"Matrix: Paint altitude contours with greys", 0) {
+FORM (Matrix_paintContours, U"Matrix: Paint altitude contours with greys", nullptr) {
 	REAL (U"From x =", U"0.0")
 	REAL (U"To x =", U"0.0")
 	REAL (U"From y =", U"0.0")
@@ -2813,7 +2813,7 @@ DO
 	}
 END2 }
 
-FORM (Matrix_paintImage, U"Matrix: Paint grey image", 0) {
+FORM (Matrix_paintImage, U"Matrix: Paint grey image", nullptr) {
 	REAL (U"From x =", U"0.0")
 	REAL (U"To x =", U"0.0")
 	REAL (U"From y =", U"0.0")
@@ -2831,7 +2831,7 @@ DO
 	}
 END2 }
 
-FORM (Matrix_paintSurface, U"Matrix: Paint 3-D surface plot", 0) {
+FORM (Matrix_paintSurface, U"Matrix: Paint 3-D surface plot", nullptr) {
 	REAL (U"From x =", U"0.0")
 	REAL (U"To x =", U"0.0")
 	REAL (U"From y =", U"0.0")
@@ -2849,7 +2849,7 @@ DO
 	}
 END2 }
 
-FORM (Matrix_power, U"Matrix: Power...", 0) {
+FORM (Matrix_power, U"Matrix: Power...", nullptr) {
 	NATURAL (U"Power", U"2")
 	OK2
 DO
@@ -2860,12 +2860,12 @@ DO
 	}
 END2 }
 
-FORM_READ2 (Matrix_readFromRawTextFile, U"Read Matrix from raw text file", 0, true) {
+FORM_READ2 (Matrix_readFromRawTextFile, U"Read Matrix from raw text file", nullptr, true) {
 	autoMatrix me = Matrix_readFromRawTextFile (file);
 	praat_new (me.move(), MelderFile_name (file));
 END2 }
 
-FORM_READ2 (Matrix_readAP, U"Read Matrix from LVS AP file", 0, true) {
+FORM_READ2 (Matrix_readAP, U"Read Matrix from LVS AP file", nullptr, true) {
 	autoMatrix me = Matrix_readAP (file);
 	praat_new (me.move(), MelderFile_name (file));
 END2 }
@@ -3018,24 +3018,24 @@ DIRECT2 (Matrix_to_VocalTract) {
 	}
 END2 }
 
-FORM_WRITE (Matrix_writeToMatrixTextFile, U"Save Matrix as matrix text file", 0, U"mat")
+FORM_WRITE (Matrix_writeToMatrixTextFile, U"Save Matrix as matrix text file", nullptr, U"mat")
 	Matrix me = FIRST (Matrix);
 	Matrix_writeToMatrixTextFile (me, file);
 END
 
-FORM_WRITE (Matrix_writeToHeaderlessSpreadsheetFile, U"Save Matrix as spreadsheet", 0, U"txt")
+FORM_WRITE (Matrix_writeToHeaderlessSpreadsheetFile, U"Save Matrix as spreadsheet", nullptr, U"txt")
 	Matrix me = FIRST (Matrix);
 	Matrix_writeToHeaderlessSpreadsheetFile (me, file);
 END
 
 /***** MOVIE *****/
 
-FORM_READ2 (Movie_openFromSoundFile, U"Open movie file", 0, true) {
+FORM_READ2 (Movie_openFromSoundFile, U"Open movie file", nullptr, true) {
 	autoMovie me = Movie_openFromSoundFile (file);
 	praat_new (me.move(), MelderFile_name (file));
 END2 }
 
-FORM (Movie_paintOneImage, U"Movie: Paint one image", 0) {
+FORM (Movie_paintOneImage, U"Movie: Paint one image", nullptr) {
 	NATURAL (U"Frame number", U"1")
 	REAL (U"From x =", U"0.0")
 	REAL (U"To x =", U"1.0")
@@ -3063,7 +3063,7 @@ END2 }
 
 /***** PARAMCURVE *****/
 
-FORM (ParamCurve_draw, U"Draw parametrized curve", 0) {
+FORM (ParamCurve_draw, U"Draw parametrized curve", nullptr) {
 	REAL (U"Tmin", U"0.0")
 	REAL (U"Tmax", U"0.0")
 	REAL (U"Step", U"0.0")
@@ -3071,7 +3071,7 @@ FORM (ParamCurve_draw, U"Draw parametrized curve", 0) {
 	REAL (U"Xmax", U"0.0")
 	REAL (U"Ymin", U"0.0")
 	REAL (U"Ymax", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	LOOP {
@@ -3259,7 +3259,7 @@ DO
 	}
 END2 }
 
-FORM (Photo_paintImage, U"Photo: Paint colour image", 0) {
+FORM (Photo_paintImage, U"Photo: Paint colour image", nullptr) {
 	REAL (U"From x =", U"0.0")
 	REAL (U"To x =", U"0.0")
 	REAL (U"From y =", U"0.0")
@@ -3274,56 +3274,56 @@ DO
 	}
 END2 }
 
-FORM_WRITE (Photo_saveAsAppleIconFile, U"Save as Apple icon file", 0, U"icns")
+FORM_WRITE (Photo_saveAsAppleIconFile, U"Save as Apple icon file", nullptr, U"icns")
 	LOOP {
 		iam (Photo);
 		Photo_saveAsAppleIconFile (me, file);
 	}
 END
 
-FORM_WRITE (Photo_saveAsGIF, U"Save as GIF file", 0, U"gif")
+FORM_WRITE (Photo_saveAsGIF, U"Save as GIF file", nullptr, U"gif")
 	LOOP {
 		iam (Photo);
 		Photo_saveAsGIF (me, file);
 	}
 END
 
-FORM_WRITE (Photo_saveAsJPEG, U"Save as JPEG file", 0, U"jpg")
+FORM_WRITE (Photo_saveAsJPEG, U"Save as JPEG file", nullptr, U"jpg")
 	LOOP {
 		iam (Photo);
 		Photo_saveAsJPEG (me, file);
 	}
 END
 
-FORM_WRITE (Photo_saveAsJPEG2000, U"Save as JPEG-2000 file", 0, U"jpg")
+FORM_WRITE (Photo_saveAsJPEG2000, U"Save as JPEG-2000 file", nullptr, U"jpg")
 	LOOP {
 		iam (Photo);
 		Photo_saveAsJPEG2000 (me, file);
 	}
 END
 
-FORM_WRITE (Photo_saveAsPNG, U"Save as PNG file", 0, U"png")
+FORM_WRITE (Photo_saveAsPNG, U"Save as PNG file", nullptr, U"png")
 	LOOP {
 		iam (Photo);
 		Photo_saveAsPNG (me, file);
 	}
 END
 
-FORM_WRITE (Photo_saveAsTIFF, U"Save as TIFF file", 0, U"tiff")
+FORM_WRITE (Photo_saveAsTIFF, U"Save as TIFF file", nullptr, U"tiff")
 	LOOP {
 		iam (Photo);
 		Photo_saveAsTIFF (me, file);
 	}
 END
 
-FORM_WRITE (Photo_saveAsWindowsBitmapFile, U"Save as Windows bitmap file", 0, U"bmp")
+FORM_WRITE (Photo_saveAsWindowsBitmapFile, U"Save as Windows bitmap file", nullptr, U"bmp")
 	LOOP {
 		iam (Photo);
 		Photo_saveAsWindowsBitmapFile (me, file);
 	}
 END
 
-FORM_WRITE (Photo_saveAsWindowsIconFile, U"Save as Windows icon file", 0, U"ico")
+FORM_WRITE (Photo_saveAsWindowsIconFile, U"Save as Windows icon file", nullptr, U"ico")
 	LOOP {
 		iam (Photo);
 		Photo_saveAsWindowsIconFile (me, file);
@@ -3377,7 +3377,7 @@ FORM (Pitch_draw, U"Pitch: Draw", U"Pitch: Draw...") {
 	praat_dia_timeRange (dia);
 	REAL (STRING_FROM_FREQUENCY_HZ, U"0.0")
 	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
@@ -3394,7 +3394,7 @@ FORM (Pitch_drawErb, U"Pitch: Draw erb", U"Pitch: Draw...") {
 	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
 	REAL (U"left Frequency range (ERB)", U"0")
 	REAL (U"right Frequency range (ERB)", U"10.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
@@ -3411,7 +3411,7 @@ FORM (Pitch_drawLogarithmic, U"Pitch: Draw logarithmic", U"Pitch: Draw...") {
 	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
 	POSITIVE (STRING_FROM_FREQUENCY_HZ, U"50.0")
 	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
@@ -3428,7 +3428,7 @@ FORM (Pitch_drawMel, U"Pitch: Draw mel", U"Pitch: Draw...") {
 	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
 	REAL (U"left Frequency range (mel)", U"0.0")
 	REAL (U"right Frequency range (mel)", U"500.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
@@ -3446,7 +3446,7 @@ FORM (Pitch_drawSemitones100, U"Pitch: Draw semitones (re 100 Hz)", U"Pitch: Dra
 	LABEL (U"", U"Range in semitones re 100 Hz:")
 	REAL (U"left Frequency range (st)", U"-12.0")
 	REAL (U"right Frequency range (st)", U"30.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
@@ -3464,7 +3464,7 @@ FORM (Pitch_drawSemitones200, U"Pitch: Draw semitones (re 200 Hz)", U"Pitch: Dra
 	LABEL (U"", U"Range in semitones re 200 Hz:")
 	REAL (U"left Frequency range (st)", U"-24.0")
 	REAL (U"right Frequency range (st)", U"18.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
@@ -3482,7 +3482,7 @@ FORM (Pitch_drawSemitones440, U"Pitch: Draw semitones (re 440 Hz)", U"Pitch: Dra
 	LABEL (U"", U"Range in semitones re 440 Hz:")
 	REAL (U"left Frequency range (st)", U"-36.0")
 	REAL (U"right Frequency range (st)", U"6.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
@@ -3521,7 +3521,7 @@ DO
 	}
 END2 }
 
-FORM (Pitch_getMaximum, U"Pitch: Get maximum", 0) {
+FORM (Pitch_getMaximum, U"Pitch: Get maximum", nullptr) {
 	praat_dia_timeRange (dia);
 	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
 	RADIO (U"Interpolation", 2)
@@ -3536,7 +3536,7 @@ DO
 	Melder_informationReal (value, Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
 END2 }
 
-FORM (Pitch_getMean, U"Pitch: Get mean", 0) {
+FORM (Pitch_getMean, U"Pitch: Get mean", nullptr) {
 	praat_dia_timeRange (dia);
 	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
 	OK2
@@ -3591,7 +3591,7 @@ DO
 	Melder_informationReal (value, Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
 END2 }
 
-FORM (Pitch_getQuantile, U"Pitch: Get quantile", 0) {
+FORM (Pitch_getQuantile, U"Pitch: Get quantile", nullptr) {
 	praat_dia_timeRange (dia);
 	REAL (U"Quantile", U"0.50 (= median)")
 	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
@@ -3605,7 +3605,7 @@ DO
 	Melder_informationReal (value, Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
 END2 }
 
-FORM (Pitch_getStandardDeviation, U"Pitch: Get standard deviation", 0) {
+FORM (Pitch_getStandardDeviation, U"Pitch: Get standard deviation", nullptr) {
 	praat_dia_timeRange (dia);
 	OPTIONMENU (U"Unit", 1)
 		OPTION (U"Hertz")
@@ -3633,7 +3633,7 @@ DO
 	Melder_informationReal (value, unitText);
 END2 }
 
-FORM (Pitch_getTimeOfMaximum, U"Pitch: Get time of maximum", 0) {
+FORM (Pitch_getTimeOfMaximum, U"Pitch: Get time of maximum", nullptr) {
 	praat_dia_timeRange (dia);
 	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
 	RADIO (U"Interpolation", 2)
@@ -3648,7 +3648,7 @@ DO
 	Melder_informationReal (time, U"seconds");
 END2 }
 
-FORM (Pitch_getTimeOfMinimum, U"Pitch: Get time of minimum", 0) {
+FORM (Pitch_getTimeOfMinimum, U"Pitch: Get time of minimum", nullptr) {
 	praat_dia_timeRange (dia);
 	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
 	RADIO (U"Interpolation", 2)
@@ -3697,7 +3697,7 @@ END2 }
 DIRECT2 (Pitch_hum) {
 	LOOP {
 		iam (Pitch);
-		Pitch_hum (me, 0, 0);
+		Pitch_hum (me, 0.0, 0.0);
 	}
 END2 }
 
@@ -3720,7 +3720,7 @@ END2 }
 DIRECT2 (Pitch_play) {
 	LOOP {
 		iam (Pitch);
-		Pitch_play (me, 0, 0);
+		Pitch_play (me, 0.0, 0.0);
 	}
 END2 }
 
@@ -3740,7 +3740,7 @@ FORM (Pitch_speckle, U"Pitch: Speckle", U"Pitch: Draw...") {
 	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
 	REAL (STRING_FROM_FREQUENCY_HZ, U"0.0")
 	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
@@ -3756,7 +3756,7 @@ FORM (Pitch_speckleErb, U"Pitch: Speckle erb", U"Pitch: Draw...") {
 	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
 	REAL (U"left Frequency range (ERB)", U"0")
 	REAL (U"right Frequency range (ERB)", U"10.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
@@ -3772,7 +3772,7 @@ FORM (Pitch_speckleLogarithmic, U"Pitch: Speckle logarithmic", U"Pitch: Draw..."
 	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
 	POSITIVE (STRING_FROM_FREQUENCY_HZ, U"50.0")
 	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
@@ -3788,7 +3788,7 @@ FORM (Pitch_speckleMel, U"Pitch: Speckle mel", U"Pitch: Draw...") {
 	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
 	REAL (U"left Frequency range (mel)", U"0")
 	REAL (U"right Frequency range (mel)", U"500")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
@@ -3805,7 +3805,7 @@ FORM (Pitch_speckleSemitones100, U"Pitch: Speckle semitones (re 100 Hz)", U"Pitc
 	LABEL (U"", U"Range in semitones re 100 hertz:")
 	REAL (U"left Frequency range (st)", U"-12.0")
 	REAL (U"right Frequency range (st)", U"30.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
@@ -3822,7 +3822,7 @@ FORM (Pitch_speckleSemitones200, U"Pitch: Speckle semitones (re 200 Hz)", U"Pitc
 	LABEL (U"", U"Range in semitones re 200 hertz:")
 	REAL (U"left Frequency range (st)", U"-24.0")
 	REAL (U"right Frequency range (st)", U"18.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
@@ -3839,7 +3839,7 @@ FORM (Pitch_speckleSemitones440, U"Pitch: Speckle semitones (re 440 Hz)", U"Pitc
 	LABEL (U"", U"Range in semitones re 440 hertz:")
 	REAL (U"left Frequency range (st)", U"-36.0")
 	REAL (U"right Frequency range (st)", U"6.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
@@ -3850,7 +3850,7 @@ DO
 	}
 END2 }
 
-FORM (Pitch_subtractLinearFit, U"Pitch: subtract linear fit", 0) {
+FORM (Pitch_subtractLinearFit, U"Pitch: subtract linear fit", nullptr) {
 	RADIO (U"Unit", 1)
 		RADIOBUTTON (U"Hertz")
 		RADIOBUTTON (U"Hertz (logarithmic)")
@@ -3979,7 +3979,7 @@ FORM (PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
 		RADIOBUTTON (U"Normal")
 		RADIOBUTTON (U"Dotted")
 		RADIOBUTTON (U"Blank")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	LABEL (U"", U"")
 	OPTIONMENU (U"Drawing method", 1)
 		OPTION (U"lines")
@@ -4044,7 +4044,7 @@ END2 }
 
 FORM (PitchTier_addPoint, U"PitchTier: Add point", U"PitchTier: Add point...") {
 	REAL (U"Time (s)", U"0.5")
-	REAL (U"Pitch (Hz)", U"200")
+	REAL (U"Pitch (Hz)", U"200.0")
 	OK2
 DO
 	LOOP {
@@ -4087,11 +4087,11 @@ DO
 	}
 END2 }
 
-FORM (old_PitchTier_draw, U"PitchTier: Draw", 0) {
+FORM (old_PitchTier_draw, U"PitchTier: Draw", nullptr) {
 	praat_dia_timeRange (dia);
 	REAL (STRING_FROM_FREQUENCY_HZ, U"0.0")
 	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	double minimumFrequency = GET_REAL (STRING_FROM_FREQUENCY);
@@ -4106,11 +4106,11 @@ DO
 	}
 END2 }
 
-FORM (PitchTier_draw, U"PitchTier: Draw", 0) {
+FORM (PitchTier_draw, U"PitchTier: Draw", nullptr) {
 	praat_dia_timeRange (dia);
 	REAL (STRING_FROM_FREQUENCY_HZ, U"0.0")
 	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	LABEL (U"", U"")
 	OPTIONMENU (U"Drawing method", 1)
 		OPTION (U"lines")
@@ -4216,7 +4216,7 @@ DIRECT2 (PitchTier_hum) {
 	}
 END2 }
 
-FORM (PitchTier_interpolateQuadratically, U"PitchTier: Interpolate quadratically", 0) {
+FORM (PitchTier_interpolateQuadratically, U"PitchTier: Interpolate quadratically", nullptr) {
 	NATURAL (U"Number of points per parabola", U"4")
 	RADIO (U"Unit", 2)
 		RADIOBUTTON (U"Hz")
@@ -4244,7 +4244,7 @@ DIRECT2 (PitchTier_playSine) {
 	}
 END2 }
 
-FORM (PitchTier_shiftFrequencies, U"PitchTier: Shift frequencies", 0) {
+FORM (PitchTier_shiftFrequencies, U"PitchTier: Shift frequencies", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"1000.0")
 	REAL (U"Frequency shift", U"-20.0")
@@ -4275,7 +4275,7 @@ DO
 	}
 END2 }
 
-FORM (PitchTier_multiplyFrequencies, U"PitchTier: Multiply frequencies", 0) {
+FORM (PitchTier_multiplyFrequencies, U"PitchTier: Multiply frequencies", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"1000.0")
 	POSITIVE (U"Factor", U"1.2")
@@ -4310,7 +4310,7 @@ DIRECT2 (PitchTier_to_PointProcess) {
 	}
 END2 }
 
-FORM (PitchTier_to_Sound_phonation, U"PitchTier: To Sound (phonation)", 0) {
+FORM (PitchTier_to_Sound_phonation, U"PitchTier: To Sound (phonation)", nullptr) {
 	POSITIVE (U"Sampling frequency (Hz)", U"44100")
 	POSITIVE (U"Adaptation factor", U"1.0")
 	POSITIVE (U"Maximum period (s)", U"0.05")
@@ -4318,7 +4318,7 @@ FORM (PitchTier_to_Sound_phonation, U"PitchTier: To Sound (phonation)", 0) {
 	REAL (U"Collision phase", U"0.03")
 	POSITIVE (U"Power 1", U"3.0")
 	POSITIVE (U"Power 2", U"4.0")
-	BOOLEAN (U"Hum", 0)
+	BOOLEAN (U"Hum", false)
 	OK2
 DO
 	LOOP {
@@ -4330,12 +4330,12 @@ DO
 	}
 END2 }
 
-FORM (PitchTier_to_Sound_pulseTrain, U"PitchTier: To Sound (pulse train)", 0) {
+FORM (PitchTier_to_Sound_pulseTrain, U"PitchTier: To Sound (pulse train)", nullptr) {
 	POSITIVE (U"Sampling frequency (Hz)", U"44100")
 	POSITIVE (U"Adaptation factor", U"1.0")
 	POSITIVE (U"Adaptation time", U"0.05")
 	NATURAL (U"Interpolation depth (samples)", U"2000")
-	BOOLEAN (U"Hum", 0)
+	BOOLEAN (U"Hum", false)
 	OK2
 DO
 	LOOP {
@@ -4347,8 +4347,8 @@ DO
 	}
 END2 }
 
-FORM (PitchTier_to_Sound_sine, U"PitchTier: To Sound (sine)", 0) {
-	POSITIVE (U"Sampling frequency (Hz)", U"44100")
+FORM (PitchTier_to_Sound_sine, U"PitchTier: To Sound (sine)", nullptr) {
+	POSITIVE (U"Sampling frequency (Hz)", U"44100.0")
 	OK2
 DO
 	LOOP {
@@ -4363,14 +4363,14 @@ DIRECT2 (info_PitchTier_Sound_edit) {
 		"   select a PitchTier and a Sound, and click \"View & Edit\".");
 END2 }
 
-FORM_WRITE (PitchTier_writeToPitchTierSpreadsheetFile, U"Save PitchTier as spreadsheet", 0, U"PitchTier")
+FORM_WRITE (PitchTier_writeToPitchTierSpreadsheetFile, U"Save PitchTier as spreadsheet", nullptr, U"PitchTier")
 	LOOP {
 		iam (PitchTier);
 		PitchTier_writeToPitchTierSpreadsheetFile (me, file);
 	}
 END
 
-FORM_WRITE (PitchTier_writeToHeaderlessSpreadsheetFile, U"Save PitchTier as spreadsheet", 0, U"txt")
+FORM_WRITE (PitchTier_writeToHeaderlessSpreadsheetFile, U"Save PitchTier as spreadsheet", nullptr, U"txt")
 	LOOP {
 		iam (PitchTier);
 		PitchTier_writeToHeaderlessSpreadsheetFile (me, file);
@@ -4434,7 +4434,7 @@ END2 }
 
 FORM (PointProcess_draw, U"PointProcess: Draw", nullptr) {
 	praat_dia_timeRange (dia);
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	LOOP {
@@ -4808,7 +4808,7 @@ DO
 	}
 END2 }
 
-FORM (PointProcess_voice, U"PointProcess: Fill unvoiced parts", 0) {
+FORM (PointProcess_voice, U"PointProcess: Fill unvoiced parts", nullptr) {
 	POSITIVE (U"Period (s)", U"0.01")
 	POSITIVE (U"Maximum voiced period (s)", U"0.02000000001")
 	OK2
@@ -4924,7 +4924,7 @@ DO
 	Melder_informationReal (shimmer, nullptr);
 END2 }
 
-FORM (PointProcess_Sound_to_AmplitudeTier_period, U"PointProcess & Sound: To AmplitudeTier (period)", 0) {
+FORM (PointProcess_Sound_to_AmplitudeTier_period, U"PointProcess & Sound: To AmplitudeTier (period)", nullptr) {
 	dia_PointProcess_getRangeProperty (dia);
 	OK2
 DO
@@ -4943,7 +4943,7 @@ DIRECT2 (PointProcess_Sound_to_AmplitudeTier_point) {
 	praat_new (thee.move(), sound -> name, U"_", point -> name);
 END2 }
 
-FORM (PointProcess_Sound_to_Ltas, U"PointProcess & Sound: To Ltas", 0) {
+FORM (PointProcess_Sound_to_Ltas, U"PointProcess & Sound: To Ltas", nullptr) {
 	POSITIVE (U"Maximum frequency (Hz)", U"5000")
 	POSITIVE (U"Band width (Hz)", U"100")
 	REAL (U"Shortest period (s)", U"0.0001")
@@ -4959,7 +4959,7 @@ DO
 	praat_new (thee.move(), sound -> name);
 END2 }
 
-FORM (PointProcess_Sound_to_Ltas_harmonics, U"PointProcess & Sound: To Ltas (harmonics", 0) {
+FORM (PointProcess_Sound_to_Ltas_harmonics, U"PointProcess & Sound: To Ltas (harmonics", nullptr) {
 	NATURAL (U"Maximum harmonic", U"20")
 	REAL (U"Shortest period (s)", U"0.0001")
 	REAL (U"Longest period (s)", U"0.02")
@@ -4974,7 +4974,7 @@ DO
 	praat_new (thee.move(), sound -> name);
 END2 }
 
-FORM (Sound_PointProcess_to_SoundEnsemble_correlate, U"Sound & PointProcess: To SoundEnsemble (correlate)", 0) {
+FORM (Sound_PointProcess_to_SoundEnsemble_correlate, U"Sound & PointProcess: To SoundEnsemble (correlate)", nullptr) {
 	REAL (U"From time (s)", U"-0.1")
 	REAL (U"To time (s)", U"1.0")
 	OK2
@@ -4987,7 +4987,7 @@ END2 }
 
 /***** POLYGON *****/
 
-FORM (Polygon_draw, U"Polygon: Draw", 0) {
+FORM (Polygon_draw, U"Polygon: Draw", nullptr) {
 	REAL (U"Xmin", U"0.0")
 	REAL (U"Xmax", U"0.0")
 	REAL (U"Ymin", U"0.0")
@@ -5001,12 +5001,12 @@ DO
 	}
 END2 }
 
-FORM (Polygon_drawCircles, U"Polygon: Draw circles", 0) {
+FORM (Polygon_drawCircles, U"Polygon: Draw circles", nullptr) {
 	REAL (U"Xmin", U"0.0")
 	REAL (U"Xmax", U"0.0 (= all)")
 	REAL (U"Ymin", U"0.0")
 	REAL (U"Ymax", U"0.0 (= all)")
-	POSITIVE (U"Diameter (mm)", U"3")
+	POSITIVE (U"Diameter (mm)", U"3.0")
 	OK2
 DO
 	LOOP {
@@ -5068,12 +5068,12 @@ DO
 	}
 END2 }
 
-FORM (Polygon_paintCircles, U"Polygon: Paint circles", 0) {
+FORM (Polygon_paintCircles, U"Polygon: Paint circles", nullptr) {
 	REAL (U"Xmin", U"0.0")
 	REAL (U"Xmax", U"0.0 (= all)")
 	REAL (U"Ymin", U"0.0")
 	REAL (U"Ymax", U"0.0 (= all)")
-	POSITIVE (U"Diameter (mm)", U"3")
+	POSITIVE (U"Diameter (mm)", U"3.0")
 	OK2
 DO
 	LOOP {
@@ -5092,7 +5092,7 @@ DIRECT2 (Polygon_randomize) {
 	}
 END2 }
 
-FORM (Polygon_salesperson, U"Polygon: Find shortest path", 0) {
+FORM (Polygon_salesperson, U"Polygon: Find shortest path", nullptr) {
 	NATURAL (U"Number of iterations", U"1")
 	OK2
 DO
@@ -5134,7 +5134,7 @@ END2 }
 
 /***** SOUND & POINTPROCESS & PITCHTIER & DURATIONTIER *****/
 
-FORM (Sound_Point_Pitch_Duration_to_Sound, U"To Sound", 0) {
+FORM (Sound_Point_Pitch_Duration_to_Sound, U"To Sound", nullptr) {
 	POSITIVE (U"Longest period (s)", U"0.02")
 	OK2
 DO
@@ -5222,7 +5222,7 @@ DIRECT2 (Spectrogram_to_Matrix) {
 	}
 END2 }
 
-FORM (Spectrogram_to_Sound, U"Spectrogram: To Sound", 0) {
+FORM (Spectrogram_to_Sound, U"Spectrogram: To Sound", nullptr) {
 	REAL (U"Sampling frequency (Hz)", U"44100")
 	OK2
 DO
@@ -5233,7 +5233,7 @@ DO
 	}
 END2 }
 
-FORM (Spectrogram_to_Spectrum, U"Spectrogram: To Spectrum (slice)", 0) {
+FORM (Spectrogram_to_Spectrum, U"Spectrogram: To Spectrum (slice)", nullptr) {
 	REAL (U"Time (seconds)", U"0.0")
 	OK2
 DO
@@ -5256,7 +5256,7 @@ END2 }
 
 /***** SPECTRUM *****/
 
-FORM (Spectrum_cepstralSmoothing, U"Spectrum: Cepstral smoothing", 0) {
+FORM (Spectrum_cepstralSmoothing, U"Spectrum: Cepstral smoothing", nullptr) {
 	POSITIVE (U"Bandwidth (Hz)", U"500.0")
 	OK2
 DO
@@ -5267,12 +5267,12 @@ DO
 	}
 END2 }
 
-FORM (Spectrum_draw, U"Spectrum: Draw", 0) {
+FORM (Spectrum_draw, U"Spectrum: Draw", nullptr) {
 	REAL (U"left Frequency range (Hz)", U"0.0")
 	REAL (U"right Frequency range (Hz)", U"0.0 (= all)")
 	REAL (U"Minimum power (dB/Hz)", U"0 (= auto)")
 	REAL (U"Maximum power (dB/Hz)", U"0 (= auto)")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	LOOP {
@@ -5284,12 +5284,12 @@ DO
 	}
 END2 }
 
-FORM (Spectrum_drawLogFreq, U"Spectrum: Draw (log freq)", 0) {
+FORM (Spectrum_drawLogFreq, U"Spectrum: Draw (log freq)", nullptr) {
 	POSITIVE (U"left Frequency range (Hz)", U"10.0")
 	POSITIVE (U"right Frequency range (Hz)", U"10000.0")
 	REAL (U"Minimum power (dB/Hz)", U"0 (= auto)")
 	REAL (U"Maximum power (dB/Hz)", U"0 (= auto)")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	LOOP {
@@ -5346,10 +5346,10 @@ DO
 END2 }
 
 FORM (Spectrum_getBandDensityDifference, U"Spectrum: Get band density difference", nullptr) {
-	REAL (U"Low band floor (Hz)", U"0")
-	REAL (U"Low band ceiling (Hz)", U"500")
-	REAL (U"High band floor (Hz)", U"500")
-	REAL (U"High band ceiling (Hz)", U"4000")
+	REAL (U"Low band floor (Hz)", U"0.0")
+	REAL (U"Low band ceiling (Hz)", U"500.0")
+	REAL (U"High band floor (Hz)", U"500.0")
+	REAL (U"High band ceiling (Hz)", U"4000.0")
 	OK2
 DO
 	LOOP {
@@ -5360,9 +5360,9 @@ DO
 	}
 END2 }
 
-FORM (Spectrum_getBandEnergy, U"Spectrum: Get band energy", 0) {
+FORM (Spectrum_getBandEnergy, U"Spectrum: Get band energy", nullptr) {
 	REAL (U"Band floor (Hz)", U"200.0")
-	REAL (U"Band ceiling (Hz)", U"1000")
+	REAL (U"Band ceiling (Hz)", U"1000.0")
 	OK2
 DO
 	LOOP {
@@ -5373,10 +5373,10 @@ DO
 END2 }
 
 FORM (Spectrum_getBandEnergyDifference, U"Spectrum: Get band energy difference", nullptr) {
-	REAL (U"Low band floor (Hz)", U"0")
-	REAL (U"Low band ceiling (Hz)", U"500")
-	REAL (U"High band floor (Hz)", U"500")
-	REAL (U"High band ceiling (Hz)", U"4000")
+	REAL (U"Low band floor (Hz)", U"0.0")
+	REAL (U"Low band ceiling (Hz)", U"500.0")
+	REAL (U"High band floor (Hz)", U"500.0")
+	REAL (U"High band ceiling (Hz)", U"4000.0")
 	OK2
 DO
 	LOOP {
@@ -5428,7 +5428,7 @@ DO
 	}
 END2 }
 
-FORM (Spectrum_getFrequencyFromBin, U"Spectrum: Get frequency from bin", 0) {
+FORM (Spectrum_getFrequencyFromBin, U"Spectrum: Get frequency from bin", nullptr) {
 	NATURAL (U"Band number", U"1")
 	OK2
 DO
@@ -5599,8 +5599,8 @@ DO
 	}
 END2 }
 
-FORM (Spectrum_to_Ltas, U"Spectrum: To Long-term average spectrum", 0) {
-	POSITIVE (U"Bandwidth (Hz)", U"1000")
+FORM (Spectrum_to_Ltas, U"Spectrum: To Long-term average spectrum", nullptr) {
+	POSITIVE (U"Bandwidth (Hz)", U"1000.0")
 	OK2
 DO
 	LOOP {
@@ -5660,12 +5660,12 @@ DIRECT2 (SpectrumTier_downto_Table) {
 	}
 END2 }
 
-FORM (old_SpectrumTier_draw, U"SpectrumTier: Draw", 0) {   // 2010/10/19
+FORM (old_SpectrumTier_draw, U"SpectrumTier: Draw", nullptr) {   // 2010-10-19
 	REAL (U"left Frequency range (Hz)", U"0.0")
 	REAL (U"right Frequency range (Hz)", U"10000.0")
 	REAL (U"left Power range (dB)", U"20.0")
 	REAL (U"right Power range (dB)", U"80.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	LOOP {
@@ -5678,12 +5678,12 @@ DO
 	}
 END2 }
 
-FORM (SpectrumTier_draw, U"SpectrumTier: Draw", 0) {
+FORM (SpectrumTier_draw, U"SpectrumTier: Draw", nullptr) {
 	REAL (U"left Frequency range (Hz)", U"0.0")
 	REAL (U"right Frequency range (Hz)", U"10000.0")
 	REAL (U"left Power range (dB)", U"20.0")
 	REAL (U"right Power range (dB)", U"80.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	LABEL (U"", U"")
 	OPTIONMENU (U"Drawing method", 1)
 		OPTION (U"lines")
@@ -5701,7 +5701,7 @@ DO_ALTERNATIVE (old_SpectrumTier_draw)
 	}
 END2 }
 
-FORM (SpectrumTier_list, U"SpectrumTier: List", 0) {
+FORM (SpectrumTier_list, U"SpectrumTier: List", nullptr) {
 	BOOLEAN (U"Include indexes", true)
 	BOOLEAN (U"Include frequency", true)
 	BOOLEAN (U"Include power density", true)
@@ -5713,7 +5713,7 @@ DO
 	}
 END2 }
 
-FORM (SpectrumTier_removePointsBelow, U"SpectrumTier: Remove points below", 0) {
+FORM (SpectrumTier_removePointsBelow, U"SpectrumTier: Remove points below", nullptr) {
 	REAL (U"Remove all points below (dB)", U"40.0")
 	OK2
 DO
@@ -5733,7 +5733,7 @@ FORM (Strings_createAsFileList, U"Create Strings as file list", U"Create Strings
 	OK2
 static bool inited;
 if (! inited) {
-	structMelderDir defaultDir = { { 0 } };
+	structMelderDir defaultDir { { 0 } };
 	Melder_getDefaultDir (& defaultDir);
 	char32 *workingDirectory = Melder_dirToPath (& defaultDir);
 	char32 path [kMelder_MAXPATH+1];
@@ -5821,7 +5821,7 @@ DIRECT2 (Strings_getNumberOfStrings) {
 	}
 END2 }
 
-FORM (Strings_getString, U"Get string", 0) {
+FORM (Strings_getString, U"Get string", nullptr) {
 	NATURAL (U"Position", U"1")
 	OK2
 DO
@@ -5875,7 +5875,7 @@ FORM_READ2 (Strings_readFromRawTextFile, U"Read Strings from raw text file", 0, 
 	praat_new (me.move(), MelderFile_name (file));
 END2 }
 
-FORM (Strings_removeString, U"Strings: Remove string", 0) {
+FORM (Strings_removeString, U"Strings: Remove string", nullptr) {
 	NATURAL (U"Position", U"1")
 	OK2
 DO
@@ -5886,7 +5886,7 @@ DO
 	}
 END2 }
 
-FORM (Strings_replaceAll, U"Strings: Replace all", 0) {
+FORM (Strings_replaceAll, U"Strings: Replace all", nullptr) {
 	SENTENCE (U"Find", U"a")
 	SENTENCE (U"Replace with", U"b")
 	INTEGER (U"Replace limit per string", U"0 (=unlimited)")
@@ -5904,7 +5904,7 @@ DO
 	}
 END2 }
 
-FORM (Strings_setString, U"Strings: Set string", 0) {
+FORM (Strings_setString, U"Strings: Set string", nullptr) {
 	NATURAL (U"Position", U"1")
 	LABEL (U"", U"New string:")
 	TEXTFIELD (U"newString", U"")
@@ -5941,7 +5941,7 @@ DIRECT2 (Strings_to_WordList) {
 	}
 END2 }
 
-FORM_WRITE (Strings_writeToRawTextFile, U"Save Strings as text file", 0, U"txt")
+FORM_WRITE (Strings_writeToRawTextFile, U"Save Strings as text file", nullptr, U"txt")
 	LOOP {
 		iam (Strings);
 		Strings_writeToRawTextFile (me, file);

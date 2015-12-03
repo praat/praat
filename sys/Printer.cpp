@@ -320,7 +320,7 @@ int Printer_postScriptSettings () {
 	- (void) drawRect: (NSRect) dirtyRect {
 		trace (U"printing ", dirtyRect. origin. x, U" ", dirtyRect. origin. y, U" ", dirtyRect. size. width, U" ", dirtyRect. size. height);
 		int currentPage = [[NSPrintOperation currentOperation] currentPage];
-		thePrinter. graphics = Graphics_create_screenPrinter (nullptr, self);
+		thePrinter. graphics = Graphics_create_screenPrinter (nullptr, self).transfer();
 		theDraw (theBoss, thePrinter. graphics);
 		forget (thePrinter. graphics);
 	}

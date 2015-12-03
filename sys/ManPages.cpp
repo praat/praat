@@ -500,17 +500,18 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 			pdfFile. path [str32len (pdfFile. path) - 5] = U'\0';   // delete extension ".html"
 			str32cpy (pdfFile. path + str32len (pdfFile. path),
 				Melder_cat (U"_", numberOfPictures, U".pdf"));
-			Graphics graphics = Graphics_create_pdffile (& pdfFile, 100, 0.0, paragraph -> width, 0.0, paragraph -> height);
-			Graphics_setFont (graphics, kGraphics_font_TIMES);
-			Graphics_setFontStyle (graphics, 0);
-			Graphics_setFontSize (graphics, 12);
-			Graphics_setWrapWidth (graphics, 0);
-			Graphics_setViewport (graphics, 0.0, paragraph -> width, 0.0, paragraph -> height);
-			paragraph -> draw (graphics);
-			Graphics_setViewport (graphics, 0, 1, 0, 1);
-			Graphics_setWindow (graphics, 0, 1, 0, 1);
-			Graphics_setTextAlignment (graphics, Graphics_LEFT, Graphics_BOTTOM);
-			forget (graphics);
+			{// scope
+				autoGraphics graphics = Graphics_create_pdffile (& pdfFile, 100, 0.0, paragraph -> width, 0.0, paragraph -> height);
+				Graphics_setFont (graphics.get(), kGraphics_font_TIMES);
+				Graphics_setFontStyle (graphics.get(), 0);
+				Graphics_setFontSize (graphics.get(), 12);
+				Graphics_setWrapWidth (graphics.get(), 0);
+				Graphics_setViewport (graphics.get(), 0.0, paragraph -> width, 0.0, paragraph -> height);
+				paragraph -> draw (graphics.get());
+				Graphics_setViewport (graphics.get(), 0, 1, 0, 1);
+				Graphics_setWindow (graphics.get(), 0, 1, 0, 1);
+				Graphics_setTextAlignment (graphics.get(), Graphics_LEFT, Graphics_BOTTOM);
+			}
 			structMelderFile tiffFile;
 			MelderFile_copy (file, & tiffFile);
 			tiffFile. path [str32len (tiffFile. path) - 5] = U'\0';   // delete extension ".html"
@@ -532,65 +533,66 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 			pdfFile. path [str32len (pdfFile. path) - 5] = U'\0';   // delete extension ".html"
 			str32cpy (pdfFile. path + str32len (pdfFile.path),
 				Melder_cat (U"_", numberOfPictures, U".pdf"));
-			Graphics graphics = Graphics_create_pdffile (& pdfFile, 100, 0.0, paragraph -> width, 0.0, paragraph -> height);
-			Graphics_setFont (graphics, kGraphics_font_TIMES);
-			Graphics_setFontStyle (graphics, 0);
-			Graphics_setFontSize (graphics, 12);
-			Graphics_setWrapWidth (graphics, 0);
-			static structPraatApplication praatApplication;
-			static structPraatObjects praatObjects;
-			static structPraatPicture praatPicture;
-			theCurrentPraatApplication = & praatApplication;
-			theCurrentPraatApplication -> batch = true;
-			theCurrentPraatApplication -> topShell = theForegroundPraatApplication. topShell;   // needed for UiForm_create () in dialogs
-			theCurrentPraatObjects = (PraatObjects) & praatObjects;
-			theCurrentPraatPicture = (PraatPicture) & praatPicture;
-			theCurrentPraatPicture -> graphics = graphics;
-			theCurrentPraatPicture -> font = kGraphics_font_TIMES;
-			theCurrentPraatPicture -> fontSize = 12;
-			theCurrentPraatPicture -> lineType = Graphics_DRAWN;
-			theCurrentPraatPicture -> colour = Graphics_BLACK;
-			theCurrentPraatPicture -> lineWidth = 1.0;
-			theCurrentPraatPicture -> arrowSize = 1.0;
-			theCurrentPraatPicture -> speckleSize = 1.0;
-			theCurrentPraatPicture -> x1NDC = 0;
-			theCurrentPraatPicture -> x2NDC = paragraph -> width;
-			theCurrentPraatPicture -> y1NDC = 0;
-			theCurrentPraatPicture -> y2NDC = paragraph -> height;
-			Graphics_setViewport (graphics, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);			
-			Graphics_setWindow (graphics, 0.0, 1.0, 0.0, 1.0);
-			long x1DC, y1DC, x2DC, y2DC;
-			Graphics_WCtoDC (graphics, 0.0, 0.0, & x1DC, & y2DC);
-			Graphics_WCtoDC (graphics, 1.0, 1.0, & x2DC, & y1DC);
-			Graphics_resetWsViewport (graphics, x1DC, x2DC, y1DC, y2DC);
-			Graphics_setWsWindow (graphics, 0, paragraph -> width, 0, paragraph -> height);
-			theCurrentPraatPicture -> x1NDC = 0;
-			theCurrentPraatPicture -> x2NDC = paragraph -> width;
-			theCurrentPraatPicture -> y1NDC = 0;
-			theCurrentPraatPicture -> y2NDC = paragraph -> height;
-			Graphics_setViewport (graphics, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);			
 			{// scope
-				autoMelderProgressOff progress;
-				autoMelderWarningOff warning;
-				autoMelderSaveDefaultDir saveDir;
-				if (! MelderDir_isNull (& my rootDirectory)) {
-					Melder_setDefaultDir (& my rootDirectory);
+				autoGraphics graphics = Graphics_create_pdffile (& pdfFile, 100, 0.0, paragraph -> width, 0.0, paragraph -> height);
+				Graphics_setFont (graphics.get(), kGraphics_font_TIMES);
+				Graphics_setFontStyle (graphics.get(), 0);
+				Graphics_setFontSize (graphics.get(), 12);
+				Graphics_setWrapWidth (graphics.get(), 0);
+				static structPraatApplication praatApplication;
+				static structPraatObjects praatObjects;
+				static structPraatPicture praatPicture;
+				theCurrentPraatApplication = & praatApplication;
+				theCurrentPraatApplication -> batch = true;
+				theCurrentPraatApplication -> topShell = theForegroundPraatApplication. topShell;   // needed for UiForm_create () in dialogs
+				theCurrentPraatObjects = (PraatObjects) & praatObjects;
+				theCurrentPraatPicture = (PraatPicture) & praatPicture;
+				theCurrentPraatPicture -> graphics = graphics.get();   // FIXME: should be move()?
+				theCurrentPraatPicture -> font = kGraphics_font_TIMES;
+				theCurrentPraatPicture -> fontSize = 12;
+				theCurrentPraatPicture -> lineType = Graphics_DRAWN;
+				theCurrentPraatPicture -> colour = Graphics_BLACK;
+				theCurrentPraatPicture -> lineWidth = 1.0;
+				theCurrentPraatPicture -> arrowSize = 1.0;
+				theCurrentPraatPicture -> speckleSize = 1.0;
+				theCurrentPraatPicture -> x1NDC = 0.0;
+				theCurrentPraatPicture -> x2NDC = paragraph -> width;
+				theCurrentPraatPicture -> y1NDC = 0.0;
+				theCurrentPraatPicture -> y2NDC = paragraph -> height;
+				Graphics_setViewport (graphics.get(), theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
+				Graphics_setWindow (graphics.get(), 0.0, 1.0, 0.0, 1.0);
+				long x1DC, y1DC, x2DC, y2DC;
+				Graphics_WCtoDC (graphics.get(), 0.0, 0.0, & x1DC, & y2DC);
+				Graphics_WCtoDC (graphics.get(), 1.0, 1.0, & x2DC, & y1DC);
+				Graphics_resetWsViewport (graphics.get(), x1DC, x2DC, y1DC, y2DC);
+				Graphics_setWsWindow (graphics.get(), 0.0, paragraph -> width, 0.0, paragraph -> height);
+				theCurrentPraatPicture -> x1NDC = 0.0;
+				theCurrentPraatPicture -> x2NDC = paragraph -> width;
+				theCurrentPraatPicture -> y1NDC = 0.0;
+				theCurrentPraatPicture -> y2NDC = paragraph -> height;
+				Graphics_setViewport (graphics.get(), theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
+				{// scope
+					autoMelderProgressOff progress;
+					autoMelderWarningOff warning;
+					autoMelderSaveDefaultDir saveDir;
+					if (! MelderDir_isNull (& my rootDirectory)) {
+						Melder_setDefaultDir (& my rootDirectory);
+					}
+					try {
+						autostring32 text = Melder_dup (p);
+						Interpreter_run (interpreter.peek(), text.peek());
+					} catch (MelderError) {
+						trace (U"interpreter fails on ", pdfFile. path);
+						Melder_flushError ();
+					}
 				}
-				try {
-					autostring32 text = Melder_dup (p);
-					Interpreter_run (interpreter.peek(), text.peek());
-				} catch (MelderError) {
-					trace (U"interpreter fails on ", pdfFile. path);
-					Melder_flushError ();
-				}
+				Graphics_setViewport (graphics.get(), 0.0, 1.0, 0.0, 1.0);
+				Graphics_setWindow (graphics.get(), 0.0, 1.0, 0.0, 1.0);
+				Graphics_setTextAlignment (graphics.get(), Graphics_LEFT, Graphics_BOTTOM);
 			}
-			Graphics_setViewport (graphics, 0, 1, 0, 1);
-			Graphics_setWindow (graphics, 0, 1, 0, 1);
-			Graphics_setTextAlignment (graphics, Graphics_LEFT, Graphics_BOTTOM);
-			forget (graphics);
 			structMelderFile tiffFile;
 			MelderFile_copy (file, & tiffFile);
-			tiffFile. path [str32len (tiffFile. path) - 5] = '\0';   // delete extension ".html"
+			tiffFile. path [str32len (tiffFile. path) - 5] = U'\0';   // delete extension ".html"
 			str32cpy (tiffFile. path + str32len (tiffFile. path),
 				Melder_cat (U"_", numberOfPictures, U".png"));
 			system (Melder_peek32to8 (Melder_cat (U"/usr/local/bin/gs -q -dNOPAUSE "

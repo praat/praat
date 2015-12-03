@@ -183,6 +183,7 @@ static const char16 * peek32to16 (const char32 *string) {
 
 bool Melder_consoleIsAnsi = false;
 
+//extern FILE *winstdout;
 void Melder_writeToConsole (const char32 *message, bool useStderr) {
 	if (! message) return;
 	#if defined (_WIN32)
@@ -190,6 +191,7 @@ void Melder_writeToConsole (const char32 *message, bool useStderr) {
 		static HANDLE console = nullptr;
 		if (! console) {
 			console = CreateFileW (L"CONOUT$", GENERIC_WRITE, FILE_SHARE_WRITE, nullptr, OPEN_EXISTING, 0, 0);
+			//freopen ("CONOUT$", "w", stdout);
 		}
 		if (Melder_consoleIsAnsi) {
 			size_t n = str32len (message);
@@ -197,6 +199,8 @@ void Melder_writeToConsole (const char32 *message, bool useStderr) {
 				unsigned int kar = (unsigned short) message [i];
 				fputc (kar, stdout);
 			}
+			//CHAR* messageA = (CHAR*) peek32to8 (message);
+			//WriteConsoleA (console, messageA, strlen (messageA), nullptr, nullptr);
 		//} else if (Melder_consoleIsUtf8) {
 			//char *messageA = Melder_peek32to8 (message);
 			//fprintf (stdout, "%s", messageA);

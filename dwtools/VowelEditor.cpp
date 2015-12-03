@@ -1446,7 +1446,7 @@ autoVowelEditor VowelEditor_create (const char32 *title, Daata data) {
 #if motif
 		Melder_assert (XtWindow (my drawingArea -> d_widget));
 #endif
-		my g = Graphics_create_xmdrawingarea (my drawingArea);
+		my g = Graphics_create_xmdrawingarea (my drawingArea).transfer();
 		Melder_assert (my g);
 		Graphics_setFontSize (my g, 12);
 		Editor_setPublicationCallback (me.peek(), cb_publish);
