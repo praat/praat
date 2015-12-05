@@ -338,7 +338,7 @@ void FFNet_reset (FFNet me, double wrange) {
 		my activity[i] = (my isbias[i] ? 1.0 : 0.0);
 	}
 	my accumulatedCost = 0.0;
-	my minimizer.reset(nullptr);
+	my minimizer.reset();
 }
 
 

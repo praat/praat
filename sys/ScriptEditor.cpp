@@ -37,7 +37,6 @@ bool ScriptEditors_dirty () {
 
 void structScriptEditor :: v_destroy () {
 	Melder_free (environmentName);
-	forget (interpreter);
 	if (theReferencesToAllOpenScriptEditors) Collection_undangleItem (theReferencesToAllOpenScriptEditors.get(), this);
 	ScriptEditor_Parent :: v_destroy ();
 }
@@ -75,11 +74,11 @@ static void args_ok (UiForm sendingForm, int /* narg */, Stackel /* args */, con
 	}
 	Melder_includeIncludeFiles (& text);
 
-	Interpreter_getArgumentsFromDialog (my interpreter, sendingForm);
+	Interpreter_getArgumentsFromDialog (my interpreter.get(), sendingForm);
 
 	autoPraatBackground background;
 	if (my name [0]) MelderFile_setDefaultDir (& file);
-	Interpreter_run (my interpreter, text.peek());
+	Interpreter_run (my interpreter.get(), text.peek());
 }
 
 static void args_ok_selectionOnly (UiForm sendingForm, int /* narg */, Stackel /* args */, const char32 * /* sendingString */,
@@ -96,11 +95,11 @@ static void args_ok_selectionOnly (UiForm sendingForm, int /* narg */, Stackel /
 	}
 	Melder_includeIncludeFiles (& text);
 
-	Interpreter_getArgumentsFromDialog (my interpreter, sendingForm);
+	Interpreter_getArgumentsFromDialog (my interpreter.get(), sendingForm);
 
 	autoPraatBackground background;
 	if (my name [0]) MelderFile_setDefaultDir (& file);
-	Interpreter_run (my interpreter, text.peek());
+	Interpreter_run (my interpreter.get(), text.peek());
 }
 
 static void menu_cb_run (ScriptEditor me, EDITOR_ARGS_DIRECT) {
@@ -114,18 +113,18 @@ static void menu_cb_run (ScriptEditor me, EDITOR_ARGS_DIRECT) {
 		MelderFile_setDefaultDir (& file);
 	}
 	Melder_includeIncludeFiles (& text);
-	int npar = Interpreter_readParameters (my interpreter, text.peek());
+	int npar = Interpreter_readParameters (my interpreter.get(), text.peek());
 	if (npar) {
 		/*
 		 * Pop up a dialog box for querying the arguments.
 		 */
-		my argsDialog = Interpreter_createForm (my interpreter, my d_windowForm, nullptr, args_ok, me, false);
+		my argsDialog = Interpreter_createForm (my interpreter.get(), my d_windowForm, nullptr, args_ok, me, false);
 		UiForm_do (my argsDialog.get(), false);
 	} else {
 		autoPraatBackground background;
 		if (my name [0]) MelderFile_setDefaultDir (& file);
 		trace (U"Running the following script (2):\n", text.peek());
-		Interpreter_run (my interpreter, text.peek());
+		Interpreter_run (my interpreter.get(), text.peek());
 	}
 }
 
@@ -141,17 +140,17 @@ static void menu_cb_runSelection (ScriptEditor me, EDITOR_ARGS_DIRECT) {
 		MelderFile_setDefaultDir (& file);
 	}
 	Melder_includeIncludeFiles (& text);
-	int npar = Interpreter_readParameters (my interpreter, text.peek());
+	int npar = Interpreter_readParameters (my interpreter.get(), text.peek());
 	if (npar) {
 		/*
 		 * Pop up a dialog box for querying the arguments.
 		 */
-		my argsDialog = Interpreter_createForm (my interpreter, my d_windowForm, nullptr, args_ok_selectionOnly, me, true);
+		my argsDialog = Interpreter_createForm (my interpreter.get(), my d_windowForm, nullptr, args_ok_selectionOnly, me, true);
 		UiForm_do (my argsDialog.get(), false);
 	} else {
 		autoPraatBackground background;
 		if (my name [0]) MelderFile_setDefaultDir (& file);
-		Interpreter_run (my interpreter, text.peek());
+		Interpreter_run (my interpreter.get(), text.peek());
 	}
 }
 

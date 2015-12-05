@@ -33,7 +33,7 @@
 // Pattern_to_Categories_cluster                                                                              //
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-Categories Pattern_to_Categories_cluster
+autoCategories Pattern_to_Categories_cluster
 (
     ///////////////////////////////
     // Parameters                //
@@ -54,7 +54,7 @@ Categories Pattern_to_Categories_cluster
 {
 		autoCategories categories = Categories_sequentialNumbers (k);
 		if (k == p->ny)
-			return categories.transfer();
+			return categories;
 
 		autoKNN knn = KNN_create();
 		if(p->ny % k) 
@@ -167,7 +167,7 @@ Categories Pattern_to_Categories_cluster
 
 		autoCategories output = KNN_classifyToCategories (knn.peek(), p, fws, 1, kOla_FLAT_VOTING);
 
-		return output.transfer();
+		return output;
 }
 
 /* End of file Pattern_to_Categories_cluster.cpp */

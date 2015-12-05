@@ -842,7 +842,7 @@ int OTMulti_learnOne (OTMulti me, const char32 *form1, const char32 *form2,
 	return 1;
 }
 
-static Table OTMulti_createHistory (OTMulti me, long storeHistoryEvery, long numberOfData)
+static autoTable OTMulti_createHistory (OTMulti me, long storeHistoryEvery, long numberOfData)
 {
 	try {
 		long numberOfSamplingPoints = numberOfData / storeHistoryEvery;   // e.g. 0, 20, 40, ...
@@ -859,7 +859,7 @@ static Table OTMulti_createHistory (OTMulti me, long storeHistoryEvery, long num
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 			Table_setNumericValue (thee.peek(), 1, 3 + icons, my constraints [icons]. ranking);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": history not created.");
 	}
@@ -897,7 +897,7 @@ void OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee, double e
 		}
 		autoTable history;
 		if (storeHistoryEvery) {
-			history.reset (OTMulti_createHistory (me, storeHistoryEvery, numberOfData));
+			history = OTMulti_createHistory (me, storeHistoryEvery, numberOfData);
 		}
 		for (long iplasticity = 1; iplasticity <= numberOfPlasticities; iplasticity ++) {
 			for (long ireplication = 1; ireplication <= replicationsPerPlasticity; ireplication ++) {
@@ -927,7 +927,7 @@ void OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee, double e
 						U":\n      ", form1, U"     ", form2);
 				} catch (MelderError) {
 					if (history_out)
-						*history_out = history.transfer();   // so that we can inspect
+						*history_out = history.move();   // so that we can inspect
 					throw;
 				}
 				OTMulti_newDisharmonies (me, evaluationNoise);

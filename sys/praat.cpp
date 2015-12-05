@@ -395,7 +395,7 @@ void praat_newWithFile (autoDaata me, MelderFile file, const char32 *myName) {
 			theCurrentPraatObjects -> n);
 	}
 	CLASS = my classInfo;
-	OBJECT = me.transfer();   // FIXME: should be move()
+	OBJECT = me.releaseToAmbiguousOwner();   // FIXME: should be move()
 	SELECTED = false;
 	for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
 		EDITOR [ieditor] = nullptr;
@@ -1413,7 +1413,7 @@ void praat_init (const char32 *title, int argc, char **argv)
 		Melder_setHelpProc (helpProc);
 	}
 	Data_setPublishProc (publishProc);
-	theCurrentPraatApplication -> manPages = ManPages_create ();
+	theCurrentPraatApplication -> manPages = ManPages_create ().releaseToAmbiguousOwner();
 
 	trace (U"creating the Picture window");
 	trace (U"before picture window shows: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));

@@ -65,12 +65,12 @@ void structKNN :: v_info ()
 // Creation                                                                                //
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-KNN KNN_create ()   
+autoKNN KNN_create ()
 {
 	try {
 		autoKNN me = Thing_new (KNN);
         my nInstances = 0;
-        return me.transfer();
+        return me;
     } catch (MelderError) {
 		Melder_throw (U"KNN classifier not created.");
 	}
@@ -173,7 +173,7 @@ typedef struct
 
 } KNN_input_ToCategories_t;
 
-Categories KNN_classifyToCategories
+autoCategories KNN_classifyToCategories
 (
     ///////////////////////////////
     // Parameters                //
@@ -267,7 +267,7 @@ Categories KNN_classifyToCategories
             Collection_addItem_move (output.get(), Data_copy ((SimpleString) my output -> item [outputindices [i]]));
     }
 	NUMvector_free (outputindices, 0);
-    return output.transfer();
+    return output;
 }
 
 void * KNN_classifyToCategoriesAux
@@ -367,7 +367,7 @@ typedef struct
 
 } KNN_input_ToTableOfReal_t;
 
-TableOfReal KNN_classifyToTableOfReal
+autoTableOfReal KNN_classifyToTableOfReal
 (
     ///////////////////////////////
     // Parameters                //
@@ -434,7 +434,7 @@ TableOfReal KNN_classifyToTableOfReal
         input[i]->me = me;
         input[i]->ps = ps;
         input[i]->output = output.get();   // YUCK: reference copy
-        input[i]->uniqueCategories = uniqueCategories.transfer();
+        input[i]->uniqueCategories = uniqueCategories.releaseToAmbiguousOwner();
         input[i]->fws = fws;
         input[i]->k = k;
         input[i]->dist = dist;
@@ -463,7 +463,7 @@ TableOfReal KNN_classifyToTableOfReal
         free(error);
         return nullptr;
     }
-    return output.transfer();
+    return output;
 }
 
 
@@ -549,7 +549,7 @@ void * KNN_classifyToTableOfRealAux
 // Classification - Folding                                                                //
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-Categories KNN_classifyFold
+autoCategories KNN_classifyFold
 (
     ///////////////////////////////
     // Parameters                //
@@ -629,7 +629,7 @@ Categories KNN_classifyFold
 	for (long o = 0; o < noutputindices; o ++) {
 		Collection_addItem_move (output.get(), Data_copy ((SimpleString) my output -> item [outputindices [o]]));
 	}
-	return output.transfer();
+	return output;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -1335,7 +1335,7 @@ long KNN_kUniqueEnemies
 // Compute dissimilarity matrix                                                            //
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-Dissimilarity KNN_patternToDissimilarity
+autoDissimilarity KNN_patternToDissimilarity
 (
     ///////////////////////////////
     // Parameters                //
@@ -1352,7 +1352,7 @@ Dissimilarity KNN_patternToDissimilarity
 	for (long y = 1; y <= p -> ny; ++ y)
 		for (long x = 1; x <= p -> ny; ++ x)
 			output -> data [y] [x] = KNN_distanceEuclidean (p, p, fws, y, x);
-	return output.transfer();
+	return output;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -1459,35 +1459,28 @@ void KNN_removeInstance
 )
 
 {
-    if (y == 1 && my nInstances == 1)
-    {
+    if (y == 1 && my nInstances == 1) {
         my nInstances = 0;
         my input.reset();
         my output.reset();
         return;
     }
 
-    Melder_assert(y > 0 && y <= my nInstances);
-    if (y > my nInstances || y < 1) 
-        return;                         // safety belt
+    Melder_assert (y > 0 && y <= my nInstances);
 
-    autoPattern newPattern = Pattern_create(my nInstances - 1, (my input)->nx);
-    Melder_assert(newPattern);
-   // if (newPattern)
-    {
-        long yt = 1;
-        for (long cy = 1; cy <= my nInstances; ++cy)
-            if (cy != y)
-            {
-                for (long cx = 1; cx <= (my input)->nx; ++cx)
-                    newPattern->z[yt][cx] = (my input)->z[cy][cx];
-                ++yt;
-            }
+    autoPattern newPattern = Pattern_create (my nInstances - 1, my input -> nx);
+	long yt = 1;
+	for (long cy = 1; cy <= my nInstances; cy ++) {
+		if (cy != y) {
+			for (long cx = 1; cx <= my input -> nx; cx ++)
+				newPattern -> z [yt] [cx] = my input -> z [cy] [cx];
+			yt ++;
+		}
+	}
 
-        my input = newPattern.move();
-        Collection_removeItem (my output.get(), y);
-        my nInstances--;
-    }
+	my input = newPattern.move();
+	Collection_removeItem (my output.get(), y);
+	my nInstances--;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -1503,24 +1496,23 @@ void KNN_shuffleInstances
     KNN me      // Classifier whose instance
                 // base is to be shuffled
 )
-
 {
     if (my nInstances < 2) 
-        return;                 // It takes atleast two to tango
+        return;   // it takes at least two to tango
 
     autoPattern new_input = Pattern_create (my nInstances, my input -> nx);
     autoCategories new_output = Categories_create ();
 	long y = 1;
 	while (my nInstances)
 	{
-		long pick = (long) lround (NUMrandomUniform (1, my nInstances));
+		long pick = NUMrandomInteger (1, my nInstances);
 		Collection_addItem_move (new_output.peek(), Data_copy ((SimpleString) my output -> item [pick]));
 
-		for (long x = 1;x <= (my input)->nx; ++x)
-			new_input -> z [y] [x] = my input-> z [pick] [x];
+		for (long x = 1; x <= my input -> nx; x ++)
+			new_input -> z [y] [x] = my input -> z [pick] [x];
 
 		KNN_removeInstance (me, pick);
-		++y;
+		y ++;
 	}
 
 	my nInstances = new_output -> size;

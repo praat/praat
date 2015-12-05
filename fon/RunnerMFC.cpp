@@ -35,10 +35,6 @@
 Thing_implement (RunnerMFC, Editor, 0);
 
 void structRunnerMFC :: v_destroy () {
-	if (our experiments) {
-		our experiments -> size = 0;   // give ownership back to whoever thinks they own the experiments. BUG: can be dontOwnItems
-		forget (our experiments);
-	}
 	our RunnerMFC_Parent :: v_destroy ();
 }
 
@@ -440,11 +436,11 @@ void structRunnerMFC :: v_createChildren () {
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
 }
 
-autoRunnerMFC RunnerMFC_create (const char32 *title, Ordered experiments) {
+autoRunnerMFC RunnerMFC_create (const char32 *title, autoOrdered experiments) {
 	try {
 		autoRunnerMFC me = Thing_new (RunnerMFC);
 		Editor_init (me.peek(), 0, 0, 2000, 2000, title, nullptr);
-		my experiments = experiments;
+		my experiments = experiments.move();
 		my graphics = Graphics_create_xmdrawingarea (my d_drawingArea);
 
 struct structGuiDrawingArea_ResizeEvent event { my d_drawingArea, 0 };

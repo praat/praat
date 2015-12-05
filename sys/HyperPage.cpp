@@ -47,11 +47,11 @@ static double resolution;
 
 Thing_implement (HyperLink, Daata, 0);
 
-HyperLink HyperLink_create (const char32 *name, double x1DC, double x2DC, double y1DC, double y2DC) {
+autoHyperLink HyperLink_create (const char32 *name, double x1DC, double x2DC, double y1DC, double y2DC) {
 	autoHyperLink me = Thing_new (HyperLink);
 	Thing_setName (me.peek(), name);
 	my x1DC = x1DC, my x2DC = x2DC, my y1DC = y1DC, my y2DC = y2DC;
-	return me.transfer();
+	return me;
 }
 
 static void saveHistory (HyperPage me, const char32 *title) {
@@ -385,7 +385,7 @@ if (! my printing) {
 
 int HyperPage_script (HyperPage me, double width_inches, double height_inches, const char32 *script) {
 	char32 *text = Melder_dup (script);
-	Interpreter interpreter = Interpreter_createFromEnvironment (nullptr);
+	autoInterpreter interpreter = Interpreter_createFromEnvironment (nullptr);
 	double topSpacing = 0.1, bottomSpacing = 0.1, minFooterDistance = 0.0;
 	kGraphics_font font = my p_font;
 	int size = my p_fontSize;
@@ -449,7 +449,7 @@ if (! my printing) {
 					Melder_setDefaultDir (& my rootDirectory);
 				}
 				try {
-					Interpreter_run (interpreter, text);
+					Interpreter_run (interpreter.get(), text);
 				} catch (MelderError) {
 					if (my scriptErrorHasBeenNotified) {
 						Melder_clearError ();
@@ -550,7 +550,7 @@ if (! my printing) {
 				Melder_setDefaultDir (& my rootDirectory);
 			}
 			try {
-				Interpreter_run (interpreter, text);
+				Interpreter_run (interpreter.get(), text);
 			} catch (MelderError) {
 				Melder_clearError ();
 			}
@@ -571,7 +571,6 @@ if (! my printing) {
 	Graphics_setTextAlignment (my ps, Graphics_LEFT, Graphics_BOTTOM);
 }
 	my previousBottomSpacing = bottomSpacing;
-	forget (interpreter);
 	Melder_free (text);
 	return 1;
 }

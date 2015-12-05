@@ -114,7 +114,7 @@ void GuiOptionMenu_init (GuiOptionMenu me, GuiForm parent, int left, int right, 
 GuiOptionMenu GuiOptionMenu_create (GuiForm parent, int left, int right, int top, int bottom, uint32 flags) {
 	autoGuiOptionMenu me = Thing_new (GuiOptionMenu);
 	GuiOptionMenu_init (me.peek(), parent, left, right, top, bottom, flags);
-	return me.transfer();
+	return me.releaseToAmbiguousOwner();
 }
 
 GuiOptionMenu GuiOptionMenu_createShown (GuiForm parent, int left, int right, int top, int bottom, uint32 flags) {

@@ -58,6 +58,7 @@
 Thing_implement (GraphicsScreen, Graphics, 0);
 
 void structGraphicsScreen :: v_destroy () {
+	Melder_casual (U"destroying a GraphicsScreen");
 	#if cairo
 		#if ALLOW_GDK_DRAWING
 			if (d_gdkGraphicsContext) {
@@ -226,6 +227,7 @@ void structGraphicsScreen :: v_destroy () {
 	trace (U"destroying parent");
 	GraphicsScreen_Parent :: v_destroy ();
 	trace (U"exit");
+	Melder_casual (U"destroyed a GraphicsScreen");
 }
 
 void structGraphicsScreen :: v_flushWs () {

@@ -276,7 +276,7 @@ GuiRadioButton GuiRadioButton_create (GuiForm parent, int left, int right, int t
 	}
 	latestRadioButton = me.get();
 	trace (U"end");
-	return me.transfer();
+	return me.releaseToAmbiguousOwner();
 }
 
 GuiRadioButton GuiRadioButton_createShown (GuiForm parent, int left, int right, int top, int bottom,

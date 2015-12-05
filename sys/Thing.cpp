@@ -163,7 +163,9 @@ void _Thing_forget (Thing me) {
 	my v_destroy ();
 	trace (U"destroying ", my classInfo -> className);
 	//Melder_free (me);
+Melder_casual (U"deleting ", me, Melder_pointer (me));
 	delete me;
+Melder_casual (U"deleted ", Melder_pointer (me));
 	theTotalNumberOfThings -= 1;
 }
 

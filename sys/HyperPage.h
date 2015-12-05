@@ -27,7 +27,7 @@ Thing_define (HyperLink, Daata) {
 	double x1DC, x2DC, y1DC, y2DC;
 };
 
-HyperLink HyperLink_create (const char32 *name, double x1, double x2, double y1, double y2);
+autoHyperLink HyperLink_create (const char32 *name, double x1, double x2, double y1, double y2);
 
 Thing_define (HyperPage, Editor) {
 	GuiDrawingArea drawingArea;

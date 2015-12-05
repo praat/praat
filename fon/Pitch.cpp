@@ -724,7 +724,7 @@ autoPitch Pitch_subtractLinearFit (Pitch me, int unit) {
 		for (long i = imin + 1; i <= my nx; i ++)
 			if (! Pitch_isVoiced_i (thee.peek(), i)) { imax = i - 1; break; }
 		long n = imax - imin + 1;
-		if (n < 3) return thee.transfer();
+		if (n < 3) return thee;
 		/*
 		 * Compute average pitch and time.
 		 */

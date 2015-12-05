@@ -391,7 +391,7 @@ static Graphics _Melder_monitor (double progress, const char32 *message) {
 		static GuiButton cancelButton = nullptr;
 		static GuiLabel label1 = nullptr, label2 = nullptr;
 		clock_t now = clock ();
-		static Graphics graphics = nullptr;
+		static autoGraphics graphics;
 		if (progress <= 0.0 || progress >= 1.0 ||
 			now - lastTime > CLOCKS_PER_SEC / 4)   // this time step must be much longer than the null-event waiting time
 		{
@@ -399,13 +399,13 @@ static Graphics _Melder_monitor (double progress, const char32 *message) {
 				_Melder_dia_init (& dia, & scale, & label1, & label2, & cancelButton, true);
 				drawingArea = GuiDrawingArea_createShown (dia, 0, 400, 230, 430, nullptr, nullptr, nullptr, nullptr, nullptr, 0);
 				GuiThing_show (dia);
-				graphics = Graphics_create_xmdrawingarea (drawingArea).transfer();
+				graphics = Graphics_create_xmdrawingarea (drawingArea);
 			}
 			if (! waitWhileProgress (progress, message, dia, scale, label1, label2, cancelButton))
 				Melder_throw (U"Interrupted!");
 			lastTime = now;
 			if (progress == 0.0)
-				return graphics;
+				return graphics.get();
 		}
 	}
 	return progress <= 0.0 ? nullptr /* no Graphics */ : (Graphics) -1 /* any non-null pointer */;

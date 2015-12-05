@@ -54,7 +54,7 @@ Thing_define (OptimalCeilingTierEditor, RealTierEditor) {
 		override { return U"Maximum frequency"; }
 };
 
-OptimalCeilingTierEditor OptimalCeilingTierEditor_create (const char32 *title,
+autoOptimalCeilingTierEditor OptimalCeilingTierEditor_create (const char32 *title,
 	OptimalCeilingTier amplitude,
 	Sound sound,   // may be null
 	bool ownSound);

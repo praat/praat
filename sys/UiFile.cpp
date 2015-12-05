@@ -42,7 +42,7 @@ UiForm UiInfile_create (GuiWindow parent, const char32 *title,
 	my helpTitle = helpTitle;
 	my allowMultipleFiles = allowMultipleFiles;
 	UiFile_init (me.get(), parent, title);
-	return me.transfer();
+	return me.releaseToAmbiguousOwner();
 }
 
 void UiInfile_do (UiForm me) {
@@ -82,7 +82,7 @@ UiForm UiOutfile_create (GuiWindow parent, const char32 *title,
 	UiFile_init (me.get(), parent, title);
 	my allowExecutionHook = theAllowExecutionHookHint;
 	my allowExecutionClosure = theAllowExecutionClosureHint;
-	return me.transfer();
+	return me.releaseToAmbiguousOwner();
 }
 
 static void commonOutfileCallback (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,

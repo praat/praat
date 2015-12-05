@@ -463,8 +463,8 @@ void Sorted_init (Sorted me, ClassInfo itemClass, long initialCapacity) {
 	Collection_init (me, itemClass, initialCapacity);
 }
 
-void Sorted_addItem_unsorted (Sorted me, Thing data) {
-	_Collection_insertItem (me, data, my size + 1);
+void Sorted_addItem_unsorted_move (Sorted me, autoThing data) {
+	_Collection_insertItem_move (me, data.move(), my size + 1);
 }
 
 void Sorted_sort (Sorted me) {

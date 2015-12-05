@@ -262,7 +262,7 @@ GuiScrollBar GuiScrollBar_create (GuiForm parent, int left, int right, int top, 
 		XtAddCallback (my d_widget, XmNvalueChangedCallback, _GuiMotifScrollBar_valueChangedCallback, (XtPointer) me.get());
 		XtAddCallback (my d_widget, XmNdragCallback, _GuiMotifScrollBar_valueChangedCallback, (XtPointer) me.get());
 	#endif
-	return me.transfer();
+	return me.releaseToAmbiguousOwner();
 }
 
 GuiScrollBar GuiScrollBar_createShown (GuiForm parent, int left, int right, int top, int bottom,

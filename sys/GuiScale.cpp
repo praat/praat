@@ -113,7 +113,7 @@ GuiScale GuiScale_create (GuiForm parent, int left, int right, int top, int bott
 			#endif
 			nullptr);
 	#endif
-	return me.transfer();
+	return me.releaseToAmbiguousOwner();
 }
 
 GuiScale GuiScale_createShown (GuiForm parent, int left, int right, int top, int bottom,

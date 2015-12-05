@@ -241,10 +241,10 @@ void structManPages :: v_readText (MelderReadText text, int /*formatVersion*/) {
 	readOnePage (this, text);
 }
 
-ManPages ManPages_create () {
+autoManPages ManPages_create () {
 	autoManPages me = Thing_new (ManPages);
 	my pages = Ordered_create ();
-	return me.transfer();
+	return me;
 }
 
 void ManPages_addPage (ManPages me, const char32 *title, const char32 *author, long date,

@@ -39,16 +39,8 @@ void structSoundEditor :: v_dataChanged () {
 
 static void menu_cb_Copy (SoundEditor me, EDITOR_ARGS_DIRECT) {
 	try {
-		/*
-		 * Create without change.
-		 */
-		autoSound publish = my d_longSound.data ? LongSound_extractPart ((LongSound) my data, my d_startSelection, my d_endSelection, false) :
+		Sound_clipboard = my d_longSound.data ? LongSound_extractPart ((LongSound) my data, my d_startSelection, my d_endSelection, false) :
 			Sound_extractPart ((Sound) my data, my d_startSelection, my d_endSelection, kSound_windowShape_RECTANGULAR, 1.0, false);
-		/*
-		 * Change without error.
-		 */
-		forget (Sound_clipboard);
-		Sound_clipboard = publish.transfer();
 	} catch (MelderError) {
 		Melder_throw (U"Sound selection not copied to clipboard.");
 	}
@@ -98,8 +90,7 @@ static void menu_cb_Cut (SoundEditor me, EDITOR_ARGS_DIRECT) {
 			sound -> nx = newNumberOfSamples;
 			sound -> x1 = 0.5 * sound -> dx;
 			sound -> z = newData.transfer();
-			forget (Sound_clipboard);
-			Sound_clipboard = publish.transfer();
+			Sound_clipboard = publish.move();
 
 			/* Start updating the markers of the FunctionEditor, respecting the invariants. */
 

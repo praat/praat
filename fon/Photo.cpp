@@ -76,31 +76,31 @@ void Photo_init (Photo me,
 	my d_transparency = Matrix_create (xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1);
 }
 
-Photo Photo_create
+autoPhoto Photo_create
 	(double xmin, double xmax, long nx, double dx, double x1,
 	 double ymin, double ymax, long ny, double dy, double y1)
 {
 	try {
 		autoPhoto me = Thing_new (Photo);
 		Photo_init (me.peek(), xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Photo object not created.");
 	}
 }
 
-Photo Photo_createSimple (long numberOfRows, long numberOfColumns) {
+autoPhoto Photo_createSimple (long numberOfRows, long numberOfColumns) {
 	try {
 		autoPhoto me = Thing_new (Photo);
 		Photo_init (me.peek(), 0.5, numberOfColumns + 0.5, numberOfColumns, 1, 1,
 		                       0.5, numberOfRows    + 0.5, numberOfRows,    1, 1);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Photo object not created.");
 	}
 }
 
-Photo Photo_readFromImageFile (MelderFile file) {
+autoPhoto Photo_readFromImageFile (MelderFile file) {
 	try {
 		#if defined (linux)
 			cairo_surface_t *surface = cairo_image_surface_create_from_png (Melder_peek32to8 (file -> path));
@@ -141,7 +141,7 @@ Photo Photo_readFromImageFile (MelderFile file) {
 				Melder_throw (U"Unsupported PNG format ", format, U".");
 			}
 			cairo_surface_destroy (surface);
-			return me.transfer();
+			return me;
 		#elif defined (_WIN32)
 			Gdiplus::Bitmap gdiplusBitmap (Melder_peek32toW (file -> path));
 			long width = gdiplusBitmap. GetWidth ();
@@ -159,7 +159,7 @@ Photo Photo_readFromImageFile (MelderFile file) {
 					my d_transparency -> z [irow] [icol] = 1.0 - (gdiplusColour. GetAlpha ()) / 255.0;
 				}
 			}
-			return me.transfer();
+			return me;
 		#elif defined (macintosh)
 			autoPhoto me;
 			char utf8 [500];
@@ -176,7 +176,7 @@ Photo Photo_readFromImageFile (MelderFile file) {
 			if (image) {
 				long width = CGImageGetWidth (image);
 				long height = CGImageGetHeight (image);
-				me.reset (Photo_createSimple (height, width));
+				me = Photo_createSimple (height, width);
 				long bitsPerPixel = CGImageGetBitsPerPixel (image);
 				long bitsPerComponent = CGImageGetBitsPerComponent (image);
 				long bytesPerRow = CGImageGetBytesPerRow (image);
@@ -205,7 +205,7 @@ Photo Photo_readFromImageFile (MelderFile file) {
 				CFRelease (data);
 				CGImageRelease (image);
 			}
-			return me.transfer();
+			return me;
 		#endif
 	} catch (MelderError) {
 		Melder_throw (U"Picture file ", file, U" not opened as Photo.");
@@ -215,9 +215,7 @@ Photo Photo_readFromImageFile (MelderFile file) {
 #if defined (macintosh)
 	#include <time.h>
 	#include "macport_on.h"
-	static void _mac_releaseDataCallback (void *info, const void *data, size_t size) {
-		(void) info;
-		(void) size;
+	static void _mac_releaseDataCallback (void * /* info */, const void *data, size_t /* size */) {
 		Melder_free (data);
 	}
 #endif

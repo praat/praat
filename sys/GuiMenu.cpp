@@ -22,8 +22,6 @@
 Thing_implement (GuiMenu, GuiThing, 0);
 
 void structGuiMenu :: v_destroy () {
-	forget (our d_cascadeButton);
-	forget (our d_menuItem);
 	our GuiMenu_Parent :: v_destroy ();   // if (d_widget) { _GuiObject_setUserData (d_widget, nullptr); GuiObject_destroy (d_widget); }
 }
 
@@ -396,14 +394,14 @@ GuiMenu GuiMenu_createInWindow (GuiWindow window, const char32 *title, uint32 fl
 	#elif motif
 		XtAddCallback (my d_widget, XmNdestroyCallback, _guiMotifMenu_destroyCallback, me.get());
 	#endif
-	return me.transfer();
+	return me.releaseToAmbiguousOwner();
 }
 
 GuiMenu GuiMenu_createInMenu (GuiMenu supermenu, const char32 *title, uint32 flags) {
 	autoGuiMenu me = Thing_new (GuiMenu);
 	my d_shell = supermenu -> d_shell;
 	my d_parent = supermenu;
-	my d_menuItem = Thing_new (GuiMenuItem).transfer();
+	my d_menuItem = Thing_new (GuiMenuItem);
 	my d_menuItem -> d_shell = my d_shell;
 	my d_menuItem -> d_parent = supermenu;
 	my d_menuItem -> d_menu = me.get();
@@ -456,7 +454,7 @@ GuiMenu GuiMenu_createInMenu (GuiMenu supermenu, const char32 *title, uint32 fla
 	#elif motif
 		XtAddCallback (my d_widget, XmNdestroyCallback, _guiMotifMenu_destroyCallback, me.get());
 	#endif
-	return me.transfer();
+	return me.releaseToAmbiguousOwner();
 }
 
 #if gtk
@@ -494,7 +492,7 @@ GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bo
 	autoGuiMenu me = Thing_new (GuiMenu);
 	my d_shell = form -> d_shell;
 	my d_parent = form;
-	my d_cascadeButton = Thing_new (GuiButton).transfer();
+	my d_cascadeButton = Thing_new (GuiButton);
 	my d_cascadeButton -> d_shell = my d_shell;
 	my d_cascadeButton -> d_parent = form;
 	my d_cascadeButton -> d_menu = me.get();
@@ -560,7 +558,7 @@ GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bo
 	#elif motif
 		XtAddCallback (my d_widget, XmNdestroyCallback, _guiMotifMenu_destroyCallback, me.get());
 	#endif
-	return me.transfer();
+	return me.releaseToAmbiguousOwner();
 };
 
 /* End of file GuiMenu.cpp */

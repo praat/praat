@@ -84,7 +84,7 @@ oo_CLASS_CREATE (KNN, Daata);
 /////////////////////////////////////////////////////
 
 // a near-dummy function
-KNN KNN_create ();
+autoKNN KNN_create ();
 
 // Learning
 int KNN_learn
@@ -97,7 +97,7 @@ int KNN_learn
 );
 
 // Classification - To Categories
-Categories KNN_classifyToCategories
+autoCategories KNN_classifyToCategories
 (
     KNN me,             // the classifier being used
     Pattern ps,         // target pattern (where neighbours are sought for)
@@ -113,7 +113,7 @@ void * KNN_classifyToCategoriesAux
 );
 
 // Classification - To TableOfReal
-TableOfReal KNN_classifyToTableOfReal
+autoTableOfReal KNN_classifyToTableOfReal
 (
     KNN me,             // the classifier being used
     Pattern ps,         // target pattern (where neighbours are sought for)
@@ -129,7 +129,7 @@ void * KNN_classifyToTableOfRealAux
 );
 
 // Classification - To TableOfReal, all candidates
-TableOfReal KNN_classifyToTableOfRealAll
+autoTableOfReal KNN_classifyToTableOfRealAll
 (
     KNN me,             // the classifier being used
     Pattern ps,         // target pattern (where neighbours are sought for)
@@ -139,7 +139,7 @@ TableOfReal KNN_classifyToTableOfRealAll
 );
 
 // Classification - Folding
-Categories KNN_classifyFold
+autoCategories KNN_classifyFold
 (
     KNN me,             // the classifier being used
     Pattern ps,         // target pattern (where neighbours are sought for)
@@ -304,7 +304,7 @@ long KNN_kUniqueEnemies
 );
 
 // Compute dissimilarity matrix
-Dissimilarity KNN_patternToDissimilarity
+autoDissimilarity KNN_patternToDissimilarity
 (
     Pattern p,          // Pattern
     FeatureWeights fws  // Feature weights

@@ -46,9 +46,9 @@ int structDLL :: s_compareHook (Daata /* node1 */, Daata /* node2 */) noexcept {
 	return 0;
 }
 
-autoDLLNode DLLNode_create (Daata data) {
+autoDLLNode DLLNode_create (autoDaata data) {
 	autoDLLNode me = Thing_new (DLLNode);
-	my data = data;
+	my data = data.move();
 	return me;
 }
 

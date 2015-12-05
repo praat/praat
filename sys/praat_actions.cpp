@@ -652,10 +652,10 @@ void praat_actions_show () {
 						BUTTON_LEFT, BUTTON_RIGHT, y, y + Gui_PUSHBUTTON_HEIGHT,
 						my title, 0);
 					y += Gui_PUSHBUTTON_HEIGHT + BUTTON_VSPACING;
-					my button = currentSubmenu1 -> d_cascadeButton;
+					my button = currentSubmenu1 -> d_cascadeButton.get();
 				} else {
 					currentSubmenu2 = GuiMenu_createInMenu (currentSubmenu1, my title, 0);
-					my button = currentSubmenu2 -> d_menuItem;
+					my button = currentSubmenu2 -> d_menuItem.get();
 				}
 				GuiThing_show (my button);
 			}

@@ -171,7 +171,7 @@ autoIntervalTier IntervalTier_create (double tmin, double tmax) {
 		my xmax = tmax;
 		autoTextInterval interval = TextInterval_create (tmin, tmax, nullptr);
 		Collection_addItem_move (my intervals.get(), interval.move());
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Interval tier not created.");
 	}
@@ -376,7 +376,7 @@ autoTextGrid TextGrid_create (double tmin, double tmax, const char32 *tierNames,
 						autoTextTier tier = TextTier_create (tmin, tmax);
 						Thing_setName (tier.peek(), tierName);
 						forget (my tier (itier));
-						my tier (itier) = tier.transfer();
+						my tier (itier) = tier.releaseToAmbiguousOwner();
 					}
 				}
 			}
@@ -546,7 +546,7 @@ autoTextGrid TextGrid_merge (Collection textGrids) {
 autoTextGrid TextGrid_extractPart (TextGrid me, double tmin, double tmax, int preserveTimes) {
 	try {
 		autoTextGrid thee = Data_copy (me);
-		if (tmax <= tmin) return thee.transfer();
+		if (tmax <= tmin) return thee;
 
 		for (long itier = 1; itier <= my numberOfTiers(); itier ++) {
 			Function anyTier = thy tier (itier);

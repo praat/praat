@@ -322,11 +322,6 @@ public:
 	 * and
 	 *    praat_new (pitch.move(), my name);
 	 */
-	T* transfer () {
-		T* temp = our ptr;
-		our ptr = nullptr;   // make the pointer non-automatic again
-		return temp;
-	}
 	void releaseToUser () {
 		our ptr = nullptr;   // make the pointer non-automatic again
 	}
@@ -352,16 +347,20 @@ public:
 	T* clone () const {
 		return static_cast<T *> (Data_copy (our ptr));
 	}
+	void reset () noexcept {
+		_Thing_forget (our ptr);
+		our ptr = nullptr;
+	}
 	/*
 	 * Replacing a pointer in an existing autoThing should be an exceptional phenomenon,
 	 * and therefore has to be done explicitly (rather than via an assignment),
 	 * so that you can easily spot ugly places in your source code.
 	 * In order not to leak memory, the old object is destroyed.
 	 */
-	void reset (T* newPtr = nullptr) noexcept {
+	/*void reset (T* newPtr = nullptr) noexcept {
 		_Thing_forget (our ptr);
 		our ptr = newPtr;
-	}
+	}*/
 	void zero () {
 		our ptr = nullptr;
 	}
@@ -482,7 +481,7 @@ public:
 	 *    Collection_addItem_transfer (collection, pitch.move());   // compiler error if you don't call move()
 	 */
 	template <class Y> _Thing_auto<Y> static_cast_move () {
-		return _Thing_auto<Y> (static_cast<Y*> (our transfer()));
+		return _Thing_auto<Y> (static_cast<Y*> (our releaseToAmbiguousOwner()));
 	}
 };
 

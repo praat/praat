@@ -43,7 +43,7 @@ Thing_define (DLL, Thing) {
 	virtual Data_CompareHook v_getCompareHook () { return s_compareHook; }
 };
 
-autoDLLNode DLLNode_create (Daata data); // DLLNode owns the data
+autoDLLNode DLLNode_create (autoDaata data);
 
 void DLL_init (DLL me);
 

@@ -59,7 +59,7 @@ GuiForm GuiForm_createInScrolledWindow (GuiScrolledWindow parent)
 		XtAddCallback (my d_widget, XmNdestroyCallback, _guiMotifForm_destroyCallback, me.get());
 	#endif
 
-	return me.transfer();
+	return me.releaseToAmbiguousOwner();
 }
 
 /* End of file GuiForm.cpp */
