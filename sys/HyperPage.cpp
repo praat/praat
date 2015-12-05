@@ -169,12 +169,12 @@ if (! my printing) {
 	if (/* my d_y > PAGE_HEIGHT + 2.0 + heightGuess || */ my d_y < PAGE_HEIGHT - SCREEN_HEIGHT) {
 		my d_y -= heightGuess;
 	} else {
-		Graphics_setFont (my g, font);
-		Graphics_setFontSize (my g, size);
-		Graphics_setWrapWidth (my g, my rightMargin - x - 0.1);
-		Graphics_setSecondIndent (my g, secondIndent);
-		Graphics_setFontStyle (my g, style);
-		Graphics_text (my g, my d_x, my d_y, text);
+		Graphics_setFont (my graphics.get(), font);
+		Graphics_setFontSize (my graphics.get(), size);
+		Graphics_setWrapWidth (my graphics.get(), my rightMargin - x - 0.1);
+		Graphics_setSecondIndent (my graphics.get(), secondIndent);
+		Graphics_setFontStyle (my graphics.get(), style);
+		Graphics_text (my graphics.get(), my d_x, my d_y, text);
 		numberOfParagraphLinks = Graphics_getLinks (& paragraphLinks);
 		if (my links) for (ilink = 1; ilink <= numberOfParagraphLinks; ilink ++) {
 			autoHyperLink link = HyperLink_create (paragraphLinks [ilink]. name,
@@ -183,15 +183,15 @@ if (! my printing) {
 			Collection_addItem_move (my links.get(), link.move());
 		}
 		if (method & HyperPage_ADD_BORDER) {
-			Graphics_setLineWidth (my g, 2);
-			Graphics_line (my g, 0.0, my d_y, my rightMargin, my d_y);
-			Graphics_setLineWidth (my g, 1);
+			Graphics_setLineWidth (my graphics.get(), 2.0);
+			Graphics_line (my graphics.get(), 0.0, my d_y, my rightMargin, my d_y);
+			Graphics_setLineWidth (my graphics.get(), 1.0);
 		}
 		/*
 		 * The text may have wrapped.
 		 * Ask the Graphics manager by how much, and update our text position accordingly.
 		 */
-		my d_y = Graphics_inqTextY (my g);
+		my d_y = Graphics_inqTextY (my graphics.get());
 	}
 } else {
 	Graphics_setFont (my ps, font);
@@ -302,13 +302,13 @@ if (! my printing) {
 	my d_y -= size * (1.2/72);
 	if (my d_y > PAGE_HEIGHT + 2.0 || my d_y < PAGE_HEIGHT - SCREEN_HEIGHT) {
 	} else {
-		Graphics_setFont (my g, font);
-		Graphics_setFontStyle (my g, 0);
-		Graphics_setFontSize (my g, size);
-		Graphics_setWrapWidth (my g, 0);
-		Graphics_setTextAlignment (my g, Graphics_CENTRE, Graphics_BOTTOM);
-		Graphics_text (my g, my rightMargin / 2, my d_y, formula);
-		Graphics_setTextAlignment (my g, Graphics_LEFT, Graphics_BOTTOM);
+		Graphics_setFont (my graphics.get(), font);
+		Graphics_setFontStyle (my graphics.get(), 0);
+		Graphics_setFontSize (my graphics.get(), size);
+		Graphics_setWrapWidth (my graphics.get(), 0.0);
+		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_BOTTOM);
+		Graphics_text (my graphics.get(), 0.5 * my rightMargin, my d_y, formula);
+		Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_BOTTOM);
 	}
 } else {
 	Graphics_setFont (my ps, font);
@@ -345,16 +345,16 @@ if (! my printing) {
 		my d_y -= height_inches;
 	} else {
 		my d_y -= height_inches;
-		Graphics_setFont (my g, font);
-		Graphics_setFontStyle (my g, 0);
-		Graphics_setFontSize (my g, size);
-		my d_x = width_inches > my rightMargin ? 0 : 0.5 * (my rightMargin - width_inches);
-		Graphics_setWrapWidth (my g, 0);
-		Graphics_setViewport (my g, my d_x, my d_x + width_inches, my d_y, my d_y + height_inches);
-		draw (my g);
-		Graphics_setViewport (my g, 0, 1, 0, 1);
-		Graphics_setWindow (my g, 0, 1, 0, 1);
-		Graphics_setTextAlignment (my g, Graphics_LEFT, Graphics_BOTTOM);
+		Graphics_setFont (my graphics.get(), font);
+		Graphics_setFontStyle (my graphics.get(), 0);
+		Graphics_setFontSize (my graphics.get(), size);
+		my d_x = width_inches > my rightMargin ? 0.0 : 0.5 * (my rightMargin - width_inches);
+		Graphics_setWrapWidth (my graphics.get(), 0.0);
+		Graphics_setViewport (my graphics.get(), my d_x, my d_x + width_inches, my d_y, my d_y + height_inches);
+		draw (my graphics.get());
+		Graphics_setViewport (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_BOTTOM);
 	}
 } else {
 	Graphics_setFont (my ps, font);
@@ -397,15 +397,15 @@ if (! my printing) {
 		my d_y -= true_height_inches;
 	} else {
 		my d_y -= true_height_inches;
-		Graphics_setFont (my g, font);
-		Graphics_setFontStyle (my g, 0);
-		Graphics_setFontSize (my g, size);
-		my d_x = true_width_inches > my rightMargin ? 0 : 0.5 * (my rightMargin - true_width_inches);
-		Graphics_setWrapWidth (my g, 0);
+		Graphics_setFont (my graphics.get(), font);
+		Graphics_setFontStyle (my graphics.get(), 0);
+		Graphics_setFontSize (my graphics.get(), size);
+		my d_x = true_width_inches > my rightMargin ? 0.0 : 0.5 * (my rightMargin - true_width_inches);
+		Graphics_setWrapWidth (my graphics.get(), 0.0);
 		long x1DCold, x2DCold, y1DCold, y2DCold;
-		Graphics_inqWsViewport (my g, & x1DCold, & x2DCold, & y1DCold, & y2DCold);
+		Graphics_inqWsViewport (my graphics.get(), & x1DCold, & x2DCold, & y1DCold, & y2DCold);
 		double x1NDCold, x2NDCold, y1NDCold, y2NDCold;
-		Graphics_inqWsWindow (my g, & x1NDCold, & x2NDCold, & y1NDCold, & y2NDCold);
+		Graphics_inqWsWindow (my graphics.get(), & x1NDCold, & x2NDCold, & y1NDCold, & y2NDCold);
 		{
 			if (! my praatApplication) my praatApplication = Melder_calloc_f (structPraatApplication, 1);
 			if (! my praatObjects) my praatObjects = Melder_calloc_f (structPraatObjects, 1);
@@ -415,7 +415,7 @@ if (! my printing) {
 			theCurrentPraatApplication -> topShell = theForegroundPraatApplication. topShell;   // needed for UiForm_create () in dialogs
 			theCurrentPraatObjects = (PraatObjects) my praatObjects;
 			theCurrentPraatPicture = (PraatPicture) my praatPicture;
-			theCurrentPraatPicture -> graphics = my g;   // has to draw into HyperPage rather than Picture window
+			theCurrentPraatPicture -> graphics = my graphics.get();   // has to draw into HyperPage rather than Picture window
 			theCurrentPraatPicture -> font = font;
 			theCurrentPraatPicture -> fontSize = size;
 			theCurrentPraatPicture -> lineType = Graphics_DRAWN;
@@ -428,18 +428,18 @@ if (! my printing) {
 			theCurrentPraatPicture -> y1NDC = my d_y;
 			theCurrentPraatPicture -> y2NDC = my d_y + true_height_inches;
 
-			Graphics_setViewport (my g, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
-			Graphics_setWindow (my g, 0.0, 1.0, 0.0, 1.0);
+			Graphics_setViewport (my graphics.get(), theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
+			Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 			long x1DC, y1DC, x2DC, y2DC;
-			Graphics_WCtoDC (my g, 0.0, 0.0, & x1DC, & y2DC);
-			Graphics_WCtoDC (my g, 1.0, 1.0, & x2DC, & y1DC);
-			Graphics_resetWsViewport (my g, x1DC, x2DC, y1DC, y2DC);
-			Graphics_setWsWindow (my g, 0, width_inches, 0, height_inches);
-			theCurrentPraatPicture -> x1NDC = 0;
+			Graphics_WCtoDC (my graphics.get(), 0.0, 0.0, & x1DC, & y2DC);
+			Graphics_WCtoDC (my graphics.get(), 1.0, 1.0, & x2DC, & y1DC);
+			Graphics_resetWsViewport (my graphics.get(), x1DC, x2DC, y1DC, y2DC);
+			Graphics_setWsWindow (my graphics.get(), 0, width_inches, 0, height_inches);
+			theCurrentPraatPicture -> x1NDC = 0.0;
 			theCurrentPraatPicture -> x2NDC = width_inches;
-			theCurrentPraatPicture -> y1NDC = 0;
+			theCurrentPraatPicture -> y1NDC = 0.0;
 			theCurrentPraatPicture -> y2NDC = height_inches;
-			Graphics_setViewport (my g, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);			
+			Graphics_setViewport (my graphics.get(), theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 
 			{// scope
 				autoMelderProgressOff progress;
@@ -459,11 +459,11 @@ if (! my printing) {
 					}
 				}
 			}
-			Graphics_setLineType (my g, Graphics_DRAWN);
-			Graphics_setLineWidth (my g, 1.0);
-			Graphics_setArrowSize (my g, 1.0);
-			Graphics_setSpeckleSize (my g, 1.0);
-			Graphics_setColour (my g, Graphics_BLACK);
+			Graphics_setLineType (my graphics.get(), Graphics_DRAWN);
+			Graphics_setLineWidth (my graphics.get(), 1.0);
+			Graphics_setArrowSize (my graphics.get(), 1.0);
+			Graphics_setSpeckleSize (my graphics.get(), 1.0);
+			Graphics_setColour (my graphics.get(), Graphics_BLACK);
 			/*Graphics_Link *paragraphLinks;
 			long numberOfParagraphLinks = Graphics_getLinks (& paragraphLinks);
 			if (my links) for (long ilink = 1; ilink <= numberOfParagraphLinks; ilink ++) {
@@ -476,11 +476,11 @@ if (! my printing) {
 			theCurrentPraatObjects = & theForegroundPraatObjects;
 			theCurrentPraatPicture = & theForegroundPraatPicture;
 		}
-		Graphics_resetWsViewport (my g, x1DCold, x2DCold, y1DCold, y2DCold);
-		Graphics_setWsWindow (my g, x1NDCold, x2NDCold, y1NDCold, y2NDCold);
-		Graphics_setViewport (my g, 0, 1, 0, 1);
-		Graphics_setWindow (my g, 0, 1, 0, 1);
-		Graphics_setTextAlignment (my g, Graphics_LEFT, Graphics_BOTTOM);
+		Graphics_resetWsViewport (my graphics.get(), x1DCold, x2DCold, y1DCold, y2DCold);
+		Graphics_setWsWindow (my graphics.get(), x1NDCold, x2NDCold, y1NDCold, y2NDCold);
+		Graphics_setViewport (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_BOTTOM);
 	}
 } else {
 	Graphics_setFont (my ps, font);
@@ -591,7 +591,6 @@ static void print (void *void_me, Graphics graphics) {
 
 void structHyperPage :: v_destroy () {
 	Melder_free (our entryHint);
-	forget (our g);
 	for (int i = 0; i < 20; i ++) Melder_free (our history [i]. page);
 	Melder_free (our currentPageTitle);
 	if (our praatApplication) {
@@ -607,8 +606,8 @@ void structHyperPage :: v_destroy () {
 }
 
 static void gui_drawingarea_cb_expose (HyperPage me, GuiDrawingArea_ExposeEvent /* event */) {
-	if (! my g) return;   // could be the case in the very beginning
-	Graphics_clearWs (my g);
+	if (! my graphics) return;   // could be the case in the very beginning
+	Graphics_clearWs (my graphics.get());
 	initScreen (me);
 	trace (U"going to draw");
 	my v_draw ();
@@ -616,7 +615,7 @@ static void gui_drawingarea_cb_expose (HyperPage me, GuiDrawingArea_ExposeEvent 
 		Melder_free (my entryHint);
 		my top = (int) floor (5.0 * (PAGE_HEIGHT - my entryPosition));
 		if (my top < 0) my top = 0;
-		Graphics_clearWs (my g);
+		Graphics_clearWs (my graphics.get());
 		initScreen (me);
 		my v_draw ();
 		updateVerticalScrollBar (me);
@@ -624,7 +623,7 @@ static void gui_drawingarea_cb_expose (HyperPage me, GuiDrawingArea_ExposeEvent 
 }
 
 static void gui_drawingarea_cb_click (HyperPage me, GuiDrawingArea_ClickEvent event) {
-	if (! my g) return;   // could be the case in the very beginning
+	if (! my graphics) return;   // could be the case in the very beginning
 	if (! my links) return;
 	for (long ilink = 1; ilink <= my links -> size; ilink ++) {
 		HyperLink link = (HyperLink) my links -> item [ilink];		
@@ -690,7 +689,7 @@ static void menu_cb_font (HyperPage me, EDITOR_ARGS_FORM) {
 	EDITOR_DO
 		int font = GET_INTEGER (U"Font");
 		my pref_font () = my p_font = font == 1 ? kGraphics_font_TIMES : kGraphics_font_HELVETICA;
-		if (my g) Graphics_updateWs (my g);
+		if (my graphics) Graphics_updateWs (my graphics.get());
 	EDITOR_END
 }
 
@@ -703,7 +702,7 @@ static void updateSizeMenu (HyperPage me) {
 }
 static void setFontSize (HyperPage me, int fontSize) {
 	my pref_fontSize () = my p_fontSize = fontSize;
-	if (my g) Graphics_updateWs (my g);
+	if (my graphics) Graphics_updateWs (my graphics.get());
 	updateSizeMenu (me);
 }
 
@@ -752,10 +751,10 @@ static void gui_cb_verticalScroll (HyperPage me, GuiScrollBarEvent	event) {
 		trace (U"scroll from ", my top, U" to ", value);
 		my top = (int) floor (value);
 		#if cocoa || gtk || win
-			Graphics_updateWs (my g);   // wait for expose event
+			Graphics_updateWs (my graphics.get());   // wait for expose event
 		#else
 			initScreen (me);
-			Graphics_clearWs (my g);
+			Graphics_clearWs (my graphics.get());
 			my v_draw ();   // do not wait for expose event
 		#endif
 		updateVerticalScrollBar (me);
@@ -786,7 +785,7 @@ static void menu_cb_pageUp (HyperPage me, EDITOR_ARGS_DIRECT) {
 	if (value < 0) value = 0;
 	if (value != my top) {
 		my top = value;
-		Graphics_clearWs (my g);
+		Graphics_clearWs (my graphics.get());
 		initScreen (me);
 		my v_draw ();   // do not wait for expose event
 		updateVerticalScrollBar (me);
@@ -799,7 +798,7 @@ static void menu_cb_pageDown (HyperPage me, EDITOR_ARGS_DIRECT) {
 	if (value > (int) (PAGE_HEIGHT * 5) - 25) value = (int) (PAGE_HEIGHT * 5) - 25;
 	if (value != my top) {
 		my top = value;
-		Graphics_clearWs (my g);
+		Graphics_clearWs (my graphics.get());
 		initScreen (me);
 		my v_draw ();   // do not wait for expose event
 		updateVerticalScrollBar (me);
@@ -880,11 +879,11 @@ void structHyperPage :: v_createMenus () {
 /********** **********/
 
 static void gui_drawingarea_cb_resize (HyperPage me, GuiDrawingArea_ResizeEvent event) {
-	if (! my g) return;
-	Graphics_setWsViewport (my g, 0, event -> width, 0, event -> height);
-	Graphics_setWsWindow (my g, 0.0, my rightMargin = event -> width / resolution,
+	if (! my graphics) return;
+	Graphics_setWsViewport (my graphics.get(), 0.0, event -> width, 0.0, event -> height);
+	Graphics_setWsWindow (my graphics.get(), 0.0, my rightMargin = event -> width / resolution,
 		PAGE_HEIGHT - event -> height / resolution, PAGE_HEIGHT);
-	Graphics_updateWs (my g);
+	Graphics_updateWs (my graphics.get());
 	updateVerticalScrollBar (me);
 }
 
@@ -936,10 +935,10 @@ void HyperPage_init (HyperPage me, const char32 *title, Daata data) {
 	#if motif
 		Melder_assert (XtWindow (my drawingArea -> d_widget));
 	#endif
-	my g = Graphics_create_xmdrawingarea (my drawingArea).transfer();
-	Graphics_setAtSignIsLink (my g, true);
-	Graphics_setDollarSignIsCode (my g, true);
-	Graphics_setFont (my g, kGraphics_font_TIMES);
+	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
+	Graphics_setAtSignIsLink (my graphics.get(), true);
+	Graphics_setDollarSignIsCode (my graphics.get(), true);
+	Graphics_setFont (my graphics.get(), kGraphics_font_TIMES);
 	if (my p_font != kGraphics_font_TIMES && my p_font != kGraphics_font_HELVETICA)
 		my pref_font () = my p_font = kGraphics_font_TIMES;   // ensure Unicode compatibility
 	setFontSize (me, my p_fontSize);
@@ -953,7 +952,7 @@ gui_drawingarea_cb_resize (me, & event);
 }
 
 void HyperPage_clear (HyperPage me) {
-	Graphics_updateWs (my g);
+	Graphics_updateWs (my graphics.get());
 	my links.reset();
 }
 

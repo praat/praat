@@ -128,7 +128,7 @@ static void drawAction (ButtonEditor me, Praat_Command cmd, long i) {
 }
 
 void structButtonEditor :: v_draw () {
-	Graphics_clearWs (g);
+	Graphics_clearWs (our graphics.get());
 	switch (show) {
 		case 1:
 			for (long i = 1, n = praat_getNumberOfMenuCommands (); i <= n; i ++) {

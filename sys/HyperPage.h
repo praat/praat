@@ -33,7 +33,8 @@ Thing_define (HyperPage, Editor) {
 	GuiDrawingArea drawingArea;
 	GuiScrollBar verticalScrollBar;
 	bool d_hasExtraRowOfTools;
-	Graphics g, ps;
+	autoGraphics graphics;
+	Graphics ps;
 	double d_x, d_y, rightMargin, previousBottomSpacing;
 	long d_printingPageNumber;
 	autoCollection links;
