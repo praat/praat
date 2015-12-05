@@ -92,9 +92,6 @@
 				our x [i] [j]. copy (& thy x [i] [j]); \
 	}
 
-#define oo_OBJECT(Class,version,x)  \
-	if (our x) thy x = Data_copy (our x).transfer();
-
 #define oo_AUTO_OBJECT(Class,version,x)  \
 	if (our x) thy x = Data_copy (our x.get());
 
