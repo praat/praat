@@ -236,11 +236,8 @@ void Picture_setMouseSelectsInnerViewport (Picture me, int mouseSelectsInnerView
 }
 
 void structPicture :: v_destroy () {
-	//Picture_erase (this);
-	//our graphics.zero();
-	Melder_casual (U"destroying a Picture");
+	Picture_erase (this);
 	Picture_Parent :: v_destroy ();
-	Melder_casual (U"destroyed a Picture");
 }
 
 Graphics Picture_peekGraphics (Picture me) { return my graphics.get(); }

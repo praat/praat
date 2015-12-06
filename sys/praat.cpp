@@ -803,7 +803,8 @@ static void helpProc (const char32 *query) {
 		return;
 	}
 	try {
-		Manual_create (query, theCurrentPraatApplication -> manPages, false);
+		autoManual manual = Manual_create (query, theCurrentPraatApplication -> manPages, false);
+		manual.releaseToUser();
 	} catch (MelderError) {
 		Melder_flushError (U"help: no help on \"", query, U"\".");
 	}

@@ -44,7 +44,7 @@ FORM (Rename, U"Rename object", U"Rename...") {
 	LABEL (U"rename object", U"New name:")
 	TEXTFIELD (U"newName", U"")
 	OK2
-{ int IOBJECT; WHERE (SELECTED) SET_STRING (U"newName", NAME) }
+int IOBJECT; WHERE (SELECTED) SET_STRING (U"newName", NAME)
 DO
 	char32 *string = GET_STRING (U"newName");
 	if (theCurrentPraatObjects -> totalSelection == 0)
@@ -411,10 +411,11 @@ static void readFromFile (MelderFile file) {
 	if (Thing_isa (object.peek(), classManPages) && ! Melder_batch) {
 		ManPages pages = (ManPages) object.peek();
 		ManPage firstPage = static_cast<ManPage> (pages -> pages -> item [1]);
-		Manual_create (firstPage -> title, object.releaseToAmbiguousOwner(), true);
+		autoManual manual = Manual_create (firstPage -> title, object.releaseToAmbiguousOwner(), true);
 		if (pages -> executable)
 			Melder_warning (U"These manual pages contain links to executable scripts.\n"
 				"Only navigate these pages if you trust their author!");
+		manual.releaseToUser();
 		return;
 	}
 	if (Thing_isa (object.peek(), classScript) && ! Melder_batch) {
