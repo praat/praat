@@ -100,7 +100,7 @@ void structManual :: v_draw () {
 	ManPage page;
 	ManPage_Paragraph paragraph;
 	#if motif
-	Graphics_clearWs (g);
+	Graphics_clearWs (our graphics.get());
 	#endif
 	if (our path == SEARCH_PAGE) {
 		HyperPage_pageTitle (this, U"Best matches");

@@ -40,7 +40,7 @@ void structGuiMenu :: v_destroy () {
 		(void) void_me;
 		GuiMenu me = (GuiMenu) _GuiObject_getUserData (widget);
 		if (! me) return;
-		trace (U"destroying GuiButton ", Melder_pointer (my d_cascadeButton));
+		trace (U"destroying GuiButton ", Melder_pointer (my d_cascadeButton.get()));
 		gtk_widget_destroy (GTK_WIDGET (my d_widget));
 	}
 #elif cocoa
