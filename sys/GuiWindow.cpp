@@ -64,7 +64,7 @@ Thing_implement (GuiWindow, GuiShell, 0);
 				control = static_cast <GuiControl> (child);
 			} else if (Thing_isa (child, classGuiMenu)) {
 				Thing_cast (GuiMenu, menu, child);
-				control = menu -> d_cascadeButton;
+				control = menu -> d_cascadeButton.get();
 			}
 			if (control) {
 				/*
