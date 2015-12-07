@@ -91,9 +91,6 @@
 				if (! our x [i] [j]. canWriteAsEncoding (encoding)) return false; \
 	}
 
-#define oo_OBJECT(Class,version,x)  \
-	if (our x && ! Data_canWriteAsEncoding (our x, encoding)) return false;
-
 #define oo_AUTO_OBJECT(Class,version,x)  \
 	if (our x && ! Data_canWriteAsEncoding (our x.get(), encoding)) return false;
 

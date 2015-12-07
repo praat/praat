@@ -114,7 +114,7 @@ void GuiOptionMenu_init (GuiOptionMenu me, GuiForm parent, int left, int right, 
 GuiOptionMenu GuiOptionMenu_create (GuiForm parent, int left, int right, int top, int bottom, uint32 flags) {
 	autoGuiOptionMenu me = Thing_new (GuiOptionMenu);
 	GuiOptionMenu_init (me.peek(), parent, left, right, top, bottom, flags);
-	return me.transfer();
+	return me.releaseToAmbiguousOwner();
 }
 
 GuiOptionMenu GuiOptionMenu_createShown (GuiForm parent, int left, int right, int top, int bottom, uint32 flags) {
@@ -149,7 +149,7 @@ void GuiOptionMenu_addOption (GuiOptionMenu me, const char32 *text) {
 		autoGuiMenuItem menuItem = Thing_new (GuiMenuItem);
 		menuItem -> d_widget = XtVaCreateManagedWidget (Melder_peek32to8 (text), xmToggleButtonWidgetClass, my d_widget, nullptr);
 		XtAddCallback (menuItem -> d_widget, XmNvalueChangedCallback, cb_optionChanged, (XtPointer) me);
-		Collection_addItem_move (my d_options, menuItem.move());
+		Collection_addItem_move (my d_options.get(), menuItem.move());
     #elif cocoa
         GuiCocoaOptionMenu *menu = (GuiCocoaOptionMenu *) my d_widget;
         [menu addItemWithTitle: [NSString stringWithUTF8String: Melder_peek32to8 (text)]];

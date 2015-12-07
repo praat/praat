@@ -37,7 +37,7 @@ static void menu_cb_evaluate (OTMultiEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_DO
 		Editor_save (me, U"Evaluate");
 		OTMulti_newDisharmonies ((OTMulti) my data, GET_REAL (U"Evaluation noise"));
-		Graphics_updateWs (my g);
+		Graphics_updateWs (my graphics.get());
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
@@ -45,14 +45,14 @@ static void menu_cb_evaluate (OTMultiEditor me, EDITOR_ARGS_FORM) {
 static void menu_cb_evaluate_noise_2_0 (OTMultiEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Evaluate (noise 2.0)");
 	OTMulti_newDisharmonies ((OTMulti) my data, 2.0);
-	Graphics_updateWs (my g);
+	Graphics_updateWs (my graphics.get());
 	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_evaluate_tinyNoise (OTMultiEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Evaluate (tiny noise)");
 	OTMulti_newDisharmonies ((OTMulti) my data, 1e-9);
-	Graphics_updateWs (my g);
+	Graphics_updateWs (my graphics.get());
 	Editor_broadcastDataChanged (me);
 }
 
@@ -77,7 +77,7 @@ static void menu_cb_editRanking (OTMultiEditor me, EDITOR_ARGS_FORM) {
 		constraint -> ranking = GET_REAL (U"Ranking value");
 		constraint -> disharmony = GET_REAL (U"Disharmony");
 		OTMulti_sort (grammar);
-		Graphics_updateWs (my g);
+		Graphics_updateWs (my graphics.get());
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
@@ -101,7 +101,7 @@ static void menu_cb_learnOne (OTMultiEditor me, EDITOR_ARGS_FORM) {
 		OTMulti_learnOne ((OTMulti) my data, my form1, my form2,
 			GET_ENUM (kOTGrammar_rerankingStrategy, U"Update rule"), GET_INTEGER (U"Direction"),
 			GET_REAL (U"Plasticity"), GET_REAL (U"Rel. plasticity spreading"));
-		Graphics_updateWs (my g);
+		Graphics_updateWs (my graphics.get());
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
@@ -113,7 +113,7 @@ static void menu_cb_removeConstraint (OTMultiEditor me, EDITOR_ARGS_DIRECT) {
 	OTConstraint constraint = & grammar -> constraints [grammar -> index [my selectedConstraint]];
 	Editor_save (me, U"Remove constraint");
 	OTMulti_removeConstraint (grammar, constraint -> name);
-	Graphics_updateWs (my g);
+	Graphics_updateWs (my graphics.get());
 	Editor_broadcastDataChanged (me);
 }
 
@@ -124,7 +124,7 @@ static void menu_cb_resetAllRankings (OTMultiEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_DO
 		Editor_save (me, U"Reset all rankings");
 		OTMulti_reset ((OTMulti) my data, GET_REAL (U"Ranking"));
-		Graphics_updateWs (my g);
+		Graphics_updateWs (my graphics.get());
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
@@ -138,7 +138,7 @@ static void do_limit (OTMultiEditor me) {
 	Melder_free (my form2);
 	my form1 = GuiText_getString (my form1Text);
 	my form2 = GuiText_getString (my form2Text);
-	Graphics_updateWs (my g);
+	Graphics_updateWs (my graphics.get());
 }
 
 static void gui_button_cb_limit (OTMultiEditor me, GuiButtonEvent /* event */) {
@@ -190,7 +190,7 @@ void structOTMultiEditor :: v_draw () {
 	OTMulti grammar = (OTMulti) data;
 	static MelderString buffer { 0 };
 	double rowHeight = 0.25, tableauHeight = 2 * rowHeight;
-	Graphics_clearWs (g);
+	Graphics_clearWs (graphics.get());
 	HyperPage_listItem (this, U"\t\t      %%ranking value\t      %disharmony\t      %plasticity");
 	for (long icons = 1; icons <= grammar -> numberOfConstraints; icons ++) {
 		OTConstraint constraint = & grammar -> constraints [grammar -> index [icons]];
@@ -201,7 +201,7 @@ void structOTMultiEditor :: v_draw () {
 		);
 		HyperPage_listItem (this, buffer.string);
 	}
-	Graphics_setAtSignIsLink (g, false);
+	Graphics_setAtSignIsLink (graphics.get(), false);
 	drawTableau_grammar = grammar;
 	for (long icand = 1; icand <= grammar -> numberOfCandidates; icand ++) {
 		if (OTMulti_candidateMatches (grammar, icand, form1, form2)) {
@@ -212,7 +212,7 @@ void structOTMultiEditor :: v_draw () {
 	drawTableau_form2 = form2;
 	drawTableau_constraintsAreDrawnVertically = d_constraintsAreDrawnVertically;
 	HyperPage_picture (this, 20, tableauHeight, drawTableau);
-	Graphics_setAtSignIsLink (g, true);
+	Graphics_setAtSignIsLink (graphics.get(), true);
 }
 
 int structOTMultiEditor :: v_goToPage (const char32 *title) {

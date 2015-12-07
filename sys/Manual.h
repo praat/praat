@@ -61,7 +61,7 @@ Thing_define (Manual, HyperPage) {
 };
 
 void Manual_init (Manual me, const char32 *title, Daata data, bool ownData);
-Manual Manual_create (const char32 *title, Daata data, bool ownData);
+autoManual Manual_create (const char32 *title, Daata data, bool ownData);
 
 void Manual_search (Manual me, const char32 *query);
 

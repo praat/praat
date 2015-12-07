@@ -220,9 +220,9 @@ static void stopRecording (SoundRecorder me) {
 	} catch (MelderError) {
 		Melder_flushError (U"Cannot stop recording.");
 	}
-	Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (my graphics, Graphics_WHITE);
-	Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 1.0);
+	Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (my graphics.get(), Graphics_WHITE);
+	Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 }
 
 void structSoundRecorder :: v_destroy () {
@@ -252,30 +252,29 @@ void structSoundRecorder :: v_destroy () {
 			if (our fd != -1) close (our fd);
 		#endif
 	}
-	forget (our graphics);
 	SoundRecorder_Parent :: v_destroy ();
 }
 
 static void showMaximum (SoundRecorder me, int channel, double maximum) {
 	maximum /= 32768.0;
-	Graphics_setWindow (my graphics,
+	Graphics_setWindow (my graphics.get(),
 		my numberOfChannels == 1 || channel == 1 ? 0.0 : -1.0,
 		my numberOfChannels == 1 || channel == 2 ? 1.0 : 2.0,
 		-0.1, 1.1);
-	Graphics_setGrey (my graphics, 0.9);
-	Graphics_fillRectangle (my graphics, 0.0, 1.0, maximum, 1.0);
-	Graphics_setColour (my graphics, Graphics_GREEN);
+	Graphics_setGrey (my graphics.get(), 0.9);
+	Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, maximum, 1.0);
+	Graphics_setColour (my graphics.get(), Graphics_GREEN);
 	if (maximum < 0.75) {
-		Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, maximum);
+		Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, maximum);
 	} else {
-		Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 0.75);
-		Graphics_setColour (my graphics, Graphics_YELLOW);
+		Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 0.75);
+		Graphics_setColour (my graphics.get(), Graphics_YELLOW);
 		if (maximum < 0.92) {
-			Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.75, maximum);
+			Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.75, maximum);
 		} else {
-			Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.75, 0.92);
-			Graphics_setColour (my graphics, Graphics_RED);
-			Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.92, maximum);
+			Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.75, 0.92);
+			Graphics_setColour (my graphics.get(), Graphics_RED);
+			Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.92, maximum);
 		}
 	}
 }
@@ -283,14 +282,14 @@ static void showMaximum (SoundRecorder me, int channel, double maximum) {
 static void showMeter (SoundRecorder me, short *buffer, long nsamp) {
 	Melder_assert (my graphics);
 	if (nsamp < 1) {
-		Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
+		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		#if defined (macintosh)
-			Graphics_setColour (my graphics, Graphics_WHITE);
-			Graphics_fillRectangle (my graphics, 0.2, 0.8, 0.3, 0.7);
+			Graphics_setColour (my graphics.get(), Graphics_WHITE);
+			Graphics_fillRectangle (my graphics.get(), 0.2, 0.8, 0.3, 0.7);
 		#endif
-		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
-		Graphics_setColour (my graphics, Graphics_BLACK);
-		Graphics_text (my graphics, 0.5, 0.5, U"Not recording.");
+		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
+		Graphics_setColour (my graphics.get(), Graphics_BLACK);
+		Graphics_text (my graphics.get(), 0.5, 0.5, U"Not recording.");
 		return;
 	}
 	if (my p_meter_which == kSoundRecorder_meter_INTENSITY) {
@@ -336,17 +335,17 @@ static void showMeter (SoundRecorder me, short *buffer, long nsamp) {
 		autoSpectrum spectrum = Sound_to_Spectrum (sound.peek(), true);
 		double centreOfGravity = Spectrum_getCentreOfGravity (spectrum.peek(), 1.0);
 		trace (nsamp, U" samples, intensity ", intensity, U" dB, centre of gravity ", centreOfGravity, U" Hz");
-		Graphics_setWindow (my graphics,
+		Graphics_setWindow (my graphics.get(),
 			my p_meter_centreOfGravity_minimum, my p_meter_centreOfGravity_maximum,
 			my p_meter_intensity_minimum, my p_meter_intensity_maximum);
-		Graphics_setColour (my graphics, Graphics_WHITE);
-		Graphics_fillRectangle (my graphics,
+		Graphics_setColour (my graphics.get(), Graphics_WHITE);
+		Graphics_fillRectangle (my graphics.get(),
 			my p_meter_centreOfGravity_minimum, my p_meter_centreOfGravity_maximum,
 			my p_meter_intensity_minimum, my p_meter_intensity_maximum);
-		Graphics_setColour (my graphics, Graphics_BLACK);
-		Graphics_fillCircle_mm (my graphics, centreOfGravity, intensity, 3.0);
+		Graphics_setColour (my graphics.get(), Graphics_BLACK);
+		Graphics_fillCircle_mm (my graphics.get(), centreOfGravity, intensity, 3.0);
 	}
-	Graphics_flushWs (my graphics);
+	Graphics_flushWs (my graphics.get());
 }
 
 static bool tooManySamplesInBufferToReturnToGui (SoundRecorder me) {
@@ -575,13 +574,13 @@ static void gui_button_cb_record (SoundRecorder me, GuiButtonEvent /* event */) 
 				#endif
 			}
 		}
-		Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
-		Graphics_setColour (my graphics, Graphics_WHITE);
-		Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 1.0);
+		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_setColour (my graphics.get(), Graphics_WHITE);
+		Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	} catch (MelderError) {
-		Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
-		Graphics_setColour (my graphics, Graphics_WHITE);
-		Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 1.0);
+		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_setColour (my graphics.get(), Graphics_WHITE);
+		Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		my recording = false;
 		Melder_flushError (U"Cannot record.");
 	}
@@ -788,10 +787,10 @@ static void gui_radiobutton_cb_fsamp (SoundRecorder me, GuiRadioButtonEvent even
 
 static void gui_drawingarea_cb_resize (SoundRecorder me, GuiDrawingArea_ResizeEvent event) {
 	if (! my graphics) return;   // could be the case in the very beginning
-	Graphics_setWsViewport (my graphics, 0, event -> width, 0, event -> height);
-	Graphics_setWsWindow (my graphics, 0, event -> width, 0, event -> height);
-	Graphics_setViewport (my graphics, 0, event -> width, 0, event -> height);
-	Graphics_updateWs (my graphics);
+	Graphics_setWsViewport (my graphics.get(), 0, event -> width, 0, event -> height);
+	Graphics_setWsWindow (my graphics.get(), 0, event -> width, 0, event -> height);
+	Graphics_setViewport (my graphics.get(), 0, event -> width, 0, event -> height);
+	Graphics_updateWs (my graphics.get());
 }
 
 void structSoundRecorder :: v_createChildren ()
@@ -1166,9 +1165,9 @@ autoSoundRecorder SoundRecorder_create (int numberOfChannels) {
 		Editor_init (me.peek(), 100, 100, 600, 500, U"SoundRecorder", nullptr);
 		my graphics = Graphics_create_xmdrawingarea (my meter);
 		Melder_assert (my graphics);
-		Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
-		Graphics_setColour (my graphics, Graphics_WHITE);
-		Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 1.0);
+		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_setColour (my graphics.get(), Graphics_WHITE);
+		Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 
 struct structGuiDrawingArea_ResizeEvent event { my meter, 0 };
 event. width  = GuiControl_getWidth  (my meter);

@@ -101,7 +101,7 @@ GuiScrolledWindow GuiScrolledWindow_create (GuiForm parent, int left, int right,
 		Melder_assert (my classInfo == classGuiScrolledWindow);
 		trace (U"me = ", Melder_pointer (me.get()), U", user data = ", Melder_pointer (my d_widget -> userData));
 	#endif
-	return me.transfer();
+	return me.releaseToAmbiguousOwner();
 }
 
 

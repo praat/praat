@@ -437,29 +437,29 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 	Melder_assert (!! sound != !! longSound);
 	int nchan = sound ? sound -> ny : longSound -> numberOfChannels;
 	bool cursorVisible = my d_startSelection == my d_endSelection && my d_startSelection >= my d_startWindow && my d_startSelection <= my d_endWindow;
-	Graphics_setColour (my d_graphics, Graphics_BLACK);
+	Graphics_setColour (my d_graphics.get(), Graphics_BLACK);
 	bool fits;
 	try {
 		fits = sound ? true : LongSound_haveWindow (longSound, my d_startWindow, my d_endWindow);
 	} catch (MelderError) {
 		bool outOfMemory = !! str32str (Melder_getError (), U"memory");
 		if (Melder_debug == 9) Melder_flushError (); else Melder_clearError ();
-		Graphics_setWindow (my d_graphics, 0.0, 1.0, 0.0, 1.0);
-		Graphics_setTextAlignment (my d_graphics, Graphics_CENTRE, Graphics_HALF);
-		Graphics_text (my d_graphics, 0.5, 0.5, outOfMemory ? U"(out of memory)" : U"(cannot read sound file)");
+		Graphics_setWindow (my d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_setTextAlignment (my d_graphics.get(), Graphics_CENTRE, Graphics_HALF);
+		Graphics_text (my d_graphics.get(), 0.5, 0.5, outOfMemory ? U"(out of memory)" : U"(cannot read sound file)");
 		return;
 	}
 	if (! fits) {
-		Graphics_setWindow (my d_graphics, 0.0, 1.0, 0.0, 1.0);
-		Graphics_setTextAlignment (my d_graphics, Graphics_CENTRE, Graphics_HALF);
-		Graphics_text (my d_graphics, 0.5, 0.5, U"(window too large; zoom in to see the data)");
+		Graphics_setWindow (my d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_setTextAlignment (my d_graphics.get(), Graphics_CENTRE, Graphics_HALF);
+		Graphics_text (my d_graphics.get(), 0.5, 0.5, U"(window too large; zoom in to see the data)");
 		return;
 	}
 	long first, last;
 	if (Sampled_getWindowSamples (sound ? (Sampled) sound : (Sampled) longSound, my d_startWindow, my d_endWindow, & first, & last) <= 1) {
-		Graphics_setWindow (my d_graphics, 0.0, 1.0, 0.0, 1.0);
-		Graphics_setTextAlignment (my d_graphics, Graphics_CENTRE, Graphics_HALF);
-		Graphics_text (my d_graphics, 0.5, 0.5, U"(zoom out to see the data)");
+		Graphics_setWindow (my d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_setTextAlignment (my d_graphics.get(), Graphics_CENTRE, Graphics_HALF);
+		Graphics_text (my d_graphics.get(), 0.5, 0.5, U"(zoom out to see the data)");
 		return;
 	}
 	const int numberOfVisibleChannels = nchan > 8 ? 8 : nchan;
@@ -493,7 +493,7 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 		 */
 		double ymin = (double) (numberOfVisibleChannels - ichan + my d_sound.channelOffset) / numberOfVisibleChannels;
 		double ymax = (double) (numberOfVisibleChannels + 1 - ichan + my d_sound.channelOffset) / numberOfVisibleChannels;
-		Graphics_Viewport vp = Graphics_insetViewport (my d_graphics, 0, 1, ymin, ymax);
+		Graphics_Viewport vp = Graphics_insetViewport (my d_graphics.get(), 0.0, 1.0, ymin, ymax);
 		bool horizontal = false;
 		double minimum = sound ? globalMinimum : -1.0, maximum = sound ? globalMaximum : 1.0;
 		if (my p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_BY_WINDOW) {
@@ -533,41 +533,41 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 			maximum = my p_sound_scaling_maximum;
 		}
 		if (minimum == maximum) { horizontal = true; minimum -= 1.0; maximum += 1.0;}
-		Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, minimum, maximum);
+		Graphics_setWindow (my d_graphics.get(), my d_startWindow, my d_endWindow, minimum, maximum);
 		if (horizontal) {
-			Graphics_setTextAlignment (my d_graphics, Graphics_RIGHT, Graphics_HALF);
+			Graphics_setTextAlignment (my d_graphics.get(), Graphics_RIGHT, Graphics_HALF);
 			double mid = 0.5 * (minimum + maximum);
-			Graphics_text (my d_graphics, my d_startWindow, mid, Melder_float (Melder_half (mid)));
+			Graphics_text (my d_graphics.get(), my d_startWindow, mid, Melder_float (Melder_half (mid)));
 		} else {
-			if (! cursorVisible || ! NUMdefined (cursorFunctionValue) || Graphics_dyWCtoMM (my d_graphics, cursorFunctionValue - minimum) > 5.0) {
-				Graphics_setTextAlignment (my d_graphics, Graphics_RIGHT, Graphics_BOTTOM);
-				Graphics_text (my d_graphics, my d_startWindow, minimum, Melder_float (Melder_half (minimum)));
+			if (! cursorVisible || ! NUMdefined (cursorFunctionValue) || Graphics_dyWCtoMM (my d_graphics.get(), cursorFunctionValue - minimum) > 5.0) {
+				Graphics_setTextAlignment (my d_graphics.get(), Graphics_RIGHT, Graphics_BOTTOM);
+				Graphics_text (my d_graphics.get(), my d_startWindow, minimum, Melder_float (Melder_half (minimum)));
 			}
-			if (! cursorVisible || ! NUMdefined (cursorFunctionValue) || Graphics_dyWCtoMM (my d_graphics, maximum - cursorFunctionValue) > 5.0) {
-				Graphics_setTextAlignment (my d_graphics, Graphics_RIGHT, Graphics_TOP);
-				Graphics_text (my d_graphics, my d_startWindow, maximum, Melder_float (Melder_half (maximum)));
+			if (! cursorVisible || ! NUMdefined (cursorFunctionValue) || Graphics_dyWCtoMM (my d_graphics.get(), maximum - cursorFunctionValue) > 5.0) {
+				Graphics_setTextAlignment (my d_graphics.get(), Graphics_RIGHT, Graphics_TOP);
+				Graphics_text (my d_graphics.get(), my d_startWindow, maximum, Melder_float (Melder_half (maximum)));
 			}
 		}
 		if (minimum < 0 && maximum > 0 && ! horizontal) {
-			Graphics_setWindow (my d_graphics, 0, 1, minimum, maximum);
-			if (! cursorVisible || ! NUMdefined (cursorFunctionValue) || fabs (Graphics_dyWCtoMM (my d_graphics, cursorFunctionValue - 0.0)) > 3.0) {
-				Graphics_setTextAlignment (my d_graphics, Graphics_RIGHT, Graphics_HALF);
-				Graphics_text (my d_graphics, 0, 0, U"0");
+			Graphics_setWindow (my d_graphics.get(), 0.0, 1.0, minimum, maximum);
+			if (! cursorVisible || ! NUMdefined (cursorFunctionValue) || fabs (Graphics_dyWCtoMM (my d_graphics.get(), cursorFunctionValue - 0.0)) > 3.0) {
+				Graphics_setTextAlignment (my d_graphics.get(), Graphics_RIGHT, Graphics_HALF);
+				Graphics_text (my d_graphics.get(), 0.0, 0.0, U"0");
 			}
-			Graphics_setColour (my d_graphics, Graphics_CYAN);
-			Graphics_setLineType (my d_graphics, Graphics_DOTTED);
-			Graphics_line (my d_graphics, 0, 0, 1, 0);
-			Graphics_setLineType (my d_graphics, Graphics_DRAWN);
+			Graphics_setColour (my d_graphics.get(), Graphics_CYAN);
+			Graphics_setLineType (my d_graphics.get(), Graphics_DOTTED);
+			Graphics_line (my d_graphics.get(), 0.0, 0.0, 1.0, 0.0);
+			Graphics_setLineType (my d_graphics.get(), Graphics_DRAWN);
 		}
 		/*
 		 * Garnish the drawing area of each channel.
 		 */
-		Graphics_setWindow (my d_graphics, 0, 1, 0, 1);
-		Graphics_setColour (my d_graphics, Graphics_CYAN);
-		Graphics_innerRectangle (my d_graphics, 0, 1, 0, 1);
-		Graphics_setColour (my d_graphics, Graphics_BLACK);
+		Graphics_setWindow (my d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_setColour (my d_graphics.get(), Graphics_CYAN);
+		Graphics_innerRectangle (my d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_setColour (my d_graphics.get(), Graphics_BLACK);
 		if (nchan > 1) {
-			Graphics_setTextAlignment (my d_graphics, Graphics_LEFT, Graphics_HALF);
+			Graphics_setTextAlignment (my d_graphics.get(), Graphics_LEFT, Graphics_HALF);
 			const char32 *channelName = my v_getChannelName (ichan);
 			static MelderString channelLabel;
 			MelderString_copy (& channelLabel, ( channelName ? U"ch" : U"Channel " ), ichan);
@@ -578,36 +578,36 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 			} else if (ichan >= 8 && ichan - my d_sound.channelOffset == 8 && ichan < nchan) {
 				MelderString_append (& channelLabel, U" " UNITEXT_DOWNWARDS_ARROW);
 			}
-			Graphics_text (my d_graphics, 1, 0.5, channelLabel.string);
+			Graphics_text (my d_graphics.get(), 1.0, 0.5, channelLabel.string);
 		}
 		/*
 		 * Draw a very thin separator line underneath.
 		 */
 		if (ichan < nchan) {
-			/*Graphics_setColour (d_graphics, Graphics_BLACK);*/
-			Graphics_line (my d_graphics, 0, 0, 1, 0);
+			/*Graphics_setColour (d_graphics.get(), Graphics_BLACK);*/
+			Graphics_line (my d_graphics.get(), 0.0, 0.0, 1.0, 0.0);
 		}
 		/*
 		 * Draw the samples.
 		 */
 		/*if (ichan == 1) FunctionEditor_SoundAnalysis_drawPulses (this);*/
 		if (sound) {
-			Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, minimum, maximum);
+			Graphics_setWindow (my d_graphics.get(), my d_startWindow, my d_endWindow, minimum, maximum);
 			if (cursorVisible && NUMdefined (cursorFunctionValue))
 				FunctionEditor_drawCursorFunctionValue (me, cursorFunctionValue, Melder_float (Melder_half (cursorFunctionValue)), U"");
-			Graphics_setColour (my d_graphics, Graphics_BLACK);
-			Graphics_function (my d_graphics, sound -> z [ichan], first, last,
+			Graphics_setColour (my d_graphics.get(), Graphics_BLACK);
+			Graphics_function (my d_graphics.get(), sound -> z [ichan], first, last,
 				Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
 		} else {
-			Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, minimum * 32768, maximum * 32768);
-			Graphics_function16 (my d_graphics,
+			Graphics_setWindow (my d_graphics.get(), my d_startWindow, my d_endWindow, minimum * 32768, maximum * 32768);
+			Graphics_function16 (my d_graphics.get(),
 				longSound -> buffer - longSound -> imin * nchan + (ichan - 1), nchan - 1, first, last,
 				Sampled_indexToX (longSound, first), Sampled_indexToX (longSound, last));
 		}
-		Graphics_resetViewport (my d_graphics, vp);
+		Graphics_resetViewport (my d_graphics.get(), vp);
 	}
-	Graphics_setWindow (my d_graphics, 0.0, 1.0, 0.0, 1.0);
-	Graphics_rectangle (my d_graphics, 0.0, 1.0, 0.0, 1.0);
+	Graphics_setWindow (my d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_rectangle (my d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
 }
 
 bool structTimeSoundEditor :: v_click (double xbegin, double ybegin, bool shiftKeyPressed) {

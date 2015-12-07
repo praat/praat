@@ -847,7 +847,7 @@ void GaussianMixture_splitComponent (GaussianMixture me, long component) {
 		} catch (MelderError) {
 			Melder_throw (me, U" cannot add new component.");
 		}
-		my covariances -> item[component] = cov1.transfer();
+		my covariances -> item[component] = cov1.releaseToAmbiguousOwner();
 		my numberOfComponents++;
 		NUMvector_free<double> (my mixingProbabilities, 1);
 		my mixingProbabilities = mixingProbabilities.transfer();

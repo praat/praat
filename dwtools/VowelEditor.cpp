@@ -871,7 +871,7 @@ static void menu_cb_prefs (VowelEditor me, EDITOR_ARGS_FORM) {
 		my frequencyScale = prefs.frequencyScale;
 		my axisOrientation = prefs.axisOrientation;
 		my soundFollowsMouse = prefs.soundFollowsMouse = GET_INTEGER (U"Sound-follows-mouse");
-		Graphics_updateWs (my g);
+		Graphics_updateWs (my graphics.get());
 	EDITOR_END
 }
 
@@ -893,7 +893,7 @@ static void menu_cb_ranges_f1f2 (VowelEditor me, EDITOR_ARGS_FORM) {
 		my f1max = prefs.f1max = GET_REAL (U"right F1 range");
 		my f2min = prefs.f2min = GET_REAL (U"left F2 range");
 		my f2max = prefs.f2max = GET_REAL (U"right F2 range");
-		Graphics_updateWs (my g);
+		Graphics_updateWs (my graphics.get());
 	EDITOR_END
 }
 
@@ -963,7 +963,7 @@ static void menu_cb_showOneVowelMark (VowelEditor me, EDITOR_ARGS_FORM) {
 			Table_setStringValue (my marks.get(), irow, 1, label);
 			Table_setNumericValue (my marks.get(), irow, 2, f1);
 			Table_setNumericValue (my marks.get(), irow, 3, f2);
-			Graphics_updateWs (my g);
+			Graphics_updateWs (my graphics.get());
 		}
 	EDITOR_END
 }
@@ -990,7 +990,7 @@ static void menu_cb_showVowelMarks (VowelEditor me, EDITOR_ARGS_FORM) {
 		my speakerType = prefs.speakerType = GET_INTEGER (U"Speaker");
 		my marksFontSize = prefs.marksFontSize = GET_INTEGER (U"Font size");
 		VowelEditor_setMarks (me, my marksDataset, my speakerType, my marksFontSize);
-		Graphics_updateWs (my g);
+		Graphics_updateWs (my graphics.get());
 	EDITOR_END
 }
 
@@ -998,7 +998,7 @@ static void menu_cb_showVowelMarksFromTableFile (VowelEditor me, EDITOR_ARGS_FOR
 	EDITOR_FORM_READ (U"VowelEditor: Show vowel marks from Table file", U"VowelEditor: Show vowel marks from Table file...");
 	EDITOR_DO_READ
 		VowelEditor_getVowelMarksFromTableFile (me, file);
-		Graphics_updateWs (my g);
+		Graphics_updateWs (my graphics.get());
 	EDITOR_END
 }
 
@@ -1035,7 +1035,7 @@ static void menu_cb_setF3F4 (VowelEditor me, EDITOR_ARGS_FORM) {
 }
 static void menu_cb_reverseTrajectory (VowelEditor me, EDITOR_ARGS_DIRECT) {
 	VowelEditor_Vowel_reverseFormantTier (me);
-	Graphics_updateWs (my g);
+	Graphics_updateWs (my graphics.get());
 }
 
 static void VowelEditor_Vowel_addData (VowelEditor me, Vowel thee, double time, double f1, double f2, double f0) {
@@ -1083,7 +1083,7 @@ static void menu_cb_newTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (duration)));
 		my vowel = newVowel.move();
 
-		Graphics_updateWs (my g);
+		Graphics_updateWs (my graphics.get());
 	EDITOR_END
 }
 
@@ -1104,7 +1104,7 @@ static void menu_cb_extendTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 		VowelEditor_Vowel_addData (me, thee, newDuration, f1, f2, f0);
 
 		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (newDuration)));
-		Graphics_updateWs (my g);
+		Graphics_updateWs (my graphics.get());
 	EDITOR_END
 }
 
@@ -1124,7 +1124,7 @@ static void menu_cb_shiftTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_OK
 	EDITOR_DO
 		VowelEditor_shiftF1F2 (me, GET_REAL (U"F1"), GET_REAL (U"F2"));
-		Graphics_updateWs (my g);
+		Graphics_updateWs (my graphics.get());
 	EDITOR_END
 }
 
@@ -1138,7 +1138,7 @@ static void menu_cb_showTrajectoryTimeMarksEvery (VowelEditor me, EDITOR_ARGS_FO
 		if (my markTraceEvery < 0) {
 			my markTraceEvery = 0;
 		}
-		Graphics_updateWs (my g);
+		Graphics_updateWs (my graphics.get());
 	EDITOR_END
 }
 
@@ -1147,7 +1147,7 @@ static void menu_cb_showTrajectoryTimeMarksEvery (VowelEditor me, EDITOR_ARGS_FO
 static void gui_button_cb_play (VowelEditor me, GuiButtonEvent /* event */) {
 	autoSound thee = VowelEditor_createTarget (me);
 	Sound_play (thee.peek(), nullptr, nullptr);
-	Graphics_updateWs (my g);
+	Graphics_updateWs (my graphics.get());
 }
 
 static void gui_button_cb_publish (VowelEditor me, GuiButtonEvent /* event */) {
@@ -1168,10 +1168,10 @@ static void gui_drawingarea_cb_expose (VowelEditor me, GuiDrawingArea_ExposeEven
 	FormantTier ft = my vowel -> ft.get();
 	Melder_assert (ft);
 	static MelderString statusInfo { 0 };
-	if (! my g) {
+	if (! my graphics) {
 		return;   // could be the case in the very beginning
 	}
-	Graphics_clearWs (my g);
+	Graphics_clearWs (my graphics.get());
 
 	appendF1F2F0 (&statusInfo, STATUSINFO_STARTINTR0, FormantTier_getValueAtTime (ft, 1, ts),
 	              FormantTier_getValueAtTime (ft, 2, ts), getF0 (&my f0, ts), STATUSINFO_ENDING);
@@ -1183,33 +1183,33 @@ static void gui_drawingarea_cb_expose (VowelEditor me, GuiDrawingArea_ExposeEven
 	GuiLabel_setText (my endInfo, statusInfo.string);
 	MelderString_empty (&statusInfo);
 
-	Graphics_setGrey (my g, 0.9);
-	Graphics_fillRectangle (my g, 0.0, 1.0, 0.0, 1.0);
-	Graphics_setInner (my g);
-	Graphics_setWindow (my g, 0.0, 1.0, 0.0, 1.0);
-	Graphics_setGrey (my g, 1.0);
-	Graphics_fillRectangle (my g, 0.0, 1.0, 0.0, 1.0);
-	Graphics_unsetInner (my g);
-	Graphics_setGrey (my g, 0.0);
+	Graphics_setGrey (my graphics.get(), 0.9);
+	Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setInner (my graphics.get());
+	Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setGrey (my graphics.get(), 1.0);
+	Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_unsetInner (my graphics.get());
+	Graphics_setGrey (my graphics.get(), 0.0);
 
-	VowelEditor_drawBackground (me, my g);
+	VowelEditor_drawBackground (me, my graphics.get());
 	Melder_assert (me);
 	Melder_assert (my vowel);
 	Melder_assert (my vowel -> ft);
-	FormantTier_drawF1F2Trajectory (my vowel -> ft.get(), my g, my f1min, my f1max, my f2min, my f2max, my markTraceEvery, my width);
+	FormantTier_drawF1F2Trajectory (my vowel -> ft.get(), my graphics.get(), my f1min, my f1max, my f2min, my f2max, my markTraceEvery, my width);
 }
 
 static void gui_drawingarea_cb_resize (VowelEditor me, GuiDrawingArea_ResizeEvent event) {
 	Melder_assert (me);
-	if (! my g) {
+	if (! my graphics) {
 		return;   // could be the case in the very beginning
 	}
-	Graphics_setWsViewport (my g, 0.0, event -> width, 0.0, event -> height);
+	Graphics_setWsViewport (my graphics.get(), 0.0, event -> width, 0.0, event -> height);
 	my width = event -> width;
 	my height = event -> height;
-	Graphics_setWsWindow (my g, 0.0, my width, 0.0, my height);
-	Graphics_setViewport (my g, 0.0, my width, 0.0, my height);
-	Graphics_updateWs (my g);
+	Graphics_setWsWindow (my graphics.get(), 0.0, my width, 0.0, my height);
+	Graphics_setViewport (my graphics.get(), 0.0, my width, 0.0, my height);
+	Graphics_updateWs (my graphics.get());
 
 	/* Save the current shell size as the user's preference for a new VowelEditor. */
 
@@ -1251,9 +1251,9 @@ static void gui_drawingarea_cb_click (VowelEditor me, GuiDrawingArea_ClickEvent 
 	double t0 = Melder_clock ();
 	long iskipped = 0;
 	struct structGuiButtonEvent gb_event { 0 };
-	Graphics_setInner (my g);
+	Graphics_setInner (my graphics.get());
 
-	Graphics_getMouseLocation (my g, & x, & y);
+	Graphics_getMouseLocation (my graphics.get(), & x, & y);
 	checkXY (&x, &y);
 
 	if (event -> shiftKeyPressed) {
@@ -1280,11 +1280,11 @@ static void gui_drawingarea_cb_click (VowelEditor me, GuiDrawingArea_ClickEvent 
 		}
 	}
 
-	Graphics_xorOn (my g, Graphics_BLUE);
-	while (Graphics_mouseStillDown (my g)) {
+	Graphics_xorOn (my graphics.get(), Graphics_BLUE);
+	while (Graphics_mouseStillDown (my graphics.get())) {
 		xb = x, yb = y, tb = t;
 		t = Melder_clock () - t0 + dt; // Get relative time in seconds from the clock
-		Graphics_getMouseLocation (my g, & x, & y);
+		Graphics_getMouseLocation (my graphics.get(), & x, & y);
 		checkXY (&x, &y);
 		// If the new point equals the previous one: no tier update
 		if (xb == x && yb == y) {
@@ -1296,7 +1296,7 @@ static void gui_drawingarea_cb_click (VowelEditor me, GuiDrawingArea_ClickEvent 
 			VowelEditor_Vowel_updateTiers (me, thee, tb, xb, yb);
 		}
 		iskipped = 0;
-		Graphics_line (my g, xb, yb, x, y);
+		Graphics_line (my graphics.get(), xb, yb, x, y);
 
 		VowelEditor_Vowel_updateTiers (me, thee, t, x, y);
 		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (t)));
@@ -1310,10 +1310,10 @@ static void gui_drawingarea_cb_click (VowelEditor me, GuiDrawingArea_ClickEvent 
 	GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (t)));
 	VowelEditor_Vowel_updateTiers (me, thee, t, x, y);
 
-	Graphics_xorOff (my g);
+	Graphics_xorOff (my graphics.get());
 
 end:
-	Graphics_unsetInner (my g);
+	Graphics_unsetInner (my graphics.get());
 
 	if (! my shiftKeyPressed) {
 		my vowel = athee.move();
@@ -1340,7 +1340,6 @@ static void updateWidgets (void *void_me) {
 }
 
 void structVowelEditor :: v_destroy () {
-	forget (g);
 	VowelEditor_Parent :: v_destroy ();
 }
 
@@ -1446,9 +1445,9 @@ autoVowelEditor VowelEditor_create (const char32 *title, Daata data) {
 #if motif
 		Melder_assert (XtWindow (my drawingArea -> d_widget));
 #endif
-		my g = Graphics_create_xmdrawingarea (my drawingArea);
-		Melder_assert (my g);
-		Graphics_setFontSize (my g, 12);
+		my graphics = Graphics_create_xmdrawingarea (my drawingArea);
+		Melder_assert (my graphics);
+		Graphics_setFontSize (my graphics.get(), 12);
 		Editor_setPublicationCallback (me.peek(), cb_publish);
 
 		my f1min = prefs.f1min;

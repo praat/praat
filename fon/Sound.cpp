@@ -34,7 +34,7 @@
 
 Thing_implement (Sound, Vector, 2);
 
-Sound Sound_clipboard;
+autoSound Sound_clipboard;
 
 void structSound :: v_info () {
 	structDaata :: v_info ();

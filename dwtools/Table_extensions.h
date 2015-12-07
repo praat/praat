@@ -53,7 +53,7 @@ autoTable Table_getOneWayAnalysisOfVarianceF (Table me, long column, long groupC
 
 autoTable Table_getOneWayKruskalWallis (Table me, long column, long groupColumn, double *degreesOfFreedom, double *kruskalWallis, double *probability);
 
-autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, long column, long groupColumnA, long groupColumnB, Table *means, Table *factorLevelSizes);
+autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, long column, long groupColumnA, long groupColumnB, autoTable *means, autoTable *factorLevelSizes);
 
 void Table_verticalErrorBarsPlotWhere (Table me, Graphics g, long xcolumn, long ycolumn, double xmin, double xmax, 
 	double ymin, double ymax, long yci_min, long yci_max, double bar_mm, int garnish, const char32 *formula, Interpreter interpreter);

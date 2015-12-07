@@ -395,7 +395,7 @@ void praat_newWithFile (autoDaata me, MelderFile file, const char32 *myName) {
 			theCurrentPraatObjects -> n);
 	}
 	CLASS = my classInfo;
-	OBJECT = me.transfer();   // FIXME: should be move()
+	OBJECT = me.releaseToAmbiguousOwner();   // FIXME: should be move()
 	SELECTED = false;
 	for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
 		EDITOR [ieditor] = nullptr;
@@ -803,7 +803,8 @@ static void helpProc (const char32 *query) {
 		return;
 	}
 	try {
-		Manual_create (query, theCurrentPraatApplication -> manPages, false);
+		autoManual manual = Manual_create (query, theCurrentPraatApplication -> manPages, false);
+		manual.releaseToUser();
 	} catch (MelderError) {
 		Melder_flushError (U"help: no help on \"", query, U"\".");
 	}
@@ -1016,53 +1017,20 @@ static bool tryToAttachToTheCommandLine ()
 		 * has to be handled explicitly, as here.
 		 */
 		if (AttachConsole (ATTACH_PARENT_PROCESS)) {   // was Praat called from either a console window or a "system" command?
-			/*
-			 * Redirect stdout to the console (note: no UTF-8!).
-			 */
-			HANDLE handle = GetStdHandle (STD_OUTPUT_HANDLE);
-			int fileHandle = _open_osfhandle ((intptr_t) handle, _O_TEXT);
-			FILE* f = _fdopen (fileHandle, "w");
-			*stdout = *f;
-			setvbuf (stdout, nullptr, _IONBF, 0);
-			/*
-			 * Redirect stderr to the console (note: no UTF-8!).
-			 */
-			handle = GetStdHandle (STD_ERROR_HANDLE);
-			fileHandle = _open_osfhandle ((intptr_t) handle, _O_TEXT);
-			f = _fdopen (fileHandle, "w");
-			*stderr = *f;
-			setvbuf (stderr, nullptr, _IONBF, 0);
-			/*
-			 * Redirect stdin from the console (note: no UTF-8!).
-			 */
-			handle = GetStdHandle (STD_INPUT_HANDLE);
-			fileHandle = _open_osfhandle ((intptr_t) handle, _O_TEXT);
-			f = _fdopen (fileHandle, "r");
-			*stdin = *f;
-			setvbuf (stdin, nullptr, _IONBF, 0);
-			/*
-			 */
 			weHaveSucceeded = true;
-		} else {   // Praat was called from Windows Explorer, typically by double-clicking or dropping a file
-			DWORD err = GetLastError ();
-			if (err == ERROR_ACCESS_DENIED) {
-				printf ("Apparently Praat has been called as a console application.\n"
-					"Did you compile it without the -mwindows flag?\n");
-				Melder_fatal (U"Apparently Praat has been called as a console application.\n"
-					"Did you compile it without the -mwindows flag?");
-			} else if (err == ERROR_INVALID_HANDLE) {
-				(void) 0;   // a normal case: the parent process is Windows Explorer or so, which doesn't have a console (Windows XP, 10?)
-			} else if (err == ERROR_GEN_FAILURE) {
-				(void) 0;   // another normal case: there is no parent process (Windows 7?)
-			} else {
-				printf ("AttachConsole() returned unknown error %d\n", (int) err);
-				Melder_fatal (U"AttachConsole() returned unknown error ", err);
-			}
 		}
 	#else
-		weHaveSucceeded = isatty (fileno (stdout));
-			// this is true if Praat was called from a terminal window or a system() command or Xcode,
-			// and false if Praat was called from the Finder by double-clicking or dropping a file.
+		weHaveSucceeded = isatty (fileno (stdin)) || isatty (fileno (stdout)) || isatty (fileno (stderr));
+		/*
+			The result is `true` if Praat was called from a terminal window or some system() commands or Xcode,
+			and `false` if Praat was called from the Finder by double-clicking or dropping a file.
+			
+			FIXME:
+			The result is incorrectly `false` if the output is redirected to a file or pipe.
+			A proposed improvement is therefore:
+				isatty (fileno (stdin)) || isatty (fileno (stdout)) || isatty (fileno (stderr))
+			This might be incorrectly false only if all three streams are redirected, but this hasn't been tested yet.
+		*/
 	#endif
 	return weHaveSucceeded;
 }
@@ -1145,20 +1113,23 @@ void praat_init (const char32 *title, int argc, char **argv)
 		} else if (strequ (argv [praatP.argumentNumber], "--version")) {
 			#define xstr(s) str(s)
 			#define str(s) #s
-			printf ("%s %s (%s %d, %d)\n", Melder_peek32to8 (title), xstr (PRAAT_VERSION_STR), xstr (PRAAT_MONTH), PRAAT_DAY, PRAAT_YEAR);
+			Melder_information (title, U" " xstr (PRAAT_VERSION_STR) " (" xstr (PRAAT_MONTH) " ", PRAAT_DAY, U" ", PRAAT_YEAR, U")");
 			exit (0);
 		} else if (strequ (argv [praatP.argumentNumber], "--help")) {
-			printf ("Usage: praat [options] script-file-name [script-arguments]\n");
-			printf ("Options:\n");
-			printf ("  --open           interpret the command line arguments as files to be opened in the GUI\n");
-			printf ("  --run            interpret the command line arguments as a script file name and its arguments\n");
-			printf ("                   (--run is superfluous when you use a Console or Terminal window)\n");
-			printf ("  --no-pref-files  don't read or write the preferences file and the buttons file\n");
-			printf ("  --no-plugins     don't activate the plugins\n");
-			printf ("  --pref-dir=DIR   set the preferences directory to DIR\n");
-			printf ("  --version        print the Praat version\n");
-			printf ("  --help           print this list of command line options\n");
-			printf ("  -a, --ansi       on Windows: use ISO Latin-1 encoding instead of UTF-16LE (not recommended)\n");
+			MelderInfo_open ();
+			MelderInfo_writeLine (U"Usage: praat [options] script-file-name [script-arguments]");
+			MelderInfo_writeLine (U"Options:");
+			MelderInfo_writeLine (U"  --open           regard the command line as files to be opened in the GUI");
+			MelderInfo_writeLine (U"  --run            regard the command line as a script to run, with its arguments");
+			MelderInfo_writeLine (U"                   (--run is superfluous when you use a Console or Terminal)");
+			MelderInfo_writeLine (U"  --no-pref-files  don't read or write the preferences file and the buttons file");
+			MelderInfo_writeLine (U"  --no-plugins     don't activate the plugins");
+			MelderInfo_writeLine (U"  --pref-dir=DIR   set the preferences directory to DIR");
+			MelderInfo_writeLine (U"  --version        print the Praat version");
+			MelderInfo_writeLine (U"  --help           print this list of command line options");
+			MelderInfo_writeLine (U"  -a, --ansi       Windows only: use ISO Latin-1 encoding instead of UTF-16LE");
+			MelderInfo_writeLine (U"                   (this option is needed when you redirect to a pipe or file");
+			MelderInfo_close ();
 			exit (0);
 		} else if (strequ (argv [praatP.argumentNumber], "-a") || strequ (argv [praatP.argumentNumber], "--ansi")) {
 			Melder_consoleIsAnsi = true;
@@ -1443,7 +1414,7 @@ void praat_init (const char32 *title, int argc, char **argv)
 		Melder_setHelpProc (helpProc);
 	}
 	Data_setPublishProc (publishProc);
-	theCurrentPraatApplication -> manPages = ManPages_create ();
+	theCurrentPraatApplication -> manPages = ManPages_create ().releaseToAmbiguousOwner();
 
 	trace (U"creating the Picture window");
 	trace (U"before picture window shows: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));

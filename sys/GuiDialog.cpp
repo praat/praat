@@ -149,7 +149,7 @@ GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int heigh
 			XmNautoUnmanage, False, nullptr);
 	#endif
 	my d_shell = me.get();
-	return me.transfer();
+	return me.releaseToAmbiguousOwner();
 }
 
 /* End of file GuiDialog.cpp */

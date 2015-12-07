@@ -252,7 +252,7 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 	if (flags & GuiButton_INSENSITIVE) {
 		GuiThing_setSensitive (me.get(), false);
 	}
-	return me.transfer();
+	return me.releaseToAmbiguousOwner();
 }
 
 GuiButton GuiButton_createShown (GuiForm parent, int left, int right, int top, int bottom,

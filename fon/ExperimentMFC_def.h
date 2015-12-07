@@ -38,9 +38,13 @@ oo_DEFINE_STRUCT (SoundMFC)
 
 	oo_STRING (name)
 	#if !oo_READING && !oo_WRITING
-		oo_OBJECT (Sound, 0, sound)
+		oo_AUTO_OBJECT (Sound, 0, sound)
 	#endif
 		
+	#if oo_DESTROYING
+		sound.reset();
+	#endif
+
 oo_END_STRUCT (SoundMFC)
 #undef ooSTRUCT
 
@@ -53,9 +57,13 @@ oo_DEFINE_STRUCT (StimulusMFC)
 		oo_STRING (visibleText)
 	oo_ENDFROM
 	#if !oo_READING && !oo_WRITING
-		oo_OBJECT (Sound, 0, sound)
+		oo_AUTO_OBJECT (Sound, 0, sound)
 	#endif
-		
+
+	#if oo_DESTROYING
+		sound.reset();
+	#endif
+
 oo_END_STRUCT (StimulusMFC)
 #undef ooSTRUCT
 
@@ -76,7 +84,11 @@ oo_DEFINE_STRUCT (ResponseMFC)
 	oo_ENDFROM
 	oo_STRING (name)
 	#if !oo_READING && !oo_WRITING
-		oo_OBJECT (Sound, 0, sound)
+		oo_AUTO_OBJECT (Sound, 0, sound)
+	#endif
+
+	#if oo_DESTROYING
+		sound.reset();
 	#endif
 
 oo_END_STRUCT (ResponseMFC)

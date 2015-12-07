@@ -46,7 +46,7 @@
 /////////////////////////////////////////////////////
 
 // Pattern_to_Categories_cluster                                                                            
-Categories Pattern_to_Categories_cluster
+autoCategories Pattern_to_Categories_cluster
 (
     Pattern p,              // source
     FeatureWeights fws,     // feature weights

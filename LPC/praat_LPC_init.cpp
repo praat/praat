@@ -858,7 +858,7 @@ DO
 	LOOP {
 		iam (LPC);
 		autoSpectrogram thee = LPC_to_Spectrogram (me, GET_REAL (U"Minimum frequency resolution"), GET_REAL (U"Bandwidth reduction"), GET_REAL (U"De-emphasis frequency"));
-		praat_new (thee.transfer(), my name);
+		praat_new (thee.move(), my name);
 	}
 END
 

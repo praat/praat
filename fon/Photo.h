@@ -2,7 +2,7 @@
 #define _Photo_h_
 /* Photo.h
  *
- * Copyright (C) 2013,2014 Paul Boersma
+ * Copyright (C) 2013,2014,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ void Photo_init (Photo me,
 	double xmin, double xmax, long nx, double dx, double x1,
 	double ymin, double ymax, long ny, double dy, double y1);
 
-Photo Photo_create
+autoPhoto Photo_create
 	(double xmin, double xmax, long nx, double dx, double x1,
 	 double ymin, double ymax, long ny, double dy, double y1);
 /*
@@ -55,7 +55,7 @@ Photo Photo_create
 		result -> d_transparency -> z [1..ny] [1..nx] == 0.0;
 */
 
-Photo Photo_createSimple (long numberOfRows, long numberOfColumns);
+autoPhoto Photo_createSimple (long numberOfRows, long numberOfColumns);
 /*
 	Function:
 		return a new opaque black Photo.
@@ -78,7 +78,7 @@ Photo Photo_createSimple (long numberOfRows, long numberOfColumns);
 		result -> d_transparency -> z [1..ny] [1..nx] == 0.0;
 */
 
-Photo Photo_readFromImageFile (MelderFile file);
+autoPhoto Photo_readFromImageFile (MelderFile file);
 
 double_rgbt Photo_getValueAtXY (Photo me, double x, double y);
 /*

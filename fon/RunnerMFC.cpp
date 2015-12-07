@@ -35,16 +35,11 @@
 Thing_implement (RunnerMFC, Editor, 0);
 
 void structRunnerMFC :: v_destroy () {
-	if (our experiments) {
-		our experiments -> size = 0;   // give ownership back to whoever thinks they own the experiments. BUG: can be dontOwnItems
-		forget (our experiments);
-	}
-	forget (our graphics);
 	our RunnerMFC_Parent :: v_destroy ();
 }
 
 void structRunnerMFC :: v_dataChanged () {
-	Graphics_updateWs (our graphics);
+	Graphics_updateWs (our graphics.get());
 }
 
 static int RunnerMFC_startExperiment (RunnerMFC me) {
@@ -53,17 +48,17 @@ static int RunnerMFC_startExperiment (RunnerMFC me) {
 	ExperimentMFC_start ((ExperimentMFC) my data);
 	Thing_setName (me, ((ExperimentMFC) my data) -> name);
 	Editor_broadcastDataChanged (me);
-	Graphics_updateWs (my graphics);
+	Graphics_updateWs (my graphics.get());
 	return 1;
 }
 
 static void drawControlButton (RunnerMFC me, double left, double right, double bottom, double top, const char32 *visibleText) {
-	Graphics_setColour (my graphics, Graphics_MAROON);
-	Graphics_setLineWidth (my graphics, 3.0);
-	Graphics_fillRectangle (my graphics, left, right, bottom, top);
-	Graphics_setColour (my graphics, Graphics_YELLOW);
-	Graphics_rectangle (my graphics, left, right, bottom, top);
-	Graphics_text (my graphics, 0.5 * (left + right), 0.5 * (bottom + top), visibleText);
+	Graphics_setColour (my graphics.get(), Graphics_MAROON);
+	Graphics_setLineWidth (my graphics.get(), 3.0);
+	Graphics_fillRectangle (my graphics.get(), left, right, bottom, top);
+	Graphics_setColour (my graphics.get(), Graphics_YELLOW);
+	Graphics_rectangle (my graphics.get(), left, right, bottom, top);
+	Graphics_text (my graphics.get(), 0.5 * (left + right), 0.5 * (bottom + top), visibleText);
 }
 
 static void gui_drawingarea_cb_expose (RunnerMFC me, GuiDrawingArea_ExposeEvent event) {
@@ -72,17 +67,17 @@ static void gui_drawingarea_cb_expose (RunnerMFC me, GuiDrawingArea_ExposeEvent 
 	ExperimentMFC experiment = (ExperimentMFC) my data;
 	long iresponse;
 	if (! my data) return;
-	Graphics_setGrey (my graphics, 0.8);
-	Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
-	Graphics_setGrey (my graphics, 0.0);
+	Graphics_setGrey (my graphics.get(), 0.8);
+	Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setGrey (my graphics.get(), 0.0);
 	if (experiment -> trial == 0) {
-		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
-		Graphics_setFontSize (my graphics, 24);
-		Graphics_text (my graphics, 0.5, 0.5, experiment -> startText);
+		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
+		Graphics_setFontSize (my graphics.get(), 24);
+		Graphics_text (my graphics.get(), 0.5, 0.5, experiment -> startText);
 	} else if (experiment -> pausing) {
-		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
-		Graphics_setFontSize (my graphics, 24);
-		Graphics_text (my graphics, 0.5, 0.5, experiment -> pauseText);
+		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
+		Graphics_setFontSize (my graphics.get(), 24);
+		Graphics_text (my graphics.get(), 0.5, 0.5, experiment -> pauseText);
 		if (experiment -> oops_right > experiment -> oops_left && experiment -> trial > 1) {
 			drawControlButton (me,
 				experiment -> oops_left, experiment -> oops_right, experiment -> oops_bottom, experiment -> oops_top,
@@ -92,25 +87,25 @@ static void gui_drawingarea_cb_expose (RunnerMFC me, GuiDrawingArea_ExposeEvent 
 		const char32 *visibleText = experiment -> stimulus [experiment -> stimuli [experiment -> trial]]. visibleText;
 		autostring32 visibleText_dup = Melder_dup_f (visibleText ? visibleText : U"");
 		char32 *visibleText_p = visibleText_dup.peek();
-		Graphics_setFont (my graphics, kGraphics_font_TIMES);
-		Graphics_setFontSize (my graphics, 10);
-		Graphics_setColour (my graphics, Graphics_BLACK);
-		Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_TOP);
-		Graphics_text (my graphics, 0, 1,   experiment -> trial, U" / ", experiment -> numberOfTrials);
-		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_TOP);
-		Graphics_setFontSize (my graphics, 24);
+		Graphics_setFont (my graphics.get(), kGraphics_font_TIMES);
+		Graphics_setFontSize (my graphics.get(), 10);
+		Graphics_setColour (my graphics.get(), Graphics_BLACK);
+		Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_TOP);
+		Graphics_text (my graphics.get(), 0.0, 1.0,   experiment -> trial, U" / ", experiment -> numberOfTrials);
+		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_TOP);
+		Graphics_setFontSize (my graphics.get(), 24);
 		/*
 		 * The run text.
 		 */
 		if (visibleText_p [0] != U'\0') {
 			char32 *visibleText_q = str32chr (visibleText_p, U'|');
 			if (visibleText_q) *visibleText_q = '\0';
-			Graphics_text (my graphics, 0.5, 1.0, visibleText_p [0] != '\0' ? visibleText_p : experiment -> runText);
+			Graphics_text (my graphics.get(), 0.5, 1.0, visibleText_p [0] != '\0' ? visibleText_p : experiment -> runText);
 			if (visibleText_q) visibleText_p = visibleText_q + 1; else visibleText_p += str32len (visibleText_p);
 		} else {
-			Graphics_text (my graphics, 0.5, 1.0, experiment -> runText);
+			Graphics_text (my graphics.get(), 0.5, 1.0, experiment -> runText);
 		}
-		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
+		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
 		for (iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
 			ResponseMFC response = & experiment -> response [iresponse];
 			char32 *textToDraw = response -> label;   // can be overridden
@@ -123,32 +118,32 @@ static void gui_drawingarea_cb_expose (RunnerMFC me, GuiDrawingArea_ExposeEvent 
 			if (str32nequ (textToDraw, U"\\FI", 3)) {
 				structMelderFile file = { 0 };
 				MelderDir_relativePathToFile (& experiment -> rootDirectory, textToDraw + 3, & file);
-				Graphics_imageFromFile (my graphics, Melder_fileToPath (& file), response -> left, response -> right, response -> bottom, response -> top);
+				Graphics_imageFromFile (my graphics.get(), Melder_fileToPath (& file), response -> left, response -> right, response -> bottom, response -> top);
 			} else {
-				Graphics_setColour (my graphics,
+				Graphics_setColour (my graphics.get(),
 					response -> name [0] == U'\0' ? Graphics_SILVER :
 					experiment -> responses [experiment -> trial] == iresponse ? Graphics_RED :
 					experiment -> ok_right > experiment -> ok_left || experiment -> responses [experiment -> trial] == 0 ?
 					Graphics_YELLOW : Graphics_SILVER);
-				Graphics_setLineWidth (my graphics, 3.0);
-				Graphics_fillRectangle (my graphics, response -> left, response -> right, response -> bottom, response -> top);
-				Graphics_setColour (my graphics, Graphics_MAROON);
-				Graphics_rectangle (my graphics, response -> left, response -> right, response -> bottom, response -> top);
-				Graphics_setFontSize (my graphics, response -> fontSize ? response -> fontSize : 24);
-				Graphics_text (my graphics, 0.5 * (response -> left + response -> right),
+				Graphics_setLineWidth (my graphics.get(), 3.0);
+				Graphics_fillRectangle (my graphics.get(), response -> left, response -> right, response -> bottom, response -> top);
+				Graphics_setColour (my graphics.get(), Graphics_MAROON);
+				Graphics_rectangle (my graphics.get(), response -> left, response -> right, response -> bottom, response -> top);
+				Graphics_setFontSize (my graphics.get(), response -> fontSize ? response -> fontSize : 24);
+				Graphics_text (my graphics.get(), 0.5 * (response -> left + response -> right),
 					0.5 * (response -> bottom + response -> top), textToDraw);
 			}
-			Graphics_setFontSize (my graphics, 24);
+			Graphics_setFontSize (my graphics.get(), 24);
 		}
 		for (iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
 			GoodnessMFC goodness = & experiment -> goodness [iresponse];
-			Graphics_setColour (my graphics, experiment -> responses [experiment -> trial] == 0 ? Graphics_SILVER :
+			Graphics_setColour (my graphics.get(), experiment -> responses [experiment -> trial] == 0 ? Graphics_SILVER :
 				experiment -> goodnesses [experiment -> trial] == iresponse ? Graphics_RED : Graphics_YELLOW);
-			Graphics_setLineWidth (my graphics, 3.0);
-			Graphics_fillRectangle (my graphics, goodness -> left, goodness -> right, goodness -> bottom, goodness -> top);
-			Graphics_setColour (my graphics, Graphics_MAROON);
-			Graphics_rectangle (my graphics, goodness -> left, goodness -> right, goodness -> bottom, goodness -> top);
-			Graphics_text (my graphics, 0.5 * (goodness -> left + goodness -> right), 0.5 * (goodness -> bottom + goodness -> top), goodness -> label);
+			Graphics_setLineWidth (my graphics.get(), 3.0);
+			Graphics_fillRectangle (my graphics.get(), goodness -> left, goodness -> right, goodness -> bottom, goodness -> top);
+			Graphics_setColour (my graphics.get(), Graphics_MAROON);
+			Graphics_rectangle (my graphics.get(), goodness -> left, goodness -> right, goodness -> bottom, goodness -> top);
+			Graphics_text (my graphics.get(), 0.5 * (goodness -> left + goodness -> right), 0.5 * (goodness -> bottom + goodness -> top), goodness -> label);
 		}
 		if (experiment -> replay_right > experiment -> replay_left && my numberOfReplays < experiment -> maximumNumberOfReplays) {
 			drawControlButton (me,
@@ -169,9 +164,9 @@ static void gui_drawingarea_cb_expose (RunnerMFC me, GuiDrawingArea_ExposeEvent 
 				experiment -> oops_label);
 		}
 	} else {
-		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
-		Graphics_setFontSize (my graphics, 24);
-		Graphics_text (my graphics, 0.5, 0.5, experiment -> endText);
+		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
+		Graphics_setFontSize (my graphics.get(), 24);
+		Graphics_text (my graphics.get(), 0.5, 0.5, experiment -> endText);
 		if (experiment -> oops_right > experiment -> oops_left && experiment -> trial > 1) {
 			drawControlButton (me,
 				experiment -> oops_left, experiment -> oops_right, experiment -> oops_bottom, experiment -> oops_top,
@@ -182,10 +177,10 @@ static void gui_drawingarea_cb_expose (RunnerMFC me, GuiDrawingArea_ExposeEvent 
 
 static void gui_drawingarea_cb_resize (RunnerMFC me, GuiDrawingArea_ResizeEvent event) {
 	if (! my graphics) return;
-	Graphics_setWsViewport (my graphics, 0, event -> width, 0, event -> height);
-	Graphics_setWsWindow (my graphics, 0, event -> width, 0, event -> height);
-	Graphics_setViewport (my graphics, 0, event -> width, 0, event -> height);
-	Graphics_updateWs (my graphics);
+	Graphics_setWsViewport (my graphics.get(), 0.0, event -> width, 0.0, event -> height);
+	Graphics_setWsWindow (my graphics.get(), 0.0, event -> width, 0.0, event -> height);
+	Graphics_setViewport (my graphics.get(), 0.0, event -> width, 0.0, event -> height);
+	Graphics_updateWs (my graphics.get());
 }
 
 static void do_ok (RunnerMFC me) {
@@ -195,21 +190,21 @@ static void do_ok (RunnerMFC me) {
 	if (experiment -> trial == experiment -> numberOfTrials) {
 		experiment -> trial ++;
 		Editor_broadcastDataChanged (me);
-		Graphics_updateWs (my graphics);
+		Graphics_updateWs (my graphics.get());
 	} else if (experiment -> breakAfterEvery != 0 && experiment -> trial % experiment -> breakAfterEvery == 0) {
 		experiment -> pausing = true;
 		Editor_broadcastDataChanged (me);
-		Graphics_updateWs (my graphics);
+		Graphics_updateWs (my graphics.get());
 	} else {
 		experiment -> trial ++;
 		Editor_broadcastDataChanged (me);
 		if (experiment -> blankWhilePlaying) {
-			Graphics_setGrey (my graphics, 0.8);
-			Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
-			Graphics_setGrey (my graphics, 0.0);
-			Graphics_flushWs (my graphics);
+			Graphics_setGrey (my graphics.get(), 0.8);
+			Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
+			Graphics_setGrey (my graphics.get(), 0.0);
+			Graphics_flushWs (my graphics.get());
 		}
-		Graphics_updateWs (my graphics);
+		Graphics_updateWs (my graphics.get());
 		if (experiment -> stimuliAreSounds) {
 			autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
 			if (experiment -> blankWhilePlaying)
@@ -233,12 +228,12 @@ static void do_oops (RunnerMFC me) {
 	my numberOfReplays = 0;
 	Editor_broadcastDataChanged (me);
 	if (experiment -> blankWhilePlaying) {
-		Graphics_setGrey (my graphics, 0.8);
-		Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
-		Graphics_setGrey (my graphics, 0.0);
-		Graphics_flushWs (my graphics);
+		Graphics_setGrey (my graphics.get(), 0.8);
+		Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_setGrey (my graphics.get(), 0.0);
+		Graphics_flushWs (my graphics.get());
 	}
-	Graphics_updateWs (my graphics);
+	Graphics_updateWs (my graphics.get());
 	if (experiment -> stimuliAreSounds) {
 		autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
 		if (experiment -> blankWhilePlaying)
@@ -253,12 +248,12 @@ static void do_replay (RunnerMFC me) {
 	my numberOfReplays ++;
 	Editor_broadcastDataChanged (me);
 	if (experiment -> blankWhilePlaying) {
-		Graphics_setGrey (my graphics, 0.8);
-		Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
-		Graphics_setGrey (my graphics, 0.0);
-		Graphics_flushWs (my graphics);
+		Graphics_setGrey (my graphics.get(), 0.8);
+		Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_setGrey (my graphics.get(), 0.0);
+		Graphics_flushWs (my graphics.get());
 	}
-	Graphics_updateWs (my graphics);
+	Graphics_updateWs (my graphics.get());
 	if (experiment -> stimuliAreSounds) {
 		autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
 		if (experiment -> blankWhilePlaying)
@@ -275,17 +270,17 @@ static void gui_drawingarea_cb_click (RunnerMFC me, GuiDrawingArea_ClickEvent ev
 	if (! experiment -> blankWhilePlaying)
 		reactionTime -= experiment -> stimulusInitialSilenceDuration;
 	double x, y;
-	Graphics_DCtoWC (my graphics, event -> x, event -> y, & x, & y);
+	Graphics_DCtoWC (my graphics.get(), event -> x, event -> y, & x, & y);
 	if (experiment -> trial == 0) {   // the first click of the experiment
 		experiment -> trial ++;
 		Editor_broadcastDataChanged (me);
 		if (experiment -> blankWhilePlaying) {
-			Graphics_setGrey (my graphics, 0.8);
-			Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
-			Graphics_setGrey (my graphics, 0.0);
-			Graphics_flushWs (my graphics);
+			Graphics_setGrey (my graphics.get(), 0.8);
+			Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
+			Graphics_setGrey (my graphics.get(), 0.0);
+			Graphics_flushWs (my graphics.get());
 		}
-		Graphics_updateWs (my graphics);
+		Graphics_updateWs (my graphics.get());
 		if (experiment -> stimuliAreSounds) {
 			if (experiment -> numberOfTrials < 1) {
 				Melder_flushError (U"There are zero trials in this experiment.");
@@ -307,12 +302,12 @@ static void gui_drawingarea_cb_click (RunnerMFC me, GuiDrawingArea_ClickEvent ev
 			experiment -> trial ++;
 			Editor_broadcastDataChanged (me);
 			if (experiment -> blankWhilePlaying) {
-				Graphics_setGrey (my graphics, 0.8);
-				Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
-				Graphics_setGrey (my graphics, 0.0);
-				Graphics_flushWs (my graphics);
+				Graphics_setGrey (my graphics.get(), 0.8);
+				Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
+				Graphics_setGrey (my graphics.get(), 0.0);
+				Graphics_flushWs (my graphics.get());
 			}
-			Graphics_updateWs (my graphics);
+			Graphics_updateWs (my graphics.get());
 			if (experiment -> stimuliAreSounds) {
 				autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
 				if (experiment -> blankWhilePlaying)
@@ -349,7 +344,7 @@ static void gui_drawingarea_cb_click (RunnerMFC me, GuiDrawingArea_ClickEvent ev
 						do_ok (me);
 					} else {
 						Editor_broadcastDataChanged (me);
-						Graphics_updateWs (my graphics);
+						Graphics_updateWs (my graphics.get());
 					}
 				}
 			}
@@ -359,7 +354,7 @@ static void gui_drawingarea_cb_click (RunnerMFC me, GuiDrawingArea_ClickEvent ev
 					if (x > cat -> left && x < cat -> right && y > cat -> bottom && y < cat -> top) {
 						experiment -> goodnesses [experiment -> trial] = iresponse;
 						Editor_broadcastDataChanged (me);
-						Graphics_updateWs (my graphics);
+						Graphics_updateWs (my graphics.get());
 					}
 				}
 			}
@@ -428,7 +423,7 @@ static void gui_drawingarea_cb_key (RunnerMFC me, GuiDrawingArea_KeyEvent event)
 						do_ok (me);
 					} else {
 						Editor_broadcastDataChanged (me);
-						Graphics_updateWs (my graphics);
+						Graphics_updateWs (my graphics.get());
 					}
 				}
 			}
@@ -441,11 +436,11 @@ void structRunnerMFC :: v_createChildren () {
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
 }
 
-autoRunnerMFC RunnerMFC_create (const char32 *title, Ordered experiments) {
+autoRunnerMFC RunnerMFC_create (const char32 *title, autoOrdered experiments) {
 	try {
 		autoRunnerMFC me = Thing_new (RunnerMFC);
 		Editor_init (me.peek(), 0, 0, 2000, 2000, title, nullptr);
-		my experiments = experiments;
+		my experiments = experiments.move();
 		my graphics = Graphics_create_xmdrawingarea (my d_drawingArea);
 
 struct structGuiDrawingArea_ResizeEvent event { my d_drawingArea, 0 };

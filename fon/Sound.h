@@ -218,7 +218,7 @@ autoSound Matrix_to_Sound_mono (Matrix me, long row);
 		thy z [1] [...] == my z [row] [...];
 */
 
-extern Sound Sound_clipboard;
+extern autoSound Sound_clipboard;
 
 /********** Sound_audio.cpp **********/
 

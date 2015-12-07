@@ -35,7 +35,8 @@
 #include "UiPause.h"
 #include "DemoEditor.h"
 
-static Interpreter theInterpreter, theLocalInterpreter;
+static Interpreter theInterpreter;
+static autoInterpreter theLocalInterpreter;
 static Daata theSource;
 static const char32 *theExpression;
 static int theLevel = 1;
@@ -1832,7 +1833,7 @@ void Formula_compile (Interpreter interpreter, Daata data, const char32 *express
 		if (! theLocalInterpreter) {
 			theLocalInterpreter = Interpreter_create (nullptr, nullptr);
 		}
-		theInterpreter = theLocalInterpreter;
+		theInterpreter = theLocalInterpreter.get();
 		#if USE_HASH
 		for (std::unordered_map<std::u32string, InterpreterVariable>::iterator it = theInterpreter -> variablesMap -> begin(); it != theInterpreter -> variablesMap -> end(); it ++) {
 			InterpreterVariable var = it -> second;

@@ -30,7 +30,7 @@
 		like clearWs, flushWs, closeWs, updateWs, setWsViewport.
 	Example:
 		Picture p = Picture_create (myDrawingArea);
-		Graphics g = Picture_getGraphics (p);
+		Graphics g = Picture_peekGraphics (p);
 		Picture_unhighlight (p);
 		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 		Graphics_text (g, 0.5, 0.7, U"Hello");
@@ -50,7 +50,7 @@
 
 Thing_define (Picture, Thing) {
 	GuiDrawingArea drawingArea;
-	Graphics graphics, selectionGraphics;
+	autoGraphics graphics, selectionGraphics;
 	bool sensitive;
 	double selx1, selx2, sely1, sely2;   // selection in NDC co-ordinates
 	void (*selectionChangedCallback) (Picture, void *, double, double, double, double);
@@ -73,7 +73,7 @@ autoPicture Picture_create (GuiDrawingArea drawingArea, bool sensitive);
 		selection is [0, 1] x [0, 1] (NDC), which is invisible;
 */
 
-Graphics Picture_getGraphics (Picture me);
+Graphics Picture_peekGraphics (Picture me);
 /*
 	Function:
 		return the Graphics object.

@@ -481,7 +481,7 @@ GuiList GuiList_create (GuiForm parent, int left, int right, int top, int bottom
 			SetListSelectionFlags (my d_macListHandle, lExtendDrag | lNoRect);
 		XtVaSetValues (my d_xmList, XmNwidth, right > 0 ? right - left + 100 : 530, nullptr);
 	#endif
-	return me.transfer();
+	return me.releaseToAmbiguousOwner();
 }
 
 GuiList GuiList_createShown (GuiForm parent, int left, int right, int top, int bottom, bool allowMultipleSelection, const char32 *header) {

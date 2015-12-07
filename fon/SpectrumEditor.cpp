@@ -46,17 +46,17 @@ void structSpectrumEditor :: v_dataChanged () {
 void structSpectrumEditor :: v_draw () {
 	Spectrum spectrum = (Spectrum) our data;
 
-	Graphics_setWindow (our d_graphics, 0, 1, 0, 1);
-	Graphics_setColour (our d_graphics, Graphics_WHITE);
-	Graphics_fillRectangle (our d_graphics, 0, 1, 0, 1);
-	Graphics_setColour (our d_graphics, Graphics_BLACK);
-	Graphics_rectangle (our d_graphics, 0, 1, 0, 1);
-	Spectrum_drawInside (spectrum, our d_graphics, our d_startWindow, our d_endWindow, our minimum, our maximum);
+	Graphics_setWindow (our d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (our d_graphics.get(), Graphics_WHITE);
+	Graphics_fillRectangle (our d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (our d_graphics.get(), Graphics_BLACK);
+	Graphics_rectangle (our d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Spectrum_drawInside (spectrum, our d_graphics.get(), our d_startWindow, our d_endWindow, our minimum, our maximum);
 	FunctionEditor_drawRangeMark (this, our maximum, Melder_fixed (maximum, 1), U" dB", Graphics_TOP);
 	FunctionEditor_drawRangeMark (this, our minimum, Melder_fixed (minimum, 1), U" dB", Graphics_BOTTOM);
 	if (our cursorHeight > our minimum && our cursorHeight < our maximum)
 		FunctionEditor_drawHorizontalHair (this, our cursorHeight, Melder_fixed (our cursorHeight, 1), U" dB");
-	Graphics_setColour (our d_graphics, Graphics_BLACK);
+	Graphics_setColour (our d_graphics.get(), Graphics_BLACK);
 
 	/* Update buttons. */
 

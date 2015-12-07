@@ -71,7 +71,7 @@ Thing_implement (ExperimentMFC, Daata, 6);
 #include "Experiment_enums.h"
 
 static void readSound (ExperimentMFC me, const char32 *fileNameHead, const char32 *fileNameTail,
-	double medialSilenceDuration, char32 **name, Sound *sound)
+	double medialSilenceDuration, char32 **name, autoSound *sound)
 {
 	char32 fileNameBuffer [256], *fileNames = & fileNameBuffer [0];
 	Melder_sprint (fileNameBuffer,256, *name);
@@ -84,7 +84,7 @@ static void readSound (ExperimentMFC me, const char32 *fileNameHead, const char3
 	#if defined (_WIN32)
 		for (;;) { char32 *slash = str32chr (fileNames, U'/'); if (! slash) break; *slash = U'\\'; }
 	#endif
-	forget (*sound);
+	sound->reset();
 	char32 pathName [kMelder_MAXPATH+1];
 	/*
 	 * 'fileNames' can contain commas, which separate partial file names.
@@ -146,13 +146,10 @@ static void readSound (ExperimentMFC me, const char32 *fileNameHead, const char3
 		/*
 		 * Append the substimuli, perhaps with silent intervals.
 		 */
-		if (! *sound) {
-			*sound = substimulus.transfer();
+		if (*sound) {
+			*sound = Sounds_append (sound->get(), medialSilenceDuration, substimulus.peek());
 		} else {
-			autoSound newStimulus = Sounds_append (*sound, medialSilenceDuration, substimulus.peek());
-			Melder_assert (sound == & (*sound));
-			forget (*sound);
-			*sound = newStimulus.transfer();
+			*sound = substimulus.move();
 		}
 		/*
 		 * Cycle.
@@ -336,13 +333,15 @@ static void playSound (ExperimentMFC me, Sound sound, Sound carrierBefore, Sound
 }
 
 void ExperimentMFC_playStimulus (ExperimentMFC me, long istim) {
-	playSound (me, my stimulus [istim]. sound,
-		my stimulusCarrierBefore. sound, my stimulusCarrierAfter. sound, my stimulusInitialSilenceDuration, my stimulusFinalSilenceDuration);
+	playSound (me, my stimulus [istim]. sound.get(),
+		my stimulusCarrierBefore. sound.get(), my stimulusCarrierAfter. sound.get(),
+		my stimulusInitialSilenceDuration, my stimulusFinalSilenceDuration);
 }
 
 void ExperimentMFC_playResponse (ExperimentMFC me, long iresp) {
-	playSound (me, my response [iresp]. sound,
-		my responseCarrierBefore. sound, my responseCarrierAfter. sound, my responseInitialSilenceDuration, my responseFinalSilenceDuration);
+	playSound (me, my response [iresp]. sound.get(),
+		my responseCarrierBefore. sound.get(), my responseCarrierAfter. sound.get(),
+		my responseInitialSilenceDuration, my responseFinalSilenceDuration);
 }
 
 Thing_implement (ResultsMFC, Daata, 2);

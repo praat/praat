@@ -167,7 +167,7 @@ GuiCheckButton GuiCheckButton_create (GuiForm parent, int left, int right, int t
 			GuiThing_setSensitive (me.get(), false);
 		}
 	#endif
-	return me.transfer();
+	return me.releaseToAmbiguousOwner();
 }
 
 GuiCheckButton GuiCheckButton_createShown (GuiForm parent, int left, int right, int top, int bottom,
