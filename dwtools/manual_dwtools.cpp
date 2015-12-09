@@ -1073,9 +1073,9 @@ DEFINITION (U"determines whether the distribution of the difference of the means
 ENTRY (U"Behaviour")
 NORMAL (U"This is Student's t-test for the significance of a difference of means. "
 	"The test statistic is:")
-FORMULA (U"%t = (%mean__1_ - %mean__2_ - %\\mu) \\Vr (%N / %s^2) with %ndf "
+FORMULA (U"%t = (%x\\-^__1_ - %x\\-^__2_ - %\\mu) \\Vr (%N / %s^2) with %ndf "
 	"degrees of freedom.")
-NORMAL (U"In the formula above %mean__1_ and %mean__2_ are the elements of the "
+NORMAL (U"In the formula above %x\\-^__1_ and %x\\-^__2_ are the elements of the "
 	"means vector, %\\mu is the hypothesized difference and %N is the number of "
 	"observations. The value that we use for the (combined) variance %s^2 is:")
 FORMULA (U"%s^2 = %var__1_ + %var__2_ - 2 * %covar__12_,")
@@ -1083,7 +1083,7 @@ NORMAL (U"when the samples are %paired, and ")
 FORMULA (U"%s^2 = %var__1_ + %var__2_ ")
 NORMAL (U"when they are not.")
 NORMAL (U"The %var__1_ and %var__2_ are the variance components for "
-	"%mean__1_ and %mean__2_, respectively, and %covar__12_ is their covariance."
+	"%x\\-^__1_ and %x\\-^__2_, respectively, and %covar__12_ is their covariance."
 	" When we have %%paired samples% we assume that the two variances are "
 	"not independent and their covariance is subtracted, otherwise their "
 	"covariance is not taken into account. Degrees of freedom parameter %ndf "
@@ -2664,7 +2664,7 @@ NORMAL (U"Because the algorithm performs a projection, the resulting Configurati
 NORMAL (U"See also @@Eigen & TableOfReal: Project...@.")
 MAN_END
 
-MAN_BEGIN (U"PCA & TableOfReal: To TableOfReal (z-scores)...", U"djmw", 20120510)
+MAN_BEGIN (U"PCA & TableOfReal: To TableOfReal (z-scores)...", U"djmw", 20151208)
 INTRO (U"A command to construct a @TableOfReal with z-scores from the selected @TableOfReal"
 	" and @PCA.")
 ENTRY (U"Setting")
@@ -2674,8 +2674,8 @@ ENTRY (U"Algorithm")
 NORMAL (U"The values %d__%ij_ in the new TableOfReal are calculated as")
 FORMULA (U"%d__%ij_ = ##eigenvector#__j_\\.c ##z#__%i_,")
 NORMAL (U"which is the inproduct of the %j-th eigenvector and the z-score vector ##z#__%i_ of the %i-th row whose elements %z__%ij_ are defined as")
-FORMULA (U"%z__%ij_ = (data__%ij_ - mean__%j_) / sqrt (eigenvalue__%j_),")
-NORMAL (U"in which data__%ij_ is the data value at row %i and column %j of the selected TableOfReal and mean__%j_ is the "
+FORMULA (U"%z__%ij_ = (%x__%ij_ - x\\-^__%j_) / sqrt (eigenvalue__%j_),")
+NORMAL (U"in which %x__%ij_ is the data value at row %i and column %j of the selected TableOfReal and x\\-^__%j_ is the "
 	"%j-th centroid value of the PCA. The square root of the %j-th eigenvalue is the standard deviation in "
 	" the %j-th principal direction.")
 MAN_END
@@ -4603,7 +4603,7 @@ ENTRY (U"Remark")
 NORMAL (U"The resulting configuration is unique up to reflections along the new principal directions.")
 MAN_END
 
-MAN_BEGIN (U"TableOfReal: To Correlation", U"djmw", 20020105)
+MAN_BEGIN (U"TableOfReal: To Correlation", U"djmw", 20151209)
 INTRO (U"A command that creates a (%Pearson) @Correlation object from every "
 	"selected @TableOfReal object. The correlations are calculated between "
 	"columns.")
@@ -4611,14 +4611,14 @@ ENTRY (U"Algorithm")
 NORMAL (U"The linear correlation coefficient %r__%ij_ (also called the %%product"
 	" moment correlation coefficient% or %%Pearson's correlation coefficient%) "
 	" between the elements of columns %i and %j is calculated as:")
-FORMULA (U"%r__%ij_ = \\Si__%k_ (%x__%ki_ - %mean__%i_)(%x__%kj_ - %mean__%j_)/"
-	"(\\Vr (\\Si__%k_(%x__%ki_ - %mean__%i_)^2) \\Vr (\\Si__%k_(%x__%kj_ -"
-	" %mean__%j_)^2)),")
-NORMAL (U"where %x__%mn_ is the element %m in column %n, and %mean__%n_ "
+FORMULA (U"%r__%ij_ = \\Si__%k_ (%x__%ki_ - %x\\-^__%i_)(%x__%kj_ - %x\\-^__%j_)/"
+	"(\\Vr (\\Si__%k_(%x__%ki_ - %x\\-^__%i_)^2) \\Vr (\\Si__%k_(%x__%kj_ -"
+	" %x\\-^__%j_)^2)),")
+NORMAL (U"where %x__%mn_ is the element %m in column %n, and %x\\-^__%n_ "
 	"is the mean of column %n.")
 MAN_END
 
-MAN_BEGIN (U"TableOfReal: To Correlation (rank)", U"djmw", 20020105)
+MAN_BEGIN (U"TableOfReal: To Correlation (rank)", U"djmw", 20151209)
 INTRO (U"A command that creates a (%%Spearman rank-order%) @Correlation object "
 	"from every selected @TableOfReal object. The correlations are calculated "
 	"between columns.")
@@ -4626,23 +4626,23 @@ ENTRY (U"Algorithm")
 NORMAL (U"The Spearman rank-order correlation coefficient %r__%ij_ between "
 	"the elements of columns %i and %j is calculated as the linear correlation"
 	" of the ranks:")
-FORMULA (U"%r__%ij_ = \\Si__%k_ (%R__%ki_ - %Rmean__%i_) "
-	"(%R__%kj_ - %Rmean__%j_) / (\\Vr (\\Si__%k_(%R__%ki_ - %Rmean__%i_)^2) "
-	"\\Vr (\\Si__%k_(%R__%kj_ - %Rmean__%j_)^2)),")
+FORMULA (U"%r__%ij_ = \\Si__%k_ (%R__%ki_ - %R\\-^__%i_) "
+	"(%R__%kj_ - %R\\-^__%j_) / (\\Vr (\\Si__%k_(%R__%ki_ - %R\\-^__%i_)^2) "
+	"\\Vr (\\Si__%k_(%R__%kj_ - %R\\-^__%j_)^2)),")
 NORMAL (U"where %R__%mn_ is the rank of element %m in column %n, "
-	"and %Rmean__%n_ is the mean of the ranks in column %n.")
+	"and %R\\-^__%n_ is the mean of the ranks in column %n.")
 MAN_END
 
-MAN_BEGIN (U"TableOfReal: To Covariance", U"djmw", 20020117)
+MAN_BEGIN (U"TableOfReal: To Covariance", U"djmw", 20151209)
 INTRO (U"A command that creates a @Covariance object from every "
 	"selected @TableOfReal object. The covariances are calculated between "
 	"columns.")
 ENTRY (U"Algorithm")
 NORMAL (U"The covariance coefficients %s__%ij_ "
 	" between the elements of columns %i and %j are defined as:")
-FORMULA (U"%s__%ij_ = \\Si__%k_ (%x__%ki_ - %mean__%i_)(%x__%kj_ - %mean__%j_)/"
+FORMULA (U"%s__%ij_ = \\Si__%k_ (%x__%ki_ - %x\\-^__%i_)(%x__%kj_ - %x\\-^__%j_)/"
 	"(%numberOfObservations - %numberOfConstraints),")
-NORMAL (U"where %x__%ki_ is the element %k in column %i, %mean__%i_ "
+NORMAL (U"where %x__%ki_ is the element %k in column %i, %x\\-^__%i_ "
 	"is the mean of column %i, %numberOfObservations equals the number of rows in "
 	"the table, and %numberOfConstraints equals 1.")
 NORMAL (U"The actual calculation goes as follows")
@@ -4682,8 +4682,8 @@ INTRO (U"Calculates Sums of Squares and Cross Products (@SSCP) from the selected
 ENTRY (U"Algorithm")
 NORMAL (U"The sums of squares and cross products %s__%ij_ "
 	" between the elements of columns %i and %j are calculated as:")
-FORMULA (U"%s__%ij_ = \\Si__%k_ (%x__%ki_ - %mean__%i_)(%x__%kj_ - %mean__%j_),")
-NORMAL (U"where %x__%mn_ is the element %m in column %n and %mean__%n_ "
+FORMULA (U"%s__%ij_ = \\Si__%k_ (%x__%ki_ - %x\\-^__%i_)(%x__%kj_ - %x\\-^__%j_),")
+NORMAL (U"where %x__%mn_ is the element %m in column %n and %x\\-^__%n_ "
 	"is the mean of column %n.")
 MAN_END
 

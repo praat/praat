@@ -212,8 +212,9 @@ static void UiField_widgetToValue (UiField me) {
 			} else {
 				GuiText_setString (my text, Melder_integer (my integerValue));
 			}
-			if (my type == UI_NATURAL && my integerValue < 1)
+			if ((my type == UI_NATURAL || my type == UI_CHANNEL) && my integerValue < 1) {
 				Melder_throw (U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U" must be a positive whole number.");
+			}
 		} break; case UI_WORD: {
 			Melder_free (my stringValue);
 			my stringValue = GuiText_getString (my text);
