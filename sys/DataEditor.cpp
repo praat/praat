@@ -796,7 +796,7 @@ autoDataEditor DataEditor_create (const char32 *title, Daata data) {
 		if (Class_getDescription (klas) == nullptr)
 			Melder_throw (U"Class ", klas -> className, U" cannot be inspected.");
 		autoDataEditor me = Thing_new (DataEditor);
-		my d_children = Collection_create (classDataSubEditor, 10);
+		my d_children = Collection_create (10);
 		ClassEditor_init (me.peek(), me.peek(), title, data, Class_getDescription (klas));
 		return me;
 	} catch (MelderError) {

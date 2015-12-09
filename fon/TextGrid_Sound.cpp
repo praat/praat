@@ -426,7 +426,7 @@ void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, dou
 autoCollection TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, long tierNumber, int preserveTimes) {
 	try {
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
-		autoCollection collection = Collection_create (nullptr, tier -> numberOfIntervals ());
+		autoCollection collection = Collection_create (tier -> numberOfIntervals ());
 		for (long iseg = 1; iseg <= tier -> numberOfIntervals (); iseg ++) {
 			TextInterval segment = tier -> interval (iseg);
 			autoSound interval = Sound_extractPart (sound, segment -> xmin, segment -> xmax, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes);
@@ -442,7 +442,7 @@ autoCollection TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, lon
 autoCollection TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound, long tierNumber, int preserveTimes) {
 	try {
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
-		autoCollection collection = Collection_create (nullptr, tier -> numberOfIntervals ());
+		autoCollection collection = Collection_create (tier -> numberOfIntervals ());
 		for (long iseg = 1; iseg <= tier -> numberOfIntervals (); iseg ++) {
 			TextInterval segment = tier -> interval (iseg);
 			if (segment -> text && segment -> text [0] != '\0') {
@@ -463,7 +463,7 @@ autoCollection TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound, l
 {
 	try {
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
-		autoCollection collection = Collection_create (nullptr, tier -> numberOfIntervals ());
+		autoCollection collection = Collection_create (tier -> numberOfIntervals ());
 		long count = 0;
 		for (long iseg = 1; iseg <= tier -> numberOfIntervals (); iseg ++) {
 			TextInterval segment = tier -> interval (iseg);

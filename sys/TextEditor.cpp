@@ -657,7 +657,7 @@ void TextEditor_init (TextEditor me, const char32 *initialText) {
 		Thing_setName (me, U"");
 	}
 	if (! theReferencesToAllOpenTextEditors) {
-		theReferencesToAllOpenTextEditors = Collection_create (classTextEditor, 100);
+		theReferencesToAllOpenTextEditors = Collection_create (100);
 	}
 	if (theReferencesToAllOpenTextEditors) {
 		Collection_addItem_ref (theReferencesToAllOpenTextEditors.get(), me);

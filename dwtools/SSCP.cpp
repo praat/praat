@@ -948,7 +948,7 @@ Thing_implement (SSCPs, Ordered, 0);
 autoSSCPs SSCPs_create () {
 	try {
 		autoSSCPs me = Thing_new (SSCPs);
-		Ordered_init (me.peek(), classSSCP, 10);
+		Ordered_init (me.peek(), 10);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SSCPs not created.");

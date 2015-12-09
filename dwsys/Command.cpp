@@ -49,7 +49,7 @@ Thing_implement (CommandHistory, Ordered, 0);
 autoCommandHistory CommandHistory_create (long maximumCapacity) {
 	try {
 		autoCommandHistory me = Thing_new (CommandHistory);
-		Collection_init (me.peek(), classCommand, maximumCapacity);
+		Collection_init (me.peek(), maximumCapacity);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Command not created.");

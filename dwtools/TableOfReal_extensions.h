@@ -210,7 +210,7 @@ autoTableOfReal TableOfReal_and_TableOfReal_crossCorrelations (TableOfReal me, T
 Thing_define (TablesOfReal, Ordered) {
 };
 
-void TablesOfReal_init (TablesOfReal me, ClassInfo klas);
+void TablesOfReal_init (TablesOfReal me);
 
 autoTablesOfReal TablesOfReal_create ();
 

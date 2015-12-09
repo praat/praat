@@ -364,7 +364,7 @@ Thing_implement (HMMObservationSequences, Collection, 0);
 autoHMMObservationSequences HMMObservationSequences_create () {
 	try {
 		autoHMMObservationSequences me = Thing_new (HMMObservationSequences);
-		Collection_init (me.peek(), classHMMObservationSequence, 1000);
+		Collection_init (me.peek(), 1000);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"HMMObservationSequences not created.");

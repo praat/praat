@@ -26,7 +26,6 @@
 #include "Simple.h"
 
 Thing_define (Collection, Daata) {
-	ClassInfo itemClass;   // the class of which all items must be members (see Thing_isa)
 	bool _ownershipInitialized, _ownItems;
 	long _capacity, size;
 	Thing *item;   // [1..size]
@@ -67,8 +66,8 @@ Thing_define (Collection, Daata) {
 		item [1..size]		// the items.
 */
 
-void Collection_init (Collection me, ClassInfo itemClass, long initialCapacity);
-autoCollection Collection_create (ClassInfo itemClass, long initialCapacity);
+void Collection_init (Collection me, long initialCapacity);
+autoCollection Collection_create (long initialCapacity);
 /*
 	Function:
 		return a new empty Collection.
@@ -181,7 +180,7 @@ Thing_define (Ordered, Collection) {
 };
 
 autoOrdered Ordered_create ();
-void Ordered_init (Ordered me, ClassInfo itemClass, long initialCapacity);
+void Ordered_init (Ordered me, long initialCapacity);
 
 /* Behaviour:
 	Collection_addItem (Ordered) inserts an item at the end.
@@ -207,7 +206,7 @@ Thing_define (Sorted, Collection) {
 		// should compare the keys of two items; returns negative if me < thee, 0 if me == thee, and positive if me > thee
 };
 
-void Sorted_init (Sorted me, ClassInfo itemClass, long initialCapacity);
+void Sorted_init (Sorted me, long initialCapacity);
 
 /* Behaviour:
 	Collection_addItem (Sorted) inserts an item at such a position that the collection stays sorted.
@@ -240,7 +239,7 @@ Thing_define (SortedSet, Sorted) {   // every item must be unique (by key)
 	long v_position (Thing data) override;   // returns 0 (refusal) if the key of 'data' already occurs
 };
 
-void SortedSet_init (SortedSet me, ClassInfo itemClass, long initialCapacity);
+void SortedSet_init (SortedSet me, long initialCapacity);
 
 inline static bool SortedSet_hasItem (SortedSet me, Thing a_item) {
 	return my v_position (a_item) == 0;
@@ -301,7 +300,7 @@ Thing_define (Cyclic, Collection) {   // the cyclic list (a, b, c, d) equals (b,
 	virtual Data_CompareHook v_getCompareHook () { return s_compareHook; }
 };
 
-void Cyclic_init (Cyclic me, ClassInfo itemClass, long initialCapacity);
+void Cyclic_init (Cyclic me, long initialCapacity);
 
 void Cyclic_cycleLeft (Cyclic me);
 void Cyclic_unicize (Cyclic me);

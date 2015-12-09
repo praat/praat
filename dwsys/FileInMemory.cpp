@@ -125,7 +125,7 @@ int structFilesInMemory :: s_compare_id (FileInMemory me, FileInMemory thee) {
 autoFilesInMemory FilesInMemory_create () {
 	try {
 		autoFilesInMemory me = Thing_new (FilesInMemory);
-		Collection_init (me.peek(), classFileInMemory, 30);
+		Collection_init (me.peek(), 30);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FilesInMemory not created.");

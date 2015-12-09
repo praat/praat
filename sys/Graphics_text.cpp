@@ -1727,15 +1727,15 @@ void Graphics_textRect (Graphics me, double x1, double x2, double y1, double y2,
 
 static void _Graphics_text (Graphics me, double xWC, double yWC, const char32 *txt) {
 	if (my wrapWidth == 0.0 && str32chr (txt, U'\n') && my textRotation == 0.0) {
-		double lineSpacingWC = (1.2/72) * my fontSize * my resolution / fabs (my scaleY);
+		double lineSpacingWC = (1.2/72.0) * my fontSize * my resolution / fabs (my scaleY);
 		long numberOfLines = 1;
 		for (const char32 *p = & txt [0]; *p != U'\0'; p ++) {
-			if (*p == '\n') {
+			if (*p == U'\n') {
 				numberOfLines ++;
 			}
 		}
 		yWC +=
-			my verticalTextAlignment == Graphics_TOP ? 0 :
+			my verticalTextAlignment == Graphics_TOP ? 0.0 :
 			my verticalTextAlignment == Graphics_HALF ? 0.5 * (numberOfLines - 1) * lineSpacingWC:
 			(numberOfLines - 1) * lineSpacingWC;
 		autostring32 linesToDraw = Melder_dup_f (txt);

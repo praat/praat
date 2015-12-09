@@ -319,7 +319,7 @@ void ScriptEditor_init (ScriptEditor me, Editor environment, const char32 *initi
 	TextEditor_init (me, initialText);
 	my interpreter = Interpreter_createFromEnvironment (environment);
 	if (! theReferencesToAllOpenScriptEditors) {
-		theReferencesToAllOpenScriptEditors = Collection_create (nullptr, 10);
+		theReferencesToAllOpenScriptEditors = Collection_create (10);
 	}
 	Collection_addItem_ref (theReferencesToAllOpenScriptEditors.get(), me);
 }

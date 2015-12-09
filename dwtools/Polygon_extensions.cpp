@@ -1063,7 +1063,7 @@ static autoPolygon Vertices_to_Polygon (Vertices /* me */, DLLNode *ni) {
 
 static autoCollection Vertices_to_Polygons (Vertices me) {
 	try {
-		autoCollection thee = Collection_create (classPolygon, 10);
+		autoCollection thee = Collection_create (10);
 		DLLNode ni = my front;
 		do {
 			autoPolygon p = Vertices_to_Polygon (me, & ni);

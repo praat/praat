@@ -965,14 +965,14 @@ void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g, long icx, long icy
 
 Thing_implement (TablesOfReal, Ordered, 0);
 
-void TablesOfReal_init (TablesOfReal me, ClassInfo klas) {
-	Ordered_init (me, klas, 10);
+void TablesOfReal_init (TablesOfReal me) {
+	Ordered_init (me, 10);
 }
 
 autoTablesOfReal TablesOfReal_create () {
 	try {
 		autoTablesOfReal me = Thing_new (TablesOfReal);
-		TablesOfReal_init (me.peek(), classTableOfReal);
+		TablesOfReal_init (me.peek());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"TablesOfReal not created.");

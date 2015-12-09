@@ -256,7 +256,7 @@ Daata praat_firstObject_any () {
 }
 
 autoCollection praat_getSelectedObjects () {
-	autoCollection thee = Collection_create (nullptr, 10);
+	autoCollection thee = Collection_create (10);
 	int IOBJECT;
 	LOOP {
 		iam_LOOP (Daata);
