@@ -37,11 +37,11 @@ void structOptimalCeilingTierEditor :: v_play (double fromTime, double toTime) {
 	}
 }
 
-OptimalCeilingTierEditor OptimalCeilingTierEditor_create (const char32 *title, OptimalCeilingTier octier, Sound sound, bool ownSound) {
+autoOptimalCeilingTierEditor OptimalCeilingTierEditor_create (const char32 *title, OptimalCeilingTier octier, Sound sound, bool ownSound) {
 	try {
 		autoOptimalCeilingTierEditor me = Thing_new (OptimalCeilingTierEditor);
 		RealTierEditor_init (me.peek(), title, (RealTier) octier, sound, ownSound);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"OptimalCeilingTier window not created.");
 	}

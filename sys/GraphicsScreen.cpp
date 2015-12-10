@@ -486,7 +486,7 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *void
 	return 1;
 }
 
-Graphics Graphics_create_screen (void *display, void *window, int resolution) {
+autoGraphics Graphics_create_screen (void *display, void *window, int resolution) {
 	autoGraphicsScreen me = Thing_new (GraphicsScreen);
 	my screen = true;
 	#if win
@@ -502,10 +502,10 @@ Graphics Graphics_create_screen (void *display, void *window, int resolution) {
 	#else
 		GraphicsScreen_init (me.get(), display, window);
 	#endif
-	return me.transfer();
+	return me.move();
 }
 
-Graphics Graphics_create_screenPrinter (void *display, void *window) {
+autoGraphics Graphics_create_screenPrinter (void *display, void *window) {
 	autoGraphicsScreen me = Thing_new (GraphicsScreen);
 	my screen = true;
 	my yIsZeroAtTheTop = true;
@@ -534,7 +534,7 @@ Graphics Graphics_create_screenPrinter (void *display, void *window) {
 	#endif
 	Graphics_setWsWindow (me.get(), 0, my paperWidth - 1.0, 13.0 - my paperHeight, 12.0);
 	GraphicsScreen_init (me.get(), display, window);
-	return me.transfer();
+	return me.move();
 }
 
 #if mac && useCarbon
@@ -560,7 +560,7 @@ static void cb_move (GuiObject w, XtPointer void_me, XtPointer call) {
 }
 #endif
 
-Graphics Graphics_create_xmdrawingarea (GuiDrawingArea w) {
+autoGraphics Graphics_create_xmdrawingarea (GuiDrawingArea w) {
 	trace (U"begin");
 	autoGraphicsScreen me = Thing_new (GraphicsScreen);
 	#if gtk
@@ -613,15 +613,15 @@ Graphics Graphics_create_xmdrawingarea (GuiDrawingArea w) {
     #elif cocoa
         NSView *view = (NSView *)my d_drawingArea -> d_widget;
         NSRect bounds = [view bounds];
-        Graphics_setWsViewport (me.get(), 0.0, bounds.size.width, 0, bounds.size.height);
+        Graphics_setWsViewport (me.get(), 0.0, bounds.size.width, 0.0, bounds.size.height);
 	#endif
 	#if mac && useCarbon
 		XtAddCallback (my d_drawingArea -> d_widget, XmNmoveCallback, cb_move, (XtPointer) me.get());
 	#endif
-	return me.transfer();
+	return me.move();
 }
 
-Graphics Graphics_create_pngfile (MelderFile file, int resolution,
+autoGraphics Graphics_create_pngfile (MelderFile file, int resolution,
 	double x1inches, double x2inches, double y1inches, double y2inches)
 {
 	autoGraphicsScreen me = Thing_new (GraphicsScreen);
@@ -703,10 +703,10 @@ Graphics Graphics_create_pngfile (MelderFile file, int resolution,
 		SelectPen (my d_gdiGraphicsContext, GetStockPen (BLACK_PEN));
 		SelectBrush (my d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));
 	#endif
-	return (Graphics) me.transfer();
+	return me.move();
 }
 
-Graphics Graphics_create_pdffile (MelderFile file, int resolution,
+autoGraphics Graphics_create_pdffile (MelderFile file, int resolution,
 	double x1inches, double x2inches, double y1inches, double y2inches)
 {
 	autoGraphicsScreen me = Thing_new (GraphicsScreen);
@@ -758,9 +758,9 @@ Graphics Graphics_create_pdffile (MelderFile file, int resolution,
 			(NUMdefined (y1inches) ? (12.0 - y1inches) : y2inches) * resolution);
 		CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
 	#endif
-	return (Graphics) me.transfer();
+	return me.move();
 }
-Graphics Graphics_create_pdf (void *context, int resolution,
+autoGraphics Graphics_create_pdf (void *context, int resolution,
 	double x1inches, double x2inches, double y1inches, double y2inches)
 {
 	autoGraphicsScreen me = Thing_new (GraphicsScreen);
@@ -784,7 +784,7 @@ Graphics Graphics_create_pdf (void *context, int resolution,
 		CGContextTranslateCTM (my d_macGraphicsContext, - x1inches * resolution, (12.0 - y1inches) * resolution);
 		CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
 	#endif
-	return me.transfer();
+	return me.move();
 }
 
 #if cairo

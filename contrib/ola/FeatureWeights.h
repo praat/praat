@@ -58,7 +58,7 @@ oo_CLASS_CREATE (FeatureWeights, Daata);
 /////////////////////////////////////////////////////
 
 // Create
-FeatureWeights FeatureWeights_create
+autoFeatureWeights FeatureWeights_create
 (
     long nweights           // number of weights
 );
@@ -72,7 +72,7 @@ long FeatureWeights_computePriors
 );
 
 // Compute feature weights (obsolete)
-FeatureWeights FeatureWeights_compute
+autoFeatureWeights FeatureWeights_compute
 (
     Pattern pp,             // Source pattern
     Categories c,           // Source categories
@@ -80,7 +80,7 @@ FeatureWeights FeatureWeights_compute
 );
 
 // Compute feature weights according to the RELIEF-F algorithm
-FeatureWeights FeatureWeights_computeRELIEF
+autoFeatureWeights FeatureWeights_computeRELIEF
 (
     Pattern pp,             // source pattern
     Categories c,           // source categories

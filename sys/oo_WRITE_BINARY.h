@@ -88,11 +88,6 @@
 		for (long j = col1; j <= col2; j ++) \
 			our x [i] [j]. writeBinary (f);
 
-#define oo_OBJECT(Class,version,x)  \
-	binputex ((bool) our x, f); \
-	if (our x) \
-		Data_writeBinary (our x, f);
-
 #define oo_AUTO_OBJECT(Class,version,x)  \
 	binputex ((bool) our x, f); \
 	if (our x) \

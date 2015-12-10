@@ -100,7 +100,7 @@ void structManual :: v_draw () {
 	ManPage page;
 	ManPage_Paragraph paragraph;
 	#if motif
-	Graphics_clearWs (g);
+	Graphics_clearWs (our graphics.get());
 	#endif
 	if (our path == SEARCH_PAGE) {
 		HyperPage_pageTitle (this, U"Best matches");
@@ -552,11 +552,11 @@ void Manual_init (Manual me, const char32 *title, Daata data, bool ownData) {
 	my history [0]. page = Melder_dup_f (title);   // BAD
 }
 
-Manual Manual_create (const char32 *title, Daata data, bool ownData) {
+autoManual Manual_create (const char32 *title, Daata data, bool ownData) {
 	try {
 		autoManual me = Thing_new (Manual);
 		Manual_init (me.peek(), title, data, ownData);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Manual window not created.");
 	}

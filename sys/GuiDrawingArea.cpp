@@ -547,7 +547,7 @@ GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int t
 		_GuiObject_setUserData (my d_widget, me.get());
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 	#endif
-	return me.transfer();
+	return me.releaseToAmbiguousOwner();
 }
 
 GuiDrawingArea GuiDrawingArea_createShown (GuiForm parent, int left, int right, int top, int bottom,
@@ -619,7 +619,7 @@ GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int h
 		_GuiObject_setUserData (my d_widget, me.get());
 		my v_positionInScrolledWindow (my d_widget, width, height, parent);
 	#endif
-	return me.transfer();
+	return me.releaseToAmbiguousOwner();
 }
 
 GuiDrawingArea GuiDrawingArea_createShown (GuiScrolledWindow parent, int width, int height,

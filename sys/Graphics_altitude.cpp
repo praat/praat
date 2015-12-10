@@ -1,6 +1,6 @@
 /* Graphics_altitude.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,17 +45,17 @@ static double *x, *y;
 static int closed;
 static double dx, dy, xoff, yoff;
 
-static int note (double **z, double height, int row, int col, int ori, int forget) {
+static int note (double **z, double height, int row, int col, int ori, int pleaseForget) {
 	++ numberOfPoints;
 	Melder_assert (numberOfPoints <= MAXALTPATH);
 	if (ori == 3) { row ++; ori = 1; } else if (ori == 2) { col ++; ori = 4; }
 	if (ori == 1) {
-		if (forget) right [row - row1] [col - col1] = 1;
+		if (pleaseForget) right [row - row1] [col - col1] = 1;
 		x [numberOfPoints] = xoff +
 			(col + (height - z [row] [col]) / (z [row] [col + 1] - z [row] [col])) * dx;
 		y [numberOfPoints] = yoff + row * dy;
 	} else {   /* ori == 4 */
-		if (forget) below [row - row1] [col - col1] = 1;
+		if (pleaseForget) below [row - row1] [col - col1] = 1;
 		x [numberOfPoints] = xoff + col * dx;
 		y [numberOfPoints] = yoff +
 			(row + (height - z [row] [col]) / (z [row + 1] [col] - z [row] [col])) * dy;

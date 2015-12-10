@@ -53,12 +53,12 @@ void structMovie :: v_info ()
 	MelderInfo_writeLine (U"   First frame centred at: ", x1, U" seconds");
 }
 
-void Movie_init (Movie me, autoSound sound, const char32 *folderName, Strings fileNames)
+void Movie_init (Movie me, autoSound sound, const char32 *folderName, autoStrings fileNames)
 {
 	Sampled_init (me, sound -> xmin, sound -> xmax, fileNames ? fileNames -> numberOfStrings : 0, 0.04, 0.0);
 	my d_sound = sound.move();
 	my d_folderName = Melder_dup (folderName);
-	my d_fileNames = fileNames;
+	my d_fileNames = fileNames.move();
 }
 
 autoMovie Movie_openFromSoundFile (MelderFile file)
@@ -76,7 +76,7 @@ autoMovie Movie_openFromSoundFile (MelderFile file)
 		autoStrings strings = Strings_createAsFileList (Melder_cat (fileNameHead.string, U"*.png"));
 		struct structMelderDir folder;
 		MelderFile_getParentDir (file, & folder);
-		Movie_init (me.peek(), sound.transfer(), Melder_dirToPath (& folder), strings.transfer());
+		Movie_init (me.peek(), sound.move(), Melder_dirToPath (& folder), strings.move());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Movie object not read from file ", file, U".");

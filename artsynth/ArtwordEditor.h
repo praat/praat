@@ -23,7 +23,7 @@
 #include "Artword.h"
 
 Thing_define (ArtwordEditor, Editor) {
-	Graphics graphics;
+	autoGraphics graphics;
 	int feature;
 	GuiList list;
 	GuiDrawingArea drawingArea;

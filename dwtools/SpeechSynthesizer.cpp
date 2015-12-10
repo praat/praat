@@ -335,7 +335,7 @@ static void IntervalTier_addBoundaryUnsorted (IntervalTier me, long iinterval, d
 	if (isNewleftLabel) TextInterval_setText (ti, newLabel);
 
 	autoTextInterval ti_new = TextInterval_create (time, my xmax, (! isNewleftLabel ? newLabel : U""));
-	Sorted_addItem_unsorted (my intervals.get(), ti_new.transfer());
+	Sorted_addItem_unsorted_move (my intervals.get(), ti_new.move());
 }
 
 static void Table_setEventTypeString (Table me) {
@@ -548,7 +548,7 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, 
 			Table_setEventTypeString (my d_events.peek());
 			*events = my d_events.move();
 		}
-		my d_events.reset(nullptr);
+		my d_events.reset();
 		return thee;
 	} catch (MelderError) {
 		espeak_Terminate ();

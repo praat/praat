@@ -1,6 +1,6 @@
 /* Script.cpp
  *
- * Copyright (C) 1997-2011 Paul Boersma
+ * Copyright (C) 1997-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,10 +21,10 @@
 
 Thing_implement (Script, Daata, 0);
 
-Script Script_createFromFile (MelderFile file) {
+autoScript Script_createFromFile (MelderFile file) {
 	autoScript me = Thing_new (Script);
 	MelderFile_copy (file, & my file);
-	return me.transfer();
+	return me;
 }
 
 /* End of file Script.cpp */

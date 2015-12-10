@@ -238,12 +238,12 @@ autoISpline ISpline_createFromStrings (double xmin, double xmax, long degree, co
 
 /****************** fit **********************************************/
 
-void FunctionTerms_and_RealTier_fit (FunctionTerms me, RealTier thee, int *freezeCoefficients, double tol, int ic, Covariance *c);
+void FunctionTerms_and_RealTier_fit (FunctionTerms me, RealTier thee, int *freezeCoefficients, double tol, int ic, autoCovariance *c);
 
-autoPolynomial RealTier_to_Polynomial (RealTier me, long degree, double tol, int ic, Covariance *cvm);
+autoPolynomial RealTier_to_Polynomial (RealTier me, long degree, double tol, int ic, autoCovariance *cvm);
 
-autoLegendreSeries RealTier_to_LegendreSeries (RealTier me, long degree, double tol, int ic, Covariance *cvm);
+autoLegendreSeries RealTier_to_LegendreSeries (RealTier me, long degree, double tol, int ic, autoCovariance *cvm);
 
-autoChebyshevSeries RealTier_to_ChebyshevSeries (RealTier me, long degree, double tol, int ic, Covariance *cvm);
+autoChebyshevSeries RealTier_to_ChebyshevSeries (RealTier me, long degree, double tol, int ic, autoCovariance *cvm);
 
 #endif /* _Polynomial_h_ */

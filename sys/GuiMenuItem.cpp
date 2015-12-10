@@ -377,7 +377,7 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, uint32 flags,
 		XtAddCallback (my d_widget, XmNdestroyCallback, _guiMotifMenuItem_destroyCallback, me.get());
 	#endif
 
-	return me.transfer();
+	return me.releaseToAmbiguousOwner();
 }
 
 GuiMenuItem GuiMenu_addSeparator (GuiMenu menu) {
@@ -418,7 +418,7 @@ GuiMenuItem GuiMenu_addSeparator (GuiMenu menu) {
 	#elif motif
 		XtAddCallback (my d_widget, XmNdestroyCallback, _guiMotifMenuItem_destroyCallback, me.get());
 	#endif
-	return me.transfer();
+	return me.releaseToAmbiguousOwner();
 }
 
 void GuiMenuItem_check (GuiMenuItem me, bool check) {

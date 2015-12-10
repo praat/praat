@@ -84,7 +84,7 @@ static void updateGroup (FunctionEditor me) {
 		thy d_endSelection = my d_endSelection;
 		FunctionEditor_updateText (thee);
 		updateScrollBar (thee);
-		Graphics_updateWs (thy d_graphics);
+		Graphics_updateWs (thy d_graphics.get());
 	}
 }
 
@@ -185,32 +185,32 @@ static void drawNow (FunctionEditor me) {
 	/*
 	 * Be responsive: update the markers now.
 	 */
-	Graphics_setViewport (my d_graphics, my functionViewerLeft, my functionViewerRight, 0.0, my height);
-	Graphics_setWindow (my d_graphics, my functionViewerLeft, my functionViewerRight, 0.0, my height);
-	Graphics_setColour (my d_graphics, Graphics_WINDOW_BACKGROUND_COLOUR);
-	Graphics_fillRectangle (my d_graphics, my functionViewerLeft + MARGIN, my selectionViewerRight - MARGIN, my height - (TOP_MARGIN + space), my height);
-	Graphics_fillRectangle (my d_graphics, my functionViewerLeft, my functionViewerLeft + MARGIN, BOTTOM_MARGIN + ( leftFromWindow ? space * 2 : 0 ), my height);
-	Graphics_fillRectangle (my d_graphics, my functionViewerRight - MARGIN, my functionViewerRight, BOTTOM_MARGIN + ( rightFromWindow ? space * 2 : 0 ), my height);
+	Graphics_setViewport (my d_graphics.get(), my functionViewerLeft, my functionViewerRight, 0.0, my height);
+	Graphics_setWindow (my d_graphics.get(), my functionViewerLeft, my functionViewerRight, 0.0, my height);
+	Graphics_setColour (my d_graphics.get(), Graphics_WINDOW_BACKGROUND_COLOUR);
+	Graphics_fillRectangle (my d_graphics.get(), my functionViewerLeft + MARGIN, my selectionViewerRight - MARGIN, my height - (TOP_MARGIN + space), my height);
+	Graphics_fillRectangle (my d_graphics.get(), my functionViewerLeft, my functionViewerLeft + MARGIN, BOTTOM_MARGIN + ( leftFromWindow ? space * 2 : 0 ), my height);
+	Graphics_fillRectangle (my d_graphics.get(), my functionViewerRight - MARGIN, my functionViewerRight, BOTTOM_MARGIN + ( rightFromWindow ? space * 2 : 0 ), my height);
 	if (my p_showSelectionViewer) {
-		Graphics_setViewport (my d_graphics, my selectionViewerLeft, my selectionViewerRight, 0.0, my height);
-		Graphics_setWindow (my d_graphics, my selectionViewerLeft, my selectionViewerRight, 0.0, my height);
-		Graphics_fillRectangle (my d_graphics, my selectionViewerLeft, my selectionViewerLeft + MARGIN, BOTTOM_MARGIN, my height);
-		Graphics_fillRectangle (my d_graphics, my selectionViewerRight - MARGIN, my selectionViewerRight, BOTTOM_MARGIN, my height);
-		Graphics_fillRectangle (my d_graphics, my selectionViewerLeft + MARGIN, my selectionViewerRight - MARGIN, 0, BOTTOM_MARGIN + space * 3);
+		Graphics_setViewport (my d_graphics.get(), my selectionViewerLeft, my selectionViewerRight, 0.0, my height);
+		Graphics_setWindow (my d_graphics.get(), my selectionViewerLeft, my selectionViewerRight, 0.0, my height);
+		Graphics_fillRectangle (my d_graphics.get(), my selectionViewerLeft, my selectionViewerLeft + MARGIN, BOTTOM_MARGIN, my height);
+		Graphics_fillRectangle (my d_graphics.get(), my selectionViewerRight - MARGIN, my selectionViewerRight, BOTTOM_MARGIN, my height);
+		Graphics_fillRectangle (my d_graphics.get(), my selectionViewerLeft + MARGIN, my selectionViewerRight - MARGIN, 0, BOTTOM_MARGIN + space * 3);
 	}
-	Graphics_setGrey (my d_graphics, 0.0);
+	Graphics_setGrey (my d_graphics.get(), 0.0);
 	#if defined (macintosh)
-		Graphics_line (my d_graphics, my functionViewerLeft, 2.0, my selectionViewerRight, 2.0);
-		Graphics_line (my d_graphics, my functionViewerLeft, my height - 2.0, my selectionViewerRight, my height - 2.0);
+		Graphics_line (my d_graphics.get(), my functionViewerLeft, 2.0, my selectionViewerRight, 2.0);
+		Graphics_line (my d_graphics.get(), my functionViewerLeft, my height - 2.0, my selectionViewerRight, my height - 2.0);
 	#endif
 
-	Graphics_setViewport (my d_graphics, my functionViewerLeft, my functionViewerRight, 0.0, my height);
-	Graphics_setWindow (my d_graphics, my functionViewerLeft, my functionViewerRight, 0.0, my height);
-	Graphics_setTextAlignment (my d_graphics, Graphics_CENTRE, Graphics_HALF);
+	Graphics_setViewport (my d_graphics.get(), my functionViewerLeft, my functionViewerRight, 0.0, my height);
+	Graphics_setWindow (my d_graphics.get(), my functionViewerLeft, my functionViewerRight, 0.0, my height);
+	Graphics_setTextAlignment (my d_graphics.get(), Graphics_CENTRE, Graphics_HALF);
 	for (int i = 0; i < 8; i ++) {
 		double left = my rect [i]. left, right = my rect [i]. right;
 		if (left < right)
-			Graphics_button (my d_graphics, left, right, my rect [i]. bottom, my rect [i]. top);
+			Graphics_button (my d_graphics.get(), left, right, my rect [i]. bottom, my rect [i]. top);
 	}
 	verticalCorrection = my height / (my height - 111.0 + 11.0);
 	#ifdef _WIN32
@@ -228,13 +228,13 @@ static void drawNow (FunctionEditor me) {
 					/*
 					 * Window domain text.
 					 */	
-					Graphics_setColour (my d_graphics, Graphics_BLUE);
-					Graphics_setTextAlignment (my d_graphics, Graphics_LEFT, Graphics_HALF);
-					Graphics_text (my d_graphics, left, 0.5 * (bottom + top) - verticalCorrection, Melder_fixed (my d_startWindow, my v_fixedPrecision_long ()));
-					Graphics_setTextAlignment (my d_graphics, Graphics_RIGHT, Graphics_HALF);
-					Graphics_text (my d_graphics, right, 0.5 * (bottom + top) - verticalCorrection, Melder_fixed (my d_endWindow, my v_fixedPrecision_long ()));
-					Graphics_setColour (my d_graphics, Graphics_BLACK);
-					Graphics_setTextAlignment (my d_graphics, Graphics_CENTRE, Graphics_HALF);
+					Graphics_setColour (my d_graphics.get(), Graphics_BLUE);
+					Graphics_setTextAlignment (my d_graphics.get(), Graphics_LEFT, Graphics_HALF);
+					Graphics_text (my d_graphics.get(), left, 0.5 * (bottom + top) - verticalCorrection, Melder_fixed (my d_startWindow, my v_fixedPrecision_long ()));
+					Graphics_setTextAlignment (my d_graphics.get(), Graphics_RIGHT, Graphics_HALF);
+					Graphics_text (my d_graphics.get(), right, 0.5 * (bottom + top) - verticalCorrection, Melder_fixed (my d_endWindow, my v_fixedPrecision_long ()));
+					Graphics_setColour (my d_graphics.get(), Graphics_BLACK);
+					Graphics_setTextAlignment (my d_graphics.get(), Graphics_CENTRE, Graphics_HALF);
 				break;
 				case 2: value = my d_startWindow - my tmin; break;
 				case 3: value = my tmax - my d_endWindow; break;
@@ -246,52 +246,52 @@ static void drawNow (FunctionEditor me) {
 			char text8 [100];
 			snprintf (text8, 100, format, value, inverseValue);
 			autostring32 text = Melder_8to32 (text8);
-			if (Graphics_textWidth (my d_graphics, text.peek()) < right - left) {
-				Graphics_text (my d_graphics, 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text.peek());
+			if (Graphics_textWidth (my d_graphics.get(), text.peek()) < right - left) {
+				Graphics_text (my d_graphics.get(), 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text.peek());
 			} else if (format == my v_format_long ()) {
 				snprintf (text8, 100, my v_format_short (), value);
 				text.reset (Melder_8to32 (text8));
-				if (Graphics_textWidth (my d_graphics, text.peek()) < right - left)
-					Graphics_text (my d_graphics, 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text.peek());
+				if (Graphics_textWidth (my d_graphics.get(), text.peek()) < right - left)
+					Graphics_text (my d_graphics.get(), 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text.peek());
 			} else {
 				snprintf (text8, 100, my v_format_long (), value);
 				text.reset (Melder_8to32 (text8));
-				if (Graphics_textWidth (my d_graphics, text.peek()) < right - left) {
-						Graphics_text (my d_graphics, 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text.peek());
+				if (Graphics_textWidth (my d_graphics.get(), text.peek()) < right - left) {
+						Graphics_text (my d_graphics.get(), 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text.peek());
 				} else {
 					snprintf (text8, 100, my v_format_short (), my d_endSelection - my d_startSelection);
 					text.reset (Melder_8to32 (text8));
-					if (Graphics_textWidth (my d_graphics, text.peek()) < right - left)
-						Graphics_text (my d_graphics, 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text.peek());
+					if (Graphics_textWidth (my d_graphics.get(), text.peek()) < right - left)
+						Graphics_text (my d_graphics.get(), 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text.peek());
 				}
 			}
 		}
 	}
 
-	Graphics_setViewport (my d_graphics, my functionViewerLeft + MARGIN, my functionViewerRight - MARGIN, 0.0, my height);
-	Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, 0.0, my height);
-	/*Graphics_setColour (my d_graphics, Graphics_WHITE);
-	Graphics_fillRectangle (my d_graphics, my d_startWindow, my d_endWindow, BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));*/
-	Graphics_setColour (my d_graphics, Graphics_BLACK);
-	Graphics_rectangle (my d_graphics, my d_startWindow, my d_endWindow, BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
+	Graphics_setViewport (my d_graphics.get(), my functionViewerLeft + MARGIN, my functionViewerRight - MARGIN, 0.0, my height);
+	Graphics_setWindow (my d_graphics.get(), my d_startWindow, my d_endWindow, 0.0, my height);
+	/*Graphics_setColour (my d_graphics.get(), Graphics_WHITE);
+	Graphics_fillRectangle (my d_graphics.get(), my d_startWindow, my d_endWindow, BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));*/
+	Graphics_setColour (my d_graphics.get(), Graphics_BLACK);
+	Graphics_rectangle (my d_graphics.get(), my d_startWindow, my d_endWindow, BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
 
 	/*
 	 * Red marker text.
 	 */
-	Graphics_setColour (my d_graphics, Graphics_RED);
+	Graphics_setColour (my d_graphics.get(), Graphics_RED);
 	if (cursorVisible) {
-		Graphics_setTextAlignment (my d_graphics, Graphics_CENTRE, Graphics_BOTTOM);
-		Graphics_text (my d_graphics, my d_startSelection, my height - (TOP_MARGIN + space) - verticalCorrection, Melder_fixed (my d_startSelection, my v_fixedPrecision_long ()));
+		Graphics_setTextAlignment (my d_graphics.get(), Graphics_CENTRE, Graphics_BOTTOM);
+		Graphics_text (my d_graphics.get(), my d_startSelection, my height - (TOP_MARGIN + space) - verticalCorrection, Melder_fixed (my d_startSelection, my v_fixedPrecision_long ()));
 	}
 	if (beginVisible && selection) {
-		Graphics_setTextAlignment (my d_graphics, Graphics_RIGHT, Graphics_HALF);
-		Graphics_text (my d_graphics, my d_startSelection, my height - (TOP_MARGIN + space/2) - verticalCorrection, Melder_fixed (my d_startSelection, my v_fixedPrecision_long ()));
+		Graphics_setTextAlignment (my d_graphics.get(), Graphics_RIGHT, Graphics_HALF);
+		Graphics_text (my d_graphics.get(), my d_startSelection, my height - (TOP_MARGIN + space/2) - verticalCorrection, Melder_fixed (my d_startSelection, my v_fixedPrecision_long ()));
 	}
 	if (endVisible && selection) {
-		Graphics_setTextAlignment (my d_graphics, Graphics_LEFT, Graphics_HALF);
-		Graphics_text (my d_graphics, my d_endSelection, my height - (TOP_MARGIN + space/2) - verticalCorrection, Melder_fixed (my d_endSelection, my v_fixedPrecision_long ()));
+		Graphics_setTextAlignment (my d_graphics.get(), Graphics_LEFT, Graphics_HALF);
+		Graphics_text (my d_graphics.get(), my d_endSelection, my height - (TOP_MARGIN + space/2) - verticalCorrection, Melder_fixed (my d_endSelection, my v_fixedPrecision_long ()));
 	}
-	Graphics_setColour (my d_graphics, Graphics_BLACK);
+	Graphics_setColour (my d_graphics.get(), Graphics_BLACK);
 
 	/*
 	 * To reduce flashing, give our descendants the opportunity to prepare their data.
@@ -301,26 +301,26 @@ static void drawNow (FunctionEditor me) {
 	/*
 	 * Start of inner drawing.
 	 */
-	Graphics_setViewport (my d_graphics, my functionViewerLeft + MARGIN, my functionViewerRight - MARGIN, BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
+	Graphics_setViewport (my d_graphics.get(), my functionViewerLeft + MARGIN, my functionViewerRight - MARGIN, BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
 
 	my v_draw ();
-	Graphics_setViewport (my d_graphics, my functionViewerLeft + MARGIN, my functionViewerRight - MARGIN, BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
+	Graphics_setViewport (my d_graphics.get(), my functionViewerLeft + MARGIN, my functionViewerRight - MARGIN, BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
 
 	/*
 	 * Red dotted marker lines.
 	 */
-	Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, 0.0, 1.0);
-	Graphics_setColour (my d_graphics, Graphics_RED);
-	Graphics_setLineType (my d_graphics, Graphics_DOTTED);
+	Graphics_setWindow (my d_graphics.get(), my d_startWindow, my d_endWindow, 0.0, 1.0);
+	Graphics_setColour (my d_graphics.get(), Graphics_RED);
+	Graphics_setLineType (my d_graphics.get(), Graphics_DOTTED);
 	double bottom = my v_getBottomOfSoundAndAnalysisArea ();
 	if (cursorVisible)
-		Graphics_line (my d_graphics, my d_startSelection, bottom, my d_startSelection, 1.0);
+		Graphics_line (my d_graphics.get(), my d_startSelection, bottom, my d_startSelection, 1.0);
 	if (beginVisible)
-		Graphics_line (my d_graphics, my d_startSelection, bottom, my d_startSelection, 1.0);
+		Graphics_line (my d_graphics.get(), my d_startSelection, bottom, my d_startSelection, 1.0);
 	if (endVisible)
-		Graphics_line (my d_graphics, my d_endSelection, bottom, my d_endSelection, 1.0);
-	Graphics_setColour (my d_graphics, Graphics_BLACK);
-	Graphics_setLineType (my d_graphics, Graphics_DRAWN);
+		Graphics_line (my d_graphics.get(), my d_endSelection, bottom, my d_endSelection, 1.0);
+	Graphics_setColour (my d_graphics.get(), Graphics_BLACK);
+	Graphics_setLineType (my d_graphics.get(), Graphics_DRAWN);
 
 	/*
 	 * Highlight selection.
@@ -336,15 +336,15 @@ static void drawNow (FunctionEditor me) {
 	 * Draw the selection part.
 	 */
 	if (my p_showSelectionViewer) {
-		Graphics_setViewport (my d_graphics, my selectionViewerLeft + MARGIN, my selectionViewerRight - MARGIN, BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
+		Graphics_setViewport (my d_graphics.get(), my selectionViewerLeft + MARGIN, my selectionViewerRight - MARGIN, BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
 		my v_drawSelectionViewer ();
 	}
 
 	/*
 	 * End of inner drawing.
 	 */
-	Graphics_flushWs (my d_graphics);
-	Graphics_setViewport (my d_graphics, my functionViewerLeft, my selectionViewerRight, 0.0, my height);
+	Graphics_flushWs (my d_graphics.get());
+	Graphics_setViewport (my d_graphics.get(), my functionViewerLeft, my selectionViewerRight, 0.0, my height);
 }
 
 /********** METHODS **********/
@@ -360,7 +360,6 @@ void structFunctionEditor :: v_destroy () {
 		theGroup [i] = nullptr;
 		nGroup --;
 	}
-	forget (our d_graphics);
 	FunctionEditor_Parent :: v_destroy ();
 }
 
@@ -380,7 +379,7 @@ void structFunctionEditor :: v_info () {
 
 static void gui_drawingarea_cb_resize (FunctionEditor me, GuiDrawingArea_ResizeEvent event) {
 	if (! my d_graphics) return;   // could be the case in the very beginning
-	Graphics_setWsViewport (my d_graphics, 0, event -> width, 0, event -> height);
+	Graphics_setWsViewport (my d_graphics.get(), 0, event -> width, 0, event -> height);
 	int width = event -> width + 21;
 	/*
 	 * Put the function viewer at the left and the selection viewer at the right.
@@ -390,9 +389,9 @@ static void gui_drawingarea_cb_resize (FunctionEditor me, GuiDrawingArea_ResizeE
 	my selectionViewerLeft = my functionViewerRight;
 	my selectionViewerRight = width;
 	my height = event -> height + 111;
-	Graphics_setWsWindow (my d_graphics, 0.0, width, 0.0, my height);
-	Graphics_setViewport (my d_graphics, 0.0, width, 0.0, my height);
-	Graphics_updateWs (my d_graphics);
+	Graphics_setWsWindow (my d_graphics.get(), 0.0, width, 0.0, my height);
+	Graphics_setViewport (my d_graphics.get(), 0.0, width, 0.0, my height);
+	Graphics_updateWs (my d_graphics.get());
 
 	/* Save the current shell size as the user's preference for a new FunctionEditor. */
 
@@ -872,9 +871,9 @@ static void gui_cb_scroll (FunctionEditor me, GuiScrollBarEvent event) {
 		my v_updateText ();
 		updateScrollBar (me);
 		#if cocoa
-			Graphics_updateWs (my d_graphics);
+			Graphics_updateWs (my d_graphics.get());
 		#else
-			/*Graphics_clearWs (my d_graphics);*/
+			/*Graphics_clearWs (my d_graphics.get());*/
 			drawNow (me);   // do not wait for expose event
 		#endif
 		if (! my group || ! my pref_synchronizedZoomAndScroll ()) return;
@@ -884,9 +883,9 @@ static void gui_cb_scroll (FunctionEditor me, GuiScrollBarEvent event) {
 			FunctionEditor_updateText (theGroup [i]);
 			updateScrollBar (theGroup [i]);
 			#if cocoa
-				Graphics_updateWs (theGroup [i] -> d_graphics);
+				Graphics_updateWs (theGroup [i] -> d_graphics.get());
 			#else
-				Graphics_clearWs (theGroup [i] -> d_graphics);
+				Graphics_clearWs (theGroup [i] -> d_graphics.get());
 				drawNow (theGroup [i]);
 			#endif
 		}
@@ -899,7 +898,7 @@ static void gui_checkbutton_cb_group (FunctionEditor me, GuiCheckButtonEvent /* 
 	if (my group) {
 		FunctionEditor thee;
 		i = 1; while (theGroup [i]) i ++; theGroup [i] = me;
-		if (++ nGroup == 1) { Graphics_updateWs (my d_graphics); return; }
+		if (++ nGroup == 1) { Graphics_updateWs (my d_graphics.get()); return; }
 		i = 1; while (! theGroup [i] || theGroup [i] == me) i ++; thee = theGroup [i];
 		if (my pref_synchronizedZoomAndScroll ()) {
 			my d_startWindow = thy d_startWindow;
@@ -912,11 +911,11 @@ static void gui_checkbutton_cb_group (FunctionEditor me, GuiCheckButtonEvent /* 
 			if (my tmax < thy tmax) my tmax = thy tmax;
 			my v_updateText ();
 			updateScrollBar (me);
-			Graphics_updateWs (my d_graphics);
+			Graphics_updateWs (my d_graphics.get());
 		} else {
 			my v_updateText ();
 			updateScrollBar (me);
-			Graphics_updateWs (my d_graphics);
+			Graphics_updateWs (my d_graphics.get());
 			if (my tmin < thy tmin || my tmax > thy tmax)
 				for (i = 1; i <= maxGroup; i ++) if (theGroup [i] && theGroup [i] != me) {
 					if (my tmin < thy tmin)
@@ -925,14 +924,14 @@ static void gui_checkbutton_cb_group (FunctionEditor me, GuiCheckButtonEvent /* 
 						theGroup [i] -> tmax = my tmax;
 					FunctionEditor_updateText (theGroup [i]);
 					updateScrollBar (theGroup [i]);
-					Graphics_updateWs (theGroup [i] -> d_graphics);
+					Graphics_updateWs (theGroup [i] -> d_graphics.get());
 				}
 		}
 	} else {
 		i = 1; while (theGroup [i] != me) i ++; theGroup [i] = nullptr;
 		nGroup --;
 		my v_updateText ();
-		Graphics_updateWs (my d_graphics);   // for setting buttons in draw method
+		Graphics_updateWs (my d_graphics.get());   // for setting buttons in draw method
 	}
 	if (my group) updateGroup (me);
 }
@@ -1025,16 +1024,16 @@ static void gui_drawingarea_cb_expose (FunctionEditor me, GuiDrawingArea_ExposeE
 static void gui_drawingarea_cb_click (FunctionEditor me, GuiDrawingArea_ClickEvent event) {
 	if (! my d_graphics) return;   // could be the case in the very beginning
 	my shiftKeyPressed = event -> shiftKeyPressed;
-	Graphics_setWindow (my d_graphics, my functionViewerLeft, my functionViewerRight, 0.0, my height);
+	Graphics_setWindow (my d_graphics.get(), my functionViewerLeft, my functionViewerRight, 0.0, my height);
 	double xWC, yWC;
-	Graphics_DCtoWC (my d_graphics, event -> x, event -> y, & xWC, & yWC);
+	Graphics_DCtoWC (my d_graphics.get(), event -> x, event -> y, & xWC, & yWC);
 
 	if (yWC > BOTTOM_MARGIN + space * 3 && yWC < my height - (TOP_MARGIN + space)) {   // in signal region?
 		int needsUpdate;
-		Graphics_setViewport (my d_graphics, my functionViewerLeft + MARGIN, my functionViewerRight - MARGIN,
+		Graphics_setViewport (my d_graphics.get(), my functionViewerLeft + MARGIN, my functionViewerRight - MARGIN,
 			BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
-		Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, 0.0, 1.0);
-		Graphics_DCtoWC (my d_graphics, event -> x, event -> y, & xWC, & yWC);
+		Graphics_setWindow (my d_graphics.get(), my d_startWindow, my d_endWindow, 0.0, 1.0);
+		Graphics_DCtoWC (my d_graphics.get(), event -> x, event -> y, & xWC, & yWC);
 		if (xWC < my d_startWindow) xWC = my d_startWindow;
 		if (xWC > my d_endWindow) xWC = my d_endWindow;
 		if (Melder_debug == 24) {
@@ -1063,7 +1062,7 @@ static void gui_drawingarea_cb_click (FunctionEditor me, GuiDrawingArea_ClickEve
 			event -> button == 2 ? my v_clickB (xWC, yWC) : my v_clickE (xWC, yWC);
 #endif
 		if (needsUpdate) my v_updateText ();
-		Graphics_setViewport (my d_graphics, my functionViewerLeft, my functionViewerRight, 0, my height);
+		Graphics_setViewport (my d_graphics.get(), my functionViewerLeft, my functionViewerRight, 0, my height);
 		if (needsUpdate) {
 			drawNow (me);
 		}
@@ -1177,20 +1176,20 @@ static void drawWhileDragging (FunctionEditor me, double x1, double x2) {
 	 */
 	double xleft, xright;
 	if (x1 > x2) xleft = x2, xright = x1; else xleft = x1, xright = x2;
-	Graphics_xorOn (my d_graphics, Graphics_MAROON);
-	Graphics_setTextAlignment (my d_graphics, Graphics_RIGHT, Graphics_TOP);
-	Graphics_text (my d_graphics, xleft, 1.0, Melder_fixed (xleft, 6));
-	Graphics_setTextAlignment (my d_graphics, Graphics_LEFT, Graphics_TOP);
-	Graphics_text (my d_graphics, xright, 1.0, Melder_fixed (xright, 6));
-	Graphics_setTextAlignment (my d_graphics, Graphics_RIGHT, Graphics_BOTTOM);
-	Graphics_text (my d_graphics, xleft, 0.0, Melder_fixed (xleft, 6));
-	Graphics_setTextAlignment (my d_graphics, Graphics_LEFT, Graphics_BOTTOM);
-	Graphics_text (my d_graphics, xright, 0.0, Melder_fixed (xright, 6));
-	Graphics_setLineType (my d_graphics, Graphics_DOTTED);
-	Graphics_line (my d_graphics, xleft, 0.0, xleft, 1.0);
-	Graphics_line (my d_graphics, xright, 0.0, xright, 1.0);
-	Graphics_setLineType (my d_graphics, Graphics_DRAWN);
-	Graphics_xorOff (my d_graphics);
+	Graphics_xorOn (my d_graphics.get(), Graphics_MAROON);
+	Graphics_setTextAlignment (my d_graphics.get(), Graphics_RIGHT, Graphics_TOP);
+	Graphics_text (my d_graphics.get(), xleft, 1.0, Melder_fixed (xleft, 6));
+	Graphics_setTextAlignment (my d_graphics.get(), Graphics_LEFT, Graphics_TOP);
+	Graphics_text (my d_graphics.get(), xright, 1.0, Melder_fixed (xright, 6));
+	Graphics_setTextAlignment (my d_graphics.get(), Graphics_RIGHT, Graphics_BOTTOM);
+	Graphics_text (my d_graphics.get(), xleft, 0.0, Melder_fixed (xleft, 6));
+	Graphics_setTextAlignment (my d_graphics.get(), Graphics_LEFT, Graphics_BOTTOM);
+	Graphics_text (my d_graphics.get(), xright, 0.0, Melder_fixed (xright, 6));
+	Graphics_setLineType (my d_graphics.get(), Graphics_DOTTED);
+	Graphics_line (my d_graphics.get(), xleft, 0.0, xleft, 1.0);
+	Graphics_line (my d_graphics.get(), xright, 0.0, xright, 1.0);
+	Graphics_setLineType (my d_graphics.get(), Graphics_DRAWN);
+	Graphics_xorOff (my d_graphics.get());
 }
 
 bool structFunctionEditor :: v_click (double xbegin, double ybegin, bool a_shiftKeyPressed) {
@@ -1205,7 +1204,7 @@ bool structFunctionEditor :: v_click (double xbegin, double ybegin, bool a_shift
 	 * Another example: if she shift-clicks near E, B will become (and stay) the anchor.
 	 */
 
-	Graphics_setWindow (our d_graphics, our d_startWindow, our d_endWindow, 0, 1);
+	Graphics_setWindow (our d_graphics.get(), our d_startWindow, our d_endWindow, 0, 1);
 
 	double anchorForDragging = xbegin;   // the default (for if the shift key isn't pressed)
 	if (a_shiftKeyPressed) {
@@ -1293,11 +1292,11 @@ bool structFunctionEditor :: v_click (double xbegin, double ybegin, bool a_shift
 	 * Find out whether this is a click or a drag.
 	 */
     
-	while (Graphics_mouseStillDown (our d_graphics)) {
-		Graphics_getMouseLocation (our d_graphics, & x, & y);
+	while (Graphics_mouseStillDown (our d_graphics.get())) {
+		Graphics_getMouseLocation (our d_graphics.get(), & x, & y);
 		if (x < our d_startWindow) x = our d_startWindow;
 		if (x > our d_endWindow) x = our d_endWindow;
-		if (fabs (Graphics_dxWCtoMM (our d_graphics, x - xbegin)) > 1.5) {
+		if (fabs (Graphics_dxWCtoMM (our d_graphics.get(), x - xbegin)) > 1.5) {
 			drag = true;
 			break;
 		}
@@ -1336,10 +1335,10 @@ bool structFunctionEditor :: v_click (double xbegin, double ybegin, bool a_shift
 		 * Drag for the new selection.
 		 */
         
-		while (Graphics_mouseStillDown (d_graphics))
+		while (Graphics_mouseStillDown (d_graphics.get()))
 		{
 			double xold = x, x1, x2;
-			Graphics_getMouseLocation (our d_graphics, & x, & y);
+			Graphics_getMouseLocation (our d_graphics.get(), & x, & y);
 			/*
 			 * Clip to the visible window. Ideally, we should perform autoscrolling instead, though...
 			 */
@@ -1402,9 +1401,9 @@ bool structFunctionEditor :: v_clickE (double xWC, double /* yWC */) {
 }
 
 void FunctionEditor_insetViewport (FunctionEditor me) {
-	Graphics_setViewport (my d_graphics, my functionViewerLeft + MARGIN, my functionViewerRight - MARGIN,
+	Graphics_setViewport (my d_graphics.get(), my functionViewerLeft + MARGIN, my functionViewerRight - MARGIN,
 		BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
-	Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, 0.0, 1.0);
+	Graphics_setWindow (my d_graphics.get(), my d_startWindow, my d_endWindow, 0.0, 1.0);
 }
 
 int structFunctionEditor :: v_playCallback (int phase, double /* a_tmin */, double a_tmax, double t) {
@@ -1415,27 +1414,27 @@ int structFunctionEditor :: v_playCallback (int phase, double /* a_tmin */, doub
 	 * So we had better make no assumptions about the current viewport.
 	 */
 	double x1NDC, x2NDC, y1NDC, y2NDC;
-	Graphics_inqViewport (our d_graphics, & x1NDC, & x2NDC, & y1NDC, & y2NDC);
+	Graphics_inqViewport (our d_graphics.get(), & x1NDC, & x2NDC, & y1NDC, & y2NDC);
 	FunctionEditor_insetViewport (this);
-	Graphics_xorOn (our d_graphics, Graphics_MAROON);
+	Graphics_xorOn (our d_graphics.get(), Graphics_MAROON);
 	/*
 	 * Undraw the play cursor at its old location.
 	 * BUG: during scrolling, zooming, and exposure, an ugly line may remain.
 	 */
 	if (phase != 1 && playCursor >= our d_startWindow && playCursor <= our d_endWindow) {
-		Graphics_setLineWidth (our d_graphics, 3.0);
-		Graphics_line (our d_graphics, playCursor, 0.0, playCursor, 1.0);
-		Graphics_setLineWidth (our d_graphics, 1.0);
+		Graphics_setLineWidth (our d_graphics.get(), 3.0);
+		Graphics_line (our d_graphics.get(), playCursor, 0.0, playCursor, 1.0);
+		Graphics_setLineWidth (our d_graphics.get(), 1.0);
 	}
 	/*
 	 * Draw the play cursor at its new location.
 	 */
 	if (phase != 3 && t >= our d_startWindow && t <= our d_endWindow) {
-		Graphics_setLineWidth (our d_graphics, 3.0);
-		Graphics_line (our d_graphics, t, 0.0, t, 1.0);
-		Graphics_setLineWidth (our d_graphics, 1.0);
+		Graphics_setLineWidth (our d_graphics.get(), 3.0);
+		Graphics_line (our d_graphics.get(), t, 0.0, t, 1.0);
+		Graphics_setLineWidth (our d_graphics.get(), 1.0);
 	}
-	Graphics_xorOff (our d_graphics);
+	Graphics_xorOff (our d_graphics.get());
 	/*
 	 * Usually, there will be an event test after each invocation of this callback,
 	 * because the asynchronicity is kMelder_asynchronicityLevel_INTERRUPTABLE or kMelder_asynchronicityLevel_ASYNCHRONOUS.
@@ -1444,8 +1443,8 @@ int structFunctionEditor :: v_playCallback (int phase, double /* a_tmin */, doub
 	 * Which means: no automatic flushing of graphics output.
 	 * So: we force the flushing ourselves, lest we see too few moving cursors.
 	 */
-	Graphics_flushWs (our d_graphics);
-	Graphics_setViewport (our d_graphics, x1NDC, x2NDC, y1NDC, y2NDC);
+	Graphics_flushWs (our d_graphics.get());
+	Graphics_setViewport (our d_graphics.get(), x1NDC, x2NDC, y1NDC, y2NDC);
 	playCursor = t;
 	if (phase == 3) {
 		if (t < a_tmax && MelderAudio_stopWasExplicit ()) {
@@ -1468,11 +1467,11 @@ int theFunctionEditor_playCallback (FunctionEditor me, int phase, double a_tmin,
 }
 
 void structFunctionEditor :: v_highlightSelection (double left, double right, double bottom, double top) {
-	Graphics_highlight (d_graphics, left, right, bottom, top);
+	Graphics_highlight (d_graphics.get(), left, right, bottom, top);
 }
 
 void structFunctionEditor :: v_unhighlightSelection (double left, double right, double bottom, double top) {
-	Graphics_unhighlight (d_graphics, left, right, bottom, top);
+	Graphics_unhighlight (d_graphics.get(), left, right, bottom, top);
 }
 
 void FunctionEditor_init (FunctionEditor me, const char32 *title, Function data) {
@@ -1487,7 +1486,7 @@ void FunctionEditor_init (FunctionEditor me, const char32 *title, Function data)
 		Melder_assert (XtWindow (my drawingArea -> d_widget));
 	#endif
 	my d_graphics = Graphics_create_xmdrawingarea (my drawingArea);
-	Graphics_setFontSize (my d_graphics, 12);
+	Graphics_setFontSize (my d_graphics.get(), 12);
 
 // This exdents because it's a hack:
 struct structGuiDrawingArea_ResizeEvent event { my drawingArea, 0 };
@@ -1531,64 +1530,64 @@ void FunctionEditor_ungroup (FunctionEditor me) {
 	theGroup [i] = nullptr;
 	nGroup --;
 	my v_updateText ();
-	Graphics_updateWs (my d_graphics);   // for setting buttons in v_draw() method
+	Graphics_updateWs (my d_graphics.get());   // for setting buttons in v_draw() method
 }
 
 void FunctionEditor_drawRangeMark (FunctionEditor me, double yWC, const char32 *yWC_string, const char32 *units, int verticalAlignment) {
 	static MelderString text { 0 };
 	MelderString_copy (& text, yWC_string, units);
-	double textWidth = Graphics_textWidth (my d_graphics, text.string) + Graphics_dxMMtoWC (my d_graphics, 0.5);
-	Graphics_setColour (my d_graphics, Graphics_BLUE);
-	Graphics_line (my d_graphics, my d_endWindow, yWC, my d_endWindow + textWidth, yWC);
-	Graphics_setTextAlignment (my d_graphics, Graphics_LEFT, verticalAlignment);
-	if (verticalAlignment == Graphics_BOTTOM) yWC -= Graphics_dyMMtoWC (my d_graphics, 0.5);
-	Graphics_text (my d_graphics, my d_endWindow, yWC, text.string);
+	double textWidth = Graphics_textWidth (my d_graphics.get(), text.string) + Graphics_dxMMtoWC (my d_graphics.get(), 0.5);
+	Graphics_setColour (my d_graphics.get(), Graphics_BLUE);
+	Graphics_line (my d_graphics.get(), my d_endWindow, yWC, my d_endWindow + textWidth, yWC);
+	Graphics_setTextAlignment (my d_graphics.get(), Graphics_LEFT, verticalAlignment);
+	if (verticalAlignment == Graphics_BOTTOM) yWC -= Graphics_dyMMtoWC (my d_graphics.get(), 0.5);
+	Graphics_text (my d_graphics.get(), my d_endWindow, yWC, text.string);
 }
 
 void FunctionEditor_drawCursorFunctionValue (FunctionEditor me, double yWC, const char32 *yWC_string, const char32 *units) {
-	Graphics_setColour (my d_graphics, Graphics_CYAN);
-	Graphics_line (my d_graphics, my d_startWindow, yWC, 0.99 * my d_startWindow + 0.01 * my d_endWindow, yWC);
-	Graphics_fillCircle_mm (my d_graphics, 0.5 * (my d_startSelection + my d_endSelection), yWC, 1.5);
-	Graphics_setColour (my d_graphics, Graphics_BLUE);
-	Graphics_setTextAlignment (my d_graphics, Graphics_RIGHT, Graphics_HALF);
-	Graphics_text (my d_graphics, my d_startWindow, yWC,   yWC_string, units);
+	Graphics_setColour (my d_graphics.get(), Graphics_CYAN);
+	Graphics_line (my d_graphics.get(), my d_startWindow, yWC, 0.99 * my d_startWindow + 0.01 * my d_endWindow, yWC);
+	Graphics_fillCircle_mm (my d_graphics.get(), 0.5 * (my d_startSelection + my d_endSelection), yWC, 1.5);
+	Graphics_setColour (my d_graphics.get(), Graphics_BLUE);
+	Graphics_setTextAlignment (my d_graphics.get(), Graphics_RIGHT, Graphics_HALF);
+	Graphics_text (my d_graphics.get(), my d_startWindow, yWC,   yWC_string, units);
 }
 
 void FunctionEditor_insertCursorFunctionValue (FunctionEditor me, double yWC, const char32 *yWC_string, const char32 *units, double minimum, double maximum) {
 	double textX = my d_endWindow, textY = yWC;
-	int tooHigh = Graphics_dyWCtoMM (my d_graphics, maximum - textY) < 5.0;
-	int tooLow = Graphics_dyWCtoMM (my d_graphics, textY - minimum) < 5.0;
+	int tooHigh = Graphics_dyWCtoMM (my d_graphics.get(), maximum - textY) < 5.0;
+	int tooLow = Graphics_dyWCtoMM (my d_graphics.get(), textY - minimum) < 5.0;
 	if (yWC < minimum || yWC > maximum) return;
-	Graphics_setColour (my d_graphics, Graphics_CYAN);
-	Graphics_line (my d_graphics, 0.99 * my d_endWindow + 0.01 * my d_startWindow, yWC, my d_endWindow, yWC);
-	Graphics_fillCircle_mm (my d_graphics, 0.5 * (my d_startSelection + my d_endSelection), yWC, 1.5);
+	Graphics_setColour (my d_graphics.get(), Graphics_CYAN);
+	Graphics_line (my d_graphics.get(), 0.99 * my d_endWindow + 0.01 * my d_startWindow, yWC, my d_endWindow, yWC);
+	Graphics_fillCircle_mm (my d_graphics.get(), 0.5 * (my d_startSelection + my d_endSelection), yWC, 1.5);
 	if (tooHigh) {
 		if (tooLow) textY = 0.5 * (minimum + maximum);
-		else textY = maximum - Graphics_dyMMtoWC (my d_graphics, 5.0);
+		else textY = maximum - Graphics_dyMMtoWC (my d_graphics.get(), 5.0);
 	} else if (tooLow) {
-		textY = minimum + Graphics_dyMMtoWC (my d_graphics, 5.0);
+		textY = minimum + Graphics_dyMMtoWC (my d_graphics.get(), 5.0);
 	}
 	static MelderString text { 0 };
 	MelderString_copy (& text, yWC_string, units);
-	double textWidth = Graphics_textWidth (my d_graphics, text.string);
-	Graphics_fillCircle_mm (my d_graphics, my d_endWindow + textWidth + Graphics_dxMMtoWC (my d_graphics, 1.5), textY, 1.5);
-	Graphics_setColour (my d_graphics, Graphics_RED);
-	Graphics_setTextAlignment (my d_graphics, Graphics_LEFT, Graphics_HALF);
-	Graphics_text (my d_graphics, textX, textY, text.string);
+	double textWidth = Graphics_textWidth (my d_graphics.get(), text.string);
+	Graphics_fillCircle_mm (my d_graphics.get(), my d_endWindow + textWidth + Graphics_dxMMtoWC (my d_graphics.get(), 1.5), textY, 1.5);
+	Graphics_setColour (my d_graphics.get(), Graphics_RED);
+	Graphics_setTextAlignment (my d_graphics.get(), Graphics_LEFT, Graphics_HALF);
+	Graphics_text (my d_graphics.get(), textX, textY, text.string);
 }
 
 void FunctionEditor_drawHorizontalHair (FunctionEditor me, double yWC, const char32 *yWC_string, const char32 *units) {
-	Graphics_setColour (my d_graphics, Graphics_RED);
-	Graphics_line (my d_graphics, my d_startWindow, yWC, my d_endWindow, yWC);
-	Graphics_setTextAlignment (my d_graphics, Graphics_RIGHT, Graphics_HALF);
-	Graphics_text (my d_graphics, my d_startWindow, yWC,   yWC_string, units);
+	Graphics_setColour (my d_graphics.get(), Graphics_RED);
+	Graphics_line (my d_graphics.get(), my d_startWindow, yWC, my d_endWindow, yWC);
+	Graphics_setTextAlignment (my d_graphics.get(), Graphics_RIGHT, Graphics_HALF);
+	Graphics_text (my d_graphics.get(), my d_startWindow, yWC,   yWC_string, units);
 }
 
 void FunctionEditor_drawGridLine (FunctionEditor me, double yWC) {
-	Graphics_setColour (my d_graphics, Graphics_CYAN);
-	Graphics_setLineType (my d_graphics, Graphics_DOTTED);
-	Graphics_line (my d_graphics, my d_startWindow, yWC, my d_endWindow, yWC);
-	Graphics_setLineType (my d_graphics, Graphics_DRAWN);
+	Graphics_setColour (my d_graphics.get(), Graphics_CYAN);
+	Graphics_setLineType (my d_graphics.get(), Graphics_DOTTED);
+	Graphics_line (my d_graphics.get(), my d_startWindow, yWC, my d_endWindow, yWC);
+	Graphics_setLineType (my d_graphics.get(), Graphics_DRAWN);
 }
 
 void FunctionEditor_garnish (FunctionEditor me) {

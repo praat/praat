@@ -155,9 +155,9 @@ void structPointEditor :: v_createHelpMenuItems (EditorMenu menu) {
 void structPointEditor :: v_draw () {
 	PointProcess point = static_cast <PointProcess> (our data);
 	Sound sound = d_sound.data;
-	Graphics_setColour (d_graphics, Graphics_WHITE);
-	Graphics_setWindow (d_graphics, 0, 1, 0, 1);
-	Graphics_fillRectangle (d_graphics, 0, 1, 0, 1);
+	Graphics_setColour (d_graphics.get(), Graphics_WHITE);
+	Graphics_setWindow (d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_fillRectangle (d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	double minimum = -1.0, maximum = +1.0;
 	if (sound && (p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_BY_WINDOW || p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_BY_WINDOW_AND_CHANNEL)) {
 		long first, last;
@@ -166,26 +166,26 @@ void structPointEditor :: v_draw () {
 			if (minimum == maximum) minimum -= 1.0, maximum += 1.0;
 		}
 	}
-	Graphics_setWindow (d_graphics, d_startWindow, d_endWindow, minimum, maximum);
-	Graphics_setColour (d_graphics, Graphics_BLACK);
+	Graphics_setWindow (d_graphics.get(), d_startWindow, d_endWindow, minimum, maximum);
+	Graphics_setColour (d_graphics.get(), Graphics_BLACK);
 	if (sound) {
 		long first, last;
 		if (Sampled_getWindowSamples (sound, d_startWindow, d_endWindow, & first, & last) > 1) {
-			Graphics_setLineType (d_graphics, Graphics_DOTTED);
-			Graphics_line (d_graphics, d_startWindow, 0.0, d_endWindow, 0.0);
-			Graphics_setLineType (d_graphics, Graphics_DRAWN);      
-			Graphics_function (d_graphics, sound -> z [1], first, last,
+			Graphics_setLineType (d_graphics.get(), Graphics_DOTTED);
+			Graphics_line (d_graphics.get(), d_startWindow, 0.0, d_endWindow, 0.0);
+			Graphics_setLineType (d_graphics.get(), Graphics_DRAWN);
+			Graphics_function (d_graphics.get(), sound -> z [1], first, last,
 				Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
 		}
 	}
-	Graphics_setColour (d_graphics, Graphics_BLUE);
-	Graphics_setWindow (d_graphics, d_startWindow, d_endWindow, -1.0, +1.0);
+	Graphics_setColour (d_graphics.get(), Graphics_BLUE);
+	Graphics_setWindow (d_graphics.get(), d_startWindow, d_endWindow, -1.0, +1.0);
 	for (long i = 1; i <= point -> nt; i ++) {
 		double t = point -> t [i];
 		if (t >= d_startWindow && t <= d_endWindow)
-			Graphics_line (d_graphics, t, -0.9, t, +0.9);
+			Graphics_line (d_graphics.get(), t, -0.9, t, +0.9);
 	}
-	Graphics_setColour (d_graphics, Graphics_BLACK);
+	Graphics_setColour (d_graphics.get(), Graphics_BLACK);
 	v_updateMenuItems_file ();
 }
 

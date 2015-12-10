@@ -159,7 +159,7 @@ static double PointProcess_getPeriodAtIndex (PointProcess me, long it, double ma
 	}\
 	else mytime = my xmax;\
 
-static RealTier RealTier_updateWithDelta (RealTier me, RealTier delta, PhonationTier glottis, double openglottis_fadeFraction) {
+static autoRealTier RealTier_updateWithDelta (RealTier me, RealTier delta, PhonationTier glottis, double openglottis_fadeFraction) {
 	try {
 		long myindex = 1;
 		RealPoint mypoint = (RealPoint) my points -> item [myindex];
@@ -168,7 +168,6 @@ static RealTier RealTier_updateWithDelta (RealTier me, RealTier delta, Phonation
 		double myvalue = mypoint -> value;
 		double lasttime = my xmin - 0.001; // sometime before xmin
 		autoRealTier thee = RealTier_create (my xmin, my xmax);
-
 
 		if (openglottis_fadeFraction <= 0) {
 			openglottis_fadeFraction = 0.0001;
@@ -247,7 +246,7 @@ static RealTier RealTier_updateWithDelta (RealTier me, RealTier delta, Phonation
 				RealTier_addPoint (thee.peek(), t4, myvalue4);
 			}
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not updated with delta.");
 	}
@@ -597,7 +596,7 @@ autoPhonationPoint PhonationPoint_create (double time, double period, double ope
 		my collisionPhase = collisionPhase;	my te = te;
 		my power1 = power1; my power2 = power2;
 		my pulseScale = pulseScale;
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PhonationPoint not created.");
 	}
@@ -709,7 +708,7 @@ autoPhonationGrid PhonationGrid_create (double tmin, double tmax) {
 		my breathinessAmplitude = IntensityTier_create (tmin, tmax);
 		my options = PhonationGridPlayOptions_create ();
 		PhonationGrid_setNames (me.peek());
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PhonationGrid not created.");
 	}
@@ -820,8 +819,8 @@ double PhonationGrid_getMaximumPeriod (PhonationGrid me) {
 static autoPointProcess PitchTier_to_PointProcess_flutter (PitchTier pitch, RealTier flutter, double maximumPeriod) {
 	try {
 		autoPointProcess thee = PitchTier_to_PointProcess (pitch);
-		if (flutter == 0) {
-			return thee.transfer();
+		if (! flutter) {
+			return thee;
 		}
 		double tsum = 0;
 		for (long it = 2; it <= thy nt; it++) {
@@ -837,7 +836,7 @@ static autoPointProcess PitchTier_to_PointProcess_flutter (PitchTier pitch, Real
 			}
 			thy t[it] += tsum;
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (pitch, U": no flutter PointProcess created.");
 	}
@@ -1179,17 +1178,16 @@ static autoSound PhonationGrid_PhonationTier_to_Sound_voiced (PhonationGrid me, 
 	}
 }
 
-static Sound PhonationGrid_to_Sound_voiced (PhonationGrid me, double samplingFrequency) {
+static autoSound PhonationGrid_to_Sound_voiced (PhonationGrid me, double samplingFrequency) {
 	try {
 		autoPhonationTier thee = PhonationGrid_to_PhonationTier (me);
-		autoSound him = PhonationGrid_PhonationTier_to_Sound_voiced (me, thee.peek(), samplingFrequency);
-		return him.transfer();
+		return PhonationGrid_PhonationTier_to_Sound_voiced (me, thee.peek(), samplingFrequency);
 	} catch (MelderError) {
 		Melder_throw (me, U": no voiced Sound created.");
 	}
 }
 
-static Sound PhonationGrid_to_Sound (PhonationGrid me, CouplingGrid him, double samplingFrequency) {
+static autoSound PhonationGrid_to_Sound (PhonationGrid me, CouplingGrid him, double samplingFrequency) {
 	try {
 		PhonationGridPlayOptions pp = my options.get();
 		autoSound thee;
@@ -1205,16 +1203,16 @@ static Sound PhonationGrid_to_Sound (PhonationGrid me, CouplingGrid him, double 
 		}
 		if (pp -> aspiration) {
 			autoSound aspiration = PhonationGrid_to_Sound_aspiration (me, samplingFrequency);
-			if (! thee.peek()) {
-				thee = aspiration.move();
-			} else {
+			if (thee) {
 				_Sounds_add_inline (thee.peek(), aspiration.peek());
+			} else {
+				thee = aspiration.move();
 			}
 		}
-		if (! thee.peek()) {
+		if (! thee) {
 			thee = Sound_createEmptyMono (my xmin, my xmax, samplingFrequency);
 		}
-		return thee.transfer();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Sound created.");
 	}
@@ -1836,7 +1834,7 @@ void FormantGrid_CouplingGrid_updateOpenPhases (FormantGrid me, CouplingGrid the
 						Melder_throw (U"Formant ", itier, U" coupling gives negative values.");
 					}
 					forget (my formants -> item [itier]);
-					my formants -> item [itier] = rt.transfer();
+					my formants -> item [itier] = rt.releaseToAmbiguousOwner();
 				}
 			}
 			delta = (RealTier) thy delta_formants -> bandwidths -> item [itier];
@@ -1847,7 +1845,7 @@ void FormantGrid_CouplingGrid_updateOpenPhases (FormantGrid me, CouplingGrid the
 						Melder_throw (U"Bandwidth ", itier, U" coupling gives negative values.");
 					}
 					forget (my bandwidths -> item [itier]);
-					my bandwidths -> item [itier] = rt.transfer();
+					my bandwidths -> item [itier] = rt.releaseToAmbiguousOwner();
 				}
 			}
 		}
@@ -2482,7 +2480,7 @@ void KlattGrid_replaceAmplitudeTier (KlattGrid me, int formantType, long iforman
 		}
 		autoIntensityTier any = Data_copy (thee);
 		forget ((*ordered) -> item [iformant]);
-		(*ordered) -> item [iformant] = any.transfer();
+		(*ordered) -> item [iformant] = any.releaseToAmbiguousOwner();
 	} catch (MelderError) {
 		Melder_throw (me, U": no ampitude tier replaced.");
 	}

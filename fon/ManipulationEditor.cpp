@@ -600,29 +600,29 @@ static void drawSoundArea (ManipulationEditor me, double ymin, double ymax) {
 	Sound sound = ana -> sound.get();
 	PointProcess pulses = ana -> pulses.get();
 	long first, last, i;
-	Graphics_Viewport viewport = Graphics_insetViewport (my d_graphics, 0, 1, ymin, ymax);
-	Graphics_setWindow (my d_graphics, 0, 1, 0, 1);
-	Graphics_setColour (my d_graphics, Graphics_WHITE);
-	Graphics_fillRectangle (my d_graphics, 0, 1, 0, 1);
-	Graphics_setColour (my d_graphics, Graphics_BLACK);
-	Graphics_rectangle (my d_graphics, 0, 1, 0, 1);
-	Graphics_setTextAlignment (my d_graphics, Graphics_RIGHT, Graphics_TOP);
-	Graphics_setFont (my d_graphics, kGraphics_font_TIMES);
-	Graphics_text (my d_graphics, 1, 1, U"%%Sound");
-	Graphics_setColour (my d_graphics, Graphics_BLUE);
-	Graphics_text (my d_graphics, 1, 1 - Graphics_dyMMtoWC (my d_graphics, 3), U"%%Pulses");
-	Graphics_setFont (my d_graphics, kGraphics_font_HELVETICA);
+	Graphics_Viewport viewport = Graphics_insetViewport (my d_graphics.get(), 0.0, 1.0, ymin, ymax);
+	Graphics_setWindow (my d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (my d_graphics.get(), Graphics_WHITE);
+	Graphics_fillRectangle (my d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (my d_graphics.get(), Graphics_BLACK);
+	Graphics_rectangle (my d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setTextAlignment (my d_graphics.get(), Graphics_RIGHT, Graphics_TOP);
+	Graphics_setFont (my d_graphics.get(), kGraphics_font_TIMES);
+	Graphics_text (my d_graphics.get(), 1.0, 1.0, U"%%Sound");
+	Graphics_setColour (my d_graphics.get(), Graphics_BLUE);
+	Graphics_text (my d_graphics.get(), 1.0, 1.0 - Graphics_dyMMtoWC (my d_graphics.get(), 3), U"%%Pulses");
+	Graphics_setFont (my d_graphics.get(), kGraphics_font_HELVETICA);
 
 	/*
 	 * Draw blue pulses.
 	 */
 	if (pulses) {
-		Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, 0.0, 1.0);
-		Graphics_setColour (my d_graphics, Graphics_BLUE);
+		Graphics_setWindow (my d_graphics.get(), my d_startWindow, my d_endWindow, 0.0, 1.0);
+		Graphics_setColour (my d_graphics.get(), Graphics_BLUE);
 		for (i = 1; i <= pulses -> nt; i ++) {
 			double t = pulses -> t [i];
 			if (t >= my d_startWindow && t <= my d_endWindow)
-				Graphics_line (my d_graphics, t, 0.05, t, 0.95);
+				Graphics_line (my d_graphics.get(), t, 0.05, t, 0.95);
 		}
 	}
 
@@ -639,7 +639,7 @@ static void drawSoundArea (ManipulationEditor me, double ymin, double ymax) {
 		 */
 		scaleMin = 0.83 * minimum + 0.17 * my soundmin;
 		scaleMax = 0.83 * maximum + 0.17 * my soundmax;
-		Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, scaleMin, scaleMax);
+		Graphics_setWindow (my d_graphics.get(), my d_startWindow, my d_endWindow, scaleMin, scaleMax);
 		FunctionEditor_drawRangeMark (me, scaleMin, Melder_float (Melder_half (scaleMin)), U"", Graphics_BOTTOM);
 		FunctionEditor_drawRangeMark (me, scaleMax, Melder_float (Melder_half (scaleMax)), U"", Graphics_TOP);
 
@@ -647,21 +647,21 @@ static void drawSoundArea (ManipulationEditor me, double ymin, double ymax) {
 		 * Draw dotted zero line.
 		 */
 		if (minimum < 0.0 && maximum > 0.0) {
-			Graphics_setColour (my d_graphics, Graphics_CYAN);
-			Graphics_setLineType (my d_graphics, Graphics_DOTTED);
-			Graphics_line (my d_graphics, my d_startWindow, 0.0, my d_endWindow, 0.0);
-			Graphics_setLineType (my d_graphics, Graphics_DRAWN);
+			Graphics_setColour (my d_graphics.get(), Graphics_CYAN);
+			Graphics_setLineType (my d_graphics.get(), Graphics_DOTTED);
+			Graphics_line (my d_graphics.get(), my d_startWindow, 0.0, my d_endWindow, 0.0);
+			Graphics_setLineType (my d_graphics.get(), Graphics_DRAWN);
 		} 
 
 		/*
 		 * Draw samples.
 		 */    
-		Graphics_setColour (my d_graphics, Graphics_BLACK);
-		Graphics_function (my d_graphics, sound -> z [1], first, last,
+		Graphics_setColour (my d_graphics.get(), Graphics_BLACK);
+		Graphics_function (my d_graphics.get(), sound -> z [1], first, last,
 			Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
 	}
 
-	Graphics_resetViewport (my d_graphics, viewport);
+	Graphics_resetViewport (my d_graphics.get(), viewport);
 }
 
 static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
@@ -677,38 +677,38 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 	/*
 	 * Pitch contours.
 	 */
-	Graphics_Viewport viewport = Graphics_insetViewport (my d_graphics, 0, 1, ymin, ymax);
-	Graphics_setWindow (my d_graphics, 0, 1, 0, 1);
-	Graphics_setColour (my d_graphics, Graphics_WHITE);
-	Graphics_fillRectangle (my d_graphics, 0, 1, 0, 1);
-	Graphics_setColour (my d_graphics, Graphics_BLACK);
-	Graphics_rectangle (my d_graphics, 0, 1, 0, 1);
-	Graphics_setColour (my d_graphics, Graphics_GREEN);
-	Graphics_setFont (my d_graphics, kGraphics_font_TIMES);
-	Graphics_setTextAlignment (my d_graphics, Graphics_RIGHT, Graphics_TOP);
-	Graphics_text (my d_graphics, 1, 1, U"%%Pitch manip");
-	Graphics_setGrey (my d_graphics, 0.7);
-	Graphics_text (my d_graphics, 1, 1 - Graphics_dyMMtoWC (my d_graphics, 3), U"%%Pitch from pulses");
-	Graphics_setFont (my d_graphics, kGraphics_font_HELVETICA);
+	Graphics_Viewport viewport = Graphics_insetViewport (my d_graphics.get(), 0, 1, ymin, ymax);
+	Graphics_setWindow (my d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (my d_graphics.get(), Graphics_WHITE);
+	Graphics_fillRectangle (my d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (my d_graphics.get(), Graphics_BLACK);
+	Graphics_rectangle (my d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (my d_graphics.get(), Graphics_GREEN);
+	Graphics_setFont (my d_graphics.get(), kGraphics_font_TIMES);
+	Graphics_setTextAlignment (my d_graphics.get(), Graphics_RIGHT, Graphics_TOP);
+	Graphics_text (my d_graphics.get(), 1.0, 1.0, U"%%Pitch manip");
+	Graphics_setGrey (my d_graphics.get(), 0.7);
+	Graphics_text (my d_graphics.get(), 1.0, 1.0 - Graphics_dyMMtoWC (my d_graphics.get(), 3), U"%%Pitch from pulses");
+	Graphics_setFont (my d_graphics.get(), kGraphics_font_HELVETICA);
 
-	Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, my p_pitch_minimum, my p_pitch_maximum);
+	Graphics_setWindow (my d_graphics.get(), my d_startWindow, my d_endWindow, my p_pitch_minimum, my p_pitch_maximum);
 
 	/*
 	 * Draw pitch contour based on pulses.
 	 */
-	Graphics_setGrey (my d_graphics, 0.7);
+	Graphics_setGrey (my d_graphics.get(), 0.7);
 	if (pulses) for (i = 1; i < pulses -> nt; i ++) {
 		double tleft = pulses -> t [i], tright = pulses -> t [i + 1], t = 0.5 * (tleft + tright);
 		if (t >= my d_startWindow && t <= my d_endWindow) {
 			if (tleft != tright) {
 				double f = YLIN (1 / (tright - tleft));
 				if (f >= my pitchTier.minPeriodic && f <= my p_pitch_maximum) {
-					Graphics_fillCircle_mm (my d_graphics, t, f, 1);
+					Graphics_fillCircle_mm (my d_graphics.get(), t, f, 1);
 				}
 			}
 		}
 	}
-	Graphics_setGrey (my d_graphics, 0.0);
+	Graphics_setGrey (my d_graphics.get(), 0.0);
 
 	FunctionEditor_drawGridLine (me, minimumFrequency);
 	FunctionEditor_drawRangeMark (me, my p_pitch_maximum,
@@ -730,48 +730,48 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 		imin = AnyTier_timeToHighIndex (pitch, my d_startWindow);
 		imax = AnyTier_timeToLowIndex (pitch, my d_endWindow);
 	}
-	Graphics_setLineWidth (my d_graphics, 2);
+	Graphics_setLineWidth (my d_graphics.get(), 2.0);
 	if (n == 0) {
-		Graphics_setTextAlignment (my d_graphics, Graphics_CENTRE, Graphics_HALF);
-		Graphics_setColour (my d_graphics, Graphics_BLACK);
-		Graphics_text (my d_graphics, 0.5 * (my d_startWindow + my d_endWindow), 0.5 * (my p_pitch_minimum + my p_pitch_maximum), U"(no pitch points)");
+		Graphics_setTextAlignment (my d_graphics.get(), Graphics_CENTRE, Graphics_HALF);
+		Graphics_setColour (my d_graphics.get(), Graphics_BLACK);
+		Graphics_text (my d_graphics.get(), 0.5 * (my d_startWindow + my d_endWindow), 0.5 * (my p_pitch_minimum + my p_pitch_maximum), U"(no pitch points)");
 	} else if (imax < imin) {
 		double fleft = YLIN (RealTier_getValueAtTime (pitch, my d_startWindow));
 		double fright = YLIN (RealTier_getValueAtTime (pitch, my d_endWindow));
-		Graphics_setColour (my d_graphics, Graphics_GREEN);
-		Graphics_line (my d_graphics, my d_startWindow, fleft, my d_endWindow, fright);
+		Graphics_setColour (my d_graphics.get(), Graphics_GREEN);
+		Graphics_line (my d_graphics.get(), my d_startWindow, fleft, my d_endWindow, fright);
 	} else {
 		for (i = imin; i <= imax; i ++) {
 			RealPoint point = (RealPoint) pitch -> points -> item [i];
 			double t = point -> number, f = YLIN (point -> value);
-			Graphics_setColour (my d_graphics, Graphics_GREEN);
+			Graphics_setColour (my d_graphics.get(), Graphics_GREEN);
 			if (i == 1)
-				Graphics_line (my d_graphics, my d_startWindow, f, t, f);
+				Graphics_line (my d_graphics.get(), my d_startWindow, f, t, f);
 			else if (i == imin)
-				Graphics_line (my d_graphics, t, f, my d_startWindow, YLIN (RealTier_getValueAtTime (pitch, my d_startWindow)));
+				Graphics_line (my d_graphics.get(), t, f, my d_startWindow, YLIN (RealTier_getValueAtTime (pitch, my d_startWindow)));
 			if (i == n)
-				Graphics_line (my d_graphics, t, f, my d_endWindow, f);
+				Graphics_line (my d_graphics.get(), t, f, my d_endWindow, f);
 			else if (i == imax)
-				Graphics_line (my d_graphics, t, f, my d_endWindow, YLIN (RealTier_getValueAtTime (pitch, my d_endWindow)));
+				Graphics_line (my d_graphics.get(), t, f, my d_endWindow, YLIN (RealTier_getValueAtTime (pitch, my d_endWindow)));
 			else {
 				RealPoint pointRight = (RealPoint) pitch -> points -> item [i + 1];
-				Graphics_line (my d_graphics, t, f, pointRight -> number, YLIN (pointRight -> value));
+				Graphics_line (my d_graphics.get(), t, f, pointRight -> number, YLIN (pointRight -> value));
 			}
 		}
 		for (i = imin; i <= imax; i ++) {
 			RealPoint point = (RealPoint) pitch -> points -> item [i];
 			double t = point -> number, f = YLIN (point -> value);
 			if (i >= ifirstSelected && i <= ilastSelected)
-				Graphics_setColour (my d_graphics, Graphics_RED);	
+				Graphics_setColour (my d_graphics.get(), Graphics_RED);
 			else
-				Graphics_setColour (my d_graphics, Graphics_GREEN);
-			Graphics_fillCircle_mm (my d_graphics, t, f, 3);
+				Graphics_setColour (my d_graphics.get(), Graphics_GREEN);
+			Graphics_fillCircle_mm (my d_graphics.get(), t, f, 3.0);
 		}
 	}
-	Graphics_setLineWidth (my d_graphics, 1);
+	Graphics_setLineWidth (my d_graphics.get(), 1.0);
 
-	Graphics_setColour (my d_graphics, Graphics_BLACK);
-	Graphics_resetViewport (my d_graphics, viewport);
+	Graphics_setColour (my d_graphics.get(), Graphics_BLACK);
+	Graphics_resetViewport (my d_graphics.get(), viewport);
 }
 
 static void drawDurationArea (ManipulationEditor me, double ymin, double ymax) {
@@ -783,19 +783,19 @@ static void drawDurationArea (ManipulationEditor me, double ymin, double ymax) {
 	/*
 	 * Duration contours.
 	 */
-	Graphics_Viewport viewport = Graphics_insetViewport (my d_graphics, 0, 1, ymin, ymax);
-	Graphics_setWindow (my d_graphics, 0, 1, 0, 1);
-	Graphics_setColour (my d_graphics, Graphics_WHITE);
-	Graphics_fillRectangle (my d_graphics, 0, 1, 0, 1);
-	Graphics_setColour (my d_graphics, Graphics_BLACK);
-	Graphics_rectangle (my d_graphics, 0, 1, 0, 1);
-	Graphics_setColour (my d_graphics, Graphics_GREEN);
-	Graphics_setFont (my d_graphics, kGraphics_font_TIMES);
-	Graphics_setTextAlignment (my d_graphics, Graphics_RIGHT, Graphics_TOP);
-	Graphics_text (my d_graphics, 1, 1, U"%%Duration manip");
-	Graphics_setFont (my d_graphics, kGraphics_font_HELVETICA);
+	Graphics_Viewport viewport = Graphics_insetViewport (my d_graphics.get(), 0.0, 1.0, ymin, ymax);
+	Graphics_setWindow (my d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (my d_graphics.get(), Graphics_WHITE);
+	Graphics_fillRectangle (my d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (my d_graphics.get(), Graphics_BLACK);
+	Graphics_rectangle (my d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (my d_graphics.get(), Graphics_GREEN);
+	Graphics_setFont (my d_graphics.get(), kGraphics_font_TIMES);
+	Graphics_setTextAlignment (my d_graphics.get(), Graphics_RIGHT, Graphics_TOP);
+	Graphics_text (my d_graphics.get(), 1.0, 1.0, U"%%Duration manip");
+	Graphics_setFont (my d_graphics.get(), kGraphics_font_HELVETICA);
 
-	Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, my p_duration_minimum, my p_duration_maximum);
+	Graphics_setWindow (my d_graphics.get(), my d_startWindow, my d_endWindow, my p_duration_minimum, my p_duration_maximum);
 	FunctionEditor_drawGridLine (me, 1.0);
 	FunctionEditor_drawRangeMark (me, my p_duration_maximum, Melder_fixed (my p_duration_maximum, 3), U"", Graphics_TOP);
 	FunctionEditor_drawRangeMark (me, my p_duration_minimum, Melder_fixed (my p_duration_minimum, 3), U"", Graphics_BOTTOM);
@@ -815,49 +815,49 @@ static void drawDurationArea (ManipulationEditor me, double ymin, double ymax) {
 		imin = AnyTier_timeToHighIndex (duration, my d_startWindow);
 		imax = AnyTier_timeToLowIndex (duration, my d_endWindow);
 	}
-	Graphics_setLineWidth (my d_graphics, 2);
+	Graphics_setLineWidth (my d_graphics.get(), 2.0);
 	if (n == 0) {
-		Graphics_setColour (my d_graphics, Graphics_BLACK);
-		Graphics_setTextAlignment (my d_graphics, Graphics_CENTRE, Graphics_HALF);
-		Graphics_text (my d_graphics, 0.5 * (my d_startWindow + my d_endWindow),
+		Graphics_setColour (my d_graphics.get(), Graphics_BLACK);
+		Graphics_setTextAlignment (my d_graphics.get(), Graphics_CENTRE, Graphics_HALF);
+		Graphics_text (my d_graphics.get(), 0.5 * (my d_startWindow + my d_endWindow),
 			0.5 * (my p_duration_minimum + my p_duration_maximum), U"(no duration points)");
 	} else if (imax < imin) {
 		double fleft = RealTier_getValueAtTime (duration, my d_startWindow);
 		double fright = RealTier_getValueAtTime (duration, my d_endWindow);
-		Graphics_setColour (my d_graphics, Graphics_GREEN);
-		Graphics_line (my d_graphics, my d_startWindow, fleft, my d_endWindow, fright);
+		Graphics_setColour (my d_graphics.get(), Graphics_GREEN);
+		Graphics_line (my d_graphics.get(), my d_startWindow, fleft, my d_endWindow, fright);
 	} else {
 		for (i = imin; i <= imax; i ++) {
 			RealPoint point = (RealPoint) duration -> points -> item [i];
 			double t = point -> number, dur = point -> value;
-			Graphics_setColour (my d_graphics, Graphics_GREEN);
+			Graphics_setColour (my d_graphics.get(), Graphics_GREEN);
 			if (i == 1)
-				Graphics_line (my d_graphics, my d_startWindow, dur, t, dur);
+				Graphics_line (my d_graphics.get(), my d_startWindow, dur, t, dur);
 			else if (i == imin)
-				Graphics_line (my d_graphics, t, dur, my d_startWindow, RealTier_getValueAtTime (duration, my d_startWindow));
+				Graphics_line (my d_graphics.get(), t, dur, my d_startWindow, RealTier_getValueAtTime (duration, my d_startWindow));
 			if (i == n)
-				Graphics_line (my d_graphics, t, dur, my d_endWindow, dur);
+				Graphics_line (my d_graphics.get(), t, dur, my d_endWindow, dur);
 			else if (i == imax)
-				Graphics_line (my d_graphics, t, dur, my d_endWindow, RealTier_getValueAtTime (duration, my d_endWindow));
+				Graphics_line (my d_graphics.get(), t, dur, my d_endWindow, RealTier_getValueAtTime (duration, my d_endWindow));
 			else {
 				RealPoint pointRight = (RealPoint) duration -> points -> item [i + 1];
-				Graphics_line (my d_graphics, t, dur, pointRight -> number, pointRight -> value);
+				Graphics_line (my d_graphics.get(), t, dur, pointRight -> number, pointRight -> value);
 			}
 		}
 		for (i = imin; i <= imax; i ++) {
 			RealPoint point = (RealPoint) duration -> points -> item [i];
 			double t = point -> number, dur = point -> value;
 			if (i >= ifirstSelected && i <= ilastSelected)
-				Graphics_setColour (my d_graphics, Graphics_RED);	
+				Graphics_setColour (my d_graphics.get(), Graphics_RED);
 			else
-				Graphics_setColour (my d_graphics, Graphics_GREEN);	
-			Graphics_fillCircle_mm (my d_graphics, t, dur, 3);
+				Graphics_setColour (my d_graphics.get(), Graphics_GREEN);
+			Graphics_fillCircle_mm (my d_graphics.get(), t, dur, 3.0);
 		}
 	}
 
-	Graphics_setLineWidth (my d_graphics, 1);
-	Graphics_setColour (my d_graphics, Graphics_BLACK);
-	Graphics_resetViewport (my d_graphics, viewport);
+	Graphics_setLineWidth (my d_graphics.get(), 1.0);
+	Graphics_setColour (my d_graphics.get(), Graphics_BLACK);
+	Graphics_resetViewport (my d_graphics.get(), viewport);
 }
 
 void structManipulationEditor :: v_draw () {
@@ -871,18 +871,18 @@ void structManipulationEditor :: v_draw () {
 	if (hasPitchArea) drawPitchArea (this, ypitchmin, ypitchmax);
 	if (hasDurationArea) drawDurationArea (this, ydurationmin, ydurationmax);
 
-	Graphics_setWindow (our d_graphics, 0.0, 1.0, 0.0, 1.0);
-	Graphics_setGrey (our d_graphics, 0.85);
-	Graphics_fillRectangle (our d_graphics, -0.001, 1.001, ypitchmax, ysoundmin);
-	Graphics_setGrey (our d_graphics, 0.00);
-	Graphics_line (our d_graphics, 0, ysoundmin, 1, ysoundmin);
-	Graphics_line (our d_graphics, 0, ypitchmax, 1, ypitchmax);
+	Graphics_setWindow (our d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setGrey (our d_graphics.get(), 0.85);
+	Graphics_fillRectangle (our d_graphics.get(), -0.001, 1.001, ypitchmax, ysoundmin);
+	Graphics_setGrey (our d_graphics.get(), 0.00);
+	Graphics_line (our d_graphics.get(), 0.0, ysoundmin, 1.0, ysoundmin);
+	Graphics_line (our d_graphics.get(), 0.0, ypitchmax, 1.0, ypitchmax);
 	if (hasDurationArea) {
-		Graphics_setGrey (our d_graphics, 0.85);
-		Graphics_fillRectangle (our d_graphics, -0.001, 1.001, ydurationmax, ypitchmin);
-		Graphics_setGrey (our d_graphics, 0.00);
-		Graphics_line (our d_graphics, 0, ypitchmin, 1, ypitchmin);
-		Graphics_line (our d_graphics, 0, ydurationmax, 1, ydurationmax);
+		Graphics_setGrey (our d_graphics.get(), 0.85);
+		Graphics_fillRectangle (our d_graphics.get(), -0.001, 1.001, ydurationmax, ypitchmin);
+		Graphics_setGrey (our d_graphics.get(), 0.00);
+		Graphics_line (our d_graphics.get(), 0, ypitchmin, 1, ypitchmin);
+		Graphics_line (our d_graphics.get(), 0, ydurationmax, 1, ydurationmax);
 	}
 	updateMenus (this);
 }
@@ -900,8 +900,8 @@ static void drawWhileDragging (ManipulationEditor me, double xWC, double yWC, lo
 		RealPoint point = pitch -> point (i);
 		double t = point -> number + dt, f = YLIN (point -> value) + df;
 		if (t >= my d_startWindow && t <= my d_endWindow)
-			Graphics_circle_mm (my d_graphics, t,
-				f < my pitchTier.minPeriodic ? my pitchTier.minPeriodic : f > my p_pitch_maximum ? my p_pitch_maximum : f, 3);
+			Graphics_circle_mm (my d_graphics.get(), t,
+				f < my pitchTier.minPeriodic ? my pitchTier.minPeriodic : f > my p_pitch_maximum ? my p_pitch_maximum : f, 3.0);
 	}
 
 	if (last == first) {
@@ -910,12 +910,12 @@ static void drawWhileDragging (ManipulationEditor me, double xWC, double yWC, lo
 		 */
 		RealPoint point = pitch -> point (first);
 		double t = point -> number + dt, fWC = YLIN (point -> value) + df;
-		Graphics_line (my d_graphics, t, my p_pitch_minimum, t, my p_pitch_maximum - Graphics_dyMMtoWC (my d_graphics, 4.0));
-		Graphics_setTextAlignment (my d_graphics, Graphics_CENTRE, Graphics_TOP);
-		Graphics_text (my d_graphics, t, my p_pitch_maximum, Melder_fixed (t, 6));
-		Graphics_line (my d_graphics, my d_startWindow, fWC, my d_endWindow, fWC);
-		Graphics_setTextAlignment (my d_graphics, Graphics_LEFT, Graphics_BOTTOM);
-		Graphics_text (my d_graphics, my d_startWindow, fWC, Melder_fixed (fWC, 5));
+		Graphics_line (my d_graphics.get(), t, my p_pitch_minimum, t, my p_pitch_maximum - Graphics_dyMMtoWC (my d_graphics.get(), 4.0));
+		Graphics_setTextAlignment (my d_graphics.get(), Graphics_CENTRE, Graphics_TOP);
+		Graphics_text (my d_graphics.get(), t, my p_pitch_maximum, Melder_fixed (t, 6));
+		Graphics_line (my d_graphics.get(), my d_startWindow, fWC, my d_endWindow, fWC);
+		Graphics_setTextAlignment (my d_graphics.get(), Graphics_LEFT, Graphics_BOTTOM);
+		Graphics_text (my d_graphics.get(), my d_startWindow, fWC, Melder_fixed (fWC, 5));
 	}
 }
 
@@ -929,10 +929,10 @@ static bool clickPitch (ManipulationEditor me, double xWC, double yWC, bool shif
 
 	my pitchTier.cursor = my p_pitch_minimum + yWC * (my p_pitch_maximum - my p_pitch_minimum);
 	if (! pitch) {
-		Graphics_resetViewport (my d_graphics, my inset);
+		Graphics_resetViewport (my d_graphics.get(), my inset);
 		return my ManipulationEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
-	Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, my p_pitch_minimum, my p_pitch_maximum);
+	Graphics_setWindow (my d_graphics.get(), my d_startWindow, my d_endWindow, my p_pitch_minimum, my p_pitch_maximum);
 	yWC = my pitchTier.cursor;
 
 	/*
@@ -940,12 +940,12 @@ static bool clickPitch (ManipulationEditor me, double xWC, double yWC, bool shif
 	 */
 	inearestPoint = AnyTier_timeToNearestIndex (pitch, xWC);
 	if (inearestPoint == 0) {
-		Graphics_resetViewport (my d_graphics, my inset);
+		Graphics_resetViewport (my d_graphics.get(), my inset);
 		return my ManipulationEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
 	nearestPoint = (RealPoint) pitch -> points -> item [inearestPoint];
-	if (Graphics_distanceWCtoMM (my d_graphics, xWC, yWC, nearestPoint -> number, YLIN (nearestPoint -> value)) > 1.5) {
-		Graphics_resetViewport (my d_graphics, my inset);
+	if (Graphics_distanceWCtoMM (my d_graphics.get(), xWC, yWC, nearestPoint -> number, YLIN (nearestPoint -> value)) > 1.5) {
+		Graphics_resetViewport (my d_graphics.get(), my inset);
 		return my ManipulationEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
 
@@ -971,14 +971,14 @@ static bool clickPitch (ManipulationEditor me, double xWC, double yWC, bool shif
 	  * Since some systems do double buffering,
 	  * the undrawing at the old position and redrawing at the new have to be bracketed by Graphics_mouseStillDown ().
 	  */
-	Graphics_xorOn (my d_graphics, Graphics_MAROON);
+	Graphics_xorOn (my d_graphics.get(), Graphics_MAROON);
 	drawWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
 	dragHorizontal = my p_pitch_draggingStrategy != kManipulationEditor_draggingStrategy_VERTICAL &&
 		(! shiftKeyPressed || my p_pitch_draggingStrategy != kManipulationEditor_draggingStrategy_HYBRID);
 	dragVertical = my p_pitch_draggingStrategy != kManipulationEditor_draggingStrategy_HORIZONTAL;
-	while (Graphics_mouseStillDown (my d_graphics)) {
+	while (Graphics_mouseStillDown (my d_graphics.get())) {
 		double xWC_new, yWC_new;
-		Graphics_getMouseLocation (my d_graphics, & xWC_new, & yWC_new);
+		Graphics_getMouseLocation (my d_graphics.get(), & xWC_new, & yWC_new);
 		if (xWC_new != xWC || yWC_new != yWC) {
 			drawWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
 			if (dragHorizontal) dt += xWC_new - xWC;
@@ -987,7 +987,7 @@ static bool clickPitch (ManipulationEditor me, double xWC, double yWC, bool shif
 			drawWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
 		}
 	}
-	Graphics_xorOff (my d_graphics);
+	Graphics_xorOff (my d_graphics.get());
 
 	/*
 	 * Dragged inside window?
@@ -1035,22 +1035,19 @@ static bool clickPitch (ManipulationEditor me, double xWC, double yWC, bool shif
 	return FunctionEditor_UPDATE_NEEDED;
 }
 
-static void drawDurationWhileDragging (ManipulationEditor me, double xWC, double yWC, long first, long last, double dt, double df) {
+static void drawDurationWhileDragging (ManipulationEditor me, double /* xWC */, double /* yWC */, long first, long last, double dt, double df) {
 	Manipulation ana = (Manipulation) my data;
 	DurationTier duration = ana -> duration.get();
-	long i;
-	(void) xWC;
-	(void) yWC;
 
 	/*
 	 * Draw all selected duration points as magenta empty circles, if inside the window.
 	 */
-	for (i = first; i <= last; i ++) {
+	for (long i = first; i <= last; i ++) {
 		RealPoint point = (RealPoint) duration -> points -> item [i];
 		double t = point -> number + dt, dur = point -> value + df;
 		if (t >= my d_startWindow && t <= my d_endWindow)
-			Graphics_circle_mm (my d_graphics, t, dur < my p_duration_minimum ? my p_duration_minimum :
-				dur > my p_duration_maximum ? my p_duration_maximum : dur, 3);
+			Graphics_circle_mm (my d_graphics.get(), t, dur < my p_duration_minimum ? my p_duration_minimum :
+				dur > my p_duration_maximum ? my p_duration_maximum : dur, 3.0);
 	}
 
 	if (last == first) {
@@ -1059,12 +1056,12 @@ static void drawDurationWhileDragging (ManipulationEditor me, double xWC, double
 		 */
 		RealPoint point = (RealPoint) duration -> points -> item [first];
 		double t = point -> number + dt, durWC = point -> value + df;
-		Graphics_line (my d_graphics, t, my p_duration_minimum, t, my p_duration_maximum - Graphics_dyMMtoWC (my d_graphics, 4.0));
-		Graphics_setTextAlignment (my d_graphics, Graphics_CENTRE, Graphics_TOP);
-		Graphics_text (my d_graphics, t, my p_duration_maximum, Melder_fixed (t, 6));
-		Graphics_line (my d_graphics, my d_startWindow, durWC, my d_endWindow, durWC);
-		Graphics_setTextAlignment (my d_graphics, Graphics_LEFT, Graphics_BOTTOM);
-		Graphics_text (my d_graphics, my d_startWindow, durWC, Melder_fixed (durWC, 2));
+		Graphics_line (my d_graphics.get(), t, my p_duration_minimum, t, my p_duration_maximum - Graphics_dyMMtoWC (my d_graphics.get(), 4.0));
+		Graphics_setTextAlignment (my d_graphics.get(), Graphics_CENTRE, Graphics_TOP);
+		Graphics_text (my d_graphics.get(), t, my p_duration_maximum, Melder_fixed (t, 6));
+		Graphics_line (my d_graphics.get(), my d_startWindow, durWC, my d_endWindow, durWC);
+		Graphics_setTextAlignment (my d_graphics.get(), Graphics_LEFT, Graphics_BOTTOM);
+		Graphics_text (my d_graphics.get(), my d_startWindow, durWC, Melder_fixed (durWC, 2));
 	}
 }
 
@@ -1087,22 +1084,22 @@ static bool clickDuration (ManipulationEditor me, double xWC, double yWC, int sh
 	my duration.cursor = yWC;
 
 	if (! duration) {
-		Graphics_resetViewport (my d_graphics, my inset);
+		Graphics_resetViewport (my d_graphics.get(), my inset);
 		return my ManipulationEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
-	Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, my p_duration_minimum, my p_duration_maximum);
+	Graphics_setWindow (my d_graphics.get(), my d_startWindow, my d_endWindow, my p_duration_minimum, my p_duration_maximum);
 
 	/*
 	 * Clicked on a duration point?
 	 */
 	inearestPoint = AnyTier_timeToNearestIndex (duration, xWC);
 	if (inearestPoint == 0) {
-		Graphics_resetViewport (my d_graphics, my inset);
+		Graphics_resetViewport (my d_graphics.get(), my inset);
 		return my ManipulationEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
 	nearestPoint = (RealPoint) duration -> points -> item [inearestPoint];
-	if (Graphics_distanceWCtoMM (my d_graphics, xWC, yWC, nearestPoint -> number, nearestPoint -> value) > 1.5) {
-		Graphics_resetViewport (my d_graphics, my inset);
+	if (Graphics_distanceWCtoMM (my d_graphics.get(), xWC, yWC, nearestPoint -> number, nearestPoint -> value) > 1.5) {
+		Graphics_resetViewport (my d_graphics.get(), my inset);
 		return my ManipulationEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
 
@@ -1123,11 +1120,11 @@ static bool clickDuration (ManipulationEditor me, double xWC, double yWC, int sh
 	/*
 	 * Drag.
 	 */
-	Graphics_xorOn (my d_graphics, Graphics_MAROON);
+	Graphics_xorOn (my d_graphics.get(), Graphics_MAROON);
 	drawDurationWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
-	while (Graphics_mouseStillDown (my d_graphics)) {
+	while (Graphics_mouseStillDown (my d_graphics.get())) {
 		double xWC_new, yWC_new;
-		Graphics_getMouseLocation (my d_graphics, & xWC_new, & yWC_new);
+		Graphics_getMouseLocation (my d_graphics.get(), & xWC_new, & yWC_new);
 		if (xWC_new != xWC || yWC_new != yWC) {
 			drawDurationWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
 			dt += xWC_new - xWC, xWC = xWC_new;
@@ -1135,7 +1132,7 @@ static bool clickDuration (ManipulationEditor me, double xWC, double yWC, int sh
 			drawDurationWhileDragging (me, xWC_new, yWC_new, ifirstSelected, ilastSelected, dt, df);
 		}
 	}
-	Graphics_xorOff (my d_graphics);
+	Graphics_xorOff (my d_graphics.get());
 
 	/*
 	 * Dragged inside window?
@@ -1192,10 +1189,10 @@ bool structManipulationEditor :: v_click (double xWC, double yWC, bool shiftKeyP
 	 * Dispatch click to clicked area.
 	 */
 	if (hasPitchArea && yWC > ypitchmin && yWC < ypitchmax) {   // clicked in pitch area?
-		inset = Graphics_insetViewport (our d_graphics, 0, 1, ypitchmin, ypitchmax);
+		inset = Graphics_insetViewport (our d_graphics.get(), 0.0, 1.0, ypitchmin, ypitchmax);
 		return clickPitch (this, xWC, (yWC - ypitchmin) / (ypitchmax - ypitchmin), shiftKeyPressed);
 	} else if (hasDurationArea && yWC > ydurationmin && yWC < ydurationmax) {   // clicked in duration area?
-		inset = Graphics_insetViewport (our d_graphics, 0, 1, ydurationmin, ydurationmax);
+		inset = Graphics_insetViewport (our d_graphics.get(), 0.0, 1.0, ydurationmin, ydurationmax);
 		return clickDuration (this, xWC, (yWC - ydurationmin) / (ydurationmax - ydurationmin), shiftKeyPressed);
 	}
 	/*

@@ -138,21 +138,21 @@ Thing_define (Graphics, Thing) {
 	virtual void v_updateWs () { }
 };
 
-Graphics Graphics_create (int resolution);
-Graphics Graphics_create_postscriptjob (MelderFile file, int resolution, enum kGraphicsPostscript_spots spots,
+autoGraphics Graphics_create (int resolution);
+autoGraphics Graphics_create_postscriptjob (MelderFile file, int resolution, enum kGraphicsPostscript_spots spots,
 	enum kGraphicsPostscript_paperSize paperSize, enum kGraphicsPostscript_orientation rotation, double magnification);
-Graphics Graphics_create_epsfile (MelderFile file, int resolution, enum kGraphicsPostscript_spots spots,
+autoGraphics Graphics_create_epsfile (MelderFile file, int resolution, enum kGraphicsPostscript_spots spots,
 	double xmin, double xmax, double ymin, double ymax, bool includeFonts, bool useSilipaPS);
-Graphics Graphics_create_pdffile (MelderFile file, int resolution,
+autoGraphics Graphics_create_pdffile (MelderFile file, int resolution,
 	double x1inches, double x2inches, double y1inches, double y2inches);
-Graphics Graphics_create_pdf (void *context, int resolution,
+autoGraphics Graphics_create_pdf (void *context, int resolution,
 	double x1inches, double x2inches, double y1inches, double y2inches);
-Graphics Graphics_create_pngfile (MelderFile file, int resolution,
+autoGraphics Graphics_create_pngfile (MelderFile file, int resolution,
 	double x1inches, double x2inches, double y1inches, double y2inches);
-Graphics Graphics_create_postscriptprinter (void);
-Graphics Graphics_create_screenPrinter (void *display, void *window);
-Graphics Graphics_create_screen (void *display, void *window, int resolution);
-Graphics Graphics_create_xmdrawingarea (GuiDrawingArea drawingArea);
+autoGraphics Graphics_create_postscriptprinter (void);
+autoGraphics Graphics_create_screenPrinter (void *display, void *window);
+autoGraphics Graphics_create_screen (void *display, void *window, int resolution);
+autoGraphics Graphics_create_xmdrawingarea (GuiDrawingArea drawingArea);
 
 int Graphics_getResolution (Graphics me);
 

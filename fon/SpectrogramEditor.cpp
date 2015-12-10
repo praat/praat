@@ -24,11 +24,11 @@ Thing_implement (SpectrogramEditor, FunctionEditor, 0);
 void structSpectrogramEditor :: v_draw () {
 	Spectrogram spectrogram = (Spectrogram) our data;
 
-	Graphics_setWindow (our d_graphics, 0, 1, 0, 1);
-	Graphics_setColour (our d_graphics, Graphics_WHITE);
-	Graphics_fillRectangle (our d_graphics, 0, 1, 0, 1);
-	Graphics_setColour (our d_graphics, Graphics_BLACK);
-	Graphics_rectangle (our d_graphics, 0, 1, 0, 1);
+	Graphics_setWindow (our d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (our d_graphics.get(), Graphics_WHITE);
+	Graphics_fillRectangle (our d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (our d_graphics.get(), Graphics_BLACK);
+	Graphics_rectangle (our d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
 
 	long itmin, itmax;
 	Sampled_getWindowSamples (spectrogram, our d_startWindow, our d_endWindow, & itmin, & itmax);
@@ -38,31 +38,31 @@ void structSpectrogramEditor :: v_draw () {
 	 */
 	our maximum = spectrogram -> ymax;
 
-	Graphics_setWindow (our d_graphics, our d_startWindow, our d_endWindow, 0.0, our maximum);
-	Spectrogram_paintInside (spectrogram, our d_graphics, our d_startWindow, our d_endWindow, 0, 0, 0.0, true,
+	Graphics_setWindow (our d_graphics.get(), our d_startWindow, our d_endWindow, 0.0, our maximum);
+	Spectrogram_paintInside (spectrogram, our d_graphics.get(), our d_startWindow, our d_endWindow, 0, 0, 0.0, true,
 		 60, 6.0, 0);
 
 	/*
 	 * Horizontal scaling lines.
 	 */
-	Graphics_setWindow (our d_graphics, 0.0, 1.0, 0.0, our maximum);
-	Graphics_setTextAlignment (our d_graphics, Graphics_RIGHT, Graphics_HALF);
-	Graphics_setColour (our d_graphics, Graphics_RED);
+	Graphics_setWindow (our d_graphics.get(), 0.0, 1.0, 0.0, our maximum);
+	Graphics_setTextAlignment (our d_graphics.get(), Graphics_RIGHT, Graphics_HALF);
+	Graphics_setColour (our d_graphics.get(), Graphics_RED);
 	long df = 1000;
 	for (long f = df; f <= our maximum; f += df) {
-		Graphics_line (our d_graphics, 0.0, f, 1.0, f);
-		Graphics_text (our d_graphics, -0.01, f,   f, U" Hz");
+		Graphics_line (our d_graphics.get(), 0.0, f, 1.0, f);
+		Graphics_text (our d_graphics.get(), -0.01, f,   f, U" Hz");
 	}
 
 	/*
 	 * Vertical cursor lines.
 	 */
-	Graphics_setWindow (our d_graphics, our d_startWindow, our d_endWindow, 0.0, our maximum);
+	Graphics_setWindow (our d_graphics.get(), our d_startWindow, our d_endWindow, 0.0, our maximum);
 	if (our d_startSelection > our d_startWindow && our d_startSelection < our d_endWindow)
-		Graphics_line (our d_graphics, our d_startSelection, 0, our d_startSelection, our maximum);
+		Graphics_line (our d_graphics.get(), our d_startSelection, 0, our d_startSelection, our maximum);
 	if (our d_endSelection > our d_startWindow && d_endSelection < d_endWindow)
-		Graphics_line (our d_graphics, our d_endSelection, 0, our d_endSelection, our maximum);
-	Graphics_setColour (our d_graphics, Graphics_BLACK);
+		Graphics_line (our d_graphics.get(), our d_endSelection, 0, our d_endSelection, our maximum);
+	Graphics_setColour (our d_graphics.get(), Graphics_BLACK);
 }
 
 bool structSpectrogramEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed) {

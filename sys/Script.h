@@ -25,7 +25,7 @@ Thing_define (Script, Daata) {
 	structMelderFile file;
 };
 
-Script Script_createFromFile (MelderFile file);
+autoScript Script_createFromFile (MelderFile file);
 
 /* End of file Script.h */
 #endif

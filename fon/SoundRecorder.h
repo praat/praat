@@ -88,7 +88,7 @@ Thing_define (SoundRecorder, Editor) {
 	GuiText soundName;
 	GuiButton cancelButton, applyButton, okButton;
 	GuiMenuItem d_meterIntensityButton, d_meterCentreOfGravityVersusIntensityButton;
-	Graphics graphics;
+	autoGraphics graphics;
 	bool inputUsesPortAudio;
 	const PaDeviceInfo *deviceInfos [1+SoundRecorder_IDEVICE_MAX];
 	PaDeviceIndex deviceIndices [1+SoundRecorder_IDEVICE_MAX];

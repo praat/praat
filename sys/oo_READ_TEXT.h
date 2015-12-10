@@ -139,12 +139,6 @@
 		} \
 	}
 
-#define oo_OBJECT(Class,formatVersion,x)  \
-	if (texgetex (a_text) == 1) { \
-		our x = Thing_new (Class).transfer(); \
-		our x -> v_readText (a_text, formatVersion); \
-	}
-
 #define oo_AUTO_OBJECT(Class,formatVersion,x)  \
 	if (texgetex (a_text) == 1) { \
 		our x = Thing_new (Class); \

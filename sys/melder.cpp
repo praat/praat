@@ -391,7 +391,7 @@ static Graphics _Melder_monitor (double progress, const char32 *message) {
 		static GuiButton cancelButton = nullptr;
 		static GuiLabel label1 = nullptr, label2 = nullptr;
 		clock_t now = clock ();
-		static Graphics graphics = nullptr;
+		static autoGraphics graphics;
 		if (progress <= 0.0 || progress >= 1.0 ||
 			now - lastTime > CLOCKS_PER_SEC / 4)   // this time step must be much longer than the null-event waiting time
 		{
@@ -405,7 +405,7 @@ static Graphics _Melder_monitor (double progress, const char32 *message) {
 				Melder_throw (U"Interrupted!");
 			lastTime = now;
 			if (progress == 0.0)
-				return graphics;
+				return graphics.get();
 		}
 	}
 	return progress <= 0.0 ? nullptr /* no Graphics */ : (Graphics) -1 /* any non-null pointer */;

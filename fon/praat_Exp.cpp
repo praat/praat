@@ -42,21 +42,33 @@ END2 }
 
 DIRECT2 (ExperimentMFC_run) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot run experiments from the command line.");
-	autoOrdered experiments = Ordered_create ();
-	WHERE (SELECTED) {
-		iam_LOOP (ExperimentMFC);
-		Melder_assert (my classInfo == classExperimentMFC);
-		Collection_addItem_ref (experiments.peek(), me);
+	autoRunnerMFC runner;
+	{// scope
+		/*
+			This `scope` comment refers to the idea that an autoThing (here, `experiments`)
+			is created in the beginning of the scope and invalidated at the end of the scope (by `move`).
+		*/
+		autoOrdered experiments = Ordered_create ();
+		WHERE (SELECTED) {
+			iam_LOOP (ExperimentMFC);
+			Melder_assert (my classInfo == classExperimentMFC);
+			Collection_addItem_ref (experiments.peek(), me);
+		}
+		Melder_assert (experiments -> size >= 1);
+		Melder_assert (((Daata) experiments -> item [1]) -> classInfo == classExperimentMFC);
+		Melder_assert (((Daata) experiments -> item [experiments -> size]) -> classInfo == classExperimentMFC);
+		runner = RunnerMFC_create (U"listening experiments", experiments.move());
+		/*
+			Now that `experiments` has been moved, it has become invalid.
+			We help the compiler notice this by ending the scope here:
+		*/
 	}
-	Melder_assert (experiments -> size >= 1);
-	Melder_assert (((Daata) experiments -> item [1]) -> classInfo == classExperimentMFC);
-	Melder_assert (((Daata) experiments -> item [experiments -> size]) -> classInfo == classExperimentMFC);
-	autoOrdered experimentsCopy = Data_copy (experiments.get());   // we need a copy, because we do a transfer, then a peek
-	Melder_assert (experimentsCopy -> size == experiments -> size);
-	Melder_assert (experimentsCopy -> item [1] == experiments -> item [1]);
-	Melder_assert (experimentsCopy -> item [experimentsCopy -> size] == experiments -> item [experiments -> size]);
-	autoRunnerMFC runner = RunnerMFC_create (U"listening experiments", experimentsCopy.transfer());
-	praat_installEditorN (runner.get(), experiments.peek());
+	/*
+		As a result of the scope braces above, the compiler will now protest
+		if we refer to `experiments` in the next line. So instead we refer to the `runner`-internal experiments,
+		which are still in scope and haven't been invalidated:
+	*/
+	praat_installEditorN (runner.get(), runner -> experiments.get());   // refer to the moved version!
 	runner.releaseToUser();
 END2 }
 

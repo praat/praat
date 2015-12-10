@@ -1860,13 +1860,13 @@ void SSCP_unExpandLowerCholesky (SSCP me) {
 
 void SSCP_expandPCA (SSCP me) {
 	if (my pca) {
-		my pca.reset(nullptr);
+		my pca.reset();
 	}
 	my pca = SSCP_to_PCA (me);
 }
 
 void SSCP_unExpandPCA (SSCP me) {
-	my pca.reset (nullptr);
+	my pca.reset();
 }
 
 

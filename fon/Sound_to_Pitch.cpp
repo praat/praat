@@ -258,7 +258,7 @@ Thing_define (Sound_into_Pitch_Args, Thing) { public:
 
 Thing_implement (Sound_into_Pitch_Args, Thing, 0);
 
-static Sound_into_Pitch_Args Sound_into_Pitch_Args_create (Sound sound, Pitch pitch,
+static autoSound_into_Pitch_Args Sound_into_Pitch_Args_create (Sound sound, Pitch pitch,
 	long firstFrame, long lastFrame, double minimumPitch, int maxnCandidates, int method,
 	double voicingThreshold, double octaveCost,
 	double dt_window, long nsamp_window, long halfnsamp_window, long maximumLag, long nsampFFT,
@@ -290,7 +290,7 @@ static Sound_into_Pitch_Args Sound_into_Pitch_Args_create (Sound sound, Pitch pi
 	my windowR = windowR;
 	my isMainThread = isMainThread;
 	my cancelled = cancelled;
-	return me.transfer();
+	return me;
 }
 
 MelderThread_MUTEX (mutex);
@@ -535,13 +535,13 @@ autoPitch Sound_to_Pitch_any (Sound me,
 		volatile int cancelled = 0;
 		for (int ithread = 1; ithread <= numberOfThreads; ithread ++) {
 			if (ithread == numberOfThreads) lastFrame = nFrames;
-			args [ithread - 1].reset (Sound_into_Pitch_Args_create (me, thee.peek(),
+			args [ithread - 1] = Sound_into_Pitch_Args_create (me, thee.peek(),
 				firstFrame, lastFrame, minimumPitch, maxnCandidates, method,
 				voicingThreshold, octaveCost,
 				dt_window, nsamp_window, halfnsamp_window, maximumLag,
 				nsampFFT, nsamp_period, halfnsamp_period, brent_ixmax, brent_depth,
 				globalPeak, window.peek(), windowR.peek(),
-				ithread == numberOfThreads, & cancelled));
+				ithread == numberOfThreads, & cancelled);
 			firstFrame = lastFrame + 1;
 			lastFrame += numberOfFramesPerThread;
 		}

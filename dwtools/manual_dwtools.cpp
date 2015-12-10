@@ -30,7 +30,7 @@
 #include "Discriminant.h"
 
 
-static TableOfReal getStandardizedLogFrequencyPolsData (int includeLevels) {
+static autoTableOfReal getStandardizedLogFrequencyPolsData (int includeLevels) {
 	autoTableOfReal me = TableOfReal_createFromPolsData_50males (includeLevels);
 	for (long i = 1; i <= my numberOfRows; i++) {
 		for (long j = 1; j <= 3; j++) {
@@ -46,7 +46,7 @@ static TableOfReal getStandardizedLogFrequencyPolsData (int includeLevels) {
 		TableOfReal_setColumnLabel (me.peek(), 5, U"standardized %L__1_");
 		TableOfReal_setColumnLabel (me.peek(), 6, U"standardized %L__3_");
 	}
-	return me.transfer();
+	return me;
 }
 
 static void drawPolsF1F2_log (Graphics g) {

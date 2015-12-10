@@ -223,7 +223,7 @@ void Sorted_init (Sorted me, ClassInfo itemClass, long initialCapacity);
 	with every insertion.
 */
 
-void Sorted_addItem_unsorted (Sorted me, Thing data);
+void Sorted_addItem_unsorted_move (Sorted me, autoThing data);
 /*
 	Function:
 		add an item to the collection, quickly at the end.

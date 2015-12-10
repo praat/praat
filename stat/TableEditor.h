@@ -30,7 +30,7 @@ Thing_define (TableEditor, Editor) {
 	GuiDrawingArea drawingArea;
 	GuiScrollBar horizontalScrollBar, verticalScrollBar;
 	double columnLeft [kTableEditor_MAXNUM_VISIBLE_COLUMNS], columnRight [kTableEditor_MAXNUM_VISIBLE_COLUMNS];
-	Graphics graphics;
+	autoGraphics graphics;
 
 	void v_destroy ()
 		override;

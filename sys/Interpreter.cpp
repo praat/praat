@@ -86,7 +86,7 @@ void structInterpreterVariable :: v_destroy () {
 	InterpreterVariable_Parent :: v_destroy ();
 }
 
-static InterpreterVariable InterpreterVariable_create (const char32 *key) {
+static autoInterpreterVariable InterpreterVariable_create (const char32 *key) {
 	try {
 		if (key [0] == U'e' && key [1] == U'\0')
 			Melder_throw (U"You cannot use 'e' as the name of a variable (e is the constant 2.71...).");
@@ -97,7 +97,7 @@ static InterpreterVariable InterpreterVariable_create (const char32 *key) {
 			Melder_throw (U"You cannot use 'undefined' as the name of a variable.");
 		autoInterpreterVariable me = Thing_new (InterpreterVariable);
 		my string = Melder_dup (key);
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Interpreter variable not created.");
 	}
@@ -121,7 +121,7 @@ void structInterpreter :: v_destroy () {
 	Interpreter_Parent :: v_destroy ();
 }
 
-Interpreter Interpreter_create (char32 *environmentName, ClassInfo editorClass) {
+autoInterpreter Interpreter_create (char32 *environmentName, ClassInfo editorClass) {
 	try {
 		autoInterpreter me = Thing_new (Interpreter);
 		#if USE_HASH
@@ -132,13 +132,13 @@ Interpreter Interpreter_create (char32 *environmentName, ClassInfo editorClass) 
 		#endif
 		my environmentName = Melder_dup (environmentName);
 		my editorClass = editorClass;
-		return me.transfer();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Interpreter not created.");
 	}
 }
 
-Interpreter Interpreter_createFromEnvironment (Editor editor) {
+autoInterpreter Interpreter_createFromEnvironment (Editor editor) {
 	if (! editor) return Interpreter_create (nullptr, nullptr);
 	return Interpreter_create (editor -> name, editor -> classInfo);
 }
@@ -644,9 +644,10 @@ void Interpreter_getArgumentsFromArgs (Interpreter me, int narg, Stackel args) {
 
 static void Interpreter_addNumericVariable (Interpreter me, const char32 *key, double value) {
 	#if USE_HASH
-	InterpreterVariable variable = InterpreterVariable_create (key);
+	autoInterpreterVariable variable = InterpreterVariable_create (key);
 	variable -> numericValue = value;
-	(*my variablesMap) [key] = variable;
+	(*my variablesMap) [key] = variable.get();   // YUCK
+	variable.releaseToAmbiguousOwner();
 	#else
 	autoInterpreterVariable variable = InterpreterVariable_create (key);
 	variable -> numericValue = value;
@@ -656,9 +657,10 @@ static void Interpreter_addNumericVariable (Interpreter me, const char32 *key, d
 
 static void Interpreter_addStringVariable (Interpreter me, const char32 *key, const char32 *value) {
 	#if USE_HASH
-	InterpreterVariable variable = InterpreterVariable_create (key);
+	autoInterpreterVariable variable = InterpreterVariable_create (key);
 	variable -> stringValue = Melder_dup (value);
-	(*my variablesMap) [key] = variable;
+	(*my variablesMap) [key] = variable.get();   // YUCK
+	variable.releaseToAmbiguousOwner();
 	#else
 	autoInterpreterVariable variable = InterpreterVariable_create (key);
 	variable -> stringValue = Melder_dup (value);
@@ -694,9 +696,11 @@ InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const char32 *ke
 	/*
 	 * The variable doesn't yet exist: create a new one.
 	 */
-	InterpreterVariable variable = InterpreterVariable_create (variableNameIncludingProcedureName);
-	(*my variablesMap) [variableNameIncludingProcedureName] = variable;
-	return variable;
+	autoInterpreterVariable variable = InterpreterVariable_create (variableNameIncludingProcedureName);
+	InterpreterVariable variable_ref = variable.get();
+	variable.releaseToAmbiguousOwner();   // YUCK
+	(*my variablesMap) [variableNameIncludingProcedureName] = variable_ref;
+	return variable_ref;
 	#else
 	long variableNumber = SortedSetOfString_lookUp (my variables.get(), variableNameIncludingProcedureName);
 	if (variableNumber) return (InterpreterVariable) my variables -> item [variableNumber];   // already exists

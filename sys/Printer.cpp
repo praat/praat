@@ -61,8 +61,7 @@
 	kGraphicsPostscript_spots_DEFAULT, kGraphicsPostscript_paperSize_DEFAULT, kGraphicsPostscript_orientation_DEFAULT, false,
 	true, kGraphicsPostscript_fontChoiceStrategy_DEFAULT,
 	600, 5100, 6600,
-	1.0,
-	nullptr
+	1.0
 };
 
 void Printer_prefs () {
@@ -320,9 +319,10 @@ int Printer_postScriptSettings () {
 	- (void) drawRect: (NSRect) dirtyRect {
 		trace (U"printing ", dirtyRect. origin. x, U" ", dirtyRect. origin. y, U" ", dirtyRect. size. width, U" ", dirtyRect. size. height);
 		int currentPage = [[NSPrintOperation currentOperation] currentPage];
-		thePrinter. graphics = Graphics_create_screenPrinter (nullptr, self);
-		theDraw (theBoss, thePrinter. graphics);
-		forget (thePrinter. graphics);
+		{// scope
+			autoGraphics graphics = Graphics_create_screenPrinter (nullptr, self);
+			theDraw (theBoss, graphics.get());
+		}
 	}
 	- (BOOL) isFlipped {
 		return YES;
@@ -351,10 +351,11 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 			char tempPath_utf8 [] = "/tmp/picXXXXXX";
 			close (mkstemp (tempPath_utf8));
 			Melder_pathToFile (Melder_peek8to32 (tempPath_utf8), & tempFile);
-			thePrinter. graphics = Graphics_create_postscriptjob (& tempFile, thePrinter. resolution,
-				thePrinter. spots, thePrinter. paperSize, thePrinter. orientation, thePrinter. magnification);
-			draw (boss, thePrinter. graphics);
-			forget (thePrinter. graphics);
+			{// scope
+				autoGraphics graphics = Graphics_create_postscriptjob (& tempFile, thePrinter. resolution,
+					thePrinter. spots, thePrinter. paperSize, thePrinter. orientation, thePrinter. magnification);
+				draw (boss, graphics.get());
+			}
 			char command [500];
 			sprintf (command, Melder_peek32to8 (Site_getPrintCommand ()), tempPath_utf8);
 			system (command);
@@ -393,7 +394,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 				 */
 				if (op) {
 					[op setCanSpawnSeparateThread: NO];
-					NSView *pictureView = ((GraphicsScreen) Picture_getGraphics ((Picture) boss)) -> d_macView;
+					NSView *pictureView = ((GraphicsScreen) Picture_peekGraphics ((Picture) boss)) -> d_macView;
 					[op
 						runOperationModalForWindow: [pictureView window]
 						delegate: cocoaPrintingArea
@@ -470,18 +471,20 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 				StartDoc (theWinDC, & docInfo);
 				StartPage (theWinDC);
 				initPostScriptPage ();
-				thePrinter. graphics = Graphics_create_postscriptprinter ();
-				draw (boss, thePrinter. graphics);
-				forget (thePrinter. graphics);
+				{// scope
+					autoGraphics graphics = Graphics_create_postscriptprinter ();
+					draw (boss, graphics.get());
+				}
 				exitPostScriptPage ();
 				EndPage (theWinDC);
 				EndDoc (theWinDC);
 			} else {
 				StartDoc (theWinDC, & docInfo);
 				StartPage (theWinDC);
-				thePrinter. graphics = Graphics_create_screenPrinter (nullptr, theWinDC);
-				draw (boss, thePrinter. graphics);
-				forget (thePrinter. graphics);
+				{// scope
+					autoGraphics graphics = Graphics_create_screenPrinter (nullptr, theWinDC);
+					draw (boss, graphics.get());
+				}
 				if (EndPage (theWinDC) < 0) {
 					Melder_throw (U"Cannot print page.");
 				} else {
@@ -530,9 +533,10 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 			 */
 			SetPort (theMacPort);
 			SetOrigin (- paperSize. left, - paperSize. top);
-			thePrinter. graphics = Graphics_create_screenPrinter (nullptr, theMacPort);
-			draw (boss, thePrinter. graphics);
-			forget (thePrinter. graphics);
+			{// scope
+				autoGraphics graphics = Graphics_create_screenPrinter (nullptr, theMacPort);
+				draw (boss, graphics.get());
+			}
 			if (theMacPort) {
 				PMSessionEndPage (theMacPrintSession);
 				PMSessionEndDocument (theMacPrintSession);

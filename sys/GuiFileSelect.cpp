@@ -23,7 +23,7 @@
 	#include <Shlobj.h>
 #endif
 
-SortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const char32 *title, bool allowMultipleFiles) {
+autoSortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const char32 *title, bool allowMultipleFiles) {
 	structMelderDir saveDir { { 0 } };
 	Melder_getDefaultDir (& saveDir);
 	autoSortedSetOfString me = SortedSetOfString_create ();
@@ -153,7 +153,7 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const char32 *
 		setlocale (LC_ALL, "C");
 	#endif
 	Melder_setDefaultDir (& saveDir);
-	return me.transfer();
+	return me;
 }
 
 char32 * GuiFileSelect_getOutfileName (GuiWindow parent, const char32 *title, const char32 *defaultName) {

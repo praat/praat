@@ -3724,9 +3724,8 @@ DO
 		long factorColumnA = Table_getColumnIndexFromColumnLabel (me, factorA);
 		long factorColumnB = Table_getColumnIndexFromColumnLabel (me, factorB);
 		long dataColumn = Table_getColumnIndexFromColumnLabel (me, dataLabel);
-		Table tmeans = 0, tsizes = 0;
-		autoTable anova = Table_getTwoWayAnalysisOfVarianceF (me, dataColumn, factorColumnA, factorColumnB, &tmeans, &tsizes);
-		autoTable means = tmeans, sizes = tsizes;
+		autoTable means, sizes;
+		autoTable anova = Table_getTwoWayAnalysisOfVarianceF (me, dataColumn, factorColumnA, factorColumnB, &means, &sizes);
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"Two-way analysis of \"", dataLabel, U"\" by \"", factorA, U"\" and \"", factorB, U".\n");
 		Table_printAsAnovaTable (anova.peek());
@@ -6547,7 +6546,7 @@ DO
 		GET_INTEGER (U"Interval number"), ( createAnnotations ? & annotations : nullptr ));
 	praat_new (him.move(), my name);
 	if (createAnnotations) {
-		praat_new (annotations.transfer(), my name);
+		praat_new (annotations.move(), my name);
 	}
 END
 
@@ -6839,7 +6838,7 @@ END
 
 DIRECT (Strings_append)
 	autoCollection set = praat_getSelectedObjects ();
-	autoStrings thee = Strings_append (set.transfer());
+	autoStrings thee = Strings_append (set.get());
 	praat_new (thee.move(), U"appended");
 END
 
@@ -6907,7 +6906,7 @@ DIRECT (Strings_and_Permutation_permuteStrings)
 	Strings me = FIRST (Strings);
 	Permutation p = FIRST (Permutation);
 	autoStrings thee = Strings_and_Permutation_permuteStrings (me, p);
-	praat_new (thee.transfer(), my name, U"_", p->name);
+	praat_new (thee.move(), my name, U"_", p->name);
 END
 
 FORM (SVD_to_TableOfReal, U"SVD: To TableOfReal", U"SVD: To TableOfReal...")
@@ -8137,7 +8136,7 @@ DIRECT (VowelEditor_create)
 		Melder_throw (U"Cannot edit from batch.");
 	}
 	autoVowelEditor vowelEditor = VowelEditor_create (U"VowelEditor", nullptr);
-	vowelEditor.transfer();   // user becomes the owner
+	vowelEditor.releaseToUser();
 END
 
 static autoDaata cmuAudioFileRecognizer (int nread, const char *header, MelderFile file) {

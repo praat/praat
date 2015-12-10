@@ -3660,7 +3660,7 @@ autoTable Table_getOneWayAnalysisOfVarianceF (Table me, long column, long factor
 	}
 }
 
-autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, long column, long factorColumnA, long factorColumnB, Table *means, Table *levelSizes) {
+autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, long column, long factorColumnA, long factorColumnB, autoTable *means, autoTable *levelSizes) {
 	try {
 		if (column < 1 || column > my numberOfColumns) {
 			Melder_throw (U"Invalid column number.");
@@ -3836,7 +3836,7 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, long column, long factor
 					Table_setNumericValue (asizes.peek(), i, j + 1, factorLevelSizes[i][j]);
 				}
 			}
-			*levelSizes = asizes.transfer();
+			*levelSizes = asizes.move();
 		}
 
 		autoTable anova = Table_createWithColumnNames (replications ? 5 : 4, U"Source SS Df MS F P");
@@ -3894,7 +3894,7 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, long column, long factor
 			Table_setNumericValue (anova.peek(), row_AB, col_p, p_AB);
 		}
 		if (means) {
-			*means = ameans.transfer();
+			*means = ameans.move();
 		}
 		return anova;
 	} catch (MelderError) {

@@ -106,7 +106,7 @@ static void OrderedOfString_replaceItemPos (Collection me, autoSimpleString item
 	if (pos < 1 || pos > my size) {
 		return;
 	}
-	forget (((SimpleString *) my item) [pos]);
+	forget (my item [pos]);
 	my item[pos] = item.releaseToAmbiguousOwner();
 }
 

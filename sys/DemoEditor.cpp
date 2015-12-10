@@ -30,7 +30,6 @@ static DemoEditor theReferenceToTheOnlyDemoEditor;
 
 void structDemoEditor :: v_destroy () {
 	Melder_free (praatPicture);
-	forget (graphics);
 	theReferenceToTheOnlyDemoEditor = nullptr;
 	DemoEditor_Parent :: v_destroy ();
 }
@@ -59,13 +58,13 @@ static void gui_drawingarea_cb_expose (DemoEditor me, GuiDrawingArea_ExposeEvent
 	/*
 	 * Erase the background. Don't record this erasure!
 	 */
-	Graphics_stopRecording (my graphics);   // the only place in Praat (the Picture window has a separate Graphics for erasing)?
-	Graphics_setColour (my graphics, Graphics_WHITE);
-	Graphics_setWindow (my graphics, 0, 1, 0, 1);
-	Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
-	Graphics_setColour (my graphics, Graphics_BLACK);
-	Graphics_startRecording (my graphics);
-	Graphics_play (my graphics, my graphics);
+	Graphics_stopRecording (my graphics.get());   // the only place in Praat (the Picture window has a separate Graphics for erasing)?
+	Graphics_setColour (my graphics.get(), Graphics_WHITE);
+	Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (my graphics.get(), Graphics_BLACK);
+	Graphics_startRecording (my graphics.get());
+	Graphics_play (my graphics.get(), my graphics.get());
 }
 
 static void gui_drawingarea_cb_click (DemoEditor me, GuiDrawingArea_ClickEvent event) {
@@ -98,10 +97,10 @@ static void gui_drawingarea_cb_key (DemoEditor me, GuiDrawingArea_KeyEvent event
 static void gui_drawingarea_cb_resize (DemoEditor me, GuiDrawingArea_ResizeEvent event) {
 	if (! my graphics) return;   // could be the case in the very beginning
 	trace (event -> width, U" ", event -> height);
-	Graphics_setWsViewport (my graphics, 0, event -> width, 0, event -> height);
-	Graphics_setWsWindow (my graphics, 0, 100, 0, 100);
-	//Graphics_setViewport (my graphics, 0, 100, 0, 100);
-	Graphics_updateWs (my graphics);
+	Graphics_setWsViewport (my graphics.get(), 0.0, event -> width, 0.0, event -> height);
+	Graphics_setWsWindow (my graphics.get(), 0.0, 100.0, 0.0, 100.0);
+	//Graphics_setViewport (my graphics.get(), 0.0, 100.0, 0.0, 100.0);
+	Graphics_updateWs (my graphics.get());
 }
 
 void structDemoEditor :: v_createChildren () {
@@ -112,16 +111,16 @@ void structDemoEditor :: v_createChildren () {
 void DemoEditor_init (DemoEditor me) {
 	Editor_init (me, 0, 0, 1024, 768, U"", nullptr);
 	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
-	Graphics_setColour (my graphics, Graphics_WHITE);
-	Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
-	Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (my graphics, Graphics_BLACK);
-	Graphics_startRecording (my graphics);
-	Graphics_setWsViewport (my graphics, 0.0, GuiControl_getWidth  (my drawingArea),
-	                                     0.0, GuiControl_getHeight (my drawingArea));
-	Graphics_setWsWindow (my graphics, 0.0, 100.0, 0.0, 100.0);
-	Graphics_setViewport (my graphics, 0.0, 100.0, 0.0, 100.0);
-	Graphics_updateWs (my graphics);
+	Graphics_setColour (my graphics.get(), Graphics_WHITE);
+	Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (my graphics.get(), Graphics_BLACK);
+	Graphics_startRecording (my graphics.get());
+	Graphics_setWsViewport (my graphics.get(), 0.0, GuiControl_getWidth  (my drawingArea),
+	                                           0.0, GuiControl_getHeight (my drawingArea));
+	Graphics_setWsWindow (my graphics.get(), 0.0, 100.0, 0.0, 100.0);
+	Graphics_setViewport (my graphics.get(), 0.0, 100.0, 0.0, 100.0);
+	Graphics_updateWs (my graphics.get());
 }
 
 autoDemoEditor DemoEditor_create () {
@@ -147,7 +146,7 @@ void Demo_open () {
 		//GuiObject_show (editor -> d_windowForm);
 		editor -> praatPicture = Melder_calloc_f (structPraatPicture, 1);
 		theCurrentPraatPicture = (PraatPicture) editor -> praatPicture;
-		theCurrentPraatPicture -> graphics = editor -> graphics;
+		theCurrentPraatPicture -> graphics = editor -> graphics.get();
 		theCurrentPraatPicture -> font = kGraphics_font_HELVETICA;
 		theCurrentPraatPicture -> fontSize = 10;
 		theCurrentPraatPicture -> lineType = Graphics_DRAWN;
@@ -155,10 +154,10 @@ void Demo_open () {
 		theCurrentPraatPicture -> lineWidth = 1.0;
 		theCurrentPraatPicture -> arrowSize = 1.0;
 		theCurrentPraatPicture -> speckleSize = 1.0;
-		theCurrentPraatPicture -> x1NDC = 0;
-		theCurrentPraatPicture -> x2NDC = 100;
-		theCurrentPraatPicture -> y1NDC = 0;
-		theCurrentPraatPicture -> y2NDC = 100;
+		theCurrentPraatPicture -> x1NDC = 0.0;
+		theCurrentPraatPicture -> x2NDC = 100.0;
+		theCurrentPraatPicture -> y1NDC = 0.0;
+		theCurrentPraatPicture -> y2NDC = 100.0;
 		theReferenceToTheOnlyDemoEditor = editor.get();
 		editor.releaseToUser();
 	}
@@ -270,13 +269,13 @@ double Demo_x () {
 			U"Please click or type into the Demo window or close it.");
 	}
 	trace (U"NDC before: ", theReferenceToTheOnlyDemoEditor -> graphics -> d_x1NDC, U" ", theReferenceToTheOnlyDemoEditor -> graphics -> d_x2NDC);
-	Graphics_setInner (theReferenceToTheOnlyDemoEditor -> graphics);
+	Graphics_setInner (theReferenceToTheOnlyDemoEditor -> graphics.get());
 	trace (U"NDC after: ", theReferenceToTheOnlyDemoEditor -> graphics -> d_x1NDC, U" ", theReferenceToTheOnlyDemoEditor -> graphics -> d_x2NDC);
 	double xWC, yWC;
 	trace (U"DC: x ", theReferenceToTheOnlyDemoEditor -> x, U", y ", theReferenceToTheOnlyDemoEditor -> y);
-	Graphics_DCtoWC (theReferenceToTheOnlyDemoEditor -> graphics, theReferenceToTheOnlyDemoEditor -> x, theReferenceToTheOnlyDemoEditor -> y, & xWC, & yWC);
+	Graphics_DCtoWC (theReferenceToTheOnlyDemoEditor -> graphics.get(), theReferenceToTheOnlyDemoEditor -> x, theReferenceToTheOnlyDemoEditor -> y, & xWC, & yWC);
 	trace (U"WC: x ", xWC, U", y ", yWC);
-	Graphics_unsetInner (theReferenceToTheOnlyDemoEditor -> graphics);
+	Graphics_unsetInner (theReferenceToTheOnlyDemoEditor -> graphics.get());
 	return xWC;
 }
 
@@ -286,10 +285,10 @@ double Demo_y () {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
 	}
-	Graphics_setInner (theReferenceToTheOnlyDemoEditor -> graphics);
+	Graphics_setInner (theReferenceToTheOnlyDemoEditor -> graphics.get());
 	double xWC, yWC;
-	Graphics_DCtoWC (theReferenceToTheOnlyDemoEditor -> graphics, theReferenceToTheOnlyDemoEditor -> x, theReferenceToTheOnlyDemoEditor -> y, & xWC, & yWC);
-	Graphics_unsetInner (theReferenceToTheOnlyDemoEditor -> graphics);
+	Graphics_DCtoWC (theReferenceToTheOnlyDemoEditor -> graphics.get(), theReferenceToTheOnlyDemoEditor -> x, theReferenceToTheOnlyDemoEditor -> y, & xWC, & yWC);
+	Graphics_unsetInner (theReferenceToTheOnlyDemoEditor -> graphics.get());
 	return yWC;
 }
 

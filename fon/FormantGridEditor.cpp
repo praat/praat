@@ -200,21 +200,21 @@ void structFormantGridEditor :: v_draw () {
 	RealTier selectedTier = (RealTier) tiers -> item [selectedFormant];
 	double ymin = our editingBandwidths ? our p_bandwidthFloor   : our p_formantFloor;
 	double ymax = our editingBandwidths ? our p_bandwidthCeiling : our p_formantCeiling;
-	Graphics_setColour (our d_graphics, Graphics_WHITE);
-	Graphics_setWindow (our d_graphics, 0, 1, 0, 1);
-	Graphics_fillRectangle (our d_graphics, 0, 1, 0, 1);
-	Graphics_setWindow (our d_graphics, our d_startWindow, our d_endWindow, ymin, ymax);
-	Graphics_setColour (our d_graphics, Graphics_RED);
-	Graphics_line (our d_graphics, our d_startWindow, our ycursor, our d_endWindow, our ycursor);
-	Graphics_setTextAlignment (our d_graphics, Graphics_RIGHT, Graphics_HALF);
-	Graphics_text (our d_graphics, our d_startWindow, our ycursor, Melder_float (Melder_half (our ycursor)));
-	Graphics_setColour (our d_graphics, Graphics_BLUE);
-	Graphics_setTextAlignment (our d_graphics, Graphics_LEFT, Graphics_TOP);
-	Graphics_text (our d_graphics, our d_endWindow, ymax, Melder_float (Melder_half (ymax)), U" Hz");
-	Graphics_setTextAlignment (our d_graphics, Graphics_LEFT, Graphics_HALF);
-	Graphics_text (our d_graphics, our d_endWindow, ymin, Melder_float (Melder_half (ymin)), U" Hz");
-	Graphics_setLineWidth (our d_graphics, 1);
-	Graphics_setColour (our d_graphics, Graphics_GREY);
+	Graphics_setColour (our d_graphics.get(), Graphics_WHITE);
+	Graphics_setWindow (our d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_fillRectangle (our d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setWindow (our d_graphics.get(), our d_startWindow, our d_endWindow, ymin, ymax);
+	Graphics_setColour (our d_graphics.get(), Graphics_RED);
+	Graphics_line (our d_graphics.get(), our d_startWindow, our ycursor, our d_endWindow, our ycursor);
+	Graphics_setTextAlignment (our d_graphics.get(), Graphics_RIGHT, Graphics_HALF);
+	Graphics_text (our d_graphics.get(), our d_startWindow, our ycursor, Melder_float (Melder_half (our ycursor)));
+	Graphics_setColour (our d_graphics.get(), Graphics_BLUE);
+	Graphics_setTextAlignment (our d_graphics.get(), Graphics_LEFT, Graphics_TOP);
+	Graphics_text (our d_graphics.get(), our d_endWindow, ymax, Melder_float (Melder_half (ymax)), U" Hz");
+	Graphics_setTextAlignment (our d_graphics.get(), Graphics_LEFT, Graphics_HALF);
+	Graphics_text (our d_graphics.get(), our d_endWindow, ymin, Melder_float (Melder_half (ymin)), U" Hz");
+	Graphics_setLineWidth (our d_graphics.get(), 1.0);
+	Graphics_setColour (our d_graphics.get(), Graphics_GREY);
 	for (long iformant = 1; iformant <= grid -> formants -> size; iformant ++) if (iformant != our selectedFormant) {
 		RealTier tier = (RealTier) tiers -> item [iformant];
 		long imin = AnyTier_timeToHighIndex (tier, our d_startWindow);
@@ -224,62 +224,62 @@ void structFormantGridEditor :: v_draw () {
 		} else if (imax < imin) {
 			double yleft = RealTier_getValueAtTime (tier, our d_startWindow);
 			double yright = RealTier_getValueAtTime (tier, our d_endWindow);
-			Graphics_line (our d_graphics, our d_startWindow, yleft, our d_endWindow, yright);
+			Graphics_line (our d_graphics.get(), our d_startWindow, yleft, our d_endWindow, yright);
 		} else for (long i = imin; i <= imax; i ++) {
 			RealPoint point = (RealPoint) tier -> points -> item [i];
 			double t = point -> number, y = point -> value;
-			Graphics_fillCircle_mm (our d_graphics, t, y, 2);
+			Graphics_fillCircle_mm (our d_graphics.get(), t, y, 2.0);
 			if (i == 1)
-				Graphics_line (our d_graphics, our d_startWindow, y, t, y);
+				Graphics_line (our d_graphics.get(), our d_startWindow, y, t, y);
 			else if (i == imin)
-				Graphics_line (our d_graphics, t, y, our d_startWindow, RealTier_getValueAtTime (tier, our d_startWindow));
+				Graphics_line (our d_graphics.get(), t, y, our d_startWindow, RealTier_getValueAtTime (tier, our d_startWindow));
 			if (i == n)
-				Graphics_line (our d_graphics, t, y, our d_endWindow, y);
+				Graphics_line (our d_graphics.get(), t, y, our d_endWindow, y);
 			else if (i == imax)
-				Graphics_line (our d_graphics, t, y, our d_endWindow, RealTier_getValueAtTime (tier, our d_endWindow));
+				Graphics_line (our d_graphics.get(), t, y, our d_endWindow, RealTier_getValueAtTime (tier, our d_endWindow));
 			else {
 				RealPoint pointRight = (RealPoint) tier -> points -> item [i + 1];
-				Graphics_line (our d_graphics, t, y, pointRight -> number, pointRight -> value);
+				Graphics_line (our d_graphics.get(), t, y, pointRight -> number, pointRight -> value);
 			}
 		}
 	}
-	Graphics_setColour (our d_graphics, Graphics_BLUE);
+	Graphics_setColour (our d_graphics.get(), Graphics_BLUE);
 	long ifirstSelected = AnyTier_timeToHighIndex (selectedTier, our d_startSelection);
 	long ilastSelected = AnyTier_timeToLowIndex (selectedTier, our d_endSelection);
 	long n = selectedTier -> points -> size;
 	long imin = AnyTier_timeToHighIndex (selectedTier, our d_startWindow);
 	long imax = AnyTier_timeToLowIndex (selectedTier, our d_endWindow);
-	Graphics_setLineWidth (our d_graphics, 2);
+	Graphics_setLineWidth (our d_graphics.get(), 2.0);
 	if (n == 0) {
-		Graphics_setTextAlignment (our d_graphics, Graphics_CENTRE, Graphics_HALF);
-		Graphics_text (our d_graphics, 0.5 * (our d_startWindow + our d_endWindow),
+		Graphics_setTextAlignment (our d_graphics.get(), Graphics_CENTRE, Graphics_HALF);
+		Graphics_text (our d_graphics.get(), 0.5 * (our d_startWindow + our d_endWindow),
 			0.5 * (ymin + ymax), U"(no points in selected formant tier)");
 	} else if (imax < imin) {
 		double yleft = RealTier_getValueAtTime (selectedTier, our d_startWindow);
 		double yright = RealTier_getValueAtTime (selectedTier, our d_endWindow);
-		Graphics_line (our d_graphics, our d_startWindow, yleft, our d_endWindow, yright);
+		Graphics_line (our d_graphics.get(), our d_startWindow, yleft, our d_endWindow, yright);
 	} else for (long i = imin; i <= imax; i ++) {
 		RealPoint point = (RealPoint) selectedTier -> points -> item [i];
 		double t = point -> number, y = point -> value;
 		if (i >= ifirstSelected && i <= ilastSelected)
-			Graphics_setColour (our d_graphics, Graphics_RED);
-		Graphics_fillCircle_mm (our d_graphics, t, y, 3);
-		Graphics_setColour (our d_graphics, Graphics_BLUE);
+			Graphics_setColour (our d_graphics.get(), Graphics_RED);
+		Graphics_fillCircle_mm (our d_graphics.get(), t, y, 3);
+		Graphics_setColour (our d_graphics.get(), Graphics_BLUE);
 		if (i == 1)
-			Graphics_line (our d_graphics, our d_startWindow, y, t, y);
+			Graphics_line (our d_graphics.get(), our d_startWindow, y, t, y);
 		else if (i == imin)
-			Graphics_line (our d_graphics, t, y, our d_startWindow, RealTier_getValueAtTime (selectedTier, our d_startWindow));
+			Graphics_line (our d_graphics.get(), t, y, our d_startWindow, RealTier_getValueAtTime (selectedTier, our d_startWindow));
 		if (i == n)
-			Graphics_line (our d_graphics, t, y, our d_endWindow, y);
+			Graphics_line (our d_graphics.get(), t, y, our d_endWindow, y);
 		else if (i == imax)
-			Graphics_line (our d_graphics, t, y, our d_endWindow, RealTier_getValueAtTime (selectedTier, our d_endWindow));
+			Graphics_line (our d_graphics.get(), t, y, our d_endWindow, RealTier_getValueAtTime (selectedTier, our d_endWindow));
 		else {
 			RealPoint pointRight = (RealPoint) selectedTier -> points -> item [i + 1];
-			Graphics_line (our d_graphics, t, y, pointRight -> number, pointRight -> value);
+			Graphics_line (our d_graphics.get(), t, y, pointRight -> number, pointRight -> value);
 		}
 	}
-	Graphics_setLineWidth (our d_graphics, 1);
-	Graphics_setColour (our d_graphics, Graphics_BLACK);
+	Graphics_setLineWidth (our d_graphics.get(), 1.0);
+	Graphics_setColour (our d_graphics.get(), Graphics_BLACK);
 }
 
 static void drawWhileDragging (FormantGridEditor me, double xWC, double yWC, long first, long last, double dt, double dy) {
@@ -298,7 +298,7 @@ static void drawWhileDragging (FormantGridEditor me, double xWC, double yWC, lon
 		RealPoint point = (RealPoint) tier -> points -> item [i];
 		double t = point -> number + dt, y = point -> value + dy;
 		if (t >= my d_startWindow && t <= my d_endWindow)
-			Graphics_circle_mm (my d_graphics, t, y, 3);
+			Graphics_circle_mm (my d_graphics.get(), t, y, 3.0);
 	}
 
 	if (last == first) {
@@ -307,12 +307,12 @@ static void drawWhileDragging (FormantGridEditor me, double xWC, double yWC, lon
 		 */
 		RealPoint point = (RealPoint) tier -> points -> item [first];
 		double t = point -> number + dt, y = point -> value + dy;
-		Graphics_line (my d_graphics, t, ymin, t, ymax - Graphics_dyMMtoWC (my d_graphics, 4.0));
-		Graphics_setTextAlignment (my d_graphics, kGraphics_horizontalAlignment_CENTRE, Graphics_TOP);
-		Graphics_text (my d_graphics, t, ymax, Melder_fixed (t, 6));
-		Graphics_line (my d_graphics, my d_startWindow, y, my d_endWindow, y);
-		Graphics_setTextAlignment (my d_graphics, Graphics_LEFT, Graphics_BOTTOM);
-		Graphics_text (my d_graphics, my d_startWindow, y, Melder_fixed (y, 6));
+		Graphics_line (my d_graphics.get(), t, ymin, t, ymax - Graphics_dyMMtoWC (my d_graphics.get(), 4.0));
+		Graphics_setTextAlignment (my d_graphics.get(), kGraphics_horizontalAlignment_CENTRE, Graphics_TOP);
+		Graphics_text (my d_graphics.get(), t, ymax, Melder_fixed (t, 6));
+		Graphics_line (my d_graphics.get(), my d_startWindow, y, my d_endWindow, y);
+		Graphics_setTextAlignment (my d_graphics.get(), Graphics_LEFT, Graphics_BOTTOM);
+		Graphics_text (my d_graphics.get(), my d_startWindow, y, Melder_fixed (y, 6));
 	}
 }
 
@@ -332,7 +332,7 @@ bool structFormantGridEditor :: v_click (double xWC, double yWC, bool shiftKeyPr
 	 */
 	//d_startSelection = d_endSelection = xWC;
 	our ycursor = (1.0 - yWC) * ymin + yWC * ymax;
-	Graphics_setWindow (our d_graphics, our d_startWindow, our d_endWindow, ymin, ymax);
+	Graphics_setWindow (our d_graphics.get(), our d_startWindow, our d_endWindow, ymin, ymax);
 	yWC = our ycursor;
 
 	/*
@@ -343,7 +343,7 @@ bool structFormantGridEditor :: v_click (double xWC, double yWC, bool shiftKeyPr
 		return FormantGridEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
 	nearestPoint = (RealPoint) tier -> points -> item [inearestPoint];
-	if (Graphics_distanceWCtoMM (our d_graphics, xWC, yWC, nearestPoint -> number, nearestPoint -> value) > 1.5) {
+	if (Graphics_distanceWCtoMM (our d_graphics.get(), xWC, yWC, nearestPoint -> number, nearestPoint -> value) > 1.5) {
 		return our FormantGridEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
 
@@ -364,11 +364,11 @@ bool structFormantGridEditor :: v_click (double xWC, double yWC, bool shiftKeyPr
 	/*
 	 * Drag.
 	 */
-	Graphics_xorOn (our d_graphics, Graphics_MAROON);
+	Graphics_xorOn (our d_graphics.get(), Graphics_MAROON);
 	drawWhileDragging (this, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
-	while (Graphics_mouseStillDown (our d_graphics)) {
+	while (Graphics_mouseStillDown (our d_graphics.get())) {
 		double xWC_new, yWC_new;
-		Graphics_getMouseLocation (our d_graphics, & xWC_new, & yWC_new);
+		Graphics_getMouseLocation (our d_graphics.get(), & xWC_new, & yWC_new);
 		if (xWC_new != xWC || yWC_new != yWC) {
 			drawWhileDragging (this, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
 			dt += xWC_new - xWC, df += yWC_new - yWC;
@@ -376,7 +376,7 @@ bool structFormantGridEditor :: v_click (double xWC, double yWC, bool shiftKeyPr
 			drawWhileDragging (this, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
 		}
 	}
-	Graphics_xorOff (our d_graphics);
+	Graphics_xorOff (our d_graphics.get());
 
 	/*
 	 * Dragged inside window?

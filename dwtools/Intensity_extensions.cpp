@@ -43,7 +43,7 @@ static void IntervalTier_addBoundaryUnsorted (IntervalTier me, long iinterval, d
 	TextInterval_setText (ti, leftLabel);
 
 	autoTextInterval ti_new = TextInterval_create (time, my xmax, U"");
-	Sorted_addItem_unsorted (my intervals.get(), ti_new.transfer());
+	Sorted_addItem_unsorted_move (my intervals.get(), ti_new.move());
 }
 
 autoTextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThreshold_dB, double minSilenceDuration, double minSoundingDuration, const char32 *silenceLabel, const char32 *soundingLabel) {
