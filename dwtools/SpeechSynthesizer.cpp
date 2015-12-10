@@ -79,42 +79,42 @@ void SpeechSynthesizerVoice_setDefaults (SpeechSynthesizerVoice me) {
 	(void) me;
 }
 
-void SpeechSynthesizerVoice_initFromEspeakVoice (SpeechSynthesizerVoice me, voice_t *voice) {
-	my d_v_name = Melder_dup (Melder_peek8to32 (voice -> v_name));
+void SpeechSynthesizerVoice_initFromEspeakVoice (SpeechSynthesizerVoice me, voice_t *evoice) {
+	my d_v_name = Melder_dup (Melder_peek8to32 (evoice -> v_name));
 
-	my d_phoneme_tab_ix = voice -> phoneme_tab_ix;
-	my d_pitch_base = voice -> pitch_base;
-	my d_pitch_range = voice -> pitch_range;
+	my d_phoneme_tab_ix = evoice -> phoneme_tab_ix;
+	my d_pitch_base = evoice -> pitch_base;
+	my d_pitch_range = evoice -> pitch_range;
 
-	my d_speedf1 = voice -> speedf1;
-	my d_speedf2 = voice -> speedf2;
-	my d_speedf3 = voice -> speedf3;
+	my d_speedf1 = evoice -> speedf1;
+	my d_speedf2 = evoice -> speedf2;
+	my d_speedf3 = evoice -> speedf3;
 
-	my d_speed_percent = voice -> speed_percent;
-	my d_flutter = voice -> flutter;
-	my d_roughness = voice -> roughness;
-	my d_echo_delay = voice -> echo_delay;
-	my d_echo_amp = voice -> echo_amp;
-	my d_n_harmonic_peaks = voice -> n_harmonic_peaks;
-	my d_peak_shape = voice -> peak_shape;
-	my d_voicing = voice -> voicing;
-	my d_formant_factor = voice -> formant_factor;
-	my d_consonant_amp = voice -> consonant_amp;
-	my d_consonant_ampv = voice -> consonant_ampv;
-	my d_samplingFrequency = voice -> samplerate;
+	my d_speed_percent = evoice -> speed_percent;
+	my d_flutter = evoice -> flutter;
+	my d_roughness = evoice -> roughness;
+	my d_echo_delay = evoice -> echo_delay;
+	my d_echo_amp = evoice -> echo_amp;
+	my d_n_harmonic_peaks = evoice -> n_harmonic_peaks;
+	my d_peak_shape = evoice -> peak_shape;
+	my d_voicing = evoice -> voicing;
+	my d_formant_factor = evoice -> formant_factor;
+	my d_consonant_amp = evoice -> consonant_amp;
+	my d_consonant_ampv = evoice -> consonant_ampv;
+	my d_samplingFrequency = evoice -> samplerate;
 	for (long i = 0; i < 7; i++) {
-		my d_klattv[i] = voice -> klattv[i];
+		my d_klattv[i] = evoice -> klattv[i];
 	}
 	for (long i = 0; i <= my d_numberOfFormants; i++) {
-		my d_freq[i] = voice -> freq[i];
-		my d_height[i] = voice -> height[i];
-		my d_width[i] = voice -> width[i];
-		my d_freqadd[i] = voice -> freqadd[i];
-		my d_freq2[i] = voice -> freq2[i];
-		my d_height2[i] = voice -> height2[i];
-		my d_width2[i] = voice -> width2[i];
-		my d_breath[i] = voice -> breath[i];
-		my d_breathw[i] = voice -> breathw[i];
+		my d_freq[i] = evoice -> freq[i];
+		my d_height[i] = evoice -> height[i];
+		my d_width[i] = evoice -> width[i];
+		my d_freqadd[i] = evoice -> freqadd[i];
+		my d_freq2[i] = evoice -> freq2[i];
+		my d_height2[i] = evoice -> height2[i];
+		my d_width2[i] = evoice -> width2[i];
+		my d_breath[i] = evoice -> breath[i];
+		my d_breathw[i] = evoice -> breathw[i];
 	}
 }
 
@@ -133,6 +133,7 @@ void structSpeechSynthesizer :: v_info () {
 	MelderInfo_writeLine (U"Speeking rate: ", d_wordsPerMinute, U" words per minute", (d_estimateWordsPerMinute ? U" (but estimated from data if possible)" : U" (fixed)"));
 
 	MelderInfo_writeLine (U"Output phoneme coding: ", (d_inputPhonemeCoding == SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM ? U"Kirshenbaum" : d_inputPhonemeCoding == SpeechSynthesizer_PHONEMECODINGS_IPA ? U"IPA" : U"???"));
+	MelderInfo_writeLine (U"Text to speech synthesis with eSpeak version 1.48.04");
 }
 
 static void NUMvector_extendNumberOfElements (long elementSize, void **v, long lo, long *hi, long extraDemand)
@@ -266,7 +267,6 @@ void SpeechSynthesizer_initSoundBuffer (SpeechSynthesizer me) {
 autoSpeechSynthesizer SpeechSynthesizer_create (const char32 *voiceLanguageName, const char32 *voiceVariantName) {
 	try {
 		autoSpeechSynthesizer me = Thing_new (SpeechSynthesizer);
-		// check the languange and voice variant
 		(void) SpeechSynthesizer_getVoiceLanguageCodeFromName (me.peek(), voiceLanguageName);
 		(void) SpeechSynthesizer_getVoiceVariantCodeFromName (me.peek(), voiceVariantName);
 		my d_voiceLanguageName = Melder_dup (voiceLanguageName);
@@ -507,7 +507,7 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, 
 		espeak_SetParameter (espeakRANGE, my d_pitchRange, 0);
 		const char32 *voiceLanguageCode = SpeechSynthesizer_getVoiceLanguageCodeFromName (me, my d_voiceLanguageName);
 		const char32 *voiceVariantCode = SpeechSynthesizer_getVoiceVariantCodeFromName (me, my d_voiceVariantName);
-		espeakdata_SetVoiceByName ((const char *) Melder_peek32to8 (voiceLanguageCode),
+		espeakdata_SetVoiceByName ((const char *) Melder_peek32to8 (voiceLanguageCode), 
 			(const char *) Melder_peek32to8 (voiceVariantCode));
 
 		espeak_SetParameter (espeakWORDGAP, my d_wordgap * 100, 0); // espeak wordgap is in units of 10 ms
@@ -517,14 +517,14 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, 
 		espeak_SetSynthCallback (synthCallback);
 
 		my d_events = Table_createWithColumnNames (0, U"time type type-t t-pos length a-pos sample id uniq");
-		
+
 		#ifdef _WIN32
                 wchar_t *textW = Melder_peek32toW (text);
                 espeak_Synth (textW, wcslen (textW) + 1, 0, POS_CHARACTER, 0, synth_flags, nullptr, me);
 		#else
                 espeak_Synth (text, str32len (text) + 1, 0, POS_CHARACTER, 0, synth_flags, nullptr, me);
 		#endif
-
+				
 		espeak_Terminate ();
 		autoSound thee = buffer_to_Sound (my d_wav, my d_numberOfSamples, my d_internalSamplingFrequency);
 
