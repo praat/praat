@@ -1,34 +1,37 @@
 # test_SpeechSynthesizer.praat
 # djmw 20120130, 20120522
 
-printline SpeechSynthesizer test...
+appendInfoLine: "SpeechSynthesizer test..."
 
-variantslist = Create copy from FilesInMemory... variants_names
+variantslist = Create copy from FilesInMemory: "variants_names"
 nvariants = Get number of strings
 
-voiceslist = Create copy from FilesInMemory... voices_names
+voiceslist = Create copy from FilesInMemory: "voices_names"
 nvoices = Get number of strings
 
+numberOfSounds = 0
 for ivoice to nvoices
-	select voiceslist
-	voice$ = Get string... ivoice
-	printline 'tab$' 'voice$'
+	selectObject: voiceslist
+	voice$ = Get string: ivoice
+	appendInfoLine: tab$, voice$
 	for ivariant to nvariants
-		select variantslist
-		variant$ = Get string... ivariant
-		printline 'tab$''tab$' 'variant$'
+		selectObject: variantslist
+		variant$ = Get string: ivariant
+		appendInfoLine: tab$, tab$, variant$
 		# some voices have spaces!
-		ss = Create SpeechSynthesizer... "'voice$'" 'variant$'
-		sound = To Sound... a e u
-		Remove
-		select ss
-		Remove
+		ss = Create SpeechSynthesizer: voice$, variant$
+		sound = To Sound: "a e u", "no"
+		;Play
+		removeObject: ss, sound
+		numberOfSounds += 1
 	endfor
 endfor
+appendInfoLine: tab$, numberOfSounds, " sounds created/removed"
+appendInfoLine: tab$, "Writing and reading..."
+ss = Create SpeechSynthesizer: voice$, variant$
+Save as text file: "kanweg.SpeechSynthesizer"
+ss2 = Read from file: "kanweg.SpeechSynthesizer"
 
-select variantslist
-plus voiceslist
-Remove
+removeObject: variantslist, voiceslist, ss, ss2
 
-
-printline SpeechSynthesizer test OK
+appendInfoLine: "SpeechSynthesizer test OK"

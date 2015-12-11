@@ -1055,7 +1055,7 @@ NORMAL (U"The total variance is the sum of the diagonal elements of the covarian
 FORMULA (U"\\Si__%i=%from..%to_ %%C__ii_% / \\Si__%i=1..%numberOfRows_ %%C__ii_%")
 MAN_END
 
-MAN_BEGIN (U"Covariance: Get significance of means difference...", U"djmw", 20040407)
+MAN_BEGIN (U"Covariance: Get significance of means difference...", U"djmw", 20151209)
 INTRO (U"Gets the level of significance for the %difference of two means "
 	"from the selected @Covariance object being different from a hypothesized "
 	"value.")
@@ -1190,7 +1190,7 @@ INTRO (U"Extract those rows from the selected @TableOfReal object whose Mahalano
 	"quantile range.")
 MAN_END
 
-MAN_BEGIN (U"Covariance & TableOfReal: To TableOfReal (mahalanobis)...", U"djmw", 20140509)
+MAN_BEGIN (U"Covariance & TableOfReal: To TableOfReal (mahalanobis)...", U"djmw", 20151209)
 INTRO (U"Calculate Mahalanobis distance for the selected @TableOfReal with respect to the "
 	"selected @Covariance object.")
 ENTRY (U"Setting")
@@ -1198,8 +1198,8 @@ TAG (U"##Use table centroid")
 DEFINITION (U"Use the mean vector calculated from the columns in the selected TableOfReal instead of the means in the selected Covariance.")
 ENTRY (U"Explanation")
 NORMAL (U"The Mahalanobis distance is defined as")
-FORMULA (U"%d = \\Vr((#%x - #mean)\\'p #S^^-1^ (#%x - #mean)),")
-NORMAL (U"where #%x is a vector, #mean is the average and #S is the covariance matrix. ")
+FORMULA (U"%d = \\Vr((#%x - #x\\-^)\\'p #S^^-1^ (#%x - #x\\-^)),")
+NORMAL (U"where #%x is a vector, #x\\-^ is the average and #S is the covariance matrix. ")
 NORMAL (U"It is the multivariate form of the distance measured in units of standard deviation.")
 ENTRY (U"Example")
 NORMAL (U"Count the number of items that are within 1, 2, 3, 4 and 5 standard deviations from the mean.")

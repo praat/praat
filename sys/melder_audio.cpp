@@ -764,9 +764,9 @@ void stream_drain_complete_cb (pa_stream *stream, int success, void *userdata) {
 	}
 }
 
-static void free_cb(void *p) { // to prevent copying of data
-	(void) p;
+static void free_cb(void * /* p */) { // to prevent copying of data
 }
+
 // asynchronous version
 void stream_write_cb2 (pa_stream *stream, size_t length, void *userdata) {
 	struct MelderPlay *me = (struct MelderPlay *) userdata;
@@ -841,6 +841,7 @@ void stream_write_cb (pa_stream *stream, size_t length, void *userdata) {
 				// returns the address of an internal buffer and the number of bytes that can maximally be written to it.
 				if (pa_stream_begin_write (stream, (void **) & pa_buffer, & nbytes) < 0) {
 					trace (U"error: no memory");
+					Melder_throw (U"Pulseaudio has no internal memory left.");
 				}
 				trace (U"buffer size = ", nbytes);
 				// do we need the full buffer space ?

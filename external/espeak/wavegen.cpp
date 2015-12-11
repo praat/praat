@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005 to 2007 by Jonathan Duddington                     *
+ *   Copyright (C) 2005 to 2013 by Jonathan Duddington                     *
  *   email: jonsd@users.sourceforge.net                                    *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -244,7 +244,7 @@ static unsigned char wavemult[N_WAVEMULT] = {
    105, 98, 90, 83, 76, 69, 62, 55, 49, 43, 37, 32, 27, 22, 18, 14,
     11,  8,  5,  3,  2,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
      0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 };
- 
+
 
 // set from y = pow(2,x) * 128,  x=-1 to 1
 unsigned char pitch_adjust_tab[MAX_PITCH_VALUE+1] = {
@@ -592,7 +592,7 @@ static PaError Pa_OpenDefaultStream2( PaStream** stream,
 		hostApiOutputParameters.device = Pa_GetDefaultOutputDevice();
 
 	if( hostApiOutputParameters.device == paNoDevice )
-		return paDeviceUnavailable; 
+		return paDeviceUnavailable;
 
 	hostApiOutputParameters.channelCount = outputChannelCount;
 	hostApiOutputParameters.sampleFormat = sampleFormat;
@@ -834,15 +834,6 @@ static void WavegenSetEcho(void)
 		amp = embedded_value[EMBED_H];
 		delay = 130;
 	}
-#ifdef deleted
-	if(embedded_value[EMBED_T] > 0)
-	{
-		// announcing punctuation, add a small echo
-// This seems unpopular
-		amp = embedded_value[EMBED_T] * 8;
-		delay = 60;
-	}
-#endif
 
 	if(delay == 0)
 		amp = 0;
@@ -854,7 +845,7 @@ static void WavegenSetEcho(void)
 	if(amp > 20)
 		echo_length = echo_head * 2;    // perhaps allow 2 echo periods if the echo is loud.
 
-	// echo_amp units are 1/256ths of the amplitude of the original sound. 
+	// echo_amp units are 1/256ths of the amplitude of the original sound.
 	echo_amp = amp;
 	// compensate (partially) for increase in amplitude due to echo
 	general_amplitude = GetAmplitude();
@@ -1025,16 +1016,16 @@ static void AdvanceParameters()
 	for(ix=0; ix <= wvoice->n_harmonic_peaks; ix++)
 	{
 		peaks[ix].freq1 += peaks[ix].freq_inc;
-		peaks[ix].freq = int(peaks[ix].freq1);
+		peaks[ix].freq = (int)peaks[ix].freq1;
 		peaks[ix].height1 += peaks[ix].height_inc;
-		if((peaks[ix].height = int(peaks[ix].height1)) < 0)
+		if((peaks[ix].height = (int)peaks[ix].height1) < 0)
 			peaks[ix].height = 0;
 		peaks[ix].left1 += peaks[ix].left_inc;
-		peaks[ix].left = int(peaks[ix].left1);
+		peaks[ix].left = (int)peaks[ix].left1;
 		if(ix < 3)
 		{
 			peaks[ix].right1 += peaks[ix].right_inc;
-			peaks[ix].right = int(peaks[ix].right1);
+			peaks[ix].right = (int)peaks[ix].right1;
 		}
 		else
 		{
@@ -1047,10 +1038,10 @@ static void AdvanceParameters()
 		if(ix < 7)
 		{
 			peaks[ix].freq1 += peaks[ix].freq_inc;
-			peaks[ix].freq = int(peaks[ix].freq1);
+			peaks[ix].freq = (int)peaks[ix].freq1;
 		}
 		peaks[ix].height1 += peaks[ix].height_inc;
-		if((peaks[ix].height = int(peaks[ix].height1)) < 0)
+		if((peaks[ix].height = (int)peaks[ix].height1) < 0)
 			peaks[ix].height = 0;
 	}
 
@@ -1166,7 +1157,7 @@ static int ApplyBreath(void)
 		if((amp = wvoice->breath[ix]) != 0)
 		{
 			amp *= (peaks[ix].height >> 14);
-			value += int(resonator(&rbreath[ix],noise) * amp);
+			value += (int)resonator(&rbreath[ix],noise) * amp;
 		}
 	}
 #endif
@@ -1264,7 +1255,7 @@ int Wavegen()
 				for(pk=wvoice->n_harmonic_peaks+1; pk<N_PEAKS; pk++)
 				{
 					// find the nearest harmonic for HF peaks where we don't use shape
-					peak_harmonic[pk] = peaks[pk].freq / (wdata.pitch*16);
+					peak_harmonic[pk] = ((peaks[pk].freq / (wdata.pitch*8)) + 1) / 2;
 				}
 
 				// adjust amplitude to compensate for fewer harmonics at higher pitch
@@ -1366,12 +1357,12 @@ int Wavegen()
 
 		for(h=1; h<=h_switch_sign; h++)
 		{
-			total += (int(sin_tab[theta >> 5]) * harmspect[h]);
+			total += ((int)sin_tab[theta >> 5] * harmspect[h]);
 			theta += waveph;
 		}
 		while(h<=maxh)
 		{
-			total -= (int(sin_tab[theta >> 5]) * harmspect[h]);
+			total -= ((int)sin_tab[theta >> 5] * harmspect[h]);
 			theta += waveph;
 			h++;
 		}
@@ -1559,7 +1550,7 @@ static int SetWithRange0(int value, int max)
 static void SetPitchFormants()
 {//===========================
 	int ix;
-	int factor;
+	int factor = 256;
 	int pitch_value;
 
 	// adjust formants to give better results for a different voice pitch
@@ -1570,11 +1561,13 @@ static void SetPitchFormants()
 	{
 		// only adjust if the pitch is higher than normal
 		factor = 256 + (25 * (pitch_value - 50))/50;
-		for(ix=0; ix<=5; ix++)
-		{
-			wvoice->freq[ix] = (wvoice->freq2[ix] * factor)/256;
-		}
 	}
+
+	for(ix=0; ix<=5; ix++)
+	{
+		wvoice->freq[ix] = (wvoice->freq2[ix] * factor)/256;
+	}
+
 	factor = embedded_value[EMBED_T]*3;
 	wvoice->height[0] = (wvoice->height2[0] * (256 - factor*2))/256;
 	wvoice->height[1] = (wvoice->height2[1] * (256 - factor))/256;
@@ -1755,7 +1748,7 @@ if(option_log_frames)
 		fprintf(f_log,"%3dmS  %3d %3d %4d %4d (%3d %3d %3d %3d)  to  %3d %3d %4d %4d (%3d %3d %3d %3d)\n",length*1000/samplerate,
 			fr1->ffreq[0],fr1->ffreq[1],fr1->ffreq[2],fr1->ffreq[3], fr1->fheight[0],fr1->fheight[1],fr1->fheight[2],fr1->fheight[3],
 			fr2->ffreq[0],fr2->ffreq[1],fr2->ffreq[2],fr2->ffreq[3], fr2->fheight[0],fr2->fheight[1],fr2->fheight[2],fr2->fheight[3] );
-	
+
 	fclose(f_log);
 	f_log=NULL;
 	}
@@ -1814,27 +1807,27 @@ if(option_log_frames)
 		if(ix < 7)
 		{
 			peaks[ix].freq1 = (fr1->ffreq[ix] * v->freq[ix] + v->freqadd[ix]*256) << 8;
-			peaks[ix].freq = int(peaks[ix].freq1);
+			peaks[ix].freq = (int)peaks[ix].freq1;
 			next = (fr2->ffreq[ix] * v->freq[ix] + v->freqadd[ix]*256) << 8;
 			peaks[ix].freq_inc =  ((next - peaks[ix].freq1) * (STEPSIZE/4)) / length4;  // lower headroom for fixed point math
 		}
 
 		peaks[ix].height1 = (fr1->fheight[ix] * v->height[ix]) << 6;
-		peaks[ix].height = int(peaks[ix].height1);
+		peaks[ix].height = (int)peaks[ix].height1;
 		next = (fr2->fheight[ix] * v->height[ix]) << 6;
 		peaks[ix].height_inc =  ((next - peaks[ix].height1) * STEPSIZE) / length2;
 
 		if((ix <= 5) && (ix <= wvoice->n_harmonic_peaks))
 		{
 			peaks[ix].left1 = (fr1->fwidth[ix] * v->width[ix]) << 10;
-			peaks[ix].left = int(peaks[ix].left1);
+			peaks[ix].left = (int)peaks[ix].left1;
 			next = (fr2->fwidth[ix] * v->width[ix]) << 10;
 			peaks[ix].left_inc =  ((next - peaks[ix].left1) * STEPSIZE) / length2;
 
 			if(ix < 3)
 			{
 				peaks[ix].right1 = (fr1->fright[ix] * v->width[ix]) << 10;
-				peaks[ix].right = int(peaks[ix].right1);
+				peaks[ix].right = (int)peaks[ix].right1;
 				next = (fr2->fright[ix] * v->width[ix]) << 10;
 				peaks[ix].right_inc = ((next - peaks[ix].right1) * STEPSIZE) / length2;
 			}
@@ -2036,7 +2029,7 @@ static int SpeedUp(short *outbuf, int length_in, int length_out, int end_of_text
 		{
 		        sonicSetSpeed(sonicSpeedupStream, sonicSpeed);
 		}
-	
+
 		sonicWriteShortToStream(sonicSpeedupStream, outbuf, length_in);
 	}
 
