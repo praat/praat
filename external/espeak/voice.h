@@ -21,11 +21,12 @@
 
 typedef struct {
 	char v_name[40];
+	char language_name[20];
 
 	int phoneme_tab_ix;  // phoneme table number
 	int pitch_base;    // Hz<<12
 	int pitch_range;   // standard = 0x1000
-	
+
 	int speedf1;
 	int speedf2;
 	int speedf3;

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005 to 2011 by Jonathan Duddington                     *
+ *   Copyright (C) 2005 to 2013 by Jonathan Duddington                     *
  *   email: jonsd@users.sourceforge.net                                    *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -35,8 +35,8 @@
 #include "translate.h"
 #include "wave.h"
 
-const char *version_string = "1.46.27  21.Oct.12";
-const int version_phdata  = 0x014624;
+const char *version_string = "1.48.03  04.Mar.14";
+const int version_phdata  = 0x014801;
 
 int option_device_number = -1;
 FILE *f_logespeak = NULL;
@@ -67,7 +67,7 @@ int vowel_transition[4];
 int vowel_transition0;
 int vowel_transition1;
 
-int FormantTransition2(frameref_t *seq, int &n_frames, unsigned int data1, unsigned int data2, PHONEME_TAB *other_ph, int which);
+int FormantTransition2(frameref_t *seq, int *n_frames, unsigned int data1, unsigned int data2, PHONEME_TAB *other_ph, int which);
 
 
 
@@ -108,13 +108,14 @@ static char *ReadPhFile(void *ptr, const char *fname, int *size)
 }  //  end of ReadPhFile
 
 
-int LoadPhData()
-{//=============
+int LoadPhData(int *srate)
+{//========================
 	int ix;
 	int n_phonemes;
 	int version;
 	int result = 1;
 	int length;
+	int rate;
 	unsigned char *p;
 	int *pw;
 
@@ -136,14 +137,16 @@ int LoadPhData()
 		return(-1);
 #endif
 
-   wavefile_data = (unsigned char *)phondata_ptr;
+    wavefile_data = (unsigned char *)phondata_ptr;
 	n_tunes = length / sizeof(TUNE);
 
-	// read the version number from the first 4 bytes of phondata
-	version = 0;
+	// read the version number and sample rate from the first 8 bytes of phondata
+	version = 0;  // bytes 0-3, version number
+	rate = 0;     // bytes 4-7, sample rate
 	for(ix=0; ix<4; ix++)
 	{
 		version += (wavefile_data[ix] << (ix*8));
+		rate += (wavefile_data[ix+4] << (ix*8));
 	}
 
 	if(version != version_phdata)
@@ -173,6 +176,8 @@ int LoadPhData()
 	if(phoneme_tab_number >= n_phoneme_tables)
 		phoneme_tab_number = 0;
 
+    if(srate != NULL)
+        *srate = rate;
 	return(result);
 }  //  end of LoadPhData
 
@@ -284,7 +289,7 @@ frameref_t *LookupSpect(PHONEME_TAB *this_ph, int which, FMT_PARAMS *fmt_params,
 	// do we need to modify a frame for blending with a consonant?
 	if((this_ph->type == phVOWEL) && (fmt_params->fmt2_addr == 0) && (fmt_params->use_vowelin))
 	{
-		seq_len_adjust += FormantTransition2(frames,nf,fmt_params->transition0,fmt_params->transition1,NULL,which);
+		seq_len_adjust += FormantTransition2(frames,&nf,fmt_params->transition0,fmt_params->transition1,NULL,which);
 	}
 
 	length1 = 0;
@@ -622,6 +627,7 @@ static int CountVowelPosition(PHONEME_LIST *plist)
 static bool InterpretCondition(Translator *tr, int control, PHONEME_LIST *plist, USHORT *p_prog, WORD_PH_DATA *worddata)
 {//========================================================================================================================
 	int which;
+	int ix;
 	unsigned int data;
 	int instn;
 	int instn2;
@@ -712,6 +718,21 @@ static bool InterpretCondition(Translator *tr, int control, PHONEME_LIST *plist,
                 return(false);   // no previous vowel
 				plist = &(worddata->prev_vowel);
             break;
+
+		case 9:  // next3PhW
+			for(ix=1; ix<=3; ix++)
+			{
+				if(plist[ix].sourceix)
+					return(false);
+			}
+			plist = &plist[3];
+			break;
+
+		case 10: // prev2PhW
+			if((plist[0].sourceix) || (plist[-1].sourceix))
+				return(false);
+			plist-=2;
+			break;
         }
 
 		if((which == 0) || (which == 5))
@@ -982,7 +1003,9 @@ void InterpretPhoneme(Translator *tr, int control, PHONEME_LIST *plist, PHONEME_
 	phdata->pd_param[i_LENGTH_MOD] = ph->length_mod;
 
 	if(ph->program == 0)
+	{
 		return;
+	}
 
 	end_flag = 0;
 
@@ -1019,6 +1042,16 @@ void InterpretPhoneme(Translator *tr, int control, PHONEME_LIST *plist, PHONEME_
 			{
 				if(phoneme_tab[plist[1].phcode]->type == phVOWEL)
 					phdata->pd_param[i_APPEND_PHONEME] = data;
+			}
+			else
+			if(instn2 == i_ADD_LENGTH)
+			{
+				if(data & 0x80)
+				{
+					// a negative value, do sign extension
+					data = -(0x100 - data);
+				}
+				phdata->pd_param[i_SET_LENGTH] += data;
 			}
 			else
 			if(instn2 == i_IPA_NAME)
@@ -1227,6 +1260,19 @@ void InterpretPhoneme(Translator *tr, int control, PHONEME_LIST *plist, PHONEME_
         memcpy(&worddata->prev_vowel, &plist[0], sizeof(PHONEME_LIST));
     }
 
+#ifdef _ESPEAKEDIT
+    plist->std_length = phdata->pd_param[i_SET_LENGTH];
+    if(phdata->sound_addr[0] != 0)
+    {
+        plist->phontab_addr = phdata->sound_addr[0];  // FMT address
+        plist->sound_param = phdata->sound_param[0];
+    }
+    else
+    {
+        plist->phontab_addr = phdata->sound_addr[1];  // WAV address
+        plist->sound_param = phdata->sound_param[1];
+	}
+#endif
 }  // end of InterpretPhoneme
 
 

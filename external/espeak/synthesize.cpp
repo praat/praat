@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005 to 2010 by Jonathan Duddington                     *
+ *   Copyright (C) 2005 to 2014 by Jonathan Duddington                     *
  *   email: jonsd@users.sourceforge.net                                    *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -40,7 +40,7 @@ static void SmoothSpect(void);
 
 // list of phonemes in a clause
 int n_phoneme_list=0;
-PHONEME_LIST phoneme_list[N_PHONEME_LIST];
+PHONEME_LIST phoneme_list[N_PHONEME_LIST+1];
 
 int mbrola_delay;
 char mbrola_name[20];
@@ -82,7 +82,7 @@ const char *WordToString(unsigned int word)
 	int  ix;
 	static char buf[5];
 
-	for(ix=0; ix<3; ix++)
+	for(ix=0; ix<4; ix++)
 		buf[ix] = word >> (ix*8);
 	buf[4] = 0;
 	return(buf);
@@ -188,7 +188,7 @@ static void DoPitch(unsigned char *env, int pitch1, int pitch2)
 
 int PauseLength(int pause, int control)
 {//====================================
-	int len;
+	unsigned int len;
 
 	if(control == 0)
 	{
@@ -210,8 +210,10 @@ int PauseLength(int pause, int control)
 
 static void DoPause(int length, int control)
 {//=========================================
+// length in nominal mS
 // control = 1, less shortening at fast speeds
-	int len;
+	unsigned int len;
+	int srate2;
 
 	if(length == 0)
 		len = 0;
@@ -219,7 +221,15 @@ static void DoPause(int length, int control)
 	{
 		len = PauseLength(length, control);
 
-		len = (len * samplerate) / 1000;  // convert from mS to number of samples
+		if(len < 90000)
+		{
+			len = (len * samplerate) / 1000;  // convert from mS to number of samples
+		}
+		else
+		{
+			srate2 = samplerate / 25;  // avoid overflow
+			len = (len * srate2) / 40;
+		}
 	}
 
 	EndPitch(1);
@@ -336,7 +346,7 @@ static int DoSample2(int index, int which, int std_length, int control, int leng
 		q = wcmdq[wcmdq_tail];
 		q[0] = WCMD_WAVE2;
 		q[1] = length | (wav_length << 16);   // length in samples
-		q[2] = long64(&wavefile_data[index]);
+		q[2] = (long64)(&wavefile_data[index]);
 		q[3] = wav_scale + (amp << 8);
 		WcmdqInc();
 		return(length);
@@ -357,7 +367,7 @@ static int DoSample2(int index, int which, int std_length, int control, int leng
 	q = wcmdq[wcmdq_tail];
 	q[0] = WCMD_WAVE;
 	q[1] = x;   // length in samples
-	q[2] = long64(&wavefile_data[index]);
+	q[2] = (long64)(&wavefile_data[index]);
 	q[3] = wav_scale + (amp << 8);
 	WcmdqInc();
 
@@ -372,7 +382,7 @@ static int DoSample2(int index, int which, int std_length, int control, int leng
 		q = wcmdq[wcmdq_tail];
 		q[0] = WCMD_WAVE;
 		q[1] = len4*2;   // length in samples
-		q[2] = long64(&wavefile_data[index+x]);
+		q[2] = (long64)(&wavefile_data[index+x]);
 		q[3] = wav_scale + (amp << 8);
 		WcmdqInc();
 
@@ -388,7 +398,7 @@ static int DoSample2(int index, int which, int std_length, int control, int leng
 		q = wcmdq[wcmdq_tail];
 		q[0] = WCMD_WAVE;
 		q[1] = length;   // length in samples
-		q[2] = long64(&wavefile_data[index+x]);
+		q[2] = (long64)(&wavefile_data[index+x]);
 		q[3] = wav_scale + (amp << 8);
 		WcmdqInc();
 	}
@@ -613,7 +623,7 @@ static int VowelCloseness(frame_t *fr)
 }
 
 
-int FormantTransition2(frameref_t *seq, int &n_frames, unsigned int data1, unsigned int data2, PHONEME_TAB *other_ph, int which)
+int FormantTransition2(frameref_t *seq, int *n_frames, unsigned int data1, unsigned int data2, PHONEME_TAB *other_ph, int which)
 {//==============================================================================================================================
 	int ix;
 	int formant;
@@ -639,7 +649,7 @@ static short vcolouring[N_VCOLOUR][5] = {
 
 	frame_t *fr = NULL;
 
-	if(n_frames < 2)
+	if(*n_frames < 2)
 		return(0);
 
 	len = (data1 & 0x3f) * 2;
@@ -714,8 +724,8 @@ if(voice->klattv[0])
 
 			if(flags & 8)
 			{
-				fr = CopyFrame(seq[n_frames-1].frame,0);
-				seq[n_frames-1].frame = fr;
+				fr = CopyFrame(seq[*n_frames-1].frame,0);
+				seq[*n_frames-1].frame = fr;
 				rms = RMS_GLOTTAL1;
 
 				// degree of glottal-stop effect depends on closeness of vowel (indicated by f1 freq)
@@ -723,7 +733,7 @@ if(voice->klattv[0])
 			}
 			else
 			{
-				fr = DuplicateLastFrame(seq,n_frames++,len);
+				fr = DuplicateLastFrame(seq,(*n_frames)++,len);
 				if(len > 36)
 					seq_len_adjust += (len - 36);
 
@@ -737,7 +747,7 @@ if(voice->klattv[0])
 
 			if((vcolour > 0) && (vcolour <= N_VCOLOUR))
 			{
-				for(ix=0; ix<n_frames; ix++)
+				for(ix=0; ix < *n_frames; ix++)
 				{
 					fr = CopyFrame(seq[ix].frame,0);
 					seq[ix].frame = fr;
@@ -1258,6 +1268,7 @@ void DoVoiceChange(voice_t *v)
 	wcmdq[wcmdq_tail][0] = WCMD_VOICE;
 	wcmdq[wcmdq_tail][2] = (long64)v2;
 	WcmdqInc();
+	trace (U"", sizeof(voice_t), U" bytes");
 }
 
 
@@ -1377,7 +1388,7 @@ int Generate(PHONEME_LIST *phoneme_list, int *n_ph, int resume)
 		DoPause(0,0);    // isolate from the previous clause
 	}
 
-	while(ix < (*n_ph))
+	while((ix < (*n_ph)) && (ix < N_PHONEME_LIST-2))
 	{
 		p = &phoneme_list[ix];
 
@@ -1426,7 +1437,7 @@ int Generate(PHONEME_LIST *phoneme_list, int *n_ph, int resume)
 
 		EndAmplitude();
 
-		if(p->prepause > 0)
+		if((p->prepause > 0) && !(p->ph->phflags & phPREVOICE))
 			DoPause(p->prepause,1);
 
 		done_phoneme_marker = 0;
@@ -1438,7 +1449,7 @@ int Generate(PHONEME_LIST *phoneme_list, int *n_ph, int resume)
 			}
 			else
 			{
-				WritePhMnemonic(phoneme_name, p->ph, p, use_ipa);
+				WritePhMnemonic(phoneme_name, p->ph, p, use_ipa, NULL);
 				DoPhonemeMarker(espeakEVENT_PHONEME, sourceix, 0, phoneme_name);
 				done_phoneme_marker = 1;
 			}
@@ -1448,10 +1459,14 @@ int Generate(PHONEME_LIST *phoneme_list, int *n_ph, int resume)
 		{
 		case phPAUSE:
 			DoPause(p->length,0);
+#ifdef _ESPEAKEDIT
+            p->std_length = p->ph->std_length;
+#endif
 			break;
 
 		case phSTOP:
 			released = 0;
+			ph = p->ph;
 			if(next->type==phVOWEL)
 			{
 				 released = 1;
@@ -1464,6 +1479,23 @@ int Generate(PHONEME_LIST *phoneme_list, int *n_ph, int resume)
 			}
 			if(released == 0)
 				p->synthflags |= SFLAG_NEXT_PAUSE;
+
+			if(ph->phflags & phPREVOICE)
+			{
+				// a period of voicing before the release
+				memset(&fmtp, 0, sizeof(fmtp));
+				InterpretPhoneme(NULL, 0x01, p, &phdata, &worddata);
+				fmtp.fmt_addr = phdata.sound_addr[pd_FMT];
+				fmtp.fmt_amp = phdata.sound_param[pd_FMT];
+
+				if(last_pitch_cmd < 0)
+				{
+					DoAmplitude(next->amp,NULL);
+					DoPitch(envelope_data[p->env],next->pitch1,next->pitch2);
+				}
+
+				DoSpect2(ph, 0, &fmtp, p, 0);
+			}
 
 			InterpretPhoneme(NULL, 0, p, &phdata, &worddata);
 			phdata.pd_control |= pd_DONTLENGTHEN;
@@ -1748,7 +1780,7 @@ int Generate(PHONEME_LIST *phoneme_list, int *n_ph, int resume)
 
 			if((option_phoneme_events) && (done_phoneme_marker == 0))
 			{
-				WritePhMnemonic(phoneme_name, p->ph, p, use_ipa);
+				WritePhMnemonic(phoneme_name, p->ph, p, use_ipa, NULL);
 				DoPhonemeMarker(espeakEVENT_PHONEME, sourceix, 0, phoneme_name);
 			}
 
@@ -1844,6 +1876,7 @@ int SpeakNextClause(FILE *f_in, const void *text_in, int control)
 	char *voice_change;
 	static FILE *f_text=NULL;
 	static const void *p_text=NULL;
+	const char *phon_out;
 
 	if(control == 4)
 	{
@@ -1866,7 +1899,6 @@ int SpeakNextClause(FILE *f_in, const void *text_in, int control)
 		n_phoneme_list = 0;
 		WcmdqStop();
 
-		embedded_value[EMBED_T] = 0;
 		return(0);
 	}
 
@@ -1933,24 +1965,18 @@ int SpeakNextClause(FILE *f_in, const void *text_in, int control)
 
 	if((option_phonemes > 0) || (phoneme_callback != NULL))
 	{
-		int use_ipa = 0;
-		if(option_phonemes == 3)
-			use_ipa = 1;
+		int phoneme_mode = 0;
+		if(option_phonemes >= 3)
+			phoneme_mode = 0x10 + option_phonemes-3;   // 0x10=ipa, 0x11=ipa with tie, 0x12=ipa with ZWJ, 0x13=ipa with separators
 
-		GetTranslatedPhonemeString(translator->phon_out, sizeof(translator->phon_out), use_ipa);
+		phon_out = GetTranslatedPhonemeString(phoneme_mode);
 		if(option_phonemes > 0)
 		{
-			fprintf(f_trans,"%s\n",translator->phon_out);
-
-			if(!iswalpha(0x010d))
-			{
-				// check that c-caron is recognized as an alphabetic character
-				fprintf(stderr,"Warning: Accented letters are not recognized, eg: U+010D\nSet LC_CTYPE to a UTF-8 locale\n");
-			}
+			fprintf(f_trans,"%s\n",phon_out);
 		}
 		if(phoneme_callback != NULL)
 		{
-			phoneme_callback(translator->phon_out);
+			phoneme_callback(phon_out);
 		}
 	}
 
