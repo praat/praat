@@ -350,8 +350,9 @@ void Data_setPublishProc (int (*publish) (autoDaata));
 #define widgetwa  19
 #define objectwa  20
 #define autoobjectwa  21
-#define autocollectionwa  22
-#define inheritwa  23
+#define collectionofwa  22
+#define autocollectionwa  23
+#define inheritwa  24
 
 /* Recursive routines for working with struct members. */
 

@@ -267,6 +267,7 @@ static void gui_button_cb_open (DataSubEditor me, GuiButtonEvent event) {
 			* (Data_Description *) fieldData -> description -> tagType);
 	} else if (fieldData -> description -> type == objectwa ||
 	           fieldData -> description -> type == autoobjectwa ||
+	           fieldData -> description -> type == collectionofwa ||
 			   fieldData -> description -> type == autocollectionwa) {
 		MelderString_append (& name, fieldData -> history, U". ", strip_d (fieldData -> description -> name));
 		ClassEditor_create (my root, name.string, fieldData -> address,
