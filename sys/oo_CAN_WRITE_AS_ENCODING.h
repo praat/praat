@@ -94,6 +94,11 @@
 #define oo_AUTO_OBJECT(Class,version,x)  \
 	if (our x && ! Data_canWriteAsEncoding (our x.get(), encoding)) return false;
 
+#define oo_COLLECTION_OF(Class,x,ItemClass,version)  \
+	for (long i = 1; i <= x.size; i ++) { \
+		if (our x [i] && ! Data_canWriteAsEncoding (our x [i], encoding)) return false; \
+	}
+
 #define oo_AUTO_COLLECTION(Class,x,ItemClass,version)  \
 	if (our x && ! Data_canWriteAsEncoding (our x.get(), encoding)) return false;
 

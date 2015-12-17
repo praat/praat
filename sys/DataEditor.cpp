@@ -67,10 +67,10 @@ Thing_implement (DataSubEditor, Editor, 0);
 void structDataSubEditor :: v_destroy () {
 	for (int i = 1; i <= kDataSubEditor_MAXNUM_ROWS; i ++)
 		Melder_free (d_fieldData [i]. history);
-	if (d_root && d_root -> d_children)
-		for (int i = d_root -> d_children -> size; i > 0; i --)
-			if (d_root -> d_children -> item [i] == this)
-				Collection_subtractItem (d_root -> d_children.get(), i);
+	if (our root && our root -> children)
+		for (int i = our root -> children.size; i > 0; i --)
+			if (our root -> children [i] == this)
+				our root -> children.subtractItem_ref (i);
 	DataSubEditor_Parent :: v_destroy ();
 }
 
@@ -211,10 +211,10 @@ static void gui_button_cb_change (DataSubEditor me, GuiButtonEvent /* event */) 
 	 * 1. The owner (creator) of our root DataEditor: so that she can notify other editors, if any.
 	 * 2. All our sibling DataSubEditors.
 	 */
-	Editor_broadcastDataChanged (my d_root);
+	Editor_broadcastDataChanged (my root);
 	update (me);
-	for (int isub = 1; isub <= my d_root -> d_children -> size; isub ++) {
-		DataSubEditor subeditor = (DataSubEditor) my d_root -> d_children -> item [isub];
+	for (int isub = 1; isub <= my root -> children.size; isub ++) {
+		DataSubEditor subeditor = my root -> children [isub];
 		if (subeditor != me) update (subeditor);
 	}
 	return;
@@ -253,26 +253,26 @@ static void gui_button_cb_open (DataSubEditor me, GuiButtonEvent event) {
 	if (fieldData -> description -> rank == 1 || fieldData -> description -> rank == 3 || fieldData -> description -> rank < 0) {
 		MelderString_append (& name, fieldData -> history, U". ", strip_d (fieldData -> description -> name),
 			U" [", fieldData -> minimum, U"..", fieldData -> maximum, U"]");
-		VectorEditor_create (my d_root, name.string, fieldData -> address,
+		VectorEditor_create (my root, name.string, fieldData -> address,
 			fieldData -> description, fieldData -> minimum, fieldData -> maximum);
 	} else if (fieldData -> description -> rank == 2) {
 		MelderString_append (& name, fieldData -> history, U". ", strip_d (fieldData -> description -> name),
 			U" [", fieldData -> minimum, U"..", fieldData -> maximum, U"]");
 		MelderString_append (& name, U" [", fieldData -> min2, U"..", fieldData -> max2, U"]");
-		MatrixEditor_create (my d_root, name.string, fieldData -> address, fieldData -> description,
+		MatrixEditor_create (my root, name.string, fieldData -> address, fieldData -> description,
 			fieldData -> minimum, fieldData -> maximum, fieldData -> min2, fieldData -> max2);
 	} else if (fieldData -> description -> type == structwa) {
 		MelderString_append (& name, fieldData -> history, U". ", strip_d (fieldData -> description -> name));
-		StructEditor_create (my d_root, name.string, fieldData -> address,
+		StructEditor_create (my root, name.string, fieldData -> address,
 			* (Data_Description *) fieldData -> description -> tagType);
 	} else if (fieldData -> description -> type == objectwa ||
 	           fieldData -> description -> type == autoobjectwa ||
 			   fieldData -> description -> type == autocollectionwa) {
 		MelderString_append (& name, fieldData -> history, U". ", strip_d (fieldData -> description -> name));
-		ClassEditor_create (my d_root, name.string, fieldData -> address,
+		ClassEditor_create (my root, name.string, fieldData -> address,
 			Class_getDescription ((ClassInfo) fieldData -> description -> tagType));
 	} else /*if (fieldData -> description -> type == inheritwa)*/ {
-		ClassEditor_create (my d_root, fieldData -> history, fieldData -> address,
+		ClassEditor_create (my root, fieldData -> history, fieldData -> address,
 			fieldData -> description);
 /*	} else {
 		Melder_casual (
@@ -318,9 +318,9 @@ void structDataSubEditor :: v_createHelpMenuItems (EditorMenu menu) {
 }
 
 static void DataSubEditor_init (DataSubEditor me, DataEditor root, const char32 *title, void *address, Data_Description description) {
-	my d_root = root;
+	my root = root;
 	if (me != root) {
-		Collection_addItem_ref (root -> d_children.get(), me);
+		root -> children.addItem_ref (me);
 	}
 	my d_address = address;
 	my d_description = description;
@@ -724,12 +724,12 @@ static void DataEditor_destroyAllChildren (DataEditor me) {
 		To destroy all children, we travel them from youngest to oldest,
 		because the array of children will change from under us:
 	*/
-	for (int i = my d_children -> size; i >= 1; i --) {
+	for (int i = my children.size; i >= 1; i --) {
 		/*
 			An optimization coming!
 			
 			Instead of
-				DataSubEditor child = (DataSubEditor) d_children -> item [i];
+				DataSubEditor child = my children [i];
 				forget (child);
 			we isolate the child from the parent before destroying the child,
 			so that the child won't try to remove the reference
@@ -737,7 +737,7 @@ static void DataEditor_destroyAllChildren (DataEditor me) {
 			So first we make the parent forget the moribund child,
 			which prevents a dangling pointer:
 		*/
-		DataSubEditor child = (DataSubEditor) Collection_subtractItem (my d_children.get(), i);
+		DataSubEditor child = my children.subtractItem_ref (i);
 		/*
 			That was fast, because subtracting the last item involves no shifting
 			of the remaining items.
@@ -746,7 +746,7 @@ static void DataEditor_destroyAllChildren (DataEditor me) {
 			so that the child won't try to remove the reference
 			that the parent has to her:
 		*/
-		child -> d_root = nullptr;
+		child -> root = nullptr;
 		/*
 			The child is now fully isolated, so we are ready to destroy her:
 		*/
@@ -763,7 +763,7 @@ static void DataEditor_destroyAllChildren (DataEditor me) {
 			and nice enough for `v_dataChanged()`.
 			
 			Something to note is that this procedure doesn't care whether the autoCollection
-			`d_children` owns its items or not.
+			`children` owns its items or not.
 		*/
 	}
 }
@@ -796,7 +796,6 @@ autoDataEditor DataEditor_create (const char32 *title, Daata data) {
 		if (Class_getDescription (klas) == nullptr)
 			Melder_throw (U"Class ", klas -> className, U" cannot be inspected.");
 		autoDataEditor me = Thing_new (DataEditor);
-		my d_children = Collection_create (10);
 		ClassEditor_init (me.peek(), me.peek(), title, data, Class_getDescription (klas));
 		return me;
 	} catch (MelderError) {

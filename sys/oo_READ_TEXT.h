@@ -145,6 +145,16 @@
 		our x -> v_readText (a_text, formatVersion); \
 	}
 
+#define oo_COLLECTION_OF(Class,x,ItemClass,formatVersion)  \
+	{ \
+		long n = texgeti4 (a_text); \
+		for (long i = 1; i <= n; i ++) { \
+			auto##ItemClass item = Thing_new (ItemClass); \
+			item.peek() -> v_readText (a_text, formatVersion); \
+			our x.addItem_move (item.move()); \
+		} \
+	}
+
 #define oo_AUTO_COLLECTION(Class,x,ItemClass,formatVersion)  \
 	{ \
 		long n = texgeti4 (a_text); \

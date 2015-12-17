@@ -30,7 +30,7 @@
 #include "Discriminant.h"
 
 
-static autoTableOfReal getStandardizedLogFrequencyPolsData (int includeLevels) {
+static autoTableOfReal getStandardizedLogFrequencyPolsData (bool includeLevels) {
 	autoTableOfReal me = TableOfReal_createFromPolsData_50males (includeLevels);
 	for (long i = 1; i <= my numberOfRows; i++) {
 		for (long j = 1; j <= 3; j++) {

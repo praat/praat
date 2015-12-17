@@ -420,7 +420,7 @@ void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, const char32 *
 	}
 }
 
-void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xmax, double ymin, double ymax, double sv_splitfactor, int labelsize, int garnish) {
+void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xmax, double ymin, double ymax, double sv_splitfactor, int labelsize, bool garnish) {
 	long nr = my numberOfRows, nc = my numberOfColumns, nPoints = nr + nc;
 	int fontsize = Graphics_inqFontSize (g);
 
@@ -502,7 +502,7 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 	}
 }
 
-void TableOfReal_drawBoxPlots (TableOfReal me, Graphics g, long rowmin, long rowmax, long colmin, long colmax, double ymin, double ymax, int garnish) {
+void TableOfReal_drawBoxPlots (TableOfReal me, Graphics g, long rowmin, long rowmax, long colmin, long colmax, double ymin, double ymax, bool garnish) {
 	if (rowmax < rowmin || rowmax < 1) {
 		rowmin = 1; rowmax = my numberOfRows;
 	}
@@ -858,7 +858,7 @@ void TableOfReal_drawScatterPlotMatrix (TableOfReal me, Graphics g, long colb, l
 	Graphics_unsetInner (g);
 }
 
-void TableOfReal_drawAsSquares_area (TableOfReal me, Graphics g, double zmin, double zmax, double cellSizeFactor, int randomFillOrder, int garnish) {
+void TableOfReal_drawAsSquares_area (TableOfReal me, Graphics g, double zmin, double zmax, double cellSizeFactor, int randomFillOrder, bool garnish) {
 	try {
 		cellSizeFactor = cellSizeFactor <= 0.0 ? 1.0 : cellSizeFactor;
 		if (zmin == 0 && zmax == 0) {
@@ -879,7 +879,7 @@ void TableOfReal_drawAsSquares_area (TableOfReal me, Graphics g, double zmin, do
 	}
 }
 
-void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g, long icx, long icy, long rowb, long rowe, double xmin, double xmax, double ymin, double ymax, int labelSize, int useRowLabels, const char32 *label, int garnish) {
+void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g, long icx, long icy, long rowb, long rowe, double xmin, double xmax, double ymin, double ymax, int labelSize, bool useRowLabels, const char32 *label, bool garnish) {
 	double m = my numberOfRows, n = my numberOfColumns;
 	int fontSize = Graphics_inqFontSize (g);
 
@@ -982,7 +982,7 @@ autoTablesOfReal TablesOfReal_create () {
 autoTableOfReal TablesOfReal_sum (TablesOfReal me) {
 	try {
 		if (my size <= 0) {
-			return nullptr;
+			return autoTableOfReal();
 		}
 		autoTableOfReal thee = Data_copy ((TableOfReal) my item[1]);
 
@@ -1037,7 +1037,7 @@ double TableOfReal_getColumnQuantile (TableOfReal me, long col, double quantile)
 	}
 }
 
-static autoTableOfReal TableOfReal_createPolsVanNieropData (int choice, int include_levels) {
+static autoTableOfReal TableOfReal_createPolsVanNieropData (int choice, bool include_levels) {
 	try {
 		autoTable table = Table_createFromPolsVanNieropData ();
 
@@ -1078,11 +1078,11 @@ static autoTableOfReal TableOfReal_createPolsVanNieropData (int choice, int incl
 	}
 }
 
-autoTableOfReal TableOfReal_createFromPolsData_50males (int include_levels) {
+autoTableOfReal TableOfReal_createFromPolsData_50males (bool include_levels) {
 	return TableOfReal_createPolsVanNieropData (1, include_levels);
 }
 
-autoTableOfReal TableOfReal_createFromVanNieropData_25females (int include_levels) {
+autoTableOfReal TableOfReal_createFromVanNieropData_25females (bool include_levels) {
 	return TableOfReal_createPolsVanNieropData (2, include_levels);
 }
 
@@ -1092,7 +1092,7 @@ autoTableOfReal TableOfReal_createFromWeeninkData (int option) {
 
 		autoTable table = Table_createFromWeeninkData ();
 
-		long ib = option == 1 ? 1 : option == 2 ? 11 : 21; /* m f c*/
+		long ib = ( option == 1 ? 1 : option == 2 ? 11 : 21 ); /* m f c*/
 		ib = (ib - 1) * nvowels + 1;
 
 		autoTableOfReal thee = TableOfReal_create (nrows, ncols);
@@ -1209,7 +1209,7 @@ long TableOfReal_getNumberOfLabelMatches (TableOfReal me, const char32 *search, 
 	return nmatches;
 }
 
-void TableOfReal_drawVectors (TableOfReal me, Graphics g, long colx1, long coly1, long colx2, long coly2, double xmin, double xmax, double ymin, double ymax, int vectype, int labelsize, int garnish) {
+void TableOfReal_drawVectors (TableOfReal me, Graphics g, long colx1, long coly1, long colx2, long coly2, double xmin, double xmax, double ymin, double ymax, int vectype, int labelsize, bool garnish) {
 	long nx = my numberOfColumns, ny = my numberOfRows;
 	int fontsize = Graphics_inqFontSize (g);
 
@@ -1291,7 +1291,7 @@ void TableOfReal_drawVectors (TableOfReal me, Graphics g, long colx1, long coly1
 	}
 }
 
-void TableOfReal_drawColumnAsDistribution (TableOfReal me, Graphics g, int column, double minimum, double maximum, long nBins, double freqMin, double freqMax, int cumulative, int garnish) {
+void TableOfReal_drawColumnAsDistribution (TableOfReal me, Graphics g, int column, double minimum, double maximum, long nBins, double freqMin, double freqMax, bool cumulative, bool garnish) {
 	if (column < 1 || column > my numberOfColumns) {
 		return;
 	}

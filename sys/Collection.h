@@ -26,9 +26,11 @@
 #include "Simple.h"
 
 Thing_define (Collection, Daata) {
-	bool _ownershipInitialized, _ownItems;
-	long _capacity, size;
 	Thing *item;   // [1..size]
+	long size;
+	long _capacity;
+	bool _ownItems;
+	bool _ownershipInitialized;
 
 	void v_info ()
 		override;
@@ -56,7 +58,7 @@ Thing_define (Collection, Daata) {
 };
 /*
 	An object of type Collection is a collection of items of any class.
-	It is the owner of its items.
+	The items are either owned by the Collection, or they are references.
 	You can access the items in the collection as item [1] through item [size].
 	There can be no null items.
 
@@ -65,6 +67,87 @@ Thing_define (Collection, Daata) {
 		size			// the current number of items.
 		item [1..size]		// the items.
 */
+
+template <typename T>
+struct CollectionOf : structDaata {
+	T** item;   // [1..size]
+	long size { 0 };
+	long _capacity { 30 };
+	bool _ownItems { true };
+	bool _ownershipInitialized { false };
+
+	CollectionOf () {
+		our classInfo = & theClassInfo_Collection;
+		our name = nullptr;
+		our item = Melder_calloc (T*, 30);
+		our item --;   // convert from base-0 to base-1
+	}
+	virtual ~ CollectionOf () {
+		/*
+			We cannot simply do
+				//our v_destroy ();
+			because C++ will implicitly call the destructor for structDaata,
+			whereas structCollection::v_destroy explicitly calls structDaata::v_destroy;
+			calling v_destroy here would therefore free structThing::name twice,
+			which may not crash Praat (assuming that `name` is nulled the first time)
+			but which is not how destruction should be organized.
+		*/
+		if (our item) {
+			if (our _ownItems) {
+				for (long i = 1; i <= our size; i ++) {
+					forget (our item [i]);
+				}
+			}
+			our item ++;   // convert from base-1 to base-0
+			Melder_free (our item);
+		}
+	}
+	T*& operator[] (long i) {
+		return item [i];
+	}
+	explicit operator bool () const {
+		return !! our item;
+	}
+	void addItem_ref (T* thing) {
+		//Melder_casual (U"addItem_ref ", _capacity, U" ", _ownItems);
+		Collection_addItem_ref ((Collection) this, thing);
+	}
+	void addItem_move (_Thing_auto<T> thing) {
+		Collection_addItem_move ((Collection) this, thing.move());
+	}
+	T* subtractItem_ref (long pos) {
+		Melder_assert (pos >= 1 && pos <= our size);
+		Melder_assert (! our _ownItems);
+		T* result = our item [pos];
+		for (long i = pos; i < our size; i ++) our item [i] = our item [i + 1];
+		our size --;
+		return result;
+	}
+
+	void v_info ()
+		override { ((Collection) this) -> structCollection::v_info (); }
+	void v_destroy ()
+		override { ((Collection) this) -> structCollection::v_destroy (); };   // destroys all the items
+	void v_copy (Daata data_to)
+		override { ((Collection) this) -> structCollection::v_copy (data_to); };   // copies all the items
+	bool v_equal (Daata data2)
+		override { return ((Collection) this) -> structCollection::v_equal (data2); };   // compares 'my item [i]' with 'thy item [i]', i = 1..size
+	bool v_canWriteAsEncoding (int outputEncoding)
+		override { return ((Collection) this) -> structCollection::v_canWriteAsEncoding (outputEncoding); };
+	void v_writeText (MelderFile openFile)
+		override { ((Collection) this) -> structCollection::v_writeText (openFile); };
+	void v_readText (MelderReadText text, int formatVersion)
+		override { ((Collection) this) -> structCollection::v_readText (text, formatVersion); };
+	void v_writeBinary (FILE *f)
+		override { ((Collection) this) -> structCollection::v_writeBinary (f); };
+	void v_readBinary (FILE *f, int formatVersion)
+		override { ((Collection) this) -> structCollection::v_readBinary (f, formatVersion); };
+	//static Data_Description s_description;
+	//Data_Description v_description ()
+	//	override { return structCollection::s_description; }
+
+	virtual long v_position (T* /* data */) { return our size + 1; /* at end */ };
+};
 
 void Collection_init (Collection me, long initialCapacity);
 autoCollection Collection_create (long initialCapacity);
@@ -177,6 +260,13 @@ void _Collection_insertItem_ref (Collection me, Thing item, long position);
 /********** class Ordered **********/
 
 Thing_define (Ordered, Collection) {
+};
+
+template <typename T>
+struct OrderedOf : CollectionOf <T> {
+	OrderedOf () {
+		our classInfo = & theClassInfo_Ordered;
+	}
 };
 
 autoOrdered Ordered_create ();

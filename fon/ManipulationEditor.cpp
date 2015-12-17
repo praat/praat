@@ -477,7 +477,7 @@ static void menu_cb_addDurationPointAtCursor (ManipulationEditor me, EDITOR_ARGS
 }
 
 static void menu_cb_addDurationPointAt (ManipulationEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Add duration point", 0)
+	EDITOR_FORM (U"Add duration point", nullptr)
 		REAL (U"Time (s)", U"0.0");
 		REAL (U"Relative duration", U"1.0");
 	EDITOR_OK
@@ -502,7 +502,7 @@ static void menu_cb_newDuration (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_forgetDuration (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
 	Manipulation ana = (Manipulation) my data;
-	ana -> duration = nullptr;
+	ana -> duration = autoDurationTier();
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }

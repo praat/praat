@@ -463,7 +463,7 @@ autoHMM HMM_createFullContinuousModel (int leftToRight, long numberOfStates, lon
 	(void) numberOfFeatureStreams;
 	(void) dimensionOfStream;
 	(void) numberOfGaussiansforStream;
-	return nullptr;
+	return autoHMM();
 }
 
 autoHMM HMM_createContinuousModel (int leftToRight, long numberOfStates, long numberOfObservationSymbols, long numberOfMixtureComponentsPerSymbol, long componentDimension, long componentStorage) {

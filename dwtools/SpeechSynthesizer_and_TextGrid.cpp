@@ -487,7 +487,7 @@ autoTextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align (SpeechSynthesiz
 			double wordsPerMinute_rawText = 60.0 * (str32len (his text) / 5.0) / s_thee_duration;
 			my d_wordsPerMinute =  (long) floor (0.5 * (wordsPerMinute_rawTokens + wordsPerMinute_rawText));
 		}
-		autoTextGrid tg2 = 0;
+		autoTextGrid tg2;
 		autoSound s2 = SpeechSynthesizer_and_TextInterval_to_Sound (me, him, &tg2);
 		autoTextGrid silentTextGrid;
 		/*

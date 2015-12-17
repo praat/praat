@@ -95,6 +95,14 @@
 #define oo_AUTO_OBJECT(Class,version,x)  \
 	if (our x) thy x = Data_copy (our x.get());
 
+#define oo_COLLECTION_OF(Class,x,ItemClass,version)  \
+	thy x = our x; \
+	thy x.item = Melder_calloc (ItemClass, our x._capacity); \
+	thy x.item --; \
+	for (long i = 1; i <= our x.size; i ++) { \
+		if (our x [i]) thy x [i] = Data_copy (our x [i]).releaseToAmbiguousOwner(); \
+	}
+
 #define oo_AUTO_COLLECTION(Class,x,ItemClass,version)  \
 	if (our x) thy x = Data_copy (our x.get());
 

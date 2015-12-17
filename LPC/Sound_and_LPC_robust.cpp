@@ -50,7 +50,8 @@ struct huber_struct {
 
 static void huber_struct_init (struct huber_struct *hs, double windowDuration, long p, double samplingFrequency, double location, int wantlocation) {
 	hs -> w = hs -> work = hs -> a = hs -> c = nullptr;
-	hs -> covar = nullptr; hs -> svd = nullptr;
+	hs -> covar = nullptr;
+	hs -> svd = autoSVD();
 	hs -> e = Sound_createSimple (1, windowDuration, samplingFrequency);
 	long n = hs -> e -> nx;
 	hs -> n = n;
@@ -169,10 +170,20 @@ void LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct
 	} while ( (hs -> iter < hs -> itermax) && (fabs (s0 - hs -> scale) > hs -> tol * s0));
 }
 
+	autoSound e;
+	double k, tol, tol_svd;
+	long iter, itermax;
+	int wantlocation, wantscale;
+	double location, scale;
+	long n, p;
+	double *w, *work;
+	double *a;
+	double **covar, *c;
+	autoSVD svd;
 
 autoLPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, double preEmphasisFrequency, double k,
 	int itermax, double tol, int wantlocation) {
-	struct huber_struct struct_huber = { 0 };
+	struct huber_struct struct_huber { autoSound(), 0.0, 0.0, 0.0, 0, 0, 0, 0, 0.0, 0.0, 0, 0, nullptr, nullptr, nullptr, nullptr, nullptr, autoSVD() };
 	try {
 		double t1, samplingFrequency = 1.0 / my dx, tol_svd = 0.000001;
 		double location = 0, windowDuration = 2 * analysisWidth; /* Gaussian window */

@@ -436,7 +436,7 @@ static int CategoriesEditorReplace_execute (CategoriesEditorReplace me) {
 
 	for (long i = my nSelected; i >= 1; i--) {
 		autoSimpleString str = Data_copy ((SimpleString) my categories -> item[1]);
-		Ordered_addItemAtPosition_move (my categories.peek(), (SimpleString) categories -> item[my selection[i]], 2);   // YUCK
+		Ordered_addItemAtPosition_move (my categories.peek(), autoSimpleString ((SimpleString) categories -> item[my selection[i]]), 2);   // YUCK
 		categories -> item[my selection[i]] = str.releaseToAmbiguousOwner();
 	}
 	update (editor, my selection[1], my selection[my nSelected], my selection, my nSelected);

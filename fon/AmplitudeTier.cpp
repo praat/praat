@@ -105,7 +105,7 @@ autoSound Sound_AmplitudeTier_multiply (Sound me, AmplitudeTier amplitude) {
 autoAmplitudeTier PointProcess_Sound_to_AmplitudeTier_point (PointProcess me, Sound thee) {
 	try {
 		long imin, imax, numberOfPeaks = PointProcess_getWindowPoints (me, my xmin, my xmax, & imin, & imax);
-		if (numberOfPeaks < 3) return nullptr;
+		if (numberOfPeaks < 3) return autoAmplitudeTier();
 		autoAmplitudeTier him = AmplitudeTier_create (my xmin, my xmax);
 		for (long i = imin; i <= imax; i ++) {
 			double value = Vector_getValueAtX (thee, my t [i], Vector_CHANNEL_AVERAGE, Vector_VALUE_INTERPOLATION_SINC700);

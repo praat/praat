@@ -90,7 +90,7 @@ static UiOption UiOption_create (const char32 *label) {
 UiOption UiRadio_addButton (UiField me, const char32 *label) {
 	if (! me) return nullptr;
 	Melder_assert (my type == UI_RADIO || my type == UI_OPTIONMENU);
-	autoUiOption thee = UiOption_create (label);
+	autoUiOption thee (UiOption_create (label));
 	UiOption thee_ref = thee.get();
 	Collection_addItem_move (my options.get(), thee.move());
 	return thee_ref;
@@ -99,7 +99,7 @@ UiOption UiRadio_addButton (UiField me, const char32 *label) {
 UiOption UiOptionMenu_addButton (UiField me, const char32 *label) {
 	if (! me) return nullptr;
 	Melder_assert (my type == UI_RADIO || my type == UI_OPTIONMENU);
-	autoUiOption thee = UiOption_create (label);
+	autoUiOption thee (UiOption_create (label));
 	UiOption thee_ref = thee.get();
 	Collection_addItem_move (my options.get(), thee.move());
 	return thee_ref;
@@ -590,7 +590,7 @@ static void commonOkCallback (UiForm /* dia */, int /* narg */, Stackel /* args 
 
 autoUiForm UiForm_createE (EditorCommand cmd, const char32 *title, const char32 *invokingButtonTitle, const char32 *helpTitle) {
 	Editor editor = cmd -> d_editor;
-	autoUiForm dia = UiForm_create (editor -> d_windowForm, title, commonOkCallback, cmd, invokingButtonTitle, helpTitle);
+	autoUiForm dia (UiForm_create (editor -> d_windowForm, title, commonOkCallback, cmd, invokingButtonTitle, helpTitle));
 	dia -> command = cmd;
 	return dia;
 }
@@ -602,81 +602,81 @@ static UiField UiForm_addField (UiForm me, int type, const char32 *label) {
 }
 
 UiField UiForm_addReal (UiForm me, const char32 *label, const char32 *defaultValue) {
-	autoUiField thee = UiForm_addField (me, UI_REAL, label);
+	autoUiField thee (UiForm_addField (me, UI_REAL, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	return thee.releaseToAmbiguousOwner();
 }
 
 UiField UiForm_addRealOrUndefined (UiForm me, const char32 *label, const char32 *defaultValue) {
-	autoUiField thee = UiForm_addField (me, UI_REAL_OR_UNDEFINED, label);
+	autoUiField thee (UiForm_addField (me, UI_REAL_OR_UNDEFINED, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	return thee.releaseToAmbiguousOwner();
 }
 
 UiField UiForm_addPositive (UiForm me, const char32 *label, const char32 *defaultValue) {
-	autoUiField thee = UiForm_addField (me, UI_POSITIVE, label);
+	autoUiField thee (UiForm_addField (me, UI_POSITIVE, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	return thee.releaseToAmbiguousOwner();
 }
 
 UiField UiForm_addInteger (UiForm me, const char32 *label, const char32 *defaultValue) {
-	autoUiField thee = UiForm_addField (me, UI_INTEGER, label);
+	autoUiField thee (UiForm_addField (me, UI_INTEGER, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	return thee.releaseToAmbiguousOwner();
 }
 
 UiField UiForm_addNatural (UiForm me, const char32 *label, const char32 *defaultValue) {
-	autoUiField thee = UiForm_addField (me, UI_NATURAL, label);
+	autoUiField thee (UiForm_addField (me, UI_NATURAL, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	return thee.releaseToAmbiguousOwner();
 }
 
 UiField UiForm_addWord (UiForm me, const char32 *label, const char32 *defaultValue) {
-	autoUiField thee = UiForm_addField (me, UI_WORD, label);
+	autoUiField thee (UiForm_addField (me, UI_WORD, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	return thee.releaseToAmbiguousOwner();
 }
 
 UiField UiForm_addSentence (UiForm me, const char32 *label, const char32 *defaultValue) {
-	autoUiField thee = UiForm_addField (me, UI_SENTENCE, label);
+	autoUiField thee (UiForm_addField (me, UI_SENTENCE, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	return thee.releaseToAmbiguousOwner();
 }
 
 UiField UiForm_addLabel (UiForm me, const char32 *name, const char32 *label) {
-	autoUiField thee = UiForm_addField (me, UI_LABEL, name);
+	autoUiField thee (UiForm_addField (me, UI_LABEL, name));
 	thy stringValue = Melder_dup (label);
 	return thee.releaseToAmbiguousOwner();
 }
 
 UiField UiForm_addBoolean (UiForm me, const char32 *label, int defaultValue) {
-	autoUiField thee = UiForm_addField (me, UI_BOOLEAN, label);
+	autoUiField thee (UiForm_addField (me, UI_BOOLEAN, label));
 	thy integerDefaultValue = defaultValue;
 	return thee.releaseToAmbiguousOwner();
 }
 
 UiField UiForm_addText (UiForm me, const char32 *name, const char32 *defaultValue) {
-	autoUiField thee = UiForm_addField (me, UI_TEXT, name);
+	autoUiField thee (UiForm_addField (me, UI_TEXT, name));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	return thee.releaseToAmbiguousOwner();
 }
 
 UiField UiForm_addRadio (UiForm me, const char32 *label, int defaultValue) {
-	autoUiField thee = UiForm_addField (me, UI_RADIO, label);
+	autoUiField thee (UiForm_addField (me, UI_RADIO, label));
 	thy integerDefaultValue = defaultValue;
 	thy options = Ordered_create ();
 	return thee.releaseToAmbiguousOwner();
 }
 
 UiField UiForm_addOptionMenu (UiForm me, const char32 *label, int defaultValue) {
-	autoUiField thee = UiForm_addField (me, UI_OPTIONMENU, label);
+	autoUiField thee (UiForm_addField (me, UI_OPTIONMENU, label));
 	thy integerDefaultValue = defaultValue;
 	thy options = Ordered_create ();
 	return thee.releaseToAmbiguousOwner();
 }
 
 UiField UiForm_addList (UiForm me, const char32 *label, long numberOfStrings, const char32 **strings, long defaultValue) {
-	autoUiField thee = UiForm_addField (me, UI_LIST, label);
+	autoUiField thee (UiForm_addField (me, UI_LIST, label));
 	thy numberOfStrings = numberOfStrings;
 	thy strings = strings;
 	thy integerDefaultValue = defaultValue;
@@ -684,13 +684,13 @@ UiField UiForm_addList (UiForm me, const char32 *label, long numberOfStrings, co
 }
 
 UiField UiForm_addColour (UiForm me, const char32 *label, const char32 *defaultValue) {
-	autoUiField thee = UiForm_addField (me, UI_COLOUR, label);
+	autoUiField thee (UiForm_addField (me, UI_COLOUR, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	return thee.releaseToAmbiguousOwner();
 }
 
 UiField UiForm_addChannel (UiForm me, const char32 *label, const char32 *defaultValue) {
-	autoUiField thee = UiForm_addField (me, UI_CHANNEL, label);
+	autoUiField thee (UiForm_addField (me, UI_CHANNEL, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	return thee.releaseToAmbiguousOwner();
 }

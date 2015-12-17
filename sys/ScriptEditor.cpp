@@ -118,7 +118,7 @@ static void menu_cb_run (ScriptEditor me, EDITOR_ARGS_DIRECT) {
 		/*
 		 * Pop up a dialog box for querying the arguments.
 		 */
-		my argsDialog = Interpreter_createForm (my interpreter.get(), my d_windowForm, nullptr, args_ok, me, false);
+		my argsDialog = autoUiForm (Interpreter_createForm (my interpreter.get(), my d_windowForm, nullptr, args_ok, me, false));
 		UiForm_do (my argsDialog.get(), false);
 	} else {
 		autoPraatBackground background;
@@ -145,7 +145,7 @@ static void menu_cb_runSelection (ScriptEditor me, EDITOR_ARGS_DIRECT) {
 		/*
 		 * Pop up a dialog box for querying the arguments.
 		 */
-		my argsDialog = Interpreter_createForm (my interpreter.get(), my d_windowForm, nullptr, args_ok_selectionOnly, me, true);
+		my argsDialog = autoUiForm (Interpreter_createForm (my interpreter.get(), my d_windowForm, nullptr, args_ok_selectionOnly, me, true));
 		UiForm_do (my argsDialog.get(), false);
 	} else {
 		autoPraatBackground background;

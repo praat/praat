@@ -1879,7 +1879,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissi
 		if (my numberOfRows != nPoints || (!no_weight && weight -> numberOfRows != nPoints) || t -> numberOfPoints != nPoints) {
 			Melder_throw (U"Dimensions not in concordance.");
 		}
-		autoWeight aw = 0;
+		autoWeight aw;
 		if (no_weight) {
 			aw = Weight_create (nPoints);
 			weight = aw.peek();

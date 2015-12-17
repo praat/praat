@@ -82,7 +82,7 @@ void Manipulation_replaceOriginalSound (Manipulation me, Sound sound) {
 	try {
 		my sound = Sound_convertToMono (sound);
 		Vector_subtractMean (my sound.peek());
-		my lpc = nullptr;
+		my lpc = autoLPC();
 	} catch (MelderError) {
 		Melder_throw (me, U": original Sound not replaced with ", sound, U".");
 	}
@@ -651,12 +651,12 @@ autoSound Manipulation_to_Sound (Manipulation me, int method) {
 		case Manipulation_PULSES_PITCH: return synthesize_pulses_pitch (me);
 		case Manipulation_PULSES_PITCH_HUM: return synthesize_pulses_pitch_hum (me);
 		case Manipulation_OVERLAPADD_NODUR: return synthesize_overlapAdd_nodur (me);
-		case Manipulation_PULSES_FORMANT: return 0;
-		case Manipulation_PULSES_FORMANT_INTENSITY: return 0;
+		case Manipulation_PULSES_FORMANT: return autoSound();
+		case Manipulation_PULSES_FORMANT_INTENSITY: return autoSound();
 		case Manipulation_PULSES_LPC: return synthesize_pulses_lpc (me);
-		case Manipulation_PULSES_LPC_INTENSITY: return 0;
+		case Manipulation_PULSES_LPC_INTENSITY: return autoSound();
 		case Manipulation_PITCH_LPC: return synthesize_pitch_lpc (me);
-		case Manipulation_PITCH_LPC_INTENSITY: return 0;
+		case Manipulation_PITCH_LPC_INTENSITY: return autoSound();
 		default: return synthesize_overlapAdd (me);
 	}
 }

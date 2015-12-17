@@ -1619,7 +1619,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, Voc
 		if (pv -> endOralFormant > 0) { // Oral formants
 			antiformants = 0;
 			if (! formants) {
-				formants = thy oral_formants.get();   // yuck
+				formants = Data_copy (thy oral_formants.get());
 			}
 			for (long iformant = pv -> startOralFormant; iformant <= pv -> endOralFormant; iformant++) {
 				if (FormantGrid_isFormantDefined (formants.peek(), iformant)) {
@@ -2018,7 +2018,7 @@ autoSound FricationGrid_to_Sound (FricationGrid me, double samplingFrequency) {
 autoSound Sound_FricationGrid_filter (Sound me, FricationGrid thee) {
 	try {
 		FricationGridPlayOptions pf = thy options.get();
-		autoSound him = 0;
+		autoSound him;
 		long numberOfFricationFormants = thy frication_formants -> formants -> size;
 
 		check_formants (numberOfFricationFormants, & (pf -> startFricationFormant), & (pf -> endFricationFormant));
@@ -2743,7 +2743,7 @@ void KlattGrid_replaceFricationBypassTier (KlattGrid me, IntensityTier thee) {
 void KlattGrid_setGlottisCoupling (KlattGrid me) {
 	try {
 		my coupling -> glottis = PhonationGrid_to_PhonationTier (my phonation.get());
-		if (my coupling -> glottis == 0) {
+		if (! my coupling -> glottis) {
 			Melder_throw (U"Empty phonation tier.");
 		}
 	} catch (MelderError) {

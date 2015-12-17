@@ -296,7 +296,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 				fprintf (stderr, "19\n");
 				testAutoDataRef (data11);
 				fprintf (stderr, "20\n");
-				data11 = nullptr;
+				//data11 = nullptr;   // disabled implicit assignment of pointer to autopointer
 				fprintf (stderr, "21\n");
 			}
 			int numberOfThingsAfter = Thing_getTotalNumberOfThings ();

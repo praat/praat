@@ -190,7 +190,9 @@ autoMatrix Matrix_transpose (Matrix me) {
 	}
 }
 
-void Matrix_drawDistribution (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax, double minimum, double maximum, long nBins, double freqMin, double freqMax, int cumulative, int garnish) {
+void Matrix_drawDistribution (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax, double minimum, double maximum,
+	long nBins, double freqMin, double freqMax, bool cumulative, bool garnish)
+{
 	if (nBins <= 0) {
 		return;
 	}

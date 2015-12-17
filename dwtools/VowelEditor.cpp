@@ -727,16 +727,16 @@ static void VowelEditor_setF3F4 (VowelEditor me, double f3, double b3, double f4
 	double xmin = my f2min, xmax = my f2max, dx = my f2max - my f2min, x1 = dx / 2;
 	double dy = my f1max - my f1min, y1 = dy / 2;
 
-	if (my f3 == 0) {
+	if (! my f3) {
 		my f3 = Matrix_create (xmin, xmax, 1, dx, x1, my f1min, my f1max, 1, dy, y1);
 	}
-	if (my b3 == 0) {
+	if (! my b3) {
 		my b3 = Matrix_create (xmin, xmax, 1, dx, x1, my f1min, my f1max, 1, dy, y1);
 	}
-	if (my f4 == 0) {
+	if (! my f4) {
 		my f4 = Matrix_create (xmin, xmax, 1, dx, x1, my f1min, my f1max, 1, dy, y1);
 	}
-	if (my b4 == 0) {
+	if (! my b4) {
 		my b4 = Matrix_create (xmin, xmax, 1, dx, x1, my f1min, my f1max, 1, dy, y1);
 	}
 	my f3 -> z[1][1] = f3; my b3 -> z[1][1] = b3;

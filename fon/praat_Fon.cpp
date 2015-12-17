@@ -509,9 +509,9 @@ DO
 	praat_new (thee.move());
 END2 }
 
-FORM (Distributions_to_Transition_noise, U"To Transition (noise)", 0) {
+FORM (Distributions_to_Transition_noise, U"To Transition (noise)", nullptr) {
 	NATURAL (U"Environment", U"1")
-	BOOLEAN (U"Greedy", 1)
+	BOOLEAN (U"Greedy", true)
 	OK2
 DO
 	Distributions underlying = nullptr, surface = nullptr;
@@ -520,9 +520,9 @@ DO
 	praat_new (thee.move());
 END2 }
 
-FORM (Distributions_to_Transition_noise_adj, U"To Transition (noise)", 0) {
+FORM (Distributions_to_Transition_noise_adj, U"To Transition (noise)", nullptr) {
 	NATURAL (U"Environment", U"1")
-	BOOLEAN (U"Greedy", 1)
+	BOOLEAN (U"Greedy", true)
 	OK2
 DO
 	Distributions underlying = nullptr, surface = nullptr;
@@ -618,7 +618,7 @@ DO
 	}
 END2 }
 
-FORM (DurationTier_getTargetDuration, U"Get target duration", 0) {
+FORM (DurationTier_getTargetDuration, U"Get target duration", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"1.0")
 	OK2
@@ -2453,7 +2453,7 @@ END2 }
 DIRECT2 (Manipulation_removeDuration) {
 	LOOP {
 		iam (Manipulation);
-		my duration = nullptr;
+		my duration = autoDurationTier();
 		praat_dataChanged (me);
 	}
 END2 }
@@ -2461,7 +2461,7 @@ END2 }
 DIRECT2 (Manipulation_removeOriginalSound) {
 	LOOP {
 		iam (Manipulation);
-		my sound = nullptr;
+		my sound = autoSound();
 		praat_dataChanged (me);
 	}
 END2 }

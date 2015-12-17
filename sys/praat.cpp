@@ -348,7 +348,7 @@ void praat_cleanUpName (char32 *name) {
 
 static void praat_new_unpackCollection (autoCollection me, const char32* myName) {
 	for (long idata = 1; idata <= my size; idata ++) {
-		autoDaata object = (Daata) my item [idata];
+		autoDaata object = autoDaata ((Daata) my item [idata]);
 		my item [idata] = nullptr;   // disown; once the elements are autoThings, the move will handle this
 		const char32 *name = object -> name ? object -> name : myName;
 		Melder_assert (name);

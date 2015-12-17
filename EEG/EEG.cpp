@@ -588,11 +588,11 @@ autoEEG EEGs_concatenate (Collection me) {
 					Melder_throw (U"Channel ", ichan, U" has a different name in ", other, U" (", other -> channelNames [ichan], U") than in ", first, U" (", channelNames [ichan], U").");
 			}
 		}
-		autoOrdered soundCollection = Ordered_create ();
+		OrderedOf<structSound> soundList;
 		autoOrdered textgridCollection = Ordered_create ();
 		for (long ieeg = 1; ieeg <= my size; ieeg ++) {
 			EEG eeg = (EEG) my item [ieeg];
-			Collection_addItem_ref (soundCollection.peek(), eeg -> sound.get());
+			soundList. addItem_ref (eeg -> sound.get());
 			Collection_addItem_ref (textgridCollection.peek(), eeg -> textgrid.get());
 		}
 		autoEEG thee = Thing_new (EEG);
@@ -601,7 +601,7 @@ autoEEG EEGs_concatenate (Collection me) {
 		for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
 			thy channelNames [ichan] = Melder_dup (channelNames [ichan]);
 		}
-		thy sound = Sounds_concatenate_e (soundCollection.peek(), 0.0);
+		thy sound = Sounds_concatenate (soundList, 0.0);
 		thy textgrid = TextGrids_concatenate (textgridCollection.peek());
 		thy xmin = thy textgrid -> xmin;
 		thy xmax = thy textgrid -> xmax;

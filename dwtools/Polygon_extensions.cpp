@@ -868,8 +868,8 @@ static void Vertices_addIntersections (Vertices me, Vertices thee) {
 					autoVertex inc = Data_copy (ins.peek());
 					inc -> alpha = mub;
 					// 2. create the nodes
-					autoDLLNode ns = DLLNode_create (nullptr);
-					autoDLLNode nc = DLLNode_create (nullptr);
+					autoDLLNode ns = DLLNode_create (autoDaata());
+					autoDLLNode nc = DLLNode_create (autoDaata());
 					// 3. link the neighbours + copy the links
 					DLLNode njc = ins -> neighbour = nc.peek();
 					DLLNode nic = inc -> neighbour = ns.peek();
@@ -1145,7 +1145,7 @@ autoPolygon Polygons_union (Polygon me, Polygon thee) {
 	try {
 		autoCollection him = Polygons_findClippings (me, false, thee, false);
 		//Melder_assert (his size == 1);
-		autoPolygon p = (Polygon) Collection_subtractItem (him.peek(), 1);
+		autoPolygon p ((Polygon) Collection_subtractItem (him.peek(), 1));
 		return p;
 	} catch (MelderError) {
 		Melder_throw (me, U": no union created.");
