@@ -49,13 +49,13 @@
 //#define ESPEAK_API  extern "C"
 
 #ifdef LIBRARY
-	#define USE_ASYNC
+#define USE_ASYNC
 #endif
 
 #ifdef _ESPEAKEDIT
-	#define USE_PORTAUDIO
-	#define USE_ASYNC
-	#define LOG_FRAMES      // write keyframe info to log-espeakedit
+#define USE_PORTAUDIO
+#define USE_ASYNC
+#define LOG_FRAMES      // write keyframe info to log-espeakedit
 #endif
 
 // will look for espeak_data directory here, and also in user's home directory
@@ -90,9 +90,9 @@ int LookupMnem(MNEM_TAB *table, const char *string);
 
 
 #ifdef PLATFORM_WINDOWS
-	#define N_PATH_HOME  220
+	#define N_PATH_HOME  230
 #else
-	#define N_PATH_HOME  150
+	#define N_PATH_HOME  160
 #endif
 
 extern char path_home[N_PATH_HOME];    // this is the espeak-data directory

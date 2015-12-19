@@ -1,6 +1,6 @@
 /* SpeechSynthesizer_def.h
  *
- * Copyright (C) 2011-2012 David Weenink
+ * Copyright (C) 2011-2012, 2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +64,6 @@ oo_END_CLASS (SpeechSynthesizerVoice)
 
 #define ooSTRUCT SpeechSynthesizer
 oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
-
 	// sythesizers language /voice
 	oo_STRING (d_voiceLanguageName)
 	oo_STRING (d_voiceVariantName)

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005 to 2011 by Jonathan Duddington                     *
+ *   Copyright (C) 2005 to 2013 by Jonathan Duddington                     *
  *   email: jonsd@users.sourceforge.net                                    *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -60,6 +60,7 @@ static espeak_AUDIO_OUTPUT my_mode=AUDIO_OUTPUT_SYNCHRONOUS;
 static int synchronous_mode = 1;
 static int out_samplerate = 0;
 static int voice_samplerate = 22050;
+static espeak_ERROR err = EE_OK;
 
 t_espeak_callback* synth_callback = NULL;
 int (* uri_callback)(int, const char *, const char *) = NULL;
@@ -114,7 +115,11 @@ static int dispatch_audio(short* outbuf, int length, espeak_EVENT* event)
 				//	sleep(1);
 				}
 				out_samplerate = voice_samplerate;
-				wave_init(voice_samplerate);
+				if(!wave_init(voice_samplerate))
+				{
+					err = EE_INTERNAL_ERROR;
+					return(-1);
+				}
 				wave_set_callback_is_output_enabled( fifo_is_command_enabled);
 				my_audio = wave_open("alsa");
 				event_init();
@@ -167,7 +172,7 @@ static int dispatch_audio(short* outbuf, int length, espeak_EVENT* event)
 
 	SHOW_TIME("LEAVE dispatch_audio\n");
 
-	return (a_wave_can_be_played==0); // 1 = stop synthesis
+	return (a_wave_can_be_played==0); // 1 = stop synthesis, -1 = error
 }
 
 
@@ -377,10 +382,12 @@ static int initialise(int control)
 {//===============================
 	int param;
 	int result;
+	int srate = 22050;  // default sample rate 22050 Hz
 
+	err = EE_OK;
 	LoadConfig();
-	WavegenInit(22050,0);   // 22050
-	if((result = LoadPhData()) != 1)
+
+	if((result = LoadPhData(&srate)) != 1)  // reads sample rate from espeak-data/phontab
 	{
 		if(result == -1)
 		{
@@ -393,6 +400,7 @@ static int initialise(int control)
 		else
 			fprintf(stderr,"Wrong version of espeak-data 0x%x (expects 0x%x) at %s\n",result,version_phdata,path_home);
 	}
+	WavegenInit(srate,0);
 
 	memset(&current_voice_selected,0,sizeof(current_voice_selected));
 	SetVoiceStack(NULL, "");
@@ -492,6 +500,8 @@ static espeak_ERROR Synthesize(unsigned int unique_identifier, const void *text,
 		{
 #ifdef USE_ASYNC
 			finished = create_events((short *)outbuf, length, event_list, a_write_pos);
+			if(finished < 0)
+				return EE_INTERNAL_ERROR;
 			length = 0; // the wave data are played once.
 #endif
 		}
@@ -521,7 +531,8 @@ static espeak_ERROR Synthesize(unsigned int unique_identifier, const void *text,
 #ifdef USE_ASYNC
 					if (my_mode==AUDIO_OUTPUT_PLAYBACK)
 					{
-						dispatch_audio(NULL, 0, NULL); // TBD: test case
+						if(dispatch_audio(NULL, 0, NULL) < 0) // TBD: test case
+							return err = EE_INTERNAL_ERROR;
 					}
 					else
 					{
@@ -545,7 +556,11 @@ static const char* label[] = {
   "SENTENCE",
   "MARK",
   "PLAY",
-  "END"};
+  "END",
+  "MSG_TERMINATED",
+  "PHONEME",
+  "SAMPLERATE",
+  "??" };
 #endif
 
 
@@ -717,8 +732,12 @@ void sync_espeak_SetPunctuationList(const wchar_t *punctlist)
 	my_unique_identifier = 0;
 	my_user_data = NULL;
 
-	wcsncpy(option_punctlist, punctlist, N_PUNCTLIST);
-	option_punctlist[N_PUNCTLIST-1] = 0;
+	option_punctlist[0] = 0;
+	if(punctlist != NULL)
+	{
+		wcsncpy(option_punctlist, punctlist, N_PUNCTLIST);
+		option_punctlist[N_PUNCTLIST-1] = 0;
+	}
 }  //  end of sync_espeak_SetPunctuationList
 
 
@@ -761,10 +780,11 @@ ENTER("espeak_Initialize");
 #ifdef PLATFORM_RISCOS
 	setlocale(LC_CTYPE,"ISO8859-1");
 #else
-	if(setlocale(LC_CTYPE,"en_US.UTF-8") == NULL)
+	if(setlocale(LC_CTYPE,"C.UTF-8") == NULL)
 	{
 		if(setlocale(LC_CTYPE,"UTF-8") == NULL)
-			setlocale(LC_CTYPE,"");
+			if(setlocale(LC_CTYPE,"en_US.UTF-8") == NULL)
+				setlocale(LC_CTYPE,"");
 	}
 #endif
 */
@@ -778,8 +798,9 @@ ENTER("espeak_Initialize");
 	}
 
 	// buflength is in mS, allocate 2 bytes per sample
-	if(buf_length == 0)
+	if((buf_length == 0) || (output_type == AUDIO_OUTPUT_PLAYBACK) || (output_type == AUDIO_OUTPUT_SYNCH_PLAYBACK))
 		buf_length = 200;
+
 	outbuf_size = (buf_length * samplerate)/500;
 	outbuf = (unsigned char*)realloc(outbuf,outbuf_size);
 	if((out_start = outbuf) == NULL)
@@ -1151,13 +1172,25 @@ ESPEAK_API void espeak_SetPhonemeTrace(int value, FILE *stream)
 		 value=3  as (1), but produces IPA phoneme names rather than ascii
 		bit 4:   produce mbrola pho data
 	*/
-	option_phonemes = value & 3;
+	option_phonemes = value & 7;
 	option_mbrola_phonemes = value & 16;
 	f_trans = stream;
 	if(stream == NULL)
 		f_trans = stderr;
 
 }   //  end of espeak_SetPhonemes
+
+
+ESPEAK_API const char *espeak_TextToPhonemes(const void **textptr, int textmode, int phonememode)
+{//=================================================================================================
+	/* phoneme_mode  bits 0-3: 0=only phoneme names, 1=ties, 2=ZWJ, 3=underscore separator
+	                 bits 4-7:   0=eSpeak phoneme names, 1=IPA
+	*/
+
+	option_multibyte = textmode & 7;
+	*textptr = TranslateClause(translator, NULL, *textptr, NULL, NULL);
+	return(GetTranslatedPhonemeString(phonememode));
+}
 
 
 ESPEAK_API void espeak_CompileDictionary(const char *path, FILE *log, int flags)
@@ -1205,6 +1238,7 @@ ESPEAK_API int espeak_IsPlaying(void)
 
 ESPEAK_API espeak_ERROR espeak_Synchronize(void)
 {//=============================================
+	espeak_ERROR berr = err;
 #ifdef USE_ASYNC
 	SHOW_TIME("espeak_Synchronize > ENTER");
 	while (espeak_IsPlaying())
@@ -1212,8 +1246,9 @@ ESPEAK_API espeak_ERROR espeak_Synchronize(void)
 		usleep(20000);
 	}
 #endif
+	err = EE_OK;
 	SHOW_TIME("espeak_Synchronize > LEAVE");
-	return EE_OK;
+	return berr;
 }   //  end of espeak_Synchronize
 
 
