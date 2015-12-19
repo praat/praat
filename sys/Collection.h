@@ -123,6 +123,42 @@ struct CollectionOf : structDaata {
 		our size --;
 		return result;
 	}
+	void removeItem (long pos) {
+		Melder_assert (pos >= 1 && pos <= our size);
+		if (our _ownItems) forget (our item [pos]);
+		for (long i = pos; i < our size; i ++) our item [i] = our item [i + 1];
+		our size --;
+	}
+	void sort (int (*compare) (T*, T*)) {
+		long l, r, j, i;
+		T* k;
+		T** a = our item;
+		long n = our size;
+		if (n < 2) return;
+		l = (n >> 1) + 1;
+		r = n;
+		for (;;) {
+			if (l > 1) {
+				l --;
+				k = a [l];
+			} else { 
+				k = a [r];
+				a [r] = a [1];
+				r --;
+				if (r == 1) { a [1] = k; return; }
+			}
+			j = l;
+			for (;;) {
+				i = j;
+				j = j << 1;
+				if (j > r) break;
+				if (j < r && compare (a [j], a [j + 1]) < 0) j ++;
+				if (compare (k, a [j]) >= 0) break;
+				a [i] = a [j];
+			}
+			a [i] = k;
+		}
+	}
 
 	void v_info ()
 		override { ((Collection) this) -> structCollection::v_info (); }

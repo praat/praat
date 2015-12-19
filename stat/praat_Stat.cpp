@@ -146,7 +146,7 @@ END2 }
 DIRECT2 (PairDistribution_getNumberOfPairs) {
 	LOOP {
 		iam (PairDistribution);
-		Melder_information (my pairs -> size);
+		Melder_information (my pairs.size);
 	}
 END2 }
 

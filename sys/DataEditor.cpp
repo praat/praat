@@ -478,6 +478,13 @@ static void showStructMember (
 		fieldData -> rank = 0;
 		Melder_free (fieldData -> history); fieldData -> history = Melder_dup_f (history);
 		GuiThing_show (fieldData -> button);
+	} else if (type == collectionofwa) {
+		fieldData -> address = (Daata) memberAddress;   // direct  // FIXME: not guaranteed for auto objects
+		if (! fieldData -> address) return;   // no button if no object
+		fieldData -> description = memberDescription;
+		fieldData -> rank = 0;
+		Melder_free (fieldData -> history); fieldData -> history = Melder_dup_f (history);
+		GuiThing_show (fieldData -> button);
 	}
 }
 
