@@ -983,8 +983,8 @@ static TextTier pr_TextGrid_peekTextTier (UiForm dia) {
 static TextInterval pr_TextGrid_peekInterval (UiForm dia) {
 	int intervalNumber = GET_INTEGER (STRING_INTERVAL_NUMBER);
 	IntervalTier intervalTier = pr_TextGrid_peekIntervalTier (dia);
-	if (intervalNumber > intervalTier -> intervals -> size) Melder_throw (U"Interval number too large.");
-	return (TextInterval) intervalTier -> intervals -> item [intervalNumber];
+	if (intervalNumber > intervalTier -> intervals. size) Melder_throw (U"Interval number too large.");
+	return intervalTier -> intervals [intervalNumber];
 }
 
 static TextPoint pr_TextGrid_peekPoint (UiForm dia) {	
@@ -1114,7 +1114,7 @@ FORM (TextGrid_getNumberOfIntervals, U"TextGrid: Get number of intervals", nullp
 	OK2
 DO
 	IntervalTier intervalTier = pr_TextGrid_peekIntervalTier (dia);
-	long numberOfIntervals = intervalTier -> intervals -> size;
+	long numberOfIntervals = intervalTier -> intervals.size;
 	Melder_information (numberOfIntervals);
 END2 }
 
@@ -1425,9 +1425,9 @@ DO
 		if (intervalTier -> classInfo != classIntervalTier)
 			Melder_throw (U"You cannot remove a boundary from tier ", itier, U" of ", me,
 				U", because that tier is a point tier instead of an interval tier.");
-		if (iinterval > intervalTier -> intervals -> size)
+		if (iinterval > intervalTier -> intervals. size)
 			Melder_throw (U"You cannot remove a boundary from interval ", iinterval, U" of tier ", itier, U" of ", me,
-				U", because that tier has only ", intervalTier -> intervals -> size, U" intervals.");
+				U", because that tier has only ", intervalTier -> intervals. size, U" intervals.");
 		if (iinterval == 1)
 			Melder_throw (U"You cannot remove the left boundary from interval 1 of tier ", itier, U" of ", me,
 				U", because this is at the left edge of the tier.");
@@ -1491,10 +1491,10 @@ DO
 		if (intervalTier -> classInfo != classIntervalTier)
 			Melder_throw (U"You cannot remove a boundary from tier ", itier, U" of ", me,
 				U", because that tier is a point tier instead of an interval tier.");
-		if (iinterval > intervalTier -> intervals -> size)
+		if (iinterval > intervalTier -> intervals.size)
 			Melder_throw (U"You cannot remove a boundary from interval ", iinterval, U" of tier ", itier, U" of ", me,
-				U", because that tier has only ", intervalTier -> intervals -> size, U" intervals.");
-		if (iinterval == intervalTier -> intervals -> size)
+				U", because that tier has only ", intervalTier -> intervals.size, U" intervals.");
+		if (iinterval == intervalTier -> intervals.size)
 			Melder_throw (U"You cannot remove the right boundary from interval ", iinterval, U" of tier ", itier, U" of ", me,
 				U", because this is at the right edge of the tier.");
 		IntervalTier_removeLeftBoundary (intervalTier, iinterval + 1);

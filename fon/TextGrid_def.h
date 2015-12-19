@@ -23,13 +23,6 @@ oo_DEFINE_CLASS (TextPoint, AnyPoint)
 
 	oo_STRING (mark)
 
-	/* 'after' was a temporary attribute (19970211-19970307). */
-	#if oo_READING_TEXT
-		if (formatVersion == 1) texgetw2 (a_text);
-	#elif oo_READING_BINARY
-		if (formatVersion == 1) bingetw2 (f);
-	#endif
-
 oo_END_CLASS (TextPoint)
 #undef ooSTRUCT
 
@@ -76,13 +69,13 @@ oo_END_CLASS (TextTier)
 #define ooSTRUCT IntervalTier
 oo_DEFINE_CLASS (IntervalTier, Function)
 
-	oo_AUTO_COLLECTION (SortedSetOfDouble, intervals, TextInterval, 0)
+	oo_COLLECTION_OF (SortedSetOfDoubleOf, intervals, TextInterval, 0)
 
 	#if oo_DECLARING
 		long numberOfIntervals () // accessor
-			{ return our intervals -> size; }
+			{ return our intervals. size; }
 		TextInterval& interval (long i) // accessor
-			{ return reinterpret_cast <TextInterval&> (our intervals -> item [i]); }
+			{ return our intervals [i]; }
 
 		int v_domainQuantity ()
 			override { return MelderQuantity_TIME_SECONDS; }

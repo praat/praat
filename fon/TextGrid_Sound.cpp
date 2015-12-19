@@ -61,10 +61,10 @@ static void IntervalTier_insertIntervalDestructively (IntervalTier me, double tm
 		 */
 		autoTextInterval newInterval = TextInterval_create (tmin, interval -> xmax, U"");
 		interval -> xmax = tmin;
-		Collection_addItem_move (my intervals.get(), newInterval.move());
+		my intervals. addItem_move (newInterval.move());
 		firstIntervalNumber = IntervalTier_hasTime (me, interval -> xmin);
 	}
-	Melder_assert (firstIntervalNumber >= 1 && firstIntervalNumber <= my intervals -> size);
+	Melder_assert (firstIntervalNumber >= 1 && firstIntervalNumber <= my intervals.size);
 	long lastIntervalNumber = IntervalTier_hasTime (me, tmax);
 	if (! lastIntervalNumber) {
 		long intervalNumber = IntervalTier_timeToIndex (me, tmax);
@@ -76,10 +76,10 @@ static void IntervalTier_insertIntervalDestructively (IntervalTier me, double tm
 		 */
 		autoTextInterval newInterval = TextInterval_create (interval -> xmin, tmax, U"");
 		interval -> xmin = tmax;
-		Collection_addItem_move (my intervals.get(), newInterval.move());
+		my intervals. addItem_move (newInterval.move());
 		lastIntervalNumber = IntervalTier_hasTime (me, interval -> xmax);
 	}
-	Melder_assert (lastIntervalNumber >= 1 && lastIntervalNumber <= my intervals -> size);
+	Melder_assert (lastIntervalNumber >= 1 && lastIntervalNumber <= my intervals.size);
 	/*
 	 * Empty the interval in the word tier.
 	 */
@@ -88,10 +88,10 @@ static void IntervalTier_insertIntervalDestructively (IntervalTier me, double tm
 		TextInterval interval = my interval (iinterval);
 		if (interval -> xmin > tmin && interval -> xmin < tmax) {
 			Melder_assert (iinterval > 1);
-			TextInterval previous = (TextInterval) my intervals -> item [iinterval - 1];
+			TextInterval previous = my intervals [iinterval - 1];
 			previous -> xmax = tmax;   // collapse left and right intervals into left interval
 			TextInterval_setText (previous, U"");
-			Collection_removeItem (my intervals.get(), iinterval);   // remove right interval
+			my intervals. removeItem (iinterval);   // remove right interval
 		}
 		if (interval -> xmax == tmax) {
 			TextInterval_setText (interval, U"");
@@ -112,7 +112,7 @@ static double IntervalTier_boundaryTimeClosestTo (IntervalTier me, double tmin, 
 
 static void IntervalTier_removeEmptyIntervals (IntervalTier me, IntervalTier boss) {
 	IntervalTier_removeBoundariesBetweenIdenticallyLabeledIntervals (me, U"");
-	if (my intervals -> size < 2) return;
+	if (my intervals.size < 2) return;
 	TextInterval firstInterval = my interval (1);
 	if (Melder_equ (firstInterval -> text, U"")) {
 		IntervalTier_removeLeftBoundary (me, 2);
@@ -137,7 +137,7 @@ static void IntervalTier_removeEmptyIntervals (IntervalTier me, IntervalTier bos
 			TextInterval next = my interval (iinterval + 1);
 			previous -> xmax = newBoundaryTime;
 			next -> xmin = newBoundaryTime;
-			Collection_removeItem (my intervals.get(), iinterval);
+			my intervals. removeItem (iinterval);
 		}
 	}
 }
@@ -256,7 +256,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 						wordInterval = wordTier -> interval (wordIntervalNumber);
 						autoTextInterval newInterval = TextInterval_create (tmin, tmax, analysisInterval -> text);
 						wordInterval -> xmin = tmax;
-						Collection_addItem_move (wordTier -> intervals.get(), newInterval.move());
+						wordTier -> intervals. addItem_move (newInterval.move());
 						wordIntervalNumber ++;
 					}
 				}
@@ -314,7 +314,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 						phonemeInterval = phonemeTier -> interval (phonemeIntervalNumber);
 						autoTextInterval newInterval = TextInterval_create (tmin, tmax, analysisInterval -> text);
 						phonemeInterval -> xmin = tmax;
-						Collection_addItem_move (phonemeTier -> intervals.get(), newInterval.move());
+						phonemeTier -> intervals. addItem_move (newInterval.move());
 						phonemeIntervalNumber ++;
 					}
 				}

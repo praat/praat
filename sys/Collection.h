@@ -301,6 +301,15 @@ Thing_define (Ordered, Collection) {
 template <typename T>
 struct OrderedOf : CollectionOf <T> {
 	OrderedOf () {
+		/*
+			The constructor of the superclass should have been called:
+		*/
+		Melder_assert (our classInfo == & theClassInfo_Collection);
+		Melder_assert (! our name);
+		Melder_assert (our _capacity == 30);
+		/*
+			Override the type information:
+		*/
 		our classInfo = & theClassInfo_Ordered;
 	}
 };
@@ -329,6 +338,27 @@ Thing_define (Sorted, Collection) {
 
 	static int s_compareHook (Daata data1, Daata data2) noexcept;
 	virtual Data_CompareHook v_getCompareHook () { return s_compareHook; }
+		// should compare the keys of two items; returns negative if me < thee, 0 if me == thee, and positive if me > thee
+};
+
+template <typename T>
+struct SortedOf : CollectionOf <T> {
+	SortedOf () {
+		our classInfo = & theClassInfo_Sorted;
+	}
+	void addItem_unsorted_move (_Thing_auto <T> data) {
+		_Collection_insertItem_move ((Collection) this, data.move(), our size + 1);
+	}
+	void sort () {
+		our CollectionOf<T>::sort (our v_getCompareHook ());
+	}
+
+	long v_position (T* data)
+		override;
+
+	static int s_compareHook (T* data1, T* data2) noexcept;
+	typedef int (*CompareHook) (T*, T*);
+	virtual CompareHook v_getCompareHook () { return s_compareHook; }
 		// should compare the keys of two items; returns negative if me < thee, 0 if me == thee, and positive if me > thee
 };
 
@@ -363,6 +393,14 @@ void Sorted_sort (Sorted me);
 
 Thing_define (SortedSet, Sorted) {   // every item must be unique (by key)
 	long v_position (Thing data) override;   // returns 0 (refusal) if the key of 'data' already occurs
+};
+
+template <typename T>
+struct SortedSetOf : SortedOf <T> {
+	SortedSetOf () {
+		our classInfo = & theClassInfo_SortedSet;
+	}
+	long v_position (T* data) override { return ((SortedSet) this) -> structSortedSet::v_position (data); }   // returns 0 (refusal) if the key of 'data' already occurs
 };
 
 void SortedSet_init (SortedSet me, long initialCapacity);
@@ -402,6 +440,20 @@ autoSortedSetOfLong SortedSetOfLong_create ();
 Thing_define (SortedSetOfDouble, SortedSet) {
 	static int s_compareHook (SimpleDouble data1, SimpleDouble data2) noexcept;
 	Data_CompareHook v_getCompareHook () override { return s_compareHook; }
+};
+
+template <typename T>
+struct SortedSetOfDoubleOf : SortedSetOf <T> {
+	SortedSetOfDoubleOf () {
+		our classInfo = & theClassInfo_SortedSetOfDouble;
+	}
+	/*static int s_compareHook (T* me, T* thee) noexcept {
+		if (my number < thy number) return -1;
+		if (my number > thy number) return +1;
+		return 0;
+	}*/
+	typename SortedOf<T>::CompareHook v_getCompareHook ()
+		override { return (typename SortedOf<T>::CompareHook) structSortedSetOfDouble::s_compareHook; }
 };
 
 void SortedSetOfDouble_init (SortedSetOfDouble me);
