@@ -1783,7 +1783,7 @@ void OTGrammar_PairDistribution_learn (OTGrammar me, PairDistribution thee,
 
 static long PairDistribution_getNumberOfAttestedOutputs (PairDistribution me, const char32 *input, char32 **attestedOutput) {
 	long result = 0;
-	for (long ipair = 1; ipair <= my pairs.size; ipair ++) {
+	for (long ipair = 1; ipair <= my pairs.size(); ipair ++) {
 		PairProbability pair = my pairs [ipair];
 		if (str32equ (pair -> string1, input) && pair -> weight > 0.0) {
 			if (attestedOutput) *attestedOutput = pair -> string2;
@@ -2313,7 +2313,7 @@ long OTGrammar_PairDistribution_getMinimumNumberCorrect (OTGrammar me, PairDistr
 {
 	try {
 		long minimumNumberCorrect = numberOfReplications;
-		for (long ipair = 1; ipair <= thy pairs.size; ipair ++) {
+		for (long ipair = 1; ipair <= thy pairs.size(); ipair ++) {
 			PairProbability prob = thy pairs [ipair];
 			if (prob -> weight > 0.0) {
 				long numberOfCorrect = 0;
@@ -2575,7 +2575,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 			bool grammarHasChangedDuringCycle = false;
 			OTGrammar_honourLocalRankings (me, 1.0, 0.0, & grammarHasChangedDuringCycle);
 			OTGrammar_newDisharmonies (me, evaluationNoise);
-			for (iform = 1; iform <= thy pairs.size; iform ++) {
+			for (iform = 1; iform <= thy pairs.size(); iform ++) {
 				PairProbability prob = thy pairs [iform];
 				if (prob -> weight > 0.0) {
 					bool grammarHasChanged = false;
@@ -2613,7 +2613,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 					bool grammarHasChangedDuringCycle = false;
 					OTGrammar_honourLocalRankings (me, 1.0, 0.0, & grammarHasChangedDuringCycle);
 					OTGrammar_newDisharmonies (me, evaluationNoise);
-					for (iform = 1; iform <= thy pairs.size; iform ++) {
+					for (iform = 1; iform <= thy pairs.size(); iform ++) {
 						PairProbability prob = thy pairs [iform];
 						if (prob -> weight > 0.0) {
 							bool grammarHasChanged = false;
@@ -2659,7 +2659,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 							bool grammarHasChangedDuringCycle = false;
 							OTGrammar_honourLocalRankings (me, 1.0, 0.0, & grammarHasChangedDuringCycle);
 							OTGrammar_newDisharmonies (me, evaluationNoise);
-							for (iform = 1; iform <= thy pairs.size; iform ++) {
+							for (iform = 1; iform <= thy pairs.size(); iform ++) {
 								PairProbability prob = thy pairs [iform];
 								if (prob -> weight > 0.0) {
 									bool grammarHasChanged = false;

@@ -56,18 +56,18 @@ void structLogisticRegression :: v_info () {
 	MelderInfo_writeLine (U"Dependent 2: ", our dependent2);
 	MelderInfo_writeLine (U"Interpretation:");
 	MelderInfo_write (U"   ln (P(", dependent2, U")/P(", dependent1, U")) " UNITEXT_ALMOST_EQUAL_TO U" ", Melder_fixed (intercept, 6));
-	for (long ivar = 1; ivar <= parameters.size; ivar ++) {
+	for (long ivar = 1; ivar <= parameters.size(); ivar ++) {
 		RegressionParameter parm = parameters [ivar];
 		MelderInfo_write (parm -> value < 0.0 ? U" - " : U" + ", Melder_fixed (fabs (parm -> value), 6), U" * ", parm -> label);
 	}
 	MelderInfo_writeLine (U"");
 	MelderInfo_writeLine (U"Log odds ratios:");
-	for (long ivar = 1; ivar <= parameters.size; ivar ++) {
+	for (long ivar = 1; ivar <= parameters.size(); ivar ++) {
 		RegressionParameter parm = parameters [ivar];
 		MelderInfo_writeLine (U"   Log odds ratio of factor ", parm -> label, U": ", Melder_fixed ((parm -> maximum - parm -> minimum) * parm -> value, 6));
 	}
 	MelderInfo_writeLine (U"Odds ratios:");
-	for (long ivar = 1; ivar <= parameters.size; ivar ++) {
+	for (long ivar = 1; ivar <= parameters.size(); ivar ++) {
 		RegressionParameter parm = parameters [ivar];
 		MelderInfo_writeLine (U"   Odds ratio of factor ", parm -> label, U": ", exp ((parm -> maximum - parm -> minimum) * parm -> value));
 	}
@@ -309,7 +309,7 @@ void LogisticRegression_drawBoundary (LogisticRegression me, Graphics graphics, 
 		ytop = parmy -> maximum;
 	}
 	double intercept = my intercept;
-	for (long iparm = 1; iparm <= my parameters.size; iparm ++) {
+	for (long iparm = 1; iparm <= my parameters.size(); iparm ++) {
 		if (iparm != colx && iparm != coly) {
 			RegressionParameter parm = my parameters [iparm];
 			intercept += parm -> value * (0.5 * (parm -> minimum + parm -> maximum));

@@ -297,7 +297,7 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 						if (time != 0.0)
 							TextGrid_insertBoundary (thee.peek(), bit, time);
 						if ((thisValue & bitValue) != 0)
-							TextGrid_setIntervalText (thee.peek(), bit, tier -> intervals.size, U"1");
+							TextGrid_setIntervalText (thee.peek(), bit, tier -> intervals.size(), U"1");
 					}
 				}
 			}

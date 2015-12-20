@@ -70,8 +70,8 @@ Thing_define (Collection, Daata) {
 
 template <typename T>
 struct CollectionOf : structDaata {
-	T** item;   // [1..size]
-	long size { 0 };
+	T** _item;   // [1..size]
+	long _size { 0 };
 	long _capacity { 30 };
 	bool _ownItems { true };
 	bool _ownershipInitialized { false };
@@ -79,8 +79,8 @@ struct CollectionOf : structDaata {
 	CollectionOf () {
 		our classInfo = & theClassInfo_Collection;
 		our name = nullptr;
-		our item = Melder_calloc (T*, 30);
-		our item --;   // convert from base-0 to base-1
+		our _item = Melder_calloc (T*, 30);
+		our _item --;   // convert from base-0 to base-1
 	}
 	virtual ~ CollectionOf () {
 		/*
@@ -92,21 +92,24 @@ struct CollectionOf : structDaata {
 			which may not crash Praat (assuming that `name` is nulled the first time)
 			but which is not how destruction should be organized.
 		*/
-		if (our item) {
+		if (our _item) {
 			if (our _ownItems) {
-				for (long i = 1; i <= our size; i ++) {
-					forget (our item [i]);
+				for (long i = 1; i <= our _size; i ++) {
+					_Thing_forget (our _item [i]);
 				}
 			}
-			our item ++;   // convert from base-1 to base-0
-			Melder_free (our item);
+			our _item ++;   // convert from base-1 to base-0
+			Melder_free (our _item);
 		}
 	}
+	long size () {
+		return _size;
+	}
 	T*& operator[] (long i) {
-		return item [i];
+		return _item [i];
 	}
 	explicit operator bool () const {
-		return !! our item;
+		return !! our _item;
 	}
 	void addItem_ref (T* thing) {
 		//Melder_casual (U"addItem_ref ", _capacity, U" ", _ownItems);
@@ -116,24 +119,24 @@ struct CollectionOf : structDaata {
 		Collection_addItem_move ((Collection) this, thing.move());
 	}
 	T* subtractItem_ref (long pos) {
-		Melder_assert (pos >= 1 && pos <= our size);
+		Melder_assert (pos >= 1 && pos <= our _size);
 		Melder_assert (! our _ownItems);
-		T* result = our item [pos];
-		for (long i = pos; i < our size; i ++) our item [i] = our item [i + 1];
-		our size --;
+		T* result = our _item [pos];
+		for (long i = pos; i < our _size; i ++) our _item [i] = our _item [i + 1];
+		our _size --;
 		return result;
 	}
 	void removeItem (long pos) {
-		Melder_assert (pos >= 1 && pos <= our size);
-		if (our _ownItems) forget (our item [pos]);
-		for (long i = pos; i < our size; i ++) our item [i] = our item [i + 1];
-		our size --;
+		Melder_assert (pos >= 1 && pos <= our _size);
+		if (our _ownItems) _Thing_forget (our _item [pos]);
+		for (long i = pos; i < our _size; i ++) our _item [i] = our _item [i + 1];
+		our _size --;
 	}
 	void sort (int (*compare) (T*, T*)) {
 		long l, r, j, i;
 		T* k;
-		T** a = our item;
-		long n = our size;
+		T** a = our _item;
+		long n = our _size;
 		if (n < 2) return;
 		l = (n >> 1) + 1;
 		r = n;
@@ -182,7 +185,7 @@ struct CollectionOf : structDaata {
 	//Data_Description v_description ()
 	//	override { return structCollection::s_description; }
 
-	virtual long v_position (T* /* data */) { return our size + 1; /* at end */ };
+	virtual long v_position (T* /* data */) { return our _size + 1; /* at end */ };
 };
 
 void Collection_init (Collection me, long initialCapacity);
@@ -347,7 +350,7 @@ struct SortedOf : CollectionOf <T> {
 		our classInfo = & theClassInfo_Sorted;
 	}
 	void addItem_unsorted_move (_Thing_auto <T> data) {
-		_Collection_insertItem_move ((Collection) this, data.move(), our size + 1);
+		_Collection_insertItem_move ((Collection) this, data.move(), our _size + 1);
 	}
 	void sort () {
 		our CollectionOf<T>::sort (our v_getCompareHook ());

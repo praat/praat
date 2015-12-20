@@ -95,7 +95,7 @@
 	if (our x && ! Data_canWriteAsEncoding (our x.get(), encoding)) return false;
 
 #define oo_COLLECTION_OF(Class,x,ItemClass,version)  \
-	for (long i = 1; i <= x.size; i ++) { \
+	for (long i = 1; i <= x.size(); i ++) { \
 		if (our x [i] && ! Data_canWriteAsEncoding (our x [i], encoding)) return false; \
 	}
 

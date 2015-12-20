@@ -42,24 +42,15 @@ oo_END_CLASS (TextInterval)
 
 
 #define ooSTRUCT TextTier
-oo_DEFINE_CLASS (TextTier, AnyTier)
+oo_DEFINE_CLASS (TextTier, Function)   // a kind of AnyTier though
 
-	#if ! oo_DECLARING
-		oo_AUTO_COLLECTION (SortedSetOfDouble, points, TextPoint, 0)
-	#endif
+	oo_COLLECTION_OF (SortedSetOfDoubleOf, points, TextPoint, 0)
 
 	#if oo_DECLARING
-		long numberOfPoints () // accessor
-			{ return our points -> size; }
-		TextPoint& point (long i) // accessor
-			{ return reinterpret_cast <TextPoint&> (our points -> item [i]); }
+		AnyTier_METHODS
 
 		int v_domainQuantity ()
 			override { return MelderQuantity_TIME_SECONDS; }
-		void v_shiftX (double xfrom, double xto)
-			override;
-		void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto)
-			override;
 	#endif
 
 oo_END_CLASS (TextTier)
@@ -72,11 +63,6 @@ oo_DEFINE_CLASS (IntervalTier, Function)
 	oo_COLLECTION_OF (SortedSetOfDoubleOf, intervals, TextInterval, 0)
 
 	#if oo_DECLARING
-		long numberOfIntervals () // accessor
-			{ return our intervals. size; }
-		TextInterval& interval (long i) // accessor
-			{ return our intervals [i]; }
-
 		int v_domainQuantity ()
 			override { return MelderQuantity_TIME_SECONDS; }
 		void v_shiftX (double xfrom, double xto)

@@ -97,9 +97,9 @@
 
 #define oo_COLLECTION_OF(Class,x,ItemClass,version)  \
 	thy x = our x; \
-	thy x.item = Melder_calloc (ItemClass, our x._capacity); \
-	thy x.item --; \
-	for (long i = 1; i <= our x.size; i ++) { \
+	thy x._item = Melder_calloc (ItemClass, our x._capacity); \
+	thy x._item --; \
+	for (long i = 1; i <= our x._size; i ++) { \
 		if (our x [i]) thy x [i] = Data_copy (our x [i]).releaseToAmbiguousOwner(); \
 	}
 

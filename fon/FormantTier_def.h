@@ -1,6 +1,6 @@
 /* FormantTier_def.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2002,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,8 @@
 
 
 #define ooSTRUCT FormantPoint
-oo_DEFINE_CLASS (FormantPoint, Daata)
+oo_DEFINE_CLASS (FormantPoint, AnyPoint)
 
-	oo_DOUBLE (time)   /* AnyPoint */
 	oo_INT (numberOfFormants)
 	oo_DOUBLE_ARRAY (formant, 10, numberOfFormants)
 	oo_DOUBLE_ARRAY (bandwidth, 10, numberOfFormants)
@@ -31,10 +30,12 @@ oo_END_CLASS (FormantPoint)
 
 
 #define ooSTRUCT FormantTier
-oo_DEFINE_CLASS (FormantTier, AnyTier)
+oo_DEFINE_CLASS (FormantTier, Function)   // a kind of AnyTier though
 
-	#if ! oo_DECLARING
-		oo_AUTO_COLLECTION (SortedSetOfDouble, points, FormantPoint, 0)
+	oo_COLLECTION_OF (SortedSetOfDoubleOf, points, FormantPoint, 0)
+
+	#if oo_DECLARING
+		AnyTier_METHODS
 	#endif
 
 oo_END_CLASS (FormantTier)

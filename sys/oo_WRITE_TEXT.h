@@ -135,8 +135,8 @@
 		Data_writeText (our x.get(), file);
 
 #define oo_COLLECTION_OF(Class,x,ItemClass,version)  \
-	texputi4 (file, our x.size, U"" #x U": size", 0,0,0,0,0); \
-	for (long i = 1; i <= our x.size; i ++) { \
+	texputi4 (file, our x.size(), U"" #x U": size", 0,0,0,0,0); \
+	for (long i = 1; i <= our x.size(); i ++) { \
 		ItemClass data = our x [i]; \
 		texputintro (file, U"" #x U" [", Melder_integer (i), U"]:", 0,0,0); \
 		data -> struct##ItemClass :: v_writeText (file); \

@@ -79,8 +79,8 @@ static void PitchTier_modifyExcursionRange (PitchTier me, double tmin, double tm
 
 	double fref_st = 12.0 * log (fref_Hz / 100.0) / NUMln2;
 
-	for (long i = 1; i <= my points -> size; i++) {
-		RealPoint point = (RealPoint) my points -> item [i];
+	for (long i = 1; i <= my points.size(); i++) {
+		RealPoint point = my points [i];
 		double f = point -> value;
 		if (point -> number < tmin || point -> number > tmax) {
 			continue;
@@ -1330,14 +1330,14 @@ void Sound_getStartAndEndTimesOfSounding (Sound me, double minPitch, double time
 		autoTextGrid dbs = Sound_to_TextGrid_detectSilences (me, minPitch, timeStep, silenceThreshold,
 			minSilenceDuration, minSoundingDuration, silentLabel, soundingLabel);
 		IntervalTier tier = (IntervalTier) dbs -> tiers -> item[1];
-		Melder_assert (tier -> intervals.size > 0);
+		Melder_assert (tier -> intervals.size() > 0);
 		TextInterval interval = tier -> intervals [1];
 		*t1 = my xmin;
 		if (Melder_equ (interval -> text, silentLabel)) {
 			*t1 = interval -> xmax;
 		}
 		*t2 = my xmax;
-		interval = tier -> intervals [tier -> intervals.size];
+		interval = tier -> intervals [tier -> intervals.size()];
 		if (Melder_equ (interval -> text, silentLabel)) {
 			*t2 = interval -> xmin;
 		}
@@ -1351,7 +1351,7 @@ autoSound Sound_and_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier t
         // count samples of the trimmed sound
         long ixmin, ixmax, numberOfSamples = 0, previous_ixmax = 0;
 		double xmin = my xmin; // start time of output sound is start time of input sound
-        for (long iint = 1; iint <= thy intervals.size; iint++) {
+        for (long iint = 1; iint <= thy intervals.size(); iint++) {
             TextInterval interval = thy intervals [iint];
             if (! Melder_equ (interval -> text, match)) {
                 numberOfSamples += Sampled_getWindowSamples (me, interval -> xmin, interval -> xmax, &ixmin, &ixmax);
@@ -1371,7 +1371,7 @@ autoSound Sound_and_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier t
         autoSound him = Sound_create (my ny, xmin, xmin + numberOfSamples * my dx, numberOfSamples, my dx, xmin + 0.5 * my dx);
         numberOfSamples = 0;
 		previous_ixmax = 0;
-        for (long iint = 1; iint <= thy intervals.size; iint++) {
+        for (long iint = 1; iint <= thy intervals.size(); iint++) {
             TextInterval interval = thy intervals [iint];
             if (! Melder_equ (interval -> text, match)) {
 				long ipos;
@@ -1407,7 +1407,7 @@ autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAnd
             minSilenceDuration, minSoundingDuration, silentLabel, soundingLabel);
         autoIntervalTier itg = Data_copy ((IntervalTier) dbs -> tiers -> item[1]);
         IntervalTier tier = (IntervalTier) dbs -> tiers -> item[1];
-        for (long iint = 1; iint <= tier -> intervals.size; iint ++) {
+        for (long iint = 1; iint <= tier -> intervals.size(); iint ++) {
             TextInterval ti = tier -> intervals [iint];
             TextInterval ati = itg -> intervals [iint];
             double duration = ti -> xmax - ti -> xmin;
@@ -1416,7 +1416,7 @@ autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAnd
                 if (iint == 1) { // first is special
                     double trim_t = ti -> xmax - trimDuration;
                     IntervalTier_moveBoundary (itg.peek(), iint, false, trim_t);
-                } else if (iint == tier -> intervals.size) { // last is special
+                } else if (iint == tier -> intervals.size()) { // last is special
                     double trim_t = ti -> xmin + trimDuration;
                     IntervalTier_moveBoundary (itg.peek(), iint, true, trim_t);
                 } else {
@@ -1456,7 +1456,7 @@ autoSound Sound_trimSilencesAtStartAndEnd (Sound me, double trimDuration, double
 		if (Melder_equ (ti1 -> text, U"trimmed")) {
 			*t1 = ti1 -> xmax;
 		}
-		TextInterval ti2 = trim -> intervals [trim -> intervals.size];
+		TextInterval ti2 = trim -> intervals [trim -> intervals.size()];
 		*t2 = my xmax;
 		if (Melder_equ (ti2 -> text, U"trimmed")) {
 			*t2 = ti2 -> xmin;
@@ -1470,8 +1470,8 @@ autoSound Sound_trimSilencesAtStartAndEnd (Sound me, double trimDuration, double
 /*  Compatibility with old Sound(&pitch)_changeGender  ***********************************/
 
 static void PitchTier_modifyRange_old (PitchTier me, double tmin, double tmax, double factor, double fmid) {
-	for (long i = 1; i <= my points -> size; i ++) {
-		RealPoint point = (RealPoint) my points -> item [i];
+	for (long i = 1; i <= my points.size(); i ++) {
+		RealPoint point = my points [i];
 		double f = point -> value;
 		if (point -> number < tmin || point -> number > tmax) {
 			continue;

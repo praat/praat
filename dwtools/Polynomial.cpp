@@ -1308,7 +1308,7 @@ autoPolynomial ChebyshevSeries_to_Polynomial (ChebyshevSeries me) {
 
 void FunctionTerms_and_RealTier_fit (FunctionTerms me, RealTier thee, int *freeze, double tol, int ic, autoCovariance *c) {
 	try {
-		long numberOfData = thy points -> size;
+		long numberOfData = thy points.size();
 		long numberOfParameters = my numberOfCoefficients;
 		long numberOfFreeParameters = numberOfParameters;
 
@@ -1350,7 +1350,7 @@ void FunctionTerms_and_RealTier_fit (FunctionTerms me, RealTier thee, int *freez
 			// Only 'residual variance' must be explained by the model
 			// Evaluate only with the frozen parameters
 
-			RealPoint point = (RealPoint) thy points -> item [i];
+			RealPoint point = thy points [i];
 			double x = point -> number, y = point -> value, **u = svd -> u;
 			double y_frozen = numberOfFreeParameters == numberOfParameters ? 0 :
 			                  FunctionTerms_evaluate (frozen.peek(), x);

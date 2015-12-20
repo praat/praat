@@ -37,7 +37,7 @@ autoTextInterval TextInterval_create (double tmin, double tmax, const char32 *te
 
 void TextInterval_setText (TextInterval me, const char32 *text);
 
-oo_CLASS_CREATE (TextTier, AnyTier);
+oo_CLASS_CREATE (TextTier, Function);
 autoTextTier TextTier_create (double tmin, double tmax);
 
 void TextTier_addPoint (TextTier me, double time, const char32 *mark);

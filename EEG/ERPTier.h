@@ -31,8 +31,8 @@ long ERPTier_getChannelNumber (ERPTier me, const char32 *channelName);
 static inline void ERPTier_checkEventNumber (ERPTier me, long eventNumber) {
 	if (eventNumber < 1)
 		Melder_throw (U"The specified event number is ", eventNumber, U" but should have been positive.");
-	if (eventNumber > my points -> size)
-		Melder_throw (U"The specified event number (", eventNumber, U") exceeds the number of events (", my points -> size, U").");
+	if (eventNumber > my points.size())
+		Melder_throw (U"The specified event number (", eventNumber, U") exceeds the number of events (", my points.size(), U").");
 }
 double ERPTier_getMean (ERPTier me, long pointNumber, long channelNumber, double tmin, double tmax);
 double ERPTier_getMean (ERPTier me, long pointNumber, const char32 *channelName, double tmin, double tmax);

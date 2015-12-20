@@ -447,7 +447,7 @@ autoSound Sounds_concatenate (OrderedOf<structSound>& list, double overlapTime) 
 	try {
 		long numberOfChannels = 0, nx = 0, numberOfSmoothingSamples;
 		double dx = 0.0;
-		for (long i = 1; i <= list.size; i ++) {
+		for (long i = 1; i <= list.size(); i ++) {
 			Sound sound = list [i];
 			if (numberOfChannels == 0) {
 				numberOfChannels = sound -> ny;
@@ -473,12 +473,12 @@ autoSound Sounds_concatenate (OrderedOf<structSound>& list, double overlapTime) 
 			}
 		}
 		nx = 0;
-		for (long i = 1; i <= list.size; i ++) {
+		for (long i = 1; i <= list.size(); i ++) {
 			Sound sound = list [i];
 			if (numberOfSmoothingSamples > 2 * sound -> nx)
 				Melder_throw (U"At least one of the sounds is shorter than twice the overlap time.\nChoose a shorter overlap time.");
 			bool thisIsTheFirstSound = ( i == 1 );
-			bool thisIsTheLastSound = ( i == list.size );
+			bool thisIsTheLastSound = ( i == list.size() );
 			bool weNeedSmoothingAtTheStartOfThisSound = ! thisIsTheFirstSound;
 			bool weNeedSmoothingAtTheEndOfThisSound = ! thisIsTheLastSound;
 			long numberOfSmoothingSamplesAtTheStartOfThisSound = weNeedSmoothingAtTheStartOfThisSound ? numberOfSmoothingSamples : 0;
@@ -501,7 +501,7 @@ autoSound Sounds_concatenate (OrderedOf<structSound>& list, double overlapTime) 
 			}
 			nx += sound -> nx - numberOfSmoothingSamplesAtTheEndOfThisSound;
 		}
-		thy nx -= numberOfSmoothingSamples * (list.size - 1);
+		thy nx -= numberOfSmoothingSamples * (list.size() - 1);
 		Melder_assert (thy nx == nx);
 		thy xmax = thy nx * dx;
 		return thee;

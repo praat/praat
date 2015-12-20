@@ -68,7 +68,7 @@ void structDataSubEditor :: v_destroy () {
 	for (int i = 1; i <= kDataSubEditor_MAXNUM_ROWS; i ++)
 		Melder_free (d_fieldData [i]. history);
 	if (our root && our root -> children)
-		for (int i = our root -> children.size; i > 0; i --)
+		for (int i = our root -> children.size(); i > 0; i --)
 			if (our root -> children [i] == this)
 				our root -> children.subtractItem_ref (i);
 	DataSubEditor_Parent :: v_destroy ();
@@ -213,7 +213,7 @@ static void gui_button_cb_change (DataSubEditor me, GuiButtonEvent /* event */) 
 	 */
 	Editor_broadcastDataChanged (my root);
 	update (me);
-	for (int isub = 1; isub <= my root -> children.size; isub ++) {
+	for (int isub = 1; isub <= my root -> children.size(); isub ++) {
 		DataSubEditor subeditor = my root -> children [isub];
 		if (subeditor != me) update (subeditor);
 	}
@@ -732,7 +732,7 @@ static void DataEditor_destroyAllChildren (DataEditor me) {
 		To destroy all children, we travel them from youngest to oldest,
 		because the array of children will change from under us:
 	*/
-	for (int i = my children.size; i >= 1; i --) {
+	for (int i = my children.size(); i >= 1; i --) {
 		/*
 			An optimization coming!
 			

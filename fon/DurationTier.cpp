@@ -27,7 +27,7 @@ void structDurationTier :: v_info () {
 	MelderInfo_writeLine (U"   Start time: ", xmin, U" seconds");
 	MelderInfo_writeLine (U"   End time: ", xmax, U" seconds");
 	MelderInfo_writeLine (U"   Total original duration: ", xmax - xmin, U" seconds");
-	MelderInfo_writeLine (U"Number of points: ", points -> size);
+	MelderInfo_writeLine (U"Number of points: ", points.size());
 	MelderInfo_writeLine (U"Minimum relative duration value: ", RealTier_getMinimumValue (this));
 	MelderInfo_writeLine (U"Maximum relative duration value: ", RealTier_getMaximumValue (this));
 }

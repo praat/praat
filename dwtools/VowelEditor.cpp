@@ -199,7 +199,7 @@ static autoVowel Vowel_create_twoFormantSchwa (double duration) {
 		fp -> formant [1] = 1500.0;
 		fp -> bandwidth[1] = 150.0;
 		fp -> numberOfFormants = 2;
-		Collection_addItem_move (my ft -> points.get(), fp.move());
+		my ft -> points. addItem_move (fp.move());
 		RealTier_addPoint (my pt.get(), 0.0, 140.0);
 
 		fp = FormantPoint_create (duration);
@@ -208,7 +208,7 @@ static autoVowel Vowel_create_twoFormantSchwa (double duration) {
 		fp -> formant [1] = 1500.0;
 		fp -> bandwidth[1] = 150.0;
 		fp -> numberOfFormants = 2;
-		Collection_addItem_move (my ft -> points.get(), fp.move());
+		my ft -> points. addItem_move (fp.move());
 		RealTier_addPoint (my pt.get(), duration, 140.0);
 		return me;
 	} catch (MelderError) {
@@ -231,9 +231,9 @@ static autoFormantGrid FormantTier_to_FormantGrid (FormantTier me) {
 	try {
 		long numberOfFormants = FormantTier_getMaxNumFormants (me);
 		autoFormantGrid thee = FormantGrid_createEmpty (my xmin, my xmax, numberOfFormants);
-		for (long ipoint = 1; ipoint <= my points -> size; ipoint++) {
-			FormantPoint fp = (FormantPoint) my points -> item[ipoint];
-			double t = fp -> time;
+		for (long ipoint = 1; ipoint <= my points.size(); ipoint++) {
+			FormantPoint fp = my points [ipoint];
+			double t = fp -> number;
 			for (long iformant = 1; iformant <= fp -> numberOfFormants; iformant++) {
 				FormantGrid_addFormantPoint (thee.peek(), iformant, t, fp -> formant[iformant - 1]);
 				FormantGrid_addBandwidthPoint (thee.peek(), iformant, t, fp -> bandwidth[iformant - 1]);
@@ -416,28 +416,28 @@ static double getF0 (structVowelEditor_F0 *f0p, double time) {
 static void VowelEditor_Vowel_reverseFormantTier (VowelEditor me) {
 	FormantTier ft = my vowel -> ft.get();
 	double duration = ft -> xmax;
-	long np = ft -> points -> size, np_2 = np / 2;
+	long np = ft -> points.size(), np_2 = np / 2;
 
 	for (long i = 1; i <= np_2; i++) {
-		FormantPoint fpt = (FormantPoint) ft -> points -> item[i];
-		ft -> points -> item[i] =  ft -> points -> item[np - i + 1];
-		ft -> points -> item[np - i + 1] = fpt;
-		fpt = (FormantPoint) ft -> points -> item[i];
-		fpt -> time = duration - fpt -> time;
-		fpt = (FormantPoint) ft -> points -> item[np - i + 1];
-		fpt -> time = duration - fpt -> time;
+		FormantPoint fpt = ft -> points [i];
+		ft -> points [i] =  ft -> points [np - i + 1];
+		ft -> points [np - i + 1] = fpt;
+		fpt = ft -> points [i];
+		fpt -> number = duration - fpt -> number;
+		fpt = ft -> points [np - i + 1];
+		fpt -> number = duration - fpt -> number;
 	}
 	if (np % 2 == 1) {
-		FormantPoint fpt = (FormantPoint) ft -> points -> item[np_2 + 1];
-		fpt -> time = duration - fpt -> time;
+		FormantPoint fpt = ft -> points [np_2 + 1];
+		fpt -> number = duration - fpt -> number;
 	}
 }
 
 static void VowelEditor_shiftF1F2 (VowelEditor me, double f1_st, double f2_st) {
 	FormantTier ft = my vowel -> ft.get();
-	for (long i = 1; i <= ft -> points -> size; i++) {
-		FormantPoint fp = (FormantPoint) ft -> points -> item[i];
-		double f1 = fp -> formant[0], f2 = fp -> formant[1];
+	for (long i = 1; i <= ft -> points.size(); i++) {
+		FormantPoint fp = ft -> points [i];
+		double f1 = fp -> formant [0], f2 = fp -> formant [1];
 
 		f1 *= pow (2, f1_st / 12);
 		if (f1 < my f1min) {
@@ -471,9 +471,9 @@ static void FormantTier_newDuration (FormantTier me, double newDuration) {
 	if (newDuration != my xmax) {
 		double multiplier = newDuration / my xmax;
 
-		for (long i = 1; i <= my points -> size; i++) {
-			FormantPoint fp = (FormantPoint) my points -> item[i];
-			fp -> time *= multiplier;
+		for (long i = 1; i <= my points.size(); i++) {
+			FormantPoint fp = my points [i];
+			fp -> number *= multiplier;
 		}
 		my xmax *= multiplier;
 	}
@@ -482,8 +482,8 @@ static void FormantTier_newDuration (FormantTier me, double newDuration) {
 static void PitchTier_newDuration (PitchTier me, structVowelEditor_F0 *f0p, double newDuration) {
 	// Always update; GuiObject text might have changed
 	double multiplier = newDuration / my xmax;
-	for (long i = 1; i <= my points -> size; i++) {
-		RealPoint pp = (RealPoint) my points -> item[i];
+	for (long i = 1; i <= my points.size(); i++) {
+		RealPoint pp = my points [i];
 		pp -> number *= multiplier;
 		pp -> value = getF0 (f0p, pp -> number);
 	}
@@ -529,10 +529,10 @@ static void FormantTier_drawF1F2Trajectory (FormantTier me, Graphics g, double f
 	int it, imark = 1, glt = Graphics_inqLineType (g);
 	double glw = Graphics_inqLineWidth (g), x1, x1p, y1, y1p, t1;
 	Graphics_Colour colour = Graphics_inqColour (g);
-	long nfp = my points -> size;
+	long nfp = my points.size();
 	trace (U"number of points ", nfp);
-	FormantPoint fp = (FormantPoint) my points -> item[1];
-	FormantPoint fpn = (FormantPoint) my points -> item[nfp];
+	FormantPoint fp = my points [1];
+	FormantPoint fpn = my points [nfp];
 	double tm, markLength = 0.01;
 
 	Graphics_setInner (g);
@@ -542,10 +542,10 @@ static void FormantTier_drawF1F2Trajectory (FormantTier me, Graphics g, double f
 	if ( (my xmax - my xmin) < 0.005) {
 		Graphics_setColour (g, Graphics_RED);
 	}
-	x1p = x1 = GETX (fp->formant[1]); y1p = y1 = GETY (fp->formant[0]); t1 = fp->time;
+	x1p = x1 = GETX (fp->formant[1]); y1p = y1 = GETY (fp->formant[0]); t1 = fp->number;
 	for (it = 2; it <= nfp; it++) {
-		fp = (FormantPoint) my points -> item[it];
-		double x2 = GETX (fp->formant[1]), y2 = GETY (fp->formant[0]), t2 = fp->time;
+		fp = my points [it];
+		double x2 = GETX (fp->formant[1]), y2 = GETY (fp->formant[0]), t2 = fp->number;
 		Graphics_setLineWidth (g, 3);
 		if (x1 == x2 && y1 == y2) {
 			x1 = x1p; y1 = y1p;
@@ -585,7 +585,7 @@ static void FormantTier_drawF1F2Trajectory (FormantTier me, Graphics g, double f
 		Graphics_setArrowSize (g, arrowSize);
 		it = 1;
 		while (it <= (nfp - 1)) {
-			fp = (FormantPoint) my points -> item[nfp - it];
+			fp = my points [nfp - it];
 			double dx = GETX (fpn->formant[1]) - GETX (fp->formant[1]);
 			double dy = GETY (fpn->formant[0]) - GETY (fp->formant[0]);
 			double d2 = dx * dx + dy * dy;
@@ -1052,7 +1052,7 @@ static void VowelEditor_Vowel_addData (VowelEditor me, Vowel thee, double time, 
 	fp -> bandwidth[3] = b4;
 	fp -> numberOfFormants = 4;
 
-	Collection_addItem_move (thy ft -> points.get(), fp.move());
+	thy ft -> points. addItem_move (fp.move());
 	RealTier_addPoint (thy pt.get(), time, f0);
 }
 
@@ -1239,7 +1239,7 @@ static void VowelEditor_Vowel_updateTiers (VowelEditor me, Vowel thee, double ti
 	point -> formant[3] = f4;
 	point -> bandwidth[3] = b4;
 	point -> numberOfFormants = 4;
-	Collection_addItem_move (thy ft -> points.get(), point.move());
+	thy ft -> points. addItem_move (point.move());
 	RealTier_addPoint (thy pt.get(), time, f0);
 }
 

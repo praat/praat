@@ -99,7 +99,7 @@
 	if (! our x != ! thy x || (our x && ! Data_equal (our x.get(), thy x.get()))) return false;
 
 #define oo_COLLECTION_OF(Class,x,ItemClass,version)  \
-	for (long i = 1; i <= our x.size; i ++) { \
+	for (long i = 1; i <= our x.size(); i ++) { \
 		if (! our x [i] != ! thy x [i] || (our x [i] && ! Data_equal (our x [i], thy x [i]))) return false; \
 	}
 
