@@ -373,8 +373,12 @@ DIRECT2 (Sounds_combineToStereo) {
 END2 }
 
 DIRECT2 (Sounds_concatenate) {
-	autoCollection set = praat_getSelectedObjects ();
-	autoSound result = Sounds_concatenate_e (set.peek(), 0.0);
+	OrderedOf<structSound> list;
+	LOOP {
+		iam_LOOP (Sound);
+		list.addItem_ref (me);
+	}
+	autoSound result = Sounds_concatenate (list, 0.0);
 	praat_new (result.move(), U"chain");
 END2 }
 
@@ -382,8 +386,12 @@ FORM (Sounds_concatenateWithOverlap, U"Sounds: Concatenate with overlap", U"Soun
 	POSITIVE (U"Overlap (s)", U"0.01")
 	OK2
 DO
-	autoCollection set = praat_getSelectedObjects ();
-	autoSound result = Sounds_concatenate_e (set.peek(), GET_REAL (U"Overlap"));
+	OrderedOf<structSound> list;
+	LOOP {
+		iam_LOOP (Sound);
+		list.addItem_ref (me);
+	}
+	autoSound result = Sounds_concatenate (list, GET_REAL (U"Overlap"));
 	praat_new (result.move(), U"chain");
 END2 }
 

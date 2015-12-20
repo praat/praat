@@ -267,7 +267,7 @@ public:
 	 *    autoPitch pitch = Pitch_create (...);
 	 * should work.
 	 */
-	/*explicit*/ _Thing_auto (T *newPtr) : ptr (newPtr) {
+	explicit _Thing_auto (T *newPtr) : ptr (newPtr) {
 		#if _Thing_auto_DEBUG
 			if (our ptr)
 				fprintf (stderr, "constructor %p %s\n",
@@ -303,9 +303,10 @@ public:
 	T* operator-> () const {   // as r-value
 		return our ptr;
 	}
+	/*
 	T& operator* () const {   // as l-value
 		return *our ptr;
-	}
+	}*/
 	/*
 	 * After construction, there are two ways to access the pointer: with and without transfer of ownership.
 	 *
@@ -361,7 +362,7 @@ public:
 		_Thing_forget (our ptr);
 		our ptr = newPtr;
 	}*/
-	void zero () {
+	void _zero () {
 		our ptr = nullptr;
 	}
 	explicit operator bool () const {
@@ -417,7 +418,7 @@ public:
 				fprintf (stderr, "move constructor %p from other class %s\n",
 					our ptr, Melder_peek32to8 (our ptr -> classInfo -> className));
 		#endif
-		other.zero();
+		other. _zero();
 	}
 	/*
 	 * The compiler should treat assignments from _Thing_auto r-values, as in
@@ -454,7 +455,7 @@ public:
 				fprintf (stderr, "move assignment after %p from other class %s\n",
 					our ptr, our ptr ? Melder_peek32to8 (our ptr -> classInfo -> className) : "(class unknown)");
 			#endif
-			other.zero();
+			other. _zero();
 		}
 		return *this;
 	}

@@ -390,6 +390,7 @@ int64 Data_Description_integer (void *address, Data_Description description) {
 		case boolwa:           return * (bool *)           ((char *) address + description -> offset);
 		case objectwa:         return (* (Collection *)    ((char *) address + description -> offset)) -> size;
 		case autoobjectwa:     return (* (Collection *)    ((char *) address + description -> offset)) -> size;   // FIXME: alignment not guaranteed
+		case collectionofwa:   return (  (Collection)      ((char *) address + description -> offset)) -> size;   // FIXME: alignment not guaranteed
 		case autocollectionwa: return (* (Collection *)    ((char *) address + description -> offset)) -> size;   // FIXME: alignment not guaranteed
 		default: return 0;
 	}

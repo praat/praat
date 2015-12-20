@@ -1078,10 +1078,8 @@ autoDTW Pitches_to_DTW (Pitch me, Pitch thee, double vuv_costs, double time_weig
 	}
 }
 
-autoDurationTier DTW_to_DurationTier (DTW me) {
-	(void) me;
-	DurationTier thee = nullptr;
-	return thee;
+autoDurationTier DTW_to_DurationTier (DTW /* me */) {
+	return autoDurationTier();
 }
 
 void DTW_and_Matrix_replace (DTW me, Matrix thee) {

@@ -1,6 +1,6 @@
 /* KlattGrid_def.h
  *
- * Copyright (C) 2008-2011 David Weenink
+ * Copyright (C) 2008-2011 David Weenink, 2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,7 @@
  */
 
 #define ooSTRUCT PhonationPoint
-oo_DEFINE_CLASS (PhonationPoint, Daata)
-	oo_DOUBLE (time)  /* AnyPoint : glottis closing time */
+oo_DEFINE_CLASS (PhonationPoint, AnyPoint)
 	oo_DOUBLE (period)  /* 1/F0 */
 	oo_DOUBLE (openPhase)
 	oo_DOUBLE (collisionPhase)
@@ -31,9 +30,10 @@ oo_END_CLASS (PhonationPoint)
 #undef ooSTRUCT
 
 #define ooSTRUCT PhonationTier
-oo_DEFINE_CLASS (PhonationTier, AnyTier)
-	#if ! oo_DECLARING
-		oo_AUTO_COLLECTION (SortedSetOfDouble, points, PhonationPoint, 0)
+oo_DEFINE_CLASS (PhonationTier, Function)
+	oo_COLLECTION_OF (SortedSetOfDoubleOf, points, PhonationPoint, 0)
+	#if oo_DECLARING
+		AnyTier_METHODS
 	#endif
 oo_END_CLASS (PhonationTier)
 #undef ooSTRUCT

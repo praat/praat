@@ -54,9 +54,9 @@ autoTableOfReal TableOfReal_createIrisDataset ();
 
 int TableOfReal_areAllCellsDefined (TableOfReal me, long rb, long re, long cb, long ce);
 
-autoTableOfReal TableOfReal_createFromPolsData_50males (int include_levels);
+autoTableOfReal TableOfReal_createFromPolsData_50males (bool include_levels);
 
-autoTableOfReal TableOfReal_createFromVanNieropData_25females (int include_levels);
+autoTableOfReal TableOfReal_createFromVanNieropData_25females (bool include_levels);
 
 autoTableOfReal TableOfReal_createFromWeeninkData (int option); /* M W C */
 
@@ -72,25 +72,25 @@ void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, const char32 *
 
 void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g, long icx, long icy, long rowb,
 	long rowe, double xmin, double xmax, double ymin, double ymax,
-	int labelSize, int useRowLabels, const char32 *label, int garnish);
+	int labelSize, bool useRowLabels, const char32 *label, bool garnish);
 
-void TableOfReal_drawAsSquares_area (TableOfReal me, Graphics g, double zmin, double zmax, double cellSizeFactor, int randomFillOrder, int garnish);
+void TableOfReal_drawAsSquares_area (TableOfReal me, Graphics g, double zmin, double zmax, double cellSizeFactor, int randomFillOrder, bool garnish);
 
 void TableOfReal_drawScatterPlotMatrix (TableOfReal me, Graphics g, long colb, long cole, double fractionWhite);
 
 void TableOfReal_drawBoxPlots (TableOfReal me, Graphics g, long rowmin, long rowmax, long colmin, long colmax,
-	double ymin, double ymax, int garnish);
+	double ymin, double ymax, bool garnish);
 
 void TableOfReal_drawVectors (TableOfReal me, Graphics g, long colx1, long coly1,
 	long colx2, long coly2, double xmin, double xmax,
-	double ymin, double ymax, int vectype, int labelsize, int garnish);
+	double ymin, double ymax, int vectype, int labelsize, bool garnish);
 
 void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xmax,
 	double ymin, double ymax, double sv_splitfactor, int labelsize,
-	int garnish);
+	bool garnish);
 
 void TableOfReal_drawColumnAsDistribution (TableOfReal me, Graphics g, int column, double minimum, double maximum, long nBins,
-	double freqMin, double freqMax, int cumulative, int garnish);
+	double freqMin, double freqMax, bool cumulative, bool garnish);
 
 long TableOfReal_getNumberOfLabelMatches (TableOfReal me, const char32 *search, int columnLabels,
 	int use_regexp);
@@ -210,7 +210,7 @@ autoTableOfReal TableOfReal_and_TableOfReal_crossCorrelations (TableOfReal me, T
 Thing_define (TablesOfReal, Ordered) {
 };
 
-void TablesOfReal_init (TablesOfReal me, ClassInfo klas);
+void TablesOfReal_init (TablesOfReal me);
 
 autoTablesOfReal TablesOfReal_create ();
 

@@ -2,7 +2,7 @@
 #define _KlattGrid_h_
 /* KlattGrid.h
  *
- * Copyright (C) 2008-2014 David Weenink
+ * Copyright (C) 2008-2014 David Weenink, 2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@
 #include "Interpreter_decl.h"
 
 #include "KlattGrid_def.h"
-oo_CLASS_CREATE (PhonationPoint, Daata);
+oo_CLASS_CREATE (PhonationPoint, AnyPoint);
 oo_CLASS_CREATE (PhonationTier, AnyTier);
 oo_CLASS_CREATE (PhonationGridPlayOptions, Daata);
 oo_CLASS_CREATE (PhonationGrid, Function);

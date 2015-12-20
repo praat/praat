@@ -98,7 +98,7 @@ static void initScreen (HyperPage me) {
 	my d_y = PAGE_HEIGHT + my top / 5.0;
 	my d_x = 0;
 	my previousBottomSpacing = 0.0;
-	my links = Collection_create (classHyperLink, 100);
+	my links = Collection_create (100);
 }
 
 void HyperPage_initSheetOfPaper (HyperPage me) {

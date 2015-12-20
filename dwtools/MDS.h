@@ -122,7 +122,7 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, lon
 Thing_define (Proximities, TablesOfReal) {
 };
 
-void Proximities_init (Proximities me, ClassInfo klas);
+void Proximities_init (Proximities me);
 
 autoProximities Proximities_create ();
 

@@ -28,8 +28,7 @@
 
 autoPitchTier PitchTier_AnyTier_to_PitchTier (PitchTier pitch, AnyTier tier) {
 	try {
-		SortedSetOfDouble points = tier -> points.get();
-		if (pitch -> points -> size == 0) Melder_throw (U"No pitch points.");
+		if (pitch -> points.size() == 0) Melder_throw (U"No pitch points.");
 
 		/*
 		 * Result's domain is a union of both domains.
@@ -41,8 +40,8 @@ autoPitchTier PitchTier_AnyTier_to_PitchTier (PitchTier pitch, AnyTier tier) {
 		/*
 		 * Copy pitch's frequencies at tier's points to the resulting PitchTier.
 		 */
-		for (long ipoint = 1; ipoint <= points -> size; ipoint ++) {
-			AnyPoint point = (AnyPoint) points -> item [ipoint];
+		for (long ipoint = 1; ipoint <= tier -> points.size(); ipoint ++) {
+			AnyPoint point = tier -> points [ipoint];
 			double time = point -> number;
 			double frequency = RealTier_getValueAtTime (pitch, time);
 			RealTier_addPoint (thee.peek(), time, frequency);
@@ -56,7 +55,6 @@ autoPitchTier PitchTier_AnyTier_to_PitchTier (PitchTier pitch, AnyTier tier) {
 
 autoPitchTier Pitch_AnyTier_to_PitchTier (Pitch pitch, AnyTier tier, int checkMethod) {
 	try {
-		SortedSetOfDouble points = tier -> points.get();
 		if (checkMethod == 2) {
 			autoPitchTier temp = Pitch_to_PitchTier (pitch);
 			return PitchTier_AnyTier_to_PitchTier (temp.peek(), tier);
@@ -72,8 +70,8 @@ autoPitchTier Pitch_AnyTier_to_PitchTier (Pitch pitch, AnyTier tier, int checkMe
 		/*
 		 * Copy pitch's frequencies at tier's points to the resulting PitchTier.
 		 */
-		for (long ipoint = 1; ipoint <= points -> size; ipoint ++) {
-			AnyPoint point = (AnyPoint) points -> item [ipoint];
+		for (long ipoint = 1; ipoint <= tier -> points.size(); ipoint ++) {
+			AnyPoint point = tier -> points [ipoint];
 			double time = point -> number;
 			double frequency = Pitch_getValueAtTime (pitch, time, kPitch_unit_HERTZ, Pitch_LINEAR);
 			if (frequency == NUMundefined && checkMethod)

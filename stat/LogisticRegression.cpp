@@ -56,19 +56,19 @@ void structLogisticRegression :: v_info () {
 	MelderInfo_writeLine (U"Dependent 2: ", our dependent2);
 	MelderInfo_writeLine (U"Interpretation:");
 	MelderInfo_write (U"   ln (P(", dependent2, U")/P(", dependent1, U")) " UNITEXT_ALMOST_EQUAL_TO U" ", Melder_fixed (intercept, 6));
-	for (long ivar = 1; ivar <= parameters -> size; ivar ++) {
-		RegressionParameter parm = static_cast<RegressionParameter> (parameters -> item [ivar]);
+	for (long ivar = 1; ivar <= parameters.size(); ivar ++) {
+		RegressionParameter parm = parameters [ivar];
 		MelderInfo_write (parm -> value < 0.0 ? U" - " : U" + ", Melder_fixed (fabs (parm -> value), 6), U" * ", parm -> label);
 	}
 	MelderInfo_writeLine (U"");
 	MelderInfo_writeLine (U"Log odds ratios:");
-	for (long ivar = 1; ivar <= parameters -> size; ivar ++) {
-		RegressionParameter parm = static_cast<RegressionParameter> (parameters -> item [ivar]);
+	for (long ivar = 1; ivar <= parameters.size(); ivar ++) {
+		RegressionParameter parm = parameters [ivar];
 		MelderInfo_writeLine (U"   Log odds ratio of factor ", parm -> label, U": ", Melder_fixed ((parm -> maximum - parm -> minimum) * parm -> value, 6));
 	}
 	MelderInfo_writeLine (U"Odds ratios:");
-	for (long ivar = 1; ivar <= parameters -> size; ivar ++) {
-		RegressionParameter parm = static_cast<RegressionParameter> (parameters -> item [ivar]);
+	for (long ivar = 1; ivar <= parameters.size(); ivar ++) {
+		RegressionParameter parm = parameters [ivar];
 		MelderInfo_writeLine (U"   Odds ratio of factor ", parm -> label, U": ", exp ((parm -> maximum - parm -> minimum) * parm -> value));
 	}
 }
@@ -149,7 +149,7 @@ static autoLogisticRegression _Table_to_LogisticRegression (Table me, long *fact
 	 */
 	thy intercept = log ((double) numberOfY1 / (double) numberOfY0);   // initial state of intercept: best guess for average log odds
 	for (long ivar = 1; ivar <= numberOfFactors; ivar ++) {
-		RegressionParameter parm = static_cast<RegressionParameter> (thy parameters -> item [ivar]);
+		RegressionParameter parm = thy parameters [ivar];
 		parm -> value = 0.0;   // initial state of dependence: none
 	}
 	long iteration = 1;
@@ -167,7 +167,7 @@ static autoLogisticRegression _Table_to_LogisticRegression (Table me, long *fact
 		for (long icell = 1; icell <= numberOfCells; icell ++) {
 			double fittedLogit = thy intercept, fittedP, fittedQ, fittedLogP, fittedLogQ, fittedPQ, fittedVariance;
 			for (long ivar = 1; ivar <= numberOfFactors; ivar ++) {
-				RegressionParameter parm = static_cast<RegressionParameter> (thy parameters -> item [ivar]);
+				RegressionParameter parm = thy parameters [ivar];
 				fittedLogit += parm -> value * x [icell] [ivar];
 			}
 			/*
@@ -257,7 +257,7 @@ static autoLogisticRegression _Table_to_LogisticRegression (Table me, long *fact
 		 */
 		thy intercept += smallMatrix [0] [numberOfParameters];
 		for (long ivar = 1; ivar <= numberOfFactors; ivar ++) {
-			RegressionParameter parm = static_cast<RegressionParameter> (thy parameters -> item [ivar]);
+			RegressionParameter parm = thy parameters [ivar];
 			parm -> value += smallMatrix [ivar] [numberOfParameters];
 		}
 	}
@@ -265,7 +265,7 @@ static autoLogisticRegression _Table_to_LogisticRegression (Table me, long *fact
 		Melder_warning (U"Logistic regression has not converged in 100 iterations. The results are unreliable.");
 	}
 	for (long ivar = 1; ivar <= numberOfFactors; ivar ++) {
-		RegressionParameter parm = static_cast<RegressionParameter> (thy parameters -> item [ivar]);
+		RegressionParameter parm = thy parameters [ivar];
 		parm -> value /= stdevX [ivar];
 		thy intercept -= parm -> value * meanX [ivar];
 	}
@@ -298,8 +298,8 @@ static inline double NUMmax2 (double a, double b) {
 void LogisticRegression_drawBoundary (LogisticRegression me, Graphics graphics, long colx, double xleft, double xright,
 	long coly, double ybottom, double ytop, bool garnish)
 {
-	RegressionParameter parmx = static_cast<RegressionParameter> (my parameters -> item [colx]);
-	RegressionParameter parmy = static_cast<RegressionParameter> (my parameters -> item [coly]);
+	RegressionParameter parmx = my parameters [colx];
+	RegressionParameter parmy = my parameters [coly];
 	if (xleft == xright) {
 		xleft = parmx -> minimum;
 		xright = parmx -> maximum;
@@ -309,9 +309,9 @@ void LogisticRegression_drawBoundary (LogisticRegression me, Graphics graphics, 
 		ytop = parmy -> maximum;
 	}
 	double intercept = my intercept;
-	for (long iparm = 1; iparm <= my parameters -> size; iparm ++) {
+	for (long iparm = 1; iparm <= my parameters.size(); iparm ++) {
 		if (iparm != colx && iparm != coly) {
-			RegressionParameter parm = static_cast<RegressionParameter> (my parameters -> item [iparm]);
+			RegressionParameter parm = my parameters [iparm];
 			intercept += parm -> value * (0.5 * (parm -> minimum + parm -> maximum));
 		}
 	}

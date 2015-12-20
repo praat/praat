@@ -191,7 +191,7 @@ static void highlight (Graphics graphics, long x1DC, long x2DC, long y1DC, long 
 			if (width <= 0 || height <= 0) return;
 			GuiCocoaDrawingArea *drawingArea = (GuiCocoaDrawingArea *) my d_drawingArea -> d_widget;
 			if (drawingArea) {
-				bool cacheImageInRectWillWork = ( Melder_systemVersion < 101100 );
+				bool cacheImageInRectWillWork = ( Melder_systemVersion < 101100 || Melder_systemVersion > 101102 );
 				if (cacheImageInRectWillWork) {
 					NSView *nsView = my d_macView;
 					if (direction == 1) {   // forward
@@ -205,8 +205,8 @@ static void highlight (Graphics graphics, long x1DC, long x2DC, long y1DC, long 
 						[drawingArea lockFocus];
 						CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
 						CGContextSaveGState (context);
-						CGContextSetBlendMode (context, kCGBlendModeDifference);
-						//CGContextSetBlendMode (context, kCGBlendModeDarken);
+						//CGContextSetBlendMode (context, kCGBlendModeDifference);
+						CGContextSetBlendMode (context, kCGBlendModeDarken);
 						CGContextSetShouldAntialias (context, false);
 						NSColor *colour = [[NSColor selectedTextBackgroundColor] colorUsingColorSpaceName: NSDeviceRGBColorSpace];
 						double red = 0.5 + 0.5 * colour.redComponent, green = 0.5 + 0.5 * colour.greenComponent, blue = 0.5 + 0.5 * colour.blueComponent;
@@ -312,7 +312,7 @@ static void highlight2 (Graphics graphics, long x1DC, long x2DC, long y1DC, long
 		#elif cocoa
 			GuiCocoaDrawingArea *drawingArea = (GuiCocoaDrawingArea *) my d_drawingArea -> d_widget;
 			if (drawingArea) {
-				bool cacheImageInRectWillWork = ( Melder_systemVersion < 101100 /*|| Melder_systemVersion > 111111*/);
+				bool cacheImageInRectWillWork = ( Melder_systemVersion < 101100 || Melder_systemVersion > 101102 );
 				if (cacheImageInRectWillWork) {
 					NSView *nsView = my d_macView;
 					if (direction == 1) {
@@ -342,9 +342,9 @@ static void highlight2 (Graphics graphics, long x1DC, long x2DC, long y1DC, long
 					CGContextFillRect (my d_macGraphicsContext, leftRect);
 					CGContextFillRect (my d_macGraphicsContext, rightRect);
 					CGContextFillRect (my d_macGraphicsContext, lowerRect);
-				} else {
+				} else if (1) {
 					/*
-					 * An older, suboptimal method.
+						An older, suboptimal method.
 					 */
 					CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeDifference);
 					if (direction == 1) {
@@ -365,6 +365,16 @@ static void highlight2 (Graphics graphics, long x1DC, long x2DC, long y1DC, long
 						CGContextFillRect (my d_macGraphicsContext, rightRect);
 						CGContextFillRect (my d_macGraphicsContext, lowerRect);
 					}
+				} else if (1) {
+					/*
+						This is true XOR.
+					*/
+					CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeDifference);
+					CGContextSetRGBFillColor (my d_macGraphicsContext, 1.0, 1.0, 1.0, 1.0);
+					CGContextFillRect (my d_macGraphicsContext, upperRect);
+					CGContextFillRect (my d_macGraphicsContext, leftRect);
+					CGContextFillRect (my d_macGraphicsContext, rightRect);
+					CGContextFillRect (my d_macGraphicsContext, lowerRect);
 				}
 				CGContextRestoreGState (my d_macGraphicsContext);
 				[drawingArea unlockFocus];
@@ -399,7 +409,7 @@ static void highlight2 (Graphics graphics, long x1DC, long x2DC, long y1DC, long
 			Rectangle (my d_gdiGraphicsContext, x1DC, y1DC_inner, x2DC + 1, y1DC + 1);
 			SetROP2 (my d_gdiGraphicsContext, R2_COPYPEN);
 			SelectPen (my d_gdiGraphicsContext, GetStockPen (BLACK_PEN));
-			SelectBrush (my d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));   /* Superfluous? */
+			SelectBrush (my d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));   // superfluous?
 		#endif
 	}
 }
@@ -424,7 +434,7 @@ void Graphics_xorOn (Graphics graphics, Graphics_Colour colour) {
 	if (graphics -> screen) {
 		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
 		#if cairo
-			GdkColor colourXorWhite = { 0,
+			GdkColor colourXorWhite { 0,
 				(uint16) ((uint16) (colour. red   * 65535.0) ^ (uint16) 0xFFFF),
 				(uint16) ((uint16) (colour. green * 65535.0) ^ (uint16) 0xFFFF),
 				(uint16) ((uint16) (colour. blue  * 65535.0) ^ (uint16) 0xFFFF) };
@@ -455,7 +465,7 @@ void Graphics_xorOff (Graphics graphics) {
 	if (graphics -> screen) {
 		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
 		#if cairo
-			GdkColor black = { 0, 0x0000, 0x0000, 0x0000 };
+			GdkColor black { 0, 0x0000, 0x0000, 0x0000 };
 			#if ALLOW_GDK_DRAWING
 				gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & black);
 				gdk_gc_set_function (my d_gdkGraphicsContext, GDK_COPY);

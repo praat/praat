@@ -38,12 +38,12 @@ static void IntervalTier_addBoundaryUnsorted (IntervalTier me, long iinterval, d
 	}
 
 	// Modify end time of left label
-	TextInterval ti = (TextInterval) my intervals -> item[iinterval];
+	TextInterval ti = my intervals [iinterval];
 	ti -> xmax = time;
 	TextInterval_setText (ti, leftLabel);
 
 	autoTextInterval ti_new = TextInterval_create (time, my xmax, U"");
-	Sorted_addItem_unsorted_move (my intervals.get(), ti_new.move());
+	my intervals. addItem_unsorted_move (ti_new.move());
 }
 
 autoTextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThreshold_dB, double minSilenceDuration, double minSoundingDuration, const char32 *silenceLabel, const char32 *soundingLabel) {
@@ -56,7 +56,7 @@ autoTextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceT
 
 		autoTextGrid thee = TextGrid_create (my xmin, my xmax, U"silences", U"");
 		IntervalTier it = (IntervalTier) thy tiers -> item[1];
-		TextInterval_setText ( (TextInterval) it -> intervals -> item[1], soundingLabel);
+		TextInterval_setText (it -> intervals [1], soundingLabel);
 		if (minSilenceDuration > duration) {
 			return thee;
 		}
@@ -104,8 +104,8 @@ autoTextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceT
 		// (re)label last interval */
 
 		label = inSilenceInterval ? silenceLabel : soundingLabel;
-		TextInterval_setText ( (TextInterval) it -> intervals -> item[iinterval], label);
-		Sorted_sort (it -> intervals.get());
+		TextInterval_setText (it -> intervals [iinterval], label);
+		it -> intervals. sort ();
 
 		// First remove short non-silence intervals in-between silence intervals and
 		// then remove the remaining short silence intervals.

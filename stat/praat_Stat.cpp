@@ -146,7 +146,7 @@ END2 }
 DIRECT2 (PairDistribution_getNumberOfPairs) {
 	LOOP {
 		iam (PairDistribution);
-		Melder_information (my pairs -> size);
+		Melder_information (my pairs.size());
 	}
 END2 }
 
@@ -249,7 +249,7 @@ END2 }
 #pragma mark TABLE
 
 DIRECT2 (Tables_append) {
-	autoCollection collection = Collection_create (classTable, 10);
+	autoCollection collection = Collection_create (10);
 	LOOP {
 		iam (Table);
 		Collection_addItem_ref (collection.peek(), me);
@@ -1124,7 +1124,7 @@ END2 }
 #pragma mark TABLEOFREAL
 
 DIRECT2 (TablesOfReal_append) {
-	autoCollection tables = Collection_create (classTableOfReal, 10);
+	autoCollection tables = Collection_create (10);
 	LOOP {
 		iam (TableOfReal);
 		Collection_addItem_ref (tables.peek(), me);

@@ -151,12 +151,12 @@ double FormantGrid_getBandwidthAtTime (FormantGrid me, long iformant, double t) 
 
 void FormantGrid_removeFormantPointsBetween (FormantGrid me, long iformant, double tmin, double tmax) {
 	if (iformant < 1 || iformant > my formants -> size) return;
-	AnyTier_removePointsBetween ((RealTier) my formants -> item [iformant], tmin, tmax);
+	AnyTier_removePointsBetween ((AnyTier) my formants -> item [iformant], tmin, tmax);
 }
 
 void FormantGrid_removeBandwidthPointsBetween (FormantGrid me, long iformant, double tmin, double tmax) {
 	if (iformant < 1 || iformant > my bandwidths -> size) return;
-	AnyTier_removePointsBetween ((RealTier) my bandwidths -> item [iformant], tmin, tmax);
+	AnyTier_removePointsBetween ((AnyTier) my bandwidths -> item [iformant], tmin, tmax);
 }
 
 void Sound_FormantGrid_filter_inline (Sound me, FormantGrid formantGrid) {
@@ -257,12 +257,12 @@ void FormantGrid_formula_bandwidths (FormantGrid me, const char32 *expression, I
 		if (! thee) thee = me;
 		for (long irow = 1; irow <= my formants -> size; irow ++) {
 			RealTier bandwidth = (RealTier) thy bandwidths -> item [irow];
-			for (long icol = 1; icol <= bandwidth -> points -> size; icol ++) {
+			for (long icol = 1; icol <= bandwidth -> points.size(); icol ++) {
 				struct Formula_Result result;
 				Formula_run (irow, icol, & result);
 				if (result. result.numericResult == NUMundefined)
 					Melder_throw (U"Cannot put an undefined value into the tier.\nFormula not finished.");
-				((RealPoint) bandwidth -> points -> item [icol]) -> value = result. result.numericResult;
+				bandwidth -> points [icol] -> value = result. result.numericResult;
 			}
 		}
 	} catch (MelderError) {
@@ -276,12 +276,12 @@ void FormantGrid_formula_frequencies (FormantGrid me, const char32 *expression, 
 		if (! thee) thee = me;
 		for (long irow = 1; irow <= my formants -> size; irow ++) {
 			RealTier formant = (RealTier) thy formants -> item [irow];
-			for (long icol = 1; icol <= formant -> points -> size; icol ++) {
+			for (long icol = 1; icol <= formant -> points.size(); icol ++) {
 				struct Formula_Result result;
 				Formula_run (irow, icol, & result);
 				if (result. result.numericResult == NUMundefined)
 					Melder_throw (U"Cannot put an undefined value into the tier.\nFormula not finished.");
-				((RealPoint) formant -> points -> item [icol]) -> value = result. result.numericResult;
+				formant -> points [icol] -> value = result. result.numericResult;
 			}
 		}
 	} catch (MelderError) {

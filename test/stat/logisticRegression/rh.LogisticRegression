@@ -1,0 +1,17 @@
+File type = "ooTextFile"
+Object class = "LogisticRegression"
+
+intercept = -8.702787857509811 
+parameters: size = 2 
+parameters [1]:
+    label = "Spec" 
+    minimum = 1 
+    maximum = 7 
+    value = 1.658716046208673 
+parameters [2]:
+    label = "Dur" 
+    minimum = 1 
+    maximum = 7 
+    value = 0.6041395474038707 
+dependent1 = "/I/" 
+dependent2 = "/i/" 

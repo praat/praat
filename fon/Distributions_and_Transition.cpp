@@ -27,10 +27,10 @@
 #include "Distributions_and_Transition.h"
 
 autoTransition Distributions_to_Transition (Distributions underlying, Distributions surface, long environment,
-	Transition adjacency, int greedy)
+	Transition adjacency, bool greedy)
 {
 	try {
-		if (! underlying) return nullptr;
+		if (! underlying) return autoTransition();
 
 		/*
 		 * Preconditions: range check and matrix matching.

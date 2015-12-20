@@ -227,7 +227,7 @@ autoGaussianMixture GaussianMixture_create (long numberOfComponents, long dimens
 /* c is double vector 1..dimension !!!!!! */
 int GaussianMixture_generateOneVector (GaussianMixture me, double *c, char32 **covname, double *buf) {
 	try {
-		double p = NUMrandomUniform (0, 1);
+		double p = NUMrandomUniform (0.0, 1.0);
 		long im = NUMgetIndexFromProbability (my mixingProbabilities, my numberOfComponents, p);
 		Covariance thee = (Covariance) my covariances -> item[im];
 		*covname = thy name;
@@ -236,7 +236,7 @@ int GaussianMixture_generateOneVector (GaussianMixture me, double *c, char32 **c
 				c[i] = NUMrandomGauss (thy centroid[i], sqrt (thy data[1][i]));
 			}
 		} else { // nxn
-			if (thy pca == 0) {
+			if (! thy pca) {
 				SSCP_expandPCA (thee);    // on demand expanding
 			}
 			Covariance_and_PCA_generateOneVector (thee, thy pca.peek(), c, buf);

@@ -32,7 +32,7 @@ Thing_implement (Excitations, Ordered, 0);
 autoExcitations Excitations_create (long initialCapacity) {
 	try {
 		autoExcitations me = Thing_new (Excitations);
-		Ordered_init (me.peek(), classExcitation, initialCapacity);
+		Ordered_init (me.peek(), initialCapacity);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Excitations not created.");

@@ -82,7 +82,7 @@ void Manipulation_replaceOriginalSound (Manipulation me, Sound sound) {
 	try {
 		my sound = Sound_convertToMono (sound);
 		Vector_subtractMean (my sound.peek());
-		my lpc = nullptr;
+		my lpc = autoLPC();
 	} catch (MelderError) {
 		Melder_throw (me, U": original Sound not replaced with ", sound, U".");
 	}
@@ -325,7 +325,7 @@ autoSound Sound_Point_Pitch_Duration_to_Sound (Sound me, PointProcess pulses,
 		double startOfSourceVoice, endOfSourceVoice, startOfTargetVoice, endOfTargetVoice;
 		double durationOfSourceVoice, durationOfTargetVoice;
 		double startingPeriod, finishingPeriod, ttarget, voicelessPeriod;
-		if (duration -> points -> size == 0)
+		if (duration -> points.size() == 0)
 			Melder_throw (U"No duration points.");
 
 		/*
@@ -336,7 +336,7 @@ autoSound Sound_Point_Pitch_Duration_to_Sound (Sound me, PointProcess pulses,
 		/*
 		 * Below, I'll abbreviate the voiced interval as "voice" and the voiceless interval as "noise".
 		 */
-		if (pitch && pitch -> points -> size) for (ipointleft = 1; ipointleft <= pulses -> nt; ipointleft = ipointright + 1) {
+		if (pitch && pitch -> points.size()) for (ipointleft = 1; ipointleft <= pulses -> nt; ipointleft = ipointright + 1) {
 			/*
 			 * Find the beginning of the voice.
 			 */
@@ -477,7 +477,7 @@ static autoSound synthesize_overlapAdd_nodur (Manipulation me) {
 }
 
 static autoSound synthesize_overlapAdd (Manipulation me) {
-	if (! my duration || my duration -> points -> size == 0) return synthesize_overlapAdd_nodur (me);
+	if (! my duration || my duration -> points.size() == 0) return synthesize_overlapAdd_nodur (me);
 	try {
 		if (! my sound)  Melder_throw (U"Missing original sound.");
 		if (! my pulses) Melder_throw (U"Missing pulses analysis.");
@@ -651,12 +651,12 @@ autoSound Manipulation_to_Sound (Manipulation me, int method) {
 		case Manipulation_PULSES_PITCH: return synthesize_pulses_pitch (me);
 		case Manipulation_PULSES_PITCH_HUM: return synthesize_pulses_pitch_hum (me);
 		case Manipulation_OVERLAPADD_NODUR: return synthesize_overlapAdd_nodur (me);
-		case Manipulation_PULSES_FORMANT: return 0;
-		case Manipulation_PULSES_FORMANT_INTENSITY: return 0;
+		case Manipulation_PULSES_FORMANT: return autoSound();
+		case Manipulation_PULSES_FORMANT_INTENSITY: return autoSound();
 		case Manipulation_PULSES_LPC: return synthesize_pulses_lpc (me);
-		case Manipulation_PULSES_LPC_INTENSITY: return 0;
+		case Manipulation_PULSES_LPC_INTENSITY: return autoSound();
 		case Manipulation_PITCH_LPC: return synthesize_pitch_lpc (me);
-		case Manipulation_PITCH_LPC_INTENSITY: return 0;
+		case Manipulation_PITCH_LPC_INTENSITY: return autoSound();
 		default: return synthesize_overlapAdd (me);
 	}
 }

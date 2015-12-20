@@ -987,7 +987,7 @@ DO
 		GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"), GET_INTEGER (U"Garnish"));
 END
 
-/**********************ComplexSpectrogram *******************************************/
+/********************** ComplexSpectrogram *******************************************/
 
 DIRECT (ComplexSpectrogram_help)
 	Melder_help (U"ComplexSpectrogram_help");
@@ -1023,7 +1023,7 @@ DO
 	}
 END
 
-/**********************Correlation *******************************************/
+/********************** Correlation *******************************************/
 
 DIRECT (Correlation_help)
 	Melder_help (U"Correlation");
@@ -1068,7 +1068,7 @@ DIRECT (Correlation_to_PCA)
 	}
 END
 
-/**********************Covariance *******************************************/
+/********************** Covariance *******************************************/
 
 DIRECT (Covariance_help)
 	Melder_help (U"Covariance");
@@ -1678,7 +1678,8 @@ FORM (DTW_and_Sounds_draw, U"DTW & Sounds: Draw", U"DTW & Sounds: Draw...")
 	BOOLEAN (U"Garnish", true)
 	OK
 DO
-	Sound s1 = nullptr, s2 = nullptr; DTW dtw = nullptr;
+	Sound s1 = nullptr, s2 = nullptr;
+	DTW dtw = nullptr;
 	LOOP {
 		iam (Daata);
 		if (CLASS == classSound) {
@@ -2695,7 +2696,7 @@ DO
 END
 
 DIRECT (Excitations_append)
-	Excitations e1 = 0, e2 = 0;
+	Excitations e1 = nullptr, e2 = nullptr;
 	LOOP {
 		iam (Excitations);
 		(e1 ? e2 : e1) = me;
@@ -3854,7 +3855,7 @@ FORM (Matrix_drawAsSquares, U"Matrix: Draw as squares", U"Matrix: Draw as square
 	REAL (U"right Horizontal range", U"0.0")
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -3879,7 +3880,7 @@ FORM (Matrix_drawDistribution, U"Matrix: Draw distribution", U"Matrix: Draw dist
 	NATURAL (U"Number of bins", U"10")
 	REAL (U"Minimum frequency", U"0.0")
 	REAL (U"Maximum frequency", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -3888,7 +3889,7 @@ DO
 		Matrix_drawDistribution (me, GRAPHICS, GET_REAL (U"left Horizontal range"),
 			GET_REAL (U"right Horizontal range"), GET_REAL (U"left Vertical range"),
 			GET_REAL (U"right Vertical range"), GET_REAL (U"Minimum value"), GET_REAL (U"Maximum value"),
-			GET_INTEGER (U"Number of bins"), GET_REAL (U"Minimum frequency"), GET_REAL (U"Maximum frequency"), 0,
+			GET_INTEGER (U"Number of bins"), GET_REAL (U"Minimum frequency"), GET_REAL (U"Maximum frequency"), false,
 			GET_INTEGER (U"Garnish"));
 	}
 END
@@ -3906,7 +3907,7 @@ FORM (Matrix_drawCumulativeDistribution, U"Matrix: Draw cumulative distribution"
 	NATURAL (U"Number of bins", U"10")
 	REAL (U"Minimum", U"0.0")
 	REAL (U"Maximum", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -3915,11 +3916,11 @@ DO
 		Matrix_drawDistribution (me, GRAPHICS, GET_REAL (U"left Horizontal range"),
 			GET_REAL (U"right Horizontal range"), GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"),
 			GET_REAL (U"Minimum value"), GET_REAL (U"Maximum value"), GET_INTEGER (U"Number of bins"),
-			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"), 1, GET_INTEGER (U"Garnish"));
+			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"), true, GET_INTEGER (U"Garnish"));
 	}
 END
 
-FORM (Matrix_getMean, U"Matrix: Get mean", 0)
+FORM (Matrix_getMean, U"Matrix: Get mean", nullptr)
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0")
 	REAL (U"left Vertical range", U"0.0")
@@ -3932,7 +3933,7 @@ DO
 	Melder_informationReal (mean, nullptr);
 END
 
-FORM (Matrix_getStandardDeviation, U"Matrix: Get standard deviation", 0)
+FORM (Matrix_getStandardDeviation, U"Matrix: Get standard deviation", nullptr)
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0")
 	REAL (U"left Vertical range", U"0.0")
@@ -3945,7 +3946,7 @@ DO
 	Melder_informationReal (stdev, nullptr);
 END
 
-FORM (Matrix_scale, U"Matrix: Scale", 0)
+FORM (Matrix_scale, U"Matrix: Scale", nullptr)
 	LABEL (U"", U"self[row, col] := self[row, col] / `Scale factor'")
 	RADIO (U"Scale factor", 1)
 	RADIOBUTTON (U"Extremum in matrix")
@@ -6357,7 +6358,7 @@ DIRECT (Spectra_multiply)
 	praat_new (Spectra_multiply (s1, s2), Thing_getName (s1), U"_x_", Thing_getName (s2));
 END
 
-FORM (Spectrum_resample, U"Spectrum: Resample", 0)
+FORM (Spectrum_resample, U"Spectrum: Resample", nullptr)
 	NATURAL (U"New number of frequencies", U"256")
 	OK
 DO
@@ -6369,12 +6370,12 @@ DO
 	}
 END
 
-FORM (Spectrum_compressFrequencyDomain, U"Spectrum: Compress frequency domain", 0)
+FORM (Spectrum_compressFrequencyDomain, U"Spectrum: Compress frequency domain", nullptr)
 	POSITIVE (U"Maximum frequency (Hz)", U"5000.0")
 	INTEGER (U"Interpolation depth", U"50")
 	RADIO (U"Interpolation scale", 1)
-	RADIOBUTTON (U"Linear")
-	RADIOBUTTON (U"Logarithmic")
+		RADIOBUTTON (U"Linear")
+		RADIOBUTTON (U"Logarithmic")
 	OK
 DO
 	double maximumFrequency = GET_REAL (U"Maximum frequency");
@@ -6448,7 +6449,7 @@ END
 
 FORM (SpeechSynthesizer_to_Sound, U"SpeechSynthesizer: To Sound", U"SpeechSynthesizer: To Sound...")
 	TEXTFIELD (U"Text", U"This is some text.")
-	BOOLEAN (U"Create TextGrid with annotations", 0);
+	BOOLEAN (U"Create TextGrid with annotations", false);
 	OK
 DO
 	const char32 *text = GET_STRING (U"Text");
@@ -6457,7 +6458,7 @@ DO
 		iam (SpeechSynthesizer);
 		autoTextGrid tg;
 		autoTable t;
-		autoSound thee = SpeechSynthesizer_to_Sound (me, text, (createTextGrid ? &tg : nullptr), (Melder_debug == -2 ? &t : nullptr));
+		autoSound thee = SpeechSynthesizer_to_Sound (me, text, ( createTextGrid ? & tg : nullptr ), ( Melder_debug == -2 ? & t : nullptr ));
 		praat_new (thee.move(), my name);
 		if (createTextGrid) {
 			praat_new (tg.move(), my name);
@@ -6484,11 +6485,11 @@ END
 
 FORM (SpeechSynthesizer_setTextInputSettings, U"SpeechSynthesizer: Set text input settings", U"SpeechSynthesizer: Set text input settings...")
 	OPTIONMENU (U"Input text format is", 1)
-	OPTION (U"Text only")
-	OPTION (U"Phoneme codes only")
-	OPTION (U"Mixed with tags")
+		OPTION (U"Text only")
+		OPTION (U"Phoneme codes only")
+		OPTION (U"Mixed with tags")
 	OPTIONMENU (U"Input phoneme codes are", 1)
-	OPTION (U"Kirshenbaum_espeak")
+		OPTION (U"Kirshenbaum_espeak")
 	OK
 DO
 	int inputTextFormat = GET_INTEGER (U"Input text format is");
@@ -6500,15 +6501,15 @@ DO
 END
 
 FORM (SpeechSynthesizer_setSpeechOutputSettings, U"SpeechSynthesizer: Set speech output settings", U"SpeechSynthesizer: Set speech output settings...")
-	POSITIVE (U"Sampling frequency (Hz)", U"44100")
+	POSITIVE (U"Sampling frequency (Hz)", U"44100.0")
 	REAL (U"Gap between words (s)", U"0.01")
 	INTEGER (U"Pitch adjustment (0-99)", U"50")
 	INTEGER (U"Pitch range (0-99)", U"50");
 	NATURAL (U"Words per minute (80-450)", U"175");
-	BOOLEAN (U"Estimate rate from data", 1);
+	BOOLEAN (U"Estimate rate from data", true);
 	OPTIONMENU (U"Output phoneme codes are", 2)
-	OPTION (U"Kirshenbaum_espeak")
-	OPTION (U"IPA")
+		OPTION (U"Kirshenbaum_espeak")
+		OPTION (U"IPA")
 	OK
 DO
 	double samplingFrequency = GET_REAL (U"Sampling frequency");
@@ -6532,10 +6533,10 @@ END
 
 /************* SpeechSynthesizer and TextGrid ************************/
 
-FORM (SpeechSynthesizer_and_TextGrid_to_Sound, U"SpeechSynthesizer & TextGrid: To Sound", 0)
+FORM (SpeechSynthesizer_and_TextGrid_to_Sound, U"SpeechSynthesizer & TextGrid: To Sound", nullptr)
 	NATURAL (U"Tier number", U"1")
 	NATURAL (U"Interval number", U"1")
-	BOOLEAN (U"Create TextGrid with annotations", 0);
+	BOOLEAN (U"Create TextGrid with annotations", false);
 	OK
 DO
 	bool createAnnotations = GET_INTEGER (U"Create TextGrid with annotations");
@@ -6550,7 +6551,7 @@ DO
 	}
 END
 
-FORM (SpeechSynthesizer_and_Sound_and_TextGrid_align, U"SpeechSynthesizer & Sound & TextGrid: To TextGrid (align)", 0)
+FORM (SpeechSynthesizer_and_Sound_and_TextGrid_align, U"SpeechSynthesizer & Sound & TextGrid: To TextGrid (align)", nullptr)
 	NATURAL (U"Tier number", U"1")
 	NATURAL (U"From interval number", U"1")
 	NATURAL (U"To interval number", U"1")
@@ -6571,7 +6572,7 @@ DO
 	praat_new (thee.move(), s -> name, U"_aligned");
 END
 
-FORM (SpeechSynthesizer_and_Sound_and_TextGrid_align2, U"SpeechSynthesizer & Sound & TextGrid: To TextGrid (align, trim)", 0)
+FORM (SpeechSynthesizer_and_Sound_and_TextGrid_align2, U"SpeechSynthesizer & Sound & TextGrid: To TextGrid (align, trim)", nullptr)
     NATURAL (U"Tier number", U"1")
     NATURAL (U"From interval number", U"1")
     NATURAL (U"To interval number", U"1")
@@ -6599,12 +6600,12 @@ END
 
 /************* Spline *************************************************/
 
-FORM (Spline_drawKnots, U"Spline: Draw knots", 0)
+FORM (Spline_drawKnots, U"Spline: Draw knots", nullptr)
 	REAL (U"Xmin", U"0.0")
 	REAL (U"Xmax", U"0.0")
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	LOOP {
@@ -6642,7 +6643,7 @@ END
 
 DIRECT (SSCP_help) Melder_help (U"SSCP"); END
 
-FORM (SSCP_drawConfidenceEllipse, U"SSCP: Draw confidence ellipse", 0)
+FORM (SSCP_drawConfidenceEllipse, U"SSCP: Draw confidence ellipse", nullptr)
 	POSITIVE (U"Confidence level", U"0.95")
 	NATURAL (U"Index for X-axis", U"1")
 	NATURAL (U"Index for Y-axis", U"2")
@@ -6650,16 +6651,16 @@ FORM (SSCP_drawConfidenceEllipse, U"SSCP: Draw confidence ellipse", 0)
 	REAL (U"right Horizontal range", U"0.0")
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (SSCP);
 		SSCP_drawConcentrationEllipse (me, GRAPHICS, GET_REAL (U"Confidence level"), 1,
-		GET_INTEGER (U"Index for X-axis"), GET_INTEGER (U"Index for Y-axis"),
-		GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
-		GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"), GET_INTEGER (U"Garnish"));
+			GET_INTEGER (U"Index for X-axis"), GET_INTEGER (U"Index for Y-axis"),
+			GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
+			GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"), GET_INTEGER (U"Garnish"));
 	}
 END
 
@@ -6671,16 +6672,16 @@ FORM (SSCP_drawSigmaEllipse, U"SSCP: Draw sigma ellipse", U"SSCP: Draw sigma ell
 	REAL (U"right Horizontal range", U"0.0")
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (SSCP);
 		SSCP_drawConcentrationEllipse (me, GRAPHICS, GET_REAL (U"Number of sigmas"), 0,
-		GET_INTEGER (U"Index for X-axis"), GET_INTEGER (U"Index for Y-axis"),
-		GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
-		GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"), GET_INTEGER (U"Garnish"));
+			GET_INTEGER (U"Index for X-axis"), GET_INTEGER (U"Index for Y-axis"),
+			GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
+			GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"), GET_INTEGER (U"Garnish"));
 	}
 END
 
@@ -6714,7 +6715,7 @@ DO
 	LOOP {
 		iam (SSCP);
 		Melder_information (SSCP_getFractionVariation (me,
-		GET_INTEGER (U"From dimension"), GET_INTEGER (U"To dimension")));
+			GET_INTEGER (U"From dimension"), GET_INTEGER (U"To dimension")));
 	}
 END
 
@@ -6786,7 +6787,7 @@ DO
 		iam (SSCP);
 		SSCP_testDiagonality_bartlett (me, nc, &chisq, &p);
 		Melder_information (p, U" (=probability for chisq = ", chisq,
-		U" and ndf = ", my numberOfRows * (my numberOfRows - 1) / 2, U")");
+			U" and ndf = ", my numberOfRows * (my numberOfRows - 1) / 2, U")");
 	}
 END
 
@@ -6817,10 +6818,10 @@ END
 
 /******************* Strings ****************************/
 DIRECT (Strings_createFromEspeakVoices)
-	praat_new (nullptr, U"voices"); // TODO ??
+	//praat_new (nullptr, U"voices"); // TODO ??
 END
 
-FORM (Strings_createAsCharacters, U"Strings: Create as characters", 0)
+FORM (Strings_createAsCharacters, U"Strings: Create as characters", nullptr)
 	SENTENCE (U"Text", U"intention")
 	OK
 DO
@@ -6828,7 +6829,7 @@ DO
 	praat_new (thee.move(), U"");
 END
 
-FORM (Strings_createAsTokens, U"Strings: Create as tokens", 0)
+FORM (Strings_createAsTokens, U"Strings: Create as tokens", nullptr)
 	SENTENCE (U"Text", U"There are seven tokens in this text")
 	OK
 DO
@@ -6868,7 +6869,7 @@ DO
 	}
 END
 
-FORM (Strings_extractPart, U"Strings: Extract part", U"")
+FORM (Strings_extractPart, U"Strings: Extract part", nullptr)
 	NATURAL (U"From index", U"1")
 	NATURAL (U"To index", U"1")
 	OK
@@ -6892,7 +6893,7 @@ DIRECT (Strings_to_EditDistanceTable)
 END
 
 FORM (Strings_to_Permutation, U"Strings: To Permutation", U"Strings: To Permutation...")
-	BOOLEAN (U"Sort", 1)
+	BOOLEAN (U"Sort", true)
 	OK
 DO
 	LOOP {
@@ -6959,7 +6960,7 @@ DIRECT (Table_createFromWeeninkData)
 	praat_new (Table_createFromWeeninkData (), U"m10w10c10");
 END
 
-FORM (Table_scatterPlotWhere, U"Table: Scatter plot where", 0)
+FORM (Table_scatterPlotWhere, U"Table: Scatter plot where", nullptr)
 	WORD (U"Horizontal column", U"")
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0 (= auto)")
@@ -6968,7 +6969,7 @@ FORM (Table_scatterPlotWhere, U"Table: Scatter plot where", 0)
 	REAL (U"right Vertical range", U"0.0 (= auto)")
 	WORD (U"Column with marks", U"")
 	NATURAL (U"Font size", U"12")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	LABEL (U"", U"Use only data from rows where the following condition holds:")
 	TEXTFIELD (U"Formula", U"1; self$[\"gender\"]=\"male\"")
 	OK
@@ -6987,7 +6988,7 @@ DO
 	}
 END
 
-FORM (Table_scatterPlotMarkWhere, U"Scatter plot where (marks)", 0)
+FORM (Table_scatterPlotMarkWhere, U"Scatter plot where (marks)", nullptr)
 	WORD (U"Horizontal column", U"")
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0 (= auto)")
@@ -6995,7 +6996,7 @@ FORM (Table_scatterPlotMarkWhere, U"Scatter plot where (marks)", 0)
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0 (= auto)")
 	POSITIVE (U"Mark size (mm)", U"1.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	SENTENCE (U"Mark string (+xo.)", U"+")
 	LABEL (U"", U"Use only data from rows where the following condition holds:")
 	TEXTFIELD (U"Formula", U"1; self$[\"gender\"]=\"male\"")
@@ -7025,7 +7026,7 @@ FORM (Table_barPlotWhere, U"Table: Bar plot where", U"Table: Bar plot where...")
 	REAL (U"Distance between bars within group", U"0.0")
 	SENTENCE (U"Colours", U"Grey")
 	REAL (U"Label text angle (degrees)", U"0.0");
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	LABEL (U"", U"Use only data from rows where the following condition holds:")
 	TEXTFIELD (U"Formula", U"row >= 1 and row <= 8")
 	OK
@@ -7049,7 +7050,7 @@ FORM (Table_LineGraphWhere, U"Table: Line graph where", U"Table: Line graph wher
 	REAL (U"right Horizontal range", U"0.0 (= auto)")
 	WORD (U"Text", U"+")
 	REAL (U"Label text angle (degrees)", U"0.0");
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	LABEL (U"", U"Use only data from rows where the following condition holds:")
 	TEXTFIELD (U"Formula", U"1; (= everything)")
 	OK
@@ -7066,12 +7067,12 @@ DO
 	}
 END
 
-FORM (Table_boxPlots, U"Table: Box plots", 0)
+FORM (Table_boxPlots, U"Table: Box plots", nullptr)
 	WORD (U"Data columns", U"")
 	WORD (U"Factor column", U"")
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0")
-	BOOLEAN (U"Garnish", 1);
+	BOOLEAN (U"Garnish", true);
 	OK
 DO
 	autoPraatPicture picture;
@@ -7090,7 +7091,7 @@ FORM (Table_boxPlotsWhere, U"Table: Box plots where", U"Table: Box plots where..
 	WORD (U"Factor column", U"")
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0")
-	BOOLEAN (U"Garnish", 1);
+	BOOLEAN (U"Garnish", true);
 	LABEL (U"", U"Use only data in rows where the following condition holds:")
 	TEXTFIELD (U"Formula", U"1; self$[\"gender\"]=\"male\"")
 	OK
@@ -7107,7 +7108,7 @@ DO
 	}
 END
 
-FORM (Table_drawEllipseWhere, U"Draw ellipse (standard deviation)", 0)
+FORM (Table_drawEllipseWhere, U"Draw ellipse (standard deviation)", nullptr)
 	WORD (U"Horizontal column", U"")
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0 (= auto)")
@@ -7115,7 +7116,7 @@ FORM (Table_drawEllipseWhere, U"Draw ellipse (standard deviation)", 0)
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0 (= auto)")
 	POSITIVE (U"Number of sigmas", U"2.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	LABEL (U"", U"Use only data in rows where the following condition holds:")
 	TEXTFIELD (U"Formula", U"1; self$[\"gender\"]=\"male\"")
 	OK
@@ -7133,7 +7134,7 @@ DO
 	}
 END
 
-FORM (Table_drawEllipses, U"Table: Draw ellipses", 0)
+FORM (Table_drawEllipses, U"Table: Draw ellipses", nullptr)
 	WORD (U"Horizontal column", U"F2")
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0 (= auto)")
@@ -7143,7 +7144,7 @@ FORM (Table_drawEllipses, U"Table: Draw ellipses", 0)
 	WORD (U"Factor column", U"Vowel")
 	POSITIVE (U"Number of sigmas", U"1.0")
 	NATURAL (U"Font size", U"12")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -7158,7 +7159,7 @@ DO
 	}
 END
 
-FORM (Table_drawEllipsesWhere, U"Table: Draw ellipses where", 0)
+FORM (Table_drawEllipsesWhere, U"Table: Draw ellipses where", nullptr)
 	WORD (U"Horizontal column", U"F2")
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0 (= auto)")
@@ -7168,7 +7169,7 @@ FORM (Table_drawEllipsesWhere, U"Table: Draw ellipses where", 0)
 	WORD (U"Factor column", U"Vowel")
 	POSITIVE (U"Number of sigmas", U"1.0")
 	NATURAL (U"Font size", U"12")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	LABEL (U"", U"Use only data in rows where the following condition holds:")
 	TEXTFIELD (U"Formula", U"1; self$[\"gender\"]=\"male\"")
 	
@@ -7193,7 +7194,7 @@ FORM (Table_normalProbabilityPlot, U"Table: Normal probability plot", U"Table: N
 	REAL (U"Number of sigmas", U"0.0")
 	NATURAL (U"Label size", U"12")
 	WORD (U"Label", U"+")
-	BOOLEAN (U"Garnish", 1);
+	BOOLEAN (U"Garnish", true);
 	OK
 DO
 	autoPraatPicture picture;
@@ -7212,7 +7213,7 @@ FORM (Table_normalProbabilityPlotWhere, U"Table: Normal probability plot where",
 	REAL (U"Number of sigmas", U"0.0")
 	NATURAL (U"Label size", U"12")
 	WORD (U"Label", U"+")
-	BOOLEAN (U"Garnish", 1);
+	BOOLEAN (U"Garnish", true);
 	LABEL (U"", U"Use only data in rows where the following condition holds:")
 	TEXTFIELD (U"Formula", U"1; self$[\"gender\"]=\"male\"")
 	OK
@@ -7238,7 +7239,7 @@ FORM (Table_quantileQuantilePlot, U"Table: Quantile-quantile plot", U"Table: Qua
 	REAL (U"right Vertical range", U"0.0")
 	NATURAL (U"Label size", U"12")
 	WORD (U"Label", U"+")
-	BOOLEAN (U"Garnish", 1);
+	BOOLEAN (U"Garnish", true);
 	OK
 DO
 	autoPraatPicture picture;
@@ -7247,9 +7248,9 @@ DO
 		long xcolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Horizontal axis column"));
 		long ycolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Vertical axis column"));
 		Table_quantileQuantilePlot (me, GRAPHICS, xcolumn, ycolumn, GET_INTEGER (U"Number of quantiles"),
-		GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
-		GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"),
-		GET_INTEGER (U"Label size"), GET_STRING (U"Label"), GET_INTEGER (U"Garnish"));
+			GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
+			GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"),
+			GET_INTEGER (U"Label size"), GET_STRING (U"Label"), GET_INTEGER (U"Garnish"));
 	}
 END
 
@@ -7579,7 +7580,7 @@ DIRECT (TableOfReal_appendColumns)
 END
 
 FORM (TableOfReal_createFromPolsData_50males, U"Create TableOfReal (Pols 1973)", U"Create TableOfReal (Pols 1973)...")
-	BOOLEAN (U"Include formant levels", 0)
+	BOOLEAN (U"Include formant levels", false)
 	OK
 DO
 	praat_new (TableOfReal_createFromPolsData_50males (GET_INTEGER (U"Include formant levels")), U"pols_50males");
@@ -7594,7 +7595,7 @@ DIRECT (Table_createFromGanongData)
 END
 
 FORM (TableOfReal_createFromVanNieropData_25females, U"Create TableOfReal (Van Nierop 1973)...", U"Create TableOfReal (Van Nierop 1973)...")
-	BOOLEAN (U"Include formant levels", 0)
+	BOOLEAN (U"Include formant levels", false)
 	OK
 DO
 	praat_new (TableOfReal_createFromVanNieropData_25females (GET_INTEGER (U"Include formant levels")), U"vannierop_25females");
@@ -7624,9 +7625,9 @@ FORM (TableOfReal_drawScatterPlot, U"TableOfReal: Draw scatter plot", U"TableOfR
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0")
 	NATURAL (U"Label size", U"12")
-	BOOLEAN (U"Use row labels", 0)
+	BOOLEAN (U"Use row labels", false)
 	WORD (U"Label", U"+")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -7791,7 +7792,7 @@ FORM (TableOfReal_drawColumnAsDistribution, U"TableOfReal: Draw column as distri
 	REAL (U"left Frequency range", U"0.0")
 	REAL (U"right frequency range", U"0.0")
 	NATURAL (U"Number of bins", U"10")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -7799,7 +7800,7 @@ DO
 		iam (TableOfReal);
 		TableOfReal_drawColumnAsDistribution (me, GRAPHICS, GET_INTEGER (U"Column number"),
 		GET_REAL (U"left Value range"), GET_REAL (U"right Value range"), GET_INTEGER (U"Number of bins"),
-		GET_REAL (U"left Frequency range"), GET_REAL (U"right frequency range"), 0, GET_INTEGER (U"Garnish"));
+		GET_REAL (U"left Frequency range"), GET_REAL (U"right frequency range"), false, GET_INTEGER (U"Garnish"));
 	}
 END
 
@@ -7907,7 +7908,7 @@ DIRECT (TableOfReal_to_SVD)
 END
 
 DIRECT (TablesOfReal_to_Eigen_gsvd)
-	TableOfReal t1 = 0, t2 = 0;
+	TableOfReal t1 = nullptr, t2 = nullptr;
 	LOOP {
 		iam (TableOfReal);
 		(t1 ? t2 : t1) = me;
@@ -8402,13 +8403,13 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"Goodies", U"Get invTukeyQ...", 0, praat_HIDDEN, DO_Praat_getInvTukeyQ);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Strings from espeak voices", U"Create Strings as directory list...", praat_DEPTH_1 + praat_HIDDEN, DO_Strings_createFromEspeakVoices);
 	praat_addMenuCommand (U"Objects", U"New", U"Create iris data set", U"Create TableOfReal...", 1, DO_New_CreateIrisDataset);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Permutation...", 0, 0, DO_Permutation_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Polynomial", 0, 0, 0);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Polynomial...", 0, 1, DO_Polynomial_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Create LegendreSeries...", 0, 1, DO_LegendreSeries_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Create ChebyshevSeries...", 0, 1, DO_ChebyshevSeries_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Create MSpline...", 0, 1, DO_MSpline_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Create ISpline...", 0, 1, DO_ISpline_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Permutation...", nullptr, 0, DO_Permutation_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Polynomial", nullptr, 0, nullptr);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Polynomial...", nullptr, 1, DO_Polynomial_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create LegendreSeries...", nullptr, 1, DO_LegendreSeries_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create ChebyshevSeries...", nullptr, 1, DO_ChebyshevSeries_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create MSpline...", nullptr, 1, DO_MSpline_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create ISpline...", nullptr, 1, DO_ISpline_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Sound from gammatone...", U"Create Sound from tone complex...", 1, DO_Sound_createFromGammaTone);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Sound from gamma-tone...", U"Create Sound from tone complex...", praat_DEPTH_1 | praat_HIDDEN, DO_Sound_createFromGammaTone);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Sound from Shepard tone...", U"Create Sound from gammatone...", 1, DO_Sound_createFromShepardTone);
@@ -8430,113 +8431,96 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as characters...", U"Create TextGrid...", praat_HIDDEN, DO_Strings_createAsCharacters);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as tokens...", U"Create TextGrid...", praat_HIDDEN, DO_Strings_createAsTokens);
 
-	praat_addMenuCommand (U"Objects", U"New", U"Create simple Polygon...", 0, praat_HIDDEN, DO_Polygon_createSimple);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Polygon (random vertices)...", 0, praat_HIDDEN, DO_Polygon_createFromRandomVertices);
-	praat_addMenuCommand (U"Objects", U"New", U"FilesInMemory", 0, praat_HIDDEN, 0);
-		praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemory...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_FileInMemory_create);
-		praat_addMenuCommand (U"Objects", U"New", U"Create copy from FilesInMemory...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_FilesInMemory_createCopyFromFilesInMemory);
-		praat_addMenuCommand (U"Objects", U"New", U"Create FilesInMemory from directory contents...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_FilesInMemory_createFromDirectoryContents);
+	praat_addMenuCommand (U"Objects", U"New", U"Create simple Polygon...", nullptr, praat_HIDDEN, DO_Polygon_createSimple);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Polygon (random vertices)...", nullptr, praat_HIDDEN, DO_Polygon_createFromRandomVertices);
+	praat_addMenuCommand (U"Objects", U"New", U"FilesInMemory", nullptr, praat_HIDDEN, nullptr);
+		praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemory...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_FileInMemory_create);
+		praat_addMenuCommand (U"Objects", U"New", U"Create copy from FilesInMemory...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_FilesInMemory_createCopyFromFilesInMemory);
+		praat_addMenuCommand (U"Objects", U"New", U"Create FilesInMemory from directory contents...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_FilesInMemory_createFromDirectoryContents);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Sound from raw 16-bit Little Endian file...", U"Read from special sound file", 1,
 	                      DO_Sound_readFromRawFileLE);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Sound from raw 16-bit Big Endian file...", U"Read Sound from raw 16-bit Little Endian file...", 1, DO_Sound_readFromRawFileBE);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read KlattTable from raw text file...", U"Read Matrix from raw text file...", praat_HIDDEN, DO_KlattTable_readFromRawTextFile);
 
-	praat_addAction1 (classActivation, 0, U"Modify", 0, 0, 0);
-	praat_addAction1 (classActivation, 0, U"Formula...", 0, 0,
-	                  DO_Activation_formula);
-	praat_addAction1 (classActivation, 0, U"Hack", 0, 0, 0);
-	praat_addAction1 (classActivation, 0, U"To Matrix", 0, 0,
-	                  DO_Activation_to_Matrix);
+	praat_addAction1 (classActivation, 0, U"Modify", nullptr, 0, nullptr);
+	praat_addAction1 (classActivation, 0, U"Formula...", nullptr, 0, DO_Activation_formula);
+	praat_addAction1 (classActivation, 0, U"Hack", nullptr, 0, nullptr);
+	praat_addAction1 (classActivation, 0, U"To Matrix", nullptr, 0, DO_Activation_to_Matrix);
 
-	praat_addAction2 (classActivation, 1, classCategories, 1, U"To TableOfReal", 0, 0, DO_Matrix_Categories_to_TableOfReal);
+	praat_addAction2 (classActivation, 1, classCategories, 1, U"To TableOfReal", nullptr, 0, DO_Matrix_Categories_to_TableOfReal);
 
-	praat_addAction1 (classBarkFilter, 0, U"BarkFilter help", 0, 0, DO_BarkFilter_help);
+	praat_addAction1 (classBarkFilter, 0, U"BarkFilter help", nullptr, 0, DO_BarkFilter_help);
 	praat_FilterBank_all_init (classBarkFilter);	// deprecated 2014
 	praat_addAction1 (classBarkFilter, 0, U"Draw spectrum (slice)...", U"Draw filters...", praat_DEPTH_1, DO_BarkFilter_drawSpectrum);	// deprecated 2014
 	praat_addAction1 (classBarkFilter, 1, U"Draw filter functions...", U"Draw filters...", praat_DEPTH_1, DO_BarkFilter_drawSekeyHansonFilterFunctions);	// deprecated 2014
 	praat_addAction1 (classBarkFilter, 0, U"Paint...", U"Draw filters...", praat_DEPTH_1, DO_BarkFilter_paint);	// deprecated 2014
-	praat_addAction1 (classBarkFilter, 0, U"To BarkSpectrogram", 0, 0, DO_BarkFilter_to_BarkSpectrogram);
+	praat_addAction1 (classBarkFilter, 0, U"To BarkSpectrogram", nullptr, 0, DO_BarkFilter_to_BarkSpectrogram);
 
-	praat_addAction1 (classBarkSpectrogram, 0, U"BarkSpectrogram help", 0, 0, DO_BarkSpectrogram_help);
+	praat_addAction1 (classBarkSpectrogram, 0, U"BarkSpectrogram help", nullptr, 0, DO_BarkSpectrogram_help);
 	praat_BandFilterSpectrogram_draw_init (classBarkSpectrogram);
-	praat_addAction1 (classBarkSpectrogram, 0, U"Paint image...", 0, 1, DO_BarkSpectrogram_paintImage);
-	praat_addAction1 (classBarkSpectrogram, 0, U"Draw Sekey-Hanson auditory filters...", 0, 1, DO_BarkSpectrogram_drawSekeyHansonAuditoryFilters);
-	praat_addAction1 (classBarkSpectrogram, 0, U"Draw spectrum at nearest time slice...", 0, 1, DO_BarkSpectrogram_drawSpectrumAtNearestTimeSlice);
-	praat_addAction1 (classBarkSpectrogram, 0, QUERY_BUTTON, 0, 0, 0);
+	praat_addAction1 (classBarkSpectrogram, 0, U"Paint image...", nullptr, 1, DO_BarkSpectrogram_paintImage);
+	praat_addAction1 (classBarkSpectrogram, 0, U"Draw Sekey-Hanson auditory filters...", nullptr, 1, DO_BarkSpectrogram_drawSekeyHansonAuditoryFilters);
+	praat_addAction1 (classBarkSpectrogram, 0, U"Draw spectrum at nearest time slice...", nullptr, 1, DO_BarkSpectrogram_drawSpectrumAtNearestTimeSlice);
+	praat_addAction1 (classBarkSpectrogram, 0, QUERY_BUTTON, nullptr, 0, nullptr);
 	praat_BandFilterSpectrogram_query_init (classBarkSpectrogram);
-	praat_addAction1 (classBarkSpectrogram, 0, U"Equalize intensities...", 0, 0, DO_BandFilterSpectrogram_equalizeIntensities);
-	praat_addAction1 (classBarkSpectrogram, 0, U"To Intensity", 0, 0, DO_BandFilterSpectrogram_to_Intensity);
-	praat_addAction1 (classBarkSpectrogram, 0, U"To Matrix...", 0, 0, DO_BandFilterSpectrogram_to_Matrix);
-	praat_addAction1 (classBarkSpectrogram, 2, U"Cross-correlate...", 0, 0, DO_BandFilterSpectrograms_crossCorrelate);
-	praat_addAction1 (classBarkSpectrogram, 2, U"Convolve...", 0, 0, DO_BandFilterSpectrograms_convolve);
+	praat_addAction1 (classBarkSpectrogram, 0, U"Equalize intensities...", nullptr, 0, DO_BandFilterSpectrogram_equalizeIntensities);
+	praat_addAction1 (classBarkSpectrogram, 0, U"To Intensity", nullptr, 0, DO_BandFilterSpectrogram_to_Intensity);
+	praat_addAction1 (classBarkSpectrogram, 0, U"To Matrix...", nullptr, 0, DO_BandFilterSpectrogram_to_Matrix);
+	praat_addAction1 (classBarkSpectrogram, 2, U"Cross-correlate...", nullptr, 0, DO_BandFilterSpectrograms_crossCorrelate);
+	praat_addAction1 (classBarkSpectrogram, 2, U"Convolve...", nullptr, 0, DO_BandFilterSpectrograms_convolve);
 	
 	
-	praat_addAction1 (classCategories, 0, U"View & Edit", 0, 0, DO_Categories_edit);
-	praat_addAction1 (classCategories, 0, U"Edit", 0, praat_HIDDEN, DO_Categories_edit); // deprecated 2015
-	praat_addAction1 (classCategories, 0, QUERY_BUTTON, 0, 0, 0);
+	praat_addAction1 (classCategories, 0, U"View & Edit", nullptr, 0, DO_Categories_edit);
+	praat_addAction1 (classCategories, 0, U"Edit", nullptr, praat_HIDDEN, DO_Categories_edit); // deprecated 2015
+	praat_addAction1 (classCategories, 0, QUERY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classCategories, 1, U"Get number of categories", QUERY_BUTTON, 1, DO_Categories_getNumberOfCategories);
 	praat_addAction1 (classCategories, 2, U"Get difference", QUERY_BUTTON, praat_HIDDEN | praat_DEPTH_1, DO_Categories_difference);
 	praat_addAction1 (classCategories, 2, U"Get number of differences", QUERY_BUTTON, 1, DO_Categories_getNumberOfDifferences);
 	praat_addAction1 (classCategories, 2, U"Get fraction different", QUERY_BUTTON, 1, DO_Categories_getFractionDifferent);
-	praat_addAction1 (classCategories, 0, MODIFY_BUTTON, 0, 0, 0);
-	praat_addAction1 (classCategories, 1, U"Append 1 category...", MODIFY_BUTTON,
-	                  1, DO_Categories_append);
-	praat_addAction1 (classCategories, 0, U"Extract", 0, 0, 0);
-	praat_addAction1 (classCategories, 0, U"To unique Categories", 0, 0,
-	                  DO_Categories_selectUniqueItems);
-	praat_addAction1 (classCategories, 0, U"Analyse", 0, 0, 0);
-	praat_addAction1 (classCategories, 2, U"To Confusion", 0, 0,
-	                  DO_Categories_to_Confusion);
-	praat_addAction1 (classCategories, 0, U"Synthesize", 0, 0, 0);
-	praat_addAction1 (classCategories, 2, U"Join", 0, 0, DO_Categories_join);
-	praat_addAction1 (classCategories, 0, U"Permute items", 0, 0, DO_Categories_permuteItems);
-	praat_addAction1 (classCategories, 0, U"To Strings", 0, 0,
-	                  DO_Categories_to_Strings);
+	praat_addAction1 (classCategories, 0, MODIFY_BUTTON, nullptr, 0, nullptr);
+	praat_addAction1 (classCategories, 1, U"Append 1 category...", MODIFY_BUTTON, 1, DO_Categories_append);
+	praat_addAction1 (classCategories, 0, U"Extract", nullptr, 0, nullptr);
+	praat_addAction1 (classCategories, 0, U"To unique Categories", nullptr, 0, DO_Categories_selectUniqueItems);
+	praat_addAction1 (classCategories, 0, U"Analyse", nullptr, 0, nullptr);
+	praat_addAction1 (classCategories, 2, U"To Confusion", nullptr, 0, DO_Categories_to_Confusion);
+	praat_addAction1 (classCategories, 0, U"Synthesize", nullptr, 0, nullptr);
+	praat_addAction1 (classCategories, 2, U"Join", nullptr, 0, DO_Categories_join);
+	praat_addAction1 (classCategories, 0, U"Permute items", nullptr, 0, DO_Categories_permuteItems);
+	praat_addAction1 (classCategories, 0, U"To Strings", nullptr, 0, DO_Categories_to_Strings);
 
-	praat_addAction1 (classChebyshevSeries, 0, U"ChebyshevSeries help", 0, 0,
-	                  DO_ChebyshevSeries_help);
+	praat_addAction1 (classChebyshevSeries, 0, U"ChebyshevSeries help", nullptr, 0, DO_ChebyshevSeries_help);
 	praat_FunctionTerms_init (classChebyshevSeries);
-	praat_addAction1 (classChebyshevSeries, 0, U"To Polynomial", U"Analyse",
-	                  0, DO_ChebyshevSeries_to_Polynomial);
+	praat_addAction1 (classChebyshevSeries, 0, U"To Polynomial", U"Analyse", 0, DO_ChebyshevSeries_to_Polynomial);
 
-	praat_addAction1 (classCCA, 1, U"Draw eigenvector...", 0, 0,
-	                  DO_CCA_drawEigenvector);
-	praat_addAction1 (classCCA, 1, U"Get number of correlations", 0, 0,
-	                  DO_CCA_getNumberOfCorrelations);
-	praat_addAction1 (classCCA, 1, U"Get correlation...", 0, 0,
-	                  DO_CCA_getCorrelationCoefficient);
-	praat_addAction1 (classCCA, 1, U"Get eigenvector element...", 0, 0, DO_CCA_getEigenvectorElement);
-	praat_addAction1 (classCCA, 1, U"Get zero correlation probability...", 0, 0, DO_CCA_getZeroCorrelationProbability);
+	praat_addAction1 (classCCA, 1, U"Draw eigenvector...", nullptr, 0, DO_CCA_drawEigenvector);
+	praat_addAction1 (classCCA, 1, U"Get number of correlations", nullptr, 0, DO_CCA_getNumberOfCorrelations);
+	praat_addAction1 (classCCA, 1, U"Get correlation...", nullptr, 0, DO_CCA_getCorrelationCoefficient);
+	praat_addAction1 (classCCA, 1, U"Get eigenvector element...", nullptr, 0, DO_CCA_getEigenvectorElement);
+	praat_addAction1 (classCCA, 1, U"Get zero correlation probability...", nullptr, 0, DO_CCA_getZeroCorrelationProbability);
 
-	praat_addAction2 (classCCA, 1, classTableOfReal, 1, U"To TableOfReal (scores)...",
-	                  0, 0, DO_CCA_and_TableOfReal_scores);
-	praat_addAction2 (classCCA, 1, classTableOfReal, 1, U"To TableOfReal (loadings)",
-	                  0, 0, DO_CCA_and_TableOfReal_factorLoadings);
-	praat_addAction2 (classCCA, 1, classTableOfReal, 1, U"Predict...", 0, 0,
-	                  DO_CCA_and_TableOfReal_predict);
-	praat_addAction2 (classCCA, 1, classCorrelation, 1, U"To TableOfReal (loadings)",
-	                  0, 0, DO_CCA_and_Correlation_factorLoadings);
-	praat_addAction2 (classCCA, 1, classCorrelation, 1, U"Get variance fraction...",
-	                  0, 0, DO_CCA_and_Correlation_getVarianceFraction);
-	praat_addAction2 (classCCA, 1, classCorrelation, 1, U"Get redundancy (sl)...",
-	                  0, 0, DO_CCA_and_Correlation_getRedundancy_sl);
+	praat_addAction2 (classCCA, 1, classTableOfReal, 1, U"To TableOfReal (scores)...", nullptr, 0, DO_CCA_and_TableOfReal_scores);
+	praat_addAction2 (classCCA, 1, classTableOfReal, 1, U"To TableOfReal (loadings)", nullptr, 0, DO_CCA_and_TableOfReal_factorLoadings);
+	praat_addAction2 (classCCA, 1, classTableOfReal, 1, U"Predict...", nullptr, 0, DO_CCA_and_TableOfReal_predict);
+	praat_addAction2 (classCCA, 1, classCorrelation, 1, U"To TableOfReal (loadings)", nullptr, 0, DO_CCA_and_Correlation_factorLoadings);
+	praat_addAction2 (classCCA, 1, classCorrelation, 1, U"Get variance fraction...", nullptr, 0, DO_CCA_and_Correlation_getVarianceFraction);
+	praat_addAction2 (classCCA, 1, classCorrelation, 1, U"Get redundancy (sl)...", nullptr, 0, DO_CCA_and_Correlation_getRedundancy_sl);
 	
 	
-	praat_addAction1 (classComplexSpectrogram, 0, U"ComplexSpectrogram help", 0, 0, DO_ComplexSpectrogram_help);
-	praat_addAction1 (classComplexSpectrogram, 0, DRAW_BUTTON, 0, 0, 0);
-	praat_addAction1 (classComplexSpectrogram, 0, U"To Sound...", 0, 0, DO_ComplexSpectrogram_to_Sound);
-	praat_addAction1 (classComplexSpectrogram, 0, U"Down to Spectrogram", 0, 0, DO_ComplexSpectrogram_to_Spectrogram);
-	praat_addAction1 (classComplexSpectrogram, 0, U"To Spectrum (slice)...", 0, 0, DO_ComplexSpectrogram_to_Spectrum);
+	praat_addAction1 (classComplexSpectrogram, 0, U"ComplexSpectrogram help", nullptr, 0, DO_ComplexSpectrogram_help);
+	praat_addAction1 (classComplexSpectrogram, 0, DRAW_BUTTON, nullptr, 0, nullptr);
+	praat_addAction1 (classComplexSpectrogram, 0, U"To Sound...", nullptr, 0, DO_ComplexSpectrogram_to_Sound);
+	praat_addAction1 (classComplexSpectrogram, 0, U"Down to Spectrogram", nullptr, 0, DO_ComplexSpectrogram_to_Spectrogram);
+	praat_addAction1 (classComplexSpectrogram, 0, U"To Spectrum (slice)...", nullptr, 0, DO_ComplexSpectrogram_to_Spectrum);
 	//praat_addAction1 (classComplexSpectrogram, 0, U"Paint...", 0, 1, DO_Spectrogram_paint);
 
-	praat_addAction1 (classConfusion, 0, U"Confusion help", 0, 0, DO_Confusion_help);
+	praat_addAction1 (classConfusion, 0, U"Confusion help", nullptr, 0, DO_Confusion_help);
 	praat_TableOfReal_init2 (classConfusion);
 	praat_removeAction (classConfusion, nullptr, nullptr, U"Draw as numbers...");
 	praat_removeAction (classConfusion, nullptr, nullptr, U"Sort by label...");
 	praat_removeAction (classConfusion, nullptr, nullptr, U"Sort by column...");
 	praat_addAction1 (classConfusion, 0, U"Draw as numbers...", U"Draw -", 1, DO_Confusion_drawAsNumbers);
 	praat_addAction1 (classConfusion, 1, U"Get value (labels)...", U"Get value...", 1, DO_Confusion_getValue);
-	praat_addAction1 (classConfusion, 0, U"-- confusion statistics --", U"Get value (labels)...", 1, 0);
+	praat_addAction1 (classConfusion, 0, U"-- confusion statistics --", U"Get value (labels)...", 1, nullptr);
 	praat_addAction1 (classConfusion, 1, U"Get fraction correct", U"-- confusion statistics --", 1, DO_Confusion_getFractionCorrect);
 	praat_addAction1 (classConfusion, 1, U"Get stimulus sum...", U"Get fraction correct", 1, DO_Confusion_getStimulusSum);
 	praat_addAction1 (classConfusion, 1, U"Get row sum...", U"Get fraction correct", praat_DEPTH_1 | praat_HIDDEN, DO_TableOfReal_getRowSum);
@@ -8545,22 +8529,19 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classConfusion, 1, U"Get grand sum", U"Get response sum...", 1, DO_TableOfReal_getGrandSum);
 	praat_addAction1 (classConfusion, 0, U"Increase...", U"Formula...", 1, DO_Confusion_increase);
 	praat_addAction1 (classConfusion, 0, U"To TableOfReal (marginals)", U"To TableOfReal", 0, DO_Confusion_to_TableOfReal_marginals);
-	praat_addAction1 (classConfusion, 0, U"Analyse", 0, 0, 0);
-	praat_addAction1 (classConfusion, 0, U"Condense...", 0, praat_HIDDEN, DO_Confusion_condense);
-	praat_addAction1 (classConfusion, 0, U"Group...", 0, 0, DO_Confusion_group);
-	praat_addAction1 (classConfusion, 0, U"Group stimuli...", 0, 0, DO_Confusion_groupStimuli);
-	praat_addAction1 (classConfusion, 0, U"Group responses...", 0, 0, DO_Confusion_groupResponses);
-	praat_addAction1 (classConfusion, 2, U"To difference matrix", 0, 0,
-	                  DO_Confusion_difference);
+	praat_addAction1 (classConfusion, 0, U"Analyse", nullptr, 0, nullptr);
+	praat_addAction1 (classConfusion, 0, U"Condense...", nullptr, praat_HIDDEN, DO_Confusion_condense);
+	praat_addAction1 (classConfusion, 0, U"Group...", nullptr, 0, DO_Confusion_group);
+	praat_addAction1 (classConfusion, 0, U"Group stimuli...", nullptr, 0, DO_Confusion_groupStimuli);
+	praat_addAction1 (classConfusion, 0, U"Group responses...", nullptr, 0, DO_Confusion_groupResponses);
+	praat_addAction1 (classConfusion, 2, U"To difference matrix", nullptr, 0, DO_Confusion_difference);
 	
-	praat_addAction2 (classConfusion, 1, classClassificationTable, 1, U"Increase confusion count", 0, 0, DO_Confusion_and_ClassificationTable_increase);
+	praat_addAction2 (classConfusion, 1, classClassificationTable, 1, U"Increase confusion count", nullptr, 0, DO_Confusion_and_ClassificationTable_increase);
 
-	praat_addAction2 (classConfusion, 1, classMatrix, 1, U"Draw", 0, 0, 0);
-	praat_addAction2 (classConfusion, 1, classMatrix, 1, U"Draw confusion...",
-	                  0, 0, DO_Confusion_Matrix_draw);
+	praat_addAction2 (classConfusion, 1, classMatrix, 1, U"Draw", nullptr, 0, nullptr);
+	praat_addAction2 (classConfusion, 1, classMatrix, 1, U"Draw confusion...", nullptr, 0, DO_Confusion_Matrix_draw);
 
-	praat_addAction1 (classCovariance, 0, U"Covariance help", 0, 0,
-	                  DO_Covariance_help);
+	praat_addAction1 (classCovariance, 0, U"Covariance help", nullptr, 0, DO_Covariance_help);
 	praat_SSCP_as_TableOfReal_init (classCovariance);
 	praat_SSCP_query_init (classCovariance);
 	praat_SSCP_extract_init (classCovariance);
@@ -8575,29 +8556,29 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classCovariance, 2, U"Difference", U"Report multivariate mean difference...", praat_DEPTH_1 | praat_HIDDEN, DO_Covariances_reportEquality);
 	praat_addAction1 (classCovariance, 0, U"Report equality of covariances", U"Report multivariate mean difference...", praat_DEPTH_1 | praat_HIDDEN, DO_Covariances_reportEquality);
 
-	praat_addAction1 (classCovariance, 0, U"To TableOfReal (random sampling)...", 0, 0, DO_Covariance_to_TableOfReal_randomSampling);
+	praat_addAction1 (classCovariance, 0, U"To TableOfReal (random sampling)...", nullptr, 0, DO_Covariance_to_TableOfReal_randomSampling);
 
-	praat_addAction1 (classCovariance, 0, U"To Correlation", 0, 0, DO_Covariance_to_Correlation);
-	praat_addAction1 (classCovariance, 0, U"To PCA", 0, 0, DO_Covariance_to_PCA);
+	praat_addAction1 (classCovariance, 0, U"To Correlation", nullptr, 0, DO_Covariance_to_Correlation);
+	praat_addAction1 (classCovariance, 0, U"To PCA", nullptr, 0, DO_Covariance_to_PCA);
 
-	praat_addAction2 (classCovariance, 1, classTableOfReal, 1, U"To TableOfReal (mahalanobis)...", 0, 0, DO_Covariance_and_TableOfReal_mahalanobis);
+	praat_addAction2 (classCovariance, 1, classTableOfReal, 1, U"To TableOfReal (mahalanobis)...", nullptr, 0, DO_Covariance_and_TableOfReal_mahalanobis);
 
-	praat_addAction1 (classClassificationTable, 0, U"ClassificationTable help", 0, 0, DO_ClassificationTable_help);
+	praat_addAction1 (classClassificationTable, 0, U"ClassificationTable help", nullptr, 0, DO_ClassificationTable_help);
 	praat_TableOfReal_init (classClassificationTable);
 	praat_addAction1 (classClassificationTable, 0, U"Get class index at maximum in row...", U"Get column index...", 1, DO_ClassificationTable_getClassIndexAtMaximumInRow);
 	praat_addAction1 (classClassificationTable, 0, U"Get class label at maximum in row...", U"Get class index at maximum in row...", 1, DO_ClassificationTable_getClassLabelAtMaximumInRow);
-	praat_addAction1 (classClassificationTable, 0, U"To Confusion", 0, praat_HIDDEN, DO_ClassificationTable_to_Confusion_old); // deprecated 2014
-	praat_addAction1 (classClassificationTable, 0, U"To Confusion...", 0, 0, DO_ClassificationTable_to_Confusion);
-	praat_addAction1 (classClassificationTable, 0, U"To Correlation (columns)", 0, 0, DO_ClassificationTable_to_Correlation_columns);
-	praat_addAction1 (classClassificationTable, 0, U"To Strings (max. prob.)", 0, 0, DO_ClassificationTable_to_Strings_maximumProbability);
+	praat_addAction1 (classClassificationTable, 0, U"To Confusion", nullptr, praat_HIDDEN, DO_ClassificationTable_to_Confusion_old); // deprecated 2014
+	praat_addAction1 (classClassificationTable, 0, U"To Confusion...", nullptr, 0, DO_ClassificationTable_to_Confusion);
+	praat_addAction1 (classClassificationTable, 0, U"To Correlation (columns)", nullptr, 0, DO_ClassificationTable_to_Correlation_columns);
+	praat_addAction1 (classClassificationTable, 0, U"To Strings (max. prob.)", nullptr, 0, DO_ClassificationTable_to_Strings_maximumProbability);
 
-	praat_addAction1 (classCorrelation, 0, U"Correlation help", 0, 0, DO_Correlation_help);
+	praat_addAction1 (classCorrelation, 0, U"Correlation help", nullptr, 0, DO_Correlation_help);
 	praat_TableOfReal_init2 (classCorrelation);
 	praat_SSCP_query_init (classCorrelation);
 	praat_SSCP_extract_init (classCorrelation);
 	praat_addAction1 (classCorrelation, 1, U"Get diagonality (bartlett)...", U"Get ln(determinant)", 1, DO_Correlation_testDiagonality_bartlett);
-	praat_addAction1 (classCorrelation, 0, U"Confidence intervals...", 0, 0, DO_Correlation_confidenceIntervals);
-	praat_addAction1 (classCorrelation, 0, U"To PCA", 0, 0, DO_Correlation_to_PCA);
+	praat_addAction1 (classCorrelation, 0, U"Confidence intervals...", nullptr, 0, DO_Correlation_confidenceIntervals);
+	praat_addAction1 (classCorrelation, 0, U"To PCA", nullptr, 0, DO_Correlation_to_PCA);
 
 	praat_addAction1 (classDiscriminant, 0, U"Discriminant help", 0, 0, DO_Discriminant_help);
 	praat_addAction1 (classDiscriminant, 0, DRAW_BUTTON, 0, 0, 0);
@@ -8762,53 +8743,53 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classExcitations, 0, U"Extract", 0, 0, 0);
 	praat_addAction1 (classExcitations, 0, U"Extract Excitation...", 0, 0, DO_Excitations_getItem);
 	praat_addAction1 (classExcitations, 0, U"Synthesize", 0, 0, 0);
-	praat_addAction1 (classExcitations, 0, U"Append", 0, 0, DO_Excitations_append);
+	praat_addAction1 (classExcitations, 2, U"Append", 0, 0, DO_Excitations_append);
 	praat_addAction1 (classExcitations, 0, U"Convert", 0, 0, 0);
 	praat_addAction1 (classExcitations, 0, U"To Pattern...", 0, 0, DO_Excitations_to_Pattern);
 	praat_addAction1 (classExcitations, 0, U"To TableOfReal", 0, 0, DO_Excitations_to_TableOfReal);
 
 	praat_addAction2 (classExcitations, 1, classExcitation, 0, U"Add to Excitations", 0, 0, DO_Excitations_addItem);
 
-	praat_addAction1 (classFileInMemory, 1, U"Show as code...", 0, 0, DO_FileInMemory_showAsCode);
-	praat_addAction1 (classFileInMemory, 1, U"Set id...", 0, 0, DO_FileInMemory_setId);
-	praat_addAction1 (classFileInMemory, 0, U"To FilesInMemory", 0, 0, DO_FileInMemory_to_FilesInMemory);
+	praat_addAction1 (classFileInMemory, 1, U"Show as code...", nullptr, 0, DO_FileInMemory_showAsCode);
+	praat_addAction1 (classFileInMemory, 1, U"Set id...", nullptr, 0, DO_FileInMemory_setId);
+	praat_addAction1 (classFileInMemory, 0, U"To FilesInMemory", nullptr, 0, DO_FileInMemory_to_FilesInMemory);
 
-	praat_addAction1 (classFilesInMemory, 1, U"Show as code...", 0, 0, DO_FilesInMemory_showAsCode);
-	praat_addAction1 (classFilesInMemory, 1, U"Show one file as code...", 0, 0, DO_FilesInMemory_showOneFileAsCode);
-	praat_addAction1 (classFilesInMemory, 2, U"Merge", 0, 0, DO_FilesInMemory_merge);
-	praat_addAction1 (classFilesInMemory, 0, U"To Strings (id)", 0, 0, DO_FilesInMemory_to_Strings_id);
+	praat_addAction1 (classFilesInMemory, 1, U"Show as code...", nullptr, 0, DO_FilesInMemory_showAsCode);
+	praat_addAction1 (classFilesInMemory, 1, U"Show one file as code...", nullptr, 0, DO_FilesInMemory_showOneFileAsCode);
+	praat_addAction1 (classFilesInMemory, 2, U"Merge", nullptr, 0, DO_FilesInMemory_merge);
+	praat_addAction1 (classFilesInMemory, 0, U"To Strings (id)", nullptr, 0, DO_FilesInMemory_to_Strings_id);
 
-	praat_addAction2 (classFilesInMemory, 1, classFileInMemory, 0, U"Add items to Collection", 0, 0, DO_FilesInMemory_addItems);
+	praat_addAction2 (classFilesInMemory, 1, classFileInMemory, 0, U"Add items to Collection", nullptr, 0, DO_FilesInMemory_addItems);
 
-	praat_addAction1 (classFormantFilter, 0, U"FormantFilter help", 0, 0, DO_FormantFilter_help);
+	praat_addAction1 (classFormantFilter, 0, U"FormantFilter help", nullptr, 0, DO_FormantFilter_help);
 	praat_FilterBank_all_init (classFormantFilter);
 	praat_addAction1 (classFormantFilter, 0, U"Draw spectrum (slice)...", U"Draw filters...", praat_DEPTH_1 + praat_HIDDEN, DO_FormantFilter_drawSpectrum);
 	praat_addAction1 (classFormantFilter, 0, U"Draw filter functions...", U"Draw filters...",  praat_DEPTH_1 + praat_HIDDEN, DO_FormantFilter_drawFilterFunctions);
-	praat_addAction1 (classFormantFilter, 0, U"To Spectrogram", 0, 0, DO_FormantFilter_to_Spectrogram);
+	praat_addAction1 (classFormantFilter, 0, U"To Spectrogram", nullptr, 0, DO_FormantFilter_to_Spectrogram);
 	
 	
 	praat_addAction1 (classFormantGrid, 0, U"Draw...", U"Edit", praat_DEPTH_1 + praat_HIDDEN, DO_FormantGrid_draw);
 
 
 	praat_addAction1 (classIntensity, 0, U"To TextGrid (silences)...", U"To IntensityTier (valleys)", 0, DO_Intensity_to_TextGrid_detectSilences);
-	praat_addAction1 (classIntensityTier, 0, U"To TextGrid (silences)...", 0, 0, DO_IntensityTier_to_TextGrid_detectSilences);
-	praat_addAction1 (classIntensityTier, 0, U"To Intensity...", 0, praat_HIDDEN, DO_IntensityTier_to_Intensity);
+	praat_addAction1 (classIntensityTier, 0, U"To TextGrid (silences)...", nullptr, 0, DO_IntensityTier_to_TextGrid_detectSilences);
+	praat_addAction1 (classIntensityTier, 0, U"To Intensity...", nullptr, praat_HIDDEN, DO_IntensityTier_to_Intensity);
 
-	praat_addAction1 (classISpline, 0, U"ISpline help", 0, 0, DO_ISpline_help);
+	praat_addAction1 (classISpline, 0, U"ISpline help", nullptr, 0, DO_ISpline_help);
 	praat_Spline_init (classISpline);
 
-	praat_addAction1 (classKlattTable, 0, U"KlattTable help", 0, 0, DO_KlattTable_help);
-	praat_addAction1 (classKlattTable, 0, U"To Sound...", 0, 0, DO_KlattTable_to_Sound);
-	praat_addAction1 (classKlattTable, 0, U"To KlattGrid...", 0, 0, DO_KlattTable_to_KlattGrid);
-	praat_addAction1 (classKlattTable, 0, U"To Table", 0, 0, DO_KlattTable_to_Table);
+	praat_addAction1 (classKlattTable, 0, U"KlattTable help", nullptr, 0, DO_KlattTable_help);
+	praat_addAction1 (classKlattTable, 0, U"To Sound...", nullptr, 0, DO_KlattTable_to_Sound);
+	praat_addAction1 (classKlattTable, 0, U"To KlattGrid...", nullptr, 0, DO_KlattTable_to_KlattGrid);
+	praat_addAction1 (classKlattTable, 0, U"To Table", nullptr, 0, DO_KlattTable_to_Table);
 
-	praat_addAction1 (classLegendreSeries, 0, U"LegendreSeries help", 0, 0, DO_LegendreSeries_help);
+	praat_addAction1 (classLegendreSeries, 0, U"LegendreSeries help", nullptr, 0, DO_LegendreSeries_help);
 	praat_FunctionTerms_init (classLegendreSeries);
 	praat_addAction1 (classLegendreSeries, 0, U"To Polynomial", U"Analyse", 0, DO_LegendreSeries_to_Polynomial);
 
-	praat_addAction1 (classLongSound, 0, U"Append to existing sound file...", 0, 0, DO_LongSounds_appendToExistingSoundFile);
-	praat_addAction1 (classSound, 0, U"Append to existing sound file...", 0, 0, DO_LongSounds_appendToExistingSoundFile);
-	praat_addAction2 (classLongSound, 0, classSound, 0, U"Append to existing sound file...", 0, 0, DO_LongSounds_appendToExistingSoundFile);
+	praat_addAction1 (classLongSound, 0, U"Append to existing sound file...", nullptr, 0, DO_LongSounds_appendToExistingSoundFile);
+	praat_addAction1 (classSound, 0, U"Append to existing sound file...", nullptr, 0, DO_LongSounds_appendToExistingSoundFile);
+	praat_addAction2 (classLongSound, 0, classSound, 0, U"Append to existing sound file...", nullptr, 0, DO_LongSounds_appendToExistingSoundFile);
 
 	praat_addAction1 (classLongSound, 2, U"Save as stereo AIFF file...", U"Save as NIST file...", 1, DO_LongSounds_writeToStereoAiffFile);
 	praat_addAction1 (classLongSound, 2, U"Write to stereo AIFF file...", U"Write to NIST file...", praat_HIDDEN + praat_DEPTH_1, DO_LongSounds_writeToStereoAiffFile);
@@ -9149,7 +9130,6 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTableOfReal, 2, U"-- between tables --", U"To Configuration (lda)...", 1, 0);
 	praat_addAction1 (classTableOfReal, 2, U"To TableOfReal (cross-correlations)...", 0, praat_HIDDEN + praat_DEPTH_1, DO_TableOfReal_and_TableOfReal_crossCorrelations);
 
-
 	praat_addAction1 (classTableOfReal, 1, U"To Pattern and Categories...", U"To Matrix", 1, DO_TableOfReal_to_Pattern_and_Categories);
 	praat_addAction1 (classTableOfReal, 1, U"Split into Pattern and Categories...", U"To Pattern and Categories...", praat_DEPTH_1 | praat_HIDDEN, DO_TableOfReal_to_Pattern_and_Categories);
 	praat_addAction1 (classTableOfReal, 0, U"To Permutation (sort row labels)", U"To Matrix", 1, DO_TableOfReal_to_Permutation_sortRowlabels);
@@ -9172,7 +9152,7 @@ void praat_uvafon_David_init () {
 
 	praat_addAction2 (classStrings, 1, classPermutation, 1, U"Permute strings", 0, 0, DO_Strings_and_Permutation_permuteStrings);
 
-	praat_addAction2 (classTableOfReal, 1, classPermutation, 1, U"Permute rows",	0, 0, DO_TableOfReal_and_Permutation_permuteRows);
+	praat_addAction2 (classTableOfReal, 1, classPermutation, 1, U"Permute rows", 0, 0, DO_TableOfReal_and_Permutation_permuteRows);
 
 	praat_addAction1 (classTextGrid, 0, U"Extend time...", U"Scale times...", 2, DO_TextGrid_extendTime);
 	praat_addAction1 (classTextGrid, 1, U"Set tier name...", U"Remove tier...", 1, DO_TextGrid_setTierName);

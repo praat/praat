@@ -40,6 +40,7 @@
 #undef oo_STRUCT_MATRIX_FROM
 
 #undef oo_AUTO_OBJECT
+#undef oo_COLLECTION_OF
 #undef oo_AUTO_COLLECTION
 #undef oo_FILE
 #undef oo_DIR

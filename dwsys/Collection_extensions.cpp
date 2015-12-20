@@ -87,7 +87,7 @@ void structOrderedOfString :: v_info () {
 Thing_implement (OrderedOfString, Ordered, 0);
 
 int OrderedOfString_init (OrderedOfString me, long initialCapacity) {
-	Ordered_init (me, classSimpleString, initialCapacity);
+	Ordered_init (me, initialCapacity);
 	return 1;
 }
 

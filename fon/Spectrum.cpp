@@ -437,10 +437,10 @@ double Spectrum_getKurtosis (Spectrum me, double power) {
 void Spectrum_getNearestMaximum (Spectrum me, double frequency, double *frequencyOfMaximum, double *heightOfMaximum) {
 	try {
 		autoSpectrumTier thee = Spectrum_to_SpectrumTier_peaks (me);
-		long index = AnyTier_timeToNearestIndex (thee.peek(), frequency);
+		long index = AnyTier_timeToNearestIndex (thy asAnyTier(), frequency);
 		if (index == 0)
 			Melder_throw (U"No peak.");
-		RealPoint point = (RealPoint) thy points -> item [index];
+		RealPoint point = thy points [index];
 		*frequencyOfMaximum = point -> number;
 		*heightOfMaximum = point -> value;
 	} catch (MelderError) {
