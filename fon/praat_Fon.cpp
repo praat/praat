@@ -198,7 +198,7 @@ END2 }
 DIRECT2 (AmplitudeTier_downto_PointProcess) {
 	LOOP {
 		iam (AmplitudeTier);
-		autoPointProcess thee = AnyTier_downto_PointProcess (*me);
+		autoPointProcess thee = AnyTier_downto_PointProcess (me->asAnyTier());
 		praat_new (thee.move(), my name);
 	}
 END2 }
@@ -577,7 +577,7 @@ END2 }
 DIRECT2 (DurationTier_downto_PointProcess) {
 	LOOP {
 		iam (DurationTier);
-		autoPointProcess thee = AnyTier_downto_PointProcess (*me);
+		autoPointProcess thee = AnyTier_downto_PointProcess (me->asAnyTier());
 		praat_new (thee.move(), my name);
 	}
 END2 }
@@ -1383,7 +1383,7 @@ DO
 	LOOP {
 		iam (FormantTier);
 		autoFormantPoint point2 = Data_copy (point.peek());
-		AnyTier_addPoint_move (my asAnyTier(), point2.move());
+		AnyTier_addPoint_move (me->asAnyTier(), point2.move());
 		praat_dataChanged (me);
 	}
 END2 }
@@ -1905,7 +1905,7 @@ END2 }
 DIRECT2 (IntensityTier_downto_PointProcess) {
 	LOOP {
 		iam (IntensityTier);
-		autoPointProcess thee = AnyTier_downto_PointProcess (*me);
+		autoPointProcess thee = AnyTier_downto_PointProcess (me->asAnyTier());
 		praat_new (thee.move(), my name);
 	}
 END2 }
@@ -4069,7 +4069,7 @@ END2 }
 DIRECT2 (PitchTier_downto_PointProcess) {
 	LOOP {
 		iam (PitchTier);
-		autoPointProcess thee = AnyTier_downto_PointProcess (*me);
+		autoPointProcess thee = AnyTier_downto_PointProcess (me->asAnyTier());
 		praat_new (thee.move(), my name);
 	}
 END2 }
@@ -6165,7 +6165,7 @@ FORM (TimeTier_removePoint, U"Remove one point", U"AnyTier: Remove point...") {
 DO
 	LOOP {
 		iam (AnyTier);
-		AnyTier_removePoint (*me, GET_INTEGER (U"Point number"));
+		AnyTier_removePoint (me, GET_INTEGER (U"Point number"));
 		praat_dataChanged (me);
 	}
 END2 }
@@ -6176,7 +6176,7 @@ FORM (TimeTier_removePointNear, U"Remove one point", U"AnyTier: Remove point nea
 DO
 	LOOP {
 		iam (AnyTier);
-		AnyTier_removePointNear (*me, GET_REAL (U"Time"));
+		AnyTier_removePointNear (me, GET_REAL (U"Time"));
 		praat_dataChanged (me);
 	}
 END2 }
@@ -6188,7 +6188,7 @@ FORM (TimeTier_removePointsBetween, U"Remove points", U"AnyTier: Remove points b
 DO
 	LOOP {
 		iam (AnyTier);
-		AnyTier_removePointsBetween (*me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
+		AnyTier_removePointsBetween (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
 		praat_dataChanged (me);
 	}
 END2 }

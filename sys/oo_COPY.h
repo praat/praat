@@ -96,11 +96,12 @@
 	if (our x) thy x = Data_copy (our x.get());
 
 #define oo_COLLECTION_OF(Class,x,ItemClass,version)  \
-	thy x._item ++; \
-	Melder_free (thy x._item); \
 	thy x = our x; \
-	thy x._item = Melder_calloc (ItemClass, our x._capacity); \
-	thy x._item --; \
+	Melder_assert (thy x._item == our x._item);   /* shallow copy */ \
+	if (our x._capacity > 0) { \
+		thy x._item = Melder_calloc (ItemClass, our x._capacity); \
+		thy x._item --; \
+	} \
 	for (long i = 1; i <= our x._size; i ++) { \
 		if (our x [i]) thy x [i] = Data_copy (our x [i]).releaseToAmbiguousOwner(); \
 	}

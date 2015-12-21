@@ -80,12 +80,12 @@ double FormantTier_getValueAtTime (FormantTier me, int iformant, double t) {
 	FormantPoint pointRight = my points [1];
 	if (t <= pointRight -> number) {
 		if (iformant > pointRight -> numberOfFormants) return NUMundefined;
-		return pointRight -> formant [iformant-1];   /* Constant extrapolation. */
+		return pointRight -> formant [iformant-1];   // constant extrapolation
 	}
 	FormantPoint pointLeft = my points [n];
 	if (t >= pointLeft -> number) {
 		if (iformant > pointLeft -> numberOfFormants) return NUMundefined;
-		return pointLeft -> formant [iformant-1];   /* Constant extrapolation. */
+		return pointLeft -> formant [iformant-1];   // constant extrapolation
 	}
 	Melder_assert (n >= 2);
 	long ileft = AnyTier_timeToLowIndex (me->asAnyTier(), t), iright = ileft + 1;
@@ -98,9 +98,9 @@ double FormantTier_getValueAtTime (FormantTier me, int iformant, double t) {
 	double fright = iformant > pointRight -> numberOfFormants ? NUMundefined : pointRight -> formant [iformant-1];
 	return fleft == NUMundefined ? fright == NUMundefined ? NUMundefined : fright
 		: fright == NUMundefined ? fleft
-		: t == tright ? fright   /* Be very accurate. */
-		: tleft == tright ? 0.5 * (fleft + fright)   /* Unusual, but possible; no preference. */
-		: fleft + (t - tleft) * (fright - fleft) / (tright - tleft);   /* Linear interpolation. */
+		: t == tright ? fright   // be very accurate
+		: tleft == tright ? 0.5 * (fleft + fright)   // unusual, but possible; no preference
+		: fleft + (t - tleft) * (fright - fleft) / (tright - tleft);   // linear interpolation
 }
 
 double FormantTier_getBandwidthAtTime (FormantTier me, int iformant, double t) {
@@ -109,15 +109,15 @@ double FormantTier_getBandwidthAtTime (FormantTier me, int iformant, double t) {
 	FormantPoint pointRight = my points [1];
 	if (t <= pointRight -> number) {
 		if (iformant > pointRight -> numberOfFormants) return NUMundefined;
-		return pointRight -> bandwidth [iformant-1];   /* Constant extrapolation. */
+		return pointRight -> bandwidth [iformant-1];   // constant extrapolation
 	}
 	FormantPoint pointLeft = my points [n];
 	if (t >= pointLeft -> number) {
 		if (iformant > pointLeft -> numberOfFormants) return NUMundefined;
-		return pointLeft -> bandwidth [iformant-1];   /* Constant extrapolation. */
+		return pointLeft -> bandwidth [iformant-1];   // constant extrapolation
 	}
 	Melder_assert (n >= 2);
-	long ileft = AnyTier_timeToLowIndex (my asAnyTier(), t), iright = ileft + 1;
+	long ileft = AnyTier_timeToLowIndex (me->asAnyTier(), t), iright = ileft + 1;
 	Melder_assert (ileft >= 1 && iright <= n);
 	pointLeft = my points [ileft];
 	pointRight = my points [iright];
@@ -127,17 +127,17 @@ double FormantTier_getBandwidthAtTime (FormantTier me, int iformant, double t) {
 	double fright = iformant > pointRight -> numberOfFormants ? NUMundefined : pointRight -> bandwidth [iformant-1];
 	return fleft == NUMundefined ? fright == NUMundefined ? NUMundefined : fright
 		: fright == NUMundefined ? fleft
-		: t == tright ? fright   /* Be very accurate. */
-		: tleft == tright ? 0.5 * (fleft + fright)   /* Unusual, but possible; no preference. */
-		: fleft + (t - tleft) * (fright - fleft) / (tright - tleft);   /* Linear interpolation. */
+		: t == tright ? fright   // be very accurate
+		: tleft == tright ? 0.5 * (fleft + fright)   // unusual, but possible; no preference
+		: fleft + (t - tleft) * (fright - fleft) / (tright - tleft);   // linear interpolation
 }
 
 void FormantTier_speckle (FormantTier me, Graphics g, double tmin, double tmax, double fmax, int garnish) {
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 	Graphics_setWindow (g, tmin, tmax, 0.0, fmax);
 	Graphics_setInner (g);
-	long imin = AnyTier_timeToHighIndex (my asAnyTier(), tmin);
-	long imax = AnyTier_timeToLowIndex (my asAnyTier(), tmax);
+	long imin = AnyTier_timeToHighIndex (me->asAnyTier(), tmin);
+	long imax = AnyTier_timeToLowIndex (me->asAnyTier(), tmax);
 	if (imin > 0) for (long i = imin; i <= imax; i ++) {
 		FormantPoint point = my points [i];
 		double t = point -> number;
@@ -268,7 +268,7 @@ void Sound_FormantTier_filter_inline (Sound me, FormantTier formantTier) {
 				double cosomdt = cos (2 * NUMpi * formant * dt);
 				double r = exp (- NUMpi * bandwidth * dt);
 				/* Formants at 0 Hz or the Nyquist are single poles, others are double poles. */
-				if (fabs (cosomdt) > 0.999999) {   /* Allow for round-off errors. */
+				if (fabs (cosomdt) > 0.999999) {   // allow for round-off errors
 					/* single pole: D(z) = 1 - r z^-1 */
 					for (long channel = 1; channel <= my ny; channel ++) {
 						if (isamp > 1) my z [channel] [isamp] += r * my z [channel] [isamp - 1];

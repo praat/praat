@@ -38,9 +38,9 @@ static void menu_cb_removePoints (FormantGridEditor me, EDITOR_ARGS_DIRECT) {
 	Ordered tiers = my editingBandwidths ? grid -> bandwidths.get() : grid -> formants.get();
 	RealTier tier = (RealTier) tiers -> item [my selectedFormant];
 	if (my d_startSelection == my d_endSelection)
-		AnyTier_removePointNear (*tier, my d_startSelection);
+		AnyTier_removePointNear (tier->asAnyTier(), my d_startSelection);
 	else
-		AnyTier_removePointsBetween (*tier, my d_startSelection, my d_endSelection);
+		AnyTier_removePointsBetween (tier->asAnyTier(), my d_startSelection, my d_endSelection);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }

@@ -30,9 +30,9 @@ static void menu_cb_removePoints (RealTierEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Remove point(s)");
 	RealTier tier = (RealTier) my data;
 	if (my d_startSelection == my d_endSelection)
-		AnyTier_removePointNear (*tier, my d_startSelection);
+		AnyTier_removePointNear (tier->asAnyTier(), my d_startSelection);
 	else
-		AnyTier_removePointsBetween (*tier, my d_startSelection, my d_endSelection);
+		AnyTier_removePointsBetween (tier->asAnyTier(), my d_startSelection, my d_endSelection);
 	RealTierEditor_updateScaling (me);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
@@ -150,6 +150,7 @@ void structRealTierEditor :: v_dataChanged () {
 void structRealTierEditor :: v_draw () {
 	RealTier data = (RealTier) our data;
 	long n = data -> points.size();
+	Melder_casual (U"structRealTierEditor :: v_draw ", n);
 	Graphics_Viewport viewport;
 	if (our d_sound.data) {
 		viewport = Graphics_insetViewport (our d_graphics.get(), 0.0, 1.0, 1.0 - SOUND_HEIGHT, 1.0);
@@ -173,10 +174,12 @@ void structRealTierEditor :: v_draw () {
 	Graphics_text (our d_graphics.get(), our d_endWindow, our ymax,   Melder_float (Melder_half (ymax)), our v_rightTickUnits ());
 	Graphics_setTextAlignment (our d_graphics.get(), Graphics_LEFT, Graphics_HALF);
 	Graphics_text (our d_graphics.get(), our d_endWindow, our ymin,   Melder_float (Melder_half (our ymin)), our v_rightTickUnits ());
-	long ifirstSelected = AnyTier_timeToHighIndex (AnyTier (data), our d_startSelection);
-	long ilastSelected = AnyTier_timeToLowIndex (AnyTier (data), our d_endSelection);
-	long imin = AnyTier_timeToHighIndex (AnyTier (data), our d_startWindow);
-	long imax = AnyTier_timeToLowIndex (AnyTier (data), our d_endWindow);
+	long ifirstSelected = AnyTier_timeToHighIndex (data->asAnyTier(), our d_startSelection);
+	long ilastSelected = AnyTier_timeToLowIndex (data->asAnyTier(), our d_endSelection);
+	Melder_casual (U"structRealTierEditor :: v_draw: selected from ", our d_startSelection, U" ",
+		ifirstSelected, U" to ", our d_endSelection, U" ", ilastSelected);
+	long imin = AnyTier_timeToHighIndex (data->asAnyTier(), our d_startWindow);
+	long imax = AnyTier_timeToLowIndex (data->asAnyTier(), our d_endWindow);
 	Graphics_setLineWidth (our d_graphics.get(), 2.0);
 	if (n == 0) {
 		Graphics_setTextAlignment (our d_graphics.get(), Graphics_CENTRE, Graphics_HALF);
@@ -265,7 +268,7 @@ bool structRealTierEditor :: v_click (double xWC, double yWC, bool shiftKeyPress
 	/*
 	 * Clicked on a point?
 	 */
-	long inearestPoint = AnyTier_timeToNearestIndex (AnyTier (pitch), xWC);
+	long inearestPoint = AnyTier_timeToNearestIndex (pitch->asAnyTier(), xWC);
 	if (inearestPoint == 0) return RealTierEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	RealPoint nearestPoint = pitch -> points [inearestPoint];
 	if (Graphics_distanceWCtoMM (d_graphics.get(), xWC, yWC, nearestPoint -> number, nearestPoint -> value) > 1.5) {
@@ -280,8 +283,8 @@ bool structRealTierEditor :: v_click (double xWC, double yWC, bool shiftKeyPress
 		nearestPoint -> number > d_startSelection && nearestPoint -> number < d_endSelection;
 	long ifirstSelected, ilastSelected;
 	if (draggingSelection) {
-		ifirstSelected = AnyTier_timeToHighIndex (AnyTier (pitch), d_startSelection);
-		ilastSelected = AnyTier_timeToLowIndex (AnyTier (pitch), d_endSelection);
+		ifirstSelected = AnyTier_timeToHighIndex (pitch->asAnyTier(), d_startSelection);
+		ilastSelected = AnyTier_timeToLowIndex (pitch->asAnyTier(), d_endSelection);
 		Editor_save (this, U"Drag points");
 	} else {
 		ifirstSelected = ilastSelected = inearestPoint;

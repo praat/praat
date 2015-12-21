@@ -89,8 +89,8 @@ void PitchTier_Pitch_draw (PitchTier me, Pitch uv, Graphics g,
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 	Graphics_setWindow (g, tmin, tmax, fmin, fmax);
 	Graphics_setInner (g);
-	imin = AnyTier_timeToHighIndex (my asAnyTier(), tmin);
-	imax = AnyTier_timeToLowIndex (my asAnyTier(), tmax);
+	imin = AnyTier_timeToHighIndex (me->asAnyTier(), tmin);
+	imax = AnyTier_timeToLowIndex (me->asAnyTier(), tmax);
 	if (n == 0) {
 	} else if (imax < imin) {
 		double fleft = RealTier_getValueAtTime (me, tmin);

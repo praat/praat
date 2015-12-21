@@ -69,7 +69,7 @@ double structRealTier :: v_getFunction1 (long irow, double x) {
 	return RealTier_getValueAtTime (this, x);
 }
 
-Thing_implement (RealTier, Function, 0);
+Thing_implement (RealTier, AnyTier, 0);
 
 void RealTier_init (RealTier me, double tmin, double tmax) {
 	my xmin = tmin;
@@ -110,8 +110,6 @@ double RealTier_getValueAtIndex (RealTier me, long i) {
 	return my points [i] -> value;
 }
 
-static void tryout (structAnyTier& hup) { }
-
 double RealTier_getValueAtTime (RealTier me, double t) {
 	long n = my points.size();
 	if (n == 0) return NUMundefined;
@@ -120,8 +118,7 @@ double RealTier_getValueAtTime (RealTier me, double t) {
 	RealPoint pointLeft = my points [n];
 	if (t >= pointLeft -> number) return pointLeft -> value;   // constant extrapolation
 	Melder_assert (n >= 2);
-	long ileft = AnyTier_timeToLowIndex (my asAnyTier(), t), iright = ileft + 1;
-	tryout (*me);
+	long ileft = AnyTier_timeToLowIndex (me->asAnyTier(), t), iright = ileft + 1;
 	Melder_assert (ileft >= 1 && iright <= n);
 	pointLeft = my points [ileft];
 	pointRight = my points [iright];
@@ -159,9 +156,9 @@ double RealTier_getArea (RealTier me, double tmin, double tmax) {
 	RealPoint *points = & my points [0];
 	if (n == 0) return NUMundefined;
 	if (n == 1) return (tmax - tmin) * points [1] -> value;
-	imin = AnyTier_timeToLowIndex (my asAnyTier(), tmin);
+	imin = AnyTier_timeToLowIndex (me->asAnyTier(), tmin);
 	if (imin == n) return (tmax - tmin) * points [n] -> value;
-	imax = AnyTier_timeToHighIndex (my asAnyTier(), tmax);
+	imax = AnyTier_timeToHighIndex (me->asAnyTier(), tmax);
 	if (imax == 1) return (tmax - tmin) * points [1] -> value;
 	Melder_assert (imin < n);
 	Melder_assert (imax > 1);
@@ -195,9 +192,9 @@ double RealTier_getStandardDeviation_curve (RealTier me, double tmin, double tma
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   // autowindow
 	if (n == 0) return NUMundefined;
 	if (n == 1) return 0.0;
-	imin = AnyTier_timeToLowIndex (my asAnyTier(), tmin);
+	imin = AnyTier_timeToLowIndex (me->asAnyTier(), tmin);
 	if (imin == n) return 0.0;
-	imax = AnyTier_timeToHighIndex (my asAnyTier(), tmax);
+	imax = AnyTier_timeToHighIndex (me->asAnyTier(), tmax);
 	if (imax == 1) return 0.0;
 	Melder_assert (imin < n);
 	Melder_assert (imax > 1);
@@ -234,7 +231,7 @@ double RealTier_getMean_points (RealTier me, double tmin, double tmax) {
 	double sum = 0.0;
 	RealPoint *points = & my points [0];
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   // autowindow
-	n = AnyTier_getWindowPoints (my asAnyTier(), tmin, tmax, & imin, & imax);
+	n = AnyTier_getWindowPoints (me->asAnyTier(), tmin, tmax, & imin, & imax);
 	if (n == 0) return NUMundefined;
 	for (long i = imin; i <= imax; i ++)
 		sum += points [i] -> value;
@@ -246,7 +243,7 @@ double RealTier_getStandardDeviation_points (RealTier me, double tmin, double tm
 	double mean, sum = 0.0;
 	RealPoint *points = & my points [0];
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   // autowindow
-	n = AnyTier_getWindowPoints (my asAnyTier(), tmin, tmax, & imin, & imax);
+	n = AnyTier_getWindowPoints (me->asAnyTier(), tmin, tmax, & imin, & imax);
 	if (n < 2) return NUMundefined;
 	mean = RealTier_getMean_points (me, tmin, tmax);
 	for (long i = imin; i <= imax; i ++) {
@@ -275,8 +272,8 @@ void RealTier_draw (RealTier me, Graphics g, double tmin, double tmax, double fm
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 	Graphics_setWindow (g, tmin, tmax, fmin, fmax);
 	Graphics_setInner (g);
-	imin = AnyTier_timeToHighIndex (my asAnyTier(), tmin);
-	imax = AnyTier_timeToLowIndex (my asAnyTier(), tmax);
+	imin = AnyTier_timeToHighIndex (me->asAnyTier(), tmin);
+	imax = AnyTier_timeToLowIndex (me->asAnyTier(), tmax);
 	if (n == 0) {
 	} else if (imax < imin) {
 		double fleft = RealTier_getValueAtTime (me, tmin);
@@ -469,7 +466,7 @@ void RealTier_removePointsBelow (RealTier me, double level) {
 	for (long ipoint = my points.size(); ipoint > 0; ipoint --) {
 		RealPoint point = my points [ipoint];
 		if (point -> value < level) {
-			AnyTier_removePoint (*me, ipoint);
+			AnyTier_removePoint (me->asAnyTier(), ipoint);
 		}
 	}
 }

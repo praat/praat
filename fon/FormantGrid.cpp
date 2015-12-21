@@ -151,12 +151,12 @@ double FormantGrid_getBandwidthAtTime (FormantGrid me, long iformant, double t) 
 
 void FormantGrid_removeFormantPointsBetween (FormantGrid me, long iformant, double tmin, double tmax) {
 	if (iformant < 1 || iformant > my formants -> size) return;
-	AnyTier_removePointsBetween (* (AnyTier) my formants -> item [iformant], tmin, tmax);
+	AnyTier_removePointsBetween ((AnyTier) my formants -> item [iformant], tmin, tmax);
 }
 
 void FormantGrid_removeBandwidthPointsBetween (FormantGrid me, long iformant, double tmin, double tmax) {
 	if (iformant < 1 || iformant > my bandwidths -> size) return;
-	AnyTier_removePointsBetween (* (AnyTier) my bandwidths -> item [iformant], tmin, tmax);
+	AnyTier_removePointsBetween ((AnyTier) my bandwidths -> item [iformant], tmin, tmax);
 }
 
 void Sound_FormantGrid_filter_inline (Sound me, FormantGrid formantGrid) {

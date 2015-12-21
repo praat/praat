@@ -69,18 +69,14 @@ Thing_define (Collection, Daata) {
 */
 
 template <typename T>
-struct CollectionOf : structDaata {
-	T** _item;   // [1..size]
+struct CollectionOf {
+	T** _item { nullptr };   // [1..size]
 	long _size { 0 };
-	long _capacity { 30 };
+	long _capacity { 0 };
 	bool _ownItems { true };
 	bool _ownershipInitialized { false };
 
 	CollectionOf () {
-		our classInfo = & theClassInfo_Collection;
-		our name = nullptr;
-		our _item = Melder_calloc (T*, 30);
-		our _item --;   // convert from base-0 to base-1
 	}
 	virtual ~ CollectionOf () {
 		/*
@@ -111,12 +107,55 @@ struct CollectionOf : structDaata {
 	explicit operator bool () const {
 		return !! our _item;
 	}
+	void _initializeOwnership (bool ownItems) {
+		if (our _ownershipInitialized) {
+			Melder_assert (our _ownItems == ownItems);
+		} else {
+			our _ownItems = ownItems;
+			our _ownershipInitialized = true;
+		}
+	}
+	void _makeRoomForOneMoreItem (long pos) {
+		if (our _size >= our _capacity) {
+			long newCapacity = 2 * our _capacity + 30;   // enough room to guarantee space for one more item, if _capacity >= 0
+			T** oldItem_base0 = ( our _item ? our _item + 1 : nullptr );   // convert from base-1 to base-0
+			T** newItem_base0 = (T**) Melder_realloc (oldItem_base0, newCapacity * (int64) sizeof (T*));
+			our _item = newItem_base0 - 1;   // convert from base-0 to base-1
+			our _capacity = newCapacity;
+		}
+		our _size ++;
+		Melder_casual (U"increasing size to ", our _size);
+		for (long i = our _size; i > pos; i --) our _item [i] = our _item [i - 1];
+	}
+	void _insertItem_move (_Thing_auto <T> data, long pos) {
+		our _initializeOwnership (true);
+		our _makeRoomForOneMoreItem (pos);
+		our _item [pos] = data.releaseToAmbiguousOwner();
+	}
+	void _insertItem_ref (T* data, long pos) {
+		our _initializeOwnership (false);
+		our _makeRoomForOneMoreItem (pos);
+		our _item [pos] = data;
+	}
 	void addItem_ref (T* thing) {
 		//Melder_casual (U"addItem_ref ", _capacity, U" ", _ownItems);
-		Collection_addItem_ref ((Collection) this, thing);
+		Melder_assert (thing);
+		long index = our _v_position (thing);
+		if (index != 0) {
+			our _insertItem_ref (thing, index);
+		} else {
+			our _initializeOwnership (false);
+		}
 	}
 	void addItem_move (_Thing_auto<T> thing) {
-		Collection_addItem_move ((Collection) this, thing.move());
+		T* thingRef = thing.get();
+		long index = our _v_position (thingRef);
+		if (index != 0) {
+			our _insertItem_move (thing.move(), index);
+		} else {
+			our _initializeOwnership (true);
+			thing.reset();   // could not insert; I am the owner, so I must dispose of the data
+		}
 	}
 	T* subtractItem_ref (long pos) {
 		Melder_assert (pos >= 1 && pos <= our _size);
@@ -163,29 +202,9 @@ struct CollectionOf : structDaata {
 		}
 	}
 
-	void v_info ()
-		override { ((Collection) this) -> structCollection::v_info (); }
-	void v_destroy ()
-		override { ((Collection) this) -> structCollection::v_destroy (); };   // destroys all the items
-	void v_copy (Daata data_to)
-		override { ((Collection) this) -> structCollection::v_copy (data_to); };   // copies all the items
-	bool v_equal (Daata data2)
-		override { return ((Collection) this) -> structCollection::v_equal (data2); };   // compares 'my item [i]' with 'thy item [i]', i = 1..size
-	bool v_canWriteAsEncoding (int outputEncoding)
-		override { return ((Collection) this) -> structCollection::v_canWriteAsEncoding (outputEncoding); };
-	void v_writeText (MelderFile openFile)
-		override { ((Collection) this) -> structCollection::v_writeText (openFile); };
-	void v_readText (MelderReadText text, int formatVersion)
-		override { ((Collection) this) -> structCollection::v_readText (text, formatVersion); };
-	void v_writeBinary (FILE *f)
-		override { ((Collection) this) -> structCollection::v_writeBinary (f); };
-	void v_readBinary (FILE *f, int formatVersion)
-		override { ((Collection) this) -> structCollection::v_readBinary (f, formatVersion); };
-	//static Data_Description s_description;
-	//Data_Description v_description ()
-	//	override { return structCollection::s_description; }
-
-	virtual long v_position (T* /* data */) { return our _size + 1; /* at end */ };
+	virtual long _v_position (T* data) {
+		return our _size + 1; /* at end */
+	};
 };
 
 void Collection_init (Collection me, long initialCapacity);
@@ -303,16 +322,6 @@ Thing_define (Ordered, Collection) {
 template <typename T>
 struct OrderedOf : CollectionOf <T> {
 	OrderedOf () {
-		/*
-			The constructor of the superclass should have been called:
-		*/
-		Melder_assert (our classInfo == & theClassInfo_Collection);
-		Melder_assert (! our name);
-		Melder_assert (our _capacity == 30);
-		/*
-			Override the type information:
-		*/
-		our classInfo = & theClassInfo_Ordered;
 	}
 };
 
@@ -346,17 +355,27 @@ Thing_define (Sorted, Collection) {
 template <typename T>
 struct SortedOf : CollectionOf <T> {
 	SortedOf () {
-		our classInfo = & theClassInfo_Sorted;
 	}
 	void addItem_unsorted_move (_Thing_auto <T> data) {
-		_Collection_insertItem_move ((Collection) this, data.move(), our _size + 1);
+		our _insertItem_move (data.move(), our _size + 1);
 	}
 	void sort () {
 		our CollectionOf<T>::sort (our v_getCompareHook ());
 	}
 
-	long v_position (T* data)
-		override;
+	long _v_position (T* data) override {
+		typename SortedOf<T>::CompareHook compare = our v_getCompareHook ();
+		if (our _size == 0 || compare (data, our _item [our _size]) >= 0) return our _size + 1;
+		if (compare (data, our _item [1]) < 0) return 1;
+		/* Binary search. */
+		long left = 1, right = our _size;
+		while (left < right - 1) {
+			long mid = (left + right) / 2;
+			if (compare (data, our _item [mid]) >= 0) left = mid; else right = mid;
+		}
+		Melder_assert (right == left + 1);
+		return right;
+	}
 
 	static int s_compareHook (T* data1, T* data2) noexcept;
 	typedef int (*CompareHook) (T*, T*);
@@ -400,9 +419,27 @@ Thing_define (SortedSet, Sorted) {   // every item must be unique (by key)
 template <typename T>
 struct SortedSetOf : SortedOf <T> {
 	SortedSetOf () {
-		our classInfo = & theClassInfo_SortedSet;
 	}
-	long v_position (T* data) override { return ((SortedSet) this) -> structSortedSet::v_position (data); }   // returns 0 (refusal) if the key of 'data' already occurs
+	long _v_position (T* data) override {   // returns 0 (refusal) if the key of 'data' already occurs
+		typename SortedOf<T>::CompareHook compare = our v_getCompareHook ();
+		if (our _size == 0) return 1;   // empty set? then 'data' is going to be the first item
+		int where = compare (data, our _item [our _size]);   // compare with last item
+		if (where > 0) return our _size + 1;   // insert at end
+		if (where == 0) return 0;
+		if (compare (data, our _item [1]) < 0) return 1;   // compare with first item
+		long left = 1, right = our _size;
+		while (left < right - 1) {
+			long mid = (left + right) / 2;
+			if (compare (data, our _item [mid]) >= 0)
+				left = mid;
+			else
+				right = mid;
+		}
+		Melder_assert (right == left + 1);
+		if (! compare (data, our _item [left]) || ! compare (data, our _item [right]))
+			return 0;
+		return right;
+	}
 };
 
 void SortedSet_init (SortedSet me, long initialCapacity);
@@ -447,15 +484,14 @@ Thing_define (SortedSetOfDouble, SortedSet) {
 template <typename T>
 struct SortedSetOfDoubleOf : SortedSetOf <T> {
 	SortedSetOfDoubleOf () {
-		our classInfo = & theClassInfo_SortedSetOfDouble;
 	}
-	/*static int s_compareHook (T* me, T* thee) noexcept {
+	static int s_compareHook (SimpleDouble me, SimpleDouble thee) noexcept {
 		if (my number < thy number) return -1;
 		if (my number > thy number) return +1;
 		return 0;
-	}*/
+	}
 	typename SortedOf<T>::CompareHook v_getCompareHook ()
-		override { return (typename SortedOf<T>::CompareHook) structSortedSetOfDouble::s_compareHook; }
+		override { return (typename SortedOf<T>::CompareHook) our s_compareHook; }
 };
 
 void SortedSetOfDouble_init (SortedSetOfDouble me);
