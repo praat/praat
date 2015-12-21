@@ -22,7 +22,7 @@
 #include "Sampled.h"
 
 #include "Tube_def.h"
-oo_CLASS_CREATE (Tube, Sampled);
+oo_CLASS_CREATE (Tube);
 
 /*
 	Tube's as a function of time.

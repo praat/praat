@@ -26,8 +26,8 @@
 #include "AnyTier.h"
 
 #include "FormantTier_def.h"
-oo_CLASS_CREATE (FormantPoint, AnyPoint);
-oo_CLASS_CREATE (FormantTier, Function);
+oo_CLASS_CREATE (FormantPoint);
+oo_CLASS_CREATE (FormantTier);
 
 autoFormantPoint FormantPoint_create (double time);
 autoFormantTier FormantTier_create (double tmin, double tmax);

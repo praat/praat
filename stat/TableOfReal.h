@@ -26,7 +26,7 @@
 #include "Interpreter_decl.h"
 
 #include "TableOfReal_def.h"
-oo_CLASS_CREATE (TableOfReal, Daata);
+oo_CLASS_CREATE (TableOfReal);
 
 void TableOfReal_init (TableOfReal me, long numberOfRows, long numberOfColumns);
 autoTableOfReal TableOfReal_create (long numberOfRows, long numberOfColumns);

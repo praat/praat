@@ -102,10 +102,10 @@ struct CollectionOf : structDaata {
 			Melder_free (our _item);
 		}
 	}
-	long size () {
+	long size () const {
 		return _size;
 	}
-	T*& operator[] (long i) {
+	T*& operator[] (long i) const {
 		return _item [i];
 	}
 	explicit operator bool () const {
@@ -292,7 +292,6 @@ void Collection_sort (Collection me, Collection_ItemCompareHook compareHook);
 
 /* For the inheritors. */
 
-void _Collection_insertItem (Collection me, Thing item, long position);
 void _Collection_insertItem_move (Collection me, autoThing item, long position);
 void _Collection_insertItem_ref (Collection me, Thing item, long position);
 

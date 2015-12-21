@@ -22,7 +22,7 @@
 #include "Regression.h"
 
 #include "LogisticRegression_def.h"
-oo_CLASS_CREATE (LogisticRegression, Regression);
+oo_CLASS_CREATE (LogisticRegression);
 
 autoLogisticRegression LogisticRegression_create (const char32 *dependent1, const char32 *dependent2);
 

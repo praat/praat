@@ -192,24 +192,27 @@ void AnyTier_addPoint_move (AnyTier me, autoAnyPoint point) {
 	}
 }
 
-void AnyTier_removePoint (AnyTier me, long i) {
+#undef my
+#define my  me.
+
+void AnyTier_removePoint (structAnyTier& me, long i) {
 	if (i >= 1 && i <= my points.size()) my points. removeItem (i);
 }
 
-void AnyTier_removePointNear (AnyTier me, double time) {
-	long ipoint = AnyTier_timeToNearestIndex (me, time);
-	if (ipoint) my points. removeItem (ipoint);
+void AnyTier_removePointNear (structAnyTier& me, double time) {
+	long ipoint = AnyTier_timeToNearestIndex (&me, time);
+	if (ipoint) my points.removeItem (ipoint);
 }
 
-void AnyTier_removePointsBetween (AnyTier me, double tmin, double tmax) {
+void AnyTier_removePointsBetween (structAnyTier& me, double tmin, double tmax) {
 	if (my points.size() == 0) return;
-	long ileft = AnyTier_timeToHighIndex (me, tmin);
-	long iright = AnyTier_timeToLowIndex (me, tmax);
+	long ileft = AnyTier_timeToHighIndex (&me, tmin);
+	long iright = AnyTier_timeToLowIndex (&me, tmax);
 	for (long i = iright; i >= ileft; i --)
 		my points. removeItem (i);
 }
 
-autoPointProcess AnyTier_downto_PointProcess (AnyTier me) {
+autoPointProcess AnyTier_downto_PointProcess (structAnyTier& me) {
 	try {
 		long numberOfPoints = my points.size();
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, numberOfPoints);
@@ -219,7 +222,7 @@ autoPointProcess AnyTier_downto_PointProcess (AnyTier me) {
 		thy nt = numberOfPoints;
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (me, U": not converted to PointProcess.");
+		Melder_throw (& me, U": not converted to PointProcess.");
 	}
 }
 

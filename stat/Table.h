@@ -24,8 +24,8 @@
 #include "Interpreter_decl.h"
 
 #include "Table_def.h"
-oo_CLASS_CREATE (TableRow, Daata);
-oo_CLASS_CREATE (Table, Daata);
+oo_CLASS_CREATE (TableRow);
+oo_CLASS_CREATE (Table);
 
 void Table_initWithColumnNames (Table me, long numberOfRows, const char32 *columnNames);
 autoTable Table_createWithColumnNames (long numberOfRows, const char32 *columnNames);

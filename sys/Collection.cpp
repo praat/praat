@@ -255,18 +255,6 @@ static inline void _Collection_initializeOwnership (Collection me, bool ownItems
 	}
 }
 
-void _Collection_insertItem (Collection me, Thing data, long pos) {
-	my _ownershipInitialized = true;
-	if (my size >= my _capacity) {
-		Thing *dum = (Thing *) Melder_realloc (my item + 1, 2 * my _capacity * (int64) sizeof (Thing));
-		my item = dum - 1;
-		my _capacity *= 2;
-	}
-	my size ++;
-	for (long i = my size; i > pos; i --) my item [i] = my item [i - 1];
-	my item [pos] = data;
-}
-
 void _Collection_insertItem_move (Collection me, autoThing data, long pos) {
 	_Collection_initializeOwnership (me, true);
 	if (my size >= my _capacity) {

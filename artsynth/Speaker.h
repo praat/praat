@@ -22,7 +22,7 @@
 #include "Data.h"
 
 #include "Speaker_def.h"
-oo_CLASS_CREATE (Speaker, Daata);
+oo_CLASS_CREATE (Speaker);
 
 autoSpeaker Speaker_create (char32 *kindOfSpeaker, int numberOfVocalCordMasses);
 	/* Preconditions:								*/

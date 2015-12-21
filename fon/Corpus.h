@@ -22,7 +22,7 @@
 #include "Table.h"
 
 #include "Corpus_def.h"
-oo_CLASS_CREATE (Corpus, Table);
+oo_CLASS_CREATE (Corpus);
 
 #endif
 /* End of file Corpus.h */

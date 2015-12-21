@@ -22,7 +22,7 @@
 #include "Sampled.h"
 
 #include "SampledXY_def.h"
-oo_CLASS_CREATE (SampledXY, Sampled);
+oo_CLASS_CREATE (SampledXY);
 
 void SampledXY_init (SampledXY me, double xmin, double xmax, long nx, double dx, double x1,
                                    double ymin, double ymax, long ny, double dy, double y1);

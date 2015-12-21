@@ -28,7 +28,7 @@
 #include "OTGrammar_enums.h"
 
 #include "OTGrammar_def.h"
-oo_CLASS_CREATE (OTGrammar, Daata);
+oo_CLASS_CREATE (OTGrammar);
 
 Thing_define (OTHistory, TableOfReal) {
 };

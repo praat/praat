@@ -23,7 +23,7 @@
 #include "Graphics.h"
 
 #include "Artword_def.h"
-oo_CLASS_CREATE (Artword, Daata);
+oo_CLASS_CREATE (Artword);
 
 autoArtword Artword_create (double totalTime);
 

@@ -26,7 +26,7 @@
 #include "Pitch_enums.h"
 
 #include "Pitch_def.h"
-oo_CLASS_CREATE (Pitch, Sampled);
+oo_CLASS_CREATE (Pitch);
 
 autoPitch Pitch_create (double tmin, double tmax, long nt, double dt, double t1,
 	double ceiling, int maxnCandidates);

@@ -23,7 +23,7 @@
 #include "Graphics.h"
 
 #include "Transition_def.h"
-oo_CLASS_CREATE (Transition, Daata);
+oo_CLASS_CREATE (Transition);
 
 void Transition_init (Transition me, long numberOfStates);
 autoTransition Transition_create (long numberOfStates);

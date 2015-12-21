@@ -23,8 +23,8 @@
 #include "Collection.h"
 
 #include "FujisakiPitch_def.h"
-oo_CLASS_CREATE (FujisakiCommand, Function);
-oo_CLASS_CREATE (FujisakiPitch, Function);
+oo_CLASS_CREATE (FujisakiCommand);
+oo_CLASS_CREATE (FujisakiPitch);
 
 autoFujisakiCommand FujisakiCommand_create (double tmin, double tmax, double amplitude);
 

@@ -23,7 +23,7 @@
 #include "Graphics.h"
 
 #include "PointProcess_def.h"
-oo_CLASS_CREATE (PointProcess, Function);
+oo_CLASS_CREATE (PointProcess);
 
 autoPointProcess PointProcess_create (double startingTime, double finishingTime, long initialMaxnt);
 autoPointProcess PointProcess_createPoissonProcess (double startingTime, double finishingTime, double density);

@@ -214,7 +214,7 @@
 
 /*** Class declaration in header file. ***/
 
-#define oo_CLASS_CREATE(klas,parent) \
+#define oo_CLASS_CREATE(klas) \
 	extern struct structClassInfo theClassInfo_##klas; \
 	extern ClassInfo class##klas
 

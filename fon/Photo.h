@@ -22,7 +22,7 @@
 #include "Matrix.h"
 
 #include "Photo_def.h"
-oo_CLASS_CREATE (Photo, SampledXY);
+oo_CLASS_CREATE (Photo);
 
 void Photo_init (Photo me,
 	double xmin, double xmax, long nx, double dx, double x1,

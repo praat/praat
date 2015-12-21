@@ -23,7 +23,7 @@
 #include "Graphics.h"
 
 #include "LPC_def.h"
-oo_CLASS_CREATE (LPC, Sampled);
+oo_CLASS_CREATE (LPC);
 
 /*
 	From Sampled:

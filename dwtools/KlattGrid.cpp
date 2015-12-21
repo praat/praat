@@ -2343,7 +2343,7 @@ double KlattGrid_get##Name##AtTime (KlattGrid me, double t) \
 void KlattGrid_add##Name##Point (KlattGrid me, double t, double value) \
 { RealTier_addPoint (my phonation -> name.get(), t, value);} \
 void KlattGrid_remove##Name##Points (KlattGrid me, double t1, double t2) \
-{ AnyTier_removePointsBetween (my phonation -> name->asAnyTier(), t1, t2); } \
+{ AnyTier_removePointsBetween (* my phonation -> name.get(), t1, t2); } \
 auto##tierType KlattGrid_extract##Name##Tier (KlattGrid me) \
 { return Data_copy (my phonation -> name.get()); } \
 void KlattGrid_replace##Name##Tier (KlattGrid me, tierType thee) \
@@ -2456,7 +2456,7 @@ void KlattGrid_removeAmplitudePoints (KlattGrid me, int formantType, long iforma
 	if (iformant < 0 || iformant > (*ordered) ->size) {
 		return;
 	}
-	AnyTier_removePointsBetween (((IntensityTier) (*ordered) -> item[iformant])->asAnyTier(), t1, t2);
+	AnyTier_removePointsBetween (* ((IntensityTier) (*ordered) -> item[iformant]), t1, t2);
 }
 
 autoIntensityTier KlattGrid_extractAmplitudeTier (KlattGrid me, int formantType, long iformant) {
@@ -2698,7 +2698,7 @@ void KlattGrid_addFricationAmplitudePoint (KlattGrid me, double t, double value)
 }
 
 void KlattGrid_removeFricationAmplitudePoints (KlattGrid me, double t1, double t2) {
-	AnyTier_removePointsBetween (my frication -> fricationAmplitude->asAnyTier(), t1, t2);
+	AnyTier_removePointsBetween (* my frication -> fricationAmplitude.get(), t1, t2);
 }
 
 autoIntensityTier KlattGrid_extractFricationAmplitudeTier (KlattGrid me) {
@@ -2725,7 +2725,7 @@ void KlattGrid_addFricationBypassPoint (KlattGrid me, double t, double value) {
 }
 
 void KlattGrid_removeFricationBypassPoints (KlattGrid me, double t1, double t2) {
-	AnyTier_removePointsBetween (my frication -> bypass->asAnyTier(), t1, t2);
+	AnyTier_removePointsBetween (* my frication -> bypass.get(), t1, t2);
 }
 
 autoIntensityTier KlattGrid_extractFricationBypassTier (KlattGrid me) {

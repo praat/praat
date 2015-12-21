@@ -30,9 +30,9 @@ static void menu_cb_removePoints (RealTierEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Remove point(s)");
 	RealTier tier = (RealTier) my data;
 	if (my d_startSelection == my d_endSelection)
-		AnyTier_removePointNear (AnyTier (tier), my d_startSelection);
+		AnyTier_removePointNear (*tier, my d_startSelection);
 	else
-		AnyTier_removePointsBetween (AnyTier (tier), my d_startSelection, my d_endSelection);
+		AnyTier_removePointsBetween (*tier, my d_startSelection, my d_endSelection);
 	RealTierEditor_updateScaling (me);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);

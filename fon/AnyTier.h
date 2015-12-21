@@ -22,12 +22,6 @@
 #include "Collection.h"
 #include "PointProcess.h"
 
-/*
-#include "AnyTier_def.h"
-oo_CLASS_CREATE (AnyPoint, SimpleDouble);
-oo_CLASS_CREATE (AnyTier, Function);
-*/
-
 Thing_define (AnyPoint, SimpleDouble) {
 };
 
@@ -46,15 +40,16 @@ long AnyTier_getWindowPoints (AnyTier me, double tmin, double tmax, long *imin, 
 long AnyTier_timeToNearestIndex (AnyTier me, double time);
 long AnyTier_hasPoint (AnyTier me, double t);
 void AnyTier_addPoint_move (AnyTier me, autoAnyPoint point);
-void AnyTier_removePoint (AnyTier me, long i);
-void AnyTier_removePointNear (AnyTier me, double time);
-void AnyTier_removePointsBetween (AnyTier me, double tmin, double tmax);
-autoPointProcess AnyTier_downto_PointProcess (AnyTier me);
+void AnyTier_removePoint (structAnyTier& me, long i);
+void AnyTier_removePointNear (structAnyTier& me, double time);
+void AnyTier_removePointsBetween (structAnyTier& me, double tmin, double tmax);
+autoPointProcess AnyTier_downto_PointProcess (structAnyTier& me);
 
 #define AnyTier_METHODS \
 	AnyTier asAnyTier () { \
 		return reinterpret_cast <AnyTier> (this); \
 	} \
+	operator structAnyTier& () { return *this; } \
 	void v_shiftX (double xfrom, double xto) \
 		override { ((AnyTier) this) -> structAnyTier::v_shiftX (xfrom, xto); } \
 	void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto) \

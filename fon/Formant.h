@@ -24,7 +24,7 @@
 #include "Interpreter_decl.h"
 
 #include "Formant_def.h"
-oo_CLASS_CREATE (Formant, Sampled);
+oo_CLASS_CREATE (Formant);
 
 autoFormant Formant_create (double tmin, double tmax, long nt, double dt, double t1, int maxnFormants);
 /*

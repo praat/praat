@@ -23,7 +23,7 @@
 #include "Graphics.h"
 
 #include "Polygon_def.h"
-oo_CLASS_CREATE (Polygon, Daata);
+oo_CLASS_CREATE (Polygon);
 
 autoPolygon Polygon_create (long numberOfPoints);
 /*

@@ -28,7 +28,7 @@
 #include "Graphics.h"
 
 #include "SPINET_def.h"
-oo_CLASS_CREATE (SPINET, SampledXY);
+oo_CLASS_CREATE (SPINET);
 
 autoSPINET SPINET_create (double tmin, double tmax, long nt, double dt, double t1,
 	 double minimumFrequency, double maximumFrequency, long nFilters,

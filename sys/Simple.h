@@ -22,10 +22,10 @@
 #include "Data.h"
 
 #include "Simple_def.h"
-oo_CLASS_CREATE (SimpleInt, Daata);
-oo_CLASS_CREATE (SimpleLong, Daata);
-oo_CLASS_CREATE (SimpleDouble, Daata);
-oo_CLASS_CREATE (SimpleString, Daata);
+oo_CLASS_CREATE (SimpleInt);
+oo_CLASS_CREATE (SimpleLong);
+oo_CLASS_CREATE (SimpleDouble);
+oo_CLASS_CREATE (SimpleString);
 
 autoSimpleInt SimpleInt_create (int number);
 autoSimpleLong SimpleLong_create (long number);

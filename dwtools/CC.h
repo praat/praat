@@ -30,7 +30,7 @@
 #include "Matrix.h"
 
 #include "CC_def.h"
-oo_CLASS_CREATE (CC, Sampled);
+oo_CLASS_CREATE (CC);
 
 void CC_init (CC me, double tmin, double tmax, long nt, double dt, double t1, long maximumNumberOfCoefficients, double fmin, double fmax);
 

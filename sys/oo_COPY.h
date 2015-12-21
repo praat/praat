@@ -96,6 +96,8 @@
 	if (our x) thy x = Data_copy (our x.get());
 
 #define oo_COLLECTION_OF(Class,x,ItemClass,version)  \
+	thy x._item ++; \
+	Melder_free (thy x._item); \
 	thy x = our x; \
 	thy x._item = Melder_calloc (ItemClass, our x._capacity); \
 	thy x._item --; \

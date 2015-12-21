@@ -30,7 +30,7 @@
 
 
 #include "Eigen_def.h"
-oo_CLASS_CREATE (Eigen, Daata);
+oo_CLASS_CREATE (Eigen);
 
 autoEigen Eigen_create (long numberOfEigenvalues, long dimension);
 

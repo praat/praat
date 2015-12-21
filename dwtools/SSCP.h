@@ -24,7 +24,7 @@
 #include "CCA.h"
 
 #include "SSCP_def.h"
-oo_CLASS_CREATE (SSCP, TableOfReal);
+oo_CLASS_CREATE (SSCP);
 
 Thing_define (Covariance, SSCP) {
 };

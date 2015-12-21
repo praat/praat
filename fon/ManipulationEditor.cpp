@@ -202,9 +202,9 @@ static void menu_cb_removePitchPoints (ManipulationEditor me, EDITOR_ARGS_DIRECT
 	if (! ana -> pitch) return;
 	Editor_save (me, U"Remove pitch point(s)");
 	if (my d_startSelection == my d_endSelection)
-		AnyTier_removePointNear (ana -> pitch->asAnyTier(), my d_startSelection);
+		AnyTier_removePointNear (* ana -> pitch.get(), my d_startSelection);
 	else
-		AnyTier_removePointsBetween (ana -> pitch->asAnyTier(), my d_startSelection, my d_endSelection);
+		AnyTier_removePointsBetween (* ana -> pitch.get(), my d_startSelection, my d_endSelection);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
@@ -460,9 +460,9 @@ static void menu_cb_removeDurationPoints (ManipulationEditor me, EDITOR_ARGS_DIR
 	if (! ana -> duration) return;
 	Editor_save (me, U"Remove duration point(s)");
 	if (my d_startSelection == my d_endSelection)
-		AnyTier_removePointNear (ana -> duration->asAnyTier(), 0.5 * (my d_startSelection + my d_endSelection));
+		AnyTier_removePointNear (* ana -> duration.get(), 0.5 * (my d_startSelection + my d_endSelection));
 	else
-		AnyTier_removePointsBetween (ana -> duration->asAnyTier(), my d_startSelection, my d_endSelection);
+		AnyTier_removePointsBetween (* ana -> duration.get(), my d_startSelection, my d_endSelection);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }

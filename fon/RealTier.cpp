@@ -110,6 +110,8 @@ double RealTier_getValueAtIndex (RealTier me, long i) {
 	return my points [i] -> value;
 }
 
+static void tryout (structAnyTier& hup) { }
+
 double RealTier_getValueAtTime (RealTier me, double t) {
 	long n = my points.size();
 	if (n == 0) return NUMundefined;
@@ -118,7 +120,8 @@ double RealTier_getValueAtTime (RealTier me, double t) {
 	RealPoint pointLeft = my points [n];
 	if (t >= pointLeft -> number) return pointLeft -> value;   // constant extrapolation
 	Melder_assert (n >= 2);
-	long ileft = AnyTier_timeToLowIndex (AnyTier (me), t), iright = ileft + 1;
+	long ileft = AnyTier_timeToLowIndex (my asAnyTier(), t), iright = ileft + 1;
+	tryout (*me);
 	Melder_assert (ileft >= 1 && iright <= n);
 	pointLeft = my points [ileft];
 	pointRight = my points [iright];
@@ -156,9 +159,9 @@ double RealTier_getArea (RealTier me, double tmin, double tmax) {
 	RealPoint *points = & my points [0];
 	if (n == 0) return NUMundefined;
 	if (n == 1) return (tmax - tmin) * points [1] -> value;
-	imin = AnyTier_timeToLowIndex (AnyTier (me), tmin);
+	imin = AnyTier_timeToLowIndex (my asAnyTier(), tmin);
 	if (imin == n) return (tmax - tmin) * points [n] -> value;
-	imax = AnyTier_timeToHighIndex (AnyTier (me), tmax);
+	imax = AnyTier_timeToHighIndex (my asAnyTier(), tmax);
 	if (imax == 1) return (tmax - tmin) * points [1] -> value;
 	Melder_assert (imin < n);
 	Melder_assert (imax > 1);
@@ -192,9 +195,9 @@ double RealTier_getStandardDeviation_curve (RealTier me, double tmin, double tma
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   // autowindow
 	if (n == 0) return NUMundefined;
 	if (n == 1) return 0.0;
-	imin = AnyTier_timeToLowIndex (AnyTier (me), tmin);
+	imin = AnyTier_timeToLowIndex (my asAnyTier(), tmin);
 	if (imin == n) return 0.0;
-	imax = AnyTier_timeToHighIndex (AnyTier (me), tmax);
+	imax = AnyTier_timeToHighIndex (my asAnyTier(), tmax);
 	if (imax == 1) return 0.0;
 	Melder_assert (imin < n);
 	Melder_assert (imax > 1);
@@ -272,8 +275,8 @@ void RealTier_draw (RealTier me, Graphics g, double tmin, double tmax, double fm
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 	Graphics_setWindow (g, tmin, tmax, fmin, fmax);
 	Graphics_setInner (g);
-	imin = AnyTier_timeToHighIndex (AnyTier (me), tmin);
-	imax = AnyTier_timeToLowIndex (AnyTier (me), tmax);
+	imin = AnyTier_timeToHighIndex (my asAnyTier(), tmin);
+	imax = AnyTier_timeToLowIndex (my asAnyTier(), tmax);
 	if (n == 0) {
 	} else if (imax < imin) {
 		double fleft = RealTier_getValueAtTime (me, tmin);
@@ -466,7 +469,7 @@ void RealTier_removePointsBelow (RealTier me, double level) {
 	for (long ipoint = my points.size(); ipoint > 0; ipoint --) {
 		RealPoint point = my points [ipoint];
 		if (point -> value < level) {
-			AnyTier_removePoint (AnyTier (me), ipoint);
+			AnyTier_removePoint (*me, ipoint);
 		}
 	}
 }

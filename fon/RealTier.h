@@ -28,7 +28,7 @@
 /********** class RealPoint **********/
 
 #include "RealTier_def.h"
-oo_CLASS_CREATE (RealPoint, AnyPoint);
+oo_CLASS_CREATE (RealPoint);
 
 autoRealPoint RealPoint_create (double time, double value);
 /*
@@ -39,7 +39,7 @@ autoRealPoint RealPoint_create (double time, double value);
 
 /********** class RealTier **********/
 
-oo_CLASS_CREATE (RealTier, AnyTier);
+oo_CLASS_CREATE (RealTier);
 
 void RealTier_init (RealTier me, double tmin, double tmax);
 autoRealTier RealTier_create (double tmin, double tmax);
