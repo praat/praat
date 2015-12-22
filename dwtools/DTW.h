@@ -31,7 +31,6 @@
 #include "Sound.h"
 
 #include "DTW_def.h"
-oo_CLASS_CREATE (DTW, Matrix);
 
 #define DTW_SAKOECHIBA 1
 #define DTW_SLOPES 2

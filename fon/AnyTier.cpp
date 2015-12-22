@@ -198,7 +198,7 @@ void AnyTier_removePoint (AnyTier me, long i) {
 
 void AnyTier_removePointNear (AnyTier me, double time) {
 	long ipoint = AnyTier_timeToNearestIndex (me, time);
-	if (ipoint) my points. removeItem (ipoint);
+	if (ipoint) my points.removeItem (ipoint);
 }
 
 void AnyTier_removePointsBetween (AnyTier me, double tmin, double tmax) {

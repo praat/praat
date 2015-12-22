@@ -29,7 +29,7 @@ void structCollection :: v_destroy () {
 				forget (our item [i]);
 			}
 		}
-		our item ++;   // base 1
+		our item ++;   // convert from base-1 to base-0
 		Melder_free (our item);
 	}
 	Collection_Parent :: v_destroy ();
@@ -47,8 +47,10 @@ void structCollection :: v_copy (Daata thee_Daata) {
 	thy _ownItems = our _ownItems;
 	thy _capacity = our _capacity;
 	thy size = our size;
-	thy item = Melder_calloc (Thing, our _capacity);   // filled with null pointers
-	thy item --;   // immediately turn from base-0 into base-1  // BUG use NUMvector
+	if (our _capacity > 0) {
+		thy item = Melder_calloc (Thing, our _capacity);   // filled with null pointers
+		thy item --;   // immediately turn from base-0 into base-1  // BUG use NUMvector
+	}
 	for (long i = 1; i <= our size; i ++) {
 		Thing itempie = our item [i];
 		if (our _ownItems) {
@@ -255,39 +257,25 @@ static inline void _Collection_initializeOwnership (Collection me, bool ownItems
 	}
 }
 
-void _Collection_insertItem (Collection me, Thing data, long pos) {
-	my _ownershipInitialized = true;
+static inline void _Collection_makeRoomForOneMoreItem (Collection me, long pos) {
 	if (my size >= my _capacity) {
-		Thing *dum = (Thing *) Melder_realloc (my item + 1, 2 * my _capacity * (int64) sizeof (Thing));
-		my item = dum - 1;
-		my _capacity *= 2;
+		long newCapacity = 2 * my _capacity + 30;   // enough room to guarantee space for one more item, if _capacity >= 0
+		Thing *oldItem_base0 = ( my item ? my item + 1 : nullptr );   // convert from base-1 to base-0
+		Thing *newItem_base0 = (Thing *) Melder_realloc (oldItem_base0, newCapacity * (int64) sizeof (Thing));
+		my item = newItem_base0 - 1;   // convert from base-0 to base-1
+		my _capacity = newCapacity;
 	}
 	my size ++;
 	for (long i = my size; i > pos; i --) my item [i] = my item [i - 1];
-	my item [pos] = data;
 }
-
 void _Collection_insertItem_move (Collection me, autoThing data, long pos) {
 	_Collection_initializeOwnership (me, true);
-	if (my size >= my _capacity) {
-		Thing *dum = (Thing *) Melder_realloc (my item + 1, 2 * my _capacity * (int64) sizeof (Thing));
-		my item = dum - 1;
-		my _capacity *= 2;
-	}
-	my size ++;
-	for (long i = my size; i > pos; i --) my item [i] = my item [i - 1];
+	_Collection_makeRoomForOneMoreItem (me, pos);
 	my item [pos] = data.releaseToAmbiguousOwner();
 }
-
 void _Collection_insertItem_ref (Collection me, Thing data, long pos) {
 	_Collection_initializeOwnership (me, false);
-	if (my size >= my _capacity) {
-		Thing *dum = (Thing *) Melder_realloc (my item + 1, 2 * my _capacity * (int64) sizeof (Thing));
-		my item = dum - 1;
-		my _capacity *= 2;
-	}
-	my size ++;
-	for (long i = my size; i > pos; i --) my item [i] = my item [i - 1];
+	_Collection_makeRoomForOneMoreItem (me, pos);
 	my item [pos] = data;
 }
 

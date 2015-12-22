@@ -27,9 +27,6 @@
 #define WARPING_fromDiag 4
 
 #include "EditDistanceTable_def.h"
-oo_CLASS_CREATE (WarpingPath, Daata);
-oo_CLASS_CREATE (EditCostsTable, TableOfReal);
-oo_CLASS_CREATE (EditDistanceTable, TableOfReal);
 
 autoWarpingPath WarpingPath_create (long length);
 

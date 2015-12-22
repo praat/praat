@@ -198,7 +198,7 @@ END2 }
 DIRECT2 (AmplitudeTier_downto_PointProcess) {
 	LOOP {
 		iam (AmplitudeTier);
-		autoPointProcess thee = AnyTier_downto_PointProcess (my asAnyTier());
+		autoPointProcess thee = AnyTier_downto_PointProcess (me->asAnyTier());
 		praat_new (thee.move(), my name);
 	}
 END2 }
@@ -577,7 +577,7 @@ END2 }
 DIRECT2 (DurationTier_downto_PointProcess) {
 	LOOP {
 		iam (DurationTier);
-		autoPointProcess thee = AnyTier_downto_PointProcess (my asAnyTier());
+		autoPointProcess thee = AnyTier_downto_PointProcess (me->asAnyTier());
 		praat_new (thee.move(), my name);
 	}
 END2 }
@@ -1383,7 +1383,7 @@ DO
 	LOOP {
 		iam (FormantTier);
 		autoFormantPoint point2 = Data_copy (point.peek());
-		AnyTier_addPoint_move (my asAnyTier(), point2.move());
+		AnyTier_addPoint_move (me->asAnyTier(), point2.move());
 		praat_dataChanged (me);
 	}
 END2 }
@@ -1905,7 +1905,7 @@ END2 }
 DIRECT2 (IntensityTier_downto_PointProcess) {
 	LOOP {
 		iam (IntensityTier);
-		autoPointProcess thee = AnyTier_downto_PointProcess (my asAnyTier());
+		autoPointProcess thee = AnyTier_downto_PointProcess (me->asAnyTier());
 		praat_new (thee.move(), my name);
 	}
 END2 }
@@ -4069,7 +4069,7 @@ END2 }
 DIRECT2 (PitchTier_downto_PointProcess) {
 	LOOP {
 		iam (PitchTier);
-		autoPointProcess thee = AnyTier_downto_PointProcess (my asAnyTier());
+		autoPointProcess thee = AnyTier_downto_PointProcess (me->asAnyTier());
 		praat_new (thee.move(), my name);
 	}
 END2 }

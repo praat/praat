@@ -1606,7 +1606,7 @@ END2 }
 DIRECT2 (TextTier_downto_PointProcess) {
 	LOOP {
 		iam (TextTier);
-		autoPointProcess thee = AnyTier_downto_PointProcess (my asAnyTier());
+		autoPointProcess thee = AnyTier_downto_PointProcess (me->asAnyTier());
 		praat_new (thee.move(), my name);
 	}
 END2 }

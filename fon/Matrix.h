@@ -26,7 +26,6 @@
 #include "Interpreter_decl.h"
 
 #include "Matrix_def.h"
-oo_CLASS_CREATE (Matrix, SampledXY);
 
 void Matrix_init
 	(Matrix me, double xmin, double xmax, long nx, double dx, double x1,

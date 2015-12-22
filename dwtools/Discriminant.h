@@ -26,7 +26,6 @@
 #include "SSCP.h"
 
 #include "Discriminant_def.h"
-oo_CLASS_CREATE (Discriminant, Eigen);
 
 autoDiscriminant Discriminant_create (long numberOfGroups, long numberOfEigenvalues, long dimension);
 

@@ -22,7 +22,6 @@
 #include "Data.h"
 
 #include "Function_def.h"
-oo_CLASS_CREATE (Function, Daata);
 
 /*
 	An object of type Function represents a function f (x, ...) on the domain [xmin, xmax] * ....

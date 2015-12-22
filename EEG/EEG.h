@@ -24,7 +24,6 @@
 #include "../dwtools/ICA.h"
 
 #include "EEG_def.h"
-oo_CLASS_CREATE (EEG, Function);
 
 autoEEG EEG_create (double tmin, double tmax);
 
