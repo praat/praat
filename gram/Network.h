@@ -24,7 +24,6 @@
 #include "Network_enums.h"
 
 #include "Network_def.h"
-oo_CLASS_CREATE (Network, Daata);
 
 void Network_init (Network me,
 	double spreadingRate, enum kNetwork_activityClippingRule activityClippingRule,

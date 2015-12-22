@@ -29,7 +29,7 @@ void structCollection :: v_destroy () {
 				forget (our item [i]);
 			}
 		}
-		our item ++;   // base 1
+		our item ++;   // convert from base-1 to base-0
 		Melder_free (our item);
 	}
 	Collection_Parent :: v_destroy ();
@@ -43,13 +43,14 @@ void structCollection :: v_copy (Daata thee_Daata) {
 	Collection thee = static_cast <Collection> (thee_Daata);
 	thy item = nullptr;   // set to null in case the inherited v_copy crashes
 	Collection_Parent :: v_copy (thee);
-	thy itemClass = our itemClass;
 	thy _ownershipInitialized = our _ownershipInitialized;
 	thy _ownItems = our _ownItems;
 	thy _capacity = our _capacity;
 	thy size = our size;
-	thy item = Melder_calloc (Thing, our _capacity);   // filled with null pointers
-	thy item --;   // immediately turn from base-0 into base-1  // BUG use NUMvector
+	if (our _capacity > 0) {
+		thy item = Melder_calloc (Thing, our _capacity);   // filled with null pointers
+		thy item --;   // immediately turn from base-0 into base-1  // BUG use NUMvector
+	}
 	for (long i = 1; i <= our size; i ++) {
 		Thing itempie = our item [i];
 		if (our _ownItems) {
@@ -118,7 +119,7 @@ void structCollection :: v_readText (MelderReadText text, int formatVersion) {
 		autostring8 line = Melder_32to8 (MelderReadText_readLine (text));
 		if (! line.peek() || ! sscanf (line.peek(), "%ld", & l_size) || l_size < 0)
 			Melder_throw (U"Collection::readText: cannot read size.");
-		Collection_init (this, nullptr, l_size);
+		Collection_init (this, l_size);
 		for (long i = 1; i <= l_size; i ++) {
 			long itemNumberRead;
 			int n = 0, length, stringsRead;
@@ -151,7 +152,7 @@ void structCollection :: v_readText (MelderReadText text, int formatVersion) {
 		}
 	} else {
 		int32_t l_size = texgeti4 (text);
-		Collection_init (this, nullptr, l_size);
+		Collection_init (this, l_size);
 		for (int32_t i = 1; i <= l_size; i ++) {
 			autostring32 className = texgetw2 (text);
 			int elementFormatVersion;
@@ -185,7 +186,7 @@ void structCollection :: v_readBinary (FILE *f, int formatVersion) {
 		int32 l_size = bingeti4 (f);
 		if (l_size < 0)
 			Melder_throw (U"Empty collection.");
-		Collection_init (this, nullptr, l_size);
+		Collection_init (this, l_size);
 		for (int32_t i = 1; i <= l_size; i ++) {
 			char klas [200], name [2000];
 			if (fscanf (f, "%s%s", klas, name) < 2)   // BUG
@@ -204,7 +205,7 @@ void structCollection :: v_readBinary (FILE *f, int formatVersion) {
 		int32_t l_size = bingeti4 (f);
 		if (Melder_debug == 44)
 			Melder_casual (U"structCollection :: v_readBinary: Reading ", l_size, U" objects");
-		Collection_init (this, nullptr, l_size);
+		Collection_init (this, l_size);
 		for (int32_t i = 1; i <= l_size; i ++) {
 			autostring8 klas = bingets1 (f);
 			if (Melder_debug == 44)
@@ -232,8 +233,7 @@ Data_Description structCollection :: s_description = & theCollection_description
 
 Thing_implement (Collection, Daata, 0);
 
-void Collection_init (Collection me, ClassInfo itemClass_, long initialCapacity) {
-	my itemClass = itemClass_;
+void Collection_init (Collection me, long initialCapacity) {
 	my _ownershipInitialized = false;
 	my _ownItems = true;
 	my _capacity = initialCapacity >= 1 ? initialCapacity : 1;
@@ -242,9 +242,9 @@ void Collection_init (Collection me, ClassInfo itemClass_, long initialCapacity)
 	my item --;   // base 1
 }
 
-autoCollection Collection_create (ClassInfo itemClass, long initialCapacity) {
+autoCollection Collection_create (long initialCapacity) {
 	autoCollection me = Thing_new (Collection);
-	Collection_init (me.peek(), itemClass, initialCapacity);
+	Collection_init (me.peek(), initialCapacity);
 	return me;
 }
 
@@ -257,39 +257,25 @@ static inline void _Collection_initializeOwnership (Collection me, bool ownItems
 	}
 }
 
-void _Collection_insertItem (Collection me, Thing data, long pos) {
-	my _ownershipInitialized = true;
+static inline void _Collection_makeRoomForOneMoreItem (Collection me, long pos) {
 	if (my size >= my _capacity) {
-		Thing *dum = (Thing *) Melder_realloc (my item + 1, 2 * my _capacity * (int64) sizeof (Thing));
-		my item = dum - 1;
-		my _capacity *= 2;
+		long newCapacity = 2 * my _capacity + 30;   // enough room to guarantee space for one more item, if _capacity >= 0
+		Thing *oldItem_base0 = ( my item ? my item + 1 : nullptr );   // convert from base-1 to base-0
+		Thing *newItem_base0 = (Thing *) Melder_realloc (oldItem_base0, newCapacity * (int64) sizeof (Thing));
+		my item = newItem_base0 - 1;   // convert from base-0 to base-1
+		my _capacity = newCapacity;
 	}
 	my size ++;
 	for (long i = my size; i > pos; i --) my item [i] = my item [i - 1];
-	my item [pos] = data;
 }
-
 void _Collection_insertItem_move (Collection me, autoThing data, long pos) {
 	_Collection_initializeOwnership (me, true);
-	if (my size >= my _capacity) {
-		Thing *dum = (Thing *) Melder_realloc (my item + 1, 2 * my _capacity * (int64) sizeof (Thing));
-		my item = dum - 1;
-		my _capacity *= 2;
-	}
-	my size ++;
-	for (long i = my size; i > pos; i --) my item [i] = my item [i - 1];
+	_Collection_makeRoomForOneMoreItem (me, pos);
 	my item [pos] = data.releaseToAmbiguousOwner();
 }
-
 void _Collection_insertItem_ref (Collection me, Thing data, long pos) {
 	_Collection_initializeOwnership (me, false);
-	if (my size >= my _capacity) {
-		Thing *dum = (Thing *) Melder_realloc (my item + 1, 2 * my _capacity * (int64) sizeof (Thing));
-		my item = dum - 1;
-		my _capacity *= 2;
-	}
-	my size ++;
-	for (long i = my size; i > pos; i --) my item [i] = my item [i - 1];
+	_Collection_makeRoomForOneMoreItem (me, pos);
 	my item [pos] = data;
 }
 
@@ -420,13 +406,13 @@ void Collection_sort (Collection me, Collection_ItemCompareHook compareHook) {
 
 Thing_implement (Ordered, Collection, 0);
 
-void Ordered_init (Ordered me, ClassInfo itemClass, long initialMaximumLength) {
-	Collection_init (me, itemClass, initialMaximumLength);
+void Ordered_init (Ordered me, long initialMaximumLength) {
+	Collection_init (me, initialMaximumLength);
 }
 
 autoOrdered Ordered_create () {
 	autoOrdered me = Thing_new (Ordered);
-	Ordered_init (me.peek(), nullptr, 10);
+	Ordered_init (me.peek(), 10);
 	return me;
 }
 
@@ -459,8 +445,8 @@ int structSorted :: s_compareHook (Daata /* data1 */, Daata /* data2 */) noexcep
 	return 0;   // in the base class, all are equal
 }
 
-void Sorted_init (Sorted me, ClassInfo itemClass, long initialCapacity) {
-	Collection_init (me, itemClass, initialCapacity);
+void Sorted_init (Sorted me, long initialCapacity) {
+	Collection_init (me, initialCapacity);
 }
 
 void Sorted_addItem_unsorted_move (Sorted me, autoThing data) {
@@ -496,8 +482,8 @@ long structSortedSet :: v_position (Thing data) {
 
 Thing_implement (SortedSet, Sorted, 0);
 
-void SortedSet_init (SortedSet me, ClassInfo itemClass, long initialCapacity) {
-	Sorted_init (me, itemClass, initialCapacity);
+void SortedSet_init (SortedSet me, long initialCapacity) {
+	Sorted_init (me, initialCapacity);
 }
 
 /********** class SortedSetOfInt **********/
@@ -511,7 +497,7 @@ int structSortedSetOfInt :: s_compareHook (SimpleInt me, SimpleInt thee) noexcep
 }
 
 void SortedSetOfInt_init (SortedSetOfInt me) {
-	SortedSet_init (me, classSimpleInt, 10);
+	SortedSet_init (me, 10);
 }
 
 autoSortedSetOfInt SortedSetOfInt_create () {
@@ -531,7 +517,7 @@ int structSortedSetOfLong :: s_compareHook (SimpleLong me, SimpleLong thee) noex
 }
 
 void SortedSetOfLong_init (SortedSetOfLong me) {
-	SortedSet_init (me, classSimpleLong, 10);
+	SortedSet_init (me, 10);
 }
 
 autoSortedSetOfLong SortedSetOfLong_create () {
@@ -551,7 +537,7 @@ int structSortedSetOfDouble :: s_compareHook (SimpleDouble me, SimpleDouble thee
 Thing_implement (SortedSetOfDouble, SortedSet, 0);
 
 void SortedSetOfDouble_init (SortedSetOfDouble me) {
-	SortedSet_init (me, classSimpleDouble, 10);
+	SortedSet_init (me, 10);
 }
 
 autoSortedSetOfDouble SortedSetOfDouble_create () {
@@ -565,7 +551,7 @@ autoSortedSetOfDouble SortedSetOfDouble_create () {
 Thing_implement (SortedSetOfString, SortedSet, 0);
 
 void SortedSetOfString_init (SortedSetOfString me) {
-	SortedSet_init (me, classSimpleString, 10);
+	SortedSet_init (me, 10);
 }
 
 autoSortedSetOfString SortedSetOfString_create () {
@@ -639,8 +625,8 @@ void Cyclic_unicize (Cyclic me) {
 		Cyclic_cycleLeft (me);
 }
 
-void Cyclic_init (Cyclic me, ClassInfo itemClass, long initialCapacity) {
-	Collection_init (me, itemClass, initialCapacity);
+void Cyclic_init (Cyclic me, long initialCapacity) {
+	Collection_init (me, initialCapacity);
 }
 
 /* End of file Collection.cpp */

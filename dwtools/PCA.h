@@ -32,7 +32,6 @@
 #include "Eigen.h"
 
 #include "PCA_def.h"
-oo_CLASS_CREATE (PCA, Eigen);
 
 autoPCA PCA_create (long numberOfComponents, long dimension);
 

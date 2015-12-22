@@ -1125,16 +1125,15 @@ autoPairDistribution OTGrammar_to_PairDistribution (OTGrammar me, long trialsPer
 			 * Copy the input and output strings to the target object.
 			 */
 			for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
-				PairDistribution_add (thee.peek(), tableau -> input, tableau -> candidates [icand]. output, 0);
+				PairDistribution_add (thee.peek(), tableau -> input, tableau -> candidates [icand]. output, 0.0);
 			}
 			/*
 			 * Compute a number of outputs and store the results.
 			 */
-			PairProbability *p = (PairProbability *) thy pairs -> item;   // may have changed after PairDistribution_add !!!
 			for (long itrial = 1; itrial <= trialsPerInput; itrial ++) {
 				OTGrammar_newDisharmonies (me, noise);
 				long iwinner = OTGrammar_getWinner (me, itab);
-				p [nout + iwinner] -> weight += 1;
+				thy pairs [nout + iwinner] -> weight += 1.0;
 			}
 			/*
 			 * Update the offset.
@@ -1784,8 +1783,8 @@ void OTGrammar_PairDistribution_learn (OTGrammar me, PairDistribution thee,
 
 static long PairDistribution_getNumberOfAttestedOutputs (PairDistribution me, const char32 *input, char32 **attestedOutput) {
 	long result = 0;
-	for (long ipair = 1; ipair <= my pairs -> size; ipair ++) {
-		PairProbability pair = (PairProbability) my pairs -> item [ipair];
+	for (long ipair = 1; ipair <= my pairs.size(); ipair ++) {
+		PairProbability pair = my pairs [ipair];
 		if (str32equ (pair -> string1, input) && pair -> weight > 0.0) {
 			if (attestedOutput) *attestedOutput = pair -> string2;
 			result ++;
@@ -2314,8 +2313,8 @@ long OTGrammar_PairDistribution_getMinimumNumberCorrect (OTGrammar me, PairDistr
 {
 	try {
 		long minimumNumberCorrect = numberOfReplications;
-		for (long ipair = 1; ipair <= thy pairs -> size; ipair ++) {
-			PairProbability prob = (PairProbability) thy pairs -> item [ipair];
+		for (long ipair = 1; ipair <= thy pairs.size(); ipair ++) {
+			PairProbability prob = thy pairs [ipair];
 			if (prob -> weight > 0.0) {
 				long numberOfCorrect = 0;
 				char32 *input = prob -> string1, *adultOutput = prob -> string2;
@@ -2576,8 +2575,8 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 			bool grammarHasChangedDuringCycle = false;
 			OTGrammar_honourLocalRankings (me, 1.0, 0.0, & grammarHasChangedDuringCycle);
 			OTGrammar_newDisharmonies (me, evaluationNoise);
-			for (iform = 1; iform <= thy pairs -> size; iform ++) {
-				PairProbability prob = (PairProbability) thy pairs -> item [iform];
+			for (iform = 1; iform <= thy pairs.size(); iform ++) {
+				PairProbability prob = thy pairs [iform];
 				if (prob -> weight > 0.0) {
 					bool grammarHasChanged = false;
 					OTGrammar_learnOne (me, prob -> string1, prob -> string2,
@@ -2614,8 +2613,8 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 					bool grammarHasChangedDuringCycle = false;
 					OTGrammar_honourLocalRankings (me, 1.0, 0.0, & grammarHasChangedDuringCycle);
 					OTGrammar_newDisharmonies (me, evaluationNoise);
-					for (iform = 1; iform <= thy pairs -> size; iform ++) {
-						PairProbability prob = (PairProbability) thy pairs -> item [iform];
+					for (iform = 1; iform <= thy pairs.size(); iform ++) {
+						PairProbability prob = thy pairs [iform];
 						if (prob -> weight > 0.0) {
 							bool grammarHasChanged = false;
 							OTGrammar_learnOne (me, prob -> string1, prob -> string2,
@@ -2660,8 +2659,8 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 							bool grammarHasChangedDuringCycle = false;
 							OTGrammar_honourLocalRankings (me, 1.0, 0.0, & grammarHasChangedDuringCycle);
 							OTGrammar_newDisharmonies (me, evaluationNoise);
-							for (iform = 1; iform <= thy pairs -> size; iform ++) {
-								PairProbability prob = (PairProbability) thy pairs -> item [iform];
+							for (iform = 1; iform <= thy pairs.size(); iform ++) {
+								PairProbability prob = thy pairs [iform];
 								if (prob -> weight > 0.0) {
 									bool grammarHasChanged = false;
 									OTGrammar_learnOne (me, prob -> string1, prob -> string2,

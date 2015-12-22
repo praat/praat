@@ -88,7 +88,7 @@ void Movie_paintOneImageInside (Movie me, Graphics graphics, long frameNumber, d
 	try {
 		if (frameNumber < 1) Melder_throw (U"Specified frame number is ", frameNumber, U" but should be at least 1.");
 		if (frameNumber > my nx) Melder_throw (U"Specified frame number is ", frameNumber, U" but there are only ", my nx, U"frames.");
-		Melder_assert (my d_fileNames != 0);
+		Melder_assert (my d_fileNames);
 		Melder_assert (my d_fileNames -> numberOfStrings == my nx);
 		struct structMelderDir folder;
 		Melder_pathToDir (my d_folderName, & folder);

@@ -22,7 +22,6 @@
 #include "Sound.h"
 
 #include "ERP_def.h"
-oo_CLASS_CREATE (ERP, Sound);
 
 /**
 	Look up the channel number from its name.

@@ -134,7 +134,7 @@ DIRECT2 (ResultsMFC_to_Categories_responses) {
 END2 }
 
 DIRECT2 (ResultsMFCs_to_Table) {
-	autoCollection collection = Collection_create (classResultsMFC, 100);
+	autoCollection collection = Collection_create (100);
 	WHERE (SELECTED) {
 		iam_LOOP (ResultsMFC);
 		Collection_addItem_ref (collection.peek(), me);

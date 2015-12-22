@@ -117,7 +117,7 @@ static void cb_open_ok (UiForm sendingForm, int /* narg */, Stackel /* args */, 
 static void cb_showOpen (EditorCommand cmd) {
 	TextEditor me = (TextEditor) cmd -> d_editor;
 	if (! my openDialog)
-		my openDialog = UiInfile_create (my d_windowForm, U"Open", cb_open_ok, me, nullptr, nullptr, false);
+		my openDialog = autoUiForm (UiInfile_create (my d_windowForm, U"Open", cb_open_ok, me, nullptr, nullptr, false));
 	UiInfile_do (my openDialog.get());
 }
 
@@ -131,7 +131,7 @@ static void cb_saveAs_ok (UiForm sendingForm, int /* narg */, Stackel /* args */
 
 static void menu_cb_saveAs (TextEditor me, EDITOR_ARGS_DIRECT) {
 	if (! my saveDialog)
-		my saveDialog = UiOutfile_create (my d_windowForm, U"Save", cb_saveAs_ok, me, nullptr, nullptr);
+		my saveDialog = autoUiForm (UiOutfile_create (my d_windowForm, U"Save", cb_saveAs_ok, me, nullptr, nullptr));
 	char32 defaultName [300];
 	Melder_sprint (defaultName,300, ! my v_fileBased () ? U"info.txt" : my name [0] ? MelderFile_name (& my file) : U"");
 	UiOutfile_do (my saveDialog.get(), defaultName);
@@ -657,7 +657,7 @@ void TextEditor_init (TextEditor me, const char32 *initialText) {
 		Thing_setName (me, U"");
 	}
 	if (! theReferencesToAllOpenTextEditors) {
-		theReferencesToAllOpenTextEditors = Collection_create (classTextEditor, 100);
+		theReferencesToAllOpenTextEditors = Collection_create (100);
 	}
 	if (theReferencesToAllOpenTextEditors) {
 		Collection_addItem_ref (theReferencesToAllOpenTextEditors.get(), me);

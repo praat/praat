@@ -707,7 +707,7 @@ FORM (ERPTier_removeEventsBetween, U"Remove events", U"ERPTier: Remove events be
 DO
 	LOOP {
 		iam (ERPTier);
-		AnyTier_removePointsBetween (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
+		AnyTier_removePointsBetween (me->asAnyTier(), GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
 		praat_dataChanged (me);
 	}
 END2 }

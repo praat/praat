@@ -983,15 +983,15 @@ static TextTier pr_TextGrid_peekTextTier (UiForm dia) {
 static TextInterval pr_TextGrid_peekInterval (UiForm dia) {
 	int intervalNumber = GET_INTEGER (STRING_INTERVAL_NUMBER);
 	IntervalTier intervalTier = pr_TextGrid_peekIntervalTier (dia);
-	if (intervalNumber > intervalTier -> intervals -> size) Melder_throw (U"Interval number too large.");
-	return (TextInterval) intervalTier -> intervals -> item [intervalNumber];
+	if (intervalNumber > intervalTier -> intervals.size()) Melder_throw (U"Interval number too large.");
+	return intervalTier -> intervals [intervalNumber];
 }
 
 static TextPoint pr_TextGrid_peekPoint (UiForm dia) {	
 	long pointNumber = GET_INTEGER (STRING_POINT_NUMBER);
 	TextTier textTier = pr_TextGrid_peekTextTier (dia);
-	if (pointNumber > textTier -> points -> size) Melder_throw (U"Point number too large.");
-	return (TextPoint) textTier -> points -> item [pointNumber];
+	if (pointNumber > textTier -> points.size()) Melder_throw (U"Point number too large.");
+	return textTier -> points [pointNumber];
 }
 
 FORM (TextGrid_extractOneTier, U"TextGrid: Extract one tier", nullptr) {
@@ -1035,7 +1035,7 @@ FORM (TextGrid_getHighIndexFromTime, U"Get high index", U"AnyTier: Get high inde
 	OK2
 DO
 	TextTier textTier = pr_TextGrid_peekTextTier (dia);
-	long highIndex = AnyTier_timeToHighIndex (textTier, GET_REAL (U"Time"));
+	long highIndex = AnyTier_timeToHighIndex (textTier->asAnyTier(), GET_REAL (U"Time"));
 	Melder_information (highIndex);
 END2 }
 
@@ -1075,7 +1075,7 @@ FORM (TextGrid_getLowIndexFromTime, U"Get low index", U"AnyTier: Get low index f
 	OK2
 DO
 	TextTier textTier = pr_TextGrid_peekTextTier (dia);
-	long lowIndex = AnyTier_timeToLowIndex (textTier, GET_REAL (U"Time"));
+	long lowIndex = AnyTier_timeToLowIndex (textTier->asAnyTier(), GET_REAL (U"Time"));
 	Melder_information (lowIndex);
 END2 }
 
@@ -1095,7 +1095,7 @@ FORM (TextGrid_getNearestIndexFromTime, U"Get nearest index", U"AnyTier: Get nea
 	OK2
 DO
 	TextTier textTier = pr_TextGrid_peekTextTier (dia);
-	long nearestIndex = AnyTier_timeToNearestIndex (textTier, GET_REAL (U"Time"));
+	long nearestIndex = AnyTier_timeToNearestIndex (textTier->asAnyTier(), GET_REAL (U"Time"));
 	Melder_information (nearestIndex);
 END2 }
 
@@ -1114,7 +1114,7 @@ FORM (TextGrid_getNumberOfIntervals, U"TextGrid: Get number of intervals", nullp
 	OK2
 DO
 	IntervalTier intervalTier = pr_TextGrid_peekIntervalTier (dia);
-	long numberOfIntervals = intervalTier -> intervals -> size;
+	long numberOfIntervals = intervalTier -> intervals.size();
 	Melder_information (numberOfIntervals);
 END2 }
 
@@ -1162,7 +1162,7 @@ FORM (TextGrid_getNumberOfPoints, U"TextGrid: Get number of points", nullptr) {
 	OK2
 DO
 	TextTier textTier = pr_TextGrid_peekTextTier (dia);
-	long numberOfPoints = textTier -> points -> size;
+	long numberOfPoints = textTier -> points.size();
 	Melder_information (numberOfPoints);
 END2 }
 
@@ -1425,9 +1425,9 @@ DO
 		if (intervalTier -> classInfo != classIntervalTier)
 			Melder_throw (U"You cannot remove a boundary from tier ", itier, U" of ", me,
 				U", because that tier is a point tier instead of an interval tier.");
-		if (iinterval > intervalTier -> intervals -> size)
+		if (iinterval > intervalTier -> intervals.size())
 			Melder_throw (U"You cannot remove a boundary from interval ", iinterval, U" of tier ", itier, U" of ", me,
-				U", because that tier has only ", intervalTier -> intervals -> size, U" intervals.");
+				U", because that tier has only ", intervalTier -> intervals.size(), U" intervals.");
 		if (iinterval == 1)
 			Melder_throw (U"You cannot remove the left boundary from interval 1 of tier ", itier, U" of ", me,
 				U", because this is at the left edge of the tier.");
@@ -1453,9 +1453,9 @@ DO
 		if (pointTier -> classInfo != classTextTier)
 			Melder_throw (U"You cannot remove a point from tier ", itier, U" of ", me,
 				U", because that tier is an interval tier instead of a point tier.");
-		if (ipoint > pointTier -> points -> size)
+		if (ipoint > pointTier -> points.size())
 			Melder_throw (U"You cannot remove point ", ipoint, U" from tier ", itier, U" of ", me,
-				U", because that tier has only ", pointTier -> points -> size, U" points.");
+				U", because that tier has only ", pointTier -> points.size(), U" points.");
 		TextTier_removePoint (pointTier, ipoint);
 		praat_dataChanged (me);
 	}
@@ -1491,10 +1491,10 @@ DO
 		if (intervalTier -> classInfo != classIntervalTier)
 			Melder_throw (U"You cannot remove a boundary from tier ", itier, U" of ", me,
 				U", because that tier is a point tier instead of an interval tier.");
-		if (iinterval > intervalTier -> intervals -> size)
+		if (iinterval > intervalTier -> intervals.size())
 			Melder_throw (U"You cannot remove a boundary from interval ", iinterval, U" of tier ", itier, U" of ", me,
-				U", because that tier has only ", intervalTier -> intervals -> size, U" intervals.");
-		if (iinterval == intervalTier -> intervals -> size)
+				U", because that tier has only ", intervalTier -> intervals.size(), U" intervals.");
+		if (iinterval == intervalTier -> intervals.size())
 			Melder_throw (U"You cannot remove the right boundary from interval ", iinterval, U" of tier ", itier, U" of ", me,
 				U", because this is at the right edge of the tier.");
 		IntervalTier_removeLeftBoundary (intervalTier, iinterval + 1);
@@ -1606,7 +1606,7 @@ END2 }
 DIRECT2 (TextTier_downto_PointProcess) {
 	LOOP {
 		iam (TextTier);
-		autoPointProcess thee = AnyTier_downto_PointProcess (me);
+		autoPointProcess thee = AnyTier_downto_PointProcess (me->asAnyTier());
 		praat_new (thee.move(), my name);
 	}
 END2 }
@@ -1637,8 +1637,8 @@ DO
 	LOOP {
 		iam (TextTier);
 		long ipoint = GET_INTEGER (U"Point number");
-		if (ipoint > my points -> size) Melder_throw (U"No such point.");
-		TextPoint point = (TextPoint) my points -> item [ipoint];
+		if (ipoint > my points.size()) Melder_throw (U"No such point.");
+		TextPoint point = my points [ipoint];
 		Melder_information (point -> mark);
 	}
 END2 }

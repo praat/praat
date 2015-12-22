@@ -43,7 +43,7 @@ typedef struct structDataSubEditor_FieldData {
 #define kDataSubEditor_MAXNUM_ROWS  12
 
 Thing_define (DataSubEditor, Editor) {
-	DataEditor d_root;
+	DataEditor root;
 	void *d_address;
 	Data_Description d_description;
 	GuiScrollBar d_scrollBar;
@@ -94,7 +94,7 @@ Thing_define (ClassEditor, StructEditor) {
 };
 
 Thing_define (DataEditor, ClassEditor) {
-	autoCollection d_children;
+	CollectionOf <structDataSubEditor> children;
 
 	void v_destroy ()
 		override;

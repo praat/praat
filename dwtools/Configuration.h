@@ -24,7 +24,6 @@
 #include "Collection.h"
 
 #include "Configuration_def.h"
-oo_CLASS_CREATE (Configuration, TableOfReal);
 
 autoConfiguration Configuration_create (long numberOfPoints, long numberOfDimensions);
 

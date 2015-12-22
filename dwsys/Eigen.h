@@ -28,9 +28,7 @@
 #include "Graphics.h"
 #include "Strings_.h"
 
-
 #include "Eigen_def.h"
-oo_CLASS_CREATE (Eigen, Daata);
 
 autoEigen Eigen_create (long numberOfEigenvalues, long dimension);
 

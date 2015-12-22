@@ -172,7 +172,7 @@ autoFeatureWeights FeatureWeights_computeWrapperInt
 )
 
 {
-	if (! me) return nullptr;
+	if (! me) return autoFeatureWeights();
 
 	try {
 		double pivot = 0.5;
@@ -277,7 +277,7 @@ autoFeatureWeights FeatureWeights_computeWrapperExt
 )
 
 {
-	if (! nn) return nullptr;
+	if (! nn) return autoFeatureWeights();
 
 	try {
 		double pivot = 0.5;

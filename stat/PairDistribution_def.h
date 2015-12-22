@@ -32,7 +32,7 @@ oo_END_CLASS (PairProbability)
 #define ooSTRUCT PairDistribution
 oo_DEFINE_CLASS (PairDistribution, Daata)
 
-	oo_AUTO_COLLECTION (Ordered, pairs, PairProbability, 0)
+	oo_COLLECTION_OF (OrderedOf, pairs, PairProbability, 0)
 
 	#if oo_DECLARING
 		void v_info ()

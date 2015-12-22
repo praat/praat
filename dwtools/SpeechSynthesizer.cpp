@@ -330,12 +330,12 @@ static void IntervalTier_addBoundaryUnsorted (IntervalTier me, long iinterval, d
 	}
 
 	// Modify end time of left label
-	TextInterval ti = (TextInterval) my intervals -> item[iinterval];
+	TextInterval ti = my intervals [iinterval];
 	ti -> xmax = time;
 	if (isNewleftLabel) TextInterval_setText (ti, newLabel);
 
 	autoTextInterval ti_new = TextInterval_create (time, my xmax, (! isNewleftLabel ? newLabel : U""));
-	Sorted_addItem_unsorted_move (my intervals.get(), ti_new.move());
+	my intervals. addItem_unsorted_move (ti_new.move());
 }
 
 static void Table_setEventTypeString (Table me) {
@@ -402,7 +402,7 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 				// Only insert a new boundary, no text
 				// text will be inserted at end sentence event
 				if (time > xmin and time < xmax) {
-					IntervalTier_addBoundaryUnsorted (itc, itc -> intervals -> size, time, U"", true);
+					IntervalTier_addBoundaryUnsorted (itc, itc -> intervals.size(), time, U"", true);
 				}
 				p1c = pos;
 			} else if (type == espeakEVENT_END) {
@@ -411,9 +411,9 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 				MelderString_ncopy (&mark, text + p1c - 1, length);
 				MelderString_trimWhiteSpaceAtEnd (&mark);
 				if (time > xmin and time < xmax) {
-					IntervalTier_addBoundaryUnsorted (itc, itc -> intervals -> size, time, mark.string, true);
+					IntervalTier_addBoundaryUnsorted (itc, itc -> intervals.size(), time, mark.string, true);
 				} else {
-					TextGrid_setIntervalText (thee.peek(), 2, itc -> intervals -> size, mark.string);
+					TextGrid_setIntervalText (thee.peek(), 2, itc -> intervals.size(), mark.string);
 				}
 				p1c = pos;
 
@@ -424,9 +424,9 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 					MelderString_ncopy (&mark, text + p1w - 1, length);
 					MelderString_trimWhiteSpaceAtEnd (&mark);
 					if (time > xmin and time < xmax) {
-						IntervalTier_addBoundaryUnsorted (itw, itw -> intervals -> size, time, mark.string, true);
+						IntervalTier_addBoundaryUnsorted (itw, itw -> intervals.size(), time, mark.string, true);
 					} else {
-						TextGrid_setIntervalText (thee.peek(), 3, itw -> intervals -> size, mark.string);
+						TextGrid_setIntervalText (thee.peek(), 3, itw -> intervals.size(), mark.string);
 					}
 					// now the next word event should not trigger setting the left interval text
 					wordEnd = false;
@@ -440,7 +440,7 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 					if (pos == textLength) length++;
 					MelderString_ncopy (&mark, text + p1w - 1, length);
 					MelderString_trimWhiteSpaceAtEnd (&mark);
-					IntervalTier_addBoundaryUnsorted (itw, itw -> intervals -> size, time, (wordEnd ? mark.string : U""), true);
+					IntervalTier_addBoundaryUnsorted (itw, itw -> intervals.size(), time, (wordEnd ? mark.string : U""), true);
 				}
 				wordEnd = true;
 				p1w = pos;
@@ -449,20 +449,20 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 				if (time > t1p) {
 					// Insert new boudary and label interval with the id
 					// TODO: Translate the id to the correct notation
-					TextInterval ti = (TextInterval) itp -> intervals -> item[itp -> intervals -> size];
+					TextInterval ti = itp -> intervals [itp -> intervals.size()];
 					if (time > ti -> xmin and time < ti -> xmax) {
-						IntervalTier_addBoundaryUnsorted (itp, itp -> intervals -> size, time, id, false);
+						IntervalTier_addBoundaryUnsorted (itp, itp -> intervals.size(), time, id, false);
 					}
 				} else {
 					// Just in case the phoneme starts at xmin we only need to set interval text
-					TextGrid_setIntervalText (thee.peek(), 4, itp -> intervals -> size, id);
+					TextGrid_setIntervalText (thee.peek(), 4, itp -> intervals.size(), id);
 				}
 				t1p = time;
 			}
 		}
-		Sorted_sort (itc -> intervals.get());
-		Sorted_sort (itw -> intervals.get());
-		Sorted_sort (itp -> intervals.get());
+		itc -> intervals. sort ();
+		itw -> intervals. sort ();
+		itp -> intervals. sort ();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"TextGrid not created from Table with events.");

@@ -794,7 +794,7 @@ Thing_implement (MDSVecs, Ordered, 0);
 autoMDSVecs MDSVecs_create () {
 	try {
 		autoMDSVecs me = Thing_new (MDSVecs);
-		Ordered_init (me.peek(), classMDSVec, 10);
+		Ordered_init (me.peek(), 10);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"MDSVecs not created.");
@@ -823,7 +823,7 @@ Thing_implement (Confusions, Proximities, 0);
 autoConfusions Confusions_create () {
 	try {
 		autoConfusions me = Thing_new (Confusions);
-		Proximities_init (me.peek(), classConfusion);
+		Proximities_init (me.peek());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Confusions not created.");
@@ -848,7 +848,7 @@ Thing_implement (Distances, Proximities, 0);
 autoDistances Distances_create () {
 	try {
 		autoDistances me = Thing_new (Distances);
-		Proximities_init (me.peek(), classDistance);
+		Proximities_init (me.peek());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Distances not created.");
@@ -878,7 +878,7 @@ Thing_implement (ScalarProducts, TablesOfReal, 0);
 autoScalarProducts ScalarProducts_create () {
 	try {
 		autoScalarProducts me = Thing_new (ScalarProducts);
-		TablesOfReal_init (me.peek(), classScalarProduct);
+		TablesOfReal_init (me.peek());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ScalarProducts not created.");
@@ -979,7 +979,7 @@ Thing_implement (Dissimilarities, Proximities, 0);
 autoDissimilarities Dissimilarities_create () {
 	try {
 		autoDissimilarities me = Thing_new (Dissimilarities);
-		Proximities_init (me.peek(), classDissimilarity);
+		Proximities_init (me.peek());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Dissimilarities not created.");
@@ -1446,14 +1446,14 @@ autoDistance Dissimilarity_Distance_monotoneRegression (Dissimilarity me, Distan
 
 Thing_implement (Proximities, TablesOfReal, 0);
 
-void Proximities_init (Proximities me, ClassInfo klas) {
-	TablesOfReal_init (me, klas);
+void Proximities_init (Proximities me) {
+	TablesOfReal_init (me);
 }
 
 autoProximities Proximities_create () {
 	try {
 		autoProximities me = Thing_new (Proximities);
-		Proximities_init (me.peek(), classProximity);
+		Proximities_init (me.peek());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Proximities not created.");
@@ -1879,7 +1879,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissi
 		if (my numberOfRows != nPoints || (!no_weight && weight -> numberOfRows != nPoints) || t -> numberOfPoints != nPoints) {
 			Melder_throw (U"Dimensions not in concordance.");
 		}
-		autoWeight aw = 0;
+		autoWeight aw;
 		if (no_weight) {
 			aw = Weight_create (nPoints);
 			weight = aw.peek();
@@ -2920,7 +2920,7 @@ autoCollection INDSCAL_createCarrollWishExample (double noiseRange) {
 		autoConfiguration c = Configuration_createCarrollWishExample ();
 		long numberOfObjects = c -> numberOfRows, numberOfSources = 8;
 		autoSalience s = Salience_createCarrollWishExample ();
-		autoCollection me = Collection_create (classDaata, numberOfSources);
+		autoCollection me = Collection_create (numberOfSources);
 		for (long l = 1; l <= numberOfSources; l++) {
 			c -> w[1] = s -> data[l][1];
 			c -> w[2] = s -> data[l][2];

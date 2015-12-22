@@ -27,24 +27,20 @@
 
 #include "TextGrid_def.h"
 
-oo_CLASS_CREATE (TextPoint, AnyPoint);
 autoTextPoint TextPoint_create (double time, const char32 *mark);
 
 void TextPoint_setText (TextPoint me, const char32 *text);
 
-oo_CLASS_CREATE (TextInterval, Function);
 autoTextInterval TextInterval_create (double tmin, double tmax, const char32 *text);
 
 void TextInterval_setText (TextInterval me, const char32 *text);
 
-oo_CLASS_CREATE (TextTier, AnyTier);
 autoTextTier TextTier_create (double tmin, double tmax);
 
 void TextTier_addPoint (TextTier me, double time, const char32 *mark);
 autoTextTier TextTier_readFromXwaves (MelderFile file);
 autoPointProcess TextTier_getPoints (TextTier me, const char32 *text);
 
-oo_CLASS_CREATE (IntervalTier, Function);
 autoIntervalTier IntervalTier_create (double tmin, double tmax);
 autoIntervalTier IntervalTier_readFromXwaves (MelderFile file);
 void IntervalTier_writeToXwaves (IntervalTier me, MelderFile file);
@@ -63,7 +59,6 @@ void IntervalTier_removeLeftBoundary (IntervalTier me, long iinterval);
 
 void TextTier_removePoint (TextTier me, long ipoint);
 
-oo_CLASS_CREATE (TextGrid, Function);
 autoTextGrid TextGrid_createWithoutTiers (double tmin, double tmax);
 autoTextGrid TextGrid_create (double tmin, double tmax, const char32 *tierNames, const char32 *pointTiers);
 

@@ -26,10 +26,11 @@
 #include "Simple.h"
 
 Thing_define (Collection, Daata) {
-	ClassInfo itemClass;   // the class of which all items must be members (see Thing_isa)
-	bool _ownershipInitialized, _ownItems;
-	long _capacity, size;
 	Thing *item;   // [1..size]
+	long size;
+	long _capacity;
+	bool _ownItems;
+	bool _ownershipInitialized;
 
 	void v_info ()
 		override;
@@ -57,7 +58,7 @@ Thing_define (Collection, Daata) {
 };
 /*
 	An object of type Collection is a collection of items of any class.
-	It is the owner of its items.
+	The items are either owned by the Collection, or they are references.
 	You can access the items in the collection as item [1] through item [size].
 	There can be no null items.
 
@@ -67,8 +68,146 @@ Thing_define (Collection, Daata) {
 		item [1..size]		// the items.
 */
 
-void Collection_init (Collection me, ClassInfo itemClass, long initialCapacity);
-autoCollection Collection_create (ClassInfo itemClass, long initialCapacity);
+template <typename T>
+struct CollectionOf {
+	T** _item { nullptr };   // [1..size]
+	long _size { 0 };
+	long _capacity { 0 };
+	bool _ownItems { true };
+	bool _ownershipInitialized { false };
+
+	CollectionOf () {
+	}
+	virtual ~ CollectionOf () {
+		/*
+			We cannot simply do
+				//our v_destroy ();
+			because C++ will implicitly call the destructor for structDaata,
+			whereas structCollection::v_destroy explicitly calls structDaata::v_destroy;
+			calling v_destroy here would therefore free structThing::name twice,
+			which may not crash Praat (assuming that `name` is nulled the first time)
+			but which is not how destruction should be organized.
+		*/
+		if (our _item) {
+			if (our _ownItems) {
+				for (long i = 1; i <= our _size; i ++) {
+					_Thing_forget (our _item [i]);
+				}
+			}
+			our _item ++;   // convert from base-1 to base-0
+			Melder_free (our _item);
+		}
+	}
+	long size () const {
+		return _size;
+	}
+	T*& operator[] (long i) const {
+		return _item [i];
+	}
+	explicit operator bool () const {
+		return !! our _item;
+	}
+	void _initializeOwnership (bool ownItems) {
+		if (our _ownershipInitialized) {
+			Melder_assert (our _ownItems == ownItems);
+		} else {
+			our _ownItems = ownItems;
+			our _ownershipInitialized = true;
+		}
+	}
+	void _makeRoomForOneMoreItem (long pos) {
+		if (our _size >= our _capacity) {
+			long newCapacity = 2 * our _capacity + 30;   // enough room to guarantee space for one more item, if _capacity >= 0
+			T** oldItem_base0 = ( our _item ? our _item + 1 : nullptr );   // convert from base-1 to base-0
+			T** newItem_base0 = (T**) Melder_realloc (oldItem_base0, newCapacity * (int64) sizeof (T*));
+			our _item = newItem_base0 - 1;   // convert from base-0 to base-1
+			our _capacity = newCapacity;
+		}
+		our _size ++;
+		for (long i = our _size; i > pos; i --) our _item [i] = our _item [i - 1];
+	}
+	void _insertItem_move (_Thing_auto <T> data, long pos) {
+		our _initializeOwnership (true);
+		our _makeRoomForOneMoreItem (pos);
+		our _item [pos] = data.releaseToAmbiguousOwner();
+	}
+	void _insertItem_ref (T* data, long pos) {
+		our _initializeOwnership (false);
+		our _makeRoomForOneMoreItem (pos);
+		our _item [pos] = data;
+	}
+	void addItem_ref (T* thing) {
+		//Melder_casual (U"addItem_ref ", _capacity, U" ", _ownItems);
+		Melder_assert (thing);
+		long index = our _v_position (thing);
+		if (index != 0) {
+			our _insertItem_ref (thing, index);
+		} else {
+			our _initializeOwnership (false);
+		}
+	}
+	void addItem_move (_Thing_auto<T> thing) {
+		T* thingRef = thing.get();
+		long index = our _v_position (thingRef);
+		if (index != 0) {
+			our _insertItem_move (thing.move(), index);
+		} else {
+			our _initializeOwnership (true);
+			thing.reset();   // could not insert; I am the owner, so I must dispose of the data
+		}
+	}
+	T* subtractItem_ref (long pos) {
+		Melder_assert (pos >= 1 && pos <= our _size);
+		Melder_assert (! our _ownItems);
+		T* result = our _item [pos];
+		for (long i = pos; i < our _size; i ++) our _item [i] = our _item [i + 1];
+		our _size --;
+		return result;
+	}
+	void removeItem (long pos) {
+		Melder_assert (pos >= 1 && pos <= our _size);
+		if (our _ownItems) _Thing_forget (our _item [pos]);
+		for (long i = pos; i < our _size; i ++) our _item [i] = our _item [i + 1];
+		our _size --;
+	}
+	void sort (int (*compare) (T*, T*)) {
+		long l, r, j, i;
+		T* k;
+		T** a = our _item;
+		long n = our _size;
+		if (n < 2) return;
+		l = (n >> 1) + 1;
+		r = n;
+		for (;;) {
+			if (l > 1) {
+				l --;
+				k = a [l];
+			} else { 
+				k = a [r];
+				a [r] = a [1];
+				r --;
+				if (r == 1) { a [1] = k; return; }
+			}
+			j = l;
+			for (;;) {
+				i = j;
+				j = j << 1;
+				if (j > r) break;
+				if (j < r && compare (a [j], a [j + 1]) < 0) j ++;
+				if (compare (k, a [j]) >= 0) break;
+				a [i] = a [j];
+			}
+			a [i] = k;
+		}
+	}
+
+	virtual long _v_position (T* data) {
+		return our _size + 1; /* at end */
+	};
+};
+
+void Collection_init (Collection me, long initialCapacity);
+autoCollection Collection_create (long initialCapacity);
 /*
 	Function:
 		return a new empty Collection.
@@ -171,7 +310,6 @@ void Collection_sort (Collection me, Collection_ItemCompareHook compareHook);
 
 /* For the inheritors. */
 
-void _Collection_insertItem (Collection me, Thing item, long position);
 void _Collection_insertItem_move (Collection me, autoThing item, long position);
 void _Collection_insertItem_ref (Collection me, Thing item, long position);
 
@@ -180,8 +318,14 @@ void _Collection_insertItem_ref (Collection me, Thing item, long position);
 Thing_define (Ordered, Collection) {
 };
 
+template <typename T>
+struct OrderedOf : CollectionOf <T> {
+	OrderedOf () {
+	}
+};
+
 autoOrdered Ordered_create ();
-void Ordered_init (Ordered me, ClassInfo itemClass, long initialCapacity);
+void Ordered_init (Ordered me, long initialCapacity);
 
 /* Behaviour:
 	Collection_addItem (Ordered) inserts an item at the end.
@@ -207,7 +351,38 @@ Thing_define (Sorted, Collection) {
 		// should compare the keys of two items; returns negative if me < thee, 0 if me == thee, and positive if me > thee
 };
 
-void Sorted_init (Sorted me, ClassInfo itemClass, long initialCapacity);
+template <typename T>
+struct SortedOf : CollectionOf <T> {
+	SortedOf () {
+	}
+	void addItem_unsorted_move (_Thing_auto <T> data) {
+		our _insertItem_move (data.move(), our _size + 1);
+	}
+	void sort () {
+		our CollectionOf<T>::sort (our v_getCompareHook ());
+	}
+
+	long _v_position (T* data) override {
+		typename SortedOf<T>::CompareHook compare = our v_getCompareHook ();
+		if (our _size == 0 || compare (data, our _item [our _size]) >= 0) return our _size + 1;
+		if (compare (data, our _item [1]) < 0) return 1;
+		/* Binary search. */
+		long left = 1, right = our _size;
+		while (left < right - 1) {
+			long mid = (left + right) / 2;
+			if (compare (data, our _item [mid]) >= 0) left = mid; else right = mid;
+		}
+		Melder_assert (right == left + 1);
+		return right;
+	}
+
+	static int s_compareHook (T* /* data1 */, T* /* data2 */) noexcept { return 0; }
+	typedef int (*CompareHook) (T*, T*);
+	virtual CompareHook v_getCompareHook () { return s_compareHook; }
+		// should compare the keys of two items; returns negative if me < thee, 0 if me == thee, and positive if me > thee
+};
+
+void Sorted_init (Sorted me, long initialCapacity);
 
 /* Behaviour:
 	Collection_addItem (Sorted) inserts an item at such a position that the collection stays sorted.
@@ -240,7 +415,33 @@ Thing_define (SortedSet, Sorted) {   // every item must be unique (by key)
 	long v_position (Thing data) override;   // returns 0 (refusal) if the key of 'data' already occurs
 };
 
-void SortedSet_init (SortedSet me, ClassInfo itemClass, long initialCapacity);
+template <typename T>
+struct SortedSetOf : SortedOf <T> {
+	SortedSetOf () {
+	}
+	long _v_position (T* data) override {   // returns 0 (refusal) if the key of 'data' already occurs
+		typename SortedOf<T>::CompareHook compare = our v_getCompareHook ();
+		if (our _size == 0) return 1;   // empty set? then 'data' is going to be the first item
+		int where = compare (data, our _item [our _size]);   // compare with last item
+		if (where > 0) return our _size + 1;   // insert at end
+		if (where == 0) return 0;
+		if (compare (data, our _item [1]) < 0) return 1;   // compare with first item
+		long left = 1, right = our _size;
+		while (left < right - 1) {
+			long mid = (left + right) / 2;
+			if (compare (data, our _item [mid]) >= 0)
+				left = mid;
+			else
+				right = mid;
+		}
+		Melder_assert (right == left + 1);
+		if (! compare (data, our _item [left]) || ! compare (data, our _item [right]))
+			return 0;
+		return right;
+	}
+};
+
+void SortedSet_init (SortedSet me, long initialCapacity);
 
 inline static bool SortedSet_hasItem (SortedSet me, Thing a_item) {
 	return my v_position (a_item) == 0;
@@ -279,6 +480,19 @@ Thing_define (SortedSetOfDouble, SortedSet) {
 	Data_CompareHook v_getCompareHook () override { return s_compareHook; }
 };
 
+template <typename T>
+struct SortedSetOfDoubleOf : SortedSetOf <T> {
+	SortedSetOfDoubleOf () {
+	}
+	static int s_compareHook (SimpleDouble me, SimpleDouble thee) noexcept {
+		if (my number < thy number) return -1;
+		if (my number > thy number) return +1;
+		return 0;
+	}
+	typename SortedOf<T>::CompareHook v_getCompareHook ()
+		override { return (typename SortedOf<T>::CompareHook) our s_compareHook; }
+};
+
 void SortedSetOfDouble_init (SortedSetOfDouble me);
 autoSortedSetOfDouble SortedSetOfDouble_create ();
 
@@ -301,7 +515,7 @@ Thing_define (Cyclic, Collection) {   // the cyclic list (a, b, c, d) equals (b,
 	virtual Data_CompareHook v_getCompareHook () { return s_compareHook; }
 };
 
-void Cyclic_init (Cyclic me, ClassInfo itemClass, long initialCapacity);
+void Cyclic_init (Cyclic me, long initialCapacity);
 
 void Cyclic_cycleLeft (Cyclic me);
 void Cyclic_unicize (Cyclic me);

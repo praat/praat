@@ -211,7 +211,7 @@ autoCategories KNN_classifyToCategories
     KNN_input_ToCategories_t ** input = (KNN_input_ToCategories_t **) malloc(nthreads * sizeof(KNN_input_ToCategories_t *));
 
     if (!input)
-        return nullptr;
+        return autoCategories();
 
     for (int i = 0; i < nthreads; ++i)
     {
@@ -222,7 +222,7 @@ autoCategories KNN_classifyToCategories
                 free(input[i]);
 
             free(input);
-            return nullptr;
+            return autoCategories();
         }
     }
 
@@ -258,7 +258,7 @@ autoCategories KNN_classifyToCategories
     if (error)           // Something went very wrong, you ought to inform the user!
     {
         free (error);
-        return nullptr;
+        return autoCategories();
     }
 
     if (output)
@@ -395,7 +395,7 @@ autoTableOfReal KNN_classifyToTableOfReal
     Melder_assert (k > 0 && k <= my nInstances);
  
     if (! ncategories)
-        return nullptr;
+        return autoTableOfReal();
 
     if(chunksize < 1)
     {
@@ -409,7 +409,7 @@ autoTableOfReal KNN_classifyToTableOfReal
     KNN_input_ToTableOfReal_t ** input = (KNN_input_ToTableOfReal_t **) malloc(nthreads * sizeof(KNN_input_ToTableOfReal_t *));
     
     if(!input)
-        return nullptr;
+        return autoTableOfReal();
 
     autoTableOfReal output = TableOfReal_create(ps->ny, ncategories);
 
@@ -425,7 +425,7 @@ autoTableOfReal KNN_classifyToTableOfReal
                 free(input[i]);
 
             free(input);
-            return nullptr;
+            return autoTableOfReal();
         }
     }
 
@@ -461,7 +461,7 @@ autoTableOfReal KNN_classifyToTableOfReal
     if(error)           // Something went very wrong, you ought to inform the user!
     {
         free(error);
-        return nullptr;
+        return autoTableOfReal();
     }
     return output;
 }

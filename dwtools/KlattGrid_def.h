@@ -1,6 +1,6 @@
 /* KlattGrid_def.h
  *
- * Copyright (C) 2008-2011 David Weenink
+ * Copyright (C) 2008-2011 David Weenink, 2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
  */
 
 #define ooSTRUCT PhonationPoint
-oo_DEFINE_CLASS (PhonationPoint, Daata)
-	oo_DOUBLE (time)  /* AnyPoint : glottis closing time */
+oo_DEFINE_CLASS (PhonationPoint, AnyPoint)
+
 	oo_DOUBLE (period)  /* 1/F0 */
 	oo_DOUBLE (openPhase)
 	oo_DOUBLE (collisionPhase)
@@ -27,19 +27,27 @@ oo_DEFINE_CLASS (PhonationPoint, Daata)
 	oo_DOUBLE (power1)  /* flow function */
 	oo_DOUBLE (power2)
 	oo_DOUBLE (pulseScale) /* multiplier for diplophonia, shimmer */	
+
 oo_END_CLASS (PhonationPoint)
 #undef ooSTRUCT
 
+
 #define ooSTRUCT PhonationTier
-oo_DEFINE_CLASS (PhonationTier, AnyTier)
-	#if ! oo_DECLARING
-		oo_AUTO_COLLECTION (SortedSetOfDouble, points, PhonationPoint, 0)
+oo_DEFINE_CLASS (PhonationTier, Function)
+
+	oo_COLLECTION_OF (SortedSetOfDoubleOf, points, PhonationPoint, 0)
+
+	#if oo_DECLARING
+		AnyTier_METHODS
 	#endif
+
 oo_END_CLASS (PhonationTier)
 #undef ooSTRUCT
 
+
 #define ooSTRUCT PhonationGridPlayOptions
 oo_DEFINE_CLASS (PhonationGridPlayOptions, Daata)
+
 	oo_INT (voicing)
 	oo_INT (aspiration)
 	oo_INT (breathiness)
@@ -50,11 +58,14 @@ oo_DEFINE_CLASS (PhonationGridPlayOptions, Daata)
 	oo_INT (flowFunction) // 1: User defined with tiers (power1, power2); 2: (2,3); 3: (3,4)
 	oo_INT (flowDerivative)
 	oo_DOUBLE (maximumPeriod)
+
 oo_END_CLASS (PhonationGridPlayOptions)
 #undef ooSTRUCT
 
+
 #define ooSTRUCT PhonationGrid
 oo_DEFINE_CLASS (PhonationGrid, Function)
+
 	oo_AUTO_OBJECT (PitchTier, 0, pitch)
 	oo_AUTO_OBJECT (RealTier, 0, flutter) // [0,1]
 	oo_AUTO_OBJECT (IntensityTier, 0, voicingAmplitude) // dB
@@ -77,8 +88,10 @@ oo_DEFINE_CLASS (PhonationGrid, Function)
 		void v_info ()
 			override;
 	#endif
+
 oo_END_CLASS (PhonationGrid)
 #undef ooSTRUCT
+
 
 #define ooSTRUCT VocalTractGridPlayOptions
 oo_DEFINE_CLASS (VocalTractGridPlayOptions, Daata)

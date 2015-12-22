@@ -21,7 +21,7 @@
 #include "Transition.h"
 
 autoTransition Distributions_to_Transition (Distributions underlying, Distributions surface,
-	long environment, Transition adjacency, int greedy);
+	long environment, Transition adjacency, bool greedy);
 
 autoDistributions Distributions_Transition_map (Distributions me, Transition map);
 

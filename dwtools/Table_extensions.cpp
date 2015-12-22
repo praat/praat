@@ -3902,7 +3902,7 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, long column, long factor
 	}
 }
 
-void Table_normalProbabilityPlot (Table me, Graphics g, long column, long numberOfQuantiles, double numberOfSigmas, int labelSize, const char32 *label, int garnish)
+void Table_normalProbabilityPlot (Table me, Graphics g, long column, long numberOfQuantiles, double numberOfSigmas, int labelSize, const char32 *label, bool garnish)
 {
 	try {
 		if (column < 1 || column > my numberOfColumns) return;
@@ -3954,7 +3954,9 @@ void Table_normalProbabilityPlot (Table me, Graphics g, long column, long number
 	}
 }
 
-void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g, long dataColumn, long factorColumn, const char32 *xlevel, const char32 *ylevel, long numberOfQuantiles, double xmin, double xmax, double ymin, double ymax, int labelSize, const char32 *plotLabel, int garnish) {
+void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g, long dataColumn, long factorColumn, const char32 *xlevel, const char32 *ylevel, long numberOfQuantiles,
+	double xmin, double xmax, double ymin, double ymax, int labelSize, const char32 *plotLabel, bool garnish)
+{
 	try {
 		if (dataColumn < 1 || dataColumn > my numberOfColumns || factorColumn < 1 || factorColumn > my numberOfColumns) return;
 		Table_numericize_Assert (me, dataColumn);
@@ -4002,7 +4004,9 @@ void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g, long dataCo
 	}
 }
 
-void Table_quantileQuantilePlot (Table me, Graphics g, long xcolumn, long ycolumn, long numberOfQuantiles, double xmin, double xmax, double ymin, double ymax, int labelSize, const char32 *plotLabel, int garnish) {
+void Table_quantileQuantilePlot (Table me, Graphics g, long xcolumn, long ycolumn, long numberOfQuantiles,
+	double xmin, double xmax, double ymin, double ymax, int labelSize, const char32 *plotLabel, bool garnish)
+{
 	try {
 		if (xcolumn < 1 || xcolumn > my numberOfColumns || ycolumn < 1 || ycolumn > my numberOfColumns) return;
 		Table_numericize_Assert (me, xcolumn);

@@ -65,7 +65,7 @@ int structTier :: compareHook (Autosegment me, Autosegment thee) {
 Thing_implement (Tier, Sorted, 0);
 
 void Tier_init (Tier me, long initialCapacity) {
-	Sorted_init (me, classAutosegment, initialCapacity);
+	Sorted_init (me, initialCapacity);
 	Collection_addItem_move (me, Autosegment_create (-1e30, 1e30, nullptr));
 }
 
@@ -91,7 +91,7 @@ long Tier_timeToIndex (Tier me, double time) {
 Thing_implement (Label, Ordered, 0);
 
 void Label_init (Label me, long initialNumberOfTiers) {
-	Ordered_init (me, classTier, initialNumberOfTiers);
+	Ordered_init (me, initialNumberOfTiers);
 	for (long i = 1; i <= initialNumberOfTiers; i ++) {
 		Collection_addItem_move (me, Tier_create (10));
 	}

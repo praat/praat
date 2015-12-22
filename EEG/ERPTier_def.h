@@ -28,25 +28,18 @@ oo_END_CLASS (ERPPoint)
 
 
 #define ooSTRUCT ERPTier
-oo_DEFINE_CLASS (ERPTier, AnyTier)
+oo_DEFINE_CLASS (ERPTier, Function)
 
-	#if ! oo_DECLARING
-		oo_AUTO_COLLECTION (SortedSetOfDouble, points, ERPPoint, 0)
-	#endif
+	oo_COLLECTION_OF (SortedSetOfDoubleOf, points, ERPPoint, 0)
 
 	oo_LONG (numberOfChannels)
 	oo_STRING_VECTOR (channelNames, numberOfChannels)
 
 	#if oo_DECLARING
-		ERPPoint event (long i)   // rvalue accessor
-			{ return static_cast <ERPPoint> (our points -> item [i]); }
+		AnyTier_METHODS
 
 		int v_domainQuantity ()
 			override { return MelderQuantity_TIME_SECONDS; }
-		void v_shiftX (double xfrom, double xto)
-			override;
-		void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto)
-			override;
 	#endif
 
 oo_END_CLASS (ERPTier)

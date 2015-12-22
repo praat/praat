@@ -838,7 +838,7 @@ Thing_implement (CrossCorrelationTables, Ordered, 0);
 autoCrossCorrelationTables CrossCorrelationTables_create () {
 	try {
 		autoCrossCorrelationTables me = Thing_new (CrossCorrelationTables);
-		Ordered_init (me.peek(), classCrossCorrelationTable, 30);
+		Ordered_init (me.peek(), 30);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"CrossCorrelationTables not created.");

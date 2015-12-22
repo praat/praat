@@ -198,7 +198,7 @@ END2 }
 DIRECT2 (AmplitudeTier_downto_PointProcess) {
 	LOOP {
 		iam (AmplitudeTier);
-		autoPointProcess thee = AnyTier_downto_PointProcess (me);
+		autoPointProcess thee = AnyTier_downto_PointProcess (me->asAnyTier());
 		praat_new (thee.move(), my name);
 	}
 END2 }
@@ -509,9 +509,9 @@ DO
 	praat_new (thee.move());
 END2 }
 
-FORM (Distributions_to_Transition_noise, U"To Transition (noise)", 0) {
+FORM (Distributions_to_Transition_noise, U"To Transition (noise)", nullptr) {
 	NATURAL (U"Environment", U"1")
-	BOOLEAN (U"Greedy", 1)
+	BOOLEAN (U"Greedy", true)
 	OK2
 DO
 	Distributions underlying = nullptr, surface = nullptr;
@@ -520,9 +520,9 @@ DO
 	praat_new (thee.move());
 END2 }
 
-FORM (Distributions_to_Transition_noise_adj, U"To Transition (noise)", 0) {
+FORM (Distributions_to_Transition_noise_adj, U"To Transition (noise)", nullptr) {
 	NATURAL (U"Environment", U"1")
-	BOOLEAN (U"Greedy", 1)
+	BOOLEAN (U"Greedy", true)
 	OK2
 DO
 	Distributions underlying = nullptr, surface = nullptr;
@@ -577,7 +577,7 @@ END2 }
 DIRECT2 (DurationTier_downto_PointProcess) {
 	LOOP {
 		iam (DurationTier);
-		autoPointProcess thee = AnyTier_downto_PointProcess (me);
+		autoPointProcess thee = AnyTier_downto_PointProcess (me->asAnyTier());
 		praat_new (thee.move(), my name);
 	}
 END2 }
@@ -618,7 +618,7 @@ DO
 	}
 END2 }
 
-FORM (DurationTier_getTargetDuration, U"Get target duration", 0) {
+FORM (DurationTier_getTargetDuration, U"Get target duration", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"1.0")
 	OK2
@@ -1383,7 +1383,7 @@ DO
 	LOOP {
 		iam (FormantTier);
 		autoFormantPoint point2 = Data_copy (point.peek());
-		AnyTier_addPoint_move (me, point2.move());
+		AnyTier_addPoint_move (me->asAnyTier(), point2.move());
 		praat_dataChanged (me);
 	}
 END2 }
@@ -1905,7 +1905,7 @@ END2 }
 DIRECT2 (IntensityTier_downto_PointProcess) {
 	LOOP {
 		iam (IntensityTier);
-		autoPointProcess thee = AnyTier_downto_PointProcess (me);
+		autoPointProcess thee = AnyTier_downto_PointProcess (me->asAnyTier());
 		praat_new (thee.move(), my name);
 	}
 END2 }
@@ -2453,7 +2453,7 @@ END2 }
 DIRECT2 (Manipulation_removeDuration) {
 	LOOP {
 		iam (Manipulation);
-		my duration = nullptr;
+		my duration = autoDurationTier();
 		praat_dataChanged (me);
 	}
 END2 }
@@ -2461,7 +2461,7 @@ END2 }
 DIRECT2 (Manipulation_removeOriginalSound) {
 	LOOP {
 		iam (Manipulation);
-		my sound = nullptr;
+		my sound = autoSound();
 		praat_dataChanged (me);
 	}
 END2 }
@@ -4069,7 +4069,7 @@ END2 }
 DIRECT2 (PitchTier_downto_PointProcess) {
 	LOOP {
 		iam (PitchTier);
-		autoPointProcess thee = AnyTier_downto_PointProcess (me);
+		autoPointProcess thee = AnyTier_downto_PointProcess (me->asAnyTier());
 		praat_new (thee.move(), my name);
 	}
 END2 }
@@ -6116,7 +6116,7 @@ FORM (TimeTier_getHighIndexFromTime, U"Get high index", U"AnyTier: Get high inde
 DO
 	LOOP {
 		iam (AnyTier);
-		Melder_information (my points -> size == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToHighIndex (me, GET_REAL (U"Time"))));
+		Melder_information (my points.size() == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToHighIndex (me, GET_REAL (U"Time"))));
 	}
 END2 }
 
@@ -6126,7 +6126,7 @@ FORM (TimeTier_getLowIndexFromTime, U"Get low index", U"AnyTier: Get low index f
 DO
 	LOOP {
 		iam (AnyTier);
-		Melder_information (my points -> size == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToLowIndex (me, GET_REAL (U"Time"))));
+		Melder_information (my points.size() == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToLowIndex (me, GET_REAL (U"Time"))));
 	}
 END2 }
 
@@ -6136,14 +6136,14 @@ FORM (TimeTier_getNearestIndexFromTime, U"Get nearest index", U"AnyTier: Get nea
 DO
 	LOOP {
 		iam (AnyTier);
-		Melder_information (my points -> size == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToNearestIndex (me, GET_REAL (U"Time"))));
+		Melder_information (my points.size() == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToNearestIndex (me, GET_REAL (U"Time"))));
 	}
 END2 }
 
 DIRECT2 (TimeTier_getNumberOfPoints) {
 	LOOP {
 		iam (AnyTier);
-		Melder_information (my points -> size, U" points");
+		Melder_information (my points.size(), U" points");
 	}
 END2 }
 
@@ -6154,8 +6154,8 @@ DO
 	LOOP {
 		iam (AnyTier);
 		long i = GET_INTEGER (U"Point number");
-		if (i > my points -> size) Melder_information (U"--undefined--");
-		else Melder_informationReal (((AnyPoint) my points -> item [i]) -> number, U"seconds");
+		if (i > my points.size()) Melder_information (U"--undefined--");
+		else Melder_informationReal (my points [i] -> number, U"seconds");
 	}
 END2 }
 

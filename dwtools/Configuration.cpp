@@ -517,7 +517,7 @@ Thing_implement (Configurations, Ordered, 0);
 autoConfigurations Configurations_create () {
 	try {
 		autoConfigurations me = Thing_new (Configurations);
-		Ordered_init (me.peek(), classConfiguration, 10);
+		Ordered_init (me.peek(), 10);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Configurations not created.");

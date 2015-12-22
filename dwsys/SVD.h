@@ -28,10 +28,6 @@
 #include "Data.h"
 
 #include "SVD_def.h"
-oo_CLASS_CREATE (SVD, Daata);
-
-#define GSVD__methods(klas) Data__methods(klas)
-oo_CLASS_CREATE (GSVD, Daata);
 
 void SVD_init (SVD me, long numberOfRows, long numberOfColumns);
 
