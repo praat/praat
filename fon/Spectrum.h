@@ -26,7 +26,6 @@
 #include "Graphics.h"
 
 #include "Spectrum_def.h"
-oo_CLASS_CREATE (Spectrum);
 
 /*
 	xmin            // lowest frequency (Hz)

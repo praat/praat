@@ -27,10 +27,6 @@
 #include "Index.h"
 
 #include "HMM_def.h"
-oo_CLASS_CREATE (HMMState);
-oo_CLASS_CREATE (HMMObservation);
-oo_CLASS_CREATE (HMMViterbi);
-oo_CLASS_CREATE (HMM);
 
 Thing_define (HMMBaumWelch, Daata) {
 	// new data:

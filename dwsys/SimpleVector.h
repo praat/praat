@@ -22,8 +22,6 @@
 #include "Data.h"
 
 #include "SimpleVector_def.h"
-oo_CLASS_CREATE (DoubleVector);
-oo_CLASS_CREATE (ComplexVector);
 
 void DoubleVector_init (DoubleVector me, long min, long max);
 

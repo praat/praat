@@ -23,8 +23,6 @@
 #include "ERP.h"
 
 #include "ERPTier_def.h"
-oo_CLASS_CREATE (ERPPoint);
-oo_CLASS_CREATE (ERPTier);
 
 long ERPTier_getChannelNumber (ERPTier me, const char32 *channelName);
 static inline void ERPTier_checkEventNumber (ERPTier me, long eventNumber) {

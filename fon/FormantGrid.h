@@ -26,7 +26,6 @@
 Thing_declare (Interpreter);
 
 #include "FormantGrid_def.h"
-oo_CLASS_CREATE (FormantGrid);
 
 void FormantGrid_init (FormantGrid me, double tmin, double tmax, long numberOfFormants);
 autoFormantGrid FormantGrid_createEmpty (double tmin, double tmax, long numberOfFormants);

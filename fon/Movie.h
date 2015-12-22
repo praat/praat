@@ -25,7 +25,6 @@
 #include "Strings_.h"
 
 #include "Movie_def.h"
-oo_CLASS_CREATE (Movie);
 
 autoMovie Movie_openFromSoundFile (MelderFile file);
 

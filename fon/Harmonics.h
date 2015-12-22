@@ -23,7 +23,6 @@
 #include "Sound.h"
 
 #include "Harmonics_def.h"
-oo_CLASS_CREATE (Harmonics);
 
 autoHarmonics Harmonics_create (long numberOfHarmonics);
 

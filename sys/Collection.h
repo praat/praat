@@ -124,7 +124,6 @@ struct CollectionOf {
 			our _capacity = newCapacity;
 		}
 		our _size ++;
-		Melder_casual (U"increasing size to ", our _size);
 		for (long i = our _size; i > pos; i --) our _item [i] = our _item [i - 1];
 	}
 	void _insertItem_move (_Thing_auto <T> data, long pos) {
@@ -377,7 +376,7 @@ struct SortedOf : CollectionOf <T> {
 		return right;
 	}
 
-	static int s_compareHook (T* data1, T* data2) noexcept;
+	static int s_compareHook (T* /* data1 */, T* /* data2 */) noexcept { return 0; }
 	typedef int (*CompareHook) (T*, T*);
 	virtual CompareHook v_getCompareHook () { return s_compareHook; }
 		// should compare the keys of two items; returns negative if me < thee, 0 if me == thee, and positive if me > thee

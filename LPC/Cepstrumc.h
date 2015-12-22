@@ -31,7 +31,6 @@
 #include "DTW.h"
 
 #include "Cepstrumc_def.h"
-oo_CLASS_CREATE (Cepstrumc);
 
 void Cepstrumc_init (Cepstrumc me, double tmin, double tmax, long nt, double dt, double t1,
 	int nCoefficients, double samplingFrequency);

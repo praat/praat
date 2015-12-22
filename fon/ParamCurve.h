@@ -31,7 +31,6 @@
 #include "Graphics.h"
 
 #include "ParamCurve_def.h"
-oo_CLASS_CREATE (ParamCurve);
 
 void ParamCurve_init (ParamCurve me, Sound x, Sound y);
 

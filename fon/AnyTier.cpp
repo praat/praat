@@ -186,9 +186,6 @@ long AnyTier_hasPoint (AnyTier me, double t) {
 
 void AnyTier_addPoint_move (AnyTier me, autoAnyPoint point) {
 	try {
-		Melder_casual (U"points ", Melder_pointer (& my points), U" ", Melder_pointer (& my points._item));
-		Melder_casual (U"size ", my points._size, U" ", my points.size());
-		Melder_casual (U"own items? ", my points._ownItems);
 		my points. addItem_move (point.move());
 	} catch (MelderError) {
 		Melder_throw (me, U": point not added.");

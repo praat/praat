@@ -24,8 +24,6 @@
 #include "Distributions.h"
 
 #include "PairDistribution_def.h"
-oo_CLASS_CREATE (PairProbability);
-oo_CLASS_CREATE (PairDistribution);
 
 autoPairProbability PairProbability_create (const char32 *string1, const char32 *string2, double weight);
 

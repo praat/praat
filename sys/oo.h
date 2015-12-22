@@ -212,14 +212,6 @@
 #define oo_STRUCT_VECTOR(Type,x,n)  oo_STRUCT_VECTOR_FROM (Type, x, 1, n)
 #define oo_STRUCT_MATRIX(Type,x,nrow,ncol)  oo_STRUCT_MATRIX_FROM (Type, x, 1, nrow, 1, ncol)
 
-/*** Class declaration in header file. ***/
-
-#define oo_CLASS_CREATE(klas) \
-	extern struct structClassInfo theClassInfo_##klas; \
-	extern ClassInfo class##klas
-
-
-
 /********** Definitions for header files only. **********/
 /* These are undef'ed and redefined in the header files that implement methods, */
 /* like oo_DESTROY.h, oo_COPY.h, oo_EQUAL.h, oo_WRITE_TEXT.h, etc. */
@@ -276,6 +268,8 @@
 	typedef struct struct##klas *klas; \
 	typedef _Thing_auto <struct##klas> auto##klas; \
 	typedef struct##parent klas##_Parent; \
+	extern struct structClassInfo theClassInfo_##klas; \
+	extern ClassInfo class##klas; \
 	struct struct##klas : public struct##parent {
 
 #define oo_END_CLASS(Class) \

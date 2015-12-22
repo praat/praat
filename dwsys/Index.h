@@ -22,8 +22,6 @@
 #include "Collection.h"
 
 #include "Index_def.h"
-oo_CLASS_CREATE (Index);
-oo_CLASS_CREATE (StringsIndex);
 
 void Index_init (Index me, long numberOfElements);
 

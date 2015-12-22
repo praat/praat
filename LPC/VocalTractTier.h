@@ -24,8 +24,6 @@
 #include "VocalTract.h"
 
 #include "VocalTractTier_def.h"
-oo_CLASS_CREATE (VocalTractPoint);
-oo_CLASS_CREATE (VocalTractTier);
 
 void VocalTract_drawSegments (VocalTract me, Graphics g, double maxLength, double maxArea, bool closedAtGlottis);
 

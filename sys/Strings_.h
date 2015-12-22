@@ -22,7 +22,6 @@
 #include "Data.h"
 
 #include "Strings_def.h"
-oo_CLASS_CREATE (Strings);
 
 autoStrings Strings_createAsFileList (const char32 *path /* cattable */);
 autoStrings Strings_createAsDirectoryList (const char32 *path /* cattable */);

@@ -60,14 +60,11 @@
 #include "Table.h"
 
 #include "DataModeler_def.h"
-oo_CLASS_CREATE (DataModeler);
-oo_CLASS_CREATE (FormantModeler);
 
 Thing_define (PitchModeler, DataModeler) {
 	// void v_info ()
 	//     override;
 };
-
 
 void  DataModeler_init (DataModeler me, double xmin, double xmax, long numberOfDataPoints, long numberOfParameters, int type);
 

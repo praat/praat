@@ -23,7 +23,6 @@
 #include "Graphics.h"
 
 #include "Image_def.h"
-oo_CLASS_CREATE (Image);
 
 /*
 	An object of type Image represents a quantized function z (x, y)

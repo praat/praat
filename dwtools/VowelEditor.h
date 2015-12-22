@@ -30,7 +30,6 @@
 #include "Editor.h"
 
 #include "Vowel_def.h"
-oo_CLASS_CREATE (Vowel);
 
 struct structVowelEditor_F0 {
 	double start;

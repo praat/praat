@@ -23,7 +23,6 @@
 #include "TableOfReal.h"
 
 #include "AffineTransform_def.h"
-oo_CLASS_CREATE (AffineTransform);
 
 void AffineTransform_init (AffineTransform me, long n);
 

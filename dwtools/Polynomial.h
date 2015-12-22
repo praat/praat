@@ -39,7 +39,6 @@
 #define Spline_MAXIMUM_DEGREE 20
 
 #include "Polynomial_def.h"
-oo_CLASS_CREATE (FunctionTerms);
 
 void FunctionTerms_init (FunctionTerms me, double xmin, double xmax, long numberOfCoefficients);
 
@@ -201,8 +200,6 @@ autoChebyshevSeries ChebyshevSeries_create (double xmin, double xmax, long numbe
 autoChebyshevSeries ChebyshevSeries_createFromString (double xmin, double xmax, const char32 *s);
 
 autoPolynomial ChebyshevSeries_to_Polynomial (ChebyshevSeries me);
-
-oo_CLASS_CREATE (Spline);
 
 void Spline_init (Spline me, double xmin, double xmax, long degree, long numberOfCoefficients, long numberOfKnots);
 
