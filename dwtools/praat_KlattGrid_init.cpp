@@ -263,11 +263,11 @@ DO \
 	if (theCurrentPraatApplication -> batch) { Melder_throw (U"Cannot edit a KlattGrid from batch."); } \
 	LOOP { \
 		iam (KlattGrid); \
-		autoOrdered* amp = KlattGrid_getAddressOfAmplitudes (me, formantType); \
+		OrderedOf<structIntensityTier>* amp = KlattGrid_getAddressOfAmplitudes (me, formantType); \
 		if (! amp) Melder_throw (U"Unknown formant type"); \
-		if (formantNumber > (*amp) -> size) Melder_throw (U"Formant number does not exist."); \
+		if (formantNumber > amp->size()) Melder_throw (U"Formant number does not exist."); \
 		const char32 *id_and_name = Melder_cat (ID, U". ", formant_names[formantType], U"formant amplitude tier"); \
-		autoKlattGrid_DecibelTierEditor editor = KlattGrid_DecibelTierEditor_create (id_and_name, me, (RealTier) (*amp)->item[formantNumber]); \
+		autoKlattGrid_DecibelTierEditor editor = KlattGrid_DecibelTierEditor_create (id_and_name, me, (*amp) [formantNumber]); \
 		praat_installEditor (editor.get(), IOBJECT); \
 		editor.releaseToUser(); \
 	} \
@@ -1291,6 +1291,5 @@ void praat_KlattGrid_init () {
 
 	INCLUDE_MANPAGES (manual_KlattGrid)
 }
-
 
 /* End of file praat_KlattGrid_init.cpp */

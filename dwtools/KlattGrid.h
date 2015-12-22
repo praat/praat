@@ -76,8 +76,8 @@ void FormantGrid_CouplingGrid_updateOpenPhases (FormantGrid me, CouplingGrid the
 
 void Sound_FormantGrid_filterWithOneFormant_inline (Sound me, FormantGrid thee, long iformant);
 void Sound_FormantGrid_filterWithOneAntiFormant_inline (Sound me, FormantGrid thee, long iformant);
-void Sound_FormantGrid_Intensities_filterWithOneFormant_inline (Sound me, FormantGrid thee, Ordered amplitudes, long iformant);
-autoSound Sound_FormantGrid_Intensities_filter (Sound me, FormantGrid thee, Ordered amplitudes, long iformantb, long iformante, int alternatingSign);
+void Sound_FormantGrid_Intensities_filterWithOneFormant_inline (Sound me, FormantGrid thee, OrderedOf<structIntensityTier>* amplitudes, long iformant);
+autoSound Sound_FormantGrid_Intensities_filter (Sound me, FormantGrid thee, OrderedOf<structIntensityTier>* amplitudes, long iformantb, long iformante, int alternatingSign);
 
 /************************ FricationGrid *********************************************/
 
@@ -188,7 +188,7 @@ void KlattGrid_replaceFricationBypassTier (KlattGrid me, IntensityTier thee);
 void KlattGrid_setGlottisCoupling (KlattGrid me);
 
 autoFormantGrid * KlattGrid_getAddressOfFormantGrid (KlattGrid me, int formantType);
-autoOrdered * KlattGrid_getAddressOfAmplitudes (KlattGrid me, int formantType);
+OrderedOf<structIntensityTier>* KlattGrid_getAddressOfAmplitudes (KlattGrid me, int formantType);
 
 /*
 	One can add (or remove) formant frequency tiers, formant bandwidth tiers and formant amplitude tiers.
