@@ -69,6 +69,7 @@ oo_DEFINE_STRUCT (Pitch_Frame)
 		oo_DOUBLE (intensity)
 		oo_LONG (nCandidates)
 	#endif
+
 	oo_STRUCT_VECTOR (Pitch_Candidate, candidate, nCandidates)
 
 oo_END_STRUCT (Pitch_Frame)

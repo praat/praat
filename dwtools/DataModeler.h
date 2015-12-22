@@ -36,7 +36,6 @@
 #define DataModeler_DATA_WEIGH_SQRT 3
 #define DataModeler_DATA_WEIGH_SQRT 3
 
-
 #define DataModeler_DATA_VALID 0
 #define DataModeler_DATA_INVALID -1
 #define DataModeler_DATA_FROM_FIT 1

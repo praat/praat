@@ -264,11 +264,11 @@ autoStringsIndex Table_to_StringsIndex_column (Table me, long column) {
 		if (column < 1 || column > my numberOfColumns) {
 			Melder_throw (U"Invalid column number.");
 		}
-		long numberOfRows = my rows -> size;
+		long numberOfRows = my rows.size();
 		Table_numericize_Assert (me, column);
 		autoNUMvector<char32 *> groupLabels (1, numberOfRows);
 		for (long irow = 1; irow <= numberOfRows; irow++) {
-			groupLabels[irow] = ((TableRow) my rows -> item [irow]) -> cells [column] .string;
+			groupLabels[irow] = my rows [irow] -> cells [column] .string;
 		}
 		autoStrings thee = strings_to_Strings (groupLabels.peek(), 1, numberOfRows);
 		autoStringsIndex him = Strings_to_StringsIndex (thee.peek());

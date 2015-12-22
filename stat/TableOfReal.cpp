@@ -1053,7 +1053,7 @@ void TableOfReal_sortByColumn (TableOfReal me, long column1, long column2) {
 autoTableOfReal Table_to_TableOfReal (Table me, long labelColumn) {
 	try {
 		if (labelColumn < 1 || labelColumn > my numberOfColumns) labelColumn = 0;
-		autoTableOfReal thee = TableOfReal_create (my rows -> size, labelColumn ? my numberOfColumns - 1 : my numberOfColumns);
+		autoTableOfReal thee = TableOfReal_create (my rows.size(), labelColumn ? my numberOfColumns - 1 : my numberOfColumns);
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 			Table_numericize_Assert (me, icol);
 		}
@@ -1064,8 +1064,8 @@ autoTableOfReal Table_to_TableOfReal (Table me, long labelColumn) {
 			for (long icol = labelColumn + 1; icol <= my numberOfColumns; icol ++) {
 				TableOfReal_setColumnLabel (thee.peek(), icol - 1, my columnHeaders [icol]. label);
 			}
-			for (long irow = 1; irow <= my rows -> size; irow ++) {
-				TableRow row = static_cast <TableRow> (my rows -> item [irow]);
+			for (long irow = 1; irow <= my rows.size(); irow ++) {
+				TableRow row = my rows [irow];
 				char32 *string = row -> cells [labelColumn]. string;
 				TableOfReal_setRowLabel (thee.peek(), irow, string ? string : U"");
 				for (long icol = 1; icol < labelColumn; icol ++) {
@@ -1081,8 +1081,8 @@ autoTableOfReal Table_to_TableOfReal (Table me, long labelColumn) {
 			for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 				TableOfReal_setColumnLabel (thee.peek(), icol, my columnHeaders [icol]. label);
 			}
-			for (long irow = 1; irow <= my rows -> size; irow ++) {
-				TableRow row = static_cast <TableRow> (my rows -> item [irow]);
+			for (long irow = 1; irow <= my rows.size(); irow ++) {
+				TableRow row = my rows [irow];
 				for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 					thy data [irow] [icol] = row -> cells [icol]. number;   // Optimization.
 					//thy data [irow] [icol] = Table_getNumericValue_Assert (me, irow, icol);
@@ -1103,9 +1103,9 @@ autoTable TableOfReal_to_Table (TableOfReal me, const char32 *labelOfFirstColumn
 			char32 *columnLabel = my columnLabels [icol];
 			thy columnHeaders [icol + 1]. label = Melder_dup (columnLabel && columnLabel [0] ? columnLabel : U"?");
 		}
-		for (long irow = 1; irow <= thy rows -> size; irow ++) {
+		for (long irow = 1; irow <= thy rows.size(); irow ++) {
 			char32 *stringValue = my rowLabels [irow];
-			TableRow row = static_cast <TableRow> (thy rows -> item [irow]);
+			TableRow row = thy rows [irow];
 			row -> cells [1]. string = Melder_dup (stringValue && stringValue [0] ? stringValue : U"?");
 			for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 				double numericValue = my data [irow] [icol];

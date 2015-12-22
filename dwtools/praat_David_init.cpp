@@ -3651,8 +3651,8 @@ static void print_means (Table me) {
 		Melder_padOrTruncate (15, my columnHeaders[1].label), U"\t",
 		Melder_padOrTruncate (15, my columnHeaders[2].label), U"\t",
 		Melder_padOrTruncate (15, my columnHeaders[3].label));
-	for (long irow = 1; irow <= my rows -> size; irow++) {
-		TableRow row = (TableRow) my rows -> item [irow];
+	for (long irow = 1; irow <= my rows.size(); irow ++) {
+		TableRow row = my rows [irow];
 		MelderInfo_writeLine (
 			Melder_padOrTruncate (15, row -> cells[1].string), U"\t",
 			Melder_padOrTruncate (15, Melder_double (row -> cells[2].number)), U"\t",
@@ -3675,9 +3675,9 @@ END
 FORM (Table_reportOneWayAnova, U"Table: Report one-way anova",  U"Table: Report one-way anova...")
 	SENTENCE (U"Column with data", U"F0")
 	SENTENCE (U"Factor", U"Vowel")
-	BOOLEAN (U"Table with means", 0);
-	BOOLEAN (U"Table with differences between means", 0)
-	BOOLEAN (U"Table with Tukey's post-hoc HSD test", 0)
+	BOOLEAN (U"Table with means", false);
+	BOOLEAN (U"Table with differences between means", false)
+	BOOLEAN (U"Table with Tukey's post-hoc HSD test", false)
 	OK
 DO
 	char32 *factor = GET_STRING (U"Factor");

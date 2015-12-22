@@ -27,11 +27,13 @@ oo_DEFINE_STRUCT (OTGrammarConstraint)
 	oo_FROM (2)
 		oo_DOUBLE (plasticity)
 	oo_ENDFROM
+
 	#if oo_READING
 		if (formatVersion < 2) {
 			plasticity = 1.0;
 		}
 	#endif
+
 	#if !oo_READING && !oo_WRITING
 		oo_INT (tiedToTheLeft)
 		oo_INT (tiedToTheRight)
@@ -57,6 +59,7 @@ oo_DEFINE_STRUCT (OTGrammarCandidate)
 	oo_STRING (output)
 	oo_LONG (numberOfConstraints)
 	oo_INT_VECTOR (marks, numberOfConstraints)
+
 	#if !oo_READING && !oo_WRITING
 		oo_DOUBLE (harmony)
 		oo_DOUBLE (probability)
@@ -95,6 +98,7 @@ oo_DEFINE_CLASS (OTGrammar, Daata)
 	oo_STRUCT_VECTOR (OTGrammarFixedRanking, fixedRankings, numberOfFixedRankings)
 	oo_LONG (numberOfTableaus)
 	oo_STRUCT_VECTOR (OTGrammarTableau, tableaus, numberOfTableaus)
+
 	#if oo_READING
 		OTGrammar_sort (this);
 	#endif

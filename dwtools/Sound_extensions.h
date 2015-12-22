@@ -2,7 +2,7 @@
 #define _Sound_extensions_h_
 /* Sound_extensions.h
  *
- * Copyright (C) 1993-2012, 2015 David Weenink
+ * Copyright (C) 1993-2012,2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,18 +19,12 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 20020813 GPL header
- djmw 20121023 Latest modification
-*/
-
-
 #include "Sound.h"
 #include "Pitch.h"
 #include "Collection.h"
 #include "PointProcess.h"
 #include "TextGrid.h"
-#include "Interpreter_decl.h"
+Thing_declare (Interpreter);
 
 int Sound_writeToNistAudioFile (Sound me, MelderFile file);
 

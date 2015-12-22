@@ -21,7 +21,7 @@
 
 #include "Sampled.h"
 #include "Graphics.h"
-#include "Interpreter_decl.h"
+Thing_declare (Interpreter);
 
 #include "Pitch_enums.h"
 

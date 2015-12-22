@@ -606,7 +606,7 @@ static void FormantTier_drawF1F2Trajectory (FormantTier me, Graphics g, double f
 #undef GETY
 
 static void copyVowelMarksInPreferences_volatile (Table me) {
-	long numberOfRows = prefs.numberOfMarks = my rows -> size;
+	long numberOfRows = prefs.numberOfMarks = my rows.size();
 	if (numberOfRows > 0) {
 		long col_vowel = Table_getColumnIndexFromColumnLabel (me, U"Vowel");
 		long col_f1 = Table_getColumnIndexFromColumnLabel (me, U"F1");
@@ -633,7 +633,7 @@ static void Table_addColumn_size (Table me, int size) {
 	long col_size = Table_findColumnIndexFromColumnLabel (me, U"Size");
 	if (col_size == 0) {
 		Table_appendColumn (me, U"Size");
-		for (long i = 1; i <= my rows -> size; i++) {
+		for (long i = 1; i <= my rows.size(); i ++) {
 			Table_setNumericValue (me, i, my numberOfColumns, size);
 		}
 	}
@@ -643,7 +643,7 @@ static void VowelEditor_setMarks (VowelEditor me, int marksDataset, int speakerT
 	autoTable te;
 	const char32 *Type[4] = { U"", U"m", U"w", U"c" };
 	const char32 *Sex[3] = { U"", U"m", U"f"};
-	if (marksDataset == 1) { // American-English
+	if (marksDataset == 1) {   // American-English
 		autoTable thee = Table_createFromPetersonBarneyData ();
 		te = Table_extractRowsWhereColumn_string (thee.peek(), 1, kMelder_string_EQUAL_TO, Type[speakerType]);
 	} else if (marksDataset == 2) { // Dutch
@@ -654,10 +654,10 @@ static void VowelEditor_setMarks (VowelEditor me, int marksDataset, int speakerT
 			autoTable thee = Table_createFromWeeninkData ();
 			te = Table_extractRowsWhereColumn_string (thee.peek(), 1, kMelder_string_EQUAL_TO, Type[speakerType]);
 		}
-	} else if (marksDataset == 3) { // None
+	} else if (marksDataset == 3) {   // none
 		my marks.reset();
 		return;
-	} else { // Leave as is
+	} else {   // leave as is
 		return;
 	}
 	autoTable newMarks = Table_collapseRows (te.peek(), U"IPA", U"", U"F1 F2", U"", U"", U"");
@@ -761,7 +761,7 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
 		long col_f1 = Table_getColumnIndexFromColumnLabel (my marks.get(), U"F1");
 		long col_f2 = Table_getColumnIndexFromColumnLabel (my marks.get(), U"F2");
 		long col_fs = Table_findColumnIndexFromColumnLabel (my marks.get(), U"Size");
-		for (long i = 1; i <= my marks -> rows -> size; i++) {
+		for (long i = 1; i <= my marks -> rows.size(); i ++) {
 			const char32 *label = Table_getStringValue_Assert (my marks.get(), i, col_vowel);
 			f1 = Table_getNumericValue_Assert (my marks.get(), i, col_f1);
 			f2 = Table_getNumericValue_Assert (my marks.get(), i, col_f2);
@@ -911,7 +911,7 @@ static void menu_cb_extract_FormantGrid (VowelEditor me, EDITOR_ARGS_DIRECT) {
 static void menu_cb_extract_KlattGrid (VowelEditor me, EDITOR_ARGS_DIRECT) {
 	VowelEditor_updateVowel (me);
 	autoFormantGrid fg = FormantTier_to_FormantGrid (my vowel -> ft.get());
-	autoKlattGrid publish = KlattGrid_create (fg -> xmin, fg -> xmax, fg -> formants -> size, 0, 0, 0, 0, 0, 0);
+	autoKlattGrid publish = KlattGrid_create (fg -> xmin, fg -> xmax, fg -> formants.size(), 0, 0, 0, 0, 0, 0);
 	KlattGrid_addVoicingAmplitudePoint (publish.peek(), fg -> xmin, 90.0);
 	KlattGrid_replacePitchTier (publish.peek(), my vowel -> pt.get());
 	KlattGrid_replaceFormantGrid (publish.peek(), KlattGrid_ORAL_FORMANTS, fg.peek());
@@ -959,7 +959,7 @@ static void menu_cb_showOneVowelMark (VowelEditor me, EDITOR_ARGS_FORM) {
 			} else {
 				Table_appendRow (my marks.get());
 			}
-			irow = my marks -> rows -> size;
+			irow = my marks -> rows.size();
 			Table_setStringValue (my marks.get(), irow, 1, label);
 			Table_setNumericValue (my marks.get(), irow, 2, f1);
 			Table_setNumericValue (my marks.get(), irow, 3, f2);

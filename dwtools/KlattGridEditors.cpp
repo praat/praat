@@ -301,7 +301,7 @@ autoKlattGrid_DoublePulsingTierEditor KlattGrid_DoublePulsingTierEditor_create (
 Thing_implement (KlattGrid_FormantGridEditor, FormantGridEditor, 0);
 
 static bool FormantGrid_isEmpty (FormantGrid me) {
-	return my formants -> size == 0 || my bandwidths -> size == 0;
+	return my formants.size() == 0 || my bandwidths.size() == 0;
 }
 
 void structKlattGrid_FormantGridEditor :: v_play (double ltmin, double ltmax) {

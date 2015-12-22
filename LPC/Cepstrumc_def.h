@@ -18,21 +18,19 @@
  */
 
 /*
- djmw 20020812 GPL header
- djmw 20080122 Version 1: float -> double
+	djmw 20020812 GPL header
+	djmw 20080122 Version 1: float -> double
 */
 
 #define ooSTRUCT Cepstrumc_Frame
 oo_DEFINE_STRUCT (Cepstrumc_Frame)
 
 	oo_INT (nCoefficients)
+
 	#if oo_READING_BINARY
-		if (formatVersion == 0)
-		{
+		if (formatVersion == 0) {
 			oo_FLOAT_VECTOR_FROM (c, 0, nCoefficients)
-		}
-		else
-		{
+		} else {
 			oo_DOUBLE_VECTOR_FROM (c, 0, nCoefficients)
 		}
 	#else
@@ -46,7 +44,7 @@ oo_END_STRUCT (Cepstrumc_Frame)
 #define ooSTRUCT Cepstrumc
 oo_DEFINE_CLASS (Cepstrumc, Sampled)
 
-	oo_DOUBLE (samplingFrequency) /* from Sound */
+	oo_DOUBLE (samplingFrequency)   // from Sound
 	oo_INT (maxnCoefficients)
 	oo_STRUCT_VECTOR (Cepstrumc_Frame, frame, nx)
 
@@ -57,5 +55,6 @@ oo_DEFINE_CLASS (Cepstrumc, Sampled)
 
 oo_END_CLASS (Cepstrumc)
 #undef ooSTRUCT
+
 
 /* End of file Cepstrumc_def.h */

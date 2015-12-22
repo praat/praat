@@ -1055,17 +1055,17 @@ static autoTableOfReal TableOfReal_createPolsVanNieropData (int choice, bool inc
 		autoTableOfReal thee = TableOfReal_create (nrows, ncols);
 
 		for (long i = 1; i <= nrows; i++) {
-			TableRow row = (TableRow) table -> rows -> item[ib + i - 1];
-			TableOfReal_setRowLabel (thee.peek(), i, row -> cells[4].string);
+			TableRow row = table -> rows [ib + i - 1];
+			TableOfReal_setRowLabel (thee.peek(), i, row -> cells [4]. string);
 			for (long j = 1; j <= 3; j++) {
-				thy data[i][j] = Melder_atof (row -> cells[4 + j].string);
+				thy data[i][j] = Melder_atof (row -> cells [4 + j]. string);
 				if (include_levels) {
-					thy data[i][3 + j] = Melder_atof (row -> cells[7 + j].string);
+					thy data[i][3 + j] = Melder_atof (row -> cells [7 + j]. string);
 				}
 			}
 		}
 		for (long j = 1; j <= 3; j++) {
-			const char32 *label = table -> columnHeaders[4 + j].label;
+			const char32 *label = table -> columnHeaders [4 + j]. label;
 			TableOfReal_setColumnLabel (thee.peek(), j, label);
 			if (include_levels) {
 				label = table -> columnHeaders[7 + j].label;
@@ -1098,14 +1098,14 @@ autoTableOfReal TableOfReal_createFromWeeninkData (int option) {
 		autoTableOfReal thee = TableOfReal_create (nrows, ncols);
 
 		for (long i = 1; i <= nrows; i++) {
-			TableRow row = (TableRow) table -> rows -> item[ib + i - 1];
-			TableOfReal_setRowLabel (thee.peek(), i, row -> cells[5].string);
+			TableRow row = table -> rows [ib + i - 1];
+			TableOfReal_setRowLabel (thee.peek(), i, row -> cells [5]. string);
 			for (long j = 1; j <= 3; j++) {
-				thy data[i][j] = Melder_atof (row -> cells[6 + j].string); /* Skip F0 */
+				thy data[i][j] = Melder_atof (row -> cells [6 + j]. string); /* Skip F0 */
 			}
 		}
 		for (long j = 1; j <= 3; j++)  {
-			const char32 *label = table -> columnHeaders[6 + j].label;
+			const char32 *label = table -> columnHeaders [6 + j]. label;
 			TableOfReal_setColumnLabel (thee.peek(), j, label);
 		}
 		return thee;

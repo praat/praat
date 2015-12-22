@@ -25,6 +25,7 @@
  djmw 20080122 float -> double
  */
 
+
 #define ooSTRUCT CCA
 oo_DEFINE_CLASS (CCA, Daata)
 
@@ -42,5 +43,6 @@ oo_DEFINE_CLASS (CCA, Daata)
 
 oo_END_CLASS (CCA)
 #undef ooSTRUCT
+
 
 /* End of file CCA_def.h */

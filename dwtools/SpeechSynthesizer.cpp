@@ -190,7 +190,7 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 			//my events = Table "time type type-t t-pos length a-pos sample id uniq";
 			//                    1    2     3      4     5     6     7      8   9
 			Table_appendRow (my d_events.peek());
-			long irow = my d_events -> rows -> size;
+			long irow = my d_events -> rows.size();
 			double time = events -> audio_position * 0.001;
 			Table_setNumericValue (my d_events.peek(), irow, 1, time);
 			Table_setNumericValue (my d_events.peek(), irow, 2, events -> type);
@@ -214,7 +214,7 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 	if (me != 0) {
 		NUMvector_supplyStorage<int> (&my d_wav, 1, &my d_wavCapacity, my d_numberOfSamples, numsamples);
 		for (long i = 1; i <= numsamples; i++) {
-			my d_wav[my d_numberOfSamples + i] = wav[i - 1];
+			my d_wav [my d_numberOfSamples + i] = wav [i - 1];
 		}
 		my d_numberOfSamples += numsamples;
 	}
@@ -340,7 +340,7 @@ static void IntervalTier_addBoundaryUnsorted (IntervalTier me, long iinterval, d
 
 static void Table_setEventTypeString (Table me) {
 	try {
-		for (long i = 1; i <= my rows -> size; i++) {
+		for (long i = 1; i <= my rows.size(); i ++) {
 			int type = Table_getNumericValue_Assert (me, i, 2);
 			const char32 *label = U"0";
 			if (type == espeakEVENT_WORD) {
@@ -376,7 +376,7 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 	//Table_createWithColumnNames (0, L"time type type-t t-pos length a-pos sample id uniq");
 	try {
 		long length, textLength = str32len (text);
-		long numberOfRows = my rows -> size;
+		long numberOfRows = my rows.size();
 		long timeColumnIndex = Table_getColumnIndexFromColumnLabel (me, U"time");
 		long typeColumnIndex = Table_getColumnIndexFromColumnLabel (me, U"type");
 		long tposColumnIndex = Table_getColumnIndexFromColumnLabel (me, U"t-pos");
@@ -537,7 +537,7 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, 
 			if (xmin > thy xmin) {
 				xmin = thy xmin;
 			}
-			double xmax = Table_getNumericValue_Assert (my d_events.peek(), my d_events -> rows -> size, 1);
+			double xmax = Table_getNumericValue_Assert (my d_events.peek(), my d_events -> rows.size(), 1);
 			if (xmax < thy xmax) {
 				xmax = thy xmax;
 			}
