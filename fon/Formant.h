@@ -21,7 +21,7 @@
 
 #include "Matrix.h"
 #include "Table.h"
-#include "Interpreter_decl.h"
+Thing_declare (Interpreter);
 
 #include "Formant_def.h"
 

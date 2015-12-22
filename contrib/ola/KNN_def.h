@@ -18,8 +18,6 @@
  */
 
 
-#include "Pattern.h"
-
 #define ooSTRUCT KNN
 oo_DEFINE_CLASS (KNN, Daata)
 
@@ -34,5 +32,6 @@ oo_DEFINE_CLASS (KNN, Daata)
 
 oo_END_CLASS (KNN)
 #undef ooSTRUCT
+
 
 /* End of file KNN_def.h */

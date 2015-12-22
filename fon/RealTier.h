@@ -23,7 +23,7 @@
 #include "Graphics.h"
 #include "TableOfReal.h"
 #include "Vector.h"
-#include "Interpreter_decl.h"
+Thing_declare (Interpreter);
 
 /********** class RealPoint **********/
 

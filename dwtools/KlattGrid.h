@@ -19,11 +19,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * djmw 20080917 Initial version
- * djmw 20140113 Latest modification
- */
-
 #include "Collection.h"
 #include "PointProcess.h"
 #include "Sound.h"
@@ -31,7 +26,7 @@
 #include "PitchTier.h"
 #include "FormantGrid.h"
 #include "KlattTable.h"
-#include "Interpreter_decl.h"
+Thing_declare (Interpreter);
 
 #include "KlattGrid_def.h"
 
@@ -195,17 +190,25 @@ void KlattGrid_setGlottisCoupling (KlattGrid me);
 autoFormantGrid * KlattGrid_getAddressOfFormantGrid (KlattGrid me, int formantType);
 autoOrdered * KlattGrid_getAddressOfAmplitudes (KlattGrid me, int formantType);
 
-// add/remove frequency + bandwidth (+amplitude) tiers
-void KlattGrid_addFormant (KlattGrid me,int formantType, long position);
-void KlattGrid_removeFormant (KlattGrid me,int formantType, long position);
-
-// add/remove frequency + bandwidth tiers
+/*
+	One can add (or remove) formant frequency tiers, formant bandwidth tiers and formant amplitude tiers.
+	The first two types are handled together, the third type is handled separately.
+*/
 void KlattGrid_addFormantFrequencyAndBandwidthTiers (KlattGrid me, int formantType, long position);
 void KlattGrid_removeFormantFrequencyAndBandwidthTiers (KlattGrid me, int formantType, long position);
-
-
 void KlattGrid_addFormantAmplitudeTier (KlattGrid me, int formantType, long position);
 void KlattGrid_removeFormantAmplitudeTier (KlattGrid me, int formantType, long position);
+
+/*
+	The following two functions are deprecated;
+	they combine the actions of the above functions,
+	i.e. they add (or remove) a formant frequency tier, a formant bandwidth tier,
+	and a formant amplitude tier in one go.
+	Use instead the above division of these actions into two steps.
+*/
+void KlattGrid_addFormant (KlattGrid me, int formantType, long position);
+void KlattGrid_removeFormant (KlattGrid me, int formantType, long position);
+
 /***************** KlattGrid & Sound *************************************/
 
 // reset PlayOptions to defaults

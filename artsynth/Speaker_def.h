@@ -1,6 +1,6 @@
 /* Speaker_def.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,89 +20,124 @@
 
 #define ooSTRUCT Speaker_CordDimensions
 oo_DEFINE_STRUCT (Speaker_CordDimensions)
+
 	oo_INT (numberOfMasses)
 	oo_DOUBLE (length)
+
 oo_END_STRUCT (Speaker_CordDimensions)
 #undef ooSTRUCT
 
+
 #define ooSTRUCT Speaker_CordSpring
 oo_DEFINE_STRUCT (Speaker_CordSpring)
+
 	oo_DOUBLE (thickness)
 	oo_DOUBLE (mass)
 	oo_DOUBLE (k1)
+
 oo_END_STRUCT (Speaker_CordSpring)
 #undef ooSTRUCT
 
+
 #define ooSTRUCT Speaker_GlottalShunt
 oo_DEFINE_STRUCT (Speaker_GlottalShunt)
+
 	oo_DOUBLE (Dx)
 	oo_DOUBLE (Dy)
 	oo_DOUBLE (Dz)
+
 oo_END_STRUCT (Speaker_GlottalShunt)
 #undef ooSTRUCT
 
+
 #define ooSTRUCT Speaker_Velum
-oo_DEFINE_STRUCT (Speaker_Velum)   /* V */
+oo_DEFINE_STRUCT (Speaker_Velum)   // V
+
 	oo_DOUBLE (x)
 	oo_DOUBLE (y)
 	oo_DOUBLE (a)
+
 oo_END_STRUCT (Speaker_Velum)
 #undef ooSTRUCT
 
+
 #define ooSTRUCT Speaker_Palate
-oo_DEFINE_STRUCT (Speaker_Palate)   /* OM */
+oo_DEFINE_STRUCT (Speaker_Palate)   // OM
+
 	oo_DOUBLE (radius)
+
 oo_END_STRUCT (Speaker_Palate)
 #undef ooSTRUCT
 
+
 #define ooSTRUCT Speaker_Tip
 oo_DEFINE_STRUCT (Speaker_Tip)
+
 	oo_DOUBLE (length)
+
 oo_END_STRUCT (Speaker_Tip)
 #undef ooSTRUCT
 
+
 #define ooSTRUCT Speaker_Alveoli
 oo_DEFINE_STRUCT (Speaker_Alveoli)
+
 	oo_DOUBLE (x)
 	oo_DOUBLE (y)
 	oo_DOUBLE (a)
+
 oo_END_STRUCT (Speaker_Alveoli)
 #undef ooSTRUCT
 
+
 #define ooSTRUCT Speaker_TeethCavity
 oo_DEFINE_STRUCT (Speaker_TeethCavity)
+
 	oo_DOUBLE (dx1)
 	oo_DOUBLE (dx2)
 	oo_DOUBLE (dy)
+
 oo_END_STRUCT (Speaker_TeethCavity)
 #undef ooSTRUCT
 
+
 #define ooSTRUCT Speaker_LowerTeeth
-oo_DEFINE_STRUCT (Speaker_LowerTeeth)   /* rest position of J */
+oo_DEFINE_STRUCT (Speaker_LowerTeeth)   // rest position of J
+
 	oo_DOUBLE (r)
 	oo_DOUBLE (a)
+
 oo_END_STRUCT (Speaker_LowerTeeth)
 #undef ooSTRUCT
 
+
 #define ooSTRUCT Speaker_UpperTeeth
-oo_DEFINE_STRUCT (Speaker_UpperTeeth)   /* U */
+oo_DEFINE_STRUCT (Speaker_UpperTeeth)   // U
+
 	oo_DOUBLE (x)
 	oo_DOUBLE (y)
+
 oo_END_STRUCT (Speaker_UpperTeeth)
 #undef ooSTRUCT
 
+
 #define ooSTRUCT Speaker_Lip
 oo_DEFINE_STRUCT (Speaker_Lip)
+
 	oo_DOUBLE (dx)
 	oo_DOUBLE (dy)
+
 oo_END_STRUCT (Speaker_Lip)
 #undef ooSTRUCT
 
+
 #define ooSTRUCT Speaker_Nose
 oo_DEFINE_STRUCT (Speaker_Nose)
+
 	oo_DOUBLE (Dx)
 	oo_DOUBLE (Dz)
 	oo_DOUBLE_ARRAY (weq, 14, 14)
+
 oo_END_STRUCT (Speaker_Nose)
 #undef ooSTRUCT
 
@@ -110,7 +145,7 @@ oo_END_STRUCT (Speaker_Nose)
 #define ooSTRUCT Speaker
 oo_DEFINE_CLASS (Speaker, Daata)
 
-	oo_DOUBLE (relativeSize)   /* Different for female, male, child. */
+	oo_DOUBLE (relativeSize)   // different for female, male, child
 
 	/* In the larynx. */
 

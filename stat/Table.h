@@ -21,7 +21,7 @@
 
 #include "Collection.h"
 #include "Graphics.h"
-#include "Interpreter_decl.h"
+Thing_declare (Interpreter);
 
 #include "Table_def.h"
 

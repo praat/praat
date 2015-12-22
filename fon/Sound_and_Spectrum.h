@@ -19,7 +19,7 @@
 
 #include "Sound.h"
 #include "Spectrum.h"
-#include "Interpreter_decl.h"
+Thing_declare (Interpreter);
 
 autoSpectrum Sound_to_Spectrum_at (Sound me, double tim, double windowDuration, int windowType);
 

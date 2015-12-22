@@ -301,8 +301,8 @@ autoERPTier ERPTier_extractEventsWhereColumn_number (ERPTier me, Table table, lo
 	try {
 		Table_checkSpecifiedColumnNumberWithinRange (table, columnNumber);
 		Table_numericize_Assert (table, columnNumber);   // extraction should work even if cells are not defined
-		if (my points.size() != table -> rows -> size)
-			Melder_throw (me, U" & ", table, U": the number of rows in the table (", table -> rows -> size,
+		if (my points.size() != table -> rows.size())
+			Melder_throw (me, U" & ", table, U": the number of rows in the table (", table -> rows.size(),
 				U") doesn't match the number of events (", my points.size(), U").");
 		autoERPTier thee = Thing_new (ERPTier);
 		Function_init (thee.peek(), my xmin, my xmax);
@@ -313,7 +313,7 @@ autoERPTier ERPTier_extractEventsWhereColumn_number (ERPTier me, Table table, lo
 		}
 		for (long ievent = 1; ievent <= my points.size(); ievent ++) {
 			ERPPoint oldEvent = my points [ievent];
-			TableRow row = table -> row (ievent);
+			TableRow row = table -> rows [ievent];
 			if (Melder_numberMatchesCriterion (row -> cells [columnNumber]. number, which_Melder_NUMBER, criterion)) {
 				autoERPPoint newEvent = Data_copy (oldEvent);
 				thy points. addItem_move (newEvent.move());
@@ -333,8 +333,8 @@ autoERPTier ERPTier_extractEventsWhereColumn_string (ERPTier me, Table table,
 {
 	try {
 		Table_checkSpecifiedColumnNumberWithinRange (table, columnNumber);
-		if (my points.size() != table -> rows -> size)
-			Melder_throw (me, U" & ", table, U": the number of rows in the table (", table -> rows -> size,
+		if (my points.size() != table -> rows.size())
+			Melder_throw (me, U" & ", table, U": the number of rows in the table (", table -> rows.size(),
 				U") doesn't match the number of events (", my points.size(), U").");
 		autoERPTier thee = Thing_new (ERPTier);
 		Function_init (thee.peek(), my xmin, my xmax);
@@ -345,7 +345,7 @@ autoERPTier ERPTier_extractEventsWhereColumn_string (ERPTier me, Table table,
 		}
 		for (long ievent = 1; ievent <= my points.size(); ievent ++) {
 			ERPPoint oldEvent = my points [ievent];
-			TableRow row = table -> row (ievent);
+			TableRow row = table -> rows [ievent];
 			if (Melder_stringMatchesCriterion (row -> cells [columnNumber]. string, which_Melder_STRING, criterion)) {
 				autoERPPoint newEvent = Data_copy (oldEvent);
 				thy points. addItem_move (newEvent.move());

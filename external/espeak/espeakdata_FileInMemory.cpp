@@ -121,15 +121,15 @@ const char * espeakdata_get_voicedata (const char *data, long ndata, char *buf, 
 autoTable espeakdata_voices_to_Table (FilesInMemory me) {
 	try {
 		autoTable thee = Table_createWithColumnNames (my size, U"id name");
-		for (long ifile = 1; ifile <= my size; ifile++) {
-			FileInMemory fim = (FileInMemory) my item[ifile];
+		for (long ifile = 1; ifile <= my size; ifile ++) {
+			FileInMemory fim = (FileInMemory) my item [ifile];
 			Table_setStringValue (thee.peek(), ifile, 1, fim -> d_id);
 			const char *p = strstr (fim -> d_data, "name");
 			if (p == NULL) continue;
 			// copy the name part to the following new line
 			char buf[40], *bufp = buf;
 			long len = 0;
-			while ((*bufp++ = *p++) != '\n' && len < 39) { len++; }
+			while ((*bufp ++ = *p ++) != '\n' && len < 39) { len ++; }
 			// remove trailing white space
 			*bufp = 0;
 			while (ESPEAK_ISSPACE (buf[len]) && len > 0) {
@@ -137,11 +137,11 @@ autoTable espeakdata_voices_to_Table (FilesInMemory me) {
 			}
 			// skip leading white space
 			bufp = & buf[4];
-			while (ESPEAK_ISSPACE (*bufp)) { *bufp++; }
+			while (ESPEAK_ISSPACE (*bufp)) { *bufp ++; }
 			Table_setStringValue (thee.peek(), ifile, 2, Melder_peek8to32 (bufp));
-			TableRow row = static_cast <TableRow> (thy rows -> item [ifile]);
-			wint_t c0 = row -> cells [2]. string[0];
-			row -> cells [2]. string[0] = towupper (c0);
+			TableRow row = thy rows [ifile];
+			wint_t c0 = row -> cells [2]. string [0];
+			row -> cells [2]. string [0] = towupper (c0);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -155,11 +155,11 @@ autoStrings espeakdata_voices_getNames (Table me, long column) {
 			Melder_throw (U"Illegal columnn.");
 		}
 		autoStrings thee = Thing_new (Strings);
-		thy strings = NUMvector <char32 *> (1, my rows -> size);
+		thy strings = NUMvector <char32 *> (1, my rows.size());
 		thy numberOfStrings = 0;
-		for (long irow = 1; irow <= my rows -> size; irow++) {
-			thy strings[irow] = Melder_dup (Table_getStringValue_Assert (me, irow, column));
-			thy numberOfStrings++;
+		for (long irow = 1; irow <= my rows.size(); irow ++) {
+			thy strings [irow] = Melder_dup (Table_getStringValue_Assert (me, irow, column));
+			thy numberOfStrings ++;
 		}
 		return thee;
 	} catch (MelderError) {

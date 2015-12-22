@@ -40,8 +40,6 @@
 #include "oo_DESCRIPTION.h"
 #include "VocalTractTier_def.h"
 
-/***** VocalTractPoint *****/
-
 void VocalTract_drawSegments (VocalTract me, Graphics g, double maxLength, double maxArea, bool closedAtGlottis)
 {
 	Graphics_setInner (g);
@@ -62,6 +60,8 @@ void VocalTract_drawSegments (VocalTract me, Graphics g, double maxLength, doubl
 	}
 	Graphics_unsetInner (g);
 }
+
+/***** VocalTractPoint *****/
 
 Thing_implement (VocalTractPoint, AnyPoint, 0);
 

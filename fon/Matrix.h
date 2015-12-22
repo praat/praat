@@ -23,7 +23,7 @@
 #include "Graphics.h"
 #include "../stat/Table.h"
 #include "../stat/TableOfReal.h"
-#include "Interpreter_decl.h"
+Thing_declare (Interpreter);
 
 #include "Matrix_def.h"
 

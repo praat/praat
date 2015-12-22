@@ -194,7 +194,7 @@ double CC_getValueInFrame (CC me, long iframe, long index) {
 	return index > cf -> numberOfCoefficients ? NUMundefined : cf -> c[index];
 }
 
-double CC_getValueAtTime (CC me, double t, long index) {
+static double CC_getValueAtTime (CC me, double t, long index) {
 	long iframe = Sampled_xToNearestIndex (me, t);
 	return CC_getValueInFrame (me, iframe, index);
 }

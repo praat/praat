@@ -105,7 +105,7 @@ autoLinearRegression LinearRegression_create () {
 autoLinearRegression Table_to_LinearRegression (Table me) {
 	try {
 		long numberOfIndependentVariables = my numberOfColumns - 1, numberOfParameters = my numberOfColumns;
-		long numberOfCells = my rows -> size, icell, ivar;
+		long numberOfCells = my rows.size(), icell, ivar;
 		if (numberOfParameters < 1)   // includes intercept
 			Melder_throw (U"Not enough columns (has to be more than 1).");
 		if (numberOfCells < numberOfParameters) {

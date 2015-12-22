@@ -79,7 +79,7 @@ void structDataModeler :: v_info () {
 
 static double polynomial_evaluate (DataModeler me, double xin, double p[])
 {
-	double xpi = 1, result = p[1];
+	double xpi = 1.0, result = p[1];
 	// From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
 	double x = (2.0 * xin - my xmin - my xmax) / 2.0;
 	for (long i = 2; i <= my numberOfParameters; i++) {
@@ -90,7 +90,7 @@ static double polynomial_evaluate (DataModeler me, double xin, double p[])
 }
 
 static void polynomial_evaluateBasisFunctions (DataModeler me, double xin, double term[]) {
-	term[1] = 1;
+	term[1] = 1.0;
 	// From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
 	double x = (2.0 * xin - my xmin - my xmax) / 2.0;
 	for (long i = 2; i <= my numberOfParameters; i++) {
@@ -109,7 +109,8 @@ static double legendre_evaluate (DataModeler me, double xin, double p[]) {
 			double f1 = d++;
 			f2 += twox;
 			result += p[i] * (pti = (f2 * ptim1 - f1 * ptim2) / d);
-			ptim2 = ptim1; ptim1 = pti;
+			ptim2 = ptim1;
+			ptim1 = pti;
 		}
 	}
 	return result;
@@ -891,7 +892,7 @@ autoDataModeler Table_to_DataModeler (Table me, double xmin, double xmax, long x
 		if (useSigmaY) {
 			Table_checkSpecifiedColumnNumberWithinRange (me, scolumn);
 		}
-		long numberOfRows = my rows -> size, numberOfData = 0;
+		long numberOfRows = my rows.size(), numberOfData = 0;
 		autoNUMvector<double> x (1, numberOfRows), y (1, numberOfRows), sy (1, numberOfRows);
 		for (long i = 1; i <= numberOfRows; i++) {
 			double val = Table_getNumericValue_Assert (me, i, xcolumn);
@@ -1376,7 +1377,7 @@ double FormantModeler_getWeightedMean (FormantModeler me, long iformant) {
 	
 }
 
-long FormantModeler_getMaximumNumberOfParameters (FormantModeler me) {
+static long FormantModeler_getMaximumNumberOfParameters (FormantModeler me) {
 	long maxnum = 1;
 	for (long i = 1; i <= my trackmodelers -> size; i++) {
 		DataModeler ffi = (DataModeler) my trackmodelers -> item[i];
@@ -1511,7 +1512,7 @@ autoTable FormantModeler_to_Table_zscores (FormantModeler me, int useSigmaY) {
 
 autoDataModeler FormantModeler_extractDataModeler (FormantModeler me, long iformant) {
 	try {
-		if (! (iformant > 0 && iformant <= my trackmodelers -> size)) {
+		if (iformant < 1 || iformant > my trackmodelers -> size) {
 			Melder_throw (U"");
 		}
 		DataModeler ff = (DataModeler) my trackmodelers -> item[iformant];
