@@ -17,11 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/05/18
- * pb 2002/07/16 GPL
- */
-
 
 #define ooSTRUCT FujisakiCommand
 oo_DEFINE_CLASS (FujisakiCommand, Function)
@@ -39,8 +34,8 @@ oo_DEFINE_CLASS (FujisakiPitch, Function)
 	oo_DOUBLE (alpha)
 	oo_DOUBLE (beta)
 	oo_DOUBLE (gamma)
-	oo_AUTO_COLLECTION (SortedSetOfDouble, phraseCommands, FujisakiCommand, 0)
-	oo_AUTO_COLLECTION (SortedSetOfDouble, accentCommands, FujisakiCommand, 0)
+	oo_COLLECTION_OF (SortedSetOfDoubleOf, phraseCommands, FujisakiCommand, 0)
+	oo_COLLECTION_OF (SortedSetOfDoubleOf, accentCommands, FujisakiCommand, 0)
 
 oo_END_CLASS (FujisakiPitch)
 #undef ooSTRUCT

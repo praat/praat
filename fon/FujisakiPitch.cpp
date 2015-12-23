@@ -69,20 +69,16 @@ autoFujisakiPitch FujisakiPitch_create (double tmin, double tmax,
 		my alpha = alpha;
 		my beta = beta;
 		my gamma = gamma;
-		my phraseCommands = SortedSetOfDouble_create ();
-		my accentCommands = SortedSetOfDouble_create ();
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FujisakiPitch not created.");
 	}
 }
 
-autoFujisakiPitch Pitch_to_FujisakiPitch (Pitch me, double gamma, double timeResolution,
+autoFujisakiPitch Pitch_to_FujisakiPitch (Pitch me, double gamma, double /* timeResolution */,
 	autoFujisakiPitch *intermediate1, autoFujisakiPitch *intermediate2, autoFujisakiPitch *intermediate3)
 {
-	(void) timeResolution;
 	try {
-
 		autoFujisakiPitch thee = FujisakiPitch_create (my xmin, my xmax, 0, 0, 0, gamma);
 		/*
 		 * Get phrase commands.
@@ -92,7 +88,7 @@ autoFujisakiPitch Pitch_to_FujisakiPitch (Pitch me, double gamma, double timeRes
 			double offsetTime = /* ... */ 3.0;
 			double amplitude = /* ... */ 1.0;
 			autoFujisakiCommand phraseCommand = FujisakiCommand_create (onsetTime, offsetTime, amplitude);
-			Collection_addItem_move (thy phraseCommands.get(), phraseCommand.move());
+			thy phraseCommands. addItem_move (phraseCommand.move());
 		}
 		if (intermediate1) *intermediate1 = Data_copy (thee.peek());
 		/*
@@ -103,7 +99,7 @@ autoFujisakiPitch Pitch_to_FujisakiPitch (Pitch me, double gamma, double timeRes
 			double offsetTime = /* ... */ 3.0;
 			double amplitude = /* ... */ 1.0;
 			autoFujisakiCommand accentCommand = FujisakiCommand_create (onsetTime, offsetTime, amplitude);
-			Collection_addItem_move (thy accentCommands.get(), accentCommand.move());
+			thy accentCommands. addItem_move (accentCommand.move());
 		}
 		if (intermediate2) *intermediate2 = Data_copy (thee.peek());
 		/*
@@ -114,12 +110,12 @@ autoFujisakiPitch Pitch_to_FujisakiPitch (Pitch me, double gamma, double timeRes
 		/*
 		 * Tidy up.
 		 */
-		for (long i = 1; i <= thy phraseCommands -> size; i ++) {
-			FujisakiCommand phraseCommand = (FujisakiCommand) thy phraseCommands -> item [i];
+		for (long i = 1; i <= thy phraseCommands.size(); i ++) {
+			FujisakiCommand phraseCommand = thy phraseCommands [i];
 			/* ... */
 		}
-		for (long i = 1; i <= thy accentCommands -> size; i ++) {
-			FujisakiCommand accentCommand = (FujisakiCommand) thy accentCommands -> item [i];
+		for (long i = 1; i <= thy accentCommands.size(); i ++) {
+			FujisakiCommand accentCommand = thy accentCommands [i];
 			/* ... */
 		}
 		return thee;

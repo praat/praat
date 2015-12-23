@@ -386,6 +386,7 @@ void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g, double
 	double *v1 = my eigenvectors[d1];
 	double *v2 = my eigenvectors[d2];
 
+
 	autoSSCPs thee = SSCPs_toTwoDimensions (my groups.peek(), v1, v2);
 
 	SSCPs_drawConcentrationEllipses (thee.peek(), g, scale, confidence, label, 1, 2, xmin, xmax, ymin, ymax, fontSize, 0);

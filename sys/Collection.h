@@ -602,6 +602,18 @@ Thing_define (SortedSetOfString, SortedSet) {
 	Data_CompareHook v_getCompareHook () override { return s_compareHook; }
 };
 
+template <typename T>
+struct SortedSetOfStringOf : SortedSetOf <T> {
+	SortedSetOfStringOf () {
+	}
+	SortedSetOfStringOf<T>&& move () noexcept { return static_cast <SortedSetOfStringOf<T>&&> (*this); }
+	static int s_compareHook (SimpleString me, SimpleString thee) noexcept {
+		return str32cmp (my string, thy string);
+	}
+	typename SortedOf<T>::CompareHook v_getCompareHook ()
+		override { return (typename SortedOf<T>::CompareHook) our s_compareHook; }
+};
+
 void SortedSetOfString_init (SortedSetOfString me);
 autoSortedSetOfString SortedSetOfString_create ();
 void SortedSetOfString_addString_copy (SortedSetOfString me, const char32 *string);

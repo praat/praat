@@ -1023,9 +1023,9 @@ void SSCPs_getHomegeneityOfCovariances_box (SSCPs me, double *probability, doubl
 autoSSCPs SSCPs_toTwoDimensions (SSCPs me, double *v1, double *v2) {
 	try {
 		autoSSCPs thee = SSCPs_create ();
-		for (long i = 1; i <= my size; i++) {
-			autoSSCP t = SSCP_toTwoDimensions ((SSCP) my item[i], v1, v2);
-			Thing_setName (t.peek(), Thing_getName ( (Thing) my item[i]));
+		for (long i = 1; i <= my size; i ++) {
+			autoSSCP t = SSCP_toTwoDimensions ((SSCP) my item [i], v1, v2);
+			Thing_setName (t.peek(), Thing_getName (my item [i]));
 			Collection_addItem_move (thee.peek(), t.move());
 		}
 		return thee;
