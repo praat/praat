@@ -40,4 +40,5 @@ oo_DEFINE_CLASS (EEG, Function)
 oo_END_CLASS (EEG)
 #undef ooSTRUCT
 
+
 /* End of file EEG_def.h */

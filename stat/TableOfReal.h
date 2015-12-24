@@ -23,7 +23,7 @@
 #include "Collection.h"
 #include "Strings_.h"
 #include "Table.h"
-#include "Interpreter_decl.h"
+Thing_declare (Interpreter);
 
 #include "TableOfReal_def.h"
 

@@ -308,7 +308,7 @@ autoHMMObservationSequence HMMObservationSequence_create (long numberOfItems, lo
 }
 
 long HMMObservationSequence_getNumberOfObservations (HMMObservationSequence me) {
-	return my rows -> size;
+	return my rows.size();
 }
 
 void HMMObservationSequence_removeObservation (HMMObservationSequence me, long index) {
@@ -317,7 +317,7 @@ void HMMObservationSequence_removeObservation (HMMObservationSequence me, long i
 
 autoStrings HMMObservationSequence_to_Strings (HMMObservationSequence me) {
 	try {
-		long numberOfStrings = my rows -> size;
+		long numberOfStrings = my rows.size();
 		autoStrings thee = Thing_new (Strings);
 		thy strings = NUMvector<char32 *> (1, numberOfStrings);
 		for (long i = 1; i <= numberOfStrings; i++) {
@@ -375,8 +375,8 @@ long HMMObservationSequences_getLongestSequence (HMMObservationSequences me) {
 	long longest = 0;
 	for (long i = 1; i <= my size; i++) {
 		HMMObservationSequence thee = (HMMObservationSequence) my item[i];
-		if (thy rows -> size > longest) {
-			longest = thy rows -> size;
+		if (thy rows.size() > longest) {
+			longest = thy rows.size();
 		}
 	}
 	return longest;
@@ -1364,8 +1364,7 @@ autoHMMStateSequence HMM_and_HMMObservationSequence_to_HMMStateSequence (HMM me,
 			Melder_throw (U"Unknown observation symbol(s) (# = ", numberOfUnknowns, U").");
 		}
 
-
-		long numberOfTimes = thy rows -> size;
+		long numberOfTimes = thy rows.size();
 		autoHMMViterbi v = HMM_to_HMMViterbi (me, obs, numberOfTimes);
 		autoHMMStateSequence him = HMMStateSequence_create (numberOfTimes);
 		// trace the path and get states
@@ -1511,7 +1510,7 @@ double HMM_and_HMMObservationSequence_getProbability (HMM me, HMMObservationSequ
 	if (numberOfUnknowns > 0) {
 		Melder_throw (U"Unknown observations (# = ", numberOfUnknowns, U").");
 	}
-	return HMM_getProbabilityOfObservations (me, index, thy rows -> size);
+	return HMM_getProbabilityOfObservations (me, index, thy rows.size());
 }
 
 double HMM_and_HMMObservationSequence_getCrossEntropy (HMM me, HMMObservationSequence thee) {

@@ -40,13 +40,11 @@
 #include "oo_DESCRIPTION.h"
 #include "VocalTractTier_def.h"
 
-/***** VocalTractPoint *****/
-
 void VocalTract_drawSegments (VocalTract me, Graphics g, double maxLength, double maxArea, bool closedAtGlottis)
 {
 	Graphics_setInner (g);
 	double maxCrossection = sqrt (maxArea);
-	Graphics_setWindow (g, 0, maxLength, -maxCrossection, maxCrossection);
+	Graphics_setWindow (g, 0.0, maxLength, -maxCrossection, maxCrossection);
 	for (long isection = 1; isection <= my nx; isection++) {
 		double x1 = (isection - 1.0) * my dx, x2 = x1 + my dx;
 		double crosssection2 = sqrt (my z[1][isection]);
@@ -62,6 +60,8 @@ void VocalTract_drawSegments (VocalTract me, Graphics g, double maxLength, doubl
 	}
 	Graphics_unsetInner (g);
 }
+
+/***** VocalTractPoint *****/
 
 Thing_implement (VocalTractPoint, AnyPoint, 0);
 
@@ -84,7 +84,6 @@ autoVocalTractTier VocalTractTier_create (double fromTime, double toTime) {
 	try {
 		autoVocalTractTier me = Thing_new (VocalTractTier);
 		Function_init (me.peek(), fromTime, toTime);
-		my d_vocalTracts = SortedSetOfDouble_create ();
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U": VocalTractTier not created.");
@@ -104,14 +103,14 @@ autoVocalTractTier VocalTract_to_VocalTractTier (VocalTract me, double startTime
 void VocalTractTier_addVocalTract_copy (VocalTractTier me, double time, VocalTract vocaltract) {
 	try {
 		autoVocalTractPoint thee = VocalTract_to_VocalTractPoint (vocaltract, time);
-		if (my d_vocalTracts -> size > 0) {
-			VocalTractPoint vtp = (VocalTractPoint) my d_vocalTracts -> item[1];
+		if (my d_vocalTracts.size() > 0) {
+			VocalTractPoint vtp = my d_vocalTracts [1];
 			long numberOfSections = vtp -> d_vocalTract -> nx;
 			if (numberOfSections != vocaltract -> nx) {
 				Melder_throw (U"The number of sections must be equal to ", numberOfSections, U".");
 			}
 		}
-		Collection_addItem_move (my d_vocalTracts.get(), thee.move());
+		my d_vocalTracts. addItem_move (thee.move());
 	} catch (MelderError) {
 		Melder_throw (me, U": no VocalTract added.");
 	}
@@ -119,14 +118,15 @@ void VocalTractTier_addVocalTract_copy (VocalTractTier me, double time, VocalTra
 
 autoVocalTract VocalTractTier_to_VocalTract (VocalTractTier me, double time) {
 	try {
-		VocalTractPoint vtp = (VocalTractPoint) my d_vocalTracts -> item[1];
+		Melder_assert (my d_vocalTracts.size() > 0);
+		VocalTractPoint vtp = my d_vocalTracts [1];
 		long numberOfSections = vtp -> d_vocalTract -> nx;
 		autoVocalTract thee = VocalTract_create (numberOfSections, vtp -> d_vocalTract -> dx);
-		for (long isection = 1; isection <= numberOfSections; isection++) {
+		for (long isection = 1; isection <= numberOfSections; isection ++) {
 			autoRealTier section = RealTier_create (my xmin, my xmax);
-			for (long i = 1; i <= my d_vocalTracts -> size; i++) {
-				VocalTractPoint vtpi = (VocalTractPoint) my d_vocalTracts -> item[i];
-				double areai = vtpi -> d_vocalTract -> z[1][isection];
+			for (long i = 1; i <= my d_vocalTracts.size(); i ++) {
+				VocalTractPoint vtpi = my d_vocalTracts [i];
+				double areai = vtpi -> d_vocalTract -> z [1] [isection];
 				RealTier_addPoint (section.peek(), vtpi -> number, areai);
 			}
 			thy z[1][isection] = RealTier_getValueAtTime (section.peek(), time);
@@ -139,38 +139,38 @@ autoVocalTract VocalTractTier_to_VocalTract (VocalTractTier me, double time) {
 
 autoLPC VocalTractTier_to_LPC (VocalTractTier me, double timeStep) {
 	try {
-		if (my d_vocalTracts -> size == 0) {
+		if (my d_vocalTracts.size() == 0) {
 			Melder_throw (U"Empty VocalTractTier");
 		}
 		long numberOfFrames = (long) floor ((my xmax - my xmin) / timeStep);
-		VocalTractPoint vtp = (VocalTractPoint) my d_vocalTracts -> item[1];
+		VocalTractPoint vtp = my d_vocalTracts [1];
 		long numberOfSections = vtp -> d_vocalTract -> nx;
 		double samplingPeriod = 1.0 / (1000.0 * numberOfSections);
 		autoNUMmatrix<double> area (1, numberOfFrames, 1, numberOfSections + 1);
 		autoNUMvector<double> areavec (1, numberOfSections + 1);
-		autoLPC thee = LPC_create (my xmin, my xmax, numberOfFrames, timeStep, timeStep / 2, numberOfSections, samplingPeriod);
+		autoLPC thee = LPC_create (my xmin, my xmax, numberOfFrames, timeStep, timeStep / 2.0, numberOfSections, samplingPeriod);
 		// interpolate each section
-		for (long isection = 1; isection <= numberOfSections; isection++) {
+		for (long isection = 1; isection <= numberOfSections; isection ++) {
 			autoRealTier sectioni = RealTier_create (my xmin, my xmax);
-			for (long i = 1; i <= my d_vocalTracts -> size; i++) {
-				VocalTractPoint vtpi = (VocalTractPoint) my d_vocalTracts -> item[i];
-				double areai = vtpi -> d_vocalTract -> z[1][isection];
+			for (long i = 1; i <= my d_vocalTracts.size(); i ++) {
+				VocalTractPoint vtpi = my d_vocalTracts [i];
+				double areai = vtpi -> d_vocalTract -> z [1] [isection];
 				RealTier_addPoint (sectioni.peek(), vtpi -> number, areai);
 			}
-			for (long iframe = 1; iframe <= numberOfFrames; iframe++) {
+			for (long iframe = 1; iframe <= numberOfFrames; iframe ++) {
 				double time = thy x1 + (iframe - 1) * thy dx;
-				area[iframe][isection] = RealTier_getValueAtTime (sectioni.peek(), time);
-				area[iframe][numberOfSections + 1] = 0.0001; // normalisation is area[n+1] = 0.0001
+				area [iframe] [isection] = RealTier_getValueAtTime (sectioni.peek(), time);
+				area [iframe] [numberOfSections + 1] = 0.0001;   // normalisation is area[n+1] = 0.0001
 			}
 		}
-		for (long iframe = 1; iframe <= numberOfFrames; iframe++) {
-			LPC_Frame frame = &thy d_frames[iframe];
+		for (long iframe = 1; iframe <= numberOfFrames; iframe ++) {
+			LPC_Frame frame = & thy d_frames [iframe];
 			LPC_Frame_init (frame, numberOfSections);
-			for (long i = 1; i <= numberOfSections + 1; i++) {
-				areavec[i] = area[iframe][numberOfSections + 1 - i];
+			for (long i = 1; i <= numberOfSections + 1; i ++) {
+				areavec [i] = area [iframe] [numberOfSections + 1 - i];
 			}
 			NUMlpc_area_to_lpc (areavec.peek(), numberOfSections + 1, frame -> a);
-			frame -> gain = 1e-6; // something
+			frame -> gain = 1e-6;   // something
 		}
 		return thee;
 	} catch (MelderError) {

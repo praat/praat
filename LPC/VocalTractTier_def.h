@@ -1,6 +1,6 @@
 /* VocalTractTier_def.h
  *
- * Copyright (C) 2012 David Weenink
+ * Copyright (C) 2012 David Weenink, 2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ oo_END_CLASS (VocalTractPoint)
 #define ooSTRUCT VocalTractTier
 oo_DEFINE_CLASS (VocalTractTier, Function)
 
-	oo_AUTO_COLLECTION (SortedSetOfDouble, d_vocalTracts, VocalTractPoint, 0)
+	oo_COLLECTION_OF (SortedSetOfDoubleOf, d_vocalTracts, VocalTractPoint, 0)
 
 oo_END_CLASS (VocalTractTier)
 #undef ooSTRUCT

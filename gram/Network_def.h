@@ -25,6 +25,7 @@ oo_DEFINE_STRUCT (NetworkNode)
 	oo_DOUBLE (y)
 	oo_BOOLEAN (clamped)
 	oo_DOUBLE (activity)
+
 	#if ! oo_READING && ! oo_WRITING
 		oo_DOUBLE (excitation)
 	#endif
@@ -42,6 +43,7 @@ oo_DEFINE_STRUCT (NetworkConnection)
 	oo_FROM (1)
 		oo_DOUBLE (plasticity)
 	oo_ENDFROM
+
 	#if oo_READING
 		if (formatVersion < 1) {
 			plasticity = 1.0;
@@ -77,6 +79,7 @@ oo_DEFINE_CLASS (Network, Daata)
 		oo_DOUBLE (outstar)
 	oo_ENDFROM
 	oo_DOUBLE (weightLeak)
+
 	#if oo_READING
 		if (formatVersion < 6) {
 			if (formatVersion < 5) {
@@ -88,6 +91,7 @@ oo_DEFINE_CLASS (Network, Daata)
 			our activityLeak = - our activityLeak;   // convert self-excitation to activity leak
 		}
 	#endif
+
 	oo_DOUBLE (xmin)
 	oo_DOUBLE (xmax)
 	oo_DOUBLE (ymin)

@@ -107,6 +107,84 @@ struct CollectionOf {
 	explicit operator bool () const {
 		return !! our _item;
 	}
+	CollectionOf<T>& operator= (const CollectionOf<T>&) = delete;   // disable copy assignment from an l-value of class T*
+	template <class Y> CollectionOf<T>& operator= (const CollectionOf<Y>&) = delete;   // disable copy assignment from an l-value of a descendant class of T*
+	CollectionOf<T> (CollectionOf<T>&& other) noexcept :
+		_item (other. _item),
+		_size (other. _size),
+		_capacity (other. _capacity),
+		_ownItems (other. _ownItems),
+		_ownershipInitialized (other. _ownershipInitialized)
+	{
+		other. _item = nullptr;
+		other. _size = 0;
+		other. _capacity = 0;
+		other. _ownItems = false;
+		other. _ownershipInitialized = false;
+	}
+	template <class Y> CollectionOf<T> (CollectionOf<Y>&& other) noexcept :
+		_item (other. _item),
+		_size (other. _size),
+		_capacity (other. _capacity),
+		_ownItems (other. _ownItems),
+		_ownershipInitialized (other. _ownershipInitialized)
+	{
+		other. _item = nullptr;
+		other. _size = 0;
+		other. _capacity = 0;
+		other. _ownItems = false;
+		other. _ownershipInitialized = false;
+	}
+	CollectionOf<T>& operator= (CollectionOf<T>&& other) noexcept {
+		if (other. _item != our _item) {
+			if (our _item) {
+				if (our _ownItems) {
+					for (long i = 1; i <= our _size; i ++) {
+						_Thing_forget (our _item [i]);
+					}
+				}
+				our _item ++;   // convert from base-1 to base-0
+				Melder_free (our _item);
+			}
+		}
+		our _item = other. _item;
+		our _size = other. _size;
+		our _capacity = other. _capacity;
+		our _ownItems = other. _ownItems;
+		our _ownershipInitialized = other. _ownershipInitialized;
+		other. _item = nullptr;
+		other. _size = 0;
+		other. _capacity = 0;
+		other. _ownItems = false;
+		other. _ownershipInitialized = false;
+		return *this;
+	}
+	template <class Y> CollectionOf<T>& operator= (CollectionOf<Y>&& other) noexcept {
+		if (other. _item != our _item) {
+			if (our _item) {
+				if (our _ownItems) {
+					for (long i = 1; i <= our _size; i ++) {
+						_Thing_forget (our _item [i]);
+					}
+				}
+				our _item ++;   // convert from base-1 to base-0
+				Melder_free (our _item);
+			}
+		}
+		our _item = other. _item;
+		our _size = other. _size;
+		our _capacity = other. _capacity;
+		our _ownItems = other. _ownItems;
+		our _ownershipInitialized = other. _ownershipInitialized;
+		other. _item = nullptr;
+		other. _size = 0;
+		other. _capacity = 0;
+		other. _ownItems = false;
+		other. _ownershipInitialized = false;
+		return *this;
+	}
+	CollectionOf<T>&& move () noexcept { return static_cast <CollectionOf<T>&&> (*this); }
+
 	void _initializeOwnership (bool ownItems) {
 		if (our _ownershipInitialized) {
 			Melder_assert (our _ownItems == ownItems);
@@ -163,6 +241,17 @@ struct CollectionOf {
 		for (long i = pos; i < our _size; i ++) our _item [i] = our _item [i + 1];
 		our _size --;
 		return result;
+	}
+	void replaceItem_ref (T* data, long pos) {
+		Melder_assert (pos >= 1 && pos <= our _size);
+		Melder_assert (! our _ownItems);
+		our _item [pos] = data;
+	}
+	void replaceItem_move (_Thing_auto <T> data, long pos) {
+		Melder_assert (pos >= 1 && pos <= our _size);
+		Melder_assert (our _ownItems);
+		_Thing_forget (our _item [pos]);
+		our _item [pos] = data.releaseToAmbiguousOwner();
 	}
 	void removeItem (long pos) {
 		Melder_assert (pos >= 1 && pos <= our _size);
@@ -322,6 +411,13 @@ template <typename T>
 struct OrderedOf : CollectionOf <T> {
 	OrderedOf () {
 	}
+	void addItemAtPosition_move (_Thing_auto <T> data, long position) {
+		Melder_assert (data);
+		if (position < 1 || position > our _size)
+			position = our _size + 1;
+		our _insertItem_move (data.move(), position);
+	}
+	OrderedOf<T>&& move () noexcept { return static_cast <OrderedOf<T>&&> (*this); }
 };
 
 autoOrdered Ordered_create ();
@@ -355,6 +451,7 @@ template <typename T>
 struct SortedOf : CollectionOf <T> {
 	SortedOf () {
 	}
+	SortedOf<T>&& move () noexcept { return static_cast <SortedOf<T>&&> (*this); }
 	void addItem_unsorted_move (_Thing_auto <T> data) {
 		our _insertItem_move (data.move(), our _size + 1);
 	}
@@ -419,6 +516,7 @@ template <typename T>
 struct SortedSetOf : SortedOf <T> {
 	SortedSetOf () {
 	}
+	SortedSetOf<T>&& move () noexcept { return static_cast <SortedSetOf<T>&&> (*this); }
 	long _v_position (T* data) override {   // returns 0 (refusal) if the key of 'data' already occurs
 		typename SortedOf<T>::CompareHook compare = our v_getCompareHook ();
 		if (our _size == 0) return 1;   // empty set? then 'data' is going to be the first item
@@ -484,6 +582,7 @@ template <typename T>
 struct SortedSetOfDoubleOf : SortedSetOf <T> {
 	SortedSetOfDoubleOf () {
 	}
+	SortedSetOfDoubleOf<T>&& move () noexcept { return static_cast <SortedSetOfDoubleOf<T>&&> (*this); }
 	static int s_compareHook (SimpleDouble me, SimpleDouble thee) noexcept {
 		if (my number < thy number) return -1;
 		if (my number > thy number) return +1;

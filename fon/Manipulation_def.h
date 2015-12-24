@@ -90,4 +90,5 @@ oo_DEFINE_CLASS (Manipulation, Function)
 oo_END_CLASS (Manipulation)
 #undef ooSTRUCT
 
+
 /* End of file Manipulation_def.h */

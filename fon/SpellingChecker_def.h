@@ -17,12 +17,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2007/08/12
- */
 
 #define ooSTRUCT SpellingChecker
 oo_DEFINE_CLASS (SpellingChecker, Daata)           // CGN:
+
 	oo_STRING (forbiddenStrings)              // : ; "
 	oo_BOOLEAN (checkMatchingParentheses)     // true
 	oo_STRING (separatingCharacters)          // .,:;()!?
@@ -37,7 +35,9 @@ oo_DEFINE_CLASS (SpellingChecker, Daata)           // CGN:
 	oo_STRING (allowAllWordsEndingIn)         // -
 	oo_AUTO_OBJECT (WordList, 0, wordList)
 	oo_AUTO_COLLECTION (SortedSetOfString, userDictionary, SimpleString, 0)
+
 oo_END_CLASS (SpellingChecker)
 #undef ooSTRUCT
+
 
 /* End of file SpellingChecker_def.h */

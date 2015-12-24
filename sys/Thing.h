@@ -479,7 +479,7 @@ public:
 	 * In function arguments, transfer of ownership works only explicitly:
 	 *    extern void Collection_addItem_move (Collection me, autoDaata item);
 	 *    autoPitch pitch = Pitch_create (...);
-	 *    Collection_addItem_transfer (collection, pitch.move());   // compiler error if you don't call move()
+	 *    Collection_addItem_move (collection, pitch.move());   // compiler error if you don't call move()
 	 */
 	template <class Y> _Thing_auto<Y> static_cast_move () {
 		return _Thing_auto<Y> (static_cast<Y*> (our releaseToAmbiguousOwner()));

@@ -15,3 +15,9 @@ endfor
 t = stopwatch
 echo 't:3' 'z'
 Remove
+
+pb1 = Create formant table (Peterson & Barney 1952)
+pb2 = Read from file: "pb.Table"
+assert objectsAreIdentical: pb1, pb2
+
+appendInfoLine: "OK"
