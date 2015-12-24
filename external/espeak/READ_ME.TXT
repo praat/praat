@@ -211,3 +211,10 @@ template <size_t _align_to, typename T> T *align_address (T *p)
 	integer &= bit_mask;
 	return ptr;
 }
+
+// tr_languages
+replace 
+const char string_ordinal[] = {0xc2,0xba,0};  // masculine ordinal character, UTF-8
+by
+const char string_ordinal[] = {static_cast<char>(0xc2),static_cast<char>(0xba),0};  // masculine ordinal character, UTF-8
+to compile on 32 bit systems

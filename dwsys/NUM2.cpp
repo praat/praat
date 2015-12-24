@@ -1,6 +1,6 @@
 /* NUM2.cpp
  *
- * Copyright (C) 1993-2014 David Weenink
+ * Copyright (C) 1993-2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3099,6 +3099,20 @@ TryAgain:
 Finish:
 
   	return (flipped) ? (n - ix) : ix;
+}
+
+void NUMlngamma_complex (double zr, double zi, double *lnr, double *arg) {
+	double ln_re = NUMundefined, ln_arg = NUMundefined;
+	gsl_sf_result gsl_lnr, gsl_arg;
+	if (gsl_sf_lngamma_complex_e (zr, zi, & gsl_lnr, & gsl_arg)) {
+		ln_re = gsl_lnr.val; ln_arg = gsl_arg.val;
+	}
+	if (lnr) {
+		*lnr = ln_re;
+	}
+	if (arg) {
+		*arg = ln_arg;
+	}
 }
 
 /* End of file NUM2.cpp */

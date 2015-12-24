@@ -2,7 +2,7 @@
 #define _NUM2_h_
 /* NUM2.h
  *
- * Copyright (C) 1997-2014 David Weenink
+ * Copyright (C) 1997-2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -754,6 +754,18 @@ double NUMbetaContinuedFraction(double a, double b, double x);
 
 double NUMfactln (int n);
 /* Returns ln (n!) */
+
+void NUMlngamma_complex (double zr, double zi, double *lnr, double *arg);
+/* Log[Gamma(z)] for z complex, z not a negative integer
+ * Uses complex Lanczos method. Note that the phase part (arg)
+ * is not well-determined when |z| is very large, due
+ * to inevitable roundoff in restricting to (-pi, pi].
+ * The absolute value part (lnr), however, never suffers.
+ *
+ * Calculates:
+ *   lnr = log|Gamma(z)|
+ *   arg = arg(Gamma(z))  in (-Pi, Pi]
+ */
 
 /***** STATISTICS: PROBABILITY DENSITY FUNCTIONS ********************/
 
