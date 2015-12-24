@@ -209,7 +209,7 @@ autoGaussianMixture GaussianMixture_create (long numberOfComponents, long dimens
 		my numberOfComponents = numberOfComponents;
 		my dimension = dimension;
 		my mixingProbabilities = NUMvector<double> (1, numberOfComponents);
-		my covariances = Ordered_create ();
+		my covariances = SSCPs_create ();
 		for (long im = 1; im <= numberOfComponents; im++) {
 			autoCovariance cov = Covariance_create_reduceStorage (dimension, storage);
 			Ordered_addItemAtPosition_move (my covariances.peek(), cov.move(), im);
