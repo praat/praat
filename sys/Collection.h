@@ -68,15 +68,22 @@ Thing_define (Collection, Daata) {
 		item [1..size]		// the items.
 */
 
+extern struct structData_Description theCollectionOf_description [];
+
 template <typename T>
-struct CollectionOf {
+struct CollectionOf : structDaata {
 	T** _item { nullptr };   // [1..size]
 	long _size { 0 };
 	long _capacity { 0 };
 	bool _ownItems { true };
 	bool _ownershipInitialized { false };
 
+	Data_Description v_description ()
+		override { return & theCollectionOf_description [0]; }
+
 	CollectionOf () {
+		our classInfo = classCollection;
+		our name = nullptr;
 	}
 	virtual ~ CollectionOf () {
 		/*
@@ -612,12 +619,58 @@ struct SortedSetOfStringOf : SortedSetOf <T> {
 	}
 	typename SortedOf<T>::CompareHook v_getCompareHook ()
 		override { return (typename SortedOf<T>::CompareHook) our s_compareHook; }
+
+	long lookUp (const char32 *string) {
+		long numberOfItems = our _size;
+		long left = 1, right = numberOfItems;
+		int atStart, atEnd;
+		if (numberOfItems == 0) return 0;
+
+		atEnd = str32cmp (string, our _item [numberOfItems] -> string);
+		if (atEnd > 0) return 0;
+		if (atEnd == 0) return numberOfItems;
+
+		atStart = str32cmp (string, our _item [1] -> string);
+		if (atStart < 0) return 0;
+		if (atStart == 0) return 1;
+
+		while (left < right - 1) {
+			long mid = (left + right) / 2;
+			int here = str32cmp (string, our _item [mid] -> string);
+			if (here == 0) return mid;
+			if (here > 0) left = mid; else right = mid;
+		}
+		Melder_assert (right == left + 1);
+		return 0;
+	}
+
+	void addString_copy (const char32 *string) {
+		static autoSimpleString simp;
+		if (! simp) {
+			simp = SimpleString_create (U"");
+			Melder_free (simp -> string);
+		}
+		simp -> string = (char32 *) string;   // reference copy
+		long index = our _v_position (simp.get());
+		simp -> string = nullptr;   // otherwise Praat will crash at shutdown
+		if (index == 0) return;   // OK: already there: do not add
+		autoSimpleString newSimp = SimpleString_create (string);
+		our _insertItem_move (newSimp.move(), index);
+	}
 };
 
 void SortedSetOfString_init (SortedSetOfString me);
 autoSortedSetOfString SortedSetOfString_create ();
 void SortedSetOfString_addString_copy (SortedSetOfString me, const char32 *string);
 long SortedSetOfString_lookUp (SortedSetOfString me, const char32 *string);
+
+typedef SortedSetOfStringOf<structSimpleString>* SortedSetOfSimpleString;
+typedef _Thing_auto<SortedSetOfStringOf<structSimpleString>> autoSortedSetOfSimpleString;
+inline static autoSortedSetOfSimpleString SortedSetOfSimpleString_create () {
+	autoSortedSetOfSimpleString me (new SortedSetOfStringOf<structSimpleString>);
+	//theTotalNumberOfThings += 1;
+	return me;
+}
 
 /********** class Cyclic **********/
 
@@ -630,7 +683,6 @@ void Cyclic_init (Cyclic me, long initialCapacity);
 
 void Cyclic_cycleLeft (Cyclic me);
 void Cyclic_unicize (Cyclic me);
-
 
 /* End of file Collection.h */
 #endif

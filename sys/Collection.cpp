@@ -224,6 +224,12 @@ void structCollection :: v_readBinary (FILE *f, int formatVersion) {
 	}
 }
 
+struct structData_Description theCollectionOf_description [] = {
+	{ U"size", longwa, Melder_offsetof (CollectionOf<structThing>*, _size), sizeof (long) },
+	{ U"item", objectwa, Melder_offsetof (CollectionOf<structThing>*, _item), sizeof (Daata), U"Daata", & theClassInfo_Daata, 1, 0, U"size" },
+	{ 0 }
+};
+
 static struct structData_Description theCollection_description [] = {
 	{ U"size", longwa, Melder_offsetof (Collection, size), sizeof (long) },
 	{ U"item", objectwa, Melder_offsetof (Collection, item), sizeof (Daata), U"Daata", & theClassInfo_Daata, 1, 0, U"size" },

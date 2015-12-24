@@ -23,10 +23,10 @@
 	#include <Shlobj.h>
 #endif
 
-autoSortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const char32 *title, bool allowMultipleFiles) {
+autoSortedSetOfSimpleString GuiFileSelect_getInfileNames (GuiWindow parent, const char32 *title, bool allowMultipleFiles) {
 	structMelderDir saveDir { { 0 } };
 	Melder_getDefaultDir (& saveDir);
-	autoSortedSetOfString me = SortedSetOfString_create ();
+	autoSortedSetOfSimpleString me = SortedSetOfSimpleString_create ();
 	#if gtk
 		(void) parent;
 		static structMelderDir dir;
@@ -46,7 +46,7 @@ autoSortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const char
 			GSList *infileNames_list = gtk_file_chooser_get_filenames (GTK_FILE_CHOOSER (dialog));
 			for (GSList *element = infileNames_list; element != nullptr; element = g_slist_next (element)) {
 				char *infileName_utf8 = (char *) element -> data;
-				SortedSetOfString_addString_copy (me.peek(), Melder_peek8to32 (infileName_utf8));
+				my addString_copy (Melder_peek8to32 (infileName_utf8));
 				g_free (infileName_utf8);
 			}
 			g_slist_free (infileNames_list);
@@ -61,9 +61,9 @@ autoSortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const char
 		[openPanel setCanChooseDirectories: NO];
 		if ([openPanel runModal] == NSFileHandlingPanelOKButton) {
 			for (NSURL *url in [openPanel URLs]) {
-				structMelderFile file = { 0 };
+				structMelderFile file { 0 };
 				Melder_8bitFileRepresentationToStr32_inline ([[url path] UTF8String], file. path);   // BUG: unsafe buffer
-				SortedSetOfString_addString_copy (me.peek(), file. path);
+				my addString_copy (file. path);
 			}
 		}
 		setlocale (LC_ALL, "en_US");
@@ -90,10 +90,10 @@ autoSortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const char
 					DescType typeCode;
 					Size actualSize = 0;
 					FSRef machFile;
-					structMelderFile file = { 0 };
+					structMelderFile file { 0 };
 					if ((err = AEGetNthPtr (& reply. selection, ifile, typeFSRef, & keyWord, & typeCode, & machFile, sizeof (FSRef), & actualSize)) == noErr)
 						Melder_machToFile (& machFile, & file);
-					SortedSetOfString_addString_copy (me.peek(), Melder_fileToPath (& file));
+					my addString_copy (Melder_fileToPath (& file));
 				}
 				NavDisposeReply (& reply);
 			}
@@ -135,7 +135,7 @@ autoSortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const char
 				/*
 				 * The user selected one file.
 				 */
-				SortedSetOfString_addString_copy (me.peek(), Melder_peekWto32 (fullFileNameW));
+				my addString_copy (Melder_peekWto32 (fullFileNameW));
 			} else {
 				/*
 				 * The user selected multiple files.
@@ -146,7 +146,7 @@ autoSortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const char
 				for (const WCHAR *p = & fullFileNameW [firstFileNameLength + 1]; *p != L'\0'; p += wcslen (p) + 1) {
 					structMelderFile file { 0 };
 					MelderDir_getFile (& dir, Melder_peekWto32 (p), & file);
-					SortedSetOfString_addString_copy (me.peek(), Melder_fileToPath (& file));
+					my addString_copy (Melder_fileToPath (& file));
 				}
 			}
 		}

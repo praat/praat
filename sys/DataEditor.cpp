@@ -480,6 +480,8 @@ static void showStructMember (
 		GuiThing_show (fieldData -> button);
 	} else if (type == collectionofwa) {
 		fieldData -> address = (Daata) memberAddress;   // direct  // FIXME: not guaranteed for auto objects
+		Melder_casual (U"Daata ", Melder_pointer (fieldData -> address));
+		Melder_casual (U"Class ", ((Daata) fieldData -> address) -> classInfo -> className);
 		if (! fieldData -> address) return;   // no button if no object
 		fieldData -> description = memberDescription;
 		fieldData -> rank = 0;
