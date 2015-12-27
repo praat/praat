@@ -409,10 +409,10 @@ static void readFromFile (MelderFile file) {
 	autoDaata object = Data_readFromFile (file);
 	if (! object.peek()) return;
 	if (Thing_isa (object.peek(), classManPages) && ! Melder_batch) {
-		ManPages pages = (ManPages) object.peek();
-		ManPage firstPage = static_cast<ManPage> (pages -> pages -> item [1]);
+		ManPages manPages = (ManPages) object.peek();
+		ManPage firstPage = manPages -> pages [1];
 		autoManual manual = Manual_create (firstPage -> title, object.releaseToAmbiguousOwner(), true);
-		if (pages -> executable)
+		if (manPages -> executable)
 			Melder_warning (U"These manual pages contain links to executable scripts.\n"
 				"Only navigate these pages if you trust their author!");
 		manual.releaseToUser();
@@ -491,7 +491,7 @@ END2 }
 DIRECT2 (ManPages_view) {
 	LOOP {
 		iam (ManPages);
-		ManPage firstPage = static_cast<ManPage> (my pages -> item [1]);
+		ManPage firstPage = my pages [1];
 		autoManual manual = Manual_create (firstPage -> title, me, false);
 		if (my executable)
 			Melder_warning (U"These manual pages contain links to executable scripts.\n"

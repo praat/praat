@@ -638,7 +638,7 @@ DO
 	if (nHidden2 < 1) {
 		nHidden2 = 0;
 	}
-	autoCategories uniq = Categories_selectUniqueItems (thee, true);
+	autoCategories uniq = Categories_selectUniqueItems (thee);
 	long numberOfOutputs = uniq -> size;
 	if (numberOfOutputs < 1) Melder_throw (U"There are not enough categories in the Categories.\n"
 		U"Please try again with more categories in the Categories.");

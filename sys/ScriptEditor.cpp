@@ -24,12 +24,11 @@
 
 Thing_implement (ScriptEditor, TextEditor, 0);
 
-static autoCollection theReferencesToAllOpenScriptEditors;
+static CollectionOf <structScriptEditor> theReferencesToAllOpenScriptEditors;
 
 bool ScriptEditors_dirty () {
-	if (! theReferencesToAllOpenScriptEditors) return false;
-	for (long i = 1; i <= theReferencesToAllOpenScriptEditors -> size; i ++) {
-		ScriptEditor me = (ScriptEditor) theReferencesToAllOpenScriptEditors -> item [i];
+	for (long i = 1; i <= theReferencesToAllOpenScriptEditors.size(); i ++) {
+		ScriptEditor me = theReferencesToAllOpenScriptEditors [i];
 		if (my dirty) return true;
 	}
 	return false;
@@ -37,7 +36,7 @@ bool ScriptEditors_dirty () {
 
 void structScriptEditor :: v_destroy () {
 	Melder_free (environmentName);
-	if (theReferencesToAllOpenScriptEditors) Collection_undangleItem (theReferencesToAllOpenScriptEditors.get(), this);
+	theReferencesToAllOpenScriptEditors. undangleItem (this);
 	ScriptEditor_Parent :: v_destroy ();
 }
 
@@ -318,10 +317,7 @@ void ScriptEditor_init (ScriptEditor me, Editor environment, const char32 *initi
 	}
 	TextEditor_init (me, initialText);
 	my interpreter = Interpreter_createFromEnvironment (environment);
-	if (! theReferencesToAllOpenScriptEditors) {
-		theReferencesToAllOpenScriptEditors = Collection_create (10);
-	}
-	Collection_addItem_ref (theReferencesToAllOpenScriptEditors.get(), me);
+	theReferencesToAllOpenScriptEditors. addItem_ref (me);
 }
 
 autoScriptEditor ScriptEditor_createFromText (Editor environment, const char32 *initialText) {
@@ -336,17 +332,15 @@ autoScriptEditor ScriptEditor_createFromText (Editor environment, const char32 *
 
 autoScriptEditor ScriptEditor_createFromScript_canBeNull (Editor environment, Script script) {
 	try {
-		if (theReferencesToAllOpenScriptEditors) {
-			for (long ieditor = 1; ieditor <= theReferencesToAllOpenScriptEditors -> size; ieditor ++) {
-				ScriptEditor editor = (ScriptEditor) theReferencesToAllOpenScriptEditors -> item [ieditor];
-				if (MelderFile_equal (& script -> file, & editor -> file)) {
-					Editor_raise (editor);
-					Melder_appendError (U"The script ", & script -> file, U" is already open and has been moved to the front.");
-					if (editor -> dirty)
-						Melder_appendError (U"Choose \"Reopen from disk\" if you want to revert to the old version.");
-					Melder_flushError ();
-					return autoScriptEditor();   // safe null
-				}
+		for (long ieditor = 1; ieditor <= theReferencesToAllOpenScriptEditors.size(); ieditor ++) {
+			ScriptEditor editor = theReferencesToAllOpenScriptEditors [ieditor];
+			if (MelderFile_equal (& script -> file, & editor -> file)) {
+				Editor_raise (editor);
+				Melder_appendError (U"The script ", & script -> file, U" is already open and has been moved to the front.");
+				if (editor -> dirty)
+					Melder_appendError (U"Choose \"Reopen from disk\" if you want to revert to the old version.");
+				Melder_flushError ();
+				return autoScriptEditor();   // safe null
 			}
 		}
 		autostring32 text = MelderFile_readText (& script -> file);

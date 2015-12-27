@@ -67,7 +67,7 @@ Thing_implement (DataSubEditor, Editor, 0);
 void structDataSubEditor :: v_destroy () {
 	for (int i = 1; i <= kDataSubEditor_MAXNUM_ROWS; i ++)
 		Melder_free (d_fieldData [i]. history);
-	if (our root && our root -> children)
+	if (our root)
 		for (int i = our root -> children.size(); i > 0; i --)
 			if (our root -> children [i] == this)
 				our root -> children.subtractItem_ref (i);

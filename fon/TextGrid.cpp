@@ -265,8 +265,8 @@ void structTextGrid :: v_info () {
 	structDaata :: v_info ();
 
 	long intervalTierCount = 0, pointTierCount = 0, intervalCount = 0, pointCount = 0;
-	for (long itier = 1; itier <= our numberOfTiers(); itier ++) {
-		Function anyTier = our tier (itier);
+	for (long itier = 1; itier <= our tiers->size(); itier ++) {
+		Function anyTier = our tiers -> _item [itier];
 		if (anyTier -> classInfo == classIntervalTier) {
 			IntervalTier intervalTier = static_cast <IntervalTier> (anyTier);
 			intervalTierCount += 1;
@@ -289,8 +289,8 @@ static void IntervalTier_addInterval_unsafe (IntervalTier me, double tmin, doubl
 }
 
 void structTextGrid :: v_repair () {
-	for (long itier = 1; itier <= our numberOfTiers(); itier ++) {
-		Function anyTier = our tier (itier);
+	for (long itier = 1; itier <= our tiers->size(); itier ++) {
+		Function anyTier = our tiers -> _item [itier];
 		if (anyTier -> classInfo == classIntervalTier) {
 			IntervalTier tier = static_cast <IntervalTier> (anyTier);
 			if (tier -> intervals.size() == 0) {
@@ -302,16 +302,16 @@ void structTextGrid :: v_repair () {
 
 void structTextGrid :: v_shiftX (double xfrom, double xto) {
 	TextGrid_Parent :: v_shiftX (xfrom, xto);
-	for (long i = 1; i <= our numberOfTiers(); i ++) {
-		Function tier = our tier (i);
+	for (long i = 1; i <= our tiers->size(); i ++) {
+		Function tier = our tiers -> _item [i];
 		tier -> v_shiftX (xfrom, xto);
 	}
 }
 
 void structTextGrid :: v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
 	TextGrid_Parent :: v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
-	for (long i = 1; i <= our numberOfTiers(); i ++) {
-		Function tier = our tier (i);
+	for (long i = 1; i <= our tiers->size(); i ++) {
+		Function tier = our tiers -> _item [i];
 		tier -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
 	}
 }
@@ -321,7 +321,7 @@ Thing_implement (TextGrid, Function, 0);
 autoTextGrid TextGrid_createWithoutTiers (double tmin, double tmax) {
 	try {
 		autoTextGrid me = Thing_new (TextGrid);
-		my tiers = Ordered_create ();
+		my tiers = OrderedOfFunction_create ();
 		my xmin = tmin;
 		my xmax = tmax;
 		return me;
@@ -343,7 +343,7 @@ autoTextGrid TextGrid_create (double tmin, double tmax, const char32 *tierNames,
 			for (char32 *tierName = Melder_tok (nameBuffer, U" "); tierName; tierName = Melder_tok (nullptr, U" ")) {
 				autoIntervalTier tier = IntervalTier_create (tmin, tmax);
 				Thing_setName (tier.peek(), tierName);
-				Collection_addItem_move (my tiers.get(), tier.move());
+				my tiers-> addItem_move (tier.move());
 			}
 		}
 
@@ -353,17 +353,16 @@ autoTextGrid TextGrid_create (double tmin, double tmax, const char32 *tierNames,
 		if (pointTiers && pointTiers [0]) {
 			str32cpy (nameBuffer, pointTiers);
 			for (char32 *tierName = Melder_tok (nameBuffer, U" "); tierName; tierName = Melder_tok (nullptr, U" ")) {
-				for (long itier = 1; itier <= my numberOfTiers(); itier ++) {
-					if (str32equ (tierName, Thing_getName (my tier (itier)))) {
+				for (long itier = 1; itier <= my tiers->size(); itier ++) {
+					if (str32equ (tierName, Thing_getName (my tiers -> _item [itier]))) {
 						autoTextTier tier = TextTier_create (tmin, tmax);
 						Thing_setName (tier.peek(), tierName);
-						forget (my tier (itier));
-						my tier (itier) = tier.releaseToAmbiguousOwner();
+						my tiers -> replaceItem_move (tier.move(), itier);
 					}
 				}
 			}
 		}
-		if (my numberOfTiers() == 0)
+		if (my tiers -> size() == 0)
 			Melder_throw (U"Cannot create a TextGrid without tiers. Supply at least one tier name.");
 		return me;
 	} catch (MelderError) {
@@ -421,9 +420,9 @@ autoTextTier TextTier_readFromXwaves (MelderFile file) {
 Function TextGrid_checkSpecifiedTierNumberWithinRange (TextGrid me, long tierNumber) {
 	if (tierNumber < 1)
 		Melder_throw (me, U": the specified tier number is ", tierNumber, U", but should be at least 1.");
-	if (tierNumber > my numberOfTiers())
-		Melder_throw (me, U": the specified tier number (", tierNumber, U") exceeds my number of tiers (", my numberOfTiers(), U").");
-	return my tier (tierNumber);
+	if (tierNumber > my tiers->size())
+		Melder_throw (me, U": the specified tier number (", tierNumber, U") exceeds my number of tiers (", my tiers->size(), U").");
+	return my tiers -> _item [tierNumber];
 }
 
 IntervalTier TextGrid_checkSpecifiedTierIsIntervalTier (TextGrid me, long tierNumber) {
@@ -502,21 +501,21 @@ void TextGrid_addTier_copy (TextGrid me, Function anyTier) {
 		autoFunction tier = Data_copy (anyTier);
 		if (tier -> xmin < my xmin) my xmin = tier -> xmin;
 		if (tier -> xmax > my xmax) my xmax = tier -> xmax;
-		Collection_addItem_move (my tiers.get(), tier.move());
+		my tiers -> addItem_move (tier.move());
 	} catch (MelderError) {
 		Melder_throw (me, U": tier not added.");
 	}
 }
 
-autoTextGrid TextGrid_merge (Collection textGrids) {
+autoTextGrid TextGrids_merge (OrderedOf<structTextGrid>* textGrids) {
 	try {
-		if (textGrids -> size < 1)
+		if (textGrids -> size() < 1)
 			Melder_throw (U"Cannot merge zero TextGrid objects.");
-		autoTextGrid thee = Data_copy ((TextGrid) textGrids -> item [1]);
-		for (long igrid = 2; igrid <= textGrids -> size; igrid ++) {
-			TextGrid textGrid = (TextGrid) textGrids -> item [igrid];
-			for (long itier = 1; itier <= textGrid -> numberOfTiers(); itier ++) {
-				TextGrid_addTier_copy (thee.peek(), textGrid -> tier (itier));
+		autoTextGrid thee = Data_copy (textGrids -> _item [1]);
+		for (long igrid = 2; igrid <= textGrids -> size(); igrid ++) {
+			TextGrid textGrid = textGrids -> _item [igrid];
+			for (long itier = 1; itier <= textGrid -> tiers->size(); itier ++) {
+				TextGrid_addTier_copy (thee.peek(), textGrid -> tiers -> _item [itier]);
 			}
 		}
 		return thee;
@@ -530,8 +529,8 @@ autoTextGrid TextGrid_extractPart (TextGrid me, double tmin, double tmax, int pr
 		autoTextGrid thee = Data_copy (me);
 		if (tmax <= tmin) return thee;
 
-		for (long itier = 1; itier <= my numberOfTiers(); itier ++) {
-			Function anyTier = thy tier (itier);
+		for (long itier = 1; itier <= my tiers -> size(); itier ++) {
+			Function anyTier = thy tiers -> _item [itier];
 			if (anyTier -> classInfo == classIntervalTier) {
 				IntervalTier tier = static_cast <IntervalTier> (anyTier);
 				for (long iinterval = tier -> intervals.size(); iinterval >= 1; iinterval --) {
@@ -566,16 +565,16 @@ autoTextGrid TextGrid_extractPart (TextGrid me, double tmin, double tmax, int pr
 
 static autoTextGrid _Label_to_TextGrid (Label me, double tmin, double tmax) {
 	autoTextGrid thee = TextGrid_createWithoutTiers (tmin, tmax);
-	for (long itier = 1; itier <= my size; itier ++) {
-		Tier tier = (Tier) my item [itier];
+	for (long itier = 1; itier <= my size(); itier ++) {
+		Tier tier = my _item [itier];
 		autoIntervalTier intervalTier = IntervalTier_create (tmin, tmax);
-		Collection_addItem_move (thy tiers.get(), intervalTier.move());
+		thy tiers -> addItem_move (intervalTier.move());
 		intervalTier -> intervals.removeItem (1);
-		for (long iinterval = 1; iinterval <= tier -> size; iinterval ++) {
-			Autosegment autosegment = (Autosegment) tier -> item [iinterval];
+		for (long iinterval = 1; iinterval <= tier -> size(); iinterval ++) {
+			Autosegment autosegment = tier -> _item [iinterval];
 			autoTextInterval textInterval = TextInterval_create (
 				iinterval == 1 ? tmin : autosegment -> xmin,
-				iinterval == tier -> size ? tmax : autosegment -> xmax,
+				iinterval == tier -> size() ? tmax : autosegment -> xmax,
 				autosegment -> name);
 			intervalTier -> intervals.addItem_move (textInterval.move());
 		}
@@ -974,7 +973,7 @@ void IntervalTier_writeToXwaves (IntervalTier me, MelderFile file) {
 autoTextGrid PointProcess_to_TextGrid_vuv (PointProcess me, double maxT, double meanT) {
 	try {
 		autoTextGrid thee = TextGrid_create (my xmin, my xmax, U"vuv", nullptr);
-		IntervalTier tier = static_cast <IntervalTier> (thy tier (1));
+		IntervalTier tier = static_cast <IntervalTier> (thy tiers -> _item [1]);
 		tier -> intervals. removeItem (1);
 		long ipointright;
 		double beginVoiceless = my xmin, endVoiceless, halfMeanT = 0.5 * meanT;
@@ -1036,8 +1035,8 @@ long TextTier_maximumLabelLength (TextTier me) {
 
 long TextGrid_maximumLabelLength (TextGrid me) {
 	long maximum = 0;
-	for (long itier = 1; itier <= my numberOfTiers(); itier ++) {
-		Function anyTier = my tier (itier);
+	for (long itier = 1; itier <= my tiers -> size(); itier ++) {
+		Function anyTier = my tiers -> _item [itier];
 		long length = anyTier -> classInfo == classIntervalTier ?
 			IntervalTier_maximumLabelLength ((IntervalTier) anyTier) :
 			TextTier_maximumLabelLength ((TextTier) anyTier);
@@ -1071,8 +1070,8 @@ static void genericize (char32 **pstring, char32 *buffer) {
 void TextGrid_genericize (TextGrid me) {
 	try {
 		autostring32 buffer = Melder_calloc (char32, TextGrid_maximumLabelLength (me) * 3 + 1);
-		for (long itier = 1; itier <= my numberOfTiers(); itier ++) {
-			Function anyTier = my tier (itier);
+		for (long itier = 1; itier <= my tiers -> size(); itier ++) {
+			Function anyTier = my tiers -> _item [itier];
 			if (anyTier -> classInfo == classIntervalTier) {
 				IntervalTier tier = static_cast <IntervalTier> (anyTier);
 				for (long i = 1; i <= tier -> intervals.size(); i ++) {
@@ -1095,8 +1094,8 @@ void TextGrid_genericize (TextGrid me) {
 void TextGrid_nativize (TextGrid me) {
 	try {
 		autostring32 buffer = Melder_calloc (char32, TextGrid_maximumLabelLength (me) + 1);
-		for (long itier = 1; itier <= my numberOfTiers(); itier ++) {
-			Function anyTier = my tier (itier);
+		for (long itier = 1; itier <= my tiers -> size(); itier ++) {
+			Function anyTier = my tiers -> _item [itier];
 			if (anyTier -> classInfo == classIntervalTier) {
 				IntervalTier tier = static_cast <IntervalTier> (anyTier);
 				for (long i = 1; i <= tier -> intervals.size(); i ++) {
@@ -1321,7 +1320,7 @@ autoTextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 			Melder_throw (U"This is not a chronological TextGrid text file.");
 		autoTextGrid me = Thing_new (TextGrid);
 		my structFunction :: v_readText (text.peek(), formatVersion);
-		my tiers = Ordered_create ();
+		my tiers = OrderedOfFunction_create ();
 		long numberOfTiers = texgeti4 (text.peek());
 		for (long itier = 1; itier <= numberOfTiers; itier ++) {
 			autostring32 klas = texgetw2 (text.peek());
@@ -1329,12 +1328,12 @@ autoTextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 				autoIntervalTier tier = Thing_new (IntervalTier);
 				tier -> name = texgetw2 (text.peek());
 				tier -> structFunction :: v_readText (text.peek(), formatVersion);
-				Collection_addItem_move (my tiers.get(), tier.move());
+				my tiers -> addItem_move (tier.move());
 			} else if (str32equ (klas.peek(), U"TextTier")) {
 				autoTextTier tier = Thing_new (TextTier);
 				tier -> name = texgetw2 (text.peek());
 				tier -> structFunction :: v_readText (text.peek(), formatVersion);
-				Collection_addItem_move (my tiers.get(), tier.move());
+				my tiers -> addItem_move (tier.move());
 			} else {
 				Melder_throw (U"Unknown tier class \"", klas.peek(), U"\".");
 			}
@@ -1394,9 +1393,9 @@ void TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file) {
 		file -> verbose = false;
 		texindent (file);
 		MelderFile_write (file, U"\"Praat chronological TextGrid text file\"\n", my xmin, U" ", my xmax,
-			U"   ! Time domain.\n", my numberOfTiers(), U"   ! Number of tiers.");
-		for (long itier = 1; itier <= my numberOfTiers(); itier ++) {
-			Function anyTier = my tier (itier);
+			U"   ! Time domain.\n", my tiers -> size(), U"   ! Number of tiers.");
+		for (long itier = 1; itier <= my tiers -> size(); itier ++) {
+			Function anyTier = my tiers -> _item [itier];
 			MelderFile_write (file, U"\n");
 			writeQuotedString (file, Thing_className (anyTier));
 			MelderFile_write (file, U" ");
@@ -1406,8 +1405,8 @@ void TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file) {
 		for (;;) {
 			double firstRemainingTime = +1e308;
 			long firstRemainingTier = 2000000000, firstRemainingElement = 0;
-			for (long itier = 1; itier <= my numberOfTiers(); itier ++) {
-				Function anyTier = my tier (itier);
+			for (long itier = 1; itier <= my tiers -> size(); itier ++) {
+				Function anyTier = my tiers -> _item [itier];
 				if (anyTier -> classInfo == classIntervalTier) {
 					IntervalTier tier = static_cast <IntervalTier> (anyTier);
 					for (long ielement = 1; ielement <= tier -> intervals.size(); ielement ++) {
@@ -1441,7 +1440,7 @@ void TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file) {
 			if (firstRemainingElement == 0) {
 				break;
 			} else {
-				Function anyTier = my tier (firstRemainingTier);
+				Function anyTier = my tiers -> _item [firstRemainingTier];
 				if (anyTier -> classInfo == classIntervalTier) {
 					IntervalTier tier = static_cast <IntervalTier> (anyTier);
 					TextInterval interval = tier -> intervals [firstRemainingElement];
@@ -1474,7 +1473,7 @@ autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 		IntervalTier sentenceTier = nullptr, phraseTier = nullptr;
 		TextInterval lastInterval = nullptr;
 		static char phrase [1000];
-		my tiers = Ordered_create ();
+		my tiers = OrderedOfFunction_create ();
 		autoMelderFile mfile = MelderFile_open (file);
 		char *line = MelderFile_readLine (file);
 		if (! strequ (line, "<?xml version=\"1.0\"?>"))
@@ -1520,8 +1519,8 @@ autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 				/*
 				 * Does this speaker name occur in the tiers?
 				 */
-				for (long itier = 1; itier <= my numberOfTiers(); itier ++) {
-					IntervalTier tier = static_cast <IntervalTier> (my tier (itier));
+				for (long itier = 1; itier <= my tiers -> size(); itier ++) {
+					IntervalTier tier = static_cast <IntervalTier> (my tiers -> _item [itier]);
 					if (str32equ (tier -> name, Melder_peek8to32 (speakerName))) {
 						speakerTier = itier;
 						break;
@@ -1536,16 +1535,16 @@ autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 					newSentenceTier -> xmax = my xmax;
 					Thing_setName (newSentenceTier.peek(), Melder_peek8to32 (speakerName));
 					sentenceTier = newSentenceTier.peek();   // for later use; this seems safe
-					Collection_addItem_move (my tiers.get(), newSentenceTier.move());
+					my tiers -> addItem_move (newSentenceTier.move());
 					autoIntervalTier newPhraseTier = Thing_new (IntervalTier);
 					newPhraseTier -> xmin = 0.0;
 					newPhraseTier -> xmax = my xmax;
 					Thing_setName (newPhraseTier.peek(), Melder_peek8to32 (speakerName));
 					phraseTier = newPhraseTier.peek();
-					Collection_addItem_move (my tiers.get(), newPhraseTier.move());
+					my tiers -> addItem_move (newPhraseTier.move());
 				} else {
-					sentenceTier = (IntervalTier) my tier (speakerTier);
-					phraseTier = (IntervalTier) my tier (speakerTier + 1);
+					sentenceTier = (IntervalTier) my tiers -> _item [speakerTier];
+					phraseTier = (IntervalTier) my tiers -> _item [speakerTier + 1];
 				}
 				tb = atof (arg4 + 4), te = atof (arg5 + 4);
 				if (te <= tb)
@@ -1636,8 +1635,8 @@ autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 			sgmlToPraat (phrase);
 			TextInterval_setText (lastInterval, Melder_peek8to32 (phrase));
 		}
-		for (long itier = 1; itier <= my numberOfTiers(); itier ++) {
-			IntervalTier tier = static_cast <IntervalTier> (my tier (itier));
+		for (long itier = 1; itier <= my tiers -> size(); itier ++) {
+			IntervalTier tier = static_cast <IntervalTier> (my tiers -> _item [itier]);
 			if (tier -> intervals.size() > 0) {
 				TextInterval latestInterval = tier -> intervals [tier -> intervals.size()];
 				if (my xmax > latestInterval -> xmax) {
@@ -1658,8 +1657,8 @@ autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 
 autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeDecimals, bool includeTierNames, bool includeEmptyIntervals) {
 	long numberOfRows = 0;
-	for (long itier = 1; itier <= my numberOfTiers(); itier ++) {
-		Function anyTier = my tier (itier);
+	for (long itier = 1; itier <= my tiers->size(); itier ++) {
+		Function anyTier = my tiers -> _item [itier];
 		if (anyTier -> classInfo == classIntervalTier) {
 			IntervalTier tier = static_cast <IntervalTier> (anyTier);
 			if (includeEmptyIntervals) {
@@ -1687,8 +1686,8 @@ autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeD
 	Table_setColumnLabel (thee.peek(), ++ icol, U"text");
 	Table_setColumnLabel (thee.peek(), ++ icol, U"tmax");
 	long irow = 0;
-	for (long itier = 1; itier <= my numberOfTiers(); itier ++) {
-		Function anyTier = my tier (itier);
+	for (long itier = 1; itier <= my tiers -> size(); itier ++) {
+		Function anyTier = my tiers -> _item [itier];
 		if (anyTier -> classInfo == classIntervalTier) {
 			IntervalTier tier = static_cast <IntervalTier> (anyTier);
 			for (long iinterval = 1; iinterval <= tier -> intervals.size(); iinterval ++) {
@@ -1736,8 +1735,8 @@ void TextGrid_list (TextGrid me, bool includeLineNumbers, int timeDecimals, bool
 }
 
 void TextGrid_correctRoundingErrors (TextGrid me) {
-	for (long itier = 1; itier <= my numberOfTiers(); itier ++) {
-		Function anyTier = my tier (itier);
+	for (long itier = 1; itier <= my tiers -> size(); itier ++) {
+		Function anyTier = my tiers -> _item [itier];
 		if (anyTier -> classInfo == classIntervalTier) {
 			IntervalTier tier = static_cast <IntervalTier> (anyTier);
 			Melder_assert (tier -> intervals.size() > 0);

@@ -66,7 +66,7 @@ Thing_define (Interpreter, Thing) {
 	#if USE_HASH
 	std::unordered_map <std::u32string, InterpreterVariable> *variablesMap;
 	#else
-	autoSortedSetOfString variables;
+	SortedSetOfStringOf<structInterpreterVariable> variables;
 	#endif
 	bool running, stopped;
 

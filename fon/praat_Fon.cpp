@@ -2047,8 +2047,12 @@ END2 }
 /***** LTAS *****/
 
 DIRECT2 (Ltases_average) {
-	autoCollection ltases = praat_getSelectedObjects ();
-	autoLtas thee = Ltases_average (ltases.peek());
+	CollectionOf<structLtas> ltases;
+	LOOP {
+		iam (Ltas);
+		ltases. addItem_ref (me);
+	}
+	autoLtas thee = Ltases_average (& ltases);
 	praat_new (thee.move(), U"averaged");
 END2 }
 
@@ -2326,8 +2330,12 @@ DIRECT2 (Ltas_help) {
 END2 }
 
 DIRECT2 (Ltases_merge) {
-	autoCollection ltases = praat_getSelectedObjects ();
-	autoLtas thee = Ltases_merge (ltases.peek());
+	CollectionOf<structLtas> ltases;
+	LOOP {
+		iam (Ltas);
+		ltases. addItem_ref (me);
+	}
+	autoLtas thee = Ltases_merge (& ltases);
 	praat_new (thee.move(), U"merged");
 END2 }
 

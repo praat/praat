@@ -520,8 +520,9 @@ DO
 		if (CLASS == classTextGrid) textgrid = (TextGrid) OBJECT;
 		if (CLASS == classSound) sound = (Sound) OBJECT;
 	}
-	autoCollection thee = TextGrid_Sound_extractAllIntervals (textgrid, sound,
+	autoOrderedOfSound thee = TextGrid_Sound_extractAllIntervals (textgrid, sound,
 		GET_INTEGER (STRING_TIER_NUMBER), GET_INTEGER (U"Preserve times"));
+	thy classInfo = classCollection;   // YUCK
 	praat_new (thee.move(), U"dummy");
 END2 }
 
@@ -536,8 +537,9 @@ DO
 		if (CLASS == classTextGrid) textgrid = (TextGrid) OBJECT;
 		if (CLASS == classSound) sound = (Sound) OBJECT;
 	}
-	autoCollection thee = TextGrid_Sound_extractNonemptyIntervals (textgrid, sound,
+	autoOrderedOfSound thee = TextGrid_Sound_extractNonemptyIntervals (textgrid, sound,
 		GET_INTEGER (STRING_TIER_NUMBER), GET_INTEGER (U"Preserve times"));
+	thy classInfo = classCollection;   // YUCK
 	praat_new (thee.move(), U"dummy");
 END2 }
 
@@ -553,9 +555,10 @@ DO
 		if (CLASS == classTextGrid) textgrid = (TextGrid) OBJECT;
 		if (CLASS == classSound) sound = (Sound) OBJECT;
 	}
-	autoCollection thee = TextGrid_Sound_extractIntervalsWhere (textgrid, sound,
+	autoOrderedOfSound thee = TextGrid_Sound_extractIntervalsWhere (textgrid, sound,
 		GET_INTEGER (STRING_TIER_NUMBER), kMelder_string_EQUAL_TO, GET_STRING (U"Label text"),
 		GET_INTEGER (U"Preserve times"));
+	thy classInfo = classCollection;   // YUCK
 	praat_new (thee.move(), GET_STRING (U"Label text"));
 END2 }
 
@@ -572,11 +575,12 @@ DO
 		if (CLASS == classTextGrid) textgrid = (TextGrid) OBJECT;
 		if (CLASS == classSound) sound = (Sound) OBJECT;
 	}
-	autoCollection thee = TextGrid_Sound_extractIntervalsWhere (textgrid, sound,
+	autoOrderedOfSound thee = TextGrid_Sound_extractIntervalsWhere (textgrid, sound,
 		GET_INTEGER (STRING_TIER_NUMBER),
 		GET_ENUM (kMelder_string, U"Extract every interval whose label..."),
 		GET_STRING (U"...the text"),
 		GET_INTEGER (U"Preserve times"));
+	thy classInfo = classCollection;   // YUCK
 	praat_new (thee.move(), GET_STRING (U"...the text"));
 END2 }
 
@@ -827,10 +831,10 @@ DO
 		int itier = GET_INTEGER (STRING_TIER_NUMBER);
 		int position = GET_INTEGER (U"Position");
 		const char32 *name = GET_STRING (U"Name");
-		if (itier > my tiers -> size) itier = my tiers -> size;
-		autoAnyTier newTier = Data_copy ((AnyTier) my tiers -> item [itier]);
+		if (itier > my tiers -> size()) itier = my tiers -> size();
+		autoFunction newTier = Data_copy (my tiers -> _item [itier]);
 		Thing_setName (newTier.peek(), name);
-		Ordered_addItemAtPosition_move (my tiers.get(), newTier.move(), position);
+		my tiers -> addItemAtPosition_move (newTier.move(), position);
 		praat_dataChanged (me);
 	}
 END2 }
@@ -960,9 +964,9 @@ static Function pr_TextGrid_peekTier (UiForm dia) {
 	LOOP {
 		iam (TextGrid);
 		long tierNumber = GET_INTEGER (STRING_TIER_NUMBER);
-		if (tierNumber > my tiers -> size)
-			Melder_throw (U"Tier number (", tierNumber, U") should not be larger than number of tiers (", my tiers -> size, U").");
-		return (Function) my tiers -> item [tierNumber];
+		if (tierNumber > my tiers -> size())
+			Melder_throw (U"Tier number (", tierNumber, U") should not be larger than number of tiers (", my tiers -> size(), U").");
+		return my tiers -> _item [tierNumber];
 	}
 	return nullptr;   // should not occur
 }
@@ -1121,7 +1125,7 @@ END2 }
 DIRECT2 (TextGrid_getNumberOfTiers) {
 	LOOP {
 		iam (TextGrid);
-		long numberOfTiers = my tiers -> size;
+		long numberOfTiers = my tiers -> size();
 		Melder_information (numberOfTiers);
 	}
 END2 }
@@ -1218,9 +1222,9 @@ DO
 		int position = GET_INTEGER (U"Position");
 		const char32 *name = GET_STRING (U"Name");
 		autoIntervalTier tier = IntervalTier_create (my xmin, my xmax);
-		if (position > my tiers -> size) position = my tiers -> size + 1;
+		if (position > my tiers -> size()) position = my tiers -> size() + 1;
 		Thing_setName (tier.peek(), name);
-		Ordered_addItemAtPosition_move (my tiers.get(), tier.move(), position);
+		my tiers -> addItemAtPosition_move (tier.move(), position);
 		praat_dataChanged (me);
 	}
 END2 }
@@ -1249,9 +1253,9 @@ DO
 		int position = GET_INTEGER (U"Position");
 		const char32 *name = GET_STRING (U"Name");
 		autoTextTier tier = TextTier_create (my xmin, my xmax);
-		if (position > my tiers -> size) position = my tiers -> size + 1;
+		if (position > my tiers -> size()) position = my tiers -> size() + 1;
 		Thing_setName (tier.peek(), name);
-		Ordered_addItemAtPosition_move (my tiers.get(), tier.move(), position);
+		my tiers -> addItemAtPosition_move (tier.move(), position);
 		praat_dataChanged (me);
 	}
 END2 }
@@ -1289,8 +1293,12 @@ DIRECT2 (TextGrids_concatenate) {
 END2 }
 
 DIRECT2 (TextGrids_merge) {
-	autoCollection textGrids = praat_getSelectedObjects ();
-	autoTextGrid thee = TextGrid_merge (textGrids.peek());
+	OrderedOf <structTextGrid> textGrids;
+	LOOP {
+		iam (TextGrid);
+		textGrids. addItem_ref (me);
+	}
+	autoTextGrid thee = TextGrids_merge (& textGrids);
 	praat_new (thee.move(), U"merged");
 END2 }
 
@@ -1418,10 +1426,10 @@ DO
 	LOOP {
 		iam (TextGrid);
 		IntervalTier intervalTier;
-		if (itier > my tiers -> size)
+		if (itier > my tiers -> size())
 			Melder_throw (U"You cannot remove a boundary from tier ", itier, U" of ", me,
-				U", because that TextGrid has only ", my tiers -> size, U" tiers.");
-		intervalTier = (IntervalTier) my tiers -> item [itier];
+				U", because that TextGrid has only ", my tiers -> size(), U" tiers.");
+		intervalTier = (IntervalTier) my tiers -> _item [itier];
 		if (intervalTier -> classInfo != classIntervalTier)
 			Melder_throw (U"You cannot remove a boundary from tier ", itier, U" of ", me,
 				U", because that tier is a point tier instead of an interval tier.");
@@ -1446,10 +1454,10 @@ DO
 	LOOP {
 		iam (TextGrid);
 		TextTier pointTier;
-		if (itier > my tiers -> size)
+		if (itier > my tiers -> size())
 			Melder_throw (U"You cannot remove a point from tier ", itier, U" of ", me,
-				U", because that TextGrid has only ", my tiers -> size, U" tiers.");
-		pointTier = (TextTier) my tiers -> item [itier];
+				U", because that TextGrid has only ", my tiers -> size(), U" tiers.");
+		pointTier = (TextTier) my tiers -> _item [itier];
 		if (pointTier -> classInfo != classTextTier)
 			Melder_throw (U"You cannot remove a point from tier ", itier, U" of ", me,
 				U", because that tier is an interval tier instead of a point tier.");
@@ -1484,10 +1492,10 @@ DO
 	LOOP {
 		iam (TextGrid);
 		IntervalTier intervalTier;
-		if (itier > my tiers -> size)
+		if (itier > my tiers -> size())
 			Melder_throw (U"You cannot remove a boundary from tier ", itier, U" of ", me,
-				U", because that TextGrid has only ", my tiers -> size, U" tiers.");
-		intervalTier = (IntervalTier) my tiers -> item [itier];
+				U", because that TextGrid has only ", my tiers -> size(), U" tiers.");
+		intervalTier = (IntervalTier) my tiers -> _item [itier];
 		if (intervalTier -> classInfo != classIntervalTier)
 			Melder_throw (U"You cannot remove a boundary from tier ", itier, U" of ", me,
 				U", because that tier is a point tier instead of an interval tier.");
@@ -1509,10 +1517,10 @@ DO
 	LOOP {
 		iam (TextGrid);
 		int itier = GET_INTEGER (STRING_TIER_NUMBER);
-		if (my tiers -> size <= 1)
+		if (my tiers -> size() <= 1)
 			Melder_throw (U"Sorry, I refuse to remove the last tier.");
-		if (itier > my tiers -> size) itier = my tiers -> size;
-		Collection_removeItem (my tiers.get(), itier);
+		if (itier > my tiers -> size()) itier = my tiers -> size();
+		my tiers -> removeItem (itier);
 		praat_dataChanged (me);
 	}
 END2 }

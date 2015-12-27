@@ -53,12 +53,13 @@ void FileInMemory_setId (FileInMemory me, const char32 *newId);
 
 void FileInMemory_showAsCode (FileInMemory me, const char32 *name, long numberOfBytesPerLine);
 
-Thing_define (FilesInMemory, SortedSet) {
+Collection_declare (SortedSetOfFileInMemory, SortedSetOf, FileInMemory);
+CollectionSubclass_define (FilesInMemory, SortedSetOfFileInMemory) {
 	int d_sortKey;
 
 	static int s_compare_name (FileInMemory data1, FileInMemory data2);
 	static int s_compare_id (FileInMemory data1, FileInMemory data2);
-	Data_CompareHook v_getCompareHook ()
+	CompareHook v_getCompareHook ()
 		override { return d_sortKey == 0 ? s_compare_name : s_compare_id; }
 };
 

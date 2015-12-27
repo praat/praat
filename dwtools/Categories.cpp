@@ -77,9 +77,9 @@ autoCategories Categories_sequentialNumbers (long n) {
 	}
 }
 
-autoCategories Categories_selectUniqueItems (Categories me, bool sorted) {
+autoCategories Categories_selectUniqueItems (Categories me) {
 	try {
-		autoOrderedOfString s = OrderedOfString_selectUniqueItems (me, sorted);
+		autoOrderedOfString s = OrderedOfString_selectUniqueItems (me);
 		autoCategories thee = OrderedOfString_to_Categories (s.peek());
 		return thee;
 	} catch (MelderError) {

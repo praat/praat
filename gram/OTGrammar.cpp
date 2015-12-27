@@ -2638,7 +2638,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 		my numberOfFixedRankings ++;
 		Melder_progress (0.0, U"");
 		npair = npair * npair;
-		autoOrdered list = Ordered_create ();
+		OrderedOf<structOTGrammar_List4> list;
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 			for (jcons = 1; jcons <= my numberOfConstraints; jcons ++) if (icons != jcons && ! obligatory [jcons] [icons]) {
 				my fixedRankings [my numberOfFixedRankings - 1]. higher = icons;
@@ -2680,7 +2680,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 							listElement -> lo1 = icons;
 							listElement -> hi2 = lcons;
 							listElement -> lo2 = kcons;
-							Collection_addItem_move (list.peek(), listElement.move());
+							list. addItem_move (listElement.move());
 						}
 					}
 				}
@@ -2693,9 +2693,9 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 		improved = true;
 		while (improved) {
 			improved = false;
-			for (ilist = 1; ilist <= list -> size; ilist ++) {
-				for (jlist = 1; jlist <= list -> size; jlist ++) if (ilist != jlist) {
-					OTGrammar_List4 elA = (OTGrammar_List4) list -> item [ilist], elB = (OTGrammar_List4) list -> item [jlist];
+			for (ilist = 1; ilist <= list.size(); ilist ++) {
+				for (jlist = 1; jlist <= list.size(); jlist ++) if (ilist != jlist) {
+					OTGrammar_List4 elA = list [ilist], elB = list [jlist];
 					long ahi1 = elA -> hi1, alo1 = elA -> lo1, ahi2 = elA -> hi2, alo2 = elA -> lo2;
 					long bhi1 = elB -> hi1, blo1 = elB -> lo1, bhi2 = elB -> hi2, blo2 = elB -> lo2;
 					improved |= (ahi1 == bhi1 || obligatory [bhi1] [ahi1]) && (ahi2 == bhi2 || obligatory [bhi2] [ahi2]) &&
@@ -2703,7 +2703,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 					improved |= (ahi1 == bhi2 || obligatory [bhi2] [ahi1]) && (ahi2 == bhi1 || obligatory [bhi1] [ahi2]) &&
 						(alo1 == blo2 || obligatory [alo1] [blo2]) && (alo2 == blo1 || obligatory [alo2] [blo1]);
 					if (improved) {
-						Collection_removeItem (list.peek(), jlist);
+						list. removeItem (jlist);
 						break;
 					}
 				}
@@ -2713,9 +2713,9 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 		improved = true;
 		while (improved) {
 			improved = false;
-			for (ilist = 1; ilist <= list -> size; ilist ++) {
-				for (jlist = 1; jlist <= list -> size; jlist ++) if (ilist != jlist) {
-					OTGrammar_List4 elA = (OTGrammar_List4) list -> item [ilist], elB = (OTGrammar_List4) list -> item [jlist];
+			for (ilist = 1; ilist <= list.size(); ilist ++) {
+				for (jlist = 1; jlist <= list.size(); jlist ++) if (ilist != jlist) {
+					OTGrammar_List4 elA = list [ilist], elB = list [jlist];
 					long ahi1 = elA -> hi1, alo1 = elA -> lo1, ahi2 = elA -> hi2, alo2 = elA -> lo2;
 					long bhi1 = elB -> hi1, blo1 = elB -> lo1, bhi2 = elB -> hi2, blo2 = elB -> lo2;
 					improved |= ahi1 == bhi1 && alo1 == blo1 && ahi2 == bhi2 && blo2 == bhi1 && alo2 == alo1;
@@ -2723,15 +2723,15 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 					improved |= ahi2 == bhi1 && alo2 == blo1 && ahi1 == bhi2 && blo2 == bhi1 && alo1 == alo2;
 					improved |= ahi2 == bhi2 && alo2 == blo2 && ahi1 == bhi1 && blo1 == bhi2 && alo1 == alo2;
 					if (improved) {
-						Collection_removeItem (list.peek(), jlist);
+						list. removeItem (jlist);
 						break;
 					}
 				}
 				if (improved) break;
 			}
 		}
-		for (ilist = 1; ilist <= list -> size; ilist ++) {
-			OTGrammar_List4 el = (OTGrammar_List4) list -> item [ilist];
+		for (ilist = 1; ilist <= list.size(); ilist ++) {
+			OTGrammar_List4 el = list [ilist];
 			MelderInfo_write (my constraints [el -> hi1]. name, U" >> ", my constraints [el -> lo1]. name, U" OR ");
 			MelderInfo_writeLine (my constraints [el -> hi2]. name, U" >> ", my constraints [el -> lo2]. name);
 			MelderInfo_close ();

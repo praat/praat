@@ -347,7 +347,7 @@ DO
 			vt = kOla_FLAT_VOTING;
 			break;
 	}
-	if (thy ny != his size)
+	if (thy ny != his size())
 		Melder_throw (U"The number of Categories should be equal to the number of rows in Pattern.");
 	if (thy nx != (my input)->nx)
 		Melder_throw (U"The dimensionality of Pattern should be equal to that of the instance base.");
@@ -385,7 +385,7 @@ DO
 			vt = kOla_FLAT_VOTING;
 			break;
 	}
-	if (p -> ny != c -> size)
+	if (p -> ny != c -> size())
 		Melder_throw (U"The number of Categories should be equal to the number of rows in Pattern.");
 	if (p -> nx != my input -> nx)
 		Melder_throw (U"The dimensionality of Pattern should be equal to that of the instance base.");
@@ -650,8 +650,8 @@ DO
 	iam_ONLY (Pattern);
 	thouart_ONLY (Categories);
 	if (my ny < 2)
-		Melder_throw (U"The Pattern object should contain at least 2 rows.");
-	if (my ny != thy size)
+		Melder_throw (U"The Pattern object should contain at least two rows.");
+	if (my ny != thy size())
 		Melder_throw (U"The number of rows in the Pattern object should equal the number of categories in the Categories object.");
 	autoFeatureWeights result = FeatureWeights_compute (me, thee, GET_INTEGER (U"Number of neighbours"));
 	praat_new (result.move(), U"Output");

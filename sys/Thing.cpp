@@ -21,7 +21,7 @@
 #include <time.h>
 #include "Thing.h"
 
-static long theTotalNumberOfThings;
+long theTotalNumberOfThings;
 
 void structThing :: v_info ()
 {
@@ -238,8 +238,6 @@ void Thing_setName (Thing me, const char32 *name /* cattable */) {
 	my name = newName.transfer();
 	my v_nameChanged ();
 }
-
-long Thing_getTotalNumberOfThings () { return theTotalNumberOfThings; }
 
 void Thing_swap (Thing me, Thing thee) {
 	Melder_assert (my classInfo == thy classInfo);

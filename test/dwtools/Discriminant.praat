@@ -23,13 +23,15 @@ Draw scatter plot: 1, 2, 0, 0, -2.9, 2.9, -2.9, 2.9, 10, "yes", "+", "yes"
 discriminant = To Discriminant
 test = Read from file: "Pols.text.Discriminant"
 assert objectsAreIdentical (test, discriminant)
+Remove
 test = Read from file: "Pols.binary.Discriminant"
 assert objectsAreIdentical (test, discriminant)
-
 
 plusObject: table
 configuration = To Configuration: 0
 Erase all
 Draw: 1, 2, -2.9, 2.9, -2.9, 2.9, 12, "yes", "+", "yes"
+
+removeObject: table, discriminant, test, configuration
 
 appendInfoLine: "OK"

@@ -71,6 +71,8 @@ Thing_declare (EditorCommand);
 	are restored to all items in the form.
 */
 
+Thing_declare (UiOption);
+
 Thing_define (UiField, Thing) {
 	int type;
 	const char32 *formLabel;
@@ -79,7 +81,7 @@ Thing_define (UiField, Thing) {
 	char32 *stringValue; const char32 *stringDefaultValue;
 	Graphics_Colour colourValue;
 	char *stringValueA;
-	autoOrdered options;
+	OrderedOf<structUiOption> options;
 	long numberOfStrings;
 	const char32 **strings;
 	GuiLabel label;

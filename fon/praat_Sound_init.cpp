@@ -178,33 +178,57 @@ DIRECT2 (LongSound_view) {
 END2 }
 
 FORM_WRITE2 (LongSound_writeToAifcFile, U"Save as AIFC file", nullptr, U"aifc") {
-	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_AIFC, 16);
+	OrderedOf <structSampled> list;
+	LOOP {
+		iam (Sampled);
+		list. addItem_ref (me);
+	}
+	LongSound_concatenate (& list, file, Melder_AIFC, 16);
 END2 }
 
 FORM_WRITE2 (LongSound_writeToAiffFile, U"Save as AIFF file", nullptr, U"aiff") {
-	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_AIFF, 16);
+	OrderedOf <structSampled> list;
+	LOOP {
+		iam (Sampled);
+		list. addItem_ref (me);
+	}
+	LongSound_concatenate (& list, file, Melder_AIFF, 16);
 END2 }
 
 FORM_WRITE2 (LongSound_writeToNextSunFile, U"Save as NeXT/Sun file", nullptr, U"au") {
-	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_NEXT_SUN, 16);
+	OrderedOf <structSampled> list;
+	LOOP {
+		iam (Sampled);
+		list. addItem_ref (me);
+	}
+	LongSound_concatenate (& list, file, Melder_NEXT_SUN, 16);
 END2 }
 
 FORM_WRITE2 (LongSound_writeToNistFile, U"Save as NIST file", nullptr, U"nist") {
-	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_NIST, 16);
+	OrderedOf <structSampled> list;
+	LOOP {
+		iam (Sampled);
+		list. addItem_ref (me);
+	}
+	LongSound_concatenate (& list, file, Melder_NIST, 16);
 END2 }
 
 FORM_WRITE2 (LongSound_writeToFlacFile, U"Save as FLAC file", nullptr, U"flac") {
-	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_FLAC, 16);
+	OrderedOf <structSampled> list;
+	LOOP {
+		iam (Sampled);
+		list. addItem_ref (me);
+	}
+	LongSound_concatenate (& list, file, Melder_FLAC, 16);
 END2 }
 
 FORM_WRITE2 (LongSound_writeToWavFile, U"Save as WAV file", nullptr, U"wav") {
-	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_WAV, 16);
+	OrderedOf <structSampled> list;
+	LOOP {
+		iam (Sampled);
+		list. addItem_ref (me);
+	}
+	LongSound_concatenate (& list, file, Melder_WAV, 16);
 END2 }
 
 FORM_WRITE2 (LongSound_writeLeftChannelToAifcFile, U"Save left channel as AIFC file", nullptr, U"aifc") {
@@ -307,33 +331,57 @@ END2 }
 /********** LONGSOUND & SOUND **********/
 
 FORM_WRITE2 (LongSound_Sound_writeToAifcFile, U"Save as AIFC file", nullptr, U"aifc") {
-	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_AIFC, 16);
+	OrderedOf <structSampled> list;
+	LOOP {
+		iam (Sampled);
+		list. addItem_ref (me);
+	}
+	LongSound_concatenate (& list, file, Melder_AIFC, 16);
 END2 }
 
 FORM_WRITE2 (LongSound_Sound_writeToAiffFile, U"Save as AIFF file", nullptr, U"aiff") {
-	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_AIFF, 16);
+	OrderedOf <structSampled> list;
+	LOOP {
+		iam (Sampled);
+		list. addItem_ref (me);
+	}
+	LongSound_concatenate (& list, file, Melder_AIFF, 16);
 END2 }
 
 FORM_WRITE2 (LongSound_Sound_writeToNextSunFile, U"Save as NeXT/Sun file", nullptr, U"au") {
-	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_NEXT_SUN, 16);
+	OrderedOf <structSampled> list;
+	LOOP {
+		iam (Sampled);
+		list. addItem_ref (me);
+	}
+	LongSound_concatenate (& list, file, Melder_NEXT_SUN, 16);
 END2 }
 
 FORM_WRITE2 (LongSound_Sound_writeToNistFile, U"Save as NIST file", nullptr, U"nist") {
-	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_NIST, 16);
+	OrderedOf <structSampled> list;
+	LOOP {
+		iam (Sampled);
+		list. addItem_ref (me);
+	}
+	LongSound_concatenate (& list, file, Melder_NIST, 16);
 END2 }
 
 FORM_WRITE2 (LongSound_Sound_writeToFlacFile, U"Save as FLAC file", nullptr, U"flac") {
-	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_FLAC, 16);
+	OrderedOf <structSampled> list;
+	LOOP {
+		iam (Sampled);
+		list. addItem_ref (me);
+	}
+	LongSound_concatenate (& list, file, Melder_FLAC, 16);
 END2 }
 
 FORM_WRITE2 (LongSound_Sound_writeToWavFile, U"Save as WAV file", nullptr, U"wav") {
-	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_WAV, 16);
+	OrderedOf <structSampled> list;
+	LOOP {
+		iam (Sampled);
+		list. addItem_ref (me);
+	}
+	LongSound_concatenate (& list, file, Melder_WAV, 16);
 END2 }
 
 /********** SOUND **********/
@@ -366,8 +414,12 @@ DO
 END2 }
 
 DIRECT2 (Sounds_combineToStereo) {
-	autoCollection set = praat_getSelectedObjects ();
-	autoSound result = Sounds_combineToStereo (set.peek());
+	OrderedOf<structSound> list;
+	LOOP {
+		iam (Sound);
+		list. addItem_ref (me);
+	}
+	autoSound result = Sounds_combineToStereo (& list);
 	long numberOfChannels = result -> ny;   // dereference before transferring
 	praat_new (result.move(), U"combined_", numberOfChannels);
 END2 }
@@ -1478,13 +1530,21 @@ DIRECT2 (Sound_reverse) {
 END2 }
 
 FORM_WRITE2 (Sound_saveAs24BitWavFile, U"Save as 24-bit WAV file", nullptr, U"wav") {
-	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_WAV, 24);
+	OrderedOf <structSampled> list;
+	LOOP {
+		iam (Sampled);
+		list. addItem_ref (me);
+	}
+	LongSound_concatenate (& list, file, Melder_WAV, 24);
 END2 }
 
 FORM_WRITE2 (Sound_saveAs32BitWavFile, U"Save as 32-bit WAV file", nullptr, U"wav") {
-	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_WAV, 32);
+	OrderedOf <structSampled> list;
+	LOOP {
+		iam (Sampled);
+		list. addItem_ref (me);
+	}
+	LongSound_concatenate (& list, file, Melder_WAV, 32);
 END2 }
 
 FORM (Sound_scalePeak, U"Sound: Scale peak", U"Sound: Scale peak...") {
@@ -2064,18 +2124,30 @@ END
 #endif
 
 FORM_WRITE2 (Sound_writeToAifcFile, U"Save as AIFC file", nullptr, U"aifc") {
-	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_AIFC, 16);
+	OrderedOf <structSampled> list;
+	LOOP {
+		iam (Sampled);
+		list. addItem_ref (me);
+	}
+	LongSound_concatenate (& list, file, Melder_AIFC, 16);
 END2 }
 
 FORM_WRITE2 (Sound_writeToAiffFile, U"Save as AIFF file", nullptr, U"aiff") {
-	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_AIFF, 16);
+	OrderedOf <structSampled> list;
+	LOOP {
+		iam (Sampled);
+		list. addItem_ref (me);
+	}
+	LongSound_concatenate (& list, file, Melder_AIFF, 16);
 END2 }
 
 FORM_WRITE2 (Sound_writeToFlacFile, U"Save as FLAC file", nullptr, U"flac") {
-	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_FLAC, 16);
+	OrderedOf <structSampled> list;
+	LOOP {
+		iam (Sampled);
+		list. addItem_ref (me);
+	}
+	LongSound_concatenate (& list, file, Melder_FLAC, 16);
 END2 }
 
 FORM_WRITE2 (Sound_writeToKayFile, U"Save as Kay sound file", nullptr, U"kay") {
@@ -2086,13 +2158,21 @@ FORM_WRITE2 (Sound_writeToKayFile, U"Save as Kay sound file", nullptr, U"kay") {
 END2 }
 
 FORM_WRITE2 (Sound_writeToNextSunFile, U"Save as NeXT/Sun file", nullptr, U"au") {
-	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_NEXT_SUN, 16);
+	OrderedOf <structSampled> list;
+	LOOP {
+		iam (Sampled);
+		list. addItem_ref (me);
+	}
+	LongSound_concatenate (& list, file, Melder_NEXT_SUN, 16);
 END2 }
 
 FORM_WRITE2 (Sound_writeToNistFile, U"Save as NIST file", nullptr, U"nist") {
-	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_NIST, 16);
+	OrderedOf <structSampled> list;
+	LOOP {
+		iam (Sampled);
+		list. addItem_ref (me);
+	}
+	LongSound_concatenate (& list, file, Melder_NIST, 16);
 END2 }
 
 FORM_WRITE2 (Sound_saveAsRaw8bitSignedFile, U"Save as raw 8-bit signed sound file", nullptr, U"8sig") {
@@ -2159,49 +2239,81 @@ FORM_WRITE2 (Sound_writeToSesamFile, U"Save as Sesam file", nullptr, U"sdf") {
 END2 }
 
 FORM_WRITE2 (Sound_writeToStereoAifcFile, U"Save as stereo AIFC file", nullptr, U"aifc") {
-	autoCollection set = praat_getSelectedObjects ();
-	autoSound stereo = Sounds_combineToStereo (set.peek());
+	OrderedOf<structSound> list;
+	LOOP {
+		iam (Sound);
+		list. addItem_ref (me);
+	}
+	autoSound stereo = Sounds_combineToStereo (& list);
 	Sound_writeToAudioFile (stereo.peek(), file, Melder_AIFC, 16);
 END2 }
 
 FORM_WRITE2 (Sound_writeToStereoAiffFile, U"Save as stereo AIFF file", nullptr, U"aiff") {
-	autoCollection set = praat_getSelectedObjects ();
-	autoSound stereo = Sounds_combineToStereo (set.peek());
+	OrderedOf<structSound> list;
+	LOOP {
+		iam (Sound);
+		list. addItem_ref (me);
+	}
+	autoSound stereo = Sounds_combineToStereo (& list);
 	Sound_writeToAudioFile (stereo.peek(), file, Melder_AIFF, 16);
 END2 }
 
 FORM_WRITE2 (Sound_writeToStereoNextSunFile, U"Save as stereo NeXT/Sun file", nullptr, U"au") {
-	autoCollection set = praat_getSelectedObjects ();
-	autoSound stereo = Sounds_combineToStereo (set.peek());
+	OrderedOf<structSound> list;
+	LOOP {
+		iam (Sound);
+		list. addItem_ref (me);
+	}
+	autoSound stereo = Sounds_combineToStereo (& list);
 	Sound_writeToAudioFile (stereo.peek(), file, Melder_NEXT_SUN, 16);
 END2 }
 
 FORM_WRITE2 (Sound_writeToStereoNistFile, U"Save as stereo NIST file", nullptr, U"nist") {
-	autoCollection set = praat_getSelectedObjects ();
-	autoSound stereo = Sounds_combineToStereo (set.peek());
+	OrderedOf<structSound> list;
+	LOOP {
+		iam (Sound);
+		list. addItem_ref (me);
+	}
+	autoSound stereo = Sounds_combineToStereo (& list);
 	Sound_writeToAudioFile (stereo.peek(), file, Melder_NIST, 16);
 END2 }
 
 FORM_WRITE2 (Sound_writeToStereoFlacFile, U"Save as stereo FLAC file", nullptr, U"flac") {
-	autoCollection set = praat_getSelectedObjects ();
-	autoSound stereo = Sounds_combineToStereo (set.peek());
+	OrderedOf<structSound> list;
+	LOOP {
+		iam (Sound);
+		list. addItem_ref (me);
+	}
+	autoSound stereo = Sounds_combineToStereo (& list);
 	Sound_writeToAudioFile (stereo.peek(), file, Melder_FLAC, 16);
 END2 }
 
 FORM_WRITE2 (Sound_writeToStereoWavFile, U"Save as stereo WAV file", nullptr, U"wav") {
-	autoCollection set = praat_getSelectedObjects ();
-	autoSound stereo = Sounds_combineToStereo (set.peek());
+	OrderedOf<structSound> list;
+	LOOP {
+		iam (Sound);
+		list. addItem_ref (me);
+	}
+	autoSound stereo = Sounds_combineToStereo (& list);
 	Sound_writeToAudioFile (stereo.peek(), file, Melder_WAV, 16);
 END2 }
 
 FORM_WRITE2 (Sound_writeToSunAudioFile, U"Save as NeXT/Sun file", nullptr, U"au") {
-	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_NEXT_SUN, 16);
+	OrderedOf <structSampled> list;
+	LOOP {
+		iam (Sampled);
+		list. addItem_ref (me);
+	}
+	LongSound_concatenate (& list, file, Melder_NEXT_SUN, 16);
 END2 }
 
 FORM_WRITE2 (Sound_writeToWavFile, U"Save as WAV file", nullptr, U"wav") {
-	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_WAV, 16);
+	OrderedOf <structSampled> list;
+	LOOP {
+		iam (Sampled);
+		list. addItem_ref (me);
+	}
+	LongSound_concatenate (& list, file, Melder_WAV, 16);
 END2 }
 
 /***** STOP *****/

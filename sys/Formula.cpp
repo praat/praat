@@ -3966,7 +3966,7 @@ static void do_chooseReadFileStr () {
 	if (n->number == 1) {
 		Stackel title = pop;
 		if (title->which == Stackel_STRING) {
-			autoSortedSetOfSimpleString fileNames = GuiFileSelect_getInfileNames (nullptr, title->string, false);
+			autoSortedSetOfString fileNames = GuiFileSelect_getInfileNames (nullptr, title->string, false);
 			if (fileNames -> size() == 0) {
 				autostring32 result = Melder_dup (U"");
 				pushString (result.transfer());

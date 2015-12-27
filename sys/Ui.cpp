@@ -92,7 +92,7 @@ UiOption UiRadio_addButton (UiField me, const char32 *label) {
 	Melder_assert (my type == UI_RADIO || my type == UI_OPTIONMENU);
 	autoUiOption thee (UiOption_create (label));
 	UiOption thee_ref = thee.get();
-	Collection_addItem_move (my options.get(), thee.move());
+	my options. addItem_move (thee.move());
 	return thee_ref;
 }
 
@@ -101,7 +101,7 @@ UiOption UiOptionMenu_addButton (UiField me, const char32 *label) {
 	Melder_assert (my type == UI_RADIO || my type == UI_OPTIONMENU);
 	autoUiOption thee (UiOption_create (label));
 	UiOption thee_ref = thee.get();
-	Collection_addItem_move (my options.get(), thee.move());
+	my options. addItem_move (thee.move());
 	return thee_ref;
 }
 
@@ -116,7 +116,7 @@ static void UiField_setDefault (UiField me) {
 		} break; case UI_BOOLEAN: {
 			GuiCheckButton_setValue (my checkButton, my integerDefaultValue);
 		} break; case UI_RADIO: {
-			for (int i = 1; i <= my options -> size; i ++) {
+			for (int i = 1; i <= my options -> size(); i ++) {
 				if (i == my integerDefaultValue) {
 					UiOption b = static_cast <UiOption> (my options -> item [i]);
 					GuiRadioButton_set (b -> radioButton);

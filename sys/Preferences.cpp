@@ -38,7 +38,7 @@ void structPreference :: v_destroy () {
 	Preference_Parent :: v_destroy ();
 }
 
-static SortedSetOfStringOf<structPreference> thePreferences;
+static SortedSetOfStringOf <structPreference> thePreferences;
 
 static void Preferences_add (const char32 *string, int type, void *value, int min, int max, const char32 * (*getText) (int value), int (*getValue) (const char32 *text)) {
 	autoPreference me = Thing_new (Preference);
@@ -92,7 +92,7 @@ void Preferences_read (MelderFile file) {
 	 * before any preferences have been registered.
 	 * In that case, do nothing.
 	 */
-	if (! thePreferences) return;
+	if (thePreferences.size() == 0) return;
 	try {
 		autoMelderReadText text = MelderReadText_createFromFile (file);
 		for (;;) {

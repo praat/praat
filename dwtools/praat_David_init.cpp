@@ -388,7 +388,7 @@ END
 DIRECT (Categories_selectUniqueItems)
 	LOOP {
 		iam (Categories);
-		autoCategories thee = Categories_selectUniqueItems (me, true);
+		autoCategories thee = Categories_selectUniqueItems (me);
 		praat_new (thee.move(), my name, U"_uniq");
 	}
 END
@@ -2860,8 +2860,8 @@ END
 DIRECT (FilesInMemory_merge)
 	FilesInMemory f1 = nullptr, f2 = nullptr;
 	LOOP { 
-		iam (FilesInMemory); 
-		(f1 ? f2 : f1) = me; 
+		iam (FilesInMemory);
+		(f1 ? f2 : f1) = me;
 	}
 	Melder_assert (f1 && f2);
 	autoFilesInMemory fim = Collections_merge (f1, f2).static_cast_move <structFilesInMemory> ();

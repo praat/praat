@@ -1,4 +1,4 @@
-/* Collection_extensions.c
+/* Collection_extensions.cpp
  *
  * Copyright (C) 1994-2011, 2015 David Weenink
  *
@@ -80,7 +80,7 @@ autoCollection Collection_permuteItems (Collection me) {
 void structOrderedOfString :: v_info () {
 	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Number of strings: ", size);
-	autoOrderedOfString uStrings = OrderedOfString_selectUniqueItems (this, 1);
+	autoOrderedOfString uStrings = OrderedOfString_selectUniqueItems (this);
 	MelderInfo_writeLine (U"Number of unique categories: ", uStrings -> size);
 }
 
@@ -130,31 +130,19 @@ autoOrderedOfString OrderedOfString_joinItems (OrderedOfString me, OrderedOfStri
 	}
 }
 
-autoOrderedOfString OrderedOfString_selectUniqueItems (OrderedOfString me, bool sort) {
+autoOrderedOfString OrderedOfString_selectUniqueItems (OrderedOfString me) {
 	try {
-		if (! sort) {
-			autoOrderedOfString him = OrderedOfString_create ();
-			for (long i = 1; i <= my size; i++) {
-				SimpleString ss = (SimpleString) my item[i];
-				if (! OrderedOfString_indexOfItem_c (him.peek(), ss -> string)) {
-					autoSimpleString item = Data_copy (ss);
-					Collection_addItem_move (him.peek(), item.move());
-				}
-			}
-			Collection_shrinkToFit (him.peek());
-			return him;
-		}
 		autoSortedSetOfString thee = SortedSetOfString_create ();
-		for (long i = 1; i <= my size; i++) {
-			if (! SortedSet_hasItem (thee.peek(), my item[i])) {
-				autoSimpleString item = Data_copy ((SimpleString) my item[i]);
-				Collection_addItem_move (thee.peek(), item.move());
+		for (long i = 1; i <= my size; i ++) {
+			if (! thy hasItem ((SimpleString) my item [i])) {   // FIXME: first sort, then unicize
+				autoSimpleString item = Data_copy ((SimpleString) my item [i]);
+				thy addItem_move (item.move());
 			}
 		}
 		autoOrderedOfString him = OrderedOfString_create ();
-		for (long i = 1; i <= thy size; i++) {
-			autoSimpleString item = Data_copy ((SimpleString) thy item[i]);
-			Collection_addItem_move (him.peek(), item.move());
+		for (long i = 1; i <= thy size(); i ++) {
+			autoSimpleString item = Data_copy (thy _item [i]);
+			Collection_addItem_move (him.get(), item.move());
 		}
 		return him;
 	} catch (MelderError) {
@@ -316,4 +304,4 @@ void OrderedOfString_removeOccurrences (OrderedOfString me, const char32 *search
 	}
 }
 
-/* End of file Collection_extensions.c */
+/* End of file Collection_extensions.cpp */

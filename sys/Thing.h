@@ -242,7 +242,7 @@ void * _Thing_check (Thing me, ClassInfo table, const char *fileName, int line);
 
 /* For debugging. */
 
-long Thing_getTotalNumberOfThings ();
+extern long theTotalNumberOfThings;
 /* This number is 0 initially, increments at every successful `new', and decrements at every `forget'. */
 
 template <class T>
@@ -303,6 +303,7 @@ public:
 	T* operator-> () const {   // as r-value
 		return our ptr;
 	}
+	//Y* operator[] (long pos) { return (*ptr) -> _item [pos]; }
 	/*
 	T& operator* () const {   // as l-value
 		return *our ptr;

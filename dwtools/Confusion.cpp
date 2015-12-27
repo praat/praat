@@ -118,8 +118,8 @@ autoConfusion Categories_to_Confusion (Categories me, Categories thee) {
 			Melder_throw (U"Categories_to_Confusion: dimensions do not agree.");
 		}
 
-		autoCategories ul1 = Categories_selectUniqueItems (me, 1);
-		autoCategories ul2 = Categories_selectUniqueItems (thee, 1);
+		autoCategories ul1 = Categories_selectUniqueItems (me);
+		autoCategories ul2 = Categories_selectUniqueItems (thee);
 		autoConfusion him = Confusion_create (ul1 -> size, ul2 -> size);
 
 		for (long i = 1; i <= ul1 -> size; i++) {

@@ -47,7 +47,7 @@ UiForm UiInfile_create (GuiWindow parent, const char32 *title,
 
 void UiInfile_do (UiForm me) {
 	try {
-		autoSortedSetOfSimpleString infileNames = GuiFileSelect_getInfileNames (my d_dialogParent, my name, my allowMultipleFiles);
+		autoSortedSetOfString infileNames = GuiFileSelect_getInfileNames (my d_dialogParent, my name, my allowMultipleFiles);
 		for (long ifile = 1; ifile <= infileNames->size(); ifile ++) {
 			SimpleString infileName = infileNames -> _item [ifile];
 			Melder_pathToFile (infileName -> string, & my file);

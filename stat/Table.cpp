@@ -1179,15 +1179,15 @@ void Table_reflectRows (Table me) noexcept {
 	}
 }
 
-autoTable Tables_append (Collection me) {
+autoTable Tables_append (OrderedOf<structTable>* me) {
 	try {
-		if (my size == 0) Melder_throw (U"Cannot add zero tables.");
-		Table thee = static_cast <Table> (my item [1]);
+		if (my size() == 0) Melder_throw (U"Cannot add zero tables.");
+		Table thee = my _item [1];
 		long nrow = thy rows.size();
 		long ncol = thy numberOfColumns;
 		Table firstTable = thee;
-		for (long itab = 2; itab <= my size; itab ++) {
-			thee = static_cast <Table> (my item [itab]);
+		for (long itab = 2; itab <= my size(); itab ++) {
+			thee = my _item [itab];
 			nrow += thy rows.size();
 			if (thy numberOfColumns != ncol)
 				Melder_throw (U"Numbers of columns do not match.");
@@ -1203,8 +1203,8 @@ autoTable Tables_append (Collection me) {
 			Table_setColumnLabel (him.peek(), icol, thy columnHeaders [icol]. label);
 		}
 		nrow = 0;
-		for (long itab = 1; itab <= my size; itab ++) {
-			thee = static_cast <Table> (my item [itab]);
+		for (long itab = 1; itab <= my size(); itab ++) {
+			thee = my _item [itab];
 			for (long irow = 1; irow <= thy rows.size(); irow ++) {
 				nrow ++;
 				for (long icol = 1; icol <= ncol; icol ++) {

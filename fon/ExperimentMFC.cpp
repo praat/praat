@@ -403,12 +403,12 @@ autoResultsMFC ResultsMFC_removeUnsharedStimuli (ResultsMFC me, ResultsMFC thee)
 	}
 }
 
-autoTable ResultsMFCs_to_Table (Collection me) {
+autoTable ResultsMFCs_to_Table (OrderedOf<structResultsMFC>* me) {
 	try {
 		long irow = 0;
 		bool hasGoodnesses = false, hasReactionTimes = false;
-		for (long iresults = 1; iresults <= my size; iresults ++) {
-			ResultsMFC results = (ResultsMFC) my item [iresults];
+		for (long iresults = 1; iresults <= my size(); iresults ++) {
+			ResultsMFC results = my _item [iresults];
 			for (long itrial = 1; itrial <= results -> numberOfTrials; itrial ++) {
 				irow ++;
 				if (results -> result [itrial]. goodness != 0)
@@ -426,8 +426,8 @@ autoTable ResultsMFCs_to_Table (Collection me) {
 		if (hasReactionTimes)
 			Table_setColumnLabel (thee.peek(), 4 + hasGoodnesses, U"reactionTime");
 		irow = 0;
-		for (long iresults = 1; iresults <= my size; iresults ++) {
-			ResultsMFC results = (ResultsMFC) my item [iresults];
+		for (long iresults = 1; iresults <= my size(); iresults ++) {
+			ResultsMFC results = my _item [iresults];
 			for (long itrial = 1; itrial <= results -> numberOfTrials; itrial ++) {
 				irow ++;
 				Table_setStringValue (thee.peek(), irow, 1, results -> name);
@@ -452,7 +452,7 @@ autoCategories ResultsMFC_to_Categories_stimuli (ResultsMFC me) {
 		autoCategories thee = Categories_create ();
 		for (long trial = 1; trial <= my numberOfTrials; trial ++) {
 			autoSimpleString category = SimpleString_create (my result [trial]. stimulus);
-			Collection_addItem_move (thee.peek(), category.move());
+			thy addItem_move (category.move());
 		}
 		return thee;
 	} catch (MelderError) {
@@ -465,7 +465,7 @@ autoCategories ResultsMFC_to_Categories_responses (ResultsMFC me) {
 		autoCategories thee = Categories_create ();
 		for (long trial = 1; trial <= my numberOfTrials; trial ++) {
 			autoSimpleString category = SimpleString_create (my result [trial]. response);
-			Collection_addItem_move (thee.peek(), category.move());
+			thy addItem_move (category.move());
 		}
 		return thee;
 	} catch (MelderError) {
@@ -474,7 +474,7 @@ autoCategories ResultsMFC_to_Categories_responses (ResultsMFC me) {
 }
 
 void Categories_sort (Categories me) {
-	Collection_sort (me, SimpleString_compare);
+	my sort (SimpleString_compare);
 }
 
 double Categories_getEntropy (Categories me) {
@@ -483,11 +483,11 @@ double Categories_getEntropy (Categories me) {
 	double entropy = 0.0;
 	autoCategories thee = Data_copy (me);
 	Categories_sort (thee.peek());
-	for (long i = 1; i <= thy size; i ++) {
-		SimpleString s = (SimpleString) thy item [i];
+	for (long i = 1; i <= thy size(); i ++) {
+		SimpleString s = thy _item [i];
 		char32 *string = s -> string;
 		if (previousString && ! str32equ (string, previousString)) {
-			double p = (double) numberOfTokens / thy size;
+			double p = (double) numberOfTokens / thy size();
 			entropy -= p * NUMlog2 (p);
 			numberOfTokens = 1;
 		} else {
@@ -496,7 +496,7 @@ double Categories_getEntropy (Categories me) {
 		previousString = string;
 	}
 	if (numberOfTokens) {
-		double p = (double) numberOfTokens / thy size;
+		double p = (double) numberOfTokens / thy size();
 		entropy -= p * NUMlog2 (p);
 	}
 	return entropy;

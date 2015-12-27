@@ -21,10 +21,9 @@
 #include "praat_script.h"
 #include "GuiP.h"
 
-static autoOrdered theCommands;
+static OrderedOf <structPraat_Command> theCommands;
 
 void praat_menuCommands_init () {
-	theCommands = Ordered_create ();
 }
 
 static int compareMenuCommands (const void *void_me, const void *void_thee) {
@@ -44,19 +43,19 @@ static int compareMenuCommands (const void *void_me, const void *void_thee) {
 }
 
 void praat_sortMenuCommands () {
-	for (long i = 1; i <= theCommands -> size; i ++) {
-		Praat_Command command = (Praat_Command) theCommands -> item [i];
+	for (long i = 1; i <= theCommands.size(); i ++) {
+		Praat_Command command = theCommands [i];
 		command -> sortingTail = i;
 	}
-	qsort (& theCommands -> item [1], theCommands -> size, sizeof (Praat_Command), compareMenuCommands);
+	qsort (& theCommands [1], theCommands.size(), sizeof (Praat_Command), compareMenuCommands);
 }
 
 static long lookUpMatchingMenuCommand (const char32 *window, const char32 *menu, const char32 *title) {
 /*
  * A menu command is fully specified by its environment (window + menu) and its title.
  */
-	for (long i = 1; i <= theCommands -> size; i ++) {
-		Praat_Command command = (Praat_Command) theCommands -> item [i];
+	for (long i = 1; i <= theCommands.size(); i ++) {
+		Praat_Command command = theCommands [i];
 		const char32 *tryWindow = command -> window;
 		const char32 *tryMenu = command -> menu;
 		const char32 *tryTitle = command -> title;
@@ -138,7 +137,7 @@ GuiMenuItem praat_addMenuCommand (const char32 *window, const char32 *menu, cons
 			return nullptr;
 		}
 	} else {
-		position = theCommands -> size + 1;   // at end
+		position = theCommands.size() + 1;   // at end
 	}
 
 	/*
@@ -176,7 +175,7 @@ GuiMenuItem praat_addMenuCommand (const char32 *window, const char32 *menu, cons
 			 * The supermenu to put the new command in is the first menu that we find when going up.
 			 */
 			for (long parentPosition = position - 1; parentPosition > 0; parentPosition --) {
-				Praat_Command parentCommand = (Praat_Command) theCommands -> item [parentPosition];
+				Praat_Command parentCommand = theCommands [parentPosition];
 				if (parentCommand -> depth == depth - 1) {
 					/*
 					 * We found the supermenu.
@@ -217,7 +216,7 @@ GuiMenuItem praat_addMenuCommand (const char32 *window, const char32 *menu, cons
 		if (hidden) GuiThing_hide (command -> button);
 	}
 	Thing_cast (GuiMenuItem, button_as_GuiMenuItem, command -> button);
-	Ordered_addItemAtPosition_move (theCommands.get(), command.move(), position);
+	theCommands. addItemAtPosition_move (command.move(), position);
 	return button_as_GuiMenuItem;
 }
 
@@ -241,10 +240,10 @@ void praat_addMenuCommandScript (const char32 *window, const char32 *menu, const
 				/*Melder_throw (U"The menu command \"", title, U"\" cannot be put after \"", after, U"\",\n"
 					U"in the menu \"", menu, "\" in the window \"", window, U"\"\n"
 					U"because the latter command does not exist.");*/
-				position = theCommands -> size + 1;   // default: at end
+				position = theCommands.size() + 1;   // default: at end
 			}
 		} else {
-			position = theCommands -> size + 1;   // at end
+			position = theCommands.size() + 1;   // at end
 		}
 
 		/*
@@ -282,7 +281,7 @@ void praat_addMenuCommandScript (const char32 *window, const char32 *menu, const
 				parentMenu = windowMenuToWidget (window, menu);   // not a subitem: in the top menu
 			} else {
 				for (long parentPosition = position - 1; parentPosition > 0; parentPosition --) {
-					Praat_Command parentCommand = (Praat_Command) theCommands -> item [parentPosition];
+					Praat_Command parentCommand = theCommands [parentPosition];
 					if (parentCommand -> depth == depth - 1) {
 						if (! parentCommand -> callback && parentCommand -> title && parentCommand -> title [0] != U'-') {
 							if (! parentCommand -> button)
@@ -307,7 +306,7 @@ void praat_addMenuCommandScript (const char32 *window, const char32 *menu, const
 				}
 			}
 		}
-		Ordered_addItemAtPosition_move (theCommands.get(), command.move(), position);
+		theCommands. addItemAtPosition_move (command.move(), position);
 
 		if (praatP.phase >= praat_HANDLING_EVENTS) praat_sortMenuCommands ();
 	} catch (MelderError) {
@@ -319,7 +318,7 @@ void praat_hideMenuCommand (const char32 *window, const char32 *menu, const char
 	if (theCurrentPraatApplication -> batch || ! window || ! menu || ! title) return;
 	long found = lookUpMatchingMenuCommand (window, menu, title);
 	if (! found) return;
-	Praat_Command command = (Praat_Command) theCommands -> item [found];
+	Praat_Command command = theCommands [found];
 	if (! command -> hidden && ! command -> unhidable) {
 		command -> hidden = true;
 		if (praatP.phase >= praat_READING_BUTTONS) command -> toggled = ! command -> toggled;
@@ -331,7 +330,7 @@ void praat_showMenuCommand (const char32 *window, const char32 *menu, const char
 	if (theCurrentPraatApplication -> batch || ! window || ! menu || ! title) return;
 	long found = lookUpMatchingMenuCommand (window, menu, title);
 	if (! found) return;
-	Praat_Command command = (Praat_Command) theCommands -> item [found];
+	Praat_Command command = theCommands [found];
 	if (command -> hidden) {
 		command -> hidden = false;
 		if (praatP.phase >= praat_READING_BUTTONS) command -> toggled = ! command -> toggled;
@@ -341,22 +340,22 @@ void praat_showMenuCommand (const char32 *window, const char32 *menu, const char
 
 void praat_saveMenuCommands (MelderString *buffer) {
 	long maxID = 0;
-	for (long i = 1; i <= theCommands -> size; i ++) {
-		Praat_Command command = (Praat_Command) theCommands -> item [i];
+	for (long i = 1; i <= theCommands.size(); i ++) {
+		Praat_Command command = theCommands [i];
 		if (command -> uniqueID > maxID)
 			maxID = command -> uniqueID;
 	}
 	for (long id = 1; id <= maxID; id ++)   // sorted
-		for (long i = 1; i <= theCommands -> size; i ++) {
-			Praat_Command me = (Praat_Command) theCommands -> item [i];
+		for (long i = 1; i <= theCommands.size(); i ++) {
+			Praat_Command me = theCommands [i];
 			if (my uniqueID == id && ! my hidden && my window && my menu && my title) {
 				MelderString_append (buffer, U"Add menu command... \"", my window, U"\" \"", my menu, U"\" \"", my title, U"\" \"",
 					( my after ? my after : U"" ), U"\" ", my depth, U" ", ( my script ? my script : U"" ), U"\n");
 				break;
 			}
 		}
-	for (long i = 1; i <= theCommands -> size; i ++) {
-		Praat_Command me = (Praat_Command) theCommands -> item [i];
+	for (long i = 1; i <= theCommands.size(); i ++) {
+		Praat_Command me = theCommands [i];
 		if (my toggled && my window && my menu && my title && ! my uniqueID && ! my script)
 			MelderString_append (buffer, my hidden ? U"Hide" : U"Show", U" menu command... \"",
 				my window, U"\" \"", my menu, U"\" ", my title, U"\n");
@@ -380,13 +379,13 @@ void praat_addFixedButtonCommand (GuiForm parent, const char32 *title, UiCallbac
 		GuiThing_show (button);
 	}
 	my executable = false;
-	Ordered_addItemAtPosition_move (theCommands.get(), me.move(), 0);
+	theCommands. addItemAtPosition_move (me.move(), 0);
 }
 
 void praat_sensitivizeFixedButtonCommand (const char32 *title, int sensitive) {
 	Praat_Command commandFound = nullptr;
-	for (long i = 1; i <= theCommands -> size; i ++) {
-		Praat_Command command = (Praat_Command) theCommands -> item [i];
+	for (long i = 1; i <= theCommands.size(); i ++) {
+		Praat_Command command = theCommands [i];
 		if (str32equ (command -> title, title)) {
 			commandFound = command;
 			break;
@@ -400,8 +399,8 @@ void praat_sensitivizeFixedButtonCommand (const char32 *title, int sensitive) {
 
 int praat_doMenuCommand (const char32 *title, const char32 *arguments, Interpreter interpreter) {
 	Praat_Command commandFound = nullptr;
-	for (long i = 1; i <= theCommands -> size; i ++) {
-		Praat_Command command = (Praat_Command) theCommands -> item [i];
+	for (long i = 1; i <= theCommands.size(); i ++) {
+		Praat_Command command = theCommands [i];
 		if (command -> executable && str32equ (command -> title, title) &&
 			(str32equ (command -> window, U"Objects") || str32equ (command -> window, U"Picture")))
 		{
@@ -416,8 +415,8 @@ int praat_doMenuCommand (const char32 *title, const char32 *arguments, Interpret
 
 int praat_doMenuCommand (const char32 *title, int narg, Stackel args, Interpreter interpreter) {
 	Praat_Command commandFound = nullptr;
-	for (long i = 1; i <= theCommands -> size; i ++) {
-		Praat_Command command = (Praat_Command) theCommands -> item [i];
+	for (long i = 1; i <= theCommands.size(); i ++) {
+		Praat_Command command = theCommands [i];
 		if (command -> executable && str32equ (command -> title, title) &&
 			(str32equ (command -> window, U"Objects") || str32equ (command -> window, U"Picture")))
 		{
@@ -430,15 +429,15 @@ int praat_doMenuCommand (const char32 *title, int narg, Stackel args, Interprete
 	return 1;
 }
 
-long praat_getNumberOfMenuCommands () { return theCommands -> size; }
+long praat_getNumberOfMenuCommands () { return theCommands.size(); }
 
 Praat_Command praat_getMenuCommand (long i)
-	{ return i < 1 || i > theCommands -> size ? nullptr : (Praat_Command) theCommands -> item [i]; }
+	{ return i < 1 || i > theCommands.size() ? nullptr : theCommands [i]; }
 
 void praat_addCommandsToEditor (Editor me) {
 	const char32 *windowName = my classInfo -> className;
-	for (long i = 1; i <= theCommands -> size; i ++) {
-		Praat_Command command = (Praat_Command) theCommands -> item [i];
+	for (long i = 1; i <= theCommands.size(); i ++) {
+		Praat_Command command = theCommands [i];
 		if (str32equ (command -> window, windowName)) {
 			Editor_addCommandScript (me, command -> menu, command -> title, 0, command -> script);
 		}

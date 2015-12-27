@@ -626,18 +626,18 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 	}
 }
 
-void LongSound_concatenate (Collection me, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint) {
+void LongSound_concatenate (OrderedOfSoundsAndLongSounds me, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint) {
 	try {
 		long sampleRate, n;   /* Integer sampling frequencies only, because of possible rounding errors. */
 		int numberOfChannels;
-		if (my size < 1) Melder_throw (U"No Sound or LongSound objects to concatenate.");
+		if (my size() < 1) Melder_throw (U"No Sound or LongSound objects to concatenate.");
 		/*
 		 * The sampling frequencies and numbers of channels must be equal for all (long)sounds.
 		 */
-		Sampled data = (Sampled) my item [1];
+		Sampled data = my _item [1];
 		if (data -> classInfo == classSound) {
 			Sound sound = (Sound) data;
-			sampleRate = floor (1.0 / sound -> dx + 0.5);
+			sampleRate = lround (1.0 / sound -> dx);
 			numberOfChannels = sound -> ny;
 			n = sound -> nx;
 		} else {
@@ -649,9 +649,9 @@ void LongSound_concatenate (Collection me, MelderFile file, int audioFileType, i
 		/*
 		 * Check whether all the sampling frequencies and channels match.
 		 */
-		for (long i = 2; i <= my size; i ++) {
+		for (long i = 2; i <= my size(); i ++) {
 			int sampleRatesMatch, numbersOfChannelsMatch;
-			data = (Sampled) my item [i];
+			data = my _item [i];
 			if (data -> classInfo == classSound) {
 				Sound sound = (Sound) data;
 				sampleRatesMatch = round (1.0 / sound -> dx) == sampleRate;
@@ -675,8 +675,8 @@ void LongSound_concatenate (Collection me, MelderFile file, int audioFileType, i
 		if (file -> filePointer) {
 			MelderFile_writeAudioFileHeader (file, audioFileType, sampleRate, n, numberOfChannels, numberOfBitsPerSamplePoint);
 		}
-		for (long i = 1; i <= my size; i ++) {
-			data = (Sampled) my item [i];
+		for (long i = 1; i <= my size(); i ++) {
+			data = my _item [i];
 			if (data -> classInfo == classSound) {
 				Sound sound = (Sound) data;
 				if (file -> filePointer) {

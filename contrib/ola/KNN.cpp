@@ -98,7 +98,7 @@ int KNN_learn
 )
 
 {
-    if (c->size == p->ny)           // the number of input vectors must
+    if (c->size() == p->ny)           // the number of input vectors must
     {                               // equal the number of categories.
         switch (method)
         {
@@ -106,7 +106,7 @@ int KNN_learn
                                     // dispose of the current
             my input = Data_copy (p);   // LEAK
             my output = Data_copy (c);
-            my nInstances = c->size;
+            my nInstances = c->size();
 
             break;
 
@@ -126,8 +126,8 @@ int KNN_learn
 				 */
 				autoMatrix matrix = Matrix_appendRows (my input.get(), p, classPattern);
                 autoPattern tinput = matrix.static_cast_move <structPattern>();
-				autoCollection collection = Collections_merge (my output.get(), c);
-                autoCategories toutput = collection. static_cast_move <structCategories>();
+				autoCategories toutput = Data_copy (my output.get());
+				toutput -> merge (c);
 
 				/*
 				 * Change without error.
@@ -264,7 +264,7 @@ autoCategories KNN_classifyToCategories
     if (output)
     {
         for (long i = 1; i <= ps->ny; ++i)
-            Collection_addItem_move (output.get(), Data_copy ((SimpleString) my output -> item [outputindices [i]]));
+            output -> addItem_move (Data_copy (my output -> _item [outputindices [i]]));
     }
 	NUMvector_free (outputindices, 0);
     return output;
@@ -387,7 +387,7 @@ autoTableOfReal KNN_classifyToTableOfReal
 {
     int nthreads = KNN_getNumberOfCPUs();
     long chunksize =  ps->ny / nthreads;
-    autoCategories uniqueCategories = Categories_selectUniqueItems (my output.get(), true);
+    autoCategories uniqueCategories = Categories_selectUniqueItems (my output.get());
     long ncategories = Categories_getSize (uniqueCategories.get());
    
     Melder_assert (nthreads > 0);
@@ -414,7 +414,7 @@ autoTableOfReal KNN_classifyToTableOfReal
     autoTableOfReal output = TableOfReal_create(ps->ny, ncategories);
 
     for (long i = 1; i <= ncategories; ++i)
-        TableOfReal_setColumnLabel (output.get(), i,  SimpleString_c ((SimpleString) uniqueCategories->item[i]));
+        TableOfReal_setColumnLabel (output.get(), i,  SimpleString_c (uniqueCategories -> _item [i]));
 
     for(int i = 0; i < nthreads; ++i)
     {
@@ -491,9 +491,13 @@ void * KNN_classifyToTableOfRealAux
 
         for(long i = 0; i < ((KNN_input_ToTableOfReal_t *) input)->k; ++i)
         {
-            for(long j = 1; j <= ncategories; ++j)
-                if(FeatureWeights_areFriends ((SimpleString) ((KNN_input_ToTableOfReal_t *) input)->me->output->item[indices[i]], (SimpleString) ((KNN_input_ToTableOfReal_t *) input)->uniqueCategories->item[j])) 
+            for(long j = 1; j <= ncategories; ++j) {
+                if (FeatureWeights_areFriends (((KNN_input_ToTableOfReal_t *) input)->me->output->_item[indices[i]],
+											   ((KNN_input_ToTableOfReal_t *) input)->uniqueCategories->_item[j]))
+				{
                     ++((KNN_input_ToTableOfReal_t *) input)->output->data[y][j];
+				}
+			}
         }
     }
  
@@ -627,7 +631,7 @@ autoCategories KNN_classifyFold
 
 	autoCategories output = Categories_create ();
 	for (long o = 0; o < noutputindices; o ++) {
-		Collection_addItem_move (output.get(), Data_copy ((SimpleString) my output -> item [outputindices [o]]));
+		output -> addItem_move (Data_copy (my output -> _item [outputindices [o]]));
 	}
 	return output;
 }
@@ -681,8 +685,8 @@ double KNN_evaluate
     for (long begin = 1; begin <= my nInstances; begin += adder)
     {
         autoCategories c = KNN_classifyFold (me, my input.get(), fws, k, dist, begin, OlaMIN (begin + adder - 1, my nInstances));
-        for (long y = 1; y <= c -> size; y ++)
-            if (FeatureWeights_areFriends ((SimpleString) c -> item [y], (SimpleString) my output -> item [begin + y - 1])) 
+        for (long y = 1; y <= c -> size(); y ++)
+            if (FeatureWeights_areFriends (c -> _item [y], my output -> _item [begin + y - 1]))
                 correct += 1.0;
     }
 
@@ -717,9 +721,9 @@ double KNN_evaluateWithTestSet
 {
     double correct = 0.0;
     autoCategories t = KNN_classifyToCategories (me, p, fws, k, dist);
-	for (long y = 1; y <= t->size; y++)
-		if (FeatureWeights_areFriends ((SimpleString) t->item[y], (SimpleString) c->item[y])) correct += 1.0;
-	return correct / c->size;
+	for (long y = 1; y <= t->size(); y ++)
+		if (FeatureWeights_areFriends (t -> _item [y], c -> _item [y])) correct += 1.0;
+	return correct / c->size();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -1146,7 +1150,7 @@ long KNN_kFriends
 
     while (dc < k && py < p->ny)
     {
-        if (jy != py && FeatureWeights_areFriends ((SimpleString) c->item[jy], (SimpleString) c->item[py]))
+        if (jy != py && FeatureWeights_areFriends (c->_item[jy], c->_item[py]))
         {
             distances[dc] = KNN_distanceManhattan (j, p, jy, py);
             indices[dc] = py;
@@ -1158,7 +1162,7 @@ long KNN_kFriends
     maxi = KNN_max (distances.peek(), k);
     while (py <= p->ny)
     {
-        if (jy != py && FeatureWeights_areFriends ((SimpleString) c->item[jy],(SimpleString) c->item[py]))
+        if (jy != py && FeatureWeights_areFriends (c->_item[jy], c->_item[py]))
         {
             double d = KNN_distanceManhattan (j, p, jy, py);
             if (d < distances [maxi])
@@ -1201,7 +1205,7 @@ double KNN_nearestEnemy
 
     for (long y = 2; y <= p->ny; y++)
     {
-        if (FeatureWeights_areEnemies ((SimpleString) c->item[jy], (SimpleString) c->item[y]))
+        if (FeatureWeights_areEnemies (c->_item[jy], c->_item[y]))
         {
             double newdist = KNN_distanceManhattan(j, p, jy, y);
             if (newdist > distance) distance = newdist;
@@ -1245,7 +1249,7 @@ long KNN_friendsAmongkNeighbours
     long ncollected = KNN_kNeighbours (j, p, fws.peek(), jy, k, indices.peek(), distances.peek());
 
     while (ncollected--)
-        if (FeatureWeights_areFriends ((SimpleString) c->item[jy], (SimpleString) c->item[indices[ncollected]])) friends++;
+        if (FeatureWeights_areFriends (c->_item[jy], c->_item[indices[ncollected]])) friends++;
     
     return friends;
 
@@ -1289,11 +1293,11 @@ long KNN_kUniqueEnemies
 
     while (dc < k && py <= p->ny)
     {
-        if (FeatureWeights_areEnemies ((SimpleString) c->item[jy], (SimpleString) c->item[py]))
+        if (FeatureWeights_areEnemies (c->_item[jy], c->_item[py]))
         {
             int hasfriend = 0;
             for (long sc = 0; sc < dc; ++sc)
-                if (FeatureWeights_areFriends ((SimpleString) c->item[py], (SimpleString) c->item[indices[sc]])) hasfriend = 1;
+                if (FeatureWeights_areFriends (c->_item[py], c->_item[indices[sc]])) hasfriend = 1;
 
             if (!hasfriend)
             {
@@ -1308,16 +1312,16 @@ long KNN_kUniqueEnemies
     maxi = KNN_max(distances, k);
     while (py <= p->ny)
     {
-        if (FeatureWeights_areEnemies ((SimpleString) c->item[jy], (SimpleString) c->item[py]))
+        if (FeatureWeights_areEnemies (c->_item[jy], c->_item[py]))
         {
             int hasfriend = 0;
             for (long sc = 0; sc < dc; ++sc)
-                if (FeatureWeights_areFriends ((SimpleString) c->item[py], (SimpleString) c->item[indices[sc]])) hasfriend = 1;
+                if (FeatureWeights_areFriends (c->_item[py], c->_item[indices[sc]])) hasfriend = 1;
 
             if (!hasfriend)
             {
                 double d = KNN_distanceManhattan(j, p, jy, py);
-                if (d < distances[maxi] && FeatureWeights_areFriends ((SimpleString) c->item[jy], (SimpleString) c->item[py]))
+                if (d < distances[maxi] && FeatureWeights_areFriends (c->_item[jy], c->_item[py]))
                 {
                     distances[maxi] = d;
                     indices[maxi] = py;
@@ -1381,8 +1385,8 @@ long KNN_kIndicesToFrequenciesAndDistances
 {
     long ncategories = 0;
     
-    Melder_assert(k <= c->size && k > 0);
-    Melder_assert(distances && indices && freqs  && freqindices);
+    Melder_assert(k <= c->size() && k > 0);
+    Melder_assert(distances && indices && freqs && freqindices);
 
     for (long y = 0; y < k; ++y)
     {
@@ -1391,7 +1395,7 @@ long KNN_kIndicesToFrequenciesAndDistances
 
         while (ifriend < ncategories)
         {
-            if (FeatureWeights_areFriends ((SimpleString) c->item[indices[y]], (SimpleString) c->item[freqindices[ifriend]]))
+            if (FeatureWeights_areFriends (c->_item[indices[y]], c->_item[freqindices[ifriend]]))
             {
                 hasfriend = 1;
                 break;
@@ -1479,7 +1483,7 @@ void KNN_removeInstance
 	}
 
 	my input = newPattern.move();
-	Collection_removeItem (my output.get(), y);
+	my output -> removeItem (y);
 	my nInstances--;
 }
 
@@ -1506,7 +1510,7 @@ void KNN_shuffleInstances
 	while (my nInstances)
 	{
 		long pick = NUMrandomInteger (1, my nInstances);
-		Collection_addItem_move (new_output.peek(), Data_copy ((SimpleString) my output -> item [pick]));
+		new_output -> addItem_move (Data_copy (my output -> _item [pick]));
 
 		for (long x = 1; x <= my input -> nx; x ++)
 			new_input -> z [y] [x] = my input -> z [pick] [x];
@@ -1515,7 +1519,7 @@ void KNN_shuffleInstances
 		y ++;
 	}
 
-	my nInstances = new_output -> size;
+	my nInstances = new_output -> size();
 	my input = new_input.move();
 	my output = new_output.move();
 }

@@ -140,7 +140,7 @@ void praat_reportMemoryUse () {
 	MelderInfo_writeLine (U"Currently in use:\n"
 		U"   Strings: ", MelderString_allocationCount () - MelderString_deallocationCount ());
 	MelderInfo_writeLine (U"   Arrays: ", NUM_getTotalNumberOfArrays ());
-	MelderInfo_writeLine (U"   Things: ", Thing_getTotalNumberOfThings (),
+	MelderInfo_writeLine (U"   Things: ", theTotalNumberOfThings,
 		U" (objects in list: ", theCurrentPraatObjects -> n, U")");
 	long numberOfMotifWidgets =
 	#if motif
@@ -151,7 +151,7 @@ void praat_reportMemoryUse () {
 	#endif
 	MelderInfo_writeLine (U"   Other: ",
 		Melder_allocationCount () - Melder_deallocationCount ()
-		- Thing_getTotalNumberOfThings () - NUM_getTotalNumberOfArrays ()
+		- theTotalNumberOfThings - NUM_getTotalNumberOfArrays ()
 		- (MelderString_allocationCount () - MelderString_deallocationCount ())
 		- numberOfMotifWidgets);
 	MelderInfo_writeLine (

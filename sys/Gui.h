@@ -527,7 +527,7 @@ void GuiDrawingArea_setResizeCallback (GuiDrawingArea me, GuiDrawingArea_ResizeC
 
 /********** GuiFileSelect **********/
 
-autoSortedSetOfSimpleString GuiFileSelect_getInfileNames (GuiWindow parent, const char32 *title, bool allowMultipleFiles);
+autoSortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const char32 *title, bool allowMultipleFiles);
 char32 * GuiFileSelect_getOutfileName (GuiWindow parent, const char32 *title, const char32 *defaultName);
 char32 * GuiFileSelect_getDirectoryName (GuiWindow parent, const char32 *title);
 
@@ -729,7 +729,7 @@ void GuiMenuItem_check (GuiMenuItem me, bool check);
 
 Thing_define (GuiOptionMenu, GuiControl) {
 	int d_value;
-	autoOrdered d_options;   // of SimpleString
+	OrderedOf<structSimpleString> d_options;
 	#if gtk
 		//GtkComboBox *d_gtkCascadeButton;
 	#elif cocoa

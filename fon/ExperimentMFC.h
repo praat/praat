@@ -35,7 +35,7 @@ autoResultsMFC ResultsMFC_create (long numberOfResults);
 autoResultsMFC ExperimentMFC_extractResults (ExperimentMFC me);
 autoResultsMFC ResultsMFC_removeUnsharedStimuli (ResultsMFC me, ResultsMFC thee);
 
-autoTable ResultsMFCs_to_Table (Collection me);
+autoTable ResultsMFCs_to_Table (OrderedOf<structResultsMFC>* me);
 
 autoCategories ResultsMFC_to_Categories_stimuli (ResultsMFC me);
 autoCategories ResultsMFC_to_Categories_responses (ResultsMFC me);

@@ -42,8 +42,12 @@ static const char32 * Table_messageColumn (Table me, long column) {
 #pragma mark DISTRIBUTIONS
 
 DIRECT2 (Distributionses_add) {
-	autoCollection me = praat_getSelectedObjects ();
-	autoDistributions thee = Distributions_addMany (me.peek());
+	OrderedOf<structDistributions> list;
+	LOOP {
+		iam (Distributions);
+		list. addItem_ref (me);
+	}
+	autoDistributions thee = Distributions_addMany (& list);
 	praat_new (thee.move(), U"added");
 END2 }
 
@@ -249,12 +253,12 @@ END2 }
 #pragma mark TABLE
 
 DIRECT2 (Tables_append) {
-	autoCollection collection = Collection_create (10);
+	OrderedOf<structTable> list;
 	LOOP {
 		iam (Table);
-		Collection_addItem_ref (collection.peek(), me);
+		list. addItem_ref (me);
 	}
-	autoTable thee = Tables_append (collection.peek());
+	autoTable thee = Tables_append (& list);
 	praat_new (thee.move(), U"appended");
 END2 }
 
@@ -1124,12 +1128,12 @@ END2 }
 #pragma mark TABLEOFREAL
 
 DIRECT2 (TablesOfReal_append) {
-	autoCollection tables = Collection_create (10);
+	OrderedOf<structTableOfReal> list;
 	LOOP {
 		iam (TableOfReal);
-		Collection_addItem_ref (tables.peek(), me);
+		list. addItem_ref (me);
 	}
-	autoTableOfReal thee = TablesOfReal_appendMany (tables.peek());
+	autoTableOfReal thee = TablesOfReal_appendMany (& list);
 	praat_new (thee.move(), U"appended");
 END2 }
 

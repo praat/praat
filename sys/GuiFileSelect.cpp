@@ -23,10 +23,10 @@
 	#include <Shlobj.h>
 #endif
 
-autoSortedSetOfSimpleString GuiFileSelect_getInfileNames (GuiWindow parent, const char32 *title, bool allowMultipleFiles) {
+autoSortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const char32 *title, bool allowMultipleFiles) {
 	structMelderDir saveDir { { 0 } };
 	Melder_getDefaultDir (& saveDir);
-	autoSortedSetOfSimpleString me = SortedSetOfSimpleString_create ();
+	autoSortedSetOfString me = SortedSetOfString_create ();
 	#if gtk
 		(void) parent;
 		static structMelderDir dir;
