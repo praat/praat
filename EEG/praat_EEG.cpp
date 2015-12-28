@@ -30,8 +30,12 @@
 /***** EEG *****/
 
 DIRECT2 (EEGs_concatenate) {
-	autoCollection eegs = praat_getSelectedObjects ();
-	autoEEG thee = EEGs_concatenate (eegs.peek());
+	OrderedOf<structEEG> eegs;
+	LOOP {
+		iam (EEG);
+		eegs. addItem_ref (me);
+	}
+	autoEEG thee = EEGs_concatenate (& eegs);
 	praat_new (thee.move(), U"chain");
 END2 }
 

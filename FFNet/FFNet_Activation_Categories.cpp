@@ -67,8 +67,8 @@ autoCategories FFNet_Activation_to_Categories (FFNet me, Activation activation, 
 		labelingFunction = labeling == 2 ? stochastic : winnerTakesAll;
 		for (long i = 1; i <= activation->ny; i++) {
 			long index = labelingFunction (me, activation -> z[i]);
-			autoSimpleString item = Data_copy ((SimpleString) my outputCategories -> item[index]);
-			Collection_addItem_move (thee.peek(), item.move());
+			autoSimpleString item = Data_copy (my outputCategories -> _item [index]);
+			thy addItem_move (item.move());
 		}
 		return thee;
 	} catch (MelderError) {
@@ -88,14 +88,14 @@ autoActivation FFNet_Categories_to_Activation (FFNet me, Categories thee) {
 			Melder_throw (U"The Categories do not match the categories of the FFNet.");
 		}
 
-		autoActivation him = Activation_create (thy size, my nOutputs);
-		for (long i = 1; i <= thy size; i++) {
+		autoActivation him = Activation_create (thy size(), my nOutputs);
+		for (long i = 1; i <= thy size(); i ++) {
 			const char32 *citem = OrderedOfString_itemAtIndex_c (thee, i);
 			long pos = OrderedOfString_indexOfItem_c (my outputCategories.peek(), citem);
 			if (pos < 1) {
 				Melder_throw (U"The FFNet doesn't know the category ", citem, U".");
 			}
-			his z[i][pos] = 1.0;
+			his z [i] [pos] = 1.0;
 		}
 		return him;
 	} catch (MelderError) {

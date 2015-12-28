@@ -1,6 +1,6 @@
 /* Intensity_extensions.cpp
  *
- * Copyright (C) 2007-2011 David Weenink
+ * Copyright (C) 2007-2011 David Weenink, 2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ autoTextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceT
 		}
 
 		autoTextGrid thee = TextGrid_create (my xmin, my xmax, U"silences", U"");
-		IntervalTier it = (IntervalTier) thy tiers -> item[1];
+		IntervalTier it = (IntervalTier) thy tiers -> _item [1];
 		TextInterval_setText (it -> intervals [1], soundingLabel);
 		if (minSilenceDuration > duration) {
 			return thee;

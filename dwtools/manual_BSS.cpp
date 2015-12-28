@@ -43,15 +43,15 @@ TAG (U"2. The elements %%c__ij_% in a Covariance always satisfy |%%c__ij_%/\\Vr(
 	"generally not the case for cross-correlations.")
 MAN_END
 
-MAN_BEGIN (U"CrossCorrelationTables", U"djmw", 20101227)
-INTRO (U"One of the types of objects in Praat. A CrossCorrelationTables represents a collection of @@CrossCorrelationTable@ objects.")
+MAN_BEGIN (U"CrossCorrelationTableList", U"djmw", 20101227)
+INTRO (U"One of the types of objects in Praat. A CrossCorrelationTableList represents a collection of @@CrossCorrelationTable@ objects.")
 MAN_END
 
-MAN_BEGIN (U"CrossCorrelationTables: Create test set...", U"djmw", 20110212)
+MAN_BEGIN (U"CrossCorrelationTableList: Create test set...", U"djmw", 20110212)
 INTRO (U"Create a collection of @@CrossCorrelationTable@s that are all derived from different diagonal matrices by the same transformation matrix.")
 ENTRY (U"Settings")
 SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (4), U""
-	Manual_DRAW_SETTINGS_WINDOW ("CrossCorrelationTables: Create test set", 4)
+	Manual_DRAW_SETTINGS_WINDOW ("CrossCorrelationTableList: Create test set", 4)
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Matrix dimension", "5")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Number of matrices", "20")
 	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN("First is positive-definite",1)

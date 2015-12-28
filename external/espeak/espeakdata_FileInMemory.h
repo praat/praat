@@ -22,21 +22,21 @@
 #include "FileInMemory.h"
 #include "Table.h"
 
-extern autoFilesInMemory espeakdata_phons;
+extern autoFileInMemorySet espeakdata_phons;
 
-extern autoFilesInMemory espeakdata_dicts;
+extern autoFileInMemorySet espeakdata_dicts;
 
-extern autoFilesInMemory espeakdata_voices;
+extern autoFileInMemorySet espeakdata_voices;
 
-extern autoFilesInMemory espeakdata_variants;
+extern autoFileInMemorySet espeakdata_variants;
 
-autoFilesInMemory create_espeakdata_phons ();
+autoFileInMemorySet create_espeakdata_phons ();
 
-autoFilesInMemory create_espeakdata_dicts ();
+autoFileInMemorySet create_espeakdata_dicts ();
 
-autoFilesInMemory create_espeakdata_voices ();
+autoFileInMemorySet create_espeakdata_voices ();
 
-autoFilesInMemory create_espeakdata_variants ();
+autoFileInMemorySet create_espeakdata_variants ();
 
 extern autoStrings espeakdata_voices_names;
 
@@ -46,7 +46,7 @@ void espeakdata_praat_init ();
 
 const char * espeakdata_get_voicedata (const char *data, long ndata, char *buf, long nbuf, long *index);
 
-autoTable espeakdata_voices_to_Table (FilesInMemory me);
+autoTable espeakdata_voices_to_Table (FileInMemorySet me);
 
 autoStrings espeakdata_voices_getNames (Table me, long column);
 

@@ -311,13 +311,13 @@ void TableOfReal_to_Pattern_and_Categories (TableOfReal me, long fromrow, long t
 		autoCategories ac = Categories_create ();
 
 		long row = 1;
-		for (long i = fromrow; i <= torow; i++, row++) {
-			char32 const *s = my rowLabels[i] ? my rowLabels[i] : U"?";
+		for (long i = fromrow; i <= torow; i ++, row ++) {
+			char32 const *s = my rowLabels [i] ? my rowLabels [i] : U"?";
 			autoSimpleString item = SimpleString_create (s);
-			Collection_addItem_move (ac.peek(), item.move());
+			ac -> addItem_move (item.move());
 			long col = 1;
-			for (long j = fromcol; j <= tocol; j++, col++) {
-				ap -> z[row][col] = my data[i][j];
+			for (long j = fromcol; j <= tocol; j ++, col ++) {
+				ap -> z [row] [col] = my data [i] [j];
 			}
 		}
 		*p = ap.move();
@@ -612,16 +612,16 @@ void TableOfReal_copyLabels (TableOfReal me, TableOfReal thee, int rowOrigin, in
 void TableOfReal_labelsFromCollectionItemNames (TableOfReal me, Collection thee, int row, int column) {
 	try {
 		if (row) {
-			Melder_assert (my numberOfRows == thy size);
-			for (long i = 1; i <= my numberOfRows; i++) {
-				const char32 *name = Thing_getName ( (Thing) thy item[i]);
+			Melder_assert (my numberOfRows == thy size());
+			for (long i = 1; i <= my numberOfRows; i ++) {
+				const char32 *name = Thing_getName (thy _item [i]);
 				TableOfReal_setRowLabel (me, i, name);
 			}
 		}
 		if (column) {
-			Melder_assert (my numberOfColumns == thy size);
-			for (long i = 1; i <= my numberOfColumns; i++) {
-				const char32 *name = Thing_getName ( (Thing) thy item[i]);
+			Melder_assert (my numberOfColumns == thy size());
+			for (long i = 1; i <= my numberOfColumns; i ++) {
+				const char32 *name = Thing_getName (thy _item [i]);
 				TableOfReal_setColumnLabel (me, i, name);
 			}
 		}
@@ -637,7 +637,7 @@ void TableOfReal_centreColumns (TableOfReal me) {
 void TableOfReal_and_Categories_setRowLabels (TableOfReal me, Categories thee) {
 	try {
 
-		if (my numberOfRows != thy size) {
+		if (my numberOfRows != thy size()) {
 			Melder_throw (U"The number of items in both objects must be equal.");
 		}
 
@@ -648,11 +648,11 @@ void TableOfReal_and_Categories_setRowLabels (TableOfReal me, Categories thee) {
 
 		autoCategories c = Data_copy (thee);
 
-		for (long i = 1; i <= my numberOfRows; i++) {
-			SimpleString s = (SimpleString) c -> item[i];
+		for (long i = 1; i <= my numberOfRows; i ++) {
+			SimpleString s = c -> _item [i];
 			char32 *t = s -> string;
-			s -> string = my rowLabels[i];
-			my rowLabels[i] = t;
+			s -> string = my rowLabels [i];
+			my rowLabels [i] = t;
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": row labels not set from categories.");
@@ -679,8 +679,8 @@ double TableOfReal_getRowSum (TableOfReal me, long index) {
 	}
 
 	double sum = 0.0;
-	for (long j = 1; j <= my numberOfColumns; j++) {
-		sum += my data[index][j];
+	for (long j = 1; j <= my numberOfColumns; j ++) {
+		sum += my data [index] [j];
 	}
 	return sum;
 }
@@ -707,17 +707,17 @@ double TableOfReal_getColumnSum (TableOfReal me, long index) {
 	}
 
 	double sum = 0.0;
-	for (long i = 1; i <= my numberOfRows; i++) {
-		sum += my data[i][index];
+	for (long i = 1; i <= my numberOfRows; i ++) {
+		sum += my data [i] [index];
 	}
 	return sum;
 }
 
 double TableOfReal_getGrandSum (TableOfReal me) {
 	double sum = 0.0;
-	for (long i = 1; i <= my numberOfRows; i++) {
-		for (long j = 1; j <= my numberOfColumns; j++) {
-			sum += my data[i][j];
+	for (long i = 1; i <= my numberOfRows; i ++) {
+		for (long j = 1; j <= my numberOfColumns; j ++) {
+			sum += my data [i] [j];
 		}
 	}
 	return sum;
@@ -963,37 +963,21 @@ void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g, long icx, long icy
 
 /****************  TABLESOFREAL **************************************/
 
-Thing_implement (TablesOfReal, Ordered, 0);
-
-void TablesOfReal_init (TablesOfReal me) {
-	Ordered_init (me, 10);
-}
-
-autoTablesOfReal TablesOfReal_create () {
+autoTableOfReal TablesOfReal_sum (TableOfRealList me) {
 	try {
-		autoTablesOfReal me = Thing_new (TablesOfReal);
-		TablesOfReal_init (me.peek());
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"TablesOfReal not created.");
-	}
-}
-
-autoTableOfReal TablesOfReal_sum (TablesOfReal me) {
-	try {
-		if (my size <= 0) {
+		if (my size() <= 0) {
 			return autoTableOfReal();
 		}
-		autoTableOfReal thee = Data_copy ((TableOfReal) my item[1]);
+		autoTableOfReal thee = Data_copy (my _item [1]);
 
-		for (long i = 2; i <= my size; i++) {
-			TableOfReal him = (TableOfReal) my item[i];
+		for (long i = 2; i <= my size(); i ++) {
+			TableOfReal him = my _item [i];
 			if (thy numberOfRows != his numberOfRows || thy numberOfColumns != his numberOfColumns || ! TableOfReal_equalLabels (thee.peek(), him, 1, 1)) {
 				Melder_throw (U"Dimensions or labels differ for table 1 and ", i, U".");
 			}
-			for (long j = 1; j <= thy numberOfRows; j++) {
-				for (long k = 1; k <= thy numberOfColumns; k++) {
-					thy data[j][k] += his data[j][k];
+			for (long j = 1; j <= thy numberOfRows; j ++) {
+				for (long k = 1; k <= thy numberOfColumns; k ++) {
+					thy data [j] [k] += his data [j] [k];
 				}
 			}
 		}
@@ -1003,19 +987,18 @@ autoTableOfReal TablesOfReal_sum (TablesOfReal me) {
 	}
 }
 
-int TablesOfReal_checkDimensions (TablesOfReal me) {
-	if (my size < 2) {
-		return 1;
+bool TablesOfReal_haveIdenticalDimensions (TableOfRealList me) {
+	if (my size() < 2) {
+		return true;
 	}
-	TableOfReal t1 = (TableOfReal) my item[1];
-	for (long i = 2; i <= my size; i++) {
-		TableOfReal t = (TableOfReal) my item[i];
-		if (t -> numberOfColumns != t1 -> numberOfColumns ||
-		        t -> numberOfRows != t1 -> numberOfRows) {
-			return 0;
+	TableOfReal t1 = my _item [1];
+	for (long i = 2; i <= my size(); i ++) {
+		TableOfReal t = my _item [i];
+		if (t -> numberOfColumns != t1 -> numberOfColumns || t -> numberOfRows != t1 -> numberOfRows) {
+			return false;
 		}
 	}
-	return 1;
+	return true;
 }
 
 double TableOfReal_getColumnQuantile (TableOfReal me, long col, double quantile) {
@@ -1554,16 +1537,16 @@ autoTableOfReal TableOfReal_appendColumns (TableOfReal me, TableOfReal thee) {
 	}
 }
 
-autoTableOfReal TableOfReal_appendColumnsMany (Collection me) {
+autoTableOfReal TableOfReal_appendColumnsMany (TableOfRealList me) {
 	try {
-		if (my size == 0) {
+		if (my size() == 0) {
 			Melder_throw (U"No tables selected.");
 		}
-		TableOfReal thee = (TableOfReal) my item [1];
+		TableOfReal thee = my _item [1];
 		long nrow = thy numberOfRows;
 		long ncol = thy numberOfColumns;
-		for (long itab = 2; itab <= my size; itab++) {
-			thee = (TableOfReal) my item [itab];
+		for (long itab = 2; itab <= my size(); itab ++) {
+			thee = my _item [itab];
 			ncol += thy numberOfColumns;
 			if (thy numberOfRows != nrow) {
 				Melder_throw (U"Numbers of rows in item ", itab, U" differs from previous.");
@@ -1571,17 +1554,17 @@ autoTableOfReal TableOfReal_appendColumnsMany (Collection me) {
 		}
 		autoTableOfReal him = TableOfReal_create (nrow, ncol);
 		/* Unsafe: new attributes not initialized. */
-		for (long irow = 1; irow <= nrow; irow++) {
+		for (long irow = 1; irow <= nrow; irow ++) {
 			TableOfReal_setRowLabel (him.peek(), irow, thy rowLabels [irow]);
 		}
 		ncol = 0;
-		for (long itab = 1; itab <= my size; itab++) {
-			thee = (TableOfReal) my item [itab];
-			for (long icol = 1; icol <= thy numberOfColumns; icol++) {
+		for (long itab = 1; itab <= my size(); itab ++) {
+			thee = my _item [itab];
+			for (long icol = 1; icol <= thy numberOfColumns; icol ++) {
 				ncol++;
 				TableOfReal_setColumnLabel (him.peek(), ncol, thy columnLabels [icol]);
-				for (long irow = 1; irow <= nrow; irow++) {
-					his data[irow][ncol] = thy data[irow][icol];
+				for (long irow = 1; irow <= nrow; irow ++) {
+					his data [irow] [ncol] = thy data [irow] [icol];
 				}
 			}
 		}

@@ -31,8 +31,6 @@ Thing_define (Categories, OrderedOfString) {
 		override;
 };
 
-void Categories_init (Categories me, long size);
-
 autoCategories Categories_create ();
 
 autoCategories Categories_sequentialNumbers (long n);

@@ -37,7 +37,7 @@ autoCollection Collection_permuteItems (Collection me);
 
 Collection_declare (OrderedOfSimpleString, OrderedOf, SimpleString);
 
-CollectionSubclass_define (OrderedOfString, OrderedOfSimpleString) {
+Thing_define (OrderedOfString, OrderedOfSimpleString) {
 	structOrderedOfString () {
 		our classInfo = classOrderedOfString;
 	}
@@ -46,8 +46,6 @@ CollectionSubclass_define (OrderedOfString, OrderedOfSimpleString) {
 };
 
 autoOrderedOfString OrderedOfString_create ();
-
-int OrderedOfString_init (OrderedOfString me, long initialCapacity);
 
 int OrderedOfString_append (OrderedOfString me, const char32 *append);
 

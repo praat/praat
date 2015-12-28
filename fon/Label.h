@@ -52,7 +52,7 @@ autoAutosegment Autosegment_create (double tmin, double tmax, const char32 *labe
 
 Collection_declare (SortedOfAutosegment, SortedOf, Autosegment);
 
-CollectionSubclass_define (Tier, SortedOfAutosegment) {
+Thing_define (Tier, SortedOfAutosegment) {
 
 	/**
 		Initialize a new Tier containing one Autosegment from -1e30 to 1e30.
@@ -88,7 +88,7 @@ long Tier_timeToIndex (Tier me, double t);
 
 Collection_declare (OrderedOfTier, OrderedOf, Tier);
 
-CollectionSubclass_define (Label, OrderedOfTier) {
+Thing_define (Label, OrderedOfTier) {
 	structLabel () {
 		our classInfo = classLabel;
 	}

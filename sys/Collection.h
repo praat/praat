@@ -273,6 +273,14 @@ struct CollectionOf : structDaata {
 			my size == my old size - 1;
 			my _capacity not changed;
 	*/
+	_Thing_auto<T> subtractItem_move (long pos) {
+		Melder_assert (pos >= 1 && pos <= our _size);
+		Melder_assert (our _ownItems);
+		_Thing_auto<T> result (our _item [pos]);
+		for (long i = pos; i < our _size; i ++) our _item [i] = our _item [i + 1];
+		our _size --;
+		return result;
+	}
 	T* subtractItem_ref (long pos) {
 		Melder_assert (pos >= 1 && pos <= our _size);
 		Melder_assert (! our _ownItems);
@@ -473,6 +481,7 @@ struct CollectionOf : structDaata {
 
 Collection_declare (Collection, CollectionOf, Thing);
 
+#if 0
 #define CollectionSubclass_declare(klas) \
 	typedef struct struct##klas *klas; \
 	typedef _Thing_auto <struct##klas> auto##klas; \
@@ -485,13 +494,14 @@ Collection_declare (Collection, CollectionOf, Thing);
 	typedef struct##parentClass klas##_Parent; \
 	auto##klas klas##_create (); \
 	struct struct##klas : public struct##parentClass
+#endif
 
 #define CollectionSubclass_implement(klas,parentClass,version) \
 	static Thing _##klas##_new () { return new struct##klas; } \
 	struct structClassInfo theClassInfo_##klas = { U"" #klas, & theClassInfo_##parentClass, \
 		sizeof (struct##klas), _##klas##_new, version, 0, nullptr}; \
 	auto##klas klas##_create () { \
-		auto##klas me (new struct##klas>); \
+		auto##klas me (new struct##klas); \
 		theTotalNumberOfThings += 1; \
 		return me; \
 	} \
@@ -643,6 +653,8 @@ struct SortedSetOf : SortedOf <T> {
 		Equality is there when the compare routine returns 0.
 	Collections_merge (SortedSet) yields a SortedSet that is the union of the two sources.
 */
+
+Collection_declare (SortedSet, SortedOf, Daata);
 
 /********** class SortedSetOfInt **********/
 

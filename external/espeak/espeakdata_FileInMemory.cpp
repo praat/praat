@@ -1,4 +1,4 @@
-/* espeakdata_FileInMemory.c
+/* espeakdata_FileInMemory.cpp
  *
  * Copyright (C) David Weenink 2012, 2015
  *
@@ -22,19 +22,19 @@
 #include "speech.h"
 #include <wctype.h>
 
-autoFilesInMemory espeakdata_variants;
-autoFilesInMemory espeakdata_dicts;
-autoFilesInMemory espeakdata_phons;
-autoFilesInMemory espeakdata_voices;
+autoFileInMemorySet espeakdata_variants;
+autoFileInMemorySet espeakdata_dicts;
+autoFileInMemorySet espeakdata_phons;
+autoFileInMemorySet espeakdata_voices;
 autoStrings espeakdata_voices_names;
 autoStrings espeakdata_voices_names_short;
 autoStrings espeakdata_variants_names;
 
-static void FilesInMemory_and_Strings_changeIds (FilesInMemory me, Strings thee) {
+static void FileInMemorySet_and_Strings_changeIds (FileInMemorySet me, Strings thee) {
 	try {
-		if (my size != thy numberOfStrings) return; // do nothing
-		for (long i = 1; i <= my size; i++) {
-			FileInMemory_setId ((FileInMemory) my item[i], thy strings[i]);
+		if (my size() != thy numberOfStrings) return; // do nothing
+		for (long i = 1; i <= my size(); i ++) {
+			FileInMemory_setId (my _item [i], thy strings [i]);
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U"Ids not changed.");
@@ -45,9 +45,9 @@ static autoStrings espeak_voices_sort () {
 	try {
 		autoTable names = espeakdata_voices_to_Table (espeakdata_voices.get());
 		autoStrings fullnames = espeakdata_voices_getNames (names.peek(), 2);
-		FilesInMemory_and_Strings_changeIds (espeakdata_voices.get(), fullnames.peek());
-		espeakdata_voices -> d_sortKey = 1; // sort id's
-		Sorted_sort (espeakdata_voices.get());
+		FileInMemorySet_and_Strings_changeIds (espeakdata_voices.get(), fullnames.peek());
+		espeakdata_voices -> d_sortKey = 1;   // sort id's
+		espeakdata_voices -> sort ();
 		Table_sortRows_string (names.peek(), U"name"); //They hopefully sort the same way
 		autoStrings neworder = espeakdata_voices_getNames (names.peek(), 2);
 		autoStrings names_short = espeakdata_voices_getNames (names.peek(), 1);

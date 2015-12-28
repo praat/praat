@@ -127,7 +127,7 @@ autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeD
 void TextGrid_list (TextGrid me, bool includeLineNumbers, int timeDecimals, bool includeTierNames, bool includeEmptyIntervals);
 
 void TextGrid_correctRoundingErrors (TextGrid me);
-autoTextGrid TextGrids_concatenate (Collection me);
+autoTextGrid TextGrids_concatenate (OrderedOf<structTextGrid>* me);
 
 /* End of file TextGrid.h */
 #endif

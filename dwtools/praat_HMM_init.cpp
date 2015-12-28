@@ -479,7 +479,7 @@ DO
 	LOOP {
 		iam (HMM);
 		REQUIRE (is <= my numberOfObservationSymbols, U"Symbol number too high.")
-		HMMObservation s = (HMMObservation) my observationSymbols -> item[is];
+		HMMObservation s = my observationSymbols -> _item [is];
 		Melder_information (s -> label);
 	}
 END
@@ -492,7 +492,7 @@ DO
 	LOOP {
 		iam (HMM);
 		REQUIRE (is <= my numberOfStates, U"State number too high.")
-		HMMState s = (HMMState) my states -> item[is];
+		HMMState s = my states -> _item [is];
 		Melder_information (s -> label);
 	}
 END
@@ -577,22 +577,22 @@ END
 FORM (HMM_and_HMMObservationSequence_learn, U"HMM & HMMObservationSequence: Learn", U"HMM & HMMObservationSequences: Learn...")
 	POSITIVE (U"Relative precision in log(p)", U"0.001")
 	REAL (U"Minimum probability", U"0.00000000001")
-	BOOLEAN (U"Learning history in Info window", 0)
+	BOOLEAN (U"Learning history in Info window", false)
 	OK
 DO
 	double minProb = GET_REAL (U"Minimum probability");
 	REQUIRE (minProb >= 0 && minProb < 1, U"A probabilty must be >= 0 and < 1!")
-	autoHMMObservationSequences hmm_oss = HMMObservationSequences_create ();
+	structHMMObservationSequenceBag hmm_oss;
 	HMM hmm = nullptr;
 	LOOP {
 		iam (Daata);
 		if (CLASS == classHMMObservationSequence) {
-			Collection_addItem_ref (hmm_oss.peek(), me);
+			hmm_oss. addItem_ref ((HMMObservationSequence) me);
 		} else {
 			hmm = (HMM) me;
 		}
 	}
-	HMM_and_HMMObservationSequences_learn (hmm, hmm_oss.peek(), GET_REAL (U"Relative precision in log"), minProb, GET_INTEGER (U"Learning history in Info window"));
+	HMM_and_HMMObservationSequenceBag_learn (hmm, & hmm_oss, GET_REAL (U"Relative precision in log"), minProb, GET_INTEGER (U"Learning history in Info window"));
 END
 
 FORM (HMM_setTransitionProbabilities, U"HMM: Set transition probabilities", U"HMM: Set transition probabilities...")

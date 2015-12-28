@@ -1,6 +1,6 @@
 /* praat_David_init.cpp
  *
- * Copyright (C) 1993-2015 David Weenink
+ * Copyright (C) 1993-2015 David Weenink, 2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -158,7 +158,7 @@ void praat_EditDistanceTable_as_TableOfReal_init (ClassInfo klas);
 
 /********************** Activation *******************************************/
 
-FORM (Activation_formula, U"Activation: Formula", 0)
+FORM (Activation_formula, U"Activation: Formula", nullptr)
 	LABEL (U"label", U"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }}")
 	TEXTFIELD (U"formula", U"self")
 	OK
@@ -181,7 +181,7 @@ FORM (BandFilterSpectrogram_drawFrequencyScale, U"", U"")
 	REAL (U"right Horizontal frequency range (Hz)", U"0.0")
 	REAL (U"left Vertical frequency range (mel)", U"0.0")
 	REAL (U"right Vertical frequency range (mel)", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -210,7 +210,7 @@ FORM (BarkFilter_drawSpectrum, U"BarkFilter: Draw spectrum (slice)", U"FilterBan
 	REAL (U"right Frequency range (Bark)", U"0.0")
 	REAL (U"left Amplitude range (dB)", U"0.0")
 	REAL (U"right Amplitude range (dB)", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -226,15 +226,15 @@ FORM (BarkFilter_drawSekeyHansonFilterFunctions, U"BarkFilter: Draw filter funct
 	INTEGER (U"left Filter range", U"0")
 	INTEGER (U"right Filter range", U"0")
 	RADIO (U"Frequency scale", 1)
-	RADIOBUTTON (U"Hertz")
-	RADIOBUTTON (U"Bark")
-	RADIOBUTTON (U"mel")
+		RADIOBUTTON (U"Hertz")
+		RADIOBUTTON (U"Bark")
+		RADIOBUTTON (U"mel")
 	REAL (U"left Frequency range", U"0.0")
 	REAL (U"right Frequency range", U"0.0")
-	BOOLEAN (U"Amplitude scale in dB", 1)
+	BOOLEAN (U"Amplitude scale in dB", true)
 	REAL (U"left Amplitude range", U"0.0")
 	REAL (U"right Amplitude range", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -252,20 +252,20 @@ FORM (BarkSpectrogram_drawSekeyHansonAuditoryFilters, U"BarkSpectrogram: Draw Se
 	INTEGER (U"left Filter range", U"0")
 	INTEGER (U"right Filter range", U"0")
 	RADIO (U"Frequency scale", 2)
-	RADIOBUTTON (U"Hertz")
-	RADIOBUTTON (U"Bark")
+		RADIOBUTTON (U"Hertz")
+		RADIOBUTTON (U"Bark")
 	REAL (U"left Frequency range", U"0.0")
 	REAL (U"right Frequency range", U"0.0")
 	BOOLEAN (U"Amplitude scale in dB", 1)
 	REAL (U"left Amplitude range", U"0.0")
 	REAL (U"right Amplitude range", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (BarkSpectrogram);
-		bool xIsHertz = GET_INTEGER (U"Frequency scale") == 1;
+		bool xIsHertz = ( GET_INTEGER (U"Frequency scale") == 1 );
 		BarkSpectrogram_drawSekeyHansonFilterFunctions (me, GRAPHICS, xIsHertz,
 			GET_INTEGER (U"left Filter range"), GET_INTEGER (U"right Filter range"),
 			GET_REAL (U"left Frequency range"), GET_REAL (U"right Frequency range"),
@@ -274,14 +274,14 @@ DO
 	}
 END
 
-FORM (BarkFilter_paint, U"FilterBank: Paint", 0)
+FORM (BarkFilter_paint, U"FilterBank: Paint", nullptr)
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"left Frequency range (bark)", U"0.0")
 	REAL (U"right Frequency range (bark)", U"0.0")
 	REAL (U"left Amplitude range", U"0.0")
 	REAL (U"right Amplitude range", U"0.0")
-	BOOLEAN (U"Garnish", 0)
+	BOOLEAN (U"Garnish", false)
 	OK
 DO
 	autoPraatPicture picture;
@@ -342,7 +342,7 @@ END
 DIRECT (Categories_getNumberOfCategories)
 	LOOP {
 		iam (Categories);
-		Melder_information (my size, U" categories");
+		Melder_information (my size(), U" categories");
 	}
 END
 
@@ -433,7 +433,7 @@ END
 
 /***************** CC ****************************************/
 
-FORM (CC_getNumberOfCoefficients, U"Get number of coefficients", 0)
+FORM (CC_getNumberOfCoefficients, U"Get number of coefficients", nullptr)
 	NATURAL (U"Frame number", U"1")
 	OK
 DO
@@ -451,7 +451,7 @@ FORM (CC_getValue, U"CC: Get value", U"CC: Get value...")
 DO
 	LOOP {
 		iam (CC); // ?? generic
-		Melder_informationReal (CC_getValue (me, GET_REAL (U"Time"), GET_INTEGER (U"Index")), 0);
+		Melder_informationReal (CC_getValue (me, GET_REAL (U"Time"), GET_INTEGER (U"Index")), nullptr);
 	}
 END
 
@@ -462,7 +462,7 @@ FORM (CC_getValueInFrame, U"CC: Get value in frame", U"CC: Get value in frame...
 DO
 	LOOP {
 		iam (CC); // ?? generic
-		Melder_informationReal (CC_getValueInFrame (me, GET_INTEGER (U"Frame number"), GET_INTEGER (U"Index")), 0);
+		Melder_informationReal (CC_getValueInFrame (me, GET_INTEGER (U"Frame number"), GET_INTEGER (U"Index")), nullptr);
 	}
 END
 
@@ -472,7 +472,7 @@ FORM (CC_getC0ValueInFrame, U"CC: Get c0 value in frame", U"CC: Get c0 value in 
 DO
 	LOOP {
 		iam (CC); // ?? generic
-		Melder_informationReal (CC_getC0ValueInFrame (me, GET_INTEGER (U"Frame number")), 0);
+		Melder_informationReal (CC_getC0ValueInFrame (me, GET_INTEGER (U"Frame number")), nullptr);
 	}
 END
 
@@ -483,7 +483,7 @@ FORM (CC_paint, U"CC: Paint", U"CC: Paint...")
 	INTEGER (U"To coefficient", U"0")
 	REAL (U"Minimum", U"0.0")
 	REAL (U"Maximum", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -500,7 +500,7 @@ FORM (CC_drawC0, U"CC: Draw c0", U"CC: Draw c0...")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"left Amplitude range", U"0.0")
 	REAL (U"right Amplitude range", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -548,11 +548,11 @@ END
 
 FORM (CCA_drawEigenvector, U"CCA: Draw eigenvector", U"Eigen: Draw eigenvector...")
 	OPTIONMENU (U"X or Y", 1)
-	OPTION (U"y")
-	OPTION (U"x")
+		OPTION (U"y")
+		OPTION (U"x")
 	INTEGER (U"Eigenvector number", U"1")
 	LABEL (U"", U"Multiply by eigenvalue?")
-	BOOLEAN (U"Component loadings", 0)
+	BOOLEAN (U"Component loadings", false)
 	LABEL (U"", U"Select part of the eigenvector:")
 	INTEGER (U"left Element range", U"0")
 	INTEGER (U"right Element range", U"0")
@@ -560,8 +560,8 @@ FORM (CCA_drawEigenvector, U"CCA: Draw eigenvector", U"Eigen: Draw eigenvector..
 	REAL (U"right Amplitude range", U"1.0")
 	POSITIVE (U"Mark size (mm)", U"1.0")
 	SENTENCE (U"Mark string (+xo.)", U"+")
-	BOOLEAN (U"Connect points", 1)
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Connect points", true)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -594,8 +594,8 @@ END
 
 FORM (CCA_getEigenvectorElement, U"CCA: Get eigenvector element", U"Eigen: Get eigenvector element...")
 	OPTIONMENU (U"X or Y", 1)
-	OPTION (U"y")
-	OPTION (U"x")
+		OPTION (U"y")
+		OPTION (U"x")
 	NATURAL (U"Eigenvector number", U"1")
 	NATURAL (U"Element number", U"1")
 	OK
@@ -630,8 +630,8 @@ END
 FORM (CCA_and_Correlation_getVarianceFraction, U"CCA & Correlation: Get variance fraction", U"CCA & Correlation: Get variance fraction...")
 	LABEL (U"", U"Get the fraction of variance from the data in set...")
 	OPTIONMENU (U"X or Y", 1)
-	OPTION (U"y")
-	OPTION (U"x")
+		OPTION (U"y")
+		OPTION (U"x")
 	LABEL (U"", U"extracted by...")
 	NATURAL (U"left Canonical variate range", U"1")
 	NATURAL (U"right Canonical variate range", U"1")
@@ -650,8 +650,8 @@ END
 FORM (CCA_and_Correlation_getRedundancy_sl, U"CCA & Correlation: Get Stewart-Love redundancy", U"CCA & Correlation: Get redundancy (sl)...")
 	LABEL (U"", U"Get the redundancy of the data in set...")
 	OPTIONMENU (U"X or Y", 1)
-	OPTION (U"y")
-	OPTION (U"x")
+		OPTION (U"y")
+		OPTION (U"x")
 	LABEL (U"", U"extracted by...")
 	NATURAL (U"left Canonical variate range", U"1")
 	NATURAL (U"right Canonical variate range", U"1")
@@ -933,12 +933,12 @@ DO
 END
 
 FORM (Confusion_drawAsNumbers, U"", U"")
-	BOOLEAN (U"Draw marginals", 1)
+	BOOLEAN (U"Draw marginals", true)
 	RADIO (U"Format", 3)
-	RADIOBUTTON (U"decimal")
-	RADIOBUTTON (U"exponential")
-	RADIOBUTTON (U"free")
-	RADIOBUTTON (U"rational")
+		RADIOBUTTON (U"decimal")
+		RADIOBUTTON (U"exponential")
+		RADIOBUTTON (U"free")
+		RADIOBUTTON (U"rational")
 	NATURAL (U"Precision", U"5")
 	OK
 DO
@@ -975,7 +975,7 @@ FORM (Confusion_Matrix_draw, U"Confusion & Matrix: Draw confusions with arrows",
 	REAL (U"right Horizontal range", U"0.0")
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	long categoryPosition = GET_INTEGER (U"Category position");
@@ -1121,9 +1121,9 @@ FORM (Covariance_getSignificanceOfMeansDifference, U"Covariance: Get significanc
 	LABEL (U"", U"differs from")
 	REAL (U"Value", U"0.0")
 	LABEL (U"", U"when the means are")
-	BOOLEAN (U"Paired", 1)
+	BOOLEAN (U"Paired", true)
 	LABEL (U"", U"and have")
-	BOOLEAN (U"Equal variances", 1)
+	BOOLEAN (U"Equal variances", true)
 	OK
 DO
 	LOOP {
@@ -1216,15 +1216,19 @@ DO
 END
 
 DIRECT (Covariances_reportEquality)
-	autoCollection set = praat_getSelectedObjects ();
+	structCovarianceList list;
+	LOOP {
+		iam (Covariance);
+		list. addItem_ref (me);
+	}
 	MelderInfo_open ();
 	double p, chisq, df;
-	Covariances_equality (set.peek(), 1, &p, &chisq, &df);
+	Covariances_equality (& list, 1, &p, &chisq, &df);
 	MelderInfo_writeLine (U"Difference between covariance matrices:");
 	MelderInfo_writeLine (U"Significance of difference (bartlett) = ", p);
 	MelderInfo_writeLine (U"Chi-squared = ", chisq);
 	MelderInfo_writeLine (U"Degrees of freedom = ", df);
-	Covariances_equality (set.peek(), 2, &p, &chisq, &df);
+	Covariances_equality (& list, 2, &p, &chisq, &df);
 	MelderInfo_writeLine (U"Significance of difference (wald) = ", p);
 	MelderInfo_writeLine (U"Chi-squared = ", chisq);
 	MelderInfo_writeLine (U"Degrees of freedom = ", df);
@@ -1270,8 +1274,8 @@ DIRECT (Discriminant_setGroupLabels)
 END
 
 FORM (Discriminant_and_Pattern_to_Categories, U"Discriminant & Pattern: To Categories", U"Discriminant & Pattern: To Categories...")
-	BOOLEAN (U"Pool covariance matrices", 1)
-	BOOLEAN (U"Use apriori probabilities", 1)
+	BOOLEAN (U"Pool covariance matrices", true)
+	BOOLEAN (U"Use apriori probabilities", true)
 	OK
 DO
 	Discriminant me = FIRST (Discriminant);
@@ -1297,8 +1301,8 @@ DIRECT (hint_Discriminant_and_TableOfReal_to_ClassificationTable)
 END
 
 FORM (Discriminant_and_TableOfReal_to_ClassificationTable, U"Discriminant & TableOfReal: To ClassificationTable", U"Discriminant & TableOfReal: To ClassificationTable...")
-	BOOLEAN (U"Pool covariance matrices", 1)
-	BOOLEAN (U"Use apriori probabilities", 1)
+	BOOLEAN (U"Pool covariance matrices", true)
+	BOOLEAN (U"Use apriori probabilities", true)
 	OK
 DO
 	Discriminant me = FIRST (Discriminant);
@@ -1310,7 +1314,7 @@ END
 
 FORM (Discriminant_and_TableOfReal_mahalanobis, U"Discriminant & TableOfReal: To TableOfReal (mahalanobis)", U"Discriminant & TableOfReal: To TableOfReal (mahalanobis)...")
 	SENTENCE (U"Group label", U"")
-	BOOLEAN (U"Pool covariance matrices", 0)
+	BOOLEAN (U"Pool covariance matrices", false)
 	OK
 DO
 	Discriminant me = FIRST (Discriminant);
@@ -1365,7 +1369,7 @@ DIRECT (Discriminant_getHomegeneityOfCovariances_box)
 	LOOP {
 		iam (Discriminant);
 		double chisq, p; long ndf;
-		SSCPs_getHomegeneityOfCovariances_box (my groups.peek(), &p, &chisq, &ndf);
+		SSCPList_getHomegeneityOfCovariances_box (my groups.peek(), &p, &chisq, &ndf);
 		Melder_information (p, U" (=probability, based on chisq = ",
 			chisq, U"and ndf = ", ndf, U")");
 	}
@@ -1375,13 +1379,19 @@ DIRECT (Discriminant_reportEqualityOfCovariances_wald)
 	MelderInfo_open ();
 	LOOP {
 		iam (Discriminant);
+		structCovarianceList list;
+		for (long i = 1; i <= my groups -> size(); i ++) {
+			SSCP sscp = my groups -> _item [i];
+			autoCovariance covariance = SSCP_to_Covariance (sscp, 1);   // FIXME numberOfConstraints shouldn't be 1, should it?
+			list. addItem_move (covariance.move());
+		}
 		double chisq, prob, df;
-		Covariances_equality (my groups.peek(), 2, &prob, &chisq, &df);
+		Covariances_equality (& list, 2, & prob, & chisq, & df);
 		MelderInfo_writeLine (U"Wald test for equality of covariance matrices:");
 		MelderInfo_writeLine (U"Chi squared: ", chisq);
 		MelderInfo_writeLine (U"Significance: ", prob);
 		MelderInfo_writeLine (U"Degrees of freedom: ", df);
-		MelderInfo_writeLine (U"Number of matrices: ", my groups -> size);
+		MelderInfo_writeLine (U"Number of matrices: ", list.size());
 	}
 	MelderInfo_close ();
 END
@@ -1389,7 +1399,7 @@ END
 FORM (Discriminant_getConcentrationEllipseArea, U"Discriminant: Get concentration ellipse area", U"Discriminant: Get concentration ellipse area...")
 	SENTENCE (U"Group label", U"")
 	POSITIVE (U"Number of sigmas", U"1.0")
-	BOOLEAN (U"Discriminant plane", 1)
+	BOOLEAN (U"Discriminant plane", true)
 	INTEGER (U"X-dimension", U"1")
 	INTEGER (U"Y-dimension", U"2")
 	OK
@@ -1407,7 +1417,7 @@ END
 FORM (Discriminant_getConfidenceEllipseArea, U"Discriminant: Get confidence ellipse area", U"Discriminant: Get confidence ellipse area...")
 	SENTENCE (U"Group label", U"")
 	POSITIVE (U"Confidence level (0-1)", U"0.95")
-	BOOLEAN (U"Discriminant plane", 1)
+	BOOLEAN (U"Discriminant plane", true)
 	INTEGER (U"X-dimension", U"1")
 	INTEGER (U"Y-dimension", U"2")
 	OK
@@ -1454,7 +1464,7 @@ END
 
 FORM (Discriminant_drawSigmaEllipses, U"Discriminant: Draw sigma ellipses", U"Discriminant: Draw sigma ellipses...")
 	POSITIVE (U"Number of sigmas", U"1.0")
-	BOOLEAN (U"Discriminant plane", 1)
+	BOOLEAN (U"Discriminant plane", true)
 	INTEGER (U"X-dimension", U"1")
 	INTEGER (U"Y-dimension", U"2")
 	REAL (U"left Horizontal range", U"0.0")
@@ -1462,7 +1472,7 @@ FORM (Discriminant_drawSigmaEllipses, U"Discriminant: Draw sigma ellipses", U"Di
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0")
 	INTEGER (U"Label size", U"12")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -2051,7 +2061,7 @@ DO
 	}
 END
 
-FORM (DTW_setDistanceValue, U"DTW: Set distance value", 0)
+FORM (DTW_setDistanceValue, U"DTW: Set distance value", nullptr)
 	REAL (U"Time at x (s)", U"0.1")
 	REAL (U"Time at y (s)", U"0.1")
 	REAL (U"New value", U"0.0")
@@ -2078,42 +2088,42 @@ DO
 	}
 END
 
-FORM (DTW_findPath, U"DTW: Find path", 0)
+FORM (DTW_findPath, U"DTW: Find path", nullptr)
 	DTW_constraints_addCommonFields (dia);
 	OK
 DO
 	int begin, end, slope;
-	DTW_constraints_getCommonFields (dia, &begin, &end, &slope);
+	DTW_constraints_getCommonFields (dia, & begin, & end, & slope);
 	LOOP {
 		iam (DTW);
 		DTW_findPath (me, begin, end, slope);
 	}
 END
 
-FORM (DTW_findPath_bandAndSlope, U"DTW: find path (band & slope)", 0)
+FORM (DTW_findPath_bandAndSlope, U"DTW: find path (band & slope)", nullptr)
     REAL (U"Sakoe-Chiba band (s)", U"0.05")
     RADIO (U"Slope constraint", 1)
-    RADIOBUTTON (U"no restriction")
-    RADIOBUTTON (U"1/3 < slope < 3")
-    RADIOBUTTON (U"1/2 < slope < 2")
-    RADIOBUTTON (U"2/3 < slope < 3/2")
+		RADIOBUTTON (U"no restriction")
+		RADIOBUTTON (U"1/3 < slope < 3")
+		RADIOBUTTON (U"1/2 < slope < 2")
+		RADIOBUTTON (U"2/3 < slope < 3/2")
     OK
 DO
     double band = GET_REAL (U"Sakoe-Chiba band");
     int slope = GET_INTEGER (U"Slope constraint");
     LOOP {
         iam (DTW);
-        DTW_findPath_bandAndSlope (me, band, slope, 0);
+        DTW_findPath_bandAndSlope (me, band, slope, nullptr);
     }
 END
 
-FORM (DTW_to_Matrix_cummulativeDistances, U"DTW: To Matrix", 0)
+FORM (DTW_to_Matrix_cummulativeDistances, U"DTW: To Matrix", nullptr)
     REAL (U"Sakoe-Chiba band (s)", U"0.05")
     RADIO (U"Slope constraint", 1)
-    RADIOBUTTON (U"no restriction")
-    RADIOBUTTON (U"1/3 < slope < 3")
-    RADIOBUTTON (U"1/2 < slope < 2")
-    RADIOBUTTON (U"2/3 < slope < 3/2")
+		RADIOBUTTON (U"no restriction")
+		RADIOBUTTON (U"1/3 < slope < 3")
+		RADIOBUTTON (U"1/2 < slope < 2")
+		RADIOBUTTON (U"2/3 < slope < 3/2")
     OK
 DO
     double band = GET_REAL (U"Sakoe-Chiba band");
@@ -2128,10 +2138,10 @@ END
 FORM (DTW_to_Polygon, U"DTW: To Polygon...", 0)
     REAL (U"Sakoe-Chiba band (s)", U"0.1")
     RADIO (U"Slope constraint", 1)
-    RADIOBUTTON (U"no restriction")
-    RADIOBUTTON (U"1/3 < slope < 3")
-    RADIOBUTTON (U"1/2 < slope < 2")
-    RADIOBUTTON (U"2/3 < slope < 3/2")
+		RADIOBUTTON (U"no restriction")
+		RADIOBUTTON (U"1/3 < slope < 3")
+		RADIOBUTTON (U"1/2 < slope < 2")
+		RADIOBUTTON (U"2/3 < slope < 3/2")
     OK
 DO
     double band = GET_REAL (U"Sakoe-Chiba band");
@@ -2200,7 +2210,7 @@ DIRECT (EditDistanceTable_setEditCosts)
 	EditDistanceTable_setEditCosts (me, thee);
 END
 
-FORM (EditDistanceTable_setDefaultCosts, U"", 0)
+FORM (EditDistanceTable_setDefaultCosts, U"", nullptr)
 	REAL (U"Insertion costs", U"1.0")
 	REAL (U"Deletion costs", U"1.0")
 	REAL (U"Substitution costs", U"2.0")
@@ -2224,7 +2234,7 @@ DO
 	}
 END
 
-FORM (EditDistanceTable_draw, U"EditDistanceTable_draw", 0)
+FORM (EditDistanceTable_draw, U"EditDistanceTable_draw", nullptr)
 	RADIO (U"Format", 3)
 		RADIOBUTTON (U"decimal")
 		RADIOBUTTON (U"exponential")
@@ -2253,7 +2263,7 @@ DIRECT (EditCostsTable_help)
 	Melder_help (U"EditCostsTable");
 END
 
-FORM (EditCostsTable_getTargetIndex, U"EditCostsTable: Get target index", 0)
+FORM (EditCostsTable_getTargetIndex, U"EditCostsTable: Get target index", nullptr)
 	SENTENCE (U"Target", U"")
 	OK
 DO
@@ -2263,7 +2273,7 @@ DO
 	}
 END
 
-FORM (EditCostsTable_getSourceIndex, U"EditCostsTable: Get source index", 0)
+FORM (EditCostsTable_getSourceIndex, U"EditCostsTable: Get source index", nullptr)
 	SENTENCE (U"Source", U"")
 	OK
 DO
@@ -2273,7 +2283,7 @@ DO
 	}
 END
 
-FORM (EditCostsTable_getInsertionCost, U"EditCostsTable: Get insertion cost", 0)
+FORM (EditCostsTable_getInsertionCost, U"EditCostsTable: Get insertion cost", nullptr)
 	SENTENCE (U"Target", U"")
 	OK
 DO
@@ -2283,7 +2293,7 @@ DO
 	}
 END
 
-FORM (EditCostsTable_getDeletionCost, U"EditCostsTable: Get deletion cost", 0)
+FORM (EditCostsTable_getDeletionCost, U"EditCostsTable: Get deletion cost", nullptr)
 	SENTENCE (U"Source", U"")
 	OK
 DO
@@ -2293,7 +2303,7 @@ DO
 	}
 END
 
-FORM (EditCostsTable_getSubstitutionCost, U"EditCostsTable: Get substitution cost", 0)
+FORM (EditCostsTable_getSubstitutionCost, U"EditCostsTable: Get substitution cost", nullptr)
 	SENTENCE (U"Target", U"")
 	SENTENCE (U"Source", U"")
 	OK
@@ -2304,12 +2314,12 @@ DO
 	}
 END
 
-FORM (EditCostsTable_getOthersCost, U"EditCostsTable: Get cost (others)", 0)
+FORM (EditCostsTable_getOthersCost, U"EditCostsTable: Get cost (others)", nullptr)
 	RADIO (U"Others cost type", 1)
-	RADIOBUTTON (U"Insertion")
-	RADIOBUTTON (U"Deletion")
-	RADIOBUTTON (U"Equality")
-	RADIOBUTTON (U"Inequality")
+		RADIOBUTTON (U"Insertion")
+		RADIOBUTTON (U"Deletion")
+		RADIOBUTTON (U"Equality")
+		RADIOBUTTON (U"Inequality")
 	OK
 DO
 	LOOP {
@@ -2318,7 +2328,7 @@ DO
 	}
 END
 
-FORM (EditCostsTable_setTargetSymbol_index, U"EditCostsTable: Set target symbol (index)", 0)
+FORM (EditCostsTable_setTargetSymbol_index, U"EditCostsTable: Set target symbol (index)", nullptr)
 	NATURAL (U"Index", U"1")
 	SENTENCE (U"Target", U"a")
 	OK
@@ -2329,7 +2339,7 @@ DO
 	}
 END
 
-FORM (EditCostsTable_setSourceSymbol_index, U"EditCostsTable: Set source symbol (index)", 0)
+FORM (EditCostsTable_setSourceSymbol_index, U"EditCostsTable: Set source symbol (index)", nullptr)
 	NATURAL (U"Index", U"1")
 	SENTENCE (U"Source", U"a")
 	OK
@@ -2340,7 +2350,7 @@ DO
 	}
 END
 
-FORM (EditCostsTable_setInsertionCosts, U"EditCostsTable: Set insertion costs", 0)
+FORM (EditCostsTable_setInsertionCosts, U"EditCostsTable: Set insertion costs", nullptr)
 	SENTENCE (U"Targets", U"")
 	REAL (U"Cost", U"2.0")
 	OK
@@ -2351,7 +2361,7 @@ DO
 	}
 END
 
-FORM (EditCostsTable_setDeletionCosts, U"EditCostsTable: Set deletion costs", 0)
+FORM (EditCostsTable_setDeletionCosts, U"EditCostsTable: Set deletion costs", nullptr)
 	SENTENCE (U"Sources", U"")
 	REAL (U"Cost", U"2.0")
 	OK
@@ -2362,7 +2372,7 @@ DO
 	}
 END
 
-FORM (EditCostsTable_setSubstitutionCosts, U"EditCostsTable: Set substitution costs", 0)
+FORM (EditCostsTable_setSubstitutionCosts, U"EditCostsTable: Set substitution costs", nullptr)
 	SENTENCE (U"Targets", U"a i u")
 	SENTENCE (U"Sources", U"a i u")
 	REAL (U"Cost", U"2.0")
@@ -2374,7 +2384,7 @@ DO
 	}
 END
 
-FORM (EditCostsTable_setOthersCosts, U"EditCostsTable: Set costs (others)", 0)
+FORM (EditCostsTable_setOthersCosts, U"EditCostsTable: Set costs (others)", nullptr)
 	LABEL (U"", U"Others costs")
 	REAL (U"Insertion", U"1.0")
 	REAL (U"Deletion", U"1.0")
@@ -2444,15 +2454,15 @@ END
 
 FORM (Eigen_drawEigenvector, U"Eigen: Draw eigenvector", U"Eigen: Draw eigenvector...")
 	INTEGER (U"Eigenvector number", U"1")
-	BOOLEAN (U"Component loadings", 0)
+	BOOLEAN (U"Component loadings", false)
 	INTEGER (U"left Element range", U"0")
 	INTEGER (U"right Element range", U"0")
 	REAL (U"left Amplitude range", U"-1.0")
 	REAL (U"right Amplitude range", U"1.0")
 	POSITIVE (U"Mark size (mm)", U"1.0")
 	SENTENCE (U"Mark string (+xo.)", U"+")
-	BOOLEAN (U"Connect points", 1)
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Connect points", true)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -2517,8 +2527,12 @@ DO
 END
 
 DIRECT (Eigens_alignEigenvectors)
-	autoCollection set = praat_getSelectedObjects ();
-	Eigens_alignEigenvectors (set.peek());
+	OrderedOf<structEigen> list;
+	LOOP {
+		iam (Eigen);
+		list. addItem_ref (me);
+	}
+	Eigens_alignEigenvectors (& list);
 END
 
 FORM (Eigen_and_Matrix_project, U"Eigen & Matrix: Project", U"Eigen & Matrix: Project...")
@@ -2554,7 +2568,7 @@ END
 DIRECT (Index_getNumberOfClasses)
 	LOOP {
 		iam (Index);
-		Melder_information (my classes -> size);
+		Melder_information (my classes -> size());
 	}
 END
 
@@ -2565,11 +2579,11 @@ DO
 	long klas = GET_INTEGER (U"Class index");
 	LOOP {
 		iam (StringsIndex);
-		long numberOfClasses = my classes -> size;
+		long numberOfClasses = my classes -> size();
 		if (klas > numberOfClasses) {
 			Melder_throw (U"Index must be less than or equal ", numberOfClasses, U".");
 		}
-		SimpleString ss = (SimpleString) my classes -> item[klas];
+		SimpleString ss = (SimpleString) my classes -> _item [klas];   // FIXME cast
 		Melder_information (ss -> string);
 	}
 END
@@ -2584,8 +2598,8 @@ DO
 		if (index > my numberOfElements) {
 			Melder_throw (U"Index must be less than or equal ", my numberOfElements, U".");
 		}
-		long klas = my classIndex[index];
-		SimpleString ss = (SimpleString) my classes -> item [klas];
+		long klas = my classIndex [index];
+		SimpleString ss = (SimpleString) my classes -> _item [klas];   // FIXME cast
 		Melder_information (ss -> string);
 	}
 END
@@ -2649,78 +2663,79 @@ END
 
 /******************** Excitation ********************************************/
 
-DIRECT (Excitation_to_Excitations)
-	autoExcitations e = Excitations_create (100);
+DIRECT (Excitation_to_ExcitationList)
+	autoExcitationList list = ExcitationList_create ();
 	LOOP {
 		iam (Excitation);
 		autoExcitation thee = Data_copy (me);
-		Collection_addItem_move (e.peek(), thee.move());
+		list -> addItem_move (thee.move());
 	}
-	praat_new (e.move(), U"appended");
+	praat_new (list.move(), U"appended");
 END
 
 /******************** Excitations ********************************************/
 
-FORM (Excitations_formula, U"Excitations: Formula", 0)
-	LABEL (U"label", U"for all objects in Excitations do { for col := 1 to ncol do { self [col] := `formula' ; x := x + dx } }")
+FORM (ExcitationList_formula, U"ExcitationList: Formula", 0)
+	LABEL (U"label", U"for all objects in ExcitationList do { for col := 1 to ncol do { self [col] := `formula' ; x := x + dx } }")
 	TEXTFIELD (U"formula", U"self")
 	OK
 DO
 	LOOP {
-		iam (Excitations);
-		for (long j = 1; j <= my size; j++) {
-			Matrix_formula ( (Matrix) my item[j], GET_STRING (U"formula"), interpreter, 0);
+		iam (ExcitationList);
+		for (long j = 1; j <= my size(); j ++) {
+			Matrix_formula (my _item [j], GET_STRING (U"formula"), interpreter, nullptr);
 		}
 		praat_dataChanged (me);
 	}
 END
 
-DIRECT (Excitations_addItem)
-	Excitations e = FIRST (Excitations);
+DIRECT (ExcitationList_addItem)
+	ExcitationList list = FIRST (ExcitationList);
 	WHERE_DOWN (SELECTED && CLASS == classExcitation) {
 		iam (Excitation);
 		autoExcitation thee = Data_copy (me);
-		Collection_addItem_move (e, thee.move());
+		list -> addItem_move (thee.move());
 	}
 END
 
-FORM (Excitations_getItem, U"Excitations: Get item", 0)
+FORM (ExcitationList_getItem, U"ExcitationList: Get item", nullptr)
 	NATURAL (U"Item number", U"1")
 	OK
 DO
 	LOOP {
-		iam (Excitations);
-		autoExcitation thee = Excitations_getItem (me, GET_INTEGER (U"Item number"));
+		iam (ExcitationList);
+		autoExcitation thee = ExcitationList_getItem (me, GET_INTEGER (U"Item number"));
 		praat_new (thee.move(), my name, U"_item");
 	}
 END
 
-DIRECT (Excitations_append)
-	Excitations e1 = nullptr, e2 = nullptr;
+DIRECT (ExcitationList_append)
+	ExcitationList e1 = nullptr, e2 = nullptr;
 	LOOP {
-		iam (Excitations);
+		iam (ExcitationList);
 		(e1 ? e2 : e1) = me;
 	}
 	Melder_assert (e1 && e2);
-	autoCollection result = Collections_merge (e1, e2);
+	autoExcitationList result = Data_copy (e1);
+	result -> merge (e2);
 	praat_new (result.move(), U"appended");
 END
 
-FORM (Excitations_to_Pattern, U"Excitations: To Pattern", 0)
+FORM (ExcitationList_to_Pattern, U"Excitations: To Pattern", nullptr)
 	NATURAL (U"Join", U"1")
 	OK
 DO
 	LOOP {
-		iam (Excitations);
-		autoPattern thee = Excitations_to_Pattern (me, GET_INTEGER (U"Join"));
+		iam (ExcitationList);
+		autoPattern thee = ExcitationList_to_Pattern (me, GET_INTEGER (U"Join"));
 		praat_new (thee.move(), my name);
 	}
 END
 
-DIRECT (Excitations_to_TableOfReal)
+DIRECT (ExcitationList_to_TableOfReal)
 	LOOP {
-		iam (Excitations);
-		autoTableOfReal thee = Excitations_to_TableOfReal (me);
+		iam (ExcitationList);
+		autoTableOfReal thee = ExcitationList_to_TableOfReal (me);
 		praat_new (thee.move(), my name);
 	}
 END
@@ -2729,12 +2744,12 @@ END
 /************************* FileInMemory ***********************************/
 
 
-FORM_READ2 (FileInMemory_create, U"Create file in memory", 0, true) {
+FORM_READ2 (FileInMemory_create, U"Create file in memory", nullptr, true) {
 	autoFileInMemory me = FileInMemory_create (file);
 	praat_new (me.move(), MelderFile_name (file));
 END2 }
 
-FORM (FileInMemory_setId, U"FileInMemory: Set id", 0)
+FORM (FileInMemory_setId, U"FileInMemory: Set id", nullptr)
 	SENTENCE (U"New id", U"New id")
 	OK
 DO
@@ -2745,7 +2760,7 @@ DO
 	}
 END
 
-FORM (FileInMemory_showAsCode, U"FileInMemory: Show as code", 0)
+FORM (FileInMemory_showAsCode, U"FileInMemory: Show as code", nullptr)
 	WORD (U"Name", U"example")
 	INTEGER (U"Number of bytes per line", U"20")
 	OK
@@ -2759,44 +2774,44 @@ DO
 	}
 END
 
-/************************* FilesInMemory ***********************************/
+/************************* FileInMemorySet ***********************************/
 
-FORM (FilesInMemory_createFromDirectoryContents, U"Create files in memory from directory contents", 0)
+FORM (FileInMemorySet_createFromDirectoryContents, U"Create files in memory from directory contents", nullptr)
 	SENTENCE (U"Name", U"list")
 	LABEL (U"", U"Directory:")
 	TEXTFIELD (U"Directory", U"/home/david/praat/src/espeak-work/espeak-1.46.13/espeak-data")
 	WORD (U"Only files that match pattern", U"*.txt")
 	OK
 DO
-	autoFilesInMemory me = FilesInMemory_createFromDirectoryContents (GET_STRING (U"Directory"), GET_STRING (U"Only files that match pattern"));
+	autoFileInMemorySet me = FileInMemorySet_createFromDirectoryContents (GET_STRING (U"Directory"), GET_STRING (U"Only files that match pattern"));
 	praat_new (me.move(), GET_STRING (U"Name"));
 END
 
-FORM (FilesInMemory_createCopyFromFilesInMemory, U"", 0)
+FORM (FileInMemorySet_createCopyFromFilesInMemory, U"", nullptr)
 	OPTIONMENU (U"Espeakdata", 5)
-	OPTION (U"phons")
-	OPTION (U"dicts")
-	OPTION (U"voices")
-	OPTION (U"variants")
-	OPTION (U"voices_names")
-	OPTION (U"variants_names")
+		OPTION (U"phons")
+		OPTION (U"dicts")
+		OPTION (U"voices")
+		OPTION (U"variants")
+		OPTION (U"voices_names")
+		OPTION (U"variants_names")
 	OK
 DO
 	long choice = GET_INTEGER (U"Espeakdata");
 	if (choice == 1) {
-		autoFilesInMemory f = Data_copy (espeakdata_phons.get());
+		autoFileInMemorySet f = Data_copy (espeakdata_phons.get());
 		praat_new (f.move(), U"espeakdata_phons");
 	}
 	else if (choice == 2) {
-		autoFilesInMemory f = Data_copy (espeakdata_dicts.get());
+		autoFileInMemorySet f = Data_copy (espeakdata_dicts.get());
 		praat_new (f.move(), U"espeakdata_dicts");
 	}
 	else if (choice == 3) {
-		autoFilesInMemory f = Data_copy (espeakdata_voices.get());
+		autoFileInMemorySet f = Data_copy (espeakdata_voices.get());
 		praat_new (f.move(), U"espeakdata_voices");
 	}
 	else if (choice == 4) {
-		autoFilesInMemory f = Data_copy (espeakdata_variants.get());
+		autoFileInMemorySet f = Data_copy (espeakdata_variants.get());
 		praat_new (f.move(), U"espeakdata_variants");
 	}
 	else if (choice == 5) {
@@ -2809,69 +2824,70 @@ DO
 	}
 END
 
-FORM (FilesInMemory_showAsCode, U"FilesInMemory: Show as code", 0)
+FORM (FileInMemorySet_showAsCode, U"FilesInMemory: Show as code", nullptr)
 	WORD (U"Name", U"example")
 	INTEGER (U"Number of bytes per line", U"20")
 	OK
 DO
 	LOOP {
-		iam (FilesInMemory);
+		iam (FileInMemorySet);
 		MelderInfo_open ();
-		FilesInMemory_showAsCode (me, GET_STRING (U"Name"), GET_INTEGER (U"Number of bytes per line"));
+		FileInMemorySet_showAsCode (me, GET_STRING (U"Name"), GET_INTEGER (U"Number of bytes per line"));
 		MelderInfo_close ();
 	}
 END
 
-FORM (FilesInMemory_showOneFileAsCode, U"FilesInMemory: Show one file as code", 0)
+FORM (FileInMemorySet_showOneFileAsCode, U"FilesInMemory: Show one file as code", nullptr)
 	NATURAL (U"Index", U"1")
 	WORD (U"Name", U"example")
 	INTEGER (U"Number of bytes per line", U"20")
 	OK
 DO
 	LOOP {
-		iam (FilesInMemory);
+		iam (FileInMemorySet);
 		MelderInfo_open ();
-		FilesInMemory_showOneFileAsCode (me, GET_INTEGER (U"Index"), GET_STRING (U"Name"), GET_INTEGER (U"Number of bytes per line"));
+		FileInMemorySet_showOneFileAsCode (me, GET_INTEGER (U"Index"), GET_STRING (U"Name"), GET_INTEGER (U"Number of bytes per line"));
 		MelderInfo_close ();
 	}
 END
 
-DIRECT (FileInMemory_to_FilesInMemory)
-	autoFilesInMemory thee = FilesInMemory_create ();
+DIRECT (FilesInMemory_to_FileInMemorySet)
+	autoFileInMemorySet thee = FileInMemorySet_create ();
 	LOOP {
 		iam (FileInMemory);
 		autoFileInMemory him = Data_copy (me);
-		Collection_addItem_move (thee.peek(), him.move());
+		thy addItem_move (him.move());
 	}
 	praat_new (thee.move(), U"files");
 END
 
-DIRECT (FilesInMemory_addItems)
-	FilesInMemory thee = FIRST (FilesInMemory);
+DIRECT (FileInMemorySet_addItems)
+	FileInMemorySet thee = FIRST (FileInMemorySet);
 	LOOP {
 		iam (Daata);
 		if (CLASS == classFileInMemory) {
 			autoFileInMemory him = Data_copy ((FileInMemory) me);
-			Collection_addItem_move (thee, him.move());
+			thy addItem_move (him.move());
 		}
 	}
 END
 
-DIRECT (FilesInMemory_merge)
-	FilesInMemory f1 = nullptr, f2 = nullptr;
+DIRECT (FileInMemorySets_merge)
+	FileInMemorySet f1 = nullptr, f2 = nullptr;
 	LOOP { 
-		iam (FilesInMemory);
+		iam (FileInMemorySet);
 		(f1 ? f2 : f1) = me;
 	}
 	Melder_assert (f1 && f2);
-	autoFilesInMemory fim = Collections_merge (f1, f2).static_cast_move <structFilesInMemory> ();
+	autoFileInMemorySet fim = Data_copy (f1);
+	fim -> merge (f2);
 	praat_new (fim.move(), f1 -> name, U"_", f2 -> name);
 END
 
-DIRECT (FilesInMemory_to_Strings_id)
+DIRECT (FileInMemorySet_to_Strings_id)
 	LOOP {
-		iam (FilesInMemory);
-		autoStrings thee = FilesInMemory_to_Strings_id (me);
+		iam (FileInMemorySet);
+		autoStrings thee = FileInMemorySet_to_Strings_id (me);
 		praat_new (thee.move(), my name);
 	}
 END
@@ -3809,8 +3825,12 @@ END
 /********************* LongSound **************************************/
 
 FORM_READ2 (LongSounds_appendToExistingSoundFile, U"LongSound: Append to existing sound file", 0, false) {
-	autoCollection set = praat_getSelectedObjects ();
-	LongSounds_appendToExistingSoundFile (set.peek(), file);
+	OrderedOf<structSampled> list;
+	LOOP {
+		iam (Sampled);
+		list. addItem_ref (me);
+	}
+	LongSounds_appendToExistingSoundFile (& list, file);
 END2 }
 
 FORM_WRITE (LongSounds_writeToStereoAiffFile, U"LongSound: Save as AIFF file", 0, U"aiff")
@@ -4965,9 +4985,15 @@ DIRECT (Permutation_invert)
 		praat_new (Permutation_invert (me), Thing_getName (me), U"_inv");
 	}
 END
+
 DIRECT (Permutations_multiply)
-	autoCollection set = praat_getSelectedObjects ();
-	praat_new (Permutations_multiply (set.peek()), U"mul_", set -> size);
+	OrderedOf<structPermutation> list;
+	LOOP {
+		iam (Permutation);
+		list. addItem_ref (me);
+	}
+	autoPermutation result = Permutations_multiply (& list);
+	praat_new (result.move(), U"mul_", list.size());
 END
 
 DIRECT (Permutations_next)
@@ -6838,8 +6864,12 @@ DO
 END
 
 DIRECT (Strings_append)
-	autoCollection set = praat_getSelectedObjects ();
-	autoStrings thee = Strings_append (set.get());
+	OrderedOf<structStrings> list;
+	LOOP {
+		iam (Strings);
+		list. addItem_ref (me);
+	}
+	autoStrings thee = Strings_append (& list);
 	praat_new (thee.move(), U"appended");
 END
 
@@ -7575,8 +7605,13 @@ DIRECT (TableOfReal_to_Permutation_sortRowlabels)
 END
 
 DIRECT (TableOfReal_appendColumns)
-	autoCollection set = praat_getSelectedObjects ();
-	praat_new (TableOfReal_appendColumnsMany (set.peek()), U"columns_appended");
+	autoTableOfRealList list;
+	LOOP {
+		iam (TableOfReal);
+		list -> addItem_ref (me);
+	}
+	autoTableOfReal result = TableOfReal_appendColumnsMany (list.get());
+	praat_new (result.move(), U"columns_appended");
 END
 
 FORM (TableOfReal_createFromPolsData_50males, U"Create TableOfReal (Pols 1973)", U"Create TableOfReal (Pols 1973)...")
@@ -8386,13 +8421,15 @@ void praat_uvafon_David_init () {
 		classCategories, classCepstrum, classCCA,
 		classChebyshevSeries, classClassificationTable, classComplexSpectrogram, classConfusion,
 		classCorrelation, classCovariance, classDiscriminant, classDTW,
-		classEigen, classExcitations, classEditCostsTable, classEditDistanceTable,
-		classFileInMemory, classFilesInMemory, classFormantFilter,
+		classEigen, classExcitationList, classEditCostsTable, classEditDistanceTable,
+		classFileInMemory, classFileInMemorySet, classFormantFilter,
 		classIndex, classKlattTable,
 		classPermutation, classISpline, classLegendreSeries,
 		classMelFilter, classMelSpectrogram, classMSpline, classPattern, classPCA, classPolynomial, classRoots,
 		classSimpleString, classStringsIndex, classSpeechSynthesizer, classSPINET, classSSCP,
 		classSVD, nullptr);
+	Thing_recognizeClassByOtherName (classExcitationList, U"Excitations");
+	Thing_recognizeClassByOtherName (classFileInMemorySet, U"FilesInMemory");
 
 	VowelEditor_prefs ();
 
@@ -8435,8 +8472,8 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Create Polygon (random vertices)...", nullptr, praat_HIDDEN, DO_Polygon_createFromRandomVertices);
 	praat_addMenuCommand (U"Objects", U"New", U"FilesInMemory", nullptr, praat_HIDDEN, nullptr);
 		praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemory...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_FileInMemory_create);
-		praat_addMenuCommand (U"Objects", U"New", U"Create copy from FilesInMemory...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_FilesInMemory_createCopyFromFilesInMemory);
-		praat_addMenuCommand (U"Objects", U"New", U"Create FilesInMemory from directory contents...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_FilesInMemory_createFromDirectoryContents);
+		praat_addMenuCommand (U"Objects", U"New", U"Create copy from FileInMemorySet...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_FileInMemorySet_createCopyFromFilesInMemory);
+		praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemorySet from directory contents...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_FileInMemorySet_createFromDirectoryContents);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Sound from raw 16-bit Little Endian file...", U"Read from special sound file", 1,
 	                      DO_Sound_readFromRawFileLE);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Sound from raw 16-bit Big Endian file...", U"Read Sound from raw 16-bit Little Endian file...", 1, DO_Sound_readFromRawFileBE);
@@ -8736,40 +8773,41 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classStringsIndex, 1, U"To Strings", 0, 0, DO_StringsIndex_to_Strings);
 
 	praat_addAction1 (classExcitation, 0, U"Synthesize", U"To Formant...", 0, 0);
-	praat_addAction1 (classExcitation, 0, U"To Excitations", U"Synthesize", 0, DO_Excitation_to_Excitations);
+	praat_addAction1 (classExcitation, 0, U"To ExcitationList", U"Synthesize", 0, DO_Excitation_to_ExcitationList);
+	praat_addAction1 (classExcitation, 0, U"To Excitations", U"Synthesize", praat_HIDDEN, DO_Excitation_to_ExcitationList);
 
-	praat_addAction1 (classExcitations, 0, U"Modify", 0, 0, 0);
-	praat_addAction1 (classExcitations, 0, U"Formula...", 0, 0, DO_Excitations_formula);
-	praat_addAction1 (classExcitations, 0, U"Extract", 0, 0, 0);
-	praat_addAction1 (classExcitations, 0, U"Extract Excitation...", 0, 0, DO_Excitations_getItem);
-	praat_addAction1 (classExcitations, 0, U"Synthesize", 0, 0, 0);
-	praat_addAction1 (classExcitations, 2, U"Append", 0, 0, DO_Excitations_append);
-	praat_addAction1 (classExcitations, 0, U"Convert", 0, 0, 0);
-	praat_addAction1 (classExcitations, 0, U"To Pattern...", 0, 0, DO_Excitations_to_Pattern);
-	praat_addAction1 (classExcitations, 0, U"To TableOfReal", 0, 0, DO_Excitations_to_TableOfReal);
+	praat_addAction1 (classExcitationList, 0, U"Modify", 0, 0, 0);
+	praat_addAction1 (classExcitationList, 0, U"Formula...", 0, 0, DO_ExcitationList_formula);
+	praat_addAction1 (classExcitationList, 0, U"Extract", 0, 0, 0);
+	praat_addAction1 (classExcitationList, 0, U"Extract Excitation...", 0, 0, DO_ExcitationList_getItem);
+	praat_addAction1 (classExcitationList, 0, U"Synthesize", 0, 0, 0);
+	praat_addAction1 (classExcitationList, 2, U"Append", 0, 0, DO_ExcitationList_append);
+	praat_addAction1 (classExcitationList, 0, U"Convert", 0, 0, 0);
+	praat_addAction1 (classExcitationList, 0, U"To Pattern...", 0, 0, DO_ExcitationList_to_Pattern);
+	praat_addAction1 (classExcitationList, 0, U"To TableOfReal", 0, 0, DO_ExcitationList_to_TableOfReal);
 
-	praat_addAction2 (classExcitations, 1, classExcitation, 0, U"Add to Excitations", 0, 0, DO_Excitations_addItem);
+	praat_addAction2 (classExcitationList, 1, classExcitation, 0, U"Add to ExcitationList", 0, 0, DO_ExcitationList_addItem);
+	praat_addAction2 (classExcitationList, 1, classExcitation, 0, U"Add to Excitations", 0, praat_HIDDEN, DO_ExcitationList_addItem);
 
 	praat_addAction1 (classFileInMemory, 1, U"Show as code...", nullptr, 0, DO_FileInMemory_showAsCode);
 	praat_addAction1 (classFileInMemory, 1, U"Set id...", nullptr, 0, DO_FileInMemory_setId);
-	praat_addAction1 (classFileInMemory, 0, U"To FilesInMemory", nullptr, 0, DO_FileInMemory_to_FilesInMemory);
+	praat_addAction1 (classFileInMemory, 0, U"To FileInMemorySet", nullptr, 0, DO_FilesInMemory_to_FileInMemorySet);
+	praat_addAction1 (classFileInMemory, 0, U"To FilesInMemory", nullptr, praat_HIDDEN, DO_FilesInMemory_to_FileInMemorySet);
 
-	praat_addAction1 (classFilesInMemory, 1, U"Show as code...", nullptr, 0, DO_FilesInMemory_showAsCode);
-	praat_addAction1 (classFilesInMemory, 1, U"Show one file as code...", nullptr, 0, DO_FilesInMemory_showOneFileAsCode);
-	praat_addAction1 (classFilesInMemory, 2, U"Merge", nullptr, 0, DO_FilesInMemory_merge);
-	praat_addAction1 (classFilesInMemory, 0, U"To Strings (id)", nullptr, 0, DO_FilesInMemory_to_Strings_id);
+	praat_addAction1 (classFileInMemorySet, 1, U"Show as code...", nullptr, 0, DO_FileInMemorySet_showAsCode);
+	praat_addAction1 (classFileInMemorySet, 1, U"Show one file as code...", nullptr, 0, DO_FileInMemorySet_showOneFileAsCode);
+	praat_addAction1 (classFileInMemorySet, 2, U"Merge", nullptr, 0, DO_FileInMemorySets_merge);
+	praat_addAction1 (classFileInMemorySet, 0, U"To Strings (id)", nullptr, 0, DO_FileInMemorySet_to_Strings_id);
 
-	praat_addAction2 (classFilesInMemory, 1, classFileInMemory, 0, U"Add items to Collection", nullptr, 0, DO_FilesInMemory_addItems);
+	praat_addAction2 (classFileInMemorySet, 1, classFileInMemory, 0, U"Add items to Collection", nullptr, 0, DO_FileInMemorySet_addItems);
 
 	praat_addAction1 (classFormantFilter, 0, U"FormantFilter help", nullptr, 0, DO_FormantFilter_help);
 	praat_FilterBank_all_init (classFormantFilter);
 	praat_addAction1 (classFormantFilter, 0, U"Draw spectrum (slice)...", U"Draw filters...", praat_DEPTH_1 + praat_HIDDEN, DO_FormantFilter_drawSpectrum);
 	praat_addAction1 (classFormantFilter, 0, U"Draw filter functions...", U"Draw filters...",  praat_DEPTH_1 + praat_HIDDEN, DO_FormantFilter_drawFilterFunctions);
 	praat_addAction1 (classFormantFilter, 0, U"To Spectrogram", nullptr, 0, DO_FormantFilter_to_Spectrogram);
-	
-	
-	praat_addAction1 (classFormantGrid, 0, U"Draw...", U"Edit", praat_DEPTH_1 + praat_HIDDEN, DO_FormantGrid_draw);
 
+	praat_addAction1 (classFormantGrid, 0, U"Draw...", U"Edit", praat_DEPTH_1 + praat_HIDDEN, DO_FormantGrid_draw);
 
 	praat_addAction1 (classIntensity, 0, U"To TextGrid (silences)...", U"To IntensityTier (valleys)", 0, DO_Intensity_to_TextGrid_detectSilences);
 	praat_addAction1 (classIntensityTier, 0, U"To TextGrid (silences)...", nullptr, 0, DO_IntensityTier_to_TextGrid_detectSilences);
@@ -8818,7 +8856,6 @@ void praat_uvafon_David_init () {
 
 	praat_addAction2 (classMatrix, 1, classCategories, 1, U"To TableOfReal", 0, 0, DO_Matrix_Categories_to_TableOfReal);
 
-	
 	praat_addAction1 (classMelSpectrogram, 0, U"MelSpectrogram help", 0, 0, DO_MelSpectrogram_help);
 	praat_BandFilterSpectrogram_draw_init (classMelSpectrogram);
 	praat_addAction1 (classMelSpectrogram, 0, U"Paint image...", 0, 1, DO_MelSpectrogram_paintImage);
@@ -8841,7 +8878,6 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classMelFilter, 0, U"Paint...", U"Draw filter functions...", praat_DEPTH_1 + praat_HIDDEN, DO_MelFilter_paint); // deprecated 2014
 	praat_addAction1 (classMelFilter, 0, U"To MFCC...", 0, praat_HIDDEN, DO_MelFilter_to_MFCC); // deprecated 2014
 	praat_addAction1 (classMelFilter, 0, U"To MelSpectrogram", 0, 0, DO_MelFilter_to_MelSpectrogram);
-
 	
 	praat_addAction1 (classMFCC, 0, U"MFCC help", 0, 0, DO_MFCC_help);
 	praat_CC_init (classMFCC);
@@ -8864,7 +8900,6 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classPattern, 0, U"To Matrix", 0, 0, DO_Pattern_to_Matrix);
 
 	praat_addAction2 (classPattern, 1, classCategories, 1, U"To TableOfReal", 0, 0, DO_Matrix_Categories_to_TableOfReal);
-
 	praat_addAction2 (classPattern, 1, classCategories, 1, U"To Discriminant", 0, 0, DO_Pattern_and_Categories_to_Discriminant);
 
 	praat_addAction1 (classPCA, 0, U"PCA help", 0, 0, DO_PCA_help);
@@ -9104,7 +9139,6 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTable, 0, U"Extract rows where (mahalanobis)...", U"Extract rows where...", praat_DEPTH_1| praat_HIDDEN, DO_Table_extractRowsMahalanobisWhere);
 	praat_addAction1 (classTable, 0, U"-- Extract columns ----", U"Extract rows where (mahalanobis)...", praat_DEPTH_1| praat_HIDDEN, 0);
 	praat_addAction1 (classTable, 0, U"Extract column ranges...", U"-- Extract columns ----", praat_DEPTH_1| praat_HIDDEN, DO_Table_extractColumnRanges);
-	
 
 	praat_addAction1 (classTable, 0, U"To KlattTable", 0, praat_HIDDEN, DO_Table_to_KlattTable);
 	praat_addAction1 (classTable, 1, U"Get median absolute deviation...", U"Get standard deviation...", 1, DO_Table_getMedianAbsoluteDeviation);

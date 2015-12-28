@@ -139,7 +139,7 @@ void Polygon_reverseY (Polygon me) {
 void Polygon_Categories_draw (Polygon me, Categories thee, Graphics graphics, double xmin, double xmax, double ymin, double ymax, int garnish) {
 	double min, max, tmp;
 
-	if (my numberOfPoints != thy size) {
+	if (my numberOfPoints != thy size()) {
 		return;
 	}
 
@@ -565,15 +565,6 @@ void structVertex :: v_copy (Daata thee_Daata) {
 	thy processed = our processed;
 }
 
-static autoVertex Vertex_create () {
-	try {
-		autoVertex me = Thing_new (Vertex);
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"Vertex not created.");
-	}
-}
-
 Thing_define (Vertices, DLL) {
 	static int s_compareHook (DLLNode me, DLLNode thee) noexcept;
 	Data_CompareHook v_getCompareHook ()
@@ -585,15 +576,6 @@ Thing_implement (Vertices, DLL, 0);
 
 int structVertices :: s_compareHook (DLLNode me, DLLNode thee) noexcept {
 	return VERTEX (me) -> alpha < VERTEX (thee) -> alpha ? -1 : VERTEX (me) -> alpha > VERTEX (thee) -> alpha ? 1 : 0;
-}
-
-static autoVertices Vertices_create () {
-	try {
-		autoVertices me = Thing_new (Vertices);
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"Vertices not created.");
-	}
 }
 
 static void Vertices_addCopyBack (Vertices me, DLLNode n) {
@@ -1061,13 +1043,13 @@ static autoPolygon Vertices_to_Polygon (Vertices /* me */, DLLNode *ni) {
 	}
 }
 
-static autoCollection Vertices_to_Polygons (Vertices me) {
+static autoCollectionOfPolygon Vertices_to_Polygons (Vertices me) {
 	try {
-		autoCollection thee = Collection_create (10);
+		autoCollectionOfPolygon thee = CollectionOfPolygon_create ();
 		DLLNode ni = my front;
 		do {
 			autoPolygon p = Vertices_to_Polygon (me, & ni);
-			Collection_addItem_move (thee.peek(), p.move());
+			thy addItem_move (p.move());
 		} while (ni != 0);
 		return thee;
 	} catch (MelderError) {
@@ -1075,11 +1057,11 @@ static autoCollection Vertices_to_Polygons (Vertices me) {
 	}
 }
 
-static autoCollection Polygons_findClippings (Polygon me, bool use_myinterior, Polygon thee, bool use_thyinterior) {
+static autoCollectionOfPolygon Polygons_findClippings (Polygon me, bool use_myinterior, Polygon thee, bool use_thyinterior) {
 	try {
-		autoVertices s = Polygon_to_Vertices (me, true); // subject
+		autoVertices s = Polygon_to_Vertices (me, true);   // subject
 		long ns = s -> numberOfNodes;
-		autoVertices c = Polygon_to_Vertices (thee, true); // clip
+		autoVertices c = Polygon_to_Vertices (thee, true);   // clip
 		// long nc = c -> numberOfNodes;
 		double eps = 1e-15;
 
@@ -1088,14 +1070,14 @@ static autoCollection Polygons_findClippings (Polygon me, bool use_myinterior, P
 		Vertices_addIntersections (s.peek(), c.peek());
 		long nnewnodes = s -> numberOfNodes - ns;
 		int firstLocation = Polygon_getLocationOfPoint (thee, my x[1], my y[1], eps);
-		if (nnewnodes == 0) { // no crossings, either one completely inside the other or separate
-			autoCollection apc;
-			if (not use_myinterior and not use_thyinterior and firstLocation == Polygon_INSIDE) {
+		if (nnewnodes == 0) {   // no crossings, either one completely inside the other or separate
+			autoCollectionOfPolygon apc;
+			if (! use_myinterior && ! use_thyinterior && firstLocation == Polygon_INSIDE) {
 				autoPolygon ap = Data_copy (thee);
-				Collection_addItem_move (apc.peek(), ap.move());
+				apc -> addItem_move (ap.move());
 			} else {
 				autoPolygon ap = Data_copy (me);
-				Collection_addItem_move (apc.peek(), ap.move());
+				apc -> addItem_move (ap.move());
 			}
 			return apc;
 		}
@@ -1125,16 +1107,16 @@ static autoCollection Polygons_findClippings (Polygon me, bool use_myinterior, P
 		}
 		// phase 4: to Polygons
 
-		autoCollection pols = Vertices_to_Polygons (pgs.peek());
+		autoCollectionOfPolygon pols = Vertices_to_Polygons (pgs.peek());
 		return pols;
 	} catch (MelderError) {
 		Melder_throw (me, U": no union Polygon created.");
 	}
 }
 
-autoCollection Polygons_clip (Polygon subject, Polygon clipper) {
+autoCollectionOfPolygon Polygons_clip (Polygon subject, Polygon clipper) {
 	try {
-		autoCollection him = Polygons_findClippings (subject, true, clipper, true);
+		autoCollectionOfPolygon him = Polygons_findClippings (subject, true, clipper, true);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (subject, U": no union created.");
@@ -1143,9 +1125,9 @@ autoCollection Polygons_clip (Polygon subject, Polygon clipper) {
 
 autoPolygon Polygons_union (Polygon me, Polygon thee) {
 	try {
-		autoCollection him = Polygons_findClippings (me, false, thee, false);
+		autoCollectionOfPolygon him = Polygons_findClippings (me, false, thee, false);
 		//Melder_assert (his size == 1);
-		autoPolygon p ((Polygon) Collection_subtractItem (him.peek(), 1));
+		autoPolygon p = his subtractItem_move (1);
 		return p;
 	} catch (MelderError) {
 		Melder_throw (me, U": no union created.");

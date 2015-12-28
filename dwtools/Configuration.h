@@ -2,7 +2,7 @@
 #define _Configuration_h_
 /* Configuration.h
  *
- * Copyright (C) 1992-2011, 2015 David Weenink
+ * Copyright (C) 1992-2011,2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,9 +112,12 @@ autoConfiguration Configuration_createCarrollWishExample ();
 
 /************************** class Configurations **************************************/
 
-Thing_define (Configurations, Ordered) {
-};
+Collection_declare (OrderedOfConfiguration, OrderedOf, Configuration);
 
-autoConfigurations Configurations_create ();
+Thing_define (ConfigurationList, OrderedOfConfiguration) {
+	structConfigurationList () {
+		our classInfo = classConfigurationList;
+	}
+};
 
 #endif /* _Configuration_h_ */

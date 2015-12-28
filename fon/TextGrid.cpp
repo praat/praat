@@ -1760,7 +1760,7 @@ void TextGrid_correctRoundingErrors (TextGrid me) {
 	}
 }
 
-autoTextGrid TextGrids_concatenate (Collection me) {
+autoTextGrid TextGrids_concatenate (OrderedOf<structTextGrid>* me) {
 	try {
 		autoTextGrid thee = TextGrids_to_TextGrid_appendContinuous (me, false);
 		TextGrid_correctRoundingErrors (thee.peek());

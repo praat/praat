@@ -404,8 +404,8 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 }
 
 void Configuration_drawConcentrationEllipses (Configuration me, Graphics g, double scale, int confidence, const char32 *label, long d1, long d2, double xmin, double xmax, double ymin, double ymax, int fontSize, int garnish) {
-	autoSSCPs sscps = TableOfReal_to_SSCPs_byLabel (me);
-	SSCPs_drawConcentrationEllipses (sscps.peek(), g, scale, confidence, label, d1, d2, xmin, xmax, ymin, ymax, fontSize, garnish);
+	autoSSCPList sscps = TableOfReal_to_SSCPList_byLabel (me);
+	SSCPList_drawConcentrationEllipses (sscps.peek(), g, scale, confidence, label, d1, d2, xmin, xmax, ymin, ymax, fontSize, garnish);
 }
 
 autoConfiguration TableOfReal_to_Configuration (TableOfReal me) {
@@ -512,16 +512,6 @@ autoConfiguration Configuration_createCarrollWishExample () {
 
 /************ CONFIGURATIONS **************************************/
 
-Thing_implement (Configurations, Ordered, 0);
-
-autoConfigurations Configurations_create () {
-	try {
-		autoConfigurations me = Thing_new (Configurations);
-		Ordered_init (me.peek(), 10);
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"Configurations not created.");
-	}
-}
+Thing_implement (ConfigurationList, TableOfRealList, 0);
 
 /* End of file Configuration.cpp */

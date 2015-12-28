@@ -249,7 +249,7 @@ void FFNet_init (FFNet me, long numberOfInputs, long nodesInLayer1, long nodesIn
 
 void FFNet_setOutputCategories (FFNet me, Categories thee) {
 	autoCategories uniq = Categories_selectUniqueItems (thee);
-	if (uniq -> size == thy size) {
+	if (uniq -> size() == thy size()) {
 		my outputCategories = uniq.move();
 	}
 }
@@ -718,21 +718,21 @@ void FFNet_drawCostHistory (FFNet me, Graphics g, long iFrom, long iTo, double c
 
 autoCollection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidden2) {
 	try {
-		autoCollection c = Collection_create (3);
+		autoCollection collection = Collection_create ();
 		autoCategories uniq = Categories_sequentialNumbers (3);
 		autoFFNet me = FFNet_create (4, numberOfHidden1, numberOfHidden2, 3, false);
 		FFNet_setOutputCategories (me.peek(), uniq.peek());
 		autostring32 name = FFNet_createNameFromTopology (me.peek());
 		Thing_setName (me.peek(), name.peek());
-		Collection_addItem_move (c.peek(), me.move());
+		collection -> addItem_move (me.move());
 		autoTableOfReal iris = TableOfReal_createIrisDataset ();
 
 		/*
 		 * Scale data to interval [0-1]
 		 */
-		for (long i = 1; i <= 150; i++) {
-			for (long j = 1; j <= 4; j++) {
-				iris -> data[i][j] /= 10.0;
+		for (long i = 1; i <= 150; i ++) {
+			for (long j = 1; j <= 4; j ++) {
+				iris -> data [i] [j] /= 10.0;
 			}
 		}
 
@@ -741,9 +741,9 @@ autoCollection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidde
 		TableOfReal_to_Pattern_and_Categories (iris.peek(), 0, 0, 0, 0, & ap, & ac);
 		Thing_setName (ap.peek(), U"iris");
 		Thing_setName (ac.peek(), U"iris");
-		Collection_addItem_move (c.peek(), ap.move());
-		Collection_addItem_move (c.peek(), ac.move());
-		return c;
+		collection -> addItem_move (ap.move());
+		collection -> addItem_move (ac.move());
+		return collection;
 	} catch (MelderError) {
 		Melder_throw (U"Iris example not created.");
 	}

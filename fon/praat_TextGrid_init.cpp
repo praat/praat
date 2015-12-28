@@ -1287,8 +1287,12 @@ DO
 END2 }
 
 DIRECT2 (TextGrids_concatenate) {
-	autoCollection textGrids = praat_getSelectedObjects ();
-	autoTextGrid thee = TextGrids_concatenate (textGrids.peek());
+	OrderedOf <structTextGrid> textGrids;
+	LOOP {
+		iam (TextGrid);
+		textGrids. addItem_ref (me);
+	}
+	autoTextGrid thee = TextGrids_concatenate (& textGrids);
 	praat_new (thee.move(), U"chain");
 END2 }
 

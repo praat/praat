@@ -31,7 +31,7 @@ autoCrossCorrelationTable EEG_to_CrossCorrelationTable (EEG me, double startTime
 
 autoCovariance EEG_to_Covariance (EEG me, double startTime, double endTime, const char32 *channelRanges);
 
-autoCrossCorrelationTables EEG_to_CrossCorrelationTables (EEG me, double startTime, double endTime, double lagTime, long ncovars, const char32 *channelRanges);
+autoCrossCorrelationTableList EEG_to_CrossCorrelationTableList (EEG me, double startTime, double endTime, double lagTime, long ncovars, const char32 *channelRanges);
 
 autoPCA EEG_to_PCA (EEG me, double startTime, double endTime, const char32 *channelRanges, int fromCorrelation);
 

@@ -4,7 +4,7 @@
  *
  * Multi Dimensional Scaling
  *
- * Copyright (C) 1993-2011, 2015 David Weenink
+ * Copyright (C) 1993-2011,2015 David Weenink, 2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,52 +95,73 @@ void Salience_draw (Salience me, Graphics g, int xdimension, int ydimension, int
 /************************** class MDSVec ******************************/
 
 Thing_define (MDSVec, Daata) {
-	// new data:
-	public:
-		long nProximities, nPoints;
-		double *proximity;
-		long *iPoint, *jPoint;
-	// overridden methods:
-	protected:
-		virtual void v_destroy ();
+	long nProximities, nPoints;
+	double *proximity;
+	long *iPoint, *jPoint;
+
+	void v_destroy ()
+		override;
 };
 
 autoMDSVec MDSVec_create (long nObjects);
 
 /************** class MDSVecs *********************************/
 
-Thing_define (MDSVecs, Ordered) {
+Collection_declare (OrderedOfMDSVec, OrderedOf, MDSVec);
+
+Thing_define (MDSVecList, OrderedOfMDSVec) {
+	structMDSVecList () {
+		our classInfo = classMDSVecList;
+	}
 };
-
-autoMDSVecs MDSVecs_create ();
-
 
 autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, long numberOfDimensions, int scaling);
 
 /********************* class Proximities *******************************/
 
-Thing_define (Proximities, TablesOfReal) {
+Collection_declare (OrderedOfProximity, OrderedOf, Proximity);
+
+Thing_define (ProximityList, OrderedOfProximity) {
+	structProximityList () {
+		our classInfo = classProximityList;
+	}
+	TableOfRealList asTableOfRealList () {
+		return reinterpret_cast<TableOfRealList> (this);
+	}
 };
-
-void Proximities_init (Proximities me);
-
-autoProximities Proximities_create ();
 
 /****************** class Confusions **********************************/
 
-Thing_define (Confusions, Proximities) {
+Collection_declare (OrderedOfConfusion, OrderedOf, Confusion);
+
+Thing_define (ConfusionList, OrderedOfConfusion) {
+	structConfusionList () {
+		our classInfo = classConfusionList;
+	}
+	TableOfRealList asTableOfRealList () {
+		return reinterpret_cast<TableOfRealList> (this);
+	}
 };
 
-autoConfusions Confusions_create ();
-
-autoConfusion Confusions_sum (Confusions me);
+autoConfusion ConfusionList_sum (ConfusionList me);
 
 /************* class Distances **************************************/
 
-Thing_define (Distances, Proximities) {
+Collection_declare (OrderedOfDistance, OrderedOf, Distance);
+
+Thing_define (DistanceList, OrderedOfDistance) {
+	structDistanceList () {
+		our classInfo = classDistanceList;
+	}
+	ProximityList asProximityList () {
+		return reinterpret_cast<ProximityList> (this);
+	}
+	TableOfRealList asTableOfRealList () {
+		return reinterpret_cast<TableOfRealList> (this);
+	}
 };
 
-autoDistances Distances_create ();
+//Collection_implement (Distances, Proximities, 0);
 
 /**************** class ScalarProduct **************************************/
 
@@ -151,11 +172,16 @@ autoScalarProduct ScalarProduct_create (long numberOfPoints);
 
 /************** class ScalarProducts ********************************/
 
-Thing_define (ScalarProducts, TablesOfReal) {
+Collection_declare (OrderedOfScalarProduct, OrderedOf, ScalarProduct);
+
+Thing_define (ScalarProductList, OrderedOfScalarProduct) {
+	structScalarProductList () {
+		our classInfo = classScalarProductList;
+	}
+	TableOfRealList asTableOfRealList () {
+		return reinterpret_cast<TableOfRealList> (this);
+	}
 };
-
-autoScalarProducts ScalarProducts_create ();
-
 
 /************* class Dissimilarity *********************************/
 
@@ -213,11 +239,10 @@ Thing_define (RatioTransformator, Transformator) {
 autoRatioTransformator RatioTransformator_create (long numberOfPoints);
 
 Thing_define (MonotoneTransformator, Transformator) {
-	// new data:
-	public:
-		int tiesProcessing;
-	// overridden methods:
-		virtual autoDistance v_transform (MDSVec vec, Distance dist, Weight w);
+	int tiesProcessing;
+
+	autoDistance v_transform (MDSVec vec, Distance dist, Weight w)
+		override;
 };
 
 autoMonotoneTransformator MonotoneTransformator_create (long numberPoints);
@@ -228,10 +253,20 @@ void MonotoneTransformator_setTiesProcessing (MonotoneTransformator,
 
 /*************** class Dissimilarities ****************************/
 
-Thing_define (Dissimilarities, Proximities) {
+Collection_declare (OrderedOfDissimilarity, OrderedOf, Dissimilarity);
+
+Thing_define (DissimilarityList, OrderedOfDissimilarity) {
+	structDissimilarityList () {
+		our classInfo = classDissimilarityList;
+	}
+	ProximityList asProximityList () {
+		return reinterpret_cast<ProximityList> (this);
+	}
+	TableOfRealList asTableOfRealList () {
+		return reinterpret_cast<TableOfRealList> (this);
+	}
 };
 
-autoDissimilarities Dissimilarities_create ();
 
 /**************** class Similarity *****************************/
 
@@ -244,19 +279,18 @@ autoSimilarity Similarity_create (long numberOfPoints);
 /************** KRUSKAL *********************************************/
 
 Thing_define (Kruskal, Thing) {
-	// new data:
-	public:
-		int process;
-		int measurementLevel;
-		int conditionality;
-		autoConfiguration configuration;
-		autoProximities proximities;
-		int stress_formula;
-		autoMDSVec vec;
-		double **dx;
-		autoMinimizer minimizer;
-	// overridden methods:
-		virtual void v_destroy ();
+	int process;
+	int measurementLevel;
+	int conditionality;
+	autoConfiguration configuration;
+	autoProximityList proximities;
+	int stress_formula;
+	autoMDSVec vec;
+	double **dx;
+	autoMinimizer minimizer;
+
+	void v_destroy ()
+		override;
 };
 
 autoKruskal Kruskal_create (long numberOfpoints, long numberOfDimensions);
@@ -303,8 +337,7 @@ void Distance_Weight_smacofNormalize (Distance d, Weight w);
 
 autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissimilarity me, Configuration conf, Weight weight, Transformator t, double tolerance, long numberOfIterations, bool showProgress, double *stress);
 
-autoConfiguration Dissimilarity_Configuration_Weight_Transformator_multiSmacof (Dissimilarity me, Configuration conf, Weight w, Transformator t,	double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress);
-
+autoConfiguration Dissimilarity_Configuration_Weight_Transformator_multiSmacof (Dissimilarity me, Configuration conf, Weight w, Transformator t, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress);
 
 autoConfiguration Dissimilarity_Configuration_Weight_absolute_mds (Dissimilarity dis, Configuration cstart, Weight w, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress);
 
@@ -351,14 +384,13 @@ void Dissimilarity_Configuration_Weight_drawISplineRegression (Dissimilarity d, 
 
 autoDistance Dissimilarity_Configuration_Transformator_Weight_transform (Dissimilarity d, Configuration c, Transformator t, Weight w);
 
+
 /******** DISTANCE & SCALARPRODUCT *******************************/
 
-
-autoScalarProduct Distance_to_ScalarProduct (Distance me, int normalize);
+autoScalarProduct Distance_to_ScalarProduct (Distance me, bool normalize);
 
 
 /************** DISTANCE & PROXIMITY ********************************/
-
 
 void Proximity_Distance_drawScatterDiagram (Proximity me, Distance thee, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, int garnish);
 
@@ -372,12 +404,10 @@ autoConfiguration Covariance_to_Configuration (Covariance me, long numberOfDimen
 
 /************ CORRELATION & CONFIGURATION ************************/
 
-
 autoConfiguration Correlation_to_Configuration (Correlation me, long numberOfDimensions);
 
 
 /************** DISTANCE & CONFIGURATION **************************/
-
 
 autoDistance Configuration_to_Distance (Configuration me);
 /* Calculates distances between the points */
@@ -389,7 +419,6 @@ autoConfiguration Distance_to_Configuration_torsca (Distance me, int numberOfDim
 
 /************** DISSIMILARITY & CONFIGURATION ************************/
 
-
 autoConfiguration Dissimilarity_kruskal (Dissimilarity me, long numberOfDimensions, long metric, int processTies, int stress_formula, double tolerance, long numberOfIterations, long numberOfRepetitions);
 
 autoConfiguration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configuration him, int processTies, int stress_formula, double tolerance, long numberOfIterations, long numberOfRepetitions);
@@ -400,80 +429,65 @@ void Dissimilarity_Configuration_drawShepardDiagram (Dissimilarity me, Configura
 
 autoDistance Dissimilarity_Configuration_monotoneRegression (Dissimilarity dis, Configuration conf, int processTies);
 
-autoDistances Dissimilarities_Configuration_monotoneRegression (Dissimilarities dissims, Configuration conf, int processTies);
+autoDistanceList DissimilarityList_Configuration_monotoneRegression (DissimilarityList dissims, Configuration conf, int processTies);
 
 void Dissimilarity_Configuration_drawMonotoneRegression	(Dissimilarity me, Configuration him, Graphics g, int processTies, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, int garnish);
 
+
 /************** SIMILARITY & TABLESOFREAL ********************************/
 
+autoSimilarity DistanceList_to_Similarity_cc (DistanceList me, Weight weight);
 
-autoSimilarity Distances_to_Similarity_cc (Distances me, Weight weight);
-
-autoSimilarity Configurations_to_Similarity_cc (Configurations me, Weight weight);
+autoSimilarity ConfigurationList_to_Similarity_cc (ConfigurationList me, Weight weight);
 
 
 /************** DISSIMILARITY & DISTANCE *************************************/
-
 
 autoDistance Dissimilarity_to_Distance (Dissimilarity me, int scale);
 /* with optional scaling with "additive constant" */
 
 autoDissimilarity Distance_to_Dissimilarity (Distance me);
 
-autoDistance Dissimilarity_Distance_monotoneRegression (Dissimilarity me, Distance thee, int processTies);
+autoDistance Dissimilarity_Distance_monotoneRegression (Dissimilarity me, Distance thee, int tiesProcessingMethod);
 
 
 /************** DISSIMILARITY & CONFUSION ************************************/
-
 
 autoDissimilarity Confusion_to_Dissimilarity_pdf (Confusion me, double minimumConfusionLevel);
 
 
 /************** DISSIMILARITY & MDSVEC ***************************************/
 
-
 autoMDSVec Dissimilarity_to_MDSVec (Dissimilarity me);
 
-autoMDSVecs Dissimilarities_to_MDSVecs (Dissimilarities me);
+autoMDSVecList DissimilarityList_to_MDSVecList (DissimilarityList me);
 
 
 /************** DISSIMILARITY & SIMILARITY ***********************************/
-
 
 autoDissimilarity Similarity_to_Dissimilarity (Similarity me, double maximumDissimilarity);
 
 
 /************** DISSIMILARITY & WEIGHT ***********************************/
 
-
-
 autoWeight Dissimilarity_to_Weight (Dissimilarity me);
 
 
 /************** CONFUSION & SIMILARITY ***************************************/
 
-
-autoSimilarity Confusion_to_Similarity (Confusion me, int normalize, int symmetrizeMethod);
-
-
-/************** CONFUSION & DISTANCE *****************************************/
-
-
-autoDistance Confusion_to_Distance_pdf (Confusion me, int symmetrizeBefore, double maximumDistance);
+autoSimilarity Confusion_to_Similarity (Confusion me, bool normalize, int symmetrizeMethod);
 
 
 /************** DISSIMILARITIES & DISTANCES **********************************/
 
+autoDissimilarityList DistanceList_to_DissimilarityList (DistanceList me);
 
-autoDissimilarities Distances_to_Dissimilarities (Distances me);
-
-autoDistances Dissimilarities_to_Distances (Dissimilarities me, int scale);
+autoDistanceList DissimilarityList_to_DistanceList (DissimilarityList me, int scale);
 
 
 /************** DISTANCES & CONFIGURATION ************************************/
 
-
-void Distances_to_Configuration_ytl (Distances me, int numberOfDimensions, int normalizeScalarProducts, autoConfiguration *out1, autoSalience *out2);
+void DistanceList_to_Configuration_ytl (DistanceList me, int numberOfDimensions, int normalizeScalarProducts, autoConfiguration *out1, autoSalience *out2);
 /*
 	F.W. Young, Y. Takane & R. Lewyckyj (1978), Three notes on ALSCAL,
 	Psychometrika 43, 433-435.
@@ -481,68 +495,67 @@ void Distances_to_Configuration_ytl (Distances me, int numberOfDimensions, int n
 	 w: numberOfSources x numberOfDimensions or null
 */
 
-autoDistances Configurations_to_Distances (Configurations me);
+autoDistanceList ConfigurationList_to_DistanceList (ConfigurationList me);
 
 
 /************** MDSVEC(S) & DISTANCE(S) **********************************/
 
+autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int tiesProcessingMethod);
 
-autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int processTies);
-
-autoDistances MDSVecs_Distance_monotoneRegression (MDSVecs me, Distance thee, int processTies);
+autoDistanceList MDSVecList_Distance_monotoneRegression (MDSVecList me, Distance thee, int tiesProcessingMethod);
 
 
 /************** SCALARPRODUCT(S) & ...... **********************************/
 
 void ScalarProduct_Configuration_getVariances (ScalarProduct me, Configuration thee, double *varianceExplained, double *varianceTotal);
 
-void ScalarProducts_Configuration_Salience_vaf (ScalarProducts me, Configuration thee, Salience him, double *vaf);
+void ScalarProductList_Configuration_Salience_vaf (ScalarProductList me, Configuration thee, Salience him, double *vaf);
 
-autoScalarProducts Distances_to_ScalarProducts (Distances me, int normalize);
+autoScalarProductList DistanceList_to_ScalarProductList (DistanceList me, bool normalize);
 
-void ScalarProducts_to_Configuration_ytl (ScalarProducts me, int numberOfDimensions, autoConfiguration *out1, autoSalience *out2);
+void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfDimensions, autoConfiguration *out1, autoSalience *out2);
 
-void ScalarProducts_Configuration_Salience_indscal (ScalarProducts sp, Configuration conf, Salience weights, double tolerance, long numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2, double *vaf);
+void ScalarProductList_Configuration_Salience_indscal (ScalarProductList sp, Configuration conf, Salience weights, double tolerance, long numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2, double *vaf);
+
 
 /************** INDSCAL & ....... ***********************************/
 
-
-void Dissimilarities_indscal (Dissimilarities me, long numberOfDimensions, int processTies, int normalizeScalarProducts, double tolerance,
+void DissimilarityList_indscal (DissimilarityList me, long numberOfDimensions, int tiesProcessingMethod, bool normalizeScalarProducts, double tolerance,
 	long numberOfIterations, long numberOfRepetitions, bool showProgress, autoConfiguration *out1, autoSalience *out2);
 
-void Distances_indscal (Distances me, long numberOfDimensions, int normalizeScalarProducts, double tolerance, long numberOfIterations,
+void DistanceList_indscal (DistanceList me, long numberOfDimensions, bool normalizeScalarProducts, double tolerance, long numberOfIterations,
 	long numberOfRepetitions, bool showProgress, autoConfiguration *out1, autoSalience *out2);
 
-void Dissimilarities_Configuration_indscal (Dissimilarities me, Configuration conf, int processTies, int normalizeScalarProducts,
+void DissimilarityList_Configuration_indscal (DissimilarityList me, Configuration conf, int tiesProcessingMethod, bool normalizeScalarProducts,
 	double tolerance, long numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2);
 
-void Distances_Configuration_indscal (Distances dists, Configuration conf, int normalizeScalarProducts, double tolerance, long numberOfIterations,
+void DistanceList_Configuration_indscal (DistanceList dists, Configuration conf, bool normalizeScalarProducts, double tolerance, long numberOfIterations,
 	bool showProgress, autoConfiguration *out1, autoSalience *out2);
 
-void Dissimilarities_Configuration_Salience_indscal (Dissimilarities dissims, Configuration conf, Salience w, int processTies,
-	int normalizeScalarProducts, double tolerance, long numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2, double *vaf);
+void DissimilarityList_Configuration_Salience_indscal (DissimilarityList dissims, Configuration conf, Salience w, int tiesProcessingMethod,
+	bool normalizeScalarProducts, double tolerance, long numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2, double *vaf);
 
-autoDistances MDSVecs_Configuration_Salience_monotoneRegression (MDSVecs vecs, Configuration conf, Salience weights, int processTies);
+autoDistanceList MDSVecList_Configuration_Salience_monotoneRegression (MDSVecList vecs, Configuration conf, Salience weights, int tiesProcessingMethod);
 
-void Distances_Configuration_Salience_indscal (Distances dists, Configuration conf, Salience weights, int normalizeScalarProducts, double tolerance, long numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2, double *vaf);
+void DistanceList_Configuration_Salience_indscal (DistanceList dists, Configuration conf, Salience weights, bool normalizeScalarProducts, double tolerance, long numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2, double *vaf);
 
-void Distances_Configuration_Salience_vaf (Distances me, Configuration thee, Salience him, int normalizeScalarProducts, double *vaf);
+void DistanceList_Configuration_Salience_vaf (DistanceList me, Configuration thee, Salience him, bool normalizeScalarProducts, double *vaf);
 
-void Dissimilarities_Configuration_Salience_vaf (Dissimilarities me, Configuration thee,
-	Salience him, int processTies, int normalizeScalarProducts, double *vaf);
+void DissimilarityList_Configuration_Salience_vaf (DissimilarityList me, Configuration thee,
+	Salience him, int tiesProcessingMethod, bool normalizeScalarProducts, double *vaf);
 
-void Distances_Configuration_vaf (Distances me, Configuration thee, int normalizeScalarProducts, double *vaf);
+void DistanceList_Configuration_vaf (DistanceList me, Configuration thee, bool normalizeScalarProducts, double *vaf);
 
-void Dissimilarities_Configuration_vaf (Dissimilarities me, Configuration thee, int processTies, int normalizeScalarProducts, double *vaf);
+void DissimilarityList_Configuration_vaf (DissimilarityList me, Configuration thee, int tiesProcessingMethod, bool normalizeScalarProducts, double *vaf);
 
-autoSalience ScalarProducts_Configuration_to_Salience (ScalarProducts me, Configuration him);
+autoSalience ScalarProductList_Configuration_to_Salience (ScalarProductList me, Configuration him);
 
-autoSalience Distances_Configuration_to_Salience (Distances me, Configuration him, int normalizeScalarProducts);
+autoSalience DistanceList_Configuration_to_Salience (DistanceList me, Configuration him, bool normalizeScalarProducts);
 
-autoSalience Dissimilarities_Configuration_to_Salience (Dissimilarities me, Configuration him, int processTies, int normalizeScalarProducts);
+autoSalience DissimilarityList_Configuration_to_Salience (DissimilarityList me, Configuration him, int processTies, bool normalizeScalarProducts);
 
 
-/********* Casts from & to TableOfReal *****************************/
+/********* Conversions from & to TableOfReal *****************************/
 
 autoDissimilarity TableOfReal_to_Dissimilarity (TableOfReal me);
 
@@ -556,8 +569,8 @@ autoWeight TableOfReal_to_Weight (TableOfReal me);
 
 autoScalarProduct TableOfReal_to_ScalarProduct (TableOfReal me);
 
-/**************  EXAMPLES  ***************************************************/
 
+/**************  EXAMPLES  ***************************************************/
 
 autoDissimilarity Dissimilarity_createLetterRExample (double noiseRange);
 

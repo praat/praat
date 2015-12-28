@@ -2,7 +2,7 @@
 #define _ICA_h_
 /* ICA.h
  *
- * Copyright (C) 2010-2014, 2015 David Weenink
+ * Copyright (C) 2010-2014,2015 David Weenink, 2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,12 @@ Thing_define (CrossCorrelationTable, SSCP) {
 		override;
 };
 
-Thing_define (CrossCorrelationTables, Ordered) {
+Collection_declare (OrderedOfCrossCorrelationTable, OrderedOf, CrossCorrelationTable);
+
+Thing_define (CrossCorrelationTableList, OrderedOfCrossCorrelationTable) {
+	structCrossCorrelationTableList () {
+		our classInfo = classCrossCorrelationTableList;
+	}
 	void v_info ()
 		override;
 };
@@ -65,13 +70,11 @@ double CrossCorrelationTable_getDiagonalityMeasure (CrossCorrelationTable me);
 
 autoCrossCorrelationTable CrossCorrelationTable_and_Diagonalizer_diagonalize (CrossCorrelationTable me, Diagonalizer thee);
 
-autoCrossCorrelationTables CrossCorrelationTables_create ();
+double CrossCorrelationTableList_getDiagonalityMeasure (CrossCorrelationTableList me, double *w, long start, long end);
 
-double CrossCorrelationTables_getDiagonalityMeasure (CrossCorrelationTables me, double *w, long start, long end);
+double CrossCorrelationTableList_and_Diagonalizer_getDiagonalityMeasure (CrossCorrelationTableList me, Diagonalizer thee, double *w, long start, long end);
 
-double CrossCorrelationTables_and_Diagonalizer_getDiagonalityMeasure (CrossCorrelationTables me, Diagonalizer thee, double *w, long start, long end);
-
-autoCrossCorrelationTables CrossCorrelationTables_createTestSet (long dimension, long n, int firstPositiveDefinite, double sigma);
+autoCrossCorrelationTableList CrossCorrelationTableList_createTestSet (long dimension, long n, int firstPositiveDefinite, double sigma);
 
 autoMixingMatrix MixingMatrix_create (long numberOfChannels, long numberOfComponents);
 
@@ -91,19 +94,19 @@ autoSound Sound_to_Sound_BSS (Sound me, double startTime, double endTime, long n
 autoSound Sound_whitenChannels (Sound me, double varianceFraction);
 autoSound Sound_and_Covariance_whitenChannels (Sound me, Covariance thee, double varianceFraction);
 
-void MixingMatrix_and_CrossCorrelationTables_improveUnmixing (MixingMatrix me, CrossCorrelationTables thee, long maxNumberOfIterations, double tol, int method);
+void MixingMatrix_and_CrossCorrelationTableList_improveUnmixing (MixingMatrix me, CrossCorrelationTableList thee, long maxNumberOfIterations, double tol, int method);
 
 /*
 	Determine the matrix that diagonalizes a series of CrossCorrelationTables as well as possible.
 */
-autoDiagonalizer CrossCorrelationTables_to_Diagonalizer (CrossCorrelationTables me, long maxNumberOfIterations, double tol, int method);
+autoDiagonalizer CrossCorrelationTableList_to_Diagonalizer (CrossCorrelationTableList me, long maxNumberOfIterations, double tol, int method);
 
-void Diagonalizer_and_CrossCorrelationTables_improveDiagonality (Diagonalizer me, CrossCorrelationTables thee, long maxNumberOfIterations, double tol, int method);
+void Diagonalizer_and_CrossCorrelationTableList_improveDiagonality (Diagonalizer me, CrossCorrelationTableList thee, long maxNumberOfIterations, double tol, int method);
 
 /*
 	Determine V*C[k]*V' for k=1..n, where V is the diagonalizer matrix and C[k} the k-th CrossCorrelationTable.
 */
-autoCrossCorrelationTables CrossCorrelationTables_and_Diagonalizer_diagonalize (CrossCorrelationTables me, Diagonalizer thee);
+autoCrossCorrelationTableList CrossCorrelationTableList_and_Diagonalizer_diagonalize (CrossCorrelationTableList me, Diagonalizer thee);
 
 
 autoDiagonalizer MixingMatrix_to_Diagonalizer (MixingMatrix me);
@@ -124,7 +127,7 @@ autoCovariance Sound_to_Covariance_channels (Sound me, double startTime, double 
 /*
 	Determine a CrossCorrelationTable for lags (k-1)*lagStep, where k = 1...n.
 */
-autoCrossCorrelationTables Sound_to_CrossCorrelationTables (Sound me, double startTime, double endTime, double lagStep, long n);
+autoCrossCorrelationTableList Sound_to_CrossCorrelationTableList (Sound me, double startTime, double endTime, double lagStep, long n);
 
 autoMixingMatrix TableOfReal_to_MixingMatrix (TableOfReal me);
 

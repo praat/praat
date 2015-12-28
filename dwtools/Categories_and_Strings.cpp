@@ -26,16 +26,16 @@
 
 autoStrings Categories_to_Strings (Categories me) {
 	try {
-		if (my size < 1) {
+		if (my size() < 1) {
 			Melder_throw (U"No elements.");
 		}
 		autoStrings thee = Thing_new (Strings);
-		thy strings = NUMvector<char32 *> (1, my size);
-		thy numberOfStrings = my size;
+		thy strings = NUMvector<char32 *> (1, my size());
+		thy numberOfStrings = my size();
 
-		for (long i = 1; i <= my size; i++) {
-			SimpleString s = (SimpleString) my item[i];
-			thy strings[i] = Melder_dup (s -> string);
+		for (long i = 1; i <= my size(); i ++) {
+			SimpleString s = my _item [i];
+			thy strings [i] = Melder_dup (s -> string);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -49,11 +49,11 @@ autoCategories Strings_to_Categories (Strings me) {
 			Melder_throw (U"Empty strings.");
 		}
 		autoCategories thee = Thing_new (Categories);
-		Categories_init (thee.peek(), my numberOfStrings);
+		thy _grow (my numberOfStrings);
 
 		for (long i = 1; i <= my numberOfStrings; i++) {
-			autoSimpleString s = SimpleString_create (my strings[i]);
-			Collection_addItem_move (thee.peek(), s.move());
+			autoSimpleString s = SimpleString_create (my strings [i]);
+			thy addItem_move (s.move());
 		}
 		return thee;
 	} catch (MelderError) {

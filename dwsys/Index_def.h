@@ -24,6 +24,7 @@
 
 #define ooSTRUCT Index
 oo_DEFINE_CLASS (Index, Daata)
+
 	oo_AUTO_OBJECT (Ordered, 0, classes)
 	oo_LONG (numberOfElements)
 	oo_LONG_VECTOR (classIndex, numberOfElements)
@@ -36,9 +37,12 @@ oo_DEFINE_CLASS (Index, Daata)
 oo_END_CLASS(Index)	
 #undef ooSTRUCT
 
+
 #define ooSTRUCT StringsIndex
 oo_DEFINE_CLASS (StringsIndex, Index)
+
 oo_END_CLASS(StringsIndex)
 #undef ooSTRUCT
+
 
 /* End of file Index_def.h */	

@@ -40,12 +40,16 @@ Thing_define (Command, Thing) {
 
 void Command_init (Command me, const char32 *name, Thing boss, Command_Callback execute, Command_Callback undo);
 
-	
 int Command_do (Command me);
 
 int Command_undo (Command me);
 
-Thing_define (CommandHistory, Ordered) {
+Collection_declare (OrderedOfCommand, OrderedOf, Command);
+
+Thing_define (CommandHistory, OrderedOfCommand) {
+	structCommandHistory () {
+		our classInfo = classCommandHistory;
+	}
 	long current;
 };
 
@@ -53,8 +57,6 @@ Thing_define (CommandHistory, Ordered) {
 /* Queries and insertions are at the current position */
 /* Invariants: */
 /*	0 <= current <= size + 1; */
-
-autoCommandHistory CommandHistory_create (long maximumCapacity);
 
 void CommandHistory_forth (CommandHistory me);
 /* Precondition: ! offright */
