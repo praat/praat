@@ -38,19 +38,10 @@ Thing_define (CrossCorrelationTable, SSCP) {
 		override;
 };
 
-Collection_declare (OrderedOfCrossCorrelationTable, OrderedOf, CrossCorrelationTable);
-
-Thing_define (CrossCorrelationTableList, OrderedOfCrossCorrelationTable) {
-	structCrossCorrelationTableList () {
-		our classInfo = classCrossCorrelationTableList;
-	}
+Collection_define (CrossCorrelationTableList, OrderedOf, CrossCorrelationTable) {
 	void v_info ()
 		override;
 };
-
-inline static autoCrossCorrelationTableList CrossCorrelationTableList_create () {
-	return Thing_new (CrossCorrelationTableList);
-}
 
 /*
 	Cell [i,j] of a CrossCorrelationTable contains the cross-correlation between signal i and signal j (for one particular lag time).

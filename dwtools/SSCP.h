@@ -35,32 +35,14 @@ Thing_define (Correlation, SSCP) {
 	Ordered collection of SSCP's
 	All SSCP's must have the same dimensions and labels.
 */
-Collection_declare (OrderedOfSSCP, OrderedOf, SSCP)
-
-Thing_define (SSCPList, OrderedOfSSCP) {
-	structSSCPList () {
-		our classInfo = classSSCPList;
-	}
+Collection_define (SSCPList, OrderedOf, SSCP) {
 };
 
-inline static autoSSCPList SSCPList_create () {
-	return Thing_new (SSCPList);
-}
-
-Collection_declare (OrderedOfCovariance, OrderedOf, Covariance)
-
-Thing_define (CovarianceList, OrderedOfCovariance) {
-	structCovarianceList () {
-		our classInfo = classCovarianceList;
-	}
+Collection_define (CovarianceList, OrderedOf, Covariance) {
 	SSCPList asSSCPList () {
 		return reinterpret_cast<SSCPList> (this);
 	}
 };
-
-inline static autoCovarianceList CovarianceList_create () {
-	return Thing_new (CovarianceList);
-}
 
 void SSCP_init (SSCP me, long dimension, long storage);
 
@@ -269,4 +251,5 @@ void SSCP_expandLowerCholesky (SSCP me); // create lower square root of covarian
 
 void SSCP_unExpandLowerCholesky (SSCP me);
 
-#endif /* _SSCP_h_ */
+/* End of file SSCP.h */
+#endif

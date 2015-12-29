@@ -76,12 +76,9 @@ autoTableOfReal TableOfReal_extractColumnsWhere (TableOfReal me, const char32 *c
 autoStrings TableOfReal_extractRowLabelsAsStrings (TableOfReal me);
 autoStrings TableOfReal_extractColumnLabelsAsStrings (TableOfReal me);
 
-Collection_declare (OrderedOfTableOfReal, OrderedOf, TableOfReal);
+#pragma mark - class TableOfRealList
 
-Thing_define (TableOfRealList, OrderedOfTableOfReal) {
-	structTableOfRealList () {
-		our classInfo = classTableOfRealList;
-	}
+Collection_define (TableOfRealList, OrderedOf, TableOfReal) {
 };
 
 /* End of file TableOfReal.h */

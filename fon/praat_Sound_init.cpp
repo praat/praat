@@ -178,57 +178,57 @@ DIRECT2 (LongSound_view) {
 END2 }
 
 FORM_WRITE2 (LongSound_writeToAifcFile, U"Save as AIFC file", nullptr, U"aifc") {
-	OrderedOf <structSampled> list;
+	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
-		list. addItem_ref (me);
+		list -> addItem_ref (me);
 	}
-	LongSound_concatenate (& list, file, Melder_AIFC, 16);
+	LongSound_concatenate (list.get(), file, Melder_AIFC, 16);
 END2 }
 
 FORM_WRITE2 (LongSound_writeToAiffFile, U"Save as AIFF file", nullptr, U"aiff") {
-	OrderedOf <structSampled> list;
+	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
-		list. addItem_ref (me);
+		list -> addItem_ref (me);
 	}
-	LongSound_concatenate (& list, file, Melder_AIFF, 16);
+	LongSound_concatenate (list.get(), file, Melder_AIFF, 16);
 END2 }
 
 FORM_WRITE2 (LongSound_writeToNextSunFile, U"Save as NeXT/Sun file", nullptr, U"au") {
-	OrderedOf <structSampled> list;
+	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
-		list. addItem_ref (me);
+		list -> addItem_ref (me);
 	}
-	LongSound_concatenate (& list, file, Melder_NEXT_SUN, 16);
+	LongSound_concatenate (list.get(), file, Melder_NEXT_SUN, 16);
 END2 }
 
 FORM_WRITE2 (LongSound_writeToNistFile, U"Save as NIST file", nullptr, U"nist") {
-	OrderedOf <structSampled> list;
+	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
-		list. addItem_ref (me);
+		list -> addItem_ref (me);
 	}
-	LongSound_concatenate (& list, file, Melder_NIST, 16);
+	LongSound_concatenate (list.get(), file, Melder_NIST, 16);
 END2 }
 
 FORM_WRITE2 (LongSound_writeToFlacFile, U"Save as FLAC file", nullptr, U"flac") {
-	OrderedOf <structSampled> list;
+	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
-		list. addItem_ref (me);
+		list -> addItem_ref (me);
 	}
-	LongSound_concatenate (& list, file, Melder_FLAC, 16);
+	LongSound_concatenate (list.get(), file, Melder_FLAC, 16);
 END2 }
 
 FORM_WRITE2 (LongSound_writeToWavFile, U"Save as WAV file", nullptr, U"wav") {
-	OrderedOf <structSampled> list;
+	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
-		list. addItem_ref (me);
+		list -> addItem_ref (me);
 	}
-	LongSound_concatenate (& list, file, Melder_WAV, 16);
+	LongSound_concatenate (list.get(), file, Melder_WAV, 16);
 END2 }
 
 FORM_WRITE2 (LongSound_writeLeftChannelToAifcFile, U"Save left channel as AIFC file", nullptr, U"aifc") {
@@ -331,57 +331,57 @@ END2 }
 /********** LONGSOUND & SOUND **********/
 
 FORM_WRITE2 (LongSound_Sound_writeToAifcFile, U"Save as AIFC file", nullptr, U"aifc") {
-	OrderedOf <structSampled> list;
+	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
-		list. addItem_ref (me);
+		list -> addItem_ref (me);
 	}
-	LongSound_concatenate (& list, file, Melder_AIFC, 16);
+	LongSound_concatenate (list.get(), file, Melder_AIFC, 16);
 END2 }
 
 FORM_WRITE2 (LongSound_Sound_writeToAiffFile, U"Save as AIFF file", nullptr, U"aiff") {
-	OrderedOf <structSampled> list;
+	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
-		list. addItem_ref (me);
+		list -> addItem_ref (me);
 	}
-	LongSound_concatenate (& list, file, Melder_AIFF, 16);
+	LongSound_concatenate (list.get(), file, Melder_AIFF, 16);
 END2 }
 
 FORM_WRITE2 (LongSound_Sound_writeToNextSunFile, U"Save as NeXT/Sun file", nullptr, U"au") {
-	OrderedOf <structSampled> list;
+	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
-		list. addItem_ref (me);
+		list -> addItem_ref (me);
 	}
-	LongSound_concatenate (& list, file, Melder_NEXT_SUN, 16);
+	LongSound_concatenate (list.get(), file, Melder_NEXT_SUN, 16);
 END2 }
 
 FORM_WRITE2 (LongSound_Sound_writeToNistFile, U"Save as NIST file", nullptr, U"nist") {
-	OrderedOf <structSampled> list;
+	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
-		list. addItem_ref (me);
+		list -> addItem_ref (me);
 	}
-	LongSound_concatenate (& list, file, Melder_NIST, 16);
+	LongSound_concatenate (list.get(), file, Melder_NIST, 16);
 END2 }
 
 FORM_WRITE2 (LongSound_Sound_writeToFlacFile, U"Save as FLAC file", nullptr, U"flac") {
-	OrderedOf <structSampled> list;
+	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
-		list. addItem_ref (me);
+		list -> addItem_ref (me);
 	}
-	LongSound_concatenate (& list, file, Melder_FLAC, 16);
+	LongSound_concatenate (list.get(), file, Melder_FLAC, 16);
 END2 }
 
 FORM_WRITE2 (LongSound_Sound_writeToWavFile, U"Save as WAV file", nullptr, U"wav") {
-	OrderedOf <structSampled> list;
+	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
-		list. addItem_ref (me);
+		list -> addItem_ref (me);
 	}
-	LongSound_concatenate (& list, file, Melder_WAV, 16);
+	LongSound_concatenate (list.get(), file, Melder_WAV, 16);
 END2 }
 
 /********** SOUND **********/
@@ -1530,21 +1530,21 @@ DIRECT2 (Sound_reverse) {
 END2 }
 
 FORM_WRITE2 (Sound_saveAs24BitWavFile, U"Save as 24-bit WAV file", nullptr, U"wav") {
-	OrderedOf <structSampled> list;
+	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
-		list. addItem_ref (me);
+		list -> addItem_ref (me);
 	}
-	LongSound_concatenate (& list, file, Melder_WAV, 24);
+	LongSound_concatenate (list.get(), file, Melder_WAV, 24);
 END2 }
 
 FORM_WRITE2 (Sound_saveAs32BitWavFile, U"Save as 32-bit WAV file", nullptr, U"wav") {
-	OrderedOf <structSampled> list;
+	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
-		list. addItem_ref (me);
+		list -> addItem_ref (me);
 	}
-	LongSound_concatenate (& list, file, Melder_WAV, 32);
+	LongSound_concatenate (list.get(), file, Melder_WAV, 32);
 END2 }
 
 FORM (Sound_scalePeak, U"Sound: Scale peak", U"Sound: Scale peak...") {
@@ -2124,30 +2124,30 @@ END
 #endif
 
 FORM_WRITE2 (Sound_writeToAifcFile, U"Save as AIFC file", nullptr, U"aifc") {
-	OrderedOf <structSampled> list;
+	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
-		list. addItem_ref (me);
+		list -> addItem_ref (me);
 	}
-	LongSound_concatenate (& list, file, Melder_AIFC, 16);
+	LongSound_concatenate (list.get(), file, Melder_AIFC, 16);
 END2 }
 
 FORM_WRITE2 (Sound_writeToAiffFile, U"Save as AIFF file", nullptr, U"aiff") {
-	OrderedOf <structSampled> list;
+	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
-		list. addItem_ref (me);
+		list -> addItem_ref (me);
 	}
-	LongSound_concatenate (& list, file, Melder_AIFF, 16);
+	LongSound_concatenate (list.get(), file, Melder_AIFF, 16);
 END2 }
 
 FORM_WRITE2 (Sound_writeToFlacFile, U"Save as FLAC file", nullptr, U"flac") {
-	OrderedOf <structSampled> list;
+	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
-		list. addItem_ref (me);
+		list -> addItem_ref (me);
 	}
-	LongSound_concatenate (& list, file, Melder_FLAC, 16);
+	LongSound_concatenate (list.get(), file, Melder_FLAC, 16);
 END2 }
 
 FORM_WRITE2 (Sound_writeToKayFile, U"Save as Kay sound file", nullptr, U"kay") {
@@ -2158,21 +2158,21 @@ FORM_WRITE2 (Sound_writeToKayFile, U"Save as Kay sound file", nullptr, U"kay") {
 END2 }
 
 FORM_WRITE2 (Sound_writeToNextSunFile, U"Save as NeXT/Sun file", nullptr, U"au") {
-	OrderedOf <structSampled> list;
+	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
-		list. addItem_ref (me);
+		list -> addItem_ref (me);
 	}
-	LongSound_concatenate (& list, file, Melder_NEXT_SUN, 16);
+	LongSound_concatenate (list.get(), file, Melder_NEXT_SUN, 16);
 END2 }
 
 FORM_WRITE2 (Sound_writeToNistFile, U"Save as NIST file", nullptr, U"nist") {
-	OrderedOf <structSampled> list;
+	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
-		list. addItem_ref (me);
+		list -> addItem_ref (me);
 	}
-	LongSound_concatenate (& list, file, Melder_NIST, 16);
+	LongSound_concatenate (list.get(), file, Melder_NIST, 16);
 END2 }
 
 FORM_WRITE2 (Sound_saveAsRaw8bitSignedFile, U"Save as raw 8-bit signed sound file", nullptr, U"8sig") {
@@ -2299,21 +2299,21 @@ FORM_WRITE2 (Sound_writeToStereoWavFile, U"Save as stereo WAV file", nullptr, U"
 END2 }
 
 FORM_WRITE2 (Sound_writeToSunAudioFile, U"Save as NeXT/Sun file", nullptr, U"au") {
-	OrderedOf <structSampled> list;
+	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
-		list. addItem_ref (me);
+		list -> addItem_ref (me);
 	}
-	LongSound_concatenate (& list, file, Melder_NEXT_SUN, 16);
+	LongSound_concatenate (list.get(), file, Melder_NEXT_SUN, 16);
 END2 }
 
 FORM_WRITE2 (Sound_writeToWavFile, U"Save as WAV file", nullptr, U"wav") {
-	OrderedOf <structSampled> list;
+	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
-		list. addItem_ref (me);
+		list -> addItem_ref (me);
 	}
-	LongSound_concatenate (& list, file, Melder_WAV, 16);
+	LongSound_concatenate (list.get(), file, Melder_WAV, 16);
 END2 }
 
 /***** STOP *****/

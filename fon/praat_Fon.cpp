@@ -2047,13 +2047,13 @@ END2 }
 /***** LTAS *****/
 
 DIRECT2 (Ltases_average) {
-	CollectionOf<structLtas> ltases;
+	autoLtasBag ltases = LtasBag_create ();
 	LOOP {
 		iam (Ltas);
-		ltases. addItem_ref (me);
+		ltases -> addItem_ref (me);
 	}
-	autoLtas thee = Ltases_average (& ltases);
-	praat_new (thee.move(), U"averaged");
+	autoLtas result = Ltases_average (ltases.get());
+	praat_new (result.move(), U"averaged");
 END2 }
 
 FORM (Ltas_computeTrendLine, U"Ltas: Compute trend line", U"Ltas: Compute trend line...") {
@@ -2079,8 +2079,12 @@ DO
 	LOOP {
 		iam (Ltas);
 		autoPraatPicture picture;
-		Ltas_draw (me, GRAPHICS, GET_REAL (U"left Frequency range"), GET_REAL (U"right Frequency range"),
-			GET_REAL (U"left Power range"), GET_REAL (U"right Power range"), GET_INTEGER (U"Garnish"), U"Bars");
+		Ltas_draw (me, GRAPHICS,
+			GET_REAL (U"left Frequency range"),
+			GET_REAL (U"right Frequency range"),
+			GET_REAL (U"left Power range"),
+			GET_REAL (U"right Power range"),
+			GET_INTEGER (U"Garnish"), U"Bars");
 	}
 END2 }
 
@@ -2101,8 +2105,13 @@ DO_ALTERNATIVE (old_Ltas_draw)
 	LOOP {
 		iam (Ltas);
 		autoPraatPicture picture;
-		Ltas_draw (me, GRAPHICS, GET_REAL (U"left Frequency range"), GET_REAL (U"right Frequency range"),
-			GET_REAL (U"left Power range"), GET_REAL (U"right Power range"), GET_INTEGER (U"Garnish"), GET_STRING (U"Drawing method"));
+		Ltas_draw (me, GRAPHICS,
+			GET_REAL (U"left Frequency range"),
+			GET_REAL (U"right Frequency range"),
+			GET_REAL (U"left Power range"),
+			GET_REAL (U"right Power range"),
+			GET_INTEGER (U"Garnish"),
+			GET_STRING (U"Drawing method"));
 	}
 END2 }
 
@@ -2160,7 +2169,9 @@ FORM (Ltas_getFrequencyOfMaximum, U"Ltas: Get frequency of maximum", U"Ltas: Get
 DO
 	Ltas me = FIRST (Ltas);
 	double frequency = Vector_getXOfMaximum (me,
-		GET_REAL (U"From frequency"), GET_REAL (U"To frequency"), GET_INTEGER (U"Interpolation") - 1);
+		GET_REAL (U"From frequency"),
+		GET_REAL (U"To frequency"),
+		GET_INTEGER (U"Interpolation") - 1);
 	Melder_informationReal (frequency, U"hertz");
 END2 }
 
@@ -2177,7 +2188,9 @@ FORM (Ltas_getFrequencyOfMinimum, U"Ltas: Get frequency of minimum", U"Ltas: Get
 DO
 	Ltas me = FIRST (Ltas);
 	double frequency = Vector_getXOfMinimum (me,
-		GET_REAL (U"From frequency"), GET_REAL (U"To frequency"), GET_INTEGER (U"Interpolation") - 1);
+		GET_REAL (U"From frequency"),
+		GET_REAL (U"To frequency"),
+		GET_INTEGER (U"Interpolation") - 1);
 	Melder_informationReal (frequency, U"hertz");
 END2 }
 
@@ -2226,7 +2239,9 @@ FORM (Ltas_getMaximum, U"Ltas: Get maximum", U"Ltas: Get maximum...") {
 DO
 	Ltas me = FIRST (Ltas);
 	double maximum = Vector_getMaximum (me,
-		GET_REAL (U"From frequency"), GET_REAL (U"To frequency"), GET_INTEGER (U"Interpolation") - 1);
+		GET_REAL (U"From frequency"),
+		GET_REAL (U"To frequency"),
+		GET_INTEGER (U"Interpolation") - 1);
 	Melder_informationReal (maximum, U"dB");
 END2 }
 
@@ -2240,8 +2255,12 @@ FORM (Ltas_getMean, U"Ltas: Get mean", U"Ltas: Get mean...") {
 	OK2
 DO
 	Ltas me = FIRST (Ltas);
-	double mean = Sampled_getMean_standardUnit (me, GET_REAL (U"From frequency"), GET_REAL (U"To frequency"),
-		0, GET_INTEGER (U"Averaging method"), false);
+	double mean = Sampled_getMean_standardUnit (me,
+		GET_REAL (U"From frequency"),
+		GET_REAL (U"To frequency"),
+		0,
+		GET_INTEGER (U"Averaging method"),
+		false);
 	Melder_informationReal (mean, U"dB");
 END2 }
 
@@ -2258,7 +2277,9 @@ FORM (Ltas_getMinimum, U"Ltas: Get minimum", U"Ltas: Get minimum...") {
 DO
 	Ltas me = FIRST (Ltas);
 	double minimum = Vector_getMinimum (me,
-		GET_REAL (U"From frequency"), GET_REAL (U"To frequency"), GET_INTEGER (U"Interpolation") - 1);
+		GET_REAL (U"From frequency"),
+		GET_REAL (U"To frequency"),
+		GET_INTEGER (U"Interpolation") - 1);
 	Melder_informationReal (minimum, U"dB");
 END2 }
 
@@ -2280,8 +2301,12 @@ FORM (Ltas_getSlope, U"Ltas: Get slope", 0) {
 	OK2
 DO
 	Ltas me = FIRST (Ltas);
-	double slope = Ltas_getSlope (me, GET_REAL (U"left Low band"), GET_REAL (U"right Low band"),
-		GET_REAL (U"left High band"), GET_REAL (U"right High band"), GET_INTEGER (U"Averaging method"));
+	double slope = Ltas_getSlope (me,
+		GET_REAL (U"left Low band"),
+		GET_REAL (U"right Low band"),
+		GET_REAL (U"left High band"),
+		GET_REAL (U"right High band"),
+		GET_INTEGER (U"Averaging method"));
 	Melder_informationReal (slope, U"dB");
 END2 }
 
@@ -2295,8 +2320,12 @@ FORM (Ltas_getStandardDeviation, U"Ltas: Get standard deviation", U"Ltas: Get st
 	OK2
 DO
 	Ltas me = FIRST (Ltas);
-	double stdev = Sampled_getStandardDeviation_standardUnit (me, GET_REAL (U"From frequency"), GET_REAL (U"To frequency"),
-		0, GET_INTEGER (U"Averaging method"), false);
+	double stdev = Sampled_getStandardDeviation_standardUnit (me,
+		GET_REAL (U"From frequency"),
+		GET_REAL (U"To frequency"),
+		0,   // level (irrelevant)
+		GET_INTEGER (U"Averaging method"),
+		false);   // interpolate (don't)
 	Melder_informationReal (stdev, U"dB");
 END2 }
 
@@ -2311,7 +2340,10 @@ FORM (Ltas_getValueAtFrequency, U"Ltas: Get value", U"Ltas: Get value at frequen
 	OK2
 DO
 	Ltas me = FIRST (Ltas);
-	double value = Vector_getValueAtX (me, GET_REAL (U"Frequency"), 1, GET_INTEGER (U"Interpolation") - 1);
+	double value = Vector_getValueAtX (me,
+		GET_REAL (U"Frequency"),
+		1,   // level
+		GET_INTEGER (U"Interpolation") - 1);
 	Melder_informationReal (value, U"dB");
 END2 }
 	
@@ -2330,12 +2362,12 @@ DIRECT2 (Ltas_help) {
 END2 }
 
 DIRECT2 (Ltases_merge) {
-	CollectionOf<structLtas> ltases;
+	autoLtasBag ltases = LtasBag_create ();
 	LOOP {
 		iam (Ltas);
-		ltases. addItem_ref (me);
+		ltases -> addItem_ref (me);
 	}
-	autoLtas thee = Ltases_merge (& ltases);
+	autoLtas thee = Ltases_merge (ltases.get());
 	praat_new (thee.move(), U"merged");
 END2 }
 
@@ -2346,16 +2378,18 @@ FORM (Ltas_subtractTrendLine, U"Ltas: Subtract trend line", U"Ltas: Subtract tre
 DO
 	LOOP {
 		iam (Ltas);
-		autoLtas thee = Ltas_subtractTrendLine (me, GET_REAL (U"left Frequency range"), GET_REAL (U"right Frequency range"));
-		praat_new (thee.move(), my name, U"_fit");
+		autoLtas result = Ltas_subtractTrendLine (me,
+			GET_REAL (U"left Frequency range"),
+			GET_REAL (U"right Frequency range"));
+		praat_new (result.move(), my name, U"_fit");
 	}
 END2 }
 
 DIRECT2 (Ltas_to_Matrix) {
 	LOOP {
 		iam (Ltas);
-		autoMatrix thee = Ltas_to_Matrix (me);
-		praat_new (thee.move(), my name);
+		autoMatrix result = Ltas_to_Matrix (me);
+		praat_new (result.move(), my name);
 	}
 END2 }
 

@@ -33,25 +33,13 @@ Thing_declare (HMMObservationList);
 
 /********** class HMMStateList **********/
 
-Collection_declare (OrderedOfHMMState, OrderedOf, HMMState);
-
-Thing_define (HMMStateList, OrderedOfHMMState) {
+Collection_define (HMMStateList, OrderedOf, HMMState) {
 };
-
-inline static autoHMMStateList HMMStateList_create () {
-	return Thing_new (HMMStateList);
-}
 
 /********** class HMMObservationList **********/
 
-Collection_declare (OrderedOfHMMObservation, OrderedOf, HMMObservation);
-
-Thing_define (HMMObservationList, OrderedOfHMMObservation) {
+Collection_define (HMMObservationList, OrderedOf, HMMObservation) {
 };
-
-inline static autoHMMObservationList HMMObservationList_create () {
-	return Thing_new (HMMObservationList);
-}
 
 /********** class HMMBaumWelch **********/
 
@@ -82,12 +70,7 @@ Thing_define (HMMObservationSequence, Table) {
 };
 // First column is always a symbol, if only 1 column then symbols only
 
-Collection_declare (CollectionOfHMMObservationSequence, CollectionOf, HMMObservationSequence);
-
-Thing_define (HMMObservationSequenceBag, CollectionOfHMMObservationSequence) {
-	structHMMObservationSequenceBag () {
-		our classInfo = classHMMObservationSequenceBag;
-	}
+Collection_define (HMMObservationSequenceBag, CollectionOf, HMMObservationSequence) {
 };
 
 autoHMMObservationSequence HMMObservationSequence_create (long numberOfItems, long dataLength);

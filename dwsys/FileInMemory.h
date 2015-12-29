@@ -47,9 +47,7 @@ void FileInMemory_setId (FileInMemory me, const char32 *newId);
 
 void FileInMemory_showAsCode (FileInMemory me, const char32 *name, long numberOfBytesPerLine);
 
-Collection_declare (SortedSetOfFileInMemory, SortedSetOf, FileInMemory);
-
-Thing_define (FileInMemorySet, SortedSetOfFileInMemory) {
+Collection_define (FileInMemorySet, SortedSetOf, FileInMemory) {
 	int d_sortKey;
 
 	static int s_compare_name (FileInMemory data1, FileInMemory data2);
@@ -57,10 +55,6 @@ Thing_define (FileInMemorySet, SortedSetOfFileInMemory) {
 	CompareHook v_getCompareHook ()
 		override { return d_sortKey == 0 ? s_compare_name : s_compare_id; }
 };
-
-inline static autoFileInMemorySet FileInMemorySet_create () {
-	return Thing_new (FileInMemorySet);
-}
 
 autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (const char32 *dirpath, const char32 *file);
 

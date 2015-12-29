@@ -120,7 +120,7 @@ autoLtas Matrix_to_Ltas (Matrix me) {
 	}
 }
 
-autoLtas Ltases_merge (CollectionOf<structLtas>* ltases) {
+autoLtas Ltases_merge (LtasBag ltases) {
 	try {
 		if (ltases->size() < 1)
 			Melder_throw (U"Cannot merge zero Ltas objects.");
@@ -159,7 +159,9 @@ autoLtas Ltases_merge (CollectionOf<structLtas>* ltases) {
 	}
 }
 
-autoLtas Ltases_average (CollectionOfLtas ltases) {
+Thing_implement (LtasBag, Collection, 0);
+
+autoLtas Ltases_average (LtasBag ltases) {
 	try {
 		double factor = -10.0 * log10 (ltases -> size());
 		autoLtas thee = Ltases_merge (ltases);

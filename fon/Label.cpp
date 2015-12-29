@@ -58,10 +58,6 @@ autoAutosegment Autosegment_create (double tmin, double tmax, const char32 *labe
 
 Thing_implement (Tier, Sorted, 0);
 
-autoTier Tier_create () {
-	return Thing_new (Tier);
-}
-
 long Tier_timeToIndex (Tier me, double time) {
 	for (long i = 1; i <= my size(); i ++) {
 		Autosegment interval = my _item [i];

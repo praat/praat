@@ -17,14 +17,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 19950710
- djmw 20020812 GPL header
- djmw 20071007 wchar
- djmw 20110304 Thing_new
-*/
-
 #include "Command.h"
+
+#pragma mark - class Command
 
 Thing_implement (Command, Thing, 0);
 
@@ -43,6 +38,8 @@ int Command_do (Command me) {
 int Command_undo (Command me) {
 	return my undo (me);
 }
+
+#pragma mark - class CommandHistory
 
 Thing_implement (CommandHistory, Ordered, 0);
 
