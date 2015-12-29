@@ -47,6 +47,7 @@ void _CollectionOfDaata_v_writeText (_CollectionOfDaata* me, MelderFile openFile
 void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text, int formatVersion);
 void _CollectionOfDaata_v_writeBinary (_CollectionOfDaata* me, FILE *f);
 void _CollectionOfDaata_v_readBinary (_CollectionOfDaata* me, FILE *f, int formatVersion);
+extern struct structData_Description theCollectionOfDaata_v_description [];
 
 template <typename T>
 struct CollectionOf : structDaata {
@@ -459,7 +460,6 @@ struct CollectionOf : structDaata {
 		_CollectionOfDaata_v_readBinary (reinterpret_cast<_CollectionOfDaata*> (this), f, formatVersion);
 	}
 	Data_Description v_description () override {
-		extern struct structData_Description theCollectionOfDaata_v_description [];
 		return & theCollectionOfDaata_v_description [0];
 	}
 
