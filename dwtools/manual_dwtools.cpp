@@ -1527,7 +1527,7 @@ LIST_ITEM (U"\\bu Draw eigenvector...")
 LIST_ITEM (U"\\bu @@Discriminant: Draw sigma ellipses...|Draw sigma ellipses...@")
 MAN_END
 
-MAN_BEGIN (U"Discriminant analysis", U"djmw", 20150902)
+MAN_BEGIN (U"Discriminant analysis", U"djmw", 20151224)
 INTRO (U"This tutorial will show you how to perform discriminant analysis with P\\s{RAAT}")
 NORMAL (U"As an example, we will use the dataset from @@Pols et al. (1973)@ "
 	"with the frequencies and levels of the first three formants from the 12 "
