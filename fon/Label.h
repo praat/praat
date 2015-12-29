@@ -78,6 +78,8 @@ Thing_define (Tier, SortedOfAutosegment) {
 	SortedOf<structAutosegment>::CompareHook v_getCompareHook () override { return compareHook; }
 };
 
+autoTier Tier_create ();
+
 /**
 	@return
 		index, or 0 if the tier is empty or t is very large.

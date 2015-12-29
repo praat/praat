@@ -2824,7 +2824,7 @@ DO
 	}
 END
 
-FORM (FileInMemorySet_showAsCode, U"FilesInMemory: Show as code", nullptr)
+FORM (FileInMemorySet_showAsCode, U"FileInMemorySet: Show as code", nullptr)
 	WORD (U"Name", U"example")
 	INTEGER (U"Number of bytes per line", U"20")
 	OK
@@ -2837,7 +2837,7 @@ DO
 	}
 END
 
-FORM (FileInMemorySet_showOneFileAsCode, U"FilesInMemory: Show one file as code", nullptr)
+FORM (FileInMemorySet_showOneFileAsCode, U"FileInMemorySet: Show one file as code", nullptr)
 	NATURAL (U"Index", U"1")
 	WORD (U"Name", U"example")
 	INTEGER (U"Number of bytes per line", U"20")
@@ -8470,8 +8470,9 @@ void praat_uvafon_David_init () {
 
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple Polygon...", nullptr, praat_HIDDEN, DO_Polygon_createSimple);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Polygon (random vertices)...", nullptr, praat_HIDDEN, DO_Polygon_createFromRandomVertices);
-	praat_addMenuCommand (U"Objects", U"New", U"FilesInMemory", nullptr, praat_HIDDEN, nullptr);
+	praat_addMenuCommand (U"Objects", U"New", U"FileInMemory", nullptr, praat_HIDDEN, nullptr);
 		praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemory...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_FileInMemory_create);
+		praat_addMenuCommand (U"Objects", U"New", U"Create copy from FilesInMemory...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_FileInMemorySet_createCopyFromFilesInMemory);
 		praat_addMenuCommand (U"Objects", U"New", U"Create copy from FileInMemorySet...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_FileInMemorySet_createCopyFromFilesInMemory);
 		praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemorySet from directory contents...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_FileInMemorySet_createFromDirectoryContents);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Sound from raw 16-bit Little Endian file...", U"Read from special sound file", 1,

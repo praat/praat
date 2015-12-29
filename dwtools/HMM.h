@@ -31,15 +31,29 @@ Thing_declare (HMMObservationList);
 
 #include "HMM_def.h"
 
+/********** class HMMStateList **********/
+
 Collection_declare (OrderedOfHMMState, OrderedOf, HMMState);
 
 Thing_define (HMMStateList, OrderedOfHMMState) {
 };
 
+inline static autoHMMStateList HMMStateList_create () {
+	return Thing_new (HMMStateList);
+}
+
+/********** class HMMObservationList **********/
+
 Collection_declare (OrderedOfHMMObservation, OrderedOf, HMMObservation);
 
 Thing_define (HMMObservationList, OrderedOfHMMObservation) {
 };
+
+inline static autoHMMObservationList HMMObservationList_create () {
+	return Thing_new (HMMObservationList);
+}
+
+/********** class HMMBaumWelch **********/
 
 Thing_define (HMMBaumWelch, Daata) {
 	long capacity;

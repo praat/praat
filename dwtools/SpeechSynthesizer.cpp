@@ -227,7 +227,7 @@ const char32 *SpeechSynthesizer_getVoiceLanguageCodeFromName (SpeechSynthesizer 
 		if (voiceLanguageNameIndex == 0) {
 			Melder_throw (U"Cannot find language \"", voiceLanguageName, U"\".");
 		}
-		FileInMemory fim = (FileInMemory) espeakdata_voices -> item[voiceLanguageNameIndex];
+		FileInMemory fim = espeakdata_voices -> _item [voiceLanguageNameIndex];
 		return fim -> d_id;
 	} catch (MelderError) {
 		Melder_throw (U"Cannot find language code.");
@@ -244,8 +244,8 @@ const char32 *SpeechSynthesizer_getVoiceVariantCodeFromName (SpeechSynthesizer /
 		}
 		// ... we have to decrease the index
 		if (voiceVariantIndex != 1) { // 1 is default, i.e. no variant
-			voiceVariantIndex--; // !!!
-			FileInMemory vfim = (FileInMemory) espeakdata_variants -> item[voiceVariantIndex];
+			voiceVariantIndex --; // !!!
+			FileInMemory vfim = espeakdata_variants -> _item [voiceVariantIndex];
 			return vfim -> d_id;
 		} else {
 			return defaultVariantCode; // TODO what is the default?
@@ -390,9 +390,9 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 		bool wordEnd = false;
 		autoMelderString mark;
 
-		IntervalTier itc = (IntervalTier) thy tiers -> item[2];
-		IntervalTier itw = (IntervalTier) thy tiers -> item[3];
-		IntervalTier itp = (IntervalTier) thy tiers -> item[4];
+		IntervalTier itc = (IntervalTier) thy tiers -> _item [2];
+		IntervalTier itw = (IntervalTier) thy tiers -> _item [3];
+		IntervalTier itp = (IntervalTier) thy tiers -> _item [4];
 
 		for (long i = 1; i <= numberOfRows; i++) {
 			double time = Table_getNumericValue_Assert (me, i, timeColumnIndex);
@@ -409,7 +409,7 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 				// End of clause: insert new boundary, and fill left interval with text
 				length = pos - p1c + 1;
 				MelderString_ncopy (&mark, text + p1c - 1, length);
-				MelderString_trimWhiteSpaceAtEnd (&mark);
+				MelderString_trimWhiteSpaceAtEnd (& mark);
 				if (time > xmin and time < xmax) {
 					IntervalTier_addBoundaryUnsorted (itc, itc -> intervals.size(), time, mark.string, true);
 				} else {
@@ -422,7 +422,7 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 				if (pos <= textLength) {
 					length = pos - p1w + 1;
 					MelderString_ncopy (&mark, text + p1w - 1, length);
-					MelderString_trimWhiteSpaceAtEnd (&mark);
+					MelderString_trimWhiteSpaceAtEnd (& mark);
 					if (time > xmin and time < xmax) {
 						IntervalTier_addBoundaryUnsorted (itw, itw -> intervals.size(), time, mark.string, true);
 					} else {
@@ -439,8 +439,8 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 					length = pos - p1w;
 					if (pos == textLength) length++;
 					MelderString_ncopy (&mark, text + p1w - 1, length);
-					MelderString_trimWhiteSpaceAtEnd (&mark);
-					IntervalTier_addBoundaryUnsorted (itw, itw -> intervals.size(), time, (wordEnd ? mark.string : U""), true);
+					MelderString_trimWhiteSpaceAtEnd (& mark);
+					IntervalTier_addBoundaryUnsorted (itw, itw -> intervals.size(), time, ( wordEnd ? mark.string : U"" ), true);
 				}
 				wordEnd = true;
 				p1w = pos;

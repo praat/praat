@@ -91,6 +91,10 @@
 #define TOVEC(x) (&(x) - 1)
 
 Thing_implement (SSCP, TableOfReal, 0);
+Thing_implement (SSCPList, TableOfRealList, 0);
+Thing_implement (Covariance, SSCP, 0);
+Thing_implement (CovarianceList, SSCPList, 0);
+Thing_implement (Correlation, SSCP, 0);
 
 void structSSCP :: v_info () {
 	structTableOfReal :: v_info ();
@@ -943,8 +947,6 @@ autoCCA SSCP_to_CCA (SSCP me, long ny) {
 
 /************ SSCPs ***********************************************/
 
-Thing_implement (SSCPList, Ordered, 0);
-
 autoSSCP SSCPList_to_SSCP_pool (SSCPList me) {
 	try {
 		autoSSCP thee = Data_copy (my _item [1]);
@@ -1093,10 +1095,6 @@ autoTableOfReal SSCP_extractCentroid (SSCP me) {
 		Melder_throw (me, U": centroid not extracted.");
 	}
 }
-
-Thing_implement (Covariance, SSCP, 0);
-
-Thing_implement (Correlation, SSCP, 0);
 
 autoCovariance Covariance_create (long dimension) {
 	try {

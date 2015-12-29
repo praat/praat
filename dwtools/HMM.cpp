@@ -45,6 +45,17 @@
 #include "oo_DESCRIPTION.h"
 #include "HMM_def.h"
 
+Thing_implement (HMM, Daata, 0);
+Thing_implement (HMMState, Daata, 0);
+Thing_implement (HMMStateList, Ordered, 0);
+Thing_implement (HMMObservation, Daata, 0);
+Thing_implement (HMMObservationList, Ordered, 0);
+Thing_implement (HMMBaumWelch, Daata, 0);
+Thing_implement (HMMViterbi, Daata, 0);
+Thing_implement (HMMObservationSequence, Table, 0);
+Thing_implement (HMMObservationSequenceBag, Collection, 0);
+Thing_implement (HMMStateSequence, Strings, 0);
+
 /*
 	Whenever a routine returns ln(p), the result for p=0 is -INFINITY.
 	On IEEE floating point hardware this number behaves reasonably.
@@ -138,8 +149,6 @@ static double HMM_and_HMM_getCrossEntropy_asym (HMM me, HMM thee, long observati
 
 /**************** HMMObservation ******************************/
 
-Thing_implement (HMMObservation, Daata, 0);
-
 static void HMMObservation_init (HMMObservation me, const char32 *label, long numberOfComponents, long dimension, long storage) {
 	my label = Melder_dup (label);
 	my gm = GaussianMixture_create (numberOfComponents, dimension, storage);
@@ -197,8 +206,6 @@ long StringsIndex_getLongestSequence (StringsIndex me, long index, long *pos) {
 
 /**************** HMMState ******************************/
 
-Thing_implement (HMMState, Daata, 0);
-
 static void HMMState_init (HMMState me, const char32 *label) {
 	my label = Melder_dup (label);
 }
@@ -219,8 +226,6 @@ void HMMState_setLabel (HMMState me, char32 *label) {
 }
 
 /**************** HMMBaumWelch ******************************/
-
-Thing_implement (HMMBaumWelch, Daata, 0);
 
 void structHMMBaumWelch :: v_destroy () {
 	for (long it = 1; it <= capacity; it ++) {
@@ -277,8 +282,6 @@ void HMMBaumWelch_getGamma (HMMBaumWelch me) {
 
 /**************** HMMViterbi ******************************/
 
-Thing_implement (HMMViterbi, Daata, 0);
-
 autoHMMViterbi HMMViterbi_create (long nstates, long ntimes) {
 	try {
 		autoHMMViterbi me = Thing_new (HMMViterbi);
@@ -294,8 +297,6 @@ autoHMMViterbi HMMViterbi_create (long nstates, long ntimes) {
 }
 
 /******************* HMMObservationSequence & HMMStateSequence ***/
-
-Thing_implement (HMMObservationSequence, Table, 0);
 
 autoHMMObservationSequence HMMObservationSequence_create (long numberOfItems, long dataLength) {
 	try {
@@ -359,8 +360,6 @@ long HMM_and_HMMObservationSequence_getLongestSequence (HMM me, HMMObservationSe
 	return 1;
 }
 
-Thing_implement (HMMObservationSequenceBag, Collection, 0);
-
 long HMMObservationSequenceBag_getLongestSequence (HMMObservationSequenceBag me) {
 	long longest = 0;
 	for (long i = 1; i <= my size(); i ++) {
@@ -371,8 +370,6 @@ long HMMObservationSequenceBag_getLongestSequence (HMMObservationSequenceBag me)
 	}
 	return longest;
 }
-
-Thing_implement (HMMStateSequence, Strings, 0);
 
 autoHMMStateSequence HMMStateSequence_create (long numberOfItems) {
 	try {
@@ -396,8 +393,6 @@ autoStrings HMMStateSequence_to_Strings (HMMStateSequence me) {
 
 
 /**************** HMM ******************************/
-
-Thing_implement (HMM, Daata, 0);
 
 void structHMM :: v_info () {
 	structDaata :: v_info ();

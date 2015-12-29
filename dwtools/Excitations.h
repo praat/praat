@@ -32,6 +32,10 @@ Thing_define (ExcitationList, OrderedOfExcitation) {
 	}
 };
 
+inline static autoExcitationList ExcitationList_create () {
+	return Thing_new (ExcitationList);
+}
+
 autoPattern ExcitationList_to_Pattern (ExcitationList me, long join);
 /* Precondition: my size >= 1, all items have same dimension */
 

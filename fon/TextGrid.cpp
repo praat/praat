@@ -316,12 +316,14 @@ void structTextGrid :: v_scaleX (double xminfrom, double xmaxfrom, double xminto
 	}
 }
 
+Thing_implement (FunctionList, Ordered, 0);
+
 Thing_implement (TextGrid, Function, 0);
 
 autoTextGrid TextGrid_createWithoutTiers (double tmin, double tmax) {
 	try {
 		autoTextGrid me = Thing_new (TextGrid);
-		my tiers = OrderedOfFunction_create ();
+		my tiers = FunctionList_create ();
 		my xmin = tmin;
 		my xmax = tmax;
 		return me;
@@ -1320,7 +1322,7 @@ autoTextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 			Melder_throw (U"This is not a chronological TextGrid text file.");
 		autoTextGrid me = Thing_new (TextGrid);
 		my structFunction :: v_readText (text.peek(), formatVersion);
-		my tiers = OrderedOfFunction_create ();
+		my tiers = FunctionList_create ();
 		long numberOfTiers = texgeti4 (text.peek());
 		for (long itier = 1; itier <= numberOfTiers; itier ++) {
 			autostring32 klas = texgetw2 (text.peek());
@@ -1473,7 +1475,7 @@ autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 		IntervalTier sentenceTier = nullptr, phraseTier = nullptr;
 		TextInterval lastInterval = nullptr;
 		static char phrase [1000];
-		my tiers = OrderedOfFunction_create ();
+		my tiers = FunctionList_create ();
 		autoMelderFile mfile = MelderFile_open (file);
 		char *line = MelderFile_readLine (file);
 		if (! strequ (line, "<?xml version=\"1.0\"?>"))

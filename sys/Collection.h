@@ -37,6 +37,17 @@
 		item [1..size]		// the items.
 */
 
+template <typename T> struct CollectionOf;
+typedef CollectionOf<structDaata> _CollectionOfDaata;
+
+void _CollectionOfDaata_v_copy (_CollectionOfDaata* me, _CollectionOfDaata* thee);
+bool _CollectionOfDaata_v_equal (_CollectionOfDaata* me, _CollectionOfDaata* thee);
+bool _CollectionOfDaata_v_canWriteAsEncoding (_CollectionOfDaata* me, int outputEncoding);
+void _CollectionOfDaata_v_writeText (_CollectionOfDaata* me, MelderFile openFile);
+void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text, int formatVersion);
+void _CollectionOfDaata_v_writeBinary (_CollectionOfDaata* me, FILE *f);
+void _CollectionOfDaata_v_readBinary (_CollectionOfDaata* me, FILE *f, int formatVersion);
+
 template <typename T>
 struct CollectionOf : structDaata {
 	T** _item { nullptr };   // [1..size]
@@ -412,8 +423,9 @@ struct CollectionOf : structDaata {
 		as an independent pointer-to-object created with XXX_create ().
 	*/
 
-	void v_info ()
-		override { ((CollectionOf<structThing>*) this) -> CollectionOf<structThing>::v_info (); }
+	void v_info () override {
+		MelderInfo_writeLine (our _size, U" items");
+	}
 
 	void v_destroy () override {
 		/*
@@ -425,30 +437,30 @@ struct CollectionOf : structDaata {
 		structDaata::v_destroy ();
 	}
 
-	void v_copy (Daata data_to)   // copies all the items
-		override { ((CollectionOf<structDaata>*) this) -> CollectionOf<structDaata>::v_copy (data_to); }
-
-	bool v_equal (Daata data2)   // compares 'my item [i]' with 'thy item [i]', i = 1..size
-		override { ((CollectionOf<structDaata>*) this) -> CollectionOf<structDaata>::v_equal (data2); }
-
-	bool v_canWriteAsEncoding (int outputEncoding)
-		override { ((CollectionOf<structDaata>*) this) -> CollectionOf<structDaata>::v_canWriteAsEncoding (outputEncoding); }
-
-	void v_writeText (MelderFile openFile)
-		override { ((CollectionOf<structDaata>*) this) -> CollectionOf<structDaata>::v_writeText (openFile); }
-
-	void v_readText (MelderReadText text, int formatVersion)
-		override { ((CollectionOf<structDaata>*) this) -> CollectionOf<structDaata>::v_readText (text, formatVersion); }
-
-	void v_writeBinary (FILE *f)
-		override { ((CollectionOf<structDaata>*) this) -> CollectionOf<structDaata>::v_writeBinary (f); }
-
-	void v_readBinary (FILE *f, int formatVersion)
-		override { ((CollectionOf<structDaata>*) this) -> CollectionOf<structDaata>::v_readBinary (f, formatVersion); }
-
+	void v_copy (Daata data_to) override {   // copies all the items
+		_CollectionOfDaata_v_copy (reinterpret_cast<_CollectionOfDaata*> (this), reinterpret_cast<_CollectionOfDaata*> (data_to));
+	}
+	bool v_equal (Daata data2) override {   // compares 'my item [i]' with 'thy item [i]', i = 1..size
+		return _CollectionOfDaata_v_equal (reinterpret_cast<_CollectionOfDaata*> (this), reinterpret_cast<_CollectionOfDaata*> (data2));
+	}
+	bool v_canWriteAsEncoding (int outputEncoding) override {
+		return _CollectionOfDaata_v_canWriteAsEncoding (reinterpret_cast<_CollectionOfDaata*> (this), outputEncoding);
+	}
+	void v_writeText (MelderFile openFile) override {
+		_CollectionOfDaata_v_writeText (reinterpret_cast<_CollectionOfDaata*> (this), openFile);
+	}
+	void v_readText (MelderReadText text, int formatVersion) override {
+		_CollectionOfDaata_v_readText (reinterpret_cast<_CollectionOfDaata*> (this), text, formatVersion);
+	}
+	void v_writeBinary (FILE *f) override {
+		_CollectionOfDaata_v_writeBinary (reinterpret_cast<_CollectionOfDaata*> (this), f);
+	}
+	void v_readBinary (FILE *f, int formatVersion) override {
+		_CollectionOfDaata_v_readBinary (reinterpret_cast<_CollectionOfDaata*> (this), f, formatVersion);
+	}
 	Data_Description v_description () override {
-		extern struct structData_Description theCollectionOf_description [];
-		return & theCollectionOf_description [0];
+		extern struct structData_Description theCollectionOfDaata_v_description [];
+		return & theCollectionOfDaata_v_description [0];
 	}
 
 	/*
@@ -459,6 +471,7 @@ struct CollectionOf : structDaata {
 		return our _size + 1;   // at end
 	};
 };
+
 
 #define Collection_declare(klas,genericClass,itemClass) \
 	typedef genericClass<struct##itemClass> struct##klas; \

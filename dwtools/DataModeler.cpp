@@ -690,7 +690,7 @@ autoTable DataModeler_to_Table_zscores (DataModeler me, int useSigmaY) {
 	}	
 }
 
-static void DataModeler_normalProbabilityPlot (DataModeler me, Graphics g, int useSigmaY, long numberOfQuantiles, double numberOfSigmas, int labelSize, const char32 *label, int garnish) {
+static void DataModeler_normalProbabilityPlot (DataModeler me, Graphics g, int useSigmaY, long numberOfQuantiles, double numberOfSigmas, int labelSize, const char32 *label, bool garnish) {
 	try {
 		autoTable thee = DataModeler_to_Table_zscores (me, useSigmaY);
 		Table_normalProbabilityPlot (thee.peek(), g, 2, numberOfQuantiles, numberOfSigmas, labelSize, label, garnish);
@@ -710,8 +710,9 @@ void DataModeler_setBasisFunctions (DataModeler me, int type) {
 	my type = type;
 }
 
-void  DataModeler_init (DataModeler me, double xmin, double xmax, long numberOfDataPoints, long numberOfParameters, int type) {
-	my xmin = xmin; my xmax = xmax;
+void DataModeler_init (DataModeler me, double xmin, double xmax, long numberOfDataPoints, long numberOfParameters, int type) {
+	my xmin = xmin;
+	my xmax = xmax;
 	DataModeler_setBasisFunctions (me, type);
 	my numberOfDataPoints = numberOfDataPoints;
 	my x = NUMvector<double> (1, numberOfDataPoints);
@@ -1209,7 +1210,7 @@ static void FormantModeler_getSumOfVariancesBetweenShiftedAndEstimatedTracks (Fo
 	}
 }
 
-static void FormantModeler_drawVariancesOfShiftedTracks (FormantModeler me, Graphics g, double xmin, double xmax,
+void FormantModeler_drawVariancesOfShiftedTracks (FormantModeler me, Graphics g, double xmin, double xmax,
 	double ymin, double ymax, int shiftDirection, long fromFormant, long toFormant, bool garnish)
 {
 	try {
@@ -1316,7 +1317,7 @@ void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tm
 	}
 }
 
-void FormantModeler_normalProbabilityPlot (FormantModeler me, Graphics g, long iformant, int useSigmaY, long numberOfQuantiles, double numberOfSigmas, int labelSize, const char32 *label, int garnish) {
+void FormantModeler_normalProbabilityPlot (FormantModeler me, Graphics g, long iformant, int useSigmaY, long numberOfQuantiles, double numberOfSigmas, int labelSize, const char32 *label, bool garnish) {
 	if (iformant > 0 || iformant <= my trackmodelers.size()) {
 		DataModeler ff = my trackmodelers [iformant];
 		DataModeler_normalProbabilityPlot (ff, g, useSigmaY, numberOfQuantiles, numberOfSigmas, labelSize, label, garnish);

@@ -120,4 +120,8 @@ Thing_define (ConfigurationList, OrderedOfConfiguration) {
 	}
 };
 
+inline static autoConfigurationList ConfigurationList_create () {
+	return Thing_new (ConfigurationList);
+}
+
 #endif /* _Configuration_h_ */

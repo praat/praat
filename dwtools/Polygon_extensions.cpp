@@ -495,25 +495,25 @@ static int LineSegments_getIntersection (double x1, double y1, double x2, double
 	if (fabs (bd) > eps) {
 		*mua = cad / bd;
 		*mub = cab / bd;
-		if (*mua <= eps or * mua > 1 + eps or * mub < eps or * mub > 1 + eps) {
+		if (*mua <= eps || *mua > 1.0 + eps || *mub < eps || *mub > 1.0 + eps) {
 			return INTERSECTION_OUTSIDE;
 		}
-		if (*mua > eps and *mua <= 1 - eps and *mub >= eps and * mub < 1 - eps) {
+		if (*mua > eps && *mua <= 1.0 - eps && *mub >= eps && *mub < 1.0 - eps) {
 			// This occurs most of the cases (hopefully)
 			return INTERSECTION_PROPER;
 		}
 		// Now eps < mua,mub <= 1+eps
 		// and at least one of the mu's is near 1,
 		// the other is in [eps,1]
-		if (fabs (*mua - 1) < eps) {
-			*mua = 1;
+		if (fabs (*mua - 1.0) < eps) {
+			*mua = 1.0;
 		}
-		if (fabs (*mub - 1) < eps) {
-			*mub = 1;
+		if (fabs (*mub - 1.0) < eps) {
+			*mub = 1.0;
 		}
 		// is the intersection at an edge or  at vertex
-		if (*mua == 1) { // end of ab touches cd
-			return *mub == 1 ? INTERSECTION_AT_VERTEX : INTERSECTION_AT_EDGE;
+		if (*mua == 1.0) { // end of ab touches cd
+			return *mub == 1.0 ? INTERSECTION_AT_VERTEX : INTERSECTION_AT_EDGE;
 		} else { // ab crosses a vertex
 			return INTERSECTION_AT_VERTEX;
 		}
@@ -522,13 +522,16 @@ static int LineSegments_getIntersection (double x1, double y1, double x2, double
 			return INTERSECTION_OUTSIDE;
 		}
 		if (x1 == x2) {
-			x1 = y1; x2 = y2; x3 = y3; x4 = y4;
+			x1 = y1;
+			x2 = y2;
+			x3 = y3;
+			x4 = y4;
 		}
 		double xs;
 		int intersection = get_collinearIntersectionPoint (x1, x2, x3, x4, &xs);
 		if (intersection != INTERSECTION_OUTSIDE) {
-			*mua = fabs ( (xs - x1) / (x2 - x1));
-			*mub = fabs ( (xs - x3) / (x4 - x3));
+			*mua = fabs ((xs - x1) / (x2 - x1));
+			*mub = fabs ((xs - x3) / (x4 - x3));
 			intersection += INTERSECTION_COPLANAR;
 		}
 		return intersection;
@@ -565,11 +568,20 @@ void structVertex :: v_copy (Daata thee_Daata) {
 	thy processed = our processed;
 }
 
+static autoVertex Vertex_create () {
+	return Thing_new (Vertex);
+}
+
 Thing_define (Vertices, DLL) {
 	static int s_compareHook (DLLNode me, DLLNode thee) noexcept;
 	Data_CompareHook v_getCompareHook ()
 		override { return s_compareHook; }
 };
+
+inline static autoVertices Vertices_create () {
+	return Thing_new (Vertices);
+}
+
 Thing_implement (Vertices, DLL, 0);
 
 #define VERTEX(n) ((Vertex) ((n) -> data.get()))

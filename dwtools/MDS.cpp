@@ -40,6 +40,30 @@
 
 #define TINY 1e-30
 
+Thing_implement (Kruskal, Thing, 0);
+
+Thing_implement (Transformator, Thing, 0);
+Thing_implement (RatioTransformator, Transformator, 0);
+Thing_implement (MonotoneTransformator, Transformator, 0);
+Thing_implement (ISplineTransformator, Transformator, 0);
+
+Thing_implement (MDSVec, Daata, 0);
+Thing_implement (MDSVecList, Ordered, 0);
+
+Thing_implement (Weight, TableOfReal, 0);
+Thing_implement (Salience, TableOfReal, 0);
+Thing_implement (ScalarProduct, TableOfReal, 0);
+
+Thing_implement (ConfusionList, TableOfRealList, 0);
+Thing_implement (ProximityList, TableOfRealList, 0);
+Thing_implement (ScalarProductList, TableOfRealList, 0);
+
+Thing_implement (DistanceList, ProximityList, 0);
+Thing_implement (Dissimilarity, Proximity, 0);
+Thing_implement (DissimilarityList, ProximityList, 0);
+Thing_implement (Similarity, Proximity, 0);
+
+
 /********************** NUMERICAL STUFF **************************************/
 
 static void NUMdmatrix_into_vector (double **m, double *v, long r1, long r2, long c1, long c2) {
@@ -104,10 +128,10 @@ static void NUMsort3 (double *data, long *iPoint, long *jPoint, long ifrom, long
 	//NUMindexx (data + ifrom - 1, n, indx + ifrom - 1);
 	NUMindexx (&data [ifrom - 1], n, &indx [ifrom - 1]);
 	if (! ascending) {
-		for (long j = ifrom; j <= ifrom + n / 2; j++) {
-			long tmp = indx[j];
-			indx[j] = indx[ito - j + ifrom];
-			indx[ito - j + ifrom] = tmp;
+		for (long j = ifrom; j <= ifrom + n / 2; j ++) {
+			long tmp = indx [j];
+			indx [j] = indx [ito - j + ifrom];
+			indx [ito - j + ifrom] = tmp;
 		}
 	}
 	for (long j = ifrom; j <= ito; j++) {
@@ -196,8 +220,6 @@ autoSimilarity DistanceList_to_Similarity_cc (DistanceList me, Weight w) {
 
 /***************** Transformator **********************************************/
 
-Thing_implement (Transformator, Thing, 0);
-
 autoDistance structTransformator :: v_transform (MDSVec vec, Distance dist, Weight /* w */) {
 	try {
 		autoDistance thee = Distance_create (numberOfPoints);
@@ -245,8 +267,6 @@ autoDistance Transformator_transform (Transformator me, MDSVec vec, Distance d, 
 	}
 }
 
-Thing_implement (RatioTransformator, Transformator, 0);
-
 autoDistance structRatioTransformator :: v_transform (MDSVec vec, Distance d, Weight w) {
 	autoDistance thee = Distance_create (numberOfPoints);
 	TableOfReal_copyLabels (d, thee.peek(), 1, 1);
@@ -291,8 +311,6 @@ autoRatioTransformator RatioTransformator_create (long numberOfPoints) {
 	}
 }
 
-Thing_implement (MonotoneTransformator, Transformator, 0);
-
 autoDistance structMonotoneTransformator :: v_transform (MDSVec vec, Distance d, Weight w) {
 	try {
 		autoDistance thee = MDSVec_Distance_monotoneRegression (vec, d, tiesProcessing);
@@ -319,8 +337,6 @@ autoMonotoneTransformator MonotoneTransformator_create (long numberOfPoints) {
 void MonotoneTransformator_setTiesProcessing (MonotoneTransformator me, int tiesProcessing) {
 	my tiesProcessing = tiesProcessing;
 }
-
-Thing_implement (ISplineTransformator, Transformator, 0);
 
 void structISplineTransformator :: v_destroy () {
 	NUMvector_free<double> (b, 1);
@@ -633,8 +649,6 @@ autoConfiguration Correlation_to_Configuration (Correlation me, long numberOfDim
 
 /**************************** Weight *****************************************/
 
-Thing_implement (Weight, TableOfReal, 0);
-
 autoWeight Weight_create (long numberOfPoints) {
 	try {
 		autoWeight me = Thing_new (Weight);
@@ -652,8 +666,6 @@ autoWeight Weight_create (long numberOfPoints) {
 
 
 /**************** Salience *****************************************/
-
-Thing_implement (Salience, TableOfReal, 0);
 
 autoSalience Salience_create (long numberOfSources, long numberOfDimensions) {
 	try {
@@ -739,8 +751,6 @@ void Salience_draw (Salience me, Graphics g, int ix, int iy, int garnish) {
 
 /******** MDSVEC *******************************************/
 
-Thing_implement (MDSVec, Daata, 0);
-
 void structMDSVec :: v_destroy () {
 	NUMvector_free<double> (proximity, 1);
 	NUMvector_free<long> (iPoint, 1);
@@ -805,8 +815,6 @@ autoMDSVecList DissimilarityList_to_MDSVecList (DissimilarityList me) {
 
 /**************************  CONFUSIONS **************************************/
 
-Thing_implement (ConfusionList, TableOfRealList, 0);
-
 autoConfusion ConfusionList_sum (ConfusionList me) {
 	try {
 		autoTableOfReal sum = TablesOfReal_sum (my asTableOfRealList());
@@ -820,12 +828,8 @@ autoConfusion ConfusionList_sum (ConfusionList me) {
 
 /**************************  DISTANCES **************************************/
 
-Thing_implement (DistanceList, ProximityList, 0);
-
 
 /*****************  SCALARPRODUCT ***************************************/
-
-Thing_implement (ScalarProduct, TableOfReal, 0);
 
 autoScalarProduct ScalarProduct_create (long numberOfPoints) {
 	try {
@@ -842,8 +846,6 @@ autoScalarProduct ScalarProduct_create (long numberOfPoints) {
 
 
 /******************  DISSIMILARITY **********************************/
-
-Thing_implement (Dissimilarity, Proximity, 0);
 
 autoDissimilarity Dissimilarity_create (long numberOfPoints) {
 	try {
@@ -932,8 +934,6 @@ double Dissimilarity_getAdditiveConstant (Dissimilarity me) {
 
 
 /*************  SIMILARITY *****************************************/
-
-Thing_implement (Similarity, Proximity, 0);
 
 autoSimilarity Similarity_create (long numberOfPoints) {
 	try {
@@ -1387,8 +1387,6 @@ autoDistance Dissimilarity_Distance_monotoneRegression (Dissimilarity me, Distan
 }
 
 /*************** class Proximities **************************************/
-
-Thing_implement (ProximityList, TableOfRealList, 0);
 
 autoScalarProductList DistanceList_to_ScalarProductList (DistanceList me, bool normalize) {
 	try {
@@ -2138,8 +2136,6 @@ static void dfunc (Daata object, const double * /* p */, double dp[]) {
 		}
 	}
 }
-
-Thing_implement (Kruskal, Thing, 0);
 
 void structKruskal :: v_destroy () {
 	NUMmatrix_free<double> (dx, 1, 1);

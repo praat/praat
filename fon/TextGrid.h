@@ -27,6 +27,13 @@
 
 Collection_declare (OrderedOfFunction, OrderedOf, Function);
 
+Thing_define (FunctionList, OrderedOfFunction) {
+};
+
+inline static autoFunctionList FunctionList_create () {
+	return Thing_new (FunctionList);
+}
+
 #include "TextGrid_def.h"
 
 autoTextPoint TextPoint_create (double time, const char32 *mark);

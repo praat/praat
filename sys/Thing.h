@@ -74,8 +74,7 @@ struct structClassInfo {
 	typedef struct struct##klas *klas; \
 	typedef _Thing_auto <struct##klas> auto##klas; \
 	extern struct structClassInfo theClassInfo_##klas; \
-	extern ClassInfo class##klas; \
-	auto##klas klas##_create ()
+	extern ClassInfo class##klas
 
 #define Thing_define(klas,parentKlas) \
 	Thing_declare (klas); \

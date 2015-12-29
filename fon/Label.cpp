@@ -54,18 +54,24 @@ autoAutosegment Autosegment_create (double tmin, double tmax, const char32 *labe
 	}
 }
 
-Collection_implement (Tier, SortedOf, Autosegment, Sorted, 0);
+/********** class Tier **********/
+
+Thing_implement (Tier, Sorted, 0);
+
+autoTier Tier_create () {
+	return Thing_new (Tier);
+}
 
 long Tier_timeToIndex (Tier me, double time) {
 	for (long i = 1; i <= my size(); i ++) {
-		Autosegment interval = (*me) [i];
+		Autosegment interval = my _item [i];
 		if (time >= interval -> xmin && time < interval -> xmax)
 			return i;
 	}
 	return 0;   // empty tier or very large time
 }
 
-Collection_implement (Label, OrderedOf, Tier, Ordered, 0);
+Thing_implement (Label, Ordered, 0);
 
 void Label_addTier (Label me) {
 	autoTier tier = Tier_create ();
@@ -76,9 +82,9 @@ void Label_suggestDomain (Label me, double *tmin, double *tmax) {
 	*tmin = 0.0;
 	*tmax = 0.0;
 	for (int itier = 1; itier <= my size(); itier ++) {
-		Tier tier = (*me) [itier];
+		Tier tier = my _item [itier];
 		if (tier->size() > 0) {
-			Autosegment seg = (*tier) [1];
+			Autosegment seg = tier -> _item [1];
 			if (seg -> xmin <= *tmin) {
 				if (seg -> name && seg -> name [0])
 					*tmin = seg -> xmin - 1.0;

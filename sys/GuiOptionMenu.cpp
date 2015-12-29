@@ -67,7 +67,6 @@ void GuiOptionMenu_init (GuiOptionMenu me, GuiForm parent, int left, int right, 
 {
 	my d_shell = parent -> d_shell;
 	my d_parent = parent;
-	my d_options = Ordered_create ();
 	#if gtk
 		my d_widget = gtk_combo_box_new_text ();
 		gtk_widget_set_size_request (GTK_WIDGET (my d_widget), right - left, bottom - top + 8);

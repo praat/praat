@@ -58,6 +58,10 @@ Thing_define (FileInMemorySet, SortedSetOfFileInMemory) {
 		override { return d_sortKey == 0 ? s_compare_name : s_compare_id; }
 };
 
+inline static autoFileInMemorySet FileInMemorySet_create () {
+	return Thing_new (FileInMemorySet);
+}
+
 autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (const char32 *dirpath, const char32 *file);
 
 void FileInMemorySet_showAsCode (FileInMemorySet me, const char32 *name, long numberOfBytesPerLine);

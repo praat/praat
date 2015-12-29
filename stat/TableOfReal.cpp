@@ -38,6 +38,9 @@
 #include "oo_DESCRIPTION.h"
 #include "TableOfReal_def.h"
 
+Thing_implement (TableOfReal, Daata, 0);
+Thing_implement (TableOfRealList, Ordered, 0);
+
 static void fprintquotedstring (MelderFile file, const char32 *s) {
 	MelderFile_writeCharacter (file, U'\"');
 	if (s) { char32 c; while ((c = *s ++) != U'\0') { MelderFile_writeCharacter (file, c); if (c == U'\"') MelderFile_writeCharacter (file, c); } }
@@ -110,8 +113,6 @@ double structTableOfReal :: v_getRowIndex (const char32 *rowLabel) {
 double structTableOfReal :: v_getColIndex (const char32 *columnLabel) {
 	return TableOfReal_columnLabelToIndex (this, columnLabel);
 }
-
-Thing_implement (TableOfReal, Daata, 0);
 
 void TableOfReal_init (TableOfReal me, long numberOfRows, long numberOfColumns) {
 	if (numberOfRows < 1 || numberOfColumns < 1)

@@ -115,6 +115,10 @@ Thing_define (MDSVecList, OrderedOfMDSVec) {
 	}
 };
 
+inline static autoMDSVecList MDSVecList_create () {
+	return Thing_new (MDSVecList);
+}
+
 autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, long numberOfDimensions, int scaling);
 
 /********************* class Proximities *******************************/
@@ -129,6 +133,10 @@ Thing_define (ProximityList, OrderedOfProximity) {
 		return reinterpret_cast<TableOfRealList> (this);
 	}
 };
+
+inline static autoProximityList ProximityList_create () {
+	return Thing_new (ProximityList);
+}
 
 /****************** class Confusions **********************************/
 
@@ -161,6 +169,10 @@ Thing_define (DistanceList, OrderedOfDistance) {
 	}
 };
 
+inline static autoDistanceList DistanceList_create () {
+	return Thing_new (DistanceList);
+}
+
 //Collection_implement (Distances, Proximities, 0);
 
 /**************** class ScalarProduct **************************************/
@@ -182,6 +194,10 @@ Thing_define (ScalarProductList, OrderedOfScalarProduct) {
 		return reinterpret_cast<TableOfRealList> (this);
 	}
 };
+
+inline static autoScalarProductList ScalarProductList_create () {
+	return Thing_new (ScalarProductList);
+}
 
 /************* class Dissimilarity *********************************/
 
@@ -266,6 +282,9 @@ Thing_define (DissimilarityList, OrderedOfDissimilarity) {
 		return reinterpret_cast<TableOfRealList> (this);
 	}
 };
+inline static autoDissimilarityList DissimilarityList_create () {
+	return Thing_new (DissimilarityList);
+}
 
 
 /**************** class Similarity *****************************/

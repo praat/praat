@@ -48,6 +48,10 @@ Thing_define (CrossCorrelationTableList, OrderedOfCrossCorrelationTable) {
 		override;
 };
 
+inline static autoCrossCorrelationTableList CrossCorrelationTableList_create () {
+	return Thing_new (CrossCorrelationTableList);
+}
+
 /*
 	Cell [i,j] of a CrossCorrelationTable contains the cross-correlation between signal i and signal j (for one particular lag time).
 	For example, the CrossCorrelation of an n-channel sound is a nxn table where cell [i,j] contains the

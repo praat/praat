@@ -206,14 +206,6 @@ autoTableOfReal TableOfReal_and_TableOfReal_crossCorrelations (TableOfReal me, T
 
 /********************* class TablesOfReal ******************************/
 
-Collection_declare (OrderedOfTableOfReal, OrderedOf, TableOfReal);
-
-Thing_define (TableOfRealList, OrderedOfTableOfReal) {
-	structTableOfRealList () {
-		our classInfo = classTableOfRealList;
-	}
-};
-
 autoTableOfReal TablesOfReal_sum (TableOfRealList me);
 
 bool TablesOfReal_haveIdenticalDimensions (TableOfRealList me);

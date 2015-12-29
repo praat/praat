@@ -139,7 +139,7 @@ autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (const char32 *d
 		}
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"FilesInMemory not created from directory \"", dirpath, U"\" for files that match \"", fileGlobber, U"\".");
+		Melder_throw (U"FileInMemorySet not created from directory \"", dirpath, U"\" for files that match \"", fileGlobber, U"\".");
 	}
 }
 
@@ -159,7 +159,7 @@ void FileInMemorySet_showAsCode (FileInMemorySet me, const char32 *name, long nu
 	}
 	MelderInfo_writeLine (U"\t\treturn me;");
 	MelderInfo_writeLine (U"\t} catch (MelderError) {");
-	MelderInfo_writeLine (U"\t\tMelder_throw (U\"FilesInMemory not created.\");");
+	MelderInfo_writeLine (U"\t\tMelder_throw (U\"FileInMemorySet not created.\");");
 	MelderInfo_writeLine (U"\t}");
 	MelderInfo_writeLine (U"}\n\n");
 }

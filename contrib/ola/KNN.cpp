@@ -1385,8 +1385,8 @@ long KNN_kIndicesToFrequenciesAndDistances
 {
     long ncategories = 0;
     
-    Melder_assert(k <= c->size() && k > 0);
-    Melder_assert(distances && indices && freqs && freqindices);
+    Melder_assert (k <= c->size() && k > 0);
+    Melder_assert (distances && indices && freqs && freqindices);
 
     for (long y = 0; y < k; ++y)
     {

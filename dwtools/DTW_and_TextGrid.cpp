@@ -234,7 +234,7 @@ autoTextGrid DTW_and_TextGrid_to_TextGrid_old (DTW me, TextGrid thee) {
 
 		his xmin = my ymin;
 		his xmax = my ymax;
-		his tiers = OrderedOfFunction_create ();
+		his tiers = FunctionList_create ();
 
 		for (long i = 1; i <= thy tiers -> size(); i ++) {
 			Daata anyTier = thy tiers -> _item [i];
