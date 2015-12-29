@@ -211,19 +211,19 @@ struct structData_Description theCollectionOfDaata_v_description [] = {
 	{ 0 }
 };
 
-#define Collection_implement(klas,genericClass,itemClass,parentClass,version) \
+#define _Collection_implement(klas,genericClass,itemClass,parentClass,version) \
 	static Thing _##klas##_new () { return new genericClass<struct##itemClass>; } \
 	struct structClassInfo theClassInfo_##klas = { U"" #klas, & theClassInfo_##parentClass, \
 		sizeof (genericClass<struct##itemClass>), _##klas##_new, version, 0, nullptr}; \
 	ClassInfo class##klas = & theClassInfo_##klas
 
-Collection_implement (Collection, CollectionOf, Thing, Daata, 0);
-Collection_implement (Ordered, OrderedOf, Daata, Collection, 0);
-Collection_implement (Sorted, SortedOf, Daata, Collection, 0);
-Collection_implement (SortedSet, SortedSetOf, Daata, Sorted, 0);
-Collection_implement (SortedSetOfInt, SortedSetOfIntOf, SimpleInt, SortedSet, 0);
-Collection_implement (SortedSetOfLong, SortedSetOfLongOf, SimpleLong, SortedSet, 0);
-Collection_implement (SortedSetOfDouble, SortedSetOfDoubleOf, SimpleDouble, SortedSet, 0);
-Collection_implement (SortedSetOfString, SortedSetOfStringOf, SimpleString, SortedSet, 0);
+_Collection_implement (Collection, CollectionOf, Thing, Daata, 0);
+_Collection_implement (Ordered, OrderedOf, Daata, Collection, 0);
+_Collection_implement (Sorted, SortedOf, Daata, Collection, 0);
+_Collection_implement (SortedSet, SortedSetOf, Daata, Sorted, 0);
+_Collection_implement (SortedSetOfInt, SortedSetOfIntOf, SimpleInt, SortedSet, 0);
+_Collection_implement (SortedSetOfLong, SortedSetOfLongOf, SimpleLong, SortedSet, 0);
+_Collection_implement (SortedSetOfDouble, SortedSetOfDoubleOf, SimpleDouble, SortedSet, 0);
+_Collection_implement (SortedSetOfString, SortedSetOfStringOf, SimpleString, SortedSet, 0);
 
 /* End of file Collection.cpp */

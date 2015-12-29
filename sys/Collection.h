@@ -472,7 +472,7 @@ struct CollectionOf : structDaata {
 };
 
 
-#define Collection_declare(klas,genericClass,itemClass) \
+#define _Collection_declare(klas,genericClass,itemClass) \
 	typedef genericClass<struct##itemClass> struct##klas; \
 	typedef genericClass<struct##itemClass> *klas; \
 	typedef _Thing_auto <genericClass<struct##itemClass>> auto##klas; \
@@ -484,19 +484,7 @@ struct CollectionOf : structDaata {
 		return me; \
 	}
 
-#define Collection_define(klas,genericClass,itemClass) \
-	typedef genericClass<struct##itemClass> struct##genericClass##__##itemClass; \
-	typedef genericClass<struct##itemClass> *genericClass##__##itemClass; \
-	typedef _Thing_auto <genericClass<struct##itemClass>> auto##genericClass##__##itemClass; \
-	typedef struct struct##klas *klas; \
-	typedef _Thing_auto <struct##klas> auto##klas; \
-	extern struct structClassInfo theClassInfo_##klas; \
-	extern ClassInfo class##klas; \
-	static inline auto##klas klas##_create () { return Thing_new (klas); } \
-	struct struct##klas : public struct##genericClass##__##itemClass
-
-
-Collection_declare (Collection, CollectionOf, Thing);
+_Collection_declare (Collection, CollectionOf, Thing);
 
 /********** class Ordered **********/
 
@@ -524,7 +512,7 @@ struct OrderedOf : CollectionOf <T> {
 	OrderedOf<T>&& move () noexcept { return static_cast <OrderedOf<T>&&> (*this); }
 };
 
-Collection_declare (Ordered, OrderedOf, Daata);
+_Collection_declare (Ordered, OrderedOf, Daata);
 
 /********** class Sorted **********/
 /*
@@ -585,7 +573,7 @@ struct SortedOf : CollectionOf <T> {
 		// should compare the keys of two items; returns negative if me < thee, 0 if me == thee, and positive if me > thee
 };
 
-Collection_declare (Sorted, SortedOf, Daata);
+_Collection_declare (Sorted, SortedOf, Daata);
 
 /********** class SortedSet **********/
 
@@ -638,7 +626,7 @@ struct SortedSetOf : SortedOf <T> {
 	Collections_merge (SortedSet) yields a SortedSet that is the union of the two sources.
 */
 
-Collection_declare (SortedSet, SortedOf, Daata);
+_Collection_declare (SortedSet, SortedOf, Daata);
 
 /********** class SortedSetOfInt **********/
 
@@ -740,7 +728,12 @@ struct SortedSetOfStringOf : SortedSetOf <T> {
 	}
 };
 
-Collection_declare (SortedSetOfString, SortedSetOfStringOf, SimpleString);
+_Collection_declare (SortedSetOfString, SortedSetOfStringOf, SimpleString);
+
+#define Collection_define(klas,genericClass,itemClass) \
+	Thing_declare (klas); \
+	static inline auto##klas klas##_create () { return Thing_new (klas); } \
+	struct struct##klas : genericClass<struct##itemClass>
 
 /* End of file Collection.h */
 #endif
