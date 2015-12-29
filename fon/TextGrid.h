@@ -25,6 +25,15 @@
 #include "TableOfReal.h"
 #include "Table.h"
 
+Collection_declare (OrderedOfFunction, OrderedOf, Function);
+
+Thing_define (FunctionList, OrderedOfFunction) {
+};
+
+inline static autoFunctionList FunctionList_create () {
+	return Thing_new (FunctionList);
+}
+
 #include "TextGrid_def.h"
 
 autoTextPoint TextPoint_create (double time, const char32 *mark);
@@ -81,7 +90,7 @@ IntervalTier TextGrid_checkSpecifiedTierIsIntervalTier (TextGrid me, long tierNu
 TextTier TextGrid_checkSpecifiedTierIsPointTier (TextGrid me, long tierNumber);
 
 void TextGrid_addTier_copy (TextGrid me, Function tier);
-autoTextGrid TextGrid_merge (Collection textGrids);
+autoTextGrid TextGrids_merge (OrderedOf<structTextGrid>* textGrids);
 autoTextGrid TextGrid_extractPart (TextGrid me, double tmin, double tmax, int preserveTimes);
 
 autoTextGrid Label_to_TextGrid (Label me, double duration);
@@ -125,7 +134,7 @@ autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeD
 void TextGrid_list (TextGrid me, bool includeLineNumbers, int timeDecimals, bool includeTierNames, bool includeEmptyIntervals);
 
 void TextGrid_correctRoundingErrors (TextGrid me);
-autoTextGrid TextGrids_concatenate (Collection me);
+autoTextGrid TextGrids_concatenate (OrderedOf<structTextGrid>* me);
 
 /* End of file TextGrid.h */
 #endif

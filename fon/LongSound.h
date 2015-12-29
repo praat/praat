@@ -77,8 +77,9 @@ void LongSound_writeChannelToAudioFile (LongSound me, int audioFileType, int cha
 void LongSound_readAudioToFloat (LongSound me, double **buffer, long firstSample, long numberOfSamples);
 void LongSound_readAudioToShort (LongSound me, int16 *buffer, long firstSample, long numberOfSamples);
 
-void LongSound_concatenate (Collection collection, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint);
-/* Concatenate a collection of Sound and LongSound objects. */
+Collection_declare (OrderedOfSoundsAndLongSounds, OrderedOf, Sampled);
+
+void LongSound_concatenate (OrderedOfSoundsAndLongSounds collection, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint);
 
 void LongSound_preferences ();
 long LongSound_getBufferSizePref_seconds ();

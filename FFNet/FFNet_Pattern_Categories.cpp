@@ -29,11 +29,10 @@
 #include "FFNet_Pattern_Activation.h"
 
 static void _FFNet_Pattern_Categories_checkDimensions (FFNet me, Pattern p, Categories c) {
-
 	if (my nInputs != p -> nx) {
 		Melder_throw (U"The Pattern and the FFNet do not match.\nThe number of colums in the Pattern must equal the number of inputs in the FFNet.");
 	}
-	if (p -> ny != c -> size) {
+	if (p -> ny != c -> size()) {
 		Melder_throw (U"The Pattern and the categories do not match.\nThe number of rows in the Pattern must equal the number of categories.");
 	}
 	if (! _Pattern_checkElements (p)) {
@@ -89,8 +88,8 @@ autoCategories FFNet_Pattern_to_Categories (FFNet me, Pattern thee, int labeling
 		for (long k = 1; k <= thy ny; k++) {
 			FFNet_propagate (me, thy z[k], nullptr);
 			long index = FFNet_getWinningUnit (me, labeling);
-			autoDaata item = Data_copy ((Daata) my outputCategories -> item[index]);
-			Collection_addItem_move (him.peek(), item.move());
+			autoSimpleString item = Data_copy (my outputCategories -> _item [index]);
+			his addItem_move (item.move());
 		}
 		return him;
 	} catch (MelderError) {

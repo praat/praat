@@ -53,7 +53,7 @@ Thing_implement (Index, Daata, 0);
 
 void structIndex :: v_info () {
 	structDaata :: v_info ();
-	MelderInfo_writeLine (U"Number of elements: ", numberOfElements);
+	MelderInfo_writeLine (U"Number of elements: ", our numberOfElements);
 }
 
 void Index_init (Index me, long numberOfElements) {
@@ -79,8 +79,8 @@ autoIndex Index_extractPart (Index me, long from, long to) {
 		autoIndex thee = Data_copy (me);
 		thy numberOfElements = to - from + 1;
 		
-		for (long i = 1; i <= thy numberOfElements; i++) {
-			thy classIndex[i] = my classIndex[from + i - 1];
+		for (long i = 1; i <= thy numberOfElements; i ++) {
+			thy classIndex [i] = my classIndex [from + i - 1];
 		}
 		return thee;
 	} catch (MelderError) {
@@ -101,8 +101,8 @@ autoStringsIndex StringsIndex_create (long numberOfElements) {
 }
 
 int StringsIndex_getClass (StringsIndex me, char32 *klasLabel) {
-	for (long i = 1; i <= my classes -> size; i++) {
-		SimpleString ss = (SimpleString) my classes -> item[i];
+	for (long i = 1; i <= my classes -> size(); i ++) {
+		SimpleString ss = (SimpleString) my classes -> _item [i];   // FIXME cast
 		if (Melder_cmp (ss -> string, klasLabel) == 0) {
 			return i;
 		}
@@ -112,9 +112,9 @@ int StringsIndex_getClass (StringsIndex me, char32 *klasLabel) {
 
 long StringsIndex_countItems (StringsIndex me, int iclass) {
 	long sum = 0;
-	for (long i = 1; i <= my numberOfElements; i++) {
-		if (my classIndex[i] == iclass) {
-			sum++;
+	for (long i = 1; i <= my numberOfElements; i ++) {
+		if (my classIndex [i] == iclass) {
+			sum ++;
 		}
 	}
 	return sum;

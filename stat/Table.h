@@ -31,7 +31,7 @@ void Table_initWithoutColumnNames (Table me, long numberOfRows, long numberOfCol
 autoTable Table_createWithoutColumnNames (long numberOfRows, long numberOfColumns);
 #define Table_create Table_createWithoutColumnNames
 
-autoTable Tables_append (Collection me);
+autoTable Tables_append (OrderedOf<structTable>* me);
 void Table_appendRow (Table me);
 void Table_appendColumn (Table me, const char32 *label);
 void Table_appendSumColumn (Table me, long column1, long column2, const char32 *label);

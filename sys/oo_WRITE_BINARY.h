@@ -101,10 +101,10 @@
 	}
 
 #define oo_AUTO_COLLECTION(Class,x,ItemClass,version)  \
-	binputi4 (our x ? our x -> size : 0, f); \
+	binputi4 (our x ? our x -> size() : 0, f); \
 	if (our x) { \
-		for (long i = 1; i <= our x -> size; i ++) { \
-			ItemClass data = (ItemClass) our x -> item [i]; \
+		for (long i = 1; i <= our x -> size(); i ++) { \
+			ItemClass data = our x -> _item [i]; \
 			data -> struct##ItemClass :: v_writeBinary (f); \
 		} \
 	}

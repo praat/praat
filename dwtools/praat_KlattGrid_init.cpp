@@ -103,9 +103,11 @@ static void KlattGrid_PlayOptions_addCommonFields (UiForm dia, bool hasSound) {
 	//LABEL (U"", U"Time domain")
 	REAL (U"left Time range (s)", U"0")
 	REAL (U"right Time range (s)", U"0")
-	if (hasSound) POSITIVE (U"Sampling frequency (Hz)", U"44100")
-		BOOLEAN (U"Scale peak", 1)
-		KlattGrid_PhonationGridPlayOptions_addCommonFields (dia);
+	if (hasSound) {
+		POSITIVE (U"Sampling frequency (Hz)", U"44100.0")
+	}
+	BOOLEAN (U"Scale peak", true)
+	KlattGrid_PhonationGridPlayOptions_addCommonFields (dia);
 	OPTIONMENU (U"Filter options", 1)
 		OPTION (U"Cascade")
 		OPTION (U"Parallel")
@@ -142,7 +144,7 @@ static void KlattGrid_PlayOptions_getCommonFields (UiForm dia, bool hasSound, Kl
 	pk -> scalePeak = GET_INTEGER (U"Scale peak");
 	KlattGrid_PhonationGridPlayOptions_getCommonFields (dia, thee);
 	VocalTractGridPlayOptions pv = thy vocalTract -> options.get();
-	pv -> filterModel = GET_INTEGER (U"Filter options") == 1 ? KlattGrid_FILTER_CASCADE : KlattGrid_FILTER_PARALLEL;
+	pv -> filterModel = ( GET_INTEGER (U"Filter options") == 1 ? KlattGrid_FILTER_CASCADE : KlattGrid_FILTER_PARALLEL );
 	pv -> startOralFormant = GET_INTEGER (U"left Oral formant range");
 	pv -> endOralFormant  = GET_INTEGER (U"right Oral formant range");
 	pv -> startNasalFormant = GET_INTEGER (U"left Nasal formant range");
@@ -255,7 +257,7 @@ KlattGRID_EDIT_FORMANTGRID (Frication, KlattGrid_FRICATION_FORMANTS)
 #undef KlattGRID_EDIT_FORMANTGRID
 
 #define KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER(Name,name,formantType) \
-FORM (KlattGrid_edit##Name##FormantAmplitudeTier, U"KlattGrid: View & Edit " #name "formant amplitude tier", 0) \
+FORM (KlattGrid_edit##Name##FormantAmplitudeTier, U"KlattGrid: View & Edit " #name "formant amplitude tier", nullptr) \
 	NATURAL (U"Formant number", U"1") \
 	OK \
 DO \
@@ -280,8 +282,8 @@ KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER (Frication, frication, KlattGrid_FRICATION
 
 #undef KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER
 
-#define KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE(Name,name,unit,default,require, requiremessage,newname,tiertype) \
-FORM(KlattGrid_get##Name##AtTime, U"KlattGrid: Get " #name " at time", 0) \
+#define KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE(Name,name,unit,default,require,requiremessage,newname,tiertype) \
+FORM (KlattGrid_get##Name##AtTime, U"KlattGrid: Get " #name " at time", nullptr) \
 	REAL (U"Time", U"0.5") \
 	OK \
 DO \
@@ -325,32 +327,32 @@ END
 
 // 55 DO_KlattGrid... functions
 KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (Pitch, pitch, U" (Hz)", (U"100.0"),
-        (value >= 0), (U"Pitch must be greater equal zero."), U"f0", PitchTier)
+        (value >= 0.0), (U"Pitch must be greater equal zero."), U"f0", PitchTier)
 KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (VoicingAmplitude, voicing amplitude, U" (dB SPL)", U"90.0",
         (1), U"", U"voicing", IntensityTier)
 KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (Flutter, flutter, U" (0..1)", (U"0.0"),
-        (value >= 0 && value <= 1), (U"Flutter must be in [0,1]."), U"flutter", RealTier)
+        (value >= 0.0 && value <= 1.0), (U"Flutter must be in [0,1]."), U"flutter", RealTier)
 KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (Power1, power1, U"", U"3",
-        (value > 0), U"Power1 needs to be positive.", U"power1", RealTier)
+        (value > 0.0), U"Power1 needs to be positive.", U"power1", RealTier)
 KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (Power2, power2, U"", U"4",
-        (value > 0), U"Power2 needs to be positive.", U"power2", RealTier)
+        (value > 0.0), U"Power2 needs to be positive.", U"power2", RealTier)
 KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (OpenPhase, open phase, U"", U"0.7",
-        (value >= 0 && value <= 1), U"Open phase must be greater than zero and smaller equal one.", U"openPhase", RealTier)
+        (value >= 0.0 && value <= 1.0), U"Open phase must be greater than zero and smaller equal one.", U"openPhase", RealTier)
 KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (CollisionPhase, collision phase, U"", U"0.03",
-        (value >= 0 && value < 1), U"Collision phase must be greater equal zero and smaller than one.", U"collisionPhase", RealTier)
+        (value >= 0.0 && value < 1.0), U"Collision phase must be greater equal zero and smaller than one.", U"collisionPhase", RealTier)
 KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (DoublePulsing, double pulsing, U" (0..1)", U"0.0",
-        (value >= 0 && value <= 1), U"Double pulsing must be greater equal zero and smaller equal one.", U"doublePulsing", RealTier)
+        (value >= 0.0 && value <= 1.0), U"Double pulsing must be greater equal zero and smaller equal one.", U"doublePulsing", RealTier)
 KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (SpectralTilt, spectral tilt, U" (dB)", U"0.0",
-        (value >= 0), U"Spectral tilt must be greater equal zero.", U"spectralTilt", IntensityTier)
+        (value >= 0.0), U"Spectral tilt must be greater equal zero.", U"spectralTilt", IntensityTier)
 KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (AspirationAmplitude, aspiration amplitude, U" (dB SPL)", U"0.0",
-        (1), U"", U"aspiration", IntensityTier)
+        (true), U"", U"aspiration", IntensityTier)
 KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (BreathinessAmplitude, breathiness amplitude, U" (dB SPL)", U"30.0",
-        (1), U"", U"breathiness", IntensityTier)
+        (true), U"", U"breathiness", IntensityTier)
 
 KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (FricationAmplitude, frication amplitude, U" (dB SPL)", U"30.0",
-        (1), U"", U"frication", IntensityTier)
+        (true), U"", U"frication", IntensityTier)
 KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (FricationBypass, frication bypass, U" (dB)", U"30.0",
-        (1), U"", U"bypass", IntensityTier)
+        (true), U"", U"bypass", IntensityTier)
 
 #undef KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE
 
@@ -368,7 +370,7 @@ DO \
 END
 
 #define KlattGrid_ADD_FBA_VALUE(Name,namef,Form,FBA,fba,formantType,default,unit,require,requiremessage) \
-FORM (KlattGrid_add##Name##Formant##FBA##Point, U"KlattGrid: Add " #namef "ormant " #fba " point", 0) \
+FORM (KlattGrid_add##Name##Formant##FBA##Point, U"KlattGrid: Add " #namef "ormant " #fba " point", nullptr) \
 	NATURAL (U"Formant number", U"1") \
 	REAL (U"Time (s)", U"0.5") \
 	REAL (U"Value " #unit, default) \
@@ -383,7 +385,7 @@ DO \
 END
 
 #define KlattGrid_REMOVE_FBA_VALUE(Name,namef,Form,FBA,fba,formantType) \
-FORM (KlattGrid_remove##Name##Formant##FBA##Points, U"KlattGrid: Remove " #namef "ormant " #fba " points", 0) \
+FORM (KlattGrid_remove##Name##Formant##FBA##Points, U"KlattGrid: Remove " #namef "ormant " #fba " points", nullptr) \
 	NATURAL (U"Formant number", U"1") \
 	REAL (U"From time (s)", U"0.3")\
 	REAL (U"To time (s)", U"0.7") \
@@ -396,7 +398,7 @@ DO \
 END
 
 #define KlattGrid_ADD_FORMANT(Name,namef,formantType) \
-FORM (KlattGrid_add##Name##Formant, U"KlattGrid: Add " #namef "ormant", 0) \
+FORM (KlattGrid_add##Name##Formant, U"KlattGrid: Add " #namef "ormant", nullptr) \
 	INTEGER (U"Position", U"0 (=at end)") \
 	OK \
 DO \
@@ -407,7 +409,7 @@ DO \
 END
 
 #define KlattGrid_REMOVE_FORMANT(Name,namef,formantType) \
-FORM (KlattGrid_remove##Name##Formant, U"KlattGrid: Remove " #namef "ormant", 0) \
+FORM (KlattGrid_remove##Name##Formant, U"KlattGrid: Remove " #namef "ormant", nullptr) \
 	INTEGER (U"Position", U"0 (=do nothing)") \
 	OK \
 DO \
@@ -418,7 +420,7 @@ DO \
 END
 
 #define KlattGrid_ADD_FORMANT_FREQUENCYANDBANDWIDTHTIERS(Name,namef,formantType) \
-FORM (KlattGrid_add##Name##FormantFrequencyAndBandwidthTiers, U"KlattGrid: Add " #namef "ormant", 0) \
+FORM (KlattGrid_add##Name##FormantFrequencyAndBandwidthTiers, U"KlattGrid: Add " #namef "ormant", nullptr) \
 	INTEGER (U"Position", U"0 (=at end)") \
 	OK \
 DO \
@@ -429,7 +431,7 @@ DO \
 END
 
 #define KlattGrid_REMOVE_FORMANT_FREQUENCYANDBANDWIDTHTIERS(Name,namef,formantType) \
-FORM (KlattGrid_remove##Name##FormantFrequencyAndBandwidthTiers, U"KlattGrid: Remove " #namef "ormant", 0) \
+FORM (KlattGrid_remove##Name##FormantFrequencyAndBandwidthTiers, U"KlattGrid: Remove " #namef "ormant", nullptr) \
 	INTEGER (U"Position", U"0 (=do nothing)") \
 	OK \
 DO \
@@ -440,7 +442,7 @@ DO \
 END
 
 #define KlattGrid_ADD_FORMANT_AMPLITUDETIER(Name,namef,formantType) \
-FORM (KlattGrid_add##Name##FormantAmplitudeTier, U"KlattGrid: Add " #namef "ormant amplitude tier", 0) \
+FORM (KlattGrid_add##Name##FormantAmplitudeTier, U"KlattGrid: Add " #namef "ormant amplitude tier", nullptr) \
 	INTEGER (U"Position", U"0 (=at end)") \
 	OK \
 DO \
@@ -451,7 +453,7 @@ DO \
 END
 
 #define KlattGrid_REMOVE_FORMANT_AMPLITUDETIER(Name,namef,formantType) \
-FORM (KlattGrid_remove##Name##FormantAmplitudeTier, U"KlattGrid: Remove " #namef "ormant amplitude tier", 0) \
+FORM (KlattGrid_remove##Name##FormantAmplitudeTier, U"KlattGrid: Remove " #namef "ormant amplitude tier", nullptr) \
 	INTEGER (U"Position", U"0 (=do nothing)") \
 	OK \
 DO \
@@ -554,7 +556,7 @@ DO
 END
 
 #define KlattGrid_FORMANT_GET_FB_VALUE(Name,name,ForB,forb,FormB,formantType) \
-FORM (KlattGrid_get##Name##Formant##ForB##AtTime, U"KlattGrid: Get " #name " " #forb " at time", 0) \
+FORM (KlattGrid_get##Name##Formant##ForB##AtTime, U"KlattGrid: Get " #name " " #forb " at time", nullptr) \
 	NATURAL (U"Formant number", U"1") \
 	REAL (U"Time (s)", U"0.5") \
 	OK \
@@ -565,7 +567,7 @@ DO \
 END
 
 #define KlattGrid_FORMANT_GET_A_VALUE(Name,name,formantType) \
-FORM (KlattGrid_get##Name##FormantAmplitudeAtTime, U"KlattGrid: Get " #name " formant amplitude at time", 0) \
+FORM (KlattGrid_get##Name##FormantAmplitudeAtTime, U"KlattGrid: Get " #name " formant amplitude at time", nullptr) \
 	NATURAL (U"Formant number", U"1") \
 	REAL (U"Time (s)", U"0.5") \
 	OK \
@@ -602,7 +604,7 @@ DIRECT (KlattGrid_extract##Name##FormantGrid) \
 END
 
 #define KlattGrid_EXTRACT_FORMANT_AMPLITUDE(Name,name,formantType) \
-FORM (KlattGrid_extract##Name##FormantAmplitudeTier, U"KlattGrid: Extract " #name " formant amplitude tier", 0) \
+FORM (KlattGrid_extract##Name##FormantAmplitudeTier, U"KlattGrid: Extract " #name " formant amplitude tier", nullptr) \
 	NATURAL (U"Formant number", U"1") \
 	OK \
 DO \
@@ -634,7 +636,7 @@ DIRECT (KlattGrid_replace##Name##FormantGrid) \
 END
 
 #define KlattGrid_REPLACE_FORMANT_AMPLITUDE(Name,name,formantType) \
-FORM (KlattGrid_replace##Name##FormantAmplitudeTier, U"KlattGrid: Replace " #name " formant amplitude tier", 0) \
+FORM (KlattGrid_replace##Name##FormantAmplitudeTier, U"KlattGrid: Replace " #name " formant amplitude tier", nullptr) \
 	NATURAL (U"Formant number", U"1") \
 	OK \
 DO \
@@ -660,7 +662,7 @@ KlattGrid_REPLACE_FORMANT_AMPLITUDE (Frication, frication, KlattGrid_FRICATION_F
 #undef KlattGrid_REPLACE_FORMANTGRID
 
 #define KlattGrid_FORMANT_GET_ADD_REMOVE(Name,name,unit,default,require,requiremessage) \
-FORM (KlattGrid_get##Name##AtTime, U"KlattGrid: Get " #name " at time", 0) \
+FORM (KlattGrid_get##Name##AtTime, U"KlattGrid: Get " #name " at time", nullptr) \
 	KlattGrid_6formants_addCommonField (dia); \
 	NATURAL (U"Formant number", U"1") \
 	REAL (U"Time (s)", U"0.5") \
@@ -671,7 +673,7 @@ DO \
 		Melder_informationReal (KlattGrid_get##Name##AtTime (me, formantType, GET_INTEGER (U"Formant number"), GET_REAL (U"Time")), U" (Hz)"); \
 	} \
 END \
-FORM (KlattGrid_getDelta##Name##AtTime, U"KlattGrid: Get delta " #name " at time", 0) \
+FORM (KlattGrid_getDelta##Name##AtTime, U"KlattGrid: Get delta " #name " at time", nullptr) \
 	NATURAL (U"Formant number", U"1") \
 	REAL (U"Time (s)", U"0.5") \
 	OK \
@@ -680,7 +682,7 @@ DO \
 		Melder_informationReal (KlattGrid_getDelta##Name##AtTime (me, GET_INTEGER (U"Formant number"), GET_REAL (U"Time")), U" (Hz)"); \
 	} \
 END \
-FORM (KlattGrid_add##Name##Point, U"KlattGrid: Add " #name " point", 0) \
+FORM (KlattGrid_add##Name##Point, U"KlattGrid: Add " #name " point", nullptr) \
 	KlattGrid_6formants_addCommonField (dia); \
 	NATURAL (U"Formant number", U"1") \
 	REAL (U"Time (s)", U"0.5") \
@@ -695,7 +697,7 @@ DO \
 		praat_dataChanged (me); \
 	} \
 END \
-FORM (KlattGrid_addDelta##Name##Point, U"KlattGrid: Add delta " #name " point", 0) \
+FORM (KlattGrid_addDelta##Name##Point, U"KlattGrid: Add delta " #name " point", nullptr) \
 	NATURAL (U"Formant number", U"1") \
 	REAL (U"Time (s)", U"0.5") \
 	REAL (U"Value" unit, default) \
@@ -708,7 +710,7 @@ DO \
 		praat_dataChanged (me); \
 	} \
 END \
-FORM (KlattGrid_remove##Name##Points, U"Remove " #name " points", 0) \
+FORM (KlattGrid_remove##Name##Points, U"Remove " #name " points", nullptr) \
 	KlattGrid_6formants_addCommonField (dia); \
 	NATURAL (U"Formant number", U"1") \
 	REAL (U"From time (s)", U"0.3")\
@@ -721,7 +723,7 @@ DO \
 		praat_dataChanged (me);\
 	} \
 END \
-FORM (KlattGrid_removeDelta##Name##Points, U"Remove delta " #name " points", 0) \
+FORM (KlattGrid_removeDelta##Name##Points, U"Remove delta " #name " points", nullptr) \
 	NATURAL (U"Formant number", U"1") \
 	REAL (U"From time (s)", U"0.3")\
 	REAL (U"To time (s)", U"0.7") \
@@ -738,7 +740,7 @@ KlattGrid_FORMANT_GET_ADD_REMOVE (Bandwidth, bandwidth, U" (Hz)", U"50.0", (valu
 
 #undef KlattGrid_FORMANT_GET_ADD_REMOVE
 
-FORM (KlattGrid_addFormantAndBandwidthTier, U"", 0)
+FORM (KlattGrid_addFormantAndBandwidthTier, U"", nullptr)
 	KlattGrid_7formants_addCommonField (dia);
 	INTEGER (U"Position", U"0 (=at end)")
 	OK
@@ -751,7 +753,7 @@ DO
 	}
 END
 
-FORM (KlattGrid_extractFormantGrid, U"KlattGrid: Extract formant grid", 0)
+FORM (KlattGrid_extractFormantGrid, U"KlattGrid: Extract formant grid", nullptr)
 	KlattGrid_6formants_addCommonField (dia);
 	OK
 DO
@@ -762,7 +764,7 @@ DO
 	}
 END
 
-FORM (KlattGrid_replaceFormantGrid, U"KlattGrid: Replace formant grid", 0)
+FORM (KlattGrid_replaceFormantGrid, U"KlattGrid: Replace formant grid", nullptr)
 	KlattGrid_6formants_addCommonField (dia);
 	OK
 DO
@@ -772,7 +774,7 @@ DO
 	praat_dataChanged (OBJECT);
 END
 
-FORM (KlattGrid_getAmplitudeAtTime, U"KlattGrid: Get amplitude at time", 0) \
+FORM (KlattGrid_getAmplitudeAtTime, U"KlattGrid: Get amplitude at time", nullptr)
 	KlattGrid_4formants_addCommonField (dia);
 	NATURAL (U"Formant number", U"1")
 	REAL (U"Time (s)", U"0.5")
@@ -785,7 +787,7 @@ DO
 	}
 END
 
-FORM (KlattGrid_addAmplitudePoint, U"KlattGrid: Add amplitude point", 0)
+FORM (KlattGrid_addAmplitudePoint, U"KlattGrid: Add amplitude point", nullptr)
 	KlattGrid_4formants_addCommonField (dia);
 	NATURAL (U"Formant number", U"1")
 	REAL (U"Time (s)", U"0.5")
@@ -801,7 +803,7 @@ DO
 	}
 END
 
-FORM (KlattGrid_removeAmplitudePoints, U"Remove amplitude points", 0) \
+FORM (KlattGrid_removeAmplitudePoints, U"Remove amplitude points", nullptr)
 	KlattGrid_4formants_addCommonField (dia);
 	NATURAL (U"Formant number", U"1")
 	REAL (U"From time (s)", U"0.3")
@@ -816,7 +818,7 @@ DO
 	}
 END
 
-FORM (KlattGrid_extractAmplitudeTier, U"", 0)
+FORM (KlattGrid_extractAmplitudeTier, U"", nullptr)
 	KlattGrid_4formants_addCommonField (dia);
 	NATURAL (U"Formant number", U"1")
 	OK
@@ -828,7 +830,7 @@ DO
 	}
 END
 
-FORM (KlattGrid_replaceAmplitudeTier, U"KlattGrid: Replace amplitude tier", 0)
+FORM (KlattGrid_replaceAmplitudeTier, U"KlattGrid: Replace amplitude tier", nullptr)
 	KlattGrid_4formants_addCommonField (dia);
 	NATURAL (U"Formant number", U"1")
 	OK
@@ -841,13 +843,13 @@ DO
 END
 
 FORM (KlattGrid_to_Sound_special, U"KlattGrid: To Sound (special)", U"KlattGrid: To Sound (special)...")
-	KlattGrid_PlayOptions_addCommonFields (dia, 1);
+	KlattGrid_PlayOptions_addCommonFields (dia, true);
 	OK
 DO
 	LOOP {
 		iam (KlattGrid);
 		KlattGrid_setDefaultPlayOptions (me);
-		KlattGrid_PlayOptions_getCommonFields (dia, 1, me);
+		KlattGrid_PlayOptions_getCommonFields (dia, true, me);
 		praat_new (KlattGrid_to_Sound (me), my name);
 	}
 END
@@ -861,19 +863,19 @@ DIRECT (KlattGrid_to_Sound)
 END
 
 FORM (KlattGrid_playSpecial, U"KlattGrid: Play special", U"KlattGrid: Play special...")
-	KlattGrid_PlayOptions_addCommonFields (dia, 0);
+	KlattGrid_PlayOptions_addCommonFields (dia, false);
 	OK
 DO
 	LOOP {
 		iam (KlattGrid);
 		KlattGrid_setDefaultPlayOptions (me);
-		KlattGrid_PlayOptions_getCommonFields (dia, 0, me);
+		KlattGrid_PlayOptions_getCommonFields (dia, false, me);
 		KlattGrid_playSpecial (me);
 	}
 END
 
 FORM (KlattGrid_to_Sound_phonation, U"KlattGrid: To Sound (phonation)", U"KlattGrid: To Sound (phonation)...")
-	POSITIVE (U"Sampling frequency (Hz)", U"44100")
+	POSITIVE (U"Sampling frequency (Hz)", U"44100.0")
 	KlattGrid_PhonationGridPlayOptions_addCommonFields (dia);
 	OK
 DO
@@ -894,10 +896,10 @@ DIRECT (KlattGrid_play)
 	}
 END
 
-FORM (KlattGrid_draw, U"KlattGrid: Draw", 0)
+FORM (KlattGrid_draw, U"KlattGrid: Draw", nullptr)
 	RADIO (U"Synthesis model", 1)
-	RADIOBUTTON (U"Cascade")
-	RADIOBUTTON (U"Parallel")
+		RADIOBUTTON (U"Cascade")
+		RADIOBUTTON (U"Parallel")
 	OK
 DO
 	autoPraatPicture picture;
@@ -907,11 +909,11 @@ DO
 	}
 END
 
-FORM (KlattGrid_drawVocalTract, U"KlattGrid: Draw vocal tract", 0)
+FORM (KlattGrid_drawVocalTract, U"KlattGrid: Draw vocal tract", nullptr)
 	RADIO (U"Synthesis model", 1)
-	RADIOBUTTON (U"Cascade")
-	RADIOBUTTON (U"Parallel")
-	BOOLEAN (U"Include tracheal formants", 1);
+		RADIOBUTTON (U"Cascade")
+		RADIOBUTTON (U"Parallel")
+	BOOLEAN (U"Include tracheal formants", true);
 	OK
 DO
 	autoPraatPicture picture;
@@ -951,8 +953,8 @@ END
 
 FORM (Sound_KlattGrid_filterByVocalTract, U"Sound & KlattGrid: Filter by vocal tract", U"Sound & KlattGrid: Filter by vocal tract...")
 	RADIO (U"Vocal tract filter model", 1)
-	RADIOBUTTON (U"Cascade")
-	RADIOBUTTON (U"Parallel")
+		RADIOBUTTON (U"Cascade")
+		RADIOBUTTON (U"Parallel")
 	OK
 DO
 	Sound me = FIRST (Sound);
@@ -1258,7 +1260,6 @@ void praat_KlattGrid_init () {
 	praat_addAction2 (classKlattGrid, 1, classFormantGrid, 1, U"Replace " #namef "ormant grid", nullptr, 1, DO_KlattGrid_replace##Name##FormantGrid);
 #define KlattGrid_REPLACE_FORMANT_AMPLITUDE_ACTION(Name,namef) \
 	praat_addAction2 (classKlattGrid, 1, classIntensityTier, 1, U"Replace " #namef "ormant amplitude tier...", nullptr, 1, DO_KlattGrid_replace##Name##FormantAmplitudeTier);
-
 
 	KlattGrid_REPLACE_FORMANTGRID_ACTION (Oral, oral f)
 	KlattGrid_REPLACE_FORMANTGRID_ACTION (Nasal, nasal f)

@@ -83,11 +83,11 @@ void Eigen_drawEigenvector (Eigen me, Graphics g, long ivec, long first, long la
 	Draw eigenvector. When rowLabels != nullptr, draw row text labels on bottom axis.
 */
 
-void Eigens_alignEigenvectors (Collection me);
-/*
-	Correlate all eigenvectors with the eigenvectors of the first Eigen.
-	If r < 0 then mirror the eigenvectors of
+/**
+	Adapt the sign of each eigenvector except the first
+	in such a way that it correlates positively with the first eigenvector.
 */
+void Eigens_alignEigenvectors (OrderedOf<structEigen>* me);
 
 double Eigens_getAngleBetweenEigenplanes_degrees (Eigen me, Eigen thee);
 /*

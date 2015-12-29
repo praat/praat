@@ -31,13 +31,11 @@ Thing_define (Categories, OrderedOfString) {
 		override;
 };
 
-void Categories_init (Categories me, long size);
-
 autoCategories Categories_create ();
 
 autoCategories Categories_sequentialNumbers (long n);
 
-autoCategories Categories_selectUniqueItems (Categories me, bool sorted);
+autoCategories Categories_selectUniqueItems (Categories me);
 
 void Categories_drawItem (Categories me, Graphics g, long position, double xWC, double yWC);
 

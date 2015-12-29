@@ -121,7 +121,7 @@ autoERPTier EEG_to_ERPTier_bit (EEG me, double fromTime, double toTime, int mark
 static autoPointProcess TextGrid_getStartingPoints_multiNumeric (TextGrid me, uint16_t number) {
 	try {
 		autoPointProcess thee;
-		int numberOfBits = my numberOfTiers();
+		int numberOfBits = my tiers -> size();
 		for (int ibit = 0; ibit < numberOfBits; ibit ++) {
 			(void) TextGrid_checkSpecifiedTierIsIntervalTier (me, ibit + 1);
 			if (number & (1 << ibit)) {

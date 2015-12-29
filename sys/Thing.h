@@ -73,12 +73,12 @@ struct structClassInfo {
 #define Thing_declare(klas) \
 	typedef struct struct##klas *klas; \
 	typedef _Thing_auto <struct##klas> auto##klas; \
+	extern struct structClassInfo theClassInfo_##klas; \
 	extern ClassInfo class##klas
 
 #define Thing_define(klas,parentKlas) \
 	Thing_declare (klas); \
 	typedef struct##parentKlas klas##_Parent; \
-	extern struct structClassInfo theClassInfo_##klas; \
 	struct struct##klas : public struct##parentKlas
 
 #define Thing_implement(klas,parentKlas,version) \
@@ -242,7 +242,7 @@ void * _Thing_check (Thing me, ClassInfo table, const char *fileName, int line);
 
 /* For debugging. */
 
-long Thing_getTotalNumberOfThings ();
+extern long theTotalNumberOfThings;
 /* This number is 0 initially, increments at every successful `new', and decrements at every `forget'. */
 
 template <class T>
@@ -303,6 +303,7 @@ public:
 	T* operator-> () const {   // as r-value
 		return our ptr;
 	}
+	//Y* operator[] (long pos) { return (*ptr) -> _item [pos]; }
 	/*
 	T& operator* () const {   // as l-value
 		return *our ptr;

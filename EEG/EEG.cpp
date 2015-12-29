@@ -288,7 +288,7 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 				numberOfStatusBits == 8 ? U"S1 S2 S3 S4 S5 S6 S7 S8" : U"S1 S2 S3 S4 S5 S6 S7 S8 S9 S10 S11 S12 S13 S14 S15 S16", U"");
 			for (int bit = 1; bit <= numberOfStatusBits; bit ++) {
 				unsigned long bitValue = 1 << (bit - 1);
-				IntervalTier tier = (IntervalTier) thy tiers -> item [bit];
+				IntervalTier tier = (IntervalTier) thy tiers -> _item [bit];
 				for (long i = 1; i <= my nx; i ++) {
 					unsigned long previousValue = i == 1 ? 0 : (long) my z [numberOfChannels] [i - 1];
 					unsigned long thisValue = (long) my z [numberOfChannels] [i];
@@ -537,7 +537,7 @@ void EEG_setChannelToZero (EEG me, const char32 *channelName) {
 
 void EEG_removeTriggers (EEG me, int which_Melder_STRING, const char32 *criterion) {
 	try {
-		if (my textgrid -> numberOfTiers () < 2 || ! Melder_equ (my textgrid -> tier (2) -> name, U"Trigger"))
+		if (my textgrid -> tiers -> size() < 2 || ! Melder_equ (my textgrid -> tiers -> _item [2] -> name, U"Trigger"))
 			Melder_throw (me, U" does not have a Trigger channel.");
 		TextGrid_removePoints (my textgrid.get(), 2, which_Melder_STRING, criterion);
 	} catch (MelderError) {
@@ -572,15 +572,15 @@ autoEEG EEG_extractChannel (EEG me, const char32 *channelName) {
 	}
 }
 
-autoEEG EEGs_concatenate (Collection me) {
+autoEEG EEGs_concatenate (OrderedOf<structEEG>* me) {
 	try {
-		if (my size < 1)
+		if (my size() < 1)
 			Melder_throw (U"Cannot concatenate zero EEG objects.");
-		EEG first = (EEG) my item [1];
+		EEG first = my _item [1];
 		long numberOfChannels = first -> numberOfChannels;
 		char32 **channelNames = first -> channelNames;
-		for (long ieeg = 2; ieeg <= my size; ieeg ++) {
-			EEG other = (EEG) my item [ieeg];
+		for (long ieeg = 2; ieeg <= my size(); ieeg ++) {
+			EEG other = my _item [ieeg];
 			if (other -> numberOfChannels != numberOfChannels)
 				Melder_throw (U"The number of channels of ", other, U" does not match the number of channels of ", first, U".");
 			for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
@@ -589,11 +589,11 @@ autoEEG EEGs_concatenate (Collection me) {
 			}
 		}
 		OrderedOf<structSound> soundList;
-		autoOrdered textgridCollection = Ordered_create ();
-		for (long ieeg = 1; ieeg <= my size; ieeg ++) {
-			EEG eeg = (EEG) my item [ieeg];
+		OrderedOf<structTextGrid> textgridList;
+		for (long ieeg = 1; ieeg <= my size(); ieeg ++) {
+			EEG eeg = my _item [ieeg];
 			soundList. addItem_ref (eeg -> sound.get());
-			Collection_addItem_ref (textgridCollection.peek(), eeg -> textgrid.get());
+			textgridList. addItem_ref (eeg -> textgrid.get());
 		}
 		autoEEG thee = Thing_new (EEG);
 		thy numberOfChannels = numberOfChannels;
@@ -602,7 +602,7 @@ autoEEG EEGs_concatenate (Collection me) {
 			thy channelNames [ichan] = Melder_dup (channelNames [ichan]);
 		}
 		thy sound = Sounds_concatenate (soundList, 0.0);
-		thy textgrid = TextGrids_concatenate (textgridCollection.peek());
+		thy textgrid = TextGrids_concatenate (& textgridList);
 		thy xmin = thy textgrid -> xmin;
 		thy xmax = thy textgrid -> xmax;
 		return thee;
@@ -639,13 +639,13 @@ void EEG_replaceTextGrid (EEG me, TextGrid textgrid) {
 
 autoMixingMatrix EEG_to_MixingMatrix (EEG me, long maxNumberOfIterations, double tol, int method) {
 	try {
-		autoCrossCorrelationTables tables = Sound_to_CrossCorrelationTables (my sound.get(), 0.0, 0.0, 0.002, 1);
+		autoCrossCorrelationTableList tables = Sound_to_CrossCorrelationTableList (my sound.get(), 0.0, 0.0, 0.002, 1);
 		autoMixingMatrix thee = MixingMatrix_create (my sound -> ny, my sound -> ny);
 		for (long ichan = 1; ichan <= my numberOfChannels; ichan ++) {
 			TableOfReal_setRowLabel (thee.peek(), ichan, my channelNames [ichan]);
 			TableOfReal_setColumnLabel (thee.peek(), ichan, Melder_cat (U"ic", ichan));
 		}
-		MixingMatrix_and_CrossCorrelationTables_improveUnmixing (thee.peek(), tables.peek(), maxNumberOfIterations, tol, method);
+		MixingMatrix_and_CrossCorrelationTableList_improveUnmixing (thee.peek(), tables.peek(), maxNumberOfIterations, tol, method);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no MixingMatrix created.");

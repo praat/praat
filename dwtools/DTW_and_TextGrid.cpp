@@ -111,8 +111,8 @@ autoTextGrid DTW_and_TextGrid_to_TextGrid (DTW me, TextGrid thee, double precisi
 
 		autoTextGrid him = TextGrid_createWithoutTiers (tmin, tmax);
 
-		for (long i = 1; i <= thy tiers -> size; i++) {
-			Function anyTier = (Function) thy tiers -> item[i];
+		for (long i = 1; i <= thy tiers -> size(); i ++) {
+			Function anyTier = thy tiers -> _item [i];
 
 			if (anyTier -> classInfo == classIntervalTier) {
 				autoIntervalTier tier = DTW_and_IntervalTier_to_IntervalTier (me, (IntervalTier) anyTier, precision);
@@ -234,10 +234,10 @@ autoTextGrid DTW_and_TextGrid_to_TextGrid_old (DTW me, TextGrid thee) {
 
 		his xmin = my ymin;
 		his xmax = my ymax;
-		his tiers = Ordered_create ();
+		his tiers = FunctionList_create ();
 
-		for (long i = 1; i <= thy tiers -> size; i++) {
-			Daata anyTier = (Daata) thy tiers -> item[i];
+		for (long i = 1; i <= thy tiers -> size(); i ++) {
+			Daata anyTier = thy tiers -> _item [i];
 
 			if (anyTier -> classInfo == classIntervalTier) {
 

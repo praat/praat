@@ -2,7 +2,7 @@
 #define _FileInMemory_h_
 /* FileInMemory.h
  *
- * Copyright (C) 2011-2012, 2015 David Weenink
+ * Copyright (C) 2011-2012,2015 David Weenink, 2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,13 +19,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
-	djmw 20120125
-*/
 #include "Collection.h"
-
-#include "Strings_.h"
-#include "melder.h"
 #include "Strings_.h"
 
 Thing_define (FileInMemory, Daata) {
@@ -53,29 +47,33 @@ void FileInMemory_setId (FileInMemory me, const char32 *newId);
 
 void FileInMemory_showAsCode (FileInMemory me, const char32 *name, long numberOfBytesPerLine);
 
-Thing_define (FilesInMemory, SortedSet) {
+Collection_declare (SortedSetOfFileInMemory, SortedSetOf, FileInMemory);
+
+Thing_define (FileInMemorySet, SortedSetOfFileInMemory) {
 	int d_sortKey;
 
 	static int s_compare_name (FileInMemory data1, FileInMemory data2);
 	static int s_compare_id (FileInMemory data1, FileInMemory data2);
-	Data_CompareHook v_getCompareHook ()
+	CompareHook v_getCompareHook ()
 		override { return d_sortKey == 0 ? s_compare_name : s_compare_id; }
 };
 
-autoFilesInMemory FilesInMemory_create ();
+inline static autoFileInMemorySet FileInMemorySet_create () {
+	return Thing_new (FileInMemorySet);
+}
 
-autoFilesInMemory FilesInMemory_createFromDirectoryContents (const char32 *dirpath, const char32 *file);
+autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (const char32 *dirpath, const char32 *file);
 
-void FilesInMemory_showAsCode (FilesInMemory me, const char32 *name, long numberOfBytesPerLine);
+void FileInMemorySet_showAsCode (FileInMemorySet me, const char32 *name, long numberOfBytesPerLine);
 
-void FilesInMemory_showOneFileAsCode (FilesInMemory me, long index, const char32 *name, long numberOfBytesPerLine);
+void FileInMemorySet_showOneFileAsCode (FileInMemorySet me, long index, const char32 *name, long numberOfBytesPerLine);
 
-long FilesInMemory_getIndexFromId (FilesInMemory me, const char32 *id);
+long FileInMemorySet_getIndexFromId (FileInMemorySet me, const char32 *id);
 
-autoStrings FilesInMemory_to_Strings_id (FilesInMemory me);
+autoStrings FileInMemorySet_to_Strings_id (FileInMemorySet me);
 
-char * FilesInMemory_getCopyOfData (FilesInMemory me, const char32 *id, long *numberOfBytes);
+char * FileInMemorySet_getCopyOfData (FileInMemorySet me, const char32 *id, long *numberOfBytes);
 
-const char * FilesInMemory_getData (FilesInMemory me, const char32 *id, long *numberOfBytes);
+const char * FileInMemorySet_getData (FileInMemorySet me, const char32 *id, long *numberOfBytes);
 
 #endif // _FileInMemory_h_

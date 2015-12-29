@@ -35,8 +35,32 @@ Thing_define (Correlation, SSCP) {
 	Ordered collection of SSCP's
 	All SSCP's must have the same dimensions and labels.
 */
-Thing_define (SSCPs, Ordered) {
+Collection_declare (OrderedOfSSCP, OrderedOf, SSCP)
+
+Thing_define (SSCPList, OrderedOfSSCP) {
+	structSSCPList () {
+		our classInfo = classSSCPList;
+	}
 };
+
+inline static autoSSCPList SSCPList_create () {
+	return Thing_new (SSCPList);
+}
+
+Collection_declare (OrderedOfCovariance, OrderedOf, Covariance)
+
+Thing_define (CovarianceList, OrderedOfCovariance) {
+	structCovarianceList () {
+		our classInfo = classCovarianceList;
+	}
+	SSCPList asSSCPList () {
+		return reinterpret_cast<SSCPList> (this);
+	}
+};
+
+inline static autoCovarianceList CovarianceList_create () {
+	return Thing_new (CovarianceList);
+}
 
 void SSCP_init (SSCP me, long dimension, long storage);
 
@@ -111,7 +135,7 @@ void Covariance_and_PCA_generateOneVector (Covariance me, PCA thee, double *vec,
 		4. buf, a vector of length my numberOfColumns, is needed so the routine cannot fail
 */
 
-autoSSCPs TableOfReal_to_SSCPs_byLabel (TableOfReal me);
+autoSSCPList TableOfReal_to_SSCPList_byLabel (TableOfReal me);
 
 autoPCA SSCP_to_PCA (SSCP me);
 
@@ -194,37 +218,35 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 	f has Fisher distribution with p and n1+n2-p-1 degrees of freedom.
 */
 
-void Covariances_equality (Collection me, int method, double *prob, double *chisq, double *df);
+void Covariances_equality (CovarianceList me, int method, double *prob, double *chisq, double *df);
 /*
 	Equality of covariance.
 	method = 1 : Bartlett (Morrison, 1990)
 	method = 2 : Wald (Schott, 2001)
 */
 
-autoSSCPs SSCPs_create ();
+autoSSCPList TableOfReal_to_SSCPList_byLabel (TableOfReal me);
 
-autoSSCPs TableOfReal_to_SSCPs_byLabel (TableOfReal me);
-
-autoSSCP SSCPs_to_SSCP_sum (SSCPs me);
+autoSSCP SSCPList_to_SSCP_sum (SSCPList me);
 /* Sum the sscp's and weigh each means with it's numberOfObservations. */
 
-autoSSCP SSCPs_to_SSCP_pool (SSCPs me);
+autoSSCP SSCPList_to_SSCP_pool (SSCPList me);
 
-void SSCPs_getHomegeneityOfCovariances_box (SSCPs me, double *probability, double *chisq, long *ndf);
+void SSCPList_getHomegeneityOfCovariances_box (SSCPList me, double *probability, double *chisq, long *ndf);
 
 autoSSCP SSCP_toTwoDimensions (SSCP me, double *v1, double *v2);
 
-autoSSCPs SSCPs_toTwoDimensions (SSCPs me, double *v1, double *v2);
+autoSSCPList SSCPList_toTwoDimensions (SSCPList me, double *v1, double *v2);
 
-autoSSCPs SSCPs_extractTwoDimensions (SSCPs me, long d1, long d2);
+autoSSCPList SSCPList_extractTwoDimensions (SSCPList me, long d1, long d2);
 
 /* For inheritors */
 
-void SSCPs_drawConcentrationEllipses (SSCPs me, Graphics g, double scale,
+void SSCPList_drawConcentrationEllipses (SSCPList me, Graphics g, double scale,
 	bool confidence, const char32 *label, long d1, long d2, double xmin, double xmax,
 	double ymin, double ymax, int fontSize, int garnish);
 
-void SSCPs_getEllipsesBoundingBoxCoordinates (SSCPs me, double scale, bool confidence,
+void SSCPList_getEllipsesBoundingBoxCoordinates (SSCPList me, double scale, bool confidence,
 	double *xmin, double *xmax, double *ymin, double *ymax);
 
 void SSCP_expand (SSCP me);

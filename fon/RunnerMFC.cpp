@@ -43,7 +43,7 @@ void structRunnerMFC :: v_dataChanged () {
 }
 
 static int RunnerMFC_startExperiment (RunnerMFC me) {
-	my data = (Daata) my experiments -> item [my iexperiment];
+	my data = my experiments [my iexperiment];
 	Melder_assert (my data -> classInfo == classExperimentMFC);
 	ExperimentMFC_start ((ExperimentMFC) my data);
 	Thing_setName (me, ((ExperimentMFC) my data) -> name);
@@ -375,7 +375,7 @@ static void gui_drawingarea_cb_click (RunnerMFC me, GuiDrawingArea_ClickEvent ev
 			do_oops (me);
 			return;
 		}
-		if (my iexperiment < my experiments -> size) {
+		if (my iexperiment < my experiments.size()) {
 			my iexperiment ++;
 			if (! RunnerMFC_startExperiment (me)) {
 				Melder_flushError ();
@@ -436,7 +436,7 @@ void structRunnerMFC :: v_createChildren () {
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
 }
 
-autoRunnerMFC RunnerMFC_create (const char32 *title, autoOrdered experiments) {
+autoRunnerMFC RunnerMFC_create (const char32 *title, OrderedOf<structExperimentMFC> experiments) {
 	try {
 		autoRunnerMFC me = Thing_new (RunnerMFC);
 		Editor_init (me.peek(), 0, 0, 2000, 2000, title, nullptr);

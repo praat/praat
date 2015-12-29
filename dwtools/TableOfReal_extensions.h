@@ -197,7 +197,6 @@ autoTableOfReal TableOfReal_to_TableOfReal (TableOfReal me);
 autoTableOfReal TableOfReal_choleskyDecomposition (TableOfReal me, int upper, int inverse);
 
 autoTableOfReal TableOfReal_appendColumns (TableOfReal me, TableOfReal thee);
-autoTableOfReal TableOfReal_appendColumnsMany (Collection me);
 
 void TableOfReal_copyOneRowWithLabel (TableOfReal me, TableOfReal thee, long myrow, long thyrow);
 
@@ -207,15 +206,10 @@ autoTableOfReal TableOfReal_and_TableOfReal_crossCorrelations (TableOfReal me, T
 
 /********************* class TablesOfReal ******************************/
 
-Thing_define (TablesOfReal, Ordered) {
-};
+autoTableOfReal TablesOfReal_sum (TableOfRealList me);
 
-void TablesOfReal_init (TablesOfReal me);
+bool TablesOfReal_haveIdenticalDimensions (TableOfRealList me);
 
-autoTablesOfReal TablesOfReal_create ();
-
-autoTableOfReal TablesOfReal_sum (TablesOfReal me);
-
-int TablesOfReal_checkDimensions (TablesOfReal me);
+autoTableOfReal TableOfReal_appendColumnsMany (TableOfRealList me);
 
 #endif /* _TableOfReal_extensions_h_ */

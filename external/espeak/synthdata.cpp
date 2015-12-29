@@ -121,10 +121,10 @@ int LoadPhData(int *srate)
 
 #ifdef DATA_FROM_SOURCECODE_FILES
 	long llength;
-	phoneme_tab_data = (unsigned char *) FilesInMemory_getData (espeakdata_phons.get(), U"phontab", &llength);
-	phoneme_index = (USHORT *) FilesInMemory_getData (espeakdata_phons.get(), U"phonindex", &llength);
-	phondata_ptr = (char *) FilesInMemory_getData (espeakdata_phons.get(), U"phondata", &llength);
-	tunes = (TUNE *) FilesInMemory_getData (espeakdata_phons.get(), U"intonations", &llength);
+	phoneme_tab_data = (unsigned char *) FileInMemorySet_getData (espeakdata_phons.get(), U"phontab", &llength);
+	phoneme_index = (USHORT *) FileInMemorySet_getData (espeakdata_phons.get(), U"phonindex", &llength);
+	phondata_ptr = (char *) FileInMemorySet_getData (espeakdata_phons.get(), U"phondata", &llength);
+	tunes = (TUNE *) FileInMemorySet_getData (espeakdata_phons.get(), U"intonations", &llength);
 	length = llength;
 #else
 	if((phoneme_tab_data = (unsigned char *)ReadPhFile((void *)(phoneme_tab_data),"phontab",NULL)) == NULL)

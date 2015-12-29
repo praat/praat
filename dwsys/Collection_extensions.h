@@ -35,21 +35,24 @@ autoCollection Collection_permuteItems (Collection me);
 
 /****************** class OrderedOfString ******************/
 
-Thing_define (OrderedOfString, Ordered) {
+Collection_declare (OrderedOfSimpleString, OrderedOf, SimpleString);
+
+Thing_define (OrderedOfString, OrderedOfSimpleString) {
+	structOrderedOfString () {
+		our classInfo = classOrderedOfString;
+	}
 	void v_info ()
 		override;
 };
 
 autoOrderedOfString OrderedOfString_create ();
 
-int OrderedOfString_init (OrderedOfString me, long initialCapacity);
-
 int OrderedOfString_append (OrderedOfString me, const char32 *append);
 
 autoOrderedOfString OrderedOfString_joinItems (OrderedOfString me, OrderedOfString thee);
 /* Join each item */
 
-autoOrderedOfString OrderedOfString_selectUniqueItems (OrderedOfString me, bool sort);
+autoOrderedOfString OrderedOfString_selectUniqueItems (OrderedOfString me);
 /* Postcondition: thy size <= my size */
 
 void OrderedOfString_frequency (OrderedOfString me, OrderedOfString thee, long *count);

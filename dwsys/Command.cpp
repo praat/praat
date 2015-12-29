@@ -46,46 +46,32 @@ int Command_undo (Command me) {
 
 Thing_implement (CommandHistory, Ordered, 0);
 
-autoCommandHistory CommandHistory_create (long maximumCapacity) {
-	try {
-		autoCommandHistory me = Thing_new (CommandHistory);
-		Collection_init (me.peek(), maximumCapacity);
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"Command not created.");
-	}
-}
-
 void CommandHistory_forth (CommandHistory me) {
-	my current++;
+	my current ++;
 }
 
 void CommandHistory_back (CommandHistory me) {
-	my current--;
+	my current --;
 }
 
 Command CommandHistory_getItem (CommandHistory me) {
-	Melder_assert (my current > 0 && my current <= my size);
-	return static_cast<Command> (my item [my current]);
+	Melder_assert (my current > 0 && my current <= my size());
+	return my _item [my current];
 }
 
-void CommandHistory_insertItem_move (CommandHistory me, autoCommand command)
-{
-	if (my current < my size) {
-		for (long i = my current + 1; i <= my size; i++) {
-			forget (my item [i]);
-		}
-		my size = my current;
+void CommandHistory_insertItem_move (CommandHistory me, autoCommand command) {
+	for (long i = my size(); i >= my current + 1; i --) {
+		my removeItem (i);
 	}
-	if (my size >= my _capacity) {
-		Collection_removeItem (me, 1);
+	my addItem_move (command.move());
+	while (my size() > 20) {
+		my removeItem (1);
 	}
-	my item[++my size] = command.releaseToAmbiguousOwner();
-	my current = my size;
+	my current = my size();
 }
 
 int CommandHistory_empty (CommandHistory me) {
-	return my size == 0;
+	return my size() == 0;
 }
 
 int CommandHistory_offleft (CommandHistory me) {
@@ -93,12 +79,12 @@ int CommandHistory_offleft (CommandHistory me) {
 }
 
 int CommandHistory_offright (CommandHistory me) {
-	return my size == 0 || my current == my size + 1;
+	return my size() == 0 || my current == my size() + 1;
 }
 
 char32 *CommandHistory_commandName (CommandHistory me, long offsetFromCurrent) {
 	long pos = my current + offsetFromCurrent;
-	return pos >= 1 && pos <= my size ? Thing_getName ((Thing) my item[pos]) : nullptr;
+	return pos >= 1 && pos <= my size() ? Thing_getName (my _item [pos]) : nullptr;
 }
 
 /* End of file Command.cpp */

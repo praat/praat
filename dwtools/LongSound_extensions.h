@@ -29,6 +29,6 @@
 
 void LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee, int audioFileType, MelderFile file);
 
-void LongSounds_appendToExistingSoundFile (Collection me, MelderFile file);
+void LongSounds_appendToExistingSoundFile (OrderedOf<structSampled>* me, MelderFile file);
 
 #endif /* _LongSound_extensions_h_ */

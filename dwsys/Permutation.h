@@ -84,6 +84,6 @@ void Permutation_previous_inline (Permutation me);
 
 autoPermutation Permutations_multiply2 (Permutation me, Permutation thee);
 
-autoPermutation Permutations_multiply (Collection me);
+autoPermutation Permutations_multiply (OrderedOf<structPermutation>* me);
 
 #endif /* _Permutation_h_ */

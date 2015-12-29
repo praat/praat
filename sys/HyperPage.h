@@ -37,7 +37,7 @@ Thing_define (HyperPage, Editor) {
 	Graphics ps;
 	double d_x, d_y, rightMargin, previousBottomSpacing;
 	long d_printingPageNumber;
-	autoCollection links;
+	CollectionOf<structHyperLink> links;
 	bool printing;
 	int top, mirror;
 	char32 *insideHeader, *middleHeader, *outsideHeader;

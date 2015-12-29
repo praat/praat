@@ -469,18 +469,18 @@ void Eigen_drawEigenvector (Eigen me, Graphics g, long ivec, long first, long la
 	}
 }
 
-void Eigens_alignEigenvectors (Collection me) {
-	if (my size < 2) {
+void Eigens_alignEigenvectors (OrderedOf<structEigen>* me) {
+	if (my size() < 2) {
 		return;
 	}
 
-	Eigen e1 = (Eigen) my item[1];
+	Eigen e1 = my _item [1];
 	double **evec1 = e1 -> eigenvectors;
 	long nev1 = e1 -> numberOfEigenvalues;
 	long dimension = e1 -> dimension;
 
-	for (long i = 2; i <= my size; i++) {
-		Eigen e2 = (Eigen) my item[i];
+	for (long i = 2; i <= my size(); i ++) {
+		Eigen e2 = my _item [i];
 		if (e2 -> dimension != dimension) {
 			Melder_throw (U"The dimension of the eigenvectors must be equal (offending object is ",  i, U").");
 		}
@@ -491,18 +491,18 @@ void Eigens_alignEigenvectors (Collection me) {
 		If r < 0 then mirror the eigenvector.
 	*/
 
-	for (long i = 2; i <= my size; i++) {
-		Eigen e2 = (Eigen) my item[i];
+	for (long i = 2; i <= my size(); i ++) {
+		Eigen e2 = my _item [i];
 		double **evec2 = e2 -> eigenvectors;
 
-		for (long j = 1; j <= MIN (nev1, e2 -> numberOfEigenvalues); j++) {
+		for (long j = 1; j <= MIN (nev1, e2 -> numberOfEigenvalues); j ++) {
 			double ip = 0.0;
-			for (long k = 1; k <= dimension; k++) {
-				ip += evec1[j][k] * evec2[j][k];
+			for (long k = 1; k <= dimension; k ++) {
+				ip += evec1 [j] [k] * evec2 [j] [k];
 			}
 			if (ip < 0.0) {
-				for (long k = 1; k <= dimension; k++) {
-					evec2[j][k] = - evec2[j][k];
+				for (long k = 1; k <= dimension; k ++) {
+					evec2 [j] [k] = - evec2 [j] [k];
 				}
 			}
 		}

@@ -100,25 +100,25 @@ long FeatureWeights_computePriors
 
 {
     long nc = 0;
-    for (long y = 1; y <= c->size; y++)
+    for (long y = 1; y <= c -> size(); y ++)
     {
         long ifriend = -1;
-        for (long sc = 0; sc < nc; sc++)
-            if (FeatureWeights_areFriends ((SimpleString) c->item[y], (SimpleString) c->item[indices[sc]])) ifriend = sc;
+        for (long sc = 0; sc < nc; sc ++)
+            if (FeatureWeights_areFriends (c -> _item [y], c -> _item [indices [sc]])) ifriend = sc;
 
         if (ifriend < 0)
         {
-            indices[nc] = y;
-            priors[nc] = 1;
-            nc++;
+            indices [nc] = y;
+            priors [nc] = 1;
+            nc ++;
         }
         else
         {
-            priors[ifriend]++;
+            priors [ifriend] ++;
         }
     }
-    for (long q = 0; q < nc; q++) priors[q] /= c->size;
-    return(nc);
+    for (long q = 0; q < nc; q++) priors [q] /= c -> size();
+    return nc;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -381,9 +381,9 @@ double FeatureWeights_evaluate      // Obsolete - use *_EvaluateWithTestSet
 	try {
 		autoCategories o = KNN_classifyToCategories (nn, pp, fws, k, d);
 		double hits = 0.0;
-		for (long y = 1; y <= o->size; y++)
-			if (FeatureWeights_areFriends ((SimpleString) o -> item [y], (SimpleString) c -> item [y])) hits ++;
-		hits /= o -> size;
+		for (long y = 1; y <= o -> size(); y ++)
+			if (FeatureWeights_areFriends (o -> _item [y], c -> _item [y])) hits ++;
+		hits /= o -> size();
 		return hits;
 	} catch (MelderError) {
 		throw;
@@ -457,10 +457,10 @@ autoFeatureWeights FeatureWeights_computeRELIEF
 	// Computing prior class probs //
 	/////////////////////////////////
 
-	autoNUMvector <double> priors (0L, c->size - 1);   // worst-case allocations
-	autoNUMvector <long> classes (0L, c->size - 1);//
-	autoNUMvector <long> enemies (0L, c->size - 1);//
-	autoNUMvector <long> friends (0L, c->size - 1);//
+	autoNUMvector <double> priors (0L, c->size() - 1);   // worst-case allocations
+	autoNUMvector <long> classes (0L, c->size() - 1);//
+	autoNUMvector <long> enemies (0L, c->size() - 1);//
+	autoNUMvector <long> friends (0L, c->size() - 1);//
 	long nclasses = FeatureWeights_computePriors (c, classes.peek(), priors.peek());
 	Melder_assert (nclasses >= 2);
 
@@ -475,22 +475,22 @@ autoFeatureWeights FeatureWeights_computeRELIEF
 
 		if (nfriends && nenemies) {
 			autoNUMvector <double> classps (0L, nenemies - 1);
-			for (long eq = 0; eq < nenemies; eq++) {
-				for (long iq = 0; iq < nclasses; iq++) {
-					if (FeatureWeights_areFriends ((SimpleString) c->item[enemies[eq]], (SimpleString) c->item[classes[iq]])) {
-						classps[eq] = priors[iq];
+			for (long eq = 0; eq < nenemies; eq ++) {
+				for (long iq = 0; iq < nclasses; iq ++) {
+					if (FeatureWeights_areFriends (c -> _item [enemies [eq]], c -> _item [classes [iq]])) {
+						classps [eq] = priors [iq];
 						break;
 					}
 				}
 			}
-			for (long x = 1; x <= p->nx; x++) {
+			for (long x = 1; x <= p -> nx; x ++) {
 				double p1 = 0.0;
 				double p2 = 0.0;
-				for (long ec = 0; ec < nfriends; ec++) {
-					p1 += fabs(p->z[y][x] - p->z[friends[ec]][x]) / (p->ny * nfriends);
+				for (long ec = 0; ec < nfriends; ec ++) {
+					p1 += fabs (p -> z [y] [x] - p -> z [friends [ec]] [x]) / (p -> ny * nfriends);
 				}
 				for (long ec = 0; ec < nenemies; ec++) {
-					p2 += (fabs(p->z[y][x] - p->z[enemies[ec]][x]) * classps[ec]) / p->ny;
+					p2 += (fabs (p->z[y][x] - p->z[enemies[ec]][x]) * classps[ec]) / p->ny;
 				}
 				my fweights -> data [1] [x] = my fweights -> data [1] [x] - p1 + p2;
 			}

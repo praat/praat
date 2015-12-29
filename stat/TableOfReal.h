@@ -54,7 +54,7 @@ void TableOfReal_drawLeftAndRightLines (TableOfReal me, Graphics g, long rowmin,
 void TableOfReal_drawTopAndBottomLines (TableOfReal me, Graphics g, long rowmin, long rowmax);
 
 autoTableOfReal TablesOfReal_append (TableOfReal me, TableOfReal thee);
-autoTableOfReal TablesOfReal_appendMany (Collection me);
+autoTableOfReal TablesOfReal_appendMany (OrderedOf<structTableOfReal>* me);
 void TableOfReal_sortByLabel (TableOfReal me, long column1, long column2);
 void TableOfReal_sortByColumn (TableOfReal me, long column1, long column2);
 
@@ -75,6 +75,14 @@ autoTableOfReal TableOfReal_extractColumnsWhere (TableOfReal me, const char32 *c
 
 autoStrings TableOfReal_extractRowLabelsAsStrings (TableOfReal me);
 autoStrings TableOfReal_extractColumnLabelsAsStrings (TableOfReal me);
+
+Collection_declare (OrderedOfTableOfReal, OrderedOf, TableOfReal);
+
+Thing_define (TableOfRealList, OrderedOfTableOfReal) {
+	structTableOfRealList () {
+		our classInfo = classTableOfRealList;
+	}
+};
 
 /* End of file TableOfReal.h */
 #endif

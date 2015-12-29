@@ -160,10 +160,10 @@ DO
 	LOOP {
 		iam (FFNet);
 		long unit = GET_INTEGER (U"Output unit");
-		if (unit > my outputCategories -> size) {
-			Melder_throw (U"Output unit cannot be larger than ", my outputCategories -> size, U".");
+		if (unit > my outputCategories -> size()) {
+			Melder_throw (U"Output unit cannot be larger than ", my outputCategories -> size(), U".");
 		}
-		SimpleString ss = (SimpleString) my outputCategories -> item[unit];
+		SimpleString ss = my outputCategories -> _item [unit];
 		Melder_information (ss -> string);
 	}
 END
@@ -176,8 +176,8 @@ DO
 		iam (FFNet);
 		char32 *category = GET_STRING (U"Category");
 		long index = 0;
-		for (long i = 1; i <= my outputCategories -> size; i++) {
-			SimpleString s = (SimpleString) my outputCategories -> item[i];
+		for (long i = 1; i <= my outputCategories -> size(); i ++) {
+			SimpleString s = my outputCategories -> _item [i];
 			if (Melder_equ (s -> string, category)) {
 				index = i;
 				break;
@@ -638,8 +638,8 @@ DO
 	if (nHidden2 < 1) {
 		nHidden2 = 0;
 	}
-	autoCategories uniq = Categories_selectUniqueItems (thee, true);
-	long numberOfOutputs = uniq -> size;
+	autoCategories uniq = Categories_selectUniqueItems (thee);
+	long numberOfOutputs = uniq -> size();
 	if (numberOfOutputs < 1) Melder_throw (U"There are not enough categories in the Categories.\n"
 		U"Please try again with more categories in the Categories.");
 

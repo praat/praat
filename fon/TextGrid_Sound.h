@@ -23,9 +23,12 @@
 
 void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, double tmax,
 	bool showBoundaries, bool useTextStyles, bool garnish);
-autoCollection TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, long itier, int preserveTimes);
-autoCollection TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound, long itier, int preserveTimes);
-autoCollection TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound,
+
+Collection_declare (OrderedOfSound, OrderedOf, Sound);
+
+autoOrderedOfSound TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, long itier, int preserveTimes);
+autoOrderedOfSound TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound, long itier, int preserveTimes);
+autoOrderedOfSound TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound,
 	long itier, int which_Melder_STRING, const char32 *text, int preserveTimes);
 
 void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,

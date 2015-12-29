@@ -67,7 +67,6 @@ void GuiOptionMenu_init (GuiOptionMenu me, GuiForm parent, int left, int right, 
 {
 	my d_shell = parent -> d_shell;
 	my d_parent = parent;
-	my d_options = Ordered_create ();
 	#if gtk
 		my d_widget = gtk_combo_box_new_text ();
 		gtk_widget_set_size_request (GTK_WIDGET (my d_widget), right - left, bottom - top + 8);
@@ -127,8 +126,8 @@ GuiOptionMenu GuiOptionMenu_createShown (GuiForm parent, int left, int right, in
 static void cb_optionChanged (GuiObject w, XtPointer void_me, XtPointer call) {
 	iam (GuiOptionMenu);
 	(void) call;
-	for (int i = 1; i <= my d_options -> size; i ++) {
-		GuiMenuItem item = static_cast <GuiMenuItem> (my d_options -> item [i]);
+	for (int i = 1; i <= my d_options.size(); i ++) {
+		GuiMenuItem item = my d_options [i];
 		if (item -> d_widget == w) {
 			XtVaSetValues (my d_xmCascadeButton, XmNlabelString, Melder_peek32to8 (item -> d_widget -> name), nullptr);
 			XmToggleButtonSetState (item -> d_widget, true, false);
@@ -149,7 +148,7 @@ void GuiOptionMenu_addOption (GuiOptionMenu me, const char32 *text) {
 		autoGuiMenuItem menuItem = Thing_new (GuiMenuItem);
 		menuItem -> d_widget = XtVaCreateManagedWidget (Melder_peek32to8 (text), xmToggleButtonWidgetClass, my d_widget, nullptr);
 		XtAddCallback (menuItem -> d_widget, XmNvalueChangedCallback, cb_optionChanged, (XtPointer) me);
-		Collection_addItem_move (my d_options.get(), menuItem.move());
+		my d_options. addItem_move (menuItem.move());
     #elif cocoa
         GuiCocoaOptionMenu *menu = (GuiCocoaOptionMenu *) my d_widget;
         [menu addItemWithTitle: [NSString stringWithUTF8String: Melder_peek32to8 (text)]];
@@ -162,8 +161,8 @@ int GuiOptionMenu_getValue (GuiOptionMenu me) {
 		// TODO: Graag even een check :)
 		my d_value = gtk_combo_box_get_active (GTK_COMBO_BOX (my d_widget)) + 1;
 	#elif motif
-		for (int i = 1; i <= my d_options -> size; i ++) {
-			GuiMenuItem menuItem = static_cast <GuiMenuItem> (my d_options -> item [i]);
+		for (int i = 1; i <= my d_options.size(); i ++) {
+			GuiMenuItem menuItem = my d_options [i];
 			if (XmToggleButtonGetState (menuItem -> d_widget))
 				my d_value = i;
 		}
@@ -181,8 +180,8 @@ void GuiOptionMenu_setValue (GuiOptionMenu me, int value) {
         GuiCocoaOptionMenu *menu = (GuiCocoaOptionMenu *) my d_widget;
         [menu   selectItemAtIndex: value - 1];
 	#elif motif
-		for (int i = 1; i <= my d_options -> size; i ++) {
-			GuiMenuItem menuItem = static_cast <GuiMenuItem> (my d_options -> item [i]);
+		for (int i = 1; i <= my d_options.size(); i ++) {
+			GuiMenuItem menuItem = my d_options [i];
 			XmToggleButtonSetState (menuItem -> d_widget, i == value, False);
 			if (i == value) {
 				XtVaSetValues (my d_xmCascadeButton, XmNlabelString, Melder_peek32to8 (menuItem -> d_widget -> name), nullptr);

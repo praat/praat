@@ -108,44 +108,44 @@ autoCategories Pattern_to_Categories_cluster
 				KNN_learn (knn.peek(), centroids.peek(), categories.peek(), kOla_REPLACE, kOla_SEQUENTIAL);
 				autoCategories interim = KNN_classifyToCategories (knn.peek(), p, fws, 1, kOla_FLAT_VOTING);
 
-				for (long x = 1; x <= k; x++)
+				for (long x = 1; x <= k; x ++)
 					sizes [x] = 0;
 
-				for (long yp = 1; yp <= categories->size; yp++)
+				for (long yp = 1; yp <= categories -> size(); yp ++)
 				{
 					double alfa = 1;
-					Melder_assert (yp <= centroids->ny);
+					Melder_assert (yp <= centroids -> ny);
 
-					for (long x = 1; x <= centroids->nx; x++)
+					for (long x = 1; x <= centroids -> nx; x ++)
 					{
-						beta[x] = centroids->z[yp][x];
+						beta [x] = centroids -> z [yp] [x];
 					}
 
-					for (long ys = 1; ys <= interim->size; ys++)
+					for (long ys = 1; ys <= interim -> size(); ys ++)
 					{
-						if (FeatureWeights_areFriends ((SimpleString) categories->item[yp], (SimpleString) interim->item[ys]))
+						if (FeatureWeights_areFriends (categories -> _item [yp], interim -> _item [ys]))
 						{
-							for (long x = 1; x <= p->nx; x++)
+							for (long x = 1; x <= p -> nx; x ++)
 							{
-								Melder_assert (ys <= p->ny);
+								Melder_assert (ys <= p -> ny);
 								if (alfa == 1)
 								{
-									centroids->z[yp][x] = p->z[ys][x];
+									centroids -> z [yp] [x] = p -> z [ys] [x];
 								}
 								else
 								{
-									centroids->z[yp][x] += (p->z[ys][x] - centroids->z[yp][x]) / alfa;
+									centroids -> z [yp] [x] += (p -> z [ys] [x] - centroids -> z [yp] [x]) / alfa;
 								}
 							}
 							Melder_assert (yp <= k);
 							sizes [yp] ++;
-							alfa++;
+							alfa ++;
 						}
 					}
 
-					for (long x = 1; x <= centroids->nx; x++)
+					for (long x = 1; x <= centroids -> nx; x ++)
 					{
-						delta += fabs (beta[x] - centroids->z[yp][x]);
+						delta += fabs (beta [x] - centroids -> z [yp] [x]);
 					}
 				}
 			}
@@ -161,7 +161,7 @@ autoCategories Pattern_to_Categories_cluster
 			}
 
 			sizes [0] = smin / smax;
-			--m;
+			-- m;
 		}
 		while (sizes[0] < s && m > 0);
 

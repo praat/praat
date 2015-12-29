@@ -38,6 +38,9 @@
 #include "oo_DESCRIPTION.h"
 #include "TableOfReal_def.h"
 
+Thing_implement (TableOfReal, Daata, 0);
+Thing_implement (TableOfRealList, Ordered, 0);
+
 static void fprintquotedstring (MelderFile file, const char32 *s) {
 	MelderFile_writeCharacter (file, U'\"');
 	if (s) { char32 c; while ((c = *s ++) != U'\0') { MelderFile_writeCharacter (file, c); if (c == U'\"') MelderFile_writeCharacter (file, c); } }
@@ -110,8 +113,6 @@ double structTableOfReal :: v_getRowIndex (const char32 *rowLabel) {
 double structTableOfReal :: v_getColIndex (const char32 *columnLabel) {
 	return TableOfReal_columnLabelToIndex (this, columnLabel);
 }
-
-Thing_implement (TableOfReal, Daata, 0);
 
 void TableOfReal_init (TableOfReal me, long numberOfRows, long numberOfColumns) {
 	if (numberOfRows < 1 || numberOfColumns < 1)
@@ -969,14 +970,14 @@ autoTableOfReal TablesOfReal_append (TableOfReal me, TableOfReal thee) {
 	}
 }
 
-autoTableOfReal TablesOfReal_appendMany (Collection me) {
+autoTableOfReal TablesOfReal_appendMany (OrderedOf<structTableOfReal>* me) {
 	try {
-		if (my size == 0) Melder_throw (U"Cannot add zero tables.");
-		TableOfReal thee = static_cast <TableOfReal> (my item [1]);
+		if (my size() == 0) Melder_throw (U"Cannot add zero tables.");
+		TableOfReal thee = my _item [1];
 		long totalNumberOfRows = thy numberOfRows;
 		long numberOfColumns = thy numberOfColumns;
-		for (long itab = 2; itab <= my size; itab ++) {
-			thee = static_cast <TableOfReal> (my item [itab]);
+		for (long itab = 2; itab <= my size(); itab ++) {
+			thee = my _item [itab];
 			totalNumberOfRows += thy numberOfRows;
 			if (thy numberOfColumns != numberOfColumns) Melder_throw (U"Numbers of columns do not match.");
 		}
@@ -987,8 +988,8 @@ autoTableOfReal TablesOfReal_appendMany (Collection me) {
 			TableOfReal_setColumnLabel (him.peek(), icol, thy columnLabels [icol]);
 		}
 		totalNumberOfRows = 0;
-		for (long itab = 1; itab <= my size; itab ++) {
-			thee = static_cast <TableOfReal> (my item [itab]);
+		for (long itab = 1; itab <= my size(); itab ++) {
+			thee = my _item [itab];
 			for (long irow = 1; irow <= thy numberOfRows; irow ++) {
 				totalNumberOfRows ++;
 				TableOfReal_setRowLabel (him.peek(), totalNumberOfRows, thy rowLabels [irow]);

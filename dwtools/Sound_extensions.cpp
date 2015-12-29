@@ -1329,7 +1329,7 @@ void Sound_getStartAndEndTimesOfSounding (Sound me, double minPitch, double time
 		const char32 *silentLabel = U"-", *soundingLabel = U"+";
 		autoTextGrid dbs = Sound_to_TextGrid_detectSilences (me, minPitch, timeStep, silenceThreshold,
 			minSilenceDuration, minSoundingDuration, silentLabel, soundingLabel);
-		IntervalTier tier = (IntervalTier) dbs -> tiers -> item[1];
+		IntervalTier tier = (IntervalTier) dbs -> tiers -> _item [1];
 		Melder_assert (tier -> intervals.size() > 0);
 		TextInterval interval = tier -> intervals [1];
 		*t1 = my xmin;
@@ -1351,7 +1351,7 @@ autoSound Sound_and_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier t
         // count samples of the trimmed sound
         long ixmin, ixmax, numberOfSamples = 0, previous_ixmax = 0;
 		double xmin = my xmin; // start time of output sound is start time of input sound
-        for (long iint = 1; iint <= thy intervals.size(); iint++) {
+        for (long iint = 1; iint <= thy intervals.size(); iint ++) {
             TextInterval interval = thy intervals [iint];
             if (! Melder_equ (interval -> text, match)) {
                 numberOfSamples += Sampled_getWindowSamples (me, interval -> xmin, interval -> xmax, &ixmin, &ixmax);
@@ -1371,7 +1371,7 @@ autoSound Sound_and_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier t
         autoSound him = Sound_create (my ny, xmin, xmin + numberOfSamples * my dx, numberOfSamples, my dx, xmin + 0.5 * my dx);
         numberOfSamples = 0;
 		previous_ixmax = 0;
-        for (long iint = 1; iint <= thy intervals.size(); iint++) {
+        for (long iint = 1; iint <= thy intervals.size(); iint ++) {
             TextInterval interval = thy intervals [iint];
             if (! Melder_equ (interval -> text, match)) {
 				long ipos;
@@ -1380,13 +1380,13 @@ autoSound Sound_and_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier t
 					ixmin++;
 				}
 				previous_ixmax = ixmax;
-                for (long ichan = 1; ichan <= my ny; ichan++) {
+                for (long ichan = 1; ichan <= my ny; ichan ++) {
                     ipos = numberOfSamples + 1;
-                    for (long i = ixmin; i <= ixmax; i++, ipos++) {
-                        his z[ichan][ipos] = my z[ichan][i];
+                    for (long i = ixmin; i <= ixmax; i ++, ipos ++) {
+                        his z [ichan] [ipos] = my z [ichan] [i];
                     }
                 }
-                numberOfSamples = --ipos;
+                numberOfSamples = -- ipos;
             }
         }
         Melder_assert (numberOfSamples == his nx);
@@ -1405,8 +1405,8 @@ autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAnd
         const char32 *copyLabel = U"";
         autoTextGrid dbs = Sound_to_TextGrid_detectSilences (me, minPitch, timeStep, silenceThreshold,
             minSilenceDuration, minSoundingDuration, silentLabel, soundingLabel);
-        autoIntervalTier itg = Data_copy ((IntervalTier) dbs -> tiers -> item[1]);
-        IntervalTier tier = (IntervalTier) dbs -> tiers -> item[1];
+        autoIntervalTier itg = Data_copy ((IntervalTier) dbs -> tiers -> _item [1]);
+        IntervalTier tier = (IntervalTier) dbs -> tiers -> _item [1];
         for (long iint = 1; iint <= tier -> intervals.size(); iint ++) {
             TextInterval ti = tier -> intervals [iint];
             TextInterval ati = itg -> intervals [iint];
@@ -1450,7 +1450,7 @@ autoSound Sound_trimSilencesAtStartAndEnd (Sound me, double trimDuration, double
 	try {
 		autoTextGrid tg;
 		autoSound thee = Sound_trimSilences (me, trimDuration, true, minPitch, timeStep, silenceThreshold, minSilenceDuration, minSoundingDuration, &tg, U"trimmed");
-		IntervalTier trim = (IntervalTier) tg -> tiers -> item[2];
+		IntervalTier trim = (IntervalTier) tg -> tiers -> _item [2];
 		TextInterval ti1 = trim -> intervals [1];
 		*t1 = my xmin;
 		if (Melder_equ (ti1 -> text, U"trimmed")) {

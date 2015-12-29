@@ -101,7 +101,7 @@ autoSound Sound_createSimple (long numberOfChannels, double duration, double sam
 autoSound Sound_convertToMono (Sound me);
 autoSound Sound_convertToStereo (Sound me);
 autoSound Sound_extractChannel (Sound me, long ichannel);
-autoSound Sounds_combineToStereo (Collection me);
+autoSound Sounds_combineToStereo (OrderedOf<structSound>* me);
 
 /* Levels for Sampled_getValueAtSample (me, index, level, unit) */
 #define Sound_LEVEL_MONO  0

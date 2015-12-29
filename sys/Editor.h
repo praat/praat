@@ -33,7 +33,7 @@ Thing_define (EditorMenu, Thing) {
 	Editor d_editor;
 	const char32 *menuTitle;
 	GuiMenu menuWidget;
-	autoOrdered commands;
+	OrderedOf<structEditorCommand> commands;
 
 	void v_destroy ()
 		override;
@@ -70,7 +70,7 @@ typedef void (*Editor_PublicationCallback) (Editor, autoDaata /* publication */)
 Thing_define (Editor, Thing) {
 	GuiWindow d_windowForm;
 	GuiMenuItem undoButton, searchButton;
-	autoOrdered menus;
+	OrderedOf<structEditorMenu> menus;
 	Daata data;   // the data that can be displayed and edited
 	autoDaata previousData;   // the data that can be displayed and edited
 	bool d_ownData;

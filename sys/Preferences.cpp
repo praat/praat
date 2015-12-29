@@ -38,7 +38,7 @@ void structPreference :: v_destroy () {
 	Preference_Parent :: v_destroy ();
 }
 
-static autoSortedSetOfString thePreferences;
+static SortedSetOfStringOf <structPreference> thePreferences;
 
 static void Preferences_add (const char32 *string, int type, void *value, int min, int max, const char32 * (*getText) (int value), int (*getValue) (const char32 *text)) {
 	autoPreference me = Thing_new (Preference);
@@ -50,8 +50,7 @@ static void Preferences_add (const char32 *string, int type, void *value, int mi
 	my max = max;
 	my getText = getText;
 	my getValue = getValue;
-	if (! thePreferences) thePreferences = SortedSetOfString_create ();
-	Collection_addItem_move (thePreferences.get(), me.move());
+	thePreferences. addItem_move (me.move());
 }
 
 void Preferences_addByte (const char32 *string, signed char *value, signed char defaultValue)
@@ -93,7 +92,7 @@ void Preferences_read (MelderFile file) {
 	 * before any preferences have been registered.
 	 * In that case, do nothing.
 	 */
-	if (! thePreferences) return;
+	if (thePreferences.size() == 0) return;
 	try {
 		autoMelderReadText text = MelderReadText_createFromFile (file);
 		for (;;) {
@@ -104,16 +103,16 @@ void Preferences_read (MelderFile file) {
 			if (! value)
 				return;   // OK: we have read past the last key-value pair
 			*value = U'\0', value += 2;
-			long ipref = SortedSetOfString_lookUp (thePreferences.get(), line);
+			long ipref = thePreferences. lookUp (line);
 			if (! ipref) {
 				/*
 				 * Recognize some preference names that went obsolete in February 2013.
 				 */
 				if (Melder_nequ (line, U"FunctionEditor.", 15))
-					ipref = SortedSetOfString_lookUp (thePreferences.get(), Melder_cat (U"TimeSoundAnalysisEditor.", line + 15));
+					ipref = thePreferences. lookUp (Melder_cat (U"TimeSoundAnalysisEditor.", line + 15));
 			}
 			if (! ipref) continue;   // skip unrecognized keys
-			Preference pref = (Preference) thePreferences -> item [ipref];
+			Preference pref = thePreferences [ipref];
 			switch (pref -> type) {
 				case bytewa: * (signed char *) pref -> value =
 					strtol (Melder_peek32to8 (value), nullptr, 10); break;
@@ -151,10 +150,10 @@ void Preferences_read (MelderFile file) {
 }
 
 void Preferences_write (MelderFile file) {
-	if (! thePreferences || thePreferences -> size == 0) return;
+	if (thePreferences.size() == 0) return;
 	static MelderString buffer { 0 };
-	for (long ipref = 1; ipref <= thePreferences -> size; ipref ++) {
-		Preference pref = (Preference) thePreferences -> item [ipref];
+	for (long ipref = 1; ipref <= thePreferences.size(); ipref ++) {
+		Preference pref = thePreferences [ipref];
 		MelderString_append (& buffer, pref -> string, U": ");
 		switch (pref -> type) {
 			case bytewa:   MelderString_append (& buffer, (int) (* (signed char *)    pref -> value)); break;

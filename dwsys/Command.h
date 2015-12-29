@@ -2,7 +2,7 @@
 #define _Command_h_
 /* Command.h
  *
- * Copyright (C) 1994-2011, 2015 David Weenink
+ * Copyright (C) 1994-2011,2015 David Weenink, 2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,14 +19,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 19950711
- djmw 20020812 GPL header
- djmw 20110306 Latest modification
-*/
-
 #include "Thing.h"
 #include "Collection.h"
+
+/********** class Command **********/
 
 Thing_declare (Command);
 
@@ -40,21 +36,29 @@ Thing_define (Command, Thing) {
 
 void Command_init (Command me, const char32 *name, Thing boss, Command_Callback execute, Command_Callback undo);
 
-	
 int Command_do (Command me);
 
 int Command_undo (Command me);
 
-Thing_define (CommandHistory, Ordered) {
+/********** class CommandHistory **********/
+
+Collection_declare (OrderedOfCommand, OrderedOf, Command);
+
+Thing_define (CommandHistory, OrderedOfCommand) {
+	structCommandHistory () {
+		our classInfo = classCommandHistory;
+	}
 	long current;
 };
+
+inline static autoCommandHistory CommandHistory_create () {
+	return Thing_new (CommandHistory);
+}
 
 /* Active data structure. 'current' is position of the cursor in the list */
 /* Queries and insertions are at the current position */
 /* Invariants: */
 /*	0 <= current <= size + 1; */
-
-autoCommandHistory CommandHistory_create (long maximumCapacity);
 
 void CommandHistory_forth (CommandHistory me);
 /* Precondition: ! offright */

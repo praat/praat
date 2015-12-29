@@ -39,7 +39,7 @@ long KNN_prune_prune
     long k      // k(!)
 )
 {
-	autoCategories uniqueCategories = Categories_selectUniqueItems (my output.get(), true);
+	autoCategories uniqueCategories = Categories_selectUniqueItems (my output.get());
 	if (Categories_getSize (uniqueCategories.peek()) == my nInstances)
 		return 0;
 	long removals = 0;
@@ -131,7 +131,7 @@ long KNN_prune_kCoverage
 	autoFeatureWeights fws = FeatureWeights_create (p -> nx);
 	autoNUMvector <long> tempindices (0L, p -> ny - 1);
 	for (long yy = 1; yy <= p -> ny; yy++) {
-		if (y != yy && FeatureWeights_areFriends ((SimpleString) c -> item [y], (SimpleString) c -> item [yy])) {
+		if (y != yy && FeatureWeights_areFriends (c -> _item [y], c -> _item [yy])) {
 			long n = KNN_kNeighboursSkip (p, p, fws.peek(), yy, k, tempindices.peek(), y);
 			while (n) {
 				Melder_assert (n <= p -> ny);
@@ -167,7 +167,7 @@ int KNN_prune_superfluous
 	autoNUMvector <double> freqs (0L, k - 1);
 	if (! KNN_kNeighboursSkip (p, p, fws.peek(), y, k, indices.peek(), skipper)) return 0;
 	long ncategories = KNN_kIndicesToFrequenciesAndDistances (c, k, indices.peek(), distances.peek(), freqs.peek(), freqindices.peek());
-	int result = FeatureWeights_areFriends ((SimpleString) c -> item [y], (SimpleString) c -> item [freqindices [KNN_max (freqs.peek(), ncategories)]]);
+	int result = FeatureWeights_areFriends (c -> _item [y], c -> _item [freqindices [KNN_max (freqs.peek(), ncategories)]]);
 	if (result)
 		return 1;
 	return 0;

@@ -120,11 +120,11 @@ autoLtas Matrix_to_Ltas (Matrix me) {
 	}
 }
 
-autoLtas Ltases_merge (Collection ltases) {
+autoLtas Ltases_merge (CollectionOf<structLtas>* ltases) {
 	try {
-		if (ltases -> size < 1)
+		if (ltases->size() < 1)
 			Melder_throw (U"Cannot merge zero Ltas objects.");
-		Ltas me = (Ltas) ltases -> item [1];
+		Ltas me = ltases -> _item [1];
 		autoLtas thee = Data_copy (me);
 		/*
 		 * Convert to energy.
@@ -132,8 +132,8 @@ autoLtas Ltases_merge (Collection ltases) {
 		for (long iband = 1; iband <= thy nx; iband ++) {
 			thy z [1] [iband] = pow (10.0, thy z [1] [iband] / 10.0);
 		}
-		for (long ispec = 2; ispec <= ltases -> size; ispec ++) {
-			Ltas him = (Ltas) ltases -> item [ispec];
+		for (long ispec = 2; ispec <= ltases->size(); ispec ++) {
+			Ltas him = ltases -> _item [ispec];
 			if (his xmin != thy xmin || his xmax != thy xmax)
 				Melder_throw (U"Frequency domains do not match.");
 			if (his dx != thy dx)
@@ -159,9 +159,9 @@ autoLtas Ltases_merge (Collection ltases) {
 	}
 }
 
-autoLtas Ltases_average (Collection ltases) {
+autoLtas Ltases_average (CollectionOfLtas ltases) {
 	try {
-		double factor = -10.0 * log10 (ltases -> size);
+		double factor = -10.0 * log10 (ltases -> size());
 		autoLtas thee = Ltases_merge (ltases);
 		for (long iband = 1; iband <= thy nx; iband ++) {
 			thy z [1] [iband] += factor;

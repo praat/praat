@@ -157,7 +157,7 @@ double FormantModeler_indexToTime (FormantModeler me, long index);
 
 void FormantModeler_fit (FormantModeler me);
 
-void FormantModeler_drawBasisFunction (FormantModeler me, Graphics g, double tmin, double tmax, double fmin, double fmax, long iformant, long iterm, bool scaled, long numberOfPoints, int garnish);
+void FormantModeler_drawBasisFunction (FormantModeler me, Graphics g, double tmin, double tmax, double fmin, double fmax, long iformant, long iterm, bool scaled, long numberOfPoints, bool garnish);
 
 void FormantModeler_setDataWeighing (FormantModeler me, long fromFormant, long toFormant, int useSigmaY);
 
@@ -178,9 +178,9 @@ void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tm
 
 void FormantModeler_drawCumulativeChiScores (FormantModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, int useSigmaY, int garnish);
 
-void FormantModeler_drawVariancesOfShiftedTracks (FormantModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, int shiftDirection, long fromFormant, long toFormant, int garnish);
+void FormantModeler_drawVariancesOfShiftedTracks (FormantModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, int shiftDirection, long fromFormant, long toFormant, bool garnish);
 
-void FormantModeler_normalProbabilityPlot (FormantModeler me, Graphics g, long iformant, int useSigmaY, long numberOfQuantiles, double numberOfSigmas, int labelSize, const char32 *label, int garnish);
+void FormantModeler_normalProbabilityPlot (FormantModeler me, Graphics g, long iformant, int useSigmaY, long numberOfQuantiles, double numberOfSigmas, int labelSize, const char32 *label, bool garnish);
 
 autoTable FormantModeler_to_Table_zscores (FormantModeler me, int useSigmaY);
 
@@ -244,13 +244,13 @@ double FormantModeler_getSmoothnessValue (FormantModeler me, long fromFormant, l
 
 double FormantModeler_getAverageDistanceBetweenTracks (FormantModeler me, long track1, long track2, int type);
 
-long Formants_getSmoothestInInterval (Collection me, double tmin, double tmax, long numberOfFormantTracks, long numberOfParametersPerTrack, int useBandWidthsForTrackEstimation, int useConstraints, double numberOfSigmas, double power, double minF1, double maxF1, double minF2, double maxF2, double minF3);
+long Formants_getSmoothestInInterval (CollectionOf<structFormant>* me, double tmin, double tmax, long numberOfFormantTracks, long numberOfParametersPerTrack, int useBandWidthsForTrackEstimation, int useConstraints, double numberOfSigmas, double power, double minF1, double maxF1, double minF2, double maxF2, double minF3);
 
 double FormantModeler_getFormantsConstraintsFactor (FormantModeler me, double minF1, double maxF1, double minF2, double maxF2, double minF3);
 
-autoFormant Formants_extractSmoothestPart (Collection me, double tmin, double tmax, long numberOfFormantTracks, long numberOfParametersPerTrack, int useBandWidthsForTrackEstimation, double numberOfSigmas, double power);
+autoFormant Formants_extractSmoothestPart (CollectionOf<structFormant>* me, double tmin, double tmax, long numberOfFormantTracks, long numberOfParametersPerTrack, int useBandWidthsForTrackEstimation, double numberOfSigmas, double power);
 
-autoFormant Formants_extractSmoothestPart_withFormantsConstraints (Collection me, double tmin, double tmax, long numberOfFormantTracks, long numberOfParametersPerTrack, int useBandWidthsForTrackEstimation, double numberOfSigmas, double power, double minF1, double maxF1, double minF2, double maxF2, double minF3);
+autoFormant Formants_extractSmoothestPart_withFormantsConstraints (CollectionOf<structFormant>* me, double tmin, double tmax, long numberOfFormantTracks, long numberOfParametersPerTrack, int useBandWidthsForTrackEstimation, double numberOfSigmas, double power, double minF1, double maxF1, double minF2, double maxF2, double minF3);
 
 autoDataModeler FormantModeler_extractDataModeler (FormantModeler me, long iformant);
 

@@ -6,9 +6,9 @@
 #include "FileInMemory.h"
 #include "melder.h"
 
-autoFilesInMemory create_espeakdata_phons () {
+autoFileInMemorySet create_espeakdata_phons () {
 	try {
-		autoFilesInMemory me = FilesInMemory_create ();
+		autoFileInMemorySet me = FileInMemorySet_create ();
 		static unsigned char espeakdata_phons1_data[1225] = {
 			115, 49, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 24, 8, 0, 0, 0, 0, 46, 57, 0, 16, 0, 0,
 			255, 80, 50, 255, 4, 5, 248, 248, 248, 251, 251, 251, 0, 64, 8, 0, 70, 18, 24, 12, 0, 70, 18, 24, 12, 0, 0, 0, 0, 0,
@@ -54,7 +54,7 @@ autoFilesInMemory create_espeakdata_phons () {
 		autoFileInMemory espeakdata_phons1 = FileInMemory_createWithData (1224, reinterpret_cast<const char *> (&espeakdata_phons1_data), 
 			U"/home/david/projects/praat/espeak-work/espeak-1.48.04-source/espeak-data/intonations", 
 			U"intonations");
-		Collection_addItem_move (me.peek(), espeakdata_phons1.move());
+		my addItem_move (espeakdata_phons1.move());
 
 		static unsigned char espeakdata_phons2_data[406337] = {
 			1, 72, 1, 0, 34, 86, 0, 0, 74, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -13605,7 +13605,7 @@ autoFilesInMemory create_espeakdata_phons () {
 		autoFileInMemory espeakdata_phons2 = FileInMemory_createWithData (406336, reinterpret_cast<const char *> (&espeakdata_phons2_data), 
 			U"/home/david/projects/praat/espeak-work/espeak-1.48.04-source/espeak-data/phondata", 
 			U"phondata");
-		Collection_addItem_move (me.peek(), espeakdata_phons2.move());
+		my addItem_move (espeakdata_phons2.move());
 
 		static unsigned char espeakdata_phons3_data[25029] = {
 			1, 72, 1, 0, 0, 161, 213, 131, 0, 0, 0, 0, 0, 162, 18, 130, 0, 0, 0, 0, 0, 192, 2, 0, 0, 176, 86, 0, 2, 13,
@@ -14446,7 +14446,7 @@ autoFilesInMemory create_espeakdata_phons () {
 		autoFileInMemory espeakdata_phons3 = FileInMemory_createWithData (25028, reinterpret_cast<const char *> (&espeakdata_phons3_data), 
 			U"/home/david/projects/praat/espeak-work/espeak-1.48.04-source/espeak-data/phonindex", 
 			U"phonindex");
-		Collection_addItem_move (me.peek(), espeakdata_phons3.move());
+		my addItem_move (espeakdata_phons3.move());
 
 		static unsigned char espeakdata_phons4_data[40565] = {
 			94, 0, 0, 0, 109, 0, 0, 0, 0, 0, 0, 0, 98, 97, 115, 101, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -15805,11 +15805,11 @@ autoFilesInMemory create_espeakdata_phons () {
 		autoFileInMemory espeakdata_phons4 = FileInMemory_createWithData (40564, reinterpret_cast<const char *> (&espeakdata_phons4_data), 
 			U"/home/david/projects/praat/espeak-work/espeak-1.48.04-source/espeak-data/phontab", 
 			U"phontab");
-		Collection_addItem_move (me.peek(), espeakdata_phons4.move());
+		my addItem_move (espeakdata_phons4.move());
 
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"FilesInMemory not created.");
+		Melder_throw (U"FileInMemorySet not created.");
 	}
 }
 

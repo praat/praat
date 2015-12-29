@@ -120,7 +120,6 @@ void TextTiers_append_inline (TextTier me, TextTier thee, bool preserveTimes);
 
 void TextGrids_append_inline (TextGrid me, TextGrid thee, bool preserveTimes);
 
-// Postcondition:
-autoTextGrid TextGrids_to_TextGrid_appendContinuous (Collection me, bool preserveTimes);
+autoTextGrid TextGrids_to_TextGrid_appendContinuous (OrderedOf<structTextGrid>* me, bool preserveTimes);
 
 #endif /* _TextGrid_extensions_h_ */

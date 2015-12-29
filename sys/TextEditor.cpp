@@ -32,14 +32,12 @@ Thing_implement (TextEditor, Editor, 0);
 #include "prefs_copyToInstance.h"
 #include "TextEditor_prefs.h"
 
-static autoCollection theReferencesToAllOpenTextEditors;
+static CollectionOf <structTextEditor> theReferencesToAllOpenTextEditors;
 
 /***** TextEditor methods *****/
 
 void structTextEditor :: v_destroy () {
-	if (theReferencesToAllOpenTextEditors) {
-		Collection_undangleItem (theReferencesToAllOpenTextEditors.get(), this);
-	}
+	theReferencesToAllOpenTextEditors. undangleItem (this);
 	TextEditor_Parent :: v_destroy ();
 }
 
@@ -65,16 +63,14 @@ void structTextEditor :: v_nameChanged () {
 }
 
 static void openDocument (TextEditor me, MelderFile file) {
-	if (theReferencesToAllOpenTextEditors) {
-		for (long ieditor = 1; ieditor <= theReferencesToAllOpenTextEditors -> size; ieditor ++) {
-			TextEditor editor = (TextEditor) theReferencesToAllOpenTextEditors -> item [ieditor];
-			if (editor != me && MelderFile_equal (file, & editor -> file)) {
-				Editor_raise (editor);
-				Melder_appendError (U"Text file ", file, U" is already open.");
-				forget (me);   // don't forget me before Melder_appendError, because "file" is owned by one of my dialogs
-				Melder_flushError ();
-				return;
-			}
+	for (long ieditor = 1; ieditor <= theReferencesToAllOpenTextEditors.size(); ieditor ++) {
+		TextEditor editor = theReferencesToAllOpenTextEditors [ieditor];
+		if (editor != me && MelderFile_equal (file, & editor -> file)) {
+			Editor_raise (editor);
+			Melder_appendError (U"Text file ", file, U" is already open.");
+			forget (me);   // don't forget me before Melder_appendError, because "file" is owned by one of my dialogs
+			Melder_flushError ();
+			return;
 		}
 	}
 	autostring32 text = MelderFile_readText (file);
@@ -656,12 +652,7 @@ void TextEditor_init (TextEditor me, const char32 *initialText) {
 		my dirty = false;   // was set to true in valueChanged callback
 		Thing_setName (me, U"");
 	}
-	if (! theReferencesToAllOpenTextEditors) {
-		theReferencesToAllOpenTextEditors = Collection_create (100);
-	}
-	if (theReferencesToAllOpenTextEditors) {
-		Collection_addItem_ref (theReferencesToAllOpenTextEditors.get(), me);
-	}
+	theReferencesToAllOpenTextEditors. addItem_ref (me);
 }
 
 autoTextEditor TextEditor_create (const char32 *initialText) {

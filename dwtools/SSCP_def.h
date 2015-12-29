@@ -23,6 +23,7 @@ oo_DEFINE_CLASS (SSCP, TableOfReal)
 
 	oo_DOUBLE (numberOfObservations)
 	oo_DOUBLE_VECTOR (centroid, numberOfColumns)
+
 	/*
 		The following definitions are only needed when we want to use many big diagonal or
 		almost diagonal matrices like for example in a GaussianMixture,
@@ -36,6 +37,7 @@ oo_DEFINE_CLASS (SSCP, TableOfReal)
 		oo_DOUBLE_MATRIX (lowerCholesky, numberOfColumns, numberOfColumns)
 		oo_AUTO_OBJECT (PCA, 0, pca)
 	#endif
+
 	#if oo_DECLARING
 		void v_info ()
 			override;

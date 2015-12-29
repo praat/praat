@@ -98,7 +98,7 @@ static void initScreen (HyperPage me) {
 	my d_y = PAGE_HEIGHT + my top / 5.0;
 	my d_x = 0;
 	my previousBottomSpacing = 0.0;
-	my links = Collection_create (100);
+	my links. removeAllItems ();
 }
 
 void HyperPage_initSheetOfPaper (HyperPage me) {
@@ -176,11 +176,11 @@ if (! my printing) {
 		Graphics_setFontStyle (my graphics.get(), style);
 		Graphics_text (my graphics.get(), my d_x, my d_y, text);
 		numberOfParagraphLinks = Graphics_getLinks (& paragraphLinks);
-		if (my links) for (ilink = 1; ilink <= numberOfParagraphLinks; ilink ++) {
+		for (ilink = 1; ilink <= numberOfParagraphLinks; ilink ++) {
 			autoHyperLink link = HyperLink_create (paragraphLinks [ilink]. name,
 				paragraphLinks [ilink]. x1, paragraphLinks [ilink]. x2,
 				paragraphLinks [ilink]. y1, paragraphLinks [ilink]. y2);
-			Collection_addItem_move (my links.get(), link.move());
+			my links. addItem_move (link.move());
 		}
 		if (method & HyperPage_ADD_BORDER) {
 			Graphics_setLineWidth (my graphics.get(), 2.0);
@@ -623,11 +623,10 @@ static void gui_drawingarea_cb_expose (HyperPage me, GuiDrawingArea_ExposeEvent 
 
 static void gui_drawingarea_cb_click (HyperPage me, GuiDrawingArea_ClickEvent event) {
 	if (! my graphics) return;   // could be the case in the very beginning
-	if (! my links) return;
-	for (long ilink = 1; ilink <= my links -> size; ilink ++) {
-		HyperLink link = (HyperLink) my links -> item [ilink];		
+	for (long ilink = 1; ilink <= my links.size(); ilink ++) {
+		HyperLink link = my links [ilink];
 		if (! link)
-			Melder_fatal (U"gui_drawingarea_cb_click: empty link ", ilink, U"/", my links -> size, U".");
+			Melder_fatal (U"gui_drawingarea_cb_click: empty link ", ilink, U"/", my links.size(), U".");
 		if (event -> y > link -> y2DC && event -> y < link -> y1DC && event -> x > link -> x1DC && event -> x < link -> x2DC) {
 			saveHistory (me, my currentPageTitle);
 			try {
@@ -952,7 +951,7 @@ gui_drawingarea_cb_resize (me, & event);
 
 void HyperPage_clear (HyperPage me) {
 	Graphics_updateWs (my graphics.get());
-	my links.reset();
+	my links. removeAllItems();
 }
 
 void structHyperPage :: v_dataChanged () {

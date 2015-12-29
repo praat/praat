@@ -92,7 +92,7 @@ UiOption UiRadio_addButton (UiField me, const char32 *label) {
 	Melder_assert (my type == UI_RADIO || my type == UI_OPTIONMENU);
 	autoUiOption thee (UiOption_create (label));
 	UiOption thee_ref = thee.get();
-	Collection_addItem_move (my options.get(), thee.move());
+	my options. addItem_move (thee.move());
 	return thee_ref;
 }
 
@@ -101,7 +101,7 @@ UiOption UiOptionMenu_addButton (UiField me, const char32 *label) {
 	Melder_assert (my type == UI_RADIO || my type == UI_OPTIONMENU);
 	autoUiOption thee (UiOption_create (label));
 	UiOption thee_ref = thee.get();
-	Collection_addItem_move (my options.get(), thee.move());
+	my options. addItem_move (thee.move());
 	return thee_ref;
 }
 
@@ -116,9 +116,9 @@ static void UiField_setDefault (UiField me) {
 		} break; case UI_BOOLEAN: {
 			GuiCheckButton_setValue (my checkButton, my integerDefaultValue);
 		} break; case UI_RADIO: {
-			for (int i = 1; i <= my options -> size; i ++) {
+			for (int i = 1; i <= my options.size(); i ++) {
 				if (i == my integerDefaultValue) {
-					UiOption b = static_cast <UiOption> (my options -> item [i]);
+					UiOption b = my options [i];
 					GuiRadioButton_set (b -> radioButton);
 				}
 			}
@@ -228,8 +228,8 @@ static void UiField_widgetToValue (UiField me) {
 			my integerValue = GuiCheckButton_getValue (my checkButton);
 		} break; case UI_RADIO: {
 			my integerValue = 0;
-			for (int i = 1; i <= my options -> size; i ++) {
-				UiOption b = static_cast <UiOption> (my options -> item [i]);
+			for (int i = 1; i <= my options.size(); i ++) {
+				UiOption b = my options [i];
 				if (GuiRadioButton_getValue (b -> radioButton))
 					my integerValue = i;
 			}
@@ -297,8 +297,8 @@ static void UiField_stringToValue (UiField me, const char32 *string, Interpreter
 				string [0] == U't' || string [0] == U'T';
 		} break; case UI_RADIO: case UI_OPTIONMENU: {
 			my integerValue = 0;
-			for (int i = 1; i <= my options -> size; i ++) {
-				UiOption b = static_cast <UiOption> (my options -> item [i]);
+			for (int i = 1; i <= my options.size(); i ++) {
+				UiOption b = my options [i];
 				if (str32equ (string, b -> name))
 					my integerValue = i;
 			}
@@ -306,8 +306,8 @@ static void UiField_stringToValue (UiField me, const char32 *string, Interpreter
 				/*
 				 * Retry with different case.
 				 */
-				for (int i = 1; i <= my options -> size; i ++) {
-					UiOption b = static_cast <UiOption> (my options -> item [i]);
+				for (int i = 1; i <= my options.size(); i ++) {
+					UiOption b = my options [i];
 					char32 name2 [100];
 					str32cpy (name2, b -> name);
 					if (islower ((int) name2 [0])) name2 [0] = (char32) toupper ((int) name2 [0]);
@@ -478,7 +478,7 @@ static void UiForm_okOrApply (UiForm me, GuiButton button, int hide) {
 					} break; case UI_BOOLEAN: {
 						UiHistory_write (field -> integerValue ? (next -- ? U", \"yes\"" : U" \"yes\"") : (next -- ? U", \"no\"" : U" \"no\""));
 					} break; case UI_RADIO: case UI_OPTIONMENU: {
-						UiOption b = static_cast <UiOption> (field -> options -> item [field -> integerValue]);
+						UiOption b = field -> options [field -> integerValue];
 						UiHistory_write (next -- ? U", \"" : U" \"");
 						UiHistory_write_expandQuotes (b -> name);
 						UiHistory_write (U"\"");
@@ -665,14 +665,12 @@ UiField UiForm_addText (UiForm me, const char32 *name, const char32 *defaultValu
 UiField UiForm_addRadio (UiForm me, const char32 *label, int defaultValue) {
 	autoUiField thee (UiForm_addField (me, UI_RADIO, label));
 	thy integerDefaultValue = defaultValue;
-	thy options = Ordered_create ();
 	return thee.releaseToAmbiguousOwner();
 }
 
 UiField UiForm_addOptionMenu (UiForm me, const char32 *label, int defaultValue) {
 	autoUiField thee (UiForm_addField (me, UI_OPTIONMENU, label));
 	thy integerDefaultValue = defaultValue;
-	thy options = Ordered_create ();
 	return thee.releaseToAmbiguousOwner();
 }
 
@@ -740,8 +738,8 @@ void UiForm_finish (UiForm me) {
 		thy y = dialogHeight;
 		dialogHeight +=
 			thy type == UI_BOOLEAN ? Gui_CHECKBUTTON_HEIGHT :
-			thy type == UI_RADIO ? thy options -> size * Gui_RADIOBUTTON_HEIGHT +
-				(thy options -> size - 1) * Gui_RADIOBUTTON_SPACING :
+			thy type == UI_RADIO ? thy options.size() * Gui_RADIOBUTTON_HEIGHT +
+				(thy options.size() - 1) * Gui_RADIOBUTTON_SPACING :
 			thy type == UI_OPTIONMENU ? Gui_OPTIONMENU_HEIGHT :
 			thy type == UI_LIST ? LIST_HEIGHT :
 			thy type == UI_LABEL && thy stringValue [0] != U'\0' && thy stringValue [str32len (thy stringValue) - 1] != U'.' &&
@@ -818,8 +816,8 @@ void UiForm_finish (UiForm me) {
 				field -> label = GuiLabel_createShown (form, x, x + labelWidth, ylabel, ylabel + Gui_RADIOBUTTON_HEIGHT,
 					theFinishBuffer.string, GuiLabel_RIGHT);
 				GuiRadioGroup_begin ();
-				for (long ibutton = 1; ibutton <= field -> options -> size; ibutton ++) {
-					UiOption button = static_cast <UiOption> (field -> options -> item [ibutton]);
+				for (long ibutton = 1; ibutton <= field -> options.size(); ibutton ++) {
+					UiOption button = field -> options [ibutton];
 					MelderString_copy (& theFinishBuffer, button -> name);
 					button -> radioButton = GuiRadioButton_createShown (form,
 						fieldX, dialogWidth /* allow to extend into the margin */,
@@ -840,8 +838,8 @@ void UiForm_finish (UiForm me) {
 				field -> label = GuiLabel_createShown (form, x, x + labelWidth, ylabel, ylabel + Gui_OPTIONMENU_HEIGHT,
 					theFinishBuffer.string, GuiLabel_RIGHT);
 				field -> optionMenu = GuiOptionMenu_createShown (form, fieldX, fieldX + fieldWidth, y, y + Gui_OPTIONMENU_HEIGHT, 0);
-				for (long ibutton = 1; ibutton <= field -> options -> size; ibutton ++) {
-					UiOption button = static_cast <UiOption> (field -> options -> item [ibutton]);
+				for (long ibutton = 1; ibutton <= field -> options.size(); ibutton ++) {
+					UiOption button = field -> options [ibutton];
 					MelderString_copy (& theFinishBuffer, button -> name);
 					GuiOptionMenu_addOption (field -> optionMenu, theFinishBuffer.string);
 				}
@@ -1002,8 +1000,8 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 			if (arg -> which != Stackel_STRING)
 				Melder_throw (U"Option argument \"", my name, U"\" should be a string, not ", Stackel_whichText (arg), U".");
 			my integerValue = 0;
-			for (int i = 1; i <= my options -> size; i ++) {
-				UiOption b = static_cast <UiOption> (my options -> item [i]);
+			for (int i = 1; i <= my options.size(); i ++) {
+				UiOption b = my options [i];
 				if (str32equ (arg -> string, b -> name))
 					my integerValue = i;
 			}
@@ -1011,8 +1009,8 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 				/*
 				 * Retry with different case.
 				 */
-				for (int i = 1; i <= my options -> size; i ++) {
-					UiOption b = static_cast <UiOption> (my options -> item [i]);
+				for (int i = 1; i <= my options.size(); i ++) {
+					UiOption b = my options [i];
 					char32 name2 [100];
 					str32cpy (name2, b -> name);
 					if (iswlower ((int) name2 [0])) name2 [0] = (char32) towupper ((int) name2 [0]);
@@ -1181,15 +1179,15 @@ void UiForm_setInteger (UiForm me, const char32 *fieldName, long value) {
 		} break; case UI_BOOLEAN: {
 			GuiCheckButton_setValue (field -> checkButton, value);
 		} break; case UI_RADIO: {
-			if (value < 1 || value > field -> options -> size) value = 1;   // guard against incorrect prefs file
-			for (int i = 1; i <= field -> options -> size; i ++) {
+			if (value < 1 || value > field -> options.size()) value = 1;   // guard against incorrect prefs file
+			for (int i = 1; i <= field -> options.size(); i ++) {
 				if (i == value) {
-					UiOption b = static_cast <UiOption> (field -> options -> item [i]);
+					UiOption b = field -> options [i];
 					GuiRadioButton_set (b -> radioButton);
 				}
 			}
 		} break; case UI_OPTIONMENU: {
-			if (value < 1 || value > field -> options -> size) value = 1;   // guard against incorrect prefs file
+			if (value < 1 || value > field -> options.size()) value = 1;   // guard against incorrect prefs file
 			GuiOptionMenu_setValue (field -> optionMenu, value);
 		} break; case UI_LIST: {
 			if (value < 1 || value > field -> numberOfStrings) value = 1;   // guard against incorrect prefs file
@@ -1212,8 +1210,8 @@ void UiForm_setString (UiForm me, const char32 *fieldName, const char32 *value /
 		} break; case UI_LABEL: {
 			GuiLabel_setText (field -> label, value);
 		} break; case UI_RADIO: {
-			for (int i = 1; i <= field -> options -> size; i ++) {
-				UiOption b = static_cast <UiOption> (field -> options -> item [i]);
+			for (int i = 1; i <= field -> options.size(); i ++) {
+				UiOption b = field -> options [i];
 				if (str32equ (value, b -> name)) {
 					GuiRadioButton_set (b -> radioButton);
 				}
@@ -1221,8 +1219,8 @@ void UiForm_setString (UiForm me, const char32 *fieldName, const char32 *value /
 			/* If not found: do nothing (guard against incorrect prefs file). */
 		} break; case UI_OPTIONMENU: {
 			int integerValue = 0;
-			for (int i = 1; i <= field -> options -> size; i ++) {
-				UiOption b = static_cast <UiOption> (field -> options -> item [i]);
+			for (int i = 1; i <= field -> options.size(); i ++) {
+				UiOption b = field -> options [i];
 				if (str32equ (value, b -> name)) {
 					integerValue = i;
 					break;
@@ -1317,7 +1315,7 @@ char32 * UiForm_getString (UiForm me, const char32 *fieldName) {
 		case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
 			return field -> stringValue;
 		} break; case UI_RADIO: case UI_OPTIONMENU: {
-			UiOption b = static_cast <UiOption> (field -> options -> item [field -> integerValue]);
+			UiOption b = field -> options [field -> integerValue];
 			return b -> name;
 		} break; case UI_LIST: {
 			return (char32 *) field -> strings [field -> integerValue];
@@ -1334,7 +1332,7 @@ char32 * UiForm_getString_check (UiForm me, const char32 *fieldName) {
 		case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
 			return field -> stringValue;
 		} break; case UI_RADIO: case UI_OPTIONMENU: {
-			UiOption b = static_cast <UiOption> (field -> options -> item [field -> integerValue]);
+			UiOption b = field -> options [field -> integerValue];
 			return b -> name;
 		} break; case UI_LIST: {
 			return (char32 *) field -> strings [field -> integerValue];
@@ -1399,7 +1397,7 @@ void UiForm_Interpreter_addVariables (UiForm me, Interpreter interpreter) {
 				MelderString_appendCharacter (& lowerCaseFieldName, U'$');
 				var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string);
 				Melder_free (var -> stringValue);
-				UiOption b = static_cast <UiOption> (field -> options -> item [field -> integerValue]);
+				UiOption b = field -> options [field -> integerValue];
 				var -> stringValue = Melder_dup (b -> name);
 			} break; case UI_LIST: {
 				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string);

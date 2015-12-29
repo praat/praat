@@ -51,7 +51,6 @@ autoActivation Matrix_to_Activation (Matrix me);
 
 autoMatrix Activation_to_Matrix (Activation me);
 
-
 int _Activation_checkElements (Activation me);
 /* Return 1 if all elements are in interval [0,1] else 0. */
 

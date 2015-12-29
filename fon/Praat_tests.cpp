@@ -243,7 +243,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			t = Melder_stopwatch ();
 		} break;
 		case kPraatTests_THING_AUTO: {
-			int numberOfThingsBefore = Thing_getTotalNumberOfThings ();
+			int numberOfThingsBefore = theTotalNumberOfThings;
 			{
 				Melder_casual (U"1\n");
 				autoDaata data = Thing_new (Daata);
@@ -299,7 +299,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 				//data11 = nullptr;   // disabled implicit assignment of pointer to autopointer
 				fprintf (stderr, "21\n");
 			}
-			int numberOfThingsAfter = Thing_getTotalNumberOfThings ();
+			int numberOfThingsAfter = theTotalNumberOfThings;
 			fprintf (stderr, "Number of things: before %d, after %d\n", numberOfThingsBefore, numberOfThingsAfter);
 			#if 1
 				MelderCallback<void,structDaata>::FunctionType f;
