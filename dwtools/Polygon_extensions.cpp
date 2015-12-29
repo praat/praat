@@ -28,7 +28,7 @@
 #include "NUM2.h"
 #include "Polygon_extensions.h"
 #include "Vector.h"
-#include "DLL.h"
+#include "DoublyLinkedList.h"
 
 // not for self-intesecting polygons!
 static double Polygon_area (Polygon me) {
@@ -544,7 +544,7 @@ static int LineSegments_getIntersection (double x1, double y1, double x2, double
 
 Thing_define (Vertex, Daata) {
 	double x, y, alpha;
-	DLLNode neighbour;
+	DoublyLinkedNode neighbour;
 	long poly_npoints, id;
 	int intersect, entry;
 	bool processed;
@@ -572,8 +572,8 @@ static autoVertex Vertex_create () {
 	return Thing_new (Vertex);
 }
 
-Thing_define (Vertices, DLL) {
-	static int s_compareHook (DLLNode me, DLLNode thee) noexcept;
+Thing_define (Vertices, DoublyLinkedList) {
+	static int s_compareHook (DoublyLinkedNode me, DoublyLinkedNode thee) noexcept;
 	Data_CompareHook v_getCompareHook ()
 		override { return s_compareHook; }
 };
@@ -582,18 +582,18 @@ inline static autoVertices Vertices_create () {
 	return Thing_new (Vertices);
 }
 
-Thing_implement (Vertices, DLL, 0);
+Thing_implement (Vertices, DoublyLinkedList, 0);
 
 #define VERTEX(n) ((Vertex) ((n) -> data.get()))
 
-int structVertices :: s_compareHook (DLLNode me, DLLNode thee) noexcept {
+int structVertices :: s_compareHook (DoublyLinkedNode me, DoublyLinkedNode thee) noexcept {
 	return VERTEX (me) -> alpha < VERTEX (thee) -> alpha ? -1 : VERTEX (me) -> alpha > VERTEX (thee) -> alpha ? 1 : 0;
 }
 
-static void Vertices_addCopyBack (Vertices me, DLLNode n) {
+static void Vertices_addCopyBack (Vertices me, DoublyLinkedNode n) {
 	try {
-		autoDLLNode nc = Data_copy (n);
-		DLL_addBack (me, nc.releaseToAmbiguousOwner());
+		autoDoublyLinkedNode nc = Data_copy (n);
+		DoublyLinkedList_addBack (me, nc.releaseToAmbiguousOwner());
 	} catch (MelderError) {
 		Melder_throw (me, U": no copy added.");
 	}
@@ -756,8 +756,8 @@ static autoVertices Polygon_to_Vertices (Polygon me, bool close) {
 		for (long i = 1 ; i <= my numberOfPoints; i++) {
 			autoVertex v = Vertex_create ();
 			v -> x = my x[i]; v -> y = my y[i];
-			autoDLLNode n = DLLNode_create (v.move());
-			DLL_addBack (thee.peek(), n.releaseToAmbiguousOwner());
+			autoDoublyLinkedNode n = DoublyLinkedNode_create (v.move());
+			DoublyLinkedList_addBack (thee.peek(), n.releaseToAmbiguousOwner());
 		}
 		Melder_assert (thy numberOfNodes == my numberOfPoints);
 		if (close) {
@@ -775,7 +775,7 @@ static autoVertices Polygon_to_Vertices (Polygon me, bool close) {
 static void Vertices_print (Vertices me, Vertices thee) {
 	long ns = 0, nc = 0, nt, nt2;
 	//	MelderInfo_open();
-	DLLNode n = my front;
+	DoublyLinkedNode n = my front;
 	MelderInfo_writeLine (U"");
 	while (n != 0) {
 		double x = VERTEX (n) -> x, y = VERTEX (n) -> y, alpha = VERTEX (n) -> alpha;
@@ -809,12 +809,12 @@ static void Vertices_print (Vertices me, Vertices thee) {
 }
 
 static void Vertices_sortIntersections (Vertices me) {
-	DLLNode ni = my front, first;
+	DoublyLinkedNode ni = my front, first;
 	bool intersections = false;
 	while (ni != my back) {
 		if (VERTEX (ni) -> intersect == 0) {
 			if (intersections) { // the previous was the last of a series of intersections
-				DLL_sortPart ( (DLL) me, first, ni -> prev);
+				DoublyLinkedList_sortPart ( (DoublyLinkedList) me, first, ni -> prev);
 				// restore myNode pointers
 				intersections = false;
 			}
@@ -828,7 +828,7 @@ static void Vertices_sortIntersections (Vertices me) {
 	}
 	// we might have missed the last series of intersections
 	if (intersections) {
-		DLL_sortPart ( (DLL) me, first, ni -> prev);
+		DoublyLinkedList_sortPart ( (DoublyLinkedList) me, first, ni -> prev);
 	}
 }
 
@@ -839,13 +839,13 @@ static void Vertices_addIntersections (Vertices me, Vertices thee) {
 		if (my numberOfNodes < 4 || thy numberOfNodes < 4) {
 			Melder_throw (U"We need at least three vertices.");
 		}
-		DLLNode ni = my front; // the node index  in me (s)
+		DoublyLinkedNode ni = my front; // the node index  in me (s)
 		while (ni != my back) { // until penultimate
 			double x1 = VERTEX (ni) -> x, y1 =  VERTEX (ni) -> y;
 			double x2 = VERTEX (ni -> next) -> x, y2 = VERTEX (ni -> next) -> y;
-			DLLNode nj = thy front; // the current node index in thee (c)
+			DoublyLinkedNode nj = thy front; // the current node index in thee (c)
 			while (nj != thy back && VERTEX (nj) -> intersect == 0) {
-				DLLNode njn = nj -> next;
+				DoublyLinkedNode njn = nj -> next;
 				SKIP_INTERSECTION_NODES (njn)
 				double x3 = VERTEX (nj) -> x, y3 = VERTEX (nj) -> y;
 				double x4 = VERTEX (njn) -> x, y4 = VERTEX (njn) -> y, mua, mub;
@@ -862,17 +862,17 @@ static void Vertices_addIntersections (Vertices me, Vertices thee) {
 					autoVertex inc = Data_copy (ins.peek());
 					inc -> alpha = mub;
 					// 2. create the nodes
-					autoDLLNode ns = DLLNode_create (autoDaata());
-					autoDLLNode nc = DLLNode_create (autoDaata());
+					autoDoublyLinkedNode ns = DoublyLinkedNode_create (autoDaata());
+					autoDoublyLinkedNode nc = DoublyLinkedNode_create (autoDaata());
 					// 3. link the neighbours + copy the links
-					DLLNode njc = ins -> neighbour = nc.peek();
-					DLLNode nic = inc -> neighbour = ns.peek();
+					DoublyLinkedNode njc = ins -> neighbour = nc.peek();
+					DoublyLinkedNode nic = inc -> neighbour = ns.peek();
 					// 4. transfer the vertices to the nodes
 					ns -> data = ins.move();
 					nc -> data = inc.move();
 					// 5. add the nodes to the list
-					DLL_addAfter (me, ni, ns.releaseToAmbiguousOwner());
-					DLL_addAfter (thee, nj, nc.releaseToAmbiguousOwner());
+					DoublyLinkedList_addAfter (me, ni, ns.releaseToAmbiguousOwner());
+					DoublyLinkedList_addAfter (thee, nj, nc.releaseToAmbiguousOwner());
 					// 6. set node pointer to inserted nodes
 					ni = nic; nj = njc;
 				}
@@ -903,7 +903,7 @@ static void Vertices_addIntersections (Vertices me, Vertices thee) {
 static void Vertices_markEntryPoints (Vertices me, int firstLocation) {
 	int entry = (firstLocation == Polygon_INSIDE) ? Polygon_EX : (firstLocation == Polygon_OUTSIDE) ? Polygon_EN : Polygon_ENEX; // problematic when on boundary
 	// my back/front can never be an intersection node
-	for (DLLNode ni = my front -> next; ni != my back; ni = ni -> next) {
+	for (DoublyLinkedNode ni = my front -> next; ni != my back; ni = ni -> next) {
 		if (VERTEX (ni) -> intersect == 0) {
 			continue;
 		}
@@ -916,9 +916,9 @@ static autoVertices Verticeses_connectClippingPathsUnion (Vertices me, Vertices 
 	try {
 		// find my first vertex outside thee, by searching the first intersection entry
 
-		DLLNode firstOutside = my front;
+		DoublyLinkedNode firstOutside = my front;
 		bool firstOutsideSet = true;
-		for (DLLNode ni = my front; ni != 0; ni = ni -> next) {
+		for (DoublyLinkedNode ni = my front; ni != 0; ni = ni -> next) {
 			if (VERTEX (ni) -> intersect == 0) { //
 				if (firstOutsideSet) {
 					continue;
@@ -935,7 +935,7 @@ static autoVertices Verticeses_connectClippingPathsUnion (Vertices me, Vertices 
 
 		autoVertices him = Vertices_create ();
 		long poly_npoints = 0;
-		DLLNode current = firstOutside;
+		DoublyLinkedNode current = firstOutside;
 		bool inside = false, forward = true;
 		do {
 			if (VERTEX (current) -> intersect == 0) {
@@ -969,14 +969,14 @@ static autoVertices Verticeses_connectClippingPathsUnion (Vertices me, Vertices 
 static autoVertices Verticeses_connectClippingPaths (Vertices me, bool /* use_myinterior */, Vertices thee, bool /* use_thyinterior */) {
 	try {
 		autoVertices him = Vertices_create ();
-		DLLNode prevPoly;
+		DoublyLinkedNode prevPoly;
 		long poly_npoints = 0;
-		for (DLLNode ni = my front; ni != 0; ni = ni -> next) {
+		for (DoublyLinkedNode ni = my front; ni != 0; ni = ni -> next) {
 			if ( (VERTEX (ni) -> intersect == 0) || VERTEX (ni) -> processed) {
 				continue;
 			}
 			// Intersection found: start new polygon
-			DLLNode currentPoly = his back;
+			DoublyLinkedNode currentPoly = his back;
 			if (currentPoly == his front) {
 				Vertices_addCopyBack (him.peek(), ni); poly_npoints++;
 				prevPoly = his front;
@@ -986,7 +986,7 @@ static autoVertices Verticeses_connectClippingPaths (Vertices me, bool /* use_my
 				poly_npoints = 0;
 				prevPoly = currentPoly;
 			}
-			DLLNode current = ni;
+			DoublyLinkedNode current = ni;
 			VERTEX (current) -> processed = true;
 			long jumps = 0;
 			do {
@@ -1036,8 +1036,8 @@ static autoVertices Verticeses_connectClippingPaths (Vertices me, bool /* use_my
 }
 
 //
-static autoPolygon Vertices_to_Polygon (Vertices /* me */, DLLNode *ni) {
-	DLLNode n = *ni;
+static autoPolygon Vertices_to_Polygon (Vertices /* me */, DoublyLinkedNode *ni) {
+	DoublyLinkedNode n = *ni;
 	try {
 		long i = 1, nPoints = VERTEX (n) -> poly_npoints;
 		if (nPoints == 0) {
@@ -1060,7 +1060,7 @@ Thing_implement (PolygonBag, Collection, 0);
 static autoPolygonBag Vertices_to_Polygons (Vertices me) {
 	try {
 		autoPolygonBag thee = PolygonBag_create ();
-		DLLNode ni = my front;
+		DoublyLinkedNode ni = my front;
 		do {
 			autoPolygon p = Vertices_to_Polygon (me, & ni);
 			thy addItem_move (p.move());
