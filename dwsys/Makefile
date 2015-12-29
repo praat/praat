@@ -8,7 +8,7 @@ CPPFLAGS =  -I ../stat -I ../num -I ../sys -I dwsys -I ../external/gsl -I ../kar
 all: libdwsys.a
 
 OBJECTS = Collection_extensions.o Command.o \
-	DLL.o Eigen.o FileInMemory.o Graphics_extensions.o Index.o \
+	DoublyLinkedList.o Eigen.o FileInMemory.o Graphics_extensions.o Index.o \
 	NUM2.o NUMhuber.o NUMlapack.o NUMmachar.o \
 	NUMf2c.o NUMcblas.o NUMclapack.o NUMfft_d.o NUMsort2.o \
 	NUMmathlib.o NUMstring.o \
