@@ -86,15 +86,6 @@ void structOrderedOfString :: v_info () {
 
 Thing_implement (OrderedOfString, Ordered, 0);
 
-autoOrderedOfString OrderedOfString_create () {
-	try {
-		autoOrderedOfString me = Thing_new (OrderedOfString);
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"OrderedOfString not created.");
-	}
-}
-
 int OrderedOfString_append (OrderedOfString me, const char32 *append) {
 	try {
 		if (! append) {

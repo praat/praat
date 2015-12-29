@@ -520,7 +520,7 @@ DO
 		if (CLASS == classTextGrid) textgrid = (TextGrid) OBJECT;
 		if (CLASS == classSound) sound = (Sound) OBJECT;
 	}
-	autoOrderedOfSound thee = TextGrid_Sound_extractAllIntervals (textgrid, sound,
+	autoSoundList thee = TextGrid_Sound_extractAllIntervals (textgrid, sound,
 		GET_INTEGER (STRING_TIER_NUMBER), GET_INTEGER (U"Preserve times"));
 	thy classInfo = classCollection;   // YUCK
 	praat_new (thee.move(), U"dummy");
@@ -537,7 +537,7 @@ DO
 		if (CLASS == classTextGrid) textgrid = (TextGrid) OBJECT;
 		if (CLASS == classSound) sound = (Sound) OBJECT;
 	}
-	autoOrderedOfSound thee = TextGrid_Sound_extractNonemptyIntervals (textgrid, sound,
+	autoSoundList thee = TextGrid_Sound_extractNonemptyIntervals (textgrid, sound,
 		GET_INTEGER (STRING_TIER_NUMBER), GET_INTEGER (U"Preserve times"));
 	thy classInfo = classCollection;   // YUCK
 	praat_new (thee.move(), U"dummy");
@@ -555,7 +555,7 @@ DO
 		if (CLASS == classTextGrid) textgrid = (TextGrid) OBJECT;
 		if (CLASS == classSound) sound = (Sound) OBJECT;
 	}
-	autoOrderedOfSound thee = TextGrid_Sound_extractIntervalsWhere (textgrid, sound,
+	autoSoundList thee = TextGrid_Sound_extractIntervalsWhere (textgrid, sound,
 		GET_INTEGER (STRING_TIER_NUMBER), kMelder_string_EQUAL_TO, GET_STRING (U"Label text"),
 		GET_INTEGER (U"Preserve times"));
 	thy classInfo = classCollection;   // YUCK
@@ -575,7 +575,7 @@ DO
 		if (CLASS == classTextGrid) textgrid = (TextGrid) OBJECT;
 		if (CLASS == classSound) sound = (Sound) OBJECT;
 	}
-	autoOrderedOfSound thee = TextGrid_Sound_extractIntervalsWhere (textgrid, sound,
+	autoSoundList thee = TextGrid_Sound_extractIntervalsWhere (textgrid, sound,
 		GET_INTEGER (STRING_TIER_NUMBER),
 		GET_ENUM (kMelder_string, U"Extract every interval whose label..."),
 		GET_STRING (U"...the text"),

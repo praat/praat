@@ -107,45 +107,23 @@ autoMDSVec MDSVec_create (long nObjects);
 
 /************** class MDSVecs *********************************/
 
-Collection_declare (OrderedOfMDSVec, OrderedOf, MDSVec);
-
-Thing_define (MDSVecList, OrderedOfMDSVec) {
-	structMDSVecList () {
-		our classInfo = classMDSVecList;
-	}
+Collection_define (MDSVecList, OrderedOf, MDSVec) {
 };
-
-inline static autoMDSVecList MDSVecList_create () {
-	return Thing_new (MDSVecList);
-}
 
 autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, long numberOfDimensions, int scaling);
 
 /********************* class Proximities *******************************/
 
-Collection_declare (OrderedOfProximity, OrderedOf, Proximity);
-
-Thing_define (ProximityList, OrderedOfProximity) {
-	structProximityList () {
-		our classInfo = classProximityList;
-	}
+Collection_define (ProximityList, OrderedOf, Proximity) {
 	TableOfRealList asTableOfRealList () {
 		return reinterpret_cast<TableOfRealList> (this);
 	}
 };
 
-inline static autoProximityList ProximityList_create () {
-	return Thing_new (ProximityList);
-}
 
-/****************** class Confusions **********************************/
+#pragma mark - class ConfusionList
 
-Collection_declare (OrderedOfConfusion, OrderedOf, Confusion);
-
-Thing_define (ConfusionList, OrderedOfConfusion) {
-	structConfusionList () {
-		our classInfo = classConfusionList;
-	}
+Collection_define (ConfusionList, OrderedOf, Confusion) {
 	TableOfRealList asTableOfRealList () {
 		return reinterpret_cast<TableOfRealList> (this);
 	}
@@ -153,14 +131,10 @@ Thing_define (ConfusionList, OrderedOfConfusion) {
 
 autoConfusion ConfusionList_sum (ConfusionList me);
 
-/************* class Distances **************************************/
 
-Collection_declare (OrderedOfDistance, OrderedOf, Distance);
+#pragma mark - class DistanceList
 
-Thing_define (DistanceList, OrderedOfDistance) {
-	structDistanceList () {
-		our classInfo = classDistanceList;
-	}
+Collection_define (DistanceList, OrderedOf, Distance) {
 	ProximityList asProximityList () {
 		return reinterpret_cast<ProximityList> (this);
 	}
@@ -169,37 +143,25 @@ Thing_define (DistanceList, OrderedOfDistance) {
 	}
 };
 
-inline static autoDistanceList DistanceList_create () {
-	return Thing_new (DistanceList);
-}
 
-//Collection_implement (Distances, Proximities, 0);
-
-/**************** class ScalarProduct **************************************/
+#pragma mark - class ScalarProduct
 
 Thing_define (ScalarProduct, TableOfReal) {
 };
 
 autoScalarProduct ScalarProduct_create (long numberOfPoints);
 
-/************** class ScalarProducts ********************************/
 
-Collection_declare (OrderedOfScalarProduct, OrderedOf, ScalarProduct);
+#pragma mark - class ScalarProductList
 
-Thing_define (ScalarProductList, OrderedOfScalarProduct) {
-	structScalarProductList () {
-		our classInfo = classScalarProductList;
-	}
+Collection_define (ScalarProductList, OrderedOf, ScalarProduct) {
 	TableOfRealList asTableOfRealList () {
 		return reinterpret_cast<TableOfRealList> (this);
 	}
 };
 
-inline static autoScalarProductList ScalarProductList_create () {
-	return Thing_new (ScalarProductList);
-}
 
-/************* class Dissimilarity *********************************/
+#pragma mark - class Dissimilarity
 
 Thing_define (Dissimilarity, Proximity) {
 };
@@ -213,15 +175,14 @@ double Dissimilarity_getAdditiveConstant (Dissimilarity me);
 	F. Cailliez (1983), The analytical solution of the additive constant problem, Psychometrika 48, 305-308.
 */
 
-/****************** class Transformator *******************************/
+
+#pragma mark - class Transformator
 
 Thing_define (Transformator, Thing) {
-	// new data:
-	public:
-		long numberOfPoints;
-		int normalization;
-	// new methods:
-		virtual autoDistance v_transform (MDSVec vec, Distance dist, Weight w);
+	long numberOfPoints;
+	int normalization;
+
+	virtual autoDistance v_transform (MDSVec vec, Distance dist, Weight w);
 };
 
 void Transformator_init (Transformator me, long numberOfPoints);
@@ -269,12 +230,7 @@ void MonotoneTransformator_setTiesProcessing (MonotoneTransformator,
 
 /*************** class Dissimilarities ****************************/
 
-Collection_declare (OrderedOfDissimilarity, OrderedOf, Dissimilarity);
-
-Thing_define (DissimilarityList, OrderedOfDissimilarity) {
-	structDissimilarityList () {
-		our classInfo = classDissimilarityList;
-	}
+Collection_define (DissimilarityList, OrderedOf, Dissimilarity) {
 	ProximityList asProximityList () {
 		return reinterpret_cast<ProximityList> (this);
 	}
@@ -282,9 +238,6 @@ Thing_define (DissimilarityList, OrderedOfDissimilarity) {
 		return reinterpret_cast<TableOfRealList> (this);
 	}
 };
-inline static autoDissimilarityList DissimilarityList_create () {
-	return Thing_new (DissimilarityList);
-}
 
 
 /**************** class Similarity *****************************/

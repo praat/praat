@@ -424,10 +424,10 @@ void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, dou
 	}
 }
 
-autoOrderedOfSound TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, long tierNumber, int preserveTimes) {
+autoSoundList TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, long tierNumber, bool preserveTimes) {
 	try {
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
-		autoOrderedOfSound list;
+		autoSoundList list = SoundList_create ();
 		for (long iseg = 1; iseg <= tier -> intervals.size(); iseg ++) {
 			TextInterval segment = tier -> intervals [iseg];
 			autoSound interval = Sound_extractPart (sound, segment -> xmin, segment -> xmax, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes);
@@ -440,10 +440,12 @@ autoOrderedOfSound TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound,
 	}
 }
 
-autoOrderedOfSound TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound, long tierNumber, int preserveTimes) {
+Thing_implement (SoundList, Ordered, 0);
+
+autoSoundList TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound, long tierNumber, bool preserveTimes) {
 	try {
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
-		autoOrderedOfSound list;
+		autoSoundList list = SoundList_create ();
 		for (long iseg = 1; iseg <= tier -> intervals.size(); iseg ++) {
 			TextInterval segment = tier -> intervals [iseg];
 			if (segment -> text && segment -> text [0] != U'\0') {
@@ -459,12 +461,12 @@ autoOrderedOfSound TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound s
 	}
 }
 
-autoOrderedOfSound TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound, long tierNumber,
-	int comparison_Melder_STRING, const char32 *text, int preserveTimes)
+autoSoundList TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound, long tierNumber,
+	int comparison_Melder_STRING, const char32 *text, bool preserveTimes)
 {
 	try {
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
-		autoOrderedOfSound list;
+		autoSoundList list = SoundList_create ();
 		long count = 0;
 		for (long iseg = 1; iseg <= tier -> intervals.size(); iseg ++) {
 			TextInterval segment = tier -> intervals [iseg];
@@ -564,7 +566,7 @@ static void autoMarks_semitones (Graphics g, double ymin, double ymax, bool have
 }
 
 void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, double tmin, double tmax,
-	double fmin, double fmax, int showBoundaries, int useTextStyles, int garnish, int speckle, int unit)
+	double fmin, double fmax, bool showBoundaries, bool useTextStyles, bool garnish, bool speckle, int unit)
 {
 	int ntier = grid -> tiers -> size();
 	if (tmax <= tmin) tmin = grid -> xmin, tmax = grid -> xmax;
@@ -606,7 +608,7 @@ void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, doub
 
 void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 	long tierNumber, double tmin, double tmax, double fmin, double fmax,
-	double fontSize, int useTextStyles, int horizontalAlignment, int garnish, int speckle, int unit)
+	double fontSize, bool useTextStyles, int horizontalAlignment, bool garnish, bool speckle, int unit)
 {
 	try {
 		Function anyTier = TextGrid_checkSpecifiedTierNumberWithinRange (grid, tierNumber);

@@ -286,7 +286,9 @@ autoTableOfReal TableOfReal_transpose (TableOfReal me) {
 	}
 }
 
-void TableOfReal_to_Pattern_and_Categories (TableOfReal me, long fromrow, long torow, long fromcol, long tocol, autoPattern *p, autoCategories *c) {
+void TableOfReal_to_Pattern_and_Categories (TableOfReal me, long fromrow, long torow, long fromcol, long tocol,
+	autoPattern *p, autoCategories *c)
+{
 	try {
 		long ncol = my numberOfColumns, nrow = my numberOfRows;
 
@@ -343,7 +345,8 @@ void TableOfReal_getColumnExtrema (TableOfReal me, long col, double *min, double
 }
 
 void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, const char32 *rows, long colb, long cole, double ymin,
-	double ymax, double xoffsetFraction, double interbarFraction, double interbarsFraction, const char32 *greys, int garnish) {
+	double ymax, double xoffsetFraction, double interbarFraction, double interbarsFraction, const char32 *greys, bool garnish)
+{
 	if (colb >= cole) {
 		colb = 1; cole = my numberOfColumns;
 	}
@@ -398,7 +401,7 @@ void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, const char32 *
 				}
 				Graphics_setGrey (g, grey);
 				Graphics_fillRectangle (g, x1, x2, y1, y2);
-				Graphics_setGrey (g, 0); /* Black */
+				Graphics_setGrey (g, 0.0);   // black
 				Graphics_rectangle (g, x1, x2, y1, y2);
 			}
 			x1 += dx;
@@ -409,9 +412,9 @@ void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, const char32 *
 
 	if (garnish) {
 		double xb = (xoffsetFraction + 0.5 * (nrows + (nrows - 1) * interbarFraction)) * bar_width;
-		for (long j = colb; j <= cole; j++) {
-			if (my columnLabels[j]) {
-				Graphics_markBottom (g, xb, false, false, false, my columnLabels[j]);
+		for (long j = colb; j <= cole; j ++) {
+			if (my columnLabels [j]) {
+				Graphics_markBottom (g, xb, false, false, false, my columnLabels [j]);
 			}
 			xb += dx;
 		}
@@ -473,15 +476,15 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 	}
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 
-	for (long i = 1; i <= nPoints; i++) {
+	for (long i = 1; i <= nPoints; i ++) {
 		char32 const *label;
 		if (i <= nr) {
-			label = my rowLabels[i];
+			label = my rowLabels [i];
 			if (! label) {
 				label = U"?__r_";
 			}
 		} else {
-			label = my columnLabels[i - nr];
+			label = my columnLabels [i - nr];
 			if (! label) {
 				label = U"?__c_";
 			}
@@ -961,9 +964,10 @@ void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g, long icx, long icy
 	}
 }
 
-/****************  TABLESOFREAL **************************************/
 
-autoTableOfReal TablesOfReal_sum (TableOfRealList me) {
+#pragma mark - class TableOfRealList
+
+autoTableOfReal TableOfRealList_sum (TableOfRealList me) {
 	try {
 		if (my size() <= 0) {
 			return autoTableOfReal();
@@ -987,7 +991,7 @@ autoTableOfReal TablesOfReal_sum (TableOfRealList me) {
 	}
 }
 
-bool TablesOfReal_haveIdenticalDimensions (TableOfRealList me) {
+bool TableOfRealList_haveIdenticalDimensions (TableOfRealList me) {
 	if (my size() < 2) {
 		return true;
 	}
@@ -1537,7 +1541,7 @@ autoTableOfReal TableOfReal_appendColumns (TableOfReal me, TableOfReal thee) {
 	}
 }
 
-autoTableOfReal TableOfReal_appendColumnsMany (TableOfRealList me) {
+autoTableOfReal TableOfRealList_appendColumnsMany (TableOfRealList me) {
 	try {
 		if (my size() == 0) {
 			Melder_throw (U"No tables selected.");

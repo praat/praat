@@ -211,68 +211,19 @@ struct structData_Description theCollectionOfDaata_v_description [] = {
 	{ 0 }
 };
 
-/********** class Collection **********/
+#define Collection_implement(klas,genericClass,itemClass,parentClass,version) \
+	static Thing _##klas##_new () { return new genericClass<struct##itemClass>; } \
+	struct structClassInfo theClassInfo_##klas = { U"" #klas, & theClassInfo_##parentClass, \
+		sizeof (genericClass<struct##itemClass>), _##klas##_new, version, 0, nullptr}; \
+	ClassInfo class##klas = & theClassInfo_##klas
 
 Collection_implement (Collection, CollectionOf, Thing, Daata, 0);
-
-/********** class Ordered **********/
-
 Collection_implement (Ordered, OrderedOf, Daata, Collection, 0);
-
-/********** class Sorted **********/
-
 Collection_implement (Sorted, SortedOf, Daata, Collection, 0);
-
-/********** class SortedSet **********/
-
 Collection_implement (SortedSet, SortedSetOf, Daata, Sorted, 0);
-
-/********** class SortedSetOfInt **********/
-
 Collection_implement (SortedSetOfInt, SortedSetOfIntOf, SimpleInt, SortedSet, 0);
-
-/********** class SortedSetOfLong **********/
-
 Collection_implement (SortedSetOfLong, SortedSetOfLongOf, SimpleLong, SortedSet, 0);
-
-/********** class SortedSetOfDouble **********/
-
 Collection_implement (SortedSetOfDouble, SortedSetOfDoubleOf, SimpleDouble, SortedSet, 0);
-
-/********** class SortedSetOfString **********/
-
 Collection_implement (SortedSetOfString, SortedSetOfStringOf, SimpleString, SortedSet, 0);
-
-/********** class Cyclic **********/
-
-#if 0
-Thing_implement (Cyclic, Collection, 0);
-
-int structCyclic :: s_compareHook (Daata /* me */, Daata /* thee */) noexcept {
-	Melder_fatal (U"Cyclic::compare: subclass responsibility.");
-	return 0;
-}
-
-void Cyclic_cycleLeft (Cyclic me) {
-	if (my size == 0) return;   // for size == 1 no motion will take place either, but in that case the algorithm determines that automatically
-	Daata help = (Daata) my item [1];
-	for (long i = 1; i < my size; i ++) my item [i] = my item [i + 1];
-	my item [my size] = help;
-}
-
-void Cyclic_unicize (Cyclic me) {
-	Data_CompareHook compare = my v_getCompareHook ();
-	if (my size <= 1) return;
-	long lowest = 1;
-	for (long i = 1; i <= my size; i ++)
-		if (compare ((Daata) my item [i], (Daata) my item [lowest]) < 0) lowest = i;
-	for (long i = 1; i < lowest; i ++)
-		Cyclic_cycleLeft (me);
-}
-
-void Cyclic_init (Cyclic me, long initialCapacity) {
-	Collection_init (me, initialCapacity);
-}
-#endif
 
 /* End of file Collection.cpp */

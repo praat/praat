@@ -691,7 +691,8 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (
 		}
 
 		double lnd;
-		autoSSCPList agroups; SSCPList groups;
+		autoSSCPList agroups;
+		SSCPList groups;
 		if (poolCovarianceMatrices) {
 			// Covariance matrix S can be decomposed as S = L.L'. Calculate L^-1.
 			// L^-1 will be used later in the Mahalanobis distance calculation:

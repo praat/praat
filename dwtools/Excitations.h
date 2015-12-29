@@ -24,17 +24,11 @@
 #include "Pattern.h"
 #include "TableOfReal.h"
 
-Collection_declare (OrderedOfExcitation, OrderedOf, Excitation);
 
-Thing_define (ExcitationList, OrderedOfExcitation) {
-	structExcitationList () {
-		our classInfo = classExcitationList;
-	}
+#pragma mark - class ExcitationList
+
+Collection_define (ExcitationList, OrderedOf, Excitation) {
 };
-
-inline static autoExcitationList ExcitationList_create () {
-	return Thing_new (ExcitationList);
-}
 
 autoPattern ExcitationList_to_Pattern (ExcitationList me, long join);
 /* Precondition: my size >= 1, all items have same dimension */
@@ -44,4 +38,6 @@ autoTableOfReal ExcitationList_to_TableOfReal (ExcitationList me);
 
 autoExcitation ExcitationList_getItem (ExcitationList m, long item);
 
-#endif /* _Excitations_h_ */
+
+/* End of file Excitations.h */
+#endif

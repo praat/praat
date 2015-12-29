@@ -75,10 +75,10 @@ void Eigen_sort (Eigen me);
 void Eigen_invertEigenvector (Eigen me, long ivec);
 
 void Eigen_drawEigenvalues (Eigen me, Graphics g, long first, long last, double ymin, double ymax,
-	int fractionOfTotal, int cumulative, double size_mm, const char32 *mark, int garnish);
+	bool fractionOfTotal, bool cumulative, double size_mm, const char32 *mark, bool garnish);
 
-void Eigen_drawEigenvector (Eigen me, Graphics g, long ivec, long first, long last, double minimum, double maximum, int weigh, 
-	double size_mm, const char32 *mark, int connect, char32 **rowLabels, int garnish);
+void Eigen_drawEigenvector (Eigen me, Graphics g, long ivec, long first, long last, double minimum, double maximum, bool weigh,
+	double size_mm, const char32 *mark, bool connect, char32 **rowLabels, bool garnish);
 /*
 	Draw eigenvector. When rowLabels != nullptr, draw row text labels on bottom axis.
 */

@@ -380,9 +380,8 @@ void Eigen_invertEigenvector (Eigen me, long ivec) {
 	}
 }
 
-void Eigen_drawEigenvalues (Eigen me, Graphics g, long first, long last, double ymin, double ymax, int fractionOfTotal, int cumulative, double size_mm, const char32 *mark, int garnish) {
+void Eigen_drawEigenvalues (Eigen me, Graphics g, long first, long last, double ymin, double ymax, bool fractionOfTotal, bool cumulative, double size_mm, const char32 *mark, bool garnish) {
 	double xmin = first, xmax = last, scale = 1.0, sumOfEigenvalues = 0.0;
-	long i;
 
 	if (first < 1) {
 		first = 1;
@@ -402,30 +401,30 @@ void Eigen_drawEigenvalues (Eigen me, Graphics g, long first, long last, double 
 		scale = sumOfEigenvalues;
 	}
 	if (ymax <= ymin) {
-		ymax = Eigen_getSumOfEigenvalues (me, (cumulative ? 1 : first), first) / scale;
-		ymin = Eigen_getSumOfEigenvalues (me, (cumulative ? 1 : last), last) / scale;
+		ymax = Eigen_getSumOfEigenvalues (me, ( cumulative ? 1 : first ), first) / scale;
+		ymin = Eigen_getSumOfEigenvalues (me, ( cumulative ? 1 : last ), last) / scale;
 		if (ymin > ymax) {
 			double tmp = ymin; ymin = ymax; ymax = tmp;
 		}
 	}
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	for (i = first; i <= last; i++) {
-		double accu = Eigen_getSumOfEigenvalues (me, (cumulative ? 1 : i), i);
+	for (long i = first; i <= last; i ++) {
+		double accu = Eigen_getSumOfEigenvalues (me, ( cumulative ? 1 : i ), i);
 		Graphics_mark (g, i, accu / scale, size_mm, mark);
 	}
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textLeft (g, true, fractionOfTotal ? (cumulative ? U"Cumulative fractional eigenvalue" : U"Fractional eigenvalue") :
-			                   (cumulative ? U"Cumulative eigenvalue" : U"Eigenvalue"));
+		Graphics_textLeft (g, true, ( fractionOfTotal ? ( cumulative ? U"Cumulative fractional eigenvalue" : U"Fractional eigenvalue" ) :
+			                   ( cumulative ? U"Cumulative eigenvalue" : U"Eigenvalue" ) ));
 		Graphics_ticks (g, first, last, true, true, false, true);
 		Graphics_marksLeft (g, 2, true, true, false);
 		Graphics_textBottom (g, true, U"Index");
 	}
 }
 
-void Eigen_drawEigenvector (Eigen me, Graphics g, long ivec, long first, long last, double ymin, double ymax, int weigh, double size_mm, const char32 *mark, int connect, char32 **rowLabels, int garnish) {
+void Eigen_drawEigenvector (Eigen me, Graphics g, long ivec, long first, long last, double ymin, double ymax, bool weigh, double size_mm, const char32 *mark, bool connect, char32 **rowLabels, bool garnish) {
 	double xmin = first, xmax = last;
 
 	if (ivec < 1 || ivec > my numberOfEigenvalues) {

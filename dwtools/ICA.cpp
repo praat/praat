@@ -567,7 +567,7 @@ autoCrossCorrelationTableList Sound_to_CrossCorrelationTableList (Sound me, doub
 			Melder_throw (U"Lag time too large.");
 		}
 		autoCrossCorrelationTableList thee = CrossCorrelationTableList_create ();
-		for (long i = 1; i <= ncovars; i++) {
+		for (long i = 1; i <= ncovars; i ++) {
 			double lag = (i - 1) * lagStep;
 			autoCrossCorrelationTable ct = Sound_to_CrossCorrelationTable (me, startTime, endTime, lag);
 			thy addItem_move (ct.move());
