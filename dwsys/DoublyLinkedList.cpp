@@ -1,4 +1,4 @@
-/* DLL.cpp
+/* DoublyLinkedList.cpp
  *
  * Copyright (C) 2011-2013, 2015 David Weenink
  *
@@ -17,58 +17,58 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "DLL.h"
+#include "DoublyLinkedList.h"
 
-Thing_implement (DLLNode, Daata, 0);
+Thing_implement (DoublyLinkedNode, Daata, 0);
 
-void structDLLNode :: v_destroy () {
-	DLLNode_Parent :: v_destroy ();
+void structDoublyLinkedNode :: v_destroy () {
+	DoublyLinkedNode_Parent :: v_destroy ();
 }
 
-void structDLLNode :: v_copy (Daata thee_Daata) {
-	DLLNode thee = static_cast <DLLNode> (thee_Daata);
+void structDoublyLinkedNode :: v_copy (Daata thee_Daata) {
+	DoublyLinkedNode thee = static_cast <DoublyLinkedNode> (thee_Daata);
 	thy data = Data_copy (our data.get());
 }
 
-Thing_implement (DLL, Thing, 0);
+Thing_implement (DoublyLinkedList, Thing, 0);
 
-void structDLL :: v_destroy () {
-	DLLNode v = front;
+void structDoublyLinkedList :: v_destroy () {
+	DoublyLinkedNode v = front;
 	while (v) {
-		DLLNode cur = v;
+		DoublyLinkedNode cur = v;
 		v = v -> next;
 		forget (cur);
 	}
-	DLL_Parent :: v_destroy ();
+	DoublyLinkedList_Parent :: v_destroy ();
 }
 
-int structDLL :: s_compareHook (Daata /* node1 */, Daata /* node2 */) noexcept {
+int structDoublyLinkedList :: s_compareHook (Daata /* node1 */, Daata /* node2 */) noexcept {
 	return 0;
 }
 
-autoDLLNode DLLNode_create (autoDaata data) {
-	autoDLLNode me = Thing_new (DLLNode);
+autoDoublyLinkedNode DoublyLinkedNode_create (autoDaata data) {
+	autoDoublyLinkedNode me = Thing_new (DoublyLinkedNode);
 	my data = data.move();
 	return me;
 }
 
-void DLL_init (DLL) {
+void DoublyLinkedList_init (DoublyLinkedList) {
 }
 
-autoDLL DLL_create() {
+autoDoublyLinkedList DoublyLinkedList_create() {
 	try {
-		autoDLL me = Thing_new (DLL);
-		DLL_init (me.peek());
+		autoDoublyLinkedList me = Thing_new (DoublyLinkedList);
+		DoublyLinkedList_init (me.peek());
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"DLL not created.");
+		Melder_throw (U"DoublyLinkedList not created.");
 	}
 
 }
 
-void DLL_addFront (DLL me, DLLNode node) {
+void DoublyLinkedList_addFront (DoublyLinkedList me, DoublyLinkedNode node) {
 	if (my front) {
-		DLL_addBefore (me, my front, node);
+		DoublyLinkedList_addBefore (me, my front, node);
 	} else {   // empty list
 		my front = node;
 		my back = node;
@@ -78,15 +78,15 @@ void DLL_addFront (DLL me, DLLNode node) {
 	}
 }
 
-void DLL_addBack (DLL me, DLLNode node) {
+void DoublyLinkedList_addBack (DoublyLinkedList me, DoublyLinkedNode node) {
 	if (my back) {
-		DLL_addAfter (me, my back, node);
+		DoublyLinkedList_addAfter (me, my back, node);
 	} else {
-		DLL_addFront (me, node);    // empty list
+		DoublyLinkedList_addFront (me, node);    // empty list
 	}
 }
 
-void DLL_addBefore (DLL me, DLLNode pos, DLLNode node) {
+void DoublyLinkedList_addBefore (DoublyLinkedList me, DoublyLinkedNode pos, DoublyLinkedNode node) {
 	node -> prev = pos -> prev;
 	node -> next = pos;
 	if (pos -> prev == nullptr) {
@@ -98,7 +98,7 @@ void DLL_addBefore (DLL me, DLLNode pos, DLLNode node) {
 	my numberOfNodes++;
 }
 
-void DLL_addAfter (DLL me, DLLNode pos, DLLNode node) {
+void DoublyLinkedList_addAfter (DoublyLinkedList me, DoublyLinkedNode pos, DoublyLinkedNode node) {
 	node -> prev = pos;
 	node -> next = pos -> next;
 	if (pos -> next == nullptr) {
@@ -110,7 +110,7 @@ void DLL_addAfter (DLL me, DLLNode pos, DLLNode node) {
 	my numberOfNodes++;
 }
 
-void DLL_remove (DLL me, DLLNode node) {
+void DoublyLinkedList_remove (DoublyLinkedList me, DoublyLinkedNode node) {
 	if (my numberOfNodes == 0) {
 		return;
 	}
@@ -131,20 +131,20 @@ void DLL_remove (DLL me, DLLNode node) {
 // Preconditions:
 //	from and to must be part of the list
 //	from must occur before to
-void DLL_sortPart (DLL me, DLLNode from, DLLNode to) {
+void DoublyLinkedList_sortPart (DoublyLinkedList me, DoublyLinkedNode from, DoublyLinkedNode to) {
 	// Save data
 	if (from == to) {
 		return;   // nothing to do
 	}
-	DLLNode from_prev = from -> prev;
-	DLLNode to_next = to -> next;
-	DLLNode my_front = my front;
-	DLLNode my_back = my back;
+	DoublyLinkedNode from_prev = from -> prev;
+	DoublyLinkedNode to_next = to -> next;
+	DoublyLinkedNode my_front = my front;
+	DoublyLinkedNode my_back = my back;
 
 	from -> prev = to -> next = nullptr;
 	my front = from;
 	my back = to;
-	DLL_sort (me);
+	DoublyLinkedList_sort (me);
 	// restore complete list
 	my front -> prev = from_prev;
 	if (from_prev) {
@@ -162,19 +162,19 @@ void DLL_sortPart (DLL me, DLLNode from, DLLNode to) {
 	}
 }
 
-void DLL_sort (DLL me) {
+void DoublyLinkedList_sort (DoublyLinkedList me) {
 	Data_CompareHook::FunctionType compare = my v_getCompareHook ().get();
 	long increment = 1;
-	DLLNode front = my front, back;
+	DoublyLinkedNode front = my front, back;
 	for (;;) {
-		DLLNode node1 = front;
+		DoublyLinkedNode node1 = front;
 		front = nullptr;
 		back = nullptr;
 
 		long numberOfMerges = 0;
 
 		while (node1) {
-			DLLNode node2 = node1, node;
+			DoublyLinkedNode node2 = node1, node;
 			long node1size = 0;
 			numberOfMerges++;
 
@@ -220,4 +220,4 @@ void DLL_sort (DLL me) {
 	my back = back;
 }
 
-// end of file DLL.cpp
+// end of file DoublyLinkedList.cpp

@@ -1,8 +1,8 @@
-#ifndef _DLL_h_
-#define _DLL_h_
-/* DLL.h
+#ifndef _DoublyLinkedList_h_
+#define _DoublyLinkedList_h_
+/* DoublyLinkedList.h
  *
- * Copyright (C) 2011 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 2011, 2015 David Weenink, 2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,8 @@
 
 #include "Data.h"
 
-Thing_define (DLLNode, Daata) {
-	DLLNode next, prev;
+Thing_define (DoublyLinkedNode, Daata) {
+	DoublyLinkedNode next, prev;
 	autoDaata data;
 
 	void v_destroy ()
@@ -32,9 +32,9 @@ Thing_define (DLLNode, Daata) {
 		override;
 };
 
-Thing_define (DLL, Thing) {
+Thing_define (DoublyLinkedList, Thing) {
 	long numberOfNodes;
-	DLLNode front, back;
+	DoublyLinkedNode front, back;
 
 	void v_destroy ()
 		override;
@@ -43,25 +43,25 @@ Thing_define (DLL, Thing) {
 	virtual Data_CompareHook v_getCompareHook () { return s_compareHook; }
 };
 
-autoDLLNode DLLNode_create (autoDaata data);
+autoDoublyLinkedNode DoublyLinkedNode_create (autoDaata data);
 
-void DLL_init (DLL me);
+void DoublyLinkedList_init (DoublyLinkedList me);
 
-autoDLL DLL_create ();
+autoDoublyLinkedList DoublyLinkedList_create ();
 
-void DLL_addFront (DLL me, DLLNode n);
+void DoublyLinkedList_addFront (DoublyLinkedList me, DoublyLinkedNode n);
 
-void DLL_addBack (DLL me, DLLNode n);
+void DoublyLinkedList_addBack (DoublyLinkedList me, DoublyLinkedNode n);
 
-void DLL_addBefore (DLL me, DLLNode pos, DLLNode n);
+void DoublyLinkedList_addBefore (DoublyLinkedList me, DoublyLinkedNode pos, DoublyLinkedNode n);
 
-void DLL_addAfter (DLL me, DLLNode pos, DLLNode n);
+void DoublyLinkedList_addAfter (DoublyLinkedList me, DoublyLinkedNode pos, DoublyLinkedNode n);
 
-void DLL_remove (DLL me, DLLNode n);
+void DoublyLinkedList_remove (DoublyLinkedList me, DoublyLinkedNode n);
 
-void DLL_sort (DLL me);
+void DoublyLinkedList_sort (DoublyLinkedList me);
 
-void DLL_sortPart (DLL me, DLLNode from, DLLNode to);
+void DoublyLinkedList_sortPart (DoublyLinkedList me, DoublyLinkedNode from, DoublyLinkedNode to);
 
-#endif // _DLL_h_
+#endif // _DoublyLinkedList_h_
 
