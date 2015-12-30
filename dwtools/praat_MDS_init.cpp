@@ -153,8 +153,11 @@ DO
 		Melder_throw (U"Required: xmin < xmax and ymin < ymax.");
 	}
 	autoPraatPicture picture;
-	drawSplines (GRAPHICS, xmin, xmax, ymin, ymax, GET_INTEGER (U"Spline type"),
-		GET_INTEGER (U"Order"), GET_STRING (U"Interior knots"), GET_INTEGER (U"Garnish"));
+	drawSplines (GRAPHICS, xmin, xmax, ymin, ymax,
+		GET_INTEGER (U"Spline type"),
+		GET_INTEGER (U"Order"),
+		GET_STRING (U"Interior knots"),
+		GET_INTEGER (U"Garnish"));
 END
 
 DIRECT (drawMDSClassRelations)
@@ -263,13 +266,16 @@ FORM (Configuration_drawSigmaEllipses, U"Configuration: Draw sigma ellipses", U"
 	POSITIVE (U"Number of sigmas", U"1.0")
 	Configuration_draw_addCommonFields (dia);
 	INTEGER (U"Label size", U"12")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (Configuration);
-		Configuration_drawConcentrationEllipses (me, GRAPHICS, GET_REAL (U"Number of sigmas"), 0, nullptr,
+		Configuration_drawConcentrationEllipses (me, GRAPHICS,
+			GET_REAL (U"Number of sigmas"),
+			false,   // confidence (i.e. the previous argument is a number of sigmas, not a confidence level)
+			nullptr,
 			GET_INTEGER (U"Horizontal dimension"), GET_INTEGER (U"Vertical dimension"),
 			GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
 			GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"),
@@ -288,11 +294,18 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (Configuration);
-		Configuration_drawConcentrationEllipses (me, GRAPHICS, GET_REAL (U"Number of sigmas"), 0, GET_STRING (U"Label"),
-			GET_INTEGER (U"Horizontal dimension"), GET_INTEGER (U"Vertical dimension"),
-			GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
-			GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"),
-			GET_INTEGER (U"Label size"), GET_INTEGER (U"Garnish"));
+		Configuration_drawConcentrationEllipses (me, GRAPHICS,
+			GET_REAL (U"Number of sigmas"),
+			false,   // confidence
+			GET_STRING (U"Label"),
+			GET_INTEGER (U"Horizontal dimension"),
+			GET_INTEGER (U"Vertical dimension"),
+			GET_REAL (U"left Horizontal range"),
+			GET_REAL (U"right Horizontal range"),
+			GET_REAL (U"left Vertical range"),
+			GET_REAL (U"right Vertical range"),
+			GET_INTEGER (U"Label size"),
+			GET_INTEGER (U"Garnish"));
 	}
 END
 
@@ -307,11 +320,18 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (Configuration);
-		Configuration_drawConcentrationEllipses (me, GRAPHICS, GET_REAL (U"Confidence level"), 1, 0,
-			GET_INTEGER (U"Horizontal dimension"), GET_INTEGER (U"Vertical dimension"),
-			GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
-			GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"),
-			GET_INTEGER (U"Label size"), GET_INTEGER (U"Garnish"));
+		Configuration_drawConcentrationEllipses (me, GRAPHICS,
+			GET_REAL (U"Confidence level"),
+			true,   // confidence (i.e. the previous argument is a confidence level, not a number of sigmas)
+			nullptr,   // label
+			GET_INTEGER (U"Horizontal dimension"),
+			GET_INTEGER (U"Vertical dimension"),
+			GET_REAL (U"left Horizontal range"),
+			GET_REAL (U"right Horizontal range"),
+			GET_REAL (U"left Vertical range"),
+			GET_REAL (U"right Vertical range"),
+			GET_INTEGER (U"Label size"),
+			GET_INTEGER (U"Garnish"));
 	}
 END
 
@@ -327,11 +347,17 @@ DO
 	LOOP {
 		iam (Configuration);
 		Configuration_drawConcentrationEllipses (me, GRAPHICS,
-			GET_REAL (U"Confidence level"), 1, GET_STRING (U"Label"),
-			GET_INTEGER (U"Horizontal dimension"), GET_INTEGER (U"Vertical dimension"),
-			GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
-			GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"),
-			GET_INTEGER (U"Label size"), GET_INTEGER (U"Garnish"));
+			GET_REAL (U"Confidence level"),
+			true,   // confidence
+			GET_STRING (U"Label"),
+			GET_INTEGER (U"Horizontal dimension"),
+			GET_INTEGER (U"Vertical dimension"),
+			GET_REAL (U"left Horizontal range"),
+			GET_REAL (U"right Horizontal range"),
+			GET_REAL (U"left Vertical range"),
+			GET_REAL (U"right Vertical range"),
+			GET_INTEGER (U"Label size"),
+			GET_INTEGER (U"Garnish"));
 	}
 END
 
@@ -350,7 +376,9 @@ FORM (Configuration_normalize, U"Configuration: Normalize", U"Configuration: Nor
 DO
 	LOOP {
 		iam (Configuration);
-		Configuration_normalize (me, GET_REAL (U"Sum of squares"), GET_INTEGER (U"Each dimension separately"));
+		Configuration_normalize (me,
+			GET_REAL (U"Sum of squares"),
+			GET_INTEGER (U"Each dimension separately"));
 	}
 END
 
@@ -369,7 +397,10 @@ FORM (Configuration_rotate, U"Configuration: Rotate", U"Configuration: Rotate...
 DO
 	LOOP {
 		iam (Configuration);
-		Configuration_rotate (me, GET_INTEGER (U"Dimension 1"), GET_INTEGER (U"Dimension 2"), GET_REAL (U"Angle"));
+		Configuration_rotate (me,
+			GET_INTEGER (U"Dimension 1"),
+			GET_INTEGER (U"Dimension 2"),
+			GET_REAL (U"Angle"));
 	}
 END
 
@@ -386,7 +417,8 @@ FORM (Configuration_invertDimension, U"Configuration: Invert dimension", U"Confi
 DO
 	LOOP {
 		iam (Configuration);
-		Configuration_invertDimension (me, GET_INTEGER (U"Dimension"));
+		Configuration_invertDimension (me,
+			GET_INTEGER (U"Dimension"));
 	}
 END
 
@@ -406,19 +438,23 @@ FORM (Configuration_varimax, U"Configuration: To Configuration (varimax)", U"Con
 DO
 	LOOP {
 		iam (Configuration);
-		autoConfiguration thee = Configuration_varimax (me, GET_INTEGER (U"Normalize rows"), 
-			GET_INTEGER (U"Quartimax"), GET_INTEGER (U"Maximum number of iterations"), GET_REAL (U"Tolerance"));
-		praat_new (thee.move(), my name, U"_varimax");
+		autoConfiguration result = Configuration_varimax (me,
+			GET_INTEGER (U"Normalize rows"),
+			GET_INTEGER (U"Quartimax"),
+			GET_INTEGER (U"Maximum number of iterations"),
+			GET_REAL (U"Tolerance"));
+		praat_new (result.move(), my name, U"_varimax");
 	}
 END
 
 DIRECT (Configurations_to_Similarity_cc)
-	structConfigurationList configurations;
+	autoConfigurationList list = ConfigurationList_create ();
 	LOOP {
 		iam (Configuration);
-		configurations. addItem_ref (me);
+		list -> addItem_ref (me);
 	}
-	autoSimilarity result = ConfigurationList_to_Similarity_cc (& configurations, 0);
+	Weight nullWeight = nullptr;
+	autoSimilarity result = ConfigurationList_to_Similarity_cc (list.get(), nullWeight);
 	praat_new (result.move(), U"congruence");
 END
 
@@ -426,14 +462,16 @@ FORM (Configurations_to_Procrustes, U"Configuration & Configuration: To Procrust
 	BOOLEAN (U"Orthogonal transform", false)
 	OK
 DO
-	Configuration c1 = nullptr, c2 = nullptr;
+	Configuration configuration1 = nullptr;
+	Configuration configuration2 = nullptr;
 	LOOP {
 		iam (Configuration);
-		(c1 ? c2 : c1) = me;
+		( configuration1 ? configuration2 : configuration1 ) = me;
 	}
-	Melder_assert (c1 && c2);
-	autoProcrustes thee = Configurations_to_Procrustes (c1, c2, GET_INTEGER (U"Orthogonal transform"));
-	praat_new (thee.move(), Thing_getName (c2), U"_to_", Thing_getName (c1));
+	Melder_assert (configuration1 && configuration2);
+	autoProcrustes result = Configurations_to_Procrustes (configuration1, configuration2,
+		GET_INTEGER (U"Orthogonal transform"));
+	praat_new (result.move(), Thing_getName (configuration2), U"_to_", Thing_getName (configuration1));
 END
 
 FORM (Configurations_to_AffineTransform_congruence, U"Configurations: To AffineTransform (congruence)", U"Configurations: To AffineTransform (congruence)...")
@@ -441,37 +479,40 @@ FORM (Configurations_to_AffineTransform_congruence, U"Configurations: To AffineT
 	POSITIVE (U"Tolerance", U"1e-6")
 	OK
 DO
-	Configuration c1 = nullptr, c2 = nullptr;
+	Configuration configuration1 = nullptr;
+	Configuration configuration2 = nullptr;
 	LOOP {
 		iam (Configuration);
-		(c1 ? c2 : c1) = me;
+		( configuration1 ? configuration2 : configuration1 ) = me;
 	}
-	Melder_assert (c1 && c2);
-	autoAffineTransform thee = Configurations_to_AffineTransform_congruence (c1, c2, GET_INTEGER (U"Maximum number of iterations"),
+	Melder_assert (configuration1 && configuration2);
+	autoAffineTransform result = Configurations_to_AffineTransform_congruence (configuration1, configuration2,
+		GET_INTEGER (U"Maximum number of iterations"),
 		GET_REAL (U"Tolerance"));
-	praat_new (thee.move(), c1 -> name, U"_", c2 -> name);
+	praat_new (result.move(), configuration1 -> name, U"_", configuration2 -> name);
 END
 
 DIRECT (Configuration_Weight_to_Similarity_cc)
-	autoConfigurationList thee = ConfigurationList_create ();
-	Weight w = nullptr;
+	autoConfigurationList configurations = ConfigurationList_create ();
+	Weight weight = nullptr;
 	LOOP {
 		iam (Daata);
 		if (CLASS == classConfiguration) {
-			thy addItem_ref ((Configuration) me);
+			configurations -> addItem_ref ((Configuration) me);
 		} else if (CLASS == classWeight) {
-			w = (Weight) me;
+			weight = (Weight) me;
 		}
 	}
-	Melder_assert (thy size() > 0 && w);
-	praat_new (ConfigurationList_to_Similarity_cc (thee.peek(), w), U"congruence");
+	Melder_assert (configurations -> size() > 0 && weight);
+	autoSimilarity result = ConfigurationList_to_Similarity_cc (configurations.get(), weight);
+	praat_new (result.move(), U"congruence");
 END
 
 DIRECT (Configuration_and_AffineTransform_to_Configuration)
 	Configuration me = FIRST (Configuration);
-	AffineTransform at = FIRST_GENERIC (AffineTransform);
-	autoConfiguration thee = Configuration_and_AffineTransform_to_Configuration (me, at);
-	praat_new (thee.move(), my name, U"_", at -> name);
+	AffineTransform thee = FIRST_GENERIC (AffineTransform);
+	autoConfiguration result = Configuration_and_AffineTransform_to_Configuration (me, thee);
+	praat_new (result.move(), my name, U"_", thy name);
 END
 
 /*************** Confusion *********************************/
@@ -482,7 +523,9 @@ FORM (Confusion_to_Dissimilarity_pdf, U"Confusion: To Dissimilarity (pdf)", U"Co
 DO
 	LOOP {
 		iam (Confusion);
-		praat_new (Confusion_to_Dissimilarity_pdf (me, GET_REAL (U"Minimum confusion level")), my name, U"_pdf");
+		autoDissimilarity result = Confusion_to_Dissimilarity_pdf (me,
+			GET_REAL (U"Minimum confusion level"));
+		praat_new (result.move(), my name, U"_pdf");
 	}
 END
 
@@ -496,25 +539,28 @@ FORM (Confusion_to_Similarity, U"Confusion: To Similarity", U"Confusion: To Simi
 DO
 	LOOP {
 		iam (Confusion);
-		praat_new (Confusion_to_Similarity (me, GET_INTEGER (U"Normalize"), GET_INTEGER (U"Symmetrization")), my name);
+		autoSimilarity result = Confusion_to_Similarity (me,
+			GET_INTEGER (U"Normalize"),
+			GET_INTEGER (U"Symmetrization"));
+		praat_new (result.move(), my name);
 	}
 END
 
 DIRECT (Confusions_sum)
-	structConfusionList confusions;
+	autoConfusionList confusions = ConfusionList_create ();
 	LOOP {
 		iam (Confusion);
-		confusions. addItem_ref (me);
+		confusions -> addItem_ref (me);
 	}
-	autoConfusion result = ConfusionList_sum (& confusions);
+	autoConfusion result = ConfusionList_sum (confusions.get());
 	praat_new (result.move(), U"sum");
 END
 
 DIRECT (Confusion_to_ContingencyTable)
 	LOOP {
 		iam (Confusion);
-		autoContingencyTable thee = Confusion_to_ContingencyTable (me);
-		praat_new (thee.move(), my name);
+		autoContingencyTable result = Confusion_to_ContingencyTable (me);
+		praat_new (result.move(), my name);
 	}
 END
 
@@ -565,7 +611,9 @@ FORM (Correlation_to_Configuration, U"Correlation: To Configuration", 0)
 DO
 	LOOP {
 		iam (Correlation);
-		praat_new (Correlation_to_Configuration (me, GET_INTEGER (U"Number of dimensions")), my name);
+		autoConfiguration result = Correlation_to_Configuration (me,
+			GET_INTEGER (U"Number of dimensions"));
+		praat_new (result.move(), my name);
 	}
 END
 
@@ -582,7 +630,9 @@ FORM (Similarity_to_Dissimilarity, U"Similarity: To Dissimilarity", U"Similarity
 DO
 	LOOP {
 		iam (Similarity);
-		praat_new (Similarity_to_Dissimilarity (me, GET_REAL (U"Maximum dissimilarity")), my name);
+		autoDissimilarity result = Similarity_to_Dissimilarity (me,
+			GET_REAL (U"Maximum dissimilarity"));
+		praat_new (result.move(), my name);
 	}
 END
 
@@ -636,10 +686,14 @@ FORM (Dissimilarity_Configuration_kruskal, U"Dissimilarity & Configuration: To C
 	OK
 DO
 	Dissimilarity me = FIRST (Dissimilarity);
-	Configuration c = FIRST (Configuration);
-	praat_new (Dissimilarity_Configuration_kruskal (me, c, GET_INTEGER (U"Handling of ties"), GET_INTEGER (U"Stress calculation"),
-		GET_REAL (U"Tolerance"), GET_INTEGER (U"Maximum number of iterations"),
-		GET_INTEGER (U"Number of repetitions")), my name, U"_kruskal");
+	Configuration thee = FIRST (Configuration);
+	autoConfiguration result = Dissimilarity_Configuration_kruskal (me, thee,
+		GET_INTEGER (U"Handling of ties"),
+		GET_INTEGER (U"Stress calculation"),
+		GET_REAL (U"Tolerance"),
+		GET_INTEGER (U"Maximum number of iterations"),
+		GET_INTEGER (U"Number of repetitions"));
+	praat_new (result.move(), my name, U"_kruskal");
 END
 
 FORM (Dissimilarity_Configuration_absolute_mds, U"Dissimilarity & Configuration: To Configuration (absolute mds)", U"Dissimilarity & Configuration: To Configuration (absolute mds)...")
@@ -647,11 +701,14 @@ FORM (Dissimilarity_Configuration_absolute_mds, U"Dissimilarity & Configuration:
 	OK
 DO
 	Dissimilarity me = FIRST (Dissimilarity);
-	Configuration c = FIRST (Configuration);
-	int showProgress = 1;
-	praat_new (Dissimilarity_Configuration_Weight_absolute_mds (me, c, nullptr,
-		GET_REAL (U"Tolerance"), GET_INTEGER (U"Maximum number of iterations"),
-		GET_INTEGER (U"Number of repetitions"), showProgress), my name, U"_absolute");
+	Configuration thee = FIRST (Configuration);
+	bool showProgress = true;
+	autoConfiguration result = Dissimilarity_Configuration_Weight_absolute_mds (me, thee, nullptr,
+		GET_REAL (U"Tolerance"),
+		GET_INTEGER (U"Maximum number of iterations"),
+		GET_INTEGER (U"Number of repetitions"),
+		showProgress);
+	praat_new (result.move(), my name, U"_absolute");
 END
 
 FORM (Dissimilarity_Configuration_ratio_mds, U"Dissimilarity & Configuration: To Configuration (ratio mds)", U"Dissimilarity & Configuration: To Configuration (ratio mds)...")
@@ -659,11 +716,14 @@ FORM (Dissimilarity_Configuration_ratio_mds, U"Dissimilarity & Configuration: To
 	OK
 DO
 	Dissimilarity me = FIRST (Dissimilarity);
-	Configuration c = FIRST (Configuration);
-	int showProgress = 1;
-	praat_new (Dissimilarity_Configuration_Weight_ratio_mds (me, c, nullptr,
-		GET_REAL (U"Tolerance"), GET_INTEGER (U"Maximum number of iterations"),
-		GET_INTEGER (U"Number of repetitions"), showProgress), my name, U"_ratio");
+	Configuration thee = FIRST (Configuration);
+	bool showProgress = true;
+	autoConfiguration result = Dissimilarity_Configuration_Weight_ratio_mds (me, thee, nullptr,
+		GET_REAL (U"Tolerance"),
+		GET_INTEGER (U"Maximum number of iterations"),
+		GET_INTEGER (U"Number of repetitions"),
+		showProgress);
+	praat_new (result.move(), my name, U"_ratio");
 END
 
 FORM (Dissimilarity_Configuration_interval_mds, U"Dissimilarity & Configuration: To Configuration (interval mds)", U"Dissimilarity & Configuration: To Configuration (interval mds)...")
@@ -671,11 +731,14 @@ FORM (Dissimilarity_Configuration_interval_mds, U"Dissimilarity & Configuration:
 	OK
 DO
 	Dissimilarity me = FIRST (Dissimilarity);
-	Configuration c = FIRST (Configuration);
-	int showProgress = 1;
-	praat_new (Dissimilarity_Configuration_Weight_interval_mds (me, c, nullptr,
-		GET_REAL (U"Tolerance"), GET_INTEGER (U"Maximum number of iterations"),
-		GET_INTEGER (U"Number of repetitions"), showProgress), my name, U"_interval");
+	Configuration thee = FIRST (Configuration);
+	bool showProgress = true;
+	autoConfiguration result = Dissimilarity_Configuration_Weight_interval_mds (me, thee, nullptr,
+		GET_REAL (U"Tolerance"),
+		GET_INTEGER (U"Maximum number of iterations"),
+		GET_INTEGER (U"Number of repetitions"),
+		showProgress);
+	praat_new (result.move(), my name, U"_interval");
 END
 
 FORM (Dissimilarity_Configuration_monotone_mds, U"Dissimilarity & Configuration: To Configuration (monotone mds)", U"Dissimilarity & Configuration: To Configuration (monotone mds)...")
@@ -686,11 +749,15 @@ FORM (Dissimilarity_Configuration_monotone_mds, U"Dissimilarity & Configuration:
 	OK
 DO
 	Dissimilarity me = FIRST (Dissimilarity);
-	Configuration c = FIRST (Configuration);
-	int showProgress = 1;
-	praat_new (Dissimilarity_Configuration_Weight_monotone_mds (me, c, nullptr,
-		GET_INTEGER (U"Handling of ties"), GET_REAL (U"Tolerance"), GET_INTEGER (U"Maximum number of iterations"),
-		GET_INTEGER (U"Number of repetitions"), showProgress), my name, U"_monotone");
+	Configuration thee = FIRST (Configuration);
+	bool showProgress = true;
+	autoConfiguration result = Dissimilarity_Configuration_Weight_monotone_mds (me, thee, nullptr,
+		GET_INTEGER (U"Handling of ties"),
+		GET_REAL (U"Tolerance"),
+		GET_INTEGER (U"Maximum number of iterations"),
+		GET_INTEGER (U"Number of repetitions"),
+		showProgress);
+	praat_new (result.move(), my name, U"_monotone");
 END
 
 FORM (Dissimilarity_Configuration_ispline_mds, U"Dissimilarity & Configuration: To Configuration (i-spline mds)", U"Dissimilarity & Configuration: To Configuration (i-spline mds)...")
@@ -701,51 +768,64 @@ FORM (Dissimilarity_Configuration_ispline_mds, U"Dissimilarity & Configuration: 
 	OK
 DO
 	Dissimilarity me = FIRST (Dissimilarity);
-	Configuration c = FIRST (Configuration);
-	int showProgress = 1;
-	praat_new (Dissimilarity_Configuration_Weight_ispline_mds (me, c, nullptr,
-		GET_INTEGER (U"Number of interior knots"), GET_INTEGER (U"Order of I-spline"),
-		GET_REAL (U"Tolerance"), GET_INTEGER (U"Maximum number of iterations"),
-		GET_INTEGER (U"Number of repetitions"), showProgress), my name, U"_ispline");
+	Configuration thee = FIRST (Configuration);
+	bool showProgress = true;
+	autoConfiguration result = Dissimilarity_Configuration_Weight_ispline_mds (me, thee, nullptr,
+		GET_INTEGER (U"Number of interior knots"),
+		GET_INTEGER (U"Order of I-spline"),
+		GET_REAL (U"Tolerance"),
+		GET_INTEGER (U"Maximum number of iterations"),
+		GET_INTEGER (U"Number of repetitions"),
+		showProgress);
+	praat_new (result.move(), my name, U"_ispline");
 END
 
 FORM (Dissimilarity_Configuration_Weight_absolute_mds, U"Dissimilarity & Configuration & Weight: To Configuration (absolute mds)", U"Dissimilarity & Configuration & Weight: To Configuration...")
 	Dissimilarity_to_Configuration_addCommonFields (dia);
 	OK
 DO
-	Dissimilarity me = FIRST (Dissimilarity);
-	Configuration c = FIRST (Configuration);
-	Weight w = FIRST (Weight);
-	int showProgress = 1;
-	praat_new (Dissimilarity_Configuration_Weight_absolute_mds (me, c, w,
-		GET_REAL (U"Tolerance"), GET_INTEGER (U"Maximum number of iterations"),
-		GET_INTEGER (U"Number of repetitions"), showProgress), my name, U"_w_absolute");
+	Dissimilarity dissimilarity = FIRST (Dissimilarity);
+	Configuration configuration = FIRST (Configuration);
+	Weight weight = FIRST (Weight);
+	bool showProgress = true;
+	autoConfiguration result = Dissimilarity_Configuration_Weight_absolute_mds (dissimilarity, configuration, weight,
+		GET_REAL (U"Tolerance"),
+		GET_INTEGER (U"Maximum number of iterations"),
+		GET_INTEGER (U"Number of repetitions"),
+		showProgress);
+	praat_new (result.move(), dissimilarity -> name, U"_w_absolute");
 END
 
 FORM (Dissimilarity_Configuration_Weight_ratio_mds, U"Dissimilarity & Configuration & Weight: To Configuration (ratio mds)", U"Dissimilarity & Configuration & Weight: To Configuration...")
 	Dissimilarity_to_Configuration_addCommonFields (dia);
 	OK
 DO
-	Dissimilarity me = FIRST (Dissimilarity);
-	Configuration c = FIRST (Configuration);
-	Weight w = FIRST (Weight);
-	int showProgress = 1;
-	praat_new (Dissimilarity_Configuration_Weight_ratio_mds (me, c, w,
-		GET_REAL (U"Tolerance"), GET_INTEGER (U"Maximum number of iterations"),
-		GET_INTEGER (U"Number of repetitions"), showProgress), my name, U"_w_ratio");
+	Dissimilarity dissimilarity = FIRST (Dissimilarity);
+	Configuration configuration = FIRST (Configuration);
+	Weight weight = FIRST (Weight);
+	bool showProgress = true;
+	autoConfiguration result = Dissimilarity_Configuration_Weight_ratio_mds (dissimilarity, configuration, weight,
+		GET_REAL (U"Tolerance"),
+		GET_INTEGER (U"Maximum number of iterations"),
+		GET_INTEGER (U"Number of repetitions"),
+		showProgress);
+	praat_new (result.move(), dissimilarity -> name, U"_w_ratio");
 END
 
 FORM (Dissimilarity_Configuration_Weight_interval_mds, U"Dissimilarity & Configuration & Weight: To Configuration (interval mds)", U"Dissimilarity & Configuration & Weight: To Configuration...")
 	Dissimilarity_to_Configuration_addCommonFields (dia);
 	OK
 DO
-	Dissimilarity me = FIRST (Dissimilarity);
-	Configuration c = FIRST (Configuration);
-	Weight w = FIRST (Weight);
-	int showProgress = 1;
-	praat_new (Dissimilarity_Configuration_Weight_interval_mds (me, c, w,
-		GET_REAL (U"Tolerance"), GET_INTEGER (U"Maximum number of iterations"),
-		GET_INTEGER (U"Number of repetitions"), showProgress), my name, U"_w_interval");
+	Dissimilarity dissimilarity = FIRST (Dissimilarity);
+	Configuration configuration = FIRST (Configuration);
+	Weight weight = FIRST (Weight);
+	bool showProgress = true;
+	autoConfiguration result = Dissimilarity_Configuration_Weight_interval_mds (dissimilarity, configuration, weight,
+		GET_REAL (U"Tolerance"),
+		GET_INTEGER (U"Maximum number of iterations"),
+		GET_INTEGER (U"Number of repetitions"),
+		showProgress);
+	praat_new (result.move(), dissimilarity -> name, U"_w_interval");
 END
 
 FORM (Dissimilarity_Configuration_Weight_monotone_mds,
@@ -757,14 +837,17 @@ FORM (Dissimilarity_Configuration_Weight_monotone_mds,
 	Dissimilarity_to_Configuration_addCommonFields (dia);
 	OK
 DO
-	Dissimilarity me = FIRST (Dissimilarity);
-	Configuration c = FIRST (Configuration);
-	Weight w = FIRST (Weight);
-	int showProgress = 1;
-	praat_new (Dissimilarity_Configuration_Weight_monotone_mds (me, c, w,
-		GET_INTEGER (U"Handling of ties"),
-		GET_REAL (U"Tolerance"), GET_INTEGER (U"Maximum number of iterations"),
-		GET_INTEGER (U"Number of repetitions"), showProgress), my name, U"_sw_monotone");
+	Dissimilarity dissimilarity = FIRST (Dissimilarity);
+	Configuration configuration = FIRST (Configuration);
+	Weight weight = FIRST (Weight);
+	bool showProgress = true;
+	praat_new (Dissimilarity_Configuration_Weight_monotone_mds (dissimilarity, configuration, weight,
+			GET_INTEGER (U"Handling of ties"),
+			GET_REAL (U"Tolerance"),
+			GET_INTEGER (U"Maximum number of iterations"),
+			GET_INTEGER (U"Number of repetitions"),
+			showProgress),
+		dissimilarity -> name, U"_sw_monotone");
 END
 
 FORM (Dissimilarity_Configuration_Weight_ispline_mds,
@@ -776,14 +859,18 @@ FORM (Dissimilarity_Configuration_Weight_ispline_mds,
 	Dissimilarity_to_Configuration_addCommonFields (dia);
 	OK
 DO
-	Dissimilarity me = FIRST (Dissimilarity);
-	Configuration c = FIRST (Configuration);
-	Weight w = FIRST (Weight);
-	int showProgress = 1;
-	praat_new (Dissimilarity_Configuration_Weight_ispline_mds (me, c, w,
-		GET_INTEGER (U"Number of interior knots"), GET_INTEGER (U"Order of I-spline"),
-		GET_REAL (U"Tolerance"), GET_INTEGER (U"Maximum number of iterations"),
-		GET_INTEGER (U"Number of repetitions"), showProgress), my name, U"_sw_ispline");
+	Dissimilarity dissimilarity = FIRST (Dissimilarity);
+	Configuration configuration = FIRST (Configuration);
+	Weight weight = FIRST (Weight);
+	bool showProgress = true;
+	praat_new (Dissimilarity_Configuration_Weight_ispline_mds (dissimilarity, configuration, weight,
+			GET_INTEGER (U"Number of interior knots"),
+			GET_INTEGER (U"Order of I-spline"),
+			GET_REAL (U"Tolerance"),
+			GET_INTEGER (U"Maximum number of iterations"),
+			GET_INTEGER (U"Number of repetitions"),
+			showProgress),
+		dissimilarity -> name, U"_sw_ispline");
 END
 
 FORM (Dissimilarity_Configuration_getStress, U"Dissimilarity & Configuration: Get stress",
@@ -797,8 +884,8 @@ FORM (Dissimilarity_Configuration_getStress, U"Dissimilarity & Configuration: Ge
 	OK
 DO
 	Dissimilarity me = FIRST (Dissimilarity);
-	Configuration c = FIRST (Configuration);
-	Melder_information (Dissimilarity_Configuration_getStress (me, c,
+	Configuration thee = FIRST (Configuration);
+	Melder_information (Dissimilarity_Configuration_getStress (me, thee,
 		GET_INTEGER (U"Handling of ties"), GET_INTEGER (U"Stress calculation")));
 END
 
@@ -809,8 +896,8 @@ FORM (Dissimilarity_Configuration_absolute_stress,
 	OK
 DO
 	Dissimilarity me = FIRST (Dissimilarity);
-	Configuration c = FIRST (Configuration);
-	Melder_information (Dissimilarity_Configuration_Weight_absolute_stress (me, c, nullptr,
+	Configuration thee = FIRST (Configuration);
+	Melder_information (Dissimilarity_Configuration_Weight_absolute_stress (me, thee, nullptr,
 		GET_INTEGER (U"Stress measure")));
 END
 
@@ -820,8 +907,8 @@ FORM (Dissimilarity_Configuration_ratio_stress, U"Dissimilarity & Configuration:
 	OK
 DO
 	Dissimilarity me = FIRST (Dissimilarity);
-	Configuration c = FIRST (Configuration);
-	Melder_information (Dissimilarity_Configuration_Weight_ratio_stress (me, c, nullptr,
+	Configuration thee = FIRST (Configuration);
+	Melder_information (Dissimilarity_Configuration_Weight_ratio_stress (me, thee, nullptr,
 		GET_INTEGER (U"Stress measure")));
 END
 
@@ -832,8 +919,8 @@ FORM (Dissimilarity_Configuration_interval_stress,
 	OK
 DO
 	Dissimilarity me = FIRST (Dissimilarity);
-	Configuration c = FIRST (Configuration);
-	Melder_information (Dissimilarity_Configuration_Weight_interval_stress (me, c, nullptr,
+	Configuration thee = FIRST (Configuration);
+	Melder_information (Dissimilarity_Configuration_Weight_interval_stress (me, thee, nullptr,
 		GET_INTEGER (U"Stress measure")));
 END
 
@@ -847,9 +934,10 @@ FORM (Dissimilarity_Configuration_monotone_stress,
 	OK
 DO
 	Dissimilarity me = FIRST (Dissimilarity);
-	Configuration c = FIRST (Configuration);
-	Melder_information (Dissimilarity_Configuration_Weight_monotone_stress (me, c, nullptr,
-		GET_INTEGER (U"Handling of ties"), GET_INTEGER (U"Stress measure")));
+	Configuration thee = FIRST (Configuration);
+	Melder_information (Dissimilarity_Configuration_Weight_monotone_stress (me, thee, nullptr,
+		GET_INTEGER (U"Handling of ties"),
+		GET_INTEGER (U"Stress measure")));
 END
 
 FORM (Dissimilarity_Configuration_ispline_stress,
@@ -861,9 +949,11 @@ FORM (Dissimilarity_Configuration_ispline_stress,
 	OK
 DO
 	Dissimilarity me = FIRST (Dissimilarity);
-	Configuration c = FIRST (Configuration);
-	Melder_information (Dissimilarity_Configuration_Weight_ispline_stress (me, c, nullptr,
-		GET_INTEGER (U"Number of interior knots"), GET_INTEGER (U"Order of I-spline"), GET_INTEGER (U"Stress measure")));
+	Configuration thee = FIRST (Configuration);
+	Melder_information (Dissimilarity_Configuration_Weight_ispline_stress (me, thee, nullptr,
+		GET_INTEGER (U"Number of interior knots"),
+		GET_INTEGER (U"Order of I-spline"),
+		GET_INTEGER (U"Stress measure")));
 END
 
 FORM (Dissimilarity_Configuration_Weight_absolute_stress,
@@ -872,10 +962,10 @@ FORM (Dissimilarity_Configuration_Weight_absolute_stress,
 	Dissimilarity_and_Configuration_getStress_addCommonFields (dia, radio);
 	OK
 DO
-	Dissimilarity me = FIRST (Dissimilarity);
-	Configuration c = FIRST (Configuration);
-	Weight w = FIRST (Weight);
-	Melder_information (Dissimilarity_Configuration_Weight_absolute_stress (me, c, w,
+	Dissimilarity dissimilarity = FIRST (Dissimilarity);
+	Configuration configuration = FIRST (Configuration);
+	Weight weight = FIRST (Weight);
+	Melder_information (Dissimilarity_Configuration_Weight_absolute_stress (dissimilarity, configuration, weight,
 		GET_INTEGER (U"Stress measure")));
 END
 
@@ -885,10 +975,10 @@ FORM (Dissimilarity_Configuration_Weight_ratio_stress,
 	Dissimilarity_and_Configuration_getStress_addCommonFields (dia, radio);
 	OK
 DO
-	Dissimilarity me = FIRST (Dissimilarity);
-	Configuration c = FIRST (Configuration);
-	Weight w = FIRST (Weight);
-	Melder_information (Dissimilarity_Configuration_Weight_ratio_stress (me, c, w,
+	Dissimilarity dissimilarity = FIRST (Dissimilarity);
+	Configuration configuration = FIRST (Configuration);
+	Weight weight = FIRST (Weight);
+	Melder_information (Dissimilarity_Configuration_Weight_ratio_stress (dissimilarity, configuration, weight,
 		GET_INTEGER (U"Stress measure")));
 END
 
@@ -898,10 +988,10 @@ FORM (Dissimilarity_Configuration_Weight_interval_stress,
 	Dissimilarity_and_Configuration_getStress_addCommonFields (dia, radio);
 	OK
 DO
-	Dissimilarity me = FIRST (Dissimilarity);
-	Configuration c = FIRST (Configuration);
-	Weight w = FIRST (Weight);
-	Melder_information (Dissimilarity_Configuration_Weight_interval_stress (me, c, w,
+	Dissimilarity dissimilarity = FIRST (Dissimilarity);
+	Configuration configuration = FIRST (Configuration);
+	Weight weight = FIRST (Weight);
+	Melder_information (Dissimilarity_Configuration_Weight_interval_stress (dissimilarity, configuration, weight,
 		GET_INTEGER (U"Stress measure")));
 END
 
@@ -909,16 +999,17 @@ FORM (Dissimilarity_Configuration_Weight_monotone_stress,
       U"Dissimilarity & Configuration & Weight: Get stress (monotone mds)",
       U"Dissimilarity & Configuration & Weight: Get stress (monotone mds)...")
 	RADIO (U"Handling of ties", 1)
-	RADIOBUTTON (U"Primary approach)")
-	RADIOBUTTON (U"Secondary approach")
+		RADIOBUTTON (U"Primary approach)")
+		RADIOBUTTON (U"Secondary approach")
 	Dissimilarity_and_Configuration_getStress_addCommonFields (dia, radio);
 	OK
 DO
-	Dissimilarity me = FIRST (Dissimilarity);
-	Configuration c = FIRST (Configuration);
-	Weight w = FIRST (Weight);
-	Melder_information (Dissimilarity_Configuration_Weight_monotone_stress (me, c, w,
-		GET_INTEGER (U"Handling of ties"), GET_INTEGER (U"Stress measure")));
+	Dissimilarity dissimilarity = FIRST (Dissimilarity);
+	Configuration configuration = FIRST (Configuration);
+	Weight weight = FIRST (Weight);
+	Melder_information (Dissimilarity_Configuration_Weight_monotone_stress (dissimilarity, configuration, weight,
+		GET_INTEGER (U"Handling of ties"),
+		GET_INTEGER (U"Stress measure")));
 END
 
 FORM (Dissimilarity_Configuration_Weight_ispline_stress,
@@ -929,11 +1020,13 @@ FORM (Dissimilarity_Configuration_Weight_ispline_stress,
 	Dissimilarity_and_Configuration_getStress_addCommonFields (dia, radio);
 	OK
 DO
-	Dissimilarity me = FIRST (Dissimilarity);
-	Configuration c = FIRST (Configuration);
-	Weight w = FIRST (Weight);
-	Melder_information (Dissimilarity_Configuration_Weight_ispline_stress (me, c, w,
-		GET_INTEGER (U"Number of interior knots"), GET_INTEGER (U"Order of I-spline"), GET_INTEGER (U"Stress measure")));
+	Dissimilarity dissimilarity = FIRST (Dissimilarity);
+	Configuration configuration = FIRST (Configuration);
+	Weight weight = FIRST (Weight);
+	Melder_information (Dissimilarity_Configuration_Weight_ispline_stress (dissimilarity, configuration, weight,
+		GET_INTEGER (U"Number of interior knots"),
+		GET_INTEGER (U"Order of I-spline"),
+		GET_INTEGER (U"Stress measure")));
 END
 
 FORM (Dissimilarity_Configuration_drawShepardDiagram, U"Dissimilarity & Configuration: Draw Shepard diagram",
@@ -943,11 +1036,14 @@ FORM (Dissimilarity_Configuration_drawShepardDiagram, U"Dissimilarity & Configur
 DO
 	autoPraatPicture picture;
 	Dissimilarity me = FIRST (Dissimilarity);
-	Configuration c = FIRST (Configuration);
-	Dissimilarity_Configuration_drawShepardDiagram (me, c, GRAPHICS,
-		GET_REAL (U"left Proximity range"), GET_REAL (U"right Proximity range"),
-		GET_REAL (U"left Distance range"), GET_REAL (U"right Distance range"),
-		GET_REAL (U"Mark size"), GET_STRING (U"Mark string"),
+	Configuration thee = FIRST (Configuration);
+	Dissimilarity_Configuration_drawShepardDiagram (me, thee, GRAPHICS,
+		GET_REAL (U"left Proximity range"),
+		GET_REAL (U"right Proximity range"),
+		GET_REAL (U"left Distance range"),
+		GET_REAL (U"right Distance range"),
+		GET_REAL (U"Mark size"),
+		GET_STRING (U"Mark string"),
 		GET_INTEGER (U"Garnish"));
 END
 
@@ -959,11 +1055,14 @@ FORM (Dissimilarity_Configuration_drawAbsoluteRegression,
 DO
 	autoPraatPicture picture;
 	Dissimilarity me = FIRST (Dissimilarity);
-	Configuration c = FIRST (Configuration);
-	Dissimilarity_Configuration_Weight_drawAbsoluteRegression (me, c, 0, GRAPHICS,
-		GET_REAL (U"left Proximity range"), GET_REAL (U"right Proximity range"),
-		GET_REAL (U"left Distance range"), GET_REAL (U"right Distance range"),
-		GET_REAL (U"Mark size"), GET_STRING (U"Mark string"),
+	Configuration thee = FIRST (Configuration);
+	Dissimilarity_Configuration_Weight_drawAbsoluteRegression (me, thee, nullptr, GRAPHICS,
+		GET_REAL (U"left Proximity range"),
+		GET_REAL (U"right Proximity range"),
+		GET_REAL (U"left Distance range"),
+		GET_REAL (U"right Distance range"),
+		GET_REAL (U"Mark size"),
+		GET_STRING (U"Mark string"),
 		GET_INTEGER (U"Garnish"));
 END
 
@@ -975,11 +1074,15 @@ FORM (Dissimilarity_Configuration_drawRatioRegression,
 DO
 	autoPraatPicture picture;
 	Dissimilarity me = FIRST (Dissimilarity);
-	Configuration c = FIRST (Configuration);
-	Dissimilarity_Configuration_Weight_drawRatioRegression (me, c, 0, GRAPHICS,
-		GET_REAL (U"left Proximity range"), GET_REAL (U"right Proximity range"),
-		GET_REAL (U"left Distance range"), GET_REAL (U"right Distance range"),
-		GET_REAL (U"Mark size"), GET_STRING (U"Mark string"), GET_INTEGER (U"Garnish"));
+	Configuration thee = FIRST (Configuration);
+	Dissimilarity_Configuration_Weight_drawRatioRegression (me, thee, nullptr, GRAPHICS,
+		GET_REAL (U"left Proximity range"),
+		GET_REAL (U"right Proximity range"),
+		GET_REAL (U"left Distance range"),
+		GET_REAL (U"right Distance range"),
+		GET_REAL (U"Mark size"),
+		GET_STRING (U"Mark string"),
+		GET_INTEGER (U"Garnish"));
 END
 
 FORM (Dissimilarity_Configuration_drawIntervalRegression,
@@ -990,29 +1093,38 @@ FORM (Dissimilarity_Configuration_drawIntervalRegression,
 DO
 	autoPraatPicture picture;
 	Dissimilarity me = FIRST (Dissimilarity);
-	Configuration c = FIRST (Configuration);
-	Dissimilarity_Configuration_Weight_drawIntervalRegression (me, c, 0, GRAPHICS,
-		GET_REAL (U"left Proximity range"), GET_REAL (U"right Proximity range"),
-		GET_REAL (U"left Distance range"), GET_REAL (U"right Distance range"),
-		GET_REAL (U"Mark size"), GET_STRING (U"Mark string"), GET_INTEGER (U"Garnish"));
+	Configuration thee = FIRST (Configuration);
+	Dissimilarity_Configuration_Weight_drawIntervalRegression (me, thee, nullptr, GRAPHICS,
+		GET_REAL (U"left Proximity range"),
+		GET_REAL (U"right Proximity range"),
+		GET_REAL (U"left Distance range"),
+		GET_REAL (U"right Distance range"),
+		GET_REAL (U"Mark size"),
+		GET_STRING (U"Mark string"),
+		GET_INTEGER (U"Garnish"));
 END
 
 FORM (Dissimilarity_Configuration_drawMonotoneRegression,
       U"Dissimilarity & Configuration: Draw regression (monotone mds)",
       U"Dissimilarity & Configuration: Draw regression (monotone mds)...")
 	RADIO (U"Handling of ties", 1)
-	RADIOBUTTON (U"Primary approach)")
-	RADIOBUTTON (U"Secondary approach")
+		RADIOBUTTON (U"Primary approach)")
+		RADIOBUTTON (U"Secondary approach")
 	Dissimilarity_Configuration_drawDiagram_addCommonFields (dia);
 	OK
 DO
 	autoPraatPicture picture;
 	Dissimilarity me = FIRST (Dissimilarity);
-	Configuration c = FIRST (Configuration);
-	Dissimilarity_Configuration_Weight_drawMonotoneRegression (me, c, 0, GRAPHICS,
-		GET_INTEGER (U"Handling of ties"), GET_REAL (U"left Proximity range"), GET_REAL (U"right Proximity range"),
-		GET_REAL (U"left Distance range"), GET_REAL (U"right Distance range"),
-		GET_REAL (U"Mark size"), GET_STRING (U"Mark string"), GET_INTEGER (U"Garnish"));
+	Configuration thee = FIRST (Configuration);
+	Dissimilarity_Configuration_Weight_drawMonotoneRegression (me, thee, nullptr, GRAPHICS,
+		GET_INTEGER (U"Handling of ties"),
+		GET_REAL (U"left Proximity range"),
+		GET_REAL (U"right Proximity range"),
+		GET_REAL (U"left Distance range"),
+		GET_REAL (U"right Distance range"),
+		GET_REAL (U"Mark size"),
+		GET_STRING (U"Mark string"),
+		GET_INTEGER (U"Garnish"));
 END
 
 FORM (Dissimilarity_Configuration_drawISplineRegression,
@@ -1025,12 +1137,17 @@ FORM (Dissimilarity_Configuration_drawISplineRegression,
 DO
 	autoPraatPicture picture;
 	Dissimilarity me = FIRST (Dissimilarity);
-	Configuration c = FIRST (Configuration);
-	Dissimilarity_Configuration_Weight_drawISplineRegression (me, c, 0, GRAPHICS,
-		GET_INTEGER (U"Number of interior knots"), GET_INTEGER (U"Order of I-spline"),
-		GET_REAL (U"left Proximity range"), GET_REAL (U"right Proximity range"),
-		GET_REAL (U"left Distance range"), GET_REAL (U"right Distance range"),
-		GET_REAL (U"Mark size"), GET_STRING (U"Mark string"), GET_INTEGER (U"Garnish"));
+	Configuration thee = FIRST (Configuration);
+	Dissimilarity_Configuration_Weight_drawISplineRegression (me, thee, nullptr, GRAPHICS,
+		GET_INTEGER (U"Number of interior knots"),
+		GET_INTEGER (U"Order of I-spline"),
+		GET_REAL (U"left Proximity range"),
+		GET_REAL (U"right Proximity range"),
+		GET_REAL (U"left Distance range"),
+		GET_REAL (U"right Distance range"),
+		GET_REAL (U"Mark size"),
+		GET_STRING (U"Mark string"),
+		GET_INTEGER (U"Garnish"));
 END
 
 FORM (Dissimilarity_kruskal, U"Dissimilarity: To Configuration (kruskal)", U"Dissimilarity: To Configuration (kruskal)...")
@@ -1048,10 +1165,14 @@ FORM (Dissimilarity_kruskal, U"Dissimilarity: To Configuration (kruskal)", U"Dis
 DO
 	LOOP {
 		iam (Dissimilarity);
-		praat_new (Dissimilarity_kruskal (me, GET_INTEGER (U"Number of dimensions"),
-			GET_INTEGER (U"Distance metric"), GET_INTEGER (U"Handling of ties"),
-			GET_INTEGER (U"Stress calculation"), GET_REAL (U"Tolerance"),
-			GET_INTEGER (U"Maximum number of iterations"), GET_INTEGER (U"Number of repetitions")), my name);
+		praat_new (Dissimilarity_kruskal (me,
+			GET_INTEGER (U"Number of dimensions"),
+			GET_INTEGER (U"Distance metric"),
+			GET_INTEGER (U"Handling of ties"),
+			GET_INTEGER (U"Stress calculation"),
+			GET_REAL (U"Tolerance"),
+			GET_INTEGER (U"Maximum number of iterations"),
+			GET_INTEGER (U"Number of repetitions")), my name);
 	}
 END
 
@@ -1271,115 +1392,130 @@ END
 
 FORM (Distances_indscal, U"Distance: To Configuration (indscal)", U"Distance: To Configuration (indscal)...")
 	NATURAL (U"Number of dimensions", U"2")
-	BOOLEAN (U"Normalize scalar products", 1)
+	BOOLEAN (U"Normalize scalar products", true)
 	LABEL (U"", U"Minimization parameters")
 	REAL (U"Tolerance", U"1e-5")
 	NATURAL (U"Maximum number of iterations", U"100 (= each repetition)")
 	NATURAL (U"Number of repetitions", U"1")
 	OK
 DO
-	structDistanceList distances;
+	autoDistanceList distances = DistanceList_create ();
 	LOOP {
 		iam (Distance);
-		distances. addItem_ref (me);
+		distances -> addItem_ref (me);
 	}
-	autoConfiguration ac;
-	autoSalience as;
-	DistanceList_indscal (& distances, GET_INTEGER (U"Number of dimensions"), GET_INTEGER (U"Normalize scalar products"),
-		GET_REAL (U"Tolerance"), GET_INTEGER (U"Maximum number of iterations"), GET_INTEGER (U"Number of repetitions"),
-		1, & ac, & as);
-	praat_new (ac.move(), U"indscal");
-	praat_new (as.move(), U"indscal");
+	autoConfiguration configurationResult;
+	autoSalience salienceResult;
+	DistanceList_indscal (distances.get(),
+		GET_INTEGER (U"Number of dimensions"),
+		GET_INTEGER (U"Normalize scalar products"),
+		GET_REAL (U"Tolerance"),
+		GET_INTEGER (U"Maximum number of iterations"),
+		GET_INTEGER (U"Number of repetitions"),
+		true,   // showProgress
+		& configurationResult, & salienceResult);
+	praat_new (configurationResult.move(), U"indscal");
+	praat_new (salienceResult.move(), U"indscal");
 END
 
-FORM (Distance_and_Configuration_drawScatterDiagram, U"Distance & Configuration: Draw scatter diagram",
-      U"Distance & Configuration: Draw scatter diagram...")
+FORM (Distance_and_Configuration_drawScatterDiagram, U"Distance & Configuration: Draw scatter diagram", U"Distance & Configuration: Draw scatter diagram...")
 	REAL (U"Minimum x-distance", U"0.0")
 	REAL (U"Maximum x-distance", U"0.0")
 	REAL (U"Minimum y-distance", U"0.0")
 	REAL (U"Maximum y-distance", U"0.0")
 	POSITIVE (U"Mark size (mm)", U"1.0")
 	SENTENCE (U"Mark string (+xo.)", U"+")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
 	Distance me = FIRST (Distance);
-	Configuration c = FIRST (Configuration);
-	Distance_and_Configuration_drawScatterDiagram (me, c, GRAPHICS, GET_REAL (U"Minimum x-distance"),
-		GET_REAL (U"Maximum x-distance"), GET_REAL (U"Minimum y-distance"), GET_REAL (U"Maximum y-distance"),
-		GET_REAL (U"Mark size"), GET_STRING (U"Mark string"), GET_INTEGER (U"Garnish"));
+	Configuration thee = FIRST (Configuration);
+	Distance_and_Configuration_drawScatterDiagram (me, thee, GRAPHICS,
+		GET_REAL (U"Minimum x-distance"),
+		GET_REAL (U"Maximum x-distance"),
+		GET_REAL (U"Minimum y-distance"),
+		GET_REAL (U"Maximum y-distance"),
+		GET_REAL (U"Mark size"),
+		GET_STRING (U"Mark string"),
+		GET_INTEGER (U"Garnish"));
 END
 
-FORM (Distance_Configuration_indscal, U"Distance & Configuration: To Configuration (indscal)",
-      U"Distance & Configuration: To Configuration (indscal)...")
+FORM (Distance_Configuration_indscal, U"Distance & Configuration: To Configuration (indscal)", U"Distance & Configuration: To Configuration (indscal)...")
 	BOOLEAN (U"Normalize scalar products", true)
 	LABEL (U"", U"Minimization parameters")
 	REAL (U"Tolerance", U"1e-5")
 	NATURAL (U"Maximum number of iterations", U"100 (= each repetition)")
 	OK
 DO
-	autoDistanceList thee = DistanceList_create ();
-	Configuration c = nullptr;
+	autoDistanceList distances = DistanceList_create ();
+	Configuration configuration = nullptr;
 	LOOP {
 		iam (Daata);
 		if (CLASS == classDistance) {
-			thy addItem_ref ((Distance) me);
+			distances -> addItem_ref ((Distance) me);
 		} else if (CLASS == classConfiguration) {
-			c = (Configuration) me;
+			configuration = (Configuration) me;
 		}
 	}
-	Melder_assert (thy size() > 0 && c);
-	autoConfiguration ac;
-	autoSalience as;
-	DistanceList_Configuration_indscal (thee.peek(), c,
-		GET_INTEGER (U"Normalize scalar products"), GET_REAL (U"Tolerance"),
-		GET_INTEGER (U"Maximum number of iterations"), 1, &ac, &as);
-	praat_new (ac.move(), U"indscal");
-	praat_new (as.move(), U"indscal");
+	Melder_assert (distances -> size() > 0 && configuration);
+	autoConfiguration configurationResult;
+	autoSalience salienceResult;
+	DistanceList_Configuration_indscal (distances.peek(), configuration,
+		GET_INTEGER (U"Normalize scalar products"),
+		GET_REAL (U"Tolerance"),
+		GET_INTEGER (U"Maximum number of iterations"),
+		true,   // showProgress
+		& configurationResult, & salienceResult);
+	praat_new (configurationResult.move(), U"indscal");
+	praat_new (salienceResult.move(), U"indscal");
 END
 
 FORM (Distance_Configuration_vaf, U"Distance & Configuration: Get VAF", U"Distance & Configuration: Get VAF...")
 	BOOLEAN (U"Normalize scalar products", true)
 	OK
 DO
-	autoDistanceList thee = DistanceList_create ();
-	Configuration c = nullptr;
+	autoDistanceList distances = DistanceList_create ();
+	Configuration configuration = nullptr;
 	LOOP {
 		iam (Daata);
 		if (CLASS == classDistance) {
-			thy addItem_ref ((Distance) me);
+			distances -> addItem_ref ((Distance) me);
 		} else if (CLASS == classConfiguration) {
-			c = (Configuration) me;
+			configuration = (Configuration) me;
 		}
 	}
-	Melder_assert (thy size() > 0 && c);
-	double vaf;
-	DistanceList_Configuration_vaf (thee.peek(), c, GET_INTEGER (U"Normalize scalar products"), &vaf);
-	Melder_information (vaf);
+	Melder_assert (distances -> size() > 0 && configuration);
+	double varianceAccountedFor;
+	DistanceList_Configuration_vaf (distances.peek(), configuration,
+		GET_INTEGER (U"Normalize scalar products"),
+		& varianceAccountedFor);
+	Melder_information (varianceAccountedFor);
 END
 
 FORM (Distance_Configuration_Salience_vaf, U"Distance & Configuration & Salience: Get VAF", U"Distance & Configuration & Salience: Get VAF...")
 	BOOLEAN (U"Normalize scalar products", true)
 	OK
 DO
-	autoDistanceList thee = DistanceList_create ();
-	Configuration c = nullptr;
-	Salience s = nullptr;
+	autoDistanceList distances = DistanceList_create ();
+	Configuration configuration = nullptr;
+	Salience salience = nullptr;
 	LOOP {
 		iam (Daata);
 		if (CLASS == classDistance) {
-			thy addItem_ref ((Distance) me);
+			distances -> addItem_ref ((Distance) me);
 		} else if (CLASS == classConfiguration) {
-			c = (Configuration) me;
+			configuration = (Configuration) me;
 		} else if (CLASS == classSalience) {
-			s = (Salience) me;
+			salience = (Salience) me;
 		}
 	}
-	Melder_assert (thy size() > 0 && c && s);
-	double vaf;
-	DistanceList_Configuration_Salience_vaf (thee.peek(), c, s, GET_INTEGER (U"Normalize scalar products"), &vaf);
-	Melder_information (vaf);
+	Melder_assert (distances -> size() > 0 && configuration && salience);
+	double varianceAccountedFor;
+	DistanceList_Configuration_Salience_vaf (distances.peek(), configuration, salience,
+		GET_INTEGER (U"Normalize scalar products"),
+		& varianceAccountedFor);
+	Melder_information (varianceAccountedFor);
 END
 
 FORM (Dissimilarity_Configuration_Salience_vaf, U"Dissimilarity & Configuration & Salience: Get VAF",
@@ -1390,24 +1526,26 @@ FORM (Dissimilarity_Configuration_Salience_vaf, U"Dissimilarity & Configuration 
 	BOOLEAN (U"Normalize scalar products", true)
 	OK
 DO
-	autoDissimilarityList thee = DissimilarityList_create ();
-	Configuration c = nullptr;
-	Salience s = nullptr;
+	autoDissimilarityList dissimilarities = DissimilarityList_create ();
+	Configuration configuration = nullptr;
+	Salience salience = nullptr;
 	LOOP {
 		iam (Daata);
 		if (CLASS == classDissimilarity) {
-			thy addItem_ref ((Dissimilarity) me);
+			dissimilarities -> addItem_ref ((Dissimilarity) me);
 		} else if (CLASS == classConfiguration) {
-			c = (Configuration) me;
+			configuration = (Configuration) me;
 		} else if (CLASS == classSalience) {
-			s = (Salience) me;
+			salience = (Salience) me;
 		}
 	}
-	Melder_assert (thy size() > 0 && c && s);
-	double vaf;
-	DissimilarityList_Configuration_Salience_vaf (thee.peek(), c, s, GET_INTEGER (U"Handling of ties"),
-		GET_INTEGER (U"Normalize scalar products"), &vaf);
-	Melder_information (vaf);
+	Melder_assert (dissimilarities -> size() > 0 && configuration && salience);
+	double varianceAccountedFor;
+	DissimilarityList_Configuration_Salience_vaf (dissimilarities.peek(), configuration, salience,
+		GET_INTEGER (U"Handling of ties"),
+		GET_INTEGER (U"Normalize scalar products"),
+		& varianceAccountedFor);
+	Melder_information (varianceAccountedFor);
 END
 
 FORM (Distance_Configuration_Salience_indscal,
@@ -1420,27 +1558,30 @@ FORM (Distance_Configuration_Salience_indscal,
 	OK
 DO
 	autoDistanceList thee = DistanceList_create ();
-	Configuration c = nullptr;
-	Salience s = nullptr;
+	Configuration configuration = nullptr;
+	Salience salience = nullptr;
 	LOOP {
 		iam (Daata);
 		if (CLASS == classDistance) {
 			thy addItem_ref ((Distance) me);
 		} else if (CLASS == classConfiguration) {
-			c = (Configuration) me;
+			configuration = (Configuration) me;
 		} else if (CLASS == classSalience) {
-			s = (Salience) me;
+			salience = (Salience) me;
 		}
 	}
-	Melder_assert (thy size() > 0 && c && s);
-	double vaf;
-	autoConfiguration ac;
-	autoSalience as;
-	DistanceList_Configuration_Salience_indscal (thee.peek(), c, s,
-		GET_INTEGER (U"Normalize scalar products"), GET_REAL (U"Tolerance"),
-		GET_INTEGER (U"Maximum number of iterations"), 1, &ac, &as, &vaf);
-	praat_new (ac.move(), U"indscal");
-	praat_new (as.move(), U"indscal");
+	Melder_assert (thy size() > 0 && configuration && salience);
+	double varianceAccountedFor;
+	autoConfiguration configurationResult;
+	autoSalience salienceResult;
+	DistanceList_Configuration_Salience_indscal (thee.peek(), configuration, salience,
+		GET_INTEGER (U"Normalize scalar products"),
+		GET_REAL (U"Tolerance"),
+		GET_INTEGER (U"Maximum number of iterations"),
+		true,   // showProgress
+		& configurationResult, & salienceResult, & varianceAccountedFor);
+	praat_new (configurationResult.move(), U"indscal");
+	praat_new (salienceResult.move(), U"indscal");
 END
 
 FORM (Distances_to_Configuration_ytl, U"Distance: To Configuration (ytl)", U"Distance: To Configuration (ytl)...")
@@ -1449,18 +1590,18 @@ FORM (Distances_to_Configuration_ytl, U"Distance: To Configuration (ytl)", U"Dis
 	BOOLEAN (U"Salience object", false)
 	OK
 DO
-	structDistanceList distances;
+	autoDistanceList distances = DistanceList_create ();
 	LOOP {
 		iam (Distance);
-		distances. addItem_ref (me);
+		distances -> addItem_ref (me);
 	}
-	autoConfiguration ac;
-	autoSalience as;
-	DistanceList_to_Configuration_ytl (& distances, GET_INTEGER (U"Number of dimensions"),
-		GET_INTEGER (U"Normalize scalar products"), & ac, & as);
-	praat_new (ac.move(), U"ytl");
+	autoConfiguration configurationResult;
+	autoSalience salienceResult;
+	DistanceList_to_Configuration_ytl (distances.get(), GET_INTEGER (U"Number of dimensions"),
+		GET_INTEGER (U"Normalize scalar products"), & configurationResult, & salienceResult);
+	praat_new (configurationResult.move(), U"ytl");
 	if (GET_INTEGER (U"Salience object")) {
-		praat_new (as.move(), U"ytl");
+		praat_new (salienceResult.move(), U"ytl");
 	}
 END
 
@@ -1471,11 +1612,12 @@ FORM (Dissimilarity_Distance_monotoneRegression, U"Dissimilarity & Distance: Mon
 	OK
 DO
 	Dissimilarity me = FIRST (Dissimilarity);
-	Distance d = FIRST (Distance);
-	praat_new (Dissimilarity_Distance_monotoneRegression (me, d, GET_INTEGER (U"Handling of ties")), my name);
+	Distance thee = FIRST (Distance);
+	praat_new (Dissimilarity_Distance_monotoneRegression (me, thee,
+		GET_INTEGER (U"Handling of ties")), my name);
 END
 
-FORM (Distance_Dissimilarity_drawShepardDiagram, U"Distance & Dissimilarity: Draw Shepard diagram", U"")
+FORM (Distance_Dissimilarity_drawShepardDiagram, U"Distance & Dissimilarity: Draw Shepard diagram", nullptr)
 	REAL (U"Minimum dissimilarity", U"0.0")
 	REAL (U"Maximum dissimilarity", U"0.0")
 	REAL (U"left Distance range", U"0.0")
@@ -1486,11 +1628,14 @@ FORM (Distance_Dissimilarity_drawShepardDiagram, U"Distance & Dissimilarity: Dra
 	OK
 DO
 	Dissimilarity me = FIRST (Dissimilarity);
-	Distance d = FIRST (Distance);
-	Proximity_Distance_drawScatterDiagram (me, d, GRAPHICS,
-		GET_REAL (U"Minimum dissimilarity"), GET_REAL (U"Maximum dissimilarity"),
-		GET_REAL (U"left Distance range"), GET_REAL (U"right Distance range"),
-		GET_REAL (U"Mark size"), GET_STRING (U"Mark string"),
+	Distance thee = FIRST (Distance);
+	Proximity_Distance_drawScatterDiagram (me, thee, GRAPHICS,
+		GET_REAL (U"Minimum dissimilarity"),
+		GET_REAL (U"Maximum dissimilarity"),
+		GET_REAL (U"left Distance range"),
+		GET_REAL (U"right Distance range"),
+		GET_REAL (U"Mark size"),
+		GET_STRING (U"Mark string"),
 		GET_INTEGER (U"Garnish"));
 END
 
@@ -1510,8 +1655,10 @@ FORM (Salience_draw, U"Salience: Draw", nullptr)
 DO
 	LOOP {
 		iam (Salience);
-		Salience_draw (me, GRAPHICS, GET_INTEGER (U"Horizontal dimension"), GET_INTEGER (U"Vertical dimension"),
-		GET_INTEGER (U"Garnish"));
+		Salience_draw (me, GRAPHICS,
+			GET_INTEGER (U"Horizontal dimension"),
+			GET_INTEGER (U"Vertical dimension"),
+			GET_INTEGER (U"Garnish"));
 	}
 END
 
@@ -1523,7 +1670,9 @@ FORM (Covariance_to_Configuration, U"Covariance: To Configuration", nullptr)
 DO
 	LOOP {
 		iam (Covariance);
-		praat_new (Covariance_to_Configuration (me, GET_INTEGER (U"Number of dimensions")), my name);
+		autoConfiguration result = Covariance_to_Configuration (me,
+			GET_INTEGER (U"Number of dimensions"));
+		praat_new (result.move(), my name);
 	}
 END
 
@@ -1587,16 +1736,16 @@ END
 DIRECT (TableOfReal_to_Configuration)
 	LOOP {
 		iam (TableOfReal);
-		autoConfiguration thee = TableOfReal_to_Configuration (me);
-		praat_new (thee.move(), my name);
+		autoConfiguration result = TableOfReal_to_Configuration (me);
+		praat_new (result.move(), my name);
 	}
 END
 
 DIRECT (TableOfReal_to_ContingencyTable)
 	LOOP {
 		iam (TableOfReal);
-		autoContingencyTable thee = TableOfReal_to_ContingencyTable (me);
-		praat_new (thee.move(), my name);
+		autoContingencyTable result = TableOfReal_to_ContingencyTable (me);
+		praat_new (result.move(), my name);
 	}
 END
 
@@ -1677,8 +1826,8 @@ END
 DIRECT (TableOfReal_to_Confusion)
 	LOOP {
 		iam (TableOfReal);
-		autoConfusion thee = TableOfReal_to_Confusion (me);
-		praat_new (thee.move(), my name);
+		autoConfusion result = TableOfReal_to_Confusion (me);
+		praat_new (result.move(), my name);
 	}
 END
 

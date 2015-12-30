@@ -219,7 +219,6 @@ struct CollectionOf : structDaata {
 		You cannot call both addItem_move() and addItem_ref() on the same Collection.
 	*/
 	void addItem_ref (T* thing) {
-		//Melder_casual (U"addItem_ref ", _capacity, U" ", _ownItems);
 		Melder_assert (thing);
 		long index = our _v_position (thing);
 		if (index != 0) {
@@ -473,7 +472,7 @@ struct CollectionOf : structDaata {
 };
 
 
-#define Collection_declare(klas,genericClass,itemClass) \
+#define _Collection_declare(klas,genericClass,itemClass) \
 	typedef genericClass<struct##itemClass> struct##klas; \
 	typedef genericClass<struct##itemClass> *klas; \
 	typedef _Thing_auto <genericClass<struct##itemClass>> auto##klas; \
@@ -485,47 +484,7 @@ struct CollectionOf : structDaata {
 		return me; \
 	}
 
-
-#define Collection_implement(klas,genericClass,itemClass,parentClass,version) \
-	static Thing _##klas##_new () { return new genericClass<struct##itemClass>; } \
-	struct structClassInfo theClassInfo_##klas = { U"" #klas, & theClassInfo_##parentClass, \
-		sizeof (genericClass<struct##itemClass>), _##klas##_new, version, 0, nullptr}; \
-	ClassInfo class##klas = & theClassInfo_##klas
-
-Collection_declare (Collection, CollectionOf, Thing);
-
-#if 0
-#define CollectionSubclass_declare(klas) \
-	typedef struct struct##klas *klas; \
-	typedef _Thing_auto <struct##klas> auto##klas; \
-	extern struct structClassInfo theClassInfo_##klas; \
-	extern ClassInfo class##klas; \
-	auto##klas klas##_create ()
-
-#define CollectionSubclass_define(klas,parentClass) \
-	CollectionSubclass_declare (klas); \
-	typedef struct##parentClass klas##_Parent; \
-	auto##klas klas##_create (); \
-	struct struct##klas : public struct##parentClass
-#endif
-
-#define CollectionSubclass_implement(klas,parentClass,version) \
-	static Thing _##klas##_new () { return new struct##klas; } \
-	struct structClassInfo theClassInfo_##klas = { U"" #klas, & theClassInfo_##parentClass, \
-		sizeof (struct##klas), _##klas##_new, version, 0, nullptr}; \
-	auto##klas klas##_create () { \
-		auto##klas me (new struct##klas); \
-		theTotalNumberOfThings += 1; \
-		return me; \
-	} \
-	ClassInfo class##klas = & theClassInfo_##klas
-
-/*
-	Data_copy, Data_equal, Data_writeXXX, Data_readXXX
-	try to copy, compare, write, or read all the items.
-	However, if any of the items is not of class Daata,
-	these routines fail with a message.
-*/
+_Collection_declare (Collection, CollectionOf, Thing);
 
 /********** class Ordered **********/
 
@@ -553,7 +512,7 @@ struct OrderedOf : CollectionOf <T> {
 	OrderedOf<T>&& move () noexcept { return static_cast <OrderedOf<T>&&> (*this); }
 };
 
-Collection_declare (Ordered, OrderedOf, Daata);
+_Collection_declare (Ordered, OrderedOf, Daata);
 
 /********** class Sorted **********/
 /*
@@ -614,7 +573,7 @@ struct SortedOf : CollectionOf <T> {
 		// should compare the keys of two items; returns negative if me < thee, 0 if me == thee, and positive if me > thee
 };
 
-Collection_declare (Sorted, SortedOf, Daata);
+_Collection_declare (Sorted, SortedOf, Daata);
 
 /********** class SortedSet **********/
 
@@ -667,7 +626,7 @@ struct SortedSetOf : SortedOf <T> {
 	Collections_merge (SortedSet) yields a SortedSet that is the union of the two sources.
 */
 
-Collection_declare (SortedSet, SortedOf, Daata);
+_Collection_declare (SortedSet, SortedOf, Daata);
 
 /********** class SortedSetOfInt **********/
 
@@ -769,21 +728,12 @@ struct SortedSetOfStringOf : SortedSetOf <T> {
 	}
 };
 
-Collection_declare (SortedSetOfString, SortedSetOfStringOf, SimpleString);
+_Collection_declare (SortedSetOfString, SortedSetOfStringOf, SimpleString);
 
-#if 0
-/********** class Cyclic **********/
-
-Thing_define (Cyclic, Collection) {   // the cyclic list (a, b, c, d) equals (b, c, d, a) but not (d, c, a, b)
-	static int s_compareHook (Daata data1, Daata data2) noexcept;
-	virtual Data_CompareHook v_getCompareHook () { return s_compareHook; }
-};
-
-void Cyclic_init (Cyclic me, long initialCapacity);
-
-void Cyclic_cycleLeft (Cyclic me);
-void Cyclic_unicize (Cyclic me);
-#endif
+#define Collection_define(klas,genericClass,itemClass) \
+	Thing_declare (klas); \
+	static inline auto##klas klas##_create () { return Thing_new (klas); } \
+	struct struct##klas : genericClass<struct##itemClass>
 
 /* End of file Collection.h */
 #endif

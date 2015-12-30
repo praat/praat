@@ -19,11 +19,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 20020411 initial GPL
- djmw 20120914 Latest modification.
-*/
-
 #include "TableOfReal.h"
 #include "Collection.h"
 #include "Pattern.h"
@@ -68,7 +63,7 @@ const char32 *TableOfReal_getColumnLabelAtMaximumInRow (TableOfReal me, long row
 
 void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, const char32 *rows, long colb, long cole,
 	double ymin, double ymax, double xoffsetFraction, double interbarFraction,
-	double interbarsFraction, const char32 *greys, int garnish);
+	double interbarsFraction, const char32 *greys, bool garnish);
 
 void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g, long icx, long icy, long rowb,
 	long rowe, double xmin, double xmax, double ymin, double ymax,
@@ -204,12 +199,14 @@ double TableOfReal_normalityTest_BHEP (TableOfReal me, double *beta, double *tnb
 
 autoTableOfReal TableOfReal_and_TableOfReal_crossCorrelations (TableOfReal me, TableOfReal thee, int by_columns, int center, int normalize);
 
-/********************* class TablesOfReal ******************************/
 
-autoTableOfReal TablesOfReal_sum (TableOfRealList me);
+#pragma mark - class TableOfRealList
 
-bool TablesOfReal_haveIdenticalDimensions (TableOfRealList me);
+autoTableOfReal TableOfRealList_sum (TableOfRealList me);
 
-autoTableOfReal TableOfReal_appendColumnsMany (TableOfRealList me);
+bool TableOfRealList_haveIdenticalDimensions (TableOfRealList me);
+
+autoTableOfReal TableOfRealList_appendColumnsMany (TableOfRealList me);
+
 
 #endif /* _TableOfReal_extensions_h_ */

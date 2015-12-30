@@ -189,7 +189,7 @@ autoSimilarity DistanceList_to_Similarity_cc (DistanceList me, Weight w) {
 		if (my size() == 0) {
 			Melder_throw (U"Distances is empty.");
 		}
-		if (! TablesOfReal_haveIdenticalDimensions (my asTableOfRealList())) {
+		if (! TableOfRealList_haveIdenticalDimensions (my asTableOfRealList())) {
 			Melder_throw (U"All matrices must have the same dimensions.");
 		}
 		autoWeight aw;
@@ -817,7 +817,7 @@ autoMDSVecList DissimilarityList_to_MDSVecList (DissimilarityList me) {
 
 autoConfusion ConfusionList_sum (ConfusionList me) {
 	try {
-		autoTableOfReal sum = TablesOfReal_sum (my asTableOfRealList());
+		autoTableOfReal sum = TableOfRealList_sum (my asTableOfRealList());
 		autoConfusion thee = TableOfReal_to_Confusion (sum.peek());
 		return thee;
 	} catch (MelderError) {

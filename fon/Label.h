@@ -22,6 +22,9 @@
 #include "Collection.h"
 #include "Function.h"
 
+
+#pragma mark - class Autosegment
+
 Thing_define (Autosegment, Function) {
 	void v_copy (Daata data_to)
 		override;
@@ -50,9 +53,10 @@ autoAutosegment Autosegment_create (double tmin, double tmax, const char32 *labe
 			result -> name [] == label [];   // 'label' copied into 'name'
 */
 
-Collection_declare (SortedOfAutosegment, SortedOf, Autosegment);
 
-Thing_define (Tier, SortedOfAutosegment) {
+#pragma mark - class Tier
+
+Collection_define (Tier, SortedOf, Autosegment) {
 
 	/**
 		Initialize a new Tier containing one Autosegment from -1e30 to 1e30.
@@ -78,8 +82,6 @@ Thing_define (Tier, SortedOfAutosegment) {
 	SortedOf<structAutosegment>::CompareHook v_getCompareHook () override { return compareHook; }
 };
 
-autoTier Tier_create ();
-
 /**
 	@return
 		index, or 0 if the tier is empty or t is very large.
@@ -88,17 +90,16 @@ autoTier Tier_create ();
 */
 long Tier_timeToIndex (Tier me, double t);
 
-Collection_declare (OrderedOfTier, OrderedOf, Tier);
 
-Thing_define (Label, OrderedOfTier) {
-	structLabel () {
-		our classInfo = classLabel;
-	}
+#pragma mark - class Label
+
+Collection_define (Label, OrderedOf, Tier) {
 };
 
 void Label_addTier (Label me);
 
 void Label_suggestDomain (Label me, double *tmin, double *tmax);
 
-#endif
+
 /* End of file Label.h */
+#endif

@@ -2,7 +2,7 @@
 #define _Collection_extensions_h_
 /* Collection_extensions.h
  *
- * Copyright (C) 1994-2002, 2015 David Weenink
+ * Copyright (C) 1994-2002,2015 David Weenink, 2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,11 +19,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 20020812 GPL header
- djmw 20110414 Latest modification.
-*/
-
 #include "Collection.h"
 #include "Graphics.h"
 #include "Permutation.h"
@@ -35,17 +30,10 @@ autoCollection Collection_permuteItems (Collection me);
 
 /****************** class OrderedOfString ******************/
 
-Collection_declare (OrderedOfSimpleString, OrderedOf, SimpleString);
-
-Thing_define (OrderedOfString, OrderedOfSimpleString) {
-	structOrderedOfString () {
-		our classInfo = classOrderedOfString;
-	}
+Collection_define (OrderedOfString, OrderedOf, SimpleString) {
 	void v_info ()
 		override;
 };
-
-autoOrderedOfString OrderedOfString_create ();
 
 int OrderedOfString_append (OrderedOfString me, const char32 *append);
 

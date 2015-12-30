@@ -644,7 +644,7 @@ static void gui_button_cb_moveDown (CategoriesEditor me, GuiButtonEvent /* event
 		autoCategoriesEditorMoveDown command = CategoriesEditorMoveDown_create (me, posList.peek(), posCount, posList[posCount] + 1);
 		Command_do (command.peek());
 		if (my history) {
-			CommandHistory_insertItem_move (my history.peek(), command.move());
+			CommandHistory_insertItem_move (my history.get(), command.move());
 		}
 		updateWidgets (me);
 	}

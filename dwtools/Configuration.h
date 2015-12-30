@@ -25,6 +25,9 @@
 
 #include "Configuration_def.h"
 
+
+#pragma mark - class Configuration
+
 autoConfiguration Configuration_create (long numberOfPoints, long numberOfDimensions);
 
 void Configuration_setMetric (Configuration me, long metric);
@@ -82,11 +85,11 @@ void Configuration_rotateToPrincipalDirections (Configuration me);
 
 void Configuration_draw (Configuration me, Graphics g, int xCoordinate,
 	int yCoordinate, double xmin, double xmax, double ymin, double ymax,
-	int labelSize, int useRowLabels, const char32 *label, int garnish);
+	int labelSize, bool useRowLabels, const char32 *label, bool garnish);
 
 void Configuration_drawConcentrationEllipses (Configuration me, Graphics g,
-	double scale, int confidence, const char32 *label, long d1, long d2, double xmin, double xmax,
-	double ymin, double ymax, int fontSize, int garnish);
+	double scale, bool confidence, const char32 *label, long d1, long d2, double xmin, double xmax,
+	double ymin, double ymax, int fontSize, bool garnish);
 
 autoConfiguration TableOfReal_to_Configuration (TableOfReal me);
 
@@ -110,18 +113,10 @@ autoConfiguration Configuration_createLetterRExample (int choice);
 autoConfiguration Configuration_createCarrollWishExample ();
 
 
-/************************** class Configurations **************************************/
+#pragma mark - class ConfigurationList
 
-Collection_declare (OrderedOfConfiguration, OrderedOf, Configuration);
-
-Thing_define (ConfigurationList, OrderedOfConfiguration) {
-	structConfigurationList () {
-		our classInfo = classConfigurationList;
-	}
+Collection_define (ConfigurationList, OrderedOf, Configuration) {
 };
 
-inline static autoConfigurationList ConfigurationList_create () {
-	return Thing_new (ConfigurationList);
-}
-
-#endif /* _Configuration_h_ */
+/* End of file Configuration.h */
+#endif

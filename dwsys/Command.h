@@ -22,7 +22,8 @@
 #include "Thing.h"
 #include "Collection.h"
 
-/********** class Command **********/
+
+#pragma mark - class Command
 
 Thing_declare (Command);
 
@@ -40,20 +41,12 @@ int Command_do (Command me);
 
 int Command_undo (Command me);
 
-/********** class CommandHistory **********/
 
-Collection_declare (OrderedOfCommand, OrderedOf, Command);
+#pragma mark - class CommandHistory
 
-Thing_define (CommandHistory, OrderedOfCommand) {
-	structCommandHistory () {
-		our classInfo = classCommandHistory;
-	}
+Collection_define (CommandHistory, OrderedOf, Command) {
 	long current;
 };
-
-inline static autoCommandHistory CommandHistory_create () {
-	return Thing_new (CommandHistory);
-}
 
 /* Active data structure. 'current' is position of the cursor in the list */
 /* Queries and insertions are at the current position */

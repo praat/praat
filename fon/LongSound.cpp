@@ -48,6 +48,7 @@
 #include "mp3.h"
 
 Thing_implement (LongSound, Sampled, 0);
+Thing_implement (SoundAndLongSoundList, Ordered, 0);
 
 #define MARGIN  0.01
 #define USE_MEMMOVE  1
@@ -626,7 +627,7 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 	}
 }
 
-void LongSound_concatenate (OrderedOfSoundsAndLongSounds me, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint) {
+void LongSound_concatenate (SoundAndLongSoundList me, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint) {
 	try {
 		long sampleRate, n;   /* Integer sampling frequencies only, because of possible rounding errors. */
 		int numberOfChannels;

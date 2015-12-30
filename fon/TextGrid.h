@@ -25,14 +25,8 @@
 #include "TableOfReal.h"
 #include "Table.h"
 
-Collection_declare (OrderedOfFunction, OrderedOf, Function);
-
-Thing_define (FunctionList, OrderedOfFunction) {
+Collection_define (FunctionList, OrderedOf, Function) {
 };
-
-inline static autoFunctionList FunctionList_create () {
-	return Thing_new (FunctionList);
-}
 
 #include "TextGrid_def.h"
 
