@@ -162,6 +162,8 @@ autoCovariance Covariance_create_reduceStorage (long dimension, long storage);
 
 autoCorrelation Correlation_create (long dimension);
 
+autoCorrelation Correlation_createSimple (char32 *s_correlations, char32 *s_centroid, long numberOfObservations);
+
 autoTableOfReal Correlation_confidenceIntervals (Correlation me, double confidenceLevel, long numberOfTests, int method);
 /*
 	if (method == 1)
@@ -178,28 +180,27 @@ autoTableOfReal Correlation_confidenceIntervals (Correlation me, double confiden
 /* Precondition ||vector|| = 1 */
 void Covariance_getMarginalDensityParameters (Covariance me, double *vector, double *mu, double *stdev);
 
-double Covariance_getMarginalProbabilityAtPosition (Covariance me, double *vector, double x);
+double Covariance_getMarginalProbabilityAtPosition (Covariance me, double vector[], double x);
 
 double Covariance_getProbabilityAtPosition_string (Covariance me, char32 *xpos);
 
-double Covariance_getProbabilityAtPosition (Covariance me, double *x);
+double Covariance_getProbabilityAtPosition (Covariance me, double x[]);
 /* evaluate the pdf(x,mu,Sigma) at x */
 
 autoCovariance SSCP_to_Covariance (SSCP me, long numberOfConstraints);
 
 autoSSCP Covariance_to_SSCP (Covariance me);
 
-void SSCP_testDiagonality_bartlett (SSCP me, long numberOfContraints, double *chisq, double *probability);
+void SSCP_testDiagonality_bartlett (SSCP me, long numberOfContraints, double *chisq, double *prob, double *df);
 
-void Correlation_testDiagonality_bartlett (Correlation me, long numberOfContraints, double *chisq, double *probability);
-/* Test whether matrices are diagonal matrices, Morrison, page 118 */
+void Correlation_testDiagonality_bartlett (Correlation me, long numberOfContraints, double *chisq, double *prob, double *df);
+/* Test if a Correlation matrix is diagonal, Morrison pp. 116-118 */
 
 autoCorrelation SSCP_to_Correlation (SSCP me);
 
-void Covariance_difference (Covariance me, Covariance thee, double *prob, double *chisq, long *ndf);
+void Covariance_difference (Covariance me, Covariance thee, double *prob, double *chisq, double *df);
 
-void Covariance_getSignificanceOfOneMean (Covariance me, long index, double mu,
-	double *probability, double *t, double *ndf);
+void Covariance_getSignificanceOfOneMean (Covariance me, long index, double mu,	double *probability, double *t, double *df);
 
 void Covariance_getSignificanceOfMeansDifference (Covariance me, long index1, long index2, double mu, int paired, int equalVariances,
 	double *probability, double *t, double *ndf);
@@ -207,7 +208,7 @@ void Covariance_getSignificanceOfMeansDifference (Covariance me, long index1, lo
 void Covariance_getSignificanceOfOneVariance (Covariance me, long index, double sigmasq, double *probability, double *chisq, long *ndf);
 
 void Covariance_getSignificanceOfVariancesRatio (Covariance me, long index1, long index2, double ratio, double *probability,
-	double *f, long *ndf);
+	double *f, double *df);
 
 double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance thee, int equalCovariances, double *prob, double *fisher, double *df1, double *df2);
 /* Are the centroids of me and thee different?
@@ -232,7 +233,7 @@ autoSSCP SSCPList_to_SSCP_sum (SSCPList me);
 
 autoSSCP SSCPList_to_SSCP_pool (SSCPList me);
 
-void SSCPList_getHomegeneityOfCovariances_box (SSCPList me, double *probability, double *chisq, long *ndf);
+void SSCPList_getHomegeneityOfCovariances_box (SSCPList me, double *probability, double *chisq, double *df);
 
 autoSSCP SSCP_toTwoDimensions (SSCP me, double *v1, double *v2);
 
