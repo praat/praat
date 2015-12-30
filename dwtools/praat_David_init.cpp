@@ -1238,15 +1238,10 @@ DIRECT (Covariances_reportEquality)
 	Covariances_equality (covariances.get(), 1, & p, & chisq, & df);
 	MelderInfo_writeLine (U"Difference between covariance matrices:");
 	MelderInfo_writeLine (U"Significance of difference (bartlett) = ", p);
-<<<<<<< HEAD
 	MelderInfo_writeLine (U"Chi-squared (bartlett)= ", chisq);
 	MelderInfo_writeLine (U"Degrees of freedom (bartlett) = ", df);
-	Covariances_equality (& list, 2, &p, &chisq, &df);
-=======
-	MelderInfo_writeLine (U"Chi-squared = ", chisq);
-	MelderInfo_writeLine (U"Degrees of freedom = ", df);
-	Covariances_equality (covariances.get(), 2, & p, & chisq, & df);
->>>>>>> 093f01af377aebd9cba4a211d5b5b7086a1332a9
+	
+	Covariances_equality (covariances.get(), 2, &p, &chisq, &df);
 	MelderInfo_writeLine (U"Significance of difference (wald) = ", p);
 	MelderInfo_writeLine (U"Chi-squared (wald) = ", chisq);
 	MelderInfo_writeLine (U"Degrees of freedom (wald) = ", df);
