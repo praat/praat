@@ -426,7 +426,7 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 		thy groups = TableOfReal_to_SSCPList_byLabel (mew.peek());
 		thy total = TableOfReal_to_SSCP (mew.peek(), 0, 0, 0, 0);
 
-		if ( (thy numberOfGroups = thy groups -> size()) < 2) {
+		if ((thy numberOfGroups = thy groups -> size()) < 2) {
 			Melder_throw (U"Number of groups must be greater than one.");
 		}
 

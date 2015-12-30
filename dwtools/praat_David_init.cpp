@@ -1025,6 +1025,18 @@ END
 
 /********************** Correlation *******************************************/
 
+FORM (Correlation_createSimple, U"Create simple Correlation", U"Create simple Correlation...")
+	WORD (U"Name", U"correlation")
+	SENTENCE (U"Correlations", U"1.0 0.5 1.0")
+	SENTENCE (U"Centroid", U"0.0 0.0")
+	NATURAL (U"Number of observations", U"100")
+	OK
+DO
+	autoCorrelation me = Correlation_createSimple (GET_STRING (U"Correlations"), GET_STRING (U"Centroid"),
+		GET_INTEGER (U"Number of observations"));
+	praat_new (me.move(), GET_STRING (U"Name"));
+END
+
 DIRECT (Correlation_help)
 	Melder_help (U"Correlation");
 END
@@ -1053,10 +1065,9 @@ DO
 	long nc = GET_INTEGER (U"Number of contraints");
 	LOOP {
 		iam (Correlation);
-		double chisq, p;
-		Correlation_testDiagonality_bartlett (me, nc, &chisq, &p);
-		Melder_information (p, U" (=probability, based on chisq = ",
-			chisq, U"and ndf = ", my numberOfRows * (my numberOfRows - 1) / 2, U")");
+		double chisq, p, df;
+		Correlation_testDiagonality_bartlett (me, nc, & chisq, & p, & df);
+		Melder_information (p, U" (=probability, based on chisq = ", chisq, U" and ndf = ", df, U")");
 	}
 END
 
@@ -1160,14 +1171,11 @@ FORM (Covariance_getSignificanceOfVariancesRatio, U"Covariance: Get significance
 DO
 	LOOP {
 		iam (Covariance);
-		double p, f; long ndf;
-		Covariance_getSignificanceOfVariancesRatio (me,
-			GET_INTEGER (U"Index1"),
-			GET_INTEGER (U"Index2"),
-			GET_REAL (U"Hypothesized ratio"),
-			& p, & f, & ndf);
-		Melder_information (p, U" (=probability, based on F = ", f,
-			U"and ndf1 = ", ndf, U" and ndf2 = ", ndf);
+		double p, f, df;
+		Covariance_getSignificanceOfVariancesRatio (me, GET_INTEGER (U"Index1"), GET_INTEGER (U"Index2"),
+			GET_REAL (U"Hypothesized ratio"), & p, & f , & df);
+		Melder_information (p, U" (=probability, based on F = ", f, U" and ndf1 = ", df, U" and ndf2 = ", df);
+
 	}
 END
 
@@ -1230,12 +1238,13 @@ DIRECT (Covariances_reportEquality)
 	Covariances_equality (covariances.get(), 1, & p, & chisq, & df);
 	MelderInfo_writeLine (U"Difference between covariance matrices:");
 	MelderInfo_writeLine (U"Significance of difference (bartlett) = ", p);
-	MelderInfo_writeLine (U"Chi-squared = ", chisq);
-	MelderInfo_writeLine (U"Degrees of freedom = ", df);
-	Covariances_equality (covariances.get(), 2, & p, & chisq, & df);
+	MelderInfo_writeLine (U"Chi-squared (bartlett)= ", chisq);
+	MelderInfo_writeLine (U"Degrees of freedom (bartlett) = ", df);
+	
+	Covariances_equality (covariances.get(), 2, &p, &chisq, &df);
 	MelderInfo_writeLine (U"Significance of difference (wald) = ", p);
-	MelderInfo_writeLine (U"Chi-squared = ", chisq);
-	MelderInfo_writeLine (U"Degrees of freedom = ", df);
+	MelderInfo_writeLine (U"Chi-squared (wald) = ", chisq);
+	MelderInfo_writeLine (U"Degrees of freedom (wald) = ", df);
 	MelderInfo_close ();
 END
 
@@ -1372,7 +1381,7 @@ END
 DIRECT (Discriminant_getHomegeneityOfCovariances_box)
 	LOOP {
 		iam (Discriminant);
-		double chisq, p; long ndf;
+		double chisq, p; double ndf;
 		SSCPList_getHomegeneityOfCovariances_box (my groups.peek(), &p, &chisq, &ndf);
 		Melder_information (p, U" (=probability, based on chisq = ",
 			chisq, U"and ndf = ", ndf, U")");
@@ -6969,13 +6978,12 @@ FORM (SSCP_testDiagonality_bartlett, U"SSCP: Get diagonality (bartlett)", U"SSCP
 	NATURAL (U"Number of contraints", U"1")
 	OK
 DO
-	double chisq, p;
+	double chisq, p, df;
 	long nc = GET_INTEGER (U"Number of contraints");
 	LOOP {
 		iam (SSCP);
-		SSCP_testDiagonality_bartlett (me, nc, &chisq, &p);
-		Melder_information (p, U" (=probability for chisq = ", chisq,
-			U" and ndf = ", my numberOfRows * (my numberOfRows - 1) / 2, U")");
+		SSCP_testDiagonality_bartlett (me, nc, & chisq, & p, & df);
+		Melder_information (p, U" (=probability for chisq = ", chisq, U" and ndf = ", df, U")");
 	}
 END
 
@@ -8647,6 +8655,7 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal (Weenink 1985)...", U"Create TableOfReal (Van Nierop 1973)...", 1, DO_TableOfReal_createFromWeeninkData);
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple Confusion...", U"Create TableOfReal (Weenink 1985)...", 1, DO_Confusion_createSimple);
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple Covariance...", U"Create simple Confusion...", 1, DO_Covariance_createSimple);
+	praat_addMenuCommand (U"Objects", U"New", U"Create simple Correlation...", U"Create simple Covariance...", 1, DO_Correlation_createSimple);
 	praat_addMenuCommand (U"Objects", U"New", U"Create empty EditCostsTable...", U"Create simple Covariance...", 1, DO_EditCostsTable_createEmpty);
 
 	praat_addMenuCommand (U"Objects", U"New", U"Create KlattTable example", U"Create TableOfReal (Weenink 1985)...", praat_DEPTH_1 + praat_HIDDEN, DO_KlattTable_createExample);

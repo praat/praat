@@ -979,6 +979,20 @@ NORMAL (U"Since an object of type Covariance contains the mean values (the "
 	"tests on means and variances.")
 MAN_END
 
+MAN_BEGIN (U"Create simple Correlation...", U"djmw", 20151230)
+INTRO (U"Create a @@Correlation@ matrix with its centroid.")
+ENTRY (U"Settings")
+TAG (U"##Correlations")
+DEFINITION (U"define the correlations. Because a correlation matrix is a symmetric matrix, only the upper triangular "
+	"part of the matrix has to be input (row-wise). If your correlation matrix is "
+	"of dimension %d, your input needs %d(%d+1)/2 elements. The first %d input elements are the elements of the first "
+	"row of the correaltion matrix, the next %d-1 input elements are for the second row, then %d-2 for the third row, etc.")
+TAG (U"##Centroid")
+DEFINITION (U"defines the centroid. ")
+TAG (U"##Number of observations")
+DEFINITION (U"defines the number of observations.")
+MAN_END
+
 MAN_BEGIN (U"Create simple Covariance...", U"djmw", 20101125)
 INTRO (U"Create a @@Covariance@ matrix with its centroid.")
 ENTRY (U"Settings")
