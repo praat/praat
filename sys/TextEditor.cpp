@@ -63,7 +63,7 @@ void structTextEditor :: v_nameChanged () {
 }
 
 static void openDocument (TextEditor me, MelderFile file) {
-	for (long ieditor = 1; ieditor <= theReferencesToAllOpenTextEditors.size(); ieditor ++) {
+	for (long ieditor = 1; ieditor <= theReferencesToAllOpenTextEditors.size; ieditor ++) {
 		TextEditor editor = theReferencesToAllOpenTextEditors.at [ieditor];
 		if (editor != me && MelderFile_equal (file, & editor -> file)) {
 			Editor_raise (editor);

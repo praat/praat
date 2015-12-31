@@ -145,7 +145,7 @@ void SSCPList_getEllipsesBoundingBoxCoordinates (SSCPList me, double scale, bool
 	*xmin = *ymin = 1e308;
 	*xmax = *ymax = - *xmin;
 
-	for (long i = 1; i <= my size(); i ++) {
+	for (long i = 1; i <= my size; i ++) {
 		SSCP s = my at [i];
 		double xmn, xmx, ymn, ymx;
 		getEllipseBoundingBoxCoordinates (s, scale, confidence, &xmn, &xmx, &ymn, &ymx);
@@ -188,7 +188,7 @@ static autoSSCP _SSCP_extractTwoDimensions (SSCP me, long d1, long d2) {
 autoSSCPList SSCPList_extractTwoDimensions (SSCPList me, long d1, long d2) {
 	try {
 		autoSSCPList thee = SSCPList_create ();
-		for (long i = 1; i <= my size(); i ++) {
+		for (long i = 1; i <= my size; i ++) {
 			autoSSCP t = _SSCP_extractTwoDimensions (my at [i], d1, d2);
 			Thing_setName (t.peek(), Thing_getName (my at [i]));
 			thy addItem_move (t.move());
@@ -721,8 +721,8 @@ autoSSCPList TableOfReal_to_SSCPList_byLabel (TableOfReal me) {
 			ngroups++;
 		}
 		Melder_warningOn ();
-		if (nsingular > 0 || thy size() != ngroups) {
-			long notIncluded = ngroups - thy size();
+		if (nsingular > 0 || thy size != ngroups) {
+			long notIncluded = ngroups - thy size;
 			Melder_warning (ngroups, U" different groups detected: ", nsingular + notIncluded,
 				U" group(s) with less rows than columns (of which ", notIncluded, U" with only one row).");
 		}
@@ -951,7 +951,7 @@ autoSSCP SSCPList_to_SSCP_pool (SSCPList me) {
 	try {
 		autoSSCP thee = Data_copy (my at [1]);
 
-		for (long k = 2; k <= my size(); k ++) {
+		for (long k = 2; k <= my size; k ++) {
 			SSCP t = my at [k];
 			long no = (long) floor (t -> numberOfObservations);
 			if (t -> numberOfRows != thy numberOfRows) {
@@ -988,7 +988,7 @@ void SSCPList_getHomegeneityOfCovariances_box (SSCPList me, double *probability,
 
 	autoSSCP pooled = SSCPList_to_SSCP_pool (me);
 	long p = pooled -> numberOfColumns;
-	double ln_determinant, inv = 0.0, sum = 0.0, g = my size();
+	double ln_determinant, inv = 0.0, sum = 0.0, g = my size;
 	for (long i = 1; i <= g; i ++) {
 		SSCP t = my at [i];
 		double ni = t -> numberOfObservations - 1.0;
@@ -1015,7 +1015,7 @@ void SSCPList_getHomegeneityOfCovariances_box (SSCPList me, double *probability,
 autoSSCPList SSCPList_toTwoDimensions (SSCPList me, double *v1, double *v2) {
 	try {
 		autoSSCPList thee = SSCPList_create ();
-		for (long i = 1; i <= my size(); i ++) {
+		for (long i = 1; i <= my size; i ++) {
 			autoSSCP t = SSCP_toTwoDimensions (my at [i], v1, v2);
 			Thing_setName (t.peek(), Thing_getName (my at [i]));
 			thy addItem_move (t.move());
@@ -1060,7 +1060,7 @@ void SSCPList_drawConcentrationEllipses (SSCPList me, Graphics g, double scale, 
 	Graphics_setInner (g);
 
 
-	for (long i = 1; i <= thy size(); i ++) {
+	for (long i = 1; i <= thy size; i ++) {
 		t = thy at [i];
 		double lscale = SSCP_getEllipseScalefactor (t, scale, confidence);
 		if (lscale < 0.0) {
@@ -1412,7 +1412,7 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 /* Schott 2001 */
 void Covariances_equality (CovarianceList me, int method, double *prob, double *chisq, double *df) {
 	try {
-		long nc = my size();
+		long nc = my size;
 		double  nsi = 0.0;
 
 		*prob = *chisq = *df = NUMundefined;

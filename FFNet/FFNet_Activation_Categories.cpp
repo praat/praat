@@ -88,8 +88,8 @@ autoActivation FFNet_Categories_to_Activation (FFNet me, Categories thee) {
 			Melder_throw (U"The Categories do not match the categories of the FFNet.");
 		}
 
-		autoActivation him = Activation_create (thy size(), my nOutputs);
-		for (long i = 1; i <= thy size(); i ++) {
+		autoActivation him = Activation_create (thy size, my nOutputs);
+		for (long i = 1; i <= thy size; i ++) {
 			const char32 *citem = OrderedOfString_itemAtIndex_c (thee, i);
 			long pos = OrderedOfString_indexOfItem_c (my outputCategories.peek(), citem);
 			if (pos < 1) {

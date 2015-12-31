@@ -150,7 +150,7 @@ END2 }
 DIRECT2 (PairDistribution_getNumberOfPairs) {
 	LOOP {
 		iam (PairDistribution);
-		Melder_information (my pairs.size());
+		Melder_information (my pairs.size);
 	}
 END2 }
 
@@ -610,7 +610,7 @@ END2 }
 DIRECT2 (Table_getNumberOfRows) {
 	LOOP {
 		iam (Table);
-		Melder_information (my rows.size());
+		Melder_information (my rows.size);
 	}
 END2 }
 
@@ -749,7 +749,7 @@ DO
 		MelderInfo_writeLine (U"Correlation between column ", Table_messageColumn (me, column1),
 			U" and column ", Table_messageColumn (me, column2), U":");
 		MelderInfo_writeLine (U"Correlation = ", correlation, U" (Pearson's r)");
-		MelderInfo_writeLine (U"Number of degrees of freedom = ", my rows.size() - 2);
+		MelderInfo_writeLine (U"Number of degrees of freedom = ", my rows.size - 2);
 		MelderInfo_writeLine (U"Significance from zero = ", significance, U" (one-tailed)");
 		MelderInfo_writeLine (U"Confidence interval (", 100.0 * (1.0 - 2.0 * unconfidence), U"%):");
 		MelderInfo_writeLine (U"   Lower limit = ", lowerLimit,

@@ -249,7 +249,7 @@ void FFNet_init (FFNet me, long numberOfInputs, long nodesInLayer1, long nodesIn
 
 void FFNet_setOutputCategories (FFNet me, Categories thee) {
 	autoCategories uniq = Categories_selectUniqueItems (thee);
-	if (uniq -> size() == thy size()) {
+	if (uniq->size == thy size) {
 		my outputCategories = uniq.move();
 	}
 }

@@ -103,7 +103,7 @@ void structRealTierEditor :: v_createMenus () {
 
 void RealTierEditor_updateScaling (RealTierEditor me) {
 	RealTier data = (RealTier) my data;
-	if (data -> points.size() == 0) {
+	if (data -> points.size == 0) {
 		my ymin = my v_defaultYmin ();
 		my ymax = my v_defaultYmax ();
 	} else {
@@ -149,7 +149,7 @@ void structRealTierEditor :: v_dataChanged () {
 
 void structRealTierEditor :: v_draw () {
 	RealTier data = (RealTier) our data;
-	long n = data -> points.size();
+	long n = data -> points.size;
 	Melder_casual (U"structRealTierEditor :: v_draw ", n);
 	Graphics_Viewport viewport;
 	if (our d_sound.data) {
@@ -323,7 +323,7 @@ bool structRealTierEditor :: v_click (double xWC, double yWC, bool shiftKeyPress
 			return 1;   // past left neighbour
 		newTime = pitch -> points.at [ilastSelected] -> number + dt;
 		if (newTime > our tmax) return 1;   // outside domain
-		if (ilastSelected < pitch -> points.size() && newTime >= pitch -> points.at [ilastSelected + 1] -> number)
+		if (ilastSelected < pitch -> points.size && newTime >= pitch -> points.at [ilastSelected + 1] -> number)
 			return FunctionEditor_UPDATE_NEEDED;   // past right neighbour
 	}
 

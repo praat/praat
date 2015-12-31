@@ -92,7 +92,7 @@ void Preferences_read (MelderFile file) {
 	 * before any preferences have been registered.
 	 * In that case, do nothing.
 	 */
-	if (thePreferences.size() == 0) return;
+	if (thePreferences.size == 0) return;
 	try {
 		autoMelderReadText text = MelderReadText_createFromFile (file);
 		for (;;) {
@@ -150,9 +150,9 @@ void Preferences_read (MelderFile file) {
 }
 
 void Preferences_write (MelderFile file) {
-	if (thePreferences.size() == 0) return;
+	if (thePreferences.size == 0) return;
 	static MelderString buffer { 0 };
-	for (long ipref = 1; ipref <= thePreferences.size(); ipref ++) {
+	for (long ipref = 1; ipref <= thePreferences.size; ipref ++) {
 		Preference pref = thePreferences.at [ipref];
 		MelderString_append (& buffer, pref -> string, U": ");
 		switch (pref -> type) {

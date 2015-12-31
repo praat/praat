@@ -162,7 +162,7 @@ static void NUMsort3 (double *data, long *iPoint, long *jPoint, long ifrom, long
 autoDistanceList ConfigurationList_to_DistanceList (ConfigurationList me) {
 	try {
 		autoDistanceList thee = DistanceList_create ();
-		for (long i = 1; i <= my size(); i ++) {
+		for (long i = 1; i <= my size; i ++) {
 			Configuration conf = my at [i];
 			autoDistance d = Configuration_to_Distance (conf);
 			Thing_setName (d.peek(), Thing_getName (conf));
@@ -186,7 +186,7 @@ autoSimilarity ConfigurationList_to_Similarity_cc (ConfigurationList me, Weight 
 
 autoSimilarity DistanceList_to_Similarity_cc (DistanceList me, Weight w) {
 	try {
-		if (my size() == 0) {
+		if (my size == 0) {
 			Melder_throw (U"Distances is empty.");
 		}
 		if (! TableOfRealList_haveIdenticalDimensions (my asTableOfRealList())) {
@@ -198,15 +198,15 @@ autoSimilarity DistanceList_to_Similarity_cc (DistanceList me, Weight w) {
 			w = aw.peek();
 		}
 
-		autoSimilarity thee = Similarity_create (my size());
+		autoSimilarity thee = Similarity_create (my size);
 
-		for (long i = 1; i <= my size(); i ++) {
+		for (long i = 1; i <= my size; i ++) {
 			Distance di = my at [i];
 			char32 *name = Thing_getName (di);
 			TableOfReal_setRowLabel (thee.peek(), i, name);
 			TableOfReal_setColumnLabel (thee.peek(), i, name);
 			thy data[i][i] = 1;
-			for (long j = i + 1; j <= my size(); j ++) {
+			for (long j = i + 1; j <= my size; j ++) {
 				Distance dj = my at [j];
 				thy data [i] [j] = thy data [j] [i] = Distance_Weight_congruenceCoefficient (di, dj, w);
 			}
@@ -801,7 +801,7 @@ autoMDSVec Dissimilarity_to_MDSVec (Dissimilarity me) {
 autoMDSVecList DissimilarityList_to_MDSVecList (DissimilarityList me) {
 	try {
 		autoMDSVecList thee = MDSVecList_create ();
-		for (long i = 1; i <= my size(); i ++) {
+		for (long i = 1; i <= my size; i ++) {
 			autoMDSVec him = Dissimilarity_to_MDSVec (my at [i]);
 			Thing_setName (him.peek(), Thing_getName (my at [i]));
 			thy addItem_move (him.move());
@@ -1288,7 +1288,7 @@ void Proximity_Distance_drawScatterDiagram (Proximity me, Distance thee, Graphic
 autoDistanceList MDSVecList_Distance_monotoneRegression (MDSVecList me, Distance thee, int tiesProcessing) {
 	try {
 		autoDistanceList him = DistanceList_create ();
-		for (long i = 1; i <= my size(); i ++) {
+		for (long i = 1; i <= my size; i ++) {
 			MDSVec vec = my at [i];
 			if (vec -> nPoints != thy numberOfRows) {
 				Melder_throw (U"Dimension of MDSVec and Distance must be equal.");
@@ -1391,7 +1391,7 @@ autoDistance Dissimilarity_Distance_monotoneRegression (Dissimilarity me, Distan
 autoScalarProductList DistanceList_to_ScalarProductList (DistanceList me, bool normalize) {
 	try {
 		autoScalarProductList thee = ScalarProductList_create ();
-		for (long i = 1; i <= my size(); i ++) {
+		for (long i = 1; i <= my size; i ++) {
 			autoScalarProduct sp = Distance_to_ScalarProduct (my at [i], normalize);
 			thy addItem_move (sp.move());
 		}
@@ -1411,7 +1411,7 @@ void DistanceList_to_Configuration_ytl (DistanceList me, int numberOfDimensions,
 }
 
 void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfDimensions, autoConfiguration *out1, autoSalience *out2) {
-	long numberOfSources = my size();
+	long numberOfSources = my size;
 	autoNUMvector<double **> ci (1, numberOfSources);
 	try {
 		long nPoints = my at [1] -> numberOfRows;
@@ -1558,7 +1558,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 autoDissimilarityList DistanceList_to_DissimilarityList (DistanceList me) {
 	try {
 		autoDissimilarityList thee = DissimilarityList_create ();
-		for (long i = 1; i <= my size(); i ++) {
+		for (long i = 1; i <= my size; i ++) {
 			char32 *name = Thing_getName (my at [i]);
 			autoDissimilarity him = Distance_to_Dissimilarity (my at [i]);
 			Thing_setName (him.peek(), name ? name : U"untitled");
@@ -1574,7 +1574,7 @@ autoDistanceList DissimilarityList_to_DistanceList (DissimilarityList me, int me
 	try {
 		autoDistanceList thee = DistanceList_create ();
 
-		for (long i = 1; i <= my size(); i ++) {
+		for (long i = 1; i <= my size; i ++) {
 			autoDistance him = Dissimilarity_to_Distance (my at [i], measurementLevel == MDS_ORDINAL);
 			char32 *name = Thing_getName (my at [i]);
 			Thing_setName (him.peek(), name ? name : U"untitled");
@@ -2186,7 +2186,7 @@ autoDistanceList DissimilarityList_Configuration_monotoneRegression (Dissimilari
 	try {
 		autoDistanceList thee = DistanceList_create ();
 		autoDistance dist = Configuration_to_Distance (configuration);
-		for (long i = 1; i <= my size(); i ++) {
+		for (long i = 1; i <= my size; i ++) {
 			autoDistance d = Dissimilarity_Distance_monotoneRegression (my at [i], dist.peek(), tiesProcessing);
 			thy addItem_move (d.move());
 		}
@@ -2313,7 +2313,7 @@ autoConfiguration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configu
 
 static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, Salience weights) {
 	long nPoints = xc -> numberOfRows, nDimensions = xc -> numberOfColumns;
-	long nSources = zc -> size();
+	long nSources = zc->size;
 	double **x = xc -> data, **w = weights -> data, lambda;
 
 	// tolerance = 1e-4 is nearly optimal for dominant eigenvector estimation.
@@ -2408,7 +2408,7 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 void ScalarProductList_Configuration_Salience_indscal (ScalarProductList sp, Configuration configuration, Salience weights, double tolerance, long numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2, double *varianceAccountedFor) {
 	try {
 		double tol = 1e-6, vafp = 0.0, vaf;
-		long nSources = sp -> size(), iter;
+		long nSources = sp->size, iter;
 
 		autoConfiguration x = Data_copy (configuration);
 		autoSalience w = Data_copy (weights);
@@ -2486,7 +2486,7 @@ void DistanceList_Configuration_Salience_indscal (DistanceList distances, Config
 void DissimilarityList_Configuration_Salience_indscal (DissimilarityList dissims, Configuration configuration, Salience weights, int tiesProcessing, bool normalizeScalarProducts, double tolerance, long numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2, double *varianceAccountedFor) {
 	try {
 		double tol = 1e-6, vafp = 0.0, vaf;
-		long iter, nSources = dissims -> size();
+		long iter, nSources = dissims->size;
 		autoConfiguration x = Data_copy (configuration);
 		autoSalience w = Data_copy (weights);
 		autoMDSVecList vecs = DissimilarityList_to_MDSVecList (dissims);
@@ -2556,7 +2556,7 @@ void DissimilarityList_Configuration_Salience_indscal (DissimilarityList dissims
 
 void DistanceList_Configuration_indscal (DistanceList dists, Configuration conf, bool normalizeScalarProducts, double tolerance, long numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2) {
 	try {
-		autoSalience w = Salience_create (dists -> size(), conf -> numberOfColumns);
+		autoSalience w = Salience_create (dists->size, conf -> numberOfColumns);
 		double vaf;
 		DistanceList_Configuration_Salience_indscal (dists, conf, w.peek(), normalizeScalarProducts, tolerance, numberOfIterations, showProgress, out1, out2, &vaf);
 	} catch (MelderError) {
@@ -2569,7 +2569,7 @@ autoDistanceList MDSVecList_Configuration_Salience_monotoneRegression (MDSVecLis
 		long nDimensions = conf -> numberOfColumns;
 		autoNUMvector<double> w (NUMvector_copy (conf -> w, 1, nDimensions), 1);
 		autoDistanceList distances = DistanceList_create ();
-		for (long i = 1; i <= vecs -> size(); i ++) {
+		for (long i = 1; i <= vecs->size; i ++) {
 			NUMvector_copyElements (weights -> data[i], conf -> w, 1, nDimensions);
 			autoDistance dc = Configuration_to_Distance (conf);
 			autoDistance dist = MDSVec_Distance_monotoneRegression (vecs->at [i], dc.peek(), tiesProcessing);
@@ -2594,7 +2594,7 @@ autoSalience DistanceList_Configuration_to_Salience (DistanceList d, Configurati
 
 autoSalience ScalarProductList_Configuration_to_Salience (ScalarProductList me, Configuration him) {
 	try {
-		autoSalience salience = Salience_create (my size(), his numberOfColumns);
+		autoSalience salience = Salience_create (my size, his numberOfColumns);
 		autoConfiguration cx = Data_copy (him);
 		indscal_iteration_tenBerge (me, cx.peek(), salience.peek());
 		return salience;
@@ -2734,7 +2734,7 @@ void DissimilarityList_Configuration_vaf (DissimilarityList me, Configuration th
 }
 
 void DistanceList_Configuration_Salience_vaf (DistanceList me, Configuration thee, Salience him, bool normalizeScalarProducts, double *vaf) {
-	if (my size() != his numberOfRows || thy numberOfColumns != his numberOfColumns) {
+	if (my size != his numberOfRows || thy numberOfColumns != his numberOfColumns) {
 		Melder_throw (U"Dimensions must conform.");
 	}
 
@@ -2767,12 +2767,12 @@ void ScalarProduct_Configuration_getVariances (ScalarProduct me, Configuration t
 void ScalarProductList_Configuration_Salience_vaf (ScalarProductList me, Configuration thee, Salience him, double *vaf) {
 	autoNUMvector<double> w (NUMvector_copy (thy w, 1, thy numberOfColumns), 1); // save weights
 	try {
-		if (my size() != his numberOfRows || thy numberOfColumns != his numberOfColumns) {
+		if (my size != his numberOfRows || thy numberOfColumns != his numberOfColumns) {
 			Melder_throw (U"Dimensions of input objects must conform.");
 		}
 
 		double t = 0.0, n = 0.0;
-		for (long i = 1; i <= my size(); i ++) {
+		for (long i = 1; i <= my size; i ++) {
 
 			ScalarProduct sp = my at [i];
 			if (sp -> numberOfRows != thy numberOfRows) {
@@ -2781,18 +2781,19 @@ void ScalarProductList_Configuration_Salience_vaf (ScalarProductList me, Configu
 
 			// weigh configuration before calculating variances
 
-			for (long j = 1; j <= thy numberOfColumns; j++) {
-				thy w[j] = sqrt (his data[i][j]);
+			for (long j = 1; j <= thy numberOfColumns; j ++) {
+				thy w [j] = sqrt (his data [i] [j]);
 			}
 
 			double vare, vart;
-			ScalarProduct_Configuration_getVariances (sp, thee, &vare, &vart);
+			ScalarProduct_Configuration_getVariances (sp, thee, & vare, & vart);
 
-			t += vare; n += vart;
+			t += vare;
+			n += vart;
 		}
 
 		if (vaf) {
-			*vaf = n > 0.0 ? 1.0 - t / n : 0.0;
+			*vaf = ( n > 0.0 ? 1.0 - t / n : 0.0 );
 		}
 		NUMvector_copyElements (w.peek(), thy w, 1, thy numberOfColumns); // restore weights
 	} catch (MelderError) {

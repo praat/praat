@@ -88,7 +88,7 @@ static void menu_cb_searchForPageList (Manual me, EDITOR_ARGS_FORM) {
 		ManPages manPages = (ManPages) my data;
 		long numberOfPages;
 		const char32 **pages = ManPages_getTitles (manPages, & numberOfPages);
-		LIST (U"Page", manPages -> pages.size(), pages, 1)
+		LIST (U"Page", manPages -> pages.size, pages, 1)
 	EDITOR_OK
 	EDITOR_DO
 		HyperPage_goToPage_i (me, GET_INTEGER (U"Page"));
@@ -198,7 +198,7 @@ void structManual :: v_draw () {
 static void print (void *void_me, Graphics graphics) {
 	iam (Manual);
 	ManPages manPages = (ManPages) my data;
-	long numberOfPages = manPages -> pages.size(), savePage = my path;
+	long numberOfPages = manPages -> pages.size, savePage = my path;
 	my ps = graphics;
 	Graphics_setDollarSignIsCode (my ps, true);
 	Graphics_setAtSignIsLink (my ps, true);
@@ -254,7 +254,7 @@ static void menu_cb_printRange (Manual me, EDITOR_ARGS_FORM) {
 		SET_STRING (U"Left or inside header", date)
 		SET_STRING (U"Right or outside header", my name)
 		if (my d_printingPageNumber) SET_INTEGER (U"First page number", my d_printingPageNumber + 1)
-		if (my path >= 1 && my path <= manPages -> pages.size()) {
+		if (my path >= 1 && my path <= manPages -> pages.size) {
 			ManPage page = manPages -> pages.at [my path];
 			SET_STRING (U"Print pages starting with", page -> title);
 		}
@@ -316,7 +316,7 @@ static double searchToken (ManPages me, long ipage, char32 *token) {
 
 static void search (Manual me, const char32 *query) {
 	ManPages manPages = (ManPages) my data;
-	long numberOfPages = manPages -> pages.size();
+	long numberOfPages = manPages -> pages.size;
 	static MelderString searchText { 0 };
 	MelderString_copy (& searchText, query);
 	for (char32 *p = & searchText.string [0]; *p != U'\0'; p ++) {
@@ -473,7 +473,7 @@ void structManual :: v_defaultHeaders (EditorCommand cmd) {
 
 long structManual :: v_getNumberOfPages () {
 	ManPages manPages = (ManPages) our data;
-	return manPages -> pages.size();
+	return manPages -> pages.size;
 }
 
 long structManual :: v_getCurrentPageNumber () {
@@ -482,7 +482,7 @@ long structManual :: v_getCurrentPageNumber () {
 
 void structManual :: v_goToPage_i (long pageNumber) {
 	ManPages manPages = (ManPages) our data;
-	if (pageNumber < 1 || pageNumber > manPages -> pages.size()) {
+	if (pageNumber < 1 || pageNumber > manPages -> pages.size) {
 		if (pageNumber == SEARCH_PAGE) {
 			our path = SEARCH_PAGE;
 			Melder_free (our currentPageTitle);

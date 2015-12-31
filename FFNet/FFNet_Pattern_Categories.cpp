@@ -32,7 +32,7 @@ static void _FFNet_Pattern_Categories_checkDimensions (FFNet me, Pattern p, Cate
 	if (my nInputs != p -> nx) {
 		Melder_throw (U"The Pattern and the FFNet do not match.\nThe number of colums in the Pattern must equal the number of inputs in the FFNet.");
 	}
-	if (p -> ny != c -> size()) {
+	if (p -> ny != c->size) {
 		Melder_throw (U"The Pattern and the categories do not match.\nThe number of rows in the Pattern must equal the number of categories.");
 	}
 	if (! _Pattern_checkElements (p)) {

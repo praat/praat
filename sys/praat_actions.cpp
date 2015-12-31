@@ -73,7 +73,7 @@ static long lookUpMatchingAction (ClassInfo class1, ClassInfo class2, ClassInfo 
  * Precondition:
  *	class1, class2, and class3 must be in sorted order.
  */
-	for (long i = 1; i <= theActions.size(); i ++) {
+	for (long i = 1; i <= theActions.size; i ++) {
 		Praat_Command action = theActions.at [i];
 		if (class1 == action -> class1 && class2 == action -> class2 &&
 		    class3 == action -> class3 && class4 == action -> class4 &&
@@ -136,7 +136,7 @@ void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, Class
 					U"because the latter command does not exist.");
 			position = found + 1;   // after 'after'
 		} else {
-			position = theActions.size() + 1;   // at end
+			position = theActions.size + 1;   // at end
 		}
 
 		/*
@@ -174,10 +174,10 @@ static void deleteDynamicMenu () {
 	if (actionsInvisible) return;
 	static long numberOfDeletions;
 	trace (U"deletion #", ++ numberOfDeletions);
-	for (int i = 1; i <= theActions.size(); i ++) {
+	for (int i = 1; i <= theActions.size; i ++) {
 		Praat_Command action = theActions.at [i];
 		if (action -> button) {
-			trace (U"trying to destroy action ", i, U" of ", theActions.size(), U": ", action -> title);
+			trace (U"trying to destroy action ", i, U" of ", theActions.size, U": ", action -> title);
 			#if gtk || cocoa
 				if (action -> button -> d_parent == praat_form) {
 					trace (U"destroy a label or a push button or a cascade button");
@@ -262,10 +262,10 @@ void praat_addActionScript (const char32 *className1, int n1, const char32 *clas
 			if (found) {
 				position = found + 1;   // after 'after'
 			} else {
-				position = theActions.size() + 1;   // at end
+				position = theActions.size + 1;   // at end
 			}
 		} else {
-			position = theActions.size() + 1;   // at end
+			position = theActions.size + 1;   // at end
 		}
 
 		/*
@@ -451,11 +451,11 @@ static int compareActions (const void *void_me, const void *void_thee) {
 }
 
 void praat_sortActions () {
-	for (long i = 1; i <= theActions.size(); i ++) {
+	for (long i = 1; i <= theActions.size; i ++) {
 		Praat_Command action = theActions.at [i];
 		action -> sortingTail = i;
 	}
-	qsort (& theActions.at [1], theActions.size(), sizeof (Praat_Command), compareActions);
+	qsort (& theActions.at [1], theActions.size, sizeof (Praat_Command), compareActions);
 }
 
 static const char32 *numberString (int number) {
@@ -471,7 +471,7 @@ static bool allowExecutionHook (void *closure) {
 	UiCallback callback = (UiCallback) closure;
 	Melder_assert (sizeof (callback) == sizeof (void *));
 	long numberOfMatchingCallbacks = 0, firstMatchingCallback = 0;
-	for (long i = 1; i <= theActions.size(); i ++) {
+	for (long i = 1; i <= theActions.size; i ++) {
 		Praat_Command me = theActions.at [i];
 		if (my callback == callback) {
 			int sel1, sel2 = 0, sel3 = 0, sel4 = 0;
@@ -558,7 +558,7 @@ void praat_actions_show () {
 		if (theCurrentPraatObjects -> totalSelection != 0 && ! Melder_backgrounding)
 			GuiThing_setSensitive (praat_writeMenu, true);
 	}
-	for (long i = 1; i <= theActions.size(); i ++) {
+	for (long i = 1; i <= theActions.size; i ++) {
 		Praat_Command action = theActions.at [i];
 		int sel1 = 0, sel2 = 0, sel3 = 0, sel4 = 0;
 		int n1 = action -> n1, n2 = action -> n2, n3 = action -> n3, n4 = action -> n4;
@@ -592,7 +592,7 @@ void praat_actions_show () {
 		GuiMenu currentSubmenu1 = nullptr, currentSubmenu2 = nullptr;
 		bool writeMenuGoingToSeparate = false;
 		int y = Machine_getMenuBarHeight () + 10;
-		for (long i = 1; i <= theActions.size(); i ++) {   // add buttons or make existing buttons sensitive (executable)
+		for (long i = 1; i <= theActions.size; i ++) {   // add buttons or make existing buttons sensitive (executable)
 			Praat_Command me = theActions.at [i];
 			if (my depth == 0) currentSubmenu1 = nullptr, currentSubmenu2 = nullptr;   // prevent attachment of later deep actions to earlier submenus after removal of label
 			if (my depth == 1) currentSubmenu2 = nullptr;   // prevent attachment of later deep actions to earlier submenus after removal of label
@@ -629,7 +629,7 @@ void praat_actions_show () {
 						gtk_button_set_alignment (GTK_BUTTON (my button -> d_widget), 0.0f, 0.5f);
 					#endif
 				}
-			} else if (i == theActions.size() || theActions.at [i + 1] -> depth == 0) {
+			} else if (i == theActions.size || theActions.at [i + 1] -> depth == 0) {
 				/*
 				 * Apparently a labelled separator.
 				 */
@@ -681,13 +681,13 @@ void praat_actions_createDynamicMenu (GuiWindow window) {
 
 void praat_saveAddedActions (MelderString *buffer) {
 	long maxID = 0;
-	for (long iaction = 1; iaction <= theActions.size(); iaction ++) {
+	for (long iaction = 1; iaction <= theActions.size; iaction ++) {
 		Praat_Command action = theActions.at [iaction];
 		if (action -> uniqueID > maxID)
 			maxID = action -> uniqueID;
 	}
 	for (long ident = 1; ident <= maxID; ident ++)
-		for (long iaction = 1; iaction <= theActions.size(); iaction ++) {
+		for (long iaction = 1; iaction <= theActions.size; iaction ++) {
 			Praat_Command me = theActions.at [iaction];
 			if (my uniqueID == ident && ! my hidden && my title) {
 				MelderString_append (buffer, U"Add action command...",
@@ -699,7 +699,7 @@ void praat_saveAddedActions (MelderString *buffer) {
 				break;
 			}
 		}
-	for (long iaction = 1; iaction <= theActions.size(); iaction ++) {
+	for (long iaction = 1; iaction <= theActions.size; iaction ++) {
 		Praat_Command me = theActions.at [iaction];
 		if (my toggled && my title && ! my uniqueID && ! my script) {
 			MelderString_append (buffer, ( my hidden ? U"Hide" : U"Show" ), U" action command...",
@@ -713,24 +713,24 @@ void praat_saveAddedActions (MelderString *buffer) {
 
 int praat_doAction (const char32 *command, const char32 *arguments, Interpreter interpreter) {
 	long i = 1;
-	while (i <= theActions.size() && (! theActions.at [i] -> executable || str32cmp (theActions.at [i] -> title, command))) i ++;
-	if (i > theActions.size()) return 0;   // not found
+	while (i <= theActions.size && (! theActions.at [i] -> executable || str32cmp (theActions.at [i] -> title, command))) i ++;
+	if (i > theActions.size) return 0;   // not found
 	theActions.at [i] -> callback (nullptr, 0, nullptr, arguments, interpreter, command, false, nullptr);
 	return 1;
 }
 
 int praat_doAction (const char32 *command, int narg, Stackel args, Interpreter interpreter) {
 	long i = 1;
-	while (i <= theActions.size() && (! theActions.at [i] -> executable || str32cmp (theActions.at [i] -> title, command))) i ++;
-	if (i > theActions.size()) return 0;   // not found
+	while (i <= theActions.size && (! theActions.at [i] -> executable || str32cmp (theActions.at [i] -> title, command))) i ++;
+	if (i > theActions.size) return 0;   // not found
 	theActions.at [i] -> callback (nullptr, narg, args, nullptr, interpreter, command, false, nullptr);
 	return 1;
 }
 
-long praat_getNumberOfActions () { return theActions.size(); }
+long praat_getNumberOfActions () { return theActions.size; }
 
 Praat_Command praat_getAction (long i)
-	{ return i < 0 || i > theActions.size() ? nullptr : theActions.at [i]; }
+	{ return i < 0 || i > theActions.size ? nullptr : theActions.at [i]; }
 
 void praat_background () {
 	if (Melder_batch) return;

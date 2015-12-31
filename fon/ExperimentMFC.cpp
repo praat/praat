@@ -418,7 +418,7 @@ autoTable ResultsMFCs_to_Table (OrderedOf<structResultsMFC>* me) {
 	try {
 		long irow = 0;
 		bool hasGoodnesses = false, hasReactionTimes = false;
-		for (long iresults = 1; iresults <= my size(); iresults ++) {
+		for (long iresults = 1; iresults <= my size; iresults ++) {
 			ResultsMFC results = my at [iresults];
 			for (long itrial = 1; itrial <= results -> numberOfTrials; itrial ++) {
 				irow ++;
@@ -437,7 +437,7 @@ autoTable ResultsMFCs_to_Table (OrderedOf<structResultsMFC>* me) {
 		if (hasReactionTimes)
 			Table_setColumnLabel (thee.peek(), 4 + hasGoodnesses, U"reactionTime");
 		irow = 0;
-		for (long iresults = 1; iresults <= my size(); iresults ++) {
+		for (long iresults = 1; iresults <= my size; iresults ++) {
 			ResultsMFC results = my at [iresults];
 			for (long itrial = 1; itrial <= results -> numberOfTrials; itrial ++) {
 				irow ++;
@@ -497,11 +497,11 @@ double Categories_getEntropy (Categories me) {
 	double entropy = 0.0;
 	autoCategories thee = Data_copy (me);
 	Categories_sort (thee.peek());
-	for (long i = 1; i <= thy size(); i ++) {
+	for (long i = 1; i <= thy size; i ++) {
 		SimpleString s = thy at [i];
 		char32 *string = s -> string;
 		if (previousString && ! str32equ (string, previousString)) {
-			double p = (double) numberOfTokens / thy size();
+			double p = (double) numberOfTokens / thy size;
 			entropy -= p * NUMlog2 (p);
 			numberOfTokens = 1;
 		} else {
@@ -510,7 +510,7 @@ double Categories_getEntropy (Categories me) {
 		previousString = string;
 	}
 	if (numberOfTokens) {
-		double p = (double) numberOfTokens / thy size();
+		double p = (double) numberOfTokens / thy size;
 		entropy -= p * NUMlog2 (p);
 	}
 	return entropy;

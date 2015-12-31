@@ -978,7 +978,7 @@ void GaussianMixture_and_TableOfReal_improveLikelihood (GaussianMixture me, Tabl
 }
 
 long GaussianMixture_getNumberOfParametersInComponent (GaussianMixture me) {
-	Melder_assert (my covariances -> size() > 0);
+	Melder_assert (my covariances->size > 0);
 	Covariance thee = my covariances->at [1];
 	// if diagonal) d (means) + d (stdev)
 	// else  n + n(n+1)/2

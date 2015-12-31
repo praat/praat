@@ -1783,7 +1783,7 @@ void OTGrammar_PairDistribution_learn (OTGrammar me, PairDistribution thee,
 
 static long PairDistribution_getNumberOfAttestedOutputs (PairDistribution me, const char32 *input, char32 **attestedOutput) {
 	long result = 0;
-	for (long ipair = 1; ipair <= my pairs.size(); ipair ++) {
+	for (long ipair = 1; ipair <= my pairs.size; ipair ++) {
 		PairProbability pair = my pairs.at [ipair];
 		if (str32equ (pair -> string1, input) && pair -> weight > 0.0) {
 			if (attestedOutput) *attestedOutput = pair -> string2;
@@ -2313,7 +2313,7 @@ long OTGrammar_PairDistribution_getMinimumNumberCorrect (OTGrammar me, PairDistr
 {
 	try {
 		long minimumNumberCorrect = numberOfReplications;
-		for (long ipair = 1; ipair <= thy pairs.size(); ipair ++) {
+		for (long ipair = 1; ipair <= thy pairs.size; ipair ++) {
 			PairProbability prob = thy pairs.at [ipair];
 			if (prob -> weight > 0.0) {
 				long numberOfCorrect = 0;
@@ -2575,7 +2575,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 			bool grammarHasChangedDuringCycle = false;
 			OTGrammar_honourLocalRankings (me, 1.0, 0.0, & grammarHasChangedDuringCycle);
 			OTGrammar_newDisharmonies (me, evaluationNoise);
-			for (iform = 1; iform <= thy pairs.size(); iform ++) {
+			for (iform = 1; iform <= thy pairs.size; iform ++) {
 				PairProbability prob = thy pairs.at [iform];
 				if (prob -> weight > 0.0) {
 					bool grammarHasChanged = false;
@@ -2613,7 +2613,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 					bool grammarHasChangedDuringCycle = false;
 					OTGrammar_honourLocalRankings (me, 1.0, 0.0, & grammarHasChangedDuringCycle);
 					OTGrammar_newDisharmonies (me, evaluationNoise);
-					for (iform = 1; iform <= thy pairs.size(); iform ++) {
+					for (iform = 1; iform <= thy pairs.size; iform ++) {
 						PairProbability prob = thy pairs.at [iform];
 						if (prob -> weight > 0.0) {
 							bool grammarHasChanged = false;
@@ -2659,7 +2659,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 							bool grammarHasChangedDuringCycle = false;
 							OTGrammar_honourLocalRankings (me, 1.0, 0.0, & grammarHasChangedDuringCycle);
 							OTGrammar_newDisharmonies (me, evaluationNoise);
-							for (iform = 1; iform <= thy pairs.size(); iform ++) {
+							for (iform = 1; iform <= thy pairs.size; iform ++) {
 								PairProbability prob = thy pairs.at [iform];
 								if (prob -> weight > 0.0) {
 									bool grammarHasChanged = false;
@@ -2693,8 +2693,8 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 		improved = true;
 		while (improved) {
 			improved = false;
-			for (ilist = 1; ilist <= list.size(); ilist ++) {
-				for (jlist = 1; jlist <= list.size(); jlist ++) if (ilist != jlist) {
+			for (ilist = 1; ilist <= list.size; ilist ++) {
+				for (jlist = 1; jlist <= list.size; jlist ++) if (ilist != jlist) {
 					OTGrammar_List4 elA = list.at [ilist];
 					OTGrammar_List4 elB = list.at [jlist];
 					long ahi1 = elA -> hi1, alo1 = elA -> lo1, ahi2 = elA -> hi2, alo2 = elA -> lo2;
@@ -2714,8 +2714,8 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 		improved = true;
 		while (improved) {
 			improved = false;
-			for (ilist = 1; ilist <= list.size(); ilist ++) {
-				for (jlist = 1; jlist <= list.size(); jlist ++) if (ilist != jlist) {
+			for (ilist = 1; ilist <= list.size; ilist ++) {
+				for (jlist = 1; jlist <= list.size; jlist ++) if (ilist != jlist) {
 					OTGrammar_List4 elA = list.at [ilist];
 					OTGrammar_List4 elB = list.at [jlist];
 					long ahi1 = elA -> hi1, alo1 = elA -> lo1, ahi2 = elA -> hi2, alo2 = elA -> lo2;
@@ -2732,7 +2732,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 				if (improved) break;
 			}
 		}
-		for (ilist = 1; ilist <= list.size(); ilist ++) {
+		for (ilist = 1; ilist <= list.size; ilist ++) {
 			OTGrammar_List4 el = list.at [ilist];
 			MelderInfo_write (my constraints [el -> hi1]. name, U" >> ", my constraints [el -> lo1]. name, U" OR ");
 			MelderInfo_writeLine (my constraints [el -> hi2]. name, U" >> ", my constraints [el -> lo2]. name);

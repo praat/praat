@@ -831,7 +831,7 @@ DO
 		int itier = GET_INTEGER (STRING_TIER_NUMBER);
 		int position = GET_INTEGER (U"Position");
 		const char32 *name = GET_STRING (U"Name");
-		if (itier > my tiers -> size()) itier = my tiers -> size();
+		if (itier > my tiers->size) itier = my tiers->size;
 		autoFunction newTier = Data_copy (my tiers->at [itier]);
 		Thing_setName (newTier.peek(), name);
 		my tiers -> addItemAtPosition_move (newTier.move(), position);
@@ -964,8 +964,8 @@ static Function pr_TextGrid_peekTier (UiForm dia) {
 	LOOP {
 		iam (TextGrid);
 		long tierNumber = GET_INTEGER (STRING_TIER_NUMBER);
-		if (tierNumber > my tiers -> size())
-			Melder_throw (U"Tier number (", tierNumber, U") should not be larger than number of tiers (", my tiers -> size(), U").");
+		if (tierNumber > my tiers->size)
+			Melder_throw (U"Tier number (", tierNumber, U") should not be larger than number of tiers (", my tiers->size, U").");
 		return my tiers->at [tierNumber];
 	}
 	return nullptr;   // should not occur
@@ -987,14 +987,14 @@ static TextTier pr_TextGrid_peekTextTier (UiForm dia) {
 static TextInterval pr_TextGrid_peekInterval (UiForm dia) {
 	int intervalNumber = GET_INTEGER (STRING_INTERVAL_NUMBER);
 	IntervalTier intervalTier = pr_TextGrid_peekIntervalTier (dia);
-	if (intervalNumber > intervalTier -> intervals.size()) Melder_throw (U"Interval number too large.");
+	if (intervalNumber > intervalTier -> intervals.size) Melder_throw (U"Interval number too large.");
 	return intervalTier -> intervals.at [intervalNumber];
 }
 
 static TextPoint pr_TextGrid_peekPoint (UiForm dia) {	
 	long pointNumber = GET_INTEGER (STRING_POINT_NUMBER);
 	TextTier textTier = pr_TextGrid_peekTextTier (dia);
-	if (pointNumber > textTier -> points.size()) Melder_throw (U"Point number too large.");
+	if (pointNumber > textTier -> points.size) Melder_throw (U"Point number too large.");
 	return textTier -> points.at [pointNumber];
 }
 
@@ -1118,14 +1118,14 @@ FORM (TextGrid_getNumberOfIntervals, U"TextGrid: Get number of intervals", nullp
 	OK2
 DO
 	IntervalTier intervalTier = pr_TextGrid_peekIntervalTier (dia);
-	long numberOfIntervals = intervalTier -> intervals.size();
+	long numberOfIntervals = intervalTier -> intervals.size;
 	Melder_information (numberOfIntervals);
 END2 }
 
 DIRECT2 (TextGrid_getNumberOfTiers) {
 	LOOP {
 		iam (TextGrid);
-		long numberOfTiers = my tiers -> size();
+		long numberOfTiers = my tiers->size;
 		Melder_information (numberOfTiers);
 	}
 END2 }
@@ -1166,7 +1166,7 @@ FORM (TextGrid_getNumberOfPoints, U"TextGrid: Get number of points", nullptr) {
 	OK2
 DO
 	TextTier textTier = pr_TextGrid_peekTextTier (dia);
-	long numberOfPoints = textTier -> points.size();
+	long numberOfPoints = textTier -> points.size;
 	Melder_information (numberOfPoints);
 END2 }
 
@@ -1222,7 +1222,7 @@ DO
 		int position = GET_INTEGER (U"Position");
 		const char32 *name = GET_STRING (U"Name");
 		autoIntervalTier tier = IntervalTier_create (my xmin, my xmax);
-		if (position > my tiers -> size()) position = my tiers -> size() + 1;
+		if (position > my tiers->size) position = my tiers->size + 1;
 		Thing_setName (tier.peek(), name);
 		my tiers -> addItemAtPosition_move (tier.move(), position);
 		praat_dataChanged (me);
@@ -1253,7 +1253,7 @@ DO
 		int position = GET_INTEGER (U"Position");
 		const char32 *name = GET_STRING (U"Name");
 		autoTextTier tier = TextTier_create (my xmin, my xmax);
-		if (position > my tiers -> size()) position = my tiers -> size() + 1;
+		if (position > my tiers->size) position = my tiers->size + 1;
 		Thing_setName (tier.peek(), name);
 		my tiers -> addItemAtPosition_move (tier.move(), position);
 		praat_dataChanged (me);
@@ -1430,16 +1430,16 @@ DO
 	LOOP {
 		iam (TextGrid);
 		IntervalTier intervalTier;
-		if (itier > my tiers -> size())
+		if (itier > my tiers->size)
 			Melder_throw (U"You cannot remove a boundary from tier ", itier, U" of ", me,
-				U", because that TextGrid has only ", my tiers -> size(), U" tiers.");
+				U", because that TextGrid has only ", my tiers->size, U" tiers.");
 		intervalTier = (IntervalTier) my tiers->at [itier];
 		if (intervalTier -> classInfo != classIntervalTier)
 			Melder_throw (U"You cannot remove a boundary from tier ", itier, U" of ", me,
 				U", because that tier is a point tier instead of an interval tier.");
-		if (iinterval > intervalTier -> intervals.size())
+		if (iinterval > intervalTier -> intervals.size)
 			Melder_throw (U"You cannot remove a boundary from interval ", iinterval, U" of tier ", itier, U" of ", me,
-				U", because that tier has only ", intervalTier -> intervals.size(), U" intervals.");
+				U", because that tier has only ", intervalTier -> intervals.size, U" intervals.");
 		if (iinterval == 1)
 			Melder_throw (U"You cannot remove the left boundary from interval 1 of tier ", itier, U" of ", me,
 				U", because this is at the left edge of the tier.");
@@ -1458,16 +1458,16 @@ DO
 	LOOP {
 		iam (TextGrid);
 		TextTier pointTier;
-		if (itier > my tiers -> size())
+		if (itier > my tiers->size)
 			Melder_throw (U"You cannot remove a point from tier ", itier, U" of ", me,
-				U", because that TextGrid has only ", my tiers -> size(), U" tiers.");
+				U", because that TextGrid has only ", my tiers->size, U" tiers.");
 		pointTier = (TextTier) my tiers->at [itier];
 		if (pointTier -> classInfo != classTextTier)
 			Melder_throw (U"You cannot remove a point from tier ", itier, U" of ", me,
 				U", because that tier is an interval tier instead of a point tier.");
-		if (ipoint > pointTier -> points.size())
+		if (ipoint > pointTier -> points.size)
 			Melder_throw (U"You cannot remove point ", ipoint, U" from tier ", itier, U" of ", me,
-				U", because that tier has only ", pointTier -> points.size(), U" points.");
+				U", because that tier has only ", pointTier -> points.size, U" points.");
 		TextTier_removePoint (pointTier, ipoint);
 		praat_dataChanged (me);
 	}
@@ -1496,17 +1496,17 @@ DO
 	LOOP {
 		iam (TextGrid);
 		IntervalTier intervalTier;
-		if (itier > my tiers -> size())
+		if (itier > my tiers->size)
 			Melder_throw (U"You cannot remove a boundary from tier ", itier, U" of ", me,
-				U", because that TextGrid has only ", my tiers -> size(), U" tiers.");
+				U", because that TextGrid has only ", my tiers->size, U" tiers.");
 		intervalTier = (IntervalTier) my tiers->at [itier];
 		if (intervalTier -> classInfo != classIntervalTier)
 			Melder_throw (U"You cannot remove a boundary from tier ", itier, U" of ", me,
 				U", because that tier is a point tier instead of an interval tier.");
-		if (iinterval > intervalTier -> intervals.size())
+		if (iinterval > intervalTier -> intervals.size)
 			Melder_throw (U"You cannot remove a boundary from interval ", iinterval, U" of tier ", itier, U" of ", me,
-				U", because that tier has only ", intervalTier -> intervals.size(), U" intervals.");
-		if (iinterval == intervalTier -> intervals.size())
+				U", because that tier has only ", intervalTier -> intervals.size, U" intervals.");
+		if (iinterval == intervalTier -> intervals.size)
 			Melder_throw (U"You cannot remove the right boundary from interval ", iinterval, U" of tier ", itier, U" of ", me,
 				U", because this is at the right edge of the tier.");
 		IntervalTier_removeLeftBoundary (intervalTier, iinterval + 1);
@@ -1521,9 +1521,9 @@ DO
 	LOOP {
 		iam (TextGrid);
 		int itier = GET_INTEGER (STRING_TIER_NUMBER);
-		if (my tiers -> size() <= 1)
+		if (my tiers->size <= 1)
 			Melder_throw (U"Sorry, I refuse to remove the last tier.");
-		if (itier > my tiers -> size()) itier = my tiers -> size();
+		if (itier > my tiers->size) itier = my tiers->size;
 		my tiers -> removeItem (itier);
 		praat_dataChanged (me);
 	}
@@ -1649,7 +1649,7 @@ DO
 	LOOP {
 		iam (TextTier);
 		long ipoint = GET_INTEGER (U"Point number");
-		if (ipoint > my points.size()) Melder_throw (U"No such point.");
+		if (ipoint > my points.size) Melder_throw (U"No such point.");
 		TextPoint point = my points.at [ipoint];
 		Melder_information (point -> mark);
 	}

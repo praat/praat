@@ -54,11 +54,11 @@ double structFormantGrid :: v_getFunction1 (long irow, double x) {
 
 void structFormantGrid :: v_shiftX (double xfrom, double xto) {
 	FormantGrid_Parent :: v_shiftX (xfrom, xto);
-	for (long i = 1; i <= our formants.size(); i ++) {
+	for (long i = 1; i <= our formants.size; i ++) {
 		RealTier tier = our formants.at [i];
 		tier -> v_shiftX (xfrom, xto);
 	}
-	for (long i = 1; i <= our bandwidths.size(); i ++) {
+	for (long i = 1; i <= our bandwidths.size; i ++) {
 		RealTier tier = our bandwidths.at [i];
 		tier -> v_shiftX (xfrom, xto);
 	}
@@ -66,11 +66,11 @@ void structFormantGrid :: v_shiftX (double xfrom, double xto) {
 
 void structFormantGrid :: v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
 	FormantGrid_Parent :: v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
-	for (long i = 1; i <= our formants.size(); i ++) {
+	for (long i = 1; i <= our formants.size; i ++) {
 		RealTier tier = our formants.at [i];
 		tier -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
 	}
-	for (long i = 1; i <= our bandwidths.size(); i ++) {
+	for (long i = 1; i <= our bandwidths.size; i ++) {
 		RealTier tier = our bandwidths.at [i];
 		tier -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
 	}
@@ -117,7 +117,7 @@ autoFormantGrid FormantGrid_create (double tmin, double tmax, long numberOfForma
 
 void FormantGrid_addFormantPoint (FormantGrid me, long iformant, double t, double value) {
 	try {
-		if (iformant < 1 || iformant > my formants.size())
+		if (iformant < 1 || iformant > my formants.size)
 			Melder_throw (U"No such formant number.");
 		RealTier formantTier = my formants.at [iformant];
 		RealTier_addPoint (formantTier, t, value);
@@ -128,7 +128,7 @@ void FormantGrid_addFormantPoint (FormantGrid me, long iformant, double t, doubl
 
 void FormantGrid_addBandwidthPoint (FormantGrid me, long iformant, double t, double value) {
 	try {
-		if (iformant < 1 || iformant > my formants.size())
+		if (iformant < 1 || iformant > my formants.size)
 			Melder_throw (U"No such formant number.");
 		RealTier bandwidthTier = my bandwidths.at [iformant];
 		RealTier_addPoint (bandwidthTier, t, value);
@@ -138,29 +138,29 @@ void FormantGrid_addBandwidthPoint (FormantGrid me, long iformant, double t, dou
 }
 
 double FormantGrid_getFormantAtTime (FormantGrid me, long iformant, double t) {
-	if (iformant < 1 || iformant > my formants.size()) return NUMundefined;
+	if (iformant < 1 || iformant > my formants.size) return NUMundefined;
 	return RealTier_getValueAtTime (my formants.at [iformant], t);
 }
 
 double FormantGrid_getBandwidthAtTime (FormantGrid me, long iformant, double t) {
-	if (iformant < 1 || iformant > my bandwidths.size()) return NUMundefined;
+	if (iformant < 1 || iformant > my bandwidths.size) return NUMundefined;
 	return RealTier_getValueAtTime (my bandwidths.at [iformant], t);
 }
 
 void FormantGrid_removeFormantPointsBetween (FormantGrid me, long iformant, double tmin, double tmax) {
-	if (iformant < 1 || iformant > my formants.size()) return;
+	if (iformant < 1 || iformant > my formants.size) return;
 	AnyTier_removePointsBetween (my formants.at [iformant]->asAnyTier(), tmin, tmax);
 }
 
 void FormantGrid_removeBandwidthPointsBetween (FormantGrid me, long iformant, double tmin, double tmax) {
-	if (iformant < 1 || iformant > my bandwidths.size()) return;
+	if (iformant < 1 || iformant > my bandwidths.size) return;
 	AnyTier_removePointsBetween (my bandwidths.at [iformant]->asAnyTier(), tmin, tmax);
 }
 
 void Sound_FormantGrid_filter_inline (Sound me, FormantGrid formantGrid) {
 	double dt = my dx;
-	if (formantGrid -> formants.size() > 0 && formantGrid -> bandwidths.size() > 0) {
-		for (long iformant = 1; iformant <= formantGrid -> formants.size(); iformant ++) {
+	if (formantGrid -> formants.size > 0 && formantGrid -> bandwidths.size > 0) {
+		for (long iformant = 1; iformant <= formantGrid -> formants.size; iformant ++) {
 			RealTier formantTier = formantGrid -> formants.at [iformant];
 			RealTier bandwidthTier = formantGrid -> bandwidths.at [iformant];
 			for (long isamp = 1; isamp <= my nx; isamp ++) {
@@ -254,9 +254,9 @@ void FormantGrid_formula_bandwidths (FormantGrid me, const char32 *expression, I
 	try {
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 		if (! thee) thee = me;
-		for (long irow = 1; irow <= my formants.size(); irow ++) {
+		for (long irow = 1; irow <= my formants.size; irow ++) {
 			RealTier bandwidth = thy bandwidths.at [irow];
-			for (long icol = 1; icol <= bandwidth -> points.size(); icol ++) {
+			for (long icol = 1; icol <= bandwidth -> points.size; icol ++) {
 				struct Formula_Result result;
 				Formula_run (irow, icol, & result);
 				if (result. result.numericResult == NUMundefined)
@@ -273,9 +273,9 @@ void FormantGrid_formula_frequencies (FormantGrid me, const char32 *expression, 
 	try {
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 		if (! thee) thee = me;
-		for (long irow = 1; irow <= my formants.size(); irow ++) {
+		for (long irow = 1; irow <= my formants.size; irow ++) {
 			RealTier formant = thy formants.at [irow];
-			for (long icol = 1; icol <= formant -> points.size(); icol ++) {
+			for (long icol = 1; icol <= formant -> points.size; icol ++) {
 				struct Formula_Result result;
 				Formula_run (irow, icol, & result);
 				if (result. result.numericResult == NUMundefined)
@@ -312,14 +312,14 @@ autoFormant FormantGrid_to_Formant (FormantGrid me, double dt, double intensity)
 		Melder_assert (intensity >= 0.0);
 		long nt = (long) floor ((my xmax - my xmin) / dt) + 1;
 		double t1 = 0.5 * (my xmin + my xmax - (nt - 1) * dt);
-		autoFormant thee = Formant_create (my xmin, my xmax, nt, dt, t1, my formants.size());
+		autoFormant thee = Formant_create (my xmin, my xmax, nt, dt, t1, my formants.size);
 		for (long iframe = 1; iframe <= nt; iframe ++) {
 			Formant_Frame frame = & thy d_frames [iframe];
 			frame -> intensity = intensity;
-			frame -> nFormants = my formants.size();
-			frame -> formant = NUMvector <structFormant_Formant> (1, my formants.size());
+			frame -> nFormants = my formants.size;
+			frame -> formant = NUMvector <structFormant_Formant> (1, my formants.size);
 			double t = t1 + (iframe - 1) * dt;
-			for (long iformant = 1; iformant <= my formants.size(); iformant ++) {
+			for (long iformant = 1; iformant <= my formants.size; iformant ++) {
 				Formant_Formant formant = & frame -> formant [iformant];
 				formant -> frequency = RealTier_getValueAtTime (my formants.at [iformant], t);
 				formant -> bandwidth = RealTier_getValueAtTime (my bandwidths.at [iformant], t);

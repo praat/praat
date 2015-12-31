@@ -22,7 +22,7 @@
 
 autoTableOfReal Matrix_and_Categories_to_TableOfReal (Matrix me, Categories thee) {
 	try {
-		if (thy size() != my ny) {
+		if (thy size != my ny) {
 			Melder_throw (U"Number of rows and number of categories must be equal.");
 		}
 

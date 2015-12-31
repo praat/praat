@@ -32,8 +32,8 @@ autoStrings espeakdata_variants_names;
 
 static void FileInMemorySet_and_Strings_changeIds (FileInMemorySet me, Strings thee) {
 	try {
-		if (my size() != thy numberOfStrings) return; // do nothing
-		for (long i = 1; i <= my size(); i ++) {
+		if (my size != thy numberOfStrings) return; // do nothing
+		for (long i = 1; i <= my size; i ++) {
 			FileInMemory_setId (my at [i], thy strings [i]);
 		}
 	} catch (MelderError) {
@@ -121,8 +121,8 @@ const char * espeakdata_get_voicedata (const char *data, long ndata, char *buf, 
 
 autoTable espeakdata_voices_to_Table (FileInMemorySet me) {
 	try {
-		autoTable thee = Table_createWithColumnNames (my size(), U"id name");
-		for (long ifile = 1; ifile <= my size(); ifile ++) {
+		autoTable thee = Table_createWithColumnNames (my size, U"id name");
+		for (long ifile = 1; ifile <= my size; ifile ++) {
 			FileInMemory fim = my at [ifile];
 			Table_setStringValue (thee.peek(), ifile, 1, fim -> d_id);
 			const char *p = strstr (fim -> d_data, "name");
@@ -156,9 +156,9 @@ autoStrings espeakdata_voices_getNames (Table me, long column) {
 			Melder_throw (U"Illegal columnn.");
 		}
 		autoStrings thee = Thing_new (Strings);
-		thy strings = NUMvector <char32 *> (1, my rows.size());
+		thy strings = NUMvector <char32 *> (1, my rows.size);
 		thy numberOfStrings = 0;
-		for (long irow = 1; irow <= my rows.size(); irow ++) {
+		for (long irow = 1; irow <= my rows.size; irow ++) {
 			thy strings [irow] = Melder_dup (Table_getStringValue_Assert (me, irow, column));
 			thy numberOfStrings ++;
 		}

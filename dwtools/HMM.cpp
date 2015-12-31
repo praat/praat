@@ -309,7 +309,7 @@ autoHMMObservationSequence HMMObservationSequence_create (long numberOfItems, lo
 }
 
 long HMMObservationSequence_getNumberOfObservations (HMMObservationSequence me) {
-	return my rows.size();
+	return my rows.size;
 }
 
 void HMMObservationSequence_removeObservation (HMMObservationSequence me, long index) {
@@ -318,7 +318,7 @@ void HMMObservationSequence_removeObservation (HMMObservationSequence me, long i
 
 autoStrings HMMObservationSequence_to_Strings (HMMObservationSequence me) {
 	try {
-		long numberOfStrings = my rows.size();
+		long numberOfStrings = my rows.size;
 		autoStrings thee = Thing_new (Strings);
 		thy strings = NUMvector<char32 *> (1, numberOfStrings);
 		for (long i = 1; i <= numberOfStrings; i++) {
@@ -362,10 +362,10 @@ long HMM_and_HMMObservationSequence_getLongestSequence (HMM me, HMMObservationSe
 
 long HMMObservationSequenceBag_getLongestSequence (HMMObservationSequenceBag me) {
 	long longest = 0;
-	for (long i = 1; i <= my size(); i ++) {
+	for (long i = 1; i <= my size; i ++) {
 		HMMObservationSequence thee = my at [i];
-		if (thy rows.size() > longest) {
-			longest = thy rows.size();
+		if (thy rows.size > longest) {
+			longest = thy rows.size;
 		}
 	}
 	return longest;
@@ -577,7 +577,7 @@ void HMM_setStartProbabilities (HMM me, char32 *probs) {
 
 void HMM_setTransitionProbabilities (HMM me, long state_number, char32 *state_probs) {
 	try {
-		if (state_number > my states -> size()) {
+		if (state_number > my states->size) {
 			Melder_throw (U"State number too large.");
 		}
 		autoNUMvector<double> p (NUMwstring_to_probs (state_probs, my numberOfStates), 1);
@@ -591,7 +591,7 @@ void HMM_setTransitionProbabilities (HMM me, long state_number, char32 *state_pr
 
 void HMM_setEmissionProbabilities (HMM me, long state_number, char32 *emission_probs) {
 	try {
-		if (state_number > my states -> size()) {
+		if (state_number > my states->size) {
 			Melder_throw (U"State number too large.");
 		}
 		if (my notHidden) {
@@ -608,7 +608,7 @@ void HMM_setEmissionProbabilities (HMM me, long state_number, char32 *emission_p
 }
 
 void HMM_addObservation_move (HMM me, autoHMMObservation thee) {
-	long ns = my observationSymbols -> size() + 1;
+	long ns = my observationSymbols->size + 1;
 	if (ns > my numberOfObservationSymbols) {
 		Melder_throw (U"Observation list is full.");
 	}
@@ -616,7 +616,7 @@ void HMM_addObservation_move (HMM me, autoHMMObservation thee) {
 }
 
 void HMM_addState_move (HMM me, autoHMMState thee) {
-	long ns = my states -> size() + 1;
+	long ns = my states->size + 1;
 	if (ns > my numberOfStates) {
 		Melder_throw (U"States list is full.");
 	}
@@ -886,7 +886,7 @@ void HMM_and_HMMObservationSequenceBag_learn (HMM me, HMMObservationSequenceBag 
 		do {
 			lnp = bw -> lnProb;
 			HMMBaumWelch_reInit (bw.peek());
-			for (long ios = 1; ios <= thy size(); ios ++) {
+			for (long ios = 1; ios <= thy size; ios ++) {
 				HMMObservationSequence hmm_os = thy at [ios];
 				autoStringsIndex si = HMM_and_HMMObservationSequence_to_StringsIndex (me, hmm_os); // TODO outside the loop or more efficiently
 				long *obs = si -> classIndex, nobs = si -> numberOfElements; // convenience
@@ -925,7 +925,7 @@ void HMM_and_HMMObservationSequenceBag_learn (HMM me, HMMObservationSequenceBag 
 		} while (fabs ((lnp - bw -> lnProb) / bw -> lnProb) > delta_lnp);
 		if (info) {
 			MelderInfo_writeLine (U"******** Learning summary *********");
-			MelderInfo_writeLine (U"  Processed ", thy size(), U" sequences,");
+			MelderInfo_writeLine (U"  Processed ", thy size, U" sequences,");
 			MelderInfo_writeLine (U"  consisting of ", bw -> totalNumberOfSequences, U" observation sequences.");
 			MelderInfo_writeLine (U"  Longest observation sequence had ", capacity, U" items");
 			MelderInfo_close();
@@ -1349,7 +1349,7 @@ autoHMMStateSequence HMM_and_HMMObservationSequence_to_HMMStateSequence (HMM me,
 			Melder_throw (U"Unknown observation symbol(s) (# = ", numberOfUnknowns, U").");
 		}
 
-		long numberOfTimes = thy rows.size();
+		long numberOfTimes = thy rows.size;
 		autoHMMViterbi v = HMM_to_HMMViterbi (me, obs, numberOfTimes);
 		autoHMMStateSequence him = HMMStateSequence_create (numberOfTimes);
 		// trace the path and get states
@@ -1495,7 +1495,7 @@ double HMM_and_HMMObservationSequence_getProbability (HMM me, HMMObservationSequ
 	if (numberOfUnknowns > 0) {
 		Melder_throw (U"Unknown observations (# = ", numberOfUnknowns, U").");
 	}
-	return HMM_getProbabilityOfObservations (me, index, thy rows.size());
+	return HMM_getProbabilityOfObservations (me, index, thy rows.size);
 }
 
 double HMM_and_HMMObservationSequence_getCrossEntropy (HMM me, HMMObservationSequence thee) {
@@ -1608,7 +1608,7 @@ autoTableOfReal HMM_and_HMMStateSequence_to_TableOfReal_transitions (HMM me, HMM
 
 autoTableOfReal StringsIndex_to_TableOfReal_transitions (StringsIndex me, int probabilities) {
 	try {
-		long numberOfTypes = my classes -> size();
+		long numberOfTypes = my classes->size;
 
 		autoTableOfReal thee = TableOfReal_create (numberOfTypes + 1, numberOfTypes + 1);
 		for (long i = 1; i <= numberOfTypes; i ++) {

@@ -109,7 +109,7 @@ static void menu_cb_showBandwidths (FormantGridEditor me, EDITOR_ARGS_DIRECT) {
 
 static void selectFormantOrBandwidth (FormantGridEditor me, long iformant) {
 	FormantGrid grid = (FormantGrid) my data;
-	long numberOfFormants = grid -> formants.size();
+	long numberOfFormants = grid -> formants.size;
 	if (iformant > numberOfFormants)
 		Melder_throw (U"Cannot select formant ", iformant, U", because the FormantGrid has only ", numberOfFormants, U" formants.");
 	my selectedFormant = iformant;
@@ -215,11 +215,11 @@ void structFormantGridEditor :: v_draw () {
 	Graphics_text (our d_graphics.get(), our d_endWindow, ymin, Melder_float (Melder_half (ymin)), U" Hz");
 	Graphics_setLineWidth (our d_graphics.get(), 1.0);
 	Graphics_setColour (our d_graphics.get(), Graphics_GREY);
-	for (long iformant = 1; iformant <= grid -> formants.size(); iformant ++) if (iformant != our selectedFormant) {
+	for (long iformant = 1; iformant <= grid -> formants.size; iformant ++) if (iformant != our selectedFormant) {
 		RealTier tier = tiers->at [iformant];
 		long imin = AnyTier_timeToHighIndex (tier->asAnyTier(), our d_startWindow);
 		long imax = AnyTier_timeToLowIndex (tier->asAnyTier(), our d_endWindow);
-		long n = tier -> points.size();
+		long n = tier -> points.size;
 		if (n == 0) {
 		} else if (imax < imin) {
 			double yleft = RealTier_getValueAtTime (tier, our d_startWindow);
@@ -246,7 +246,7 @@ void structFormantGridEditor :: v_draw () {
 	Graphics_setColour (our d_graphics.get(), Graphics_BLUE);
 	long ifirstSelected = AnyTier_timeToHighIndex (selectedTier->asAnyTier(), our d_startSelection);
 	long ilastSelected = AnyTier_timeToLowIndex (selectedTier->asAnyTier(), our d_endSelection);
-	long n = selectedTier -> points.size();
+	long n = selectedTier -> points.size;
 	long imin = AnyTier_timeToHighIndex (selectedTier->asAnyTier(), our d_startWindow);
 	long imax = AnyTier_timeToLowIndex (selectedTier->asAnyTier(), our d_endWindow);
 	Graphics_setLineWidth (our d_graphics.get(), 2.0);
@@ -390,7 +390,7 @@ bool structFormantGridEditor :: v_click (double xWC, double yWC, bool shiftKeyPr
 		return 1;   // past left neighbour
 	newTime = tier -> points.at [ilastSelected] -> number + dt;
 	if (newTime > our tmax) return 1;   // outside domain
-	if (ilastSelected < tier -> points.size() && newTime >= tier -> points.at [ilastSelected + 1] -> number)
+	if (ilastSelected < tier -> points.size && newTime >= tier -> points.at [ilastSelected + 1] -> number)
 		return FunctionEditor_UPDATE_NEEDED;   // past right neighbour
 
 	/*

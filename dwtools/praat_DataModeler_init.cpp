@@ -897,7 +897,7 @@ FORM (FormantModeler_reportChiSquared, U"FormantModeler: Report chi squared", nu
 DO
 	LOOP {
 		iam (FormantModeler);
-		long numberOfFormants = my trackmodelers. size();
+		long numberOfFormants = my trackmodelers.size;
 		int useSigmaY = GET_INTEGER (U"Weigh data") - 1;
 		double chisq = 0, ndf = 0, probability;
 		MelderInfo_open ();

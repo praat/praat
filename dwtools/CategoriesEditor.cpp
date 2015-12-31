@@ -64,7 +64,7 @@ static void Ordered_moveItems (Ordered me, long position [], long npos, long new
 		}
 	}
 
-	Melder_assert (min >= 1 && max <= my size() && (newpos <= min || newpos >= max));
+	Melder_assert (min >= 1 && max <= my size && (newpos <= min || newpos >= max));
 
 	autoNUMvector<Daata> tmp (1, npos);
 
@@ -104,7 +104,7 @@ static void Ordered_moveItems (Ordered me, long position [], long npos, long new
 }
 
 static void OrderedOfString_replaceItemPos (Collection me, autoSimpleString data, long pos) {
-	if (pos < 1 || pos > my size()) {
+	if (pos < 1 || pos > my size) {
 		return;
 	}
 	my replaceItem_move (data.move(), pos);
@@ -112,11 +112,11 @@ static void OrderedOfString_replaceItemPos (Collection me, autoSimpleString data
 
 /* Remove the item at position 'from' and insert it at position 'to'. */
 static void Ordered_moveItem (Ordered me, long from, long to) {
-	if (from < 1 || from > my size()) {
-		from = my size();
+	if (from < 1 || from > my size) {
+		from = my size;
 	}
-	if (to < 1 || to > my size()) {
-		to = my size();
+	if (to < 1 || to > my size) {
+		to = my size;
 	}
 	if (from == to) {
 		return;
@@ -175,7 +175,7 @@ static void updateUndoAndRedoMenuItems (CategoriesEditor me)
 
 static void updateWidgets (CategoriesEditor me) {   // all buttons except undo & redo
 	Categories data = (Categories) my data;
-	long size = data -> size();
+	long size = data->size;
 	bool insert = false, insertAtEnd = true, replace = false, remove = false;
 	bool moveUp = false, moveDown = false;
 	long posCount;
@@ -212,7 +212,7 @@ static void updateWidgets (CategoriesEditor me) {   // all buttons except undo &
 
 static void update (CategoriesEditor me, long from, long to, const long *select, long nSelect) {
 	Categories data = (Categories) my data;
-	long size = data -> size();
+	long size = data->size;
 
 	if (size == 0) {
 		autoSimpleString str = SimpleString_create (CategoriesEditor_EMPTYLABEL);
@@ -601,8 +601,8 @@ static void gui_button_cb_insert (CategoriesEditor me, GuiButtonEvent /* event *
 
 static void gui_button_cb_insertAtEnd (CategoriesEditor me, GuiButtonEvent /* event */) {
 	Categories categories = (Categories) my data;
-	insert (me, categories -> size() + 1);
-	my position = categories -> size();
+	insert (me, categories->size + 1);
+	my position = categories->size;
 }
 
 static void gui_button_cb_replace (CategoriesEditor me, GuiButtonEvent /* event */) {

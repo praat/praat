@@ -347,7 +347,7 @@ void praat_cleanUpName (char32 *name) {
 /***** objects + commands *****/
 
 static void praat_new_unpackCollection (autoCollection me, const char32* myName) {
-	for (long idata = 1; idata <= my size(); idata ++) {
+	for (long idata = 1; idata <= my size; idata ++) {
 		autoDaata object = autoDaata ((Daata) my at [idata]);
 		my at [idata] = nullptr;   // disown; once the elements are autoThings, the move will handle this
 		const char32 *name = object -> name ? object -> name : myName;
@@ -724,7 +724,7 @@ int praat_installEditorN (Editor editor, OrderedOf<structDaata>* objects) {
 	 * First check whether all objects in the Ordered are also in the List of Objects (Praat crashes if not),
 	 * and check whether there is room to add an editor for each.
 	 */
-	for (long iOrderedObject = 1; iOrderedObject <= objects->size(); iOrderedObject ++) {
+	for (long iOrderedObject = 1; iOrderedObject <= objects->size; iOrderedObject ++) {
 		Daata object = objects->at [iOrderedObject];
 		long iPraatObject = 1;
 		for (; iPraatObject <= theCurrentPraatObjects -> n; iPraatObject ++) {
@@ -747,7 +747,7 @@ int praat_installEditorN (Editor editor, OrderedOf<structDaata>* objects) {
 	/*
 	 * There appears to be room for all elements of the Ordered. The editor window can appear. Install the editor in all objects.
 	 */
-	for (long iOrderedObject = 1; iOrderedObject <= objects->size(); iOrderedObject ++) {
+	for (long iOrderedObject = 1; iOrderedObject <= objects->size; iOrderedObject ++) {
 		Daata object = objects->at [iOrderedObject];
 		long iPraatObject = 1;
 		for (; iPraatObject <= theCurrentPraatObjects -> n; iPraatObject ++) {

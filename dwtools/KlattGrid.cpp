@@ -118,7 +118,7 @@ static void rel_to_abs (double *w, double *ws, long n, double d) {
 }
 
 static bool RealTier_valuesInRange (RealTier me, double min, double max) {
-	for (long i = 1; i <= my points.size(); i ++) {
+	for (long i = 1; i <= my points.size; i ++) {
 		RealPoint p = my points.at [i];
 		if (NUMdefined (min) && p -> value < min) {
 			return false;
@@ -166,7 +166,7 @@ static autoRealTier RealTier_updateWithDelta (RealTier me, RealTier delta, Phona
 	try {
 		long myindex = 1;
 		RealPoint mypoint = my points.at [myindex];
-		long numberOfValues = my points.size();
+		long numberOfValues = my points.size;
 		double mytime = mypoint -> number;
 		double myvalue = mypoint -> value;
 		double lasttime = my xmin - 0.001; // sometime before xmin
@@ -179,7 +179,7 @@ static autoRealTier RealTier_updateWithDelta (RealTier me, RealTier delta, Phona
 			openglottis_fadeFraction = 0.4999;
 		}
 
-		for (long ipoint = 1; ipoint <= glottis -> points.size(); ipoint++) {
+		for (long ipoint = 1; ipoint <= glottis -> points.size; ipoint++) {
 			PhonationPoint point = glottis -> points.at [ipoint];
 			double t4 = point -> number; // glottis closing
 			double openDuration = point -> te;
@@ -259,16 +259,16 @@ static bool FormantGrid_isFormantDefined (FormantGrid me, long iformant) {
 	// formant and bandwidth are always in sync
 	RealTier ftier = my formants.at [iformant];
 	RealTier btier = my bandwidths.at [iformant];
-	return ftier -> points.size() > 0 and btier -> points.size() > 0;
+	return ftier -> points.size > 0 and btier -> points.size > 0;
 }
 
 static bool FormantGrid_Intensities_isFormantDefined (FormantGrid me, OrderedOf<structIntensityTier>* thee, long iformant) {
 	bool exists = false;
-	if (iformant <= my formants.size() && iformant <= my bandwidths.size() && iformant <= thee->size()) {
+	if (iformant <= my formants.size && iformant <= my bandwidths.size && iformant <= thee->size) {
 		RealTier ftier = my formants.at [iformant];
 		RealTier btier = my bandwidths.at [iformant];
 		IntensityTier atier = thy at [iformant];
-		exists = ( ftier -> points.size() > 0 && btier -> points.size() > 0 && atier -> points.size() > 0 );
+		exists = ( ftier -> points.size > 0 && btier -> points.size > 0 && atier -> points.size > 0 );
 	}
 	return exists;
 }
@@ -480,7 +480,7 @@ static void draw_oneSection (Graphics g, double xmin, double xmax, double ymin, 
 /************************ Sound & FormantGrid *********************************************/
 
 static void _Sound_FormantGrid_filterWithOneFormant_inline (Sound me, FormantGrid thee, long iformant, int antiformant) {
-	if (iformant < 1 || iformant > thy formants.size()) {
+	if (iformant < 1 || iformant > thy formants.size) {
 		Melder_warning (U"Formant ", iformant, U" does not exist.");
 		return;
 	}
@@ -488,9 +488,9 @@ static void _Sound_FormantGrid_filterWithOneFormant_inline (Sound me, FormantGri
 	RealTier ftier = thy formants.at [iformant];
 	RealTier btier = thy bandwidths.at [iformant];
 
-	if (ftier -> points.size() == 0 && btier -> points.size() == 0) {
+	if (ftier -> points.size == 0 && btier -> points.size == 0) {
 		return;
-	} else if (ftier -> points.size() == 0 || btier -> points.size() == 0) {
+	} else if (ftier -> points.size == 0 || btier -> points.size == 0) {
 		Melder_throw (U"Empty tier");
 	}
 
@@ -523,7 +523,7 @@ void Sound_FormantGrid_filterWithOneFormant_inline (Sound me, FormantGrid thee, 
 
 void Sound_FormantGrid_Intensities_filterWithOneFormant_inline (Sound me, FormantGrid thee, OrderedOf<structIntensityTier>* amplitudes, long iformant) {
 	try {
-		if (iformant < 1 || iformant > thy formants.size()) {
+		if (iformant < 1 || iformant > thy formants.size) {
 			Melder_throw (U"Formant ", iformant, U" not defined. \nThis formant will not be used.");
 		}
 		double nyquist = 0.5 / my dx;
@@ -532,7 +532,7 @@ void Sound_FormantGrid_Intensities_filterWithOneFormant_inline (Sound me, Forman
 		RealTier btier = thy bandwidths.at [iformant];
 		IntensityTier atier = amplitudes->at [iformant];
 
-		if (ftier -> points.size() == 0 || btier -> points.size() == 0 || atier -> points.size() == 0) {
+		if (ftier -> points.size == 0 || btier -> points.size == 0 || atier -> points.size == 0) {
 			return;    // nothing to do
 		}
 
@@ -561,10 +561,10 @@ autoSound Sound_FormantGrid_Intensities_filter (Sound me, FormantGrid thee, Orde
 	try {
 		if (iformantb > iformante) {
 			iformantb = 1;
-			iformante = thy formants.size();
+			iformante = thy formants.size;
 		}
-		if (iformantb < 1 || iformantb > thy formants.size() ||
-		        iformante < 1 || iformante > thy formants.size()) {
+		if (iformantb < 1 || iformantb > thy formants.size ||
+		        iformante < 1 || iformante > thy formants.size) {
 			Melder_throw (U"No such formant number.");
 		}
 
@@ -624,7 +624,7 @@ autoPhonationTier PhonationTier_create (double tmin, double tmax) {
 
 autoPointProcess PhonationTier_to_PointProcess_closures (PhonationTier me) {
 	try {
-		long nt = my points.size();
+		long nt = my points.size;
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, nt);
 		for (long ip = 1; ip <= nt; ip ++) {
 			PhonationPoint fp = my points.at [ip];
@@ -671,17 +671,17 @@ void structPhonationGrid :: v_info () {
 	MelderInfo_writeLine (in2, U"End time:       ", xmax, U" seconds");
 	MelderInfo_writeLine (in2, U"Total duration: ", xmax - xmin, U" seconds");
 	MelderInfo_writeLine (in1, U"\nNumber of points in the PHONATION tiers:");
-	MelderInfo_writeLine (in2, U"pitch:               ", pitch -> points.size());
-	MelderInfo_writeLine (in2, U"voicingAmplitude:    ", voicingAmplitude -> points.size());
-	MelderInfo_writeLine (in2, U"openPhase:           ", openPhase -> points.size());
-	MelderInfo_writeLine (in2, U"collisionPhase:      ", collisionPhase -> points.size());
-	MelderInfo_writeLine (in2, U"power1:              ", power1 -> points.size());
-	MelderInfo_writeLine (in2, U"power2:              ", power2 -> points.size());
-	MelderInfo_writeLine (in2, U"flutter:             ", flutter -> points.size());
-	MelderInfo_writeLine (in2, U"doublePulsing:       ", doublePulsing -> points.size());
-	MelderInfo_writeLine (in2, U"spectralTilt:        ", spectralTilt -> points.size());
-	MelderInfo_writeLine (in2, U"aspirationAmplitude: ", aspirationAmplitude -> points.size());
-	MelderInfo_writeLine (in2, U"breathinessAmplitude:", breathinessAmplitude -> points.size());
+	MelderInfo_writeLine (in2, U"pitch:               ", pitch -> points.size);
+	MelderInfo_writeLine (in2, U"voicingAmplitude:    ", voicingAmplitude -> points.size);
+	MelderInfo_writeLine (in2, U"openPhase:           ", openPhase -> points.size);
+	MelderInfo_writeLine (in2, U"collisionPhase:      ", collisionPhase -> points.size);
+	MelderInfo_writeLine (in2, U"power1:              ", power1 -> points.size);
+	MelderInfo_writeLine (in2, U"power2:              ", power2 -> points.size);
+	MelderInfo_writeLine (in2, U"flutter:             ", flutter -> points.size);
+	MelderInfo_writeLine (in2, U"doublePulsing:       ", doublePulsing -> points.size);
+	MelderInfo_writeLine (in2, U"spectralTilt:        ", spectralTilt -> points.size);
+	MelderInfo_writeLine (in2, U"aspirationAmplitude: ", aspirationAmplitude -> points.size);
+	MelderInfo_writeLine (in2, U"breathinessAmplitude:", breathinessAmplitude -> points.size);
 }
 
 void PhonationGrid_setNames (PhonationGrid me) {
@@ -722,8 +722,8 @@ autoPhonationGrid PhonationGrid_create (double tmin, double tmax) {
 }
 
 static void PhonationGrid_checkFlowFunction (PhonationGrid me) {
-	int hasPower1Points = my power1 -> points.size() > 0;
-	int hasPower2Points = my power2 -> points.size() > 0;
+	int hasPower1Points = my power1 -> points.size > 0;
+	int hasPower2Points = my power2 -> points.size > 0;
 
 	long ipoint = 1;
 	do {
@@ -742,7 +742,7 @@ static void PhonationGrid_checkFlowFunction (PhonationGrid me) {
 		if (power2 <= power1) {
 			Melder_throw (U"At all times a power1 value must be smaller than the corresponding power2 value.");
 		}
-	} while (++ipoint < my power1 -> points.size());
+	} while (++ipoint < my power1 -> points.size);
 
 	// Now check power2 values. This is necessary to catch situations where power2 has a valley:
 	// power1(0) = 3; power2(1)= 4; power2(1)= 4; power2(0.5) = 3;
@@ -761,7 +761,7 @@ static void PhonationGrid_checkFlowFunction (PhonationGrid me) {
 		if (power2 <= power1) {
 			Melder_throw (U"At all times the power2 value must be greater than the corresponding power1 value.");
 		}
-	} while (++ipoint < my power2 -> points.size());
+	} while (++ipoint < my power2 -> points.size);
 }
 
 static void PhonationGrid_draw_inside (PhonationGrid me, Graphics g, double xmin, double xmax, double ymin, double ymax, double dy, double *yout) {
@@ -833,7 +833,7 @@ static autoPointProcess PitchTier_to_PointProcess_flutter (PitchTier pitch, Real
 		for (long it = 2; it <= thy nt; it ++) {
 			double t = thy t [it - 1];
 			double period = thy t [it] - thy t [it - 1];
-			if (period < maximumPeriod && flutter -> points.size() > 0) {
+			if (period < maximumPeriod && flutter -> points.size > 0) {
 				double fltr = RealTier_getValueAtTime (flutter, t);
 				if (NUMdefined (fltr)) {
 					// newF0 = f0 * (1 + (val / 50) * (sin ... + ...));
@@ -856,7 +856,7 @@ autoSound PhonationGrid_to_Sound_aspiration (PhonationGrid me, double samplingFr
 		// Noise spectrum is tilted down by soft low-pass filter having a pole near
 		// the origin in the z-plane, i.e. y[n] = x[n] + (0.75 * y[n-1])
 		double lastval = 0.0;
-		if (my aspirationAmplitude -> points.size() > 0) {
+		if (my aspirationAmplitude -> points.size > 0) {
 			for (long i = 1; i <= thy nx; i ++) {
 				double t = thy x1 + (i - 1) * thy dx;
 				double val = NUMrandomUniform (-1.0, 1.0);
@@ -875,7 +875,7 @@ autoSound PhonationGrid_to_Sound_aspiration (PhonationGrid me, double samplingFr
 }
 
 static void Sound_PhonationGrid_spectralTilt_inline (Sound thee, PhonationGrid me) {
-	if (my spectralTilt -> points.size() > 0) {
+	if (my spectralTilt -> points.size > 0) {
 		/* Spectral tilt
 			Filter y[n] = a * x[n] + b * y[n-1] => H(z) = a / (1 - bz^(-1)).
 			We need attenuation, i.e. low-pass. Therefore 0 <= b <= 1.
@@ -960,7 +960,7 @@ autoPhonationTier PhonationGrid_to_PhonationTier (PhonationGrid me) {
 		PhonationGridPlayOptions pp = my options.get();
 
 		PhonationGrid_checkFlowFunction (me);
-		if (my pitch -> points.size() == 0) {
+		if (my pitch -> points.size == 0) {
 			Melder_throw (U"Pitch tier is empty.");
 		}
 
@@ -1039,7 +1039,7 @@ autoPhonationTier PhonationGrid_to_PhonationTier (PhonationGrid me) {
 						nextPeriod = period;
 					}
 					double openPhase2 = KlattGrid_OPENPHASE_DEFAULT;
-					if (my openPhase -> points.size() > 0) {
+					if (my openPhase -> points.size > 0) {
 						openPhase2 = RealTier_getValueAtTime (my openPhase.get(), t);
 					}
 					double maxDelay = period * (1.0 - openPhase2);
@@ -1065,13 +1065,13 @@ static autoSound PhonationGrid_PhonationTier_to_Sound_voiced (PhonationGrid me, 
 		PhonationGridPlayOptions p = my options.get();
 		double lastVal = NUMundefined;
 
-		if (my voicingAmplitude -> points.size() == 0) {
+		if (my voicingAmplitude -> points.size == 0) {
 			Melder_throw (U"Voicing amplitude tier is empty.");
 		}
 
 		autoSound him = Sound_createEmptyMono (my xmin, my xmax, samplingFrequency);
 		autoSound breathy;
-		if (p -> breathiness && my breathinessAmplitude -> points.size() > 0) {
+		if (p -> breathiness && my breathinessAmplitude -> points.size > 0) {
 			breathy = Sound_createEmptyMono (my xmin, my xmax, samplingFrequency);
 		}
 		/*
@@ -1083,7 +1083,7 @@ static autoSound PhonationGrid_PhonationTier_to_Sound_voiced (PhonationGrid me, 
 				Generate the period.
 		*/
 		double *sound = his z[1];
-		for (long it = 1; it <= thy points.size(); it ++) {
+		for (long it = 1; it <= thy points.size; it ++) {
 			PhonationPoint point = thy points.at [it];
 			double t = point -> number;		// the glottis "closing" point
 			double te = point -> te;
@@ -1200,7 +1200,7 @@ static autoSound PhonationGrid_to_Sound (PhonationGrid me, CouplingGrid him, dou
 		PhonationGridPlayOptions pp = my options.get();
 		autoSound thee;
 		if (pp -> voicing) {
-			if (him && his glottis -> points.size() > 0) {
+			if (him && his glottis -> points.size > 0) {
 				thee = PhonationGrid_PhonationTier_to_Sound_voiced (me, his glottis.get(), samplingFrequency);
 			} else {
 				thee = PhonationGrid_to_Sound_voiced (me, samplingFrequency);
@@ -1243,11 +1243,11 @@ Thing_implement (VocalTractGridPlayOptions, Daata, 0);
 
 static void VocalTractGridPlayOptions_setDefaults (VocalTractGridPlayOptions me, VocalTractGrid thee) {
 	my filterModel = KlattGrid_FILTER_CASCADE;
-	my endOralFormant = MIN (thy oral_formants -> formants.size(), thy oral_formants -> bandwidths.size());
+	my endOralFormant = MIN (thy oral_formants -> formants.size, thy oral_formants -> bandwidths.size);
 	my startOralFormant = 1;
-	my endNasalFormant = MIN (thy nasal_formants -> formants.size(), thy nasal_formants -> bandwidths.size());
+	my endNasalFormant = MIN (thy nasal_formants -> formants.size, thy nasal_formants -> bandwidths.size);
 	my startNasalFormant = 1;
-	my endNasalAntiFormant = MIN (thy nasal_antiformants -> formants.size(), thy nasal_antiformants -> bandwidths.size());
+	my endNasalAntiFormant = MIN (thy nasal_antiformants -> formants.size, thy nasal_antiformants -> bandwidths.size);
 	my startNasalAntiFormant = 1;
 }
 
@@ -1263,37 +1263,37 @@ autoVocalTractGridPlayOptions VocalTractGridPlayOptions_create () {
 /********************** VocalTractGrid ***************************************/
 
 static long FormantGrid_getNumberOfFormantPoints (FormantGrid me, long iformant) {
-	if (iformant < 1 || iformant > my formants.size()) {
+	if (iformant < 1 || iformant > my formants.size) {
 		return -1;
 	}
 	RealTier f = my formants.at [iformant];
-	return f -> points.size();
+	return f -> points.size;
 }
 
 static long FormantGrid_getNumberOfBandwidthPoints (FormantGrid me, long iformant) {
-	if (iformant < 1 || iformant > my bandwidths.size()) {
+	if (iformant < 1 || iformant > my bandwidths.size) {
 		return -1;
 	}
 	RealTier b = my bandwidths.at [iformant];
-	return b -> points.size();
+	return b -> points.size;
 }
 
 static long Ordered_getNumberOfAmplitudePoints (OrderedOf<structIntensityTier>* me, long iformant) {
-	if (! me || iformant < 1 || iformant > me->size()) {
+	if (! me || iformant < 1 || iformant > me->size) {
 		return -1;
 	}
 	RealTier t = my at [iformant];
-	return t -> points.size();
+	return t -> points.size;
 }
 
 static void FormantGrid_info (FormantGrid me, OrderedOf<structIntensityTier>* amplitudes, const char32 *in1, const char32 *in2) {
-	long nformants = my formants.size();
-	long namplitudes = ( amplitudes ? amplitudes->size() : 0 );
+	long nformants = my formants.size;
+	long namplitudes = ( amplitudes ? amplitudes->size : 0 );
 	long nmax = MAX (nformants, namplitudes);
 
 	for (long iformant = 1; iformant <= nmax; iformant++) {
 		MelderInfo_writeLine (in1, U"Formant ", iformant, U":");
-		if (iformant <= my formants.size()) {
+		if (iformant <= my formants.size) {
 			long nfp = FormantGrid_getNumberOfFormantPoints (me, iformant);
 			long nbp = FormantGrid_getNumberOfBandwidthPoints (me, iformant);
 			MelderInfo_writeLine (in2, U"formants:   ", (nfp >= 0 ? Melder_integer (nfp) : U"--undefined--"));
@@ -1350,11 +1350,11 @@ autoVocalTractGrid VocalTractGrid_create (double tmin, double tmax, long numberO
 }
 
 static void VocalTractGrid_CouplingGrid_drawCascade_inline (VocalTractGrid me, CouplingGrid thee, Graphics g, double xmin, double xmax, double ymin, double ymax, double *yin, double *yout) {
-	long numberOfOralFormants = my oral_formants -> formants.size();
-	long numberOfNasalFormants = my nasal_formants -> formants.size();
-	long numberOfNasalAntiFormants = my nasal_antiformants -> formants.size();
-	long numberOfTrachealFormants = thee ? thy tracheal_formants -> formants.size() : 0;
-	long numberOfTrachealAntiFormants = thee ? thy tracheal_antiformants -> formants.size() : 0;
+	long numberOfOralFormants = my oral_formants -> formants.size;
+	long numberOfNasalFormants = my nasal_formants -> formants.size;
+	long numberOfNasalAntiFormants = my nasal_antiformants -> formants.size;
+	long numberOfTrachealFormants = thee ? thy tracheal_formants -> formants.size : 0;
+	long numberOfTrachealAntiFormants = thee ? thy tracheal_antiformants -> formants.size : 0;
 	double x1, y1 = ymin, x2, y2 = ymax, dx, ddx = 0.2, ymid = (y1 + y2) / 2.0;
 	const char32 *text [6] = { 0, U"TF", U"TAF", U"NF", U"NAF", U""};
 	long nf[6] = { 0, numberOfTrachealFormants, numberOfTrachealAntiFormants, numberOfNasalFormants, numberOfNasalAntiFormants, numberOfOralFormants };
@@ -1418,9 +1418,9 @@ static void VocalTractGrid_CouplingGrid_drawParallel_inline (VocalTractGrid me, 
 	// (5: split to filter) (6: filters) (7: conn to summer) (8: summer)
 	double xw [9] = { 0.0, 0.3, 0.2, 1.5, 0.5, 0.5, 1.0, 0.5, 0.5 }, xws [9];
 	long numberOfXSections = 8, ic = 0, numberOfYSections = 4;
-	long numberOfNasalFormants = my nasal_formants -> formants.size();
-	long numberOfOralFormants = my oral_formants -> formants.size();
-	long numberOfTrachealFormants = thee ? thy tracheal_formants -> formants.size() : 0;
+	long numberOfNasalFormants = my nasal_formants -> formants.size;
+	long numberOfOralFormants = my oral_formants -> formants.size;
+	long numberOfTrachealFormants = thee ? thy tracheal_formants -> formants.size : 0;
 	long numberOfFormants = numberOfNasalFormants + numberOfOralFormants + numberOfTrachealFormants;
 	long numberOfUpperPartFormants = numberOfNasalFormants + ( numberOfOralFormants > 0 ? 1 : 0 );
 	long numberOfLowerPartFormants = numberOfFormants - numberOfUpperPartFormants;
@@ -1548,7 +1548,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, Voc
 	try {
 		VocalTractGridPlayOptions pv = thy options.get();
 		CouplingGridPlayOptions pc = coupling -> options.get();
-		bool useOpenGlottisInfo = pc -> openglottis && coupling && coupling -> glottis && coupling -> glottis -> points.size() > 0;
+		bool useOpenGlottisInfo = pc -> openglottis && coupling && coupling -> glottis && coupling -> glottis -> points.size > 0;
 		FormantGrid oral_formants = thy oral_formants.get();
 		FormantGrid nasal_formants = thy nasal_formants.get();
 		FormantGrid nasal_antiformants = thy nasal_antiformants.get();
@@ -1556,11 +1556,11 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, Voc
 		FormantGrid tracheal_antiformants = coupling -> tracheal_antiformants.get();
 
 		int antiformants = 0;
-		long numberOfFormants = oral_formants -> formants.size();
-		long numberOfTrachealFormants = tracheal_formants -> formants.size();
-		long numberOfTrachealAntiFormants = tracheal_antiformants -> formants.size();
-		long numberOfNasalFormants = nasal_formants -> formants.size();
-		long numberOfNasalAntiFormants = nasal_antiformants -> formants.size();
+		long numberOfFormants = oral_formants -> formants.size;
+		long numberOfTrachealFormants = tracheal_formants -> formants.size;
+		long numberOfTrachealAntiFormants = tracheal_antiformants -> formants.size;
+		long numberOfNasalFormants = nasal_formants -> formants.size;
+		long numberOfNasalAntiFormants = nasal_antiformants -> formants.size;
 		check_formants (numberOfFormants, & (pv -> startOralFormant), & (pv -> endOralFormant));
 		check_formants (numberOfNasalFormants, & (pv -> startNasalFormant), & (pv -> endNasalFormant));
 		check_formants (numberOfTrachealFormants, & (pc -> startTrachealFormant), & (pc -> endTrachealFormant));
@@ -1677,11 +1677,11 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, Vo
 		FormantGrid oral_formants = thy oral_formants.get();
 		autoFormantGrid aof;
 		int alternatingSign = 0; // 0: no alternating signs in parallel adding of filter outputs, 1/-1 start sign
-		bool useOpenGlottisInfo = pc -> openglottis && coupling -> glottis && coupling -> glottis -> points.size() > 0;
+		bool useOpenGlottisInfo = pc -> openglottis && coupling -> glottis && coupling -> glottis -> points.size > 0;
 		int scale = 1;
-		long numberOfFormants = thy oral_formants -> formants.size();
-		long numberOfNasalFormants = thy nasal_formants -> formants.size();
-		long numberOfTrachealFormants = coupling -> tracheal_formants -> formants.size();
+		long numberOfFormants = thy oral_formants -> formants.size;
+		long numberOfNasalFormants = thy nasal_formants -> formants.size;
+		long numberOfTrachealFormants = coupling -> tracheal_formants -> formants.size;
 
 		check_formants (numberOfFormants, & (pv -> startOralFormant), & (pv -> endOralFormant));
 		check_formants (numberOfNasalFormants, & (pv -> startNasalFormant), & (pv -> endNasalFormant));
@@ -1696,7 +1696,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, Vo
 		if (pv -> endOralFormant > 0) {
 			if (pv -> startOralFormant == 1) {
 				him = Data_copy (me);
-				if (oral_formants -> formants.size() > 0) {
+				if (oral_formants -> formants.size > 0) {
 					Sound_FormantGrid_Intensities_filterWithOneFormant_inline (him.peek(), oral_formants, & thy oral_formants_amplitudes, 1);
 				}
 			}
@@ -1724,7 +1724,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, Vo
 		if (pv -> endOralFormant >= 2) {
 			long startOralFormant2 = pv -> startOralFormant > 2 ? pv -> startOralFormant : 2;
 			alternatingSign = ( startOralFormant2 % 2 == 0 ? -1 : 1 );   // 2 starts with negative sign
-			if (startOralFormant2 <= oral_formants -> formants.size()) {
+			if (startOralFormant2 <= oral_formants -> formants.size) {
 				autoSound vocalTract = Sound_FormantGrid_Intensities_filter (me_diff.peek(), oral_formants, & thy oral_formants_amplitudes, startOralFormant2, pv -> endOralFormant, alternatingSign);
 
 				if (! him) {
@@ -1769,14 +1769,14 @@ Thing_implement (CouplingGridPlayOptions, Daata, 0);
 static void CouplingGridPlayOptions_setDefaults (CouplingGridPlayOptions me, CouplingGrid thee) {
 	my fadeFraction = 0.1;
 	my openglottis = 1;
-	my endTrachealFormant = MIN (thy tracheal_formants -> formants.size(), thy tracheal_formants -> bandwidths.size());
+	my endTrachealFormant = MIN (thy tracheal_formants -> formants.size, thy tracheal_formants -> bandwidths.size);
 	my startTrachealFormant = 1;
-	my endTrachealAntiFormant = MIN (thy tracheal_antiformants -> formants.size(), thy tracheal_antiformants -> bandwidths.size());
+	my endTrachealAntiFormant = MIN (thy tracheal_antiformants -> formants.size, thy tracheal_antiformants -> bandwidths.size);
 	my startTrachealAntiFormant = 1;
 	my startDeltaFormant = 1;
-	my endDeltaFormant = thy delta_formants -> formants.size();
+	my endDeltaFormant = thy delta_formants -> formants.size;
 	my startDeltaBandwidth = 1;
-	my endDeltaBandwidth = thy delta_formants -> bandwidths.size();
+	my endDeltaBandwidth = thy delta_formants -> bandwidths.size;
 }
 
 autoCouplingGridPlayOptions CouplingGridPlayOptions_create () {
@@ -1837,10 +1837,10 @@ autoCouplingGrid CouplingGrid_create (double tmin, double tmax, long numberOfTra
 void FormantGrid_CouplingGrid_updateOpenPhases (FormantGrid me, CouplingGrid thee) {
 	try {
 		CouplingGridPlayOptions pc = thy options.get();
-		for (long itier = 1; itier <= thy delta_formants -> formants.size(); itier ++) {
+		for (long itier = 1; itier <= thy delta_formants -> formants.size; itier ++) {
 			RealTier delta = thy delta_formants -> formants.at [itier];
-			if (itier <= my formants.size()) {
-				if (delta -> points.size() > 0) {
+			if (itier <= my formants.size) {
+				if (delta -> points.size > 0) {
 					autoRealTier rt = RealTier_updateWithDelta (my formants.at [itier], delta, thy glottis.get(), pc -> fadeFraction);
 					if (! RealTier_valuesInRange (rt.peek(), 0, NUMundefined)) {
 						Melder_throw (U"Formant ", itier, U" coupling gives negative values.");
@@ -1849,8 +1849,8 @@ void FormantGrid_CouplingGrid_updateOpenPhases (FormantGrid me, CouplingGrid the
 				}
 			}
 			delta = thy delta_formants -> bandwidths.at [itier];
-			if (itier <= my bandwidths.size()) {
-				if (delta -> points.size() > 0) {
+			if (itier <= my bandwidths.size) {
+				if (delta -> points.size > 0) {
 					autoRealTier rt = RealTier_updateWithDelta (my bandwidths.at [itier], delta, thy glottis.get(), pc -> fadeFraction);
 					if (! RealTier_valuesInRange (rt.peek(), 0, NUMundefined)) {
 						Melder_throw (U"Bandwidth ", itier, U" coupling gives negative values.");
@@ -1869,7 +1869,7 @@ void FormantGrid_CouplingGrid_updateOpenPhases (FormantGrid me, CouplingGrid the
 Thing_implement (FricationGridPlayOptions, Daata, 0);
 
 static void FricationGridPlayOptions_setDefaults (FricationGridPlayOptions me, FricationGrid thee) {
-	my endFricationFormant = MIN (thy frication_formants -> formants.size(), thy frication_formants -> bandwidths.size());
+	my endFricationFormant = MIN (thy frication_formants -> formants.size, thy frication_formants -> bandwidths.size);
 	my startFricationFormant = 2;
 	my bypass = 1;
 }
@@ -1893,8 +1893,8 @@ void structFricationGrid :: v_info () {
 	MelderInfo_writeLine (in2, U"End time:       ", xmax, U" seconds");
 	MelderInfo_writeLine (in2, U"Total duration: ", xmax - xmin, U" seconds");
 	MelderInfo_writeLine (in1, U"\nNumber of points in the FRICATION tiers:");
-	MelderInfo_writeLine (in2, U"fricationAmplitude:  ", fricationAmplitude -> points.size());
-	MelderInfo_writeLine (in2, U"bypass:              ", bypass -> points.size());
+	MelderInfo_writeLine (in2, U"fricationAmplitude:  ", fricationAmplitude -> points.size);
+	MelderInfo_writeLine (in2, U"bypass:              ", bypass -> points.size);
 	MelderInfo_writeLine (in1, U"\nNumber of points in the FRICATION FORMANT tiers:");
 	FormantGrid_info (our frication_formants.get(), & our frication_formants_amplitudes, in2, in3);
 }
@@ -1926,7 +1926,7 @@ autoFricationGrid FricationGrid_create (double tmin, double tmax, long numberOfF
 
 static void FricationGrid_draw_inside (FricationGrid me, Graphics g, double xmin, double xmax, double ymin, double ymax, double dy, double *yout) {
 	long numberOfXSections = 5;
-	long numberOfFormants = my frication_formants -> formants.size();
+	long numberOfFormants = my frication_formants -> formants.size;
 	long numberOfParts = numberOfFormants + ( numberOfFormants > 1 ? 0 : 1 ) ;   // 2..number + bypass
 	// dum noise, connections, filter, connections, adder
 	double xw[6] = { 0.0, 2, 0.6, 1.5, 0.6, 0.5 }, xws[6];
@@ -2016,7 +2016,7 @@ autoSound FricationGrid_to_Sound (FricationGrid me, double samplingFrequency) {
 			double t = thy x1 + (i - 1) * thy dx;
 			double val = NUMrandomUniform (-1.0, 1.0);
 			double a = 0.0;
-			if (my fricationAmplitude -> points.size() > 0) {
+			if (my fricationAmplitude -> points.size > 0) {
 				double dba = RealTier_getValueAtTime (my fricationAmplitude.get(), t);
 				a = ( NUMdefined (dba) ? DBSPL_to_A (dba) : 0.0 );
 			}
@@ -2037,7 +2037,7 @@ autoSound Sound_FricationGrid_filter (Sound me, FricationGrid thee) {
 	try {
 		FricationGridPlayOptions pf = thy options.get();
 		autoSound him;
-		long numberOfFricationFormants = thy frication_formants -> formants.size();
+		long numberOfFricationFormants = thy frication_formants -> formants.size;
 
 		check_formants (numberOfFricationFormants, & (pf -> startFricationFormant), & (pf -> endFricationFormant));
 
@@ -2055,7 +2055,7 @@ autoSound Sound_FricationGrid_filter (Sound me, FricationGrid thee) {
 			for (long is = 1; is <= his nx; is ++) {	// Bypass
 				double t = his x1 + (is - 1) * his dx;
 				double ab = 0;
-				if (thy bypass -> points.size() > 0) {
+				if (thy bypass -> points.size > 0) {
 					double val = RealTier_getValueAtTime (thy bypass.get(), t);
 					ab = val == NUMundefined ? 0 : DB_to_A (val);
 				}
@@ -2159,10 +2159,10 @@ autoKlattGrid KlattGrid_createExample () {
 // y is the height in units of the height of one section,
 // y1 is the height from the top to the split between the uppper, non-diffed, and lower diffed part
 static void _KlattGrid_queryParallelSplit (KlattGrid me, double dy, double *y, double *y1) {
-	long ny = my vocalTract -> nasal_formants -> formants.size() +
-		my vocalTract -> oral_formants -> formants.size() + my coupling -> tracheal_formants -> formants.size();
-	long n1 = my vocalTract -> nasal_formants -> formants.size() +
-		( my vocalTract -> oral_formants -> formants.size() > 0 ? 1 : 0 );
+	long ny = my vocalTract -> nasal_formants -> formants.size +
+		my vocalTract -> oral_formants -> formants.size + my coupling -> tracheal_formants -> formants.size;
+	long n1 = my vocalTract -> nasal_formants -> formants.size +
+		( my vocalTract -> oral_formants -> formants.size > 0 ? 1 : 0 );
 
 	long n2 = ny - n1;
 	if (ny == 0) {
@@ -2259,7 +2259,7 @@ void KlattGrid_draw (KlattGrid me, Graphics g, int filterModel) {
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	Graphics_setLineWidth (g, 2);
 
-	long nff = my frication -> frication_formants -> formants.size() - 1 + 1;
+	long nff = my frication -> frication_formants -> formants.size - 1 + 1;
 	double yh_frication = ( nff > 0 ? nff + (nff - 1) * dy_frication : 1.0 );
 	double yh_phonation = 1.0 + dy_phonation + 1.0;
 	double yout_phonation, yout_frication;
@@ -2456,10 +2456,10 @@ void KlattGrid_formula_bandwidths (KlattGrid me, int formantType, const char32 *
 void KlattGrid_formula_amplitudes (KlattGrid me, int formantType, const char32 *expression, Interpreter interpreter) {
 	try {
 		OrderedOf<structIntensityTier>* ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
-		for (long irow = 1; irow <= ordered->size(); irow ++) {
+		for (long irow = 1; irow <= ordered->size; irow ++) {
 			IntensityTier amplitudes = ordered->at [irow];
 			Formula_compile (interpreter, amplitudes, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
-			for (long icol = 1; icol <= amplitudes -> points.size(); icol ++) {
+			for (long icol = 1; icol <= amplitudes -> points.size; icol ++) {
 				struct Formula_Result result;
 				Formula_run (irow, icol, & result);
 				if (result. result.numericResult == NUMundefined) {
@@ -2475,7 +2475,7 @@ void KlattGrid_formula_amplitudes (KlattGrid me, int formantType, const char32 *
 
 double KlattGrid_getAmplitudeAtTime (KlattGrid me, int formantType, long iformant, double t) {
 	OrderedOf<structIntensityTier>* ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
-	if (iformant < 0 || iformant > ordered->size()) {
+	if (iformant < 0 || iformant > ordered->size) {
 		return NUMundefined;
 	}
 	return RealTier_getValueAtTime (ordered->at [iformant], t);
@@ -2483,7 +2483,7 @@ double KlattGrid_getAmplitudeAtTime (KlattGrid me, int formantType, long iforman
 
 void KlattGrid_addAmplitudePoint (KlattGrid me, int formantType, long iformant, double t, double value) {
 	OrderedOf<structIntensityTier>* ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
-	if (iformant < 0 || iformant > ordered->size()) {
+	if (iformant < 0 || iformant > ordered->size) {
 		Melder_throw (U"Formant amplitude tier ", iformant, U"does not exist.");
 	}
 	RealTier_addPoint (ordered->at [iformant], t, value);
@@ -2491,7 +2491,7 @@ void KlattGrid_addAmplitudePoint (KlattGrid me, int formantType, long iformant, 
 
 void KlattGrid_removeAmplitudePoints (KlattGrid me, int formantType, long iformant, double t1, double t2) {
 	OrderedOf<structIntensityTier>* ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
-	if (iformant < 0 || iformant > ordered->size()) {
+	if (iformant < 0 || iformant > ordered->size) {
 		return;
 	}
 	AnyTier_removePointsBetween (ordered->at [iformant]->asAnyTier(), t1, t2);
@@ -2500,7 +2500,7 @@ void KlattGrid_removeAmplitudePoints (KlattGrid me, int formantType, long iforma
 autoIntensityTier KlattGrid_extractAmplitudeTier (KlattGrid me, int formantType, long iformant) {
 	try {
 		OrderedOf<structIntensityTier>* ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
-		if (iformant < 0 || iformant > ordered->size()) {
+		if (iformant < 0 || iformant > ordered->size) {
 			Melder_throw (U"Formant amplitude tier ", iformant, U" does not exist.");
 		}
 		autoIntensityTier thee = Data_copy (ordered->at [iformant]);
@@ -2516,7 +2516,7 @@ void KlattGrid_replaceAmplitudeTier (KlattGrid me, int formantType, long iforman
 			Melder_throw (U"Domains must be equal");
 		}
 		OrderedOf<structIntensityTier>* ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
-		if (iformant < 0 || iformant > ordered->size()) {
+		if (iformant < 0 || iformant > ordered->size) {
 			Melder_throw (U"Formant amplitude tier ", iformant, U" does not exist.");
 		}
 		autoIntensityTier any = Data_copy (thee);
@@ -2554,7 +2554,7 @@ void KlattGrid_addFormantAmplitudeTier (KlattGrid me, int formantType, long posi
 			Melder_throw (U"Cannot add amplitude tier to this formant type.");
 		}
 		OrderedOf<structIntensityTier>* ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
-		long noa = ordered->size();
+		long noa = ordered->size;
 		if (position > noa || position < 1) {
 			position = noa + 1;
 		}
@@ -2571,7 +2571,7 @@ void KlattGrid_removeFormantAmplitudeTier (KlattGrid me, int formantType, long p
 			Melder_throw (U"Cannot remove amplitude tier from this formant type.");
 		}
 		OrderedOf<structIntensityTier>* ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
-		if (position > 0 && position <= ordered->size()) {
+		if (position > 0 && position <= ordered->size) {
 			ordered-> removeItem (position);
 		}
 	} catch (MelderError) {
@@ -2588,7 +2588,7 @@ void KlattGrid_addFormant (KlattGrid me, int formantType, long position) {
 			Melder_throw (U"Formant type ", formantType, U" does not exist.");
 		}
 
-		long nof = (*fg) -> formants.size();
+		long nof = (*fg) -> formants.size;
 		if (position > nof || position < 1) {
 			position = nof + 1;
 		}
@@ -2600,7 +2600,7 @@ void KlattGrid_addFormant (KlattGrid me, int formantType, long position) {
 		}
 
 		OrderedOf<structIntensityTier>* ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
-		long noa = ordered->size();
+		long noa = ordered->size;
 		if (nof != noa) {
 			Melder_throw (U"The number of formants (",  nof, U") and the number of amplitudes (", noa, U") must be equal.");
 		}
@@ -2618,7 +2618,7 @@ void KlattGrid_addFormant (KlattGrid me, int formantType, long position) {
 
 void KlattGrid_removeFormant (KlattGrid me, int formantType, long position) {
 	autoFormantGrid* fg = KlattGrid_getAddressOfFormantGrid (me, formantType);
-	long nof = (*fg) -> formants.size();
+	long nof = (*fg) -> formants.size;
 	if (formantType == KlattGrid_NASAL_ANTIFORMANTS || formantType == KlattGrid_TRACHEAL_ANTIFORMANTS ||
         formantType == KlattGrid_DELTA_FORMANTS) {
 		if (position < 1 || position > nof) {
@@ -2629,7 +2629,7 @@ void KlattGrid_removeFormant (KlattGrid me, int formantType, long position) {
 		// oral & nasal & tracheal formants can have amplitudes
 		// only remove a formant and its amplitude tier if number of formants and amplitudes are the same
 		OrderedOf<structIntensityTier>* ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
-		long noa = ordered->size();
+		long noa = ordered->size;
 		if (position < 1 || position > nof || position > noa) {
 			if (nof != noa) {
 				Melder_warning (U"The number of formant tiers (", nof, U") and the number of amplitude tiers (",
@@ -2696,7 +2696,7 @@ void KlattGrid_replaceDeltaFormantGrid (KlattGrid me, FormantGrid thee) {
 
 autoFormantGrid KlattGrid_to_oralFormantGrid_openPhases (KlattGrid me, double fadeFraction) {
 	try {
-		if (my vocalTract -> oral_formants -> formants.size() == 0 && my vocalTract -> oral_formants -> bandwidths.size() == 0) {
+		if (my vocalTract -> oral_formants -> formants.size == 0 && my vocalTract -> oral_formants -> bandwidths.size == 0) {
 			Melder_throw (U"Formant grid is empty.");
 		}
 		if (fadeFraction < 0.0) {
@@ -2883,7 +2883,7 @@ autoKlattGrid KlattTable_to_KlattGrid (KlattTable me, double frameDuration) {
 	try {
 		Table kt = (Table) me;
 
-		long nrows = my rows.size();
+		long nrows = my rows.size;
 		double tmin = 0, tmax = nrows * frameDuration;
 		double dBNul = -300;
 		double dB_offset = -20.0 * log10 (2.0e-5) - 87.0; // in KlattTable maximum in DB_to_LIN is at 87 dB : 32767

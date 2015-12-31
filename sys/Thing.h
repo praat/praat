@@ -303,7 +303,6 @@ public:
 	T* operator-> () const {   // as r-value
 		return our ptr;
 	}
-	//Y* operator[] (long pos) { return (*ptr) -> items [pos]; }
 	/*
 	T& operator* () const {   // as l-value
 		return *our ptr;

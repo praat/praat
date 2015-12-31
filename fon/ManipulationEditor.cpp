@@ -668,7 +668,7 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 	Manipulation ana = (Manipulation) my data;
 	PointProcess pulses = ana -> pulses.get();
 	PitchTier pitch = ana -> pitch.get();
-	long ifirstSelected, ilastSelected, n = pitch ? pitch -> points.size() : 0, imin, imax, i;
+	long ifirstSelected, ilastSelected, n = pitch ? pitch -> points.size : 0, imin, imax, i;
 	int cursorVisible = my d_startSelection == my d_endSelection && my d_startSelection >= my d_startWindow && my d_startSelection <= my d_endWindow;
 	double minimumFrequency = YLIN (50);
 	int rangePrecisions [] = { 0, 1, 2 };
@@ -777,7 +777,7 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 static void drawDurationArea (ManipulationEditor me, double ymin, double ymax) {
 	Manipulation ana = (Manipulation) my data;
 	DurationTier duration = ana -> duration.get();
-	long ifirstSelected, ilastSelected, n = duration ? duration -> points.size() : 0, imin, imax, i;
+	long ifirstSelected, ilastSelected, n = duration ? duration -> points.size : 0, imin, imax, i;
 	int cursorVisible = my d_startSelection == my d_endSelection && my d_startSelection >= my d_startWindow && my d_startSelection <= my d_endWindow;
 
 	/*
@@ -1004,7 +1004,7 @@ static bool clickPitch (ManipulationEditor me, double xWC, double yWC, bool shif
 			return 1;   /* Past left neighbour. */
 		newTime = pitch -> points.at [ilastSelected] -> number + dt;
 		if (newTime > my tmax) return 1;   // outside domain
-		if (ilastSelected < pitch -> points.size() && newTime >= pitch -> points.at [ilastSelected + 1] -> number)
+		if (ilastSelected < pitch -> points.size && newTime >= pitch -> points.at [ilastSelected + 1] -> number)
 			return FunctionEditor_UPDATE_NEEDED;   // past right neighbour
 	}
 
@@ -1148,7 +1148,7 @@ static bool clickDuration (ManipulationEditor me, double xWC, double yWC, int sh
 			return 1;   /* Past left neighbour. */
 		newTime = duration -> points.at [ilastSelected] -> number + dt;
 		if (newTime > my tmax) return 1;   // outside domain
-		if (ilastSelected < duration -> points.size() && newTime >= duration -> points.at [ilastSelected + 1] -> number)
+		if (ilastSelected < duration -> points.size && newTime >= duration -> points.at [ilastSelected + 1] -> number)
 			return 1;   // past right neighbour
 	}
 

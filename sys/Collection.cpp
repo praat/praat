@@ -28,12 +28,12 @@ void _CollectionOfDaata_v_copy (_CollectionOfDaata* me, _CollectionOfDaata* thee
 	thy _ownershipInitialized = my _ownershipInitialized;
 	thy _ownItems = my _ownItems;
 	thy _capacity = my _capacity;
-	thy _size = my _size;
+	thy size = my size;
 	if (my _capacity > 0) {
 		thy at._elements = Melder_calloc (Daata, my _capacity);   // filled with null pointers
 		thy at._elements --;   // immediately turn from base-0 into base-1  // BUG use NUMvector
 	}
-	for (long i = 1; i <= my _size; i ++) {
+	for (long i = 1; i <= my size; i ++) {
 		Daata itempie = my at [i];
 		if (my _ownItems) {
 			if (! Thing_isa (itempie, classDaata))
@@ -47,8 +47,8 @@ void _CollectionOfDaata_v_copy (_CollectionOfDaata* me, _CollectionOfDaata* thee
 
 bool _CollectionOfDaata_v_equal (_CollectionOfDaata* me, _CollectionOfDaata* thee) {
 	if (! my structDaata :: v_equal (thee)) return false;
-	if (my _size != thy _size) return false;
-	for (long i = 1; i <= my _size; i ++) {
+	if (my size != thy size) return false;
+	for (long i = 1; i <= my size; i ++) {
 		if (! Thing_isa (my at [i], classDaata))
 			Melder_throw (U"Collection::equal: "
 				U"cannot compare items of class ", Thing_className (my at [i]), U".");
@@ -65,7 +65,7 @@ bool _CollectionOfDaata_v_equal (_CollectionOfDaata* me, _CollectionOfDaata* the
 }
 
 bool _CollectionOfDaata_v_canWriteAsEncoding (_CollectionOfDaata* me, int encoding) {
-	for (long i = 1; i <= my _size; i ++) {
+	for (long i = 1; i <= my size; i ++) {
 		Daata data = my at [i];
 		if (data -> name && ! Melder_isEncodable (data -> name, encoding)) return false;
 		if (! Data_canWriteAsEncoding (data, encoding)) return false;
@@ -74,9 +74,9 @@ bool _CollectionOfDaata_v_canWriteAsEncoding (_CollectionOfDaata* me, int encodi
 }
 
 void _CollectionOfDaata_v_writeText (_CollectionOfDaata* me, MelderFile file) {
-	texputi4 (file, my _size, U"size", 0,0,0,0,0);
-	texputintro (file, U"item []: ", my _size ? nullptr : U"(empty)", 0,0,0,0);
-	for (long i = 1; i <= my _size; i ++) {
+	texputi4 (file, my size, U"size", 0,0,0,0,0);
+	texputintro (file, U"item []: ", my size ? nullptr : U"(empty)", 0,0,0,0);
+	for (long i = 1; i <= my size; i ++) {
 		Daata thing = my at [i];
 		ClassInfo classInfo = thing -> classInfo;
 		texputintro (file, U"item [", Melder_integer (i), U"]:", 0,0,0);
@@ -119,7 +119,7 @@ void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text,
 			if (stringsRead == 3 && ! strequ (nameTag, "name"))
 				Melder_throw (U"Collection::readText: wrong header at object ", i, U".");
 			my at [i] = (Daata) Thing_newFromClassName (Melder_peek8to32 (klas), nullptr).releaseToAmbiguousOwner();
-			my _size ++;
+			my size ++;
 			if (! Thing_isa (my at [i], classDaata) || ! Data_canReadText (my at [i]))
 				Melder_throw (U"Cannot read item of class ", Thing_className (my at [i]), U" in collection.");
 			Data_readText (my at [i], text, -1);
@@ -138,7 +138,7 @@ void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text,
 			autostring32 className = texgetw2 (text);
 			int elementFormatVersion;
 			my at [i] = (Daata) Thing_newFromClassName (className.peek(), & elementFormatVersion).releaseToAmbiguousOwner();
-			my _size ++;
+			my size ++;
 			if (! Thing_isa (my at [i], classDaata) || ! Data_canReadText (my at [i]))
 				Melder_throw (U"Cannot read item of class ", Thing_className (my at [i]), U" in collection.");
 			autostring32 objectName = texgetw2 (text);
@@ -149,8 +149,8 @@ void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text,
 }
 
 void _CollectionOfDaata_v_writeBinary (_CollectionOfDaata* me, FILE *f) {
-	binputi4 (my _size, f);
-	for (long i = 1; i <= my _size; i ++) {
+	binputi4 (my size, f);
+	for (long i = 1; i <= my size; i ++) {
 		Daata thing = my at [i];
 		ClassInfo classInfo = thing -> classInfo;
 		if (! Thing_isa (thing, classDaata) || ! Data_canWriteBinary (thing))
@@ -173,7 +173,7 @@ void _CollectionOfDaata_v_readBinary (_CollectionOfDaata* me, FILE *f, int forma
 			if (fscanf (f, "%s%s", klas, name) < 2)   // BUG
 				Melder_throw (U"Cannot read class and name.");
 			my at [i] = (Daata) Thing_newFromClassName (Melder_peek8to32 (klas), nullptr).releaseToAmbiguousOwner();
-			my _size ++;
+			my size ++;
 			if (! Thing_isa (my at [i], classDaata))
 				Melder_throw (U"Cannot read item of class ", Thing_className (my at [i]), U".");
 			if (fgetc (f) != ' ')
@@ -193,7 +193,7 @@ void _CollectionOfDaata_v_readBinary (_CollectionOfDaata* me, FILE *f, int forma
 				Melder_casual (U"structCollection :: v_readBinary: Reading object of type ", Melder_peek8to32 (klas.peek()));
 			int elementFormatVersion;
 			my at [i] = (Daata) Thing_newFromClassName (Melder_peek8to32 (klas.peek()), & elementFormatVersion).releaseToAmbiguousOwner();
-			my _size ++;
+			my size ++;
 			if (! Thing_isa (my at [i], classDaata) || ! Data_canReadBinary (my at [i]))
 				Melder_throw (U"Objects of class ", Thing_className (my at [i]), U" cannot be read.");
 			autostring32 name = bingetw2 (f);
@@ -206,7 +206,7 @@ void _CollectionOfDaata_v_readBinary (_CollectionOfDaata* me, FILE *f, int forma
 }
 
 struct structData_Description theCollectionOfDaata_v_description [] = {
-	{ U"size", longwa, Melder_offsetof (CollectionOf<structThing>*, _size), sizeof (long) },
+	{ U"size", longwa, Melder_offsetof (CollectionOf<structThing>*, size), sizeof (long) },
 	{ U"items", objectwa, Melder_offsetof (CollectionOf<structThing>*, at), sizeof (Daata), U"Daata", & theClassInfo_Daata, 1, 0, U"size" },
 	{ 0 }
 };

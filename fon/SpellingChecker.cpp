@@ -78,7 +78,7 @@ void SpellingChecker_replaceWordList (SpellingChecker me, WordList list) {
 
 autoStringSet SpellingChecker_extractUserDictionary (SpellingChecker me) {
 	try {
-		if (my userDictionary -> size() == 0)
+		if (my userDictionary->size == 0)
 			Melder_throw (U"This spelling checker does not contain a user dictionary.");
 		return Data_copy (my userDictionary.get());
 	} catch (MelderError) {
@@ -185,7 +185,7 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, const char32 *word) {
 	}
 	if (WordList_hasWord (my wordList.get(), word))
 		return true;
-	if (my userDictionary -> size() > 0) {
+	if (my userDictionary->size > 0) {
 		if (str32len (word) > 3333) return false;   // superfluous, because WordList_hasWord already checked; but safe
 		static char32 buffer [3*3333+1];
 		Longchar_genericize32 (word, buffer);

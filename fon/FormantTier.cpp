@@ -75,7 +75,7 @@ autoFormantTier FormantTier_create (double tmin, double tmax) {
 }
 
 double FormantTier_getValueAtTime (FormantTier me, int iformant, double t) {
-	long n = my points.size();
+	long n = my points.size;
 	if (n == 0 || iformant < 1) return NUMundefined;
 	FormantPoint pointRight = my points.at [1];
 	if (t <= pointRight -> number) {
@@ -104,7 +104,7 @@ double FormantTier_getValueAtTime (FormantTier me, int iformant, double t) {
 }
 
 double FormantTier_getBandwidthAtTime (FormantTier me, int iformant, double t) {
-	long n = my points.size();
+	long n = my points.size;
 	if (n == 0) return 0.0;
 	FormantPoint pointRight = my points.at [1];
 	if (t <= pointRight -> number) {
@@ -203,7 +203,7 @@ autoFormantTier Formant_PointProcess_to_FormantTier (Formant me, PointProcess pp
 
 int FormantTier_getMinNumFormants (FormantTier me) {
 	int minNumFormants = 10;
-	for (long ipoint = 1; ipoint <= my points.size(); ipoint ++) {
+	for (long ipoint = 1; ipoint <= my points.size; ipoint ++) {
 		FormantPoint point = my points.at [ipoint];
 		if (point -> numberOfFormants < minNumFormants)
 			minNumFormants = point -> numberOfFormants;
@@ -213,7 +213,7 @@ int FormantTier_getMinNumFormants (FormantTier me) {
 
 int FormantTier_getMaxNumFormants (FormantTier me) {
 	int maxNumFormants = 0;
-	for (long ipoint = 1; ipoint <= my points.size(); ipoint ++) {
+	for (long ipoint = 1; ipoint <= my points.size; ipoint ++) {
 		FormantPoint point = my points.at [ipoint];
 		if (point -> numberOfFormants > maxNumFormants)
 			maxNumFormants = point -> numberOfFormants;
@@ -224,7 +224,7 @@ int FormantTier_getMaxNumFormants (FormantTier me) {
 autoTableOfReal FormantTier_downto_TableOfReal (FormantTier me, int includeFormants, int includeBandwidths) {
 	try {
 		int maximumNumberOfFormants = FormantTier_getMaxNumFormants (me);
-		autoTableOfReal thee = TableOfReal_create (my points.size(), 1 +
+		autoTableOfReal thee = TableOfReal_create (my points.size, 1 +
 			( includeFormants ? maximumNumberOfFormants : 0 ) +
 			( includeBandwidths ? maximumNumberOfFormants : 0 ));
 		TableOfReal_setColumnLabel (thee.peek(), 1, U"Time");
@@ -239,7 +239,7 @@ autoTableOfReal FormantTier_downto_TableOfReal (FormantTier me, int includeForma
 				TableOfReal_setColumnLabel (thee.peek(), ++ icol, label);
 			}
 		}
-		for (long ipoint = 1; ipoint <= my points.size(); ipoint ++) {
+		for (long ipoint = 1; ipoint <= my points.size; ipoint ++) {
 			FormantPoint point = my points.at [ipoint];
 			thy data [ipoint] [1] = point -> number;
 			for (long icol = 1, iformant = 1; iformant <= maximumNumberOfFormants; iformant ++) {
@@ -255,7 +255,7 @@ autoTableOfReal FormantTier_downto_TableOfReal (FormantTier me, int includeForma
 
 void Sound_FormantTier_filter_inline (Sound me, FormantTier formantTier) {
 	double dt = my dx;
-	if (formantTier -> points.size()) for (long iformant = 1; iformant <= 10; iformant ++) {
+	if (formantTier -> points.size) for (long iformant = 1; iformant <= 10; iformant ++) {
 		for (long isamp = 1; isamp <= my nx; isamp ++) {
 			double t = my x1 + (isamp - 1) * my dx;
 			/*

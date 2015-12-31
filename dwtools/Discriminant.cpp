@@ -166,7 +166,7 @@ autoStrings Discriminant_extractGroupLabels (Discriminant me) {
 
 autoTableOfReal Discriminant_extractGroupCentroids (Discriminant me) {
 	try {
-		long m = my groups -> size(), n = my dimension;
+		long m = my groups->size, n = my dimension;
 		autoTableOfReal thee = TableOfReal_create (m, n);
 
 		for (long i = 1; i <= m; i ++) {
@@ -183,7 +183,7 @@ autoTableOfReal Discriminant_extractGroupCentroids (Discriminant me) {
 
 autoTableOfReal Discriminant_extractGroupStandardDeviations (Discriminant me) {
 	try {
-		long m = my groups -> size(), n = my dimension;
+		long m = my groups->size, n = my dimension;
 		autoTableOfReal thee = TableOfReal_create (m, n);
 
 		for (long i = 1; i <= m; i ++) {
@@ -255,7 +255,7 @@ autoTableOfReal Discriminant_extractCoefficients (Discriminant me, int choice) {
 
 static long Discriminant_getDegreesOfFreedom (Discriminant me) {
 	long ndf = 0;
-	for (long i = 1; i <= my groups -> size(); i ++) {
+	for (long i = 1; i <= my groups->size; i ++) {
 		ndf += SSCP_getDegreesOfFreedom (my groups->at [i]);
 	}
 	return ndf;
@@ -426,7 +426,7 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 		thy groups = TableOfReal_to_SSCPList_byLabel (mew.peek());
 		thy total = TableOfReal_to_SSCP (mew.peek(), 0, 0, 0, 0);
 
-		if ( (thy numberOfGroups = thy groups -> size()) < 2) {
+		if ( (thy numberOfGroups = thy groups->size) < 2) {
 			Melder_throw (U"Number of groups must be greater than one.");
 		}
 

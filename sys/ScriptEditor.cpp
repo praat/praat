@@ -27,7 +27,7 @@ Thing_implement (ScriptEditor, TextEditor, 0);
 static CollectionOf <structScriptEditor> theReferencesToAllOpenScriptEditors;
 
 bool ScriptEditors_dirty () {
-	for (long i = 1; i <= theReferencesToAllOpenScriptEditors.size(); i ++) {
+	for (long i = 1; i <= theReferencesToAllOpenScriptEditors.size; i ++) {
 		ScriptEditor me = theReferencesToAllOpenScriptEditors.at [i];
 		if (my dirty) return true;
 	}
@@ -332,7 +332,7 @@ autoScriptEditor ScriptEditor_createFromText (Editor environment, const char32 *
 
 autoScriptEditor ScriptEditor_createFromScript_canBeNull (Editor environment, Script script) {
 	try {
-		for (long ieditor = 1; ieditor <= theReferencesToAllOpenScriptEditors.size(); ieditor ++) {
+		for (long ieditor = 1; ieditor <= theReferencesToAllOpenScriptEditors.size; ieditor ++) {
 			ScriptEditor editor = theReferencesToAllOpenScriptEditors.at [ieditor];
 			if (MelderFile_equal (& script -> file, & editor -> file)) {
 				Editor_raise (editor);

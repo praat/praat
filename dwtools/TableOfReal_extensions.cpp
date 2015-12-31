@@ -615,14 +615,14 @@ void TableOfReal_copyLabels (TableOfReal me, TableOfReal thee, int rowOrigin, in
 void TableOfReal_labelsFromCollectionItemNames (TableOfReal me, Collection thee, int row, int column) {
 	try {
 		if (row) {
-			Melder_assert (my numberOfRows == thy size());
+			Melder_assert (my numberOfRows == thy size);
 			for (long i = 1; i <= my numberOfRows; i ++) {
 				const char32 *name = Thing_getName (thy at [i]);
 				TableOfReal_setRowLabel (me, i, name);
 			}
 		}
 		if (column) {
-			Melder_assert (my numberOfColumns == thy size());
+			Melder_assert (my numberOfColumns == thy size);
 			for (long i = 1; i <= my numberOfColumns; i ++) {
 				const char32 *name = Thing_getName (thy at [i]);
 				TableOfReal_setColumnLabel (me, i, name);
@@ -640,7 +640,7 @@ void TableOfReal_centreColumns (TableOfReal me) {
 void TableOfReal_and_Categories_setRowLabels (TableOfReal me, Categories thee) {
 	try {
 
-		if (my numberOfRows != thy size()) {
+		if (my numberOfRows != thy size) {
 			Melder_throw (U"The number of items in both objects must be equal.");
 		}
 
@@ -973,12 +973,12 @@ void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g, long icx, long icy
 
 autoTableOfReal TableOfRealList_sum (TableOfRealList me) {
 	try {
-		if (my size() <= 0) {
+		if (my size <= 0) {
 			return autoTableOfReal();
 		}
 		autoTableOfReal thee = Data_copy (my at [1]);
 
-		for (long i = 2; i <= my size(); i ++) {
+		for (long i = 2; i <= my size; i ++) {
 			TableOfReal him = my at [i];
 			if (thy numberOfRows != his numberOfRows || thy numberOfColumns != his numberOfColumns || ! TableOfReal_equalLabels (thee.peek(), him, 1, 1)) {
 				Melder_throw (U"Dimensions or labels differ for table 1 and ", i, U".");
@@ -996,11 +996,11 @@ autoTableOfReal TableOfRealList_sum (TableOfRealList me) {
 }
 
 bool TableOfRealList_haveIdenticalDimensions (TableOfRealList me) {
-	if (my size() < 2) {
+	if (my size < 2) {
 		return true;
 	}
 	TableOfReal t1 = my at [1];
-	for (long i = 2; i <= my size(); i ++) {
+	for (long i = 2; i <= my size; i ++) {
 		TableOfReal t = my at [i];
 		if (t -> numberOfColumns != t1 -> numberOfColumns || t -> numberOfRows != t1 -> numberOfRows) {
 			return false;
@@ -1547,13 +1547,13 @@ autoTableOfReal TableOfReal_appendColumns (TableOfReal me, TableOfReal thee) {
 
 autoTableOfReal TableOfRealList_appendColumnsMany (TableOfRealList me) {
 	try {
-		if (my size() == 0) {
+		if (my size == 0) {
 			Melder_throw (U"No tables selected.");
 		}
 		TableOfReal thee = my at [1];
 		long nrow = thy numberOfRows;
 		long ncol = thy numberOfColumns;
-		for (long itab = 2; itab <= my size(); itab ++) {
+		for (long itab = 2; itab <= my size; itab ++) {
 			thee = my at [itab];
 			ncol += thy numberOfColumns;
 			if (thy numberOfRows != nrow) {
@@ -1566,7 +1566,7 @@ autoTableOfReal TableOfRealList_appendColumnsMany (TableOfRealList me) {
 			TableOfReal_setRowLabel (him.peek(), irow, thy rowLabels [irow]);
 		}
 		ncol = 0;
-		for (long itab = 1; itab <= my size(); itab ++) {
+		for (long itab = 1; itab <= my size; itab ++) {
 			thee = my at [itab];
 			for (long icol = 1; icol <= thy numberOfColumns; icol ++) {
 				ncol++;

@@ -116,7 +116,7 @@ static void UiField_setDefault (UiField me) {
 		} break; case UI_BOOLEAN: {
 			GuiCheckButton_setValue (my checkButton, my integerDefaultValue);
 		} break; case UI_RADIO: {
-			for (int i = 1; i <= my options.size(); i ++) {
+			for (int i = 1; i <= my options.size; i ++) {
 				if (i == my integerDefaultValue) {
 					UiOption b = my options.at [i];
 					GuiRadioButton_set (b -> radioButton);
@@ -228,7 +228,7 @@ static void UiField_widgetToValue (UiField me) {
 			my integerValue = GuiCheckButton_getValue (my checkButton);
 		} break; case UI_RADIO: {
 			my integerValue = 0;
-			for (int i = 1; i <= my options.size(); i ++) {
+			for (int i = 1; i <= my options.size; i ++) {
 				UiOption b = my options.at [i];
 				if (GuiRadioButton_getValue (b -> radioButton))
 					my integerValue = i;
@@ -297,7 +297,7 @@ static void UiField_stringToValue (UiField me, const char32 *string, Interpreter
 				string [0] == U't' || string [0] == U'T';
 		} break; case UI_RADIO: case UI_OPTIONMENU: {
 			my integerValue = 0;
-			for (int i = 1; i <= my options.size(); i ++) {
+			for (int i = 1; i <= my options.size; i ++) {
 				UiOption b = my options.at [i];
 				if (str32equ (string, b -> name))
 					my integerValue = i;
@@ -306,7 +306,7 @@ static void UiField_stringToValue (UiField me, const char32 *string, Interpreter
 				/*
 				 * Retry with different case.
 				 */
-				for (int i = 1; i <= my options.size(); i ++) {
+				for (int i = 1; i <= my options.size; i ++) {
 					UiOption b = my options.at [i];
 					char32 name2 [100];
 					str32cpy (name2, b -> name);
@@ -738,8 +738,8 @@ void UiForm_finish (UiForm me) {
 		thy y = dialogHeight;
 		dialogHeight +=
 			thy type == UI_BOOLEAN ? Gui_CHECKBUTTON_HEIGHT :
-			thy type == UI_RADIO ? thy options.size() * Gui_RADIOBUTTON_HEIGHT +
-				(thy options.size() - 1) * Gui_RADIOBUTTON_SPACING :
+			thy type == UI_RADIO ? thy options.size * Gui_RADIOBUTTON_HEIGHT +
+				(thy options.size - 1) * Gui_RADIOBUTTON_SPACING :
 			thy type == UI_OPTIONMENU ? Gui_OPTIONMENU_HEIGHT :
 			thy type == UI_LIST ? LIST_HEIGHT :
 			thy type == UI_LABEL && thy stringValue [0] != U'\0' && thy stringValue [str32len (thy stringValue) - 1] != U'.' &&
@@ -816,7 +816,7 @@ void UiForm_finish (UiForm me) {
 				field -> label = GuiLabel_createShown (form, x, x + labelWidth, ylabel, ylabel + Gui_RADIOBUTTON_HEIGHT,
 					theFinishBuffer.string, GuiLabel_RIGHT);
 				GuiRadioGroup_begin ();
-				for (long ibutton = 1; ibutton <= field -> options.size(); ibutton ++) {
+				for (long ibutton = 1; ibutton <= field -> options.size; ibutton ++) {
 					UiOption button = field -> options.at [ibutton];
 					MelderString_copy (& theFinishBuffer, button -> name);
 					button -> radioButton = GuiRadioButton_createShown (form,
@@ -838,7 +838,7 @@ void UiForm_finish (UiForm me) {
 				field -> label = GuiLabel_createShown (form, x, x + labelWidth, ylabel, ylabel + Gui_OPTIONMENU_HEIGHT,
 					theFinishBuffer.string, GuiLabel_RIGHT);
 				field -> optionMenu = GuiOptionMenu_createShown (form, fieldX, fieldX + fieldWidth, y, y + Gui_OPTIONMENU_HEIGHT, 0);
-				for (long ibutton = 1; ibutton <= field -> options.size(); ibutton ++) {
+				for (long ibutton = 1; ibutton <= field -> options.size; ibutton ++) {
 					UiOption button = field -> options.at [ibutton];
 					MelderString_copy (& theFinishBuffer, button -> name);
 					GuiOptionMenu_addOption (field -> optionMenu, theFinishBuffer.string);
@@ -1000,7 +1000,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 			if (arg -> which != Stackel_STRING)
 				Melder_throw (U"Option argument \"", my name, U"\" should be a string, not ", Stackel_whichText (arg), U".");
 			my integerValue = 0;
-			for (int i = 1; i <= my options.size(); i ++) {
+			for (int i = 1; i <= my options.size; i ++) {
 				UiOption b = my options.at [i];
 				if (str32equ (arg -> string, b -> name))
 					my integerValue = i;
@@ -1009,7 +1009,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 				/*
 				 * Retry with different case.
 				 */
-				for (int i = 1; i <= my options.size(); i ++) {
+				for (int i = 1; i <= my options.size; i ++) {
 					UiOption b = my options.at [i];
 					char32 name2 [100];
 					str32cpy (name2, b -> name);
@@ -1179,15 +1179,15 @@ void UiForm_setInteger (UiForm me, const char32 *fieldName, long value) {
 		} break; case UI_BOOLEAN: {
 			GuiCheckButton_setValue (field -> checkButton, value);
 		} break; case UI_RADIO: {
-			if (value < 1 || value > field -> options.size()) value = 1;   // guard against incorrect prefs file
-			for (int i = 1; i <= field -> options.size(); i ++) {
+			if (value < 1 || value > field -> options.size) value = 1;   // guard against incorrect prefs file
+			for (int i = 1; i <= field -> options.size; i ++) {
 				if (i == value) {
 					UiOption b = field -> options.at [i];
 					GuiRadioButton_set (b -> radioButton);
 				}
 			}
 		} break; case UI_OPTIONMENU: {
-			if (value < 1 || value > field -> options.size()) value = 1;   // guard against incorrect prefs file
+			if (value < 1 || value > field -> options.size) value = 1;   // guard against incorrect prefs file
 			GuiOptionMenu_setValue (field -> optionMenu, value);
 		} break; case UI_LIST: {
 			if (value < 1 || value > field -> numberOfStrings) value = 1;   // guard against incorrect prefs file
@@ -1210,7 +1210,7 @@ void UiForm_setString (UiForm me, const char32 *fieldName, const char32 *value /
 		} break; case UI_LABEL: {
 			GuiLabel_setText (field -> label, value);
 		} break; case UI_RADIO: {
-			for (int i = 1; i <= field -> options.size(); i ++) {
+			for (int i = 1; i <= field -> options.size; i ++) {
 				UiOption b = field -> options.at [i];
 				if (str32equ (value, b -> name)) {
 					GuiRadioButton_set (b -> radioButton);
@@ -1219,7 +1219,7 @@ void UiForm_setString (UiForm me, const char32 *fieldName, const char32 *value /
 			/* If not found: do nothing (guard against incorrect prefs file). */
 		} break; case UI_OPTIONMENU: {
 			int integerValue = 0;
-			for (int i = 1; i <= field -> options.size(); i ++) {
+			for (int i = 1; i <= field -> options.size; i ++) {
 				UiOption b = field -> options.at [i];
 				if (str32equ (value, b -> name)) {
 					integerValue = i;

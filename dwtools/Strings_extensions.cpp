@@ -92,14 +92,14 @@ autoStrings Strings_append (OrderedOf<structStrings>* me) {
 	try {
 		long index = 1, numberOfStrings = 0;
 
-		for (long i = 1; i <= my size(); i ++) {
+		for (long i = 1; i <= my size; i ++) {
 			Strings s = my at [i];
 			numberOfStrings += s -> numberOfStrings;
 		}
 
 		autoStrings thee = Strings_createFixedLength (numberOfStrings);
 
-		for (long i = 1; i <= my size(); i ++) {
+		for (long i = 1; i <= my size; i ++) {
 			Strings s = my at [i];
 			for (long j = 1; j <= s -> numberOfStrings; j ++, index ++) {
 				thy strings [index] = Melder_dup (s -> strings [j]);
@@ -194,7 +194,7 @@ autoStrings Strings_and_Permutation_permuteStrings (Strings me, Permutation thee
 autoStringsIndex Stringses_to_StringsIndex (Strings me, Strings classes) {
 	try {
 		autoStringsIndex tmp = Strings_to_StringsIndex (classes);
-		long numberOfClasses = tmp -> classes -> size();
+		long numberOfClasses = tmp -> classes->size;
 
 		autoStringsIndex him = StringsIndex_create (my numberOfStrings);
 		for (long i = 1; i <= numberOfClasses; i ++) {
@@ -204,7 +204,7 @@ autoStringsIndex Stringses_to_StringsIndex (Strings me, Strings classes) {
 		}
 		for (long j = 1; j <= my numberOfStrings; j ++) {
 			long index = 0;
-			char32 *stringsj = my strings[j];
+			char32 *stringsj = my strings [j];
 			for (long i = 1; i <= numberOfClasses; i ++) {
 				SimpleString ss = (SimpleString) his classes->at [i];   // FIXME cast
 				if (Melder_equ (stringsj, ss -> string)) {
@@ -261,7 +261,7 @@ autoStringsIndex Table_to_StringsIndex_column (Table me, long column) {
 		if (column < 1 || column > my numberOfColumns) {
 			Melder_throw (U"Invalid column number.");
 		}
-		long numberOfRows = my rows.size();
+		long numberOfRows = my rows.size;
 		Table_numericize_Assert (me, column);
 		autoNUMvector<char32 *> groupLabels (1, numberOfRows);
 		for (long irow = 1; irow <= numberOfRows; irow ++) {

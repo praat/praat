@@ -24,7 +24,7 @@ autoPointProcess PitchTier_to_PointProcess (PitchTier me) {
 	try {
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, 1000);
 		double area = 0.5;   // imagine an event half a period before the beginning
-		long size = my points.size();
+		long size = my points.size;
 		if (size == 0) return thee;
 		for (long interval = 0; interval <= size; interval ++) {
 			double t1 = ( interval == 0 ? my xmin : my points.at [interval] -> number );
@@ -127,7 +127,7 @@ autoPitchTier Pitch_PointProcess_to_PitchTier (Pitch me, PointProcess pp) {
 
 autoPitchTier PitchTier_PointProcess_to_PitchTier (PitchTier me, PointProcess pp) {
 	try {
-		if (my points.size() == 0) Melder_throw (U"No pitch points.");
+		if (my points.size == 0) Melder_throw (U"No pitch points.");
 		autoPitchTier thee = PitchTier_create (pp -> xmin, pp -> xmax);
 		for (long i = 1; i <= pp -> nt; i ++) {
 			double time = pp -> t [i];

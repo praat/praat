@@ -98,7 +98,7 @@ int KNN_learn
 )
 
 {
-    if (c->size() == p->ny)           // the number of input vectors must
+    if (c->size == p->ny)           // the number of input vectors must
     {                               // equal the number of categories.
         switch (method)
         {
@@ -106,7 +106,7 @@ int KNN_learn
                                     // dispose of the current
             my input = Data_copy (p);   // LEAK
             my output = Data_copy (c);
-            my nInstances = c->size();
+            my nInstances = c->size;
 
             break;
 
@@ -680,7 +680,7 @@ double KNN_evaluate
     for (long begin = 1; begin <= my nInstances; begin += adder)
     {
         autoCategories c = KNN_classifyFold (me, my input.get(), fws, k, dist, begin, OlaMIN (begin + adder - 1, my nInstances));
-        for (long y = 1; y <= c->size(); y ++)
+        for (long y = 1; y <= c->size; y ++)
             if (FeatureWeights_areFriends (c->at [y], my output->at [begin + y - 1]))
                 correct += 1.0;
     }
@@ -716,9 +716,9 @@ double KNN_evaluateWithTestSet
 {
     double correct = 0.0;
     autoCategories t = KNN_classifyToCategories (me, p, fws, k, dist);
-	for (long y = 1; y <= t->size(); y ++)
+	for (long y = 1; y <= t->size; y ++)
 		if (FeatureWeights_areFriends (t->at [y], c->at [y])) correct += 1.0;
-	return correct / c->size();
+	return correct / c->size;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -1380,7 +1380,7 @@ long KNN_kIndicesToFrequenciesAndDistances
 {
     long ncategories = 0;
     
-    Melder_assert (k <= c->size() && k > 0);
+    Melder_assert (k <= c->size && k > 0);
     Melder_assert (distances && indices && freqs && freqindices);
 
     for (long y = 0; y < k; ++y)
@@ -1514,7 +1514,7 @@ void KNN_shuffleInstances
 		y ++;
 	}
 
-	my nInstances = new_output -> size();
+	my nInstances = new_output->size;
 	my input = new_input.move();
 	my output = new_output.move();
 }

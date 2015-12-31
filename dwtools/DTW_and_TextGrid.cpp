@@ -38,7 +38,7 @@ autoTextTier DTW_and_TextTier_to_TextTier (DTW me, TextTier thee, double precisi
 			autoTextTier him = Data_copy (thee);
 			his xmin = my xmin;
 			his xmax = my xmax;
-			for (long i = 1; i <= his points.size(); i++) {
+			for (long i = 1; i <= his points.size; i++) {
 				TextPoint textpoint = his points.at [i];
 				double time = DTW_getXTimeFromYTime (me, textpoint -> number);
 				textpoint -> number = time;
@@ -48,7 +48,7 @@ autoTextTier DTW_and_TextTier_to_TextTier (DTW me, TextTier thee, double precisi
 			autoTextTier him = Data_copy (thee);
 			his xmin = my ymin;
 			his xmax = my ymax;
-			for (long i = 1; i <= his points.size(); i++) {
+			for (long i = 1; i <= his points.size; i++) {
 				TextPoint textpoint = his points.at [i];
 				double time = DTW_getYTimeFromXTime (me, textpoint -> number);
 				textpoint -> number = time;
@@ -68,7 +68,7 @@ autoIntervalTier DTW_and_IntervalTier_to_IntervalTier (DTW me, IntervalTier thee
 			autoIntervalTier him = Data_copy (thee);
 			his xmin = my xmin;
 			his xmax = my xmax;
-			for (long i = 1; i <= his intervals.size(); i ++) {
+			for (long i = 1; i <= his intervals.size; i ++) {
 				TextInterval textinterval = his intervals.at [i];
 				double xmin = DTW_getXTimeFromYTime (me, textinterval -> xmin);
 				textinterval -> xmin = xmin;
@@ -80,7 +80,7 @@ autoIntervalTier DTW_and_IntervalTier_to_IntervalTier (DTW me, IntervalTier thee
 			autoIntervalTier him = Data_copy (thee);
 			his xmin = my ymin;
 			his xmax = my ymax;
-			for (long i = 1; i <= his intervals.size(); i ++) {
+			for (long i = 1; i <= his intervals.size; i ++) {
 				TextInterval textinterval = his intervals.at [i];
 				double xmin = DTW_getYTimeFromXTime (me, textinterval -> xmin);
 				textinterval -> xmin = xmin;
@@ -111,7 +111,7 @@ autoTextGrid DTW_and_TextGrid_to_TextGrid (DTW me, TextGrid thee, double precisi
 
 		autoTextGrid him = TextGrid_createWithoutTiers (tmin, tmax);
 
-		for (long i = 1; i <= thy tiers->size(); i ++) {
+		for (long i = 1; i <= thy tiers->size; i ++) {
 			Function anyTier = thy tiers->at [i];
 
 			if (anyTier -> classInfo == classIntervalTier) {
@@ -132,7 +132,7 @@ autoTextGrid DTW_and_TextGrid_to_TextGrid (DTW me, TextGrid thee, double precisi
 
 autoTable DTW_and_IntervalTier_to_Table (DTW me, IntervalTier thee, double precision) {
 	try {
-		long numberOfIntervals = thy intervals.size();
+		long numberOfIntervals = thy intervals.size;
 		autoTable him = Table_createWithColumnNames (numberOfIntervals, U"tmin tmax label dist");
 		if (fabs (my ymin - thy xmin) <= precision && fabs (my ymax - thy xmax) <= precision) { // map from Y to X
 			long pathIndex = 1;
@@ -191,7 +191,7 @@ autoTextTier DTW_and_TextTier_to_TextTier_old (DTW me, TextTier thee) {
 		his xmin = my ymin;
 		his xmax = my ymax;
 
-		for (long i = 1; i <= his points.size(); i ++) {
+		for (long i = 1; i <= his points.size; i ++) {
 			TextPoint textpoint = his points.at [i];
 			double time = DTW_getPathY (me, textpoint -> number);
 			textpoint -> number = time;
@@ -212,7 +212,7 @@ autoIntervalTier DTW_and_IntervalTier_to_IntervalTier_old (DTW me, IntervalTier 
 		his xmin = my ymin;
 		his xmax = my ymax;
 
-		for (long i = 1; i <= his intervals.size(); i ++) {
+		for (long i = 1; i <= his intervals.size; i ++) {
 			TextInterval textinterval = his intervals.at [i];
 			double xmin = DTW_getPathY (me, textinterval -> xmin);
 			textinterval -> xmin = xmin;
@@ -236,7 +236,7 @@ autoTextGrid DTW_and_TextGrid_to_TextGrid_old (DTW me, TextGrid thee) {
 		his xmax = my ymax;
 		his tiers = FunctionList_create ();
 
-		for (long i = 1; i <= thy tiers->size(); i ++) {
+		for (long i = 1; i <= thy tiers->size; i ++) {
 			Daata anyTier = thy tiers->at [i];
 
 			if (anyTier -> classInfo == classIntervalTier) {

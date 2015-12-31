@@ -44,19 +44,19 @@ Thing_implement (RegressionParameter, Daata, 0);
 void structRegression :: v_info () {
 	Regression_Parent :: v_info ();
 	MelderInfo_writeLine (U"Factors:");
-	MelderInfo_writeLine (U"   Number of factors: ", our parameters.size());
-	for (long ivar = 1; ivar <= our parameters.size(); ivar ++) {
+	MelderInfo_writeLine (U"   Number of factors: ", our parameters.size);
+	for (long ivar = 1; ivar <= our parameters.size; ivar ++) {
 		RegressionParameter parm = our parameters.at [ivar];
 		MelderInfo_writeLine (U"   Factor ", ivar, U": ", parm -> label);
 	}
 	MelderInfo_writeLine (U"Fitted coefficients:");
 	MelderInfo_writeLine (U"   Intercept: ", intercept);
-	for (long ivar = 1; ivar <= our parameters.size(); ivar ++) {
+	for (long ivar = 1; ivar <= our parameters.size; ivar ++) {
 		RegressionParameter parm = our parameters.at [ivar];
 		MelderInfo_writeLine (U"   Coefficient of factor ", parm -> label, U": ", parm -> value);
 	}
 	MelderInfo_writeLine (U"Ranges of values:");
-	for (long ivar = 1; ivar <= our parameters.size(); ivar ++) {
+	for (long ivar = 1; ivar <= our parameters.size; ivar ++) {
 		RegressionParameter parm = our parameters.at [ivar];
 		MelderInfo_writeLine (U"   Range of factor ", parm -> label, U": minimum ",
 			parm -> minimum, U", maximum ", parm -> maximum);
@@ -83,7 +83,7 @@ void Regression_addParameter (Regression me, const char32 *label, double minimum
 }
 
 long Regression_getFactorIndexFromFactorName_e (Regression me, const char32 *factorName) {
-	for (long iparm = 1; iparm <= my parameters.size(); iparm ++) {
+	for (long iparm = 1; iparm <= my parameters.size; iparm ++) {
 		RegressionParameter parm = my parameters.at [iparm];
 		if (Melder_equ (factorName, parm -> label)) return iparm;
 	}
@@ -105,7 +105,7 @@ autoLinearRegression LinearRegression_create () {
 autoLinearRegression Table_to_LinearRegression (Table me) {
 	try {
 		long numberOfIndependentVariables = my numberOfColumns - 1, numberOfParameters = my numberOfColumns;
-		long numberOfCells = my rows.size(), icell, ivar;
+		long numberOfCells = my rows.size, icell, ivar;
 		if (numberOfParameters < 1)   // includes intercept
 			Melder_throw (U"Not enough columns (has to be more than 1).");
 		if (numberOfCells < numberOfParameters) {

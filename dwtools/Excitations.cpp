@@ -31,17 +31,17 @@ Thing_implement (ExcitationList, Ordered, 0);
 
 autoPattern ExcitationList_to_Pattern (ExcitationList me, long join) {
 	try {
-		Melder_assert (my size() > 0);
+		Melder_assert (my size > 0);
 		Matrix m = my at [1];
 		if (join < 1) {
 			join = 1;
 		}
-		if ( (my size() % join) != 0) {
+		if ( (my size % join) != 0) {
 			Melder_throw (U"Number of rows is not a multiple of join.");
 		}
-		autoPattern thee = Pattern_create (my size() / join, join * m -> nx);
+		autoPattern thee = Pattern_create (my size / join, join * m -> nx);
 		long r = 0, c = 1;
-		for (long i = 1; i <= my size(); i ++) {
+		for (long i = 1; i <= my size; i ++) {
 			double *z = my at [i] -> z [1];
 			if ((i - 1) % join == 0) {
 				r ++;
@@ -59,10 +59,10 @@ autoPattern ExcitationList_to_Pattern (ExcitationList me, long join) {
 
 autoTableOfReal ExcitationList_to_TableOfReal (ExcitationList me) {
 	try {
-		Melder_assert (my size() > 0);
+		Melder_assert (my size > 0);
 		Matrix m = my at [1];
-		autoTableOfReal thee = TableOfReal_create (my size(), m -> nx);
-		for (long i = 1;  i <= my size(); i ++) {
+		autoTableOfReal thee = TableOfReal_create (my size, m -> nx);
+		for (long i = 1;  i <= my size; i ++) {
 			double *z = my at [i] -> z [1];
 			for (long j = 1; j <= m -> nx; j ++) {
 				thy data[i][j] = z[j];
@@ -76,7 +76,7 @@ autoTableOfReal ExcitationList_to_TableOfReal (ExcitationList me) {
 
 autoExcitation ExcitationList_getItem (ExcitationList me, long item) {
 	try {
-		if (item < 1 || item > my size()) {
+		if (item < 1 || item > my size) {
 			Melder_throw (U"Not a valid element number.");
 		}
 		autoExcitation thee = Data_copy (my at [item]);

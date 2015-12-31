@@ -469,7 +469,7 @@ void Eigen_drawEigenvector (Eigen me, Graphics g, long ivec, long first, long la
 }
 
 void Eigens_alignEigenvectors (OrderedOf<structEigen>* me) {
-	if (my size() < 2) {
+	if (my size < 2) {
 		return;
 	}
 
@@ -478,7 +478,7 @@ void Eigens_alignEigenvectors (OrderedOf<structEigen>* me) {
 	long nev1 = e1 -> numberOfEigenvalues;
 	long dimension = e1 -> dimension;
 
-	for (long i = 2; i <= my size(); i ++) {
+	for (long i = 2; i <= my size; i ++) {
 		Eigen e2 = my at [i];
 		if (e2 -> dimension != dimension) {
 			Melder_throw (U"The dimension of the eigenvectors must be equal (offending object is ",  i, U").");
@@ -490,7 +490,7 @@ void Eigens_alignEigenvectors (OrderedOf<structEigen>* me) {
 		If r < 0 then mirror the eigenvector.
 	*/
 
-	for (long i = 2; i <= my size(); i ++) {
+	for (long i = 2; i <= my size; i ++) {
 		Eigen e2 = my at [i];
 		double **evec2 = e2 -> eigenvectors;
 

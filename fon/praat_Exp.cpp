@@ -54,9 +54,9 @@ DIRECT2 (ExperimentMFC_run) {
 			Melder_assert (my classInfo == classExperimentMFC);
 			experiments -> addItem_ref (me);
 		}
-		Melder_assert (experiments->size() >= 1);
+		Melder_assert (experiments->size >= 1);
 		Melder_assert (experiments->at [1] -> classInfo == classExperimentMFC);
-		Melder_assert (experiments->at [experiments -> size()] -> classInfo == classExperimentMFC);
+		Melder_assert (experiments->at [experiments->size] -> classInfo == classExperimentMFC);
 		runner = RunnerMFC_create (U"listening experiments", experiments.move());
 		/*
 			Now that `experiments` has been moved, it has become invalid.

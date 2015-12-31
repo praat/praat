@@ -375,7 +375,7 @@ static void gui_drawingarea_cb_click (RunnerMFC me, GuiDrawingArea_ClickEvent ev
 			do_oops (me);
 			return;
 		}
-		if (my iexperiment < my experiments -> size()) {
+		if (my iexperiment < my experiments->size) {
 			my iexperiment ++;
 			if (! RunnerMFC_startExperiment (me)) {
 				Melder_flushError ();

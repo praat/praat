@@ -972,11 +972,11 @@ autoTableOfReal TablesOfReal_append (TableOfReal me, TableOfReal thee) {
 
 autoTableOfReal TablesOfReal_appendMany (OrderedOf<structTableOfReal>* me) {
 	try {
-		if (my size() == 0) Melder_throw (U"Cannot add zero tables.");
+		if (my size == 0) Melder_throw (U"Cannot add zero tables.");
 		TableOfReal thee = my at [1];
 		long totalNumberOfRows = thy numberOfRows;
 		long numberOfColumns = thy numberOfColumns;
-		for (long itab = 2; itab <= my size(); itab ++) {
+		for (long itab = 2; itab <= my size; itab ++) {
 			thee = my at [itab];
 			totalNumberOfRows += thy numberOfRows;
 			if (thy numberOfColumns != numberOfColumns) Melder_throw (U"Numbers of columns do not match.");
@@ -988,7 +988,7 @@ autoTableOfReal TablesOfReal_appendMany (OrderedOf<structTableOfReal>* me) {
 			TableOfReal_setColumnLabel (him.peek(), icol, thy columnLabels [icol]);
 		}
 		totalNumberOfRows = 0;
-		for (long itab = 1; itab <= my size(); itab ++) {
+		for (long itab = 1; itab <= my size; itab ++) {
 			thee = my at [itab];
 			for (long irow = 1; irow <= thy numberOfRows; irow ++) {
 				totalNumberOfRows ++;
@@ -1054,7 +1054,7 @@ void TableOfReal_sortByColumn (TableOfReal me, long column1, long column2) {
 autoTableOfReal Table_to_TableOfReal (Table me, long labelColumn) {
 	try {
 		if (labelColumn < 1 || labelColumn > my numberOfColumns) labelColumn = 0;
-		autoTableOfReal thee = TableOfReal_create (my rows.size(), labelColumn ? my numberOfColumns - 1 : my numberOfColumns);
+		autoTableOfReal thee = TableOfReal_create (my rows.size, labelColumn ? my numberOfColumns - 1 : my numberOfColumns);
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 			Table_numericize_Assert (me, icol);
 		}
@@ -1065,7 +1065,7 @@ autoTableOfReal Table_to_TableOfReal (Table me, long labelColumn) {
 			for (long icol = labelColumn + 1; icol <= my numberOfColumns; icol ++) {
 				TableOfReal_setColumnLabel (thee.peek(), icol - 1, my columnHeaders [icol]. label);
 			}
-			for (long irow = 1; irow <= my rows.size(); irow ++) {
+			for (long irow = 1; irow <= my rows.size; irow ++) {
 				TableRow row = my rows.at [irow];
 				char32 *string = row -> cells [labelColumn]. string;
 				TableOfReal_setRowLabel (thee.peek(), irow, string ? string : U"");
@@ -1082,7 +1082,7 @@ autoTableOfReal Table_to_TableOfReal (Table me, long labelColumn) {
 			for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 				TableOfReal_setColumnLabel (thee.peek(), icol, my columnHeaders [icol]. label);
 			}
-			for (long irow = 1; irow <= my rows.size(); irow ++) {
+			for (long irow = 1; irow <= my rows.size; irow ++) {
 				TableRow row = my rows.at [irow];
 				for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 					thy data [irow] [icol] = row -> cells [icol]. number;   // Optimization.
@@ -1104,7 +1104,7 @@ autoTable TableOfReal_to_Table (TableOfReal me, const char32 *labelOfFirstColumn
 			char32 *columnLabel = my columnLabels [icol];
 			thy columnHeaders [icol + 1]. label = Melder_dup (columnLabel && columnLabel [0] ? columnLabel : U"?");
 		}
-		for (long irow = 1; irow <= thy rows.size(); irow ++) {
+		for (long irow = 1; irow <= thy rows.size; irow ++) {
 			char32 *stringValue = my rowLabels [irow];
 			TableRow row = thy rows.at [irow];
 			row -> cells [1]. string = Melder_dup (stringValue && stringValue [0] ? stringValue : U"?");

@@ -231,7 +231,7 @@ static autoFormantGrid FormantTier_to_FormantGrid (FormantTier me) {
 	try {
 		long numberOfFormants = FormantTier_getMaxNumFormants (me);
 		autoFormantGrid thee = FormantGrid_createEmpty (my xmin, my xmax, numberOfFormants);
-		for (long ipoint = 1; ipoint <= my points.size(); ipoint++) {
+		for (long ipoint = 1; ipoint <= my points.size; ipoint ++) {
 			FormantPoint fp = my points.at [ipoint];
 			double t = fp -> number;
 			for (long iformant = 1; iformant <= fp -> numberOfFormants; iformant++) {
@@ -416,7 +416,7 @@ static double getF0 (structVowelEditor_F0 *f0p, double time) {
 static void VowelEditor_Vowel_reverseFormantTier (VowelEditor me) {
 	FormantTier ft = my vowel -> ft.get();
 	double duration = ft -> xmax;
-	long np = ft -> points.size(), np_2 = np / 2;
+	long np = ft -> points.size, np_2 = np / 2;
 
 	for (long i = 1; i <= np_2; i++) {
 		FormantPoint fpt = ft -> points.at [i];
@@ -435,7 +435,7 @@ static void VowelEditor_Vowel_reverseFormantTier (VowelEditor me) {
 
 static void VowelEditor_shiftF1F2 (VowelEditor me, double f1_st, double f2_st) {
 	FormantTier ft = my vowel -> ft.get();
-	for (long i = 1; i <= ft -> points.size(); i ++) {
+	for (long i = 1; i <= ft -> points.size; i ++) {
 		FormantPoint fp = ft -> points.at [i];
 		double f1 = fp -> formant [0], f2 = fp -> formant [1];
 
@@ -471,7 +471,7 @@ static void FormantTier_newDuration (FormantTier me, double newDuration) {
 	if (newDuration != my xmax) {
 		double multiplier = newDuration / my xmax;
 
-		for (long i = 1; i <= my points.size(); i ++) {
+		for (long i = 1; i <= my points.size; i ++) {
 			FormantPoint fp = my points.at [i];
 			fp -> number *= multiplier;
 		}
@@ -482,7 +482,7 @@ static void FormantTier_newDuration (FormantTier me, double newDuration) {
 static void PitchTier_newDuration (PitchTier me, structVowelEditor_F0 *f0p, double newDuration) {
 	// Always update; GuiObject text might have changed
 	double multiplier = newDuration / my xmax;
-	for (long i = 1; i <= my points.size(); i ++) {
+	for (long i = 1; i <= my points.size; i ++) {
 		RealPoint pp = my points.at [i];
 		pp -> number *= multiplier;
 		pp -> value = getF0 (f0p, pp -> number);
@@ -526,12 +526,12 @@ static autoSound VowelEditor_createTarget (VowelEditor me) {
 #define GETY(y) (getCoordinate (f1min, f1max, y))
 static void FormantTier_drawF1F2Trajectory (FormantTier me, Graphics g, double f1min, double f1max, double f2min, double f2max, double markTraceEvery, double width) {
 // Our FormantTiers always have a FormantPoint at t=xmin and t=xmax;
-	Melder_assert (my points.size() >= 2);
+	Melder_assert (my points.size >= 2);
 
 	int it, imark = 1, glt = Graphics_inqLineType (g);
 	double glw = Graphics_inqLineWidth (g), x1, x1p, y1, y1p, t1;
 	Graphics_Colour colour = Graphics_inqColour (g);
-	long nfp = my points.size();
+	long nfp = my points.size;
 	trace (U"number of points ", nfp);
 	FormantPoint fp = my points.at [1];
 	FormantPoint fpn = my points.at [nfp];
@@ -618,7 +618,7 @@ static void FormantTier_drawF1F2Trajectory (FormantTier me, Graphics g, double f
 #undef GETY
 
 static void copyVowelMarksInPreferences_volatile (Table me) {
-	long numberOfRows = prefs.numberOfMarks = my rows.size();
+	long numberOfRows = prefs.numberOfMarks = my rows.size;
 	if (numberOfRows > 0) {
 		long col_vowel = Table_getColumnIndexFromColumnLabel (me, U"Vowel");
 		long col_f1 = Table_getColumnIndexFromColumnLabel (me, U"F1");
@@ -645,7 +645,7 @@ static void Table_addColumn_size (Table me, int size) {
 	long col_size = Table_findColumnIndexFromColumnLabel (me, U"Size");
 	if (col_size == 0) {
 		Table_appendColumn (me, U"Size");
-		for (long i = 1; i <= my rows.size(); i ++) {
+		for (long i = 1; i <= my rows.size; i ++) {
 			Table_setNumericValue (me, i, my numberOfColumns, size);
 		}
 	}
@@ -773,7 +773,7 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
 		long col_f1 = Table_getColumnIndexFromColumnLabel (my marks.get(), U"F1");
 		long col_f2 = Table_getColumnIndexFromColumnLabel (my marks.get(), U"F2");
 		long col_fs = Table_findColumnIndexFromColumnLabel (my marks.get(), U"Size");
-		for (long i = 1; i <= my marks -> rows.size(); i ++) {
+		for (long i = 1; i <= my marks -> rows.size; i ++) {
 			const char32 *label = Table_getStringValue_Assert (my marks.get(), i, col_vowel);
 			f1 = Table_getNumericValue_Assert (my marks.get(), i, col_f1);
 			f2 = Table_getNumericValue_Assert (my marks.get(), i, col_f2);
@@ -923,7 +923,7 @@ static void menu_cb_extract_FormantGrid (VowelEditor me, EDITOR_ARGS_DIRECT) {
 static void menu_cb_extract_KlattGrid (VowelEditor me, EDITOR_ARGS_DIRECT) {
 	VowelEditor_updateVowel (me);
 	autoFormantGrid fg = FormantTier_to_FormantGrid (my vowel -> ft.get());
-	autoKlattGrid publish = KlattGrid_create (fg -> xmin, fg -> xmax, fg -> formants.size(), 0, 0, 0, 0, 0, 0);
+	autoKlattGrid publish = KlattGrid_create (fg -> xmin, fg -> xmax, fg -> formants.size, 0, 0, 0, 0, 0, 0);
 	KlattGrid_addVoicingAmplitudePoint (publish.peek(), fg -> xmin, 90.0);
 	KlattGrid_replacePitchTier (publish.peek(), my vowel -> pt.get());
 	KlattGrid_replaceFormantGrid (publish.peek(), KlattGrid_ORAL_FORMANTS, fg.peek());
@@ -971,7 +971,7 @@ static void menu_cb_showOneVowelMark (VowelEditor me, EDITOR_ARGS_FORM) {
 			} else {
 				Table_appendRow (my marks.get());
 			}
-			irow = my marks -> rows.size();
+			irow = my marks -> rows.size;
 			Table_setStringValue (my marks.get(), irow, 1, label);
 			Table_setNumericValue (my marks.get(), irow, 2, f1);
 			Table_setNumericValue (my marks.get(), irow, 3, f2);
